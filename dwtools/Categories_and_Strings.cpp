@@ -35,10 +35,10 @@ Strings Categories_to_Strings (Categories me)
 		for (long i = 1; i <= my size; i++)
 		{
 			SimpleString s = (SimpleString) my item[i];
-			thy strings[i] = Melder_wcsdup (s -> string); therror
+			thy strings[i] = Melder_wcsdup (s -> string);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Strings."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Strings."); }
 }
 
 Categories Strings_to_Categories (Strings me)
@@ -54,7 +54,7 @@ Categories Strings_to_Categories (Strings me)
 			Collection_addItem (thee.peek(), s.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted."); }
 }
 
 /* End of file Categories_and_Strings.cpp */

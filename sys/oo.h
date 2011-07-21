@@ -243,7 +243,6 @@
 /*** Class declaration in header file. ***/
 
 #define oo_CLASS_CREATE(klas,parent) \
-	typedef struct struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
 	struct struct##klas##_Table { \
 		void (* _initialize) (void *table); \
@@ -308,10 +307,11 @@
 	void Type##_copy (Type me, Type thee); \
 	bool Type##_equal (Type me, Type thee);
 
-#define oo_DEFINE_CLASS(Class,Parent)  \
-	typedef struct struct##Class##_Table *Class##_Table; \
-	typedef struct struct##Class *Class; \
-	struct struct##Class : public struct##Parent {
+#define oo_DEFINE_CLASS(klas,parent)  \
+	typedef struct struct##klas##_Table *klas##_Table; \
+	typedef struct struct##klas *klas; \
+	typedef struct##parent klas##_Parent; \
+	struct struct##klas : public struct##parent {
 #define oo_END_CLASS(Class)  };
 
 /*** Miscellaneous. ***/

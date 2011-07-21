@@ -154,7 +154,7 @@ struct structSoundRecorder : public structEditor {
 #define SoundRecorder__methods(Klas)
 Thing_declare2cpp (SoundRecorder, Editor);
 
-SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels, void *applicationContext);
+SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels);
 /*
 	Function:
 		create a SoundRecorder, which is an interactive window

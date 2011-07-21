@@ -84,11 +84,13 @@ static void FormantGrid_addBandwidthTier (FormantGrid me, int position)
 
 void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position)
 {
+	try {
 		if (my formants -> size != my bandwidths -> size) Melder_throw ("Number of formants and bandwidths must be equal.");
 		if (position > my formants -> size || position < 1) position = my formants -> size + 1;
 		FormantGrid_addFormantTier (me, position);
 		try { FormantGrid_addBandwidthTier (me, position); 
-		} catch (MelderError) { FormantGrid_removeFormantTier (me, position); throw; }
+		} catch (MelderError) { FormantGrid_removeFormantTier (me, position); throw MelderError (); }
+	} catch (MelderError) { Melder_throw (me, ": no ties added.");}
 }
 
 /* End of file FormantGrid_extensions.cpp */

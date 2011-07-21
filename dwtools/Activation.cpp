@@ -1,17 +1,17 @@
 /* Activation.cpp
- * 
+ *
  * Copyright (C) 1993-2011 David Weenink
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -27,8 +27,9 @@
 #include "Activation.h"
 
 class_methods (Activation, Matrix)
-class_methods_end
-
+{
+	class_methods_end
+}
 int _Activation_checkElements (Activation me)
 {
 	for (long i = 1; i <= my ny; i++)
@@ -43,7 +44,7 @@ int _Activation_checkElements (Activation me)
 
 void Activation_init (I, long ny, long nx)
 {
-	iam (Activation); 
+	iam (Activation);
 	double xmin = 1, xmax = nx, dx = 1, x1 = 1, ymin = 1, ymax = ny;
 	double dy = 1, y1 = 1;
 	my ny = ny; my nx = nx;
@@ -56,28 +57,28 @@ Activation Activation_create (long ny, long nx)
 		autoActivation me = Thing_new (Activation);
 		Activation_init (me.peek(), ny, nx);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Activation not created."); }
+	} catch (MelderError) { Melder_throw ("Activation not created."); }
 }
 
 Activation Matrix_to_Activation (I)
 {
-	iam (Matrix); 
+	iam (Matrix);
 	try {
 		autoActivation thee = Activation_create (my ny, my nx);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Activation."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Activation."); }
 }
 
 Matrix Activation_to_Matrix (I)
 {
-	iam (Activation); 
+	iam (Activation);
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-                                 my ymin, my ymax, my ny, my dy, my y1); 
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);   
+                                 my ymin, my ymax, my ny, my dy, my y1);
+		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Matrix."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Matrix."); }
 }
 
 /* End of file Activation.cpp */

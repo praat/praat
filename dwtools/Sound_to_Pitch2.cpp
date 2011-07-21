@@ -187,7 +187,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 		
 			// The subharmonic summation. Shift spectra in octaves and sum. 
 		
-			Pitch_Frame_init (pitchFrame, maxnCandidates); therror
+			Pitch_Frame_init (pitchFrame, maxnCandidates);
 			autoNUMvector<double> sumspec (1, nFrequencyPoints);
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 		
@@ -254,7 +254,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 			Pitch_Frame_resizeStrengths (& thy frame[i], cc[i], vuvCriterium);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Pitch (shs) created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Pitch (shs) created."); }
 }
 
 Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
@@ -266,7 +266,7 @@ Pitch Sound_to_Pitch_SPINET (Sound me, double timeStep, double windowDuration,
 		maximumFrequencyHz, nFilters, 0.4, 0.6);
 		autoPitch thee = SPINET_to_Pitch (him.peek(), 0.15, ceiling, maxnCandidates);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Pitch (SPINET) created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Pitch (SPINET) created."); }
 }
 
 /* End of file Sound_to_Pitch2.cpp */

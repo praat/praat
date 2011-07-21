@@ -23,14 +23,9 @@
 /*
  * djmw 20110307 Latest modification
  */
- 
-#ifndef _Permutation_h_
-	#include "Permutation.h"
-#endif
 
-#ifndef _Index_h_
-	#include "Index.h"
-#endif
+#include "Permutation.h"
+#include "Index.h"
 
 #ifdef __cplusplus
 	extern "C" {

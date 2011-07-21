@@ -215,7 +215,7 @@ DIRECT (KlattGrid_edit##Name##Tier) \
 	LOOP {\
 		iam (KlattGrid); \
 		auto##KlattGrid_##name##TierEditor editor = KlattGrid_##name##TierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me); \
-		praat_installEditor (editor.transfer(), IOBJECT); therror \
+		praat_installEditor (editor.transfer(), IOBJECT); \
 	}\
 END
 

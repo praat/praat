@@ -18,9 +18,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
+
+
+#include "Data.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -44,7 +44,8 @@ void DLL_addBack (DLL me, DLLNode n);
 void DLL_addBefore (DLL me, DLLNode pos, DLLNode n);
 void DLL_addAfter (DLL me, DLLNode pos, DLLNode n);
 void DLL_remove (DLL me, DLLNode n);
-void DLL_sort (DLL me, DLLNode from, DLLNode to);
+void DLL_sort (DLL me);
+void DLL_sortPart (DLL me, DLLNode from, DLLNode to);
 
 #ifdef __cplusplus
 	}

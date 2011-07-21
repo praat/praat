@@ -3,10 +3,10 @@
 /* -- LAPACK driver routines (version 3.0) -- Univ. of Tennessee, Univ. of
    California Berkeley, NAG Ltd., Courant Institute, Argonne National Lab,
    and Rice University October 31, 1999 -- translated by f2c (version
-   19990503). 
+   19990503).
 
 	Adapted by David Weenink 20021201
- 
+
  djmw 20030205 Latest modification
 */
 /* #include "blaswrap.h" */
@@ -46,7 +46,7 @@ static double c_b438 = 1.;
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define vt_ref(a_1,a_2) vt[(a_2)*vt_dim1 + a_1]
 
-int NUMlapack_dbdsqr (char *uplo, long *n, long *ncvt, long *nru, long *ncc, double *d__, double *e, double *vt,
+int NUMlapack_dbdsqr (const char *uplo, long *n, long *ncvt, long *nru, long *ncc, double *d__, double *e, double *vt,
 	long *ldvt, double *u, long *ldu, double *c__, long *ldc, double *work, long *info)
 {
 	/* System generated locals */
@@ -196,7 +196,7 @@ int NUMlapack_dbdsqr (char *uplo, long *n, long *ncvt, long *nru, long *ncc, dou
 		}
 	}
 
-	/* Compute singular values to relative accuracy TOL (By setting TOL to be 
+	/* Compute singular values to relative accuracy TOL (By setting TOL to be
 	   negative, algorithm will compute singular values to absolute accuracy
 	   ABS(TOL)*norm(input matrix))
 
@@ -1013,7 +1013,7 @@ int NUMlapack_dgebd2 (long *m, long *n, double *a, long *lda, double *d__, doubl
 }								/* NUMlapack_dgebd2 */
 
 
-int NUMlapack_dgebak (char *job, char *side, long *n, long *ilo, long *ihi, double *scale, long *m,
+int NUMlapack_dgebak (const char *job, const char *side, long *n, long *ilo, long *ihi, double *scale, long *m,
 	double *v, long *ldv, long *info)
 {
 	/* System generated locals */
@@ -1185,7 +1185,7 @@ int NUMlapack_dgebak (char *job, char *side, long *n, long *ilo, long *ihi, doub
 
 #undef v_ref
 
-int NUMlapack_dgebal (char *job, long *n, double *a, long *lda, long *ilo, long *ihi, double *scale,
+int NUMlapack_dgebal (const char *job, long *n, double *a, long *lda, long *ilo, long *ihi, double *scale,
 	long *info)
 {
 	/* Table of constant values */
@@ -1588,7 +1588,7 @@ int NUMlapack_dgebrd (long *m, long *n, double *a, long *lda, double *d__, doubl
 			if ((double) (*lwork) < ws)
 			{
 
-				/* Not enough work space for the optimal NB, consider using a 
+				/* Not enough work space for the optimal NB, consider using a
 				   smaller block size. */
 
 				nbmin = NUMlapack_ilaenv (&c__2, "DGEBRD", " ", m, n, &c_n1, &c_n1, 6, 1);
@@ -1614,7 +1614,7 @@ int NUMlapack_dgebrd (long *m, long *n, double *a, long *lda, double *d__, doubl
 	for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2)
 	{
 
-		/* Reduce rows and columns i:i+nb-1 to bidiagonal form and return the 
+		/* Reduce rows and columns i:i+nb-1 to bidiagonal form and return the
 		   matrices X and Y which are needed to update the unreduced part of
 		   the matrix */
 
@@ -1623,7 +1623,7 @@ int NUMlapack_dgebrd (long *m, long *n, double *a, long *lda, double *d__, doubl
 		NUMlapack_dlabrd (&i__3, &i__4, &nb, &a_ref (i__, i__), lda, &d__[i__], &e[i__], &tauq[i__], &taup[i__],
 			&work[1], &ldwrkx, &work[ldwrkx * nb + 1], &ldwrky);
 
-		/* Update the trailing submatrix A(i+nb:m,i+nb:n), using an update of 
+		/* Update the trailing submatrix A(i+nb:m,i+nb:n), using an update of
 		   the form A := A - V*Y' - X*U' */
 
 		i__3 = *m - i__ - nb + 1;
@@ -1671,7 +1671,7 @@ int NUMlapack_dgebrd (long *m, long *n, double *a, long *lda, double *d__, doubl
 }								/* NUMlapack_dgebrd */
 
 
-int NUMlapack_dgeev (char *jobvl, char *jobvr, long *n, double *a, long *lda, double *wr, double *wi,
+int NUMlapack_dgeev (const char *jobvl, const char *jobvr, long *n, double *a, long *lda, double *wr, double *wi,
 	double *vl, long *ldvl, double *vr, long *ldvr, double *work, long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -1756,7 +1756,7 @@ int NUMlapack_dgeev (char *jobvl, char *jobvr, long *n, double *a, long *lda, do
 	/* Compute workspace (Note: Comments in the code beginning "Workspace:"
 	   describe the minimal amount of workspace needed at that point in the
 	   code, as well as the preferred amount for good performance. NB refers
-	   to the optimal block size for the immediately following subroutine, as 
+	   to the optimal block size for the immediately following subroutine, as
 	   returned by ILAENV. HSWORK refers to the workspace preferred by
 	   NUMlapack_dhseqr , as calculated below. HSWORK is computed assuming
 	   ILO=1 and IHI=N, the worst case.) */
@@ -1868,7 +1868,7 @@ int NUMlapack_dgeev (char *jobvl, char *jobvr, long *n, double *a, long *lda, do
 	ibal = 1;
 	NUMlapack_dgebal ("B", n, &a[a_offset], lda, &ilo, &ihi, &work[ibal], &ierr);
 
-	/* Reduce to upper Hessenberg form (Workspace: need 3*N, prefer 2*N+N*NB) 
+	/* Reduce to upper Hessenberg form (Workspace: need 3*N, prefer 2*N+N*NB)
 	 */
 
 	itau = ibal + *n;
@@ -1890,7 +1890,7 @@ int NUMlapack_dgeev (char *jobvl, char *jobvr, long *n, double *a, long *lda, do
 		i__1 = *lwork - iwrk + 1;
 		NUMlapack_dorghr (n, &ilo, &ihi, &vl[vl_offset], ldvl, &work[itau], &work[iwrk], &i__1, &ierr);
 
-		/* Perform QR iteration, accumulating Schur vectors in VL (Workspace: 
+		/* Perform QR iteration, accumulating Schur vectors in VL (Workspace:
 		   need N+1, prefer N+HSWORK (see comments) ) */
 
 		iwrk = itau;
@@ -1922,7 +1922,7 @@ int NUMlapack_dgeev (char *jobvl, char *jobvr, long *n, double *a, long *lda, do
 		i__1 = *lwork - iwrk + 1;
 		NUMlapack_dorghr (n, &ilo, &ihi, &vr[vr_offset], ldvr, &work[itau], &work[iwrk], &i__1, &ierr);
 
-		/* Perform QR iteration, accumulating Schur vectors in VR (Workspace: 
+		/* Perform QR iteration, accumulating Schur vectors in VR (Workspace:
 		   need N+1, prefer N+HSWORK (see comments) ) */
 
 		iwrk = itau;
@@ -2335,7 +2335,7 @@ int NUMlapack_dgehrd (long *n, long *ilo, long *ihi, double *a, long *lda, doubl
 				&a_ref (i__ + ib, i__), lda, &c_b26, &a_ref (1, i__ + ib), lda);
 			a_ref (i__ + ib, i__ + ib - 1) = ei;
 
-			/* Apply the block reflector H to A(i+1:ihi,i+ib:n) from the left 
+			/* Apply the block reflector H to A(i+1:ihi,i+ib:n) from the left
 			 */
 
 			i__3 = *ihi - i__;
@@ -2541,7 +2541,7 @@ int NUMlapack_dgelqf (long *m, long *n, double *a, long *lda, double *tau, doubl
 			if (i__ + ib <= *m)
 			{
 
-				/* Form the triangular factor of the block reflector H = H(i) 
+				/* Form the triangular factor of the block reflector H = H(i)
 				   H(i+1) . . . H(i+ib-1) */
 
 				i__3 = *n - i__ + 1;
@@ -2644,7 +2644,7 @@ int NUMlapack_dgelss (long *m, long *n, long *nrhs, double *a, long *lda, double
 	/* Compute workspace (Note: Comments in the code beginning "Workspace:"
 	   describe the minimal amount of workspace needed at that point in the
 	   code, as well as the preferred amount for good performance. NB refers
-	   to the optimal block size for the immediately following subroutine, as 
+	   to the optimal block size for the immediately following subroutine, as
 	   returned by ILAENV.) */
 
 	minwrk = 1;
@@ -3653,7 +3653,7 @@ int NUMlapack_dgeqrf (long *m, long *n, double *a, long *lda, double *tau, doubl
 			if (i__ + ib <= *n)
 			{
 
-				/* Form the triangular factor of the block reflector H = H(i) 
+				/* Form the triangular factor of the block reflector H = H(i)
 				   H(i+1) . . . H(i+ib-1) */
 
 				i__3 = *m - i__ + 1;
@@ -3805,11 +3805,11 @@ int NUMlapack_dgesv (long *n, long *nrhs, double *a, long *lda, long *ipiv, doub
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define vt_ref(a_1,a_2) vt[(a_2)*vt_dim1 + a_1]
 
-int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long *lda, double *s, double *u,
+int NUMlapack_dgesvd (const char *jobu, const char *jobvt, long *m, long *n, double *a, long *lda, double *s, double *u,
 	long *ldu, double *vt, long *ldvt, double *work, long *lwork, long *info)
 {
 	/* System generated locals */
-	char *a__1[2];
+	const char *a__1[2];
 	long a_dim1, a_offset, u_dim1, u_offset, vt_dim1, vt_offset, i__1[2], i__2, i__3, i__4;
 	char ch__1[2];
 
@@ -3895,7 +3895,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 	/* Compute workspace (Note: Comments in the code beginning "Workspace:"
 	   describe the minimal amount of workspace needed at that point in the
 	   code, as well as the preferred amount for good performance. NB refers
-	   to the optimal block size for the immediately following subroutine, as 
+	   to the optimal block size for the immediately following subroutine, as
 	   returned by ILAENV.) */
 
 	if (*info == 0 && (*lwork >= 1 || lquery) && *m > 0 && *n > 0)
@@ -4539,7 +4539,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 	if (*m >= *n)
 	{
 
-		/* A has at least as many rows as columns. If A has sufficiently more 
+		/* A has at least as many rows as columns. If A has sufficiently more
 		   rows than columns, first reduce using the QR decomposition (if
 		   sufficient workspace available) */
 
@@ -4755,7 +4755,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			{
 
 				/* Path 3 (M much larger than N, JOBU='O', JOBVT='S' or 'A')
-				   N left singular vectors to be overwritten on A and N right 
+				   N left singular vectors to be overwritten on A and N right
 				   singular vectors to be computed in VT
 
 				   Computing MAX */
@@ -4791,7 +4791,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						else
 						{
 
-							/* WORK(IU) is LDWRKU by N and WORK(IR) is N by N 
+							/* WORK(IU) is LDWRKU by N and WORK(IR) is N by N
 							 */
 
 							ldwrku = (*lwork - *n * *n - *n) / *n;
@@ -4942,7 +4942,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 				{
 
 					/* Path 4 (M much larger than N, JOBU='S', JOBVT='N') N
-					   left singular vectors to be computed in U and no right 
+					   left singular vectors to be computed in U and no right
 					   singular vectors to be computed
 
 					   Computing MAX */
@@ -5010,7 +5010,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						iwork = ie + *n;
 
 						/* Perform bidiagonal QR iteration, computing left
-						   singular vectors of R in WORK(IR) (Workspace: need 
+						   singular vectors of R in WORK(IR) (Workspace: need
 						   N*N+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", n, &c__0, n, &c__0, &s[1], &work[ie], dum, &c__1, &work[ir],
@@ -5138,7 +5138,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						i__3 = *n - 1;
 						NUMlapack_dlaset ("L", &i__2, &i__3, &c_b416, &c_b416, &work[iu + 1], &ldwrku);
 
-						/* Generate Q in A (Workspace: need 2*N*N+2*N, prefer 
+						/* Generate Q in A (Workspace: need 2*N*N+2*N, prefer
 						   2*N*N+N+N*NB) */
 
 						i__2 = *lwork - iwork + 1;
@@ -5158,14 +5158,14 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						NUMlapack_dlacpy ("U", n, n, &work[iu], &ldwrku, &work[ir], &ldwrkr);
 
 						/* Generate left bidiagonalizing vectors in WORK(IU)
-						   (Workspace: need 2*N*N+4*N, prefer 2*N*N+3*N+N*NB) 
+						   (Workspace: need 2*N*N+4*N, prefer 2*N*N+3*N+N*NB)
 						 */
 
 						i__2 = *lwork - iwork + 1;
 						NUMlapack_dorgbr ("Q", n, n, n, &work[iu], &ldwrku, &work[itauq], &work[iwork], &i__2,
 							&ierr);
 
-						/* Generate right bidiagonalizing vectors in WORK(IR) 
+						/* Generate right bidiagonalizing vectors in WORK(IR)
 						   (Workspace: need 2*N*N+4*N-1, prefer
 						   2*N*N+3*N+(N-1)*NB) */
 
@@ -5263,7 +5263,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 				{
 
 					/* Path 6 (M much larger than N, JOBU='S', JOBVT='S' or
-					   'A') N left singular vectors to be computed in U and N 
+					   'A') N left singular vectors to be computed in U and N
 					   right singular vectors to be computed in VT
 
 					   Computing MAX */
@@ -5340,7 +5340,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 
 						/* Perform bidiagonal QR iteration, computing left
 						   singular vectors of R in WORK(IU) and computing
-						   right singular vectors of R in VT (Workspace: need 
+						   right singular vectors of R in VT (Workspace: need
 						   N*N+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", n, n, n, &c__0, &s[1], &work[ie], &vt[vt_offset], ldvt,
@@ -5386,14 +5386,14 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						itaup = itauq + *n;
 						iwork = itaup + *n;
 
-						/* Bidiagonalize R in VT (Workspace: need 4*N, prefer 
+						/* Bidiagonalize R in VT (Workspace: need 4*N, prefer
 						   3*N+2*N*NB) */
 
 						i__2 = *lwork - iwork + 1;
 						NUMlapack_dgebrd (n, n, &vt[vt_offset], ldvt, &s[1], &work[ie], &work[itauq],
 							&work[itaup], &work[iwork], &i__2, &ierr);
 
-						/* Multiply Q in U by left bidiagonalizing vectors in 
+						/* Multiply Q in U by left bidiagonalizing vectors in
 						   VT (Workspace: need 3*N+M, prefer 3*N+M*NB) */
 
 						i__2 = *lwork - iwork + 1;
@@ -5428,7 +5428,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 				{
 
 					/* Path 7 (M much larger than N, JOBU='A', JOBVT='N') M
-					   left singular vectors to be computed in U and no right 
+					   left singular vectors to be computed in U and no right
 					   singular vectors to be computed
 
 					   Computing MAX */
@@ -5496,7 +5496,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						iwork = ie + *n;
 
 						/* Perform bidiagonal QR iteration, computing left
-						   singular vectors of R in WORK(IR) (Workspace: need 
+						   singular vectors of R in WORK(IR) (Workspace: need
 						   N*N+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", n, &c__0, n, &c__0, &s[1], &work[ie], dum, &c__1, &work[ir],
@@ -5552,7 +5552,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						NUMlapack_dgebrd (n, n, &a[a_offset], lda, &s[1], &work[ie], &work[itauq], &work[itaup],
 							&work[iwork], &i__2, &ierr);
 
-						/* Multiply Q in U by left bidiagonalizing vectors in 
+						/* Multiply Q in U by left bidiagonalizing vectors in
 						   A (Workspace: need 3*N+M, prefer 3*N+M*NB) */
 
 						i__2 = *lwork - iwork + 1;
@@ -5622,7 +5622,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						NUMlapack_dgeqrf (m, n, &a[a_offset], lda, &work[itau], &work[iwork], &i__2, &ierr);
 						NUMlapack_dlacpy ("L", m, n, &a[a_offset], lda, &u[u_offset], ldu);
 
-						/* Generate Q in U (Workspace: need 2*N*N+N+M, prefer 
+						/* Generate Q in U (Workspace: need 2*N*N+N+M, prefer
 						   2*N*N+N+M*NB) */
 
 						i__2 = *lwork - iwork + 1;
@@ -5649,14 +5649,14 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						NUMlapack_dlacpy ("U", n, n, &work[iu], &ldwrku, &work[ir], &ldwrkr);
 
 						/* Generate left bidiagonalizing vectors in WORK(IU)
-						   (Workspace: need 2*N*N+4*N, prefer 2*N*N+3*N+N*NB) 
+						   (Workspace: need 2*N*N+4*N, prefer 2*N*N+3*N+N*NB)
 						 */
 
 						i__2 = *lwork - iwork + 1;
 						NUMlapack_dorgbr ("Q", n, n, n, &work[iu], &ldwrku, &work[itauq], &work[iwork], &i__2,
 							&ierr);
 
-						/* Generate right bidiagonalizing vectors in WORK(IR) 
+						/* Generate right bidiagonalizing vectors in WORK(IR)
 						   (Workspace: need 2*N*N+4*N-1, prefer
 						   2*N*N+3*N+(N-1)*NB) */
 
@@ -5728,7 +5728,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						NUMlapack_dgebrd (n, n, &a[a_offset], lda, &s[1], &work[ie], &work[itauq], &work[itaup],
 							&work[iwork], &i__2, &ierr);
 
-						/* Multiply Q in U by left bidiagonalizing vectors in 
+						/* Multiply Q in U by left bidiagonalizing vectors in
 						   A (Workspace: need 3*N+M, prefer 3*N+M*NB) */
 
 						i__2 = *lwork - iwork + 1;
@@ -5758,7 +5758,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 				{
 
 					/* Path 9 (M much larger than N, JOBU='A', JOBVT='S' or
-					   'A') M left singular vectors to be computed in U and N 
+					   'A') M left singular vectors to be computed in U and N
 					   right singular vectors to be computed in VT
 
 					   Computing MAX */
@@ -5836,7 +5836,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 
 						/* Perform bidiagonal QR iteration, computing left
 						   singular vectors of R in WORK(IU) and computing
-						   right singular vectors of R in VT (Workspace: need 
+						   right singular vectors of R in VT (Workspace: need
 						   N*N+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", n, n, n, &c__0, &s[1], &work[ie], &vt[vt_offset], ldvt,
@@ -5886,14 +5886,14 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						itaup = itauq + *n;
 						iwork = itaup + *n;
 
-						/* Bidiagonalize R in VT (Workspace: need 4*N, prefer 
+						/* Bidiagonalize R in VT (Workspace: need 4*N, prefer
 						   3*N+2*N*NB) */
 
 						i__2 = *lwork - iwork + 1;
 						NUMlapack_dgebrd (n, n, &vt[vt_offset], ldvt, &s[1], &work[ie], &work[itauq],
 							&work[itaup], &work[iwork], &i__2, &ierr);
 
-						/* Multiply Q in U by left bidiagonalizing vectors in 
+						/* Multiply Q in U by left bidiagonalizing vectors in
 						   VT (Workspace: need 3*N+M, prefer 3*N+M*NB) */
 
 						i__2 = *lwork - iwork + 1;
@@ -5945,7 +5945,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			{
 
 				/* If left singular vectors desired in U, copy result to U
-				   and generate left bidiagonalizing vectors in U (Workspace: 
+				   and generate left bidiagonalizing vectors in U (Workspace:
 				   need 3*N+NCU, prefer 3*N+NCU*NB) */
 
 				NUMlapack_dlacpy ("L", m, n, &a[a_offset], lda, &u[u_offset], ldu);
@@ -5963,7 +5963,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			if (wntvas)
 			{
 
-				/* If right singular vectors desired in VT, copy result to VT 
+				/* If right singular vectors desired in VT, copy result to VT
 				   and generate right bidiagonalizing vectors in VT
 				   (Workspace: need 4*N-1, prefer 3*N+(N-1)*NB) */
 
@@ -6055,7 +6055,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			if (wntvn)
 			{
 
-				/* Path 1t(N much larger than M, JOBVT='N') No right singular 
+				/* Path 1t(N much larger than M, JOBVT='N') No right singular
 				   vectors to be computed */
 
 				itau = 1;
@@ -6116,7 +6116,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			else if (wntvo && wntun)
 			{
 
-				/* Path 2t(N much larger than M, JOBU='N', JOBVT='O') M right 
+				/* Path 2t(N much larger than M, JOBU='N', JOBVT='O') M right
 				   singular vectors to be overwritten on A and no left
 				   singular vectors to be computed
 
@@ -6267,7 +6267,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			{
 
 				/* Path 3t(N much larger than M, JOBU='S' or 'A', JOBVT='O')
-				   M right singular vectors to be overwritten on A and M left 
+				   M right singular vectors to be overwritten on A and M left
 				   singular vectors to be computed in U
 
 				   Computing MAX */
@@ -6524,7 +6524,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						iwork = ie + *m;
 
 						/* Perform bidiagonal QR iteration, computing right
-						   singular vectors of L in WORK(IR) (Workspace: need 
+						   singular vectors of L in WORK(IR) (Workspace: need
 						   M*M+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", m, m, &c__0, &c__0, &s[1], &work[ie], &work[ir], &ldwrkr, dum,
@@ -6546,7 +6546,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						itau = 1;
 						iwork = itau + *m;
 
-						/* Compute A=L*Q (Workspace: need 2*M, prefer M+M*NB) 
+						/* Compute A=L*Q (Workspace: need 2*M, prefer M+M*NB)
 						 */
 
 						i__2 = *lwork - iwork + 1;
@@ -6602,7 +6602,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 				{
 
 					/* Path 5t(N much larger than M, JOBU='O', JOBVT='S') M
-					   right singular vectors to be computed in VT and M left 
+					   right singular vectors to be computed in VT and M left
 					   singular vectors to be overwritten on A
 
 					   Computing MAX */
@@ -6656,7 +6656,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						i__3 = *m - 1;
 						NUMlapack_dlaset ("U", &i__2, &i__3, &c_b416, &c_b416, &work[iu + ldwrku], &ldwrku);
 
-						/* Generate Q in A (Workspace: need 2*M*M+2*M, prefer 
+						/* Generate Q in A (Workspace: need 2*M*M+2*M, prefer
 						   2*M*M+M+M*NB) */
 
 						i__2 = *lwork - iwork + 1;
@@ -6675,7 +6675,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 							&work[itaup], &work[iwork], &i__2, &ierr);
 						NUMlapack_dlacpy ("L", m, m, &work[iu], &ldwrku, &work[ir], &ldwrkr);
 
-						/* Generate right bidiagonalizing vectors in WORK(IU) 
+						/* Generate right bidiagonalizing vectors in WORK(IU)
 						   (Workspace: need 2*M*M+4*M-1, prefer
 						   2*M*M+3*M+(M-1)*NB) */
 
@@ -6684,7 +6684,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 							&ierr);
 
 						/* Generate left bidiagonalizing vectors in WORK(IR)
-						   (Workspace: need 2*M*M+4*M, prefer 2*M*M+3*M+M*NB) 
+						   (Workspace: need 2*M*M+4*M, prefer 2*M*M+3*M+M*NB)
 						 */
 
 						i__2 = *lwork - iwork + 1;
@@ -6841,7 +6841,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 							&work[itaup], &work[iwork], &i__2, &ierr);
 						NUMlapack_dlacpy ("L", m, m, &work[iu], &ldwrku, &u[u_offset], ldu);
 
-						/* Generate right bidiagonalizing vectors in WORK(IU) 
+						/* Generate right bidiagonalizing vectors in WORK(IU)
 						   (Workspace: need M*M+4*M-1, prefer
 						   M*M+3*M+(M-1)*NB) */
 
@@ -6859,7 +6859,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 
 						/* Perform bidiagonal QR iteration, computing left
 						   singular vectors of L in U and computing right
-						   singular vectors of L in WORK(IU) (Workspace: need 
+						   singular vectors of L in WORK(IU) (Workspace: need
 						   M*M+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", m, m, m, &c__0, &s[1], &work[ie], &work[iu], &ldwrku,
@@ -7008,7 +7008,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						NUMlapack_dgebrd (m, m, &work[ir], &ldwrkr, &s[1], &work[ie], &work[itauq],
 							&work[itaup], &work[iwork], &i__2, &ierr);
 
-						/* Generate right bidiagonalizing vectors in WORK(IR) 
+						/* Generate right bidiagonalizing vectors in WORK(IR)
 						   (Workspace: need M*M+4*M-1, prefer
 						   M*M+3*M+(M-1)*NB) */
 
@@ -7018,7 +7018,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 						iwork = ie + *m;
 
 						/* Perform bidiagonal QR iteration, computing right
-						   singular vectors of L in WORK(IR) (Workspace: need 
+						   singular vectors of L in WORK(IR) (Workspace: need
 						   M*M+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", m, m, &c__0, &c__0, &s[1], &work[ie], &work[ir], &ldwrkr, dum,
@@ -7097,7 +7097,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 				{
 
 					/* Path 8t(N much larger than M, JOBU='O', JOBVT='A') N
-					   right singular vectors to be computed in VT and M left 
+					   right singular vectors to be computed in VT and M left
 					   singular vectors to be overwritten on A
 
 					   Computing MAX */
@@ -7172,7 +7172,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 							&work[itaup], &work[iwork], &i__2, &ierr);
 						NUMlapack_dlacpy ("L", m, m, &work[iu], &ldwrku, &work[ir], &ldwrkr);
 
-						/* Generate right bidiagonalizing vectors in WORK(IU) 
+						/* Generate right bidiagonalizing vectors in WORK(IU)
 						   (Workspace: need 2*M*M+4*M-1, prefer
 						   2*M*M+3*M+(M-1)*NB) */
 
@@ -7181,7 +7181,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 							&ierr);
 
 						/* Generate left bidiagonalizing vectors in WORK(IR)
-						   (Workspace: need 2*M*M+4*M, prefer 2*M*M+3*M+M*NB) 
+						   (Workspace: need 2*M*M+4*M, prefer 2*M*M+3*M+M*NB)
 						 */
 
 						i__2 = *lwork - iwork + 1;
@@ -7208,7 +7208,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 
 						NUMlapack_dlacpy ("F", m, n, &a[a_offset], lda, &vt[vt_offset], ldvt);
 
-						/* Copy left singular vectors of A from WORK(IR) to A 
+						/* Copy left singular vectors of A from WORK(IR) to A
 						 */
 
 						NUMlapack_dlacpy ("F", m, m, &work[ir], &ldwrkr, &a[a_offset], lda);
@@ -7344,8 +7344,8 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 							&work[itaup], &work[iwork], &i__2, &ierr);
 						NUMlapack_dlacpy ("L", m, m, &work[iu], &ldwrku, &u[u_offset], ldu);
 
-						/* Generate right bidiagonalizing vectors in WORK(IU) 
-						   (Workspace: need M*M+4*M, prefer M*M+3*M+(M-1)*NB) 
+						/* Generate right bidiagonalizing vectors in WORK(IU)
+						   (Workspace: need M*M+4*M, prefer M*M+3*M+(M-1)*NB)
 						 */
 
 						i__2 = *lwork - iwork + 1;
@@ -7362,7 +7362,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 
 						/* Perform bidiagonal QR iteration, computing left
 						   singular vectors of L in U and computing right
-						   singular vectors of L in WORK(IU) (Workspace: need 
+						   singular vectors of L in WORK(IU) (Workspace: need
 						   M*M+BDSPAC) */
 
 						NUMlapack_dbdsqr ("U", m, m, m, &c__0, &s[1], &work[ie], &work[iu], &ldwrku,
@@ -7472,7 +7472,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			{
 
 				/* If left singular vectors desired in U, copy result to U
-				   and generate left bidiagonalizing vectors in U (Workspace: 
+				   and generate left bidiagonalizing vectors in U (Workspace:
 				   need 4*M-1, prefer 3*M+(M-1)*NB) */
 
 				NUMlapack_dlacpy ("L", m, m, &a[a_offset], lda, &u[u_offset], ldu);
@@ -7482,7 +7482,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 			if (wntvas)
 			{
 
-				/* If right singular vectors desired in VT, copy result to VT 
+				/* If right singular vectors desired in VT, copy result to VT
 				   and generate right bidiagonalizing vectors in VT
 				   (Workspace: need 3*M+NRVT, prefer 3*M+NRVT*NB) */
 
@@ -7571,7 +7571,7 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 
 	}
 
-	/* If DBDSQR failed to converge, copy unconverged superdiagonals to WORK( 
+	/* If DBDSQR failed to converge, copy unconverged superdiagonals to WORK(
 	   2:MINMN ) */
 
 	if (*info != 0)
@@ -7861,7 +7861,7 @@ int NUMlapack_dgetri (long *n, double *a, long *lda, long *ipiv, double *work, l
 			i__2 = nb, i__3 = *n - j + 1;
 			jb = MIN (i__2, i__3);
 
-			/* Copy current block column of L to WORK and replace with zeros. 
+			/* Copy current block column of L to WORK and replace with zeros.
 			 */
 
 			i__2 = j + jb - 1;
@@ -8037,7 +8037,7 @@ int NUMlapack_dgetrf (long *m, long *n, double *a, long *lda, long *ipiv, long *
 	return 0;
 }								/* NUMlapack_dgetrf */
 
-int NUMlapack_dgetrs (char *trans, long *n, long *nrhs, double *a, long *lda, long *ipiv, double *b, long *ldb,
+int NUMlapack_dgetrs (const char *trans, long *n, long *nrhs, double *a, long *lda, long *ipiv, double *b, long *ldb,
 	long *info)
 {
 	/* Table of constant values */
@@ -8137,7 +8137,7 @@ int NUMlapack_dgetrs (char *trans, long *n, long *nrhs, double *a, long *lda, lo
 	return 0;
 }								/* NUMlapack_dgetrs */
 
-int NUMlapack_dggsvd (char *jobu, char *jobv, char *jobq, long *m, long *n, long *p, long *k, long *l,
+int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, long *m, long *n, long *p, long *k, long *l,
 	double *a, long *lda, double *b, long *ldb, double *alpha, double *beta, double *u, long *ldu, double *v,
 	long *ldv, double *q, long *ldq, double *work, long *iwork, long *info)
 {
@@ -8305,7 +8305,7 @@ int NUMlapack_dggsvd (char *jobu, char *jobv, char *jobq, long *m, long *n, long
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dggsvp (char *jobu, char *jobv, char *jobq, long *m, long *p, long *n, double *a, long *lda,
+int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, long *m, long *p, long *n, double *a, long *lda,
 	double *b, long *ldb, double *tola, double *tolb, long *k, long *l, double *u, long *ldu, double *v,
 	long *ldv, double *q, long *ldq, long *iwork, double *tau, double *work, long *info)
 {
@@ -8574,7 +8574,7 @@ int NUMlapack_dggsvp (char *jobu, char *jobv, char *jobq, long *m, long *p, long
 		NUMlapack_dlapmt (&forwrd, n, &i__1, &q[q_offset], ldq, &iwork[1]);
 	}
 
-	/* Clean up A: set the strictly lower triangular part of A(1:K, 1:K) = 0, 
+	/* Clean up A: set the strictly lower triangular part of A(1:K, 1:K) = 0,
 	   and A( K+1:M, 1:N-L ) = 0. */
 
 	i__1 = *k - 1;
@@ -8675,7 +8675,7 @@ int NUMlapack_dggsvp (char *jobu, char *jobv, char *jobq, long *m, long *p, long
 #undef b_ref
 
 
-int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, double *h__, long *ldh,
+int NUMlapack_dhseqr (const char *job, const char *compz, long *n, long *ilo, long *ihi, double *h__, long *ldh,
 	double *wr, double *wi, double *z__, long *ldz, double *work, long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -8690,7 +8690,7 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 	static long c__1 = 1;
 
 	/* System generated locals */
-	char *a__1[2];
+	const char *a__1[2];
 	long h_dim1, h_offset, z_dim1, z_offset, i__1, i__2, i__3[2], i__4, i__5;
 	double d__1, d__2;
 	char ch__1[2];
@@ -8838,7 +8838,7 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 	   Writing concatenation */
 	i__3[0] = 1, a__1[0] = job;
 	i__3[1] = 1, a__1[1] = compz;
-	s_cat (ch__1, a__1, i__3, &c__2, 2);
+	s_cat ((char *) ch__1, a__1, i__3, &c__2, 2);
 	ns = NUMlapack_ilaenv (&c__4, "NUMlapack_dhseqr ", ch__1, n, ilo, ihi, &c_n1, 6, 2);
 	/* Writing concatenation */
 	i__3[0] = 1, a__1[0] = job;
@@ -8861,7 +8861,7 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 
 	/* Now 2 < NS <= MAXB < NH.
 
-	   Set machine-dependent constants for the stopping criterion. If norm(H) 
+	   Set machine-dependent constants for the stopping criterion. If norm(H)
 	   <= sqrt(OVFL), overflow should not occur. */
 
 	unfl = NUMblas_dlamch ("Safe minimum");
@@ -8886,7 +8886,7 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 
 	/* The main loop begins here. I is the loop index and decreases from IHI
 	   to ILO in steps of at most MAXB. Each iteration of the loop works with
-	   the active submatrix in rows and columns L to I. Eigenvalues I+1 to IHI 
+	   the active submatrix in rows and columns L to I. Eigenvalues I+1 to IHI
 	   have already converged. Either L = ILO or H(L,L-1) is negligible so
 	   that the matrix splits. */
 
@@ -8977,7 +8977,7 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 			if (ierr > 0)
 			{
 
-				/* If NUMlapack_dlahqr failed to compute all NS eigenvalues, 
+				/* If NUMlapack_dlahqr failed to compute all NS eigenvalues,
 				   use the unconverged diagonal elements as the remaining
 				   shifts. */
 
@@ -8991,7 +8991,7 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 			}
 		}
 
-		/* Form the first column of (G-w(1)) (G-w(2)) . . . (G-w(ns)) where G 
+		/* Form the first column of (G-w(1)) (G-w(2)) . . . (G-w(ns)) where G
 		   is the Hessenberg submatrix H(L:I,L:I) and w is the vector of
 		   shifts (stored in WR and WI). The result is stored in the local
 		   array V. */
@@ -9084,8 +9084,8 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 			   from the vector V and applies it from left and right to H,
 			   thus creating a nonzero bulge below the subdiagonal.
 
-			   Each subsequent iteration determines a reflection G to restore 
-			   the Hessenberg form in the (K-1)th column, and thus chases the 
+			   Each subsequent iteration determines a reflection G to restore
+			   the Hessenberg form in the (K-1)th column, and thus chases the
 			   bulge one step toward the bottom of the active submatrix. NR
 			   is the order of G.
 
@@ -9143,7 +9143,7 @@ int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, dou
 
   L160:
 
-	/* A submatrix of order <= MAXB in rows and columns L to I has split off. 
+	/* A submatrix of order <= MAXB in rows and columns L to I has split off.
 	   Use the double-shift QR algorithm to handle it. */
 
 	NUMlapack_dlahqr (&wantt, &wantz, n, &l, &i__, &h__[h_offset], ldh, &wr[1], &wi[1], ilo, ihi,
@@ -9430,7 +9430,7 @@ int NUMlapack_dlabrd (long *m, long *n, long *nb, double *a, long *lda, double *
 
 #define b_ref(a_1,a_2) b[(a_2)*b_dim1 + a_1]
 
-int NUMlapack_dlacpy (char *uplo, long *m, long *n, double *a, long *lda, double *b, long *ldb)
+int NUMlapack_dlacpy (const char *uplo, long *m, long *n, double *a, long *lda, double *b, long *ldb)
 {
 	/* System generated locals */
 	long a_dim1, a_offset, b_dim1, b_offset, i__1, i__2;
@@ -9821,7 +9821,7 @@ int NUMlapack_dlags2 (long *upper, double *a1, double *a2, double *a3, double *b
 	else
 	{
 
-		/* Input matrices A and B are lower triangular matrices Form matrix C 
+		/* Input matrices A and B are lower triangular matrices Form matrix C
 		   = A*adj(B) = ( a 0 ) ( c d ) */
 
 		a = *a1 * *b3;
@@ -9975,7 +9975,7 @@ int NUMlapack_dlahqr (int *wantt, int *wantz, long *n, long *ilo, long *ihi, dou
 	nh = *ihi - *ilo + 1;
 	nz = *ihiz - *iloz + 1;
 
-	/* Set machine-dependent constants for the stopping criterion. If norm(H) 
+	/* Set machine-dependent constants for the stopping criterion. If norm(H)
 	   <= sqrt(OVFL), overflow should not occur. */
 
 	unfl = NUMblas_dlamch ("Safe minimum");
@@ -10013,7 +10013,7 @@ int NUMlapack_dlahqr (int *wantt, int *wantz, long *n, long *ilo, long *ihi, dou
 	}
 
 	/* Perform QR iterations on rows and columns ILO to I until a submatrix
-	   of order 1 or 2 splits off at the bottom because a subdiagonal element 
+	   of order 1 or 2 splits off at the bottom because a subdiagonal element
 	   has become negligible. */
 
 	i__1 = itn;
@@ -10115,7 +10115,7 @@ int NUMlapack_dlahqr (int *wantt, int *wantz, long *n, long *ilo, long *ihi, dou
 		i__2 = l;
 		for (m = i__ - 2; m >= i__2; --m)
 		{
-			/* Determine the effect of starting the double-shift QR iteration 
+			/* Determine the effect of starting the double-shift QR iteration
 			   at row M, and see if this would make H(M,M-1) negligible. */
 
 			h11 = h___ref (m, m);
@@ -10159,8 +10159,8 @@ int NUMlapack_dlahqr (int *wantt, int *wantz, long *n, long *ilo, long *ihi, dou
 			   from the vector V and applies it from left and right to H,
 			   thus creating a nonzero bulge below the subdiagonal.
 
-			   Each subsequent iteration determines a reflection G to restore 
-			   the Hessenberg form in the (K-1)th column, and thus chases the 
+			   Each subsequent iteration determines a reflection G to restore
+			   the Hessenberg form in the (K-1)th column, and thus chases the
 			   bulge one step toward the bottom of the active submatrix. NR
 			   is the order of G.
 
@@ -10304,7 +10304,7 @@ int NUMlapack_dlahqr (int *wantt, int *wantz, long *n, long *ilo, long *ihi, dou
 
 		/* H(I-1,I-2) is negligible: a pair of eigenvalues have converged.
 
-		   Transform the 2-by-2 submatrix to standard Schur form, and compute 
+		   Transform the 2-by-2 submatrix to standard Schur form, and compute
 		   and store the eigenvalues. */
 
 		NUMlapack_dlanv2 (&h___ref (i__ - 1, i__ - 1), &h___ref (i__ - 1, i__), &h___ref (i__, i__ - 1),
@@ -10958,7 +10958,7 @@ int NUMlapack_dlaln2 (int *ltrans, long *na, long *nw, double *smin, double *ca,
 #undef ci
 
 
-double NUMlapack_dlange (char *norm, long *m, long *n, double *a, long *lda, double *work)
+double NUMlapack_dlange (const char *norm, long *m, long *n, double *a, long *lda, double *work)
 {
 	/* Table of constant values */
 	static long c__1 = 1;
@@ -11076,7 +11076,7 @@ double NUMlapack_dlange (char *norm, long *m, long *n, double *a, long *lda, dou
 }								/* NUMlapack_dlange */
 
 
-double NUMlapack_dlanhs (char *norm, long *n, double *a, long *lda, double *work)
+double NUMlapack_dlanhs (const char *norm, long *n, double *a, long *lda, double *work)
 {
 	/* Table of constant values */
 	static long c__1 = 1;
@@ -11203,7 +11203,7 @@ double NUMlapack_dlanhs (char *norm, long *n, double *a, long *lda, double *work
 }								/* NUMlapack_dlanhs */
 
 
-double NUMlapack_dlanst (char *norm, long *n, double *d__, double *e)
+double NUMlapack_dlanst (const char *norm, long *n, double *d__, double *e)
 {
 	/* Table of constant values */
 	static long c__1 = 1;
@@ -11289,7 +11289,7 @@ double NUMlapack_dlanst (char *norm, long *n, double *d__, double *e)
 	return ret_val;
 }								/* NUMlapack_dlanst */
 
-double NUMlapack_dlansy (char *norm, char *uplo, long *n, double *a, long *lda, double *work)
+double NUMlapack_dlansy (const char *norm, const char *uplo, long *n, double *a, long *lda, double *work)
 {
 	/* Table of constant values */
 	static long c__1 = 1;
@@ -11811,7 +11811,7 @@ double NUMlapack_dlapy2 (double *x, double *y)
 #define work_ref(a_1,a_2) work[(a_2)*work_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dlarfb (char *side, char *trans, char *direct, char *storev, long *m, long *n, long *k, double *v,
+int NUMlapack_dlarfb (const char *side, const char *trans, const char *direct, const char *storev, long *m, long *n, long *k, double *v,
 	long *ldv, double *t, long *ldt, double *c__, long *ldc, double *work, long *ldwork)
 {
 	/* Table of constant values */
@@ -12147,7 +12147,7 @@ int NUMlapack_dlarfb (char *side, char *trans, char *direct, char *storev, long 
 		if (lsame_ (direct, "F"))
 		{
 
-			/* Let V = ( V1 V2 ) (V1: first K columns) where V1 is unit upper 
+			/* Let V = ( V1 V2 ) (V1: first K columns) where V1 is unit upper
 			   triangular. */
 
 			if (lsame_ (side, "L"))
@@ -12436,7 +12436,7 @@ int NUMlapack_dlarfb (char *side, char *trans, char *direct, char *storev, long 
 #undef v_ref
 #undef work_ref
 
-int NUMlapack_dlarf (char *side, long *m, long *n, double *v, long *incv, double *tau, double *c__, long *ldc,
+int NUMlapack_dlarf (const char *side, long *m, long *n, double *v, long *incv, double *tau, double *c__, long *ldc,
 	double *work)
 {
 	/* Table of constant values */
@@ -12591,7 +12591,7 @@ int NUMlapack_dlarfg (long *n, double *alpha, double *x, long *incx, double *tau
 #define t_ref(a_1,a_2) t[(a_2)*t_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dlarft (char *direct, char *storev, long *n, long *k, double *v, long *ldv, double *tau,
+int NUMlapack_dlarft (const char *direct, const char *storev, long *n, long *k, double *v, long *ldv, double *tau,
 	double *t, long *ldt)
 {
 	/* Table of constant values */
@@ -12870,7 +12870,7 @@ int NUMlapack_dlartg (double *f, double *g, double *cs, double *sn, double *r__)
 	return 0;
 }								/* NUMlapack_dlartg */
 
-int NUMlapack_dlarfx (char *side, long *m, long *n, double *v, double *tau, double *c__, long *ldc,
+int NUMlapack_dlarfx (const char *side, long *m, long *n, double *v, double *tau, double *c__, long *ldc,
 	double *work)
 {
 	/* Table of constant values */
@@ -13631,7 +13631,7 @@ int NUMlapack_dlas2 (double *f, double *g, double *h__, double *ssmin, double *s
 	return 0;
 }								/* NUMlapack_dlas2 */
 
-int NUMlapack_dlascl (char *type__, long *kl, long *ku, double *cfrom, double *cto, long *m, long *n, double *a,
+int NUMlapack_dlascl (const char *type__, long *kl, long *ku, double *cfrom, double *cto, long *m, long *n, double *a,
 	long *lda, long *info)
 {
 	/* System generated locals */
@@ -13926,7 +13926,7 @@ int NUMlapack_dlascl (char *type__, long *kl, long *ku, double *cfrom, double *c
 	return 0;
 }								/* NUMlapack_dlascl */
 
-int NUMlapack_dlaset (char *uplo, long *m, long *n, double *alpha, double *beta, double *a, long *lda)
+int NUMlapack_dlaset (const char *uplo, long *m, long *n, double *alpha, double *beta, double *a, long *lda)
 {
 	/* System generated locals */
 	long a_dim1, a_offset, i__1, i__2, i__3;
@@ -13942,7 +13942,7 @@ int NUMlapack_dlaset (char *uplo, long *m, long *n, double *alpha, double *beta,
 	if (lsame_ (uplo, "U"))
 	{
 
-		/* Set the strictly upper triangular or trapezoidal part of the array 
+		/* Set the strictly upper triangular or trapezoidal part of the array
 		   to ALPHA. */
 
 		i__1 = *n;
@@ -13963,7 +13963,7 @@ int NUMlapack_dlaset (char *uplo, long *m, long *n, double *alpha, double *beta,
 	else if (lsame_ (uplo, "L"))
 	{
 
-		/* Set the strictly lower triangular or trapezoidal part of the array 
+		/* Set the strictly lower triangular or trapezoidal part of the array
 		   to ALPHA. */
 
 		i__1 = MIN (*m, *n);
@@ -14086,7 +14086,7 @@ int NUMlapack_dlasq1 (long *n, double *d__, double *e, double *work, long *info)
 		/* L20: */
 	}
 
-	/* Copy D and E into WORK (in the Z format) and scale (squaring the input 
+	/* Copy D and E into WORK (in the Z format) and scale (squaring the input
 	   data makes scaling by a power of the radix pointless). */
 
 	eps = NUMblas_dlamch ("Precision");
@@ -14426,7 +14426,7 @@ int NUMlapack_dlasq2 (long *n, double *z__, long *info)
 
 		/* While array unfinished do
 
-		   E(N0) holds the value of SIGMA when submatrix in I0:N0 splits from 
+		   E(N0) holds the value of SIGMA when submatrix in I0:N0 splits from
 		   the rest of the array, but is negated. */
 
 		desig = 0.;
@@ -15575,7 +15575,7 @@ int NUMlapack_dlasq6 (long *i0, long *n0, double *z__, long *pp, double *dmin__,
 	return 0;
 }								/* NUMlapack_dlasq6 */
 
-int NUMlapack_dlasr (char *side, char *pivot, char *direct, long *m, long *n, double *c__, double *s, double *a,
+int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, long *m, long *n, double *c__, double *s, double *a,
 	long *lda)
 {
 	/* System generated locals */
@@ -15913,7 +15913,7 @@ int NUMlapack_dlasr (char *side, char *pivot, char *direct, long *m, long *n, do
 
 #define stack_ref(a_1,a_2) stack[(a_2)*2 + a_1 - 3]
 
-int NUMlapack_dlasrt (char *id, long *n, double *d__, long *info)
+int NUMlapack_dlasrt (const char *id, long *n, double *d__, long *info)
 {
 	/* System generated locals */
 	long i__1, i__2;
@@ -16504,7 +16504,7 @@ int NUMlapack_dlaswp (long *n, double *a, long *lda, long *k1, long *k2, long *i
 
 #define w_ref(a_1,a_2) w[(a_2)*w_dim1 + a_1]
 
-int NUMlapack_dlatrd (char *uplo, long *n, long *nb, double *a, long *lda, double *e, double *tau, double *w,
+int NUMlapack_dlatrd (const char *uplo, long *n, long *nb, double *a, long *lda, double *e, double *tau, double *w,
 	long *ldw)
 {
 	/* Table of constant values */
@@ -16869,7 +16869,7 @@ int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorg2r */
 
-int NUMlapack_dorgbr (char *vect, long *m, long *n, long *k, double *a, long *lda, double *tau, double *work,
+int NUMlapack_dorgbr (const char *vect, long *m, long *n, long *k, double *a, long *lda, double *tau, double *work,
 	long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -17137,7 +17137,7 @@ int NUMlapack_dorghr (long *n, long *ilo, long *ihi, double *a, long *lda, doubl
 		return 0;
 	}
 
-	/* Shift the vectors which define the elementary reflectors one column to 
+	/* Shift the vectors which define the elementary reflectors one column to
 	   the right, and set the first ilo and the last n-ihi rows and columns
 	   to those of the unit matrix */
 
@@ -17462,7 +17462,7 @@ int NUMlapack_dorglq (long *m, long *n, long *k, double *a, long *lda, double *t
 			if (i__ + ib <= *m)
 			{
 
-				/* Form the triangular factor of the block reflector H = H(i) 
+				/* Form the triangular factor of the block reflector H = H(i)
 				   H(i+1) . . . H(i+ib-1) */
 
 				i__2 = *n - i__ + 1;
@@ -17856,7 +17856,7 @@ int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *t
 			if (i__ + ib <= *n)
 			{
 
-				/* Form the triangular factor of the block reflector H = H(i) 
+				/* Form the triangular factor of the block reflector H = H(i)
 				   H(i+1) . . . H(i+ib-1) */
 
 				i__2 = *m - i__ + 1;
@@ -17898,7 +17898,7 @@ int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *t
 	return 0;
 }								/* NUMlapack_dorgqr */
 
-int NUMlapack_dorgtr (char *uplo, long *n, double *a, long *lda, double *tau, double *work, long *lwork,
+int NUMlapack_dorgtr (const char *uplo, long *n, double *a, long *lda, double *tau, double *work, long *lwork,
 	long *info)
 {
 	/* Table of constant values */
@@ -18068,7 +18068,7 @@ int NUMlapack_dorgtr (char *uplo, long *n, double *a, long *lda, double *tau, do
 	return 0;
 }								/* NUMlapack_dorgtr */
 
-int NUMlapack_dorm2r (char *side, char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
+int NUMlapack_dorm2r (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
 	double *c__, long *ldc, double *work, long *info)
 {
 	/* Table of constant values */
@@ -18206,7 +18206,7 @@ int NUMlapack_dorm2r (char *side, char *trans, long *m, long *n, long *k, double
 	return 0;
 }								/* NUMlapack_dorm2r */
 
-int NUMlapack_dormbr (char *vect, char *side, char *trans, long *m, long *n, long *k, double *a, long *lda,
+int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda,
 	double *tau, double *c__, long *ldc, double *work, long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -18215,7 +18215,7 @@ int NUMlapack_dormbr (char *vect, char *side, char *trans, long *m, long *n, lon
 	static long c__2 = 2;
 
 	/* System generated locals */
-	char *a__1[2];
+	const char *a__1[2];
 	long a_dim1, a_offset, c_dim1, c_offset, i__1, i__2, i__3[2];
 	char ch__1[2];
 
@@ -18455,7 +18455,7 @@ int NUMlapack_dormbr (char *vect, char *side, char *trans, long *m, long *n, lon
 	return 0;
 }								/* NUMlapack_dormbr */
 
-int NUMlapack_dorml2 (char *side, char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
+int NUMlapack_dorml2 (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
 	double *c__, long *ldc, double *work, long *info)
 {
 	/* System generated locals */
@@ -18591,7 +18591,7 @@ int NUMlapack_dorml2 (char *side, char *trans, long *m, long *n, long *k, double
 
 }								/* NUMlapack_dorml2 */
 
-int NUMlapack_dormlq (char *side, char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
+int NUMlapack_dormlq (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
 	double *c__, long *ldc, double *work, long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -18682,13 +18682,13 @@ int NUMlapack_dormlq (char *side, char *trans, long *m, long *n, long *k, double
 	if (*info == 0)
 	{
 
-		/* Determine the block size.  NB may be at most NBMAX, where NBMAX is 
+		/* Determine the block size.  NB may be at most NBMAX, where NBMAX is
 		   used to define the local array T.
 
 		   Computing MIN Writing concatenation */
-		i__3[0] = 1, a__1[0] = side;
-		i__3[1] = 1, a__1[1] = trans;
-		s_cat (ch__1, a__1, i__3, &c__2, 2);
+		i__3[0] = 1, a__1[0] = (char *)side;
+		i__3[1] = 1, a__1[1] = (char *)trans;
+		s_cat (ch__1, (const char **)a__1, i__3, &c__2, 2);
 		i__1 = 64, i__2 = NUMlapack_ilaenv (&c__1, "DORMLQ", ch__1, m, n, k, &c_n1, 6, 2);
 		nb = MIN (i__1, i__2);
 		lwkopt = MAX (1, nw) * nb;
@@ -18723,9 +18723,9 @@ int NUMlapack_dormlq (char *side, char *trans, long *m, long *n, long *k, double
 		{
 			nb = *lwork / ldwork;
 			/* Computing MAX Writing concatenation */
-			i__3[0] = 1, a__1[0] = side;
-			i__3[1] = 1, a__1[1] = trans;
-			s_cat (ch__1, a__1, i__3, &c__2, 2);
+			i__3[0] = 1, a__1[0] = (char *) side;
+			i__3[1] = 1, a__1[1] = (char *) trans;
+			s_cat (ch__1, (const char **)a__1, i__3, &c__2, 2);
 			i__1 = 2, i__2 = NUMlapack_ilaenv (&c__2, "DORMLQ", ch__1, m, n, k, &c_n1, 6, 2);
 			nbmin = MAX (i__1, i__2);
 		}
@@ -18822,7 +18822,7 @@ int NUMlapack_dormlq (char *side, char *trans, long *m, long *n, long *k, double
 	return 0;
 }								/* NUMlapack_dormlq */
 
-int NUMlapack_dormqr (char *side, char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
+int NUMlapack_dormqr (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
 	double *c__, long *ldc, double *work, long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -18911,13 +18911,13 @@ int NUMlapack_dormqr (char *side, char *trans, long *m, long *n, long *k, double
 	if (*info == 0)
 	{
 
-		/* Determine the block size.  NB may be at most NBMAX, where NBMAX is 
+		/* Determine the block size.  NB may be at most NBMAX, where NBMAX is
 		   used to define the local array T.
 
 		   Computing MIN Writing concatenation */
-		i__3[0] = 1, a__1[0] = side;
-		i__3[1] = 1, a__1[1] = trans;
-		s_cat (ch__1, a__1, i__3, &c__2, 2);
+		i__3[0] = 1, a__1[0] = (char *) side;
+		i__3[1] = 1, a__1[1] = (char *) trans;
+		s_cat (ch__1, (const char **) a__1, i__3, &c__2, 2);
 		i__1 = 64, i__2 = NUMlapack_ilaenv (&c__1, "DORMQR", ch__1, m, n, k, &c_n1, 6, 2);
 		nb = MIN (i__1, i__2);
 		lwkopt = MAX (1, nw) * nb;
@@ -18952,9 +18952,9 @@ int NUMlapack_dormqr (char *side, char *trans, long *m, long *n, long *k, double
 		{
 			nb = *lwork / ldwork;
 			/* Computing MAX Writing concatenation */
-			i__3[0] = 1, a__1[0] = side;
-			i__3[1] = 1, a__1[1] = trans;
-			s_cat (ch__1, a__1, i__3, &c__2, 2);
+			i__3[0] = 1, a__1[0] = (char *) side;
+			i__3[1] = 1, a__1[1] = (char *) trans;
+			s_cat (ch__1, (const char **) a__1, i__3, &c__2, 2);
 			i__1 = 2, i__2 = NUMlapack_ilaenv (&c__2, "DORMQR", ch__1, m, n, k, &c_n1, 6, 2);
 			nbmin = MAX (i__1, i__2);
 		}
@@ -19043,7 +19043,7 @@ int NUMlapack_dormqr (char *side, char *trans, long *m, long *n, long *k, double
 	return 0;
 }								/* NUMlapack_dormqr */
 
-int NUMlapack_dormr2 (char *side, char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
+int NUMlapack_dormr2 (const char *side, const char *trans, long *m, long *n, long *k, double *a, long *lda, double *tau,
 	double *c__, long *ldc, double *work, long *info)
 {
 	/* System generated locals */
@@ -19174,7 +19174,7 @@ int NUMlapack_dormr2 (char *side, char *trans, long *m, long *n, long *k, double
 	return 0;
 }								/* NUMlapack_dormr2 */
 
-int NUMlapack_dpotf2 (char *uplo, long *n, double *a, long *lda, long *info)
+int NUMlapack_dpotf2 (const char *uplo, long *n, double *a, long *lda, long *info)
 {
 	/* Table of constant values */
 	static double c_b10 = -1.;
@@ -19373,7 +19373,7 @@ int NUMlapack_drscl (long *n, double *sa, double *sx, long *incx)
 
 #define z___ref(a_1,a_2) z__[(a_2)*z_dim1 + a_1]
 
-int NUMlapack_dsteqr (char *compz, long *n, double *d__, double *e, double *z__, long *ldz, double *work,
+int NUMlapack_dsteqr (const char *compz, long *n, double *d__, double *e, double *z__, long *ldz, double *work,
 	long *info)
 {
 	/* Table of constant values */
@@ -20342,7 +20342,7 @@ int NUMlapack_dsterf (long *n, double *d__, double *e, long *info)
 	return 0;
 }								/* NUMlapack_dsterf */
 
-int NUMlapack_dsyev (char *jobz, char *uplo, long *n, double *a, long *lda, double *w, double *work,
+int NUMlapack_dsyev (const char *jobz, const char *uplo, long *n, double *a, long *lda, double *w, double *work,
 	long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -20527,7 +20527,7 @@ int NUMlapack_dsyev (char *jobz, char *uplo, long *n, double *a, long *lda, doub
 	return 0;
 }								/* NUMlapack_dsyev */
 
-int NUMlapack_dsytd2 (char *uplo, long *n, double *a, long *lda, double *d__, double *e, double *tau,
+int NUMlapack_dsytd2 (const char *uplo, long *n, double *a, long *lda, double *d__, double *e, double *tau,
 	long *info)
 {
 	/* Table of constant values */
@@ -20681,7 +20681,7 @@ int NUMlapack_dsytd2 (char *uplo, long *n, double *a, long *lda, double *d__, do
 	return 0;
 }								/* NUMlapack_dsytd2 */
 
-int NUMlapack_dsytrd (char *uplo, long *n, double *a, long *lda, double *d__, double *e, double *tau,
+int NUMlapack_dsytrd (const char *uplo, long *n, double *a, long *lda, double *d__, double *e, double *tau,
 	double *work, long *lwork, long *info)
 {
 	/* Table of constant values */
@@ -20826,14 +20826,14 @@ int NUMlapack_dsytrd (char *uplo, long *n, double *a, long *lda, double *d__, do
 			i__3 = i__ + nb - 1;
 			NUMlapack_dlatrd (uplo, &i__3, &nb, &a[a_offset], lda, &e[1], &tau[1], &work[1], &ldwork);
 
-			/* Update the unreduced submatrix A(1:i-1,1:i-1), using an update 
+			/* Update the unreduced submatrix A(1:i-1,1:i-1), using an update
 			   of the form: A := A - V*W' - W*V' */
 
 			i__3 = i__ - 1;
 			NUMblas_dsyr2k (uplo, "No transpose", &i__3, &nb, &c_b22, &a_ref (1, i__), lda, &work[1], &ldwork,
 				&c_b23, &a[a_offset], lda);
 
-			/* Copy superdiagonal elements back into A, and diagonal elements 
+			/* Copy superdiagonal elements back into A, and diagonal elements
 			   into D */
 
 			i__3 = i__ + nb - 1;
@@ -20902,7 +20902,7 @@ int NUMlapack_dsytrd (char *uplo, long *n, double *a, long *lda, double *d__, do
 #define u_ref(a_1,a_2) u[(a_2)*u_dim1 + a_1]
 #define v_ref(a_1,a_2) v[(a_2)*v_dim1 + a_1]
 
-int NUMlapack_dtgsja (char *jobu, char *jobv, char *jobq, long *m, long *p, long *n, long *k, long *l,
+int NUMlapack_dtgsja (const char *jobu, const char *jobv, const char *jobq, long *m, long *p, long *n, long *k, long *l,
 	double *a, long *lda, double *b, long *ldb, double *tola, double *tolb, double *alpha, double *beta,
 	double *u, long *ldu, double *v, long *ldv, double *q, long *ldq, double *work, long *ncycle, long *info)
 {
@@ -21087,7 +21087,7 @@ int NUMlapack_dtgsja (char *jobu, char *jobv, char *jobq, long *m, long *p, long
 
 				NUMblas_drot (l, &b_ref (j, *n - *l + 1), ldb, &b_ref (i__, *n - *l + 1), ldb, &csv, &snv);
 
-				/* Update (N-L+I)-th and (N-L+J)-th columns of matrices A and 
+				/* Update (N-L+I)-th and (N-L+J)-th columns of matrices A and
 				   B: A*Q and B*Q
 
 				   Computing MIN */
@@ -21139,7 +21139,7 @@ int NUMlapack_dtgsja (char *jobu, char *jobv, char *jobq, long *m, long *p, long
 		if (!upper)
 		{
 
-			/* The matrices A13 and B13 were lower triangular at the start of 
+			/* The matrices A13 and B13 were lower triangular at the start of
 			   the cycle, and are now upper triangular.
 
 			   Convergence test: test the parallelism of the corresponding
@@ -21281,7 +21281,7 @@ int NUMlapack_dtgsja (char *jobu, char *jobv, char *jobq, long *m, long *p, long
 
 
 
-int NUMlapack_dtrevc (char *side, char *howmny, int *select, long *n, double *t, long *ldt, double *vl,
+int NUMlapack_dtrevc (const char *side, const char *howmny, int *select, long *n, double *t, long *ldt, double *vl,
 	long *ldvl, double *vr, long *ldvr, long *mm, long *m, double *work, long *info)
 {
 	/* Table of constant values */
@@ -21550,7 +21550,7 @@ int NUMlapack_dtrevc (char *side, char *howmny, int *select, long *n, double *t,
 					/* L50: */
 				}
 
-				/* Solve the upper quasi-triangular system: (T(1:KI-1,1:KI-1) 
+				/* Solve the upper quasi-triangular system: (T(1:KI-1,1:KI-1)
 				   - WR)*X = SCALE*WORK. */
 
 				jnxt = ki - 1;
@@ -22417,7 +22417,7 @@ int NUMlapack_dtrevc (char *side, char *howmny, int *select, long *n, double *t,
 #undef x_ref
 #undef t_ref
 
-int NUMlapack_dtrti2 (char *uplo, char *diag, long *n, double *a, long *lda, long *info)
+int NUMlapack_dtrti2 (const char *uplo, const char *diag, long *n, double *a, long *lda, long *info)
 {
 	/* Table of constant values */
 	static long c__1 = 1;
@@ -22523,7 +22523,7 @@ int NUMlapack_dtrti2 (char *uplo, char *diag, long *n, double *a, long *lda, lon
 	return 0;
 }								/* NUMlapack_dtrti2 */
 
-int NUMlapack_dtrtri (char *uplo, char *diag, long *n, double *a, long *lda, long *info)
+int NUMlapack_dtrtri (const char *uplo, const char *diag, long *n, double *a, long *lda, long *info)
 {
 	/* Table of constant values */
 	static long c__1 = 1;
@@ -22600,9 +22600,9 @@ int NUMlapack_dtrtri (char *uplo, char *diag, long *n, double *a, long *lda, lon
 	/* Determine the block size for this environment.
 
 	   Writing concatenation */
-	i__2[0] = 1, a__1[0] = uplo;
-	i__2[1] = 1, a__1[1] = diag;
-	s_cat (ch__1, a__1, i__2, &c__2, 2);
+	i__2[0] = 1, a__1[0] = (char *) uplo;
+	i__2[1] = 1, a__1[1] = (char *) diag;
+	s_cat (ch__1, (const char **) a__1, i__2, &c__2, 2);
 	nb = NUMlapack_ilaenv (&c__1, "DTRTRI", ch__1, n, &c_n1, &c_n1, &c_n1, 6, 2);
 	if (nb <= 1 || nb >= *n)
 	{
@@ -22803,7 +22803,7 @@ long NUMlapack_ieeeck (long *ispec, float *zero, float *one)
 	return ret_val;
 }								/* NUMlapack_ieeeck */
 
-long NUMlapack_ilaenv (long *ispec, char *name__, char *opts, long *n1, long *n2, long *n3, long *n4,
+long NUMlapack_ilaenv (long *ispec, const char *name__, const char *opts, long *n1, long *n2, long *n3, long *n4,
 	long name_len, long opts_len)
 {
 	/* Table of constant values */
@@ -22863,7 +22863,7 @@ long NUMlapack_ilaenv (long *ispec, char *name__, char *opts, long *n1, long *n2
 	/* Convert NAME to upper case if the first character is lower case. */
 
 	ret_val = 1;
-	s_copy (subnam, name__, 6, name_len);
+	s_copy (subnam, (char *) name__, 6, name_len);
 	ic = *(unsigned char *) subnam;
 	iz = 'Z';
 	if (iz == 90 || iz == 122)

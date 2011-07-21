@@ -24,14 +24,10 @@
  djmw 20110428 Latest modification.
 */
 
-#ifndef _NUM_h_
-	#include "NUM.h"
-#endif
-#include "limits.h"
+#include <limits.h>
+#include "../num/NUM.h"
+#include "regularExp.h"
 
-#ifndef _regularExp_h_
-	#include "regularExp.h"
-#endif
 /* machine precision */
 #define NUMeps 2.2e-16
 
@@ -302,7 +298,7 @@ void NUMrank (long n, double a []);
 	E.g. The elements {10, 20.1, 20.1, 20.1, 20.1, 30} in array a will be replaced
     by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively.
 */
-int NUMrankColumns (double **m, long rb, long re, long cb, long ce);
+void NUMrankColumns (double **m, long rb, long re, long cb, long ce);
 
 void NUMhunt_f (float xx[], long n, float x, long *jlo);
 void NUMhunt (double xx[], long n, double x, long *jlo);
@@ -647,12 +643,6 @@ double NUMlnBeta (double a, double b);
 */
 
 double NUMbeta2 (double z, double w);//temporarily
-
-double NUMincompleteBeta (double a, double b, double x);
-/*
-	Incomplete beta function Ix(a,b).
-	Preconditions: a, b > 0; 0 <= x <= 1
-*/
 
 double NUMbetaContinuedFraction(double a, double b, double x);
 
@@ -1004,17 +994,19 @@ void NUMfft_Table_init (NUMfft_Table table, long n);
 */
 
 #ifdef __cplusplus
+
 struct autoNUMfft_Table : public structNUMfft_Table {
-	autoNUMfft_Table () throw () {
-		n = 0;
-		trigcache = 0;
-		splitcache = 0;
-	}
-	~autoNUMfft_Table () {
-		NUMvector_free (trigcache, 0);
-		NUMvector_free (splitcache, 0);
-	}
+        autoNUMfft_Table () throw () {
+                n = 0;
+                trigcache = 0;
+                splitcache = 0;
+        }
+        ~autoNUMfft_Table () {
+                NUMvector_free (trigcache, 0);
+                NUMvector_free (splitcache, 0);
+        }
 };
+
 #endif
 
 void NUMfft_forward_f (NUMfft_Table_f table, float *data);
@@ -1144,4 +1136,4 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 	}
 #endif
 
-#endif /* _NUM2_h_ */
+#endif // _NUM2_h_

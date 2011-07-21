@@ -921,14 +921,14 @@ void praat_background (void) {
 	if (Melder_backgrounding) return;
 	deleteDynamicMenu ();
 	praat_list_background ();
-	Melder_backgrounding = TRUE;
+	Melder_backgrounding = true;
 	if (! praatP.dontUsePictureWindow) praat_picture_background ();
 }
 
 void praat_foreground (void) {
 	if (Melder_batch) return;
 	if (! Melder_backgrounding) return;
-	Melder_backgrounding = FALSE;
+	Melder_backgrounding = false;
 	praat_list_foreground ();
 	praat_show ();
 	if (! praatP.dontUsePictureWindow) praat_picture_foreground ();

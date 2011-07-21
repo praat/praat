@@ -154,21 +154,20 @@ void NUMrank (long n, double a[])
 	MACRO_NUMrank(double)
 
 
-int NUMrankColumns (double **m, long rb, long re, long cb, long ce)
+void NUMrankColumns (double **m, long rb, long re, long cb, long ce)
 {
-		long nr = re - rb + 1;
-		autoNUMvector<double> v (1, nr);
-		autoNUMvector<long> index (1, nr);
+	long nr = re - rb + 1;
+	autoNUMvector<double> v (1, nr);
+	autoNUMvector<long> index (1, nr);
 
-		for (long j = cb; j <= ce; j++)
-		{
-			for (long i = 1; i <= nr; i++) v[i] = m[rb + i - 1][j];
-			for (long i = 1; i <= nr; i++) index[i] = i;
-			NUMsort2_dl (nr, v.peek(), index.peek());
-			NUMrank (nr, v.peek());
-			for (long i = 1; i <= nr; i++) { m[rb + index[i] - 1][j] = v[i]; }
-		}
-		return 1;
+	for (long j = cb; j <= ce; j++)
+	{
+		for (long i = 1; i <= nr; i++) v[i] = m[rb + i - 1][j];
+		for (long i = 1; i <= nr; i++) index[i] = i;
+		NUMsort2_dl (nr, v.peek(), index.peek());
+		NUMrank (nr, v.peek());
+		for (long i = 1; i <= nr; i++) { m[rb + index[i] - 1][j] = v[i]; }
+	}
 }
 
 #define MACRO_NUMindex(TYPE) \

@@ -25,12 +25,9 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _LPC_h_
-	#include "LPC.h"
-#endif
-#ifndef _Polynomial_h_
-	#include "Polynomial.h"
-#endif
+
+#include "LPC.h"
+#include "Polynomial.h"
 
 #ifdef __cplusplus
 	extern "C" {

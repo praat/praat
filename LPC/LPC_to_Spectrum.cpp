@@ -130,7 +130,7 @@ Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduct
 		autoSpectrum thee = Spectrum_create (samplingFrequency / 2, nfft / 2 + 1);
 		LPC_Frame_into_Spectrum (& my frame[index], thee.peek(), bandwidthReduction, deEmphasisFrequency); 
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Spectrum created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Spectrum created."); }
 }
 
 /* End of file LPC_to_Spectrum.cpp */

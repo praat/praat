@@ -24,15 +24,9 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _LPC_h_
-	#include "LPC.h"
-#endif
-#ifndef _Tube_h_
-	#include "Tube.h"
-#endif
-#ifndef _VocalTract_h_
-	#include "VocalTract.h"
-#endif
+#include "LPC.h"
+#include "Tube.h"
+#include "VocalTract.h"
 
 #ifdef __cplusplus
 	extern "C" {

@@ -27,60 +27,73 @@
 #include "Editor_enums.h"
 
 Thing_declare (Editor);
-Thing_declare (EditorMenu);
+
+Thing_define (EditorMenu, Thing) {
+	// new data:
+		Editor editor;
+		const wchar *menuTitle;
+		GuiObject menuWidget;
+		Ordered commands;
+	// overridden methods:
+		void v_destroy ();
+};
 
 Thing_define (EditorCommand, Thing) {
-	Editor editor;
-	EditorMenu menu;
-	const wchar *itemTitle;
-	GuiObject itemWidget;
-	int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter);
-	const wchar *script;
-	Any dialog;
+	// new data:
+		Editor editor;
+		EditorMenu menu;
+		const wchar *itemTitle;
+		GuiObject itemWidget;
+		int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter);
+		const wchar *script;
+		Any dialog;
+	// overridden methods:
+		void v_destroy ();
 };
 
 Thing_define (Editor, Thing) {
-	GuiObject parent, shell, dialog, menuBar, undoButton, searchButton;
-	Ordered menus;
-	Data data, previousData;   // the data that can be displayed and edited
-	wchar undoText [100];
-	Graphics pictureGraphics;
-	void (*destroyCallback) (I, void *closure);
-	void *destroyClosure;
-	void (*dataChangedCallback) (I, void *closure, Data data);
-	void *dataChangedClosure;
-	void (*publishCallback) (I, void *closure, Data publish);
-	void *publishClosure;
-	void (*publish2Callback) (I, void *closure, Data publish1, Data publish2);
-	void *publish2Closure;
-// overridden methods:
-	void v_destroy ();
-	void v_info ();
-	void v_nameChanged ();
-// new methods:
-	virtual void v_goAway () { forget_cpp (this); }
-	virtual bool v_hasMenuBar () { return true; }
-	virtual bool v_canFullScreen () { return false; }
-	virtual bool v_editable () { return true ; }
-	virtual bool v_scriptable () { return true; }
-	virtual void v_createMenuItems_file (EditorMenu menu);
-	virtual void v_createMenuItems_edit (EditorMenu menu);
-	virtual bool v_hasQueryMenu () { return true; }
-	virtual void v_createMenuItems_query (EditorMenu menu);
-	virtual void v_createMenuItems_query_info (EditorMenu menu);
-	virtual void v_createMenus ();
-	virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
-	virtual void v_createChildren () { }
-	virtual void v_dataChanged () { }
-	virtual void v_save ();
-	virtual void v_restore ();
-	virtual void v_clipboardChanged (Data data) { (void) data; }
-	virtual void v_form_pictureWindow (EditorCommand cmd);
-	virtual void v_ok_pictureWindow (EditorCommand cmd);
-	virtual void v_do_pictureWindow (EditorCommand cmd);
-	virtual void v_form_pictureMargins (EditorCommand cmd);
-	virtual void v_ok_pictureMargins (EditorCommand cmd);
-	virtual void v_do_pictureMargins (EditorCommand cmd);
+	// new data:
+		GuiObject parent, shell, dialog, menuBar, undoButton, searchButton;
+		Ordered menus;
+		Data data, previousData;   // the data that can be displayed and edited
+		wchar undoText [100];
+		Graphics pictureGraphics;
+		void (*destroyCallback) (I, void *closure);
+		void *destroyClosure;
+		void (*dataChangedCallback) (I, void *closure, Data data);
+		void *dataChangedClosure;
+		void (*publishCallback) (I, void *closure, Data publish);
+		void *publishClosure;
+		void (*publish2Callback) (I, void *closure, Data publish1, Data publish2);
+		void *publish2Closure;
+	// overridden methods:
+		void v_destroy ();
+		void v_info ();
+		void v_nameChanged ();
+	// new methods:
+		virtual void v_goAway () { forget_cpp (this); }
+		virtual bool v_hasMenuBar () { return true; }
+		virtual bool v_canFullScreen () { return false; }
+		virtual bool v_editable () { return true ; }
+		virtual bool v_scriptable () { return true; }
+		virtual void v_createMenuItems_file (EditorMenu menu);
+		virtual void v_createMenuItems_edit (EditorMenu menu);
+		virtual bool v_hasQueryMenu () { return true; }
+		virtual void v_createMenuItems_query (EditorMenu menu);
+		virtual void v_createMenuItems_query_info (EditorMenu menu);
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
+		virtual void v_createChildren () { }
+		virtual void v_dataChanged () { }
+		virtual void v_save ();
+		virtual void v_restore ();
+		virtual void v_clipboardChanged (Data data) { (void) data; }
+		virtual void v_form_pictureWindow (EditorCommand cmd);
+		virtual void v_ok_pictureWindow (EditorCommand cmd);
+		virtual void v_do_pictureWindow (EditorCommand cmd);
+		virtual void v_form_pictureMargins (EditorCommand cmd);
+		virtual void v_ok_pictureMargins (EditorCommand cmd);
+		virtual void v_do_pictureMargins (EditorCommand cmd);
 };
 
 GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar *itemTitle, long flags,

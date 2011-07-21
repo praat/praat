@@ -18,24 +18,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-#ifndef _Strings_extensions_h_
-	#include "Strings_extensions.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Collection_h_
- #include "Collection.h"
-#endif
-#ifndef _GaussianMixture_h_
- #include "GaussianMixture.h"
-#endif
-#ifndef _SSCP_h_
- #include "SSCP.h"
-#endif
-#ifndef _Index_h_
- #include "Index.h"
-#endif
+
+#include "Strings_extensions.h"
+#include "TableOfReal.h"
+#include "Collection.h"
+#include "GaussianMixture.h"
+#include "SSCP.h"
+#include "Index.h"
 
 #ifdef __cplusplus
 	extern "C" {

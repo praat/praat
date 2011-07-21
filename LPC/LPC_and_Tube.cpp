@@ -54,12 +54,10 @@ void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee)
 {
 	struct structTube_Frame rc_struct = { 0 };
 	Tube_Frame rc = & rc_struct;
-	try {
-		Tube_Frame_init (rc, my nCoefficients, thy length); therror
-		LPC_Frame_into_Tube_Frame_rc (me, rc); therror
-		Tube_Frames_rc_into_area (rc, thee); therror
-		Tube_Frame_destroy (rc);
-	} catch (MelderError) { Tube_Frame_destroy (rc); throw; }
+	Tube_Frame_init (rc, my nCoefficients, thy length);
+	LPC_Frame_into_Tube_Frame_rc (me, rc);
+	Tube_Frames_rc_into_area (rc, thee);
+	Tube_Frame_destroy (rc);
 }
 
 double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength)
@@ -92,7 +90,7 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		
 		// LPC_Frame_into_Formant_Frame performs the Formant_Frame_init !! 
 		
-		if (f -> nFormants < 1) throw MelderError ();
+		if (f -> nFormants < 1) Melder_throw ("Not enough formants.");
 	
 		double *area = af -> c;
 		double lmin = length = 0.10;
@@ -121,16 +119,16 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		
 			// step 4 
 		
-			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod); therror
+			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
 		
 			// step 5 
 		
 			rc -> length = length;
-			LPC_Frame_into_Tube_Frame_rc (lpc, rc); therror
+			LPC_Frame_into_Tube_Frame_rc (lpc, rc);
 		
 			// step 6.1
 			
-			Tube_Frames_rc_into_area (rc, af); therror
+			Tube_Frames_rc_into_area (rc, af);
 		
 			// step 6.2 Log(areas) 
 		
@@ -203,8 +201,8 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 		LPC_Frame lpc = & my frame[iframe];
 		long m = lpc -> nCoefficients;
 	
-		Tube_Frame_init (area, m, length); therror
-		LPC_Frame_into_Tube_Frame_area (lpc, area); therror
+		Tube_Frame_init (area, m, length);
+		LPC_Frame_into_Tube_Frame_area (lpc, area);
 		
 		thee.reset(VocalTract_create (m, area -> length / m));
 
@@ -220,7 +218,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 	} catch (MelderError) { 
 		thy xmax = thy x1 = thy dx = NUMundefined;
 		Tube_Frame_destroy (area); 
-		Melder_thrown (me, ": no VocalTract created."); }
+		Melder_throw (me, ": no VocalTract created."); }
 }
 
 /* End of file LPC_and_Tube.cpp */

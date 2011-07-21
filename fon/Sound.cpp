@@ -128,6 +128,8 @@ static double getMatrix (I, long irow, long icol) {
 
 #undef our
 #define our ((Sound_Table) my methods) ->
+#undef your
+#define your ((Sound_Table) thy methods) ->
 
 static double getFunction2 (I, double x, double y) {
 	iam (Sound);
@@ -309,8 +311,8 @@ Sound Matrix_to_Sound_mono (Matrix me, long row) {
 
 Matrix Sound_to_Matrix (Sound me) {
 	try {
-		autoMatrix thee = (Matrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMatrix);
+		autoMatrix thee = Thing_new (Matrix);
+		your copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");

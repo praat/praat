@@ -24,15 +24,9 @@
  djmw 20110307 Latewst modification
 */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Intensity_h_
-	#include "Intensity.h"
-#endif
-#ifndef _TextGrid_h_
-	#include "TextGrid.h"
-#endif
+#include "Sound.h"
+#include "Intensity.h"
+#include "TextGrid.h"
 
 #ifdef __cplusplus
 	extern "C" {

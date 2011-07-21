@@ -107,7 +107,7 @@ Formant LPC_to_Formant (LPC me, double margin)
 		
 			// Initialisation of Formant_Frame is taken care of in Roots_into_Formant_Frame!
 		
-			try { LPC_Frame_into_Formant_Frame (lpc, formant, my samplingPeriod, margin); therror
+			try { LPC_Frame_into_Formant_Frame (lpc, formant, my samplingPeriod, margin);
 			} catch (MelderError) { Melder_clearError(); err++; }
 		
 			if ((interval == 1 || (i % interval) == 1)) {
@@ -119,7 +119,7 @@ Formant LPC_to_Formant (LPC me, double margin)
 		Formant_sort (thee.peek());
 		if (err > 0) Melder_warning4 (Melder_integer (err), L" formant frames out of ", Melder_integer (my nx), L" suspect.");
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Formant created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Formant created."); }
 }
 
 void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samplingPeriod)
@@ -172,11 +172,11 @@ LPC Formant_to_LPC (Formant me, double samplingPeriod)
 			LPC_Frame lpc = & thy frame[i];
 			long m = 2 * f -> nFormants;
 		
-			LPC_Frame_init (lpc, m); therror
-			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod); therror
+			LPC_Frame_init (lpc, m);
+			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no LPC created."); }
+	} catch (MelderError) { Melder_throw (me, ": no LPC created."); }
 }
 
 /* End of file LPC_and_Formant.cpp */

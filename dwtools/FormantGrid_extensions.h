@@ -24,12 +24,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _FormantGrid_h_
-	#include "FormantGrid.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "FormantGrid.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -43,5 +39,5 @@ void FormantGrid_addFormantAndBandwidthTiers (FormantGrid me, int position);
 #ifdef __cplusplus
 	}
 #endif
- 
+
 #endif /* _FormantGrid_extensions_h_ */

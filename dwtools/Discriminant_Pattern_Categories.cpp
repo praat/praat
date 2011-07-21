@@ -31,7 +31,7 @@ Discriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee
 		autoTableOfReal t = Matrix_and_Categories_to_TableOfReal (me, thee);
 		autoDiscriminant him = TableOfReal_to_Discriminant (t.peek());
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Discriminant not created from Pattern & Categories."); }
+	} catch (MelderError) { Melder_throw ("Discriminant not created from Pattern & Categories."); }
 }
 
 Categories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee, 
@@ -43,7 +43,7 @@ Categories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee
 			poolCovarianceMatrices, useAprioriProbabilities);
 		autoCategories him =  ClassificationTable_to_Categories_maximumProbability (ct.peek());
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Categories not created from Pattern & Discriminant."); }
+	} catch (MelderError) { Melder_throw ("Categories not created from Pattern & Discriminant."); }
 }
 
 /* End of file Discriminant_Pattern_Categories.cpp */

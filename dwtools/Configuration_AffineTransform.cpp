@@ -220,7 +220,7 @@ AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,
 		autoAffineTransform at = AffineTransform_create (p -> n);	
 		NUMdmatrix_copyElements (p -> r, at -> r, 1, p -> n, 1, p -> n);
 		return at.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no congruence transformation created."); }
+	} catch (MelderError) { Melder_throw (me, ": no congruence transformation created."); }
 }
 
 Configuration Configuration_and_AffineTransform_to_Configuration (Configuration me, thou)
@@ -235,7 +235,7 @@ Configuration Configuration_and_AffineTransform_to_Configuration (Configuration 
 	
 		if (your transform) your transform (thee, my data, my numberOfRows, his data);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Configuration not created."); }
+	} catch (MelderError) { Melder_throw ("Configuration not created."); }
 }
 
 /* End of file Configuration_AffineTransform.cpp */

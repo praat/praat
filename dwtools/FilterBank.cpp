@@ -200,9 +200,9 @@ BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 {
 	try {
 		autoBarkFilter me = Thing_new (BarkFilter);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1); therror
+		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("BarkFilter not created."); }
+	} catch (MelderError) { Melder_throw ("BarkFilter not created."); }
 }
 
 double FilterBank_getFrequencyInHertz (I, double f, int scale_from)
@@ -372,9 +372,9 @@ MelFilter MelFilter_create (double tmin, double tmax, long nt, double dt,
 {
 	try {
 		autoMelFilter me = Thing_new (MelFilter);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1); therror
+		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("MelFilter not created."); }
+	} catch (MelderError) { Melder_throw ("MelFilter not created."); }
 }
 
 /*
@@ -507,7 +507,7 @@ Matrix FilterBank_to_Matrix (I)
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Matrix."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Matrix."); }
 }
 
 BarkFilter Matrix_to_BarkFilter (I)
@@ -518,7 +518,7 @@ BarkFilter Matrix_to_BarkFilter (I)
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to BarkFilter."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to BarkFilter."); }
 }
 
 MelFilter Matrix_to_MelFilter (I)
@@ -529,7 +529,7 @@ MelFilter Matrix_to_MelFilter (I)
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to MelFilter."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to MelFilter."); }
 }
 
 class_methods (FormantFilter, FilterBank)
@@ -540,9 +540,9 @@ FormantFilter FormantFilter_create (double tmin, double tmax, long nt,
 {
 	try {
 		autoFormantFilter me = Thing_new (FormantFilter);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1); therror
+		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, fmin, fmax, nf, df, f1);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("FormantFilter not created."); }
+	} catch (MelderError) { Melder_throw ("FormantFilter not created."); }
 }
 
 void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double bandwidth,
@@ -617,7 +617,7 @@ FormantFilter Matrix_to_FormantFilter (I)
 			my ymin, my ymax, my ny, my dy, my y1);
 		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to FormantFilter."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to FormantFilter."); }
 }
 
 Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t)
@@ -645,7 +645,7 @@ Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t)
 			thy z[2][i] = 0.0;
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": Spectral slice not created."); }
+	} catch (MelderError) { Melder_throw (me, ": Spectral slice not created."); }
 }
 
 Intensity FilterBank_to_Intensity (I)
@@ -665,7 +665,7 @@ Intensity FilterBank_to_Intensity (I)
 			thy z[1][j] = 10 * log10 (p) - db_ref;
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": Intensity not created."); }
+	} catch (MelderError) { Melder_throw (me, ": Intensity not created."); }
 }
 
 void FilterBank_equalizeIntensities (I, double intensity_db)

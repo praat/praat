@@ -34,14 +34,14 @@
 #include "GraphicsP.h"
 #include "NUM2.h"
 
-/* 
-The Peterson & Barney data were once (1991) obtained by me (djmw) as a compressed tar-file 
+/*
+The Peterson & Barney data were once (1991) obtained by me (djmw) as a compressed tar-file
 by anonymous ftp from ftp://linc.cis.upenn.edu/pub,
 however, this site appears no longer to be an anonymous ftp site.
-The compressed tar file contained two files: a header file 'pb.header' 
+The compressed tar file contained two files: a header file 'pb.header'
 and a data file 'verified_pb.data'.
 The header file reads:
- 
+
 "This file contains the vowel formant data reported by Gordon E.
 Peterson and Harold L. Barney in their classic paper, "Control methods
 used in a study of the vowels", JASA 24(2) 175-184, 1952. This data
@@ -60,15 +60,15 @@ Phoneme Number, Phoneme Label, F0, F1, F2 and F3. The speaker types
 are type 1 (men), type 2 (women) and type 3 (children)."
 */
 
-Table Table_createFromPetersonBarneyData (void)
+Table Table_createFromPetersonBarneyData ()
 {
 	long nrows = 1520, ncols = 9;
-	const wchar_t *columnLabels[9] = 
+	const wchar_t *columnLabels[9] =
 		{L"Type", L"Sex", L"Speaker", L"Vowel", L"IPA", L"F0", L"F1", L"F2", L"F3"};
 	const wchar_t *type[3] = {L"m", L"w", L"c"};
 // Wrong order before 20080125
 //	wchar_t *vowel[10] = {L"iy", L"ih", L"eh", L"ae", L"aa", L"ao", L"uh", L"uw", L"ah", L"er"};
-//	wchar_t *ipa[10] = {L"i", L"\\ic", L"\\ep", L"\\ae", L"\\as", L"\\ct", L"\\hs", L"u", 
+//	wchar_t *ipa[10] = {L"i", L"\\ic", L"\\ep", L"\\ae", L"\\as", L"\\ct", L"\\hs", L"u",
 //		L"\\vt", L"\\er\\hr"};
 	const wchar_t *vowel[10] = {L"iy", L"ih", L"eh", L"ae", L"ah", L"aa", L"ao", L"uh", L"uw", L"er"};
 // Watrous IPA symbols
@@ -78,7 +78,7 @@ Table Table_createFromPetersonBarneyData (void)
 	const wchar_t *sex[2] = {L"m", L"f"};
 	struct pbdatum {
 		short star; /* was there a * in front of the vowel-type? */
-		short f[4];	/* f0, f1, f2, f3 */	
+		short f[4];	/* f0, f1, f2, f3 */
 	} pbdata [] = {
 	{0, {160, 240, 2280, 2850}},
 	{0, {186, 280, 2400, 2790}},
@@ -1603,7 +1603,7 @@ Table Table_createFromPetersonBarneyData (void)
 
 	try {
 		autoTable me = Table_create (nrows, ncols);
-	
+
 		for (long i = 1; i <= nrows; i++)
 		{
 			TableRow row = (TableRow) my rows -> item[i];
@@ -1622,11 +1622,11 @@ Table Table_createFromPetersonBarneyData (void)
 			else /*15  children */
 			{
 				speaker_type = 2; speaker_sex = 0;
-				if (speaker_id == 62 || speaker_id == 63 || 
+				if (speaker_id == 62 || speaker_id == 63 ||
 					(speaker_id >= 65 && speaker_id <= 68) ||
 					speaker_id == 73 || speaker_id == 76) speaker_sex = 1;
 			}
-		
+
 			row -> cells [1]. string = Melder_wcsdup_f (type [speaker_type]);
 			row -> cells [2]. string = Melder_wcsdup_f (sex [speaker_sex]);
 			row -> cells [3]. string = Melder_wcsdup_f (Melder_integer (speaker_id));
@@ -1634,7 +1634,7 @@ Table Table_createFromPetersonBarneyData (void)
 			row -> cells [5]. string = Melder_wcsdup_f (ipa [vowel_id - 1]);
 			for (long j = 0; j <= 3; j++)
 			{
-				row -> cells [j + 6].string = Melder_wcsdup_f (Melder_integer (pbdata[i-1].f[j]));		
+				row -> cells [j + 6].string = Melder_wcsdup_f (Melder_integer (pbdata[i-1].f[j]));
 			}
 		}
 		for (long j = 1; j <= ncols; j++)
@@ -1643,22 +1643,22 @@ Table Table_createFromPetersonBarneyData (void)
 			my columnHeaders [j]. numericized = FALSE;
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Table not created from Peterson & Barney data."); }
+	} catch (MelderError) { Melder_throw ("Table not created from Peterson & Barney data."); }
 }
 
-Table Table_createFromPolsVanNieropData (void)
+Table Table_createFromPolsVanNieropData ()
 {
 	long nrows = 900, ncols = 10;
-	const wchar_t *columnLabels[10] = 
+	const wchar_t *columnLabels[10] =
 		{L"Sex", L"Speaker", L"Vowel", L"IPA", L"F1", L"F2", L"F3", L"L1", L"L2", L"L3"};
-	const wchar_t *vowel[12] = {L"oe", L"aa", L"oo", L"a", L"eu", L"ie", L"uu", L"ee", L"u", 
+	const wchar_t *vowel[12] = {L"oe", L"aa", L"oo", L"a", L"eu", L"ie", L"uu", L"ee", L"u",
 		L"e", L"o", L"i"};
 	const wchar_t *ipa[12] = {L"u", L"a", L"o", L"\\as", L"\\o/", L"i", L"y", L"e", L"\\yc", L"\\ep", L"\\ct", L"\\ic"};
 	const wchar_t *sex[2] = {L"m", L"f"};
 	struct polsdatum {
 		short f[3]; /* frequency F1, F2, F3 */
-		short l[3];	/* level f1, f2, f3 */	
-	} polsdata [] = { 
+		short l[3];	/* level f1, f2, f3 */
+	} polsdata [] = {
 		/* 50*12 males */
 	    /* male 1 */
 	{{320,  630,  2560},  {6,  13,  48}}, /* poet */
@@ -1674,8 +1674,8 @@ Table Table_createFromPolsVanNieropData (void)
 	{{520, 1000,  2520},  {4,  13,  31}},	/* pot */
 	{{350, 2000,  2520},  {7,  19,  18}},	/* pit */
     /* male 2 */
-	{{440,  780,  2600},  {7,  20,  35}}, 
-	{{940, 1300,  2780},  {5,  13,  26}},  
+	{{440,  780,  2600},  {7,  20,  35}},
+	{{940, 1300,  2780},  {5,  13,  26}},
 	{{500,  740,  2700},  {7,  11,  32}},
 	{{800, 1000,  2480}, {11,  11,  31}},
 	{{460, 1500,  2300}, {10,  20,  20}},
@@ -1766,7 +1766,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{340, 1960,  2480},  {6,  13,  17}},
     /* male 9 */
 	{{300,  680,  2400},  {3,  19,  32}},
-	{{860, 1300,  2660}, {12,  18,  26}},  
+	{{860, 1300,  2660}, {12,  18,  26}},
 	{{500,  940,  2500},  {3,  13,  33}},
 	{{700, 1120,  2620},  {9,  17,  24}},
 	{{500, 1500,  2280},  {3,  17,  22}},
@@ -1838,7 +1838,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{360, 2500,  3000},  {8,  10,  13}},
 	{{360, 1900,  2420},  {6,  16,  12}},
 	{{380, 1780,  2420},  {4,  36,  18}},
-	{{500, 1640,  2620},  {4,  23,  29}}, 
+	{{500, 1640,  2620},  {4,  23,  29}},
 	{{600, 1940,  2700},  {3,  16,  19}},
 	{{500,  800,  2800},  {3,  10,  38}},
 	{{400, 2360,  2740},  {7,  13,  27}},
@@ -1999,7 +1999,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{560,  980,  2900},  {5,  13,  32}},
 	{{400, 2060,  2540},  {5,  21,  21}},
     /* male 27 */
-	{{300,  900,  2300},  {3,  15,  38}}, 
+	{{300,  900,  2300},  {3,  15,  38}},
 	{{780, 1300,  2400},  {9,  18,  32}},
 	{{550, 1000,  2480},  {5,  10,  35}},
 	{{680, 1050,  2550},  {5,  10,  35}},
@@ -2026,7 +2026,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{300, 2140,  2760},  {6,  32,  31}},
     /* male 29 */
 	{{340,  660,  2320},  {4,  13,  37}},
-	{{640, 1250,  2480}, {10,  16,  29}}, 
+	{{640, 1250,  2480}, {10,  16,  29}},
 	{{560, 1000,  2480}, {10,  14,  31}},
 	{{720, 1150,  2600}, {10,  13,  26}},
 	{{480, 1400,  2160},  {9,  22,  28}},
@@ -2036,10 +2036,10 @@ Table Table_createFromPolsVanNieropData (void)
 	{{440, 1550,  2200},  {8,  16,  23}},
 	{{480, 1660,  1960}, {10,  16,  23}},
 	{{480,  840,  2840},  {9,  12,  28}},
-	{{400, 1780,  2360},  {7,  20,  23}}, 
+	{{400, 1780,  2360},  {7,  20,  23}},
     /* male 30 */
 	{{360,  800,  2540},  {1,  11,  40}},
-	{{600, 1300,  2600},  {6,   8,  27}}, 
+	{{600, 1300,  2600},  {6,   8,  27}},
 	{{500,  860,  2440},  {2,   7,  36}},
 	{{750, 1140,  2640},  {4,   9,  30}},
 	{{460, 1400,  2340},  {1,  23,  28}},
@@ -2078,7 +2078,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{460, 1720,  2400},  {7,  22,  20}},
     /* male 33 */
 	{{400,  700,  2600},  {4,  17,  45}},
-	{{900, 1440,  2600}, {10,  17,  36}}, 
+	{{900, 1440,  2600}, {10,  17,  36}},
 	{{460,  860,  2600},  {7,  18,  45}},
 	{{680, 1000,  2200},  {7,  13,  39}},
 	{{460, 1600,  2540},  {5,  28,  37}},
@@ -2117,7 +2117,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{400, 2100,  2640},  {8,  27,  27}},
     /* male 36 */
 	{{360,  740,  2160},  {2,  21,  40}},
-	{{660, 1260,  2540}, {10,  18,  21}}, 
+	{{660, 1260,  2540}, {10,  18,  21}},
 	{{500,  900,  2600},  {9,  20,  30}},
 	{{640, 1000,  2880}, {11,  17,  29}},
 	{{460, 1300,  2140},  {8,  19,  25}},
@@ -2129,7 +2129,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{540,  860,  2720},  {7,  20,  32}},
 	{{400, 1740,  2340},  {5,  22,  23}},
     /* male 37 */
-	{{300,  900,  2140},  {5,  21,  39}},  
+	{{300,  900,  2140},  {5,  21,  39}},
 	{{700, 1240,  2460}, {10,  18,  28}},
 	{{480,  960,  2140},  {4,  12,  32}},
 	{{640, 1120,  2480},  {9,  14,  32}},
@@ -2143,7 +2143,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{460, 1820,  2480},  {6,  18,  26}},
     /* male 38 */
 	{{320,  760,  2080}, {11,  23,  41}},
-	{{840, 1180,  2700}, {13,  20,  37}}, 
+	{{840, 1180,  2700}, {13,  20,  37}},
 	{{500,  920,  2400}, {13,  17,  37}},
 	{{660, 1060,  2700}, {13,  17,  36}},
 	{{440, 1400,  2220},  {5,  32,  37}},
@@ -2169,7 +2169,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{400, 1700,  2320},  {3,  38,  23}},
     /* male 40 */
 	{{300,  680,  1920},  {7,  28,  48}},
-	{{740, 1200,  2550},  {8,  10,  24}}, 
+	{{740, 1200,  2550},  {8,  10,  24}},
 	{{420,  860,  2420},  {7,  17,  37}},
 	{{640, 1120,  2500}, {12,  17,  37}},
 	{{360, 1500,  2180},  {3,  27,  35}},
@@ -2181,7 +2181,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{500,  840,  2580},  {6,  14,  35}},
 	{{360, 1920,  2560},  {3,  31,  31}},
     /* male 41 */
-	{{360,  880,  2320},  {2,  12,  43}},  
+	{{360,  880,  2320},  {2,  12,  43}},
 	{{840, 1200,  2500}, {12,  17,  37}},
 	{{580, 1060,  2300}, {11,  10,  32}},
 	{{580, 1100,  2680},  {8,  12,  33}},
@@ -2207,7 +2207,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{500,  780,  2840},  {7,  14,  38}},
 	{{380, 2120,  2720},  {2,  21,  25}},
     /* male 43 */
-	{{300,  760,  2020},  {3,  16,  38}}, 
+	{{300,  760,  2020},  {3,  16,  38}},
 	{{740, 1200,  2360},  {8,  15,  29}},
 	{{460,  860,  2200},  {8,  12,  39}},
 	{{620,  900,  2500},  {8,  12,  27}},
@@ -2220,7 +2220,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{500,  800,  2460},  {6,   6,  31}},
 	{{440, 1720,  2100},  {7,  19,  24}},
     /* male 44 */
-	{{260,  800,  2400},  {3,  16,  48}}, 
+	{{260,  800,  2400},  {3,  16,  48}},
 	{{780, 1300,  2700},  {6,  14,  28}},
 	{{480,  900,  2500},  {5,   8,  35}},
 	{{620, 1000,  2820},  {5,   9,  28}},
@@ -2309,7 +2309,7 @@ Table Table_createFromPolsVanNieropData (void)
 	{{400, 1360,  2160},  {4,  16,  22}},
 	{{520, 1580,  2240},  {2,  12,  16}},
 	{{380,  800,  2560},  {7,  11,  25}},
-	{{360, 1740,  2260},  {5,  14,  17}},	
+	{{360, 1740,  2260},  {5,  14,  17}},
 		/* 25*12 females */
 	{{250,  800, 2450},  {0,  8, 45}},	/* poet */
 	{{950, 1500, 2650},  {5, 14, 30}},	/* paat */
@@ -2645,14 +2645,14 @@ Table Table_createFromPolsVanNieropData (void)
 			int vowel_id = ((i - 1) % 12) + 1;	/* 1 - 12 */
 			int speaker_id = (i - 1) / 12 + 1;  /* 1 - 75 */
 			int speaker_sex = speaker_id <= 50 ? 0 : 1;
-		
+
 			row -> cells [1]. string = Melder_wcsdup_f (sex [speaker_sex]);
 			row -> cells [2]. string = Melder_wcsdup_f (Melder_integer (speaker_id));
 			row -> cells [3]. string = Melder_wcsdup_f (vowel [vowel_id - 1]);
 			row -> cells [4]. string = Melder_wcsdup_f (ipa [vowel_id - 1]);
 			for (long j = 0; j <= 2; j++)
 			{
-				row -> cells [j + 5]. string = Melder_wcsdup_f (Melder_integer (polsdata[i-1].f[j]));	
+				row -> cells [j + 5]. string = Melder_wcsdup_f (Melder_integer (polsdata[i-1].f[j]));
 				row -> cells [j + 8]. string = Melder_wcsdup_f (Melder_integer (polsdata[i-1].l[j]));
 			}
 		}
@@ -2662,23 +2662,23 @@ Table Table_createFromPolsVanNieropData (void)
 			my columnHeaders [j]. numericized = false;
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Table not created from Pols & van Nierop data."); }
+	} catch (MelderError) { Melder_throw ("Table not created from Pols & van Nierop data."); }
 }
 
-Table Table_createFromWeeninkData (void)
+Table Table_createFromWeeninkData ()
 {
 	long nrows = 360, ncols = 9;
 	const wchar_t *columnLabels[9] =
 		{L"Type", L"Sex", L"Speaker", L"Vowel", L"IPA", L"F0", L"F1", L"F2", L"F3"};
 	const wchar_t *type[3] = {L"m", L"w", L"c"};
-	/* Our order: "oe", "o", "oo", "a", "aa", "u", "eu", "uu", "ie", "i", "ee", "e" 
+	/* Our order: "oe", "o", "oo", "a", "aa", "u", "eu", "uu", "ie", "i", "ee", "e"
 		to Pols & van Nierop order */
 	int order[13] = { 0, 1, 5, 3, 4, 7, 9, 8, 11, 6, 12, 2, 10};
 	const wchar_t *vowel[13] = {L"", L"oe", L"aa", L"oo", L"a", L"eu", L"ie", L"uu", L"ee", L"u", L"e", L"o", L"i"};
 	const wchar_t *ipa[13] = {L"", L"u", L"a", L"o", L"\\as", L"\\o/", L"i", L"y", L"e", L"\\yc", L"\\ep", L"\\ct", L"\\ic"};
 	const wchar_t *sex[2] = {L"m", L"f"};
 	struct weeninkdatum {
-		short f[4];	/* f0, f1, f2, f3 */	
+		short f[4];	/* f0, f1, f2, f3 */
 	} weeninkdata [] = {
 	{182, 335, 748, 2332},
 	{170, 435, 669, 2886},
@@ -3072,7 +3072,7 @@ Table Table_createFromWeeninkData (void)
 
 	try {
 		autoTable me = Table_create (nrows, ncols);
-	
+
 		for (long i = 1; i <= nrows; i++)
 		{
 			TableRow row = (TableRow)  my rows -> item[i];
@@ -3090,11 +3090,11 @@ Table Table_createFromWeeninkData (void)
 				speaker_type = 1; speaker_sex = 1;
 			}
 			else /* 10  children */
-			{                                                                         
+			{
 				speaker_type = 2; speaker_sex = 0;
 				//  Which children were m/f ?
 			}
-		
+
 			row -> cells [1]. string = Melder_wcsdup_f (type [speaker_type]);
 			row -> cells [2]. string = Melder_wcsdup_f (sex [speaker_sex]);
 			row -> cells [3]. string = Melder_wcsdup_f (Melder_integer (speaker_id));
@@ -3103,7 +3103,7 @@ Table Table_createFromWeeninkData (void)
 
 			for (long j = 0; j <= 3; j++)
 			{
-				row -> cells [j + 6]. string = Melder_wcsdup_f (Melder_integer (weeninkdata[index_in_data].f[j]));		
+				row -> cells [j + 6]. string = Melder_wcsdup_f (Melder_integer (weeninkdata[index_in_data].f[j]));
 			}
 		}
 		for (long j = 1; j <= ncols; j++)
@@ -3112,7 +3112,7 @@ Table Table_createFromWeeninkData (void)
 			my columnHeaders [j]. numericized = false;
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Table not created from Weenink data."); }
+	} catch (MelderError) { Melder_throw ("Table not created from Weenink data."); }
 }
 
 void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
@@ -3122,22 +3122,22 @@ void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xc
 	long nrows = my rows -> size;
 	double x2min, x1max, y1max, y2min;
 	double bar = ceil (bar_mm * g -> resolution / 25.4);
-	
+
 	// check validity of columns
 	if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows) return;
 	if (labs (xci_min) > nrows || labs (xci_max) > nrows ||
 		labs (yci_min) > nrows || labs (yci_max) > nrows) return;
-	
-	if (xmin >= xmax && 
+
+	if (xmin >= xmax &&
 		Table_getExtrema (me, xci_min, &xmin, &x1max) &&
 		Table_getExtrema (me, xci_max, &x2min, &xmax) &&
 		xmin >= xmax) return;
-	
-	if (ymin >= ymax && 
+
+	if (ymin >= ymax &&
 		Table_getExtrema (me, yci_min, &ymin, &y1max) &&
 		Table_getExtrema (me, yci_max, &y2min, &ymax) &&
 		ymin >= ymax) return;
-	
+
     Graphics_setWindow (g, xmin, xmax, ymin, ymax);
     Graphics_setInner (g);
 
@@ -3145,44 +3145,44 @@ void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xc
 	{
 		double x  = Table_getNumericValue_Assert (me, row, xcolumn);
 		double y  = Table_getNumericValue_Assert (me, row, ycolumn);
-		double x1 = Table_getNumericValue_Assert (me, row, xci_min);	
+		double x1 = Table_getNumericValue_Assert (me, row, xci_min);
 		double x2 = Table_getNumericValue_Assert (me, row, xci_max);
-		double y1 = Table_getNumericValue_Assert (me, row, yci_min);	
+		double y1 = Table_getNumericValue_Assert (me, row, yci_min);
 		double y2 = Table_getNumericValue_Assert (me, row, yci_max);
 		double xo1, yo1, xo2, yo2;
-		
+
 		if (xci_min > 0)
 		{
 			if (NUMclipLineWithinRectangle (x1, y, x, y, xmin, ymin, xmax, ymax,
 				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
-			if (bar > 0 && NUMclipLineWithinRectangle (x1, y - bar/2, x1, y + bar/2, 
+			if (bar > 0 && NUMclipLineWithinRectangle (x1, y - bar/2, x1, y + bar/2,
 				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
 		}
 		if (xci_max > 0)
 		{
 			if (NUMclipLineWithinRectangle (x, y, x2, y, xmin, ymin, xmax, ymax,
 				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
-			if (bar > 0 && NUMclipLineWithinRectangle (x2, y - bar/2, x2, y + bar/2, 
+			if (bar > 0 && NUMclipLineWithinRectangle (x2, y - bar/2, x2, y + bar/2,
 				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
 		}
 		if (yci_min > 0)
 		{
 			if (NUMclipLineWithinRectangle (x, y1, x, y, xmin, ymin, xmax, ymax,
 				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
-			if (bar > 0 && NUMclipLineWithinRectangle (x - bar/2, y1, x + bar/2, y1, 
+			if (bar > 0 && NUMclipLineWithinRectangle (x - bar/2, y1, x + bar/2, y1,
 				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
 		}
 		if (yci_max > 0)
 		{
 			if (NUMclipLineWithinRectangle (x, y, x, y2, xmin, ymin, xmax, ymax,
 				&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
-			if (bar > 0 && NUMclipLineWithinRectangle (x - bar/2, y2, x + bar/2, y2, 
+			if (bar > 0 && NUMclipLineWithinRectangle (x - bar/2, y2, x + bar/2, y2,
 				xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) Graphics_line (g, xo1, yo1, xo2, yo2);
 		}
 	}
-	
+
     Graphics_unsetInner (g);
-	
+
 	if (garnish)
 	{
 		Graphics_drawInnerBox (g);

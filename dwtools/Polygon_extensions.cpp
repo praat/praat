@@ -35,7 +35,7 @@ Polygon Polygon_createSimple (wchar_t *xystring)
 	try {
 		long numberOfPoints;
 		autoNUMvector<double> xys (NUMstring_to_numbers (xystring, &numberOfPoints), 1);
-		if (numberOfPoints < 6) Melder_throw ("There must be at least 3 points (= x,y pairs) in the Polygon"); 
+		if (numberOfPoints < 6) Melder_throw ("There must be at least 3 points (= x,y pairs) in the Polygon");
 		if (numberOfPoints % 2 != 0) Melder_throw ("One value is missing.");
 		numberOfPoints /= 2; // x,y pairs
 		autoPolygon me = Polygon_create (numberOfPoints);
@@ -46,7 +46,7 @@ Polygon Polygon_createSimple (wchar_t *xystring)
 			if (i > 1 && my x[i] == my x[i-1] && my y[i] == my y[i-1]) Melder_warning ("Two successives vertices are equal.");
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Polygon not created."); }
+	} catch (MelderError) { Melder_throw ("Polygon not created."); }
 }
 
 Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax)
@@ -59,13 +59,11 @@ Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, do
 			my y[i] = NUMrandomUniform (ymin, ymax);
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Polygon not created."); }
+	} catch (MelderError) { Melder_throw ("Polygon not created."); }
 }
 
-void Polygon_translate (I, double xt, double yt)
+void Polygon_translate (Polygon me, double xt, double yt)
 {
-	iam (Polygon);
-
 	for (long i = 1; i <= my numberOfPoints; i++)
 	{
 		my x[i] += xt;
@@ -74,9 +72,8 @@ void Polygon_translate (I, double xt, double yt)
 }
 
 /* rotate counterclockwise w.r.t. (xc,yc) */
-void Polygon_rotate (I, double alpha, double xc, double yc)
+void Polygon_rotate (Polygon me, double alpha, double xc, double yc)
 {
-	iam (Polygon);
 	double f = alpha * NUMpi / 180, cosa = cos (f), sina = sin (f);
 
 	Polygon_translate (me, -xc, -yc);
@@ -89,10 +86,8 @@ void Polygon_rotate (I, double alpha, double xc, double yc)
 	Polygon_translate (me, xc, yc);
 }
 
-void Polygon_scale (I, double xs, double ys)
+void Polygon_scale (Polygon me, double xs, double ys)
 {
-	iam (Polygon);
-
 	for (long i = 1; i <= my numberOfPoints; i++)
 	{
 		my x[i] *= xs;
@@ -100,10 +95,8 @@ void Polygon_scale (I, double xs, double ys)
 	}
 }
 
-void Polygon_reverseX (I)
+void Polygon_reverseX (Polygon me)
 {
-	iam (Polygon);
-
 	for (long i = 1; i <= my numberOfPoints; i++)
 	{
 		my x[i] = -my x[i];
@@ -111,10 +104,8 @@ void Polygon_reverseX (I)
 
 }
 
-void Polygon_reverseY (I)
+void Polygon_reverseY (Polygon me)
 {
-	iam (Polygon);
-
 	for (long i = 1; i <= my numberOfPoints; i++)
 	{
 		my y[i] = -my y[i];
@@ -122,10 +113,10 @@ void Polygon_reverseY (I)
 
 }
 
-void Polygon_Categories_draw (I, thou, Any graphics, double xmin, double xmax,
+void Polygon_Categories_draw (Polygon me, thou, Any graphics, double xmin, double xmax,
 	double ymin, double ymax, int garnish)
 {
-    iam (Polygon); thouart (Categories);
+    thouart (Categories);
     double min, max, tmp;
 
     if (my numberOfPoints != thy size) return;
@@ -205,11 +196,9 @@ static void setWindow (Polygon me, Any graphics,
 	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
 }
 
-void Polygon_drawMarks (I, Graphics g, double xmin, double xmax,
+void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double size_mm, const wchar_t *mark)
 {
-	iam (Polygon);
-
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	for (long i = 1; i <= my numberOfPoints; i++)
@@ -271,7 +260,7 @@ Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, doubl
 		his x[k] = tmax;
 		his y[k++] = CLIP_Y(level,ymin,ymax);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (me, ":no Polygon created."); }
+	} catch (MelderError) { Melder_throw (me, ":no Polygon created."); }
 }
 
 /* Area inbetween */
@@ -309,15 +298,15 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 		long numberOfPoints = n1 + n2 + 4; // me + thee + begin + endpoint + closing
 
 		autoPolygon him = Polygon_create (numberOfPoints);
-		
+
 		// my starting point at tmin
-		
+
 		double y = Vector_getValueAtX (me, tmin, (my ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x[k] = tmin;
 		his y[k++] = CLIP_Y(y,ymin,ymax);
-		
+
 		// my samples
-		
+
 		for (long i = ib1; i <= ie1; i++)
 		{
 			double t = my x1 + (i - 1) * my dx;
@@ -325,21 +314,21 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 			his x[k] = t;
 			his y[k++] = CLIP_Y(y,ymin,ymax);
 		}
-		
+
 		// my end point at tmax
-		
+
 		y = Vector_getValueAtX (me, tmax, (my ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x[k] = tmax;
 		his y[k++] = y;
-		
+
 		// thy starting point at tmax
-		
+
 		y = Vector_getValueAtX (thee, tmax, (thy ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x[k] = tmax;
 		his y[k++] = y;
-		
+
 		// thy samples
-		
+
 		for (long i = ie2; i >= ib2; i--)
 		{
 			double t = thy x1 + (i - 1) * thy dx;
@@ -347,16 +336,16 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 			his x[k] = t;
 			his y[k++] = CLIP_Y(y,ymin,ymax);
 		}
-		
+
 		// thy end point at tmin
-		
+
 		y = Vector_getValueAtX (thee, tmin, (thy ny == 1 ? 1 : channel), Vector_VALUE_INTERPOLATION_LINEAR);
 		his x[k] = tmin;
 		his y[k] = y;
-		
+
 		Melder_assert (k == numberOfPoints);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no enclosed Polygon created."); }
+	} catch (MelderError) { Melder_throw (me, ": no enclosed Polygon created."); }
 }
 
 #define INTERSECTION_OUTSIDE 0
@@ -394,7 +383,7 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 		}
 		else
 		{	// x4 < x3
-			if (x2 < x4 || x3 < x1) intersection = INTERSECTION_OUTSIDE; 
+			if (x2 < x4 || x3 < x1) intersection = INTERSECTION_OUTSIDE;
 			else if (p3inb12)
 			{	// 4 can be inside or outside
 				*xs = x4;
@@ -414,7 +403,7 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 	{	// x2 < x1
 		if (x3 < x4)
 		{
-			if (x1 < x3 || x4 < x2) intersection = INTERSECTION_OUTSIDE; 
+			if (x1 < x3 || x4 < x2) intersection = INTERSECTION_OUTSIDE;
 			else if (p3inb12)
 			{
 				*xs = p4inb12 ? x4 : x3;
@@ -449,11 +438,11 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 	return intersection;
 }
 
-// Line from a to b : 
+// Line from a to b :
 //	(1) ab = (1-s)*a+s*b = a + s*(b-a) = a + s * b'
 //	(2) cd = c+t*(d-c) = c + t * d'
 // where b' = b - a and d' = d - c.
-// at intersection: 
+// at intersection:
 //	(3) a + s * b' = c + t * d'
 //  Cross (3) with d';
 // 	cross (a, d') + s * cross (b', d') = cross (c, d')
@@ -462,12 +451,12 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 //	cross (a, b') = cross (c, b') + t * cross (d', b')
 //		t = cross (c - a, b') / cross (b', d')
 // if cross (b', b') then b' and d' are parallel
-// After Paul Rourke 
+// After Paul Rourke
 // Area of triangle a,b,c = ((bx-ax)(cy-ay) - (cx-ax)(by-ay)) / 2
 #define POS(ax,ay,bx,by,cx,cy) (bx - ax) * (cy - ay) - (cx - ax) * (by-ay);
 // if POS(a,b,c) (> 0 ; <0, 0) then c is on (the left of;  the right of; collinear with) the line segment (a,b)
 
-// Register the crossing of line a(1)b(2) with c(3)d(4), if the crossing is degenerate only register the tip. 
+// Register the crossing of line a(1)b(2) with c(3)d(4), if the crossing is degenerate only register the tip.
 int LineSegments_getIntersection (double x1, double y1, double x2, double y2, double x3, double y3,
 double x4, double y4, double *mua, double *mub, double eps)
 {
@@ -482,11 +471,11 @@ double x4, double y4, double *mua, double *mub, double eps)
 	min34 = y3 < y4 ? y3 : y4;
 	max34 = y3 > y4 ? y3 : y4;
 	if (max12 - min34 < -eps or max34 - min12 < -eps) return INTERSECTION_OUTSIDE;
-	
+
 	double cad = (x3 - x1) * (y4 - y3) - (y3 - y1) * (x4 - x3); // cross (c - a, d')
 	double cab = (x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1); // cross (c - a, b')
 	double bd  = (x2 - x1) * (y4 - y3) - (y2 - y1) * (x4 - x3); // cross (b', d')
-	
+
 	if (fabs (bd) > eps)
 	{
 		*mua = cad / bd;
@@ -534,16 +523,37 @@ double x4, double y4, double *mua, double *mub, double eps)
 // Vertices:
 // first node has prev = 0, last node has next = 0;
 // entry marks the entrance of the OTHER polygon
+
 Thing_declare1cpp (Vertex);
-struct structVertex : public structData {
+Thing_declare1cpp (Vertices);
+
+#ifdef __cplusplus
+
+	struct structVertex : public structData {
 	double x, y, alpha;
 	DLLNode neighbour;
-	long poly_npoints, number;
+	long poly_npoints, id;
 	int intersect, entry;
 	bool processed;
-};
-#define Vertex__methods(klas) Data__methods(klas)
-Thing_declare2cpp (Vertex, Data);
+	};
+	#define Vertex__methods(klas) Data__methods(klas)
+	Thing_declare2cpp (Vertex, Data);
+	struct structVertices : public structDLL {
+	};
+	#define Vertices__methods(klas) DLL__methods(klas)
+	Thing_declare2cpp (Vertices, DLL);
+#endif
+
+#if 0
+#define Vertex_members Data_members \
+	double x, y, alpha; \
+	DLLNode neighbour; \
+	long poly_npoints, id; \
+	int intersect, entry; \
+	bool processed;
+#define Vertex_methods Data_methods
+class_create (Vertex, Data);
+#endif
 
 static void classVertex_copy (I, thou)
 {
@@ -552,8 +562,10 @@ static void classVertex_copy (I, thou)
 	thy alpha = my alpha;
 	thy neighbour = my neighbour;
 	thy poly_npoints = my poly_npoints;
+	thy id = my id;
 	thy intersect = my intersect;
-	thy entry = my entry; thy processed = my processed;
+	thy entry = my entry;
+	thy processed = my processed;
 }
 
 class_methods (Vertex, Data)
@@ -567,19 +579,21 @@ Vertex Vertex_create ()
 	try {
 		autoVertex me = Thing_new (Vertex);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Vertex not created."); }
+	} catch (MelderError) { Melder_throw ("Vertex not created."); }
 }
 
-Thing_declare1cpp (Vertices);
-struct structVertices : public structDLL {
-};
-#define Vertices__methods(klas) DLL__methods(klas)
-Thing_declare2cpp (Vertices, DLL);
+#if 0
+#define Vertices_members DLL_members
+#define Vertices_methods DLL_methods
+class_create (Vertices, DLL);
+#endif
+
+#define VERTEX(n) ((Vertex) (n -> data))
 
 static int classVertices_compare (I, thou)
 {
-	iam (Vertex); thouart (Vertex);
-	return my alpha < thy alpha ? -1 : my alpha > thy alpha ? 1 : 0;
+	iam (DLLNode); thouart (DLLNode);
+	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
 }
 
 class_methods (Vertices, DLL)
@@ -588,18 +602,20 @@ class_methods (Vertices, DLL)
 	class_methods_end
 }
 
-Vertices Vertices_create () 
+Vertices Vertices_create ()
 {
 	try {
 		Vertices me = Thing_new (Vertices);
 		return me;
-	} catch (MelderError) { Melder_thrown ("Vertices not created."); }
+	} catch (MelderError) { Melder_throw ("Vertices not created."); }
 }
 
 void Vertices_addCopyBack (Vertices me, DLLNode n)
 {
+	try {
 		autoDLLNode nc = (DLLNode) Data_copy (n);
 		DLL_addBack ((DLL) me, nc.transfer());
+	} catch (MelderError) { Melder_throw (me, ": no copy added."); }
 }
 
 static bool pointsInsideInterval (double *x, long n, long istart, long iend, long *jstart, long *jend)
@@ -608,7 +624,7 @@ static bool pointsInsideInterval (double *x, long n, long istart, long iend, lon
 	long imax = istart, imin = istart;
 	long iendmod = iend > istart ? iend : iend + n; // circular
 	for (long i = istart + 1; i <= iendmod; i++)
-	{ 
+	{
 		long index = (i - 1) % n + 1; // make it circular
 		if (x[index] > xmax) { xmax = x[index]; imax = index; }
 		else if (x[index] < xmin) { xmin = x[index]; imin = index; }
@@ -616,7 +632,7 @@ static bool pointsInsideInterval (double *x, long n, long istart, long iend, lon
 	*jstart = imin; *jend = imax;
 	if (x[istart] > x[iend]) { *jstart = imax; *jend = imin; }
 	if (x[istart] == x[*jstart] and x[iend] == x[*jend]) // if there are duplicates of the extrema
-	{ 
+	{
 		*jstart = istart; *jend = iend;
 	}
 	return *jstart == istart and *jend == iend;
@@ -636,15 +652,15 @@ Polygon Polygon_circularPermutation (Polygon me, long nshift)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not circularly permuted."); }
+	} catch (MelderError) { Melder_throw (me, ": not circularly permuted."); }
 }
 
 void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, long collstart, long collend)
 {
 	// Determine if all collinear point are within the interval [colstart,colend]
 	long jstart, jend;
-	bool allPointsInside = my x[collstart] != my x[collend] ? 
-		pointsInsideInterval (my x, my numberOfPoints, collstart, collend, &jstart, &jend) : 
+	bool allPointsInside = my x[collstart] != my x[collend] ?
+		pointsInsideInterval (my x, my numberOfPoints, collstart, collend, &jstart, &jend) :
 		pointsInsideInterval (my y, my numberOfPoints, collstart, collend, &jstart, &jend);
 	if (not allPointsInside)
 	{
@@ -682,9 +698,9 @@ Polygon Polygon_simplify (Polygon me)
 		if (p1 -> x[np] == p1 -> x[1] && p1 -> y[np] == p1 -> y[1]) np--;
 		if (np < 3) Melder_throw ("Not enough points left after doublet removal.");
 		p1 -> numberOfPoints = np;
-		
+
 		// pass 2: remove collinearities
-		
+
 		autoPolygon p = (Polygon) Data_copy (p1.peek());
 		p -> numberOfPoints = 0;
 		// is there collinearity between the first and the last points of p1?
@@ -711,7 +727,7 @@ Polygon Polygon_simplify (Polygon me)
 			p -> numberOfPoints = 1; p -> x[1] = p1 -> x[1]; p -> y[1] = p1 -> y[1];
 		}
 		bool collinearity = false;
-		long endpos = collstart - 1; 
+		long endpos = collstart - 1;
 		for (long i = collend + 1; i <= endpos; i++) // start was < numberOfPoints
 		{
 			// if i-1, i, i+1 are coplanar, remove i
@@ -742,14 +758,14 @@ Polygon Polygon_simplify (Polygon me)
 		if (not collinearity and collend != endpos + 1)  // only if previous series was not collinear
 		{
 			p -> numberOfPoints++;
-			p -> x[p -> numberOfPoints] = p1 -> x[endpos + 1]; 
+			p -> x[p -> numberOfPoints] = p1 -> x[endpos + 1];
 			p -> y[p -> numberOfPoints] = p1 -> y[endpos + 1];
 		}
 		if (p -> numberOfPoints < 3) Melder_throw ("Not enough points left after collinear points removal.");
-	
-		autoPolygon thee = (Polygon) Data_copy (p.peek()); // 
+
+		autoPolygon thee = (Polygon) Data_copy (p.peek()); //
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not simplified."); }
+	} catch (MelderError) { Melder_throw (me, ": not simplified."); }
 }
 
 #undef AREA
@@ -768,16 +784,15 @@ Vertices Polygon_to_Vertices (Polygon me, bool close)
 		Melder_assert (thy numberOfNodes == my numberOfPoints);
 		if (close) Vertices_addCopyBack (thee.peek(), thy front);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Vertices created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Vertices created."); }
 }
 
-#define VERTEX(n) ((Vertex) (n -> data))
 #define SKIP_INTERSECTION_NODES(n) while(VERTEX(n) -> intersect != 0) n = n -> next;
 
 
 void Vertices_print (Vertices me, Vertices thee)
 {
-	long ns = 0, nc = 0, ni = 0, nt;
+	long ns = 0, nc = 0, ni = 0, nt, nt2;
 //	MelderInfo_open();
 	DLLNode n = my front;
 	MelderInfo_writeLine1 (L"");
@@ -787,14 +802,15 @@ void Vertices_print (Vertices me, Vertices thee)
 		const wchar_t *type = 0, *itype;
 		if (VERTEX(n) -> intersect == 0)
 		{
-			type = L"S"; ns++; nt = ns; itype = L"-";
+			type = L"S"; ns++; nt = ns; itype = L"-"; nt2 = 0;
 		}
 		else
 		{
-			type = L"I"; ni++; nt = ni; itype = Melder_integer (VERTEX(n) -> intersect);
-			VERTEX(n) -> number = ni;
+			type = L"I"; nt = VERTEX (n) -> id; nt2 = VERTEX(VERTEX(n) -> neighbour) -> id;
+			itype = Melder_integer (VERTEX(n) -> intersect);
 		}
-		MelderInfo_writeLine9 (type, Melder_integer(nt), itype, L", ", Melder_double (x), L", ", Melder_double (y), L", ", Melder_double(alpha));
+		MelderInfo_write9 (type, Melder_integer(nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
+		MelderInfo_write6 (Melder_double(alpha), L", E", Melder_integer (VERTEX(n) -> entry), L"(", Melder_integer(nt2), L")\n");
 		n = n -> next;
 	}
 	MelderInfo_writeLine1 (L"");
@@ -805,14 +821,15 @@ void Vertices_print (Vertices me, Vertices thee)
 		const wchar_t *type = 0, *itype;
 		if (VERTEX(n) -> intersect == 0)
 		{
-			type = L"C"; nc++; nt = nc; itype = L"-";
+			type = L"C"; nc++; nt = nc; itype = L"-"; nt2 = 0;
 		}
 		else
 		{
-			type = L"I"; nt = VERTEX(VERTEX(n) -> neighbour) -> number; 
+			type = L"I"; nt = VERTEX(n) -> id; nt2 = VERTEX(VERTEX(n) -> neighbour) -> id;
 			itype = Melder_integer (VERTEX(n) -> intersect);
 		}
-		MelderInfo_writeLine9 (type, Melder_integer(nt), itype, L", ", Melder_double (x), L", ", Melder_double (y), L", ", Melder_double(alpha));
+		MelderInfo_write9 (type, Melder_integer(nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
+		MelderInfo_write6 (Melder_double(alpha), L", E", Melder_integer (VERTEX(n) -> entry), L"(", Melder_integer(nt2), L")\n");
 		n = n -> next;
 	}
 //	MelderInfo_close();
@@ -828,7 +845,8 @@ void Vertices_sortIntersections (Vertices me)
 		{
 			if (intersections) // the previous was the last of a series of intersections
 			{
-				DLL_sort ((DLL) me, first, ni -> prev);
+				DLL_sortPart ((DLL) me, first, ni -> prev);
+				// restore myNode pointers
 				intersections = false;
 			}
 		}
@@ -843,14 +861,17 @@ void Vertices_sortIntersections (Vertices me)
 		ni = ni -> next;
 	}
 	// we might have missed the last series of intersections
-	if (intersections) DLL_sort ((DLL) me, first, ni -> prev);
+	if (intersections)
+	{
+		DLL_sortPart ((DLL) me, first, ni -> prev);
+	}
 }
 
 void Vertices_addIntersections (Vertices me, Vertices thee)
 {
 	try {
 		double eps = 1e-15;
-		long ns = my numberOfNodes, nc = thy numberOfNodes;
+		long ns = my numberOfNodes, nc = thy numberOfNodes, id = 0;
 		if (ns < 4 || nc < 4) Melder_throw ("We need at least three vertices.");
 		DLLNode ni = my front; // the node index  in me (s)
 		while (ni != my back) // until penultimate
@@ -867,26 +888,29 @@ void Vertices_addIntersections (Vertices me, Vertices thee)
 				int intersection = LineSegments_getIntersection (x1, y1, x2, y2, x3, y3, x4, y4, &mua, &mub, eps);
 				if (intersection != INTERSECTION_OUTSIDE)
 				{
+					id++;
+					// 1. create the vertices
 					autoVertex ins = Vertex_create ();
 					ins -> x = x1 + mua * (x2 - x1);
 					ins -> y = y1 + mua * (y2 - y1);
 					ins -> alpha = mua;
 					ins -> intersect = intersection;
+					ins -> id = id;
 					autoVertex inc = (Vertex) Data_copy (ins.peek());
 					inc -> alpha = mub;
-					// normally we would do transfer() here but we have still to assign the neighbour pointer
-					// which we can only do **after** creating the nodes
+					// 2. create the nodes
 					autoDLLNode ns = DLLNode_create (0);
 					autoDLLNode nc = DLLNode_create (0);
-					
+					// 3. link the neighbours + copy the links
 					DLLNode njc = ins -> neighbour = nc.peek();
 					DLLNode nic = inc -> neighbour = ns.peek();
-					// Now tranfer the Vertex
+					// 4. transfer the vertices to the nodes
 					ns -> data = (Data) ins.transfer();
 					nc -> data = (Data) inc.transfer();
+					// 5. add the nodes to the list
 					DLL_addAfter ((DLL) me, ni, ns.transfer());
 					DLL_addAfter ((DLL) thee, nj, nc.transfer());
-					// set node pointer to inserted object
+					// 6. set node pointer to inserted nodes
 					ni = nic; nj = njc;
 				}
 				nj = nj -> next;
@@ -897,7 +921,7 @@ void Vertices_addIntersections (Vertices me, Vertices thee)
 		if (Melder_debug == -1) { MelderInfo_open(); Vertices_print (me, thee);}
 		Vertices_sortIntersections (me);
 		Vertices_sortIntersections (thee);
-		if (Melder_debug == -1) { Vertices_print (me, thee); MelderInfo_close(); }
+		if (Melder_debug == -1) { Vertices_print (me, thee); }
 	} catch (MelderError) { Melder_throw ("Intersections not calculated."); }
 }
 
@@ -918,11 +942,62 @@ void Vertices_markEntryPoints (Vertices me, int firstLocation)
 	}
 }
 
+Vertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices thee)
+{
+	try {
+		// find my first vertex outside thee, by searching the first intersection entry
+
+		DLLNode firstOutside = my front;
+		bool firstOutsideSet = true;
+		for (DLLNode ni = my front; ni != 0; ni = ni -> next)
+		{
+			if (VERTEX (ni) -> intersect == 0) //
+			{
+				if (firstOutsideSet) continue;
+				firstOutside = ni; break;
+			}
+			else if (VERTEX (ni) -> entry = Polygon_EN) break;
+			// We were inside
+			else firstOutsideSet = false;
+		}
+
+		autoVertices him = Vertices_create ();
+		long poly_npoints = 0;
+		DLLNode current = firstOutside;
+		bool inside = false, forward = true;
+		do {
+			if (VERTEX (current) -> intersect == 0)
+			{
+				Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+			}
+			else // intersection point
+			{
+				// store and jump to other polygon
+				Vertices_addCopyBack (him.peek(), current); poly_npoints++;
+				current = VERTEX (current) -> neighbour; inside = not inside;
+				forward = VERTEX (current) ->  entry == Polygon_EX;
+			}
+			if (forward)
+			{
+				current = current -> next;
+				if (current == 0) current = inside ? thy front : my front;
+			}
+			else
+			{
+				current = current -> prev;
+				if (current == 0) current = inside ? thy back : my back;
+			}
+		} while (current != firstOutside and current != 0);
+		VERTEX(his front) -> poly_npoints = poly_npoints;
+		return him.transfer();
+	} catch (MelderError) { Melder_throw (me, ": no clipping path."); }
+}
+
 Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vertices thee, bool use_thyinterior)
 {
 	try {
 		autoVertices him = Vertices_create ();
-		DLLNode prevPoly; 
+		DLLNode prevPoly;
 		long poly_npoints = 0;
 		for (DLLNode ni = my front; ni != 0; ni = ni -> next)
 		{
@@ -992,10 +1067,10 @@ Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vert
 		// last polygon:
 		VERTEX (prevPoly) -> poly_npoints = poly_npoints;
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no clipping vertices created."); }
+	} catch (MelderError) { Melder_throw (me, ": no clipping vertices created."); }
 }
 
-// 
+//
 Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni)
 {
 	DLLNode n = *ni;
@@ -1005,16 +1080,17 @@ Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni)
 		autoPolygon thee = Polygon_create (nPoints);
 		thy x[i] = VERTEX (n) -> x; thy y[i] = VERTEX (n) -> y;
 		while ((n = n -> next) != 0 and VERTEX (n) -> poly_npoints == 0 and i <= nPoints)
-		{ 
-			i++; thy x[i] = VERTEX (n) -> x; thy y[i] = VERTEX (n) -> y; 
+		{
+			i++; thy x[i] = VERTEX (n) -> x; thy y[i] = VERTEX (n) -> y;
 		}
 		*ni =  n;
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Polygon not created."); }
+	} catch (MelderError) { Melder_throw ("Polygon not created."); }
 }
 
 Collection Vertices_to_Polygons (Vertices me)
 {
+	try {
 		autoCollection thee = Collection_create (classPolygon, 10);
 		DLLNode ni = my front;
 		do {
@@ -1022,6 +1098,7 @@ Collection Vertices_to_Polygons (Vertices me)
 			Collection_addItem (thee.peek(), p.transfer());
 		} while (ni != 0);
 		return thee.transfer();
+	} catch (MelderError) { Melder_throw (me, ": no polygon collection created."); }
 }
 
 Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior)
@@ -1032,39 +1109,59 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 		autoVertices c = Polygon_to_Vertices (thee, true); // clip
 		long nc = c -> numberOfNodes;
 		double eps = 1e-15;
-		
+
 		// phase 1: Get all intersections and add them to both lists
-		
+
 		Vertices_addIntersections (s.peek(), c.peek());
 		long nnewnodes = s -> numberOfNodes - ns;
-		if (Melder_debug == -1) Melder_throw ("Bail out of Polygons_findClippings.");
 		int firstLocation = Polygon_getLocationOfPoint (thee, my x[1], my y[1], eps);
 		if (nnewnodes == 0) // no crossings, either one completely inside the other or separate
 		{
-			
+			autoCollection apc;
+			if (not use_myinterior and not use_thyinterior and firstLocation == Polygon_INSIDE)
+			{
+				autoPolygon ap = (Polygon) Data_copy (thee);
+				Collection_addItem (ap.peek(), ap.transfer());
+			}
+			else
+			{
+				autoPolygon ap = (Polygon) Data_copy (me);
+				Collection_addItem (ap.peek(), ap.transfer());
+			}
+			return apc.transfer();
 		}
-		
+
 		// phase 2: Determine intersections as entry / exit points
 
 		Vertices_markEntryPoints (s.peek(), firstLocation);
-		
+
 		firstLocation = Polygon_getLocationOfPoint (me, thy x[1], thy y[1], eps);
 		Vertices_markEntryPoints (c.peek(), firstLocation);
-		
+		if (Melder_debug == -1) {
+			Vertices_print (s.peek(), c.peek()); MelderInfo_close();
+			Melder_throw ("Bail out of Polygons_findClippings.");
+		}
+
 		// phase 3: Determine the clipping paths
 		// use_myinterior use_thyinterior  result
 		//  true         false      diff me - thee
 		//  false        false      union
 		//  true         true       clip
 		//  false        true       diff thee - me
-		
-		autoVertices pgs = Verticeses_connectClippingPaths (s.peek(), use_myinterior, c.peek(), use_thyinterior);
-		
+		autoVertices pgs = 0;
+		if (not use_myinterior and not use_thyinterior)
+		{
+			pgs.reset (Verticeses_connectClippingPathsUnion (s.peek(), c.peek()));
+		}
+		else
+		{
+			pgs.reset (Verticeses_connectClippingPaths (s.peek(), use_myinterior, c.peek(), use_thyinterior));
+		}
 		// phase 4: to Polygons
-		
+
 		autoCollection pols = Vertices_to_Polygons (pgs.peek());
 		return pols.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no union Polygon created."); }
+	} catch (MelderError) { Melder_throw (me, ": no union Polygon created."); }
 }
 
 Collection Polygons_clip (Polygon subject, Polygon clipper)
@@ -1072,7 +1169,7 @@ Collection Polygons_clip (Polygon subject, Polygon clipper)
 	try {
 		autoCollection him = Polygons_findClippings (subject, true, clipper, true);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (subject, ": no union created."); }
+	} catch (MelderError) { Melder_throw (subject, ": no union created."); }
 }
 
 Polygon Polygons_union (Polygon me, Polygon thee)
@@ -1083,7 +1180,7 @@ Polygon Polygons_union (Polygon me, Polygon thee)
 		autoPolygon p = (Polygon) Collection_subtractItem (him.peek(), 1);
 		Collection_dontOwnItems (him.peek());
 		return p.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no union created."); }
+	} catch (MelderError) { Melder_throw (me, ": no union created."); }
 }
 
 #define CROSSING (my y[i] < y0) != (my y[ip1] < y0)
@@ -1098,7 +1195,7 @@ int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps)
 	for (long i = 1; i <= my numberOfPoints; i++)
 	{
 		double a;
-		long ip1 = i < my numberOfPoints ? i + 1 : 1; 
+		long ip1 = i < my numberOfPoints ? i + 1 : 1;
 		if (my y[ip1] == y0)
 		{
 			if (my x[ip1] == x0) return Polygon_VERTEX;

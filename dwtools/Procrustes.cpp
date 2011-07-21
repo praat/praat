@@ -131,10 +131,10 @@ Procrustes Procrustes_create (long n)
 {
 	try {
 		autoProcrustes me = (Procrustes) Thing_new (Procrustes);
-		AffineTransform_init (me.peek(), n); therror
+		AffineTransform_init (me.peek(), n);
 		Procrustes_setDefaults (me.peek());
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Procrustes not created."); }
+	} catch (MelderError) { Melder_throw ("Procrustes not created."); }
 }
 
 

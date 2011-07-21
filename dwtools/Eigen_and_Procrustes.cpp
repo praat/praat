@@ -49,7 +49,7 @@ Procrustes Eigens_to_Procrustes (I, thou, long evec_from, long evec_to)
 
 		NUMProcrustes (x.peek(), y.peek(), my dimension, nvectors, his r, NULL, NULL);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Procrustes not created from Eigens."); }
+	} catch (MelderError) { Melder_throw ("Procrustes not created from Eigens."); }
 }
 
 

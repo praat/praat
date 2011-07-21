@@ -27,30 +27,14 @@
 #define FITTER_PARAMETER_FREE 0
 #define FITTER_PARAMETER_FIXED 1
 
-#ifndef _SimpleVector_h_
-	#include "SimpleVector.h"
-#endif
-#ifndef _Function_h_
-	#include "Function.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _Minimizers_h_
-	#include "Minimizers.h"
-#endif
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
-#endif
-#ifndef _RealTier_h_
-	#include "RealTier.h"
-#endif
-#ifndef _SSCP_h_
-	#include "SSCP.h"
-#endif
+#include "SimpleVector.h"
+#include "Function.h"
+#include "TableOfReal.h"
+#include "Graphics.h"
+#include "Minimizers.h"
+#include "Spectrum.h"
+#include "RealTier.h"
+#include "SSCP.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -99,11 +83,11 @@ double FunctionTerms_getXOfMaximum (I, double x1, double x2);
 /*
 	Returns minimum and maximum function values (ymin, ymax) in
 	interval [x1, x2] and their x-values (xmin, xmax).
-	Precondition: [x1, x2] is a (sub)domain 
+	Precondition: [x1, x2] is a (sub)domain
 		my xmin <= x1 < x2 <= my xmax
 */
 
-void FunctionTerms_draw (I, Graphics g, double xmin, double xmax, double ymin, double ymax, 
+void FunctionTerms_draw (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	int extrapolate, int garnish);
 /*
 	Extrapolate only for functions whose domain is extendable and that can be extrapolated.
@@ -130,7 +114,7 @@ Polynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax);
 void Polynomial_evaluate_z (Polynomial me, dcomplex *z, dcomplex *p);
 /* Evaluate at complex z = x + iy */
 
-	
+
 double Polynomial_getArea (Polynomial me, double xmin, double xmax);
 
 Polynomial Polynomial_getDerivative (Polynomial me);
@@ -170,15 +154,15 @@ Roots Polynomial_to_Roots_ev (Polynomial me);
 
 long Roots_getNumberOfRoots (Roots me);
 
-void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax, 
+void Roots_draw (Roots me, Graphics g, double rmin, double rmax, double imin, double imax,
 	const wchar_t *symbol, int fontSize, int garnish);
-	
+
 dcomplex Roots_getRoot (Roots me, long index);
 void Roots_setRoot (Roots me, long index, double re, double im);
 
 Spectrum Roots_to_Spectrum (Roots me, double nyquistFrequency,
 	long numberOfFrequencies, double radius);
-	
+
 Roots Polynomial_to_Roots (Polynomial me);
 /* Find roots of polynomial and polish them */
 
@@ -189,9 +173,9 @@ Polynomial Roots_to_Polynomial (Roots me);
 Polynomial TableOfReal_to_Polynomial (I, long degree, long xcol,
 	long ycol, long scol);
 
-LegendreSeries TableOfReal_to_LegendreSeries (I, long numberOfPolynomials, 
+LegendreSeries TableOfReal_to_LegendreSeries (I, long numberOfPolynomials,
 	long xcol, long ycol, long scol);
-	
+
 Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency,
 	long numberOfFrequencies, double radius);
 
@@ -205,7 +189,7 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency,
 		p(x) = c[1] /2 + sum (k=2..numberOfCoefficients, c[k]*T[k](x'))
 */
 Thing_declare1cpp (ChebyshevSeries);
-	
+
 ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
 ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, const wchar_t *s);

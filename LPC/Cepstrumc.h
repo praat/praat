@@ -38,7 +38,7 @@
 #define Cepstrumc__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Cepstrumc, Sampled);
 
-int Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
+void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency);
 	
 Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -46,7 +46,7 @@ Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double
 
 /******************* Frames ************************************************/
 
-int Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients);
+void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients);
 	
 DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 	double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint);

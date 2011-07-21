@@ -81,13 +81,13 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g,
  *      draw circle at i of width: my z[i][i]/rowSum;
  *		for (j=1; j <= my numberOfColumns; j++)
  *		{
- *			if (i != j && 100*my data[i][j]/rowSum > lowerPercentage) 
+ *			if (i != j && 100*my data[i][j]/rowSum > lowerPercentage)
  *				draw arrow from i to j of width: my data[i][j]/rowSum;
  *		}
  *	}
  */
- 
-Any Confusion_difference (Confusion me, Confusion thee);
+
+Matrix Confusion_difference (Confusion me, Confusion thee);
 /* return matrix with the difference between the two confusion matrices */
 
 long Confusion_getNumberOfEntries (Confusion me);
@@ -107,7 +107,7 @@ Confusion TableOfReal_to_Confusion (I);
 TableOfReal Confusion_to_TableOfReal_marginals (I);
 /*
 	Create a table with one extra row and one extra column with marginals,
-	i.e., column and row sums. 
+	i.e., column and row sums.
 */
 
 void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision);

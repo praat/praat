@@ -25,6 +25,9 @@
 
 #include "Resonator.h"
 
+#undef our
+#define our ((Filter_Table) my methods) ->
+
 #define SETBC(f,bw) \
 	double r = exp (-NUMpi * my dT * bw); \
 	my c = -(r * r); \
@@ -77,13 +80,13 @@ Resonator Resonator_create (double dT, int normalisation)
 		my dT = dT;
 		my normalisation = normalisation;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Resonator not created."); }
+	} catch (MelderError) { Melder_throw ("Resonator not created."); }
 }
 
 static void classAntiResonator_setFB (I, double f, double bw)
 {
 	iam (AntiResonator);
-	
+
 	if (f <= 0 && bw <= 0)
 	{
 		my a = 1; my b = -2; my c = 1; // all-pass except dc
@@ -145,9 +148,6 @@ class_methods (ConstantGainResonator, Filter)
 	class_method_local (ConstantGainResonator, resetMemory)
 class_methods_end
 
-#undef our
-#define our ((Resonator_Table) my methods) ->
-
 ConstantGainResonator ConstantGainResonator_create (double dT)
 {
 	try {
@@ -155,7 +155,7 @@ ConstantGainResonator ConstantGainResonator_create (double dT)
 		my a = 1; // all-pass
 		my dT = dT;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("ConstantGainResonator not created."); }
+	} catch (MelderError) { Melder_throw ("ConstantGainResonator not created."); }
 }
 
 AntiResonator AntiResonator_create (double dT)
@@ -165,7 +165,7 @@ AntiResonator AntiResonator_create (double dT)
 		my a = 1; // all-pass
 		my dT = dT;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("AntiResonator not created."); }
+	} catch (MelderError) { Melder_throw ("AntiResonator not created."); }
 }
 
 void Filter_setFB (I, double f, double b)

@@ -80,7 +80,7 @@ static Matrix Sound_to_spectralpower (Sound me)
 		z[1] *= 0.5;
 		z[s -> nx] *= 0.5;
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Matrix with spectral power created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Matrix with spectral power created."); }
 }
 
 static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, long frame)
@@ -133,9 +133,9 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 		long nf = floor ((fmax_bark - f1_bark) / df_bark + 0.5);
 		if (nf <= 0) Melder_throw ("The combination of filter parameters is not valid.");
 		
-		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1); therror
-		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency); therror
-		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency); therror
+		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
+		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
+		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoBarkFilter thee = BarkFilter_create (my xmin, my xmax, nt, dt, t1, 
 				fmin_bark, fmax_bark, nf, df_bark, f1_bark);
 		 
@@ -167,7 +167,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	
 		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee.transfer();	
-	} catch (MelderError) { Melder_thrown (me, ": no BarkFilter created."); }
+	} catch (MelderError) { Melder_throw (me, ": no BarkFilter created."); }
 } 
 
 
@@ -225,11 +225,11 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 		long nf = floor ((fmax_mel - f1_mel) / df_mel + 0.5);
 		fmax_mel = f1_mel + nf * df_mel;
 
-		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1); therror
-		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency); therror
-		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency); therror
+		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
+		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
+		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel, 
-			fmax_mel, nf, df_mel, f1_mel); therror
+			fmax_mel, nf, df_mel, f1_mel);
 
 		autoMelderProgress progress ( L"MelFilters analysis");
 
@@ -254,7 +254,7 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 		
 		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no MelFilter created."); }
+	} catch (MelderError) { Melder_throw (me, ": no MelFilter created."); }
 }
 
 /*
@@ -307,7 +307,7 @@ FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
 		autoFormantFilter ff = Sound_and_Pitch_to_FormantFilter (me, thee.peek(), analysisWidth, dt, 
 			f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no FormantFilter created."); }
+	} catch (MelderError) { Melder_throw (me, ": no FormantFilter created."); }
 }
 
 FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double analysisWidth, double dt, 
@@ -337,14 +337,14 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 		fmax_hz = MIN (fmax_hz, nyquist);
 		long nf = floor ((fmax_hz - f1_hz) / df_hz + 0.5);
 			
-		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1); therror
+		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
 		autoFormantFilter him = FormantFilter_create (my xmin, my xmax, nt, dt, t1, 
 			fmin_hz, fmax_hz, nf, df_hz, f1_hz);
 
 		// Temporary objects
 	
-		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency); therror
-		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency); therror
+		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
+		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 
 		for (long i = 1; i <= nt; i++)
 		{
@@ -359,7 +359,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2);
 			Sounds_multiply (sframe.peek(), window.peek());
 						
-			Sound_into_FormantFilter_frame (sframe.peek(), him.peek(), i, b); therror
+			Sound_into_FormantFilter_frame (sframe.peek(), him.peek(), i, b);
 		
 			if ((i % 10) == 1) {
 				Melder_progress5 ((double)i / nt, L"Frame ", Melder_integer (i), L" out of ", 
@@ -370,7 +370,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 		NUMdmatrix_to_dBs (his z, 1, his ny, 1, his nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("FormantFilter not created from Pitch & FormantFilter."); }
+	} catch (MelderError) { Melder_throw ("FormantFilter not created from Pitch & FormantFilter."); }
 }
 
 /* End of file Sound_and_FilterBank.cpp */

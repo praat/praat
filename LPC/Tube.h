@@ -24,23 +24,20 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Sampled_h_
-	#include "Sampled.h"
-#endif
+#include "Sampled.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
 #include "Tube_def.h"
-
 #define Tube__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Tube, Sampled);
 
 /*
 	Tube's as a function of time.
 	Tube_frame: c[1] -> mouth
-	            c[nSegments] -> glottis. 	
+	            c[nSegments] -> glottis.
 */
 
 void Tube_Frame_init (Tube_Frame me, long nSegments, double length);
@@ -49,7 +46,7 @@ void Tube_Frame_free (Tube_Frame me);
 
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
 
-void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1, 
+void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
 
 Thing_declare1cpp (Area);
@@ -60,12 +57,12 @@ Thing_declare2cpp (Area, Tube);
 
 /*
 	Areas as a function of time.
-	units in m^2. 
+	units in m^2.
 */
 
-void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1, 
+void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
-		
+
 Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
 
@@ -83,7 +80,7 @@ Thing_declare2cpp (RC, Tube);
 
 void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
-		
+
 RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
 
@@ -91,12 +88,4 @@ RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 	}
 #endif
 
-#if 0
-#ifdef __cplusplus
-struct autoTubeFrame : struct structTubeFrame {
-	autoTubeFrame () { nSegments = 0; length = 0; c = 0; }
-	~autoTubeFrame () { NUMvector_free(c, 1); }
-};
-#endif
-#endif
-#endif /* _Tube_h_ */
+#endif // _Tube_h_

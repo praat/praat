@@ -24,12 +24,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Cepstrum_h_
-	#include "Cepstrum.h"
-#endif
+#include "Sound.h"
+#include "Cepstrum.h"
 
 #ifdef __cplusplus
 	extern "C" {

@@ -79,7 +79,7 @@ static void FFNet_create_checkCommonFields_hidden (void *dia, 	long *numberOfHid
 {
 		*numberOfHidden1 = GET_INTEGER (L"Number of units in hidden layer 1");
 		*numberOfHidden2 = GET_INTEGER (L"Number of units in hidden layer 2");
-		if (*numberOfHidden1 < 0 || *numberOfHidden2 < 0) Melder_throw ("The number of units in a hidden layer must be geater equal zero"); 
+		if (*numberOfHidden1 < 0 || *numberOfHidden2 < 0) Melder_throw ("The number of units in a hidden layer must be geater equal zero");
 }
 
 static void FFNet_create_addCommonFields (void *dia)
@@ -196,7 +196,7 @@ DO
 		long layer = GET_INTEGER (L"Layer");
 		long unit = GET_INTEGER (L"Unit");
 		double bias = FFNet_getBias (me, layer, unit);
-		Melder_information6 (Melder_double(bias), L"(bias for unit ", Melder_integer(unit), L"in layer ", 
+		Melder_information6 (Melder_double(bias), L"(bias for unit ", Melder_integer(unit), L"in layer ",
 			Melder_integer(layer), L").");
 	}
 END
@@ -225,8 +225,8 @@ DO
 		long unit = GET_INTEGER (L"Unit");
 		long unitf = GET_INTEGER (L"Unit from");
 		double w = FFNet_getWeight (me, layer, unit, unitf);
-		Melder_information9 (Melder_double (w), L"(weight between unit ", Melder_integer(unit), 
-			L" in layer ", Melder_integer(layer), L", and unit ", Melder_integer (unitf), L"in layer ", 
+		Melder_information9 (Melder_double (w), L"(weight between unit ", Melder_integer(unit),
+			L" in layer ", Melder_integer(layer), L", and unit ", Melder_integer (unitf), L"in layer ",
 			Melder_integer (layer -1));
 	}
 END
@@ -384,7 +384,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (FFNet);
-		FFNet_drawCostHistory (me, GRAPHICS, GET_INTEGER (L"left Iteration_range"), 
+		FFNet_drawCostHistory (me, GRAPHICS, GET_INTEGER (L"left Iteration_range"),
 			GET_INTEGER (L"right Iteration_range"), GET_REAL (L"left Cost_range"), GET_REAL (L"right Cost_range"),
 			GET_INTEGER (L"Garnish"));
 	}
@@ -407,7 +407,7 @@ FORM (FFNet_weightsToMatrix, L"FFNet: Weights to Matrix ", 0)
 DO
 	LOOP {
 		iam (FFNet);
-		praat_new (FFNet_weightsToMatrix (me, GET_INTEGER (L"Layer number"), 0), 0);
+		praat_new (FFNet_weightsToMatrix (me, GET_INTEGER (L"Layer number"), 0), my name);
 	}
 END
 
@@ -472,7 +472,7 @@ END
 DIRECT (FFNet_Categories_to_Activation)
 	FFNet me = FIRST (FFNet);
 	Categories thee = FIRST (Categories);
-	praat_new (FFNet_Categories_to_Activation (me, thee), NULL);
+	praat_new (FFNet_Categories_to_Activation (me, thee), my name);
 END
 
 /************************* FFNet && Matrix **********************************/
@@ -483,7 +483,7 @@ FORM (FFNet_weightsFromMatrix, L"Replace weights by values from Matrix", 0)
 DO
 	FFNet me = FIRST (FFNet);
 	Matrix thee = FIRST (Matrix);
-   praat_new (FFNet_weightsFromMatrix (me, thee, GET_INTEGER (L"Layer")), 0);
+   praat_new (FFNet_weightsFromMatrix (me, thee, GET_INTEGER (L"Layer")), my name);
 END
 
 /************************* FFNet && Pattern **********************************/
@@ -571,7 +571,7 @@ DO
 	struct structSteepestDescentMinimizer_parameters p;
     p.eta = GET_REAL (L"Learning rate");
     p.momentum = GET_REAL (L"Momentum");
-    FFNet_Pattern_Activation_learnSD (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
+    return FFNet_Pattern_Activation_learnSD (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
 		GET_REAL (L"Tolerance of minimizer"), & p, GET_INTEGER (L"Cost function"));
 END
 
@@ -586,7 +586,7 @@ DO
 	FFNet me = FIRST (FFNet);
 	Pattern thee = FIRST (Pattern);
 	Activation him = FIRST (Activation);
-    FFNet_Pattern_Activation_learnSM (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
+    return FFNet_Pattern_Activation_learnSM (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
 		GET_REAL (L"Tolerance of minimizer"), NULL,
 		GET_INTEGER (L"Cost function"));
 END
@@ -602,7 +602,7 @@ DO
 	FFNet me = FIRST (FFNet);
 	Pattern thee = FIRST (Pattern);
 	Categories him = FIRST(Categories);
-	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_total (me, thee, him, 
+	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_total (me, thee, him,
 		GET_INTEGER (L"Cost function"))));
 END
 
@@ -615,7 +615,7 @@ DO
 	FFNet me = FIRST (FFNet);
 	Pattern thee = FIRST (Pattern);
 	Categories him = FIRST(Categories);
-	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_average (me, thee, him, 
+	Melder_information1 (Melder_double (FFNet_Pattern_Categories_getCosts_average (me, thee, him,
 		GET_INTEGER (L"Cost function"))));
 END
 
@@ -654,7 +654,7 @@ DO
 	Pattern thee = FIRST (Pattern);
 	Categories him = FIRST(Categories);
 	FFNet_Pattern_Categories_learnSM (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
-		GET_REAL (L"Tolerance of minimizer"), NULL, GET_INTEGER (L"Cost function")); therror
+		GET_REAL (L"Tolerance of minimizer"), NULL, GET_INTEGER (L"Cost function"));
 END
 
 FORM (FFNet_Pattern_Categories_learnSD, L"FFNet & Pattern & Categories: Learn slow", L"FFNet & Pattern & Categories: Learn slow...")
@@ -675,7 +675,7 @@ DO
 	p.eta = GET_REAL (L"Learning rate");
     p.momentum = GET_REAL (L"Momentum");
 	FFNet_Pattern_Categories_learnSD (me, thee, him, GET_INTEGER (L"Maximum number of epochs"),
-		GET_REAL (L"Tolerance of minimizer"), &p, GET_INTEGER (L"Cost function")); therror
+		GET_REAL (L"Tolerance of minimizer"), &p, GET_INTEGER (L"Cost function"));
 END
 
 extern "C" void praat_uvafon_FFNet_init (void);

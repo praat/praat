@@ -1,4 +1,4 @@
-/* praat_David_init.c
+/* praat_David_init.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -67,7 +67,6 @@
 #include "NUM2.h"
 #include "NUMlapack.h"
 #include "NUMmachar.h"
-extern machar_Table NUMfpp;
 
 #include "Activation.h"
 #include "Categories.h"
@@ -178,7 +177,7 @@ FORM (Activation_formula, L"Activation: Formula", 0)
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	praat_Fon_formula (dia, interpreter); therror
+	praat_Fon_formula (dia, interpreter);
 END
 
 DIRECT (Activation_to_Matrix)
@@ -233,7 +232,7 @@ DO
 		BarkFilter_drawSekeyHansonFilterFunctions (me, GRAPHICS, GET_INTEGER (L"Frequency scale"),
 			GET_INTEGER (L"left Filter range"), GET_INTEGER (L"right Filter range"),
 			GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-			GET_INTEGER (L"Amplitude scale in dB"), GET_REAL (L"left Amplitude range"), 
+			GET_INTEGER (L"Amplitude scale in dB"), GET_REAL (L"left Amplitude range"),
 			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
 	}
 END
@@ -250,14 +249,13 @@ DO
 END
 
 DIRECT (Categories_edit)
-	if (theCurrentPraatApplication -> batch)
-		Melder_throw ("Cannot edit a Categories from batch.");
+	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit a Categories from batch.");
 	else
 	{
 		LOOP {
 			iam (Categories);
-			if (! praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
-			my name, me), IOBJECT)) therror;
+			praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
+			my name, me), IOBJECT);
 		}
 	}
 END
@@ -372,8 +370,8 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (CC);
-		CC_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), 
-				  GET_INTEGER (L"From coefficient"), GET_INTEGER (L"To coefficient"), 
+		CC_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+				  GET_INTEGER (L"From coefficient"), GET_INTEGER (L"To coefficient"),
 				  GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
 	}
 END
@@ -389,7 +387,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (CC);
-		CC_drawC0 (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), 
+		CC_drawC0 (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 			GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
 	}
 END
@@ -413,7 +411,7 @@ DO
 	int begin, end, slope;
 	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
 
-	praat_new (CCs_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"), GET_REAL (L"Log energy weight"), 
+	praat_new (CCs_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"), GET_REAL (L"Log energy weight"),
 		GET_REAL (L"Regression weight"), GET_REAL (L"Regression weight log energy"),
 		GET_REAL (L"Regression coefficients window"),begin, end, slope), 0);
 END
@@ -484,7 +482,7 @@ FORM (CCA_getEigenvectorElement, L"CCA: Get eigenvector element", L"Eigen: Get e
 DO
 	LOOP {
 		iam (CCA);
-		Melder_information1 (Melder_double (CCA_getEigenvectorElement (me, GET_INTEGER (L"X or Y"), 
+		Melder_information1 (Melder_double (CCA_getEigenvectorElement (me, GET_INTEGER (L"X or Y"),
 			GET_INTEGER (L"Eigenvector number"), GET_INTEGER (L"Element number"))));
 	}
 END
@@ -497,7 +495,7 @@ DO
 		iam (CCA);
 		double p, chisq; long ndf;
 		CCA_getZeroCorrelationProbability (me, GET_INTEGER (L"Coefficient number"), &chisq, &ndf, &p);
-		Melder_information6 (Melder_double (p), L" (=probability for chisq = ", Melder_double (chisq), 
+		Melder_information6 (Melder_double (p), L" (=probability for chisq = ", Melder_double (chisq),
 			L" and ndf = ", Melder_integer (ndf), L")");
 	}
 END
@@ -544,7 +542,7 @@ DO
 	int x_or_y = GET_INTEGER (L"X or Y");
 	int cv_from = GET_INTEGER (L"left Canonical variate range");
 	int cv_to = GET_INTEGER (L"right Canonical variate range");
-	Melder_information7 (Melder_double (CCA_and_Correlation_getRedundancy_sl (cca, c, x_or_y, cv_from, cv_to)), 
+	Melder_information7 (Melder_double (CCA_and_Correlation_getRedundancy_sl (cca, c, x_or_y, cv_from, cv_to)),
 		L" (redundancy from ", (x_or_y == 1 ? L"y" : L"x"), L" extracted by canonical variates ",
 		Melder_integer (cv_from), L" to ", Melder_integer (cv_to));
 END
@@ -665,7 +663,7 @@ DO
 	wchar_t * resp = GET_STRING (L"Response");
 	LOOP {
 		iam (Confusion);
-		Melder_information6 (Melder_double (Confusion_getValue (me, stim, resp)), 
+		Melder_information6 (Melder_double (Confusion_getValue (me, stim, resp)),
 		L" ( [\"", stim, L"\", \"",  resp, L"\"] )");
 	}
 END
@@ -704,7 +702,7 @@ DIRECT (Confusion_difference)
 		( c1 ? c2 : c1 ) = me;
 	}
 	Melder_assert (c1 && c2);
-	praat_new ((Data) Confusion_difference (c1, c2), L"diffs");
+	praat_new (Confusion_difference (c1, c2), L"diffs");
 END
 
 FORM (Confusion_condense, L"Confusion: Condense", L"Confusion: Condense...")
@@ -718,7 +716,7 @@ FORM (Confusion_condense, L"Confusion: Condense", L"Confusion: Condense...")
 DO
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_condense (me, GET_STRING (L"Search"),GET_STRING (L"Replace"), 
+		praat_new (Confusion_condense (me, GET_STRING (L"Search"),GET_STRING (L"Replace"),
 			GET_INTEGER (L"Replace limit"), GET_INTEGER (L"Search and replace are") - 1), my name, L"_cnd");
 	}
 END
@@ -732,7 +730,7 @@ DO
 	const wchar_t *newlabel = GET_STRING (L"New label");
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_group (me, GET_STRING (L"Stimuli & Responses"), newlabel, 
+		praat_new (Confusion_group (me, GET_STRING (L"Stimuli & Responses"), newlabel,
 			GET_INTEGER (L"New label position")), Thing_getName (me), L"_sr", newlabel);
 	}
 END
@@ -746,7 +744,7 @@ DO
 	const wchar_t *newlabel = GET_STRING (L"New label");
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_groupStimuli (me, GET_STRING (L"Stimuli"), newlabel, 
+		praat_new (Confusion_groupStimuli (me, GET_STRING (L"Stimuli"), newlabel,
 			GET_INTEGER (L"New label position")), Thing_getName (me), L"_s", newlabel);
 	}
 END
@@ -760,7 +758,7 @@ DO
 	const wchar_t *newlabel = GET_STRING (L"New label");
 	LOOP {
 		iam (Confusion);
-		praat_new (Confusion_groupResponses (me, GET_STRING (L"Responses"), newlabel, 
+		praat_new (Confusion_groupResponses (me, GET_STRING (L"Responses"), newlabel,
 			GET_INTEGER (L"New label position")), Thing_getName (me), L"_s", newlabel);
 	}
 END
@@ -951,7 +949,7 @@ DO
 		double f, p; long ndf;
 		Covariance_getSignificanceOfVariancesRatio (me, GET_INTEGER (L"Index1"), GET_INTEGER (L"Index2"),
 			GET_REAL (L"Hypothesized ratio"), &p, &f , &ndf);
-		Melder_information7 (Melder_double (p), L" (=probability, based on F = ", Melder_double (f), 
+		Melder_information7 (Melder_double (p), L" (=probability, based on F = ", Melder_double (f),
 			L"and ndf1 = ", Melder_integer (ndf), L" and ndf2 = ", Melder_integer (ndf));
 	}
 END
@@ -1090,7 +1088,7 @@ FORM (Discriminant_and_TableOfReal_to_ClassificationTable, L"Discriminant & Tabl
 DO
 	Discriminant me = FIRST (Discriminant);
 	TableOfReal tr = FIRST_GENERIC (TableOfReal);
-	praat_new (Discriminant_and_TableOfReal_to_ClassificationTable (me, tr, 
+	praat_new (Discriminant_and_TableOfReal_to_ClassificationTable (me, tr,
 		GET_INTEGER (L"Pool covariance matrices"), GET_INTEGER (L"Use apriori probabilities")),
 		Thing_getName (me), L"_", Thing_getName (tr));
 END
@@ -1127,7 +1125,7 @@ FORM (Discriminant_getCumulativeContributionOfComponents, L"Discriminant: Get cu
 DO
 	LOOP {
 		iam (Discriminant);
-		Melder_information1 (Melder_double (Eigen_getCumulativeContributionOfComponents (me, 
+		Melder_information1 (Melder_double (Eigen_getCumulativeContributionOfComponents (me,
 			GET_INTEGER (L"From component"), GET_INTEGER (L"To component"))));
 	}
 END
@@ -1254,7 +1252,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
-		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (L"Number of sigmas"), 0, 0, 
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (L"Number of sigmas"), 0, 0,
 			GET_INTEGER (L"Discriminant plane"), GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"),
 			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
@@ -1279,7 +1277,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Discriminant);
-		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (L"Number of sigmas"), 0, 
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (L"Number of sigmas"), 0,
 			GET_STRING (L"Label"), GET_INTEGER (L"Discriminant plane"),
 		GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"),
 		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
@@ -1436,7 +1434,7 @@ DO
 	Melder_assert (s1 && s2);
 	DTW dtw = FIRST (DTW);
 	autoPraatPicture picture;
-	DTW_and_Sounds_draw (dtw, s2, s1, GRAPHICS, GET_REAL (L"left Horizontal range"), 
+	DTW_and_Sounds_draw (dtw, s2, s1, GRAPHICS, GET_REAL (L"left Horizontal range"),
 		GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 		GET_INTEGER (L"Garnish"));
 END
@@ -1779,7 +1777,7 @@ DO
 		iam (DTW);
 		autoMatrix cp = DTW_distancesToMatrix (me);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, 0); therror
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, 0);
 			double minimum, maximum;
 			Matrix_getWindowExtrema (me, 0, 0, 0, 0, & minimum, & maximum);
 			if (minimum < 0)
@@ -1952,10 +1950,10 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Eigen);
-		Eigen_drawEigenvalues (me, GRAPHICS, GET_INTEGER (L"left Eigenvalue range"), 
-			GET_INTEGER (L"right Eigenvalue range"), GET_REAL (L"left Amplitude range"), 
-			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Fraction of eigenvalues summed"), 
-			GET_INTEGER (L"Cumulative"), GET_REAL (L"Mark size"), GET_STRING (L"Mark string"), 
+		Eigen_drawEigenvalues (me, GRAPHICS, GET_INTEGER (L"left Eigenvalue range"),
+			GET_INTEGER (L"right Eigenvalue range"), GET_REAL (L"left Amplitude range"),
+			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Fraction of eigenvalues summed"),
+			GET_INTEGER (L"Cumulative"), GET_REAL (L"Mark size"), GET_STRING (L"Mark string"),
 			GET_INTEGER (L"Garnish"));
 	}
 END
@@ -2174,7 +2172,7 @@ DO
 	LOOP {
 		iam (Excitations);
 		for (long j = 1; j <= my size; j++)
-			Matrix_formula ((Matrix) my item[j], GET_STRING (L"formula"), interpreter, 0); therror
+			Matrix_formula ((Matrix) my item[j], GET_STRING (L"formula"), interpreter, 0);
 		praat_dataChanged (me);
 	}
 END
@@ -2206,7 +2204,7 @@ DIRECT (Excitations_append)
 		( e1 ? e2 : e1 ) = me;
 	}
 	Melder_assert (e1 && e2);
-	praat_new ((Data) Collections_merge (e1, e2), 0);
+	praat_new ((Excitations) Collections_merge (e1, e2), 0);
 END
 
 FORM (Excitations_to_Pattern,L"Excitations: To Pattern", 0)
@@ -2576,7 +2574,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (FunctionTerms);
-		FunctionTerms_drawBasisFunction (me, GRAPHICS, GET_INTEGER (L"Index"), GET_REAL (L"Xmin"), 
+		FunctionTerms_drawBasisFunction (me, GRAPHICS, GET_INTEGER (L"Index"), GET_REAL (L"Xmin"),
 			GET_REAL (L"Xmax"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 			GET_INTEGER (L"Extrapolate"), GET_INTEGER (L"Garnish"));
 	}
@@ -2819,7 +2817,7 @@ FORM (LegendreSeries_create, L"Create LegendreSeries", L"Create LegendreSeries..
 DO
 	double xmin = GET_REAL (L"Xmin"), xmax = GET_REAL (L"Xmax");
 	if (xmin >= xmax) Melder_throw ("Xmin must be smaller than Xmax.");
-	praat_new (LegendreSeries_createFromString (xmin, xmax, GET_STRING (L"Coefficients")), GET_STRING (L"Name")); 
+	praat_new (LegendreSeries_createFromString (xmin, xmax, GET_STRING (L"Coefficients")), GET_STRING (L"Name"));
 END
 
 DIRECT (LegendreSeries_help) Melder_help (L"LegendreSeries"); END
@@ -2885,8 +2883,8 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Matrix);
-		Matrix_drawAsSquares (me, GRAPHICS, GET_REAL (L"left Horizontal range"), 
-			GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), 
+		Matrix_drawAsSquares (me, GRAPHICS, GET_REAL (L"left Horizontal range"),
+			GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"),
 			GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"));
 	}
 END
@@ -2910,8 +2908,8 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Matrix);
-		Matrix_drawDistribution (me, GRAPHICS, GET_REAL (L"left Horizontal range"), 
-			GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), 
+		Matrix_drawDistribution (me, GRAPHICS, GET_REAL (L"left Horizontal range"),
+			GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"),
 			GET_REAL (L"right Vertical range"), GET_REAL (L"Minimum value"), GET_REAL (L"Maximum value"),
 			GET_INTEGER (L"Number of bins"), GET_REAL (L"Minimum frequency"), GET_REAL (L"Maximum frequency"), 0,
 			GET_INTEGER (L"Garnish"));
@@ -2937,7 +2935,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Matrix);
-		Matrix_drawDistribution (me, GRAPHICS, GET_REAL (L"left Horizontal range"), 
+		Matrix_drawDistribution (me, GRAPHICS, GET_REAL (L"left Horizontal range"),
 		GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
     	GET_REAL (L"Minimum value"), GET_REAL (L"Maximum value"), GET_INTEGER (L"Number of bins"),
     	GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), 1,GET_INTEGER (L"Garnish"));
@@ -2965,7 +2963,7 @@ END
 DIRECT (Matrix_transpose)
 	LOOP {
 		iam (Matrix);
-		praat_new ((Data) Matrix_transpose (me), my name);
+		praat_new (Matrix_transpose (me), 0);
 	}
 END
 
@@ -3002,8 +3000,8 @@ DO
 	if (x == 0 || y == 0) Melder_throw ("X and Y component must differ from 0.");
 	LOOP {
 		iam (Matrix);
-		Matrix_scatterPlot (me, GRAPHICS, x, y, GET_REAL (L"left Horizontal range"), 
-			GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), 
+		Matrix_scatterPlot (me, GRAPHICS, x, y, GET_REAL (L"left Horizontal range"),
+			GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"),
 			GET_REAL (L"right Vertical range"), GET_REAL (L"Mark size"), GET_STRING (L"Mark string"),
 			GET_INTEGER (L"Garnish"));
 	}
@@ -3258,7 +3256,7 @@ FORM (Pattern_formula, L"Pattern: Formula", 0)
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	praat_Fon_formula (dia, interpreter); therror
+	praat_Fon_formula (dia, interpreter);
 END
 
 FORM (Pattern_setValue, L"Pattern: Set value", L"Pattern: Set value...")
@@ -3598,7 +3596,7 @@ DO
 	LOOP {
 		iam (Permutation);
 		praat_new (Permutation_permuteBlocksRandomly (me, GET_INTEGER (L"left Index range"),
-			GET_INTEGER (L"right Index range"), blocksize, GET_INTEGER (L"Permute within blocks"), 
+			GET_INTEGER (L"right Index range"), blocksize, GET_INTEGER (L"Permute within blocks"),
 			GET_INTEGER (L"No doublets")), Thing_getName (me), L"_pbr", Melder_integer(blocksize));
 	}
 END
@@ -3769,7 +3767,10 @@ FORM (Polygon_translate, L"Polygon: Translate", L"Polygon: Translate...")
 	REAL (L"Y", L"0.0")
 	OK
 DO
-	Polygon_translate (ONLY(classPolygon), GET_REAL (L"X"), GET_REAL (L"Y"));
+	LOOP {
+		iam (Polygon);
+		Polygon_translate (me, GET_REAL (L"X"), GET_REAL (L"Y"));
+	}
 END
 
 FORM (Polygon_rotate, L"Polygon: Rotate", L"Polygon: Rotate...")
@@ -3809,7 +3810,7 @@ FORM (Polygon_Categories_draw, L"Polygon & Categories: Draw", 0)
 DO
 	Polygon me = FIRST (Polygon);
 	Categories cat = FIRST (Categories);
-	Polygon_Categories_draw (me, cat, GRAPHICS, GET_REAL (L"left Horizontal range"), 
+	Polygon_Categories_draw (me, cat, GRAPHICS, GET_REAL (L"left Horizontal range"),
 		GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 		GET_INTEGER (L"Garnish"));
 END
@@ -3950,7 +3951,7 @@ DO
 		The following line initiates pq = NULL and I don't know why
 	Polynomial p1 = NULL, p2 = NULL, pq, pr;
 	*/
-	
+
 	bool wantq = GET_INTEGER (L"Want quotient");
 	bool wantr = GET_INTEGER (L"Want remainder");
 	if (! wantq && ! wantr) Melder_throw ("Either \'Want quotient\' or \'Want remainder\' must be chosen");
@@ -4096,62 +4097,62 @@ static void Sound_create_addCommonFields (void *dia)
 static void Sound_create_checkCommonFields (void *dia, double *startingTime, double *finishingTime,
 	double *samplingFrequency)
 {
-		double numberOfSamples_real;
-		*startingTime = GET_REAL (L"Starting time");
-		*finishingTime = GET_REAL (L"Finishing time");
-		*samplingFrequency = GET_REAL (L"Sampling frequency");
-		numberOfSamples_real = floor ((*finishingTime - *startingTime) * *samplingFrequency + 0.5);
-		if (*finishingTime <= *startingTime)
-		{
-			if (*finishingTime == *startingTime)
-				Melder_throw ("A Sound cannot have a duration of zero.");
-			else
-				Melder_throw ("A Sound cannot have a duration less than zero.");
-			if (*startingTime == 0.0)
-				Melder_throw ("Please set the finishing time to something greater than 0 seconds.");
-			else
-				Melder_throw ("Please lower the starting time or raise the finishing time.");
-		}
-		if (*samplingFrequency <= 0.0)
-			Melder_throw ("A Sound cannot have a negative sampling frequency.\n"
-				"Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
-
-		if (numberOfSamples_real < 1.0)
-		{
-			Melder_error1 (L"A Sound cannot have zero samples.\n");
-		if (*startingTime == 0.0)
-			Melder_throw ("A Sound cannot have zero samples.\nPlease raise the finishing time.");
+	double numberOfSamples_real;
+	*startingTime = GET_REAL (L"Starting time");
+	*finishingTime = GET_REAL (L"Finishing time");
+	*samplingFrequency = GET_REAL (L"Sampling frequency");
+	numberOfSamples_real = floor ((*finishingTime - *startingTime) * *samplingFrequency + 0.5);
+	if (*finishingTime <= *startingTime)
+	{
+		if (*finishingTime == *startingTime)
+			Melder_throw ("A Sound cannot have a duration of zero.");
 		else
-			Melder_throw ("A Sound cannot have zero samples.\nPlease lower the starting time or raise the finishing time.");
-		}
-		if (numberOfSamples_real > LONG_MAX)
-		{
-			Melder_throw ("A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), " samples; the maximum is ", Melder_bigInteger (LONG_MAX), " samples.\n");
+			Melder_throw ("A Sound cannot have a duration less than zero.");
+		if (*startingTime == 0.0)
+			Melder_throw ("Please set the finishing time to something greater than 0 seconds.");
+		else
+			Melder_throw ("Please lower the starting time or raise the finishing time.");
+	}
+	if (*samplingFrequency <= 0.0)
+		Melder_throw ("A Sound cannot have a negative sampling frequency.\n"
+			"Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
+
+	if (numberOfSamples_real < 1.0)
+	{
+		Melder_error1 (L"A Sound cannot have zero samples.\n");
+	if (*startingTime == 0.0)
+		Melder_throw ("A Sound cannot have zero samples.\nPlease raise the finishing time.");
+	else
+		Melder_throw ("A Sound cannot have zero samples.\nPlease lower the starting time or raise the finishing time.");
+	}
+	if (numberOfSamples_real > LONG_MAX)
+	{
+		Melder_throw ("A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), " samples; the maximum is ", Melder_bigInteger (LONG_MAX), " samples.\n");
 #if 0
-			if (*startingTime == 0.0)
-				Melder_throw (L"Please lower the finishing time or the sampling frequency.");
-			else
-				Melder_throw (L"Please raise the starting time, lower the finishing time, or lower the sampling frequency.");
+		if (*startingTime == 0.0)
+			Melder_throw (L"Please lower the finishing time or the sampling frequency.");
+		else
+			Melder_throw (L"Please raise the starting time, lower the finishing time, or lower the sampling frequency.");
 #endif
-		}
+	}
 }
 
 static void Sound_create_check (Sound me, double startingTime, double finishingTime, double samplingFrequency)
 {
-		if (me != 0) return;
+	if (me != 0) return;
 
-		if (wcsstr (Melder_getError (), L"memory"))
-		{
-			double numberOfSamples_real = floor ((finishingTime - startingTime) * samplingFrequency + 0.5);
-			Melder_clearError ();
-			Melder_throw ("There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), L" samples.\n");
+	if (wcsstr (Melder_getError (), L"memory"))
+	{
+		double numberOfSamples_real = floor ((finishingTime - startingTime) * samplingFrequency + 0.5);
+		Melder_clearError ();
+		Melder_throw ("There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), L" samples.\n");
 #if 0
-			if (startingTime == 0.0)
-				Melder_throw (L"You could lower the finishing time or the sampling frequency and try again.");
-			else
-				Melder_throw ("You could raise the starting time or lower the finishing time or the sampling frequency, and try again.");
+		if (startingTime == 0.0)
+			Melder_throw (L"You could lower the finishing time or the sampling frequency and try again.");
+		else
+			Melder_throw ("You could raise the starting time or lower the finishing time or the sampling frequency, and try again.");
 #endif
-		}
+	}
 }
 
 FORM (Sound_and_Pitch_to_FormantFilter, L"Sound & Pitch: To FormantFilter", L"Sound & Pitch: To FormantFilter...")
@@ -4267,7 +4268,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Sound);
-		Sound_drawWhere (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), 
+		Sound_drawWhere (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"),
 			GET_STRING (L"Drawing method"), numberOfBisections, GET_STRING (L"Formula"), interpreter);
 	}
@@ -4494,7 +4495,7 @@ DO
 		( s1 ? s2 : s1 ) = me;
 	}
 	Melder_assert (s1 && s2);
-	praat_new (Sounds_to_Polygon_enclosed (s1, s2, channel, GET_REAL (L"left Time range"), 
+	praat_new (Sounds_to_Polygon_enclosed (s1, s2, channel, GET_REAL (L"left Time range"),
 		GET_REAL (L"right Time range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range")), 0);
 END
 
@@ -4571,7 +4572,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Sound);
-		Sound_paintWhere (me, GRAPHICS, GET_COLOUR (L"Colour"), GET_REAL (L"left Time range"), 
+		Sound_paintWhere (me, GRAPHICS, GET_COLOUR (L"Colour"), GET_REAL (L"left Time range"),
 			GET_REAL (L"right Time range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 			GET_REAL (L"Fill from level"), GET_INTEGER (L"Garnish"), numberOfBisections, GET_STRING (L"Formula"),
 			interpreter);
@@ -4599,28 +4600,28 @@ DO
 END
 
 FORM_READ (Sound_readFromRawFileLE, L"Read Sound from raw Little Endian file", 0, true)
-	praat_new (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0, 16000), MelderFile_name (file)); therror
+	praat_new (Sound_readFromRawFile (file, NULL, 16, 1, 0, 0, 16000), MelderFile_name (file));
 END
 
 FORM_READ (Sound_readFromRawFileBE, L"Read Sound from raw 16-bit Little Endian file", 0, true)
-	praat_new (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0, 16000), MelderFile_name (file)); therror
+	praat_new (Sound_readFromRawFile (file, NULL, 16, 0, 0, 0, 16000), MelderFile_name (file));
 END
 
 FORM_READ (KlattTable_readFromRawTextFile, L"KlattTable_readFromRawTextFile", 0, true)
-	praat_new (KlattTable_readFromRawTextFile (file), MelderFile_name (file)); therror
+	praat_new (KlattTable_readFromRawTextFile (file), MelderFile_name (file));
 END
 
 FORM_WRITE (Sound_writeToRawFileBE, L"Sound: Save as raw 16-bit Big Endian file", 0, L"raw")
 	LOOP {
 		iam (Sound);
-		Sound_writeToRawFile (me, file, 0, 0, 16, 0); therror
+		Sound_writeToRawFile (me, file, 0, 0, 16, 0);
 	}
 END
 
 FORM_WRITE (Sound_writeToRawFileLE, L"Sound: Save as raw 16-bit Little Endian file", 0, L"raw")
 	LOOP {
 		iam (Sound);
-		Sound_writeToRawFile (me, file, 0, 1, 16, 0); therror
+		Sound_writeToRawFile (me, file, 0, 1, 16, 0);
 	}
 END
 
@@ -4752,7 +4753,7 @@ DO
 		iam (SSCP);
 		SSCP_drawConcentrationEllipse (me, GRAPHICS, GET_REAL (L"Confidence level"), 1,
 			GET_INTEGER (L"Index for X-axis"), GET_INTEGER (L"Index for Y-axis"),
-			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"), 
+			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"));
 	}
 END
@@ -4928,7 +4929,7 @@ FORM (Strings_setString, L"Strings: Set string", L"Strings: Set string...")
 DO
 	LOOP {
 		iam (Strings);
-		Strings_setString (me, GET_STRING (L"String"), GET_INTEGER (L"Index")); therror
+		Strings_setString (me, GET_STRING (L"String"), GET_INTEGER (L"Index"));
 		praat_dataChanged (me);
 	}
 END
@@ -4945,7 +4946,7 @@ DO
 	long nmatches, nstringmatches;
 	LOOP {
 		iam (Strings);
-		praat_new (Strings_change (me, GET_STRING (L"Search"), GET_STRING (L"Replace"), 
+		praat_new (Strings_change (me, GET_STRING (L"Search"), GET_STRING (L"Replace"),
 			GET_INTEGER (L"Replace limit"), &nmatches, &nstringmatches, GET_INTEGER (L"Search and replace are") - 1), 0);
 	}
 END
@@ -5092,7 +5093,7 @@ END
 
 DIRECT (TableOfReal_appendColumns)
 	autoCollection set = praat_getSelectedObjects ();
-	praat_new ((Data) TableOfReal_appendColumnsMany (set.peek()), L"columns_appended");
+	praat_new (TableOfReal_appendColumnsMany (set.peek()), L"columns_appended");
 END
 
 FORM (TableOfReal_createFromPolsData_50males, L"Create TableOfReal (Pols 1973)", L"Create TableOfReal (Pols 1973)...")
@@ -5562,7 +5563,7 @@ DO
 		iam (TextGrid);
 		long nmatches, nstringmatches;
 		TextGrid_changeLabels (me, GET_INTEGER (L"Tier number"), from, to, search, GET_STRING (L"Replace"),
-			regexp, &nmatches, &nstringmatches); therror
+			regexp, &nmatches, &nstringmatches);
 		praat_dataChanged (me);
 	}
 END
@@ -5585,7 +5586,7 @@ DO
 		iam (TextGrid);
 		long nmatches, nstringmatches;
 		TextGrid_changeLabels (me, GET_INTEGER (L"Tier number"), from, to, GET_STRING (L"Search"), GET_STRING (L"Replace"),
-			GET_INTEGER (L"Search and replace strings are")-1, &nmatches, &nstringmatches); therror
+			GET_INTEGER (L"Search and replace strings are")-1, &nmatches, &nstringmatches);
 		praat_dataChanged (me);
 	}
 END
@@ -5597,15 +5598,15 @@ FORM (TextGrid_setTierName, L"TextGrid: Set tier name", L"TextGrid: Set tier nam
 DO
 	LOOP {
 		iam (TextGrid);
-		TextGrid_setTierName (me, GET_INTEGER (L"Tier number"), GET_STRING (L"Name")); therror
+		TextGrid_setTierName (me, GET_INTEGER (L"Tier number"), GET_STRING (L"Name"));
 		praat_dataChanged (me);
 	}
 END
 
-static VowelEditor vowelEditor = NULL;
 DIRECT (VowelEditor_create)
-	if (theCurrentPraatApplication -> batch) Melder_throw (L"Cannot edit from batch.");
-	vowelEditor = VowelEditor_create (theCurrentPraatApplication -> topShell, L"VowelEditor", NULL);
+	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit from batch.");
+	autoVowelEditor vowelEditor = VowelEditor_create (theCurrentPraatApplication -> topShell, L"VowelEditor", NULL);
+	vowelEditor.transfer(); // user becomes the owner
 END
 
 static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs)
@@ -5828,6 +5829,8 @@ extern "C" void praat_uvafon_David_init (void)
 		classMelFilter,
 		classMSpline, classPattern, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSPINET, classSSCP, classSVD, NULL);
+
+	VowelEditor_prefs ();
 
     praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
 
@@ -6273,7 +6276,7 @@ extern "C" void praat_uvafon_David_init (void)
 	praat_addAction1 (classPolygon, 0, L"Reverse Y", L"Reverse X", 1, DO_Polygon_reverseY);
 	praat_addAction1 (classPolygon, 0, L"Simplify", 0, praat_HIDDEN, DO_Polygon_simplify);
 	praat_addAction1 (classPolygon, 0, L"Circular permutation...", 0, praat_HIDDEN, DO_Polygon_circularPermutation);
-	
+
 	praat_addAction2 (classPolygon, 1, classCategories, 1, L"Draw...", 0, 0, DO_Polygon_Categories_draw);
 
 	praat_addAction1 (classPolynomial, 0, L"Polynomial help", 0, 0, DO_Polynomial_help);
@@ -6435,13 +6438,11 @@ extern "C" void praat_uvafon_David_init (void)
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)
-	
+
     INCLUDE_LIBRARY (praat_uvafon_MDS_init)
 	INCLUDE_LIBRARY (praat_KlattGrid_init)
 	INCLUDE_LIBRARY (praat_HMM_init)
 	INCLUDE_LIBRARY (praat_BSS_init)
-
-	VowelEditor_prefs ();
 }
 
 /* End of file praat_David.c */

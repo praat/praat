@@ -25,28 +25,20 @@
  djmw 20110307 Latest mofification.
 */
 
-#ifndef _FFNet_h_
-	#include "FFNet.h"
-#endif
-#ifndef _Pattern_h_
-	#include "Pattern.h"
-#endif
-#ifndef _Categories_h_	
-	#include "Categories.h"
-#endif
-#ifndef _Minimizers_h_	
-	#include "Minimizers.h"
-#endif
+#include "FFNet.h"
+#include "Pattern.h"
+#include "Categories.h"
+#include "Minimizers.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-int FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long maxNumOfEpochs,
+void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, long maxNumOfEpochs,
     double tolerance, Any parameters, int costFunctionType);
 /* Steepest descent */
 
-int FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long maxNumOfEpochs,
+void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, long maxNumOfEpochs,
     double tolerance, Any parameters, int costFunctionType);
 /* Conj. Gradient vdSmagt */
 
@@ -63,5 +55,5 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern p, int labeling);
 #ifdef __cplusplus
 	}
 #endif
- 
+
 #endif /* _FFNet_Pattern_Categories_h_ */

@@ -43,7 +43,7 @@ Polynomial LPC_to_Polynomial (LPC me, double time)
 		if (iFrame < 1 || iFrame > my nx) Melder_throw ("invalid frame number.");
 		autoPolynomial thee = LPC_Frame_to_Polynomial (&my frame[iFrame]);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ":no Polynomial created."); }
+	} catch (MelderError) { Melder_throw (me, ":no Polynomial created."); }
 }
 
 /* End of file LPC_and_Polynomial.cpp */

@@ -56,11 +56,11 @@ static void readText (I, MelderReadText text) {
 	my dy = texgetr8 (text);
 	my y1 = texgetr8 (text);
 	if (my xmin > my xmax || my ymin > my ymax)
-		Melder_throw (L"(Sampled2::readText:) xmin should <= xmax and ymin <= ymax.");
+		Melder_throw ("xmin should <= xmax and ymin <= ymax.");
 	if (my nx < 1 || my ny < 1)
-		Melder_throw (L"(Sampled2::readText:) nx should >= 1 and ny >= 1.");
+		Melder_throw ("nx should >= 1 and ny >= 1.");
 	if (my dx <= 0 || my dy <= 0)
-		Melder_throw (L"(Sampled2::readText:) dx should > 0 and dy > 0.");
+		Melder_throw ("dx should > 0 and dy > 0.");
 }
 
 class_methods (Sampled2, Data)

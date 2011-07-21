@@ -43,21 +43,21 @@
 Polygon Polygon_createSimple (wchar_t *xystring);
 Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
 Polygon Polygon_simplify (Polygon me);
-void Polygon_translate (I, double xt, double yt);
-void Polygon_rotate (I, double alpha, double xc, double yc);
-void Polygon_scale (I, double xs, double ys);
-void Polygon_reverseX (I);
-void Polygon_reverseY (I);
+void Polygon_translate (Polygon me, double xt, double yt);
+void Polygon_rotate (Polygon me, double alpha, double xc, double yc);
+void Polygon_scale (Polygon me, double xs, double ys);
+void Polygon_reverseX (Polygon me);
+void Polygon_reverseY (Polygon me);
 Polygon Polygon_circularPermutation (Polygon me, long nshift);
 
 // Is point (x,y) Inside, Outside, Boundary (Edge or Vertex) ?
 int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);
 
-void Polygon_Categories_draw (I, Any categories, Any graphics, double xmin, double xmax,
+void Polygon_Categories_draw (Polygon me, Any categories, Any graphics, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
 /* reverse axis when min > max */
 
-void Polygon_drawMarks (I, Graphics g, double xmin, double xmax,
+void Polygon_drawMarks (Polygon me, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double size_mm, const wchar_t *mark);
 
 Polygon Sound_to_Polygon (Sound me, int channel, double tmin, double tmax, double ymin, double ymax, double level);

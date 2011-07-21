@@ -385,7 +385,7 @@ static int CategoriesEditorMoveDown_execute (I)
 {
 		iam (CategoriesEditorMoveDown);
 		CategoriesEditor editor = (CategoriesEditor) my data;
-		Ordered_moveItems (editor -> data, my selection, my nSelected, my newPos);
+	Ordered_moveItems ((Ordered) editor -> data, my selection, my nSelected, my newPos);
 		autoNUMvector<long> selection (1, my nSelected);
 		for (long i = 1; i <= my nSelected; i++)
 		{
@@ -869,7 +869,7 @@ CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, 
 		updateWidgets (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("Categories window not created.");
+		Melder_throw ("Categories window not created.");
 	}
 }
 

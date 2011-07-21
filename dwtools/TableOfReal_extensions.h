@@ -24,24 +24,12 @@
  djmw 20110105 Latest modification.
 */
 
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _Pattern_h_
-	#include "Pattern.h"
-#endif
-#ifndef _Categories_h_
-	#include "Categories.h"
-#endif
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
-#ifndef _SSCP_h_
-	#include "SSCP.h"
-#endif
+#include "TableOfReal.h"
+#include "Collection.h"
+#include "Pattern.h"
+#include "Categories.h"
+#include "Strings.h"
+#include "SSCP.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -198,9 +186,9 @@ TableOfReal TableOfReal_to_TableOfReal (I);
 TableOfReal TableOfReal_choleskyDecomposition (I, int upper, int inverse);
 
 TableOfReal TableOfReal_appendColumns (I, thou);
-Any TableOfReal_appendColumnsMany (Collection me);
+TableOfReal TableOfReal_appendColumnsMany (Collection me);
 
-int TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow);
+void TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow);
 
 double TableOfReal_normalityTest_BHEP (I, double *beta, double *tnb, double *lnmu, double *lnvar);
 

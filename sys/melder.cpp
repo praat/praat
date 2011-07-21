@@ -81,14 +81,13 @@
 
 /********** Exported variables. **********/
 
-int Melder_batch;   /* Don't we have a GUI?- Set once at application start-up. */
-int Melder_backgrounding;   /* Are we running a script?- Set and unset dynamically. */
+bool Melder_batch;   // don't we have a GUI?- Set once at application start-up
+bool Melder_backgrounding;   // are we running a script?- Set and unset dynamically
 char Melder_buffer1 [30001], Melder_buffer2 [30001];
 unsigned long Melder_systemVersion;
 
 #ifndef CONSOLE_APPLICATION
-	void *Melder_appContext;   /* XtAppContext* */
-	void *Melder_topShell;   /* GuiObject */
+	void *Melder_topShell;   // GuiObject
 #endif
 
 static void defaultHelp (const wchar *query) {
@@ -544,7 +543,6 @@ void Melder_warningOn (void) { theWarningDepth ++; }
 
 static MelderString theWarningBuffer = { 0 };
 
-#ifdef __cplusplus
 void Melder_warning (const MelderArg& arg1) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
@@ -709,7 +707,6 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 		arg20.type == 1 ? arg20.argW : Melder_peekUtf8ToWcs (arg20.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
-#endif
 
 void Melder_warning1 (const wchar *s1) {
 	if (theWarningDepth < 0) return;
@@ -886,10 +883,9 @@ static void gui_warning (const wchar *message) {
 }
 
 extern "C" void gui_information (const wchar *);   // BUG: no prototype
-void MelderGui_create (void *appContext, void *parent) {
+void MelderGui_create (void *parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
 	assert (theMessageFund != NULL);
-	Melder_appContext = appContext;
 	Melder_topShell = (GuiObject) parent;
 	Melder_setInformationProc (gui_information);
 	Melder_setFatalProc (gui_fatal);

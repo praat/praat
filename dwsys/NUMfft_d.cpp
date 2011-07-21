@@ -30,7 +30,6 @@
 #define FFT_DATA_TYPE double
 #include "NUMfft_core.h"
 
-
 void NUMforwardRealFastFourierTransform (double *data, long n)
 {
 	autoNUMfft_Table table;
@@ -79,10 +78,10 @@ void NUMfft_backward (NUMfft_Table me, double *data)
 
 void NUMfft_Table_init (NUMfft_Table me, long n)
 {
-	my n = n;
-	my trigcache = NUMvector <double> (0, 3 * n - 1);
-	my splitcache = NUMvector <long> (0, 31);
-	NUMrffti (n, my trigcache, my splitcache);
+        my n = n;
+        my trigcache = NUMvector <double> (0, 3 * n - 1);
+        my splitcache = NUMvector <long> (0, 31);
+        NUMrffti (n, my trigcache, my splitcache);
 }
 
 void NUMrealft (double *data, long n, int isign)

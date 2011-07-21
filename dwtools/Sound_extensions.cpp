@@ -268,12 +268,12 @@ Sound Sound_readFromCmuAudioFile (MelderFile file)
 		if (bingeti2LE (f) < 1) Melder_throw ("Sound_readFromCmuAudioFile: incorrect sampling frequency.");
 		long nSamples = bingeti4LE (f);
 		if (nSamples < 1) Melder_throw ("Sound_readFromCmuAudioFile: incorrect number of samples.");
-		autoSound me = Sound_createSimple (1, nSamples/16000., 16000); therror
+		autoSound me = Sound_createSimple (1, nSamples/16000., 16000);
 		i2read (me.peek(), f, littleEndian);
 		if (feof (f) || ferror (f)) Melder_throw ("Sound_readFromCmuAudioFile: not completed.");
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Reading from file not performed."); }
+	} catch (MelderError) { Melder_throw ("Reading from file not performed."); }
 }
 
 Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding,
@@ -292,42 +292,41 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 		if (nSamples < 1) Melder_errorp ("Sound_readFromRawFile: no samples left to read");
 		autoSound me = Sound_createSimple (1, nSamples/samplingFrequency, samplingFrequency);
 		fseek (f, skipNBytes, SEEK_SET);
-		if (      nBytesPerSample == 1 &&   unSigned) u1read (me.peek(), f); therror
-		else if ( nBytesPerSample == 1 && ! unSigned) i1read (me.peek(), f); therror
-		else if ( nBytesPerSample == 2 &&   unSigned) u2read (me.peek(), f, littleEndian); therror
-		else if ( nBytesPerSample == 2 && ! unSigned) i2read (me.peek(), f, littleEndian); therror
-		else if ( nBytesPerSample == 4 &&   unSigned) u4read (me.peek(), f, littleEndian); therror
-		else if ( nBytesPerSample == 4 && ! unSigned) i4read (me.peek(), f, littleEndian); therror
-		else if ( nBytesPerSample == 4 && strequ (format, "float")) r4read (me.peek(), f); therror
+		if (      nBytesPerSample == 1 &&   unSigned) u1read (me.peek(), f);
+		else if ( nBytesPerSample == 1 && ! unSigned) i1read (me.peek(), f);
+		else if ( nBytesPerSample == 2 &&   unSigned) u2read (me.peek(), f, littleEndian);
+		else if ( nBytesPerSample == 2 && ! unSigned) i2read (me.peek(), f, littleEndian);
+		else if ( nBytesPerSample == 4 &&   unSigned) u4read (me.peek(), f, littleEndian);
+		else if ( nBytesPerSample == 4 && ! unSigned) i4read (me.peek(), f, littleEndian);
+		else if ( nBytesPerSample == 4 && strequ (format, "float")) r4read (me.peek(), f);
 		if (feof (f) || ferror (f)) Melder_throw ("Sound_readFromRawFile: not completed.");
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not read from file ", MelderFile_messageName (file), "."); }
+	} catch (MelderError) { Melder_throw ("Sound not read from file ", MelderFile_messageName (file), "."); }
 }
 
-int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned)
+void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned)
 {
 	try {
-	long nClip = 0;
+		long nClip = 0;
 		autofile f = Melder_fopen (file, "wb");
 		if (! format) format = "integer";
 		if (nBitsCoding <= 0) nBitsCoding = 16;
 		long nBytesPerSample = ( nBitsCoding + 7) / 8;
 		if (strequ (format, "float")) nBytesPerSample = 4;
 		if (nBytesPerSample == 3 || nBytesPerSample > 4) Melder_throw (L"number of bytes per sample should be 1, 2 or 4.");
-		if (     nBytesPerSample == 1 &&   unSigned) u1write (me, f, & nClip); therror
-		else if (nBytesPerSample == 1 && ! unSigned) i1write (me, f, & nClip); therror
-		else if (nBytesPerSample == 2 &&   unSigned) u2write (me, f, littleEndian, & nClip); therror
-		else if (nBytesPerSample == 2 && ! unSigned) i2write (me, f, littleEndian, & nClip); therror
-		else if (nBytesPerSample == 4 &&   unSigned) u4write (me, f, littleEndian, & nClip); therror
-		else if (nBytesPerSample == 4 && ! unSigned) i4write (me, f, littleEndian, & nClip); therror
-		else if (nBytesPerSample == 4 && strequ (format, "float")) r4write (me, f); therror
+		if (     nBytesPerSample == 1 &&   unSigned) u1write (me, f, & nClip);
+		else if (nBytesPerSample == 1 && ! unSigned) i1write (me, f, & nClip);
+		else if (nBytesPerSample == 2 &&   unSigned) u2write (me, f, littleEndian, & nClip);
+		else if (nBytesPerSample == 2 && ! unSigned) i2write (me, f, littleEndian, & nClip);
+		else if (nBytesPerSample == 4 &&   unSigned) u4write (me, f, littleEndian, & nClip); 
+		else if (nBytesPerSample == 4 && ! unSigned) i4write (me, f, littleEndian, & nClip); 
+		else if (nBytesPerSample == 4 && strequ (format, "float")) r4write (me, f);
 		if (nClip > 0) Melder_warning4 (Melder_integer (nClip), L" from ", Melder_integer (my nx),
 			L" samples have been clipped.\nAdvice: you could scale the amplitudes or save as a binary file.");
 		if (feof (f) || ferror (f)) Melder_throw ("Sound_writeToRawFile: not completed");
 		f.close (file);
-		return 1;
-	} catch (MelderError) { Melder_thrown (me, ": saving as raw file not performed."); }
+	} catch (MelderError) { Melder_throw (me, ": saving as raw file not performed."); }
 }
 
 struct dialogic_adpcm
@@ -424,7 +423,7 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 		}
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not read from Dialogic ADPCM file", MelderFile_messageName (file), "."); }
+	} catch (MelderError) { Melder_throw ("Sound not read from Dialogic ADPCM file", MelderFile_messageName (file), "."); }
 }
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency)
@@ -461,7 +460,7 @@ Sound Sound_createGaussian (double windowDuration, double samplingFrequency)
 			s[i] = (exp (-48.0*(i-imid)*(i-imid)/(my nx+1)/(my nx+1)) - edge) / (1 - edge);
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Gaussian function."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from Gaussian function."); }
 }
 
 Sound Sound_createHamming (double windowDuration, double samplingFrequency)
@@ -475,7 +474,7 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency)
 			s[i] = 0.54 - 0.46 * cos ((i-1) * p);
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Hamming function."); };
+	} catch (MelderError) { Melder_throw ("Sound not created from Hamming function."); };
 }
 
 static Sound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency)
@@ -522,7 +521,7 @@ static Sound Sound_createToneComplex (double minimumTime, double maximumTime, do
 		}
 		if (scaleAmplitudes) Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from tone complex."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from tone complex."); }
 }
 
 
@@ -576,7 +575,7 @@ Sound Sound_createGammaTone (double minimumTime, double maximumTime, double samp
 		}
 		if (scaleAmplitudes) Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from gammatone function."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from gammatone function."); }
 }
 
 static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_frequency,
@@ -715,7 +714,7 @@ Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double 
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not filtered by gammatone filter4."); }
+	} catch (MelderError) { Melder_throw ("Sound not filtered by gammatone filter4."); }
 }
 
 /*
@@ -822,7 +821,7 @@ Sound Sound_createShepardToneComplex (double minimumTime, double maximumTime,
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Shepard tone complex."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from Shepard tone complex."); }
 }
 
 /* can be implemented more efficiently with sin recurrence? */
@@ -867,7 +866,7 @@ Sound Sound_createShepardTone (double minimumTime, double maximumTime,
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Shepard tone."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from Shepard tone."); }
 }
 
 Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime, double samplingFrequency,
@@ -876,7 +875,7 @@ Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime,
 	try {
 		if ((numberOfComponents - 1 + frequencyShiftRatio) * baseFrequency >  samplingFrequency/2) Melder_throw
 			("Frequency of one or more components too large.");
-		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency); therror
+		autoSound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 		double w0 = NUM2pi * baseFrequency;
 		for (long i = 1; i <= my nx; i++)
 		{
@@ -886,7 +885,7 @@ Sound Sound_createPattersonWightmanTone (double minimumTime, double maximumTime,
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Patterson Wightman tone."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from Patterson Wightman tone."); }
 }
 
 Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samplingFrequency,
@@ -907,7 +906,7 @@ Sound Sound_createPlompTone (double minimumTime, double maximumTime, double samp
 		}
 		Vector_scale (me.peek(), 0.99996948);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Plomp tone."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from Plomp tone."); }
 }
 
 void Sounds_multiply (Sound me, Sound thee)
@@ -1039,42 +1038,42 @@ end:
 }
 */
 
-int Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
+void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3)
 {
-		if (my dx != thy dx) Melder_throw ("Sample rates must be equal.");
+	if (my dx != thy dx) Melder_throw ("Sample rates must be equal.");
 
-		if (t1 == 0) t1 =  my xmin;
-		if (t2 == 0) t2 =  my xmax;
+	if (t1 == 0) t1 =  my xmin;
+	if (t2 == 0) t2 =  my xmax;
 
-		long i1 = Sampled_xToHighIndex (me, t1);
-		long i2 = Sampled_xToLowIndex (me, t2);
-		if (i1 > i2 || i2 > my nx || i1 < 1) Melder_throw
-			("Times of part to be overwritten must be within the sound.");
+	long i1 = Sampled_xToHighIndex (me, t1);
+	long i2 = Sampled_xToLowIndex (me, t2);
+	if (i1 > i2 || i2 > my nx || i1 < 1) Melder_throw
+		("Times of part to be overwritten must be within the sound.");
 
-		if (t3 == 0) t3 = thy xmin;
-		long i3 = Sampled_xToHighIndex (thee, t3);
-		long i4 = Sampled_xToLowIndex (thee, t3 + t2 - t1);
-		if (i4 > thy nx || i3 < 1) Melder_throw ("Not enough samples to be copied.");
-		if (i4 - i3 != i2 - i1) Melder_throw ("Error i4 - i3 != i2 - i1.");
+	if (t3 == 0) t3 = thy xmin;
+	long i3 = Sampled_xToHighIndex (thee, t3);
+	long i4 = Sampled_xToLowIndex (thee, t3 + t2 - t1);
+	if (i4 > thy nx || i3 < 1) Melder_throw ("Not enough samples to be copied.");
+	if (i4 - i3 != i2 - i1) Melder_throw ("Error i4 - i3 != i2 - i1.");
 
-		for (long i = i1; i <= i2; i++)
-		{
-			my z[1][i] = thy z[1][i - i1 + i3];
-		}
-		return 1;
+	for (long i = i1; i <= i2; i++)
+	{
+		my z[1][i] = thy z[1][i - i1 + i3];
+	}
 }
 
-int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula, Interpreter interpreter)
+void Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula, Interpreter interpreter)
 {
+	try {
 		autoSound part = Sound_extractPart (me, t1, t2, kSound_windowShape_RECTANGULAR, 1, 1);
 		autoSpectrum spec = Sound_to_Spectrum (part.peek(), TRUE);
-		Matrix_formula ((Matrix) spec.peek(), formula, interpreter, 0); therror
+		Matrix_formula ((Matrix) spec.peek(), formula, interpreter, 0);
 		autoSound filtered = Spectrum_to_Sound (spec.peek());
 
 		// Overwrite part between t1 and t2 of original with the filtered signal */
 
 		Sound_overwritePart (me, t1, t2, filtered.peek(), 0);
-		return 1;
+	} catch (MelderError) { Melder_throw (me, ": part not filtered by formula."); }
 }
 
 /*
@@ -1097,7 +1096,7 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 				if (fabs (s[i] - s[j]) > minimumJump)
 				{
 					double t = Sampled_indexToX (me, i);
-					PointProcess_addPoint (thee.peek(), t); therror
+					PointProcess_addPoint (thee.peek(), t);
 					step = j - i + 1; break;
 				}
 				j++;
@@ -1105,7 +1104,7 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 			i += step;
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no PointProcess created."); }
+	} catch (MelderError) { Melder_throw (me, ": no PointProcess created."); }
 }
 
 /* Internal pitch representation in semitones */
@@ -1149,7 +1148,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 			Melder_warning1 (L"Pitch has not been changed because the sound was entirely voiceless.");
 		}
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
-		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantMultiplier * durationMultiplier); therror
+		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantMultiplier * durationMultiplier);
 
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(), duration.peek(), MAX_T);
 
@@ -1157,7 +1156,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 
 		if (formantMultiplier != 1) thee.reset (Sound_resample (thee.peek(), samplingFrequency_old, 10));
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Pitch & Sound."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from Pitch & Sound."); }
 }
 
 Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
@@ -1170,7 +1169,7 @@ Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 		autoPitch pitch = Sound_to_Pitch (me, 0.8 / pitchMin, pitchMin, pitchMax);
 		autoSound thee = Sound_and_Pitch_changeSpeaker (me, pitch.peek(), formantMultiplier, pitchMultiplier, pitchRangeMultiplier, durationMultiplier);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": speaker not changed."); }
+	} catch (MelderError) { Melder_throw (me, ": speaker not changed."); }
 }
 
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
@@ -1182,7 +1181,7 @@ TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double tim
 		autoIntensity thee = Sound_to_Intensity (me, minPitch, timeStep, subtractMeanPressure);
 		autoTextGrid him = Intensity_to_TextGrid_detectSilences (thee.peek(), silenceThreshold, minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no TextGrid with silences created."); }
+	} catch (MelderError) { Melder_throw (me, ": no TextGrid with silences created."); }
 }
 
 /*  Compatibility with old Sound(&pitch)_changeGender  ***********************************/
@@ -1219,7 +1218,7 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor)
 			if (f < my ceiling) thy frame[i].candidate[1].frequency = f;
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Pitch not scaled."); }
+	} catch (MelderError) { Melder_throw ("Pitch not scaled."); }
 }
 
 Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio,
@@ -1260,7 +1259,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 			Melder_warning1 (L"There were no voiced segments found.");
 		}
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
-		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantRatio * durationFactor); therror
+		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantRatio * durationFactor);
 
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(),
 			duration.peek(), 0.8 / Pitch_getMinimum (pitch.peek(), 0.0, 0.0, kPitch_unit_HERTZ, false));
@@ -1269,7 +1268,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 
 		if (formantRatio != 1) thee.reset (Sound_resample (thee.peek(), samplingFrequency_old, 10));
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from Pitch & Sound."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from Pitch & Sound."); }
 }
 
 Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formantRatio,
@@ -1280,7 +1279,7 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 		autoSound thee = Sound_and_Pitch_changeGender_old (me, pitch.peek(), formantRatio,
 			new_pitch, pitchRangeFactor, durationFactor);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created for gender change."); }
+	} catch (MelderError) { Melder_throw ("Sound not created for gender change."); }
 }
 
 /*  End of compatibility with Sound_changeGender and Sound_and_Pitch_changeGender ***********************************/
@@ -1495,7 +1494,7 @@ Sound Sound_createFromWindowFunction (double windowDuration, double samplingFreq
 			my z[1][i] = value;
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Sound not created from window function."); }
+	} catch (MelderError) { Melder_throw ("Sound not created from window function."); }
 }
 
 /* y[n] = sum(i=-n, i=n, x[n+mi])/(2*n+1) */
@@ -1528,7 +1527,7 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Sound (local average) created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Sound (local average) created."); }
 }
 
 static void _Sound_garnish (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum)
@@ -1585,89 +1584,89 @@ static void _Sound_getWindowExtrema (Sound me, double *tmin, double *tmax, doubl
 static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isample, bool left, bool right, const wchar_t *formula,
 	Interpreter interpreter, int interpolation, long numberOfBisections, double *x, double *y)
 {
-		if (left)
-		{
-			*x = Matrix_columnToX (me, isample);
-			*y = my z[ichannel][isample];
-		}
-		else
-		{
-			*x = Matrix_columnToX (me, isample + 1);
-			*y = my z[ichannel][isample+1];
-		}
-		if ((left && right) || (!left && !right)) Melder_throw ("Invalid situation.");
+	if (left)
+	{
+		*x = Matrix_columnToX (me, isample);
+		*y = my z[ichannel][isample];
+	}
+	else
+	{
+		*x = Matrix_columnToX (me, isample + 1);
+		*y = my z[ichannel][isample+1];
+	}
+	if ((left && right) || (!left && !right)) Melder_throw ("Invalid situation.");
 
-		if (numberOfBisections < 1) return;
+	if (numberOfBisections < 1) return;
 
-		long nx = 3;
-		double dx = my dx / 2;
-		double xleft = Matrix_columnToX (me, isample);
-		autoSound thee = Sound_create (my ny, my xmin, my xmax, nx, dx, xleft); // my domain !
+	long nx = 3;
+	double dx = my dx / 2;
+	double xleft = Matrix_columnToX (me, isample);
+	autoSound thee = Sound_create (my ny, my xmin, my xmax, nx, dx, xleft); // my domain !
+
+	for (long channel = 1; channel <= my ny; channel++)
+	{
+		thy z[channel][1] = my z[channel][isample]; thy z[channel][3] = my z[channel][isample+1];
+	}
+
+	Formula_compile (interpreter, thee.peek(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+
+	// bisection to find optimal x and y
+	long istep = 1;
+	double xright = xleft + my dx, xmid; // !!
+	do
+	{
+		xmid = (xleft + xright) / 2;
 
 		for (long channel = 1; channel <= my ny; channel++)
 		{
-			thy z[channel][1] = my z[channel][isample]; thy z[channel][3] = my z[channel][isample+1];
+			thy z[channel][2] = Vector_getValueAtX (me, xmid, channel, interpolation);
 		}
 
-		Formula_compile (interpreter, thee.peek(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, true); therror
+		// Only thy x1 and thy dx have changed; It seems we don't have to recompile.
+		struct Formula_Result result;
+		Formula_run (ichannel, 2, & result);
+		bool current = result.result.numericResult;
 
-		// bisection to find optimal x and y
-		long istep = 1;
-		double xright = xleft + my dx, xmid; // !!
-		do
+		dx /= 2;
+		if ((left && current) || (! left && ! current))
 		{
-			xmid = (xleft + xright) / 2;
-
+			xleft = xmid;
+			left = current;
 			for (long channel = 1; channel <= my ny; channel++)
 			{
-				thy z[channel][2] = Vector_getValueAtX (me, xmid, channel, interpolation);
+				thy z[channel][1] = thy z[channel][2];
 			}
-
-			// Only thy x1 and thy dx have changed; It seems we don't have to recompile.
-			struct Formula_Result result;
-			Formula_run (ichannel, 2, & result); therror
-			bool current = result.result.numericResult;
-
-			dx /= 2;
-			if ((left && current) || (! left && ! current))
+			thy x1 = xleft;
+		}
+		else if ((left && ! current) || (!left && current))
+		{
+			xright = xmid;
+			right = current;
+			for (long channel = 1; channel <= my ny; channel++)
 			{
-				xleft = xmid;
-				left = current;
-				for (long channel = 1; channel <= my ny; channel++)
-				{
-					thy z[channel][1] = thy z[channel][2];
-				}
-				thy x1 = xleft;
+				thy z[channel][3] = thy z[channel][2];
 			}
-			else if ((left && ! current) || (!left && current))
-			{
-				xright = xmid;
-				right = current;
-				for (long channel = 1; channel <= my ny; channel++)
-				{
-					thy z[channel][3] = thy z[channel][2];
-				}
-			}
-			else
-			{
-				// we should not even be here.
-				break;
-			}
+		}
+		else
+		{
+			// we should not even be here.
+			break;
+		}
 
-			thy xmin = xleft - dx / 2;
-			thy xmax = xright + dx / 2;
-			thy dx = dx;
-			istep ++;
-		} while (istep < numberOfBisections);
+		thy xmin = xleft - dx / 2;
+		thy xmax = xright + dx / 2;
+		thy dx = dx;
+		istep ++;
+	} while (istep < numberOfBisections);
 
-		*x = xmid;
-		*y = thy z[ichannel][2];
+	*x = xmid;
+	*y = thy z[ichannel][2];
 }
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
 	bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter)
 {
-	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true); therror
+	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
 	long ixmin, ixmax;
 	_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
@@ -1685,7 +1684,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 		{
 			for (long ix = ixmin; ix <= ixmax; ix ++) 
 			{
-				Formula_run (channel, ix, & result); therror
+				Formula_run (channel, ix, & result);
 				if (result.result.numericResult)
 				{
 					double x = Sampled_indexToX (me, ix);
@@ -1704,7 +1703,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 		{
 			for (long ix = ixmin; ix <= ixmax; ix ++)
 			{
-				Formula_run (channel, ix, & result); therror
+				Formula_run (channel, ix, & result);
 				if (result.result.numericResult)
 				{
 					double x = Sampled_indexToX (me, ix);
@@ -1719,7 +1718,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 		{
 			for (long ix = ixmin; ix <= ixmax; ix ++)
 			{
-				Formula_run (channel, ix, & result); therror
+				Formula_run (channel, ix, & result);
 				if (result.result.numericResult)
 				{
 					double x = Sampled_indexToX (me, ix);
@@ -1736,7 +1735,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			 double xb = Sampled_indexToX (me, ixmin), yb = my z[channel][ixmin], xe, ye;
 			 for (long ix = ixmin; ix <= ixmax; ix++)
 			 {
-				Formula_run (channel, ix, & result); therror
+				Formula_run (channel, ix, & result);
 				current = result.result.numericResult; // true means draw
 				if (previous && ! current) // leaving drawing segment
 				{
@@ -1753,7 +1752,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 						}
 						Sound_findIntermediatePoint_bs (me, channel, ix-1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xe, &ye);
 						Graphics_line (g, xb, yb, xe, ye);
-						Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true); therror
+						Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 					}
 				}
 				else if (current && ! previous) // entry drawing segment
@@ -1763,7 +1762,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 					xe = Sampled_indexToX (me, ix), ye = my z[channel][ix];
 					Graphics_line (g, xb, yb, xe, ye);
 					xb = xe; yb = ye;
-					Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true); therror
+					Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 				}
 				else if (previous && current && ix == ixmax)
 				{
@@ -1792,7 +1791,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 	long ixmin, ixmax;
 	struct Formula_Result result;
 
-	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true); therror
+	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
 	_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
 
@@ -1808,7 +1807,7 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 		long ix = ixmin;
 		do
 		{
-			Formula_run (channel, ix, & result); therror
+			Formula_run (channel, ix, & result);
 			current = result.result.numericResult;
 			if (ix == ixmin) { previous = current; }
 			if (previous != current)
@@ -1823,12 +1822,12 @@ void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin
 					tmaxi = xe;
 					fill = true;
 				}
-				Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true); therror
+				Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 			}
 			if (ix == ixmax && current) { tmaxi = tmax; fill = true; }
 			if (fill)
 			{
-				autoPolygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level); therror
+				autoPolygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level);
 				Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);
 				fill = false;
 			}
@@ -1865,7 +1864,7 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 	Graphics_setInner (g);
 	for (long channel = 1; channel <= numberOfChannels; channel++)
 	{
-		autoPolygon him = Sounds_to_Polygon_enclosed (me, thee, channel, tmin, tmax, minimum, maximum); therror
+		autoPolygon him = Sounds_to_Polygon_enclosed (me, thee, channel, tmin, tmax, minimum, maximum);
 		Graphics_setWindow (g, tmin, tmax,
 			minimum - (numberOfChannels - channel) * (maximum - minimum),
 			maximum + (channel - 1) * (maximum - minimum));

@@ -92,7 +92,6 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SIGN(a,b) ((b < 0) ? -fabs(a) : fabs(a))
 using namespace std;
-extern machar_Table NUMfpp;
 
 struct pdf1_struct { double p; double df; };
 struct pdf2_struct { double p; double df1; double df2; };
@@ -152,7 +151,7 @@ void NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi)
 	for (long i = lo; i <= hi; i++)
 	{
 		Melder_free (to[i]);
-		if (from[i]) to[i] = Melder_wcsdup (from[i]); therror
+		if (from[i]) to[i] = Melder_wcsdup (from[i]);
 	}
 }
 
@@ -177,7 +176,7 @@ static wchar_t *appendNumberToString (const wchar_t *s, long number)
 
 	ncharb = swprintf (buf, 12, L"%ld", number);
 	if (s != NULL) nchars = wcslen (s);
-	wchar_t *newc = Melder_calloc (wchar_t, nchars + ncharb + 1); 
+	wchar_t *newc = Melder_calloc (wchar_t, nchars + ncharb + 1);
 	if (nchars > 0) wcsncpy (newc, s, nchars);
 	wcsncpy (newc + nchars, buf, ncharb + 1);
 	return newc;
@@ -216,7 +215,7 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
 	wchar_t *charp = 0;
-	wchar *compileMsg;
+	wchar_t *compileMsg;
 	regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) search_regexp, &compileMsg, 0);
 
 	if (compiled_regexp == 0) Melder_throw ("No regexp");
@@ -444,7 +443,7 @@ static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
 		return result.transfer();
 	} catch (MelderError) {
 		NUMstrings_free (result, lo, hi);
-		return 0; 
+		return 0;
 	}
 }
 
@@ -456,7 +455,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	wchar_t **result = NULL;
 	try {
 		regexp *compiledRE;
-		wchar *compileMsg;
+		wchar_t *compileMsg;
 		long nmatches_sub = 0;
 
 		if (searchRE == NULL || replaceRE == NULL) return NULL;
@@ -482,7 +481,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 		return result.transfer();
 	} catch (MelderError) {
 		NUMstrings_free (result, lo, hi);
-		return 0; 
+		return 0;
 	}
 }
 
@@ -769,19 +768,19 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 
 void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar)
 {
-		if (ndf < 0 || nrows - ndf < 1 || covar == 0) Melder_throw ("Invalid arguments.");
-		for (long i = 1; i <= ncols; i++)
+	if (ndf < 0 || nrows - ndf < 1 || covar == 0) Melder_throw ("Invalid arguments.");
+	for (long i = 1; i <= ncols; i++)
+	{
+		for (long j = i; j <= ncols; j++)
 		{
-			for (long j = i; j <= ncols; j++)
+			double sum = 0;
+			for (long k = 1; k <= nrows; k++)
 			{
-				double sum = 0;
-				for (long k = 1; k <= nrows; k++)
-				{
-					sum += x[k][i] * x[k][j];
-				}
-				covar[i][j] = covar[j][i] = sum / (nrows - ndf);
+				sum += x[k][i] * x[k][j];
 			}
+			covar[i][j] = covar[j][i] = sum / (nrows - ndf);
 		}
+	}
 }
 
 double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method)
@@ -1156,10 +1155,10 @@ double NUMtrace2 (double **a1, double **a2, long n)
 
 void NUMeigensystem (double **a, long n, double **evec, double eval[])
 {
-		autoEigen me = Thing_new (Eigen);
-		Eigen_initFromSymmetricMatrix (me.peek(), a, n); therror
-		if (evec) NUMdmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
-		if (eval) NUMdvector_copyElements (my eigenvalues, eval, 1, n);
+	autoEigen me = Thing_new (Eigen);
+	Eigen_initFromSymmetricMatrix (me.peek(), a, n);
+	if (evec) NUMdmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
+	if (eval) NUMdvector_copyElements (my eigenvalues, eval, 1, n);
 }
 
 void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, double tolerance)
@@ -1172,8 +1171,8 @@ void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, do
 		for (long l = 1; l <= n; l++) { cval += q[k] * mns[k][l] * q[l]; }
 	}
 	if (cval == 0) Melder_throw ("Zero matrices ??");
-	
-	long iter = 0; 
+
+	long iter = 0;
 	do
 	{
 		double znorm2 = 0;
@@ -1182,19 +1181,19 @@ void NUMdominantEigenvector (double **mns, long n, double *q, double *lambda, do
 			z[l] = 0;
 			for (long k = 1; k <= n; k++) { z[l] += mns[l][k] * q[k]; }
 		}
-		
+
 		for (long k = 1; k <= n; k++)  { znorm2 += z[k] * z[k]; }
 		znorm2 = sqrt (znorm2);
-		
+
 		for (long k = 1; k <= n; k++) { q[k] = z[k] / znorm2; }
-		
+
 		val = cval; cval = 0;
-		
+
 		for (long k = 1; k <= n; k++)
 		{
 			for (long l = 1; l <= n; l++) { cval += q[k] * mns[k][l] * q[l]; }
 		}
-		
+
 	} while (fabs(cval - val) > tolerance || ++iter < 30);
 	*lambda = cval;
 }
@@ -1371,168 +1370,168 @@ static void nr_func (double x, double *f, double *df, void *data)
 
 void NUMsolveConstrainedLSQuadraticRegression (double **o, const double d[], long n, double *alpha, double *gamma)
 {
-		long n3 = 3, info;
-		double eps = 1e-5, t1, t2, t3;
+	long n3 = 3, info;
+	double eps = 1e-5, t1, t2, t3;
 
-		autoNUMmatrix<double> ftinv (1, n3, 1, n3);
-		autoNUMmatrix<double> b (1, n3, 1, n3);
-		autoNUMmatrix<double> g (1, n3, 1, n3);
-		autoNUMmatrix<double> p (1, n3, 1, n3);
-		autoNUMvector<double> delta (1, n3);
-		autoNUMmatrix<double> ftinvp (1, n3, 1, n3);
-		autoNUMmatrix<double> ptfinv (1, n3, 1, n3);
-		autoNUMvector<double> otd (1, n3);
-		autoNUMmatrix<double> ptfinvc (1, n3, 1, n3);
-		autoNUMvector<double> y (1, n3);
-		autoNUMvector<double> w (1, n3);
-		autoNUMvector<double> chi (1, n3);
-		autoNUMvector<double> diag (1, n3);
+	autoNUMmatrix<double> ftinv (1, n3, 1, n3);
+	autoNUMmatrix<double> b (1, n3, 1, n3);
+	autoNUMmatrix<double> g (1, n3, 1, n3);
+	autoNUMmatrix<double> p (1, n3, 1, n3);
+	autoNUMvector<double> delta (1, n3);
+	autoNUMmatrix<double> ftinvp (1, n3, 1, n3);
+	autoNUMmatrix<double> ptfinv (1, n3, 1, n3);
+	autoNUMvector<double> otd (1, n3);
+	autoNUMmatrix<double> ptfinvc (1, n3, 1, n3);
+	autoNUMvector<double> y (1, n3);
+	autoNUMvector<double> w (1, n3);
+	autoNUMvector<double> chi (1, n3);
+	autoNUMvector<double> diag (1, n3);
 
 		// Construct O'.O     [1..3][1..3].
 
-		for (long i = 1; i <= n3; i++)
+	for (long i = 1; i <= n3; i++)
+	{
+		for (long j = 1; j <= n3; j++)
 		{
-			for (long j = 1; j <= n3; j++)
+			for (long k = 1; k <= n; k++)
 			{
-				for (long k = 1; k <= n; k++)
+				ftinv[i][j] += o[k][i] * o[k][j];
+			}
+		}
+	}
+
+	// Get lower triangular decomposition from O'.O and
+	// get F'^-1 from it (eq. (2)) (F^-1 not done ????)
+
+	char uplo = 'U';
+	(void) NUMlapack_dpotf2 (&uplo, &n3, &ftinv[1][1], &n3, &info);
+	if (info != 0) Melder_throw ("dpotf2 fails.");
+	ftinv[1][2] = ftinv[1][3] = ftinv[2][3] = 0;
+
+	// Construct G and its eigen-decomposition (eq. (4,5))
+	// Sort eigenvalues (& eigenvectors) ascending.
+
+	b[3][1] = b[1][3] = -0.5; b[2][2] = 1;
+
+	// G = F^-1 B (F')^-1 (eq. 4)
+
+	for (long i = 1; i <= 3; i++)
+	{
+		for (long j = 1; j <= 3; j++)
+		{
+			for (long k = 1; k <= 3; k++)
+			{
+				if (ftinv[k][i] != 0)
 				{
-					ftinv[i][j] += o[k][i] * o[k][j];
+					for (long l = 1; l <= 3; l++)
+					{
+						g[i][j] += ftinv[k][i] * b[k][l] * ftinv[l][j];
+					}
 				}
 			}
 		}
+	}
 
-		// Get lower triangular decomposition from O'.O and
-		// get F'^-1 from it (eq. (2)) (F^-1 not done ????)
+	// G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)
 
-		char uplo = 'U';
-		(void) NUMlapack_dpotf2 (&uplo, &n3, &ftinv[1][1], &n3, &info);
-		if (info != 0) Melder_throw ("dpotf2 fails.");
-		ftinv[1][2] = ftinv[1][3] = ftinv[2][3] = 0;
+	NUMeigensystem (g.peek(), 3, p.peek(), delta.peek());
 
-		// Construct G and its eigen-decomposition (eq. (4,5))
-		// Sort eigenvalues (& eigenvectors) ascending.
+	NUMsort_d (3, delta.peek()); /* ascending */
 
-		b[3][1] = b[1][3] = -0.5; b[2][2] = 1;
+	// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)    (page 632)
+	// Get P'F^-1 from the transpose of (F')^-1 . P
 
-		// G = F^-1 B (F')^-1 (eq. 4)
-
-		for (long i = 1; i <= 3; i++)
+	for (long i = 1; i <= 3; i++)
+	{
+		for (long j = 1; j <= 3; j++)
 		{
-			for (long j = 1; j <= 3; j++)
+			if (ftinv[i][j] != 0)
 			{
 				for (long k = 1; k <= 3; k++)
 				{
-					if (ftinv[k][i] != 0)
-					{
-						for (long l = 1; l <= 3; l++)
-						{
-							g[i][j] += ftinv[k][i] * b[k][l] * ftinv[l][j];
-						}
-					}
+					ftinvp[i][k] += ftinv[i][j] * p[3+1-j][k]; /* is sorted desc. */
 				}
 			}
 		}
-
-		// G's eigen-decomposition with eigenvalues (assumed ascending). (eq. 5)
-
-		NUMeigensystem (g.peek(), 3, p.peek(), delta.peek());
-
-		NUMsort_d (3, delta.peek()); /* ascending */
-
-		// Construct y = P'.F'.O'.d ==> Solve (F')^-1 . P .y = (O'.d)    (page 632)
-		// Get P'F^-1 from the transpose of (F')^-1 . P
-
-		for (long i = 1; i <= 3; i++)
+		for (long k = 1; k <= n; k++)
 		{
-			for (long j = 1; j <= 3; j++)
-			{
-				if (ftinv[i][j] != 0)
-				{
-					for (long k = 1; k <= 3; k++)
-					{
-						ftinvp[i][k] += ftinv[i][j] * p[3+1-j][k]; /* is sorted desc. */
-					}
-				}
-			}
-			for (long k = 1; k <= n; k++)
-			{
-				otd[i] += o[k][i] * d[k];
-			}
+			otd[i] += o[k][i] * d[k];
 		}
+	}
 
-		for (long i = 1; i <= 3; i++)
+	for (long i = 1; i <= 3; i++)
+	{
+		for (long j = 1; j <= 3; j++)
 		{
-			for (long j = 1; j <= 3; j++)
-			{
-				ptfinvc[j][i] = ptfinv[j][i] = ftinvp[i][j];
-			}
+			ptfinvc[j][i] = ptfinv[j][i] = ftinvp[i][j];
 		}
+	}
 
-		NUMsolveEquation (ftinvp.peek(), 3, 3, otd.peek(), 1e-6, y.peek());
+	NUMsolveEquation (ftinvp.peek(), 3, 3, otd.peek(), 1e-6, y.peek());
 
-		// The solution (3 cases)
+	// The solution (3 cases)
 
-		if (fabs (y[1]) < eps)
+	if (fabs (y[1]) < eps)
+	{
+		// Case 1: page 633
+
+		t2 = y[2] / (delta[2] - delta[1]);
+		t3 = y[3] / (delta[3] - delta[1]);
+		/* +- */
+		w[1] = sqrt (- delta[1] * (t2 * t2 * delta[2] + t3 * t3 * delta[3]));
+		w[2] = t2 * delta[2];
+		w[3] = t3 * delta[3];
+
+		NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+
+		w[1] = -w[1];
+		if (fabs (chi[3] / chi[1]) < eps) NUMsolveEquation (ptfinvc.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+	}
+	else if (fabs (y[2]) < eps)
+	{
+		// Case 2: page 633
+
+		t1 = y[1] / (delta[1] - delta[2]);
+		t3 = y[3] / (delta[3] - delta[2]);
+		w[1] = t1 * delta[1];
+		if((delta[2] < delta[3] &&
+			(t2 = (t1 * t1 * delta[1] + t3 * t3 * delta[3])) < eps))
 		{
-			// Case 1: page 633
-
-			t2 = y[2] / (delta[2] - delta[1]);
-			t3 = y[3] / (delta[3] - delta[1]);
-			/* +- */
-			w[1] = sqrt (- delta[1] * (t2 * t2 * delta[2] + t3 * t3 * delta[3]));
-			w[2] = t2 * delta[2];
+			w[2] = sqrt (- delta[2] * t2); /* +- */
 			w[3] = t3 * delta[3];
-
 			NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
-
-			w[1] = -w[1];
+			w[2] = -w[2];
 			if (fabs (chi[3] / chi[1]) < eps) NUMsolveEquation (ptfinvc.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
 		}
-		else if (fabs (y[2]) < eps)
+		else if (((delta[2] < delta[3] + eps) || (delta[2] > delta[3] - eps))
+			&& fabs (y[3]) < eps)
 		{
-			// Case 2: page 633
+			// choose one value for w[2] from an infinite number
 
-			t1 = y[1] / (delta[1] - delta[2]);
-			t3 = y[3] / (delta[3] - delta[2]);
-			w[1] = t1 * delta[1];
-			if((delta[2] < delta[3] &&
-				(t2 = (t1 * t1 * delta[1] + t3 * t3 * delta[3])) < eps))
-			{
-				w[2] = sqrt (- delta[2] * t2); /* +- */
-				w[3] = t3 * delta[3];
-				NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
-				w[2] = -w[2];
-				if (fabs (chi[3] / chi[1]) < eps) NUMsolveEquation (ptfinvc.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
-			}
-			else if (((delta[2] < delta[3] + eps) || (delta[2] > delta[3] - eps))
-				&& fabs (y[3]) < eps)
-			{
-				// choose one value for w[2] from an infinite number
-
-				w[2] = w[1];
-				w[3] = sqrt (- t1 * t1 * delta[1] * delta[2] - w[2] * w[2]);
-				NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
-			}
-		}
-		else
-		{
-			// Case 3: page 634 use Newton-Raphson root finder
-
-			struct nr_struct me;
-			double xlambda, eps = (delta[2] - delta[1]) * 1e-6;
-
-			me.y = y.peek(); me.delta = delta.peek();
-
-			NUMnrbis (nr_func, delta[1] + eps, delta[2] - eps, & me, & xlambda);
-
-			for (long i = 1; i <= 3; i++)
-			{
-				w[i] = y[i] / (1 - xlambda / delta[i]);
-			}
+			w[2] = w[1];
+			w[3] = sqrt (- t1 * t1 * delta[1] * delta[2] - w[2] * w[2]);
 			NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
 		}
+	}
+	else
+	{
+		// Case 3: page 634 use Newton-Raphson root finder
 
-		*alpha = chi[1]; *gamma = chi[3];
+		struct nr_struct me;
+		double xlambda, eps = (delta[2] - delta[1]) * 1e-6;
+
+		me.y = y.peek(); me.delta = delta.peek();
+
+		NUMnrbis (nr_func, delta[1] + eps, delta[2] - eps, & me, & xlambda);
+
+		for (long i = 1; i <= 3; i++)
+		{
+			w[i] = y[i] / (1 - xlambda / delta[i]);
+		}
+		NUMsolveEquation (ptfinv.peek(), 3, 3, w.peek(), 1e-6, chi.peek());
+	}
+
+	*alpha = chi[1]; *gamma = chi[3];
 }
 
 /*
@@ -1558,115 +1557,115 @@ static void nr2_func (double b, double *f, double *df, void *data)
 
 void NUMsolveWeaklyConstrainedLinearRegression (double **f, long n, long m, double phi[], double alpha, double delta, double t[])
 {
-		autoNUMmatrix<double> u (1, m, 1, m);
-		autoNUMvector<double> c (1, m);
-		autoNUMvector<double> x (1, n);
-		autoNUMvector<long> indx (1, m);
-		
-		for (long j = 1; j <= m; j++) t[j] = 0;
+	autoNUMmatrix<double> u (1, m, 1, m);
+	autoNUMvector<double> c (1, m);
+	autoNUMvector<double> x (1, n);
+	autoNUMvector<long> indx (1, m);
 
-		autoSVD svd = SVD_create_d (f, n, m);
+	for (long j = 1; j <= m; j++) t[j] = 0;
 
-		if (alpha == 0) SVD_solve (svd.peek(), phi, t); // standard least squares
+	autoSVD svd = SVD_create_d (f, n, m);
 
-
-		// Step 1: Compute U and C from the eigendecomposition F'F = UCU'
-		// Evaluate q, the multiplicity of the smallest eigenvalue in C
+	if (alpha == 0) SVD_solve (svd.peek(), phi, t); // standard least squares
 
 
-		double *sqrtc = svd -> d;
-		double **ut = svd -> v;
-		NUMindexx (sqrtc, m, indx.peek());
+	// Step 1: Compute U and C from the eigendecomposition F'F = UCU'
+	// Evaluate q, the multiplicity of the smallest eigenvalue in C
 
-		for (long j = m; j > 0; j--)
+
+	double *sqrtc = svd -> d;
+	double **ut = svd -> v;
+	NUMindexx (sqrtc, m, indx.peek());
+
+	for (long j = m; j > 0; j--)
+	{
+		double tmp = sqrtc [indx[j]];
+		c[m - j + 1] = tmp * tmp;
+		for (long k = 1; k <= m; k++)
 		{
-			double tmp = sqrtc [indx[j]];
-			c[m - j + 1] = tmp * tmp;
-			for (long k = 1; k <= m; k++)
+			u[m - j + 1][k] = ut [indx[j]] [k];
+		}
+	}
+
+	long q = 1;
+	double tol = 1e-6;
+	while (q < m && (c[m - q] - c[m]) < tol) q++;
+
+	// step 2: x = U'F'phi
+
+	for (long i = 1; i <= m; i++)
+	{
+		for (long j=1; j <= m; j++)
+		{
+			for (long k=1; k <= n; k++)
 			{
-				u[m - j + 1][k] = ut [indx[j]] [k];
+				x[i] += u[j][i] * f[k][j] * phi[k];
 			}
 		}
+	}
 
-		long q = 1;
-		double tol = 1e-6;
-		while (q < m && (c[m - q] - c[m]) < tol) q++;
+	// step 3:
 
-		// step 2: x = U'F'phi
+	struct nr2_struct me;
+	me.m = m;
+	me.delta = delta;
+	me.alpha = alpha;
+	me.x = x.peek();
+	me.c = c.peek();
 
-		for (long i = 1; i <= m; i++)
+	double xqsq = 0;
+	for (long j = m - q + 1; j <= m; j++)
+	{
+		xqsq += x[j] * x[j];
+	}
+
+	long r = m;
+	if (xqsq < tol) /* xqsq == 0 */
+	{
+		double fm, df;
+		r = m - q;
+		me.m = r;
+		nr2_func (c[m], &fm, &df, & me);
+		if (fm >= 0) /* step 3.b1 */
 		{
-			for (long j=1; j <= m; j++)
+			x[r+1] = sqrt (fm);
+			for (long j = 1; j <= r; j++)
 			{
-				for (long k=1; k <= n; k++)
+				x[j] /= c[j] - c[m];
+			}
+			for (long j = 1; j <= r+1; j++)
+			{
+				for (long k = 1; k <= r+1; k++)
 				{
-					x[i] += u[j][i] * f[k][j] * phi[k];
+					t[j] += u[j][k] * x[k];
 				}
 			}
+			return;
 		}
+		/* else continue with r = m - q */
+	}
 
-		// step 3:
+	// step 3a & 3b2, determine interval lower bound for Newton-Raphson root finder
 
-		struct nr2_struct me;
-		me.m = m;
-		me.delta = delta;
-		me.alpha = alpha;
-		me.x = x.peek();
-		me.c = c.peek();
-		
-		double xqsq = 0;
-		for (long j = m - q + 1; j <= m; j++)
+	double xCx = 0;
+	for (long j = 1; j <= r; j++)
+	{
+		xCx += x[j] * x[j] / c[j];
+	}
+	double b0, bmin = delta > 0 ? - xCx / delta : -2 * sqrt (alpha * xCx);
+	double eps = (c[m] - bmin) * tol;
+
+	// find the root of d(psi(b)/db in interval (bmin, c[m])
+
+	NUMnrbis (nr2_func, bmin + eps, c[m] - eps, & me, & b0);
+
+	for (long j = 1; j <= r; j++)
+	{
+		for (long k = 1; k <= r; k++)
 		{
-			xqsq += x[j] * x[j];
+			t[j] += u[j][k] * x[k] / (c[k] - b0);
 		}
-		
-		long r = m;
-		if (xqsq < tol) /* xqsq == 0 */
-		{
-			double fm, df;
-			r = m - q;
-			me.m = r;
-			nr2_func (c[m], &fm, &df, & me);
-			if (fm >= 0) /* step 3.b1 */
-			{
-				x[r+1] = sqrt (fm);
-				for (long j = 1; j <= r; j++)
-				{
-					x[j] /= c[j] - c[m];
-				}
-				for (long j = 1; j <= r+1; j++)
-				{
-					for (long k = 1; k <= r+1; k++)
-					{
-						t[j] += u[j][k] * x[k];
-					}
-				}
-				return;
-			}
-			/* else continue with r = m - q */
-		}
-
-		// step 3a & 3b2, determine interval lower bound for Newton-Raphson root finder
-		
-		double xCx = 0;
-		for (long j = 1; j <= r; j++)
-		{
-			xCx += x[j] * x[j] / c[j];
-		}
-		double b0, bmin = delta > 0 ? - xCx / delta : -2 * sqrt (alpha * xCx);
-		double eps = (c[m] - bmin) * tol;
-
-		// find the root of d(psi(b)/db in interval (bmin, c[m])
-
-		NUMnrbis (nr2_func, bmin + eps, c[m] - eps, & me, & b0);
-
-		for (long j = 1; j <= r; j++)
-		{
-			for (long k = 1; k <= r; k++)
-			{
-				t[j] += u[j][k] * x[k] / (c[k] - b0);
-			}
-		}
+	}
 }
 
 void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, double **t, double *v, double *s)
@@ -1676,7 +1675,7 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 	autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
 	autoNUMmatrix<double> yc (1, nPoints, 1, nDimensions);
 	NUMdmatrix_copyElements (y, yc.peek(), 1, nPoints, 1, nDimensions);
-	
+
 	/*
 		Reference: Borg & Groenen (1997), Modern multidimensional scaling,
 		Springer
@@ -1780,77 +1779,77 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 void NUMmspline (double knot[], long nKnots, long order, long i, double x, double *y)
 {
-		long j, nSplines = nKnots - order;
-		if (nSplines <= 0) Melder_throw ("No splines.");
-		
-		// Find the interval where x is located.
-		// M-splines of order k have degree k-1.
-		// M-splines are zero outside interval [ knot[i], knot[i+order] ).
-		// First and last 'order' knots are equal, i.e.,
-		// knot[1] = ... = knot[order] && knot[nKnots-order+1] = ... knot[nKnots].
+	long j, nSplines = nKnots - order;
+	if (nSplines <= 0) Melder_throw ("No splines.");
 
-		*y = 0;
-		if (i > nSplines || order < 1) Melder_throw ("Combination of order and index not correct.");
-		for (j = order; j <= nKnots - order + 1; j++)
+	// Find the interval where x is located.
+	// M-splines of order k have degree k-1.
+	// M-splines are zero outside interval [ knot[i], knot[i+order] ).
+	// First and last 'order' knots are equal, i.e.,
+	// knot[1] = ... = knot[order] && knot[nKnots-order+1] = ... knot[nKnots].
+
+	*y = 0;
+	if (i > nSplines || order < 1) Melder_throw ("Combination of order and index not correct.");
+	for (j = order; j <= nKnots - order + 1; j++)
+	{
+		if (x < knot[j]) break;
+	}
+	if (j < i || (j > i + order) || j == order || j > (nKnots - order + 1)) return;
+
+	// Calculate M[i](x|1,t) according to eq.2.
+
+	long ito = i + order - 1;
+	autoNUMvector<double> m (i, ito);
+	for (long j = i; j <= ito; j++)
+	{
+		if (x >= knot[j] && x < knot[j+1]) m[j] = 1 / (knot[j+1] - knot[j]);
+	}
+
+	// Iterate to get M[i](x|k,t)
+
+	for (long k = 2; k <= order; k++)
+	{
+		for (long j = i; j <= i + order - k; j++)
 		{
-			if (x < knot[j]) break;
-		}
-		if (j < i || (j > i + order) || j == order || j > (nKnots - order + 1)) return;
-
-		// Calculate M[i](x|1,t) according to eq.2.
-		
-		long ito = i + order - 1;
-		autoNUMvector<double> m (i, ito);
-		for (long j = i; j <= ito; j++)
-		{
-			if (x >= knot[j] && x < knot[j+1]) m[j] = 1 / (knot[j+1] - knot[j]);
-		}
-
-		// Iterate to get M[i](x|k,t)
-
-		for (long k = 2; k <= order; k++)
-		{
-			for (long j = i; j <= i + order - k; j++)
+			double kj = knot[j], kjpk = knot[j+k];
+			if (kjpk > kj)
 			{
-				double kj = knot[j], kjpk = knot[j+k];
-				if (kjpk > kj)
-				{
-					m[j] = k * ((x - kj) * m[j] + (kjpk - x) * m[j+1]) / ((k - 1) * (kjpk - kj));
-				}
+				m[j] = k * ((x - kj) * m[j] + (kjpk - x) * m[j+1]) / ((k - 1) * (kjpk - kj));
 			}
 		}
-		*y = m[i];
+	}
+	*y = m[i];
 }
 
 void NUMispline (double aknot[], long nKnots, long order, long i, double x, double *y)
 {
-		long j, orderp1 = order + 1;
+	long j, orderp1 = order + 1;
 
-		*y = 0;
+	*y = 0;
 
-		for (j = orderp1; j <= nKnots-order; j++)
-		{
-			if (x < aknot[j]) break;
-		}
-		j--;
-		if (j < i) return;
-		if (j > i + order || (j == nKnots - order && x == aknot[j]))
-		{
-			*y = 1; return;
-		}
+	for (j = orderp1; j <= nKnots-order; j++)
+	{
+		if (x < aknot[j]) break;
+	}
+	j--;
+	if (j < i) return;
+	if (j > i + order || (j == nKnots - order && x == aknot[j]))
+	{
+		*y = 1; return;
+	}
 
-		// Equation 5 in Ramsay's article contains some errors!!!
-		// 1. the interval selection must be 'j-k <= i <= j' instead of
-		//	'j-k+1 <= i <= j'
-		// 2. the summation index m starts at 'i+1' instead of 'i'
+	// Equation 5 in Ramsay's article contains some errors!!!
+	// 1. the interval selection must be 'j-k <= i <= j' instead of
+	//	'j-k+1 <= i <= j'
+	// 2. the summation index m starts at 'i+1' instead of 'i'
 
-		for (long m = i + 1; m <=j; m++)
-		{
-			double r;
-			NUMmspline (aknot, nKnots, orderp1, m, x, &r);
-			*y += (aknot[m+orderp1] - aknot[m]) * r;
-		}
-		*y /= orderp1;
+	for (long m = i + 1; m <=j; m++)
+	{
+		double r;
+		NUMmspline (aknot, nKnots, orderp1, m, x, &r);
+		*y += (aknot[m+orderp1] - aknot[m]) * r;
+	}
+	*y /= orderp1;
 }
 
 double NUMwilksLambda (double *lambda, long from, long to)
@@ -2279,7 +2278,7 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 
 	NUMcovarianceFromColumnCentredMatrix (x.peek(), n, p, 0, covar.peek());
 
-	try { 
+	try {
 		NUMlowerCholeskyInverse (covar.peek(), p, NULL);
 		double djk, djj, sumjk = 0, sumj = 0;
 		double b1 = beta2 / 2, b2 = b1 / (1.0 + beta2);
@@ -2428,11 +2427,11 @@ for (i=1; i<=n+n+n; i++) work[i]=0;
 int NUMburg (double x[], long n, double a[], int m, double *xms)
 {
 	for (long j = 1; j <= m; j++) a[j] = 0;
-	
+
 	autoNUMvector<double> b1 (1, n);
 	autoNUMvector<double> b2 (1, n);
 	autoNUMvector<double> aa (1, m);
-	
+
 	// (3)
 
 	double p = 0.0;
@@ -2555,7 +2554,7 @@ void NUMspline (double x[], double y[], long n, double yp1, double ypn,
 	double y2[])
 {
 	autoNUMvector<double> u (1, n - 1);
-	
+
 	if (yp1 > 0.99e30)
 	{
 		y2[1] = u[1] = 0.0;
@@ -2565,7 +2564,7 @@ void NUMspline (double x[], double y[], long n, double yp1, double ypn,
 		y2[1] = -0.5;
 		u[1] = (3.0 / (x[2] - x[1])) * ((y[2] - y[1]) / (x[2] - x[1]) - yp1);
 	}
-	
+
 	for (long i = 2; i <= n - 1; i++)
 	{
 		double sig = (x[i] - x[i-1]) / (x[i+1] - x[i-1]);
@@ -2574,7 +2573,7 @@ void NUMspline (double x[], double y[], long n, double yp1, double ypn,
 		u[i] = (y[i+1] - y[i]) / (x[i+1] - x[i]) - (y[i] - y[i-1]) / (x[i] - x[i-1]);
 		u[i] = (6.0 * u[i] / (x[i+1] - x[i-1]) - sig * u[i-1]) / p;
 	}
-	
+
 	double qn, un;
 	if (ypn > 0.99e30)
 	{

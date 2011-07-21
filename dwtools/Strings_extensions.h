@@ -27,21 +27,11 @@
  djmw 20050724 Index
  djmw 20110307 Latest modification
 */
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
 
-#ifndef _Strings_h_
-	#include "Strings.h"
-#endif
-
-#ifndef _Permutation_h_
-	#include "Permutation.h"
-#endif
-
-#ifndef _Index_h_
-	#include "Index.h"
-#endif
+#include "Collection.h"
+#include "Strings.h"
+#include "Permutation.h"
+#include "Index.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -55,7 +45,7 @@ Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replac
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 
-int Strings_setString (Strings me, const wchar_t *newstr, long index);
+void Strings_setString (Strings me, const wchar_t *newstr, long index);
 
 Strings strings_to_Strings (wchar_t **strings, long from, long to);
 

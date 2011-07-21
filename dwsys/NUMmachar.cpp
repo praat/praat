@@ -54,9 +54,9 @@ ngrd
 void NUMmachar (void)
 {
 	if (NUMfpp) return;
-	
+
 	NUMfpp = & machar_table;
-		
+
     NUMfpp -> base  = (int) NUMblas_dlamch ("Base");
     NUMfpp -> t     = (int) NUMblas_dlamch ("Number of digits in mantissa");
     NUMfpp -> emin  = (int) NUMblas_dlamch ("Minimum exponent");

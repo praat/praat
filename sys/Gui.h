@@ -123,8 +123,6 @@
 	 */
 	typedef void *XtPointer;
 	typedef GuiObject *GuiObjectList;
-	typedef void *XtAppContext;
-	typedef XtAppContext Context;
 	typedef long XtWorkProcId, XtIntervalId;
 	typedef void (*XtCallbackProc) (GuiObject w, XtPointer client_data, XtPointer call_data);
 	typedef Boolean (*XtWorkProc) (XtPointer client_data);
@@ -137,18 +135,17 @@
 	 * Declarations of Xt functions.
 	 */
 	void XtAddCallback (GuiObject w, int kind, XtCallbackProc proc, XtPointer closure);
-	XtIntervalId XtAppAddTimeOut (XtAppContext appContext, unsigned long interval,
+	XtIntervalId GuiAddTimeOut (unsigned long interval,
 		XtTimerCallbackProc timerProc, XtPointer closure);
-	XtWorkProcId XtAppAddWorkProc (XtAppContext appContext, XtWorkProc workProc, XtPointer closure);
-	void XtAppMainLoop (XtAppContext appContext);
-	void XtAppNextEvent (XtAppContext appContext, XEvent *event);
+	XtWorkProcId GuiAddWorkProc (XtWorkProc workProc, XtPointer closure);
+	void GuiMainLoop ();
+	void GuiNextEvent (XEvent *event);
 	#define XtCalloc  Melder_calloc
 	#define XtClass(w)  (w) -> widgetClass
 	void XtDestroyWidget (GuiObject w);
 	void XtDispatchEvent (XEvent *event);
 	#define XtDisplay(w)  0
-	GuiObject XtInitialize (void *dum1, const char *name,
-		void *dum2, int dum3, unsigned int *argc, char **argv);
+	GuiObject GuiInitialize (const char *name, unsigned int *argc, char **argv);
 	Boolean XtIsManaged (GuiObject w);
 	Boolean XtIsShell (GuiObject w);
 	void XtManageChild (GuiObject w);
@@ -161,7 +158,7 @@
 	void XtSetSensitive (GuiObject w, Boolean value);
 	void XtUnmanageChild (GuiObject self);
 	void XtUnmanageChildren (GuiObjectList children, Cardinal num_children);
-	GuiObject XtVaAppInitialize (XtAppContext *appContext, const char *name,
+	GuiObject GuiAppInitialize (const char *name,
 		void *dum1, int dum2, unsigned int *argc, char **argv, void *dum3, void *dum4);
 	GuiObject XtVaCreateWidget (const char *name, int widgetClass, GuiObject parent, ...);
 	GuiObject XtVaCreateManagedWidget (const char *name, int widgetClass, GuiObject parent, ...);

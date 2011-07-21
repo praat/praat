@@ -24,9 +24,7 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _TextGrid_h_
-	#include "TextGrid.h"
-#endif
+#include "TextGrid.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -39,7 +37,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
 		samplenumber3 samplenumber4 label2
 		...
 		samplenumber2n-1 samplenumber2n labeln
-		
+
 	The first tier of TextGrid will contain the TIMIT labels.
 	If phnFile != 0, the second tier will contain the translation of the
 	TIMIT labels into IPA labels.
@@ -52,7 +50,7 @@ Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile
 	There are two types of TIMIT label files. One with phonetic labels, these
 	files have '.phn' as file extension. The other contains word labels and has
 	'.wrd' as extension. Since these extensions are only valid on the CDROM we can
-	not use them for filetype recognition. Both TIMIT label files do not have a 
+	not use them for filetype recognition. Both TIMIT label files do not have a
 	self-describing format. For filetype recognition we make use of the fact that
 	both files are text files and always have three items on each line: two numbers
 	followed by a string. The numbers increase in a monotone way.
@@ -70,29 +68,29 @@ Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile
 TextGrid TextGrids_merge (TextGrid grid1, TextGrid grid2);
 /*
 	Merge two textGrids.
-	The new domain will be: 
+	The new domain will be:
 	[min(grid1->xmin, grid2->xmin), max(grid1->xmax, grid2->xmax)].
-	This implies that for the resulting TextGrid each interval tier will have 
+	This implies that for the resulting TextGrid each interval tier will have
 	one or two extra intervals if the domains of the two TextGrids are not equal,
 */
 
-int TextGrid_extendTime (TextGrid me, double delta_time, int position);
+void TextGrid_extendTime (TextGrid me, double delta_time, int position);
 /*
 	Extend the begin-time (delta_time<0) or end-time (delta_time>0).
 	For Point-tiers only the domain will be extended.
 	Interval tiers will have a new (empty) interval at the start or the end.
 */
 
-int TextGrid_setTierName (TextGrid me, long itier, const wchar_t *newName);
+void TextGrid_setTierName (TextGrid me, long itier, const wchar_t *newName);
 
-int TextTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-int IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 void IntervalTier_removeBoundary_equalLabels (IntervalTier me, const wchar_t *label);
 void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, const wchar_t *label, double minimumDuration);
 
-int TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
+void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
 #ifdef __cplusplus
 	}

@@ -724,7 +724,7 @@ if (my usePortAudio) {
 			Pa_StopStream (my stream);
 		} else {
 			#if motif
-				my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
+				my workProcId_motif = GuiAddWorkProc (workProc_motif, NULL);
 			#elif gtk
 				my workProcId_gtk = gtk_idle_add (workProc_gtk, NULL);
 			#endif
@@ -791,7 +791,7 @@ if (my usePortAudio) {
 			Pa_AbortStream (my stream);
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 			#if motif
-				my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
+				my workProcId_motif = GuiAddWorkProc (workProc_motif, NULL);
 			#elif gtk
 				my workProcId_gtk = gtk_idle_add (workProc_gtk, NULL);
 			#endif
@@ -937,7 +937,7 @@ if (my usePortAudio) {
 			SndDisposeChannel (my soundChannel, 0), my soundChannel = NULL;
 			my samplesPlayed = my numberOfSamples;
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-			my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
+			my workProcId_motif = GuiAddWorkProc (workProc_motif, NULL);
 			return 1;
 		}
 	}
@@ -1307,7 +1307,7 @@ if (my usePortAudio) {
 			}
 		}
 	} else {
-		my workProcId_motif = XtAppAddWorkProc (0, workProc_motif, NULL);
+		my workProcId_motif = GuiAddWorkProc (workProc_motif, NULL);
 		return 1;
 	}
 	flush ();

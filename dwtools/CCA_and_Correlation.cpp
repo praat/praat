@@ -37,7 +37,7 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
 	
-		NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns); therror
+		NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns);
 		TableOfReal_setSequentialRowLabels (him.peek(), 1, my numberOfCoefficients, L"dv", 1, 1);
 		TableOfReal_setSequentialRowLabels (him.peek(), my numberOfCoefficients + 1,
 			2 * my numberOfCoefficients, L"iv", 1, 1);
@@ -65,7 +65,7 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("TableOfReal not created from CCA & Correlation."); }
+	} catch (MelderError) { Melder_throw ("TableOfReal not created from CCA & Correlation."); }
 }
 
 static int _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to)

@@ -67,7 +67,7 @@ Permutation Index_to_Permutation_permuteRandomly (I, int permuteWithinClasses)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": Permutation not created."); }
+	} catch (MelderError) { Melder_throw (me, ": Permutation not created."); }
 }
 
 /*  End of file Permutation_and_Index.cpp */

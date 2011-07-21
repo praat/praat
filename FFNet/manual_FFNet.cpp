@@ -27,8 +27,8 @@
 
 static void drawFFNet_345 (Graphics g)
 {
-		autoFFNet me = FFNet_create (3, 4, 0, 5, 0);
-		FFNet_drawTopology (me.peek(), g);
+	autoFFNet me = FFNet_create (3, 4, 0, 5, 0);
+	FFNet_drawTopology (me.peek(), g);
 }
 
 extern "C" void manual_FFNet_init (ManPages me);

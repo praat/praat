@@ -36,11 +36,11 @@
 
 static void info (I)
 {
-    iam (Confusion); 
+    iam (Confusion);
     double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, frac;
     long nCorrect;
-	
-    Confusion_getEntropies (me, & h, & hx, & hy, & hygx, & hxgy, & uygx, 
+
+    Confusion_getEntropies (me, & h, & hx, & hy, & hygx, & hxgy, & uygx,
 		& uxgy, & uxy);
     Confusion_getFractionCorrect (me, & frac, & nCorrect);
     MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my numberOfRows));
@@ -54,7 +54,7 @@ static void info (I)
     MelderInfo_writeLine2 (L"  Dependency of y on x; ", Melder_double(uygx));
     MelderInfo_writeLine2 (L"  Dependency of x on y: ", Melder_double(uxgy));
     MelderInfo_writeLine2 (L"  Symmetrical dependency: ", Melder_double(uxy));
-    MelderInfo_writeLine2 (L"  Total number of entries: ", 
+    MelderInfo_writeLine2 (L"  Total number of entries: ",
     	Melder_integer (Confusion_getNumberOfEntries (me)));
 	MelderInfo_writeLine2 (L" Fraction correct: ", Melder_double (frac));
 }
@@ -67,9 +67,9 @@ Confusion Confusion_create (long numberOfStimuli, long numberOfResponses)
 {
 	try {
 		autoConfusion me = Thing_new (Confusion);
-		TableOfReal_init (me.peek(), numberOfStimuli, numberOfResponses); therror
+		TableOfReal_init (me.peek(), numberOfStimuli, numberOfResponses);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Confusion not created."); }
+	} catch (MelderError) { Melder_throw ("Confusion not created."); }
 }
 
 Confusion Confusion_createSimple (const wchar_t *labels)
@@ -85,23 +85,23 @@ Confusion Confusion_createSimple (const wchar_t *labels)
 			{
 				if (Melder_wcscmp (token, my rowLabels[i]) == 0) Melder_throw ("Label ", i, "and ", ilabel, "may not be equal.");
 			}
-			TableOfReal_setRowLabel (me.peek(), ilabel, token); therror
-			TableOfReal_setColumnLabel (me.peek(), ilabel, token); therror
+			TableOfReal_setRowLabel (me.peek(), ilabel, token);
+			TableOfReal_setColumnLabel (me.peek(), ilabel, token);
 			ilabel++;
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Simple Confusion not created."); }
+	} catch (MelderError) { Melder_throw ("Simple Confusion not created."); }
 }
 
 Confusion Categories_to_Confusion (Categories me, Categories thee)
 {
 	try {
 		if (my size != thy size) Melder_throw ("Categories_to_Confusion: dimensions do not agree.");
-		
+
 		autoCategories ul1 = Categories_selectUniqueItems (me, 1);
  		autoCategories ul2 = Categories_selectUniqueItems (thee, 1);
 		autoConfusion him = Confusion_create (ul1 -> size, ul2 -> size);
-	
+
 		for (long i = 1; i <= ul1 -> size; i++)
 		{
 			SimpleString s = (SimpleString) ul1 -> item[i];
@@ -118,7 +118,7 @@ Confusion Categories_to_Confusion (Categories me, Categories thee)
 			Confusion_increase (him.peek(), SimpleString_c (myi), SimpleString_c (thyi));
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Confusion created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Confusion created."); }
 }
 
 #define TINY 1.0e-30
@@ -126,65 +126,66 @@ Confusion Categories_to_Confusion (Categories me, Categories thee)
 void Confusion_getEntropies (Confusion me, double *h, double *hx, double *hy,
 	double *hygx, double *hxgy, double *uygx, double *uxgy, double *uxy)
 {
-		*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
-	
-		autoNUMvector<double> rowSum (1, my numberOfRows);
-		autoNUMvector<double> colSum (1, my numberOfColumns);
-		
-		double sum = 0.0;
-		for (long i=1; i <= my numberOfRows; i++)
-		{
-			for (long j=1; j <= my numberOfColumns; j++)
-			{
-				rowSum[i] += my data[i][j];
-				colSum[j] += my data[i][j];
-				sum += my data[i][j];
-			}
-		}
-		for (long i=1; i <= my numberOfRows; i++)
-		{
-			if (rowSum[i] > 0) *hy -= rowSum[i] / sum * NUMlog2 (rowSum[i] / sum);
-		}
+	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
+
+	autoNUMvector<double> rowSum (1, my numberOfRows);
+	autoNUMvector<double> colSum (1, my numberOfColumns);
+
+	double sum = 0.0;
+	for (long i=1; i <= my numberOfRows; i++)
+	{
 		for (long j=1; j <= my numberOfColumns; j++)
 		{
-			if (colSum[j] > 0) *hx -= colSum[j] / sum * NUMlog2 (colSum[j] / sum);
+			rowSum[i] += my data[i][j];
+			colSum[j] += my data[i][j];
+			sum += my data[i][j];
 		}
-		for (long i=1; i <= my numberOfRows; i++)
+	}
+	for (long i=1; i <= my numberOfRows; i++)
+	{
+		if (rowSum[i] > 0) *hy -= rowSum[i] / sum * NUMlog2 (rowSum[i] / sum);
+	}
+	for (long j=1; j <= my numberOfColumns; j++)
+	{
+		if (colSum[j] > 0) *hx -= colSum[j] / sum * NUMlog2 (colSum[j] / sum);
+	}
+	for (long i=1; i <= my numberOfRows; i++)
+	{
+		for (long j=1; j <= my numberOfColumns; j++)
 		{
-			for (long j=1; j <= my numberOfColumns; j++)
+			if (my data[i][j] > 0)
 			{
-				if (my data[i][j] > 0)
-				{
-					*h -= my data[i][j] / sum * NUMlog2 (my data[i][j] / sum);
-				}
+				*h -= my data[i][j] / sum * NUMlog2 (my data[i][j] / sum);
 			}
 		}
-	
-		*hygx = *h - *hx;
-		*hxgy = *h - *hy;
-		*uygx = (*hy - *hygx) / (*hy + TINY);
-		*uxgy = (*hx - *hxgy) / (*hx + TINY);
-		*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
+	}
+
+	*hygx = *h - *hx;
+	*hxgy = *h - *hy;
+	*uygx = (*hy - *hygx) / (*hy + TINY);
+	*uxgy = (*hx - *hxgy) / (*hx + TINY);
+	*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
 }
 
 void Confusion_increase (Confusion me, const wchar_t *stim, const wchar_t *resp)
 {
+	try {
 		long stimIndex = TableOfReal_rowLabelToIndex (me, stim);
 		if (stimIndex < 1) Melder_throw ("Stimulus not valid.");
 		long respIndex = TableOfReal_columnLabelToIndex (me, resp);
 		if (respIndex < 1) Melder_throw ("Response not valid.");
 
 		my data[stimIndex][respIndex] += 1;
+	} catch (MelderError) { Melder_throw (me, ": not increased."); }
 }
 
 double Confusion_getValue (Confusion me, const wchar_t *stim, const wchar_t *resp)
 {
-		long stimIndex = TableOfReal_rowLabelToIndex (me, stim);
-		if (stimIndex < 1) Melder_throw ("Stimulus not valid.");
-		long respIndex = TableOfReal_columnLabelToIndex (me, resp);
-		if (respIndex < 1) Melder_throw ("Response not valid.");
-		return my data[stimIndex][respIndex];
-	
+	long stimIndex = TableOfReal_rowLabelToIndex (me, stim);
+	if (stimIndex < 1) Melder_throw ("Stimulus not valid.");
+	long respIndex = TableOfReal_columnLabelToIndex (me, resp);
+	if (respIndex < 1) Melder_throw ("Response not valid.");
+	return my data[stimIndex][respIndex];
 }
 
 void Confusion_getFractionCorrect (Confusion me, double *fraction,
@@ -192,7 +193,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction,
 {
     *fraction = NUMundefined;
     *numberOfCorrect = -1;
-    
+
     double c = 0, ct = 0;
 	for (long i = 1; i <= my numberOfRows; i++)
     {
@@ -207,7 +208,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction,
 				c += my data[i][j];
     	}
     }
-	
+
 	if (ct != 0)  *fraction = c / ct;
     *numberOfCorrect = c;
 }
@@ -226,6 +227,7 @@ class_methods_end
 #define NPOINTS 6
 static Pointer Pointer_create (void)
 {
+	try {
 		double x[NPOINTS+1] = { 0, 0, 0.9, 1, 0.9, 0, 0 };
 		double y[NPOINTS+1] = { 0, 0, 0, 0.5,   1, 1, 0 };
 		autoPointer me = (Pointer) Polygon_create (NPOINTS);
@@ -234,6 +236,7 @@ static Pointer Pointer_create (void)
 			my x[i] = x[i]; my y[i] = y[i];
 		}
 		return me.transfer();
+	} catch (MelderError) { Melder_throw ("Pointer not created."); }
 }
 
 static void Pointer_draw (I, Any graphics)
@@ -242,30 +245,30 @@ static void Pointer_draw (I, Any graphics)
 	Graphics_polyline (graphics, my numberOfPoints, & my x[1], & my y[1]);
 }
 
-void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, double lowerPercentage, 
+void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, double lowerPercentage,
 	double xmin, double xmax, double ymin, double ymax, int garnish)
 {
 	long ib = 1, ie = my numberOfRows;
 	if (index > 0 && index <= my numberOfColumns) ib = ie = index;
-	 
+
 	if(thy ny != my numberOfRows)
 	{
 		(void) Melder_error1 (L"Confusion_Matrix_draw: number of positions.");
 		return;
 	}
-	
+
     if (xmax <= xmin) (void) Matrix_getWindowExtrema (thee, 1, 1, 1, thy ny, &xmin, &xmax);
-		 
+
 	if (xmax <= xmin) return;
-	 
+
     if (ymax <= ymin) (void) Matrix_getWindowExtrema (thee, 2, 2, 1, thy ny, &ymin, &ymax);
-		 
+
 	if (ymax <= ymin) return;
 	double rmax = fabs (xmax - xmin) / 10;
 	double rmin = rmax / 10;
-	
+
     Graphics_setInner (g);
-    Graphics_setWindow (g, xmin - rmax, xmax + rmax, ymin - rmax, ymax + rmax); 
+    Graphics_setWindow (g, xmin - rmax, xmax + rmax, ymin - rmax, ymax + rmax);
     Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
     for (long i = 1; i <= my numberOfRows; i++)
 	{
@@ -278,24 +281,24 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 		{
 			xSum += my data[i][j];
 		}
-		
+
 		if (xSum <= 0) continue; /* no confusions */
-		
-		double x1 = thy z[i][1]; 
+
+		double x1 = thy z[i][1];
 		double y1 = thy z[i][2];
 		double r = rmax * my data[i][i] / xSum;
-		
+
 		Graphics_circle (g, x1, y1, r > rmin ? r : rmin);
-		
+
 		for (long j = 1; j <= my numberOfColumns; j++)
 		{
 			double x2 = thy z[j][1], y2 = thy z[j][2];
 			double perc =  100 * my data[i][j] / xSum;
 			double dx = x2 - x1, dy = y2 - y1;
 			double alpha = atan2 (dy, dx);
-			 
+
 			if (perc == 0 || perc < lowerPercentage || j == i) continue;
-			
+
 			xmin = x1; xmax = x2;
 			if (x2 < x1)
 			{
@@ -309,7 +312,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 			autoPointer p = Pointer_create();
 			double xs = sqrt (dx * dx + dy * dy) - 2.2 * r;
 			if (xs < 0) xs = 0;
-			double ys = perc * rmax / 100; 
+			double ys = perc * rmax / 100;
 			Polygon_scale (p.peek(), xs, ys);
 			Polygon_translate (p.peek(), x1, y1 - ys / 2);
 			Polygon_rotate (p.peek(), alpha, x1, y1);
@@ -317,9 +320,9 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 			Pointer_draw (p.peek(), g);
 		}
 	}
-	
+
 	Graphics_unsetInner (g);
-	
+
     if (garnish)
     {
     	Graphics_drawInnerBox (g);
@@ -330,7 +333,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
     }
 }
 
-Any Confusion_difference (Confusion me, Confusion thee)
+Matrix Confusion_difference (Confusion me, Confusion thee)
 {
 	try {
 		/* categories must be the same too*/
@@ -339,7 +342,7 @@ Any Confusion_difference (Confusion me, Confusion thee)
 
 		autoMatrix him = Matrix_create (0.5, my numberOfColumns + 0.5, my numberOfColumns,
 			1, 1, 0.5, my numberOfRows+0.5, my numberOfRows, 1, 1);
-		
+
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			for (long j = 1; j <= my numberOfColumns; j++)
@@ -348,7 +351,7 @@ Any Confusion_difference (Confusion me, Confusion thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Matrix not created from two Confusions."); }
+	} catch (MelderError) { Melder_throw ("Matrix not created from two Confusions."); }
 }
 
 long Confusion_getNumberOfEntries (Confusion me)
@@ -379,24 +382,24 @@ static void create_index (wchar_t**s, long sb, long se, wchar_t **ref, long rb, 
 		index[i] = indxj;
 	}
 }
- 
+
 Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t *replace,
 	long maximumNumberOfReplaces, int use_regexp)
 {
 	try {
 		long nmatches, nstringmatches;
-	
+
 		if (my rowLabels == 0 || my columnLabels == 0) Melder_throw ("No row or column labels.");
-		autoNUMvector<wchar_t *> rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, 
+		autoNUMvector<wchar_t *> rowLabels (strs_replace (my rowLabels, 1, my numberOfRows,
 			search, replace, maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1);
-	
-		autoNUMvector<wchar_t *> columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns, 
+
+		autoNUMvector<wchar_t *> columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns,
 			search, replace, maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1);
-	
+
 		autoStrings srow = Thing_new (Strings);
 		srow -> numberOfStrings = my numberOfRows;
 		srow -> strings = rowLabels.transfer();
-	
+
 		autoStrings scol = Thing_new (Strings);
 		scol -> numberOfStrings = my numberOfColumns;
 		scol -> strings = columnLabels.transfer();
@@ -404,20 +407,20 @@ Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t
 		/* Find dimension of new Confusion */
 		autoDistributions dcol = Strings_to_Distributions (scol.peek());
 		long nresp = dcol -> numberOfRows;
-		
+
 		autoDistributions drow = Strings_to_Distributions (srow.peek());
 		long nstim = drow -> numberOfRows;
 
 		autoConfusion thee = Confusion_create (nstim, nresp);
-	
+
 		NUMstrings_copyElements (drow -> rowLabels, thy rowLabels, 1, nstim);
 		NUMstrings_copyElements (dcol -> rowLabels, thy columnLabels, 1, nresp);
-	
+
 		autoNUMvector<long> rowIndex (1, my numberOfRows);
 		create_index (srow -> strings, 1, my numberOfRows, drow -> rowLabels, 1, nstim, rowIndex.peek());
 		autoNUMvector<long> columnIndex (1, my numberOfColumns);
 		create_index (scol -> strings, 1, my numberOfColumns, dcol -> rowLabels, 1, nresp, columnIndex.peek());
-	
+
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			for (long j = 1; j <= my numberOfColumns; j++)
@@ -426,18 +429,18 @@ Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not condensed."); }
+	} catch (MelderError) { Melder_throw (me, ": not condensed."); }
 }
 
 Confusion TableOfReal_to_Confusion (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	try {
 		if (! TableOfReal_checkPositive (me)) Melder_throw ("Elements may not be less than zero.");
 		autoConfusion thee = (Confusion) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classConfusion);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Confusion."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Confusion."); }
 }
 
 Confusion Confusion_group (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos)
@@ -446,7 +449,7 @@ Confusion Confusion_group (Confusion me, const wchar_t *labels, const wchar_t *n
 		autoConfusion stim = Confusion_groupStimuli (me, labels, newLabel, newpos);
 		autoConfusion me = Confusion_groupResponses (stim.peek(), labels, newLabel, newpos);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not grouped."); }
+	} catch (MelderError) { Melder_throw (me, ": not grouped."); }
 }
 
 Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos)
@@ -454,9 +457,9 @@ Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wch
 	try {
 		long ncondense = Melder_countTokens (labels);
 		autoNUMvector<long> irow (1, my numberOfRows);
-		
+
 		for (long i = 1; i <= my numberOfRows; i++) irow[i] = i;
-		
+
 		for (wchar_t *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ())
 		{
 			for (long i = 1; i <= my numberOfRows; i++)
@@ -473,25 +476,25 @@ Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wch
 		if (newpos < 1) newpos = 1;
 		if (newpos > newnstim) newpos = newnstim;
 		autoConfusion thee = Confusion_create (newnstim, my numberOfColumns);
-		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns); therror
+		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
 
-		TableOfReal_setRowLabel (thee.peek(), newpos, newLabel); therror
+		TableOfReal_setRowLabel (thee.peek(), newpos, newLabel);
 		long inewrow = 1;
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			long rowpos = newpos;
 			if (irow[i] > 0)
-			{ 
+			{
 				if (inewrow == newpos) inewrow++;
 				rowpos = inewrow;
 				inewrow++;
-				TableOfReal_setRowLabel (thee.peek(), rowpos, my rowLabels[i]); therror
+				TableOfReal_setRowLabel (thee.peek(), rowpos, my rowLabels[i]);
 			}
 			for (long j = 1; j <= my numberOfColumns; j++)
 			{ thy data[rowpos][j] += my data[i][j]; }
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": stimuli not grouped."); }	
+	} catch (MelderError) { Melder_throw (me, ": stimuli not grouped."); }
 }
 
 Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const wchar_t *newLabel, long newpos)
@@ -499,9 +502,9 @@ Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const w
 	try {
 		long ncondense = Melder_countTokens (labels);
 		autoNUMvector<long> icol (1, my numberOfColumns);
-		
+
 		for (long i = 1; i <= my numberOfColumns; i++) icol[i] = i;
-		
+
 		for (wchar_t *token = Melder_firstToken (labels); token != 0; token = Melder_nextToken ())
 		{
 			for (long i = 1; i <= my numberOfColumns; i++)
@@ -518,24 +521,24 @@ Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const w
 		if (newpos < 1) newpos = 1;
 		if (newpos > newnresp) newpos = newnresp;
 		autoConfusion thee = Confusion_create (my numberOfRows, newnresp);
-		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, my numberOfRows); therror
-		TableOfReal_setColumnLabel (thee.peek(), newpos, newLabel); therror
+		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, my numberOfRows);
+		TableOfReal_setColumnLabel (thee.peek(), newpos, newLabel);
 		long inewcol = 1;
 		for (long i = 1; i <= my numberOfColumns; i++)
 		{
 			long colpos = newpos;
 			if (icol[i] > 0)
-			{ 
+			{
 				if (inewcol == newpos) inewcol++;
 				colpos = inewcol;
 				inewcol++;
-				TableOfReal_setColumnLabel (thee.peek(), colpos, my columnLabels[i]); therror
+				TableOfReal_setColumnLabel (thee.peek(), colpos, my columnLabels[i]);
 			}
-			for (long j = 1; j <= my numberOfRows; j++) 
+			for (long j = 1; j <= my numberOfRows; j++)
 			{ thy data[j][colpos] += my data[j][i]; }
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": responses not grouped."); }	
+	} catch (MelderError) { Melder_throw (me, ": responses not grouped."); }
 }
 
 TableOfReal Confusion_to_TableOfReal_marginals (I)
@@ -543,7 +546,7 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 	iam (Confusion);
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows + 1, my numberOfColumns + 1);
-	
+
 		double total = 0;
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
@@ -556,9 +559,9 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 			thy data[i][my numberOfColumns + 1] = rowsum;
 			total += rowsum;
 		}
-	
+
 		thy data[my numberOfRows + 1][my numberOfColumns + 1] = total;
-	
+
 		for (long j = 1; j <= my numberOfColumns; j++)
 		{
 			double colsum = 0;
@@ -568,19 +571,20 @@ TableOfReal Confusion_to_TableOfReal_marginals (I)
 			}
 			thy data[my numberOfRows + 1][j] = colsum;
 		}
-	
-		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, my numberOfRows); 
+
+		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, my numberOfRows);
 		NUMstrings_copyElements (my columnLabels, thy columnLabels, 1, my numberOfColumns);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": table with marginals not created."); }
+	} catch (MelderError) { Melder_throw (me, ": table with marginals not created."); }
 }
 
 void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision)
 {
 	iam (Confusion);
-		autoTableOfReal thee = marginals ? Confusion_to_TableOfReal_marginals (me) : (TableOfReal) me; 
-		TableOfReal_drawAsNumbers (thee.peek(), g, 1, thy numberOfRows, iformat, precision);
-		if (! marginals) thee.transfer();
+	TableOfReal thee = (TableOfReal) me;
+	autoTableOfReal athee = 0;
+	if (marginals) { athee.reset (Confusion_to_TableOfReal_marginals (me)); thee = athee.peek(); }
+	TableOfReal_drawAsNumbers (thee, g, 1, thy numberOfRows, iformat, precision);
 }
 
 

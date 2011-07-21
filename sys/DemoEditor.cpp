@@ -165,7 +165,7 @@ void Demo_open (void) {
 			/*
 			 * Batch scripts have to be able to run demos.
 			 */
-			//Melder_batch = 0;
+			//Melder_batch = false;
 		}
 		if (theDemoEditor == NULL) {
 			theDemoEditor = DemoEditor_create ((GuiObject) Melder_topShell);
@@ -222,7 +222,7 @@ bool Demo_waitForInput (Interpreter interpreter) {
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;
 	#if ! defined (CONSOLE_APPLICATION)
-		int wasBackgrounding = Melder_backgrounding;
+		bool wasBackgrounding = Melder_backgrounding;
 		structMelderDir dir = { { 0 } };
 		Melder_getDefaultDir (& dir);
 		if (wasBackgrounding) praat_foreground ();
@@ -233,7 +233,7 @@ bool Demo_waitForInput (Interpreter interpreter) {
 		#else
 			do {
 				XEvent event;
-				XtAppNextEvent (Melder_appContext, & event);
+				GuiNextEvent (& event);
 				XtDispatchEvent (& event);
 			} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
 		#endif

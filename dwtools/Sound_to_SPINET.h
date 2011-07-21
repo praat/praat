@@ -25,13 +25,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _SPINET_h_
-	#include "SPINET.h"
-#endif
-
-#ifndef _Sound_extensions_h_
-	#include "Sound_extensions.h"
-#endif
+#include "SPINET.h"
+#include "Sound_extensions.h"
 
 #ifdef __cplusplus
 	extern "C" {

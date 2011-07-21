@@ -11,7 +11,7 @@ double d_sign(double *a, double *b)
 	return( *b >= 0 ? x : -x);
 }
 
-long int lsame_(char *ca, char *cb)
+long int lsame_(const char *ca, const char *cb)
 {
 	int a = *(unsigned char *) ca;
 	int b = *(unsigned char *) cb;
@@ -48,7 +48,7 @@ double pow_di(double *ap, long *bp)
 	return(pow);
 }
 
-void s_cat(char *lp, char *rpp[], long rnp[], long *np, long ll)
+void s_cat(char *lp, const char *rpp[], long rnp[], long *np, long ll)
 {
 	long i, nc;
 	char *rp;
@@ -62,7 +62,7 @@ void s_cat(char *lp, char *rpp[], long rnp[], long *np, long ll)
 	L = ll;
 	i = 0;
 	while(i < n) {
-		rp = rpp[i];
+		rp = (char *) rpp[i];
 		m = rnp[i++];
 		if (rp >= lp1 || rp + m <= lp) {
 			if ((L -= m) <= 0) {
@@ -83,7 +83,7 @@ void s_cat(char *lp, char *rpp[], long rnp[], long *np, long ll)
 		if(rnp[i] < nc)
 			nc = rnp[i];
 		ll -= nc;
-		rp = rpp[i];
+		rp = (char *) rpp[i];
 		while(--nc >= 0)
 			*lp++ = *rp++;
 		}
@@ -99,7 +99,7 @@ void s_cat(char *lp, char *rpp[], long rnp[], long *np, long ll)
 
 
 /* compare two strings */
-long s_cmp(char *a0, char *b0, long la, long lb)
+long s_cmp(const char *a0, const char *b0, long la, long lb)
 {
 	register unsigned char *a, *aend, *b, *bend;
 	a = (unsigned char *)a0;

@@ -28,7 +28,9 @@
 #include "LFCC.h"
 
 class_methods (LFCC, CC)
-class_methods_end
+{
+	class_methods_end
+}
 
 LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax)
@@ -37,7 +39,7 @@ LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoLFCC me = Thing_new (LFCC);
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin, fmax);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("LFCC not created."); }
+	} catch (MelderError) { Melder_throw ("LFCC not created."); }
 }
 
 /* End of file LFCC.cpp */

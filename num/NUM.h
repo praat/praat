@@ -69,14 +69,8 @@
 #endif
 #include <stdio.h>
 #include <wchar.h>
-#ifndef _abcio_h_
-	#include "abcio.h"
-#endif
+#include "abcio.h"
 #define NUMlog2(x)  (log (x) * NUMlog2e)
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 void NUMinit (void);
 
@@ -272,77 +266,6 @@ FUNCTION (fc, fcomplex)
 FUNCTION (dc, dcomplex)
 #undef FUNCTION
 
-#ifndef __cplusplus
-
-#define NUMstructvector(Type,lo,hi)  \
-	(struct struct##Type *) NUMvector (sizeof (struct struct##Type), lo, hi)
-#define NUMstructvector_free(Type,v,lo)  \
-	NUMvector_free (sizeof (struct struct##Type), v, lo)
-#define NUMstructvector_copy(Type,v,lo,hi)  \
-	(struct struct##Type *) NUMvector_copy (sizeof (struct struct##Type), v, lo, hi)
-#define NUMstructvector_copyElements(Type,v,to,lo,hi)  \
-	NUMvector_copyElements (sizeof (struct struct##Type), v, to, lo, hi)
-#define NUMstructvector_equal(Type,v1,v2,lo,hi)  \
-	NUMvector_equal (sizeof (struct struct##Type), v1, v2, lo, hi)
-#define NUMstructvector_append(Type,v,lo,hi)  \
-	NUMvector_append (sizeof (struct struct##Type), (void **) v, lo, hi)
-#define NUMstructvector_insert(Type,v,lo,hi,position)  \
-	NUMvector_insert (sizeof (struct struct##Type), (void **) v, lo, hi, position)
-
-#define NUMpvector(lo,hi)  \
-	NUMvector (sizeof (void *), lo, hi)
-#define NUMpvector_free(v,lo)  \
-	NUMvector_free (sizeof (void *), v, lo)
-#define NUMpvector_copy(v,lo,hi)  \
-	NUMvector_copy (sizeof (void *), v, lo, hi)
-#define NUMpvector_copyElements(v,to,lo,hi)  \
-	NUMvector_copyElements (sizeof (void *), v, to, lo, hi)
-#define NUMpvector_equal(v1,v2,lo,hi)  \
-	NUMvector_equal (sizeof (void *), v1, v2, lo, hi)
-#define NUMpvector_append(v,lo,hi)  \
-	NUMvector_append (sizeof (void *), (void **) v, lo, hi)
-#define NUMpvector_insert(v,lo,hi,position)  \
-	NUMvector_insert (sizeof (void *), (void **) v, lo, hi, position)
-
-#define NUMwvector(lo,hi)  \
-	(wchar **) NUMvector (sizeof (wchar *), lo, hi)
-#define NUMwvector_free(v,lo)  \
-	NUMvector_free (sizeof (wchar *), v, lo)
-#define NUMwvector_copy(v,lo,hi)  \
-	(wchar **) NUMvector_copy (sizeof (wchar *), v, lo, hi)
-#define NUMwvector_copyElements(v,to,lo,hi)  \
-	NUMvector_copyElements (sizeof (wchar *), v, to, lo, hi)
-#define NUMwvector_equal(v1,v2,lo,hi)  \
-	NUMvector_equal (sizeof (wchar *), v1, v2, lo, hi)
-#define NUMwvector_append(v,lo,hi)  \
-	NUMvector_append (sizeof (wchar *), (void **) v, lo, hi)
-#define NUMwvector_insert(v,lo,hi,position)  \
-	NUMvector_insert (sizeof (wchar *), (void **) v, lo, hi, position)
-
-#define NUMstructmatrix(Type,row1,row2,col1,col2)  \
-	NUMmatrix (sizeof (struct struct##Type), row1, row2, col1, col2)
-#define NUMstructmatrix_free(Type,m,row1,col1)  \
-	NUMmatrix_free (sizeof (struct struct##Type), m, row1, col1)
-#define NUMstructmatrix_copy(Type,m,row1,row2,col1,col2)  \
-	NUMmatrix_copy (sizeof (struct struct##Type), m, row1, row2, col1, col2)
-#define NUMstructmatrix_copyElements(Type,m,to,row1,row2,col1,col2)  \
-	NUMmatrix_copyElements (sizeof (struct struct##Type), m, to, row1, row2, col1, col2)
-#define NUMstructmatrix_equal(Type,m1,m2,row1,row2,col1,col2)  \
-	NUMmatrix_equal (sizeof (struct struct##Type), m1, m2, row1, row2, col1, col2)
-
-#define NUMpmatrix(row1,row2,col1,col2)  \
-	NUMmatrix (sizeof (void *), row1, row2, col1, col2)
-#define NUMpmatrix_free(m,row1,col1)  \
-	NUMmatrix_free (sizeof (void *), m, row1, col1)
-#define NUMpmatrix_copy(m,row1,row2,col1,col2)  \
-	NUMmatrix_copy (sizeof (void *), m, row1, row2, col1, col2)
-#define NUMpmatrix_copyElements(m,to,row1,row2,col1,col2)  \
-	NUMmatrix_copyElements (sizeof (void *), m, to, row1, row2, col1, col2)
-#define NUMpmatrix_equal(m1,m2,row1,row2,col1,col2)  \
-	NUMmatrix_equal (sizeof (void *), m1, m2, row1, row2, col1, col2)
-
-#endif
-
 long NUM_getTotalNumberOfArrays (void);   /* For debugging. */
 
 /********** Special functions (NUM.c) **********/
@@ -366,7 +289,7 @@ double NUMincompleteGammaQ (double a, double x);
 double NUMchiSquareP (double chiSquare, double degreesOfFreedom);
 double NUMchiSquareQ (double chiSquare, double degreesOfFreedom);
 double NUMcombinations (long n, long k);
-double NUMincompleteBeta (double a, double b, double x);
+double NUMincompleteBeta (double a, double b, double x);   // incomplete beta function Ix(a,b). Preconditions: a, b > 0; 0 <= x <= 1
 double NUMbinomialP (double p, double k, double n);
 double NUMbinomialQ (double p, double k, double n);
 double NUMinvBinomialP (double p, double k, double n);
@@ -553,9 +476,6 @@ void NUMlinprog_addConstraintCoefficient (NUMlinprog me, double coefficient);
 void NUMlinprog_run (NUMlinprog me);
 double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
-#ifdef __cplusplus
-	}
-
 template <class T>
 T* NUMvector (long from, long to) {
 	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
@@ -685,8 +605,6 @@ public:
 		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1 = newRow1, row2, col1 = newCol1, col2)); therror
 	}
 };
-
-#endif
 
 /* End of file NUM.h */
 #endif

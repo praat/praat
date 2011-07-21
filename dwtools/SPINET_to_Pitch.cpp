@@ -102,7 +102,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 
 			// into Pitch object
 		
-			Pitch_Frame_init (pitchFrame, maxnCandidates); therror
+			Pitch_Frame_init (pitchFrame, maxnCandidates);
 			pitchFrame -> nCandidates = 0; /* !!!!! */
 			Pitch_Frame_addPitch (pitchFrame, 0, 0, maxnCandidates); /* unvoiced */
 			
@@ -130,7 +130,7 @@ Pitch SPINET_to_Pitch (SPINET me, double harmonicFallOffSlope, double ceiling, i
 			Pitch_Frame_resizeStrengths (&thy frame[j], localStrength / maxStrength, unvoicedCriterium);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Pitch created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Pitch created."); }
 }
 
 /* End of file SPINET_to_Pitch.cpp */

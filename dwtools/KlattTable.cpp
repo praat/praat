@@ -467,7 +467,7 @@ KlattTable KlattTable_readFromRawTextFile (MelderFile fs)
 		if (thy nx != KlattTable_NPAR) Melder_throw ("A KlattTable needs ",  KlattTable_NPAR, " columns.");
 
 		autoKlattTable me = Thing_new (KlattTable);
-		Table_initWithColumnNames (me.peek(), thy ny, columnNames); therror
+		Table_initWithColumnNames (me.peek(), thy ny, columnNames);
 		for (long irow = 1; irow <= thy ny; irow++)
 		{
 			for (long jcol = 1; jcol <= KlattTable_NPAR; jcol++)
@@ -477,11 +477,11 @@ KlattTable KlattTable_readFromRawTextFile (MelderFile fs)
 				{
 					val = thy z[irow][jcol - 1] / 10;
 				}
-				Table_setNumericValue ((Table) me.peek(), irow, jcol, val); therror
+				Table_setNumericValue ((Table) me.peek(), irow, jcol, val);
 			}
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("KlattTable not read from file."); }
+	} catch (MelderError) { Melder_throw ("KlattTable not read from file."); }
 }
 
 static void KlattGlobal_free (KlattGlobal me)
@@ -524,7 +524,7 @@ static KlattGlobal KlattGlobal_create (double samplingFrequency)
 		my rout = Resonator_create (dT, Resonator_NORMALISATION_H0);
 		my rnz = AntiResonator_create (dT);
 		return me;
-	} catch (MelderError) { KlattGlobal_free (me); Melder_thrown ("KlattGlobal not created."); }
+	} catch (MelderError) { KlattGlobal_free (me); Melder_throw ("KlattGlobal not created."); }
 }
 
 static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFormants, int glottalSource,
@@ -558,8 +558,7 @@ static void KlattGlobal_init (KlattGlobal me, int synthesisModel, int numberOfFo
 
 static KlattFrame KlattFrame_create ()
 {
-		KlattFrame me = (KlattFrame) _Melder_malloc_e (sizeof(struct structKlattFrame));
-		return me;
+	return Melder_malloc (structKlattFrame, 1);
 }
 
 static void KlattFrame_free (KlattFrame me)
@@ -573,11 +572,11 @@ class_methods_end
 KlattTable KlattTable_create (double frameDuration, double totalDuration)
 {
 	try {
-		autoKlattTable me = (KlattTable) Thing_new (KlattTable); therror
+		autoKlattTable me = (KlattTable) Thing_new (KlattTable);
 		long nrows = floor (totalDuration / frameDuration) + 1;
 		Table_initWithColumnNames (me.peek(), nrows, columnNames);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("KlattTable not created."); }
+	} catch (MelderError) { Melder_throw ("KlattTable not created."); }
 }
 
 //static void frame_init(KlattGlobal_ptr globals, KlattFrame_ptr frame)
@@ -1208,8 +1207,8 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 		{
 			Melder_warning1 (L"Some values in the KlattTable are outside the limits, the resulting sound may sound weird.");
 		}
-		KlattGlobal thee = KlattGlobal_create (samplingFrequency); therror
-		KlattFrame frame = KlattFrame_create ();  therror
+		KlattGlobal thee = KlattGlobal_create (samplingFrequency);
+		KlattFrame frame = KlattFrame_create ();
 		autoNUMvector<short> iwave (0L, MAX_SAM);
 		thy samrate = samplingFrequency;
 
@@ -1258,7 +1257,7 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 		}
 		KlattGlobal_free (thee); KlattFrame_free (frame);
 		return him.transfer ();
-	} catch (MelderError) { KlattGlobal_free (thee); KlattFrame_free (frame); Melder_thrown (me, ": no Sound created."); }
+	} catch (MelderError) { KlattGlobal_free (thee); KlattFrame_free (frame); Melder_throw (me, ": no Sound created."); }
 }
 
 
@@ -2661,7 +2660,7 @@ KlattTable KlattTable_createExample (void)
 			}
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown (" KlattTable example not created."); }
+	} catch (MelderError) { Melder_throw (" KlattTable example not created."); }
 }
 
 KlattTable Table_to_KlattTable (Table me)
@@ -2671,7 +2670,7 @@ KlattTable Table_to_KlattTable (Table me)
 		autoKlattTable thee = (KlattTable) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classKlattTable);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("KlattTable not created from Table."); }
+	} catch (MelderError) { Melder_throw ("KlattTable not created from Table."); }
 }
 
 Table KlattTable_to_Table (KlattTable me)
@@ -2680,7 +2679,7 @@ Table KlattTable_to_Table (KlattTable me)
 		autoTable thee = (Table) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classTable);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Table not created from KlattTable."); }
+	} catch (MelderError) { Melder_throw ("Table not created from KlattTable."); }
 }
 
 /* End of file KlattTable.cpp */

@@ -112,7 +112,7 @@ void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
 {
 	iam (Tube);
 	my maxnSegments = maxnSegments;
-	Sampled_init (me, tmin, tmax, nt, dt, t1); therror
+	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my frame = NUMvector<structTube_Frame> (1, nt);
 	Tube_setLengths (me, defaultLength);
 }
@@ -133,7 +133,7 @@ Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoArea me = Thing_new (Area);
 		Area_init (me.peek(), tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Area not crteated."); }
+	} catch (MelderError) { Melder_throw ("Area not crteated."); }
 }
 
 class_methods (RC, Tube)
@@ -152,7 +152,7 @@ RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoRC me = Thing_new (RC);
 		RC_init (me.peek(), tmin, tmax, nt, dt, t1, maxnCoefficients, defaultLength);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("RC not crteated."); }
+	} catch (MelderError) { Melder_throw ("RC not crteated."); }
 }
 		
 /* End of file Tube.cpp */

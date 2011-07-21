@@ -1,3 +1,5 @@
+#ifndef _TableOfReal_and_SVD_h_
+#define TableOfReal_and_SVD_h_
 /* TableOfReal_and_SVD.h
  *
  * Copyright (C) 1993-2011 David Weenink
@@ -22,14 +24,8 @@
  djmw 20110397 Latest modification
 */
 
-#ifndef TableOfReal_and_SVD_h_
-	#define TableOfReal_and_SVD_h_
-#ifndef _SVD_h_
-	#include "SVD.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
+#include "SVD.h"
+#include "TableOfReal.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -47,4 +43,4 @@ TableOfReal SVD_extractSingularValues (I);
 	}
 #endif
 
-#endif /* TableOfReal_and_SVD.h */
+#endif // _TableOfReal_and_SVD_h_

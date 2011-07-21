@@ -67,8 +67,6 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
 
-extern machar_Table NUMfpp;
-
 static void Graphics_ticks (Graphics g, double min, double max, int hasNumber,
 	int hasTick, int hasDottedLine, int integers)
 {
@@ -169,7 +167,7 @@ void Eigen_initFromSquareRoot (I, double **a, long numberOfRows, long numberOfCo
 }
 
 void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
-	long numberOfColumns, double **b, long numberOfRows_b) 
+	long numberOfColumns, double **b, long numberOfRows_b)
 {
 	iam (Eigen);
 	double *u = NULL, *v = NULL, maxsv2 = -10;
@@ -303,7 +301,7 @@ Eigen Eigen_create (long numberOfEigenvalues, long dimension)
 		autoEigen me = Thing_new (Eigen);
 		Eigen_init (me.peek(), numberOfEigenvalues, dimension);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Eigen not created."); }
+	} catch (MelderError) { Melder_throw ("Eigen not created."); }
 }
 
 long Eigen_getNumberOfEigenvectors (I)

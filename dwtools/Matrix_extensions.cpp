@@ -164,7 +164,7 @@ void Matrix_scale (I, int choice)
 	if (nZero)  Melder_warning1 (L"Matrix_scale: extremum == 0, (part of) matrix unscaled.");
 }
 
-Any Matrix_transpose (I)
+Matrix Matrix_transpose (I)
 {
 	iam (Matrix);
 	try {
@@ -178,7 +178,7 @@ Any Matrix_transpose (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not transposed."); }
+	} catch (MelderError) { Melder_throw (me, ": not transposed."); }
 }
 
 void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
@@ -329,7 +329,7 @@ Matrix Matrix_solveEquation (I, double tolerance)
 		NUMsolveEquation (u.peek(), nr, nc, b.peek(), 0, x.peek());
 		for (long j = 1; j <= nc; j++) thy z[1][j] = x[j];
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Matrix equation not solved."); }
+	} catch (MelderError) { Melder_throw ("Matrix equation not solved."); }
 }
 
 /* End of file Matrix_extensions.cpp */

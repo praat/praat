@@ -28,10 +28,10 @@
 #include "Graphics.h"
 #include "FFNet_Pattern_Activation.h"
 
-static double func (I, const double p[])
+static double func (Data object, const double p[])
 {
-    iam (FFNet); 
-	Minimizer thee = my minimizer; 
+    FFNet me = (FFNet) object;
+	Minimizer thee = my minimizer;
 	double fp = 0;
 
     for (long j = 1, k = 1; k <= my nWeights; k++)
@@ -54,10 +54,10 @@ static double func (I, const double p[])
     return fp;
 }
 
-static void dfunc_optimized (I, const double p[], double dp[])
+static void dfunc_optimized (Data object, const double p[], double dp[])
 {
-    iam (FFNet);
-	(void) p; 
+    FFNet me = (FFNet) object;
+	(void) p;
 
 	long j = 1;
     for (long k = 1; k <= my nWeights; k++)
@@ -71,7 +71,7 @@ static void _FFNet_Pattern_Activation_checkDimensions (FFNet me, Pattern p, Acti
     if (my nInputs != p -> nx) Melder_throw (L"The Pattern and the FFNet do not match.\n"
     	"The number of colums in the Pattern must equal the number of inputs in the FFNet.");
     if (my nOutputs != a -> nx) Melder_throw (L"The Activation and the FFNet do not match.\n"
-    	"The number of colums in the Activation must equal the number of outputs in the FFNet."); 
+    	"The number of colums in the Activation must equal the number of outputs in the FFNet.");
 	if (p -> ny != a -> ny) Melder_throw (L"The Pattern and the Activation do not match.\n"
 		"The number of rows in the Pattern must equal the number of rows in the Activation.");
 	if (! _Pattern_checkElements (p)) Melder_throw (L"The elements in the Pattern are not all "
@@ -82,43 +82,44 @@ static void _FFNet_Pattern_Activation_checkDimensions (FFNet me, Pattern p, Acti
 		"between 0 and 1.\nYou could use \"Formula...\" to scale the Activation values first.");
 }
 
-static int _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern, 
-	Activation activation, long maxNumOfEpochs, double tolerance, 
+static void _FFNet_Pattern_Activation_learn (FFNet me, Pattern pattern,
+	Activation activation, long maxNumOfEpochs, double tolerance,
 	Any parameters, int costFunctionType, int reset)
 {
-	_FFNet_Pattern_Activation_checkDimensions (me, pattern, activation);
-	Minimizer_setParameters (my minimizer, parameters);
+	try {
+		_FFNet_Pattern_Activation_checkDimensions (me, pattern, activation);
+		Minimizer_setParameters (my minimizer, parameters);
 
-	// Link the things to be learned
+		// Link the things to be learned
 
-	my nPatterns = pattern -> ny;
-	my inputPattern = pattern -> z;
-	my targetActivation = activation -> z;
-	FFNet_setCostFunction (me, costFunctionType);
+		my nPatterns = pattern -> ny;
+		my inputPattern = pattern -> z;
+		my targetActivation = activation -> z;
+		FFNet_setCostFunction (me, costFunctionType);
 
-	if (reset) 
-	{
-		autoNUMvector<double> wbuf (1, my dimension);
-		long k = 1;
-		for (long i = 1; i <= my nWeights; i++)
+		if (reset)
 		{
-			if (my wSelected[i]) wbuf[k++] = my w[i];
-		} 
-		Minimizer_reset (my minimizer, wbuf.peek());
-	}
-	
-	int status = Minimizer_minimize (my minimizer, maxNumOfEpochs, tolerance, 1);
+			autoNUMvector<double> wbuf (1, my dimension);
+			long k = 1;
+			for (long i = 1; i <= my nWeights; i++)
+			{
+				if (my wSelected[i]) wbuf[k++] = my w[i];
+			}
+			Minimizer_reset (my minimizer, wbuf.peek());
+		}
 
-	// Unlink
+		Minimizer_minimize (my minimizer, maxNumOfEpochs, tolerance, 1);
 
-	my nPatterns = 0; 
-	my inputPattern = NULL; 
-	my targetActivation = NULL;
-	return status;
+		// Unlink
+
+		my nPatterns = 0;
+		my inputPattern = NULL;
+		my targetActivation = NULL;
+	} catch (MelderError) { my nPatterns = 0; my inputPattern = 0; my targetActivation = 0; }
 }
-  
 
-int FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, 
+
+void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a,
 	long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType)
 {
     int resetMinimizer = 0;
@@ -133,13 +134,12 @@ int FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a,
     {
     	resetMinimizer = 1;
 		my minimizer = (Minimizer) SteepestDescentMinimizer_create (my dimension, me, func, dfunc_optimized);
-    	if (my minimizer == 0) return 0;
     }
-    return _FFNet_Pattern_Activation_learn (me, p, a, maxNumOfEpochs,
+    _FFNet_Pattern_Activation_learn (me, p, a, maxNumOfEpochs,
 		tolerance, parameters, costFunctionType, resetMinimizer);
 }
 
-int FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, 
+void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a,
 	long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType)
 {
     int resetMinimizer = 0;
@@ -152,13 +152,12 @@ int FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a,
 		resetMinimizer = 1;
 	}
 	/* create the minimizer if it doesn't exist */
-    if (my minimizer == 0)
-    {
+	if (my minimizer == 0)
+	{
     	resetMinimizer = 1;
 		my minimizer = (Minimizer) VDSmagtMinimizer_create (my dimension, me, func, dfunc_optimized);
-    	if (my minimizer == 0) return 0;
-    }
-    return _FFNet_Pattern_Activation_learn (me, p, a, maxNumOfEpochs,
+	}
+   _FFNet_Pattern_Activation_learn (me, p, a, maxNumOfEpochs,
 		tolerance, parameters, costFunctionType, resetMinimizer);
 }
 
@@ -167,13 +166,13 @@ double FFNet_Pattern_Activation_getCosts_total (FFNet me, Pattern p, Activation 
 	try {
 		_FFNet_Pattern_Activation_checkDimensions (me, p, a);
 		FFNet_setCostFunction (me, costFunctionType);
-	
+
 		double cost = 0;
 		for (long i = 1; i <= p -> ny; i++)
 		{
 			FFNet_propagate (me, p -> z[i], NULL);
 			cost += FFNet_computeError (me, a -> z[i]);
-		}	
+		}
 		return cost;
 	} catch (MelderError) { return NUMundefined; }
 }
@@ -191,20 +190,20 @@ Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer)
 		if (my nInputs != p -> nx) Melder_throw ("The Pattern and the FFNet do not match. "
 			"The number of colums in the Pattern (", p -> nx, ") must equal the number of inputs "
 			"in the FFNet (", my nInputs, ").");
-		if (! _Pattern_checkElements (p)) Melder_throw 
+		if (! _Pattern_checkElements (p)) Melder_throw
 		("The elements in the Activation are not all in the interval [0, 1].\n"
 		"The output units of the neural net can only process values that are between 0 and 1.\n"
 		"You could use \"Formula...\" to scale the Activation values first.");
-		
+
 		long nPatterns = p -> ny;
-		autoActivation thee = Activation_create (nPatterns, my nUnitsInLayer[layer]);	
-	
+		autoActivation thee = Activation_create (nPatterns, my nUnitsInLayer[layer]);
+
 		for (long i = 1; i <= nPatterns; i++)
 		{
 			FFNet_propagateToLayer (me, p -> z[i], thy z[i], layer);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Activation created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Activation created."); }
 }
 
 /* End of file FFNet_Pattern_Activation.cpp */

@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/13
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -699,19 +695,16 @@ extern char Melder_buffer1 [30001], Melder_buffer2 [30001];
 
 /* Procedures to enforce interactive behaviour of the Melder_XXXXXX routines. */
 
-void MelderGui_create (/* XtAppContext* */ void *appContext, /* GuiObject */ void *parent);
+void MelderGui_create (/* GuiObject */ void *parent);
 /*
-	'appContext' is the XtAppContext* output from Xt(Va)AppInitialize;
-		if you used Xt(Va)Initialize it should be NULL.
-	'parent' is the top-level widget returned by Xt(Va)(App)Initialize.
+	'parent' is the top-level widget returned by GuiAppInitialize.
 */
 
-extern int Melder_batch;   /* True if run from the batch or from an interactive command-line interface. */
-extern int Melder_backgrounding;   /* True if running a script. */
+extern bool Melder_batch;   // true if run from the batch or from an interactive command-line interface
+extern bool Melder_backgrounding;   /* True if running a script. */
 extern bool Melder_consoleIsAnsi;
 #ifndef CONTROL_APPLICATION
-	extern void *Melder_appContext;   /* XtAppContext* */
-	extern void *Melder_topShell;   /* GuiObject */
+	extern void *Melder_topShell;   // GuiObject
 #endif
 
 /********** OVERRIDE DEFAULT BEHAVIOUR **********/
@@ -967,7 +960,6 @@ wchar * Melder_getenv (const wchar *variableName);
 void Melder_system (const wchar *command);   // spawn a system command; return 0 if error
 double Melder_clock (void);   // seconds since 1969
 
-#ifdef __cplusplus
 class MelderError { };
 
 typedef struct structThing *Thing;
@@ -1292,8 +1284,6 @@ private:
 
 typedef _autostring <wchar> autostring;
 typedef _autostring <char> autostring8;
-
-#endif
 
 /* End of file melder.h */
 #endif

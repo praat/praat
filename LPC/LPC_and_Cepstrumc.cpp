@@ -70,7 +70,7 @@ Cepstrumc LPC_to_Cepstrumc (LPC me)
 			LPC_Frame_into_Cepstrumc_Frame (& my frame[i], & thy frame[i]);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Cepstrum created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Cepstrum created."); }
 }
 
 LPC Cepstrumc_to_LPC (Cepstrumc me)
@@ -84,7 +84,7 @@ LPC Cepstrumc_to_LPC (Cepstrumc me)
 			Cepstrumc_Frame_into_LPC_Frame (& my frame[i], & thy frame[i]);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ":no LPC created."); }
+	} catch (MelderError) { Melder_throw (me, ":no LPC created."); }
 }
 
 /* End of file LPC_and_Cepstrumc.cpp  */

@@ -144,7 +144,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 		thePauseFormCancelCallback);
 	theCancelContinueButton = cancelContinueButton;
 	UiForm_finish (thePauseForm); therror
-	int wasBackgrounding = Melder_backgrounding;
+	bool wasBackgrounding = Melder_backgrounding;
 	structMelderDir dir = { { 0 } };
 	Melder_getDefaultDir (& dir);
 	//if (theCurrentPraatApplication -> batch) goto end;
@@ -169,7 +169,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 			#else
 				do {
 					XEvent event;
-					XtAppNextEvent (Melder_appContext, & event);
+					GuiNextEvent (& event);
 					XtDispatchEvent (& event);
 				} while (! thePauseForm_clicked);
 			#endif

@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CFLAGS = $(DEFS) -I ../stat -I ../num -I ../sys -I ../GSL -I ../kar
+CFLAGS = $(DEFS) -I ../stat -I ../num -I ../sys -I dwsys -I ../GSL -I ../kar
 
 CPPFLAGS = $(CFLAGS)
 

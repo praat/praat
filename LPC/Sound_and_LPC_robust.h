@@ -24,12 +24,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _LPC_h_
-	#include "LPC.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+#include "LPC.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -42,7 +38,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 	error: two or more data types in declaration of `LPC_Frame_and_Sound_into_LPC_Frame_huber
 	By defining a void pointer we circumvent the complaint.
 */
-	
+
 LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	double preEmphasisFrequency, double k, int itermax, double tol, int wantlocation);
 

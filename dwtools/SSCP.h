@@ -210,7 +210,7 @@ SSCP SSCPs_to_SSCP_sum (SSCPs me);
 
 SSCP SSCPs_to_SSCP_pool (SSCPs me);
 
-int SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability,
+void SSCPs_getHomegeneityOfCovariances_box (SSCPs me, double *probability,
 	double *chisq, long *ndf);
 
 SSCP SSCP_toTwoDimensions (I, double *v1, double *v2);

@@ -65,7 +65,7 @@ SSCP Eigen_and_SSCP_project (I, SSCP thee)
 		autoSSCP him = SSCP_create (my numberOfEigenvalues);	
 		Eigen_and_SSCP_project_ (me, thee, him.peek());
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("SSCP not projected."); }
+	} catch (MelderError) { Melder_throw ("SSCP not projected."); }
 }
 
 Covariance Eigen_and_Covariance_project (I, Covariance thee)
@@ -76,7 +76,7 @@ Covariance Eigen_and_Covariance_project (I, Covariance thee)
 		autoCovariance him = Covariance_create (my numberOfEigenvalues);
 		Eigen_and_SSCP_project_ (me, thee, him.peek());
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Covariance not projected."); }
+	} catch (MelderError) { Melder_throw ("Covariance not projected."); }
 }
 
 /* End of file Eigen_and_SSCP.cpp */

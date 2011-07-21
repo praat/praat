@@ -81,7 +81,7 @@ void MelderString_empty (MelderString *me) {
 	unsigned long sizeNeeded = 1;
 	expandIfNecessary (wchar_t)
 	my string [0] = '\0';
-end:
+//end:
 	my length = 0;
 }
 

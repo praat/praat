@@ -24,9 +24,8 @@
  djmw 20110306 Latest modification.
 */
 
-#ifndef _Matrix_h_
-	#include "Matrix.h"
-#endif
+
+#include "Matrix.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -54,11 +53,11 @@ Pattern Pattern_create (long ny, long nx);
 void Pattern_normalize (I, int choice, double pmin, double pmax);
 /* choice == 1: z[i][j] = (z[i][j]-pmin) / (pmax-pmin);
  * choice == 2: z[i][j] *= 1.0 / sum(j=1,j=nx, z[i][j]-pmin)
- */					
+ */
 
 void Pattern_draw (I, Graphics g, long pattern, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
-	
+
 Pattern Matrix_to_Pattern (I, int join);
 Matrix Pattern_to_Matrix (Pattern me);
 

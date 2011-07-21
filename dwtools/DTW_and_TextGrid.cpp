@@ -50,7 +50,7 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee)
 			textpoint -> number = time;
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("TextTier not created from DTW & TextTier."); }
+	} catch (MelderError) { Melder_throw ("TextTier not created from DTW & TextTier."); }
 }
 
 IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
@@ -72,7 +72,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
 			textinterval -> xmax = xmax;
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("IntervalTier not created from DTW & IntervalTier."); }
+	} catch (MelderError) { Melder_throw ("IntervalTier not created from DTW & IntervalTier."); }
 }
 
 TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
@@ -92,12 +92,12 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 			if (anyTier -> methods == (Thing_Table) classIntervalTier)
 			{
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier);
-				TextGrid_addTier (him.peek(), tier.peek()); therror
+				TextGrid_addTier (him.peek(), tier.peek());
 			}
 			else if (anyTier -> methods == (Thing_Table) classTextTier)
 			{
 				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier);
-				TextGrid_addTier (him.peek(), tier.peek()); therror
+				TextGrid_addTier (him.peek(), tier.peek());
 			}
 			else
 			{
@@ -105,7 +105,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("TextGrid not created from DTW & TextGrid."); }	
+	} catch (MelderError) { Melder_throw ("TextGrid not created from DTW & TextGrid."); }	
 }
 
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */
@@ -125,7 +125,7 @@ TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee)
 			textpoint -> number = time;
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("TextTier not created."); }
+	} catch (MelderError) { Melder_throw ("TextTier not created."); }
 }
 
 IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee)
@@ -148,7 +148,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee
 			textinterval -> xmax = xmax;
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("IntervalTier not created."); }
+	} catch (MelderError) { Melder_throw ("IntervalTier not created."); }
 }
 
 TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
@@ -169,12 +169,12 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
 			{
 			
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
-				TextGrid_addTier (him.peek(), tier.peek()); therror
+				TextGrid_addTier (him.peek(), tier.peek());
 			}
 			else if (anyTier -> methods == (Thing_Table) classTextTier)
 			{
 				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
-				TextGrid_addTier (him.peek(), tier.peek()); therror
+				TextGrid_addTier (him.peek(), tier.peek());
 			}
 			else
 			{
@@ -182,7 +182,7 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("TextGrid not created."); }
+	} catch (MelderError) { Melder_throw ("TextGrid not created."); }
 }
 
 /* End of file DTW_and_TextGrid.cpp */

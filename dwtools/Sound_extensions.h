@@ -24,24 +24,13 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Pitch_h_
-	#include "Pitch.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-#ifndef _PointProcess_h_
-	#include "PointProcess.h"
-#endif
-#ifndef _TextGrid_h_
-	#include "TextGrid.h"
-#endif
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
-#endif
+
+#include "Sound.h"
+#include "Pitch.h"
+#include "Collection.h"
+#include "PointProcess.h"
+#include "TextGrid.h"
+#include "Interpreter_decl.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -69,13 +58,13 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate);
 /*
 */
 
-int Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian,
+void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian,
 	int nBitsCoding, int unSigned);
 
 void Sound_into_Sound (Sound me, Sound to, double startTime);
 /* precondition: my dx == to->dx (equal sampling times */
 
-int Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3);
+void Sound_overwritePart (Sound me, double t1, double t2, Sound thee, double t3);
 /*
 	Overwrite the part between (t1,t2) in me with samples from Sound thee,
 	starting at t3 in thee.
@@ -185,7 +174,7 @@ PointProcess Sound_to_PointProcess_getJumps (Sound me, double minimumJump, doubl
 	within time dt
 */
 
-int Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula, Interpreter interpreter);
+void Sound_filter_part_formula (Sound me, double t1, double t2, const wchar_t *formula, Interpreter interpreter);
 
 Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 	double formantMultiplier, // > 0

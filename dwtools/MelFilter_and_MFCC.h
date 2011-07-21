@@ -25,12 +25,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _MelFilter_h_
-	#include "FilterBank.h"
-#endif
-#ifndef _MFCC_h_
-	#include "MFCC.h"
-#endif
+#include "FilterBank.h"
+#include "MFCC.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -51,8 +47,8 @@ We follow the definition of Davis and Mermelstein:
     	MFCC[i] = SUM (j=1..N, f[j] * cos (i(j-1/2)pi/N)), i=1..N-1,
 however, we also calculate the zero coefficient as
     	MFCC[0] = SUM (j=1..N, f[j]) / N.
-The pure cosine transform MFCC[0] would be the sum instead of the average. 
-This average is more convenient in the inverse transform (from MFCC to 
+The pure cosine transform MFCC[0] would be the sum instead of the average.
+This average is more convenient in the inverse transform (from MFCC to
 MelFilter).
 */
 
@@ -63,12 +59,12 @@ Calculates the Cosine Transform of the filterbank values (See Numerical
 Recipes in C, Chapter 12.3):
     F[k] =  SUM (j=1..N, f[j] * cos (pi * k * (j - 1/2) / N)).
     The zeroth cepstral coefficient (F[0]) has been modified to represent the
-    average filterbank output instead of the sum of these outputs.  
+    average filterbank output instead of the sum of these outputs.
 */
 
-MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient, 
+MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient,
 	long lastCoefficient, double f1_mel, double df_mel);
-/*  
+/*
 Calculates the Inverse CT of cepstral coefficients:
     f[j] = c0+1/N * SUM (k=1..N, F[k] * cos (pi * k * (j - 1/2) / N)),
 */

@@ -123,7 +123,7 @@ FORM (Configuration_create, L"Create Configuration", L"Create Configuration...")
 	OK
 DO
 	autoConfiguration me = Configuration_create (GET_INTEGER (L"Number of points"), GET_INTEGER (L"Number of dimensions"));
-	TableOfReal_formula (me.peek(), GET_STRING (L"formula"), interpreter, 0); therror
+	TableOfReal_formula (me.peek(), GET_STRING (L"formula"), interpreter, 0);
 	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
@@ -164,7 +164,7 @@ END
 DIRECT (AffineTransform_invert)
 	LOOP {
 		iam (AffineTransform);
-		praat_new ((Data) AffineTransform_invert (me), NAME, L"_inv");
+		praat_new ((AffineTransform) AffineTransform_invert (me), NAME, L"_inv");
 	}
 END
 

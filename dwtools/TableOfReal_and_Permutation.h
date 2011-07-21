@@ -24,12 +24,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _Permutation_h_
-	#include "Permutation.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
+#include "Permutation.h"
+#include "TableOfReal.h"
 
 #ifdef __cplusplus
 	extern "C" {

@@ -48,7 +48,7 @@ oo_CLASS_CREATE (DTW, Matrix);
 #define DTW_X 4
 #define DTW_Y 6
 
-int DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx);
+void DTW_Path_Query_init (DTW_Path_Query me, long ny, long nx);
 
 /* Prototype on y-axis and test on x-axis */
 DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,

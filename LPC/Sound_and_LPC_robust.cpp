@@ -50,21 +50,21 @@ struct huber_struct
 static void huber_struct_init (struct huber_struct *hs, double windowDuration,
 	long p, double samplingFrequency, double location, int wantlocation)
 {
-		hs -> w = hs -> work = hs -> a = hs -> c = 0;
-		hs -> covar = 0; hs -> svd = 0;
-		hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency); therror
-		long n = hs -> e -> nx;
-		hs -> n = n;
-		hs -> p = p;
-		hs -> w = NUMvector<double> (1, n);
-		hs -> work = NUMvector<double> (1, n);
-		hs -> a = NUMvector<double> (1, p);
-		hs -> covar = NUMmatrix<double> (1, p, 1, p);
-		hs -> c = NUMvector<double> (1, p);
-		hs -> svd = SVD_create (p, p);
-		hs -> wantlocation = wantlocation;
-		if (! wantlocation) hs -> location = location;
-		hs -> wantscale = 1;
+	hs -> w = hs -> work = hs -> a = hs -> c = 0;
+	hs -> covar = 0; hs -> svd = 0;
+	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
+	long n = hs -> e -> nx;
+	hs -> n = n;
+	hs -> p = p;
+	hs -> w = NUMvector<double> (1, n);
+	hs -> work = NUMvector<double> (1, n);
+	hs -> a = NUMvector<double> (1, p);
+	hs -> covar = NUMmatrix<double> (1, p, 1, p);
+	hs -> c = NUMvector<double> (1, p);
+	hs -> svd = SVD_create (p, p);
+	hs -> wantlocation = wantlocation;
+	if (! wantlocation) hs -> location = location;
+	hs -> wantscale = 1;
 }
 
 static void huber_struct_destroy (struct huber_struct *hs)
@@ -118,60 +118,60 @@ static void huber_struct_getWeightedCovars (struct huber_struct *hs, double *s)
 
 static void huber_struct_solvelpc (struct huber_struct *hs)
 {
-		SVD me = hs -> svd;
-		double **covar = hs -> covar;
+	SVD me = hs -> svd;
+	double **covar = hs -> covar;
 
-		for (long i = 1; i <= my numberOfRows; i++)
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
+		for (long j = 1; j <= my numberOfColumns; j++)
 		{
-			for (long j = 1; j <= my numberOfColumns; j++)
-			{
-				my u[i][j] = covar[i][j];
-			}
+			my u[i][j] = covar[i][j];
 		}
+	}
 
-		SVD_setTolerance (me, hs -> tol_svd);
-		SVD_compute (me);
+	SVD_setTolerance (me, hs -> tol_svd);
+	SVD_compute (me);
 
-		long nzeros = SVD_zeroSmallSingularValues (me, 0);
+	long nzeros = SVD_zeroSmallSingularValues (me, 0);
 
-		SVD_solve (me, hs -> c, hs -> a);
+	SVD_solve (me, hs -> c, hs -> a);
 }
 
 void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs)
 {
-		long p = my nCoefficients > his nCoefficients ? his nCoefficients : my nCoefficients;
-		long n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
-		double *e = hs -> e -> z[1], *s = thy z[1];
+	long p = my nCoefficients > his nCoefficients ? his nCoefficients : my nCoefficients;
+	long n = hs -> e -> nx > thy nx ? thy nx : hs -> e -> nx;
+	double *e = hs -> e -> z[1], *s = thy z[1];
 
-		hs -> iter = 0;
-		hs -> scale = 1e38;
-		hs -> p = p;
+	hs -> iter = 0;
+	hs -> scale = 1e38;
+	hs -> p = p;
 
-		double s0;
-		do
-		{
-			Sound hse = hs -> e;
-			for (long i = 1; i <= thy nx; i++) hse -> z[1][i] = thy z[1][i];
-			LPC_Frame_and_Sound_filterInverse (him, hse, 1);
+	double s0;
+	do
+	{
+		Sound hse = hs -> e;
+		for (long i = 1; i <= thy nx; i++) hse -> z[1][i] = thy z[1][i];
+		LPC_Frame_and_Sound_filterInverse (him, hse, 1);
 
-			s0 = hs -> scale;
+		s0 = hs -> scale;
 
-			NUMstatistics_huber (e, n, &(hs -> location), hs -> wantlocation, &(hs -> scale), hs -> wantscale,
-				hs -> k, hs -> tol, hs -> work);
+		NUMstatistics_huber (e, n, &(hs -> location), hs -> wantlocation, &(hs -> scale), hs -> wantscale,
+			hs -> k, hs -> tol, hs -> work);
 
-			huber_struct_getWeights (hs, e);
-			huber_struct_getWeightedCovars (hs, s);
+		huber_struct_getWeights (hs, e);
+		huber_struct_getWeightedCovars (hs, s);
 
-			// Solve C a = [-] c */
-			try { huber_struct_solvelpc (hs); } catch (MelderError) {
-				// Copy the starting lpc coeffs */
-				for (long i = 1; i <= p; i++) his a[i] = my a[i];
-				throw;
-			}
-			for (long i = 1; i <= p; i++) his a[i] = hs -> a[i];
+		// Solve C a = [-] c */
+		try { huber_struct_solvelpc (hs); } catch (MelderError) {
+			// Copy the starting lpc coeffs */
+			for (long i = 1; i <= p; i++) his a[i] = my a[i];
+			throw MelderError();
+		}
+		for (long i = 1; i <= p; i++) his a[i] = hs -> a[i];
 
-			(hs -> iter)++;
-		} while ((hs -> iter < hs -> itermax) && (fabs (s0 - hs -> scale) > hs -> tol * s0));
+		(hs -> iter)++;
+	} while ((hs -> iter < hs -> itermax) && (fabs (s0 - hs -> scale) > hs -> tol * s0));
 }
 
 
@@ -236,7 +236,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		return him.transfer();
 	} catch (MelderError) { 
 		huber_struct_destroy (&struct_huber);
-		Melder_thrown (me, ": no robust LPC created."); }
+		Melder_throw (me, ": no robust LPC created."); }
 }
 
 /* End of file Sound_and_LPC_robust.cpp */

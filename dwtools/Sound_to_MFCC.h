@@ -25,13 +25,8 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _MFCC_h_
-	#include "MFCC.h"
-#endif
-
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+#include "MFCC.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {

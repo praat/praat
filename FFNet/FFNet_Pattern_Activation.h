@@ -23,36 +23,29 @@
  djmw 1994.
  djmw 20020712 GPL header.
  djmw 20030701 Removed non-GPL minimizations.
- djmw 20110307 Latest modification.
+ djmw 20110714 Latest modification.
 */
 
-#ifndef _FFNet_h_
-	#include "FFNet.h"
-#endif
-#ifndef _Pattern_h_
-	#include "Pattern.h"
-#endif
-#ifndef _Activation_h_	
-	#include "Activation.h"
-#endif
-#ifndef _Minimizers_h_	
-	#include "Minimizers.h"
-#endif
+
+#include "FFNet.h"
+#include "Pattern.h"
+#include "Activation.h"
+#include "Minimizers.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-int FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
+void FFNet_Pattern_Activation_learnSD (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
     double tolerance, Any parameters, int costFunctionType);
 /* Steepest Descent minimization */
 
-int FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
+void FFNet_Pattern_Activation_learnSM (FFNet me, Pattern p, Activation a, long maxNumOfEpochs,
     double tolerance, Any parameters, int costFunctionType);
-	
+
 double FFNet_Pattern_Activation_getCosts_total (FFNet me, Pattern p, Activation a, int costFunctionType);
 double FFNet_Pattern_Activation_getCosts_average (FFNet me, Pattern p, Activation a, int costFunctionType);
-   
+
 Activation FFNet_Pattern_to_Activation (FFNet me, Pattern p, long layer);
 /* Calculate the activations at a layer */
 /* if (layer<1 || layer > my nLayers) layer = my nLayers; */

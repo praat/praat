@@ -38,11 +38,13 @@ struct structmachar_Table
 	double prec;	/* Quantization step (eps*base) */
 	double eps;		/* Quantization error (relative machine precision) */
 	double rmin;	/* Underflow threshold - base**(emin-1) */
-	double sfmin;	/* Safe minimum, such that 1/sfmin does not overflow */	
-	double rmax;	/* Overflow threshold  - (base**emax)*(1-eps)*/	
+	double sfmin;	/* Safe minimum, such that 1/sfmin does not overflow */
+	double rmax;	/* Overflow threshold  - (base**emax)*(1-eps)*/
 };
 
 typedef struct structmachar_Table *machar_Table;
+
+extern machar_Table NUMfpp;
 
 void NUMmachar (void);
 

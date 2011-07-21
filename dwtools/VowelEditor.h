@@ -37,7 +37,7 @@ struct structVowel : public structFunction {
 #define Vowel__methods(klas) Function__methods(klas)
 Thing_declare2cpp (Vowel, Function);
 
-struct structVowelEditor_F0 
+struct structVowelEditor_F0
 {
 	double start;
 	double slopeOctPerSec;
@@ -81,7 +81,7 @@ Thing_define (VowelEditor, Editor) {
 		void v_createHelpMenuItems (EditorMenu menu);
 };
 
-VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data);
+VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data);
 
 void VowelEditor_prefs (void);
 

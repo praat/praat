@@ -42,7 +42,7 @@ void SVD_init (I, long numberOfRows, long numberOfColumns);
 
 SVD SVD_create (long numberOfRows, long numberOfColumns);
 /*
-	my tolerance = eps * MAX (numberOfRows, numberOfColumns) 
+	my tolerance = eps * MAX (numberOfRows, numberOfColumns)
 	where eps is the floating point precision, approximately 2.2e-16
 */
 
@@ -52,43 +52,43 @@ SVD SVD_create_f (float **m, long numberOfRows, long numberOfColumns);
 	Copy matrix into svd->u and calculate U D V'
 */
 
-void SVD_svd_d (I, double **m);
-void SVD_svd_f (I, float **m);
+void SVD_svd_d (SVD me, double **m);
+void SVD_svd_f (SVD me, float **m);
 /*
 	Perform SVD analysis on matrix M, i.e., decompose M as M = UDV'.
 	Watch out: dataType contains V, not V' !!
 */
 
-void SVD_compute (I);
+void SVD_compute (SVD me);
 
-void SVD_solve (I, double b[], double x[]);
+void SVD_solve (SVD me, double b[], double x[]);
 /* Solve Ax = b */
 
-void SVD_sort (I);
+void SVD_sort (SVD me);
 /*
 	Sort singular values (and corresponding column vectors of U and V) in decreasing order.
 */
 
-void SVD_setTolerance (I, double tolerance);
-double SVD_getTolerance (I);
+void SVD_setTolerance (SVD me, double tolerance);
+double SVD_getTolerance (SVD me);
 
-long SVD_zeroSmallSingularValues (I, double tolerance);
+long SVD_zeroSmallSingularValues (SVD me, double tolerance);
 /*
 	Zero singular values smaller than maximum_singular_value * tolerance
 	If tolerance == 0 then then my tolerance will be used.
 	Return the number of s.v.'s zeroed.
 */
 
-void SVD_synthesize (I, long sv_from, long sv_to, double **m);
+void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m);
 /*
 	Synthesize matrix as U D(sv_from:sv_to) V'.
-	(The synthesized matrix is an approximation of the svd'ed matrix with 
-	only a selected number of sv's). 
+	(The synthesized matrix is an approximation of the svd'ed matrix with
+	only a selected number of sv's).
 	Matrix m is [numberOfRows x numberOfColumns] and must be allocated
 	by caller!
 */
 
-long SVD_getRank (I);
+long SVD_getRank (SVD me);
 
 GSVD GSVD_create (long numberOfColumns);
 

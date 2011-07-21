@@ -111,7 +111,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 	
 		thy z[1][1] = lnxa;
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Cepstrum created."); } 
+	} catch (MelderError) { Melder_throw (me, ": no Cepstrum created."); } 
 }
 
 /* Zijn nog niet elkaars inverse!!!!*/
@@ -122,7 +122,7 @@ Cepstrum Sound_to_Cepstrum (Sound me)
 		autoSpectrum sx = Sound_to_Spectrum (me, TRUE);
 		autoCepstrum thee = Spectrum_to_Cepstrum (sx.peek());
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Cepstrum calculated."); }
+	} catch (MelderError) { Melder_throw (me, ": no Cepstrum calculated."); }
 }
 
 Sound Cepstrum_to_Sound (Cepstrum me)
@@ -131,7 +131,7 @@ Sound Cepstrum_to_Sound (Cepstrum me)
 		autoSpectrum sx = Cepstrum_to_Spectrum (me);
 		autoSound thee = Spectrum_to_Sound (sx.peek());
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Sound calculated."); }
+	} catch (MelderError) { Melder_throw (me, ": no Sound calculated."); }
 }
 
 /* End of file Sound_and_Cepstrum.cpp  */

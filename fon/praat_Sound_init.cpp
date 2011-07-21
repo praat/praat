@@ -1370,7 +1370,7 @@ DIRECT (Sound_record_mono)
 		}
 	}
 	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 1, theCurrentPraatApplication -> context);
+		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 1);
 		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
 		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
 	}
@@ -1398,7 +1398,7 @@ DIRECT (Sound_record_stereo)
 		}
 	}
 	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 2, theCurrentPraatApplication -> context);
+		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 2);
 		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
 		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
 		Editor_setPublish2Callback (soundRecorder, cb_SoundRecorder_publish2, NULL);

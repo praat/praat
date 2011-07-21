@@ -31,8 +31,8 @@
 #define xerbla_(src,info) (void) Melder_error4 (Melder_peekUtf8ToWcs (src), L": parameter ", Melder_integer (*info), L"not correct!")
 
 int NUMblas_daxpy (long *n, double *da, double *dx,	long *incx, double *dy, long *incy);
-/*     constant times a vector plus a vector.   
-       uses unrolled loops for increments equal to one. */  
+/*     constant times a vector plus a vector.
+       uses unrolled loops for increments equal to one. */
 
 int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy);
 /*     copies a vector, x, to a vector, y.
@@ -40,10 +40,10 @@ int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy);
 */
 
 double NUMblas_ddot (long *n, double *dx, long *incx, double *dy, long *incy);
-/*     forms the dot product of two vectors.   
-       uses unrolled loops for increments equal to one. */  
+/*     forms the dot product of two vectors.
+       uses unrolled loops for increments equal to one. */
 
-int NUMblas_dgemm (char *transa, char *transb, long *m, long *n, long *k, double *alpha,
+int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, long *k, double *alpha,
 	double *a, long *lda, double *b, long *ldb, double *beta, double *c, long *ldc);
 /*  Purpose
     =======
@@ -191,7 +191,7 @@ int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double
        Richard Hanson, Sandia National Labs.
 */
 
-int NUMblas_dgemv (char *trans, long *m, long *n, double *alpha, double *a, long *lda,
+int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a, long *lda,
 	double *x, long *incx, double *beta, double *y, long *incy);
 /*  Purpose
     =======
@@ -262,7 +262,7 @@ int NUMblas_dgemv (char *trans, long *m, long *n, double *alpha, double *a, long
        Richard Hanson, Sandia National Labs.
 */
 
-double NUMblas_dlamch (char *cmach);
+double NUMblas_dlamch (const char *cmach);
 /*  Purpose
     =======
 
@@ -324,231 +324,231 @@ int NUMblas_dswap (long *n, double *dx, long *incx,	double *dy, long *incy);
 /*     interchanges two vectors.
        uses unrolled loops for increments equal one. */
 
-int NUMblas_dsymv (char *uplo, long *n, double *alpha, double *a, long *lda, 
+int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *lda,
 	double *x, long *incx, double *beta, double *y, long *incy);
-/*  Purpose   
-    =======   
-    NUMblas_dsymv  performs the matrix-vector  operation   
-       y := alpha*A*x + beta*y,   
-    where alpha and beta are scalars, x and y are n element vectors and   
-    A is an n by n symmetric matrix.   
-    Parameters   
-    ==========   
-    UPLO   - char*.   
-             On entry, UPLO specifies whether the upper or lower   
-             triangular part of the array A is to be referenced as   
-             follows:   
-                UPLO = 'U' or 'u'   Only the upper triangular part of A   
-                                    is to be referenced.   
-                UPLO = 'L' or 'l'   Only the lower triangular part of A   
-                                    is to be referenced.   
-             Unchanged on exit.   
-    N      - long.   
-             On entry, N specifies the order of the matrix A.   
-             N must be at least zero.   
-             Unchanged on exit.   
-    ALPHA  - double.   
-             On entry, ALPHA specifies the scalar alpha.   
-             Unchanged on exit.   
-    A      - double array of DIMENSION ( LDA, n ).   
-             Before entry with  UPLO = 'U' or 'u', the leading n by n   
-             upper triangular part of the array A must contain the upper   
-             triangular part of the symmetric matrix and the strictly   
-             lower triangular part of A is not referenced.   
-             Before entry with UPLO = 'L' or 'l', the leading n by n   
-             lower triangular part of the array A must contain the lower   
-             triangular part of the symmetric matrix and the strictly   
-             upper triangular part of A is not referenced.   
-             Unchanged on exit.   
-    LDA    - long.   
-             On entry, LDA specifies the first dimension of A as declared   
-             in the calling (sub) program. LDA must be at least   
-             max( 1, n ).   
-             Unchanged on exit.   
-    X      - double array of dimension at least   
-             ( 1 + ( n - 1 )*abs( INCX ) ).   
-             Before entry, the incremented array X must contain the n   
-             element vector x.   
-             Unchanged on exit.   
-    INCX   - long.   
-             On entry, INCX specifies the increment for the elements of   
-             X. INCX must not be zero.   
-             Unchanged on exit.   
-    BETA   - double.   
-             On entry, BETA specifies the scalar beta. When BETA is   
-             supplied as zero then Y need not be set on input.   
-             Unchanged on exit.   
-    Y      - double array of dimension at least   
-             ( 1 + ( n - 1 )*abs( INCY ) ).   
-             Before entry, the incremented array Y must contain the n   
-             element vector y. On exit, Y is overwritten by the updated   
-             vector y.   
-    INCY   - long.   
-             On entry, INCY specifies the increment for the elements of   
-             Y. INCY must not be zero.   
-             Unchanged on exit.   
+/*  Purpose
+    =======
+    NUMblas_dsymv  performs the matrix-vector  operation
+       y := alpha*A*x + beta*y,
+    where alpha and beta are scalars, x and y are n element vectors and
+    A is an n by n symmetric matrix.
+    Parameters
+    ==========
+    UPLO   - char*.
+             On entry, UPLO specifies whether the upper or lower
+             triangular part of the array A is to be referenced as
+             follows:
+                UPLO = 'U' or 'u'   Only the upper triangular part of A
+                                    is to be referenced.
+                UPLO = 'L' or 'l'   Only the lower triangular part of A
+                                    is to be referenced.
+             Unchanged on exit.
+    N      - long.
+             On entry, N specifies the order of the matrix A.
+             N must be at least zero.
+             Unchanged on exit.
+    ALPHA  - double.
+             On entry, ALPHA specifies the scalar alpha.
+             Unchanged on exit.
+    A      - double array of DIMENSION ( LDA, n ).
+             Before entry with  UPLO = 'U' or 'u', the leading n by n
+             upper triangular part of the array A must contain the upper
+             triangular part of the symmetric matrix and the strictly
+             lower triangular part of A is not referenced.
+             Before entry with UPLO = 'L' or 'l', the leading n by n
+             lower triangular part of the array A must contain the lower
+             triangular part of the symmetric matrix and the strictly
+             upper triangular part of A is not referenced.
+             Unchanged on exit.
+    LDA    - long.
+             On entry, LDA specifies the first dimension of A as declared
+             in the calling (sub) program. LDA must be at least
+             max( 1, n ).
+             Unchanged on exit.
+    X      - double array of dimension at least
+             ( 1 + ( n - 1 )*abs( INCX ) ).
+             Before entry, the incremented array X must contain the n
+             element vector x.
+             Unchanged on exit.
+    INCX   - long.
+             On entry, INCX specifies the increment for the elements of
+             X. INCX must not be zero.
+             Unchanged on exit.
+    BETA   - double.
+             On entry, BETA specifies the scalar beta. When BETA is
+             supplied as zero then Y need not be set on input.
+             Unchanged on exit.
+    Y      - double array of dimension at least
+             ( 1 + ( n - 1 )*abs( INCY ) ).
+             Before entry, the incremented array Y must contain the n
+             element vector y. On exit, Y is overwritten by the updated
+             vector y.
+    INCY   - long.
+             On entry, INCY specifies the increment for the elements of
+             Y. INCY must not be zero.
+             Unchanged on exit.
 */
 
-int NUMblas_dsyr2 ( char *uplo, long *n, double *alpha,	double *x, long *incx, 
+int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha,	double *x, long *incx,
 	double *y, long *incy, double *a, long *lda);
-/*  Purpose   
-    =======   
-    NUMblas_dsyr2  performs the symmetric rank 2 operation   
-       A := alpha*x*y' + alpha*y*x' + A,   
-    where alpha is a scalar, x and y are n element vectors and A is an n   
-    by n symmetric matrix.   
-    Parameters   
-    ==========   
-    UPLO   - char*.   
-             On entry, UPLO specifies whether the upper or lower   
-             triangular part of the array A is to be referenced as   
-             follows:   
-                UPLO = 'U' or 'u'   Only the upper triangular part of A   
-                                    is to be referenced.   
-                UPLO = 'L' or 'l'   Only the lower triangular part of A   
-                                    is to be referenced.   
-             Unchanged on exit.   
-    N      - long.   
-             On entry, N specifies the order of the matrix A.   
-             N must be at least zero.   
-             Unchanged on exit.   
-    ALPHA  - double.   
-             On entry, ALPHA specifies the scalar alpha.   
-             Unchanged on exit.   
-    X      - double array of dimension at least   
-             ( 1 + ( n - 1 )*abs( INCX ) ).   
-             Before entry, the incremented array X must contain the n   
-             element vector x.   
-             Unchanged on exit.   
-    INCX   - long.   
-             On entry, INCX specifies the increment for the elements of   
-             X. INCX must not be zero.   
-             Unchanged on exit.   
-    Y      - double array of dimension at least   
-             ( 1 + ( n - 1 )*abs( INCY ) ).   
-             Before entry, the incremented array Y must contain the n   
-             element vector y.   
-             Unchanged on exit.   
-    INCY   - long.   
-             On entry, INCY specifies the increment for the elements of   
-             Y. INCY must not be zero.   
-             Unchanged on exit.   
-    A      - double array of DIMENSION ( LDA, n ).   
-             Before entry with  UPLO = 'U' or 'u', the leading n by n   
-             upper triangular part of the array A must contain the upper   
-             triangular part of the symmetric matrix and the strictly   
-             lower triangular part of A is not referenced. On exit, the   
-             upper triangular part of the array A is overwritten by the   
-             upper triangular part of the updated matrix.   
-             Before entry with UPLO = 'L' or 'l', the leading n by n   
-             lower triangular part of the array A must contain the lower   
-             triangular part of the symmetric matrix and the strictly   
-             upper triangular part of A is not referenced. On exit, the   
-             lower triangular part of the array A is overwritten by the   
-             lower triangular part of the updated matrix.   
-    LDA    - long.   
-             On entry, LDA specifies the first dimension of A as declared   
-             in the calling (sub) program. LDA must be at least   
-             max( 1, n ).   
-             Unchanged on exit.   
+/*  Purpose
+    =======
+    NUMblas_dsyr2  performs the symmetric rank 2 operation
+       A := alpha*x*y' + alpha*y*x' + A,
+    where alpha is a scalar, x and y are n element vectors and A is an n
+    by n symmetric matrix.
+    Parameters
+    ==========
+    UPLO   - char*.
+             On entry, UPLO specifies whether the upper or lower
+             triangular part of the array A is to be referenced as
+             follows:
+                UPLO = 'U' or 'u'   Only the upper triangular part of A
+                                    is to be referenced.
+                UPLO = 'L' or 'l'   Only the lower triangular part of A
+                                    is to be referenced.
+             Unchanged on exit.
+    N      - long.
+             On entry, N specifies the order of the matrix A.
+             N must be at least zero.
+             Unchanged on exit.
+    ALPHA  - double.
+             On entry, ALPHA specifies the scalar alpha.
+             Unchanged on exit.
+    X      - double array of dimension at least
+             ( 1 + ( n - 1 )*abs( INCX ) ).
+             Before entry, the incremented array X must contain the n
+             element vector x.
+             Unchanged on exit.
+    INCX   - long.
+             On entry, INCX specifies the increment for the elements of
+             X. INCX must not be zero.
+             Unchanged on exit.
+    Y      - double array of dimension at least
+             ( 1 + ( n - 1 )*abs( INCY ) ).
+             Before entry, the incremented array Y must contain the n
+             element vector y.
+             Unchanged on exit.
+    INCY   - long.
+             On entry, INCY specifies the increment for the elements of
+             Y. INCY must not be zero.
+             Unchanged on exit.
+    A      - double array of DIMENSION ( LDA, n ).
+             Before entry with  UPLO = 'U' or 'u', the leading n by n
+             upper triangular part of the array A must contain the upper
+             triangular part of the symmetric matrix and the strictly
+             lower triangular part of A is not referenced. On exit, the
+             upper triangular part of the array A is overwritten by the
+             upper triangular part of the updated matrix.
+             Before entry with UPLO = 'L' or 'l', the leading n by n
+             lower triangular part of the array A must contain the lower
+             triangular part of the symmetric matrix and the strictly
+             upper triangular part of A is not referenced. On exit, the
+             lower triangular part of the array A is overwritten by the
+             lower triangular part of the updated matrix.
+    LDA    - long.
+             On entry, LDA specifies the first dimension of A as declared
+             in the calling (sub) program. LDA must be at least
+             max( 1, n ).
+             Unchanged on exit.
 */
 
-int NUMblas_dsyr2k (char *uplo, char *trans, long *n, long *k, double *alpha, double *a,
+int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, double *alpha, double *a,
 	long *lda, double *b, long *ldb, double *beta, double *c, long *ldc);
-/*  Purpose   
-    =======   
-    NUMblas_dsyr2k  performs one of the symmetric rank 2k operations   
-       C := alpha*A*B' + alpha*B*A' + beta*C,   
-    or   
-       C := alpha*A'*B + alpha*B'*A + beta*C,   
-    where  alpha and beta  are scalars, C is an  n by n  symmetric matrix   
-    and  A and B  are  n by k  matrices  in the  first  case  and  k by n   
-    matrices in the second case.   
-    Parameters   
-    ==========   
-    UPLO   - char*.   
-             On  entry,   UPLO  specifies  whether  the  upper  or  lower   
-             triangular  part  of the  array  C  is to be  referenced  as   
-             follows:   
-                UPLO = 'U' or 'u'   Only the  upper triangular part of  C   
-                                    is to be referenced.   
-                UPLO = 'L' or 'l'   Only the  lower triangular part of  C   
-                                    is to be referenced.   
-             Unchanged on exit.   
-    TRANS  - char*.   
-             On entry,  TRANS  specifies the operation to be performed as   
-             follows:   
-                TRANS = 'N' or 'n'   C := alpha*A*B' + alpha*B*A' +   
-                                          beta*C.   
-                TRANS = 'T' or 't'   C := alpha*A'*B + alpha*B'*A +   
-                                          beta*C.   
-                TRANS = 'C' or 'c'   C := alpha*A'*B + alpha*B'*A +   
-                                          beta*C.   
-             Unchanged on exit.   
-    N      - long.   
-             On entry,  N specifies the order of the matrix C.  N must be   
-             at least zero.   
-             Unchanged on exit.   
-    K      - long.   
-             On entry with  TRANS = 'N' or 'n',  K  specifies  the number   
-             of  columns  of the  matrices  A and B,  and on  entry  with   
-             TRANS = 'T' or 't' or 'C' or 'c',  K  specifies  the  number   
-             of rows of the matrices  A and B.  K must be at least  zero.   
-             Unchanged on exit.   
-    ALPHA  - double.   
-             On entry, ALPHA specifies the scalar alpha.   
-             Unchanged on exit.   
-    A      - double array of DIMENSION ( LDA, ka ), where ka is   
-             k  when  TRANS = 'N' or 'n',  and is  n  otherwise.   
-             Before entry with  TRANS = 'N' or 'n',  the  leading  n by k   
-             part of the array  A  must contain the matrix  A,  otherwise   
-             the leading  k by n  part of the array  A  must contain  the   
-             matrix A.   
-             Unchanged on exit.   
-    LDA    - long.   
-             On entry, LDA specifies the first dimension of A as declared   
-             in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'   
-             then  LDA must be at least  max( 1, n ), otherwise  LDA must   
-             be at least  max( 1, k ).   
-             Unchanged on exit.   
-    B      - double array of DIMENSION ( LDB, kb ), where kb is   
-             k  when  TRANS = 'N' or 'n',  and is  n  otherwise.   
-             Before entry with  TRANS = 'N' or 'n',  the  leading  n by k   
-             part of the array  B  must contain the matrix  B,  otherwise   
-             the leading  k by n  part of the array  B  must contain  the   
-             matrix B.   
-             Unchanged on exit.   
-    LDB    - long.   
-             On entry, LDB specifies the first dimension of B as declared   
-             in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'   
-             then  LDB must be at least  max( 1, n ), otherwise  LDB must   
-             be at least  max( 1, k ).   
-             Unchanged on exit.   
-    BETA   - double.   
-             On entry, BETA specifies the scalar beta.   
-             Unchanged on exit.   
-    C      - double array of DIMENSION ( LDC, n ).   
-             Before entry  with  UPLO = 'U' or 'u',  the leading  n by n   
-             upper triangular part of the array C must contain the upper   
-             triangular part  of the  symmetric matrix  and the strictly   
-             lower triangular part of C is not referenced.  On exit, the   
-             upper triangular part of the array  C is overwritten by the   
-             upper triangular part of the updated matrix.   
-             Before entry  with  UPLO = 'L' or 'l',  the leading  n by n   
-             lower triangular part of the array C must contain the lower   
-             triangular part  of the  symmetric matrix  and the strictly   
-             upper triangular part of C is not referenced.  On exit, the   
-             lower triangular part of the array  C is overwritten by the   
-             lower triangular part of the updated matrix.   
-    LDC    - long.   
-             On entry, LDC specifies the first dimension of C as declared   
-             in  the  calling  (sub)  program.   LDC  must  be  at  least   
-             max( 1, n ).   
-             Unchanged on exit.   
-    Level 3 Blas routine.   
+/*  Purpose
+    =======
+    NUMblas_dsyr2k  performs one of the symmetric rank 2k operations
+       C := alpha*A*B' + alpha*B*A' + beta*C,
+    or
+       C := alpha*A'*B + alpha*B'*A + beta*C,
+    where  alpha and beta  are scalars, C is an  n by n  symmetric matrix
+    and  A and B  are  n by k  matrices  in the  first  case  and  k by n
+    matrices in the second case.
+    Parameters
+    ==========
+    UPLO   - char*.
+             On  entry,   UPLO  specifies  whether  the  upper  or  lower
+             triangular  part  of the  array  C  is to be  referenced  as
+             follows:
+                UPLO = 'U' or 'u'   Only the  upper triangular part of  C
+                                    is to be referenced.
+                UPLO = 'L' or 'l'   Only the  lower triangular part of  C
+                                    is to be referenced.
+             Unchanged on exit.
+    TRANS  - char*.
+             On entry,  TRANS  specifies the operation to be performed as
+             follows:
+                TRANS = 'N' or 'n'   C := alpha*A*B' + alpha*B*A' +
+                                          beta*C.
+                TRANS = 'T' or 't'   C := alpha*A'*B + alpha*B'*A +
+                                          beta*C.
+                TRANS = 'C' or 'c'   C := alpha*A'*B + alpha*B'*A +
+                                          beta*C.
+             Unchanged on exit.
+    N      - long.
+             On entry,  N specifies the order of the matrix C.  N must be
+             at least zero.
+             Unchanged on exit.
+    K      - long.
+             On entry with  TRANS = 'N' or 'n',  K  specifies  the number
+             of  columns  of the  matrices  A and B,  and on  entry  with
+             TRANS = 'T' or 't' or 'C' or 'c',  K  specifies  the  number
+             of rows of the matrices  A and B.  K must be at least  zero.
+             Unchanged on exit.
+    ALPHA  - double.
+             On entry, ALPHA specifies the scalar alpha.
+             Unchanged on exit.
+    A      - double array of DIMENSION ( LDA, ka ), where ka is
+             k  when  TRANS = 'N' or 'n',  and is  n  otherwise.
+             Before entry with  TRANS = 'N' or 'n',  the  leading  n by k
+             part of the array  A  must contain the matrix  A,  otherwise
+             the leading  k by n  part of the array  A  must contain  the
+             matrix A.
+             Unchanged on exit.
+    LDA    - long.
+             On entry, LDA specifies the first dimension of A as declared
+             in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'
+             then  LDA must be at least  max( 1, n ), otherwise  LDA must
+             be at least  max( 1, k ).
+             Unchanged on exit.
+    B      - double array of DIMENSION ( LDB, kb ), where kb is
+             k  when  TRANS = 'N' or 'n',  and is  n  otherwise.
+             Before entry with  TRANS = 'N' or 'n',  the  leading  n by k
+             part of the array  B  must contain the matrix  B,  otherwise
+             the leading  k by n  part of the array  B  must contain  the
+             matrix B.
+             Unchanged on exit.
+    LDB    - long.
+             On entry, LDB specifies the first dimension of B as declared
+             in  the  calling  (sub)  program.   When  TRANS = 'N' or 'n'
+             then  LDB must be at least  max( 1, n ), otherwise  LDB must
+             be at least  max( 1, k ).
+             Unchanged on exit.
+    BETA   - double.
+             On entry, BETA specifies the scalar beta.
+             Unchanged on exit.
+    C      - double array of DIMENSION ( LDC, n ).
+             Before entry  with  UPLO = 'U' or 'u',  the leading  n by n
+             upper triangular part of the array C must contain the upper
+             triangular part  of the  symmetric matrix  and the strictly
+             lower triangular part of C is not referenced.  On exit, the
+             upper triangular part of the array  C is overwritten by the
+             upper triangular part of the updated matrix.
+             Before entry  with  UPLO = 'L' or 'l',  the leading  n by n
+             lower triangular part of the array C must contain the lower
+             triangular part  of the  symmetric matrix  and the strictly
+             upper triangular part of C is not referenced.  On exit, the
+             lower triangular part of the array  C is overwritten by the
+             lower triangular part of the updated matrix.
+    LDC    - long.
+             On entry, LDC specifies the first dimension of C as declared
+             in  the  calling  (sub)  program.   LDC  must  be  at  least
+             max( 1, n ).
+             Unchanged on exit.
+    Level 3 Blas routine.
 */
- 
-int NUMblas_dtrmm (char *side, char *uplo, char *transa, char *diag,
+
+int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const char *diag,
 	long *m, long *n, double *alpha, double *a, long *lda,
 	double *b, long *ldb);
 /*  Purpose
@@ -630,7 +630,7 @@ int NUMblas_dtrmm (char *side, char *uplo, char *transa, char *diag,
     Level 3 Blas routine.
 */
 
-int NUMblas_dtrmv (char *uplo, char *trans, char *diag, long *n,
+int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *n,
 	double *a, long *lda, double *x, long *incx);
 /*  Purpose
     =======
@@ -693,85 +693,85 @@ int NUMblas_dtrmv (char *uplo, char *trans, char *diag, long *n,
     Level 2 Blas routine.
 */
 
-int NUMblas_dtrsm (char *side, char *uplo, char *transa, char *diag, long *m, long *n,
+int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const char *diag, long *m, long *n,
 	double *alpha, double *a, long *lda, double *b, long *ldb);
-/*  Purpose   
-    =======   
-    NUMblas_dtrsm  solves one of the matrix equations   
-       op( A )*X = alpha*B,   or   X*op( A ) = alpha*B,   
-    where alpha is a scalar, X and B are m by n matrices, A is a unit, or   
-    non-unit,  upper or lower triangular matrix  and  op( A )  is one  of   
-       op( A ) = A   or   op( A ) = A'.   
-    The matrix X is overwritten on B.   
-    Parameters   
-    ==========   
-    SIDE   - char*.   
-             On entry, SIDE specifies whether op( A ) appears on the left   
-             or right of X as follows:   
-                SIDE = 'L' or 'l'   op( A )*X = alpha*B.   
-                SIDE = 'R' or 'r'   X*op( A ) = alpha*B.   
-             Unchanged on exit.   
-    UPLO   - char*.   
-             On entry, UPLO specifies whether the matrix A is an upper or   
-             lower triangular matrix as follows:   
-                UPLO = 'U' or 'u'   A is an upper triangular matrix.   
-                UPLO = 'L' or 'l'   A is a lower triangular matrix.   
-             Unchanged on exit.   
-    TRANSA - char*.   
-             On entry, TRANSA specifies the form of op( A ) to be used in   
-             the matrix multiplication as follows:   
-                TRANSA = 'N' or 'n'   op( A ) = A.   
-                TRANSA = 'T' or 't'   op( A ) = A'.   
-                TRANSA = 'C' or 'c'   op( A ) = A'.   
-             Unchanged on exit.   
-    DIAG   - char*.   
-             On entry, DIAG specifies whether or not A is unit triangular   
-             as follows:   
-                DIAG = 'U' or 'u'   A is assumed to be unit triangular.   
-                DIAG = 'N' or 'n'   A is not assumed to be unit   
-                                    triangular.   
-             Unchanged on exit.   
-    M      - long.   
-             On entry, M specifies the number of rows of B. M must be at   
-             least zero.   
-             Unchanged on exit.   
-    N      - long.   
-             On entry, N specifies the number of columns of B.  N must be   
-             at least zero.   
-             Unchanged on exit.   
-    ALPHA  - double.   
-             On entry,  ALPHA specifies the scalar  alpha. When  alpha is   
-             zero then  A is not referenced and  B need not be set before   
-             entry.   
-             Unchanged on exit.   
-    A      - double array of DIMENSION ( LDA, k ), where k is m   
-             when  SIDE = 'L' or 'l'  and is  n  when  SIDE = 'R' or 'r'.   
-             Before entry  with  UPLO = 'U' or 'u',  the  leading  k by k   
-             upper triangular part of the array  A must contain the upper   
-             triangular matrix  and the strictly lower triangular part of   
-             A is not referenced.   
-             Before entry  with  UPLO = 'L' or 'l',  the  leading  k by k   
-             lower triangular part of the array  A must contain the lower   
-             triangular matrix  and the strictly upper triangular part of   
-             A is not referenced.   
-             Note that when  DIAG = 'U' or 'u',  the diagonal elements of   
-             A  are not referenced either,  but are assumed to be  unity.   
-             Unchanged on exit.   
-    LDA    - long.   
-             On entry, LDA specifies the first dimension of A as declared   
-             in the calling (sub) program.  When  SIDE = 'L' or 'l'  then   
-             LDA  must be at least  max( 1, m ),  when  SIDE = 'R' or 'r'   
-             then LDA must be at least max( 1, n ).   
-             Unchanged on exit.   
-    B      - double array of DIMENSION ( LDB, n ).   
-             Before entry,  the leading  m by n part of the array  B must   
-             contain  the  right-hand  side  matrix  B,  and  on exit  is   
-             overwritten by the solution matrix  X.   
-    LDB    - long.   
-             On entry, LDB specifies the first dimension of B as declared   
-             in  the  calling  (sub)  program.   LDB  must  be  at  least   
-             max( 1, m ).   
-             Unchanged on exit.   
+/*  Purpose
+    =======
+    NUMblas_dtrsm  solves one of the matrix equations
+       op( A )*X = alpha*B,   or   X*op( A ) = alpha*B,
+    where alpha is a scalar, X and B are m by n matrices, A is a unit, or
+    non-unit,  upper or lower triangular matrix  and  op( A )  is one  of
+       op( A ) = A   or   op( A ) = A'.
+    The matrix X is overwritten on B.
+    Parameters
+    ==========
+    SIDE   - char*.
+             On entry, SIDE specifies whether op( A ) appears on the left
+             or right of X as follows:
+                SIDE = 'L' or 'l'   op( A )*X = alpha*B.
+                SIDE = 'R' or 'r'   X*op( A ) = alpha*B.
+             Unchanged on exit.
+    UPLO   - char*.
+             On entry, UPLO specifies whether the matrix A is an upper or
+             lower triangular matrix as follows:
+                UPLO = 'U' or 'u'   A is an upper triangular matrix.
+                UPLO = 'L' or 'l'   A is a lower triangular matrix.
+             Unchanged on exit.
+    TRANSA - char*.
+             On entry, TRANSA specifies the form of op( A ) to be used in
+             the matrix multiplication as follows:
+                TRANSA = 'N' or 'n'   op( A ) = A.
+                TRANSA = 'T' or 't'   op( A ) = A'.
+                TRANSA = 'C' or 'c'   op( A ) = A'.
+             Unchanged on exit.
+    DIAG   - char*.
+             On entry, DIAG specifies whether or not A is unit triangular
+             as follows:
+                DIAG = 'U' or 'u'   A is assumed to be unit triangular.
+                DIAG = 'N' or 'n'   A is not assumed to be unit
+                                    triangular.
+             Unchanged on exit.
+    M      - long.
+             On entry, M specifies the number of rows of B. M must be at
+             least zero.
+             Unchanged on exit.
+    N      - long.
+             On entry, N specifies the number of columns of B.  N must be
+             at least zero.
+             Unchanged on exit.
+    ALPHA  - double.
+             On entry,  ALPHA specifies the scalar  alpha. When  alpha is
+             zero then  A is not referenced and  B need not be set before
+             entry.
+             Unchanged on exit.
+    A      - double array of DIMENSION ( LDA, k ), where k is m
+             when  SIDE = 'L' or 'l'  and is  n  when  SIDE = 'R' or 'r'.
+             Before entry  with  UPLO = 'U' or 'u',  the  leading  k by k
+             upper triangular part of the array  A must contain the upper
+             triangular matrix  and the strictly lower triangular part of
+             A is not referenced.
+             Before entry  with  UPLO = 'L' or 'l',  the  leading  k by k
+             lower triangular part of the array  A must contain the lower
+             triangular matrix  and the strictly upper triangular part of
+             A is not referenced.
+             Note that when  DIAG = 'U' or 'u',  the diagonal elements of
+             A  are not referenced either,  but are assumed to be  unity.
+             Unchanged on exit.
+    LDA    - long.
+             On entry, LDA specifies the first dimension of A as declared
+             in the calling (sub) program.  When  SIDE = 'L' or 'l'  then
+             LDA  must be at least  max( 1, m ),  when  SIDE = 'R' or 'r'
+             then LDA must be at least max( 1, n ).
+             Unchanged on exit.
+    B      - double array of DIMENSION ( LDB, n ).
+             Before entry,  the leading  m by n part of the array  B must
+             contain  the  right-hand  side  matrix  B,  and  on exit  is
+             overwritten by the solution matrix  X.
+    LDB    - long.
+             On entry, LDB specifies the first dimension of B as declared
+             in  the  calling  (sub)  program.   LDB  must  be  at  least
+             max( 1, m ).
+             Unchanged on exit.
 */
 
 long NUMblas_idamax (long *n, double *dx, long *incx);

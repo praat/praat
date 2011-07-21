@@ -33,42 +33,42 @@
 
 static void drawLetterRConfigurationExample (Graphics g)
 {
-		autoConfiguration me = Configuration_createLetterRExample (1);
-		Graphics_setWindow (g, -6, 4, -7, 5);
-		Configuration_draw (me.peek(), g, 1, 2, -6, 4, -7, 5, 0, 1, L"", 1);
+	autoConfiguration me = Configuration_createLetterRExample (1);
+	Graphics_setWindow (g, -6, 4, -7, 5);
+	Configuration_draw (me.peek(), g, 1, 2, -6, 4, -7, 5, 0, 1, L"", 1);
 }
 
 static void drawLetterRConfigurationExample2 (Graphics g)
 {
-		autoConfiguration me = Configuration_createLetterRExample (2);
-		Configuration_draw (me.peek(), g, 1, 2, -0.8, 1.2, -0.8, 0.7, 0, 1, L"", 1);
+	autoConfiguration me = Configuration_createLetterRExample (2);
+	Configuration_draw (me.peek(), g, 1, 2, -0.8, 1.2, -0.8, 0.7, 0, 1, L"", 1);
 }
 
 static void drawLetterRShepard (Graphics g)
 {
-		autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
-		autoConfiguration c = Configuration_createLetterRExample (2);
-		Dissimilarity_Configuration_drawShepardDiagram (d.peek(), c.peek(), g, 0, 200, 0, 2.2, 1, L"+", 1);
+	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
+	autoConfiguration c = Configuration_createLetterRExample (2);
+	Dissimilarity_Configuration_drawShepardDiagram (d.peek(), c.peek(), g, 0, 200, 0, 2.2, 1, L"+", 1);
 }
 
 static void drawLetterRRegression (Graphics g)
 {
-		autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
-		autoConfiguration c = Configuration_createLetterRExample (2);
-		Dissimilarity_Configuration_drawMonotoneRegression (d.peek(), c.peek(), g, MDS_PRIMARY_APPROACH, 0, 200, 0, 2.2, 1, L"+", 1);
+	autoDissimilarity d = Dissimilarity_createLetterRExample (32.5);
+	autoConfiguration c = Configuration_createLetterRExample (2);
+	Dissimilarity_Configuration_drawMonotoneRegression (d.peek(), c.peek(), g, MDS_PRIMARY_APPROACH, 0, 200, 0, 2.2, 1, L"+", 1);
 }
 
 static void drawCarrollWishConfigurationExample (Graphics g)
 {
-		autoConfiguration me = Configuration_createCarrollWishExample ();
-		Graphics_setWindow (g, -2, 2, -2, 2);
-		Configuration_draw (me.peek(), g, 1, 2, -2, 2, -2, 2, 0, 1, L"", 1);
+	autoConfiguration me = Configuration_createCarrollWishExample ();
+	Graphics_setWindow (g, -2, 2, -2, 2);
+	Configuration_draw (me.peek(), g, 1, 2, -2, 2, -2, 2, 0, 1, L"", 1);
 }
 
 static void drawCarrollWishSalienceExample (Graphics g)
 {
-		autoSalience me = Salience_createCarrollWishExample ();
-		Salience_draw (me.peek(), g, 1, 2, 1);
+	autoSalience me = Salience_createCarrollWishExample ();
+	Salience_draw (me.peek(), g, 1, 2, 1);
 }
 
 static void drawMsplineExample (Graphics g)

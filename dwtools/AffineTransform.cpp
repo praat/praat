@@ -117,7 +117,7 @@ AffineTransform AffineTransform_create (long n)
 		autoAffineTransform me = Thing_new (AffineTransform);
 		AffineTransform_init (me.peek(), n);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("AffineTransform not created."); }
+	} catch (MelderError) { Melder_throw ("AffineTransform not created."); }
 }
 
 Any AffineTransform_invert (I)
@@ -142,7 +142,7 @@ TableOfReal AffineTransform_extractMatrix (I)
 			TableOfReal_setColumnLabel (thee.peek(), i, label);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": transformation matrix not extracted."); }
+	} catch (MelderError) { Melder_throw (me, ": transformation matrix not extracted."); }
 }
 
 TableOfReal AffineTransform_extractTranslationVector (I)
@@ -152,7 +152,7 @@ TableOfReal AffineTransform_extractTranslationVector (I)
 		autoTableOfReal thee = TableOfReal_create (1, my n);
 		for (long i = 1; i <= my n; i++) thy data[1][i] = my t[i];
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": translation vector not extracted."); }
+	} catch (MelderError) { Melder_throw (me, ": translation vector not extracted."); }
 }
 
 /* End of file AffineTransform.cpp */

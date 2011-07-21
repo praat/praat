@@ -63,7 +63,7 @@ MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients)
 			cf -> c0 = p / nf;
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no MFCC created."); }
+	} catch (MelderError) { Melder_throw (me, ": no MFCC created."); }
 }
 
 MelFilter MFCC_to_MelFilter (MFCC me, long first_cc, long last_cc, double f1_mel, double df_mel)
@@ -118,7 +118,7 @@ MelFilter MFCC_to_MelFilter (MFCC me, long first_cc, long last_cc, double f1_mel
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) {Melder_thrown (me, ": no MelFilter created."); }
+	} catch (MelderError) {Melder_throw (me, ": no MelFilter created."); }
 }
 
 #undef MAX

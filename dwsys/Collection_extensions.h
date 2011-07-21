@@ -47,7 +47,7 @@ OrderedOfString OrderedOfString_joinItems (I, thou);
 /* Join each item */
 
 OrderedOfString OrderedOfString_selectUniqueItems (I, int sort);
-/* Postcondition: thy size <= my size */ 
+/* Postcondition: thy size <= my size */
 
 void OrderedOfString_frequency (I, thou, long *count);
 /* count how often the items in 'thee' occur in 'me' */
@@ -62,15 +62,15 @@ long OrderedOfString_getNumberOfDifferences (I, thou);
 
 const wchar_t *OrderedOfString_itemAtIndex_c (I, long index);
 long OrderedOfString_indexOfItem_c (I, const wchar_t *str);
- 
+
 void OrderedOfString_drawItem (I, Any graphics, long index, double xWC, double yWC);
 
-int OrderedOfString_sequentialNumbers (I, long n);
+void OrderedOfString_sequentialNumbers (I, long n);
 
 void OrderedOfString_removeOccurrences (I, const wchar_t *search, int user_regexp);
 
-int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace, 
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, 
+int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 
 long OrderedOfString_isSubsetOf (I, thou, long *translation);
@@ -83,7 +83,7 @@ long OrderedOfString_isSubsetOf (I, thou, long *translation);
  *	if (translation[i] > 0) my label[i] = thy label[ translation[i] ];
  *	else if (translation[i] == 0) my label[i] not in thy labels.
  */
- 
+
 long OrderedOfString_getSize (I);
 /* return my size */
 

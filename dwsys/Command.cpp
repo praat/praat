@@ -60,7 +60,7 @@ CommandHistory CommandHistory_create (long maximumCapacity)
 		autoCommandHistory me = Thing_new (CommandHistory);
 		Collection_init (me.peek(), classCommand, maximumCapacity);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Command not created."); }
+	} catch (MelderError) { Melder_throw ("Command not created."); }
 }
 
 void CommandHistory_forth (I)
@@ -84,8 +84,8 @@ Any CommandHistory_getItem (I)
 
 void CommandHistory_insertItem (I, Any data)
 {
-	iam (CommandHistory); 
-	
+	iam (CommandHistory);
+
 	Melder_assert (data && (Thing_member ((Thing) data, my itemClass) || my itemClass == NULL));
 	if (my current < my size)
 	{
@@ -117,9 +117,9 @@ int CommandHistory_offright (I)
 
 wchar_t *CommandHistory_commandName (I, long offsetFromCurrent)
 {
-	iam (CommandHistory); 
+	iam (CommandHistory);
 	long pos = my current + offsetFromCurrent;
-	
+
 	return pos >= 1 && pos <= my size ? Thing_getName ((Thing) my item[pos]) : NULL;
 }
 

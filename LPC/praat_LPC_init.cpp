@@ -148,7 +148,7 @@ END
 DIRECT (Cepstrumc_to_Matrix)
 	LOOP {
 		iam (Cepstrumc);
-		praat_new (Cepstrumc_to_Matrix (me), 0);
+		praat_new (Cepstrumc_to_Matrix (me), my name);
 	}
 END
 
@@ -160,7 +160,7 @@ FORM (Formant_to_LPC, L"Formant: To LPC", 0)
 DO
 	LOOP {
 		iam (Formant);
-		praat_new (Formant_to_LPC (me, 1.0/GET_REAL (L"Sampling frequency")), 0);
+		praat_new (Formant_to_LPC (me, 1.0/GET_REAL (L"Sampling frequency")), my name);
 	}
 END
 
@@ -178,7 +178,7 @@ DO
 	if (ncof < 0) Melder_throw ("Number of coefficients must be greater or equal zero.");
 	LOOP {
 		iam (LFCC);
-		praat_new (LFCC_to_LPC (me, ncof), 0);
+		praat_new (LFCC_to_LPC (me, ncof), my name);
 	}
 END
 
@@ -234,14 +234,14 @@ END
 DIRECT (LPC_to_Formant)
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_Formant (me, 50), 0);
+		praat_new (LPC_to_Formant (me, 50), my name);
 	}
 END
 
 DIRECT (LPC_to_Formant_keep_all)
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_Formant (me, 0), 0);
+		praat_new (LPC_to_Formant (me, 0), my name);
 	}
 END
 
@@ -253,7 +253,7 @@ DO
 	if (ncof < 0) Melder_throw ("Number of coefficients must be greater or equal zero.");
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_LFCC (me, ncof), 0);
+		praat_new (LPC_to_LFCC (me, ncof), my name);
 	}
 END
 
@@ -263,7 +263,7 @@ FORM (LPC_to_Polynomial, L"LPC: To Polynomial", L"LPC: To Polynomial (slice)..."
 DO
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_Polynomial (me, GET_REAL (L"Time")), 0);
+		praat_new (LPC_to_Polynomial (me, GET_REAL (L"Time")), my name);
 	}
 END
 
@@ -277,7 +277,7 @@ DO
 	LOOP {
 		iam (LPC);
 		praat_new (LPC_to_Spectrum (me, GET_REAL (L"Time"), GET_REAL (L"Minimum frequency resolution"),
-			GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), 0);
+			GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name);
 	}
 END
 
@@ -290,7 +290,7 @@ DO
 	LOOP {
 		iam (LPC);
 		praat_new (LPC_to_Spectrogram (me, GET_REAL (L"Minimum frequency resolution"),
-		GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), 0);
+		GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name);
 	}
 END
 
@@ -303,14 +303,14 @@ DO
 	LOOP {
 		iam (LPC);
 		praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), GET_REAL (L"Length"),
-		GET_INTEGER(L"Length according to Wakita")), 0);
+		GET_INTEGER(L"Length according to Wakita")), my name);
 	}
 END
 
 DIRECT (LPC_to_Matrix)
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_Matrix (me), 0);
+		praat_new (LPC_to_Matrix (me), my name);
 	}
 END
 
@@ -330,11 +330,11 @@ static void Sound_to_LPC_addCommonFields (void *dia) {
 static void Sound_to_LPC_checkCommonFields (void * dia, long *predictionOrder, double *analysisWindowDuration,
 	double *timeStep, double *preemphasisFrequency)
 {
-		*predictionOrder = GET_INTEGER (L"Prediction order");
-		*analysisWindowDuration = GET_REAL (L"Window length");
-		*timeStep = GET_REAL (L"Time step");
-		*preemphasisFrequency = GET_REAL (L"Pre-emphasis frequency");
-		if (*preemphasisFrequency < 0.0) Melder_throw ("Pre-emphasis frequencies cannot be negative.");
+	*predictionOrder = GET_INTEGER (L"Prediction order");
+	*analysisWindowDuration = GET_REAL (L"Window length");
+	*timeStep = GET_REAL (L"Time step");
+	*preemphasisFrequency = GET_REAL (L"Pre-emphasis frequency");
+	if (*preemphasisFrequency < 0.0) Melder_throw ("Pre-emphasis frequencies cannot be negative.");
 }
 
 FORM (Sound_to_LPC_auto, L"Sound: To LPC (autocorrelation)", L"Sound: To LPC (autocorrelation)...")
@@ -346,7 +346,7 @@ DO
 	Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, &preemphasisFrequency);
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_LPC_auto (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), 0);
+		praat_new (Sound_to_LPC_auto (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
 	}
 END
 
@@ -359,7 +359,7 @@ DO
 	Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, & preemphasisFrequency);
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_LPC_covar (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), 0);
+		praat_new (Sound_to_LPC_covar (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
 	}
 END
 
@@ -372,7 +372,7 @@ DO
 	Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, & preemphasisFrequency);
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_LPC_burg (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), 0);
+		praat_new (Sound_to_LPC_burg (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
 	}
 END
 
@@ -388,7 +388,7 @@ DO
 	LOOP {
 		iam (Sound);
 		praat_new (Sound_to_LPC_marple (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency,
-		GET_REAL (L"Tolerance 1"), GET_REAL (L"Tolerance 2")), 0);
+		GET_REAL (L"Tolerance 1"), GET_REAL (L"Tolerance 2")), my name);
 	}
 END
 
@@ -408,7 +408,7 @@ DO
 		iam (Sound);
 		praat_new (Sound_to_MFCC (me, p, GET_REAL (L"Window length"),
 		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
-		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), 0);
+		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), my name);
 	}
 END
 
@@ -429,7 +429,7 @@ FORM (LPC_and_Sound_filter, L"LPC & Sound: Filter", L"LPC & Sound: Filter...")
 DO
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
-	praat_new (LPC_and_Sound_filter (me , s, GET_INTEGER (L"Use LPC gain")), 0);
+	praat_new (LPC_and_Sound_filter (me , s, GET_INTEGER (L"Use LPC gain")), my name);
 END
 
 FORM (LPC_and_Sound_filterWithFilterAtTime, L"LPC & Sound: Filter with one filter at time",
@@ -444,13 +444,13 @@ DO
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
 	long channel = GET_INTEGER (L"Channel") - 1;
-	praat_new (LPC_and_Sound_filterWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), 0);
+	praat_new (LPC_and_Sound_filterWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), my name);
 END
 
 DIRECT (LPC_and_Sound_filterInverse)
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
-	praat_new (LPC_and_Sound_filterInverse (me , s), 0);
+	praat_new (LPC_and_Sound_filterInverse (me , s), my name);
 END
 
 FORM (LPC_and_Sound_filterInverseWithFilterAtTime, L"LPC & Sound: Filter (inverse) with filter at time",
@@ -465,7 +465,7 @@ DO
 	LPC me = FIRST (LPC);
 	Sound s = FIRST (Sound);
 	long channel = GET_INTEGER (L"Channel") - 1;
-	praat_new (LPC_and_Sound_filterInverseWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), 0);
+	praat_new (LPC_and_Sound_filterInverseWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), my name);
 END
 
 FORM (LPC_and_Sound_to_LPC_robust, L"Robust LPC analysis", L"LPC & Sound: To LPC (robust)...")

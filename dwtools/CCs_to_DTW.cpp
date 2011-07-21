@@ -141,7 +141,7 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("DTW not created from CCs."); }
+	} catch (MelderError) { Melder_throw ("DTW not created from CCs."); }
 }
 
 /* End of file CCs_to_DTW.cpp */

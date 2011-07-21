@@ -199,7 +199,7 @@ static Vowel Vowel_create (double duration)
 		my ft = FormantTier_create (0, duration);
 		my pt = PitchTier_create (0, duration);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Vowel not created."); }
+	} catch (MelderError) { Melder_throw ("Vowel not created."); }
 }
 
 static Vowel Vowel_create_twoFormantSchwa (double duration)
@@ -212,7 +212,7 @@ static Vowel Vowel_create_twoFormantSchwa (double duration)
 		fp -> formant [1] = 1500;
 		fp -> bandwidth[1] = 150;
 		fp -> numberOfFormants = 2;
-		Collection_addItem (my ft -> points, fp.transfer()); 
+		Collection_addItem (my ft -> points, fp.transfer());
 		RealTier_addPoint (my pt, 0, 140);
 
 		fp.reset(FormantPoint_create (duration));
@@ -224,7 +224,7 @@ static Vowel Vowel_create_twoFormantSchwa (double duration)
 		Collection_addItem (my ft -> points, fp.transfer());
 		RealTier_addPoint (my pt, duration, 140);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Schwa Vowel not created"); }
+	} catch (MelderError) { Melder_throw ("Schwa Vowel not created"); }
 }
 
 static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double adaptFactor, double adaptTime, long interpolationDepth)
@@ -234,7 +234,7 @@ static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double a
 		autoSound thee = PointProcess_to_Sound_pulseTrain (pp.peek(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
 		Sound_FormantTier_filter_inline (thee.peek(), my ft);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": Sound with pulses not created."); }
+	} catch (MelderError) { Melder_throw (me, ": Sound with pulses not created."); }
 }
 
 static FormantGrid FormantTier_to_FormantGrid (FormantTier me)
@@ -253,7 +253,7 @@ static FormantGrid FormantTier_to_FormantGrid (FormantTier me)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no FormantGrod created."); }
+	} catch (MelderError) { Melder_throw (me, ": no FormantGrod created."); }
 }
 
 static void VowelEditor_getXYFromF1F2 (VowelEditor me, double f1, double f2, double *x, double *y)
@@ -577,7 +577,7 @@ static PitchTier VowelEditor_to_PitchTier (VowelEditor me, double duration)
 		}
 		RealTier_addPoint (thee.peek(), t_end, f0_end);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no PitchTier created."); }
+	} catch (MelderError) { Melder_throw (me, ": no PitchTier created."); }
 }
 
 static struct {
@@ -594,6 +594,7 @@ void VowelEditor_prefs (void)
 {
 	Preferences_addInt (L"VowelEditor.shellWidth", &prefs.shellWidth, 500);
 	Preferences_addInt (L"VowelEditor.shellHeight", &prefs.shellHeight, 500);
+	Preferences_addInt (L"VowelEditor.soundFollowsMouse", &prefs.soundFollowsMouse, 1);
 	Preferences_addDouble (L"VowelEditor.f1min", &prefs.f1min, 200);
 	Preferences_addDouble (L"VowelEditor.f1max", &prefs.f1max, 1200);
 	Preferences_addDouble (L"VowelEditor.f2min", &prefs.f2min, 500);
@@ -605,7 +606,6 @@ void VowelEditor_prefs (void)
 	Preferences_addInt (L"VowelEditor.frequencyScale", &prefs.frequencyScale, 0);
 	Preferences_addInt (L"VowelEditor.axisOrientation", &prefs.axisOrientation, 0);
 	Preferences_addInt (L"VowelEditor.speakerType", &prefs.speakerType, 1);
-	Preferences_addInt (L"VowelEditor.soundFollowsMouse", &prefs.soundFollowsMouse, 1);
 }
 
 static void VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType, int fontSize)
@@ -1350,7 +1350,7 @@ static void cb_publish (Any editor, void *closure, Data publish)
 	try {
 		praat_new (publish, 0); praat_updateSelection ();
 	} catch (MelderError) { Melder_flushError (0); }
-	
+
 }
 
 static void updateWidgets (I)
@@ -1411,7 +1411,7 @@ void structVowelEditor :: v_createChildren ()
 #if gtk
 	guint nrows = 25, ncols = 7, ileft, iright = 0, itop, ibottom;
 	form = dialog;
-	GuiObject table = gtk_table_new (nrows, ncols, TRUE);
+	GuiObject table = gtk_table_new (nrows, ncols, false);
 	gtk_table_set_row_spacings(GTK_TABLE(table), 4);
 	gtk_table_set_col_spacings(GTK_TABLE(table), 4);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 4);
@@ -1558,14 +1558,14 @@ static Sound VowelEditor_createTarget (VowelEditor me)
 		Sound_fadeIn (thee.peek(), 0.005, 1);
 		Sound_fadeOut(thee.peek(), 0.005);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Target Sound not created."); }
+	} catch (MelderError) { Melder_throw ("Target Sound not created."); }
 }
 
-VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data)
+VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data)
 {
 	try {
 		autoVowelEditor me = Thing_new (VowelEditor);
-		Editor_init (me.peek(), parent, 0, 0, prefs.shellWidth, prefs.shellHeight, title, (Data) data);
+		Editor_init (me.peek(), parent, 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
 		#if motif
 		Melder_assert (XtWindow (my drawingArea));
 		#endif
@@ -1582,7 +1582,7 @@ VowelEditor VowelEditor_create (GuiObject parent, const wchar_t *title, Any data
 		my speakerType = prefs.speakerType;
 		my soundFollowsMouse = prefs.soundFollowsMouse;
 		VowelEditor_setMarks (me.peek(), 2, my speakerType, 14);
-		VowelEditor_setF3F4 (me.peek(), prefs.f3, prefs.b3, prefs.f4, prefs.b4); therror
+		VowelEditor_setF3F4 (me.peek(), prefs.f3, prefs.b3, prefs.f4, prefs.b4);
 		my maximumDuration = BUFFER_SIZE_SEC;
 		my extendDuration = 0.05;
 		if (my data != 0) my vowel = (Vowel) Data_copy (data);
@@ -1609,8 +1609,8 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 		updateWidgets (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("VowelEditor not created.");
+		Melder_throw ("VowelEditor not created.");
 	}
 }
 
-/* End of file VowelEditor.c */
+/* End of file VowelEditor.cpp */

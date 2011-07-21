@@ -40,15 +40,15 @@ static void _FFNet_Pattern_Categories_checkDimensions (FFNet me, Pattern p, Cate
 			"and 1.\nYou could use \"Formula...\" to scale the Pattern values first.");
 }
 
-static int _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c, 
+static void _FFNet_Pattern_Categories_learn (FFNet me, Pattern p, Categories c,
 	long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType,
-	int (*learn) (FFNet, Pattern, Activation, long, double, Any, int))
+	void (*learn) (FFNet, Pattern, Activation, long, double, Any, int))
 {
 	_FFNet_Pattern_Categories_checkDimensions (me, p, c);
 	autoActivation activation = FFNet_Categories_to_Activation (me, c);
 	double min, max;
 	Matrix_getWindowExtrema (p, 0, 0, 0, 0, &min, &max);
-	return learn (me, p, activation.peek(), maxNumOfEpochs, tolerance, parameters, costFunctionType);
+	learn (me, p, activation.peek(), maxNumOfEpochs, tolerance, parameters, costFunctionType);
 }
 
 double FFNet_Pattern_Categories_getCosts_total (FFNet me, Pattern p, Categories c, int costFunctionType)
@@ -66,41 +66,41 @@ double FFNet_Pattern_Categories_getCosts_average (FFNet me, Pattern p, Categorie
 	return costs == NUMundefined ? NUMundefined : costs / p -> ny;
 }
 
-int FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c, 
+void FFNet_Pattern_Categories_learnSM (FFNet me, Pattern p, Categories c,
 	long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType)
 {
-	return _FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSM);
+	_FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSM);
 }
 
-int FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c, 
+void FFNet_Pattern_Categories_learnSD (FFNet me, Pattern p, Categories c,
 	long maxNumOfEpochs, double tolerance, Any parameters, int costFunctionType)
 {
-	return _FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSD);
+	_FFNet_Pattern_Categories_learn (me, p, c, maxNumOfEpochs, tolerance, parameters, costFunctionType, FFNet_Pattern_Activation_learnSD);
 }
 
 Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling)
 {
 	try {
 		if (my outputCategories == 0) Melder_throw ("The FFNet has no output categories.");
-		if (my nInputs != thy nx) Melder_throw ("The number of colums in the Pattern (", thy nx, 
+		if (my nInputs != thy nx) Melder_throw ("The number of colums in the Pattern (", thy nx,
 			") must equal the number of inputs in the FFNet (", my nInputs, L").");
-		if (! _Pattern_checkElements (thee)) Melder_throw 
+		if (! _Pattern_checkElements (thee)) Melder_throw
 		("The elements in the Pattern are not all in the interval [0, 1].\n"
 		"The input of the neural net can only process values that are between 0 and 1.\n"
 		"You could use \"Formula...\" to scale the Pattern values first.");
 
-		
+
 		autoCategories him = Categories_create ();
-	
+
 		for (long k = 1; k <= thy ny; k++)
 		{
 			FFNet_propagate (me, thy z[k], 0);
 			long index = FFNet_getWinningUnit (me, labeling);
 			autoData item = (Data) Data_copy (my outputCategories -> item[index]);
-			Collection_addItem (him.peek(), item.transfer()); therror
+			Collection_addItem (him.peek(), item.transfer());
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Categories created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Categories created."); }
 }
 
 /* End of file FFNet_Pattern_Categories.cpp */

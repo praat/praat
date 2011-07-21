@@ -1060,7 +1060,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 *    praat -
 		 */
 		if (hasCommandLineInput) {
-			Melder_batch = TRUE;
+			Melder_batch = true;
 			doingCommandLineInterface = TRUE;   /* Read from stdin. */
 		}
 
@@ -1072,7 +1072,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			MelderString_copy (& theCurrentPraatApplication -> batchName,
 				argv [3] ? Melder_peekUtf8ToWcs (argv [3]) : L"");   /* The command line. */
 		#endif
-		Melder_batch = FALSE;   /* PRAAT.EXE on Windows is always interactive. */
+		Melder_batch = false;   // PRAAT.EXE on Windows is always interactive
 		strcpy (truncatedTitle, title && title [0] ? title : "praat");
 	#endif
 	theCurrentPraatApplication -> batch = Melder_batch;
@@ -1215,14 +1215,13 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			g_set_application_name (title);
 			raam = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit_gtk, NULL, 0);
 			theCurrentPraatApplication -> topShell = gtk_widget_get_parent (raam);
-			theCurrentPraatApplication -> context = g_main_context_default ();
 			GuiObject_show (theCurrentPraatApplication -> topShell);
 		#else
 			#ifdef _WIN32
 				argv [0] = & praatP. title [0];   /* argc == 4 */
 				Gui_setOpenDocumentCallback (cb_openDocument);
 			#endif
-			theCurrentPraatApplication -> topShell = XtVaAppInitialize (& theCurrentPraatApplication -> context, "Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
+			theCurrentPraatApplication -> topShell = GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
 			XtVaSetValues (theCurrentPraatApplication -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
 			#if defined (macintosh) || defined (_WIN32)
 				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
@@ -1233,7 +1232,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	}
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
 	if (Melder_batch) {
-		Melder_backgrounding = TRUE;
+		Melder_backgrounding = true;
 		praat_addMenus (NULL);
 		praat_addFixedButtons (NULL);
 	} else {
@@ -1246,7 +1245,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 
 		#ifdef macintosh
-			MelderGui_create (theCurrentPraatApplication -> context, theCurrentPraatApplication -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
+			MelderGui_create (theCurrentPraatApplication -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
 		#if gtk
 			Raam = raam;
@@ -1301,7 +1300,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
-			MelderGui_create (theCurrentPraatApplication -> context, theCurrentPraatApplication -> topShell);   /* Mac: done this earlier. */
+			MelderGui_create (theCurrentPraatApplication -> topShell);   /* Mac: done this earlier. */
 		#endif
 		Melder_setHelpProc (helpProc);
 	}
@@ -1428,7 +1427,7 @@ void praat_run (void) {
 					praat_exit (-1);
 				}
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
-					MelderGui_create (NULL, NULL);
+					MelderGui_create (NULL);
 				#endif
 				Melder_error_ (praatP.title, ": command file ", MelderFile_messageName (& batchFile), " not completed.");
 				Melder_flushError (NULL);
@@ -1505,7 +1504,7 @@ void praat_run (void) {
 			#endif
 			for (;;) {
 				XEvent event;
-				XtAppNextEvent (theCurrentPraatApplication -> context, & event);
+				GuiNextEvent (& event);
 				XtDispatchEvent (& event);
 			}
 		#endif

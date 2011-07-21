@@ -4,7 +4,7 @@
 
 include ../makefile.defs
 
-CFLAGS = $(DEFS) -I ../num -I ../LPC -I ../fon -I ../sys -I ../dwsys -I ../audio -I ../stat
+CFLAGS = $(DEFS) -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../audio
 
 CPPFLAGS = $(CFLAGS)
 

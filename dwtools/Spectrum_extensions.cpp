@@ -266,7 +266,7 @@ Matrix Spectrum_unwrap (Spectrum me)
 		Melder_information2 (L"Number of spectral values: ", Melder_integer (tbs.count));
 		Melder_information2 (L" iphase = ", Melder_integer (iphase));
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not unwrapped."); }
+	} catch (MelderError) { Melder_throw (me, ": not unwrapped."); }
 }
 
 void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
@@ -308,7 +308,7 @@ Spectrum Spectra_multiply (Spectrum me, Spectrum thee)
 			his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i]; 
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not multiplied."); }
+	} catch (MelderError) { Melder_throw (me, ": not multiplied."); }
 }
 
 void Spectrum_conjugate (Spectrum me)

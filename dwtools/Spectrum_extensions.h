@@ -25,15 +25,9 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _Spectrum_h_
-	#include "Spectrum.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
+#include "Spectrum.h"
+#include "Sound.h"
+#include "Graphics.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -43,12 +37,12 @@ Matrix Spectrum_unwrap (Spectrum me);
 /*
 	Unwrap the phases of the spectrum according to an algorithm by
 	Tribolet as published in:
-	
+
 	Tribolet, J.M. & Quatieri, T.F. (1979), Computation of the Complex
-		Spectrum, in: Programs for Digital Signal Processing, 
+		Spectrum, in: Programs for Digital Signal Processing,
 		Digital Signal Processing Commitee (eds), IEEE Press,
 		chapter 7.1.
-		
+
 	First row of returned matrix contains the amplitudes-squared,
 	second row contains the unwrapped phases.
 */

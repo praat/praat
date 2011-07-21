@@ -29,7 +29,7 @@
  djmw 20071030 MelderFile->wpath to  MelderFile->path
 */
 
-#include "LongSound_extensions.h" 
+#include "LongSound_extensions.h"
 
 #if defined (_WIN32)
   #include <windows.h>
@@ -46,7 +46,7 @@
 
 /*
   Precondition: size (my buffer) >= nbuf
-*/ 
+*/
 static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long nbuf,
 	int nchannels, int ichannel, long ibuf)
 {
@@ -58,7 +58,7 @@ static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long
 		n_to_read = ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf;
 		long imin = (ibuf - 1) * nbuf + 1;
 		LongSound_readAudioToShort (me, my buffer, imin, n_to_read); therror
-	
+
 		for (long i = 1; i <= n_to_read; i++)
 		{
 			buffer[nchannels * (i - 1) + ichannel] = my buffer[i];
@@ -71,91 +71,93 @@ static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long
 			buffer[nchannels * (i - 1) + ichannel] = 0;
 		}
 	}
-} 
+}
 
 void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	int audioFileType, MelderFile file)
 {
-		long nbuf = my nmax < thy nmax ? my nmax : thy nmax; 
-		long nx = my nx > thy nx ? my nx : thy nx; 
+	try {
+		long nbuf = my nmax < thy nmax ? my nmax : thy nmax;
+		long nx = my nx > thy nx ? my nx : thy nx;
 		long numberOfReads = (nx - 1) / nbuf + 1;
-	
+
 		if (thy numberOfChannels != my numberOfChannels || my numberOfChannels != 1) Melder_throw ("LongSounds must be mono.");
 
 		if (my sampleRate != thy sampleRate) Melder_throw ("Sample rates must be equal.");
-	
-		/* 
+
+		/*
 			Allocate a stereo buffer of size (2 * the smallest)!
 			WE SUPPOSE THAT SMALL IS LARGE ENOUGH.
 			Read the same number of samples from both files, despite
-			potential differences in internal buffer size. 
+			potential differences in internal buffer size.
 		*/
-	
-		long nchannels = 2; 
+
+		long nchannels = 2;
 		autoNUMvector<short> buffer (1, nchannels * nbuf);
-		
-		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", 
-			Melder_winAudioFileExtension (audioFileType));
-		MelderFile_writeAudioFileHeader16_e (file, audioFileType, my sampleRate, nx, nchannels);	
+
+		autoMelderFile f  = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB",
+		Melder_winAudioFileExtension (audioFileType));
+		MelderFile_writeAudioFileHeader16_e (file, audioFileType, my sampleRate, nx, nchannels);
 
 		for (long i = 1; i <= numberOfReads; i++)
 		{
 			long n_to_write = i == numberOfReads ? (nx - 1) % nbuf + 1: nbuf;
 			_LongSound_to_multichannel_buffer (me, buffer.peek(), nbuf, nchannels, 1, i);
 			_LongSound_to_multichannel_buffer (thee, buffer.peek(), nbuf, nchannels, 2, i);
-			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding16 (audioFileType), 
+			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding16 (audioFileType),
 				buffer.peek(), n_to_write);
 		}
+		f.close ();
+	} catch (MelderError) { Melder_throw (me, ": no stereo audio file created."); }
 }
 
 
 /*
-	BSD systems provide ftruncate, several others supply chsize, and a few 
+	BSD systems provide ftruncate, several others supply chsize, and a few
 	may provide a (possibly undocumented) fcntl option F_FREESP. Under MS-DOS,
-	you can sometimes use write(fd, "", 0). However, there is no portable 
+	you can sometimes use write(fd, "", 0). However, there is no portable
 	solution, nor a way to delete blocks at the beginning.
 */
-static int MelderFile_truncate (MelderFile me, long size)
-{	
+static void MelderFile_truncate (MelderFile me, long size)
+{
 #if defined(_WIN32)
 
-		HANDLE hFile;
-		DWORD fdwAccess = GENERIC_READ | GENERIC_WRITE, fPos;
-		DWORD fdwShareMode = 0; /* File cannot be shared */
-		LPSECURITY_ATTRIBUTES lpsa = NULL;
-		DWORD fdwCreate = OPEN_EXISTING;
-		LARGE_INTEGER fileSize;
+	HANDLE hFile;
+	DWORD fdwAccess = GENERIC_READ | GENERIC_WRITE, fPos;
+	DWORD fdwShareMode = 0; /* File cannot be shared */
+	LPSECURITY_ATTRIBUTES lpsa = NULL;
+	DWORD fdwCreate = OPEN_EXISTING;
+	LARGE_INTEGER fileSize;
 
-		MelderFile_close (me);
+	MelderFile_close (me);
 
-		hFile = CreateFileW (my path, fdwAccess, fdwShareMode, lpsa, fdwCreate,
-        FILE_ATTRIBUTE_NORMAL, NULL);
-		if (hFile == INVALID_HANDLE_VALUE)  Melder_throw ("Can't open file ", MelderFile_messageName (me), ".");
+	hFile = CreateFileW (my path, fdwAccess, fdwShareMode, lpsa, fdwCreate,
+	FILE_ATTRIBUTE_NORMAL, NULL);
+	if (hFile == INVALID_HANDLE_VALUE)  Melder_throw ("Can't open file ", MelderFile_messageName (me), ".");
 
-       // Set current file pointer to position 'size'
+	// Set current file pointer to position 'size'
 
-		fileSize.LowPart = size;
-		fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
-		fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
-		if (fPos == 0xFFFFFFFF)  Melder_throw ("Can't set the position at size ", size, "for file ", 	MelderFile_messageName (me), ".");
+	fileSize.LowPart = size;
+	fileSize.HighPart = 0; /* Limit the file size to 2^32 - 2 bytes */
+	fPos = SetFilePointer (hFile, fileSize.LowPart, &fileSize.HighPart, FILE_BEGIN);
+	if (fPos == 0xFFFFFFFF)  Melder_throw ("Can't set the position at size ", size, "for file ", 	MelderFile_messageName (me), ".");
 
-		// Limit the file size as the current position of the file pointer.
+	// Limit the file size as the current position of the file pointer.
 
-		SetEndOfFile (hFile);
-		CloseHandle (hFile);
-	
+	SetEndOfFile (hFile);
+	CloseHandle (hFile);
+
 #elif defined(linux) || defined(macintosh)
-	
-		MelderFile_close (me);
-		if (truncate (Melder_peekWcsToUtf8 (my path), size) == -1) Melder_throw ("Truncating failed for file ",
-			MelderFile_messageName (me), " (", Melder_peekUtf8ToWcs(strerror (errno)), ").");
+
+	MelderFile_close (me);
+	if (truncate (Melder_peekWcsToUtf8 (my path), size) == -1) Melder_throw ("Truncating failed for file ",
+		MelderFile_messageName (me), " (", Melder_peekUtf8ToWcs(strerror (errno)), ").");
 #else
-		return 0;
+	Melder_throw ("Don't know what to do.");
 #endif
-		return 1;
 }
 
-static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file) 
+static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, long n, MelderFile file)
 {
 	long offset = imin;
 	long numberOfBuffers = (n - 1) / my nmax + 1;
@@ -167,7 +169,7 @@ static void writePartToOpenFile16 (LongSound me, int audioFileType, long imin, l
 			long numberOfSamplesToCopy = ibuffer < numberOfBuffers ? my nmax : numberOfSamplesInLastBuffer;
 			LongSound_readAudioToShort (me, my buffer, offset, numberOfSamplesToCopy);
 			offset += numberOfSamplesToCopy;
-			MelderFile_writeShortToAudio (file, my numberOfChannels, 
+			MelderFile_writeShortToAudio (file, my numberOfChannels,
 				Melder_defaultAudioFileEncoding16 (audioFileType), my buffer, numberOfSamplesToCopy);
 		}
 	}
@@ -193,19 +195,19 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 			should deny access!
 			Under Windows deny access is default?!
 		*/
-	
+
 		autofile f = Melder_fopen (file, "r+b");
 		file -> filePointer = f; // essential !!
 		double sampleRate_d;
 		long startOfData, numberOfSamples;
 		int numberOfChannels, encoding;
-		int audioFileType = MelderFile_checkSoundFile (file, &numberOfChannels, 
+		int audioFileType = MelderFile_checkSoundFile (file, &numberOfChannels,
 			&encoding, &sampleRate_d, &startOfData, &numberOfSamples);
-		
+
 		if (audioFileType == 0) Melder_throw ("Not a sound file.");
-	
+
 		// Check whether all the sample rates and channels match.
-	
+
 		long sampleRate = sampleRate_d;
 		for (long i = 1; i <= my size; i++)
 		{
@@ -230,11 +232,11 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		}
 
 		// Search the end of the file, count the number of bytes and append.
-	
+
 		MelderFile_seek (file, 0, SEEK_END); therror
-	
+
 		pre_append_endpos = MelderFile_tell (file); therror
-	
+
 		errno = 0;
 		for (long i = 1; i <= my size; i++)
 		{
@@ -252,7 +254,7 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 			}
 			if (errno != 0) Melder_throw ("Error during writing.");
 		}
-	
+
 		// Update header
 
 		MelderFile_rewind (file);
@@ -269,4 +271,4 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		} throw; }
 }
 
-/* End of file LongSound_extensions.cpp */	 
+/* End of file LongSound_extensions.cpp */

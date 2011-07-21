@@ -69,11 +69,11 @@ class_methods_end
 
 void Index_init (I, long numberOfElements)
 {
-		iam (Index);
-		if (numberOfElements < 1) Melder_throw ("Cannot create index without elements.");
-		my classes = Ordered_create (); therror
-		my numberOfElements = numberOfElements;
-		my classIndex = NUMvector<long> (1, numberOfElements);
+	iam (Index);
+	if (numberOfElements < 1) Melder_throw ("Cannot create index without elements.");
+	my classes = Ordered_create ();
+	my numberOfElements = numberOfElements;
+	my classIndex = NUMvector<long> (1, numberOfElements);
 }
 
 Index Index_extractPart (I, long from, long to)
@@ -84,7 +84,7 @@ Index Index_extractPart (I, long from, long to)
 		if (to == 0) to = my numberOfElements;
 		if (to < from || from < 1 || to > my numberOfElements) Melder_throw 
 			("Range should be in interval [1,", my numberOfElements, "].");
-		autoIndex thee = (Index) Data_copy (me); therror
+		autoIndex thee = (Index) Data_copy (me);
 		thy numberOfElements = to - from + 1;
 		/* */
 		for (long i = 1; i <= thy numberOfElements; i++)
@@ -92,7 +92,7 @@ Index Index_extractPart (I, long from, long to)
 			thy classIndex[i] = my classIndex[from + i - 1];
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": part not extracted."); }
+	} catch (MelderError) { Melder_throw (me, ": part not extracted."); }
 }
 
 class_methods (StringsIndex, Index)
@@ -110,9 +110,9 @@ StringsIndex StringsIndex_create (long numberOfElements)
 {
 	try {
 		autoStringsIndex me = (StringsIndex) Thing_new (StringsIndex);
-		Index_init (me.peek(), numberOfElements); therror
+		Index_init (me.peek(), numberOfElements);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("StringsIndex not created."); }
+	} catch (MelderError) { Melder_throw ("StringsIndex not created."); }
 }
 
 int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel)

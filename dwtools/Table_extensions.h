@@ -1,6 +1,8 @@
+#ifndef _Table_extensions_h_
+#define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,24 +20,25 @@
  */
 
 /*
- djmw 20020619 GPL header
- djmw 20110307 Latest modification
+ djmw 20020411 initial GPL
+ djmw 20110105 Latest modification.
 */
 
-#ifndef _Table_extensions_h_
-#define _Table_extensions_h_
-
-#ifndef _Table_h_
-	#include "Table.h"
-#endif
+#include "TableOfReal.h"
+#include "Collection.h"
+#include "Pattern.h"
+#include "Categories.h"
+#include "Strings.h"
+#include "SSCP.h"
+#include "Table.h"
 
 #ifdef __cplusplus
 	extern "C" {
 #endif
 
-Table Table_createFromPetersonBarneyData (void);
-Table Table_createFromPolsVanNieropData (void);
-Table Table_createFromWeeninkData (void);
+Table Table_createFromPetersonBarneyData ();
+Table Table_createFromPolsVanNieropData ();
+Table Table_createFromWeeninkData ();
 
 void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
@@ -45,4 +48,4 @@ void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xc
 	}
 #endif
 
-#endif /* _Table_extensions_h_ */
+#endif // _Table_extensions_h_

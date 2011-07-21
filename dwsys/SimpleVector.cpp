@@ -68,7 +68,7 @@ DoubleVector DoubleVector_create (long min, long max)
 		autoDoubleVector me = Thing_new (DoubleVector);
 		DoubleVector_init (me.peek(), min, max);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("DoubleVector not created."); }
+	} catch (MelderError) { Melder_throw ("DoubleVector not created."); }
 }
 
 class_methods (ComplexVector, Data)
@@ -87,7 +87,7 @@ void ComplexVector_init (I, long min, long max)
 {
 		iam (ComplexVector);
 		my min = min; my max = max;
-		my v = NUMdcvector (min, max); therror
+		my v = NUMdcvector (min, max);
 }
 
 ComplexVector ComplexVector_create (long min, long max)
@@ -96,7 +96,7 @@ ComplexVector ComplexVector_create (long min, long max)
 		autoComplexVector me = Thing_new (ComplexVector);
 		ComplexVector_init (me.peek(), min, max);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("ComplexVector not created."); }
+	} catch (MelderError) { Melder_throw ("ComplexVector not created."); }
 }
 
 /* End of file SimpleVector.cpp */

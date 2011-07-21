@@ -26,8 +26,8 @@
 
 /*
 	The following routines all use FORTRAN column-major storage of
-	matrices. A consequence is that all matrices must have been allocated 
-	as a single block of mxn elements. 
+	matrices. A consequence is that all matrices must have been allocated
+	as a single block of mxn elements.
 	All matrices are passed as a vector of mxn elements.
 		matrix[i][j] => vector[(j-1)*m + i] "Fortran"
 		matrix[i][j] => vector[(i-1)*n + j] "C"
@@ -42,8 +42,8 @@
 	extern "C" {
 #endif
 
-int NUMlapack_dbdsqr(char *uplo, long *n, long *ncvt, long *nru, long *ncc,
-	double *d, double *e, double *vt, long *ldvt, double *u, long *ldu, 
+int NUMlapack_dbdsqr(const char *uplo, long *n, long *ncvt, long *nru, long *ncc,
+	double *d, double *e, double *vt, long *ldvt, double *u, long *ldu,
 	double *c, long *ldc, double *work, long *info);
 /*  Purpose
     =======
@@ -277,7 +277,7 @@ int NUMlapack_dgebd2(long *m, long *n, double *a, long *lda, double *d, double *
     =====================================================================
 */
 
-	
+
 
 int NUMlapack_dgebrd(long *m, long *n, double *a, long *lda, double *d, double *e,
 	double *tauq, double *taup, double *work, long *lwork, long *info);
@@ -405,451 +405,451 @@ int NUMlapack_dgebrd(long *m, long *n, double *a, long *lda, double *d, double *
     =====================================================================
 */
 
-int NUMlapack_dgebak (char *job, char *side, long *n, long *ilo, long *ihi, 
+int NUMlapack_dgebak (const char *job, const char *side, long *n, long *ilo, long *ihi,
 	double *scale, long *m,	double *v, long *ldv, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       September 30, 1994   
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       September 30, 1994
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dgebak forms the right or left eigenvectors of a real general matrix   
-    by backward transformation on the computed eigenvectors of the   
-    balanced matrix output by NUMlapack_dgebal.   
+    NUMlapack_dgebak forms the right or left eigenvectors of a real general matrix
+    by backward transformation on the computed eigenvectors of the
+    balanced matrix output by NUMlapack_dgebal.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    JOB     (input) char*   
-            Specifies the type of backward transformation required:   
-            = 'N', do nothing, return immediately;   
-            = 'P', do backward transformation for permutation only;   
-            = 'S', do backward transformation for scaling only;   
-            = 'B', do backward transformations for both permutation and   
-                   scaling.   
-            JOB must be the same as the argument JOB supplied to NUMlapack_dgebal.   
+    JOB     (input) char*
+            Specifies the type of backward transformation required:
+            = 'N', do nothing, return immediately;
+            = 'P', do backward transformation for permutation only;
+            = 'S', do backward transformation for scaling only;
+            = 'B', do backward transformations for both permutation and
+                   scaling.
+            JOB must be the same as the argument JOB supplied to NUMlapack_dgebal.
 
-    SIDE    (input) char*   
-            = 'R':  V contains right eigenvectors;   
-            = 'L':  V contains left eigenvectors.   
+    SIDE    (input) char*
+            = 'R':  V contains right eigenvectors;
+            = 'L':  V contains left eigenvectors.
 
-    N       (input) long   
-            The number of rows of the matrix V.  N >= 0.   
+    N       (input) long
+            The number of rows of the matrix V.  N >= 0.
 
-    ILO     (input) long   
-    IHI     (input) long   
-            The integers ILO and IHI determined by NUMlapack_dgebal.   
-            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.   
+    ILO     (input) long
+    IHI     (input) long
+            The integers ILO and IHI determined by NUMlapack_dgebal.
+            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.
 
-    SCALE   (input) double array, dimension (N)   
-            Details of the permutation and scaling factors, as returned   
-            by NUMlapack_dgebal.   
+    SCALE   (input) double array, dimension (N)
+            Details of the permutation and scaling factors, as returned
+            by NUMlapack_dgebal.
 
-    M       (input) long   
-            The number of columns of the matrix V.  M >= 0.   
+    M       (input) long
+            The number of columns of the matrix V.  M >= 0.
 
-    V       (input/output) double array, dimension (LDV,M)   
-            On entry, the matrix of right or left eigenvectors to be   
-            transformed, as returned by DHSEIN or NUMlapack_dtrevc.   
-            On exit, V is overwritten by the transformed eigenvectors.   
+    V       (input/output) double array, dimension (LDV,M)
+            On entry, the matrix of right or left eigenvectors to be
+            transformed, as returned by DHSEIN or NUMlapack_dtrevc.
+            On exit, V is overwritten by the transformed eigenvectors.
 
-    LDV     (input) long   
-            The leading dimension of the array V. LDV >= max(1,N).   
+    LDV     (input) long
+            The leading dimension of the array V. LDV >= max(1,N).
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
-
-    =====================================================================   
-*/
-
-int NUMlapack_dgebal (char *job, long *n, double *a, long *lda, long *ilo, 
-	long *ihi, double *scale, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
-
-
-    Purpose   
-    =======   
-
-    NUMlapack_dgebal balances a general real matrix A.  This involves, first,   
-    permuting A by a similarity transformation to isolate eigenvalues   
-    in the first 1 to ILO-1 and last IHI+1 to N elements on the   
-    diagonal; and second, applying a diagonal similarity transformation   
-    to rows and columns ILO to IHI to make the rows and columns as   
-    close in norm as possible.  Both steps are optional.   
-
-    Balancing may reduce the 1-norm of the matrix, and improve the   
-    accuracy of the computed eigenvalues and/or eigenvectors.   
-
-    Arguments   
-    =========   
-
-    JOB     (input) char*   
-            Specifies the operations to be performed on A:   
-            = 'N':  none:  simply set ILO = 1, IHI = N, SCALE(I) = 1.0   
-                    for i = 1,...,N;   
-            = 'P':  permute only;   
-            = 'S':  scale only;   
-            = 'B':  both permute and scale.   
-
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
-
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the input matrix A.   
-            On exit,  A is overwritten by the balanced matrix.   
-            If JOB = 'N', A is not referenced.   
-            See Further Details.   
-
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
-
-    ILO     (output) long   
-    IHI     (output) long   
-            ILO and IHI are set to integers such that on exit   
-            A(i,j) = 0 if i > j and j = 1,...,ILO-1 or I = IHI+1,...,N.   
-            If JOB = 'N' or 'S', ILO = 1 and IHI = N.   
-
-    SCALE   (output) double array, dimension (N)   
-            Details of the permutations and scaling factors applied to   
-            A.  If P(j) is the index of the row and column interchanged   
-            with row and column j and D(j) is the scaling factor   
-            applied to row and column j, then   
-            SCALE(j) = P(j)    for j = 1,...,ILO-1   
-                     = D(j)    for j = ILO,...,IHI   
-                     = P(j)    for j = IHI+1,...,N.   
-            The order in which the interchanges are made is N to IHI+1,   
-            then 1 to ILO-1.   
-
-    INFO    (output) long   
-            = 0:  successful exit.   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
-
-    Further Details   
-    ===============   
-
-    The permutations consist of row and column interchanges which put   
-    the matrix in the form   
-
-               ( T1   X   Y  )   
-       P A P = (  0   B   Z  )   
-               (  0   0   T2 )   
-
-    where T1 and T2 are upper triangular matrices whose eigenvalues lie   
-    along the diagonal.  The column indices ILO and IHI mark the starting   
-    and ending columns of the submatrix B. Balancing consists of applying   
-    a diagonal similarity transformation inv(D) * B * D to make the   
-    1-norms of each row of B and its corresponding column nearly equal.   
-    The output matrix is   
-
-       ( T1     X*D          Y    )   
-       (  0  inv(D)*B*D  inv(D)*Z ).   
-       (  0      0           T2   )   
-
-    Information about the permutations P and the diagonal matrix D is   
-    returned in the vector SCALE.   
-
-    This subroutine is based on the EISPACK routine BALANC.   
-
-    Modified by Tzu-Yi Chen, Computer Science Division, University of   
-      California at Berkeley, USA   
-
-    =====================================================================   
-*/
-
-int NUMlapack_dgeev (char *jobvl, char *jobvr, long *n, double *a, long *lda, 
-	double *wr, double *wi,	double *vl, long *ldvl, double *vr, long *ldvr, 
-	double *work, long *lwork, long *info);
-/*  -- LAPACK driver routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       December 8, 1999   
-
-    Purpose   
-    =======   
-
-    NUMlapack_dgeev computes for an N-by-N real nonsymmetric matrix A, the   
-    eigenvalues and, optionally, the left and/or right eigenvectors.   
-
-    The right eigenvector v(j) of A satisfies   
-                     A * v(j) = lambda(j) * v(j)   
-    where lambda(j) is its eigenvalue.   
-    The left eigenvector u(j) of A satisfies   
-                  u(j)**H * A = lambda(j) * u(j)**H   
-    where u(j)**H denotes the conjugate transpose of u(j).   
-
-    The computed eigenvectors are normalized to have Euclidean norm   
-    equal to 1 and largest component real.   
-
-    Arguments   
-    =========   
-
-    JOBVL   (input) char*   
-            = 'N': left eigenvectors of A are not computed;   
-            = 'V': left eigenvectors of A are computed.   
-
-    JOBVR   (input) char*   
-            = 'N': right eigenvectors of A are not computed;   
-            = 'V': right eigenvectors of A are computed.   
-
-    N       (input) long   
-            The order of the matrix A. N >= 0.   
-
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the N-by-N matrix A.   
-            On exit, A has been overwritten.   
-
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
-
-    WR      (output) double array, dimension (N)   
-    WI      (output) double array, dimension (N)   
-            WR and WI contain the real and imaginary parts,   
-            respectively, of the computed eigenvalues.  Complex   
-            conjugate pairs of eigenvalues appear consecutively   
-            with the eigenvalue having the positive imaginary part   
-            first.   
-
-    VL      (output) double array, dimension (LDVL,N)   
-            If JOBVL = 'V', the left eigenvectors u(j) are stored one   
-            after another in the columns of VL, in the same order   
-            as their eigenvalues.   
-            If JOBVL = 'N', VL is not referenced.   
-            If the j-th eigenvalue is real, then u(j) = VL(:,j),   
-            the j-th column of VL.   
-            If the j-th and (j+1)-st eigenvalues form a complex   
-            conjugate pair, then u(j) = VL(:,j) + i*VL(:,j+1) and   
-            u(j+1) = VL(:,j) - i*VL(:,j+1).   
-
-    LDVL    (input) long   
-            The leading dimension of the array VL.  LDVL >= 1; if   
-            JOBVL = 'V', LDVL >= N.   
-
-    VR      (output) double array, dimension (LDVR,N)   
-            If JOBVR = 'V', the right eigenvectors v(j) are stored one   
-            after another in the columns of VR, in the same order   
-            as their eigenvalues.   
-            If JOBVR = 'N', VR is not referenced.   
-            If the j-th eigenvalue is real, then v(j) = VR(:,j),   
-            the j-th column of VR.   
-            If the j-th and (j+1)-st eigenvalues form a complex   
-            conjugate pair, then v(j) = VR(:,j) + i*VR(:,j+1) and   
-            v(j+1) = VR(:,j) - i*VR(:,j+1).   
-
-    LDVR    (input) long   
-            The leading dimension of the array VR.  LDVR >= 1; if   
-            JOBVR = 'V', LDVR >= N.   
-
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
-
-    LWORK   (input) long   
-            The dimension of the array WORK.  LWORK >= max(1,3*N), and   
-            if JOBVL = 'V' or JOBVR = 'V', LWORK >= 4*N.  For good   
-            performance, LWORK must generally be larger.   
-
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
-
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
-            > 0:  if INFO = i, the QR algorithm failed to compute all the   
-                  eigenvalues, and no eigenvectors have been computed;   
-                  elements i+1:N of WR and WI contain eigenvalues which   
-                  have converged.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
 
     =====================================================================
 */
 
-int NUMlapack_dgehd2 (long *n, long *ilo, long *ihi, double *a, long *lda, 
-	double *tau, double *work, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       October 31, 1992   
+int NUMlapack_dgebal (const char *job, long *n, double *a, long *lda, long *ilo,
+	long *ihi, double *scale, long *info);
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dgehd2 reduces a real general matrix A to upper Hessenberg form H by   
-    an orthogonal similarity transformation:  Q' * A * Q = H .   
+    NUMlapack_dgebal balances a general real matrix A.  This involves, first,
+    permuting A by a similarity transformation to isolate eigenvalues
+    in the first 1 to ILO-1 and last IHI+1 to N elements on the
+    diagonal; and second, applying a diagonal similarity transformation
+    to rows and columns ILO to IHI to make the rows and columns as
+    close in norm as possible.  Both steps are optional.
 
-    Arguments   
-    =========   
+    Balancing may reduce the 1-norm of the matrix, and improve the
+    accuracy of the computed eigenvalues and/or eigenvectors.
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    Arguments
+    =========
 
-    ILO     (input) long   
-    IHI     (input) long   
-            It is assumed that A is already upper triangular in rows   
-            and columns 1:ILO-1 and IHI+1:N. ILO and IHI are normally   
-            set by a previous call to NUMlapack_dgebal; otherwise they should be   
-            set to 1 and N respectively. See Further Details.   
-            1 <= ILO <= IHI <= max(1,N).   
+    JOB     (input) char*
+            Specifies the operations to be performed on A:
+            = 'N':  none:  simply set ILO = 1, IHI = N, SCALE(I) = 1.0
+                    for i = 1,...,N;
+            = 'P':  permute only;
+            = 'S':  scale only;
+            = 'B':  both permute and scale.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the n by n general matrix to be reduced.   
-            On exit, the upper triangle and the first subdiagonal of A   
-            are overwritten with the upper Hessenberg matrix H, and the   
-            elements below the first subdiagonal, with the array TAU,   
-            represent the orthogonal matrix Q as a product of elementary   
-            reflectors. See Further Details.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the input matrix A.
+            On exit,  A is overwritten by the balanced matrix.
+            If JOB = 'N', A is not referenced.
+            See Further Details.
 
-    TAU     (output) double array, dimension (N-1)   
-            The scalar factors of the elementary reflectors (see Further   
-            Details).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    WORK    (workspace) double array, dimension (N)   
+    ILO     (output) long
+    IHI     (output) long
+            ILO and IHI are set to integers such that on exit
+            A(i,j) = 0 if i > j and j = 1,...,ILO-1 or I = IHI+1,...,N.
+            If JOB = 'N' or 'S', ILO = 1 and IHI = N.
 
-    INFO    (output) long   
-            = 0:  successful exit.   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
+    SCALE   (output) double array, dimension (N)
+            Details of the permutations and scaling factors applied to
+            A.  If P(j) is the index of the row and column interchanged
+            with row and column j and D(j) is the scaling factor
+            applied to row and column j, then
+            SCALE(j) = P(j)    for j = 1,...,ILO-1
+                     = D(j)    for j = ILO,...,IHI
+                     = P(j)    for j = IHI+1,...,N.
+            The order in which the interchanges are made is N to IHI+1,
+            then 1 to ILO-1.
 
-    Further Details   
-    ===============   
+    INFO    (output) long
+            = 0:  successful exit.
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
 
-    The matrix Q is represented as a product of (ihi-ilo) elementary   
-    reflectors   
+    Further Details
+    ===============
 
-       Q = H(ilo) H(ilo+1) . . . H(ihi-1).   
+    The permutations consist of row and column interchanges which put
+    the matrix in the form
 
-    Each H(i) has the form   
+               ( T1   X   Y  )
+       P A P = (  0   B   Z  )
+               (  0   0   T2 )
 
-       H(i) = I - tau * v * v'   
+    where T1 and T2 are upper triangular matrices whose eigenvalues lie
+    along the diagonal.  The column indices ILO and IHI mark the starting
+    and ending columns of the submatrix B. Balancing consists of applying
+    a diagonal similarity transformation inv(D) * B * D to make the
+    1-norms of each row of B and its corresponding column nearly equal.
+    The output matrix is
 
-    where tau is a real scalar, and v is a real vector with   
-    v(1:i) = 0, v(i+1) = 1 and v(ihi+1:n) = 0; v(i+2:ihi) is stored on   
-    exit in A(i+2:ihi,i), and tau in TAU(i).   
+       ( T1     X*D          Y    )
+       (  0  inv(D)*B*D  inv(D)*Z ).
+       (  0      0           T2   )
 
-    The contents of A are illustrated by the following example, with   
-    n = 7, ilo = 2 and ihi = 6:   
+    Information about the permutations P and the diagonal matrix D is
+    returned in the vector SCALE.
 
-    on entry,                        on exit,   
+    This subroutine is based on the EISPACK routine BALANC.
 
-    ( a   a   a   a   a   a   a )    (  a   a   h   h   h   h   a )   
-    (     a   a   a   a   a   a )    (      a   h   h   h   h   a )   
-    (     a   a   a   a   a   a )    (      h   h   h   h   h   h )   
-    (     a   a   a   a   a   a )    (      v2  h   h   h   h   h )   
-    (     a   a   a   a   a   a )    (      v2  v3  h   h   h   h )   
-    (     a   a   a   a   a   a )    (      v2  v3  v4  h   h   h )   
-    (                         a )    (                          a )   
+    Modified by Tzu-Yi Chen, Computer Science Division, University of
+      California at Berkeley, USA
 
-    where a denotes an element of the original matrix A, h denotes a   
-    modified element of the upper Hessenberg matrix H, and vi denotes an   
-    element of the vector defining H(i).   
-
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dgehrd (long *n, long *ilo, long *ihi, double *a, long *lda, 
+int NUMlapack_dgeev (const char *jobvl, const char *jobvr, long *n, double *a, long *lda,
+	double *wr, double *wi,	double *vl, long *ldvl, double *vr, long *ldvr,
+	double *work, long *lwork, long *info);
+/*  -- LAPACK driver routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       December 8, 1999
+
+    Purpose
+    =======
+
+    NUMlapack_dgeev computes for an N-by-N real nonsymmetric matrix A, the
+    eigenvalues and, optionally, the left and/or right eigenvectors.
+
+    The right eigenvector v(j) of A satisfies
+                     A * v(j) = lambda(j) * v(j)
+    where lambda(j) is its eigenvalue.
+    The left eigenvector u(j) of A satisfies
+                  u(j)**H * A = lambda(j) * u(j)**H
+    where u(j)**H denotes the conjugate transpose of u(j).
+
+    The computed eigenvectors are normalized to have Euclidean norm
+    equal to 1 and largest component real.
+
+    Arguments
+    =========
+
+    JOBVL   (input) char*
+            = 'N': left eigenvectors of A are not computed;
+            = 'V': left eigenvectors of A are computed.
+
+    JOBVR   (input) char*
+            = 'N': right eigenvectors of A are not computed;
+            = 'V': right eigenvectors of A are computed.
+
+    N       (input) long
+            The order of the matrix A. N >= 0.
+
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the N-by-N matrix A.
+            On exit, A has been overwritten.
+
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
+
+    WR      (output) double array, dimension (N)
+    WI      (output) double array, dimension (N)
+            WR and WI contain the real and imaginary parts,
+            respectively, of the computed eigenvalues.  Complex
+            conjugate pairs of eigenvalues appear consecutively
+            with the eigenvalue having the positive imaginary part
+            first.
+
+    VL      (output) double array, dimension (LDVL,N)
+            If JOBVL = 'V', the left eigenvectors u(j) are stored one
+            after another in the columns of VL, in the same order
+            as their eigenvalues.
+            If JOBVL = 'N', VL is not referenced.
+            If the j-th eigenvalue is real, then u(j) = VL(:,j),
+            the j-th column of VL.
+            If the j-th and (j+1)-st eigenvalues form a complex
+            conjugate pair, then u(j) = VL(:,j) + i*VL(:,j+1) and
+            u(j+1) = VL(:,j) - i*VL(:,j+1).
+
+    LDVL    (input) long
+            The leading dimension of the array VL.  LDVL >= 1; if
+            JOBVL = 'V', LDVL >= N.
+
+    VR      (output) double array, dimension (LDVR,N)
+            If JOBVR = 'V', the right eigenvectors v(j) are stored one
+            after another in the columns of VR, in the same order
+            as their eigenvalues.
+            If JOBVR = 'N', VR is not referenced.
+            If the j-th eigenvalue is real, then v(j) = VR(:,j),
+            the j-th column of VR.
+            If the j-th and (j+1)-st eigenvalues form a complex
+            conjugate pair, then v(j) = VR(:,j) + i*VR(:,j+1) and
+            v(j+1) = VR(:,j) - i*VR(:,j+1).
+
+    LDVR    (input) long
+            The leading dimension of the array VR.  LDVR >= 1; if
+            JOBVR = 'V', LDVR >= N.
+
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
+
+    LWORK   (input) long
+            The dimension of the array WORK.  LWORK >= max(1,3*N), and
+            if JOBVL = 'V' or JOBVR = 'V', LWORK >= 4*N.  For good
+            performance, LWORK must generally be larger.
+
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
+
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
+            > 0:  if INFO = i, the QR algorithm failed to compute all the
+                  eigenvalues, and no eigenvectors have been computed;
+                  elements i+1:N of WR and WI contain eigenvalues which
+                  have converged.
+
+    =====================================================================
+*/
+
+int NUMlapack_dgehd2 (long *n, long *ilo, long *ihi, double *a, long *lda,
+	double *tau, double *work, long *info);
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       October 31, 1992
+
+
+    Purpose
+    =======
+
+    NUMlapack_dgehd2 reduces a real general matrix A to upper Hessenberg form H by
+    an orthogonal similarity transformation:  Q' * A * Q = H .
+
+    Arguments
+    =========
+
+    N       (input) long
+            The order of the matrix A.  N >= 0.
+
+    ILO     (input) long
+    IHI     (input) long
+            It is assumed that A is already upper triangular in rows
+            and columns 1:ILO-1 and IHI+1:N. ILO and IHI are normally
+            set by a previous call to NUMlapack_dgebal; otherwise they should be
+            set to 1 and N respectively. See Further Details.
+            1 <= ILO <= IHI <= max(1,N).
+
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the n by n general matrix to be reduced.
+            On exit, the upper triangle and the first subdiagonal of A
+            are overwritten with the upper Hessenberg matrix H, and the
+            elements below the first subdiagonal, with the array TAU,
+            represent the orthogonal matrix Q as a product of elementary
+            reflectors. See Further Details.
+
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
+
+    TAU     (output) double array, dimension (N-1)
+            The scalar factors of the elementary reflectors (see Further
+            Details).
+
+    WORK    (workspace) double array, dimension (N)
+
+    INFO    (output) long
+            = 0:  successful exit.
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
+
+    Further Details
+    ===============
+
+    The matrix Q is represented as a product of (ihi-ilo) elementary
+    reflectors
+
+       Q = H(ilo) H(ilo+1) . . . H(ihi-1).
+
+    Each H(i) has the form
+
+       H(i) = I - tau * v * v'
+
+    where tau is a real scalar, and v is a real vector with
+    v(1:i) = 0, v(i+1) = 1 and v(ihi+1:n) = 0; v(i+2:ihi) is stored on
+    exit in A(i+2:ihi,i), and tau in TAU(i).
+
+    The contents of A are illustrated by the following example, with
+    n = 7, ilo = 2 and ihi = 6:
+
+    on entry,                        on exit,
+
+    ( a   a   a   a   a   a   a )    (  a   a   h   h   h   h   a )
+    (     a   a   a   a   a   a )    (      a   h   h   h   h   a )
+    (     a   a   a   a   a   a )    (      h   h   h   h   h   h )
+    (     a   a   a   a   a   a )    (      v2  h   h   h   h   h )
+    (     a   a   a   a   a   a )    (      v2  v3  h   h   h   h )
+    (     a   a   a   a   a   a )    (      v2  v3  v4  h   h   h )
+    (                         a )    (                          a )
+
+    where a denotes an element of the original matrix A, h denotes a
+    modified element of the upper Hessenberg matrix H, and vi denotes an
+    element of the vector defining H(i).
+
+    =====================================================================
+*/
+
+int NUMlapack_dgehrd (long *n, long *ilo, long *ihi, double *a, long *lda,
 	double *tau, double *work, long *lwork, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dgehrd reduces a real general matrix A to upper Hessenberg form H by   
-    an orthogonal similarity transformation:  Q' * A * Q = H .   
+    NUMlapack_dgehrd reduces a real general matrix A to upper Hessenberg form H by
+    an orthogonal similarity transformation:  Q' * A * Q = H .
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    ILO     (input) long   
-    IHI     (input) long   
-            It is assumed that A is already upper triangular in rows   
-            and columns 1:ILO-1 and IHI+1:N. ILO and IHI are normally   
-            set by a previous call to NUMlapack_dgebal; otherwise they should be   
-            set to 1 and N respectively. See Further Details.   
-            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.   
+    ILO     (input) long
+    IHI     (input) long
+            It is assumed that A is already upper triangular in rows
+            and columns 1:ILO-1 and IHI+1:N. ILO and IHI are normally
+            set by a previous call to NUMlapack_dgebal; otherwise they should be
+            set to 1 and N respectively. See Further Details.
+            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the N-by-N general matrix to be reduced.   
-            On exit, the upper triangle and the first subdiagonal of A   
-            are overwritten with the upper Hessenberg matrix H, and the   
-            elements below the first subdiagonal, with the array TAU,   
-            represent the orthogonal matrix Q as a product of elementary   
-            reflectors. See Further Details.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the N-by-N general matrix to be reduced.
+            On exit, the upper triangle and the first subdiagonal of A
+            are overwritten with the upper Hessenberg matrix H, and the
+            elements below the first subdiagonal, with the array TAU,
+            represent the orthogonal matrix Q as a product of elementary
+            reflectors. See Further Details.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    TAU     (output) double array, dimension (N-1)   
-            The scalar factors of the elementary reflectors (see Further   
-            Details). Elements 1:ILO-1 and IHI:N-1 of TAU are set to   
-            zero.   
+    TAU     (output) double array, dimension (N-1)
+            The scalar factors of the elementary reflectors (see Further
+            Details). Elements 1:ILO-1 and IHI:N-1 of TAU are set to
+            zero.
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The length of the array WORK.  LWORK >= max(1,N).   
-            For optimum performance LWORK >= N*NB, where NB is the   
-            optimal blocksize.   
+    LWORK   (input) long
+            The length of the array WORK.  LWORK >= max(1,N).
+            For optimum performance LWORK >= N*NB, where NB is the
+            optimal blocksize.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    The matrix Q is represented as a product of (ihi-ilo) elementary   
-    reflectors   
+    The matrix Q is represented as a product of (ihi-ilo) elementary
+    reflectors
 
-       Q = H(ilo) H(ilo+1) . . . H(ihi-1).   
+       Q = H(ilo) H(ilo+1) . . . H(ihi-1).
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H(i) = I - tau * v * v'   
+       H(i) = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(1:i) = 0, v(i+1) = 1 and v(ihi+1:n) = 0; v(i+2:ihi) is stored on   
-    exit in A(i+2:ihi,i), and tau in TAU(i).   
+    where tau is a real scalar, and v is a real vector with
+    v(1:i) = 0, v(i+1) = 1 and v(ihi+1:n) = 0; v(i+2:ihi) is stored on
+    exit in A(i+2:ihi,i), and tau in TAU(i).
 
-    The contents of A are illustrated by the following example, with   
-    n = 7, ilo = 2 and ihi = 6:   
+    The contents of A are illustrated by the following example, with
+    n = 7, ilo = 2 and ihi = 6:
 
-    on entry,                        on exit,   
+    on entry,                        on exit,
 
-    ( a   a   a   a   a   a   a )    (  a   a   h   h   h   h   a )   
-    (     a   a   a   a   a   a )    (      a   h   h   h   h   a )   
-    (     a   a   a   a   a   a )    (      h   h   h   h   h   h )   
-    (     a   a   a   a   a   a )    (      v2  h   h   h   h   h )   
-    (     a   a   a   a   a   a )    (      v2  v3  h   h   h   h )   
-    (     a   a   a   a   a   a )    (      v2  v3  v4  h   h   h )   
-    (                         a )    (                          a )   
+    ( a   a   a   a   a   a   a )    (  a   a   h   h   h   h   a )
+    (     a   a   a   a   a   a )    (      a   h   h   h   h   a )
+    (     a   a   a   a   a   a )    (      h   h   h   h   h   h )
+    (     a   a   a   a   a   a )    (      v2  h   h   h   h   h )
+    (     a   a   a   a   a   a )    (      v2  v3  h   h   h   h )
+    (     a   a   a   a   a   a )    (      v2  v3  v4  h   h   h )
+    (                         a )    (                          a )
 
-    where a denotes an element of the original matrix A, h denotes a   
-    modified element of the upper Hessenberg matrix H, and vi denotes an   
-    element of the vector defining H(i).   
+    where a denotes an element of the original matrix A, h denotes a
+    modified element of the upper Hessenberg matrix H, and vi denotes an
+    element of the vector defining H(i).
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dgelq2 (long *m, long *n, double *a, long *lda, double *tau, double *work, long *info);
@@ -975,162 +975,162 @@ int NUMlapack_dgelqf (long *m, long *n, double *a, long *lda, double *tau,
 */
 
 
-int NUMlapack_dgelss (long *m, long *n, long *nrhs, double *a, long *lda, 
-	double *b, long *ldb, double *s, double *rcond, long *rank, double *work, 
+int NUMlapack_dgelss (long *m, long *n, long *nrhs, double *a, long *lda,
+	double *b, long *ldb, double *s, double *rcond, long *rank, double *work,
 	long *lwork, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dgelss computes the minimum norm solution to a real linear least   
-    squares problem:   
+    NUMlapack_dgelss computes the minimum norm solution to a real linear least
+    squares problem:
 
-    Minimize 2-norm(| b - A*x |).   
+    Minimize 2-norm(| b - A*x |).
 
-    using the singular value decomposition (SVD) of A. A is an M-by-N   
-    matrix which may be rank-deficient.   
+    using the singular value decomposition (SVD) of A. A is an M-by-N
+    matrix which may be rank-deficient.
 
-    Several right hand side vectors b and solution vectors x can be   
-    handled in a single call; they are stored as the columns of the   
-    M-by-NRHS right hand side matrix B and the N-by-NRHS solution matrix   
-    X.   
+    Several right hand side vectors b and solution vectors x can be
+    handled in a single call; they are stored as the columns of the
+    M-by-NRHS right hand side matrix B and the N-by-NRHS solution matrix
+    X.
 
-    The effective rank of A is determined by treating as zero those   
-    singular values which are less than RCOND times the largest singular   
-    value.   
+    The effective rank of A is determined by treating as zero those
+    singular values which are less than RCOND times the largest singular
+    value.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    M       (input) long   
-            The number of rows of the matrix A. M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A. M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix A. N >= 0.   
+    N       (input) long
+            The number of columns of the matrix A. N >= 0.
 
-    NRHS    (input) long   
-            The number of right hand sides, i.e., the number of columns   
-            of the matrices B and X. NRHS >= 0.   
+    NRHS    (input) long
+            The number of right hand sides, i.e., the number of columns
+            of the matrices B and X. NRHS >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the M-by-N matrix A.   
-            On exit, the first min(m,n) rows of A are overwritten with   
-            its right singular vectors, stored rowwise.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the M-by-N matrix A.
+            On exit, the first min(m,n) rows of A are overwritten with
+            its right singular vectors, stored rowwise.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,M).
 
-    B       (input/output) double array, dimension (LDB,NRHS)   
-            On entry, the M-by-NRHS right hand side matrix B.   
-            On exit, B is overwritten by the N-by-NRHS solution   
-            matrix X.  If m >= n and RANK = n, the residual   
-            sum-of-squares for the solution in the i-th column is given   
-            by the sum of squares of elements n+1:m in that column.   
+    B       (input/output) double array, dimension (LDB,NRHS)
+            On entry, the M-by-NRHS right hand side matrix B.
+            On exit, B is overwritten by the N-by-NRHS solution
+            matrix X.  If m >= n and RANK = n, the residual
+            sum-of-squares for the solution in the i-th column is given
+            by the sum of squares of elements n+1:m in that column.
 
-    LDB     (input) long   
-            The leading dimension of the array B. LDB >= max(1,max(M,N)).   
+    LDB     (input) long
+            The leading dimension of the array B. LDB >= max(1,max(M,N)).
 
-    S       (output) double array, dimension (min(M,N))   
-            The singular values of A in decreasing order.   
-            The condition number of A in the 2-norm = S(1)/S(min(m,n)).   
+    S       (output) double array, dimension (min(M,N))
+            The singular values of A in decreasing order.
+            The condition number of A in the 2-norm = S(1)/S(min(m,n)).
 
-    RCOND   (input) double   
-            RCOND is used to determine the effective rank of A.   
-            Singular values S(i) <= RCOND*S(1) are treated as zero.   
-            If RCOND < 0, machine precision is used instead.   
+    RCOND   (input) double
+            RCOND is used to determine the effective rank of A.
+            Singular values S(i) <= RCOND*S(1) are treated as zero.
+            If RCOND < 0, machine precision is used instead.
 
-    RANK    (output) long   
-            The effective rank of A, i.e., the number of singular values   
-            which are greater than RCOND*S(1).   
+    RANK    (output) long
+            The effective rank of A, i.e., the number of singular values
+            which are greater than RCOND*S(1).
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The dimension of the array WORK. LWORK >= 1, and also:   
-            LWORK >= 3*min(M,N) + max( 2*min(M,N), max(M,N), NRHS )   
-            For good performance, LWORK should generally be larger.   
+    LWORK   (input) long
+            The dimension of the array WORK. LWORK >= 1, and also:
+            LWORK >= 3*min(M,N) + max( 2*min(M,N), max(M,N), NRHS )
+            For good performance, LWORK should generally be larger.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
-            > 0:  the algorithm for computing the SVD failed to converge;   
-                  if INFO = i, i off-diagonal elements of an intermediate   
-                  bidiagonal form did not converge to zero.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
+            > 0:  the algorithm for computing the SVD failed to converge;
+                  if INFO = i, i off-diagonal elements of an intermediate
+                  bidiagonal form did not converge to zero.
 
-    =====================================================================   
+    =====================================================================
 */
 
 
-int NUMlapack_dgeqpf (long *m, long *n, double *a, long *lda, long *jpvt, 
+int NUMlapack_dgeqpf (long *m, long *n, double *a, long *lda, long *jpvt,
 	double *tau, double *work, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    This routine is deprecated and has been replaced by routine DGEQP3.   
+    This routine is deprecated and has been replaced by routine DGEQP3.
 
-    NUMlapack_dgeqpf computes a QR factorization with column pivoting of a   
-    real M-by-N matrix A: A*P = Q*R.   
+    NUMlapack_dgeqpf computes a QR factorization with column pivoting of a
+    real M-by-N matrix A: A*P = Q*R.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    M       (input) long   
-            The number of rows of the matrix A. M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A. M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix A. N >= 0   
+    N       (input) long
+            The number of columns of the matrix A. N >= 0
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the M-by-N matrix A.   
-            On exit, the upper triangle of the array contains the   
-            min(M,N)-by-N upper triangular matrix R; the elements   
-            below the diagonal, together with the array TAU,   
-            represent the orthogonal matrix Q as a product of   
-            min(m,n) elementary reflectors.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the M-by-N matrix A.
+            On exit, the upper triangle of the array contains the
+            min(M,N)-by-N upper triangular matrix R; the elements
+            below the diagonal, together with the array TAU,
+            represent the orthogonal matrix Q as a product of
+            min(m,n) elementary reflectors.
 
-    LDA     (input) long   
-            The leading dimension of the array A. LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A. LDA >= max(1,M).
 
-    JPVT    (input/output) long array, dimension (N)   
-            On entry, if JPVT(i) .ne. 0, the i-th column of A is permuted   
-            to the front of A*P (a leading column); if JPVT(i) = 0,   
-            the i-th column of A is a free column.   
-            On exit, if JPVT(i) = k, then the i-th column of A*P   
-            was the k-th column of A.   
+    JPVT    (input/output) long array, dimension (N)
+            On entry, if JPVT(i) .ne. 0, the i-th column of A is permuted
+            to the front of A*P (a leading column); if JPVT(i) = 0,
+            the i-th column of A is a free column.
+            On exit, if JPVT(i) = k, then the i-th column of A*P
+            was the k-th column of A.
 
-    TAU     (output) double array, dimension (min(M,N))   
-            The scalar factors of the elementary reflectors.   
+    TAU     (output) double array, dimension (min(M,N))
+            The scalar factors of the elementary reflectors.
 
-    WORK    (workspace) double array, dimension (3*N)   
+    WORK    (workspace) double array, dimension (3*N)
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    The matrix Q is represented as a product of elementary reflectors   
+    The matrix Q is represented as a product of elementary reflectors
 
-       Q = H(1) H(2) . . . H(n)   
+       Q = H(1) H(2) . . . H(n)
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H = I - tau * v * v'   
+       H = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(1:i-1) = 0 and v(i) = 1; v(i+1:m) is stored on exit in A(i+1:m,i).   
+    where tau is a real scalar, and v is a real vector with
+    v(1:i-1) = 0 and v(i) = 1; v(i+1:m) is stored on exit in A(i+1:m,i).
 
-    The matrix P is represented in jpvt as follows: If   
-       jpvt(j) = i   
-    then the jth column of P is the ith canonical unit vector.   
+    The matrix P is represented in jpvt as follows: If
+       jpvt(j) = i
+    then the jth column of P is the ith canonical unit vector.
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dgeqr2 (long *m, long *n, double *a, long *lda, double *tau,
@@ -1257,121 +1257,121 @@ int NUMlapack_dgeqrf(long *m, long *n, double *a, long *lda, double *tau,
     =====================================================================
 */
 
-int NUMlapack_dgerq2(long *m, long *n, double *a, long *lda, double *tau, 
+int NUMlapack_dgerq2(long *m, long *n, double *a, long *lda, double *tau,
 	double *work, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dgerq2 computes an RQ factorization of a real m by n matrix A:   
-    A = R * Q.   
+    NUMlapack_dgerq2 computes an RQ factorization of a real m by n matrix A:
+    A = R * Q.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    M       (input) long   
-            The number of rows of the matrix A.  M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A.  M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix A.  N >= 0.   
+    N       (input) long
+            The number of columns of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the m by n matrix A.   
-            On exit, if m <= n, the upper triangle of the subarray   
-            A(1:m,n-m+1:n) contains the m by m upper triangular matrix R;   
-            if m >= n, the elements on and above the (m-n)-th subdiagonal   
-            contain the m by n upper trapezoidal matrix R; the remaining   
-            elements, with the array TAU, represent the orthogonal matrix   
-            Q as a product of elementary reflectors (see Further   
-            Details).   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the m by n matrix A.
+            On exit, if m <= n, the upper triangle of the subarray
+            A(1:m,n-m+1:n) contains the m by m upper triangular matrix R;
+            if m >= n, the elements on and above the (m-n)-th subdiagonal
+            contain the m by n upper trapezoidal matrix R; the remaining
+            elements, with the array TAU, represent the orthogonal matrix
+            Q as a product of elementary reflectors (see Further
+            Details).
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,M).
 
-    TAU     (output) double array, dimension (min(M,N))   
-            The scalar factors of the elementary reflectors (see Further   
-            Details).   
+    TAU     (output) double array, dimension (min(M,N))
+            The scalar factors of the elementary reflectors (see Further
+            Details).
 
-    WORK    (workspace) double array, dimension (M)   
+    WORK    (workspace) double array, dimension (M)
 
-    INFO    (output) long   
-            = 0: successful exit   
-            < 0: if INFO = -i, the i-th argument had an illegal value   
+    INFO    (output) long
+            = 0: successful exit
+            < 0: if INFO = -i, the i-th argument had an illegal value
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    The matrix Q is represented as a product of elementary reflectors   
+    The matrix Q is represented as a product of elementary reflectors
 
-       Q = H(1) H(2) . . . H(k), where k = min(m,n).   
+       Q = H(1) H(2) . . . H(k), where k = min(m,n).
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H(i) = I - tau * v * v'   
+       H(i) = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(n-k+i+1:n) = 0 and v(n-k+i) = 1; v(1:n-k+i-1) is stored on exit in   
-    A(m-k+i,1:n-k+i-1), and tau in TAU(i).   
+    where tau is a real scalar, and v is a real vector with
+    v(n-k+i+1:n) = 0 and v(n-k+i) = 1; v(1:n-k+i-1) is stored on exit in
+    A(m-k+i,1:n-k+i-1), and tau in TAU(i).
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dgesv (long *n, long *nrhs, double *a, long *lda, long *ipiv, 
+int NUMlapack_dgesv (long *n, long *nrhs, double *a, long *lda, long *ipiv,
 	double *b, long *ldb, long *info);
-/* 	Purpose   
-    =======   
+/* 	Purpose
+    =======
 
-    NUMlapack_dgesv computes the solution to a real system of linear equations   
-       A * X = B,   
-    where A is an N-by-N matrix and X and B are N-by-NRHS matrices.   
+    NUMlapack_dgesv computes the solution to a real system of linear equations
+       A * X = B,
+    where A is an N-by-N matrix and X and B are N-by-NRHS matrices.
 
-    The LU decomposition with partial pivoting and row interchanges is   
-    used to factor A as   
-       A = P * L * U,   
-    where P is a permutation matrix, L is unit lower triangular, and U is   
-    upper triangular.  The factored form of A is then used to solve the   
-    system of equations A * X = B.   
+    The LU decomposition with partial pivoting and row interchanges is
+    used to factor A as
+       A = P * L * U,
+    where P is a permutation matrix, L is unit lower triangular, and U is
+    upper triangular.  The factored form of A is then used to solve the
+    system of equations A * X = B.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The number of linear equations, i.e., the order of the   
-            matrix A.  N >= 0.   
+    N       (input) long
+            The number of linear equations, i.e., the order of the
+            matrix A.  N >= 0.
 
-    NRHS    (input) long   
-            The number of right hand sides, i.e., the number of columns   
-            of the matrix B.  NRHS >= 0.   
+    NRHS    (input) long
+            The number of right hand sides, i.e., the number of columns
+            of the matrix B.  NRHS >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the N-by-N coefficient matrix A.   
-            On exit, the factors L and U from the factorization   
-            A = P*L*U; the unit diagonal elements of L are not stored.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the N-by-N coefficient matrix A.
+            On exit, the factors L and U from the factorization
+            A = P*L*U; the unit diagonal elements of L are not stored.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    IPIV    (output) long array, dimension (N)   
-            The pivot indices that define the permutation matrix P;   
-            row i of the matrix was interchanged with row IPIV(i).   
+    IPIV    (output) long array, dimension (N)
+            The pivot indices that define the permutation matrix P;
+            row i of the matrix was interchanged with row IPIV(i).
 
-    B       (input/output) double array, dimension (LDB,NRHS)   
-            On entry, the N-by-NRHS matrix of right hand side matrix B.   
-            On exit, if INFO = 0, the N-by-NRHS solution matrix X.   
+    B       (input/output) double array, dimension (LDB,NRHS)
+            On entry, the N-by-NRHS matrix of right hand side matrix B.
+            On exit, if INFO = 0, the N-by-NRHS solution matrix X.
 
-    LDB     (input) long   
-            The leading dimension of the array B.  LDB >= max(1,N).   
+    LDB     (input) long
+            The leading dimension of the array B.  LDB >= max(1,N).
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
-            > 0:  if INFO = i, U(i,i) is exactly zero.  The factorization   
-                  has been completed, but the factor U is exactly   
-                  singular, so the solution could not be computed.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
+            > 0:  if INFO = i, U(i,i) is exactly zero.  The factorization
+                  has been completed, but the factor U is exactly
+                  singular, so the solution could not be computed.
 
 	=====================================================================
 */
-	
-int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long *lda,
+
+int NUMlapack_dgesvd (const char *jobu, const char *jobvt, long *m, long *n, double *a, long *lda,
 	double *s, double *u, long *ldu, double *vt, long *ldvt, double *work,
 	long *lwork, long *info);
 /*
@@ -1495,229 +1495,229 @@ int NUMlapack_dgesvd (char *jobu, char *jobvt, long *m, long *n, double *a, long
 */
 
 int NUMlapack_dgetf2 (long *m, long *n, double *a, long *lda, long *ipiv, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dgetf2 computes an LU factorization of a general m-by-n matrix A   
-    using partial pivoting with row interchanges.   
+    NUMlapack_dgetf2 computes an LU factorization of a general m-by-n matrix A
+    using partial pivoting with row interchanges.
 
-    The factorization has the form   
-       A = P * L * U   
-    where P is a permutation matrix, L is lower triangular with unit   
-    diagonal elements (lower trapezoidal if m > n), and U is upper   
-    triangular (upper trapezoidal if m < n).   
+    The factorization has the form
+       A = P * L * U
+    where P is a permutation matrix, L is lower triangular with unit
+    diagonal elements (lower trapezoidal if m > n), and U is upper
+    triangular (upper trapezoidal if m < n).
 
-    This is the right-looking Level 2 BLAS version of the algorithm.   
+    This is the right-looking Level 2 BLAS version of the algorithm.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    M       (input) long   
-            The number of rows of the matrix A.  M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A.  M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix A.  N >= 0.   
+    N       (input) long
+            The number of columns of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the m by n matrix to be factored.   
-            On exit, the factors L and U from the factorization   
-            A = P*L*U; the unit diagonal elements of L are not stored.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the m by n matrix to be factored.
+            On exit, the factors L and U from the factorization
+            A = P*L*U; the unit diagonal elements of L are not stored.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,M).
 
-    IPIV    (output) long array, dimension (min(M,N))   
-            The pivot indices; for 1 <= i <= min(M,N), row i of the   
-            matrix was interchanged with row IPIV(i).   
+    IPIV    (output) long array, dimension (min(M,N))
+            The pivot indices; for 1 <= i <= min(M,N), row i of the
+            matrix was interchanged with row IPIV(i).
 
-    INFO    (output) long   
-            = 0: successful exit   
-            < 0: if INFO = -k, the k-th argument had an illegal value   
-            > 0: if INFO = k, U(k,k) is exactly zero. The factorization   
-                 has been completed, but the factor U is exactly   
-                 singular, and division by zero will occur if it is used   
-                 to solve a system of equations.   
+    INFO    (output) long
+            = 0: successful exit
+            < 0: if INFO = -k, the k-th argument had an illegal value
+            > 0: if INFO = k, U(k,k) is exactly zero. The factorization
+                 has been completed, but the factor U is exactly
+                 singular, and division by zero will occur if it is used
+                 to solve a system of equations.
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dgetri (long *n, double *a, long *lda, long *ipiv, double *work,
 	long *lwork, long *info);
-/* Purpose   
-    =======   
+/* Purpose
+    =======
 
-    NUMlapack_dgetri computes the inverse of a matrix using the LU factorization   
-    computed by NUMlapack_dgetrf.   
+    NUMlapack_dgetri computes the inverse of a matrix using the LU factorization
+    computed by NUMlapack_dgetrf.
 
-    This method inverts U and then computes inv(A) by solving the system   
-    inv(A)*L = inv(U) for inv(A).   
+    This method inverts U and then computes inv(A) by solving the system
+    inv(A)*L = inv(U) for inv(A).
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the factors L and U from the factorization   
-            A = P*L*U as computed by DGETRF.   
-            On exit, if INFO = 0, the inverse of the original matrix A.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the factors L and U from the factorization
+            A = P*L*U as computed by DGETRF.
+            On exit, if INFO = 0, the inverse of the original matrix A.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    IPIV    (input) long array, dimension (N)   
-            The pivot indices from DGETRF; for 1<=i<=N, row i of the   
-            matrix was interchanged with row IPIV(i).   
+    IPIV    (input) long array, dimension (N)
+            The pivot indices from DGETRF; for 1<=i<=N, row i of the
+            matrix was interchanged with row IPIV(i).
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO=0, then WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO=0, then WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The dimension of the array WORK.  LWORK >= max(1,N).   
-            For optimal performance LWORK >= N*NB, where NB is   
-            the optimal blocksize returned by NUMlapack_ilaenv.   
+    LWORK   (input) long
+            The dimension of the array WORK.  LWORK >= max(1,N).
+            For optimal performance LWORK >= N*NB, where NB is
+            the optimal blocksize returned by NUMlapack_ilaenv.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
-            > 0:  if INFO = i, U(i,i) is exactly zero; the matrix is   
-                  singular and its inverse could not be computed.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
+            > 0:  if INFO = i, U(i,i) is exactly zero; the matrix is
+                  singular and its inverse could not be computed.
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dgetrf (long *m, long *n, double *a, long *lda, long *ipiv, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dgetrf computes an LU factorization of a general M-by-N matrix A   
-    using partial pivoting with row interchanges.   
+    NUMlapack_dgetrf computes an LU factorization of a general M-by-N matrix A
+    using partial pivoting with row interchanges.
 
-    The factorization has the form   
-       A = P * L * U   
-    where P is a permutation matrix, L is lower triangular with unit   
-    diagonal elements (lower trapezoidal if m > n), and U is upper   
-    triangular (upper trapezoidal if m < n).   
+    The factorization has the form
+       A = P * L * U
+    where P is a permutation matrix, L is lower triangular with unit
+    diagonal elements (lower trapezoidal if m > n), and U is upper
+    triangular (upper trapezoidal if m < n).
 
-    This is the right-looking Level 3 BLAS version of the algorithm.   
+    This is the right-looking Level 3 BLAS version of the algorithm.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    M       (input) long   
-            The number of rows of the matrix A.  M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A.  M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix A.  N >= 0.   
+    N       (input) long
+            The number of columns of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the M-by-N matrix to be factored.   
-            On exit, the factors L and U from the factorization   
-            A = P*L*U; the unit diagonal elements of L are not stored.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the M-by-N matrix to be factored.
+            On exit, the factors L and U from the factorization
+            A = P*L*U; the unit diagonal elements of L are not stored.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,M).
 
-    IPIV    (output) long array, dimension (min(M,N))   
-            The pivot indices; for 1 <= i <= min(M,N), row i of the   
-            matrix was interchanged with row IPIV(i).   
+    IPIV    (output) long array, dimension (min(M,N))
+            The pivot indices; for 1 <= i <= min(M,N), row i of the
+            matrix was interchanged with row IPIV(i).
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
-            > 0:  if INFO = i, U(i,i) is exactly zero. The factorization   
-                  has been completed, but the factor U is exactly   
-                  singular, and division by zero will occur if it is used   
-                  to solve a system of equations.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
+            > 0:  if INFO = i, U(i,i) is exactly zero. The factorization
+                  has been completed, but the factor U is exactly
+                  singular, and division by zero will occur if it is used
+                  to solve a system of equations.
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dgetrs (char *trans, long *n, long *nrhs, double *a, long *lda, 
+int NUMlapack_dgetrs (const char *trans, long *n, long *nrhs, double *a, long *lda,
 	long *ipiv, double *b, long *ldb, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dgetrs solves a system of linear equations   
-       A * X = B  or  A' * X = B   
-    with a general N-by-N matrix A using the LU factorization computed   
-    by DGETRF.   
+    NUMlapack_dgetrs solves a system of linear equations
+       A * X = B  or  A' * X = B
+    with a general N-by-N matrix A using the LU factorization computed
+    by DGETRF.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    TRANS   (input) char*   
-            Specifies the form of the system of equations:   
-            = 'N':  A * X = B  (No transpose)   
-            = 'T':  A'* X = B  (Transpose)   
-            = 'C':  A'* X = B  (Conjugate transpose = Transpose)   
+    TRANS   (input) char*
+            Specifies the form of the system of equations:
+            = 'N':  A * X = B  (No transpose)
+            = 'T':  A'* X = B  (Transpose)
+            = 'C':  A'* X = B  (Conjugate transpose = Transpose)
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    NRHS    (input) long   
-            The number of right hand sides, i.e., the number of columns   
-            of the matrix B.  NRHS >= 0.   
+    NRHS    (input) long
+            The number of right hand sides, i.e., the number of columns
+            of the matrix B.  NRHS >= 0.
 
-    A       (input) double array, dimension (LDA,N)   
-            The factors L and U from the factorization A = P*L*U   
-            as computed by DGETRF.   
+    A       (input) double array, dimension (LDA,N)
+            The factors L and U from the factorization A = P*L*U
+            as computed by DGETRF.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    IPIV    (input) long array, dimension (N)   
-            The pivot indices from DGETRF; for 1<=i<=N, row i of the   
-            matrix was interchanged with row IPIV(i).   
+    IPIV    (input) long array, dimension (N)
+            The pivot indices from DGETRF; for 1<=i<=N, row i of the
+            matrix was interchanged with row IPIV(i).
 
-    B       (input/output) double array, dimension (LDB,NRHS)   
-            On entry, the right hand side matrix B.   
-            On exit, the solution matrix X.   
+    B       (input/output) double array, dimension (LDB,NRHS)
+            On entry, the right hand side matrix B.
+            On exit, the solution matrix X.
 
-    LDB     (input) long   
-            The leading dimension of the array B.  LDB >= max(1,N).   
+    LDB     (input) long
+            The leading dimension of the array B.  LDB >= max(1,N).
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dggsvd (char *jobu, char *jobv, char *jobq, long *m, long *n,
-	long *p, long *k, long *l, double *a, long *lda, double *b, long *ldb, 
-	double *alpha, double *beta, double *u, long *ldu, double *v, long *ldv, 
+int NUMlapack_dggsvd (const char *jobu, const char *jobv, const char *jobq, long *m, long *n,
+	long *p, long *k, long *l, double *a, long *lda, double *b, long *ldb,
+	double *alpha, double *beta, double *u, long *ldu, double *v, long *ldv,
 	double *q, long *ldq, double *work, long *iwork, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
     NUMlapack_dggsvd computes the generalized singular value decomposition (GSVD)
-    of an M-by-N real matrix A and P-by-N real matrix B:   
+    of an M-by-N real matrix A and P-by-N real matrix B:
 
-        U'*A*Q = D1*( 0 R ),    V'*B*Q = D2*( 0 R )   
+        U'*A*Q = D1*( 0 R ),    V'*B*Q = D2*( 0 R )
 
-    where U, V and Q are orthogonal matrices, and Z' is the transpose   
-    of Z.  Let K+L = the effective numerical rank of the matrix (A',B')',   
-    then R is a K+L-by-K+L nonsingular upper triangular matrix, D1 and   
-    D2 are M-by-(K+L) and P-by-(K+L) "diagonal" matrices and of the   
-    following structures, respectively:   
+    where U, V and Q are orthogonal matrices, and Z' is the transpose
+    of Z.  Let K+L = the effective numerical rank of the matrix (A',B')',
+    then R is a K+L-by-K+L nonsingular upper triangular matrix, D1 and
+    D2 are M-by-(K+L) and P-by-(K+L) "diagonal" matrices and of the
+    following structures, respectively:
 
-    If M-K-L >= 0,   
+    If M-K-L >= 0,
 
-                        K  L   
-           D1 =     K ( I  0 )   
-                    L ( 0  C )   
-                M-K-L ( 0  0 )   
+                        K  L
+           D1 =     K ( I  0 )
+                    L ( 0  C )
+                M-K-L ( 0  0 )
 
-                      K  L   
-           D2 =   L ( 0  S )   
-                P-L ( 0  0 )   
+                      K  L
+           D2 =   L ( 0  S )
+                P-L ( 0  0 )
 
                     N-K-L  K    L
       ( 0 R ) = K (  0   R11  R12 )
@@ -1777,395 +1777,395 @@ int NUMlapack_dggsvd (char *jobu, char *jobv, char *jobq, long *m, long *n,
                                ( 0 inv(R) ).
 
     Arguments
-    =========   
+    =========
 
-    JOBU    (input) char*   
-            = 'U':  Orthogonal matrix U is computed;   
-            = 'N':  U is not computed.   
+    JOBU    (input) char*
+            = 'U':  Orthogonal matrix U is computed;
+            = 'N':  U is not computed.
 
-    JOBV    (input) char*   
-            = 'V':  Orthogonal matrix V is computed;   
-            = 'N':  V is not computed.   
+    JOBV    (input) char*
+            = 'V':  Orthogonal matrix V is computed;
+            = 'N':  V is not computed.
 
-    JOBQ    (input) char*   
-            = 'Q':  Orthogonal matrix Q is computed;   
-            = 'N':  Q is not computed.   
+    JOBQ    (input) char*
+            = 'Q':  Orthogonal matrix Q is computed;
+            = 'N':  Q is not computed.
 
-    M       (input) long   
-            The number of rows of the matrix A.  M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A.  M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrices A and B.  N >= 0.   
+    N       (input) long
+            The number of columns of the matrices A and B.  N >= 0.
 
-    P       (input) long   
-            The number of rows of the matrix B.  P >= 0.   
+    P       (input) long
+            The number of rows of the matrix B.  P >= 0.
 
-    K       (output) long   
-    L       (output) long   
-            On exit, K and L specify the dimension of the subblocks   
-            described in the Purpose section.   
-            K + L = effective numerical rank of (A',B')'.   
+    K       (output) long
+    L       (output) long
+            On exit, K and L specify the dimension of the subblocks
+            described in the Purpose section.
+            K + L = effective numerical rank of (A',B')'.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the M-by-N matrix A.   
-            On exit, A contains the triangular matrix R, or part of R.   
-            See Purpose for details.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the M-by-N matrix A.
+            On exit, A contains the triangular matrix R, or part of R.
+            See Purpose for details.
 
-    LDA     (input) long   
-            The leading dimension of the array A. LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A. LDA >= max(1,M).
 
-    B       (input/output) double array, dimension (LDB,N)   
-            On entry, the P-by-N matrix B.   
-            On exit, B contains the triangular matrix R if M-K-L < 0.   
-            See Purpose for details.   
+    B       (input/output) double array, dimension (LDB,N)
+            On entry, the P-by-N matrix B.
+            On exit, B contains the triangular matrix R if M-K-L < 0.
+            See Purpose for details.
 
-    LDB     (input) long   
-            The leading dimension of the array B. LDA >= max(1,P).   
+    LDB     (input) long
+            The leading dimension of the array B. LDA >= max(1,P).
 
-    ALPHA   (output) double array, dimension (N)   
-    BETA    (output) double array, dimension (N)   
-            On exit, ALPHA and BETA contain the generalized singular   
-            value pairs of A and B;   
-              ALPHA(1:K) = 1,   
-              BETA(1:K)  = 0,   
-            and if M-K-L >= 0,   
-              ALPHA(K+1:K+L) = C,   
-              BETA(K+1:K+L)  = S,   
-            or if M-K-L < 0,   
-              ALPHA(K+1:M)=C, ALPHA(M+1:K+L)=0   
-              BETA(K+1:M) =S, BETA(M+1:K+L) =1   
-            and   
-              ALPHA(K+L+1:N) = 0   
-              BETA(K+L+1:N)  = 0   
+    ALPHA   (output) double array, dimension (N)
+    BETA    (output) double array, dimension (N)
+            On exit, ALPHA and BETA contain the generalized singular
+            value pairs of A and B;
+              ALPHA(1:K) = 1,
+              BETA(1:K)  = 0,
+            and if M-K-L >= 0,
+              ALPHA(K+1:K+L) = C,
+              BETA(K+1:K+L)  = S,
+            or if M-K-L < 0,
+              ALPHA(K+1:M)=C, ALPHA(M+1:K+L)=0
+              BETA(K+1:M) =S, BETA(M+1:K+L) =1
+            and
+              ALPHA(K+L+1:N) = 0
+              BETA(K+L+1:N)  = 0
 
-    U       (output) double array, dimension (LDU,M)   
-            If JOBU = 'U', U contains the M-by-M orthogonal matrix U.   
-            If JOBU = 'N', U is not referenced.   
+    U       (output) double array, dimension (LDU,M)
+            If JOBU = 'U', U contains the M-by-M orthogonal matrix U.
+            If JOBU = 'N', U is not referenced.
 
-    LDU     (input) long   
-            The leading dimension of the array U. LDU >= max(1,M) if   
-            JOBU = 'U'; LDU >= 1 otherwise.   
+    LDU     (input) long
+            The leading dimension of the array U. LDU >= max(1,M) if
+            JOBU = 'U'; LDU >= 1 otherwise.
 
-    V       (output) double array, dimension (LDV,P)   
-            If JOBV = 'V', V contains the P-by-P orthogonal matrix V.   
-            If JOBV = 'N', V is not referenced.   
+    V       (output) double array, dimension (LDV,P)
+            If JOBV = 'V', V contains the P-by-P orthogonal matrix V.
+            If JOBV = 'N', V is not referenced.
 
-    LDV     (input) long   
-            The leading dimension of the array V. LDV >= max(1,P) if   
-            JOBV = 'V'; LDV >= 1 otherwise.   
+    LDV     (input) long
+            The leading dimension of the array V. LDV >= max(1,P) if
+            JOBV = 'V'; LDV >= 1 otherwise.
 
-    Q       (output) double array, dimension (LDQ,N)   
-            If JOBQ = 'Q', Q contains the N-by-N orthogonal matrix Q.   
-            If JOBQ = 'N', Q is not referenced.   
+    Q       (output) double array, dimension (LDQ,N)
+            If JOBQ = 'Q', Q contains the N-by-N orthogonal matrix Q.
+            If JOBQ = 'N', Q is not referenced.
 
-    LDQ     (input) long   
-            The leading dimension of the array Q. LDQ >= max(1,N) if   
-            JOBQ = 'Q'; LDQ >= 1 otherwise.   
+    LDQ     (input) long
+            The leading dimension of the array Q. LDQ >= max(1,N) if
+            JOBQ = 'Q'; LDQ >= 1 otherwise.
 
-    WORK    (workspace) double array,   
-                        dimension (max(3*N,M,P)+N)   
+    WORK    (workspace) double array,
+                        dimension (max(3*N,M,P)+N)
 
-    IWORK   (workspace/output) long array, dimension (N)   
-            On exit, IWORK stores the sorting information. More   
-            precisely, the following loop will sort ALPHA   
-               for I = K+1, min(M,K+L)   
-                   swap ALPHA(I) and ALPHA(IWORK(I))   
-               endfor   
-            such that ALPHA(1) >= ALPHA(2) >= ... >= ALPHA(N).   
+    IWORK   (workspace/output) long array, dimension (N)
+            On exit, IWORK stores the sorting information. More
+            precisely, the following loop will sort ALPHA
+               for I = K+1, min(M,K+L)
+                   swap ALPHA(I) and ALPHA(IWORK(I))
+               endfor
+            such that ALPHA(1) >= ALPHA(2) >= ... >= ALPHA(N).
 
-    INFO    (output)long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
-            > 0:  if INFO = 1, the Jacobi-type procedure failed to   
+    INFO    (output)long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
+            > 0:  if INFO = 1, the Jacobi-type procedure failed to
                   converge.  For further details, see subroutine NUMlapack_dtgsja.
 
-    Internal Parameters   
-    ===================   
+    Internal Parameters
+    ===================
 
-    TOLA    double   
-    TOLB    double   
-            TOLA and TOLB are the thresholds to determine the effective   
-            rank of (A',B')'. Generally, they are set to   
-                     TOLA = MAX(M,N)*norm(A)*MAZHEPS,   
-                     TOLB = MAX(P,N)*norm(B)*MAZHEPS.   
-            The size of TOLA and TOLB may affect the size of backward   
-            errors of the decomposition.   
+    TOLA    double
+    TOLB    double
+            TOLA and TOLB are the thresholds to determine the effective
+            rank of (A',B')'. Generally, they are set to
+                     TOLA = MAX(M,N)*norm(A)*MAZHEPS,
+                     TOLB = MAX(P,N)*norm(B)*MAZHEPS.
+            The size of TOLA and TOLB may affect the size of backward
+            errors of the decomposition.
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dggsvp (char *jobu, char *jobv, char *jobq, long *m, long *p, 
-	long *n, double *a, long *lda, double *b, long *ldb, double *tola, 
-	double *tolb, long *k, long *l, double *u, long *ldu, double *v, long *ldv, 
+int NUMlapack_dggsvp (const char *jobu, const char *jobv, const char *jobq, long *m, long *p,
+	long *n, double *a, long *lda, double *b, long *ldb, double *tola,
+	double *tolb, long *k, long *l, double *u, long *ldu, double *v, long *ldv,
 	double *q, long *ldq, long *iwork, double *tau, double *work, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
     NUMlapack_dggsvp computes orthogonal matrices U, V and Q such that
 
-                     N-K-L  K    L   
-     U'*A*Q =     K ( 0    A12  A13 )  if M-K-L >= 0;   
-                  L ( 0     0   A23 )   
-              M-K-L ( 0     0    0  )   
+                     N-K-L  K    L
+     U'*A*Q =     K ( 0    A12  A13 )  if M-K-L >= 0;
+                  L ( 0     0   A23 )
+              M-K-L ( 0     0    0  )
 
-                     N-K-L  K    L   
+                     N-K-L  K    L
             =     K ( 0    A12  A13 )  if M-K-L < 0;
-                M-K ( 0     0   A23 )   
+                M-K ( 0     0   A23 )
 
-                   N-K-L  K    L   
-     V'*B*Q =   L ( 0     0   B13 )   
-              P-L ( 0     0    0  )   
+                   N-K-L  K    L
+     V'*B*Q =   L ( 0     0   B13 )
+              P-L ( 0     0    0  )
 
-    where the K-by-K matrix A12 and L-by-L matrix B13 are nonsingular   
-    upper triangular; A23 is L-by-L upper triangular if M-K-L >= 0,   
-    otherwise A23 is (M-K)-by-L upper trapezoidal.  K+L = the effective   
-    numerical rank of the (M+P)-by-N matrix (A',B')'.  Z' denotes the   
-    transpose of Z.   
+    where the K-by-K matrix A12 and L-by-L matrix B13 are nonsingular
+    upper triangular; A23 is L-by-L upper triangular if M-K-L >= 0,
+    otherwise A23 is (M-K)-by-L upper trapezoidal.  K+L = the effective
+    numerical rank of the (M+P)-by-N matrix (A',B')'.  Z' denotes the
+    transpose of Z.
 
-    This decomposition is the preprocessing step for computing the   
-    Generalized Singular Value Decomposition (GSVD), see subroutine   
+    This decomposition is the preprocessing step for computing the
+    Generalized Singular Value Decomposition (GSVD), see subroutine
     NUMlapack_dggsvd.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    JOBU    (input) char*   
-            = 'U':  Orthogonal matrix U is computed;   
-            = 'N':  U is not computed.   
+    JOBU    (input) char*
+            = 'U':  Orthogonal matrix U is computed;
+            = 'N':  U is not computed.
 
-    JOBV    (input) char*   
-            = 'V':  Orthogonal matrix V is computed;   
-            = 'N':  V is not computed.   
+    JOBV    (input) char*
+            = 'V':  Orthogonal matrix V is computed;
+            = 'N':  V is not computed.
 
-    JOBQ    (input) char*   
-            = 'Q':  Orthogonal matrix Q is computed;   
-            = 'N':  Q is not computed.   
+    JOBQ    (input) char*
+            = 'Q':  Orthogonal matrix Q is computed;
+            = 'N':  Q is not computed.
 
-    M       (input) long   
-            The number of rows of the matrix A.  M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A.  M >= 0.
 
-    P       (input) long   
-            The number of rows of the matrix B.  P >= 0.   
+    P       (input) long
+            The number of rows of the matrix B.  P >= 0.
 
-    N       (input) long   
-            The number of columns of the matrices A and B.  N >= 0.   
+    N       (input) long
+            The number of columns of the matrices A and B.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the M-by-N matrix A.   
-            On exit, A contains the triangular (or trapezoidal) matrix   
-            described in the Purpose section.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the M-by-N matrix A.
+            On exit, A contains the triangular (or trapezoidal) matrix
+            described in the Purpose section.
 
-    LDA     (input) long   
-            The leading dimension of the array A. LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A. LDA >= max(1,M).
 
-    B       (input/output) double array, dimension (LDB,N)   
-            On entry, the P-by-N matrix B.   
-            On exit, B contains the triangular matrix described in   
-            the Purpose section.   
+    B       (input/output) double array, dimension (LDB,N)
+            On entry, the P-by-N matrix B.
+            On exit, B contains the triangular matrix described in
+            the Purpose section.
 
-    LDB     (input) long   
-            The leading dimension of the array B. LDB >= max(1,P).   
+    LDB     (input) long
+            The leading dimension of the array B. LDB >= max(1,P).
 
-    TOLA    (input) double   
-    TOLB    (input) double   
-            TOLA and TOLB are the thresholds to determine the effective   
-            numerical rank of matrix B and a subblock of A. Generally,   
-            they are set to   
-               TOLA = MAX(M,N)*norm(A)*MAZHEPS,   
-               TOLB = MAX(P,N)*norm(B)*MAZHEPS.   
-            The size of TOLA and TOLB may affect the size of backward   
-            errors of the decomposition.   
+    TOLA    (input) double
+    TOLB    (input) double
+            TOLA and TOLB are the thresholds to determine the effective
+            numerical rank of matrix B and a subblock of A. Generally,
+            they are set to
+               TOLA = MAX(M,N)*norm(A)*MAZHEPS,
+               TOLB = MAX(P,N)*norm(B)*MAZHEPS.
+            The size of TOLA and TOLB may affect the size of backward
+            errors of the decomposition.
 
-    K       (output) long   
-    L       (output) long   
-            On exit, K and L specify the dimension of the subblocks   
-            described in Purpose.   
-            K + L = effective numerical rank of (A',B')'.   
+    K       (output) long
+    L       (output) long
+            On exit, K and L specify the dimension of the subblocks
+            described in Purpose.
+            K + L = effective numerical rank of (A',B')'.
 
-    U       (output) double array, dimension (LDU,M)   
-            If JOBU = 'U', U contains the orthogonal matrix U.   
-            If JOBU = 'N', U is not referenced.   
+    U       (output) double array, dimension (LDU,M)
+            If JOBU = 'U', U contains the orthogonal matrix U.
+            If JOBU = 'N', U is not referenced.
 
-    LDU     (input) long   
-            The leading dimension of the array U. LDU >= max(1,M) if   
-            JOBU = 'U'; LDU >= 1 otherwise.   
+    LDU     (input) long
+            The leading dimension of the array U. LDU >= max(1,M) if
+            JOBU = 'U'; LDU >= 1 otherwise.
 
-    V       (output) double array, dimension (LDV,M)   
-            If JOBV = 'V', V contains the orthogonal matrix V.   
-            If JOBV = 'N', V is not referenced.   
+    V       (output) double array, dimension (LDV,M)
+            If JOBV = 'V', V contains the orthogonal matrix V.
+            If JOBV = 'N', V is not referenced.
 
-    LDV     (input) long   
-            The leading dimension of the array V. LDV >= max(1,P) if   
-            JOBV = 'V'; LDV >= 1 otherwise.   
+    LDV     (input) long
+            The leading dimension of the array V. LDV >= max(1,P) if
+            JOBV = 'V'; LDV >= 1 otherwise.
 
-    Q       (output) double array, dimension (LDQ,N)   
-            If JOBQ = 'Q', Q contains the orthogonal matrix Q.   
-            If JOBQ = 'N', Q is not referenced.   
+    Q       (output) double array, dimension (LDQ,N)
+            If JOBQ = 'Q', Q contains the orthogonal matrix Q.
+            If JOBQ = 'N', Q is not referenced.
 
-    LDQ     (input) long   
-            The leading dimension of the array Q. LDQ >= max(1,N) if   
-            JOBQ = 'Q'; LDQ >= 1 otherwise.   
+    LDQ     (input) long
+            The leading dimension of the array Q. LDQ >= max(1,N) if
+            JOBQ = 'Q'; LDQ >= 1 otherwise.
 
-    IWORK   (workspace) long array, dimension (N)   
+    IWORK   (workspace) long array, dimension (N)
 
-    TAU     (workspace) double array, dimension (N)   
+    TAU     (workspace) double array, dimension (N)
 
-    WORK    (workspace) double array, dimension (max(3*N,M,P))   
+    WORK    (workspace) double array, dimension (max(3*N,M,P))
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
 
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    The subroutine uses LAPACK subroutine DGEQPF for the QR factorization   
-    with column pivoting to detect the effective numerical rank of the   
-    a matrix. It may be replaced by a better rank determination strategy.   
+    The subroutine uses LAPACK subroutine DGEQPF for the QR factorization
+    with column pivoting to detect the effective numerical rank of the
+    a matrix. It may be replaced by a better rank determination strategy.
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dhseqr (char *job, char *compz, long *n, long *ilo, long *ihi, 
-	double *h, long *ldh, double *wr, double *wi, double *z, long *ldz, 
+int NUMlapack_dhseqr (const char *job, const char *compz, long *n, long *ilo, long *ihi,
+	double *h, long *ldh, double *wr, double *wi, double *z, long *ldz,
 	double *work, long *lwork, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dhseqr computes the eigenvalues of a real upper Hessenberg matrix H   
-    and, optionally, the matrices T and Z from the Schur decomposition   
-    H = Z T Z**T, where T is an upper quasi-triangular matrix (the Schur   
-    form), and Z is the orthogonal matrix of Schur vectors.   
+    NUMlapack_dhseqr computes the eigenvalues of a real upper Hessenberg matrix H
+    and, optionally, the matrices T and Z from the Schur decomposition
+    H = Z T Z**T, where T is an upper quasi-triangular matrix (the Schur
+    form), and Z is the orthogonal matrix of Schur vectors.
 
-    Optionally Z may be postmultiplied into an input orthogonal matrix Q,   
-    so that this routine can give the Schur factorization of a matrix A   
-    which has been reduced to the Hessenberg form H by the orthogonal   
-    matrix Q:  A = Q*H*Q**T = (QZ)*T*(QZ)**T.   
+    Optionally Z may be postmultiplied into an input orthogonal matrix Q,
+    so that this routine can give the Schur factorization of a matrix A
+    which has been reduced to the Hessenberg form H by the orthogonal
+    matrix Q:  A = Q*H*Q**T = (QZ)*T*(QZ)**T.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    JOB     (input) char*   
-            = 'E':  compute eigenvalues only;   
-            = 'S':  compute eigenvalues and the Schur form T.   
+    JOB     (input) char*
+            = 'E':  compute eigenvalues only;
+            = 'S':  compute eigenvalues and the Schur form T.
 
-    COMPZ   (input) char*   
-            = 'N':  no Schur vectors are computed;   
-            = 'I':  Z is initialized to the unit matrix and the matrix Z   
-                    of Schur vectors of H is returned;   
-            = 'V':  Z must contain an orthogonal matrix Q on entry, and   
-                    the product Q*Z is returned.   
+    COMPZ   (input) char*
+            = 'N':  no Schur vectors are computed;
+            = 'I':  Z is initialized to the unit matrix and the matrix Z
+                    of Schur vectors of H is returned;
+            = 'V':  Z must contain an orthogonal matrix Q on entry, and
+                    the product Q*Z is returned.
 
-    N       (input) long   
-            The order of the matrix H.  N >= 0.   
+    N       (input) long
+            The order of the matrix H.  N >= 0.
 
-    ILO     (input) long   
-    IHI     (input) long   
-            It is assumed that H is already upper triangular in rows   
-            and columns 1:ILO-1 and IHI+1:N. ILO and IHI are normally   
-            set by a previous call to NUMlapack_dgebal, and then passed to SGEHRD   
-            when the matrix output by NUMlapack_dgebal is reduced to Hessenberg   
-            form. Otherwise ILO and IHI should be set to 1 and N   
-            respectively.   
-            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.   
+    ILO     (input) long
+    IHI     (input) long
+            It is assumed that H is already upper triangular in rows
+            and columns 1:ILO-1 and IHI+1:N. ILO and IHI are normally
+            set by a previous call to NUMlapack_dgebal, and then passed to SGEHRD
+            when the matrix output by NUMlapack_dgebal is reduced to Hessenberg
+            form. Otherwise ILO and IHI should be set to 1 and N
+            respectively.
+            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.
 
-    H       (input/output) double array, dimension (LDH,N)   
-            On entry, the upper Hessenberg matrix H.   
-            On exit, if JOB = 'S', H contains the upper quasi-triangular   
-            matrix T from the Schur decomposition (the Schur form);   
-            2-by-2 diagonal blocks (corresponding to complex conjugate   
-            pairs of eigenvalues) are returned in standard form, with   
-            H(i,i) = H(i+1,i+1) and H(i+1,i)*H(i,i+1) < 0. If JOB = 'E',   
-            the contents of H are unspecified on exit.   
+    H       (input/output) double array, dimension (LDH,N)
+            On entry, the upper Hessenberg matrix H.
+            On exit, if JOB = 'S', H contains the upper quasi-triangular
+            matrix T from the Schur decomposition (the Schur form);
+            2-by-2 diagonal blocks (corresponding to complex conjugate
+            pairs of eigenvalues) are returned in standard form, with
+            H(i,i) = H(i+1,i+1) and H(i+1,i)*H(i,i+1) < 0. If JOB = 'E',
+            the contents of H are unspecified on exit.
 
-    LDH     (input) long   
-            The leading dimension of the array H. LDH >= max(1,N).   
+    LDH     (input) long
+            The leading dimension of the array H. LDH >= max(1,N).
 
-    WR      (output) double array, dimension (N)   
-    WI      (output) double array, dimension (N)   
-            The real and imaginary parts, respectively, of the computed   
-            eigenvalues. If two eigenvalues are computed as a complex   
-            conjugate pair, they are stored in consecutive elements of   
-            WR and WI, say the i-th and (i+1)th, with WI(i) > 0 and   
-            WI(i+1) < 0. If JOB = 'S', the eigenvalues are stored in the   
-            same order as on the diagonal of the Schur form returned in   
-            H, with WR(i) = H(i,i) and, if H(i:i+1,i:i+1) is a 2-by-2   
-            diagonal block, WI(i) = sqrt(H(i+1,i)*H(i,i+1)) and   
-            WI(i+1) = -WI(i).   
+    WR      (output) double array, dimension (N)
+    WI      (output) double array, dimension (N)
+            The real and imaginary parts, respectively, of the computed
+            eigenvalues. If two eigenvalues are computed as a complex
+            conjugate pair, they are stored in consecutive elements of
+            WR and WI, say the i-th and (i+1)th, with WI(i) > 0 and
+            WI(i+1) < 0. If JOB = 'S', the eigenvalues are stored in the
+            same order as on the diagonal of the Schur form returned in
+            H, with WR(i) = H(i,i) and, if H(i:i+1,i:i+1) is a 2-by-2
+            diagonal block, WI(i) = sqrt(H(i+1,i)*H(i,i+1)) and
+            WI(i+1) = -WI(i).
 
-    Z       (input/output) double array, dimension (LDZ,N)   
-            If COMPZ = 'N': Z is not referenced.   
-            If COMPZ = 'I': on entry, Z need not be set, and on exit, Z   
-            contains the orthogonal matrix Z of the Schur vectors of H.   
-            If COMPZ = 'V': on entry Z must contain an N-by-N matrix Q,   
-            which is assumed to be equal to the unit matrix except for   
-            the submatrix Z(ILO:IHI,ILO:IHI); on exit Z contains Q*Z.   
-            Normally Q is the orthogonal matrix generated by NUMlapack_dorghr after   
-            the call to NUMlapack_dgehrd which formed the Hessenberg matrix H.   
+    Z       (input/output) double array, dimension (LDZ,N)
+            If COMPZ = 'N': Z is not referenced.
+            If COMPZ = 'I': on entry, Z need not be set, and on exit, Z
+            contains the orthogonal matrix Z of the Schur vectors of H.
+            If COMPZ = 'V': on entry Z must contain an N-by-N matrix Q,
+            which is assumed to be equal to the unit matrix except for
+            the submatrix Z(ILO:IHI,ILO:IHI); on exit Z contains Q*Z.
+            Normally Q is the orthogonal matrix generated by NUMlapack_dorghr after
+            the call to NUMlapack_dgehrd which formed the Hessenberg matrix H.
 
-    LDZ     (input) long   
-            The leading dimension of the array Z.   
-            LDZ >= max(1,N) if COMPZ = 'I' or 'V'; LDZ >= 1 otherwise.   
+    LDZ     (input) long
+            The leading dimension of the array Z.
+            LDZ >= max(1,N) if COMPZ = 'I' or 'V'; LDZ >= 1 otherwise.
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The dimension of the array WORK.  LWORK >= max(1,N).   
+    LWORK   (input) long
+            The dimension of the array WORK.  LWORK >= max(1,N).
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
-            > 0:  if INFO = i, NUMlapack_dhseqr failed to compute all of the   
-                  eigenvalues in a total of 30*(IHI-ILO+1) iterations;   
-                  elements 1:ilo-1 and i+1:n of WR and WI contain those   
-                  eigenvalues which have been successfully computed.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
+            > 0:  if INFO = i, NUMlapack_dhseqr failed to compute all of the
+                  eigenvalues in a total of 30*(IHI-ILO+1) iterations;
+                  elements 1:ilo-1 and i+1:n of WR and WI contain those
+                  eigenvalues which have been successfully computed.
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dlabad (double *smal, double *large);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dlabad takes as input the values computed by DLAMCH for underflow and   
-    overflow, and returns the square root of each of these values if the   
-    log of LARGE is sufficiently large.  This subroutine is intended to   
-    identify machines with a large exponent range, such as the Crays, and   
-    redefine the underflow and overflow limits to be the square roots of   
-    the values computed by DLAMCH.  This subroutine is needed because   
-    DLAMCH does not compensate for poor arithmetic in the upper half of   
-    the exponent range, as is found on a Cray.   
+    NUMlapack_dlabad takes as input the values computed by DLAMCH for underflow and
+    overflow, and returns the square root of each of these values if the
+    log of LARGE is sufficiently large.  This subroutine is intended to
+    identify machines with a large exponent range, such as the Crays, and
+    redefine the underflow and overflow limits to be the square roots of
+    the values computed by DLAMCH.  This subroutine is needed because
+    DLAMCH does not compensate for poor arithmetic in the upper half of
+    the exponent range, as is found on a Cray.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    smal   (input/output) double   
-            On entry, the underflow threshold as computed by DLAMCH.   
-            On exit, if LOG10(LARGE) is sufficiently large, the square   
-            root of smal, otherwise unchanged.   
+    smal   (input/output) double
+            On entry, the underflow threshold as computed by DLAMCH.
+            On exit, if LOG10(LARGE) is sufficiently large, the square
+            root of smal, otherwise unchanged.
 
-    LARGE   (input/output) double   
-            On entry, the overflow threshold as computed by DLAMCH.   
-            On exit, if LOG10(LARGE) is sufficiently large, the square   
-            root of LARGE, otherwise unchanged.   
+    LARGE   (input/output) double
+            On entry, the overflow threshold as computed by DLAMCH.
+            On exit, if LOG10(LARGE) is sufficiently large, the square
+            root of LARGE, otherwise unchanged.
 
-    =====================================================================   
+    =====================================================================
 
 
-       If it looks like we're on a Cray, take the square root of   
+       If it looks like we're on a Cray, take the square root of
        smal and LARGE to avoid overflow and underflow problems.
 */
 
@@ -2294,7 +2294,7 @@ int NUMlapack_dlabrd (long *m, long *n, long *nb, double *a, long *lda, double *
     =====================================================================
 */
 
-int NUMlapack_dlacpy (char *uplo, long *m, long *n, double *a, long *lda, double *b, long *ldb);
+int NUMlapack_dlacpy (const char *uplo, long *m, long *n, double *a, long *lda, double *b, long *ldb);
 /*  Purpose
     =======
 
@@ -2334,527 +2334,527 @@ int NUMlapack_dlacpy (char *uplo, long *m, long *n, double *a, long *lda, double
 */
 
 int NUMlapack_dladiv (double *a, double *b, double *c, double *d, double *p, double *q);
-/*  -- LAPACK auxiliary routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       October 31, 1992   
+/*  -- LAPACK auxiliary routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       October 31, 1992
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dladiv performs complex division in  real arithmetic   
+    NUMlapack_dladiv performs complex division in  real arithmetic
 
-                          a + i*b   
-               p + i*q = ---------   
-                          c + i*d   
+                          a + i*b
+               p + i*q = ---------
+                          c + i*d
 
-    The algorithm is due to Robert L. Smith and can be found   
-    in D. Knuth, The art of Computer Programming, Vol.2, p.195   
+    The algorithm is due to Robert L. Smith and can be found
+    in D. Knuth, The art of Computer Programming, Vol.2, p.195
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    A       (input) double   
-    B       (input) double   
-    C       (input) double   
-    D       (input) double   
-            The scalars a, b, c, and d in the above expression.   
+    A       (input) double
+    B       (input) double
+    C       (input) double
+    D       (input) double
+            The scalars a, b, c, and d in the above expression.
 
-    P       (output) double   
-    Q       (output) double   
-            The scalars p and q in the above expression.   
+    P       (output) double
+    Q       (output) double
+            The scalars p and q in the above expression.
 
     =====================================================================
 */
 
 int NUMlapack_dlae2 (double *a, double *b, double *c, double *rt1, double *rt2);
-/*   Purpose   
-    =======   
+/*   Purpose
+    =======
 
-    NUMlapack_dlae2  computes the eigenvalues of a 2-by-2 symmetric matrix   
-       [  A   B  ]   
-       [  B   C  ].   
-    On return, RT1 is the eigenvalue of larger absolute value, and RT2   
-    is the eigenvalue of smaller absolute value.   
+    NUMlapack_dlae2  computes the eigenvalues of a 2-by-2 symmetric matrix
+       [  A   B  ]
+       [  B   C  ].
+    On return, RT1 is the eigenvalue of larger absolute value, and RT2
+    is the eigenvalue of smaller absolute value.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    A       (input) double   
-            The (1,1) element of the 2-by-2 matrix.   
+    A       (input) double
+            The (1,1) element of the 2-by-2 matrix.
 
-    B       (input) double   
-            The (1,2) and (2,1) elements of the 2-by-2 matrix.   
+    B       (input) double
+            The (1,2) and (2,1) elements of the 2-by-2 matrix.
 
-    C       (input) double   
-            The (2,2) element of the 2-by-2 matrix.   
+    C       (input) double
+            The (2,2) element of the 2-by-2 matrix.
 
-    RT1     (output) double   
-            The eigenvalue of larger absolute value.   
+    RT1     (output) double
+            The eigenvalue of larger absolute value.
 
-    RT2     (output) double   
-            The eigenvalue of smaller absolute value.   
+    RT2     (output) double
+            The eigenvalue of smaller absolute value.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    RT1 is accurate to a few ulps barring over/underflow.   
+    RT1 is accurate to a few ulps barring over/underflow.
 
-    RT2 may be inaccurate if there is massive cancellation in the   
-    determinant A*C-B*B; higher precision or correctly rounded or   
-    correctly truncated arithmetic would be needed to compute RT2   
-    accurately in all cases.   
+    RT2 may be inaccurate if there is massive cancellation in the
+    determinant A*C-B*B; higher precision or correctly rounded or
+    correctly truncated arithmetic would be needed to compute RT2
+    accurately in all cases.
 
-    Overflow is possible only if RT1 is within a factor of 5 of overflow.   
-    Underflow is harmless if the input data is 0 or exceeds   
-       underflow_threshold / macheps.   
+    Overflow is possible only if RT1 is within a factor of 5 of overflow.
+    Underflow is harmless if the input data is 0 or exceeds
+       underflow_threshold / macheps.
 
-   =====================================================================   
+   =====================================================================
 */
 
 int NUMlapack_dlaev2 (double *a, double *b, double *c, double *rt1, double *rt2,
 	double *cs1, double *sn1);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dlaev2 computes the eigendecomposition of a 2-by-2 symmetric matrix   
-       [  A   B  ]   
-       [  B   C  ].   
-    On return, RT1 is the eigenvalue of larger absolute value, RT2 is the   
-    eigenvalue of smaller absolute value, and (CS1,SN1) is the unit right   
-    eigenvector for RT1, giving the decomposition   
+    NUMlapack_dlaev2 computes the eigendecomposition of a 2-by-2 symmetric matrix
+       [  A   B  ]
+       [  B   C  ].
+    On return, RT1 is the eigenvalue of larger absolute value, RT2 is the
+    eigenvalue of smaller absolute value, and (CS1,SN1) is the unit right
+    eigenvector for RT1, giving the decomposition
 
-       [ CS1  SN1 ] [  A   B  ] [ CS1 -SN1 ]  =  [ RT1  0  ]   
-       [-SN1  CS1 ] [  B   C  ] [ SN1  CS1 ]     [  0  RT2 ].   
+       [ CS1  SN1 ] [  A   B  ] [ CS1 -SN1 ]  =  [ RT1  0  ]
+       [-SN1  CS1 ] [  B   C  ] [ SN1  CS1 ]     [  0  RT2 ].
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    A       (input) double   
-            The (1,1) element of the 2-by-2 matrix.   
+    A       (input) double
+            The (1,1) element of the 2-by-2 matrix.
 
-    B       (input) double   
-            The (1,2) element and the conjugate of the (2,1) element of   
-            the 2-by-2 matrix.   
+    B       (input) double
+            The (1,2) element and the conjugate of the (2,1) element of
+            the 2-by-2 matrix.
 
-    C       (input) double   
-            The (2,2) element of the 2-by-2 matrix.   
+    C       (input) double
+            The (2,2) element of the 2-by-2 matrix.
 
-    RT1     (output) double   
-            The eigenvalue of larger absolute value.   
+    RT1     (output) double
+            The eigenvalue of larger absolute value.
 
-    RT2     (output) double   
-            The eigenvalue of smaller absolute value.   
+    RT2     (output) double
+            The eigenvalue of smaller absolute value.
 
-    CS1     (output) double   
-    SN1     (output) double   
-            The vector (CS1, SN1) is a unit right eigenvector for RT1.   
+    CS1     (output) double
+    SN1     (output) double
+            The vector (CS1, SN1) is a unit right eigenvector for RT1.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    RT1 is accurate to a few ulps barring over/underflow.   
+    RT1 is accurate to a few ulps barring over/underflow.
 
-    RT2 may be inaccurate if there is massive cancellation in the   
-    determinant A*C-B*B; higher precision or correctly rounded or   
-    correctly truncated arithmetic would be needed to compute RT2   
-    accurately in all cases.   
+    RT2 may be inaccurate if there is massive cancellation in the
+    determinant A*C-B*B; higher precision or correctly rounded or
+    correctly truncated arithmetic would be needed to compute RT2
+    accurately in all cases.
 
-    CS1 and SN1 are accurate to a few ulps barring over/underflow.   
+    CS1 and SN1 are accurate to a few ulps barring over/underflow.
 
-    Overflow is possible only if RT1 is within a factor of 5 of overflow.   
-    Underflow is harmless if the input data is 0 or exceeds   
-       underflow_threshold / macheps.   
+    Overflow is possible only if RT1 is within a factor of 5 of overflow.
+    Underflow is harmless if the input data is 0 or exceeds
+       underflow_threshold / macheps.
 
-   =====================================================================   
+   =====================================================================
 */
 
 int NUMlapack_dlags2 (long *upper, double *a1, double *a2,	double *a3, double *b1,
-	double *b2, double *b3, double *csu, double *snu, double *csv, double *snv, 
+	double *b2, double *b3, double *csu, double *snu, double *csv, double *snv,
 	double *csq, double *snq);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dlags2 computes 2-by-2 orthogonal matrices U, V and Q, such   
-    that if ( UPPER ) then   
+    NUMlapack_dlags2 computes 2-by-2 orthogonal matrices U, V and Q, such
+    that if ( UPPER ) then
 
-              U'*A*Q = U'*( A1 A2 )*Q = ( x  0  )   
-                          ( 0  A3 )     ( x  x  )   
-    and   
-              V'*B*Q = V'*( B1 B2 )*Q = ( x  0  )   
-                          ( 0  B3 )     ( x  x  )   
+              U'*A*Q = U'*( A1 A2 )*Q = ( x  0  )
+                          ( 0  A3 )     ( x  x  )
+    and
+              V'*B*Q = V'*( B1 B2 )*Q = ( x  0  )
+                          ( 0  B3 )     ( x  x  )
 
-    or if ( .NOT.UPPER ) then   
+    or if ( .NOT.UPPER ) then
 
-              U'*A*Q = U'*( A1 0  )*Q = ( x  x  )   
-                          ( A2 A3 )     ( 0  x  )   
-    and   
-              V'*B*Q = V'*( B1 0  )*Q = ( x  x  )   
-                          ( B2 B3 )     ( 0  x  )   
+              U'*A*Q = U'*( A1 0  )*Q = ( x  x  )
+                          ( A2 A3 )     ( 0  x  )
+    and
+              V'*B*Q = V'*( B1 0  )*Q = ( x  x  )
+                          ( B2 B3 )     ( 0  x  )
 
-    The rows of the transformed A and B are parallel, where   
+    The rows of the transformed A and B are parallel, where
 
-      U = (  CSU  SNU ), V = (  CSV SNV ), Q = (  CSQ   SNQ )   
-          ( -SNU  CSU )      ( -SNV CSV )      ( -SNQ   CSQ )   
+      U = (  CSU  SNU ), V = (  CSV SNV ), Q = (  CSQ   SNQ )
+          ( -SNU  CSU )      ( -SNV CSV )      ( -SNQ   CSQ )
 
-    Z' denotes the transpose of Z.   
+    Z' denotes the transpose of Z.
 
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    UPPER   (input) long* (boolean)   
-            = TRUE: the input matrices A and B are upper triangular.   
-            = FALSE: the input matrices A and B are lower triangular.   
+    UPPER   (input) long* (boolean)
+            = TRUE: the input matrices A and B are upper triangular.
+            = FALSE: the input matrices A and B are lower triangular.
 
-    A1      (input) double   
-    A2      (input) double   
-    A3      (input) double   
-            On entry, A1, A2 and A3 are elements of the input 2-by-2   
-            upper (lower) triangular matrix A.   
+    A1      (input) double
+    A2      (input) double
+    A3      (input) double
+            On entry, A1, A2 and A3 are elements of the input 2-by-2
+            upper (lower) triangular matrix A.
 
-    B1      (input) double   
-    B2      (input) double   
-    B3      (input) double   
-            On entry, B1, B2 and B3 are elements of the input 2-by-2   
-            upper (lower) triangular matrix B.   
+    B1      (input) double
+    B2      (input) double
+    B3      (input) double
+            On entry, B1, B2 and B3 are elements of the input 2-by-2
+            upper (lower) triangular matrix B.
 
-    CSU     (output) double   
-    SNU     (output) double   
-            The desired orthogonal matrix U.   
+    CSU     (output) double
+    SNU     (output) double
+            The desired orthogonal matrix U.
 
-    CSV     (output) double   
-    SNV     (output) double   
-            The desired orthogonal matrix V.   
+    CSV     (output) double
+    SNV     (output) double
+            The desired orthogonal matrix V.
 
-    CSQ     (output) double   
-    SNQ     (output) double   
-            The desired orthogonal matrix Q.   
+    CSQ     (output) double
+    SNQ     (output) double
+            The desired orthogonal matrix Q.
 
     =====================================================================
-*/	
+*/
 
-int NUMlapack_dlahqr (int * wantt, int * wantz, long *n, long *ilo, 
-	long *ihi, double *h, long *ldh, double *wr, double *wi, long *iloz, 
+int NUMlapack_dlahqr (int * wantt, int * wantz, long *n, long *ilo,
+	long *ihi, double *h, long *ldh, double *wr, double *wi, long *iloz,
 	long *ihiz, double *z, long *ldz, long *info);
-/*  -- LAPACK auxiliary routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
+/*  -- LAPACK auxiliary routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dlahqr is an auxiliary routine called by NUMlapack_dhseqr to update the   
-    eigenvalues and Schur decomposition already computed by NUMlapack_dhseqr, by   
-    dealing with the Hessenberg submatrix in rows and columns ILO to IHI.   
+    NUMlapack_dlahqr is an auxiliary routine called by NUMlapack_dhseqr to update the
+    eigenvalues and Schur decomposition already computed by NUMlapack_dhseqr, by
+    dealing with the Hessenberg submatrix in rows and columns ILO to IHI.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    WANTT   (input) int   
-            = .TRUE. : the full Schur form T is required;   
-            = .FALSE.: only eigenvalues are required.   
+    WANTT   (input) int
+            = .TRUE. : the full Schur form T is required;
+            = .FALSE.: only eigenvalues are required.
 
-    WANTZ   (input) int   
-            = .TRUE. : the matrix of Schur vectors Z is required;   
-            = .FALSE.: Schur vectors are not required.   
+    WANTZ   (input) int
+            = .TRUE. : the matrix of Schur vectors Z is required;
+            = .FALSE.: Schur vectors are not required.
 
-    N       (input) long   
-            The order of the matrix H.  N >= 0.   
+    N       (input) long
+            The order of the matrix H.  N >= 0.
 
-    ILO     (input) long   
-    IHI     (input) long   
-            It is assumed that H is already upper quasi-triangular in   
-            rows and columns IHI+1:N, and that H(ILO,ILO-1) = 0 (unless   
-            ILO = 1). NUMlapack_dlahqr works primarily with the Hessenberg   
-            submatrix in rows and columns ILO to IHI, but applies   
-            transformations to all of H if WANTT is .TRUE..   
-            1 <= ILO <= max(1,IHI); IHI <= N.   
+    ILO     (input) long
+    IHI     (input) long
+            It is assumed that H is already upper quasi-triangular in
+            rows and columns IHI+1:N, and that H(ILO,ILO-1) = 0 (unless
+            ILO = 1). NUMlapack_dlahqr works primarily with the Hessenberg
+            submatrix in rows and columns ILO to IHI, but applies
+            transformations to all of H if WANTT is .TRUE..
+            1 <= ILO <= max(1,IHI); IHI <= N.
 
-    H       (input/output) double array, dimension (LDH,N)   
-            On entry, the upper Hessenberg matrix H.   
-            On exit, if WANTT is .TRUE., H is upper quasi-triangular in   
-            rows and columns ILO:IHI, with any 2-by-2 diagonal blocks in   
-            standard form. If WANTT is .FALSE., the contents of H are   
-            unspecified on exit.   
+    H       (input/output) double array, dimension (LDH,N)
+            On entry, the upper Hessenberg matrix H.
+            On exit, if WANTT is .TRUE., H is upper quasi-triangular in
+            rows and columns ILO:IHI, with any 2-by-2 diagonal blocks in
+            standard form. If WANTT is .FALSE., the contents of H are
+            unspecified on exit.
 
-    LDH     (input) long   
-            The leading dimension of the array H. LDH >= max(1,N).   
+    LDH     (input) long
+            The leading dimension of the array H. LDH >= max(1,N).
 
-    WR      (output) double array, dimension (N)   
-    WI      (output) double array, dimension (N)   
-            The real and imaginary parts, respectively, of the computed   
-            eigenvalues ILO to IHI are stored in the corresponding   
-            elements of WR and WI. If two eigenvalues are computed as a   
-            complex conjugate pair, they are stored in consecutive   
-            elements of WR and WI, say the i-th and (i+1)th, with   
-            WI(i) > 0 and WI(i+1) < 0. If WANTT is .TRUE., the   
-            eigenvalues are stored in the same order as on the diagonal   
-            of the Schur form returned in H, with WR(i) = H(i,i), and, if   
-            H(i:i+1,i:i+1) is a 2-by-2 diagonal block,   
-            WI(i) = sqrt(H(i+1,i)*H(i,i+1)) and WI(i+1) = -WI(i).   
+    WR      (output) double array, dimension (N)
+    WI      (output) double array, dimension (N)
+            The real and imaginary parts, respectively, of the computed
+            eigenvalues ILO to IHI are stored in the corresponding
+            elements of WR and WI. If two eigenvalues are computed as a
+            complex conjugate pair, they are stored in consecutive
+            elements of WR and WI, say the i-th and (i+1)th, with
+            WI(i) > 0 and WI(i+1) < 0. If WANTT is .TRUE., the
+            eigenvalues are stored in the same order as on the diagonal
+            of the Schur form returned in H, with WR(i) = H(i,i), and, if
+            H(i:i+1,i:i+1) is a 2-by-2 diagonal block,
+            WI(i) = sqrt(H(i+1,i)*H(i,i+1)) and WI(i+1) = -WI(i).
 
-    ILOZ    (input) long   
-    IHIZ    (input) long   
-            Specify the rows of Z to which transformations must be   
-            applied if WANTZ is .TRUE..   
-            1 <= ILOZ <= ILO; IHI <= IHIZ <= N.   
+    ILOZ    (input) long
+    IHIZ    (input) long
+            Specify the rows of Z to which transformations must be
+            applied if WANTZ is .TRUE..
+            1 <= ILOZ <= ILO; IHI <= IHIZ <= N.
 
-    Z       (input/output) double array, dimension (LDZ,N)   
-            If WANTZ is .TRUE., on entry Z must contain the current   
-            matrix Z of transformations accumulated by NUMlapack_dhseqr, and on   
-            exit Z has been updated; transformations are applied only to   
-            the submatrix Z(ILOZ:IHIZ,ILO:IHI).   
-            If WANTZ is .FALSE., Z is not referenced.   
+    Z       (input/output) double array, dimension (LDZ,N)
+            If WANTZ is .TRUE., on entry Z must contain the current
+            matrix Z of transformations accumulated by NUMlapack_dhseqr, and on
+            exit Z has been updated; transformations are applied only to
+            the submatrix Z(ILOZ:IHIZ,ILO:IHI).
+            If WANTZ is .FALSE., Z is not referenced.
 
-    LDZ     (input) long   
-            The leading dimension of the array Z. LDZ >= max(1,N).   
+    LDZ     (input) long
+            The leading dimension of the array Z. LDZ >= max(1,N).
 
-    INFO    (output) long   
-            = 0: successful exit   
-            > 0: NUMlapack_dlahqr failed to compute all the eigenvalues ILO to IHI   
-                 in a total of 30*(IHI-ILO+1) iterations; if INFO = i,   
-                 elements i+1:ihi of WR and WI contain those eigenvalues   
-                 which have been successfully computed.   
+    INFO    (output) long
+            = 0: successful exit
+            > 0: NUMlapack_dlahqr failed to compute all the eigenvalues ILO to IHI
+                 in a total of 30*(IHI-ILO+1) iterations; if INFO = i,
+                 elements i+1:ihi of WR and WI contain those eigenvalues
+                 which have been successfully computed.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    2-96 Based on modifications by   
-       David Day, Sandia National Laboratory, USA   
+    2-96 Based on modifications by
+       David Day, Sandia National Laboratory, USA
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dlahrd (long *n, long *k, long *nb, double *a, long *lda, 
+int NUMlapack_dlahrd (long *n, long *k, long *nb, double *a, long *lda,
 	double *tau, double *t, long *ldt, double *y, long *ldy);
-/*  -- LAPACK auxiliary routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
+/*  -- LAPACK auxiliary routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dlahrd reduces the first NB columns of a real general n-by-(n-k+1)   
-    matrix A so that elements below the k-th subdiagonal are zero. The   
-    reduction is performed by an orthogonal similarity transformation   
-    Q' * A * Q. The routine returns the matrices V and T which determine   
-    Q as a block reflector I - V*T*V', and also the matrix Y = A * V * T.   
+    NUMlapack_dlahrd reduces the first NB columns of a real general n-by-(n-k+1)
+    matrix A so that elements below the k-th subdiagonal are zero. The
+    reduction is performed by an orthogonal similarity transformation
+    Q' * A * Q. The routine returns the matrices V and T which determine
+    Q as a block reflector I - V*T*V', and also the matrix Y = A * V * T.
 
-    This is an auxiliary routine called by NUMlapack_dgehrd.   
+    This is an auxiliary routine called by NUMlapack_dgehrd.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The order of the matrix A.   
+    N       (input) long
+            The order of the matrix A.
 
-    K       (input) long   
-            The offset for the reduction. Elements below the k-th   
-            subdiagonal in the first NB columns are reduced to zero.   
+    K       (input) long
+            The offset for the reduction. Elements below the k-th
+            subdiagonal in the first NB columns are reduced to zero.
 
-    NB      (input) long   
-            The number of columns to be reduced.   
+    NB      (input) long
+            The number of columns to be reduced.
 
-    A       (input/output) double array, dimension (LDA,N-K+1)   
-            On entry, the n-by-(n-k+1) general matrix A.   
-            On exit, the elements on and above the k-th subdiagonal in   
-            the first NB columns are overwritten with the corresponding   
-            elements of the reduced matrix; the elements below the k-th   
-            subdiagonal, with the array TAU, represent the matrix Q as a   
-            product of elementary reflectors. The other columns of A are   
-            unchanged. See Further Details.   
+    A       (input/output) double array, dimension (LDA,N-K+1)
+            On entry, the n-by-(n-k+1) general matrix A.
+            On exit, the elements on and above the k-th subdiagonal in
+            the first NB columns are overwritten with the corresponding
+            elements of the reduced matrix; the elements below the k-th
+            subdiagonal, with the array TAU, represent the matrix Q as a
+            product of elementary reflectors. The other columns of A are
+            unchanged. See Further Details.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    TAU     (output) double array, dimension (NB)   
-            The scalar factors of the elementary reflectors. See Further   
-            Details.   
+    TAU     (output) double array, dimension (NB)
+            The scalar factors of the elementary reflectors. See Further
+            Details.
 
-    T       (output) double array, dimension (LDT,NB)   
-            The upper triangular matrix T.   
+    T       (output) double array, dimension (LDT,NB)
+            The upper triangular matrix T.
 
-    LDT     (input) long   
-            The leading dimension of the array T.  LDT >= NB.   
+    LDT     (input) long
+            The leading dimension of the array T.  LDT >= NB.
 
-    Y       (output) double array, dimension (LDY,NB)   
-            The n-by-nb matrix Y.   
+    Y       (output) double array, dimension (LDY,NB)
+            The n-by-nb matrix Y.
 
-    LDY     (input) long   
-            The leading dimension of the array Y. LDY >= N.   
+    LDY     (input) long
+            The leading dimension of the array Y. LDY >= N.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    The matrix Q is represented as a product of nb elementary reflectors   
+    The matrix Q is represented as a product of nb elementary reflectors
 
-       Q = H(1) H(2) . . . H(nb).   
+       Q = H(1) H(2) . . . H(nb).
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H(i) = I - tau * v * v'   
+       H(i) = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(1:i+k-1) = 0, v(i+k) = 1; v(i+k+1:n) is stored on exit in   
-    A(i+k+1:n,i), and tau in TAU(i).   
+    where tau is a real scalar, and v is a real vector with
+    v(1:i+k-1) = 0, v(i+k) = 1; v(i+k+1:n) is stored on exit in
+    A(i+k+1:n,i), and tau in TAU(i).
 
-    The elements of the vectors v together form the (n-k+1)-by-nb matrix   
-    V which is needed, with T and Y, to apply the transformation to the   
-    unreduced part of the matrix, using an update of the form:   
-    A := (I - V*T*V') * (A - Y*V').   
+    The elements of the vectors v together form the (n-k+1)-by-nb matrix
+    V which is needed, with T and Y, to apply the transformation to the
+    unreduced part of the matrix, using an update of the form:
+    A := (I - V*T*V') * (A - Y*V').
 
-    The contents of A on exit are illustrated by the following example   
-    with n = 7, k = 3 and nb = 2:   
+    The contents of A on exit are illustrated by the following example
+    with n = 7, k = 3 and nb = 2:
 
-       ( a   h   a   a   a )   
-       ( a   h   a   a   a )   
-       ( a   h   a   a   a )   
-       ( h   h   a   a   a )   
-       ( v1  h   a   a   a )   
-       ( v1  v2  a   a   a )   
-       ( v1  v2  a   a   a )   
+       ( a   h   a   a   a )
+       ( a   h   a   a   a )
+       ( a   h   a   a   a )
+       ( h   h   a   a   a )
+       ( v1  h   a   a   a )
+       ( v1  v2  a   a   a )
+       ( v1  v2  a   a   a )
 
-    where a denotes an element of the original matrix A, h denotes a   
-    modified element of the upper Hessenberg matrix H, and vi denotes an   
-    element of the vector defining H(i).   
+    where a denotes an element of the original matrix A, h denotes a
+    modified element of the upper Hessenberg matrix H, and vi denotes an
+    element of the vector defining H(i).
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dlaln2 (int * ltrans, long *na, long *nw, double *smin, 
-	double *ca, double *a, long *lda, double *d1, double *d2, double *b, 
+int NUMlapack_dlaln2 (int * ltrans, long *na, long *nw, double *smin,
+	double *ca, double *a, long *lda, double *d1, double *d2, double *b,
 	long *ldb, double *wr, double *wi, double *x, long *ldx, double *scale,
 	double *xnorm, long *info);
-/*  -- LAPACK auxiliary routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       October 31, 1992   
+/*  -- LAPACK auxiliary routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       October 31, 1992
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dlaln2 solves a system of the form  (ca A - w D ) X = s B   
-    or (ca A' - w D) X = s B   with possible scaling ("s") and   
-    perturbation of A.  (A' means A-transpose.)   
+    NUMlapack_dlaln2 solves a system of the form  (ca A - w D ) X = s B
+    or (ca A' - w D) X = s B   with possible scaling ("s") and
+    perturbation of A.  (A' means A-transpose.)
 
-    A is an NA x NA real matrix, ca is a real scalar, D is an NA x NA   
-    real diagonal matrix, w is a real or complex value, and X and B are   
-    NA x 1 matrices -- real if w is real, complex if w is complex.  NA   
-    may be 1 or 2.   
+    A is an NA x NA real matrix, ca is a real scalar, D is an NA x NA
+    real diagonal matrix, w is a real or complex value, and X and B are
+    NA x 1 matrices -- real if w is real, complex if w is complex.  NA
+    may be 1 or 2.
 
-    If w is complex, X and B are represented as NA x 2 matrices,   
-    the first column of each being the real part and the second   
-    being the imaginary part.   
+    If w is complex, X and B are represented as NA x 2 matrices,
+    the first column of each being the real part and the second
+    being the imaginary part.
 
-    "s" is a scaling factor (.LE. 1), computed by NUMlapack_dlaln2, which is   
-    so chosen that X can be computed without overflow.  X is further   
-    scaled if necessary to assure that norm(ca A - w D)*norm(X) is less   
-    than overflow.   
+    "s" is a scaling factor (.LE. 1), computed by NUMlapack_dlaln2, which is
+    so chosen that X can be computed without overflow.  X is further
+    scaled if necessary to assure that norm(ca A - w D)*norm(X) is less
+    than overflow.
 
-    If both singular values of (ca A - w D) are less than SMIN,   
-    SMIN*identity will be used instead of (ca A - w D).  If only one   
-    singular value is less than SMIN, one element of (ca A - w D) will be   
-    perturbed enough to make the smallest singular value roughly SMIN.   
-    If both singular values are at least SMIN, (ca A - w D) will not be   
-    perturbed.  In any case, the perturbation will be at most some small   
-    multiple of max( SMIN, ulp*norm(ca A - w D) ).  The singular values   
-    are computed by infinity-norm approximations, and thus will only be   
-    correct to a factor of 2 or so.   
+    If both singular values of (ca A - w D) are less than SMIN,
+    SMIN*identity will be used instead of (ca A - w D).  If only one
+    singular value is less than SMIN, one element of (ca A - w D) will be
+    perturbed enough to make the smallest singular value roughly SMIN.
+    If both singular values are at least SMIN, (ca A - w D) will not be
+    perturbed.  In any case, the perturbation will be at most some small
+    multiple of max( SMIN, ulp*norm(ca A - w D) ).  The singular values
+    are computed by infinity-norm approximations, and thus will only be
+    correct to a factor of 2 or so.
 
-    Note: all input quantities are assumed to be smaller than overflow   
-    by a reasonable factor.  (See BIGNUM.)   
+    Note: all input quantities are assumed to be smaller than overflow
+    by a reasonable factor.  (See BIGNUM.)
 
-    Arguments   
-    ==========   
+    Arguments
+    ==========
 
-    LTRANS  (input) int   
-            =.TRUE.:  A-transpose will be used.   
-            =.FALSE.: A will be used (not transposed.)   
+    LTRANS  (input) int
+            =.TRUE.:  A-transpose will be used.
+            =.FALSE.: A will be used (not transposed.)
 
-    NA      (input) long   
-            The size of the matrix A.  It may (only) be 1 or 2.   
+    NA      (input) long
+            The size of the matrix A.  It may (only) be 1 or 2.
 
-    NW      (input) long   
-            1 if "w" is real, 2 if "w" is complex.  It may only be 1   
-            or 2.   
+    NW      (input) long
+            1 if "w" is real, 2 if "w" is complex.  It may only be 1
+            or 2.
 
-    SMIN    (input) double   
-            The desired lower bound on the singular values of A.  This   
-            should be a safe distance away from underflow or overflow,   
-            say, between (underflow/machine precision) and  (machine   
-            precision * overflow ).  (See BIGNUM and ULP.)   
+    SMIN    (input) double
+            The desired lower bound on the singular values of A.  This
+            should be a safe distance away from underflow or overflow,
+            say, between (underflow/machine precision) and  (machine
+            precision * overflow ).  (See BIGNUM and ULP.)
 
-    CA      (input) double   
-            The coefficient c, which A is multiplied by.   
+    CA      (input) double
+            The coefficient c, which A is multiplied by.
 
-    A       (input) double array, dimension (LDA,NA)   
-            The NA x NA matrix A.   
+    A       (input) double array, dimension (LDA,NA)
+            The NA x NA matrix A.
 
-    LDA     (input) long   
-            The leading dimension of A.  It must be at least NA.   
+    LDA     (input) long
+            The leading dimension of A.  It must be at least NA.
 
-    D1      (input) double   
-            The 1,1 element in the diagonal matrix D.   
+    D1      (input) double
+            The 1,1 element in the diagonal matrix D.
 
-    D2      (input) double   
-            The 2,2 element in the diagonal matrix D.  Not used if NW=1.   
+    D2      (input) double
+            The 2,2 element in the diagonal matrix D.  Not used if NW=1.
 
-    B       (input) double array, dimension (LDB,NW)   
-            The NA x NW matrix B (right-hand side).  If NW=2 ("w" is   
-            complex), column 1 contains the real part of B and column 2   
-            contains the imaginary part.   
+    B       (input) double array, dimension (LDB,NW)
+            The NA x NW matrix B (right-hand side).  If NW=2 ("w" is
+            complex), column 1 contains the real part of B and column 2
+            contains the imaginary part.
 
-    LDB     (input) long   
-            The leading dimension of B.  It must be at least NA.   
+    LDB     (input) long
+            The leading dimension of B.  It must be at least NA.
 
-    WR      (input) double   
-            The real part of the scalar "w".   
+    WR      (input) double
+            The real part of the scalar "w".
 
-    WI      (input) double   
-            The imaginary part of the scalar "w".  Not used if NW=1.   
+    WI      (input) double
+            The imaginary part of the scalar "w".  Not used if NW=1.
 
-    X       (output) double array, dimension (LDX,NW)   
-            The NA x NW matrix X (unknowns), as computed by NUMlapack_dlaln2.   
-            If NW=2 ("w" is complex), on exit, column 1 will contain   
-            the real part of X and column 2 will contain the imaginary   
-            part.   
+    X       (output) double array, dimension (LDX,NW)
+            The NA x NW matrix X (unknowns), as computed by NUMlapack_dlaln2.
+            If NW=2 ("w" is complex), on exit, column 1 will contain
+            the real part of X and column 2 will contain the imaginary
+            part.
 
-    LDX     (input) long   
-            The leading dimension of X.  It must be at least NA.   
+    LDX     (input) long
+            The leading dimension of X.  It must be at least NA.
 
-    SCALE   (output) double   
-            The scale factor that B must be multiplied by to insure   
-            that overflow does not occur when computing X.  Thus,   
-            (ca A - w D) X  will be SCALE*B, not B (ignoring   
-            perturbations of A.)  It will be at most 1.   
+    SCALE   (output) double
+            The scale factor that B must be multiplied by to insure
+            that overflow does not occur when computing X.  Thus,
+            (ca A - w D) X  will be SCALE*B, not B (ignoring
+            perturbations of A.)  It will be at most 1.
 
-    XNORM   (output) double   
-            The infinity-norm of X, when X is regarded as an NA x NW   
-            real matrix.   
+    XNORM   (output) double
+            The infinity-norm of X, when X is regarded as an NA x NW
+            real matrix.
 
-    INFO    (output) long   
-            An error flag.  It will be set to zero if no error occurs,   
-            a negative number if an argument is in error, or a positive   
-            number if  ca A - w D  had to be perturbed.   
-            The possible values are:   
-            = 0: No error occurred, and (ca A - w D) did not have to be   
-                   perturbed.   
-            = 1: (ca A - w D) had to be perturbed to make its smallest   
-                 (or only) singular value greater than SMIN.   
-            NOTE: In the interests of speed, this routine does not   
-                  check the inputs for errors.   
+    INFO    (output) long
+            An error flag.  It will be set to zero if no error occurs,
+            a negative number if an argument is in error, or a positive
+            number if  ca A - w D  had to be perturbed.
+            The possible values are:
+            = 0: No error occurred, and (ca A - w D) did not have to be
+                   perturbed.
+            = 1: (ca A - w D) had to be perturbed to make its smallest
+                 (or only) singular value greater than SMIN.
+            NOTE: In the interests of speed, this routine does not
+                  check the inputs for errors.
 
-   =====================================================================   
+   =====================================================================
 */
 
-double NUMlapack_dlange (char *norm, long *m, long *n, double *a, long *lda, double *work);
+double NUMlapack_dlange (const char *norm, long *m, long *n, double *a, long *lda, double *work);
 /*  Purpose
     =======
 
@@ -2908,267 +2908,267 @@ double NUMlapack_dlange (char *norm, long *m, long *n, double *a, long *lda, dou
    =====================================================================
 */
 
-double NUMlapack_dlanhs (char *norm, long *n, double *a, long *lda, double *work);
-/*  -- LAPACK auxiliary routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       October 31, 1992   
+double NUMlapack_dlanhs (const char *norm, long *n, double *a, long *lda, double *work);
+/*  -- LAPACK auxiliary routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       October 31, 1992
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dlanhs  returns the value of the one norm,  or the Frobenius norm, or   
-    the  infinity norm,  or the  element of  largest absolute value  of a   
-    Hessenberg matrix A.   
+    NUMlapack_dlanhs  returns the value of the one norm,  or the Frobenius norm, or
+    the  infinity norm,  or the  element of  largest absolute value  of a
+    Hessenberg matrix A.
 
-    Description   
-    ===========   
+    Description
+    ===========
 
-    NUMlapack_dlanhs returns the value   
+    NUMlapack_dlanhs returns the value
 
-       NUMlapack_dlanhs = 
-	            ( max(abs(A(i,j))), NORM = 'M' or 'm'   
-                (   
-                ( norm1(A),         NORM = '1', 'O' or 'o'   
-                (   
-                ( normI(A),         NORM = 'I' or 'i'   
-                (   
-                ( normF(A),         NORM = 'F', 'f', 'E' or 'e'   
+       NUMlapack_dlanhs =
+	            ( max(abs(A(i,j))), NORM = 'M' or 'm'
+                (
+                ( norm1(A),         NORM = '1', 'O' or 'o'
+                (
+                ( normI(A),         NORM = 'I' or 'i'
+                (
+                ( normF(A),         NORM = 'F', 'f', 'E' or 'e'
 
-    where  norm1  denotes the  one norm of a matrix (maximum column sum),   
-    normI  denotes the  infinity norm  of a matrix  (maximum row sum) and   
-    normF  denotes the  Frobenius norm of a matrix (square root of sum of   
-    squares).  Note that  max(abs(A(i,j)))  is not a  matrix norm.   
+    where  norm1  denotes the  one norm of a matrix (maximum column sum),
+    normI  denotes the  infinity norm  of a matrix  (maximum row sum) and
+    normF  denotes the  Frobenius norm of a matrix (square root of sum of
+    squares).  Note that  max(abs(A(i,j)))  is not a  matrix norm.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    NORM    (input) char*   
-            Specifies the value to be returned in NUMlapack_dlanhs as described   
-            above.   
+    NORM    (input) char*
+            Specifies the value to be returned in NUMlapack_dlanhs as described
+            above.
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.  When N = 0, NUMlapack_dlanhs is   
-            set to zero.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.  When N = 0, NUMlapack_dlanhs is
+            set to zero.
 
-    A       (input) double array, dimension (LDA,N)   
-            The n by n upper Hessenberg matrix A; the part of A below the   
-            first sub-diagonal is not referenced.   
+    A       (input) double array, dimension (LDA,N)
+            The n by n upper Hessenberg matrix A; the part of A below the
+            first sub-diagonal is not referenced.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(N,1).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(N,1).
 
-    WORK    (workspace) double array, dimension (LWORK),   
-            where LWORK >= N when NORM = 'I'; otherwise, WORK is not   
-            referenced.   
+    WORK    (workspace) double array, dimension (LWORK),
+            where LWORK >= N when NORM = 'I'; otherwise, WORK is not
+            referenced.
 
-   =====================================================================   
+   =====================================================================
 */
 
-double NUMlapack_dlanst (char *norm, long *n, double *d, double *e);
-/*   Purpose   
-    =======   
+double NUMlapack_dlanst (const char *norm, long *n, double *d, double *e);
+/*   Purpose
+    =======
 
-    NUMlapack_dlanst  returns the value of the one norm,  or the Frobenius norm, or   
-    the  infinity norm,  or the  element of  largest absolute value  of a   
-    real symmetric tridiagonal matrix A.   
+    NUMlapack_dlanst  returns the value of the one norm,  or the Frobenius norm, or
+    the  infinity norm,  or the  element of  largest absolute value  of a
+    real symmetric tridiagonal matrix A.
 
-    Description   
-    ===========   
+    Description
+    ===========
 
-    NUMlapack_dlanst returns the value   
-    NUMlapack_dlanst = 
-	            ( max(abs(A(i,j))), NORM = 'M' or 'm'   
-                (   
-                ( norm1(A),         NORM = '1', 'O' or 'o'   
-                (   
-                ( normI(A),         NORM = 'I' or 'i'   
-                (   
-                ( normF(A),         NORM = 'F', 'f', 'E' or 'e'   
+    NUMlapack_dlanst returns the value
+    NUMlapack_dlanst =
+	            ( max(abs(A(i,j))), NORM = 'M' or 'm'
+                (
+                ( norm1(A),         NORM = '1', 'O' or 'o'
+                (
+                ( normI(A),         NORM = 'I' or 'i'
+                (
+                ( normF(A),         NORM = 'F', 'f', 'E' or 'e'
 
-    where  norm1  denotes the  one norm of a matrix (maximum column sum),   
-    normI  denotes the  infinity norm  of a matrix  (maximum row sum) and   
-    normF  denotes the  Frobenius norm of a matrix (square root of sum of   
-    squares).  Note that  max(abs(A(i,j)))  is not a  matrix norm.   
+    where  norm1  denotes the  one norm of a matrix (maximum column sum),
+    normI  denotes the  infinity norm  of a matrix  (maximum row sum) and
+    normF  denotes the  Frobenius norm of a matrix (square root of sum of
+    squares).  Note that  max(abs(A(i,j)))  is not a  matrix norm.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    NORM    (input) char*   
-            Specifies the value to be returned in DLANST as described   
-            above.   
+    NORM    (input) char*
+            Specifies the value to be returned in DLANST as described
+            above.
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.  When N = 0, DLANST is   
-            set to zero.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.  When N = 0, DLANST is
+            set to zero.
 
-    D       (input) double array, dimension (N)   
-            The diagonal elements of A.   
+    D       (input) double array, dimension (N)
+            The diagonal elements of A.
 
-    E       (input) double array, dimension (N-1)   
-            The (n-1) sub-diagonal or super-diagonal elements of A.   
+    E       (input) double array, dimension (N-1)
+            The (n-1) sub-diagonal or super-diagonal elements of A.
 
-    =====================================================================   
+    =====================================================================
 */
 
-double NUMlapack_dlansy (char *norm, char *uplo, long *n, double *a, 
+double NUMlapack_dlansy (const char *norm, const char *uplo, long *n, double *a,
 	long *lda, double *work);
-/*   Purpose   
-    =======   
+/*   Purpose
+    =======
 
-    NUMlapack_dlansy  returns the value of the one norm,  or the Frobenius norm, or   
-    the  infinity norm,  or the  element of  largest absolute value  of a   
-    real symmetric matrix A.   
+    NUMlapack_dlansy  returns the value of the one norm,  or the Frobenius norm, or
+    the  infinity norm,  or the  element of  largest absolute value  of a
+    real symmetric matrix A.
 
-    Description   
-    ===========   
+    Description
+    ===========
 
-    NUMlapack_dlansy returns the value   
+    NUMlapack_dlansy returns the value
 
-                ( max(abs(A(i,j))), NORM = 'M' or 'm'   
-                (   
-                ( norm1(A),         NORM = '1', 'O' or 'o'   
-                (   
-                ( normI(A),         NORM = 'I' or 'i'   
-                (   
-                ( normF(A),         NORM = 'F', 'f', 'E' or 'e'   
+                ( max(abs(A(i,j))), NORM = 'M' or 'm'
+                (
+                ( norm1(A),         NORM = '1', 'O' or 'o'
+                (
+                ( normI(A),         NORM = 'I' or 'i'
+                (
+                ( normF(A),         NORM = 'F', 'f', 'E' or 'e'
 
-    where  norm1  denotes the  one norm of a matrix (maximum column sum),   
-    normI  denotes the  infinity norm  of a matrix  (maximum row sum) and   
-    normF  denotes the  Frobenius norm of a matrix (square root of sum of   
-    squares).  Note that  max(abs(A(i,j)))  is not a  matrix norm.   
+    where  norm1  denotes the  one norm of a matrix (maximum column sum),
+    normI  denotes the  infinity norm  of a matrix  (maximum row sum) and
+    normF  denotes the  Frobenius norm of a matrix (square root of sum of
+    squares).  Note that  max(abs(A(i,j)))  is not a  matrix norm.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    NORM    (input) char*   
-            Specifies the value to be returned in DLANSY as described   
-            above.   
+    NORM    (input) char*
+            Specifies the value to be returned in DLANSY as described
+            above.
 
-    UPLO    (input) char*   
-            Specifies whether the upper or lower triangular part of the   
-            symmetric matrix A is to be referenced.   
-            = 'U':  Upper triangular part of A is referenced   
-            = 'L':  Lower triangular part of A is referenced   
+    UPLO    (input) char*
+            Specifies whether the upper or lower triangular part of the
+            symmetric matrix A is to be referenced.
+            = 'U':  Upper triangular part of A is referenced
+            = 'L':  Lower triangular part of A is referenced
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.  When N = 0, DLANSY is   
-            set to zero.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.  When N = 0, DLANSY is
+            set to zero.
 
-    A       (input) double array, dimension (LDA,N)   
-            The symmetric matrix A.  If UPLO = 'U', the leading n by n   
-            upper triangular part of A contains the upper triangular part   
-            of the matrix A, and the strictly lower triangular part of A   
-            is not referenced.  If UPLO = 'L', the leading n by n lower   
-            triangular part of A contains the lower triangular part of   
-            the matrix A, and the strictly upper triangular part of A is   
-            not referenced.   
+    A       (input) double array, dimension (LDA,N)
+            The symmetric matrix A.  If UPLO = 'U', the leading n by n
+            upper triangular part of A contains the upper triangular part
+            of the matrix A, and the strictly lower triangular part of A
+            is not referenced.  If UPLO = 'L', the leading n by n lower
+            triangular part of A contains the lower triangular part of
+            the matrix A, and the strictly upper triangular part of A is
+            not referenced.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(N,1).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(N,1).
 
-    WORK    (workspace) double array, dimension (LWORK),   
-            where LWORK >= N when NORM = 'I' or '1' or 'O'; otherwise,   
-            WORK is not referenced.   
+    WORK    (workspace) double array, dimension (LWORK),
+            where LWORK >= N when NORM = 'I' or '1' or 'O'; otherwise,
+            WORK is not referenced.
 
-   =====================================================================   
+   =====================================================================
 */
 
 int NUMlapack_dlanv2 (double *a, double *b, double *c, double *d, double *rt1r,
 	double *rt1i,	double *rt2r, double *rt2i, double *cs, double *sn);
-/*  -- LAPACK driver routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
+/*  -- LAPACK driver routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dlanv2 computes the Schur factorization of a real 2-by-2 nonsymmetric   
-    matrix in standard form:   
+    NUMlapack_dlanv2 computes the Schur factorization of a real 2-by-2 nonsymmetric
+    matrix in standard form:
 
-         [ A  B ] = [ CS -SN ] [ AA  BB ] [ CS  SN ]   
-         [ C  D ]   [ SN  CS ] [ CC  DD ] [-SN  CS ]   
+         [ A  B ] = [ CS -SN ] [ AA  BB ] [ CS  SN ]
+         [ C  D ]   [ SN  CS ] [ CC  DD ] [-SN  CS ]
 
-    where either   
-    1) CC = 0 so that AA and DD are real eigenvalues of the matrix, or   
-    2) AA = DD and BB*CC < 0, so that AA + or - sqrt(BB*CC) are complex   
-    conjugate eigenvalues.   
+    where either
+    1) CC = 0 so that AA and DD are real eigenvalues of the matrix, or
+    2) AA = DD and BB*CC < 0, so that AA + or - sqrt(BB*CC) are complex
+    conjugate eigenvalues.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    A       (input/output) double   
-    B       (input/output) double   
-    C       (input/output) double   
-    D       (input/output) double   
-            On entry, the elements of the input matrix.   
-            On exit, they are overwritten by the elements of the   
-            standardised Schur form.   
+    A       (input/output) double
+    B       (input/output) double
+    C       (input/output) double
+    D       (input/output) double
+            On entry, the elements of the input matrix.
+            On exit, they are overwritten by the elements of the
+            standardised Schur form.
 
-    RT1R    (output) double   
-    RT1I    (output) double   
-    RT2R    (output) double   
-    RT2I    (output) double   
-            The real and imaginary parts of the eigenvalues. If the   
-            eigenvalues are a complex conjugate pair, RT1I > 0.   
+    RT1R    (output) double
+    RT1I    (output) double
+    RT2R    (output) double
+    RT2I    (output) double
+            The real and imaginary parts of the eigenvalues. If the
+            eigenvalues are a complex conjugate pair, RT1I > 0.
 
-    CS      (output) double   
-    SN      (output) double   
-            Parameters of the rotation matrix.   
+    CS      (output) double
+    SN      (output) double
+            Parameters of the rotation matrix.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    Modified by V. Sima, Research Institute for Informatics, Bucharest,   
-    Romania, to reduce the risk of cancellation errors,   
-    when computing real eigenvalues, and to ensure, if possible, that   
-    abs(RT1R) >= abs(RT2R).   
+    Modified by V. Sima, Research Institute for Informatics, Bucharest,
+    Romania, to reduce the risk of cancellation errors,
+    when computing real eigenvalues, and to ensure, if possible, that
+    abs(RT1R) >= abs(RT2R).
 
     =====================================================================
 */
 
 int NUMlapack_dlapll(long *n, double *x, long *incx, double *y, long *incy, double *ssmin);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    Given two column vectors X and Y, let   
+    Given two column vectors X and Y, let
 
-                         A = ( X Y ).   
+                         A = ( X Y ).
 
-    The subroutine first computes the QR factorization of A = Q*R,   
-    and then computes the SVD of the 2-by-2 upper triangular matrix R.   
-    The smaller singular value of R is returned in SSMIN, which is used   
-    as the measurement of the linear dependency of the vectors X and Y.   
+    The subroutine first computes the QR factorization of A = Q*R,
+    and then computes the SVD of the 2-by-2 upper triangular matrix R.
+    The smaller singular value of R is returned in SSMIN, which is used
+    as the measurement of the linear dependency of the vectors X and Y.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The length of the vectors X and Y.   
+    N       (input) long
+            The length of the vectors X and Y.
 
-    X       (input/output) double array,   
-                           dimension (1+(N-1)*INCX)   
-            On entry, X contains the N-vector X.   
-            On exit, X is overwritten.   
+    X       (input/output) double array,
+                           dimension (1+(N-1)*INCX)
+            On entry, X contains the N-vector X.
+            On exit, X is overwritten.
 
-    INCX    (input) long   
-            The increment between successive elements of X. INCX > 0.   
+    INCX    (input) long
+            The increment between successive elements of X. INCX > 0.
 
-    Y       (input/output) double array,   
-                           dimension (1+(N-1)*INCY)   
-            On entry, Y contains the N-vector Y.   
-            On exit, Y is overwritten.   
+    Y       (input/output) double array,
+                           dimension (1+(N-1)*INCY)
+            On entry, Y contains the N-vector Y.
+            On exit, Y is overwritten.
 
-    INCY    (input) long   
-            The increment between successive elements of Y. INCY > 0.   
+    INCY    (input) long
+            The increment between successive elements of Y. INCY > 0.
 
-    SSMIN   (output) double   
-            The smallest singular value of the N-by-2 matrix A = ( X Y ).   
+    SSMIN   (output) double
+            The smallest singular value of the N-by-2 matrix A = ( X Y ).
 
-    =====================================================================   
+    =====================================================================
 */
 
 double NUMlapack_dlapy2 (double *x, double *y);
@@ -3189,46 +3189,46 @@ double NUMlapack_dlapy2 (double *x, double *y);
 */
 
 int NUMlapack_dlapmt (long *forwrd, long *m, long *n,	double *x, long *ldx, long *k);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dlapmt rearranges the columns of the M by N matrix X as specified   
-    by the permutation K(1),K(2),...,K(N) of the integers 1,...,N.   
-    If FORWRD = TRUE,  forward permutation:   
+    NUMlapack_dlapmt rearranges the columns of the M by N matrix X as specified
+    by the permutation K(1),K(2),...,K(N) of the integers 1,...,N.
+    If FORWRD = TRUE,  forward permutation:
 
-         X(*,K(J)) is moved X(*,J) for J = 1,2,...,N.   
+         X(*,K(J)) is moved X(*,J) for J = 1,2,...,N.
 
-    If FORWRD = FALSE, backward permutation:   
+    If FORWRD = FALSE, backward permutation:
 
-         X(*,J) is moved to X(*,K(J)) for J = 1,2,...,N.   
+         X(*,J) is moved to X(*,K(J)) for J = 1,2,...,N.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    FORWRD  (input) long* (boolean)   
-            = TRUE, forward permutation   
-            = FALSE, backward permutation   
+    FORWRD  (input) long* (boolean)
+            = TRUE, forward permutation
+            = FALSE, backward permutation
 
-    M       (input) long   
-            The number of rows of the matrix X. M >= 0.   
+    M       (input) long
+            The number of rows of the matrix X. M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix X. N >= 0.   
+    N       (input) long
+            The number of columns of the matrix X. N >= 0.
 
-    X       (input/output) double array, dimension (LDX,N)   
-            On entry, the M by N matrix X.   
-            On exit, X contains the permuted matrix X.   
+    X       (input/output) double array, dimension (LDX,N)
+            On entry, the M by N matrix X.
+            On exit, X contains the permuted matrix X.
 
-    LDX     (input) long   
-            The leading dimension of the array X, LDX >= MAX(1,M).   
+    LDX     (input) long
+            The leading dimension of the array X, LDX >= MAX(1,M).
 
-    K       (input) long array, dimension (N)   
-            On entry, K contains the permutation vector.   
+    K       (input) long array, dimension (N)
+            On entry, K contains the permutation vector.
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dlarf (char *side, long *m, long *n, double *v, long *incv, double *tau,
+int NUMlapack_dlarf (const char *side, long *m, long *n, double *v, long *incv, double *tau,
 	double *c, long *ldc, double *work);
 /*
     Purpose
@@ -3283,8 +3283,8 @@ int NUMlapack_dlarf (char *side, long *m, long *n, double *v, long *incv, double
     =====================================================================
 */
 
-int NUMlapack_dlarfb (char *side, char *trans, char *direct, char *storev, 
-	long *m, long *n, long *k, double *v, long *ldv, double *t, long *ldt, 
+int NUMlapack_dlarfb (const char *side, const char *trans, const char *direct, const char *storev,
+	long *m, long *n, long *k, double *v, long *ldv, double *t, long *ldt,
 	double *c, long *ldc, double *work, long *ldwork);
 /*  Purpose
     =======
@@ -3408,7 +3408,7 @@ int NUMlapack_dlarfg (long *n, double *alpha, double *x, long *incx, double *tau
     =====================================================================
 */
 
-int NUMlapack_dlarft (char *direct, char *storev, long *n, long *k,
+int NUMlapack_dlarft (const char *direct, const char *storev, long *n, long *k,
 	double *v, long *ldv, double *tau, double *t, long *ldt);
 /*  Purpose
     =======
@@ -3501,63 +3501,63 @@ int NUMlapack_dlarft (char *direct, char *storev, long *n, long *k,
     =====================================================================
 */
 
-int NUMlapack_dlarfx (char *side, long *m, long *n, double *v, double *tau, 
+int NUMlapack_dlarfx (const char *side, long *m, long *n, double *v, double *tau,
 	double *c, long *ldc, double *work);
-/*  -- LAPACK auxiliary routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       February 29, 1992   
+/*  -- LAPACK auxiliary routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       February 29, 1992
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dlarfx applies a real elementary reflector H to a real m by n   
-    matrix C, from either the left or the right. H is represented in the   
-    form   
+    NUMlapack_dlarfx applies a real elementary reflector H to a real m by n
+    matrix C, from either the left or the right. H is represented in the
+    form
 
-          H = I - tau * v * v'   
+          H = I - tau * v * v'
 
-    where tau is a real scalar and v is a real vector.   
+    where tau is a real scalar and v is a real vector.
 
-    If tau = 0, then H is taken to be the unit matrix   
+    If tau = 0, then H is taken to be the unit matrix
 
-    This version uses inline code if H has order < 11.   
+    This version uses inline code if H has order < 11.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    SIDE    (input) char*   
-            = 'L': form  H * C   
-            = 'R': form  C * H   
+    SIDE    (input) char*
+            = 'L': form  H * C
+            = 'R': form  C * H
 
-    M       (input) long   
-            The number of rows of the matrix C.   
+    M       (input) long
+            The number of rows of the matrix C.
 
-    N       (input) long   
-            The number of columns of the matrix C.   
+    N       (input) long
+            The number of columns of the matrix C.
 
-    V       (input) double array, dimension (M) if SIDE = 'L'   
-                                       or (N) if SIDE = 'R'   
-            The vector v in the representation of H.   
+    V       (input) double array, dimension (M) if SIDE = 'L'
+                                       or (N) if SIDE = 'R'
+            The vector v in the representation of H.
 
-    TAU     (input) double   
-            The value tau in the representation of H.   
+    TAU     (input) double
+            The value tau in the representation of H.
 
-    C       (input/output) double array, dimension (LDC,N)   
-            On entry, the m by n matrix C.   
-            On exit, C is overwritten by the matrix H * C if SIDE = 'L',   
-            or C * H if SIDE = 'R'.   
+    C       (input/output) double array, dimension (LDC,N)
+            On entry, the m by n matrix C.
+            On exit, C is overwritten by the matrix H * C if SIDE = 'L',
+            or C * H if SIDE = 'R'.
 
-    LDC     (input) long   
-            The leading dimension of the array C. LDA >= (1,M).   
+    LDC     (input) long
+            The leading dimension of the array C. LDA >= (1,M).
 
-    WORK    (workspace) double array, dimension   
-                        (N) if SIDE = 'L'   
-                        or (M) if SIDE = 'R'   
-            WORK is not referenced if H has order < 11.   
+    WORK    (workspace) double array, dimension
+                        (N) if SIDE = 'L'
+                        or (M) if SIDE = 'R'
+            WORK is not referenced if H has order < 11.
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dlartg (double *f, double *g, double *cs, double *sn, double *r);
@@ -3650,7 +3650,7 @@ int NUMlapack_dlas2 (double *f, double *g, double *h,	double *ssmin, double *ssm
     ====================================================================
 */
 
-int NUMlapack_dlascl (char *type, long *kl, long *ku, double *cfrom, double *cto,
+int NUMlapack_dlascl (const char *type, long *kl, long *ku, double *cfrom, double *cto,
 	long *m, long *n, double *a, long *lda, long *info);
 /*  Purpose
     =======
@@ -3714,7 +3714,7 @@ int NUMlapack_dlascl (char *type, long *kl, long *ku, double *cfrom, double *cto
     =====================================================================
 */
 
-int NUMlapack_dlaset (char *uplo, long *m, long *n, double *alpha, double *beta,
+int NUMlapack_dlaset (const char *uplo, long *m, long *n, double *alpha, double *beta,
 	double *a, long *lda);
 /*  Purpose
     =======
@@ -4071,7 +4071,7 @@ int NUMlapack_dlasq6 (long *i0, long *n0, double *z, long *pp, double *dmin,
 */
 
 
-int NUMlapack_dlasr (char *side, char *pivot, char *direct, long *m,
+int NUMlapack_dlasr (const char *side, const char *pivot, const char *direct, long *m,
 	 long *n, double *c, double *s, double *a, long *lda);
 /*  Purpose
     =======
@@ -4166,7 +4166,7 @@ int NUMlapack_dlasr (char *side, char *pivot, char *direct, long *m,
 
 
 
-int NUMlapack_dlasrt (char *id, long *n, double *d, long *info);
+int NUMlapack_dlasrt (const char *id, long *n, double *d, long *info);
 /*  Purpose
     =======
 
@@ -4244,7 +4244,7 @@ int NUMlapack_dlassq (long *n, double *x, long *incx, double *scale, double *sum
    =====================================================================
 */
 
-int NUMlapack_dlasv2 (double *f, double *g, double *h, double *ssmin, 
+int NUMlapack_dlasv2 (double *f, double *g, double *h, double *ssmin,
 	double *ssmax, double *snr, double *csr, double *snl, double *csl);
 /*  Purpose
     =======
@@ -4312,49 +4312,49 @@ int NUMlapack_dlasv2 (double *f, double *g, double *h, double *ssmin,
    =====================================================================
 */
 
-int NUMlapack_dlaswp (long *n, double *a, long *lda, long *k1, long *k2, 
+int NUMlapack_dlaswp (long *n, double *a, long *lda, long *k1, long *k2,
 	long *ipiv, long *incx);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dlaswp performs a series of row interchanges on the matrix A.   
-    One row interchange is initiated for each of rows K1 through K2 of A.   
+    NUMlapack_dlaswp performs a series of row interchanges on the matrix A.
+    One row interchange is initiated for each of rows K1 through K2 of A.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The number of columns of the matrix A.   
+    N       (input) long
+            The number of columns of the matrix A.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the matrix of column dimension N to which the row   
-            interchanges will be applied.   
-            On exit, the permuted matrix.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the matrix of column dimension N to which the row
+            interchanges will be applied.
+            On exit, the permuted matrix.
 
-    LDA     (input) long   
-            The leading dimension of the array A.   
+    LDA     (input) long
+            The leading dimension of the array A.
 
-    K1      (input) long   
-            The first element of IPIV for which a row interchange will   
-            be done.   
+    K1      (input) long
+            The first element of IPIV for which a row interchange will
+            be done.
 
-    K2      (input) long   
-            The last element of IPIV for which a row interchange will   
-            be done.   
+    K2      (input) long
+            The last element of IPIV for which a row interchange will
+            be done.
 
-    IPIV    (input) long array, dimension (M*abs(INCX))   
-            The vector of pivot indices.  Only the elements in positions   
-            K1 through K2 of IPIV are accessed.   
-            IPIV(K) = L implies rows K and L are to be interchanged.   
+    IPIV    (input) long array, dimension (M*abs(INCX))
+            The vector of pivot indices.  Only the elements in positions
+            K1 through K2 of IPIV are accessed.
+            IPIV(K) = L implies rows K and L are to be interchanged.
 
-    INCX    (input) long   
-            The increment between successive values of IPIV.  If IPIV   
-            is negative, the pivots are applied in reverse order.   
+    INCX    (input) long
+            The increment between successive values of IPIV.  If IPIV
+            is negative, the pivots are applied in reverse order.
 
-   =====================================================================   
+   =====================================================================
 */
 
-int NUMlapack_dlatrd (char *uplo, long *n, long *nb, double *a, long *lda, 
+int NUMlapack_dlatrd (const char *uplo, long *n, long *nb, double *a, long *lda,
 	double *e, double *tau, double *w, long *ldw);
 /* Purpose =======
 
@@ -4363,7 +4363,7 @@ int NUMlapack_dlatrd (char *uplo, long *n, long *nb, double *a, long *lda,
 	   Q' * A * Q, and returns the matrices V and W which are needed to apply
 	   the transformation to the unreduced part of A.
 
-	   If UPLO = 'U', DLATRD reduces the last NB rows and columns of a matrix, 
+	   If UPLO = 'U', DLATRD reduces the last NB rows and columns of a matrix,
 	   of which the upper triangle is supplied; if UPLO = 'L', DLATRD reduces
 	   the first NB rows and columns of a matrix, of which the lower triangle
 	   is supplied.
@@ -4392,7 +4392,7 @@ int NUMlapack_dlatrd (char *uplo, long *n, long *nb, double *a, long *lda,
 	   above the diagonal with the array TAU, represent the orthogonal matrix
 	   Q as a product of elementary reflectors; if UPLO = 'L', the first NB
 	   columns have been reduced to tridiagonal form, with the diagonal
-	   elements overwriting the diagonal elements of A; the elements below the 
+	   elements overwriting the diagonal elements of A; the elements below the
 	   diagonal with the array TAU, represent the orthogonal matrix Q as a
 	   product of elementary reflectors. See Further Details.
 
@@ -4404,7 +4404,7 @@ int NUMlapack_dlatrd (char *uplo, long *n, long *nb, double *a, long *lda,
 	   of the reduced matrix; if UPLO = 'L', E(1:nb) contains the subdiagonal
 	   elements of the first NB columns of the reduced matrix.
 
-	   TAU (output) double array, dimension (N-1) The scalar factors 
+	   TAU (output) double array, dimension (N-1) The scalar factors
 	   of the elementary reflectors, stored in TAU(n-nb:n-1) if UPLO = 'U',
 	   and in TAU(1:nb) if UPLO = 'L'. See Further Details.
 
@@ -4447,7 +4447,7 @@ int NUMlapack_dlatrd (char *uplo, long *n, long *nb, double *a, long *lda,
 	   the matrix, using a symmetric rank-2k update of the form: A := A - V*W'
 	   - W*V'.
 
-	   The contents of A on exit are illustrated by the following examples with 
+	   The contents of A on exit are illustrated by the following examples with
 	   n = 5 and nb = 2:
 
 	   if UPLO = 'U': if UPLO = 'L':
@@ -4462,56 +4462,56 @@ int NUMlapack_dlatrd (char *uplo, long *n, long *nb, double *a, long *lda,
 	   =====================================================================
 */
 
-int NUMlapack_dorg2l (long *m, long *n, long *k, double *	a, long *lda, double *tau, 
+int NUMlapack_dorg2l (long *m, long *n, long *k, double *	a, long *lda, double *tau,
 	double *work, long *info);
-/*   Purpose   
-    =======   
+/*   Purpose
+    =======
 
-    NUMlapack_dorg2l generates an m by n real matrix Q with orthonormal columns,   
-    which is defined as the last n columns of a product of k elementary   
-    reflectors of order m   
+    NUMlapack_dorg2l generates an m by n real matrix Q with orthonormal columns,
+    which is defined as the last n columns of a product of k elementary
+    reflectors of order m
 
-          Q  =  H(k) . . . H(2) H(1)   
+          Q  =  H(k) . . . H(2) H(1)
 
-    as returned by NUMlapack_dgeqlf.   
+    as returned by NUMlapack_dgeqlf.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    M       (input) long   
-            The number of rows of the matrix Q. M >= 0.   
+    M       (input) long
+            The number of rows of the matrix Q. M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix Q. M >= N >= 0.   
+    N       (input) long
+            The number of columns of the matrix Q. M >= N >= 0.
 
-    K       (input) long   
-            The number of elementary reflectors whose product defines the   
-            matrix Q. N >= K >= 0.   
+    K       (input) long
+            The number of elementary reflectors whose product defines the
+            matrix Q. N >= K >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the (n-k+i)-th column must contain the vector which   
-            defines the elementary reflector H(i), for i = 1,2,...,k, as   
-            returned by DGEQLF in the last k columns of its array   
-            argument A.   
-            On exit, the m by n matrix Q.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the (n-k+i)-th column must contain the vector which
+            defines the elementary reflector H(i), for i = 1,2,...,k, as
+            returned by DGEQLF in the last k columns of its array
+            argument A.
+            On exit, the m by n matrix Q.
 
-    LDA     (input) long   
-            The first dimension of the array A. LDA >= max(1,M).   
+    LDA     (input) long
+            The first dimension of the array A. LDA >= max(1,M).
 
-    TAU     (input) double array, dimension (K)   
-            TAU(i) must contain the scalar factor of the elementary   
-            reflector H(i), as returned by DGEQLF.   
+    TAU     (input) double array, dimension (K)
+            TAU(i) must contain the scalar factor of the elementary
+            reflector H(i), as returned by DGEQLF.
 
-    WORK    (workspace) double array, dimension (N)   
+    WORK    (workspace) double array, dimension (N)
 
-    INFO    (output) long   
-            = 0: successful exit   
-            < 0: if INFO = -i, the i-th argument has an illegal value   
+    INFO    (output) long
+            = 0: successful exit
+            < 0: if INFO = -i, the i-th argument has an illegal value
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda, 
+int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda,
 	double *tau, double *work, long *info);
 /*  Purpose
     =======
@@ -4560,7 +4560,7 @@ int NUMlapack_dorg2r (long *m, long *n, long *k, double *a, long *lda,
     =====================================================================
 */
 
-int NUMlapack_dorgbr (char *vect, long *m, long *n, long *k, double *a, long *lda,
+int NUMlapack_dorgbr (const char *vect, long *m, long *n, long *k, double *a, long *lda,
 	double *tau, double *work, long *lwork, long *info);
 /*  Purpose
     =======
@@ -4645,66 +4645,66 @@ int NUMlapack_dorgbr (char *vect, long *m, long *n, long *k, double *a, long *ld
     =====================================================================
 */
 
-int NUMlapack_dorghr (long *n, long *ilo, long *ihi, double *a, long *lda, 
+int NUMlapack_dorghr (long *n, long *ilo, long *ihi, double *a, long *lda,
 	double *tau, double *work, long *lwork, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dorghr generates a real orthogonal matrix Q which is defined as the   
-    product of IHI-ILO elementary reflectors of order N, as returned by   
-    NUMlapack_dgehrd:   
+    NUMlapack_dorghr generates a real orthogonal matrix Q which is defined as the
+    product of IHI-ILO elementary reflectors of order N, as returned by
+    NUMlapack_dgehrd:
 
-    Q = H(ilo) H(ilo+1) . . . H(ihi-1).   
+    Q = H(ilo) H(ilo+1) . . . H(ihi-1).
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The order of the matrix Q. N >= 0.   
+    N       (input) long
+            The order of the matrix Q. N >= 0.
 
-    ILO     (input) long   
-    IHI     (input) long   
-            ILO and IHI must have the same values as in the previous call   
-            of NUMlapack_dgehrd. Q is equal to the unit matrix except in the   
-            submatrix Q(ilo+1:ihi,ilo+1:ihi).   
-            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.   
+    ILO     (input) long
+    IHI     (input) long
+            ILO and IHI must have the same values as in the previous call
+            of NUMlapack_dgehrd. Q is equal to the unit matrix except in the
+            submatrix Q(ilo+1:ihi,ilo+1:ihi).
+            1 <= ILO <= IHI <= N, if N > 0; ILO=1 and IHI=0, if N=0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the vectors which define the elementary reflectors,   
-            as returned by NUMlapack_dgehrd.   
-            On exit, the N-by-N orthogonal matrix Q.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the vectors which define the elementary reflectors,
+            as returned by NUMlapack_dgehrd.
+            On exit, the N-by-N orthogonal matrix Q.
 
-    LDA     (input) long   
-            The leading dimension of the array A. LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A. LDA >= max(1,N).
 
-    TAU     (input) double array, dimension (N-1)   
-            TAU(i) must contain the scalar factor of the elementary   
-            reflector H(i), as returned by NUMlapack_dgehrd.   
+    TAU     (input) double array, dimension (N-1)
+            TAU(i) must contain the scalar factor of the elementary
+            reflector H(i), as returned by NUMlapack_dgehrd.
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The dimension of the array WORK. LWORK >= IHI-ILO.   
-            For optimum performance LWORK >= (IHI-ILO)*NB, where NB is   
-            the optimal blocksize.   
+    LWORK   (input) long
+            The dimension of the array WORK. LWORK >= IHI-ILO.
+            For optimum performance LWORK >= (IHI-ILO)*NB, where NB is
+            the optimal blocksize.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dorgl2 (long *m, long *n, long *k, double *a, long *lda, double *tau,
@@ -4814,64 +4814,64 @@ int NUMlapack_dorglq (long *m, long *n, long *k, double *a, long *lda, double *t
     =====================================================================
 */
 
-int NUMlapack_dorgql (long *m, long *n, long *k, double *a, long *lda, double *tau, 
+int NUMlapack_dorgql (long *m, long *n, long *k, double *a, long *lda, double *tau,
 	double *work, long *lwork, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dorgql generates an M-by-N real matrix Q with orthonormal columns,   
-    which is defined as the last N columns of a product of K elementary   
-    reflectors of order M   
+    NUMlapack_dorgql generates an M-by-N real matrix Q with orthonormal columns,
+    which is defined as the last N columns of a product of K elementary
+    reflectors of order M
 
-          Q  =  H(k) . . . H(2) H(1)   
+          Q  =  H(k) . . . H(2) H(1)
 
-    as returned by DGEQLF.   
+    as returned by DGEQLF.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    M       (input) long   
-            The number of rows of the matrix Q. M >= 0.   
+    M       (input) long
+            The number of rows of the matrix Q. M >= 0.
 
-    N       (input) long   
-            The number of columns of the matrix Q. M >= N >= 0.   
+    N       (input) long
+            The number of columns of the matrix Q. M >= N >= 0.
 
-    K       (input) long   
-            The number of elementary reflectors whose product defines the   
-            matrix Q. N >= K >= 0.   
+    K       (input) long
+            The number of elementary reflectors whose product defines the
+            matrix Q. N >= K >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the (n-k+i)-th column must contain the vector which   
-            defines the elementary reflector H(i), for i = 1,2,...,k, as   
-            returned by DGEQLF in the last k columns of its array   
-            argument A.   
-            On exit, the M-by-N matrix Q.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the (n-k+i)-th column must contain the vector which
+            defines the elementary reflector H(i), for i = 1,2,...,k, as
+            returned by DGEQLF in the last k columns of its array
+            argument A.
+            On exit, the M-by-N matrix Q.
 
-    LDA     (input) long   
-            The first dimension of the array A. LDA >= max(1,M).   
+    LDA     (input) long
+            The first dimension of the array A. LDA >= max(1,M).
 
-    TAU     (input) double array, dimension (K)   
-            TAU(i) must contain the scalar factor of the elementary   
-            reflector H(i), as returned by DGEQLF.   
+    TAU     (input) double array, dimension (K)
+            TAU(i) must contain the scalar factor of the elementary
+            reflector H(i), as returned by DGEQLF.
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The dimension of the array WORK. LWORK >= max(1,N).   
-            For optimum performance LWORK >= N*NB, where NB is the   
-            optimal blocksize.   
+    LWORK   (input) long
+            The dimension of the array WORK. LWORK >= max(1,N).
+            For optimum performance LWORK >= N*NB, where NB is the
+            optimal blocksize.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument has an illegal value   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument has an illegal value
 
-    =====================================================================   
+    =====================================================================
 */
 
 int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *tau,
@@ -4934,64 +4934,64 @@ int NUMlapack_dorgqr (long *m, long *n, long *k, double *a, long *lda, double *t
     =====================================================================
 */
 
-int NUMlapack_dorgtr (char *uplo, long *n, double *a, long *lda, double *tau, 
+int NUMlapack_dorgtr (const char *uplo, long *n, double *a, long *lda, double *tau,
 	double *work, long *lwork, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dorgtr generates a real orthogonal matrix Q which is defined as the   
-    product of n-1 elementary reflectors of order N, as returned by   
-    NUMlapack_dsytrd:   
+    NUMlapack_dorgtr generates a real orthogonal matrix Q which is defined as the
+    product of n-1 elementary reflectors of order N, as returned by
+    NUMlapack_dsytrd:
 
-    if UPLO = 'U', Q = H(n-1) . . . H(2) H(1),   
+    if UPLO = 'U', Q = H(n-1) . . . H(2) H(1),
 
-    if UPLO = 'L', Q = H(1) H(2) . . . H(n-1).   
+    if UPLO = 'L', Q = H(1) H(2) . . . H(n-1).
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    UPLO    (input) char*   
-            = 'U': Upper triangle of A contains elementary reflectors   
-                   from NUMlapack_dsytrd;   
-            = 'L': Lower triangle of A contains elementary reflectors   
-                   from NUMlapack_dsytrd.   
+    UPLO    (input) char*
+            = 'U': Upper triangle of A contains elementary reflectors
+                   from NUMlapack_dsytrd;
+            = 'L': Lower triangle of A contains elementary reflectors
+                   from NUMlapack_dsytrd.
 
-    N       (input) long   
-            The order of the matrix Q. N >= 0.   
+    N       (input) long
+            The order of the matrix Q. N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the vectors which define the elementary reflectors,   
-            as returned by NUMlapack_dsytrd.   
-            On exit, the N-by-N orthogonal matrix Q.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the vectors which define the elementary reflectors,
+            as returned by NUMlapack_dsytrd.
+            On exit, the N-by-N orthogonal matrix Q.
 
-    LDA     (input) long   
-            The leading dimension of the array A. LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A. LDA >= max(1,N).
 
-    TAU     (input) double array, dimension (N-1)   
-            TAU(i) must contain the scalar factor of the elementary   
-            reflector H(i), as returned by NUMlapack_dsytrd.   
+    TAU     (input) double array, dimension (N-1)
+            TAU(i) must contain the scalar factor of the elementary
+            reflector H(i), as returned by NUMlapack_dsytrd.
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The dimension of the array WORK. LWORK >= max(1,N-1).   
-            For optimum performance LWORK >= (N-1)*NB, where NB is   
-            the optimal blocksize.   
+    LWORK   (input) long
+            The dimension of the array WORK. LWORK >= max(1,N-1).
+            For optimum performance LWORK >= (N-1)*NB, where NB is
+            the optimal blocksize.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dorm2r (char *side, char *trans, long *m, long *n, long *k, 
+int NUMlapack_dorm2r (const char *side, const char *trans, long *m, long *n, long *k,
 	double *a, long *lda, double *tau, double *c, long *ldc, double *work,
 	long *info);
 /*  Purpose
@@ -5071,8 +5071,8 @@ int NUMlapack_dorm2r (char *side, char *trans, long *m, long *n, long *k,
     =====================================================================
 */
 
-int NUMlapack_dormbr (char *vect, char *side, char *trans, long *m, long *n, 
-	long *k, double *a, long *lda, double *tau, double *c, long *ldc, 
+int NUMlapack_dormbr (const char *vect, const char *side, const char *trans, long *m, long *n,
+	long *k, double *a, long *lda, double *tau, double *c, long *ldc,
 	double *work, long *lwork, long *info);
 /*  Purpose
     =======
@@ -5181,7 +5181,7 @@ int NUMlapack_dormbr (char *vect, char *side, char *trans, long *m, long *n,
     =====================================================================
 */
 
-int NUMlapack_dorml2 (char *side, char *trans, long *m, long *n, long *k, double *a,
+int NUMlapack_dorml2 (const char *side, const char *trans, long *m, long *n, long *k, double *a,
 	long *lda, double *tau, double *c, long *ldc, double *work, long *info);
 /*  Purpose
     =======
@@ -5260,7 +5260,7 @@ int NUMlapack_dorml2 (char *side, char *trans, long *m, long *n, long *k, double
     =====================================================================
 */
 
-int NUMlapack_dormlq (char *side, char *trans, long *m, long *n,
+int NUMlapack_dormlq (const char *side, const char *trans, long *m, long *n,
 	long *k, double *a, long *lda, double *tau, double *c,
 	long *ldc, double *work, long *lwork, long *info);
 /*  Purpose
@@ -5348,7 +5348,7 @@ int NUMlapack_dormlq (char *side, char *trans, long *m, long *n,
     =====================================================================
 */
 
-int NUMlapack_dormqr (char *side, char *trans, long *m, long *n, long *k,
+int NUMlapack_dormqr (const char *side, const char *trans, long *m, long *n, long *k,
 	double *a, long *lda, double *tau, double *c, long *ldc, double *work,
 	long *lwork, long *info);
 /*  Purpose
@@ -5436,8 +5436,8 @@ int NUMlapack_dormqr (char *side, char *trans, long *m, long *n, long *k,
     =====================================================================
 */
 
-int NUMlapack_dormr2 (char *side, char *trans, long *m, long *n, long *k, 
-	double *a, long *lda, double *tau, double *c, long *ldc, double *work, 
+int NUMlapack_dormr2 (const char *side, const char *trans, long *m, long *n, long *k,
+	double *a, long *lda, double *tau, double *c, long *ldc, double *work,
 	long *info);
 /*  Purpose
     =======
@@ -5516,881 +5516,881 @@ int NUMlapack_dormr2 (char *side, char *trans, long *m, long *n, long *k,
     =====================================================================
 */
 
-int NUMlapack_dpotf2 (char *uplo, long *n, double *a, long *lda, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       February 29, 1992   
+int NUMlapack_dpotf2 (const char *uplo, long *n, double *a, long *lda, long *info);
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       February 29, 1992
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dpotf2 computes the Cholesky factorization of a real symmetric   
-    positive definite matrix A.   
+    NUMlapack_dpotf2 computes the Cholesky factorization of a real symmetric
+    positive definite matrix A.
 
-    The factorization has the form   
-       A = U' * U ,  if UPLO = 'U', or   
-       A = L  * L',  if UPLO = 'L',   
-    where U is an upper triangular matrix and L is lower triangular.   
+    The factorization has the form
+       A = U' * U ,  if UPLO = 'U', or
+       A = L  * L',  if UPLO = 'L',
+    where U is an upper triangular matrix and L is lower triangular.
 
-    This is the unblocked version of the algorithm, calling Level 2 BLAS.   
+    This is the unblocked version of the algorithm, calling Level 2 BLAS.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    UPLO    (input) char *   
-            Specifies whether the upper or lower triangular part of the   
-            symmetric matrix A is stored.   
-            = 'U':  Upper triangular   
-            = 'L':  Lower triangular   
+    UPLO    (input) char *
+            Specifies whether the upper or lower triangular part of the
+            symmetric matrix A is stored.
+            = 'U':  Upper triangular
+            = 'L':  Lower triangular
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the symmetric matrix A.  If UPLO = 'U', the leading   
-            n by n upper triangular part of A contains the upper   
-            triangular part of the matrix A, and the strictly lower   
-            triangular part of A is not referenced.  If UPLO = 'L', the   
-            leading n by n lower triangular part of A contains the lower   
-            triangular part of the matrix A, and the strictly upper   
-            triangular part of A is not referenced.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the symmetric matrix A.  If UPLO = 'U', the leading
+            n by n upper triangular part of A contains the upper
+            triangular part of the matrix A, and the strictly lower
+            triangular part of A is not referenced.  If UPLO = 'L', the
+            leading n by n lower triangular part of A contains the lower
+            triangular part of the matrix A, and the strictly upper
+            triangular part of A is not referenced.
 
-            On exit, if INFO = 0, the factor U or L from the Cholesky   
-            factorization A = U'*U  or A = L*L'.   
+            On exit, if INFO = 0, the factor U or L from the Cholesky
+            factorization A = U'*U  or A = L*L'.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    INFO    (output) long   
-            = 0: successful exit   
-            < 0: if INFO = -k, the k-th argument had an illegal value   
-            > 0: if INFO = k, the leading minor of order k is not   
-                 positive definite, and the factorization could not be   
-                 completed.   
+    INFO    (output) long
+            = 0: successful exit
+            < 0: if INFO = -k, the k-th argument had an illegal value
+            > 0: if INFO = k, the leading minor of order k is not
+                 positive definite, and the factorization could not be
+                 completed.
 
 */
 
 int NUMlapack_drscl (long *n, double *sa, double *sx,	long *incx);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_drscl multiplies an n-element real vector x by the real scalar 1/a.   
-    This is done without overflow or underflow as long as   
-    the final result x/a does not overflow or underflow.   
+    NUMlapack_drscl multiplies an n-element real vector x by the real scalar 1/a.
+    This is done without overflow or underflow as long as
+    the final result x/a does not overflow or underflow.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The number of components of the vector x.   
+    N       (input) long
+            The number of components of the vector x.
 
-    SA      (input) double   
-            The scalar a which is used to divide each component of x.   
-            SA must be >= 0, or the subroutine will divide by zero.   
+    SA      (input) double
+            The scalar a which is used to divide each component of x.
+            SA must be >= 0, or the subroutine will divide by zero.
 
-    SX      (input/output) double array, dimension   
-                           (1+(N-1)*abs(INCX))   
-            The n-element vector x.   
+    SX      (input/output) double array, dimension
+                           (1+(N-1)*abs(INCX))
+            The n-element vector x.
 
-    INCX    (input) long   
-            The increment between successive values of the vector SX.   
-            > 0:  SX(1) = X(1) and SX(1+(i-1)*INCX) = x(i),     1< i<= n   
+    INCX    (input) long
+            The increment between successive values of the vector SX.
+            > 0:  SX(1) = X(1) and SX(1+(i-1)*INCX) = x(i),     1< i<= n
 
-   =====================================================================   
+   =====================================================================
 */
 
 
-int NUMlapack_dsteqr (char *compz, long *n, double *d, double *e, double *z, long *ldz,
+int NUMlapack_dsteqr (const char *compz, long *n, double *d, double *e, double *z, long *ldz,
 	double *work, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dsteqr computes all eigenvalues and, optionally, eigenvectors of a   
-    symmetric tridiagonal matrix using the implicit QL or QR method.   
-    The eigenvectors of a full or band symmetric matrix can also be found   
-    if NUMlapack_dsytrd or DSPTRD or DSBTRD has been used to reduce this matrix to   
-    tridiagonal form.   
+    NUMlapack_dsteqr computes all eigenvalues and, optionally, eigenvectors of a
+    symmetric tridiagonal matrix using the implicit QL or QR method.
+    The eigenvectors of a full or band symmetric matrix can also be found
+    if NUMlapack_dsytrd or DSPTRD or DSBTRD has been used to reduce this matrix to
+    tridiagonal form.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    COMPZ   (input) char*   
-            = 'N':  Compute eigenvalues only.   
-            = 'V':  Compute eigenvalues and eigenvectors of the original   
-                    symmetric matrix.  On entry, Z must contain the   
-                    orthogonal matrix used to reduce the original matrix   
-                    to tridiagonal form.   
-            = 'I':  Compute eigenvalues and eigenvectors of the   
-                    tridiagonal matrix.  Z is initialized to the identity   
-                    matrix.   
+    COMPZ   (input) char*
+            = 'N':  Compute eigenvalues only.
+            = 'V':  Compute eigenvalues and eigenvectors of the original
+                    symmetric matrix.  On entry, Z must contain the
+                    orthogonal matrix used to reduce the original matrix
+                    to tridiagonal form.
+            = 'I':  Compute eigenvalues and eigenvectors of the
+                    tridiagonal matrix.  Z is initialized to the identity
+                    matrix.
 
-    N       (input) long   
-            The order of the matrix.  N >= 0.   
+    N       (input) long
+            The order of the matrix.  N >= 0.
 
-    D       (input/output) double array, dimension (N)   
-            On entry, the diagonal elements of the tridiagonal matrix.   
-            On exit, if INFO = 0, the eigenvalues in ascending order.   
+    D       (input/output) double array, dimension (N)
+            On entry, the diagonal elements of the tridiagonal matrix.
+            On exit, if INFO = 0, the eigenvalues in ascending order.
 
-    E       (input/output) double array, dimension (N-1)   
-            On entry, the (n-1) subdiagonal elements of the tridiagonal   
-            matrix.   
-            On exit, E has been destroyed.   
+    E       (input/output) double array, dimension (N-1)
+            On entry, the (n-1) subdiagonal elements of the tridiagonal
+            matrix.
+            On exit, E has been destroyed.
 
-    Z       (input/output) double array, dimension (LDZ, N)   
-            On entry, if  COMPZ = 'V', then Z contains the orthogonal   
-            matrix used in the reduction to tridiagonal form.   
-            On exit, if INFO = 0, then if  COMPZ = 'V', Z contains the   
-            orthonormal eigenvectors of the original symmetric matrix,   
-            and if COMPZ = 'I', Z contains the orthonormal eigenvectors   
-            of the symmetric tridiagonal matrix.   
-            If COMPZ = 'N', then Z is not referenced.   
+    Z       (input/output) double array, dimension (LDZ, N)
+            On entry, if  COMPZ = 'V', then Z contains the orthogonal
+            matrix used in the reduction to tridiagonal form.
+            On exit, if INFO = 0, then if  COMPZ = 'V', Z contains the
+            orthonormal eigenvectors of the original symmetric matrix,
+            and if COMPZ = 'I', Z contains the orthonormal eigenvectors
+            of the symmetric tridiagonal matrix.
+            If COMPZ = 'N', then Z is not referenced.
 
-    LDZ     (input) long   
-            The leading dimension of the array Z.  LDZ >= 1, and if   
-            eigenvectors are desired, then  LDZ >= max(1,N).   
+    LDZ     (input) long
+            The leading dimension of the array Z.  LDZ >= 1, and if
+            eigenvectors are desired, then  LDZ >= max(1,N).
 
-    WORK    (workspace) double array, dimension (max(1,2*N-2))   
-            If COMPZ = 'N', then WORK is not referenced.   
+    WORK    (workspace) double array, dimension (max(1,2*N-2))
+            If COMPZ = 'N', then WORK is not referenced.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
-            > 0:  the algorithm has failed to find all the eigenvalues in   
-                  a total of 30*N iterations; if INFO = i, then i   
-                  elements of E have not converged to zero; on exit, D   
-                  and E contain the elements of a symmetric tridiagonal   
-                  matrix which is orthogonally similar to the original   
-                  matrix.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
+            > 0:  the algorithm has failed to find all the eigenvalues in
+                  a total of 30*N iterations; if INFO = i, then i
+                  elements of E have not converged to zero; on exit, D
+                  and E contain the elements of a symmetric tridiagonal
+                  matrix which is orthogonally similar to the original
+                  matrix.
 
-    =====================================================================   
+    =====================================================================
 */
 
 
 int NUMlapack_dsterf (long *n, double *d, double *e, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dsterf computes all eigenvalues of a symmetric tridiagonal matrix   
-    using the Pal-Walker-Kahan variant of the QL or QR algorithm.   
+    NUMlapack_dsterf computes all eigenvalues of a symmetric tridiagonal matrix
+    using the Pal-Walker-Kahan variant of the QL or QR algorithm.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    N       (input) long   
-            The order of the matrix.  N >= 0.   
+    N       (input) long
+            The order of the matrix.  N >= 0.
 
-    D       (input/output) double array, dimension (N)   
-            On entry, the n diagonal elements of the tridiagonal matrix.   
-            On exit, if INFO = 0, the eigenvalues in ascending order.   
+    D       (input/output) double array, dimension (N)
+            On entry, the n diagonal elements of the tridiagonal matrix.
+            On exit, if INFO = 0, the eigenvalues in ascending order.
 
-    E       (input/output) double array, dimension (N-1)   
-            On entry, the (n-1) subdiagonal elements of the tridiagonal   
-            matrix.   
-            On exit, E has been destroyed.   
+    E       (input/output) double array, dimension (N-1)
+            On entry, the (n-1) subdiagonal elements of the tridiagonal
+            matrix.
+            On exit, E has been destroyed.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
-            > 0:  the algorithm failed to find all of the eigenvalues in   
-                  a total of 30*N iterations; if INFO = i, then i   
-                  elements of E have not converged to zero.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
+            > 0:  the algorithm failed to find all of the eigenvalues in
+                  a total of 30*N iterations; if INFO = i, then i
+                  elements of E have not converged to zero.
 
-    =====================================================================   
+    =====================================================================
 */
 
 
-int NUMlapack_dsyev (char *jobz, char *uplo, long *n, double *a,	long *lda, 
+int NUMlapack_dsyev (const char *jobz, const char *uplo, long *n, double *a,	long *lda,
 	double *w, double *work, long *lwork, long *info);
 /* Purpose =======
 
 	NUMlapack_dsyev computes all eigenvalues and, optionally, eigenvectors of a
 	real symmetric matrix A.
-	
-    Arguments   
-    =========   
 
-    JOBZ    (input) char*   
-            = 'N':  Compute eigenvalues only;   
-            = 'V':  Compute eigenvalues and eigenvectors.   
+    Arguments
+    =========
 
-    UPLO    (input) char*   
-            = 'U':  Upper triangle of A is stored;   
-            = 'L':  Lower triangle of A is stored.   
+    JOBZ    (input) char*
+            = 'N':  Compute eigenvalues only;
+            = 'V':  Compute eigenvalues and eigenvectors.
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    UPLO    (input) char*
+            = 'U':  Upper triangle of A is stored;
+            = 'L':  Lower triangle of A is stored.
 
-    A       (input/output) double array, dimension (LDA, N)   
-            On entry, the symmetric matrix A.  If UPLO = 'U', the   
-            leading N-by-N upper triangular part of A contains the   
-            upper triangular part of the matrix A.  If UPLO = 'L',   
-            the leading N-by-N lower triangular part of A contains   
-            the lower triangular part of the matrix A.   
-            On exit, if JOBZ = 'V', then if INFO = 0, A contains the   
-            orthonormal eigenvectors of the matrix A.   
-            If JOBZ = 'N', then on exit the lower triangle (if UPLO='L')   
-            or the upper triangle (if UPLO='U') of A, including the   
-            diagonal, is destroyed.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    A       (input/output) double array, dimension (LDA, N)
+            On entry, the symmetric matrix A.  If UPLO = 'U', the
+            leading N-by-N upper triangular part of A contains the
+            upper triangular part of the matrix A.  If UPLO = 'L',
+            the leading N-by-N lower triangular part of A contains
+            the lower triangular part of the matrix A.
+            On exit, if JOBZ = 'V', then if INFO = 0, A contains the
+            orthonormal eigenvectors of the matrix A.
+            If JOBZ = 'N', then on exit the lower triangle (if UPLO='L')
+            or the upper triangle (if UPLO='U') of A, including the
+            diagonal, is destroyed.
 
-    W       (output) double array, dimension (N)   
-            If INFO = 0, the eigenvalues in ascending order.   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    W       (output) double array, dimension (N)
+            If INFO = 0, the eigenvalues in ascending order.
 
-    LWORK   (input) long   
-            The length of the array WORK.  LWORK >= max(1,3*N-1).   
-            For optimal efficiency, LWORK >= (NB+2)*N,   
-            where NB is the blocksize for NUMlapack_dsytrd returned by NUMlapack_ilaenv.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+    LWORK   (input) long
+            The length of the array WORK.  LWORK >= max(1,3*N-1).
+            For optimal efficiency, LWORK >= (NB+2)*N,
+            where NB is the blocksize for NUMlapack_dsytrd returned by NUMlapack_ilaenv.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
-            > 0:  if INFO = i, the algorithm failed to converge; i   
-                  off-diagonal elements of an intermediate tridiagonal   
-                  form did not converge to zero.   
-	
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
+
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
+            > 0:  if INFO = i, the algorithm failed to converge; i
+                  off-diagonal elements of an intermediate tridiagonal
+                  form did not converge to zero.
+
 	=====================================================================
 */
 
 
-int NUMlapack_dsytd2 (char *uplo, long *n, double *a, long *lda, double *d, 
+int NUMlapack_dsytd2 (const char *uplo, long *n, double *a, long *lda, double *d,
 	double *e, double *tau, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dsytd2 reduces a real symmetric matrix A to symmetric tridiagonal   
-    form T by an orthogonal similarity transformation: Q' * A * Q = T.   
+    NUMlapack_dsytd2 reduces a real symmetric matrix A to symmetric tridiagonal
+    form T by an orthogonal similarity transformation: Q' * A * Q = T.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    UPLO    (input) char*   
-            Specifies whether the upper or lower triangular part of the   
-            symmetric matrix A is stored:   
-            = 'U':  Upper triangular   
-            = 'L':  Lower triangular   
+    UPLO    (input) char*
+            Specifies whether the upper or lower triangular part of the
+            symmetric matrix A is stored:
+            = 'U':  Upper triangular
+            = 'L':  Lower triangular
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the symmetric matrix A.  If UPLO = 'U', the leading   
-            n-by-n upper triangular part of A contains the upper   
-            triangular part of the matrix A, and the strictly lower   
-            triangular part of A is not referenced.  If UPLO = 'L', the   
-            leading n-by-n lower triangular part of A contains the lower   
-            triangular part of the matrix A, and the strictly upper   
-            triangular part of A is not referenced.   
-            On exit, if UPLO = 'U', the diagonal and first superdiagonal   
-            of A are overwritten by the corresponding elements of the   
-            tridiagonal matrix T, and the elements above the first   
-            superdiagonal, with the array TAU, represent the orthogonal   
-            matrix Q as a product of elementary reflectors; if UPLO   
-            = 'L', the diagonal and first subdiagonal of A are over-   
-            written by the corresponding elements of the tridiagonal   
-            matrix T, and the elements below the first subdiagonal, with   
-            the array TAU, represent the orthogonal matrix Q as a product   
-            of elementary reflectors. See Further Details.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the symmetric matrix A.  If UPLO = 'U', the leading
+            n-by-n upper triangular part of A contains the upper
+            triangular part of the matrix A, and the strictly lower
+            triangular part of A is not referenced.  If UPLO = 'L', the
+            leading n-by-n lower triangular part of A contains the lower
+            triangular part of the matrix A, and the strictly upper
+            triangular part of A is not referenced.
+            On exit, if UPLO = 'U', the diagonal and first superdiagonal
+            of A are overwritten by the corresponding elements of the
+            tridiagonal matrix T, and the elements above the first
+            superdiagonal, with the array TAU, represent the orthogonal
+            matrix Q as a product of elementary reflectors; if UPLO
+            = 'L', the diagonal and first subdiagonal of A are over-
+            written by the corresponding elements of the tridiagonal
+            matrix T, and the elements below the first subdiagonal, with
+            the array TAU, represent the orthogonal matrix Q as a product
+            of elementary reflectors. See Further Details.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    D       (output) double array, dimension (N)   
-            The diagonal elements of the tridiagonal matrix T:   
-            D(i) = A(i,i).   
+    D       (output) double array, dimension (N)
+            The diagonal elements of the tridiagonal matrix T:
+            D(i) = A(i,i).
 
-    E       (output) double array, dimension (N-1)   
-            The off-diagonal elements of the tridiagonal matrix T:   
-            E(i) = A(i,i+1) if UPLO = 'U', E(i) = A(i+1,i) if UPLO = 'L'.   
+    E       (output) double array, dimension (N-1)
+            The off-diagonal elements of the tridiagonal matrix T:
+            E(i) = A(i,i+1) if UPLO = 'U', E(i) = A(i+1,i) if UPLO = 'L'.
 
-    TAU     (output) double array, dimension (N-1)   
-            The scalar factors of the elementary reflectors (see Further   
-            Details).   
+    TAU     (output) double array, dimension (N-1)
+            The scalar factors of the elementary reflectors (see Further
+            Details).
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    If UPLO = 'U', the matrix Q is represented as a product of elementary   
-    reflectors   
+    If UPLO = 'U', the matrix Q is represented as a product of elementary
+    reflectors
 
-       Q = H(n-1) . . . H(2) H(1).   
+       Q = H(n-1) . . . H(2) H(1).
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H(i) = I - tau * v * v'   
+       H(i) = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(i+1:n) = 0 and v(i) = 1; v(1:i-1) is stored on exit in   
-    A(1:i-1,i+1), and tau in TAU(i).   
+    where tau is a real scalar, and v is a real vector with
+    v(i+1:n) = 0 and v(i) = 1; v(1:i-1) is stored on exit in
+    A(1:i-1,i+1), and tau in TAU(i).
 
-    If UPLO = 'L', the matrix Q is represented as a product of elementary   
-    reflectors   
+    If UPLO = 'L', the matrix Q is represented as a product of elementary
+    reflectors
 
-       Q = H(1) H(2) . . . H(n-1).   
+       Q = H(1) H(2) . . . H(n-1).
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H(i) = I - tau * v * v'   
+       H(i) = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(1:i) = 0 and v(i+1) = 1; v(i+2:n) is stored on exit in A(i+2:n,i),   
-    and tau in TAU(i).   
+    where tau is a real scalar, and v is a real vector with
+    v(1:i) = 0 and v(i+1) = 1; v(i+2:n) is stored on exit in A(i+2:n,i),
+    and tau in TAU(i).
 
-    The contents of A on exit are illustrated by the following examples   
-    with n = 5:   
+    The contents of A on exit are illustrated by the following examples
+    with n = 5:
 
-    if UPLO = 'U':                       if UPLO = 'L':   
+    if UPLO = 'U':                       if UPLO = 'L':
 
-      (  d   e   v2  v3  v4 )              (  d                  )   
-      (      d   e   v3  v4 )              (  e   d              )   
-      (          d   e   v4 )              (  v1  e   d          )   
-      (              d   e  )              (  v1  v2  e   d      )   
-      (                  d  )              (  v1  v2  v3  e   d  )   
+      (  d   e   v2  v3  v4 )              (  d                  )
+      (      d   e   v3  v4 )              (  e   d              )
+      (          d   e   v4 )              (  v1  e   d          )
+      (              d   e  )              (  v1  v2  e   d      )
+      (                  d  )              (  v1  v2  v3  e   d  )
 
-    where d and e denote diagonal and off-diagonal elements of T, and vi   
-    denotes an element of the vector defining H(i).   
+    where d and e denote diagonal and off-diagonal elements of T, and vi
+    denotes an element of the vector defining H(i).
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dsytrd (char *uplo, long *n, double *a, long *lda, double *d,
+int NUMlapack_dsytrd (const char *uplo, long *n, double *a, long *lda, double *d,
 	double *e, double *tau, double *work, long *lwork, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dsytrd reduces a real symmetric matrix A to real symmetric   
-    tridiagonal form T by an orthogonal similarity transformation:   
-    Q**T * A * Q = T.   
+    NUMlapack_dsytrd reduces a real symmetric matrix A to real symmetric
+    tridiagonal form T by an orthogonal similarity transformation:
+    Q**T * A * Q = T.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    UPLO    (input) char*   
-            = 'U':  Upper triangle of A is stored;   
-            = 'L':  Lower triangle of A is stored.   
+    UPLO    (input) char*
+            = 'U':  Upper triangle of A is stored;
+            = 'L':  Lower triangle of A is stored.
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the symmetric matrix A.  If UPLO = 'U', the leading   
-            N-by-N upper triangular part of A contains the upper   
-            triangular part of the matrix A, and the strictly lower   
-            triangular part of A is not referenced.  If UPLO = 'L', the   
-            leading N-by-N lower triangular part of A contains the lower   
-            triangular part of the matrix A, and the strictly upper   
-            triangular part of A is not referenced.   
-            On exit, if UPLO = 'U', the diagonal and first superdiagonal   
-            of A are overwritten by the corresponding elements of the   
-            tridiagonal matrix T, and the elements above the first   
-            superdiagonal, with the array TAU, represent the orthogonal   
-            matrix Q as a product of elementary reflectors; if UPLO   
-            = 'L', the diagonal and first subdiagonal of A are over-   
-            written by the corresponding elements of the tridiagonal   
-            matrix T, and the elements below the first subdiagonal, with   
-            the array TAU, represent the orthogonal matrix Q as a product   
-            of elementary reflectors. See Further Details.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the symmetric matrix A.  If UPLO = 'U', the leading
+            N-by-N upper triangular part of A contains the upper
+            triangular part of the matrix A, and the strictly lower
+            triangular part of A is not referenced.  If UPLO = 'L', the
+            leading N-by-N lower triangular part of A contains the lower
+            triangular part of the matrix A, and the strictly upper
+            triangular part of A is not referenced.
+            On exit, if UPLO = 'U', the diagonal and first superdiagonal
+            of A are overwritten by the corresponding elements of the
+            tridiagonal matrix T, and the elements above the first
+            superdiagonal, with the array TAU, represent the orthogonal
+            matrix Q as a product of elementary reflectors; if UPLO
+            = 'L', the diagonal and first subdiagonal of A are over-
+            written by the corresponding elements of the tridiagonal
+            matrix T, and the elements below the first subdiagonal, with
+            the array TAU, represent the orthogonal matrix Q as a product
+            of elementary reflectors. See Further Details.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    D       (output) double array, dimension (N)   
-            The diagonal elements of the tridiagonal matrix T:   
-            D(i) = A(i,i).   
+    D       (output) double array, dimension (N)
+            The diagonal elements of the tridiagonal matrix T:
+            D(i) = A(i,i).
 
-    E       (output) double array, dimension (N-1)   
-            The off-diagonal elements of the tridiagonal matrix T:   
-            E(i) = A(i,i+1) if UPLO = 'U', E(i) = A(i+1,i) if UPLO = 'L'.   
+    E       (output) double array, dimension (N-1)
+            The off-diagonal elements of the tridiagonal matrix T:
+            E(i) = A(i,i+1) if UPLO = 'U', E(i) = A(i+1,i) if UPLO = 'L'.
 
-    TAU     (output) double array, dimension (N-1)   
-            The scalar factors of the elementary reflectors (see Further   
-            Details).   
+    TAU     (output) double array, dimension (N-1)
+            The scalar factors of the elementary reflectors (see Further
+            Details).
 
-    WORK    (workspace/output) double array, dimension (LWORK)   
-            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.   
+    WORK    (workspace/output) double array, dimension (LWORK)
+            On exit, if INFO = 0, WORK(1) returns the optimal LWORK.
 
-    LWORK   (input) long   
-            The dimension of the array WORK.  LWORK >= 1.   
-            For optimum performance LWORK >= N*NB, where NB is the   
-            optimal blocksize.   
+    LWORK   (input) long
+            The dimension of the array WORK.  LWORK >= 1.
+            For optimum performance LWORK >= N*NB, where NB is the
+            optimal blocksize.
 
-            If LWORK = -1, then a workspace query is assumed; the routine   
-            only calculates the optimal size of the WORK array, returns   
-            this value as the first entry of the WORK array, and no error   
-            message related to LWORK is issued by XERBLA.   
+            If LWORK = -1, then a workspace query is assumed; the routine
+            only calculates the optimal size of the WORK array, returns
+            this value as the first entry of the WORK array, and no error
+            message related to LWORK is issued by XERBLA.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    If UPLO = 'U', the matrix Q is represented as a product of elementary   
-    reflectors   
+    If UPLO = 'U', the matrix Q is represented as a product of elementary
+    reflectors
 
-       Q = H(n-1) . . . H(2) H(1).   
+       Q = H(n-1) . . . H(2) H(1).
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H(i) = I - tau * v * v'   
+       H(i) = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(i+1:n) = 0 and v(i) = 1; v(1:i-1) is stored on exit in   
-    A(1:i-1,i+1), and tau in TAU(i).   
+    where tau is a real scalar, and v is a real vector with
+    v(i+1:n) = 0 and v(i) = 1; v(1:i-1) is stored on exit in
+    A(1:i-1,i+1), and tau in TAU(i).
 
-    If UPLO = 'L', the matrix Q is represented as a product of elementary   
-    reflectors   
+    If UPLO = 'L', the matrix Q is represented as a product of elementary
+    reflectors
 
-       Q = H(1) H(2) . . . H(n-1).   
+       Q = H(1) H(2) . . . H(n-1).
 
-    Each H(i) has the form   
+    Each H(i) has the form
 
-       H(i) = I - tau * v * v'   
+       H(i) = I - tau * v * v'
 
-    where tau is a real scalar, and v is a real vector with   
-    v(1:i) = 0 and v(i+1) = 1; v(i+2:n) is stored on exit in A(i+2:n,i),   
-    and tau in TAU(i).   
+    where tau is a real scalar, and v is a real vector with
+    v(1:i) = 0 and v(i+1) = 1; v(i+2:n) is stored on exit in A(i+2:n,i),
+    and tau in TAU(i).
 
-    The contents of A on exit are illustrated by the following examples   
-    with n = 5:   
+    The contents of A on exit are illustrated by the following examples
+    with n = 5:
 
-    if UPLO = 'U':                       if UPLO = 'L':   
+    if UPLO = 'U':                       if UPLO = 'L':
 
-      (  d   e   v2  v3  v4 )              (  d                  )   
-      (      d   e   v3  v4 )              (  e   d              )   
-      (          d   e   v4 )              (  v1  e   d          )   
-      (              d   e  )              (  v1  v2  e   d      )   
-      (                  d  )              (  v1  v2  v3  e   d  )   
+      (  d   e   v2  v3  v4 )              (  d                  )
+      (      d   e   v3  v4 )              (  e   d              )
+      (          d   e   v4 )              (  v1  e   d          )
+      (              d   e  )              (  v1  v2  e   d      )
+      (                  d  )              (  v1  v2  v3  e   d  )
 
-    where d and e denote diagonal and off-diagonal elements of T, and vi   
-    denotes an element of the vector defining H(i).   
+    where d and e denote diagonal and off-diagonal elements of T, and vi
+    denotes an element of the vector defining H(i).
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dtgsja(char *jobu, char *jobv, char *jobq, long *m, long *p,
-	long *n, long *k, long *l, double *a, long *lda, double *b, long *ldb, 
-	double *tola, double *tolb, double *alpha, double *beta, double *u, 
-	long *ldu, double *v, long *ldv, double *q, long *ldq, double *work, 
+int NUMlapack_dtgsja(const char *jobu, const char *jobv, const char *jobq, long *m, long *p,
+	long *n, long *k, long *l, double *a, long *lda, double *b, long *ldb,
+	double *tola, double *tolb, double *alpha, double *beta, double *u,
+	long *ldu, double *v, long *ldv, double *q, long *ldq, double *work,
 	long *ncycle, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
     NUMlapack_dtgsja computes the generalized singular value decomposition (GSVD)
-    of two real upper triangular (or trapezoidal) matrices A and B.   
+    of two real upper triangular (or trapezoidal) matrices A and B.
 
-    On entry, it is assumed that matrices A and B have the following   
-    forms, which may be obtained by the preprocessing subroutine NUMlapack_dggsvp   
-    from a general M-by-N matrix A and P-by-N matrix B:   
+    On entry, it is assumed that matrices A and B have the following
+    forms, which may be obtained by the preprocessing subroutine NUMlapack_dggsvp
+    from a general M-by-N matrix A and P-by-N matrix B:
 
-                 N-K-L  K    L   
-       A =    K ( 0    A12  A13 ) if M-K-L >= 0;   
-              L ( 0     0   A23 )   
-          M-K-L ( 0     0    0  )   
+                 N-K-L  K    L
+       A =    K ( 0    A12  A13 ) if M-K-L >= 0;
+              L ( 0     0   A23 )
+          M-K-L ( 0     0    0  )
 
-               N-K-L  K    L   
-       A =  K ( 0    A12  A13 ) if M-K-L < 0;   
-          M-K ( 0     0   A23 )   
+               N-K-L  K    L
+       A =  K ( 0    A12  A13 ) if M-K-L < 0;
+          M-K ( 0     0   A23 )
 
-               N-K-L  K    L   
-       B =  L ( 0     0   B13 )   
-          P-L ( 0     0    0  )   
+               N-K-L  K    L
+       B =  L ( 0     0   B13 )
+          P-L ( 0     0    0  )
 
-    where the K-by-K matrix A12 and L-by-L matrix B13 are nonsingular   
-    upper triangular; A23 is L-by-L upper triangular if M-K-L >= 0,   
-    otherwise A23 is (M-K)-by-L upper trapezoidal.   
+    where the K-by-K matrix A12 and L-by-L matrix B13 are nonsingular
+    upper triangular; A23 is L-by-L upper triangular if M-K-L >= 0,
+    otherwise A23 is (M-K)-by-L upper trapezoidal.
 
-    On exit,   
+    On exit,
 
-                U'*A*Q = D1*( 0 R ),    V'*B*Q = D2*( 0 R ),   
+                U'*A*Q = D1*( 0 R ),    V'*B*Q = D2*( 0 R ),
 
-    where U, V and Q are orthogonal matrices, Z' denotes the transpose   
-    of Z, R is a nonsingular upper triangular matrix, and D1 and D2 are   
-    ``diagonal'' matrices, which are of the following structures:   
+    where U, V and Q are orthogonal matrices, Z' denotes the transpose
+    of Z, R is a nonsingular upper triangular matrix, and D1 and D2 are
+    ``diagonal'' matrices, which are of the following structures:
 
-    If M-K-L >= 0,   
+    If M-K-L >= 0,
 
-                        K  L   
-           D1 =     K ( I  0 )   
-                    L ( 0  C )   
-                M-K-L ( 0  0 )   
+                        K  L
+           D1 =     K ( I  0 )
+                    L ( 0  C )
+                M-K-L ( 0  0 )
 
-                      K  L   
-           D2 = L   ( 0  S )   
-                P-L ( 0  0 )   
+                      K  L
+           D2 = L   ( 0  S )
+                P-L ( 0  0 )
 
-                   N-K-L  K    L   
-      ( 0 R ) = K (  0   R11  R12 ) K   
-                L (  0    0   R22 ) L   
+                   N-K-L  K    L
+      ( 0 R ) = K (  0   R11  R12 ) K
+                L (  0    0   R22 ) L
 
-    where   
+    where
 
-      C = diag( ALPHA(K+1), ... , ALPHA(K+L) ),   
-      S = diag( BETA(K+1),  ... , BETA(K+L) ),   
-      C**2 + S**2 = I.   
+      C = diag( ALPHA(K+1), ... , ALPHA(K+L) ),
+      S = diag( BETA(K+1),  ... , BETA(K+L) ),
+      C**2 + S**2 = I.
 
-      R is stored in A(1:K+L,N-K-L+1:N) on exit.   
+      R is stored in A(1:K+L,N-K-L+1:N) on exit.
 
-    If M-K-L < 0,   
+    If M-K-L < 0,
 
-                   K M-K K+L-M   
-        D1 =   K ( I  0    0   )   
-             M-K ( 0  C    0   )   
+                   K M-K K+L-M
+        D1 =   K ( I  0    0   )
+             M-K ( 0  C    0   )
 
-                     K M-K K+L-M   
-        D2 =   M-K ( 0  S    0   )   
-             K+L-M ( 0  0    I   )   
-               P-L ( 0  0    0   )   
+                     K M-K K+L-M
+        D2 =   M-K ( 0  S    0   )
+             K+L-M ( 0  0    I   )
+               P-L ( 0  0    0   )
 
-                   N-K-L  K   M-K  K+L-M   
-   ( 0 R ) =    K ( 0    R11  R12  R13  )   
-              M-K ( 0     0   R22  R23  )   
-            K+L-M ( 0     0    0   R33  )   
+                   N-K-L  K   M-K  K+L-M
+   ( 0 R ) =    K ( 0    R11  R12  R13  )
+              M-K ( 0     0   R22  R23  )
+            K+L-M ( 0     0    0   R33  )
 
-    where   
-    C = diag( ALPHA(K+1), ... , ALPHA(M) ),   
-    S = diag( BETA(K+1),  ... , BETA(M) ),   
-    C**2 + S**2 = I.   
+    where
+    C = diag( ALPHA(K+1), ... , ALPHA(M) ),
+    S = diag( BETA(K+1),  ... , BETA(M) ),
+    C**2 + S**2 = I.
 
-    R = ( R11 R12 R13 ) is stored in A(1:M, N-K-L+1:N) and R33 is stored   
-        (  0  R22 R23 )   
-    in B(M-K+1:L,N+M-K-L+1:N) on exit.   
+    R = ( R11 R12 R13 ) is stored in A(1:M, N-K-L+1:N) and R33 is stored
+        (  0  R22 R23 )
+    in B(M-K+1:L,N+M-K-L+1:N) on exit.
 
-    The computation of the orthogonal transformation matrices U, V or Q   
-    is optional.  These matrices may either be formed explicitly, or they   
-    may be postmultiplied into input matrices U1, V1, or Q1.   
+    The computation of the orthogonal transformation matrices U, V or Q
+    is optional.  These matrices may either be formed explicitly, or they
+    may be postmultiplied into input matrices U1, V1, or Q1.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    JOBU    (input) char*   
-            = 'U':  U must contain an orthogonal matrix U1 on entry, and   
-                    the product U1*U is returned;   
-            = 'I':  U is initialized to the unit matrix, and the   
-                    orthogonal matrix U is returned;   
-            = 'N':  U is not computed.   
+    JOBU    (input) char*
+            = 'U':  U must contain an orthogonal matrix U1 on entry, and
+                    the product U1*U is returned;
+            = 'I':  U is initialized to the unit matrix, and the
+                    orthogonal matrix U is returned;
+            = 'N':  U is not computed.
 
-    JOBV    (input) char*   
-            = 'V':  V must contain an orthogonal matrix V1 on entry, and   
-                    the product V1*V is returned;   
-            = 'I':  V is initialized to the unit matrix, and the   
-                    orthogonal matrix V is returned;   
-            = 'N':  V is not computed.   
+    JOBV    (input) char*
+            = 'V':  V must contain an orthogonal matrix V1 on entry, and
+                    the product V1*V is returned;
+            = 'I':  V is initialized to the unit matrix, and the
+                    orthogonal matrix V is returned;
+            = 'N':  V is not computed.
 
-    JOBQ    (input) char*   
-            = 'Q':  Q must contain an orthogonal matrix Q1 on entry, and   
-                    the product Q1*Q is returned;   
-            = 'I':  Q is initialized to the unit matrix, and the   
-                    orthogonal matrix Q is returned;   
-            = 'N':  Q is not computed.   
+    JOBQ    (input) char*
+            = 'Q':  Q must contain an orthogonal matrix Q1 on entry, and
+                    the product Q1*Q is returned;
+            = 'I':  Q is initialized to the unit matrix, and the
+                    orthogonal matrix Q is returned;
+            = 'N':  Q is not computed.
 
-    M       (input) long   
-            The number of rows of the matrix A.  M >= 0.   
+    M       (input) long
+            The number of rows of the matrix A.  M >= 0.
 
-    P       (input) long   
-            The number of rows of the matrix B.  P >= 0.   
+    P       (input) long
+            The number of rows of the matrix B.  P >= 0.
 
-    N       (input) long   
-            The number of columns of the matrices A and B.  N >= 0.   
+    N       (input) long
+            The number of columns of the matrices A and B.  N >= 0.
 
-    K       (input) long   
-    L       (input) long   
-            K and L specify the subblocks in the input matrices A and B:   
-            A23 = A(K+1:MIN(K+L,M),N-L+1:N) and B13 = B(1:L,N-L+1:N)   
+    K       (input) long
+    L       (input) long
+            K and L specify the subblocks in the input matrices A and B:
+            A23 = A(K+1:MIN(K+L,M),N-L+1:N) and B13 = B(1:L,N-L+1:N)
             of A and B, whose GSVD is going to be computed by NUMlapack_dtgsja.
-            See Further details.   
+            See Further details.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the M-by-N matrix A.   
-            On exit, A(N-K+1:N,1:MIN(K+L,M) ) contains the triangular   
-            matrix R or part of R.  See Purpose for details.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the M-by-N matrix A.
+            On exit, A(N-K+1:N,1:MIN(K+L,M) ) contains the triangular
+            matrix R or part of R.  See Purpose for details.
 
-    LDA     (input) long   
-            The leading dimension of the array A. LDA >= max(1,M).   
+    LDA     (input) long
+            The leading dimension of the array A. LDA >= max(1,M).
 
-    B       (input/output) double array, dimension (LDB,N)   
-            On entry, the P-by-N matrix B.   
-            On exit, if necessary, B(M-K+1:L,N+M-K-L+1:N) contains   
-            a part of R.  See Purpose for details.   
+    B       (input/output) double array, dimension (LDB,N)
+            On entry, the P-by-N matrix B.
+            On exit, if necessary, B(M-K+1:L,N+M-K-L+1:N) contains
+            a part of R.  See Purpose for details.
 
-    LDB     (input) long   
-            The leading dimension of the array B. LDB >= max(1,P).   
+    LDB     (input) long
+            The leading dimension of the array B. LDB >= max(1,P).
 
-    TOLA    (input) double   
-    TOLB    (input) double   
-            TOLA and TOLB are the convergence criteria for the Jacobi-   
-            Kogbetliantz iteration procedure. Generally, they are the   
-            same as used in the preprocessing step, say   
-                TOLA = max(M,N)*norm(A)*MAZHEPS,   
-                TOLB = max(P,N)*norm(B)*MAZHEPS.   
+    TOLA    (input) double
+    TOLB    (input) double
+            TOLA and TOLB are the convergence criteria for the Jacobi-
+            Kogbetliantz iteration procedure. Generally, they are the
+            same as used in the preprocessing step, say
+                TOLA = max(M,N)*norm(A)*MAZHEPS,
+                TOLB = max(P,N)*norm(B)*MAZHEPS.
 
-    ALPHA   (output) double array, dimension (N)   
-    BETA    (output) double array, dimension (N)   
+    ALPHA   (output) double array, dimension (N)
+    BETA    (output) double array, dimension (N)
             On exit, ALPHA and BETA contain the generalized singular
-            value pairs of A and B;   
-              ALPHA(1:K) = 1,   
-              BETA(1:K)  = 0,   
-            and if M-K-L >= 0,   
-              ALPHA(K+1:K+L) = diag(C),   
-              BETA(K+1:K+L)  = diag(S),   
-            or if M-K-L < 0,   
-              ALPHA(K+1:M)= C, ALPHA(M+1:K+L)= 0   
-              BETA(K+1:M) = S, BETA(M+1:K+L) = 1.   
-            Furthermore, if K+L < N,   
-              ALPHA(K+L+1:N) = 0 and   
-              BETA(K+L+1:N)  = 0.   
+            value pairs of A and B;
+              ALPHA(1:K) = 1,
+              BETA(1:K)  = 0,
+            and if M-K-L >= 0,
+              ALPHA(K+1:K+L) = diag(C),
+              BETA(K+1:K+L)  = diag(S),
+            or if M-K-L < 0,
+              ALPHA(K+1:M)= C, ALPHA(M+1:K+L)= 0
+              BETA(K+1:M) = S, BETA(M+1:K+L) = 1.
+            Furthermore, if K+L < N,
+              ALPHA(K+L+1:N) = 0 and
+              BETA(K+L+1:N)  = 0.
 
-    U       (input/output) double array, dimension (LDU,M)   
-            On entry, if JOBU = 'U', U must contain a matrix U1 (usually   
-            the orthogonal matrix returned by NUMlapack_dggsvp).   
-            On exit,   
-            if JOBU = 'I', U contains the orthogonal matrix U;   
-            if JOBU = 'U', U contains the product U1*U.   
-            If JOBU = 'N', U is not referenced.   
+    U       (input/output) double array, dimension (LDU,M)
+            On entry, if JOBU = 'U', U must contain a matrix U1 (usually
+            the orthogonal matrix returned by NUMlapack_dggsvp).
+            On exit,
+            if JOBU = 'I', U contains the orthogonal matrix U;
+            if JOBU = 'U', U contains the product U1*U.
+            If JOBU = 'N', U is not referenced.
 
-    LDU     (input) long   
-            The leading dimension of the array U. LDU >= max(1,M) if   
-            JOBU = 'U'; LDU >= 1 otherwise.   
+    LDU     (input) long
+            The leading dimension of the array U. LDU >= max(1,M) if
+            JOBU = 'U'; LDU >= 1 otherwise.
 
-    V       (input/output) double array, dimension (LDV,P)   
-            On entry, if JOBV = 'V', V must contain a matrix V1 (usually   
-            the orthogonal matrix returned by NUMlapack_dggsvp).   
-            On exit,   
-            if JOBV = 'I', V contains the orthogonal matrix V;   
-            if JOBV = 'V', V contains the product V1*V.   
-            If JOBV = 'N', V is not referenced.   
+    V       (input/output) double array, dimension (LDV,P)
+            On entry, if JOBV = 'V', V must contain a matrix V1 (usually
+            the orthogonal matrix returned by NUMlapack_dggsvp).
+            On exit,
+            if JOBV = 'I', V contains the orthogonal matrix V;
+            if JOBV = 'V', V contains the product V1*V.
+            If JOBV = 'N', V is not referenced.
 
-    LDV     (input) long   
-            The leading dimension of the array V. LDV >= max(1,P) if   
-            JOBV = 'V'; LDV >= 1 otherwise.   
+    LDV     (input) long
+            The leading dimension of the array V. LDV >= max(1,P) if
+            JOBV = 'V'; LDV >= 1 otherwise.
 
-    Q       (input/output) double array, dimension (LDQ,N)   
-            On entry, if JOBQ = 'Q', Q must contain a matrix Q1 (usually   
-            the orthogonal matrix returned by NUMlapack_dggsvp).   
-            On exit,   
-            if JOBQ = 'I', Q contains the orthogonal matrix Q;   
-            if JOBQ = 'Q', Q contains the product Q1*Q.   
-            If JOBQ = 'N', Q is not referenced.   
+    Q       (input/output) double array, dimension (LDQ,N)
+            On entry, if JOBQ = 'Q', Q must contain a matrix Q1 (usually
+            the orthogonal matrix returned by NUMlapack_dggsvp).
+            On exit,
+            if JOBQ = 'I', Q contains the orthogonal matrix Q;
+            if JOBQ = 'Q', Q contains the product Q1*Q.
+            If JOBQ = 'N', Q is not referenced.
 
-    LDQ     (input) long   
-            The leading dimension of the array Q. LDQ >= max(1,N) if   
-            JOBQ = 'Q'; LDQ >= 1 otherwise.   
+    LDQ     (input) long
+            The leading dimension of the array Q. LDQ >= max(1,N) if
+            JOBQ = 'Q'; LDQ >= 1 otherwise.
 
-    WORK    (workspace) double array, dimension (2*N)   
+    WORK    (workspace) double array, dimension (2*N)
 
-    NCYCLE  (output) long   
-            The number of cycles required for convergence.   
+    NCYCLE  (output) long
+            The number of cycles required for convergence.
 
-    INFO    (output) long   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value.   
-            = 1:  the procedure does not converge after MAXIT cycles.   
+    INFO    (output) long
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value.
+            = 1:  the procedure does not converge after MAXIT cycles.
 
-    Internal Parameters   
-    ===================   
+    Internal Parameters
+    ===================
 
-    MAXIT   long   
-            MAXIT specifies the total loops that the iterative procedure   
-            may take. If after MAXIT cycles, the routine fails to   
-            converge, we return INFO = 1.   
+    MAXIT   long
+            MAXIT specifies the total loops that the iterative procedure
+            may take. If after MAXIT cycles, the routine fails to
+            converge, we return INFO = 1.
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
     NUMlapack_dtgsja essentially uses a variant of Kogbetliantz algorithm to reduce
-    min(L,M-K)-by-L triangular (or trapezoidal) matrix A23 and L-by-L   
-    matrix B13 to the form:   
+    min(L,M-K)-by-L triangular (or trapezoidal) matrix A23 and L-by-L
+    matrix B13 to the form:
 
-             U1'*A13*Q1 = C1*R1; V1'*B13*Q1 = S1*R1,   
+             U1'*A13*Q1 = C1*R1; V1'*B13*Q1 = S1*R1,
 
-    where U1, V1 and Q1 are orthogonal matrix, and Z' is the transpose   
-    of Z.  C1 and S1 are diagonal matrices satisfying   
+    where U1, V1 and Q1 are orthogonal matrix, and Z' is the transpose
+    of Z.  C1 and S1 are diagonal matrices satisfying
 
-                  C1**2 + S1**2 = I,   
+                  C1**2 + S1**2 = I,
 
-    and R1 is an L-by-L nonsingular upper triangular matrix.   
+    and R1 is an L-by-L nonsingular upper triangular matrix.
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dtrevc (char *side, char *howmny, int * select, long *n, 
-	double *t, long *ldt, double *vl, long *ldvl, double *vr, long *ldvr, 
+int NUMlapack_dtrevc (const char *side, const char *howmny, int * select, long *n,
+	double *t, long *ldt, double *vl, long *ldvl, double *vr, long *ldvr,
 	long *mm, long *m, double *work, long *info);
-/*  -- LAPACK routine (version 3.0) --   
-       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,   
-       Courant Institute, Argonne National Lab, and Rice University   
-       June 30, 1999   
+/*  -- LAPACK routine (version 3.0) --
+       Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd.,
+       Courant Institute, Argonne National Lab, and Rice University
+       June 30, 1999
 
 
-    Purpose   
-    =======   
+    Purpose
+    =======
 
-    NUMlapack_dtrevc computes some or all of the right and/or left eigenvectors of   
-    a real upper quasi-triangular matrix T.   
+    NUMlapack_dtrevc computes some or all of the right and/or left eigenvectors of
+    a real upper quasi-triangular matrix T.
 
-    The right eigenvector x and the left eigenvector y of T corresponding   
-    to an eigenvalue w are defined by:   
+    The right eigenvector x and the left eigenvector y of T corresponding
+    to an eigenvalue w are defined by:
 
-                 T*x = w*x,     y'*T = w*y'   
+                 T*x = w*x,     y'*T = w*y'
 
-    where y' denotes the conjugate transpose of the vector y.   
+    where y' denotes the conjugate transpose of the vector y.
 
-    If all eigenvectors are requested, the routine may either return the   
-    matrices X and/or Y of right or left eigenvectors of T, or the   
-    products Q*X and/or Q*Y, where Q is an input orthogonal   
-    matrix. If T was obtained from the real-Schur factorization of an   
-    original matrix A = Q*T*Q', then Q*X and Q*Y are the matrices of   
-    right or left eigenvectors of A.   
+    If all eigenvectors are requested, the routine may either return the
+    matrices X and/or Y of right or left eigenvectors of T, or the
+    products Q*X and/or Q*Y, where Q is an input orthogonal
+    matrix. If T was obtained from the real-Schur factorization of an
+    original matrix A = Q*T*Q', then Q*X and Q*Y are the matrices of
+    right or left eigenvectors of A.
 
-    T must be in Schur canonical form (as returned by NUMlapack_dhseqr), that is,   
-    block upper triangular with 1-by-1 and 2-by-2 diagonal blocks; each   
-    2-by-2 diagonal block has its diagonal elements equal and its   
-    off-diagonal elements of opposite sign.  Corresponding to each 2-by-2   
-    diagonal block is a complex conjugate pair of eigenvalues and   
-    eigenvectors; only one eigenvector of the pair is computed, namely   
-    the one corresponding to the eigenvalue with positive imaginary part.   
+    T must be in Schur canonical form (as returned by NUMlapack_dhseqr), that is,
+    block upper triangular with 1-by-1 and 2-by-2 diagonal blocks; each
+    2-by-2 diagonal block has its diagonal elements equal and its
+    off-diagonal elements of opposite sign.  Corresponding to each 2-by-2
+    diagonal block is a complex conjugate pair of eigenvalues and
+    eigenvectors; only one eigenvector of the pair is computed, namely
+    the one corresponding to the eigenvalue with positive imaginary part.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    SIDE    (input) char*   
-            = 'R':  compute right eigenvectors only;   
-            = 'L':  compute left eigenvectors only;   
-            = 'B':  compute both right and left eigenvectors.   
+    SIDE    (input) char*
+            = 'R':  compute right eigenvectors only;
+            = 'L':  compute left eigenvectors only;
+            = 'B':  compute both right and left eigenvectors.
 
-    HOWMNY  (input) char*   
-            = 'A':  compute all right and/or left eigenvectors;   
-            = 'B':  compute all right and/or left eigenvectors,   
-                    and backtransform them using the input matrices   
-                    supplied in VR and/or VL;   
-            = 'S':  compute selected right and/or left eigenvectors,   
-                    specified by the int array SELECT.   
+    HOWMNY  (input) char*
+            = 'A':  compute all right and/or left eigenvectors;
+            = 'B':  compute all right and/or left eigenvectors,
+                    and backtransform them using the input matrices
+                    supplied in VR and/or VL;
+            = 'S':  compute selected right and/or left eigenvectors,
+                    specified by the int array SELECT.
 
-    SELECT  (input/output) int array, dimension (N)   
-            If HOWMNY = 'S', SELECT specifies the eigenvectors to be   
-            computed.   
-            If HOWMNY = 'A' or 'B', SELECT is not referenced.   
-            To select the real eigenvector corresponding to a real   
-            eigenvalue w(j), SELECT(j) must be set to .TRUE..  To select   
-            the complex eigenvector corresponding to a complex conjugate   
-            pair w(j) and w(j+1), either SELECT(j) or SELECT(j+1) must be   
-            set to .TRUE.; then on exit SELECT(j) is .TRUE. and   
-            SELECT(j+1) is .FALSE..   
+    SELECT  (input/output) int array, dimension (N)
+            If HOWMNY = 'S', SELECT specifies the eigenvectors to be
+            computed.
+            If HOWMNY = 'A' or 'B', SELECT is not referenced.
+            To select the real eigenvector corresponding to a real
+            eigenvalue w(j), SELECT(j) must be set to .TRUE..  To select
+            the complex eigenvector corresponding to a complex conjugate
+            pair w(j) and w(j+1), either SELECT(j) or SELECT(j+1) must be
+            set to .TRUE.; then on exit SELECT(j) is .TRUE. and
+            SELECT(j+1) is .FALSE..
 
-    N       (input) long   
-            The order of the matrix T. N >= 0.   
+    N       (input) long
+            The order of the matrix T. N >= 0.
 
-    T       (input) double array, dimension (LDT,N)   
-            The upper quasi-triangular matrix T in Schur canonical form.   
+    T       (input) double array, dimension (LDT,N)
+            The upper quasi-triangular matrix T in Schur canonical form.
 
-    LDT     (input) long   
-            The leading dimension of the array T. LDT >= max(1,N).   
+    LDT     (input) long
+            The leading dimension of the array T. LDT >= max(1,N).
 
-    VL      (input/output) double array, dimension (LDVL,MM)   
-            On entry, if SIDE = 'L' or 'B' and HOWMNY = 'B', VL must   
-            contain an N-by-N matrix Q (usually the orthogonal matrix Q   
-            of Schur vectors returned by NUMlapack_dhseqr).   
-            On exit, if SIDE = 'L' or 'B', VL contains:   
-            if HOWMNY = 'A', the matrix Y of left eigenvectors of T;   
-                             VL has the same quasi-lower triangular form   
-                             as T'. If T(i,i) is a real eigenvalue, then   
-                             the i-th column VL(i) of VL  is its   
-                             corresponding eigenvector. If T(i:i+1,i:i+1)   
-                             is a 2-by-2 block whose eigenvalues are   
-                             complex-conjugate eigenvalues of T, then   
-                             VL(i)+sqrt(-1)*VL(i+1) is the complex   
-                             eigenvector corresponding to the eigenvalue   
-                             with positive real part.   
-            if HOWMNY = 'B', the matrix Q*Y;   
-            if HOWMNY = 'S', the left eigenvectors of T specified by   
-                             SELECT, stored consecutively in the columns   
-                             of VL, in the same order as their   
-                             eigenvalues.   
-            A complex eigenvector corresponding to a complex eigenvalue   
-            is stored in two consecutive columns, the first holding the   
-            real part, and the second the imaginary part.   
-            If SIDE = 'R', VL is not referenced.   
+    VL      (input/output) double array, dimension (LDVL,MM)
+            On entry, if SIDE = 'L' or 'B' and HOWMNY = 'B', VL must
+            contain an N-by-N matrix Q (usually the orthogonal matrix Q
+            of Schur vectors returned by NUMlapack_dhseqr).
+            On exit, if SIDE = 'L' or 'B', VL contains:
+            if HOWMNY = 'A', the matrix Y of left eigenvectors of T;
+                             VL has the same quasi-lower triangular form
+                             as T'. If T(i,i) is a real eigenvalue, then
+                             the i-th column VL(i) of VL  is its
+                             corresponding eigenvector. If T(i:i+1,i:i+1)
+                             is a 2-by-2 block whose eigenvalues are
+                             complex-conjugate eigenvalues of T, then
+                             VL(i)+sqrt(-1)*VL(i+1) is the complex
+                             eigenvector corresponding to the eigenvalue
+                             with positive real part.
+            if HOWMNY = 'B', the matrix Q*Y;
+            if HOWMNY = 'S', the left eigenvectors of T specified by
+                             SELECT, stored consecutively in the columns
+                             of VL, in the same order as their
+                             eigenvalues.
+            A complex eigenvector corresponding to a complex eigenvalue
+            is stored in two consecutive columns, the first holding the
+            real part, and the second the imaginary part.
+            If SIDE = 'R', VL is not referenced.
 
-    LDVL    (input) long   
-            The leading dimension of the array VL.  LDVL >= max(1,N) if   
-            SIDE = 'L' or 'B'; LDVL >= 1 otherwise.   
+    LDVL    (input) long
+            The leading dimension of the array VL.  LDVL >= max(1,N) if
+            SIDE = 'L' or 'B'; LDVL >= 1 otherwise.
 
-    VR      (input/output) double array, dimension (LDVR,MM)   
-            On entry, if SIDE = 'R' or 'B' and HOWMNY = 'B', VR must   
-            contain an N-by-N matrix Q (usually the orthogonal matrix Q   
-            of Schur vectors returned by NUMlapack_dhseqr).   
-            On exit, if SIDE = 'R' or 'B', VR contains:   
-            if HOWMNY = 'A', the matrix X of right eigenvectors of T;   
-                             VR has the same quasi-upper triangular form   
-                             as T. If T(i,i) is a real eigenvalue, then   
-                             the i-th column VR(i) of VR  is its   
-                             corresponding eigenvector. If T(i:i+1,i:i+1)   
-                             is a 2-by-2 block whose eigenvalues are   
-                             complex-conjugate eigenvalues of T, then   
-                             VR(i)+sqrt(-1)*VR(i+1) is the complex   
-                             eigenvector corresponding to the eigenvalue   
-                             with positive real part.   
-            if HOWMNY = 'B', the matrix Q*X;   
-            if HOWMNY = 'S', the right eigenvectors of T specified by   
-                             SELECT, stored consecutively in the columns   
-                             of VR, in the same order as their   
-                             eigenvalues.   
-            A complex eigenvector corresponding to a complex eigenvalue   
-            is stored in two consecutive columns, the first holding the   
-            real part and the second the imaginary part.   
-            If SIDE = 'L', VR is not referenced.   
+    VR      (input/output) double array, dimension (LDVR,MM)
+            On entry, if SIDE = 'R' or 'B' and HOWMNY = 'B', VR must
+            contain an N-by-N matrix Q (usually the orthogonal matrix Q
+            of Schur vectors returned by NUMlapack_dhseqr).
+            On exit, if SIDE = 'R' or 'B', VR contains:
+            if HOWMNY = 'A', the matrix X of right eigenvectors of T;
+                             VR has the same quasi-upper triangular form
+                             as T. If T(i,i) is a real eigenvalue, then
+                             the i-th column VR(i) of VR  is its
+                             corresponding eigenvector. If T(i:i+1,i:i+1)
+                             is a 2-by-2 block whose eigenvalues are
+                             complex-conjugate eigenvalues of T, then
+                             VR(i)+sqrt(-1)*VR(i+1) is the complex
+                             eigenvector corresponding to the eigenvalue
+                             with positive real part.
+            if HOWMNY = 'B', the matrix Q*X;
+            if HOWMNY = 'S', the right eigenvectors of T specified by
+                             SELECT, stored consecutively in the columns
+                             of VR, in the same order as their
+                             eigenvalues.
+            A complex eigenvector corresponding to a complex eigenvalue
+            is stored in two consecutive columns, the first holding the
+            real part and the second the imaginary part.
+            If SIDE = 'L', VR is not referenced.
 
-    LDVR    (input) long   
-            The leading dimension of the array VR.  LDVR >= max(1,N) if   
-            SIDE = 'R' or 'B'; LDVR >= 1 otherwise.   
+    LDVR    (input) long
+            The leading dimension of the array VR.  LDVR >= max(1,N) if
+            SIDE = 'R' or 'B'; LDVR >= 1 otherwise.
 
-    MM      (input) long   
-            The number of columns in the arrays VL and/or VR. MM >= M.   
+    MM      (input) long
+            The number of columns in the arrays VL and/or VR. MM >= M.
 
-    M       (output) long   
-            The number of columns in the arrays VL and/or VR actually   
-            used to store the eigenvectors.   
-            If HOWMNY = 'A' or 'B', M is set to N.   
-            Each selected real eigenvector occupies one column and each   
-            selected complex eigenvector occupies two columns.   
+    M       (output) long
+            The number of columns in the arrays VL and/or VR actually
+            used to store the eigenvectors.
+            If HOWMNY = 'A' or 'B', M is set to N.
+            Each selected real eigenvector occupies one column and each
+            selected complex eigenvector occupies two columns.
 
-    WORK    (workspace) double array, dimension (3*N)   
+    WORK    (workspace) double array, dimension (3*N)
 
-    INFO    (output) INTEGER   
-            = 0:  successful exit   
-            < 0:  if INFO = -i, the i-th argument had an illegal value   
+    INFO    (output) INTEGER
+            = 0:  successful exit
+            < 0:  if INFO = -i, the i-th argument had an illegal value
 
-    Further Details   
-    ===============   
+    Further Details
+    ===============
 
-    The algorithm used in this program is basically backward (forward)   
-    substitution, with scaling to make the the code robust against   
-    possible overflow.   
+    The algorithm used in this program is basically backward (forward)
+    substitution, with scaling to make the the code robust against
+    possible overflow.
 
-    Each eigenvector is normalized so that the element of largest   
-    magnitude has magnitude 1; here the magnitude of a complex number   
-    (x,y) is taken to be |x| + |y|.   
+    Each eigenvector is normalized so that the element of largest
+    magnitude has magnitude 1; here the magnitude of a complex number
+    (x,y) is taken to be |x| + |y|.
 
-    =====================================================================   
+    =====================================================================
 */
 
-int NUMlapack_dtrti2 (char *uplo, char *diag, long *n, double *a, long *lda, long *info);
+int NUMlapack_dtrti2 (const char *uplo, const char *diag, long *n, double *a, long *lda, long *info);
 /*  Purpose
     =======
 
@@ -6439,53 +6439,53 @@ int NUMlapack_dtrti2 (char *uplo, char *diag, long *n, double *a, long *lda, lon
     =====================================================================
 */
 
-int NUMlapack_dtrtri (char *uplo, char *diag, long *n, double *
+int NUMlapack_dtrtri (const char *uplo, const char *diag, long *n, double *
 	a, long *lda, long *info);
-/*  Purpose   
-    =======   
+/*  Purpose
+    =======
 
-    NUMlapack_dtrtri computes the inverse of a real upper or lower triangular   
-    matrix A.   
+    NUMlapack_dtrtri computes the inverse of a real upper or lower triangular
+    matrix A.
 
-    This is the Level 3 BLAS version of the algorithm.   
+    This is the Level 3 BLAS version of the algorithm.
 
-    Arguments   
-    =========   
+    Arguments
+    =========
 
-    UPLO    (input) char*   
-            = 'U':  A is upper triangular;   
-            = 'L':  A is lower triangular.   
+    UPLO    (input) char*
+            = 'U':  A is upper triangular;
+            = 'L':  A is lower triangular.
 
-    DIAG    (input) char*   
-            = 'N':  A is non-unit triangular;   
-            = 'U':  A is unit triangular.   
+    DIAG    (input) char*
+            = 'N':  A is non-unit triangular;
+            = 'U':  A is unit triangular.
 
-    N       (input) long   
-            The order of the matrix A.  N >= 0.   
+    N       (input) long
+            The order of the matrix A.  N >= 0.
 
-    A       (input/output) double array, dimension (LDA,N)   
-            On entry, the triangular matrix A.  If UPLO = 'U', the   
-            leading N-by-N upper triangular part of the array A contains   
-            the upper triangular matrix, and the strictly lower   
-            triangular part of A is not referenced.  If UPLO = 'L', the   
-            leading N-by-N lower triangular part of the array A contains   
-            the lower triangular matrix, and the strictly upper   
-            triangular part of A is not referenced.  If DIAG = 'U', the   
-            diagonal elements of A are also not referenced and are   
-            assumed to be 1.   
-            On exit, the (triangular) inverse of the original matrix, in   
-            the same storage format.   
+    A       (input/output) double array, dimension (LDA,N)
+            On entry, the triangular matrix A.  If UPLO = 'U', the
+            leading N-by-N upper triangular part of the array A contains
+            the upper triangular matrix, and the strictly lower
+            triangular part of A is not referenced.  If UPLO = 'L', the
+            leading N-by-N lower triangular part of the array A contains
+            the lower triangular matrix, and the strictly upper
+            triangular part of A is not referenced.  If DIAG = 'U', the
+            diagonal elements of A are also not referenced and are
+            assumed to be 1.
+            On exit, the (triangular) inverse of the original matrix, in
+            the same storage format.
 
-    LDA     (input) long   
-            The leading dimension of the array A.  LDA >= max(1,N).   
+    LDA     (input) long
+            The leading dimension of the array A.  LDA >= max(1,N).
 
-    INFO    (output) long   
-            = 0: successful exit   
-            < 0: if INFO = -i, the i-th argument had an illegal value   
-            > 0: if INFO = i, A(i,i) is exactly zero.  The triangular   
-                 matrix is singular and its inverse can not be computed.   
+    INFO    (output) long
+            = 0: successful exit
+            < 0: if INFO = -i, the i-th argument had an illegal value
+            > 0: if INFO = i, A(i,i) is exactly zero.  The triangular
+                 matrix is singular and its inverse can not be computed.
 
-    =====================================================================   
+    =====================================================================
 */
 
 long NUMlapack_ieeeck (long *ispec, float *zero, float *one);
@@ -6520,7 +6520,7 @@ long NUMlapack_ieeeck (long *ispec, float *zero, float *one);
 */
 
 
-long NUMlapack_ilaenv (long *ispec, char *name, char *opts, long *n1,
+long NUMlapack_ilaenv (long *ispec, const char *name, const char *opts, long *n1,
 	long *n2, long *n3, long *n4, long name_len, long opts_len);
 /*  Purpose
     =======

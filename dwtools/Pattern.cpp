@@ -55,7 +55,7 @@ Pattern Pattern_create (long ny, long nx)
 		autoPattern me = Thing_new (Pattern);
 		Pattern_init (me.peek(), ny, nx);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Pattern not created."); }
+	} catch (MelderError) { Melder_throw ("Pattern not created."); }
 }
 
 void Pattern_normalize (I, int choice, double pmin, double pmax)
@@ -111,7 +111,7 @@ Pattern Matrix_to_Pattern (I, int join)
 			for (long j = 1; j <= my nx; j++) { thy z[r][c++] = my z[i][j]; }
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Pattern created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Pattern created."); }
 }
 
 Matrix Pattern_to_Matrix (Pattern me)
@@ -120,7 +120,7 @@ Matrix Pattern_to_Matrix (Pattern me)
 		autoMatrix thee = (Matrix) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classMatrix);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Matrix."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Matrix."); }
 }
 
 /* End of file Pattern.cpp */

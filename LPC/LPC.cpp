@@ -87,7 +87,7 @@ void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 {
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = predictionOrder;
-	Sampled_init (me, tmin, tmax, nt, dt, t1); therror
+	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my frame = NUMvector<structLPC_Frame> (1, nt);
 }
 
@@ -98,7 +98,7 @@ LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoLPC me = Thing_new (LPC);
 		LPC_init (me.peek(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("LPC not created."); }
+	} catch (MelderError) { Melder_throw ("LPC not created."); }
 }
 
 void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, int garnish)
@@ -153,7 +153,7 @@ Matrix LPC_to_Matrix (LPC me)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Matrix created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Matrix created."); }
 }
 
 /* End of file LPC.cpp */

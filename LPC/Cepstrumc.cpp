@@ -73,21 +73,19 @@ class_methods (Cepstrumc, Sampled)
 	class_method_local (Cepstrumc, description)
 class_methods_end
 
-int Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients)
+void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients)
 {
-		my c = NUMvector<double> (0, nCoefficients);
-		my nCoefficients = nCoefficients;
-		return 1;
+	my c = NUMvector<double> (0, nCoefficients);
+	my nCoefficients = nCoefficients;
 }
 
-int Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
+void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
 	int nCoefficients, double samplingFrequency)
 {
 		my samplingFrequency = samplingFrequency;
 		my maxnCoefficients = nCoefficients;
-		Sampled_init (me, tmin, tmax, nt, dt, t1); therror
+		Sampled_init (me, tmin, tmax, nt, dt, t1);
 		my frame = NUMvector<structCepstrumc_Frame> (1, nt);
-		return 1;
 }
  
 Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -97,7 +95,7 @@ Cepstrumc Cepstrumc_create (double tmin, double tmax, long nt, double dt, double
 		autoCepstrumc me = Thing_new (Cepstrumc);
 		Cepstrumc_init (me.peek(), tmin, tmax, nt, dt, t1, nCoefficients, samplingFrequency);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Cepstrum not created."); }
+	} catch (MelderError) { Melder_throw ("Cepstrum not created."); }
 }
 
 static void regression (Cepstrumc me, long frame, double r[], long nr)
@@ -178,11 +176,11 @@ DTW Cepstrumc_to_DTW (Cepstrumc me, Cepstrumc thee, double wc, double wle,
 				his z[i][j] = sqrt (dist); // prototype along y-direction
 			}
 			Melder_progress5 ((double)i / my nx, L"Calculate distances: frame ",
-				Melder_integer (i), L" from ", Melder_integer (my nx), L"."); therror
+				Melder_integer (i), L" from ", Melder_integer (my nx), L".");
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("DTW not created."); }
+	} catch (MelderError) { Melder_throw ("DTW not created."); }
 }
 
 Matrix Cepstrumc_to_Matrix (Cepstrumc me)
@@ -197,7 +195,7 @@ Matrix Cepstrumc_to_Matrix (Cepstrumc me)
 			for (long j = 1; j <= his nCoefficients+1; j++) thy z[j][i] = his c[j-1];
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Matrix created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Matrix created."); }
 }
 
 /* End of file Cepstrumc.cpp */

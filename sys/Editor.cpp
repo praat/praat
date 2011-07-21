@@ -64,39 +64,26 @@ void Editor_prefs (void) {
 
 /********** class EditorCommand **********/
 
-static void classEditorCommand_destroy (I) {
-	iam (EditorCommand);
-	Melder_free (my itemTitle);
-	Melder_free (my script);
-	forget (my dialog);
-	inherited (EditorCommand) destroy (me);
+void structEditorCommand :: v_destroy () {
+	Melder_free (itemTitle);
+	Melder_free (script);
+	forget (dialog);
+	EditorCommand_Parent :: v_destroy ();
 }
 
 class_methods (EditorCommand, Thing) {
-	class_method_local (EditorCommand, destroy)
 	class_methods_end
 }
 
 /********** class EditorMenu **********/
 
-struct structEditorMenu : public structThing {
-	Editor editor;
-	const wchar *menuTitle;
-	GuiObject menuWidget;
-	Ordered commands;
-};
-#define EditorMenu__methods(Klas) Thing__methods(klas)
-Thing_declare2cpp (EditorMenu, Thing);
-
-static void classEditorMenu_destroy (I) {
-	iam (EditorMenu);
-	Melder_free (my menuTitle);
-	forget (my commands);
-	inherited (EditorCommand) destroy (me);
+void structEditorMenu :: v_destroy () {
+	Melder_free (menuTitle);
+	forget (commands);
+	EditorMenu_Parent :: v_destroy ();
 }
 
 class_methods (EditorMenu, Thing) {
-	class_method_local (EditorMenu, destroy)
 	class_methods_end
 }
 

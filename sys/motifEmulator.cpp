@@ -2165,9 +2165,8 @@ void XtAddCallback (GuiObject me, int kind, XtCallbackProc proc, XtPointer closu
 	}
 }
 
-XtWorkProcId XtAppAddWorkProc (XtAppContext appContext, XtWorkProc workProc, XtPointer closure) {
+XtWorkProcId GuiAddWorkProc (XtWorkProc workProc, XtPointer closure) {
 	int i = 1;
-	(void) appContext;
 	while (i < 10 && theWorkProcs [i]) i ++;
 	Melder_assert (i < 10);
 	theWorkProcs [i] = workProc;
@@ -2190,9 +2189,8 @@ static pascal void timerAction (EventLoopTimerRef timer, void *closure) {
 }
 #endif
 
-XtIntervalId XtAppAddTimeOut (XtAppContext appContext, unsigned long interval, XtTimerCallbackProc proc, XtPointer closure) {
+XtIntervalId GuiAddTimeOut (unsigned long interval, XtTimerCallbackProc proc, XtPointer closure) {
 	long i = 1;
-	(void) appContext;
 	while (i < 10 && theTimeOutProcs [i]) i ++;
 	Melder_assert (i < 10);
 	theTimeOutProcs [i] = proc;
@@ -2790,12 +2788,8 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 	static LRESULT CALLBACK windowProc (HWND window, UINT message, WPARAM wParam, LPARAM lParam);
 #endif
 
-GuiObject XtInitialize (void *dum1, const char *name,
-	void *dum2, int dum3, unsigned int *argc, char **argv)
+GuiObject GuiInitialize (const char *name, unsigned int *argc, char **argv)
 {
-	(void) dum1;
-	(void) dum2;
-	(void) dum3;
 	(void) argc;
 	#if mac
 		(void) argv;
@@ -2875,13 +2869,12 @@ GuiObject XtInitialize (void *dum1, const char *name,
 	return theApplicationShell = XmCreateShell (NULL, name, NULL, 0);
 }
 
-GuiObject XtVaAppInitialize (XtAppContext *dum1, const char *name,
+GuiObject GuiAppInitialize (const char *name,
 	void *dum2, int dum3, unsigned int *argc, char **argv, void *dum4, void *dum5)
 {
-	(void) dum1;
 	(void) dum4;
 	(void) dum5;
-	return XtInitialize (0, name, dum2, dum3, argc, argv);
+	return GuiInitialize (name, argc, argv);
 }
 
 GuiObject XtVaCreateManagedWidget (const char *name, int widgetClass, GuiObject parent, ...) {
@@ -4204,8 +4197,7 @@ static void processWorkProcsAndTimeOuts (void) {
 	#endif
 }
 
-void XtAppNextEvent (XtAppContext appContext, XEvent *xevent) {
-	(void) appContext;
+void GuiNextEvent (XEvent *xevent) {
 	#if win
 		if (theNumberOfWorkProcs != 0 || theNumberOfTimeOuts != 0) {
 			if (PeekMessage (xevent, 0, 0, 0, PM_REMOVE)) {   // Message available?
@@ -4446,10 +4438,10 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 	#endif
 }
 
-void XtAppMainLoop (XtAppContext appctxt) {
+void GuiMainLoop () {
 	for (;;) {
 		XEvent event;
-		XtAppNextEvent (appctxt, & event);
+		GuiNextEvent (& event);
 		XtDispatchEvent (& event);
 	}
 }

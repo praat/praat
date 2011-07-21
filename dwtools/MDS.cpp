@@ -41,12 +41,12 @@
 #define TINY 1e-30
 
 /********************** NUMERICAL STUFF **************************************/
-	
+
 static void NUMdmatrix_into_vector (double **m, double *v, long r1, long r2,
 	long c1, long c2)
 {
 	long k = 1;
-	
+
 	for(long i = r1; i <= r2; i++)
 	{
 		for (long j=c1; j <= c2; j++)
@@ -56,11 +56,11 @@ static void NUMdmatrix_into_vector (double **m, double *v, long r1, long r2,
 	}
 }
 
-static void NUMdvector_into_matrix (const double *v, double **m, 
+static void NUMdvector_into_matrix (const double *v, double **m,
 	long r1, long r2, long c1, long c2)
 {
 	long k = 1;
-	
+
 	for(long i = r1; i <= r2; i++)
 	{
 		for (long j = c1; j <= c2; j++)
@@ -71,7 +71,7 @@ static void NUMdvector_into_matrix (const double *v, double **m,
 }
 
 static void NUMdmatrix_normalizeRows (double **m, long nr, long nc)
-{	
+{
 	for (long i = 1; i <= nr; i++)
 	{
 		double rowSum = 0;
@@ -79,7 +79,7 @@ static void NUMdmatrix_normalizeRows (double **m, long nr, long nc)
 		{
 			rowSum += m[i][j];
 		}
-		
+
 		if (rowSum != 0)
 		{
 			for (long j = 1; j <= nc; j++)
@@ -93,7 +93,7 @@ static void NUMdmatrix_normalizeRows (double **m, long nr, long nc)
 static long NUMdmatrix_countZeros (double **m, long nr, long nc)
 {
 	long nZeros = 0;
-	
+
 	for (long i = 1; i <= nr; i++)
 	{
 		for (long j = 1; j <= nc; j++)
@@ -104,34 +104,32 @@ static long NUMdmatrix_countZeros (double **m, long nr, long nc)
 	return nZeros;
 }
 
-static int NUMsort3 (double *data, long *iPoint, long *jPoint, long ifrom, 
-	long ito, int ascending)
+static void NUMsort3 (double *data, long *iPoint, long *jPoint, long ifrom, long ito, int ascending)
 {
-		if (ifrom > ito || ifrom < 1) Melder_throw ("invalid range.");
-		long n = ito - ifrom + 1;
-		if (n == 1) return 1;
-		autoNUMvector<long> indx (ifrom, ito);
-		autoNUMvector<double> atmp (ifrom, ito);
-		autoNUMvector<long> itmp (ifrom, ito);	
-		//NUMindexx (data + ifrom - 1, n, indx + ifrom - 1);
-		NUMindexx (&data [ifrom - 1], n, &indx [ifrom - 1]);
-		if (! ascending)
+	if (ifrom > ito || ifrom < 1) Melder_throw ("invalid range.");
+	long n = ito - ifrom + 1;
+	if (n == 1) return;
+	autoNUMvector<long> indx (ifrom, ito);
+	autoNUMvector<double> atmp (ifrom, ito);
+	autoNUMvector<long> itmp (ifrom, ito);
+	//NUMindexx (data + ifrom - 1, n, indx + ifrom - 1);
+	NUMindexx (&data [ifrom - 1], n, &indx [ifrom - 1]);
+	if (! ascending)
+	{
+		for (long j = ifrom; j <= ifrom + n / 2; j++)
 		{
-			for (long j = ifrom; j <= ifrom + n / 2; j++)
-			{
-				long tmp = indx[j];
-				indx[j] = indx[ito - j + ifrom]; 
-				indx[ito - j + ifrom] = tmp;
-			}
+			long tmp = indx[j];
+			indx[j] = indx[ito - j + ifrom];
+			indx[ito - j + ifrom] = tmp;
 		}
-		for (long j = ifrom; j <= ito; j++) indx[j] += ifrom -1;
-		for (long j = ifrom; j <= ito; j++) atmp[j] = data[j];
-		for (long j = ifrom; j <= ito; j++) data[j] = atmp[indx[j]];
-		for (long j = ifrom; j <= ito; j++) itmp[j] = iPoint[j];
-		for (long j = ifrom; j <= ito; j++) iPoint[j] = itmp[indx[j]];
-		for (long j = ifrom; j <= ito; j++) itmp[j] = jPoint[j];
-		for (long j = ifrom; j <= ito; j++) jPoint[j] = itmp[indx[j]];
-		return 1;
+	}
+	for (long j = ifrom; j <= ito; j++) indx[j] += ifrom -1;
+	for (long j = ifrom; j <= ito; j++) atmp[j] = data[j];
+	for (long j = ifrom; j <= ito; j++) data[j] = atmp[indx[j]];
+	for (long j = ifrom; j <= ito; j++) itmp[j] = iPoint[j];
+	for (long j = ifrom; j <= ito; j++) iPoint[j] = itmp[indx[j]];
+	for (long j = ifrom; j <= ito; j++) itmp[j] = jPoint[j];
+	for (long j = ifrom; j <= ito; j++) jPoint[j] = itmp[indx[j]];
 }
 
 /************ Configurations & Similarity **************************/
@@ -145,10 +143,10 @@ Distances Configurations_to_Distances (Configurations me)
 			Configuration conf = (Configuration) (my item[i]);
 			autoDistance d = Configuration_to_Distance (conf);
 			Thing_setName (d.peek(), Thing_getName (conf));
-			Collection_addItem (thee.peek(), d.transfer()); therror
+			Collection_addItem (thee.peek(), d.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Distances not created form Configurations."); }
+	} catch (MelderError) { Melder_throw ("Distances not created form Configurations."); }
 }
 
 Similarity Configurations_to_Similarity_cc (Configurations me, Weight weight)
@@ -157,7 +155,7 @@ Similarity Configurations_to_Similarity_cc (Configurations me, Weight weight)
 		autoDistances d = Configurations_to_Distances (me);
 		autoSimilarity thee = Distances_to_Similarity_cc (d.peek(), weight);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Similarity not created form Configurations."); }
+	} catch (MelderError) { Melder_throw ("Similarity not created form Configurations."); }
 }
 
 Similarity Distances_to_Similarity_cc (Distances me, Weight w)
@@ -171,9 +169,9 @@ Similarity Distances_to_Similarity_cc (Distances me, Weight w)
 			aw.reset (Weight_create (((Distance) (my item[1])) -> numberOfRows));
 			w = aw.peek();
 		}
-	
+
 		autoSimilarity thee = Similarity_create (my size);
-	
+
 		for (long i = 1; i <= my size; i++)
 		{
 			Distance di = (Distance) (my item[i]);
@@ -189,7 +187,7 @@ Similarity Distances_to_Similarity_cc (Distances me, Weight w)
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("Similarity not created form Distancess."); 
+		Melder_throw ("Similarity not created form Distancess.");
 	}
 }
 
@@ -201,7 +199,7 @@ static Distance classTransformator_transform (I, MDSVec vec, Distance dist, Weig
 	try {
 		iam (Transformator);
 		(void) w;
-	
+
 		autoDistance thee = Distance_create (my numberOfPoints);
 		TableOfReal_copyLabels (dist, thee.peek(), 1, 1);
 		/*
@@ -214,7 +212,7 @@ static Distance classTransformator_transform (I, MDSVec vec, Distance dist, Weig
 			thy data[ii][jj] = thy data[jj][ii] = vec -> proximity[i];
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Distance not created."); }
+	} catch (MelderError) { Melder_throw ("Distance not created."); }
 }
 
 class_methods (Transformator, Thing)
@@ -230,10 +228,12 @@ void Transformator_init (I, long numberOfPoints)
 
 Transformator Transformator_create (long numberOfPoints)
 {
+	try {
 		autoTransformator me = Thing_new (Transformator);
 		Transformator_init (me.peek(), numberOfPoints);
 		my normalization = 0;
 		return me.transfer();
+	} catch (MelderError) { Melder_throw ("No Transformator created."); }
 }
 
 #undef our
@@ -247,41 +247,41 @@ Distance Transformator_transform (I, MDSVec vec, Distance d, Weight w)
 		my numberOfPoints != d -> numberOfRows ||
 		d -> numberOfRows != w -> numberOfRows) Melder_throw (L"Dimensions do not agree.");
 		return our transform (me, vec, d, w);
-	} catch (MelderError) { Melder_thrown (me, "Distance not created."); }
+	} catch (MelderError) { Melder_throw (me, "Distance not created."); }
 }
 
 static Distance classRatioTransformator_transform (I, MDSVec vec, Distance d, Weight w)
 {
-		iam (RatioTransformator);
-		autoDistance thee = Distance_create (my numberOfPoints);
-		TableOfReal_copyLabels (d, thee.peek(), 1, 1);
+	iam (RatioTransformator);
+	autoDistance thee = Distance_create (my numberOfPoints);
+	TableOfReal_copyLabels (d, thee.peek(), 1, 1);
 
-		// Determine ratio (eq. 9.4)
-		
-		double etaSq = 0, rho = 0; 
-		for (long i = 1; i <= vec -> nProximities; i++)
-		{
-			long ii = vec -> iPoint[i];
-			long jj = vec -> jPoint[i];
-			double delta_ij = vec -> proximity[i], d_ij = d -> data[ii][jj];
-			double tmp = w -> data[ii][jj] * delta_ij * delta_ij;
-			etaSq += tmp;
-			rho += tmp * d_ij * d_ij;
-		}
-		
-		// transform
-	
-		if (etaSq == 0) Melder_throw ("Eta squared is zero.");
-		my ratio = rho / etaSq;
-		for (long i = 1; i <= vec -> nProximities; i++)
-		{
-			long ii = vec -> iPoint[i];
-			long jj = vec -> jPoint[i];
-			thy data[ii][jj] = thy data[jj][ii] = my ratio * vec -> proximity[i];
-		}
-	
-		if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
-		return thee.transfer();
+	// Determine ratio (eq. 9.4)
+
+	double etaSq = 0, rho = 0;
+	for (long i = 1; i <= vec -> nProximities; i++)
+	{
+		long ii = vec -> iPoint[i];
+		long jj = vec -> jPoint[i];
+		double delta_ij = vec -> proximity[i], d_ij = d -> data[ii][jj];
+		double tmp = w -> data[ii][jj] * delta_ij * delta_ij;
+		etaSq += tmp;
+		rho += tmp * d_ij * d_ij;
+	}
+
+	// transform
+
+	if (etaSq == 0) Melder_throw ("Eta squared is zero.");
+	my ratio = rho / etaSq;
+	for (long i = 1; i <= vec -> nProximities; i++)
+	{
+		long ii = vec -> iPoint[i];
+		long jj = vec -> jPoint[i];
+		thy data[ii][jj] = thy data[jj][ii] = my ratio * vec -> proximity[i];
+	}
+
+	if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
+	return thee.transfer();
 }
 
 class_methods (RatioTransformator, Transformator)
@@ -294,17 +294,17 @@ RatioTransformator RatioTransformator_create (long numberOfPoints)
 		autoRatioTransformator me = Thing_new (RatioTransformator);
 		Transformator_init (me.peek(), numberOfPoints);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("RatioTransformator not created."); }
+	} catch (MelderError) { Melder_throw ("RatioTransformator not created."); }
 }
 
 static Distance classMonotoneTransformator_transform (I, MDSVec vec, Distance d, Weight w)
 {
 	try {
-		iam (MonotoneTransformator);	
+		iam (MonotoneTransformator);
 		autoDistance thee = MDSVec_Distance_monotoneRegression (vec, d, my tiesProcessing);
 		if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Distance not created."); }
+	} catch (MelderError) { Melder_throw ("Distance not created."); }
 
 }
 
@@ -319,10 +319,10 @@ MonotoneTransformator MonotoneTransformator_create (long numberOfPoints)
 		Transformator_init (me.peek(), numberOfPoints);
 		my tiesProcessing = MDS_PRIMARY_APPROACH;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("MonotoneTransformator not created."); }
+	} catch (MelderError) { Melder_throw ("MonotoneTransformator not created."); }
 }
 
-void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me, 
+void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me,
 	int tiesProcessing)
 {
 	my tiesProcessing = tiesProcessing;
@@ -339,71 +339,71 @@ static void classISplineTransformator_destroy (I)
 
 static Distance classISplineTransformator_transform (I, MDSVec vec, Distance dist, Weight w)
 {
-		iam (ISplineTransformator); 
-		double tol = 1e-6;
-		long itermax = 20, nx = vec -> nProximities;
-		long nKnots = my numberOfInteriorKnots + my order + my order + 2;
+	iam (ISplineTransformator);
+	double tol = 1e-6;
+	long itermax = 20, nx = vec -> nProximities;
+	long nKnots = my numberOfInteriorKnots + my order + my order + 2;
 
-		autoDistance thee = Distance_create (dist -> numberOfRows);
-		TableOfReal_copyLabels (dist, thee.peek(), 1, -1); therror
-	
-		autoNUMvector<double> d (1, nx);
-		
-		for (long i = 1; i <= nx; i++)
+	autoDistance thee = Distance_create (dist -> numberOfRows);
+	TableOfReal_copyLabels (dist, thee.peek(), 1, -1);
+
+	autoNUMvector<double> d (1, nx);
+
+	for (long i = 1; i <= nx; i++)
+	{
+		d[i] = dist -> data[vec -> iPoint[i]][vec -> jPoint[i]];
+	}
+
+	/*
+		Process knots. Put interior knots at quantiles.
+		Guarantee that for each proximity x[i]: knot[j] <= x[i] < knot[j+1]
+	*/
+
+	for (long i = 1; i <= my order+1; i++)
+	{
+		my knot[i] = vec -> proximity[1];
+		my knot[nKnots - i + 1] = vec -> proximity[nx] * 1.000001;
+	}
+	for (long i = 1; i <= my numberOfInteriorKnots; i++)
+	{
+		double fraction = (double) i / (my numberOfInteriorKnots + 1);
+		my knot[my order + 1 + i] = NUMquantile (nx, vec -> proximity, fraction);
+	}
+
+	/*
+		Calculate data matrix m.
+	*/
+
+	for (long i = 1; i <= nx; i++)
+	{
+		double y, x = vec -> proximity[i];
+		my m[i][1] = 1;
+		for (long j = 2; j <= my numberOfParameters; j++)
 		{
-			d[i] = dist -> data[vec -> iPoint[i]][vec -> jPoint[i]];
+			try { NUMispline (my knot, nKnots, my order, j - 1, x, &y);
+			} catch (MelderError) { Melder_throw ("I-spline[",j-1, "], data[", i,"d] = ", x); }
+			my m[i][j] = y;
 		}
-	
-		/*
-			Process knots. Put interior knots at quantiles.
-			Guarantee that for each proximity x[i]: knot[j] <= x[i] < knot[j+1] 
-		*/
-	
-		for (long i = 1; i <= my order+1; i++)
+	}
+
+	NUMsolveNonNegativeLeastSquaresRegression (my m, nx, my numberOfParameters,
+		d.peek(), tol, itermax, my b);
+
+	for (long i = 1; i <= nx; i++)
+	{
+		long ii = vec->iPoint[i];
+		long jj = vec->jPoint[i];
+		double r = 0;
+
+		for (long j = 1; j <= my numberOfParameters; j++)
 		{
-			my knot[i] = vec -> proximity[1];
-			my knot[nKnots - i + 1] = vec -> proximity[nx] * 1.000001;
+			r += my m[i][j] * my b[j];
 		}
-		for (long i = 1; i <= my numberOfInteriorKnots; i++)
-		{
-			double fraction = (double) i / (my numberOfInteriorKnots + 1);
-			my knot[my order + 1 + i] = NUMquantile (nx, vec -> proximity, fraction);
-		}
-	 
-		/*
-			Calculate data matrix m.
-		*/
-	
-		for (long i = 1; i <= nx; i++)
-		{
-			double y, x = vec -> proximity[i];
-			my m[i][1] = 1;
-			for (long j = 2; j <= my numberOfParameters; j++)
-			{
-				try { NUMispline (my knot, nKnots, my order, j - 1, x, &y);
-				} catch (MelderError) { Melder_throw ("I-spline[",j-1, "], data[", i,"d] = ", x); }
-				my m[i][j] = y;
-			}
-		}
-	
-		NUMsolveNonNegativeLeastSquaresRegression (my m, nx, my numberOfParameters, 
-			d.peek(), tol, itermax, my b);
-	
-		for (long i = 1; i <= nx; i++)
-		{
-			long ii = vec->iPoint[i];
-			long jj = vec->jPoint[i];
-			double r = 0;
-		
-			for (long j = 1; j <= my numberOfParameters; j++)
-			{
-				r += my m[i][j] * my b[j];
-			}
-			thy data[ii][jj] = thy data[jj][ii] = r;
-		}
-	
-		if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
-		return thee.transfer();
+		thy data[ii][jj] = thy data[jj][ii] = r;
+	}
+
+	if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
+	return thee.transfer();
 }
 
 class_methods (ISplineTransformator, Transformator)
@@ -412,43 +412,43 @@ class_methods (ISplineTransformator, Transformator)
 class_methods_end
 
 
-ISplineTransformator ISplineTransformator_create (long numberOfPoints, 
+ISplineTransformator ISplineTransformator_create (long numberOfPoints,
 	long numberOfInteriorKnots, long order)
 {
 	try {
 		autoISplineTransformator me = Thing_new (ISplineTransformator);
 		long nData = (numberOfPoints - 1) * numberOfPoints / 2;
 
-		Transformator_init (me.peek(), numberOfPoints); 
-	
+		Transformator_init (me.peek(), numberOfPoints);
+
 		/*
 			1 extra parameter for the intercept.
 			2 extra knots for the I-spline.
 		*/
-	
+
 		my numberOfParameters = numberOfInteriorKnots + order + 1;
 		long numberOfKnots = numberOfInteriorKnots + order + order + 2;
 
 		my b = NUMvector<double> (1, my numberOfParameters);
 		my knot = NUMvector<double> (1, numberOfKnots);
 		my m = NUMmatrix<double> (1, nData, 1, my numberOfParameters);
-	
+
 		for (long i = 1; i <= my numberOfParameters; i++)
 		{
 			my b[i] = NUMrandomUniform (0, 1);
 		}
-	
+
 		my numberOfInteriorKnots = numberOfInteriorKnots;
 		my order = order;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("ISplineTransformator not created."); }
+	} catch (MelderError) { Melder_throw ("ISplineTransformator not created."); }
 }
 
 /***************** CONTINGENCYTABLE **************************************/
 
 static void classContingencyTable_info (I)
 {
-	iam (ContingencyTable); 
+	iam (ContingencyTable);
 	long ndf;
     double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;
 
@@ -468,7 +468,7 @@ static void classContingencyTable_info (I)
 	Melder_information2 (L"  Symmetrical dependency: ", Melder_double (uxy));
 	Melder_information2 (L"  Chi squared: ", Melder_double (chisq));
 	Melder_information2 (L"  Degrees of freedom: ", Melder_integer (ndf));
-	Melder_information2 (L"  Probability: ", Melder_double (ContingencyTable_chisqProbability (me)));	
+	Melder_information2 (L"  Probability: ", Melder_double (ContingencyTable_chisqProbability (me)));
 }
 
 class_methods (ContingencyTable, TableOfReal)
@@ -479,9 +479,9 @@ ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumn
 {
 	try {
 		autoContingencyTable me = Thing_new (ContingencyTable);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns); therror
+		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("ContingencyTable not created."); }
+	} catch (MelderError) { Melder_throw ("ContingencyTable not created."); }
 }
 
 Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling)
@@ -489,22 +489,22 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 	try {
 		long nr = my numberOfRows, nc = my numberOfColumns;
 		long dimmin = nr < nc ? nr : nc;
-	
+
 		autoNUMmatrix<double> h (NUMdmatrix_copy (my data, 1, nr, 1, nc), 1, 1);
 		autoNUMvector<double> rowsum (1, nr);
 		autoNUMvector<double> colsum (1, nc);
 		autoConfiguration thee = Configuration_create (nr + nc, numberOfDimensions);
-	
+
 		if (numberOfDimensions == 0) numberOfDimensions = dimmin - 1;
 		if (numberOfDimensions >= dimmin) Melder_throw ("Dimension too high.");
-	
+
 		/*
 			Ref: A. Gifi (1990), Nonlinear Multivariate Analysis, Wiley & Sons,
 				reprinted 1996,
 				Chapter 8, Multidimensional scaling and Correspondence Analysis.
 			Get row and column marginals
 		*/
-	
+
 		double sum = 0;
 		for (long i = 1; i <= nr; i++)
 		{
@@ -517,16 +517,16 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 			sum += rowsum[i];
 		}
 
-		for (long j = 1; j <= nc; j++) 
+		for (long j = 1; j <= nc; j++)
 		{
 			if (colsum[j] <= 0) Melder_throw ("Empty column: ", j, ".");
 		}
-	
+
 		/*
 			Remove trivial singular vectors (Eq. 8.24),
 			construct Dr^(-1/2) H Dc^(-1/2) - Dr^(1/2) uu' Dc^(1/2) / N
 		*/
-	
+
 		for (long i = 1; i <= nr; i++)
 		{
 			for (long j = 1; j <= nc; j++)
@@ -535,25 +535,25 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 				h[i][j] = h[i][j] / rc - rc / sum;
 			}
 		}
-	
+
 		/*
 			Singular value decomposition of h
 		*/
-	
+
 		autoSVD svd = SVD_create_d (h.peek(), nr, nc);
 		SVD_zeroSmallSingularValues (svd.peek(), 0);
-	
+
 		/*
 			Scale row vectors and column vectors to configuration.
 		*/
-	
+
 		for (long j = 1; j <= numberOfDimensions; j++)
 		{
 			double rootsum = sqrt (sum), xfactor, yfactor, lambda = svd -> d[j];
 			if (scaling == 1)
 			{
 				/*
-					Scale row points in the centre of gravity of 
+					Scale row points in the centre of gravity of
 					column points (eq 8.5.a)
 				*/
 				xfactor = rootsum * lambda;
@@ -562,7 +562,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 			else if (scaling == 2)
 			{
 				/*
-					Scale column points in the centre of gravity of 
+					Scale column points in the centre of gravity of
 					row points (8.5.b)
 				*/
 				xfactor = rootsum;
@@ -588,7 +588,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 				thy data[nr + i][j] = svd -> v[i][j] * yfactor / sqrt (colsum[i]);
 			}
 		}
-	
+
 		TableOfReal_setSequentialColumnLabels (thee.peek(), 0, 0, NULL, 1, 1);
 		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, nr);
 		for (long i = 1; i <= nc; i++)
@@ -599,13 +599,13 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created."); }
 }
 
 double ContingencyTable_chisqProbability (ContingencyTable me)
 {
 	double chisq;
-	long df;	
+	long df;
 	ContingencyTable_chisq (me, &chisq, &df);
 	if (chisq == 0 && df == 0) return 0;
 	return NUMchiSquareQ (chisq, df);
@@ -615,9 +615,9 @@ double ContingencyTable_cramersStatistic (ContingencyTable me)
 {
 	double chisq, sum = 0;
 	long df, nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
-	
+
 	if (nr == 1 || nc == 1) return 0;
-	
+
 	for (long i = 1; i <= nr; i++)
 	{
 		for (long j = 1; j <= nc; j++)
@@ -625,10 +625,10 @@ double ContingencyTable_cramersStatistic (ContingencyTable me)
 			sum += my data[i][j];
 		}
 	}
-	
+
 	if (nc < nr) nmin = nc;
 	nmin--;
-	
+
 	ContingencyTable_chisq (me, &chisq, &df);
 	if (chisq == 0 && df == 0) return 0;
 	return sqrt (chisq / (sum * nmin));
@@ -638,7 +638,7 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me)
 {
 	double chisq, sum = 0;
 	long df, nr = my numberOfRows, nc = my numberOfColumns;
-		
+
 	for (long i = 1; i <= nr; i++)
 	{
 		for (long j = 1; j <= nc; j++)
@@ -646,7 +646,7 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me)
 			sum += my data[i][j];
 		}
 	}
-	
+
 	ContingencyTable_chisq (me, &chisq, &df);
 	if (chisq == 0 && df == 0) return 0;
 	return sqrt (chisq / (chisq + sum));
@@ -654,126 +654,126 @@ double ContingencyTable_contingencyCoefficient (ContingencyTable me)
 
 void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df)
 {
-		long nr = my numberOfRows, nc = my numberOfColumns;
+	long nr = my numberOfRows, nc = my numberOfColumns;
 
-		*chisq = 0; *df = 0;
-		
-		autoNUMvector<double> rowsum (1, nr);
-		autoNUMvector<double> colsum (1, nc);
+	*chisq = 0; *df = 0;
 
-		/*
-			row and column marginals
-		*/
-	
-		double sum = 0;
-		for (long i = 1; i <= my numberOfRows; i++)
-		{
-			for (long j = 1; j <= my numberOfColumns; j++)
-			{
-				rowsum[i] += my data[i][j];
-				colsum[j] += my data[i][j];
-			}
-			sum += rowsum[i];
-		}
+	autoNUMvector<double> rowsum (1, nr);
+	autoNUMvector<double> colsum (1, nc);
 
-		for (long i = 1; i <= my numberOfRows; i++)
-		{
-			if (rowsum[i] == 0) --nr;
-		}
+	/*
+		row and column marginals
+	*/
+
+	double sum = 0;
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
 		for (long j = 1; j <= my numberOfColumns; j++)
 		{
-			if (colsum[j] == 0) --nc;
+			rowsum[i] += my data[i][j];
+			colsum[j] += my data[i][j];
 		}
-	
-		*df = (nr - 1) * (nc - 1);
-		for (long i = 1; i <= my numberOfRows; i++)
+		sum += rowsum[i];
+	}
+
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
+		if (rowsum[i] == 0) --nr;
+	}
+	for (long j = 1; j <= my numberOfColumns; j++)
+	{
+		if (colsum[j] == 0) --nc;
+	}
+
+	*df = (nr - 1) * (nc - 1);
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
+		if (rowsum[i] == 0) continue;
+		for (long j = 1; j <= my numberOfColumns; j++)
 		{
-			if (rowsum[i] == 0) continue;
-			for (long j = 1; j <= my numberOfColumns; j++)
-			{
-				if (colsum[j] == 0) continue;
-				double expt = rowsum[i] * colsum[j] / sum;
-				double tmp = my data[i][j] - expt;
-				*chisq += tmp * tmp / expt;
-			}
+			if (colsum[j] == 0) continue;
+			double expt = rowsum[i] * colsum[j] / sum;
+			double tmp = my data[i][j] - expt;
+			*chisq += tmp * tmp / expt;
 		}
+	}
 }
 
 void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx,
-	double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy, 
+	double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy,
 	double *uxy)
 {
-		*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
-	
-    	autoNUMvector<double> rowsum (1, my numberOfRows);
-		autoNUMvector<double> colsum (1, my numberOfColumns);
+	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
 
-		/*
-			row and column totals
-		*/
-	
-		double sum = 0.0;
-		for (long i = 1; i <= my numberOfRows; i++)
-		{
-			for (long j = 1; j <= my numberOfColumns; j++)
-			{
-				rowsum[i] += my data[i][j];
-				colsum[j] += my data[i][j];
-			}
-			sum += rowsum[i];
-		}
-	
-		/*
-			Entropy of x distribution
-		*/
-    
+	autoNUMvector<double> rowsum (1, my numberOfRows);
+	autoNUMvector<double> colsum (1, my numberOfColumns);
+
+	/*
+		row and column totals
+	*/
+
+	double sum = 0.0;
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
 		for (long j = 1; j <= my numberOfColumns; j++)
 		{
-			if (colsum[j] > 0)
-			{
-				double p = colsum[j] / sum;
-				*hx -= p * NUMlog2 (p);
-			}
+			rowsum[i] += my data[i][j];
+			colsum[j] += my data[i][j];
 		}
-    
-		/*
-			Entropy of y distribution
-		*/
-    
-		for (long i = 1; i <= my numberOfRows; i++)
+		sum += rowsum[i];
+	}
+
+	/*
+		Entropy of x distribution
+	*/
+
+	for (long j = 1; j <= my numberOfColumns; j++)
+	{
+		if (colsum[j] > 0)
 		{
-			if (rowsum[i] > 0)
-			{
-				double p = rowsum[i] / sum;
-				*hy -= p * NUMlog2 (p);
-			}
+			double p = colsum[j] / sum;
+			*hx -= p * NUMlog2 (p);
 		}
-    
-		/*
-			Total entropy
-		*/
-    
-		for (long i = 1; i <= my numberOfRows; i++)
+	}
+
+	/*
+		Entropy of y distribution
+	*/
+
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
+		if (rowsum[i] > 0)
 		{
-			for (long j = 1; j <= my numberOfColumns; j++)
+			double p = rowsum[i] / sum;
+			*hy -= p * NUMlog2 (p);
+		}
+	}
+
+	/*
+		Total entropy
+	*/
+
+	for (long i = 1; i <= my numberOfRows; i++)
+	{
+		for (long j = 1; j <= my numberOfColumns; j++)
+		{
+			if (my data[i][j] > 0)
 			{
-				if (my data[i][j] > 0)
-				{
-					double p = my data[i][j] / sum;
-					*h -= p * NUMlog2 (p);
-				}
+				double p = my data[i][j] / sum;
+				*h -= p * NUMlog2 (p);
 			}
 		}
-	
-		/*
-			Conditional entropies
-		*/
-	
-		*hygx = *h - *hx;
-		*hxgy = *h - *hy;
-		*uygx = (*hy - *hygx) / (*hy + TINY);
-		*uxgy = (*hx - *hxgy) / (*hx + TINY);
-		*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
+	}
+
+	/*
+		Conditional entropies
+	*/
+
+	*hygx = *h - *hx;
+	*hxgy = *h - *hy;
+	*uygx = (*hy - *hygx) / (*hy + TINY);
+	*uxgy = (*hx - *hxgy) / (*hx + TINY);
+	*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
 }
 
 /********** CASTS FROM & TO TABLEOFREAL **********************************/
@@ -784,65 +784,65 @@ ContingencyTable Confusion_to_ContingencyTable (Confusion me)
 		autoContingencyTable thee = (ContingencyTable) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classContingencyTable);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to ContingencyTable."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to ContingencyTable."); }
 }
 
 Dissimilarity TableOfReal_to_Dissimilarity (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square tabel.");
 		TableOfReal_checkPositive (me);
 		autoDissimilarity thee = (Dissimilarity) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classDissimilarity);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Dissimilarity."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Dissimilarity."); }
 }
 
 Similarity TableOfReal_to_Similarity (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
 		TableOfReal_checkPositive (me);
 		autoSimilarity thee = (Similarity) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classSimilarity);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Similarity."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Similarity."); }
 }
 
 Distance TableOfReal_to_Distance (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
 		TableOfReal_checkPositive (me);
 		autoDistance thee = (Distance) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classDistance);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Distance."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Distance."); }
 }
 
 Salience TableOfReal_to_Salience (I)
 {
-	iam (TableOfReal); 
+	iam (TableOfReal);
 	try {
 		TableOfReal_checkPositive (me);
 		autoSalience thee = (Salience) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classSalience);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Salience."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Salience."); }
 }
 
 Weight TableOfReal_to_Weight (I)
 {
 	iam (TableOfReal);
 	try {
-		TableOfReal_checkPositive (me); 
+		TableOfReal_checkPositive (me);
 		autoWeight thee = (Weight) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classWeight);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Weight."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Weight."); }
 }
 
 ScalarProduct TableOfReal_to_ScalarProduct (I)
@@ -853,7 +853,7 @@ ScalarProduct TableOfReal_to_ScalarProduct (I)
 		autoScalarProduct thee = (ScalarProduct) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classScalarProduct);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to ScalarProduct."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to ScalarProduct."); }
 }
 
 ContingencyTable TableOfReal_to_ContingencyTable (I)
@@ -864,14 +864,14 @@ ContingencyTable TableOfReal_to_ContingencyTable (I)
 		autoContingencyTable thee = (ContingencyTable) Data_copy (me);
 		Thing_overrideClass (thee.peek(), classContingencyTable);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to ContingencyTable."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to ContingencyTable."); }
 }
 
 /**************** Covariance & Correlation to Configuration *****************/
 
 Configuration SSCP_to_Configuration (I, long numberOfDimensions)
 {
-	iam (SSCP); 
+	iam (SSCP);
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
 		autoPCA a = SSCP_to_PCA (me);
@@ -890,16 +890,16 @@ Configuration SSCP_to_Configuration (I, long numberOfDimensions)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created."); }
 }
 
-Configuration Covariance_to_Configuration (Covariance me, 
+Configuration Covariance_to_Configuration (Covariance me,
 	long numberOfDimensions)
 {
 	return SSCP_to_Configuration (me, numberOfDimensions);
 }
 
-Configuration Correlation_to_Configuration (Correlation me, 
+Configuration Correlation_to_Configuration (Correlation me,
 	long numberOfDimensions)
 {
 	return SSCP_to_Configuration (me, numberOfDimensions);
@@ -913,8 +913,8 @@ class_methods_end
 Weight Weight_create (long numberOfPoints)
 {
 	try {
-		autoWeight me = Thing_new (Weight); 
-		TableOfReal_init (me.peek(), numberOfPoints, numberOfPoints); therror
+		autoWeight me = Thing_new (Weight);
+		TableOfReal_init (me.peek(), numberOfPoints, numberOfPoints);
 		for (long i = 1; i <= numberOfPoints; i++)
 		{
 			for (long j = 1; j <= numberOfPoints; j++)
@@ -923,7 +923,7 @@ Weight Weight_create (long numberOfPoints)
 			}
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Weight not created."); }
+	} catch (MelderError) { Melder_throw ("Weight not created."); }
 }
 
 
@@ -936,10 +936,10 @@ Salience Salience_create (long numberOfSources, long numberOfDimensions)
 {
 	try {
 		autoSalience me = Thing_new (Salience);
-		TableOfReal_init (me.peek(), numberOfSources, numberOfDimensions); therror
+		TableOfReal_init (me.peek(), numberOfSources, numberOfDimensions);
 		Salience_setDefaults (me.peek());
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Salience not created."); }
+	} catch (MelderError) { Melder_throw ("Salience not created."); }
 }
 
 long Salience_correctNegatives (Salience me)
@@ -948,21 +948,21 @@ long Salience_correctNegatives (Salience me)
 		The weights might be negative.
 		We correct this by simply making them positive.
 	*/
-	
+
 	long nNegatives = 0;
 	for (long i = 1; i <= my numberOfRows; i++)
 	{
 		for (long j = 1; j <= my numberOfColumns; j++)
 		{
-			if (my data[i][j] < 0) 
+			if (my data[i][j] < 0)
 			{
-				nNegatives++; 
+				nNegatives++;
 				my data[i][j] = - my data[i][j];
 			}
 		}
 	}
 	return nNegatives;
-}		
+}
 
 void Salience_setDefaults (Salience me)
 {
@@ -985,10 +985,10 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish)
 {
 	long nc2, nc1 = ix < iy ? (nc2 = iy, ix) : (nc2 = ix, iy);
 	double xmin = 0, xmax = 1, ymin = 0, ymax = 1, wmax = 1;
-	
-	if (ix < 1 || ix > my numberOfColumns || 
+
+	if (ix < 1 || ix > my numberOfColumns ||
 		iy < 1 || iy > my numberOfColumns) return;
-		
+
 	for (long i = 1; i <= my numberOfRows; i++)
 	{
 		for (long j = nc1; j <= nc2; j++)
@@ -1000,7 +1000,7 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish)
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
     Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	
+
 	for (long i = 1; i <= my numberOfRows; i++)
 	{
 		if (my rowLabels[i])
@@ -1008,13 +1008,13 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish)
 			Graphics_text (g, my data[i][ix], my data[i][iy], my rowLabels[i]);
 		}
 	}
-	
+
 	Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_BOTTOM);
 	Graphics_line (g, xmin, ymax, xmin, ymin);
 	Graphics_line (g, xmin, ymin, xmax, ymin);
 	/* Graphics_arc (g, xmin, ymin, xmax - xmin, 0, 90); */
     Graphics_unsetInner (g);
-	
+
 	if (garnish)
 	{
 		if (my columnLabels[ix])
@@ -1053,14 +1053,14 @@ MDSVec MDSVec_create (long nPoints)
 		my iPoint = NUMvector<long> (1, my nProximities);
 		my jPoint = NUMvector<long> (1, my nProximities);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("MDSVec not created."); }
+	} catch (MelderError) { Melder_throw ("MDSVec not created."); }
 }
 
 MDSVec Dissimilarity_to_MDSVec (Dissimilarity me)
 {
 	try {
 		autoMDSVec thee = MDSVec_create (my numberOfRows);
-	
+
 		long k = 0;
 		for (long i = 1; i <= my numberOfRows - 1; i++)
 		{
@@ -1069,17 +1069,17 @@ MDSVec Dissimilarity_to_MDSVec (Dissimilarity me)
 				double f = (my data[i][j] + my data[j][i]) / 2;
 				if (f > 0)
 				{
-					k++; 
-					thy proximity[k] = f; 
-					thy iPoint[k] = i; 
+					k++;
+					thy proximity[k] = f;
+					thy iPoint[k] = i;
 					thy jPoint[k] = j;
 				}
 			}
 		}
-		thy nProximities = k;		
+		thy nProximities = k;
 		NUMsort3 (thy proximity, thy iPoint, thy jPoint, 1, k, 1);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no MDSVec created."); }
+	} catch (MelderError) { Melder_throw (me, ": no MDSVec created."); }
 }
 
 /*********************** MDSVECS *******************************************/
@@ -1094,7 +1094,7 @@ MDSVecs MDSVecs_create (void)
 		autoMDSVecs me = Thing_new (MDSVecs);
 		Ordered_init (me.peek(), classMDSVec, 10);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("MDSVecs not created."); }
+	} catch (MelderError) { Melder_throw ("MDSVecs not created."); }
 }
 
 MDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me)
@@ -1108,7 +1108,7 @@ MDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me)
 			Collection_addItem (thee.peek(), him.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no MDSVecs created."); }
+	} catch (MelderError) { Melder_throw (me, ": no MDSVecs created."); }
 }
 
 
@@ -1123,7 +1123,7 @@ Confusions Confusions_create (void)
 		autoConfusions me = Thing_new (Confusions);
 		Proximities_init (me.peek(), classConfusion);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Confusions not created."); }
+	} catch (MelderError) { Melder_throw ("Confusions not created."); }
 }
 
 Confusion Confusions_sum (Confusions me)
@@ -1132,7 +1132,7 @@ Confusion Confusions_sum (Confusions me)
 		autoTableOfReal sum = TablesOfReal_sum (me);
 		autoConfusion thee = TableOfReal_to_Confusion (sum.peek());
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not created."); }
+	} catch (MelderError) { Melder_throw (me, ": not created."); }
 }
 
 
@@ -1147,7 +1147,7 @@ Distances Distances_create (void)
 		autoDistances me = Thing_new (Distances);
 		Proximities_init (me.peek(), classDistance);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Distances not created."); }
+	} catch (MelderError) { Melder_throw ("Distances not created."); }
 }
 
 
@@ -1162,7 +1162,7 @@ ScalarProduct ScalarProduct_create (long numberOfPoints)
 		autoScalarProduct me = Thing_new (ScalarProduct);
 		TableOfReal_init (me.peek(), numberOfPoints, numberOfPoints);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("ScalarProduct not created."); }
+	} catch (MelderError) { Melder_throw ("ScalarProduct not created."); }
 }
 
 
@@ -1177,7 +1177,7 @@ ScalarProducts ScalarProducts_create (void)
 		autoScalarProducts me = Thing_new (ScalarProducts);
 		TablesOfReal_init (me.peek(), classScalarProduct);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("ScalarProducts not created."); }
+	} catch (MelderError) { Melder_throw ("ScalarProducts not created."); }
 }
 
 /******************  DISSIMILARITY **********************************/
@@ -1191,7 +1191,7 @@ Dissimilarity Dissimilarity_create (long numberOfPoints)
 		autoDissimilarity me = Thing_new (Dissimilarity);
 		Proximity_init (me.peek(), numberOfPoints);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Dissimilarity not created."); }
+	} catch (MelderError) { Melder_throw ("Dissimilarity not created."); }
 }
 
 int Dissimilarity_getAdditiveConstant (I, double *c) // Why not: double Diss..(I) ???
@@ -1202,12 +1202,12 @@ int Dissimilarity_getAdditiveConstant (I, double *c) // Why not: double Diss..(I
 		int status = 0;
 		long nProximities = 0, nPoints = my numberOfRows, nPoints2 = 2 * nPoints;
 		double proximity;
-	
+
 		/*
 			Return c = average dissimilarity in case of failure
 		*/
 		if (nPoints < 1) Melder_throw ("Matrix part is empty.");
-		
+
 		*c = 0;
 		for (long i = 1; i <= nPoints - 1; i++)
 		{
@@ -1223,52 +1223,52 @@ int Dissimilarity_getAdditiveConstant (I, double *c) // Why not: double Diss..(I
 		}
 		if (nProximities < 1) Melder_throw ("No proximities larger than zero.");
 		*c /= nProximities;
-		
+
 		autoNUMmatrix<double> wd (1, nPoints, 1, nPoints);
 		autoNUMmatrix<double> wdsqrt (1, nPoints, 1, nPoints);
 		autoNUMmatrix<double> b (1, nPoints2, 1, nPoints2);
 		autoNUMvector<double> eigenvalue (1, nPoints2);
-				
+
 		/*
 			The matrices D & D1/2 with distances (squared and linear)
 		*/
-	
+
 		for (long i = 1; i <= nPoints - 1; i++)
 		{
 			for (long j = i + 1; j <= nPoints; j++)
 			{
 				proximity = (my data[i][j] + my data[j][i]) / 2;
 				wdsqrt[i][j] = - proximity / 2;
-				wd[i][j] = - proximity * proximity / 2;		
+				wd[i][j] = - proximity * proximity / 2;
 			}
 		}
-	
+
 		NUMdoubleCentre (wdsqrt.peek(), 1, nPoints, 1, nPoints);
 		NUMdoubleCentre (wd.peek(), 1, nPoints, 1, nPoints);
-	
+
 		/*
 			Calculate the B matrix according to eq. 6
 		*/
-	
+
 		for (long i = 1; i <= nPoints; i++)
 		{
 			for (long j = 1; j <= nPoints; j++)
-			{ 
+			{
 				b[i][nPoints+j] = 2 * wd[i][j];
 				b[nPoints+i][nPoints+j] = -4 * wdsqrt[i][j];
 				b[nPoints+i][i] = -1;
 			}
 		}
-	
+
 		/*
 			Get eigenvalues and sort them descending
 		*/
-	
+
 		NUMeigensystem (b.peek(), nPoints2, NULL, eigenvalue.peek());
 		if (eigenvalue[1] <= 0) Melder_throw ("Negative eigenvalue.");
 		*c = eigenvalue[1];
 		return 1;
-	} catch (MelderError) { Melder_thrown ("Additive constant not calculated."); }
+	} catch (MelderError) { Melder_throw ("Additive constant not calculated."); }
 }
 
 
@@ -1283,7 +1283,7 @@ Dissimilarities Dissimilarities_create (void)
 		autoDissimilarities me = Thing_new (Dissimilarities);
 		Proximities_init (me.peek(), classDissimilarity);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Dissimilarities not created."); }
+	} catch (MelderError) { Melder_throw ("Dissimilarities not created."); }
 }
 
 
@@ -1298,22 +1298,22 @@ Similarity Similarity_create (long numberOfPoints)
 		autoSimilarity me = Thing_new (Similarity);
 		Proximity_init (me.peek(), numberOfPoints);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Similarity not created."); }
+	} catch (MelderError) { Melder_throw ("Similarity not created."); }
 }
 
-Similarity Confusion_to_Similarity (Confusion me, int normalize, 
+Similarity Confusion_to_Similarity (Confusion me, int normalize,
 	int symmetrizeMethod)
 {
 	try {
 		if (my numberOfColumns != my numberOfRows) Melder_throw ("Confusion must be a square table.");
-		
+
 		long nxy = my numberOfColumns;
 		autoSimilarity thee = Similarity_create (nxy);
-	
-		TableOfReal_copyLabels (me, thee.peek(), 1, 1); therror
-	
+
+		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
+
 		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
-		
+
 		if (normalize) NUMdmatrix_normalizeRows (thy data, nxy, nxy);
 		if (symmetrizeMethod == 1) return thee.transfer();
 		if (symmetrizeMethod == 2) // Average data
@@ -1322,7 +1322,7 @@ Similarity Confusion_to_Similarity (Confusion me, int normalize,
 			{
 				for (long j = i + 1; j <= nxy; j++)
 				{
-					thy data[i][j] = thy data[j][i] = 
+					thy data[i][j] = thy data[j][i] =
 					(	thy data[i][j] + thy data[j][i]) / 2;
 				}
 			}
@@ -1344,10 +1344,10 @@ Similarity Confusion_to_Similarity (Confusion me, int normalize,
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Similarity created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Similarity created."); }
 }
 
-Dissimilarity Similarity_to_Dissimilarity (Similarity me, 
+Dissimilarity Similarity_to_Dissimilarity (Similarity me,
 	double maximumDissimilarity)
 {
 	try {
@@ -1364,10 +1364,10 @@ Dissimilarity Similarity_to_Dissimilarity (Similarity me,
 				if (thy data[i][j] > max) max = thy data[i][j];
 			}
 		}
-	
+
 		if (maximumDissimilarity <= 0) maximumDissimilarity = max;
 
-		if (maximumDissimilarity < max) Melder_warning1 
+		if (maximumDissimilarity < max) Melder_warning1
 			(L"Your maximumDissimilarity is smaller than the maximum similarity. Some data may be lost.");
 
 		for (long i = 1; i <= nxy; i++)
@@ -1379,20 +1379,20 @@ Dissimilarity Similarity_to_Dissimilarity (Similarity me,
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Dissimilarity created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Dissimilarity created."); }
 }
 
 Distance Dissimilarity_to_Distance (Dissimilarity me, int scale)
 {
 	try {
 		double additiveConstant = 0;
-	
+
 		autoDistance thee = Distance_create (my numberOfRows);
-		TableOfReal_copyLabels (me, thee.peek(), 1, 1); therror
-		if (scale == MDS_ORDINAL && 
+		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
+		if (scale == MDS_ORDINAL &&
 			! Dissimilarity_getAdditiveConstant (me, &additiveConstant))
 		{
-			Melder_warning1 (L"Dissimilarity_to_Distance: could not determine " 
+			Melder_warning1 (L"Dissimilarity_to_Distance: could not determine "
 			"\"additive constant\", the average dissimilarity was used as "
 			"its value.");
 		}
@@ -1405,7 +1405,7 @@ Distance Dissimilarity_to_Distance (Dissimilarity me, int scale)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Distance created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Distance created."); }
 }
 
 Weight Dissimilarity_to_Weight (Dissimilarity me)
@@ -1422,7 +1422,7 @@ Weight Dissimilarity_to_Weight (Dissimilarity me)
 			thy data[i][i] = 0;
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Weight created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Weight created."); }
 }
 
 
@@ -1432,13 +1432,13 @@ Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfus
 		if (my numberOfColumns != my numberOfRows) Melder_throw ("Confusion must be a square table.");
 		Melder_assert (minimumConfusionLevel > 0);
 		autoDissimilarity thee = Dissimilarity_create (my numberOfColumns);
-		TableOfReal_copyLabels (me, thee.peek(), 1, 1); therror
+		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
 		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
-	
+
 		/*
-			Correct "zero" responses.	
+			Correct "zero" responses.
 		*/
-	
+
 		for (long i = 1; i <= my numberOfColumns; i++)
 		{
 			for (long j = 1; j <= my numberOfColumns; j++)
@@ -1446,38 +1446,38 @@ Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfus
 				if (thy data[i][j] == 0) thy data[i][j] = minimumConfusionLevel;
 			}
 		}
-	
+
 		NUMdmatrix_normalizeRows (thy data, my numberOfColumns, my numberOfColumns);
 
 		/*
-			Consider the fraction as the fraction overlap between two gaussians 
+			Consider the fraction as the fraction overlap between two gaussians
 			with unequal sigmas (1 & s).
 			We have two matrix elements p[i][j] && p[j][i]
-		
+
 			N (x, m, s) = 1 / (s * sqrt(2 pi)) exp(-((x - m) / s)^2 / 2)
 			N1 (x) = N (x, 0, 1)
 			N2 (x) = N (x, m, s)
-			These two gaussians cross each other at a point X that can be found 
+			These two gaussians cross each other at a point X that can be found
 			by solving N1 (x) == N2 (x).
 			The solution that is important to us is:
 				X = (- m + s sqrt (m^2 - 2 (s^2 - 1) ln(s))) / (s^2 - 1)  (1)
-			
-			This point X must be the solution of F (X, 0, 1) == p[i][j], where 
+
+			This point X must be the solution of F (X, 0, 1) == p[i][j], where
 				F (x, m, s) = P (x>X, m, s) = Integral (x, infinity, N (x, m, s) dx)
-		
+
 			We can solve for m and obtain:
 				m = X + s sqrt (X^2 + 2 ln (s))                           (2)
-			
+
 			We also have
 				Integral (-Infinity, X, N2 (x) dx) == p[j][i];
 			By changing integration variables, (x - m) / s = y, we get
 				Integral ((x-m)/s, Infinity, N (y, 0, 1) dy) == p[j][i]
 			Let this equation result in a value Y, i.e., (X - m) / s = Y  (3)
-		
+
 			(2) and (3) together and solve for m:
-		
+
 				m = X + Y * exp ((Y * y - X * X) / 2);
-			
+
 			Make maximum dissimilarity equal to 4sigma.
 		*/
 
@@ -1495,26 +1495,26 @@ Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfus
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Dissimilarity created from pdf."); }
+	} catch (MelderError) { Melder_throw (me, ": no Dissimilarity created from pdf."); }
 }
 
-void Distance_and_Configuration_drawScatterDiagram (Distance me, 
-	Configuration him, Graphics g, double xmin, double xmax, double ymin, 
+void Distance_and_Configuration_drawScatterDiagram (Distance me,
+	Configuration him, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
-		autoDistance dist = Configuration_to_Distance (him);	
-		Proximity_Distance_drawScatterDiagram (me, dist.peek(), g, xmin, xmax, ymin, 
-			ymax, size_mm, mark, garnish);
+	autoDistance dist = Configuration_to_Distance (him);
+	Proximity_Distance_drawScatterDiagram (me, dist.peek(), g, xmin, xmax, ymin,
+		ymax, size_mm, mark, garnish);
 }
 
 Dissimilarity Distance_to_Dissimilarity (Distance me)
 {
 	try {
 		autoDissimilarity thee = Dissimilarity_create (my numberOfRows);
-		TableOfReal_copyLabels (me, thee.peek(), 1, 1); therror
+		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
 		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Dissimilarity not created from Distance."); }
+	} catch (MelderError) { Melder_throw ("Dissimilarity not created from Distance."); }
 }
 
 Configuration Distance_to_Configuration_torsca (Distance me, int numberOfDimensions)
@@ -1523,17 +1523,17 @@ Configuration Distance_to_Configuration_torsca (Distance me, int numberOfDimensi
 		if (numberOfDimensions > my numberOfRows)  Melder_throw ("Number of dimensions too high.");
 		autoScalarProduct sp = Distance_to_ScalarProduct (me, 0);
 		autoConfiguration thee = Configuration_create (my numberOfRows, numberOfDimensions);
-		TableOfReal_copyLabels (me, thee.peek(), 1, 0); therror
+		TableOfReal_copyLabels (me, thee.peek(), 1, 0);
 		NUMprincipalComponents (sp -> data, my numberOfRows, numberOfDimensions, thy data);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (torsca method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (torsca method)."); }
 }
 
 ScalarProduct Distance_to_ScalarProduct (Distance me, int normalize)
 {
 	try {
 		autoScalarProduct thee = ScalarProduct_create (my numberOfRows);
-		TableOfReal_copyLabels (me, thee.peek(), 1, 1); therror
+		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
 		for (long i = 1; i <= my numberOfRows - 1; i++)
 		{
 			for (long j = i + 1; j <= my numberOfColumns; j++)
@@ -1549,7 +1549,7 @@ ScalarProduct Distance_to_ScalarProduct (Distance me, int normalize)
 		if (my name) Thing_setName (thee.peek(), my name);
 		if (normalize) TableOfReal_normalizeTable (thee.peek(), 1);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no ScalarProduct created."); }
+	} catch (MelderError) { Melder_throw (me, ": no ScalarProduct created."); }
 }
 
 /**********  Configuration & ..... ***********************************/
@@ -1559,20 +1559,20 @@ Distance Configuration_to_Distance (Configuration me)
 {
 	try {
 		autoDistance thee = Distance_create (my numberOfRows);
-		TableOfReal_copyLabels (me, thee.peek(), 1, -1); therror
+		TableOfReal_copyLabels (me, thee.peek(), 1, -1);
 		for (long i = 1; i <= thy numberOfRows-1; i++)
 		{
 			for (long j = i + 1; j <= thy numberOfColumns; j++)
 			{
 				double dmax = 0, d = 0;
-			
+
 				/*
 					first divide distance by maximum to prevent overflow when metric is a large number.
 					d = (x^n)^(1/n) may overflow if x>1 & n >>1 even if d would not overflow!
 					metric changed 24/11/97
-					my w[k] * pow (|i-j|) instead of pow (my w[k] * |i-j|) 
+					my w[k] * pow (|i-j|) instead of pow (my w[k] * |i-j|)
 				*/
-			
+
 				for (long k = 1; k <= my numberOfColumns; k++)
 				{
 					double dtmp  = fabs (my data[i][k] - my data[j][k]);
@@ -1590,17 +1590,17 @@ Distance Configuration_to_Distance (Configuration me)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Distance created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Distance created."); }
 }
 
-void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g, 
-	double xmin, double xmax, double ymin, double ymax, double size_mm, 
-	const wchar_t *mark, int garnish)   
+void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
+	double xmin, double xmax, double ymin, double ymax, double size_mm,
+	const wchar_t *mark, int garnish)
 {
 	iam (Proximity);
 	long n = my numberOfRows * (my numberOfRows - 1) / 2;
 	double **x = my data, **y = thy data;
-	
+
 	if (n == 0) return;
 	if (! TableOfReal_equalLabels (me, thee, 1, 1))
 	{
@@ -1618,7 +1618,7 @@ void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
 				else if (x[i][j] < xmin) xmin = x[i][j];
 			}
 		}
-	}	
+	}
 	if (ymax <= ymin)
 	{
 		ymin = ymax = y[1][2];
@@ -1655,20 +1655,20 @@ void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
     	Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 }
- 
+
 Distances MDSVecs_Distance_monotoneRegression (MDSVecs me, Distance thee, int tiesProcessing)
 {
 	try {
 		autoDistances him = Distances_create ();
 		for (long i = 1; i <= my size; i++)
 		{
-			autoMDSVec vec = (MDSVec) my item[i]; 
+			autoMDSVec vec = (MDSVec) my item[i];
 			if (vec -> nPoints != thy numberOfRows) Melder_throw ("Dimension of MDSVec and Distance must be equal.");
 			autoDistance fit = MDSVec_Distance_monotoneRegression (vec.peek(), thee, tiesProcessing);
-			Collection_addItem (him.peek(), fit.transfer()); therror
+			Collection_addItem (him.peek(), fit.transfer());
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("No Distances created from MDSVecs & Distance."); }
+	} catch (MelderError) { Melder_throw ("No Distances created from MDSVecs & Distance."); }
 }
 
 Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesProcessing)
@@ -1679,9 +1679,9 @@ Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesP
 		autoNUMvector<double> distance (1, nProximities);
 		autoNUMvector<double> fit (1, nProximities);
 		autoDistance him = Distance_create (thy numberOfRows);
-		TableOfReal_copyLabels (thee, him.peek(), 1, 1); therror
-		
-		long *iPoint = my iPoint, *jPoint = my jPoint;	
+		TableOfReal_copyLabels (thee, him.peek(), 1, 1);
+
+		long *iPoint = my iPoint, *jPoint = my jPoint;
 		for (long i = 1; i <= nProximities; i++)
 		{
 			distance[i] = thy data[iPoint[i]][jPoint[i]];
@@ -1700,7 +1700,7 @@ Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesP
 			{
 				if (my proximity[i] == my proximity[i-1]) continue;
 				if (i - ib > 1)
-				{ 
+				{
 					if (tiesProcessing == MDS_PRIMARY_APPROACH)
 					{
 						NUMsort3 (distance.peek(), iPoint, jPoint, ib, i-1, 1); // sort ascending
@@ -1722,23 +1722,23 @@ Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesP
 				ib = i;
 			}
 		}
-		
+
 		NUMmonotoneRegression (distance.peek(), nProximities, fit.peek());
-	
+
 		/*
 			Fill Distance with monotone regressed distances
 		*/
-	
+
 		for (long i = 1; i <= nProximities; i++)
 		{
 			long ip = iPoint[i], jp = jPoint[i];
-			his data[ip][jp] = his data[jp][ip] = fit[i];	
+			his data[ip][jp] = his data[jp][ip] = fit[i];
 		}
-	
+
 		/*
 			Make rest of distances equal to the maximum fit.
 		*/
-	
+
 		for (long i = 1; i <= his numberOfRows - 1; i++)
 		{
 			for (long j = i + 1; j <= his numberOfColumns; j++)
@@ -1750,7 +1750,7 @@ Distance MDSVec_Distance_monotoneRegression (MDSVec me, Distance thee, int tiesP
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Distance not created."); }
+	} catch (MelderError) { Melder_throw ("Distance not created."); }
 }
 
 
@@ -1761,7 +1761,7 @@ Distance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance t
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 		autoDistance him = MDSVec_Distance_monotoneRegression (vec.peek(), thee, tiesProcessing);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Distance not created."); }
+	} catch (MelderError) { Melder_throw ("Distance not created."); }
 }
 
 /*************** class Proximities **************************************/
@@ -1781,7 +1781,7 @@ Proximities Proximities_create (void)
 		autoProximities me = Thing_new (Proximities);
 		Proximities_init (me.peek(), classProximity);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Proximities not created."); }
+	} catch (MelderError) { Melder_throw ("Proximities not created."); }
 }
 
 ScalarProducts Distances_to_ScalarProducts (Distances me, int normalize)
@@ -1794,7 +1794,7 @@ ScalarProducts Distances_to_ScalarProducts (Distances me, int normalize)
 			Collection_addItem (thee.peek(), sp.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no ScalarProducts created."); }
+	} catch (MelderError) { Melder_throw (me, ": no ScalarProducts created."); }
 }
 
 int Distances_to_Configuration_ytl (Distances me, int numberOfDimensions,
@@ -1805,7 +1805,7 @@ int Distances_to_Configuration_ytl (Distances me, int numberOfDimensions,
 		autoScalarProducts sp = Distances_to_ScalarProducts (me, normalizeScalarProducts);
 		ScalarProducts_to_Configuration_ytl (sp.peek(), numberOfDimensions, out1, out2);
 		return 1;
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (ytl method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (ytl method)."); }
 }
 
 void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensions, Configuration *out1, Salience *out2)
@@ -1815,7 +1815,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 	try {
 		long nPoints = ((ScalarProduct) my item[1]) -> numberOfRows;
 		double **w;
-	
+
 		autoConfiguration thee = Configuration_create (nPoints, numberOfDimensions);
 		autoSalience mdsw = Salience_create (numberOfSources, numberOfDimensions);
 		TableOfReal_copyLabels (my item[1], thee.peek(), 1, 0);
@@ -1827,16 +1827,16 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 		autoNUMmatrix<double> a (1, numberOfSources, 1, numberOfSources);
 		autoNUMmatrix<double> evec (1, numberOfSources, 1, numberOfSources);
 		autoNUMmatrix<double> K (1, numberOfDimensions, 1, numberOfDimensions);
-	
+
 		*out1 = NULL; *out2 = NULL;
-	
-		Thing_setName (mdsw.peek(), L"ytl"); 
+
+		Thing_setName (mdsw.peek(), L"ytl");
 		Thing_setName (thee.peek(), L"ytl");
 		TableOfReal_labelsFromCollectionItemNames (mdsw.peek(), me, 1, 0);
-	
+
 		// Determine the average scalar product matrix (Pmean) of
 		// dimension [1..nPoints][1..nPoints].
-	
+
 		for (long i = 1; i <= numberOfSources; i++)
 		{
 			ScalarProduct sp = (ScalarProduct) my item[i];
@@ -1845,7 +1845,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 				for (long k = 1; k <= nPoints; k++) { pmean[j][k] += sp->data[j][k]; }
 			}
 		}
-	
+
 		if (numberOfSources > 1)
 		{
 			for (long j = 1; j <= nPoints; j++)
@@ -1854,14 +1854,14 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 			}
 		}
 
-		// Up to a rotation K, the initial configuration can be found by 
+		// Up to a rotation K, the initial configuration can be found by
 		// extracting the first 'numberOfDimensions' principal components of Pmean.
 
 		NUMdmatrix_into_principalComponents (pmean.peek(), nPoints, nPoints, numberOfDimensions, y.peek());
 		NUMdmatrix_copyElements (y.peek(), thy data, 1, nPoints, 1, numberOfDimensions);
-	
+
 		// We cannot determine weights from only one sp-matrix.
-	
+
 		if (numberOfSources == 1) Melder_throw ("Only one source.");
 
 		// Calculate the C[i] matrices [1..numberOfDimensions][1..numberOfDimensions]
@@ -1874,10 +1874,10 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 		{
 			ScalarProduct sp = (ScalarProduct) my item[i];
 			ci[i] = NUMmatrix<double> (1, numberOfDimensions, 1, numberOfDimensions);
-			for (long j = 1; j <= numberOfDimensions; j++) 
+			for (long j = 1; j <= numberOfDimensions; j++)
 			{
 				for (long k = 1; k <= numberOfDimensions; k++)
-				{ 
+				{
 					for (long l = 1; l <= nPoints; l++)
 					{
 						if (yinv[j][l] != 0)
@@ -1900,13 +1900,13 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 		{
 			for (long j = i; j <= numberOfSources; j++)
 			{
-				a[j][i] = a[i][j] =  NUMtrace2 (ci[i], ci[j], numberOfDimensions) 
+				a[j][i] = a[i][j] =  NUMtrace2 (ci[i], ci[j], numberOfDimensions)
 					- NUMtrace (ci[i], numberOfDimensions) * NUMtrace (ci[j], numberOfDimensions) / numberOfDimensions;
 			}
 		}
-	
+
 		NUMeigensystem (a.peek(), numberOfSources, evec.peek(), eval.peek());
-	
+
 		for (long i = 1; i <= numberOfSources; i++)
 		{
 			for (long j = 1; j <= numberOfDimensions; j++)
@@ -1917,7 +1917,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 				}
 			}
 		}
-	
+
 		// The rotation K is obtained from the eigenvectors of cl
 		// Is the following still correct??? eigensystem was not sorted??
 
@@ -1937,12 +1937,12 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 				thy data [i][j] = x;
 			}
 		}
-	
+
 		Configuration_normalize (thee.peek(), 0, 1);
 
 		// And finally the weights: W[i] = K' C[i] K   (eq. (5)).
 		// We are only interested in the diagonal of the resulting matrix W[i].
-	
+
 		w = mdsw -> data;
 		for (long i = 1; i <= numberOfSources; i++)
 		{
@@ -1964,7 +1964,9 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 		}
 		*out1 = thee.transfer(); *out2 = mdsw.transfer();
 		for (long i = 1; i <= numberOfSources; i++) { NUMmatrix_free<double> (ci[i], 1, 1); }
-	} catch (MelderError) { for (long i = 1; i <= numberOfSources; i++) { NUMmatrix_free<double> (ci[i], 1, 1); }; throw; }
+	} catch (MelderError) {
+		for (long i = 1; i <= numberOfSources; i++) { NUMmatrix_free<double> (ci[i], 1, 1); };
+		Melder_throw (me, ": no Configuration (ytl) crerated."); }
 }
 
 Dissimilarities Distances_to_Dissimilarities (Distances me)
@@ -1979,14 +1981,14 @@ Dissimilarities Distances_to_Dissimilarities (Distances me)
 			Collection_addItem (thee.peek(), him.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Dissimilarities created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Dissimilarities created."); }
 }
 
 Distances Dissimilarities_to_Distances (Dissimilarities me, int measurementLevel)
 {
 	try {
 		autoDistances thee = Distances_create ();
-	
+
 		for (long i = 1; i <= my size; i++)
 		{
 			autoDistance him = Dissimilarity_to_Distance ((Dissimilarity) my item[i], measurementLevel == MDS_ORDINAL);
@@ -1995,64 +1997,63 @@ Distances Dissimilarities_to_Distances (Dissimilarities me, int measurementLevel
 			Collection_addItem (thee.peek(), him.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Distances created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Distances created."); }
 }
 
 /*****************  Kruskal *****************************************/
 
-static int smacof_guttmanTransform (Configuration cx, Configuration cz, 
+static void smacof_guttmanTransform (Configuration cx, Configuration cz,
 	Distance disp, Weight weight, double **vplus)
 {
-		long nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
-		double **z = cz -> data;
-	
-		autoNUMmatrix<double> b (1, nPoints, 1, nPoints);
-		autoDistance distZ = Configuration_to_Distance (cz);
-	
-		// compute B(Z) (eq. 8.25)
-	
-		for (long i = 1; i <= nPoints; i++)
+	long nPoints = cx -> numberOfRows, nDimensions = cx -> numberOfColumns;
+	double **z = cz -> data;
+
+	autoNUMmatrix<double> b (1, nPoints, 1, nPoints);
+	autoDistance distZ = Configuration_to_Distance (cz);
+
+	// compute B(Z) (eq. 8.25)
+
+	for (long i = 1; i <= nPoints; i++)
+	{
+		double sum = 0;
+		for (long j = 1; j <= nPoints; j++)
 		{
-			double sum = 0;
-			for (long j = 1; j <= nPoints; j++)
-			{
-				double dzij = distZ -> data[i][j];
-				if (i == j || dzij == 0) continue;
-				b[i][j] = - weight -> data[i][j] * disp -> data[i][j] / dzij;
-				sum += b[i][j];
-			}
-			b[i][i] = - sum;
+			double dzij = distZ -> data[i][j];
+			if (i == j || dzij == 0) continue;
+			b[i][j] = - weight -> data[i][j] * disp -> data[i][j] / dzij;
+			sum += b[i][j];
 		}
-	
-		// Guttman transform: Xu = (V+)B(Z)Z (eq. 8.29)
-	
-		for (long i = 1; i <= nPoints; i++)
+		b[i][i] = - sum;
+	}
+
+	// Guttman transform: Xu = (V+)B(Z)Z (eq. 8.29)
+
+	for (long i = 1; i <= nPoints; i++)
+	{
+		for (long j = 1; j <= nDimensions; j++)
 		{
-			for (long j = 1; j <= nDimensions; j++)
+			double xij = 0;
+			for (long k = 1;  k <= nPoints; k++)
 			{
-				double xij = 0;
-				for (long k = 1;  k <= nPoints; k++)
+				for (long l = 1; l <= nPoints; l++)
 				{
-					for (long l = 1; l <= nPoints; l++)
-					{
-						xij += vplus[i][k] * b[k][l] * z[l][j];
-					}
+					xij += vplus[i][k] * b[k][l] * z[l][j];
 				}
-				cx -> data[i][j] = xij;
 			}
+			cx -> data[i][j] = xij;
 		}
-		return 1;
+	}
 }
 
 double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int type)
 {
 	double eta_fit, eta_conf, rho, stress = NUMundefined, denum, tmp;
-	
+
 	Distance_Weight_rawStressComponents (fit, conf, weight, &eta_fit, &eta_conf, &rho);
-	
+
 	// All formula's for stress, except for raw stress, are independent of the
 	// scale of the configuration, i.e., the distances conf[i][j].
-	
+
 	if (type == MDS_NORMALIZED_STRESS)
 	{
 		denum = eta_fit * eta_conf;
@@ -2072,9 +2073,9 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 		double m = 0, wsum = 0, var = 0, **w = weight -> data;
 		double **c = conf -> data;
 		long nPoints = conf -> numberOfRows;
-		
+
 		// Get average distance
-		
+
 		for (long i = 1; i <= nPoints-1; i++)
 		{
 			for (long j = i + 1; j <= nPoints; j++)
@@ -2087,7 +2088,7 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 		if (m > 0)
 		{
 			// Get variance
-			
+
 			for (long i = 1; i <= nPoints-1; i++)
 			{
 				for (long j = i + 1; j <= nPoints; j++)
@@ -2097,7 +2098,7 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 				}
 			}
 			denum = var * eta_fit;
-			if (denum > 0) 
+			if (denum > 0)
 			{
 				stress = sqrt ((eta_fit * eta_conf - rho * rho) / denum);
 			}
@@ -2113,23 +2114,23 @@ double Distance_Weight_stress (Distance fit, Distance conf, Weight weight, int t
 void Distance_Weight_rawStressComponents (Distance fit, Distance conf,
 	Weight weight, double *eta_fit, double *eta_conf, double *rho)
 {
-	long nPoints = conf -> numberOfRows; 
-	
+	long nPoints = conf -> numberOfRows;
+
 	 *eta_fit = *eta_conf = *rho = 0;
-	
+
 	double wsum = 0;
 	for (long i = 1; i <= nPoints - 1; i++)
 	{
 		double *wi = weight -> data[i];
 		double *fiti = fit -> data[i];
 		double *confi = conf -> data[i];
-		
+
 		for (long j = i + 1; j <= nPoints; j++)
 		{
 			*eta_fit += wi[j] * fiti[j] * fiti[j];
 			*eta_conf += wi[j] * confi[j] * confi[j];
 			*rho += wi[j] * fiti[j] * confi[j];
-			wsum += wi[j];	
+			wsum += wi[j];
 		}
 	}
 }
@@ -2137,62 +2138,62 @@ void Distance_Weight_rawStressComponents (Distance fit, Distance conf,
 double Dissimilarity_Configuration_Transformator_Weight_stress (Dissimilarity d,
 	Configuration c, Any transformator, Weight w, int type)
 {
-		Transformator t = (Transformator) transformator;
-		long nPoints = d -> numberOfRows;
-		double stress = NUMundefined;
-	
-		if (nPoints < 1 || nPoints != c -> numberOfRows  || nPoints != t -> numberOfPoints ||
-		(w && nPoints != w -> numberOfRows)) Melder_throw ("Incorrect number of points.");
-		autoWeight aw = 0;
-		if (w == 0) { aw.reset (Weight_create (nPoints)); w = aw.peek(); }
-		autoDistance cdist = Configuration_to_Distance (c);
-		autoMDSVec vec = Dissimilarity_to_MDSVec (d);
-		autoDistance fit = Transformator_transform (t, vec.peek(), cdist.peek(), w);
-	
-		stress = Distance_Weight_stress (fit.peek(), cdist.peek(), w, type);
-		return stress;
+	Transformator t = (Transformator) transformator;
+	long nPoints = d -> numberOfRows;
+	double stress = NUMundefined;
+
+	if (nPoints < 1 || nPoints != c -> numberOfRows  || nPoints != t -> numberOfPoints ||
+	(w && nPoints != w -> numberOfRows)) Melder_throw ("Incorrect number of points.");
+	autoWeight aw = 0;
+	if (w == 0) { aw.reset (Weight_create (nPoints)); w = aw.peek(); }
+	autoDistance cdist = Configuration_to_Distance (c);
+	autoMDSVec vec = Dissimilarity_to_MDSVec (d);
+	autoDistance fit = Transformator_transform (t, vec.peek(), cdist.peek(), w);
+
+	stress = Distance_Weight_stress (fit.peek(), cdist.peek(), w, type);
+	return stress;
 }
 
 double Dissimilarity_Configuration_Weight_absolute_stress (Dissimilarity d, Configuration c, Weight w, int type)
 {
-		autoTransformator t = Transformator_create (d -> numberOfRows);
-		double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
-		return stress;
+	autoTransformator t = Transformator_create (d -> numberOfRows);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
+	return stress;
 }
 
 double Dissimilarity_Configuration_Weight_ratio_stress (Dissimilarity d, Configuration c, Weight w, int type)
 {
-		autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
-		double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
-		return stress;
+	autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
+	return stress;
 }
 
 double Dissimilarity_Configuration_Weight_interval_stress (Dissimilarity d, Configuration c, Weight w, int type)
 {
-		autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, 0, 1);
-		double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
-		return stress;
+	autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, 0, 1);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
+	return stress;
 }
 
 double Dissimilarity_Configuration_Weight_monotone_stress (Dissimilarity d, Configuration c, Weight w, int tiesProcessing, int type)
 {
-		autoMonotoneTransformator t = MonotoneTransformator_create (d -> numberOfRows);
-		MonotoneTransformator_setTiesProcessing (t.peek(), tiesProcessing);
-		double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
-		return stress;
+	autoMonotoneTransformator t = MonotoneTransformator_create (d -> numberOfRows);
+	MonotoneTransformator_setTiesProcessing (t.peek(), tiesProcessing);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c, t.peek(), w, type);
+	return stress;
 }
 
 double Dissimilarity_Configuration_Weight_ispline_stress (Dissimilarity d,
 	Configuration c, Weight w, long numberOfInteriorKnots, long order, int type)
 {
-		autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, numberOfInteriorKnots, order);
-		double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c,t.peek(), w, type);
-		return stress;
+	autoISplineTransformator t = ISplineTransformator_create (d -> numberOfRows, numberOfInteriorKnots, order);
+	double stress = Dissimilarity_Configuration_Transformator_Weight_stress (d, c,t.peek(), w, type);
+	return stress;
 }
 
 void Distance_Weight_smacofNormalize (Distance me, Weight w)
 {
-	double sumsq = 0; 
+	double sumsq = 0;
 	for (long i = 1; i <= my numberOfRows-1; i++)
 	{
 		double *wi = w -> data[i];
@@ -2216,14 +2217,14 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w)
 {
 	long nPoints = x -> numberOfRows;
 	if (y -> numberOfRows != nPoints || w -> numberOfRows != nPoints) return 0;
-	
+
 	double xy = 0, x2 = 0, y2 = 0;
 	for (long i = 1; i <= nPoints-1; i++)
 	{
 		double *xi = x -> data[i];
 		double *yi = y -> data[i];
 		double *wi = w -> data[i];
-		for (long j = i + 1; j <= nPoints-1; j++)		
+		for (long j = i + 1; j <= nPoints-1; j++)
 		{
 			xy += wi[j] * xi[j] * yi[j];
 			x2 += wi[j] * xi[j] * xi[j];
@@ -2233,7 +2234,7 @@ double Distance_Weight_congruenceCoefficient (Distance x, Distance y, Weight w)
 	return xy / (sqrt (x2) * sqrt (y2));
 }
 
-Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf, 
+Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimilarity me, Configuration conf,
 	Weight weight, Any transformator, double tolerance, long numberOfIterations, int showProgress, double *stress)
 {
 	try {
@@ -2251,13 +2252,13 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 		autoNUMmatrix<double> vplus (1, nPoints, 1, nPoints);
 		autoConfiguration z = (Configuration) Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
-		
+
 		double **w = weight -> data;
-	
+
 		if (showProgress) Melder_progress1 (0.0, L"MDS analysis" );
 
-		// Get V (eq. 8.19). 
-	
+		// Get V (eq. 8.19).
+
 		for (long i = 1; i <= nPoints; i++)
 		{
 			double wsum = 0;
@@ -2269,15 +2270,15 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 			}
 			v[i][i] = wsum;
 		}
-	
+
 		// V is row and column centered and therefore: rank(V) <= nPoints-1.
 		// V^-1 does not exist -> get Moore-Penrose inverse.
-	
+
 		NUMpseudoInverse (v.peek(), nPoints, nPoints, vplus.peek(), tol);
 		for (long iter = 1; iter <= numberOfIterations; iter++)
 		{
 			autoDistance dist = Configuration_to_Distance (conf);
-		
+
 			// transform & normalization
 
 			autoDistance fit = Transformator_transform (t, vec.peek(), dist.peek(), weight);
@@ -2285,33 +2286,33 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 			// Make conf the Guttman transform of z
 
 			smacof_guttmanTransform (conf, z.peek(), fit.peek(), weight, vplus.peek());
-		
+
 			// Compute stress
-		
+
 			autoDistance cdist = Configuration_to_Distance (conf);
-		
+
 			*stress = Distance_Weight_stress (fit.peek(), cdist.peek(), weight, MDS_NORMALIZED_STRESS);
-				
+
 			// Check stop criterium
-		
+
 			if (fabs (*stress - stressp) / stressp < tolerance) break;
-		
+
 			// Make Z = X
-		
+
 			NUMdmatrix_copyElements (conf -> data, z -> data, 1, nPoints, 1, nDimensions);
-		
+
 			stressp = *stress;
 			if (showProgress) { Melder_progress2 ((double) iter / (numberOfIterations + 1), L"kruskal: stress ",
 				Melder_double (*stress)); therror }
 		}
 		if (showProgress) Melder_progress1 (1.0, 0);
 		return z.transfer();
-	} catch (MelderError) { 
+	} catch (MelderError) {
 		if (showProgress) Melder_progress1 (1.0, 0);
-		Melder_thrown (me, ": no improved Configuration created (smacof method)."); }
+		Melder_throw (me, ": no improved Configuration created (smacof method)."); }
 }
 
-Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf, 
+Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Dissimilarity me, Configuration conf,
 	Weight w, Any transformator, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	int showMulti = showProgress && numberOfRepetitions > 1;
@@ -2323,7 +2324,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Diss
 		autoConfiguration  cbest = (Configuration) Data_copy (conf);
 
 		if (showMulti) Melder_progress1 (0.0, L"MDS many times");
-		
+
 		for (long i = 1; i <= numberOfRepetitions; i++)
 		{
 			autoConfiguration cresult = Dissimilarity_Configuration_Weight_Transformator_smacof
@@ -2335,65 +2336,65 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Diss
 			}
 			Configuration_randomize (cstart.peek());
 			TableOfReal_centreColumns (cstart.peek());
- 		
-			if (showMulti) { Melder_progress3 ((double)i / (numberOfRepetitions+1), Melder_integer (i), 
+
+			if (showMulti) { Melder_progress3 ((double)i / (numberOfRepetitions+1), Melder_integer (i),
 				L" from ", Melder_integer (numberOfRepetitions)); therror }
 		}
 		if (showMulti) Melder_progress1 (1.0, NULL);
 		return cbest.transfer();
-	} catch (MelderError) { 
+	} catch (MelderError) {
 		if (showMulti) Melder_progress1 (1.0, NULL);
-		Melder_thrown (me, ": no improved Configuration created (smacodf method)."); 
+		Melder_throw (me, ": no improved Configuration created (smacodf method).");
 	}
 }
 
-Configuration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity me, Configuration cstart, Weight w, 
+Configuration Dissimilarity_Configuration_Weight_absolute_mds (Dissimilarity me, Configuration cstart, Weight w,
 	double tolerance, long numberOfIterations,long numberOfRepetitions, int showProgress)
 {
 	try {
 		autoTransformator t = Transformator_create (my numberOfRows);
-		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof 
-			(me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress); 
+		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof
+			(me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no improved Configuration created (absolute mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no improved Configuration created (absolute mds method)."); }
 }
 
-Configuration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me, Configuration cstart, Weight w, 
+Configuration Dissimilarity_Configuration_Weight_ratio_mds (Dissimilarity me, Configuration cstart, Weight w,
 	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	try {
 		autoRatioTransformator t = RatioTransformator_create (my numberOfRows);
-		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof 
+		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof
 			(me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no improved Configuration created (ratio mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no improved Configuration created (ratio mds method)."); }
 }
 
-Configuration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity me, Configuration cstart, Weight w, 
+Configuration Dissimilarity_Configuration_Weight_interval_mds (Dissimilarity me, Configuration cstart, Weight w,
 	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	try {
 		autoISplineTransformator t = ISplineTransformator_create (my numberOfRows, 0, 1);
-		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof 
+		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof
 			(me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no improved Configuration created (interval mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no improved Configuration created (interval mds method)."); }
 }
 
-Configuration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w, 
+Configuration Dissimilarity_Configuration_Weight_monotone_mds (Dissimilarity me, Configuration cstart, Weight w,
    int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	try {
 		autoMonotoneTransformator t = MonotoneTransformator_create (my numberOfRows);
 		MonotoneTransformator_setTiesProcessing (t.peek(), tiesProcessing);
-		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof 
+		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof
 			(me, cstart, w, t.peek(), tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no improved Configuration created (monotone mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no improved Configuration created (monotone mds method)."); }
 }
 
-Configuration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, Configuration cstart, Weight w, 
-	long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, 
+Configuration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, Configuration cstart, Weight w,
+	long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions,
 	int showProgress)
 {
 	try {
@@ -2401,34 +2402,34 @@ Configuration Dissimilarity_Configuration_Weight_ispline_mds (Dissimilarity me, 
 		autoConfiguration c = Dissimilarity_Configuration_Weight_Transformator_multiSmacof (me, cstart, w, t.peek(),
 			tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no improved Configuration created (ispline mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no improved Configuration created (ispline mds method)."); }
 }
 
-Configuration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, long numberOfDimensions, 
+Configuration Dissimilarity_Weight_absolute_mds (Dissimilarity me, Weight w, long numberOfDimensions,
 	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_ABSOLUTE);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
-		autoConfiguration c = Dissimilarity_Configuration_Weight_absolute_mds 
+		autoConfiguration c = Dissimilarity_Configuration_Weight_absolute_mds
 				(me, cstart.peek(), w, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (absolute mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (absolute mds method)."); }
 }
 
-Configuration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, long numberOfDimensions, 
+Configuration Dissimilarity_Weight_interval_mds (Dissimilarity me, Weight w, long numberOfDimensions,
 	double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	try {
 		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
-		autoConfiguration c = Dissimilarity_Configuration_Weight_interval_mds 
+		autoConfiguration c = Dissimilarity_Configuration_Weight_interval_mds
 			(me, cstart.peek(), w, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (interval mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (interval mds method)."); }
 }
 
-Configuration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, long numberOfDimensions, 
+Configuration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, long numberOfDimensions,
 	int tiesProcessing, double tolerance, long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	try {
@@ -2437,38 +2438,38 @@ Configuration Dissimilarity_Weight_monotone_mds (Dissimilarity me, Weight w, lon
 		autoConfiguration c = Dissimilarity_Configuration_Weight_monotone_mds (me, cstart.peek(), w, tiesProcessing,
 			tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (monotone mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (monotone mds method)."); }
 }
 
 Configuration Dissimilarity_Weight_ratio_mds (Dissimilarity me, Weight w, long numberOfDimensions, double tolerance,
 	long numberOfIterations, long numberOfRepetitions, int showProgress)
 {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO); 
+		autoDistance d = Dissimilarity_to_Distance (me, MDS_RATIO);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_ratio_mds (me, cstart.peek(), w, tolerance,
 			numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (ratio mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (ratio mds method)."); }
 }
 
-Configuration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, long numberOfDimensions, 
-	long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions, 
+Configuration Dissimilarity_Weight_ispline_mds (Dissimilarity me, Weight w, long numberOfDimensions,
+	long numberOfInteriorKnots, long order, double tolerance, long numberOfIterations, long numberOfRepetitions,
 	int showProgress)
 {
 	try {
-		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL); 
+		autoDistance d = Dissimilarity_to_Distance (me, MDS_ORDINAL);
 		autoConfiguration cstart = Distance_to_Configuration_torsca (d.peek(), numberOfDimensions);
 		autoConfiguration c = Dissimilarity_Configuration_Weight_ispline_mds (me, cstart.peek(), w,
 			numberOfInteriorKnots, order, tolerance, numberOfIterations, numberOfRepetitions, showProgress);
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (ispline mds method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (ispline mds method)."); }
 }
 
 /***** classical **/
-	
-static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist, 
-	Distance dfit, int stress_formula, double *stress, double *s, double *t, 
+
+static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist,
+	Distance dfit, int stress_formula, double *stress, double *s, double *t,
 	double *dbar)
 {
 	long nProximities = my nProximities;
@@ -2485,7 +2486,7 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist,
 		}
 		*dbar /= nProximities;
 	}
-	
+
 	for (long i = 1; i <= nProximities; i++)
 	{
 		long ii = iPoint[i], jj = jPoint[i];
@@ -2493,85 +2494,85 @@ static void MDSVec_Distances_getStressValues (MDSVec me, Distance ddist,
 		double tt = dist[ii][jj] - *dbar;
 		*s += st * st; *t += tt * tt;
 	}
-	
+
 	*stress = *t > 0 ? sqrt (*s / *t) : 0;
 }
 
-static double func (I, const double p[])
+static double func (Data object, const double p[])
 {
-		iam (Kruskal); 
-		MDSVec him = my vec; 
-		double **x = my configuration -> data, s, t, dbar, stress;
-		double metric = my configuration -> metric;
-		long numberOfDimensions = my configuration -> numberOfColumns;
-		long numberOfPoints = my configuration -> numberOfRows;
-		int tiesProcessing = my process == MDS_CONTINUOUS ? 1 : 0;
+	Kruskal me = (Kruskal) object;
+	MDSVec him = my vec;
+	double **x = my configuration -> data, s, t, dbar, stress;
+	double metric = my configuration -> metric;
+	long numberOfDimensions = my configuration -> numberOfColumns;
+	long numberOfPoints = my configuration -> numberOfRows;
+	int tiesProcessing = my process == MDS_CONTINUOUS ? 1 : 0;
 
-		// Substitute results of minimizer into configuration and 
-		// normalize the configuration
+	// Substitute results of minimizer into configuration and
+	// normalize the configuration
 
-		NUMdvector_into_matrix (p, x, 1, numberOfPoints, 1, numberOfDimensions);
-	
-		// Normalize
-		
-		NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, NULL);
-		NUMnormalize (x, numberOfPoints, numberOfDimensions, sqrt (numberOfPoints));
+	NUMdvector_into_matrix (p, x, 1, numberOfPoints, 1, numberOfDimensions);
 
-		// Calculate interpoint distances from the configuration
-	
-		autoDistance dist = Configuration_to_Distance (my configuration);
+	// Normalize
 
+	NUMcentreColumns (x, 1, numberOfPoints, 1, numberOfDimensions, NULL);
+	NUMnormalize (x, numberOfPoints, numberOfDimensions, sqrt (numberOfPoints));
 
-		// Monotone regression
+	// Calculate interpoint distances from the configuration
 
-		autoDistance fit = MDSVec_Distance_monotoneRegression (my vec, dist.peek(), tiesProcessing);
+	autoDistance dist = Configuration_to_Distance (my configuration);
 
 
-		// Get numerator and denominator of stress
+	// Monotone regression
+
+	autoDistance fit = MDSVec_Distance_monotoneRegression (my vec, dist.peek(), tiesProcessing);
 
 
-		MDSVec_Distances_getStressValues (my vec, dist.peek(), fit.peek(), my stress_formula, &stress, &s, &t, &dbar);
-	
-		// Gradient calculation. 
+	// Get numerator and denominator of stress
 
-		for (long i = 1; i <= numberOfPoints; i++)
+
+	MDSVec_Distances_getStressValues (my vec, dist.peek(), fit.peek(), my stress_formula, &stress, &s, &t, &dbar);
+
+	// Gradient calculation.
+
+	for (long i = 1; i <= numberOfPoints; i++)
+	{
+		for (long j = 1; j <= numberOfDimensions; j++)
 		{
-			for (long j = 1; j <= numberOfDimensions; j++)
-			{
-				my dx[i][j] = 0;
-			}
+			my dx[i][j] = 0;
 		}
+	}
 
-		// Prevent overflow when stress is small
-			
-		if (stress < 1e-6) return stress;
-	 
-		for (long i = 1; i <= his nProximities; i++)
+	// Prevent overflow when stress is small
+
+	if (stress < 1e-6) return stress;
+
+	for (long i = 1; i <= his nProximities; i++)
+	{
+		long ii = my vec -> iPoint[i], jj = my vec -> jPoint[i];
+		double g1 = stress * ((dist->data[ii][jj] - fit->data[ii][jj]) / s - (dist->data[ii][jj] - dbar) / t);
+		for (long j = 1; j <= numberOfDimensions; j++)
 		{
-			long ii = my vec -> iPoint[i], jj = my vec -> jPoint[i];
-			double g1 = stress * ((dist->data[ii][jj] - fit->data[ii][jj]) / s - (dist->data[ii][jj] - dbar) / t);
-			for (long j = 1; j <= numberOfDimensions; j++)
-			{
-				double dj = x[ii][j] - x[jj][j];
-				double g2 = g1 * pow (fabs (dj) / dist->data[ii][jj], metric - 1);
-				if (dj < 0) g2 = -g2;
-				my dx[ii][j] += g2; my dx[jj][j] -= g2;
-			}
+			double dj = x[ii][j] - x[jj][j];
+			double g2 = g1 * pow (fabs (dj) / dist->data[ii][jj], metric - 1);
+			if (dj < 0) g2 = -g2;
+			my dx[ii][j] += g2; my dx[jj][j] -= g2;
 		}
-	
-		// Increment the number of times this function has been called
-	 
-		(my minimizer -> funcCalls)++;
-		return stress;
+	}
+
+	// Increment the number of times this function has been called
+
+	(my minimizer -> funcCalls)++;
+	return stress;
 }
 
 /* Precondition: configuration was not changed since previous call to func */
-static void dfunc (I, const double p[], double dp[])
+static void dfunc (Data object, const double p[], double dp[])
 {
-	iam (Kruskal); 
-	Configuration thee = my configuration; 
+	Kruskal me = (Kruskal) object;
+	Configuration thee = my configuration;
 	(void) p;
-	
+
 	long k = 1;
 	for (long i = 1; i <= thy numberOfRows; i++)
 	{
@@ -2605,10 +2606,10 @@ Kruskal Kruskal_create (long numberOfPoints, long numberOfDimensions)
 		my configuration = Configuration_create (numberOfPoints, numberOfDimensions);
 		my dx = NUMmatrix<double> (1, numberOfPoints, 1, numberOfDimensions);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Kruskal not created."); }
+	} catch (MelderError) { Melder_throw ("Kruskal not created."); }
 }
 
-Configuration Dissimilarity_kruskal (Dissimilarity me, long numberOfDimensions, long metric, int tiesProcessing, 
+Configuration Dissimilarity_kruskal (Dissimilarity me, long numberOfDimensions, long metric, int tiesProcessing,
 	int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions)
 {
 	try {
@@ -2620,64 +2621,64 @@ Configuration Dissimilarity_kruskal (Dissimilarity me, long numberOfDimensions, 
 		autoConfiguration thee = Dissimilarity_Configuration_kruskal (me, c.peek(), tiesProcessing,
 			stress_formula, tolerance, numberOfIterations, numberOfRepetitions);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created (kruskal method)."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created (kruskal method)."); }
 }
 
-void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me, 
-	Configuration him, Graphics g, double xmin, double xmax, double ymin, 
+void Dissimilarity_Configuration_drawShepardDiagram (Dissimilarity me,
+	Configuration him, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
-		autoDistance dist = Configuration_to_Distance (him);
-		Proximity_Distance_drawScatterDiagram (me, dist.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
+	autoDistance dist = Configuration_to_Distance (him);
+	Proximity_Distance_drawScatterDiagram (me, dist.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-Distance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dissimilarity, Configuration configuration, 
+Distance Dissimilarity_Configuration_monotoneRegression (Dissimilarity dissimilarity, Configuration configuration,
 	int tiesProcessing)
 {
 	try {
 		autoDistance dist = Configuration_to_Distance (configuration);
 		autoDistance result = Dissimilarity_Distance_monotoneRegression (dissimilarity, dist.peek(), tiesProcessing);
 		return result.transfer();
-	} catch (MelderError) { Melder_thrown ("No Distance created (monotone regression)."); }
+	} catch (MelderError) { Melder_throw ("No Distance created (monotone regression)."); }
 }
 
 Distances Dissimilarities_Configuration_monotoneRegression (Dissimilarities me, Configuration configuration, int tiesProcessing)
 {
 	try {
-		autoDistances result = Distances_create (); 
+		autoDistances result = Distances_create ();
 		autoDistance dist = Configuration_to_Distance (configuration);
 		for (long i = 1; i <= my size; i++)
 		{
 			autoDistance d = Dissimilarity_Distance_monotoneRegression ((Dissimilarity) my item[i], dist.peek(), tiesProcessing);
-			Collection_addItem (result.peek(), d.transfer()); therror
+			Collection_addItem (result.peek(), d.transfer());
 		}
 		return result.transfer();
-	} catch (MelderError) { Melder_thrown ("No Distances created (monotone regression)."); }
+	} catch (MelderError) { Melder_throw ("No Distances created (monotone regression)."); }
 }
 
 
-void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g, 
-	int tiesProcessing, double xmin, double xmax, double ymin, double ymax, double size_mm, 
+void Dissimilarity_Configuration_drawMonotoneRegression (Dissimilarity me, Configuration him, Graphics g,
+	int tiesProcessing, double xmin, double xmax, double ymin, double ymax, double size_mm,
 	const wchar_t *mark, int garnish)
 {/* obsolete replace by transformator */
-		autoDistance fit = Dissimilarity_Configuration_monotoneRegression (me, him, tiesProcessing);
-		Proximity_Distance_drawScatterDiagram (me, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
+	autoDistance fit = Dissimilarity_Configuration_monotoneRegression (me, him, tiesProcessing);
+	Proximity_Distance_drawScatterDiagram (me, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
 void Dissimilarity_Configuration_Weight_drawAbsoluteRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
-		autoTransformator t = Transformator_create (d->numberOfRows);
-		autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
-		Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
+	autoTransformator t = Transformator_create (d->numberOfRows);
+	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
+	Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, 
+void Dissimilarity_Configuration_Weight_drawRatioRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
-		autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
-		autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
-		Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
+	autoRatioTransformator t = RatioTransformator_create (d -> numberOfRows);
+	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
+	Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
 void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
@@ -2687,22 +2688,22 @@ void Dissimilarity_Configuration_Weight_drawIntervalRegression (Dissimilarity d,
 		0, 1, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
-void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d, Configuration c, Weight w, Graphics g, 
+void Dissimilarity_Configuration_Weight_drawMonotoneRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
 	int tiesProcessing, double xmin, double xmax, double ymin, double ymax, double size_mm, const wchar_t *mark, int garnish)
 {
-		autoMonotoneTransformator t = MonotoneTransformator_create (d->numberOfRows);
-		MonotoneTransformator_setTiesProcessing (t.peek(), tiesProcessing);
-		autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
-		Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
+	autoMonotoneTransformator t = MonotoneTransformator_create (d->numberOfRows);
+	MonotoneTransformator_setTiesProcessing (t.peek(), tiesProcessing);
+	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
+	Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
 void Dissimilarity_Configuration_Weight_drawISplineRegression (Dissimilarity d, Configuration c, Weight w, Graphics g,
-	long numberOfInternalKnots, long order, double xmin, double xmax, double ymin, double ymax, double size_mm, 
+	long numberOfInternalKnots, long order, double xmin, double xmax, double ymin, double ymax, double size_mm,
 	const wchar_t *mark, int garnish)
 {
-		autoISplineTransformator t = ISplineTransformator_create (d->numberOfRows, numberOfInternalKnots, order);
-		autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
-		Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
+	autoISplineTransformator t = ISplineTransformator_create (d->numberOfRows, numberOfInternalKnots, order);
+	autoDistance fit = Dissimilarity_Configuration_Transformator_Weight_transform (d, c, t.peek(), w);
+	Proximity_Distance_drawScatterDiagram (d, fit.peek(), g, xmin, xmax, ymin, ymax, size_mm, mark, garnish);
 }
 
 Distance Dissimilarity_Configuration_Transformator_Weight_transform (Dissimilarity d, Configuration c, Any t, Weight w)
@@ -2714,178 +2715,177 @@ Distance Dissimilarity_Configuration_Transformator_Weight_transform (Dissimilari
 		autoMDSVec v = Dissimilarity_to_MDSVec (d);
 		autoDistance thee = Transformator_transform (t, v.peek(), cdist.peek(), w);
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown ("Distance not created."); }
+	} catch (MelderError) { Melder_throw ("Distance not created."); }
 }
 
-double Dissimilarity_Configuration_Weight_Transformator_normalizedStress 
+double Dissimilarity_Configuration_Weight_Transformator_normalizedStress
 	(Dissimilarity me, Configuration conf, Weight weight, Transformator t)
 {
-		autoDistance cdist = Configuration_to_Distance (conf); 
-		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
-		autoDistance fdist = Transformator_transform (t, vec.peek(), cdist.peek(), weight);
-		double stress = Distance_Weight_stress (fdist.peek(), cdist.peek(), weight, MDS_NORMALIZED_STRESS);
-		return stress;
+	autoDistance cdist = Configuration_to_Distance (conf);
+	autoMDSVec vec = Dissimilarity_to_MDSVec (me);
+	autoDistance fdist = Transformator_transform (t, vec.peek(), cdist.peek(), weight);
+	double stress = Distance_Weight_stress (fdist.peek(), cdist.peek(), weight, MDS_NORMALIZED_STRESS);
+	return stress;
 }
 
-double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, int tiesProcessing, 
+double Dissimilarity_Configuration_getStress (Dissimilarity me, Configuration him, int tiesProcessing,
 	int stress_formula)
 {
-		autoDistance dist = Configuration_to_Distance (him);
-		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
-		autoDistance fit = MDSVec_Distance_monotoneRegression (vec.peek(), dist.peek(), tiesProcessing);
-		double s, t, dbar;
-		double stress;
-		MDSVec_Distances_getStressValues (vec.peek(), dist.peek(), fit.peek(), stress_formula, &stress, &s, &t, &dbar);
-		return stress;
+	autoDistance dist = Configuration_to_Distance (him);
+	autoMDSVec vec = Dissimilarity_to_MDSVec (me);
+	autoDistance fit = MDSVec_Distance_monotoneRegression (vec.peek(), dist.peek(), tiesProcessing);
+	double s, t, dbar;
+	double stress;
+	MDSVec_Distances_getStressValues (vec.peek(), dist.peek(), fit.peek(), stress_formula, &stress, &s, &t, &dbar);
+	return stress;
 }
 
-Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int tiesProcessing, 
+Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configuration him, int tiesProcessing,
 	int stress_formula, double tolerance, long numberOfIterations, long numberOfRepetitions)
 {
 	try {
-		// The Configuration is normalized: each dimension centred + 
+		// The Configuration is normalized: each dimension centred +
 		//	total variance set
 
 		long numberOfCoordinates = my numberOfRows * his numberOfColumns;
 		long numberOfParameters = numberOfCoordinates - his numberOfColumns - 1;
 		long numberOfData = my numberOfRows * (my numberOfRows - 1) / 2;
-	
+
 		if (numberOfData < numberOfParameters) Melder_throw ("The number of data must be larger than number of parameters in the model.");
-		
+
 		autoKruskal thee = Kruskal_create (my numberOfRows, his numberOfColumns);
 		TableOfReal_copyLabels (me, thy configuration, 1, 0);
 		autoDissimilarity dissimilarity = (Dissimilarity) Data_copy (me);
-		Collection_addItem (thy proximities, dissimilarity.transfer()); therror
+		Collection_addItem (thy proximities, dissimilarity.transfer());
 		thy vec = Dissimilarity_to_MDSVec (me);
-	
-		thy minimizer = (Minimizer) VDSmagtMinimizer_create (numberOfCoordinates, thee.peek(), func, dfunc); therror
+
+		thy minimizer = (Minimizer) VDSmagtMinimizer_create (numberOfCoordinates, (Data) thee.peek(), func, dfunc);
 
 		NUMdmatrix_into_vector (his data, thy minimizer -> p, 1, his numberOfRows, 1, his numberOfColumns);
 
-		thy stress_formula = stress_formula; 
+		thy stress_formula = stress_formula;
 		thy process = tiesProcessing;
 		Configuration_setMetric (thy configuration, his metric);
 
-		if (! Minimizer_minimizeManyTimes (thy minimizer, numberOfRepetitions,
-    		numberOfIterations, tolerance)) Melder_throw ("Cannot minimize.");
+		Minimizer_minimizeManyTimes (thy minimizer, numberOfRepetitions, numberOfIterations, tolerance);
 
 		/* call the function to get the best configuration */
-	
-		(void) func (thee.peek(), ((Minimizer)(thy minimizer)) -> p);
-	
+
+		(void) func ((Data) thee.peek(), ((Minimizer)(thy minimizer)) -> p);
+
 		autoConfiguration result = (Configuration) Data_copy (thy configuration);
 		return result.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no Configuration created."); }
+	} catch (MelderError) { Melder_throw (me, ": no Configuration created."); }
 }
 
 /************************** INDSCAL **************************************/
 
 
 /*
-	Ten Berge, Kiers & Krijnen (1993), Computational Solutions for the 
-	Problem of Negative Saliences and Nonsymmetry in INDSCAL, 
-	Journal of Classification 10, 115-124. 
+	Ten Berge, Kiers & Krijnen (1993), Computational Solutions for the
+	Problem of Negative Saliences and Nonsymmetry in INDSCAL,
+	Journal of Classification 10, 115-124.
 */
 
 static void indscal_iteration_tenBerge (ScalarProducts zc, Configuration xc, Salience weights)
 {
-		long nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
-		long nSources = zc -> size;
-		double **x = xc -> data, **w = weights -> data, lambda;
+	long nPoints = xc -> numberOfRows, nDimensions = xc -> numberOfColumns;
+	long nSources = zc -> size;
+	double **x = xc -> data, **w = weights -> data, lambda;
 
-		// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
-	
-		double tolerance = 1e-4;
-		autoNUMmatrix<double> wsih (1, nPoints, 1, nPoints);
-		autoNUMvector<double> solution (1, nPoints);
+	// tolerance = 1e-4 is nearly optimal for dominant eigenvector estimation.
 
-		for (long h = 1; h <= nDimensions; h++)
+	double tolerance = 1e-4;
+	autoNUMmatrix<double> wsih (1, nPoints, 1, nPoints);
+	autoNUMvector<double> solution (1, nPoints);
+
+	for (long h = 1; h <= nDimensions; h++)
+	{
+		autoCollection sprc = (Collection) Data_copy (zc);
+		for (long k = 1; k <= nPoints; k++)
 		{
-			autoCollection sprc = (Collection) Data_copy (zc);
-			for (long k = 1; k <= nPoints; k++)
-			{
-				for (long l = 1; l <= nPoints; l++) { wsih[k][l] = 0; }
-			}
-		
-			for (long i = 1; i<= nSources; i++)
-			{
-				ScalarProduct spr = (ScalarProduct) sprc -> item[i];
-				double **sih = spr -> data;
-			
-				// Construct the S[i][h] matrices (eq. 6)
-			
-				for (long j = 1; j <= nDimensions; j++)
-				{
-					if (j == h) continue;
-					for (long k = 1; k <= nPoints; k++)
-					{
-						for (long l = 1; l <= nPoints; l++)
-						{
-							sih[k][l] -= x[k][j] * x[l][j] * w[i][j];
-						}
-					}
-				}
-						
-				// the weighted S matrix (eq. 8)
-			
-				for (long k = 1; k <= nPoints; k++)
-				{
-					for (long l = 1; l <= nPoints; l++)
-					{
-						wsih[k][l] += w[i][h] * sih[k][l];
-					}
-				}
-			}
-		
-			// largest eigenvalue of m (nonsymmetric matrix!!) is optimal solution for this dimension
-		
-			for (long k = 1; k <= nPoints; k++)
-			{
-				solution[k] = x[k][h];
-			}
-		
-			NUMdominantEigenvector (wsih.peek(), nPoints, solution.peek(), &lambda, tolerance);
-		
-			// normalize the solution: centre and x'x = 1
-			
-			double mean = 0;
-			for (long k = 1; k <= nPoints; k++)
-			{
-				mean += solution[k];
-			}
-			mean /= nPoints;
+			for (long l = 1; l <= nPoints; l++) { wsih[k][l] = 0; }
+		}
 
-			if (mean == 0) continue;
-		
-			double scale = 0;
-			for (long k = 1; k <= nPoints; k++)
+		for (long i = 1; i<= nSources; i++)
+		{
+			ScalarProduct spr = (ScalarProduct) sprc -> item[i];
+			double **sih = spr -> data;
+
+			// Construct the S[i][h] matrices (eq. 6)
+
+			for (long j = 1; j <= nDimensions; j++)
 			{
-				solution[k] -= mean;
-				scale += solution[k] * solution[k];
-			}
-		
-			for (long k = 1; k <= nPoints; k++)
-			{
-				x[k][h] = solution[k] / sqrt (scale);
-			}
-		
-			// update weights. Make negative weights zero.
-		
-			for (long i = 1; i<= nSources; i++) 
-			{
-				ScalarProduct spr = (ScalarProduct) sprc -> item[i];
-				double **sih = spr -> data, wih = 0;
+				if (j == h) continue;
 				for (long k = 1; k <= nPoints; k++)
 				{
 					for (long l = 1; l <= nPoints; l++)
 					{
-						wih += x[k][h] * sih[k][l] * x[l][h];
+						sih[k][l] -= x[k][j] * x[l][j] * w[i][j];
 					}
 				}
-				if (wih < 0) wih = 0;
-				w[i][h] = wih;
+			}
+
+			// the weighted S matrix (eq. 8)
+
+			for (long k = 1; k <= nPoints; k++)
+			{
+				for (long l = 1; l <= nPoints; l++)
+				{
+					wsih[k][l] += w[i][h] * sih[k][l];
+				}
 			}
 		}
+
+		// largest eigenvalue of m (nonsymmetric matrix!!) is optimal solution for this dimension
+
+		for (long k = 1; k <= nPoints; k++)
+		{
+			solution[k] = x[k][h];
+		}
+
+		NUMdominantEigenvector (wsih.peek(), nPoints, solution.peek(), &lambda, tolerance);
+
+		// normalize the solution: centre and x'x = 1
+
+		double mean = 0;
+		for (long k = 1; k <= nPoints; k++)
+		{
+			mean += solution[k];
+		}
+		mean /= nPoints;
+
+		if (mean == 0) continue;
+
+		double scale = 0;
+		for (long k = 1; k <= nPoints; k++)
+		{
+			solution[k] -= mean;
+			scale += solution[k] * solution[k];
+		}
+
+		for (long k = 1; k <= nPoints; k++)
+		{
+			x[k][h] = solution[k] / sqrt (scale);
+		}
+
+		// update weights. Make negative weights zero.
+
+		for (long i = 1; i<= nSources; i++)
+		{
+			ScalarProduct spr = (ScalarProduct) sprc -> item[i];
+			double **sih = spr -> data, wih = 0;
+			for (long k = 1; k <= nPoints; k++)
+			{
+				for (long l = 1; l <= nPoints; l++)
+				{
+					wih += x[k][h] * sih[k][l] * x[l][h];
+				}
+			}
+			if (wih < 0) wih = 0;
+			w[i][h] = wih;
+		}
+	}
 }
 
 
@@ -2895,47 +2895,47 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 	try {
 		double tol = 1e-6, vafp = 0;
 		long nZeros = 0, nSources = sp -> size, iter;
-	
+
 		autoConfiguration x = (Configuration) Data_copy (configuration);
 		autoSalience w = (Salience) Data_copy (weights);
-	
+
 		*out1 = 0; *out2 = 0;
-		
+
 		if (showProgress) Melder_progress1 (0.0, L"INDSCAL analysis");
-	
+
 		// Solve for X, and W matrix via Alternating Least Squares.
-	
+
 		for (iter = 1; iter <= numberOfIterations; iter++)
 		{
 			indscal_iteration_tenBerge (sp, x.peek(), w.peek());
-		
+
 			// Goodness of fit and test criterion.
-		
+
 			ScalarProducts_Configuration_Salience_vaf (sp, x.peek(), w.peek(), vaf);
-		
+
 			if (*vaf > 1 - tol || fabs (*vaf - vafp) /  vafp < tolerance) break;
 			vafp = *vaf;
-			if (showProgress) { Melder_progress2 ((double) iter / (numberOfIterations + 1), 
+			if (showProgress) { Melder_progress2 ((double) iter / (numberOfIterations + 1),
 				L"indscal: vaf ", Melder_double(*vaf)); therror }
 		}
-	
+
 		// Count number of zero weights
-	
+
 		nZeros = NUMdmatrix_countZeros (w->data, w->numberOfRows, w->numberOfColumns);
-	
+
 		// Set labels & names.
-	
+
 		Thing_setName (x.peek(), L"indscal");
 		Thing_setName (w.peek(), L"indscal");
 		TableOfReal_labelsFromCollectionItemNames (w.peek(), sp, 1, 0);
-	
+
 		*out1 = x.transfer(); *out2 = w.transfer();
-	
+
 		if (showProgress)
 		{
 			MelderInfo_open ();
 			MelderInfo_writeLine4 (L"**************** INDSCAL results on Distances "
-				"*******************\n\n", Thing_className (sp), 
+				"*******************\n\n", Thing_className (sp),
 				L"number of objects: ",  Melder_integer (nSources));
 			for (long i = 1; i <= nSources; i++)
 			{
@@ -2943,74 +2943,76 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 			}
 			if (nZeros > 0)
 			{
-				MelderInfo_writeLine5 (L"WARNING: ", Melder_integer (nZeros),  L" zero weight", 
+				MelderInfo_writeLine5 (L"WARNING: ", Melder_integer (nZeros),  L" zero weight",
 					(nZeros > 1 ? L"s": L""), L"!");
 			}
-			MelderInfo_writeLine5 (L"\n\nVariance Accounted For = ", Melder_double (*vaf), 
-				L"\nThe optimal configuration was reached in ", 
+			MelderInfo_writeLine5 (L"\n\nVariance Accounted For = ", Melder_double (*vaf),
+				L"\nThe optimal configuration was reached in ",
 				Melder_integer ((iter > numberOfIterations ? numberOfIterations : iter)), L" iterations.");
 			MelderInfo_close ();
 		}
 		if (showProgress) Melder_progress1 (1.0, NULL);
-	} catch (MelderError) { 
+	} catch (MelderError) {
 		if (showProgress) Melder_progress1 (1.0, NULL);
-		throw; 
+		Melder_throw ("No indscal configuration calculated.");
 	}
 }
 
-void Distances_Configuration_Salience_indscal (Distances distances, Configuration configuration, Salience weights, 
-	int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, 
+void Distances_Configuration_Salience_indscal (Distances distances, Configuration configuration, Salience weights,
+	int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress,
 	Configuration *out1, Salience *out2, double *vaf)
 {
+	try {
 		*out1 = 0; *out2 = 0;
 		autoScalarProducts sp = Distances_to_ScalarProducts (distances, normalizeScalarProducts);
 		ScalarProducts_Configuration_Salience_indscal (sp.peek(), configuration, weights, tolerance, numberOfIterations,
 			showProgress, out1, out2, vaf);
+	} catch (MelderError) { Melder_throw ("No indscal configuration calculated."); }
 }
 
 
-void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration configuration, 
+void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Configuration configuration,
 	Salience weights, int tiesProcessing, int normalizeScalarProducts, double tolerance, long numberOfIterations,
 	int showProgress, Configuration *out1, Salience *out2, double *vaf)
 {
 	try {
-		double tol = 1e-6, vafp = 0; 
+		double tol = 1e-6, vafp = 0;
 		long iter, nSources = dissims -> size;;
 		autoConfiguration x = (Configuration) Data_copy (configuration);
 		autoSalience w = (Salience) Data_copy (weights);
 		autoMDSVecs vecs = (MDSVecs) Dissimilarities_to_MDSVecs (dissims);
-	
+
 		*out1 = 0; *out2 = 0;
-		
+
 		if (showProgress) Melder_progress1 (0.0, L"INDSCAL analysis");
-		
+
 		for (iter = 1; iter <= numberOfIterations; iter++)
 		{
 			autoDistances distances = MDSVecs_Configuration_Salience_monotoneRegression (vecs.peek(), x.peek(), w.peek(), tiesProcessing);
 			autoScalarProducts sp = Distances_to_ScalarProducts (distances.peek(), normalizeScalarProducts);
-		
+
 			indscal_iteration_tenBerge (sp.peek(), x.peek(), w.peek());
-			
+
 			// Goodness of fit and test criterion.
-		
+
 			Distances_Configuration_Salience_vaf (distances.peek(), x.peek(), w.peek(), normalizeScalarProducts, vaf);
 
 			if (*vaf > 1 - tol || fabs(*vaf - vafp) /  vafp < tolerance) break;
 			vafp = *vaf;
 			if (showProgress) { Melder_progress2 ((double) iter / (numberOfIterations+1), L"indscal: vaf ", Melder_double (*vaf)); therror }
 		}
-	
+
 		// Count number of zero weights
-	
+
 		long nZeros = NUMdmatrix_countZeros (w -> data, w -> numberOfRows, w -> numberOfColumns);
 
 		// Set labels & names.
-	
+
 		Thing_setName (x.peek(), L"indscal_mr"); Thing_setName (w.peek(), L"indscal_mr");
 		TableOfReal_labelsFromCollectionItemNames (w.peek(), dissims, 1, 0);
-	
+
 		*out1 = x.transfer(); *out2 = w.transfer();
-	
+
 		if (showProgress)
 		{
 			MelderInfo_open ();
@@ -3029,24 +3031,26 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 			MelderInfo_writeLine1 (L"Based on MONOTONE REGRESSION");
 			MelderInfo_writeLine2  (L"number of iterations: ", Melder_integer ((iter > numberOfIterations ?	numberOfIterations : iter)));
 			MelderInfo_close ();
-		}		
+		}
 		if (showProgress) Melder_progress1 (1.0, NULL);
-	} catch (MelderError) { 
+	} catch (MelderError) {
 		if (showProgress) Melder_progress1 (1.0, NULL);
-		throw;
+		Melder_throw ("no inscal configuration calculated.");
 	}
 }
 
 void Distances_Configuration_indscal (Distances dists, Configuration conf, int normalizeScalarProducts, double tolerance,
 	long numberOfIterations, int showProgress, Configuration *out1, Salience *out2)
 {
+	try {
 		autoSalience w = Salience_create (dists -> size, conf -> numberOfColumns);
 		double vaf;
 		Distances_Configuration_Salience_indscal (dists, conf, w.peek(), normalizeScalarProducts, tolerance,
 			numberOfIterations, showProgress, out1, out2, &vaf);
+	} catch (MelderError) { Melder_throw ("No indscal performed."); }
 }
 
-Distances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs, 
+Distances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs,
 	Configuration conf, Salience weights, int tiesProcessing)
 {
 	try {
@@ -3062,7 +3066,7 @@ Distances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs,
 		}
 		Configuration_setDefaultWeights (conf);
 		return distances.transfer();
-	} catch (MelderError) { Melder_thrown ("No Distances created."); }
+	} catch (MelderError) { Melder_throw ("No Distances created."); }
 }
 
 
@@ -3070,9 +3074,9 @@ Salience Distances_Configuration_to_Salience (Distances d, Configuration c, int 
 {
 	try {
 		autoScalarProducts sp = Distances_to_ScalarProducts (d, normalize);
-		autoSalience w = ScalarProducts_Configuration_to_Salience (sp.peek(), c); 
+		autoSalience w = ScalarProducts_Configuration_to_Salience (sp.peek(), c);
 		return w.transfer();
-	} catch (MelderError) { Melder_thrown ("No Salience created."); }
+	} catch (MelderError) { Melder_throw ("No Salience created."); }
 }
 
 Salience ScalarProducts_Configuration_to_Salience (ScalarProducts me, Configuration him)
@@ -3082,29 +3086,31 @@ Salience ScalarProducts_Configuration_to_Salience (ScalarProducts me, Configurat
 		autoConfiguration cx = (Configuration) Data_copy (him);
 		indscal_iteration_tenBerge (me, cx.peek(), salience.peek());
 		return salience.transfer();
-	} catch (MelderError) { Melder_thrown ("No Salience created."); }
+	} catch (MelderError) { Melder_throw ("No Salience created."); }
 }
 
-Salience Dissimilarities_Configuration_to_Salience (Dissimilarities me, Configuration him, int tiesProcessing, 
+Salience Dissimilarities_Configuration_to_Salience (Dissimilarities me, Configuration him, int tiesProcessing,
 	int normalizeScalarProducts)
 {
 	try {
-		autoDistances distances = Dissimilarities_Configuration_monotoneRegression (me, him, tiesProcessing); 
+		autoDistances distances = Dissimilarities_Configuration_monotoneRegression (me, him, tiesProcessing);
 		autoSalience w = Distances_Configuration_to_Salience (distances.peek(), him, normalizeScalarProducts);
 		return w.transfer();
-	} catch (MelderError) { Melder_thrown ("No Salience created."); }
+	} catch (MelderError) { Melder_throw ("No Salience created."); }
 }
 
 void Dissimilarities_Configuration_indscal (Dissimilarities dissims,Configuration conf, int tiesProcessing,
-	int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress, 
+	int normalizeScalarProducts, double tolerance, long numberOfIterations, int showProgress,
 	Configuration *out1, Salience *out2)
 {
+	try {
 		*out1 = 0; *out2 = 0;
 		autoDistances distances = Dissimilarities_Configuration_monotoneRegression (dissims, conf, tiesProcessing);
 		auto Salience weights = Distances_Configuration_to_Salience (distances.peek(), conf, normalizeScalarProducts);
 		double vaf;
-		Dissimilarities_Configuration_Salience_indscal (dissims, conf, weights, tiesProcessing, normalizeScalarProducts, 
+		Dissimilarities_Configuration_Salience_indscal (dissims, conf, weights, tiesProcessing, normalizeScalarProducts,
 			tolerance, numberOfIterations, showProgress, out1, out2, &vaf);
+	} catch (MelderError) { Melder_throw ("No indscal performed."); }
 }
 
 
@@ -3114,10 +3120,10 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		int showSingle = showProgress && numberOfRepetitions == 1;
-		double vaf, vafmin = 0; 
-	
+		double vaf, vafmin = 0;
+
 		*out1 = 0; *out2 = 0;
-	
+
 		autoDistances distances = Dissimilarities_to_Distances (me, MDS_ORDINAL);
 		Configuration cstart1 = 0; Salience wstart1 = 0;
 		Distances_to_Configuration_ytl (distances.peek(), numberOfDimensions,normalizeScalarProducts, &cstart1, &wstart1);
@@ -3127,12 +3133,12 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 		autoSalience wbest = (Salience) Data_copy (wstart.peek());
 
 		if (showMulti) Melder_progress1 (0.0, L"Indscal many times");
-	
+
 		for (long iter = 1; iter <= numberOfRepetitions; iter++)
 		{
 			Configuration cresult1 = 0; Salience wresult1 = 0;
 			Dissimilarities_Configuration_Salience_indscal (me, cstart.peek(), wstart.peek(), tiesProcessing,
-				normalizeScalarProducts, tolerance, numberOfIterations, showSingle, &cresult1, &wresult1, &vaf); 
+				normalizeScalarProducts, tolerance, numberOfIterations, showSingle, &cresult1, &wresult1, &vaf);
 			autoConfiguration cresult = cresult1;
 			autoSalience wresult = wresult1;
 			if (vaf > vafmin)
@@ -3144,29 +3150,29 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 			Configuration_randomize (cstart.peek());
 			Configuration_normalize (cstart.peek(), 1.0, 1);
 			Salience_setDefaults (wstart.peek());
-  		
+
 			if (showMulti) {
 				Melder_progress3 ((double)iter / (numberOfRepetitions + 1),
 				Melder_integer (iter), L" from ", Melder_integer (numberOfRepetitions)); therror
 			}
 		}
-	
+
 		*out1 = cbest.transfer(); *out2 = wbest.transfer();
 		if (showMulti) Melder_progress1 (1.0, 0);
-	} catch (MelderError) { 
+	} catch (MelderError) {
 		if (showMulti) Melder_progress1 (1.0, 0);
-		throw; }
+		Melder_throw (me, ": no indscal performed."); }
 }
 
 
-void Distances_indscal (Distances distances, long numberOfDimensions, int normalizeScalarProducts, double tolerance, 
+void Distances_indscal (Distances distances, long numberOfDimensions, int normalizeScalarProducts, double tolerance,
 	long numberOfIterations, long numberOfRepetitions, int showProgress, Configuration *out1, Salience *out2)
 {
 	int showMulti = showProgress && numberOfRepetitions > 1;
 	try {
 		int showSingle = showProgress && numberOfRepetitions == 1;
-		double vaf, vafmin = 0; 
-	
+		double vaf, vafmin = 0;
+
 		*out1 = 0; *out2 = 0;
 		Configuration cstart1 = 0; Salience wstart1 = 0;
 		Distances_to_Configuration_ytl (distances, numberOfDimensions, normalizeScalarProducts, &cstart1, &wstart1);
@@ -3178,8 +3184,8 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 		if (showMulti) Melder_progress1 (0.0, L"Indscal many times");
 
 		for (long i = 1; i <= numberOfRepetitions; i++)
-		{	
-			Configuration cresult1 = 0; Salience wresult1 = 0;	
+		{
+			Configuration cresult1 = 0; Salience wresult1 = 0;
 			Distances_Configuration_Salience_indscal (distances, cstart.peek(), wstart.peek(), normalizeScalarProducts,
 				tolerance, numberOfIterations, showSingle, &cresult1, &wresult1, &vaf);
 			autoConfiguration cresult = cresult1;
@@ -3193,72 +3199,72 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 			Configuration_randomize (cstart.peek());
 			Configuration_normalize (cstart.peek(), 1.0, 1);
 			Salience_setDefaults (wstart.peek());
-  		
+
 			if (showMulti) { Melder_progress3 ((double)i / (numberOfRepetitions+1),
 				Melder_integer (i), L" from ", Melder_integer (numberOfRepetitions)); therror }
 		}
 
 		*out1 = cbest.transfer(); *out2 = wbest.transfer();
 		if (showMulti) Melder_progress1 (1.0, NULL);
-	} catch (MelderError) { 
+	} catch (MelderError) {
 		if (showMulti) Melder_progress1 (1.0, NULL);
-		throw; 
+		Melder_throw (distances, ": no indscal performed.");
 	}
 }
 
-void Dissimilarities_Configuration_Salience_vaf (Dissimilarities me, Configuration thee, Salience him, int tiesProcessing, 
+void Dissimilarities_Configuration_Salience_vaf (Dissimilarities me, Configuration thee, Salience him, int tiesProcessing,
 	int normalizeScalarProducts, double *vaf)
 {
-		autoDistances distances = Dissimilarities_Configuration_monotoneRegression (me, thee, tiesProcessing);
-		Distances_Configuration_Salience_vaf (distances.peek(), thee, him, normalizeScalarProducts, vaf);
+	autoDistances distances = Dissimilarities_Configuration_monotoneRegression (me, thee, tiesProcessing);
+	Distances_Configuration_Salience_vaf (distances.peek(), thee, him, normalizeScalarProducts, vaf);
 }
 
 void Distances_Configuration_vaf (Distances me, Configuration thee, int normalizeScalarProducts, double *vaf)
 {
-		autoSalience w = Distances_Configuration_to_Salience (me, thee, normalizeScalarProducts);
-		Distances_Configuration_Salience_vaf (me, thee, w.peek(), normalizeScalarProducts, vaf);
+	autoSalience w = Distances_Configuration_to_Salience (me, thee, normalizeScalarProducts);
+	Distances_Configuration_Salience_vaf (me, thee, w.peek(), normalizeScalarProducts, vaf);
 }
 
 void Dissimilarities_Configuration_vaf (Dissimilarities me, Configuration thee, int tiesProcessing, int normalizeScalarProducts, double *vaf)
 {
-		autoSalience w = Dissimilarities_Configuration_to_Salience (me, thee, tiesProcessing, normalizeScalarProducts);
-		Dissimilarities_Configuration_Salience_vaf (me, thee, w.peek(), tiesProcessing, normalizeScalarProducts, vaf);
+	autoSalience w = Dissimilarities_Configuration_to_Salience (me, thee, tiesProcessing, normalizeScalarProducts);
+	Dissimilarities_Configuration_Salience_vaf (me, thee, w.peek(), tiesProcessing, normalizeScalarProducts, vaf);
 }
 
 void Distances_Configuration_Salience_vaf (Distances me, Configuration thee, Salience him, int normalizeScalarProducts, double *vaf)
 {
-		if (my size != his numberOfRows || thy numberOfColumns != his numberOfColumns) Melder_throw 
-			("Dimensions must conform.");
+	if (my size != his numberOfRows || thy numberOfColumns != his numberOfColumns) Melder_throw
+		("Dimensions must conform.");
 
-		autoScalarProducts sp = Distances_to_ScalarProducts (me, normalizeScalarProducts);
-		ScalarProducts_Configuration_Salience_vaf (sp.peek(), thee, him, vaf);
+	autoScalarProducts sp = Distances_to_ScalarProducts (me, normalizeScalarProducts);
+	ScalarProducts_Configuration_Salience_vaf (sp.peek(), thee, him, vaf);
 }
 
-void ScalarProduct_Configuration_getVariances (ScalarProduct me, 
+void ScalarProduct_Configuration_getVariances (ScalarProduct me,
 	Configuration thee, double *varianceExplained, double *varianceTotal)
 {
 	*varianceExplained = *varianceTotal = 0;
-		autoDistance distance = Configuration_to_Distance (thee);
-		autoScalarProduct fit = Distance_to_ScalarProduct (distance.peek(), 0);
-		/*
-			ScalarProduct is double centred, i.e., mean == 0.
-		*/
-		for (long j = 1; j <= my numberOfRows; j++)
+	autoDistance distance = Configuration_to_Distance (thee);
+	autoScalarProduct fit = Distance_to_ScalarProduct (distance.peek(), 0);
+	/*
+		ScalarProduct is double centred, i.e., mean == 0.
+	*/
+	for (long j = 1; j <= my numberOfRows; j++)
+	{
+		for (long k = 1; k <= my numberOfColumns; k++)
 		{
-			for (long k = 1; k <= my numberOfColumns; k++)
-			{
-				double d2 = my data[j][k] - fit -> data[j][k];
-				*varianceExplained += d2 * d2;
-				*varianceTotal += my data[j][k] * my data[j][k];
-			}
+			double d2 = my data[j][k] - fit -> data[j][k];
+			*varianceExplained += d2 * d2;
+			*varianceTotal += my data[j][k] * my data[j][k];
 		}
+	}
 }
 
 void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, Configuration thee, Salience him, double *vaf)
 {
 	autoNUMvector<double> w (NUMdvector_copy (thy w, 1, thy numberOfColumns), 1); // save weights
 	try {
-		if (my size != his numberOfRows || thy numberOfColumns != his numberOfColumns) Melder_throw 
+		if (my size != his numberOfRows || thy numberOfColumns != his numberOfColumns) Melder_throw
 			("Dimensions of input objects must conform.");
 
 		double t = 0, n = 0;
@@ -3267,23 +3273,25 @@ void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, Configuration
 
 			ScalarProduct sp = (ScalarProduct) my item[i];
 			if (sp -> numberOfRows != thy numberOfRows) Melder_throw ("ScalarProduct ", i, " does not match Configuration." );
-		
+
 			// weigh configuration before calculating variances
-		
+
 			for (long j = 1; j <= thy numberOfColumns; j++)
 			{
 				thy w[j] = sqrt (his data[i][j]);
 			}
-			
-			double vare, vart;	
+
+			double vare, vart;
 			ScalarProduct_Configuration_getVariances (sp, thee, &vare, &vart);
 
 			t += vare; n+= vart;
 		}
-	
+
 		*vaf = n > 0 ? 1.0 - t / n : 0;
 		NUMdvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
-	} catch (MelderError) { NUMdvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); throw; }
+	} catch (MelderError) {
+		NUMdvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns);
+		Melder_throw ("No vaf calculasted."); }
 }
 
 
@@ -3296,7 +3304,7 @@ Dissimilarity Dissimilarity_createLetterRExample (double noiseStd)
 		autoDistance d = Configuration_to_Distance (r.peek());
 		autoDissimilarity me = Distance_to_Dissimilarity (d.peek());
 		Thing_setName (me.peek(), L"R");
-		
+
 		for (long i = 1; i <= my numberOfRows - 1; i++)
 		{
 			for (long j = i + 1; j <= my numberOfRows; j++)
@@ -3306,7 +3314,7 @@ Dissimilarity Dissimilarity_createLetterRExample (double noiseStd)
 			}
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Dissimilarity for letter R example not created."); }
+	} catch (MelderError) { Melder_throw ("Dissimilarity for letter R example not created."); }
 }
 
 Salience Salience_createCarrollWishExample (void)
@@ -3317,15 +3325,15 @@ Salience Salience_createCarrollWishExample (void)
 		double wy[9] = {0, 0.1, 0.5,   0.707, 0.866,   1, 0.1, 0.354, 0.5};
 		wchar_t const *name[] = { L"", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8"};
 		autoSalience me = Salience_create (nSources, 2);
-		
+
 		for (long i = 1; i <= nSources; i++)
 		{
-			my data[i][1] = wx[i]; 
-			my data[i][2] = wy[i]; 
-			TableOfReal_setRowLabel (me.peek(), i, name[i]);	
+			my data[i][1] = wx[i];
+			my data[i][2] = wy[i];
+			TableOfReal_setRowLabel (me.peek(), i, name[i]);
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Salience for Carroll Wish example not created."); }
+	} catch (MelderError) { Melder_throw ("Salience for Carroll Wish example not created."); }
 }
 
 Collection INDSCAL_createCarrollWishExample (double noiseRange)
@@ -3337,7 +3345,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseRange)
 		autoCollection me = Collection_create (classData, nSources);
 		for (long l = 1; l <= nSources; l++)
 		{
-			c -> w[1] = s -> data[l][1]; 
+			c -> w[1] = s -> data[l][1];
 			c -> w[2] = s -> data[l][2];
 			autoDistance d = Configuration_to_Distance (c.peek());
 			autoDissimilarity dissim = Distance_to_Dissimilarity (d.peek());
@@ -3345,7 +3353,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseRange)
 			{
 				for (long j = i + 1; j <= nObjects; j++)
 				{
-					dissim -> data[i][j] = (dissim -> data[j][i] += 
+					dissim -> data[i][j] = (dissim -> data[j][i] +=
 						NUMrandomUniform (0, noiseRange));
 				}
 			}
@@ -3354,7 +3362,7 @@ Collection INDSCAL_createCarrollWishExample (double noiseRange)
 		}
 		Thing_setName (me.peek(), L"CarrollWish");
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("Collection not created."); }
+	} catch (MelderError) { Melder_throw ("Collection not created."); }
 }
 
 void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
@@ -3364,14 +3372,14 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	long nSplines, n = 1000;
 	double knot[101], y[1001];
 	wchar_t *start, *end;
-	
+
 	if (type == MDS_ISPLINE) k++;
 	for (long i = 1; i <= k; i++)
 	{
 		knot[i] = low;
 	}
 	numberOfKnots = k;
-	
+
 	start = (wchar_t *) interiorKnots;
 	while (*start)
 	{
@@ -3382,7 +3390,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			Melder_warning5 (L"drawSplines: knots must be in interval (", Melder_double (low), L", ", Melder_double (high), L")");
 			return;
 		}
-		if (numberOfKnots == 100) 
+		if (numberOfKnots == 100)
 		{
 			Melder_warning1 (L"drawSplines: too many knots (101)");
 			return;
@@ -3395,20 +3403,20 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	{
 		knot[++numberOfKnots] = high;
 	}
-	
+
 	nSplines = order + numberOfInteriorKnots;
-	
+
 	if (nSplines == 0) return;
-	
+
 	Graphics_setWindow (g, low, high, ymin, ymax);
 	Graphics_setInner (g);
 	for (long i = 1; i <= nSplines; i++)
 	{
 		double x, yx, dx = (high-low) / (n-1);
-		for (long j = 1; j <= n; j++) 
+		for (long j = 1; j <= n; j++)
 		{
 			x = low + dx * (j - 1);
-			if (type == MDS_MSPLINE) 
+			if (type == MDS_MSPLINE)
 			{
 				(void) NUMmspline (knot, numberOfKnots, order, i, x, &yx);
 			}
@@ -3419,7 +3427,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			y[j] = yx < ymin ? ymin : yx > ymax ? ymax : yx;
 		}
 		Graphics_function (g, y, 1, n, low, high);
-	} 
+	}
 	Graphics_unsetInner (g);
 	if (garnish)
 	{
@@ -3434,7 +3442,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
     	{
     		if (order == 1) MelderString_append (&ts, L"t__1_");
 			else if (order == 2) MelderString_append (&ts,  L"{t__1_, t__2_}");
-			else MelderString_append3 (&ts, L"{t__1_..t__", Melder_integer (order), L"_}"); 
+			else MelderString_append3 (&ts, L"{t__1_..t__", Melder_integer (order), L"_}");
 			Graphics_markBottom (g, low, 0, 0, 0, ts.string);
 		}
 		for (long i = 1; i <= numberOfInteriorKnots; i++)
@@ -3443,7 +3451,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			{
 				MelderString_empty (&ts);
 				MelderString_append3 (&ts, L"t__", Melder_integer (order + i), L"_");
-				Graphics_markBottom (g, knot[k+i], 0, 1, 1, ts.string); 
+				Graphics_markBottom (g, knot[k+i], 0, 1, 1, ts.string);
 				Graphics_markTop (g, knot[k+i], 1, 0, 0, 0);
 			}
 		}
@@ -3454,7 +3462,7 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 			{
 				MelderString_append3 (&ts, L"t__", Melder_integer (lastKnot), L"_");
 			}
-			else 
+			else
 			{
 				MelderString_append5 (&ts, L"{t__", Melder_integer (order == 2 ? lastKnot-1 : lastKnot-order+1), L"_, t__", Melder_integer (lastKnot), L"_}");
 			}
@@ -3475,11 +3483,11 @@ void drawMDSClassRelations (Graphics g)
 	double x[7] = {0.0, 0.2, 0.2, 0.7, 0.2, 0.7, 0.2}; /* left */
 	double y[7] = {0.0, 0.9, 0.6, 0.6, 0.3, 0.3, 0.0}; /* bottom */
 	wchar_t const *text[7] = {L"", L"Confusion", L"Dissimilarity  %\\de__%%ij%_",
-		L"Similarity", L"Distance  %d__%%ij%_, %d\\'p__%%ij%_", 
+		L"Similarity", L"Distance  %d__%%ij%_, %d\\'p__%%ij%_",
 		L"ScalarProduct", L"Configuration"};
 
-	Graphics_setWindow (g, -0.05, 1.05, -0.05, 1.05);	
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);	
+	Graphics_setWindow (g, -0.05, 1.05, -0.05, 1.05);
+	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 	for (long i = 1; i <= nBoxes; i++)
 	{
 		x2 = x[i] + boxWidth; y2 = y[i] + boxHeight;
@@ -3487,19 +3495,19 @@ void drawMDSClassRelations (Graphics g)
 		Graphics_roundedRectangle (g, x[i], x2, y[i], y2, r_mm);
 		Graphics_text (g, xm, ym, text[i]);
 	}
-	
+
 	Graphics_setLineWidth (g, 2);
-	Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_BOTTOM);	
+	Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_BOTTOM);
 
 	// Confusion to Dissimilarity
 
 	xm = x[1] + boxWidth2;
 	y2 = y[2] + boxHeight;
 	Graphics_arrow (g, xm, y[1], xm, y2);
-	Graphics_text (g, xm + dxt, y2 + dboxy / 2, L"pdf"); 
+	Graphics_text (g, xm + dxt, y2 + dboxy / 2, L"pdf");
 
 	// Confusion to Similarity
-	
+
 	x1 = x[1] + boxWidth;
 	xm = x[3] + boxWidth2;
 	ym = y[1] + boxHeight2;
@@ -3507,12 +3515,12 @@ void drawMDSClassRelations (Graphics g)
 	Graphics_line (g, x1, ym, xm, ym);
 	Graphics_arrow (g, xm, ym, xm, y2);
 	y2 += + dboxy / 2 + dyt / 2;
-	Graphics_text (g, xm + dxt, y2, L"average"); 
+	Graphics_text (g, xm + dxt, y2, L"average");
 	y2 -= dyt;
-	Graphics_text (g, xm + dxt, y2, L"houtgast"); 
+	Graphics_text (g, xm + dxt, y2, L"houtgast");
 
 	// Dissimilarity to Similarity
-	
+
 	x1 = x[2] + boxWidth;
 	y23 = y[2] + 2 * boxHeight3;
 	Graphics_arrow (g, x1, y23, x[3], y23);
@@ -3520,13 +3528,13 @@ void drawMDSClassRelations (Graphics g)
 	Graphics_arrow (g, x[3], y13, x1, y13);
 
 	// Dissimilarity to Distance
-	
+
 	x13 = x[4] + boxWidth3;
 	y1 = y[4] + boxHeight;
 	Graphics_arrow (g, x13, y1, x13, y[2]);
 	x23 = x[4] + 2 * boxWidth3;
 	Graphics_arrow (g, x23, y[2], x23, y1);
-	
+
 	x1 = x23 + dxt;
 	y1 = y[2] - dyt;
 	x2 = 0 + dxt;
@@ -3545,20 +3553,20 @@ void drawMDSClassRelations (Graphics g)
 	y1 -= dyt;
 	Graphics_text (g, x1, y1, L"%d\\'p__%%ij%_ = monotone (%\\de__%%ij%_)");
 	Graphics_text (g, x2, y1, L"monotone");
-	
+
 	// Distance to ScalarProduct
-	
+
 	x1 = x[4] + boxWidth;
-	ym = y[4] + boxHeight2;		
+	ym = y[4] + boxHeight2;
 	Graphics_arrow (g, x1, ym, x[5], ym);
-	
+
 	// Distance to Configuration
-	
+
 	y1 = y[6] + boxHeight;
 	Graphics_arrow (g, x13, y1, x13, y[4]);
-		
+
 	// ScalarProduct to Configuration
-	
+
 	x13 = x[5] + boxWidth3;
 	x23 = x[6] + 2 * boxWidth3;
 	y1 = y[5] - dboxy / 2;
@@ -3570,31 +3578,31 @@ void drawMDSClassRelations (Graphics g)
 	Graphics_text (g, x1, y1, L"\\s{TORSCA}");
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
 	Graphics_text (g, x1, y1, L"\\s{YTL}");
-	
+
 	Graphics_setLineType (g, Graphics_DOTTED);
-	
+
 	x23 = x[5] + 2 * boxWidth3;
-	ym = y[6] + boxHeight2;	
+	ym = y[6] + boxHeight2;
 	Graphics_line (g, x23, y[5], x23, ym);
 	Graphics_arrow (g, x23, ym, x[6] + boxWidth, ym);
 	x1 = x[6] + boxWidth + dboxx / 2 + boxWidth3;
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 	Graphics_text (g, x1, ym, L"\\s{INDSCAL}");
-	
+
 	// Dissimilarity to Configuration
 
 	ym = y[2] + boxHeight2;
-	y2 = y[6] + boxHeight2;	
+	y2 = y[6] + boxHeight2;
 	Graphics_line (g, x[2], ym, 0, ym);
 	Graphics_line (g, 0, ym, 0, y2);
 	Graphics_arrow (g, 0, y2, x[6], y2);
-	
+
 	// Restore settings
-	
+
 	Graphics_setLineType (g, Graphics_DRAWN);
 	Graphics_setLineWidth (g, 1);
 	Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_BOTTOM);
-	
+
 }
 
 /* End of file MDS.cpp */

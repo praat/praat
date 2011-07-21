@@ -135,7 +135,7 @@ void praat_showLogo (int autoPopDown) {
 		
 		#if motif
 			if (autoPopDown)
-				XtAppAddTimeOut (theCurrentPraatApplication -> context, 2000, logo_timeOut, (XtPointer) NULL);
+				GuiAddTimeOut (2000, logo_timeOut, (XtPointer) NULL);
 		#endif
 	#endif
 }

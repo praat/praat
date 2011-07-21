@@ -1454,7 +1454,7 @@ class_methods (SoundRecorder, Editor) {
 	class_methods_end
 }
 
-SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels, void *applicationContext) {
+SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels) {
 	try {
 		autoSoundRecorder me = Thing_new (SoundRecorder);
 		my inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
@@ -1656,7 +1656,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 		#if gtk
 			g_idle_add (workProc, me.peek());
 		#elif motif
-			my workProcId = XtAppAddWorkProc (applicationContext, workProc, (XtPointer) me.peek());
+			my workProcId = GuiAddWorkProc (workProc, (XtPointer) me.peek());
 		#endif
 		return me.transfer();
 	} catch (MelderError) {

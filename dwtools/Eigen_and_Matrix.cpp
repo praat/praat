@@ -36,7 +36,7 @@ Matrix Eigen_and_Matrix_project (I, thou, long numberOfComponents)
 		Matrix thim = him.peek();
 		Eigen_and_Matrix_project_into (me, thee, &thim);
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("Projection Matrix not created."); }
+	} catch (MelderError) { Melder_throw ("Projection Matrix not created."); }
 }
 
 void Eigen_and_Matrix_project_into (I, thou, Any void_pointer_to_him)

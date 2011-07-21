@@ -119,7 +119,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 				thy s[i][j] = a > 0 ? a : 0;
 			}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ":  no SPINET created."); }
+	} catch (MelderError) { Melder_throw (me, ":  no SPINET created."); }
 }
 
 /* End of file Sound_to_SPINET.cpp */

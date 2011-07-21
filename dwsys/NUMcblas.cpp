@@ -256,7 +256,7 @@ double NUMblas_ddot (long *n, double *dx, long *incx, double *dy, long *incy)
 	return ret_val;
 }								/* NUMblas_ddot */
 
-int NUMblas_dgemm (char *transa, char *transb, long *m, long *n, long *k, double *alpha, double *a, long *lda,
+int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, long *k, double *alpha, double *a, long *lda,
 	double *b, long *ldb, double *beta, double *c__, long *ldc)
 {
 	/* System generated locals */
@@ -653,7 +653,7 @@ int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double
 
 #undef a_ref
 
-int NUMblas_dgemv (char *trans, long *m, long *n, double *alpha, double *a, long *lda, double *x, long *incx,
+int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a, long *lda, double *x, long *incx,
 	double *beta, double *y, long *incy)
 {
 	/* System generated locals */
@@ -882,7 +882,7 @@ int NUMblas_dgemv (char *trans, long *m, long *n, double *alpha, double *a, long
 
 #undef a_ref
 
-double NUMblas_dlamch (char *cmach)
+double NUMblas_dlamch (const char *cmach)
 {
 	/* Initialized data */
 	static long first = TRUE;
@@ -1915,7 +1915,7 @@ int NUMblas_dswap (long *n, double *dx, long *incx, double *dy, long *incy)
 	return 0;
 }								/* NUMblas_dswap */
 
-int NUMblas_dsymv (char *uplo, long *n, double *alpha, double *a, long *lda, double *x, long *incx, double *beta,
+int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *lda, double *x, long *incx, double *beta,
 	double *y, long *incy)
 {
 	/* System generated locals */
@@ -2141,7 +2141,7 @@ int NUMblas_dsymv (char *uplo, long *n, double *alpha, double *a, long *lda, dou
 
 #undef a_ref
 
-int NUMblas_dsyr2 (char *uplo, long *n, double *alpha, double *x, long *incx, double *y, long *incy, double *a,
+int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha, double *x, long *incx, double *y, long *incy, double *a,
 	long *lda)
 {
 	/* System generated locals */
@@ -2318,7 +2318,7 @@ int NUMblas_dsyr2 (char *uplo, long *n, double *alpha, double *x, long *incx, do
 
 #undef a_ref
 
-int NUMblas_dsyr2k (char *uplo, char *trans, long *n, long *k, double *alpha, double *a, long *lda, double *b,
+int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, double *alpha, double *a, long *lda, double *b,
 	long *ldb, double *beta, double *c__, long *ldc)
 {
 	/* System generated locals */
@@ -2622,7 +2622,7 @@ int NUMblas_dsyr2k (char *uplo, char *trans, long *n, long *k, double *alpha, do
 #undef b_ref
 #undef a_ref
 
-int NUMblas_dtrmm (char *side, char *uplo, char *transa, char *diag, long *m, long *n, double *alpha, double *a,
+int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const char *diag, long *m, long *n, double *alpha, double *a,
 	long *lda, double *b, long *ldb)
 {
 	/* System generated locals */
@@ -2993,7 +2993,7 @@ int NUMblas_dtrmm (char *side, char *uplo, char *transa, char *diag, long *m, lo
 #undef b_ref
 #undef a_ref
 
-int NUMblas_dtrmv (char *uplo, char *trans, char *diag, long *n, double *a, long *lda, double *x, long *incx)
+int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *n, double *a, long *lda, double *x, long *incx)
 {
 	/* System generated locals */
 	long a_dim1, a_offset, i__1, i__2;
@@ -3267,7 +3267,7 @@ int NUMblas_dtrmv (char *uplo, char *trans, char *diag, long *n, double *a, long
 
 #undef a_ref
 
-int NUMblas_dtrsm (char *side, char *uplo, char *transa, char *diag, long *m, long *n,
+int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const char *diag, long *m, long *n,
 	double *alpha, double *a, long *lda, double *b, long *ldb)
 {
 	/* System generated locals */

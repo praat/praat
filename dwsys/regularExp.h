@@ -27,7 +27,7 @@
 *                                                                              *
 *******************************************************************************/
 /*
-	djmw 20080110 Extra parameter for SubstituteRE to allow error differentiation 
+	djmw 20080110 Extra parameter for SubstituteRE to allow error differentiation
  */
 
 /* Number of text capturing parentheses allowed. */
@@ -69,11 +69,11 @@ typedef struct regexp {
 typedef enum {
   REDFLT_STANDARD         = 0,
   REDFLT_CASE_INSENSITIVE = 1
-  /* REDFLT_MATCH_NEWLINE = 2    Currently not used. */ 
+  /* REDFLT_MATCH_NEWLINE = 2    Currently not used. */
 } RE_DEFAULT_FLAG;
 
 /* Compiles a regular expression into the internal format used by `ExecRE'. */
-   
+
 regexp * CompileRE (
    const regularExp_CHAR  *exp,         /* String containing the regex specification. */
    wchar_t **errorText,   /* Text of any error message produced. */

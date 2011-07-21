@@ -35,14 +35,14 @@ TableOfReal Matrix_and_Categories_to_TableOfReal (I, Categories thee)
 	
 		for (long i = 1; i <= my ny; i++)
 		{
-			his rowLabels[i] = Melder_wcsdup_e (OrderedOfString_itemAtIndex_c (thee, i)); therror
+			his rowLabels[i] = Melder_wcsdup (OrderedOfString_itemAtIndex_c (thee, i));
 		}
 		for (long i = 1; i <= my ny; i++)
 		{
 			for (long j = 1; j <= my nx; j++) his data[i][j] = my z[i][j];
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_thrown ("TableOfReal not created from Matrix & Categories."); }
+	} catch (MelderError) { Melder_throw ("TableOfReal not created from Matrix & Categories."); }
 }
 
 /* End of file Matrix_Categories.cpp */

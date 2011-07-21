@@ -37,11 +37,12 @@ MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 		autoMFCC me = Thing_new (MFCC);
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin_mel, fmax_mel);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("MFCC not created."); }
+	} catch (MelderError) { Melder_throw ("MFCC not created."); }
 }
 
 void MFCC_lifter (MFCC me, long lifter)
 {
+	try {
 		Melder_assert (lifter > 0);
 		autoNUMvector<double> c (1, my maximumNumberOfCoefficients);	
 		for (long i=1; i <= my maximumNumberOfCoefficients; i++)
@@ -57,6 +58,7 @@ void MFCC_lifter (MFCC me, long lifter)
 				cf -> c[i] *= c[i];
 			}
 		}
+	} catch (MelderError) { Melder_throw (me, ": not lifted."); }
 }
 
 /* End of file MFCC.cpp */

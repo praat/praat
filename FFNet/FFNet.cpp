@@ -81,11 +81,11 @@ static void FFNet_checkLayerNumber (FFNet me, long layer)
 wchar_t * FFNet_createNameFromTopology (FFNet me)
 {
 	MelderString name = { 0 }; 
-	MelderString_copy (&name, Melder_integer (my nUnitsInLayer[0])); therror
+	MelderString_copy (&name, Melder_integer (my nUnitsInLayer[0]));
 	for (long i = 1; i <= my nLayers; i++)
 	{
-		MelderString_appendCharacter (&name, '-'); therror
-		MelderString_append (&name, Melder_integer (my nUnitsInLayer[i])); therror
+		MelderString_appendCharacter (&name, '-');
+		MelderString_append (&name, Melder_integer (my nUnitsInLayer[i]));
 	}
 	return name.string;
 }
@@ -700,8 +700,8 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 		autoFFNet me = FFNet_create (4, numberOfHidden1, numberOfHidden2, 3, 0);
 		FFNet_setOutputCategories (me.peek(), uniq.peek());
 		autostring name = FFNet_createNameFromTopology (me.peek());
-		Thing_setName (me.peek(), name.peek()); therror
-		Collection_addItem (c.peek(), me.transfer()); therror
+		Thing_setName (me.peek(), name.peek());
+		Collection_addItem (c.peek(), me.transfer());
 		autoTableOfReal iris = TableOfReal_createIrisDataset ();
 		
 		// Scale data to interval [0-1]
@@ -714,12 +714,12 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2)
 		Pattern thee = 0; Categories him = 0;
 		TableOfReal_to_Pattern_and_Categories (iris.peek(), 0, 0, 0, 0, &thee, &him); 
 		autoPattern ap = thee; autoCategories ac = him;
-		Thing_setName (ap.peek(), L"iris"); therror
-		Thing_setName (ac.peek(), L"iris"); therror
-		Collection_addItem (c.peek(), ap.transfer()); therror
-		Collection_addItem (c.peek(), ac.transfer()); therror
+		Thing_setName (ap.peek(), L"iris");
+		Thing_setName (ac.peek(), L"iris");
+		Collection_addItem (c.peek(), ap.transfer());
+		Collection_addItem (c.peek(), ac.transfer());
 		return c.transfer();
-	} catch (MelderError) { Melder_thrown ("Iris example not created."); }
+	} catch (MelderError) { Melder_throw ("Iris example not created."); }
 }
 
 TableOfReal FFNet_extractWeights (FFNet me, long layer)
@@ -755,7 +755,7 @@ TableOfReal FFNet_extractWeights (FFNet me, long layer)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no TableOfReal created."); }
+	} catch (MelderError) { Melder_throw (me, ": no TableOfReal created."); }
 }
 
 FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
@@ -805,7 +805,7 @@ FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": no FFNet created."); }
+	} catch (MelderError) { Melder_throw (me, ": no FFNet created."); }
 }
 
 /* End of file FFNet.cpp */

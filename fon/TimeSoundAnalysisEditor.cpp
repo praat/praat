@@ -1800,131 +1800,124 @@ static void createMenuItems_pulses_picture (TimeSoundAnalysisEditor me, EditorMe
 }
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me) {
-	Melder_progressOff ();
+	autoMelderProgressOff progress;
 	if (my spectrogram.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my spectrogram.data == NULL || my spectrogram.data -> xmin != my startWindow || my spectrogram.data -> xmax != my endWindow))
 	{
-		Sound sound = NULL;
 		double margin = my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? my spectrogram.windowLength : 0.5 * my spectrogram.windowLength;
 		forget (my spectrogram.data);
-		sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-		if (sound != NULL) {
-			my spectrogram.data = Sound_to_Spectrogram (sound, my spectrogram.windowLength,
+		try {
+			autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
+			my spectrogram.data = Sound_to_Spectrogram (sound.peek(), my spectrogram.windowLength,
 				my spectrogram.viewTo, (my endWindow - my startWindow) / my spectrogram.timeSteps,
 				my spectrogram.viewTo / my spectrogram.frequencySteps, my spectrogram.windowShape, 8.0, 8.0);
-			if (my spectrogram.data != NULL) my spectrogram.data -> xmin = my startWindow, my spectrogram.data -> xmax = my endWindow;
-			else Melder_clearError ();
-			forget (sound);
-		} else Melder_clearError ();
+			my spectrogram.data -> xmin = my startWindow;
+			my spectrogram.data -> xmax = my endWindow;
+		} catch (MelderError) {
+			Melder_clearError ();
+		}
 	}
-	Melder_progressOn ();
 }
 
 static void computePitch_inside (TimeSoundAnalysisEditor me) {
-	Sound sound = NULL;
 	double margin = my pitch.veryAccurate ? 3.0 / my pitch.floor : 1.5 / my pitch.floor;
 	forget (my pitch.data);
-	sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-	if (sound != NULL) {
+	try {
+		autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
 		double pitchTimeStep =
 			my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_FIXED ? my fixedTimeStep :
 			my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_VIEW_DEPENDENT ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
-			0.0;   /* The default: determined by pitch floor. */
-		my pitch.data = Sound_to_Pitch_any (sound, pitchTimeStep,
+			0.0;   // the default: determined by pitch floor
+		my pitch.data = Sound_to_Pitch_any (sound.peek(), pitchTimeStep,
 			my pitch.floor,
 			my pitch.method == kTimeSoundAnalysisEditor_pitch_analysisMethod_AUTOCORRELATION ? 3.0 : 1.0,
 			my pitch.maximumNumberOfCandidates,
 			(my pitch.method - 1) * 2 + my pitch.veryAccurate,
 			my pitch.silenceThreshold, my pitch.voicingThreshold,
 			my pitch.octaveCost, my pitch.octaveJumpCost, my pitch.voicedUnvoicedCost, my pitch.ceiling);
-		if (my pitch.data != NULL) my pitch.data -> xmin = my startWindow, my pitch.data -> xmax = my endWindow;
-		else Melder_clearError ();
-		forget (sound);
-	} else Melder_clearError ();
+		my pitch.data -> xmin = my startWindow;
+		my pitch.data -> xmax = my endWindow;
+	} catch (MelderError) {
+		Melder_clearError ();
+	}
 }
 
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me) {
-	Melder_progressOff ();
+	autoMelderProgressOff progress;
 	if (my pitch.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my pitch.data == NULL || my pitch.data -> xmin != my startWindow || my pitch.data -> xmax != my endWindow))
 	{
 		computePitch_inside (me);
 	}
-	Melder_progressOn ();
 }
 
 void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me) {
-	Melder_progressOff ();
+	autoMelderProgressOff progress;
 	if (my intensity.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my intensity.data == NULL || my intensity.data -> xmin != my startWindow || my intensity.data -> xmax != my endWindow))
 	{
-		Sound sound = NULL;
 		double margin = 3.2 / my pitch.floor;
 		forget (my intensity.data);
-		sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-		if (sound != NULL) {
-			my intensity.data = Sound_to_Intensity (sound, my pitch.floor,
+		try {
+			autoSound sound = extractSound (me, my startWindow - margin, my endWindow + margin);
+			my intensity.data = Sound_to_Intensity (sound.peek(), my pitch.floor,
 				my endWindow - my startWindow > my longestAnalysis ? (my endWindow - my startWindow) / 100 : 0.0,
 				my intensity.subtractMeanPressure);
-			if (my intensity.data != NULL) my intensity.data -> xmin = my startWindow, my intensity.data -> xmax = my endWindow;
-			else Melder_clearError ();
-			forget (sound);
-		} else Melder_clearError ();
+			my intensity.data -> xmin = my startWindow;
+			my intensity.data -> xmax = my endWindow;
+		} catch (MelderError) {
+			Melder_clearError ();
+		}
 	}
-	Melder_progressOn ();
 }
 
 void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me) {
-	Melder_progressOff ();
+	autoMelderProgressOff progress;
 	if (my formant.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my formant.data == NULL || my formant.data -> xmin != my startWindow || my formant.data -> xmax != my endWindow))
 	{
-		Sound sound = NULL;
 		double margin = my formant.windowLength;
 		forget (my formant.data);
-		if (my endWindow - my startWindow > my longestAnalysis)
-			sound = extractSound (me,
-				0.5 * (my startWindow + my endWindow - my longestAnalysis) - margin,
-				0.5 * (my startWindow + my endWindow + my longestAnalysis) + margin);
-		else
-			sound = extractSound (me, my startWindow - margin, my endWindow + margin);
-		if (sound != NULL) {
+		try {
+			autoSound sound =
+				my endWindow - my startWindow > my longestAnalysis ?
+					extractSound (me,
+						0.5 * (my startWindow + my endWindow - my longestAnalysis) - margin,
+						0.5 * (my startWindow + my endWindow + my longestAnalysis) + margin) :
+					extractSound (me, my startWindow - margin, my endWindow + margin);
 			double formantTimeStep =
 				my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_FIXED ? my fixedTimeStep :
 				my timeStepStrategy == kTimeSoundAnalysisEditor_timeStepStrategy_VIEW_DEPENDENT ? (my endWindow - my startWindow) / my numberOfTimeStepsPerView :
-				0.0;   /* The default: determined by analysis window length. */
-			my formant.data = Sound_to_Formant_any (sound, formantTimeStep,
+				0.0;   // the default: determined by analysis window length
+			my formant.data = Sound_to_Formant_any (sound.peek(), formantTimeStep,
 				my formant.numberOfPoles, my formant.maximumFormant,
 				my formant.windowLength, my formant.method, my formant.preemphasisFrom, 50.0);
-			if (my formant.data != NULL) my formant.data -> xmin = my startWindow, my formant.data -> xmax = my endWindow;
-			else Melder_clearError ();
-			forget (sound);
-		} else Melder_clearError ();
+			my formant.data -> xmin = my startWindow;
+			my formant.data -> xmax = my endWindow;
+		} catch (MelderError) {
+			Melder_clearError ();
+		}
 	}
-	Melder_progressOn ();
 }
 
 void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me) {
-	Melder_progressOff ();
+	autoMelderProgressOff progress;
 	if (my pulses.show && my endWindow - my startWindow <= my longestAnalysis &&
 		(my pulses.data == NULL || my pulses.data -> xmin != my startWindow || my pulses.data -> xmax != my endWindow))
 	{
-		forget (my pulses.data);   /* 20060912 */
+		forget (my pulses.data);
 		if (my pitch.data == NULL || my pitch.data -> xmin != my startWindow || my pitch.data -> xmax != my endWindow) {
 			computePitch_inside (me);
 		}
 		if (my pitch.data != NULL) {
-			Sound sound = NULL;
-			/* forget (my pulses.data);   /* 20060912 */
-			sound = extractSound (me, my startWindow, my endWindow);
-			if (sound != NULL) {
-				my pulses.data = Sound_Pitch_to_PointProcess_cc (sound, my pitch.data);
-				if (my pulses.data == NULL) Melder_clearError ();
-				forget (sound);
-			} else Melder_clearError ();
-		} else Melder_clearError ();
+			try {
+				autoSound sound = extractSound (me, my startWindow, my endWindow);
+				my pulses.data = Sound_Pitch_to_PointProcess_cc (sound.peek(), my pitch.data);
+			} catch (MelderError) {
+				Melder_clearError ();
+			}
+		}
 	}
-	Melder_progressOn ();
 }
 
 static void draw_analysis (TimeSoundAnalysisEditor me) {

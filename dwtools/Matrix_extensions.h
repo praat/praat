@@ -45,7 +45,7 @@ void Matrix_scale (I, int choice);
 /* choice = 2 :rows, divide each row elmnt by the maximum (abs) of that row	*/
 /* choice = 3 :columns, divide each col elmnt by the maximum of that col	*/
 
-Any Matrix_transpose (I);
+Matrix Matrix_transpose (I);
 
 void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double minimum, double maximum, long nBins,

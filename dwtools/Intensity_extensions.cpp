@@ -37,7 +37,7 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	// Modify end time of left label
 	TextInterval ti = (TextInterval) my intervals -> item[iinterval];
 	ti -> xmax = time;
-	TextInterval_setText (ti, leftLabel); therror
+	TextInterval_setText (ti, leftLabel);
 
 	autoTextInterval ti_new = TextInterval_create (time, my xmax, L"");
 	Sorted_addItem_unsorted (my intervals, ti_new.transfer());
@@ -53,7 +53,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 
 		autoTextGrid thee = TextGrid_create (my xmin, my xmax, L"silences", L"");
 		IntervalTier it = (IntervalTier) thy tiers -> item[1];
-		TextInterval_setText ((TextInterval) it -> intervals -> item[1], soundingLabel); therror
+		TextInterval_setText ((TextInterval) it -> intervals -> item[1], soundingLabel);
 		if (minSilenceDuration > duration) return thee.transfer();
 
 		double intensity_max_db, intensity_min_db, xOfMaximum, xOfMinimum;
@@ -96,7 +96,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 			if (addBoundary)
 			{
 				time = my x1 + (i - 1) * my dx;
-				IntervalTier_addBoundaryUnsorted (it, iinterval, time, label); therror
+				IntervalTier_addBoundaryUnsorted (it, iinterval, time, label);
 				iinterval++;
 			}
 		}
@@ -104,7 +104,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		// (re)label last interval */
 
 		label = inSilenceInterval ? silenceLabel : soundingLabel;
-		TextInterval_setText ((TextInterval) it -> intervals -> item[iinterval], label); therror
+		TextInterval_setText ((TextInterval) it -> intervals -> item[iinterval], label);
 		Sorted_sort (it -> intervals);
 
 		// First remove short non-silence intervals in-between silence intervals and
@@ -118,7 +118,7 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		IntervalTier_removeBoundary_equalLabels (it, soundingLabel);
 
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": TextGrid not created."); }
+	} catch (MelderError) { Melder_throw (me, ": TextGrid not created."); }
 }
 
 /* End of file Intensity_extensions.cpp */

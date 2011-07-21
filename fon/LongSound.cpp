@@ -316,29 +316,29 @@ void LongSound_readAudioToFloat (LongSound me, double **buffer, long firstSample
 			my compressedFloats [ichan - 1] = & buffer [ichan] [1];
 		}
 		_LongSound_FLAC_process (me, firstSample, numberOfSamples); therror
-		return;
-	}
-	if (my encoding == Melder_MPEG_COMPRESSION) {
+	} else if (my encoding == Melder_MPEG_COMPRESSION) {
 		my compressedMode = COMPRESSED_MODE_READ_FLOAT;
 		for (int ichan = 1; ichan <= my numberOfChannels; ichan ++) {
 			my compressedFloats [ichan - 1] = & buffer [ichan] [1];
 		}
 		_LongSound_MP3_process (me, firstSample, numberOfSamples); therror
 		return;
+	} else {
+		_LongSound_FILE_seekSample (me, firstSample); therror
+		Melder_readAudioToFloat (my f, my numberOfChannels, my encoding, buffer, numberOfSamples);
 	}
-	_LongSound_FILE_seekSample (me, firstSample); therror
-	Melder_readAudioToFloat (my f, my numberOfChannels, my encoding, buffer, numberOfSamples);
 }
 
 void LongSound_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples) {
 	if (my encoding == Melder_FLAC_COMPRESSION) {
 		_LongSound_FLAC_readAudioToShort (me, buffer, firstSample, numberOfSamples); therror
-	}
-	if (my encoding == Melder_MPEG_COMPRESSION) {
+	} else if (my encoding == Melder_MPEG_COMPRESSION) {
 		_LongSound_MP3_readAudioToShort (me, buffer, firstSample, numberOfSamples); therror
+		return;
+	} else {
+		_LongSound_FILE_seekSample (me, firstSample); therror
+		Melder_readAudioToShort (my f, my numberOfChannels, my encoding, buffer, numberOfSamples);
 	}
-	_LongSound_FILE_seekSample (me, firstSample); therror
-	Melder_readAudioToShort (my f, my numberOfChannels, my encoding, buffer, numberOfSamples);
 }
 
 Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserveTimes) {

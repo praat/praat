@@ -92,31 +92,31 @@ SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 		my excitationErbProportion = excitationErbProportion;
 		my inhibitionErbProportion = inhibitionErbProportion;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("SPINET not created."); }
+	} catch (MelderError) { Melder_throw ("SPINET not created."); }
 }
 
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,
 	double fromErb, double toErb, double minimum, double maximum, int enhanced,
 	int garnish)
 {
-		double **z = enhanced ? my s : my y;
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-			my ymin, my ymax, my ny, my dy, my y1);
-		for (long j = 1; j <= my ny; j++)
-		{
-			for (long i = 1; i <= my nx; i++) thy z[j][i] = z[j][i];
-		}
-		Matrix_paintCells (thee.peek(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
-		if (garnish)
-		{
-			Graphics_drawInnerBox(g);
-			Graphics_textBottom (g, 1, L"Time (s)");
-			Graphics_marksBottom( g, 2, 1, 1, 0);
-			Graphics_textLeft (g, 1, L"Frequency (ERB)");
-			Graphics_marksLeft( g, 2, 1, 1, 0);
-			Graphics_textTop (g, 0, enhanced ? L"Cooperative interaction output" : 
-				L"Gammatone filterbank output");
-		}
+	double **z = enhanced ? my s : my y;
+	autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
+		my ymin, my ymax, my ny, my dy, my y1);
+	for (long j = 1; j <= my ny; j++)
+	{
+		for (long i = 1; i <= my nx; i++) thy z[j][i] = z[j][i];
+	}
+	Matrix_paintCells (thee.peek(), g, fromTime, toTime, fromErb, toErb, minimum, maximum);
+	if (garnish)
+	{
+		Graphics_drawInnerBox(g);
+		Graphics_textBottom (g, 1, L"Time (s)");
+		Graphics_marksBottom( g, 2, 1, 1, 0);
+		Graphics_textLeft (g, 1, L"Frequency (ERB)");
+		Graphics_marksLeft( g, 2, 1, 1, 0);
+		Graphics_textTop (g, 0, enhanced ? L"Cooperative interaction output" : 
+			L"Gammatone filterbank output");
+	}
 }
 
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,

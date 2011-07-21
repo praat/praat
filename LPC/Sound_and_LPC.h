@@ -25,12 +25,9 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _LPC_h_
-	#include "LPC.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
+
+#include "LPC.h"
+#include "Sound.h"
 
 #ifdef __cplusplus
 	extern "C" {
@@ -77,7 +74,7 @@ LPC Sound_to_LPC_marple (Sound me, int predictionOrder, double analysisWidth, do
  *	tol2 : stop iteration when (E(m)-E(m-1)) / E(m-1) < tol2,
  */
 
-int LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel);
+void LPC_Frame_and_Sound_filterInverse (LPC_Frame me, Sound thee, int channel);
 Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain);
 /*
 	E(z) = X(z)A(z),
@@ -89,7 +86,7 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain);
 	useGain determines whether the LPC-gain is used in the synthesis.
 */
 
-int LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
+void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
 Sound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time);
 
 Sound LPC_and_Sound_filterInverse (LPC me, Sound thee);
@@ -103,7 +100,7 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee);
 */
 
 Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time);
-int LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
+void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int channel, double time);
 
 #ifdef __cplusplus
 	}

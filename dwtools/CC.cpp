@@ -88,7 +88,7 @@ void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	my fmin = fmin;
 	my fmax = fmax;
 	my maximumNumberOfCoefficients = maximumNumberOfCoefficients;
-	Sampled_init (me, tmin, tmax, nt, dt, t1); therror
+	Sampled_init (me, tmin, tmax, nt, dt, t1);
 	my frame = NUMvector<structCC_Frame> (1, nt);
 }
 
@@ -108,7 +108,7 @@ Matrix CC_to_Matrix (I)
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_thrown (me, ": not converted to Matrix."); }
+	} catch (MelderError) { Melder_throw (me, ": not converted to Matrix."); }
 }
 
 void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
