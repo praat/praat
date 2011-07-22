@@ -474,7 +474,7 @@ void praat_executeScriptFromDialog (Any dia) {
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 	Interpreter_readParameters (interpreter.peek(), text.peek()); therror
 	Interpreter_getArgumentsFromDialog (interpreter.peek(), dia); therror
-	autoPraatBackground ();
+	autoPraatBackground background;
 	Interpreter_run (interpreter.peek(), text.peek());
 }
 
@@ -502,7 +502,7 @@ static void firstPassThroughScript (MelderFile file) {
 			UiForm_destroyWhenUnmanaged (form);
 			UiForm_do (form, false);
 		} else {
-			autoPraatBackground ();
+			autoPraatBackground background;
 			praat_executeScriptFromFile (file, NULL);
 		}
 	} catch (MelderError) {

@@ -486,27 +486,28 @@ if (! my printing) {
 			theCurrentPraatPicture -> y2NDC = height_inches;
 			Graphics_setViewport (my g, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
 
-			Melder_progressOff ();
-			Melder_warningOff ();
-			structMelderDir saveDir = { { 0 } };
-			Melder_getDefaultDir (& saveDir);
-			if (! MelderDir_isNull (& my rootDirectory)) Melder_setDefaultDir (& my rootDirectory);
-			Interpreter_run (interpreter, text);
-			Melder_setDefaultDir (& saveDir);
-			Melder_warningOn ();
-			Melder_progressOn ();
+			{ // scope
+				autoMelderProgressOff progress;
+				autoMelderWarningOff warning;
+				autoMelderSaveDefaultDir saveDir;
+				if (! MelderDir_isNull (& my rootDirectory)) {
+					Melder_setDefaultDir (& my rootDirectory);
+				}
+				try {
+					Interpreter_run (interpreter, text);
+				} catch (MelderError) {
+					if (my scriptErrorHasBeenNotified) {
+						Melder_clearError ();
+					} else {
+						Melder_flushError (NULL);
+						my scriptErrorHasBeenNotified = true;
+					}
+				}
+			}
 			Graphics_setLineType (my g, Graphics_DRAWN);
 			Graphics_setLineWidth (my g, 1.0);
 			Graphics_setArrowSize (my g, 1.0);
 			Graphics_setColour (my g, Graphics_BLACK);
-			iferror {
-				if (my scriptErrorHasBeenNotified) {
-					Melder_clearError ();
-				} else {
-					Melder_flushError (NULL);
-					my scriptErrorHasBeenNotified = true;
-				}
-			}
 			/*Graphics_Link *paragraphLinks;
 			long numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 			if (my links) for (long ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
@@ -580,16 +581,19 @@ if (! my printing) {
 		theCurrentPraatPicture -> y2NDC = height_inches;
 		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 
-		Melder_progressOff ();
-		Melder_warningOff ();
-		structMelderDir saveDir = { { 0 } };
-		Melder_getDefaultDir (& saveDir);
-		if (! MelderDir_isNull (& my rootDirectory)) Melder_setDefaultDir (& my rootDirectory);
-		Interpreter_run (interpreter, text);
-		Melder_setDefaultDir (& saveDir);
-		Melder_warningOn ();
-		Melder_progressOn ();
-		iferror Melder_clearError ();
+		{ // scope
+			autoMelderProgressOff progress;
+			autoMelderWarningOff warning;
+			autoMelderSaveDefaultDir saveDir;
+			if (! MelderDir_isNull (& my rootDirectory)) {
+				Melder_setDefaultDir (& my rootDirectory);
+			}
+			try {
+				Interpreter_run (interpreter, text);
+			} catch (MelderError) {
+				Melder_clearError ();
+			}
+		}
 		Graphics_setLineType (my ps, Graphics_DRAWN);
 		Graphics_setLineWidth (my ps, 1.0);
 		Graphics_setArrowSize (my ps, 1.0);
@@ -676,9 +680,10 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 		HyperLink link = (HyperLink) my links -> item [ilink];
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
-			if (! HyperPage_goToPage (me, link -> name)) {
-				/* Allow for a returned 0 just to mean: 'do not jump'. */
-				if (Melder_hasError ()) Melder_flushError (NULL);
+			try {
+				HyperPage_goToPage (me, link -> name);
+			} catch (MelderError) {
+				Melder_flushError (NULL);
 			}
 			return;
 		}

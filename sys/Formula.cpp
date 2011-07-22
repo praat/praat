@@ -2669,7 +2669,7 @@ static void do_indexedNumericVariable (void) {
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (var == NULL)
-		Melder_throw ("Undefined indexed variable " L_LEFT_GUILLEMET, totalVariableName.string, L_RIGHT_GUILLEMET L".");
+		Melder_throw ("Undefined indexed variable " L_LEFT_GUILLEMET, totalVariableName.string, L_RIGHT_GUILLEMET ".");
 	pushNumber (var -> numericValue);
 }
 static void do_indexedStringVariable (void) {
@@ -4491,17 +4491,22 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				}
 			}
 		}
+		/*
+			Clean up the stack (theStack [1] may have been disowned).
+		*/
+		for (w = wmax; w > 0; w --) {
+			Stackel stackel = & theStack [w];
+			if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
+		}
 	} catch (MelderError) {
 		/*
-		 * Trickle through.
-		 */
-	}
-	/*
-		Clean up the stack (theStack [1] may have been disowned).
-	*/
-	for (w = wmax; w > 0; w --) {
-		Stackel stackel = & theStack [w];
-		if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
+			Clean up the stack (theStack [1] may have been disowned).
+		*/
+		for (w = wmax; w > 0; w --) {
+			Stackel stackel = & theStack [w];
+			if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
+		}
+		Melder_throw ("Formula not run.");
 	}
 }
 

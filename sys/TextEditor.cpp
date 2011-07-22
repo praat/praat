@@ -114,7 +114,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
 				Editor_raise (editor);
 				Melder_error_ ("Text file ", MelderFile_messageName (file), " is already open.");
-				forget (me);   // don't forget me before Melder_flushError, because "file" is owned by one of my dialogs
+				forget (me);   // don't forget me before Melder_error_, because "file" is owned by one of my dialogs
 				Melder_flushError (NULL);
 			}
 		}

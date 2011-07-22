@@ -23,9 +23,12 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110721)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110722)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.32# (22 July 2011)")
+LIST_ITEM (L"\\bu Corrected several problems with error messages.")
+LIST_ITEM (L"\\bu Corrected a bug that could cause slow execution of scripts with forms.")
 NORMAL (L"##5.2.31# (21 July 2011)")
 LIST_ITEM (L"\\bu Corrected a bug that caused an incorrect window size in the VowelEditor.")
 LIST_ITEM (L"\\bu Corrected a bug that caused incorrect error messages when opening a FLAC file as a LongSound.")

@@ -340,8 +340,11 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 static void prepareDraw (SoundEditor me) {
 	if (my longSound.data) {
-		LongSound_haveWindow (my longSound.data, my startWindow, my endWindow);
-		Melder_clearError ();
+		try {
+			LongSound_haveWindow (my longSound.data, my startWindow, my endWindow);
+		} catch (MelderError) {
+			Melder_clearError ();
+		}
 	}
 }
 

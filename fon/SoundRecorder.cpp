@@ -745,8 +745,12 @@ static void publish (SoundRecorder me) {
 	double fsamp = theControlPanel. sampleRate;
 	if (my nsamp == 0) return;
 	if (fsamp <= 0) fsamp = 48000.0;   /* Safe. */
-	sound = Sound_createSimple (my numberOfChannels, (double) nsamp / fsamp, fsamp);
-	if (Melder_hasError ()) { Melder_flushError ("You can still save to file."); return; }
+	try {
+		sound = Sound_createSimple (my numberOfChannels, (double) nsamp / fsamp, fsamp);
+	} catch (MelderError) {
+		Melder_flushError ("You can still save to file.");
+		return;
+	}
 	if (my fakeMono) {
 		for (i = 1; i <= nsamp; i ++)
 			sound -> z [1] [i] = (my buffer [i + i - 2] + my buffer [i + i - 1]) * (1.0 / 65536);
@@ -1515,11 +1519,17 @@ SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels) {
 				#endif
 			my nmax = nmax_bytes / (sizeof (short) * numberOfChannels);
 			for (;;) {
-				my buffer = NUMvector <short> (0, my nmax * numberOfChannels - 1);
-				if (my buffer) break;   // success
-				if (my nmax < 100000) throw MelderError ();   // failure, with error message
-				Melder_clearError ();
-				my nmax /= 2;   // retry with less application memory
+				try {
+					my buffer = NUMvector <short> (0, my nmax * numberOfChannels - 1);
+					break;   // success
+				} catch (MelderError) {
+					if (my nmax < 100000) {
+						throw MelderError ();   // failure, with error message
+					} else {
+						Melder_clearError ();
+						my nmax /= 2;   // retry with less application memory
+					}
+				}
 			}
 		}
 		Melder_assert (my buffer != NULL);

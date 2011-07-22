@@ -95,13 +95,13 @@ static void args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Int
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (& text);
+	Melder_includeIncludeFiles (& text); therror
 
 	Interpreter_getArgumentsFromDialog (my interpreter, sendingForm);
 
-	autoPraatBackground background ();
+	autoPraatBackground background;
 	if (my name) MelderFile_setDefaultDir (& file);
-	Interpreter_run (my interpreter, text);
+	Interpreter_run (my interpreter, text); therror
 	Melder_free (text);
 }
 
@@ -111,10 +111,8 @@ static void run (ScriptEditor me, wchar_t **text) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (text);
-	//iferror { Melder_flushError (NULL); return; }
-	int npar = Interpreter_readParameters (my interpreter, *text);
-	//iferror { Melder_flushError (NULL); return; }
+	Melder_includeIncludeFiles (text); therror
+	int npar = Interpreter_readParameters (my interpreter, *text); therror
 	if (npar) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
@@ -125,8 +123,7 @@ static void run (ScriptEditor me, wchar_t **text) {
 	} else {
 		autoPraatBackground background;
 		if (my name) MelderFile_setDefaultDir (& file);
-		Interpreter_run (my interpreter, *text);
-		//iferror Melder_flushError (NULL);
+		Interpreter_run (my interpreter, *text); therror
 	}
 }
 

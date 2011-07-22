@@ -190,10 +190,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 				 * A link to a sound file: see if it exists.
 				 */
 				MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
-				if (Melder_hasError ()) {
-					Melder_clearError ();
-					Melder_warning3 (L"Cannot find sound file \"", link + 3, L"\".");
-				} else if (! MelderFile_exists (& file2)) {
+				if (! MelderFile_exists (& file2)) {
 					Melder_warning3 (L"Cannot find sound file ", MelderFile_messageName (& file2), L".");
 				}
 			} else if (link [0] == '\\' && link [1] == 'S' && link [2] == 'C') {
@@ -212,10 +209,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					*q = '\0';
 				}
 				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
-				if (Melder_hasError ()) {
-					Melder_clearError ();
-					Melder_warning3 (L"Cannot find script \"", fileName, L"\".");
-				} else if (! MelderFile_exists (& file2)) {
+				if (! MelderFile_exists (& file2)) {
 					Melder_warning3 (L"Cannot find script ", MelderFile_messageName (& file2), L".");
 				}
 				my executable = TRUE;

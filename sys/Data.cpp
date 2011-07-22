@@ -463,7 +463,6 @@ Any Data_readFromFile (MelderFile file) {
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	for (i = 1; i <= numFileTypeRecognizers; i ++) {
 		Data object = (Data) fileTypeRecognizers [i] (nread, header, file);
-		if (Melder_hasError ()) return NULL;
 		if (object) return object;
 	}
 

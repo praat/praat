@@ -132,7 +132,6 @@ void * Melder_realloc_e (void *ptr, long size) {
 	return result;
 }
 
-#ifdef __cplusplus
 void * Melder_realloc (void *ptr, long size) {
 	if (size <= 0)
 		Melder_throw ("Can never allocate ", size, " bytes.");
@@ -153,7 +152,6 @@ void * Melder_realloc (void *ptr, long size) {
 	}
 	return result;
 }
-#endif
 
 void * Melder_realloc_f (void *ptr, long size) {
 	void *result;

@@ -1041,7 +1041,7 @@ extern "C++" void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, c
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
 	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
 	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
-#define therror  if (Melder_hasError ()) { Melder_casual ("therror %s line %d", __FILE__, __LINE__); throw MelderError (); }
+#define therror  if (Melder_hasError ()) { Melder_error_ ("PLEASE SEND THIS ENTIRE ERROR MESSAGE TO PAUL.BOERSMA@UVA.NL (file ", __FILE__, ", line", __LINE__, ")."); throw MelderError (); }
 //#define Melder_thrown(...)  do { Melder_throw (__VA_ARGS__); return 0; } while (false)
 #define Melder_throw(...)  do { Melder_error_ (__VA_ARGS__); throw MelderError (); } while (false)
 #define Melder_thrown(...)  do { Melder_error_ (__VA_ARGS__); throw MelderError (); } while (false)
@@ -1176,6 +1176,17 @@ public:
 		MelderFile tmp = file;
 		file = NULL;
 		return tmp;
+	}
+};
+
+class autoMelderSaveDefaultDir {
+	structMelderDir saveDir;
+public:
+	autoMelderSaveDefaultDir () {
+		Melder_getDefaultDir (& saveDir);
+	}
+	~autoMelderSaveDefaultDir () {
+		Melder_setDefaultDir (& saveDir);
 	}
 };
 

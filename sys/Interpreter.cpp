@@ -1525,7 +1525,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 				//Melder_casual ("Error: << %ls >>\nassertErrorLineNumber: %ld\nlineNumber: %ld\nAssert error string: << %ls >>\n",
 				//	Melder_getError(), assertErrorLineNumber, lineNumber, assertErrorString.string);
 				if (assertErrorLineNumber == 0) {
-					iferror throw;
+					throw;
 				} else if (assertErrorLineNumber != lineNumber) {
 					if (wcsstr (Melder_getError (), assertErrorString.string)) {
 						Melder_clearError ();

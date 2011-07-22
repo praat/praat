@@ -543,7 +543,7 @@ static int goToPage (Manual me, const wchar_t *title) {
 		return -1;
 	} else if (title [0] == '\\' && title [1] == 'S' && title [2] == 'C') {
 		autoMelderSetDefaultDir dir (& manPages -> rootDirectory);
-		autoPraatBackground ();
+		autoPraatBackground background;
 		try {
 			praat_executeScriptFromFileNameWithArguments (title + 3);
 		} catch (MelderError) {

@@ -419,11 +419,13 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 	Sound sound = my sound.data;
 	LongSound longSound = my longSound.data;
 	Melder_assert ((sound == NULL) != (longSound == NULL));
-	int fits = sound ? TRUE : LongSound_haveWindow (longSound, my startWindow, my endWindow);
 	int nchan = sound ? sound -> ny : longSound -> numberOfChannels;
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 	Graphics_setColour (my graphics, Graphics_BLACK);
-	iferror {
+	int fits;
+	try {
+		fits = sound ? TRUE : LongSound_haveWindow (longSound, my startWindow, my endWindow);
+	} catch (MelderError) {
 		int outOfMemory = wcsstr (Melder_getError (), L"memory") != NULL;
 		if (Melder_debug == 9) Melder_flushError (NULL); else Melder_clearError ();
 		Graphics_setWindow (my graphics, 0, 1, 0, 1);

@@ -35,34 +35,45 @@
 #define RECORDING_HEADER_LENGTH 2
 
 double * _Graphics_check (Graphics me, long number) {
-	static int messageShown = FALSE;
+	static bool messageHasAlreadyBeenShownOnce = false;
 	double *result = NULL;
 	double *record = my record;
 	long nrecord = my nrecord;
 	if (nrecord == 0) {
 		nrecord = 1000;
-		record = Melder_malloc_e (double, 1 + nrecord);
-		if (record == NULL) goto error;
+		try {
+			record = Melder_malloc (double, 1 + nrecord);
+		} catch (MelderError) {
+			if (messageHasAlreadyBeenShownOnce) {
+				Melder_clearError ();
+			} else {
+				messageHasAlreadyBeenShownOnce = true;
+				Melder_flushError ("_Graphics_growRecorder: out of memory.\n"
+					"This message will not show up on future occasions.");   // because of loop danger when redrawing
+			}
+			return NULL;
+		}
 		my record = record; my nrecord = nrecord;
 	}
 	if (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) {
 		while (nrecord < my irecord + RECORDING_HEADER_LENGTH + number) nrecord *= 2;
-		record = (double *) Melder_realloc_e (record, (1 + nrecord) * sizeof (double));
-		if (record == NULL) goto error;
+		try {
+			record = (double *) Melder_realloc (record, (1 + nrecord) * sizeof (double));
+		} catch (MelderError) {
+			if (messageHasAlreadyBeenShownOnce) {
+				Melder_clearError ();
+			} else {
+				messageHasAlreadyBeenShownOnce = true;
+				Melder_flushError ("_Graphics_growRecorder: out of memory.\n"
+					"This message will not show up on future occasions.");   // because of loop danger when redrawing
+			}
+			return NULL;
+		}
 		my record = record; my nrecord = nrecord;
 	}
 	result = my record + my irecord;
 	my irecord += number + RECORDING_HEADER_LENGTH;
 	return result;
-error:
-	if (messageShown) {
-		Melder_clearError ();
-	} else {
-		messageShown = TRUE;
-		Melder_flushError ("_Graphics_growRecorder: out of memory.\n"
-			"This message will not show up on future occasions.");   /* Because of loop danger when redrawing. */
-	}
-	return NULL;
 }
 
 /***** RECORD AND PLAY *****/

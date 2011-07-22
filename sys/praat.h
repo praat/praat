@@ -313,9 +313,9 @@ void praat_name2 (wchar *name, void *klas1, void *klas2);
 				} catch (MelderError) { \
 					Melder_clearError (); \
 					Melder_error_ (parkedError); \
+					throw; \
 				} \
 				Melder_free (parkedError); \
-				throw; \
 			} \
 		} else { \
 			try { \

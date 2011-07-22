@@ -91,7 +91,7 @@ unsigned long Melder_systemVersion;
 #endif
 
 static void defaultHelp (const wchar *query) {
-	Melder_error3 (L"Do not know how to find help on \"", query, L"\".");
+	Melder_error_ ("Don't know how to find help on \"", query, "\".");
 	Melder_flushError (NULL);
 }
 

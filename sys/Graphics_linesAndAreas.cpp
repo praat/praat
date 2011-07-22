@@ -895,8 +895,16 @@ static void fillRoundedRectangle (I, long x1DC, long x2DC, long y1DC, long y2DC,
 void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {   // base 0
 	iam (Graphics);
 	if (numberOfPoints == 0) return;
-	long *xyDC = Melder_malloc_e (long, 2 * numberOfPoints);
-	if (xyDC == NULL) { Melder_clearError (); return; }
+	long *xyDC;
+	try {
+		xyDC = Melder_malloc (long, 2 * numberOfPoints);
+	} catch (MelderError) {
+		/*
+		 * Out of memory: silently refuse to draw.
+		 */
+		Melder_clearError ();
+		return;
+	}
 	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
@@ -914,8 +922,16 @@ void Graphics_polyline (I, long numberOfPoints, double *xWC, double *yWC) {   //
 void Graphics_polyline_closed (I, long numberOfPoints, double *xWC, double *yWC) {   // base 0
 	iam (Graphics);
 	if (numberOfPoints == 0) return;
-	long *xyDC = Melder_malloc_e (long, 2 * numberOfPoints);
-	if (xyDC == NULL) { Melder_clearError (); return; }
+	long *xyDC;
+	try {
+		xyDC = Melder_malloc (long, 2 * numberOfPoints);
+	} catch (MelderError) {
+		/*
+		 * Out of memory: silently refuse to draw.
+		 */
+		Melder_clearError ();
+		return;
+	}
 	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);
@@ -943,8 +959,16 @@ void Graphics_line (I, double x1WC, double y1WC, double x2WC, double y2WC) {
 
 void Graphics_fillArea (I, long numberOfPoints, double *xWC, double *yWC) {
 	iam (Graphics);
-	long *xyDC = Melder_malloc_e (long, 2 * numberOfPoints);
-	if (xyDC == NULL) { Melder_clearError (); return; }
+	long *xyDC;
+	try {
+		xyDC = Melder_malloc (long, 2 * numberOfPoints);
+	} catch (MelderError) {
+		/*
+		 * Out of memory: silently refuse to draw.
+		 */
+		Melder_clearError ();
+		return;
+	}
 	for (long i = 0; i < numberOfPoints; i ++) {
 		xyDC [i + i] = wdx (xWC [i]);
 		xyDC [i + i + 1] = wdy (yWC [i]);

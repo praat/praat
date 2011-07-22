@@ -1287,8 +1287,7 @@ static void play (ManipulationEditor me, double tmin, double tmax) {
 	if (my shiftKeyPressed) {
 		if (ana -> sound) Sound_playPart (ana -> sound, tmin, tmax, our playCallback, me);
 	} else {
-		if (! Manipulation_playPart (ana, tmin, tmax, my synthesisMethod))
-			Melder_flushError (NULL);
+		Manipulation_playPart (ana, tmin, tmax, my synthesisMethod);
 	}
 }
 

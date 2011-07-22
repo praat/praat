@@ -210,44 +210,45 @@ int Demo_show (void) {
 	return 1;
 }
 
-bool Demo_waitForInput (Interpreter interpreter) {
-	if (theDemoEditor == NULL) return false;
+void Demo_waitForInput (Interpreter interpreter) {
+	if (theDemoEditor == NULL) return;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	//GuiObject_show (theDemoEditor -> dialog);
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;
 	#if ! defined (CONSOLE_APPLICATION)
+	{ // scope
+		autoMelderSaveDefaultDir saveDir;
 		bool wasBackgrounding = Melder_backgrounding;
-		structMelderDir dir = { { 0 } };
-		Melder_getDefaultDir (& dir);
 		if (wasBackgrounding) praat_foreground ();
-		#if gtk
-			do {
-				gtk_main_iteration ();
-			} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
-		#else
-			do {
-				XEvent event;
-				GuiNextEvent (& event);
-				XtDispatchEvent (& event);
-			} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
-		#endif
+		try {
+			#if gtk
+				do {
+					gtk_main_iteration ();
+				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+			#else
+				do {
+					XEvent event;
+					GuiNextEvent (& event);
+					XtDispatchEvent (& event);
+				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+			#endif
+		} catch (MelderError) {
+			Melder_flushError ("An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");
+		}
 		if (wasBackgrounding) praat_background ();
-		Melder_setDefaultDir (& dir);
+	}
 	#endif
 	theDemoEditor -> waitingForInput = false;
 	if (theDemoEditor -> userWantsToClose) {
 		Interpreter_stop (interpreter);
-		Melder_error1 (L"You interrupted the script.");
 		forget (theDemoEditor);
-		return false;
+		Melder_throw ("You interrupted the script.");
 	}
-	return true;
 }
 
 bool Demo_clicked (void) {

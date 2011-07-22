@@ -966,7 +966,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		return 0;
 	}
 	static int cb_userMessageW (wchar *message) {
-		autoPraatBackground ();
+		autoPraatBackground background;
 		try {
 			praat_executeScriptFromText (message);
 		} catch (MelderError) {
@@ -1369,25 +1369,27 @@ void praat_run (void) {
 	 */
 	structMelderFile searchPattern = { 0 };
 	MelderDir_getFile (& praatDir, L"plugin_*", & searchPattern);
-	Strings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
-	if (directoryNames != NULL && directoryNames -> numberOfStrings > 0) {
-		for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
-			structMelderDir pluginDir = { { 0 } };
-			structMelderFile plugin = { 0 };
-			MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
-			MelderDir_getFile (& pluginDir, L"setup.praat", & plugin);
-			if (MelderFile_readable (& plugin)) {
-				try {
-					praat_executeScriptFromFile (& plugin, NULL);
-				} catch (MelderError) {
-					Melder_error_ (praatP.title, ": plugin ", MelderFile_messageName (& plugin), " contains an error.");
-					Melder_flushError (NULL);
+	try {
+		autoStrings directoryNames = Strings_createAsDirectoryList (Melder_fileToPath (& searchPattern));
+		if (directoryNames -> numberOfStrings > 0) {
+			for (long i = 1; i <= directoryNames -> numberOfStrings; i ++) {
+				structMelderDir pluginDir = { { 0 } };
+				structMelderFile plugin = { 0 };
+				MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
+				MelderDir_getFile (& pluginDir, L"setup.praat", & plugin);
+				if (MelderFile_readable (& plugin)) {
+					try {
+						praat_executeScriptFromFile (& plugin, NULL);
+					} catch (MelderError) {
+						Melder_error_ (praatP.title, ": plugin ", MelderFile_messageName (& plugin), " contains an error.");
+						Melder_flushError (NULL);
+					}
 				}
 			}
 		}
+	} catch (MelderError) {
+		Melder_clearError ();   // in case Strings_createAsDirectoryList () threw an error
 	}
-	forget (directoryNames);
-	Melder_clearError ();   /* In case Strings_createAsDirectoryList () returned an error. */
 
 	Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
 	{ int dummy = 200; Melder_assert ((int) (signed char) dummy == -56); }   // bingeti1 relies on this

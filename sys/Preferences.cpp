@@ -194,8 +194,11 @@ void Preferences_write (MelderFile file) {
 		}
 		MelderString_appendCharacter (& buffer, '\n');
 	}
-	MelderFile_writeText (file, buffer.string);
-	Melder_clearError ();
+	try {
+		MelderFile_writeText (file, buffer.string);
+	} catch (MelderError) {
+		Melder_clearError ();
+	}
 	forget (thePreferences);	
 }
 

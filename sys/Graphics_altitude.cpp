@@ -140,23 +140,19 @@ void Graphics_contour (I, double **z,
 	dy = (y2WC - y1WC) / (iy2 - iy1);
 	xoff = x1WC - ix1 * dx;
 	yoff = y1WC - iy1 * dy;
-	if (! right) {   /* Static! */
-		right = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);   // BUG memory
+	if (! right) {   // static!
+		right = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
 		below = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
 		x = NUMvector <double> (1, MAXALTPATH);
 		y = NUMvector <double> (1, MAXALTPATH);
-		if (! y) {
-			right = NULL;
-			Melder_flushError ("Graphics_altitude: not enough memory.");
-			return;
-		}
 	}
-	for (row1 = iy1; row1 < iy2; row1 += MAXALTSIDE - 1)
+	for (row1 = iy1; row1 < iy2; row1 += MAXALTSIDE - 1) {
 		for (col1 = ix1; col1 < ix2; col1 += MAXALTSIDE - 1) {
 			if ((row2 = row1 + (MAXALTSIDE - 1)) > iy2) row2 = iy2;
 			if ((col2 = col1 + (MAXALTSIDE - 1)) > ix2) col2 = ix2;
 			smallAlt (me, z, height);
 		}
+	}
 }
 
 void Graphics_altitude (I, double **z,
@@ -171,18 +167,13 @@ void Graphics_altitude (I, double **z,
 	dy = (y2WC - y1WC) / (iy2 - iy1);
 	xoff = x1WC - ix1 * dx;
 	yoff = y1WC - iy1 * dy;
-	if (! right) {   /* Static! */
-		right = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);   // BUG memory
+	if (! right) {   // static!
+		right = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
 		below = NUMmatrix <int> (0, MAXALTSIDE - 1, 0, MAXALTSIDE - 1);
 		x = NUMvector <double> (1, MAXALTPATH);
 		y = NUMvector <double> (1, MAXALTPATH);
-		if (! y) {
-			right = NULL;
-			Melder_flushError ("Graphics_altitude: not enough memory.");
-			return;
-		}
 	}
-	for (row1 = iy1; row1 < iy2; row1 += MAXALTSIDE - 1)
+	for (row1 = iy1; row1 < iy2; row1 += MAXALTSIDE - 1) {
 		for (col1 = ix1; col1 < ix2; col1 += MAXALTSIDE - 1) {
 			if ((row2 = row1 + (MAXALTSIDE - 1)) > iy2) row2 = iy2;
 			if ((col2 = col1 + (MAXALTSIDE - 1)) > ix2) col2 = ix2;
@@ -190,6 +181,7 @@ void Graphics_altitude (I, double **z,
 				smallAlt (me, z, borders [iborder]);
 			}
 		}
+	}
 }
 
 /* End of file Graphics_altitude.cpp */

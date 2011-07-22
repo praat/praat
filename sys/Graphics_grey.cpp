@@ -484,14 +484,9 @@ void Graphics_grey (I, double **z,
 		below = NUMmatrix <int> (0, MAXGREYSIDE - 1, 0, MAXGREYSIDE - 1);
 		x = NUMvector <double> (1, MAXGREYPATH);
 		y = NUMvector <double> (1, MAXGREYPATH);
-		edgeContours = Melder_calloc_f (EdgeContour, MAXGREYEDGECONTOURS * numberOfBorders) - 1;
-		closedContours = Melder_calloc_f (ClosedContour, MAXGREYCLOSEDCONTOURS * numberOfBorders) - 1;
-		edgePoints = Melder_calloc_f (structEdgePoint, MAXGREYEDGEPOINTS * numberOfBorders);
-		if (! edgePoints --) {
-			right = NULL;
-			Melder_flushError ("Graphics_grey: not enough memory.");   // BUG
-			return;
-		}
+		edgeContours = Melder_calloc (EdgeContour, MAXGREYEDGECONTOURS * numberOfBorders) - 1;
+		closedContours = Melder_calloc (ClosedContour, MAXGREYCLOSEDCONTOURS * numberOfBorders) - 1;
+		edgePoints = Melder_calloc (structEdgePoint, MAXGREYEDGEPOINTS * numberOfBorders);
 	}
 
 	/* The matrix is subdivided into matrices with side MAXGREYSIDE, so that:

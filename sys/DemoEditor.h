@@ -53,7 +53,7 @@ struct autoDemoOpen {
 
 int Demo_windowTitle (const wchar_t *title);
 int Demo_show (void);
-bool Demo_waitForInput (Interpreter interpreter);
+void Demo_waitForInput (Interpreter interpreter);
 bool Demo_clicked (void);
 double Demo_x (void);
 double Demo_y (void);

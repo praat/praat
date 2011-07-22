@@ -425,12 +425,8 @@ Defining a file-type recognizer:
 	}
 	From this example, we see that if the file is recognized, it should be read immediately,
 	and the resulting object (always a descendant of class Data) should be returned.
-	We also see that the return value NULL is used either for notifying Data_readFromFile
-	of the fact that the file is not a Sun audio file,
-	or for returning an error message (because Sound_readFromSunAudioFile may return NULL).
-	Data_readFromFile will distinguish between these two possibilities by checking the error queue
-	(with Melder_hasError). This means that Sound_readFromSunAudioFile is obliged
-	to queue an error (with Melder_error) in case of a failure.
+	We also see that the return value NULL is used for notifying Data_readFromFile
+	of the fact that the file is not a Sun audio file.
 Registering a file-type recognizer:
 	You would put a statement like the following in the initialization section of your program:
 	Data_recognizeFileType (Sound_sunAudioFileRecognizer);

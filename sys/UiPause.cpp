@@ -145,8 +145,6 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	theCancelContinueButton = cancelContinueButton;
 	UiForm_finish (thePauseForm); therror
 	bool wasBackgrounding = Melder_backgrounding;
-	structMelderDir dir = { { 0 } };
-	Melder_getDefaultDir (& dir);
 	//if (theCurrentPraatApplication -> batch) goto end;
 	if (wasBackgrounding) praat_foreground ();
 	/*
@@ -158,27 +156,29 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	 * Wait for the user to click Stop or Continue.
 	 */
 	#ifndef CONSOLE_APPLICATION
-		thePauseForm_clicked = 0;
-		Melder_assert (theEventLoopDepth == 0);
-		theEventLoopDepth ++;
-		try {
-			#if gtk
-				do {
-					gtk_main_iteration ();
-				} while (! thePauseForm_clicked);
-			#else
-				do {
-					XEvent event;
-					GuiNextEvent (& event);
-					XtDispatchEvent (& event);
-				} while (! thePauseForm_clicked);
-			#endif
-		} catch (MelderError) {
-			Melder_flushError ("An error made it to the outer level; should not occur! Please write to paul.boersma@uva.nl");
+		{ // scope
+			autoMelderSaveDefaultDir saveDir;
+			thePauseForm_clicked = 0;
+			Melder_assert (theEventLoopDepth == 0);
+			theEventLoopDepth ++;
+			try {
+				#if gtk
+					do {
+						gtk_main_iteration ();
+					} while (! thePauseForm_clicked);
+				#else
+					do {
+						XEvent event;
+						GuiNextEvent (& event);
+						XtDispatchEvent (& event);
+					} while (! thePauseForm_clicked);
+				#endif
+			} catch (MelderError) {
+				Melder_flushError ("An error made it to the outer level in a pause window; should not occur! Please write to paul.boersma@uva.nl");
+			}
+			theEventLoopDepth --;
 		}
-		theEventLoopDepth --;
 		if (wasBackgrounding) praat_background ();
-		Melder_setDefaultDir (& dir);
 		/* BUG: should also restore praatP. editor. */
 		thePauseForm = NULL;   // undangle
 		thePauseFormRadio = NULL;   // undangle
