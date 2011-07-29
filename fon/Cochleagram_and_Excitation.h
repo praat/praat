@@ -17,21 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/13
- */
-
 #include "Cochleagram.h"
 #include "Excitation.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Excitation Cochleagram_to_Excitation (Cochleagram me, double t);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Cochleagram_and_Excitation.h */

@@ -482,10 +482,10 @@ void UiHistory_clear (void) { MelderString_empty (& theHistory); }
 
 /***** class UiForm: dialog windows *****/
 
-int (*theAllowExecutionHookHint) (void *closure) = NULL;
+bool (*theAllowExecutionHookHint) (void *closure) = NULL;
 void *theAllowExecutionClosureHint = NULL;
 
-void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *allowExecutionClosure) {
+void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void *allowExecutionClosure) {
 	theAllowExecutionHookHint = allowExecutionHook;
 	theAllowExecutionClosureHint = allowExecutionClosure;
 }
@@ -506,7 +506,7 @@ struct structUiForm : public structThing {
 	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
 	GuiObject okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 	bool destroyWhenUnmanaged, isPauseForm;
-	int (*allowExecutionHook) (void *closure);
+	bool (*allowExecutionHook) (void *closure);
 	void *allowExecutionClosure;
 };
 #define UiForm__methods(klas) Thing__methods(klas)
@@ -669,14 +669,13 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 			 * Otherwise, show a generic message.
 			 */
 			if (wcsstr (Melder_getError (), L"Selection changed!")) {
-				Melder_error3 (L"Please change the selection in the object list, or click Cancel in the command window " L_LEFT_DOUBLE_QUOTE,
+				Melder_error_ ("Please change the selection in the object list, or click Cancel in the command window " L_LEFT_DOUBLE_QUOTE,
 					my name, L_RIGHT_DOUBLE_QUOTE L".");
 			} else {
-				Melder_error3 (L"Please change something in the command window " L_LEFT_DOUBLE_QUOTE,
+				Melder_error_ ("Please change something in the command window " L_LEFT_DOUBLE_QUOTE,
 					my name, L_RIGHT_DOUBLE_QUOTE L", or click Cancel in that window.");
 			}
 		}
-		/*XtAddCallback (w, XmNactivateCallback, UiForm_ok, void_me);   /* FIX */
 		Melder_flushError (NULL);
 	}
 	if (my okButton) GuiObject_setSensitive (my okButton, true);

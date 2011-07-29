@@ -59,7 +59,7 @@ OTGrammar OTGrammar_create_NPA_grammar (void) {
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 3);
 				candidate -> marks [2] = 1;
 		tableau = & my tableaus [2];
-			tableau -> input = Melder_wcsdup_e (L"at+ma"); therror
+			tableau -> input = Melder_wcsdup (L"at+ma");
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates = 2);
 			candidate = & tableau -> candidates [1];
 				candidate -> output = Melder_wcsdup (L"atma");

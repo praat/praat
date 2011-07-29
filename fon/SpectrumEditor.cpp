@@ -132,7 +132,7 @@ static int menu_cb_passBand (EDITOR_ARGS) {
 		SET_REAL (L"Band smoothing", my bandSmoothing)
 	EDITOR_DO
 		preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
-		if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-pass filter, first make a selection.");
+		if (my endSelection <= my startSelection) Melder_throw (L"To apply a band-pass filter, first make a selection.");
 		Editor_save (me, L"Pass band");
 		Spectrum_passHannBand ((Spectrum) my data, my startSelection, my endSelection, my bandSmoothing);
 		FunctionEditor_redraw (me);
@@ -148,7 +148,7 @@ static int menu_cb_stopBand (EDITOR_ARGS) {
 		SET_REAL (L"Band smoothing", my bandSmoothing)
 	EDITOR_DO
 		preferences.bandSmoothing = my bandSmoothing = GET_REAL (L"Band smoothing");
-		if (my endSelection <= my startSelection) return Melder_error1 (L"To apply band-stop filter, first make a selection.");
+		if (my endSelection <= my startSelection) Melder_throw (L"To apply a band-stop filter, first make a selection.");
 		Editor_save (me, L"Stop band");
 		Spectrum_stopHannBand ((Spectrum) my data, my startSelection, my endSelection, my bandSmoothing);
 		FunctionEditor_redraw (me);

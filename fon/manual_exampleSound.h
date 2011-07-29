@@ -19,23 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "Pitch.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Sound manual_exampleSound (void);
 Pitch manual_examplePitch (void);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file manual_exampleSound.h */
 #endif

@@ -140,13 +140,13 @@ long Discriminant_getNumberOfObservations (Discriminant me, long group)
 	else return -1;
 }
 
-int Discriminant_setAprioriProbability (Discriminant me, long group, double p)
+void Discriminant_setAprioriProbability (Discriminant me, long group, double p)
 {
-	if (group < 1 || group > my numberOfGroups) return Melder_error5
-		(L"Group (", Melder_integer (group), L") must be in interval [1, ", Melder_integer(my numberOfGroups), L"].");
-	if (p < 0 || p > 1) return Melder_error1 (L"Probability must be in interval [0,1]");
+	if (group < 1 || group > my numberOfGroups)
+		Melder_throw ("The group number (", group, ") must be in the interval [1, ", my numberOfGroups, "]; the supplied value (", group, ") falls outside it.");
+	if (p < 0 || p > 1)
+		Melder_throw ("The probability must be in the interval [0, 1]; the supplied value (", p, ") falls outside it.");
 	my aprioriProbabilities[group] = p;
-	return 1;
 }
 
 long Discriminant_getNumberOfFunctions (Discriminant me)

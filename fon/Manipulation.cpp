@@ -608,14 +608,15 @@ void Sound_Formant_Intensity_filter (Sound me, FormantTier formantTier, Intensit
 }
 
 static Sound synthesize_pulses_formant (Manipulation me, int useIntensity) {
-	Sound thee = NULL;
-	PointProcess temp = NULL;
-	if (! my pulses) return Melder_errorp ("Cannot synthesize this without pulses analysis.");
-	if (! my formant) return Melder_errorp ("Cannot synthesize this without formant information.");
-	thee = PointProcess_to_Sound (my pulses, 44100, 0.7, 0.05, 30);
-	if (! thee) return Melder_errorp ("Manipulation_to_Sound: not performed.");
-	Sound_Formant_Intensity_filter (thee, my formant, useIntensity ? my intensity : NULL);
-	return thee;
+	try {
+		if (! my pulses)  Melder_throw ("Missing pulses analysis.");
+		if (! my formant) Melder_throw ("Missing formant information.");
+		autoSound thee = PointProcess_to_Sound (my pulses, 44100, 0.7, 0.05, 30);
+		Sound_Formant_Intensity_filter (thee.peek(), my formant, useIntensity ? my intensity : NULL);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": formant and pulses manipulation not synthesized.");
+	}
 }
 */
 

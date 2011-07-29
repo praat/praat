@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/02
- */
-
 #include "Gui.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /*
  * In GUI implementations, we order everything by ease of programming: Unix, Windows, Macintosh.
@@ -276,10 +268,6 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 		void _GuiText_exit (void);
 
 	#endif
-#endif
-
-#ifdef __cplusplus
-	}
 #endif
 
 /* End of file GuiP.h */

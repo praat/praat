@@ -19,20 +19,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "RealTier.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /********** class DurationTier **********/
 
 Thing_declare1cpp (DurationTier);
+struct structDurationTier : public structRealTier {
+// overridden methods:
+	void v_info ();
+};
+#define DurationTier__methods(klas) RealTier__methods(klas)
+Thing_declare2cpp (DurationTier, RealTier);
 
 DurationTier DurationTier_create (double tmin, double tmax);
 
@@ -40,18 +38,6 @@ void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, const wchar_t *method, int garnish);
 
 DurationTier PointProcess_upto_DurationTier (PointProcess me);
-
-#ifdef __cplusplus
-	}
-
-	struct structDurationTier : public structRealTier {
-	// overridden methods:
-		void v_info ();
-	};
-	#define DurationTier__methods(klas) RealTier__methods(klas)
-	Thing_declare2cpp (DurationTier, RealTier);
-
-#endif
 
 /* End of file DurationTier.h */
 #endif

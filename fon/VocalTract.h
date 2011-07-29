@@ -19,18 +19,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/04/29
- */
-
 #include "Vector.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (VocalTract);
+struct structVocalTract : public structVector {
+};
+#define VocalTract__methods(klas)  Vector__methods(klas)
+Thing_declare2cpp (VocalTract, Vector);
 
 /*
 	Attributes:
@@ -85,16 +81,6 @@ VocalTract Matrix_to_VocalTract (Matrix me);
 		thy ymin ymax ny dy y1 == 1;
 		thy z [1] [...] == my z [1] [...];
 */
-
-#ifdef __cplusplus
-	}
-
-	struct structVocalTract : public structVector {
-	};
-	#define VocalTract__methods(klas)  Vector__methods(klas)
-	Thing_declare2cpp (VocalTract, Vector);
-
-#endif
 
 /* End of file VocalTract.h */
 #endif

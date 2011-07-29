@@ -27,7 +27,14 @@
 #include "Pattern.h"
 
 class_methods (Pattern, Matrix)
-class_methods_end
+{
+	class_methods_end
+}
+
+#undef our
+#define our ((Pattern_Table) my methods) ->
+#undef your
+#define your ((Pattern_Table) thy methods) ->
 
 int _Pattern_checkElements (Pattern me)
 {
@@ -61,10 +68,10 @@ Pattern Pattern_create (long ny, long nx)
 void Pattern_normalize (I, int choice, double pmin, double pmax)
 {
     iam (Pattern);
-	
+
     if (pmin == pmax) (void) Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & pmin, & pmax);
     if (pmin == pmax) return;
-	
+
     if (choice == 1)
     {
 		for (long i = 1; i <= my ny; i++)
@@ -91,7 +98,7 @@ void Pattern_draw (I, Graphics g, long pattern, double xmin, double xmax, double
 	{
 		Graphics_drawInnerBox (g);
     	Graphics_marksBottom (g, 2, 1, 1, 0);
-    	Graphics_marksLeft (g, 2, 1, 1, 0);		
+    	Graphics_marksLeft (g, 2, 1, 1, 0);
 	}
 }
 
@@ -101,9 +108,9 @@ Pattern Matrix_to_Pattern (I, int join)
 	try {
 		if (join < 1) join = 1;
 		if ((my ny % join) != 0) Melder_throw (L"Number of rows is not a multiple of join factor.");
-		
+
 		autoPattern thee = Pattern_create (my ny / join, join * my nx);
-		
+
 		long r = 0, c = 1;
 		for (long i = 1; i <= my ny; i++)
 		{
@@ -117,8 +124,8 @@ Pattern Matrix_to_Pattern (I, int join)
 Matrix Pattern_to_Matrix (Pattern me)
 {
 	try {
-		autoMatrix thee = (Matrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMatrix);
+		autoMatrix thee = Thing_new (Matrix);
+		your copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Matrix."); }
 }

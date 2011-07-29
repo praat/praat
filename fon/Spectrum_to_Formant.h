@@ -17,21 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Spectrum.h"
 #include "Formant.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Formant Spectrum_to_Formant (Spectrum me, int maxnFormants);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Spectrum_to_Formant.h */

@@ -389,7 +389,7 @@ long OTMulti_getWinner (OTMulti me, const wchar *form1, const wchar *form2) {
 			}
 		}
 		if (icand_best == 0) {
-			Melder_error5 (L"The forms ", form1, L" and ", form2, L" do not match any candidate.");
+			Melder_error_ ("The forms ", form1, " and ", form2, " do not match any candidate.");
 			throw MelderError_OTMulti_NoMatchingCandidate ();   // BUG: NYI
 		}
 		return icand_best;
@@ -1126,20 +1126,30 @@ void OTMulti_reset (OTMulti me, double ranking) {
 	OTMulti_sort (me);
 }
 
-int OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony) {
-	if (constraint < 1 || constraint > my numberOfConstraints)
-		return Melder_error ("(OTGrammar_setRanking): No constraint %ld.", constraint);
-	my constraints [constraint]. ranking = ranking;
-	my constraints [constraint]. disharmony = disharmony;
-	OTMulti_sort (me);
-	return 1;
+void OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony) {
+	try {
+		if (constraint < 1)
+			Melder_throw ("The constraint number should be positive, not ", constraint, ".");
+		if (constraint > my numberOfConstraints)
+			Melder_throw ("Constraint ", constraint, " does not exist (there are only ", my numberOfConstraints, " constraints).");
+		my constraints [constraint]. ranking = ranking;
+		my constraints [constraint]. disharmony = disharmony;
+		OTMulti_sort (me);
+	} catch (MelderError) {
+		Melder_throw (me, ": ranking not set.");
+	}
 }
 
-int OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity) {
-	if (constraint < 1 || constraint > my numberOfConstraints)
-		return Melder_error ("(OTMulti_setConstraintPlasticity): No constraint %ld.", constraint);
-	my constraints [constraint]. plasticity = plasticity;
-	return 1;
+void OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity) {
+	try {
+		if (constraint < 1)
+			Melder_throw ("The constraint number should be positive, not ", constraint, ".");
+		if (constraint > my numberOfConstraints)
+			Melder_throw ("Constraint ", constraint, " does not exist (there are only ", my numberOfConstraints, " constraints).");
+		my constraints [constraint]. plasticity = plasticity;
+	} catch (MelderError) {
+		Melder_throw (me, ": constraint plasticity not set.");
+	}
 }
 
 void OTMulti_removeConstraint (OTMulti me, const wchar *constraintName) {
@@ -1211,7 +1221,7 @@ Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, double e
 		for (long i = 1; i <= n; i ++) {
 			wchar output [100];
 			OTMulti_generateOptimalForm (me, thy strings [i], L"", output, evaluationNoise); therror
-			outputs -> strings [i] = Melder_wcsdup_e (output); therror
+			outputs -> strings [i] = Melder_wcsdup (output);
 		}
 		return outputs.transfer();
 	} catch (MelderError) {
@@ -1259,7 +1269,7 @@ Distributions OTMulti_to_Distribution (OTMulti me, const wchar *form1, const wch
 		iout = 0;
 		for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 			if (OTMulti_candidateMatches (me, icand, form1, form2)) {
-				thy rowLabels [++ iout] = Melder_wcsdup_e (my candidates [icand]. string); therror
+				thy rowLabels [++ iout] = Melder_wcsdup (my candidates [icand]. string);
 				index [icand] = iout;
 			}
 		}

@@ -17,25 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
-#ifndef _Excitation_h_
-	#include "Excitation.h"
-#endif
-#ifndef _Formant_h_
-	#include "Formant.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "Excitation.h"
+#include "Formant.h"
 
 Formant Excitation_to_Formant (Excitation, int maxnFormants);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Excitation_to_Formant.h */

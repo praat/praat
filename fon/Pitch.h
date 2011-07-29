@@ -19,17 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Sampled.h"
 #include "Graphics.h"
 #include "Interpreter_decl.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Pitch_enums.h"
 
@@ -61,7 +53,7 @@ Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 		my frame [1..nt]. intensity == 0.0; // silent
 */
 
-int Pitch_Frame_init (Pitch_Frame me, int nCandidates);
+void Pitch_Frame_init (Pitch_Frame me, int nCandidates);
 /*
 	Function:
 		create space for a number of candidates; space already there is disposed of.
@@ -74,7 +66,7 @@ int Pitch_Frame_init (Pitch_Frame me, int nCandidates);
 		my intensity == 0.0; // silent
 */
 
-int Pitch_isVoiced_i (Pitch me, long index);
+bool Pitch_isVoiced_i (Pitch me, long index);
 /*
 	Is the frame 'index' voiced?
 	A frame is considered voiced if the frequency of its first candidate
@@ -83,7 +75,7 @@ int Pitch_isVoiced_i (Pitch me, long index);
 		index >= 1 && index <= my nx;
 */
 
-int Pitch_isVoiced_t (Pitch me, double t);
+bool Pitch_isVoiced_t (Pitch me, double t);
 /*
 	Are you voiced at time 't'?
 	The answer is TRUE iff 't' lies within a voiced frame.
@@ -206,11 +198,7 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 	as long as that candidate is in between 0 and my ceiling.
 */
 
-int Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter);
-
-#ifdef __cplusplus
-	}
-#endif
+void Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter);
 
 /* End of file Pitch.h */
 #endif

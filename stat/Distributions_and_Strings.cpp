@@ -34,7 +34,7 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 		for (long istring = 1; istring <= numberOfStrings; istring ++) {
 			wchar_t *string;
 			Distributions_peek (me, column, & string); therror
-			thy strings [istring] = Melder_wcsdup_e (string); therror
+			thy strings [istring] = Melder_wcsdup (string);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -69,7 +69,7 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 			if (! string)
 				Melder_throw ("No string in row ", irow, ".");
 			for (long i = 1; i <= number; i ++) {
-				thy strings [++ istring] = Melder_wcsdup_e (string); therror
+				thy strings [++ istring] = Melder_wcsdup (string);
 			}
 		}
 		Strings_randomize (thee.peek());
@@ -93,7 +93,7 @@ Distributions Strings_to_Distributions (Strings me) {
 			if (where) {
 				thy data [j] [1] += 1.0;
 			} else {
-				thy rowLabels [++ idist] = Melder_wcsdup_e (string); therror
+				thy rowLabels [++ idist] = Melder_wcsdup (string);
 				thy data [idist] [1] = 1.0;
 			}
 		}

@@ -57,7 +57,7 @@ int Lispio_openListFromFile (LispioSeq *seq, FILE *f, char *buffer, long maxLeng
 	while ((ch = getc (f)) != '(') {
 		if (ch == EOF) return EOF;
 		if (ch != ' ' && ch != '\n' && ch != '\t')
-			return Melder_error ("Lispio_openListFromFile: not a list: expected leading `(' but found character `%c'.", ch);
+			Melder_throw ("Lispio_openListFromFile: not a list: expected leading `(' but found character `%c'.", ch);
 	}
 	buffer [0] = ch;
 	depth = 1;
@@ -65,15 +65,15 @@ int Lispio_openListFromFile (LispioSeq *seq, FILE *f, char *buffer, long maxLeng
 	while (depth != 0) {
 		ch = getc (f);
 		if (ch == EOF)
-			return Melder_error ("Lispio_openListFromFile: early end-of-file detected: no matching `)': depth %ld instead of 0.", depth);
+			Melder_throw ("Lispio_openListFromFile: early end-of-file detected: no matching `)': depth %ld instead of 0.", depth);
 		if (length >= maxLength)
-			return Melder_error ("Lispio_openListFromFile: buffer too small for list: list longer than %ld bytes.", maxLength);
+			Melder_throw ("Lispio_openListFromFile: buffer too small for list: list longer than %ld bytes.", maxLength);
 		buffer [length ++] = ch;
 		if (ch == '(') depth += 1; else if (ch == ')') depth -= 1;
 	}
 	list.length = length;
 	list.string = buffer;
-	return Lispio_openList (& list, seq);   /* Always 1 (OK). */
+	return Lispio_openList (& list, seq);   // always 1
 }
 
 char * Lispio_string (const Lispio *me) {

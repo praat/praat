@@ -4119,11 +4119,11 @@ static void Sound_create_checkCommonFields (void *dia, double *startingTime, dou
 
 	if (numberOfSamples_real < 1.0)
 	{
-		Melder_error1 (L"A Sound cannot have zero samples.\n");
-	if (*startingTime == 0.0)
-		Melder_throw ("A Sound cannot have zero samples.\nPlease raise the finishing time.");
-	else
-		Melder_throw ("A Sound cannot have zero samples.\nPlease lower the starting time or raise the finishing time.");
+		Melder_error_ ("A Sound cannot have zero samples.\n");
+		if (*startingTime == 0.0)
+			Melder_throw ("Please raise the finishing time.");
+		else
+			Melder_throw ("Please lower the starting time or raise the finishing time.");
 	}
 	if (numberOfSamples_real > LONG_MAX)
 	{

@@ -78,7 +78,7 @@ bool OTGrammar_isCandidateGrammatical (OTGrammar me, long itab, long icand);
 bool OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand);
 
 /* Interpretive parsing. */
-int OTGrammar_getInterpretiveParse
+void OTGrammar_getInterpretiveParse
 	(OTGrammar me, const wchar *partialOutput, long *bestTableau, long *bestCandidate);
 	/* Gives randomized results in case of tied candidates. */
 bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar *partialOutput);

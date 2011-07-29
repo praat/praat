@@ -255,7 +255,7 @@ void Matrix_movie (I, Graphics g);
 
 Matrix Matrix_readFromRawTextFile (MelderFile file);
 Matrix Matrix_readAP (MelderFile file);
-Matrix Matrix_appendRows (I, thou);
+Matrix Matrix_appendRows (Matrix me, Matrix thee, Matrix_Table klas);
 
 void Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues);
 Matrix Matrix_power (I, long power);

@@ -23,9 +23,6 @@
  * pb 2011/05/15 C++
  */
 
-#if defined (sgi) || defined (sun)
-	#include <sys/stat.h>
-#endif
 #include "machine.h"
 #include "melder.h"
 
@@ -110,22 +107,10 @@ int Machine_getTextHeight (void) {
 }
 
 void Machine_initLookAndFeel (unsigned int argc, char **argv) {
-	#if defined (sgi) || defined (sun)
-	struct stat statBuf;
-	#endif
-
 	/*
 	 * Determining the appropriate look-and-feel: the default depends on the client machine.
 	 */
-	#if defined (sgi)
-		lookAndFeel = stat ("/usr/sbin/schemebr", & statBuf) ? LookAndFeel_MOTIF : LookAndFeel_SGI;
-	#elif defined (sun4)
-		lookAndFeel = LookAndFeel_SUN4;
-	#elif defined (sun)
-		lookAndFeel = stat ("/usr/dt/bin/dtaction", & statBuf) ? LookAndFeel_SOLARIS : LookAndFeel_CDE;
-	#elif defined (HPUX)
-		lookAndFeel = LookAndFeel_HP;
-	#elif defined (macintosh)
+	#if defined (macintosh)
 		lookAndFeel = LookAndFeel_MAC;
 		return;
 	#elif defined (_WIN32)
@@ -133,8 +118,6 @@ void Machine_initLookAndFeel (unsigned int argc, char **argv) {
 		return;
 	#elif defined (linux)
 		lookAndFeel = LookAndFeel_LINUX;
-	#else
-		lookAndFeel = LookAndFeel_MOTIF;
 	#endif
 
 	/*

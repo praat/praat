@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Spectrum.h"
 #include "Spectrogram.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Spectrum Spectrogram_to_Spectrum (I, double time);
 /*
@@ -59,9 +51,5 @@ Spectrogram Spectrum_to_Spectrogram (I);
 		for (i = 1; i <= my nx; i ++) 
 			thy z [i] [1] == (my z [1] [i]) ^ 2 + (my z [2] [i]) ^ 2;
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Spectrum_and_Spectrogram.h */

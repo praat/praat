@@ -124,8 +124,8 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 
 Matrix Ltas_to_Matrix (Ltas me) {
 	try {
-		autoMatrix thee = (Matrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMatrix);
+		autoMatrix thee = Thing_new (Matrix);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");
@@ -134,9 +134,8 @@ Matrix Ltas_to_Matrix (Ltas me) {
 
 Ltas Matrix_to_Ltas (Matrix me) {
 	try {
-		autoLtas thee = (Ltas) Data_copy (me);
-		Melder_assert (sizeof (struct structLtas) == sizeof (struct structMatrix));
-		Thing_overrideClass (thee.peek(), classLtas);
+		autoLtas thee = Thing_new (Ltas);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Ltas.");

@@ -19,18 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Collection.h"
 #include "PointProcess.h"
 
 #include "AnyTier_def.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #define AnyPoint__methods(klas) SimpleDouble__methods(klas)
 oo_CLASS_CREATE (AnyPoint, SimpleDouble);
@@ -48,10 +40,6 @@ void AnyTier_removePoint (I, long i);
 void AnyTier_removePointNear (I, double time);
 void AnyTier_removePointsBetween (I, double tmin, double tmax);
 PointProcess AnyTier_downto_PointProcess (I);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif
 /* End of file AnyTier.h */

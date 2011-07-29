@@ -17,17 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "PointProcess.h"
 #include "Pitch.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 double PointProcess_getJitter_local (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);
@@ -60,9 +52,5 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 	double tmin, double tmax,
 	double floor, double ceiling, double maximumPeriodFactor, double maximumAmplitudeFactor,
 	double silenceThreshold, double voicingThreshold);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file VoiceAnalysis.h */

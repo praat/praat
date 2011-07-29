@@ -43,10 +43,6 @@
 #include "FeatureWeights.h"
 #include "gsl_siman.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /////////////////////////////////////////////////////
 // Praat specifics                                 //
 /////////////////////////////////////////////////////
@@ -468,10 +464,6 @@ double FeatureWeights_evaluate
     long k,                 // k(!)
     int d                   // distance weighting
 );
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file KNN.h */
 #endif

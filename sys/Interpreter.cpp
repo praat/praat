@@ -56,7 +56,7 @@
 #include <ctype.h>
 #include "Interpreter.h"
 #include "praatP.h"
-extern "C" structMelderDir praatDir;
+extern structMelderDir praatDir;
 #include "praat_script.h"
 #include "Formula.h"
 #include "praat_version.h"
@@ -590,11 +590,10 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar *key
 }
 
 static long lookupLabel (Interpreter me, const wchar *labelName) {
-	int ilabel;
-	for (ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
+	for (long ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
 		if (wcsequ (labelName, my labelNames [ilabel]))
 			return ilabel;
-	return Melder_error3 (L"Unknown label \"", labelName, L"\".");
+	Melder_throw ("Unknown label \"", labelName, "\".");
 }
 
 static bool isCommand (const wchar *p) {
@@ -1098,8 +1097,8 @@ void Interpreter_run (Interpreter me, wchar *text) {
 								if (value == 0.0) dojump = FALSE;
 							}
 							if (dojump) {
-								ilabel = lookupLabel (me, labelName); therror
-								lineNumber = my labelLines [ilabel];   /* Loop will add 1. */
+								ilabel = lookupLabel (me, labelName);
+								lineNumber = my labelLines [ilabel];   // loop will add 1
 							}
 						} else fail = TRUE;
 						break;
@@ -1342,7 +1341,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							Melder_divertInfo (NULL); therror
 							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName); therror
 							Melder_free (var -> stringValue);
-							var -> stringValue = Melder_wcsdup_e (valueString.string); therror
+							var -> stringValue = Melder_wcsdup (valueString.string);
 						} else {
 							/*
 							 * Evaluate a string expression and assign the result to the variable.

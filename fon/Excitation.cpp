@@ -146,8 +146,8 @@ void Excitation_draw (Excitation me, Graphics g,
 
 Matrix Excitation_to_Matrix (Excitation me) {
 	try {
-		autoMatrix thee = (Matrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMatrix);
+		autoMatrix thee = Thing_new (Matrix);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");
@@ -156,8 +156,8 @@ Matrix Excitation_to_Matrix (Excitation me) {
 
 Excitation Matrix_to_Excitation (Matrix me) {
 	try {
-		autoExcitation thee = (Excitation) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classExcitation);
+		autoExcitation thee = Thing_new (Excitation);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Excitation.");

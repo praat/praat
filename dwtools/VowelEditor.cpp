@@ -978,7 +978,7 @@ static int menu_cb_setF3F4 (EDITOR_ARGS)
 	EDITOR_DO
 		double f3 = GET_REAL (L"F3"), b3 = GET_REAL (L"B3");
 		double f4 = GET_REAL (L"F4"), b4 = GET_REAL (L"B4");
-		if (f3 >= f4 ) return Melder_error1 (L"F4 must be larger than F3.");
+		if (f3 >= f4 ) Melder_throw ("F4 must be larger than F3.");
 		VowelEditor_setF3F4 (me, f3, b3, f4, b4); therror
 	EDITOR_END
 }

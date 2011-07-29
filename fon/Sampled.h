@@ -19,19 +19,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 /* Sampled inherits from Function */
 #include "Function.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Sampled);
+struct structSampled : public structFunction {
+	long nx;
+	double dx, x1;
+};
+#define Sampled__methods(klas) Function__methods(klas) \
+	double (*getValueAtSample) (I, long isamp, long ilevel, int unit);
+Thing_declare2cpp (Sampled, Function);
 
 /* A Sampled is a Function that is sampled at nx points [1..nx], */
 /* which are spaced apart by a constant distance dx. */
@@ -117,19 +116,6 @@ double Sampled_getXOfMaximum (I, double xmin, double xmax, long ilevel, int unit
 
 void Sampled_drawInside
 	(I, Graphics g, double xmin, double xmax, double ymin, double ymax, double speckle_mm, long ilevel, int unit);
-
-#ifdef __cplusplus
-	}
-
-	struct structSampled : public structFunction {
-		long nx;
-		double dx, x1;
-	};
-	#define Sampled__methods(klas) Function__methods(klas) \
-		double (*getValueAtSample) (I, long isamp, long ilevel, int unit);
-	Thing_declare2cpp (Sampled, Function);
-
-#endif
 
 /* End of file Sampled.h */
 #endif

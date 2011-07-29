@@ -19,17 +19,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Vector.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Harmonicity);
+struct structHarmonicity : public structVector {
+};
+#define Harmonicity__methods(klas)  Vector__methods(klas)
+Thing_declare2cpp (Harmonicity, Vector);
 
 /* Attributes:
 		xmin				// Start time (seconds).
@@ -60,16 +56,6 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile);
 
 Matrix Harmonicity_to_Matrix (Harmonicity me);
 Harmonicity Matrix_to_Harmonicity (I);
-
-#ifdef __cplusplus
-	}
-
-	struct structHarmonicity : public structVector {
-	};
-	#define Harmonicity__methods(klas)  Vector__methods(klas)
-	Thing_declare2cpp (Harmonicity, Vector);
-
-#endif
 
 /* End of file Harmonicity.h */
 #endif

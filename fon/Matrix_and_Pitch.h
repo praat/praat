@@ -17,23 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Matrix.h"
 #include "Pitch.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Matrix Pitch_to_Matrix (Pitch me);
 
 Pitch Matrix_to_Pitch (Matrix me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Matrix_and_Pitch.h */

@@ -19,21 +19,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "RealTier.h"
 #include "Graphics.h"
 #include "Spectrum.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /********** class SpectrumTier **********/
 
 Thing_declare1cpp (SpectrumTier);
+struct structSpectrumTier : public structRealTier {
+};
+#define SpectrumTier__methods(klas) RealTier__methods(klas)
+Thing_declare2cpp (SpectrumTier, RealTier);
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax);
 /*
@@ -51,16 +47,6 @@ void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFreque
 Table SpectrumTier_downto_Table (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 
 SpectrumTier Spectrum_to_SpectrumTier_peaks (Spectrum me);
-
-#ifdef __cplusplus
-	}
-
-	struct structSpectrumTier : public structRealTier {
-	};
-	#define SpectrumTier__methods(klas) RealTier__methods(klas)
-	Thing_declare2cpp (SpectrumTier, RealTier);
-
-#endif
 
 /* End of file SpectrumTier.h */
 #endif

@@ -521,7 +521,7 @@ void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce,
 }
 
 
-int NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
+void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 	long pivot[], double tau[])
 {
 	long numberOfHouseholders = MIN (m, n);
@@ -530,7 +530,7 @@ int NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 
 	if (! pivot)
 	{
-		NUMhouseholderQR (a, 1, m, 1, n, lda, tau); return 1;
+		NUMhouseholderQR (a, 1, m, 1, n, lda, tau); return;
 	}
 
 	if (numberOfHouseholders == m)
@@ -573,7 +573,7 @@ int NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 			1, ma, lda, tau, NUM_LEFT, NUM_TRANSPOSE);
 	}
 
-	if (itmp >= numberOfHouseholders) goto end;
+	if (itmp >= numberOfHouseholders) return;
 
 	/*
 		Initialize partial column norms. the first n elements of
@@ -667,8 +667,6 @@ int NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 			else colnorm[j] *= sqrt (tmp);
 		}
 	}
-end:
-	return ! Melder_hasError ();
 }
 
 
@@ -1096,7 +1094,7 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax)
 
 #define MAXIT 50
 
-int NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
+void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 	long p, int product, long k, long l, double tola, double tolb,
 	double *alpha, double *beta, double **u, double **v, double **q,
 	long *ncycle)
@@ -1221,9 +1219,8 @@ int NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 
 	if (iter == MAXIT + 1)
 	{
-		(void) Melder_error3 (L"NUMgsvdFromUpperTriangulars: "
-			"No convergence after ", Melder_integer (MAXIT), L" iterations.");
-		*ncycle = MAXIT; goto end;
+		*ncycle = MAXIT;
+		Melder_throw ("NUMgsvdFromUpperTriangulars: no convergence after ", MAXIT, " iterations.");
 	}
 
 	*ncycle = iter;
@@ -1298,12 +1295,10 @@ int NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
             alpha[i] = beta[i] = 0;
 		}
 	}
-end:
-	return ! Melder_hasError ();
 }
 
 
-int NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
+void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 	long p, double tola, double tolb, long *kk, long *ll, double **u,
 	double **v, double **q)
 {
@@ -1327,8 +1322,7 @@ int NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 		where V = H(1)H(2)...H(min(p,n))
 	*/
 
-	if (! NUMhouseholderQRwithColumnPivoting (p, n, b, ldb, pivot.peek(), tau.peek()))
-		 goto end;
+	NUMhouseholderQRwithColumnPivoting (p, n, b, ldb, pivot.peek(), tau.peek());
 
 	if (v) NUMapplyFactoredHouseholders (v, 1, p, 1, p, b, 1, p, 1, n, ldb,
 		tau.peek(), NUM_RIGHT, NUM_NOTRANSPOSE);
@@ -1399,8 +1393,7 @@ int NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 	{
 		for (i = 1; i <= n - l; i++) pivot[i] = 0;
 
-		if (! NUMhouseholderQRwithColumnPivoting (m, n - l, a, lda, pivot.peek(), tau.peek()))
-			goto end;
+		NUMhouseholderQRwithColumnPivoting (m, n - l, a, lda, pivot.peek(), tau.peek());
 
 		/*
 			Determine the effective rank of A11
@@ -1491,13 +1484,11 @@ int NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 			for (i = j - n + k + l + 1; i <= m; i++) a[i][j] = 0;
 		}
 	}
-end:
 	*kk = k; *ll = l;
-	return ! Melder_hasError ();
 }
 
 
-int NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
+void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 	long *k, long *l, double *alpha, double *beta, double **u, double **v,
 	double **q, int invertR)
 {
@@ -1518,17 +1509,15 @@ int NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 
 	if (anorm == 0 || bnorm == 0)
 	{
-		return Melder_error1 (L"NUMgsvdcmp: empty matrix.");
+		Melder_throw (L"NUMgsvdcmp: empty matrix.");
 	}
 
 	tola = MAX (m, n) * MAX (anorm, NUMfpp -> sfmin) * NUMfpp -> prec;
 	tolb = MAX (p, n) * MAX (bnorm, NUMfpp -> sfmin) * NUMfpp -> prec;
 
-	if (! NUMmatricesToUpperTriangularForms (a, m, n, b, p, tola, tolb,
-		k, l, u, v, q)) return 0;
+	NUMmatricesToUpperTriangularForms (a, m, n, b, p, tola, tolb, k, l, u, v, q);
 
-	if (! NUMgsvdFromUpperTriangulars (a, m, n, b, p, productsvd, *k, *l, tola,
-		tolb, alpha, beta, u, v, q, &ncycle)) return 0;
+	NUMgsvdFromUpperTriangulars (a, m, n, b, p, productsvd, *k, *l, tola, tolb, alpha, beta, u, v, q, &ncycle);
 
 	if (q && invertR)
 	{
@@ -1615,7 +1604,6 @@ int NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 			printf ("%f ", norms[i]);
 		}
 	}
-	return ! Melder_hasError ();
 }
 
 void NUMtriangularInverse (int upper, int unitDiagonal, long n, double **a)

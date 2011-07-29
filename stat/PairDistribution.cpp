@@ -17,14 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/09/03 PairDistribution_Distributions_getFractionCorrect
- * pb 2007/03/29 PairDistribution_to_Table
- * pb 2011/03/13 C++
- * pb 2011/07/05 C++
- */
-
 #include "PairDistribution.h"
 
 #include "oo_DESTROY.h"
@@ -80,16 +72,16 @@ class_methods (PairDistribution, Data) {
 }
 
 PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight) {
-	autoPairProbability me = Thing_new (PairProbability); therror
-	my string1 = Melder_wcsdup_e (string1); therror
-	my string2 = Melder_wcsdup_e (string2); therror
+	autoPairProbability me = Thing_new (PairProbability);
+	my string1 = Melder_wcsdup (string1);
+	my string2 = Melder_wcsdup (string2);
 	my weight = weight;
 	return me.transfer();
 }
 
 PairDistribution PairDistribution_create () {
 	try {
-		autoPairDistribution me = Thing_new (PairDistribution); therror
+		autoPairDistribution me = Thing_new (PairDistribution);
 		my pairs = Ordered_create (); therror
 		return me.transfer();
 	} catch (MelderError) {
@@ -187,8 +179,8 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 			PairProbability prob = static_cast <PairProbability> (my pairs -> item [iin]);
 			if (! prob -> string1 || ! prob -> string2)
 				Melder_throw ("No string in probability pair ", iin, ".");
-			strings1 -> strings [iout] = Melder_wcsdup_e (prob -> string1); therror
-			strings2 -> strings [iout] = Melder_wcsdup_e (prob -> string2); therror
+			strings1 -> strings [iout] = Melder_wcsdup (prob -> string1);
+			strings2 -> strings [iout] = Melder_wcsdup (prob -> string2);
 		}
 		*strings1_out = strings1.transfer();
 		*strings2_out = strings2.transfer();

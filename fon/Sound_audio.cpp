@@ -52,30 +52,11 @@
 #include "Preferences.h"
 #include "portaudio.h"
 
-#if defined (sgi)
-	#include <audio.h>
-	#include <unistd.h>   /* sginap (): nap while waiting for a sound to finish playing. */
-#elif defined (macintosh)
+#if defined (macintosh)
 	#include "macport_on.h"
 	#include <Carbon/Carbon.h>
 	#include "pa_mac_core.h"
 	#include "macport_off.h"
-#elif defined (sun)
-	#include <fcntl.h>
-	#include <stropts.h>
-	#include <unistd.h>   /* ioctl open write close */
-	#if defined (sun4)
-		#include <ctype.h>
-		#include <sun/audioio.h>
-	#else
-		#include <sys/audioio.h>
-	#endif
-#elif defined (HPUX)
-	#include <fcntl.h>
-	#include <ctype.h>
-	#include <sys/audio.h>
-	#include <sys/ioctl.h>
-	#include <sys/stat.h>
 #elif defined (_WIN32)
 	#include <windows.h>
 	#include <mmsystem.h>
@@ -162,10 +143,7 @@ static int portaudioStreamCallback (
 Sound Sound_recordFixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
 	bool inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
 	PaStream *portaudioStream = NULL;
-	#if defined (sgi)
-		ALconfig config;
-		ALport port;
-	#elif defined (macintosh)
+	#if defined (macintosh)
 		long refNum;
 	#elif defined (_WIN32)
 		HWAVEIN hWaveIn = 0;
@@ -184,8 +162,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		static bool paInitialized = false;
 		volatile struct Sound_recordFixedTime_Info info = { 0 };
 		PaStreamParameters streamParameters = { 0 };
-		#if defined (sgi)
-		#elif defined (macintosh)
+		#if defined (macintosh)
 			SPB spb;
 			long soundFeatures;
 			(void) gain;
@@ -199,19 +176,11 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			(void) inputSource;
 			(void) gain;
 			(void) balance;
-		#else
-			#if defined (sun)
-				struct audio_info info;
-			#elif defined (HPUX)
-				struct audio_describe info;
-				struct audio_gains gains;
-				struct audio_limits limits;
-			#elif defined (linux)
-				#define min(a,b) a > b ? b : a
-				int dev_mask;
-				int fd_mixer = -1;
-				int val;
-			#endif
+		#elif defined (linux)
+			#define min(a,b) a > b ? b : a
+			int dev_mask;
+			int fd_mixer = -1;
+			int val;
 		#endif
 
 		/* Check representation of shorts. */
@@ -227,23 +196,13 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				if (sampleRate != 44100 && sampleRate != 48000 && sampleRate != 96000) supportsSamplingFrequency = false;
 			#endif
 		} else {
-			#if defined (sgi)
-				if (sampleRate != 8000 && sampleRate != 9800 && sampleRate != 11025 &&
-						sampleRate != 16000 && sampleRate != 22050 &&
-						sampleRate != 32000 && sampleRate != 44100 &&
-						sampleRate != 48000 && sampleRate != 0) supportsSamplingFrequency = false;
-			#elif defined (macintosh)
+			#if defined (macintosh)
 				if (sampleRate != 44100) supportsSamplingFrequency = false;
-			#elif defined (sun) || defined (linux)
+			#elif defined (linux)
 				if (sampleRate != 8000 && sampleRate != 11025 &&
 						sampleRate != 16000 && sampleRate != 22050 &&
 						sampleRate != 32000 && sampleRate != 44100 &&
 						sampleRate != 48000) supportsSamplingFrequency = false;
-			#elif defined (HPUX)
-				if (sampleRate != 8000 && sampleRate != 11025 &&
-						sampleRate != 16000 && sampleRate != 22050 &&
-						sampleRate != 32000 && sampleRate != 44100 &&
-						sampleRate != 48000 && sampleRate != 5512) supportsSamplingFrequency = false;
 			#elif defined (_WIN32)
 				if (sampleRate != 8000 && sampleRate != 11025 &&
 						sampleRate != 16000 && sampleRate != 22050 &&
@@ -267,12 +226,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				paInitialized = true;
 			}
 		} else {
-			#if defined (sgi)
-				config = ALnewconfig ();
-				if (! config)
-					Melder_throw ("Don't know how to record a sound on this computer.");
-				/* We do not open the port yet, because the info is an argument to opening the port. */
-			#elif defined (macintosh)
+			#if defined (macintosh)
 				if (SPBOpenDevice (NULL, siWritePermission, & refNum) != noErr)
 					Melder_throw ("Cannot open audio input device.\nPerhaps somebody else is recording on your computer.");
 			#elif defined (_WIN32)
@@ -291,15 +245,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				}
 				/* The device immediately started recording into its buffer, but probably at the wrong rate etc. */
 				/* Pause and flush this rubbish. */
-				#if defined (sun)
-					AUDIO_INITINFO (& info);
-					info. record. pause = 1;
-					ioctl (fd, AUDIO_SETINFO, & info);   /* Pause! */
-					ioctl (fd, I_FLUSH, FLUSHR);   /* Discard buffers! */
-				#elif defined (HPUX)
-					ioctl (fd, AUDIO_RESET, RESET_RX_BUF | RESET_RX_OVF);
-					ioctl (fd, AUDIO_PAUSE, AUDIO_RECEIVE);
-				#elif defined (linux)
+				#if defined (linux)
 					ioctl (fd, SNDCTL_DSP_RESET, NULL);
 				#endif
 			#endif
@@ -312,17 +258,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				Melder_throw ("Unknown device #", inputSource, ".");
 			streamParameters. device = inputSource - 1;
 		} else {
-			#if defined (sgi)
-				if (inputSource == 0) {
-					/* Do not change input source: e.g., use the one set by the Audio Control Panel. */
-				} else {
-					long params [2];
-					params [0] = AL_INPUT_SOURCE;
-					params [1] = inputSource == 2 ? AL_INPUT_LINE :
-						inputSource == 3 ? AL_INPUT_DIGITAL : AL_INPUT_MIC;
-					ALsetparams (AL_DEFAULT_DEVICE, params, 2);
-				}
-			#elif defined (macintosh)
+			#if defined (macintosh)
 			{
 				short macInputSource = inputSource;
 				OSErr err = SPBSetDeviceInfo (refNum, siInputSource, & macInputSource);
@@ -332,14 +268,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 					notified = TRUE;
 				}
 			}
-			#elif defined (sun)
-				AUDIO_INITINFO (& info);
-				info. record. port = inputSource == 2 ? AUDIO_LINE_IN : AUDIO_MICROPHONE;   /* No digital. */
-				if (ioctl (fd, AUDIO_SETINFO, & info) == -1)
-					Melder_throw ("Cannot set port.");
-			#elif defined (HPUX)
-				if (ioctl (fd, AUDIO_SET_INPUT, inputSource == 2 ? AUDIO_IN_LINE : AUDIO_IN_MIKE) == -1)
-					Melder_throw ("Cannot set input source.");
 			#elif defined (linux)
 				fd_mixer = open ("/dev/mixer", O_WRONLY);		
 				if (fd_mixer == -1)
@@ -355,14 +283,8 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		if (inputUsesPortAudio) {
 			/* Taken from Audio Control Panel. */
 		} else {
-			#if defined (sgi) || defined (HPUX) || defined (macintosh) || defined (_WIN32)
+			#if defined (macintosh) || defined (_WIN32)
 				/* Taken from Audio Control Panel. */
-			#elif defined (sun)
-				AUDIO_INITINFO (& info);
-				info. record. gain = gain <= 0.0 ? 0 : gain >= 1.0 ? 255 : floor (gain * 255 + 0.5);
-				info. record. balance = balance <= 0.0 ? 0 : balance >= 1.0 ? 64 : floor (balance * 64 + 0.5);
-				if (ioctl (fd, AUDIO_SETINFO, & info) == -1)
-					Melder_throw ("Cannot set gain and balance.");
 			#elif defined (linux)
 				val = (gain <= 0.0 ? 0 : gain >= 1.0 ? 100 : floor (gain * 100 + 0.5));  
 				balance = balance <= 0 ? 0 : balance >= 1 ? 1 : balance;
@@ -391,42 +313,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		if (inputUsesPortAudio) {
 			// Set while opening.
 		} else {
-			#if defined (sgi)
-				if (sampleRate == 0.0) {
-					/* Do not change sampling frequency. Get it from audio panel. */
-					long params [2];
-					params [0] = AL_INPUT_RATE;
-					ALgetparams (AL_DEFAULT_DEVICE, params, 2);
-					switch (params [1]) {
-						case AL_RATE_8000:  sampleRate = 8000; break;
-						case 9800: sampleRate = 9800; break;
-						case AL_RATE_11025: sampleRate = 11025; break;
-						case AL_RATE_16000: sampleRate = 16000; break;
-						case AL_RATE_22050: sampleRate = 22050; break;
-						case AL_RATE_32000: sampleRate = 32000; break;
-						case AL_RATE_44100: sampleRate = 44100; break;
-						case AL_RATE_48000: sampleRate = 48000; break;
-						default:
-							Melder_throw ("Wrong sampling frequency.");
-					}
-				} else {
-					/* Set sampling frequency. */
-					long params [2];
-					params [0] = AL_INPUT_RATE;
-					params [1] = sampleRate;
-					ALsetparams (AL_DEFAULT_DEVICE, params, 2);
-				}
-			#elif defined (macintosh)
+			#if defined (macintosh)
 				unsigned long sampleRate_uf = sampleRate * 65536.0;
 				if (SPBSetDeviceInfo (refNum, siSampleRate, & sampleRate_uf) != noErr)
-					Melder_throw ("Cannot set sampling frequency to ", sampleRate, " Hz.");
-			#elif defined (sun)
-				AUDIO_INITINFO (& info);
-				info. record. sample_rate = sampleRate;
-				if (ioctl (fd, AUDIO_SETINFO, & info) == -1)
-					Melder_throw ("Cannot set sampling frequency to ", sampleRate, " Hz.");
-			#elif defined (HPUX)
-				if (ioctl (fd, AUDIO_SET_SAMPLE_RATE, (int) sampleRate) == -1)
 					Melder_throw ("Cannot set sampling frequency to ", sampleRate, " Hz.");
 			#elif defined (linux)
 				int sampleRate_int = (int) sampleRate;
@@ -442,22 +331,10 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		if (inputUsesPortAudio) {
 			streamParameters. channelCount = 1;
 		} else {
-			#if defined (sgi)
-				ALsetchannels (config, AL_MONO);
-			#elif defined (macintosh)
-			{
+			#if defined (macintosh)
 				short numberOfChannels = 1;
 				if (SPBSetDeviceInfo (refNum, siNumberChannels, & numberOfChannels) != noErr)
 					fakeMonoByStereo = TRUE;
-			}
-			#elif defined (sun)
-				AUDIO_INITINFO (& info);
-				info. record. channels = 1;
-				if (ioctl (fd, AUDIO_SETINFO, & info) == -1)
-					Melder_throw ("Cannot set to mono.");
-			#elif defined (HPUX)
-				if (ioctl (fd, AUDIO_SET_CHANNELS, 1) == -1)
-					Melder_throw ("Cannot set to mono.");
 			#elif defined (linux)
 				val = 1;
 				if (ioctl (fd, SNDCTL_DSP_CHANNELS, & val) == -1)
@@ -472,26 +349,13 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		if (inputUsesPortAudio) {
 			streamParameters. sampleFormat = paInt16;
 		} else {
-			#if defined (sgi)
-				ALsetwidth (config, AL_SAMPLE_16);
-			#elif defined (macintosh)
-			{
+			#if defined (macintosh)
 				OSType compressionType = 'NONE';
 				short sampleSize = can16bit ? 16 : 8;
 				if (SPBSetDeviceInfo (refNum, siCompressionType, & compressionType) != noErr)
 					Melder_throw ("Cannot set to linear.");
 				if (SPBSetDeviceInfo (refNum, siSampleSize, & sampleSize) != noErr)
 					Melder_throw ("Cannot set to ", sampleSize, "-bit.");
-			}
-			#elif defined (sun)
-				AUDIO_INITINFO (& info);
-				info. record. precision = 16;
-				info. record. encoding = AUDIO_ENCODING_LINEAR;
-				if (ioctl (fd, AUDIO_SETINFO, & info) == -1)
-					Melder_throw ("Cannot set to 16-bit linear.");
-			#elif defined (HPUX)
-				if (ioctl (fd, AUDIO_SET_DATA_FORMAT, AUDIO_FORMAT_LINEAR16BIT) == -1)
-					Melder_throw ("Cannot set 16-bit linear.");
 			#elif defined (linux)
 				#if __BYTE_ORDER == __BIG_ENDIAN
 					val = AFMT_S16_BE;
@@ -543,11 +407,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			if (err)
 				Melder_throw ("start ", Pa_GetErrorText (err));
 		} else {
-			#if defined (sgi)
-				port = ALopenport ("Sound_record", "r", config);
-				if (! port)
-					Melder_throw ("Cannot open audio port.");
-			#elif defined (macintosh)
+			#if defined (macintosh)
 				spb. inRefNum = refNum;
 				spb. bufferLength = spb. count = numberOfSamples * (can16bit ? 2 : 1) * (fakeMonoByStereo ? 2 : 1);
 				spb. milliseconds = 0;
@@ -559,21 +419,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				spb. unused1 = 0;
 				if (SPBRecord (& spb, false) != noErr)
 					Melder_throw ("Cannot create audio buffer.");
-			#elif defined (sun)
-				if (info. record. encoding == AUDIO_ENCODING_ULAW) {
-					mulaw = TRUE;
-					sampleRate = info. record. sample_rate;
-					numberOfSamples = floor (sampleRate * duration + 0.5);
-					Melder_casual ("Recording with mulaw encoding at sampling frequency %f.", sampleRate);
-					me.reset (Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate));
-				}
-				AUDIO_INITINFO (& info);
-				info. record. pause = 0;   // resume
-				ioctl (fd, AUDIO_SETINFO, & info);
-			#elif defined (HPUX)
-				ioctl (fd, AUDIO_GET_LIMITS, & limits);
-				ioctl (fd, AUDIO_SET_RXBUFSIZE, limits. max_receive_buffer_size);
-				ioctl (fd, AUDIO_RESUME, AUDIO_RECEIVE);
 			#elif defined (_WIN32)
 				waveFormat. cbSize = 0;
 				err = waveInOpen (& hWaveIn, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL);
@@ -591,9 +436,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				//Melder_casual ("filled %ld/%ld", getNumberOfSamplesRead (& info), numberOfSamples);
 			}
 		} else {
-			#if defined (sgi)
-				ALreadsamps (port, & buffer [1], numberOfSamples);
-			#elif defined (macintosh)
+			#if defined (macintosh)
 			#elif defined (_WIN32)
 				waveHeader. dwFlags = 0;
 				waveHeader. lpData = (char *) & buffer [1];
@@ -652,10 +495,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			Pa_StopStream (portaudioStream);
 			Pa_CloseStream (portaudioStream);
 		} else {
-			#if defined (sgi)
-				ALcloseport (port);
-				ALfreeconfig (config);
-			#elif defined (macintosh)
+			#if defined (macintosh)
 				SPBCloseDevice (refNum);
 			#elif defined (_WIN32)
 				err = waveInClose (hWaveIn);
@@ -674,10 +514,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			if (portaudioStream) Pa_StopStream (portaudioStream);
 			if (portaudioStream) Pa_CloseStream (portaudioStream);
 		} else {
-			#if defined (sgi)
-				if (port) ALcloseport (port);
-				if (config) ALfreeconfig (config);
-			#elif defined (macintosh)
+			#if defined (macintosh)
 				SPBCloseDevice (refNum);
 			#elif defined (_WIN32)
 				if (hWaveIn != 0) waveInClose (hWaveIn);
@@ -700,7 +537,7 @@ static struct SoundPlay {
 	short *buffer;
 } thePlayingSound;
 
-static int melderPlayCallback (void *closure, long samplesPlayed) {
+static bool melderPlayCallback (void *closure, long samplesPlayed) {
 	struct SoundPlay *me = (struct SoundPlay *) closure;
 	int phase = 2;
 	double t = samplesPlayed <= my silenceBefore ? my tmin :
@@ -712,7 +549,7 @@ static int melderPlayCallback (void *closure, long samplesPlayed) {
 	}
 	if (my callback)
 		return my callback (my closure, phase, my tmin, my tmax, t);
-	return 1;
+	return true;
 }
 
 void Sound_playPart (Sound me, double tmin, double tmax,

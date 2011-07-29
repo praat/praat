@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
-
 #include "Editor.h"
 #include "Collection.h"
 #include "Graphics.h"
@@ -71,7 +67,7 @@ struct structHyperPage : public structEditor {
 	long (*getNumberOfPages) (Klas me); \
 	long (*getCurrentPageNumber) (Klas me); \
 	int (*goToPage) (Klas me, const wchar *title); \
-	int (*goToPage_i) (Klas me, long ipage); \
+	void (*goToPage_i) (Klas me, long ipage); \
 	void (*defaultHeaders) (EditorCommand cmd); \
 	int hasHistory, isOrdered;
 Thing_declare2cpp (HyperPage, Editor);
@@ -112,7 +108,7 @@ int HyperPage_picture (I, double width_inches, double height_inches, void (*draw
 int HyperPage_script (I, double width_inches, double height_inches, const wchar *script);
 
 int HyperPage_goToPage (I, const wchar *title);
-int HyperPage_goToPage_i (I, long i);
+void HyperPage_goToPage_i (I, long i);
 
 void HyperPage_init (HyperPage me, GuiObject parent, const wchar *title, Data data);
 

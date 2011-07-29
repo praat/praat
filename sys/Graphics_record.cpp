@@ -375,18 +375,17 @@ void Graphics_play (Graphics me, Graphics thee) {
 #define binputi4(o,f) ascputi4(o,f,"")
 #define binputr4(o,f) ascputr4(o,f,"")
 */
-int Graphics_writeRecordings (I, FILE *f) {
+void Graphics_writeRecordings (I, FILE *f) {
 	iam (Graphics);
 	double *p = my record, *endp = p + my irecord;
-	if (! p) return 0;
-/*ascio_verbose(0);*/
+	if (! p) return;
 	binputi4 (my irecord, f);
 	while (p < endp) {
 		#define get  (* ++ p)
 		int opcode = (int) get;
 		long numberOfArguments = (long) get;
 		if (numberOfArguments > 0x000FFFFF) {
-			return Melder_error1 (L"This picture has more than 16 million points "
+			Melder_throw ("This picture has more than 16 million points "
 				"and can therefore not be saved in a Praat picture file. "
 				"Contact paul.boersma@uva.nl to have this corrected.");
 		}
@@ -397,73 +396,69 @@ int Graphics_writeRecordings (I, FILE *f) {
 			binputr4 (get, f);   /* y */
 			binputr4 (get, f);   /* length */
 			Melder_assert (sizeof (double) == 8);
-			fwrite (++ p, 8, numberOfArguments - 3, f);   /* text */
+			if (fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
+				Melder_throw ("Error writing graphics recordings.");
 			p += numberOfArguments - 4;
 		} else {
 			for (long i = numberOfArguments; i > 0; i --) binputr4 (get, f);
 		}
 	}
-	return ! ferror (f) && ! feof (f);
-/*	long i;
-	binputi4 (my irecord, f);
-	for (i = 1; i <= my irecord; i ++) binputr4 (my record [i], f);
-	return ! ferror (f) && ! feof (f);*/
 }
 
 #ifdef _WIN32
-int Graphics_readRecordings_oldWindows (I, FILE *f) {
+void Graphics_readRecordings_oldWindows (I, FILE *f) {
 	iam (Graphics);
-	long i, added_irecord, old_irecord = my irecord;
-	double *p;
-	added_irecord = bingeti4 (f);
-	p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
-	if (! p) return 0;
-	Melder_assert (my irecord == old_irecord + added_irecord);
-	for (i = 1; i <= added_irecord; i ++) {
-		double value = bingetr4 (f);
-		if (ferror (f) || feof (f)) {
-			my irecord = old_irecord;
-			return Melder_error5 (L"Graphics_readRecordings: error reading record ",
-				Melder_integer (i), L" out of ", Melder_integer (added_irecord), L".");
-		}
-		* ++ p = value;
-	}   
-	return 1;
+	long old_irecord = my irecord, i, added_irecord;
+	try {
+		added_irecord = bingeti4 (f);
+		double *p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
+		if (! p) return;
+		Melder_assert (my irecord == old_irecord + added_irecord);
+		for (i = 1; i <= added_irecord; i ++) {
+			double value = bingetr4 (f);
+			* ++ p = value;
+		}   
+	} catch (MelderError) {
+		my irecord = old_irecord;
+		Melder_throw ("Error reading graphics record ", i, " out of ", added_irecord, ".");
+	}
 }
 #endif
 
-int Graphics_readRecordings (I, FILE *f) {
+void Graphics_readRecordings (I, FILE *f) {
 	iam (Graphics);
-	long added_irecord, old_irecord = my irecord;
-	double *p, *endp;
-	added_irecord = bingeti4 (f);
-	p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
-	if (! p) return 0;
-	Melder_assert (my irecord == old_irecord + added_irecord);
-	endp = p + added_irecord;
-	while (p < endp) {
-		int opcode = (int) bingetr4 (f);
-		long numberOfArguments = (long) bingetr4 (f);
-		put (opcode);
-		put (numberOfArguments);
-		if (opcode == TEXT) {
-			put (bingetr4 (f));   /* x */
-			put (bingetr4 (f));   /* y */
-			put (bingetr4 (f));   /* length */
-			fread (++ p, 8, numberOfArguments - 3, f);   /* text */
-			p += numberOfArguments - 4;
-		} else {
-			long i;
-			for (i = numberOfArguments; i > 0; i --) put (bingetr4 (f));
-		}
-		if (ferror (f) || feof (f)) {
-			my irecord = old_irecord;
-			return Melder_error9 (L"Graphics_readRecordings: error reading record ", Melder_integer (added_irecord - (endp - p)),
-				L" out of ", Melder_integer (added_irecord), L".\nOpcode ",
-				Melder_integer (opcode), L", args ", Melder_integer (numberOfArguments), L".");
-		}
-	}   
-	return 1;
+	long old_irecord = my irecord;
+	long added_irecord = 0;
+	double *p = NULL, *endp = NULL;
+	long numberOfArguments = 0;
+	int opcode = 0;
+	try {
+		added_irecord = bingeti4 (f);
+		double *p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
+		if (! p) return;
+		Melder_assert (my irecord == old_irecord + added_irecord);
+		double *endp = p + added_irecord;
+		while (p < endp) {
+			opcode = (int) bingetr4 (f);
+			numberOfArguments = (long) bingetr4 (f);
+			put (opcode);
+			put (numberOfArguments);
+			if (opcode == TEXT) {
+				put (bingetr4 (f));   // x
+				put (bingetr4 (f));   // y
+				put (bingetr4 (f));   // length
+				if (fread (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
+					Melder_throw ("Error reading graphics recordings.");
+				p += numberOfArguments - 4;
+			} else {
+				for (long i = numberOfArguments; i > 0; i --) put (bingetr4 (f));
+			}
+		}   
+	} catch (MelderError) {
+		my irecord = old_irecord;
+		Melder_throw ("Error reading graphics record ", added_irecord - (long) (endp - p),
+			" out of ", added_irecord, ".\nOpcode ", opcode, ", args ", numberOfArguments, ".");
+	}
 }
 
 void Graphics_markGroup (I) {

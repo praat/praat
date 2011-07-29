@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * 2011/05/03
- */
-
 #if defined (UNIX)
 	#define gtk 1
 	#define motif 0
@@ -31,9 +27,7 @@
 	#define motif 1
 #endif
 
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
+#include "Collection.h"
 
 #if gtk
 	#include <gtk/gtk.h>
@@ -48,10 +42,6 @@
 	#include <windows.h>
 	#include <windowsx.h>
 	#undef Polygon
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
 #endif
 
 #define GUI_ARGS  GuiObject w, XtPointer void_me, XtPointer call
@@ -522,10 +512,6 @@ void GuiObject_size (GuiObject me, long width, long height);
 
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file));
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Gui.h */
 #endif

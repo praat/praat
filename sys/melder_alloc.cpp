@@ -61,18 +61,6 @@ void Melder_alloc_init (void) {
 	assert (theRainyDayFund != NULL);
 }
 
-void * _Melder_malloc_e (unsigned long size) {
-	if (size <= 0)
-		return Melder_errorp ("(Melder_malloc_e:) Can never allocate %ld bytes.", size);
-	void *result = malloc (size);
-	if (result == NULL)
-		return Melder_errorp ("Out of memory: there is not enough room for another %ld bytes.", size);
-	if (Melder_debug == 34) { Melder_casual ("Melder_malloc\t%ld\t%ld\t1", result, size); }
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size;
-	return result;
-}
-
 void * _Melder_malloc (unsigned long size) {
 	if (size <= 0)
 		Melder_throw ("Can never allocate ", size, " bytes.");
@@ -109,27 +97,6 @@ void _Melder_free (void **ptr) {
 	if (Melder_debug == 34) { Melder_casual ("Melder_free\t%ld\t?\t?", *ptr); }
 	*ptr = NULL;
 	totalNumberOfDeallocations += 1;
-}
-
-void * Melder_realloc_e (void *ptr, long size) {
-	if (size <= 0)
-		return Melder_errorp ("(Melder_realloc_e:) Can never allocate %ld bytes.", size);
-	void *result = realloc (ptr, size);   // will not show in the statistics...
-	if (result == NULL)
-		return Melder_errorp ("Out of memory. Could not extend room to %ld bytes.", size);
-	if (ptr == NULL) {   // is it like malloc?
-		if (Melder_debug == 34) { Melder_casual ("Melder_realloc\t%ld\t%ld\t1", result, size); }
-		totalNumberOfAllocations += 1;
-		totalAllocationSize += size;
-	} else if (result != ptr) {   // did realloc do a malloc-and-free?
-		totalNumberOfAllocations += 1;
-		totalAllocationSize += size;
-		totalNumberOfDeallocations += 1;
-		totalNumberOfMovingReallocs += 1;
-	} else {
-		totalNumberOfReallocsInSitu += 1;
-	}
-	return result;
 }
 
 void * Melder_realloc (void *ptr, long size) {
@@ -181,21 +148,6 @@ void * Melder_realloc_f (void *ptr, long size) {
 	return result;
 }
 
-void * _Melder_calloc_e (long nelem, long elsize) {
-	void *result;
-	if (nelem <= 0)
-		return Melder_errorp ("(Melder_calloc_e:) Can never allocate %ld elements.", nelem);
-	if (elsize <= 0)
-		return Melder_errorp ("(Melder_calloc_e:) Can never allocate elements whose size is %ld bytes.", elsize);
-	result = calloc (nelem, elsize);
-	if (result == NULL)
-		return Melder_errorp ("Out of memory: there is not enough room for %ld more elements whose sizes are %ld bytes each.", nelem, elsize);
-	if (Melder_debug == 34) { Melder_casual ("Melder_calloc\t%ld\t%ld\t%ld", result, nelem, elsize); }
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += nelem * elsize;
-	return result;
-}
-
 void * _Melder_calloc (long nelem, long elsize) {
 	void *result;
 	if (nelem <= 0)
@@ -232,19 +184,6 @@ void * _Melder_calloc_f (long nelem, long elsize) {
 	return result;
 }
 
-char * Melder_strdup_e (const char *string) {
-	if (! string) return NULL;
-	long size = strlen (string) + 1;
-	char *result = (char *) malloc (size * sizeof (char));
-	if (result == NULL)
-		return (char *) Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
-	strcpy (result, string);
-	if (Melder_debug == 34) { Melder_casual ("Melder_strdup\t%ld\t%ld\t1", result, size); }
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size;
-	return result;
-}
-
 char * Melder_strdup (const char *string) {
 	if (! string) return NULL;
 	long size = strlen (string) + 1;
@@ -274,19 +213,6 @@ char * Melder_strdup_f (const char *string) {
 	strcpy (result, string);
 	totalNumberOfAllocations += 1;
 	totalAllocationSize += size;
-	return result;
-}
-
-wchar_t * Melder_wcsdup_e (const wchar_t *string) {
-	if (! string) return NULL;
-	long size = wcslen (string) + 1;
-	wchar *result = (wchar *) malloc (size * sizeof (wchar));
-	if (result == NULL)
-		return (wchar *) Melder_errorp ("Out of memory: there is not enough room to duplicate a text of %ld characters.", size - 1);
-	wcscpy (result, string);
-	if (Melder_debug == 34) { Melder_casual ("Melder_wcsdup\t%ld\t%ld\t4", result, size); }
-	totalNumberOfAllocations += 1;
-	totalAllocationSize += size * sizeof (wchar_t);
 	return result;
 }
 

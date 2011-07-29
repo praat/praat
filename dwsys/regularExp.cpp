@@ -4142,7 +4142,7 @@ static void adjustcase (regularExp_CHAR *str, int len, regularExp_CHAR chgcase) 
  *----------------------------------------------------------------------*/
 
 static void reg_error (wchar *str) {
-	Melder_error2 (L"Internal error processing regular expression: ", str);
+	Melder_error_ ("Internal error processing regular expression: ", str);
 }
 
 /*----------------------------------------------------------------------*

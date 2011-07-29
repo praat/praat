@@ -17,12 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * 2004 created
- * 2006/12/30 new Sound_create API
- * 2011/03/03 C++
- */
-
 #include "manual_exampleSound.h"
 #include "Sound_to_Pitch.h"
 
@@ -2586,7 +2580,6 @@ static const char *data [] = {
 "74??83??;9??=9??<1??6;??>5?>>2?>",
 "57??58??0:??19??5=??3<??=4?>" };
 
-extern "C"
 Sound manual_exampleSound (void) {
 	static Sound me = NULL;
 	if (me == NULL) {
@@ -2604,7 +2597,6 @@ Sound manual_exampleSound (void) {
 	return me;
 }
 
-extern "C"
 Pitch manual_examplePitch (void) {
 	static Pitch me = NULL;
 	if (me == NULL) {

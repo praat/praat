@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "Pitch.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Pitch Sound_to_Pitch (Sound me, double timeStep,
 	double minimumPitch, double maximumPitch);
@@ -92,9 +84,5 @@ Pitch Sound_to_Pitch_any (Sound me,
 		It is directly copied into the Pitch object as a hint for considering
 		pitches above a certain value "voiceless".
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Sound_to_Pitch.h */

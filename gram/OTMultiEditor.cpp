@@ -74,7 +74,8 @@ static int menu_cb_editRanking (EDITOR_ARGS) {
 	EDITOR_OK
 		OTMulti grammar = (OTMulti) my data;
 		OTConstraint constraint;
-		if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints) return Melder_error1 (L"Select a constraint first.");
+		if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
+			Melder_throw ("Select a constraint first.");
 		constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
 		SET_STRING (L"constraint", constraint -> name)
 		SET_REAL (L"Ranking value", constraint -> ranking)
@@ -110,8 +111,7 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 		my form2 = GuiText_getString (my form2Text);
 		OTMulti_learnOne ((OTMulti) my data, my form1, my form2,
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Direction"),
-			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
-		iferror return 0;
+			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading")); therror
 		Graphics_updateWs (my g);
 		Editor_broadcastChange (me);
 	EDITOR_END
@@ -120,10 +120,9 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 static int menu_cb_removeConstraint (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	OTMulti grammar = (OTMulti) my data;
-	OTConstraint constraint;
 	if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
-		return Melder_error1 (L"Select a constraint first.");
-	constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
+		Melder_throw ("Select a constraint first.");
+	OTConstraint constraint = & grammar -> constraints [grammar -> index [my selectedConstraint]];
 	Editor_save (me, L"Remove constraint");
 	OTMulti_removeConstraint (grammar, constraint -> name);
 	Graphics_updateWs (my g);

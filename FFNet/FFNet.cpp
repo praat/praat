@@ -70,7 +70,7 @@ static void FFNet_checkLayerNumber (FFNet me, long layer)
 		else if (layer < 0) Melder_throw (L"A negative layer number is not allowed.");
 		else if (layer > my nLayers) Melder_throw (L"A layer number of ", layer, " is too big.");
 		
-		Melder_error4 (L"This FFNet has ", Melder_integer (layer), L" layer", (my nLayers > 1 ? L"s\n" : L"\n"));
+		Melder_error_ (L"This FFNet has ", Melder_integer (layer), L" layer", (my nLayers > 1 ? L"s\n" : L"\n"));
 		if (my nLayers == 1) Melder_throw (L"Layer number must be equal to 1.");
 		else if (my nLayers == 2) Melder_throw (L"Layer number must be equal to 1 or 2.");
 		else if (my nLayers == 3) Melder_throw (L"Layer number must be equal to 1, 2 or 3.");

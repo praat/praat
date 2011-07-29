@@ -17,23 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "VocalTract.h"
 #include "Spectrum.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Spectrum VocalTract_to_Spectrum
     (VocalTract tube, long numberOfFrequencies, double maximumFrequency,
      double glottalDamping, int hasRadiationDamping, int hasInternalDamping);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file VocalTract_to_Spectrum.h */

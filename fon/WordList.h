@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/12
- */
-
 #include "Strings.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "WordList_def.h"
 #define WordList__methods(klas) Data__methods(klas)
@@ -37,10 +29,6 @@ WordList Strings_to_WordList (Strings me);
 Strings WordList_to_Strings (WordList me);
 
 bool WordList_hasWord (WordList me, const wchar_t *word);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file WordList.h */
 #endif

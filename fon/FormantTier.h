@@ -19,18 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "PointProcess.h"
 #include "Formant.h"
 #include "TableOfReal.h"
 #include "Sound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "FormantTier_def.h"
 #define FormantPoint__methods(klas) Data__methods(klas)
@@ -52,10 +44,6 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier);
 Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier);
 Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file FormantTier.h */
 #endif

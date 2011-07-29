@@ -357,8 +357,7 @@ void DTW_Path_recode (DTW me)
 		}
 		else
 		{
-			(void) Melder_error1 (L"The path goes back in time");
-			return;
+			Melder_throw ("The path goes back in time.");
 		}
 		// update
 		thy xytimes[nxy].x = xright;
@@ -1520,26 +1519,26 @@ void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, d
 	DTW_drawWarpX_raw (me, g, xmin, xmax, ymin, ymax, tx, garnish, 1);
 }
 
-static int DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin, double *xmax, double *ymin, double *ymax)
+static void DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin, double *xmax, double *ymin, double *ymax)
 {
 	if (my ymin == (*y) -> xmin && my ymax == (*y) -> xmax)
 	{
 		if (my xmin != (*x) -> xmin || my xmax != (*x) -> xmax)
 		{
-			return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
+			Melder_throw ("The domains of the DTW and the sound('s) don't match");
 		}
 	}
 	else if (my ymin == (*x) -> xmin && my ymax == (*x) -> xmax)
 	{
 		if (my xmin != (*y) -> xmin || my xmax != (*y) -> xmax)
 		{
-			return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
+			Melder_throw ("The domains of the DTW and the sound('s) don't match");
 		}
 		Sound tmp = *y; *y = *x; *x = tmp; // swap x and y
 	}
 	else
 	{
-		return Melder_error1 (L"The domains of the DTW and the sound('s) don't match");
+		Melder_throw ("The domains of the DTW and the sound('s) don't match");
 	}
 
 	if (*xmin >= *xmax)
@@ -1550,7 +1549,6 @@ static int DTW_and_Sounds_checkDomains (DTW me, Sound *y, Sound *x, double *xmin
 	{
 		*ymin = my ymin; *ymax = my ymax;
 	}
-	return 1;
 }
 
 static void drawBox (Graphics g)
@@ -1578,7 +1576,7 @@ static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x)
 void DTW_and_Sounds_draw (DTW me, Sound y, Sound x, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, int garnish)
 {
-	if (! DTW_and_Sounds_checkDomains (me, &y, &x, &xmin, &xmax, &ymin, &ymax)) return;
+	DTW_and_Sounds_checkDomains (me, &y, &x, &xmin, &xmax, &ymin, &ymax);
 
 	Graphics_setInner (g);
 	Graphics_Viewport ovp = g -> outerViewport; // save for unsetInner
@@ -1634,7 +1632,7 @@ void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xm
 	Sound y = yy, x = xx;
 	int lineType = Graphics_inqLineType (g);
 
-	if (! DTW_and_Sounds_checkDomains (me, &y, &x, &xmin, &xmax, &ymin, &ymax )) return;
+	DTW_and_Sounds_checkDomains (me, &y, &x, &xmin, &xmax, &ymin, &ymax);
 
 	Graphics_setInner (g);
 	double dtw_part_x = 0.85;

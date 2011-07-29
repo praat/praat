@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/09
- */
-
 #include "Sound.h"
 #include "PointProcess.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 PointProcess Sound_to_PointProcess_extrema (Sound me, long channel, int interpolation, bool includeMaxima, bool includeMinima);
 PointProcess Sound_to_PointProcess_maxima (Sound me, long channel, int interpolation);
@@ -38,9 +30,5 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 PointProcess Sound_to_PointProcess_periodic_cc (Sound me, double fmin, double fmax);
 
 PointProcess Sound_to_PointProcess_periodic_peaks (Sound me, double fmin, double fmax, bool includeMaxima, bool includeMinima);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Sound_to_PointProcess.h */

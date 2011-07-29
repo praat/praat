@@ -19,21 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/11 replaced _I with void_me etc for compliance with new ctype.h
- * pb 2004/10/16 C++ compatible structs
- * pb 2004/10/25 C++ compatible assignments
- * pb 2006/12/10 update on "info" documentation
- * pb 2007/06/11 wchar_t
- * pb 2007/10/09 removed char
- * pb 2008/04/04 Thing_infoWithId
- * pb 2009/03/21 modern enums
- * pb 2009/08/17 readable-class IDs
- * pb 2011/03/05 C++
- * pb 2011/03/09 C++
- */
-
 /* The root class of all objects. */
 
 /* Anyone who uses Thing can also use: */
@@ -148,7 +133,6 @@ struct structThing_Table {
 	long sequentialUniqueIdOfReadableClass;
 	void (*destroy) (I);
 	void (*info) (I);
-	Thing__methods(Thing)
 };
 struct structThing {
 	Thing_Table methods;
@@ -156,22 +140,38 @@ struct structThing {
 	void * operator new (size_t size) { return Melder_calloc (char, size); }
 	void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
 // new methods:
-	virtual void v_destroy ();
+	virtual void v_destroy () { Melder_free (name); };
+		/*
+		 * derived::v_destroy calls base::v_destroy at end
+		 */
 	virtual void v_info ();
-	virtual void v_checkConstraints ();
-	virtual void v_nameChanged ();
+		/*
+		 * Thing::v_info writes object id, object name, and date;
+		 * derived::v_info often calls base::v_info at start and then writes information on contents
+		 */
+	virtual void v_checkConstraints () { };
+		/*
+		 * derived::v_checkConstraints typically calls base::v_checkConstraints at start
+		 */
+	virtual void v_nameChanged () { };
+		/*
+		 * derived::v_nameChanged may call base::v_nameChanged at start, middle or end
+		 */
 };
 extern struct structThing_Table theStructThing;
 extern Thing_Table classThing;
 
 #define forget(thing)  _Thing_forget ((Thing *) & (thing))
-#define forget_cpp(thing)  do { _Thing_forget_cpp (thing); delete thing; } while (false)
-#define forget_cpp0(thing)  do { _Thing_forget_cpp (thing); delete thing; thing = NULL; } while (false)
 /*
 	Function:
 		free all memory associated with 'thing'.
-	Postconditions:
+	Postcondition:
 		thing == NULL;
+*/
+#define forget_nozero(thing)  do { _Thing_forget_nozero (thing); delete thing; } while (false)
+/*
+	Function:
+		free all memory associated with 'thing'.
 */
 
 /* All functions with 'Thing me' as the first argument assume that it is not NULL. */
@@ -276,26 +276,6 @@ void Thing_setName (Thing me, const wchar_t *name);
 		my name *and* my name are copies of 'name'.
 */
 
-void Thing_overrideClass (Thing me, void *klas);
-/*
-	Function:
-		change my class to 'klas'.
-	Postconditions:
-		my methods == klas;
-		klas -> destroy != NULL;   // 'klas' has been initialized.
-	Usage:
-		- Safe typecast if my methods is a subclass of 'klas',
-			in which case you can also safely use "my methods = klas".
-		- Safe typecast if 'klas' is a dummy subclass of my methods,
-			i.e., if 'klas' does not add members or methods (so this is just a name change);
-			in this case, you cannot just use "my methods = klas" if you are not sure whether
-			'klas' has been initialized (by a previous 'new' or so).
-			An application of this is giving a collection of objects of class "Foo"
-			the name "Foos" instead of "Collection".
-		- Unsafe in all other situations. Normally, 'I' should contain the members and methods of 'klas',
-			perhaps with different names.
-*/
-
 void Thing_swap (Thing me, Thing thee);
 /*
 	Function:
@@ -312,8 +292,7 @@ void Thing_swap (Thing me, Thing thee);
 /* For the macros. */
 
 void _Thing_forget (Thing *me);
-	/* Macro 'forget'. */
-void _Thing_forget_cpp (Thing me);
+void _Thing_forget_nozero (Thing me);
 void * _Thing_check (Thing me, void *table, const char *fileName, int line);
 	/* Macros 'iam', 'thouart', 'heis'. */
 

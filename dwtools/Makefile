@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20110418 Latest modification
+# djmw 20110721 Latest modification
 
 include ../makefile.defs
 
@@ -13,7 +13,8 @@ OBJECTS = Activation.o AffineTransform.o \
 	Categories_and_Strings.o CCA.o CCA_and_Correlation.o \
 	CC.o CCs_to_DTW.o \
 	ClassificationTable.o Confusion.o \
-	Configuration.o Configuration_AffineTransform.o \
+	Configuration.o ContingencyTable.o \
+	Configuration_AffineTransform.o \
 	Configuration_and_Procrustes.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_Pattern_Categories.o \

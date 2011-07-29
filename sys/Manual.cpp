@@ -90,7 +90,7 @@ static int menu_cb_searchForPageList (EDITOR_ARGS) {
 		LIST (L"Page", manPages -> pages -> size, pages, 1)
 	EDITOR_OK
 	EDITOR_DO
-		if (! HyperPage_goToPage_i (me, GET_INTEGER (L"Page"))) return 0;
+		HyperPage_goToPage_i (me, GET_INTEGER (L"Page")); therror
 	EDITOR_END
 }
 
@@ -322,27 +322,26 @@ static double searchToken (ManPages me, long ipage, wchar_t *token) {
 	return goodness;
 }
 
-static void search (Manual me, const wchar_t *query) {
+static void search (Manual me, const wchar *query) {
 	ManPages manPages = (ManPages) my data;
-	long numberOfPages = manPages -> pages -> size, ipage, imatch;
+	long numberOfPages = manPages -> pages -> size;
 	static MelderString searchText = { 0 };
-	wchar_t *p;
 	MelderString_copy (& searchText, query);
-	for (p = & searchText.string [0]; *p != '\0'; p ++) {
+	for (wchar *p = & searchText.string [0]; *p != '\0'; p ++) {
 		if (*p == '\n') *p = ' ';
 		*p = tolower (*p);
 	}
-	if (! goodnessOfMatch && ! (goodnessOfMatch = NUMdvector (1, numberOfPages)))
-		{ Melder_flushError (NULL); return; }
-	for (ipage = 1; ipage <= numberOfPages; ipage ++) {
-		wchar_t *token = searchText.string;
+	if (! goodnessOfMatch)
+		goodnessOfMatch = NUMdvector (1, numberOfPages);
+	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
+		wchar *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;
 		for (;;) {
-			wchar_t *space = wcschr (token, ' ');
+			wchar *space = wcschr (token, ' ');
 			if (space) *space = '\0';
 			goodnessOfMatch [ipage] *= searchToken (manPages, ipage, token);
 			if (! space) break;
-			*space = ' ';   /* Restore. */
+			*space = ' ';   // restore
 			token = space + 1;
 		}
 	}
@@ -350,10 +349,10 @@ static void search (Manual me, const wchar_t *query) {
 	 * Find the 20 best matches.
 	 */
 	my numberOfMatches = 0;
-	for (imatch = 1; imatch <= 20; imatch ++) {
+	for (long imatch = 1; imatch <= 20; imatch ++) {
 		long imax = 0;
 		double max = 0.0;
-		for (ipage = 1; ipage <= numberOfPages; ipage ++) {
+		for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
 			if (goodnessOfMatch [ipage] > max) {
 				max = goodnessOfMatch [ipage];
 				imax = ipage;
@@ -361,12 +360,12 @@ static void search (Manual me, const wchar_t *query) {
 		}
 		if (! imax) break;
 		my matches [++ my numberOfMatches] = imax;
-		goodnessOfMatch [imax] = 0.0;   /* Skip next time. */
+		goodnessOfMatch [imax] = 0.0;   // skip next time
 	}
-	if (! HyperPage_goToPage_i (me, SEARCH_PAGE)) Melder_flushError (NULL);
+	HyperPage_goToPage_i (me, SEARCH_PAGE);
 }
 
-void Manual_search (Manual me, const wchar_t *query) {
+void Manual_search (Manual me, const wchar *query) {
 	GuiText_setString (my searchText, query);
 	search (me, query);
 }
@@ -512,7 +511,7 @@ static long getCurrentPageNumber (Manual me) {
 	return my path ? my path : 1;
 }
 
-static int goToPage_i (Manual me, long i) {
+static void goToPage_i (Manual me, long i) {
 	ManPages manPages = (ManPages) my data;
 	ManPage page;
 	ManPage_Paragraph par;
@@ -520,8 +519,8 @@ static int goToPage_i (Manual me, long i) {
 		if (i == SEARCH_PAGE) {
 			my path = SEARCH_PAGE;
 			Melder_free (my currentPageTitle);
-			return 1;
-		} else return Melder_error3 (L"Page ", Melder_integer (i), L" not found.");
+			return;
+		} else Melder_throw ("Page ", i, " not found.");
 	}
 	my path = i;
 	page = (ManPage) manPages -> pages -> item [my path];
@@ -531,7 +530,6 @@ static int goToPage_i (Manual me, long i) {
 	while ((par ++) -> type) my numberOfParagraphs ++;
 	Melder_free (my currentPageTitle);
 	my currentPageTitle = Melder_wcsdup_f (page -> title);
-	return 1;
 }
 
 static int goToPage (Manual me, const wchar_t *title) {
@@ -554,7 +552,8 @@ static int goToPage (Manual me, const wchar_t *title) {
 		long i = ManPages_lookUp (manPages, title);
 		if (! i)
 			Melder_throw ("Page \"", title, "\" not found.");
-		return goToPage_i (me, i);
+		goToPage_i (me, i);
+		return 1;
 	}
 }
 

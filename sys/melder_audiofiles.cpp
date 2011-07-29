@@ -59,129 +59,163 @@
 #define WAVE_FORMAT_MULAW  0x0007
 #define WAVE_FORMAT_DVI_ADPCM  0x0011
 
-void MelderFile_writeAudioFileHeader16_e (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels) {
-	FILE *f = file -> filePointer;
-	if (f == NULL) return;
-	switch (audioFileType) {
-		case Melder_AIFF: {
-			long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
+void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels) {
+	try {
+		FILE *f = file -> filePointer;
+		if (f == NULL) return;
+		switch (audioFileType) {
+			case Melder_AIFF: {
+				try {
+					long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
 
-			/* Form Chunk: contains all other chunks. */
-			fwrite ("FORM", 1, 4, f);
-			binputi4 (4 + (8 + 4) + (8 + 18) + (8 + 8 + dataSize), f);   /* Size of Form Chunk. */
-			fwrite ("AIFF", 1, 4, f);   /* File type. */
+					/* Form Chunk: contains all other chunks. */
+					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FORM statement.");
+					binputi4 (4 + (8 + 4) + (8 + 18) + (8 + 8 + dataSize), f);   // the size of the Form Chunk
+					if (fwrite ("AIFF", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the AIFF file type.");
 
-			/* Format Version Chunk: 8 + 4 bytes. */
-			fwrite ("FVER", 1, 4, f); binputi4 (4, f);
-			binputi4 (0xA2805140, f); /* Time of version. */
+					/* Format Version Chunk: 8 + 4 bytes. */
+					if (fwrite ("FVER", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FVER statement.");
+					binputi4 (4, f);   // the size of what follows
+					binputi4 (0xA2805140, f);   // time of version
 
-			/* Common Chunk: 8 + 18 bytes. */
-			fwrite ("COMM", 1, 4, f); binputi4 (18, f);
-			binputi2 (numberOfChannels, f);
-			binputi4 (numberOfSamples, f);
-			binputi2 (BITS_PER_SAMPLE_PER_CHANNEL, f);
-			binputr10 (sampleRate, f);
+					/* Common Chunk: 8 + 18 bytes. */
+					if (fwrite ("COMM", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the COMM statement.");
+					binputi4 (18, f);   // the size of what follows
+					binputi2 (numberOfChannels, f);
+					binputi4 (numberOfSamples, f);
+					binputi2 (BITS_PER_SAMPLE_PER_CHANNEL, f);
+					binputr10 (sampleRate, f);
 
-			/* Sound Data Chunk: 8 + 8 bytes + samples. */
-			fwrite ("SSND", 1, 4, f); binputi4 (8 + dataSize, f);
-			binputi4 (0, f);   /* Offset. */
-			binputi4 (0, f);   /* Block size. */
-		} break;
-		case Melder_AIFC: {
-			long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
+					/* Sound Data Chunk: 8 + 8 bytes + samples. */
+					if (fwrite ("SSND", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the SSND statement.");
+					binputi4 (8 + dataSize, f);   // the size of what follows
+					binputi4 (0, f);   // offset
+					binputi4 (0, f);   // block size
+				} catch (MelderError) {
+					Melder_throw ("AIFF header not written.");
+				}
+			} break;
+			case Melder_AIFC: {
+				try {
+					long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
 
-			/* Form Chunk: contains all other chunks. */
-			fwrite ("FORM", 1, 4, f);
-			binputi4 (4 + (8 + 4) + (8 + 24) + (8 + 8 + dataSize), f);   /* Size of Form Chunk. */
-			fwrite ("AIFC", 1, 4, f);   /* File type. */
+					/* Form Chunk: contains all other chunks. */
+					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FORM statement.");
+					binputi4 (4 + (8 + 4) + (8 + 24) + (8 + 8 + dataSize), f);   // the size of the Form Chunk
+					if (fwrite ("AIFC", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the AIFC file type.");
 
-			/* Format Version Chunk: 8 + 4 bytes. */
-			fwrite ("FVER", 1, 4, f); binputi4 (4, f);
-			binputi4 (0xA2805140, f); /* Time of version. */
+					/* Format Version Chunk: 8 + 4 bytes. */
+					if (fwrite ("FVER", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FVER statement.");
+					binputi4 (4, f);   // the size of what follows
+					binputi4 (0xA2805140, f);   // time of version
 
-			/* Common Chunk: 8 + 24 bytes. */
-			fwrite ("COMM", 1, 4, f); binputi4 (24, f);
-			binputi2 (numberOfChannels, f);
-			binputi4 (numberOfSamples, f);
-			binputi2 (BITS_PER_SAMPLE_PER_CHANNEL, f);
-			binputr10 (sampleRate, f);
-			fwrite ("NONE", 1, 4, f);   /* Type of compression. */
-			binputi2 (0, f);   /* Name of compression. */
+					/* Common Chunk: 8 + 24 bytes. */
+					if (fwrite ("COMM", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the COMM statement.");
+					binputi4 (24, f);   // the size of what follows
+					binputi2 (numberOfChannels, f);
+					binputi4 (numberOfSamples, f);
+					binputi2 (BITS_PER_SAMPLE_PER_CHANNEL, f);
+					binputr10 (sampleRate, f);
+					if (fwrite ("NONE", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the compression type.");
+					binputi2 (0, f);   // name of compression
 
-			/* Sound Data Chunk: 8 + 8 bytes + samples. */
-			fwrite ("SSND", 1, 4, f); binputi4 (8 + dataSize, f);
-			binputi4 (0, f);   /* Offset. */
-			binputi4 (0, f);   /* Block size. */
-		} break;
-		case Melder_WAV: {
-			long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
+					/* Sound Data Chunk: 8 + 8 bytes + samples. */
+					if (fwrite ("SSND", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the SSND statement.");
+					binputi4 (8 + dataSize, f);   // the size of what follows
+					binputi4 (0, f);   // offset
+					binputi4 (0, f);   // block size
+				} catch (MelderError) {
+					Melder_throw ("AIFC header not written.");
+				}
+			} break;
+			case Melder_WAV: {
+				try {
+					long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
 
-			/* RIFF Chunk: contains all other chunks. */
-			fwrite ("RIFF", 1, 4, f);
-			binputi4LE (4 + (12 + 16) + (4 + dataSize), f);
-			fwrite ("WAVE", 1, 4, f);   /* File type. */
+					/* RIFF Chunk: contains all other chunks. */
+					if (fwrite ("RIFF", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the RIFF statement.");
+					binputi4LE (4 + (12 + 16) + (4 + dataSize), f);
+					if (fwrite ("WAVE", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the WAV file type.");
 
-			/* Format Chunk: 8 + 16 bytes. */
-			fwrite ("fmt ", 1, 4, f); binputi4LE (16, f);
-			binputi2LE (WAVE_FORMAT_PCM, f);
-			binputi2LE (numberOfChannels, f);
-			binputi4LE (sampleRate, f);   /* Number of samples per second. */
-			binputi4LE (sampleRate * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels, f);   /* Average number of bytes per second. */
-			binputi2LE (BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels, f);   /* Block alignment. */
-			binputi2LE (BITS_PER_SAMPLE_PER_CHANNEL, f);   /* Bits per sample point. */
+					/* Format Chunk: 8 + 16 bytes. */
+					if (fwrite ("fmt ", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FMT statement.");
+					binputi4LE (16, f);
+					binputi2LE (WAVE_FORMAT_PCM, f);
+					binputi2LE (numberOfChannels, f);
+					binputi4LE (sampleRate, f);   // number of samples per second
+					binputi4LE (sampleRate * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels, f);   // average number of bytes per second
+					binputi2LE (BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels, f);   // block alignment
+					binputi2LE (BITS_PER_SAMPLE_PER_CHANNEL, f);   // bits per sample point
 
-			/* Data Chunk: 8 bytes + samples. */
-			fwrite ("data", 1, 4, f); binputi4LE (dataSize, f);
-		} break;
-		case Melder_NEXT_SUN: {
-			fwrite (".snd", 1, 4, f);   /* Tag. */
-			binputi4 (32, f);   /* Length of header. */
-			binputi4 (numberOfSamples * 2 * numberOfChannels, f);   /* Length of data. */
-			binputi4 (3, f);   /* 16-bits linear, not mu-law or A-law. */
-			binputi4 (sampleRate, f);
-			binputi4 (numberOfChannels, f);
-			binputi4 (0, f);
-			binputi4 (0, f);
-		} break;
-		case Melder_NIST: {
-			char header [1024];
-			memset (header, 0, 1024);
-			sprintf (header, "NIST_1A\n   1024\n"
-				"channel_count -i %d\n"
-				"sample_count -i %ld\n"
-				"sample_n_bytes -i 2\n"
-				"sample_byte_format -s2 01\n" /* 01=LE 10=BE */
-				"sample_coding -s3 pcm\n"
-				"sample_rate -i %ld\n"
-				"sample_min -i -32768\n"
-				"sample_max -i 32767\n"
-				"end_head\n", numberOfChannels, numberOfSamples, sampleRate);
-			fwrite (header, 1, 1024, f);
-		} break;
-		case Melder_SOUND_DESIGNER_TWO: {
-			error1 (L"Cannot yet write Sound Designer II files.")
-		} break;
-		case Melder_FLAC: {
-			FLAC__StreamEncoder *encoder = NULL;
-			if (numberOfChannels > (int) FLAC__MAX_CHANNELS)
-				error1 (L"FLAC files cannot have more than 8 channels.")
-			if ((encoder = FLAC__stream_encoder_new ()) == NULL)
-				error1 (L"Error creating FLAC stream encoder.");
-			FLAC__stream_encoder_set_bits_per_sample (encoder, 16);
-			FLAC__stream_encoder_set_channels (encoder, numberOfChannels);
-			FLAC__stream_encoder_set_sample_rate (encoder, sampleRate);
-			FLAC__stream_encoder_set_total_samples_estimate (encoder, numberOfSamples);
-			if (FLAC__stream_encoder_init_FILE (encoder, file -> filePointer, NULL, NULL) != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
-				FLAC__stream_encoder_delete (encoder);
-				error1 (L"Error creating FLAC stream encoder");
-			}
-			file -> flacEncoder = encoder;   // only after we know it's correct (for MelderFile_close)
-			file -> outputEncoding = kMelder_textOutputEncoding_FLAC;   // only after we know it's correct (for MelderFile_close)
-		} break;
-		default: error3 (L"Unknown audio file type ", Melder_integer (audioFileType), L".");
+					/* Data Chunk: 8 bytes + samples. */
+					if (fwrite ("data", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the DATA statement.");
+					binputi4LE (dataSize, f);
+				} catch (MelderError) {
+					Melder_throw ("WAV header not written.");
+				}
+			} break;
+			case Melder_NEXT_SUN: {
+				try {
+					if (fwrite (".snd", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the .snd file type tag.");
+					binputi4 (32, f);   // length of header
+					binputi4 (numberOfSamples * 2 * numberOfChannels, f);   // length of data
+					binputi4 (3, f);   // 16-bits linear, not mu-law or A-law
+					binputi4 (sampleRate, f);
+					binputi4 (numberOfChannels, f);
+					binputi4 (0, f);
+					binputi4 (0, f);
+				} catch (MelderError) {
+					Melder_throw ("NeXT/Sun header not written.");
+				}
+			} break;
+			case Melder_NIST: {
+				try {
+					char header [1024];
+					memset (header, 0, 1024);
+					sprintf (header, "NIST_1A\n   1024\n"
+						"channel_count -i %d\n"
+						"sample_count -i %ld\n"
+						"sample_n_bytes -i 2\n"
+						"sample_byte_format -s2 01\n" /* 01=LE 10=BE */
+						"sample_coding -s3 pcm\n"
+						"sample_rate -i %ld\n"
+						"sample_min -i -32768\n"
+						"sample_max -i 32767\n"
+						"end_head\n", numberOfChannels, numberOfSamples, sampleRate);
+					if (fwrite (header, 1, 1024, f) != 1024) Melder_throw ("Error in file while trying to write the NIST header.");
+				} catch (MelderError) {
+					Melder_throw ("NIST header not written.");
+				}
+			} break;
+			case Melder_SOUND_DESIGNER_TWO: {
+				Melder_throw ("Cannot yet write Sound Designer II files.");
+			} break;
+			case Melder_FLAC: {
+				try {
+					FLAC__StreamEncoder *encoder = NULL;
+					if (numberOfChannels > (int) FLAC__MAX_CHANNELS)
+						Melder_throw ("FLAC files cannot have more than 8 channels.");
+					if ((encoder = FLAC__stream_encoder_new ()) == NULL)
+						Melder_throw ("Error creating FLAC stream encoder.");
+					FLAC__stream_encoder_set_bits_per_sample (encoder, 16);
+					FLAC__stream_encoder_set_channels (encoder, numberOfChannels);
+					FLAC__stream_encoder_set_sample_rate (encoder, sampleRate);
+					FLAC__stream_encoder_set_total_samples_estimate (encoder, numberOfSamples);
+					if (FLAC__stream_encoder_init_FILE (encoder, file -> filePointer, NULL, NULL) != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
+						FLAC__stream_encoder_delete (encoder);
+						Melder_throw ("Error creating FLAC stream encoder");
+					}
+					file -> flacEncoder = encoder;   // only after we know it's correct (for MelderFile_close)
+					file -> outputEncoding = kMelder_textOutputEncoding_FLAC;   // only after we know it's correct (for MelderFile_close)
+				} catch (MelderError) {
+					Melder_throw ("FLAC header not written.");
+				}
+			} break;
+			default: Melder_throw ("Unknown audio file type ", audioFileType, ".");
+		}
+	} catch (MelderError) {
+		Melder_throw ("16-bit audio file header not written.");
 	}
-end:
-	iferror return;
 }
 
 static const wchar *audioFileTypeString [] = { L"none", L"AIFF", L"AIFC", L"WAV", L"NeXT/Sun", L"NIST", L"Sound Designer II", L"FLAC", L"MP3" };
@@ -201,7 +235,7 @@ int Melder_defaultAudioFileEncoding16 (int audioFileType) { return defaultAudioF
 void MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file, macAudioFileType [audioFileType], L"PpgB", winAudioFileExtension [audioFileType]);
-		MelderFile_writeAudioFileHeader16_e (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
 		MelderFile_writeShortToAudio (file, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
 		mfile.close ();
 	} catch (MelderError) {

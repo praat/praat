@@ -128,7 +128,7 @@ void UiInfile_do (I) {
 
 Thing_declare1cpp (UiOutfile);
 struct structUiOutfile : public structUiFile {
-	int (*allowExecutionHook) (void *closure);
+	bool (*allowExecutionHook) (void *closure);
 	void *allowExecutionClosure;   // I am owner (see destroy)
 };
 #define UiOutfile__methods(klas) UiFile__methods(klas)

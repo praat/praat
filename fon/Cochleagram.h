@@ -19,17 +19,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Matrix.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Cochleagram);
+struct structCochleagram : public structMatrix {
+};
+#define Cochleagram__methods(klas)  Matrix__methods(klas)
+Thing_declare2cpp (Cochleagram, Matrix);
 
 /* Normally, the attributes will meet the following:
 	xmin;			// Start time (seconds).
@@ -81,16 +77,6 @@ Matrix Cochleagram_to_Matrix (Cochleagram me);
 		with deep copy of all its attributes, except class information and methods.
 	Return NULL if out of memory.  
 */
-
-#ifdef __cplusplus
-	}
-
-	struct structCochleagram : public structMatrix {
-	};
-	#define Cochleagram__methods(klas)  Matrix__methods(klas)
-	Thing_declare2cpp (Cochleagram, Matrix);
-
-#endif
 
 /* End of file Cochleagram.h */
 #endif

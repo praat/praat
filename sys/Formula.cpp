@@ -2973,14 +2973,14 @@ static void do_selected (void) {
 	Stackel n = pop;
 	long result = 0;
 	if (n->content.number == 0) {
-		result = praat_getIdOfSelected (NULL, 0); therror
+		result = praat_getIdOfSelected (NULL, 0);
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
 			void *klas = Thing_classFromClassName (a->content.string); therror
-			result = praat_getIdOfSelected (klas, 0); therror
+			result = praat_getIdOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
-			result = praat_getIdOfSelected (NULL, a->content.number); therror
+			result = praat_getIdOfSelected (NULL, a->content.number);
 		} else {
 			Melder_throw ("The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
@@ -2988,7 +2988,7 @@ static void do_selected (void) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			void *klas = Thing_classFromClassName (s->content.string); therror
-			result = praat_getIdOfSelected (klas, x->content.number); therror
+			result = praat_getIdOfSelected (klas, x->content.number);
 		} else {
 			Melder_throw ("The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
@@ -3002,16 +3002,16 @@ static void do_selectedStr (void) {
 	wchar_t *name;
 	autostring result;
 	if (n->content.number == 0) {
-		name = praat_getNameOfSelected (NULL, 0); therror
+		name = praat_getNameOfSelected (NULL, 0);
 		result.reset (Melder_wcsdup (name));
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
 			void *klas = Thing_classFromClassName (a->content.string); therror
-			name = praat_getNameOfSelected (klas, 0); therror
+			name = praat_getNameOfSelected (klas, 0);
 			result.reset (Melder_wcsdup (name));
 		} else if (a->which == Stackel_NUMBER) {
-			name = praat_getNameOfSelected (NULL, a->content.number); therror
+			name = praat_getNameOfSelected (NULL, a->content.number);
 			result.reset (Melder_wcsdup (name));
 		} else {
 			Melder_throw ("The function \"selected$\" requires a string (an object type name) and/or a number.");
@@ -3020,7 +3020,7 @@ static void do_selectedStr (void) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 			void *klas = Thing_classFromClassName (s->content.string); therror
-			name = praat_getNameOfSelected (klas, x->content.number); therror
+			name = praat_getNameOfSelected (klas, x->content.number);
 			result.reset (Melder_wcsdup (name));
 		} else {
 			Melder_throw ("The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->content.number, ".");

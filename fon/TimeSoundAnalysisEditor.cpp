@@ -298,18 +298,18 @@ static const wchar *FunctionEditor_partString_locative (int part) {
 
 static int makeQueriable (TimeSoundAnalysisEditor me, int allowCursor, double *tmin, double *tmax) {
 	if (my endWindow - my startWindow > my longestAnalysis) {
-		return Melder_error5 (L"Window too long to show analyses. Zoom in to at most ", Melder_half (my longestAnalysis), L" seconds "
-			"or set the \"longest analysis\" to at least ", Melder_half (my endWindow - my startWindow), L" seconds.");
+		Melder_throw ("Window too long to show analyses. Zoom in to at most ", Melder_half (my longestAnalysis), " seconds "
+			"or set the \"longest analysis\" to at least ", Melder_half (my endWindow - my startWindow), " seconds.");
 	}
 	if (my startSelection == my endSelection) {
 		if (allowCursor) {
 			*tmin = *tmax = my startSelection;
 			return FunctionEditor_PART_CURSOR;
 		} else {
-			return Melder_error1 (L"Make a selection first.");
+			Melder_throw ("Make a selection first.");
 		}
 	} else if (my startSelection < my startWindow || my endSelection > my endWindow) {
-		return Melder_error1 (L"Command ambiguous: a part of the selection is out of view. Either zoom or re-select.");
+		Melder_throw ("Command ambiguous: a part of the selection is out of view. Either zoom or re-select.");
 	}
 	*tmin = my startSelection;
 	*tmax = my endSelection;
@@ -375,7 +375,7 @@ static int menu_cb_deleteLogFile2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisE
 static int do_log (TimeSoundAnalysisEditor me, int which) {
 	wchar format [1000], *p;
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	wcscpy (format, preferences.log[which].format);
 	for (p = format; *p !='\0'; p ++) if (*p == '\'') {
 		/*
@@ -414,9 +414,9 @@ static int do_log (TimeSoundAnalysisEditor me, int which) {
 			stringValue = my name;
 		} else if (wcsequ (varName, L"f0")) {
 			if (! my pitch.show)
-				return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+				Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 			if (! my pitch.data) {
-				return Melder_error1 (theMessage_Cannot_compute_pitch);
+				Melder_throw (theMessage_Cannot_compute_pitch);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, 1);
@@ -425,9 +425,9 @@ static int do_log (TimeSoundAnalysisEditor me, int which) {
 			}
 		} else if (varName [0] == 'f' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
 			if (! my formant.show)
-				return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+				Melder_throw ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
-				return Melder_error1 (theMessage_Cannot_compute_formant);
+				Melder_throw (theMessage_Cannot_compute_formant);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Formant_getValueAtTime (my formant.data, varName [1] - '0', tmin, 0);
@@ -436,16 +436,16 @@ static int do_log (TimeSoundAnalysisEditor me, int which) {
 			}
 		} else if (varName [0] == 'b' && varName [1] >= '1' && varName [1] <= '5' && varName [2] == '\0') {
 			if (! my formant.show)
-				return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+				Melder_throw ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 			if (! my formant.data) {
-				return Melder_error1 (theMessage_Cannot_compute_formant);
+				Melder_throw (theMessage_Cannot_compute_formant);
 			}
 			value = Formant_getBandwidthAtTime (my formant.data, varName [1] - '0', 0.5 * (tmin + tmax), 0);
 		} else if (wcsequ (varName, L"intensity")) {
 			if (! my intensity.show)
-				return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+				Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 			if (! my intensity.data) {
-				return Melder_error1 (theMessage_Cannot_compute_intensity);
+				Melder_throw (theMessage_Cannot_compute_intensity);
 			}
 			if (part == FunctionEditor_PART_CURSOR) {
 				value = Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR);
@@ -454,11 +454,11 @@ static int do_log (TimeSoundAnalysisEditor me, int which) {
 			}
 		} else if (wcsequ (varName, L"power")) {
 			if (! my spectrogram.show)
-				return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+				Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 			if (! my spectrogram.data) {
-				return Melder_error1 (theMessage_Cannot_compute_spectrogram);
+				Melder_throw (theMessage_Cannot_compute_spectrogram);
 			}
-			if (part != FunctionEditor_PART_CURSOR) return Melder_error1 (L"Click inside the spectrogram first.");
+			if (part != FunctionEditor_PART_CURSOR) Melder_throw ("Click inside the spectrogram first.");
 			value = Matrix_getValueAtXY (my spectrogram.data, tmin, my spectrogram.cursor);
 		}
 		if (NUMdefined (value)) {
@@ -659,14 +659,14 @@ static int menu_cb_getFrequency (EDITOR_ARGS) {
 static int menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my spectrogram.show)
-		return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+		Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		TimeSoundAnalysisEditor_computeSpectrogram (me);
-		if (! my spectrogram.data) return Melder_error1 (theMessage_Cannot_compute_spectrogram);
+		if (! my spectrogram.data) Melder_throw (theMessage_Cannot_compute_spectrogram);
 	}
-	if (part != FunctionEditor_PART_CURSOR) return Melder_error1 (L"Click inside the spectrogram first.");
+	if (part != FunctionEditor_PART_CURSOR) Melder_throw ("Click inside the spectrogram first.");
 	MelderInfo_open ();
 	MelderInfo_write1 (Melder_double (Matrix_getValueAtXY (my spectrogram.data, tmin, my spectrogram.cursor)));
 	MelderInfo_write5 (L" Pa2/Hz (at time = ", Melder_double (tmin), L" seconds and frequency = ",
@@ -678,7 +678,7 @@ static int menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
 static int menu_cb_moveFrequencyCursorTo (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my spectrogram.show)
-		return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+		Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	EDITOR_FORM (L"Move frequency cursor to", 0)
 		REAL (L"Frequency (Hz)", L"0.0")
 	EDITOR_OK
@@ -708,10 +708,10 @@ static int menu_cb_extractVisibleSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	Spectrogram publish;
 	if (! my spectrogram.show)
-		return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+		Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		TimeSoundAnalysisEditor_computeSpectrogram (me);
-		if (! my spectrogram.data) return Melder_error1 (theMessage_Cannot_compute_spectrogram);
+		if (! my spectrogram.data) Melder_throw (theMessage_Cannot_compute_spectrogram);
 	}
 	publish = (Spectrogram) Data_copy (my spectrogram.data);
 	if (publish == NULL) return 0;
@@ -769,10 +769,10 @@ static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 		our do_pictureSelection (me, cmd);
 		our preferences.picture.spectrogram.garnish = GET_INTEGER (L"Garnish");
 		if (! my spectrogram.show)
-			return Melder_error1 (L"No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
+			Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my spectrogram.data) {
 			TimeSoundAnalysisEditor_computeSpectrogram (me);
-			if (! my spectrogram.data) return Melder_error1 (theMessage_Cannot_compute_spectrogram);
+			if (! my spectrogram.data) Melder_throw (theMessage_Cannot_compute_spectrogram);
 		}
 		Editor_openPraatPicture (me);
 		Spectrogram_paint (my spectrogram.data, my pictureGraphics, my startWindow, my endWindow, my spectrogram.viewFrom, my spectrogram.viewTo,
@@ -864,7 +864,7 @@ static int menu_cb_advancedPitchSettings (EDITOR_ARGS) {
 		SET_REAL (L"Voiced / unvoiced cost", my pitch.voicedUnvoicedCost)
 	EDITOR_DO
 		long maxnCandidates = GET_INTEGER (L"Max. number of candidates");
-		if (maxnCandidates < 2) return Melder_error1 (L"Maximum number of candidates must be greater than 1.");
+		if (maxnCandidates < 2) Melder_throw ("Maximum number of candidates must be greater than 1.");
 		preferences.pitch.viewFrom = my pitch.viewFrom = GET_REAL (L"left View range");
 		preferences.pitch.viewTo = my pitch.viewTo = GET_REAL (L"right View range");
 		preferences.pitch.veryAccurate = my pitch.veryAccurate = GET_INTEGER (L"Very accurate");
@@ -884,12 +884,12 @@ static int menu_cb_advancedPitchSettings (EDITOR_ARGS) {
 static int menu_cb_pitchListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my pitch.show)
-		return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine2 (L"Time_s   F0_", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
@@ -914,12 +914,12 @@ static int menu_cb_pitchListing (EDITOR_ARGS) {
 static int menu_cb_getPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my pitch.show)
-		return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
@@ -938,12 +938,12 @@ static int menu_cb_getPitch (EDITOR_ARGS) {
 static int menu_cb_getMinimumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax, f0;
-	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, FALSE, & tmin, & tmax);
 	if (! my pitch.show)
-		return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -955,12 +955,12 @@ static int menu_cb_getMinimumPitch (EDITOR_ARGS) {
 static int menu_cb_getMaximumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax, f0;
-	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, FALSE, & tmin, & tmax);
 	if (! my pitch.show)
-		return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -972,19 +972,19 @@ static int menu_cb_getMaximumPitch (EDITOR_ARGS) {
 static int menu_cb_moveCursorToMinimumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my pitch.show)
-		return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
+		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	if (my startSelection == my endSelection) {
-		return Melder_error1 (L"Empty selection.");
+		Melder_throw ("Empty selection.");
 	} else {
 		double time;
 		Pitch_getMinimumAndTime (my pitch.data, my startSelection, my endSelection,
 			my pitch.unit, 1, NULL, & time);
 		if (! NUMdefined (time))
-			return Melder_error1 (L"Selection is voiceless.");
+			Melder_throw ("Selection is voiceless.");
 		my startSelection = my endSelection = time;
 		FunctionEditor_marksChanged (me);
 	}
@@ -994,19 +994,19 @@ static int menu_cb_moveCursorToMinimumPitch (EDITOR_ARGS) {
 static int menu_cb_moveCursorToMaximumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my pitch.show)
-		return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
+		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	if (my startSelection == my endSelection) {
-		return Melder_error1 (L"Empty selection.");
+		Melder_throw (L"Empty selection.");
 	} else {
 		double time;
 		Pitch_getMaximumAndTime (my pitch.data, my startSelection, my endSelection,
 			my pitch.unit, 1, NULL, & time);
 		if (! NUMdefined (time))
-			return Melder_error1 (L"Selection is voiceless.");
+			Melder_throw (L"Selection is voiceless.");
 		my startSelection = my endSelection = time;
 		FunctionEditor_marksChanged (me);
 	}
@@ -1016,10 +1016,10 @@ static int menu_cb_moveCursorToMaximumPitch (EDITOR_ARGS) {
 static int menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my pitch.show)
-		return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	Pitch publish = (Pitch) Data_copy (my pitch.data);
 	if (! publish) return 0;
@@ -1050,10 +1050,10 @@ static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 		our do_pictureSelection (me, cmd);
 		our preferences.picture.pitch.garnish = GET_INTEGER (L"Garnish");
 		if (! my pitch.show)
-			return Melder_error1 (L"No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
+			Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
 			TimeSoundAnalysisEditor_computePitch (me);
-			if (! my pitch.data) return Melder_error1 (theMessage_Cannot_compute_pitch);
+			if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 		}
 		Editor_openPraatPicture (me);
 		double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
@@ -1112,10 +1112,10 @@ static int menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	Intensity publish;
 	if (! my intensity.show)
-		return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+		Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
-		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	publish = (Intensity) Data_copy (my intensity.data);
 	if (! publish) return 0;
@@ -1142,10 +1142,10 @@ static int menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
 		our do_pictureSelection (me, cmd);
 		our preferences.picture.intensity.garnish = GET_INTEGER (L"Garnish");
 		if (! my intensity.show)
-			return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+			Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 		if (! my intensity.data) {
 			TimeSoundAnalysisEditor_computeIntensity (me);
-			if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+			if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 		}
 		Editor_openPraatPicture (me);
 		Intensity_draw (my intensity.data, my pictureGraphics, my startWindow, my endWindow, my intensity.viewFrom, my intensity.viewTo,
@@ -1158,12 +1158,12 @@ static int menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
 static int menu_cb_intensityListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my intensity.show)
-		return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+		Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
-		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 (L"Time_s   Intensity_dB");
@@ -1186,12 +1186,12 @@ static int menu_cb_intensityListing (EDITOR_ARGS) {
 static int menu_cb_getIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my intensity.show)
-		return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+		Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
-		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR)), L" dB (intensity at CURSOR)");
@@ -1206,12 +1206,12 @@ static int menu_cb_getIntensity (EDITOR_ARGS) {
 static int menu_cb_getMinimumIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, FALSE, & tmin, & tmax);
 	if (! my intensity.show)
-		return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+		Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
-		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	double intensity = Vector_getMinimum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
 	Melder_information4 (Melder_double (intensity), L" dB (minimum intensity ", FunctionEditor_partString_locative (part), L")");
@@ -1221,12 +1221,12 @@ static int menu_cb_getMinimumIntensity (EDITOR_ARGS) {
 static int menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, FALSE, & tmin, & tmax);
 	if (! my intensity.show)
-		return Melder_error1 (L"No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
+		Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
-		if (! my intensity.data) return Melder_error1 (theMessage_Cannot_compute_intensity);
+		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	double intensity = Vector_getMaximum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
 	Melder_information4 (Melder_double (intensity), L" dB (maximum intensity ", FunctionEditor_partString_locative (part), L")");
@@ -1300,10 +1300,10 @@ static int menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	Formant publish;
 	if (! my formant.show)
-		return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+		Melder_throw ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		TimeSoundAnalysisEditor_computeFormants (me);
-		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
+		if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	publish = (Formant) Data_copy (my formant.data);
 	if (! publish) return 0;
@@ -1330,10 +1330,10 @@ static int menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
 		our do_pictureSelection (me, cmd);
 		our preferences.picture.formant.garnish = GET_INTEGER (L"Garnish");
 		if (! my formant.show)
-			return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
+			Melder_throw ("No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
 		if (! my formant.data) {
 			TimeSoundAnalysisEditor_computeFormants (me);
-			if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
+			if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 		}
 		Editor_openPraatPicture (me);
 		Formant_drawSpeckles (my formant.data, my pictureGraphics, my startWindow, my endWindow,
@@ -1347,12 +1347,12 @@ static int menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
 static int menu_cb_formantListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my formant.show)
-		return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+		Melder_throw ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		TimeSoundAnalysisEditor_computeFormants (me);
-		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
+		if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 (L"Time_s   F1_Hz   F2_Hz   F3_Hz   F4_Hz");
@@ -1382,12 +1382,12 @@ static int menu_cb_formantListing (EDITOR_ARGS) {
 
 static int do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my formant.show)
-		return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+		Melder_throw ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		TimeSoundAnalysisEditor_computeFormants (me);
-		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
+		if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information4 (Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)),
@@ -1400,12 +1400,12 @@ static int do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
 }
 static int do_getBandwidth (TimeSoundAnalysisEditor me, int iformant) {
 	double tmin, tmax;
-	int part = makeQueriable (me, TRUE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my formant.show)
-		return Melder_error1 (L"No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
+		Melder_throw ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		TimeSoundAnalysisEditor_computeFormants (me);
-		if (! my formant.data) return Melder_error1 (theMessage_Cannot_compute_formant);
+		if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		Melder_information4 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)),
@@ -1483,10 +1483,10 @@ static int menu_cb_extractVisiblePulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	Pitch publish;
 	if (! my pulses.show)
-		return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		TimeSoundAnalysisEditor_computePulses (me);
-		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	publish = (Pitch) Data_copy (my pulses.data);
 	if (! publish) return 0;
@@ -1513,10 +1513,10 @@ static int menu_cb_drawVisiblePulses (EDITOR_ARGS) {
 		our do_pictureSelection (me, cmd);
 		our preferences.picture.pulses.garnish = GET_INTEGER (L"Garnish");
 		if (! my pulses.show)
-			return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+			Melder_throw (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 		if (! my pulses.data) {
 			TimeSoundAnalysisEditor_computePulses (me);
-			if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
+			if (! my pulses.data) Melder_throw (theMessage_Cannot_compute_pulses);
 		}
 		Editor_openPraatPicture (me);
 		PointProcess_draw (my pulses.data, my pictureGraphics, my startWindow, my endWindow,
@@ -1529,27 +1529,24 @@ static int menu_cb_drawVisiblePulses (EDITOR_ARGS) {
 static int menu_cb_voiceReport (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	time_t today = time (NULL);
-	Sound sound = NULL;
 	double tmin, tmax;
-	int part = makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	int part = makeQueriable (me, FALSE, & tmin, & tmax);
 	if (! my pulses.show)
-		return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		TimeSoundAnalysisEditor_computePulses (me);
-		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
-	sound = extractSound (me, tmin, tmax);
-	if (! sound) return Melder_error1 (L"Selection too small (or out of memory).");
+	autoSound sound = extractSound (me, tmin, tmax);
 	MelderInfo_open ();
 	MelderInfo_writeLine4 (L"-- Voice report for ", my name, L" --\nDate: ", Melder_peekUtf8ToWcs (ctime (& today)));
 	if ((my pitch.method & 2) == 0)
 		MelderInfo_writeLine1 (L"WARNING: some of the following measurements may be imprecise.\n"
 			"For more precision, go to \"Pitch settings\" and choose \"Optimize for voice analysis\".\n");
 	MelderInfo_writeLine2 (L"Time range of ", FunctionEditor_partString (part));
-	Sound_Pitch_PointProcess_voiceReport (sound, my pitch.data, my pulses.data, tmin, tmax,
+	Sound_Pitch_PointProcess_voiceReport (sound.peek(), my pitch.data, my pulses.data, tmin, tmax,
 		my pitch.floor, my pitch.ceiling, my pulses.maximumPeriodFactor, my pulses.maximumAmplitudeFactor, my pitch.silenceThreshold, my pitch.voicingThreshold);
 	MelderInfo_close ();
-	forget (sound);
 	return 1;
 }
 
@@ -1557,12 +1554,12 @@ static int menu_cb_pulseListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	long i, i1, i2;
 	double tmin, tmax;
-	makeQueriable (me, FALSE, & tmin, & tmax); iferror return 0;
+	makeQueriable (me, FALSE, & tmin, & tmax);
 	if (! my pulses.show)
-		return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		TimeSoundAnalysisEditor_computePulses (me);
-		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	MelderInfo_open ();
 	MelderInfo_writeLine1 (L"Time_s");
@@ -1580,13 +1577,13 @@ static int menu_cb_pulseListing (EDITOR_ARGS) {
 static int cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_getJitter_xx) (PointProcess, double, double, double, double, double)) {
 	double minimumPeriod = 0.8 / my pitch.ceiling, maximumPeriod = 1.25 / my pitch.floor;
 	if (! my pulses.show)
-		return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	if (my startSelection == my endSelection)
-		return Melder_error1 (L"Make a selection first.");
+		Melder_throw (L"Make a selection first.");
 	if (! queriable (me)) return 0;
 	Melder_informationReal (PointProcess_getJitter_xx (my pulses.data, my startSelection, my endSelection,
 		minimumPeriod, maximumPeriod, my pulses.maximumPeriodFactor), NULL);
@@ -1599,22 +1596,19 @@ DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ppq5) if (! cb_getJitter_xx (me, P
 DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ddp) if (! cb_getJitter_xx (me, PointProcess_getJitter_ddp)) return 0; END
 
 static int cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_Sound_getShimmer_xx) (PointProcess, Sound, double, double, double, double, double)) {
-	Sound sound = NULL;
 	double minimumPeriod = 0.8 / my pitch.ceiling, maximumPeriod = 1.25 / my pitch.floor;
 	if (! my pulses.show)
-		return Melder_error1 (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
+		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		computePulses (me);
-		if (! my pulses.data) return Melder_error1 (theMessage_Cannot_compute_pulses);
+		if (! my pulses.data) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
 	if (my startSelection == my endSelection)
-		return Melder_error1 (L"Make a selection first.");
+		Melder_throw ("Make a selection first.");
 	if (! queriable (me)) return 0;
-	sound = extractSound (me, my startSelection, my endSelection);
-	if (! sound) return Melder_error1 (L"Selection too small (or out of memory).");
+	autoSound sound = extractSound (me, my startSelection, my endSelection);
 	Melder_informationReal (PointProcess_Sound_getShimmer_xx (my pulses.data, sound, my startSelection, my endSelection,
 		minimumPeriod, maximumPeriod, my pulses.maximumAmplitudeFactor), NULL);
-	forget (sound);
 	return 1;
 }
 DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local)) return 0; END

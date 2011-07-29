@@ -19,26 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
+#include "RealTier.h"
+#include "Sound.h"
+#include "Formant.h"
 
-#ifndef _RealTier_h_
-	#include "RealTier.h"
-#endif
-#ifndef _Sound_h_
-	#include "Sound.h"
-#endif
-#ifndef _Formant_h_
-	#include "Formant.h"
-#endif
-#ifndef _Interpreter_decl_h_
-	#include "Interpreter_decl.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+Thing_declare (Interpreter);
 
 #include "FormantGrid_def.h"
 #define FormantGrid__methods(klas) Function__methods(klas)
@@ -79,10 +64,6 @@ Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);
 
 Sound Sound_Formant_filter (Sound me, Formant formant);
 Sound Sound_Formant_filter_noscale (Sound me, Formant formant);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file FormantGrid.h */
 #endif

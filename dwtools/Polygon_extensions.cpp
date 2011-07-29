@@ -30,6 +30,8 @@
 #include "Vector.h"
 #include "DLL.h"
 
+//
+
 Polygon Polygon_createSimple (wchar_t *xystring)
 {
 	try {
@@ -457,7 +459,7 @@ static int get_collinearIntersectionPoint (double x1, double x2, double x3, doub
 // if POS(a,b,c) (> 0 ; <0, 0) then c is on (the left of;  the right of; collinear with) the line segment (a,b)
 
 // Register the crossing of line a(1)b(2) with c(3)d(4), if the crossing is degenerate only register the tip.
-int LineSegments_getIntersection (double x1, double y1, double x2, double y2, double x3, double y3,
+static int LineSegments_getIntersection (double x1, double y1, double x2, double y2, double x3, double y3,
 double x4, double y4, double *mua, double *mub, double eps)
 {
 	// bounding box pre-selection
@@ -544,17 +546,6 @@ Thing_declare1cpp (Vertices);
 	Thing_declare2cpp (Vertices, DLL);
 #endif
 
-#if 0
-#define Vertex_members Data_members \
-	double x, y, alpha; \
-	DLLNode neighbour; \
-	long poly_npoints, id; \
-	int intersect, entry; \
-	bool processed;
-#define Vertex_methods Data_methods
-class_create (Vertex, Data);
-#endif
-
 static void classVertex_copy (I, thou)
 {
 	iam (Vertex); thouart (Vertex);
@@ -574,6 +565,7 @@ class_methods (Vertex, Data)
 	class_methods_end
 }
 
+Vertex Vertex_create ();
 Vertex Vertex_create ()
 {
 	try {
@@ -602,6 +594,7 @@ class_methods (Vertices, DLL)
 	class_methods_end
 }
 
+Vertices Vertices_create ();
 Vertices Vertices_create ()
 {
 	try {
@@ -610,6 +603,7 @@ Vertices Vertices_create ()
 	} catch (MelderError) { Melder_throw ("Vertices not created."); }
 }
 
+void Vertices_addCopyBack (Vertices me, DLLNode n);
 void Vertices_addCopyBack (Vertices me, DLLNode n)
 {
 	try {
@@ -638,6 +632,7 @@ static bool pointsInsideInterval (double *x, long n, long istart, long iend, lon
 	return *jstart == istart and *jend == iend;
 }
 
+Polygon Polygon_circularPermutation (Polygon me, long nshift);
 Polygon Polygon_circularPermutation (Polygon me, long nshift)
 {
 	try {
@@ -655,6 +650,7 @@ Polygon Polygon_circularPermutation (Polygon me, long nshift)
 	} catch (MelderError) { Melder_throw (me, ": not circularly permuted."); }
 }
 
+void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, long collstart, long collend);
 void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, long collstart, long collend)
 {
 	// Determine if all collinear point are within the interval [colstart,colend]
@@ -680,6 +676,7 @@ void _Polygons_copyNonCollinearities (Polygon me, Polygon thee, long collstart, 
 }
 
 #define AREA(x1,y1,x2,y2,x3,y3) (x1*(y2 - y3)+x2*(y3-y1)+x3*(y1-y2))
+Polygon Polygon_simplify (Polygon me);
 Polygon Polygon_simplify (Polygon me)
 {
 	try {
@@ -770,6 +767,7 @@ Polygon Polygon_simplify (Polygon me)
 
 #undef AREA
 
+Vertices Polygon_to_Vertices (Polygon me, bool close);
 Vertices Polygon_to_Vertices (Polygon me, bool close)
 {
 	try {
@@ -790,6 +788,7 @@ Vertices Polygon_to_Vertices (Polygon me, bool close)
 #define SKIP_INTERSECTION_NODES(n) while(VERTEX(n) -> intersect != 0) n = n -> next;
 
 
+void Vertices_print (Vertices me, Vertices thee);
 void Vertices_print (Vertices me, Vertices thee)
 {
 	long ns = 0, nc = 0, ni = 0, nt, nt2;
@@ -835,6 +834,7 @@ void Vertices_print (Vertices me, Vertices thee)
 //	MelderInfo_close();
 }
 
+void Vertices_sortIntersections (Vertices me);
 void Vertices_sortIntersections (Vertices me)
 {
 	DLLNode ni = my front, first;
@@ -867,6 +867,7 @@ void Vertices_sortIntersections (Vertices me)
 	}
 }
 
+void Vertices_addIntersections (Vertices me, Vertices thee);
 void Vertices_addIntersections (Vertices me, Vertices thee)
 {
 	try {
@@ -930,6 +931,7 @@ void Vertices_addIntersections (Vertices me, Vertices thee)
 #define Polygon_ENEX 3
 #define Polygon_EXEN 4
 
+void Vertices_markEntryPoints (Vertices me, int firstLocation);
 void Vertices_markEntryPoints (Vertices me, int firstLocation)
 {
 	int entry = (firstLocation == Polygon_INSIDE) ? Polygon_EX : (firstLocation == Polygon_OUTSIDE) ? Polygon_EN : Polygon_ENEX; // problematic when on boundary
@@ -942,6 +944,7 @@ void Vertices_markEntryPoints (Vertices me, int firstLocation)
 	}
 }
 
+Vertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices thee);
 Vertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices thee)
 {
 	try {
@@ -993,6 +996,7 @@ Vertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices thee)
 	} catch (MelderError) { Melder_throw (me, ": no clipping path."); }
 }
 
+Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vertices thee, bool use_thyinterior);
 Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vertices thee, bool use_thyinterior)
 {
 	try {
@@ -1071,6 +1075,7 @@ Vertices Verticeses_connectClippingPaths (Vertices me, bool use_myinterior, Vert
 }
 
 //
+Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni);
 Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni)
 {
 	DLLNode n = *ni;
@@ -1088,6 +1093,7 @@ Polygon Vertices_to_Polygon (Vertices me, DLLNode *ni)
 	} catch (MelderError) { Melder_throw ("Polygon not created."); }
 }
 
+Collection Vertices_to_Polygons (Vertices me);
 Collection Vertices_to_Polygons (Vertices me)
 {
 	try {
@@ -1101,6 +1107,7 @@ Collection Vertices_to_Polygons (Vertices me)
 	} catch (MelderError) { Melder_throw (me, ": no polygon collection created."); }
 }
 
+Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior);
 Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee, bool use_thyinterior)
 {
 	try {
@@ -1172,6 +1179,7 @@ Collection Polygons_clip (Polygon subject, Polygon clipper)
 	} catch (MelderError) { Melder_throw (subject, ": no union created."); }
 }
 
+Polygon Polygons_union (Polygon me, Polygon thee);
 Polygon Polygons_union (Polygon me, Polygon thee)
 {
 	try {
@@ -1187,6 +1195,8 @@ Polygon Polygons_union (Polygon me, Polygon thee)
 #define AREA { a = (my x[i]-x0)*(my y[ip1]-y0) - (my x[ip1]-x0)*(my y[i]-y0); if (fabs (a) <= eps) return Polygon_EDGE; }
 #define RIGHT_CROSSING (a > 0) == (my y[ip1] > my y[i])
 #define MODIFY_CROSSING_NUMBER { if (my y[ip1] > my y[i]) nup++; else nup--; }
+
+int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);
 int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps)
 {
 	if (my y[1] == y0 and my x[1] == x0) return Polygon_VERTEX;

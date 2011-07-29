@@ -19,20 +19,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 /* Vector inherits from Matrix */
 /* A Vector is horizontal Matrix. */
 /* The rows are 'channels'. There will often be only one channel, but e.g. a stereo sound has two. */
 #include "Matrix.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Vector);
+struct structVector : public structMatrix {
+};
+#define Vector__methods(klas)  Matrix__methods(klas)
+Thing_declare2cpp (Vector, Matrix);
 
 #define Vector_CHANNEL_AVERAGE  0
 #define Vector_CHANNEL_1  1
@@ -78,16 +74,6 @@ void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, do
 	method can be "curve", "bars", "poles", or "speckles"; it must not be NULL;
 	if anything else is specified, a curve is drawn.
 */
-
-#ifdef __cplusplus
-	}
-
-	struct structVector : public structMatrix {
-	};
-	#define Vector__methods(klas)  Matrix__methods(klas)
-	Thing_declare2cpp (Vector, Matrix);
-
-#endif
 
 /* End of file Vector.h */
 #endif

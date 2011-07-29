@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Sound.h"
 #include "Collection.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #define COMPRESSED_MODE_READ_FLOAT 0
 #define COMPRESSED_MODE_READ_SHORT 1
@@ -38,6 +30,24 @@ struct FLAC__StreamEncoder;
 struct _MP3_FILE;
 
 Thing_declare1cpp (LongSound);
+struct structLongSound : public structSampled {
+	structMelderFile file;
+	FILE *f;
+	int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
+	double sampleRate;
+	long startOfData;
+	double bufferLength;
+	short *buffer;
+	long imin, imax, nmax;
+	struct FLAC__StreamDecoder *flacDecoder;
+	struct _MP3_FILE *mp3f;
+	int compressedMode;
+	long compressedSamplesLeft;
+	double *compressedFloats [2];
+	short *compressedShorts;
+};
+#define LongSound__methods(klas) Sampled__methods(klas)
+Thing_declare2cpp (LongSound, Sampled);
 
 LongSound LongSound_open (MelderFile fs);
 
@@ -65,30 +75,6 @@ void LongSound_concatenate (Collection collection, MelderFile file, int audioFil
 void LongSound_prefs (void);
 long LongSound_getBufferSizePref_seconds (void);
 void LongSound_setBufferSizePref_seconds (long size);
-
-#ifdef __cplusplus
-	}
-
-	struct structLongSound : public structSampled {
-		structMelderFile file;
-		FILE *f;
-		int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
-		double sampleRate;
-		long startOfData;
-		double bufferLength;
-		short *buffer;
-		long imin, imax, nmax;
-		struct FLAC__StreamDecoder *flacDecoder;
-		struct _MP3_FILE *mp3f;
-		int compressedMode;
-		long compressedSamplesLeft;
-		double *compressedFloats [2];
-		short *compressedShorts;
-	};
-	#define LongSound__methods(klas) Sampled__methods(klas)
-	Thing_declare2cpp (LongSound, Sampled);
-
-#endif
 
 /* End of file LongSound.h */
 #endif

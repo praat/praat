@@ -53,9 +53,7 @@ void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
 
 IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
 	try {
-		autoIntensityTier thee = (IntensityTier) PointProcess_upto_RealTier (me, intensity);
-		Thing_overrideClass (thee.peek(), classIntensityTier);
-		return thee.transfer();
+		return (IntensityTier) PointProcess_upto_RealTier (me, intensity, (RealTier_Table) classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to IntensityTier.");
 	}
@@ -63,9 +61,7 @@ IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity
 
 IntensityTier Intensity_downto_IntensityTier (Intensity me) {
 	try {
-		autoIntensityTier thee = (IntensityTier) Vector_to_RealTier (me, 1);
-		Thing_overrideClass (thee.peek(), classIntensityTier);
-		return thee.transfer();
+		return (IntensityTier) Vector_to_RealTier (me, 1, (RealTier_Table) classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to IntensityTier.");
 	}
@@ -73,9 +69,7 @@ IntensityTier Intensity_downto_IntensityTier (Intensity me) {
 
 IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 	try {
-		autoIntensityTier thee = (IntensityTier) Vector_to_RealTier_peaks (me, 1);
-		Thing_overrideClass (thee.peek(), classIntensityTier);
-		return thee.transfer();
+		return (IntensityTier) Vector_to_RealTier_peaks (me, 1, (RealTier_Table) classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": peaks not converted to IntensityTier.");
 	}
@@ -83,9 +77,7 @@ IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 
 IntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 	try {
-		autoIntensityTier thee = (IntensityTier) Vector_to_RealTier_valleys (me, 1);
-		Thing_overrideClass (thee.peek(), classIntensityTier);
-		return thee.transfer();
+		return (IntensityTier) Vector_to_RealTier_valleys (me, 1, (RealTier_Table) classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": valleys not converted to IntensityTier.");
 	}

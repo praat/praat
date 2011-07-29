@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Matrix.h"
 #include "PointProcess.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Matrix PointProcess_to_Matrix (PointProcess me);
 /*
@@ -51,9 +43,5 @@ PointProcess Matrix_to_PointProcess (Matrix me);
 		thy numberOfEvents == my nx;
 		for (ix in 1..my nx) thy event [ix] == my z [1] [ix];
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Matrix_and_PointProcess.h */

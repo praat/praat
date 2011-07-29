@@ -207,7 +207,7 @@ SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin);
 SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin);
 SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin);
 DO
-	//if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
+	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw ("Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
@@ -266,7 +266,7 @@ SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC);
 SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
 SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
 DO
-	//if (theCurrentPraatObjects != & theForegroundPraatObjects) return Melder_error1 (L"Viewport commands are not available inside manuals.");
+	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw ("Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	if (left == right) {

@@ -481,28 +481,28 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 	long numberOfSamples;
 	if (endTime <= startTime) {
 		if (endTime == startTime)
-			Melder_error1 (L"A Sound cannot have a duration of zero.");
+			Melder_error_ ("A Sound cannot have a duration of zero.");
 		else
-			Melder_error1 (L"A Sound cannot have a duration less than zero.");
+			Melder_error_ ("A Sound cannot have a duration less than zero.");
 		if (startTime == 0.0)
 			Melder_throw ("Please set the end time to something greater than 0 seconds.");
 		else
 			Melder_throw ("Please lower the start time or raise the end time.");
 	}
 	if (samplingFrequency <= 0.0) {
-		Melder_error1 (L"A Sound cannot have a negative sampling frequency.");
+		Melder_error_ ("A Sound cannot have a negative sampling frequency.");
 		Melder_throw ("Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
 	}
 	if (numberOfSamples_real < 1.0) {
-		Melder_error1 (L"A Sound cannot have zero samples.");
+		Melder_error_ ("A Sound cannot have zero samples.");
 		if (startTime == 0.0)
 			Melder_throw ("Please raise the end time.");
 		else
 			Melder_throw ("Please lower the start time or raise the end time.");
 	}
 	if (numberOfSamples_real > LONG_MAX) {
-		Melder_error5 (L"A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), L" samples; the maximum is ",
-			Melder_bigInteger (LONG_MAX), L" samples (or less, depending on your computer's memory).");
+		Melder_error_ ("A Sound cannot have ", Melder_bigInteger (numberOfSamples_real), " samples; the maximum is ",
+			Melder_bigInteger (LONG_MAX), " samples (or less, depending on your computer's memory).");
 		if (startTime == 0.0)
 			Melder_throw ("Please lower the end time or the sampling frequency.");
 		else
@@ -516,7 +516,7 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 	} catch (MelderError) {
 		if (wcsstr (Melder_getError (), L"memory")) {
 			Melder_clearError ();
-			Melder_error3 (L"There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), L" samples.");
+			Melder_error_ ("There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), " samples.");
 			if (startTime == 0.0)
 				Melder_throw ("You could lower the end time or the sampling frequency and try again.");
 			else
@@ -1410,22 +1410,11 @@ FORM (Sound_recordFixedTime, L"Record Sound", 0)
 	RADIO (L"Input source", 1)
 		RADIOBUTTON (L"Microphone")
 		RADIOBUTTON (L"Line")
-	#if defined (sgi)
-		RADIOBUTTON (L"Digital")
-		REAL (L"Gain (0-1)", L"0.5")
-	#else
 		REAL (L"Gain (0-1)", L"0.1")
-	#endif
 	REAL (L"Balance (0-1)", L"0.5")
 	RADIO (L"Sampling frequency", 1)
-		#if defined (hpux)
-			RADIOBUTTON (L"5512")
-		#endif
 		#ifdef UNIX
 		RADIOBUTTON (L"8000")
-		#endif
-		#ifdef sgi
-		RADIOBUTTON (L"9800")
 		#endif
 		#ifndef macintosh
 		RADIOBUTTON (L"11025")
@@ -2019,14 +2008,6 @@ DO
 END
 
 FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
-	#if defined (sun) || defined (HPUX)
-		RADIO (L"Internal speaker", 1)
-		RADIOBUTTON (L"On")
-		RADIOBUTTON (L"Off")
-	#endif
-	#if defined (pietjepuk)
-		REAL (L"Output gain (0..1)", L"0.3")
-	#endif
 	LABEL (L"", L"The following determines how sounds are played.")
 	LABEL (L"", L"Between parentheses, you find what you can do simultaneously.")
 	LABEL (L"", L"Decrease asynchronicity if sound plays with discontinuities.")
@@ -2038,24 +2019,12 @@ FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
 	BOOLEAN (L"Output uses PortAudio", kMelderAudio_outputUsesPortAudio_DEFAULT)
 	BOOLEAN (L"Output uses blocking", 0)
 	OK
-#if defined (sun) || defined (HPUX)
-	SET_INTEGER (L"Internal speaker", 2 - MelderAudio_getUseInternalSpeaker ())
-#endif
-#if defined (pietjepuk)
-	SET_REAL ("Output gain", MelderAudio_getOutputGain ())
-#endif
 SET_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
 SET_REAL (L"Silence before", MelderAudio_getOutputSilenceBefore ())
 SET_REAL (L"Silence after", MelderAudio_getOutputSilenceAfter ())
 SET_INTEGER (L"Output uses PortAudio", MelderAudio_getOutputUsesPortAudio ())
 SET_INTEGER (L"Output uses blocking", MelderAudio_getOutputUsesBlocking ())
 DO
-	#if defined (sun) || defined (HPUX)
-		MelderAudio_setUseInternalSpeaker (2 - GET_INTEGER (L"Internal speaker"));
-	#endif
-	#if defined (pietjepuk)
-		MelderAudio_setOutputGain (GET_REAL (L"Gain"));
-	#endif
 	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, L"Maximum asynchronicity"));
 	MelderAudio_setOutputSilenceBefore (GET_REAL (L"Silence before"));
 	MelderAudio_setOutputSilenceAfter (GET_REAL (L"Silence after"));
@@ -2239,7 +2208,7 @@ static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderF
 	#ifdef macintosh
 		return Sound_readFromMacSoundFile (file);
 	#else
-		return Melder_errorp3 (L"File ", MelderFile_messageName (file), L" is empty.");   /* !!! */
+		Melder_throw ("File ", MelderFile_messageName (file), " is empty.");   /* !!! */
 	#endif
 }
 
@@ -2260,7 +2229,7 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 static Any movieFileRecognizer (int nread, const char *header, MelderFile file) {
 	const wchar_t *fileName = MelderFile_name (file);
 	(void) header;
-	/*Melder_error ("%d %d %d %d %d %d %d %d %d %d", header [0],
+	/*Melder_casual ("%d %d %d %d %d %d %d %d %d %d", header [0],
 		header [1], header [2], header [3],
 		header [4], header [5], header [6],
 		header [7], header [8], header [9]);*/
@@ -2293,7 +2262,7 @@ static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
 	TextGrid textGrid;
 	Sound sound;
-	TextGrid_Sound_readFromBdfFile (file, & textGrid, & sound); iferror return NULL;
+	TextGrid_Sound_readFromBdfFile (file, & textGrid, & sound); therror;
 	Collection collection = Collection_create (classData, 2);
 	Collection_addItem (collection, sound);
 	Collection_addItem (collection, textGrid);

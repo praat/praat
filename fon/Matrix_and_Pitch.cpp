@@ -64,7 +64,7 @@ Pitch Matrix_to_Pitch (Matrix me) {
 	}
 }
 
-int Pitch_formula (Pitch me, const wchar *formula, Interpreter interpreter) {
+void Pitch_formula (Pitch me, const wchar *formula, Interpreter interpreter) {
 	try {
 		autoMatrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maxnCandidates, my maxnCandidates, 1, 1);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
@@ -78,7 +78,6 @@ int Pitch_formula (Pitch me, const wchar *formula, Interpreter interpreter) {
 			for (long icand = 1; icand <= frame -> nCandidates; icand ++)
 				frame -> candidate [icand]. frequency = m -> z [icand] [iframe];
 		}
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, ": formula not completed.");
 	}

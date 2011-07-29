@@ -928,60 +928,54 @@ static int menu_cb_pageDown (EDITOR_ARGS) {
 
 static int do_back (HyperPage me) {
 	if (my historyPointer <= 0) return 1;
-	wchar_t *page = Melder_wcsdup_f (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
+	autostring page = Melder_wcsdup_f (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
 	int top = my history [my historyPointer]. top;
-	if (our goToPage (me, page)) {
+	if (our goToPage (me, page.peek())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
 	} else {
-		Melder_free (page);
 		return 0;
 	}
-	Melder_free (page);
 	return 1;
 }
 
 static int menu_cb_back (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
-	if (! do_back (me)) return 0;
+	do_back (me);
 	return 1;
 }
 
 static void gui_button_cb_back (I, GuiButtonEvent event) {
 	(void) event;
 	iam (HyperPage);
-	if (! do_back (me)) Melder_flushError (NULL);
+	do_back (me);
 }
 
 static int do_forth (HyperPage me) {
-	wchar_t *page;
-	int top;
 	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return 1;
-	page = Melder_wcsdup_f (my history [++ my historyPointer]. page);
-	top = my history [my historyPointer]. top;
-	if (our goToPage (me, page)) {
+	autostring page = Melder_wcsdup_f (my history [++ my historyPointer]. page);
+	int top = my history [my historyPointer]. top;
+	if (our goToPage (me, page.peek())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
 	} else {
-		Melder_free (page);
 		return 0;
 	}
-	Melder_free (page);
 	return 1;
 }
 
 static int menu_cb_forth (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
-	if (! do_forth (me)) return 0;
+	do_forth (me);
 	return 1;
 }
 
 static void gui_button_cb_forth (I, GuiButtonEvent event) {
 	(void) event;
 	iam (HyperPage);
-	if (! do_forth (me)) Melder_flushError (NULL);
+	do_forth (me);
 }
 
 void structHyperPage :: v_createMenus () {
@@ -1037,8 +1031,8 @@ static void gui_button_cb_previousPage (I, GuiButtonEvent event) {
 static void gui_button_cb_nextPage (I, GuiButtonEvent event) {
 	(void) event;
 	iam (HyperPage);
-	HyperPage_goToPage_i (me, our getCurrentPageNumber (me) < our getNumberOfPages (me) ?
-		our getCurrentPageNumber (me) + 1 : 1);
+	long currentPageNumber = our getCurrentPageNumber (me);
+	HyperPage_goToPage_i (me, currentPageNumber < our getNumberOfPages (me) ? currentPageNumber + 1 : 1);
 }
 
 void structHyperPage :: v_createChildren () {
@@ -1123,7 +1117,7 @@ void HyperPage_clear (HyperPage me) {
 }
 
 void structHyperPage :: v_dataChanged () {
-	int oldError = Melder_hasError ();
+	int oldError = Melder_hasError ();   // this method can be called during error time
 	(void) its goToPage (this, currentPageTitle);
 	if (Melder_hasError () && ! oldError) Melder_flushError (NULL);
 	HyperPage_clear (this);
@@ -1145,10 +1139,9 @@ static int goToPage (HyperPage me, const wchar_t *title) {
 	(void) title;
 	return 0;
 }
-static int goToPage_i (HyperPage me, long i) {
+static void goToPage_i (HyperPage me, long i) {
 	(void) me;
 	(void) i;
-	return 0;
 }
 static int hasHistory = FALSE;
 static int isOrdered = FALSE;
@@ -1180,13 +1173,12 @@ int HyperPage_goToPage (I, const wchar_t *title) {
 	return 1;	
 }
 
-int HyperPage_goToPage_i (I, long i) {
+void HyperPage_goToPage_i (I, long i) {
 	iam (HyperPage);
-	if (! our goToPage_i (me, i)) { HyperPage_clear (me); return 0; }
+	our goToPage_i (me, i);   // catch -> HyperPage_clear (me); ?
 	my top = 0;
 	HyperPage_clear (me);
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */
-	return 1;
 }
 
 void HyperPage_setEntryHint (I, const wchar_t *hint) {

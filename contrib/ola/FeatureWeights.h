@@ -39,10 +39,6 @@
 
 #include "OlaP.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /////////////////////////////////////////////////////
 // Praat specifics                                 //
 /////////////////////////////////////////////////////
@@ -91,10 +87,6 @@ FeatureWeights FeatureWeights_computeRELIEF
     Categories c,           // source categories
     long k                  // k(!)
 );
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file FeatureWeights.h */
 #endif

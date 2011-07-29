@@ -69,7 +69,7 @@ void OrderedOfString_sequentialNumbers (I, long n);
 
 void OrderedOfString_removeOccurrences (I, const wchar_t *search, int user_regexp);
 
-int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
+void OrderedOfString_changeStrings (OrderedOfString me, wchar_t *search, wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 

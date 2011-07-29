@@ -19,17 +19,25 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Data.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Function);
+struct structFunction : public structData {
+	double xmin, xmax;
+// overridden methods:
+	void v_info ();
+};
+#define Function__methods(klas)  Data__methods(klas) \
+	int domainQuantity; \
+	int (*getMinimumUnit) (void *klas, long ilevel); \
+	int (*getMaximumUnit) (void *klas, long ilevel); \
+	const wchar * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
+	int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
+	double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
+	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit); \
+	void (*shiftX) (I, double xfrom, double xto); \
+	void (*scaleX) (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+Thing_declare2cpp (Function, Data);
 
 /*
 	An object of type Function represents a function f (x, ...) on the domain [xmin, xmax] * ....
@@ -140,28 +148,6 @@ void Function_shiftXBy (I, double shift);
 void Function_shiftXTo (I, double xfrom, double xto);
 void Function_scaleXBy (I, double factor);
 void Function_scaleXTo (I, double xminto, double xmaxto);
-
-#ifdef __cplusplus
-	}
-
-	struct structFunction : public structData {
-		double xmin, xmax;
-	// overridden methods:
-		void v_info ();
-	};
-	#define Function__methods(klas)  Data__methods(klas) \
-		int domainQuantity; \
-		int (*getMinimumUnit) (void *klas, long ilevel); \
-		int (*getMaximumUnit) (void *klas, long ilevel); \
-		const wchar * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
-		int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
-		double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
-		double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit); \
-		void (*shiftX) (I, double xfrom, double xto); \
-		void (*scaleX) (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
-	Thing_declare2cpp (Function, Data);
-
-#endif
 
 /* End of file Function.h */
 #endif

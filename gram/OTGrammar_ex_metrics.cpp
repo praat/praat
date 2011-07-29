@@ -448,7 +448,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConst
 		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = NUMBER_OF_CONSTRAINTS);
 		for (long icons = 1; icons <= NUMBER_OF_CONSTRAINTS; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [icons];
-			constraint -> name = Melder_wcsdup_e (constraintNames [icons]); therror
+			constraint -> name = Melder_wcsdup (constraintNames [icons]);
 			constraint -> ranking = 100.0;
 			constraint -> plasticity = 1.0;
 		}

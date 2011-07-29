@@ -296,42 +296,47 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 }
 
 Picture Picture_create (GuiObject drawingArea, Boolean sensitive) {
-	Picture me = Melder_calloc_e (struct structPicture, 1);
-	if (! me) return NULL;
-	#if gtk
-		my selectionInProgress = 0;
-	#endif
-	my drawingArea = drawingArea;
-	/*
-	 * The initial viewport is a rectangle 6 inches wide and 4 inches high.
-	 */
-	my selx1 = 0.0;
-	my selx2 = 6.0;
-	my sely1 = 8.0;
-	my sely2 = 12.0;
-	my sensitive = sensitive && drawingArea;
-	if (drawingArea) {
-		/* The drawing area must have been realized; see manual at XtWindow. */
-		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-		GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me);
-	} else {
+	Picture me = NULL;
+	try {
+		me = Melder_calloc (struct structPicture, 1);
+		#if gtk
+			my selectionInProgress = 0;
+		#endif
+		my drawingArea = drawingArea;
 		/*
-		 * Create a dummy Graphics.
-		 * This has device coordinates from 0 to 32767.
-		 * This will be mapped on an area of 12x12 inches,
-		 * so the resolution is 32767 / 12 = 2731.
+		 * The initial viewport is a rectangle 6 inches wide and 4 inches high.
 		 */
-		my graphics = Graphics_create (2731);
+		my selx1 = 0.0;
+		my selx2 = 6.0;
+		my sely1 = 8.0;
+		my sely2 = 12.0;
+		my sensitive = sensitive && drawingArea;
+		if (drawingArea) {
+			/* The drawing area must have been realized; see manual at XtWindow. */
+			my graphics = Graphics_create_xmdrawingarea (my drawingArea);
+			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me);
+		} else {
+			/*
+			 * Create a dummy Graphics.
+			 * This has device coordinates from 0 to 32767.
+			 * This will be mapped on an area of 12x12 inches,
+			 * so the resolution is 32767 / 12 = 2731.
+			 */
+			my graphics = Graphics_create (2731);
+		}
+		Graphics_setWsWindow (my graphics, 0.0, 12.0, 0.0, 12.0);
+		Graphics_setViewport (my graphics, my selx1, my selx2, my sely1, my sely2);
+		if (my sensitive) {
+			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
+			Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
+			GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
+		}
+		Graphics_startRecording (my graphics);
+		return me;
+	} catch (MelderError) {
+		if (me) Melder_free (me);
+		Melder_throw ("Picture not created.");
 	}
-	Graphics_setWsWindow (my graphics, 0.0, 12.0, 0.0, 12.0);
-	Graphics_setViewport (my graphics, my selx1, my selx2, my sely1, my sely2);
-	if (my sensitive) {
-		my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
-		Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
-		GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
-	}
-	Graphics_startRecording (my graphics);
-	return me;
 }
 
 void Picture_setSelectionChangedCallback (Picture me,
@@ -452,7 +457,7 @@ static PicHandle copyToPict (Picture me) {
 	openCPicParams. reserved1 = 0;
 	openCPicParams. reserved2 = 0;
 	pict = OpenCPicture (& openCPicParams);
-	if (! pict) return (PicHandle) Melder_errorp ("Cannot create PICT.");
+	if (! pict) Melder_throw ("Cannot create PICT.");
 	PenSize (0, 0); MoveTo (0, 0); LineTo (0, 0); PenSize (1, 1);   /* Flush GrafPort state. */
 	Graphics_play ((Graphics) my graphics, pictGraphics);
 	ClosePicture ();
@@ -738,7 +743,11 @@ static void print (I, Graphics printer) {
 }
 
 void Picture_print (Picture me) {
-	Printer_print (print, me); iferror Melder_flushError ("Picture not printed.");
+	try {
+		Printer_print (print, me); therror
+	} catch (MelderError) {
+		Melder_flushError ("Picture not printed.");
+	}
 }
 
 void Picture_setSelection

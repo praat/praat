@@ -446,8 +446,8 @@ HMM_StateSequence HMM_StateSequence_create (long numberOfItems)
 Strings HMM_StateSequence_to_Strings (HMM_StateSequence me)
 {
 	try {
-		autoStrings thee = (Strings) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classStrings);
+		autoStrings thee = Thing_new (Strings);
+		((Strings_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Strings created."); }
 }
@@ -1338,7 +1338,7 @@ HMM_StateSequence HMM_and_HMM_ObservationSequence_to_HMM_StateSequence (HMM me, 
 		long numberOfUnknowns = StringsIndex_countItems (si.peek(), 0);
 
 		if (numberOfUnknowns > 0)
-			Melder_throw ("Unknown observation symbol(s) (# = ", Melder_integer (numberOfUnknowns), L")."); 
+			Melder_throw ("Unknown observation symbol(s) (# = ", Melder_integer (numberOfUnknowns), L").");
 
 
 		long numberOfTimes = thy rows -> size;
@@ -1380,7 +1380,7 @@ double HMM_and_HMM_StateSequence_getProbability (HMM me, HMM_StateSequence thee)
 double HMM_getProbabilityAtTimeBeingInState (HMM me, long itime, long istate)
 {
 	if (istate < 1 || istate > my numberOfStates) return NUMundefined;
-	
+
 	autoNUMvector<double> scale (1, itime);
 	autoNUMvector<double> alpha_t (1, my numberOfStates);
 	autoNUMvector<double> alpha_tm1 (1, my numberOfStates);
@@ -1617,7 +1617,7 @@ TableOfReal StringsIndex_to_TableOfReal_transitions (StringsIndex me, int probab
 			{
 				if (thy data[i][numberOfTypes + 1] > 0)
 				{
-					for (long j = 1; j <= numberOfTypes; j++) 
+					for (long j = 1; j <= numberOfTypes; j++)
 					{ thy data[i][j] /= thy data[i][numberOfTypes + 1]; }
 				}
 			}

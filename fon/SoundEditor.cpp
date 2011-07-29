@@ -66,7 +66,6 @@ static int menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Sound publish = my longSound.data ? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, FALSE) :
 		Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, FALSE);
-	iferror return 0;
 	forget (Sound_clipboard);
 	Sound_clipboard = publish;
 	return 1;
@@ -80,7 +79,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 	long oldNumberOfSamples = sound -> nx;
 	long newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
 	if (newNumberOfSamples < 1)
-		return Melder_error1 (L"(SoundEditor_cut:) You cannot cut all of the signal away,\n"
+		Melder_throw ("You cannot cut all of the signal away,\n"
 			"because you cannot create a Sound with 0 samples.\n"
 			"You could consider using Copy instead.");
 	if (selectionNumberOfSamples) {
@@ -176,11 +175,11 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 		return 1;
 	}
 	if (Sound_clipboard -> ny != sound -> ny)
-		return Melder_error1 (L"(SoundEditor_paste:) Cannot paste because\n"
+		Melder_throw ("Cannot paste, because\n"
 			"the number of channels of the clipboard is not equal to\n"
 			"the number of channels of the edited sound.");
 	if (Sound_clipboard -> dx != sound -> dx)
-		return Melder_error1 (L"(SoundEditor_paste:) Cannot paste because\n"
+		Melder_throw ("Cannot paste, because\n"
 			"the sampling frequency of the clipboard is not equal to\n"
 			"the sampling frequency of the edited sound.");
 	if (leftSample < 0) leftSample = 0;

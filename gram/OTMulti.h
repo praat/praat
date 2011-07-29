@@ -62,8 +62,8 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wchar *form2, int showDisharmonies);
 
 void OTMulti_reset (OTMulti me, double ranking);
-int OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);
-int OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity);
+void OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);
+void OTMulti_setConstraintPlasticity (OTMulti me, long constraint, double plasticity);
 void OTMulti_removeConstraint (OTMulti me, const wchar *constraintName);
 
 void OTMulti_generateOptimalForm (OTMulti me, const wchar *form1, const wchar *form2, wchar *optimalForm, double evaluationNoise);

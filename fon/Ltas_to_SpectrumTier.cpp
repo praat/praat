@@ -17,18 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/03/17
- * pb 2011/06/03 C++
- */
-
 #include "Ltas_to_SpectrumTier.h"
 
 SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me) {
 	try {
-		autoSpectrumTier thee = (SpectrumTier) Vector_to_RealTier_peaks (me, 1);
-		Thing_overrideClass (thee.peek(), classSpectrumTier);
-		return thee.transfer();
+		return (SpectrumTier) Vector_to_RealTier_peaks (me, 1, (RealTier_Table) classSpectrumTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": peaks not analyzed as SpectrumTier.");
 	}

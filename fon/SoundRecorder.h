@@ -31,26 +31,8 @@
 Thing_declare1cpp (SoundRecorder);
 
 #include "portaudio.h"
-#if defined (sgi)
-	#include <audio.h>
-#elif defined (_WIN32)
+#if defined (_WIN32)
 #elif defined (macintosh)
-#elif defined (sun)
-	#include <fcntl.h>
-	#include <stropts.h>
-	#include <unistd.h>
-	#if defined (sun4)
-		#include <sun/audioio.h>
-	#else
-		#include <sys/audioio.h>
-	#endif
-#elif defined (HPUX)
-	#include <fcntl.h>
-	#include <ctype.h>
-	#include <unistd.h>
-	#include <sys/audio.h>
-	#include <sys/ioctl.h>
-	#include <sys/stat.h>
 #elif defined (linux)
 	#include <sys/types.h>
 	#include <sys/stat.h>
@@ -115,11 +97,7 @@ struct structSoundRecorder : public structEditor {
 		#if motif
 			XtWorkProcId workProcId;
 		#endif
-		#if defined (sgi)
-			ALconfig audio;
-			ALport port;
-			long info [10];
-		#elif defined (_WIN32)
+		#if defined (_WIN32)
 			HWAVEIN hWaveIn;
 			WAVEFORMATEX waveFormat;
 			WAVEHDR waveHeader [3];
@@ -130,14 +108,6 @@ struct structSoundRecorder : public structEditor {
 			Str255 hybridDeviceNames [1+8];
 			SPB spb;
 			long refNum;
-		#elif defined (sun)
-			int fd;
-			struct audio_info info;
-		#elif defined (HPUX)
-			int fd;
-			struct audio_describe info;
-			int hpInputSource;
-			struct audio_gain hpGains;
 		#elif defined (linux)
 			int fd;
 		#else
@@ -158,7 +128,7 @@ SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels);
 /*
 	Function:
 		create a SoundRecorder, which is an interactive window
-		for recording in 16-bit mono or stereo (SGI, MacOS, SunOS, HPUX, Linux, Windows).
+		for recording in 16-bit mono or stereo.
 */
 
 void SoundRecorder_prefs (void);

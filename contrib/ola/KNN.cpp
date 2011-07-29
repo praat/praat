@@ -139,7 +139,7 @@ int KNN_learn
 				/*
 				 * Create without change.
 				 */
-                autoMatrix tinput = Matrix_appendRows (my input, p);
+                autoPattern tinput = (Pattern) Matrix_appendRows (my input, p, (Matrix_Table) classPattern);
                 autoCategories toutput = (Categories) Collections_merge (my output, c);
 
 				/*
@@ -147,7 +147,7 @@ int KNN_learn
 				 */
                 forget (my input);
                 forget (my output);
-                my input = (Pattern) tinput.transfer();
+                my input = tinput.transfer();
                 my output = toutput.transfer();
                 my nInstances += p->ny;
             }

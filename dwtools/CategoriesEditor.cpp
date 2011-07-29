@@ -203,7 +203,7 @@ static CategoriesEditorInsert CategoriesEditorInsert_create (Any data, Any str, 
 		my selection[1] = position;
 		Collection_addItem (my categories, str);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("CategoriesEditorInsert not created."); }
+	} catch (MelderError) { Melder_throw ("CategoriesEditorInsert not created."); }
 }
 
 class_methods (CategoriesEditorInsert, CategoriesEditorCommand)
@@ -256,7 +256,7 @@ static CategoriesEditorRemove CategoriesEditorRemove_create (Any data, long *pos
 			CategoriesEditorRemove_undo, posCount, posCount);
 		for (long i = 1; i <= posCount; i++) { my selection[i] = posList[i]; }
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("CategoriesEditorRemove not created."); }
+	} catch (MelderError) { Melder_throw ("CategoriesEditorRemove not created."); }
 }
 
 class_methods (CategoriesEditorRemove, CategoriesEditorCommand)
@@ -313,7 +313,7 @@ static CategoriesEditorReplace CategoriesEditorReplace_create (Any data, Any str
 		}
 		Collection_addItem (my categories, str);
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("CategoriesEditorReplace not created."); }
+	} catch (MelderError) { Melder_throw ("CategoriesEditorReplace not created."); }
 }
 
 class_methods (CategoriesEditorReplace, CategoriesEditorCommand)
@@ -367,7 +367,7 @@ static CategoriesEditorMoveUp CategoriesEditorMoveUp_create (Any data, long *pos
 		}
 		my newPos = newPos;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("CategoriesEditorMoveUp not created."); }
+	} catch (MelderError) { Melder_throw ("CategoriesEditorMoveUp not created."); }
 }
 
 class_methods (CategoriesEditorMoveUp, CategoriesEditorCommand)
@@ -421,7 +421,7 @@ static CategoriesEditorMoveDown CategoriesEditorMoveDown_create (Any data, long 
 		}
 		my newPos = newPos;
 		return me.transfer();
-	} catch (MelderError) { Melder_thrown ("CategoriesEditorMoveDown not created."); }
+	} catch (MelderError) { Melder_throw ("CategoriesEditorMoveDown not created."); }
 }
 
 class_methods (CategoriesEditorMoveDown, CategoriesEditorCommand)

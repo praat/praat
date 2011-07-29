@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Function.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "PointProcess_def.h"
 #define PointProcess__methods(klas)  Function__methods(klas)
@@ -61,10 +53,6 @@ double PointProcess_getMeanPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);
 double PointProcess_getStdevPeriod (PointProcess me, double tmin, double tmax,
 	double minimumPeriod, double maximumPeriod, double maximumPeriodFactor);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file PointProcess.h */
 #endif

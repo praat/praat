@@ -19,19 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "AnyTier.h"
 #include "Label.h"
 #include "Graphics.h"
 #include "TableOfReal.h"
 #include "Table.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "TextGrid_def.h"
 
@@ -130,10 +122,6 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
 
 Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file TextGrid.h */
 #endif

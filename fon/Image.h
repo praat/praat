@@ -19,22 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
-
-/* Image inherits from Sampled */
-#ifndef _Sampled_h_
-	#include "Sampled.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "Sampled.h"
+#include "Graphics.h"
 
 #include "Image_def.h"
 #define Image__methods(klas) Sampled__methods(klas)
@@ -86,10 +72,6 @@ void Image_paint (I, Graphics g, double xmin, double xmax, double ymin, double y
 	Every sample is drawn as a grey rectangle.
 	The larger the value of the sample, the darker the rectangle.
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Image.h */
 #endif

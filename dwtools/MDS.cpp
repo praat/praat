@@ -1,4 +1,4 @@
-/* MDS.c
+/* MDS.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -446,44 +446,6 @@ ISplineTransformator ISplineTransformator_create (long numberOfPoints,
 
 /***************** CONTINGENCYTABLE **************************************/
 
-static void classContingencyTable_info (I)
-{
-	iam (ContingencyTable);
-	long ndf;
-    double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, chisq;
-
-    ContingencyTable_entropies (me, &h, &hx, &hy, &hygx, &hxgy, &uygx, &uxgy, &uxy);
-    ContingencyTable_chisq (me, &chisq, &ndf);
-
-	Melder_information2 (L"Number of rows: ", Melder_integer (my numberOfRows));
-	Melder_information2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
-	Melder_information1 (L"Entropies (y is row variable):");
-	Melder_information2 (L"  Total: ", Melder_double (h));
-	Melder_information2 (L"  Y: ", Melder_double (hy));
-	Melder_information2 (L"  X: ", Melder_double (hx));
-	Melder_information2 (L"  Y given x: ", Melder_double (hygx));
-	Melder_information2 (L"  X given y: ", Melder_double (hxgy));
-	Melder_information2 (L"  Dependency of y on x: ", Melder_double (uygx));
-	Melder_information2 (L"  Dependency of x on y: ", Melder_double (uxgy));
-	Melder_information2 (L"  Symmetrical dependency: ", Melder_double (uxy));
-	Melder_information2 (L"  Chi squared: ", Melder_double (chisq));
-	Melder_information2 (L"  Degrees of freedom: ", Melder_integer (ndf));
-	Melder_information2 (L"  Probability: ", Melder_double (ContingencyTable_chisqProbability (me)));
-}
-
-class_methods (ContingencyTable, TableOfReal)
-	class_method_local (ContingencyTable, info)
-class_methods_end
-
-ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns)
-{
-	try {
-		autoContingencyTable me = Thing_new (ContingencyTable);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
-		return me.transfer();
-	} catch (MelderError) { Melder_throw ("ContingencyTable not created."); }
-}
-
 Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long numberOfDimensions, int scaling)
 {
 	try {
@@ -602,199 +564,14 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 	} catch (MelderError) { Melder_throw (me, ": no Configuration created."); }
 }
 
-double ContingencyTable_chisqProbability (ContingencyTable me)
-{
-	double chisq;
-	long df;
-	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0 && df == 0) return 0;
-	return NUMchiSquareQ (chisq, df);
-}
-
-double ContingencyTable_cramersStatistic (ContingencyTable me)
-{
-	double chisq, sum = 0;
-	long df, nr = my numberOfRows, nc = my numberOfColumns, nmin = nr;
-
-	if (nr == 1 || nc == 1) return 0;
-
-	for (long i = 1; i <= nr; i++)
-	{
-		for (long j = 1; j <= nc; j++)
-		{
-			sum += my data[i][j];
-		}
-	}
-
-	if (nc < nr) nmin = nc;
-	nmin--;
-
-	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0 && df == 0) return 0;
-	return sqrt (chisq / (sum * nmin));
-}
-
-double ContingencyTable_contingencyCoefficient (ContingencyTable me)
-{
-	double chisq, sum = 0;
-	long df, nr = my numberOfRows, nc = my numberOfColumns;
-
-	for (long i = 1; i <= nr; i++)
-	{
-		for (long j = 1; j <= nc; j++)
-		{
-			sum += my data[i][j];
-		}
-	}
-
-	ContingencyTable_chisq (me, &chisq, &df);
-	if (chisq == 0 && df == 0) return 0;
-	return sqrt (chisq / (chisq + sum));
-}
-
-void ContingencyTable_chisq (ContingencyTable me, double *chisq, long *df)
-{
-	long nr = my numberOfRows, nc = my numberOfColumns;
-
-	*chisq = 0; *df = 0;
-
-	autoNUMvector<double> rowsum (1, nr);
-	autoNUMvector<double> colsum (1, nc);
-
-	/*
-		row and column marginals
-	*/
-
-	double sum = 0;
-	for (long i = 1; i <= my numberOfRows; i++)
-	{
-		for (long j = 1; j <= my numberOfColumns; j++)
-		{
-			rowsum[i] += my data[i][j];
-			colsum[j] += my data[i][j];
-		}
-		sum += rowsum[i];
-	}
-
-	for (long i = 1; i <= my numberOfRows; i++)
-	{
-		if (rowsum[i] == 0) --nr;
-	}
-	for (long j = 1; j <= my numberOfColumns; j++)
-	{
-		if (colsum[j] == 0) --nc;
-	}
-
-	*df = (nr - 1) * (nc - 1);
-	for (long i = 1; i <= my numberOfRows; i++)
-	{
-		if (rowsum[i] == 0) continue;
-		for (long j = 1; j <= my numberOfColumns; j++)
-		{
-			if (colsum[j] == 0) continue;
-			double expt = rowsum[i] * colsum[j] / sum;
-			double tmp = my data[i][j] - expt;
-			*chisq += tmp * tmp / expt;
-		}
-	}
-}
-
-void ContingencyTable_entropies (ContingencyTable me, double *h, double *hx,
-	double *hy, double *hygx, double *hxgy, double *uygx, double *uxgy,
-	double *uxy)
-{
-	*h = *hx = *hy = *hxgy = *hygx = *uygx = *uxgy = *uxy = 0;
-
-	autoNUMvector<double> rowsum (1, my numberOfRows);
-	autoNUMvector<double> colsum (1, my numberOfColumns);
-
-	/*
-		row and column totals
-	*/
-
-	double sum = 0.0;
-	for (long i = 1; i <= my numberOfRows; i++)
-	{
-		for (long j = 1; j <= my numberOfColumns; j++)
-		{
-			rowsum[i] += my data[i][j];
-			colsum[j] += my data[i][j];
-		}
-		sum += rowsum[i];
-	}
-
-	/*
-		Entropy of x distribution
-	*/
-
-	for (long j = 1; j <= my numberOfColumns; j++)
-	{
-		if (colsum[j] > 0)
-		{
-			double p = colsum[j] / sum;
-			*hx -= p * NUMlog2 (p);
-		}
-	}
-
-	/*
-		Entropy of y distribution
-	*/
-
-	for (long i = 1; i <= my numberOfRows; i++)
-	{
-		if (rowsum[i] > 0)
-		{
-			double p = rowsum[i] / sum;
-			*hy -= p * NUMlog2 (p);
-		}
-	}
-
-	/*
-		Total entropy
-	*/
-
-	for (long i = 1; i <= my numberOfRows; i++)
-	{
-		for (long j = 1; j <= my numberOfColumns; j++)
-		{
-			if (my data[i][j] > 0)
-			{
-				double p = my data[i][j] / sum;
-				*h -= p * NUMlog2 (p);
-			}
-		}
-	}
-
-	/*
-		Conditional entropies
-	*/
-
-	*hygx = *h - *hx;
-	*hxgy = *h - *hy;
-	*uygx = (*hy - *hygx) / (*hy + TINY);
-	*uxgy = (*hx - *hxgy) / (*hx + TINY);
-	*uxy = 2.0 * (*hx + *hy - *h) / (*hx + *hy + TINY);
-}
-
-/********** CASTS FROM & TO TABLEOFREAL **********************************/
-
-ContingencyTable Confusion_to_ContingencyTable (Confusion me)
-{
-	try {
-		autoContingencyTable thee = (ContingencyTable) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classContingencyTable);
-		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": not converted to ContingencyTable."); }
-}
-
 Dissimilarity TableOfReal_to_Dissimilarity (I)
 {
 	iam (TableOfReal);
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square tabel.");
 		TableOfReal_checkPositive (me);
-		autoDissimilarity thee = (Dissimilarity) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classDissimilarity);
+		autoDissimilarity thee = Thing_new (Dissimilarity);
+		((Dissimilarity_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Dissimilarity."); }
 }
@@ -805,8 +582,8 @@ Similarity TableOfReal_to_Similarity (I)
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
 		TableOfReal_checkPositive (me);
-		autoSimilarity thee = (Similarity) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classSimilarity);
+		autoSimilarity thee = Thing_new (Similarity);
+		((Similarity_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Similarity."); }
 }
@@ -817,8 +594,8 @@ Distance TableOfReal_to_Distance (I)
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
 		TableOfReal_checkPositive (me);
-		autoDistance thee = (Distance) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classDistance);
+		autoDistance thee = Thing_new (Distance);
+		((Distance_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Distance."); }
 }
@@ -828,8 +605,8 @@ Salience TableOfReal_to_Salience (I)
 	iam (TableOfReal);
 	try {
 		TableOfReal_checkPositive (me);
-		autoSalience thee = (Salience) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classSalience);
+		autoSalience thee = Thing_new (Salience);
+		((Salience_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Salience."); }
 }
@@ -839,8 +616,8 @@ Weight TableOfReal_to_Weight (I)
 	iam (TableOfReal);
 	try {
 		TableOfReal_checkPositive (me);
-		autoWeight thee = (Weight) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classWeight);
+		autoWeight thee = Thing_new (Weight);
+		((Weight_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Weight."); }
 }
@@ -850,21 +627,10 @@ ScalarProduct TableOfReal_to_ScalarProduct (I)
 	iam (TableOfReal);
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
-		autoScalarProduct thee = (ScalarProduct) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classScalarProduct);
+		autoScalarProduct thee = Thing_new (ScalarProduct);
+		((ScalarProduct_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to ScalarProduct."); }
-}
-
-ContingencyTable TableOfReal_to_ContingencyTable (I)
-{
-	iam (TableOfReal);
-	try {
-		TableOfReal_checkPositive (me);
-		autoContingencyTable thee = (ContingencyTable) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classContingencyTable);
-		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": not converted to ContingencyTable."); }
 }
 
 /**************** Covariance & Correlation to Configuration *****************/
@@ -1604,8 +1370,7 @@ void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
 	if (n == 0) return;
 	if (! TableOfReal_equalLabels (me, thee, 1, 1))
 	{
-		(void) Melder_error1 (L"Proximity_Distance_drawScatterDiagram: Dimensions and labels must be the same.");
-		return;
+		Melder_throw (L"Proximity_Distance_drawScatterDiagram: Dimensions and labels must be the same.");
 	}
 	if (xmax <= xmin)
 	{

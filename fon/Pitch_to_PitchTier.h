@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Pitch.h"
 #include "PitchTier.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 PitchTier Pitch_to_PitchTier (Pitch me);
 /*
@@ -40,9 +32,5 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	int nonPeriodicLineType, int garnish, const wchar_t *method);
 
 Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Pitch_to_PitchTier.h */

@@ -882,7 +882,7 @@ static void gui_warning (const wchar *message) {
 	#endif
 }
 
-extern "C" void gui_information (const wchar *);   // BUG: no prototype
+void gui_information (const wchar *);   // BUG: no prototype
 void MelderGui_create (void *parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
 	assert (theMessageFund != NULL);

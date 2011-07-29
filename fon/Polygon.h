@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Data.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Polygon_def.h"
 #define Polygon__methods(klas)  Data__methods(klas)
@@ -81,10 +73,6 @@ void Polygon_paintCircles (I, Graphics g,
 
 void Polygons_drawConnection (I, thou, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, int hasArrow, double relativeLength);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Polygon.h */
 #endif

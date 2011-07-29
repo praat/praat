@@ -34,6 +34,9 @@
 #include "Distributions_and_Strings.h"
 #include "NUM2.h"
 
+#undef your
+#define your ((Confusion_Table) thy methods) ->
+
 static void info (I)
 {
     iam (Confusion);
@@ -252,10 +255,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 	if (index > 0 && index <= my numberOfColumns) ib = ie = index;
 
 	if(thy ny != my numberOfRows)
-	{
-		(void) Melder_error1 (L"Confusion_Matrix_draw: number of positions.");
-		return;
-	}
+		Melder_throw ("Wrong number of positions.");
 
     if (xmax <= xmin) (void) Matrix_getWindowExtrema (thee, 1, 1, 1, thy ny, &xmin, &xmax);
 
@@ -437,8 +437,8 @@ Confusion TableOfReal_to_Confusion (I)
 	iam (TableOfReal);
 	try {
 		if (! TableOfReal_checkPositive (me)) Melder_throw ("Elements may not be less than zero.");
-		autoConfusion thee = (Confusion) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classConfusion);
+		autoConfusion thee = Thing_new (Confusion);
+		your copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Confusion."); }
 }

@@ -48,11 +48,6 @@ using namespace std;
 #if defined (UNIX) || defined __MWERKS__
 	#include <unistd.h>
 #endif
-/*#if defined (HPUX)
-	#define _INCLUDE_POSIX_SOURCE
-	#define _INCLUDE_HPUX_SOURCE
-	#define _INCLUDE_XOPEN_SOURCE
-#endif*/
 #if defined (UNIX)
 	#include <sys/stat.h>
 #endif
@@ -643,9 +638,6 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	}
 	if (! f) {
 		wchar_t *path = file -> path;
-		#ifdef sgi
-			Melder_error ("%s.", strerror (errno));
-		#endif
 		Melder_error_ ("Cannot ", type [0] == 'r' ? "open" : type [0] == 'a' ? "append to" : "create",
 			" file ", MelderFile_messageName (file), ".");
 		if (path [0] == '\0')
@@ -879,28 +871,13 @@ char * MelderFile_readLine (MelderFile me) {
 	if (! my filePointer) return NULL;
 	if (feof (my filePointer)) return NULL;
 	if (! buffer) {
-		buffer = Melder_malloc_e (char, capacity = 100);
-		if (buffer == NULL) {
-			Melder_error1 (L"(MelderFile_readLine:) No room even for a string buffer of 100 bytes.");
-			fclose (my filePointer);
-			my filePointer = NULL;
-		}
+		buffer = Melder_malloc (char, capacity = 100);
 	}
 	for (i = 0; 1; i ++) {
-		int c;
-		if (i >= capacity && ! (buffer = (char *) Melder_realloc_e (buffer, capacity *= 2))) {
-			Melder_error ("(MelderFile_readLine:) No memory to extend string buffer to %ld bytes.", capacity);
-			/*
-			 * If the buffer overflows the available memory,
-			 * half the buffer will also be quite large!
-			 * So shrink it.
-			 */
-			buffer = (char *) Melder_realloc_f (buffer, capacity = 100);
-			fclose (my filePointer);
-			my filePointer = NULL;
-			return NULL;
+		if (i >= capacity) {
+			buffer = (char *) Melder_realloc (buffer, capacity *= 2);
 		}
-		c = fgetc (my filePointer);
+		int c = fgetc (my filePointer);
 		if (feof (my filePointer))
 			break;
 		if (c == '\n') {
@@ -957,9 +934,9 @@ MelderFile MelderFile_create (MelderFile me, const wchar_t *macType, const wchar
 void MelderFile_seek (MelderFile me, long position, int direction) {
 	if (! my filePointer) return;
 	if (fseek (my filePointer, position, direction)) {
-		Melder_error3 (L"Cannot seek in file ", MelderFile_messageName (me), L".");
 		fclose (my filePointer);
 		my filePointer = NULL;
+		Melder_throw ("Cannot seek in file ", MelderFile_messageName (me), ".");
 	}
 }
 
@@ -967,9 +944,9 @@ long MelderFile_tell (MelderFile me) {
 	long result = 0;
 	if (! my filePointer) return 0;
 	if ((result = ftell (my filePointer)) == -1) {
-		Melder_error3 (L"Cannot tell in file ", MelderFile_messageName (me), L".");
 		fclose (my filePointer);
 		my filePointer = NULL;
+		Melder_throw ("Cannot tell in file ", MelderFile_messageName (me), ".");
 	}
 	return result;
 }

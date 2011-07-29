@@ -17,17 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "Intensity.h"
 #include "IntensityTier.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, int subtractMean);
 /*
@@ -55,9 +47,5 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 */
 
 IntensityTier Sound_to_IntensityTier (Sound me, double minimumPitch, double timeStep, int subtractMean);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Sound_to_Intensity.h */

@@ -2497,7 +2497,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms)
 	return 1;
 }
 
-int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
+void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 	double ref, double factor, double floor)
 {
 	double ref_db, factor10 = factor * 10;
@@ -2514,7 +2514,7 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 		}
 	}
 
-	if (max < 0 || min < 0) return Melder_error1 (L"NUMdmatrix_to_dBs: all "
+	if (max < 0 || min < 0) Melder_throw ("NUMdmatrix_to_dBs: all "
 		"matrix elements must be positive.");
 
 	ref_db = factor10 * log10 (ref);
@@ -2532,7 +2532,6 @@ int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 			m[i][j] = mij;
 		}
 	}
-	return 1;
 }
 
 double **NUMcosinesTable (long first, long last, long npoints)
@@ -2794,8 +2793,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 		ni++;
 		if (ni > 2)
 		{
-			(void) Melder_error1 (L"Too many intersections.");
-			return 2;
+			Melder_throw ("Too many intersections.");
 		}
 		xi[ni] = x[i] + t * (x[i+1] - x[i]);
 		yi[ni] = y[i] + t * (y[i+1] - y[i]);
@@ -2942,7 +2940,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	}
 	else
 	{
-		return Melder_error1 (L"Too many crossings found.");
+		Melder_throw (L"Too many crossings found.");
 	}
 	return 1;
 }

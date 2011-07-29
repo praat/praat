@@ -17,17 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "PitchTier.h"
 #include "PointProcess.h"
 #include "Pitch.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 PointProcess PitchTier_to_PointProcess (PitchTier me);
 
@@ -44,9 +36,5 @@ PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval);
 PitchTier Pitch_PointProcess_to_PitchTier (Pitch me, PointProcess pp);
 PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp);
 TableOfReal PitchTier_downto_TableOfReal (PitchTier me, int useSemitones);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file PitchTier_to_PointProcess.h */

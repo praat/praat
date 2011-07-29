@@ -23,10 +23,6 @@
 #include <sys/types.h>
 #include <stdio.h>
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /* The following function is used to identify MP3 files */
 int mp3_recognize (int nread, const char *data);
 
@@ -65,10 +61,6 @@ int mp3f_read (MP3_FILE mp3f, MP3F_OFFSET num_samples);
 
 #define mp3f_sample_to_float(s) ((float)((s) / (float)(1L << 28)))
 short mp3f_sample_to_short (MP3F_SAMPLE sample);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* __MP3_H */
 

@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/06
- */
-
 #include "PointProcess.h"
 #include "Sound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Sound PointProcess_to_Sound_pulseTrain (PointProcess me, double samplingFrequency,
 	double adaptFactor, double adaptTime, long interpolationDepth);
@@ -56,9 +48,5 @@ void PointProcess_playPart (PointProcess me, double tmin, double tmax);
 void PointProcess_play (PointProcess me);
 void PointProcess_hum (PointProcess me, double tmin, double tmax);
 Sound PointProcess_to_Sound_hum (PointProcess me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file PointProcess_and_Sound.h */

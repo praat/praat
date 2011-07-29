@@ -558,7 +558,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 void Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
-		MelderFile_writeAudioFileHeader16_e (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny); therror
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny); therror
 		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding16 (audioFileType), my z, my nx, TRUE); therror
 		mfile.close ();
 	} catch (MelderError) {

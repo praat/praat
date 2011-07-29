@@ -37,11 +37,7 @@
 
 static long theTotalNumberOfThings;
 
-void structThing :: v_destroy ()
-{
-}
-
-static void destroy (I) { iam (Thing); Melder_free (my name); }
+static void destroy (I) { iam (Thing); }
 
 void structThing :: v_info ()
 {
@@ -49,14 +45,6 @@ void structThing :: v_info ()
 	MelderInfo_writeLine2 (L"Object name: ", this -> name ? this -> name : L"<no name>");
 	time_t today = time (NULL);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
-}
-
-void structThing :: v_checkConstraints ()
-{
-}
-
-void structThing :: v_nameChanged ()
-{
 }
 
 static void info (I) {
@@ -189,7 +177,7 @@ Any Thing_newFromClassName (const wchar *className) {
 	}
 }
 
-void _Thing_forget_cpp (Thing me) {
+void _Thing_forget_nozero (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
 	our destroy (me);
@@ -268,12 +256,6 @@ void Thing_setName (Thing me, const wchar *name) {
 }
 
 long Thing_getTotalNumberOfThings (void) { return theTotalNumberOfThings; }
-
-void Thing_overrideClass (Thing me, void *klas) {
-	my methods = (Thing_Table) klas;
-	if (! ((Thing_Table) klas) -> destroy)
-		((Thing_Table) klas) -> _initialize (klas);
-}
 
 void Thing_swap (Thing me, Thing thee) {
 	Melder_assert (my methods == thy methods);

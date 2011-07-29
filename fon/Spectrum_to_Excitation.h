@@ -17,25 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Spectrum.h"
 #include "Excitation.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Excitation Spectrum_to_Excitation (I, double df);
 /*
 	Postcondition:
 		filtered with 10 ^ (1.581 + 0.75 * bark - 1.75 * sqrt (1 + bark * bark)))
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Spectrum_to_Excitation.h */

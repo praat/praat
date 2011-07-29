@@ -19,15 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/08
- */
-
 #include "Thing.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Graphics_enums.h"
 
@@ -239,10 +231,10 @@ bool Graphics_startRecording (I);
 bool Graphics_stopRecording (I);
 void Graphics_clearRecording (I);
 void Graphics_play (Graphics from, Graphics to);
-int Graphics_writeRecordings (I, FILE *f);
-int Graphics_readRecordings (I, FILE *f);
+void Graphics_writeRecordings (I, FILE *f);
+void Graphics_readRecordings (I, FILE *f);
 #ifdef _WIN32
-int Graphics_readRecordings_oldWindows (I, FILE *f);
+void Graphics_readRecordings_oldWindows (I, FILE *f);
 #endif
 void Graphics_markGroup (I);
 void Graphics_undoGroup (I);
@@ -258,10 +250,6 @@ void Graphics_waitMouseUp (I);
 void Graphics_getMouseLocation (I, double *xWC, double *yWC);
 
 void Graphics_nextSheetOfPaper (I);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Graphics.h */
 #endif

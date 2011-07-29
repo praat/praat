@@ -27,6 +27,12 @@
 #include "Cepstrum.h"
 #include "NUM2.h"
 
+
+#undef our
+#define our ((Cepstrum_Table) my methods) ->
+#undef your
+#define your ((Cepstrum_Table) thy methods) ->
+
 class_methods (Cepstrum, Matrix)
 	us -> version = 1;
 class_methods_end
@@ -89,8 +95,8 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 Matrix Cepstrum_to_Matrix (Cepstrum me)
 {
 	try {
-		autoMatrix thee = (Matrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMatrix);
+		autoMatrix thee = Thing_new (Matrix);
+		your copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Matrix created."); }
 }

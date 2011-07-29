@@ -19,18 +19,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/02
- */
-
 #include "Collection.h"
 #include "Function.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Autosegment);
+struct structAutosegment : public structFunction {
+};
+#define Autosegment__methods(klas) Function__methods(klas)
+Thing_declare2cpp (Autosegment, Function);
 
 Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
 /*
@@ -51,6 +47,10 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
 */
 
 Thing_declare1cpp (Tier);
+struct structTier : public structSorted {
+};
+#define Tier__methods(klas) Sorted__methods(klas)
+Thing_declare2cpp (Tier, Sorted);
 
 Tier Tier_create (long initialCapacity);
 /*
@@ -77,6 +77,10 @@ long Tier_timeToIndex (Tier me, double t);
 void Tier_init (I, long initialCapacity);
 
 Thing_declare1cpp (Label);
+struct structLabel : public structOrdered {
+};
+#define Label__methods(klas) Ordered__methods(klas)
+Thing_declare2cpp (Label, Ordered);
 
 Label Label_create (long initialNumberOfTiers);
 
@@ -85,26 +89,6 @@ void Label_init (I, long initialNumberOfTiers);
 void Label_addTier (Label me);
 
 void Label_suggestDomain (Label me, double *tmin, double *tmax);
-
-#ifdef __cplusplus
-	}
-
-	struct structAutosegment : public structFunction {
-	};
-	#define Autosegment__methods(klas) Function__methods(klas)
-	Thing_declare2cpp (Autosegment, Function);
-
-	struct structTier : public structSorted {
-	};
-	#define Tier__methods(klas) Sorted__methods(klas)
-	Thing_declare2cpp (Tier, Sorted);
-
-	struct structLabel : public structOrdered {
-	};
-	#define Label__methods(klas) Ordered__methods(klas)
-	Thing_declare2cpp (Label, Ordered);
-
-#endif
 
 #endif
 /* End of file Label.h */

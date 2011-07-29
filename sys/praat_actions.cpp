@@ -470,7 +470,7 @@ static const wchar *classString (void *klas) {
 static const wchar *objectString (int number) {
 	return number == 1 ? L"object" : L"objects";
 }
-static int allowExecutionHook (void *closure) {
+static bool allowExecutionHook (void *closure) {
 	void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *) = (void (*) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *)) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
@@ -478,7 +478,7 @@ static int allowExecutionHook (void *closure) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
 			int sel1, sel2 = 0, sel3 = 0, sel4 = 0;
-			if (! my class1) return Melder_error1 (L"No class1???");
+			if (! my class1) Melder_throw ("No class1???");
 			numberOfMatchingCallbacks += 1;
 			if (! firstMatchingCallback) firstMatchingCallback = i;
 			sel1 = my class1 == classData ? theCurrentPraatObjects -> totalSelection : praat_selection (my class1);
@@ -488,20 +488,21 @@ static int allowExecutionHook (void *closure) {
 			if (my class4 && (sel4 = praat_selection (my class4)) == 0) continue;
 			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraatObjects -> totalSelection) continue;
 			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4)) continue;
-			return TRUE;   /* Found a matching action. */
+			return true;   // found a matching action
 		}
 	}
 	if (numberOfMatchingCallbacks == 1) {
 		praat_Command me = & theActions [firstMatchingCallback];
-		Melder_error1 (L"Selection changed! It should be:");
-		if (my class1) Melder_error6 (L"   ", numberString (my n1), L" ", classString (my class1), L" ", objectString (my n1));
-		if (my class2) Melder_error6 (L"   ", numberString (my n2), L" ", classString (my class2), L" ", objectString (my n2));
-		if (my class3) Melder_error6 (L"   ", numberString (my n3), L" ", classString (my class3), L" ", objectString (my n3));
-		if (my class4) Melder_error6 (L"   ", numberString (my n4), L" ", classString (my class4), L" ", objectString (my n4));
+		Melder_error_ ("Selection changed! It should be:");
+		if (my class1) Melder_error_ ("   ", numberString (my n1), " ", classString (my class1), " ", objectString (my n1));
+		if (my class2) Melder_error_ ("   ", numberString (my n2), " ", classString (my class2), " ", objectString (my n2));
+		if (my class3) Melder_error_ ("   ", numberString (my n3), " ", classString (my class3), " ", objectString (my n3));
+		if (my class4) Melder_error_ ("   ", numberString (my n4), " ", classString (my class4), " ", objectString (my n4));
+		throw MelderError ();
 	} else {
-		Melder_error1 (L"Selection changed!");
+		Melder_throw ("Selection changed!");
 	}
-	return FALSE;
+	return false;
 }
 
 static void do_menu (I, bool modified) {

@@ -100,7 +100,7 @@ KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (GuiObject parent, co
 		KlattGrid_realTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid pitch window not created.");
+		Melder_throw ("KlattGrid pitch window not created.");
 	}
 }
 
@@ -149,7 +149,7 @@ KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (GuiObject parent
 		KlattGrid_intensityTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid decibel window not created.");
+		Melder_throw ("KlattGrid decibel window not created.");
 	}
 }
 
@@ -166,7 +166,7 @@ KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create
 		KlattGrid_intensityTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid voicing amplitude window not created.");
+		Melder_throw ("KlattGrid voicing amplitude window not created.");
 	}
 }
 
@@ -183,7 +183,7 @@ KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_
 		KlattGrid_intensityTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid aspiration amplitude window not created.");
+		Melder_throw ("KlattGrid aspiration amplitude window not created.");
 	}
 }
 
@@ -200,7 +200,7 @@ KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEdito
 		KlattGrid_intensityTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid breathiness amplitude window not created.");
+		Melder_throw ("KlattGrid breathiness amplitude window not created.");
 	}
 }
 
@@ -219,7 +219,7 @@ KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (GuiObj
 		KlattGrid_intensityTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid spectral tilt window not created.");
+		Melder_throw ("KlattGrid spectral tilt window not created.");
 	}
 }
 
@@ -239,7 +239,7 @@ KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (
 		KlattGrid_intensityTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid frication bypass window not created.");
+		Melder_throw ("KlattGrid frication bypass window not created.");
 	}
 }
 
@@ -257,7 +257,7 @@ KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_cr
 		KlattGrid_intensityTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid frication amplitude window not created.");
+		Melder_throw ("KlattGrid frication amplitude window not created.");
 	}
 }
 
@@ -283,7 +283,7 @@ KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (GuiObject pa
 		KlattGrid_realTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid_openPhaseTierEditor not created.");
+		Melder_throw ("KlattGrid_openPhaseTierEditor not created.");
 	}
 }
 
@@ -309,7 +309,7 @@ KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (Gu
 		KlattGrid_realTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid collision phase window not created.");
+		Melder_throw ("KlattGrid collision phase window not created.");
 	}
 }
 
@@ -335,7 +335,7 @@ KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (GuiObject parent, 
 		KlattGrid_realTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid power1 window not created.");
+		Melder_throw ("KlattGrid power1 window not created.");
 	}
 }
 
@@ -361,7 +361,7 @@ KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (GuiObject parent, 
 		KlattGrid_realTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid power2 window not created.");
+		Melder_throw ("KlattGrid power2 window not created.");
 	}
 }
 
@@ -387,7 +387,7 @@ KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (GuiObject parent
 		KlattGrid_realTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid flutter window not created.");
+		Melder_throw ("KlattGrid flutter window not created.");
 	}
 }
 
@@ -413,7 +413,7 @@ KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (GuiO
 		KlattGrid_realTierEditor_init (me.peek(), parent, title, klattgrid, tier);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid double pulsing window not created.");
+		Melder_throw ("KlattGrid double pulsing window not created.");
 	}
 }
 
@@ -447,7 +447,7 @@ KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (GuiObject parent
 		FormantGridEditor_init (me.peek(), parent, title, *fg);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_thrown ("KlattGrid formant window not created.");
+		Melder_throw ("KlattGrid formant window not created.");
 	}
 }
 

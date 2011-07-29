@@ -187,7 +187,7 @@ void UiHistory_write (const wchar_t *string);
 wchar *UiHistory_get (void);
 void UiHistory_clear (void);
 
-void Ui_setAllowExecutionHook (int (*allowExecutionHook) (void *closure), void *allowExecutionClosure);
+void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void *allowExecutionClosure);
 
 void UiForm_widgetsToValues (I);
 void UiForm_Interpreter_addVariables (I, Interpreter interpreter);

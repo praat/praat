@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Matrix.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Thing_declare1cpp (Spectrogram);
 struct structSpectrogram : public structMatrix {
@@ -103,10 +95,6 @@ Matrix Spectrogram_to_Matrix (I);
 	with deep copy of all its attributes, except class information and methods.
 	Return NULL if out of memory.  
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Spectrogram.h */
 #endif

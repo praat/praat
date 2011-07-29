@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/05
- */
-
 #include "Pitch.h"
 #include "Sound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 /* These routines convert a Pitch into a PointProcess, */
 /* then this PointProcess into a Sound (pulse train), */
@@ -42,9 +34,5 @@ void Pitch_hum (Pitch me, double tmin, double tmax);
 
 Sound Pitch_to_Sound_sine (Pitch me, double tmin, double tmax, double samplingFrequency,
 	int roundToNearestZeroCrossings);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Pitch_to_Sound.h */

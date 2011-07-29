@@ -37,6 +37,7 @@
 #include "NUM2.h"
 #include "praat.h"
 #include "MDS.h"
+#include "ContingencyTable.h"
 #include "TableOfReal_extensions.h"
 #include "Configuration_and_Procrustes.h"
 #include "Configuration_AffineTransform.h"

@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Graphics.h"
 #include "Gui.h"
 
@@ -33,10 +29,6 @@
 	#include <Quickdraw.h>
 	#include <MacWindows.h>
 	#include "macport_off.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
 #endif
 
 typedef struct {
@@ -233,10 +225,6 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void);
 #ifdef macintosh
 	void GraphicsQuartz_initDraw (GraphicsScreen me);
 	void GraphicsQuartz_exitDraw (GraphicsScreen me);
-#endif
-
-#ifdef __cplusplus
-	}
 #endif
 
 /* End of file GraphicsP.h */

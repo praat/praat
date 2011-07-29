@@ -71,7 +71,7 @@ Thing_define (Editor, Thing) {
 		void v_info ();
 		void v_nameChanged ();
 	// new methods:
-		virtual void v_goAway () { forget_cpp (this); }
+		virtual void v_goAway () { forget_nozero (this); }
 		virtual bool v_hasMenuBar () { return true; }
 		virtual bool v_canFullScreen () { return false; }
 		virtual bool v_editable () { return true ; }

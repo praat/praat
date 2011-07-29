@@ -83,7 +83,8 @@ static int menu_cb_editConstraint (EDITOR_ARGS) {
 	EDITOR_OK
 		OTGrammar ot = (OTGrammar) my data;
 		OTGrammarConstraint constraint;
-		if (my selected < 1 || my selected > ot -> numberOfConstraints) return Melder_error1 (L"Select a constraint first.");
+		if (my selected < 1 || my selected > ot -> numberOfConstraints)
+			Melder_throw ("Select a constraint first.");
 		constraint = & ot -> constraints [ot -> index [my selected]];
 		SET_STRING (L"constraint", constraint -> name)
 		SET_REAL (L"Ranking value", constraint -> ranking)
@@ -153,7 +154,8 @@ static int menu_cb_removeConstraint (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	OTGrammar ot = (OTGrammar) my data;
 	OTGrammarConstraint constraint;
-	if (my selected < 1 || my selected > ot -> numberOfConstraints) return Melder_error ("Select a constraint first.");
+	if (my selected < 1 || my selected > ot -> numberOfConstraints)
+		Melder_throw ("Select a constraint first.");
 	constraint = & ot -> constraints [ot -> index [my selected]];
 	Editor_save (me, L"Remove constraint");
 	OTGrammar_removeConstraint (ot, constraint -> name);

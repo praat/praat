@@ -360,9 +360,11 @@ void OTGrammar_newDisharmonies (OTGrammar me, double spreading) {
 }
 
 long OTGrammar_getTableau (OTGrammar me, const wchar *input) {
-	long i, n = my numberOfTableaus;
-	for (i = 1; i <= n; i ++) if (wcsequ (my tableaus [i]. input, input)) return i;
-	return Melder_error3 (L"Input \"", input, L"\" not in list of tableaus.");
+	long n = my numberOfTableaus;
+	for (long i = 1; i <= n; i ++)
+		if (wcsequ (my tableaus [i]. input, input))
+			return i;
+	Melder_throw ("Input \"", input, "\" not in list of tableaus.");
 }
 
 static void _OTGrammar_fillInHarmonies (OTGrammar me, long itab) {
@@ -564,95 +566,97 @@ bool OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand
 	return true;
 }
 
-int OTGrammar_getInterpretiveParse (OTGrammar me, const wchar *partialOutput, long *bestTableau, long *bestCandidate) {
-	long itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tableau = & my tableaus [itab];
-		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			OTGrammarCandidate cand = & tableau -> candidates [icand];
-			if (wcsstr (cand -> output, partialOutput)) {   /* T&S idea of surface->overt mapping */
-				if (itab_best == 0) {
-					itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
-					icand_best = icand;
-					numberOfBestCandidates = 1;
-				} else {
-					int comparison = OTGrammar_compareCandidates (me, itab, icand, itab_best, icand_best);
-					if (comparison == -1) {
-						itab_best = itab;   /* The current input/output pair is the best candidate found so far. */
+void OTGrammar_getInterpretiveParse (OTGrammar me, const wchar *partialOutput, long *bestTableau, long *bestCandidate) {
+	try {
+		long itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
+		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+			OTGrammarTableau tableau = & my tableaus [itab];
+			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+				OTGrammarCandidate cand = & tableau -> candidates [icand];
+				if (wcsstr (cand -> output, partialOutput)) {   /* T&S idea of surface->overt mapping */
+					if (itab_best == 0) {
+						itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
 						icand_best = icand;
 						numberOfBestCandidates = 1;
-					} else if (comparison == 0) {
-						numberOfBestCandidates += 1;   /* The current input/output pair is equally good as the best found before. */
-						/*
-						 * Give all candidates that are equally good an equal chance to become the winner.
-						 */
-						if (Melder_debug == 41) {
-							itab_best = itab_best;
-							icand_best = icand_best;   // keep first
-						} else if (Melder_debug == 42) {
-							itab_best = itab;
-							icand_best = icand;   // take last
-						} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
-							itab_best = itab;
+					} else {
+						int comparison = OTGrammar_compareCandidates (me, itab, icand, itab_best, icand_best);
+						if (comparison == -1) {
+							itab_best = itab;   /* The current input/output pair is the best candidate found so far. */
 							icand_best = icand;
+							numberOfBestCandidates = 1;
+						} else if (comparison == 0) {
+							numberOfBestCandidates += 1;   /* The current input/output pair is equally good as the best found before. */
+							/*
+							 * Give all candidates that are equally good an equal chance to become the winner.
+							 */
+							if (Melder_debug == 41) {
+								itab_best = itab_best;
+								icand_best = icand_best;   // keep first
+							} else if (Melder_debug == 42) {
+								itab_best = itab;
+								icand_best = icand;   // take last
+							} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
+								itab_best = itab;
+								icand_best = icand;
+							}
 						}
 					}
 				}
 			}
 		}
+		if (itab_best == 0) Melder_throw ("The partial output \"", partialOutput, "\" does not match any candidate for any input form.");
+		if (bestTableau != NULL) *bestTableau = itab_best;
+		if (bestCandidate != NULL) *bestCandidate = icand_best;
+	} catch (MelderError) {
+		Melder_throw ("Interpretive parse not computed.");
 	}
-	if (itab_best == 0) error3 (L"The partial output \"", partialOutput, L"\" does not match any candidate for any input form.")
-end:
-	if (bestTableau != NULL) *bestTableau = itab_best;
-	if (bestCandidate != NULL) *bestCandidate = icand_best;
-	iferror return Melder_error1 (L"(OTGrammar: Get interpretive parse:) Not performed.");
-	return 1;
 }
 
-static int OTGrammar_getInterpretiveParse_opt (OTGrammar me, long ipartialOutput, long *bestTableau, long *bestCandidate) {
-	long itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tableau = & my tableaus [itab];
-		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-			OTGrammarCandidate cand = & tableau -> candidates [icand];
-			Melder_assert (cand -> partialOutputMatches != NULL);
-			if (cand -> partialOutputMatches [ipartialOutput]) {   /* T&S idea of surface->overt mapping */
-				if (itab_best == 0) {
-					itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
-					icand_best = icand;
-					numberOfBestCandidates = 1;
-				} else {
-					int comparison = OTGrammar_compareCandidates (me, itab, icand, itab_best, icand_best);
-					if (comparison == -1) {
-						itab_best = itab;   /* The current input/output pair is the best candidate found so far. */
+static void OTGrammar_getInterpretiveParse_opt (OTGrammar me, long ipartialOutput, long *bestTableau, long *bestCandidate) {
+	try {
+		long itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
+		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
+			OTGrammarTableau tableau = & my tableaus [itab];
+			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+				OTGrammarCandidate cand = & tableau -> candidates [icand];
+				Melder_assert (cand -> partialOutputMatches != NULL);
+				if (cand -> partialOutputMatches [ipartialOutput]) {   /* T&S idea of surface->overt mapping */
+					if (itab_best == 0) {
+						itab_best = itab;   /* The first compatible input/output pair found is the first guess for the best candidate. */
 						icand_best = icand;
 						numberOfBestCandidates = 1;
-					} else if (comparison == 0) {
-						numberOfBestCandidates += 1;   /* The current input/output pair is equally good as the best found before. */
-						/*
-						 * Give all candidates that are equally good an equal chance to become the winner.
-						 */
-						if (Melder_debug == 41) {
-							itab_best = itab_best;
-							icand_best = icand_best;   // keep first
-						} else if (Melder_debug == 42) {
-							itab_best = itab;
-							icand_best = icand;   // take last
-						} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
-							itab_best = itab;
+					} else {
+						int comparison = OTGrammar_compareCandidates (me, itab, icand, itab_best, icand_best);
+						if (comparison == -1) {
+							itab_best = itab;   /* The current input/output pair is the best candidate found so far. */
 							icand_best = icand;
+							numberOfBestCandidates = 1;
+						} else if (comparison == 0) {
+							numberOfBestCandidates += 1;   /* The current input/output pair is equally good as the best found before. */
+							/*
+							 * Give all candidates that are equally good an equal chance to become the winner.
+							 */
+							if (Melder_debug == 41) {
+								itab_best = itab_best;
+								icand_best = icand_best;   // keep first
+							} else if (Melder_debug == 42) {
+								itab_best = itab;
+								icand_best = icand;   // take last
+							} else if (NUMrandomUniform (0.0, numberOfBestCandidates) < 1.0) {   // default: take random
+								itab_best = itab;
+								icand_best = icand;
+							}
 						}
 					}
 				}
 			}
 		}
+		Melder_assert (itab_best != 0);
+		if (bestTableau != NULL) *bestTableau = itab_best;
+		if (bestCandidate != NULL) *bestCandidate = icand_best;
+	} catch (MelderError) {
+		Melder_throw ("Interpretive parse not computed.");
 	}
-	Melder_assert (itab_best != 0);
-end:
-	if (bestTableau != NULL) *bestTableau = itab_best;
-	if (bestCandidate != NULL) *bestCandidate = icand_best;
-	iferror return Melder_error1 (L"(OTGrammar: Get interpretive parse:) Not performed.");
-	return 1;
 }
 
 bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar *partialOutput) {
@@ -750,218 +754,217 @@ static double OTGrammar_constraintWidth (Graphics g, const wchar *name) {
 }
 
 void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
-	long itab, winner, numberOfOptimalCandidates;
-	OTGrammarTableau tableau;
-	double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
-	double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
-	Graphics_Colour colour = Graphics_inqColour (g);
-	wchar text [200];
-	itab = OTGrammar_getTableau (me, input);
-	if (! itab) {
-		Melder_error3 (L"This grammar accepts no input \"", input, L"\".");
-		Melder_flushError (NULL);
-		return;
-	}
-	_OTGrammar_fillInHarmonies (me, itab);
-	winner = OTGrammar_getWinner (me, itab);
-	
-	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
-	margin = Graphics_dxMMtoWC (g, 1.0);
-	fingerWidth = Graphics_dxMMtoWC (g, 7.0) * fontSize / 12.0;
-	doubleLineDx = Graphics_dxMMtoWC (g, 0.9);
-	doubleLineDy = Graphics_dyMMtoWC (g, 0.9);
-	rowHeight = Graphics_dyMMtoWC (g, 1.5 * fontSize * 25.4 / 72);
-	descent = rowHeight * 0.5;
-	/*
-	 * Compute height of header row.
-	 */
-	headerHeight = rowHeight;
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTGrammarConstraint constraint = & my constraints [icons];
-		if (wcschr (constraint -> name, '\n')) {
-			headerHeight *= 1.6;
-			break;
-		}
-	}
-	/*
-	 * Compute longest candidate string.
-	 * Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
-	 */
-	candWidth = Graphics_textWidth (g, input);
-	tableau = & my tableaus [itab];
-	numberOfOptimalCandidates = 0;
-	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-		double width = Graphics_textWidth (g, tableau -> candidates [icand]. output);
-		if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0) {
-			width += fingerWidth;
-			numberOfOptimalCandidates ++;
-		}
-		if (width > candWidth) candWidth = width;
-	}
-	candWidth += margin * 3;
-	/*
-	 * Compute tableau width.
-	 */
-	tableauWidth = candWidth + doubleLineDx;
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTGrammarConstraint constraint = & my constraints [icons];
-		tableauWidth += OTGrammar_constraintWidth (g, constraint -> name);
-	}
-	tableauWidth += margin * 2 * my numberOfConstraints;
-	/*
-	 * Draw box.
-	 */
-	x = doubleLineDx;   /* Left side of tableau. */
-	y = 1.0 - doubleLineDy;
-	Graphics_rectangle (g, x, x + tableauWidth,
-		y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);
-	/*
-	 * Draw input.
-	 */
-	y -= headerHeight;
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_text (g, x + 0.5 * candWidth, y + 0.5 * headerHeight, input);
-	Graphics_rectangle (g, x, x + candWidth, y, y + headerHeight);
-	/*
-	 * Draw constraint names.
-	 */
-	x += candWidth + doubleLineDx;
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTGrammarConstraint constraint = & my constraints [my index [icons]];
-		double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
-		if (wcschr (constraint -> name, '\n')) {
-			wchar *newLine;
-			wcscpy (text, constraint -> name);
-			newLine = wcschr (text, '\n');
-			*newLine = '\0';
-			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
-			Graphics_text (g, x + 0.5 * width, y + headerHeight, text);
-			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
-			Graphics_text (g, x + 0.5 * width, y, newLine + 1);
-		} else {
-			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-			Graphics_text (g, x + 0.5 * width, y + 0.5 * headerHeight, constraint -> name);
-		}
-		if (constraint -> tiedToTheLeft)
-			Graphics_setLineType (g, Graphics_DOTTED);
-		Graphics_line (g, x, y, x, y + headerHeight);
-		Graphics_setLineType (g, Graphics_DRAWN);
-		Graphics_line (g, x, y, x + width, y);
-		x += width;
-	}
-	/*
-	 * Draw candidates.
-	 */
-	y -= doubleLineDy;
-	for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-		long crucialCell = OTGrammar_crucialCell (me, itab, icand, winner, numberOfOptimalCandidates);
-		bool candidateIsOptimal = OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0;
+	try {
+		long itab, winner, numberOfOptimalCandidates;
+		OTGrammarTableau tableau;
+		double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
+		double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
+		Graphics_Colour colour = Graphics_inqColour (g);
+		wchar text [200];
+		itab = OTGrammar_getTableau (me, input);
+		_OTGrammar_fillInHarmonies (me, itab);
+		winner = OTGrammar_getWinner (me, itab);
+		
+		Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
+		margin = Graphics_dxMMtoWC (g, 1.0);
+		fingerWidth = Graphics_dxMMtoWC (g, 7.0) * fontSize / 12.0;
+		doubleLineDx = Graphics_dxMMtoWC (g, 0.9);
+		doubleLineDy = Graphics_dyMMtoWC (g, 0.9);
+		rowHeight = Graphics_dyMMtoWC (g, 1.5 * fontSize * 25.4 / 72);
+		descent = rowHeight * 0.5;
 		/*
-		 * Draw candidate transcription.
+		 * Compute height of header row.
 		 */
-		x = doubleLineDx;
-		y -= rowHeight;
-		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (g, x + candWidth - margin, y + descent, tableau -> candidates [icand]. output);
-		if (candidateIsOptimal) {
-			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
-			Graphics_setFontSize (g, (int) (1.5 * fontSize));
-			if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
-			Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, L"\\pf");
-			Graphics_setColour (g, colour);
-			Graphics_setFontSize (g, (int) fontSize);
-		}
-		Graphics_rectangle (g, x, x + candWidth, y, y + rowHeight);
-		/*
-		 * Draw grey cell backgrounds.
-		 */
-		x = candWidth + 2 * doubleLineDx;
-		Graphics_setGrey (g, 0.9);
+		headerHeight = rowHeight;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int index = my index [icons];
-			OTGrammarConstraint constraint = & my constraints [index];
+			OTGrammarConstraint constraint = & my constraints [icons];
+			if (wcschr (constraint -> name, '\n')) {
+				headerHeight *= 1.6;
+				break;
+			}
+		}
+		/*
+		 * Compute longest candidate string.
+		 * Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
+		 */
+		candWidth = Graphics_textWidth (g, input);
+		tableau = & my tableaus [itab];
+		numberOfOptimalCandidates = 0;
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+			double width = Graphics_textWidth (g, tableau -> candidates [icand]. output);
+			if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0) {
+				width += fingerWidth;
+				numberOfOptimalCandidates ++;
+			}
+			if (width > candWidth) candWidth = width;
+		}
+		candWidth += margin * 3;
+		/*
+		 * Compute tableau width.
+		 */
+		tableauWidth = candWidth + doubleLineDx;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			OTGrammarConstraint constraint = & my constraints [icons];
+			tableauWidth += OTGrammar_constraintWidth (g, constraint -> name);
+		}
+		tableauWidth += margin * 2 * my numberOfConstraints;
+		/*
+		 * Draw box.
+		 */
+		x = doubleLineDx;   /* Left side of tableau. */
+		y = 1.0 - doubleLineDy;
+		Graphics_rectangle (g, x, x + tableauWidth,
+			y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);
+		/*
+		 * Draw input.
+		 */
+		y -= headerHeight;
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x + 0.5 * candWidth, y + 0.5 * headerHeight, input);
+		Graphics_rectangle (g, x, x + candWidth, y, y + headerHeight);
+		/*
+		 * Draw constraint names.
+		 */
+		x += candWidth + doubleLineDx;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			OTGrammarConstraint constraint = & my constraints [my index [icons]];
 			double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
-			if (icons > crucialCell)
-				Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
+			if (wcschr (constraint -> name, '\n')) {
+				wchar *newLine;
+				wcscpy (text, constraint -> name);
+				newLine = wcschr (text, '\n');
+				*newLine = '\0';
+				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+				Graphics_text (g, x + 0.5 * width, y + headerHeight, text);
+				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+				Graphics_text (g, x + 0.5 * width, y, newLine + 1);
+			} else {
+				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+				Graphics_text (g, x + 0.5 * width, y + 0.5 * headerHeight, constraint -> name);
+			}
+			if (constraint -> tiedToTheLeft)
+				Graphics_setLineType (g, Graphics_DOTTED);
+			Graphics_line (g, x, y, x, y + headerHeight);
+			Graphics_setLineType (g, Graphics_DRAWN);
+			Graphics_line (g, x, y, x + width, y);
 			x += width;
 		}
-		Graphics_setColour (g, colour);
 		/*
-		 * Draw cell marks.
+		 * Draw candidates.
 		 */
-		x = candWidth + 2 * doubleLineDx;
-		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			int index = my index [icons];
-			OTGrammarConstraint constraint = & my constraints [index];
-			double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
-			wchar markString [40];
-			markString [0] = '\0';
-			if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
-				/*
-				 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
-				 * 1. the candidate is not optimal;
-				 * 2. the constraint is not tied;
-				 * 3. this is the crucial cell, i.e. the cells after it are drawn in grey.
-				 */
-				if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
-					int winnerMarks = tableau -> candidates [winner]. marks [index];
-					for (long imark = 1; imark <= winnerMarks + 1; imark ++)
-						wcscat (markString, L"*");
-					for (long imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
-						wcscat (markString, L"+");
-					wcscat (markString, L"!");
-					for (long imark = winnerMarks + 2; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
-						wcscat (markString, L"*");
-				} else {
-					if (! candidateIsOptimal && (constraint -> tiedToTheLeft || constraint -> tiedToTheRight) &&
-					    crucialCell >= 1 && constraint -> disharmony == my constraints [my index [crucialCell]]. disharmony)
-					{
-						Graphics_setColour (g, Graphics_RED);
+		y -= doubleLineDy;
+		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
+			long crucialCell = OTGrammar_crucialCell (me, itab, icand, winner, numberOfOptimalCandidates);
+			bool candidateIsOptimal = OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0;
+			/*
+			 * Draw candidate transcription.
+			 */
+			x = doubleLineDx;
+			y -= rowHeight;
+			Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
+			Graphics_text (g, x + candWidth - margin, y + descent, tableau -> candidates [icand]. output);
+			if (candidateIsOptimal) {
+				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+				Graphics_setFontSize (g, (int) (1.5 * fontSize));
+				if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
+				Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, L"\\pf");
+				Graphics_setColour (g, colour);
+				Graphics_setFontSize (g, (int) fontSize);
+			}
+			Graphics_rectangle (g, x, x + candWidth, y, y + rowHeight);
+			/*
+			 * Draw grey cell backgrounds.
+			 */
+			x = candWidth + 2 * doubleLineDx;
+			Graphics_setGrey (g, 0.9);
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				int index = my index [icons];
+				OTGrammarConstraint constraint = & my constraints [index];
+				double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
+				if (icons > crucialCell)
+					Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
+				x += width;
+			}
+			Graphics_setColour (g, colour);
+			/*
+			 * Draw cell marks.
+			 */
+			x = candWidth + 2 * doubleLineDx;
+			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				int index = my index [icons];
+				OTGrammarConstraint constraint = & my constraints [index];
+				double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
+				wchar markString [40];
+				markString [0] = '\0';
+				if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+					/*
+					 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:
+					 * 1. the candidate is not optimal;
+					 * 2. the constraint is not tied;
+					 * 3. this is the crucial cell, i.e. the cells after it are drawn in grey.
+					 */
+					if (icons == crucialCell && ! candidateIsOptimal && ! constraint -> tiedToTheLeft && ! constraint -> tiedToTheRight) {
+						int winnerMarks = tableau -> candidates [winner]. marks [index];
+						for (long imark = 1; imark <= winnerMarks + 1; imark ++)
+							wcscat (markString, L"*");
+						for (long imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
+							wcscat (markString, L"+");
+						wcscat (markString, L"!");
+						for (long imark = winnerMarks + 2; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
+							wcscat (markString, L"*");
+					} else {
+						if (! candidateIsOptimal && (constraint -> tiedToTheLeft || constraint -> tiedToTheRight) &&
+							crucialCell >= 1 && constraint -> disharmony == my constraints [my index [crucialCell]]. disharmony)
+						{
+							Graphics_setColour (g, Graphics_RED);
+						}
+						for (long imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
+							wcscat (markString, L"*");
+						for (long imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
+							wcscat (markString, L"+");
 					}
+				} else {
 					for (long imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
 						wcscat (markString, L"*");
 					for (long imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
 						wcscat (markString, L"+");
 				}
-			} else {
-				for (long imark = 1; imark <= tableau -> candidates [icand]. marks [index]; imark ++)
-					wcscat (markString, L"*");
-				for (long imark = tableau -> candidates [icand]. marks [index]; imark < 0; imark ++)
-					wcscat (markString, L"+");
+				Graphics_text (g, x + 0.5 * width, y + descent, markString);
+				Graphics_setColour (g, colour);
+				if (constraint -> tiedToTheLeft)
+					Graphics_setLineType (g, Graphics_DOTTED);
+				Graphics_line (g, x, y, x, y + rowHeight);
+				Graphics_setLineType (g, Graphics_DRAWN);
+				Graphics_line (g, x, y + rowHeight, x + width, y + rowHeight);
+				x += width;
 			}
-			Graphics_text (g, x + 0.5 * width, y + descent, markString);
-			Graphics_setColour (g, colour);
-			if (constraint -> tiedToTheLeft)
-				Graphics_setLineType (g, Graphics_DOTTED);
-			Graphics_line (g, x, y, x, y + rowHeight);
-			Graphics_setLineType (g, Graphics_DRAWN);
-			Graphics_line (g, x, y + rowHeight, x + width, y + rowHeight);
-			x += width;
+			/*
+			 * Draw harmony.
+			 */
+			if (my decisionStrategy != kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
+				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+				double value = tableau -> candidates [icand]. harmony;
+				if (my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
+					my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
+				{
+					//value = value > -1e-300 ? 1000 : value < -1e300 ? -1000 : - log (- value);
+					Graphics_text (g, x, y + descent, Melder_float (Melder_half (value)));
+				} else {
+					Graphics_text (g, x, y + descent, Melder_fixed (value, 3));
+				}
+			}
 		}
 		/*
-		 * Draw harmony.
+		 * Draw box.
 		 */
-		if (my decisionStrategy != kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
-			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
-			double value = tableau -> candidates [icand]. harmony;
-			if (my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
-				my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
-			{
-				//value = value > -1e-300 ? 1000 : value < -1e300 ? -1000 : - log (- value);
-				Graphics_text (g, x, y + descent, Melder_float (Melder_half (value)));
-			} else {
-				Graphics_text (g, x, y + descent, Melder_fixed (value, 3));
-			}
-		}
+		x = doubleLineDx;   /* Left side of tableau. */
+		y = 1.0 - doubleLineDy;
+		Graphics_rectangle (g, x, x + tableauWidth,
+			y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);
+	} catch (MelderError) {
+		Melder_throw (me, ": tableau not drawn.");
 	}
-	/*
-	 * Draw box.
-	 */
-	x = doubleLineDx;   /* Left side of tableau. */
-	y = 1.0 - doubleLineDy;
-	Graphics_rectangle (g, x, x + tableauWidth,
-		y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);
 }
 
 Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
@@ -970,7 +973,7 @@ Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 		thy strings = NUMvector <wchar*> (1, thy numberOfStrings = numberOfTrials);
 		for (long i = 1; i <= numberOfTrials; i ++) {
 			long itab = NUMrandomInteger (1, my numberOfTableaus);
-			thy strings [i] = Melder_wcsdup_e (my tableaus [itab]. input); therror
+			thy strings [i] = Melder_wcsdup (my tableaus [itab]. input);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -983,7 +986,7 @@ Strings OTGrammar_getInputs (OTGrammar me) {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <wchar *> (1, thy numberOfStrings = my numberOfTableaus);
 		for (long i = 1; i <= my numberOfTableaus; i ++) {
-			thy strings [i] = Melder_wcsdup_e (my tableaus [i]. input); therror
+			thy strings [i] = Melder_wcsdup (my tableaus [i]. input);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -994,7 +997,7 @@ Strings OTGrammar_getInputs (OTGrammar me) {
 void OTGrammar_inputToOutput (OTGrammar me, const wchar *input, wchar *output, double evaluationNoise) {
 	try {
 		OTGrammar_newDisharmonies (me, evaluationNoise);
-		long itab = OTGrammar_getTableau (me, input); therror
+		long itab = OTGrammar_getTableau (me, input);
 		long winner = OTGrammar_getWinner (me, itab);
 		if (winner == 0)
 			Melder_throw ("No winner");
@@ -1013,7 +1016,7 @@ Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluati
 		for (long i = 1; i <= n; i ++) {
 			wchar output [100];
 			OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise); therror
-			his strings [i] = Melder_wcsdup_e (output); therror
+			his strings [i] = Melder_wcsdup (output);
 		}
 		return him.transfer();
 	} catch (MelderError) {
@@ -1029,7 +1032,7 @@ Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar *input, long n, doub
 		for (long i = 1; i <= n; i ++) {
 			wchar output [100];
 			OTGrammar_inputToOutput (me, input, output, evaluationNoise); therror
-			thy strings [i] = Melder_wcsdup_e (output); therror
+			thy strings [i] = Melder_wcsdup (output);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -1502,7 +1505,7 @@ void OTGrammar_learnOne (OTGrammar me, const wchar *underlyingForm, const wchar 
 		/*
 		 * Evaluate the input in the learner's hypothesis.
 		 */
-		long itab = OTGrammar_getTableau (me, underlyingForm); therror
+		long itab = OTGrammar_getTableau (me, underlyingForm);
 		OTGrammarTableau tableau = & my tableaus [itab];
 
 		/*
@@ -1777,7 +1780,7 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar *partialAdul
 		long ichew = 1;
 		for (; ichew <= numberOfChews; ichew ++) {
 			long assumedAdultInputTableau, assumedAdultCandidate;
-			OTGrammar_getInterpretiveParse (me, partialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate); therror
+			OTGrammar_getInterpretiveParse (me, partialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
 			int grammarHasChanged;
 			OTGrammar_learnOne (me,
 				my tableaus [assumedAdultInputTableau]. input,
@@ -1791,7 +1794,7 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar *partialAdul
 			 * Is the partial output form grammatical by now?
 			 */
 			long assumedAdultInputTableau, assumedAdultCandidate;
-			OTGrammar_getInterpretiveParse (me, partialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate); therror
+			OTGrammar_getInterpretiveParse (me, partialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
 			OTGrammarCandidate learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
 			if (! wcsequ (learnerCandidate -> output,
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
@@ -1819,7 +1822,7 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, long ipartial
 		long ichew = 1;
 		for (; ichew <= numberOfChews; ichew ++) {
 			long assumedAdultInputTableau, assumedAdultCandidate;
-			OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate); therror
+			OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
 			int grammarHasChanged;
 			OTGrammar_learnOne (me,
 				my tableaus [assumedAdultInputTableau]. input,
@@ -1833,7 +1836,7 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, long ipartial
 			 * Is the partial output form grammatical by now?
 			 */
 			long assumedAdultInputTableau, assumedAdultCandidate;
-			OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate); therror
+			OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
 			OTGrammarCandidate learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
 			if (! wcsequ (learnerCandidate -> output,
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
@@ -2068,7 +2071,7 @@ double OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribu
 			wchar *input, *adultOutput;
 			PairDistribution_peekPair (thee, & input, & adultOutput); therror
 			OTGrammar_newDisharmonies (me, evaluationNoise);
-			long inputTableau = OTGrammar_getTableau (me, input); therror
+			long inputTableau = OTGrammar_getTableau (me, input);
 			OTGrammarCandidate learnerCandidate = & my tableaus [inputTableau]. candidates [OTGrammar_getWinner (me, inputTableau)];
 			if (wcsequ (learnerCandidate -> output, adultOutput))
 				numberOfCorrect ++;
@@ -2089,7 +2092,7 @@ long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistr
 			if (prob -> weight > 0.0) {
 				long numberOfCorrect = 0;
 				wchar *input = prob -> string1, *adultOutput = prob -> string2;
-				long inputTableau = OTGrammar_getTableau (me, input); therror
+				long inputTableau = OTGrammar_getTableau (me, input);
 				for (long ireplication = 1; ireplication <= numberOfReplications; ireplication ++) {
 					OTGrammar_newDisharmonies (me, evaluationNoise);
 					OTGrammarCandidate learnerCandidate = & my tableaus [inputTableau]. candidates [OTGrammar_getWinner (me, inputTableau)];

@@ -19,20 +19,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Spectrum.h"
 #include "Sound.h"
 #include "PointProcess.h"
 #include "Collection.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Ltas);
+struct structLtas : public structVector {
+};
+#define Ltas__methods(klas)  Vector__methods(klas)
+Thing_declare2cpp (Ltas, Vector);
 
 /*
 	Attributes:
@@ -93,16 +89,6 @@ Ltas Sound_to_Ltas_pitchCorrected (Sound sound, double minimumPitch, double maxi
 
 double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double f2max, int averagingUnits);
 double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environmentMax, double peakMin, double peakMax, int averagingUnits);
-
-#ifdef __cplusplus
-	}
-
-	struct structLtas : public structVector {
-	};
-	#define Ltas__methods(klas)  Vector__methods(klas)
-	Thing_declare2cpp (Ltas, Vector);
-
-#endif
 
 /* End of file Ltas.h */
 #endif

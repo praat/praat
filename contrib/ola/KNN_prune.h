@@ -33,10 +33,6 @@
 #include "FeatureWeights.h"
 #include "OlaP.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /////////////////////////////////////////////////////
 // Prototypes                                      //
 /////////////////////////////////////////////////////
@@ -97,10 +93,6 @@ int KNN_prune_noisy
     long y,             // source instance index
     long k              // k(!)
 );
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file KNN_prune.h */
 #endif

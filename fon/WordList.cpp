@@ -165,14 +165,11 @@ WordList Strings_to_WordList (Strings me) {
 		for (long i = 1; i <= my numberOfStrings; i ++) {
 			wchar_t *string = my strings [i], *p;
 			for (p = & string [0]; *p; p ++) {
-				if (*p > 126) {
-					Melder_error3 (L"(Strings_to_WordList:) String \"", string, L"\" not generic.\nPlease genericize first.");
-					return NULL;
-				}
+				if (*p > 126)
+					Melder_throw ("String \"", string, "\" not generic.\nPlease convert to backslash trigraphs first.");
 			}
 			if (i > 1 && wcscmp (my strings [i - 1], string) > 0) {
-				Melder_error3 (L"(Strings_to_WordList:) String \"", string, L"\" not sorted.\nPlease sort first.");
-				return NULL;
+				Melder_throw ("String \"", string, L"\" not sorted.\nPlease sort first.");
 			}
 			totalLength += wcslen (string);
 		}

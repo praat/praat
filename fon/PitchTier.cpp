@@ -67,9 +67,7 @@ void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 
 PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 	try {
-		autoPitchTier thee = (PitchTier) PointProcess_upto_RealTier (me, frequency);
-		Thing_overrideClass (thee.peek(), classPitchTier);
-		return thee.transfer();
+		return (PitchTier) PointProcess_upto_RealTier (me, frequency, (RealTier_Table) classPitchTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to PitchTier.");
 	}

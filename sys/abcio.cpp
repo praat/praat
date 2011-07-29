@@ -487,7 +487,7 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 
 /* On which machines is "short" a two's complement Big-Endian (MSB-first) 2-byte word? */
 
-#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+#if defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
 	#define binario_shortBE2 (sizeof (short) == 2)
 	#define binario_shortLE2 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
@@ -500,7 +500,7 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 
 /* On which machines is "long" a two's complement Big-Endian (MSB-first) 4-byte word? */
 
-#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+#if defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
 	#define binario_longBE4 (sizeof (long) == 4)
 	#define binario_longLE4 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
@@ -513,7 +513,7 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 
 /* On which machines is "float" IEEE, four bytes, Most Significant Bit first? */
 
-#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+#if defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
 	#define binario_floatIEEE4msb (sizeof (float) == 4)
 	#define binario_floatIEEE4lsb 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
@@ -526,7 +526,7 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 
 /* On which machines is "double" IEEE, eight bytes, Most Significant Bit first? */
 
-#if defined (sgi) || defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
+#if defined (macintosh) && TARGET_RT_BIG_ENDIAN == 1
 	#define binario_doubleIEEE8msb (sizeof (double) == 8)
 	#define binario_doubleIEEE8lsb 0
 #elif defined (_WIN32) || defined (macintosh) && TARGET_RT_LITTLE_ENDIAN == 1
@@ -1809,7 +1809,7 @@ void cacputi1 (int u, CACHE *me) { * (signed char *) my ptr ++ = u; }
 int cacgete1 (CACHE *me, const wchar_t *type) {
 	int result = * (signed char *) my ptr ++;
 	if (result < 0)
-		(void) Melder_error5 (L"(cacgete1:) ", Melder_integer (result), L" is not a value of enumerated type \"", type, L"\".");
+		Melder_throw ("(cacgete1:) ", result, " is not a value of enumerated type \"", type, "\".");
 	return result;
 }
 void cacpute1 (int value, CACHE *me) {
@@ -1876,7 +1876,7 @@ int cacgete2 (CACHE *f, const wchar_t *type) {
 		s = ((unsigned short) bytes [0] << 8) | (unsigned short) bytes [1];
 	}
 	if (s < 0)
-		(void) Melder_error5 (L"(cacgete2:) ", Melder_integer (s), L" is not a value of enumerated type \"", type, L"\".");
+		Melder_throw ("(cacgete2:) ", s, " is not a value of enumerated type \"", type, "\".");
 	return s;
 }
 

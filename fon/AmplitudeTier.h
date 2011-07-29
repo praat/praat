@@ -19,21 +19,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "IntensityTier.h"
 #include "TableOfReal.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /********** class AmplitudeTier **********/
 
 Thing_declare1cpp (AmplitudeTier);
+struct structAmplitudeTier : public structRealTier {
+};
+#define AmplitudeTier__methods(klas) RealTier__methods(klas)
+Thing_declare2cpp (AmplitudeTier, RealTier);
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax);
 
@@ -58,16 +54,6 @@ double AmplitudeTier_getShimmer_apq11 (AmplitudeTier me, double shortestPeriod, 
 double AmplitudeTier_getShimmer_dda (AmplitudeTier me, double shortestPeriod, double longestPeriod, double maximumAmplitudeFactor);
 
 Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long interpolationDepth);
-
-#ifdef __cplusplus
-	}
-
-	struct structAmplitudeTier : public structRealTier {
-	};
-	#define AmplitudeTier__methods(klas) RealTier__methods(klas)
-	Thing_declare2cpp (AmplitudeTier, RealTier);
-
-#endif
 
 /* End of file AmplitudeTier.h */
 #endif

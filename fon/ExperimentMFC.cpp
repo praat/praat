@@ -401,8 +401,8 @@ ResultsMFC ResultsMFC_removeUnsharedStimuli (ResultsMFC me, ResultsMFC thee) {
 			}
 			if (present) {
 				his numberOfTrials ++;
-				his result [his numberOfTrials]. stimulus = Melder_wcsdup_e (thy result [i]. stimulus); therror
-				his result [his numberOfTrials]. response = Melder_wcsdup_e (thy result [i]. response); therror
+				his result [his numberOfTrials]. stimulus = Melder_wcsdup (thy result [i]. stimulus);
+				his result [his numberOfTrials]. response = Melder_wcsdup (thy result [i]. response);
 			}
 		}
 		if (his numberOfTrials == 0)

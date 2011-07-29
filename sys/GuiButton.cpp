@@ -54,7 +54,12 @@ typedef struct structGuiButton {
 		iam (GuiButton);
 		struct structGuiButtonEvent event = { widget, 0 };
 		if (my activateCallback != NULL) {
-			my activateCallback (my activateBoss, & event);
+			try {
+				my activateCallback (my activateBoss, & event);
+			} catch (MelderError) {
+				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+				Melder_flushError (NULL);
+			}
 		}
 	}
 #elif win || mac
@@ -72,14 +77,24 @@ typedef struct structGuiButton {
 			iam_button;
 			if (my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };
-				my activateCallback (my activateBoss, & event);
+				try {
+					my activateCallback (my activateBoss, & event);
+				} catch (MelderError) {
+					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+					Melder_flushError (NULL);
+				}
 			}
 		}
 		bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
 			iam_button;
 			if (my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };
-				my activateCallback (my activateBoss, & event);
+				try {
+					my activateCallback (my activateBoss, & event);
+				} catch (MelderError) {
+					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+					Melder_flushError (NULL);
+				}
 				return true;
 			}
 			return false;
@@ -98,7 +113,12 @@ typedef struct structGuiButton {
 				event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
 				event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
 				event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
-				my activateCallback (my activateBoss, & event);
+				try {
+					my activateCallback (my activateBoss, & event);
+				} catch (MelderError) {
+					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+					Melder_flushError (NULL);
+				}
 			}
 		}
 		bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent) {
@@ -106,7 +126,12 @@ typedef struct structGuiButton {
 			if (my activateCallback != NULL) {
 				struct structGuiButtonEvent event = { widget, 0 };
 				// ignore modifier keys for Enter
-				my activateCallback (my activateBoss, & event);
+				try {
+					my activateCallback (my activateBoss, & event);
+				} catch (MelderError) {
+					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+					Melder_flushError (NULL);
+				}
 				return true;
 			}
 			return false;

@@ -106,7 +106,7 @@ void Regression_addParameter (I, const wchar_t *label, double minimum, double ma
 	iam (Regression);
 	try {
 		autoRegressionParameter thee = Thing_new (RegressionParameter);
-		thy label = Melder_wcsdup_e (label); therror
+		thy label = Melder_wcsdup (label);
 		thy minimum = minimum;
 		thy maximum = maximum;
 		thy value = value;

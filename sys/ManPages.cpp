@@ -94,8 +94,7 @@ static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link)
 		const wchar *from = p + 2;
 		while (*from != '@' && *from != '|' && *from != '\0') {
 			if (to >= max) {
-				Melder_error2 (L"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
-				return NULL;
+				Melder_throw ("(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
 			}
 			*to ++ = *from ++;
 		}
@@ -105,8 +104,7 @@ static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link)
 		const wchar *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
 			if (to >= max) {
-				Melder_error2 (L"(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
-				return NULL;
+				Melder_throw ("(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
 			}
 			*to ++ = *from ++;
 		}
@@ -368,7 +366,7 @@ static void grind (ManPages me) {
 					ndangle ++;
 				}
 			}
-			iferror Melder_flushError (NULL);
+			therror;
 		}
 	}
 	if (ndangle) {
@@ -426,7 +424,7 @@ static void grind (ManPages me) {
 					}
 				}
 			}
-			iferror Melder_flushError (NULL);
+			therror;
 		}
 	}
 
@@ -502,7 +500,7 @@ static struct stylesInfo {
 /* CODE5: */ { L"<code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", L"<br></code>" }
 };
 
-static int writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragraph paragraphs, MelderString *buffer) {
+static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragraph paragraphs, MelderString *buffer) {
 	bool inList = false, inItalic = false, inBold = false;
 	bool inSub = false, inCode = false, inSuper = false, ul = false, inSmall = false;
 	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
@@ -525,8 +523,6 @@ static int writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragrap
 			#ifdef macintoshxxx
 				if (type == kManPage_type_PICTURE) {
 					Graphics graphics = Graphics_create_pdffile (file, 75, 0.0, paragraph -> width, 0.0, paragraph -> height);
-					if (graphics == NULL)
-						return Melder_error3 (L"Cannot create PDF file ", MelderFile_messageName (file), L".");
 					Graphics_setFont (graphics, kGraphics_font_TIMES);
 					Graphics_setFontStyle (graphics, 0);
 					Graphics_setFontSize (graphics, 12);
@@ -711,10 +707,9 @@ static int writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragrap
 		MelderString_append2 (buffer, stylesInfo [paragraph -> type]. htmlOut, L"\n");
 	}
 	if (inList) { MelderString_append1 (buffer, ul ? L"</ul>\n" : L"</dl>\n"); inList = FALSE; }
-	return 1;
 }
 
-static const wchar_t *month [] =
+static const wchar *month [] =
 	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
 	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
@@ -727,7 +722,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 		L"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
 		L"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
 		page -> title, L"\n</b></font></table></table>\n");
-	writeParagraphsAsHtml (me, file, paragraphs, buffer);
+	writeParagraphsAsHtml (me, file, paragraphs, buffer); therror
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		long ilink, jlink, lastParagraph = 0;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
@@ -771,7 +766,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
-	writePageAsHtml (me, file, ipage, & buffer);
+	writePageAsHtml (me, file, ipage, & buffer); therror
 	MelderFile_writeText (file, buffer.string);
 }
 

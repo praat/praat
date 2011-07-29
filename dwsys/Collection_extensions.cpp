@@ -266,21 +266,23 @@ void OrderedOfString_sequentialNumbers (I, long n)
 	}
 }
 
-int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
+void OrderedOfString_changeStrings (OrderedOfString me, wchar_t *search, wchar_t *replace,
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp)
 {
-	iam (OrderedOfString);
 	regexp *compiled_search = NULL;
 	wchar_t *compileMsg;
 	wchar_t *r;
 
-	if (search == NULL || replace == NULL) return 0;
+	if (search == NULL)
+		Melder_throw ("Missing search string.");
+	if (replace == NULL)
+		Melder_throw ("Missing replace string.");
 
 	if (use_regexp)
 	{
 		compiled_search = CompileRE ((regularExp_CHAR *) search, &compileMsg, 0);
-		if (compiled_search == NULL) return Melder_error1 (compileMsg);
+		if (compiled_search == NULL) Melder_throw (compileMsg);
 	}
 	for (long i = 1; i <= my size; i++)
 	{
@@ -290,12 +292,10 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 		if (use_regexp) {
 			r = str_replace_regexp (ss -> string, compiled_search,
 				replace, maximumNumberOfReplaces, &nmatches_sub);
-			if (r == NULL) goto end;
 		}
 		else r = str_replace_literal (ss -> string, search, replace,
 			maximumNumberOfReplaces, &nmatches_sub);
 
-		if (r == NULL) goto end;
 		Melder_free (ss -> string);
 		ss -> string = r;
 		if (nmatches_sub > 0)
@@ -304,10 +304,7 @@ int OrderedOfString_changeStrings (I, wchar_t *search, wchar_t *replace,
 			(*nstringmatches)++;
 		}
 	}
-
-end:
 	if (use_regexp) free (compiled_search);
-	return ! Melder_hasError ();
 }
 
 

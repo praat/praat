@@ -19,17 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 /* Transition inherits from Data */
 #include "Matrix.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Transition_def.h"
 #define Transition__methods(klas) Data__methods(klas)
@@ -46,10 +38,6 @@ Transition Transition_power (Transition me, long power);
 
 Matrix Transition_to_Matrix (Transition me);
 Transition Matrix_to_Transition (Matrix me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Transition.h */
 #endif

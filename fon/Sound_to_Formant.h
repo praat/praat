@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "Formant.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Formant Sound_to_Formant_any (Sound me, double timeStep, int numberOfPoles, double maximumFrequency,
 	double halfdt_window, int which, double preemphasisFrequency, double safetyMargin);
@@ -45,9 +37,5 @@ Formant Sound_to_Formant_keepAll (Sound me, double timeStep, double maximumNumbe
 
 Formant Sound_to_Formant_willems (Sound me, double timeStep, double numberOfFormants,
 	double maximumFormantFrequency, double windowLength, double preemphasisFrequency);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Sound_to_Formant.h */

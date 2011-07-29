@@ -57,7 +57,7 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 		 * Copy labels and set name.
 		 */
 		for (long i = 1; i <= thy numberOfStates; i ++) {
-			thy stateLabels [i] = Melder_wcsdup_e (underlying -> columnLabels [i]); therror
+			thy stateLabels [i] = Melder_wcsdup (underlying -> columnLabels [i]);
 		}
 		Thing_setName (thee.peek(), underlying -> columnLabels [environment]); therror
 

@@ -25,9 +25,9 @@ Thing_declare1cpp (InfoEditor);
 struct structInfoEditor : public structTextEditor {
 	// overridden methods:
 		void v_destroy ();
+		bool v_scriptable () { return false; }
 		bool fileBased () { return false; }
 		void clear ();
-		bool v_scriptable () { return false; }
 };
 #define InfoEditor__methods(Klas) TextEditor__methods(Klas)
 Thing_declare2cpp (InfoEditor, TextEditor);

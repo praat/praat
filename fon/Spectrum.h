@@ -19,19 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/01
- */
-
 /* Complex spectrum. */
 /* If it comes from a sound (expressed in Pa), the values are expressed in Pa/Hz. */
 
 #include "Matrix.h"
 #include "Graphics.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Spectrum_def.h"
 #define Spectrum__methods(klas)  Matrix__methods(klas)
@@ -111,10 +103,6 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth);
 
 void Spectrum_passHannBand (Spectrum me, double fmin, double fmax, double smooth);
 void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax, double smooth);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Spectrum.h */
 #endif

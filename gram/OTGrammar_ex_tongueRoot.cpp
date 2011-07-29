@@ -17,13 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2007/07/23 constraint plasticity
- * pb 2007/08/12 wchar
- * pb 2011/03/29 C++
- */
-
 #include "OTGrammar.h"
 
 static const wchar *vowels [] = { L"i", L"e", L"\\sw", L"\\ic", L"\\ep", L"a" };
@@ -70,16 +63,16 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		int ncons = small_large == 1 ? 5 : 9, itab, v1, v2;
 		autoOTGrammar me = Thing_new (OTGrammar);
 		my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints = ncons);
-		my constraints [1]. name = Melder_wcsdup_e (L"*[rtr / hi]"); therror
-		my constraints [2]. name = Melder_wcsdup_e (L"*[atr / lo]"); therror
-		my constraints [3]. name = Melder_wcsdup_e (L"P\\s{ARSE}\n(rtr)"); therror
-		my constraints [4]. name = Melder_wcsdup_e (L"P\\s{ARSE}\n(atr)"); therror
-		my constraints [5]. name = Melder_wcsdup_e (L"*G\\s{ESTURE}\n(contour)"); therror
+		my constraints [1]. name = Melder_wcsdup (L"*[rtr / hi]");
+		my constraints [2]. name = Melder_wcsdup (L"*[atr / lo]");
+		my constraints [3]. name = Melder_wcsdup (L"P\\s{ARSE}\n(rtr)");
+		my constraints [4]. name = Melder_wcsdup (L"P\\s{ARSE}\n(atr)");
+		my constraints [5]. name = Melder_wcsdup (L"*G\\s{ESTURE}\n(contour)");
 		if (ncons == 9) {
-			my constraints [6]. name = Melder_wcsdup_e (L"*[rtr / mid]"); therror
-			my constraints [7]. name = Melder_wcsdup_e (L"*[rtr / lo]"); therror
-			my constraints [8]. name = Melder_wcsdup_e (L"*[atr / mid]"); therror
-			my constraints [9]. name = Melder_wcsdup_e (L"*[atr / hi]"); therror
+			my constraints [6]. name = Melder_wcsdup (L"*[rtr / mid]");
+			my constraints [7]. name = Melder_wcsdup (L"*[rtr / lo]");
+			my constraints [8]. name = Melder_wcsdup (L"*[atr / mid]");
+			my constraints [9]. name = Melder_wcsdup (L"*[atr / hi]");
 		}
 		if (equal_random_infant_Wolof == 1) {   /* equal? */
 			for (long icons = 1; icons <= ncons; icons ++)

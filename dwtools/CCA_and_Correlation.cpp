@@ -68,20 +68,19 @@ TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
 	} catch (MelderError) { Melder_throw ("TableOfReal not created from CCA & Correlation."); }
 }
 
-static int _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to)
+static void _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to)
 {
-	if (my y -> dimension + my x -> dimension != thy numberOfColumns) return Melder_error1
-		(L"The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object");
-	if (canonicalVariate_to < canonicalVariate_from) return Melder_error1
-		(L"The second value in the \"Canonical variate range\" must be equal or larger than the first.");
-	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients) return Melder_error3
-		(L"The \"Canonical variate range\" must be within the interval [1, ", Melder_integer (my numberOfCoefficients), L"].");
-	return 1;
+	if (my y -> dimension + my x -> dimension != thy numberOfColumns)
+		Melder_throw ("The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object");
+	if (canonicalVariate_to < canonicalVariate_from)
+		Melder_throw ("The second value in the \"Canonical variate range\" must be equal or larger than the first.");
+	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients)
+		Melder_throw ("The \"Canonical variate range\" must be within the interval [1, ", my numberOfCoefficients, "].");
 }
 
 double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to)
 {
-	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to)) return NUMundefined;
+	_CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to);
 
 	/* For the formulas see:
 		William W. Cooley & Paul R. Lohnes (1971), Multivariate data Analysis, John Wiley & Sons, pag 170-...
@@ -131,7 +130,7 @@ double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_
 
 double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to)
 {
-	if (! _CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to)) return NUMundefined;
+	_CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to);
 	
 	double redundancy = 0;
 	for (long icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++)

@@ -99,7 +99,7 @@ static structMelderDir homeDir = { { 0 } };
  *                       or:   C:\Documents and settings\Miep\MyProg
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
  */
-extern "C" structMelderDir praatDir;
+extern structMelderDir praatDir;
 structMelderDir praatDir = { { 0 } };
 /*
  * prefs5File: preferences file.
@@ -143,9 +143,12 @@ long praat_getIdOfSelected (void *voidklas, int inplace) {
 			place ++;
 		}
 	}
-	return inplace ?
-		Melder_error5 (L"No ", klas ? klas -> _className : L"object", L" #", Melder_integer (inplace), L" selected.") :
-		Melder_error3 (L"No ", klas ? klas -> _className : L"object", L" selected.");
+	if (inplace) {
+		Melder_throw ("No ", klas ? klas -> _className : L"object", " #", inplace, " selected.");
+	} else {
+		Melder_throw ("No ", klas ? klas -> _className : L"object", " selected.");
+	}
+	return 0;
 }
 
 wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
@@ -164,9 +167,9 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 		}
 	}
 	if (inplace) {
-		Melder_error5 (L"No ", klas ? klas -> _className : L"object", L" #", Melder_integer (inplace), L" selected.");
+		Melder_throw ("No ", klas ? klas -> _className : L"object", " #", inplace, " selected.");
 	} else {
-		Melder_error3 (L"No ", klas ? klas -> _className : L"object", L" selected.");
+		Melder_throw ("No ", klas ? klas -> _className : L"object", " selected.");
 	}
 	return 0;   // Failure.
 }
@@ -715,7 +718,7 @@ int praat_installEditor (Any editor, int IOBJECT) {
 		}
 	}
 	forget (editor);
-	return Melder_error3 (L"(praat_installEditor:) Cannot have more than ", Melder_integer (praat_MAXNUM_EDITORS), L" editors with one object.");
+	Melder_throw ("(praat_installEditor:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
 }
 
 int praat_installEditor2 (Any editor, int i1, int i2) {
@@ -734,7 +737,7 @@ int praat_installEditor2 (Any editor, int i1, int i2) {
 		Editor_setPublishCallback ((Editor) editor, cb_Editor_publish, NULL);
 	} else {
 		forget (editor);
-		return Melder_error3 (L"(praat_installEditor2:) Cannot have more than ", Melder_integer (praat_MAXNUM_EDITORS), L" editors with one object.");
+		Melder_throw ("(praat_installEditor2:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
 	}
 	return 1;
 }
@@ -758,7 +761,7 @@ int praat_installEditor3 (Any editor, int i1, int i2, int i3) {
 		Editor_setPublishCallback ((Editor) editor, cb_Editor_publish, NULL);
 	} else {
 		forget (editor);
-		return Melder_error3 (L"(praat_installEditor3:) Cannot have more than ", Melder_integer (praat_MAXNUM_EDITORS), L" editors with one object.");
+		Melder_throw ("(praat_installEditor3:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
 	}
 	return 1;
 }
@@ -782,7 +785,7 @@ int praat_installEditorN (Any editor, Ordered objects) {
 				}
 				if (ieditor >= praat_MAXNUM_EDITORS) {
 					forget (editor);
-					return Melder_error3 (L"Cannot view the same object in more than ", Melder_integer (praat_MAXNUM_EDITORS), L" windows.");
+					Melder_throw ("Cannot view the same object in more than ", praat_MAXNUM_EDITORS, " windows.");
 				}
 				break;
 			}
@@ -819,7 +822,7 @@ void praat_dataChanged (Any object) {
 	/*
 	 * This function can be called at error time.
 	 */
-	wchar_t *saveError = NULL;
+	wchar *saveError = NULL;
 	bool duringError = Melder_hasError ();
 	if (duringError) {
 		saveError = Melder_wcsdup_f (Melder_getError ());
@@ -832,7 +835,7 @@ void praat_dataChanged (Any object) {
 				Editor_dataChanged ((Editor) EDITOR [ieditor], (Data) object);
 	}
 	if (duringError) {
-		Melder_error1 (saveError);   // BUG: this appends an empty newline to the original error message
+		Melder_error_ (saveError);   // BUG: this appends an empty newline to the original error message
 		Melder_free (saveError);
 	}
 }

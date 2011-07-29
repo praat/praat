@@ -96,7 +96,7 @@ static int menu_cb_getShimmer_local (EDITOR_ARGS) {
 
 static int menu_cb_getShimmer_local_dB (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
-	if (my startSelection == my endSelection) return Melder_error1 (L"To measure shimmer, make a selection first.");
+	if (my startSelection == my endSelection) Melder_throw ("To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_local_dB ((PointProcess) my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
 	return 1;
 }

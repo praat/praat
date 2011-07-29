@@ -17,20 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
-#ifndef _Distributions_h_
-	#include "Distributions.h"
-#endif
-#ifndef _Transition_h_
-	#include "Transition.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "Distributions.h"
+#include "Transition.h"
 
 Transition Distributions_to_Transition (Distributions underlying, Distributions surface,
 	long environment, Transition adjacency, int greedy);
@@ -38,9 +26,5 @@ Transition Distributions_to_Transition (Distributions underlying, Distributions 
 Distributions Distributions_Transition_map (Distributions me, Transition map);
 
 Distributions Transition_to_Distributions_conflate (Transition me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Distributions_and_Transition.h */

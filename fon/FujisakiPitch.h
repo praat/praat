@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Pitch.h"
 #include "Collection.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "FujisakiPitch_def.h"
 #define FujisakiCommand__methods(klas) Function__methods(klas)
@@ -44,10 +36,6 @@ FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 
 FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolution,
 	FujisakiPitch *intermediate1, FujisakiPitch *intermediate2, FujisakiPitch *intermediate3);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file FujisakiPitch.h */
 #endif

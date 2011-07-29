@@ -1076,8 +1076,8 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale, int co
 TableOfReal SSCP_to_TableOfReal (SSCP me)
 {
 	try {
-		autoTableOfReal thee = (TableOfReal) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classTableOfReal);
+		autoTableOfReal thee = Thing_new (TableOfReal);
+		((TableOfReal_Table) thy methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not copied."); }
 }
@@ -1185,14 +1185,14 @@ Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints)
 {
 	try {
 		Melder_assert (numberOfConstraints >= 0);
-		autoCovariance thee = (Covariance) Data_copy (me);
+		autoCovariance thee = Thing_new (Covariance);
+		((Covariance_Table) thy methods) -> copy (me, thee.peek());
 
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			for (long j = i; j <= my numberOfColumns; j++)
 				thy data[j][i] = thy data[i][j] /= (my numberOfObservations - numberOfConstraints);
 		}
-		Thing_overrideClass (thee.peek(), classCovariance);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, "; Covariance not created."); }
 }
@@ -1200,13 +1200,13 @@ Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints)
 SSCP Covariance_to_SSCP (Covariance me)
 {
 	try {
-		autoSSCP thee = (SSCP) Data_copy (me);
+		autoSSCP thee = Thing_new (SSCP);
+		((SSCP_Table) thy methods) -> copy (me, thee.peek());
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			for (long j = i; j <= my numberOfColumns; j++)
 				thy data[j][i] = thy data[i][j] *= (my numberOfObservations - 1);
 		}
-		Thing_overrideClass (thee.peek(), classSSCP);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": SSCP not created."); }
 }
@@ -1215,13 +1215,13 @@ Correlation SSCP_to_Correlation (I)
 {
 	iam (SSCP);
 	try {
-		autoCorrelation thee = (Correlation) Data_copy (me); long i, j;
-		for (i = 1; i <= my numberOfRows; i++)
+		autoCorrelation thee = Thing_new (Correlation);
+		((Correlation_Table) thy methods) -> copy (me, thee.peek());
+		for (long i = 1; i <= my numberOfRows; i++)
 		{
-			for (j = i; j <= my numberOfColumns; j++)
+			for (long j = i; j <= my numberOfColumns; j++)
 				thy data[j][i] = thy data[i][j] /= sqrt (my data[i][i] * my data[j][j]);
 		}
-		Thing_overrideClass (thee.peek(), classCorrelation);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": Correlation not created."); }
 }
@@ -1545,32 +1545,18 @@ void Covariance_difference (Covariance me, Covariance thee, double *prob, double
 	*prob = NUMchiSquareQ (*chisq, *ndf);
 }
 
-static int checkOneIndex (I, long index)
+static void checkOneIndex (TableOfReal me, long index)
 {
-	iam (TableOfReal);
 	if (index < 1 || index > my numberOfColumns)
-	{
-		return Melder_error3 (L"Index must be in interval [1, ",
-			Melder_integer (my numberOfColumns), L"].");
-	}
-	return 1;
+		Melder_throw ("Index must be in interval [1, ", my numberOfColumns, "].");
 }
 
-static int checkTwoIndices (I, long index1, long index2)
+static void checkTwoIndices (TableOfReal me, long index1, long index2)
 {
-	iam (TableOfReal);
-
-	if (index1 < 1 || index1 > my numberOfColumns || index2 < 1 ||
-		index2 > my numberOfColumns)
-	{
-		return Melder_error3 (L"Index must be in interval [1, ",
-			Melder_integer (my numberOfColumns), L"].");
-	}
+	if (index1 < 1 || index1 > my numberOfColumns || index2 < 1 || index2 > my numberOfColumns)
+		Melder_throw ("Index must be in interval [1, ", my numberOfColumns, "].");
 	if (index1 == index2)
-	{
-		return Melder_error1 (L"Indices must be different.");
-	}
-	return 1;
+		Melder_throw ("Indices must be different.");
 }
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
@@ -1580,7 +1566,7 @@ void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,
 	*probability = *t = NUMundefined;
 	*ndf = my numberOfObservations - 1;
 
-	if (! checkOneIndex (me, index)) return;
+	checkOneIndex (me, index);
 
 	if ((var = my data[index][index]) == 0) return;
 
@@ -1598,7 +1584,7 @@ void Covariance_getSignificanceOfMeansDifference (Covariance me,
 	*probability = *t = NUMundefined;
 	*ndf = 2 * (n - 1);
 
-	if (! checkTwoIndices (me, index1, index2)) return;
+	checkTwoIndices (me, index1, index2);
 
 	var1 = my data[index1][index1];
 	var2 = my data[index2][index2];
@@ -1647,7 +1633,7 @@ void Covariance_getSignificanceOfOneVariance (Covariance me, long index,
 	*probability = *chisq = NUMundefined;
 	*ndf = my numberOfObservations - 1;
 
-	if (checkOneIndex (me, index)) return;
+	checkOneIndex (me, index);
 
 	if ((var = my data[index][index]) == 0) return;
 
@@ -1667,7 +1653,7 @@ void Covariance_getSignificanceOfVariancesRatio (Covariance me,
 	double var1, var2, ratio2;
 
 	*ndf = n - 1; *probability = *f = NUMundefined;
-	if (! checkTwoIndices (me, index1, index2)) return;
+	checkTwoIndices (me, index1, index2);
 
 	var1 = my data[index1][index1];
 	var2 = my data[index2][index2];

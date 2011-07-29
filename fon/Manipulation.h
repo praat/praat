@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Sound.h"
 #include "PointProcess.h"
 #include "PitchTier.h"
@@ -36,10 +32,6 @@
 #include "Formant.h"
 #include "Pitch.h"
 #include "Image.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Manipulation_def.h"
 #define Manipulation__methods(klas) Function__methods(klas)
@@ -89,10 +81,6 @@ int Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile fs);
 
 Sound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 	PitchTier pitch, DurationTier duration, double maxT);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Manipulation.h */
 #endif

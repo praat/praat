@@ -1206,7 +1206,7 @@ Polynomial Roots_to_Polynomial (Roots me)
 	try {
 		(void) me;
 		throw MelderError();
-	} catch (MelderError) { Melder_thrown ("Not implemented yet"); }
+	} catch (MelderError) { Melder_throw ("Not implemented yet"); }
 }
 
 void Roots_setRoot (Roots me, long index, double re, double im)
@@ -1253,18 +1253,9 @@ long Roots_getNumberOfRoots (Roots me)
 
 dcomplex Roots_getRoot (Roots me, long index)
 {
-	dcomplex root;
-
-	if (index >= 1 && index <= my max)
-	{
-		root = my v[index];
-	}
-	else
-	{
-		(void) Melder_error1 (L"Roots_getRoot: root index out of range.");
-		root.re = root.im = NUMundefined;
-	}
-	return root;
+	if (index < 1 || index > my max)
+		Melder_throw ("Root index out of range.");
+	return my v [index];
 }
 
 /* Can be speeded up by doing a FFT */

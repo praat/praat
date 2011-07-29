@@ -89,8 +89,8 @@ Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double
 
 Matrix Intensity_to_Matrix (Intensity me) {
 	try {
-		autoMatrix thee = (Matrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMatrix);
+		autoMatrix thee = Thing_new (Matrix);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Intensity.");
@@ -99,8 +99,8 @@ Matrix Intensity_to_Matrix (Intensity me) {
 
 Intensity Matrix_to_Intensity (Matrix me) {
 	try {
-		autoIntensity thee = (Intensity) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classIntensity);
+		autoIntensity thee = Thing_new (Intensity);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");

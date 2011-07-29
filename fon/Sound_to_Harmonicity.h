@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "Harmonicity.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Harmonicity Sound_to_Harmonicity_ac (Sound me, double dt, double minimumPitch,
 	double silenceThreshold, double periodsPerWindow);
@@ -39,9 +31,5 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 	double fmax,   /* 4500 Hz */
 	double bandwidth,  /* 1000 Hz */
 	double step);   /* 80 Hz */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Sound_to_Harmonicity.h */

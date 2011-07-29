@@ -831,7 +831,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms);
 	Spectrum Analysis, IEEE Press, 1978, 252-255.
 */
 
-int NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
+void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 	double ref, double factor, double floor);
 /*
 	Transforms the values in the matrix m[rb..re][cb..ce] to dB's

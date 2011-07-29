@@ -491,7 +491,6 @@ void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, 
 	Graphics_unsetInner (g);
 }
 
-extern int sginap (long);
 void Matrix_movie (I, Graphics g) {
 	iam (Matrix);
 	autoNUMvector <double> column (1, my ny);
@@ -505,9 +504,6 @@ void Matrix_movie (I, Graphics g) {
 		Graphics_clearWs (g);
 		Graphics_function (g, column.peek(), 1, my ny, my ymin, my ymax);
 		Graphics_flushWs (g);
-		#ifdef sgi
-			sginap (2);
-		#endif
 	}
 }
 
@@ -545,14 +541,13 @@ Matrix Matrix_readAP (MelderFile file) {
 	}
 }
 
-Matrix Matrix_appendRows (I, thou) {
-	iam (Matrix); thouart (Matrix);
+Matrix Matrix_appendRows (Matrix me, Matrix thee, Matrix_Table klas) {
 	try {
-		autoMatrix him = Matrix_create (my xmin < thy xmin ? my xmin : thy xmin,
+		autoMatrix him = (Matrix) _Thing_new (klas);
+		Matrix_init (him.peek(), my xmin < thy xmin ? my xmin : thy xmin,
 			my xmax > thy xmax ? my xmax : thy xmax,
 			my nx > thy nx ? my nx : thy nx, my dx, my x1 < thy x1 ? my x1 : thy x1,
 			my ymin, my ymax + (thy ymax - thy ymin), my ny + thy ny, my dy, my y1);
-		if (our _size == classMatrix -> _size) Thing_overrideClass (him.peek(), my methods);
 		for (long irow = 1; irow <= my ny; irow ++)
 			for (long icol = 1; icol <= my nx; icol ++)
 				his z [irow] [icol] = my z [irow] [icol];

@@ -17,25 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/08
- */
-
 #include "Sound.h"
 #include "Cochleagram.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double windowLength, double forwardMaskingTime);
 
 Cochleagram Sound_to_Cochleagram_edb
 	(Sound me, double dtime, double dfreq, int hasSynapse, double replenishmentRate,
 	 double lossRate, double returnRate, double reprocessingRate);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Sound_to_Cochleagram.h */

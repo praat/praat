@@ -441,7 +441,7 @@ void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce, long ncol
 */
 
 
-int NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long ncol, long *pivot, double tau[]);
+void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long ncol, long *pivot, double tau[]);
 /*
 	Computes a QR factorization with column pivoting of a
 	real m-by-n matrix A: A*P = Q*R.
@@ -713,7 +713,7 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax );
 */
 
 
-int NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b, long p,
+void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b, long p,
 	int product, long k, long l, double tola, double tolb, double *alpha, double *beta,
 	double **u, double **v, double **q, long *ncycle);
 /*
@@ -891,7 +891,7 @@ int NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b, long p,
 */
 
 
-int NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b, long p,
+void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b, long p,
 	double tola, double tolb, long *kk, long *ll, double **u, double **v, double **q);
 /*
 	Computes orthogonal matrices U, V and Q such that
@@ -966,7 +966,7 @@ int NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b, l
 */
 
 
-int NUMgsvdcmp (double **a, long m, long n, double **b, long p, int product, long *k, long *l,
+void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int product, long *k, long *l,
 	double *alpha, double *beta, double **u, double **v, double **q, int invertR);
 /*
 	Computes the generalized singular value decomposition (gsvd)

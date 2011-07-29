@@ -371,7 +371,7 @@ double NUMcombinations (long n, long k) {
 		return yl * fir + yr * fil - fil * fir * (0.5 * (dyr - dyl) + (fil - 0.5) * (dyl + dyr - 2 * (yr - yl))); \
 	}
 
-#if defined (sgi) || defined (sun) || defined (HPUX) || defined (__POWERPC__)
+#if defined (__POWERPC__)
 double NUM_interpolate_sinc (double y [], long nx, double x, long maxDepth) {
 	long ix, midleft = floor (x), midright = midleft + 1, left, right;
 	double result = 0.0, a, halfsina, aa, daa, cosaa, sinaa, cosdaa, sindaa;

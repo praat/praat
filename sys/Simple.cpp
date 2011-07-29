@@ -17,14 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2007/08/12 wchar_t
- * pb 2007/10/01 can write as encoding
- * pb 2008/03/19 removed SimpleFloat
- * pb 2011/05/15 C++
- */
-
 #include "Simple.h"
 
 #include "oo_DESTROY.h"
@@ -66,10 +58,9 @@ class_methods (SimpleInt, Data) {
 }
 
 SimpleInt SimpleInt_create (int number) {
-	SimpleInt me = Thing_new (SimpleInt);
-	if (! me) return NULL;
+	autoSimpleInt me = Thing_new (SimpleInt);
 	my number = number;
-	return me;
+	return me.transfer();
 }
 
 class_methods (SimpleShort, Data) {
@@ -88,10 +79,9 @@ class_methods (SimpleShort, Data) {
 }
 
 SimpleShort SimpleShort_create (short number) {
-	SimpleShort me = Thing_new (SimpleShort);
-	if (! me) return NULL;
+	autoSimpleShort me = Thing_new (SimpleShort);
 	my number = number;
-	return me;
+	return me.transfer();
 }
 
 class_methods (SimpleLong, Data) {
@@ -110,10 +100,9 @@ class_methods (SimpleLong, Data) {
 }
 
 SimpleLong SimpleLong_create (long number) {
-	SimpleLong me = Thing_new (SimpleLong);
-	if (! me) return NULL;
+	autoSimpleLong me = Thing_new (SimpleLong);
 	my number = number;
-	return me;
+	return me.transfer();
 }
 
 class_methods (SimpleDouble, Data) {
@@ -132,10 +121,9 @@ class_methods (SimpleDouble, Data) {
 }
 
 SimpleDouble SimpleDouble_create (double number) {
-	SimpleDouble me = Thing_new (SimpleDouble);
-	if (! me) return NULL;
+	autoSimpleDouble me = Thing_new (SimpleDouble);
 	my number = number;
-	return me;
+	return me.transfer();
 }
 
 class_methods (SimpleString, Data) {
@@ -154,10 +142,9 @@ class_methods (SimpleString, Data) {
 }
 
 SimpleString SimpleString_create (const wchar_t *string) {
-	SimpleString me = Thing_new (SimpleString);
-	if (! me || ! (my string = Melder_wcsdup_e (string)))
-		{ forget (me); return NULL; }
-	return me;
+	autoSimpleString me = Thing_new (SimpleString);
+	my string = Melder_wcsdup (string);
+	return me.transfer();
 }
 
 /* End of file Simple.cpp */

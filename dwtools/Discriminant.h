@@ -43,7 +43,7 @@ Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues,
 
 long Discriminant_groupLabelToIndex (Discriminant me, const wchar_t *label);
 
-int Discriminant_setAprioriProbability (Discriminant me, long group, double p);
+void Discriminant_setAprioriProbability (Discriminant me, long group, double p);
 
 long Discriminant_getNumberOfGroups (Discriminant me);
 

@@ -41,10 +41,6 @@
 
 #include "FeatureWeights.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /////////////////////////////////////////////////////
 // Prototypes                                      //
 /////////////////////////////////////////////////////
@@ -59,6 +55,4 @@ Categories Pattern_to_Categories_cluster
     long m                  // reseed maximum
 );
 
-#ifdef __cplusplus
-	}
-#endif
+/* End of file Pattern_to_Categories_cluster.h */

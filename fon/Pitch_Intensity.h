@@ -17,23 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Pitch.h"
 #include "Intensity.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void Pitch_Intensity_draw (Pitch pitch, Intensity intensity, Graphics g,
 	double f1, double f2, double s1, double s2, int garnish, int connect);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Pitch_Intensity.h */

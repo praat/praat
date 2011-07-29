@@ -1050,12 +1050,6 @@ NORMAL (L"The size of the recording buffer determines how many seconds of sound 
 NORMAL (L"If you recorded a very long sound, it is probable that you cannot copy it to the list of objects. "
 	"In such a case, you can still write the sound to disk with one of the #Save commands in the #File menu. "
 	"You can then open such a long sound file in Praat with @@Open long sound file...@ from the Open menu.")
-#ifdef sgi
-ENTRY (L"Recording sounds on SGI")
-NORMAL (L"On SGI (Indigo, Indy, O2), you can record from microphone, line input, or digital input. "
-	"Changes in most of the audio settings (sampling frequency, gain, input device) are reflected immediately in your system's Audio Control Panel; "
-	"you can also change the settings from the Audio Control Panel: the SoundRecorder window will follow suit.")
-#endif
 #ifdef macintosh
 ENTRY (L"Recording sounds on MacOS X")
 NORMAL (L"You can record from the combined microphone / line input. On some computers, these are separate.")

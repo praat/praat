@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "Spectrogram.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Sound_and_Spectrogram_enums.h"
 
@@ -37,10 +29,6 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 	double maximumTimeOversampling, double maximumFreqOversampling);
 
 Sound Spectrogram_to_Sound (Spectrogram me, double fsamp);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of Sound_and_Spectrogram.h */
 #endif

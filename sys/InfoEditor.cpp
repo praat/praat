@@ -46,8 +46,8 @@ class_methods (InfoEditor, TextEditor) {
 	class_methods_end
 }
 
-extern "C" void gui_information (wchar *message);   // BUG
-void gui_information (wchar *message) {
+void gui_information (const wchar *message);   // BUG
+void gui_information (const wchar *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = Thing_new (InfoEditor);
 		theInfoEditor -> structTextEditor :: init ((GuiObject) Melder_topShell, L"");

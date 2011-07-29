@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/05
- */
-
 #include "PitchTier.h"
 #include "Sound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 	 double adaptFactor, double adaptTime, long interpolationDepth,
@@ -41,9 +33,5 @@ void PitchTier_hum (PitchTier me);
 
 Sound PitchTier_to_Sound_sine (PitchTier me, double tmin, double tmax, double samplingFrequency);
 void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file PitchTier_to_Sound.h */

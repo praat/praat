@@ -20,10 +20,6 @@
  */
 
 /*
- * pb 2011/04/25
- */
-
-/*
 	Parametrized curve (x (t), y (t)):
 		two functions (x and y) of one variable (the parameter t).
 	Sampled parametrized curve (x [i], y [j]):
@@ -34,11 +30,12 @@
 #include "Sound.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (ParamCurve);
+struct structParamCurve : public structFunction {
+	Sound x, y;
+};
+#define ParamCurve__methods(klas) Function__methods(klas)
+Thing_declare2cpp (ParamCurve, Function);
 
 void ParamCurve_init (I, Any x, Any y);
 
@@ -80,17 +77,6 @@ void ParamCurve_swapXY (I);
 		x == old y;
 		y == old x;
 */
-
-#ifdef __cplusplus
-	}
-
-	struct structParamCurve : public structFunction {
-		Sound x, y;
-	};
-	#define ParamCurve__methods(klas) Function__methods(klas)
-	Thing_declare2cpp (ParamCurve, Function);
-
-#endif
 
 /* End of file ParamCurve.h */
 #endif

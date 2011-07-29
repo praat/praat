@@ -59,9 +59,9 @@ static int menu_cb_removePoints (EDITOR_ARGS) {
 static int menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
 	if (NUMdefined (our minimumLegalValue) && my ycursor < our minimumLegalValue)
-		return Melder_error4 (L"Cannot add a point below ", Melder_double (our minimumLegalValue), our rightTickUnits, L".");
+		Melder_throw ("Cannot add a point below ", our minimumLegalValue, our rightTickUnits, ".");
 	if (NUMdefined (our maximumLegalValue) && my ycursor > our maximumLegalValue)
-		return Melder_error4 (L"Cannot add a point above ", Melder_double (our maximumLegalValue), our rightTickUnits, L".");
+		Melder_throw ("Cannot add a point above ", our maximumLegalValue, our rightTickUnits, ".");
 	Editor_save (me, L"Add point");
 	RealTier_addPoint (my data, 0.5 * (my startSelection + my endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
@@ -81,9 +81,9 @@ static int menu_cb_addPointAt (EDITOR_ARGS) {
 	EDITOR_DO
 		double desiredValue = GET_REAL (our quantityKey);
 		if (NUMdefined (our minimumLegalValue) && desiredValue < our minimumLegalValue)
-			return Melder_error4 (L"Cannot add a point below ", Melder_double (our minimumLegalValue), our rightTickUnits, L".");
+			Melder_throw ("Cannot add a point below ", our minimumLegalValue, our rightTickUnits, ".");
 		if (NUMdefined (our maximumLegalValue) && desiredValue > our maximumLegalValue)
-			return Melder_error4 (L"Cannot add a point above ", Melder_double (our maximumLegalValue), our rightTickUnits, L".");
+			Melder_throw ("Cannot add a point above ", our maximumLegalValue, our rightTickUnits, ".");
 		Editor_save (me, L"Add point");
 		RealTier_addPoint (my data, GET_REAL (L"Time"), desiredValue);
 		RealTierEditor_updateScaling (me);

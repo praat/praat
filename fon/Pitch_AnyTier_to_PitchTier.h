@@ -17,23 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Pitch.h"
 #include "AnyTier.h"
 #include "PitchTier.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 PitchTier Pitch_AnyTier_to_PitchTier (Pitch pitch, AnyTier tier, int checkMethod);
 PitchTier PitchTier_AnyTier_to_PitchTier (PitchTier pitch, AnyTier tier);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Pitch_AnyTier_to_PitchTier.h */

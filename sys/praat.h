@@ -450,10 +450,10 @@ int praat_installEditor (Any editor, int iobject);
       Return value: normally 1, but 0 if 'editor' is NULL.
    A typical calling sequence is:
 	DIRECT (Spectrogram_edit)
-		if (praat.batch) return Melder_error1 (L"Cannot edit a Spectrogram from batch.");
+		if (praat.batch) Melder_throw ("Cannot edit a Spectrogram from batch.");
 		else WHERE (SELECTED)
-			if (! praat_installEditor
-				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT)) return 0;
+			praat_installEditor
+				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
 	END
 */
 int praat_installEditor2 (Any editor, int iobject1, int iobject2);

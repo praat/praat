@@ -17,21 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Ltas.h"
 #include "SpectrumTier.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Ltas_to_SpectrumTier.h */

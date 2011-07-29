@@ -17,17 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/11
- */
-
 #include "TextGrid.h"
 #include "Sound.h"
 #include "Pitch.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
 	int showBoundaries, int useTextStyles, int garnish);
@@ -43,9 +35,5 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
 
 void TextGrid_Sound_readFromBdfFile (MelderFile file, TextGrid *textGrid, Sound *sound);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file TextGrid_Sound.h */

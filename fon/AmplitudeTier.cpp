@@ -54,9 +54,7 @@ void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 
 AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
 	try {
-		autoAmplitudeTier thee = (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure);
-		Thing_overrideClass (thee.peek(), classAmplitudeTier);
-		return thee.transfer();
+		return (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure, (RealTier_Table) classAmplitudeTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to AmplitudeTier.");
 	}
@@ -64,8 +62,8 @@ AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPres
 
 AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 	try {
-		autoAmplitudeTier thee = (AmplitudeTier) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classAmplitudeTier);
+		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		for (long i = 1; i <= thy points -> size; i ++) {
 			RealPoint point = (RealPoint) thy points -> item [i];
 			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
@@ -78,9 +76,9 @@ AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 
 IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold_dB) {
 	try {
-		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   /* Often zero! */
-		autoIntensityTier thee = (IntensityTier) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classIntensityTier);
+		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   // often zero!
+		autoIntensityTier thee = Thing_new (IntensityTier);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		for (long i = 1; i <= thy points -> size; i ++) {
 			RealPoint point = (RealPoint) thy points -> item [i];
 			double absoluteValue = fabs (point -> value);

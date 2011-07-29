@@ -19,17 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Matrix.h"
 #include "Table.h"
 #include "Interpreter_decl.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "Formant_def.h"
 #define Formant__methods(klas) Sampled__methods(klas)
@@ -107,10 +99,6 @@ void Formant_list (Formant me, bool includeFrameNumbers,
 	bool includeIntensity, int intensityDecimals,
 	bool includeNumberOfFormants, int frequencyDecimals,
 	bool includeBandwidths);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Formant.h */
 #endif

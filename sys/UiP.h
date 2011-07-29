@@ -18,26 +18,14 @@
  */
 
 /*
- * pb 2011/03/02
- */
-
-/*
- * Private stuff for communication between Ui.c and UiFile.c.
+ * Private stuff for communication between Ui.c and UiFile.cpp.
  */
 
 #include "Ui.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-extern int (*theAllowExecutionHookHint) (void *closure);
+extern bool (*theAllowExecutionHookHint) (void *closure);
 extern void *theAllowExecutionClosureHint;
 typedef struct structUiFileSelector *UiFileSelector;
 UiFileSelector UiFileSelector_create (GuiObject parent, const char *label, int direction, const char *defaultValue);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file UiP.h */

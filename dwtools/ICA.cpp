@@ -192,12 +192,12 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 		autoNUMmatrix<double> w (1, dimension, 1, dimension);
 		autoNUMmatrix<double> vnew (1, dimension, 1, dimension);
 		autoNUMmatrix<double> cc (1, dimension, 1, dimension);
-		
+
 		for (long i = 1; i<= dimension; i++) { w[i][i] = 1; }
 
 		MelderInfo_open ();
 		double dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), NULL, 0, 0);
-		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new), 
+		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new),
 			L" (= diagonality measurement)");
 
 		double dm_old, theta = 1 ;
@@ -266,8 +266,8 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 			MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new), L" (= diagonality measurement)");
 		} while (fabs((dm_old - dm_new) / dm_new) > delta && iter < maxNumberOfIterations);
 		MelderInfo_close ();
-	} catch (MelderError) { 
-		MelderInfo_close (); 
+	} catch (MelderError) {
+		MelderInfo_close ();
 		Melder_throw (me, " & ", thee, ": no joint diagonalization (ffdiag)."); }
 }
 
@@ -424,8 +424,8 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		L" iterations.");
 		MelderInfo_close ();
 	} catch (MelderError) {
-		MelderInfo_close (); 
-		Melder_throw (me, " & ", thee, ": no joint diagonalization (qdiag)."); 
+		MelderInfo_close ();
+		Melder_throw (me, " & ", thee, ": no joint diagonalization (qdiag).");
 	}
 }
 
@@ -661,19 +661,22 @@ Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee)
 MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double tol, int method)
 {
 	try {
-		autoCrossCorrelationTables ccs = Sound_to_CrossCorrelationTables (me, startTime, endTime, lagTime, ncovars); 
+		autoCrossCorrelationTables ccs = Sound_to_CrossCorrelationTables (me, startTime, endTime, lagTime, ncovars);
 		autoMixingMatrix thee = MixingMatrix_create (my ny, my ny);
 		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), ccs.peek(), maxNumberOfIterations, tol, method);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no MixingMatrix created."); }
 }
 
+#undef your
+#define your ((MixingMatrix_Table) thy methods) ->
+
 MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me)
 {
 	try {
 		if (my numberOfColumns != my numberOfRows) Melder_throw ("Number of rows and columns must be equal.");
-		autoMixingMatrix thee = (MixingMatrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMixingMatrix);
+		autoMixingMatrix thee = Thing_new (MixingMatrix);
+		your copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to MixingMatrix."); }
 }

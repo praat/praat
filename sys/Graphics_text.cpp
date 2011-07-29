@@ -1096,24 +1096,26 @@ static wchar_t *charCodes;
 static char *charCodes8;
 static MelderUtf16 *charCodes16;
 static int initBuffer (const wchar_t *txt) {
-	long sizeNeeded = wcslen (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
-	if (sizeNeeded > bufferSize) {
-		sizeNeeded += sizeNeeded / 2 + 100;
-		Melder_free (widechar);
-		Melder_free (charCodes);
-		Melder_free (charCodes8);
-		Melder_free (charCodes16);
-		if (! (widechar = Melder_calloc_e (_Graphics_widechar, sizeNeeded)))
-			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
-		if (! (charCodes = Melder_calloc_e (wchar_t, sizeNeeded)))
-			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
-		if (! (charCodes8 = Melder_calloc_e (char, sizeNeeded)))
-			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
-		if (! (charCodes16 = Melder_calloc_e (MelderUtf16, sizeNeeded)))
-			{ bufferSize = 0; Melder_flushError (NULL); return 0; }
-		bufferSize = sizeNeeded;
+	try {
+		long sizeNeeded = wcslen (txt) + 1;   /* It is true that some characters are split into two, but all of these are backslash sequences. */
+		if (sizeNeeded > bufferSize) {
+			sizeNeeded += sizeNeeded / 2 + 100;
+			Melder_free (widechar);
+			Melder_free (charCodes);
+			Melder_free (charCodes8);
+			Melder_free (charCodes16);
+			widechar = Melder_calloc (_Graphics_widechar, sizeNeeded);
+			charCodes = Melder_calloc (wchar_t, sizeNeeded);
+			charCodes8 = Melder_calloc (char, sizeNeeded);
+			charCodes16 = Melder_calloc (MelderUtf16, sizeNeeded);
+			bufferSize = sizeNeeded;
+		}
+		return 1;
+	} catch (MelderError) {
+		bufferSize = 0;
+		Melder_flushError (NULL);
+		return 0;
 	}
-	return 1;
 }
 
 static int numberOfLinks = 0;

@@ -19,16 +19,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/10
- */
-
 #include "WordList.h"
 #include "Collection.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 #include "SpellingChecker_def.h"
 #define SpellingChecker__methods(klas) Data__methods(klas)
@@ -44,10 +36,6 @@ bool SpellingChecker_isWordAllowed (SpellingChecker me, const wchar *word);
 wchar * SpellingChecker_nextNotAllowedWord (SpellingChecker me, const wchar *sentence, long *start);
 
 void SpellingChecker_addNewWord (SpellingChecker me, const wchar *word);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file SpellingChecker.h */
 #endif

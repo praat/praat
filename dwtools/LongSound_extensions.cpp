@@ -97,7 +97,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 
 		autoMelderFile f  = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB",
 		Melder_winAudioFileExtension (audioFileType));
-		MelderFile_writeAudioFileHeader16_e (file, audioFileType, my sampleRate, nx, nchannels);
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, my sampleRate, nx, nchannels);
 
 		for (long i = 1; i <= numberOfReads; i++)
 		{
@@ -258,7 +258,7 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		// Update header
 
 		MelderFile_rewind (file);
-		MelderFile_writeAudioFileHeader16_e (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
+		MelderFile_writeAudioFileHeader16 (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
 		f.close(file);
 		return;
 	} catch (MelderError) {

@@ -152,27 +152,24 @@ static int menu_cb_showBandwidths (EDITOR_ARGS) {
 	return 1;
 }
 
-static int selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
+static void selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
 	FormantGrid grid = (FormantGrid) my data;
 	long numberOfFormants = grid -> formants -> size;
-	if (iformant > numberOfFormants) {
-		return Melder_error5 (L"Cannot select formant ", Melder_integer (iformant),
-			L", because the FormantGrid has only ", Melder_integer (numberOfFormants), L" formants.");
-	}
+	if (iformant > numberOfFormants)
+		Melder_throw ("Cannot select formant ", iformant, ", because the FormantGrid has only ", numberOfFormants, " formants.");
 	my selectedFormant = iformant;
 	FunctionEditor_redraw (me);
-	return 1;
 }
 
-static int menu_cb_selectFirst (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 1); }
-static int menu_cb_selectSecond (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 2); }
-static int menu_cb_selectThird (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 3); }
-static int menu_cb_selectFourth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 4); }
-static int menu_cb_selectFifth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 5); }
-static int menu_cb_selectSixth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 6); }
-static int menu_cb_selectSeventh (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 7); }
-static int menu_cb_selectEighth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 8); }
-static int menu_cb_selectNinth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); return selectFormantOrBandwidth (me, 9); }
+static int menu_cb_selectFirst (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 1); return 1; }
+static int menu_cb_selectSecond (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 2); return 1; }
+static int menu_cb_selectThird (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 3); return 1; }
+static int menu_cb_selectFourth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 4); return 1; }
+static int menu_cb_selectFifth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 5); return 1; }
+static int menu_cb_selectSixth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 6); return 1; }
+static int menu_cb_selectSeventh (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 7); return 1; }
+static int menu_cb_selectEighth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 8); return 1; }
+static int menu_cb_selectNinth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 9); return 1; }
 static int menu_cb_selectFormantOrBandwidth (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
 	EDITOR_FORM (L"Select formant or bandwidth", 0)
@@ -180,7 +177,7 @@ static int menu_cb_selectFormantOrBandwidth (EDITOR_ARGS) {
 	EDITOR_OK
 		SET_INTEGER (L"Formant number", my selectedFormant)
 	EDITOR_DO
-		if (! selectFormantOrBandwidth (me, GET_INTEGER (L"Formant number"))) return 0;
+		selectFormantOrBandwidth (me, GET_INTEGER (L"Formant number"));
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }

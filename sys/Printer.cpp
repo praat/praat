@@ -161,7 +161,7 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		 * Send direct PostScript commands.
 		 */
 		if (PMSessionPostScriptBegin (theMacPrintSession)) {
-			return Melder_error1 (L"Cannot begin PostScript.");
+			Melder_throw ("Cannot begin PostScript.");
 		}
 		initPostScriptPage ();
 		return true;
@@ -362,12 +362,12 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				memset (& theWinPrint, 0, sizeof (PRINTDLG));
 				theWinPrint. lStructSize = sizeof (PRINTDLG);
 				theWinPrint. Flags = PD_RETURNDEFAULT;
-				if (! PrintDlg (& theWinPrint)) return Melder_error1 (L"Cannot initialize printer.");
+				if (! PrintDlg (& theWinPrint)) Melder_throw ("Cannot initialize printer.");
 			}
 			if (Melder_backgrounding) {
 				theWinPrint. Flags = PD_RETURNDEFAULT | PD_RETURNDC;
 				if (! PrintDlg (& theWinPrint) || theWinPrint. hDC == NULL) {
-					return Melder_error1 (L"Cannot print from a script on this computer.");
+					Melder_throw ("Cannot print from a script on this computer.");
 				}
 			} else {
 				theWinPrint. Flags &= ~ PD_RETURNDEFAULT;

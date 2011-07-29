@@ -17,16 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Matrix.h"
 #include "Polygon.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Polygon Matrix_to_Polygon (I);
 /*
@@ -56,9 +48,5 @@ Matrix Polygon_to_Matrix (I);
 		thy z [1] [...] == my x [...];
 		thy z [2] [...] == my y [...];
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Matrix_and_Polygon.h */

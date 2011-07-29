@@ -369,6 +369,9 @@ e-mail sensimetrics@sens.com
 #define NUMBER_OF_SAMPLES 100
 #define SAMPLE_FACTOR 0.00001
 
+#undef your
+#define your ((KlattTable_Table) thy methods) ->
+
 /* Structure for Klatt Parameters */
 typedef struct structKlattFrame
 {
@@ -2667,8 +2670,8 @@ KlattTable Table_to_KlattTable (Table me)
 {
 	try {
 		if (my numberOfColumns != KlattTable_NPAR) Melder_throw ("A KlattTable needs ", KlattTable_NPAR, L" columns.");
-		autoKlattTable thee = (KlattTable) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classKlattTable);
+		autoKlattTable thee = Thing_new (KlattTable);
+		your copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw ("KlattTable not created from Table."); }
 }
@@ -2676,8 +2679,8 @@ KlattTable Table_to_KlattTable (Table me)
 Table KlattTable_to_Table (KlattTable me)
 {
 	try {
-		autoTable thee = (Table) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classTable);
+		autoTable thee = Thing_new (Table);
+		your copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw ("Table not created from KlattTable."); }
 }

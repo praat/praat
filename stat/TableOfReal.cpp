@@ -341,7 +341,7 @@ void TableOfReal_setRowLabel (I, long rowNumber, const wchar_t *label) {
 	iam (TableOfReal);
 	try {
 		if (rowNumber < 1 || rowNumber > my numberOfRows) return;
-		autostring newLabel = Melder_wcsdup_e (label);
+		autostring newLabel = Melder_wcsdup (label);
 		/*
 		 * Change without error.
 		 */
@@ -356,7 +356,7 @@ void TableOfReal_setColumnLabel (I, long columnNumber, const wchar_t *label) {
 	iam (TableOfReal);
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns) return;
-		autostring newLabel = Melder_wcsdup_e (label);
+		autostring newLabel = Melder_wcsdup (label);
 		/*
 		 * Change without error.
 		 */
@@ -732,7 +732,7 @@ Strings TableOfReal_extractRowLabelsAsStrings (I) {
 		thy strings = NUMvector <wchar *> (1, my numberOfRows);
 		thy numberOfStrings = my numberOfRows;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			thy strings [irow] = Melder_wcsdup_e (my rowLabels [irow] ? my rowLabels [irow] : L""); therror
+			thy strings [irow] = Melder_wcsdup (my rowLabels [irow] ? my rowLabels [irow] : L"");
 		}
 		return thee.transfer();	
 	} catch (MelderError) {
@@ -747,7 +747,7 @@ Strings TableOfReal_extractColumnLabelsAsStrings (I) {
 		thy strings = NUMvector <wchar *> (1, my numberOfColumns);
 		thy numberOfStrings = my numberOfColumns;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			thy strings [icol] = Melder_wcsdup_e (my columnLabels [icol] ? my columnLabels [icol] : L""); therror
+			thy strings [icol] = Melder_wcsdup (my columnLabels [icol] ? my columnLabels [icol] : L"");
 		}
 		return thee.transfer();	
 	} catch (MelderError) {
@@ -1183,15 +1183,15 @@ Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn) {
 		Table_setColumnLabel (thee.peek(), 1, labelOfFirstColumn); therror
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			wchar_t *columnLabel = my columnLabels [icol];
-			thy columnHeaders [icol + 1]. label = Melder_wcsdup_e (columnLabel && columnLabel [0] ? columnLabel : L"?"); therror
+			thy columnHeaders [icol + 1]. label = Melder_wcsdup (columnLabel && columnLabel [0] ? columnLabel : L"?");
 		}
 		for (long irow = 1; irow <= thy rows -> size; irow ++) {
 			wchar_t *stringValue = my rowLabels [irow];
 			TableRow row = static_cast <TableRow> (thy rows -> item [irow]);
-			row -> cells [1]. string = Melder_wcsdup_e (stringValue && stringValue [0] ? stringValue : L"?"); therror
+			row -> cells [1]. string = Melder_wcsdup (stringValue && stringValue [0] ? stringValue : L"?");
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				double numericValue = my data [irow] [icol];
-				row -> cells [icol + 1]. string = Melder_wcsdup_e (Melder_double (numericValue)); therror
+				row -> cells [icol + 1]. string = Melder_wcsdup (Melder_double (numericValue));
 			}
 		}
 		return thee.transfer();

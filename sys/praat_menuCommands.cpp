@@ -173,7 +173,7 @@ GuiObject praat_addMenuCommand (const wchar *window, const wchar *menu, const wc
 		motifFlags = key ? flags & (0x006000FF | GuiMenu_BUTTON_STATE_MASK) : flags & GuiMenu_BUTTON_STATE_MASK;
 	}
 	if (callback && ! title) {
-		Melder_error5 (L"praat_addMenuCommand: command with callback has no title. Window \"", window, L"\", menu \"", menu, L"\".");
+		Melder_error_ ("praat_addMenuCommand: command with callback has no title. Window \"", window, "\", menu \"", menu, "\".");
 		Melder_flushError (NULL);
 		return NULL;
 	}
@@ -185,8 +185,8 @@ GuiObject praat_addMenuCommand (const wchar *window, const wchar *menu, const wc
 		if (found) {
 			position = found + 1;   /* After 'after'. */
 		} else {
-			Melder_error9 (L"praat_addMenuCommand: the command \"", title, L"\" cannot be put after \"", after, L"\",\n"
-				"in the menu \"", menu, L"\" in the window \"", window, L"\"\n"
+			Melder_error_ ("praat_addMenuCommand: the command \"", title, "\" cannot be put after \"", after, "\",\n"
+				"in the menu \"", menu, "\" in the window \"", window, "\"\n"
 				"because the latter command does not exist.");
 			Melder_flushError (NULL);
 			return NULL;

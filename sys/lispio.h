@@ -19,17 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/02
- */
-
-#ifndef _melder_h_
-	#include "melder.h"   /* FILE * */
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "melder.h"
 
 /* A LISP object is a list or an atom. */
 
@@ -69,10 +59,8 @@ int Lispio_openListFromFile (LispioSeq *me, FILE *f, char *buffer, long maxLengt
 	Example:
 		reading all lists in a file:
 			LispioSeq entry;
-			char *buffer = NULL;
-			FILE *f = fopen (fileName, "r");
-			if (! f) { Melder_error1 (L"Cannot open file."); goto error; }
-			if (! (buffer = Melder_malloc_e (200000))) goto error;
+			autofile f = Melder_fopen (fileName, "r");
+			autostring8 buffer = Melder_malloc (200000);
 			for (;;)
 			{
 				int status = Lispio_openListFromFile (& entry, f, buffer, 200000);
@@ -80,13 +68,7 @@ int Lispio_openListFromFile (LispioSeq *me, FILE *f, char *buffer, long maxLengt
 				if (status == EOF) break;   // Leave loop.
 				if (! myProcessList (entry)) goto error;
 			}
-			Melder_free (buffer);
-			fclose (f);
-			return 1;   // OK
-		error:
-			Melder_free (buffer);
-			if (f) fclose (f);
-			return Melder_error ("Reading of file \"%s\" not completed.", fileName);
+			f.close (file);
 */
 
 char * Lispio_string (const Lispio *me);
@@ -122,10 +104,6 @@ long Lispio_count (const LispioSeq *me);
 int Lispio_isInteger (const Lispio *me);
 
 int Lispio_integer (const Lispio *me, long *value);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file lispio.h */
 #endif

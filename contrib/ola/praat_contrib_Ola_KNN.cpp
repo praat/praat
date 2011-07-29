@@ -817,25 +817,21 @@ END
 #ifdef _DEBUG
 
 DIRECT (KNN_debug_KNN_SA_partition)
-    Pattern p = ONLY(classPattern);
-    Pattern output = Pattern_create(p->ny, p->nx);
-    
-    if(!output)
-        return(Melder_error ("Could not create Pattern!\n"));
+    Pattern p = ONLY (classPattern);
+    Pattern output = Pattern_create (p->ny, p->nx);
+    autoNUMvector <long> result (0, p->ny);
+    KNN_SA_partition (p, 1, p->ny, result);
 
-    long result[p->ny + 1];
-    KNN_SA_partition(p, 1, p->ny, result);
-
-    for(long k = 1, c = 1; k <= output->ny; ++k, ++c)
-        for(long i = 1; i <= p->ny && k <= output->ny; ++i)
-            if(result[i] == c)
+    for (long k = 1, c = 1; k <= output->ny; ++k, ++c)
+        for (long i = 1; i <= p->ny && k <= output->ny; ++i)
+            if(result [i] == c)
             {
                 for(long j = 1; j <= output->nx; ++j)
                     output->z[k][j] = p->z[i][j];
                 ++k;
             }
 
-    praat_new1(output, L"Output");
+    praat_new (output, L"Output");
 
 END
 

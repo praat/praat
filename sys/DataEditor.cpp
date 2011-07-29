@@ -142,8 +142,8 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				if (newValue != oldValue) {
 					Data_Description numberUse = DataSubEditor_findNumberUse (me, my fieldData [i]. description -> name);
 					if (numberUse) {
-						Melder_error5 (L"Changing field \"", my fieldData [i]. description -> name,
-							L"\" would damage the array \"", numberUse -> name, L"\".");
+						Melder_error_ ("Changing field \"", my fieldData [i]. description -> name,
+							"\" would damage the array \"", numberUse -> name, "\".");
 						Melder_flushError (NULL);
 					} else {
 						* (signed char *) my fieldData [i]. address = newValue;
@@ -155,8 +155,8 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				if (newValue != oldValue) {
 					Data_Description numberUse = DataSubEditor_findNumberUse (me, my fieldData [i]. description -> name);
 					if (numberUse) {
-						Melder_error5 (L"Changing field \"", my fieldData [i]. description -> name,
-							L"\" would damage the array \"", numberUse -> name, L"\".");
+						Melder_error_ ("Changing field \"", my fieldData [i]. description -> name,
+							"\" would damage the array \"", numberUse -> name, "\".");
 						Melder_flushError (NULL);
 					} else {
 						* (short *) my fieldData [i]. address = newValue;
@@ -168,8 +168,8 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				if (newValue != oldValue) {
 					Data_Description numberUse = DataSubEditor_findNumberUse (me, my fieldData [i]. description -> name);
 					if (numberUse) {
-						Melder_error5 (L"Changing field \"", my fieldData [i]. description -> name,
-							L"\" would damage the array \"", numberUse -> name, L"\".");
+						Melder_error_ ("Changing field \"", my fieldData [i]. description -> name,
+							"\" would damage the array \"", numberUse -> name, "\".");
 						Melder_flushError (NULL);
 					} else {
 						* (int *) my fieldData [i]. address = newValue;
@@ -181,8 +181,8 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				if (newValue != oldValue) {
 					Data_Description numberUse = DataSubEditor_findNumberUse (me, my fieldData [i]. description -> name);
 					if (numberUse) {
-						Melder_error5 (L"Changing field \"", my fieldData [i]. description -> name,
-							L"\" would damage the array \"", numberUse -> name, L"\".");
+						Melder_error_ ("Changing field \"", my fieldData [i]. description -> name,
+							"\" would damage the array \"", numberUse -> name, "\".");
 						Melder_flushError (NULL);
 					} else {
 						* (long *) my fieldData [i]. address = newValue;
@@ -202,14 +202,14 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 				swscanf (text, L"%lf + %lf i", & x -> re, & x -> im); } break;
 			case enumwa: {
 				if (wcslen (text) < 3) goto error;
-				text [wcslen (text) - 1] = '\0';   /* Remove trailing ">". */
+				text [wcslen (text) - 1] = '\0';   // remove trailing ">"
 				int value = ((int (*) (const wchar_t *)) (my fieldData [i]. description -> tagType)) (text + 1);   /* Skip leading "<". */
 				if (value < 0) goto error;
 				* (signed char *) my fieldData [i]. address = value;
 			} break;
 			case lenumwa: {
 				if (wcslen (text) < 3) goto error;
-				text [wcslen (text) - 1] = '\0';   /* Remove trailing ">". */
+				text [wcslen (text) - 1] = '\0';   // remove trailing ">"
 				int value = ((int (*) (const wchar_t *)) (my fieldData [i]. description -> tagType)) (text + 1);   /* Skip leading "<". */
 				if (value < 0) goto error;
 				* (signed short *) my fieldData [i]. address = value;
@@ -226,9 +226,9 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			} break;
 			case stringwa:
 			case lstringwa: {
-				wchar_t *old = * (wchar_t **) my fieldData [i]. address;
+				wchar *old = * (wchar_t **) my fieldData [i]. address;
 				Melder_free (old);
-				* (wchar_t **) my fieldData [i]. address = Melder_wcsdup_f (text);
+				* (wchar **) my fieldData [i]. address = Melder_wcsdup_f (text);
 			} break;
 			default: break;
 		}
@@ -250,7 +250,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 	}
 	return;
 error:
-	Melder_error3 (L"Edit field \"", my fieldData [i]. description -> name, L"\" or click \"Cancel\".");
+	Melder_error_ ("Edit field \"", my fieldData [i]. description -> name, "\" or click \"Cancel\".");
 	Melder_flushError (NULL);
 }
 

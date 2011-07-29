@@ -220,7 +220,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar *path, int type)
 							(findData. dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0))
 					{
 						if (findData. cFileName [0] != '.') {
-							my strings [++ my numberOfStrings] = Melder_wcsdup_e (findData. cFileName);
+							my strings [++ my numberOfStrings] = Melder_wcsdup (findData. cFileName);
 						}
 					}
 				} while (FindNextFileW (searchHandle, & findData));

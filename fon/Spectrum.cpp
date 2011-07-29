@@ -245,8 +245,8 @@ Spectrum Matrix_to_Spectrum (Matrix me) {
 	try {
 		if (my ny != 2)
 			Melder_throw ("Matrix must have exactly 2 rows.");
-		autoSpectrum thee = (Spectrum) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classSpectrum);
+		autoSpectrum thee = Thing_new (Spectrum);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Spectrum.");
@@ -255,8 +255,8 @@ Spectrum Matrix_to_Spectrum (Matrix me) {
 
 Matrix Spectrum_to_Matrix (Spectrum me) {
 	try {
-		autoMatrix thee = (Matrix) Data_copy (me);
-		Thing_overrideClass (thee.peek(), classMatrix);
+		autoMatrix thee = Thing_new (Matrix);
+		((Data_Table) my methods) -> copy (me, thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");

@@ -17,21 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Sound.h"
 #include "PointProcess.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Sound Sound_PointProcess_to_SoundEnsemble_correlate (Sound me, PointProcess thee, double tmin, double tmax);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Sound_PointProcess.h */

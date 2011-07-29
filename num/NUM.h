@@ -19,28 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/10/31 NUMlog2 instead of log2
- * pb 2003/06/23 removed NUMbesselJ and NUMbesselY
- * pb 2004/10/16 replaced struct Type with struct structType
- * pb 2005/07/08 NUMpow
- * pb 2006/08/02 NUMinvSigmoid
- * pb 2007/06/21 readText and writeText API change
- * pb 2007/06/28 double degreesOfFreedom
- * pb 2007/07/21 readText API change
- * pb 2007/08/10 NUMsort_strW
- * pb 2008/01/19 double
- * pb 2008/04/09 40-digit constants
- * pb 2008/04/09 NUMinit
- * pb 2008/04/12 NUMlinprog
- * pb 2008/09/21 NUMshift
- * pb 2008/09/22 NUMscale
- * pb 2008/11/04 MelderReadText
- * pb 2009/03/14 NUMvector_append
- * pb 2009/03/21 NUMvector_insert
- * pb 2011/05/14
- */
-
 /* "NUM" = "NUMerics" */
 /* More mathematical and numerical things than there are in <math.h>. */
 

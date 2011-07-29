@@ -2476,7 +2476,7 @@ END
 DIRECT (Matrix_appendRows)
 	Matrix m1 = NULL, m2 = NULL;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
-	autoMatrix thee = Matrix_appendRows (m1, m2);
+	autoMatrix thee = Matrix_appendRows (m1, m2, classMatrix);
 	praat_new (thee.transfer(), m1 -> name, L"_", m2 -> name);
 END
 

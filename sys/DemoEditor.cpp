@@ -254,9 +254,8 @@ void Demo_waitForInput (Interpreter interpreter) {
 bool Demo_clicked (void) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	return theDemoEditor -> clicked;
 }
@@ -264,9 +263,8 @@ bool Demo_clicked (void) {
 double Demo_x (void) {
 	if (theDemoEditor == NULL) return NUMundefined;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return NUMundefined;
 	}
 	Graphics_setInner (theDemoEditor -> graphics);
 	double xWC, yWC;
@@ -278,9 +276,8 @@ double Demo_x (void) {
 double Demo_y (void) {
 	if (theDemoEditor == NULL) return NUMundefined;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return NUMundefined;
 	}
 	Graphics_setInner (theDemoEditor -> graphics);
 	double xWC, yWC;
@@ -292,19 +289,17 @@ double Demo_y (void) {
 bool Demo_keyPressed (void) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	return theDemoEditor -> keyPressed;
 }
 
-wchar_t Demo_key (void) {
+wchar Demo_key (void) {
 	if (theDemoEditor == NULL) return 0;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return 0;
 	}
 	return theDemoEditor -> key;
 }
@@ -312,9 +307,8 @@ wchar_t Demo_key (void) {
 bool Demo_shiftKeyPressed (void) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	return theDemoEditor -> shiftKeyPressed;
 }
@@ -322,9 +316,8 @@ bool Demo_shiftKeyPressed (void) {
 bool Demo_commandKeyPressed (void) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	return theDemoEditor -> commandKeyPressed;
 }
@@ -332,9 +325,8 @@ bool Demo_commandKeyPressed (void) {
 bool Demo_optionKeyPressed (void) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	return theDemoEditor -> optionKeyPressed;
 }
@@ -342,9 +334,8 @@ bool Demo_optionKeyPressed (void) {
 bool Demo_extraControlKeyPressed (void) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	return theDemoEditor -> extraControlKeyPressed;
 }
@@ -352,9 +343,8 @@ bool Demo_extraControlKeyPressed (void) {
 bool Demo_input (const wchar_t *keys) {
 	if (theDemoEditor == NULL) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	return wcschr (keys, theDemoEditor -> key) != NULL;
 }
@@ -362,9 +352,8 @@ bool Demo_input (const wchar_t *keys) {
 bool Demo_clickedIn (double left, double right, double bottom, double top) {
 	if (theDemoEditor == NULL || ! theDemoEditor -> clicked) return false;
 	if (theDemoEditor -> waitingForInput) {
-		Melder_error1 (L"You cannot work with the Demo window while it is waiting for input. "
+		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
-		return false;
 	}
 	double xWC = Demo_x (), yWC = Demo_y ();
 	return xWC >= left && xWC < right && yWC >= bottom && yWC < top;

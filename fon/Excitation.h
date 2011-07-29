@@ -19,18 +19,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Vector.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Thing_declare1cpp (Excitation);
+struct structExcitation : public structVector {
+};
+#define Excitation__methods(klas)  Vector__methods(klas)
+Thing_declare2cpp (Excitation, Vector);
 
 double Excitation_hertzToBark (double hertz);
 double Excitation_barkToHertz (double bark);
@@ -44,16 +40,6 @@ double Excitation_getLoudness (Excitation me);
 void Excitation_draw (Excitation me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish);
 Matrix Excitation_to_Matrix (Excitation me);
 Excitation Matrix_to_Excitation (Matrix me);
-
-#ifdef __cplusplus
-	}
-
-	struct structExcitation : public structVector {
-	};
-	#define Excitation__methods(klas)  Vector__methods(klas)
-	Thing_declare2cpp (Excitation, Vector);
-
-#endif
 
 /* End of file Excitation.h */
 #endif

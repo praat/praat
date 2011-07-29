@@ -1228,7 +1228,7 @@ void TextGrid_setPointText (TextGrid me, int tierNumber, long ipoint, const wcha
 	}
 }
 
-static int sgmlToPraat (char *text) {
+static void sgmlToPraat (char *text) {
 	char *sgml = text, *praat = text;
 	for (;;) {
 		if (*sgml == '\0') break;
@@ -1257,13 +1257,13 @@ static int sgmlToPraat (char *text) {
 			for (i = 0; i < 200; i ++) {
 				char sgmlChar = sgml [i];
 				if (sgmlChar == ';') {
-					if (i == 0) return Melder_error1 (L"Empty SGML code.");
+					if (i == 0) Melder_throw ("Empty SGML code.");
 					sgml += i + 1;
 					break;
 				}
 				sgmlCode [i] = sgmlChar;
 			}
-			if (i >= 200) return Melder_error1 (L"Unfinished SGML code.");
+			if (i >= 200) Melder_throw ("Unfinished SGML code.");
 			sgmlCode [i] = '\0';
 			for (i = 0; translations [i]. sgml != NULL; i ++) {
 				if (strequ (sgmlCode, translations [i]. sgml)) {
@@ -1272,13 +1272,12 @@ static int sgmlToPraat (char *text) {
 					break;
 				}
 			}
-			if (translations [i]. sgml == NULL) return Melder_error ("Unknown SGML code &%s;.", sgmlCode);
+			if (translations [i]. sgml == NULL) Melder_throw ("Unknown SGML code &", sgmlCode, ";.");
 		} else {
 			* praat ++ = * sgml ++;
 		}
 	}
 	*praat = '\0';
-	return 1;
 }
 
 TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {

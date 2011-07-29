@@ -17,26 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
-
 #include "Pitch.h"
 #include "PointProcess.h"
 #include "Sound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 PointProcess Pitch_to_PointProcess (Pitch pitch);
 
 PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch);
 
 PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int includeMaxima, int includeMinima);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Pitch_to_PointProcess.h */

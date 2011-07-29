@@ -274,7 +274,7 @@ static int menu_cb_addPitchPointAtSlice (EDITOR_ARGS) {
 	PointProcess pulses = ana -> pulses;
 	long ileft, iright, nt;
 	double *t, f;
-	if (! pulses) return Melder_error1 (L"There are no pulses.");
+	if (! pulses) Melder_throw ("There are no pulses.");
 	if (! ana -> pitch) return 0;
 	ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
 	t = pulses -> t, f = my pitchTier.cursor;   /* Default. */
@@ -448,7 +448,7 @@ static int menu_cb_setPitchRange (EDITOR_ARGS) {
 	EDITOR_DO
 		double maximum = GET_REAL (L"Maximum");
 		if (maximum <= my pitchTier.minPeriodic)
-			return Melder_error5 (L"Maximum pitch must be greater than ", Melder_half (my pitchTier.minPeriodic), L" ", units_strings [my pitchTier.units], L".");
+			Melder_throw ("Maximum pitch must be greater than ", Melder_half (my pitchTier.minPeriodic), " ", units_strings [my pitchTier.units], ".");
 		preferences.pitchTier.maximum = my pitchTier.maximum = maximum;
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -494,15 +494,15 @@ static int menu_cb_setDurationRange (EDITOR_ARGS) {
 		double minimum = GET_REAL (L"Minimum"), maximum = GET_REAL (L"Maximum");
 		double minimumValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : NUMundefined;
 		double maximumValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : NUMundefined;
-		if (minimum > 1) return Melder_error1 (L"Minimum relative duration must not be greater than 1.");
-		if (maximum < 1) return Melder_error1 (L"Maximum relative duration must not be less than 1.");
-		if (minimum >= maximum) return Melder_error1 (L"Maximum relative duration must be greater than minimum.");
+		if (minimum > 1) Melder_throw ("Minimum relative duration must not be greater than 1.");
+		if (maximum < 1) Melder_throw ("Maximum relative duration must not be less than 1.");
+		if (minimum >= maximum) Melder_throw ("Maximum relative duration must be greater than minimum.");
 		if (NUMdefined (minimumValue) && minimum > minimumValue)
-			return Melder_error3 (L"Minimum relative duration must not be greater than the minimum value present, "
-				"which is ", Melder_half (minimumValue), L".");
+			Melder_throw ("Minimum relative duration must not be greater than the minimum value present, "
+				"which is ", Melder_half (minimumValue), ".");
 		if (NUMdefined (maximumValue) && maximum < maximumValue)
-			return Melder_error3 (L"Maximum relative duration must not be less than the maximum value present, "
-				"which is ", Melder_half (maximumValue), L".");
+			Melder_throw ("Maximum relative duration must not be less than the maximum value present, "
+				"which is ", Melder_half (maximumValue), ".");
 		preferences.duration.minimum = my duration.minimum = minimum;
 		preferences.duration.maximum = my duration.maximum = maximum;
 		FunctionEditor_redraw (me);

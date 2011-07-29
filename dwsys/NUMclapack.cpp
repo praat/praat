@@ -9524,12 +9524,12 @@ int NUMlapack_dlae2 (double *a, double *b, double *c__, double *rt1, double *rt2
 
 	/* Local variables */
 	static double acmn, acmx, ab, df, tb, sm, rt, adf;
-
 	sm = *a + *c__;
 	df = *a - *c__;
 	adf = fabs (df);
 	tb = *b + *b;
 	ab = fabs (tb);
+	// djmw 20110721 changed abs(*a) to fabs(*a)
 	if (fabs (*a) > fabs (*c__))
 	{
 		acmx = *a;
@@ -10890,6 +10890,7 @@ int NUMlapack_dlaln2 (int *ltrans, long *na, long *nw, double *smin, double *ca,
 			br2 = br2 - lr21 * br1 + li21 * bi1;
 			bi2 = bi2 - li21 * br1 - lr21 * bi1;
 			/* Computing MAX */
+			// djmw 20110721 changed abs(br2) to fabs(br2)
 			d__1 = (fabs (br1) + fabs (bi1)) * (u22abs * (fabs (ur11r) + fabs (ui11r))), d__2 =
 				fabs (br2) + fabs (bi2);
 			bbnd = MAX (d__1, d__2);

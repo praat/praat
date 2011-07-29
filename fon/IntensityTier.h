@@ -19,22 +19,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "RealTier.h"
 #include "Intensity.h"
 #include "TableOfReal.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-/********** class IntensityTier **********/
-
 Thing_declare1cpp (IntensityTier);
+struct structIntensityTier : public structRealTier {
+};
+#define IntensityTier__methods(klas) RealTier__methods(klas)
+Thing_declare2cpp (IntensityTier, RealTier);
 
 IntensityTier IntensityTier_create (double tmin, double tmax);
 
@@ -50,16 +44,6 @@ IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, Poi
 TableOfReal IntensityTier_downto_TableOfReal (IntensityTier me);
 void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity);
 Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale);
-
-#ifdef __cplusplus
-	}
-
-	struct structIntensityTier : public structRealTier {
-	};
-	#define IntensityTier__methods(klas) RealTier__methods(klas)
-	Thing_declare2cpp (IntensityTier, RealTier);
-
-#endif
 
 /* End of file IntensityTier.h */
 #endif

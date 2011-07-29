@@ -176,11 +176,11 @@ static double getValueAtSample (I, long iframe, long ilevel, int unit) {
 	return our convertStandardToSpecialUnit (me, ilevel == Pitch_LEVEL_FREQUENCY ? f : my frame [iframe]. candidate [1]. strength, ilevel, unit);
 }
 
-int Pitch_isVoiced_i (Pitch me, long iframe) {
+bool Pitch_isVoiced_i (Pitch me, long iframe) {
 	return NUMdefined (Sampled_getValueAtSample (me, iframe, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ));
 }
 
-int Pitch_isVoiced_t (Pitch me, double time) {
+bool Pitch_isVoiced_t (Pitch me, double time) {
 	return NUMdefined (Sampled_getValueAtX (me, time, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, FALSE));
 }
 
@@ -430,7 +430,7 @@ class_methods (Pitch, Sampled) {
 	class_methods_end
 }
 
-int Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
+void Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 	/*
 	 * Create without change.
 	 */
@@ -441,7 +441,6 @@ int Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 	NUMvector_free (my candidate, 1);
 	my candidate = candidate.transfer();
 	my nCandidates = nCandidates;
-	return 1;
 }
 
 Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,

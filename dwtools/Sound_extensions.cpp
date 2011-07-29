@@ -257,23 +257,22 @@ Sound Sound_readFromCmuAudioFile (MelderFile file)
 {
 	try {
 		int littleEndian = 1;
-
 		autofile f = Melder_fopen (file, "rb");
-
-		if (bingeti2LE (f) != 6) Melder_throw ("Sound_readFromCmuAudioFile: incorrect header size.");
+		if (bingeti2LE (f) != 6) Melder_throw ("Incorrect header size.");
 		bingeti2LE (f);
 		short nChannels = bingeti2LE (f);
-		if (nChannels < 1) Melder_throw ("Sound_readFromCmuAudioFile: incorrect number of channels.");
-		if (nChannels > 1) Melder_throw ("Sound_readFromCmuAudioFile: multi channel, cannot read.");
-		if (bingeti2LE (f) < 1) Melder_throw ("Sound_readFromCmuAudioFile: incorrect sampling frequency.");
+		if (nChannels < 1) Melder_throw ("Incorrect number of channels.");
+		if (nChannels > 1) Melder_throw ("File has multiple channels: cannot read.");
+		if (bingeti2LE (f) < 1) Melder_throw ("Incorrect sampling frequency.");
 		long nSamples = bingeti4LE (f);
-		if (nSamples < 1) Melder_throw ("Sound_readFromCmuAudioFile: incorrect number of samples.");
+		if (nSamples < 1) Melder_throw ("Incorrect number of samples.");
 		autoSound me = Sound_createSimple (1, nSamples/16000., 16000);
 		i2read (me.peek(), f, littleEndian);
-		if (feof (f) || ferror (f)) Melder_throw ("Sound_readFromCmuAudioFile: not completed.");
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Reading from file not performed."); }
+	} catch (MelderError) {
+		Melder_throw ("Sound not read from CMU audio file ", MelderFile_messageName (file), ".");
+	}
 }
 
 Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCoding,
@@ -281,15 +280,14 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 {
 	try {
 		autofile f = Melder_fopen (file, "rb");
-
 		if (! format) format = "integer";
 		if (nBitsCoding <= 0) nBitsCoding = 16;
 		long nBytesPerSample = ( nBitsCoding + 7) / 8;
 		if (strequ (format, "float")) nBytesPerSample = 4;
-		if (nBytesPerSample == 3 || nBytesPerSample > 4) Melder_throw ("Sound_readFromRawFile: number of bytes per sample should be 1, 2 or 4.");
+		if (nBytesPerSample == 3 || nBytesPerSample > 4) Melder_throw ("Number of bytes per sample should be 1, 2 or 4.");
 		if (skipNBytes <= 0) skipNBytes = 0;
 		long nSamples = ( fileLengthBytes (f) - skipNBytes) / nBytesPerSample;
-		if (nSamples < 1) Melder_errorp ("Sound_readFromRawFile: no samples left to read");
+		if (nSamples < 1) Melder_throw ("No samples left to read");
 		autoSound me = Sound_createSimple (1, nSamples/samplingFrequency, samplingFrequency);
 		fseek (f, skipNBytes, SEEK_SET);
 		if (      nBytesPerSample == 1 &&   unSigned) u1read (me.peek(), f);
@@ -299,10 +297,11 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 		else if ( nBytesPerSample == 4 &&   unSigned) u4read (me.peek(), f, littleEndian);
 		else if ( nBytesPerSample == 4 && ! unSigned) i4read (me.peek(), f, littleEndian);
 		else if ( nBytesPerSample == 4 && strequ (format, "float")) r4read (me.peek(), f);
-		if (feof (f) || ferror (f)) Melder_throw ("Sound_readFromRawFile: not completed.");
 		f.close (file);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Sound not read from file ", MelderFile_messageName (file), "."); }
+	} catch (MelderError) {
+		Melder_throw ("Sound not read from raw audio file ", MelderFile_messageName (file), ".");
+	}
 }
 
 void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned)

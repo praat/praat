@@ -159,6 +159,16 @@ RealTier RealTier_create (double tmin, double tmax) {
 	}
 }
 
+RealTier RealTier_createWithClass (double tmin, double tmax, RealTier_Table klas) {
+	try {
+		autoRealTier me = (RealTier) _Thing_new (klas);
+		RealTier_init (me.peek(), tmin, tmax);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw (klas -> _className, " not created.");
+	}
+}
+
 int RealTier_addPoint (I, double t, double value) {
 	iam (RealTier);
 	try {
@@ -467,23 +477,23 @@ Table RealTier_downto_Table (I, const wchar_t *indexText, const wchar_t *timeTex
 	}
 }
 
-RealTier Vector_to_RealTier (I, long channel) {
+RealTier Vector_to_RealTier (I, long channel, RealTier_Table klas) {
 	iam (Vector);
 	try {
-		autoRealTier thee = RealTier_create (my xmin, my xmax);
+		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nx; i ++) {
 			RealTier_addPoint (thee.peek(), Sampled_indexToX (me, i), my z [channel] [i]); therror
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to RealTier.");
+		Melder_throw (me, ": not converted to ", klas -> _className, ".");
 	}
 }
 
-RealTier Vector_to_RealTier_peaks (I, long channel) {
+RealTier Vector_to_RealTier_peaks (I, long channel, RealTier_Table klas) {
 	iam (Vector);
 	try {
-		autoRealTier thee = RealTier_create (my xmin, my xmax);
+		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 2; i < my nx; i ++) {
 			double left = my z [channel] [i - 1], centre = my z [channel] [i], right = my z [channel] [i + 1];
 			if (left <= centre && right < centre) {
@@ -495,14 +505,14 @@ RealTier Vector_to_RealTier_peaks (I, long channel) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to RealTier (peaks).");
+		Melder_throw (me, ": not converted to ", klas -> _className, " (peaks).");
 	}
 }
 
-RealTier Vector_to_RealTier_valleys (I, long channel) {
+RealTier Vector_to_RealTier_valleys (I, long channel, RealTier_Table klas) {
 	iam (Vector);
 	try {
-		autoRealTier thee = RealTier_create (my xmin, my xmax);
+		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 2; i < my nx; i ++) {
 			double left = my z [channel] [i - 1], centre = my z [channel] [i], right = my z [channel] [i + 1];
 			if (left >= centre && right > centre) {
@@ -514,13 +524,13 @@ RealTier Vector_to_RealTier_valleys (I, long channel) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to RealTier (valleys).");
+		Melder_throw (me, ": not converted to ", klas -> _className, " (valleys).");
 	}
 }
 
-RealTier PointProcess_upto_RealTier (PointProcess me, double value) {
+RealTier PointProcess_upto_RealTier (PointProcess me, double value, RealTier_Table klas) {
 	try {
-		autoRealTier thee = RealTier_create (my xmin, my xmax);
+		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nt; i ++) {
 			RealTier_addPoint (thee.peek(), my t [i], value); therror
 		}
