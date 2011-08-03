@@ -205,7 +205,7 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	}
 }
 
-void Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter interpreter) {
+void Formant_formula_bandwidths (Formant me, const wchar *formula, Interpreter interpreter) {
 	try {
 		long nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
@@ -227,7 +227,7 @@ void Formant_formula_bandwidths (Formant me, const wchar_t *formula, Interpreter
 	}
 }
 
-void Formant_formula_frequencies (Formant me, const wchar_t *formula, Interpreter interpreter) {
+void Formant_formula_frequencies (Formant me, const wchar *formula, Interpreter interpreter) {
 	try {
 		long nrow = Formant_getMaxNumFormants (me);
 		if (nrow < 1)
@@ -349,7 +349,7 @@ double Formant_getQuantileOfBandwidth (Formant me, int iformant, double quantile
 
 void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	int iformant1, double fmin1, double fmax1, int iformant2, double fmin2, double fmax2,
-	double size_mm, const wchar_t *mark, int garnish)
+	double size_mm, const wchar *mark, int garnish)
 {
 	if (iformant1 < 1 || iformant2 < 1) return;
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
@@ -373,7 +373,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
-		wchar_t text [100];
+		wchar text [100];
 		Graphics_drawInnerBox (g);
 		swprintf (text, 100, L"%%F_%d (Hz)", iformant1);
 		Graphics_textBottom (g, 1, text);

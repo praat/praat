@@ -17,14 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2001/08/02 last change
- * pb 2002/07/16 GPL
- * pb 2006/12/20 new Sound_play API
- * pb 2006/12/30 new Sound_create API
- * pb 2011/03/22 C++
- */
-
 #include "Artword_Speaker_Sound.h"
 #include "Artword_Speaker.h"
 #include "Art_Speaker.h"

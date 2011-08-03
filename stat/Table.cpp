@@ -2004,7 +2004,7 @@ Table Table_readFromTableFile (MelderFile file) {
 		return me;
 	} catch (MelderError) {
 		forget (me);
-		Melder_throw ("Table object not read from space-separated text file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Table object not read from space-separated text file ", file, ".");
 	}
 }
 
@@ -2089,7 +2089,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar separator
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Table object not read from character-separated text file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Table object not read from character-separated text file ", file, ".");
 	}
 }
 

@@ -17,19 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2006/04/01 dynamic range setting
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/09/04 new FunctionEditor API
- * pb 2008/01/19 double
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2011/03/22 C++
- * pb 2011/07/01 C++
- */
-
 #include "SpectrumEditor.h"
 #include "Sound_and_Spectrum.h"
 #include "Preferences.h"

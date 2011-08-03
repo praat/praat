@@ -17,16 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/05/31 created
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2009/01/23 minimum and maximum legal values
- * pb 2011/07/02 C++
- */
-
 #include "AmplitudeTierEditor.h"
 #include "EditorM.h"
 

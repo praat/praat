@@ -20,7 +20,7 @@
 /*
  * pb 2005/05/01 created
  * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 can write as encoding
  * pb 2007/11/18 split off from Regression.c
  * pb 2011/03/20 C++
@@ -86,7 +86,7 @@ class_methods (LogisticRegression, Regression) {
 	class_methods_end
 }
 
-LogisticRegression LogisticRegression_create (const wchar_t *dependent1, const wchar_t *dependent2) {
+LogisticRegression LogisticRegression_create (const wchar *dependent1, const wchar *dependent2) {
 	try {
 		autoLogisticRegression me = Thing_new (LogisticRegression);
 		Regression_init (me.peek()); therror
@@ -285,8 +285,8 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 	return thee.transfer();
 }
 
-LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *factors_columnLabelString,
-	const wchar_t *dependent1_columnLabel, const wchar_t *dependent2_columnLabel)
+LogisticRegression Table_to_LogisticRegression (Table me, const wchar *factors_columnLabelString,
+	const wchar *dependent1_columnLabel, const wchar *dependent2_columnLabel)
 {
 	try {
 		long numberOfFactors;

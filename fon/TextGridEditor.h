@@ -50,7 +50,7 @@ struct structTextGridEditor : public structTimeSoundAnalysisEditor {
 };
 
 TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid,
-	Data sound,   // either a Sound or a LongSound, or null
+	Function sound,   // either a Sound or a LongSound, or null
 	SpellingChecker spellingChecker);
 
 void TextGridEditor_prefs (void);

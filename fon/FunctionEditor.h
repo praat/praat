@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
-
 #include "Editor.h"
 #include "Graphics.h"
 #include "Function.h"
@@ -148,35 +144,15 @@ Thing_declare2cpp (FunctionEditor, Editor);
 #define FunctionEditor_UPDATE_NEEDED  1
 #define FunctionEditor_NO_UPDATE_NEEDED  0
 
-void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *title, Data data);
+void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *title, Function data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.
 	Preconditions:
 		parent != NULL;
-		Thing_member (data, classFunction);
 	Postconditions:
-		my cursorMenu contains the following entries:
-			Move cursor to B
-			Move cursor to E
-			Move cursor to...
-			Move cursor by...
-		my beginMenu contains:
-			Move B to cursor
-			Move B to E
-			Move B to...
-			Move B by...
-		my endMenu contains:
-			Move E to cursor
-			Move E to B
-			Move E to...
-			Move E by...
 		my drawingArea is attached to the form at all sides,
 		my scrollBar only to the bottom, left and right sides.
-		The other members are 0.0 or NULL.
-		The inheritor should call
-			'GuiObject_show (my dialog); GuiObject_show (my shell);'
-			before calling FunctionEditor_open (me).
 */ 
 
 void FunctionEditor_marksChanged (FunctionEditor me);

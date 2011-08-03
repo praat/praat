@@ -17,13 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2006/12/30 new Sound_create API
- * pb 2008/01/19 double
- * pb 2011/03/22 C++
- */
-
 #include "Speaker_to_Delta.h"
 #include "Art_Speaker_Delta.h"
 #include "Artword_Speaker_to_Sound.h"

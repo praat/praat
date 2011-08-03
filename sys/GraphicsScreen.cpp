@@ -33,7 +33,18 @@
 #include "GraphicsP.h"
 #include "Printer.h"
 
-#if mac
+#if win
+	//#include "winport_on.h"
+	#include <gdiplus.h>
+	//#include "winport_off.h"
+	//using namespace Gdiplus;
+	static bool _GraphicsWindows_tryToInitializeGdiPlus (void) {
+		Gdiplus::GdiplusStartupInput gdiplusStartupInput;
+		ULONG_PTR gdiplusToken;
+		GdiplusStartup (& gdiplusToken, & gdiplusStartupInput, NULL);
+		return true;
+	}
+#elif mac
 	#include "macport_on.h"
 	static RGBColor theBlackColour = { 0, 0, 0 };
 	static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
@@ -268,9 +279,9 @@ Graphics Graphics_create_screen (void *display, unsigned long window, int resolu
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
-	if (! Graphics_init (me)) return 0;
+	Graphics_init (me);
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
-	#ifdef macintosh
+	#if mac
 		GraphicsScreen_init (me, display, (unsigned long) GetWindowPort ((WindowRef) window), resolution);
 	#else
 		GraphicsScreen_init (me, display, window, resolution);
@@ -283,7 +294,7 @@ Graphics Graphics_create_port (void *display, unsigned long port, int resolution
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
-	if (! Graphics_init (me)) return 0;
+	Graphics_init (me);
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
 	GraphicsScreen_init (me, display, (unsigned long) port, resolution);
 	return (Graphics) me;
@@ -353,7 +364,9 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	my drawingArea = static_cast <GuiObject> (w);   /* Now !!!!!!!!!! */
 	my screen = true;
 	my yIsZeroAtTheTop = true;
-	#ifdef macintosh
+	#if win
+		my useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
+	#elif mac
 		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me); therror

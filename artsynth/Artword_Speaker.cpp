@@ -17,12 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1999/02/07
- * pb 2002/07/16 GPL
- * pb 2011/03/22 C++
- */
-
 #include "Art_Speaker.h"
 #include "Artword_Speaker.h"
 

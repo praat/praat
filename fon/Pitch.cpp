@@ -31,7 +31,7 @@
  * pb 2007/01/12 guard path finder against weird settings
  * pb 2007/01/12 commented out Melder_casual in Pitch_difference
  * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 can write as encoding
  * pb 2007/12/09 enums
  * pb 2011/06/04 C++

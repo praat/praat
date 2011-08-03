@@ -27,7 +27,7 @@
  * pb 2006/02/06 better cepstral smoothing
  * pb 2007/03/17 domain quantity
  * pb 2007/03/30 Spectrum_downto_Table
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2008/01/19 double
  * pb 2011/06/10 C++
  */

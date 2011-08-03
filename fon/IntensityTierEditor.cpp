@@ -17,17 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2007/06/10 wchar
- * pb 2007/08/11 wchar
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2009/01/23 minimum and maximum legal values
- * pb 2011/07/02 C++
- * pb 2011/07/17 C++
- */
-
 #include "IntensityTierEditor.h"
 #include "EditorM.h"
 

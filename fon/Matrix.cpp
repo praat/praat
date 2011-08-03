@@ -24,7 +24,7 @@
  * pb 2003/08/28 Matrix_writeToHeaderlessSpreadsheetFile
  * pb 2005/06/16 units
  * pb 2007/03/18 moved table stuff here
- * pb 2007/05/26 wchar_t
+ * pb 2007/05/26 wchar
  * pb 2007/06/21 tex
  * pb 2007/10/01 can write as encoding
  * pb 2008/01/19 double
@@ -537,7 +537,7 @@ Matrix Matrix_readAP (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not read from AP file ", MelderFile_messageName (file));
+		Melder_throw ("Matrix object not read from AP file ", file);
 	}
 }
 
@@ -615,7 +615,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not read from raw text file ", MelderFile_messageName (file));
+		Melder_throw ("Matrix object not read from raw text file ", file);
 	}
 }
 
@@ -699,11 +699,11 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 		f.close (file);
 		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
-		Melder_throw (me, ": not saved as tab-separated file ", MelderFile_messageName (file));
+		Melder_throw (me, ": not saved as tab-separated file ", file);
 	}
 }
 
-void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target) {
+void Matrix_formula (Matrix me, const wchar *expression, Interpreter interpreter, Matrix target) {
 	try {
 		struct Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
@@ -720,7 +720,7 @@ void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpret
 }
 
 void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
-	const wchar_t *expression, Interpreter interpreter, Matrix target)
+	const wchar *expression, Interpreter interpreter, Matrix target)
 {
 	try {
 		if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }

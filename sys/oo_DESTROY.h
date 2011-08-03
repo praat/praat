@@ -17,19 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/02/07 added oo_FILE and oo_DIR
- * pb 2003/06/11 made struct_destroy global
- * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
- * pb 2007/06/09 wchar_t
- * pb 2009/03/21 modern enums
- * pb 2011/03/03 removed oo_STRINGx
- * pb 2011/03/29 C++
- */
-
 #include "oo_undef.h"
-
-
 
 #define oo_SIMPLE(type,storage,x)
 
@@ -37,21 +25,11 @@
 
 #define oo_SET(type,storage,x,setType)
 
-#ifdef __cplusplus
 #define oo_VECTOR(type,t,storage,x,min,max)  \
 	NUMvector_free <type> (my x, min);
-#else
-#define oo_VECTOR(type,t,storage,x,min,max)  \
-	NUM##t##vector_free (my x, min);
-#endif
 
-#ifdef __cplusplus
 #define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
 	NUMmatrix_free <type> (my x, row1, col1);
-#else
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
-	NUM##t##matrix_free (my x, row1, col1);
-#endif
 
 
 #define oo_ENUMx(type,storage,Type,x)
@@ -62,8 +40,6 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	NUM##t##vector_free (my x, min);
-
-
 
 #define oo_STRINGx(storage,x)  \
 	Melder_free (my x);
@@ -76,23 +52,12 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		Melder_free (my x [i]);
 
-#ifdef __cplusplus
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
 			Melder_free (my x [i]); \
 		NUMvector_free <wchar*> (my x, min); \
 	}
-#else
-#define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (my x) { \
-		for (long i = min; i <= max; i ++) \
-			Melder_free (my x [i]); \
-		NUMwvector_free (my x, min); \
-	}
-#endif
-
-
 
 #define oo_STRUCT(Type,x)  \
 	Type##_destroy (& my x);
@@ -105,21 +70,12 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		Type##_destroy (& my x [i]);
 
-#ifdef __cplusplus
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (my x) { \
 		for (long i = min; i <= max; i ++) \
 			Type##_destroy (& my x [i]); \
 		NUMvector_free <struct##Type> (my x, min); \
 	}
-#else
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (my x) { \
-		for (long i = min; i <= max; i ++) \
-			Type##_destroy (& my x [i]); \
-		NUMstructvector_free (Type, my x, min); \
-	}
-#endif
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	if (my x) { \
@@ -128,8 +84,6 @@
 				Type##_destroy (& my x [i] [j]); \
 		NUMstructmatrix_free (Type, my x, row1, col1); \
 	}
-
-
 
 #define oo_WIDGET(x)  \
 	if (my x) XtDestroyWidget (my x);
@@ -149,8 +103,6 @@
 		NUMvector_free (sizeof (GuiObject), my x, min, 0); \
 	}
 
-
-
 #define oo_OBJECT(Class,version,x)  \
 	forget (my x);
 
@@ -161,15 +113,11 @@
 
 #define oo_DIR(x)
 
-
-
 #define oo_DEFINE_STRUCT(Type)  \
 	void Type##_destroy (Type me) { (void) me;
 
 #define oo_END_STRUCT(Type)  \
 	}
-
-
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
 	static void class##Class##_destroy (I) { \
@@ -179,25 +127,17 @@
 		inherited (Class) destroy (me); \
 	}
 
-
-
 #define oo_IF(condition)  \
 	if (condition) {
 
 #define oo_ENDIF  \
 	}
 
-
-
 #define oo_FROM(from)
 
 #define oo_ENDFROM
 
-
-
 #define oo_VERSION(version)
-
-
 
 #define oo_DECLARING  0
 #define oo_DESTROYING  1

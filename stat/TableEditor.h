@@ -43,7 +43,7 @@ struct structTableEditor : public structEditor {
 	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed);
 Thing_declare2cpp (TableEditor, Editor);
 
-TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table);
+TableEditor TableEditor_create (GuiObject parent, const wchar *title, Table table);
 
 /* End of file TableEditor.h */
 #endif

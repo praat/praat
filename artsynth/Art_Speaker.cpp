@@ -17,15 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1996/09/04 latest change
- * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar
- * pb 2008/01/19 double
- * pb 2009/03/21 modern enums
- * pb 2011/03/22 C++
- */
-
 #include "Art_Speaker.h"
 
 #define DLIP  5e-3

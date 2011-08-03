@@ -639,7 +639,7 @@ FILE * Melder_fopen (MelderFile file, const char *type) {
 	if (! f) {
 		wchar_t *path = file -> path;
 		Melder_error_ ("Cannot ", type [0] == 'r' ? "open" : type [0] == 'a' ? "append to" : "create",
-			" file ", MelderFile_messageName (file), ".");
+			" file ", file, ".");
 		if (path [0] == '\0')
 			Melder_error_ ("Hint: empty file name.");
 		else if (path [0] == ' ' || path [0] == '\t')
@@ -706,7 +706,7 @@ void Melder_fclose (MelderFile file, FILE *f) {
     }
 	#endif
 	if (f != stdout && fclose (f) == EOF)
-		Melder_throw ("Error closing file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Error closing file ", file, ".");
 }
 
 void Melder_files_cleanUp (void) {
@@ -793,8 +793,8 @@ wchar * Melder_peekExpandBackslashes (const wchar *message) {
 	return & names [index] [0];
 }
 
-wchar * MelderFile_messageName (MelderFile file) {
-	return file -> path;
+const wchar * MelderFile_messageName (MelderFile file) {
+	return Melder_wcscat3 (L_LEFT_DOUBLE_QUOTE, file -> path, L_RIGHT_DOUBLE_QUOTE);
 }
 
 void Melder_getDefaultDir (MelderDir dir) {
@@ -835,7 +835,7 @@ void Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode)
 		swprintf (file. path, kMelder_MAXPATH+1, L"%ls/%ls", parent -> path, dirName);   // relative path
 	}
 	if (! CreateDirectoryW (file. path, & sa) && GetLastError () != ERROR_ALREADY_EXISTS)   // ignore if directory already exists
-		Melder_throw ("Cannot create directory ", MelderFile_messageName (& file), ".");
+		Melder_throw ("Cannot create directory ", & file, ".");
 #else
 	structMelderFile file = { 0 };
 	if (dirName [0] == '/') {
@@ -848,7 +848,7 @@ void Melder_createDirectory (MelderDir parent, const wchar_t *dirName, int mode)
 	char utf8path [kMelder_MAXPATH+1];
 	Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8path);
 	if (mkdir (utf8path, mode) == -1 && errno != EEXIST)   // ignore if directory already exists
-		Melder_throw ("Cannot create directory ", MelderFile_messageName (& file), ".");
+		Melder_throw ("Cannot create directory ", & file, ".");
 #endif
 }
 
@@ -936,7 +936,7 @@ void MelderFile_seek (MelderFile me, long position, int direction) {
 	if (fseek (my filePointer, position, direction)) {
 		fclose (my filePointer);
 		my filePointer = NULL;
-		Melder_throw ("Cannot seek in file ", MelderFile_messageName (me), ".");
+		Melder_throw ("Cannot seek in file ", me, ".");
 	}
 }
 
@@ -946,7 +946,7 @@ long MelderFile_tell (MelderFile me) {
 	if ((result = ftell (my filePointer)) == -1) {
 		fclose (my filePointer);
 		my filePointer = NULL;
-		Melder_throw ("Cannot tell in file ", MelderFile_messageName (me), ".");
+		Melder_throw ("Cannot tell in file ", me, ".");
 	}
 	return result;
 }

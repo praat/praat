@@ -38,11 +38,11 @@ extern "C" void praat_dia_timeRange (Any dia);
 extern "C" void praat_get_timeRange (Any dia, double *tmin, double *tmax);
 extern "C" int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
 
-static const wchar_t *STRING_FROM_FREQUENCY_HZ = L"left Frequency range (Hz)";
-static const wchar_t *STRING_TO_FREQUENCY_HZ = L"right Frequency range (Hz)";
-static const wchar_t *STRING_TIER_NUMBER = L"Tier number";
-static const wchar_t *STRING_INTERVAL_NUMBER = L"Interval number";
-static const wchar_t *STRING_POINT_NUMBER = L"Point number";
+static const wchar *STRING_FROM_FREQUENCY_HZ = L"left Frequency range (Hz)";
+static const wchar *STRING_TO_FREQUENCY_HZ = L"right Frequency range (Hz)";
+static const wchar *STRING_TIER_NUMBER = L"Tier number";
+static const wchar *STRING_INTERVAL_NUMBER = L"Interval number";
+static const wchar *STRING_POINT_NUMBER = L"Point number";
 
 extern "C" void praat_TimeFunction_modify_init (void *klas);   // Modify buttons for time-based subclasses of Function.
 
@@ -704,7 +704,7 @@ FORM (SpellingChecker_nextNotAllowedWord, L"Next not allowed word?", L"SpellingC
 DO
 	LOOP {
 		iam (SpellingChecker);
-		wchar_t *sentence = GET_STRING (L"sentence");
+		wchar *sentence = GET_STRING (L"sentence");
 		long startingCharacter = GET_INTEGER (L"Starting character");
 		if (startingCharacter < 0) Melder_throw ("Starting character should be 0 or positive.");
 		if (startingCharacter > (int) wcslen (sentence)) Melder_throw ("Starting character should not exceed end of sentence.");
@@ -795,7 +795,7 @@ DO
 		iam (TextGrid);
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		int position = GET_INTEGER (L"Position");
-		const wchar_t *name = GET_STRING (L"Name");
+		const wchar *name = GET_STRING (L"Name");
 		AnyTier newTier;
 		if (itier > my tiers -> size) itier = my tiers -> size;
 		newTier = (AnyTier) Data_copy (my tiers -> item [itier]); therror   // BUG: this is an unknown type, so we cannot use autopointer?
@@ -1120,7 +1120,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		int position = GET_INTEGER (L"Position");
-		wchar_t *name = GET_STRING (L"Name");
+		wchar *name = GET_STRING (L"Name");
 		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
 		Thing_setName (tier.peek(), name); therror
@@ -1151,7 +1151,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		int position = GET_INTEGER (L"Position");
-		wchar_t *name = GET_STRING (L"Name");
+		wchar *name = GET_STRING (L"Name");
 		autoTextTier tier = TextTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
 		Thing_setName (tier.peek(), name); therror
@@ -1214,7 +1214,7 @@ FORM (TextGrid_getCentrePoints, L"TextGrid: Get centre points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar_t *text = GET_STRING (L"...the text");
+	wchar *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getCentrePoints (me, GET_INTEGER (STRING_TIER_NUMBER),
@@ -1229,7 +1229,7 @@ FORM (TextGrid_getEndPoints, L"TextGrid: Get end points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar_t *text = GET_STRING (L"...the text");
+	wchar *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getEndPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
@@ -1244,7 +1244,7 @@ FORM (TextGrid_getStartingPoints, L"TextGrid: Get starting points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar_t *text = GET_STRING (L"...the text");
+	wchar *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getStartingPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
@@ -1259,7 +1259,7 @@ FORM (TextGrid_getPoints, L"Get points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar_t *text = GET_STRING (L"...the text");
+	wchar *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getPoints (me, GET_INTEGER (STRING_TIER_NUMBER),

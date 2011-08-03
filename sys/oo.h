@@ -19,23 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/02/07 added oo_FILE and oo_DIR
- * pb 2003/06/11 made structure functions global
- * pb 2004/10/16 C++ compatible structs
- * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
- * pb 2007/06/09 oo_WCHAR, oo_STRINGW
- * pb 2007/06/10 corrections
- * pb 2007/06/21 oo_LSTRINGW; removed oo_SSTRINGxxx
- * pb 2007/09/01 oo_BOOL
- * pb 2008/01/19 double
- * pb 2009/03/21 modern enums
- * pb 2011/03/03 removed oo_STRING
- * pb 2011/03/15 removed oo_CHAR
- * pb 2011/04/14 removed oo_WCHAR
- * pb 2011/07/07 void
- */
-
 /*** Single types. ***/
 
 /* The possible storage types give these binary formats: */

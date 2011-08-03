@@ -17,37 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2003/05/19 Melder_atof
- * pb 2003/12/03 nicer dialogs
- * pb 2004/04/02 nicer dialogs
- * pb 2004/06/18 allow reversed axes
- * pb 2004/09/05 allow selection of inner viewport
- * pb 2005/07/05 Draw function...
- * pb 2006/11/22 after 14 years we renamed "Plain line" to "Solid line", which is the common term nowadays
- * pb 2006/12/26 theCurrentPraat
- * pb 2007/03/14 arrowSize
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/08/15 removed New Century Schoolbook
- * pb 2007/09/01 praat_picture_editor_open/close
- * pb 2007/12/09 enums
- * pb 2008/01/19 double
- * pb 2008/03/18 function comment
- * pb 2008/04/30 new Formula API
- * pb 2008/08/06 axes info
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2009/05/08 demo window
- * pb 2009/05/09 pink
- * pb 2009/09/04 demo window can Undo
- * fb 2010/02/20 GTK
- * pb 2010/07/13 GTK: attempts to front the window
- * pb 2010/07/29 removed GuiWindow_show (and window comes to the front!)
- * pb 2010/12/17 dashed-dotted lines
- * pb 2011/03/29 C++
- */
-
 #include "praatP.h"
 #include "Picture.h"
 #include "Printer.h"
@@ -1691,7 +1660,7 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"World", L"Paint circle...", 0, 0, DO_PaintCircle);
 	praat_addMenuCommand (L"Picture", L"World", L"Draw circle (mm)...", 0, 0, DO_DrawCircle_mm);
 	praat_addMenuCommand (L"Picture", L"World", L"Paint circle (mm)...", 0, 0, DO_PaintCircle_mm);
-	#if defined (macintosh)
+	#if defined (macintosh) || defined (_WIN32)
 		praat_addMenuCommand (L"Picture", L"World", L"-- picture --", 0, 0, 0);
 		praat_addMenuCommand (L"Picture", L"World", L"Insert picture from file...", 0, 0, DO_InsertPictureFromFile);
 	#endif

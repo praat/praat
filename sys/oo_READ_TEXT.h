@@ -17,27 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
- * pb 2005/11/24 more informative error messages
- * pb 2006/04/12 guard against too new versions
- * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
- * pb 2007/06/09 wchar
- * pb 2007/06/21 asc -> tex
- * pb 2007/07/21 MelderReadString
- * pb 2007/07/22 improved reading of <exists>
- * pb 2008/01/19 NUM##storage
- * pb 2008/03/20 layout
- * pb 2008/11/04 MelderReadText
- * pb 2009/03/21 modern enums
- * pb 2011/03/03 removed oo_STRINGx
- * pb 2011/03/29 C++
- * pb 2011/05/03 therror
- * pb 2011/06/29 removed C version
- * pb 2011/07/07 void
- */
-
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \

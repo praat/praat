@@ -23,7 +23,7 @@
  * pb 2006/12/30 new Sound_create API
  * pb 2007/01/27 compatible with stereo Sounds
  * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2008/01/19 double
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/09 C++
@@ -47,7 +47,7 @@ AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
 }
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish)
+	double ymin, double ymax, const wchar *method, int garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Sound pressure (Pa)");
 }

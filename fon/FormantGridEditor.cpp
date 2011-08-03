@@ -17,13 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2008/04/24 created
- * pb 2008/04/25 audio
- * pb 2011/03/23 C++
- * pb 2011/07/02 C++
- */
-
 #include "FormantGridEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"

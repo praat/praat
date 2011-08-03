@@ -136,14 +136,14 @@ static void readSound (ExperimentMFC me, const wchar *fileNameHead, const wchar 
 		 */
 		autoSound substimulus = (Sound) Data_readFromFile (& file);   // Sound_readFromSoundFile (& file);
 		if (substimulus -> methods != (Thing_Table) classSound)
-			Melder_throw ("File ", MelderFile_messageName (& file), " contains a ", Thing_className (substimulus.peek()), " instead of a sound.");
+			Melder_throw ("File ", & file, " contains a ", Thing_className (substimulus.peek()), " instead of a sound.");
 		/*
 		 * Check whether all sounds have the same number of channels.
 		 */
 		if (my numberOfChannels == 0) {
 			my numberOfChannels = substimulus -> ny;
 		} else if (substimulus -> ny != my numberOfChannels) {
-			Melder_throw ("The sound in file ", MelderFile_messageName (& file), " has a different number of channels than some other sound.");
+			Melder_throw ("The sound in file ", & file, " has a different number of channels than some other sound.");
 		}
 		/*
 		 * Check whether all sounds have the same sampling frequency.
@@ -151,7 +151,7 @@ static void readSound (ExperimentMFC me, const wchar *fileNameHead, const wchar 
 		if (my samplePeriod == 0.0) {
 			my samplePeriod = substimulus -> dx;   /* This must be the first sound read. */
 		} else if (substimulus -> dx != my samplePeriod) {
-			Melder_throw ("The sound in file ", MelderFile_messageName (& file), " has a different sampling frequency than some other sound.");
+			Melder_throw ("The sound in file ", & file, " has a different sampling frequency than some other sound.");
 		}
 		/*
 		 * Append the substimuli, perhaps with silent intervals.

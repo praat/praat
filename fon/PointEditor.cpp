@@ -17,24 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/05/17 more shimmer measurements
- * pb 2003/05/21 more jitter measurements
- * pb 2004/04/16 added a fixed maximum period factor of 1.3
- * pb 2004/04/21 less flashing
- * pb 2007/01/28 made compatible with stereo sounds (by converting them to mono)
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/09/08 inherit from TimeSoundEditor
- * pb 2007/09/22 autoscaling
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2011/02/20 better messages and info
- * pb 2011/06/06 C++
- * pb 2011/07/15 C++
- */
-
 #include "PointEditor.h"
 #include "PointProcess_and_Sound.h"
 #include "EditorM.h"
@@ -249,7 +231,7 @@ class_methods (PointEditor, TimeSoundEditor) {
 	class_methods_end
 }
 
-PointEditor PointEditor_create (GuiObject parent, const wchar_t *title, PointProcess point, Sound sound) {
+PointEditor PointEditor_create (GuiObject parent, const wchar *title, PointProcess point, Sound sound) {
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		if (sound) {

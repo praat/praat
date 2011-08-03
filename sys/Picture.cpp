@@ -387,7 +387,7 @@ void Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
 		Graphics_writeRecordings (my graphics, f);
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw ("Cannot write Praat picture file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Cannot write Praat picture file ", file, ".");
 	}
 }
 
@@ -417,7 +417,7 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 	try {
 		Picture_readFromPraatPictureFile_any (me, file, false);
 	} catch (MelderError) {
-		Melder_throw ("Praat picture not read from file ", MelderFile_messageName (file));
+		Melder_throw ("Praat picture not read from file ", file);
 	}
 }
 
@@ -426,7 +426,7 @@ void Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file) {
 	try {
 		Picture_readFromPraatPictureFile_any (me, file, true);
 	} catch (MelderError) {
-		Melder_throw ("Praat picture not read from file ", MelderFile_messageName (file));
+		Melder_throw ("Praat picture not read from file ", file);
 	}
 }
 #endif
@@ -589,7 +589,7 @@ void Picture_writeToMacPictFile (Picture me, MelderFile file) {
 		KillPicture (pict);
 		MelderFile_setMacTypeAndCreator (file, 'PICT', 'PpgB');
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to Mac picture file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Picture not written to Mac picture file ", file, ".");
 	}
 }
 #endif
@@ -671,7 +671,7 @@ void Picture_writeToWindowsMetafile (Picture me, MelderFile file) {
 		DeleteEnhMetaFile (CopyEnhMetaFile (metafile, file -> path));
 		DeleteEnhMetaFile (metafile);
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to Windows metafile ", MelderFile_messageName (file));
+		Melder_throw ("Picture not written to Windows metafile ", file);
 	}
 }
 #endif
@@ -724,7 +724,7 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int 
 		}
 		#endif
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to Windows metafile ", MelderFile_messageName (file));
+		Melder_throw ("Picture not written to Windows metafile ", file);
 	}
 }
 
@@ -733,7 +733,7 @@ void Picture_writeToPdfFile (Picture me, MelderFile file) {
 		autoGraphics graphics = Graphics_create_pdffile (file, 300, my selx1, my selx2, my sely1, my sely2);
 		Graphics_play ((Graphics) my graphics, graphics.peek());
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to PDF file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Picture not written to PDF file ", file, ".");
 	}
 }
 

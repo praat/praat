@@ -24,7 +24,7 @@
  * pb 2005/06/16 units
  * pb 2006/12/08 info
  * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/31 C++
  * pb 2011/07/14 C++
@@ -60,7 +60,7 @@ PitchTier PitchTier_create (double tmin, double tmax) {
 }
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int garnish, const wchar_t *method)
+	double fmin, double fmax, int garnish, const wchar *method)
 {
 	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, L"Frequency (Hz)");
 }

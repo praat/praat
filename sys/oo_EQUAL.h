@@ -17,19 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/02/07 added oo_FILE and oo_DIR
- * pb 2003/06/11 made struct_equal global
- * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
- * pb 2006/08/08 reduced Lint warnings
- * pb 2007/06/09 wchar_t
- * pb 2009/01/22 consider empty strings and null strings identical
- * pb 2009/03/21 modern enums
- * pb 2011/03/03 removed oo_STRINGx
- * pb 2011/03/29 C++
- * pb 2011/07/07 C++
- */
-
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
@@ -120,8 +107,6 @@
 #define oo_WIDGET_VECTOR_FROM(x,cap,min,max)  \
 	!!!! Can never compare Widgets... !!!!
 
-
-
 #define oo_OBJECT(Class,version,x)  \
 	if (! my x != ! thy x || (my x && ! Data_equal (my x, thy x))) return false;
 
@@ -134,16 +119,12 @@
 #define oo_DIR(x)  \
 	if (! MelderDir_equal (& my x, & thy x)) return false;
 
-
-
 #define oo_DEFINE_STRUCT(Type)  \
 	bool Type##_equal (Type me, Type thee) {
 
 #define oo_END_STRUCT(Type)  \
 		return true; \
 	}
-
-
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
 	static bool class##Class##_equal (I, thou) { \
@@ -155,25 +136,17 @@
 		return true; \
 	}
 
-
-
 #define oo_IF(condition)  \
 	if (condition) {
 
 #define oo_ENDIF  \
 	}
 
-
-
 #define oo_FROM(from)
 
 #define oo_ENDFROM
 
-
-
 #define oo_VERSION(version)
-
-
 
 #define oo_DECLARING  0
 #define oo_DESTROYING  0

@@ -17,24 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/10/16 C++ compatible struct tags
- * pb 2006/12/21 thicker moving cursor
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/09/19 info
- * pb 2007/09/21 query menu hierarchical
- * pb 2007/11/30 erased Graphics_printf
- * pb 2007/12/27 Gui
- * pb 2008/03/20 split off Help menu
- * pb 2009/09/21 Zoom Back
- * pb 2009/10/26 repaired the synchronizedZoomAndScroll preference
- * fb 2010/02/24 GTK
- * pb 2010/05/14 abolished resolution independence
- * pb 2011/07/01 C++
- */
-
 #include "FunctionEditor.h"
 #include "machine.h"
 #include "Preferences.h"
@@ -1687,9 +1669,9 @@ class_methods (FunctionEditor, Editor) {
 	class_methods_end
 }
 
-void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *title, Data data) {
-	my tmin = ((Function) data) -> xmin;   /* Set before adding children (see group button). */
-	my tmax = ((Function) data) -> xmax;
+void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *title, Function data) {
+	my tmin = data -> xmin;   // set before adding children (see group button)
+	my tmax = data -> xmax;
 	Editor_init (me, parent, 0, 0, preferences.shellWidth, preferences.shellHeight, title, data);
 
 	my startWindow = my tmin;
@@ -1701,13 +1683,11 @@ void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *titl
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setFontSize (my graphics, 12);
 
-{
 // This exdents because it's a hack:
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width = GuiObject_getWidth (my drawingArea);
 event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me, & event);
-}
 
 	our updateText (me);
 	if (group_equalDomain (my tmin, my tmax))

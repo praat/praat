@@ -21,7 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2006/12/10 MelderInfo
  * pb 2007/10/01 can write as encoding
- * pb 2011/03/03 wchar_t
+ * pb 2011/03/03 wchar
  * pb 2011/06/12 C++
  */
 
@@ -64,7 +64,7 @@ static void info (I) {
 
 static void readBinary (I, FILE *f) {
 	iam (WordList);
-	wchar_t *current, *p;
+	wchar *current, *p;
 	int kar = 0;
 	my length = bingeti4 (f);
 	if (my length < 0)
@@ -88,7 +88,7 @@ static void readBinary (I, FILE *f) {
 		 * Read following words.
 		 */
 		for (;;) {
-			wchar_t *previous = current;
+			wchar *previous = current;
 			int numberOfSame = kar - 128;
 			current = p;
 			wcsncpy (current, previous, numberOfSame);
@@ -116,13 +116,13 @@ static void writeBinary (I, FILE *f) {
 	if (! my length) my length = wcslen (my string);
 	binputi4 (my length, f);
 	if (my length > 0) {
-		wchar_t *current = my string, *kar = current;
+		wchar *current = my string, *kar = current;
 		for (kar = current; *kar != '\n'; kar ++) { }
 		currentLength = kar - current;
 		for (long i = 0; i < currentLength; i ++)
 			fputc (current [i], f);   // TODO: check
 		for (;;) {
-			wchar_t *previous = current, *kar1, *kar2;
+			wchar *previous = current, *kar1, *kar2;
 			int numberOfSame;
 			previousLength = currentLength;
 			current = previous + previousLength + 1;
@@ -163,7 +163,7 @@ WordList Strings_to_WordList (Strings me) {
 		 * Check whether the strings are generic and sorted.
 		 */
 		for (long i = 1; i <= my numberOfStrings; i ++) {
-			wchar_t *string = my strings [i], *p;
+			wchar *string = my strings [i], *p;
 			for (p = & string [0]; *p; p ++) {
 				if (*p > 126)
 					Melder_throw ("String \"", string, "\" not generic.\nPlease convert to backslash trigraphs first.");
@@ -239,7 +239,7 @@ static long gotoPrevious (WordList me, long p) {
 	return p + 1;
 }
 
-static int compare (const wchar_t *word, const wchar_t *p) {
+static int compare (const wchar *word, const wchar *p) {
 	for (;;) {
 		if (*word == '\0') {
 			if (*p == '\n') return 0;
@@ -253,9 +253,9 @@ static int compare (const wchar_t *word, const wchar_t *p) {
 	return 0;   // should not occur
 }
 
-static wchar_t buffer [3333+1];
+static wchar buffer [3333+1];
 
-bool WordList_hasWord (WordList me, const wchar_t *word) {
+bool WordList_hasWord (WordList me, const wchar *word) {
 	long p, d;
 	int cf;
 	if (wcslen (word) > 3333) return false;

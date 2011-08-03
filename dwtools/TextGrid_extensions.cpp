@@ -253,7 +253,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		}
 		f.close(file);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("TextGrid not read from file ", MelderFile_messageName (file), "."); }
+	} catch (MelderError) { Melder_throw ("TextGrid not read from file ", file, "."); }
 }
 
 TextGrid TextGrids_merge (TextGrid me, TextGrid thee)

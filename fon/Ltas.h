@@ -58,7 +58,7 @@ Ltas Ltas_create (long nx, double dx);
  */
 
 void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax,
-	double minimum, double maximum, int garnish, const wchar_t *method);
+	double minimum, double maximum, int garnish, const wchar *method);
 
 Matrix Ltas_to_Matrix (Ltas me);
 Ltas Matrix_to_Ltas (Matrix me);

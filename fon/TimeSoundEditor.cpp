@@ -17,18 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/10/16 C++ compatible struct tags
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/09/19 info
- * pb 2007/09/22 Draw visible sound
- * pb 2010/12/08 
- * pb 2011/03/23 C++
- * pb 2011/07/15 C++
- */
-
 #include "TimeSoundEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"
@@ -537,7 +525,7 @@ class_methods (TimeSoundEditor, FunctionEditor) {
 	class_methods_end
 }
 
-void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound) {
+void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound) {
 	my ownSound = ownSound;
 	if (sound != NULL) {
 		if (ownSound) {

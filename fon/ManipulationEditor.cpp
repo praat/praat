@@ -17,21 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2002/10/06 improved visibility of dragging
- * pb 2003/11/20 PitchTier: Interpolate quadratically...
- * pb 2004/04/13 less flashing
- * pb 2006/01/02 removed bug in Shift Frequencies: wrong option list
- * pb 2006/12/08 better NUMundefined pitch and duration range checking
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/11/30 erased Graphics_printf
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2011/07/01 C++
- */
-
 #include "ManipulationEditor.h"
 #include "Preferences.h"
 #include "PitchTier_to_PointProcess.h"
@@ -749,7 +734,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 	double minimumFrequency = YLIN (50);
 	int rangePrecisions [] = { 0, 1, 2 };
-	const wchar_t *rangeUnits [] = { L"", L" Hz", L" st" };
+	const wchar *rangeUnits [] = { L"", L" Hz", L" st" };
 
 	/*
 	 * Pitch contours.

@@ -29,7 +29,9 @@
 
 #include "GraphicsP.h"
 
-#if mac
+#if win
+	#include <gdiplus.h>
+#elif mac
 	#include <time.h>
 	#include "macport_on.h"
 	#include <QDOffscreen.h>
@@ -772,7 +774,26 @@ void Graphics_imageFromFile (I, const wchar *relativeFileName, double x1, double
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
 	if (my screen) {
 		iam (GraphicsScreen);
-		#if mac
+		#if win
+			if (my useGdiplus) {
+				structMelderFile file;
+				Melder_relativePathToFile (relativeFileName, & file);
+				Gdiplus::Image image (file. path);
+				Gdiplus::Graphics dcplus (my dc);
+				if (x1 == x2 && y1 == y2) {
+					width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
+					height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
+				} else if (x1 == x2) {
+					width = height * (double) image. GetWidth () / (double) image. GetHeight ();
+					x1DC -= width / 2, x2DC = x1DC + width;
+				} else if (y1 == y2) {
+					height = width * (double) image. GetHeight () / (double) image. GetWidth ();
+					y2DC -= height / 2, y1DC = y2DC + height;
+				}
+				Gdiplus::Rect rect (x1DC, y2DC, width, height);
+				dcplus.DrawImage (& image, rect);
+			}
+		#elif mac
 			if (my useQuartz) {
 				structMelderFile file;
 				Melder_relativePathToFile (relativeFileName, & file);

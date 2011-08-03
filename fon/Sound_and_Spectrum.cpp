@@ -142,7 +142,7 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 	}
 }
 
-Sound Sound_filter_formula (Sound me, const wchar_t *formula, Interpreter interpreter) {
+Sound Sound_filter_formula (Sound me, const wchar *formula, Interpreter interpreter) {
 	try {
 		autoSound thee = (Sound) Data_copy (me);
 		if (my ny == 1) {

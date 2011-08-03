@@ -725,7 +725,7 @@ Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum
 }
 
 void Sound_draw (Sound me, Graphics g,
-	double tmin, double tmax, double minimum, double maximum, bool garnish, const wchar_t *method)
+	double tmin, double tmax, double minimum, double maximum, bool garnish, const wchar *method)
 {
 	long ixmin, ixmax;
 	bool treversed = tmin > tmax;

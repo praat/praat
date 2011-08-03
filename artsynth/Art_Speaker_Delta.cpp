@@ -17,13 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1996/06/22
- * pb 2002/07/16 GPL
- * pb 2009/03/21 modern enums
- * pb 2011/03/22 C++
- */
-
 #include "Art_Speaker_Delta.h"
 #include "Art_Speaker.h"
 

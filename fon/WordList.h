@@ -28,7 +28,7 @@ oo_CLASS_CREATE (WordList, Data);
 WordList Strings_to_WordList (Strings me);
 Strings WordList_to_Strings (WordList me);
 
-bool WordList_hasWord (WordList me, const wchar_t *word);
+bool WordList_hasWord (WordList me, const wchar *word);
 
 /* End of file WordList.h */
 #endif

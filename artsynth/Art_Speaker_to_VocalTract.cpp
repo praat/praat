@@ -17,13 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1994/05/09
- * pb 2002/07/16 GPL
- * pb 2008/01/19 double
- * pb 2011/03/22 C++
- */
-
 #include "Delta.h"
 #include "Speaker_to_Delta.h"
 #include "Art_Speaker_Delta.h"

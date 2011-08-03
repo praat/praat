@@ -225,7 +225,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					try {
 						readOnePage (me, text2.peek());
 					} catch (MelderError) {
-						Melder_throw ("File ", MelderFile_messageName (& file2), ".");
+						Melder_throw ("File ", & file2, ".");
 					}
 				} catch (MelderError) {
 					/*
@@ -240,7 +240,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 					try {
 						readOnePage (me, text2.peek());
 					} catch (MelderError) {
-						Melder_throw ("File ", MelderFile_messageName (& file2), ".");
+						Melder_throw ("File ", & file2, ".");
 					}
 				}
 			}

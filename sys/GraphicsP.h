@@ -142,6 +142,7 @@ struct structGraphicsScreen : public structGraphics {
 		HPEN pen;
 		HBRUSH brush;
 		bool fatNonSolid;
+		bool useGdiplus;
 	#elif defined (macintosh)
 		GrafPtr macPort;
 		int macFont, macStyle;

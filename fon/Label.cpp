@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2004/10/16 C++ compatible structs
- * pb 2007/08/13 wchar_t
+ * pb 2007/08/13 wchar
  * pb 2011/06/02 C++
  * pb 2011/07/02 C++
  */
@@ -53,7 +53,7 @@ class_methods (Autosegment, Function) {
 	class_methods_end
 }
 
-Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label) {
+Autosegment Autosegment_create (double tmin, double tmax, const wchar *label) {
 	try {
 		autoAutosegment me = Thing_new (Autosegment);
 		Function_init (me.peek(), tmin, tmax);

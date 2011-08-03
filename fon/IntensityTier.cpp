@@ -23,7 +23,7 @@
  * pb 2005/05/26 switch for scaling in multiply
  * pb 2007/01/27 made compatible with stereo sounds
  * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/31 C++
  */
@@ -46,7 +46,7 @@ IntensityTier IntensityTier_create (double tmin, double tmax) {
 }
 
 void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish)
+	double ymin, double ymax, const wchar *method, int garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Intensity (dB)");
 }

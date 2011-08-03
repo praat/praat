@@ -17,21 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2002/10/06 improved visilibity of dragging
- * pb 2004/04/13 less flashing
- * pb 2006/12/08 keyboard shortcuts
- * pb 2007/06/10 wchar_t
- * pb 2007/09/04 new FunctionEditor API
- * pb 2007/09/08 inherit from TimeSoundEditor
- * pb 2007/11/30 erased Graphics_printf
- * pb 2008/03/21 new Editor API
- * pb 2009/01/23 minimum and maximum legal values
- * pb 2011/03/23 C++
- * pb 2011/07/01 C++
- */
-
 #include "RealTierEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"
@@ -420,7 +405,7 @@ class_methods (RealTierEditor, TimeSoundEditor) {
 	class_methods_end
 }
 
-void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar_t *title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar *title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));
 	TimeSoundEditor_init (me, parent, title, data, sound, ownSound);

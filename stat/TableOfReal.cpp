@@ -1313,7 +1313,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TableOfReal: tab-separated file ", MelderFile_messageName (file), " not read.");
+		Melder_throw ("TableOfReal: tab-separated file ", file, " not read.");
 	}
 }
 

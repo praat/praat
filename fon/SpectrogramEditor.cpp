@@ -17,14 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/04/13 less flashing
- * pb 2007/06/10 wchar_t
- * pb 2007/11/30 erased Graphics_printf
- * pb 2011/03/23 C++
- */
-
 #include "SpectrogramEditor.h"
 
 static void draw (SpectrogramEditor me) {
@@ -85,7 +77,7 @@ class_methods (SpectrogramEditor, FunctionEditor) {
 	class_methods_end
 }
 
-SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Data data) {
+SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Spectrogram data) {
 	try {
 		autoSpectrogramEditor me = Thing_new (SpectrogramEditor);
 		FunctionEditor_init (me.peek(), parent, title, data);

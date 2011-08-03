@@ -21,7 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/07/28 Distributions_peek
  * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2008/04/08 Distributions_peek_opt
  * pb 2011/03/20 C++
  */
@@ -57,7 +57,7 @@ void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long
 		Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at most my number of columns (", my numberOfColumns, ").");
 }
 
-int Distributions_peek (Distributions me, long column, wchar_t **string) {
+int Distributions_peek (Distributions me, long column, wchar **string) {
 	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
 	if (my numberOfRows < 1)
 		Melder_throw (me, ": I have no candidates.");
@@ -105,7 +105,7 @@ int Distributions_peek_opt (Distributions me, long column, long *number) {
 	return 1;
 }
 
-double Distributions_getProbability (Distributions me, const wchar_t *string, long column) {
+double Distributions_getProbability (Distributions me, const wchar *string, long column) {
 	long row, rowOfString = 0;
 	double total = 0.0;
 	if (column < 1 || column > my numberOfColumns) return NUMundefined;

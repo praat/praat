@@ -17,20 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/02/07 added oo_FILE and oo_DIR (empty)
- * pb 2004/10/16 replaced structType with theStructType, struct Type with struct structType
- * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
- * pb 2007/06/09 wchar_t
- * pb 2007/06/21 oo_LSTRINGW
- * pb 2007/08/13 wchar_t
- * pb 2007/09/02 bool
- * pb 2009/03/21 modern enums
- * pb 2011/03/03 removed oo_STRING
- * pb 2011/05/14 removed oo_CHAR and oo_WCHAR
- * pb 2011/07/01 & Melder_debug
- */
-
 #include "oo_undef.h"
 
 #undef oo_BYTE

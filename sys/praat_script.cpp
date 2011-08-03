@@ -29,7 +29,7 @@
  * pb 2006/01/11 local variables
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/02/17 corrected the messages about trailing spaces
- * pb 2007/06/11 wchar_t
+ * pb 2007/06/11 wchar
  * pb 2007/10/04 removed swscanf
  * pb 2009/01/04 allow proc(args) syntax
  * pb 2009/01/17 arguments to UiForm callbacks
@@ -423,7 +423,7 @@ void praat_executeScriptFromFile (MelderFile file, const wchar *arguments) {
 		}
 		Interpreter_run (interpreter.peek(), text.peek()); therror
 	} catch (MelderError) {
-		Melder_throw ("Script ", MelderFile_messageName (file), " not completed.");
+		Melder_throw ("Script ", file, " not completed.");
 	}
 }
 
@@ -506,7 +506,7 @@ static void firstPassThroughScript (MelderFile file) {
 			praat_executeScriptFromFile (file, NULL);
 		}
 	} catch (MelderError) {
-		Melder_throw ("Script ", MelderFile_messageName (file), " not completed.");
+		Melder_throw ("Script ", file, " not completed.");
 	}
 }
 

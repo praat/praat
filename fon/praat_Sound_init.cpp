@@ -1325,9 +1325,9 @@ END
 
 FORM_READ (Sound_readSeparateChannelsFromSoundFile, L"Read separate channels from sound file", 0, true)
 	autoSound sound = Sound_readFromSoundFile (file);
-	wchar_t name [300];
+	wchar name [300];
 	wcscpy (name, MelderFile_name (file));
-	wchar_t *lastPeriod = wcsrchr (name, '.');
+	wchar *lastPeriod = wcsrchr (name, '.');
 	if (lastPeriod != NULL) {
 		*lastPeriod = '\0';
 	}
@@ -2208,7 +2208,7 @@ static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderF
 	#ifdef macintosh
 		return Sound_readFromMacSoundFile (file);
 	#else
-		Melder_throw ("File ", MelderFile_messageName (file), " is empty.");   /* !!! */
+		Melder_throw ("File ", file, " is empty.");   // !!!
 	#endif
 }
 
@@ -2227,7 +2227,7 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 }
 
 static Any movieFileRecognizer (int nread, const char *header, MelderFile file) {
-	const wchar_t *fileName = MelderFile_name (file);
+	const wchar *fileName = MelderFile_name (file);
 	(void) header;
 	/*Melder_casual ("%d %d %d %d %d %d %d %d %d %d", header [0],
 		header [1], header [2], header [3],
@@ -2239,7 +2239,7 @@ static Any movieFileRecognizer (int nread, const char *header, MelderFile file) 
 }
 
 static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
-	const wchar_t *fileName = MelderFile_name (file);
+	const wchar *fileName = MelderFile_name (file);
 	(void) header;
 	if (nread < 512 || (! wcsstr (fileName, L".sdf") && ! wcsstr (fileName, L".SDF"))) return NULL;
 	return Sound_readFromSesamFile (file);
@@ -2256,7 +2256,7 @@ static Any kayFileRecognizer (int nread, const char *header, MelderFile file) {
 }
 
 static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
-	const wchar_t *fileName = MelderFile_name (file);
+	const wchar *fileName = MelderFile_name (file);
 	bool isBdfFile = wcsstr (fileName, L".bdf") != NULL || wcsstr (fileName, L".BDF") != NULL;
 	bool isEdfFile = wcsstr (fileName, L".edf") != NULL || wcsstr (fileName, L".EDF") != NULL;
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;

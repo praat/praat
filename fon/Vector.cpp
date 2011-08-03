@@ -411,7 +411,7 @@ void Vector_scale (I, double scale) {
 /***** Graphics. *****/
 
 void Vector_draw (I, Graphics g, double *pxmin, double *pxmax, double *pymin, double *pymax,
-	double defaultDy, const wchar_t *method)
+	double defaultDy, const wchar *method)
 {
 	iam (Vector);
 	bool xreversed = *pxmin > *pxmax, yreversed = *pymin > *pymax;

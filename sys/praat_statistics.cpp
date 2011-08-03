@@ -26,7 +26,7 @@
  * pb 2006/12/06 MelderString
  * pb 2006/12/26 theCurrentPraat
  * pb 2007/07/27 string deallocation size
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/12/09 preferences
  * pb 2008/11/26 numberOfMotifWidgets
  */
@@ -37,7 +37,7 @@
 static struct {
 	long batchSessions, interactiveSessions;
 	double memory;
-	wchar_t dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
+	wchar dateOfFirstSession [Preferences_STRING_BUFFER_SIZE];
 } statistics;
 
 void praat_statistics_prefs (void) {
@@ -50,7 +50,7 @@ void praat_statistics_prefs (void) {
 void praat_statistics_prefsChanged (void) {
 	if (! statistics.dateOfFirstSession [0]) {
 		time_t today = time (NULL);
-		wchar_t *newLine;
+		wchar *newLine;
 		wcscpy (statistics.dateOfFirstSession, Melder_peekUtf8ToWcs (ctime (& today)));
 		newLine = wcschr (statistics.dateOfFirstSession, '\n');
 		if (newLine) *newLine = '\0';

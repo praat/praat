@@ -17,16 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/05/19 Melder_atof
- * pb 2007/08/30 include menu bar height
- * pb 2007/12/27 Gui
- * pb 2009/03/21 modern enums
- * pb 2011/03/22 C+
- * pb 2011/07/16 C+
- */
-
 #include "ArtwordEditor.h"
 #include "machine.h"
 

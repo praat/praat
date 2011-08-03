@@ -28,7 +28,7 @@ struct structAutosegment : public structFunction {
 #define Autosegment__methods(klas) Function__methods(klas)
 Thing_declare2cpp (Autosegment, Function);
 
-Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
+Autosegment Autosegment_create (double tmin, double tmax, const wchar *label);
 /*
 	Function:
 		create a new instance of Autosegment.

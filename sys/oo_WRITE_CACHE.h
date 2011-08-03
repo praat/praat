@@ -17,19 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2006/05/29 added version to oo_OBJECT and oo_COLLECTION
- * pb 2007/06/09 wchar_t
- * pb 2008/01/19 NUM##storage
- * pb 2009/03/21 modern enums
- * pb 2011/03/03 removed oo_STRINGx
- * pb 2011/06/29 removed C version
- * pb 2011/07/07 void
- */
-
 #include "oo_undef.h"
-
 
 #define oo_SIMPLE(type,storage,x)  \
 	cacput##storage (my x, f);

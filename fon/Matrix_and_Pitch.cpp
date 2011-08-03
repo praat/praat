@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2009/01/18 Interpreter argument to formula
  * pb 2009/04/04 corrected voiceless frames in Pitch_to_Matrix
  * pb 2011/06/04 C++

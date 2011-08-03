@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,29 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/05/21 more complete settings report
- * pb 2004/02/15 highlight selection, but not the spectrogram
- * pb 2005/06/16 units
- * pb 2005/09/21 interface update
- * pb 2006/05/10 repaired memory leak in do_write
- * pb 2006/12/30 new Sound_create API
- * pb 2007/01/27 compatible with stereo sounds
- * Erez Volk 2007/05/14 FLAC support
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/09/04 TimeSoundAnalysisEditor
- * pb 2007/09/05 direct drawing to picture window
- * pb 2007/09/08 moved File menu to TimeSoundEditor.c
- * pb 2007/09/19 moved settings report to info
- * pb 2007/11/30 erased Graphics_printf
- * pb 2008/01/19 double
- * pb 2008/03/20 split off Help menu
- * pb 2011/03/23 C++
- * pb 2011/07/15 C++
  */
 
 #include "SoundEditor.h"
@@ -454,7 +431,7 @@ class_methods (SoundEditor, TimeSoundAnalysisEditor) {
 	class_methods_end
 }
 
-SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Data data) {
+SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Function data) {
 	Melder_assert (data != NULL);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);

@@ -150,7 +150,7 @@ struct structTimeSoundAnalysisEditor : public structTimeSoundEditor {
 	void (*createMenuItems_view_sound_analysis) (Klas me, EditorMenu menu);
 Thing_declare2cpp (TimeSoundAnalysisEditor, TimeSoundEditor);
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound);
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);

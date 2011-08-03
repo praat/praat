@@ -1,6 +1,6 @@
-/* Speaker_to_Delta.c
+/* Speaker_to_Delta.cpp
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1996/05/26
- * pb 2002/07/16 GPL
- */
-
 #include "Art_Speaker.h"
 #include "Speaker_to_Delta.h"
 #define SMOOTH_LUNGS  TRUE
 #define FIRST_TUBE  7
 
-Delta Speaker_to_Delta (Speaker me)
-{
+Delta Speaker_to_Delta (Speaker me) {
 	double f = my relativeSize * 1e-3;   /* We shall use millimetres and grams. */
 	double xe [30], ye [30], xi [30], yi [30], xmm [30], ymm [30], dx, dy;
 	int closed [40];
 	int itube;
-	Delta thee = Delta_create (89);
-	if (! thee) return NULL;
+	autoDelta thee = Delta_create (89);
 	Melder_assert (my cord.numberOfMasses == 1 || my cord.numberOfMasses == 2 || my cord.numberOfMasses == 10);
 
 	/* Lungs: tubes 1..23. */
@@ -367,7 +360,7 @@ Delta Speaker_to_Delta (Speaker me)
 		Melder_assert (! t->right1 || t->right1->left1 == t || t->right1->left2 == t);
 		Melder_assert (! t->right2 || t->right2->left1 == t);
 	}
-	return thee;
+	return thee.transfer();
 }
 
-/* End of file Speaker_to_Delta.c */
+/* End of file Speaker_to_Delta.cpp */

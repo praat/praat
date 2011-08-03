@@ -53,7 +53,7 @@ VocalTract VocalTract_create (long nx, double dx) {
 }
 
 #define MinimumWidth 0.0001
-static struct { const wchar_t *phone; int numberOfSections; double area [40]; }
+static struct { const wchar *phone; int numberOfSections; double area [40]; }
 	data [] = {
 { L"a", 34, { 1.7, 1.2, 1.6, 3.39, 2.1, 1.4, 1, 0.8, 0.8, 0.8, 1, 1.4,
 	2.1, 2.9, 3.09, 2.1, 2.5, 4, 5.3, 6.16, 7, 7.6, 8.15, 8.5, 8.6,
@@ -131,7 +131,7 @@ static struct { const wchar_t *phone; int numberOfSections; double area [40]; }
 	10.9, 12.9, 13.15, 13, 12.5, 9.9, 3.9, 1.8, 0.32, 0.4, 0.6 } },
 { NULL, 0, { 0 } } };
 
-VocalTract VocalTract_createFromPhone (const wchar_t *phone) {
+VocalTract VocalTract_createFromPhone (const wchar *phone) {
 	try {
 		int i = 0;
 		for (;; i ++) {

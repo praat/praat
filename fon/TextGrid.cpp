@@ -921,7 +921,7 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 		mfile.close ();
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("IntervalTier not read from file ", MelderFile_messageName (file), ".");
+		Melder_throw ("IntervalTier not read from file ", file, ".");
 	}
 }
 
@@ -936,7 +936,7 @@ void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
 		f.close (file);
 		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to Xwaves file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to Xwaves file ", file, ".");
 	}
 }
 
@@ -1336,7 +1336,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TextGrid not read from chronological text file ", MelderFile_messageName (file), ".");
+		Melder_throw ("TextGrid not read from chronological text file ", file, ".");
 	}
 }
 
@@ -1432,7 +1432,7 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 		mfile.close ();
 		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to chronological text file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to chronological text file ", file, ".");
 	}
 }
 
@@ -1626,7 +1626,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 		mfile.close ();
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("TextGrid not read from CGN syntax file ", MelderFile_messageName (file), ".");
+		Melder_throw ("TextGrid not read from CGN syntax file ", file, ".");
 	}
 }
 

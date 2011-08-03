@@ -1324,7 +1324,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 		try {
 			praat_executeScriptFromFile (& startUp, NULL);
 		} catch (MelderError) {
-			Melder_error_ (praatP.title, ": start-up file ", MelderFile_messageName (& startUp), " not completed.");
+			Melder_error_ (praatP.title, ": start-up file ", & startUp, " not completed.");
 			Melder_flushError (NULL);
 		}
 	}
@@ -1384,7 +1384,7 @@ void praat_run (void) {
 					try {
 						praat_executeScriptFromFile (& plugin, NULL);
 					} catch (MelderError) {
-						Melder_error_ (praatP.title, ": plugin ", MelderFile_messageName (& plugin), " contains an error.");
+						Melder_error_ (praatP.title, ": plugin ", & plugin, " contains an error.");
 						Melder_flushError (NULL);
 					}
 				}
@@ -1434,7 +1434,7 @@ void praat_run (void) {
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderGui_create (NULL);
 				#endif
-				Melder_error_ (praatP.title, ": command file ", MelderFile_messageName (& batchFile), " not completed.");
+				Melder_error_ (praatP.title, ": command file ", & batchFile, " not completed.");
 				Melder_flushError (NULL);
 				praat_exit (-1);
 			}

@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
-
 #include "FunctionEditor.h"
 #include "Spectrogram.h"
 
@@ -33,7 +29,7 @@ struct structSpectrogramEditor : public structFunctionEditor {
 #define SpectrogramEditor__methods(Klas) FunctionEditor__methods(Klas)
 Thing_declare2cpp (SpectrogramEditor, FunctionEditor);
 
-SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Data data);
+SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Spectrogram data);
 
 /* End of file SpectrogramEditor.h */
 #endif

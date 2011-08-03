@@ -1,6 +1,6 @@
-/* Speaker.c
+/* Speaker.cpp
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,12 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2007/10/01 can write as encoding
- * pb 2007/10/09 wchar
  */
 
 #include "Speaker.h"
@@ -57,8 +51,7 @@ class_methods (Speaker, Data) {
 	class_methods_end
 }
 
-Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses)
-{
+Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses) {
 	Speaker me = Thing_new (Speaker);
 
 	/* Supralaryngeal dimensions are taken from P. Mermelstein (1973):		*/
@@ -150,4 +143,4 @@ Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses)
 	return me;
 }
 
-/* End of file Speaker.c */
+/* End of file Speaker.cpp */

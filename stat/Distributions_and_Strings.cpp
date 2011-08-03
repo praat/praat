@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2003/07/28 factored out Distributions_peek
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2011/03/20 C++
  */
 
@@ -32,7 +32,7 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 		thy numberOfStrings = numberOfStrings;
 		thy strings = NUMvector <wchar*> (1, numberOfStrings);
 		for (long istring = 1; istring <= numberOfStrings; istring ++) {
-			wchar_t *string;
+			wchar *string;
 			Distributions_peek (me, column, & string); therror
 			thy strings [istring] = Melder_wcsdup (string);
 		}
@@ -65,7 +65,7 @@ Strings Distributions_to_Strings_exact (Distributions me, long column) {
 		thy strings = NUMvector <wchar*> (1, total);
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			long number = my data [irow] [column];
-			wchar_t *string = my rowLabels [irow];
+			wchar *string = my rowLabels [irow];
 			if (! string)
 				Melder_throw ("No string in row ", irow, ".");
 			for (long i = 1; i <= number; i ++) {
@@ -84,7 +84,7 @@ Distributions Strings_to_Distributions (Strings me) {
 		autoDistributions thee = Distributions_create (my numberOfStrings, 1);
 		long idist = 0;
 		for (long i = 1; i <= my numberOfStrings; i ++) {
-			wchar_t *string = my strings [i];
+			wchar *string = my strings [i];
 			long where = 0;
 			long j = 1;
 			for (; j <= idist; j ++)

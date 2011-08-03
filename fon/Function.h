@@ -71,7 +71,7 @@ int ClassFunction_getMaximumUnit (void *klas, long ilevel);
 #define Function_UNIT_TEXT_SHORT            0x00000001
 #define Function_UNIT_TEXT_GRAPHICAL        0x00000002
 #define Function_UNIT_TEXT_MENU             0x00000004
-const wchar_t * ClassFunction_getUnitText (void *klas, long ilevel, int unit, unsigned long flags);
+const wchar * ClassFunction_getUnitText (void *klas, long ilevel, int unit, unsigned long flags);
 
 int ClassFunction_isUnitLogarithmic (void *klas, long ilevel, int unit);
 

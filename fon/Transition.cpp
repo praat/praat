@@ -21,7 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2003/06/19 Eigen
  * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 can write as encoding
  * pb 2011/06/11 C++
  */
@@ -118,8 +118,8 @@ static void NUMrationalize (double x, long *numerator, long *denominator) {
 	*denominator = 0;   // failure
 }
 
-static void print4 (wchar_t *buffer, double value, int iformat, int width, int precision) {
-	wchar_t formatString [40];
+static void print4 (wchar *buffer, double value, int iformat, int width, int precision) {
+	wchar formatString [40];
 	if (iformat == 4) {
 		long numerator, denominator;
 		NUMrationalize (value, & numerator, & denominator);
@@ -159,7 +159,7 @@ void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision) {
 		}
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		for (long col = 1; col <= my numberOfStates; col ++) {
-			wchar_t text [40];
+			wchar text [40];
 			print4 (text, my data [row] [col], iformat, 0, precision);
 			Graphics_text (g, col, y, text);
 		}

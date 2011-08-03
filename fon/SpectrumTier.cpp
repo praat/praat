@@ -19,7 +19,7 @@
 
 /*
  * pb 2007/03/29 created
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/31
  */
@@ -55,7 +55,7 @@ SpectrumTier SpectrumTier_create (double fmin, double fmax) {
 }
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish, const wchar_t *method)
+	double pmin, double pmax, int garnish, const wchar *method)
 {
 	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, method, L"Power spectral density (dB)");
 }

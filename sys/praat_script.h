@@ -25,7 +25,7 @@ void praat_executeCommand (Interpreter me, wchar *command);
 void praat_executeCommandFromStandardInput (const char *programName);
 void praat_executeScriptFromFile (MelderFile file, const wchar *arguments);
 void praat_executeScriptFromFileNameWithArguments (const wchar *nameAndArguments);
-void praat_executeScriptFromText (wchar_t *text);
+void praat_executeScriptFromText (wchar *text);
 void praat_executeScriptFromDialog (Any dia);
 void DO_praat_runScript (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar *scriptPath, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);

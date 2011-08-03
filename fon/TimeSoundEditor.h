@@ -51,7 +51,7 @@ Thing_declare2cpp (TimeSoundEditor, FunctionEditor);
 
 void TimeSoundEditor_prefs (void);
 
-void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound);
+void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound);
 
 void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 

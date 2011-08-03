@@ -30,7 +30,7 @@ oo_CLASS_CREATE (Transition, Data);
 void Transition_init (I, long numberOfStates);
 Transition Transition_create (long numberOfStates);
 
-void Transition_formula (I, const wchar_t *formula);
+void Transition_formula (I, const wchar *formula);
 void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision);
 
 void Transition_eigen (Transition me, Matrix *eigenvectors, Matrix *eigenvalues);

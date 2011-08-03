@@ -275,7 +275,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 		}
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Strings not read from raw text file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Strings not read from raw text file ", file, ".");
 	}
 }
 

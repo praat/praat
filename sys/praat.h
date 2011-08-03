@@ -80,7 +80,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 	'title' is the name that will appear in the dynamic menu,
 		and also the command that is used in command files.
 	'callback' refers to a function prototyped like this:
-		static int DO_Class_action (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, void *closure);
+		static int DO_Class_action (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, void *closure);
 		this function should return 0 if the command failed,
 		and 1 if the command was executed successfully;
 		this function will be called by 'praat' when the user clicks a menu command,
@@ -130,7 +130,7 @@ GuiObject praat_addMenuCommand (const wchar *window, const wchar *menu, const wc
 typedef struct {
 	void *klas;   /* The class. */
 	Any object;   /* The instance. */
-	wchar_t *name;   /* The name of the object as it appears in the List. */
+	wchar *name;   /* The name of the object as it appears in the List. */
 	long id;   /* The unique number of the object. */
 	int selected;   /* Is the name of the object inverted in the list? */
 	Any editors [praat_MAXNUM_EDITORS];   /* Are there editors open with this Object in it? */

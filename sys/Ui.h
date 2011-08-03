@@ -156,7 +156,7 @@ long UiForm_getInteger_check (I, const wchar *fieldName);
 wchar * UiForm_getString_check (I, const wchar *fieldName);
 Graphics_Colour UiForm_getColour_check (I, const wchar *fieldName);
 
-void UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter);
+void UiForm_parseString (I, const wchar *arguments, Interpreter interpreter);
 
 UiForm UiInfile_create (GuiObject parent, const wchar *title,
   void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure), void *okClosure,

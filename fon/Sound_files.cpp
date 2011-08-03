@@ -169,7 +169,7 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 		mfile.close ();
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from sound file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sound not read from sound file ", file, ".");
 	}
 }
 
@@ -200,7 +200,7 @@ Sound Sound_readFromSesamFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Sesam file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sound not read from Sesam file ", file, ".");
 	}
 }
 
@@ -247,7 +247,7 @@ Sound Sound_readFromMacSoundFile (MelderFile file) {
 		DisposeHandle (han);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Mac sound file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sound not read from Mac sound file ", file, ".");
 	}
 }
 #endif
@@ -415,7 +415,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 			if (soundConverter) SoundConverterClose (soundConverter);
 			if (refNum) CloseMovieFile (refNum);
 		#endif
-		Melder_throw ("Sound not read from movie file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sound not read from movie file ", file, ".");
 	}
 }
 
@@ -480,7 +480,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Bell Labs sound file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sound not read from Bell Labs sound file ", file, ".");
 	}
 }
 
@@ -535,7 +535,7 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from Kay file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sound not read from Kay file ", file, ".");
 	}
 }
 
@@ -551,7 +551,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Sound not read from raw A-law file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sound not read from raw A-law file ", file, ".");
 	}
 }
 
@@ -562,7 +562,7 @@ void Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType) {
 		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding16 (audioFileType), my z, my nx, TRUE); therror
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to 16-bit sound file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to 16-bit sound file ", file, ".");
 	}
 }
 
@@ -592,7 +592,7 @@ void Sound_writeToSesamFile (Sound me, MelderFile file) {
 		for (long i = 1; i <= tail; i ++) binputi2LE (0, f);   /* Pad last block with zeroes. */
 		f.close (file);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to Sesam file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to Sesam file ", file, ".");
 	}
 }
 
@@ -666,7 +666,7 @@ void Sound_writeToMacSoundFile (Sound me, MelderFile file) {
 			/* Make purgeable, like system sounds. Keep the changes. */
 		CloseResFile (path);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to Mac sound file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to Mac sound file ", file, ".");
 	}
 }
 #endif
@@ -702,7 +702,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 		MelderFile_writeFloatToAudio (file, my ny, Melder_LINEAR_16_LITTLE_ENDIAN, my z, my nx, TRUE); therror
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to Kay sound file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to Kay sound file ", file, ".");
 	}
 }
 
@@ -712,7 +712,7 @@ void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
 		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, TRUE); therror
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to raw sound file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to raw sound file ", file, ".");
 	}
 }
 

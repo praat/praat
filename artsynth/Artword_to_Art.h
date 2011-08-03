@@ -19,7 +19,7 @@
 
 #include "Artword.h"
 
-Art Artword_to_Art (I, double time);
+Art Artword_to_Art (Artword me, double time);
 /*
 	Function:
 		linear interpolation between targets.	

@@ -34,7 +34,11 @@ struct structSoundEditor : public structTimeSoundAnalysisEditor {
 #define SoundEditor__methods(Klas) TimeSoundAnalysisEditor__methods(Klas)
 Thing_declare2cpp (SoundEditor, TimeSoundAnalysisEditor);
 
-SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Data data);
+SoundEditor SoundEditor_create (
+	GuiObject parent,
+	const wchar *title,
+	Function data   // either a Sound or a LongSound
+);
 
 /* End of file SoundEditor.h */
 #endif

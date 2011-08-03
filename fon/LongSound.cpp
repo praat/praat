@@ -77,7 +77,7 @@ static void destroy (I) {
 
 static void info (I) {
 	iam (LongSound);
-	static const wchar_t *encodingStrings [1+16] = { L"none",
+	static const wchar *encodingStrings [1+16] = { L"none",
 		L"linear 8 bit signed", L"linear 8 bit unsigned",
 		L"linear 16 bit big-endian", L"linear 16 bit little-endian",
 		L"linear 24 bit big-endian", L"linear 24 bit little-endian",
@@ -272,18 +272,18 @@ LongSound LongSound_open (MelderFile file) {
 static void _LongSound_FLAC_process (LongSound me, long firstSample, long numberOfSamples) {
 	my compressedSamplesLeft = numberOfSamples - 1;
 	if (! FLAC__stream_decoder_seek_absolute (my flacDecoder, firstSample))
-		Melder_throw ("Cannot seek in FLAC file ", MelderFile_messageName (& my file), ".");
+		Melder_throw ("Cannot seek in FLAC file ", & my file, ".");
 	while (my compressedSamplesLeft > 0) {
 		if (FLAC__stream_decoder_get_state (my flacDecoder) == FLAC__STREAM_DECODER_END_OF_STREAM)
-			Melder_throw ("FLAC file ", MelderFile_messageName (& my file), " too short.");
+			Melder_throw ("FLAC file ", & my file, " too short.");
 		if (! FLAC__stream_decoder_process_single (my flacDecoder))
-			Melder_throw ("Error decoding FLAC file ", MelderFile_messageName (& my file), ".");
+			Melder_throw ("Error decoding FLAC file ", & my file, ".");
 	}
 }
 
 static void _LongSound_FILE_seekSample (LongSound me, long firstSample) {
 	if (fseek (my f, my startOfData + (firstSample - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
-		Melder_throw ("Cannot seek in file ", MelderFile_messageName (& my file), ".");
+		Melder_throw ("Cannot seek in file ", & my file, ".");
 }
 
 static void _LongSound_FLAC_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples) {
@@ -294,10 +294,10 @@ static void _LongSound_FLAC_readAudioToShort (LongSound me, short *buffer, long 
 
 static void _LongSound_MP3_process (LongSound me, long firstSample, long numberOfSamples) {
 	if (! mp3f_seek (my mp3f, firstSample))
-		Melder_throw ("Cannot seek in MP3 file ", MelderFile_messageName (& my file), ".");
+		Melder_throw ("Cannot seek in MP3 file ", & my file, ".");
 	my compressedSamplesLeft = numberOfSamples;
 	if (! mp3f_read (my mp3f, numberOfSamples))
-		Melder_throw ("Error decoding MP3 file ", MelderFile_messageName (& my file), ".");
+		Melder_throw ("Error decoding MP3 file ", & my file, ".");
 }
 
 static void _LongSound_MP3_readAudioToShort (LongSound me, short *buffer, long firstSample, long numberOfSamples) {
@@ -388,7 +388,7 @@ void LongSound_writePartToAudioFile16 (LongSound me, int audioFileType, double t
 		writePartToOpenFile16 (me, audioFileType, imin, n, file, 0); therror
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to sound file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to sound file ", file, ".");
 	}
 }
 
@@ -403,7 +403,7 @@ void LongSound_writeChannelToAudioFile16 (LongSound me, int audioFileType, int c
 		writePartToOpenFile16 (me, audioFileType, 1, my nx, file, channel == 0 ? -1 : -2); therror
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw ("Channel ", channel, " of ", me, ": not written to sound file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Channel ", channel, " of ", me, ": not written to sound file ", file, ".");
 	}
 }
 
@@ -614,7 +614,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 			if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
 			MelderAudio_play16 (resampledBuffer, newSampleRate, silenceBefore + newN + silenceAfter, my numberOfChannels, melderPlayCallback, thee); therror
 		}
-		Melder_free (thy resampledBuffer);
+		//Melder_free (thy resampledBuffer);   // cannot do that, because MelderAudio_play16 isn't necessarily synchronous
 	} catch (MelderError) {
 		Melder_free (thy resampledBuffer);
 		Melder_throw (me, ": not played");
@@ -685,7 +685,7 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType) {
 		}
 		mfile.close ();
 	} catch (MelderError) {
-		Melder_throw ("Sounds not concatenated and not saved to ", MelderFile_messageName (file), ".");
+		Melder_throw ("Sounds not concatenated and not saved to ", file, ".");
 	}
 }
 

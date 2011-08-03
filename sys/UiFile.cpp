@@ -117,7 +117,7 @@ void UiInfile_do (I) {
 		try {
 			my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure);
 		} catch (MelderError) {
-			Melder_error_ ("File ", MelderFile_messageName (& file), " not finished.");
+			Melder_error_ ("File ", & file, " not finished.");
 			Melder_flushError (NULL);
 		}
 	}
@@ -182,7 +182,7 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 	try {
 		my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure);
 	} catch (MelderError) {
-		Melder_error_ ("File ", MelderFile_messageName (& file), " not finished.");
+		Melder_error_ ("File ", & file, " not finished.");
 		Melder_flushError (NULL);
 	}
 	UiHistory_write (L" ");

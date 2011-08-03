@@ -72,9 +72,10 @@ static void widgetToWindowCoordinates (I) {
 	#endif
 }
 
-class_methods (Graphics, Thing)
+class_methods (Graphics, Thing) {
 	class_method (destroy)
-class_methods_end
+	class_methods_end
+}
 
 static void computeTrafo (I) {
 	iam (Graphics);
@@ -126,7 +127,7 @@ int Graphics_init (I) {
 
 Graphics Graphics_create (int resolution) {
 	Graphics me = (Graphics) Thing_new (Graphics);
-	if (! me || ! Graphics_init (me)) forget (me);
+	Graphics_init (me);
 	my resolution = resolution;
 	return me;
 }

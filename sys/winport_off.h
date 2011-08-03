@@ -1,6 +1,6 @@
-/* Artword_to_Art.cpp
+/* winport_off.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Artword_to_Art.h"
+#undef Graphics
 
-Art Artword_to_Art (Artword me, double tim) {
-	try {
-		autoArt thee = Art_create ();
-		Artword_intoArt (me, thee.peek(), tim);
-		return thee.transfer();
-	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Articulation.");
-	}
-}
-
-/* End of file Artword_to_Art.cpp */
+/* End of file winport_off.h */

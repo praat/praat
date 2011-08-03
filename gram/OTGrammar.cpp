@@ -2710,7 +2710,7 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 		}
 		MelderFile_writeText (file, buffer.string); therror
 	} catch (MelderError) {
-		Melder_throw (me, ": not saved to tab-separated file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not saved to tab-separated file ", file, ".");
 	}
 }
 

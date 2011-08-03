@@ -201,7 +201,7 @@ void Data_writeToTextFile (I, MelderFile file) {
 	try {
 		_Data_writeToTextFile (me, file, true);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to text file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to text file ", file, ".");
 	}
 }
 
@@ -210,7 +210,7 @@ void Data_writeToShortTextFile (I, MelderFile file) {
 	try {
 		_Data_writeToTextFile (me, file, false);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to short text file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to short text file ", file, ".");
 	}
 }
 
@@ -239,7 +239,7 @@ void Data_writeToBinaryFile (I, MelderFile file) {
 		mfile.close ();
 		MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
 	} catch (MelderError) {
-		Melder_throw (me, ": not written to binary file ", MelderFile_messageName (file), ".");
+		Melder_throw (me, ": not written to binary file ", file, ".");
 	}
 }
 
@@ -320,7 +320,7 @@ Any Data_readFromTextFile (MelderFile file) {
 		Data_readText (me.peek(), text.peek()); therror
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Data not read from text file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Data not read from text file ", file, ".");
 	}
 }
 
@@ -356,7 +356,7 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		} else {
 			end = strstr (line, "BinaryFile");
 			if (! end) {
-				Melder_throw ("File ", MelderFile_messageName (file), " is not a Data binary file.");
+				Melder_throw ("File ", file, " is not a Data binary file.");
 			}
 			*end = '\0';
 			me.reset ((Data) Thing_newFromClassNameA (line));
@@ -369,7 +369,7 @@ Any Data_readFromBinaryFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Data not read from binary file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Data not read from binary file ", file, ".");
 	}
 }
 
@@ -394,7 +394,7 @@ Any Data_readFromLispFile (MelderFile file) {
 		fgets (line, 199, f);
 		char *end = strstr (line, "LispFile");
 		if (! end) {
-			Melder_throw ("File ", MelderFile_messageName (file), " is not a Data LISP file.");
+			Melder_throw ("File ", file, " is not a Data LISP file.");
 		}
 		*end = '\0';
 		autoData me = (Data) Thing_newFromClassNameA (line);
@@ -403,7 +403,7 @@ Any Data_readFromLispFile (MelderFile file) {
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Data not read from LISP file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Data not read from LISP file ", file, ".");
 	}
 }
 
@@ -473,7 +473,7 @@ Any Data_readFromFile (MelderFile file) {
 			break;
 	if (i >= nread) return Data_readFromTextFile (file);
 
-	Melder_throw ("File ", MelderFile_messageName (file), " not recognized.");
+	Melder_throw ("File ", file, " not recognized.");
 }
 
 /* Recursive routines for working with struct members. */

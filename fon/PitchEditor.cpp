@@ -17,25 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/04/13 less flashing
- * pb 2004/05/10 undefined pitch is NUMundefined rather than 0.0
- * pb 2004/10/16 struct PitchCandidate -> struct structPitchCandidate
- * pb 2005/06/16 units
- * pb 2006/08/08 reduced compiler warnings
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/10/16 Get pitch: F5 shortcut, as in Sound windows
- * pb 2007/11/30 erased Graphics_printf
- * pb 2008/01/19 double
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2009/04/04 
- * pb 2011/03/22 C++
- * pb 2011/07/01 C++
- */
-
 #include "Pitch_to_Sound.h"
 #include "PitchEditor.h"
 #include "EditorM.h"
@@ -380,7 +361,7 @@ class_methods (PitchEditor, FunctionEditor) {
 	class_methods_end
 }
 
-PitchEditor PitchEditor_create (GuiObject parent, const wchar_t *title, Pitch pitch) {
+PitchEditor PitchEditor_create (GuiObject parent, const wchar *title, Pitch pitch) {
 	try {
 		autoPitchEditor me = Thing_new (PitchEditor);
 		FunctionEditor_init (me.peek(), parent, title, pitch);

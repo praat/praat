@@ -17,13 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2008/03/21
- * pb 2009/01/23 minimum and maximum legal values
- * pb 2011/07/01 C++
- * pb 2011/07/16 C++
- */
-
 #include "DurationTierEditor.h"
 #include "EditorM.h"
 
@@ -55,7 +48,7 @@ class_methods (DurationTierEditor, RealTierEditor) {
 	class_methods_end
 }
 
-DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar_t *title, DurationTier duration, Sound sound, bool ownSound) {
+DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar *title, DurationTier duration, Sound sound, bool ownSound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
 		RealTierEditor_init (me.peek(), parent, title, (RealTier) duration, sound, ownSound);

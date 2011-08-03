@@ -177,7 +177,7 @@ void Melder_includeIncludeFiles (wchar **text) {
 			try {
 				includeText.reset (MelderFile_readText (& includeFile));
 			} catch (MelderError) {
-				Melder_throw ("Include file ", MelderFile_messageName (& includeFile), " not read.");
+				Melder_throw ("Include file ", & includeFile, " not read.");
 			}
 			/*
 				Construct the new text.

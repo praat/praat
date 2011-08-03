@@ -21,7 +21,7 @@
  * pb 2002/07/16 GPL
  * pb 2006/12/08 info
  * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2010/10/19 allow drawing without speckles
  * pb 2011/05/09 C++
  * pb 2011/07/14 C++
@@ -56,7 +56,7 @@ DurationTier DurationTier_create (double tmin, double tmax) {
 }
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar_t *method, int garnish)
+	double ymin, double ymax, const wchar *method, int garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Relative duration");
 }

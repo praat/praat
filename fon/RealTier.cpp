@@ -26,7 +26,7 @@
  * pb 2007/01/28 made compatible with new getVector and getFunction1 API
  * pb 2007/03/30 RealTier_downto_Table: include point numbers
  * pb 2007/04/19 RealTier_formula: defence against undefined values
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 can write as encoding
  * pb 2008/04/30 new Formula API
  * pb 2008/09/23 shiftX, scaleX
@@ -350,7 +350,7 @@ void RealTier_multiplyPart (I, double tmin, double tmax, double factor) {
 }
 
 void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	int garnish, const wchar_t *method, const wchar_t *quantity)
+	int garnish, const wchar *method, const wchar *quantity)
 {
 	iam (RealTier);
 	bool drawLines = wcsstr (method, L"lines") || wcsstr (method, L"Lines");
@@ -395,7 +395,7 @@ void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double
 	}
 }
 
-TableOfReal RealTier_downto_TableOfReal (I, const wchar_t *timeLabel, const wchar_t *valueLabel) {
+TableOfReal RealTier_downto_TableOfReal (I, const wchar *timeLabel, const wchar *valueLabel) {
 	iam (RealTier);
 	try {
 		autoTableOfReal thee = TableOfReal_create (my points -> size, 2);
@@ -455,7 +455,7 @@ int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int lo
 	}
 }
 
-Table RealTier_downto_Table (I, const wchar_t *indexText, const wchar_t *timeText, const wchar_t *valueText) {
+Table RealTier_downto_Table (I, const wchar *indexText, const wchar *timeText, const wchar *valueText) {
 	iam (RealTier);
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my points -> size,
@@ -540,7 +540,7 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value, RealTier_Tab
 	}
 }
 
-int RealTier_formula (I, const wchar_t *expression, Interpreter interpreter, thou) {
+int RealTier_formula (I, const wchar *expression, Interpreter interpreter, thou) {
 	iam (RealTier);
 	thouart (RealTier);
 	try {

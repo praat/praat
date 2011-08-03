@@ -248,7 +248,7 @@ static wchar * _MelderFile_readText (MelderFile file, char **string8) {
 		f.close (file);
 		return text.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Error reading file ", MelderFile_messageName (file), ".");
+		Melder_throw ("Error reading file ", file, ".");
 	}
 }
 

@@ -1,7 +1,7 @@
 /* Praat_tests.cpp */
 /* Paul Boersma, August 2, 2001 */
 /* December 10, 2006: MelderInfo */
-/* November 5, 2007: wchar_t */
+/* November 5, 2007: wchar */
 /* 21 March 2009: modern enums */
 /* 24 May 2011: C++ */
 
@@ -10,7 +10,7 @@
 #include "enums_getText.h"
 #include "Praat_tests_enums.h"
 
-int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t *arg4) {
+int Praat_tests (int itest, wchar *arg1, wchar *arg2, wchar *arg3, wchar *arg4) {
 	long i, n = wcstol (arg1, NULL, 10);
 	double x;
 	(void) arg1;

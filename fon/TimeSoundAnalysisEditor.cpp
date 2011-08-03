@@ -17,68 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2002/10/11 added a screen text for unavailable pitch
- * pb 2002/11/19 default log file names include "~" on Unix and Mach
- * pb 2002/11/19 added pulses and five separate analysis menus
- * pb 2003/02/19 clearer wording
- * pb 2003/02/24 spectral slices
- * pb 2003/03/03 Extract visible spectrogram: higher degree of oversampling than in editor
- * pb 2003/03/10 undid previous change because our PostScript code now does image interpolation
- * pb 2003/03/12 queriable
- * pb 2003/04/03 Get power at cursor cross
- * pb 2003/04/11 smaller log settings dialog
- * pb 2003/05/18 more shimmer measurements
- * pb 2003/05/20 longestAnalysis replaces the pitch/formant/intensity time steps,
- *               pitch.speckle, and formant.maximumDuration
- * pb 2003/05/21 pitch floor and ceiling replace the separate ranges for viewing and analysis
- * pb 2003/05/27 spectrogram maximum and autoscaling
- * pb 2003/07/20 moved voice report to VoiceAnalysis.c
- * pb 2003/08/23 reintroduced formant.numberOfTimeSteps
- * pb 2003/09/11 make sure that analyses objects can be extracted even before first drawing
- * pb 2003/09/16 advanced pitch settings: pitch.timeStep, pitch.viewFrom, pitch.viewTo, pitch.timeStepsPerView
- * pb 2003/10/01 time step settings: timeStepStrategy, fixedTimeStep, numberOfTimeStepsPerView
- * pb 2003/11/30 Sound_to_Spectrogram_windowShapeText
- * pb 2003/12/09 moved Spectrogram settings back in sync with preferences
- * pb 2004/02/15 highlight methods
- * pb 2004/04/16 introduced pulses.maximumPeriodFactor
- * pb 2004/05/12 extended voice report with mean F0 and harmonic-to-noise ratios
- * pb 2004/07/14 introduced pulses.maximumAmplitudeFactor
- * pb 2004/10/16 C++ compatible struct tags
- * pb 2004/10/24 intensity.averagingMethod
- * pb 2004/10/27 intensity.subtractMeanPressure
- * pb 2004/11/22 simplified Sound_to_Spectrum ()
- * pb 2004/11/28 improved screen text for unavailable pitch
- * pb 2004/11/28 warning in settings dialogs for non-standard time step strategies
- * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
- * pb 2005/03/02 all pref string buffers are 260 bytes long
- * pb 2005/03/07 'intensity' logging sensitive to averaging method
- * pb 2005/06/16 units
- * pb 2005/08/18 editor name in log files
- * pb 2005/09/23 interface update
- * pb 2005/12/07 scrollStep
- * pb 2006/02/27 more helpful text when analyses are not shown
- * pb 2006/09/12 better messages if analysis not available
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/10 MelderInfo
- * pb 2006/12/18 better info
- * pb 2007/01/27 changed Vector API
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/09/01 computeXXX procedures are global on behalf of the inheritors
- * pb 2007/09/02 Picture window drawing
- * pb 2007/09/08 inherit from TimeSoundEditor
- * pb 2007/09/19 info
- * pb 2007/09/21 split Query menu
- * pb 2007/11/01 direct intensity, formants, and pulses drawing
- * pb 2007/11/30 erased Graphics_printf
- * pb 2009/11/30 Move frequency cursor to...
- * pb 2010/01/15 corrected checking of "Show pitch" menu item (and so on) when the command is called from a script
- * pb 2011/03/23 C++
- * pb 2011/07/15 C++
- */
-
 #include <time.h>
 #include "TimeSoundAnalysisEditor.h"
 #include "Preferences.h"
@@ -2179,7 +2117,7 @@ class_methods (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	class_methods_end
 }
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Data data, Data sound, bool ownSound) {
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound) {
 	TimeSoundEditor_init (me, parent, title, data, sound, ownSound);
 	my longestAnalysis = preferences.longestAnalysis;
 	if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)

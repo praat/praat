@@ -16,36 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2004/01/07 use GuiWindow_setDirty
- * pb 2004/01/28 MacOS X: use trick for ensuring dirtiness callback
- * pb 2005/06/28 font size
- * pb 2005/09/01 Undo and Redo buttons
- * pb 2006/08/09 guarded against closing when a file selector is open
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/18 improved info
- * pb 2007/02/15 GuiText_updateChangeCountAfterSave
- * pb 2007/03/23 Go to line: guarded against uninitialized 'right'
- * pb 2007/05/30 save Unicode
- * pb 2007/06/12 more wchar_t
- * pb 2007/08/12 more wchar_t
- * pb 2007/10/05 less char
- * pb 2007/12/05 prefs
- * pb 2007/12/23 Gui
- * pb 2008/01/04 guard against multiple opening of same file
- * pb 2008/03/21 new Editor API
- * pb 2009/01/18 arguments to UiForm callbacks
- * pb 2010/01/20 Reopen from disk
- * pb 2010/01/20 guard against Find Again before Find
- * fb 2010/02/26 tell Undo/Redo buttons to GuiText for (de)sensitivization
- * pb 2010/05/16 correct order and types in Font menu
- * pb 2010/07/29 removed GuiDialog_show
- * pb 2010/12/03 command "Convert to C string"
- * pb 2011/04/06 C++
- * pb 2011/07/03 C++
- */
+/* Franz Brausse helped with Undo support in 2010 */
 
 #include "TextEditor.h"
 #include "machine.h"
@@ -92,7 +63,7 @@ void structTextEditor :: v_nameChanged () {
 				MelderString_append (& windowTitle, L", modified");
 			MelderString_append (& windowTitle, L")");
 		} else {
-			MelderString_append3 (& windowTitle, L"File " UNITEXT_LEFT_DOUBLE_QUOTATION_MARK, MelderFile_messageName (& file), UNITEXT_RIGHT_DOUBLE_QUOTATION_MARK);
+			MelderString_append2 (& windowTitle, L"File ", MelderFile_messageName (& file));
 			if (dirty && ! dirtinessAlreadyShown)
 				MelderString_append (& windowTitle, L" (modified)");
 		}
@@ -113,7 +84,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 			TextEditor editor = (TextEditor) theOpenTextEditors -> item [ieditor];
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
 				Editor_raise (editor);
-				Melder_error_ ("Text file ", MelderFile_messageName (file), " is already open.");
+				Melder_error_ ("Text file ", file, " is already open.");
 				forget (me);   // don't forget me before Melder_error_, because "file" is owned by one of my dialogs
 				Melder_flushError (NULL);
 			}
@@ -131,7 +102,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 }
 
 static void newDocument (TextEditor me) {
-	GuiText_setString (my textWidget, L"");   /* Implicitly sets my dirty to TRUE. */
+	GuiText_setString (my textWidget, L"");   // implicitly sets my dirty to TRUE
 	my dirty = FALSE;
 	if (my fileBased ()) Thing_setName (me, NULL);
 }

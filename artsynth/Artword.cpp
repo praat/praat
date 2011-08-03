@@ -17,14 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2007/10/01 can write as encoding
- * pb 2008/01/19 double
- * pb 2009/03/21 
- * pb 2011/03/22 C++
- */
-
 #include "Artword.h"
 
 #include "oo_DESTROY.h"

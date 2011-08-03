@@ -16,35 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2002/10/06 improved visibility of dragging
- * pb 2004/04/13 less flashing
- * pb 2005/01/11 better visibility of yellow line
- * pb 2005/03/02 green colouring for matching labels
- * pb 2005/05/05 show number of intervals
- * pb 2005/06/17 enums
- * pb 2005/09/23 interface update
- * pb 2006/12/18 better info
- * pb 2007/03/23 new Editor API
- * Erez Volk & pb 2007/05/17 FLAC support
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/09/02 direct drawing to Picture window
- * pb 2007/09/04 TimeSoundAnalysisEditor
- * pb 2007/09/05 direct drawing to picture window
- * pb 2007/11/30 erased Graphics_printf
- * pb 2007/12/07 enums
- * Erez Volk 2008/03/16 Write selected TextGrid to text file
- * pb 2008/03/17 extract selected TextGrid
- * pb 2008/03/18 renamed: "convert to backslash trigraphs/Unicode"
- * pb 2008/03/20 split off Help menu
- * pb 2008/09/23 info: selectedTier
- * pb 2010/11/10 correctedIinterval2
- * pb 2011/03/22 C++
- * pb 2011/07/02 C++
- */
+/* Erez Volk added FLAC support in 2007 */
 
 #include "TextGridEditor.h"
 #include "EditorM.h"
@@ -2279,7 +2251,7 @@ class_methods (TextGridEditor, TimeSoundAnalysisEditor) {
 
 /********** EXPORTED **********/
 
-TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid, Data sound, SpellingChecker spellingChecker) {
+TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid, Function sound, SpellingChecker spellingChecker) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
 		my spellingChecker = spellingChecker;   // set in time

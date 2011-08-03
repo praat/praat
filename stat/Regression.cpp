@@ -20,7 +20,7 @@
 /*
  * pb 2005/05/01 created
  * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 can write as encoding
  * pb 2011/03/20 C++
  */
@@ -102,7 +102,7 @@ void Regression_init (I) {
 	my parameters = Ordered_create (); therror
 }
 
-void Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value) {
+void Regression_addParameter (I, const wchar *label, double minimum, double maximum, double value) {
 	iam (Regression);
 	try {
 		autoRegressionParameter thee = Thing_new (RegressionParameter);
@@ -116,7 +116,7 @@ void Regression_addParameter (I, const wchar_t *label, double minimum, double ma
 	}
 }
 
-long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName) {
+long Regression_getFactorIndexFromFactorName_e (I, const wchar *factorName) {
 	iam (Regression);
 	for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [iparm]);

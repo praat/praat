@@ -64,7 +64,7 @@ static double getFunction1 (I, long irow, double x) {
 	return RealTier_getValueAtTime (tier, x);
 }
 
-static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	(void) void_me;
 	(void) ilevel;
 	(void) unit;
@@ -292,7 +292,7 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 	}
 }
 
-void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
+void FormantGrid_formula_bandwidths (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		if (thee == NULL) thee = me;
@@ -311,7 +311,7 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, 
 	}
 }
 
-void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
+void FormantGrid_formula_frequencies (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		if (thee == NULL) thee = me;

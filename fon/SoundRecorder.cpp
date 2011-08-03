@@ -17,43 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 /* Linux code originally by Darryl Purnell, Pretoria */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/02/09 better layout on MacOS X
- * pb 2003/04/07 larger default buffer
- * pb 2003/08/22 use getenv ("AUDIODEV") on Sun (thanks to Michel Scheffers)
- * pb 2003/09/12 more MelderFile
- * pb 2003/10/22 check for mono refusal on Linux
- * pb 2003/12/06 use sys/soundcard.h instead of linux/soundcard.h for FreeBSD compatibility
- * pb 2004/11/26 fake Mono on MacOS X
- * pb 2004/11/26 check available sampling frequencies on MacOS X
- * pb 2005/02/13 defended against weird meter levels
- * pb 2005/04/25 made 24 kHz available for Mac
- * pb 2005/08/22 removed reference to Control menu from message
- * pb 2005/09/28 made 12 and 64 kHz available for Mac
- * pb 2005/10/13 edition for OpenBSD
- * pb 2006/04/01 corrections for Intel Mac
- * pb 2006/08/09 acknowledge the 67 MB buffer limit on Windows XP
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/30 stereo
- * pb 2007/01/03 CoreAudio (PortAudio)
- * pb 2007/01/03 flexible drawing area
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/12/02 big-endian Linux (suggested by Stefan de Konink)
- * pb 2007/12/05 prefs
- * pb 2007/12/09 192 kHz
- * pb 2007/12/23 Gui
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2008/06/02 PortAudio for Linux
- * pb 2008/06/16 PortAudio optional
- * pb 2008/06/17 api
- * fb 2010/02/24 GTK
- * pb 2011/03/23 C++
- * pb 2011/07/01 C++
- */
+/* GTK conversion includes work by fb */
 
 /* This source file describes interactive sound recorders for the following systems:
  *     MacOS
@@ -710,7 +674,7 @@ static void publish (SoundRecorder me) {
 		}
 	}
 	if (my soundName) {
-		wchar_t *name = GuiText_getString (my soundName);
+		wchar *name = GuiText_getString (my soundName);
 		Thing_setName (sound, name);
 		Melder_free (name);
 	}

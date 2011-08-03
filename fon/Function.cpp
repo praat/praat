@@ -23,7 +23,7 @@
  * pb 2005/06/16 units
  * pb 2006/12/08 info
  * pb 2007/03/17 domain texts
- * pb 2007/08/12 wchar_t
+ * pb 2007/08/12 wchar
  * pb 2007/10/01 can write as encoding
  * pb 2008/09/20 shiftXBy
  * pb 2011/03/09 C++
@@ -86,7 +86,7 @@ static int getMaximumUnit (I, long ilevel) {
 	return 0;
 }
 
-static const wchar_t * getUnitText (I, long ilevel, int unit, unsigned long flags) {
+static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
 	(void) void_me;
 	(void) ilevel;
 	(void) unit;
