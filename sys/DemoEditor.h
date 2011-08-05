@@ -31,14 +31,14 @@ Thing_define (DemoEditor, Editor) {
 		wchar key;
 		bool waitingForInput, userWantsToClose, fullScreen;
 	// overridden methods:
-		void v_destroy ();
-		void v_info ();
-		void v_goAway ();
-		bool v_hasMenuBar () { return false; }
-		bool v_canFullScreen () { return true; }
-		bool v_scriptable () { return false; }
-		void v_createChildren ();
-		void v_createMenus ();
+		virtual void v_destroy ();
+		virtual void v_info ();
+		virtual void v_goAway ();
+		virtual bool v_hasMenuBar () { return false; }
+		virtual bool v_canFullScreen () { return true; }
+		virtual bool v_scriptable () { return false; }
+		virtual void v_createChildren ();
+		virtual void v_createMenus ();
 };
 
 void DemoEditor_init (DemoEditor me, GuiObject parent);

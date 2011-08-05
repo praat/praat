@@ -22,12 +22,13 @@
 #include "FunctionEditor.h"
 #include "Spectrogram.h"
 
-Thing_declare1cpp (SpectrogramEditor);
-struct structSpectrogramEditor : public structFunctionEditor {
-	double maximum;
+Thing_define (SpectrogramEditor, FunctionEditor) {
+	// new data:
+		double maximum;
+	// overridden methods:
+		virtual void v_draw ();
+		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
-#define SpectrogramEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2cpp (SpectrogramEditor, FunctionEditor);
 
 SpectrogramEditor SpectrogramEditor_create (GuiObject parent, const wchar *title, Spectrogram data);
 

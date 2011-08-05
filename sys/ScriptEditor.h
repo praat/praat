@@ -23,8 +23,7 @@
 #include "TextEditor.h"
 #include "Interpreter.h"
 
-Thing_declare1cpp (ScriptEditor);
-struct structScriptEditor : public structTextEditor {
+Thing_define (ScriptEditor, TextEditor) {
 	// data:
 		wchar *environmentName;
 		Editor_Table editorClass;
@@ -33,15 +32,13 @@ struct structScriptEditor : public structTextEditor {
 	// functions:
 		void init (GuiObject parent, Editor editor, const wchar_t *initialText);
 	// overridden methods:
-		void v_destroy ();
-		void v_nameChanged ();
-		void v_goAway ();
-		bool v_scriptable () { return false; }
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_destroy ();
+		virtual void v_nameChanged ();
+		virtual void v_goAway ();
+		virtual bool v_scriptable () { return false; }
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
 };
-#define ScriptEditor__methods(Klas) TextEditor__methods(Klas)
-Thing_declare2cpp (ScriptEditor, TextEditor);
 
 ScriptEditor ScriptEditor_createFromText (
 	GuiObject parent,

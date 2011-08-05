@@ -45,6 +45,8 @@
 #include "praat_script.h"
 #include "praatP.h"
 
+Thing_implement (Manual, HyperPage, 0);
+
 /* Remaining BUGS: HTML writer does not recognize "\s{". */
 
 #define SEARCH_PAGE  0
@@ -100,71 +102,70 @@ void structManual :: v_destroy () {
 	Manual_Parent :: v_destroy ();
 }
 
-static void draw (Manual me) {
-	ManPages manPages = (ManPages) my data;
+void structManual :: v_draw () {
+	ManPages manPages = (ManPages) data;
 	ManPage page;
 	ManPage_Paragraph paragraph;
 	#if motif
-	Graphics_clearWs (my g);
+	Graphics_clearWs (g);
 	#endif
-	if (my path == SEARCH_PAGE) {
-		int i;
-		HyperPage_pageTitle (me, L"Best matches");
-		HyperPage_intro (me, L"The best matches to your query seem to be:");
-		for (i = 1; i <= my numberOfMatches; i ++) {
-			wchar_t link [300];
-			page = (ManPage) manPages -> pages -> item [my matches [i]];
+	if (path == SEARCH_PAGE) {
+		HyperPage_pageTitle (this, L"Best matches");
+		HyperPage_intro (this, L"The best matches to your query seem to be:");
+		for (int i = 1; i <= numberOfMatches; i ++) {
+			wchar link [300];
+			page = (ManPage) manPages -> pages -> item [matches [i]];
 			swprintf (link, 300, L"\\bu @@%ls", page -> title);
-			HyperPage_listItem (me, link);
+			HyperPage_listItem (this, link);
 		}
 		return;
 	}
-	page = (ManPage) manPages -> pages -> item [my path];
-	if (! my paragraphs) return;
-	HyperPage_pageTitle (me, page -> title);
+	page = (ManPage) manPages -> pages -> item [path];
+	if (! paragraphs) return;
+	HyperPage_pageTitle (this, page -> title);
 	for (paragraph = & page -> paragraphs [0]; paragraph -> type != 0; paragraph ++) {
 		switch (paragraph -> type) {
-			case  kManPage_type_INTRO: HyperPage_intro (me, paragraph -> text); break;
-			case  kManPage_type_ENTRY: HyperPage_entry (me, paragraph -> text); break;
-			case  kManPage_type_NORMAL: HyperPage_paragraph (me, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM: HyperPage_listItem (me, paragraph -> text); break;
-			case  kManPage_type_TAG: HyperPage_listTag (me, paragraph -> text); break;
-			case  kManPage_type_DEFINITION: HyperPage_definition (me, paragraph -> text); break;
-			case  kManPage_type_CODE: HyperPage_code (me, paragraph -> text); break;
-			case  kManPage_type_PROTOTYPE: HyperPage_prototype (me, paragraph -> text); break;
-			case  kManPage_type_FORMULA: HyperPage_formula (me, paragraph -> text); break;
-			case  kManPage_type_PICTURE: HyperPage_picture (me, paragraph -> width,
+			case  kManPage_type_INTRO: HyperPage_intro (this, paragraph -> text); break;
+			case  kManPage_type_ENTRY: HyperPage_entry (this, paragraph -> text); break;
+			case  kManPage_type_NORMAL: HyperPage_paragraph (this, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM: HyperPage_listItem (this, paragraph -> text); break;
+			case  kManPage_type_TAG: HyperPage_listTag (this, paragraph -> text); break;
+			case  kManPage_type_DEFINITION: HyperPage_definition (this, paragraph -> text); break;
+			case  kManPage_type_CODE: HyperPage_code (this, paragraph -> text); break;
+			case  kManPage_type_PROTOTYPE: HyperPage_prototype (this, paragraph -> text); break;
+			case  kManPage_type_FORMULA: HyperPage_formula (this, paragraph -> text); break;
+			case  kManPage_type_PICTURE: HyperPage_picture (this, paragraph -> width,
 				paragraph -> height, paragraph -> draw); break;
-			case  kManPage_type_SCRIPT: HyperPage_script (me, paragraph -> width,
+			case  kManPage_type_SCRIPT: HyperPage_script (this, paragraph -> width,
 				paragraph -> height, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM1: HyperPage_listItem1 (me, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM2: HyperPage_listItem2 (me, paragraph -> text); break;
-			case  kManPage_type_LIST_ITEM3: HyperPage_listItem3 (me, paragraph -> text); break;
-			case  kManPage_type_TAG1: HyperPage_listTag1 (me, paragraph -> text); break;
-			case  kManPage_type_TAG2: HyperPage_listTag2 (me, paragraph -> text); break;
-			case  kManPage_type_TAG3: HyperPage_listTag3 (me, paragraph -> text); break;
-			case  kManPage_type_DEFINITION1: HyperPage_definition1 (me, paragraph -> text); break;
-			case  kManPage_type_DEFINITION2: HyperPage_definition2 (me, paragraph -> text); break;
-			case  kManPage_type_DEFINITION3: HyperPage_definition3 (me, paragraph -> text); break;
-			case  kManPage_type_CODE1: HyperPage_code1 (me, paragraph -> text); break;
-			case  kManPage_type_CODE2: HyperPage_code2 (me, paragraph -> text); break;
-			case  kManPage_type_CODE3: HyperPage_code3 (me, paragraph -> text); break;
-			case  kManPage_type_CODE4: HyperPage_code4 (me, paragraph -> text); break;
-			case  kManPage_type_CODE5: HyperPage_code5 (me, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM1: HyperPage_listItem1 (this, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM2: HyperPage_listItem2 (this, paragraph -> text); break;
+			case  kManPage_type_LIST_ITEM3: HyperPage_listItem3 (this, paragraph -> text); break;
+			case  kManPage_type_TAG1: HyperPage_listTag1 (this, paragraph -> text); break;
+			case  kManPage_type_TAG2: HyperPage_listTag2 (this, paragraph -> text); break;
+			case  kManPage_type_TAG3: HyperPage_listTag3 (this, paragraph -> text); break;
+			case  kManPage_type_DEFINITION1: HyperPage_definition1 (this, paragraph -> text); break;
+			case  kManPage_type_DEFINITION2: HyperPage_definition2 (this, paragraph -> text); break;
+			case  kManPage_type_DEFINITION3: HyperPage_definition3 (this, paragraph -> text); break;
+			case  kManPage_type_CODE1: HyperPage_code1 (this, paragraph -> text); break;
+			case  kManPage_type_CODE2: HyperPage_code2 (this, paragraph -> text); break;
+			case  kManPage_type_CODE3: HyperPage_code3 (this, paragraph -> text); break;
+			case  kManPage_type_CODE4: HyperPage_code4 (this, paragraph -> text); break;
+			case  kManPage_type_CODE5: HyperPage_code5 (this, paragraph -> text); break;
 			default: break;
 		}
 	}
-	if (ManPages_uniqueLinksHither (manPages, my path)) {
+	if (ManPages_uniqueLinksHither (manPages, path)) {
 		long ilink, jlink, lastParagraph = 0;
 		int goAhead = TRUE;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
-			const wchar_t *text = page -> paragraphs [lastParagraph - 1]. text;
+			const wchar *text = page -> paragraphs [lastParagraph - 1]. text;
 			if (text == NULL || text [0] == '\0' || text [wcslen (text) - 1] != ':') {
-				if (my printing && my suppressLinksHither)
+				if (printing && suppressLinksHither)
 					goAhead = FALSE;
 				else
-					HyperPage_entry (me, L"Links to this page");
+					HyperPage_entry (this, L"Links to this page");
 			}
 		}
 		if (goAhead) for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
@@ -174,15 +175,15 @@ static void draw (Manual me) {
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = TRUE;
 			if (! alreadyShown) {
-				const wchar_t *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
-				wchar_t linkText [304];
+				const wchar *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
+				wchar linkText [304];
 				swprintf (linkText, 304, L"@@%ls@", title);
-				HyperPage_listItem (me, linkText);
+				HyperPage_listItem (this, linkText);
 			}
 		}
 	}
-	if (! my printing && page -> date) {
-		wchar_t signature [100];
+	if (! printing && page -> date) {
+		wchar signature [100];
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
@@ -190,17 +191,14 @@ static void draw (Manual me) {
 			wcsequ (page -> author, L"ppgb") ? L"Paul Boersma" :
 			wcsequ (page -> author, L"djmw") ? L"David Weenink" : page -> author,
 			date % 100, month [imonth], date / 10000);
-		HyperPage_any (me, L"", my font, my fontSize, 0, 0.0,
+		HyperPage_any (this, L"", font, fontSize, 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (me, signature, my font, my fontSize, Graphics_ITALIC, 0.0,
+		HyperPage_any (this, signature, font, fontSize, Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }
 
 /********** PRINTING **********/
-
-#undef our
-#define our ((Manual_Table) my methods) ->
 
 static void print (I, Graphics graphics) {
 	iam (Manual);
@@ -224,9 +222,9 @@ static void print (I, Graphics graphics) {
 			while ((par ++) -> type) my numberOfParagraphs ++;
 			Melder_free (my currentPageTitle);
 			my currentPageTitle = Melder_wcsdup_f (page -> title);
-			our goToPage_i (me, ipage);
-			our draw (me);
-			our goToPage_i (me, savePage);
+			my v_goToPage_i (ipage);
+			my v_draw ();
+			my v_goToPage_i (savePage);
 		}
 	}
 	my printing = FALSE;
@@ -484,7 +482,7 @@ void structManual :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Manual help", '?', menu_cb_help);
 }
 
-static void defaultHeaders (EditorCommand cmd) {
+void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	Manual me = (Manual) cmd -> editor;
 	ManPages manPages = (ManPages) my data;
 	if (my path) {
@@ -502,38 +500,36 @@ static void defaultHeaders (EditorCommand cmd) {
 	}
 }
 
-static long getNumberOfPages (Manual me) {
-	ManPages manPages = (ManPages) my data;
+long structManual :: v_getNumberOfPages () {
+	ManPages manPages = (ManPages) data;
 	return manPages -> pages -> size;
 }
 
-static long getCurrentPageNumber (Manual me) {
-	return my path ? my path : 1;
+long structManual :: v_getCurrentPageNumber () {
+	return path ? path : 1;
 }
 
-static void goToPage_i (Manual me, long i) {
-	ManPages manPages = (ManPages) my data;
-	ManPage page;
-	ManPage_Paragraph par;
-	if (i < 1 || i > manPages -> pages -> size) {
-		if (i == SEARCH_PAGE) {
-			my path = SEARCH_PAGE;
-			Melder_free (my currentPageTitle);
+void structManual :: v_goToPage_i (long pageNumber) {
+	ManPages manPages = (ManPages) data;
+	if (pageNumber < 1 || pageNumber > manPages -> pages -> size) {
+		if (pageNumber == SEARCH_PAGE) {
+			path = SEARCH_PAGE;
+			Melder_free (currentPageTitle);
 			return;
-		} else Melder_throw ("Page ", i, " not found.");
+		} else Melder_throw ("Page ", pageNumber, " not found.");
 	}
-	my path = i;
-	page = (ManPage) manPages -> pages -> item [my path];
-	my paragraphs = page -> paragraphs;
-	my numberOfParagraphs = 0;
-	par = my paragraphs;
-	while ((par ++) -> type) my numberOfParagraphs ++;
-	Melder_free (my currentPageTitle);
-	my currentPageTitle = Melder_wcsdup_f (page -> title);
+	path = pageNumber;
+	ManPage page = (ManPage) manPages -> pages -> item [path];
+	paragraphs = page -> paragraphs;
+	numberOfParagraphs = 0;
+	ManPage_Paragraph par = paragraphs;
+	while ((par ++) -> type) numberOfParagraphs ++;
+	Melder_free (currentPageTitle);
+	currentPageTitle = Melder_wcsdup_f (page -> title);
 }
 
-static int goToPage (Manual me, const wchar_t *title) {
-	ManPages manPages = (ManPages) my data;
+int structManual :: v_goToPage (const wchar_t *title) {
+	ManPages manPages = (ManPages) data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
 		structMelderFile file = { 0 };
 		MelderDir_relativePathToFile (& manPages -> rootDirectory, title + 3, & file);
@@ -552,23 +548,9 @@ static int goToPage (Manual me, const wchar_t *title) {
 		long i = ManPages_lookUp (manPages, title);
 		if (! i)
 			Melder_throw ("Page \"", title, "\" not found.");
-		goToPage_i (me, i);
+		v_goToPage_i (i);
 		return 1;
 	}
-}
-
-static int hasHistory = TRUE, isOrdered = TRUE;
-
-class_methods (Manual, HyperPage) {
-	class_method (draw)
-	class_method (defaultHeaders)
-	class_method (getNumberOfPages)
-	class_method (getCurrentPageNumber)
-	class_method (goToPage)
-	class_method (goToPage_i)
-	class_method (hasHistory)
-	class_method (isOrdered)
-	class_methods_end
 }
 
 void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data) {

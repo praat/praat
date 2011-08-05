@@ -22,8 +22,7 @@
 #include "EditorM.h"
 #include "VoiceAnalysis.h"
 
-#undef our
-#define our ((PointEditor_Table) my methods) ->
+Thing_implement (PointEditor, TimeSoundEditor, 0);
 
 /********** DESTRUCTION **********/
 
@@ -181,54 +180,48 @@ void structPointEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 /********** DRAWING AREA **********/
 
-static void draw (PointEditor me) {
-	PointProcess point = (PointProcess) my data;
-	Sound sound = my sound.data;
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+void structPointEditor :: v_draw () {
+	PointProcess point = (PointProcess) data;
+	Sound sound = this -> sound.data;
+	Graphics_setColour (graphics, Graphics_WHITE);
+	Graphics_setWindow (graphics, 0, 1, 0, 1);
+	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
 	double minimum = -1.0, maximum = +1.0;
-	if (sound != NULL && my sound.autoscaling) {
+	if (sound != NULL && this -> sound.autoscaling) {
 		long first, last;
-		if (Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) >= 1) {
+		if (Sampled_getWindowSamples (sound, startWindow, endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
 		}
 	}
-	Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
-	Graphics_setColour (my graphics, Graphics_BLACK);
+	Graphics_setWindow (graphics, startWindow, endWindow, minimum, maximum);
+	Graphics_setColour (graphics, Graphics_BLACK);
 	if (sound != NULL) {
 		long first, last;
-		if (Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) > 1) {
-			Graphics_setLineType (my graphics, Graphics_DOTTED);
-			Graphics_line (my graphics, my startWindow, 0.0, my endWindow, 0.0);
-			Graphics_setLineType (my graphics, Graphics_DRAWN);      
-			Graphics_function (my graphics, sound -> z [1], first, last,
+		if (Sampled_getWindowSamples (sound, startWindow, endWindow, & first, & last) > 1) {
+			Graphics_setLineType (graphics, Graphics_DOTTED);
+			Graphics_line (graphics, startWindow, 0.0, endWindow, 0.0);
+			Graphics_setLineType (graphics, Graphics_DRAWN);      
+			Graphics_function (graphics, sound -> z [1], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		}
 	}
-	Graphics_setColour (my graphics, Graphics_BLUE);
-	Graphics_setWindow (my graphics, my startWindow, my endWindow, -1.0, +1.0);
+	Graphics_setColour (graphics, Graphics_BLUE);
+	Graphics_setWindow (graphics, startWindow, endWindow, -1.0, +1.0);
 	for (long i = 1; i <= point -> nt; i ++) {
 		double t = point -> t [i];
-		if (t >= my startWindow && t <= my endWindow)
-			Graphics_line (my graphics, t, -0.9, t, +0.9);
+		if (t >= startWindow && t <= endWindow)
+			Graphics_line (graphics, t, -0.9, t, +0.9);
 	}
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	our updateMenuItems_file (me);
+	Graphics_setColour (graphics, Graphics_BLACK);
+	v_updateMenuItems_file ();
 }
 
-static void play (PointEditor me, double tmin, double tmax) {
-	if (my sound.data) {
-		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
+void structPointEditor :: v_play (double tmin, double tmax) {
+	if (sound.data) {
+		Sound_playPart (sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 	} else {
-		PointProcess_playPart ((PointProcess) my data, tmin, tmax); therror
+		PointProcess_playPart ((PointProcess) data, tmin, tmax); therror
 	}
-}
-
-class_methods (PointEditor, TimeSoundEditor) {
-	class_method (draw)
-	class_method (play)
-	class_methods_end
 }
 
 PointEditor PointEditor_create (GuiObject parent, const wchar *title, PointProcess point, Sound sound) {

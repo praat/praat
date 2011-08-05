@@ -17,19 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2004/09/13
- * pb 2004/10/21 clear method also clears the info buffer, not just the visible text
- * pb 2007/05/24 wchar_t
- * pb 2007/06/09 more wchar_t
- * pb 2007/12/31 Gui
- * sdk 2008/03/24 Gui
- * pb 2010/07/29 removed GuiDialog_show
- * pb 2011/04/06 C++
- * pb 2011/07/15 C++
- */
-
 #include "InfoEditor.h"
+
+Thing_implement (InfoEditor, TextEditor, 0);
 
 static InfoEditor theInfoEditor;
 
@@ -38,12 +28,8 @@ void structInfoEditor :: v_destroy () {
 	InfoEditor_Parent :: v_destroy ();
 }
 
-void structInfoEditor :: clear () {
+void structInfoEditor :: v_clear () {
 	Melder_clearInfo ();
-}
-
-class_methods (InfoEditor, TextEditor) {
-	class_methods_end
 }
 
 void gui_information (const wchar *message);   // BUG

@@ -17,27 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/10/14 added scripting examples to Help menu
- * pb 2002/12/05 include
- * pb 2004/01/07 use GuiWindow_setDirty
- * pb 2007/06/12 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2009/01/18 arguments to UiForm callbacks
- * pb 2009/01/20 pause forms
- * pb 2009/05/07 demo window
- * pb 2010/04/30 command "Expand include files"
- * pb 2011/04/06 C++
- */
-
 #include "ScriptEditor.h"
 #include "longchar.h"
 #include "praatP.h"
 #include "EditorM.h"
 #include "UnicodeData.h"
+
+Thing_implement (ScriptEditor, TextEditor, 0);
 
 static Collection theScriptEditors;
 
@@ -311,10 +297,6 @@ void structScriptEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"-- help add --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Adding to a fixed menu", 0, menu_cb_AddingToAFixedMenu);
 	EditorMenu_addCommand (menu, L"Adding to a dynamic menu", 0, menu_cb_AddingToADynamicMenu);
-}
-
-class_methods (ScriptEditor, TextEditor) {
-	class_methods_end
 }
 
 void structScriptEditor :: init (GuiObject parent_, Editor environment_, const wchar *initialText_) {

@@ -21,8 +21,7 @@
 #include "PitchEditor.h"
 #include "EditorM.h"
 
-#undef our
-#define our ((PitchEditor_Table) my methods) ->
+Thing_implement (PitchEditor, FunctionEditor, 0);
 
 #define HEIGHT_UNV  3.0
 #define HEIGHT_INTENS  6.0
@@ -173,21 +172,21 @@ void structPitchEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	
 /********** DRAWING AREA **********/
 
-static void draw (PitchEditor me) {
-	Pitch pitch = (Pitch) my data;
+void structPitchEditor :: v_draw () {
+	Pitch pitch = (Pitch) data;
 	long it, it1, it2;
 	double dyUnv, dyIntens;
 
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_rectangle (my graphics, 0, 1, 0, 1);
+	Graphics_setWindow (graphics, 0, 1, 0, 1);
+	Graphics_setColour (graphics, Graphics_WHITE);
+	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
+	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_rectangle (graphics, 0, 1, 0, 1);
 
-	dyUnv = Graphics_dyMMtoWC (my graphics, HEIGHT_UNV);
-	dyIntens = Graphics_dyMMtoWC (my graphics, HEIGHT_INTENS);
+	dyUnv = Graphics_dyMMtoWC (graphics, HEIGHT_UNV);
+	dyIntens = Graphics_dyMMtoWC (graphics, HEIGHT_INTENS);
 
-	Sampled_getWindowSamples (pitch, my startWindow, my endWindow, & it1, & it2);
+	Sampled_getWindowSamples (pitch, startWindow, endWindow, & it1, & it2);
 
 	/*
 	 * Show pitch.
@@ -202,54 +201,53 @@ static void draw (PitchEditor me) {
 			50;
 		double radius;
 		Graphics_Viewport previous;
-		previous = Graphics_insetViewport (my graphics, 0, 1, dyUnv, 1 - dyIntens);
-		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0, pitch -> ceiling);
-		radius = Graphics_dxMMtoWC (my graphics, RADIUS);
+		previous = Graphics_insetViewport (graphics, 0, 1, dyUnv, 1 - dyIntens);
+		Graphics_setWindow (graphics, startWindow, endWindow, 0, pitch -> ceiling);
+		radius = Graphics_dxMMtoWC (graphics, RADIUS);
 
 		/* Horizontal hair at current pitch. */
 
-		if (my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow) {
-			double f = Pitch_getValueAtTime (pitch, my startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
+		if (startSelection == endSelection && startSelection >= startWindow && startSelection <= endWindow) {
+			double f = Pitch_getValueAtTime (pitch, startSelection, kPitch_unit_HERTZ, Pitch_LINEAR);
 			if (NUMdefined (f)) {
-				Graphics_setColour (my graphics, Graphics_RED);
-				Graphics_line (my graphics, my startWindow - radius, f, my endWindow, f);
-				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-				Graphics_text1 (my graphics, my startWindow - radius, f, Melder_fixed (f, 2));
+				Graphics_setColour (graphics, Graphics_RED);
+				Graphics_line (graphics, startWindow - radius, f, endWindow, f);
+				Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
+				Graphics_text1 (graphics, startWindow - radius, f, Melder_fixed (f, 2));
 			}
 		}
 
 		/* Horizontal scaling lines. */
 
-		Graphics_setColour (my graphics, Graphics_BLUE);
-		Graphics_setLineType (my graphics, Graphics_DOTTED);
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
+		Graphics_setColour (graphics, Graphics_BLUE);
+		Graphics_setLineType (graphics, Graphics_DOTTED);
+		Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 		for (f = df; f <= pitch -> ceiling; f += df) {
-			Graphics_line (my graphics, my startWindow, f, my endWindow, f);
-			Graphics_text2 (my graphics, my endWindow + radius/2, f, Melder_integer (f), L" Hz");
+			Graphics_line (graphics, startWindow, f, endWindow, f);
+			Graphics_text2 (graphics, endWindow + radius/2, f, Melder_integer (f), L" Hz");
 		}
-		Graphics_setLineType (my graphics, Graphics_DRAWN);
+		Graphics_setLineType (graphics, Graphics_DRAWN);
 
 		/* Show candidates. */
 
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
-			int icand;
 			double f = frame -> candidate [1]. frequency;
 			if (f > 0.0 && f < pitch -> ceiling) {
-				Graphics_setColour (my graphics, Graphics_MAGENTA);
-				Graphics_fillCircle_mm (my graphics, t, f, RADIUS * 2);
+				Graphics_setColour (graphics, Graphics_MAGENTA);
+				Graphics_fillCircle_mm (graphics, t, f, RADIUS * 2);
 			}
-			Graphics_setColour (my graphics, Graphics_BLACK);
-			Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-			for (icand = 1; icand <= frame -> nCandidates; icand ++) {
+			Graphics_setColour (graphics, Graphics_BLACK);
+			Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
+			for (int icand = 1; icand <= frame -> nCandidates; icand ++) {
 				int strength = floor (10 * frame -> candidate [icand]. strength + 0.5);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
-				if (f > 0 && f <= pitch -> ceiling) Graphics_text1 (my graphics, t, f, Melder_integer (strength));
+				if (f > 0 && f <= pitch -> ceiling) Graphics_text1 (graphics, t, f, Melder_integer (strength));
 			}
 		}
-		Graphics_resetViewport (my graphics, previous);
+		Graphics_resetViewport (graphics, previous);
 	}
 
 	/*
@@ -257,22 +255,22 @@ static void draw (PitchEditor me) {
 	 */
 	{
 		Graphics_Viewport previous;
-		previous = Graphics_insetViewport (my graphics, 0, 1, 1 - dyIntens, 1);
-		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0, 1);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (my graphics, my startWindow, 0.5, L"intens");
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_text (my graphics, my endWindow, 0.5, L"intens");
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
+		previous = Graphics_insetViewport (graphics, 0, 1, 1 - dyIntens, 1);
+		Graphics_setWindow (graphics, startWindow, endWindow, 0, 1);
+		Graphics_setColour (graphics, Graphics_BLACK);
+		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (graphics, startWindow, 0.5, L"intens");
+		Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
+		Graphics_text (graphics, endWindow, 0.5, L"intens");
+		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
 			int strength = floor (10 * frame -> intensity + 0.5);   /* Map 0.0-1.0 to 0-9 */
 			if (strength > 9) strength = 9;
-			Graphics_text1 (my graphics, t, 0.5, Melder_integer (strength));
+			Graphics_text1 (graphics, t, 0.5, Melder_integer (strength));
 		}
-		Graphics_resetViewport (my graphics, previous);
+		Graphics_resetViewport (graphics, previous);
 	}
 
 	if (it1 > 1) it1 -= 1;
@@ -283,35 +281,35 @@ static void draw (PitchEditor me) {
 	 */
 	{
 		Graphics_Viewport previous;
-		previous = Graphics_insetViewport (my graphics, 0, 1, 0, dyUnv);
-		Graphics_setColour (my graphics, Graphics_BLUE);
-		Graphics_line (my graphics, my startWindow, 1, my endWindow, 1);
-		Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text (my graphics, my startWindow, 0.5, L"Unv");
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
-		Graphics_text (my graphics, my endWindow, 0.5, L"Unv");
+		previous = Graphics_insetViewport (graphics, 0, 1, 0, dyUnv);
+		Graphics_setColour (graphics, Graphics_BLUE);
+		Graphics_line (graphics, startWindow, 1, endWindow, 1);
+		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (graphics, startWindow, 0.5, L"Unv");
+		Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
+		Graphics_text (graphics, endWindow, 0.5, L"Unv");
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
 			double f = frame -> candidate [1]. frequency;
-			if ((f > 0.0 && f < pitch -> ceiling) || tright <= my startWindow || tleft >= my endWindow) continue;
-			if (tleft < my startWindow) tleft = my startWindow;
-			if (tright > my endWindow) tright = my endWindow;
-			Graphics_fillRectangle (my graphics, tleft, tright, 0, 1);
+			if ((f > 0.0 && f < pitch -> ceiling) || tright <= startWindow || tleft >= endWindow) continue;
+			if (tleft < startWindow) tleft = startWindow;
+			if (tright > endWindow) tright = endWindow;
+			Graphics_fillRectangle (graphics, tleft, tright, 0, 1);
 		}
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_resetViewport (my graphics, previous);
+		Graphics_setColour (graphics, Graphics_BLACK);
+		Graphics_resetViewport (graphics, previous);
 	}
 }
 
-static void play (PitchEditor me, double tmin, double tmax) {
-	Pitch_hum ((Pitch) my data, tmin, tmax);
+void structPitchEditor :: v_play (double tmin, double tmax) {
+	Pitch_hum ((Pitch) data, tmin, tmax);
 }
 
-static int click (PitchEditor me, double xWC, double yWC, int dummy) {
-	Pitch pitch = (Pitch) my data;
-	double dyUnv = Graphics_dyMMtoWC (my graphics, HEIGHT_UNV);
-	double dyIntens = Graphics_dyMMtoWC (my graphics, HEIGHT_INTENS);
+int structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
+	Pitch pitch = (Pitch) data;
+	double dyUnv = Graphics_dyMMtoWC (graphics, HEIGHT_UNV);
+	double dyIntens = Graphics_dyMMtoWC (graphics, HEIGHT_INTENS);
 	double frequency = (yWC - dyUnv) / (1 - dyIntens - dyUnv) * pitch -> ceiling, tmid;
 	double minimumDf = 1e30;
 	int cand, bestCandidate = -1;
@@ -334,31 +332,24 @@ static int click (PitchEditor me, double xWC, double yWC, int dummy) {
 	if (bestCandidate != -1) {
 		double bestFrequency = bestFrame -> candidate [bestCandidate]. frequency;
 		double distanceWC = (frequency - bestFrequency) / pitch -> ceiling * (1 - dyIntens - dyUnv);
-		double dx_mm = Graphics_dxWCtoMM (my graphics, xWC - tmid), dy_mm = Graphics_dyWCtoMM (my graphics, distanceWC);
-		if (bestFrequency < pitch -> ceiling &&   /* Above ceiling: ignore. */
+		double dx_mm = Graphics_dxWCtoMM (graphics, xWC - tmid), dy_mm = Graphics_dyWCtoMM (graphics, distanceWC);
+		if (bestFrequency < pitch -> ceiling &&   // above ceiling: ignore
 		    ((bestFrequency <= 0.0 && fabs (xWC - tmid) <= 0.5 * pitch -> dx && frequency <= 0.0) ||   // voiceless: click within frame
 		     (bestFrequency > 0.0 && dx_mm * dx_mm + dy_mm * dy_mm <= RADIUS * RADIUS)))   // voiced: click within circle
 		{
 			struct structPitch_Candidate help = bestFrame -> candidate [1];
-			Editor_save (me, L"Change path");
+			Editor_save (this, L"Change path");
 			bestFrame -> candidate [1] = bestFrame -> candidate [bestCandidate];
 			bestFrame -> candidate [bestCandidate] = help;
-			FunctionEditor_redraw (me);
-			Editor_broadcastChange (me);
-			my startSelection = my endSelection = tmid;   // cursor will snap to candidate
+			FunctionEditor_redraw (this);
+			Editor_broadcastChange (this);
+			startSelection = endSelection = tmid;   // cursor will snap to candidate
 			return 1;
 		} else {
-			return inherited (PitchEditor) click (me, xWC, yWC, dummy);   // move cursor or drag selection
+			return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection
 		}
 	}
-	return inherited (PitchEditor) click (me, xWC, yWC, dummy);   // move cursor or drag selection
-}
-
-class_methods (PitchEditor, FunctionEditor) {
-	class_method (draw)
-	class_method (play)
-	class_method (click)
-	class_methods_end
+	return PitchEditor_Parent :: v_click (xWC, yWC, dummy);   // move cursor or drag selection
 }
 
 PitchEditor PitchEditor_create (GuiObject parent, const wchar *title, Pitch pitch) {

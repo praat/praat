@@ -23,13 +23,25 @@
 #include "AmplitudeTier.h"
 #include "Sound.h"
 
-Thing_declare1cpp (AmplitudeTierEditor);
-struct structAmplitudeTierEditor : public structRealTierEditor {
+Thing_define (AmplitudeTierEditor, RealTierEditor) {
 	// overridden methods:
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_play (double tmin, double tmax);
+		virtual const wchar *
+			v_quantityText ()
+				{ return L"Sound pressure (Pa)"; }
+		virtual const wchar * v_quantityKey () { return L"Sound pressure"; }
+		virtual const wchar * v_rightTickUnits () { return L" Pa"; }
+		virtual double v_defaultYmin () { return -1.0; }
+		virtual double v_defaultYmax () { return +1.0; }
+		virtual const wchar * v_setRangeTitle () { return L"Set amplitude range..."; }
+		virtual const wchar * v_defaultYminText () { return L"-1.0"; }
+		virtual const wchar * v_defaultYmaxText () { return L"+1.0"; }
+		virtual const wchar * v_yminText () { return L"Minimum amplitude (Pa)"; }
+		virtual const wchar * v_ymaxText () { return L"Maximum amplitude (Pa)"; }
+		virtual const wchar * v_yminKey () { return L"Minimum amplitude"; }
+		virtual const wchar * v_ymaxKey () { return L"Maximum amplitude"; }
 };
-#define AmplitudeTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-Thing_declare2cpp (AmplitudeTierEditor, RealTierEditor);
 
 AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar *title,
 	AmplitudeTier amplitude,

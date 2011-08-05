@@ -18,21 +18,17 @@
  */
 
 /*
+ * a selection of changes:
  * pb 2005/07/04 created
- * pb 2006/05/17 draw disharmonies on top of tableau
- * pb 2007/06/10 wchar
- * pb 2007/08/12 wchar
  * pb 2007/10/01 constraint plasticity
- * pb 2007/12/14 Gui
- * pb 2008/03/20 split off Help menu
  * pb 2011/03/01 multiple update rules
- * pb 2011/03/23 C++
- * pb 2011/07/15 C++
  */
 
 #include "OTMultiEditor.h"
 #include "EditorM.h"
 #include "machine.h"
+
+Thing_implement (OTMultiEditor, HyperPage, 0);
 
 static int menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
@@ -221,44 +217,38 @@ static void drawTableau (Graphics g) {
 	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, TRUE);
 }
 
-static void draw (OTMultiEditor me) {
-	OTMulti grammar = (OTMulti) my data;
+void structOTMultiEditor :: v_draw () {
+	OTMulti grammar = (OTMulti) data;
 	static MelderString buffer = { 0 };
 	double rowHeight = 0.25, tableauHeight = 2 * rowHeight;
-	Graphics_clearWs (my g);
-	HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
+	Graphics_clearWs (g);
+	HyperPage_listItem (this, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
 		MelderString_empty (& buffer);
-		MelderString_append8 (& buffer, L"\t", icons == my selectedConstraint ? L"\\sp " : L"   ", L"@@", Melder_integer (icons),
+		MelderString_append8 (& buffer, L"\t", icons == selectedConstraint ? L"\\sp " : L"   ", L"@@", Melder_integer (icons),
 			L"|", constraint -> name, L"@\t      ", Melder_fixed (constraint -> ranking, 3));
 		MelderString_append2 (& buffer, L"\t      ", Melder_fixed (constraint -> disharmony, 3));
 		MelderString_append2 (& buffer, L"\t      ", Melder_fixed (constraint -> plasticity, 6));
-		HyperPage_listItem (me, buffer.string);
+		HyperPage_listItem (this, buffer.string);
 	}
-	Graphics_setAtSignIsLink (my g, FALSE);
+	Graphics_setAtSignIsLink (g, FALSE);
 	drawTableau_grammar = grammar;
 	for (long icand = 1; icand <= grammar -> numberOfCandidates; icand ++) {
-		if (OTMulti_candidateMatches (grammar, icand, my form1, my form2)) {
+		if (OTMulti_candidateMatches (grammar, icand, form1, form2)) {
 			tableauHeight += rowHeight;
 		}
 	}
-	drawTableau_form1 = my form1;
-	drawTableau_form2 = my form2;
-	HyperPage_picture (me, 20, tableauHeight, drawTableau);
-	Graphics_setAtSignIsLink (my g, TRUE);
+	drawTableau_form1 = form1;
+	drawTableau_form2 = form2;
+	HyperPage_picture (this, 20, tableauHeight, drawTableau);
+	Graphics_setAtSignIsLink (g, TRUE);
 }
 
-static int goToPage (OTMultiEditor me, const wchar *title) {
+int structOTMultiEditor :: v_goToPage (const wchar *title) {
 	if (title == NULL) return 1;
-	my selectedConstraint = wcstol (title, NULL, 10);
+	selectedConstraint = wcstol (title, NULL, 10);
 	return 1;
-}
-
-class_methods (OTMultiEditor, HyperPage) {
-	class_method (draw)
-	class_method (goToPage)
-	class_methods_end
 }
 
 OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar *title, OTMulti grammar) {

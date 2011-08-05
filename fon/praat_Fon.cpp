@@ -1286,7 +1286,7 @@ FORM (FormantGrid_to_Formant, L"FormantGrid: To Formant", 0)
 	OK
 DO
 	double intensity = GET_REAL (L"Intensity");
-	if (intensity > 0.0) Melder_throw ("Intensity cannot be negative.");
+	if (intensity < 0.0) Melder_throw ("Intensity cannot be negative.");
 	LOOP {
 		iam (FormantGrid);
 		autoFormant thee = FormantGrid_to_Formant (me, GET_REAL (L"Time step"), intensity);

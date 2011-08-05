@@ -18,27 +18,21 @@
  */
 
 /*
- * pb 2001/07/18
+ * a selection of changes:
  * pb 2002/07/08 goodness
- * pb 2002/07/16 GPL
  * pb 2005/11/21 play again
  * pb 2005/12/02 response sounds are played
  * pb 2005/12/04 oops button
  * pb 2005/12/08 multiple experiments
- * pb 2006/01/19 fixed a bug that caused an assertion violation when the oops button was pressed after the experiment finished
- * pb 2006/02/23 repaired small memory leak in destroy()
- * pb 2007/08/12 wchar_t
- * pb 2008/03/31 correct error message when the second of multiple experiments cannot start
- * pb 2008/04/08 disable the OK key if no response has been given yet
  * pb 2011/03/03 reaction times for mouse clicks
- * pb 2011/03/23 C++
  * pb 2011/04/14 reaction times for key presses
- * pb 2011/07/15 C++
  */
 
 #include "RunnerMFC.h"
 #include "EditorM.h"
 #include "machine.h"
+
+Thing_implement (RunnerMFC, Editor, 0);
 
 void structRunnerMFC :: v_destroy () {
 	if (experiments) {
@@ -398,10 +392,6 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 void structRunnerMFC :: v_createChildren () {
 	drawingArea = GuiDrawingArea_createShown (dialog, 0, 0, Machine_getMenuBarHeight (), 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
-}
-
-class_methods (RunnerMFC, Editor) {
-	class_methods_end
 }
 
 RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered experiments) {

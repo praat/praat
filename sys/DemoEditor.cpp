@@ -17,22 +17,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2009/05/04 created
- * pb 2009/05/06 Demo_waitForInput ()
- * pb 2009/05/08 Demo_input ()
- * pb 2009/06/30 removed interpreter member (could cause Praat to crash when the editor was closed after an "execute")
- * pb 2009/08/21 Demo_windowTitle ()
- * pb 2009/12/25 error messages if the user tries to handle the Demo window while it is waiting for input
- * pb 2010/07/13 GTK
- * pb 2011/04/06 C++
- * pb 2011/07/15 C++
- */
-
 #include "DemoEditor.h"
 #include "machine.h"
 #include "praatP.h"
 #include "UnicodeData.h"
+
+Thing_implement (DemoEditor, Editor, 0);
 
 static DemoEditor theDemoEditor;
 
@@ -125,10 +115,6 @@ void structDemoEditor :: v_createChildren () {
 	#if gtk
 		gtk_widget_set_double_buffered (drawingArea, FALSE);
 	#endif
-}
-
-class_methods (DemoEditor, Editor) {
-	class_methods_end
 }
 
 void DemoEditor_init (DemoEditor me, GuiObject parent) {

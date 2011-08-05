@@ -24,24 +24,22 @@
 
 #define kTableEditor_MAXNUM_VISIBLE_COLUMNS  100
 
-Thing_declare1cpp (TableEditor);
-struct structTableEditor : public structEditor {
+Thing_define (TableEditor, Editor) {
 	// new data:
 		long topRow, leftColumn, selectedRow, selectedColumn;
 		GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar;
 		double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
 		Graphics graphics;
 	// overridden methods:
-		void v_destroy ();
-		void v_createChildren ();
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
-		void v_dataChanged ();
+		virtual void v_destroy ();
+		virtual void v_createChildren ();
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_dataChanged ();
+	// new methods:
+		virtual void v_draw ();
+		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
-#define TableEditor__methods(Klas) \
-	void (*draw) (Klas me); \
-	int (*click) (Klas me, double xWC, double yWC, int shiftKeyPressed);
-Thing_declare2cpp (TableEditor, Editor);
 
 TableEditor TableEditor_create (GuiObject parent, const wchar *title, Table table);
 

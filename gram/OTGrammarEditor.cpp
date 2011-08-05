@@ -18,20 +18,15 @@
  */
 
 /*
- * pb 2002/07/16 GPL
- * pb 2003/03/31 removeConstraint
+ * a selection of changes:
  * pb 2003/05/27 learnOne and learnOneFromPartialOutput
- * pb 2004/03/16 Evaluate (tiny noise)
- * pb 2007/06/10 wchar
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
  * pb 2008/05/31 ExponentialMaximumEntropy
- * pb 2011/03/22 C++
- * pb 2011/07/15 C++
  */
 
 #include "OTGrammarEditor.h"
 #include "EditorM.h"
+
+Thing_implement (OTGrammarEditor, HyperPage, 0);
 
 static int menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
@@ -209,16 +204,16 @@ static void drawTableau (Graphics g) {
 	OTGrammar_drawTableau (drawTableau_ot, g, drawTableau_input);
 }
 
-static void draw (OTGrammarEditor me) {
-	OTGrammar ot = (OTGrammar) my data;
+void structOTGrammarEditor :: v_draw () {
+	OTGrammar ot = (OTGrammar) data;
 	static wchar text [1000];
-	Graphics_clearWs (my g);
+	Graphics_clearWs (g);
 	if (ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
 		ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
 	{
-		HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity\t   %%e^^disharmony");
+		HyperPage_listItem (this, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity\t   %%e^^disharmony");
 	} else {
-		HyperPage_listItem (me, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
+		HyperPage_listItem (this, L"\t\t      %%ranking value\t      %disharmony\t      %plasticity");
 	}
 	for (long icons = 1; icons <= ot -> numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & ot -> constraints [ot -> index [icons]];
@@ -226,38 +221,32 @@ static void draw (OTGrammarEditor me) {
 			ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
 			swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f\t %ls",
-				icons == my selected ? L"\\sp " : L"   ", icons, constraint -> name,
+				icons == selected ? L"\\sp " : L"   ", icons, constraint -> name,
 				constraint -> ranking, constraint -> disharmony, constraint -> plasticity,
 				Melder_float (Melder_half (exp (constraint -> disharmony))));
 		} else {
 			swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f",
-				icons == my selected ? L"\\sp " : L"   ", icons, constraint -> name,
+				icons == selected ? L"\\sp " : L"   ", icons, constraint -> name,
 				constraint -> ranking, constraint -> disharmony, constraint -> plasticity);
 		}
-		HyperPage_listItem (me, text);
+		HyperPage_listItem (this, text);
 	}
-	Graphics_setAtSignIsLink (my g, FALSE);
+	Graphics_setAtSignIsLink (g, FALSE);
 	for (long itab = 1; itab <= ot -> numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & ot -> tableaus [itab];
 		double rowHeight = 0.25;
 		double tableauHeight = rowHeight * (tableau -> numberOfCandidates + 2);
 		drawTableau_ot = ot;
 		drawTableau_input = tableau -> input;
-		HyperPage_picture (me, 20, tableauHeight, drawTableau);
+		HyperPage_picture (this, 20, tableauHeight, drawTableau);
 	}
-	Graphics_setAtSignIsLink (my g, TRUE);
+	Graphics_setAtSignIsLink (g, TRUE);
 }
 
-static int goToPage (OTGrammarEditor me, const wchar *title) {
+int structOTGrammarEditor :: v_goToPage (const wchar *title) {
 	if (title == NULL) return 1;
-	my selected = wcstol (title, NULL, 10);
+	selected = wcstol (title, NULL, 10);
 	return 1;
-}
-
-class_methods (OTGrammarEditor, HyperPage) {
-	class_method (draw)
-	class_method (goToPage)
-	class_methods_end
 }
 
 OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar *title, OTGrammar ot) {

@@ -30,8 +30,7 @@ struct FormantGridEditor_Source {
 	struct { double adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2; } phonation;
 };
 
-Thing_declare1cpp (FormantGridEditor);
-struct structFormantGridEditor : public structFunctionEditor {
+Thing_define (FormantGridEditor, FunctionEditor) {
 	// new data:
 		bool editingBandwidths;
 		long selectedFormant;
@@ -39,11 +38,13 @@ struct structFormantGridEditor : public structFunctionEditor {
 		struct FormantGridEditor_Play play;
 		struct FormantGridEditor_Source source;
 	// overridden methods:
-		void v_createMenus ();
+		virtual void v_createMenus ();
+		virtual void v_draw ();
+		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+		virtual void v_play (double tmin, double tmax);
+	// new methods:
+		virtual bool v_hasSourceMenu () { return true; }
 };
-#define FormantGridEditor__methods(Klas) FunctionEditor__methods(Klas) \
-	bool hasSourceMenu;
-Thing_declare2cpp (FormantGridEditor, FunctionEditor);
 
 void FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar *title, FormantGrid data);
 

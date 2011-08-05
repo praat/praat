@@ -20,8 +20,7 @@
 #include "AmplitudeTierEditor.h"
 #include "EditorM.h"
 
-#undef our
-#define our ((AmplitudeTierEditor_Table) my methods) ->
+Thing_implement (AmplitudeTierEditor, RealTierEditor, 0);
 
 static int menu_cb_AmplitudeTierHelp (EDITOR_ARGS) { EDITOR_IAM (AmplitudeTierEditor); Melder_help (L"AmplitudeTier"); return 1; }
 
@@ -30,24 +29,12 @@ void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
 }
 
-static void play (AmplitudeTierEditor me, double tmin, double tmax) {
-	if (my sound.data) {
-		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
+void structAmplitudeTierEditor :: v_play (double tmin, double tmax) {
+	if (sound.data) {
+		Sound_playPart (sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 	} else {
-		/*if (! AmplitudeTier_playPart (my data, tmin, tmax, FALSE)) Melder_flushError (NULL);*/
+		//AmplitudeTier_playPart (data, tmin, tmax, FALSE);
 	}
-}
-
-class_methods (AmplitudeTierEditor, RealTierEditor) {
-	class_method (play)
-	us -> quantityText = L"Sound pressure (Pa)", us -> quantityKey = L"Sound pressure";
-	us -> rightTickUnits = L" Pa";
-	us -> defaultYmin = -1.0, us -> defaultYmax = +1.0;
-	us -> setRangeTitle = L"Set amplitude range...";
-	us -> defaultYminText = L"-1.0", us -> defaultYmaxText = L"+1.0";
-	us -> yminText = L"Minimum amplitude (Pa)", us -> ymaxText = L"Maximum amplitude (Pa)";
-	us -> yminKey = L"Minimum amplitude", us -> ymaxKey = L"Maximum amplitude";
-	class_methods_end
 }
 
 AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar *title, AmplitudeTier amplitude, Sound sound, bool ownSound) {

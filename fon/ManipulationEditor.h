@@ -24,8 +24,7 @@
 
 #include "ManipulationEditor_enums.h"
 
-Thing_declare1cpp (ManipulationEditor);
-struct structManipulationEditor : structFunctionEditor {
+Thing_define (ManipulationEditor, FunctionEditor) {
 	// new data:
 		PointProcess previousPulses;
 		PitchTier previousPitch;
@@ -42,14 +41,15 @@ struct structManipulationEditor : structFunctionEditor {
 		struct { double minimum, maximum, cursor;  } duration;
 		Graphics_Viewport inset;
 	// overridden methods:
-		void v_destroy ();
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
-		void v_save ();
-		void v_restore ();
+		virtual void v_destroy ();
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_save ();
+		virtual void v_restore ();
+		virtual void v_draw ();
+		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+		virtual void v_play (double tmin, double tmax);
 };
-#define ManipulationEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2cpp (ManipulationEditor, FunctionEditor);
 
 ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar *title, Manipulation ana);
 

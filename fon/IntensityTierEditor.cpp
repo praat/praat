@@ -20,8 +20,7 @@
 #include "IntensityTierEditor.h"
 #include "EditorM.h"
 
-#undef our
-#define our ((IntensityTierEditor_Table) my methods) ->
+Thing_implement (IntensityTierEditor, RealTierEditor, 0);
 
 static int menu_cb_IntensityTierHelp (EDITOR_ARGS) { EDITOR_IAM (IntensityTierEditor); Melder_help (L"IntensityTier"); return 1; }
 
@@ -30,24 +29,12 @@ void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"IntensityTier help", 0, menu_cb_IntensityTierHelp);
 }
 
-static void play (IntensityTierEditor me, double tmin, double tmax) {
-	if (my sound.data) {
-		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
+void structIntensityTierEditor :: v_play (double tmin, double tmax) {
+	if (sound.data) {
+		Sound_playPart (sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 	} else {
-		/*if (! IntensityTier_playPart (my data, tmin, tmax, FALSE)) Melder_flushError (NULL);*/
+		//IntensityTier_playPart (data, tmin, tmax, FALSE);
 	}
-}
-
-class_methods (IntensityTierEditor, RealTierEditor) {
-	class_method (play)
-	us -> quantityText = L"Intensity (dB)", us -> quantityKey = L"Intensity";
-	us -> rightTickUnits = L" dB";
-	us -> defaultYmin = 50.0, us -> defaultYmax = 100.0;
-	us -> setRangeTitle = L"Set intensity range...";
-	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"100.0";
-	us -> yminText = L"Minimum intensity (dB)", us -> ymaxText = L"Maximum intensity (dB)";
-	us -> yminKey = L"Minimum intensity", us -> ymaxKey = L"Maximum intensity";
-	class_methods_end
 }
 
 IntensityTierEditor IntensityTierEditor_create (GuiObject parent, const wchar *title, IntensityTier intensity, Sound sound, bool ownSound) {

@@ -20,6 +20,8 @@
 #include "DurationTierEditor.h"
 #include "EditorM.h"
 
+Thing_implement (DurationTierEditor, RealTierEditor, 0);
+
 static int menu_cb_DurationTierHelp (EDITOR_ARGS) { EDITOR_IAM (DurationTierEditor); Melder_help (L"DurationTier"); return 1; }
 
 void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -27,25 +29,12 @@ void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 
-static void play (DurationTierEditor me, double tmin, double tmax) {
-	if (my sound.data) {
-		Sound_playPart (my sound.data, tmin, tmax, NULL, NULL);
+void structDurationTierEditor :: v_play (double tmin, double tmax) {
+	if (sound.data) {
+		Sound_playPart (sound.data, tmin, tmax, NULL, NULL);
 	} else {
-		/*if (! DurationTier_playPart (my data, tmin, tmax, FALSE)) Melder_flushError (NULL);*/
+		//DurationTier_playPart (data, tmin, tmax, FALSE);
 	}
-}
-
-class_methods (DurationTierEditor, RealTierEditor) {
-	class_method (play)
-	us -> minimumLegalValue = 0.0;
-	us -> quantityText = L"Relative duration", us -> quantityKey = L"Relative duration";
-	us -> rightTickUnits = L"";
-	us -> defaultYmin = 0.25, us -> defaultYmax = 3.0;
-	us -> setRangeTitle = L"Set duration range...";
-	us -> defaultYminText = L"0.25", us -> defaultYmaxText = L"3.0";
-	us -> yminText = L"Minimum duration", us -> ymaxText = L"Maximum duration";
-	us -> yminKey = L"Minimum duration", us -> ymaxKey = L"Maximum duration";
-	class_methods_end
 }
 
 DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar *title, DurationTier duration, Sound sound, bool ownSound) {

@@ -38,6 +38,8 @@ static void KlattGrid_Editor_defaultPlay (KlattGrid me, double tmin, double tmax
 
 /************************** KlattGrid_realTierEditor *********************************/
 
+Thing_implement (KlattGrid_realTierEditor, RealTierEditor, 0);
+
 static int menu_cb_KlattGridHelp (EDITOR_ARGS) { EDITOR_IAM (KlattGrid_realTierEditor); Melder_help (L"KlattGrid"); return 1; }
 
 void structKlattGrid_realTierEditor :: v_createHelpMenuItems (EditorMenu menu)
@@ -46,15 +48,10 @@ void structKlattGrid_realTierEditor :: v_createHelpMenuItems (EditorMenu menu)
 	EditorMenu_addCommand (menu, L"KlattGrid help", 0, menu_cb_KlattGridHelp);
 }
 
-static void classKlattGrid_realTierEditor_play (KlattGrid_realTierEditor me, double tmin, double tmax)
+void structKlattGrid_realTierEditor :: v_play (double tmin, double tmax)
 {
-	KlattGrid_Editor_defaultPlay (my klattgrid, tmin, tmax);
+	KlattGrid_Editor_defaultPlay (klattgrid, tmin, tmax);
 }
-
-class_methods (KlattGrid_realTierEditor, RealTierEditor)
-//	us -> play = KlattGrid_realTierEditor_play;
-	class_method_local (KlattGrid_realTierEditor, play)
-class_methods_end
 
 void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier data)
 {
@@ -63,6 +60,8 @@ void KlattGrid_realTierEditor_init (KlattGrid_realTierEditor me, GuiObject paren
 }
 
 /************************** KlattGrid_pitchTierEditor *********************************/
+
+Thing_implement (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor, 0);
 
 static int menu_cb_KlattGrid_pitchTierEditorHelp (EDITOR_ARGS)
 {
@@ -80,19 +79,6 @@ void structKlattGrid_pitchTierEditor :: v_createHelpMenuItems (EditorMenu menu)
 	EditorMenu_addCommand (menu, L"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
-class_methods (KlattGrid_pitchTierEditor, KlattGrid_realTierEditor)
-{
-	us -> quantityText = L"Frequency (Hz)", us -> quantityKey = L"Frequency";
-	us -> rightTickUnits = L" Hz";
-	us -> defaultYmin = 50.0, us -> defaultYmax = 600.0;
-	us -> minimumLegalValue = 0.0;
-	us -> setRangeTitle = L"Set frequency range...";
-	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"600.0";
-	us -> yminText = L"Minimum frequency (Hz)", us -> ymaxText = L"Maximum frequency (Hz)";
-	us -> yminKey = L"Minimum frequency", us -> ymaxKey = L"Maximum frequency";
-	class_methods_end
-}
-
 KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid) {
 	try {
 		autoKlattGrid_pitchTierEditor me = Thing_new (KlattGrid_pitchTierEditor);
@@ -106,6 +92,8 @@ KlattGrid_pitchTierEditor KlattGrid_pitchTierEditor_create (GuiObject parent, co
 
 /************************** KlattGrid_intensityTierEditor *********************************/
 
+Thing_implement (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor, 0);
+
 static int menu_cb_IntensityTierHelp (EDITOR_ARGS) { EDITOR_IAM (KlattGrid_intensityTierEditor); Melder_help (L"IntensityTier"); return 1; }
 
 void structKlattGrid_intensityTierEditor :: v_createHelpMenuItems (EditorMenu menu)
@@ -113,16 +101,6 @@ void structKlattGrid_intensityTierEditor :: v_createHelpMenuItems (EditorMenu me
 	KlattGrid_intensityTierEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"IntensityTier help", 0, menu_cb_IntensityTierHelp);
 }
-
-class_methods (KlattGrid_intensityTierEditor, KlattGrid_realTierEditor)
-	us -> quantityText = L"Intensity (dB)", us -> quantityKey = L"Intensity";
-	us -> rightTickUnits = L" dB";
-	us -> defaultYmin = 50.0, us -> defaultYmax = 100.0;
-	us -> setRangeTitle = L"Set intensity range...";
-	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"100.0";
-	us -> yminText = L"Minimum intensity (dB)", us -> ymaxText = L"Maximum intensity (dB)";
-	us -> yminKey = L"Minimum intensity", us -> ymaxKey = L"Maximum intensity";
-class_methods_end
 
 void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier)
 {
@@ -132,15 +110,7 @@ void KlattGrid_intensityTierEditor_init (KlattGrid_intensityTierEditor me, GuiOb
 
 /************************** KlattGrid_DecibelTierEditor *********************************/
 
-class_methods (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor)
-	us -> quantityText = L"Amplitude (dB)", us -> quantityKey = L"Amplitude";
-	us -> rightTickUnits = L" dB";
-	us -> defaultYmin = -30.0, us -> defaultYmax = 30.0;
-	us -> setRangeTitle = L"Set amplitude range...";
-	us -> defaultYminText = L"-30.0", us -> defaultYmaxText = L"30.0";
-	us -> yminText = L"Minimum amplitude (dB)", us -> ymaxText = L"Maximum amplitude (dB)";
-	us -> yminKey = L"Minimum amplitude", us -> ymaxKey = L"Maximum amplitude";
-class_methods_end
+Thing_implement (KlattGrid_decibelTierEditor, KlattGrid_intensityTierEditor, 0);
 
 KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid, RealTier tier)
 {
@@ -155,8 +125,7 @@ KlattGrid_decibelTierEditor KlattGrid_decibelTierEditor_create (GuiObject parent
 
 /************************** KlattGrid_voicingAmplitudeTierEditor *********************************/
 
-class_methods (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor)
-class_methods_end
+Thing_implement (KlattGrid_voicingAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
 KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -172,8 +141,7 @@ KlattGrid_voicingAmplitudeTierEditor KlattGrid_voicingAmplitudeTierEditor_create
 
 /************************** KlattGrid_aspirationAmplitudeTierEditor *********************************/
 
-class_methods (KlattGrid_aspirationAmplitudeTierEditor, KlattGrid_intensityTierEditor)
-class_methods_end
+Thing_implement (KlattGrid_aspirationAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
 KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -189,8 +157,7 @@ KlattGrid_aspirationAmplitudeTierEditor KlattGrid_aspirationAmplitudeTierEditor_
 
 /************************** KlattGrid_breathinessAmplitudeTierEditor *********************************/
 
-class_methods (KlattGrid_breathinessAmplitudeTierEditor, KlattGrid_intensityTierEditor)
-class_methods_end
+Thing_implement (KlattGrid_breathinessAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
 KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -206,10 +173,7 @@ KlattGrid_breathinessAmplitudeTierEditor KlattGrid_breathinessAmplitudeTierEdito
 
 /************************** KlattGrid_spectralTiltTierEditor *********************************/
 
-class_methods (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor)
-	us -> defaultYmin = -50.0, us -> defaultYmax = 10.0;
-	us -> defaultYminText = L"-50.0", us -> defaultYmaxText = L"10.0";
-class_methods_end
+Thing_implement (KlattGrid_spectralTiltTierEditor, KlattGrid_intensityTierEditor, 0);
 
 KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -225,11 +189,7 @@ KlattGrid_spectralTiltTierEditor KlattGrid_spectralTiltTierEditor_create (GuiObj
 
 /************************** KlattGrid_fricationBypassTierEditor *********************************/
 
-class_methods (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor) {
-	us -> defaultYmin = -50.0, us -> defaultYmax = 10.0;
-	us -> defaultYminText = L"-50.0", us -> defaultYmaxText = L"10.0";
-	class_methods_end
-}
+Thing_implement (KlattGrid_fricationBypassTierEditor, KlattGrid_intensityTierEditor, 0);
 
 KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -245,9 +205,7 @@ KlattGrid_fricationBypassTierEditor KlattGrid_fricationBypassTierEditor_create (
 
 /************************** KlattGrid_fricationAmplitudeTierEditor *********************************/
 
-class_methods (KlattGrid_fricationAmplitudeTierEditor, KlattGrid_intensityTierEditor) {
-	class_methods_end
-}
+Thing_implement (KlattGrid_fricationAmplitudeTierEditor, KlattGrid_intensityTierEditor, 0);
 
 KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -263,17 +221,7 @@ KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_cr
 
 /************************** KlattGrid_openPhaseTierEditor *********************************/
 
-class_methods (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor) {
-	us -> quantityText = L"Open phase (0..1)", us -> quantityKey = L"Open phase";
-	us -> rightTickUnits = L"";
-	us -> defaultYmin = 0, us -> defaultYmax = 1;
-	us -> minimumLegalValue = 0; us -> maximumLegalValue = 1;
-	us -> setRangeTitle = L"Set open phase range...";
-	us -> defaultYminText = L"0.0", us -> defaultYmaxText = L"1.0";
-	us -> yminText = L"Minimum (0..1)", us -> ymaxText = L"Maximum (0..1)";
-	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
-	class_methods_end
-}
+Thing_implement (KlattGrid_openPhaseTierEditor, KlattGrid_realTierEditor, 0);
 
 KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -289,17 +237,7 @@ KlattGrid_openPhaseTierEditor KlattGrid_openPhaseTierEditor_create (GuiObject pa
 
 /************************** KlattGrid_collisionPhaseTierEditor *********************************/
 
-class_methods (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor) {
-	us -> quantityText = L"Collision phase (0..1)", us -> quantityKey = L"Collision phase";
-	us -> rightTickUnits = L"";
-	us -> defaultYmin = 0, us -> defaultYmax = 0.1;
-	us -> minimumLegalValue = 0; us -> maximumLegalValue = 1;
-	us -> setRangeTitle = L"Set collision phase range...";
-	us -> defaultYminText = L"0.0", us -> defaultYmaxText = L"0.1";
-	us -> yminText = L"Minimum (0..1)", us -> ymaxText = L"Maximum (0..1)";
-	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
-	class_methods_end
-}
+Thing_implement (KlattGrid_collisionPhaseTierEditor, KlattGrid_realTierEditor, 0);
 
 KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -315,17 +253,7 @@ KlattGrid_collisionPhaseTierEditor KlattGrid_collisionPhaseTierEditor_create (Gu
 
 /************************** KlattGrid_power1TierEditor *********************************/
 
-class_methods (KlattGrid_power1TierEditor, KlattGrid_realTierEditor) {
-	us -> quantityText = L"Power1", us -> quantityKey = L"Power1";
-	us -> rightTickUnits = L"";
-	us -> defaultYmin = 0, us -> defaultYmax = 4;
-	us -> minimumLegalValue = 0;
-	us -> setRangeTitle = L"Set power1 range...";
-	us -> defaultYminText = L"0", us -> defaultYmaxText = L"4";
-	us -> yminText = L"Minimum", us -> ymaxText = L"Maximum";
-	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
-	class_methods_end
-}
+Thing_implement (KlattGrid_power1TierEditor, KlattGrid_realTierEditor, 0);
 
 KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -341,17 +269,7 @@ KlattGrid_power1TierEditor KlattGrid_power1TierEditor_create (GuiObject parent, 
 
 /************************** KlattGrid_power2TierEditor *********************************/
 
-class_methods (KlattGrid_power2TierEditor, KlattGrid_realTierEditor) {
-	us -> quantityText = L"Power2", us -> quantityKey = L"Power2";
-	us -> rightTickUnits = L"";
-	us -> defaultYmin = 0, us -> defaultYmax = 5;
-	us -> minimumLegalValue = 0;
-	us -> setRangeTitle = L"Set power2 range...";
-	us -> defaultYminText = L"0", us -> defaultYmaxText = L"5";
-	us -> yminText = L"Minimum", us -> ymaxText = L"Maximum";
-	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
-	class_methods_end
-}
+Thing_implement (KlattGrid_power2TierEditor, KlattGrid_realTierEditor, 0);
 
 KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -367,17 +285,7 @@ KlattGrid_power2TierEditor KlattGrid_power2TierEditor_create (GuiObject parent, 
 
 /************************** KlattGrid_flutterTierEditor *********************************/
 
-class_methods (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor) {
-	us -> quantityText = L"Flutter (0..1)", us -> quantityKey = L"Flutter";
-	us -> rightTickUnits = L"";
-	us -> defaultYmin = 0, us -> defaultYmax = 1;
-	us -> minimumLegalValue = 0; us -> maximumLegalValue = 1;
-	us -> setRangeTitle = L"Set flutter range...";
-	us -> defaultYminText = L"0.0", us -> defaultYmaxText = L"1.0";
-	us -> yminText = L"Minimum (0..1)", us -> ymaxText = L"Maximum (0..1)";
-	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
-	class_methods_end
-}
+Thing_implement (KlattGrid_flutterTierEditor, KlattGrid_realTierEditor, 0);
 
 KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -393,17 +301,7 @@ KlattGrid_flutterTierEditor KlattGrid_flutterTierEditor_create (GuiObject parent
 
 /************************** KlattGrid_doublePulsingTierEditor *********************************/
 
-class_methods (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor) {
-	us -> quantityText = L"Double pulsing (0..1)", us -> quantityKey = L"Double pulsing";
-	us -> rightTickUnits = L"";
-	us -> defaultYmin = 0, us -> defaultYmax = 1;
-	us -> minimumLegalValue = 0; us -> maximumLegalValue = 1;
-	us -> setRangeTitle = L"Set double pulsing range...";
-	us -> defaultYminText = L"0.0", us -> defaultYmaxText = L"1.0";
-	us -> yminText = L"Minimum (0..1)", us -> ymaxText = L"Maximum (0..1)";
-	us -> yminKey = L"Minimum", us -> ymaxKey = L"Maximum";
-	class_methods_end
-}
+Thing_implement (KlattGrid_doublePulsingTierEditor, KlattGrid_realTierEditor, 0);
 
 KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (GuiObject parent, const wchar_t *title, KlattGrid klattgrid)
 {
@@ -419,20 +317,16 @@ KlattGrid_doublePulsingTierEditor KlattGrid_doublePulsingTierEditor_create (GuiO
 
 /************************** KlattGrid_formantGridEditor *********************************/
 
-static int FormantGrid_isEmpty (FormantGrid me)
+Thing_implement (KlattGrid_formantGridEditor, FormantGridEditor, 0);
+
+static bool FormantGrid_isEmpty (FormantGrid me)
 {
 	return my formants -> size == 0 || my bandwidths -> size == 0;
 }
 
-static void classKlattGrid_formantGridEditor_play (KlattGrid_formantGridEditor me, double tmin, double tmax)
+void structKlattGrid_formantGridEditor :: v_play (double tmin, double tmax)
 {
-	KlattGrid_Editor_defaultPlay (my klattgrid, tmin, tmax);
-}
-
-class_methods (KlattGrid_formantGridEditor, FormantGridEditor) {
-	us -> hasSourceMenu = false;
-	class_method_local (KlattGrid_formantGridEditor, play)
-	class_methods_end
+	KlattGrid_Editor_defaultPlay (klattgrid, tmin, tmax);
 }
 
 KlattGrid_formantGridEditor KlattGrid_formantGridEditor_create (GuiObject parent, const wchar_t *title, KlattGrid data, int formantType)

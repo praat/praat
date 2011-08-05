@@ -23,9 +23,11 @@
 extern "C" void manual_tutorials_init (ManPages me);
 extern "C" void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110803)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110805)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.35# (5 August 2011)")
+LIST_ITEM (L"\\bu Corrected the menus of the Sound and TextGrid windows.")
 NORMAL (L"##5.2.34# (3 August 2011)")
 LIST_ITEM (L"\\bu @@Insert picture from file...@ now works on Windows (as well as on the Mac).")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when playing a LongSound.")

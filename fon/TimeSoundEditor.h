@@ -30,8 +30,7 @@ struct TimeSoundEditor_sound {
 	double minimum, maximum;
 };
 
-Thing_declare1cpp (TimeSoundEditor);
-struct structTimeSoundEditor : public structFunctionEditor {
+Thing_define (TimeSoundEditor, FunctionEditor) {
 	// new data:
 		bool ownSound;
 		struct TimeSoundEditor_sound sound;
@@ -39,15 +38,18 @@ struct structTimeSoundEditor : public structFunctionEditor {
 		GuiObject drawButton, publishButton, publishPreserveButton, publishWindowButton;
 		GuiObject writeAiffButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 	// overridden methods:
-		void v_destroy ();
-		void v_info ();
-		void v_createMenuItems_file (EditorMenu menu);
-		void v_createMenuItems_query_info (EditorMenu menu);
+		virtual void v_destroy ();
+		virtual void v_info ();
+		virtual void v_createMenuItems_file (EditorMenu menu);
+		virtual void v_createMenuItems_query_info (EditorMenu menu);
+		virtual void v_createMenuItems_file_draw (EditorMenu menu);
+		virtual void v_createMenuItems_file_extract (EditorMenu menu);
+		virtual void v_createMenuItems_file_write (EditorMenu menu);
+		virtual void v_createMenuItems_view (EditorMenu menu);
+	// new methods:
+		virtual void v_createMenuItems_view_sound (EditorMenu menu);
+		virtual void v_updateMenuItems_file ();
 };
-#define TimeSoundEditor__methods(Klas) FunctionEditor__methods(Klas) \
-	void (*createMenuItems_view_sound) (Klas me, EditorMenu menu); \
-	void (*updateMenuItems_file) (Klas me);
-Thing_declare2cpp (TimeSoundEditor, FunctionEditor);
 
 void TimeSoundEditor_prefs (void);
 

@@ -22,8 +22,7 @@
 #include "HyperPage.h"
 #include "ManPages.h"
 
-Thing_declare1cpp (Manual);
-struct structManual : public structHyperPage {
+Thing_define (Manual, HyperPage) {
 	// data:
 		long path, numberOfParagraphs;
 		struct structManPage_Paragraph *paragraphs;
@@ -34,15 +33,21 @@ struct structManual : public structHyperPage {
 		int suppressLinksHither;
 		wchar *printPagesStartingWith;
 	// overridden methods:
-		void v_destroy ();
-		bool v_scriptable () { return false; }
-		void v_createChildren ();
-		void v_createMenus ();
-		bool v_hasQueryMenu () { return false; }
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_destroy ();
+		virtual bool v_scriptable () { return false; }
+		virtual void v_createChildren ();
+		virtual void v_createMenus ();
+		virtual bool v_hasQueryMenu () { return false; }
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_draw ();
+		virtual void v_defaultHeaders (EditorCommand cmd);
+		virtual long v_getNumberOfPages ();
+		virtual long v_getCurrentPageNumber ();
+		virtual int v_goToPage (const wchar *title);
+		virtual void v_goToPage_i (long pageNumber);
+		virtual bool v_hasHistory () { return true; }
+		virtual bool v_isOrdered () { return true; }
 };
-#define Manual__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2cpp (Manual, HyperPage);
 
 void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data);
 Manual Manual_create (GuiObject parent, const wchar *title, Data data);

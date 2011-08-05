@@ -22,20 +22,19 @@
 #include "HyperPage.h"
 #include "OTMulti.h"
 
-Thing_declare1cpp (OTMultiEditor);
-struct structOTMultiEditor : public structHyperPage {
+Thing_define (OTMultiEditor, HyperPage) {
 	// new data:
 		const wchar *form1, *form2;
 		GuiObject form1Text, form2Text;
 		long selectedConstraint;
 	// overridden methods:
-		bool v_editable () { return true; }
-		void v_createChildren ();
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual bool v_editable () { return true; }
+		virtual void v_createChildren ();
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_draw ();
+		virtual int v_goToPage (const wchar *title);
 };
-#define OTMultiEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2cpp (OTMultiEditor, HyperPage);
 
 OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar *title, OTMulti grammar);
 

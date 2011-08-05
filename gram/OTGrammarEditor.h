@@ -22,17 +22,16 @@
 #include "HyperPage.h"
 #include "OTGrammar.h"
 
-Thing_declare1cpp (OTGrammarEditor);
-struct structOTGrammarEditor : public structHyperPage {
+Thing_define (OTGrammarEditor, HyperPage) {
 	// new data:
 		long selected;
 	// overridden methods:
-		bool v_editable () { return true; }
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual bool v_editable () { return true; }
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_draw ();
+		virtual int v_goToPage (const wchar *title);
 };
-#define OTGrammarEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2cpp (OTGrammarEditor, HyperPage);
 
 OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar *title, OTGrammar ot);
 

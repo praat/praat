@@ -22,18 +22,15 @@
 #include "Editor.h"
 #include "Strings.h"
 
-Thing_declare1cpp (StringsEditor);
-struct structStringsEditor : public structEditor {
+Thing_define (StringsEditor, Editor) {
 	// new data:
 		GuiObject list, text;
 	// overridden methods:
-		void v_destroy ();
-		void v_createChildren ();
-		void v_createHelpMenuItems (EditorMenu menu);
-		void v_dataChanged ();
+		virtual void v_destroy ();
+		virtual void v_createChildren ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_dataChanged ();
 };
-#define StringsEditor__methods(Klas)
-Thing_declare2cpp (StringsEditor, Editor);
 
 StringsEditor StringsEditor_create (GuiObject parent, const wchar *title, Strings data);
 

@@ -1,4 +1,4 @@
-/* SoundRecorder.c
+/* SoundRecorder.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *
@@ -36,11 +36,12 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "Preferences.h"
-
 #if defined (macintosh)
 	#include "pa_mac_core.h"
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
 #endif
+
+Thing_implement (SoundRecorder, Editor, 0);
 
 static struct {
 	int bufferSize_MB;
@@ -1246,10 +1247,6 @@ void structSoundRecorder :: v_createMenus () {
 void structSoundRecorder :: v_createHelpMenuItems (EditorMenu menu) {
 	SoundRecorder_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"SoundRecorder help", '?', menu_cb_SoundRecorder_help);
-}
-
-class_methods (SoundRecorder, Editor) {
-	class_methods_end
 }
 
 SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels) {

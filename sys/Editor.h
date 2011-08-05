@@ -35,7 +35,7 @@ Thing_define (EditorMenu, Thing) {
 		GuiObject menuWidget;
 		Ordered commands;
 	// overridden methods:
-		void v_destroy ();
+		virtual void v_destroy ();
 };
 
 Thing_define (EditorCommand, Thing) {
@@ -48,7 +48,7 @@ Thing_define (EditorCommand, Thing) {
 		const wchar *script;
 		Any dialog;
 	// overridden methods:
-		void v_destroy ();
+		virtual void v_destroy ();
 };
 
 Thing_define (Editor, Thing) {
@@ -67,9 +67,9 @@ Thing_define (Editor, Thing) {
 		void (*publish2Callback) (I, void *closure, Data publish1, Data publish2);
 		void *publish2Closure;
 	// overridden methods:
-		void v_destroy ();
-		void v_info ();
-		void v_nameChanged ();
+		virtual void v_destroy ();
+		virtual void v_info ();
+		virtual void v_nameChanged ();
 	// new methods:
 		virtual void v_goAway () { forget_nozero (this); }
 		virtual bool v_hasMenuBar () { return true; }

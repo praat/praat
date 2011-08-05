@@ -22,19 +22,28 @@
 #include "FunctionEditor.h"
 #include "Spectrum.h"
 
-Thing_declare1cpp (SpectrumEditor);
-struct structSpectrumEditor : public structFunctionEditor {
+Thing_define (SpectrumEditor, FunctionEditor) {
 	// new data:
 		double minimum, maximum, cursorHeight;
 		double bandSmoothing, dynamicRange;
 		GuiObject publishBandButton, publishSoundButton;
 	// overridden methods:
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
-		void v_dataChanged ();
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_dataChanged ();
+		virtual void v_draw ();
+		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+		virtual void v_play (double tmin, double tmax);
+		virtual void v_createMenuItems_view (EditorMenu menu);
+		virtual const wchar * v_format_domain () { return L"Frequency domain:"; }
+		virtual const wchar * v_format_short () { return L"%.0f"; }
+		virtual const wchar * v_format_long () { return L"%.2f"; }
+		virtual int v_fixedPrecision_long () { return 2; }
+		virtual const wchar * v_format_units () { return L"hertz"; }
+		virtual const wchar * v_format_totalDuration () { return L"Total bandwidth %.2f hertz"; }
+		virtual const wchar * v_format_window () { return L"Visible part %.2f hertz"; }
+		virtual const wchar * v_format_selection () { return L"%.2f Hz"; }
 };
-#define SpectrumEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2cpp (SpectrumEditor, FunctionEditor);
 
 SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar *title, Spectrum data);
 

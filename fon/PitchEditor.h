@@ -22,14 +22,14 @@
 #include "FunctionEditor.h"
 #include "Pitch.h"
 
-Thing_declare1cpp (PitchEditor);
-struct structPitchEditor : public structFunctionEditor {
+Thing_define (PitchEditor, FunctionEditor) {
 	// overridden methods:
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_draw ();
+		virtual void v_play (double tmin, double tmax);
+		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
-#define PitchEditor__methods(Klas) FunctionEditor__methods(Klas)
-Thing_declare2cpp (PitchEditor, FunctionEditor);
 
 PitchEditor PitchEditor_create (GuiObject parent, const wchar *title, Pitch pitch);
 

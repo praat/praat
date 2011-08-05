@@ -22,6 +22,8 @@
 #include "Preferences.h"
 #include "EditorM.h"
 
+Thing_implement (SpectrumEditor, FunctionEditor, 0);
+
 static struct {
 	double bandSmoothing;
 	double dynamicRange;
@@ -45,32 +47,32 @@ void structSpectrumEditor :: v_dataChanged () {
 	SpectrumEditor_Parent :: v_dataChanged ();
 }
 
-static void draw (SpectrumEditor me) {
-	Spectrum spectrum = (Spectrum) my data;
-	long first, last, selectedSamples;
+void structSpectrumEditor :: v_draw () {
+	Spectrum spectrum = (Spectrum) data;
 
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_rectangle (my graphics, 0, 1, 0, 1);
-	Spectrum_drawInside (spectrum, my graphics, my startWindow, my endWindow, my minimum, my maximum);
-	FunctionEditor_drawRangeMark (me, my maximum, Melder_fixed (my maximum, 1), L" dB", Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, my minimum, Melder_fixed (my minimum, 1), L" dB", Graphics_BOTTOM);
-	if (my cursorHeight > my minimum && my cursorHeight < my maximum)
-		FunctionEditor_drawHorizontalHair (me, my cursorHeight, Melder_fixed (my cursorHeight, 1), L" dB");
-	Graphics_setColour (my graphics, Graphics_BLACK);
+	Graphics_setWindow (graphics, 0, 1, 0, 1);
+	Graphics_setColour (graphics, Graphics_WHITE);
+	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
+	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_rectangle (graphics, 0, 1, 0, 1);
+	Spectrum_drawInside (spectrum, graphics, startWindow, endWindow, minimum, maximum);
+	FunctionEditor_drawRangeMark (this, maximum, Melder_fixed (maximum, 1), L" dB", Graphics_TOP);
+	FunctionEditor_drawRangeMark (this, minimum, Melder_fixed (minimum, 1), L" dB", Graphics_BOTTOM);
+	if (cursorHeight > minimum && cursorHeight < maximum)
+		FunctionEditor_drawHorizontalHair (this, cursorHeight, Melder_fixed (cursorHeight, 1), L" dB");
+	Graphics_setColour (graphics, Graphics_BLACK);
 
 	/* Update buttons. */
 
-	selectedSamples = Sampled_getWindowSamples (spectrum, my startSelection, my endSelection, & first, & last);
-	GuiObject_setSensitive (my publishBandButton, selectedSamples != 0);
-	GuiObject_setSensitive (my publishSoundButton, selectedSamples != 0);
+	long first, last;
+	long selectedSamples = Sampled_getWindowSamples (spectrum, startSelection, endSelection, & first, & last);
+	GuiObject_setSensitive (publishBandButton, selectedSamples != 0);
+	GuiObject_setSensitive (publishSoundButton, selectedSamples != 0);
 }
 
-static int click (SpectrumEditor me, double xWC, double yWC, int shiftKeyPressed) {
-	my cursorHeight = my minimum + yWC * (my maximum - my minimum);
-	return inherited (SpectrumEditor) click (me, xWC, yWC, shiftKeyPressed);   // move cursor or drag selection
+int structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+	cursorHeight = minimum + yWC * (maximum - minimum);
+	return SpectrumEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // move cursor or drag selection
 }
 
 static Spectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
@@ -88,8 +90,8 @@ static Sound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
 	return sound.transfer();
 }
 
-static void play (SpectrumEditor me, double fmin, double fmax) {
-	autoSound sound = Spectrum_to_Sound_part ((Spectrum) my data, fmin, fmax);
+void structSpectrumEditor :: v_play (double fmin, double fmax) {
+	autoSound sound = Spectrum_to_Sound_part ((Spectrum) data, fmin, fmax);
 	Sound_play (sound.peek(), NULL, NULL);
 }
 
@@ -169,33 +171,16 @@ void structSpectrumEditor :: v_createMenus () {
 	Editor_addCommand (this, L"Edit", L"Stop band...", 0, menu_cb_stopBand);
 }
 
-static void createMenuItems_view (SpectrumEditor me, EditorMenu menu) {
-	(void) me;
+void structSpectrumEditor :: v_createMenuItems_view (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Set dynamic range...", 0, menu_cb_setDynamicRange);
 	EditorMenu_addCommand (menu, L"-- view settings --", 0, 0);
-	inherited (SpectrumEditor) createMenuItems_view (me, menu);
+	SpectrumEditor_Parent :: v_createMenuItems_view (menu);
 }
 
 void structSpectrumEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	SpectrumEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"SpectrumEditor help", '?', menu_cb_help_SpectrumEditor);
 	EditorMenu_addCommand (menu, L"Spectrum help", 0, menu_cb_help_Spectrum);
-}
-
-class_methods (SpectrumEditor, FunctionEditor) {
-	class_method (createMenuItems_view)
-	class_method (draw)
-	us -> format_domain = L"Frequency domain:";
-	us -> format_short = L"%.0f";
-	us -> format_long = L"%.2f";
-	us -> fixedPrecision_long = 2;
-	us -> format_units = L"hertz";
-	us -> format_totalDuration = L"Total bandwidth %.2f hertz";
-	us -> format_window = L"Window %.2f hertz";
-	us -> format_selection = L"%.2f Hz";
-	class_method (click)
-	class_method (play)
-	class_methods_end
 }
 
 SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar *title, Spectrum data) {

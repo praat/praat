@@ -614,14 +614,6 @@ if (! my printing) {
 	return 1;
 }
 
-static void draw (HyperPage hyperPage) {
-	(void) hyperPage;
-}
-
-#undef our
-#define our ((HyperPage_Table) my methods) ->
-#define its ((HyperPage_Table) methods) ->
-
 static void print (I, Graphics graphics) {
 	iam (HyperPage);
 	my ps = graphics;
@@ -629,7 +621,7 @@ static void print (I, Graphics graphics) {
 	Graphics_setAtSignIsLink (graphics, TRUE);
 	my printing = TRUE;
 	HyperPage_initSheetOfPaper (me);
-	our draw (me);
+	my v_draw ();
 	my printing = FALSE;
 }
 
@@ -659,14 +651,14 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	if (my g == NULL) return;   // Could be the case in the very beginning.
 	Graphics_clearWs (my g);
 	initScreen (me);
-	our draw (me);
+	my v_draw ();
 	if (my entryHint && my entryPosition) {
 		Melder_free (my entryHint);
 		my top = 5.0 * (PAGE_HEIGHT - my entryPosition);
 		if (my top < 0) my top = 0;
 		Graphics_clearWs (my g);
 		initScreen (me);
-		our draw (me);
+		my v_draw ();
 		updateVerticalScrollBar (me);
 	}
 }
@@ -717,7 +709,7 @@ static int menu_cb_print (EDITOR_ARGS) {
 		BOOLEAN (L"Mirror even/odd headers", TRUE)
 		INTEGER (L"First page number", L"0 (= no page numbers)")
 	EDITOR_OK
-		our defaultHeaders (cmd);
+		my v_defaultHeaders (cmd);
 		if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
 	EDITOR_DO
 		my insideHeader = GET_STRING (L"Left or inside header");
@@ -855,7 +847,7 @@ static void gui_cb_verticalScroll (GtkRange *rng, gpointer void_me) {
 		my top = value;
 		Graphics_clearWs (my g);
 		initScreen (me);
-		our draw (me);   /* Do not wait for expose event. */
+		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
 	}
 }
@@ -872,7 +864,7 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 		my top = value;
 		Graphics_clearWs (my g);
 		initScreen (me);
-		our draw (me);   /* Do not wait for expose event. */
+		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
 	}
 }
@@ -895,7 +887,7 @@ static int menu_cb_pageUp (EDITOR_ARGS) {
 		my top = value;
 		Graphics_clearWs (my g);
 		initScreen (me);
-		our draw (me);   /* Do not wait for expose event. */
+		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
 	}
 	return 1;
@@ -918,7 +910,7 @@ static int menu_cb_pageDown (EDITOR_ARGS) {
 		my top = value;
 		Graphics_clearWs (my g);
 		initScreen (me);
-		our draw (me);   /* Do not wait for expose event. */
+		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
 	}
 	return 1;
@@ -930,7 +922,7 @@ static int do_back (HyperPage me) {
 	if (my historyPointer <= 0) return 1;
 	autostring page = Melder_wcsdup_f (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
 	int top = my history [my historyPointer]. top;
-	if (our goToPage (me, page.peek())) {
+	if (my v_goToPage (page.peek())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
@@ -956,7 +948,7 @@ static int do_forth (HyperPage me) {
 	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return 1;
 	autostring page = Melder_wcsdup_f (my history [++ my historyPointer]. page);
 	int top = my history [my historyPointer]. top;
-	if (our goToPage (me, page.peek())) {
+	if (my v_goToPage (page.peek())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
@@ -988,7 +980,7 @@ void structHyperPage :: v_createMenus () {
 	Editor_addCommand (this, L"File", L"Print page...", 'P', menu_cb_print);
 	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
 
-	if (its hasHistory) {
+	if (v_hasHistory ()) {
 		Editor_addMenu (this, L"Go to", 0);
 		Editor_addCommand (this, L"Go to", L"Search for page...", 0, menu_cb_searchForPage);
 		Editor_addCommand (this, L"Go to", L"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_back);
@@ -1024,15 +1016,15 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 static void gui_button_cb_previousPage (I, GuiButtonEvent event) {
 	(void) event;
 	iam (HyperPage);
-	HyperPage_goToPage_i (me, our getCurrentPageNumber (me) > 1 ?
-		our getCurrentPageNumber (me) - 1 : our getNumberOfPages (me));
+	HyperPage_goToPage_i (me, my v_getCurrentPageNumber () > 1 ?
+		my v_getCurrentPageNumber () - 1 : my v_getNumberOfPages ());
 }
 
 static void gui_button_cb_nextPage (I, GuiButtonEvent event) {
 	(void) event;
 	iam (HyperPage);
-	long currentPageNumber = our getCurrentPageNumber (me);
-	HyperPage_goToPage_i (me, currentPageNumber < our getNumberOfPages (me) ? currentPageNumber + 1 : 1);
+	long currentPageNumber = my v_getCurrentPageNumber ();
+	HyperPage_goToPage_i (me, currentPageNumber < my v_getNumberOfPages () ? currentPageNumber + 1 : 1);
 }
 
 void structHyperPage :: v_createChildren () {
@@ -1049,13 +1041,13 @@ void structHyperPage :: v_createChildren () {
 
 	/***** Create navigation buttons. *****/
 
-	if (its hasHistory) {
+	if (v_hasHistory ()) {
 		GuiButton_createShown (holder, 4, 48, y, y + height,
 			L"<", gui_button_cb_back, this, 0);
 		GuiButton_createShown (holder, 54, 98, y, y + height,
 			L">", gui_button_cb_forth, this, 0);
 	}
-	if (its isOrdered) {
+	if (v_isOrdered ()) {
 		GuiButton_createShown (holder, 174, 218, y, y + height,
 			L"< 1", gui_button_cb_previousPage, this, 0);
 		GuiButton_createShown (holder, 224, 268, y, y + height,
@@ -1118,49 +1110,17 @@ void HyperPage_clear (HyperPage me) {
 
 void structHyperPage :: v_dataChanged () {
 	int oldError = Melder_hasError ();   // this method can be called during error time
-	(void) its goToPage (this, currentPageTitle);
+	(void) v_goToPage (currentPageTitle);
 	if (Melder_hasError () && ! oldError) Melder_flushError (NULL);
 	HyperPage_clear (this);
 	updateVerticalScrollBar (this);
 }
-static long getNumberOfPages (HyperPage me) {
-	(void) me;
-	return 0;
-}
-static long getCurrentPageNumber (HyperPage me) {
-	(void) me;
-	return 0;
-}
-static void defaultHeaders (EditorCommand cmd) {
-	(void) cmd;
-}
-static int goToPage (HyperPage me, const wchar_t *title) {
-	(void) me;
-	(void) title;
-	return 0;
-}
-static void goToPage_i (HyperPage me, long i) {
-	(void) me;
-	(void) i;
-}
-static int hasHistory = FALSE;
-static int isOrdered = FALSE;
 
-class_methods (HyperPage, Editor) {
-	class_method (draw)
-	class_method (defaultHeaders)
-	class_method (getNumberOfPages)
-	class_method (getCurrentPageNumber)
-	class_method (goToPage)
-	class_method (goToPage_i)
-	class_method (hasHistory)
-	class_method (isOrdered)
-	class_methods_end
-}
+Thing_implement (HyperPage, Editor, 0);
 
 int HyperPage_goToPage (I, const wchar_t *title) {
 	iam (HyperPage);
-	switch (our goToPage (me, title)) {
+	switch (my v_goToPage (title)) {
 		case -1: return 0;
 		case 0: HyperPage_clear (me); return 0;
 	}
@@ -1175,7 +1135,7 @@ int HyperPage_goToPage (I, const wchar_t *title) {
 
 void HyperPage_goToPage_i (I, long i) {
 	iam (HyperPage);
-	our goToPage_i (me, i);   // catch -> HyperPage_clear (me); ?
+	my v_goToPage_i (i);   // catch -> HyperPage_clear (me); ?
 	my top = 0;
 	HyperPage_clear (me);
 	updateVerticalScrollBar (me);   /* Scroll to the top (my top == 0). */

@@ -70,7 +70,7 @@ const wchar * Thing_className (Thing me) { return our _className; }
 
 Any _Thing_new (void *table) {
 	Thing_Table us = (Thing_Table) table;
-	if (! us -> destroy) {   // table not initialized?
+	if (us -> _initialize != NULL && ! us -> destroy) {   // table not initialized?
 		us -> _initialize (us);
 		//Melder_casual ("Initializing class %ls (%ld).", us -> _className, table);
 	}
@@ -180,7 +180,7 @@ Any Thing_newFromClassName (const wchar *className) {
 void _Thing_forget_nozero (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
-	our destroy (me);
+	if (our destroy != NULL) our destroy (me);
 	my v_destroy ();
 	theTotalNumberOfThings -= 1;
 }
@@ -189,7 +189,7 @@ void _Thing_forget (Thing *pme) {
 	Thing me = *pme;
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
-	our destroy (me);
+	if (our destroy != NULL) our destroy (me);
 	my v_destroy ();
 	Melder_free (me);
 	theTotalNumberOfThings -= 1;
@@ -223,7 +223,7 @@ void Thing_infoWithId (Thing me, unsigned long id) {
 	MelderInfo_open ();
 	if (id != 0) MelderInfo_writeLine2 (L"Object id: ", Melder_integer (id));
 	my v_info ();
-	our info (me);   // this calls a set of MelderInfo_writeXXX
+	if (our info != NULL) our info (me);   // this calls a set of MelderInfo_writeXXX
 	MelderInfo_close ();
 }
 

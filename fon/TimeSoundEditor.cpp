@@ -21,9 +21,7 @@
 #include "Preferences.h"
 #include "EditorM.h"
 
-#undef our
-#define our ((TimeSoundEditor_Table) my methods) ->
-#define its ((TimeSoundEditor_Table) methods) ->
+Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 
 /********** PREFERENCES **********/
 
@@ -78,7 +76,7 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 		REAL (L"left Vertical range", L"0.0")
 		REAL (L"right Vertical range", L"0.0 (= auto)")
 		my v_form_pictureMargins (cmd);
-		our form_pictureSelection (me, cmd);
+		my v_form_pictureSelection (cmd);
 		BOOLEAN (L"Garnish", 1);
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
@@ -86,7 +84,7 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 		SET_REAL (L"left Vertical range", preferences.picture.bottom);
 		SET_REAL (L"right Vertical range", preferences.picture.top);
 		my v_ok_pictureMargins (cmd);
-		our ok_pictureSelection (me, cmd);
+		my v_ok_pictureSelection (cmd);
 		SET_INTEGER (L"Garnish", preferences.picture.garnish);
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
@@ -94,7 +92,7 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 		preferences.picture.bottom = GET_REAL (L"left Vertical range");
 		preferences.picture.top = GET_REAL (L"right Vertical range");
 		my v_do_pictureMargins (cmd);
-		our do_pictureSelection (me, cmd);
+		my v_do_pictureSelection (cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		if (my longSound.data == NULL && my sound.data == NULL)
 			Melder_throw ("There is no sound to draw.");
@@ -277,56 +275,56 @@ static int menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void createMenuItems_file_draw (TimeSoundEditor me, EditorMenu menu) {
+void structTimeSoundEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Draw to picture window:", GuiMenu_INSENSITIVE, menu_cb_DrawVisibleSound /* dummy */);
-	if (my sound.data || my longSound.data) {
+	if (sound.data || longSound.data) {
 		EditorMenu_addCommand (menu, L"Draw visible sound...", 0, menu_cb_DrawVisibleSound);
-		my drawButton = EditorMenu_addCommand (menu, L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
+		drawButton = EditorMenu_addCommand (menu, L"Draw selected sound...", 0, menu_cb_DrawSelectedSound);
 	}
 }
 
-static void createMenuItems_file_extract (TimeSoundEditor me, EditorMenu menu) {
+void structTimeSoundEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_ExtractSelectedSound_preserveTimes /* dummy */);
-	if (my sound.data || my longSound.data) {
-		my publishPreserveButton = EditorMenu_addCommand (menu, L"Extract selected sound (preserve times)", 0, menu_cb_ExtractSelectedSound_preserveTimes);
+	if (sound.data || longSound.data) {
+		publishPreserveButton = EditorMenu_addCommand (menu, L"Extract selected sound (preserve times)", 0, menu_cb_ExtractSelectedSound_preserveTimes);
 			EditorMenu_addCommand (menu, L"Extract sound selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
 			EditorMenu_addCommand (menu, L"Extract selection (preserve times)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_preserveTimes);
-		my publishButton = EditorMenu_addCommand (menu, L"Extract selected sound (time from 0)", 0, menu_cb_ExtractSelectedSound_timeFromZero);
+		publishButton = EditorMenu_addCommand (menu, L"Extract selected sound (time from 0)", 0, menu_cb_ExtractSelectedSound_timeFromZero);
 			EditorMenu_addCommand (menu, L"Extract sound selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
 			EditorMenu_addCommand (menu, L"Extract selection (time from 0)", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
 			EditorMenu_addCommand (menu, L"Extract selection", Editor_HIDDEN, menu_cb_ExtractSelectedSound_timeFromZero);
-		if (my sound.data) {
-			my publishWindowButton = EditorMenu_addCommand (menu, L"Extract selected sound (windowed)...", 0, menu_cb_ExtractSelectedSound_windowed);
+		if (sound.data) {
+			publishWindowButton = EditorMenu_addCommand (menu, L"Extract selected sound (windowed)...", 0, menu_cb_ExtractSelectedSound_windowed);
 				EditorMenu_addCommand (menu, L"Extract windowed sound selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
 				EditorMenu_addCommand (menu, L"Extract windowed selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
 		}
 	}
 }
 
-static void createMenuItems_file_write (TimeSoundEditor me, EditorMenu menu) {
+void structTimeSoundEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Save to disk:", GuiMenu_INSENSITIVE, menu_cb_WriteWav /* dummy */);
-	if (my sound.data || my longSound.data) {
-		my writeWavButton = EditorMenu_addCommand (menu, L"Save selected sound as WAV file...", 0, menu_cb_WriteWav);
+	if (sound.data || longSound.data) {
+		writeWavButton = EditorMenu_addCommand (menu, L"Save selected sound as WAV file...", 0, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
-		my writeAiffButton = EditorMenu_addCommand (menu, L"Save selected sound as AIFF file...", 0, menu_cb_WriteAiff);
+		writeAiffButton = EditorMenu_addCommand (menu, L"Save selected sound as AIFF file...", 0, menu_cb_WriteAiff);
 			EditorMenu_addCommand (menu, L"Write selected sound to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
 			EditorMenu_addCommand (menu, L"Write sound selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
 			EditorMenu_addCommand (menu, L"Write selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
-		my writeAifcButton = EditorMenu_addCommand (menu, L"Save selected sound as AIFC file...", 0, menu_cb_WriteAifc);
+		writeAifcButton = EditorMenu_addCommand (menu, L"Save selected sound as AIFC file...", 0, menu_cb_WriteAifc);
 			EditorMenu_addCommand (menu, L"Write selected sound to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
 			EditorMenu_addCommand (menu, L"Write sound selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
 			EditorMenu_addCommand (menu, L"Write selection to AIFC file...", Editor_HIDDEN, menu_cb_WriteAifc);
-		my writeNextSunButton = EditorMenu_addCommand (menu, L"Save selected sound as Next/Sun file...", 0, menu_cb_WriteNextSun);
+		writeNextSunButton = EditorMenu_addCommand (menu, L"Save selected sound as Next/Sun file...", 0, menu_cb_WriteNextSun);
 			EditorMenu_addCommand (menu, L"Write selected sound to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
 			EditorMenu_addCommand (menu, L"Write sound selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
 			EditorMenu_addCommand (menu, L"Write selection to Next/Sun file...", Editor_HIDDEN, menu_cb_WriteNextSun);
-		my writeNistButton = EditorMenu_addCommand (menu, L"Save selected sound as NIST file...", 0, menu_cb_WriteNist);
+		writeNistButton = EditorMenu_addCommand (menu, L"Save selected sound as NIST file...", 0, menu_cb_WriteNist);
 			EditorMenu_addCommand (menu, L"Write selected sound to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
 			EditorMenu_addCommand (menu, L"Write sound selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
 			EditorMenu_addCommand (menu, L"Write selection to NIST file...", Editor_HIDDEN, menu_cb_WriteNist);
-		my writeFlacButton = EditorMenu_addCommand (menu, L"Save selected sound as FLAC file...", 0, menu_cb_WriteFlac);
+		writeFlacButton = EditorMenu_addCommand (menu, L"Save selected sound as FLAC file...", 0, menu_cb_WriteFlac);
 			EditorMenu_addCommand (menu, L"Write selected sound to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
 			EditorMenu_addCommand (menu, L"Write sound selection to FLAC file...", Editor_HIDDEN, menu_cb_WriteFlac);
 	}
@@ -334,11 +332,11 @@ static void createMenuItems_file_write (TimeSoundEditor me, EditorMenu menu) {
 
 void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
 	TimeSoundEditor_Parent :: v_createMenuItems_file (menu);
-	its createMenuItems_file_draw (this, menu);
+	v_createMenuItems_file_draw (menu);
 	EditorMenu_addCommand (menu, L"-- after file draw --", 0, NULL);
-	its createMenuItems_file_extract (this, menu);
+	v_createMenuItems_file_extract (menu);
 	EditorMenu_addCommand (menu, L"-- after file extract --", 0, NULL);
-	its createMenuItems_file_write (this, menu);
+	v_createMenuItems_file_write (menu);
 	EditorMenu_addCommand (menu, L"-- after file write --", 0, NULL);
 }
 
@@ -374,33 +372,33 @@ static int menu_cb_autoscaling (EDITOR_ARGS) {
 	return 1;
 }
 
-static void createMenuItems_view (TimeSoundEditor me, EditorMenu menu) {
-	if (my sound.data || my longSound.data) our createMenuItems_view_sound (me, menu);
-	inherited (TimeSoundEditor) createMenuItems_view (me, menu);
+void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
+	if (sound.data || longSound.data)
+		v_createMenuItems_view_sound (menu);
+	TimeSoundEditor_Parent :: v_createMenuItems_view (menu);
 }
 
-static void createMenuItems_view_sound (TimeSoundEditor me, EditorMenu menu) {
-	(void) me;
+void structTimeSoundEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"Sound autoscaling", GuiMenu_CHECKBUTTON | (preferences.sound.autoscaling ? GuiMenu_TOGGLE_ON : 0), menu_cb_autoscaling);
 	EditorMenu_addCommand (menu, L"-- sound view --", 0, 0);
 }
 
-static void updateMenuItems_file (TimeSoundEditor me) {
-	Any sound = my sound.data != NULL ? (Sampled) my sound.data : (Sampled) my longSound.data;
+void structTimeSoundEditor :: v_updateMenuItems_file () {
+	Sampled sound = this -> sound.data != NULL ? (Sampled) this -> sound.data : (Sampled) longSound.data;
 	if (sound == NULL) return;
-	long first, last, selectedSamples = Sampled_getWindowSamples (sound, my startSelection, my endSelection, & first, & last);
-	if (my drawButton) {
-		GuiObject_setSensitive (my drawButton, selectedSamples != 0);
-		GuiObject_setSensitive (my publishButton, selectedSamples != 0);
-		GuiObject_setSensitive (my publishPreserveButton, selectedSamples != 0);
-		if (my publishWindowButton) GuiObject_setSensitive (my publishWindowButton, selectedSamples != 0);
+	long first, last, selectedSamples = Sampled_getWindowSamples (sound, startSelection, endSelection, & first, & last);
+	if (drawButton) {
+		GuiObject_setSensitive (drawButton, selectedSamples != 0);
+		GuiObject_setSensitive (publishButton, selectedSamples != 0);
+		GuiObject_setSensitive (publishPreserveButton, selectedSamples != 0);
+		if (publishWindowButton) GuiObject_setSensitive (publishWindowButton, selectedSamples != 0);
 	}
-	GuiObject_setSensitive (my writeWavButton, selectedSamples != 0);
-	GuiObject_setSensitive (my writeAiffButton, selectedSamples != 0);
-	GuiObject_setSensitive (my writeAifcButton, selectedSamples != 0);
-	GuiObject_setSensitive (my writeNextSunButton, selectedSamples != 0);
-	GuiObject_setSensitive (my writeNistButton, selectedSamples != 0);
-	GuiObject_setSensitive (my writeFlacButton, selectedSamples != 0);
+	GuiObject_setSensitive (writeWavButton, selectedSamples != 0);
+	GuiObject_setSensitive (writeAiffButton, selectedSamples != 0);
+	GuiObject_setSensitive (writeAifcButton, selectedSamples != 0);
+	GuiObject_setSensitive (writeNextSunButton, selectedSamples != 0);
+	GuiObject_setSensitive (writeNistButton, selectedSamples != 0);
+	GuiObject_setSensitive (writeFlacButton, selectedSamples != 0);
 }
 
 void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum) {
@@ -513,16 +511,6 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 	}
 	Graphics_setWindow (my graphics, 0, 1, 0, 1);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
-}
-
-class_methods (TimeSoundEditor, FunctionEditor) {
-	class_method (createMenuItems_file_draw)
-	class_method (createMenuItems_file_extract)
-	class_method (createMenuItems_file_write)
-	class_method (createMenuItems_view)
-	class_method (createMenuItems_view_sound)
-	class_method (updateMenuItems_file)
-	class_methods_end
 }
 
 void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound) {

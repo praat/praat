@@ -21,8 +21,7 @@
 #include "PitchTier_to_Sound.h"
 #include "EditorM.h"
 
-#undef our
-#define our ((PitchTierEditor_Table) my methods) ->
+Thing_implement (PitchTierEditor, RealTierEditor, 0);
 
 static int menu_cb_PitchTierEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTierEditor"); return 1; }
 static int menu_cb_PitchTierHelp (EDITOR_ARGS) { EDITOR_IAM (PitchTierEditor); Melder_help (L"PitchTier"); return 1; }
@@ -33,22 +32,12 @@ void structPitchTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"PitchTier help", 0, menu_cb_PitchTierHelp);
 }
 
-static void play (PitchTierEditor me, double tmin, double tmax) {
-	if (my sound.data) Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
-	else PitchTier_playPart ((PitchTier) my data, tmin, tmax, FALSE);
-}
-
-class_methods (PitchTierEditor, RealTierEditor) {
-	class_method (play)
-	us -> minimumLegalValue = 0.0;
-	us -> quantityText = L"Frequency (Hz)", us -> quantityKey = L"Frequency";
-	us -> rightTickUnits = L" Hz";
-	us -> defaultYmin = 50.0, us -> defaultYmax = 600.0;
-	us -> setRangeTitle = L"Set frequency range...";
-	us -> defaultYminText = L"50.0", us -> defaultYmaxText = L"600.0";
-	us -> yminText = L"Minimum frequency (Hz)", us -> ymaxText = L"Maximum frequency (Hz)";
-	us -> yminKey = L"Minimum frequency", us -> ymaxKey = L"Maximum frequency";
-	class_methods_end
+void structPitchTierEditor :: v_play (double tmin, double tmax) {
+	if (sound.data) {
+		Sound_playPart (sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+	} else {
+		PitchTier_playPart ((PitchTier) data, tmin, tmax, FALSE);
+	}
 }
 
 PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar *title, PitchTier pitch, Sound sound, bool ownSound) {

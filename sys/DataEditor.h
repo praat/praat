@@ -48,10 +48,10 @@ struct structDataSubEditor : public structEditor {
 		int irow, topField, numberOfFields;
 		struct structDataSubEditor_FieldData fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
 	// overridden methods:
-		void v_destroy ();
-		bool v_scriptable () { return false; }
-		void v_createChildren ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_destroy ();
+		virtual bool v_scriptable () { return false; }
+		virtual void v_createChildren ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
 };
 #define DataSubEditor__methods(Klas) \
 	long (*countFields) (Klas me); \

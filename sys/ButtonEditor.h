@@ -21,18 +21,17 @@
 
 #include "HyperPage.h"
 
-Thing_declare1cpp (ButtonEditor);
-struct structButtonEditor : public structHyperPage {
+Thing_define (ButtonEditor, HyperPage) {
 	// new data:
 		int show;
 		GuiObject button1, button2, button3, button4, button5;
 	// overridden methods:
-		bool v_scriptable () { return false; }
-		void v_createChildren ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual bool v_scriptable () { return false; }
+		virtual void v_createChildren ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_draw ();
+		virtual int v_goToPage (const wchar *title);
 };
-#define ButtonEditor__methods(Klas) HyperPage__methods(Klas)
-Thing_declare2cpp (ButtonEditor, HyperPage);
 
 ButtonEditor ButtonEditor_create (GuiObject parent);
 

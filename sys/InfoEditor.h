@@ -21,16 +21,13 @@
 
 #include "TextEditor.h"
 
-Thing_declare1cpp (InfoEditor);
-struct structInfoEditor : public structTextEditor {
+Thing_define (InfoEditor, TextEditor) {
 	// overridden methods:
-		void v_destroy ();
-		bool v_scriptable () { return false; }
-		bool fileBased () { return false; }
-		void clear ();
+		virtual void v_destroy ();
+		virtual bool v_scriptable () { return false; }
+		virtual bool v_fileBased () { return false; }
+		virtual void v_clear ();
 };
-#define InfoEditor__methods(Klas) TextEditor__methods(Klas)
-Thing_declare2cpp (InfoEditor, TextEditor);
 
 /* End of file InfoEditor.h */
 #endif

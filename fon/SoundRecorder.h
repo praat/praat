@@ -19,16 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
-
 /* An editor-like object that allows the user to record sounds. */
 
 #include "Editor.h"
 #include "Sound.h"
-
-Thing_declare1cpp (SoundRecorder);
 
 #include "portaudio.h"
 #if defined (_WIN32)
@@ -76,7 +70,7 @@ struct SoundRecorder_Fsamp {
 #define SoundRecorder_IFSAMP_192000  14
 #define SoundRecorder_IFSAMP_MAX  14
 
-struct structSoundRecorder : public structEditor {
+Thing_define (SoundRecorder, Editor) {
 	// new data:
 		int numberOfChannels;
 		long nsamp, nmax;
@@ -114,15 +108,13 @@ struct structSoundRecorder : public structEditor {
 			int fd;
 		#endif
 	// overridden methods:
-		void v_destroy ();
-		bool v_editable () { return false; }
-		bool v_scriptable () { return false; }
-		void v_createChildren ();
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_destroy ();
+		virtual bool v_editable () { return false; }
+		virtual bool v_scriptable () { return false; }
+		virtual void v_createChildren ();
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
 };
-#define SoundRecorder__methods(Klas)
-Thing_declare2cpp (SoundRecorder, Editor);
 
 SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels);
 /*

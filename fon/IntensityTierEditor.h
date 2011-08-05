@@ -19,20 +19,27 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
-
 #include "RealTierEditor.h"
 #include "IntensityTier.h"
 #include "Sound.h"
 
-Thing_declare1cpp (IntensityTierEditor);
-struct structIntensityTierEditor : public structRealTierEditor {
-	void v_createHelpMenuItems (EditorMenu menu);
+Thing_define (IntensityTierEditor, RealTierEditor) {
+	// overridden methods:
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_play (double tmin, double tmax);
+		virtual const wchar * v_quantityText () { return L"Intensity (dB)"; }
+		virtual const wchar * v_quantityKey () { return L"Intensity"; }
+		virtual const wchar * v_rightTickUnits () { return L" dB"; }
+		virtual double v_defaultYmin () { return 50.0; }
+		virtual double v_defaultYmax () { return 100.0; }
+		virtual const wchar * v_setRangeTitle () { return L"Set intensity range..."; }
+		virtual const wchar * v_defaultYminText () { return L"50.0"; }
+		virtual const wchar * v_defaultYmaxText () { return L"100.0"; }
+		virtual const wchar * v_yminText () { return L"Minimum intensity (dB)"; }
+		virtual const wchar * v_ymaxText () { return L"Maximum intensity (dB)"; }
+		virtual const wchar * v_yminKey () { return L"Minimum intensity"; }
+		virtual const wchar * v_ymaxKey () { return L"Maximum intensity"; }
 };
-#define IntensityTierEditor__methods(Klas) RealTierEditor__methods(Klas)
-Thing_declare2cpp (IntensityTierEditor, RealTierEditor);
 
 IntensityTierEditor IntensityTierEditor_create (GuiObject parent, const wchar *title,
 	IntensityTier intensity, Sound sound, bool ownSound);

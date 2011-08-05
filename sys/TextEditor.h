@@ -21,8 +21,7 @@
 
 #include "Editor.h"
 
-Thing_declare1cpp (TextEditor);
-struct structTextEditor : public structEditor {
+Thing_define (TextEditor, Editor) {
 	// data:
 		structMelderFile file;
 		GuiObject textWidget;
@@ -33,18 +32,16 @@ struct structTextEditor : public structEditor {
 	// functions:
 		void init (GuiObject parent, const wchar *initialText);
 	// overridden methods:
-		void v_destroy ();
-		void v_nameChanged ();
-		void v_goAway ();
-		void v_createChildren ();
-		void v_createMenus ();
-		bool v_hasQueryMenu () { return false; }
+		virtual void v_destroy ();
+		virtual void v_nameChanged ();
+		virtual void v_goAway ();
+		virtual void v_createChildren ();
+		virtual void v_createMenus ();
+		virtual bool v_hasQueryMenu () { return false; }
 	// new methods:
-		virtual bool fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
-		virtual void clear () { }
+		virtual bool v_fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
+		virtual void v_clear () { }
 };
-#define TextEditor__methods(Klas)
-Thing_declare2cpp (TextEditor, Editor);
 
 TextEditor TextEditor_create (
 	GuiObject parent,

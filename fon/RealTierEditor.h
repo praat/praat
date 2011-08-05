@@ -22,21 +22,32 @@
 #include "TimeSoundEditor.h"
 #include "RealTier.h"
 
-Thing_declare1cpp (RealTierEditor);
-struct structRealTierEditor : structTimeSoundEditor {
+Thing_define (RealTierEditor, TimeSoundEditor) {
 	// new data:
 		double ymin, ymax, ycursor;
 	// overridden methods:
-		void v_createMenus ();
-		void v_dataChanged ();
+		virtual void v_createMenus ();
+		virtual void v_dataChanged ();
+		virtual void v_draw ();
+		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+		virtual void v_play (double tmin, double tmax);
+		virtual void v_createMenuItems_view (EditorMenu menu);
+	// new methods:
+		virtual double v_minimumLegalValue () { return NUMundefined; }
+		virtual double v_maximumLegalValue () { return NUMundefined; }
+		virtual const wchar * v_quantityText () { return L"Y"; }   // normally includes units
+		virtual const wchar * v_quantityKey () { return L"Y"; }   // without units
+		virtual const wchar * v_rightTickUnits () { return L""; }
+		virtual double v_defaultYmin () { return 0.0; }
+		virtual double v_defaultYmax () { return 1.0; }
+		virtual const wchar * v_setRangeTitle () { return L"Set range..."; }
+		virtual const wchar * v_defaultYminText () { return L"0.0"; }
+		virtual const wchar * v_defaultYmaxText () { return L"1.0"; }
+		virtual const wchar * v_yminText () { return L"Minimum"; }   // normally includes units
+		virtual const wchar * v_ymaxText () { return L"Maximum"; }   // normally includes units
+		virtual const wchar * v_yminKey () { return L"Minimum"; }   // without units
+		virtual const wchar * v_ymaxKey () { return L"Maximum"; }   // without units
 };
-#define RealTierEditor__methods(Klas) TimeSoundEditor__methods(Klas) \
-	double minimumLegalValue, maximumLegalValue; \
-	const wchar *quantityText, *quantityKey, *rightTickUnits; \
-	double defaultYmin, defaultYmax; \
-	const wchar *setRangeTitle, *defaultYminText, *defaultYmaxText; \
-	const wchar *yminText, *ymaxText, *yminKey, *ymaxKey;
-Thing_declare2cpp (RealTierEditor, TimeSoundEditor);
 
 void RealTierEditor_updateScaling (RealTierEditor me);
 /*

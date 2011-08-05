@@ -23,9 +23,7 @@
 #include "Preferences.h"
 #include "EditorM.h"
 
-#undef our
-#define our ((SoundEditor_Table) my methods) ->
-#define its ((SoundEditor_Table) methods) ->
+Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 
 /********** METHODS **********/
 
@@ -33,7 +31,7 @@ void structSoundEditor :: v_dataChanged () {
 	Sound sound = (Sound) data;
 	Melder_assert (sound != NULL);   // LongSound objects should not get v_dataChanged messages
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & this -> sound.minimum, & this -> sound.maximum);   // BUG unreadable
-	destroy_analysis ();
+	v_destroy_analysis ();
 	SoundEditor_Parent :: v_dataChanged ();
 }
 
@@ -131,7 +129,7 @@ static int menu_cb_Cut (EDITOR_ARGS) {
 		/* Force FunctionEditor to show changes. */
 
 		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
-		my destroy_analysis ();
+		my v_destroy_analysis ();
 		FunctionEditor_ungroup (me);
 		FunctionEditor_marksChanged (me);
 		Editor_broadcastChange (me);
@@ -199,7 +197,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	/* Force FunctionEditor to show changes. */
 
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
-	my destroy_analysis ();
+	my v_destroy_analysis ();
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me);
 	Editor_broadcastChange (me);
@@ -217,7 +215,7 @@ static int menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 			sound -> z [channel] [i] = 0.0;
 		}
 	}
-	my destroy_analysis ();
+	my v_destroy_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 	return 1;
@@ -227,7 +225,7 @@ static int menu_cb_ReverseSelection (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Editor_save (me, L"Reverse selection");
 	Sound_reverse ((Sound) my data, my startSelection, my endSelection);
-	my destroy_analysis ();
+	my v_destroy_analysis ();
 	FunctionEditor_redraw (me);
 	Editor_broadcastChange (me);
 	return 1;
@@ -303,7 +301,7 @@ void structSoundEditor :: v_createMenus () {
 		Editor_addCommand (this, L"Select", L"Move end of selection to nearest zero crossing", '.', menu_cb_MoveEtoZero);
 	}
 
-	its createMenus_analysis (this);
+	v_createMenus_analysis ();
 }
 
 void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -314,121 +312,111 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 /********** UPDATE **********/
 
-static void prepareDraw (SoundEditor me) {
-	if (my longSound.data) {
+void structSoundEditor :: v_prepareDraw () {
+	if (longSound.data) {
 		try {
-			LongSound_haveWindow (my longSound.data, my startWindow, my endWindow);
+			LongSound_haveWindow (longSound.data, startWindow, endWindow);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
 	}
 }
 
-static void draw (SoundEditor me) {
-	long first, last, selectedSamples;
+void structSoundEditor :: v_draw () {
 	Graphics_Viewport viewport;
-	int showAnalysis = my spectrogram.show || my pitch.show || my intensity.show || my formant.show;
-	Melder_assert (my data != NULL);
-	Melder_assert (my sound.data != NULL || my longSound.data != NULL);
+	bool showAnalysis = spectrogram.show || pitch.show || intensity.show || formant.show;
+	Melder_assert (data != NULL);
+	Melder_assert (sound.data != NULL || longSound.data != NULL);
 
 	/*
 	 * We check beforehand whether the window fits the LongSound buffer.
 	 */
-	if (my longSound.data && my endWindow - my startWindow > my longSound.data -> bufferLength) {
-		Graphics_setColour (my graphics, Graphics_WHITE);
-		Graphics_setWindow (my graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text3 (my graphics, 0.5, 0.5, L"(window longer than ", Melder_float (Melder_single (my longSound.data -> bufferLength)), L" seconds)");
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text1 (my graphics, 0.5, 0.5, L"(zoom in to see the samples)");
+	if (longSound.data && endWindow - startWindow > longSound.data -> bufferLength) {
+		Graphics_setColour (graphics, Graphics_WHITE);
+		Graphics_setWindow (graphics, 0, 1, 0, 1);
+		Graphics_fillRectangle (graphics, 0, 1, 0, 1);
+		Graphics_setColour (graphics, Graphics_BLACK);
+		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text3 (graphics, 0.5, 0.5, L"(window longer than ", Melder_float (Melder_single (longSound.data -> bufferLength)), L" seconds)");
+		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_TOP);
+		Graphics_text1 (graphics, 0.5, 0.5, L"(zoom in to see the samples)");
 		return;
 	}
 
 	/* Draw sound. */
 
 	if (showAnalysis)
-		viewport = Graphics_insetViewport (my graphics, 0, 1, 0.5, 1);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	TimeSoundEditor_draw_sound (me, my sound.minimum, my sound.maximum);
-	Graphics_flushWs (my graphics);
+		viewport = Graphics_insetViewport (graphics, 0, 1, 0.5, 1);
+	Graphics_setColour (graphics, Graphics_WHITE);
+	Graphics_setWindow (graphics, 0, 1, 0, 1);
+	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
+	TimeSoundEditor_draw_sound (this, sound.minimum, sound.maximum);
+	Graphics_flushWs (graphics);
 	if (showAnalysis)
-		Graphics_resetViewport (my graphics, viewport);
+		Graphics_resetViewport (graphics, viewport);
 
 	/* Draw analyses. */
 
 	if (showAnalysis) {
 		/* Draw spectrogram, pitch, formants. */
-		viewport = Graphics_insetViewport (my graphics, 0, 1, 0, 0.5);
-		our draw_analysis (me);
-		Graphics_flushWs (my graphics);
-		Graphics_resetViewport (my graphics, viewport);
+		viewport = Graphics_insetViewport (graphics, 0, 1, 0, 0.5);
+		v_draw_analysis ();
+		Graphics_flushWs (graphics);
+		Graphics_resetViewport (graphics, viewport);
 	}
 
 	/* Draw pulses. */
 
-	if (my pulses.show) {
+	if (pulses.show) {
 		if (showAnalysis)
-			viewport = Graphics_insetViewport (my graphics, 0, 1, 0.5, 1);
-		our draw_analysis_pulses (me);
-		TimeSoundEditor_draw_sound (me, my sound.minimum, my sound.maximum);   // second time, partially across the pulses
-		Graphics_flushWs (my graphics);
+			viewport = Graphics_insetViewport (graphics, 0, 1, 0.5, 1);
+		v_draw_analysis_pulses ();
+		TimeSoundEditor_draw_sound (this, sound.minimum, sound.maximum);   // second time, partially across the pulses
+		Graphics_flushWs (graphics);
 		if (showAnalysis)
-			Graphics_resetViewport (my graphics, viewport);
+			Graphics_resetViewport (graphics, viewport);
 	}
 
 	/* Update buttons. */
 
-	selectedSamples = Sampled_getWindowSamples (my data, my startSelection, my endSelection, & first, & last);
-	our updateMenuItems_file (me);
-	if (my sound.data) {
-		GuiObject_setSensitive (my cutButton, selectedSamples != 0 && selectedSamples < my sound.data -> nx);
-		GuiObject_setSensitive (my copyButton, selectedSamples != 0);
-		GuiObject_setSensitive (my zeroButton, selectedSamples != 0);
-		GuiObject_setSensitive (my reverseButton, selectedSamples != 0);
+	long first, last;
+	long selectedSamples = Sampled_getWindowSamples (data, startSelection, endSelection, & first, & last);
+	v_updateMenuItems_file ();
+	if (sound.data) {
+		GuiObject_setSensitive (cutButton, selectedSamples != 0 && selectedSamples < sound.data -> nx);
+		GuiObject_setSensitive (copyButton, selectedSamples != 0);
+		GuiObject_setSensitive (zeroButton, selectedSamples != 0);
+		GuiObject_setSensitive (reverseButton, selectedSamples != 0);
 	}
 }
 
-static void play (SoundEditor me, double tmin, double tmax) {
-	if (my longSound.data)
-		LongSound_playPart ((LongSound) my data, tmin, tmax, our playCallback, me);
+void structSoundEditor :: v_play (double tmin, double tmax) {
+	if (longSound.data)
+		LongSound_playPart ((LongSound) data, tmin, tmax, theFunctionEditor_playCallback, this);
 	else
-		Sound_playPart ((Sound) my data, tmin, tmax, our playCallback, me);
+		Sound_playPart ((Sound) data, tmin, tmax, theFunctionEditor_playCallback, this);
 }
 
-static int click (SoundEditor me, double xWC, double yWC, int shiftKeyPressed) {
-	if ((my spectrogram.show || my formant.show) && yWC < 0.5 && xWC > my startWindow && xWC < my endWindow) {
-		my spectrogram.cursor = my spectrogram.viewFrom +
-			2 * yWC * (my spectrogram.viewTo - my spectrogram.viewFrom);
+int structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
+	if ((spectrogram.show || formant.show) && yWC < 0.5 && xWC > startWindow && xWC < endWindow) {
+		spectrogram.cursor = spectrogram.viewFrom +
+			2 * yWC * (spectrogram.viewTo - spectrogram.viewFrom);
 	}
-	return inherited (SoundEditor) click (me, xWC, yWC, shiftKeyPressed);   /* Drag & update. */
+	return SoundEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // drag & update
 }
 
-static void highlightSelection (SoundEditor me, double left, double right, double bottom, double top) {
-	if (my spectrogram.show)
-		Graphics_highlight (my graphics, left, right, 0.5 * (bottom + top), top);
+void structSoundEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
+	if (spectrogram.show)
+		Graphics_highlight (graphics, left, right, 0.5 * (bottom + top), top);
 	else
-		Graphics_highlight (my graphics, left, right, bottom, top);
+		Graphics_highlight (graphics, left, right, bottom, top);
 }
 
-static void unhighlightSelection (SoundEditor me, double left, double right, double bottom, double top) {
-	if (my spectrogram.show)
-		Graphics_unhighlight (my graphics, left, right, 0.5 * (bottom + top), top);
+void structSoundEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
+	if (spectrogram.show)
+		Graphics_unhighlight (graphics, left, right, 0.5 * (bottom + top), top);
 	else
-		Graphics_unhighlight (my graphics, left, right, bottom, top);
-}
-
-class_methods (SoundEditor, TimeSoundAnalysisEditor) {
-	class_method (prepareDraw)
-	class_method (draw)
-	class_method (play)
-	class_method (click)
-	class_method (highlightSelection)
-	class_method (unhighlightSelection)
-	class_methods_end
+		Graphics_unhighlight (graphics, left, right, bottom, top);
 }
 
 SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Function data) {

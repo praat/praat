@@ -29,9 +29,9 @@ Thing_define (ArtwordEditor, Editor) {
 		GuiObject list, drawingArea, radio, time, value;
 		GuiObject button [1 + kArt_muscle_MAX];
 	// overridden methods:
-		void v_destroy ();
-		void v_createChildren ();
-		void v_dataChanged ();
+		virtual void v_destroy ();
+		virtual void v_createChildren ();
+		virtual void v_dataChanged ();
 };
 
 ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar *title, Artword data);

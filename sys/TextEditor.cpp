@@ -25,11 +25,7 @@
 #include "Preferences.h"
 #include "UnicodeData.h"
 
-/*
- * UGLY
- */
-#undef our
-#define our ((TextEditor_Table) my methods) ->
+Thing_implement (TextEditor, Editor, 0);
 
 static int theTextEditorFontSize;
 
@@ -53,7 +49,7 @@ void structTextEditor :: v_destroy () {
 }
 
 void structTextEditor :: v_nameChanged () {
-	if (fileBased ()) {
+	if (v_fileBased ()) {
 		bool dirtinessAlreadyShown = GuiWindow_setDirty (shell, dirty);
 		static MelderString windowTitle = { 0 };
 		MelderString_empty (& windowTitle);
@@ -104,7 +100,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 static void newDocument (TextEditor me) {
 	GuiText_setString (my textWidget, L"");   // implicitly sets my dirty to TRUE
 	my dirty = FALSE;
-	if (my fileBased ()) Thing_setName (me, NULL);
+	if (my v_fileBased ()) Thing_setName (me, NULL);
 }
 
 static void saveDocument (TextEditor me, MelderFile file) {
@@ -112,7 +108,7 @@ static void saveDocument (TextEditor me, MelderFile file) {
 	MelderFile_writeText (file, text.peek()); therror
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
-	if (my fileBased ()) Thing_setName (me, Melder_fileToPath (file));
+	if (my v_fileBased ()) Thing_setName (me, Melder_fileToPath (file));
 }
 
 static void closeDocument (TextEditor me) {
@@ -154,7 +150,7 @@ static int menu_cb_saveAs (EDITOR_ARGS) {
 	wchar_t defaultName [300];
 	if (! my saveDialog)
 		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, NULL, NULL);
-	swprintf (defaultName, 300, ! my fileBased () ? L"info.txt" : my name ? MelderFile_name (& my file) : L"");
+	swprintf (defaultName, 300, ! my v_fileBased () ? L"info.txt" : my name ? MelderFile_name (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
 	return 1;
 }
@@ -260,7 +256,7 @@ static void gui_button_cb_discardAndNew (I, GuiButtonEvent event) {
 
 static int menu_cb_new (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
-	if (my fileBased () && my dirty) {
+	if (my v_fileBased () && my dirty) {
 		if (! my dirtyNewDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
 			my dirtyNewDialog = GuiDialog_create (my shell,
@@ -293,7 +289,7 @@ static int menu_cb_new (EDITOR_ARGS) {
 
 static int menu_cb_clear (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
-	my clear ();
+	my v_clear ();
 	return 1;
 }
 
@@ -358,7 +354,7 @@ static void gui_button_cb_discardAndClose (I, GuiButtonEvent event) {
 }
 
 void structTextEditor :: v_goAway () {
-	if (fileBased () && dirty) {
+	if (v_fileBased () && dirty) {
 		if (! dirtyCloseDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
 			dirtyCloseDialog = GuiDialog_create (shell,
@@ -665,7 +661,7 @@ static int menu_cb_fontSize (EDITOR_ARGS) {
 
 void structTextEditor :: v_createMenus () {
 	TextEditor_Parent :: v_createMenus ();
-	if (fileBased ()) {
+	if (v_fileBased ()) {
 		Editor_addCommand (this, L"File", L"New", 'N', menu_cb_new);
 		Editor_addCommand (this, L"File", L"Open...", 'O', menu_cb_open);
 		Editor_addCommand (this, L"File", L"Reopen from disk", 0, menu_cb_reopen);
@@ -673,7 +669,7 @@ void structTextEditor :: v_createMenus () {
 		Editor_addCommand (this, L"File", L"Clear", 'N', menu_cb_clear);
 	}
 	Editor_addCommand (this, L"File", L"-- save --", 0, NULL);
-	if (fileBased ()) {
+	if (v_fileBased ()) {
 		Editor_addCommand (this, L"File", L"Save", 'S', menu_cb_save);
 		Editor_addCommand (this, L"File", L"Save as...", 0, menu_cb_saveAs);
 	} else {
@@ -722,10 +718,6 @@ void structTextEditor :: v_createChildren () {
 	GuiText_setChangeCallback (textWidget, gui_text_cb_change, this);
 	GuiText_setUndoItem (textWidget, Editor_getMenuCommand (this, L"Edit", L"Undo") -> itemWidget);
 	GuiText_setRedoItem (textWidget, Editor_getMenuCommand (this, L"Edit", L"Redo") -> itemWidget);
-}
-
-class_methods (TextEditor, Editor) {
-	class_methods_end
 }
 
 void structTextEditor :: init (GuiObject parent_, const wchar *initialText_) {

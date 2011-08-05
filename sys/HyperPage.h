@@ -32,8 +32,7 @@ Thing_declare2cpp (HyperLink, Data);
 
 HyperLink HyperLink_create (const wchar *name, double x1, double x2, double y1, double y2);
 
-Thing_declare1cpp (HyperPage);
-struct structHyperPage : public structEditor {
+Thing_define (HyperPage, Editor) {
 	// data:
 		GuiObject drawingArea, verticalScrollBar;
 		Graphics g, ps;
@@ -55,22 +54,21 @@ struct structHyperPage : public structEditor {
 		bool scriptErrorHasBeenNotified;
 		structMelderDir rootDirectory;
 	// overridden methods:
-		void v_destroy ();
-		bool v_editable () { return false; }
-		void v_createMenus ();
-		void v_createChildren ();
-		void v_dataChanged ();
+		virtual void v_destroy ();
+		virtual bool v_editable () { return false; }
+		virtual void v_createMenus ();
+		virtual void v_createChildren ();
+		virtual void v_dataChanged ();
 	// new methods:
+		virtual void v_draw () { }
+		virtual long v_getNumberOfPages () { return 0; }
+		virtual long v_getCurrentPageNumber () { return 0; }
+		virtual int v_goToPage (const wchar *title) { (void) title; return 0; }
+		virtual void v_goToPage_i (long pageNumber) { (void) pageNumber; }
+		virtual void v_defaultHeaders (EditorCommand cmd) { (void) cmd; }
+		virtual bool v_hasHistory () { return false; }
+		virtual bool v_isOrdered () { return false; }
 };
-#define HyperPage__methods(Klas) \
-	void (*draw) (Klas me); \
-	long (*getNumberOfPages) (Klas me); \
-	long (*getCurrentPageNumber) (Klas me); \
-	int (*goToPage) (Klas me, const wchar *title); \
-	void (*goToPage_i) (Klas me, long ipage); \
-	void (*defaultHeaders) (EditorCommand cmd); \
-	int hasHistory, isOrdered;
-Thing_declare2cpp (HyperPage, Editor);
 
 void HyperPage_clear (HyperPage me);
 

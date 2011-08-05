@@ -20,6 +20,8 @@
 #include "ArtwordEditor.h"
 #include "machine.h"
 
+Thing_implement (ArtwordEditor, Editor, 0);
+
 void structArtwordEditor :: v_destroy () {
 	forget (graphics);
 	ArtwordEditor_Parent :: v_destroy ();
@@ -161,10 +163,6 @@ void structArtwordEditor :: v_createChildren () {
 	}
 	feature = 1;
 	GuiRadioButton_setValue (button [1], true);
-}
-
-class_methods (ArtwordEditor, Editor) {
-	class_methods_end
 }
 
 ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar *title, Artword data) {

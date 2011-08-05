@@ -77,9 +77,7 @@ trajectory --> path ????
 	#include <signal.h>
 #endif
 
-/* TEMPORARY: */
-#undef our
-#define our ((VowelEditor_Table) my methods) ->
+Thing_implement (VowelEditor, Editor, 0);
 
 // Male, Female, Child speaker
 #define VG_SPEAKER_M 0
@@ -1535,10 +1533,6 @@ void structVowelEditor :: v_createChildren ()
 	GuiObject_show (form);
 
 #endif
-}
-
-class_methods (VowelEditor, Editor) {
-	class_methods_end
 }
 
 static void VowelEditor_setSource (VowelEditor me)

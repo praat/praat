@@ -17,17 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/12/19 created
- * pb 2008/02/06 const
- * pb 2008/03/20 split off Help menu
- * pb 2011/04/06 C++
- * pb 2011/07/15 C++
- */
-
 #include "StringsEditor.h"
 #include "EditorM.h"
 #include "machine.h"
+
+Thing_implement (StringsEditor, Editor, 0);
 
 void structStringsEditor :: v_destroy () {
 	StringsEditor_Parent :: v_destroy ();
@@ -150,10 +144,6 @@ void structStringsEditor :: v_createChildren () {
 
 void structStringsEditor :: v_dataChanged () {
 	updateList (this);
-}
-
-class_methods (StringsEditor, Editor) {
-	class_methods_end
 }
 
 StringsEditor StringsEditor_create (GuiObject parent, const wchar *title, Strings data) {

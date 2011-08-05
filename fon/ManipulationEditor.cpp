@@ -31,8 +31,7 @@
 #include "enums_getValue.h"
 #include "ManipulationEditor_enums.h"
 
-#undef our
-#define our ((ManipulationEditor_Table) my methods) ->
+Thing_implement (ManipulationEditor, FunctionEditor, 0);
 
 /*
  * How to add a synthesis method (in an interruptable order):
@@ -922,31 +921,31 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_resetViewport (my graphics, viewport);
 }
 
-static void draw (ManipulationEditor me) {
+void structManipulationEditor :: v_draw () {
 	double ysoundmin, ysoundmax;
 	double ypitchmin, ypitchmax, ydurationmin, ydurationmax;
-	int hasSoundArea = getSoundArea (me, & ysoundmin, & ysoundmax);
-	int hasPitchArea = getPitchArea (me, & ypitchmin, & ypitchmax);
-	int hasDurationArea = getDurationArea (me, & ydurationmin, & ydurationmax);
+	int hasSoundArea = getSoundArea (this, & ysoundmin, & ysoundmax);
+	int hasPitchArea = getPitchArea (this, & ypitchmin, & ypitchmax);
+	int hasDurationArea = getDurationArea (this, & ydurationmin, & ydurationmax);
 
-	if (hasSoundArea) drawSoundArea (me, ysoundmin, ysoundmax);
-	if (hasPitchArea) drawPitchArea (me, ypitchmin, ypitchmax);
-	if (hasDurationArea) drawDurationArea (me, ydurationmin, ydurationmax);
+	if (hasSoundArea) drawSoundArea (this, ysoundmin, ysoundmax);
+	if (hasPitchArea) drawPitchArea (this, ypitchmin, ypitchmax);
+	if (hasDurationArea) drawDurationArea (this, ydurationmin, ydurationmax);
 
-	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setGrey (my graphics, 0.85);
-	Graphics_fillRectangle (my graphics, -0.001, 1.001, ypitchmax, ysoundmin);
-	Graphics_setGrey (my graphics, 0.00);
-	Graphics_line (my graphics, 0, ysoundmin, 1, ysoundmin);
-	Graphics_line (my graphics, 0, ypitchmax, 1, ypitchmax);
+	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setGrey (graphics, 0.85);
+	Graphics_fillRectangle (graphics, -0.001, 1.001, ypitchmax, ysoundmin);
+	Graphics_setGrey (graphics, 0.00);
+	Graphics_line (graphics, 0, ysoundmin, 1, ysoundmin);
+	Graphics_line (graphics, 0, ypitchmax, 1, ypitchmax);
 	if (hasDurationArea) {
-		Graphics_setGrey (my graphics, 0.85);
-		Graphics_fillRectangle (my graphics, -0.001, 1.001, ydurationmax, ypitchmin);
-		Graphics_setGrey (my graphics, 0.00);
-		Graphics_line (my graphics, 0, ypitchmin, 1, ypitchmin);
-		Graphics_line (my graphics, 0, ydurationmax, 1, ydurationmax);
+		Graphics_setGrey (graphics, 0.85);
+		Graphics_fillRectangle (graphics, -0.001, 1.001, ydurationmax, ypitchmin);
+		Graphics_setGrey (graphics, 0.00);
+		Graphics_line (graphics, 0, ypitchmin, 1, ypitchmin);
+		Graphics_line (graphics, 0, ydurationmax, 1, ydurationmax);
 	}
-	updateMenus (me);
+	updateMenus (this);
 }
 
 static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, long first, long last, double dt, double df) {
@@ -982,7 +981,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 	}
 }
 
-static int clickPitch (ManipulationEditor me, double xWC, double yWC, int shiftKeyPressed) {
+static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shiftKeyPressed) {
 	Manipulation ana = (Manipulation) my data;
 	PitchTier pitch = ana -> pitch;
 	long inearestPoint, ifirstSelected, ilastSelected, i;
@@ -993,7 +992,7 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, int shiftK
 	my pitchTier.cursor = my pitchTier.minimum + yWC * (my pitchTier.maximum - my pitchTier.minimum);
 	if (! pitch) {
 		Graphics_resetViewport (my graphics, my inset);
-		return inherited (ManipulationEditor) click (me, xWC, yWC, shiftKeyPressed);
+		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my pitchTier.minimum, my pitchTier.maximum);
 	yWC = my pitchTier.cursor;
@@ -1004,12 +1003,12 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, int shiftK
 	inearestPoint = AnyTier_timeToNearestIndex (pitch, xWC);
 	if (inearestPoint == 0) {
 		Graphics_resetViewport (my graphics, my inset);
-		return inherited (ManipulationEditor) click (me, xWC, yWC, shiftKeyPressed);
+		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) pitch -> points -> item [inearestPoint];
 	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> number, YLIN (nearestPoint -> value)) > 1.5) {
 		Graphics_resetViewport (my graphics, my inset);
-		return inherited (ManipulationEditor) click (me, xWC, yWC, shiftKeyPressed);
+		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
 	/*
@@ -1151,7 +1150,7 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 
 	if (! duration) {
 		Graphics_resetViewport (my graphics, my inset);
-		return inherited (ManipulationEditor) click (me, xWC, yWC, shiftKeyPressed);
+		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, my duration.minimum, my duration.maximum);
 
@@ -1161,12 +1160,12 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	inearestPoint = AnyTier_timeToNearestIndex (duration, xWC);
 	if (inearestPoint == 0) {
 		Graphics_resetViewport (my graphics, my inset);
-		return inherited (ManipulationEditor) click (me, xWC, yWC, shiftKeyPressed);
+		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) duration -> points -> item [inearestPoint];
 	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
 		Graphics_resetViewport (my graphics, my inset);
-		return inherited (ManipulationEditor) click (me, xWC, yWC, shiftKeyPressed);
+		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
 	/*
@@ -1246,41 +1245,35 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	return 1;   /* Update needed. */
 }
 
-static int click (ManipulationEditor me, double xWC, double yWC, int shiftKeyPressed) {
+int structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
 	double ypitchmin, ypitchmax, ydurationmin, ydurationmax;
-	int hasPitchArea = getPitchArea (me, & ypitchmin, & ypitchmax);
-	int hasDurationArea = getDurationArea (me, & ydurationmin, & ydurationmax);
+	int hasPitchArea = getPitchArea (this, & ypitchmin, & ypitchmax);
+	int hasDurationArea = getDurationArea (this, & ydurationmin, & ydurationmax);
 
 	/*
 	 * Dispatch click to clicked area.
 	 */
-	if (hasPitchArea && yWC > ypitchmin && yWC < ypitchmax) {   /* Clicked in pitch area? */
-		my inset = Graphics_insetViewport (my graphics, 0, 1, ypitchmin, ypitchmax);
-		return clickPitch (me, xWC, (yWC - ypitchmin) / (ypitchmax - ypitchmin), shiftKeyPressed);
-	} else if (hasDurationArea && yWC > ydurationmin && yWC < ydurationmax) {   /* Clicked in duration area? */
-		my inset = Graphics_insetViewport (my graphics, 0, 1, ydurationmin, ydurationmax);
-		return clickDuration (me, xWC, (yWC - ydurationmin) / (ydurationmax - ydurationmin), shiftKeyPressed);
+	if (hasPitchArea && yWC > ypitchmin && yWC < ypitchmax) {   // clicked in pitch area?
+		inset = Graphics_insetViewport (graphics, 0, 1, ypitchmin, ypitchmax);
+		return clickPitch (this, xWC, (yWC - ypitchmin) / (ypitchmax - ypitchmin), shiftKeyPressed);
+	} else if (hasDurationArea && yWC > ydurationmin && yWC < ydurationmax) {   // clicked in duration area?
+		inset = Graphics_insetViewport (graphics, 0, 1, ydurationmin, ydurationmax);
+		return clickDuration (this, xWC, (yWC - ydurationmin) / (ydurationmax - ydurationmin), shiftKeyPressed);
 	}
 	/*
 	 * Perform the default action: move cursor or drag selection.
 	 */
-	return inherited (ManipulationEditor) click (me, xWC, yWC, shiftKeyPressed);
+	return ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
-static void play (ManipulationEditor me, double tmin, double tmax) {
-	Manipulation ana = (Manipulation) my data;
-	if (my shiftKeyPressed) {
-		if (ana -> sound) Sound_playPart (ana -> sound, tmin, tmax, our playCallback, me);
+void structManipulationEditor :: v_play (double tmin, double tmax) {
+	Manipulation ana = (Manipulation) data;
+	if (shiftKeyPressed) {
+		if (ana -> sound)
+			Sound_playPart (ana -> sound, tmin, tmax, theFunctionEditor_playCallback, this);
 	} else {
-		Manipulation_playPart (ana, tmin, tmax, my synthesisMethod);
+		Manipulation_playPart (ana, tmin, tmax, synthesisMethod);
 	}
-}
-
-class_methods (ManipulationEditor, FunctionEditor) {
-	class_method (draw)
-	class_method (click)
-	class_method (play)
-	class_methods_end
 }
 
 ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar *title, Manipulation ana) {

@@ -22,18 +22,17 @@
 #include "TimeSoundEditor.h"
 #include "PointProcess.h"
 
-Thing_declare1cpp (PointEditor);
-struct structPointEditor : structTimeSoundEditor {
+Thing_define (PointEditor, TimeSoundEditor) {
 	// new data:
 		Sound monoSound;
 		GuiObject addPointAtDialog;
 	// overridden methods:
-		void v_destroy ();
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_destroy ();
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_draw ();
+		virtual void v_play (double tmin, double tmax);
 };
-#define PointEditor__methods(Klas) TimeSoundEditor__methods(Klas)
-Thing_declare2cpp (PointEditor, TimeSoundEditor);
 
 PointEditor PointEditor_create (GuiObject parent, const wchar *title,
 	PointProcess point,

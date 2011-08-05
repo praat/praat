@@ -120,6 +120,11 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 #define class_method_local(klas,method)  us -> method = class##klas##_##method;
 #define class_methods_end  }
 
+#define Thing_implement(klas,parentKlas,version) \
+	static void *_##klas##_new () { return (Thing) new struct##klas; } \
+	struct struct##klas##_Table theStruct##klas = { NULL, L"" #klas, & theStruct##parentKlas, sizeof (struct struct##klas), _##klas##_new, version }; \
+	klas##_Table class##klas = & theStruct##klas
+
 #define Thing__methods(klas)
 typedef struct structThing *Thing;
 typedef struct structThing_Table *Thing_Table;

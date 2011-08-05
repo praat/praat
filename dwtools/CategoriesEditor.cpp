@@ -40,6 +40,7 @@
 //#include "Preferences.h"
 #include "EditorM.h"
 
+Thing_implement (CategoriesEditor, Editor, 0);
 
 /* forward declarations */
 static void update (I, long from, long to, const long *select, long nSelect);
@@ -853,10 +854,6 @@ void structCategoriesEditor :: v_dataChanged ()
 {
 	update (this, 0, 0, 0, 0);
 	updateWidgets (this);
-}
-
-class_methods (CategoriesEditor, Editor) {
-	class_methods_end
 }
 
 CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, Categories data)

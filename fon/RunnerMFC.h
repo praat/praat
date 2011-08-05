@@ -22,8 +22,7 @@
 #include "Editor.h"
 #include "ExperimentMFC.h"
 
-Thing_declare1cpp (RunnerMFC);
-struct structRunnerMFC : public structEditor {
+Thing_define (RunnerMFC, Editor) {
 	// new data:
 		GuiObject drawingArea;
 		Ordered experiments;
@@ -37,8 +36,6 @@ struct structRunnerMFC : public structEditor {
 		void v_createChildren ();
 		void v_dataChanged ();
 };
-#define RunnerMFC__methods(Klas)
-Thing_declare2cpp (RunnerMFC, Editor);
 
 RunnerMFC RunnerMFC_create (GuiObject parent, const wchar *title, Ordered experiments);
 

@@ -17,24 +17,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2004/05/10 corrected redrawing
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/12/14 Gui
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2011/04/06 C++
- * pb 2011/07/15 C++
- */
-
 #include "ButtonEditor.h"
 #include "praatP.h"
 #include "praat_script.h"
 #include "EditorM.h"
 #include "machine.h"
+
+Thing_implement (ButtonEditor, HyperPage, 0);
 
 #if defined (_WIN32)
 	#define BUTTON_WIDTH  72
@@ -138,51 +127,50 @@ static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
-static void draw (ButtonEditor me) {
-	Graphics_clearWs (my g);
-	switch (my show) {
+void structButtonEditor :: v_draw () {
+	Graphics_clearWs (g);
+	switch (show) {
 		case 1:
 			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				praat_Command cmd = praat_getMenuCommand (i);
 				if (wcsequ (cmd -> window, L"Objects"))
-					drawMenuCommand (me, praat_getMenuCommand (i), i);
+					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 2:
 			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				praat_Command cmd = praat_getMenuCommand (i);
 				if (wcsequ (cmd -> window, L"Picture"))
-					drawMenuCommand (me, praat_getMenuCommand (i), i);
+					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 3:
 			for (long i = 1, n = praat_getNumberOfMenuCommands (); i <= n; i ++) {
 				praat_Command cmd = praat_getMenuCommand (i);
 				if (! wcsequ (cmd -> window, L"Objects") && ! wcsequ (cmd -> window, L"Picture"))
-					drawMenuCommand (me, praat_getMenuCommand (i), i);
+					drawMenuCommand (this, praat_getMenuCommand (i), i);
 			}
 			break;
 		case 4:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				const wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
+				const wchar *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") < 0)
-					drawAction (me, praat_getAction (i), i);
+					drawAction (this, praat_getAction (i), i);
 			}
 			break;
 		case 5:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				const wchar_t *klas = ((Data_Table) cmd -> class1) -> _className;
+				const wchar *klas = ((Data_Table) cmd -> class1) -> _className;
 				if (wcscmp (klas, L"N") >= 0)
-					drawAction (me, praat_getAction (i), i);
+					drawAction (this, praat_getAction (i), i);
 			}
 			break;
 	}
 }
 
-static int goToPage (ButtonEditor me, const wchar_t *title) {
-	(void) me;
+int structButtonEditor :: v_goToPage (const wchar_t *title) {
 	if (! title || ! title [0]) return 0;
 	if (wcsequ (title, L"Buttons")) return 1;
 	switch (title [0]) {
@@ -311,12 +299,6 @@ static int menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); M
 void structButtonEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	ButtonEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', menu_cb_ButtonEditorHelp);
-}
-
-class_methods (ButtonEditor, HyperPage) {
-	class_method (draw)
-	class_method (goToPage)
-	class_methods_end
 }
 
 ButtonEditor ButtonEditor_create (GuiObject parent) {
