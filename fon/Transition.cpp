@@ -17,15 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/06/19 Eigen
- * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar
- * pb 2007/10/01 can write as encoding
- * pb 2011/06/11 C++
- */
-
 #include "Transition.h"
 #include "NUM2.h"
 #include "Eigen.h"
@@ -47,43 +38,29 @@
 #include "oo_DESCRIPTION.h"
 #include "Transition_def.h"
 
-static void writeText (I, MelderFile file) {
-	iam (Transition);
-	texputi4 (file, my numberOfStates, L"numberOfStates", 0,0,0,0,0);
+Thing_implement (Transition, Data, 0);
+
+void structTransition :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (numberOfStates));
+}
+
+void structTransition :: v_writeText (MelderFile file) {
+	texputi4 (file, numberOfStates, L"numberOfStates", 0,0,0,0,0);
 	MelderFile_write1 (file, L"\nstateLabels []: ");
-	if (my numberOfStates < 1) MelderFile_write1 (file, L"(empty)");
+	if (numberOfStates < 1) MelderFile_write1 (file, L"(empty)");
 	MelderFile_write1 (file, L"\n");
-	for (long i = 1; i <= my numberOfStates; i ++) {
+	for (long i = 1; i <= numberOfStates; i ++) {
 		MelderFile_write1 (file, L"\"");
-		if (my stateLabels [i] != NULL) MelderFile_write1 (file, my stateLabels [i]);
+		if (stateLabels [i] != NULL) MelderFile_write1 (file, stateLabels [i]);
 		MelderFile_write1 (file, L"\"\t");
 	}
-	for (long i = 1; i <= my numberOfStates; i ++) {
+	for (long i = 1; i <= numberOfStates; i ++) {
 		MelderFile_write3 (file, L"\nstate [", Melder_integer (i), L"]:");
-		for (long j = 1; j <= my numberOfStates; j ++) {
-			MelderFile_write2 (file, L"\t", Melder_double (my data [i] [j]));
+		for (long j = 1; j <= numberOfStates; j ++) {
+			MelderFile_write2 (file, L"\t", Melder_double (data [i] [j]));
 		}
 	}
-}
-
-static void info (I) {
-	iam (Transition);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (my numberOfStates));
-}
-
-class_methods (Transition, Data) {
-	class_method_local (Transition, destroy)
-	class_method_local (Transition, description)
-	class_method_local (Transition, copy)
-	class_method_local (Transition, equal)
-	class_method_local (Transition, canWriteAsEncoding)
-	class_method (writeText)
-	class_method_local (Transition, readText)
-	class_method_local (Transition, writeBinary)
-	class_method_local (Transition, readBinary)
-	class_method (info)
-	class_methods_end
 }
 
 void Transition_init (I, long numberOfStates) {
@@ -209,8 +186,8 @@ void Transition_eigen (Transition me, Matrix *out_eigenvectors, Matrix *out_eige
 
 Transition Transition_power (Transition me, long power) {
 	try {
-		autoTransition thee = (Transition) Data_copy (me);
-		autoTransition him = (Transition) Data_copy (me);
+		autoTransition thee = Data_copy (me);
+		autoTransition him = Data_copy (me);
 		for (long ipow = 2; ipow <= power; ipow ++) {
 			double **tmp = his data; his data = thy data; thy data = tmp;   // OPTIMIZE
 			for (long irow = 1; irow <= my numberOfStates; irow ++) {

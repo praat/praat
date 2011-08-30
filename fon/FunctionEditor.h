@@ -30,6 +30,7 @@ struct FunctionEditor_picture {
 
 Thing_define (FunctionEditor, Editor) {
 	// new data:
+	public:
 		/* Subclass may change the following attributes, */
 		/* but has to respect the invariants, */
 		/* and has to call FunctionEditor_marksChanged () */

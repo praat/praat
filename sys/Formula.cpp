@@ -17,53 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/10/02 getenv -> Melder_getenv
- * pb 2002/11/24 Melder_double
- * pb 2002/11/30 extractWord, extractLine
- * pb 2002/12/01 expressionType unknown
- * pb 2002/12/14 nicer error messages
- * pb 2003/03/09 allowed theInterpreter and theSource to both exist or not exist
- * pb 2003/05/19 Melder_atof, percent
- * pb 2003/06/23 removed Bessel functions J and Y
- * pb 2003/07/26 min and max
- * pb 2004/10/16 C++ compatible struct tags
- * pb 2005/05/15 messages
- * pb 2005/06/14 startsWith, endsWith, index_regex
- * pb 2006/01/11 local variables
- * pb 2006/01/21 allow things like Object_137 [row, col]
- * pb 2006/01/29 run-time type checking
- * pb 2006/01/30 lexical analysis: binary rather than linear search for language names
- * pb 2006/04/17 .row$, .col$
- * pb 2006/05/30 replace_regex$
- * pb 2006/06/10 prevented replace_regex$ from returning null string (now empty string)
- * pb 2006/12/18 better info
- * pb 2006/12/26 theCurrentPraat
- * pb 2007/01/28 made compatible with multi-channelled vectors
- * pb 2007/05/26 wchar_t
- * pb 2007/06/09 wchar_t for Interpreter
- * pb 2007/11/17 implemented self0$
- * pb 2008/02/01 object
- * pb 2008/04/09 removed explicit GSL
- * pb 2008/05/01 arrays
- * pb 2008/05/12 to, sum
- * pb 2009/01/04 fileDelete
- * pb 2009/01/05 pause forms
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2009/01/20 pause forms moved to UiPause.c
- * pb 2009/02/06 createDirectory
- * pb 2009/05/04 demoShow
- * pb 2009/05/05 demoWaitForInput
- * pb 2009/08/09 variableExists
- * pb 2009/08/21 demoWindowTitle
- * pb 2009/12/25 error checking for Demo commands (should yield an error if the Demo window is waiting for input)
- * pb 2010/07/26 chooseReadFile$, chooseWriteFile$
- * pb 2010/11/03 indexed variables
- * pb 2010/11/26 chooseDirectory$
- * pb 2011/04/06 C++
- * pb 2011/07/11 C++
- */
-
 #include <ctype.h>
 #include <time.h>
 #if defined (UNIX)
@@ -1072,87 +1025,87 @@ static void parsePowerFactor (void) {
 		} else if (symbol == PERIOD_) {
 			switch (nieuwlees) {
 				case XMIN_:
-					if (your getXmin == NULL) {
+					if (! thy v_hasGetXmin ()) {
 						formulefout (L"Attribute \"xmin\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getXmin (thee));
+						parsenumber (thy v_getXmin ());
 						return;
 					}
 				case XMAX_:
-					if (your getXmax == NULL) {
+					if (! thy v_hasGetXmax ()) {
 						formulefout (L"Attribute \"xmax\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getXmax (thee));
+						parsenumber (thy v_getXmax ());
 						return;
 					}
 				case YMIN_:
-					if (your getYmin == NULL) {
+					if (! thy v_hasGetYmin ()) {
 						formulefout (L"Attribute \"ymin\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getYmin (thee));
+						parsenumber (thy v_getYmin ());
 						return;
 					}
 				case YMAX_:
-					if (your getYmax == NULL) {
+					if (! thy v_hasGetYmax ()) {
 						formulefout (L"Attribute \"ymax\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getYmax (thee));
+						parsenumber (thy v_getYmax ());
 						return;
 					}
 				case NX_:
-					if (your getNx == NULL) {
+					if (! thy v_hasGetNx ()) {
 						formulefout (L"Attribute \"nx\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getNx (thee));
+						parsenumber (thy v_getNx ());
 						return;
 					}
 				case NY_:
-					if (your getNy == NULL) {
+					if (! thy v_hasGetNy ()) {
 						formulefout (L"Attribute \"ny\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getNy (thee));
+						parsenumber (thy v_getNy ());
 						return;
 					}
 				case DX_:
-					if (your getDx == NULL) {
+					if (! thy v_hasGetDx ()) {
 						formulefout (L"Attribute \"dx\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getDx (thee));
+						parsenumber (thy v_getDx ());
 						return;
 					}
 				case DY_:
-					if (your getDy == NULL) {
+					if (! thy v_hasGetDy ()) {
 						formulefout (L"Attribute \"dy\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getDy (thee));
+						parsenumber (thy v_getDy ());
 						return;
 					}
 				case NCOL_:
-					if (your getNcol == NULL) {
+					if (! thy v_hasGetNcol ()) {
 						formulefout (L"Attribute \"ncol\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getNcol (thee));
+						parsenumber (thy v_getNcol ());
 						return;
 					}
 				case NROW_:
-					if (your getNrow == NULL) {
+					if (! thy v_hasGetNrow ()) {
 						formulefout (L"Attribute \"nrow\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						nieuwontleed (NUMBER_);
-						parsenumber (your getNrow (thee));
+						parsenumber (thy v_getNrow ());
 						return;
 					}
 				case ROWSTR_:
-					if (your getRowStr == NULL) {
+					if (! thy v_hasGetRowStr ()) {
 						formulefout (L"Attribute \"row$\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						pas (RECHTEHAAKOPENEN_);
@@ -1163,7 +1116,7 @@ static void parsePowerFactor (void) {
 						return;
 					}
 				case COLSTR_:
-					if (your getColStr == NULL) {
+					if (! thy v_hasGetColStr ()) {
 						formulefout (L"Attribute \"col$\" not defined for this object", lexan [ilexan]. position);
 					} else {
 						pas (RECHTEHAAKOPENEN_);
@@ -2977,7 +2930,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (a->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (a->content.string); therror
 			result = praat_getIdOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
 			result = praat_getIdOfSelected (NULL, a->content.number);
@@ -2987,7 +2940,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassName (s->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (s->content.string); therror
 			result = praat_getIdOfSelected (klas, x->content.number);
 		} else {
 			Melder_throw ("The function \"selected\" requires a string (an object type name) and/or a number.");
@@ -3007,7 +2960,7 @@ static void do_selectedStr (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (a->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (a->content.string); therror
 			name = praat_getNameOfSelected (klas, 0);
 			result.reset (Melder_wcsdup (name));
 		} else if (a->which == Stackel_NUMBER) {
@@ -3019,7 +2972,7 @@ static void do_selectedStr (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			void *klas = Thing_classFromClassName (s->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (s->content.string); therror
 			name = praat_getNameOfSelected (klas, x->content.number);
 			result.reset (Melder_wcsdup (name));
 		} else {
@@ -3036,7 +2989,7 @@ static void do_numberOfSelected (void) {
 	} else if (n->content.number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			void *klas = Thing_classFromClassName (s->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (s->content.string); therror
 			result = praat_selection (klas);
 		} else {
 			Melder_throw ("The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), ".");
@@ -3589,9 +3542,9 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 	if (row->which == Stackel_NUMBER) {
 		result = floor (row->content.number + 0.5);   // round
 	} else if (row->which == Stackel_STRING) {
-		if (your getRowIndex == NULL)
+		if (! thy v_hasGetRowIndex ())
 			Melder_throw ("Objects of type ", Thing_className (thee), " do not have row labels, so row indexes have to be numbers.");
-		result = your getRowIndex (thee, row->content.string);
+		result = thy v_getRowIndex (row->content.string);
 		if (result == 0)
 			Melder_throw ("Object \"", thy name, "\" has no row labelled \"", row->content.string, "\".");
 	} else {
@@ -3604,9 +3557,9 @@ static long Stackel_getColumnNumber (Stackel column, Data thee) {
 	if (column->which == Stackel_NUMBER) {
 		result = floor (column->content.number + 0.5);   // round
 	} else if (column->which == Stackel_STRING) {
-		if (your getColumnIndex == NULL)
+		if (! thy v_hasGetColIndex ())
 			Melder_throw ("Objects of type ", Thing_className (thee), " do not have column labels, so column indexes have to be numbers.");
-		result = your getColumnIndex (thee, column->content.string);
+		result = thy v_getColIndex (column->content.string);
 		if (result == 0)
 			Melder_throw ("Object \"", thy name, "\" has no column labelled \"", column->content.string, "\".");
 	} else {
@@ -3617,16 +3570,16 @@ static long Stackel_getColumnNumber (Stackel column, Data thee) {
 static void do_self0 (long irow, long icol) {
 	Data me = theSource;
 	if (me == NULL) Melder_throw ("The name \"self\" is restricted to formulas for objects.");
-	if (our getCell) {
-		pushNumber (our getCell (me));
-	} else if (our getVector) {
+	if (my v_hasGetCell ()) {
+		pushNumber (my v_getCell ());
+	} else if (my v_hasGetVector ()) {
 		if (icol == 0) {
 			Melder_throw ("We are not in a loop, hence no implicit column index for the current ",
 				Thing_className (me), " object (self).\nTry using the [column] index explicitly.");
 		} else {
-			pushNumber (our getVector (me, irow, icol));
+			pushNumber (my v_getVector (irow, icol));
 		}
-	} else if (our getMatrix) {
+	} else if (my v_hasGetMatrix ()) {
 		if (irow == 0) {
 			if (icol == 0) {
 				Melder_throw ("We are not in a loop over rows and columns,\n"
@@ -3640,7 +3593,7 @@ static void do_self0 (long irow, long icol) {
 					"Try using the [row] index explicitly.");
 			}
 		} else {
-			pushNumber (our getMatrix (me, irow, icol));
+			pushNumber (my v_getMatrix (irow, icol));
 		}
 	} else {
 		Melder_throw (Thing_className (me), " objects (like self) accept no [] indexing.");
@@ -3649,18 +3602,18 @@ static void do_self0 (long irow, long icol) {
 static void do_selfStr0 (long irow, long icol) {
 	Data me = theSource;
 	if (me == NULL) Melder_throw ("The name \"self$\" is restricted to formulas for objects.");
-	if (our getCellStr) {
-		autostring result = Melder_wcsdup (our getCellStr (me));
+	if (my v_hasGetCellStr ()) {
+		autostring result = Melder_wcsdup (my v_getCellStr ());
 		pushString (result.transfer());
-	} else if (our getVectorStr) {
+	} else if (my v_hasGetVectorStr ()) {
 		if (icol == 0) {
 			Melder_throw ("We are not in a loop, hence no implicit column index for the current ",
 				Thing_className (me), " object (self).\nTry using the [column] index explicitly.");
 		} else {
-			autostring result = Melder_wcsdup (our getVectorStr (me, icol));
+			autostring result = Melder_wcsdup (my v_getVectorStr (icol));
 			pushString (result.transfer());
 		}
-	} else if (our getMatrixStr) {
+	} else if (my v_hasGetMatrixStr ()) {
 		if (irow == 0) {
 			if (icol == 0) {
 				Melder_throw ("We are not in a loop over rows and columns,\n"
@@ -3674,7 +3627,7 @@ static void do_selfStr0 (long irow, long icol) {
 					"Try using the [row] index explicitly.");
 			}
 		} else {
-			autostring result = Melder_wcsdup (our getMatrixStr (me, irow, icol));
+			autostring result = Melder_wcsdup (my v_getMatrixStr (irow, icol));
 			pushString (result.transfer());
 		}
 	} else {
@@ -3706,17 +3659,17 @@ static Data getObjectFromUniqueID (Stackel object) {
 }
 static void do_objectCell0 (long irow, long icol) {
 	Data thee = getObjectFromUniqueID (pop);
-	if (your getCell) {
-		pushNumber (your getCell (thee));
-	} else if (your getVector) {
+	if (thy v_hasGetCell ()) {
+		pushNumber (thy v_getCell ());
+	} else if (thy v_hasGetVector ()) {
 		if (icol == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit column index for this ", Thing_className (thee), " object.\n"
 				"Try using: object [id, column].");
 		} else {
-			pushNumber (your getVector (thee, irow, icol));
+			pushNumber (thy v_getVector (irow, icol));
 		}
-	} else if (your getMatrix) {
+	} else if (thy v_hasGetMatrix ()) {
 		if (irow == 0) {
 			if (icol == 0) {
 				Melder_throw ("We are not in a loop over rows and columns,\n"
@@ -3728,7 +3681,7 @@ static void do_objectCell0 (long irow, long icol) {
 					"Try using: object [id, row].");
 			}
 		} else {
-			pushNumber (your getMatrix (thee, irow, icol));
+			pushNumber (thy v_getMatrix (irow, icol));
 		}
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept no [] indexing.");
@@ -3736,17 +3689,17 @@ static void do_objectCell0 (long irow, long icol) {
 }
 static void do_matriks0 (long irow, long icol) {
 	Data thee = parse [programPointer]. content.object;
-	if (your getCell) {
-		pushNumber (your getCell (thee));
-	} else if (your getVector) {
+	if (thy v_hasGetCell ()) {
+		pushNumber (thy v_getCell ());
+	} else if (thy v_hasGetVector ()) {
 		if (icol == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit column index for this ", Thing_className (thee), " object.\n"
 				"Try using the [column] index explicitly.");
 		} else {
-			pushNumber (your getVector (thee, irow, icol));
+			pushNumber (thy v_getVector (irow, icol));
 		}
-	} else if (your getMatrix) {
+	} else if (thy v_hasGetMatrix ()) {
 		if (irow == 0) {
 			if (icol == 0) {
 				Melder_throw ("We are not in a loop over rows and columns,\n"
@@ -3758,7 +3711,7 @@ static void do_matriks0 (long irow, long icol) {
 					"Try using the [row] index explicitly.");
 			}
 		} else {
-			pushNumber (your getMatrix (thee, irow, icol));
+			pushNumber (thy v_getMatrix (irow, icol));
 		}
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept no [] indexing.");
@@ -3769,15 +3722,15 @@ static void do_selfMatriks1 (long irow) {
 	Stackel column = pop;
 	if (me == NULL) Melder_throw ("The name \"self\" is restricted to formulas for objects.");
 	long icol = Stackel_getColumnNumber (column, me);
-	if (our getVector) {
-		pushNumber (our getVector (me, irow, icol));
-	} else if (our getMatrix) {
+	if (my v_hasGetVector ()) {
+		pushNumber (my v_getVector (irow, icol));
+	} else if (my v_hasGetMatrix ()) {
 		if (irow == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit row index for the current ", Thing_className (me), " object (self).\n"
 				"Try using both [row, column] indexes instead.");
 		} else {
-			pushNumber (our getMatrix (me, irow, icol));
+			pushNumber (my v_getMatrix (irow, icol));
 		}
 	} else {
 		Melder_throw (Thing_className (me), " objects (like self) accept no [column] indexes.");
@@ -3788,16 +3741,16 @@ static void do_selfMatriksStr1 (long irow) {
 	Stackel column = pop;
 	if (me == NULL) Melder_throw ("The name \"self$\" is restricted to formulas for objects.");
 	long icol = Stackel_getColumnNumber (column, me);
-	if (our getVectorStr) {
-		autostring result = Melder_wcsdup (our getVectorStr (me, icol));
+	if (my v_hasGetVectorStr ()) {
+		autostring result = Melder_wcsdup (my v_getVectorStr (icol));
 		pushString (result.transfer());
-	} else if (our getMatrixStr) {
+	} else if (my v_hasGetMatrixStr ()) {
 		if (irow == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit row index for the current ", Thing_className (me), " object (self).\n"
 				"Try using both [row, column] indexes instead.");
 		} else {
-			autostring result = Melder_wcsdup (our getMatrixStr (me, irow, icol));
+			autostring result = Melder_wcsdup (my v_getMatrixStr (irow, icol));
 			pushString (result.transfer());
 		}
 	} else {
@@ -3808,15 +3761,15 @@ static void do_objectCell1 (long irow) {
 	Stackel column = pop;
 	Data thee = getObjectFromUniqueID (pop);
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getVector) {
-		pushNumber (your getVector (thee, irow, icol));
-	} else if (your getMatrix) {
+	if (thy v_hasGetVector ()) {
+		pushNumber (thy v_getVector (irow, icol));
+	} else if (thy v_hasGetMatrix ()) {
 		if (irow == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit row index for this ", Thing_className (thee), " object.\n"
 				"Try using: object [id, row, column].");
 		} else {
-			pushNumber (your getMatrix (thee, irow, icol));
+			pushNumber (thy v_getMatrix (irow, icol));
 		}
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept no [column] indexes.");
@@ -3826,15 +3779,15 @@ static void do_matriks1 (long irow) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel column = pop;
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getVector) {
-		pushNumber (your getVector (thee, irow, icol));
-	} else if (your getMatrix) {
+	if (thy v_hasGetVector ()) {
+		pushNumber (thy v_getVector (irow, icol));
+	} else if (thy v_hasGetMatrix ()) {
 		if (irow == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit row index for this ", Thing_className (thee), " object.\n"
 				"Try using both [row, column] indexes instead.");
 		} else {
-			pushNumber (your getMatrix (thee, irow, icol));
+			pushNumber (thy v_getMatrix (irow, icol));
 		}
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept no [column] indexes.");
@@ -3844,16 +3797,16 @@ static void do_objectCellStr1 (long irow) {
 	Stackel column = pop;
 	Data thee = getObjectFromUniqueID (pop);
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getVectorStr) {
-		autostring result = Melder_wcsdup (your getVectorStr (thee, icol));
+	if (thy v_hasGetVectorStr ()) {
+		autostring result = Melder_wcsdup (thy v_getVectorStr (icol));
 		pushString (result.transfer());
-	} else if (your getMatrixStr) {
+	} else if (thy v_hasGetMatrixStr ()) {
 		if (irow == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit row index for this ", Thing_className (thee), " object.\n"
 				"Try using: object [id, row, column].");
 		} else {
-			autostring result = Melder_wcsdup (your getMatrixStr (thee, irow, icol));
+			autostring result = Melder_wcsdup (thy v_getMatrixStr (irow, icol));
 			pushString (result.transfer());
 		}
 	} else {
@@ -3864,16 +3817,16 @@ static void do_matrixStr1 (long irow) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel column = pop;
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getVectorStr) {
-		autostring result = Melder_wcsdup (your getVectorStr (thee, icol));
+	if (thy v_hasGetVectorStr ()) {
+		autostring result = Melder_wcsdup (thy v_getVectorStr (icol));
 		pushString (result.transfer());
-	} else if (your getMatrixStr) {
+	} else if (thy v_hasGetMatrixStr ()) {
 		if (irow == 0) {
 			Melder_throw ("We are not in a loop,\n"
 				"hence no implicit row index for this ", Thing_className (thee), " object.\n"
 				"Try using both [row, column] indexes instead.");
 		} else {
-			autostring result = Melder_wcsdup (your getMatrixStr (thee, irow, icol));
+			autostring result = Melder_wcsdup (thy v_getMatrixStr (irow, icol));
 			pushString (result.transfer());
 		}
 	} else {
@@ -3886,9 +3839,9 @@ static void do_selfMatriks2 (void) {
 	if (me == NULL) Melder_throw ("The name \"self\" is restricted to formulas for objects.");
 	long irow = Stackel_getRowNumber (row, me);
 	long icol = Stackel_getColumnNumber (column, me);
-	if (our getMatrix == NULL)
+	if (! my v_hasGetMatrix ())
 		Melder_throw (Thing_className (me), " objects like \"self\" accept no [row, column] indexing.");
-	pushNumber (our getMatrix (me, irow, icol));
+	pushNumber (my v_getMatrix (irow, icol));
 }
 static void do_selfMatriksStr2 (void) {
 	Data me = theSource;
@@ -3896,9 +3849,9 @@ static void do_selfMatriksStr2 (void) {
 	if (me == NULL) Melder_throw ("The name \"self$\" is restricted to formulas for objects.");
 	long irow = Stackel_getRowNumber (row, me);
 	long icol = Stackel_getColumnNumber (column, me);
-	if (our getMatrixStr == NULL)
+	if (! my v_hasGetMatrixStr ())
 		Melder_throw (Thing_className (me), " objects like \"self$\" accept no [row, column] indexing for string cells.");
-	autostring result = Melder_wcsdup (our getMatrixStr (me, irow, icol));
+	autostring result = Melder_wcsdup (my v_getMatrixStr (irow, icol));
 	pushString (result.transfer());
 }
 static void do_objectCell2 (void) {
@@ -3906,27 +3859,27 @@ static void do_objectCell2 (void) {
 	Data thee = getObjectFromUniqueID (pop);
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getMatrix == NULL)
+	if (! thy v_hasGetMatrix ())
 		Melder_throw (Thing_className (thee), " objects accept no [id, row, column] indexing.");
-	pushNumber (your getMatrix (thee, irow, icol));
+	pushNumber (thy v_getMatrix (irow, icol));
 }
 static void do_matriks2 (void) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel column = pop, row = pop;
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getMatrix == NULL)
+	if (! thy v_hasGetMatrix ())
 		Melder_throw (Thing_className (thee), " objects accept no [row, column] indexing.");
-	pushNumber (your getMatrix (thee, irow, icol));
+	pushNumber (thy v_getMatrix (irow, icol));
 }
 static void do_objectCellStr2 (void) {
 	Stackel column = pop, row = pop;
 	Data thee = getObjectFromUniqueID (pop);
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getMatrixStr == NULL)
+	if (! thy v_hasGetMatrixStr ())
 		Melder_throw (Thing_className (thee), " objects accept no [id, row, column] indexing for string cells.");
-	autostring result = Melder_wcsdup (your getMatrixStr (thee, irow, icol));
+	autostring result = Melder_wcsdup (thy v_getMatrixStr (irow, icol));
 	pushString (result.transfer());
 }
 static void do_matriksStr2 (void) {
@@ -3934,83 +3887,83 @@ static void do_matriksStr2 (void) {
 	Stackel column = pop, row = pop;
 	long irow = Stackel_getRowNumber (row, thee);
 	long icol = Stackel_getColumnNumber (column, thee);
-	if (your getMatrixStr == NULL)
+	if (! thy v_hasGetMatrixStr ())
 		Melder_throw (Thing_className (thee), " objects accept no [row, column] indexing for string cells.");
-	autostring result = Melder_wcsdup (your getMatrixStr (thee, irow, icol));
+	autostring result = Melder_wcsdup (thy v_getMatrixStr (irow, icol));
 	pushString (result.transfer());
 }
 static void do_objectLocation0 (long irow, long icol) {
 	Data thee = getObjectFromUniqueID (pop);
-	if (your getFunction0) {
-		pushNumber (your getFunction0 (thee));
-	} else if (your getFunction1) {
+	if (thy v_hasGetFunction0 ()) {
+		pushNumber (thy v_getFunction0 ());
+	} else if (thy v_hasGetFunction1 ()) {
 		Data me = theSource;
 		if (me == NULL)
 			Melder_throw ("No current object (we are not in a Formula command),\n"
 				"hence no implicit x value for this ", Thing_className (thee), " object.\n"
 				"Try using: object (id, x).");
-		if (our getX == NULL)
+		if (! my v_hasGetX ())
 			Melder_throw ("The current ", Thing_className (me),
 				" object gives no implicit x values,\nhence no implicit x value for this ",
 				Thing_className (thee), " object.\n"
 				"Try using: object (id, x).");
-		double x = our getX (me, icol);
-		pushNumber (your getFunction1 (thee, irow, x));
-	} else if (your getFunction2) {
+		double x = my v_getX (icol);
+		pushNumber (thy v_getFunction1 (irow, x));
+	} else if (thy v_hasGetFunction2 ()) {
 		Data me = theSource;
 		if (me == NULL)
 			Melder_throw ("No current object (we are not in a Formula command),\n"
 				"hence no implicit x or y values for this ", Thing_className (thee), " object.\n"
 				"Try using: object (id, x, y).");
-		if (our getX == NULL)
+		if (! my v_hasGetX ())
 			Melder_throw ("The current ", Thing_className (me), " object gives no implicit x values,\n"
 				"hence no implicit x value for this ", Thing_className (thee), " object.\n"
 				"Try using: object (id, x, y).");
-		double x = our getX (me, icol);
-		if (our getY == NULL)
+		double x = my v_getX (icol);
+		if (! my v_hasGetY ())
 			Melder_throw ("The current ", Thing_className (me), L" object gives no implicit y values,\n"
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using: object (id, y).");
-		double y = our getY (me, irow);
-		pushNumber (your getFunction2 (thee, x, y));
+		double y = my v_getY (irow);
+		pushNumber (thy v_getFunction2 (x, y));
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept no () values.");
 	}
 }
 static void do_funktie0 (long irow, long icol) {
 	Data thee = parse [programPointer]. content.object;
-	if (your getFunction0) {
-		pushNumber (your getFunction0 (thee));
-	} else if (your getFunction1) {
+	if (thy v_hasGetFunction0 ()) {
+		pushNumber (thy v_getFunction0 ());
+	} else if (thy v_hasGetFunction1 ()) {
 		Data me = theSource;
 		if (me == NULL)
 			Melder_throw ("No current object (we are not in a Formula command),\n"
 				"hence no implicit x value for this ", Thing_className (thee), " object.\n"
 				"Try using the (x) argument explicitly.");
-		if (our getX == NULL)
+		if (! my v_hasGetX ())
 			Melder_throw ("The current ", Thing_className (me),
 				" object gives no implicit x values,\nhence no implicit x value for this ",
 				Thing_className (thee), " object.\n"
 				"Try using the (x) argument explicitly.");
-		double x = our getX (me, icol);
-		pushNumber (your getFunction1 (thee, irow, x));
-	} else if (your getFunction2) {
+		double x = my v_getX (icol);
+		pushNumber (thy v_getFunction1 (irow, x));
+	} else if (thy v_hasGetFunction2 ()) {
 		Data me = theSource;
 		if (me == NULL)
 			Melder_throw ("No current object (we are not in a Formula command),\n"
 				"hence no implicit x or y values for this ", Thing_className (thee), " object.\n"
 				"Try using both (x, y) arguments explicitly.");
-		if (our getX == NULL)
+		if (! my v_hasGetX ())
 			Melder_throw ("The current ", Thing_className (me), " object gives no implicit x values,\n"
 				"hence no implicit x value for this ", Thing_className (thee), " object.\n"
 				"Try using both (x, y) arguments explicitly.");
-		double x = our getX (me, icol);
-		if (our getY == NULL)
+		double x = my v_getX (icol);
+		if (! my v_hasGetY ())
 			Melder_throw ("The current ", Thing_className (me), " object gives no implicit y values,\n"
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using the (y) argument explicitly.");
-		double y = our getY (me, irow);
-		pushNumber (your getFunction2 (thee, x, y));
+		double y = my v_getY (irow);
+		pushNumber (thy v_getFunction2 (x, y));
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept no () values.");
 	}
@@ -4020,14 +3973,14 @@ static void do_selfFunktie1 (long irow) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
 		if (me == NULL) Melder_throw ("The name \"self\" is restricted to formulas for objects.");
-		if (our getFunction1) {
-			pushNumber (our getFunction1 (me, irow, x->content.number));
-		} else if (our getFunction2) {
-			if (our getY == NULL)
+		if (my v_hasGetFunction1 ()) {
+			pushNumber (my v_getFunction1 (irow, x->content.number));
+		} else if (my v_hasGetFunction2 ()) {
+			if (! my v_hasGetY ())
 				Melder_throw ("The current ", Thing_className (me), " object (self) accepts no implicit y values.\n"
 					"Try using both (x, y) arguments instead.");
-			double y = our getY (me, irow);
-			pushNumber (our getFunction2 (me, x->content.number, y));
+			double y = my v_getY (irow);
+			pushNumber (my v_getFunction2 (x->content.number, y));
 		} else {
 			Melder_throw (Thing_className (me), " objects like \"self\" accept no (x) values.");
 		}
@@ -4039,20 +3992,20 @@ static void do_objectLocation1 (long irow) {
 	Stackel x = pop;
 	Data thee = getObjectFromUniqueID (pop);
 	if (x->which == Stackel_NUMBER) {
-		if (your getFunction1) {
-			pushNumber (your getFunction1 (thee, irow, x->content.number));
-		} else if (your getFunction2) {
+		if (thy v_hasGetFunction1 ()) {
+			pushNumber (thy v_getFunction1 (irow, x->content.number));
+		} else if (thy v_hasGetFunction2 ()) {
 			Data me = theSource;
 			if (me == NULL)
 				Melder_throw ("No current object (we are not in a Formula command),\n"
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using: object (id, x, y).");
-			if (our getY == NULL)
+			if (! my v_hasGetY ())
 				Melder_throw ("The current ", Thing_className (me), " object gives no implicit y values,\n"
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using: object (id, x, y).");
-			double y = our getY (me, irow);
-			pushNumber (your getFunction2 (thee, x->content.number, y));
+			double y = my v_getY (irow);
+			pushNumber (thy v_getFunction2 (x->content.number, y));
 		} else {
 			Melder_throw (Thing_className (thee), " objects accept no (x) values.");
 		}
@@ -4064,20 +4017,20 @@ static void do_funktie1 (long irow) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		if (your getFunction1) {
-			pushNumber (your getFunction1 (thee, irow, x->content.number));
-		} else if (your getFunction2) {
+		if (thy v_hasGetFunction1 ()) {
+			pushNumber (thy v_getFunction1 (irow, x->content.number));
+		} else if (thy v_hasGetFunction2 ()) {
 			Data me = theSource;
 			if (me == NULL)
 				Melder_throw ("No current object (we are not in a Formula command),\n"
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using both (x, y) arguments instead.");
-			if (our getY == NULL)
+			if (! my v_hasGetY ())
 				Melder_throw ("The current ", Thing_className (me), " object gives no implicit y values,\n"
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using both (x, y) arguments instead.");
-			double y = our getY (me, irow);
-			pushNumber (your getFunction2 (thee, x->content.number, y));
+			double y = my v_getY (irow);
+			pushNumber (thy v_getFunction2 (x->content.number, y));
 		} else {
 			Melder_throw (Thing_className (thee), " objects accept no (x) values.");
 		}
@@ -4090,9 +4043,9 @@ static void do_selfFunktie2 (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (me == NULL) Melder_throw ("The name \"self\" is restricted to formulas for objects.");
-		if (our getFunction2 == NULL)
+		if (! my v_hasGetFunction2 ())
 			Melder_throw (Thing_className (me), " objects like \"self\" accept no (x, y) values.");
-		pushNumber (our getFunction2 (me, x->content.number, y->content.number));
+		pushNumber (my v_getFunction2 (x->content.number, y->content.number));
 	} else {
 		Melder_throw (Thing_className (me), " objects accept only numeric x values.");
 	}
@@ -4101,9 +4054,9 @@ static void do_objectLocation2 (void) {
 	Stackel y = pop, x = pop;
 	Data thee = getObjectFromUniqueID (pop);
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		if (your getFunction2 == NULL)
+		if (! thy v_hasGetFunction2 ())
 			Melder_throw (Thing_className (thee), " objects accept no (x, y) values.");
-		pushNumber (your getFunction2 (thee, x->content.number, y->content.number));
+		pushNumber (thy v_getFunction2 (x->content.number, y->content.number));
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept only numeric x values.");
 	}
@@ -4112,9 +4065,9 @@ static void do_funktie2 (void) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		if (your getFunction2 == NULL)
+		if (! thy v_hasGetFunction2 ())
 			Melder_throw (Thing_className (thee), " objects accept no (x, y) values.");
-		pushNumber (your getFunction2 (thee, x->content.number, y->content.number));
+		pushNumber (thy v_getFunction2 (x->content.number, y->content.number));
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept only numeric x values.");
 	}
@@ -4123,7 +4076,7 @@ static void do_rowStr (void) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel row = pop;
 	long irow = Stackel_getRowNumber (row, thee);
-	autostring result = Melder_wcsdup (your getRowStr (thee, irow));
+	autostring result = Melder_wcsdup (thy v_getRowStr (irow));
 	if (result.peek() == NULL)
 		Melder_throw ("Row index out of bounds.");
 	pushString (result.transfer());
@@ -4132,7 +4085,7 @@ static void do_colStr (void) {
 	Data thee = parse [programPointer]. content.object;
 	Stackel col = pop;
 	long icol = Stackel_getColumnNumber (col, thee);
-	autostring result = Melder_wcsdup (your getColStr (thee, icol));
+	autostring result = Melder_wcsdup (thy v_getColStr (icol));
 	if (result.peek() == NULL)
 		Melder_throw ("Column index out of bounds.");
 	pushString (result.transfer());
@@ -4169,12 +4122,12 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case COL_: { pushNumber (col);
 } break; case X_: {
 	Data me = theSource;
-	if (our getX == NULL) Melder_throw ("No values for \"x\" for this object.");
-	pushNumber (our getX (me, col));
+	if (! my v_hasGetX ()) Melder_throw ("No values for \"x\" for this object.");
+	pushNumber (my v_getX (col));
 } break; case Y_: {
 	Data me = theSource;
-	if (our getY == NULL) Melder_throw ("No values for \"y\" for this object.");
-	pushNumber (our getY (me, row));
+	if (! my v_hasGetY ()) Melder_throw ("No values for \"y\" for this object.");
+	pushNumber (my v_getY (row));
 } break; case NOT_: { do_not ();
 } break; case EQ_: { do_eq ();
 } break; case NE_: { do_ne ();

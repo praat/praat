@@ -24,6 +24,7 @@
 
 Thing_define (StringsEditor, Editor) {
 	// new data:
+	public:
 		GuiObject list, text;
 	// overridden methods:
 		virtual void v_destroy ();

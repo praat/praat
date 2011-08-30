@@ -22,7 +22,6 @@
 #include "Regression.h"
 
 #include "LogisticRegression_def.h"
-#define LogisticRegression__methods(klas)  Regression__methods(klas)
 oo_CLASS_CREATE (LogisticRegression, Regression);
 
 LogisticRegression LogisticRegression_create (const wchar *dependent1, const wchar *dependent2);

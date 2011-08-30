@@ -22,11 +22,12 @@
 oo_DEFINE_CLASS (Strings, Data)
 
 	oo_LONG (numberOfStrings)
-	oo_STRING_VECTOR (strings, my numberOfStrings)
+	oo_STRING_VECTOR (strings, numberOfStrings)
 
 	#if oo_DECLARING
 		// overridden methods:
-			void v_info ();
+			virtual void v_info ();
+			virtual bool v_hasGetVectorStr () { return true; }   virtual const wchar * v_getVectorStr (long icol);
 	#endif
 
 oo_END_CLASS (Strings)

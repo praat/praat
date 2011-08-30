@@ -128,19 +128,7 @@ static double HMM_and_HMM_getCrossEntropy_asym (HMM me, HMM thee, long observati
 
 /**************** HMM_Observation ******************************/
 
-class_methods (HMM_Observation, Data)
-{
-	class_method_local (HMM_Observation, destroy)
-	class_method_local (HMM_Observation, copy)
-	class_method_local (HMM_Observation, equal)
-	class_method_local (HMM_Observation, canWriteAsEncoding)
-	class_method_local (HMM_Observation, writeText)
-	class_method_local (HMM_Observation, readText)
-	class_method_local (HMM_Observation, writeBinary)
-	class_method_local (HMM_Observation, readBinary)
-	class_method_local (HMM_Observation, description)
-	class_methods_end
-}
+Thing_implement (HMM_Observation, Data, 0);
 
 void HMM_Observation_init (I, const wchar_t *label, long numberOfComponents, long dimension, long storage)
 {
@@ -210,6 +198,8 @@ long StringsIndex_getLongestSequence (StringsIndex me, long index, long *pos)
 
 /**************** HMM_State ******************************/
 
+Thing_implement (HMM_State, Data, 0);
+
 void HMM_State_init (I, const wchar_t *label)
 {
 		iam (HMM_State);
@@ -225,20 +215,6 @@ HMM_State HMM_State_create (const wchar_t *label)
 	} catch (MelderError) { Melder_throw ("HMM_State not created."); }
 }
 
-class_methods (HMM_State, Data)
-{
-	class_method_local (HMM_State, destroy)
-	class_method_local (HMM_State, copy)
-	class_method_local (HMM_State, equal)
-	class_method_local (HMM_State, canWriteAsEncoding)
-	class_method_local (HMM_State, writeText)
-	class_method_local (HMM_State, readText)
-	class_method_local (HMM_State, writeBinary)
-	class_method_local (HMM_State, readBinary)
-	class_method_local (HMM_State, description)
-	class_methods_end
-}
-
 void HMM_State_setLabel (HMM_State me, wchar_t *label)
 {
 	Melder_free (my label);
@@ -247,21 +223,16 @@ void HMM_State_setLabel (HMM_State me, wchar_t *label)
 
 /**************** HMM_BaumWelch ******************************/
 
-static void classHMM_BaumWelch_destroy (I)
-{
-		iam (HMM_BaumWelch);
-		for (long it = 1; it <= my numberOfTimes; it++) NUMmatrix_free (my xi[it], 1, 1);
-		NUMvector_free (my xi, 1);
-		NUMvector_free (my scale, 1);
-		NUMmatrix_free (my beta, 1, 1);
-		NUMmatrix_free (my alpha, 1, 1);
-		NUMmatrix_free (my gamma, 1, 1);
-}
+Thing_implement (HMM_BaumWelch, Data, 0);
 
-class_methods (HMM_BaumWelch, Data)
+void structHMM_BaumWelch :: v_destroy ()
 {
-	class_method_local (HMM_BaumWelch, destroy)
-	class_methods_end
+		for (long it = 1; it <= numberOfTimes; it++) NUMmatrix_free (xi[it], 1, 1);
+		NUMvector_free (xi, 1);
+		NUMvector_free (scale, 1);
+		NUMmatrix_free (beta, 1, 1);
+		NUMmatrix_free (alpha, 1, 1);
+		NUMmatrix_free (gamma, 1, 1);
 }
 
 HMM_BaumWelch HMM_BaumWelch_create (long nstates, long nsymbols, long capacity)
@@ -308,19 +279,7 @@ void HMM_BaumWelch_getGamma (HMM_BaumWelch me)
 
 /**************** HMM_Viterbi ******************************/
 
-class_methods (HMM_Viterbi, Data)
-{
-	class_method_local (HMM_Viterbi, destroy)
-	class_method_local (HMM_Viterbi, copy)
-	class_method_local (HMM_Viterbi, equal)
-	class_method_local (HMM_Viterbi, canWriteAsEncoding)
-	class_method_local (HMM_Viterbi, writeText)
-	class_method_local (HMM_Viterbi, readText)
-	class_method_local (HMM_Viterbi, writeBinary)
-	class_method_local (HMM_Viterbi, readBinary)
-	class_method_local (HMM_Viterbi, description)
-	class_methods_end
-}
+Thing_implement (HMM_Viterbi, Data, 0);
 
 HMM_Viterbi HMM_Viterbi_create (long nstates, long ntimes)
 {
@@ -337,10 +296,7 @@ HMM_Viterbi HMM_Viterbi_create (long nstates, long ntimes)
 
 /******************* HMM_ObservationSequence & HMM_StateSequence ***/
 
-class_methods (HMM_ObservationSequence, Table)
-{
-	class_methods_end
-}
+Thing_implement (HMM_ObservationSequence, Table, 0);
 
 HMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength)
 {
@@ -404,10 +360,7 @@ long HMM_and_HMM_ObservationSequence_getLongestSequence (HMM me, HMM_Observation
 		return 1;
 }
 
-class_methods (HMM_ObservationSequences, Collection)
-{
-	class_methods_end
-}
+Thing_implement (HMM_ObservationSequences, Collection, 0);
 
 HMM_ObservationSequences HMM_ObservationSequences_create (void)
 {
@@ -429,10 +382,7 @@ long HMM_ObservationSequences_getLongestSequence (HMM_ObservationSequences me)
 	return longest;
 }
 
-class_methods (HMM_StateSequence, Strings)
-{
-	class_methods_end
-}
+Thing_implement (HMM_StateSequence, Strings, 0);
 
 HMM_StateSequence HMM_StateSequence_create (long numberOfItems)
 {
@@ -447,7 +397,7 @@ Strings HMM_StateSequence_to_Strings (HMM_StateSequence me)
 {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		((Strings_Table) thy methods) -> copy (me, thee.peek());
+		my structStrings :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Strings created."); }
 }
@@ -455,37 +405,23 @@ Strings HMM_StateSequence_to_Strings (HMM_StateSequence me)
 
 /**************** HMM ******************************/
 
-static void classHMM_info (I)
-{
-	iam (HMM);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (my numberOfStates));
-	for (long i = 1; i <= my numberOfStates; i++)
-	{
-		HMM_State hmms = (HMM_State) my states -> item[i];
-		MelderInfo_writeLine2 (L"  ", hmms -> label);
-	}
-	MelderInfo_writeLine2 (L"Number of symbols: ", Melder_integer (my numberOfObservationSymbols));
-	for (long i = 1; i <= my numberOfObservationSymbols; i++)
-	{
-		HMM_Observation hmms = (HMM_Observation) my observationSymbols -> item[i];
-		MelderInfo_writeLine2 (L"  ", hmms -> label);
-	}
-}
+Thing_implement (HMM, Data, 0);
 
-class_methods (HMM, Data)
+void structHMM :: v_info ()
 {
-	class_method_local (HMM, info)
-	class_method_local (HMM, destroy)
-	class_method_local (HMM, copy)
-	class_method_local (HMM, equal)
-	class_method_local (HMM, canWriteAsEncoding)
-	class_method_local (HMM, writeText)
-	class_method_local (HMM, readText)
-	class_method_local (HMM, writeBinary)
-	class_method_local (HMM, readBinary)
-	class_method_local (HMM, description)
-	class_methods_end
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (numberOfStates));
+	for (long i = 1; i <= numberOfStates; i++)
+	{
+		HMM_State hmms = (HMM_State) states -> item[i];
+		MelderInfo_writeLine2 (L"  ", hmms -> label);
+	}
+	MelderInfo_writeLine2 (L"Number of symbols: ", Melder_integer (numberOfObservationSymbols));
+	for (long i = 1; i <= numberOfObservationSymbols; i++)
+	{
+		HMM_Observation hmms = (HMM_Observation) observationSymbols -> item[i];
+		MelderInfo_writeLine2 (L"  ", hmms -> label);
+	}
 }
 
 static void HMM_init (HMM me, long numberOfStates, long numberOfObservationSymbols, int leftToRight)

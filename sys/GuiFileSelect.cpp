@@ -40,12 +40,12 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
 			for (GSList *element = infileNames_list; element != NULL; element = g_slist_next (element)) {
 				char *infileName_utf8 = (char *) element -> data;
-				SortedSetOfString_add (me.peek(), Melder_peekUtf8ToWcs (infileName_utf8)); therror
+				my addString (Melder_peekUtf8ToWcs (infileName_utf8)); therror
 				g_free (infileName_utf8);
 			}
 			g_slist_free (infileNames_list);
 		}
-		gtk_widget_destroy (dialog);
+		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
 		(void) parent;
 		OSStatus err;
@@ -71,7 +71,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 					structMelderFile file;
 					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 						Melder_machToFile (& machFile, & file);
-					SortedSetOfString_add (me.peek(), Melder_fileToPath (& file)); therror
+					my addString (Melder_fileToPath (& file)); therror
 				}
 				NavDisposeReply (& reply);
 			}
@@ -112,7 +112,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 				/*
 				 * The user selected one file.
 				 */
-				SortedSetOfString_add (me.peek(), fullFileName); therror
+				my addString (fullFileName); therror
 			} else {
 				/*
 				 * The user selected multiple files.
@@ -123,7 +123,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 				for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
 					structMelderFile file;
 					MelderDir_getFile (& dir, p, & file);
-					SortedSetOfString_add (me.peek(), Melder_fileToPath (& file)); therror
+					my addString (Melder_fileToPath (& file)); therror
 				}
 			}
 		}
@@ -149,7 +149,7 @@ wchar * GuiFileSelect_getOutfileName (GuiObject parent, const wchar *title, cons
 			g_free (outfileName_utf8);
 			Melder_pathToFile (outfileName, & file);
 		}
-		gtk_widget_destroy (dialog);
+		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
 		(void) parent;
 		const wchar *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
@@ -240,7 +240,7 @@ wchar * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar *title) {
 			g_free (directoryName_utf8);
 			Melder_pathToFile (directoryName, & file);
 		}
-		gtk_widget_destroy (dialog);
+		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
 		(void) parent;
 		OSStatus err;

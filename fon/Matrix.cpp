@@ -17,25 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/04/03 Matrix_getValueAtXY
- * pb 2003/06/19 Eigen
- * pb 2003/08/28 Matrix_writeToHeaderlessSpreadsheetFile
- * pb 2005/06/16 units
- * pb 2007/03/18 moved table stuff here
- * pb 2007/05/26 wchar
- * pb 2007/06/21 tex
- * pb 2007/10/01 can write as encoding
- * pb 2008/01/19 double
- * pb 2008/04/30 new Formula API
- * pb 2009/01/18 Interpreter argument to formula
- * pb 2009/11/23 support for drawing with reversed axes
- * pb 2011/01/10 Matrix_formula_part
- * pb 2011/06/19 C++
- * pb 2011/07/14 C++
- */
-
 #include "Matrix.h"
 #include "NUM2.h"
 #include "Formula.h"
@@ -58,6 +39,8 @@
 #include "oo_DESCRIPTION.h"
 #include "Matrix_def.h"
 
+Thing_implement (Matrix, Sampled, 2);
+
 void structMatrix :: v_info () {
 	structData :: v_info ();
 	double minimum = 0.0, maximum = 0.0;
@@ -76,101 +59,62 @@ void structMatrix :: v_info () {
 	MelderInfo_writeLine2 (L"Maximum value: ", Melder_single (maximum));
 }
 
-static void readText (I, MelderReadText text) {
-	iam (Matrix);
+void structMatrix :: v_readText (MelderReadText text) {
 	if (Thing_version < 0) {
-		my xmin = texgetr8 (text);
-		my xmax = texgetr8 (text);
-		my ymin = texgetr8 (text);
-		my ymax = texgetr8 (text);
-		my nx = texgeti4 (text);
-		my ny = texgeti4 (text);
-		my dx = texgetr8 (text);
-		my dy = texgetr8 (text);
-		my x1 = texgetr8 (text);
-		my y1 = texgetr8 (text);
+		xmin = texgetr8 (text);
+		xmax = texgetr8 (text);
+		ymin = texgetr8 (text);
+		ymax = texgetr8 (text);
+		nx = texgeti4 (text);
+		ny = texgeti4 (text);
+		dx = texgetr8 (text);
+		dy = texgetr8 (text);
+		x1 = texgetr8 (text);
+		y1 = texgetr8 (text);
 	} else {
-		inherited (Matrix) readText (me, text);
-		my ymin = texgetr8 (text);
-		my ymax = texgetr8 (text);
-		my ny = texgeti4 (text);
-		my dy = texgetr8 (text);
-		my y1 = texgetr8 (text);
+		Matrix_Parent :: v_readText (text);
+		ymin = texgetr8 (text);
+		ymax = texgetr8 (text);
+		ny = texgeti4 (text);
+		dy = texgetr8 (text);
+		y1 = texgetr8 (text);
 	}
-	if (my xmin > my xmax)
+	if (xmin > xmax)
 		Melder_throw ("xmin should be less than or equal to xmax.");
-	if (my ymin > my ymax)
+	if (ymin > ymax)
 		Melder_throw ("ymin should be less than or equal to ymax.");
-	if (my nx < 1)
+	if (nx < 1)
 		Melder_throw ("nx should be at least 1.");
-	if (my ny < 1)
+	if (ny < 1)
 		Melder_throw ("ny should be at least 1.");
-	if (my dx <= 0.0)
+	if (dx <= 0.0)
 		Melder_throw ("dx should be greater than 0.0.");
-	if (my dy <= 0.0)
+	if (dy <= 0.0)
 		Melder_throw ("dy should be greater than 0.0.");
-	my z = NUMdmatrix_readText_r8 (1, my ny, 1, my nx, text, "z"); therror
+	z = NUMdmatrix_readText_r8 (1, ny, 1, nx, text, "z"); therror
 }
 
-#undef our
-#define our ((Matrix_Table) my methods) ->
-
-static double getValueAtSample (I, long isamp, long ilevel, int unit) {
-	iam (Matrix);
-	double value = my z [ilevel] [isamp];
-	return NUMdefined (value) ? our convertStandardToSpecialUnit (me, value, ilevel, unit) : NUMundefined;
+double structMatrix :: v_getValueAtSample (long isamp, long ilevel, int unit) {
+	double value = z [ilevel] [isamp];
+	return NUMdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined;
 }
 
-static double getNrow (I) { iam (Matrix); return my ny; }
-static double getNcol (I) { iam (Matrix); return my nx; }
-static double getYmin (I) { iam (Matrix); return my ymin; }
-static double getYmax (I) { iam (Matrix); return my ymax; }
-static double getNy (I) { iam (Matrix); return my ny; }
-static double getDy (I) { iam (Matrix); return my dy; }
-static double getY (I, long iy) { iam (Matrix); return my y1 + (iy - 1) * my dy; }
-
-static double getMatrix (I, long irow, long icol) {
-	iam (Matrix);
-	if (irow < 1 || irow > my ny) return 0.0;
-	if (icol < 1 || icol > my nx) return 0.0;
-	return my z [irow] [icol];
+double structMatrix :: v_getMatrix (long irow, long icol) {
+	if (irow < 1 || irow > ny) return 0.0;
+	if (icol < 1 || icol > nx) return 0.0;
+	return z [irow] [icol];
 }
 
-static double getFunction2 (I, double x, double y) {
-	iam (Matrix);
-	double rrow = (y - my y1) / my dy + 1.0;
-	double rcol = (x - my x1) / my dx + 1.0;
+double structMatrix :: v_getFunction2 (double x, double y) {
+	double rrow = (y - y1) / dy + 1.0;
+	double rcol = (x - x1) / dx + 1.0;
 	long irow = floor (rrow), icol = floor (rcol);
 	double drow = rrow - irow, dcol = rcol - icol;
-	double z1 = irow < 1 || irow > my ny || icol < 1 || icol > my nx ? 0.0 : my z [irow] [icol];
-	double z2 = irow < 0 || irow >= my ny || icol < 1 || icol > my nx ? 0.0 : my z [irow + 1] [icol];
-	double z3 = irow < 1 || irow > my ny || icol < 0 || icol >= my nx ? 0.0 : my z [irow] [icol + 1];
-	double z4 = irow < 0 || irow >= my ny || icol < 0 || icol >= my nx ? 0.0 : my z [irow + 1] [icol + 1];
+	double z1 = irow < 1 || irow > ny || icol < 1 || icol > nx ? 0.0 : z [irow] [icol];
+	double z2 = irow < 0 || irow >= ny || icol < 1 || icol > nx ? 0.0 : z [irow + 1] [icol];
+	double z3 = irow < 1 || irow > ny || icol < 0 || icol >= nx ? 0.0 : z [irow] [icol + 1];
+	double z4 = irow < 0 || irow >= ny || icol < 0 || icol >= nx ? 0.0 : z [irow + 1] [icol + 1];
 	return (1.0 - drow) * (1.0 - dcol) * z1 + drow * (1.0 - dcol) * z2 + (1.0 - drow) * dcol * z3 + drow * dcol * z4;
-}
-
-class_methods (Matrix, Sampled) {
-	us -> version = 2;
-	class_method_local (Matrix, destroy)
-	class_method_local (Matrix, description)
-	class_method_local (Matrix, copy)
-	class_method_local (Matrix, equal)
-	class_method_local (Matrix, canWriteAsEncoding)
-	class_method_local (Matrix, writeText)
-	class_method (readText)
-	class_method_local (Matrix, writeBinary)
-	class_method_local (Matrix, readBinary)
-	class_method (getValueAtSample)
-	class_method (getNrow)
-	class_method (getNcol)
-	class_method (getYmin)
-	class_method (getYmax)
-	class_method (getNy)
-	class_method (getDy)
-	class_method (getY)
-	class_method (getMatrix)
-	class_method (getFunction2)
-	class_methods_end
 }
 
 void Matrix_init
@@ -541,7 +485,7 @@ Matrix Matrix_readAP (MelderFile file) {
 	}
 }
 
-Matrix Matrix_appendRows (Matrix me, Matrix thee, Matrix_Table klas) {
+Matrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas) {
 	try {
 		autoMatrix him = (Matrix) _Thing_new (klas);
 		Matrix_init (him.peek(), my xmin < thy xmin ? my xmin : thy xmin,
@@ -629,7 +573,7 @@ void Matrix_eigen (I, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
 
 		autoEigen eigen = Thing_new (Eigen);
 		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx); therror
-		autoMatrix eigenvectors = (Matrix) Data_copy (me); therror
+		autoMatrix eigenvectors = Data_copy (me);
 		autoMatrix eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1);
 		for (long i = 1; i <= my nx; i ++) {
 			eigenvalues -> z [i] [1] = eigen -> eigenvalues [i];
@@ -648,8 +592,8 @@ Matrix Matrix_power (I, long power) {
 	try {
 		if (my nx != my ny)
 			Melder_throw ("Matrix not square.");
-		autoMatrix thee = (Matrix) Data_copy (me);
-		autoMatrix him = (Matrix) Data_copy (me);
+		autoMatrix thee = Data_copy (me);
+		autoMatrix him = Data_copy (me);
 		for (long ipow = 2; ipow <= power; ipow ++) {
 			double **tmp = his z; his z = thy z; thy z = tmp;
 			for (long irow = 1; irow <= my ny; irow ++) {

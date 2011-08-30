@@ -74,8 +74,8 @@ static void draw_SoundDeepen_impulse (Graphics g) {
 	forget (s);
 }
 
-extern "C" void manual_sound_init (ManPages me);
-extern "C" void manual_sound_init (ManPages me) {
+void manual_sound_init (ManPages me);
+void manual_sound_init (ManPages me) {
 
 MAN_BEGIN (L"Combine to stereo", L"ppgb", 20070129)
 INTRO (L"To combine two mono @Sound objects into one single stereo Sound, "

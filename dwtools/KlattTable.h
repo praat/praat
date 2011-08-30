@@ -28,15 +28,8 @@
 #include "Sound.h"
 #include "Table.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (KlattTable);
-struct structKlattTable : public structTable {
+Thing_define (KlattTable, Table) {
 };
-#define KlattTable__methods(klas) Table__methods(klas)
-Thing_declare2cpp (KlattTable, Table);
 
 KlattTable KlattTable_create (double frameDuration, double totalDuration);
 /*
@@ -112,9 +105,5 @@ KlattTable Table_to_KlattTable (Table me);
 Table KlattTable_to_Table (KlattTable me);
 
 KlattTable KlattTable_readFromRawTextFile (MelderFile fs);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _KlattTable_h_ */

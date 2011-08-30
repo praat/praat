@@ -19,20 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20030526 GPL header
- djmw 20110306 Latest modification.
-*/
-
 #include "Matrix.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "LPC_def.h"
-#define LPC__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (LPC, Sampled);
 
 /*
@@ -59,9 +49,5 @@ Matrix LPC_to_Matrix (LPC me);
 /******************* Frames ************************************************/
 
 void LPC_Frame_init (LPC_Frame me, int nCoefficients);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LPC_h_ */

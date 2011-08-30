@@ -19,19 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20030617 Creation
- djmw 20110306 Latest modification.
-*/
-
 #include "Sampled.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Tube_def.h"
-#define Tube__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Tube, Sampled);
 
 /*
@@ -49,11 +39,8 @@ void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee);
 void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
 
-Thing_declare1cpp (Area);
-struct structArea : public structTube {
+Thing_define (Area, Tube) {
 };
-#define Area__methods(klas) Tube__methods(klas)
-Thing_declare2cpp (Area, Tube);
 
 /*
 	Areas as a function of time.
@@ -66,11 +53,8 @@ void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1
 Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength);
 
-Thing_declare1cpp (RC);
-struct structRC : public structTube {
+Thing_define (RC, Tube) {
 };
-#define RC__methods(klas) Tube__methods(klas)
-Thing_declare2cpp (RC, Tube);
 
 /*
 	Reflection Coefficients as a function of time.
@@ -83,9 +67,5 @@ void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 
 RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnCoefficients, double defaultLength);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif // _Tube_h_

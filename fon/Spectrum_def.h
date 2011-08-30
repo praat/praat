@@ -1,6 +1,6 @@
 /* Spectrum_def.h
  *
- * Copyright (C) 2002 Paul Boersma
+ * Copyright (C) 2002-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/05/22
- * pb 2002/07/16 GPL
- */
-
 
 #define ooSTRUCT Spectrum
 oo_DEFINE_CLASS (Spectrum, Matrix)
 
 	#if oo_READING
 		if (localVersion < 1) {
-			long i;
-			for (i = 1; i <= my nx; i ++)
-				my z [2] [i] = - my z [2] [i];
+			for (long i = 1; i <= nx; i ++)
+				z [2] [i] = - z [2] [i];
 		}
+	#endif
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+			virtual int v_domainQuantity () { return MelderQuantity_FREQUENCY_HERTZ; }
+			virtual double v_getValueAtSample (long isamp, long which, int units);
 	#endif
 
 oo_END_CLASS (Spectrum)

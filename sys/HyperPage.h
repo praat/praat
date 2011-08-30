@@ -23,17 +23,17 @@
 #include "Collection.h"
 #include "Graphics.h"
 
-Thing_declare1cpp (HyperLink);
-struct structHyperLink : public structData {
-	double x1DC, x2DC, y1DC, y2DC;
+Thing_define (HyperLink, Data) {
+	// new data:
+	public:
+		double x1DC, x2DC, y1DC, y2DC;
 };
-#define HyperLink__methods(klas) Data__methods(klas)
-Thing_declare2cpp (HyperLink, Data);
 
 HyperLink HyperLink_create (const wchar *name, double x1, double x2, double y1, double y2);
 
 Thing_define (HyperPage, Editor) {
 	// data:
+	public:
 		GuiObject drawingArea, verticalScrollBar;
 		Graphics g, ps;
 		double x, y, rightMargin, previousBottomSpacing;
@@ -54,12 +54,14 @@ Thing_define (HyperPage, Editor) {
 		bool scriptErrorHasBeenNotified;
 		structMelderDir rootDirectory;
 	// overridden methods:
+	protected:
 		virtual void v_destroy ();
 		virtual bool v_editable () { return false; }
 		virtual void v_createMenus ();
 		virtual void v_createChildren ();
 		virtual void v_dataChanged ();
 	// new methods:
+	public:
 		virtual void v_draw () { }
 		virtual long v_getNumberOfPages () { return 0; }
 		virtual long v_getCurrentPageNumber () { return 0; }

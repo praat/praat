@@ -24,6 +24,7 @@
 
 Thing_define (RunnerMFC, Editor) {
 	// new data:
+	public:
 		GuiObject drawingArea;
 		Ordered experiments;
 		long iexperiment;

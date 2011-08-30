@@ -101,8 +101,8 @@ static void draw_Infant_swtI (Graphics g) {
 	forget (ot);
 }
 
-extern "C" void manual_gram_init (ManPages me);
-extern "C" void manual_gram_init (ManPages me) {
+void manual_gram_init (ManPages me);
+void manual_gram_init (ManPages me) {
 
 MAN_BEGIN (L"constraints", L"ppgb", 20021105)
 INTRO (L"In @@Optimality Theory@, the `rules' that an output form has to satisfy. Since there can be many constraints "
@@ -424,13 +424,13 @@ NORMAL (L"However, in the remaining part of this tutorial, we will stick with a 
 	"the differences between their ranking values are in the vicinity of 10.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 2.5. Editing a grammar", L"ppgb", 20070725)
+MAN_BEGIN (L"OT learning 2.5. Editing a grammar", L"ppgb", 20110808)
 NORMAL (L"In the N\\s{O}C\\s{ODA} example, the winning candidate for the input /pat/ was always [pa].")
 NORMAL (L"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lower than P\\s{ARSE}. "
 	"To achieve this even with zero noise, go to the editor and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
 	"(a spade symbol \\sp will mark the selected constraint), "
 	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut Command-E.")
-NORMAL (L"In the resulting dialog, we lower the ranking of the constraint from 100 to 80, and click OK. "
+NORMAL (L"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click OK. "
 	"This is what you will see in the editor:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (L"\t\\sp ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       1.000")
@@ -523,9 +523,9 @@ NORMAL (L"Besides printing the entire picture (with @@Print...@), you can save a
 	"otherwise, some part of your tableau may end up truncated.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 2.8. Asking for one output", L"ppgb", 20030916)
+MAN_BEGIN (L"OT learning 2.8. Asking for one output", L"ppgb", 20110808)
 NORMAL (L"To ask the grammar to produce a single output for a specified input form, "
-	"you can choose @@OTGrammar: Input to output...@. The dialog will ask you to provide "
+	"you can choose @@OTGrammar: Input to output...@. The command window will ask you to provide "
 	"an input form and the strength of the noise (the standard value is 2.0 again). "
 	"This will perform an evaluation and write the result into the Info window.")
 NORMAL (L"If you are viewing the grammar in the @OTGrammarEditor, you will see the disharmonies change, "
@@ -536,13 +536,13 @@ NORMAL (L"Since the editor shows more information than the Info window, "
 	"See the following page for some related but more useful commands.")
 MAN_END
 
-MAN_BEGIN (L"OT learning 2.9. Output distributions", L"ppgb", 20000202)
+MAN_BEGIN (L"OT learning 2.9. Output distributions", L"ppgb", 20110808)
 NORMAL (L"To ask the grammar to produce %many outputs for a specified input form, "
 	"and collect them in a @Strings object, "
 	"you select an @OTGrammar and choose @@OTGrammar: Input to outputs...|Input to outputs...@.")
 NORMAL (L"For example, select the object \"OTGrammar assimilation\" from our place assimilation example "
 	"(@@OT learning 2.6. Variable output|\\SS2.6@), and click ##Input to outputs...#. "
-	"In the resulting dialog, you specify 1000 trials, a noise strength of 2.0, and \"an+pa\" for the input form.")
+	"In the resulting command window, you specify 1000 trials, a noise strength of 2.0, and \"an+pa\" for the input form.")
 NORMAL (L"After you click OK, a @Strings object will appear in the list. "
 	"If you click Info, you will see that it contains 1000 strings. "
 	"If you click Inspect, you will see that most of the strings are \"ampa\", "
@@ -559,7 +559,7 @@ NORMAL (L"which means that our grammar, when fed with 1000 /an+pa/ inputs, produ
 ENTRY (L"Checking the distribution hypothesis")
 NORMAL (L"To see whether the guess of a 2.7 ranking difference is correct, we perform 1,000,000 trials instead of 1000. "
 	"The output distribution (if you have enough memory in your computer) becomes something like "
-	"(set the %Precision to 7 in the drawing dialog):")
+	"(set the %Precision to 7 in the #Draw command window):")
 LIST_ITEM (L"\tampa\t830080")
 LIST_ITEM (L"\tanpa\t169920")
 NORMAL (L"The expected values under the 80\\%  - 20\\%  distribution hypothesis are:")

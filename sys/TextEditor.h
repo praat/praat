@@ -22,10 +22,11 @@
 #include "Editor.h"
 
 Thing_define (TextEditor, Editor) {
-	// data:
+	// new data:
+	public:
 		structMelderFile file;
 		GuiObject textWidget;
-		Any openDialog, saveDialog, printDialog, findDialog;
+		UiForm openDialog, saveDialog, printDialog, findDialog;
 		int dirty, fontSize;
 		GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
 		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;

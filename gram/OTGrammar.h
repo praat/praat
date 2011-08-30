@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
-
 #include "Strings.h"
 #include "Graphics.h"
 #include "PairDistribution.h"
@@ -32,14 +28,10 @@
 #include "OTGrammar_enums.h"
 
 #include "OTGrammar_def.h"
-#define OTGrammar__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (OTGrammar, Data);
 
-Thing_declare1cpp (OTHistory);
-struct structOTHistory : public structTableOfReal {
+Thing_define (OTHistory, TableOfReal) {
 };
-#define OTHistory__methods(klas)  TableOfReal__methods(klas)
-Thing_declare2cpp (OTHistory, TableOfReal);
 
 void OTGrammar_sort (OTGrammar me);
 /* Low level: meant to maintain the invariant

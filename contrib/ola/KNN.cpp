@@ -35,6 +35,8 @@
 #include "KNN_def.h"
 #include "oo_EQUAL.h"
 #include "KNN_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "KNN_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "KNN_def.h"
 #include "oo_WRITE_BINARY.h"
@@ -47,6 +49,8 @@
 #include "KNN_def.h"
 
 
+Thing_implement (KNN, Data, 0);
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Praat specifics                                                                         //
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,19 +59,6 @@ void structKNN :: v_info ()
 {
     structData :: v_info ();
     MelderInfo_writeLine2 (L"Size of instancebase: ", Melder_integer (nInstances));
-}
-
-class_methods (KNN, Data)
-{
-	class_method_local (KNN, destroy)
-	class_method_local (KNN, copy)
-	class_method_local (KNN, equal)
-	class_method_local (KNN, writeText)
-	class_method_local (KNN, writeBinary)
-	class_method_local (KNN, readText)
-	class_method_local (KNN, readBinary)
-	class_method_local (KNN, description)
-	class_methods_end
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,7 +130,7 @@ int KNN_learn
 				/*
 				 * Create without change.
 				 */
-                autoPattern tinput = (Pattern) Matrix_appendRows (my input, p, (Matrix_Table) classPattern);
+                autoPattern tinput = (Pattern) Matrix_appendRows (my input, p, classPattern);
                 autoCategories toutput = (Categories) Collections_merge (my output, c);
 
 				/*
@@ -266,23 +257,23 @@ Categories KNN_classifyToCategories
  
     enum KNN_thread_status * error = (enum KNN_thread_status *) KNN_threadDistribution(KNN_classifyToCategoriesAux, (void **) input, nthreads);
     //void *error = KNN_classifyToCategoriesAux (input [0]);
-    for(int i = 0; i < nthreads; ++i)
-        free(input[i]);
+    for (int i = 0; i < nthreads; ++ i)
+        free (input [i]);
   
-    free(input);
-    if(error)           // Something went very wrong, you ought to inform the user!
+    free (input);
+    if (error)           // Something went very wrong, you ought to inform the user!
     {
-        free(error);
-        return(NULL);
+        free (error);
+        return NULL;
     }
 
-    if(output)
+    if (output)
     {
         for (long i = 1; i <= ps->ny; ++i)
-            Collection_addItem (output, Data_copy((my output)->item[outputindices[i]]));
+            Collection_addItem (output, Data_copy ((SimpleString) my output -> item [outputindices [i]]));
     }
 	NUMlvector_free (outputindices, 0);
-    return(output);
+    return output;
 }
 
 void * KNN_classifyToCategoriesAux
@@ -644,7 +635,7 @@ Categories KNN_classifyFold
 
     Categories output = Categories_create ();
 	for (long o = 0; o < noutputindices; o ++) {
-		Collection_addItem (output, Data_copy (my output -> item [outputindices [o]]));
+		Collection_addItem (output, Data_copy ((SimpleString) my output -> item [outputindices [o]]));
 	}
 	return output;
 }
@@ -1549,7 +1540,7 @@ void KNN_shuffleInstances
 	while (my nInstances)
 	{
 		long pick = (long) lround (NUMrandomUniform (1, my nInstances));
-		Collection_addItem (new_output.peek(), Data_copy (my output -> item [pick]));
+		Collection_addItem (new_output.peek(), Data_copy ((SimpleString) my output -> item [pick]));
 
 		for (long x = 1;x <= (my input)->nx; ++x)
 			new_input -> z [y] [x] = my input-> z [pick] [x];
@@ -1618,7 +1609,7 @@ Permutation KNN_SA_ToPermutation
                     0, 
                     params);
 
-    for(unsigned long i = 1; i <= my nInstances; ++i)
+    for (long i = 1; i <= my nInstances; ++i)
         result->p[i] = istruct->indices[i];
 
     KNN_SA_t_destroy(istruct);

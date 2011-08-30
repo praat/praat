@@ -31,92 +31,7 @@
 	#include "macport_off.h"
 #endif
 
-typedef struct {
-	unsigned char link, rightToLeft;
-	short style, size, baseline;
-	unsigned long code;
-	wchar_t kar;
-	double width;
-	union { long integer; const char *string; } font;
-	int cell, line, run;
-} _Graphics_widechar;
-
-Thing_declare1cpp (Graphics);
-struct structGraphics : public structThing {
-	/* Device constants. */
-	bool screen;
-		/* A boolean for whether we are a graphic screen (which may include a non-PostScript printer. */
-	bool postScript;
-		/* A boolean for whether we are a PostScript device. */
-	bool printer;
-		/* A boolean for whether we are a printer. */
-	bool metafile;
-		/* A boolean for whether we are a high-resolution metafile or clipboard. */
-	bool yIsZeroAtTheTop;
-		/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */
-	GuiObject drawingArea;
-		/* Also used as a boolean. */
-	int resolution;
-		/* Dots per inch. */
-	long x1DCmin, x2DCmax, y1DCmin, y2DCmax;
-		/* Maximum dimensions of the output device. */
-		/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */
-		/* The point (x1DCmin, y1DCmin) can be either in the top left */
-		/* or in the bottom left, depending on the yIsZeroAtTheTop flag. */
-		/* Device variables. */
-	long x1DC, x2DC, y1DC, y2DC;
-		/* Current dimensions of the output device, or: */
-		/* device coordinates of the viewport rectangle. */
-		/* x1DCmin <= x1DC < x2DC <= x2DCmax; */
-		/* y1DCmin <= y1DC < y2DC <= y2DCmax; */
-		/* Graphics_create_xxxxxx sets these coordinates to */
-		/* x1DCmin, x2DCmax, y1DCmin, and y2DCmax. */
-		/* They can be changed by Graphics_setWsViewport. */
-	double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
-		/* Normalized device coordinates of */
-		/* the device viewport rectangle. */
-		/* The point (x1wNDC, y1wNDC) is always in the bottom left.	*/
-		/* Graphics_create_xxxxxx sets these coordinates to */
-		/* 0.0, 1.0, 0.0, and 1.0. */
-		/* They can be changed by Graphics_setWsWindow. */
-	double x1NDC, x2NDC, y1NDC, y2NDC;
-		/* Normalized device coordinates of the user output viewport, */
-		/* which is a part of the device viewport rectangle. */
-		/* x1wNDC <= x1NDC < x2NDC <= x2wNDC; */
-		/* y1wNDC <= y1NDC < y2NDC <= y2wNDC; */
-		/* Graphics_create_xxxxxx sets these coordinates to */
-		/* 0.0, 1.0, 0.0, and 1.0. */
-		/* They can be changed by Graphics_setViewport. */
-	double x1WC, x2WC, y1WC, y2WC;
-		/* World coordinates of the user output viewport rectangle.	*/
-		/* They bear a relation to the "real" world, */
-		/* and are used in the drawing routines. */
-		/* Graphics_create_xxxxxx sets these coordinates to */
-		/* 0.0, 1.0, 0.0, and 1.0. */
-		/* They can be changed by Graphics_setWindow. */
-	double deltaX, deltaY, scaleX, scaleY;
-		/* Current coordinate transformation. */
-	/* Graphics state. */
-	int lineType;
-	Graphics_Colour colour;
-	double lineWidth, arrowSize;
-	int horizontalTextAlignment, verticalTextAlignment;
-	double textRotation, wrapWidth, secondIndent, textX, textY;
-	enum kGraphics_font font;
-	int fontSize, fontStyle;
-	int percentSignIsItalic, numberSignIsBold, circumflexIsSuperscript, underscoreIsSubscript;
-	int dollarSignIsCode, atSignIsLink;
-	bool recording, duringXor;
-	long irecord, nrecord;
-	double *record;
-	Graphics_Viewport outerViewport;   /* For Graphics_(un)setInner (). */
-	double horTick, vertTick;   /* For Graphics_mark(s)XXX (). */
-	double paperWidth, paperHeight;
-};
-#define Graphics__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (Graphics, Thing);
-
-int Graphics_init (I);
+void Graphics_init (Graphics me);
 /*
 	Postconditions:
 		my font == Graphics_FONT_HELVETICA;
@@ -128,33 +43,50 @@ int Graphics_init (I);
 #define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
 #define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 3)
 
-Thing_declare1cpp (GraphicsScreen);
-struct structGraphicsScreen : public structGraphics {
-	#if defined (UNIX)
-		GdkDisplay *display;
-		GdkDrawable *window;
-		GdkGC *gc;
-		cairo_t *cr;
-	#elif defined (_WIN32)
-		HWND window;
-		HDC dc;
-		COLORREF foregroundColour;
-		HPEN pen;
-		HBRUSH brush;
-		bool fatNonSolid;
-		bool useGdiplus;
-	#elif defined (macintosh)
-		GrafPtr macPort;
-		int macFont, macStyle;
-		int depth;
-		RGBColor macColour;
-		bool useQuartz;
-		CGContextRef macGraphicsContext;
-	#endif
+Thing_define (GraphicsScreen, Graphics) {
+	// new data:
+	public:
+		#if defined (UNIX)
+			GdkDisplay *d_display;
+			GdkDrawable *d_window;
+			GdkGC *d_gdkGraphicsContext;
+			cairo_t *d_cairoGraphicsContext;
+		#elif defined (_WIN32)
+			HWND d_winWindow;
+			HDC d_gdiGraphicsContext;
+			COLORREF d_winForegroundColour;
+			HPEN d_winPen;
+			HBRUSH d_winBrush;
+			bool d_fatNonSolid;
+			bool d_useGdiplus;
+		#elif defined (macintosh)
+			GrafPtr d_macPort;
+			int d_macFont, d_macStyle;
+			int d_depth;
+			RGBColor d_macColour;
+			bool d_useQuartz;
+			CGContextRef d_macGraphicsContext;
+		#endif
+	// overridden methods:
+		virtual void v_destroy ();
+		virtual void v_polyline (long numberOfPoints, long *xyDC, bool close);
+		virtual void v_fillArea (long numberOfPoints, long *xyDC);
+		virtual void v_rectangle (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_fillRectangle (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_circle (double xDC, double yDC, double rDC);
+		virtual void v_ellipse (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle);
+		virtual void v_fillCircle (long xDC, long yDC, long rDC);
+		virtual void v_fillEllipse (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_button (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_roundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r);
+		virtual void v_arrowHead (long xDC, long yDC, double angle);
+		virtual bool v_mouseStillDown ();
+		virtual void v_getMouseLocation (double *xWC, double *yWC);
+		virtual void v_flushWs ();
+		virtual void v_clearWs ();
+		virtual void v_updateWs ();
 };
-
-#define GraphicsScreen__methods(klas) Graphics__methods(klas)
-Thing_declare2cpp (GraphicsScreen, Graphics);
 
 #if defined (UNIX)
 	#define mac 0
@@ -173,19 +105,30 @@ Thing_declare2cpp (GraphicsScreen, Graphics);
 	#define pango 0
 #endif
 
-Thing_declare1cpp (GraphicsPostscript);
-struct structGraphicsPostscript : public structGraphics {
-	FILE *file;
-	int (*printf) (void *stream, const char *format, ...);
-	int languageLevel;
-	int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS;
-	double magnification;
-	char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC];
-	const char *lastFid;
-	int job, eps, pageNumber, lastSize;
+Thing_define (GraphicsPostscript, Graphics) {
+	// new data:
+	public:
+		FILE *d_file;
+		int (*d_printf) (void *stream, const char *format, ...);
+		int languageLevel;
+		int photocopyable, spotsDensity, spotsAngle, landscape, includeFonts, loadedXipa, useSilipaPS;
+		double magnification;
+		char *fontInfos [1 + kGraphics_font_DINGBATS] [1 + Graphics_BOLD_ITALIC];
+		const char *lastFid;
+		int job, eps, pageNumber, lastSize;
+	// overridden methods:
+		virtual void v_destroy ();
+		virtual void v_polyline (long numberOfPoints, long *xyDC, bool close);
+		virtual void v_fillArea (long numberOfPoints, long *xyDC);
+		virtual void v_rectangle (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_fillRectangle (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_circle (double xDC, double yDC, double rDC);
+		virtual void v_ellipse (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle);
+		virtual void v_fillCircle (long xDC, long yDC, long rDC);
+		virtual void v_fillEllipse (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_arrowHead (long xDC, long yDC, double angle);
 };
-#define GraphicsPostscript__methods(klas) Graphics__methods(klas)
-Thing_declare2cpp (GraphicsPostscript, Graphics);
 
 /* Opcodes for recording. */
 
@@ -216,11 +159,11 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 	/* 161 */ POLYLINE_CLOSED
 };
 
-void _Graphics_text_init (I);
-void _Graphics_fillRectangle (I, long x1DC, long x2DC, long y1DC, long y2DC);
-void _Graphics_setColour (I, Graphics_Colour colour);
-void _Graphics_setGrey (I, double grey);
-void _Graphics_colour_init (I);
+void _GraphicsScreen_text_init (GraphicsScreen me);
+void _Graphics_fillRectangle (Graphics me, long x1DC, long x2DC, long y1DC, long y2DC);
+void _Graphics_setColour (Graphics me, Graphics_Colour colour);
+void _Graphics_setGrey (Graphics me, double grey);
+void _Graphics_colour_init (Graphics me);
 bool _GraphicsMac_tryToInitializeAtsuiFonts (void);
 
 #ifdef macintosh

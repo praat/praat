@@ -46,6 +46,8 @@
 #include "oo_DESCRIPTION.h"
 #include "GaussianMixture_def.h"
 
+Thing_implement (GaussianMixture, Data, 0);
+
 const wchar_t *GaussianMixture_criterionText (int criterion)
 {
 	const wchar_t *criterionText[6] =  { L"(1/n)*LLH", L"(1/n)*MML", L"(1/n)*BIC", L"(1/n)*AIC", L"(1/n)*AICc", L"(1/n)*CD_LLH" };
@@ -150,33 +152,17 @@ static void GaussianMixture_addCovarianceFraction (GaussianMixture me, long im, 
 	}
 }
 
-static void classGaussianMixture_info (I)
+void structGaussianMixture :: v_info ()
 {
-	iam (GaussianMixture);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of components: ", Melder_integer (my numberOfComponents));
-	MelderInfo_writeLine2 (L"Dimension of component: ", Melder_integer (my dimension));
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of components: ", Melder_integer (numberOfComponents));
+	MelderInfo_writeLine2 (L"Dimension of component: ", Melder_integer (dimension));
 	MelderInfo_writeLine1 (L"Mixing probabilities:");
-	for (long im = 1; im <= my numberOfComponents; im++)
+	for (long im = 1; im <= numberOfComponents; im++)
 	{
-		MelderInfo_writeLine7 (L"  ", Melder_integer (im), L": p = ", Melder_double (my mixingProbabilities[im]),
-			L"  Name =  \"", Thing_getName ((Thing) my covariances -> item[im]), L"\"");
+		MelderInfo_writeLine7 (L"  ", Melder_integer (im), L": p = ", Melder_double (mixingProbabilities[im]),
+			L"  Name =  \"", Thing_getName ((Thing) covariances -> item[im]), L"\"");
 	}
-}
-
-class_methods (GaussianMixture, Data)
-{
-	class_method_local (GaussianMixture, info)
-	class_method_local (GaussianMixture, destroy)
-	class_method_local (GaussianMixture, copy)
-	class_method_local (GaussianMixture, equal)
-	class_method_local (GaussianMixture, canWriteAsEncoding)
-	class_method_local (GaussianMixture, writeText)
-	class_method_local (GaussianMixture, readText)
-	class_method_local (GaussianMixture, writeBinary)
-	class_method_local (GaussianMixture, readBinary)
-	class_method_local (GaussianMixture, description)
-	class_methods_end
 }
 
 static void GaussianMixture_setLabelsFromTableOfReal (GaussianMixture me, thou)
@@ -423,7 +409,7 @@ Covariance GaussianMixture_extractComponent(GaussianMixture me, long component)
 {
 	try {
 		if (component < 1 || component > my numberOfComponents) Melder_throw ("Illegal component.");
-		return (Covariance) Data_copy (my covariances -> item[component]);
+		return Data_copy ((Covariance) my covariances -> item[component]);
 	} catch (MelderError) { Melder_throw (me, ": no component extracted."); }
 }
 

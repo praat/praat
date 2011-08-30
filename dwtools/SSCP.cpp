@@ -90,17 +90,7 @@
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define TOVEC(x) (&(x) - 1)
 
-class_methods (SSCP, TableOfReal)
-	class_method_local (SSCP, destroy)
-	class_method_local (SSCP, description)
-	class_method_local (SSCP, copy)
-	class_method_local (SSCP, equal)
-	class_method_local (SSCP, canWriteAsEncoding)
-	class_method_local (SSCP, writeText)
-	class_method_local (SSCP, readText)
-	class_method_local (SSCP, writeBinary)
-	class_method_local (SSCP, readBinary)
-class_methods_end
+Thing_implement (SSCP, TableOfReal, 0);
 
 /*
 	Calculate scale factor by which sqrt(eigenvalue) has to
@@ -925,8 +915,7 @@ CCA SSCP_to_CCA (I, long ny)
 
 /************ SSCPs ***********************************************/
 
-class_methods (SSCPs, Ordered)
-class_methods_end
+Thing_implement (SSCPs, Ordered, 0);
 
 SSCPs SSCPs_create (void)
 {
@@ -940,7 +929,7 @@ SSCPs SSCPs_create (void)
 SSCP SSCPs_to_SSCP_pool (SSCPs me)
 {
 	try {
-		autoSSCP thee = (SSCP) Data_copy (my item[1]);
+		autoSSCP thee = Data_copy ((SSCP) my item[1]);
 
 		for (long k = 2; k <= my size; k++)
 		{
@@ -1077,7 +1066,7 @@ TableOfReal SSCP_to_TableOfReal (SSCP me)
 {
 	try {
 		autoTableOfReal thee = Thing_new (TableOfReal);
-		((TableOfReal_Table) thy methods) -> copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not copied."); }
 }
@@ -1095,11 +1084,9 @@ TableOfReal SSCP_extractCentroid (I)
 	} catch (MelderError) { Melder_throw (me, ": centroid not extracted."); }
 }
 
-class_methods (Covariance, SSCP)
-class_methods_end
+Thing_implement (Covariance, SSCP, 0);
 
-class_methods (Correlation, SSCP)
-class_methods_end
+Thing_implement (Correlation, SSCP, 0);
 
 Covariance Covariance_create (long dimension)
 {
@@ -1186,7 +1173,7 @@ Covariance SSCP_to_Covariance (SSCP me, long numberOfConstraints)
 	try {
 		Melder_assert (numberOfConstraints >= 0);
 		autoCovariance thee = Thing_new (Covariance);
-		((Covariance_Table) thy methods) -> copy (me, thee.peek());
+		my structSSCP :: v_copy (thee.peek());
 
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
@@ -1201,7 +1188,7 @@ SSCP Covariance_to_SSCP (Covariance me)
 {
 	try {
 		autoSSCP thee = Thing_new (SSCP);
-		((SSCP_Table) thy methods) -> copy (me, thee.peek());
+		my structSSCP :: v_copy (thee.peek());
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			for (long j = i; j <= my numberOfColumns; j++)
@@ -1216,7 +1203,7 @@ Correlation SSCP_to_Correlation (I)
 	iam (SSCP);
 	try {
 		autoCorrelation thee = Thing_new (Correlation);
-		((Correlation_Table) thy methods) -> copy (me, thee.peek());
+		my structSSCP :: v_copy (thee.peek());
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			for (long j = i; j <= my numberOfColumns; j++)

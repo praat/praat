@@ -311,7 +311,7 @@ static void _Melder_dia_init (GuiObject *dia, GuiObject *scale, GuiObject *label
 
 	#if gtk
 		*scale = gtk_progress_bar_new ();
-		gtk_container_add (GTK_CONTAINER (form), *scale);
+		gtk_container_add (GTK_CONTAINER (form), GTK_WIDGET (*scale));
 		GuiObject_show (*scale);
 	#elif motif
 		*scale = XmCreateScale (*dia, "scale", NULL, 0);
@@ -825,7 +825,7 @@ static void gui_fatal (const wchar *message) {
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
+		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
 		mac_message (kAlertStopAlert, message);
 		SysError (11);
@@ -843,7 +843,7 @@ static void gui_error (const wchar *message) {
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
+		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
 		mac_message (kAlertStopAlert, message);
 		XmUpdateDisplay (0);
@@ -857,7 +857,7 @@ static void gui_error (const wchar *message) {
 				GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				gtk_dialog_run (GTK_DIALOG (dialog));
-				gtk_widget_destroy (dialog);
+				gtk_widget_destroy (GTK_WIDGET (dialog));
 			#elif defined (macintosh)
 				mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				XmUpdateDisplay (0);
@@ -873,7 +873,7 @@ static void gui_warning (const wchar *message) {
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
+		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
 		mac_message (kAlertNoteAlert, message);
 		XmUpdateDisplay (0);

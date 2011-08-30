@@ -72,6 +72,7 @@ struct SoundRecorder_Fsamp {
 
 Thing_define (SoundRecorder, Editor) {
 	// new data:
+	public:
 		int numberOfChannels;
 		long nsamp, nmax;
 		bool fakeMono, synchronous, recording;

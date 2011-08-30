@@ -19,31 +19,26 @@
 
 #include "Delta.h"
 
-static void destroy (I) {
-	iam (Delta);
-	if (my tube) {
-		my tube ++;
-		free (my tube);
-		my tube = NULL;
-	}
-	inherited (Delta) destroy (me);
+Thing_implement (Delta, Thing, 0);
+
+void structDelta :: v_destroy () {
+	NUMvector_free (this -> tube, 1);
+	Delta_Parent :: v_destroy ();
 }
 
-class_methods (Delta, Thing) {
-	class_method (destroy)
-	class_methods_end
+void structDelta :: init (int numberOfTubes) {
+	Melder_assert (numberOfTubes >= 1);
+	this -> numberOfTubes = numberOfTubes;
+	this -> tube = NUMvector <struct structDelta_Tube> (1, numberOfTubes);
+	for (int itube = 1; itube <= numberOfTubes; itube ++) {
+		Delta_Tube t = this -> tube + itube;
+		t -> parallel = 1;
+	}
 }
 
 Delta Delta_create (int numberOfTubes) {
 	autoDelta me = Thing_new (Delta);
-	Melder_assert (numberOfTubes >= 1);
-	my numberOfTubes = numberOfTubes;
-	my tube = (struct structDelta_Tube *) calloc (numberOfTubes, sizeof (struct structDelta_Tube));
-	my tube --;
-	for (int itube = 1; itube <= numberOfTubes; itube ++) {
-		Delta_Tube t = my tube + itube;
-		t -> parallel = 1;
-	}
+	my init (numberOfTubes);
 	return me.transfer();
 }
 

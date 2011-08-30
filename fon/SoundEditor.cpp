@@ -37,109 +37,127 @@ void structSoundEditor :: v_dataChanged () {
 
 /***** EDIT MENU *****/
 
-static int menu_cb_Copy (EDITOR_ARGS) {
+static void menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
-	Sound publish = my longSound.data ? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, FALSE) :
-		Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, FALSE);
-	forget (Sound_clipboard);
-	Sound_clipboard = publish;
-	return 1;
-}
-
-static int menu_cb_Cut (EDITOR_ARGS) {
-	EDITOR_IAM (SoundEditor);
-	Sound sound = (Sound) my data;
-	long first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
-		my startSelection, my endSelection, & first, & last);
-	long oldNumberOfSamples = sound -> nx;
-	long newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
-	if (newNumberOfSamples < 1)
-		Melder_throw ("You cannot cut all of the signal away,\n"
-			"because you cannot create a Sound with 0 samples.\n"
-			"You could consider using Copy instead.");
-	if (selectionNumberOfSamples) {
-		double **newData, **oldData = sound -> z;
+	try {
+		/*
+		 * Create without change.
+		 */
+		autoSound publish = my longSound.data ? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, FALSE) :
+			Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, FALSE);
+		/*
+		 * Change without error.
+		 */
 		forget (Sound_clipboard);
-		Sound_clipboard = Sound_create (sound -> ny, 0.0, selectionNumberOfSamples * sound -> dx,
-						selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
-		if (! Sound_clipboard) return 0;
-		for (long channel = 1; channel <= sound -> ny; channel ++) {
-			long j = 0;
-			for (long i = first; i <= last; i ++) {
-				Sound_clipboard -> z [channel] [++ j] = oldData [channel] [i];
-			}
-		}
-		newData = NUMmatrix <double> (1, sound -> ny, 1, newNumberOfSamples);   // BUG memory
-		for (long channel = 1; channel <= sound -> ny; channel ++) {
-			long j = 0;
-			for (long i = 1; i < first; i ++) {
-				newData [channel] [++ j] = oldData [channel] [i];
-			}
-			for (long i = last + 1; i <= oldNumberOfSamples; i ++) {
-				newData [channel] [++ j] = oldData [channel] [i];
-			}
-		}
-		Editor_save (me, L"Cut");
-		NUMmatrix_free <double> (oldData, 1, 1);
-		sound -> xmin = 0.0;
-		sound -> xmax = newNumberOfSamples * sound -> dx;
-		sound -> nx = newNumberOfSamples;
-		sound -> x1 = 0.5 * sound -> dx;
-		sound -> z = newData;
-
-		/* Start updating the markers of the FunctionEditor, respecting the invariants. */
-
-		my tmin = sound -> xmin;
-		my tmax = sound -> xmax;
-
-		/* Collapse the selection, */
-		/* so that the Cut operation can immediately be undone by a Paste. */
-		/* The exact position will be half-way in between two samples. */
-
-		my startSelection = my endSelection = sound -> xmin + (first - 1) * sound -> dx;
-
-		/* Update the window. */
-		{
-			double t1 = (first - 1) * sound -> dx;
-			double t2 = last * sound -> dx;
-			double windowLength = my endWindow - my startWindow;   /* > 0 */
-			if (t1 > my startWindow)
-				if (t2 < my endWindow)
-					my startWindow -= 0.5 * (t2 - t1);
-				else
-					(void) 0;
-			else if (t2 < my endWindow)
-				my startWindow -= t2 - t1;
-			else   /* Cut overlaps entire window: centre. */
-				my startWindow = my startSelection - 0.5 * windowLength;
-			my endWindow = my startWindow + windowLength;   /* First try. */
-			if (my endWindow > my tmax) {
-				my startWindow -= my endWindow - my tmax;   /* 2nd try. */
-				if (my startWindow < my tmin)
-					my startWindow = my tmin;   /* Third try. */
-				my endWindow = my tmax;   /* Second try. */
-			} else if (my startWindow < my tmin) {
-				my endWindow -= my startWindow - my tmin;   /* Second try. */
-				if (my endWindow > my tmax)
-					my endWindow = my tmax;   /* Third try. */
-				my startWindow = my tmin;   /* Second try. */
-			}
-		}
-
-		/* Force FunctionEditor to show changes. */
-
-		Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
-		my v_destroy_analysis ();
-		FunctionEditor_ungroup (me);
-		FunctionEditor_marksChanged (me);
-		Editor_broadcastChange (me);
-	} else {
-		Melder_warning1 (L"No samples selected.");
+		Sound_clipboard = publish.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Sound selection not copied to clipboard.");
 	}
-	return 1;
 }
 
-static int menu_cb_Paste (EDITOR_ARGS) {
+static void menu_cb_Cut (EDITOR_ARGS) {
+	EDITOR_IAM (SoundEditor);
+	try {
+		Sound sound = (Sound) my data;
+		long first, last, selectionNumberOfSamples = Sampled_getWindowSamples (sound,
+			my startSelection, my endSelection, & first, & last);
+		long oldNumberOfSamples = sound -> nx;
+		long newNumberOfSamples = oldNumberOfSamples - selectionNumberOfSamples;
+		if (newNumberOfSamples < 1)
+			Melder_throw ("You cannot cut all of the signal away,\n"
+				"because you cannot create a Sound with 0 samples.\n"
+				"You could consider using Copy instead.");
+		if (selectionNumberOfSamples) {
+			double **oldData = sound -> z;
+			/*
+			 * Create without change.
+			 */
+			autoSound publish = Sound_create (sound -> ny, 0.0, selectionNumberOfSamples * sound -> dx,
+							selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
+			for (long channel = 1; channel <= sound -> ny; channel ++) {
+				long j = 0;
+				for (long i = first; i <= last; i ++) {
+					publish -> z [channel] [++ j] = oldData [channel] [i];
+				}
+			}
+			autoNUMmatrix <double> newData (1, sound -> ny, 1, newNumberOfSamples);
+			for (long channel = 1; channel <= sound -> ny; channel ++) {
+				long j = 0;
+				for (long i = 1; i < first; i ++) {
+					newData [channel] [++ j] = oldData [channel] [i];
+				}
+				for (long i = last + 1; i <= oldNumberOfSamples; i ++) {
+					newData [channel] [++ j] = oldData [channel] [i];
+				}
+			}
+			Editor_save (me, L"Cut");
+			/*
+			 * Change without error.
+			 */
+			NUMmatrix_free <double> (oldData, 1, 1);
+			sound -> xmin = 0.0;
+			sound -> xmax = newNumberOfSamples * sound -> dx;
+			sound -> nx = newNumberOfSamples;
+			sound -> x1 = 0.5 * sound -> dx;
+			sound -> z = newData.transfer();
+			forget (Sound_clipboard);
+			Sound_clipboard = publish.transfer();
+
+			/* Start updating the markers of the FunctionEditor, respecting the invariants. */
+
+			my tmin = sound -> xmin;
+			my tmax = sound -> xmax;
+
+			/* Collapse the selection, */
+			/* so that the Cut operation can immediately be undone by a Paste. */
+			/* The exact position will be half-way in between two samples. */
+
+			my startSelection = my endSelection = sound -> xmin + (first - 1) * sound -> dx;
+
+			/* Update the window. */
+			{
+				double t1 = (first - 1) * sound -> dx;
+				double t2 = last * sound -> dx;
+				double windowLength = my endWindow - my startWindow;   /* > 0 */
+				if (t1 > my startWindow)
+					if (t2 < my endWindow)
+						my startWindow -= 0.5 * (t2 - t1);
+					else
+						(void) 0;
+				else if (t2 < my endWindow)
+					my startWindow -= t2 - t1;
+				else   /* Cut overlaps entire window: centre. */
+					my startWindow = my startSelection - 0.5 * windowLength;
+				my endWindow = my startWindow + windowLength;   /* First try. */
+				if (my endWindow > my tmax) {
+					my startWindow -= my endWindow - my tmax;   /* 2nd try. */
+					if (my startWindow < my tmin)
+						my startWindow = my tmin;   /* Third try. */
+					my endWindow = my tmax;   /* Second try. */
+				} else if (my startWindow < my tmin) {
+					my endWindow -= my startWindow - my tmin;   /* Second try. */
+					if (my endWindow > my tmax)
+						my endWindow = my tmax;   /* Third try. */
+					my startWindow = my tmin;   /* Second try. */
+				}
+			}
+
+			/* Force FunctionEditor to show changes. */
+
+			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
+			my v_destroy_analysis ();
+			FunctionEditor_ungroup (me);
+			FunctionEditor_marksChanged (me);
+			my broadcastDataChanged ();
+		} else {
+			Melder_warning1 (L"No samples selected.");
+		}
+	} catch (MelderError) {
+		Melder_throw ("Sound selection not cut to clipboard.");
+	}
+}
+
+static void menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Sound sound = (Sound) my data;
 	long leftSample = Sampled_xToLowIndex (sound, my endSelection);
@@ -147,7 +165,7 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	double **oldData = sound -> z;
 	if (! Sound_clipboard) {
 		Melder_warning1 (L"(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
-		return 1;
+		return;
 	}
 	if (Sound_clipboard -> ny != sound -> ny)
 		Melder_throw ("Cannot paste, because\n"
@@ -200,11 +218,10 @@ static int menu_cb_Paste (EDITOR_ARGS) {
 	my v_destroy_analysis ();
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_SetSelectionToZero (EDITOR_ARGS) {
+static void menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Sound sound = (Sound) my data;
 	long first, last;
@@ -217,33 +234,30 @@ static int menu_cb_SetSelectionToZero (EDITOR_ARGS) {
 	}
 	my v_destroy_analysis ();
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_ReverseSelection (EDITOR_ARGS) {
+static void menu_cb_ReverseSelection (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	Editor_save (me, L"Reverse selection");
 	Sound_reverse ((Sound) my data, my startSelection, my endSelection);
 	my v_destroy_analysis ();
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
 /***** SELECT MENU *****/
 
-static int menu_cb_MoveCursorToZero (EDITOR_ARGS) {
+static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	double zero = Sound_getNearestZeroCrossing ((Sound) my data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me);
 	}
-	return 1;
 }
 
-static int menu_cb_MoveBtoZero (EDITOR_ARGS) {
+static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	double zero = Sound_getNearestZeroCrossing ((Sound) my data, my startSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
@@ -255,10 +269,9 @@ static int menu_cb_MoveBtoZero (EDITOR_ARGS) {
 		}
 		FunctionEditor_marksChanged (me);
 	}
-	return 1;
 }
 
-static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
+static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
 	EDITOR_IAM (SoundEditor);
 	double zero = Sound_getNearestZeroCrossing ((Sound) my data, my endSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
@@ -270,13 +283,12 @@ static int menu_cb_MoveEtoZero (EDITOR_ARGS) {
 		}
 		FunctionEditor_marksChanged (me);
 	}
-	return 1;
 }
 
 /***** HELP MENU *****/
 
-static int menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"SoundEditor"); return 1; }
-static int menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"LongSoundEditor"); return 1; }
+static void menu_cb_SoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"SoundEditor"); }
+static void menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor); Melder_help (L"LongSoundEditor"); }
 
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
@@ -323,6 +335,7 @@ void structSoundEditor :: v_prepareDraw () {
 }
 
 void structSoundEditor :: v_draw () {
+	Sampled data = (Sampled) this -> data;
 	Graphics_Viewport viewport;
 	bool showAnalysis = spectrogram.show || pitch.show || intensity.show || formant.show;
 	Melder_assert (data != NULL);
@@ -419,7 +432,7 @@ void structSoundEditor :: v_unhighlightSelection (double left, double right, dou
 		Graphics_unhighlight (graphics, left, right, bottom, top);
 }
 
-SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Function data) {
+SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Sampled data) {
 	Melder_assert (data != NULL);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);

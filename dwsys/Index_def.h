@@ -26,7 +26,13 @@
 oo_DEFINE_CLASS (Index, Data)
 	oo_OBJECT (Ordered, 0, classes)
 	oo_LONG (numberOfElements)
-	oo_LONG_VECTOR (classIndex, my numberOfElements)
+	oo_LONG_VECTOR (classIndex, numberOfElements)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
+
 oo_END_CLASS(Index)	
 #undef ooSTRUCT
 

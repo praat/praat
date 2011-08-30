@@ -24,6 +24,7 @@
 
 Thing_define (OTMultiEditor, HyperPage) {
 	// new data:
+	public:
 		const wchar *form1, *form2;
 		GuiObject form1Text, form2Text;
 		long selectedConstraint;

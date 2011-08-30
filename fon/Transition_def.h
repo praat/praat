@@ -1,6 +1,6 @@
 /* Transition_def.h
  *
- * Copyright (C) 1997-2007 Paul Boersma
+ * Copyright (C) 1997-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +17,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/08/12
- */
-
 
 #define ooSTRUCT Transition
 oo_DEFINE_CLASS (Transition, Data)
 
 	oo_LONG (numberOfStates)
-	oo_STRING_VECTOR (stateLabels, my numberOfStates)
-	oo_DOUBLE_MATRIX (data, my numberOfStates, my numberOfStates)
+	oo_STRING_VECTOR (stateLabels, numberOfStates)
+	oo_DOUBLE_MATRIX (data, numberOfStates, numberOfStates)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (Transition)
 #undef ooSTRUCT

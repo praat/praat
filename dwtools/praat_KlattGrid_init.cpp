@@ -872,7 +872,7 @@ DO
 	}
 END
 
-DIRECT(KlattGrid_drawPhonation)
+DIRECT (KlattGrid_drawPhonation)
 	autoPraatPicture picture;
 	LOOP {
 		iam (KlattGrid);
@@ -880,7 +880,7 @@ DIRECT(KlattGrid_drawPhonation)
 	}
 END
 
-DIRECT(KlattGrid_drawFrication)
+DIRECT (KlattGrid_drawFrication)
 	autoPraatPicture picture;
 	LOOP {
 		iam (KlattGrid);
@@ -912,8 +912,8 @@ DO
 	praat_new (Sound_KlattGrid_filterByVocalTract (me, thee, filterModel), my name, L"_", thy name);
 END
 
-extern "C" void praat_KlattGrid_init (void);
-extern "C" void praat_KlattGrid_init (void)
+void praat_KlattGrid_init (void);
+void praat_KlattGrid_init (void)
 {
 
 	Thing_recognizeClassesByName (classKlattGrid, NULL);

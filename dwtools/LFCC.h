@@ -29,21 +29,10 @@
 
 #include "CC.h"
 
-Thing_declare1cpp (LFCC);
-struct structLFCC : public structCC {
+Thing_define (LFCC, CC) {
 };
-#define LFCC__methods(klas) CC__methods(klas)
-Thing_declare2cpp (LFCC, CC);
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LFCC_h_ */

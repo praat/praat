@@ -118,7 +118,7 @@ static void drawNow (FunctionEditor me) {
 	int selection = my endSelection > my startSelection;
 	int beginVisible, endVisible;
 	double verticalCorrection, bottom;
-	wchar_t text [100];
+	wchar text [100];
 
 	/* Update selection. */
 
@@ -374,7 +374,7 @@ void structFunctionEditor :: v_info () {
 
 /********** FILE MENU **********/
 
-static int menu_cb_preferences (EDITOR_ARGS) {
+static void menu_cb_preferences (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Preferences", 0)
 		BOOLEAN (L"Synchronize zoom and scroll", 1)
@@ -410,30 +410,26 @@ void structFunctionEditor :: v_do_pictureSelection (EditorCommand cmd) {
 
 /********** QUERY MENU **********/
 
-static int menu_cb_getB (EDITOR_ARGS) {
+static void menu_cb_getB (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	Melder_informationReal (my startSelection, my v_format_units ());
-	return 1;
 }
-static int menu_cb_getCursor (EDITOR_ARGS) {
+static void menu_cb_getCursor (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	Melder_informationReal (0.5 * (my startSelection + my endSelection), my v_format_units ());
-	return 1;
 }
-static int menu_cb_getE (EDITOR_ARGS) {
+static void menu_cb_getE (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	Melder_informationReal (my endSelection, my v_format_units ());
-	return 1;
 }
-static int menu_cb_getSelectionDuration (EDITOR_ARGS) {
+static void menu_cb_getSelectionDuration (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	Melder_informationReal (my endSelection - my startSelection, my v_format_units ());
-	return 1;
 }
 
 /********** VIEW MENU **********/
 
-static int menu_cb_zoom (EDITOR_ARGS) {
+static void menu_cb_zoom (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Zoom", 0)
 		REAL (L"From", L"0.0")
@@ -554,37 +550,32 @@ static void gui_button_cb_zoomBack (I, GuiButtonEvent event) {
 	do_zoomBack (me);
 }
 
-static int menu_cb_showAll (EDITOR_ARGS) {
+static void menu_cb_showAll (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	do_showAll (me);
-	return 1;
 }
 
-static int menu_cb_zoomIn (EDITOR_ARGS) {
+static void menu_cb_zoomIn (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	do_zoomIn (me);
-	return 1;
 }
 
-static int menu_cb_zoomOut (EDITOR_ARGS) {
+static void menu_cb_zoomOut (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	do_zoomOut (me);
-	return 1;
 }
 
-static int menu_cb_zoomToSelection (EDITOR_ARGS) {
+static void menu_cb_zoomToSelection (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	do_zoomToSelection (me);
-	return 1;
 }
 
-static int menu_cb_zoomBack (EDITOR_ARGS) {
+static void menu_cb_zoomBack (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	do_zoomBack (me);
-	return 1;
 }
 
-static int menu_cb_play (EDITOR_ARGS) {
+static void menu_cb_play (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Play", 0)
 		REAL (L"From", L"0.0")
@@ -598,7 +589,7 @@ static int menu_cb_play (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_playOrStop (EDITOR_ARGS) {
+static void menu_cb_playOrStop (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	if (MelderAudio_isPlaying) {
 		MelderAudio_stopPlaying (MelderAudio_EXPLICIT);
@@ -612,26 +603,23 @@ static int menu_cb_playOrStop (EDITOR_ARGS) {
 		else
 			my v_play (my startWindow, my endWindow);
 	}
-	return 1;
 }
 
-static int menu_cb_playWindow (EDITOR_ARGS) {
+static void menu_cb_playWindow (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	my playingCursor = true;
 	my v_play (my startWindow, my endWindow);
-	return 1;
 }
 
-static int menu_cb_interruptPlaying (EDITOR_ARGS) {
+static void menu_cb_interruptPlaying (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	return 1;
 }
 
 /********** SELECT MENU **********/
 
-static int menu_cb_select (EDITOR_ARGS) {
+static void menu_cb_select (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Select", 0)
 		REAL (L"Start of selection", L"0.0")
@@ -657,25 +645,23 @@ static int menu_cb_select (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_moveCursorToB (EDITOR_ARGS) {
+static void menu_cb_moveCursorToB (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my endSelection = my startSelection;
 	my v_updateText ();
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
 	updateGroup (me);
-	return 1;
 }
 
-static int menu_cb_moveCursorToE (EDITOR_ARGS) {
+static void menu_cb_moveCursorToE (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my startSelection = my endSelection;
 	my v_updateText ();
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
 	updateGroup (me);
-	return 1;
 }
 
-static int menu_cb_moveCursorTo (EDITOR_ARGS) {
+static void menu_cb_moveCursorTo (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Move cursor to", 0)
 		REAL (L"Position", L"0.0")
@@ -692,7 +678,7 @@ static int menu_cb_moveCursorTo (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_moveCursorBy (EDITOR_ARGS) {
+static void menu_cb_moveCursorBy (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Move cursor by", 0)
 		REAL (L"Distance", L"0.05")
@@ -708,7 +694,7 @@ static int menu_cb_moveCursorBy (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_moveBby (EDITOR_ARGS) {
+static void menu_cb_moveBby (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Move start of selection by", 0)
 		REAL (L"Distance", L"0.05")
@@ -729,7 +715,7 @@ static int menu_cb_moveBby (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_moveEby (EDITOR_ARGS) {
+static void menu_cb_moveEby (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Move end of selection by", 0)
 		REAL (L"Distance", L"0.05")
@@ -771,16 +757,16 @@ void FunctionEditor_shift (FunctionEditor me, double shift) {
 	FunctionEditor_marksChanged (me);
 }
 
-static int menu_cb_pageUp (EDITOR_ARGS) {
+static void menu_cb_pageUp (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	FunctionEditor_shift (me, -RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow));
-	return 1;
+	updateGroup (me);
 }
 
-static int menu_cb_pageDown (EDITOR_ARGS) {
+static void menu_cb_pageDown (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	FunctionEditor_shift (me, +RELATIVE_PAGE_INCREMENT * (my endWindow - my startWindow));
-	return 1;
+	updateGroup (me);
 }
 
 static void scrollToView (FunctionEditor me, double t) {
@@ -791,9 +777,10 @@ static void scrollToView (FunctionEditor me, double t) {
 	} else {
 		FunctionEditor_marksChanged (me);
 	}
+	updateGroup (me);
 }
 
-static int menu_cb_selectEarlier (EDITOR_ARGS) {
+static void menu_cb_selectEarlier (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my startSelection -= my arrowScrollStep;
 	if (my startSelection < my tmin + 1e-12)
@@ -802,10 +789,9 @@ static int menu_cb_selectEarlier (EDITOR_ARGS) {
 	if (my endSelection < my tmin + 1e-12)
 		my endSelection = my tmin;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
-	return 1;
 }
 
-static int menu_cb_selectLater (EDITOR_ARGS) {
+static void menu_cb_selectLater (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my startSelection += my arrowScrollStep;
 	if (my startSelection > my tmax - 1e-12)
@@ -814,19 +800,17 @@ static int menu_cb_selectLater (EDITOR_ARGS) {
 	if (my endSelection > my tmax - 1e-12)
 		my endSelection = my tmax;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
-	return 1;
 }
 
-static int menu_cb_moveBleft (EDITOR_ARGS) {
+static void menu_cb_moveBleft (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my startSelection -= my arrowScrollStep;
 	if (my startSelection < my tmin + 1e-12)
 		my startSelection = my tmin;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
-	return 1;
 }
 
-static int menu_cb_moveBright (EDITOR_ARGS) {
+static void menu_cb_moveBright (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my startSelection += my arrowScrollStep;
 	if (my startSelection > my tmax - 1e-12)
@@ -837,10 +821,9 @@ static int menu_cb_moveBright (EDITOR_ARGS) {
 		my endSelection = dummy;
 	}
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
-	return 1;
 }
 
-static int menu_cb_moveEleft (EDITOR_ARGS) {
+static void menu_cb_moveEleft (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my endSelection -= my arrowScrollStep;
 	if (my endSelection < my tmin + 1e-12)
@@ -851,16 +834,14 @@ static int menu_cb_moveEleft (EDITOR_ARGS) {
 		my endSelection = dummy;
 	}
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
-	return 1;
 }
 
-static int menu_cb_moveEright (EDITOR_ARGS) {
+static void menu_cb_moveEright (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	my endSelection += my arrowScrollStep;
 	if (my endSelection > my tmax - 1e-12)
 		my endSelection = my tmax;
 	scrollToView (me, 0.5 * (my startSelection + my endSelection));
-	return 1;
 }
 
 /********** GUI CALLBACKS **********/
@@ -965,10 +946,9 @@ static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {
 	if (my group) updateGroup (me);
 }
 
-static int menu_cb_intro (EDITOR_ARGS) {
+static void menu_cb_intro (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	Melder_help (L"Intro");
-	return 1;
 }
 
 void structFunctionEditor :: v_createMenuItems_file (EditorMenu menu) {
@@ -1137,8 +1117,8 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
 
-	preferences.shellWidth = GuiObject_getWidth (my shell);
-	preferences.shellHeight = GuiObject_getHeight (my shell);
+	preferences.shellWidth = GuiObject_getWidth (my d_windowShell);
+	preferences.shellHeight = GuiObject_getHeight (my d_windowShell);
 }
 
 void structFunctionEditor :: v_createChildren () {
@@ -1146,28 +1126,28 @@ void structFunctionEditor :: v_createChildren () {
 	int x = BUTTON_X;
 
 	#if gtk
-		form = dialog;
+		form = d_windowForm;
 		GuiObject hctl_box = gtk_hbox_new (FALSE, BUTTON_SPACING);
-		gtk_box_pack_end (GTK_BOX (form), hctl_box, FALSE, FALSE, 0);
+		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (hctl_box), FALSE, FALSE, 0);
 		GuiObject leftbtn_box = gtk_hbox_new (TRUE, 3);
-		gtk_box_pack_start (GTK_BOX (hctl_box), leftbtn_box, FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (hctl_box), GTK_WIDGET (leftbtn_box), FALSE, FALSE, 0);
 
 		/***** Create zoom buttons. *****/
 
 		gtk_box_pack_start (GTK_BOX (leftbtn_box),
-			GuiButton_create (NULL, 0, 0, 0, 0, L"all", gui_button_cb_showAll, this, 0), TRUE, TRUE, 0);
+			GTK_WIDGET (GuiButton_create (NULL, 0, 0, 0, 0, L"all", gui_button_cb_showAll, this, 0)), TRUE, TRUE, 0);
 		gtk_box_pack_start (GTK_BOX (leftbtn_box),
-			GuiButton_create (NULL, 0, 0, 0, 0, L"in", gui_button_cb_zoomIn, this, 0), TRUE, TRUE, 0);
+			GTK_WIDGET (GuiButton_create (NULL, 0, 0, 0, 0, L"in", gui_button_cb_zoomIn, this, 0)), TRUE, TRUE, 0);
 		gtk_box_pack_start (GTK_BOX (leftbtn_box),
-			GuiButton_create (NULL, 0, 0, 0, 0, L"out", gui_button_cb_zoomOut, this, 0), TRUE, TRUE, 0);
+			GTK_WIDGET (GuiButton_create (NULL, 0, 0, 0, 0, L"out", gui_button_cb_zoomOut, this, 0)), TRUE, TRUE, 0);
 		gtk_box_pack_start (GTK_BOX (leftbtn_box),
-			GuiButton_create (NULL, 0, 0, 0, 0, L"sel", gui_button_cb_zoomToSelection, this, 0), TRUE, TRUE, 0);
+			GTK_WIDGET (GuiButton_create (NULL, 0, 0, 0, 0, L"sel", gui_button_cb_zoomToSelection, this, 0)), TRUE, TRUE, 0);
 		gtk_box_pack_start (GTK_BOX (leftbtn_box),
-			GuiButton_create (NULL, 0, 0, 0, 0, L"bak", gui_button_cb_zoomBack, this, 0), TRUE, TRUE, 0);
+			GTK_WIDGET (GuiButton_create (NULL, 0, 0, 0, 0, L"bak", gui_button_cb_zoomBack, this, 0)), TRUE, TRUE, 0);
 
 		GuiObject_show (leftbtn_box);
 	#elif motif
-		form = XmCreateForm (dialog, "buttons", NULL, 0);
+		form = XmCreateForm (d_windowForm, "buttons", NULL, 0);
 		XtVaSetValues (form,
 			XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
@@ -1200,7 +1180,7 @@ void structFunctionEditor :: v_createChildren () {
 		scrollBar = gtk_hscrollbar_new (GTK_ADJUSTMENT (adj));
 		g_signal_connect (G_OBJECT (scrollBar), "value-changed", G_CALLBACK (gui_cb_scroll), this);
 		GuiObject_show (scrollBar);
-		gtk_box_pack_start (GTK_BOX (hctl_box), scrollBar, TRUE, TRUE, 3);
+		gtk_box_pack_start (GTK_BOX (hctl_box), GTK_WIDGET (scrollBar), TRUE, TRUE, 3);
 	#elif motif
 		scrollBar = XtVaCreateManagedWidget ("scrollBar",
 			xmScrollBarWidgetClass, form,
@@ -1223,8 +1203,8 @@ void structFunctionEditor :: v_createChildren () {
 	#if gtk
 		groupButton = GuiCheckButton_create (NULL, 0, 0, 0, 0, L"Group",
 			gui_checkbutton_cb_group, this, group_equalDomain (tmin, tmax) ? GuiCheckButton_SET : 0);
-		gtk_box_pack_start (GTK_BOX (hctl_box), groupButton, FALSE, FALSE, 0);
-		gtk_widget_show_all (hctl_box);
+		gtk_box_pack_start (GTK_BOX (hctl_box), GTK_WIDGET (groupButton), FALSE, FALSE, 0);
+		gtk_widget_show_all (GTK_WIDGET (hctl_box));
 	#else
 		groupButton = GuiCheckButton_createShown (form, -80, 0, - Machine_getScrollBarWidth () - 5, -4,
 			L"Group", gui_checkbutton_cb_group, this, group_equalDomain (tmin, tmax) ? GuiCheckButton_SET : 0);
@@ -1235,7 +1215,7 @@ void structFunctionEditor :: v_createChildren () {
 	if (v_hasText ()) {
 		#if gtk
 			text = GuiText_create (NULL, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
-			gtk_box_pack_start (GTK_BOX (form), text, FALSE, FALSE, 3);
+			gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (text), FALSE, FALSE, 3);
 			GuiObject_show (text);
 		#else
 			text = GuiText_createShown (form, 0, 0, 0, TEXT_HEIGHT, GuiText_WORDWRAP | GuiText_MULTILINE);
@@ -1249,7 +1229,7 @@ void structFunctionEditor :: v_createChildren () {
 		 * in the window (in our Motif emulator, this is the automatic behaviour).
 		 */
 		#if gtk
-			gtk_widget_grab_focus (text);   // BUG: can hardly be correct (the text should grab the focus of the window, not the global focus)
+			gtk_widget_grab_focus (GTK_WIDGET (text));   // BUG: can hardly be correct (the text should grab the focus of the window, not the global focus)
 		#elif motif && defined (UNIX)
 			XtSetKeyboardFocus (form, text);
 		#endif
@@ -1263,12 +1243,12 @@ void structFunctionEditor :: v_createChildren () {
 		
 		// turn off double-buffering, otherwise the reaction to the expose-events gets
 		// delayed by one event (TODO: figure out, why)
-		gtk_widget_set_double_buffered (drawingArea, FALSE);
+		gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
 		
 		// turn off clearing window to background colour before an expose event
-		// gtk_widget_set_app_paintable (drawingArea, FALSE);
+		// gtk_widget_set_app_paintable (GTK_WIDGET (drawingArea), FALSE);
 		
-		gtk_box_pack_start (GTK_BOX (form), drawingArea, TRUE, TRUE, 0);
+		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (drawingArea), TRUE, TRUE, 0);
 		GuiObject_show (drawingArea);
 	#else
 		drawingArea = GuiDrawingArea_createShown (form, 0, 0, v_hasText () ? TEXT_HEIGHT : 0, - Machine_getScrollBarWidth () - 9,
@@ -1616,7 +1596,6 @@ void FunctionEditor_marksChanged (FunctionEditor me) {
 	my v_updateText ();
 	updateScrollBar (me);
 	/*Graphics_updateWs (my graphics);*/ drawNow (me);
-	updateGroup (me);
 }
 
 void FunctionEditor_updateText (FunctionEditor me) {
@@ -1640,7 +1619,7 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 	theGroup [i] = NULL;
 	nGroup --;
 	my v_updateText ();
-	Graphics_updateWs (my graphics);   /* For setting buttons in draw method. */
+	Graphics_updateWs (my graphics);   // for setting buttons in v_draw() method
 }
 
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment) {

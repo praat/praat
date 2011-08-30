@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_statistics_init (ManPages me);
-extern "C" void manual_statistics_init (ManPages me) {
+void manual_statistics_init (ManPages me);
+void manual_statistics_init (ManPages me) {
 
 MAN_BEGIN (L"Statistics", L"ppgb", 20060506)
 INTRO (L"This is the tutorial about basic statistical techniques in Praat, which work "

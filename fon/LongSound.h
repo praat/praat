@@ -29,25 +29,30 @@ struct FLAC__StreamDecoder;
 struct FLAC__StreamEncoder;
 struct _MP3_FILE;
 
-Thing_declare1cpp (LongSound);
-struct structLongSound : public structSampled {
-	structMelderFile file;
-	FILE *f;
-	int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
-	double sampleRate;
-	long startOfData;
-	double bufferLength;
-	short *buffer;
-	long imin, imax, nmax;
-	struct FLAC__StreamDecoder *flacDecoder;
-	struct _MP3_FILE *mp3f;
-	int compressedMode;
-	long compressedSamplesLeft;
-	double *compressedFloats [2];
-	short *compressedShorts;
+Thing_define (LongSound, Sampled) {
+	// new data:
+	public:
+		structMelderFile file;
+		FILE *f;
+		int audioFileType, numberOfChannels, encoding, numberOfBytesPerSamplePoint;
+		double sampleRate;
+		long startOfData;
+		double bufferLength;
+		short *buffer;
+		long imin, imax, nmax;
+		struct FLAC__StreamDecoder *flacDecoder;
+		struct _MP3_FILE *mp3f;
+		int compressedMode;
+		long compressedSamplesLeft;
+		double *compressedFloats [2];
+		short *compressedShorts;
+	// overridden methods:
+		virtual void v_destroy ();
+		virtual void v_info ();
+		virtual void v_copy (Any data_to);
+		virtual bool v_writable () { return false; }
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define LongSound__methods(klas) Sampled__methods(klas)
-Thing_declare2cpp (LongSound, Sampled);
 
 LongSound LongSound_open (MelderFile fs);
 

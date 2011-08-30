@@ -1,6 +1,6 @@
 /* Graphics_surface.cpp
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2008/01/19 double
- * pb 2011/03/17 C++
- */
-
 #include "Graphics.h"
 
-void Graphics_surface (I, double **z,
+void Graphics_surface (Graphics me, double **z,
 	long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2,
 	double minimum, double maximum,
 	double elevation, double azimuth)
 {
-	iam (Graphics);
 	double dx, dy;
 
 	/* 'sum' is the running sum of the x and y indices of the back corner of each tetragon.

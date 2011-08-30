@@ -57,7 +57,7 @@ void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee)
 	Tube_Frame_init (rc, my nCoefficients, thy length);
 	LPC_Frame_into_Tube_Frame_rc (me, rc);
 	Tube_Frames_rc_into_area (rc, thee);
-	Tube_Frame_destroy (rc);
+	rc -> destroy ();
 }
 
 double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength)
@@ -156,16 +156,16 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		}
 	
 		wakita_length = lmin;
-		Formant_Frame_destroy (f); 
-		LPC_Frame_destroy (lpc);
-		Tube_Frame_destroy (rc);
-		Tube_Frame_destroy (af);
+		f -> destroy (); 
+		lpc -> destroy ();
+		rc -> destroy ();
+		af -> destroy ();
 		return wakita_length;
 	} catch (MelderError) {
-		Formant_Frame_destroy (f); 
-		LPC_Frame_destroy (lpc);
-		Tube_Frame_destroy (rc);
-		Tube_Frame_destroy (af);
+		f -> destroy (); 
+		lpc -> destroy ();
+		rc -> destroy ();
+		af -> destroy ();
 		return NUMundefined;
 	}
 }
@@ -188,7 +188,7 @@ int Tube_Frame_into_LPC_Frame_rc (Tube_Frame me, LPC_Frame thee)
 VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 {
 	autoVocalTract thee = 0;
-	struct structTube_Frame area_struct;
+	struct structTube_Frame area_struct;   // David, moet dit niet op nul geinitialiseerd? = { 0 };
 	Tube_Frame area = & area_struct;
 	try {
 		long iframe = Sampled_xToIndex (me, time);
@@ -196,7 +196,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 		if (iframe < 1) iframe = 1;
 		if (iframe > my nx) iframe = my nx;
 	
-		memset (& area_struct, 0, sizeof(area_struct));
+		memset (& area_struct, 0, sizeof(area_struct));   // David, ja zo kan het ook (is dit op tijd voor alle throws? kan je niet weten...)
 	
 		LPC_Frame lpc = & my frame[iframe];
 		long m = lpc -> nCoefficients;
@@ -212,13 +212,14 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 		{
 			thy z[1][i] = area -> c[m + 1 - i];
 		}
-		if (wakita) double wakita_length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);
-		Tube_Frame_destroy (area);
+		if (wakita) double wakita_length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);   // David, dit heeft geen betekenis, toch?
+		area -> destroy ();
 		return thee.transfer();
 	} catch (MelderError) { 
 		thy xmax = thy x1 = thy dx = NUMundefined;
-		Tube_Frame_destroy (area); 
-		Melder_throw (me, ": no VocalTract created."); }
+		area -> destroy (); 
+		Melder_throw (me, ": no VocalTract created.");
+	}
 }
 
 /* End of file LPC_and_Tube.cpp */

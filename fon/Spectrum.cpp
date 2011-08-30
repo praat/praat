@@ -18,48 +18,51 @@
  */
 
 /*
+ * a selection of changes:
  * pb 2001/11/30 Spectral moments
  * pb 2002/05/22 changed sign of imaginary part
- * pb 2002/07/16 GPL
- * pb 2004/05/07 support for odd number of samples
- * pb 2004/10/31 Sampled statistics
- * pb 2004/11/22 simplified Sound_to_Spectrum ()
  * pb 2006/02/06 better cepstral smoothing
- * pb 2007/03/17 domain quantity
- * pb 2007/03/30 Spectrum_downto_Table
- * pb 2007/08/12 wchar
- * pb 2008/01/19 double
- * pb 2011/06/10 C++
  */
 
 #include "Sound_and_Spectrum.h"
 
+#include "oo_DESTROY.h"
+#include "Spectrum_def.h"
+#include "oo_COPY.h"
+#include "Spectrum_def.h"
+#include "oo_EQUAL.h"
+#include "Spectrum_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "Spectrum_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "Spectrum_def.h"
 #include "oo_READ_TEXT.h"
+#include "Spectrum_def.h"
+#include "oo_WRITE_BINARY.h"
 #include "Spectrum_def.h"
 #include "oo_READ_BINARY.h"
 #include "Spectrum_def.h"
+#include "oo_DESCRIPTION.h"
+#include "Spectrum_def.h"
 
-#undef our
-#define our ((Spectrum_Table) my methods) ->
+Thing_implement (Spectrum, Matrix, 2);
 
-static void info (I) {
-	iam (Spectrum);
-	classData -> info (me);
+void structSpectrum :: v_info () {
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Frequency domain:");
-	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (my xmin), L" Hz");
-	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (my xmax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (my xmax - my xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
+	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
 	MelderInfo_writeLine1 (L"Frequency sampling:");
-	MelderInfo_writeLine2 (L"   Number of frequency bands (bins): ", Melder_integer (my nx));
-	MelderInfo_writeLine3 (L"   Frequency step (bin width): ", Melder_double (my dx), L" Hz");
-	MelderInfo_writeLine3 (L"   First frequency band around (bin centre at): ", Melder_double (my x1), L" Hz");
-	MelderInfo_writeLine3 (L"Total energy: ", Melder_single (Spectrum_getBandEnergy (me, 0.0, 0.0)), L" Pa2 sec");
+	MelderInfo_writeLine2 (L"   Number of frequency bands (bins): ", Melder_integer (nx));
+	MelderInfo_writeLine3 (L"   Frequency step (bin width): ", Melder_double (dx), L" Hz");
+	MelderInfo_writeLine3 (L"   First frequency band around (bin centre at): ", Melder_double (x1), L" Hz");
+	MelderInfo_writeLine3 (L"Total energy: ", Melder_single (Spectrum_getBandEnergy (this, 0.0, 0.0)), L" Pa2 sec");
 }
 
-static double getValueAtSample (I, long isamp, long which, int units) {
-	iam (Spectrum);
+double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) {
 	if (units == 0) {
-		return which == 1 ? my z [1] [isamp] : which == 2 ? my z [2] [isamp] : NUMundefined;
+		return which == 1 ? z [1] [isamp] : which == 2 ? z [2] [isamp] : NUMundefined;
 	} else {
 		/*
 		 * The energy in a bin is 2 * (re^2 + im^2) times the bin width.
@@ -67,12 +70,12 @@ static double getValueAtSample (I, long isamp, long which, int units) {
 		 * and that the negative-frequency values have the same norm, since they are the complex conjugates
 		 * of the positive-frequency values.
 		 */
-		double energyDensity = 2.0 * (my z [1] [isamp] * my z [1] [isamp] + my z [2] [isamp] * my z [2] [isamp]);
+		double energyDensity = 2.0 * (z [1] [isamp] * z [1] [isamp] + z [2] [isamp] * z [2] [isamp]);
 			/* Pa2/Hz2; sum of positive and negative frequencies */
 		if (units == 1) {
 			return energyDensity;
 		} else {
-			double powerDensity = energyDensity * my dx;   /* Pa^2 Hz-2 s-1, after division by approximate duration */
+			double powerDensity = energyDensity * dx;   /* Pa^2 Hz-2 s-1, after division by approximate duration */
 			if (units == 2) {
 				/* "dB/Hz" */
 				return powerDensity == 0.0 ? -300.0 : 10 * log10 (powerDensity / 4.0e-10);
@@ -80,15 +83,6 @@ static double getValueAtSample (I, long isamp, long which, int units) {
 		}
 	}
 	return NUMundefined;
-}
-
-class_methods (Spectrum, Matrix) {
-	class_method (info)
-	class_method_local (Spectrum, readText)
-	class_method_local (Spectrum, readBinary)
-	us -> domainQuantity = MelderQuantity_FREQUENCY_HERTZ;
-	class_method (getValueAtSample)
-	class_methods_end
 }
 
 Spectrum Spectrum_create (double fmax, long nf) {
@@ -129,7 +123,7 @@ void Spectrum_drawInside (Spectrum me, Graphics g, double fmin, double fmax, dou
 	 */
 	if (autoscaling) maximum = -1e30;
 	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
-		double y = our getValueAtSample (me, ifreq, 0, 2);
+		double y = my v_getValueAtSample (ifreq, 0, 2);
 		if (autoscaling && y > maximum) maximum = y;
 		yWC [ifreq] = y;
 	}
@@ -175,7 +169,7 @@ if(ifmin==1)ifmin=2;  /* BUG */
 	if (autoscaling) maximum = -1e6;
 	for (long ifreq = ifmin; ifreq <= ifmax; ifreq ++) {
 		xWC [ifreq] = log10 (my x1 + (ifreq - 1) * my dx);
-		yWC [ifreq] = our getValueAtSample (me, ifreq, 0, 2);
+		yWC [ifreq] = my v_getValueAtSample (ifreq, 0, 2);
 		if (autoscaling && yWC [ifreq] > maximum) maximum = yWC [ifreq];
 	}
 	if (autoscaling) minimum = maximum - 60;   /* Default dynamic range is 60 dB. */
@@ -246,7 +240,7 @@ Spectrum Matrix_to_Spectrum (Matrix me) {
 		if (my ny != 2)
 			Melder_throw ("Matrix must have exactly 2 rows.");
 		autoSpectrum thee = Thing_new (Spectrum);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Spectrum.");
@@ -256,7 +250,7 @@ Spectrum Matrix_to_Spectrum (Matrix me) {
 Matrix Spectrum_to_Matrix (Spectrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");
@@ -268,7 +262,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth) {
 		/*
 		 * dB-spectrum is log (power).
 		 */
-		autoSpectrum dBspectrum = (Spectrum) Data_copy (me);
+		autoSpectrum dBspectrum = Data_copy (me);
 		double *re = dBspectrum -> z [1], *im = dBspectrum -> z [2];
 		for (long i = 1; i <= dBspectrum -> nx; i ++) {
 			re [i] = log (re [i] * re [i] + im [i] * im [i] + 1e-300);

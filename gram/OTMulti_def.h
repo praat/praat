@@ -17,9 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/14
- */
 
 #define ooSTRUCT OTConstraint
 oo_DEFINE_STRUCT (OTConstraint)
@@ -32,7 +29,7 @@ oo_DEFINE_STRUCT (OTConstraint)
 	oo_ENDFROM
 	#if oo_READING
 		if (localVersion < 2) {
-			my plasticity = 1.0;
+			plasticity = 1.0;
 		}
 	#endif
 	#if !oo_READING && !oo_WRITING
@@ -49,7 +46,7 @@ oo_DEFINE_STRUCT (OTCandidate)
 
 	oo_STRING (string)
 	oo_LONG (numberOfConstraints)
-	oo_INT_VECTOR (marks, my numberOfConstraints)
+	oo_INT_VECTOR (marks, numberOfConstraints)
 	#if !oo_READING && !oo_WRITING
 		oo_DOUBLE (harmony)
 		oo_DOUBLE (probability)
@@ -69,17 +66,17 @@ oo_DEFINE_CLASS (OTMulti, Data)
 		oo_DOUBLE (leak)
 	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
-	oo_STRUCT_VECTOR (OTConstraint, constraints, my numberOfConstraints)
-	oo_LONG_VECTOR (index, my numberOfConstraints)
+	oo_STRUCT_VECTOR (OTConstraint, constraints, numberOfConstraints)
+	oo_LONG_VECTOR (index, numberOfConstraints)
 	oo_LONG (numberOfCandidates)
-	oo_STRUCT_VECTOR (OTCandidate, candidates, my numberOfCandidates)
+	oo_STRUCT_VECTOR (OTCandidate, candidates, numberOfCandidates)
 	#if oo_READING
-		OTMulti_sort (me);
+		OTMulti_sort (this);
 	#endif
 
 	#if oo_DECLARING
 		// overridden methods:
-			void v_info ();
+			virtual void v_info ();
 	#endif
 
 oo_END_CLASS (OTMulti)

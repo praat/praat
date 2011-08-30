@@ -27,8 +27,7 @@
 #include "MFCC.h"
 #include "NUM2.h"
 
-class_methods (MFCC, CC)
-class_methods_end
+Thing_implement (MFCC, CC, 0);
 
 MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel)

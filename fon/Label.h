@@ -22,11 +22,14 @@
 #include "Collection.h"
 #include "Function.h"
 
-Thing_declare1cpp (Autosegment);
-struct structAutosegment : public structFunction {
+Thing_define (Autosegment, Function) {
+	// overridden methods:
+	protected:
+		virtual void v_copy (Any data_to);
+		virtual bool v_equal (Any otherData);
+		static Data_Description s_description;
+		virtual Data_Description v_description () { return s_description; }
 };
-#define Autosegment__methods(klas) Function__methods(klas)
-Thing_declare2cpp (Autosegment, Function);
 
 Autosegment Autosegment_create (double tmin, double tmax, const wchar *label);
 /*
@@ -46,11 +49,13 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar *label);
 			result -> name [] == label [];   // 'label' copied into 'name'
 */
 
-Thing_declare1cpp (Tier);
-struct structTier : public structSorted {
+Thing_define (Tier, Sorted) {
+	// overridden methods:
+		static int compare (Any data1, Any data2);
+		virtual int (*v_getCompareFunction ()) (Any data1, Any data2) { return compare; }
 };
-#define Tier__methods(klas) Sorted__methods(klas)
-Thing_declare2cpp (Tier, Sorted);
+
+void Tier_init (I, long initialCapacity);
 
 Tier Tier_create (long initialCapacity);
 /*
@@ -76,11 +81,8 @@ long Tier_timeToIndex (Tier me, double t);
 
 void Tier_init (I, long initialCapacity);
 
-Thing_declare1cpp (Label);
-struct structLabel : public structOrdered {
+Thing_define (Label, Ordered) {
 };
-#define Label__methods(klas) Ordered__methods(klas)
-Thing_declare2cpp (Label, Ordered);
 
 Label Label_create (long initialNumberOfTiers);
 

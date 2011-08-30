@@ -30,12 +30,7 @@
 #include "DurationTier.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "DTW_def.h"
-#define DTW__methods(klas) Matrix__methods(klas)
 oo_CLASS_CREATE (DTW, Matrix);
 
 #define DTW_SAKOECHIBA 1
@@ -92,16 +87,16 @@ double DTW_getXTimeFromYTime (DTW me, double ty);
 
 long DTW_getMaximumConsecutiveSteps (DTW me, int direction);
 
-void DTW_paintDistances (DTW me, Any g, double xmin, double xmax, double ymin,
+void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, double minimum, double maximum, int garnish);
 
-void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
+void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish);
 void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish);	
 void DTW_pathRemoveRedundantNodes (DTW me);
 void DTW_pathQueryRecode (DTW me);
 
-void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax,
+void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax,
 	double dmin, double dmax, int garnish);
 	
 void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
@@ -125,9 +120,5 @@ DTW Pitches_to_DTW (Pitch me, Pitch thee, double vuv_costs, double time_weight, 
 DurationTier DTW_to_DurationTier (DTW me);
 
 void DTW_and_Matrix_replace (DTW me, Matrix thee);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _DTW_h_ */

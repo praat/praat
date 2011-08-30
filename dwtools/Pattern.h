@@ -19,19 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020813 GPL header
- djmw 20110306 Latest modification.
-*/
-
-
 #include "Matrix.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Pattern);
+Thing_define (Pattern, Matrix) {
+};
 
 /* Attributes:
    xmin				:index of first input node.
@@ -63,15 +54,5 @@ Matrix Pattern_to_Matrix (Pattern me);
 
 int _Pattern_checkElements (Pattern me);
 /* Return 1 if all elements are in interval [0,1] else 0. */
-
-#ifdef __cplusplus
-	}
-
-	struct structPattern : public structMatrix {
-	};
-	#define Pattern__methods(klas) Matrix__methods(klas)
-	Thing_declare2cpp (Pattern, Matrix);
-
-#endif
 
 #endif /* _Pattern_h_ */

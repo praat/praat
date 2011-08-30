@@ -257,47 +257,46 @@ static void svdcvm (double **v, long mfit, long ma, int *frozen, double *w, doub
 
 /********* FunctionTerms *********************************************/
 
-static double classFunctionTerms_evaluate (I, double x)
+Thing_implement (FunctionTerms, Function, 0);
+
+double structFunctionTerms :: v_evaluate (double x)
 {
-	(void) void_me; (void) x;
+	(void) x;
 	return NUMundefined;
 }
 
-static void classFunctionTerms_evaluate_z (I, dcomplex *z, dcomplex *p)
+void structFunctionTerms :: v_evaluate_z (dcomplex *z, dcomplex *p)
 {
-	(void) void_me; (void) z;
+	(void) z;
 	p -> re = p -> im = NUMundefined;
 }
 
-static void classFunctionTerms_evaluateTerms (I, double x, double terms[])
+void structFunctionTerms :: v_evaluateTerms (double x, double terms[])
 {
-	iam (FunctionTerms);
 	(void) x;
-	for (long i = 1; i <= my numberOfCoefficients; i++)
+	for (long i = 1; i <= numberOfCoefficients; i++)
 	{
 		terms[i] = NUMundefined;
 	}
 }
 
-static long classFunctionTerms_getDegree (I)
+long structFunctionTerms :: v_getDegree ()
 {
-	iam (FunctionTerms);
-	return my numberOfCoefficients - 1;
+	return numberOfCoefficients - 1;
 }
 
-static void defaultGetExtrema (I, double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax)
+void structFunctionTerms :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax)   // David, geen aparte naam hier nodig
 {
-	iam (FunctionTerms);
 	long numberOfPoints = 1000;
 
 	// Melder_warning1 (L"defaultGetExtrema: extrema calculated by sampling the interval");
 
 	double x = x1, dx = (x2 - x1) / (numberOfPoints - 1);
-	*xmin = *xmax = x; *ymin = *ymax = our evaluate (me, x);
+	*xmin = *xmax = x; *ymin = *ymax = v_evaluate (x);
 	for (long i = 2; i <= numberOfPoints; i++)
 	{
 		x += dx;
-		double y = our evaluate (me, x);
+		double y = v_evaluate (x);
 		if (y > *ymax)
 		{
 			*ymax = y; *xmax = x;
@@ -308,23 +307,6 @@ static void defaultGetExtrema (I, double x1, double x2, double *xmin, double *ym
 		}
 	}
 }
-
-class_methods (FunctionTerms, Function)
-	class_method_local (FunctionTerms, destroy)
-	class_method_local (FunctionTerms, equal)
-	class_method_local (FunctionTerms, canWriteAsEncoding)
-	class_method_local (FunctionTerms, copy)
-	class_method_local (FunctionTerms, readText)
-	class_method_local (FunctionTerms, readBinary)
-	class_method_local (FunctionTerms, writeText)
-	class_method_local (FunctionTerms, writeBinary)
-	class_method_local (FunctionTerms, description)
-	class_method_local (FunctionTerms, evaluate)
-	class_method_local (FunctionTerms, evaluate_z)
-	class_method_local (FunctionTerms, evaluateTerms)
-	class_method_local (FunctionTerms, getDegree)
-	us -> getExtrema = defaultGetExtrema;
-class_methods_end
 
 void FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients)
 {
@@ -363,7 +345,7 @@ void FunctionTerms_initFromString (I, double xmin, double xmax, const wchar_t *s
 long FunctionTerms_getDegree (I)
 {
 	iam (FunctionTerms);
-	return our getDegree (me);
+	return my v_getDegree ();
 }
 
 void FunctionTerms_setDomain (I, double xmin, double xmax)
@@ -375,19 +357,19 @@ void FunctionTerms_setDomain (I, double xmin, double xmax)
 double FunctionTerms_evaluate (I, double x)
 {
 	iam (FunctionTerms);
-	return our evaluate (me, x);
+	return my v_evaluate (x);
 }
 
 void FunctionTerms_evaluate_z (I, dcomplex *z, dcomplex *p)
 {
 	iam (FunctionTerms);
-	our evaluate_z (me, z, p);
+	my v_evaluate_z (z, p);
 }
 
 void FunctionTerms_evaluateTerms (I, double x, double terms[])
 {
 	iam (FunctionTerms);
-	our evaluateTerms (me, x, terms);
+	my v_evaluateTerms (x, terms);
 }
 
 void FunctionTerms_getExtrema (I, double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax)
@@ -397,7 +379,7 @@ void FunctionTerms_getExtrema (I, double x1, double x2, double *xmin, double *ym
 	{
 		x1 = my xmin; x2 = my xmax;
 	}
-	our getExtrema (me, x1, x2, xmin, ymin, xmax, ymax);
+	my v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);
 }
 
 double FunctionTerms_getMinimum (I, double x1, double x2)
@@ -473,7 +455,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y, l
 			{
 				// Line enters from below: start new segment. Save start values
 
-				double xb = x[i-1]; yb = y[i-1]; index = i - 1;
+				double xb = x[i-1]; yb = y[i-1]; index = i - 1;   // David, dit klopt toch niet? xb is tweemaal gedefinieerd, en hier verdwijnt een toekenning
 				y[i-1] = ymin; x[i-1] = xcros_min;
 			}
 			if (y1 < ymax && y2 > ymax)
@@ -572,52 +554,50 @@ void FunctionTerms_setCoefficient (I, long index, double value)
 
 /********** Polynomial ***********************************************/
 
-static double classPolynomial_evaluate (I, double x)
-{
-	iam (Polynomial);
-	long double p = my coefficients[my numberOfCoefficients];
+Thing_implement (Polynomial, FunctionTerms, 0);
 
-	for (long i = my numberOfCoefficients - 1; i > 0; i--)
+double structPolynomial :: v_evaluate (double x)
+{
+	long double p = coefficients [numberOfCoefficients];
+
+	for (long i = numberOfCoefficients - 1; i > 0; i--)
 	{
-		p = p * x + my coefficients[i];
+		p = p * x + coefficients [i];
 	}
 	return p;
 }
 
-static void classPolynomial_evaluate_z (I, dcomplex *z, dcomplex *p)
+void structPolynomial :: v_evaluate_z (dcomplex *z, dcomplex *p)
 {
-	iam (Polynomial);
 	long double x = z -> re, y = z -> im;
 
-	long double pr = my coefficients[my numberOfCoefficients];
+	long double pr = coefficients [numberOfCoefficients];
 	long double pi = 0;
-	for (long i = my numberOfCoefficients - 1; i > 0; i--)
+	for (long i = numberOfCoefficients - 1; i > 0; i--)
 	{
 		long double p_r = pr;
-		pr =  pr * x - pi * y + my coefficients[i];
+		pr =  pr * x - pi * y + coefficients[i];
 		pi = p_r * y + pi * x;
 	}
 	p -> re = pr; p -> im = pi;
 }
 
-static void classPolynomial_evaluateTerms (I, double x, double terms[])
+void structPolynomial :: v_evaluateTerms (double x, double terms[])
 {
-	iam (Polynomial);
 	terms[1] = 1;
-	for (long i = 2; i <= my numberOfCoefficients; i++)
+	for (long i = 2; i <= numberOfCoefficients; i++)
 	{
 		terms[i] = terms[i-1] * x;
 	}
 }
 
-static void classPolynomial_getExtrema (I, double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax)
+void structPolynomial :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax)
 {
-	iam (Polynomial);
 	try {
-		long degree = my numberOfCoefficients - 1;
+		long degree = numberOfCoefficients - 1;
 
-		*xmin = x1; *ymin = our evaluate (me, x1);
-		*xmax = x2; *ymax = our evaluate (me, x2);
+		*xmin = x1; *ymin = v_evaluate (x1);
+		*xmax = x2; *ymax = v_evaluate (x2);
 		if (*ymin > *ymax)
 		{
 			/* Swap */
@@ -626,7 +606,7 @@ static void classPolynomial_getExtrema (I, double x1, double x2, double *xmin, d
 		}
 
 		if (degree < 2) return;
-		autoPolynomial d = Polynomial_getDerivative (me);
+		autoPolynomial d = Polynomial_getDerivative (this);
 		autoRoots r = Polynomial_to_Roots (d.peek());
 
 		for (long i = 1; i <= degree - 1; i++)
@@ -634,7 +614,7 @@ static void classPolynomial_getExtrema (I, double x1, double x2, double *xmin, d
 			double x = (r -> v[i]).re;
 			if (x > x1 && x < x2)
 			{
-				double y = our evaluate (me, x);
+				double y = v_evaluate (x);
 				if (y > *ymax)
 				{
 					*ymax = y; *xmax = x;
@@ -646,17 +626,10 @@ static void classPolynomial_getExtrema (I, double x1, double x2, double *xmin, d
 			}
 		}
 	} catch (MelderError) {
-		defaultGetExtrema (me, x1, x2, xmin, ymin, xmax, ymax);
+		structFunctionTerms :: v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);
 		Melder_clearError ();
 	}
 }
-
-class_methods (Polynomial, FunctionTerms)
-	class_method_local (Polynomial, evaluate)
-	class_method_local (Polynomial, evaluate_z)
-	class_method_local (Polynomial, evaluateTerms)
-	class_method_local (Polynomial, getExtrema)
-class_methods_end
 
 Polynomial Polynomial_create (double xmin, double xmax, long degree)
 {
@@ -745,12 +718,12 @@ Polynomial Polynomial_scaleX (Polynomial me, double xmin, double xmax)
 double Polynomial_evaluate (I, double x)
 {
 	iam (Polynomial);
-	return our evaluate (me, x);
+	return my v_evaluate (x);
 }
 
 void Polynomial_evaluate_z (Polynomial me, dcomplex *z, dcomplex *p)
 {
-	our evaluate_z (me, z, p);
+	my v_evaluate_z (z, p);
 }
 
 static void Polynomial_evaluate_z_cart (Polynomial me, double r, double phi, double *re, double *im)
@@ -857,53 +830,52 @@ void Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomi
 
 /******** LegendreSeries ********************************************/
 
-static double classLegendreSeries_evaluate (I, double x)
+Thing_implement (LegendreSeries, FunctionTerms, 0);
+
+double structLegendreSeries :: v_evaluate (double x)
 {
-	iam (LegendreSeries);
-	double p = my coefficients[1];
+	double p = coefficients[1];
 
 	// Transform x from domain [xmin, xmax] to domain [-1, 1]
 
-	if (x < my xmin || x > my xmax) return NUMundefined;
+	if (x < xmin || x > xmax) return NUMundefined;
 
-	double pim1 = x = (2 * x - my xmin - my xmax) / (my xmax - my xmin);
+	double pim1 = x = (2 * x - xmin - xmax) / (xmax - xmin);
 
-	if (my numberOfCoefficients > 1)
+	if (numberOfCoefficients > 1)
 	{
 		double pim2 = 1, twox = 2 * x, f2 = x, d = 1.0;
-		p += my coefficients[2] * pim1;
-		for (long i = 3; i <= my numberOfCoefficients; i++)
+		p += coefficients[2] * pim1;
+		for (long i = 3; i <= numberOfCoefficients; i++)
 		{
 			double f1 = d++;
 			f2 += twox;
 			double pi = (f2 * pim1 - f1 * pim2) / d;
-			p += my coefficients[i] * pi;
+			p += coefficients[i] * pi;
 			pim2 = pim1; pim1 = pi;
 		}
 	}
 	return p;
 }
 
-static void classLegendreSeries_evaluateTerms (I, double x, double terms[])
+void structLegendreSeries :: v_evaluateTerms (double x, double terms[])
 {
-	iam (LegendreSeries);
-
-	if (x < my xmin || x > my xmax)
+	if (x < xmin || x > xmax)
 	{
-		for (long i = 1; i <= my numberOfCoefficients; i++) terms[i] = NUMundefined;
+		for (long i = 1; i <= numberOfCoefficients; i++) terms[i] = NUMundefined;
 		return;
 	}
 
 	// Transform x from domain [xmin, xmax] to domain [-1, 1]
 
-	x = (2 * x - my xmin - my xmax) / (my xmax - my xmin);
+	x = (2 * x - xmin - xmax) / (xmax - xmin);
 
 	terms[1] = 1;
-	if (my numberOfCoefficients > 1)
+	if (numberOfCoefficients > 1)
 	{
 		double twox = 2 * x, f2 = x, d = 1.0;
 		terms[2] = x;
-		for (long i = 3; i <= my numberOfCoefficients; i++)
+		for (long i = 3; i <= numberOfCoefficients; i++)
 		{
 			double f1 = d++;
 			f2 += twox;
@@ -912,23 +884,17 @@ static void classLegendreSeries_evaluateTerms (I, double x, double terms[])
 	}
 }
 
-static void classLegendreSeries_getExtrema (I, double x1, double x2,
+void structLegendreSeries :: v_getExtrema (double x1, double x2,
 	double *xmin, double *ymin, double *xmax, double *ymax)
 {
-	iam (LegendreSeries);
 	try {
-		autoPolynomial p = LegendreSeries_to_Polynomial (me);
+		autoPolynomial p = LegendreSeries_to_Polynomial (this);
 		FunctionTerms_getExtrema (p.peek(), x1, x2, xmin, ymin, xmax, ymax);
 	} catch (MelderError) {
-		defaultGetExtrema (me, x1, x2, xmin, ymin, xmax, ymax);
-		Melder_clearError (); }
+		structFunctionTerms :: v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);
+		Melder_clearError ();
+	}
 }
-
-class_methods (LegendreSeries, FunctionTerms)
-	class_method_local (LegendreSeries, evaluate)
-	class_method_local (LegendreSeries, evaluateTerms)
-	class_method_local (LegendreSeries, getExtrema)
-class_methods_end
 
 LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials)
 {
@@ -1011,8 +977,7 @@ Polynomial LegendreSeries_to_Polynomial (LegendreSeries me)
 
 /********* Roots ****************************************************/
 
-class_methods (Roots, ComplexVector)
-class_methods_end
+Thing_implement (Roots, ComplexVector, 0);
 
 Roots Roots_create (long numberOfRoots)
 {
@@ -1278,6 +1243,8 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, long nu
 
 /****** ChebyshevSeries ******************************************/
 
+Thing_implement (ChebyshevSeries, FunctionTerms, 0);
+
 /*
 	p(x) = sum (k=1..numberOfCoefficients, c[k]*T[k](x')) - c[1] / 2;
 	Numerical evaluation via Clenshaw's recurrence equation (NRC: 5.8.11)
@@ -1286,69 +1253,61 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency, long nu
 	p(x) = d[0] = x' d[1] - d[2] + c[0] / 2;
 	x' = (2 * x - xmin - xmax) / (xmax - xmin)
 */
-static double classChebyshevSeries_evaluate (I, double x)
+double structChebyshevSeries :: v_evaluate (double x)
 {
-	iam (ChebyshevSeries);
-	if (x < my xmin || x > my xmax) return NUMundefined;
+	if (x < xmin || x > xmax) return NUMundefined;
 
 	double d1 = 0, d2 = 0;
-	if (my numberOfCoefficients > 1)
+	if (numberOfCoefficients > 1)
 	{
 		// Transform x from domain [xmin, xmax] to domain [-1, 1]
 
-		x = (2 * x - my xmin - my xmax) / (my xmax - my xmin);
+		x = (2 * x - xmin - xmax) / (xmax - xmin);
 		double x2 = 2 * x;
-		for (long i = my numberOfCoefficients; i > 1; i--)
+		for (long i = numberOfCoefficients; i > 1; i--)
 		{
 			double tmp = d1;
-			d1 = x2 * d1 - d2 + my coefficients[i];
+			d1 = x2 * d1 - d2 + coefficients[i];
 			d2 = tmp;
 		}
 	}
-	return x * d1 - d2 + my coefficients[1];
+	return x * d1 - d2 + coefficients[1];
 }
 
 /*
 	T[n](x) = 2*x*T[n-1] - T[n-2](x)  n >= 2
 */
-static void classChebyshevSeries_evaluateTerms (I, double x, double *terms)
+void structChebyshevSeries :: v_evaluateTerms (double x, double *terms)
 {
-	iam (ChebyshevSeries);
-
-	if (x < my xmin || x > my xmax)
+	if (x < xmin || x > xmax)
 	{
-		for (long i = 1; i <= my numberOfCoefficients; i++) terms[i] = NUMundefined;
+		for (long i = 1; i <= numberOfCoefficients; i++) terms[i] = NUMundefined;
 		return;
 	}
 	terms[1] = 1;
-	if (my numberOfCoefficients > 1)
+	if (numberOfCoefficients > 1)
 	{
 		// Transform x from domain [xmin, xmax] to domain [-1, 1]
 
-		terms[2] = x = (2 * x - my xmin - my xmax) / (my xmax - my xmin);
+		terms[2] = x = (2 * x - xmin - xmax) / (xmax - xmin);
 
-		for (long i = 3; i <= my numberOfCoefficients; i++)
+		for (long i = 3; i <= numberOfCoefficients; i++)
 		{
 			terms[i] = 2 * x * terms[i-1] - terms[i-2];
 		}
 	}
 }
 
-static void classChebyshevSeries_getExtrema (I, double x1, double x2,
+void structChebyshevSeries :: v_getExtrema (double x1, double x2,
 	double *xmin, double *ymin, double *xmax, double *ymax)
 {
-	iam (ChebyshevSeries);
 	try {
-		autoPolynomial p = ChebyshevSeries_to_Polynomial (me);
+		autoPolynomial p = ChebyshevSeries_to_Polynomial (this);
 		FunctionTerms_getExtrema (p.peek(), x1, x2, xmin, ymin, xmax, ymax);
-	} catch (MelderError) { defaultGetExtrema (me, x1, x2, xmin, ymin, xmax, ymax); }
+	} catch (MelderError) {
+		structFunctionTerms :: v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);   // David, dat is fout: er moet een Melder_throw of een Melder_clearError volgen
+	}
 }
-
-class_methods (ChebyshevSeries, FunctionTerms)
-	class_method_local (ChebyshevSeries, evaluate)
-	class_method_local (ChebyshevSeries, evaluateTerms)
-	class_method_local (ChebyshevSeries, getExtrema)
-class_methods_end
 
 ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numberOfPolynomials)
 {
@@ -1641,38 +1600,23 @@ static double NUMispline2 (double points[], long numberOfPoints, long order, lon
 	return y /= (order + 1);
 }
 
-static double classSpline_evaluate (I, double x)
+Thing_implement (Spline, FunctionTerms, 0);
+
+double structSpline :: v_evaluate (double x)
 {
-	(void) void_me; (void) x;
+	(void) x;
 	return 0;
 }
 
-static long classSpline_getDegree (I)
+long structSpline :: v_getDegree ()
 {
-	iam (Spline);
-	return my degree;
+	return degree;
 }
 
-static long classSpline_getOrder (I)
+long structSpline :: v_getOrder ()
 {
-	iam (Spline);
-	return my degree + 1;
+	return degree + 1;
 }
-
-class_methods (Spline, FunctionTerms)
-	class_method_local (Spline, destroy)
-	class_method_local (Spline, equal)
-	class_method_local (Spline, canWriteAsEncoding)
-	class_method_local (Spline, copy)
-	class_method_local (Spline, readText)
-	class_method_local (Spline, readBinary)
-	class_method_local (Spline, writeText)
-	class_method_local (Spline, writeBinary)
-	class_method_local (Spline, description)
-	class_method_local (Spline, evaluate)
-	class_method_local (Spline, getDegree)
-	class_method_local (Spline, getOrder)
-class_methods_end
 
 /* Precondition: FunctionTerms part inited + degree */
 static void Spline_initKnotsFromString (I, long degree, const wchar_t *interiorKnots)
@@ -1785,7 +1729,7 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 long Spline_getOrder (I)
 {
 	iam (Spline);
-	return our getOrder (me);
+	return my v_getOrder ();
 }
 
 Spline Spline_scaleX (I, double xmin, double xmax)
@@ -1815,36 +1759,30 @@ Spline Spline_scaleX (I, double xmin, double xmax)
 
 /********* MSplines ************************************************/
 
-static double classMSpline_evaluate (I, double x)
+double structMSpline :: v_evaluate (double x)
 {
-	iam (MSpline);
-	if (x < my xmin || x > my xmax) return 0;
+	if (x < xmin || x > xmax) return 0;
 
 	double result = 0;
-	for (long i = 1; i <= my numberOfCoefficients; i++)
+	for (long i = 1; i <= numberOfCoefficients; i++)
 	{
-		if (my coefficients[i] != 0) result += my coefficients[i] *
-			NUMmspline2 (my knots, my numberOfKnots, my degree + 1, i, x);
+		if (coefficients[i] != 0) result += coefficients[i] *
+			NUMmspline2 (knots, numberOfKnots, degree + 1, i, x);
 	}
 	return result;
 }
 
-static void classMSpline_evaluateTerms (I, double x, double *terms)
+void structMSpline :: v_evaluateTerms (double x, double *terms)
 {
-	iam (MSpline);
+	if (x < xmin || x > xmax) return;
 
-	if (x < my xmin || x > my xmax) return;
-
-	for (long i = 1; i <= my numberOfCoefficients; i++)
+	for (long i = 1; i <= numberOfCoefficients; i++)
 	{
-		terms[i] = NUMmspline2 (my knots, my numberOfKnots, my degree + 1, i, x);
+		terms[i] = NUMmspline2 (knots, numberOfKnots, degree + 1, i, x);
 	}
 }
 
-class_methods (MSpline, Spline)
-	class_method_local (MSpline, evaluate)
-	class_method_local (MSpline, evaluateTerms)
-class_methods_end
+Thing_implement (MSpline, Spline, 0);
 
 MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots)
 {
@@ -1870,36 +1808,30 @@ MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const 
 
 /******** ISplines ************************************************/
 
-static double classISpline_evaluate (I, double x)
+double structISpline :: v_evaluate (double x)
 {
-	iam (ISpline);
-	if (x < my xmin || x > my xmax) return 0;
+	if (x < xmin || x > xmax) return 0;
 
 	double result = 0;
-	for (long i = 1; i <= my numberOfCoefficients; i++)
+	for (long i = 1; i <= numberOfCoefficients; i++)
 	{
-		if (my coefficients[i] != 0) result += my coefficients[i] *
-			NUMispline2 (my knots, my numberOfKnots, my degree, i, x);
+		if (coefficients[i] != 0) result += coefficients[i] *
+			NUMispline2 (knots, numberOfKnots, degree, i, x);
 	}
 	return result;
 }
 
-static void classISpline_evaluateTerms (I, double x, double *terms)
+void structISpline :: v_evaluateTerms (double x, double *terms)
 {
-	iam (ISpline);
-	for (long i = 1; i <= my numberOfCoefficients; i++)
+	for (long i = 1; i <= numberOfCoefficients; i++)
 	{
-		terms[i] = NUMispline2 (my knots, my numberOfKnots, my degree, i, x);
+		terms[i] = NUMispline2 (knots, numberOfKnots, degree, i, x);
 	}
 }
 
-static long classISpline_getOrder (I) { iam (ISpline); return my degree; }
+long structISpline :: v_getOrder () { return degree; }
 
-class_methods (ISpline, Spline)
-	class_method_local (ISpline, evaluate)
-	class_method_local (ISpline, evaluateTerms)
-	class_method_local (ISpline, getOrder)
-class_methods_end
+Thing_implement (ISpline, Spline, 0);
 
 ISpline ISpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots)
 {

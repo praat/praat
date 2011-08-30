@@ -60,10 +60,10 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 	Graphics_setCircumflexIsSuperscript (g, useTextStyles);
 	Graphics_setUnderscoreIsSubscript (g, useTextStyles);
 	for (long itier = 1; itier <= numberOfTiers; itier ++) {
-		Data anyTier = (Data) my tiers -> item [itier];
+		Function anyTier = (Function) my tiers -> item [itier];
 		double ymin = -1.0 - 0.5 * itier, ymax = ymin + 0.5;
 		Graphics_rectangle (g, tmin, tmax, ymin, ymax);
-		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			long ninterval = tier -> intervals -> size;
 			for (long iinterval = 1; iinterval <= ninterval; iinterval ++) {
@@ -264,9 +264,9 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 {
 	int ntier = grid -> tiers -> size;
 	if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
-	if (ClassFunction_isUnitLogarithmic (classPitch, Pitch_LEVEL_FREQUENCY, unit)) {
-		fmin = ClassFunction_convertStandardToSpecialUnit (classPitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
-		fmax = ClassFunction_convertStandardToSpecialUnit (classPitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
+	if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, unit)) {
+		fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
+		fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
 	}
 	if (unit == kPitch_unit_HERTZ_LOGARITHMIC)
 		Pitch_draw (pitch, g, tmin, tmax, pow (10, fmin - 0.25 * (fmax - fmin) * ntier), pow (10, fmax), FALSE, speckle, unit);
@@ -296,7 +296,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		}
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
-		MelderString_append3 (& buffer, L"Pitch (", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
+		MelderString_append3 (& buffer, L"Pitch (", Function_getUnitText (pitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
 		Graphics_textLeft (g, true, buffer.string);
 		Graphics_textBottom (g, true, L"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, true);
@@ -313,9 +313,9 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Pitch_draw (pitch, g, tmin, tmax, fmin, fmax, garnish, speckle, unit);
 		if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch);
-		if (ClassFunction_isUnitLogarithmic (classPitch, Pitch_LEVEL_FREQUENCY, unit)) {
-			fmin = ClassFunction_convertStandardToSpecialUnit (classPitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
-			fmax = ClassFunction_convertStandardToSpecialUnit (classPitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
+		if (Function_isUnitLogarithmic (pitch, Pitch_LEVEL_FREQUENCY, unit)) {
+			fmin = Function_convertStandardToSpecialUnit (pitch, fmin, Pitch_LEVEL_FREQUENCY, unit);
+			fmax = Function_convertStandardToSpecialUnit (pitch, fmax, Pitch_LEVEL_FREQUENCY, unit);
 		}
 		Graphics_setTextAlignment (g, horizontalAlignment, Graphics_BOTTOM);
 		Graphics_setInner (g);
@@ -324,8 +324,8 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Graphics_setNumberSignIsBold (g, useTextStyles);
 		Graphics_setCircumflexIsSuperscript (g, useTextStyles);
 		Graphics_setUnderscoreIsSubscript (g, useTextStyles);
-		Data anyTier = (Data) grid -> tiers -> item [tierNumber];
-		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+		Function anyTier = (Function) grid -> tiers -> item [tierNumber];
+		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			for (long i = 1; i <= tier -> intervals -> size; i ++) {
 				TextInterval interval = (TextInterval) tier -> intervals -> item [i];
@@ -335,7 +335,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				if (tright > pitch -> xmax) tright = pitch -> xmax;
 				tmid = (tleft + tright) / 2;
 				if (tmid < tmin || tmid > tmax) continue;
-				f0 = ClassFunction_convertStandardToSpecialUnit (classPitch, RealTier_getValueAtTime (pitchTier.peek(), tmid), Pitch_LEVEL_FREQUENCY, unit);
+				f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.peek(), tmid), Pitch_LEVEL_FREQUENCY, unit);
 				if (f0 < fmin || f0 > fmax) continue;
 				Graphics_text (g,
 					horizontalAlignment == Graphics_LEFT ? tleft : horizontalAlignment == Graphics_RIGHT ? tright : tmid,
@@ -348,7 +348,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 				double t = point -> number, f0;
 				if (! point -> mark || ! point -> mark [0]) continue;
 				if (t < tmin || t > tmax) continue;
-				f0 = ClassFunction_convertStandardToSpecialUnit (classPitch, RealTier_getValueAtTime (pitchTier.peek(), t), Pitch_LEVEL_FREQUENCY, unit);
+				f0 = Function_convertStandardToSpecialUnit (pitch, RealTier_getValueAtTime (pitchTier.peek(), t), Pitch_LEVEL_FREQUENCY, unit);
 				if (f0 < fmin || f0 > fmax) continue;
 				Graphics_text (g, t, f0, point -> mark);
 			}

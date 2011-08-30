@@ -130,8 +130,8 @@ static void draw_IPA_vowel_chart (Graphics graphics) {
 	}
 }
 
-extern "C" void manual_Picture_init (ManPages me);
-extern "C" void manual_Picture_init (ManPages me) {
+void manual_Picture_init (ManPages me);
+void manual_Picture_init (ManPages me) {
 
 MAN_BEGIN (L"Special symbols", L"ppgb", 20080227)
 INTRO (L"When drawing text into the @@Picture window@ or into the @@TextGridEditor@, "
@@ -313,17 +313,10 @@ NORMAL (L"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20090804)
+MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20110831)
 NORMAL (L"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following list.")
-NORMAL (L"In line:")
-LIST_ITEM (L"\\:f \\bs:f the phonetic length sign")
-LIST_ITEM (L"\\\'1 \\bs\'1 primary stress")
-LIST_ITEM (L"\\\'2 \\bs\'2 secondary stress")
-LIST_ITEM (L"\\|f \\bs|f the phonetic stroke")
-LIST_ITEM (L"t\\cn t\\bscn (%%combining left angle above%, %corner): unreleased plosive")
-LIST_ITEM (L"\\er\\hr \\bser\\bshr (%%combining rhotic hook%): rhotacized vowel")
 NORMAL (L"Understrikes:")
 LIST_ITEM (L"n\\|v n\\bs|v (%%combining vertical line below%): syllabic consonant")
 LIST_ITEM (L"b\\0v b\\bs0v (%%combining ring below%): voiceless (e.g. lenis voiceless plosive, voiceless nasal or approximant)")
@@ -352,6 +345,26 @@ LIST_ITEM (L"\\ep\\^^ \\bsep\\bs\\^ \\^  (%%combining circumflex accent%): falli
 LIST_ITEM (L"o\\:^ o\\bs:\\^  (%%combining diaeresis%): centralized")
 LIST_ITEM (L"\\ep\\N^ \\ep\\bsN\\^  (%%combining breve%): short")
 LIST_ITEM (L"k\\lip t\\lis k\\bslip (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
+NORMAL (L"In line:")
+LIST_ITEM (L"\\:f \\bs:f the phonetic length sign")
+LIST_ITEM (L"\\\'1 \\bs\'1 primary stress")
+LIST_ITEM (L"\\\'2 \\bs\'2 secondary stress")
+LIST_ITEM (L"\\|f \\bs|f the phonetic stroke")
+LIST_ITEM (L"t\\cn t\\bscn (%%combining left angle above%, %corner): unreleased plosive")
+LIST_ITEM (L"\\er\\hr \\bser\\bshr (%%combining rhotic hook%): rhotacized vowel")
+NORMAL (L"Not available in EPS files (i.e. only publishable with copy-paste or with PDF files):")
+LIST_ITEM (L"t\\^h t\\bs\\^ h aspiration")
+LIST_ITEM (L"b\\^H b\\bs\\^ H voiced aspiration (breathiness)")
+LIST_ITEM (L"t\\^j t\\bs\\^ j palatalization")
+LIST_ITEM (L"t\\^g t\\bs\\^ g velarization")
+LIST_ITEM (L"k\\^w k\\bs\\^ w rounding")
+LIST_ITEM (L"t\\^Y t\\bs\\^ Y rounding with palatalization")
+LIST_ITEM (L"a\\^? a\\bs\\^ ? glottalization")
+LIST_ITEM (L"t\\^9 t\\bs\\^ 9 pharyngealization")
+LIST_ITEM (L"t\\^l t\\bs\\^ l lateral release")
+LIST_ITEM (L"t\\^s t\\bs\\^ s, k\\^x k\\bs\\^ x, p\\^f p\\bs\\^ f affrication")
+LIST_ITEM (L"\\^y \\bs\\^ y (palatalization in a deprecated American notation)")
+LIST_ITEM (L"a\\_ub a\\bs\\_ ub undertie (liaison, if spaces don't mean breaks in your transcription)")
 MAN_END
 
 MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20090804)
@@ -693,14 +706,14 @@ TAG (L"@@Pen menu")
 TAG (L"@@Font menu")
 MAN_END
 
-MAN_BEGIN (L"PostScript settings...", L"ppgb", 20110131)
+MAN_BEGIN (L"PostScript settings...", L"ppgb", 20110808)
 INTRO (L"One of the commands in the File menus of many windows. "
 	"The PostScript settings influence @Printing and saving to @@Encapsulated PostScript@ files.")
 ENTRY (L"Settings")
 TAG (L"##Allow direct PostScript printing# (Windows and Macintosh only)")
 DEFINITION (L"this determines whether Praat prints explicit PostScript commands to your printer "
 	"if it is a PostScript printer. This is what you will usually want. However, if you find "
-	"that some of the options that you choose in the printing dialog seem not to be supported "
+	"that some of the options that you choose in the #Print window seem not to be supported "
 	"(e.g. scaling, printing two-up...), you may switch this off; Praat will then send native "
 	"Windows or Macintosh drawing commands, which the printer driver will try to translate "
 	"to PostScript. If your printer does not support PostScript, this switch is ignored. "
@@ -715,17 +728,17 @@ DEFINITION (L"Your choice of the grey resolution influences direct PostScript pr
 	"and saving to @@Encapsulated PostScript@ files.")
 TAG (L"##Paper size# (Unix only)")
 DEFINITION (L"you can choose from A4 (210 \\xx 297 mm), A3 (297 \\xx 420 mm) or US Letter (8.5 \\xx 11\\\"p). "
-	"This choice applies to Unix only; on Windows, you choose the paper size in the ##Print...# dialog; "
-	"on Macintosh, you choose the paper size in the ##Page setup...# dialog.")
+	"This choice applies to Unix only; on Windows, you choose the paper size in the ##Print...# window; "
+	"on Macintosh, you choose the paper size in the ##Page setup...# window.")
 TAG (L"##Orientation# (Unix only)")
 DEFINITION (L"you can choose between %portrait (e.g., 297 mm high and 210 mm wide) "
 	"and %landscape (e.g., 210 mm high and 297 mm wide). "
-	"This choice applies to Unix only; on Windows, you choose the orientation in the ##Print...# dialog; "
-	"on Macintosh, you choose the orientation in the ##Page setup...# dialog.")
+	"This choice applies to Unix only; on Windows, you choose the orientation in the ##Print...# window; "
+	"on Macintosh, you choose the orientation in the ##Page setup...# window.")
 TAG (L"##Magnification# (Unix only)")
 DEFINITION (L"the relative size with which your picture will be printed; normally 1.0. "
-	"This choice applies to Unix only; on Windows, you choose the scaling in the ##Print...# dialog; "
-	"on Macintosh, you choose the scaling in the ##Page setup...# dialog.")
+	"This choice applies to Unix only; on Windows, you choose the scaling in the ##Print...# window; "
+	"on Macintosh, you choose the scaling in the ##Page setup...# window.")
 TAG (L"##Print command# (Unix only)")
 DEFINITION (L"When printing on Unix, a temporary PostScript^\\re file is created in the \"/tmp\" directory; "
 	"it will have a name like \"picXXXXXX\", and is automatically removed after printing. "

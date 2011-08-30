@@ -126,7 +126,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 	try {
 		if (tier -> points -> size == 0) Melder_throw ("No pitch points.");
-		autoPitch thee = (Pitch) Data_copy (me);
+		autoPitch thee = Data_copy (me);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & thy frame [iframe];
 			Pitch_Candidate cand = & frame -> candidate [1];

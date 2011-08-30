@@ -30,11 +30,8 @@
 	extern "C" {
 #endif
 
-Thing_declare1cpp (Activation);
-struct structActivation : public structMatrix {
+Thing_define (Activation, Matrix) {
 };
-#define Activation__methods(klas) Matrix__methods(klas)
-oo_CLASS_CREATE (Activation, Matrix);
 
 /* Attributes:
    xmin				:1

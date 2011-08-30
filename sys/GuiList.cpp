@@ -284,8 +284,8 @@ GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bo
 		GuiObject scrolled = gtk_scrolled_window_new (NULL, NULL);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 		my widget = gtk_tree_view_new_with_model (GTK_TREE_MODEL (liststore));
-		gtk_container_add (GTK_CONTAINER (scrolled), my widget);
-		gtk_widget_show (scrolled);
+		gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my widget));
+		gtk_widget_show (GTK_WIDGET (scrolled));
 		gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (my widget), allowMultipleSelection ? GTK_SELECTION_MULTIPLE : GTK_SELECTION_SINGLE);
 		g_object_unref (liststore);   // Destroys the widget after the list is destroyed
 
@@ -335,7 +335,7 @@ GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bo
 			gtk_tree_selection_set_mode (sel, GTK_SELECTION_SINGLE);
 		}
 		if (GTK_IS_BOX (parent)) {
-			gtk_box_pack_start (GTK_BOX (parent), scrolled, TRUE, TRUE, 0);
+			gtk_box_pack_start (GTK_BOX (parent), GTK_WIDGET (scrolled), TRUE, TRUE, 0);
 		}
 		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), me);
 	#elif win

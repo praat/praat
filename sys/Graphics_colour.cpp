@@ -87,176 +87,168 @@ const wchar_t * Graphics_Colour_name (Graphics_Colour colour) {
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void _Graphics_setColour (I, Graphics_Colour colour) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
+void _Graphics_setColour (Graphics graphics, Graphics_Colour colour) {
+	if (graphics -> screen) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my cr == NULL) return;
-			cairo_set_source_rgb (my cr, colour. red, colour. green, colour. blue);
+			if (my d_cairoGraphicsContext == NULL) return;
+			cairo_set_source_rgb (my d_cairoGraphicsContext, colour. red, colour. green, colour. blue);
 		#elif win
-			my foregroundColour = RGB (colour. red * 255, colour. green * 255, colour. blue * 255);
-			SelectPen (my dc, GetStockPen (BLACK_PEN));
-			DeleteObject (my pen);
-			my pen = CreatePen (PS_SOLID, 0, my foregroundColour);
-			SelectBrush (my dc, GetStockBrush (NULL_BRUSH));
-			DeleteObject (my brush);
-			my brush = CreateSolidBrush (my foregroundColour);
+			my d_winForegroundColour = RGB (colour. red * 255, colour. green * 255, colour. blue * 255);
+			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+			DeleteObject (my d_winPen);
+			my d_winPen = CreatePen (PS_SOLID, 0, my d_winForegroundColour);
+			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+			DeleteObject (my d_winBrush);
+			my d_winBrush = CreateSolidBrush (my d_winForegroundColour);
 		#elif mac
-			my macColour. red = colour. red * 65535;
-			my macColour. green = colour. green * 65535;
-			my macColour. blue = colour. blue * 65535;
+			my d_macColour. red = colour. red * 65535;
+			my d_macColour. green = colour. green * 65535;
+			my d_macColour. blue = colour. blue * 65535;
 			// postpone till drawing
 		#endif
-	} else if (my postScript) {
-		iam (GraphicsPostscript);
-		my printf (my file, "%.6g %.6g %.6g setrgbcolor\n", colour. red, colour. green, colour. blue);
+	} else if (graphics -> postScript) {
+		GraphicsPostscript me = static_cast <GraphicsPostscript> (graphics);
+		my d_printf (my d_file, "%.6g %.6g %.6g setrgbcolor\n", colour. red, colour. green, colour. blue);
 	}
 }
 
-void Graphics_setColour (I, Graphics_Colour colour) {
-	iam (Graphics);
+void Graphics_setColour (Graphics me, Graphics_Colour colour) {
 	my colour = colour;
 	_Graphics_setColour (me, colour);
 	if (my recording) { op (SET_RGB_COLOUR, 3); put (colour. red); put (colour. green); put (colour. blue); }
 }
 
-void _Graphics_setGrey (I, double fgrey) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
+void _Graphics_setGrey (Graphics graphics, double fgrey) {
+	if (graphics -> screen) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my cr == NULL) return;
+			if (my d_cairoGraphicsContext == NULL) return;
 			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
-			cairo_set_source_rgb (my cr, fgrey, fgrey, fgrey);
+			cairo_set_source_rgb (my d_cairoGraphicsContext, fgrey, fgrey, fgrey);
 		#elif win
 			int lightness = fgrey <= 0 ? 0 : fgrey >= 1.0 ? 255 : fgrey * 255;
-			my foregroundColour = RGB (lightness, lightness, lightness);
-			SelectPen (my dc, GetStockPen (BLACK_PEN));
-			DeleteObject (my pen);
-			my pen = CreatePen (PS_SOLID, 0, my foregroundColour);
-			SelectBrush (my dc, GetStockBrush (NULL_BRUSH));
-			DeleteObject (my brush);
-			my brush = CreateSolidBrush (my foregroundColour);
+			my d_winForegroundColour = RGB (lightness, lightness, lightness);
+			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+			DeleteObject (my d_winPen);
+			my d_winPen = CreatePen (PS_SOLID, 0, my d_winForegroundColour);
+			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+			DeleteObject (my d_winBrush);
+			my d_winBrush = CreateSolidBrush (my d_winForegroundColour);
 		#elif mac
 			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
-			my macColour. red = my macColour. green = my macColour. blue = fgrey * 65535;
-			if (my useQuartz) {
+			my d_macColour. red = my d_macColour. green = my d_macColour. blue = fgrey * 65535;
+			if (my d_useQuartz) {
 			} else {   // QuickDraw
 				/* Superfluous? */
-				SetPort (my macPort);
+				SetPort (my d_macPort);
 				//RGBForeColor (& my macColour);
 			}
 		#endif
-	} else if (my postScript) {
-		iam (GraphicsPostscript);
+	} else if (graphics ->  postScript) {
+		GraphicsPostscript me = static_cast <GraphicsPostscript> (graphics);
 		if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
-		my printf (my file, "%.6g setgray\n", fgrey);
+		my d_printf (my d_file, "%.6g setgray\n", fgrey);
 	}
 }
 
-void Graphics_setGrey (I, double grey) {
-	iam (Graphics);
+void Graphics_setGrey (Graphics me, double grey) {
 	my colour. red = my colour. green = my colour. blue = grey;
 	_Graphics_setGrey (me, grey);
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
 
-static void highlight (I, long x1DC, long x2DC, long y1DC, long y2DC) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
+static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long y2DC) {
+	if (graphics -> screen) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my cr == NULL) return;
+			if (my d_cairoGraphicsContext == NULL) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
-			gdk_gc_set_function (my gc, GDK_XOR);
+			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
 			GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
-			gdk_gc_set_rgb_fg_color (my gc, & pinkXorWhite);
-			gdk_draw_rectangle (my window, my gc, TRUE, x1DC, y2DC, width, height);
-			gdk_gc_set_rgb_fg_color (my gc, & black);
-			gdk_gc_set_function (my gc, GDK_COPY);
+			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
+			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, width, height);
+			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
+			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
 			gdk_flush ();   //tryout 20110207
-			//cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
-			//cairo_set_operator (my cr, CAIRO_OPERATOR_BITXOR);   // this blend mode doesn't exist
-			//cairo_rectangle (my cr, x1DC, y2DC, width, height);
-			//cairo_fill (my cr);
-			//cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0);
-			//cairo_set_operator (my cr, CAIRO_OPERATOR_OVER);
+			//cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
+			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_BITXOR);   // this blend mode doesn't exist
+			//cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC, width, height);
+			//cairo_fill (my d_cairoGraphicsContext);
+			//cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 0.0);
+			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
 		#elif win
 			static HBRUSH highlightBrush;
 			RECT rect;
 			rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
 			if (! highlightBrush)
 				highlightBrush = CreateSolidBrush (RGB (255, 210, 210));
-			SelectPen (my dc, GetStockPen (NULL_PEN));
-			SelectBrush (my dc, highlightBrush);
-			SetROP2 (my dc, R2_NOTXORPEN);
-			Rectangle (my dc, x1DC, y2DC, x2DC + 1, y1DC + 1);
-			SetROP2 (my dc, R2_COPYPEN);
-			SelectPen (my dc, GetStockPen (BLACK_PEN));
-			SelectBrush (my dc, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
+			SelectPen (my d_gdiGraphicsContext, GetStockPen (NULL_PEN));
+			SelectBrush (my d_gdiGraphicsContext, highlightBrush);
+			SetROP2 (my d_gdiGraphicsContext, R2_NOTXORPEN);
+			Rectangle (my d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
+			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
+			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
 		#elif mac
 			Rect rect;
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);
+			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea);
 			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
-			SetPort (my macPort);
+			SetPort (my d_macPort);
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);   /* see IM V-61 */
 			InvertRect (& rect);
-			if (my drawingArea) GuiMac_clipOff ();
+			if (my d_drawingArea) GuiMac_clipOff ();
 		#endif
 	}
 }
 
-void Graphics_highlight (I, double x1WC, double x2WC, double y1WC, double y2WC) {
-	iam (Graphics);
+void Graphics_highlight (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
 	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 	if (my recording)
 		{ op (HIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
-void Graphics_unhighlight (I, double x1WC, double x2WC, double y1WC, double y2WC) {
-	iam (Graphics);
+void Graphics_unhighlight (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
 	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
 	if (my recording)
 		{ op (UNHIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
-static void highlight2 (I, long x1DC, long x2DC, long y1DC, long y2DC,
+static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long y2DC,
 	long x1DC_inner, long x2DC_inner, long y1DC_inner, long y2DC_inner)
 {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
+	if (graphics -> screen) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
-			if (my cr == NULL) return;
-			cairo_save (my cr);
-			cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
-			//cairo_set_operator (my cr, CAIRO_OPERATOR_XOR);
-			cairo_rectangle (my cr, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
-			cairo_rectangle (my cr, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
-			cairo_rectangle (my cr, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
-			cairo_rectangle (my cr, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
-			cairo_fill (my cr);
-			cairo_restore (my cr);
+			if (my d_cairoGraphicsContext == NULL) return;
+			cairo_save (my d_cairoGraphicsContext);
+			cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
+			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_XOR);
+			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+			cairo_rectangle (my d_cairoGraphicsContext, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
+			cairo_fill (my d_cairoGraphicsContext);
+			cairo_restore (my d_cairoGraphicsContext);
 		#elif win
 			static HBRUSH highlightBrush;
 			if (! highlightBrush)
 				highlightBrush = CreateSolidBrush (RGB (255, 210, 210));
-			SelectPen (my dc, GetStockPen (NULL_PEN));
-			SelectBrush (my dc, highlightBrush);
-			SetROP2 (my dc, R2_NOTXORPEN);
-			Rectangle (my dc, x1DC, y2DC, x2DC + 1, y2DC_inner + 1);
-			Rectangle (my dc, x1DC, y2DC_inner, x1DC_inner + 1, y1DC_inner + 1);
-			Rectangle (my dc, x2DC_inner, y2DC_inner, x2DC + 1, y1DC_inner + 1);
-			Rectangle (my dc, x1DC, y1DC_inner, x2DC + 1, y1DC + 1);
-			SetROP2 (my dc, R2_COPYPEN);
-			SelectPen (my dc, GetStockPen (BLACK_PEN));
-			SelectBrush (my dc, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
+			SelectPen (my d_gdiGraphicsContext, GetStockPen (NULL_PEN));
+			SelectBrush (my d_gdiGraphicsContext, highlightBrush);
+			SetROP2 (my d_gdiGraphicsContext, R2_NOTXORPEN);
+			Rectangle (my d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y2DC_inner + 1);
+			Rectangle (my d_gdiGraphicsContext, x1DC, y2DC_inner, x1DC_inner + 1, y1DC_inner + 1);
+			Rectangle (my d_gdiGraphicsContext, x2DC_inner, y2DC_inner, x2DC + 1, y1DC_inner + 1);
+			Rectangle (my d_gdiGraphicsContext, x1DC, y1DC_inner, x2DC + 1, y1DC + 1);
+			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
+			SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
 		#elif mac
 			Rect rect;
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);
-			SetPort (my macPort);
+			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea);
+			SetPort (my d_macPort);
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
 			SetRect (& rect, x1DC, y2DC, x2DC, y2DC_inner);
 			InvertRect (& rect);
@@ -269,24 +261,22 @@ static void highlight2 (I, long x1DC, long x2DC, long y1DC, long y2DC,
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
 			SetRect (& rect, x1DC, y1DC_inner, x2DC, y1DC);
 			InvertRect (& rect);
-			if (my drawingArea) GuiMac_clipOff ();
+			if (my d_drawingArea) GuiMac_clipOff ();
 		#endif
 	}
 }
 
-void Graphics_highlight2 (I, double x1WC, double x2WC, double y1WC, double y2WC,
+void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC,
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
-	iam (Graphics);
 	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
 	if (my recording)
 		{ op (HIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
 
-void Graphics_unhighlight2 (I, double x1WC, double x2WC, double y1WC, double y2WC,
+void Graphics_unhighlight2 (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC,
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
-	iam (Graphics);
 	#if ! cairo
 		highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
 	#endif
@@ -294,70 +284,67 @@ void Graphics_unhighlight2 (I, double x1WC, double x2WC, double y1WC, double y2W
 		{ op (UNHIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
 
-void Graphics_xorOn (I, Graphics_Colour colour) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
+void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
+	if (graphics -> screen) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
 			GdkColor colourXorWhite = { 0,
 				(uint16_t) (colour. red * 65535.0) ^ 0xFFFF,
 				(uint16_t) (colour. green * 65535.0) ^ 0xFFFF,
 				(uint16_t) (colour. blue * 65535.0) ^ 0xFFFF };
-			gdk_gc_set_rgb_fg_color (my gc, & colourXorWhite);
-			gdk_gc_set_function (my gc, GDK_XOR);
-			//cairo_set_source_rgba (my cr, 1.0, 0.8, 0.8, 0.5);
-			//cairo_set_operator (my cr, CAIRO_OPERATOR_XOR);
+			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & colourXorWhite);
+			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
+			//cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
+			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_XOR);
 			gdk_flush ();
 		#elif win
-			SetROP2 (my dc, R2_XORPEN);
+			SetROP2 (my d_gdiGraphicsContext, R2_XORPEN);
 			colour. red = ((uint16_t) (colour. red * 65535.0) ^ 0xFFFF) / 65535.0;
 			colour. green = ((uint16_t) (colour. green * 65535.0) ^ 0xFFFF) / 65535.0;
 			colour. blue = ((uint16_t) (colour. blue * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
 		#elif mac
-			if (my useQuartz) {
+			if (my d_useQuartz) {
 				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
 			} else {
-				SetPort (my macPort);
+				SetPort (my d_macPort);
 				PenMode (patXor);
 				TextMode (srcXor);
 			}
 		#endif
 		my duringXor = true;
+		if (graphics -> recording) { op (XOR_ON, 3); put (colour. red); put (colour. green); put (colour. blue); }
 	}
-	if (my recording) { op (XOR_ON, 3); put (colour. red); put (colour. green); put (colour. blue); }
 }
 
-void Graphics_xorOff (I) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
+void Graphics_xorOff (Graphics graphics) {
+	if (graphics -> screen) {
+		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
 			GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
-			gdk_gc_set_rgb_fg_color (my gc, & black);
-			gdk_gc_set_function (my gc, GDK_COPY);
-			//cairo_set_source_rgba (my cr, 0.0, 0.0, 0.0, 1.0);
-			//cairo_set_operator (my cr, CAIRO_OPERATOR_OVER);
+			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
+			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
+			//cairo_set_source_rgba (my d_cairoGraphicsContext, 0.0, 0.0, 0.0, 1.0);
+			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
 			gdk_flush ();
 		#elif win
-			SetROP2 (my dc, R2_COPYPEN);
+			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			_Graphics_setColour (me, my colour);
 		#elif mac
-			if (my useQuartz) {
+			if (my d_useQuartz) {
 				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
 			} else {
-				SetPort (my macPort);
+				SetPort (my d_macPort);
 				PenMode (patCopy);
 				TextMode (srcOr);
 			}
 		#endif
 		my duringXor = false;
+		if (graphics -> recording) { op (XOR_OFF, 0); }
 	}
-	if (my recording) { op (XOR_OFF, 0); }
 }
 
-Graphics_Colour Graphics_inqColour (I) {
-	iam (Graphics);
+Graphics_Colour Graphics_inqColour (Graphics me) {
 	return my colour;
 }
 

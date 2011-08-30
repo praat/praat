@@ -46,13 +46,15 @@
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
+static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, long x1DC, long x2DC,
 	long iy1, long iy2, long y1DC, long y2DC,
 	double minimum, double maximum,
 	long clipx1, long clipx2, long clipy1, long clipy2, int interpolate)
 {
-	iam (GraphicsScreen);
+	#if mac
+		if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea);
+	#endif
 	/*long t=clock();*/
 	long nx = ix2 - ix1 + 1;   /* The number of cells along the horizontal axis. */
 	long ny = iy2 - iy1 + 1;   /* The number of cells along the vertical axis. */
@@ -69,7 +71,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	if (clipy1 > y1DC) clipy1 = y1DC;
 	if (clipy2 < y2DC) clipy2 = y2DC;
 	#if mac
-		SetPort (my macPort);
+		SetPort (my d_macPort);
 	#endif
 	/*
 	 * The first decision is whether we are going to use the standard rectangle drawing
@@ -122,12 +124,12 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 					if (left < clipx1) left = clipx1;
 					if (right > clipx2) right = clipx2;
 					#if cairo
-						cairo_set_source (my cr, grey [value <= 0 ? 0 : value >= sizeof (grey) / sizeof (*grey) ? sizeof (grey) / sizeof (*grey) : value]);
-						cairo_rectangle (my cr, left, top, right - left, bottom - top);
-						cairo_fill (my cr);
+						cairo_set_source (my d_cairoGraphicsContext, grey [value <= 0 ? 0 : value >= sizeof (grey) / sizeof (*grey) ? sizeof (grey) / sizeof (*grey) : value]);
+						cairo_rectangle (my d_cairoGraphicsContext, left, top, right - left, bottom - top);
+						cairo_fill (my d_cairoGraphicsContext);
 					#elif win
 						rect. left = left; rect. right = right;
-						FillRect (my dc, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
+						FillRect (my d_gdiGraphicsContext, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
 					#elif mac
 					{
 						RGBColor rgb;
@@ -144,7 +146,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			#if cairo
 				for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey ++)
 					cairo_pattern_destroy (grey [igrey]);
-				cairo_paint(my cr);
+				cairo_paint (my d_cairoGraphicsContext);
 			#endif
 		} catch (MelderError) { }
 	} else {
@@ -194,7 +196,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				bitmapInfo. colours [igrey]. rgbGreen = igrey;
 				bitmapInfo. colours [igrey]. rgbBlue = igrey;
 			}
-			bitmap = CreateDIBSection (my dc /* ignored */, (CONST BITMAPINFO *) & bitmapInfo,
+			bitmap = CreateDIBSection (my d_gdiGraphicsContext /* ignored */, (CONST BITMAPINFO *) & bitmapInfo,
 				DIB_RGB_COLORS, (VOID **) & bits, NULL, 0);
 		#elif mac
 			/*
@@ -214,7 +216,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 			 */
 			unsigned char *imageData;
 			long bytesPerRow, numberOfRows;
-			bool useQuartzForImages = my useQuartz && 1;
+			bool useQuartzForImages = my d_useQuartz && 1;
 			if (useQuartzForImages) {
 				bytesPerRow = (clipx2 - clipx1) * 4;
 				Melder_assert (bytesPerRow > 0);
@@ -378,14 +380,14 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				Melder_casual ("bitmap pattern status: %s", cairo_status_to_string (status));
 			} else {
 				cairo_pattern_set_matrix (bitmap_pattern, & clip_trans);
-				cairo_save (my cr);
-				cairo_set_source (my cr, bitmap_pattern);
-				cairo_paint (my cr);
-				cairo_restore (my cr);
+				cairo_save (my d_cairoGraphicsContext);
+				cairo_set_source (my d_cairoGraphicsContext, bitmap_pattern);
+				cairo_paint (my d_cairoGraphicsContext);
+				cairo_restore (my d_cairoGraphicsContext);
 			}
 			cairo_pattern_destroy (bitmap_pattern);
 		#elif win
-			SetDIBitsToDevice (my dc, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
+			SetDIBitsToDevice (my d_gdiGraphicsContext, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
 		#elif mac
 			if (useQuartzForImages) {
@@ -416,7 +418,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				}
 				Melder_assert (image != NULL);
 				GraphicsQuartz_initDraw (me);
-				CGContextDrawImage (my macGraphicsContext, CGRectMake (clipx1, clipy2, clipx2 - clipx1, clipy1 - clipy2), image);
+				CGContextDrawImage (my d_macGraphicsContext, CGRectMake (clipx1, clipy2, clipx2 - clipx1, clipy1 - clipy2), image);
 				GraphicsQuartz_exitDraw (me);
 				CGColorSpaceRelease (colourSpace);
 				CGImageRelease (image);
@@ -433,7 +435,7 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 				 * However, the example in Imaging:6-6 violates this, and dereferences the handle directly...
 				 */
 				CopyBits ((struct BitMap *) *offscreenPixMap,
-					(const struct BitMap *) * GetPortPixMap ((CGrafPtr) my macPort),   /* BUG for 1-bit eps preview */
+					(const struct BitMap *) * GetPortPixMap ((CGrafPtr) my d_macPort),   /* BUG for 1-bit eps preview */
 					& rect, & destRect, srcCopy, NULL);
 			}
 		#endif
@@ -459,271 +461,196 @@ static void screenCellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 		return;
 	#elif mac
 		end:
-		if (my macPort != NULL) {
+		if (my d_macPort != NULL) {
 			RGBForeColor (& theBlackColour);
-			SetPort (my macPort);
+			SetPort (my d_macPort);
 			RGBForeColor (& theBlackColour);
 		}
 	#endif
 	/*Melder_information2("duration ",Melder_integer(clock()-t));*/
+	#if mac
+		if (my d_drawingArea) GuiMac_clipOff ();
+	#endif
 }
 
-#define INTERPOLATE_IN_POSTSCRIPT  TRUE
+static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double **z_float, unsigned char **z_byte,
+	long ix1, long ix2, long x1DC, long x2DC,
+	long iy1, long iy2, long y1DC, long y2DC,
+	double minimum, double maximum,
+	long clipx1, long clipx2, long clipy1, long clipy2, int interpolate)
+{
+	long interpolateX = 1, interpolateY = 1;
+	long ix, iy, nx = ix2 - ix1 + 1, ny = iy2 - iy1 + 1, filling = 0;
+	double scale = ( my photocopyable ? 200.1f : 255.1f ) / (maximum - minimum);
+	double offset = 255.1f + minimum * scale;
+	int minimalGrey = my photocopyable ? 55 : 0;
+	my d_printf (my d_file, "gsave N %ld %ld M %ld %ld L %ld %ld L %ld %ld L closepath clip\n",
+		clipx1, clipy1, clipx2 - clipx1, 0L, 0L, clipy2 - clipy1, clipx1 - clipx2, 0L);
+	my d_printf (my d_file, "%ld %ld translate %ld %ld scale\n",
+		x1DC, y1DC, x2DC - x1DC, y2DC - y1DC);
+	if (interpolate) {
+		/* Base largest spot size on 106 dpi. */
+		#define LARGEST_SPOT_MM  0.24
+		double colSize_mm = (double) (x2DC - x1DC) / nx * 25.4 / my resolution;
+		double rowSize_mm = (double) (y2DC - y1DC) / ny * 25.4 / my resolution;
+		interpolateX = ceil (colSize_mm / LARGEST_SPOT_MM);
+		interpolateY = ceil (rowSize_mm / LARGEST_SPOT_MM);
+	}
 
-static void _cellArrayOrImage (I, double **z_float, unsigned char **z_byte,
+	if (interpolateX <= 1 && interpolateY <= 1) {
+		/* Do not interpolate. */
+		my d_printf (my d_file, "/picstr %ld string def %ld %ld 8 [%ld 0 0 %ld 0 0]\n"
+			"{ currentfile picstr readhexstring pop } image\n",
+			nx, nx, ny, nx, ny);
+	} else if (interpolateX > 1 && interpolateY > 1) {
+		/* Interpolate both horizontally and vertically. */
+		long nx_new = nx * interpolateX;
+		long ny_new = ny * interpolateY;
+		/* Interpolation between rows requires us to remember two original rows: */
+		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
+		/* New rows (scanlines) are longer: */
+		my d_printf (my d_file, "/scanline %ld string def\n", nx_new);
+		/* The first four arguments to the 'image' command,
+		/* namely the new number of columns, the new number of rows, the bit depth, and the matrix: */
+		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny_new, nx_new, ny_new);
+		/* Since our imageproc is going to output only one scanline at a time, */
+		/* the outer loop variable (scanline number) has to be initialized outside the imageproc: */
+		my d_printf (my d_file, "/irow 0 def\n");
+		/* The imageproc starts here. First, we fill one or two original rows if necessary; */
+		/* they are read as hexadecimal strings from the current file, i.e. just after the image command. */
+		my d_printf (my d_file, "{\n"
+			/* First test: are we in the first scanline? If so, read two original rows: */
+			"irow 0 eq { currentfile lorow readhexstring pop pop lorow hirow copy pop } if\n"
+			/* Second test: did we just pass an original data row? */
+			/* If so, */
+			/*    (1) move that row backwards; */
+			/*    (2) read a new one unless we just passed the last original row: */
+			"irow %ld mod %ld eq { hirow lorow copy pop\n"
+			"irow %ld ne { currentfile hirow readhexstring pop pop } if } if\n",
+			interpolateY, interpolateY / 2, ny_new - interpolateY + interpolateY / 2);
+		/* Where are we between those two rows? */
+		my d_printf (my d_file, "/rowphase irow %ld add %ld mod %ld div def\n",
+			interpolateY - interpolateY / 2, interpolateY, interpolateY);
+		/* Inner loop starts here. It cycles through all new columns: */
+		my d_printf (my d_file, "0 1 %ld {\n", nx_new - 1);
+		/* Get the inner loop variable: */
+		my d_printf (my d_file, "   /icol exch def\n");
+		/* Where are the two original columns? */
+		my d_printf (my d_file, "   /locol icol %ld sub %ld idiv def\n", interpolateX / 2, interpolateX);
+		my d_printf (my d_file, "   /hicol icol %ld ge { %ld } { icol %ld add %ld idiv } ifelse def\n",
+			nx_new - interpolateX / 2, nx - 1, interpolateX / 2, interpolateX);
+		/* Where are we between those two columns? */
+		my d_printf (my d_file, "   /colphase icol %ld add %ld mod %ld div def\n",
+			interpolateX - interpolateX / 2, interpolateX, interpolateX);
+		/* Four-point interpolation: */
+		my d_printf (my d_file,
+			"   /plow lorow locol get def\n"
+			"   /phigh lorow hicol get def\n"
+			"   /qlow hirow locol get def\n"
+			"   /qhigh hirow hicol get def\n"
+			"   /value\n"
+			"      plow phigh plow sub colphase mul add 1 rowphase sub mul\n"
+			"      qlow qhigh qlow sub colphase mul add rowphase mul\n"
+			"      add def\n"
+			"   scanline icol value 0 le { 0 } { value 255 ge { 255 } { value } ifelse } ifelse cvi put\n"
+			"} for\n"
+			"/irow irow 1 add def scanline } image\n");
+	} else if (interpolateX > 1) {
+		/* Interpolate horizontally only. */
+		long nx_new = nx * interpolateX;
+		/* Remember one original row: */
+		my d_printf (my d_file, "/row %ld string def\n", nx, nx);
+		/* New rows (scanlines) are longer: */
+		my d_printf (my d_file, "/scanline %ld string def\n", nx_new);
+		/* The first four arguments to the 'image' command,
+		/* namely the new number of columns, the number of rows, the bit depth, and the matrix: */
+		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny, nx_new, ny);
+		/* The imageproc starts here. We fill one original row. */
+		my d_printf (my d_file, "{\n"
+			"currentfile row readhexstring pop pop\n");
+		/* Loop starts here. It cycles through all new columns: */
+		my d_printf (my d_file, "0 1 %ld {\n", nx_new - 1);
+		/* Get the loop variable: */
+		my d_printf (my d_file, "   /icol exch def\n");
+		/* Where are the two original columns? */
+		my d_printf (my d_file, "   /locol icol %ld sub %ld idiv def\n", interpolateX / 2, interpolateX);
+		my d_printf (my d_file, "   /hicol icol %ld ge { %ld } { icol %ld add %ld idiv } ifelse def\n",
+			nx_new - interpolateX / 2, nx - 1, interpolateX / 2, interpolateX);
+		/* Where are we between those two columns? */
+		my d_printf (my d_file, "   /colphase icol %ld add %ld mod %ld div def\n",
+			interpolateX - interpolateX / 2, interpolateX, interpolateX);
+		/* Two-point interpolation: */
+		my d_printf (my d_file,
+			"   /plow row locol get def\n"
+			"   /phigh row hicol get def\n"
+			"   /value plow phigh plow sub colphase mul add def\n"
+			"   scanline icol value 0 le { 0 } { value 255 ge { 255 } { value } ifelse } ifelse cvi put\n"
+			"} for\n"
+			"scanline } image\n");
+	} else {
+		/* Interpolate vertically only. */
+		long ny_new = ny * interpolateY;
+		/* Interpolation between rows requires us to remember two original rows: */
+		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
+		/* New rows (scanlines) are equally long: */
+		my d_printf (my d_file, "/scanline %ld string def\n", nx);
+		/* The first four arguments to the 'image' command,
+		/* namely the number of columns, the new number of rows, the bit depth, and the matrix: */
+		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx, ny_new, nx, ny_new);
+		/* Since our imageproc is going to output only one scanline at a time, */
+		/* the outer loop variable (scanline number) has to be initialized outside the imageproc: */
+		my d_printf (my d_file, "/irow 0 def\n");
+		/* The imageproc starts here. First, we fill one or two original rows if necessary; */
+		/* they are read as hexadecimal strings from the current file, i.e. just after the image command. */
+		my d_printf (my d_file, "{\n"
+			/* First test: are we in the first scanline? If so, read two original rows: */
+			"irow 0 eq { currentfile lorow readhexstring pop pop lorow hirow copy pop } if\n"
+			/* Second test: did we just pass an original data row? */
+			/* If so, */
+			/*    (1) move that row backwards; */
+			/*    (2) read a new one unless we just passed the last original row: */
+			"irow %ld mod %ld eq { hirow lorow copy pop\n"
+			"irow %ld ne { currentfile hirow readhexstring pop pop } if } if\n",
+			interpolateY, interpolateY / 2, ny_new - interpolateY + interpolateY / 2);
+		/* Where are we between those two rows? */
+		my d_printf (my d_file, "/rowphase irow %ld add %ld mod %ld div def\n",
+			interpolateY - interpolateY / 2, interpolateY, interpolateY);
+		/* Inner loop starts here. It cycles through all columns: */
+		my d_printf (my d_file, "0 1 %ld {\n", nx - 1);
+		/* Get the inner loop variable: */
+		my d_printf (my d_file, "   /icol exch def\n");
+		/* Two-point interpolation: */
+		my d_printf (my d_file,
+			"   /p lorow icol get def\n"
+			"   /q hirow icol get def\n"
+			"   /value\n"
+			"      p 1 rowphase sub mul\n"
+			"      q rowphase mul\n"
+			"      add def\n"
+			"   scanline icol value 0 le { 0 } { value 255 ge { 255 } { value } ifelse } ifelse cvi put\n"
+			"} for\n"
+			"/irow irow 1 add def scanline } image\n");
+	}
+	for (iy = iy1; iy <= iy2; iy ++) for (ix = ix1; ix <= ix2; ix ++) {
+		int value = (int) (offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] ));
+		my d_printf (my d_file, "%.2x", value <= minimalGrey ? minimalGrey : value >= 255 ? 255 : value);
+		if (++ filling == 39) { my d_printf (my d_file, "\n"); filling = 0; }
+	}
+	if (filling) my d_printf (my d_file, "\n");
+	my d_printf (my d_file, "grestore\n");
+}
+
+static void _cellArrayOrImage (Graphics me, double **z_float, unsigned char **z_byte,
 	long ix1, long ix2, long x1DC, long x2DC,
 	long iy1, long iy2, long y1DC, long y2DC, double minimum, double maximum,
 	long clipx1, long clipx2, long clipy1, long clipy2, int interpolate)
 {
-	iam (Graphics);
 	if (my screen) {
-		iam (GraphicsScreen);
-		#if mac
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);
-		#endif
-		screenCellArrayOrImage (me, z_float, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
+		_GraphicsScreen_cellArrayOrImage (static_cast <GraphicsScreen> (me), z_float, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
 			minimum, maximum, clipx1, clipx2, clipy1, clipy2, interpolate);
-		#if mac
-			if (my drawingArea) GuiMac_clipOff ();
-		#endif
 	} else if (my postScript) {
-		iam (GraphicsPostscript);
-		long interpolateX = 1, interpolateY = 1;
-		long ix, iy, nx = ix2 - ix1 + 1, ny = iy2 - iy1 + 1, filling = 0;
-		double scale = ( my photocopyable ? 200.1f : 255.1f ) / (maximum - minimum);
-		double offset = 255.1f + minimum * scale;
-		int minimalGrey = my photocopyable ? 55 : 0;
-		my printf (my file, "gsave N %ld %ld M %ld %ld L %ld %ld L %ld %ld L closepath clip\n",
-			clipx1, clipy1, clipx2 - clipx1, 0L, 0L, clipy2 - clipy1, clipx1 - clipx2, 0L);
-		my printf (my file, "%ld %ld translate %ld %ld scale\n",
-			x1DC, y1DC, x2DC - x1DC, y2DC - y1DC);
-		if (interpolate) {
-			/* Base largest spot size on 106 dpi. */
-			#define LARGEST_SPOT_MM  0.24
-			double colSize_mm = (double) (x2DC - x1DC) / nx * 25.4 / my resolution;
-			double rowSize_mm = (double) (y2DC - y1DC) / ny * 25.4 / my resolution;
-			#if INTERPOLATE_IN_POSTSCRIPT
-			interpolateX = ceil (colSize_mm / LARGEST_SPOT_MM);
-			interpolateY = ceil (rowSize_mm / LARGEST_SPOT_MM);
-			#else
-			long xDC, yDC;
-			long *ileft, *iright;
-			double *rightWeight, *leftWeight;
-			if (x2DC <= x1DC || y2DC <= y1DC) return;   /* Different from the screen test! */
-			/* Clip by the intersection of the world window and the outline of the cells. */
-			if (clipx1 < x1DC) clipx1 = x1DC;
-			if (clipx2 > x2DC) clipx2 = x2DC;
-			if (clipy1 < y1DC) clipy1 = y1DC;   /* Different from the screen version! */
-			if (clipy2 > y2DC) clipy2 = y2DC;
-			ileft = NUMlvector (clipx1, clipx2);
-			iright = NUMlvector (clipx1, clipx2);
-			rightWeight = NUMdvector (clipx1, clipx2);
-			leftWeight = NUMdvector (clipx1, clipx2);
-			if (! ileft || ! iright || ! rightWeight || ! leftWeight) goto ready1;
-			/* Allow extra interpolation for PDF. */
-			my printf (my file, "/DeviceGray setcolorspace << /ImageType 1 /Width %ld /Height %ld\n"
-				"/BitsPerComponent 8 /Decode [0 1] /ImageMatrix [%ld 0 0 %ld 0 0]\n"
-				"/DataSource currentfile /ASCIIHexDecode filter /Interpolate true >> image\n",
-				clipx2 - clipx1, clipy2 - clipy1, clipx2 - clipx1, clipy2 - clipy1);
-			for (xDC = clipx1; xDC < clipx2; xDC ++) {
-				double ix_real = ix1 - 0.5 + ((double) nx * (xDC - x1DC)) / (x2DC - x1DC);
-				ileft [xDC] = floor (ix_real), iright [xDC] = ileft [xDC] + 1;
-				rightWeight [xDC] = ix_real - ileft [xDC], leftWeight [xDC] = 1.0 - rightWeight [xDC];
-				if (ileft [xDC] < ix1) ileft [xDC] = ix1;
-				if (iright [xDC] > ix2) iright [xDC] = ix2;
-			}
-			for (yDC = clipy1; yDC < clipy2; yDC ++) {
-				double iy_real = iy1 - 0.5 + ((double) ny * (yDC - y1DC)) / (y2DC - y1DC);
-				long ibottom = floor (iy_real), itop = ibottom + 1;
-				double topWeight = iy_real - ibottom, bottomWeight = 1.0 - topWeight;
-				if (ibottom < iy1) ibottom = iy1;
-				if (itop > iy2) itop = iy2;
-				if (z_float) {
-					double *zbottom = z_float [ibottom], *ztop = z_float [itop];
-					for (xDC = clipx1; xDC < clipx2; xDC ++) {
-						double interpol =
-							rightWeight [xDC] *
-								(bottomWeight * zbottom [iright [xDC]] + topWeight * ztop [iright [xDC]]) +
-							leftWeight [xDC] *
-								(bottomWeight * zbottom [ileft [xDC]] + topWeight * ztop [ileft [xDC]]);
-						short value = offset - scale * interpol;
-						my printf (my file, "%.2x", value <= minimalGrey ? minimalGrey : value >= 255 ? 255 : value);
-						if (++ filling == 39) { my printf (my file, "\n"); filling = 0; }
-					}
-				} else {
-					unsigned char *zbottom = z_byte [ibottom], *ztop = z_byte [itop];
-					for (xDC = clipx1; xDC < clipx2; xDC ++) {
-						double interpol =
-							rightWeight [xDC] *
-								(bottomWeight * zbottom [iright [xDC]] + topWeight * ztop [iright [xDC]]) +
-							leftWeight [xDC] *
-								(bottomWeight * zbottom [ileft [xDC]] + topWeight * ztop [ileft [xDC]]);
-						short value = offset - scale * interpol;
-						my printf (my file, "%.2x", value <= minimalGrey ? minimalGrey : value >= 255 ? 255 : value);
-						if (++ filling == 39) { my printf (my file, "\n"); filling = 0; }
-					}
-				}
-			}
-			ready1:
-			NUMlvector_free (ileft, clipx1);
-			NUMlvector_free (iright, clipx1);
-			NUMdvector_free (rightWeight, clipx1);
-			NUMdvector_free (leftWeight, clipx1);
-			#endif
-		}
-		#if ! INTERPOLATE_IN_POSTSCRIPT
-		else
-			/* Do not interpolate. */
-			my printf (my file, "/picstr %ld string def %ld %ld 8 [%ld 0 0 %ld 0 0]\n"
-				"{ currentfile picstr readhexstring pop } image\n",
-				nx, nx, ny, nx, ny);
-		#endif
-
-		#if INTERPOLATE_IN_POSTSCRIPT
-		if (interpolateX <= 1 && interpolateY <= 1) {
-			/* Do not interpolate. */
-			my printf (my file, "/picstr %ld string def %ld %ld 8 [%ld 0 0 %ld 0 0]\n"
-				"{ currentfile picstr readhexstring pop } image\n",
-				nx, nx, ny, nx, ny);
-		} else if (interpolateX > 1 && interpolateY > 1) {
-			/* Interpolate both horizontally and vertically. */
-			long nx_new = nx * interpolateX;
-			long ny_new = ny * interpolateY;
-			/* Interpolation between rows requires us to remember two original rows: */
-			my printf (my file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
-			/* New rows (scanlines) are longer: */
-			my printf (my file, "/scanline %ld string def\n", nx_new);
-			/* The first four arguments to the 'image' command,
-			/* namely the new number of columns, the new number of rows, the bit depth, and the matrix: */
-			my printf (my file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny_new, nx_new, ny_new);
-			/* Since our imageproc is going to output only one scanline at a time, */
-			/* the outer loop variable (scanline number) has to be initialized outside the imageproc: */
-			my printf (my file, "/irow 0 def\n");
-			/* The imageproc starts here. First, we fill one or two original rows if necessary; */
-			/* they are read as hexadecimal strings from the current file, i.e. just after the image command. */
-			my printf (my file, "{\n"
-				/* First test: are we in the first scanline? If so, read two original rows: */
-				"irow 0 eq { currentfile lorow readhexstring pop pop lorow hirow copy pop } if\n"
-				/* Second test: did we just pass an original data row? */
-				/* If so, */
-				/*    (1) move that row backwards; */
-				/*    (2) read a new one unless we just passed the last original row: */
-				"irow %ld mod %ld eq { hirow lorow copy pop\n"
-				"irow %ld ne { currentfile hirow readhexstring pop pop } if } if\n",
-				interpolateY, interpolateY / 2, ny_new - interpolateY + interpolateY / 2);
-			/* Where are we between those two rows? */
-			my printf (my file, "/rowphase irow %ld add %ld mod %ld div def\n",
-				interpolateY - interpolateY / 2, interpolateY, interpolateY);
-			/* Inner loop starts here. It cycles through all new columns: */
-			my printf (my file, "0 1 %ld {\n", nx_new - 1);
-			/* Get the inner loop variable: */
-			my printf (my file, "   /icol exch def\n");
-			/* Where are the two original columns? */
-			my printf (my file, "   /locol icol %ld sub %ld idiv def\n", interpolateX / 2, interpolateX);
-			my printf (my file, "   /hicol icol %ld ge { %ld } { icol %ld add %ld idiv } ifelse def\n",
-				nx_new - interpolateX / 2, nx - 1, interpolateX / 2, interpolateX);
-			/* Where are we between those two columns? */
-			my printf (my file, "   /colphase icol %ld add %ld mod %ld div def\n",
-				interpolateX - interpolateX / 2, interpolateX, interpolateX);
-			/* Four-point interpolation: */
-			my printf (my file,
-				"   /plow lorow locol get def\n"
-				"   /phigh lorow hicol get def\n"
-				"   /qlow hirow locol get def\n"
-				"   /qhigh hirow hicol get def\n"
-				"   /value\n"
-				"      plow phigh plow sub colphase mul add 1 rowphase sub mul\n"
-				"      qlow qhigh qlow sub colphase mul add rowphase mul\n"
-				"      add def\n"
-				"   scanline icol value 0 le { 0 } { value 255 ge { 255 } { value } ifelse } ifelse cvi put\n"
-				"} for\n"
-				"/irow irow 1 add def scanline } image\n");
-		} else if (interpolateX > 1) {
-			/* Interpolate horizontally only. */
-			long nx_new = nx * interpolateX;
-			/* Remember one original row: */
-			my printf (my file, "/row %ld string def\n", nx, nx);
-			/* New rows (scanlines) are longer: */
-			my printf (my file, "/scanline %ld string def\n", nx_new);
-			/* The first four arguments to the 'image' command,
-			/* namely the new number of columns, the number of rows, the bit depth, and the matrix: */
-			my printf (my file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny, nx_new, ny);
-			/* The imageproc starts here. We fill one original row. */
-			my printf (my file, "{\n"
-				"currentfile row readhexstring pop pop\n");
-			/* Loop starts here. It cycles through all new columns: */
-			my printf (my file, "0 1 %ld {\n", nx_new - 1);
-			/* Get the loop variable: */
-			my printf (my file, "   /icol exch def\n");
-			/* Where are the two original columns? */
-			my printf (my file, "   /locol icol %ld sub %ld idiv def\n", interpolateX / 2, interpolateX);
-			my printf (my file, "   /hicol icol %ld ge { %ld } { icol %ld add %ld idiv } ifelse def\n",
-				nx_new - interpolateX / 2, nx - 1, interpolateX / 2, interpolateX);
-			/* Where are we between those two columns? */
-			my printf (my file, "   /colphase icol %ld add %ld mod %ld div def\n",
-				interpolateX - interpolateX / 2, interpolateX, interpolateX);
-			/* Two-point interpolation: */
-			my printf (my file,
-				"   /plow row locol get def\n"
-				"   /phigh row hicol get def\n"
-				"   /value plow phigh plow sub colphase mul add def\n"
-				"   scanline icol value 0 le { 0 } { value 255 ge { 255 } { value } ifelse } ifelse cvi put\n"
-				"} for\n"
-				"scanline } image\n");
-		} else {
-			/* Interpolate vertically only. */
-			long ny_new = ny * interpolateY;
-			/* Interpolation between rows requires us to remember two original rows: */
-			my printf (my file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
-			/* New rows (scanlines) are equally long: */
-			my printf (my file, "/scanline %ld string def\n", nx);
-			/* The first four arguments to the 'image' command,
-			/* namely the number of columns, the new number of rows, the bit depth, and the matrix: */
-			my printf (my file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx, ny_new, nx, ny_new);
-			/* Since our imageproc is going to output only one scanline at a time, */
-			/* the outer loop variable (scanline number) has to be initialized outside the imageproc: */
-			my printf (my file, "/irow 0 def\n");
-			/* The imageproc starts here. First, we fill one or two original rows if necessary; */
-			/* they are read as hexadecimal strings from the current file, i.e. just after the image command. */
-			my printf (my file, "{\n"
-				/* First test: are we in the first scanline? If so, read two original rows: */
-				"irow 0 eq { currentfile lorow readhexstring pop pop lorow hirow copy pop } if\n"
-				/* Second test: did we just pass an original data row? */
-				/* If so, */
-				/*    (1) move that row backwards; */
-				/*    (2) read a new one unless we just passed the last original row: */
-				"irow %ld mod %ld eq { hirow lorow copy pop\n"
-				"irow %ld ne { currentfile hirow readhexstring pop pop } if } if\n",
-				interpolateY, interpolateY / 2, ny_new - interpolateY + interpolateY / 2);
-			/* Where are we between those two rows? */
-			my printf (my file, "/rowphase irow %ld add %ld mod %ld div def\n",
-				interpolateY - interpolateY / 2, interpolateY, interpolateY);
-			/* Inner loop starts here. It cycles through all columns: */
-			my printf (my file, "0 1 %ld {\n", nx - 1);
-			/* Get the inner loop variable: */
-			my printf (my file, "   /icol exch def\n");
-			/* Two-point interpolation: */
-			my printf (my file,
-				"   /p lorow icol get def\n"
-				"   /q hirow icol get def\n"
-				"   /value\n"
-				"      p 1 rowphase sub mul\n"
-				"      q rowphase mul\n"
-				"      add def\n"
-				"   scanline icol value 0 le { 0 } { value 255 ge { 255 } { value } ifelse } ifelse cvi put\n"
-				"} for\n"
-				"/irow irow 1 add def scanline } image\n");
-		}
-		for (iy = iy1; iy <= iy2; iy ++) for (ix = ix1; ix <= ix2; ix ++) {
-			int value = (int) (offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] ));
-			my printf (my file, "%.2x", value <= minimalGrey ? minimalGrey : value >= 255 ? 255 : value);
-			if (++ filling == 39) { my printf (my file, "\n"); filling = 0; }
-		}
-		#endif
-		if (filling) my printf (my file, "\n");
-		/*if (interpolate && my languageLevel > 1)
-			my printf (my file, ">\n");*/
-		my printf (my file, "grestore\n");
+		_GraphicsPostscript_cellArrayOrImage (static_cast <GraphicsPostscript> (me), z_float, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
+			minimum, maximum, clipx1, clipx2, clipy1, clipy2, interpolate);
 	}
 	_Graphics_setColour (me, my colour);
 }
@@ -752,88 +679,90 @@ static void cellArrayOrImage (I, double **z_float, unsigned char **z_byte,
 	}
 }
 
-void Graphics_cellArray (I, double **z, long ix1, long ix2, double x1WC, double x2WC,
+void Graphics_cellArray (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (void_me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+{ cellArrayOrImage (me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
 
-void Graphics_cellArray8 (I, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
+void Graphics_cellArray8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (void_me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+{ cellArrayOrImage (me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
 
-void Graphics_image (I, double **z, long ix1, long ix2, double x1WC, double x2WC,
+void Graphics_image (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (void_me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+{ cellArrayOrImage (me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
 
-void Graphics_image8 (I, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
+void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (void_me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+{ cellArrayOrImage (me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
 
-void Graphics_imageFromFile (I, const wchar *relativeFileName, double x1, double x2, double y1, double y2) {
-	iam (Graphics);
+static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
-	if (my screen) {
-		iam (GraphicsScreen);
-		#if win
-			if (my useGdiplus) {
-				structMelderFile file;
-				Melder_relativePathToFile (relativeFileName, & file);
-				Gdiplus::Image image (file. path);
-				Gdiplus::Graphics dcplus (my dc);
-				if (x1 == x2 && y1 == y2) {
-					width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
-					height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
-				} else if (x1 == x2) {
-					width = height * (double) image. GetWidth () / (double) image. GetHeight ();
-					x1DC -= width / 2, x2DC = x1DC + width;
-				} else if (y1 == y2) {
-					height = width * (double) image. GetHeight () / (double) image. GetWidth ();
-					y2DC -= height / 2, y1DC = y2DC + height;
-				}
-				Gdiplus::Rect rect (x1DC, y2DC, width, height);
-				dcplus.DrawImage (& image, rect);
+	#if win
+		if (my d_useGdiplus) {
+			structMelderFile file;
+			Melder_relativePathToFile (relativeFileName, & file);
+			Gdiplus::Image image (file. path);
+			Gdiplus::Graphics dcplus (my d_gdiGraphicsContext);
+			if (x1 == x2 && y1 == y2) {
+				width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
+				height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
+			} else if (x1 == x2) {
+				width = height * (double) image. GetWidth () / (double) image. GetHeight ();
+				x1DC -= width / 2, x2DC = x1DC + width;
+			} else if (y1 == y2) {
+				height = width * (double) image. GetHeight () / (double) image. GetWidth ();
+				y2DC -= height / 2, y1DC = y2DC + height;
 			}
-		#elif mac
-			if (my useQuartz) {
-				structMelderFile file;
-				Melder_relativePathToFile (relativeFileName, & file);
-				char utf8 [500];
-				Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8);
-				CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
-				CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
-				CFRelease (path);
-				CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
-				//CGDataProviderRef dataProvider = CGDataProviderCreateWithURL (url);
-				CFRelease (url);
-				if (imageSource != NULL) {
-				//if (dataProvider != NULL) {
-					CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
-					//CGImageRef image = CGImageCreateWithJPEGDataProvider (dataProvider, NULL, true, kCGRenderingIntentDefault);
-					CFRelease (imageSource);
-					//CGDataProviderRelease (dataProvider);
-					if (image != NULL) {
-						if (x1 == x2 && y1 == y2) {
-							width = CGImageGetWidth (image), x1DC -= width / 2, x2DC = x1DC + width;
-							height = CGImageGetHeight (image), y2DC -= height / 2, y1DC = y2DC + height;
-						} else if (x1 == x2) {
-							width = height * (double) CGImageGetWidth (image) / (double) CGImageGetHeight (image);
-							x1DC -= width / 2, x2DC = x1DC + width;
-						} else if (y1 == y2) {
-							height = width * (double) CGImageGetHeight (image) / (double) CGImageGetWidth (image);
-							y2DC -= height / 2, y1DC = y2DC + height;
-						}
-						GraphicsQuartz_initDraw (me);
-						CGContextSaveGState (my macGraphicsContext);
-						CGContextTranslateCTM (my macGraphicsContext, 0, y1DC);
-						CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
-						CGContextDrawImage (my macGraphicsContext, CGRectMake (x1DC, 0, width, height), image);
-						CGContextRestoreGState (my macGraphicsContext);
-						GraphicsQuartz_exitDraw (me);
-						CGImageRelease (image);
+			Gdiplus::Rect rect (x1DC, y2DC, width, height);
+			dcplus.DrawImage (& image, rect);
+		}
+	#elif mac
+		if (my d_useQuartz) {
+			structMelderFile file;
+			Melder_relativePathToFile (relativeFileName, & file);
+			char utf8 [500];
+			Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8);
+			CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
+			CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
+			CFRelease (path);
+			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
+			//CGDataProviderRef dataProvider = CGDataProviderCreateWithURL (url);
+			CFRelease (url);
+			if (imageSource != NULL) {
+			//if (dataProvider != NULL) {
+				CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
+				//CGImageRef image = CGImageCreateWithJPEGDataProvider (dataProvider, NULL, true, kCGRenderingIntentDefault);
+				CFRelease (imageSource);
+				//CGDataProviderRelease (dataProvider);
+				if (image != NULL) {
+					if (x1 == x2 && y1 == y2) {
+						width = CGImageGetWidth (image), x1DC -= width / 2, x2DC = x1DC + width;
+						height = CGImageGetHeight (image), y2DC -= height / 2, y1DC = y2DC + height;
+					} else if (x1 == x2) {
+						width = height * (double) CGImageGetWidth (image) / (double) CGImageGetHeight (image);
+						x1DC -= width / 2, x2DC = x1DC + width;
+					} else if (y1 == y2) {
+						height = width * (double) CGImageGetHeight (image) / (double) CGImageGetWidth (image);
+						y2DC -= height / 2, y1DC = y2DC + height;
 					}
+					GraphicsQuartz_initDraw (me);
+					CGContextSaveGState (my d_macGraphicsContext);
+					CGContextTranslateCTM (my d_macGraphicsContext, 0, y1DC);
+					CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+					CGContextDrawImage (my d_macGraphicsContext, CGRectMake (x1DC, 0, width, height), image);
+					CGContextRestoreGState (my d_macGraphicsContext);
+					GraphicsQuartz_exitDraw (me);
+					CGImageRelease (image);
 				}
 			}
-		#endif
+		}
+	#endif
+}
+
+void Graphics_imageFromFile (Graphics me, const wchar *relativeFileName, double x1, double x2, double y1, double y2) {
+	if (my screen) {
+		_GraphicsScreen_imageFromFile (static_cast <GraphicsScreen> (me), relativeFileName, x1, x2, y1, y2);
 	}
 	if (my recording) {
 		char *txt_utf8 = Melder_peekWcsToUtf8 (relativeFileName);

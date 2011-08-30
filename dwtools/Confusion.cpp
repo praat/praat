@@ -34,20 +34,18 @@
 #include "Distributions_and_Strings.h"
 #include "NUM2.h"
 
-#undef your
-#define your ((Confusion_Table) thy methods) ->
+Thing_implement (Confusion, TableOfReal, 0);
 
-static void info (I)
+void structConfusion :: v_info ()
 {
-    iam (Confusion);
     double h, hx, hy, hygx, hxgy, uygx, uxgy, uxy, frac;
     long nCorrect;
 
-    Confusion_getEntropies (me, & h, & hx, & hy, & hygx, & hxgy, & uygx,
+    Confusion_getEntropies (this, & h, & hx, & hy, & hygx, & hxgy, & uygx,
 		& uxgy, & uxy);
-    Confusion_getFractionCorrect (me, & frac, & nCorrect);
-    MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my numberOfRows));
-    MelderInfo_writeLine2 (L"Number of colums: ", Melder_integer (my numberOfColumns));
+    Confusion_getFractionCorrect (this, & frac, & nCorrect);
+    MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (numberOfRows));
+    MelderInfo_writeLine2 (L"Number of colums: ", Melder_integer (numberOfColumns));
     MelderInfo_writeLine1 (L"Entropies (y is row variable):");
     MelderInfo_writeLine2 (L"  Total: ", Melder_double(h));
     MelderInfo_writeLine2 (L"  Y: ", Melder_double(hy));
@@ -58,13 +56,9 @@ static void info (I)
     MelderInfo_writeLine2 (L"  Dependency of x on y: ", Melder_double(uxgy));
     MelderInfo_writeLine2 (L"  Symmetrical dependency: ", Melder_double(uxy));
     MelderInfo_writeLine2 (L"  Total number of entries: ",
-    	Melder_integer (Confusion_getNumberOfEntries (me)));
+    	Melder_integer (Confusion_getNumberOfEntries (this)));
 	MelderInfo_writeLine2 (L" Fraction correct: ", Melder_double (frac));
 }
-
-class_methods (Confusion, TableOfReal)
-    class_method (info);
-class_methods_end
 
 Confusion Confusion_create (long numberOfStimuli, long numberOfResponses)
 {
@@ -218,14 +212,11 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction,
 
 /*************** Confusion_Matrix_draw ****************************************/
 
-Thing_declare1cpp (Pointer);
-struct structPointer : public structPolygon {
+Thing_define (Pointer, Polygon) {   // David, dit kan gewoon een Polygon zijn i.p.v. een nieuwe klasse,
+	// met functies Polygon_createPointer() en Polygon_drawInside() (zoals Pitch_drawInside enz.)
 };
-#define Pointer__methods(klas) Polygon__methods(klas)
-Thing_declare2cpp (Pointer, Polygon);
 
-class_methods (Pointer, Polygon)
-class_methods_end
+Thing_implement (Pointer, Polygon, 1);
 
 #define NPOINTS 6
 static Pointer Pointer_create (void)
@@ -242,7 +233,7 @@ static Pointer Pointer_create (void)
 	} catch (MelderError) { Melder_throw ("Pointer not created."); }
 }
 
-static void Pointer_draw (I, Any graphics)
+static void Pointer_draw (I, Graphics graphics)
 {
 	iam (Polygon);
 	Graphics_polyline (graphics, my numberOfPoints, & my x[1], & my y[1]);
@@ -438,7 +429,7 @@ Confusion TableOfReal_to_Confusion (I)
 	try {
 		if (! TableOfReal_checkPositive (me)) Melder_throw ("Elements may not be less than zero.");
 		autoConfusion thee = Thing_new (Confusion);
-		your copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Confusion."); }
 }

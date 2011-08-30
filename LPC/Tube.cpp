@@ -45,29 +45,17 @@
 #include "oo_DESCRIPTION.h"
 #include "Tube_def.h"
 
-static void classTube_info (I)
-{
-	iam (Tube);
-	classData -> info (me);
-	MelderInfo_writeLine5 (L"Time domain: ", Melder_double (my xmin), L" to ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine2 (L"Maximum number of segments: ", Melder_integer (my maxnSegments));
-	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 (L"Time step: ", Melder_double (my dx), L" seconds");
-	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (my x1), L" seconds");
-}
+Thing_implement (Tube, Sampled, 0);
 
-class_methods (Tube, Sampled)
-	class_method_local (Tube, destroy)
-	class_method_local (Tube, equal)
-	class_method_local (Tube, copy)
-	class_method_local (Tube, info)
-	class_method_local (Tube, canWriteAsEncoding)
-	class_method_local (Tube, readText)
-	class_method_local (Tube, readBinary)
-	class_method_local (Tube, writeText)
-	class_method_local (Tube, writeBinary)
-	class_method_local (Tube, description)
-class_methods_end
+void structTube :: v_info ()
+{
+	structData :: v_info ();
+	MelderInfo_writeLine5 (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine2 (L"Maximum number of segments: ", Melder_integer (maxnSegments));
+	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine3 (L"Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (x1), L" seconds");
+}
 
 void Tube_Frame_init (Tube_Frame me, long nSegments, double length)
 {
@@ -78,9 +66,9 @@ void Tube_Frame_init (Tube_Frame me, long nSegments, double length)
 }
 
 
-void Tube_Frame_free (Tube_Frame me)
+void Tube_Frame_free (Tube_Frame me)   // David, dit wordt niet gebruikt
 {
-	Tube_Frame_destroy (me);
+	my destroy ();
 }
 
 /* Gray & Markel (1979), LPTRN */
@@ -117,8 +105,7 @@ void Tube_init (I, double tmin, double tmax, long nt, double dt, double t1,
 	Tube_setLengths (me, defaultLength);
 }
 
-class_methods (Area, Tube)
-class_methods_end
+Thing_implement (Area, Tube, 0);
 
 void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)
@@ -136,8 +123,7 @@ Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 	} catch (MelderError) { Melder_throw ("Area not crteated."); }
 }
 
-class_methods (RC, Tube)
-class_methods_end
+Thing_implement (RC, Tube, 0);
 
 void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)

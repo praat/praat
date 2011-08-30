@@ -128,19 +128,19 @@
 static const wchar_t *QUERY_BUTTON   = L"Query -";
 static const wchar_t *DRAW_BUTTON    = L"Draw -";
 static const wchar_t *MODIFY_BUTTON  = L"Modify -";
-static const  wchar_t *EXTRACT_BUTTON = L"Extract -";
+static const wchar_t *EXTRACT_BUTTON = L"Extract -";
 
-extern "C" void praat_TimeFunction_query_init (void *klas);
-extern "C" void praat_TimeFrameSampled_query_init (void *klas);
-extern "C" void praat_TableOfReal_init (void *klas);
-extern "C" void praat_TableOfReal_init2  (void *klas);
-extern "C" void praat_SSCP_as_TableOfReal_init (void *klas);
+void praat_TimeFunction_query_init (ClassInfo klas);
+void praat_TimeFrameSampled_query_init (ClassInfo klas);
+void praat_TableOfReal_init (ClassInfo klas);
+void praat_TableOfReal_init2  (ClassInfo klas);
+void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
 
-extern "C" void praat_CC_init (void *klas);
+void praat_CC_init (ClassInfo klas);
 void DTW_constraints_addCommonFields (void *dia);
 void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope);
-void praat_Matrixft_query_init (void *klas);
-extern "C" int praat_Fon_formula (UiForm dia, Interpreter interpreter);
+void praat_Matrixft_query_init (ClassInfo klas);
+int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 #undef INCLUDE_DTW_SLOPES
 
@@ -5615,7 +5615,7 @@ static Any cmuAudioFileRecognizer (int nread, const char *header, MelderFile fs)
 	 NULL : Sound_readFromCmuAudioFile (fs);
 }
 
-extern "C" void praat_CC_init (void *klas)
+void praat_CC_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 1, L"Paint...", 0, 1, DO_CC_paint);
 	praat_addAction1 (klas, 1, L"Draw...", 0, 1, DO_CC_drawC0);
@@ -5626,13 +5626,13 @@ extern "C" void praat_CC_init (void *klas)
 	praat_addAction1 (klas, 2, L"To DTW...", 0, 0, DO_CCs_to_DTW);
 }
 
-static void praat_Eigen_Matrix_project (void *klase, void *klasm);
-static void praat_Eigen_Matrix_project (void *klase, void *klasm)
+static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm);
+static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm)
 {
 	praat_addAction2 (klase, 1, klasm, 1, L"Project...", 0, 0, DO_Eigen_and_Matrix_project);
 }
 
-static void praat_Eigen_query_init (void *klas)
+static void praat_Eigen_query_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 1, L"Get eigenvalue...", 0, 1, DO_Eigen_getEigenvalue);
 	praat_addAction1 (klas, 1, L"Get sum of eigenvalues...", 0, 1, DO_Eigen_getSumOfEigenvalues);
@@ -5641,22 +5641,22 @@ static void praat_Eigen_query_init (void *klas)
 	praat_addAction1 (klas, 1, L"Get eigenvector element...", 0, 1, DO_Eigen_getEigenvectorElement);
 }
 
-static void praat_Eigen_draw_init (void *klas)
+static void praat_Eigen_draw_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 0, L"Draw eigenvalues...", 0, 1, DO_Eigen_drawEigenvalues);
 	praat_addAction1 (klas, 0, L"Draw eigenvalues (scree)...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_Eigen_drawEigenvalues_scree);
 	praat_addAction1 (klas, 0, L"Draw eigenvector...", 0, 1, DO_Eigen_drawEigenvector);
 }
 
-static void praat_Index_init (void *klas)
+static void praat_Index_init (ClassInfo klas)
 {
     praat_addAction1 (klas, 1, L"Get number of classes", 0, 0, DO_Index_getNumberOfClasses);
     praat_addAction1 (klas, 1, L"To Permutation...", 0, 0, DO_Index_to_Permutation);
     praat_addAction1 (klas, 1, L"Extract part...", 0, 0, DO_Index_extractPart);
 }
 
-static void praat_FilterBank_query_init (void *klas);
-static void praat_FilterBank_query_init (void *klas)
+static void praat_FilterBank_query_init (ClassInfo klas);
+static void praat_FilterBank_query_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_Matrixft_query_init (klas);
@@ -5666,15 +5666,15 @@ static void praat_FilterBank_query_init (void *klas)
 	praat_addAction1 (klas, 1, L"Get frequency in mel...", 0, 1, DO_FilterBank_getFrequencyInMel);
 }
 
-static void praat_FilterBank_modify_init (void *klas);
-static void praat_FilterBank_modify_init (void *klas)
+static void praat_FilterBank_modify_init (ClassInfo klas);
+static void praat_FilterBank_modify_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 0, MODIFY_BUTTON, 0, 0, 0);
 	praat_addAction1 (klas, 0, L"Equalize intensities...", 0, 1, DO_FilterBank_equalizeIntensities);
 }
 
-static void praat_FilterBank_draw_init (void *klas);
-static void praat_FilterBank_draw_init (void *klas)
+static void praat_FilterBank_draw_init (ClassInfo klas);
+static void praat_FilterBank_draw_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
 		praat_addAction1 (klas, 0, L"Draw filters...", 0, 1, DO_FilterBank_drawFilters);
@@ -5689,8 +5689,8 @@ static void praat_FilterBank_draw_init (void *klas)
 
 }
 
-static void praat_FilterBank_all_init (void *klas);
-static void praat_FilterBank_all_init (void *klas)
+static void praat_FilterBank_all_init (ClassInfo klas);
+static void praat_FilterBank_all_init (ClassInfo klas)
 {
 	praat_FilterBank_draw_init (klas);
 	praat_FilterBank_query_init (klas);
@@ -5699,7 +5699,7 @@ static void praat_FilterBank_all_init (void *klas)
 	praat_addAction1 (klas, 0, L"To Matrix", 0, 0, DO_FilterBank_to_Matrix);
 }
 
-static void praat_FunctionTerms_init (void *klas)
+static void praat_FunctionTerms_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
 	praat_addAction1 (klas, 0, L"Draw...", 0, 1, DO_FunctionTerms_draw);
@@ -5722,7 +5722,7 @@ static void praat_FunctionTerms_init (void *klas)
 
 /* Query buttons for frame-based frequency x time subclasses of matrix. */
 
-void praat_Matrixft_query_init (void *klas)
+void praat_Matrixft_query_init (ClassInfo klas)
 {
 	praat_TimeFrameSampled_query_init (klas);
 	praat_addAction1 (klas, 1, L"Get time from column...", 0, 1, DO_Matrixft_getXofColumn);
@@ -5736,7 +5736,7 @@ void praat_Matrixft_query_init (void *klas)
 	praat_addAction1 (klas, 1, L"Get value in cell...", 0, 1, DO_Matrixft_getValueInCell);
 }
 
-static void praat_Spline_init (void *klas)
+static void praat_Spline_init (ClassInfo klas)
 {
 	praat_FunctionTerms_init (klas);
 	praat_addAction1 (klas, 0, L"Draw knots...", L"Draw basis function...", 1, DO_Spline_drawKnots);
@@ -5745,7 +5745,7 @@ static void praat_Spline_init (void *klas)
 
 }
 
-static void praat_SSCP_query_init (void *klas)
+static void praat_SSCP_query_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 1, L"-- statistics --", L"Get value...", 1, 0);
 	praat_addAction1 (klas, 1, L"Get number of observations", L"-- statistics --", 1, DO_SSCP_getNumberOfObservations);
@@ -5754,7 +5754,7 @@ static void praat_SSCP_query_init (void *klas)
 	praat_addAction1 (klas, 1, L"Get ln(determinant)", L"Get centroid element...", 1, DO_SSCP_getLnDeterminant);
 }
 
-static void praat_SSCP_extract_init (void *klas)
+static void praat_SSCP_extract_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 1, L"Extract centroid", EXTRACT_BUTTON, 1, DO_SSCP_extractCentroid);
 }
@@ -5783,7 +5783,7 @@ DO
 	}
 END
 
-extern "C" void praat_SSCP_as_TableOfReal_init (void *klas)
+void praat_SSCP_as_TableOfReal_init (ClassInfo klas)
 {
 	praat_TableOfReal_init (klas);
 	praat_removeAction (klas, NULL, NULL, L"Set value...");
@@ -5793,7 +5793,7 @@ extern "C" void praat_SSCP_as_TableOfReal_init (void *klas)
 
 }
 
-extern "C" void praat_TableOfReal_init2  (void *klas)
+void praat_TableOfReal_init2  (ClassInfo klas)
 {
 	praat_TableOfReal_init (klas);
 	praat_addAction1 (klas, 0, L"To TableOfReal", L"To Matrix", 1, DO_TableOfReal_to_TableOfReal);
@@ -5813,8 +5813,8 @@ void praat_TimeFrameSampled_query_init (void *klas)
 		DO_TimeFrameSampled_getFrameFromTime);
 }
 */
-extern "C" void praat_uvafon_David_init (void);
-extern "C" void praat_uvafon_David_init (void)
+void praat_uvafon_David_init (void);
+void praat_uvafon_David_init (void)
 {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);

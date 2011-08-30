@@ -17,31 +17,19 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/03/29 created
- * pb 2007/08/12 wchar
- * pb 2010/10/19 allow drawing without speckles
- * pb 2011/05/31
- */
-
 #include "Ltas_to_SpectrumTier.h"
 
-static void info (I) {
-	iam (SpectrumTier);
-	classData -> info (me);
-	MelderInfo_writeLine1 (L"Frequency domain:");
-	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (my xmin), L" Hz");
-	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (my xmax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (my xmax - my xmin), L" Hz");
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my points -> size));
-	MelderInfo_writeLine3 (L"Minimum power value: ", Melder_double (RealTier_getMinimumValue (me)), L" dB/Hz");
-	MelderInfo_writeLine3 (L"Maximum power value: ", Melder_double (RealTier_getMaximumValue (me)), L" dB/Hz");
-}
+Thing_implement (SpectrumTier, RealTier, 0);
 
-class_methods (SpectrumTier, RealTier) {
-	class_method (info)
-	us -> domainQuantity = MelderQuantity_FREQUENCY_HERTZ;
-	class_methods_end
+void structSpectrumTier :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine1 (L"Frequency domain:");
+	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
+	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine3 (L"Minimum power value: ", Melder_double (RealTier_getMinimumValue (this)), L" dB/Hz");
+	MelderInfo_writeLine3 (L"Maximum power value: ", Melder_double (RealTier_getMaximumValue (this)), L" dB/Hz");
 }
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax) {

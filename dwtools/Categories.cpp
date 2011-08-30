@@ -24,41 +24,37 @@
 
 #include "Categories.h"
 
-static void readText (I, MelderReadText text)
+void structCategories :: v_readText (MelderReadText a_text)
 {
-	iam (Categories); 
-	long size = texgeti4 (text);
-	if (size == 0)
-	{
-		OrderedOfString_init (me, 1);
+	long l_size = texgeti4 (a_text);
+	if (l_size == 0) {
+		OrderedOfString_init (this, 1);
+	} else if (l_size < 0) {
+		Melder_throw ("Size cannot be negative.");
+	} else {
+		OrderedOfString_init (this, l_size);   // David, in je vorige versie kon dit tweemaal aangeroepen worden (en in dat geval crashend)
 	}
-	if (size < 0) Melder_throw ("Size cannot be negative.");
-	OrderedOfString_init (me, size);
-	for (long i = 1; i <= size; i++)
+	for (long i = 1; i <= l_size; i ++)
 	{
 		autoSimpleString item = Thing_new (SimpleString);
-		((Data_Table) item -> methods) -> readText (item.peek(), text); therror
-		Ordered_addItemPos (me, item.transfer(), i);
+		item -> v_readText (a_text); therror
+		Ordered_addItemPos (this, item.transfer(), i);
 	}
 } 
 
-static void writeText (I, MelderFile file)
+void structCategories :: v_writeText (MelderFile file)
 {
-	iam (Categories);
-	texputi4 (file, my size, L"size", 0,0,0,0,0);
-	for (long i = 1; i <= my size; i++)
+	texputi4 (file, size, L"size", 0,0,0,0,0);
+	for (long i = 1; i <= size; i++)
 	{
-		SimpleString data = (SimpleString) my item [i];
+		SimpleString data = (SimpleString) item [i];
 		texputintro (file, L"item" " [", Melder_integer (i), L"]:", 0,0,0);
-		classSimpleString -> writeText (data, file);
+		data -> structSimpleString :: v_writeText (file);
 		texexdent (file);
 	}
 }
 
-class_methods (Categories, OrderedOfString)
-    class_method (readText)
-    class_method (writeText)
-class_methods_end
+Thing_implement (Categories, OrderedOfString, 0);
 
 void Categories_init (Categories me, long size)
 {
@@ -108,7 +104,7 @@ Categories OrderedOfString_to_Categories (I)
 		
 		for (long i = 1; i <= my size; i++)
 		{
-			autoSimpleString item = (SimpleString) Data_copy (my item[i]);
+			autoSimpleString item = Data_copy ((SimpleString) my item [i]);
 			Collection_addItem (thee.peek(), item.transfer());
 		}
 		return thee.transfer();

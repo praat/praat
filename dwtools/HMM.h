@@ -26,62 +26,42 @@
 #include "SSCP.h"
 #include "Index.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "HMM_def.h"
-
-#define HMM_State__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM_State, Data);
-
-#define HMM_Observation__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM_Observation, Data);
-
-#define HMM_Viterbi__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM_Viterbi, Data);
-
-#define HMM__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (HMM, Data);
 
-Thing_declare1cpp (HMM_BaumWelch);
-struct structHMM_BaumWelch : public structData {
-	long capacity;
-	long numberOfTimes;
-	long totalNumberOfSequences;
-	long numberOfStates;
-	long numberOfSymbols;
-	double lnProb;
-	double minProb;
-	double **alpha;
-	double **beta;
-	double *scale;
-	double **gamma;
-	double ***xi;
-	double **aij_num, **aij_denom;
-	double **bik_num, **bik_denom;
+Thing_define (HMM_BaumWelch, Data) {
+	// new data:
+	public:
+		long capacity;
+		long numberOfTimes;
+		long totalNumberOfSequences;
+		long numberOfStates;
+		long numberOfSymbols;
+		double lnProb;
+		double minProb;
+		double **alpha;
+		double **beta;
+		double *scale;
+		double **gamma;
+		double ***xi;
+		double **aij_num, **aij_denom;
+		double **bik_num, **bik_denom;
+	// overridden methods:
+		virtual void v_destroy ();
 };
-#define HMM_BaumWelch__methods(klas) Data__methods(klas)
-Thing_declare2cpp (HMM_BaumWelch, Data);
 
-Thing_declare1cpp (HMM_StateSequence);
-struct structHMM_StateSequence : public structStrings {
+Thing_define (HMM_StateSequence, Strings) {
 };
-#define HMM_StateSequence__methods(klas) Strings__methods(klas)
-Thing_declare2cpp (HMM_StateSequence, Strings);
 
-Thing_declare1cpp (HMM_ObservationSequence);
-struct structHMM_ObservationSequence : public structTable {
+Thing_define (HMM_ObservationSequence, Table) {
 };
-#define HMM_ObservationSequence__methods(klas) Table__methods(klas)
-Thing_declare2cpp (HMM_ObservationSequence, Table);
 // First column is always a symbol, if only 1 column then symbols only
 
-Thing_declare1cpp (HMM_ObservationSequences);
-struct structHMM_ObservationSequences : public structCollection {
+Thing_define (HMM_ObservationSequences, Collection) {
 };
-#define HMM_ObservationSequences__methods(klas) Collection__methods(klas)
-Thing_declare2cpp (HMM_ObservationSequences, Collection);
 
 HMM_ObservationSequence HMM_ObservationSequence_create (long numberOfItems, long dataLength);
 void HMM_ObservationSequence_removeObservation (HMM_ObservationSequence me, long index);
@@ -159,9 +139,5 @@ double HMM_and_HMM_ObservationSequence_getPerplexity (HMM me, HMM_ObservationSeq
 // somewhere else
 void MelderInfo_lnp (double logp);
 TableOfReal Strings_to_TableOfReal_transitions (Strings me, int probabilities);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _HMM_h_ */

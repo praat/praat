@@ -28,7 +28,6 @@
 /********** class RealPoint **********/
 
 #include "RealTier_def.h"
-#define RealPoint__methods(klas) AnyPoint__methods(klas)
 oo_CLASS_CREATE (RealPoint, AnyPoint);
 
 RealPoint RealPoint_create (double time, double value);
@@ -40,12 +39,11 @@ RealPoint RealPoint_create (double time, double value);
 
 /********** class RealTier **********/
 
-#define RealTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (RealTier, Function);
 
-void RealTier_init (I, double tmin, double tmax);
+void RealTier_init (RealTier me, double tmin, double tmax);
 RealTier RealTier_create (double tmin, double tmax);
-RealTier RealTier_createWithClass (double tmin, double tmax, RealTier_Table klas);
+RealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas);
 /*
 	Postconditions:
 		result -> xmin == tmin;
@@ -53,37 +51,37 @@ RealTier RealTier_createWithClass (double tmin, double tmax, RealTier_Table klas
 		result -> points -> size == 0;
 */
 
-double RealTier_getValueAtIndex (I, long point);
+double RealTier_getValueAtIndex (RealTier me, long point);
 /* No points or 'point' out of range: NUMundefined. */
 
-double RealTier_getValueAtTime (I, double t);
+double RealTier_getValueAtTime (RealTier me, double t);
 /* Inside points: linear intrapolation. */
 /* Outside points: constant extrapolation. */
 /* No points: NUMundefined. */
 
-double RealTier_getMinimumValue (I);
-double RealTier_getMaximumValue (I);
-double RealTier_getArea (I, double tmin, double tmax);
-double RealTier_getMean_curve (I, double tmin, double tmax);
-double RealTier_getMean_points (I, double tmin, double tmax);
-double RealTier_getStandardDeviation_curve (I, double tmin, double tmax);
-double RealTier_getStandardDeviation_points (I, double tmin, double tmax);
+double RealTier_getMinimumValue (RealTier me);
+double RealTier_getMaximumValue (RealTier me);
+double RealTier_getArea (RealTier me, double tmin, double tmax);
+double RealTier_getMean_curve (RealTier me, double tmin, double tmax);
+double RealTier_getMean_points (RealTier me, double tmin, double tmax);
+double RealTier_getStandardDeviation_curve (RealTier me, double tmin, double tmax);
+double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tmax);
 
-int RealTier_addPoint (I, double t, double value);
-void RealTier_draw (I, Graphics g, double tmin, double tmax,
+void RealTier_addPoint (RealTier me, double t, double value);
+void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax,
 	double ymin, double ymax, int garnish, const wchar *method, const wchar *quantity);
-TableOfReal RealTier_downto_TableOfReal (I, const wchar *timeLabel, const wchar *valueLabel);
+TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar *timeLabel, const wchar *valueLabel);
 
-int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int logarithmically);
+void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParabola, int logarithmically);
 
-Table RealTier_downto_Table (I, const wchar *indexText, const wchar *timeText, const wchar *valueText);
-RealTier Vector_to_RealTier (I, long channel, RealTier_Table klas);
-RealTier Vector_to_RealTier_peaks (I, long channel, RealTier_Table klas);
-RealTier Vector_to_RealTier_valleys (I, long channel, RealTier_Table klas);
-RealTier PointProcess_upto_RealTier (PointProcess me, double value, RealTier_Table klas);
+Table RealTier_downto_Table (RealTier me, const wchar *indexText, const wchar *timeText, const wchar *valueText);
+RealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas);
+RealTier Vector_to_RealTier_peaks (Vector me, long channel, ClassInfo klas);
+RealTier Vector_to_RealTier_valleys (Vector me, long channel, ClassInfo klas);
+RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo klas);
 
-int RealTier_formula (I, const wchar *expression, Interpreter interpreter, thou);
-void RealTier_multiplyPart (I, double tmin, double tmax, double factor);
+void RealTier_formula (RealTier me, const wchar *expression, Interpreter interpreter, RealTier thee);
+void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor);
 void RealTier_removePointsBelow (RealTier me, double level);
 
 /* End of file RealTier.h */

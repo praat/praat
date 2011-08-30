@@ -25,11 +25,8 @@
 */
 
 #include "Collection.h"
+#include "Graphics.h"
 #include "Permutation.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Collection Collection_and_Permutation_permuteItems (Collection me, Permutation him);
 Collection Collection_permuteItems(Collection me);
@@ -37,7 +34,10 @@ Collection Collection_permuteItems(Collection me);
 
 /****************** class OrderedOfString ******************/
 
-Thing_declare1cpp (OrderedOfString);
+Thing_define (OrderedOfString, Ordered) {
+	// overridden methods:
+		virtual void v_info ();
+};
 
 OrderedOfString OrderedOfString_create (void);
 int OrderedOfString_init (I, long initialCapacity);
@@ -63,7 +63,7 @@ long OrderedOfString_getNumberOfDifferences (I, thou);
 const wchar_t *OrderedOfString_itemAtIndex_c (I, long index);
 long OrderedOfString_indexOfItem_c (I, const wchar_t *str);
 
-void OrderedOfString_drawItem (I, Any graphics, long index, double xWC, double yWC);
+void OrderedOfString_drawItem (I, Graphics graphics, long index, double xWC, double yWC);
 
 void OrderedOfString_sequentialNumbers (I, long n);
 
@@ -86,15 +86,5 @@ long OrderedOfString_isSubsetOf (I, thou, long *translation);
 
 long OrderedOfString_getSize (I);
 /* return my size */
-
-#ifdef __cplusplus
-	}
-
-	struct structOrderedOfString : public structOrdered {
-	};
-	#define OrderedOfString__methods(klas) Ordered__methods(klas)
-	Thing_declare2cpp (OrderedOfString, Ordered);
-
-#endif
 
 #endif /* _Collection_extensions_h_ */

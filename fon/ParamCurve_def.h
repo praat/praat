@@ -1,6 +1,6 @@
-/* Ltas_to_SpectrumTier.cpp
+/* ParamCurve_def.h
  *
- * Copyright (C) 2007-2011 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Ltas_to_SpectrumTier.h"
 
-SpectrumTier Ltas_to_SpectrumTier_peaks (Ltas me) {
-	try {
-		return (SpectrumTier) Vector_to_RealTier_peaks (me, 1, classSpectrumTier);
-	} catch (MelderError) {
-		Melder_throw (me, ": peaks not analyzed as SpectrumTier.");
-	}
-}
+#define ooSTRUCT ParamCurve
+oo_DEFINE_CLASS (ParamCurve, Function)
 
-/* End of file Ltas_to_SpectrumTier.cpp */
+	oo_OBJECT (Sound, 2, x)
+	oo_OBJECT (Sound, 2, y)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
+
+oo_END_CLASS (ParamCurve)
+#undef ooSTRUCT
+
+
+/* End of file ParamCurve_def.h */

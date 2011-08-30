@@ -23,36 +23,27 @@
   djmw 20101202 Initial version
   djmw 20110306 Latest modification.
 */
+
 #include "SSCP.h"
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (MixingMatrix);
-struct structMixingMatrix : public structTableOfReal {
+Thing_define (MixingMatrix, TableOfReal) {
 };
-#define MixingMatrix__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (MixingMatrix, TableOfReal);
 
-Thing_declare1cpp (Diagonalizer);
-struct structDiagonalizer : public structTableOfReal {
+Thing_define (Diagonalizer, TableOfReal) {
 };
-#define Diagonalizer__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (Diagonalizer, TableOfReal);
 
-Thing_declare1cpp (CrossCorrelationTable);
-struct structCrossCorrelationTable : public structSSCP {
+Thing_define (CrossCorrelationTable, SSCP) {
+	// overridden methods:
+	public:
+		virtual void v_info ();
 };
-#define CrossCorrelationTable__methods(klas) SSCP__methods(klas)
-Thing_declare2cpp (CrossCorrelationTable, SSCP);
 
-Thing_declare1cpp (CrossCorrelationTables);
-struct structCrossCorrelationTables : public structOrdered {
+Thing_define (CrossCorrelationTables, Ordered) {
+	// overridden methods:
+	public:
+		virtual void v_info ();
 };
-#define CrossCorrelationTables__methods(klas) Ordered__methods(klas)
-Thing_declare2cpp (CrossCorrelationTables, Ordered);
 
 /*
 	Cell [i,j] of a CrossCorrelationTable contains the cross-correlation between signal i and signal j.
@@ -123,9 +114,5 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagTime, long n);
 
 MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /*_ICA_h_ */

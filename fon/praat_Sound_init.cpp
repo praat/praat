@@ -49,8 +49,8 @@
 #undef iam
 #define iam iam_LOOP
 
-extern "C" void praat_TimeFunction_query_init (void *klas);
-extern "C" void praat_TimeFunction_modify_init (void *klas);
+void praat_TimeFunction_query_init (ClassInfo klas);
+void praat_TimeFunction_modify_init (ClassInfo klas);
 
 /***** LONGSOUND *****/
 
@@ -96,7 +96,10 @@ FORM (LongSound_getTimeFromIndex, L"LongSound: Get time from sample index", L"So
 	INTEGER (L"Sample index", L"100")
 	OK
 DO
-	Melder_informationReal (Sampled_indexToX (ONLY (classLongSound), GET_INTEGER (L"Sample index")), L"seconds");
+	LOOP {
+		iam (LongSound);
+		Melder_informationReal (Sampled_indexToX (me, GET_INTEGER (L"Sample index")), L"seconds");
+	}
 END
 
 DIRECT (LongSound_getNumberOfSamples)
@@ -675,16 +678,16 @@ DO_ALTERNATIVE (old_Sound_draw)
 	}
 END
 
-static void cb_SoundEditor_publish (Any editor, void *closure, Data publish) {
+static void cb_SoundEditor_publication (Editor editor, void *closure, Data publication) {
 	(void) editor;
 	(void) closure;
 	/*
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publish, NULL);
+		praat_new (publication, NULL);
 		praat_updateSelection ();
-		if (Thing_member ((Thing) publish, classSpectrum)) {
+		if (Thing_member (publication, classSpectrum)) {
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
@@ -700,7 +703,7 @@ DIRECT (Sound_edit)
 	LOOP {
 		iam (Sound);
 		autoSoundEditor editor = SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		Editor_setPublishCallback (editor.peek(), cb_SoundEditor_publish, NULL);
+		editor -> setPublicationCallback (cb_SoundEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
@@ -1342,68 +1345,45 @@ FORM_READ (Sound_readFromRawAlawFile, L"Read Sound from raw Alaw file", 0, true)
 	praat_new (me.transfer(), MelderFile_name (file));
 END
 
-static SoundRecorder soundRecorder;   /* Only one at a time. */
-static void cb_SoundRecorder_destroy (Any editor, void *closure) {
+static SoundRecorder theSoundRecorder;   // only one at a time can exist
+static int thePreviousNumberOfChannels;
+static void cb_SoundRecorder_destruction (Editor editor, void *closure) {
 	(void) editor;
 	(void) closure;
-	soundRecorder = NULL;
+	theSoundRecorder = NULL;
 }
-static int previousNumberOfChannels;
-static void cb_SoundRecorder_publish (Any editor, void *closure, Data publish) {
+static void cb_SoundRecorder_publication (Editor editor, void *closure, Data publication) {
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new1 (publish, NULL);
+		praat_new1 (publication, NULL);
 	} catch (MelderError) {
 		Melder_flushError (NULL);
 	}
 	praat_updateSelection ();
 }
-DIRECT (Sound_record_mono)
+static void do_Sound_record (int numberOfChannels) {
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw ("Cannot record a Sound from batch.");
-	if (soundRecorder) {
-		if (previousNumberOfChannels == 1) {
-			Editor_raise (soundRecorder);
+	if (theSoundRecorder) {
+		if (numberOfChannels == thePreviousNumberOfChannels) {
+			theSoundRecorder -> raise ();
 		} else {
-			forget (soundRecorder);
+			forget (theSoundRecorder);
 		}
 	}
-	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 1);
-		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
-		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
+	if (! theSoundRecorder) {
+		theSoundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, numberOfChannels);
+		theSoundRecorder -> setDestructionCallback (cb_SoundRecorder_destruction, NULL);
+		theSoundRecorder -> setPublicationCallback (cb_SoundRecorder_publication, NULL);
 	}
-	previousNumberOfChannels = 1;
-END
-static void cb_SoundRecorder_publish2 (Any editor, Any closure, Data publish1, Data publish2) {
-	(void) editor;
-	(void) closure;
-	try {
-		praat_new (publish1, L"left");
-		praat_new (publish2, L"right");
-	} catch (MelderError) {
-		Melder_flushError (NULL);
-		return;
-	}
-	praat_updateSelection ();
+	thePreviousNumberOfChannels = numberOfChannels;
 }
+DIRECT (Sound_record_mono)
+	do_Sound_record (1);
+END
 DIRECT (Sound_record_stereo)
-	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot record a Sound from batch.");
-	if (soundRecorder) {
-		if (previousNumberOfChannels == 2) {
-			Editor_raise (soundRecorder);
-		} else {
-			forget (soundRecorder);
-		}
-	}
-	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, 2);
-		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
-		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
-		Editor_setPublish2Callback (soundRecorder, cb_SoundRecorder_publish2, NULL);
-	}
-	previousNumberOfChannels = 2;
+	do_Sound_record (2);
 END
 
 FORM (Sound_recordFixedTime, L"Record Sound", 0)
@@ -2309,8 +2289,8 @@ static int publishPlayedProc (void) {
 
 /***** buttons *****/
 
-extern "C" void praat_uvafon_Sound_init (void);
-extern "C" void praat_uvafon_Sound_init (void) {
+void praat_uvafon_Sound_init (void);
+void praat_uvafon_Sound_init (void) {
 
 	Data_recognizeFileType (macSoundOrEmptyFileRecognizer);
 	Data_recognizeFileType (soundFileRecognizer);

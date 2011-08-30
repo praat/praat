@@ -47,31 +47,18 @@
 #include "oo_DESCRIPTION.h"
 #include "Cepstrumc_def.h"
 
-static void info (I)
-{
-	iam (Cepstrumc);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"  Start time: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 (L"  End time: ", Melder_double (my xmax));
-	MelderInfo_writeLine2 (L"  Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine2 (L"  Time step: ", Melder_double (my dx));
-	MelderInfo_writeLine2 (L"  First frame at: ", Melder_double (my x1));
-	MelderInfo_writeLine2 (L"  Number of coefficients: ", Melder_integer (my maxnCoefficients));
-}
+Thing_implement (Cepstrumc, Sampled, 1);
 
-class_methods (Cepstrumc, Sampled)
-	us -> version = 1;
-	class_method_local (Cepstrumc, destroy)
-	class_method_local (Cepstrumc, equal)
-	class_method_local (Cepstrumc, copy)
-	class_method ( info)
-	class_method_local (Cepstrumc, canWriteAsEncoding)
-	class_method_local (Cepstrumc, readText)
-	class_method_local (Cepstrumc, readBinary)
-	class_method_local (Cepstrumc, writeText)
-	class_method_local (Cepstrumc, writeBinary)
-	class_method_local (Cepstrumc, description)
-class_methods_end
+void structCepstrumc :: v_info ()
+{
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"  Start time: ", Melder_double (xmin));
+	MelderInfo_writeLine2 (L"  End time: ", Melder_double (xmax));
+	MelderInfo_writeLine2 (L"  Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine2 (L"  Time step: ", Melder_double (dx));
+	MelderInfo_writeLine2 (L"  First frame at: ", Melder_double (x1));
+	MelderInfo_writeLine2 (L"  Number of coefficients: ", Melder_integer (maxnCoefficients));
+}
 
 void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients)
 {

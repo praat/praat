@@ -110,7 +110,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_DOUBLE (stimulusMedialSilenceDuration)
 	oo_ENDFROM
 	oo_LONG (numberOfDifferentStimuli)
-	oo_STRUCT_VECTOR (StimulusMFC, stimulus, my numberOfDifferentStimuli)
+	oo_STRUCT_VECTOR (StimulusMFC, stimulus, numberOfDifferentStimuli)
 	oo_LONG (numberOfReplicationsPerStimulus)
 	oo_LONG (breakAfterEvery)
 	oo_ENUM (kExperiment_randomize, randomize)
@@ -149,10 +149,10 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_DOUBLE (responseMedialSilenceDuration)
 	oo_ENDFROM
 	oo_LONG (numberOfDifferentResponses)
-	oo_STRUCT_VECTOR (ResponseMFC, response, my numberOfDifferentResponses)
+	oo_STRUCT_VECTOR (ResponseMFC, response, numberOfDifferentResponses)
 	oo_FROM (1)
 		oo_LONG (numberOfGoodnessCategories)
-		oo_STRUCT_VECTOR (GoodnessMFC, goodness, my numberOfGoodnessCategories)
+		oo_STRUCT_VECTOR (GoodnessMFC, goodness, numberOfGoodnessCategories)
 	oo_ENDFROM
 	#if !oo_READING && !oo_WRITING
 		oo_DOUBLE (samplePeriod)
@@ -160,17 +160,17 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_BOOLEAN (pausing)
 		oo_LONG (trial)
 		oo_LONG (numberOfTrials)
-		oo_LONG_VECTOR (stimuli, my numberOfTrials)
-		oo_LONG_VECTOR (responses, my numberOfTrials)
-		oo_DOUBLE_VECTOR (goodnesses, my numberOfTrials)
+		oo_LONG_VECTOR (stimuli, numberOfTrials)
+		oo_LONG_VECTOR (responses, numberOfTrials)
+		oo_DOUBLE_VECTOR (goodnesses, numberOfTrials)
 		oo_DOUBLE (startingTime)
-		oo_DOUBLE_VECTOR (reactionTimes, my numberOfTrials)
+		oo_DOUBLE_VECTOR (reactionTimes, numberOfTrials)
 		oo_OBJECT (Sound, 0, playBuffer)
 	#endif
 	oo_DIR (rootDirectory)
 	#if oo_READING
-		MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
-		if (localVersion < 4) my stimuliAreSounds = TRUE;
+		MelderDir_copy (& Data_directoryBeingRead, & rootDirectory);
+		if (localVersion < 4) stimuliAreSounds = TRUE;
 	#endif
 
 oo_END_CLASS (ExperimentMFC)
@@ -199,7 +199,7 @@ oo_END_STRUCT (TrialMFC)
 oo_DEFINE_CLASS (ResultsMFC, Data)
 
 	oo_LONG (numberOfTrials)
-	oo_STRUCT_VECTOR (TrialMFC, result, my numberOfTrials)
+	oo_STRUCT_VECTOR (TrialMFC, result, numberOfTrials)
 
 oo_END_CLASS (ResultsMFC)
 #undef ooSTRUCT

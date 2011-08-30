@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/11/18
- */
-
 
 #define ooSTRUCT RegressionParameter
 oo_DEFINE_CLASS (RegressionParameter, Data)
@@ -42,6 +38,11 @@ oo_DEFINE_CLASS (Regression, Data)
 
 	oo_DOUBLE (intercept)
 	oo_COLLECTION (Ordered, parameters, RegressionParameter, 0)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (Regression)
 #undef ooSTRUCT

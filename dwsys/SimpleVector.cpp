@@ -43,17 +43,7 @@
 #include "oo_DESCRIPTION.h"
 #include "SimpleVector_def.h"
 
-class_methods (DoubleVector, Data)
-	class_method_local (DoubleVector, destroy)
-	class_method_local (DoubleVector, equal)
-	class_method_local (DoubleVector, canWriteAsEncoding)
-	class_method_local (DoubleVector, copy)
-	class_method_local (DoubleVector, readText)
-	class_method_local (DoubleVector, readBinary)
-	class_method_local (DoubleVector, writeText)
-	class_method_local (DoubleVector, writeBinary)
-	class_method_local (DoubleVector, description)
-class_methods_end
+Thing_implement (DoubleVector, Data, 0);
 
 void DoubleVector_init (I, long min, long max)
 {
@@ -71,17 +61,7 @@ DoubleVector DoubleVector_create (long min, long max)
 	} catch (MelderError) { Melder_throw ("DoubleVector not created."); }
 }
 
-class_methods (ComplexVector, Data)
-	class_method_local (ComplexVector, destroy)
-	class_method_local (ComplexVector, equal)
-	class_method_local (ComplexVector, canWriteAsEncoding)
-	class_method_local (ComplexVector, copy)
-	class_method_local (ComplexVector, readText)
-	class_method_local (ComplexVector, readBinary)
-	class_method_local (ComplexVector, writeText)
-	class_method_local (ComplexVector, writeBinary)
-	class_method_local (ComplexVector, description)
-class_methods_end
+Thing_implement (ComplexVector, Data, 0);
 
 void ComplexVector_init (I, long min, long max)
 {

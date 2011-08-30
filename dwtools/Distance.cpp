@@ -1,4 +1,4 @@
-/* Distance.c
+/* Distance.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -24,8 +24,7 @@
 
 #include "Distance.h"
 
-class_methods (Distance, Proximity)
-class_methods_end
+Thing_implement (Distance, Proximity, 0);
 
 Distance Distance_create (long numberOfPoints)
 {
@@ -42,3 +41,5 @@ void Distance_drawDendogram (Distance me, Graphics g, int method)
 	(void) g;
 	(void) method;
 }
+
+/* End of file Distance.cpp */

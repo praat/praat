@@ -218,4 +218,4 @@ libgsl.a: $(OBJECTS)
 	ar cq libgsl.a $(OBJECTS)
 	$(RANLIB) libgsl.a
 
-$(OBJECTS): *.h ../sys/*.h  ../dwsys/*.h
+$(OBJECTS): *.h

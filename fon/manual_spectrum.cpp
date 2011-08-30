@@ -82,8 +82,8 @@ static void draw_SpectrumStopHann_decompose (Graphics g) {
 	draw_SpectrumHann (g, 500, 1000, 1, 0);
 }
 
-extern "C" void manual_spectrum_init (ManPages me);
-extern "C" void manual_spectrum_init (ManPages me) {
+void manual_spectrum_init (ManPages me);
+void manual_spectrum_init (ManPages me) {
 
 MAN_BEGIN (L"Ltas", L"ppgb", 20070320)
 INTRO (L"One of the @@types of objects@ in Praat. "

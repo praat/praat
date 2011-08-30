@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/14
- */
-
 #include "Sampled.h"
 #include "Graphics.h"
 #include "Table.h"
@@ -30,7 +26,6 @@
 #include "Interpreter_decl.h"
 
 #include "Matrix_def.h"
-#define Matrix__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Matrix, Sampled);
 
 void Matrix_init
@@ -255,7 +250,7 @@ void Matrix_movie (I, Graphics g);
 
 Matrix Matrix_readFromRawTextFile (MelderFile file);
 Matrix Matrix_readAP (MelderFile file);
-Matrix Matrix_appendRows (Matrix me, Matrix thee, Matrix_Table klas);
+Matrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas);
 
 void Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues);
 Matrix Matrix_power (I, long power);

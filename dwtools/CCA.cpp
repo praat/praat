@@ -56,27 +56,15 @@
 #include "oo_DESCRIPTION.h"
 #include "CCA_def.h"
 
-static void info (I)
+void structCCA :: v_info ()
 {
-	iam (CCA);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (my numberOfCoefficients));
-	MelderInfo_writeLine2 (L"ny: ", Melder_integer (my y -> dimension));
-	MelderInfo_writeLine2 (L"nx: ", Melder_integer (my x -> dimension));
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (numberOfCoefficients));
+	MelderInfo_writeLine2 (L"ny: ", Melder_integer (y -> dimension));
+	MelderInfo_writeLine2 (L"nx: ", Melder_integer (x -> dimension));
 }
 
-class_methods (CCA, Data)
-	class_method_local (CCA, destroy)
-	class_method_local (CCA, equal)
-	class_method_local (CCA, canWriteAsEncoding)
-	class_method_local (CCA, copy)
-	class_method (info)
-	class_method_local (CCA, readText)
-	class_method_local (CCA, readBinary)
-	class_method_local (CCA, writeText)
-	class_method_local (CCA, writeBinary)
-	class_method_local (CCA, description)
-class_methods_end
+Thing_implement (CCA, Data, 0);
 
 CCA CCA_create (long numberOfCoefficients, long ny, long nx)
 {

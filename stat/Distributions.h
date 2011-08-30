@@ -22,11 +22,11 @@
 /* Distributions inherits from TableOfReal */
 #include "TableOfReal.h"
 
-Thing_declare1cpp (Distributions);
-struct structDistributions : public structTableOfReal {
+Thing_define (Distributions, TableOfReal) {
+	// overridden methods:
+	protected:
+		virtual void v_info ();
 };
-#define Distributions__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (Distributions, TableOfReal);
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns);
 

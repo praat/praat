@@ -50,7 +50,7 @@ void structTextEditor :: v_destroy () {
 
 void structTextEditor :: v_nameChanged () {
 	if (v_fileBased ()) {
-		bool dirtinessAlreadyShown = GuiWindow_setDirty (shell, dirty);
+		bool dirtinessAlreadyShown = GuiWindow_setDirty (d_windowShell, dirty);
 		static MelderString windowTitle = { 0 };
 		MelderString_empty (& windowTitle);
 		if (name == NULL) {
@@ -63,11 +63,11 @@ void structTextEditor :: v_nameChanged () {
 			if (dirty && ! dirtinessAlreadyShown)
 				MelderString_append (& windowTitle, L" (modified)");
 		}
-		GuiWindow_setTitle (shell, windowTitle.string);
+		GuiWindow_setTitle (d_windowShell, windowTitle.string);
 		MelderString_empty (& windowTitle);
 		MelderString_append2 (& windowTitle, dirty && ! dirtinessAlreadyShown ? L"*" : L"", name == NULL ? L"(untitled)" : MelderFile_name (& file));
 		#if motif	
-			XtVaSetValues (shell, XmNiconName, Melder_peekWcsToUtf8 (windowTitle.string), NULL);
+			XtVaSetValues (d_windowShell, XmNiconName, Melder_peekWcsToUtf8 (windowTitle.string), NULL);
 		#endif
 	} else {
 		TextEditor_Parent :: v_nameChanged ();
@@ -79,7 +79,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 		for (long ieditor = 1; ieditor <= theOpenTextEditors -> size; ieditor ++) {
 			TextEditor editor = (TextEditor) theOpenTextEditors -> item [ieditor];
 			if (editor != me && MelderFile_equal (file, & editor -> file)) {
-				Editor_raise (editor);
+				editor -> raise ();
 				Melder_error_ ("Text file ", file, " is already open.");
 				forget (me);   // don't forget me before Melder_error_, because "file" is owned by one of my dialogs
 				Melder_flushError (NULL);
@@ -126,12 +126,12 @@ static void cb_open_ok (UiForm sendingForm, const wchar_t *sendingString, Interp
 }
 
 static void cb_showOpen (EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter) {
-	TextEditor me = (TextEditor) cmd -> editor;
+	TextEditor me = (TextEditor) cmd -> d_editor;
 	(void) sendingForm;
 	(void) sendingString;
 	(void) interpreter;
 	if (! my openDialog)
-		my openDialog = UiInfile_create (my dialog, L"Open", cb_open_ok, me, NULL, NULL, false);
+		my openDialog = UiInfile_create (my d_windowForm, L"Open", cb_open_ok, me, NULL, NULL, false);
 	UiInfile_do (my openDialog);
 }
 
@@ -145,20 +145,19 @@ static void cb_saveAs_ok (UiForm sendingForm, const wchar_t *sendingString, Inte
 	saveDocument (me, file);
 }
 
-static int menu_cb_saveAs (EDITOR_ARGS) {
+static void menu_cb_saveAs (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
-	wchar_t defaultName [300];
+	wchar defaultName [300];
 	if (! my saveDialog)
-		my saveDialog = UiOutfile_create (my dialog, L"Save", cb_saveAs_ok, me, NULL, NULL);
+		my saveDialog = UiOutfile_create (my d_windowForm, L"Save", cb_saveAs_ok, me, NULL, NULL);
 	swprintf (defaultName, 300, ! my v_fileBased () ? L"info.txt" : my name ? MelderFile_name (& my file) : L"");
 	UiOutfile_do (my saveDialog, defaultName);
-	return 1;
 }
 
 static void gui_button_cb_saveAndOpen (I, GuiButtonEvent event) {
 	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
-	TextEditor me = (TextEditor) cmd -> editor;
+	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiObject_hide (my dirtyOpenDialog);
 	if (my name) {
 		try {
@@ -176,24 +175,24 @@ static void gui_button_cb_saveAndOpen (I, GuiButtonEvent event) {
 static void gui_button_cb_cancelOpen (I, GuiButtonEvent event) {
 	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
-	TextEditor me = (TextEditor) cmd -> editor;
+	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiObject_hide (my dirtyOpenDialog);
 }
 
 static void gui_button_cb_discardAndOpen (I, GuiButtonEvent event) {
 	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
-	TextEditor me = (TextEditor) cmd -> editor;
+	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiObject_hide (my dirtyOpenDialog);
 	cb_showOpen (cmd, NULL, NULL, NULL);
 }
 
-static int menu_cb_open (EDITOR_ARGS) {
+static void menu_cb_open (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my dirty) {
 		if (my dirtyOpenDialog == NULL) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			my dirtyOpenDialog = GuiDialog_create (my shell,
+			my dirtyOpenDialog = GuiDialog_create (my d_windowShell,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
 				L"Text changed", NULL, NULL, GuiDialog_MODAL);
@@ -218,13 +217,12 @@ static int menu_cb_open (EDITOR_ARGS) {
 	} else {
 		cb_showOpen (cmd, sendingForm, sendingString, interpreter);
 	}
-	return 1;
 }
 
 static void gui_button_cb_saveAndNew (I, GuiButtonEvent event) {
 	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
-	TextEditor me = (TextEditor) cmd -> editor;
+	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiObject_hide (my dirtyNewDialog);
 	if (my name) {
 		try {
@@ -242,24 +240,24 @@ static void gui_button_cb_saveAndNew (I, GuiButtonEvent event) {
 static void gui_button_cb_cancelNew (I, GuiButtonEvent event) {
 	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
-	TextEditor me = (TextEditor) cmd -> editor;
+	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiObject_hide (my dirtyNewDialog);
 }
 
 static void gui_button_cb_discardAndNew (I, GuiButtonEvent event) {
 	(void) event;
 	EditorCommand cmd = (EditorCommand) void_me;
-	TextEditor me = (TextEditor) cmd -> editor;
+	TextEditor me = (TextEditor) cmd -> d_editor;
 	GuiObject_hide (my dirtyNewDialog);
 	newDocument (me);
 }
 
-static int menu_cb_new (EDITOR_ARGS) {
+static void menu_cb_new (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my v_fileBased () && my dirty) {
 		if (! my dirtyNewDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			my dirtyNewDialog = GuiDialog_create (my shell,
+			my dirtyNewDialog = GuiDialog_create (my d_windowShell,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
 				L"Text changed", NULL, NULL, GuiDialog_MODAL);
@@ -284,43 +282,39 @@ static int menu_cb_new (EDITOR_ARGS) {
 	} else {
 		newDocument (me);
 	}
-	return 1;
 }
 
-static int menu_cb_clear (EDITOR_ARGS) {
+static void menu_cb_clear (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	my v_clear ();
-	return 1;
 }
 
-static int menu_cb_save (EDITOR_ARGS) {
+static void menu_cb_save (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my name) {
 		try {
 			saveDocument (me, & my file);
 		} catch (MelderError) {
 			Melder_flushError (NULL);
-			return 1;
+			return;
 		}
 	} else {
 		menu_cb_saveAs (me, cmd, NULL, NULL, NULL);
 	}
-	return 1;
 }
 
-static int menu_cb_reopen (EDITOR_ARGS) {
+static void menu_cb_reopen (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	if (my name) {
 		try {
 			openDocument (me, & my file);
 		} catch (MelderError) {
 			Melder_flushError (NULL);
-			return 1;
+			return;
 		}
 	} else {
 		Melder_throw ("Cannot reopen from disk, because the text has never been saved yet.");
 	}
-	return 1;
 }
 
 static void gui_button_cb_saveAndClose (I, GuiButtonEvent event) {
@@ -357,7 +351,7 @@ void structTextEditor :: v_goAway () {
 	if (v_fileBased () && dirty) {
 		if (! dirtyCloseDialog) {
 			int buttonWidth = 120, buttonSpacing = 20;
-			dirtyCloseDialog = GuiDialog_create (shell,
+			dirtyCloseDialog = GuiDialog_create (d_windowShell,
 				150, 70, Gui_LEFT_DIALOG_SPACING + 3 * buttonWidth + 2 * buttonSpacing + Gui_RIGHT_DIALOG_SPACING,
 					Gui_TOP_DIALOG_SPACING + Gui_TEXTFIELD_HEIGHT + Gui_VERTICAL_DIALOG_SPACING_SAME + 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT,
 				L"Text changed", NULL, NULL, GuiDialog_MODAL);
@@ -384,40 +378,34 @@ void structTextEditor :: v_goAway () {
 	}
 }
 
-static int menu_cb_undo (EDITOR_ARGS) {
+static void menu_cb_undo (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_undo (my textWidget);
-	return 1;
 }
 
-static int menu_cb_redo (EDITOR_ARGS) {
+static void menu_cb_redo (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_redo (my textWidget);
-	return 1;
 }
 
-static int menu_cb_cut (EDITOR_ARGS) {
+static void menu_cb_cut (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_cut (my textWidget);  // use ((XmAnyCallbackStruct *) call) -> event -> xbutton. time
-	return 1;
 }
 
-static int menu_cb_copy (EDITOR_ARGS) {
+static void menu_cb_copy (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_copy (my textWidget);
-	return 1;
 }
 
-static int menu_cb_paste (EDITOR_ARGS) {
+static void menu_cb_paste (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_paste (my textWidget);
-	return 1;
 }
 
-static int menu_cb_erase (EDITOR_ARGS) {
+static void menu_cb_erase (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	GuiText_remove (my textWidget);
-	return 1;
 }
 
 static bool getSelectedLines (TextEditor me, long *firstLine, long *lastLine) {
@@ -459,7 +447,7 @@ static void do_find (TextEditor me) {
 		GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
 		GuiText_scrollToSelection (my textWidget);
 		#ifdef _WIN32
-			GuiObject_show (my dialog);
+			GuiObject_show (my d_windowForm);
 		#endif
 	} else {
 		/* Try from the start of the document. */
@@ -469,7 +457,7 @@ static void do_find (TextEditor me) {
 			GuiText_setSelection (my textWidget, index, index + wcslen (theFindString));
 			GuiText_scrollToSelection (my textWidget);
 			#ifdef _WIN32
-				GuiObject_show (my dialog);
+				GuiObject_show (my d_windowForm);
 			#endif
 		} else {
 			Melder_beep ();
@@ -490,11 +478,11 @@ static void do_replace (TextEditor me) {
 	GuiText_setSelection (my textWidget, left, left + wcslen (theReplaceString));
 	GuiText_scrollToSelection (my textWidget);
 	#ifdef _WIN32
-		GuiObject_show (my dialog);
+		GuiObject_show (my d_windowForm);
 	#endif
 }
 
-static int menu_cb_find (EDITOR_ARGS) {
+static void menu_cb_find (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	EDITOR_FORM (L"Find", 0)
 		LABEL (L"", L"Find:")
@@ -508,13 +496,12 @@ static int menu_cb_find (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_findAgain (EDITOR_ARGS) {
+static void menu_cb_findAgain (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	do_find (me);
-	return 1;
 }
 
-static int menu_cb_replace (EDITOR_ARGS) {
+static void menu_cb_replace (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	EDITOR_FORM (L"Find", 0)
 		LABEL (L"", L"This is a \"slow\" find-and-replace method;")
@@ -538,13 +525,12 @@ static int menu_cb_replace (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_replaceAgain (EDITOR_ARGS) {
+static void menu_cb_replaceAgain (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	do_replace (me);
-	return 1;
 }
 
-static int menu_cb_whereAmI (EDITOR_ARGS) {
+static void menu_cb_whereAmI (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	long numberOfLinesLeft, numberOfLinesRight;
 	if (! getSelectedLines (me, & numberOfLinesLeft, & numberOfLinesRight)) {
@@ -555,10 +541,9 @@ static int menu_cb_whereAmI (EDITOR_ARGS) {
 		Melder_information5 (L"The selection runs from line ", Melder_integer (numberOfLinesLeft),
 			L" to line ", Melder_integer (numberOfLinesRight), L".");
 	}
-	return 1;
 }
 
-static int menu_cb_goToLine (EDITOR_ARGS) {
+static void menu_cb_goToLine (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	EDITOR_FORM (L"Go to line", 0)
 		NATURAL (L"Line", L"1")
@@ -594,14 +579,14 @@ static int menu_cb_goToLine (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_convertToCString (EDITOR_ARGS) {
+static void menu_cb_convertToCString (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	autostring text = GuiText_getString (my textWidget);
-	wchar_t buffer [2] = L" ";
-	const wchar_t *hex [16] = { L"0", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9", L"A", L"B", L"C", L"D", L"E", L"F" };
+	wchar buffer [2] = L" ";
+	const wchar *hex [16] = { L"0", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9", L"A", L"B", L"C", L"D", L"E", L"F" };
 	MelderInfo_open ();
 	MelderInfo_write1 (L"\"");
-	for (wchar_t *p = & text [0]; *p != '\0'; p ++) {
+	for (wchar *p = & text [0]; *p != '\0'; p ++) {
 		if (*p == '\n') {
 			MelderInfo_write1 (L"\\n\"\n\"");
 		} else if (*p == '\t') {
@@ -611,7 +596,7 @@ static int menu_cb_convertToCString (EDITOR_ARGS) {
 		} else if (*p == '\\') {
 			MelderInfo_write1 (L"\\\\");
 		} else if (*p < 0 || *p > 127) {
-			uint32_t kar = *p;
+			uint32 kar = *p;
 			if (kar <= 0xFFFF) {
 				MelderInfo_write5 (L"\\u", hex [kar >> 12], hex [(kar >> 8) & 0x0000000F], hex [(kar >> 4) & 0x0000000F], hex [kar & 0x0000000F]);
 			} else {
@@ -625,7 +610,6 @@ static int menu_cb_convertToCString (EDITOR_ARGS) {
 	}
 	MelderInfo_write1 (L"\"");
 	MelderInfo_close ();
-	return 1;
 }
 
 /***** 'Font' menu *****/
@@ -643,12 +627,12 @@ static void setFontSize (TextEditor me, int fontSize) {
 	updateSizeMenu (me);
 }
 
-static int menu_cb_10 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 10); return 1; }
-static int menu_cb_12 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 12); return 1; }
-static int menu_cb_14 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 14); return 1; }
-static int menu_cb_18 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 18); return 1; }
-static int menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 24); return 1; }
-static int menu_cb_fontSize (EDITOR_ARGS) {
+static void menu_cb_10 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 10); }
+static void menu_cb_12 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 12); }
+static void menu_cb_14 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 14); }
+static void menu_cb_18 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 18); }
+static void menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (TextEditor); setFontSize (me, 24); }
+static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	EDITOR_FORM (L"Text window: Font size", 0)
 		NATURAL (L"Font size (points)", L"12")
@@ -714,7 +698,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 }
 
 void structTextEditor :: v_createChildren () {
-	textWidget = GuiText_createShown (dialog, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
+	textWidget = GuiText_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
 	GuiText_setChangeCallback (textWidget, gui_text_cb_change, this);
 	GuiText_setUndoItem (textWidget, Editor_getMenuCommand (this, L"Edit", L"Undo") -> itemWidget);
 	GuiText_setRedoItem (textWidget, Editor_getMenuCommand (this, L"Edit", L"Redo") -> itemWidget);

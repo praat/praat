@@ -45,6 +45,9 @@
 #include "Preferences.h"
 #include "flac_FLAC_stream_decoder.h"
 #include "mp3.h"
+
+Thing_implement (LongSound, Sampled, 0);
+
 #define MARGIN  0.01
 #define USE_MEMMOVE  1
 
@@ -57,26 +60,24 @@ void LongSound_prefs (void) {
 long LongSound_getBufferSizePref_seconds (void) { return prefs_bufferLength; }
 void LongSound_setBufferSizePref_seconds (long size) { prefs_bufferLength = size < 10 ? 10 : size > 10000 ? 10000: size; }
 
-static void destroy (I) {
-	iam (LongSound);
+void structLongSound :: v_destroy () {
 	/*
 	 * The play callback may contain a pointer to my buffer.
 	 * That pointer is about to dangle, so kill the playback.
 	 */
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
-	if (my mp3f)
-		mp3f_delete (my mp3f);
-	if (my flacDecoder) {
-		FLAC__stream_decoder_finish (my flacDecoder);   // closes my f
-		FLAC__stream_decoder_delete (my flacDecoder);
+	if (mp3f)
+		mp3f_delete (mp3f);
+	if (flacDecoder) {
+		FLAC__stream_decoder_finish (flacDecoder);   // closes f
+		FLAC__stream_decoder_delete (flacDecoder);
 	}
-	else if (my f) fclose (my f);
-	NUMvector_free <short> (my buffer, 0);
-	inherited (LongSound) destroy (me);
+	else if (f) fclose (f);
+	NUMvector_free <short> (buffer, 0);
+	LongSound_Parent :: v_destroy ();
 }
 
-static void info (I) {
-	iam (LongSound);
+void structLongSound :: v_info () {
 	static const wchar *encodingStrings [1+16] = { L"none",
 		L"linear 8 bit signed", L"linear 8 bit unsigned",
 		L"linear 16 bit big-endian", L"linear 16 bit little-endian",
@@ -85,15 +86,15 @@ static void info (I) {
 		L"mu-law", L"A-law", L"shorten", L"polyphone",
 		L"IEEE float 32 bit big-endian", L"IEEE float 32 bit little-endian",
 		L"FLAC", L"MP3" };
-	classData -> info (me);
-	MelderInfo_writeLine3 (L"Duration: ", Melder_double (my xmax - my xmin), L" seconds");
-	MelderInfo_writeLine2 (L"File name: ", Melder_fileToPath (& my file));
-	MelderInfo_writeLine2 (L"File type: ", my audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : Melder_audioFileTypeString (my audioFileType));
-	MelderInfo_writeLine2 (L"Number of channels: ", Melder_integer (my numberOfChannels));
-	MelderInfo_writeLine2 (L"Encoding: ", my encoding > 16 ? L"unknown" : encodingStrings [my encoding]);
-	MelderInfo_writeLine3 (L"Sampling frequency: ", Melder_double (my sampleRate), L" Hz");
-	MelderInfo_writeLine3 (L"Size: ", Melder_integer (my nx), L" samples");
-	MelderInfo_writeLine3 (L"Start of sample data: ", Melder_integer (my startOfData), L" bytes from the start of the file");
+	structData :: v_info ();
+	MelderInfo_writeLine3 (L"Duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine2 (L"File name: ", Melder_fileToPath (& file));
+	MelderInfo_writeLine2 (L"File type: ", audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : Melder_audioFileTypeString (audioFileType));
+	MelderInfo_writeLine2 (L"Number of channels: ", Melder_integer (numberOfChannels));
+	MelderInfo_writeLine2 (L"Encoding: ", encoding > 16 ? L"unknown" : encodingStrings [encoding]);
+	MelderInfo_writeLine3 (L"Sampling frequency: ", Melder_double (sampleRate), L" Hz");
+	MelderInfo_writeLine3 (L"Size: ", Melder_integer (nx), L" samples");
+	MelderInfo_writeLine3 (L"Start of sample data: ", Melder_integer (startOfData), L" bytes from the start of the file");
 }
 
 static void _LongSound_FLAC_convertFloats (LongSound me, const FLAC__int32 * const samples[], long bitsPerSample, long numberOfSamples) {
@@ -241,22 +242,11 @@ static void LongSound_init (LongSound me, MelderFile file) {
 	}
 }
 
-static void copy (I, thou) {
-	iam (LongSound);
+void structLongSound :: v_copy (thou) {
 	thouart (LongSound);
 	thy f = NULL;
 	thy buffer = NULL;
-	LongSound_init (thee, & my file);
-}
-
-class_methods (LongSound, Sampled) {
-	class_method (destroy)
-	class_method (info)
-	class_method (copy)
-	us -> writeText = classData -> writeText;
-	us -> writeBinary = classData -> writeBinary;
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
+	LongSound_init (thee, & file);
 }
 
 LongSound LongSound_open (MelderFile file) {
@@ -629,8 +619,8 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType) {
 		/*
 		 * The sampling frequencies and numbers of channels must be equal for all (long)sounds.
 		 */
-		Thing data = (Data) my item [1];
-		if (data -> methods == (Thing_Table) classSound) {
+		Sampled data = (Sampled) my item [1];
+		if (data -> classInfo == classSound) {
 			Sound sound = (Sound) data;
 			sampleRate = floor (1.0 / sound -> dx + 0.5);
 			numberOfChannels = sound -> ny;
@@ -646,8 +636,8 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType) {
 		 */
 		for (long i = 2; i <= my size; i ++) {
 			int sampleRatesMatch, numbersOfChannelsMatch;
-			data = (Data) my item [i];
-			if (data -> methods == (Thing_Table) classSound) {
+			data = (Sampled) my item [i];
+			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
 				numbersOfChannelsMatch = sound -> ny == numberOfChannels;
@@ -671,8 +661,8 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType) {
 			MelderFile_writeAudioFileHeader16 (file, audioFileType, sampleRate, n, numberOfChannels); therror
 		}
 		for (long i = 1; i <= my size; i ++) {
-			data = (Data) my item [i];
-			if (data -> methods == (Thing_Table) classSound) {
+			data = (Sampled) my item [i];
+			if (data -> classInfo == classSound) {
 				Sound sound = (Sound) data;
 				if (file -> filePointer) {
 					MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding16 (audioFileType),

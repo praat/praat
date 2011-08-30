@@ -7,10 +7,15 @@ oo_DEFINE_CLASS (SPINET, Sampled2)
 	oo_LONG (gamma)						/* filter order */
 	oo_DOUBLE (excitationErbProportion)	/* excitatory bandwidth proportionality factor*/
 	oo_DOUBLE (inhibitionErbProportion)	/* inhibitatory bandwidth proportionality factor*/
-	oo_DOUBLE_MATRIX (y, my ny, my nx) /* short term average energy spectrum */
+	oo_DOUBLE_MATRIX (y, ny, nx) /* short term average energy spectrum */
 	/* spectrum after on-center/off-surround and rectification */
-	oo_DOUBLE_MATRIX (s, my ny, my nx)
-		
+	oo_DOUBLE_MATRIX (s, ny, nx)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
+
 oo_END_CLASS (SPINET)	
 #undef ooSTRUCT
 

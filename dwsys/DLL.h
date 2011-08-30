@@ -22,17 +22,30 @@
 
 #include "Data.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
+Thing_define (DLLNode, Data) {
+	// new data:
+	public:
+		DLLNode next, prev;
+		Data data;
+	// overridden methods:
+	protected:
+		virtual void v_destroy ();
+		virtual void v_copy (Any data_to);
+};
 
-/*typedef struct structDLLNode {
-	struct structDLLNode *next, *prev;
-	Data data;
-} *DLLNode;*/
-
-Thing_declare1cpp (DLLNode);
-Thing_declare1cpp (DLL);
+Thing_define (DLL, Thing) {
+	// new data:
+	public:
+		long numberOfNodes;
+		DLLNode front, back;
+	// overridden methods:
+	protected:
+		virtual void v_destroy ();
+	// new methods:
+	public:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+};
 
 DLLNode DLLNode_create (Data data); // DLLNode owns the data
 
@@ -46,26 +59,6 @@ void DLL_addAfter (DLL me, DLLNode pos, DLLNode n);
 void DLL_remove (DLL me, DLLNode n);
 void DLL_sort (DLL me);
 void DLL_sortPart (DLL me, DLLNode from, DLLNode to);
-
-#ifdef __cplusplus
-	}
-
-	struct structDLLNode : public structData {
-		DLLNode next, prev;
-		Data data;
-	};
-	#define DLLNode__methods(klas) Data__methods(klas)
-	Thing_declare2cpp (DLLNode, Data);
-
-	struct structDLL : public structThing {
-		long numberOfNodes;
-		DLLNode front, back;
-	};
-	#define DLL__methods(klas) Thing__methods(klas) \
-		int (*compare) (I, thou);
-	Thing_declare2cpp (DLL, Thing);
-
-#endif
 
 #endif // _DLL_h_
 

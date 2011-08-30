@@ -32,6 +32,7 @@ struct FormantGridEditor_Source {
 
 Thing_define (FormantGridEditor, FunctionEditor) {
 	// new data:
+	public:
 		bool editingBandwidths;
 		long selectedFormant;
 		double formantFloor, formantCeiling, bandwidthFloor, bandwidthCeiling, ycursor;

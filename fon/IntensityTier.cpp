@@ -17,23 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/05/31 use PointProcess_upto_RealTier
- * pb 2005/05/26 switch for scaling in multiply
- * pb 2007/01/27 made compatible with stereo sounds
- * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar
- * pb 2010/10/19 allow drawing without speckles
- * pb 2011/05/31 C++
- */
-
 #include "IntensityTier.h"
 
-class_methods (IntensityTier, RealTier) {
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
-}
+Thing_implement (IntensityTier, RealTier, 0);
 
 IntensityTier IntensityTier_create (double tmin, double tmax) {
 	try {
@@ -53,7 +39,7 @@ void IntensityTier_draw (IntensityTier me, Graphics g, double tmin, double tmax,
 
 IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity) {
 	try {
-		return (IntensityTier) PointProcess_upto_RealTier (me, intensity, (RealTier_Table) classIntensityTier);
+		return (IntensityTier) PointProcess_upto_RealTier (me, intensity, classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to IntensityTier.");
 	}
@@ -61,7 +47,7 @@ IntensityTier PointProcess_upto_IntensityTier (PointProcess me, double intensity
 
 IntensityTier Intensity_downto_IntensityTier (Intensity me) {
 	try {
-		return (IntensityTier) Vector_to_RealTier (me, 1, (RealTier_Table) classIntensityTier);
+		return (IntensityTier) Vector_to_RealTier (me, 1, classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to IntensityTier.");
 	}
@@ -69,7 +55,7 @@ IntensityTier Intensity_downto_IntensityTier (Intensity me) {
 
 IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 	try {
-		return (IntensityTier) Vector_to_RealTier_peaks (me, 1, (RealTier_Table) classIntensityTier);
+		return (IntensityTier) Vector_to_RealTier_peaks (me, 1, classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": peaks not converted to IntensityTier.");
 	}
@@ -77,7 +63,7 @@ IntensityTier Intensity_to_IntensityTier_peaks (Intensity me) {
 
 IntensityTier Intensity_to_IntensityTier_valleys (Intensity me) {
 	try {
-		return (IntensityTier) Vector_to_RealTier_valleys (me, 1, (RealTier_Table) classIntensityTier);
+		return (IntensityTier) Vector_to_RealTier_valleys (me, 1, classIntensityTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": valleys not converted to IntensityTier.");
 	}
@@ -125,7 +111,7 @@ void Sound_IntensityTier_multiply_inline (Sound me, IntensityTier intensity) {
 
 Sound Sound_IntensityTier_multiply (Sound me, IntensityTier intensity, int scale) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_IntensityTier_multiply_inline (thee.peek(), intensity);
 		if (scale) Vector_scale (thee.peek(), 0.9);
 		return thee.transfer();

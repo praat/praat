@@ -21,12 +21,9 @@
 #include "TableOfReal_extensions.h"
 #include "NUM2.h"
 
-#define TINY 1e-30
+Thing_implement (ContingencyTable, TableOfReal, 0);
 
-#undef our
-#define our ((ContingencyTable_Table) my methods) ->
-#undef your
-#define your ((ContingencyTable_Table) thy methods) ->
+#define TINY 1e-30
 
 void structContingencyTable :: v_info ()
 {
@@ -51,11 +48,6 @@ void structContingencyTable :: v_info ()
 	Melder_information2 (L"  Chi squared: ", Melder_double (chisq));
 	Melder_information2 (L"  Degrees of freedom: ", Melder_integer (ndf));
 	Melder_information2 (L"  Probability: ", Melder_double (ContingencyTable_chisqProbability (this)));
-}
-
-class_methods (ContingencyTable, TableOfReal)
-{
-	class_methods_end
 }
 
 ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns)
@@ -245,7 +237,7 @@ ContingencyTable Confusion_to_ContingencyTable (Confusion me)
 {
 	try {
 		autoContingencyTable thee = Thing_new (ContingencyTable);
-		your copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to ContingencyTable."); }
 }
@@ -256,7 +248,7 @@ ContingencyTable TableOfReal_to_ContingencyTable (I)
 	try {
 		TableOfReal_checkPositive (me);
 		autoContingencyTable thee = Thing_new (ContingencyTable);
-		your copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to ContingencyTable."); }
 }

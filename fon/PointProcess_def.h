@@ -1,6 +1,6 @@
 /* PointProcess_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1995/10/11
- * pb 2002/07/16 GPL
- */
-
 
 #define ooSTRUCT PointProcess
 oo_DEFINE_CLASS (PointProcess, Function)
@@ -33,17 +28,26 @@ oo_DEFINE_CLASS (PointProcess, Function)
 	oo_LONG (nt)
 
 	#if oo_COPYING
-		oo_DOUBLE_VECTOR (t, my maxnt)
+		oo_DOUBLE_VECTOR (t, maxnt)
 	#elif oo_READING
-		if (my nt) {
-			my maxnt = my nt;
-			oo_DOUBLE_VECTOR (t, my nt)
+		if (nt) {
+			maxnt = nt;
+			oo_DOUBLE_VECTOR (t, nt)
 		} else {
-			my maxnt = 1;
-			my t = NUMvector <double> (1, 1);
+			maxnt = 1;
+			t = NUMvector <double> (1, 1);
 		}
 	#else
-		oo_DOUBLE_VECTOR (t, my nt)
+		oo_DOUBLE_VECTOR (t, nt)
+	#endif
+
+	#if oo_DECLARING
+		// overridden methods:
+		public:
+			virtual void v_info ();
+			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+			virtual void v_shiftX (double xfrom, double xto);
+			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
 	#endif
 
 oo_END_CLASS (PointProcess)

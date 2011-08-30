@@ -48,42 +48,29 @@
 #include "oo_DESCRIPTION.h"
 #include "LogisticRegression_def.h"
 
-static void info (I) {
-	iam (LogisticRegression);
-	inherited (LogisticRegression) info (me);
-	MelderInfo_writeLine2 (L"Dependent 1: ", my dependent1);
-	MelderInfo_writeLine2 (L"Dependent 2: ", my dependent2);
+Thing_implement (LogisticRegression, Regression, 0);
+
+void structLogisticRegression :: v_info () {
+	LogisticRegression_Parent :: v_info ();
+	MelderInfo_writeLine2 (L"Dependent 1: ", dependent1);
+	MelderInfo_writeLine2 (L"Dependent 2: ", dependent2);
 	MelderInfo_writeLine1 (L"Interpretation:");
-	MelderInfo_write6 (L"   ln (P(", my dependent2, L")/P(", my dependent1, L")) " UNITEXT_ALMOST_EQUAL_TO L" ", Melder_fixed (my intercept, 6));
-	for (long ivar = 1; ivar <= my parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [ivar]);
+	MelderInfo_write6 (L"   ln (P(", dependent2, L")/P(", dependent1, L")) " UNITEXT_ALMOST_EQUAL_TO L" ", Melder_fixed (intercept, 6));
+	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_write4 (parm -> value < 0.0 ? L" - " : L" + ", Melder_fixed (fabs (parm -> value), 6), L" * ", parm -> label);
 	}
 	MelderInfo_writeLine1 (NULL);
 	MelderInfo_writeLine1 (L"Log odds ratios:");
-	for (long ivar = 1; ivar <= my parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [ivar]);
+	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_writeLine4 (L"   Log odds ratio of factor ", parm -> label, L": ", Melder_fixed ((parm -> maximum - parm -> minimum) * parm -> value, 6));
 	}
 	MelderInfo_writeLine1 (L"Odds ratios:");
-	for (long ivar = 1; ivar <= my parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [ivar]);
+	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_writeLine4 (L"   Odds ratio of factor ", parm -> label, L": ", Melder_double (exp ((parm -> maximum - parm -> minimum) * parm -> value)));
 	}
-}
-
-class_methods (LogisticRegression, Regression) {
-	class_method_local (LogisticRegression, destroy)
-	class_method (info)
-	class_method_local (LogisticRegression, copy)
-	class_method_local (LogisticRegression, equal)
-	class_method_local (LogisticRegression, canWriteAsEncoding)
-	class_method_local (LogisticRegression, writeText)
-	class_method_local (LogisticRegression, readText)
-	class_method_local (LogisticRegression, writeBinary)
-	class_method_local (LogisticRegression, readBinary)
-	class_method_local (LogisticRegression, description)
-	class_methods_end
 }
 
 LogisticRegression LogisticRegression_create (const wchar *dependent1, const wchar *dependent2) {

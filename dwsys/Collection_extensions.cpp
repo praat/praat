@@ -70,19 +70,15 @@ Collection Collection_permuteItems(Collection me)
 
 /****************** class OrderedOfString ******************/
 
-static void info (I)
+void structOrderedOfString :: v_info ()
 {
-	iam (OrderedOfString);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (my size));
-	autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems(me, 1);
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (size));
+	autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems (this, 1);
 	MelderInfo_writeLine2 (L"Number of unique categories: ", Melder_integer (uStrings -> size));
 }
 
-class_methods (OrderedOfString, Ordered) {
-    class_method (info)
-	class_methods_end
-}
+Thing_implement (OrderedOfString, Ordered, 0);
 
 int OrderedOfString_init (I, long initialCapacity)
 {
@@ -149,23 +145,24 @@ OrderedOfString OrderedOfString_selectUniqueItems (I, int sort)
 			Collection_shrinkToFit (him.peek());
 			return him.transfer();
 		}
-		autoSortedSet thee = Thing_new (SortedSet);
-		SortedSet_init (thee.peek(), classSimpleString, 10);
-		classSortedSet->compare = (int (*)(Any, Any)) SimpleString_compare;
+		//autoSortedSet thee = Thing_new (SortedSet);
+		//SortedSet_init (thee.peek(), classSimpleString, 10);
+		//classSortedSet->compare = (int (*)(Any, Any)) SimpleString_compare; // David, dit stond hier echt; je veranderde een klassetabel!
 
+		autoSortedSetOfString thee = SortedSetOfString_create ();   // David, waarom niet deze simpele oplossing?
 		/* Collection_to_SortedSet (I, int (*compare)(I, thou)) */
 		for (long i = 1; i <= my size; i++)
 		{
-			if (! SortedSet_hasItem (thee.peek(), my item[i]))
+			if (! thy hasItem (my item[i]))
 			{
-				autoSimpleString item = (SimpleString) Data_copy (my item[i]);
+				autoSimpleString item = Data_copy ((SimpleString) my item [i]);
 				Collection_addItem (thee.peek(), item.transfer());
 			}
 		}
 		autoOrderedOfString him = OrderedOfString_create ();
 		for (long i = 1; i <= thy size; i++)
 		{
-			autoData item = (Data) Data_copy (thy item[i]);
+			autoSimpleString item = Data_copy ((SimpleString) thy item[i]);
 			Collection_addItem (him.peek(), item.transfer());
 		}
 		return him.transfer();
@@ -181,7 +178,7 @@ void OrderedOfString_frequency (I, thou, long *count)
 	{
 		for (long j = 1; j <= thy size; j++)
 		{
-			if (Data_equal (my item[i], thy item[j]))
+			if (Data_equal ((Data) my item[i], (Data) thy item[j]))
 			{
 				count[j]++;
 				break;
@@ -199,7 +196,7 @@ long OrderedOfString_getNumberOfDifferences (I, thou)
 	if (my size != thy size) return -1;
 	for (long i = 1; i <= my size; i++)
 	{
-		if (! Data_equal (my item[i], thy item[i])) numberOfDifferences++;
+		if (! Data_equal ((Data) my item[i], (Data) thy item[i])) numberOfDifferences++;
 	}
 	return numberOfDifferences;
 }
@@ -227,7 +224,7 @@ int OrderedOfString_difference (I, thou, long *ndif, double *fraction)
 	}
 	for (long i = 1; i <= my size; i++)
 	{
-		if (! Data_equal (my item[i], thy item[i])) (*ndif)++;
+		if (! Data_equal ((Data) my item[i], (Data) thy item[i])) (*ndif)++;
 	}
 	*fraction = *ndif;
 	*fraction /= my size;
@@ -242,7 +239,7 @@ long OrderedOfString_indexOfItem_c (I, const wchar_t *str)
 
 	for (long i = 1; i <= my size; i++)
 	{
-		if (Data_equal (my item[i], s.peek())) { index = i; break; }
+		if (Data_equal ((Data) my item[i], s.peek())) { index = i; break; }
 	}
 	return index;
 }
@@ -318,7 +315,7 @@ long OrderedOfString_isSubsetOf (I, thou, long *translation) // ?? test and give
     {
     	if (translation) translation[i] = 0;
     	for (long j = 1; j <= thy size; j++)
-			if (Data_equal (my item[i], thy item[j]))
+			if (Data_equal ((Data) my item[i], (Data) thy item[j]))
 			{
 	    		if (translation) translation[i] = j;
 	    		nStrings++; break;
@@ -327,7 +324,7 @@ long OrderedOfString_isSubsetOf (I, thou, long *translation) // ?? test and give
     return nStrings;
 }
 
-void OrderedOfString_drawItem (I, Any g, long index, double xWC, double yWC)
+void OrderedOfString_drawItem (I, Graphics g, long index, double xWC, double yWC)
 {
 	iam (OrderedOfString);
     if (index > 0 && index <= my size)

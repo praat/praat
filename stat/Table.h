@@ -23,11 +23,8 @@
 #include "Graphics.h"
 #include "Interpreter_decl.h"
 
-/* For the inheritors. */
 #include "Table_def.h"
-#define TableRow__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (TableRow, Data);
-#define Table__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Table, Data);
 
 void Table_initWithColumnNames (I, long numberOfRows, const wchar_t *columnNames);

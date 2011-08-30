@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_voice_init (ManPages me);
-extern "C" void manual_voice_init (ManPages me) {
+void manual_voice_init (ManPages me);
+void manual_voice_init (ManPages me) {
 
 MAN_BEGIN (L"Voice", L"ppgb", 20061028)
 INTRO (L"This tutorial describes how you can do voice analysis with Praat. "

@@ -17,17 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2006/12/08 info
- * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar
- * pb 2010/10/19 allow drawing without speckles
- * pb 2011/05/09 C++
- * pb 2011/07/14 C++
- */
-
 #include "DurationTier.h"
+
+Thing_implement (DurationTier, RealTier, 0);
 
 void structDurationTier :: v_info () {
 	structData :: v_info ();
@@ -38,11 +30,6 @@ void structDurationTier :: v_info () {
 	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
 	MelderInfo_writeLine2 (L"Minimum relative duration value: ", Melder_double (RealTier_getMinimumValue (this)));
 	MelderInfo_writeLine2 (L"Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (this)));
-}
-
-class_methods (DurationTier, RealTier) {
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
 }
 
 DurationTier DurationTier_create (double tmin, double tmax) {

@@ -62,7 +62,7 @@ GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int b
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		if (GTK_IS_BOX (parent)) {
-			gtk_box_pack_start (GTK_BOX (parent), my widget, FALSE, FALSE, 0);
+			gtk_box_pack_start (GTK_BOX (parent), GTK_WIDGET (my widget), FALSE, FALSE, 0);
 		}
 		g_signal_connect (G_OBJECT (my widget), "destroy",
 				  G_CALLBACK (_GuiGtkLabel_destroyCallback), me);

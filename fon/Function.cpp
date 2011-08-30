@@ -17,20 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/07/10 NUMbessel_i0_f
- * pb 2005/06/16 units
- * pb 2006/12/08 info
- * pb 2007/03/17 domain texts
- * pb 2007/08/12 wchar
- * pb 2007/10/01 can write as encoding
- * pb 2008/09/20 shiftXBy
- * pb 2011/03/09 C++
- */
-
 #include "Function.h"
 
+#include "oo_DESTROY.h"
+#include "Function_def.h"
 #include "oo_COPY.h"
 #include "Function_def.h"
 #include "oo_EQUAL.h"
@@ -48,186 +38,78 @@
 #include "oo_DESCRIPTION.h"
 #include "Function_def.h"
 
-/*
- * Methods for Function.
- */
+Thing_implement (Function, Data, 0);
 
-void structFunction :: v_info ()
-{
+void structFunction :: v_info () {
 	Function_Parent :: v_info ();
 	MelderInfo_writeLine1 (L"Domain:");
-	MelderInfo_writeLine2 (L"   xmin: ", Melder_double (this -> xmin));
-	MelderInfo_writeLine2 (L"   xmax: ", Melder_double (this -> xmax));
+	MelderInfo_writeLine2 (L"   xmin: ", Melder_double (xmin));
+	MelderInfo_writeLine2 (L"   xmax: ", Melder_double (xmax));
 }
 
-static double getXmin (I) {
-	iam (Function);
-	return my xmin;
+void structFunction :: v_shiftX (double xfrom, double xto) {
+	NUMshift (& xmin, xfrom, xto);
+	NUMshift (& xmax, xfrom, xto);
 }
 
-static double getXmax (I) {
-	iam (Function);
-	return my xmax;
+void structFunction :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	NUMscale (& xmin, xminfrom, xmaxfrom, xminto, xmaxto);
+	NUMscale (& xmax, xminfrom, xmaxfrom, xminto, xmaxto);
 }
 
-/*
- * Methods for Function_Table.
- */
-
-static int getMinimumUnit (I, long ilevel) {
-	(void) void_me;
-	(void) ilevel;
-	return 0;
+void Function_init (Function me, double xmin_, double xmax_) {
+	my xmin = xmin_;
+	my xmax = xmax_;
 }
 
-static int getMaximumUnit (I, long ilevel) {
-	(void) void_me;
-	(void) ilevel;
-	return 0;
+int Function_getMinimumUnit (Function me, long ilevel) {
+	return my v_getMinimumUnit (ilevel);
 }
 
-static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
-	(void) void_me;
-	(void) ilevel;
-	(void) unit;
-	(void) flags;
-	return L"";
+int Function_getMaximumUnit (Function me, long ilevel) {
+	return my v_getMaximumUnit (ilevel);
 }
 
-static int isUnitLogarithmic (I, long ilevel, int unit) {
-	(void) void_me;
-	(void) ilevel;
-	(void) unit;
-	return FALSE;
+int Function_getDomainQuantity (Function me) {
+	return my v_domainQuantity ();
 }
 
-static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
-	(void) void_me;
-	(void) ilevel;
-	(void) unit;
-	return value;
+const wchar * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags) {
+	Melder_assert (unit >= my v_getMinimumUnit (ilevel) && unit <= my v_getMaximumUnit (ilevel));
+	return my v_getUnitText (ilevel, unit, flags);
 }
 
-static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
-	(void) void_me;
-	(void) ilevel;
-	(void) unit;
-	return value;
+bool Function_isUnitLogarithmic (Function me, long ilevel, int unit) {
+	Melder_assert (unit >= my v_getMinimumUnit (ilevel) && unit <= my v_getMaximumUnit (ilevel));
+	return my v_isUnitLogarithmic (ilevel, unit);
 }
 
-static void shiftX (I, double xfrom, double xto) {
-	iam (Function);
-	NUMshift (& my xmin, xfrom, xto);
-	NUMshift (& my xmax, xfrom, xto);
+double Function_convertStandardToSpecialUnit (Function me, double value, long ilevel, int unit) {
+	return NUMdefined (value) ? my v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined;
 }
 
-static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (Function);
-	NUMscale (& my xmin, xminfrom, xmaxfrom, xminto, xmaxto);
-	NUMscale (& my xmax, xminfrom, xmaxfrom, xminto, xmaxto);
+double Function_convertSpecialToStandardUnit (Function me, double value, long ilevel, int unit) {
+	return NUMdefined (value) ? my v_convertSpecialToStandardUnit (value, ilevel, unit) : NUMundefined;
 }
 
-class_methods (Function, Data) {
-	class_method_local (Function, copy)
-	class_method_local (Function, equal)
-	class_method_local (Function, canWriteAsEncoding)
-	class_method_local (Function, writeText)
-	class_method_local (Function, readText)
-	class_method_local (Function, writeBinary)
-	class_method_local (Function, readBinary)
-	class_method_local (Function, description)
-	class_method (getXmin)
-	class_method (getXmax)
-	us -> domainQuantity = 0;
-	class_method (getMinimumUnit)
-	class_method (getMaximumUnit)
-	class_method (getUnitText)
-	class_method (isUnitLogarithmic)
-	class_method (convertStandardToSpecialUnit)
-	class_method (convertSpecialToStandardUnit)
-	class_method (shiftX)
-	class_method (scaleX)
-	class_methods_end
+double Function_convertToNonlogarithmic (Function me, double value, long ilevel, int unit) {
+	return NUMdefined (value) && my v_isUnitLogarithmic (ilevel, unit) ? pow (10.0, value) : value;
 }
 
-int Function_init (I, double xmin, double xmax) {
-	iam (Function);
-	my xmin = xmin;
-	my xmax = xmax;
-	return 1;
+void Function_shiftXBy (Function me, double shift) {
+	my v_shiftX (0.0, shift);
 }
 
-int ClassFunction_getMinimumUnit (I, long ilevel) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	return my getMinimumUnit (me, ilevel);
+void Function_shiftXTo (Function me, double xfrom, double xto) {
+	my v_shiftX (xfrom, xto);
 }
 
-int ClassFunction_getMaximumUnit (I, long ilevel) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	return my getMaximumUnit (me, ilevel);
+void Function_scaleXBy (Function me, double factor) {
+	my v_scaleX (0.0, 1.0, 0.0, factor);
 }
 
-int ClassFunction_getDomainQuantity (I) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	return my domainQuantity;
-}
-
-const wchar * ClassFunction_getUnitText (I, long ilevel, int unit, unsigned long flags) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	Melder_assert (unit >= my getMinimumUnit (me, ilevel) && unit <= my getMaximumUnit (me, ilevel));
-	return my getUnitText (me, ilevel, unit, flags);
-}
-
-int ClassFunction_isUnitLogarithmic (I, long ilevel, int unit) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	Melder_assert (unit >= my getMinimumUnit (me, ilevel) && unit <= my getMaximumUnit (me, ilevel));
-	return my isUnitLogarithmic (me, ilevel, unit);
-}
-
-double ClassFunction_convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	return NUMdefined (value) ? my convertStandardToSpecialUnit (me, value, ilevel, unit) : NUMundefined;
-}
-
-double ClassFunction_convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	return NUMdefined (value) ? my convertSpecialToStandardUnit (me, value, ilevel, unit) : NUMundefined;
-}
-
-double ClassFunction_convertToNonlogarithmic (I, double value, long ilevel, int unit) {
-	iam (Function_Table);
-	if (! my destroy) my _initialize (me);
-	return NUMdefined (value) && my isUnitLogarithmic (me, ilevel, unit) ? pow (10.0, value) : value;
-}
-
-#undef our
-#define our ((Function_Table) my methods) ->
-
-void Function_shiftXBy (I, double shift) {
-	iam (Function);
-	our shiftX (me, 0.0, shift);
-}
-
-void Function_shiftXTo (I, double xfrom, double xto) {
-	iam (Function);
-	our shiftX (me, xfrom, xto);
-}
-
-void Function_scaleXBy (I, double factor) {
-	iam (Function);
-	our scaleX (me, 0.0, 1.0, 0.0, factor);
-}
-
-void Function_scaleXTo (I, double xminto, double xmaxto) {
-	iam (Function);
-	our scaleX (me, my xmin, my xmax, xminto, xmaxto);
+void Function_scaleXTo (Function me, double xminto, double xmaxto) {
+	my v_scaleX (my xmin, my xmax, xminto, xmaxto);
 }
 
 double Function_window (double tim, int windowType) {
@@ -266,35 +148,32 @@ double Function_window (double tim, int windowType) {
 	}
 }
 
-void Function_unidirectionalAutowindow (I, double *xmin, double *xmax) {
-	iam (Function);
+void Function_unidirectionalAutowindow (Function me, double *xmin, double *xmax) {
 	if (*xmin >= *xmax) {
 		*xmin = my xmin;
 		*xmax = my xmax;
 	}
 }
 
-void Function_bidirectionalAutowindow (I, double *x1, double *x2) {
-	iam (Function);
+void Function_bidirectionalAutowindow (Function me, double *x1, double *x2) {
 	if (*x1 == *x2) {
 		*x1 = my xmin;
 		*x2 = my xmax;
 	}
 }
 
-int Function_intersectRangeWithDomain (I, double *x1, double *x2) {
-	iam (Function);
-	if (*x1 == *x2) return 0;
+bool Function_intersectRangeWithDomain (Function me, double *x1, double *x2) {
+	if (*x1 == *x2) return false;
 	if (*x1 < *x2) {
-		if (*x1 < my xmin) *x1 = my xmin;   /* Intersect requested range with logical domain. */
+		if (*x1 < my xmin) *x1 = my xmin;   // intersect requested range with logical domain
 		if (*x2 > my xmax) *x2 = my xmax;
-		if (*x2 <= *x1) return 0;   /* Requested range and logical domain do not intersect. */
+		if (*x2 <= *x1) return false;   // requested range and logical domain do not intersect
 	} else {
-		if (*x2 < my xmin) *x2 = my xmin;   /* Intersect requested range with logical domain. */
+		if (*x2 < my xmin) *x2 = my xmin;   // intersect requested range with logical domain
 		if (*x1 > my xmax) *x1 = my xmax;
-		if (*x1 <= *x2) return 0;   /* Requested range and logical domain do not intersect. */
+		if (*x1 <= *x2) return false;   // requested range and logical domain do not intersect
 	}
-	return 1;
+	return true;
 }
 
 /* End of file Function.cpp */

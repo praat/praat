@@ -26,7 +26,6 @@
 #include "Interpreter_decl.h"
 
 #include "TableOfReal_def.h"
-#define TableOfReal__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (TableOfReal, Data);
 
 void TableOfReal_init (I, long numberOfRows, long numberOfColumns);

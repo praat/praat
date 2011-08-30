@@ -20,12 +20,15 @@
 #include "ManPagesM.h"
 #include "praat_version.h"
 
-extern "C" void manual_tutorials_init (ManPages me);
-extern "C" void manual_tutorials_init (ManPages me) {
+void manual_tutorials_init (ManPages me);
+void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110805)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110831)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.36# (30 August 2011)")
+LIST_ITEM (L"\\bu Graphics: added superscript diacritics as single symbols: \\^h (\\bs\\^ h), \\^j (\\bs\\^ j), "
+	"and many more; also \\_u (\\bs\\_ u). See @@Phonetic symbols: diacritics@.")
 NORMAL (L"##5.2.35# (5 August 2011)")
 LIST_ITEM (L"\\bu Corrected the menus of the Sound and TextGrid windows.")
 NORMAL (L"##5.2.34# (3 August 2011)")
@@ -304,7 +307,7 @@ LIST_ITEM (L"\\bu Articulatory synthesis: corrected a bug that could cause Praat
 LIST_ITEM (L"\\bu Macintosh: corrected a bug that could cause poor text alignment in picture.")
 NORMAL (L"##5.1.02# (9 March 2009)")
 LIST_ITEM (L"\\bu Allow pause forms without fields.")
-LIST_ITEM (L"\\bu The value \"undefined\" is disallowed from all fields in dialog windows "
+LIST_ITEM (L"\\bu The value \"undefined\" is disallowed from all fields in command windows "
 	"except ##Table: Set numeric value...# and ##TableOfReal: Set value...#.")
 LIST_ITEM (L"\\bu TextGrid: ##List...# and ##Down to Table...#.")
 LIST_ITEM (L"\\bu OT learning: Giorgio Magri's \"Weighted all up, highest down\" update rule.")
@@ -587,7 +590,7 @@ LIST_ITEM (L"\\bu Macintosh: improved drawing of spectrograms for printing and c
 NORMAL (L"##4.5.21# (24 April 2007)")
 LIST_ITEM (L"\\bu OT learning: corrected HarmonicGrammar (and LinearOT) learning procedure "
 	"to the stochastic gradient ascent method applied by @@J\\a\"ger (2003)@ to MaxEnt grammars.")
-LIST_ITEM (L"\\bu Scripting: removed a bug that could make selection checking (in dialog windows) unreliable after a script was run.")
+LIST_ITEM (L"\\bu Scripting: removed a bug that could make selection checking (in command windows) unreliable after a script was run.")
 NORMAL (L"##4.5.20# (19 April 2007)")
 LIST_ITEM (L"\\bu Scripting: allow assignments like $$pitch = To Pitch... 0 75 600$.")
 LIST_ITEM (L"\\bu PitchTier Formula: guard against undefined values.")
@@ -1370,7 +1373,7 @@ MAN_BEGIN (L"Praat menu", L"ppgb", 20050822)
 INTRO (L"The first menu in the @@Object window@. On MacOS X, this menu is in the main menu bar.")
 MAN_END
 
-MAN_BEGIN (L"Copy...", L"ppgb", 19960904)
+MAN_BEGIN (L"Copy...", L"ppgb", 20110808)
 INTRO (L"One of the fixed buttons in the @@Object window@.")
 ENTRY (L"Availability")
 NORMAL (L"You can choose this command after selecting one object of any class.")
@@ -1379,7 +1382,7 @@ NORMAL (L"The Object window copies the selected object, and all the data it cont
 	"to a new object, which will appear at the bottom of the List of Objects.")
 ENTRY (L"Example")
 NORMAL (L"If you select \"Sound hallo\" and click `Copy...', "
-	"a dialog will appear, which prompts you for a name; "
+	"a command window will appear, which prompts you for a name; "
 	"after you click OK, a new object will appear in the list, bearing that name.")
 MAN_END
 
@@ -2221,7 +2224,7 @@ NORMAL (L"Another way to override the standard time step is by setting the %%Tim
 	"of zooming.")
 MAN_END
 
-MAN_BEGIN (L"Advanced pitch settings...", L"ppgb", 20030916)
+MAN_BEGIN (L"Advanced pitch settings...", L"ppgb", 20110808)
 INTRO (L"A command in the #Pitch menu of the @SoundEditor or @TextGridEditor windows. "
 	"Before changing the advanced pitch settings, make sure you understand "
 	"@@Intro 4.2. Configuring the pitch contour@.")
@@ -2230,7 +2233,7 @@ NORMAL (L"Normally, the range of pitch values that can be seen in the editor win
 	"that the analysis algorithm can determine. If you set the analysis range from 75 to 500 Hz, this will be the range "
 	"you see in the editor window as well. If the pitch values in the curve happen to be between 350 and 400 Hz, "
 	"you may want to zoom in to the 350-400 Hz pitch region. "
-	"You will usually do this by changing the pitch range in the @@Pitch settings...@ dialog. "
+	"You will usually do this by changing the pitch range in the @@Pitch settings...@ window. "
 	"However, the analysis range will also change in that case, so that the curve itself may change. "
 	"If you do not want that, you can change the %%View range% settings "
 	"from \"0.0 (= auto)\" \\-- \"0.0 (=auto)\" to something else, perhaps \"350\" \\-- \"400\".")

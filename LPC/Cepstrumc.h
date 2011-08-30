@@ -30,12 +30,7 @@
 #include "Graphics.h"
 #include "DTW.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Cepstrumc_def.h"
-#define Cepstrumc__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Cepstrumc, Sampled);
 
 void Cepstrumc_init (Cepstrumc me, double tmin, double tmax, long nt, double dt, double t1,
@@ -70,9 +65,5 @@ DTW Cepstrumc_to_DTW ( Cepstrumc me, Cepstrumc thee, double wc, double wle,
 */
 
 Matrix Cepstrumc_to_Matrix (Cepstrumc me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Cepstrumc_h_ */

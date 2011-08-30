@@ -23,7 +23,6 @@
 #include "Graphics.h"
 
 #include "Image_def.h"
-#define Image__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Image, Sampled);
 
 /*

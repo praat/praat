@@ -28,12 +28,7 @@
 #include "Graphics.h"
 #include "Strings.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Eigen_def.h"
-#define Eigen__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Eigen, Data);
 
 Eigen Eigen_create (long numberOfEigenvalues, long dimension);
@@ -101,10 +96,6 @@ double Eigens_getAngleBetweenEigenplanes_degrees (I, thou);
 /*
 	Get angle between the eigenplanes, spanned by the first two eigenvectors, .
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Eigen_h_ */
 

@@ -28,7 +28,7 @@
 
 Thing_implement (OTGrammarEditor, HyperPage, 0);
 
-static int menu_cb_evaluate (EDITOR_ARGS) {
+static void menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	EDITOR_FORM (L"Evaluate", 0)
 		REAL (L"Noise", L"2.0")
@@ -37,38 +37,35 @@ static int menu_cb_evaluate (EDITOR_ARGS) {
 		Editor_save (me, L"Evaluate");
 		OTGrammar_newDisharmonies ((OTGrammar) my data, GET_REAL (L"Noise"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
+static void menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 2.0);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
+static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	Editor_save (me, L"Evaluate (tiny noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 1e-9);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_evaluate_zeroNoise (EDITOR_ARGS) {
+static void menu_cb_evaluate_zeroNoise (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	Editor_save (me, L"Evaluate (zero noise)");
 	OTGrammar_newDisharmonies ((OTGrammar) my data, 0.0);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_editConstraint (EDITOR_ARGS) {
+static void menu_cb_editConstraint (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	EDITOR_FORM (L"Edit constraint", 0)
 		LABEL (L"constraint", L"");
@@ -94,11 +91,11 @@ static int menu_cb_editConstraint (EDITOR_ARGS) {
 		constraint -> plasticity = GET_REAL (L"Plasticity");
 		OTGrammar_sort (ot);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_learnOne (EDITOR_ARGS) {
+static void menu_cb_learnOne (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	EDITOR_FORM (L"Learn one", L"OTGrammar: Learn one...")
 		LABEL (L"", L"Underlying form:")
@@ -118,11 +115,11 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), TRUE, TRUE, NULL);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
+static void menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	EDITOR_FORM (L"Learn one from partial adult output", 0)
 		LABEL (L"", L"Partial adult surface form (e.g. overt form):")
@@ -141,11 +138,11 @@ static int menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"), TRUE);
 		OTGrammar_sort ((OTGrammar) my data);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_removeConstraint (EDITOR_ARGS) {
+static void menu_cb_removeConstraint (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	OTGrammar ot = (OTGrammar) my data;
 	OTGrammarConstraint constraint;
@@ -155,11 +152,10 @@ static int menu_cb_removeConstraint (EDITOR_ARGS) {
 	Editor_save (me, L"Remove constraint");
 	OTGrammar_removeConstraint (ot, constraint -> name);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_resetAllRankings (EDITOR_ARGS) {
+static void menu_cb_resetAllRankings (EDITOR_ARGS) {
 	EDITOR_IAM (OTGrammarEditor);
 	EDITOR_FORM (L"Reset all rankings", 0)
 		REAL (L"Ranking", L"100.0")
@@ -168,13 +164,13 @@ static int menu_cb_resetAllRankings (EDITOR_ARGS) {
 		Editor_save (me, L"Reset all rankings");
 		OTGrammar_reset ((OTGrammar) my data, GET_REAL (L"Ranking"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_OTGrammarEditor_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OTGrammarEditor"); return 1; }
-static int menu_cb_OTGrammar_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OTGrammar"); return 1; }
-static int menu_cb_OTLearningTutorial (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OT learning"); return 1; }
+static void menu_cb_OTGrammarEditor_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OTGrammarEditor"); }
+static void menu_cb_OTGrammar_help (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OTGrammar"); }
+static void menu_cb_OTLearningTutorial (EDITOR_ARGS) { EDITOR_IAM (OTGrammarEditor); Melder_help (L"OT learning"); }
 
 void structOTGrammarEditor :: v_createMenus () {
 	OTGrammarEditor_Parent :: v_createMenus ();

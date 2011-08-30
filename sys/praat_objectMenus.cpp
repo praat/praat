@@ -98,7 +98,7 @@ DO
 		Melder_throw ("Selection changed!\nCannot copy more than one object at a time.");
 	WHERE (SELECTED) {
 		wchar_t *name = GET_STRING (L"newName");
-		praat_new1 ((Data) Data_copy (OBJECT), name);
+		praat_new1 (Data_copy ((Data) OBJECT), name);
 	}
 END
 
@@ -165,7 +165,7 @@ END
 
 static ButtonEditor theButtonEditor;
 
-static void cb_ButtonEditor_destroy (Any editor, void *closure) {
+static void cb_ButtonEditor_destruction (Editor editor, void *closure) {
 	(void) editor;
 	(void) closure;
 	theButtonEditor = NULL;
@@ -184,10 +184,10 @@ END
 
 DIRECT (praat_editButtons)
 	if (theButtonEditor) {
-		Editor_raise (theButtonEditor);
+		theButtonEditor -> raise ();
 	} else {
 		theButtonEditor = ButtonEditor_create (theCurrentPraatApplication -> topShell);
-		Editor_setDestroyCallback (theButtonEditor, cb_ButtonEditor_destroy, NULL);
+		theButtonEditor -> setDestructionCallback (cb_ButtonEditor_destruction, NULL);
 	}
 END
 
@@ -422,13 +422,6 @@ FORM_WRITE (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0)
 	}
 END
 
-FORM_WRITE (Data_writeToLispFile, L"Save Object as LISP file", 0, L"lsp")
-	LOOP {
-		iam (Data);
-		Data_writeToLispFile (me, file); therror
-	}
-END
-
 /********** Callbacks of the Help menu. **********/
 
 FORM (SearchManual, L"Search manual", L"Manual")
@@ -480,7 +473,7 @@ void praat_show (void) {
 	praat_sensitivizeFixedButtonCommand (L"Info", theCurrentPraatObjects -> totalSelection == 1);
 	praat_sensitivizeFixedButtonCommand (L"Inspect", theCurrentPraatObjects -> totalSelection != 0);
 	praat_actions_show ();
-	if (theCurrentPraatApplication == & theForegroundPraatApplication && theButtonEditor) Editor_dataChanged (theButtonEditor, NULL);
+	if (theCurrentPraatApplication == & theForegroundPraatApplication && theButtonEditor) theButtonEditor -> dataChanged ();
 }
 
 /********** Menu descriptions. **********/
@@ -496,12 +489,12 @@ void praat_addFixedButtons (GuiObject form) {
 		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons1), GTK_BUTTONBOX_START);
 		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons2), GTK_BUTTONBOX_START);
 		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons3), GTK_BUTTONBOX_START);
-		gtk_box_pack_end (GTK_BOX (form), buttons3, FALSE, FALSE, 0);
-		gtk_box_pack_end (GTK_BOX (form), buttons2, FALSE, FALSE, 0);
-		gtk_box_pack_end (GTK_BOX (form), buttons1, FALSE, FALSE, 0);
-		gtk_widget_show (buttons1);
-		gtk_widget_show (buttons2);
-		gtk_widget_show (buttons3);
+		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (buttons3), FALSE, FALSE, 0);
+		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (buttons2), FALSE, FALSE, 0);
+		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (buttons1), FALSE, FALSE, 0);
+		gtk_widget_show (GTK_WIDGET (buttons1));
+		gtk_widget_show (GTK_WIDGET (buttons2));
+		gtk_widget_show (GTK_WIDGET (buttons3));
 	}
 	praat_addFixedButtonCommand (buttons1, L"Rename...", DO_Rename, 8, 70);
 	praat_addFixedButtonCommand (buttons1, L"Copy...", DO_Copy, 98, 70);

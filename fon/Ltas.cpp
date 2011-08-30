@@ -18,71 +18,49 @@
  */
 
 /*
- * pb 2002/07/16 GPL
- * pb 2003/04/16 Ltases_merge
- * pb 2003/06/19 Ltas_computeTrendLine, Ltas_subtractTrendLine
- * pb 2004/05/05 more drawing options
- * pb 2004/05/13 pitch-corrected LTAS
- * pb 2004/10/24 Sampled statistics
- * pb 2004/10/31 info
- * pb 2004/11/22 simplified Sound_to_Spectrum
- * pb 2005/06/16 units
- * pb 2005/11/26 calibrated pitch-corrected Ltas
- * pb 2005/11/27 Sound_to_Ltas_pitchCorrected
- * pb 2005/12/10 Ltases_average
- * pb 2006/12/08 MelderInfo
- * pb 2007/03/17 domain quantity
- * pb 2011/06/03 C++
+ * a selection of changes:
+ * pb 2005/11/26 pitch-corrected Ltas
  */
 
 #include "Ltas.h"
 #include "Sound_and_Spectrum.h"
 #include "Sound_to_PointProcess.h"
 
-static void info (I) {
-	iam (Ltas);
+Thing_implement (Ltas, Vector, 2);
+
+void structLtas :: v_info () {
 	double meanPowerDensity;
-	classData -> info (me);
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Frequency domain:");
-	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (my xmin), L" Hz");
-	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (my xmax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total frequency domain: ", Melder_double (my xmax - my xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
+	MelderInfo_writeLine3 (L"   Total frequency domain: ", Melder_double (xmax - xmin), L" Hz");
 	MelderInfo_writeLine1 (L"Frequency sampling:");
-	MelderInfo_writeLine2 (L"   Number of frequency bands: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 (L"   Width of each band: ", Melder_double (my dx), L" Hz");
-	MelderInfo_writeLine3 (L"   First band centred at: ", Melder_double (my x1), L" Hz");
-	meanPowerDensity = Sampled_getMean (me, my xmin, my xmax, 0, 1, FALSE);
-	MelderInfo_writeLine3 (L"Total SPL: ", Melder_single (10 * log10 (meanPowerDensity * (my xmax - my xmin))), L" dB");
+	MelderInfo_writeLine2 (L"   Number of frequency bands: ", Melder_integer (nx));
+	MelderInfo_writeLine3 (L"   Width of each band: ", Melder_double (dx), L" Hz");
+	MelderInfo_writeLine3 (L"   First band centred at: ", Melder_double (x1), L" Hz");
+	meanPowerDensity = Sampled_getMean (this, xmin, xmax, 0, 1, FALSE);
+	MelderInfo_writeLine3 (L"Total SPL: ", Melder_single (10 * log10 (meanPowerDensity * (xmax - xmin))), L" dB");
 }
 
-static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
-	(void) void_me;
+double structLtas :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
 	(void) ilevel;
 	if (unit == 1) {
-		return pow (10.0, 0.1 * value);   /* energy */
+		return pow (10.0, 0.1 * value);   // energy
 	} else if (unit == 2) {
-		return pow (2.0, 0.1 * value);   /* sones */
+		return pow (2.0, 0.1 * value);   // sones
 	}
 	return value;
 }
 
-static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
-	(void) void_me;
+double structLtas :: v_convertSpecialToStandardUnit (double value, long ilevel, int unit) {
 	(void) ilevel;
 	return
 		unit == 1 ?
-			10.0 * log10 (value) :   /* value = energy */
+			10.0 * log10 (value) :   // value = energy
 		unit == 2 ?
-			10.0 * NUMlog2 (value) :   /* value = sones */
-		value;   /* value = dB */
-}
-
-class_methods (Ltas, Vector) {
-	class_method (info)
-	us -> domainQuantity = MelderQuantity_FREQUENCY_HERTZ;
-	class_method (convertStandardToSpecialUnit)
-	class_method (convertSpecialToStandardUnit)
-	class_methods_end
+			10.0 * NUMlog2 (value) :   // value = sones
+		value;   // value = dB
 }
 
 Ltas Ltas_create (long nx, double dx) {
@@ -110,7 +88,7 @@ double Ltas_getSlope (Ltas me, double f1min, double f1max, double f2min, double 
 	double low = Sampled_getMean (me, f1min, f1max, 0, averagingUnits, FALSE);
 	double high = Sampled_getMean (me, f2min, f2max, 0, averagingUnits, FALSE);
 	if (low == NUMundefined || high == NUMundefined) return NUMundefined;
-	return averagingUnits == 3 ? high - low : ClassFunction_convertSpecialToStandardUnit (classLtas, high / low, 0, averagingUnits);
+	return averagingUnits == 3 ? high - low : Function_convertSpecialToStandardUnit (me, high / low, 0, averagingUnits);
 }
 
 double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environmentMax, double peakMin, double peakMax, int averagingUnits) {
@@ -119,13 +97,13 @@ double Ltas_getLocalPeakHeight (Ltas me, double environmentMin, double environme
 	double peak = Sampled_getMean (me, peakMin, peakMax, 0, averagingUnits, FALSE);
 	if (environmentLow == NUMundefined || environmentHigh == NUMundefined || peak == NUMundefined) return NUMundefined;
 	return averagingUnits == 3 ? peak - 0.5 * (environmentLow + environmentHigh) :
-		ClassFunction_convertSpecialToStandardUnit (classLtas, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
+		Function_convertSpecialToStandardUnit (me, peak / (0.5 * (environmentLow + environmentHigh)), 0, averagingUnits);
 }
 
 Matrix Ltas_to_Matrix (Ltas me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");
@@ -135,7 +113,7 @@ Matrix Ltas_to_Matrix (Ltas me) {
 Ltas Matrix_to_Ltas (Matrix me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());   // because copying a descendant of Matrix with additional members should not crash
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Ltas.");
@@ -147,7 +125,7 @@ Ltas Ltases_merge (Collection ltases) {
 		if (ltases -> size < 1)
 			Melder_throw ("Cannot merge zero Ltas objects.");
 		Ltas me = (Ltas) ltases -> item [1];
-		autoLtas thee = (Ltas) Data_copy (me);
+		autoLtas thee = Data_copy (me);
 		/*
 		 * Convert to energy.
 		 */
@@ -202,7 +180,7 @@ Ltas Ltas_computeTrendLine (Ltas me, double fmin, double fmax) {
 		long imin, imax, n;
 		if ((n = Sampled_getWindowSamples (me, fmin, fmax, & imin, & imax)) < 2)
 			Melder_throw ("Number of bins too low (", n, "). Should be at least 2.");
-		autoLtas thee = (Ltas) Data_copy (me);
+		autoLtas thee = Data_copy (me);
 		/*
 		 * Compute average amplitude and frequency.
 		 */
@@ -242,7 +220,7 @@ Ltas Ltas_subtractTrendLine (Ltas me, double fmin, double fmax) {
 		long imin, imax, n;
 		if ((n = Sampled_getWindowSamples (me, fmin, fmax, & imin, & imax)) < 2)
 			Melder_throw ("Number of bins too low (", n, "). Should be at least 2.");
-		autoLtas thee = (Ltas) Data_copy (me);
+		autoLtas thee = Data_copy (me);
 		/*
 		 * Compute average amplitude and frequency.
 		 */
@@ -334,7 +312,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		long numberOfPeriods = pulses -> nt - 2, totalNumberOfEnergies = 0;
 		autoLtas ltas = Ltas_create (maximumFrequency / bandWidth, bandWidth);
 		ltas -> xmax = maximumFrequency;
-		autoLtas numbers = (Ltas) Data_copy (ltas.peek());
+		autoLtas numbers = Data_copy (ltas.peek());
 		if (numberOfPeriods < 1)
 			Melder_throw ("Cannot compute an Ltas if there are no periods in the point process.");
 		autoMelderProgress progress (L"Ltas analysis...");

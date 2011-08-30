@@ -17,15 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2007/03/14 arrowSize
- * pb 2007/08/01 reintroduced yIsZeroAtTheTop
- * pb 2007/12/02 enums
- * pb 2007/12/20 getResolution
- * pb 2011/03/17 C++
- */
-
 #include <stdarg.h>
 #include "GraphicsP.h"
 
@@ -36,10 +27,11 @@
 
 /***** Methods *****/
 
-static void destroy (I) {
-	iam (Graphics);
-	Melder_free (my record);
-	inherited (Graphics) destroy (me);
+Thing_implement (Graphics, Thing, 0);
+
+void structGraphics :: v_destroy () {
+	Melder_free (record);
+	Graphics_Parent :: v_destroy ();
 }
 
 /* On Macintosh, the Device Coordinates are Mac window coordinates.
@@ -52,8 +44,8 @@ static void widgetToWindowCoordinates (I) {
 		iam (Graphics);
 		if (my screen) {
 			iam (GraphicsScreen);
-			if (my drawingArea) {
-				GuiObject widget = my drawingArea;
+			if (my d_drawingArea) {
+				GuiObject widget = my d_drawingArea;
 				int shellX = 0, shellY = 0;
 				do {
 					int x = GuiObject_getX (widget), y = GuiObject_getY (widget);
@@ -70,11 +62,6 @@ static void widgetToWindowCoordinates (I) {
 	#else
 		(void) void_me;
 	#endif
-}
-
-class_methods (Graphics, Thing) {
-	class_method (destroy)
-	class_methods_end
 }
 
 static void computeTrafo (I) {
@@ -99,8 +86,7 @@ static void computeTrafo (I) {
 
 /***** WORKSTATION FUNCTIONS *****/
 
-int Graphics_init (I) {
-	iam (Graphics);
+void Graphics_init (Graphics me) {
 	my x1DC = my x1DCmin = 0;	my x2DC = my x2DCmax = 32767;
 	my y1DC = my y1DCmin = 0;	my y2DC = my y2DCmax = 32767;
 	my x1WC = my x1NDC = my x1wNDC = 0.0;
@@ -122,7 +108,6 @@ int Graphics_init (I) {
 	my underscoreIsSubscript = 1;
 	my dollarSignIsCode = 0;
 	my atSignIsLink = 0;
-	return 1;
 }
 
 Graphics Graphics_create (int resolution) {
@@ -132,15 +117,13 @@ Graphics Graphics_create (int resolution) {
 	return me;
 }
 
-int Graphics_getResolution (I) {
-	iam (Graphics);
+int Graphics_getResolution (Graphics me) {
 	return my resolution;
 }
 
-void Graphics_setWsViewport (I,
+void Graphics_setWsViewport (Graphics me,
 	long x1DC, long x2DC, long y1DC, long y2DC)
 {
-	iam (Graphics);
 	if (x1DC < my x1DCmin || x2DC > my x2DCmax || y1DC < my y1DCmin || y2DC > my y2DCmax) {
 		static MelderString warning = { 0 };
 		MelderString_empty (& warning);
@@ -161,23 +144,22 @@ void Graphics_setWsViewport (I,
 	widgetToWindowCoordinates (me);
 	#if win
 		if (my screen && my printer) {
-			iam (GraphicsScreen);
+			GraphicsScreen mescreen = (GraphicsScreen) me;
 			/*
 			 * Map page coordinates to paper coordinates.
 			 */
-			my x1DC -=  GetDeviceCaps (my dc, PHYSICALOFFSETX);
-			my x2DC -=  GetDeviceCaps (my dc, PHYSICALOFFSETX);
-			my y1DC -=  GetDeviceCaps (my dc, PHYSICALOFFSETY);
-			my y2DC -=  GetDeviceCaps (my dc, PHYSICALOFFSETY);
+			mescreen -> x1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
+			mescreen -> x2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
+			mescreen -> y1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
+			mescreen -> y2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
 		}
 	#endif
 	computeTrafo (me);
 }
 
-void Graphics_resetWsViewport (I,
+void Graphics_resetWsViewport (Graphics me,
 	long x1DC, long x2DC, long y1DC, long y2DC)
 {
-	iam (Graphics);
 	my x1DC = x1DC;
 	my x2DC = x2DC;
 	my y1DC = y1DC;
@@ -185,16 +167,14 @@ void Graphics_resetWsViewport (I,
 	computeTrafo (me);
 }
 
-void Graphics_inqWsViewport (I, long *x1DC, long *x2DC, long *y1DC, long *y2DC) {
-	iam (Graphics);
+void Graphics_inqWsViewport (Graphics me, long *x1DC, long *x2DC, long *y1DC, long *y2DC) {
 	*x1DC = my x1DC;
 	*x2DC = my x2DC;
 	*y1DC = my y1DC;
 	*y2DC = my y2DC;
 }
 
-void Graphics_setWsWindow (I, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
-	iam (Graphics);
+void Graphics_setWsWindow (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
 	my x1wNDC = x1NDC;
 	my x2wNDC = x2NDC;
 	my y1wNDC = y1NDC;
@@ -204,8 +184,7 @@ void Graphics_setWsWindow (I, double x1NDC, double x2NDC, double y1NDC, double y
 		{ op (SET_WS_WINDOW, 4); put (x1NDC); put (x2NDC); put (y1NDC); put (y2NDC); }
 }
 
-void Graphics_inqWsWindow (I, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC) {
-	iam (Graphics);
+void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC) {
 	*x1NDC = my x1wNDC;
 	*x2NDC = my x2wNDC;
 	*y1NDC = my y1wNDC;
@@ -214,8 +193,7 @@ void Graphics_inqWsWindow (I, double *x1NDC, double *x2NDC, double *y1NDC, doubl
 
 /***** CO-ORDINATE TRANFORMATIONS *****/
 
-void Graphics_DCtoWC (I, long xDC, long yDC, double *xWC, double *yWC) {
-	iam (Graphics);
+void Graphics_DCtoWC (Graphics me, long xDC, long yDC, double *xWC, double *yWC) {
 	if (my yIsZeroAtTheTop) {
 		*xWC = (xDC + 0.5 - my deltaX) / my scaleX;
 		*yWC = (yDC - 0.5 - my deltaY) / my scaleY;
@@ -228,16 +206,14 @@ void Graphics_DCtoWC (I, long xDC, long yDC, double *xWC, double *yWC) {
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-void Graphics_WCtoDC (I, double xWC, double yWC, long *xDC, long *yDC) {
-	iam (Graphics);
+void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC) {
 	*xDC = wdx (xWC);
 	*yDC = wdy (yWC);
 }
 
 /***** OUTPUT PRIMITIVES, RECORDABLE *****/
 
-void Graphics_setViewport (I, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
-	iam (Graphics);
+void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
 	my x1NDC = x1NDC;
 	my x2NDC = x2NDC;
 	my y1NDC = y1NDC;
@@ -247,8 +223,7 @@ void Graphics_setViewport (I, double x1NDC, double x2NDC, double y1NDC, double y
 		{ op (SET_VIEWPORT, 4); put (x1NDC); put (x2NDC); put (y1NDC); put (y2NDC); }
 }
 
-void Graphics_setInner (I) {
-	iam (Graphics);
+void Graphics_setInner (Graphics me) {
 	double margin = 2.8 * my fontSize * my resolution / 72.0, wDC, hDC, dx, dy;
 	wDC = (my x2DC - my x1DC) / (my x2wNDC - my x1wNDC) * (my x2NDC - my x1NDC);
 	hDC = abs (my y2DC - my y1DC) / (my y2wNDC - my y1wNDC) * (my y2NDC - my y1NDC);
@@ -270,8 +245,7 @@ void Graphics_setInner (I) {
 	if (my recording) { op (SET_INNER, 0); }
 }
 
-void Graphics_unsetInner (I) {
-	iam (Graphics);
+void Graphics_unsetInner (Graphics me) {
 	my x1NDC = my outerViewport.x1NDC;
 	my x2NDC = my outerViewport.x2NDC;
 	my y1NDC = my outerViewport.y1NDC;
@@ -281,8 +255,7 @@ void Graphics_unsetInner (I) {
 		{ op (UNSET_INNER, 0); }
 }
 
-void Graphics_setWindow (I, double x1WC, double x2WC, double y1WC, double y2WC) {
-	iam (Graphics);
+void Graphics_setWindow (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
 	my x1WC = x1WC;
 	my x2WC = x2WC;
 	my y1WC = y1WC;
@@ -294,16 +267,14 @@ void Graphics_setWindow (I, double x1WC, double x2WC, double y1WC, double y2WC) 
 
 /***** INQUIRIES TO CURRENT GRAPHICS *****/
 
-void Graphics_inqViewport (I, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC) {
-	iam (Graphics);
+void Graphics_inqViewport (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC) {
 	*x1NDC = my x1NDC;
 	*x2NDC = my x2NDC;
 	*y1NDC = my y1NDC;
 	*y2NDC = my y2NDC;
 }
 
-void Graphics_inqWindow (I, double *x1WC, double *x2WC, double *y1WC, double *y2WC) {
-	iam (Graphics);
+void Graphics_inqWindow (Graphics me, double *x1WC, double *x2WC, double *y1WC, double *y2WC) {
 	*x1WC = my x1WC;
 	*x2WC = my x2WC;
 	*y1WC = my y1WC;
@@ -311,9 +282,8 @@ void Graphics_inqWindow (I, double *x1WC, double *x2WC, double *y1WC, double *y2
 }
 
 Graphics_Viewport Graphics_insetViewport
-	(I, double x1rel, double x2rel, double y1rel, double y2rel)
+	(Graphics me, double x1rel, double x2rel, double y1rel, double y2rel)
 {
-	iam (Graphics);
 	Graphics_Viewport previous;
 	previous.x1NDC = my x1NDC;
 	previous.x2NDC = my x2NDC;
@@ -327,38 +297,32 @@ Graphics_Viewport Graphics_insetViewport
 	return previous;
 }
 
-void Graphics_resetViewport (I, Graphics_Viewport viewport) {
-	iam (Graphics);
+void Graphics_resetViewport (Graphics me, Graphics_Viewport viewport) {
 	Graphics_setViewport (me, viewport.x1NDC, viewport.x2NDC, viewport.y1NDC, viewport.y2NDC);
 }
 
 /* Millimetres. */
 
-double Graphics_dxMMtoWC (I, double dx_mm) {
-	iam (Graphics);
+double Graphics_dxMMtoWC (Graphics me, double dx_mm) {
 	return dx_mm * my resolution / (25.4 * my scaleX);
 }
 
-double Graphics_dyMMtoWC (I, double dy_mm) {
-	iam (Graphics);
+double Graphics_dyMMtoWC (Graphics me, double dy_mm) {
 	return my yIsZeroAtTheTop ?
 		dy_mm * my resolution / (-25.4 * my scaleY) : dy_mm * my resolution / (25.4 * my scaleY);
 }
 
-double Graphics_distanceWCtoMM (I, double x1WC, double y1WC, double x2WC, double y2WC) {
-	iam (Graphics);
+double Graphics_distanceWCtoMM (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
 	double dxDC = (x1WC - x2WC) * my scaleX;
 	double dyDC = (y1WC - y2WC) * my scaleY;
 	return sqrt (dxDC * dxDC + dyDC * dyDC) * 25.4 / my resolution;
 }
 
-double Graphics_dxWCtoMM (I, double dxWC) {
-	iam (Graphics);
+double Graphics_dxWCtoMM (Graphics me, double dxWC) {
 	return dxWC * my scaleX * 25.4 / my resolution;
 }
 
-double Graphics_dyWCtoMM (I, double dyWC) {
-	iam (Graphics);
+double Graphics_dyWCtoMM (Graphics me, double dyWC) {
 	return my yIsZeroAtTheTop ?
 		dyWC * my scaleY * -25.4 / my resolution : dyWC * my scaleY * 25.4 / my resolution;
 }

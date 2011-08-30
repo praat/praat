@@ -17,28 +17,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/12/19 corrected word-bold-italic for HTML files
- * pb 2003/09/14 replaced MelderDir_getFile with MelderDir_relativePathToFile to allow man pages in directory trees
- * pb 2004/09/27 corrected check for script files with arguments
- * pb 2004/10/16 C++ compatible structs
- * pb 2004/11/21 a link can have upper case while the man page has lower case
- * pb 2006/10/20 embedded scripts
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/10 MelderInfo
- * pb 2006/12/15 turned HTML special symbols into Unicode (and removed glyph pictures)
- * pb 2006/12/28 repaired a memory leak
- * pb 2007/06/11 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/08/25 added an extra count to "par" in readOnePage (awful bug)
- * pb 2007/10/01 made sure that non-ASCII characters in ManPage code are written as ASCII Unicode numbers
- * pb 2011/05/15 C++
- * pb 2011/07/03 C++
- */
-
 #include <ctype.h>
 #include "ManPages.h"
 #include "longchar.h"
+
+Thing_implement (ManPages, Data, 0);
+
 #define LONGEST_FILE_NAME  55
 
 static int isAllowedFileNameCharacter (int c) {
@@ -50,10 +34,10 @@ static int isSingleWordCharacter (int c) {
 
 static long lookUp_unsorted (ManPages me, const wchar_t *title);
 
-static void destroy (I) { iam (ManPages);
-	if (my dynamic && my pages) {
-		for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
-			ManPage page = (ManPage) my pages -> item [ipage];
+void structManPages :: v_destroy () {
+	if (dynamic && pages) {
+		for (long ipage = 1; ipage <= pages -> size; ipage ++) {
+			ManPage page = (ManPage) pages -> item [ipage];
 			Melder_free (page -> title);
 			Melder_free (page -> author);
 			if (page -> paragraphs) {
@@ -68,13 +52,13 @@ static void destroy (I) { iam (ManPages);
 			}
 		}
 	}
-	if (my pages && my titles)
-		for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
-			Melder_free (my titles [ipage]);
+	if (pages && titles)
+		for (long ipage = 1; ipage <= pages -> size; ipage ++) {
+			Melder_free (titles [ipage]);
 		}
-	forget (my pages);
-	NUMvector_free <const wchar *> (my titles, 1);
-	inherited (ManPages) destroy (me);
+	forget (pages);
+	NUMvector_free <const wchar *> (titles, 1);
+	ManPages_Parent :: v_destroy ();
 }
 
 static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link) {
@@ -250,18 +234,11 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	++ par;   // Room for the final zero-type paragraph.
 	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 }
-static void readText (I, MelderReadText text) {
-	iam (ManPages);
-	my dynamic = TRUE;
-	my pages = Ordered_create ();
-	MelderDir_copy (& Data_directoryBeingRead, & my rootDirectory);
-	readOnePage (me, text);
-}
-
-class_methods (ManPages, Data) {
-	class_method (destroy)
-	class_method (readText)
-	class_methods_end
+void structManPages :: v_readText (MelderReadText text) {
+	dynamic = TRUE;
+	pages = Ordered_create ();
+	MelderDir_copy (& Data_directoryBeingRead, & rootDirectory);
+	readOnePage (this, text);
 }
 
 ManPages ManPages_create (void) {

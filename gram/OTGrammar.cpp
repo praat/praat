@@ -111,12 +111,11 @@ void structOTGrammar :: v_info ()
 	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
-static void writeText (I, MelderFile file) {
-	iam (OTGrammar);
-	MelderFile_write7 (file, L"\n<", kOTGrammar_decisionStrategy_getText (my decisionStrategy),
-		L">\n", Melder_double (my leak), L" ! leak\n", Melder_integer (my numberOfConstraints), L" constraints");
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTGrammarConstraint constraint = & my constraints [icons];
+void structOTGrammar :: v_writeText (MelderFile file) {
+	MelderFile_write7 (file, L"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
+		L">\n", Melder_double (leak), L" ! leak\n", Melder_integer (numberOfConstraints), L" constraints");
+	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
+		OTGrammarConstraint constraint = & constraints [icons];
 		MelderFile_write3 (file, L"\nconstraint [", Melder_integer (icons), L"]: \"");
 		for (const wchar *p = & constraint -> name [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
@@ -131,14 +130,14 @@ static void writeText (I, MelderFile file) {
 			else MelderFile_writeCharacter (file, *p);
 		}
 	}
-	MelderFile_write3 (file, L"\n\n", Melder_integer (my numberOfFixedRankings), L" fixed rankings");
-	for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
-		OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
+	MelderFile_write3 (file, L"\n\n", Melder_integer (numberOfFixedRankings), L" fixed rankings");
+	for (long irank = 1; irank <= numberOfFixedRankings; irank ++) {
+		OTGrammarFixedRanking fixedRanking = & fixedRankings [irank];
 		MelderFile_write4 (file, L"\n   ", Melder_integer (fixedRanking -> higher), L" ", Melder_integer (fixedRanking -> lower));
 	}
-	MelderFile_write3 (file, L"\n\n", Melder_integer (my numberOfTableaus), L" tableaus");
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tableau = & my tableaus [itab];
+	MelderFile_write3 (file, L"\n\n", Melder_integer (numberOfTableaus), L" tableaus");
+	for (long itab = 1; itab <= numberOfTableaus; itab ++) {
+		OTGrammarTableau tableau = & tableaus [itab];
 		MelderFile_write3 (file, L"\ninput [", Melder_integer (itab), L"]: \"");
 		for (const wchar *p = & tableau -> input [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
@@ -168,33 +167,32 @@ void OTGrammar_checkIndex (OTGrammar me) {
 	OTGrammar_sort (me);
 }
 
-static void readText (I, MelderReadText text) {
-	iam (OTGrammar);
+void structOTGrammar :: v_readText (MelderReadText text) {
 	int localVersion = Thing_version;
-	inherited (OTGrammar) readText (me, text);
+	OTGrammar_Parent :: v_readText (text);
 	if (localVersion >= 1) {
 		try {
-			my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue); therror
+			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue); therror
 		} catch (MelderError) {
 			Melder_throw ("Trying to read decision strategy.");
 		}
 	}
 	if (localVersion >= 2) {
 		try {
-			my leak = texgetr8 (text);
+			leak = texgetr8 (text);
 		} catch (MelderError) {
 			Melder_throw ("Trying to read leak.");
 		}
 	}
 	try {
-		my numberOfConstraints = texgeti4 (text);
+		numberOfConstraints = texgeti4 (text);
 	} catch (MelderError) {
 		Melder_throw ("Trying to read number of constraints.");
 	}
-	if (my numberOfConstraints < 1) Melder_throw ("No constraints.");
-	my constraints = NUMvector <structOTGrammarConstraint> (1, my numberOfConstraints);
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTGrammarConstraint constraint = & my constraints [icons];
+	if (numberOfConstraints < 1) Melder_throw ("No constraints.");
+	constraints = NUMvector <structOTGrammarConstraint> (1, numberOfConstraints);
+	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
+		OTGrammarConstraint constraint = & constraints [icons];
 		try {
 			constraint -> name = texgetw2 (text);
 		} catch (MelderError) {
@@ -221,14 +219,14 @@ static void readText (I, MelderReadText text) {
 		}
 	}
 	try {
-		my numberOfFixedRankings = texgeti4 (text);
+		numberOfFixedRankings = texgeti4 (text);
 	} catch (MelderError) {
 		Melder_throw ("Trying to read number of fixed rankings.");
 	}
-	if (my numberOfFixedRankings >= 1) {
-		my fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, my numberOfFixedRankings);
-		for (long irank = 1; irank <= my numberOfFixedRankings; irank ++) {
-			OTGrammarFixedRanking fixedRanking = & my fixedRankings [irank];
+	if (numberOfFixedRankings >= 1) {
+		fixedRankings = NUMvector <structOTGrammarFixedRanking> (1, numberOfFixedRankings);
+		for (long irank = 1; irank <= numberOfFixedRankings; irank ++) {
+			OTGrammarFixedRanking fixedRanking = & fixedRankings [irank];
 			try {
 				fixedRanking -> higher = texgeti4 (text);
 			} catch (MelderError) {
@@ -242,14 +240,14 @@ static void readText (I, MelderReadText text) {
 		}
 	}
 	try {
-		my numberOfTableaus = texgeti4 (text);
+		numberOfTableaus = texgeti4 (text);
 	} catch (MelderError) {
 		Melder_throw ("Trying to read number of tableaus.");
 	}
-	if (my numberOfTableaus < 1) Melder_throw (L"No tableaus.");
-	my tableaus = NUMvector <structOTGrammarTableau> (1, my numberOfTableaus);
-	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
-		OTGrammarTableau tableau = & my tableaus [itab];
+	if (numberOfTableaus < 1) Melder_throw (L"No tableaus.");
+	tableaus = NUMvector <structOTGrammarTableau> (1, numberOfTableaus);
+	for (long itab = 1; itab <= numberOfTableaus; itab ++) {
+		OTGrammarTableau tableau = & tableaus [itab];
 		try {
 			tableau -> input = texgetw2 (text);
 		} catch (MelderError) {
@@ -265,7 +263,7 @@ static void readText (I, MelderReadText text) {
 			 " (input: ", tableau -> input, ")"
 			 " in line ", MelderReadText_getLineNumber (text),
 			 itab == 1 ? L"." : ", or perhaps wrong number of candidates for input " L_LEFT_GUILLEMET,
-			 itab == 1 ? NULL : my tableaus [itab - 1]. input,
+			 itab == 1 ? NULL : tableaus [itab - 1]. input,
 			 itab == 1 ? NULL : L_RIGHT_GUILLEMET L".");
 		tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates);
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -276,7 +274,7 @@ static void readText (I, MelderReadText text) {
 				Melder_throw ("Trying to read candidate ", icand, " of tableau ", itab,
 					" (input: ", tableau -> input, ") in line ", MelderReadText_getLineNumber (text), ".");
 			}
-			candidate -> numberOfConstraints = my numberOfConstraints;   // redundancy, needed for writing binary
+			candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
 			candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
 			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
 				try {
@@ -284,7 +282,7 @@ static void readText (I, MelderReadText text) {
 				} catch (MelderError) {
 					Melder_throw
 					("Trying to read number of violations of constraint ", icons,
-					 " (", my constraints [icons]. name, ")"
+					 " (", constraints [icons]. name, ")"
 					 " of candidate ", icand,
 					 " (", candidate -> output, ")"
 					 " of tableau ", itab,
@@ -294,32 +292,12 @@ static void readText (I, MelderReadText text) {
 			}
 		}
 	}
-	OTGrammar_checkIndex (me);
+	OTGrammar_checkIndex (this);
 }
 
-class_methods (OTGrammar, Data) {
-	us -> version = 2;
-	class_method_local (OTGrammar, destroy)
-	class_method_local (OTGrammar, description)
-	class_method_local (OTGrammar, copy)
-	class_method_local (OTGrammar, equal)
-	class_method_local (OTGrammar, canWriteAsEncoding)
-	class_method (writeText)
-	class_method (readText)
-	class_method_local (OTGrammar, writeBinary)
-	class_method_local (OTGrammar, readBinary)
-	class_methods_end
-}
+Thing_implement (OTGrammar, Data, 2);
 
-static void classOTHistory_info (I) {
-	iam (OTHistory);
-	inherited (OTHistory) info (me);
-}
-
-class_methods (OTHistory, TableOfReal) {
-	class_method_local (OTHistory, info)
-	class_methods_end
-}
+Thing_implement (OTHistory, TableOfReal, 0);
 
 static OTGrammar constraintCompare_grammar;
 
@@ -2312,16 +2290,13 @@ void OTGrammar_removeHarmonicallyBoundedCandidates (OTGrammar me, int singly) {
 	}
 }
 
-Thing_declare1cpp (OTGrammar_List4);
-struct structOTGrammar_List4 : public structData {
-	long hi1, lo1, hi2, lo2;
+Thing_define (OTGrammar_List4, Data) {
+	// new data:
+	public:
+		long hi1, lo1, hi2, lo2;
 };
-#define OTGrammar_List4__methods(klas) Data__methods(klas)
-Thing_declare2cpp (OTGrammar_List4, Data);
 
-class_methods (OTGrammar_List4, Data) {
-	class_methods_end
-}
+Thing_implement (OTGrammar_List4, Data, 0);
 
 void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistribution thee) {
 	/*

@@ -26,9 +26,9 @@
 #include "ManPagesM.h"
 #include "KNN.h"
 
-extern "C" void manual_KNN_init (ManPages me);
+void manual_KNN_init (ManPages me);
 
-extern "C" void manual_KNN_init (ManPages me)
+void manual_KNN_init (ManPages me)
 {
 MAN_BEGIN (L"kNN classifiers", L"Ola Söder", 20080529)
 INTRO (L"This tutorial describes the use of kNN classifiers in Praat.")

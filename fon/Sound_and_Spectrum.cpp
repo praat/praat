@@ -114,7 +114,7 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 		
 		NUMburg (sound -> z [1], sound -> nx, a, numberOfCoefficients, & gain);
 		for (long i = 1; i <= numberOfCoefficients; i ++) a [i] = - a [i];
-		autoSpectrum thee = (Spectrum) Data_copy (me);
+		autoSpectrum thee = Data_copy (me);
 
 		long nfft = 2 * (thy nx - 1);
 		long ndata = numberOfCoefficients < nfft ? numberOfCoefficients : nfft - 1;
@@ -144,7 +144,7 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 
 Sound Sound_filter_formula (Sound me, const wchar *formula, Interpreter interpreter) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
 			Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL); therror
@@ -167,7 +167,7 @@ Sound Sound_filter_formula (Sound me, const wchar *formula, Interpreter interpre
 
 Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smooth) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
 			Spectrum_passHannBand (spec.peek(), fmin, fmax, smooth);
@@ -190,7 +190,7 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 
 Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smooth) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
 			Spectrum_stopHannBand (spec.peek(), fmin, fmax, smooth);

@@ -24,11 +24,12 @@
 #include "Interpreter.h"
 
 Thing_define (ScriptEditor, TextEditor) {
-	// data:
+	// new data:
+	public:
 		wchar *environmentName;
-		Editor_Table editorClass;
+		ClassInfo editorClass;
 		Interpreter interpreter;
-		Any argsDialog;
+		UiForm argsDialog;
 	// functions:
 		void init (GuiObject parent, Editor editor, const wchar_t *initialText);
 	// overridden methods:

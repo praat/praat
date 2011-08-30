@@ -1,6 +1,6 @@
-/* Sampled2.c
+/* Sampled2.cpp
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-/*
- djmw 19970408
- djmw 20020813 GPL header
- djmw 20071012 Added: o_CAN_WRITE_AS_ENCODING.h
-*/
 
 #include "Sampled2.h"
 #include "NUM2.h"
@@ -43,37 +37,26 @@
 #include "oo_DESCRIPTION.h"
 #include "Sampled2_def.h"
 
-static void readText (I, MelderReadText text) {
-	iam (Sampled2);
-	my xmin = texgetr8 (text);
-	my xmax = texgetr8 (text);
-	my nx = texgeti4 (text);
-	my dx = texgetr8 (text);
-	my x1 = texgetr8 (text);
-	my ymin = texgetr8 (text);
-	my ymax = texgetr8 (text);
-	my ny = texgeti4 (text);
-	my dy = texgetr8 (text);
-	my y1 = texgetr8 (text);
-	if (my xmin > my xmax || my ymin > my ymax)
-		Melder_throw ("xmin should <= xmax and ymin <= ymax.");
-	if (my nx < 1 || my ny < 1)
-		Melder_throw ("nx should >= 1 and ny >= 1.");
-	if (my dx <= 0 || my dy <= 0)
-		Melder_throw ("dx should > 0 and dy > 0.");
-}
+Thing_implement (Sampled2, Sampled, 0);
 
-class_methods (Sampled2, Data)
-	class_method_local (Sampled2, destroy)
-	class_method_local (Sampled2, description)
-	class_method_local (Sampled2, copy)
-	class_method_local (Sampled2, equal)
-	class_method_local (Sampled2, canWriteAsEncoding)
-	class_method_local (Sampled2, writeText)
-	class_method (readText)
-	class_method_local (Sampled2, writeBinary)
-	class_method_local (Sampled2, readBinary)
-class_methods_end
+void structSampled2 :: v_readText (MelderReadText text) {
+	xmin = texgetr8 (text);
+	xmax = texgetr8 (text);
+	nx = texgeti4 (text);
+	dx = texgetr8 (text);
+	x1 = texgetr8 (text);
+	ymin = texgetr8 (text);
+	ymax = texgetr8 (text);
+	ny = texgeti4 (text);
+	dy = texgetr8 (text);
+	y1 = texgetr8 (text);
+	if (xmin > xmax || ymin > ymax)
+		Melder_throw ("xmax should be greater than xmax and ymax should be greater than ymin.");
+	if (nx < 1 || ny < 1)
+		Melder_throw ("nx and ny should be at least 1.");
+	if (dx <= 0 || dy <= 0)
+		Melder_throw ("dx and dy should be positive.");
+}
 
 void Sampled2_init
 	(I, double xmin, double xmax, long nx, double dx, double x1,
@@ -163,4 +146,4 @@ long Sampled2_getWindowExtrema_f (I, float **z, long ixmin, long ixmax, long iym
 	return (ixmax - ixmin + 1) * (iymax - iymin + 1);
 }
 
-/* End of file Sampled2.c */
+/* End of file Sampled2.cpp */

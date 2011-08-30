@@ -30,7 +30,6 @@
 		#include "oo.h"
 	/* The input/output mechanism: */
 		#include "abcio.h"
-		#include "lispio.h"
 
 /* Public. */
 
@@ -41,8 +40,7 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 	Use the macros 'iam' and 'thouart'
 	as the first declaration in a function definition.
 	After this, the object 'me' or 'thee' has the right class (for the compiler),
-	so that you can use the macros 'my' and 'thy' to refer to members,
-	and 'our' and 'your' to refer to methods.
+	so that you can use the macros 'my' and 'thy' to refer to members.
 	Example: int Person_getAge (I) { iam (Person); return my age; }
 */
 #define I  Any void_me
@@ -52,121 +50,71 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 #define my  me ->
 #define thy  thee ->
 #define his  him ->
-#define our  my methods ->
-#define your  thy methods ->
 
-#define inherited(klas)  class##klas -> _parent ->
-
-#define Thing_declare1cpp(klas) \
-	typedef struct struct##klas *klas; \
-	typedef _Thing_auto <struct##klas> auto##klas; \
-	typedef struct struct##klas##_Table *klas##_Table; \
-	extern klas##_Table class##klas
+typedef struct structClassInfo *ClassInfo;
+struct structClassInfo {
+	const wchar *className;
+	ClassInfo parent;
+	long size;
+	void * (* _new) ();
+	long version;
+	long sequentialUniqueIdOfReadableClass;
+	Thing dummyObject;
+};
 
 #define Thing_declare(klas) \
-	typedef struct struct##klas *klas; \
+	typedef class struct##klas *klas; \
 	typedef _Thing_auto <struct##klas> auto##klas; \
-	typedef struct struct##klas##_Table *klas##_Table; \
-	extern klas##_Table class##klas
+	extern ClassInfo class##klas
 
 #define Thing_define(klas,parentKlas) \
 	Thing_declare (klas); \
 	typedef struct##parentKlas klas##_Parent; \
-	struct struct##klas##_Table { \
-		void (* _initialize) (void *table); \
-		const wchar *_className; \
-		parentKlas##_Table _parent; \
-		long _size; \
-		void * (* _new) (); \
-		long version; \
-		long sequentialUniqueIdOfReadableClass; \
-		void (*destroy) (I); \
-		void (*info) (I); \
-	}; \
-	extern struct struct##klas##_Table theStruct##klas; \
-	struct struct##klas : public struct##parentKlas
-
-#define Thing_declare2cpp(klas,parentKlas) \
-	typedef struct##parentKlas klas##_Parent; \
-	struct struct##klas##_Table { \
-		void (* _initialize) (void *table); \
-		const wchar *_className; \
-		parentKlas##_Table _parent; \
-		long _size; \
-		void * (* _new) (); \
-		long version; \
-		long sequentialUniqueIdOfReadableClass; \
-		void (*destroy) (I); \
-		void (*info) (I); \
-		klas##__methods(klas) \
-	}; \
-	extern struct struct##klas##_Table theStruct##klas
-
-#define class_methods(klas,parentKlas) \
-	static void _##klas##_initialize (void *table);   /* Forward declaration. */ \
-	static void *_##klas##_new () { return (Thing) new struct##klas; } \
-	struct struct##klas##_Table theStruct##klas = { \
-		_##klas##_initialize, L"" #klas,   /* Partial initialization because init and */ \
-		& theStruct##parentKlas, sizeof (struct struct##klas),   /* parent must be known. */ \
-		_##klas##_new }; \
-	klas##_Table class##klas = & theStruct##klas; \
-	static void _##klas##_initialize (void *table) { \
-		klas##_Table us = (klas##_Table) table; \
-		if (! class##parentKlas -> destroy)   /* Parent class not initialized? */ \
-			class##parentKlas -> _initialize (class##parentKlas); \
-		if (Melder_debug == 43) Melder_casual ("Initializing class %ls (%ld), part %ls.", us -> _className, table, class##parentKlas -> _className); \
-		class##parentKlas -> _initialize (us);   /* Inherit methods from parent class. */
-#define class_method(method)  us -> method = method;   /* Override one method. */
-#define class_method_local(klas,method)  us -> method = class##klas##_##method;
-#define class_methods_end  }
+	extern struct structClassInfo theClassInfo_##klas; \
+	class struct##klas : public struct##parentKlas
 
 #define Thing_implement(klas,parentKlas,version) \
 	static void *_##klas##_new () { return (Thing) new struct##klas; } \
-	struct struct##klas##_Table theStruct##klas = { NULL, L"" #klas, & theStruct##parentKlas, sizeof (struct struct##klas), _##klas##_new, version }; \
-	klas##_Table class##klas = & theStruct##klas
+	struct structClassInfo theClassInfo_##klas = { L"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, NULL }; \
+	ClassInfo class##klas = & theClassInfo_##klas
 
-#define Thing__methods(klas)
-typedef struct structThing *Thing;
-typedef struct structThing_Table *Thing_Table;
-struct structThing_Table {
-	void (* _initialize) (void *table);
-	const wchar *_className;
-	Thing_Table	_parent;
-	long _size;
-	void * (* _new) ();
-	long version;
-	long sequentialUniqueIdOfReadableClass;
-	void (*destroy) (I);
-	void (*info) (I);
+/*
+ * Thing has no parent class, so instead of using the Thing_define macro
+ * we write out the stuff that does exist.
+ */
+typedef class structThing *Thing;
+extern ClassInfo classThing;
+extern struct structClassInfo theClassInfo_Thing;
+class structThing {
+	public:
+		ClassInfo classInfo;
+		wchar *name;
+		void * operator new (size_t size) { return Melder_calloc (char, size); }
+		void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
+	// new methods:
+		virtual void v_destroy () { Melder_free (name); };
+			/*
+			 * derived::v_destroy calls base::v_destroy at end
+			 */
+		virtual void v_info ();
+			/*
+			 * Implement as follows: call a set of MelderInfo_writeXXX describing your data.
+			 *
+			 * Thing::v_info writes object id, object name, and date;
+			 * derived::v_info often calls base::v_info at start and then writes information on the new data,
+			 * but a few ancestors can be skipped if their data have new meanings.
+			 */
+		virtual void v_checkConstraints () { };
+			/*
+			 * derived::v_checkConstraints typically calls base::v_checkConstraints at start
+			 */
+		virtual void v_nameChanged () { };
+			/*
+			 * derived::v_nameChanged may call base::_nameChanged at start, middle or end
+			 */
 };
-struct structThing {
-	Thing_Table methods;
-	wchar *name;
-	void * operator new (size_t size) { return Melder_calloc (char, size); }
-	void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
-// new methods:
-	virtual void v_destroy () { Melder_free (name); };
-		/*
-		 * derived::v_destroy calls base::v_destroy at end
-		 */
-	virtual void v_info ();
-		/*
-		 * Thing::v_info writes object id, object name, and date;
-		 * derived::v_info often calls base::v_info at start and then writes information on contents
-		 */
-	virtual void v_checkConstraints () { };
-		/*
-		 * derived::v_checkConstraints typically calls base::v_checkConstraints at start
-		 */
-	virtual void v_nameChanged () { };
-		/*
-		 * derived::v_nameChanged may call base::v_nameChanged at start, middle or end
-		 */
-};
-extern struct structThing_Table theStructThing;
-extern Thing_Table classThing;
 
-#define forget(thing)  _Thing_forget ((Thing *) & (thing))
+#define forget(thing)  do { _Thing_forget (thing); thing = NULL; } while (0)
 /*
 	Function:
 		free all memory associated with 'thing'.
@@ -184,14 +132,14 @@ extern Thing_Table classThing;
 const wchar * Thing_className (Thing me);
 /* Return your class name. */
 
-bool Thing_member (Thing me, void *klas);
+bool Thing_member (Thing me, ClassInfo klas);
 /*
 	return true if you are a 'klas',
 	i.e., if you are an object of the class 'klas' or of one of the classes derived from 'klas'.
 	E.g., Thing_member (object, classThing) will always return true.
 */
 
-bool Thing_subclass (void *klas, void *ancestor);
+bool Thing_subclass (ClassInfo klas, ClassInfo ancestor);
 /*
 	return true if <klas> is a subclass of <ancestor>,
 	i.e., if <klas> equals <ancestor>, or if the parent class of <klas> is a subclass of <ancestor>.
@@ -206,22 +154,20 @@ void Thing_infoWithId (Thing me, unsigned long id);
 	Function:
 		return a new object of class 'klas'.
 	Postconditions:
-		result -> methods == class'klas';
-		other members are 0;
-		result -> methods -> destroy != NULL;   // Class table initialized.
+		result -> classInfo == class'klas';
+		other members are 0.
 */
 
-Any _Thing_new (void *klas);
+Any _Thing_new (ClassInfo klas);
 /*
 	Function:
 		return a new object of class 'klas'.
 	Postconditions:
-		result -> methods == 'klas';
-		other members are 0;
-		result -> methods -> destroy != NULL;   // Class table initialized.
+		result -> classInfo == 'klas';
+		other members are 0.
 */
 
-void Thing_recognizeClassesByName (void *readableClass, ...);
+void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 /*
 	Function:
 		make Thing_classFromClassName () and Thing_newFromClassName ()
@@ -239,7 +185,7 @@ void Thing_recognizeClassesByName (void *readableClass, ...);
 		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
-void Thing_recognizeClassByOtherName (void *readableClass, const wchar *otherName);
+void Thing_recognizeClassByOtherName (ClassInfo readableClass, const wchar *otherName);
 long Thing_listReadableClasses (void);
 
 Any Thing_newFromClassNameA (const char *className);
@@ -248,26 +194,27 @@ Any Thing_newFromClassName (const wchar *className);
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
 	Postconditions:
-		result -> methods == class'className';
-		other members are 0;
-		class'className' -> destroy != NULL;   // class'className' has been initialized.
+		result -> classInfo == class'className';
+		other members are 0.
 	Side effect:
 		see Thing_classFromClassName.
 */
 
-void *Thing_classFromClassName (const wchar_t *className);
+ClassInfo Thing_classFromClassName (const wchar_t *className);
 /*
 	Function:
-		Return the class table of class 'className', or NULL if it is not recognized.
+		Return the class info table of class 'className', or NULL if it is not recognized.
 		E.g. the value returned from Thing_classFromClassName (L"PietjePuk")
 		will be equal to classPietjePuk.
-	Postcondition:
-		class'className' -> destroy != NULL;   // class'className' has been initialized.
 	Side effect:
 		Sets the global variable Thing_version.
 		If 'className' equals L"PietjePuk 300", the value returned will be classPietjePuk,
 		and Thing_version will be set to 300.
 */
+
+#define Thing_dummyObject(klas) \
+	(klas) _Thing_dummyObject (class##klas)
+Thing _Thing_dummyObject (ClassInfo classInfo);
 
 wchar * Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be NULL). */
@@ -286,7 +233,7 @@ void Thing_swap (Thing me, Thing thee);
 	Function:
 		Swap my and thy contents.
 	Precondition:
-		my methods == thy methods;
+		my classInfo == thy classInfo;
 	Postconditions:
 		my xxx == thy old xxx;
 		thy xxx == my old xxx;
@@ -296,9 +243,9 @@ void Thing_swap (Thing me, Thing thee);
 
 /* For the macros. */
 
-void _Thing_forget (Thing *me);
+void _Thing_forget (Thing me);
 void _Thing_forget_nozero (Thing me);
-void * _Thing_check (Thing me, void *table, const char *fileName, int line);
+void * _Thing_check (Thing me, ClassInfo table, const char *fileName, int line);
 	/* Macros 'iam', 'thouart', 'heis'. */
 
 /* For debugging. */

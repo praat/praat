@@ -60,28 +60,15 @@
 #include "oo_DESCRIPTION.h"
 #include "Configuration_def.h"
 
-static void classConfiguration_info (I)
+Thing_implement (Configuration, TableOfReal, 0);
+
+void structConfiguration :: v_info ()
 {
-	iam (Configuration);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my numberOfRows));
-	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (my numberOfColumns));
-	MelderInfo_writeLine2 (L"Metric: ", Melder_integer (my metric));
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine2 (L"Metric: ", Melder_integer (metric));
 }
-
-class_methods (Configuration, TableOfReal)
-	class_method_local (Configuration, destroy)
-	class_method_local (Configuration, equal)
-	class_method_local (Configuration, canWriteAsEncoding)
-	class_method_local (Configuration, copy)
-	class_method_local (Configuration, readText)
-	class_method_local (Configuration, readBinary)
-	class_method_local (Configuration, writeText)
-	class_method_local (Configuration, writeBinary)
-	class_method_local (Configuration, description)
-	class_method_local (Configuration, info)
-class_methods_end
-
 
 Configuration Configuration_create (long numberOfPoints,
 	long numberOfDimensions)
@@ -530,8 +517,7 @@ Configuration Configuration_createCarrollWishExample (void)
 
 /************ CONFIGURATIONS **************************************/
 
-class_methods (Configurations, Ordered)
-class_methods_end
+Thing_implement (Configurations, Ordered, 0);
 
 Configurations Configurations_create (void)
 {

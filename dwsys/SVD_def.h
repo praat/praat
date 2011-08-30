@@ -17,11 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19981210
- djmw 20020812 GPL header
- djmw 20051204 Latest modification
-*/
 
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
@@ -31,24 +26,36 @@ oo_DEFINE_CLASS (SVD, Data)
 	oo_DOUBLE (tolerance)
 	oo_LONG (numberOfRows)
 	oo_LONG (numberOfColumns)
-	oo_DOUBLE_MATRIX (u, my numberOfRows, MIN(my numberOfColumns, my numberOfRows))
-	oo_DOUBLE_MATRIX (v, my numberOfColumns, MIN(my numberOfColumns, my numberOfRows))
-	oo_DOUBLE_VECTOR (d, MIN(my numberOfColumns, my numberOfRows))
+	oo_DOUBLE_MATRIX (u, numberOfRows, MIN (numberOfColumns, numberOfRows))
+	oo_DOUBLE_MATRIX (v, numberOfColumns, MIN (numberOfColumns, numberOfRows))
+	oo_DOUBLE_VECTOR (d, MIN (numberOfColumns, numberOfRows))
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (SVD)
 #undef ooSTRUCT
+
 
 #define ooSTRUCT GSVD
 oo_DEFINE_CLASS (GSVD, Data)
 
 	oo_DOUBLE (tolerance)
 	oo_LONG (numberOfColumns)
-	oo_DOUBLE_MATRIX ( q, my numberOfColumns, my numberOfColumns)
-	oo_DOUBLE_MATRIX ( r, my numberOfColumns, my numberOfColumns)
-	oo_DOUBLE_VECTOR (d1, my numberOfColumns)
-	oo_DOUBLE_VECTOR (d2, my numberOfColumns)
+	oo_DOUBLE_MATRIX ( q, numberOfColumns, numberOfColumns)
+	oo_DOUBLE_MATRIX ( r, numberOfColumns, numberOfColumns)
+	oo_DOUBLE_VECTOR (d1, numberOfColumns)
+	oo_DOUBLE_VECTOR (d2, numberOfColumns)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (GSVD)
 #undef ooSTRUCT
+
 
 /* End of file SVD_def.h */

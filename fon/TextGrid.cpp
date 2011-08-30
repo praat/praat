@@ -17,32 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/03/12 corrected TextGrid_extractPart (could crash)
- * pb 2003/05/09 added extractNonemptyIntervals
- * pb 2004/04/14 TextGrid_merge supports more than two TextGrids
- * pb 2005/02/16 TextGrid_removeBoundaryAtTime
- * pb 2005/03/04 TextGrid_Sound_extractIntervalsWhere
- * pb 2005/06/16 enums -> ints
- * pb 2005/06/22 corrected log scale bug
- * pb 2005/10/07 alignment in TextGrid_Pitch_draw
- * pb 2006/01/01 IntervalTier_removeLeftBoundary, TextTier_removePoint
- * pb 2006/01/25 IntervalTier_writeToXwaves
- * pb 2006/01/29 IntervalTier_readFromXwaves more forgiving
- * pb 2006/02/20 TextGrid_create guards against zero tiers
- * pb 2006/02/24 split TextGrid_create into TextGrid_createWithTiers and TextGrid_createWithoutTiers
- * pb 2007/03/17 domain quantity
- * pb 2007/06/21 tex
- * pb 2007/06/24 canWriteAsAscii
- * pb 2007/07/03 canWriteAsEncoding
- * pb 2007/07/21 corrected chronologicalTextFile
- * pb 2007/08/08 wchar_t
- * pb 2008/09/23 shiftX, scaleX
- * pb 2010/12/08 split off TextGrid_Sound.c
- * pb 2011/06/10 C++
- */
-
 #include "TextGrid.h"
 #include "longchar.h"
 
@@ -65,18 +39,7 @@
 #include "oo_DESCRIPTION.h"
 #include "TextGrid_def.h"
 
-class_methods (TextPoint, AnyPoint) {
-	class_method_local (TextPoint, destroy)
-	class_method_local (TextPoint, copy)
-	class_method_local (TextPoint, equal)
-	class_method_local (TextPoint, canWriteAsEncoding)
-	class_method_local (TextPoint, writeText)
-	class_method_local (TextPoint, readText)
-	class_method_local (TextPoint, writeBinary)
-	class_method_local (TextPoint, readBinary)
-	class_method_local (TextPoint, description)
-	class_methods_end
-}
+Thing_implement (TextPoint, AnyPoint, 0);
 
 TextPoint TextPoint_create (double time, const wchar *mark) {
 	try {
@@ -107,19 +70,7 @@ void TextPoint_setText (TextPoint me, const wchar *text) {
 	}
 }
 
-class_methods (TextInterval, Function) {
-	class_method_local (TextInterval, destroy)
-	class_method_local (TextInterval, copy)
-	class_method_local (TextInterval, equal)
-	class_method_local (TextInterval, canWriteAsEncoding)
-	class_method_local (TextInterval, writeText)
-	class_method_local (TextInterval, readText)
-	class_method_local (TextInterval, writeBinary)
-	class_method_local (TextInterval, readBinary)
-	class_method_local (TextInterval, description)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
-}
+Thing_implement (TextInterval, Function, 0);
 
 TextInterval TextInterval_create (double tmin, double tmax, const wchar_t *text) {
 	try {
@@ -153,38 +104,22 @@ void TextInterval_setText (TextInterval me, const wchar_t *text) {
 	}
 }
 
-static void classTextTier_shiftX (I, double xfrom, double xto) {
-	iam (TextTier);
-	inherited (TextTier) shiftX (me, xfrom, xto);
-	for (long i = 1; i <= my points -> size; i ++) {
-		TextPoint point = (TextPoint) my points -> item [i];
+Thing_implement (TextTier, Function, 0);
+
+void structTextTier :: v_shiftX (double xfrom, double xto) {
+	TextTier_Parent :: v_shiftX (xfrom, xto);
+	for (long i = 1; i <= points -> size; i ++) {
+		TextPoint point = (TextPoint) points -> item [i];
 		NUMshift (& point -> number, xfrom, xto);
 	}
 }
 
-static void classTextTier_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (TextTier);
-	inherited (TextTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= my points -> size; i ++) {
-		TextPoint point = (TextPoint) my points -> item [i];
+void structTextTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	TextTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= points -> size; i ++) {
+		TextPoint point = (TextPoint) points -> item [i];
 		NUMscale (& point -> number, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-}
-
-class_methods (TextTier, Function) {
-	class_method_local (TextTier, destroy)
-	class_method_local (TextTier, copy)
-	class_method_local (TextTier, equal)
-	class_method_local (TextTier, canWriteAsEncoding)
-	class_method_local (TextTier, writeText)
-	class_method_local (TextTier, readText)
-	class_method_local (TextTier, writeBinary)
-	class_method_local (TextTier, readBinary)
-	class_method_local (TextTier, description)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method_local (TextTier, shiftX)
-	class_method_local (TextTier, scaleX)
-	class_methods_end
 }
 
 TextTier TextTier_create (double tmin, double tmax) {
@@ -207,38 +142,22 @@ void TextTier_addPoint (TextTier me, double time, const wchar_t *mark) {
 	}
 }
 
-static void classIntervalTier_shiftX (I, double xfrom, double xto) {
-	iam (IntervalTier);
-	inherited (IntervalTier) shiftX (me, xfrom, xto);
-	for (long i = 1; i <= my intervals -> size; i ++) {
-		TextInterval interval = (TextInterval) my intervals -> item [i];
-		((Function_Table) interval -> methods) -> shiftX (interval, xfrom, xto);
+Thing_implement (IntervalTier, Function, 0);
+
+void structIntervalTier :: v_shiftX (double xfrom, double xto) {
+	IntervalTier_Parent :: v_shiftX (xfrom, xto);
+	for (long i = 1; i <= intervals -> size; i ++) {
+		TextInterval interval = (TextInterval) intervals -> item [i];
+		interval -> v_shiftX (xfrom, xto);
 	}
 }
 
-static void classIntervalTier_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (IntervalTier);
-	inherited (IntervalTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= my intervals -> size; i ++) {
-		TextInterval interval = (TextInterval) my intervals -> item [i];
-		((Function_Table) interval -> methods) -> scaleX (interval, xminfrom, xmaxfrom, xminto, xmaxto);
+void structIntervalTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	IntervalTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= intervals -> size; i ++) {
+		TextInterval interval = (TextInterval) intervals -> item [i];
+		interval -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-}
-
-class_methods (IntervalTier, Function) {
-	class_method_local (IntervalTier, destroy)
-	class_method_local (IntervalTier, copy)
-	class_method_local (IntervalTier, equal)
-	class_method_local (IntervalTier, canWriteAsEncoding)
-	class_method_local (IntervalTier, writeText)
-	class_method_local (IntervalTier, readText)
-	class_method_local (IntervalTier, writeBinary)
-	class_method_local (IntervalTier, readBinary)
-	class_method_local (IntervalTier, description)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method_local (IntervalTier, shiftX)
-	class_method_local (IntervalTier, scaleX)
-	class_methods_end
 }
 
 IntervalTier IntervalTier_create (double tmin, double tmax) {
@@ -297,14 +216,13 @@ long IntervalTier_hasBoundary (IntervalTier me, double t) {
 	return 0;   // boundary not found
 }
 
-static void classTextGrid_info (I) {
-	iam (TextGrid);
-	long ntier = my tiers -> size;
-	long numberOfIntervalTiers = 0, numberOfPointTiers = 0, numberOfIntervals = 0, numberOfPoints = 0, itier;
-	classData -> info (me);
-	for (itier = 1; itier <= ntier; itier ++) {
-		Thing anyTier = (Thing) my tiers -> item [itier];
-		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+void structTextGrid :: v_info () {
+	long ntier = tiers -> size;
+	long numberOfIntervalTiers = 0, numberOfPointTiers = 0, numberOfIntervals = 0, numberOfPoints = 0;
+	structData :: v_info ();
+	for (long itier = 1; itier <= ntier; itier ++) {
+		Function anyTier = (Function) tiers -> item [itier];
+		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			numberOfIntervalTiers += 1;
 			numberOfIntervals += tier -> intervals -> size;
@@ -320,40 +238,23 @@ static void classTextGrid_info (I) {
 	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (numberOfPoints));
 }
 
-static void classTextGrid_shiftX (I, double xfrom, double xto) {
-	iam (TextGrid);
-	inherited (TextGrid) shiftX (me, xfrom, xto);
-	for (long i = 1; i <= my tiers -> size; i ++) {
-		Function tier = (Function) my tiers -> item [i];
-		((Function_Table) tier -> methods) -> shiftX (tier, xfrom, xto);
+void structTextGrid :: v_shiftX (double xfrom, double xto) {
+	TextGrid_Parent :: v_shiftX (xfrom, xto);
+	for (long i = 1; i <= tiers -> size; i ++) {
+		Function tier = (Function) tiers -> item [i];
+		tier -> v_shiftX (xfrom, xto);
 	}
 }
 
-static void classTextGrid_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (TextGrid);
-	inherited (TextGrid) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= my tiers -> size; i ++) {
-		Function tier = (Function) my tiers -> item [i];
-		((Function_Table) tier -> methods) -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+void structTextGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	TextGrid_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= tiers -> size; i ++) {
+		Function tier = (Function) tiers -> item [i];
+		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
-class_methods (TextGrid, Function) {
-	class_method_local (TextGrid, destroy)
-	class_method_local (TextGrid, copy)
-	class_method_local (TextGrid, equal)
-	class_method_local (TextGrid, canWriteAsEncoding)
-	class_method_local (TextGrid, writeText)
-	class_method_local (TextGrid, readText)
-	class_method_local (TextGrid, writeBinary)
-	class_method_local (TextGrid, readBinary)
-	class_method_local (TextGrid, description)
-	class_method_local (TextGrid, info)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method_local (TextGrid, shiftX)
-	class_method_local (TextGrid, scaleX)
-	class_methods_end
-}
+Thing_implement (TextGrid, Function, 0);
 
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	try {
@@ -392,11 +293,10 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 			for (wchar *tierName = Melder_wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = Melder_wcstok (NULL, L" ", & last)) {
 				for (long itier = 1; itier <= my tiers -> size; itier ++) {
 					if (wcsequ (tierName, Thing_getName ((Thing) my tiers -> item [itier]))) {
-						TextTier tier = TextTier_create (tmin, tmax);
-						if (! tier) { forget (me); return NULL; }
-						forget (my tiers -> item [itier]);
-						my tiers -> item [itier] = tier;
-						Thing_setName (tier, tierName);
+						autoTextTier tier = TextTier_create (tmin, tmax);
+						Thing_setName (tier.peek(), tierName);
+						forget (((Function *) my tiers -> item) [itier]);
+						my tiers -> item [itier] = tier.transfer();
 					}
 				}
 			}
@@ -465,16 +365,16 @@ void TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber)
 
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-	AnyTier tier = (AnyTier) my tiers -> item [tierNumber];
-	if (tier -> methods != (Thing_Table) classIntervalTier)
+	Function tier = (Function) my tiers -> item [tierNumber];
+	if (tier -> classInfo != classIntervalTier)
 		Melder_throw ("Tier ", tierNumber, " should be an interval tier.");
 	return (IntervalTier) tier;
 }
 
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-	AnyTier tier = (AnyTier) my tiers -> item [tierNumber];
-	if (tier -> methods != (Thing_Table) classTextTier)
+	Function tier = (Function) my tiers -> item [tierNumber];
+	if (tier -> classInfo != classTextTier)
 		Melder_throw ("Tier ", tierNumber, " should be a point tier.");
 	return (TextTier) tier;
 }
@@ -483,8 +383,8 @@ long TextGrid_countLabels (TextGrid me, long tierNumber, const wchar_t *text) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		long count = 0;
-		Thing anyTier = (Data) my tiers -> item [tierNumber];
-		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+		Function anyTier = (Function) my tiers -> item [tierNumber];
+		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			for (long i = 1; i <= tier -> intervals -> size; i ++) {
 				TextInterval segment = (TextInterval) tier -> intervals -> item [i];
@@ -505,9 +405,9 @@ long TextGrid_countLabels (TextGrid me, long tierNumber, const wchar_t *text) {
 	}
 }
 
-void TextGrid_addTier (TextGrid me, Any anyTier) {
+void TextGrid_addTier (TextGrid me, Function anyTier) {
 	try {
-		autoFunction tier = (Function) Data_copy (anyTier);
+		autoFunction tier = Data_copy (anyTier);
 		if (tier -> xmin < my xmin) my xmin = tier -> xmin;
 		if (tier -> xmax > my xmax) my xmax = tier -> xmax;
 		Collection_addItem (my tiers, tier.transfer());
@@ -520,11 +420,11 @@ TextGrid TextGrid_merge (Collection textGrids) {
 	try {
 		if (textGrids -> size < 1)
 			Melder_throw ("Cannot merge zero TextGrid objects.");
-		autoTextGrid thee = (TextGrid) Data_copy (textGrids -> item [1]);
+		autoTextGrid thee = Data_copy ((TextGrid) textGrids -> item [1]);
 		for (long igrid = 2; igrid <= textGrids -> size; igrid ++) {
 			TextGrid textGrid = (TextGrid) textGrids -> item [igrid];
 			for (long itier = 1; itier <= textGrid -> tiers -> size; itier ++) {
-				TextGrid_addTier (thee.peek(), textGrid -> tiers -> item [itier]); therror
+				TextGrid_addTier (thee.peek(), (TextGrid) textGrid -> tiers -> item [itier]); therror
 			}
 		}
 		return thee.transfer();
@@ -560,7 +460,7 @@ TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preser
 
 		for (long itier = 1; itier <= ntier; itier ++) {
 			Function anyTier = (Function) thy tiers -> item [itier];
-			if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = (IntervalTier) anyTier;
 				long ninterval = tier -> intervals -> size;
 				for (long iinterval = ninterval; iinterval >= 1; iinterval --) {
@@ -1001,8 +901,8 @@ long TextTier_maximumLabelLength (TextTier me) {
 long TextGrid_maximumLabelLength (TextGrid me) {
 	long maximum = 0, ntier = my tiers -> size;
 	for (long itier = 1; itier <= ntier; itier ++) {
-		Thing anyTier = (Thing) my tiers -> item [itier];
-		long length = anyTier -> methods == (Thing_Table) classIntervalTier ?
+		Function anyTier = (Function) my tiers -> item [itier];
+		long length = anyTier -> classInfo == classIntervalTier ?
 			IntervalTier_maximumLabelLength ((IntervalTier) anyTier) :
 			TextTier_maximumLabelLength ((TextTier) anyTier);
 		if (length > maximum) maximum = length;
@@ -1035,8 +935,8 @@ void TextGrid_genericize (TextGrid me) {
 		long ntier = my tiers -> size;
 		autostring buffer = Melder_calloc (wchar, TextGrid_maximumLabelLength (me) * 3 + 1);
 		for (long itier = 1; itier <= ntier; itier ++) {
-			Thing anyTier = (Thing) my tiers -> item [itier];
-			if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+			Function anyTier = (Function) my tiers -> item [itier];
+			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = (IntervalTier) anyTier;
 				long ninterval = tier -> intervals -> size;
 				for (long iinterval = 1; iinterval <= ninterval; iinterval ++) {
@@ -1062,8 +962,8 @@ void TextGrid_nativize (TextGrid me) {
 		long ntier = my tiers -> size;
 		autostring buffer = Melder_calloc (wchar, TextGrid_maximumLabelLength (me) + 1);
 		for (long itier = 1; itier <= ntier; itier ++) {
-			Thing anyTier = (Thing) my tiers -> item [itier];
-			if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+			Function anyTier = (Function) my tiers -> item [itier];
+			if (anyTier -> classInfo == classIntervalTier) {
 				IntervalTier tier = (IntervalTier) anyTier;
 				long ninterval = tier -> intervals -> size;
 				for (long iinterval = 1; iinterval <= ninterval; iinterval ++) {
@@ -1114,7 +1014,7 @@ void TextGrid_insertBoundary (TextGrid me, int tierNumber, double t) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		IntervalTier intervalTier = (IntervalTier) my tiers -> item [tierNumber];
-		if (intervalTier -> methods != (Thing_Table) classIntervalTier)
+		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw ("Cannot add a boundary on tier ", tierNumber, ", because that tier is not an interval tier.");
 		if (IntervalTier_hasTime (intervalTier, t))
 			Melder_throw ("Cannot add a boundary at ", Melder_fixed (t, 6), " seconds, because there is already a boundary there.");
@@ -1163,7 +1063,7 @@ void TextGrid_removeBoundaryAtTime (TextGrid me, int tierNumber, double t) {
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		IntervalTier intervalTier = (IntervalTier) my tiers -> item [tierNumber];
-		if (intervalTier -> methods != (Thing_Table) classIntervalTier)
+		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw ("Tier ", tierNumber, " is not an interval tier.");
 		if (! IntervalTier_hasTime (intervalTier, t))
 			Melder_throw ("There is no boundary at ", t, " seconds.");
@@ -1182,7 +1082,7 @@ void TextGrid_setIntervalText (TextGrid me, int tierNumber, long iinterval, cons
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		IntervalTier intervalTier = (IntervalTier) my tiers -> item [tierNumber];
-		if (intervalTier -> methods != (Thing_Table) classIntervalTier)
+		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw ("Tier ", tierNumber, " is not an interval tier.");
 		if (iinterval < 1 || iinterval > intervalTier -> intervals -> size)
 			Melder_throw ("Interval ", iinterval, " does not exist on tier ", tierNumber, ".");
@@ -1197,7 +1097,7 @@ void TextGrid_insertPoint (TextGrid me, int tierNumber, double t, const wchar_t 
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		TextTier textTier = (TextTier) my tiers -> item [tierNumber];
-		if (textTier -> methods != (Thing_Table) classTextTier)
+		if (textTier -> classInfo != classTextTier)
 			Melder_throw ("Tier ", tierNumber, " is not a point tier.");
 		if (AnyTier_hasPoint (textTier, t))
 			Melder_throw ("There is already a point at ", t, " seconds.");
@@ -1217,7 +1117,7 @@ void TextGrid_setPointText (TextGrid me, int tierNumber, long ipoint, const wcha
 	try {
 		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		TextTier textTier = (TextTier) my tiers -> item [tierNumber];
-		if (textTier -> methods != (Thing_Table) classTextTier)
+		if (textTier -> classInfo != classTextTier)
 			Melder_throw ("Tier ", tierNumber, " is not a point tier.");
 		if (ipoint < 1 || ipoint > textTier -> points -> size)
 			Melder_throw ("Point ", ipoint, " does not exist on tier ", tierNumber, ".");
@@ -1288,7 +1188,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 		if (! wcsequ (tag.peek(), L"Praat chronological TextGrid text file"))
 			Melder_throw ("This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
-		classFunction -> readText (me.peek(), text.peek());
+		my structFunction :: v_readText (text.peek());
 		my tiers = Ordered_create (); therror
 		long numberOfTiers = texgeti4 (text.peek());
 		for (long itier = 1; itier <= numberOfTiers; itier ++) {
@@ -1296,13 +1196,13 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			if (wcsequ (klas.peek(), L"IntervalTier")) {
 				autoIntervalTier tier = Thing_new (IntervalTier);
 				tier -> name = texgetw2 (text.peek());
-				classFunction -> readText (tier.peek(), text.peek());
+				tier -> structFunction :: v_readText (text.peek());
 				tier -> intervals = SortedSetOfDouble_create (); therror
 				Collection_addItem (my tiers, tier.transfer()); therror
 			} else if (wcsequ (klas.peek(), L"TextTier")) {
 				autoTextTier tier = Thing_new (TextTier); therror
 				tier -> name = texgetw2 (text.peek());
-				classFunction -> readText (tier.peek(), text.peek());
+				tier -> structFunction :: v_readText (text.peek());
 				tier -> points = SortedSetOfDouble_create (); therror
 				Collection_addItem (my tiers, tier.transfer());
 			} else {
@@ -1322,15 +1222,15 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 				}
 			}
 			TextGrid_checkSpecifiedTierNumberWithinRange (me.peek(), tierNumber);
-			if (((Thing) my tiers -> item [tierNumber]) -> methods == (Thing_Table) classIntervalTier) {
+			if (((Function) my tiers -> item [tierNumber]) -> classInfo == classIntervalTier) {
 				IntervalTier tier = (IntervalTier) my tiers -> item [tierNumber];
 				autoTextInterval interval = Thing_new (TextInterval);
-				classTextInterval -> readText (interval.peek(), text.peek());
+				interval -> v_readText (text.peek());
 				Collection_addItem (tier -> intervals, interval.transfer());   // not earlier: sorting depends on contents of interval
 			} else {
 				TextTier tier = (TextTier) my tiers -> item [tierNumber];
 				autoTextPoint point = Thing_new (TextPoint);
-				classTextPoint -> readText (point.peek(), text.peek()); therror
+				point -> v_readText (text.peek()); therror
 				Collection_addItem (tier -> points, point.transfer());   // not earlier: sorting depends on contents of point
 			}
 		}
@@ -1377,8 +1277,8 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 			double firstRemainingTime = +1e308;
 			long firstRemainingTier = 2000000000, firstRemainingElement = 0;
 			for (long itier = 1; itier <= my tiers -> size; itier ++) {
-				Thing anyTier = (Data) my tiers -> item [itier];
-				if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+				Function anyTier = (Function) my tiers -> item [itier];
+				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = (IntervalTier) anyTier;
 					for (long ielement = 1; ielement <= tier -> intervals -> size; ielement ++) {
 						TextInterval interval = (TextInterval) tier -> intervals -> item [ielement];
@@ -1411,8 +1311,8 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 			if (firstRemainingElement == 0) {
 				break;
 			} else {
-				Thing anyTier = (Thing) my tiers -> item [firstRemainingTier];
-				if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+				Function anyTier = (Function) my tiers -> item [firstRemainingTier];
+				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = (IntervalTier) anyTier;
 					TextInterval interval = (TextInterval) tier -> intervals -> item [firstRemainingElement];
 					MelderFile_write6 (file, L"\n", Melder_integer (firstRemainingTier), L" ", Melder_double (interval -> xmin), L" ",
@@ -1633,8 +1533,8 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals) {
 	long numberOfRows = 0;
 	for (long itier = 1; itier <= my tiers -> size; itier ++) {
-		Thing anyTier = (Thing) my tiers -> item [itier];
-		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+		Function anyTier = (Function) my tiers -> item [itier];
+		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			if (includeEmptyIntervals) {
 				numberOfRows += tier -> intervals -> size;
@@ -1662,8 +1562,8 @@ Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecim
 	Table_setColumnLabel (thee.peek(), ++ icol, L"tmax");
 	long irow = 0;
 	for (long itier = 1; itier <= my tiers -> size; itier ++) {
-		Thing anyTier = (Thing) my tiers -> item [itier];
-		if (anyTier -> methods == (Thing_Table) classIntervalTier) {
+		Function anyTier = (Function) my tiers -> item [itier];
+		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
 			for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
 				TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];

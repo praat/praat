@@ -28,14 +28,7 @@
 #include "NUM2.h"
 
 
-#undef our
-#define our ((Cepstrum_Table) my methods) ->
-#undef your
-#define your ((Cepstrum_Table) thy methods) ->
-
-class_methods (Cepstrum, Matrix)
-	us -> version = 1;
-class_methods_end
+Thing_implement (Cepstrum, Matrix, 2);
 
 Cepstrum Cepstrum_create (double qmin, double qmax, long nq)
 {
@@ -96,7 +89,7 @@ Matrix Cepstrum_to_Matrix (Cepstrum me)
 {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		your copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Matrix created."); }
 }

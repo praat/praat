@@ -34,15 +34,15 @@ static void draw_CreateDurationTier (Graphics g) {
 	Graphics_textLeft (g, TRUE, L"Relative duration");
 }
 
-extern "C" void manual_Sampling_init (ManPages me);
-extern "C" void manual_sound_init (ManPages me);
-extern "C" void manual_pitch_init (ManPages me);
-extern "C" void manual_spectrum_init (ManPages me);
-extern "C" void manual_formant_init (ManPages me);
-extern "C" void manual_annotation_init (ManPages me);
+void manual_Sampling_init (ManPages me);
+void manual_sound_init (ManPages me);
+void manual_pitch_init (ManPages me);
+void manual_spectrum_init (ManPages me);
+void manual_formant_init (ManPages me);
+void manual_annotation_init (ManPages me);
 
-extern "C" void manual_Fon_init (ManPages me);
-extern "C" void manual_Fon_init (ManPages me) {
+void manual_Fon_init (ManPages me);
+void manual_Fon_init (ManPages me) {
 
 manual_Sampling_init (me);
 manual_sound_init (me);
@@ -786,7 +786,7 @@ LIST_ITEM (L"Page-down (in sound windows): Scroll page forward")
 LIST_ITEM (L"Escape: Interrupt playing")
 MAN_END
 
-MAN_BEGIN (L"Log files", L"ppgb", 20060804)
+MAN_BEGIN (L"Log files", L"ppgb", 20110808)
 INTRO (L"With some commands in the @Query menu of the @SoundEditor and @TextGridEditor, "
 	"you can write combined information about times, pitch values, formants, and intensities "
 	"to the @@Info window@ and to a log file.")
@@ -794,7 +794,7 @@ NORMAL (L"A log file is a text file on disk. It consists of a number of similar 
 	"whose format you determine with the log settings in the Query menu.")
 NORMAL (L"Every time you press F12 (or choose ##Log 1# from the Query menu, "
 	"Praat writes a line to log file 1. If you press Shift-F12, Praat writes a line to log file 2.")
-NORMAL (L"With the ##log settings# dialog, you determine the following:")
+NORMAL (L"With the ##log settings# command window, you determine the following:")
 TAG (L"##Log 1 to Info window")
 DEFINITION (L"this determines whether your log line will be written to the Info window or not.")
 TAG (L"##Log 1 to log file")
@@ -869,7 +869,7 @@ NORMAL (L"With this script, the information would be appended both to the Info w
 	"file \"Formant log.txt\" on your desktop.")
 NORMAL (L"You can make this script accessible with Option-F12 (or Command-F12) "
 	"by saving the script and specifying the name of the script file in the ##Log script 3# (or #4) field "
-	"in the ##Log settings...# dialog.")
+	"in the ##Log settings...# window.")
 NORMAL (L"These scripts may take arguments. Suppose, for instance, that you want to specify a vowel symbol "
 	"as you press Option-F12. The following script will take care of that:")
 CODE (L"form Save vowel and formants")

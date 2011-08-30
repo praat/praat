@@ -26,15 +26,7 @@
 
 #include "Pattern.h"
 
-class_methods (Pattern, Matrix)
-{
-	class_methods_end
-}
-
-#undef our
-#define our ((Pattern_Table) my methods) ->
-#undef your
-#define your ((Pattern_Table) thy methods) ->
+Thing_implement (Pattern, Matrix, 2);
 
 int _Pattern_checkElements (Pattern me)
 {
@@ -125,7 +117,7 @@ Matrix Pattern_to_Matrix (Pattern me)
 {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		your copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Matrix."); }
 }

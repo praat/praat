@@ -48,32 +48,19 @@
 #include "oo_DESCRIPTION.h"
 #include "CC_def.h"
 
-static void info (I)
-{
-	iam (CC);
-	classData -> info (me);
-	MelderInfo_writeLine5 (L"Time domain:", Melder_double (my xmin), L" to ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 (L"Time step: ", Melder_double (my dx), L" seconds");
-	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (my x1), L" seconds");
-	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (my maximumNumberOfCoefficients));
-	MelderInfo_writeLine3 (L"Minimum frequency: ", Melder_double (my fmin), L" Hz");
-	MelderInfo_writeLine3 (L"Maximum frequency: ", Melder_double (my fmax), L" Hz");
-}
+Thing_implement (CC, Sampled, 1);
 
-class_methods (CC, Sampled)
-	us -> version = 1;
-	class_method_local (CC, destroy)
-	class_method_local (CC, equal)
-	class_method_local (CC, canWriteAsEncoding)
-	class_method_local (CC, copy)
-	class_method (info)
-	class_method_local (CC, readText)
-	class_method_local (CC, readBinary)
-	class_method_local (CC, writeText)
-	class_method_local (CC, writeBinary)
-	class_method_local (CC, description)
-class_methods_end
+void structCC :: v_info ()
+{
+	structData :: v_info ();
+	MelderInfo_writeLine5 (L"Time domain:", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine3 (L"Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (maximumNumberOfCoefficients));
+	MelderInfo_writeLine3 (L"Minimum frequency: ", Melder_double (fmin), L" Hz");
+	MelderInfo_writeLine3 (L"Maximum frequency: ", Melder_double (fmax), L" Hz");
+}
 
 void CC_Frame_init (CC_Frame me, long numberOfCoefficients)
 {

@@ -27,12 +27,7 @@
 #include "NUM2.h"
 #include "Data.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "SVD_def.h"
-#define SVD__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SVD, Data);
 
 #define GSVD__methods(klas) Data__methods(klas)
@@ -98,9 +93,5 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns,
 void GSVD_setTolerance (GSVD me, double tolerance);
 
 double GSVD_getTolerance (GSVD me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _SVD_h_ */

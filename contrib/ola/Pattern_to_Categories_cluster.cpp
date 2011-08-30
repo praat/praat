@@ -148,7 +148,6 @@ Categories Pattern_to_Categories_cluster
 						delta += fabs (beta[x] - centroids->z[yp][x]);
 					}
 				}
-				forget (interim);
 			}
 			while (delta);
 

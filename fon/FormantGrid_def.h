@@ -1,6 +1,6 @@
 /* FormantGrid_def.h
  *
- * Copyright (C) 2008 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,21 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2008/04/24 created
- */
-
 #define ooSTRUCT FormantGrid
 oo_DEFINE_CLASS (FormantGrid, Function)
 
 	oo_COLLECTION (Ordered, formants, RealTier, 0)
 	oo_COLLECTION (Ordered, bandwidths, RealTier, 0)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual double v_getVector (long irow, long icol);
+			virtual double v_getFunction1 (long irow, double x);
+			virtual const wchar * v_getUnitText (long ilevel, int unit, unsigned long flags)
+				{ (void) unit; (void) flags; return ilevel & 1 ? L"Formant (Hz)" : L"Bandwidth (Hz)"; }
+			virtual void v_shiftX (double xfrom, double xto);
+			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+	#endif
 
 oo_END_CLASS (FormantGrid)
 #undef ooSTRUCT

@@ -55,9 +55,9 @@
 static const wchar_t *DRAW_BUTTON    = L"Draw -";
 static const wchar_t *QUERY_BUTTON   = L"Query -";
 
-extern "C" void praat_CC_init (void *klas);
-extern "C" void praat_TimeFrameSampled_query_init (void *klas);
-extern "C" int praat_Fon_formula (Any dia);
+void praat_CC_init (ClassInfo klas);
+void praat_TimeFrameSampled_query_init (ClassInfo klas);
+int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 /********************** Cepstrum  ****************************************/
 
@@ -88,7 +88,7 @@ FORM (Cepstrum_formula, L"Cepstrum: Formula...", L"Cepstrum: Formula...")
 	TEXTFIELD (L"formula", L"self")
 	OK
 DO
-	praat_Fon_formula (dia);
+	praat_Fon_formula (dia, interpreter);
 END
 
 
@@ -484,8 +484,8 @@ DO
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Variable location")), my name, L"_r");
 END
 
-extern "C" void praat_uvafon_LPC_init (void);
-extern "C" void praat_uvafon_LPC_init (void)
+void praat_uvafon_LPC_init (void);
+void praat_uvafon_LPC_init (void)
 {
 	Thing_recognizeClassesByName (classCepstrumc, classLPC, classLFCC, classMFCC, NULL);
 

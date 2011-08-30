@@ -32,10 +32,6 @@
 #include "Intensity.h"
 #include "PCA.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #define HZTOBARK(x) NUMhertzToBark2(x)
 #define HZTOMEL(x)	NUMhertzToMel2(x)
 #define BARKTOHZ(x) NUMbarkToHertz2(x)
@@ -52,18 +48,17 @@
 #define FilterBank_BARK  2
 #define FilterBank_MEL   3
 
-Thing_declare1cpp (FilterBank);
-struct structFilterBank : public structMatrix {
+Thing_define (FilterBank, Matrix) {
+	// new methods:
+	public:
+		virtual int v_getFrequencyScale () { return FilterBank_HERTZ; }
 };
-#define FilterBank__methods(klas) Matrix__methods(klas) \
-	int (*getFrequencyScale) (I);
-Thing_declare2cpp (FilterBank, Matrix);
 
-Thing_declare1cpp (BarkFilter);
-struct structBarkFilter : public structFilterBank {
+Thing_define (BarkFilter, FilterBank) {
+	// overridden methods:
+	protected:
+		virtual int v_getFrequencyScale () { return FilterBank_BARK; }
 };
-#define BarkFilter__methods(klas) FilterBank__methods(klas)
-Thing_declare2cpp (BarkFilter, FilterBank);
 
 /*
 Interpretation:
@@ -95,11 +90,11 @@ BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 
 BarkFilter Matrix_to_BarkFilter (I);
 
-Thing_declare1cpp (MelFilter);
-struct structMelFilter : public structFilterBank {
+Thing_define (MelFilter, FilterBank) {
+	// overridden methods:
+	protected:
+		virtual int v_getFrequencyScale () { return FilterBank_MEL; }
 };
-#define MelFilter__methods(klas) FilterBank__methods(klas)
-Thing_declare2cpp (MelFilter, FilterBank);
 
 /*
 Interpretation:
@@ -121,12 +116,14 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 
 MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 
-Thing_declare1cpp (FormantFilter);
-struct structFormantFilter : public structFilterBank {
+Thing_define (FormantFilter, FilterBank) {
+	// overridden methods:
+	protected:
+		//virtual int v_getFrequencyScale ();   // David, is dit correct?
+	// new methods:
+	public:
+		//virtual void v_drawFilterFunction (int from, int to, void *dwrawclosure);   // David, is dit correct?
 };
-#define FormantFilter__methods(klas) FilterBank__methods(klas) \
-	void (*drawFilterFunction) (I, int from, int to, void *dwrawclosure);
-Thing_declare2cpp (FormantFilter, FilterBank);
 
 FormantFilter FormantFilter_create (double tmin, double tmax, long nt, 
 	double dt, double t1, double fmin, double fmax, long nf, double df, 
@@ -155,9 +152,5 @@ Intensity FilterBank_to_Intensity (I);
 
 void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, double dblevel,
 	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FilterBank_h_ */

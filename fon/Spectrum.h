@@ -26,7 +26,6 @@
 #include "Graphics.h"
 
 #include "Spectrum_def.h"
-#define Spectrum__methods(klas)  Matrix__methods(klas)
 oo_CLASS_CREATE (Spectrum, Matrix);
 
 /*

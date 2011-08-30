@@ -26,6 +26,7 @@
 
 Thing_define (ManipulationEditor, FunctionEditor) {
 	// new data:
+	public:
 		PointProcess previousPulses;
 		PitchTier previousPitch;
 		DurationTier previousDuration;
@@ -44,8 +45,8 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		virtual void v_destroy ();
 		virtual void v_createMenus ();
 		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_save ();
-		virtual void v_restore ();
+		virtual void v_saveData ();
+		virtual void v_restoreData ();
 		virtual void v_draw ();
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 		virtual void v_play (double tmin, double tmax);

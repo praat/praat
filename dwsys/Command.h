@@ -28,11 +28,13 @@
 #include "Thing.h"
 #include "Collection.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Command);
+Thing_define (Command, Thing) {
+	// new data:
+	public:
+		Any data;
+		int (*execute) (I);
+		int (*undo) (I);
+};
 
 void Command_init (I, const wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any));
 	
@@ -40,7 +42,11 @@ int Command_do (I);
 
 int Command_undo (I);
 
-Thing_declare1cpp (CommandHistory);
+Thing_define (CommandHistory, Ordered) {
+	// new data:
+	public:
+		long current;
+};
 
 /* Active data structure. 'current' is position of the cursor in the list */
 /* Queries and insertions are at the current position */
@@ -77,24 +83,5 @@ int CommandHistory_offright (I);
 wchar_t *CommandHistory_commandName (I, long offsetFromCurrent);
 /* offsetFromCurrent may be zero, positive or negative. */
 /* References outside the list will return NULL. */
-
-#ifdef __cplusplus
-	}
-
-	struct structCommand : public structThing {
-		Any data;
-		int (*execute) (I);
-		int (*undo) (I);
-	};
-	#define Command__methods(klas) Thing__methods(klas)
-	Thing_declare2cpp (Command, Thing);
-
-	struct structCommandHistory : public structOrdered {
-		long current;
-	};
-	#define CommandHistory__methods(klas) Ordered__methods(klas)
-	Thing_declare2cpp (CommandHistory, Ordered);
-
-#endif
 
 #endif /* _Command_h_ */

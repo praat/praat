@@ -28,36 +28,33 @@
 #include "Data.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /*********** deferred class Minimizer **********************************/
 
-Thing_declare1cpp (Minimizer);
-
-struct structMinimizer : public structThing {
-    long nParameters;	/* the number of parameters */
-    double *p;			/* the parameters */
-    double minimum;		/* current minimum */
-    double *history;	/* previous minima */
-    double tolerance;	/* stop criterium */
-    Data object;		/* reference to the object that uses this Minimizer */
-    long funcCalls;		/* the number of times 'func' has been called */
-    long success;		/* indicates whether I'm done */
-    long start;			/* start iteration series */
-    long maxNumOfIterations; /* the current maximum number of iterations */
-    long iteration;     /* the total number of iterations */
-    void (*after) (I, Any aclosure); /* to be called after each iteration */
-    Any aclosure;
-    Graphics gmonitor;		/* graphics to monitor the minimization process */
+Thing_define (Minimizer, Thing) {
+	// new data:
+	public:
+		long nParameters;	/* the number of parameters */
+		double *p;			/* the parameters */
+		double minimum;		/* current minimum */
+		double *history;	/* previous minima */
+		double tolerance;	/* stop criterium */
+		Data object;		/* reference to the object that uses this Minimizer */
+		long funcCalls;		/* the number of times 'func' has been called */
+		long success;		/* indicates whether I'm done */
+		long start;			/* start iteration series */
+		long maxNumOfIterations; /* the current maximum number of iterations */
+		long iteration;     /* the total number of iterations */
+		void (*after) (I, Any aclosure); /* to be called after each iteration */
+		Any aclosure;
+		Graphics gmonitor;		/* graphics to monitor the minimization process */
+	// overridden methods:
+		virtual void v_destroy ();
+		virtual void v_info () { }
+	// new methods:
+		virtual void v_minimize () { }  /* does the work */
+		virtual void v_reset () { } /* reset the minimizer */
+		virtual void v_setParameters (Any parameters) { (void) parameters; }
 };
-#define Minimizer__methods(klas) Thing__methods(klas)				\
-    void (*minimize) (I);  /* does the work */		\
-    void (*reset) (I); /* reset the minimizer */	\
-    void (*setParameters) (I, Any parameters);
-
-Thing_declare2cpp (Minimizer, Thing);
 
 void Minimizer_init (I, long nParameters, Data object);
 /*
@@ -107,17 +104,19 @@ double Minimizer_getMinimum (Minimizer me);
 
 /********** deferred class LineMinimizer ************************************/
 
-Thing_declare1cpp (LineMinimizer);
-struct structLineMinimizer : public structMinimizer {
-	/* the function to be minimized */
-    double (*func) (Data object, const double p[]);
-	double maxLineStep;	/*maximum step in line search direction */
-    double *direction;	/* search direction vector */
-    double *ptry;		/* point in search direction */
+Thing_define (LineMinimizer, Minimizer) {
+	// new data:
+	public:
+		/* the function to be minimized */
+		double (*func) (Data object, const double p[]);
+		double maxLineStep;	/*maximum step in line search direction */
+		double *direction;	/* search direction vector */
+		double *ptry;		/* point in search direction */
+	// overridden methods:
+		virtual void v_destroy ();
+	// new methods:
+		//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct?
 };
-#define LineMinimizer__methods(klas) Minimizer__methods(klas) \
-    void (*linmin) (I, double p[], double fp, double direction[], double *fret);	/* line minimization */
-Thing_declare2cpp (LineMinimizer, Minimizer);
 
 void LineMinimizer_init (I, long nParameters, Data object, double (*func)
 	(Data object, const double p[]));
@@ -129,15 +128,17 @@ typedef struct structSteepestDescentMinimizer_parameters {
 	double eta, momentum;
 } *SteepestDescentMinimizer_parameters;
 
-Thing_declare1cpp (SteepestDescentMinimizer);
-struct structSteepestDescentMinimizer : public structMinimizer {
-	double eta, momentum;
-    double (*func) (Data object, const double p[]);
-    void  (*dfunc) (Data object, const double p[], double dp[]);
-	/* calculates gradient at position p */
+Thing_define (SteepestDescentMinimizer, Minimizer) {
+	// new data:
+	public:
+		double eta, momentum;
+		double (*func) (Data object, const double p[]);
+		void  (*dfunc) (Data object, const double p[], double dp[]);
+		/* calculates gradient at position p */
+	// overridden methods:
+		virtual void v_minimize ();
+		virtual void v_setParameters (Any parameters);
 };
-#define SteepestDescentMinimizer__methods(klas) Minimizer__methods(klas)
-Thing_declare2cpp (SteepestDescentMinimizer, Minimizer);
 
 SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Data object, double (*func)
 	(Data object, const double p[]), void (*dfunc) (Data object, const double p[],
@@ -151,34 +152,34 @@ typedef struct structVDSmagtMinimizer_parameters {
 	long lineSearchMaxNumOfIterations;
 } *VDSmagtMinimizer_parameters;
 
-Thing_declare1cpp (VDSmagtMinimizer);
-struct structVDSmagtMinimizer : public structMinimizer {
-    double (*func) (Data object, const double p[]);
-	void  (*dfunc) (Data object, const double p[], double dp[]);
-	double *dp;
-    double lineSearchGradient;
-    long lineSearchMaxNumOfIterations;
-    double gr0, gropt, df, alplim, alpha, dalpha, alphamin;
-    double *pc;	/* position of current point */
-    double *gc;	/* gradient of current point */
-    double *g0;	/* gradient at beginning of line search */
-    double *s;	/* search direction for line search */
-    double *srst;/* search direction for first iteration after restart */
-    double *grst; /* gradient for first iteration after restart */
-    double fc, grc, fch, gr2s, temp, grs, beta, gcg0;
-    double gamma, gamma_in, f0, gsq, gopt_sq;
-    long lineSearch_iteration, flag, again, one_up, restart;
-    long restart_flag;
+Thing_define (VDSmagtMinimizer, Minimizer) {
+	// new data:
+	public:
+		double (*func) (Data object, const double p[]);
+		void  (*dfunc) (Data object, const double p[], double dp[]);
+		double *dp;
+		double lineSearchGradient;
+		long lineSearchMaxNumOfIterations;
+		double gr0, gropt, df, alplim, alpha, dalpha, alphamin;
+		double *pc;	/* position of current point */
+		double *gc;	/* gradient of current point */
+		double *g0;	/* gradient at beginning of line search */
+		double *s;	/* search direction for line search */
+		double *srst;/* search direction for first iteration after restart */
+		double *grst; /* gradient for first iteration after restart */
+		double fc, grc, fch, gr2s, temp, grs, beta, gcg0;
+		double gamma, gamma_in, f0, gsq, gopt_sq;
+		long lineSearch_iteration, flag, again, one_up, restart;
+		long restart_flag;
+	// overridden methods:
+		virtual void v_destroy ();
+		virtual void v_minimize ();
+		virtual void v_reset ();
+		virtual void v_setParameters (Any parameters);
 };
-#define VDSmagtMinimizer__methods(klas) Minimizer__methods(klas)
-Thing_declare2cpp (VDSmagtMinimizer, Minimizer);
 
 VDSmagtMinimizer VDSmagtMinimizer_create (long dimension, Data object, double (*func)
 	(Data object, const double p[]), void (*dfunc) (Data object, const double p[],
 	double dp[]));
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Minimizer_h_ */

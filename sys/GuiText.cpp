@@ -190,7 +190,7 @@ void _GuiText_setTheTextFocus (GuiObject widget) {
 	if (widget == NULL || theGui.textFocus == widget
 		|| ! widget -> managed) return;   /* Perhaps not-yet-managed. Test: open Praat's DataEditor with a Sound, then type. */
 	#if gtk
-		gtk_widget_grab_focus (widget);
+		gtk_widget_grab_focus (GTK_WIDGET (widget));
 	#elif win
 		SetFocus (widget -> window);   /* Will send an EN_SETFOCUS notification, which will call _GuiText_handleFocusReception (). */
 	#elif mac
@@ -875,8 +875,8 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			GuiObject scrolled = gtk_scrolled_window_new (NULL, NULL);
 			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 			my widget = gtk_text_view_new ();
-			gtk_container_add (GTK_CONTAINER (scrolled), my widget);
-			gtk_widget_show (scrolled);
+			gtk_container_add (GTK_CONTAINER (scrolled), GTK_WIDGET (my widget));
+			gtk_widget_show (GTK_WIDGET (scrolled));
 			gtk_text_view_set_editable (GTK_TEXT_VIEW (my widget), (flags & GuiText_NONEDITABLE) == 0);
 			if ((flags & GuiText_WORDWRAP) != 0) 
 				ww = GTK_WRAP_WORD_CHAR;
@@ -887,7 +887,7 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			g_signal_connect (G_OBJECT (buffer), "delete-range", G_CALLBACK (_GuiGtkTextBuf_history_delete_cb), me);
 			g_signal_connect (G_OBJECT (buffer), "insert-text", G_CALLBACK (_GuiGtkTextBuf_history_insert_cb), me);
 			g_signal_connect (G_OBJECT (buffer), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
-			gtk_container_add (GTK_CONTAINER (parent), scrolled);
+			gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (scrolled));
 		} else {
 			my widget = gtk_entry_new ();
 			gtk_editable_set_editable (GTK_EDITABLE (my widget), (flags & GuiText_NONEDITABLE) == 0);
@@ -896,7 +896,7 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			g_signal_connect (GTK_EDITABLE (my widget), "changed", G_CALLBACK (_GuiGtkText_valueChangedCallback), me);
 			//GTK_WIDGET_UNSET_FLAGS (my widget, GTK_CAN_DEFAULT);
 			if (GTK_IS_BOX (parent)) {
-				gtk_container_add (GTK_CONTAINER (parent), my widget);
+				gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (my widget));
 			}
 			gtk_entry_set_activates_default (GTK_ENTRY (my widget), true);
 		}
@@ -1318,11 +1318,11 @@ void GuiText_setChangeCallback (GuiObject widget, void (*changeCallback) (void *
 
 void GuiText_setFontSize (GuiObject widget, int size) {
 	#if gtk
-		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (widget);
-		PangoFontDescription *fontDesc = modStyle -> font_desc != NULL ? modStyle->font_desc : pango_font_description_copy (widget -> style -> font_desc);
+		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (GTK_WIDGET (widget));
+		PangoFontDescription *fontDesc = modStyle -> font_desc != NULL ? modStyle->font_desc : pango_font_description_copy (GTK_WIDGET (widget) -> style -> font_desc);
 		pango_font_description_set_absolute_size (fontDesc, size * PANGO_SCALE);
 		modStyle -> font_desc = fontDesc;
-		gtk_widget_modify_style (widget, modStyle);
+		gtk_widget_modify_style (GTK_WIDGET (widget), modStyle);
 	#elif win
 	#elif mac
 		iam_text;

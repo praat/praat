@@ -19,25 +19,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020813 GPL header
- djmw 20110511 Latest modification.
-*/
-
 #include "TableOfReal.h"
 #include "Categories.h"
 #include "Graphics.h"
 #include "Matrix.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Confusion);
-struct structConfusion : public structTableOfReal {
+Thing_define (Confusion, TableOfReal) {
+	// overridden methods:
+		virtual void v_info ();
 };
-#define Confusion__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (Confusion, TableOfReal);
 
 /*
 	A Confusion matrix has both row and column labels.
@@ -112,9 +102,5 @@ TableOfReal Confusion_to_TableOfReal_marginals (I);
 
 void Confusion_drawAsNumbers (I, Graphics g, int marginals, int iformat, int precision);
 // option marginals draw one extra row and column with sums.
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Confusion_h_ */

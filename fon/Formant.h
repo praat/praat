@@ -24,7 +24,6 @@
 #include "Interpreter_decl.h"
 
 #include "Formant_def.h"
-#define Formant__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Formant, Sampled);
 
 Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1, int maxnFormants);

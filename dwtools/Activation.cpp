@@ -26,10 +26,8 @@
 
 #include "Activation.h"
 
-class_methods (Activation, Matrix)
-{
-	class_methods_end
-}
+Thing_implement (Activation, Matrix, 2);
+
 int _Activation_checkElements (Activation me)
 {
 	for (long i = 1; i <= my ny; i++)

@@ -17,26 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1998/05/17 mac 64-bit floats only
- * pb 1998/05/18 "verticalScrollBar"
- * pb 1998/10/22 removed now duplicate "parent" attribute
- * pb 1998/11/04 removed BUG: added assignment to "my parent"
- * pb 1999/06/21 removed BUG: dcomplex read %lf
- * pb 2003/05/19 Melder_atof
- * pb 2005/12/04 wider names
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/12/23 Gui
- * pb 2007/12/31 Gui
- * pb 2008/03/20 split off Help menu
- * pb 2008/03/21 new Editor API
- * pb 2008/07/20 wchar_t
- * pb 2011/03/03 removed stringwa
- * pb 2011/04/06 C++
- * pb 2011/05/14 removed charwa and wcharwa
- */
-
 #define NAME_X  30
 #define TEXT_X  250
 #define BUTTON_X  250
@@ -51,6 +31,10 @@
 #include "EditorM.h"
 #include "Collection.h"
 #include "machine.h"
+
+static Data_Description Class_getDescription (ClassInfo table) {
+	return ((Data) _Thing_dummyObject (table)) -> v_description ();
+}
 
 /*static const char * typeStrings [] = { "none",
 	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
@@ -73,8 +57,8 @@ static StructEditor StructEditor_create (DataEditor root, const wchar *title, vo
 static ClassEditor ClassEditor_create (DataEditor root, const wchar *title, void *address, Data_Description description);
 
 /********** DataSubEditor **********/
-#undef our
-#define our ((DataSubEditor_Table) my methods) ->
+
+Thing_implement (DataSubEditor, Editor, 0);
 
 void structDataSubEditor :: v_destroy () {
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
@@ -99,15 +83,15 @@ static void update (DataSubEditor me) {
 	}
 
 	my irow = 0;
-	our showMembers (me);
+	my v_showMembers ();
 }
 
 static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const wchar_t *number) {
 	Data_Description structDescription, result;
 	wchar_t string [100];
-	if ((DataSubEditor_Table) my methods == (DataSubEditor_Table) classMatrixEditor) return NULL;   /* No structs inside. */
-	if ((DataSubEditor_Table) my methods == (DataSubEditor_Table) classVectorEditor) {
-		if (my description -> type != structwa) return NULL;   /* No structs inside. */
+	if (my classInfo == classMatrixEditor) return NULL;   // no structs inside
+	if (my classInfo == classVectorEditor) {
+		if (my description -> type != structwa) return NULL;   // no structs inside
 		structDescription = (Data_Description) my description -> tagType;
 	} else { /* StructEditor or ClassEditor or DataEditor. */
 		structDescription = my description;
@@ -241,8 +225,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 	 * 1. The owner (creator) of our root DataEditor: so that she can notify other editors, if any.
 	 * 2. All our sibling DataSubEditors.
 	 */
-	if (my root -> dataChangedCallback)
-		my root -> dataChangedCallback (my root, my root -> dataChangedClosure, NULL);   /* Notify owner. */
+	my root -> broadcastDataChanged ();
 	update (me);
 	for (i = 1; i <= my root -> children -> size; i ++) {
 		DataSubEditor subeditor = (DataSubEditor) my root -> children -> item [i];
@@ -308,7 +291,7 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 	} else if (fieldData -> description -> type == objectwa || fieldData -> description -> type == collectionwa) {
 		MelderString_append3 (& name, fieldData -> history, L". ", fieldData -> description -> name);
 		if (! ClassEditor_create (my root, name.string, fieldData -> address,
-			((Data_Table) fieldData -> description -> tagType) -> description)) Melder_flushError (NULL);
+			Class_getDescription ((ClassInfo) fieldData -> description -> tagType))) Melder_flushError (NULL);
 	} else /*if (fieldData -> description -> type == inheritwa)*/ {
 		if (! ClassEditor_create (my root, fieldData -> history, fieldData -> address,
 			fieldData -> description)) Melder_flushError (NULL);
@@ -324,13 +307,13 @@ void structDataSubEditor :: v_createChildren () {
 	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
 
 	#if motif
-	GuiButton_createShown (dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
+	GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Change", gui_button_cb_change, this, 0);
 	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
-	GuiButton_createShown (dialog, x, x + buttonWidth, y, Gui_AUTOMATIC,
+	GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Cancel", gui_button_cb_cancel, this, 0);
 	
-	GuiObject scrolledWindow = XmCreateScrolledWindow (dialog, "list", NULL, 0);
+	GuiObject scrolledWindow = XmCreateScrolledWindow (d_windowForm, "list", NULL, 0);
 	XtVaSetValues (scrolledWindow, 
 		XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, LIST_Y + Machine_getMenuBarHeight (),
@@ -356,7 +339,7 @@ void structDataSubEditor :: v_createChildren () {
 	GuiObject outerBox = gtk_vbox_new (0, 0);
 	GuiObject buttonBox = gtk_hbutton_box_new ();
 	gtk_button_box_set_layout (GTK_BUTTON_BOX (buttonBox), GTK_BUTTONBOX_START);
-	gtk_box_pack_start (GTK_BOX (outerBox), buttonBox, 0, 0, 3);
+	gtk_box_pack_start (GTK_BOX (outerBox), GTK_WIDGET (buttonBox), 0, 0, 3);
 	
 	GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
 		L"Change", gui_button_cb_change, this, 0);
@@ -367,10 +350,10 @@ void structDataSubEditor :: v_createChildren () {
 	GuiObject scrolledWindow = gtk_scrolled_window_new (NULL, NULL);
 	
 	GuiObject form = gtk_vbox_new (0, 3);
-	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledWindow), form);
+	gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledWindow), GTK_WIDGET (form));
 	gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-	gtk_box_pack_start (GTK_BOX (outerBox), scrolledWindow, 1, 1, 3);
-	gtk_container_add (GTK_CONTAINER (dialog), outerBox);
+	gtk_box_pack_start (GTK_BOX (outerBox), GTK_WIDGET (scrolledWindow), 1, 1, 3);
+	gtk_container_add (GTK_CONTAINER (d_windowForm), GTK_WIDGET (outerBox));
 	
 	GuiObject_show (outerBox);
 	GuiObject_show (buttonBox);
@@ -388,21 +371,11 @@ void structDataSubEditor :: v_createChildren () {
 	GuiObject_show (form);
 }
 
-static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (DataSubEditor); Melder_help (L"Inspect"); return 1; }
+static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (DataSubEditor); Melder_help (L"Inspect"); }
 
 void structDataSubEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	DataSubEditor_Parent :: v_createHelpMenuItems (menu);
 	EditorMenu_addCommand (menu, L"DataEditor help", '?', menu_cb_help);
-}
-
-static long classDataSubEditor_countFields (DataSubEditor me) { (void) me; return 0; }
-
-static void classDataSubEditor_showMembers (DataSubEditor me) { (void) me; }
-
-class_methods (DataSubEditor, Editor) {
-	class_method_local (DataSubEditor, countFields)
-	class_method_local (DataSubEditor, showMembers)
-	class_methods_end
 }
 
 static void DataSubEditor_init (DataSubEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
@@ -413,15 +386,17 @@ static void DataSubEditor_init (DataSubEditor me, DataEditor root, const wchar_t
 	my address = address;
 	my description = description;
 	my topField = 1;
-	my numberOfFields = our countFields (me);
-	Editor_init (me, root -> parent, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL); therror
+	my numberOfFields = my v_countFields ();
+	Editor_init (me, root -> d_windowParent, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL); therror
 	update (me);
 }
 
 /********** StructEditor **********/
 
-static long classStructEditor_countFields (StructEditor me) {
-	return Data_Description_countMembers (my description);
+Thing_implement (StructEditor, DataSubEditor, 0);
+
+long structStructEditor :: v_countFields () {
+	return Data_Description_countMembers (description);
 }
 
 static const wchar * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
@@ -584,14 +559,8 @@ static void showStructMembers (I, void *structAddress, Data_Description structDe
 	}
 }
 
-static void classStructEditor_showMembers (StructEditor me) {
-	showStructMembers (me, my address, my description, my topField, my name);
-}
-
-class_methods (StructEditor, DataSubEditor) {
-	class_method_local (StructEditor, countFields)
-	class_method_local (StructEditor, showMembers)
-	class_methods_end
+void structStructEditor :: v_showMembers () {
+	showStructMembers (this, address, description, topField, name);
 }
 
 static void StructEditor_init (StructEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
@@ -610,50 +579,52 @@ static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, 
 
 /********** VectorEditor **********/
 
-static long classVectorEditor_countFields (VectorEditor me) {
-	long numberOfElements = my maximum - my minimum + 1;
-	if (my description -> type == structwa)
-		return numberOfElements * (Data_Description_countMembers ((Data_Description) my description -> tagType) + 1);
+Thing_implement (VectorEditor, DataSubEditor, 0);
+
+long structVectorEditor :: v_countFields () {
+	long numberOfElements = maximum - minimum + 1;
+	if (description -> type == structwa)
+		return numberOfElements * (Data_Description_countMembers ((Data_Description) description -> tagType) + 1);
 	else
 		return numberOfElements;
 }
 
-static void classVectorEditor_showMembers (VectorEditor me) {
+void structVectorEditor :: v_showMembers () {
 	long firstElement, ielement;
-	int type = my description -> type, isSingleType = type <= maxsingletypewa;
+	int type = description -> type, isSingleType = type <= maxsingletypewa;
 	int elementSize = type == structwa ?
-		Data_Description_countMembers ((Data_Description) my description -> tagType) + 1 : 1;
-	firstElement = my minimum + (my topField - 1) / elementSize;
+		Data_Description_countMembers ((Data_Description) description -> tagType) + 1 : 1;
+	firstElement = minimum + (topField - 1) / elementSize;
 
-	for (ielement = firstElement; ielement <= my maximum; ielement ++) {
-		unsigned char *elementAddress = (unsigned char *) my address + ielement * my description -> size;
+	for (ielement = firstElement; ielement <= maximum; ielement ++) {
+		unsigned char *elementAddress = (unsigned char *) address + ielement * description -> size;
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
-		DataSubEditor_FieldData fieldData;
-		int skip = ielement == firstElement ? (my topField - 1) % elementSize : 0;
+		DataSubEditor_FieldData l_fieldData;
+		int skip = ielement == firstElement ? (topField - 1) % elementSize : 0;
 
-		if (++ my irow > kDataSubEditor_MAXNUM_ROWS) return;
-		fieldData = & my fieldData [my irow];
+		if (++ irow > kDataSubEditor_MAXNUM_ROWS) return;
+		l_fieldData = & this -> fieldData [irow];
 
 		if (isSingleType) {
-			MelderString_append4 (& buffer, my description -> name, L" [",
-				my description -> rank == 3 ? ((const wchar_t * (*) (int)) my description -> min1) (ielement) : Melder_integer (ielement), L"]");
-			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-			GuiLabel_setString (fieldData -> label, buffer.string);
-			GuiObject_show (fieldData -> label);
+			MelderString_append4 (& buffer, description -> name, L" [",
+				description -> rank == 3 ? ((const wchar_t * (*) (int)) description -> min1) (ielement) : Melder_integer (ielement), L"]");
+			GuiObject_move (l_fieldData -> label, 0, Gui_AUTOMATIC);
+			GuiLabel_setString (l_fieldData -> label, buffer.string);
+			GuiObject_show (l_fieldData -> label);
 
 			MelderString_empty (& buffer);
-			const wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
+			const wchar_t *text = singleTypeToText (elementAddress, type, description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+				XtVaSetValues (l_fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 			#endif
-			GuiText_setString (fieldData -> text, text);
-			GuiObject_show (fieldData -> text);
-			fieldData -> address = elementAddress;
-			fieldData -> description = my description;
+			GuiText_setString (l_fieldData -> text, text);
+			GuiObject_show (l_fieldData -> text);
+			l_fieldData -> address = elementAddress;
+			l_fieldData -> description = description;
 		} else if (type == structwa) {
 			static MelderString history = { 0 };
-			MelderString_copy (& history, my name);
+			MelderString_copy (& history, name);
 
 			/* Replace things like [1..100] by things like [19]. */
 
@@ -666,17 +637,17 @@ static void classVectorEditor_showMembers (VectorEditor me) {
 			MelderString_append3 (& history, L"[", Melder_integer (ielement), L"]");
 
 			if (skip) {
-				my irow --;
+				irow --;
 			} else {
-				MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]: ---------------------------");
-				GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-				GuiLabel_setString (fieldData -> label, buffer.string);
-				GuiObject_show (fieldData -> label);
+				MelderString_append4 (& buffer, description -> name, L" [", Melder_integer (ielement), L"]: ---------------------------");
+				GuiObject_move (l_fieldData -> label, 0, Gui_AUTOMATIC);
+				GuiLabel_setString (l_fieldData -> label, buffer.string);
+				GuiObject_show (l_fieldData -> label);
 			}
-			showStructMembers (me, elementAddress, (Data_Description) my description -> tagType, skip, history.string);
+			showStructMembers (this, elementAddress, (Data_Description) description -> tagType, skip, history.string);
 		} else if (type == objectwa) {
 			static MelderString history = { 0 };
-			MelderString_copy (& history, my name);
+			MelderString_copy (& history, name);
 			if (history.string [history.length - 1] == ']') {
 				wchar_t *openingBracket = wcsrchr (history.string, '[');
 				Melder_assert (openingBracket != NULL);
@@ -685,28 +656,22 @@ static void classVectorEditor_showMembers (VectorEditor me) {
 			}
 			MelderString_append3 (& history, L"[", Melder_integer (ielement), L"]");
 
-			MelderString_append4 (& buffer, my description -> name, L" [", Melder_integer (ielement), L"]");
-			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-			GuiLabel_setString (fieldData -> label, buffer.string);
-			GuiObject_show (fieldData -> label);
+			MelderString_append4 (& buffer, description -> name, L" [", Melder_integer (ielement), L"]");
+			GuiObject_move (l_fieldData -> label, 0, Gui_AUTOMATIC);
+			GuiLabel_setString (l_fieldData -> label, buffer.string);
+			GuiObject_show (l_fieldData -> label);
 
 			Data object = * (Data *) elementAddress;
-			if (object == NULL) return;   /* No button if no object. */
-			if (! ((Data_Table) object -> methods) -> description) return;   /* No button if no description for this class. */
-			fieldData -> address = object;
-			fieldData -> description = ((Data_Table) object -> methods) -> description;
-			fieldData -> rank = 0;
-			if (fieldData -> history) Melder_free (fieldData -> history);
-			fieldData -> history = Melder_wcsdup_f (history.string);
-			GuiObject_show (fieldData -> button);			
+			if (object == NULL) return;   // no button if no object
+			if (! Class_getDescription (object -> classInfo)) return;   // no button if no description for this class
+			l_fieldData -> address = object;
+			l_fieldData -> description = Class_getDescription (object -> classInfo);
+			l_fieldData -> rank = 0;
+			if (l_fieldData -> history) Melder_free (l_fieldData -> history);
+			l_fieldData -> history = Melder_wcsdup_f (history.string);
+			GuiObject_show (l_fieldData -> button);			
 		}
 	}
-}
-
-class_methods (VectorEditor, DataSubEditor) {
-	class_method_local (VectorEditor, countFields)
-	class_method_local (VectorEditor, showMembers)
-	class_methods_end
 }
 
 static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
@@ -725,56 +690,51 @@ static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, 
 
 /********** MatrixEditor **********/
 
-static long classMatrixEditor_countFields (MatrixEditor me) {
-	long numberOfElements = (my maximum - my minimum + 1) * (my max2 - my min2 + 1);
-	if (my description -> type == structwa)
-		return numberOfElements * (Data_Description_countMembers ((Data_Description) my description -> tagType) + 1);
+Thing_implement (MatrixEditor, DataSubEditor, 0);
+
+long structMatrixEditor :: v_countFields () {
+	long numberOfElements = (maximum - minimum + 1) * (max2 - min2 + 1);
+	if (description -> type == structwa)
+		return numberOfElements * (Data_Description_countMembers ((Data_Description) description -> tagType) + 1);
 	else
 		return numberOfElements;
 }
 
-static void classMatrixEditor_showMembers (MatrixEditor me) {
+void structMatrixEditor :: v_showMembers () {
 	long firstRow, firstColumn;
-	int type = my description -> type, isSingleType = type <= maxsingletypewa;
+	int type = description -> type, isSingleType = type <= maxsingletypewa;
 	int elementSize = type == structwa ?
-		Data_Description_countMembers ((Data_Description) my description -> tagType) + 1 : 1;
-	int rowSize = elementSize * (my max2 - my min2 + 1);
-	firstRow = my minimum + (my topField - 1) / rowSize;
-	firstColumn = my min2 + (my topField - 1 - (firstRow - my minimum) * rowSize) / elementSize;
+		Data_Description_countMembers ((Data_Description) description -> tagType) + 1 : 1;
+	int rowSize = elementSize * (max2 - min2 + 1);
+	firstRow = minimum + (topField - 1) / rowSize;
+	firstColumn = min2 + (topField - 1 - (firstRow - minimum) * rowSize) / elementSize;
 
-	for (long irow = firstRow; irow <= my maximum; irow ++)
-	for (long icolumn = irow == firstRow ? firstColumn : my min2; icolumn <= my max2; icolumn ++) {
-		unsigned char *elementAddress = * ((unsigned char **) my address + irow) + icolumn * my description -> size;
-		DataSubEditor_FieldData fieldData;
+	for (long irow = firstRow; irow <= maximum; irow ++)
+	for (long icolumn = irow == firstRow ? firstColumn : min2; icolumn <= max2; icolumn ++) {
+		unsigned char *elementAddress = * ((unsigned char **) address + irow) + icolumn * description -> size;
 
-		if (++ my irow > kDataSubEditor_MAXNUM_ROWS) return;
-		fieldData = & my fieldData [my irow];
+		if (++ irow > kDataSubEditor_MAXNUM_ROWS) return;
+		DataSubEditor_FieldData l_fieldData = & this -> fieldData [irow];
 		
 		if (isSingleType) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
-			MelderString_append6 (& buffer, my description -> name, L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
-			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-			GuiLabel_setString (fieldData -> label, buffer.string);
-			GuiObject_show (fieldData -> label);
+			MelderString_append6 (& buffer, description -> name, L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
+			GuiObject_move (l_fieldData -> label, 0, Gui_AUTOMATIC);
+			GuiLabel_setString (l_fieldData -> label, buffer.string);
+			GuiObject_show (l_fieldData -> label);
 
 			MelderString_empty (& buffer);
-			const wchar_t *text = singleTypeToText (elementAddress, type, my description -> tagType, & buffer);
+			const wchar_t *text = singleTypeToText (elementAddress, type, description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+				XtVaSetValues (l_fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 			#endif
-			GuiText_setString (fieldData -> text, text);
-			GuiObject_show (fieldData -> text);
-			fieldData -> address = elementAddress;
-			fieldData -> description = my description;
+			GuiText_setString (l_fieldData -> text, text);
+			GuiObject_show (l_fieldData -> text);
+			l_fieldData -> address = elementAddress;
+			l_fieldData -> description = description;
 		}
 	}
-}
-
-class_methods (MatrixEditor, DataSubEditor) {
-	class_method_local (MatrixEditor, countFields)
-	class_method_local (MatrixEditor, showMembers)
-	class_methods_end
 }
 
 static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
@@ -795,26 +755,23 @@ static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, 
 
 /********** ClassEditor **********/
 
-static void ClassEditor_showMembers_recursive (ClassEditor me, void *klas) {
-	Data_Table parentClass = (Data_Table) ((Data_Table) klas) -> _parent;
-	Data_Description description = ((Data_Table) klas) -> description;
+Thing_implement (ClassEditor, StructEditor, 0);
+
+static void ClassEditor_showMembers_recursive (ClassEditor me, ClassInfo klas) {
+	ClassInfo parentClass = klas -> parent;
+	Data_Description description = Class_getDescription (klas);
 	int classFieldsTraversed = 0;
-	while (parentClass -> description == description)
-		parentClass = (Data_Table) parentClass -> _parent;
+	while (Class_getDescription (parentClass) == description)
+		parentClass = parentClass -> parent;
 	if (parentClass != classData) {
 		ClassEditor_showMembers_recursive (me, parentClass);
-		classFieldsTraversed = Data_Description_countMembers (parentClass -> description);
+		classFieldsTraversed = Data_Description_countMembers (Class_getDescription (parentClass));
 	}
 	showStructMembers (me, my address, description, my irow ? 1 : my topField - classFieldsTraversed, my name);
 }
 
-static void classClassEditor_showMembers (ClassEditor me) {
-	ClassEditor_showMembers_recursive (me, ((Data) my address) -> methods);
-}
-
-class_methods (ClassEditor, StructEditor) {
-	class_method_local (ClassEditor, showMembers)
-	class_methods_end
+void structClassEditor :: v_showMembers () {
+	ClassEditor_showMembers_recursive (this, ((Data) address) -> classInfo);
 }
 
 static void ClassEditor_init (ClassEditor me, DataEditor root, const wchar_t *title, void *address, Data_Description description) {
@@ -834,6 +791,8 @@ static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, vo
 }
 
 /********** DataEditor **********/
+
+Thing_implement (DataEditor, ClassEditor, 0);
 
 void structDataEditor :: v_destroy () {
 
@@ -865,19 +824,15 @@ void structDataEditor :: v_dataChanged () {
 	}
 }
 
-class_methods (DataEditor, ClassEditor) {
-	class_methods_end
-}
-
 DataEditor DataEditor_create (GuiObject parent, const wchar *title, Any data) {
 	try {
-		Data_Table klas = (Data_Table) ((Thing) data) -> methods;
-		if (klas -> description == NULL)
-			Melder_throw ("Class ", klas -> _className, " cannot be inspected.");
+		ClassInfo klas = ((Thing) data) -> classInfo;
+		if (Class_getDescription (klas) == NULL)
+			Melder_throw ("Class ", klas -> className, " cannot be inspected.");
 		autoDataEditor me = Thing_new (DataEditor);
 		my children = Collection_create (classDataSubEditor, 10); therror
-		my parent = parent;
-		ClassEditor_init (me.peek(), me.peek(), title, data, klas -> description);
+		my d_windowParent = parent;
+		ClassEditor_init (me.peek(), me.peek(), title, data, Class_getDescription (klas));
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Inspector window not created.");

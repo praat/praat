@@ -22,20 +22,10 @@
 #include "Data.h"
 
 #include "Simple_def.h"
-
-#define SimpleInt__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleInt, Data);
-
-#define SimpleShort__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleShort, Data);
-
-#define SimpleLong__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleLong, Data);
-
-#define SimpleDouble__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleDouble, Data);
-
-#define SimpleString__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SimpleString, Data);
 
 SimpleInt SimpleInt_create (int number);

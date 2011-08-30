@@ -30,9 +30,9 @@
 #undef iam
 #define iam iam_LOOP
 
-extern "C" void praat_SSCP_as_TableOfReal_init (void *klas);
-extern "C" void praat_TableOfReal_init (void *klas);
-void praat_TableOfReal_init3  (void *klas);
+void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
+void praat_TableOfReal_init (ClassInfo klas);
+void praat_TableOfReal_init3  (ClassInfo klas);
 
 /********************** CrossCorrelationTable(s) ******************/
 
@@ -144,7 +144,7 @@ DO
 	LOOP {
 		iam (CrossCorrelationTables);
 		if (index > my size) Melder_throw (L"Index too large.");
-		autoCrossCorrelationTable thee = (CrossCorrelationTable) Data_copy (my item[index]);
+		autoCrossCorrelationTable thee = Data_copy ((CrossCorrelationTable) my item[index]);
 		praat_new (thee.transfer(), Thing_getName (me), L"_", Melder_integer (index));
 	}
 END
@@ -320,14 +320,14 @@ DO
 		(by_columns ? L"by_columns" : L"by_rows"));
 END
 
-void praat_TableOfReal_init3  (void *klas)
+void praat_TableOfReal_init3  (ClassInfo klas)
 {
 	praat_TableOfReal_init (klas);
 	praat_addAction1 (klas, 2, L"To TableOfReal (cross-correlations)...", 0, 0, DO_TableOfReal_and_TableOfReal_crossCorrelations);
 }
 
-extern "C" void praat_BSS_init (void);
-extern "C" void praat_BSS_init (void)
+void praat_BSS_init (void);
+void praat_BSS_init (void)
 {
 	Thing_recognizeClassesByName (classDiagonalizer, classMixingMatrix, classCrossCorrelationTable, classCrossCorrelationTables, NULL);
 

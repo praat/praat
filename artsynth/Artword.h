@@ -23,7 +23,6 @@
 #include "Graphics.h"
 
 #include "Artword_def.h"
-#define Artword__methods(klas)  Data__methods(klas)
 oo_CLASS_CREATE (Artword, Data);
 
 Artword Artword_create (double totalTime);

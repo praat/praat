@@ -17,26 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/05/08 standard info
- * pb 2004/10/16 struct Pitch_Candidate -> struct structPitch_Candidate
- * pb 2004/10/24 Sampled statistics
- * pb 2004/11/22 simplified Sound_to_Spectrum ()
- * pb 2005/06/16 function units
- * pb 2005/08/31 semitones re 200 Hz
- * pb 2006/12/17 Pitch_getMeanAbsoluteSlope returns NUMundefined instead of 0.0
- * pb 2006/12/18 better info
- * pb 2006/12/30 new Sound_create API
- * pb 2007/01/12 guard path finder against weird settings
- * pb 2007/01/12 commented out Melder_casual in Pitch_difference
- * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar
- * pb 2007/10/01 can write as encoding
- * pb 2007/12/09 enums
- * pb 2011/06/04 C++
- */
-
 #include "Pitch.h"
 #include <ctype.h>
 #include "Sound_and_Spectrum.h"
@@ -66,25 +46,21 @@
 #include "enums_getValue.h"
 #include "Pitch_enums.h"
 
-#undef our
-#define our ((Pitch_Table) my methods) ->
+Thing_implement (Pitch, Sampled, 1);
 
 #define FREQUENCY(frame)  ((frame) -> candidate [1]. frequency)
 #define STRENGTH(frame)  ((frame) -> candidate [1]. strength)
 #define NOT_VOICED(f)  ((f) <= 0.0 || (f) >= my ceiling)   /* This includes NUMundefined! */
 
-static int getMinimumUnit (I, long ilevel) {
-	(void) void_me;
+int structPitch :: v_getMinimumUnit (long ilevel) {
 	return ilevel == Pitch_LEVEL_FREQUENCY ? kPitch_unit_MIN : Pitch_STRENGTH_UNIT_min;
 }
 
-static int getMaximumUnit (I, long ilevel) {
-	(void) void_me;
+int structPitch :: v_getMaximumUnit (long ilevel) {
 	return ilevel == Pitch_LEVEL_FREQUENCY ? kPitch_unit_MAX : Pitch_STRENGTH_UNIT_max;
 }
 
-static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
-	(void) void_me;
+const wchar * structPitch :: v_getUnitText (long ilevel, int unit, unsigned long flags) {
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == kPitch_unit_HERTZ ?
@@ -115,13 +91,11 @@ static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags)
 	return L"unknown";
 }
 
-static int isUnitLogarithmic (I, long ilevel, int unit) {
-	(void) void_me;
+bool structPitch :: v_isUnitLogarithmic (long ilevel, int unit) {
 	return ilevel == Pitch_LEVEL_FREQUENCY && unit == kPitch_unit_HERTZ_LOGARITHMIC;
 }
 
-static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
-	(void) void_me;
+double structPitch :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == kPitch_unit_HERTZ ? value :
@@ -145,8 +119,7 @@ static double convertStandardToSpecialUnit (I, double value, long ilevel, int un
 	}
 }
 
-static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
-	(void) void_me;
+double structPitch :: v_convertSpecialToStandardUnit (double value, long ilevel, int unit) {
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == kPitch_unit_HERTZ ? value :
@@ -169,11 +142,10 @@ static double convertSpecialToStandardUnit (I, double value, long ilevel, int un
 	  (unit) == kPitch_unit_SEMITONES_1 || (unit) == kPitch_unit_SEMITONES_100 ||  \
 	  (unit) == kPitch_unit_SEMITONES_200 || (unit) == kPitch_unit_SEMITONES_440 )
 
-static double getValueAtSample (I, long iframe, long ilevel, int unit) {
-	iam (Pitch);
-	double f = my frame [iframe]. candidate [1]. frequency;
-	if (f <= 0.0 || f >= my ceiling) return NUMundefined;   // frequency out of range (or NUMundefined)? Voiceless
-	return our convertStandardToSpecialUnit (me, ilevel == Pitch_LEVEL_FREQUENCY ? f : my frame [iframe]. candidate [1]. strength, ilevel, unit);
+double structPitch :: v_getValueAtSample (long iframe, long ilevel, int unit) {
+	double f = frame [iframe]. candidate [1]. frequency;
+	if (f <= 0.0 || f >= ceiling) return NUMundefined;   // frequency out of range (or NUMundefined)? Voiceless
+	return v_convertStandardToSpecialUnit (ilevel == Pitch_LEVEL_FREQUENCY ? f : frame [iframe]. candidate [1]. strength, ilevel, unit);
 }
 
 bool Pitch_isVoiced_i (Pitch me, long iframe) {
@@ -408,28 +380,6 @@ void structPitch :: v_info () {
 	}
 }
 
-class_methods (Pitch, Sampled) {
-	us -> version = 1;
-	class_method_local (Pitch, destroy)
-	class_method_local (Pitch, description)
-	class_method_local (Pitch, copy)
-	class_method_local (Pitch, equal)
-	class_method_local (Pitch, canWriteAsEncoding)
-	class_method_local (Pitch, writeText)
-	class_method_local (Pitch, readText)
-	class_method_local (Pitch, writeBinary)
-	class_method_local (Pitch, readBinary)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method (getMinimumUnit)
-	class_method (getMaximumUnit)
-	class_method (getUnitText)
-	class_method (isUnitLogarithmic)
-	class_method (convertStandardToSpecialUnit)
-	class_method (convertSpecialToStandardUnit)
-	class_method (getValueAtSample)
-	class_methods_end
-}
-
 void Pitch_Frame_init (Pitch_Frame me, int nCandidates) {
 	/*
 	 * Create without change.
@@ -632,9 +582,9 @@ void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, do
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
-		MelderString_append3 (& buffer, L"Pitch (", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
+		MelderString_append3 (& buffer, L"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
 		Graphics_textLeft (g, TRUE, buffer.string);
-		if (ClassFunction_isUnitLogarithmic (classPitch, Pitch_LEVEL_FREQUENCY, unit)) {
+		if (Function_isUnitLogarithmic (me, Pitch_LEVEL_FREQUENCY, unit)) {
 			Graphics_marksLeftLogarithmic (g, 6, TRUE, TRUE, FALSE);
 		} else {
 			Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
@@ -787,7 +737,7 @@ Pitch Pitch_subtractLinearFit (Pitch me, int unit) {
 			if (NOT_VOICED (myFreq))
 				FREQUENCY (thyFrame) = 0.0;
 			else
-				FREQUENCY (thyFrame) = ClassFunction_convertSpecialToStandardUnit (classPitch, f, Pitch_LEVEL_FREQUENCY, unit);
+				FREQUENCY (thyFrame) = Function_convertSpecialToStandardUnit (me, f, Pitch_LEVEL_FREQUENCY, unit);
 		}
 		return thee.transfer();
 	} catch (MelderError) {

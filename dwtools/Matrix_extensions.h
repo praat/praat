@@ -27,16 +27,12 @@
 #include "Matrix.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-void Matrix_scatterPlot (I, Any g, long icx, long icy,
+void Matrix_scatterPlot (I, Graphics g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,
     double size_mm, const wchar_t *mark, int garnish);
 /* Draw my columns ix and iy as a scatterplot (with squares)				*/
 
-void Matrix_drawAsSquares (I, Any graphics, double xmin, double xmax, double ymin, double ymax, int garnished);
+void Matrix_drawAsSquares (I, Graphics graphics, double xmin, double xmax, double ymin, double ymax, int garnished);
 /* Draw a Matrix as small squares whose area correspond to the matrix element */
 /* The square is filled with black if the weights are negative					*/
 
@@ -57,9 +53,5 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 int Matrix_fitPolynomial (I, long maxDegree);
 
 Matrix Matrix_solveEquation (I, double tolerance);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Matrix_extensions_h_ */

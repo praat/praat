@@ -110,10 +110,10 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 }
 
 void structDemoEditor :: v_createChildren () {
-	drawingArea = GuiDrawingArea_createShown (dialog, 0, 0, 0, 0,
+	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, 0, 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	#if gtk
-		gtk_widget_set_double_buffered (drawingArea, FALSE);
+		gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
 	#endif
 }
 
@@ -156,7 +156,7 @@ void Demo_open (void) {
 		if (theDemoEditor == NULL) {
 			theDemoEditor = DemoEditor_create ((GuiObject) Melder_topShell);
 			Melder_assert (theDemoEditor != NULL);
-			//GuiObject_show (theDemoEditor -> dialog);
+			//GuiObject_show (theDemoEditor -> d_windowForm);
 			theDemoEditor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
 			theCurrentPraatPicture = (PraatPicture) theDemoEditor -> praatPicture;
 			theCurrentPraatPicture -> graphics = theDemoEditor -> graphics;
@@ -191,8 +191,8 @@ int Demo_windowTitle (const wchar_t *title) {
 int Demo_show (void) {
 	if (theDemoEditor == NULL) return 0;
 	autoDemoOpen demo;
-	GuiObject_show (theDemoEditor -> dialog);
-	GuiWindow_drain (theDemoEditor -> shell);
+	GuiObject_show (theDemoEditor -> d_windowForm);
+	GuiWindow_drain (theDemoEditor -> d_windowShell);
 	return 1;
 }
 
@@ -202,7 +202,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
 	}
-	//GuiObject_show (theDemoEditor -> dialog);
+	//GuiObject_show (theDemoEditor -> d_windowForm);
 	theDemoEditor -> clicked = false;
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;

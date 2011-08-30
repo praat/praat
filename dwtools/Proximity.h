@@ -26,20 +26,9 @@
 
 #include "TableOfReal.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Proximity);
-struct structProximity : public structTableOfReal {
+Thing_define (Proximity, TableOfReal) {
 };
-#define Proximity__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (Proximity, TableOfReal);
 
 void Proximity_init (I, long numberOfPoints);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Proximity_h_ */

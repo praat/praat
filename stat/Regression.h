@@ -22,20 +22,15 @@
 #include "Table.h"
 
 #include "Regression_def.h"
-#define RegressionParameter__methods(klas)  Data__methods(klas)
 oo_CLASS_CREATE (RegressionParameter, Data);
-#define Regression__methods(klas)  Data__methods(klas)
 oo_CLASS_CREATE (Regression, Data);
 
 void Regression_init (I);
 void Regression_addParameter (I, const wchar *label, double minimum, double maximum, double value);
 long Regression_getFactorIndexFromFactorName_e (I, const wchar *factorName);
 
-Thing_declare1cpp (LinearRegression);
-struct structLinearRegression : public structRegression {
+Thing_define (LinearRegression, Regression) {
 };
-#define LinearRegression__methods(klas)  Regression__methods(klas)
-Thing_declare2cpp (LinearRegression, Regression);
 
 LinearRegression LinearRegression_create (void);
 

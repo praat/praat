@@ -27,18 +27,9 @@
 
 #include "AffineTransform.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Procrustes_def.h"
-#define Procrustes__methods(klas) AffineTransform__methods(klas)
 oo_CLASS_CREATE (Procrustes, AffineTransform);
 
 Procrustes Procrustes_create (long n);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Procrustes_h_ */

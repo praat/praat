@@ -17,24 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/08 speed up creation of Poisson process
- * pb 2002/03/08 GPL
- * pb 2002/03/08 getMeanPeriod, getStdevPeriod
- * pb 2003/07/20 moved jitter measurements to VoiceAnalysis.c
- * pb 2004/04/16 addPoint tests uncrashingly for undefined
- * pb 2004/04/16 added maximum period factor
- * pb 2004/07/09 better period counting
- * pb 2006/12/10 MelderInfo
- * pb 2007/03/17 domain quantity
- * pb 2007/10/01 can write as encoding
- * pb 2008/09/20 shiftX
- * pb 2008/09/23 scaleX
- * pb 2010/03/24 make sure that addPoint cannot add a point where there is already a point
- * pb 2011/02/20 lay-out
- * pb 2011/06/06 C++
- */
-
 #include "PointProcess.h"
 #include "VoiceAnalysis.h"
 
@@ -57,6 +39,8 @@
 #include "oo_DESCRIPTION.h"
 #include "PointProcess_def.h"
 
+Thing_implement (PointProcess, Function, 0);
+
 static void infoPeriods (PointProcess me, double shortestPeriod, double longestPeriod, double maximumPeriodFactor, int precision) {
 	long numberOfPeriods = PointProcess_getNumberOfPeriods (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
 	double meanPeriod = PointProcess_getMeanPeriod (me, 0.0, 0.0, shortestPeriod, longestPeriod, maximumPeriodFactor);
@@ -76,56 +60,36 @@ static void infoPeriods (PointProcess me, double shortestPeriod, double longestP
 	MelderInfo_writeLine2 (L"     Jitter (ddp): ", Melder_percent (jitter_ddp, precision));
 }
 
-static void info (I) {
-	iam (PointProcess);
-	classData -> info (me);
+void structPointProcess :: v_info () {
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
-	MelderInfo_writeLine2 (L"Number of times: ", Melder_integer (my nt));
-	if (my nt) {
-		MelderInfo_writeLine3 (L"First time: ", Melder_double (my t [1]), L" seconds");
-		MelderInfo_writeLine3 (L"Last time: ", Melder_double (my t [my nt]), L" seconds");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine2 (L"Number of times: ", Melder_integer (nt));
+	if (nt) {
+		MelderInfo_writeLine3 (L"First time: ", Melder_double (t [1]), L" seconds");
+		MelderInfo_writeLine3 (L"Last time: ", Melder_double (t [nt]), L" seconds");
 	}
 	MelderInfo_writeLine1 (L"Periods between 0.1 ms and 20 ms (pitch between 50 and 10000 Hz),");
 	MelderInfo_writeLine1 (L"with a maximum \"period factor\" of 1.3:");
-	infoPeriods (me, 1e-4, 20e-3, 1.3, 3);
+	infoPeriods (this, 1e-4, 20e-3, 1.3, 3);
 	MelderInfo_writeLine1 (L"All periods:");
-	infoPeriods (me, 0.0, 0.0, 1e300, 6);
+	infoPeriods (this, 0.0, 0.0, 1e300, 6);
 }
 
-static void shiftX (I, double xfrom, double xto) {
-	iam (PointProcess);
-	inherited (PointProcess) shiftX (me, xfrom, xto);
-	for (long i = 1; i <= my nt; i ++) {
-		NUMshift (& my t [i], xfrom, xto);
+void structPointProcess :: v_shiftX (double xfrom, double xto) {
+	PointProcess_Parent :: v_shiftX (xfrom, xto);
+	for (long i = 1; i <= nt; i ++) {
+		NUMshift (& t [i], xfrom, xto);
 	}
 }
 
-static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (PointProcess);
-	inherited (PointProcess) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= my nt; i ++) {
-		NUMscale (& my t [i], xminfrom, xmaxfrom, xminto, xmaxto);
+void structPointProcess :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	PointProcess_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= nt; i ++) {
+		NUMscale (& t [i], xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-}
-
-class_methods (PointProcess, Function) {
-	class_method_local (PointProcess, destroy)
-	class_method (info)
-	class_method_local (PointProcess, description)
-	class_method_local (PointProcess, copy)
-	class_method_local (PointProcess, equal)
-	class_method_local (PointProcess, canWriteAsEncoding)
-	class_method_local (PointProcess, writeText)
-	class_method_local (PointProcess, readText)
-	class_method_local (PointProcess, writeBinary)
-	class_method_local (PointProcess, readBinary)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method (shiftX)
-	class_method (scaleX)
-	class_methods_end
 }
 
 void PointProcess_init (I, double tmin, double tmax, long initialMaxnt) {
@@ -297,7 +261,7 @@ double PointProcess_getInterval (PointProcess me, double t) {
 
 PointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 	try {
-		autoPointProcess him = (PointProcess) Data_copy (me);
+		autoPointProcess him = Data_copy (me);
 		if (thy xmin < my xmin) his xmin = thy xmin;
 		if (thy xmax > my xmax) his xmax = thy xmax;
 		for (long i = 1; i <= thy nt; i ++) {
@@ -328,7 +292,7 @@ long PointProcess_findPoint (PointProcess me, double t) {
 
 PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee) {
 	try {
-		autoPointProcess him = (PointProcess) Data_copy (me);
+		autoPointProcess him = Data_copy (me);
 		if (thy xmin > my xmin) his xmin = thy xmin;
 		if (thy xmax < my xmax) his xmax = thy xmax;
 		for (long i = my nt; i >= 1; i --)
@@ -342,7 +306,7 @@ PointProcess PointProcesses_intersection (PointProcess me, PointProcess thee) {
 
 PointProcess PointProcesses_difference (PointProcess me, PointProcess thee) {
 	try {
-		autoPointProcess him = (PointProcess) Data_copy (me);
+		autoPointProcess him = Data_copy (me);
 		for (long i = my nt; i >= 1; i --)
 			if (PointProcess_findPoint (thee, my t [i]))
 				PointProcess_removePoint (him.peek(), i);

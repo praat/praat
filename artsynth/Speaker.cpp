@@ -38,18 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Speaker_def.h"
 
-class_methods (Speaker, Data) {
-	class_method_local (Speaker, destroy)
-	class_method_local (Speaker, description)
-	class_method_local (Speaker, copy)
-	class_method_local (Speaker, equal)
-	class_method_local (Speaker, canWriteAsEncoding)
-	class_method_local (Speaker, writeText)
-	class_method_local (Speaker, readText)
-	class_method_local (Speaker, writeBinary)
-	class_method_local (Speaker, readBinary)
-	class_methods_end
-}
+Thing_implement (Speaker, Data, 0);
 
 Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses) {
 	Speaker me = Thing_new (Speaker);

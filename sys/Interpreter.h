@@ -23,41 +23,51 @@
 #include "Gui.h"
 #include "Formula.h"
 
-Thing_declare1cpp (InterpreterVariable);
-struct structInterpreterVariable : public structSimpleString {
-	wchar *stringValue;
-	double numericValue;
-	struct Formula_NumericArray numericArrayValue;
+Thing_define (InterpreterVariable, SimpleString) {
+	// new data:
+	public:
+		wchar *stringValue;
+		double numericValue;
+		struct Formula_NumericArray numericArrayValue;
+	// overridden methods:
+	protected:
+		virtual void v_destroy ();
 };
-#define InterpreterVariable__methods(klas) SimpleString__methods(klas)
-Thing_declare2cpp (InterpreterVariable, SimpleString);
 
 #define Interpreter_MAXNUM_PARAMETERS  400
 #define Interpreter_MAXNUM_LABELS  1000
 #define Interpreter_MAX_CALL_DEPTH  50
 
+Thing_declare (UiForm);
+Thing_declare (Editor);
+
 Thing_define (Interpreter, Thing) {
-	wchar *environmentName;
-	Any editorClass;
-	int numberOfParameters, numberOfLabels, callDepth;
-	wchar parameters [1+Interpreter_MAXNUM_PARAMETERS] [100];
-	unsigned char types [1+Interpreter_MAXNUM_PARAMETERS];
-	wchar *arguments [1+Interpreter_MAXNUM_PARAMETERS];
-	wchar choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
-	wchar labelNames [1+Interpreter_MAXNUM_LABELS] [100];
-	long labelLines [1+Interpreter_MAXNUM_LABELS];
-	wchar dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
-	SortedSetOfString variables;
-	bool running, stopped;
+	// new data:
+	public:
+		wchar *environmentName;
+		ClassInfo editorClass;
+		int numberOfParameters, numberOfLabels, callDepth;
+		wchar parameters [1+Interpreter_MAXNUM_PARAMETERS] [100];
+		unsigned char types [1+Interpreter_MAXNUM_PARAMETERS];
+		wchar *arguments [1+Interpreter_MAXNUM_PARAMETERS];
+		wchar choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
+		wchar labelNames [1+Interpreter_MAXNUM_LABELS] [100];
+		long labelLines [1+Interpreter_MAXNUM_LABELS];
+		wchar dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
+		SortedSetOfString variables;
+		bool running, stopped;
+	// overridden methods:
+	protected:
+		virtual void v_destroy ();
 };
 
-Interpreter Interpreter_create (wchar *environmentName, Any editorClass);
-Interpreter Interpreter_createFromEnvironment (Any editor);
+Interpreter Interpreter_create (wchar *environmentName, ClassInfo editorClass);
+Interpreter Interpreter_createFromEnvironment (Editor editor);
 
 void Melder_includeIncludeFiles (wchar **text);
 long Interpreter_readParameters (Interpreter me, wchar *text);
 Thing_declare (UiForm);
-Any Interpreter_createForm (Interpreter me, GuiObject parent, const wchar_t *fileName,
+UiForm Interpreter_createForm (Interpreter me, GuiObject parent, const wchar_t *fileName,
 	void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure), void *okClosure);
 void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
 void Interpreter_getArgumentsFromString (Interpreter me, const wchar *arguments);

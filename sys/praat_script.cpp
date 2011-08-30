@@ -497,7 +497,7 @@ static void firstPassThroughScript (MelderFile file) {
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (Interpreter_readParameters (interpreter.peek(), text.peek()) > 0) {
 			Any form = Interpreter_createForm (interpreter.peek(),
-				praatP.editor ? ((Editor) praatP.editor) -> dialog : theCurrentPraatApplication -> topShell,
+				praatP.editor ? ((Editor) praatP.editor) -> d_windowForm : theCurrentPraatApplication -> topShell,
 				Melder_fileToPath (file), secondPassThroughScript, NULL);
 			UiForm_destroyWhenUnmanaged (form);
 			UiForm_do (form, false);
@@ -554,7 +554,7 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wch
 	firstPassThroughScript (& file);
 }
 
-void DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar *script) {
+void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const wchar *script) {
 	praatP.editor = editor;
 	DO_RunTheScriptFromAnyAddedMenuCommand (NULL, script, NULL, NULL, false, NULL);
 	/*praatP.editor = NULL;*/

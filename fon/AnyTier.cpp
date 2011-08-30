@@ -17,16 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2007/10/01 can write as encoding
- * pb 2008/03/27 binary rather than linear searches
- * pb 2008/03/31 corrected binary search (case n=1)
- * pb 2008/09/20 shiftX
- * pb 2008/09/23 scaleX
- * pb 2011/05/09 C++
- */
-
 #include "AnyTier.h"
 
 #include "oo_DESTROY.h"
@@ -48,50 +38,24 @@
 #include "oo_DESCRIPTION.h"
 #include "AnyTier_def.h"
 
-class_methods (AnyPoint, SimpleDouble) {
-	class_method_local (AnyPoint, destroy)
-	class_method_local (AnyPoint, copy)
-	class_method_local (AnyPoint, equal)
-	class_method_local (AnyPoint, canWriteAsEncoding)
-	class_method_local (AnyPoint, writeText)
-	class_method_local (AnyPoint, readText)
-	class_method_local (AnyPoint, writeBinary)
-	class_method_local (AnyPoint, readBinary)
-	class_method_local (AnyPoint, description)
-	class_methods_end
-}
+Thing_implement (AnyPoint, SimpleDouble, 0);
 
-static void shiftX (I, double xfrom, double xto) {
-	iam (AnyTier);
-	inherited (AnyTier) shiftX (me, xfrom, xto);
-	for (long i = 1; i <= my points -> size; i ++) {
-		AnyPoint point = (AnyPoint) my points -> item [i];
+Thing_implement (AnyTier, Function, 0);
+
+void structAnyTier :: v_shiftX (double xfrom, double xto) {
+	AnyTier_Parent :: v_shiftX (xfrom, xto);
+	for (long i = 1; i <= points -> size; i ++) {
+		AnyPoint point = (AnyPoint) points -> item [i];
 		NUMshift (& point -> number, xfrom, xto);
 	}
 }
 
-static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (AnyTier);
-	inherited (AnyTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= my points -> size; i ++) {
-		AnyPoint point = (AnyPoint) my points -> item [i];
+void structAnyTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	AnyTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= points -> size; i ++) {
+		AnyPoint point = (AnyPoint) points -> item [i];
 		NUMscale (& point -> number, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-}
-
-class_methods (AnyTier, Function) {
-	class_method_local (AnyTier, destroy)
-	class_method_local (AnyTier, copy)
-	class_method_local (AnyTier, equal)
-	class_method_local (AnyTier, canWriteAsEncoding)
-	class_method_local (AnyTier, writeText)
-	class_method_local (AnyTier, readText)
-	class_method_local (AnyTier, writeBinary)
-	class_method_local (AnyTier, readBinary)
-	class_method_local (AnyTier, description)
-	class_method (shiftX)
-	class_method (scaleX)
-	class_methods_end
 }
 
 long AnyTier_timeToLowIndex (I, double time) {
@@ -227,7 +191,7 @@ long AnyTier_hasPoint (I, double t) {
 	return 0;   /* Point not found. */
 }
 
-void AnyTier_addPoint (I, Any point) {
+void AnyTier_addPoint (I, Data point) {
 	iam (AnyTier);
 	try {
 		Collection_addItem (my points, point); therror

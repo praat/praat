@@ -116,6 +116,7 @@ struct FunctionEditor_pulses {
 
 Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 	// new data:
+	public:
 		double longestAnalysis;
 		enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
 		double fixedTimeStep;
@@ -146,7 +147,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
 };
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound);
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);

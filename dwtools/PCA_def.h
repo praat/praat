@@ -25,8 +25,13 @@
 oo_DEFINE_CLASS (PCA, Eigen)
 	
 	oo_LONG (numberOfObservations)
-	oo_STRING_VECTOR (labels, my dimension)
-	oo_DOUBLE_VECTOR (centroid, my dimension)
+	oo_STRING_VECTOR (labels, dimension)
+	oo_DOUBLE_VECTOR (centroid, dimension)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (PCA)	
 #undef ooSTRUCT

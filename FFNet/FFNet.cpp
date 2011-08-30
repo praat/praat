@@ -62,6 +62,8 @@ static void bookkeeping (FFNet me);
 #include "oo_DESCRIPTION.h"
 #include "FFNet_def.h"
 
+Thing_implement (FFNet, Data, 0);
+
 static void FFNet_checkLayerNumber (FFNet me, long layer)
 {
 	if (layer < 1 || layer > my nLayers)
@@ -193,40 +195,24 @@ void bookkeeping (FFNet me)
 	FFNet_selectAllWeights (me);
 }
 
-static void info (I)
+void structFFNet :: v_info ()
 {
-	iam (FFNet);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of layers: ", Melder_integer (my nLayers));
-	MelderInfo_writeLine2 (L"Total number of units: ", Melder_integer (FFNet_getNumberOfUnits (me)));
-	MelderInfo_writeLine4 (L"   Number of units in layer ", Melder_integer (my nLayers), L" (output): ",
-		Melder_integer (my nUnitsInLayer[my nLayers]));
-	for (long i = my nLayers - 1; i >= 1; i--)
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of layers: ", Melder_integer (nLayers));
+	MelderInfo_writeLine2 (L"Total number of units: ", Melder_integer (FFNet_getNumberOfUnits (this)));
+	MelderInfo_writeLine4 (L"   Number of units in layer ", Melder_integer (nLayers), L" (output): ",
+		Melder_integer (nUnitsInLayer[nLayers]));
+	for (long i = nLayers - 1; i >= 1; i--)
 	{
 		MelderInfo_writeLine4 (L"   Number of units in layer ", Melder_integer (i), L" (hidden): ",
-			Melder_integer (my nUnitsInLayer[i]));
+			Melder_integer (nUnitsInLayer[i]));
 	}
-	MelderInfo_writeLine2 (L"   Number of units in layer 0 (input): ", Melder_integer (my nUnitsInLayer[0]));
-	MelderInfo_writeLine2 (L"Outputs are linear: ", Melder_boolean (my outputsAreLinear));
-	MelderInfo_writeLine5 (L"Number of weights: ", Melder_integer (my nWeights), L" (", 
-		Melder_integer (FFNet_dimensionOfSearchSpace (me)), L" selected)");
-	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (my nNodes));
+	MelderInfo_writeLine2 (L"   Number of units in layer 0 (input): ", Melder_integer (nUnitsInLayer[0]));
+	MelderInfo_writeLine2 (L"Outputs are linear: ", Melder_boolean (outputsAreLinear));
+	MelderInfo_writeLine5 (L"Number of weights: ", Melder_integer (nWeights), L" (", 
+		Melder_integer (FFNet_dimensionOfSearchSpace (this)), L" selected)");
+	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (nNodes));
 } 
-
-
-class_methods (FFNet, Data)
-	class_method_local (FFNet, destroy)
-	class_method_local (FFNet, copy)
-	class_method_local (FFNet, equal)
-	class_method_local (FFNet, canWriteAsEncoding)
-	class_method_local (FFNet, writeText)
-	class_method_local (FFNet, writeBinary)
-	class_method_local (FFNet, readText)
-	class_method_local (FFNet, readBinary)
-	class_method_local (FFNet, description)
-    class_method (info)
-class_methods_end
-
 
 void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, 
 	long numberOfOutputs, int outputsAreLinear)

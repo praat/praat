@@ -55,7 +55,7 @@ static const wchar_t *month [] =
 	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
 	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
-static int menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
+static void menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
 	EDITOR_FORM_WRITE (L"Save as HTML file", 0)
 		ManPages manPages = (ManPages) my data;
@@ -68,7 +68,7 @@ static int menu_cb_writeOneToHtmlFile (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
+static void menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
 	EDITOR_FORM (L"Save all pages as HTML files", 0)
 		LABEL (L"", L"Type a directory name:")
@@ -83,7 +83,7 @@ static int menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_searchForPageList (EDITOR_ARGS) {
+static void menu_cb_searchForPageList (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
 	EDITOR_FORM (L"Search for page", 0)
 		ManPages manPages = (ManPages) my data;
@@ -231,7 +231,7 @@ static void print (I, Graphics graphics) {
 	my printPagesStartingWith = NULL;
 }
 
-static int menu_cb_printRange (EDITOR_ARGS) {
+static void menu_cb_printRange (EDITOR_ARGS) {
 	EDITOR_IAM (Manual);
 	EDITOR_FORM (L"Print range", 0)
 		SENTENCE (L"Left or inside header", L"")
@@ -385,7 +385,7 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	GuiObject_setSensitive (my playButton, false);
 	GuiObject_setSensitive (my publishButton, false);
 	#if motif
-		XmUpdateDisplay (my shell);
+		XmUpdateDisplay (my d_windowShell);
 	#endif
 	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError (NULL);
 	GuiObject_setSensitive (my recordButton, true);
@@ -400,7 +400,7 @@ static void gui_button_cb_play (I, GuiButtonEvent event) {
 	GuiObject_setSensitive (my playButton, false);
 	GuiObject_setSensitive (my publishButton, false);
 	#if motif
-		XmUpdateDisplay (my shell);
+		XmUpdateDisplay (my d_windowShell);
 	#endif
 	Melder_play ();
 	GuiObject_setSensitive (my recordButton, true);
@@ -448,11 +448,11 @@ void structManual :: v_createChildren () {
 			XtVaSetValues (drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
 			XtVaSetValues (verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
 		#endif
-		recordButton = GuiButton_createShown (dialog, 4, 79, y+height+8, y+height+8 + height,
+		recordButton = GuiButton_createShown (d_windowForm, 4, 79, y+height+8, y+height+8 + height,
 			L"Record", gui_button_cb_record, this, 0);
-		playButton = GuiButton_createShown (dialog, 85, 160, y+height+8, y+height+8 + height,
+		playButton = GuiButton_createShown (d_windowForm, 85, 160, y+height+8, y+height+8 + height,
 			L"Play", gui_button_cb_play, this, 0);
-		publishButton = GuiButton_createShown (dialog, 166, 166 + 175, y+height+8, y+height+8 + height, 
+		publishButton = GuiButton_createShown (d_windowForm, 166, 166 + 175, y+height+8, y+height+8 + height, 
 			L"Copy last played to list", gui_button_cb_publish, this, 0);
 	}
 	GuiButton_createShown (holder, 274, 274 + 69, y, y + height,
@@ -464,7 +464,7 @@ void structManual :: v_createChildren () {
 	#endif
 }
 
-static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); if (! HyperPage_goToPage (me, L"Manual")) return 0; return 1; }
+static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); HyperPage_goToPage (me, L"Manual"); }
 
 void structManual :: v_createMenus () {
 	Manual_Parent :: v_createMenus ();
@@ -483,7 +483,7 @@ void structManual :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structManual :: v_defaultHeaders (EditorCommand cmd) {
-	Manual me = (Manual) cmd -> editor;
+	Manual me = (Manual) cmd -> d_editor;
 	ManPages manPages = (ManPages) my data;
 	if (my path) {
 		wchar_t string [400];

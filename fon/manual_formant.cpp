@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_formant_init (ManPages me);
-extern "C" void manual_formant_init (ManPages me) {
+void manual_formant_init (ManPages me);
+void manual_formant_init (ManPages me) {
 
 MAN_BEGIN (L"Create FormantGrid...", L"ppgb", 20080425)
 INTRO (L"A command in the @@New menu@ to create an empty @FormantGrid object.")

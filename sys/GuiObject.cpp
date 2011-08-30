@@ -111,7 +111,7 @@ void _GuiObject_setUserData (GuiObject me, void *userData) {
 
 void GuiObject_destroy (GuiObject me) {
 	#if gtk
-		gtk_widget_destroy (me);
+		gtk_widget_destroy (GTK_WIDGET (me));
 	#else
 		XtDestroyWidget (me);
 	#endif
@@ -120,7 +120,7 @@ void GuiObject_destroy (GuiObject me) {
 long GuiObject_getHeight (GuiObject me) {
 	long height = 0;
 	#if gtk
-		height = my allocation.height;
+		height = GTK_WIDGET (me) -> allocation.height;
 	#elif win || mac
 		height = my height;
 	#endif
@@ -130,7 +130,7 @@ long GuiObject_getHeight (GuiObject me) {
 long GuiObject_getWidth (GuiObject me) {
 	long width = 0;
 	#if gtk
-		width = my allocation.width;
+		width = GTK_WIDGET (me) -> allocation.width;
 	#elif win || mac
 		width = my width;
 	#endif
@@ -140,7 +140,7 @@ long GuiObject_getWidth (GuiObject me) {
 long GuiObject_getX (GuiObject me) {
 	long x = 0;
 	#if gtk
-		x = my allocation.x;
+		x = GTK_WIDGET (me) -> allocation.x;
 	#elif win || mac
 		x = my x;
 	#endif
@@ -150,7 +150,7 @@ long GuiObject_getX (GuiObject me) {
 long GuiObject_getY (GuiObject me) {
 	long y = 0;
 	#if gtk
-		y = my allocation.y;
+		y = GTK_WIDGET (me) -> allocation.y;
 	#elif win || mac
 		y = my y;
 	#endif
@@ -174,9 +174,9 @@ void GuiObject_move (GuiObject me, long x, long y) {
 
 void GuiObject_hide (GuiObject me) {
 	#if gtk
-		GuiObject parent = gtk_widget_get_parent (me);
+		GuiObject parent = gtk_widget_get_parent (GTK_WIDGET (me));
 		if (parent != NULL && GTK_IS_DIALOG (parent)) {   // I am the top vbox of a dialog
-			gtk_widget_hide (parent);
+			gtk_widget_hide (GTK_WIDGET (parent));
 		} else {
 			gtk_widget_hide (GTK_WIDGET (me));
 		}
@@ -194,7 +194,7 @@ void GuiObject_hide (GuiObject me) {
 
 GuiObject GuiObject_parent (GuiObject me) {
 	#if gtk
-		return gtk_widget_get_parent (me);
+		return gtk_widget_get_parent (GTK_WIDGET (me));
 	#elif win || mac
 		return my parent;
 	#endif
@@ -202,7 +202,7 @@ GuiObject GuiObject_parent (GuiObject me) {
 
 void GuiObject_setSensitive (GuiObject me, bool sensitive) {
 	#if gtk
-		gtk_widget_set_sensitive (me, sensitive);
+		gtk_widget_set_sensitive (GTK_WIDGET (me), sensitive);
 	#else
 		XtSetSensitive (me, sensitive);
 	#endif
@@ -210,16 +210,16 @@ void GuiObject_setSensitive (GuiObject me, bool sensitive) {
 
 void GuiObject_show (GuiObject me) {
 	#if gtk
-		GuiObject parent = gtk_widget_get_parent (me);
+		GuiObject parent = gtk_widget_get_parent (GTK_WIDGET (me));
 		if (GTK_IS_WINDOW (parent)) {
 			// I am a window's vbox
-			gtk_widget_show (me);
+			gtk_widget_show (GTK_WIDGET (me));
 			gtk_window_present (GTK_WINDOW (parent));
 		} else if (GTK_IS_DIALOG (parent)) {
 			// I am a dialog's vbox, and therefore automatically shown
 			gtk_window_present (GTK_WINDOW (parent));
 		} else {
-			gtk_widget_show (me);
+			gtk_widget_show (GTK_WIDGET (me));
 		}
 	#elif win || mac
 		XtManageChild (me);
@@ -236,7 +236,7 @@ void GuiObject_size (GuiObject me, long width, long height) {
 	#if gtk
 		if (width == Gui_AUTOMATIC || width <= 0) width = -1;
 		if (height == Gui_AUTOMATIC || height <= 0) height = -1;
-		gtk_widget_set_size_request (me, width, height);
+		gtk_widget_set_size_request (GTK_WIDGET (me), width, height);
 	#elif win || mac
 		if (width != Gui_AUTOMATIC) {
 			if (height != Gui_AUTOMATIC) {

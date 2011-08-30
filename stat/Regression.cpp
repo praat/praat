@@ -17,14 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2005/05/01 created
- * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar
- * pb 2007/10/01 can write as encoding
- * pb 2011/03/20 C++
- */
-
 #include "Regression.h"
 #include "NUM2.h"
 
@@ -47,55 +39,31 @@
 #include "oo_DESCRIPTION.h"
 #include "Regression_def.h"
 
-class_methods (RegressionParameter, Data) {
-	class_method_local (RegressionParameter, destroy)
-	class_method_local (RegressionParameter, description)
-	class_method_local (RegressionParameter, copy)
-	class_method_local (RegressionParameter, equal)
-	class_method_local (RegressionParameter, canWriteAsEncoding)
-	class_method_local (RegressionParameter, writeText)
-	class_method_local (RegressionParameter, writeBinary)
-	class_method_local (RegressionParameter, readText)
-	class_method_local (RegressionParameter, readBinary)
-	class_methods_end
-}
+Thing_implement (RegressionParameter, Data, 0);
 
-static void info (I) {
-	iam (Regression);
-	inherited (Regression) info (me);
+void structRegression :: v_info () {
+	Regression_Parent :: v_info ();
 	MelderInfo_writeLine1 (L"Factors:");
-	MelderInfo_writeLine2 (L"   Number of factors: ", Melder_integer (my parameters -> size));
-	for (long ivar = 1; ivar <= my parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [ivar]);
+	MelderInfo_writeLine2 (L"   Number of factors: ", Melder_integer (parameters -> size));
+	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_writeLine4 (L"   Factor ", Melder_integer (ivar), L": ", parm -> label);
 	}
 	MelderInfo_writeLine1 (L"Fitted coefficients:");
-	MelderInfo_writeLine2 (L"   Intercept: ", Melder_double (my intercept));
-	for (long ivar = 1; ivar <= my parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [ivar]);
+	MelderInfo_writeLine2 (L"   Intercept: ", Melder_double (intercept));
+	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_writeLine4 (L"   Coefficient of factor ", parm -> label, L": ", Melder_double (parm -> value));
 	}
 	MelderInfo_writeLine1 (L"Ranges of values:");
-	for (long ivar = 1; ivar <= my parameters -> size; ivar ++) {
-		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [ivar]);
+	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
+		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_writeLine6 (L"   Range of factor ", parm -> label, L": minimum ",
 			Melder_double (parm -> minimum), L", maximum ", Melder_double (parm -> maximum));
 	}
 }
 
-class_methods (Regression, Data) {
-	class_method_local (Regression, destroy)
-	class_method (info)
-	class_method_local (Regression, description)
-	class_method_local (Regression, copy)
-	class_method_local (Regression, equal)
-	class_method_local (Regression, canWriteAsEncoding)
-	class_method_local (Regression, writeText)
-	class_method_local (Regression, writeBinary)
-	class_method_local (Regression, readText)
-	class_method_local (Regression, readBinary)
-	class_methods_end
-}
+Thing_implement (Regression, Data, 0);
 
 void Regression_init (I) {
 	iam (Regression);
@@ -125,9 +93,7 @@ long Regression_getFactorIndexFromFactorName_e (I, const wchar *factorName) {
 	Melder_throw (Thing_messageName (me), L" has no parameter named \"", factorName, L"\".");
 }
 
-class_methods (LinearRegression, Regression) {
-	class_methods_end
-}
+Thing_implement (LinearRegression, Regression, 0);
 
 LinearRegression LinearRegression_create (void) {
 	try {

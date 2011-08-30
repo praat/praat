@@ -38,44 +38,44 @@
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)
 
 #define oo_STRINGx(storage,x)  \
-	if (my x && ! Melder_isEncodable (my x, encoding)) return false;
+	if (x && ! Melder_isEncodable (x, encoding)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false;
+		if (x [i] && ! Melder_isEncodable (x [i], encoding)) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false;
+		if (x [i] && ! Melder_isEncodable (x [i], encoding)) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (my x) { \
+	if (x) { \
 		for (long i = min; i <= max; i ++) \
-			if (my x [i] && ! Melder_isEncodable (my x [i], encoding)) return false; \
+			if (x [i] && ! Melder_isEncodable (x [i], encoding)) return false; \
 	}
 
 #define oo_STRUCT(Type,x)  \
-	if (! Type##_canWriteAsEncoding (& my x, encoding)) return false;
+	if (! x. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (! Type##_canWriteAsEncoding (& my x [i], encoding)) return false;
+		if (! x [i]. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! Type##_canWriteAsEncoding (& my x [i], encoding)) return false;
+		if (! x [i]. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (my x) { \
+	if (x) { \
 		for (long i = min; i <= max; i ++) \
-			if (! Type##_canWriteAsEncoding (& my x [i], encoding)) return false; \
+			if (! x [i]. canWriteAsEncoding (encoding)) return false; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (my x) { \
+	if (x) { \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				if (! Type##_canWriteAsEncoding (& my x [i] [j], encoding)) return false; \
+				if (! x [i] [j]. canWriteAsEncoding (encoding)) return false; \
 	}
 
 #define oo_WIDGET(x)  \
@@ -91,29 +91,28 @@
 	!!!! Can never write Widgets... !!!!
 
 #define oo_OBJECT(Class,version,x)  \
-	if (my x && ! Data_canWriteAsEncoding (my x, encoding)) return false;
+	if (x && ! Data_canWriteAsEncoding (x, encoding)) return false;
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (my x && ! Data_canWriteAsEncoding (my x, encoding)) return false;
+	if (x && ! Data_canWriteAsEncoding (x, encoding)) return false;
 
 #define oo_FILE(x)  \
-	if (! Melder_isEncodable (my x. path, encoding)) return false;
+	if (! Melder_isEncodable (x. path, encoding)) return false;
 
 #define oo_DIR(x)  \
-	if (! Melder_isEncodable (my x. path, encoding)) return false;
+	if (! Melder_isEncodable (x. path, encoding)) return false;
 
 #define oo_DEFINE_STRUCT(Type)  \
-	static bool Type##_canWriteAsEncoding (Type me, int encoding) { \
-		(void) me; (void) encoding;
+	bool struct##Type :: canWriteAsEncoding (int encoding) { \
+		(void) encoding;
 
 #define oo_END_STRUCT(Type)  \
 		return true; \
 	}
 
 #define oo_DEFINE_CLASS(Class,Parent)  \
-	static bool class##Class##_canWriteAsEncoding (I, int encoding) { \
-		iam (Class); \
-		if (! inherited (Class) canWriteAsEncoding (me, encoding)) return false;
+	bool struct##Class :: v_canWriteAsEncoding (int encoding) { \
+		if (! Class##_Parent :: v_canWriteAsEncoding (encoding)) return false;
 
 #define oo_END_CLASS(Class)  \
 		return true; \

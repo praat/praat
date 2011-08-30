@@ -19,11 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/05
- */
-
-Thing_declare1cpp (UiForm);
+Thing_declare (UiForm);
 
 /* End of file Ui_decl.h */
 #endif

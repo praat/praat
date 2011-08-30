@@ -33,6 +33,8 @@
 #include "FeatureWeights_def.h"
 #include "oo_EQUAL.h"
 #include "FeatureWeights_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "FeatureWeights_def.h"
 #include "oo_WRITE_TEXT.h"
 #include "FeatureWeights_def.h"
 #include "oo_WRITE_BINARY.h"
@@ -50,17 +52,7 @@ void structFeatureWeights :: v_info ()
     MelderInfo_writeLine2 (L"Number of weights: ", Melder_integer (fweights -> numberOfColumns));
 }
 
-class_methods (FeatureWeights, Data) {
-	class_method_local (FeatureWeights, destroy)
-	class_method_local (FeatureWeights, copy)
-	class_method_local (FeatureWeights, equal)
-	class_method_local (FeatureWeights, writeText)
-	class_method_local (FeatureWeights, writeBinary)
-	class_method_local (FeatureWeights, readText)
-	class_method_local (FeatureWeights, readBinary)
-	class_method_local (FeatureWeights, description)
-	class_methods_end
-}
+Thing_implement (FeatureWeights, Data, 0);
 
 /////////////////////////////////////////////////////////////////////////////////////////////
 // Creation...    //
@@ -185,7 +177,6 @@ FeatureWeights FeatureWeights_computeWrapperInt
 	try {
 		double pivot = 0.5;
 		double range = 0.5;
-		double progress = 1 / range;
 		autoNUMvector <double> results (0L, nseeds);
 
 		autoThingVector <FeatureWeights> cs (0L, nseeds);

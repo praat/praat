@@ -24,10 +24,7 @@
 #include "Distributions.h"
 
 #include "PairDistribution_def.h"
-#define PairProbability__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PairProbability, Data);
-
-#define PairDistribution__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PairDistribution, Data);
 
 PairProbability PairProbability_create (const wchar *string1, const wchar *string2, double weight);

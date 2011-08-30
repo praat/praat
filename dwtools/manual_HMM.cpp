@@ -24,8 +24,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_HMM (ManPages me);
-extern "C" void manual_HMM (ManPages me)
+void manual_HMM (ManPages me);
+void manual_HMM (ManPages me)
 {
 
 MAN_BEGIN (L"GaussianMixture", L"djmw", 20101026)

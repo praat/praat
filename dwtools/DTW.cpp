@@ -63,12 +63,14 @@
 #include "oo_DESCRIPTION.h"
 #include "DTW_def.h"
 
+Thing_implement (DTW, Matrix, 2);
+
 #define DTW_BIG 1e38
 
 static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset);
-static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, double minimum, double maximum, int garnish, int inset);
-static void DTW_drawPath_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish, int inset);
 static double _DTW_and_Sounds_getPartY (Graphics g, double dtw_part_x);
 
@@ -486,42 +488,27 @@ static void get_ylimitsFromAdjustmentwindow (DTW me, double sakoeChibaBand,
 	if (*ylow > my ny) *ylow = my ny + 1;
 }
 
-static void info (I)
+void structDTW :: v_info ()
 {
-	iam (DTW);
-
-	classData -> info (me);
-	MelderInfo_writeLine5 (L"Domain prototype:", Melder_double (my ymin), L" to ",
-		Melder_double (my ymax), L" (s).");
-	MelderInfo_writeLine5 (L"Domain candidate:", Melder_double (my xmin), L" to ",
-		Melder_double (my xmax), L" (s).");
-	MelderInfo_writeLine2 (L"Number of frames prototype: ", Melder_integer (my ny));
-	MelderInfo_writeLine2 (L"Number of frames candidate: ", Melder_integer (my nx));
-	MelderInfo_writeLine2 (L"Path length (frames): ", Melder_integer (my pathLength));
-	MelderInfo_writeLine2 (L"Global warped distance: ", Melder_double (my weightedDistance));
-	if (my nx == my ny)
+	structData :: v_info ();
+	MelderInfo_writeLine5 (L"Domain prototype:", Melder_double (ymin), L" to ",
+		Melder_double (ymax), L" (s).");
+	MelderInfo_writeLine5 (L"Domain candidate:", Melder_double (xmin), L" to ",
+		Melder_double (xmax), L" (s).");
+	MelderInfo_writeLine2 (L"Number of frames prototype: ", Melder_integer (ny));
+	MelderInfo_writeLine2 (L"Number of frames candidate: ", Melder_integer (nx));
+	MelderInfo_writeLine2 (L"Path length (frames): ", Melder_integer (pathLength));
+	MelderInfo_writeLine2 (L"Global warped distance: ", Melder_double (weightedDistance));
+	if (nx == ny)
 	{
 		double dd = 0;
-		for (long i = 1; i <= my nx; i++)
+		for (long i = 1; i <= nx; i++)
 		{
-			dd += my z[i][i];
+			dd += z[i][i];
 		}
-		MelderInfo_writeLine2 (L"Distance along diagonal: ", Melder_double (dd / my nx));
+		MelderInfo_writeLine2 (L"Distance along diagonal: ", Melder_double (dd / nx));
 	}
 }
-
-class_methods (DTW, Matrix)
-	class_method_local (DTW, destroy)
-	class_method_local (DTW, equal)
-	class_method_local (DTW, canWriteAsEncoding)
-	class_method_local (DTW, copy)
-	class_method_local (DTW, readText)
-	class_method_local (DTW, readBinary)
-	class_method_local (DTW, writeText)
-	class_method_local (DTW, writeBinary)
-	class_method_local (DTW, description)
-	class_method (info)
-class_methods_end
 
 /* Prototype must be on y-axis and test on x-axis */
 
@@ -874,11 +861,6 @@ int DTW_pathFinder_slopes (DTW me, long nsteps_xory, long nsteps_xandy, double c
 {
 	return DTW_checkSlopeConstraintParameters (me, nsteps_xory, nsteps_xandy) &&
 		_DTW_pathFinder (me, DTW_SLOPES, 0.0, 1, nsteps_xory, nsteps_xandy, costs_x, costs_y, costs_xandy);
-}
-
-void DTW_initAccumulatedWeights (DTW me)
-{
-
 }
 
 #if 0
@@ -1399,7 +1381,7 @@ Polygon DTW_to_Polygon_localConstraints (DTW me, long nsteps_xory, long nsteps_x
 	} catch (MelderError) { Melder_throw (me, ": Polygon not created."); }
 }
 
-static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, double minimum, double maximum, int garnish, int inset)
 {
 	long ixmin, ixmax, iymin, iymax;
@@ -1428,13 +1410,13 @@ static void DTW_paintDistances_raw (DTW me, Any g, double xmin, double xmax, dou
 	}
 }
 
-void DTW_paintDistances (DTW me, Any g, double xmin, double xmax, double ymin,
+void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, double minimum, double maximum, int garnish)
 {
 	DTW_paintDistances_raw (me, g, xmin, xmax, ymin, ymax, minimum, maximum, garnish, 1);
 }
 
-static void DTW_drawPath_raw (DTW me, Any g, double xmin, double xmax, double ymin,
+static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish, int inset)
 {
 	DTW_Path_Query thee = & my pathQuery;
@@ -1471,7 +1453,7 @@ static void DTW_drawPath_raw (DTW me, Any g, double xmin, double xmax, double ym
 	}
 }
 
-void DTW_drawPath (DTW me, Any g, double xmin, double xmax, double ymin,
+void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish)
 {
 	DTW_drawPath_raw (me, g, xmin, xmax, ymin, ymax, garnish, 1);
@@ -1669,7 +1651,7 @@ Matrix DTW_distancesToMatrix (DTW me)
 }
 
 /* nog aanpassen, dl = sqrt (dx^2 + dy^2) */
-void DTW_drawDistancesAlongPath (DTW me, Any g, double xmin, double xmax, double dmin, double dmax, int garnish)
+void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, double dmin, double dmax, int garnish)
 {
 	if (xmin >= xmax)
 	{

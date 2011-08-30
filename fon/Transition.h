@@ -24,7 +24,6 @@
 #include "Graphics.h"
 
 #include "Transition_def.h"
-#define Transition__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Transition, Data);
 
 void Transition_init (I, long numberOfStates);

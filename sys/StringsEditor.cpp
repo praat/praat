@@ -27,11 +27,10 @@ void structStringsEditor :: v_destroy () {
 	StringsEditor_Parent :: v_destroy ();
 }
 
-static int menu_cb_help (EDITOR_ARGS) {
+static void menu_cb_help (EDITOR_ARGS) {
 	EDITOR_IAM (StringsEditor);
 	(void) me;
 	Melder_help (L"StringsEditor");
-	return 1;
 }
 
 void structStringsEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -71,7 +70,7 @@ static void gui_button_cb_insert (I, GuiButtonEvent event) {
 	 * Clean up.
 	 */
 	Melder_free (text);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 }
 
 static void gui_button_cb_append (I, GuiButtonEvent event) {
@@ -93,7 +92,7 @@ static void gui_button_cb_append (I, GuiButtonEvent event) {
 	 * Clean up.
 	 */
 	Melder_free (text);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 }
 
 static void gui_button_cb_remove (I, GuiButtonEvent event) {
@@ -105,7 +104,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent event) {
 	}
 	NUMlvector_free (selected, 1);
 	updateList (me);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 }
 
 static void gui_button_cb_replace (I, GuiButtonEvent event) {
@@ -119,7 +118,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 		GuiList_replaceItem (my list, text, selected [iselected]);
 	}
 	Melder_free (text);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 }
 
 static void gui_list_cb_doubleClick (GuiObject widget, void *void_me, long item) {
@@ -131,15 +130,15 @@ static void gui_list_cb_doubleClick (GuiObject widget, void *void_me, long item)
 }
 
 void structStringsEditor :: v_createChildren () {
-	list = GuiList_create (dialog, 1, 0, Machine_getMenuBarHeight (), -70, true, NULL);
+	list = GuiList_create (d_windowForm, 1, 0, Machine_getMenuBarHeight (), -70, true, NULL);
 	//GuiList_setDoubleClickCallback (list, gui_list_cb_doubleClick, this);
 	GuiObject_show (list);
 
-	text = GuiText_createShown (dialog, 0, 0, Gui_AUTOMATIC, -40, 0);
-	GuiButton_createShown (dialog, 10, 100, Gui_AUTOMATIC, -10, L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
-	GuiButton_createShown (dialog, 110, 200, Gui_AUTOMATIC, -10, L"Append", gui_button_cb_append, this, 0);
-	GuiButton_createShown (dialog, 210, 300, Gui_AUTOMATIC, -10, L"Replace", gui_button_cb_replace, this, 0);
-	GuiButton_createShown (dialog, 310, 400, Gui_AUTOMATIC, -10, L"Remove", gui_button_cb_remove, this, 0);	
+	text = GuiText_createShown (d_windowForm, 0, 0, Gui_AUTOMATIC, -40, 0);
+	GuiButton_createShown (d_windowForm, 10, 100, Gui_AUTOMATIC, -10, L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	GuiButton_createShown (d_windowForm, 110, 200, Gui_AUTOMATIC, -10, L"Append", gui_button_cb_append, this, 0);
+	GuiButton_createShown (d_windowForm, 210, 300, Gui_AUTOMATIC, -10, L"Replace", gui_button_cb_replace, this, 0);
+	GuiButton_createShown (d_windowForm, 310, 400, Gui_AUTOMATIC, -10, L"Remove", gui_button_cb_remove, this, 0);	
 }
 
 void structStringsEditor :: v_dataChanged () {

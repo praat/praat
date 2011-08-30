@@ -23,6 +23,7 @@
 
 Thing_define (DemoEditor, Editor) {
 	// new data:
+	public:
 		GuiObject drawingArea;
 		Graphics graphics;
 		void *praatPicture;

@@ -21,11 +21,12 @@
 
 #include "Vector.h"
 
-Thing_declare1cpp (Harmonicity);
-struct structHarmonicity : public structVector {
+Thing_define (Harmonicity, Vector) {
+	// overridden methods:
+	protected:
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define Harmonicity__methods(klas)  Vector__methods(klas)
-Thing_declare2cpp (Harmonicity, Vector);
 
 /* Attributes:
 		xmin				// Start time (seconds).
@@ -43,7 +44,7 @@ Thing_declare2cpp (Harmonicity, Vector);
 
 Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1);
 
-void Harmonicity_draw (I, double tmin, double tmax, double min, double max);
+void Harmonicity_draw (Harmonicity me, double tmin, double tmax, double min, double max);
 /*
 	draw a harmonicity contour into the current Graphics.
 	If tmax <= tmin, draw whole time domain.
@@ -55,7 +56,7 @@ double Harmonicity_getStandardDeviation (Harmonicity me, double tmin, double tma
 double Harmonicity_getQuantile (Harmonicity me, double quantile);
 
 Matrix Harmonicity_to_Matrix (Harmonicity me);
-Harmonicity Matrix_to_Harmonicity (I);
+Harmonicity Matrix_to_Harmonicity (Matrix me);
 
 /* End of file Harmonicity.h */
 #endif

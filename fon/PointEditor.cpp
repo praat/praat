@@ -33,84 +33,73 @@ void structPointEditor :: v_destroy () {
 
 /********** MENU COMMANDS **********/
 
-static int menu_cb_getJitter_local (EDITOR_ARGS) {
+static void menu_cb_getJitter_local (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_local ((PointProcess) my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
-	return 1;
 }
 
-static int menu_cb_getJitter_local_absolute (EDITOR_ARGS) {
+static void menu_cb_getJitter_local_absolute (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_local_absolute ((PointProcess) my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), L"seconds");
-	return 1;
 }
 
-static int menu_cb_getJitter_rap (EDITOR_ARGS) {
+static void menu_cb_getJitter_rap (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_rap ((PointProcess) my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
-	return 1;
 }
 
-static int menu_cb_getJitter_ppq5 (EDITOR_ARGS) {
+static void menu_cb_getJitter_ppq5 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_ppq5 ((PointProcess) my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
-	return 1;
 }
 
-static int menu_cb_getJitter_ddp (EDITOR_ARGS) {
+static void menu_cb_getJitter_ddp (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure jitter, make a selection first.");
 	Melder_informationReal (PointProcess_getJitter_ddp ((PointProcess) my data, my startSelection, my endSelection, 1e-4, 0.02, 1.3), NULL);
-	return 1;
 }
 
-static int menu_cb_getShimmer_local (EDITOR_ARGS) {
+static void menu_cb_getShimmer_local (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_local ((PointProcess) my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
-	return 1;
 }
 
-static int menu_cb_getShimmer_local_dB (EDITOR_ARGS) {
+static void menu_cb_getShimmer_local_dB (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_local_dB ((PointProcess) my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
-	return 1;
 }
 
-static int menu_cb_getShimmer_apq3 (EDITOR_ARGS) {
+static void menu_cb_getShimmer_apq3 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq3 ((PointProcess) my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
-	return 1;
 }
 
-static int menu_cb_getShimmer_apq5 (EDITOR_ARGS) {
+static void menu_cb_getShimmer_apq5 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq5 ((PointProcess) my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
-	return 1;
 }
 
-static int menu_cb_getShimmer_apq11 (EDITOR_ARGS) {
+static void menu_cb_getShimmer_apq11 (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_apq11 ((PointProcess) my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
-	return 1;
 }
 
-static int menu_cb_getShimmer_dda (EDITOR_ARGS) {
+static void menu_cb_getShimmer_dda (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	if (my startSelection == my endSelection) Melder_throw ("To measure shimmer, make a selection first.");
 	Melder_informationReal (PointProcess_Sound_getShimmer_dda ((PointProcess) my data, my sound.data, my startSelection, my endSelection, 1e-4, 0.02, 1.3, 1.6), NULL);
-	return 1;
 }
 
-static int menu_cb_removePoints (EDITOR_ARGS) {
+static void menu_cb_removePoints (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	Editor_save (me, L"Remove point(s)");
 	if (my startSelection == my endSelection)
@@ -118,20 +107,18 @@ static int menu_cb_removePoints (EDITOR_ARGS) {
 	else
 		PointProcess_removePointsBetween ((PointProcess) my data, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_addPointAtCursor (EDITOR_ARGS) {
+static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	Editor_save (me, L"Add point");
 	PointProcess_addPoint ((PointProcess) my data, 0.5 * (my startSelection + my endSelection));
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_addPointAt (EDITOR_ARGS) {
+static void menu_cb_addPointAt (EDITOR_ARGS) {
 	EDITOR_IAM (PointEditor);
 	EDITOR_FORM (L"Add point", 0)
 		REAL (L"Position", L"0.0");
@@ -141,11 +128,11 @@ static int menu_cb_addPointAt (EDITOR_ARGS) {
 		Editor_save (me, L"Add point");
 		PointProcess_addPoint ((PointProcess) my data, GET_REAL (L"Position"));
 		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_PointEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PointEditor); Melder_help (L"PointEditor"); return 1; }
+static void menu_cb_PointEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PointEditor); Melder_help (L"PointEditor"); }
 
 void structPointEditor :: v_createMenus () {
 	PointEditor_Parent :: v_createMenus ();

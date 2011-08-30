@@ -24,6 +24,7 @@
 
 Thing_define (OTGrammarEditor, HyperPage) {
 	// new data:
+	public:
 		long selected;
 	// overridden methods:
 		virtual bool v_editable () { return true; }

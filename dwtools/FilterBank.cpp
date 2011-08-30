@@ -175,25 +175,9 @@ static void setDrawingLimits (double *a, long n, double amin, double amax, long 
 	(*iend)--;
 }
 
-static int classFilterBank_getFrequencyScale (I)
-{
-	(void) void_me;
-	return FilterBank_HERTZ;
-}
+Thing_implement (FilterBank, Matrix, 2);
 
-class_methods (FilterBank, Matrix)
-	class_method_local (FilterBank, getFrequencyScale)
-class_methods_end
-
-static int classBarkFilter_getFrequencyScale (I)
-{
-	(void) void_me;
-	return FilterBank_BARK;
-}
-
-class_methods (BarkFilter, FilterBank)
-	class_method_local (BarkFilter, getFrequencyScale)
-class_methods_end
+Thing_implement (BarkFilter, FilterBank, 2);
 
 BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, long f1)
@@ -229,7 +213,7 @@ double FilterBank_getFrequencyInMel (I, double f, int scale_from)
 int FilterBank_getFrequencyScale (I)
 {
 	iam (FilterBank);
-	return our getFrequencyScale (me);
+	return my v_getFrequencyScale ();
 }
 
 void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double xmin, 
@@ -357,15 +341,7 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 	}
 }
 
-static int classMelFilter_getFrequencyScale (I)
-{
-	(void) void_me;
-	return FilterBank_MEL;
-}
-
-class_methods (MelFilter, FilterBank)
-	class_method_local (MelFilter, getFrequencyScale)
-class_methods_end
+Thing_implement (MelFilter, FilterBank, 2);
 
 MelFilter MelFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, double f1)
@@ -532,8 +508,7 @@ MelFilter Matrix_to_MelFilter (I)
 	} catch (MelderError) { Melder_throw (me, ": not converted to MelFilter."); }
 }
 
-class_methods (FormantFilter, FilterBank)
-class_methods_end
+Thing_implement (FormantFilter, FilterBank, 2);
 
 FormantFilter FormantFilter_create (double tmin, double tmax, long nt,
 	double dt, double t1, double fmin, double fmax, long nf, double df, double f1)

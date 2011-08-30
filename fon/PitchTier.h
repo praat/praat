@@ -19,23 +19,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/14
- */
-
 #include "RealTier.h"
 #include "Graphics.h"
 #include "Sound.h"
 
 /********** class PitchTier **********/
 
-Thing_declare1cpp (PitchTier);
-struct structPitchTier : public structRealTier {
+Thing_define (PitchTier, RealTier) {
 	// overridden methods:
-		void v_info ();
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define PitchTier__methods(klas) RealTier__methods(klas)
-Thing_declare2cpp (PitchTier, RealTier);
 
 PitchTier PitchTier_create (double tmin, double tmax);
 /*

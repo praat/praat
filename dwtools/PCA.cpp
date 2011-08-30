@@ -60,27 +60,14 @@
 #include "oo_DESCRIPTION.h"
 #include "PCA_def.h"
 
-static void info (I) {
-	iam (PCA);
+Thing_implement (PCA, Eigen, 0);
 
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of components: ", Melder_integer (my numberOfEigenvalues));
-	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (my dimension));
-	MelderInfo_writeLine2 (L"Number of observations: ", Melder_integer (my numberOfObservations));
+void structPCA :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of components: ", Melder_integer (numberOfEigenvalues));
+	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (dimension));
+	MelderInfo_writeLine2 (L"Number of observations: ", Melder_integer (numberOfObservations));
 }
-
-class_methods (PCA, Eigen)
-	class_method_local (PCA, destroy)
-	class_method_local (PCA, description)
-	class_method_local (PCA, copy)
-	class_method_local (PCA, equal)
-	class_method_local (PCA, canWriteAsEncoding)
-	class_method_local (PCA, writeText)
-	class_method_local (PCA, readText)
-	class_method_local (PCA, writeBinary)
-	class_method_local (PCA, readBinary)
-	class_method (info)
-class_methods_end
 
 PCA PCA_create (long numberOfComponents, long dimension)
 {

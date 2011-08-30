@@ -23,6 +23,7 @@
 
 Thing_define (ButtonEditor, HyperPage) {
 	// new data:
+	public:
 		int show;
 		GuiObject button1, button2, button3, button4, button5;
 	// overridden methods:

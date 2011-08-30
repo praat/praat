@@ -19,30 +19,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020813 GPL header
- djmw 20110306 Latest modification.
-*/
-
 #include "Proximity.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Distance);
-struct structDistance : public structProximity {
+Thing_define (Distance, Proximity) {
 };
-#define Distance__methods(klas) Proximity__methods(klas)
-Thing_declare2cpp (Distance, Proximity);
 
 Distance Distance_create (long numberOfPoints);
 
 void Distance_drawDendogram (Distance me, Graphics g, int method);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Distance_h_ */

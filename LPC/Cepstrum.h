@@ -37,15 +37,8 @@
 
 #include "Matrix.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Cepstrum);
-struct structCepstrum : public structMatrix {
+Thing_define (Cepstrum, Matrix) {
 };
-#define Cepstrum__methods(klas)  Matrix__methods(klas)
-Thing_declare2cpp (Cepstrum, Matrix);
 
 /*
 	xmin		// Lowest quefrency.
@@ -87,9 +80,5 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 
 Matrix Cepstrum_to_Matrix (Cepstrum me);
 Cepstrum Matrix_to_Cepstrum (Matrix me, long row);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Cepstrum_h_ */

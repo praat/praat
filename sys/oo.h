@@ -227,20 +227,8 @@
 
 #define oo_CLASS_CREATE(klas,parent) \
 	typedef _Thing_auto <struct##klas> auto##klas; \
-	struct struct##klas##_Table { \
-		void (* _initialize) (void *table); \
-		const wchar *_className; \
-		parent##_Table _parent; \
-		long _size; \
-		void * (* _new) (); \
-		long version; \
-		long sequentialUniqueIdOfReadableClass; \
-		void (*destroy) (I); \
-		void (*info) (I); \
-		klas##__methods(klas) \
-	}; \
-	extern struct struct##klas##_Table theStruct##klas; \
-	extern klas##_Table class##klas
+	extern struct structClassInfo theClassInfo_##klas; \
+	extern ClassInfo class##klas
 
 
 
@@ -284,18 +272,39 @@
 
 /* Struct and class definitions. */
 
-#define oo_DEFINE_STRUCT(Type)  typedef struct struct##Type {
-#define oo_END_STRUCT(Type)  } *Type; \
-	void Type##_destroy (Type me); \
-	void Type##_copy (Type me, Type thee); \
-	bool Type##_equal (Type me, Type thee);
+#define oo_DEFINE_STRUCT(T) \
+	typedef struct struct##T *T; \
+	struct struct##T {
+#define oo_END_STRUCT(T) \
+		void destroy (); \
+		void copy (T data_to); \
+		bool equal (T otherData); \
+		Data_Description description (); \
+		static Data_Description s_description; \
+		bool canWriteAsEncoding (int outputEncoding); \
+		void writeText (MelderFile openFile); \
+		void readText (MelderReadText text); \
+		void writeBinary (FILE *f); \
+		void readBinary (FILE *f); \
+	};
 
-#define oo_DEFINE_CLASS(klas,parent)  \
-	typedef struct struct##klas##_Table *klas##_Table; \
-	typedef struct struct##klas *klas; \
+#define oo_DEFINE_CLASS(klas,parent) \
+	typedef class struct##klas *klas; \
 	typedef struct##parent klas##_Parent; \
-	struct struct##klas : public struct##parent {
-#define oo_END_CLASS(Class)  };
+	class struct##klas : public struct##parent { \
+		public:
+#define oo_END_CLASS(Class) \
+		virtual void v_destroy (); \
+		virtual void v_copy (Any data_to); \
+		virtual bool v_equal (Any otherData); \
+		static Data_Description s_description; \
+		virtual Data_Description v_description () { return s_description; } \
+		virtual bool v_canWriteAsEncoding (int outputEncoding); \
+		virtual void v_writeText (MelderFile openFile); \
+		virtual void v_readText (MelderReadText text); \
+		virtual void v_writeBinary (FILE *f); \
+		virtual void v_readBinary (FILE *f); \
+	};
 
 /*** Miscellaneous. ***/
 

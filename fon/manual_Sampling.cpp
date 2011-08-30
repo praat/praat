@@ -21,8 +21,8 @@
 
 #include "Sound.h"
 
-extern "C" void manual_Sampling_init (ManPages me);
-extern "C" void manual_Sampling_init (ManPages me) {
+void manual_Sampling_init (ManPages me);
+void manual_Sampling_init (ManPages me) {
 
 MAN_BEGIN (L"Get sampling period", L"ppgb", 20040420)
 INTRO (L"A command that becomes available in the #Query menu if you select a @Sound object.")

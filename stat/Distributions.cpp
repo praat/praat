@@ -17,27 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/07/28 Distributions_peek
- * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar
- * pb 2008/04/08 Distributions_peek_opt
- * pb 2011/03/20 C++
- */
-
 #include "Distributions.h"
 
-static void info (I) {
-	iam (TableOfReal);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of distributions: ", Melder_integer (my numberOfColumns));
-	MelderInfo_writeLine2 (L"Number of values: ", Melder_integer (my numberOfRows));
-}
+Thing_implement (Distributions, TableOfReal, 0);
 
-class_methods (Distributions, TableOfReal) {
-	class_method (info)
-	class_methods_end
+void structDistributions :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of distributions: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine2 (L"Number of values: ", Melder_integer (numberOfRows));
 }
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns) {

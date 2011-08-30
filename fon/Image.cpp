@@ -18,10 +18,7 @@
  */
 
 /*
- * pb 2002/07/16 GPL
- * pb 2003/02/17 removed source code
- * pb 2007/10/01 can write as encoding
- * pb 2011/05/27 C++
+ * pb 2003/02/17 removed all meaningful source code
  */
 
 #include "Image.h"
@@ -46,17 +43,6 @@
 #include "oo_DESCRIPTION.h"
 #include "Image_def.h"
 
-class_methods (Image, Sampled) {
-	class_method_local (Image, destroy)
-	class_method_local (Image, copy)
-	class_method_local (Image, equal)
-	class_method_local (Image, canWriteAsEncoding)
-	class_method_local (Image, writeText)
-	class_method_local (Image, readText)
-	class_method_local (Image, writeBinary)
-	class_method_local (Image, readBinary)
-	class_method_local (Image, description)
-	class_methods_end
-}
+Thing_implement (Image, Sampled, 0);
 
 /* End of file Image.cpp */

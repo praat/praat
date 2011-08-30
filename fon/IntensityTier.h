@@ -24,11 +24,11 @@
 #include "TableOfReal.h"
 #include "Sound.h"
 
-Thing_declare1cpp (IntensityTier);
-struct structIntensityTier : public structRealTier {
+Thing_define (IntensityTier, RealTier) {
+	// overridden methods:
+	protected:
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define IntensityTier__methods(klas) RealTier__methods(klas)
-Thing_declare2cpp (IntensityTier, RealTier);
 
 IntensityTier IntensityTier_create (double tmin, double tmax);
 

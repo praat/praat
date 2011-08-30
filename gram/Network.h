@@ -19,19 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Data.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Network_def.h"
-#define Network__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Network, Data);
 
 void Network_init (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
@@ -66,10 +57,6 @@ void Network_zeroActivities (Network me, long nodeMin, long nodeMax);
 void Network_normalizeActivities (Network me, long nodeMin, long nodeMax);
 void Network_spreadActivities (Network me, long numberOfSteps);
 void Network_updateWeights (Network me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 /* End of file Network.h */
 #endif

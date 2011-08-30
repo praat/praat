@@ -24,6 +24,7 @@
 
 Thing_define (ArtwordEditor, Editor) {
 	// new data:
+	public:
 		Graphics graphics;
 		int feature;
 		GuiObject list, drawingArea, radio, time, value;

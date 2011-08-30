@@ -17,16 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2006/12/10 MelderInfo
- * pb 2007/03/17 domain quantity
- * pb 2008/01/19 double
- * pb 2011/05/27 C++
- */
-
 #include "Graphics.h"
 #include "Harmonicity.h"
+
+Thing_implement (Harmonicity, Vector, 2);
 
 double Harmonicity_getMean (Harmonicity me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
@@ -84,22 +78,21 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 	return result;
 }
 
-static void info (I) {
-	iam (Harmonicity);
-	classData -> info (me);
+void structHarmonicity :: v_info () {
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
-	autoNUMvector <double> strengths (1, my nx);
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	autoNUMvector <double> strengths (1, nx);
 	long nSounding = 0;
-	for (long ix = 1; ix <= my nx; ix ++)
-		if (my z [1] [ix] != -200)
-			strengths [++ nSounding] = my z [1] [ix];
+	for (long ix = 1; ix <= nx; ix ++)
+		if (z [1] [ix] != -200)
+			strengths [++ nSounding] = z [1] [ix];
 	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine5 (L"   Number of frames: ", Melder_integer (my nx), L" (", Melder_integer (nSounding), L" sounding)");
-	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (my dx), L" seconds");
-	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (my x1), L" seconds");
+	MelderInfo_writeLine5 (L"   Number of frames: ", Melder_integer (nx), L" (", Melder_integer (nSounding), L" sounding)");
+	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 	if (nSounding) {
 		double sum = 0, sumOfSquares = 0;
 		MelderInfo_writeLine1 (L"Periodicity-to-noise ratios of sounding frames:");
@@ -126,12 +119,6 @@ static void info (I) {
 	}
 }
 
-class_methods (Harmonicity, Vector) {
-	class_method (info)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
-}
-
 Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, double t1) {
 	try {
 		autoHarmonicity me = Thing_new (Harmonicity);
@@ -152,8 +139,7 @@ Matrix Harmonicity_to_Matrix (Harmonicity me) {
 	}
 }
 
-Harmonicity Matrix_to_Harmonicity (I) {
-	iam (Matrix);
+Harmonicity Matrix_to_Harmonicity (Matrix me) {
 	try {
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, my nx, my dx, my x1);
 		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);

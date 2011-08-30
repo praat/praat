@@ -17,19 +17,18 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * os 2007/05/29 Initial release
- * pb 2011/07/14 C++
- */
 
 #define ooSTRUCT FeatureWeights
-    oo_DEFINE_CLASS (FeatureWeights, Data)
-        oo_OBJECT (TableOfReal, 0, fweights)
+oo_DEFINE_CLASS (FeatureWeights, Data)
+	oo_OBJECT (TableOfReal, 0, fweights)
 
-		#if oo_DECLARING
-			// overridden methods:
-				void v_info ();
-		#endif
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
-    oo_END_CLASS (FeatureWeights)
+oo_END_CLASS (FeatureWeights)
 #undef ooSTRUCT
+
+
+/* End of file FeatureWeights_def.h */

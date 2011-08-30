@@ -216,10 +216,8 @@ Delta Speaker_to_Delta (Speaker me) {
 
 	/* Vocal tract from neutral articulation. */
 	{
-		Art art = Art_create ();
-		if (! art) { forget (thee); return NULL; }
-		Art_Speaker_meshVocalTract (art, me, xi, yi, xe, ye, xmm, ymm, closed);
-		forget (art);
+		autoArt art = Art_create ();
+		Art_Speaker_meshVocalTract (art.peek(), me, xi, yi, xe, ye, xmm, ymm, closed);
 	}
 
 	/* Pharynx and mouth: tubes 38..64. */

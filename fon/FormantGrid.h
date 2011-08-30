@@ -26,7 +26,6 @@
 Thing_declare (Interpreter);
 
 #include "FormantGrid_def.h"
-#define FormantGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (FormantGrid, Function);
 
 void FormantGrid_init (I, double tmin, double tmax, long numberOfFormants);

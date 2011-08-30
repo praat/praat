@@ -30,7 +30,7 @@
 #include "Eigen.h"
 #include "NUM2.h"
 
-void Matrix_scatterPlot (I, Any g, long icx, long icy,
+void Matrix_scatterPlot (I, Graphics g, long icx, long icy,
     double xmin, double xmax, double ymin, double ymax,
     double size_mm, const wchar_t *mark, int garnish)
 {
@@ -75,7 +75,7 @@ void Matrix_scatterPlot (I, Any g, long icx, long icy,
 	}
 }
 
-void Matrix_drawAsSquares (I, Any g, double xmin, double xmax, double ymin, double ymax, int garnish)
+void Matrix_drawAsSquares (I, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish)
 {
     iam (Matrix);
 	Graphics_Colour colour = Graphics_inqColour (g);

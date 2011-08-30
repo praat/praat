@@ -17,18 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/10/23 Intensity_getQuantile
- * pb 2004/10/24 Sampled statistics
- * pb 2004/11/21 corrected sones bug
- * pb 2006/12/08 MelderInfo
- * pb 2007/03/17 domain quantity
- * pb 2011/05/31 C++
- * pb 2011/07/14 C++
- */
-
 #include "Intensity.h"
+
+Thing_implement (Intensity, Vector, 2);
 
 void structIntensity :: v_info () {
 	structData :: v_info ();
@@ -42,35 +33,24 @@ void structIntensity :: v_info () {
 	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 }
 
-static double convertStandardToSpecialUnit (I, double value, long ilevel, int unit) {
-	iam (Intensity);
-	(void) me;
+double structIntensity :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
 	(void) ilevel;
 	if (unit == 1) {
-		return pow (10.0, 0.1 * value);   /* energy */
+		return pow (10.0, 0.1 * value);   // energy
 	} else if (unit == 2) {
-		return pow (2.0, 0.1 * value);   /* sones */
+		return pow (2.0, 0.1 * value);   // sones
 	}
-	return value;   /* default, especially if units=0 (as in Vector_getMean) or units=3 (averaging_DB) */
+	return value;   // default, especially if units == 0 (as in Vector_getMean) or units == 3 (averaging_DB)
 }
 
-static double convertSpecialToStandardUnit (I, double value, long ilevel, int unit) {
-	iam (Intensity);
+double structIntensity :: v_convertSpecialToStandardUnit (double value, long ilevel, int unit) {
 	(void) ilevel;
-	(void) me;
 	return
 		unit == 1 ?
-			10.0 * log10 (value) :   /* value = energy */
+			10.0 * log10 (value) :   // value = energy
 		unit == 2 ?
-			10.0 * NUMlog2 (value) :   /* value = sones */
-		value;   /* value = dB */
-}
-
-class_methods (Intensity, Vector) {
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method (convertStandardToSpecialUnit)
-	class_method (convertSpecialToStandardUnit)
-	class_methods_end
+			10.0 * NUMlog2 (value) :   // value = sones
+		value;   // value = dB
 }
 
 void Intensity_init (Intensity me, double tmin, double tmax, long nt, double dt, double t1) {
@@ -90,7 +70,7 @@ Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double
 Matrix Intensity_to_Matrix (Intensity me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Intensity.");
@@ -100,7 +80,7 @@ Matrix Intensity_to_Matrix (Intensity me) {
 Intensity Matrix_to_Intensity (Matrix me) {
 	try {
 		autoIntensity thee = Thing_new (Intensity);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");

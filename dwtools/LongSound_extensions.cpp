@@ -212,8 +212,8 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		for (long i = 1; i <= my size; i++)
 		{
 			int sampleRatesMatch, numbersOfChannelsMatch;
-			Data data = (Data) my item [i];
-			if (data -> methods == (Thing_Table) classSound)
+			Sampled data = (Sampled) my item [i];
+			if (data -> classInfo == classSound)
 			{
 				Sound sound = (Sound) data;
 				sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
@@ -240,8 +240,8 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file)
 		errno = 0;
 		for (long i = 1; i <= my size; i++)
 		{
-			Data data = (Data) my item [i];
-			if (data -> methods == (Thing_Table) classSound)
+			Sampled data = (Sampled) my item [i];
+			if (data -> classInfo == classSound)
 			{
 				Sound sound = (Sound) data;
 				MelderFile_writeFloatToAudio (file, sound -> ny, Melder_defaultAudioFileEncoding16

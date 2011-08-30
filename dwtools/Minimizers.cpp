@@ -45,8 +45,14 @@
 #define DFUNC1(df, x) for (i=1; i <= my nParameters; i++) my ptry[i] = p[i] + (x) * direction[i]; \
 	my dfunc (my object, my ptry, my dp); for (df=0, i=1; i <= my nParameters; i++) df += my dp[i] * direction[i];
 
-#undef our
-#define our ((Minimizer_Table) my methods) ->   // tijdelijk
+Thing_implement (Minimizer, Thing, 0);
+
+void structMinimizer :: v_destroy ()
+{
+    NUMdvector_free (p, 1);
+    NUMdvector_free (history, 1);
+    Minimizer_Parent :: v_destroy ();
+}
 
 static void classMinimizer_after (I, Any aclosure)
 {
@@ -72,33 +78,6 @@ static void classMinimizer_after (I, Any aclosure)
 		L", Cost: ", Melder_double (my minimum));
 }
 
-static void classMinimizer_info (I) {(void) void_me;}
-
-static void classMinimizer_destroy (I)
-{
-    iam (Minimizer);
-    NUMdvector_free (my p, 1);
-    NUMdvector_free (my history, 1);
-    inherited (Minimizer) destroy (me);
-}
-
-static void classMinimizer_reset (I) {(void) void_me;}
-
-static void classMinimizer_minimize (I) { (void) void_me; }
-
-static void classMinimizer_setParameters (I, Any parameters)
-{
-	(void) void_me; (void) parameters;
-}
-
-class_methods (Minimizer, Thing)
-   class_method_local (Minimizer, destroy)
-   class_method_local (Minimizer, info)
-   class_method_local (Minimizer, minimize)
-   class_method_local (Minimizer, reset)
-   class_method_local (Minimizer, setParameters)
-class_methods_end
-
 void Minimizer_init (I, long nParameters, Data object)
 {
 	iam (Minimizer);
@@ -112,7 +91,7 @@ void Minimizer_init (I, long nParameters, Data object)
 
 void Minimizer_setParameters (Minimizer me, Any parameters)
 {
-	if (our setParameters) our setParameters (me, parameters);
+	my v_setParameters (parameters);
 }
 static void monitor_off (Minimizer me)
 {
@@ -142,7 +121,7 @@ void Minimizer_minimize (Minimizer me, long maxNumOfIterations, double tolerance
 		}
 		if (monitor) my gmonitor = (Graphics) Melder_monitor1 (0.0, L"Starting...");
 		my start = 1; /* for my after() */
-		our minimize (me);
+		my v_minimize ();
 		if (monitor) monitor_off (me);
 		if (my success) Melder_casual("Minimizer_minimize: minimum %f reached \n"
 			"after %ld iterations and %ld function calls.", my minimum,
@@ -182,7 +161,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 	Minimizer_reset (me, popt.peek());
 }
 
-void Minimizer_setAfterEachIteration (Minimizer me, void (*after) (I, Any aclosure), Any aclosure)
+static void Minimizer_setAfterEachIteration (Minimizer me, void (*after) (I, Any aclosure), Any aclosure)
 {
     my after = after;
     my aclosure = aclosure;
@@ -214,7 +193,7 @@ void Minimizer_reset (Minimizer me, const double guess[])
     }
     my maxNumOfIterations = my success = my funcCalls = my iteration = 0;
     my minimum = 1.0e38;
-    our reset (me);
+    my v_reset ();
 }
 
 void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, double hmin,
@@ -262,55 +241,50 @@ double Minimizer_getMinimum (Minimizer me)
 
 /**************  class SteepestDescentMinimizer **********************/
 
-static void classSteepestDescentMinimizer_minimize (I)
+Thing_implement	(SteepestDescentMinimizer, Minimizer, 0);
+
+void structSteepestDescentMinimizer :: v_minimize ()
 {
-	iam (SteepestDescentMinimizer);
-	autoNUMvector<double> dp  (1, my nParameters);
-	autoNUMvector<double> dpp (1, my nParameters);
-	double fret = my func (my object, my p);
-	while (my iteration < my maxNumOfIterations)
+	autoNUMvector<double> dp  (1, nParameters);
+	autoNUMvector<double> dpp (1, nParameters);
+	double fret = func (object, p);
+	while (iteration < maxNumOfIterations)
 	{
-		my dfunc (my object, my p, dp.peek());
-		for (long i = 1; i <= my nParameters; i++)
+		dfunc (object, p, dp.peek());
+		for (long i = 1; i <= nParameters; i++)
 		{
-			dpp[i] = - my eta * dp[i] + my momentum * dpp[i];
-			my p[i] += dpp[i];
+			dpp[i] = - eta * dp[i] + momentum * dpp[i];
+			p[i] += dpp[i];
 		}
-		my history[++my iteration] = my minimum = my func (my object, my p);
-		my success = 2.0 * fabs (fret - my minimum) < my tolerance * (fabs (fret) + fabs (my minimum));
-		if (my after)
+		history[++iteration] = minimum = func (object, p);
+		success = 2.0 * fabs (fret - minimum) < tolerance * (fabs (fret) + fabs (minimum));
+		if (after)
 		{
-			try { my after (me, my aclosure);
+			try { after (this, aclosure);
 			} catch (MelderError) {
-				Melder_casual ("Interrupted after %ld iterations.",my iteration);
+				Melder_casual ("Interrupted after %ld iterations.",iteration);
 				Melder_clearError ();
 				break;
 			}
 		}
-		if (my success) break;
-		fret = my minimum;
+		if (success) break;
+		fret = minimum;
 	}
 }
 
-static void classSteepestDescentMinimizer_setParameters (I, Any p)
+void structSteepestDescentMinimizer :: v_setParameters (Any p)
 {
-	iam (SteepestDescentMinimizer);
 	if (p)
 	{
 		SteepestDescentMinimizer_parameters thee = (SteepestDescentMinimizer_parameters) p;
-		my eta = thy eta;
-		my momentum = thy momentum;
+		eta = thy eta;
+		momentum = thy momentum;
 	}
 	else
 	{
-		my eta = 0.1; my momentum = 0.9;
+		eta = 0.1; momentum = 0.9;
 	}
 }
-
-class_methods (SteepestDescentMinimizer, Minimizer)
-   class_method_local (SteepestDescentMinimizer, minimize)
-   class_method_local (SteepestDescentMinimizer, setParameters)
-class_methods_end
 
 SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Data object,
 	double (*func) (Data object, const double p[]),
@@ -327,10 +301,12 @@ SteepestDescentMinimizer SteepestDescentMinimizer_create (long nParameters, Data
 
 /*****************  class VDSmagtMinimizer ******************************/
 
-static void classVDSmagtMinimizer_minimize (I)
+Thing_implement (VDSmagtMinimizer, Minimizer, 0);
+
+void structVDSmagtMinimizer :: v_minimize ()
 {
-    iam (VDSmagtMinimizer);
-    int decrease_direction_found = 1, iteration = 1;
+    int decrease_direction_found = 1;
+	int l_iteration = 1;   // David, dat is gevaarlijk: een locale variabele met dezelfde naam als een member; daarom hernoemd, maar is het correct?
     double rtemp, rtemp2;
 
 	// df is estimate of function reduction obtainable during line search
@@ -340,251 +316,242 @@ static void classVDSmagtMinimizer_minimize (I)
 	// flag = 2 => line search did not decrease gradient
     //    OK; must restart
 
-	if (my restart_flag)
+	if (restart_flag)
 	{
-    	my minimum = my func (my object, my p);
-    	my dfunc (my object, my p, my dp);
- 		my df = my minimum;
-    	my restart = 2;
-		my one_up = my flag = 0;
-		my gcg0 = my gopt_sq = 0.0;
+    	minimum = func (object, p);
+    	dfunc (object, p, dp);
+ 		df = minimum;
+    	restart = 2;
+		one_up = flag = 0;
+		gcg0 = gopt_sq = 0.0;
 	}
-	my restart_flag = 1;
-    while (++my iteration <= my maxNumOfIterations)
+	restart_flag = 1;
+    while (++ this -> iteration <= maxNumOfIterations)
     {
-		if (my flag & 1)
+		if (flag & 1)
 		{
-	    	if (my one_up)
+	    	if (one_up)
 			{
 				decrease_direction_found = 0;
-				my iteration--;
+				this -> iteration --;
 				break;
 			}
 	    	else
 			{
-				my one_up = 1;
+				one_up = 1;
 			}
 		}
 		else
 		{
-			my one_up = 0;
+			one_up = 0;
 		}
-		if (my flag & 2)
+		if (flag & 2)
 		{
-			my restart = 2; /* my flag & 1 ??? */
+			restart = 2; /* flag & 1 ??? */
 		}
-		else if (fabs ((double) my gcg0) > 0.2 * my gopt_sq)
+		else if (fabs ((double) gcg0) > 0.2 * gopt_sq)
 		{
-			my restart = 1;
+			restart = 1;
 		}
-		if (my restart == 0)
+		if (restart == 0)
 		{
 			rtemp = rtemp2 = 0.0;
-	    	for (long i = 1; i <= my nParameters; i++)
+	    	for (long i = 1; i <= nParameters; i++)
 	    	{
-				rtemp += my gc[i] * my grst[i];
-				rtemp2 += my gc[i] * my srst[i];
+				rtemp += gc[i] * grst[i];
+				rtemp2 += gc[i] * srst[i];
 	    	}
-	    	my gamma = rtemp / my gamma_in;
-	    	if (fabs (my beta * my gropt - my gamma * rtemp2) > 0.2*my gopt_sq)
+	    	gamma = rtemp / gamma_in;
+	    	if (fabs (beta * gropt - gamma * rtemp2) > 0.2*gopt_sq)
 			{
-				my restart = 1;
+				restart = 1;
 			}
 	    	else
 			{
-				for (long i = 1; i <= my nParameters; i++)
+				for (long i = 1; i <= nParameters; i++)
 				{
-	    			my s[i] = my beta * my s[i] + my gamma * my srst[i] - my gc[i];
+	    			s[i] = beta * s[i] + gamma * srst[i] - gc[i];
 				}
 			}
 		}
-		if (my restart == 2)
+		if (restart == 2)
 		{
-	    	for (long i = 1; i <= my nParameters; i++) my s[i] = - my dp[i];
-	    	my restart = 1;
+	    	for (long i = 1; i <= nParameters; i++) s[i] = - dp[i];
+	    	restart = 1;
 		}
-		else if (my restart == 1)
+		else if (restart == 1)
 		{
-	    	my gamma_in = my gropt - my gr0;
-	    	for (long i = 1; i <= my nParameters; i++)
+	    	gamma_in = gropt - gr0;
+	    	for (long i = 1; i <= nParameters; i++)
 	    	{
-				my srst[i] = my s[i];
-				my s[i] = my beta * my s[i] - my gc[i];
-				my grst[i] = my gc[i] - my g0[i];
+				srst[i] = s[i];
+				s[i] = beta * s[i] - gc[i];
+				grst[i] = gc[i] - g0[i];
 	    	}
-	    	my restart = 0;
+	    	restart = 0;
 		}
 
 		// Begin line search
 		// lineSearch_iteration = #iterations during current line search
 
-		my flag = 0;
-		my lineSearch_iteration = 0;
+		flag = 0;
+		lineSearch_iteration = 0;
 		rtemp = 0.0;
-		for (long i = 1; i <= my nParameters; i++)
+		for (long i = 1; i <= nParameters; i++)
 		{
-	    	rtemp += my dp[i] * my s[i];
-	    	my g0[i] = my dp[i];
+	    	rtemp += dp[i] * s[i];
+	    	g0[i] = dp[i];
 		}
-		my gr0 = my gropt = rtemp;
-		if (iteration == 1) my alphamin = fabs (my df / my gropt);
-		if (my gr0 > 0)
+		gr0 = gropt = rtemp;
+		if (l_iteration == 1) alphamin = fabs (df / gropt);
+		if (gr0 > 0)
 		{
-	    	my flag = 1;
-	    	my restart = 2;
+	    	flag = 1;
+	    	restart = 2;
 			continue;
 		}
-		my f0 = my minimum;
+		f0 = minimum;
 
 		// alpha = length of step along line;
 		// dalpha = change in alpha
 		// alphamin = position of min along line
 
-		my alplim = -1;
-		my again = -1;
-		rtemp = fabs (my df / my gropt);
-		my dalpha = my alphamin < rtemp ? my alphamin : rtemp;
-		my alphamin = 0;
+		alplim = -1;
+		again = -1;
+		rtemp = fabs (df / gropt);
+		dalpha = alphamin < rtemp ? alphamin : rtemp;
+		alphamin = 0;
 		do
 		{
 	    	do
 			{
-				if (my lineSearch_iteration)
+				if (lineSearch_iteration)
 				{
-		    		if (! (my fch == 0))
+		    		if (! (fch == 0))
 					{
-						my gr2s += (my temp + my temp) / my dalpha;
+						gr2s += (temp + temp) / dalpha;
 					}
 
-		    		if (my alplim < -0.5)
+		    		if (alplim < -0.5)
 					{
-						my dalpha = 9.0 * my alphamin;
+						dalpha = 9.0 * alphamin;
 					}
 		    		else
 					{
-						my dalpha = 0.5 * (my alplim - my alphamin);
+						dalpha = 0.5 * (alplim - alphamin);
 					}
 
-		    		my grs = my gropt + my dalpha * my gr2s;
-		    		if (my gropt * my grs < 0)
+		    		grs = gropt + dalpha * gr2s;
+		    		if (gropt * grs < 0)
 					{
-						my dalpha *= my  gropt / (my gropt - my grs);
+						dalpha *= gropt / (gropt - grs);
 					}
 				}
-				my alpha = my alphamin + my dalpha;
-				for (long i = 1; i <= my nParameters; i++)
+				alpha = alphamin + dalpha;
+				for (long i = 1; i <= nParameters; i++)
 				{
-					my pc[i] = my p[i] + my dalpha * my s[i];
+					pc[i] = p[i] + dalpha * s[i];
 				}
-    			my fc = my func (my object, my pc);
-    			my dfunc (my object, my pc, my gc);
-				iteration++;
-				my lineSearch_iteration++;
-				my gsq = my grc = 0.0;
-				for (long i = 1; i <= my nParameters; i++)
+    			fc = func (object, pc);
+    			dfunc (object, pc, gc);
+				l_iteration ++;
+				lineSearch_iteration++;
+				gsq = grc = 0.0;
+				for (long i = 1; i <= nParameters; i++)
 				{
-		    		my gsq += my gc[i] * my gc[i];
-		    		my grc += my gc[i] * my s[i];
+		    		gsq += gc[i] * gc[i];
+		    		grc += gc[i] * s[i];
 				}
-				my fch = my fc - my minimum;
-				my gr2s = (my grc - my gropt) / my dalpha;
-				my temp = (my fch + my fch) / my dalpha - my grc - my gropt;
-				if ((my fc < my minimum) ||
-					((my fc == my minimum) && (my grc / my gropt > -1)))
+				fch = fc - minimum;
+				gr2s = (grc - gropt) / dalpha;
+				temp = (fch + fch) / dalpha - grc - gropt;
+				if ((fc < minimum) ||
+					((fc == minimum) && (grc / gropt > -1)))
 				{
 		    		double *tmp;
-		    		my gopt_sq = my gsq;
-		    		my history[my iteration] = my minimum = my fc;
-		    		tmp = my p; my p = my pc; my pc = tmp;
-		    		tmp = my dp; my dp = my gc; my gc = tmp;
-		    		if (my grc * my gropt <= 0) my alplim = my alphamin;
-		    		my alphamin = my alpha;
-		    		my gropt = my grc;
-		    		my dalpha = -my dalpha;
-		    		my success = my gsq < my tolerance;
-					if (my after)
+		    		gopt_sq = gsq;
+		    		history [this ->iteration] = minimum = fc;
+		    		tmp = p; p = pc; pc = tmp;
+		    		tmp = dp; dp = gc; gc = tmp;
+		    		if (grc * gropt <= 0) alplim = alphamin;
+		    		alphamin = alpha;
+		    		gropt = grc;
+		    		dalpha = - dalpha;
+		    		success = gsq < tolerance;
+					if (after)
 					{
-						try { my after (me, my aclosure);
+						try {
+							after (this, aclosure);
 						} catch (MelderError) {
-							Melder_casual ("Interrupted after %ld iterations.", my iteration);
+							Melder_casual ("Interrupted after %ld iterations.", this -> iteration);
 							Melder_clearError ();
 							break;
 						}
 					}
-					if (my success) return;
-		    		if (fabs (my gropt / my gr0) < my lineSearchGradient) break;
+					if (success) return;
+		    		if (fabs (gropt / gr0) < lineSearchGradient) break;
 				}
 				else
 				{
-					my alplim = my alpha;
+					alplim = alpha;
 				}
-	    	} while (my lineSearch_iteration
-				<= my lineSearchMaxNumOfIterations);
+	    	} while (lineSearch_iteration
+				<= lineSearchMaxNumOfIterations);
 
-	    	my fc = my history[my iteration] = my minimum;
+	    	fc = history [this -> iteration] = minimum;
 			rtemp = 0.0;
-	    	for (long i = 1; i <= my nParameters; i++)
+	    	for (long i = 1; i <= nParameters; i++)
 	    	{
-				my pc[i] = my p[i];
-				my gc[i] = my dp[i];
-				rtemp += my gc[i] * my g0[i];
+				pc[i] = p[i];
+				gc[i] = dp[i];
+				rtemp += gc[i] * g0[i];
 	    	}
-	    	my gcg0 = rtemp;
-	    	if (fabs(my gropt - my gr0) > my tolerance)
+	    	gcg0 = rtemp;
+	    	if (fabs(gropt - gr0) > tolerance)
 	    	{
-				my beta = (my gopt_sq - my gcg0) / (my gropt - my gr0);
-				if (fabs (my beta * my gropt) < 0.2 * my gopt_sq) break;
+				beta = (gopt_sq - gcg0) / (gropt - gr0);
+				if (fabs (beta * gropt) < 0.2 * gopt_sq) break;
 	    	}
-	    	my again++;
-	    	if (my again > 0) my flag += 2;
-		} while (my flag < 1);
+	    	again++;
+	    	if (again > 0) flag += 2;
+		} while (flag < 1);
 
-		if (my f0 <= my minimum) my flag += 1;
-		my df = my gr0 * my alphamin;
+		if (f0 <= minimum) flag += 1;
+		df = gr0 * alphamin;
 	}
-	if (my iteration > my maxNumOfIterations)
+	if (this -> iteration > maxNumOfIterations)
 	{
-		my iteration = my maxNumOfIterations;
+		this -> iteration = maxNumOfIterations;
 	}
-    if (decrease_direction_found) my restart_flag = 0;
+    if (decrease_direction_found) restart_flag = 0;
 }
 
-static void classVDSmagtMinimizer_destroy (I)
+void structVDSmagtMinimizer :: v_destroy ()
 {
-    iam (VDSmagtMinimizer);
-    NUMvector_free (my dp, 1);
-    NUMvector_free (my pc, 1);
-    NUMvector_free (my gc, 1);
-    NUMvector_free (my g0, 1);
-    NUMvector_free (my s, 1);
-    NUMvector_free (my srst, 1);
-    NUMvector_free (my grst, 1);
-    inherited (VDSmagtMinimizer) destroy (me);
+    NUMvector_free (dp, 1);
+    NUMvector_free (pc, 1);
+    NUMvector_free (gc, 1);
+    NUMvector_free (g0, 1);
+    NUMvector_free (s, 1);
+    NUMvector_free (srst, 1);
+    NUMvector_free (grst, 1);
+    VDSmagtMinimizer_Parent :: v_destroy ();
 }
 
-static void classVDSmagtMinimizer_reset (I)
+void structVDSmagtMinimizer :: v_reset ()
 {
-    iam (VDSmagtMinimizer);
-    my restart_flag = 1;
+    restart_flag = 1;
 }
 
-static void classVDSmagtMinimizer_setParameters (I, Any parameters)
+void structVDSmagtMinimizer :: v_setParameters (Any parameters)
 {
-	iam (VDSmagtMinimizer);
 	if (parameters)
 	{
-		VDSmagtMinimizer_parameters p = (VDSmagtMinimizer_parameters) parameters;
-    	my lineSearchGradient = p -> lineSearchGradient;
-    	my lineSearchMaxNumOfIterations = p -> lineSearchMaxNumOfIterations;
+		VDSmagtMinimizer_parameters p = (VDSmagtMinimizer_parameters) parameters;   // David, weer link: dezelfde naam
+    	lineSearchGradient = p -> lineSearchGradient;
+    	lineSearchMaxNumOfIterations = p -> lineSearchMaxNumOfIterations;
     }
 }
-
-class_methods (VDSmagtMinimizer, Minimizer)
-   class_method_local (VDSmagtMinimizer, minimize)
-   class_method_local (VDSmagtMinimizer, destroy)
-   class_method_local (VDSmagtMinimizer, reset)
-   class_method_local (VDSmagtMinimizer, setParameters)
-class_methods_end
 
 VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Data object, double (*func) (Data object, const double x[]),
     void (*dfunc) (Data object, const double x[], double dx[]))
@@ -609,17 +576,14 @@ VDSmagtMinimizer VDSmagtMinimizer_create (long nParameters, Data object, double 
 
 /************ class LineMinimizer *******************************/
 
-static void classLineMinimizer_destroy (I)
+void structLineMinimizer :: v_destroy ()
 {
-    iam (LineMinimizer);
-    NUMvector_free (my ptry, 1);
-    NUMvector_free (my direction, 1);
-    inherited (LineMinimizer) destroy (me);
+    NUMvector_free (ptry, 1);
+    NUMvector_free (direction, 1);
+    LineMinimizer_Parent :: v_destroy ();
 }
 
-class_methods (LineMinimizer, Minimizer)
-   class_method_local (LineMinimizer, destroy)
-class_methods_end
+Thing_implement (LineMinimizer, Minimizer, 0);
 
 void LineMinimizer_init (I, long nParameters, Data object, double (*func)(Data, const double []))
 {

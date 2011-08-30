@@ -50,23 +50,12 @@
 
 #include "longchar.h"
 
-class_methods (SpellingChecker, Data) {
-	class_method_local (SpellingChecker, description)
-	class_method_local (SpellingChecker, destroy)
-	class_method_local (SpellingChecker, copy)
-	class_method_local (SpellingChecker, equal)
-	class_method_local (SpellingChecker, canWriteAsEncoding)
-	class_method_local (SpellingChecker, writeText)
-	class_method_local (SpellingChecker, writeBinary)
-	class_method_local (SpellingChecker, readText)
-	class_method_local (SpellingChecker, readBinary)
-	class_methods_end
-}
+Thing_implement (SpellingChecker, Data, 0);
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me) {
 	try {
 		autoSpellingChecker thee = Thing_new (SpellingChecker);
-		thy wordList = (WordList) Data_copy (me); therror
+		thy wordList = Data_copy (me);
 		thy separatingCharacters = Melder_wcsdup (L".,;:()\"");
 		return thee.transfer();
 	} catch (MelderError) {
@@ -75,7 +64,7 @@ SpellingChecker WordList_upto_SpellingChecker (WordList me) {
 }
 
 WordList SpellingChecker_extractWordList (SpellingChecker me) {
-	return (WordList) Data_copy (my wordList);
+	return Data_copy (my wordList);
 }
 
 void SpellingChecker_replaceWordList (SpellingChecker me, WordList list) {
@@ -83,7 +72,7 @@ void SpellingChecker_replaceWordList (SpellingChecker me, WordList list) {
 		/*
 		 * Create without change.
 		 */
-		autoWordList newList = (WordList) Data_copy (list);
+		autoWordList newList = Data_copy (list);
 		/*
 		 * Change without error.
 		 */
@@ -98,7 +87,7 @@ SortedSetOfString SpellingChecker_extractUserDictionary (SpellingChecker me) {
 	try {
 		if (! my userDictionary)
 			Melder_throw ("This spelling checker does not contain a user dictionary.");
-		return (SortedSetOfString) Data_copy (my userDictionary);
+		return Data_copy (my userDictionary);
 	} catch (MelderError) {
 		Melder_throw (me, ": user dictionary not extracted.");
 	}
@@ -109,7 +98,7 @@ void SpellingChecker_replaceUserDictionary (SpellingChecker me, SortedSetOfStrin
 		/*
 		 * Create without change.
 		 */
-		autoSortedSetOfString newDict = (SortedSetOfString) Data_copy (userDictionary);
+		autoSortedSetOfString newDict = Data_copy (userDictionary);
 		/*
 		 * Change without error.
 		 */
@@ -226,7 +215,7 @@ void SpellingChecker_addNewWord (SpellingChecker me, const wchar *word) {
 			my userDictionary = SortedSetOfString_create ();
 		autostring generic = Melder_calloc (wchar, 3 * wcslen (word) + 1);
 		Longchar_genericizeW (word, generic.peek());
-		SortedSetOfString_add (my userDictionary, generic.transfer()); therror
+		my userDictionary -> addString (generic.transfer()); therror
 	} catch (MelderError) {
 		Melder_throw (me, ": word \"", word, "\" not added.");
 	}

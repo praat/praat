@@ -62,19 +62,7 @@
 #include "oo_DESCRIPTION.h"
 #include "ExperimentMFC_def.h"
 
-class_methods (ExperimentMFC, Data) {
-	us -> version = 5;
-	class_method_local (ExperimentMFC, destroy)
-	class_method_local (ExperimentMFC, description)
-	class_method_local (ExperimentMFC, copy)
-	class_method_local (ExperimentMFC, equal)
-	class_method_local (ExperimentMFC, canWriteAsEncoding)
-	class_method_local (ExperimentMFC, writeText)
-	class_method_local (ExperimentMFC, readText)
-	class_method_local (ExperimentMFC, writeBinary)
-	class_method_local (ExperimentMFC, readBinary)
-	class_methods_end
-}
+Thing_implement (ExperimentMFC, Data, 5);
 
 #include "enums_getText.h"
 #include "Experiment_enums.h"
@@ -135,7 +123,7 @@ static void readSound (ExperimentMFC me, const wchar *fileNameHead, const wchar 
 		 * Read the substimulus.
 		 */
 		autoSound substimulus = (Sound) Data_readFromFile (& file);   // Sound_readFromSoundFile (& file);
-		if (substimulus -> methods != (Thing_Table) classSound)
+		if (substimulus -> classInfo != classSound)
 			Melder_throw ("File ", & file, " contains a ", Thing_className (substimulus.peek()), " instead of a sound.");
 		/*
 		 * Check whether all sounds have the same number of channels.
@@ -334,19 +322,7 @@ void ExperimentMFC_playResponse (ExperimentMFC me, long iresp) {
 		my responseCarrierBefore. sound, my responseCarrierAfter. sound, my responseInitialSilenceDuration);
 }
 
-class_methods (ResultsMFC, Data) {
-	us -> version = 2;
-	class_method_local (ResultsMFC, destroy)
-	class_method_local (ResultsMFC, description)
-	class_method_local (ResultsMFC, copy)
-	class_method_local (ResultsMFC, equal)
-	class_method_local (ResultsMFC, canWriteAsEncoding)
-	class_method_local (ResultsMFC, writeText)
-	class_method_local (ResultsMFC, readText)
-	class_method_local (ResultsMFC, writeBinary)
-	class_method_local (ResultsMFC, readBinary)
-	class_methods_end
-}
+Thing_implement (ResultsMFC, Data, 2);
 
 ResultsMFC ResultsMFC_create (long numberOfTrials) {
 	try {
@@ -492,7 +468,7 @@ double Categories_getEntropy (Categories me) {
 	long numberOfTokens = 0;
 	wchar_t *previousString = NULL;
 	double entropy = 0.0;
-	autoCategories thee = (Categories) Data_copy (me);
+	autoCategories thee = Data_copy (me);
 	Categories_sort (thee.peek());
 	for (long i = 1; i <= thy size; i ++) {
 		SimpleString s = (SimpleString) thy item [i];

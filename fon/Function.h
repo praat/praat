@@ -21,23 +21,8 @@
 
 #include "Data.h"
 
-Thing_declare1cpp (Function);
-struct structFunction : public structData {
-	double xmin, xmax;
-// overridden methods:
-	void v_info ();
-};
-#define Function__methods(klas)  Data__methods(klas) \
-	int domainQuantity; \
-	int (*getMinimumUnit) (void *klas, long ilevel); \
-	int (*getMaximumUnit) (void *klas, long ilevel); \
-	const wchar * (*getUnitText) (void *klas, long ilevel, int unit, unsigned long flags); \
-	int (*isUnitLogarithmic) (void *klas, long ilevel, int unit); \
-	double (*convertStandardToSpecialUnit) (void *klas, double value, long ilevel, int unit); \
-	double (*convertSpecialToStandardUnit) (void *klas, double value, long ilevel, int unit); \
-	void (*shiftX) (I, double xfrom, double xto); \
-	void (*scaleX) (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto);
-Thing_declare2cpp (Function, Data);
+#include "Function_def.h"
+oo_CLASS_CREATE (Function, Data);
 
 /*
 	An object of type Function represents a function f (x, ...) on the domain [xmin, xmax] * ....
@@ -46,7 +31,7 @@ Thing_declare2cpp (Function, Data);
 		xmin, xmax are constant;
 */
 
-int Function_init (I, double xmin, double xmax);
+void Function_init (Function me, double xmin, double xmax);
 /*
 	Preconditions:
 		xmin <= xmax;
@@ -55,7 +40,7 @@ int Function_init (I, double xmin, double xmax);
 		result -> xmax == xmax;
 */
 
-int ClassFunction_getDomainQuantity (I);   // as input for MelderQuantity_getXXX
+int Function_getDomainQuantity (Function me);   // as input for MelderQuantity_getXXX
 
 /*
  * A function value is often expressed in some unit, such as:
@@ -65,19 +50,19 @@ int ClassFunction_getDomainQuantity (I);   // as input for MelderQuantity_getXXX
  * 'unit' is enumerated type that has to be defined in the header files of the descendant class,
  * starting from 0, which should be the default unit; e.g. for pitch: 0 = Hz, 1 = logHz, 2 = semitones, 3 = mel.
  */
-int ClassFunction_getMinimumUnit (void *klas, long ilevel);
-int ClassFunction_getMaximumUnit (void *klas, long ilevel);
+int Function_getMinimumUnit (Function me, long ilevel);
+int Function_getMaximumUnit (Function me, long ilevel);
 
 #define Function_UNIT_TEXT_SHORT            0x00000001
 #define Function_UNIT_TEXT_GRAPHICAL        0x00000002
 #define Function_UNIT_TEXT_MENU             0x00000004
-const wchar * ClassFunction_getUnitText (void *klas, long ilevel, int unit, unsigned long flags);
+const wchar * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags);
 
-int ClassFunction_isUnitLogarithmic (void *klas, long ilevel, int unit);
+bool Function_isUnitLogarithmic (Function me, long ilevel, int unit);
 
-double ClassFunction_convertStandardToSpecialUnit (void *klas, double value, long ilevel, int unit);
-double ClassFunction_convertSpecialToStandardUnit (void *klas, double value, long ilevel, int unit);
-double ClassFunction_convertToNonlogarithmic (void *klas, double value, long ilevel, int unit);
+double Function_convertStandardToSpecialUnit (Function me, double value, long ilevel, int unit);
+double Function_convertSpecialToStandardUnit (Function me, double value, long ilevel, int unit);
+double Function_convertToNonlogarithmic (Function me, double value, long ilevel, int unit);
 
 /* The domain of a function can be changed by windowing. */
 /* Here follow some window functions. */
@@ -140,14 +125,14 @@ double Function_window (double tim, int windowType);
 /*
  * Procedures to adapt a range to the extent of the function domain.
  */
-void Function_unidirectionalAutowindow (I, double *xmin, double *xmax);
-void Function_bidirectionalAutowindow (I, double *x1, double *x2);
-int Function_intersectRangeWithDomain (I, double *x1, double *x2);
+void Function_unidirectionalAutowindow (Function me, double *xmin, double *xmax);
+void Function_bidirectionalAutowindow (Function me, double *x1, double *x2);
+bool Function_intersectRangeWithDomain (Function me, double *x1, double *x2);
 
-void Function_shiftXBy (I, double shift);
-void Function_shiftXTo (I, double xfrom, double xto);
-void Function_scaleXBy (I, double factor);
-void Function_scaleXTo (I, double xminto, double xmaxto);
+void Function_shiftXBy (Function me, double shift);
+void Function_shiftXTo (Function me, double xfrom, double xto);
+void Function_scaleXBy (Function me, double factor);
+void Function_scaleXTo (Function me, double xminto, double xmaxto);
 
 /* End of file Function.h */
 #endif

@@ -17,12 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/02/17 removed pitch analysis properties
- * pb 2006/05/29 added versions to included objects
- * pb 2008/03/07 version 5 (too late!)
- */
 
 #define ooSTRUCT Manipulation
 oo_DEFINE_CLASS (Manipulation, Function)
@@ -53,11 +47,11 @@ oo_DEFINE_CLASS (Manipulation, Function)
 		 * but allow it to be read (a legacy of writing but not reading the version 3 stuff).
 		 */
 		#if oo_WRITING
-			{ Image save = my dummySpectrogram; my dummySpectrogram = NULL;
+			{ Image save = dummySpectrogram; dummySpectrogram = NULL;
 		#endif
 		oo_OBJECT (Image, 0, dummySpectrogram)
 		#if oo_WRITING
-			my dummySpectrogram = save; }
+			dummySpectrogram = save; }
 		#endif
 		oo_OBJECT (FormantTier, 0, dummyFormantTier)
 		oo_OBJECT (Data, 0, dummy1)
@@ -82,6 +76,14 @@ oo_DEFINE_CLASS (Manipulation, Function)
 
 	#if !oo_READING && !oo_WRITING
 		oo_OBJECT (LPC, 0, lpc)
+	#endif
+
+	#if oo_DECLARING
+		// overridden methods:
+		protected:
+			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+			virtual void v_shiftX (double xfrom, double xto);
+			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
 	#endif
 
 oo_END_CLASS (Manipulation)

@@ -29,15 +29,8 @@
 #include "Pattern.h"
 #include "TableOfReal.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Excitations);
-struct structExcitations : public structOrdered {
+Thing_define (Excitations, Ordered) {
 };
-#define Excitations__methods(klas) Ordered__methods(klas)
-Thing_declare2cpp (Excitations, Ordered);
 
 /* Excitations is a collection of objects of the same class Excitation */
 
@@ -50,9 +43,5 @@ TableOfReal Excitations_to_TableOfReal (Excitations me);
 /* Precondition: my size >= 1, all items have same dimension */
 
 Excitation Excitations_getItem (Excitations m, long item);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Excitations_h_ */

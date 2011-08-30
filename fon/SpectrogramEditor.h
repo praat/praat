@@ -24,6 +24,7 @@
 
 Thing_define (SpectrogramEditor, FunctionEditor) {
 	// new data:
+	public:
 		double maximum;
 	// overridden methods:
 		virtual void v_draw ();

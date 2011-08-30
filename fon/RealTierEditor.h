@@ -24,6 +24,7 @@
 
 Thing_define (RealTierEditor, TimeSoundEditor) {
 	// new data:
+	public:
 		double ymin, ymax, ycursor;
 	// overridden methods:
 		virtual void v_createMenus ();

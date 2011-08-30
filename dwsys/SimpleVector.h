@@ -19,32 +19,16 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020812 GPL header
- djmw 20110505 Latest modification.
-*/
-
 #include "Data.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "SimpleVector_def.h"
-#define DoubleVector__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (DoubleVector, Data);
+oo_CLASS_CREATE (ComplexVector, Data);
 
 void DoubleVector_init (I, long min, long max);
 DoubleVector DoubleVector_create (long min, long max);
 
-#define ComplexVector__methods(klas) Data__methods(klas)
-oo_CLASS_CREATE (ComplexVector, Data);
-
 void ComplexVector_init (I, long min, long max);
 ComplexVector ComplexVector_create (long min, long max);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _SimpleVector_h_ */

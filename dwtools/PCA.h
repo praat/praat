@@ -31,12 +31,7 @@
 #include "Configuration.h"
 #include "Eigen.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "PCA_def.h"
-#define PCA__methods(klas) Eigen__methods(klas)
 oo_CLASS_CREATE (PCA, Eigen);
 
 PCA PCA_create (long numberOfComponents, long dimension);
@@ -63,10 +58,6 @@ TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou);
 /* Reconstruct the original TableOfReal from the PCA and the Configuration */
 
 TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, wchar_t *numstring);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _PCA_h_ */
 

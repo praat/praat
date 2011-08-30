@@ -19,21 +19,17 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020315 GPL header
-  djmw 20070620 Latest modification.
-*/
-
 #include "Collection_extensions.h"
 #include "Simple_extensions.h"
 #include "TableOfReal.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Categories);
+Thing_define (Categories, OrderedOfString) {
+	// overridden methods:
+	public:
+		virtual void v_readText (MelderReadText text);
+		virtual void v_writeText (MelderFile file);
+};
 
 void Categories_init (Categories me, long size);
 
@@ -51,15 +47,5 @@ long Categories_getSize (Categories me);
 
 Categories TableOfReal_to_CategoriesRow (I);
 Categories TableOfReal_to_CategoriesColumn (I);
-
-#ifdef __cplusplus
-	}
-
-	struct structCategories : public structOrderedOfString {
-	};
-	#define Categories__methods(klas) OrderedOfString__methods(klas)
-	Thing_declare2cpp (Categories, OrderedOfString);
-
-#endif
 
 #endif /* _Categories_h_ */

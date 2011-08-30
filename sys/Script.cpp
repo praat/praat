@@ -17,19 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2000/09/21
- * pb 2002/03/07 GPL
- * pb 2009/01/26
- * pb 2011/05/15 C++
- * pb 2011/07/04 C++
- */
-
 #include "Script.h"
 
-class_methods (Script, Data) {
-	class_methods_end
-}
+Thing_implement (Script, Data, 0);
 
 Script Script_createFromFile (MelderFile file) {
 	autoScript me = Thing_new (Script);

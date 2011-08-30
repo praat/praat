@@ -34,7 +34,6 @@
 #include "Image.h"
 
 #include "Manipulation_def.h"
-#define Manipulation__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (Manipulation, Function);
 
 /* How to create an Manipulation. */

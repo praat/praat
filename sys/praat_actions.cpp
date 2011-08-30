@@ -17,21 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/18 Mach
- * pb 2004/04/01 second-level menus
- * pb 2006/12/26 theCurrentPraat
- * pb 2007/01/25 width of button list is 50 procent
- * pb 2007/06/10 wchar_t
- * pb 2007/10/17 removed a bug that caused a crash in praat_show/hideAction if class2 or class3 was NULL
- * pb 2007/12/26 Gui
- * pb 2009/01/18 arguments to UiForm callbacks
- * pb 2009/08/03 repaired a memory leak in praat_removeAction
- * pb 2009/12/22 invokingButtonTitle
- * pb 2011/04/05 C++
- */
-
 #include "praatP.h"
 #include "praat_script.h"
 #include "longchar.h"
@@ -45,14 +30,14 @@ static struct structPraat_Command *theActions;
 static GuiObject praat_writeMenuTitle, praat_writeMenu, praat_writeMenuSeparator;
 static GuiObject praat_dynamicMenu, praat_dynamicMenuWindow;
 
-static void fixSelectionSpecification (void **class1, int *n1, void **class2, int *n2, void **class3, int *n3) {
+static void fixSelectionSpecification (ClassInfo *class1, int *n1, ClassInfo *class2, int *n2, ClassInfo *class3, int *n3) {
 /*
  * Function:
  *	sort the specification pairs *class(i), *n(i) according to class name, with NULL classes at the end.
  * Postconditions:
  *	if (*class2 != NULL) *class1 != NULL;
  *	if (*class3 != NULL) *class2 != NULL;
- *	(*class1) -> _className <= (*class2) -> _className <= (*class3) -> _className;
+ *	(*class1) -> className <= (*class2) -> className <= (*class3) -> className;
  * Usage:
  *	Called by praat_addAction () and praat_removeAction ().
  */
@@ -66,21 +51,21 @@ static void fixSelectionSpecification (void **class1, int *n1, void **class2, in
 	/* Now: if *class3, then *class2, and if *class2, then *class1.
 	 * Bubble-sort the input by class name.
 	 */
-	if (*class2 && wcscmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
-		void *helpClass = *class1; *class1 = *class2; *class2 = helpClass;
+	if (*class2 && wcscmp ((*class1) -> className, (*class2) -> className) > 0) {
+		ClassInfo helpClass = *class1; *class1 = *class2; *class2 = helpClass;
 		int helpN = *n1; *n1 = *n2; *n2 = helpN;
 	}
-	if (*class3 && wcscmp (((Data_Table) *class2) -> _className, ((Data_Table) *class3) -> _className) > 0) {
-		void *helpClass = *class2; *class2 = *class3; *class3 = helpClass;
+	if (*class3 && wcscmp ((*class2) -> className, (*class3) -> className) > 0) {
+		ClassInfo helpClass = *class2; *class2 = *class3; *class3 = helpClass;
 		int helpN = *n2; *n2 = *n3; *n3 = helpN;
-		if (wcscmp (((Data_Table) *class1) -> _className, ((Data_Table) *class2) -> _className) > 0) {
-			void *helpClass = *class1; *class1 = *class2; *class2 = helpClass;
+		if (wcscmp ((*class1) -> className, (*class2) -> className) > 0) {
+			ClassInfo helpClass = *class1; *class1 = *class2; *class2 = helpClass;
 			int helpN = *n1; *n1 = *n2; *n2 = helpN;
 		}
 	}
 }
 
-static long lookUpMatchingAction (void *class1, void *class2, void *class3, void *class4, const wchar_t *title) {
+static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, ClassInfo class4, const wchar *title) {
 /*
  * An action command is fully specified by its environment (the selected classes) and its title.
  * Precondition:
@@ -93,23 +78,23 @@ static long lookUpMatchingAction (void *class1, void *class2, void *class3, void
 	return 0;   /* Not found. */
 }
 
-void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
+void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
-void praat_addAction1 (void *class1, int n1,
+void praat_addAction1 (ClassInfo class1, int n1,
 	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
-void praat_addAction2 (void *class1, int n1, void *class2, int n2,
+void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
 	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
-void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3, int n3,
+void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
-void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
+void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
 	const wchar *title, const wchar *after, unsigned long flags, void (*callback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *))
 {
 	try {
@@ -127,10 +112,10 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 
 		if (callback && ! title)
 			Melder_throw ("An action command with callback has no title. Classes: ",
-				class1 ? ((Data_Table) class1) -> _className : L"", L" ",
-				class2 ? ((Data_Table) class2) -> _className : L"", L" ",
-				class3 ? ((Data_Table) class3) -> _className : L"", L" ",
-				class4 ? ((Data_Table) class4) -> _className : L"", L".");
+				class1 ? class1 -> className : L"", L" ",
+				class2 ? class2 -> className : L"", L" ",
+				class3 ? class3 -> className : L"", L" ",
+				class4 ? class4 -> className : L"", L".");
 
 		if (! class1)
 			Melder_throw ("The action command \"", title, "\" has no first class.");
@@ -203,7 +188,7 @@ static void deleteDynamicMenu (void) {
 			// RFC: Beter? Nog beter?
 			#if gtk
 				praat_writeMenu = gtk_menu_new ();
-				gtk_menu_item_set_submenu (GTK_MENU_ITEM (praat_writeMenuTitle), praat_writeMenu);
+				gtk_menu_item_set_submenu (GTK_MENU_ITEM (praat_writeMenuTitle), GTK_WIDGET (praat_writeMenu));
 			#elif motif
 				praat_writeMenu = XmCreatePulldownMenu (praatP.menuBar, "Save", NULL, 0);
 				XtVaSetValues (praat_writeMenuTitle, XmNsubMenuId, praat_writeMenu, NULL);
@@ -223,7 +208,7 @@ void praat_addActionScript (const wchar *className1, int n1, const wchar *classN
 	const wchar *title, const wchar *after, int depth, const wchar *script)
 {
 	try {
-		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title && after && script);
 		if (wcslen (className1)) {
 			class1 = Thing_classFromClassName (className1); therror
@@ -311,15 +296,15 @@ void praat_addActionScript (const wchar *className1, int n1, const wchar *classN
 	}
 }
 
-void praat_removeAction (void *class1, void *class2, void *class3, const wchar_t *title) {
+void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const wchar *title) {
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 		if (! found) {
-			Melder_throw ("Action command \"", ((Data_Table) class1) -> _className,
-				class2 ? L" & ": L"", ((Data_Table) class2) -> _className,
-				class3 ? L" & ": L"", ((Data_Table) class3) -> _className,
+			Melder_throw ("Action command \"", class1 -> className,
+				class2 ? L" & ": L"", class2 -> className,
+				class3 ? L" & ": L"", class3 -> className,
 				": ", title, "\" not found.");
 		}
 		Melder_free (theActions [found]. title);
@@ -334,7 +319,7 @@ void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *cl
 	const wchar_t *className3, const wchar_t *title)
 {
 	try {
-		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (wcslen (className1)) {
 			class1 = Thing_classFromClassName (className1); therror
@@ -352,15 +337,15 @@ void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *cl
 	}
 }
 
-void praat_hideAction (void *class1, void *class2, void *class3, const wchar_t *title) {
+void praat_hideAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const wchar *title) {
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 		if (! found) {
-			Melder_throw ("Praat: action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
-				class2 ? " & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
-				class3 ? " & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
+			Melder_throw ("Praat: action command \"", class1 ? class1 -> className : NULL,
+				class2 ? " & ": NULL, class2 ? class2 -> className : NULL,
+				class3 ? " & ": NULL, class3 ? class3 -> className : NULL,
 				": ", title, "\" not found.");
 		}
 		if (! theActions [found]. hidden) {
@@ -377,7 +362,7 @@ void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *clas
 	const wchar_t *className3, const wchar_t *title)
 {
 	try {
-		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (wcslen (className1)) {
 			class1 = Thing_classFromClassName (className1); therror
@@ -394,15 +379,15 @@ void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *clas
 	}
 }
 
-void praat_showAction (void *class1, void *class2, void *class3, const wchar_t *title) {
+void praat_showAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const wchar *title) {
 	try {
 		int n1, n2, n3;
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 		long found = lookUpMatchingAction (class1, class2, class3, NULL, title);
 		if (! found) {
-			Melder_throw ("Action command \"", class1 ? ((Data_Table) class1) -> _className : NULL,
-				class2 ? L" & ": NULL, class2 ? ((Data_Table) class2) -> _className : NULL,
-				class3 ? L" & ": NULL, class3 ? ((Data_Table) class3) -> _className : NULL,
+			Melder_throw ("Action command \"", class1 ? class1 -> className : NULL,
+				class2 ? L" & ": NULL, class2 ? class2 -> className : NULL,
+				class3 ? L" & ": NULL, class3 ? class3 -> className : NULL,
 				L": ", title, "\" not found.");
 		}
 		if (theActions [found]. hidden) {
@@ -415,11 +400,11 @@ void praat_showAction (void *class1, void *class2, void *class3, const wchar_t *
 	}
 }
 
-void praat_showAction_classNames (const wchar_t *className1, const wchar_t *className2,
-	const wchar_t *className3, const wchar_t *title)
+void praat_showAction_classNames (const wchar *className1, const wchar *className2,
+	const wchar *className3, const wchar *title)
 {
 	try {
-		void *class1 = NULL, *class2 = NULL, *class3 = NULL;
+		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (wcslen (className1)) {
 			class1 = Thing_classFromClassName (className1); therror
@@ -439,16 +424,16 @@ void praat_showAction_classNames (const wchar_t *className1, const wchar_t *clas
 static int compareActions (const void *void_me, const void *void_thee) {
 	praat_Command me = (praat_Command) void_me, thee = (praat_Command) void_thee;
 	int compare;
-	compare = wcscmp (((Data_Table) my class1) -> _className, ((Data_Table) thy class1) -> _className);
+	compare = wcscmp (my class1 -> className, thy class1 -> className);
 	if (compare) return my class1 == classData ? -1 : thy class1 == classData ? 1 : compare;
 	if (my class2) {
 		if (! thy class2) return 1;
-		compare = wcscmp (((Data_Table) my class2) -> _className, ((Data_Table) thy class2) -> _className);
+		compare = wcscmp (my class2 -> className, thy class2 -> className);
 		if (compare) return compare;
 	} else if (thy class2) return -1;
 	if (my class3) {
 		if (! thy class3) return 1;
-		compare = wcscmp (((Data_Table) my class3) -> _className, ((Data_Table) thy class3) -> _className);
+		compare = wcscmp (my class3 -> className, thy class3 -> className);
 		if (compare) return compare;
 	} else if (thy class3) return -1;
 	if (my sortingTail < thy sortingTail) return -1;
@@ -464,8 +449,8 @@ void praat_sortActions (void) {
 static const wchar *numberString (int number) {
 	return number == 1 ? L"one" : number == 2 ? L"two" : number == 3 ? L"three" : L"any number of";
 }
-static const wchar *classString (void *klas) {
-	return klas == classData ? L"" : ((Data_Table) klas) -> _className;
+static const wchar *classString (ClassInfo klas) {
+	return klas == classData ? L"" : klas -> className;
 }
 static const wchar *objectString (int number) {
 	return number == 1 ? L"object" : L"objects";
@@ -667,7 +652,7 @@ void praat_actions_show (void) {
 				praat_dynamicMenu = gtk_vbutton_box_new ();
 				gtk_button_box_set_layout (GTK_BUTTON_BOX (praat_dynamicMenu), GTK_BUTTONBOX_START);
 				GuiObject viewport = gtk_bin_get_child (GTK_BIN (praat_dynamicMenuWindow));
-				gtk_container_add (GTK_CONTAINER (viewport), praat_dynamicMenu);
+				gtk_container_add (GTK_CONTAINER (viewport), GTK_WIDGET (praat_dynamicMenu));
 			#elif motif
 				praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
 			#endif
@@ -843,9 +828,9 @@ void praat_actions_createDynamicMenu (GuiObject form, int width) {
 		/* Oh yes, we are lazy */
 		praat_dynamicMenuWindow = gtk_scrolled_window_new (NULL, NULL);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (praat_dynamicMenuWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (praat_dynamicMenuWindow), praat_dynamicMenu);
-		gtk_container_add (GTK_CONTAINER (form), praat_dynamicMenuWindow);
-		gtk_widget_set_size_request (praat_dynamicMenuWindow, width, -1);
+		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (praat_dynamicMenuWindow), GTK_WIDGET (praat_dynamicMenu));
+		gtk_container_add (GTK_CONTAINER (form), GTK_WIDGET (praat_dynamicMenuWindow));
+		gtk_widget_set_size_request (GTK_WIDGET (praat_dynamicMenuWindow), width, -1);
 	#elif motif
 		praat_dynamicMenuWindow = XmCreateScrolledWindow (form, "menuWindow", NULL, 0);
 		#if defined (macintosh)
@@ -885,9 +870,9 @@ void praat_saveAddedActions (FILE *f) {
 			praat_Command me = & theActions [i];
 			if (my uniqueID == id && ! my hidden && my title) {
 				fwprintf (f, L"Add action command... %ls %d %ls %d %ls %d \"%ls\" \"%ls\" %d %ls\n",
-					((Data_Table) my class1) -> _className, my n1,
-					my class2 ? ((Data_Table) my class2) -> _className : L"\"\"", my n2,
-					my class3 ? ((Data_Table) my class3) -> _className : L"\"\"", my n3,
+					my class1 -> className, my n1,
+					my class2 ? my class2 -> className : L"\"\"", my n2,
+					my class3 ? my class3 -> className : L"\"\"", my n3,
 					my title, my after ? my after : L"", my depth, my script ? my script : L"");
 				break;
 			}
@@ -897,9 +882,9 @@ void praat_saveAddedActions (FILE *f) {
 		if (my toggled && my title && ! my uniqueID && ! my script)
 			fwprintf (f, L"%ls action command... %ls %ls %ls %ls\n",
 				my hidden ? L"Hide" : L"Show",
-				((Data_Table) my class1) -> _className,
-				my class2 ? ((Data_Table) my class2) -> _className : L"\"\"",
-				my class3 ? ((Data_Table) my class3) -> _className : L"\"\"",
+				my class1 -> className,
+				my class2 ? my class2 -> className : L"\"\"",
+				my class3 ? my class3 -> className : L"\"\"",
 				my title);
 	}
 }

@@ -64,103 +64,74 @@ static void fprintquotedstring (MelderFile file, const wchar_t *s) {
 	MelderFile_writeCharacter (file, '\"');
 }
 
-static void writeText (I, MelderFile file) {
-	iam (TableOfReal);
-	texputi4 (file, my numberOfColumns, L"numberOfColumns", 0,0,0,0,0);
+void structTableOfReal :: v_writeText (MelderFile file) {
+	texputi4 (file, numberOfColumns, L"numberOfColumns", 0,0,0,0,0);
 	MelderFile_write1 (file, L"\ncolumnLabels []: ");
-	if (my numberOfColumns < 1) MelderFile_write1 (file, L"(empty)");
+	if (numberOfColumns < 1) MelderFile_write1 (file, L"(empty)");
 	MelderFile_write1 (file, L"\n");
-	for (long i = 1; i <= my numberOfColumns; i ++) {
-		fprintquotedstring (file, my columnLabels [i]);
+	for (long i = 1; i <= numberOfColumns; i ++) {
+		fprintquotedstring (file, columnLabels [i]);
 		MelderFile_writeCharacter (file, '\t');
 	}
-	texputi4 (file, my numberOfRows, L"numberOfRows", 0,0,0,0,0);
-	for (long i = 1; i <= my numberOfRows; i ++) {
+	texputi4 (file, numberOfRows, L"numberOfRows", 0,0,0,0,0);
+	for (long i = 1; i <= numberOfRows; i ++) {
 		MelderFile_write3 (file, L"\nrow [", Melder_integer (i), L"]: ");
-		fprintquotedstring (file, my rowLabels [i]);
-		for (long j = 1; j <= my numberOfColumns; j ++) {
-			double x = my data [i] [j];
+		fprintquotedstring (file, rowLabels [i]);
+		for (long j = 1; j <= numberOfColumns; j ++) {
+			double x = data [i] [j];
 			MelderFile_write2 (file, L"\t", Melder_double (x));
 		}
 	}
 }
 
-static void readText (I, MelderReadText text) {
-	iam (TableOfReal);
-	my numberOfColumns = texgeti4 (text);
-	if (my numberOfColumns >= 1) {
-		my columnLabels = NUMvector <wchar*> (1, my numberOfColumns);
-		for (long i = 1; i <= my numberOfColumns; i ++)
-			my columnLabels [i] = texgetw2 (text);
+void structTableOfReal :: v_readText (MelderReadText a_text) {
+	numberOfColumns = texgeti4 (a_text);
+	if (numberOfColumns >= 1) {
+		columnLabels = NUMvector <wchar*> (1, numberOfColumns);
+		for (long i = 1; i <= numberOfColumns; i ++)
+			columnLabels [i] = texgetw2 (a_text);
 	}
-	my numberOfRows = texgeti4 (text);
-	if (my numberOfRows >= 1) {
-		my rowLabels = NUMvector <wchar*> (1, my numberOfRows);
+	numberOfRows = texgeti4 (a_text);
+	if (numberOfRows >= 1) {
+		rowLabels = NUMvector <wchar*> (1, numberOfRows);
 	}
-	if (my numberOfRows >= 1 && my numberOfColumns >= 1) {
-		my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
-		for (long i = 1; i <= my numberOfRows; i ++) {
-			my rowLabels [i] = texgetw2 (text);
-			for (long j = 1; j <= my numberOfColumns; j ++)
-				my data [i] [j] = texgetr8 (text);
+	if (numberOfRows >= 1 && numberOfColumns >= 1) {
+		data = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
+		for (long i = 1; i <= numberOfRows; i ++) {
+			rowLabels [i] = texgetw2 (a_text);
+			for (long j = 1; j <= numberOfColumns; j ++)
+				data [i] [j] = texgetr8 (a_text);
 		}
 	}
 }
 
-static void info (I) {
-	iam (TableOfReal);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my numberOfRows));
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
+void structTableOfReal :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
-static double getNrow (I) { iam (TableOfReal); return my numberOfRows; }
-static double getNcol (I) { iam (TableOfReal); return my numberOfColumns; }
-static const wchar * getRowStr (I, long irow) {
-	iam (TableOfReal);
-	if (irow < 1 || irow > my numberOfRows) return NULL;
-	return my rowLabels [irow] ? my rowLabels [irow] : L"";
+const wchar * structTableOfReal :: v_getRowStr (long irow) {
+	if (irow < 1 || irow > numberOfRows) return NULL;
+	return rowLabels [irow] ? rowLabels [irow] : L"";
 }
-static const wchar * getColStr (I, long icol) {
-	iam (TableOfReal);
-	if (icol < 1 || icol > my numberOfColumns) return NULL;
-	return my columnLabels [icol] ? my columnLabels [icol] : L"";
+const wchar * structTableOfReal :: v_getColStr (long icol) {
+	if (icol < 1 || icol > numberOfColumns) return NULL;
+	return columnLabels [icol] ? columnLabels [icol] : L"";
 }
-static double getMatrix (I, long irow, long icol) {
-	iam (TableOfReal);
-	if (irow < 1 || irow > my numberOfRows) return NUMundefined;
-	if (icol < 1 || icol > my numberOfColumns) return NUMundefined;
-	return my data [irow] [icol];
+double structTableOfReal :: v_getMatrix (long irow, long icol) {
+	if (irow < 1 || irow > numberOfRows) return NUMundefined;
+	if (icol < 1 || icol > numberOfColumns) return NUMundefined;
+	return data [irow] [icol];
 }
-static double getRowIndex (I, const wchar_t *rowLabel) {
-	iam (TableOfReal);
-	return TableOfReal_rowLabelToIndex (me, rowLabel);
+double structTableOfReal :: v_getRowIndex (const wchar_t *rowLabel) {
+	return TableOfReal_rowLabelToIndex (this, rowLabel);
 }
-static double getColumnIndex (I, const wchar_t *columnLabel) {
-	iam (TableOfReal);
-	return TableOfReal_columnLabelToIndex (me, columnLabel);
+double structTableOfReal :: v_getColIndex (const wchar_t *columnLabel) {
+	return TableOfReal_columnLabelToIndex (this, columnLabel);
 }
 
-class_methods (TableOfReal, Data) {
-	class_method_local (TableOfReal, destroy)
-	class_method_local (TableOfReal, description)
-	class_method_local (TableOfReal, copy)
-	class_method_local (TableOfReal, equal)
-	class_method_local (TableOfReal, canWriteAsEncoding)
-	class_method (writeText)
-	class_method (readText)
-	class_method_local (TableOfReal, writeBinary)
-	class_method_local (TableOfReal, readBinary)
-	class_method (info)
-	class_method (getNrow)
-	class_method (getNcol)
-	class_method (getRowStr)
-	class_method (getColStr)
-	class_method (getMatrix)
-	class_method (getRowIndex)
-	class_method (getColumnIndex)
-	class_methods_end
-}
+Thing_implement (TableOfReal, Data, 0);
 
 void TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
 	iam (TableOfReal);
@@ -1026,7 +997,7 @@ Any TablesOfReal_append (I, thou) {
 	try {
 		if (thy numberOfColumns != my numberOfColumns)
 			Melder_throw (L"Numbers of columns are ", my numberOfColumns, " and ", thy numberOfColumns, " but should be equal.");
-		autoTableOfReal him = static_cast<TableOfReal> (_Thing_new (my methods));
+		autoTableOfReal him = static_cast<TableOfReal> (_Thing_new (my classInfo));
 		TableOfReal_init (him.peek(), my numberOfRows + thy numberOfRows, my numberOfColumns); therror
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1060,7 +1031,7 @@ Any TablesOfReal_appendMany (Collection me) {
 			totalNumberOfRows += thy numberOfRows;
 			if (thy numberOfColumns != numberOfColumns) Melder_throw ("Numbers of columns do not match.");
 		}
-		autoTableOfReal him = static_cast <TableOfReal> (_Thing_new (thy methods));
+		autoTableOfReal him = static_cast <TableOfReal> (_Thing_new (thy classInfo));
 		TableOfReal_init (him.peek(), totalNumberOfRows, numberOfColumns); therror
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= numberOfColumns; icol ++) {

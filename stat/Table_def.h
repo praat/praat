@@ -41,7 +41,7 @@ oo_DEFINE_CLASS (TableRow, Data)
 		oo_LONG (sortingIndex)
 	#endif
 	oo_LONG (numberOfColumns)
-	oo_STRUCT_VECTOR (TableCell, cells, my numberOfColumns)
+	oo_STRUCT_VECTOR (TableCell, cells, numberOfColumns)
 
 oo_END_CLASS (TableRow)
 #undef ooSTRUCT
@@ -63,8 +63,19 @@ oo_END_STRUCT (TableColumnHeader)
 oo_DEFINE_CLASS (Table, Data)
 
 	oo_LONG (numberOfColumns)
-	oo_STRUCT_VECTOR (TableColumnHeader, columnHeaders, my numberOfColumns)
+	oo_STRUCT_VECTOR (TableColumnHeader, columnHeaders, numberOfColumns)
 	oo_COLLECTION (Ordered, rows, TableRow, 0)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+			virtual bool v_hasGetNrow      () { return true; }   virtual double        v_getNrow      () { return rows -> size; }
+			virtual bool v_hasGetNcol      () { return true; }   virtual double        v_getNcol      () { return numberOfColumns; }
+			virtual bool v_hasGetColStr    () { return true; }   virtual const wchar * v_getColStr    (long columnNumber);
+			virtual bool v_hasGetMatrix    () { return true; }   virtual double        v_getMatrix    (long rowNumber, long columnNumber);
+			virtual bool v_hasGetMatrixStr () { return true; }   virtual const wchar * v_getMatrixStr (long rowNumber, long columnNumber);
+			virtual bool v_hasGetColIndex  () { return true; }   virtual double        v_getColIndex  (const wchar *columnLabel);
+	#endif
 
 oo_END_CLASS (Table)
 #undef ooSTRUCT

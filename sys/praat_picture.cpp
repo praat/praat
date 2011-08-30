@@ -702,27 +702,19 @@ DO
 	Graphics_unsetInner (GRAPHICS);
 END
 
-Thing_declare1cpp (PraatPictureFunction);
-struct structPraatPictureFunction : public structData {
-	double xmin, xmax, dx, x1;
-	long nx;
+Thing_define (PraatPictureFunction, Data) {
+	// new data:
+	public:
+		double xmin, xmax, dx, x1;
+		long nx;
+	// overridden methods:
+		virtual bool v_hasGetXmin () { return true; }   virtual double v_getXmin ()        { return xmin; }
+		virtual bool v_hasGetXmax () { return true; }   virtual double v_getXmax ()        { return xmax; }
+		virtual bool v_hasGetNx   () { return true; }   virtual double v_getNx   ()        { return nx; }
+		virtual bool v_hasGetDx   () { return true; }   virtual double v_getDx   ()        { return dx; }
+		virtual bool v_hasGetX    () { return true; }   virtual double v_getX    (long ix) { return x1 + (ix - 1) * dx; }
 };
-#define PraatPictureFunction__methods(klas) Data__methods(klas)
-Thing_declare2cpp (PraatPictureFunction, Data);
-
-static double getXmin (I) { iam (PraatPictureFunction); return my xmin; }
-static double getXmax (I) { iam (PraatPictureFunction); return my xmax; }
-static double getNx (I) { iam (PraatPictureFunction); return my nx; }
-static double getDx (I) { iam (PraatPictureFunction); return my dx; }
-static double getX (I, long ix) { iam (PraatPictureFunction); return my x1 + (ix - 1) * my dx; }
-
-class_methods (PraatPictureFunction, Data)
-	class_method (getXmin)
-	class_method (getXmax)
-	class_method (getNx)
-	class_method (getDx)
-	class_method (getX)
-class_methods_end
+Thing_implement (PraatPictureFunction, Data, 0);
 
 FORM (DrawFunction, L"Praat picture: Draw function", 0)
 	LABEL (L"", L"This command assumes that the x and y axes")
@@ -988,7 +980,7 @@ static void dia_marksEvery (Any dia) {
 	BOOLEAN (L"Draw ticks", 1)
 	BOOLEAN (L"Draw dotted lines", 1)
 }
-static void do_marksEvery (Any dia, void (*Graphics_marksEvery) (void *, double, double, bool, bool, bool)) {
+static void do_marksEvery (Any dia, void (*Graphics_marksEvery) (Graphics, double, double, bool, bool, bool)) {
 	autoPraatPicture picture;
 	Graphics_marksEvery (GRAPHICS, GET_REAL (L"Units"), GET_REAL (L"Distance"),
 		GET_INTEGER (L"Write numbers"),
@@ -1009,7 +1001,7 @@ static void dia_marks (Any dia) {
 	BOOLEAN (L"Draw ticks", 1)
 	BOOLEAN (L"Draw dotted lines", 1)
 }
-static void do_marks (Any dia, void (*Graphics_marks) (void *, int, bool, bool, bool)) {
+static void do_marks (Any dia, void (*Graphics_marks) (Graphics, int, bool, bool, bool)) {
 	long numberOfMarks = GET_INTEGER (L"Number of marks");
 	REQUIRE (numberOfMarks >= 2, L"`Number of marks' must be at least 2.")
 	autoPraatPicture picture;
@@ -1031,7 +1023,7 @@ static void dia_marksLogarithmic (Any dia) {
 	BOOLEAN (L"Draw ticks", 1)
 	BOOLEAN (L"Draw dotted lines", 1)
 }
-static void do_marksLogarithmic (Any dia, void (*Graphics_marksLogarithmic) (void *, int, bool, bool, bool)) {
+static void do_marksLogarithmic (Any dia, void (*Graphics_marksLogarithmic) (Graphics, int, bool, bool, bool)) {
 	long numberOfMarksPerDecade = GET_INTEGER (L"Marks per decade");
 	autoPraatPicture picture;
 	Graphics_marksLogarithmic (GRAPHICS, numberOfMarksPerDecade, GET_INTEGER (L"Write numbers"),
@@ -1760,8 +1752,8 @@ void praat_picture_init (void) {
 		#endif
 		#if gtk
 			drawingArea = GuiDrawingArea_create (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-			gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrollWindow), drawingArea);
-			gtk_container_add (GTK_CONTAINER (dialog), scrollWindow);
+			gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrollWindow), GTK_WIDGET (drawingArea));
+			gtk_container_add (GTK_CONTAINER (dialog), GTK_WIDGET (scrollWindow));
 
 			GuiObject_show (menuBar);
 			GuiObject_show (drawingArea);

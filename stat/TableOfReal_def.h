@@ -1,6 +1,6 @@
 /* TableOfReal_def.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,19 +17,27 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/08/10
- */
-
 
 #define ooSTRUCT TableOfReal
 oo_DEFINE_CLASS (TableOfReal, Data)
 
 	oo_LONG (numberOfRows)
 	oo_LONG (numberOfColumns)
-	oo_STRING_VECTOR (rowLabels, my numberOfRows)
-	oo_STRING_VECTOR (columnLabels, my numberOfColumns)
-	oo_DOUBLE_MATRIX (data, my numberOfRows, my numberOfColumns)
+	oo_STRING_VECTOR (rowLabels, numberOfRows)
+	oo_STRING_VECTOR (columnLabels, numberOfColumns)
+	oo_DOUBLE_MATRIX (data, numberOfRows, numberOfColumns)
+
+	#if oo_DECLARING
+		// overridden methods:
+		virtual void v_info ();
+		virtual bool v_hasGetNrow     () { return true; }   virtual double        v_getNrow     () { return numberOfRows; }
+		virtual bool v_hasGetNcol     () { return true; }   virtual double        v_getNcol     () { return numberOfColumns; }
+		virtual bool v_hasGetRowStr   () { return true; }   virtual const wchar * v_getRowStr   (long irow);
+		virtual bool v_hasGetColStr   () { return true; }   virtual const wchar * v_getColStr   (long icol);
+		virtual bool v_hasGetMatrix   () { return true; }   virtual double        v_getMatrix   (long irow, long icol);
+		virtual bool v_hasGetRowIndex () { return true; }   virtual double        v_getRowIndex (const wchar_t *rowLabel);
+		virtual bool v_hasGetColIndex () { return true; }   virtual double        v_getColIndex (const wchar_t *columnLabel);
+	#endif
 
 oo_END_CLASS (TableOfReal)
 #undef ooSTRUCT

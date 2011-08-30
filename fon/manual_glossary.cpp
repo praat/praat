@@ -28,8 +28,8 @@ static void draw_TimeDomain_Pitch (Graphics g) {
 	Pitch_draw (manual_examplePitch (), g, 0, 0, 200.0, 500.0, TRUE, Pitch_speckle_NO, kPitch_unit_HERTZ);
 }
 
-extern "C" void manual_glossary_init (ManPages me);
-extern "C" void manual_glossary_init (ManPages me) {
+void manual_glossary_init (ManPages me);
+void manual_glossary_init (ManPages me) {
 
 MAN_BEGIN (L"aliasing", L"ppgb", 20040331)
 INTRO (L"Aliasing (Du. %vouwvervorming) is the phenomenon of the ambiguity "

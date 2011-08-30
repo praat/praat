@@ -48,32 +48,19 @@
 #include "oo_DESCRIPTION.h"
 #include "SPINET_def.h"
 
-static void info (I)
+Thing_implement (SPINET, Sampled2, 0);
+
+void structSPINET :: v_info ()
 {
-	iam (SPINET); double miny, maxy, mins, maxs;
-	
-	classData -> info (me);
- 	if (! Sampled2_getWindowExtrema_d (me, my y, 1, my nx, 1, my ny, &miny, &maxy) ||
- 		! Sampled2_getWindowExtrema_d (me, my s, 1, my nx, 1, my ny, &mins, &maxs)) return;
+	structData :: v_info ();
+	double miny, maxy, mins, maxs;
+	 	if (! Sampled2_getWindowExtrema_d (this, y, 1, nx, 1, ny, & miny, & maxy) ||
+ 		! Sampled2_getWindowExtrema_d (this, s, 1, nx, 1, ny, & mins, & maxs)) return;
 	MelderInfo_writeLine2 (L"Minimum power: ", Melder_double (miny));
 	MelderInfo_writeLine2 (L"Maximum power: ", Melder_double (maxy));
 	MelderInfo_writeLine2 (L"Minimum power rectified: ", Melder_double (mins));
 	MelderInfo_writeLine2 (L"Maximum powerrectified: ", Melder_double (maxs));
 }
-
-class_methods (SPINET, Sampled2)
-	class_method_local (SPINET, destroy)
-	class_method_local (SPINET, equal)
-	class_method_local (SPINET, canWriteAsEncoding)
-	class_method_local (SPINET, copy)
-	class_method_local (SPINET, readText)
-	class_method_local (SPINET, readBinary)
-	class_method_local (SPINET, writeText)
-	class_method_local (SPINET, writeBinary)
-	class_method_local (SPINET, description)
-	class_method (info)
-class_methods_end
-
 
 SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 	 double minimumFrequency, double maximumFrequency, long nFilters,

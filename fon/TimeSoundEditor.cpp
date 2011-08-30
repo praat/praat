@@ -67,7 +67,7 @@ void structTimeSoundEditor :: v_info () {
 
 /***** FILE MENU *****/
 
-static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
+static void menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Draw visible sound", 0)
 		my v_form_pictureWindow (cmd);
@@ -107,7 +107,7 @@ static int menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_DrawSelectedSound (EDITOR_ARGS) {
+static void menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Draw selected sound", 0)
 		my v_form_pictureWindow (cmd);
@@ -152,23 +152,20 @@ static void do_ExtractSelectedSound (TimeSoundEditor me, bool preserveTimes) {
 	} else if (my sound.data) {
 		extract.reset (Sound_extractPart (my sound.data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes));
 	}
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, extract.transfer());
+	my broadcastPublication (extract.transfer());
 }
 
-static int menu_cb_ExtractSelectedSound_timeFromZero (EDITOR_ARGS) {
+static void menu_cb_ExtractSelectedSound_timeFromZero (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	do_ExtractSelectedSound (me, FALSE);
-	return 1;
 }
 
-static int menu_cb_ExtractSelectedSound_preserveTimes (EDITOR_ARGS) {
+static void menu_cb_ExtractSelectedSound_preserveTimes (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	do_ExtractSelectedSound (me, TRUE);
-	return 1;
 }
 
-static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
+static void menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Extract selected sound (windowed)", 0)
 		WORD (L"Name", L"slice")
@@ -188,8 +185,7 @@ static int menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 		autoSound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowShape,
 			preferences.extract.relativeWidth, preferences.extract.preserveTimes);
 		Thing_setName (extract.peek(), GET_STRING (L"Name")); therror
-		if (my publishCallback)
-			my publishCallback (me, my publishClosure, extract.transfer());
+		my broadcastPublication (extract.transfer());
 	EDITOR_END
 }
 
@@ -221,7 +217,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format) {
 	}
 }
 
-static int menu_cb_WriteWav (EDITOR_ARGS) {
+static void menu_cb_WriteWav (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Save selected sound as WAV file", 0)
 		swprintf (defaultName, 300, L"%ls.wav", my longSound.data ? my longSound.data -> name : my sound.data -> name);
@@ -230,7 +226,7 @@ static int menu_cb_WriteWav (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_WriteAiff (EDITOR_ARGS) {
+static void menu_cb_WriteAiff (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Save selected sound as AIFF file", 0)
 		swprintf (defaultName, 300, L"%ls.aiff", my longSound.data ? my longSound.data -> name : my sound.data -> name);
@@ -239,7 +235,7 @@ static int menu_cb_WriteAiff (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_WriteAifc (EDITOR_ARGS) {
+static void menu_cb_WriteAifc (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Save selected sound as AIFC file", 0)
 		swprintf (defaultName, 300, L"%ls.aifc", my longSound.data ? my longSound.data -> name : my sound.data -> name);
@@ -248,7 +244,7 @@ static int menu_cb_WriteAifc (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_WriteNextSun (EDITOR_ARGS) {
+static void menu_cb_WriteNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Save selected sound as NeXT/Sun file", 0)
 		swprintf (defaultName, 300, L"%ls.au", my longSound.data ? my longSound.data -> name : my sound.data -> name);
@@ -257,7 +253,7 @@ static int menu_cb_WriteNextSun (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_WriteNist (EDITOR_ARGS) {
+static void menu_cb_WriteNist (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Save selected sound as NIST file", 0)
 		swprintf (defaultName, 300, L"%ls.nist", my longSound.data ? my longSound.data -> name : my sound.data -> name);
@@ -266,7 +262,7 @@ static int menu_cb_WriteNist (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_WriteFlac (EDITOR_ARGS) {
+static void menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM_WRITE (L"Save selected sound as FLAC file", 0)
 		swprintf (defaultName, 300, L"%ls.flac", my longSound.data ? my longSound.data -> name : my sound.data -> name);
@@ -342,16 +338,14 @@ void structTimeSoundEditor :: v_createMenuItems_file (EditorMenu menu) {
 
 /********** QUERY MENU **********/
 
-static int menu_cb_SoundInfo (EDITOR_ARGS) {
+static void menu_cb_SoundInfo (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	Thing_info (my sound.data);
-	return 1;
 }
 
-static int menu_cb_LongSoundInfo (EDITOR_ARGS) {
+static void menu_cb_LongSoundInfo (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	Thing_info (my longSound.data);
-	return 1;
 }
 
 void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
@@ -365,11 +359,10 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 
 /********** VIEW MENU **********/
 
-static int menu_cb_autoscaling (EDITOR_ARGS) {
+static void menu_cb_autoscaling (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	preferences.sound.autoscaling = my sound.autoscaling = ! my sound.autoscaling;
 	FunctionEditor_redraw (me);
-	return 1;
 }
 
 void structTimeSoundEditor :: v_createMenuItems_view (EditorMenu menu) {
@@ -513,12 +506,12 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
 }
 
-void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound) {
+void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Sampled sound, bool ownSound) {
 	my ownSound = ownSound;
 	if (sound != NULL) {
 		if (ownSound) {
 			Melder_assert (Thing_member (sound, classSound));
-			my sound.data = (Sound) Data_copy (sound); therror   // deep copy; ownership transferred
+			my sound.data = Data_copy ((Sound) sound);   // deep copy; ownership transferred
 			Matrix_getWindowExtrema (sound, 1, my sound.data -> nx, 1, my sound.data -> ny, & my sound.minimum, & my sound.maximum);
 		} else if (Thing_member (sound, classSound)) {
 			my sound.data = (Sound) sound;   // reference copy; ownership not transferred

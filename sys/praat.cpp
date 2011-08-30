@@ -128,8 +128,7 @@ static GuiObject praatList_objects;
 
 /***** selection *****/
 
-long praat_getIdOfSelected (void *voidklas, int inplace) {
-	Data_Table klas = (Data_Table) voidklas;
+long praat_getIdOfSelected (ClassInfo klas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
@@ -144,15 +143,14 @@ long praat_getIdOfSelected (void *voidklas, int inplace) {
 		}
 	}
 	if (inplace) {
-		Melder_throw ("No ", klas ? klas -> _className : L"object", " #", inplace, " selected.");
+		Melder_throw ("No ", klas ? klas -> className : L"object", " #", inplace, " selected.");
 	} else {
-		Melder_throw ("No ", klas ? klas -> _className : L"object", " selected.");
+		Melder_throw ("No ", klas ? klas -> className : L"object", " selected.");
 	}
 	return 0;
 }
 
-wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
-	Data_Table klas = (Data_Table) voidklas;
+wchar * praat_getNameOfSelected (ClassInfo klas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
@@ -167,17 +165,17 @@ wchar_t * praat_getNameOfSelected (void *voidklas, int inplace) {
 		}
 	}
 	if (inplace) {
-		Melder_throw ("No ", klas ? klas -> _className : L"object", " #", inplace, " selected.");
+		Melder_throw ("No ", klas ? klas -> className : L"object", " #", inplace, " selected.");
 	} else {
-		Melder_throw ("No ", klas ? klas -> _className : L"object", " selected.");
+		Melder_throw ("No ", klas ? klas -> className : L"object", " selected.");
 	}
 	return 0;   // Failure.
 }
 
-int praat_selection (void *klas) {
+int praat_selection (ClassInfo klas) {
 	if (klas == NULL) return theCurrentPraatObjects -> totalSelection;
-	long readableClassId = ((Thing_Table) klas) -> sequentialUniqueIdOfReadableClass;
-	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", ((Thing_Table) klas) -> _className);
+	long readableClassId = klas -> sequentialUniqueIdOfReadableClass;
+	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", klas -> className);
 	return theCurrentPraatObjects -> numberOfSelected [readableClassId];
 }
 
@@ -185,7 +183,7 @@ void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
 	SELECTED = FALSE;
 	theCurrentPraatObjects -> totalSelection -= 1;
-	long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> methods -> sequentialUniqueIdOfReadableClass;
+	long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
@@ -201,8 +199,8 @@ void praat_select (int IOBJECT) {
 	theCurrentPraatObjects -> totalSelection += 1;
 	Thing object = (Thing) theCurrentPraatObjects -> list [IOBJECT]. object;
 	Melder_assert (object != NULL);
-	long readableClassId = object -> methods -> sequentialUniqueIdOfReadableClass;
-	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", object -> methods -> _className);
+	long readableClassId = object -> classInfo -> sequentialUniqueIdOfReadableClass;
+	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", object -> classInfo -> className);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		GuiList_selectItem (praatList_objects, IOBJECT);
@@ -222,30 +220,30 @@ void praat_list_foreground (void) {
 	}
 }
 
-Any praat_onlyObject (void *klas) {
+Data praat_onlyObject (ClassInfo klas) {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED && CLASS == klas) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
 	return theCurrentPraatObjects -> list [result]. object;
 }
 
-Any praat_firstObject (void *klas) {
+Data praat_firstObject (ClassInfo klas) {
 	LOOP {
 		if (CLASS == klas) return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
 	return NULL;   // this is often OK
 }
 
-Any praat_onlyObject_generic (void *klas) {
+Data praat_onlyObject_generic (ClassInfo klas) {
 	int IOBJECT, result = 0, found = 0;
-	WHERE (SELECTED && Thing_subclass (CLASS, klas)) { result = IOBJECT; found += 1; }
+	WHERE (SELECTED && Thing_subclass ((ClassInfo) CLASS, klas)) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
 	return theCurrentPraatObjects -> list [result]. object;
 }
 
-Any praat_firstObject_generic (void *klas) {
+Data praat_firstObject_generic (ClassInfo klas) {
 	LOOP {
-		if (Thing_subclass (CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
+		if (Thing_subclass ((ClassInfo) CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
 	return NULL;   // this is often OK
 }
@@ -257,7 +255,7 @@ praat_Object praat_onlyScreenObject (void) {
 	return & theCurrentPraatObjects -> list [result];
 }
 
-Any praat_firstObject_any () {
+Data praat_firstObject_any () {
 	LOOP {
 		return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
@@ -323,7 +321,7 @@ static void praat_remove (int iobject) {
 	 * To prevent synchronization problems, kill editors before killing the data.
 	 */
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-		Any editor = theCurrentPraatObjects -> list [iobject]. editors [ieditor];   /* Save this one reference. */
+		Editor editor = (Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor];   /* Save this one reference. */
 		if (editor) {
 			removeAllReferencesToEditor (editor);
 			forget (editor);
@@ -356,7 +354,7 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 	/*
 	 * If my class is Collection, I'll have to be unpacked.
 	 */
-	if (my methods == (Any) classCollection) {
+	if (my classInfo == classCollection) {
 		Collection list = (Collection) me;
 		try {
 			for (long idata = 1; idata <= list -> size; idata ++) {
@@ -412,7 +410,7 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 	}
 	OBJECT = me;
 	SELECTED = FALSE;
-	CLASS = my methods;
+	CLASS = my classInfo;
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
 		EDITOR [ieditor] = NULL;
 	if (file != NULL) {
@@ -511,7 +509,7 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 	int IOBJECT, first = TRUE;
 	WHERE (SELECTED) {
 		SELECTED = FALSE;
-		long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> methods -> sequentialUniqueIdOfReadableClass;
+		long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
 		theCurrentPraatObjects -> numberOfSelected [readableClassId] --;
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
@@ -521,7 +519,7 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
 			SELECTED = TRUE;
-			long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> methods -> sequentialUniqueIdOfReadableClass;
+			long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
 			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
 			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
 			UiHistory_write (first ? L"\nselect " : L"\nplus ");
@@ -544,7 +542,7 @@ void praat_list_renameAndSelect (int position, const wchar_t *name) {
 
 /***** objects *****/
 
-void praat_name2 (wchar_t *name, void *klas1, void *klas2) {
+void praat_name2 (wchar *name, ClassInfo klas1, ClassInfo klas2) {
 	int i1 = 1, i2;
 	wchar_t *name1, *name2;
 	while (theCurrentPraatObjects -> list [i1]. selected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1) i1 ++;
@@ -653,67 +651,60 @@ static void praat_exit (int exit_code) {
 	exit (exit_code);
 }
 
-static void cb_Editor_destroy (I, void *closure) {
-	iam (Editor);
+static void cb_Editor_destruction (Editor me, void *closure) {
 	(void) closure;
-	removeAllReferencesToEditor (me);   /* Remove reference(s) to moribund Editor. */
+	removeAllReferencesToEditor (me);   // remove reference(s) to moribund Editor
 }
 
-static void cb_Editor_dataChanged (I, void *closure, Data data) {
-	iam (Editor);
-	int iobject, ieditor;
+static void cb_Editor_dataChanged (Editor me, void *closure) {
 	(void) closure;
-	for (iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
-		int editingThisObject = FALSE;
+	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++) {
+		bool editingThisObject = false;
 		/*
 		 * Am I editing this object?
 		 */
-		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == me)
-				editingThisObject = TRUE;
+		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor] == me) {
+				editingThisObject = true;
+			}
+		}
 		if (editingThisObject) {
-			/*
-			 * Change the data if needed (unusual but possible).
-			 * BUG: DO NOT, because changed object may be second data in editor.
-			 */
-			/*if (data && ((Data) data) -> methods == ((Data) theCurrentPraatObjects -> list [iobject]. object) -> methods)
-				theCurrentPraatObjects -> list [iobject]. object = data;*/
 			/*
 			 * Notify all other editors associated with this object.
 			 */
-			for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 				Editor otherEditor = (Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor];
 				if (otherEditor != NULL && otherEditor != me) {
-					Editor_dataChanged (otherEditor, data);
+					otherEditor -> dataChanged ();
 				}
 			}
 		}
 	}
 }
 
-static void cb_Editor_publish (Any editor, void *closure, Data publish) {
+static void cb_Editor_publication (Editor me, void *closure, Data publication) {
 /*
    The default publish callback.
    Works nicely if the publisher invents a name.
 */
-	(void) editor;
+	(void) me;
 	(void) closure;
 	try {
-		praat_new1 (publish, NULL);
+		praat_new1 (publication, NULL);
 	} catch (MelderError) {
 		Melder_flushError (NULL);
 	}
 	praat_updateSelection ();
 }
 
-int praat_installEditor (Any editor, int IOBJECT) {
+int praat_installEditor (Editor editor, int IOBJECT) {
 	if (editor == NULL) return 0;
 	for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 		if (EDITOR [ieditor] == NULL) {
 			EDITOR [ieditor] = editor;
-			Editor_setDestroyCallback ((Editor) editor, cb_Editor_destroy, NULL);
-			Editor_setDataChangedCallback ((Editor) editor, cb_Editor_dataChanged, NULL);
-			Editor_setPublishCallback ((Editor) editor, cb_Editor_publish, NULL);
+			editor -> setDestructionCallback (cb_Editor_destruction, NULL);
+			editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
+			if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
 			return 1;
 		}
 	}
@@ -721,20 +712,21 @@ int praat_installEditor (Any editor, int IOBJECT) {
 	Melder_throw ("(praat_installEditor:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
 }
 
-int praat_installEditor2 (Any editor, int i1, int i2) {
-	int ieditor1 = 0, ieditor2 = 0;
+int praat_installEditor2 (Editor editor, int i1, int i2) {
 	if (editor == NULL) return 0;
-	for (ieditor1 = 0; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
+	int ieditor1 = 0;
+	for (; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
 		if (theCurrentPraatObjects -> list [i1]. editors [ieditor1] == NULL)
 			break;
-	for (ieditor2 = 0; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
+	int ieditor2 = 0;
+	for (; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
 		if (theCurrentPraatObjects -> list [i2]. editors [ieditor2] == NULL)
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = editor;
-		Editor_setDestroyCallback ((Editor) editor, cb_Editor_destroy, NULL);
-		Editor_setDataChangedCallback ((Editor) editor, cb_Editor_dataChanged, NULL);
-		Editor_setPublishCallback ((Editor) editor, cb_Editor_publish, NULL);
+		editor -> setDestructionCallback (cb_Editor_destruction, NULL);
+		editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
+		if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
 	} else {
 		forget (editor);
 		Melder_throw ("(praat_installEditor2:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
@@ -742,23 +734,25 @@ int praat_installEditor2 (Any editor, int i1, int i2) {
 	return 1;
 }
 
-int praat_installEditor3 (Any editor, int i1, int i2, int i3) {
-	int ieditor1 = 0, ieditor2 = 0, ieditor3;
+int praat_installEditor3 (Editor editor, int i1, int i2, int i3) {
 	if (! editor) return 0;
-	for (ieditor1 = 0; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
+	int ieditor1 = 0;
+	for (; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
 		if (theCurrentPraatObjects -> list [i1]. editors [ieditor1] == NULL)
 			break;
-	for (ieditor2 = 0; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
+	int ieditor2 = 0;
+	for (; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
 		if (theCurrentPraatObjects -> list [i2]. editors [ieditor2] == NULL)
 			break;
-	for (ieditor3 = 0; ieditor3 < praat_MAXNUM_EDITORS; ieditor3 ++)
+	int ieditor3 = 0;
+	for (; ieditor3 < praat_MAXNUM_EDITORS; ieditor3 ++)
 		if (theCurrentPraatObjects -> list [i3]. editors [ieditor3] == NULL)
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS && ieditor3 < praat_MAXNUM_EDITORS) {
 		theCurrentPraatObjects -> list [i1]. editors [ieditor1] = theCurrentPraatObjects -> list [i2]. editors [ieditor2] = theCurrentPraatObjects -> list [i3]. editors [ieditor3] = editor;
-		Editor_setDestroyCallback ((Editor) editor, cb_Editor_destroy, NULL);
-		Editor_setDataChangedCallback ((Editor) editor, cb_Editor_dataChanged, NULL);
-		Editor_setPublishCallback ((Editor) editor, cb_Editor_publish, NULL);
+		editor -> setDestructionCallback (cb_Editor_destruction, NULL);
+		editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
+		if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
 	} else {
 		forget (editor);
 		Melder_throw ("(praat_installEditor3:) Cannot have more than ", praat_MAXNUM_EDITORS, " editors with one object.");
@@ -766,7 +760,7 @@ int praat_installEditor3 (Any editor, int i1, int i2, int i3) {
 	return 1;
 }
 
-int praat_installEditorN (Any editor, Ordered objects) {
+int praat_installEditorN (Editor editor, Ordered objects) {
 	long iOrderedObject, iPraatObject;
 	if (editor == NULL) return 0;
 	/*
@@ -777,8 +771,8 @@ int praat_installEditorN (Any editor, Ordered objects) {
 		Data object = (Data) objects -> item [iOrderedObject];
 		for (iPraatObject = 1; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
-				int ieditor;
-				for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+				int ieditor = 0;
+				for (; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 					if (theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor] == NULL) {
 						break;
 					}
@@ -799,13 +793,13 @@ int praat_installEditorN (Any editor, Ordered objects) {
 		Data object = (Data) objects -> item [iOrderedObject];
 		for (iPraatObject = 1; iPraatObject <= theCurrentPraatObjects -> n; iPraatObject ++) {
 			if (object == theCurrentPraatObjects -> list [iPraatObject]. object) {
-				int ieditor;
-				for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+				int ieditor = 0;
+				for (; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
 					if (theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor] == NULL) {
 						theCurrentPraatObjects -> list [iPraatObject]. editors [ieditor] = editor;
-						Editor_setDestroyCallback ((Editor) editor, cb_Editor_destroy, NULL);
-						Editor_setDataChangedCallback ((Editor) editor, cb_Editor_dataChanged, NULL);
-						Editor_setPublishCallback ((Editor) editor, cb_Editor_publish, NULL);
+						editor -> setDestructionCallback (cb_Editor_destruction, NULL);
+						editor -> setDataChangedCallback (cb_Editor_dataChanged, NULL);
+						if (! editor -> d_publicationCallback) editor -> setPublicationCallback (cb_Editor_publication, NULL);
 						break;
 					}
 				}
@@ -828,24 +822,19 @@ void praat_dataChanged (Any object) {
 		saveError = Melder_wcsdup_f (Melder_getError ());
 		Melder_clearError ();
 	}
-	int IOBJECT, ieditor;
+	int IOBJECT;
 	WHERE (OBJECT == object) {
-		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (EDITOR [ieditor])
-				Editor_dataChanged ((Editor) EDITOR [ieditor], (Data) object);
+		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+			Editor editor = (Editor) EDITOR [ieditor];
+			if (editor != NULL) {
+				editor -> dataChanged ();
+			}
+		}
 	}
 	if (duringError) {
 		Melder_error_ (saveError);   // BUG: this appends an empty newline to the original error message
 		Melder_free (saveError);
 	}
-}
-
-void praat_clipboardChanged (void *closure, Any clipboard) {
-	(void) closure;
-	for (int iobject = 1; iobject <= theCurrentPraatObjects -> n; iobject ++)
-		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (theCurrentPraatObjects -> list [iobject]. editors [ieditor])
-				Editor_clipboardChanged ((Editor) theCurrentPraatObjects -> list [iobject]. editors [ieditor], (Data) clipboard);
 }
 
 static void helpProc (const wchar_t *query) {
@@ -1217,7 +1206,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#if gtk
 			g_set_application_name (title);
 			raam = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit_gtk, NULL, 0);
-			theCurrentPraatApplication -> topShell = gtk_widget_get_parent (raam);
+			theCurrentPraatApplication -> topShell = gtk_widget_get_parent (GTK_WIDGET (raam));
 			GuiObject_show (theCurrentPraatApplication -> topShell);
 		#else
 			#ifdef _WIN32
@@ -1269,9 +1258,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		#if gtk
 			raHoriz = gtk_hpaned_new ();
-			gtk_container_add (GTK_CONTAINER (Raam), raHoriz);
+			gtk_container_add (GTK_CONTAINER (Raam), GTK_WIDGET (raHoriz));
 			raLeft = gtk_vbox_new (FALSE, 0);
-			gtk_container_add (GTK_CONTAINER (raHoriz), raLeft);
+			gtk_container_add (GTK_CONTAINER (raHoriz), GTK_WIDGET (raLeft));
 		#else
 			GuiLabel_createShown (raLeft, 3, -250, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
 		#endif
@@ -1290,7 +1279,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
 				#if gtk
-					fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (theCurrentPraatApplication -> topShell -> window)));
+					fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell) -> window)));
 				#else
 					fprintf (f, " %ld", (long) XtWindow (theCurrentPraatApplication -> topShell));
 				#endif

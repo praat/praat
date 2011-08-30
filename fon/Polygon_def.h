@@ -1,6 +1,6 @@
 /* Polygon_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,27 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1995/08/24
- * pb 2002/07/16 GPL
- */
-
 
 #define ooSTRUCT Polygon
 oo_DEFINE_CLASS (Polygon, Data)
 
 	oo_LONG (numberOfPoints)
+
 	#if oo_READING
 		if (localVersion >= 1) {
-			oo_DOUBLE_VECTOR (x, my numberOfPoints)
-			oo_DOUBLE_VECTOR (y, my numberOfPoints)
+			oo_DOUBLE_VECTOR (x, numberOfPoints)
+			oo_DOUBLE_VECTOR (y, numberOfPoints)
 		} else {
-			oo_FLOAT_VECTOR (x, my numberOfPoints)
-			oo_FLOAT_VECTOR (y, my numberOfPoints)
+			oo_FLOAT_VECTOR (x, numberOfPoints)
+			oo_FLOAT_VECTOR (y, numberOfPoints)
 		}
 	#else
-		oo_DOUBLE_VECTOR (x, my numberOfPoints)
-		oo_DOUBLE_VECTOR (y, my numberOfPoints)
+		oo_DOUBLE_VECTOR (x, numberOfPoints)
+		oo_DOUBLE_VECTOR (y, numberOfPoints)
+	#endif
+
+	#if oo_DECLARING
+		// overridden methods:
+		virtual void v_info ();
 	#endif
 
 oo_END_CLASS (Polygon)

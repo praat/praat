@@ -22,11 +22,12 @@
 #include "Vector.h"
 #include "Graphics.h"
 
-Thing_declare1cpp (VocalTract);
-struct structVocalTract : public structVector {
+Thing_define (VocalTract, Vector) {
+	// overridden methods:
+	protected:
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_DISTANCE_FROM_GLOTTIS_METRES; }
 };
-#define VocalTract__methods(klas)  Vector__methods(klas)
-Thing_declare2cpp (VocalTract, Vector);
 
 /*
 	Attributes:

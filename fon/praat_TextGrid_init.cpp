@@ -44,7 +44,7 @@ static const wchar *STRING_TIER_NUMBER = L"Tier number";
 static const wchar *STRING_INTERVAL_NUMBER = L"Interval number";
 static const wchar *STRING_POINT_NUMBER = L"Point number";
 
-extern "C" void praat_TimeFunction_modify_init (void *klas);   // Modify buttons for time-based subclasses of Function.
+void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
 
 /***** ANYTIER (generic) *****/
 
@@ -796,25 +796,24 @@ DO
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		int position = GET_INTEGER (L"Position");
 		const wchar *name = GET_STRING (L"Name");
-		AnyTier newTier;
 		if (itier > my tiers -> size) itier = my tiers -> size;
-		newTier = (AnyTier) Data_copy (my tiers -> item [itier]); therror   // BUG: this is an unknown type, so we cannot use autopointer?
-		Thing_setName (newTier, name); therror
-		Ordered_addItemPos (my tiers, newTier, position); therror
+		autoAnyTier newTier = Data_copy ((AnyTier) my tiers -> item [itier]);
+		Thing_setName (newTier.peek(), name);
+		Ordered_addItemPos (my tiers, newTier.transfer(), position);
 		praat_dataChanged (me);
 	}
 END
 
-static void cb_TextGridEditor_publish (Any editor, void *closure, Data publish) {
+static void cb_TextGridEditor_publication (Editor editor, void *closure, Data publication) {
 	(void) editor;
 	(void) closure;
 	/*
 	 * Keep the gate for error handling.
 	 */
 	try {
-		praat_new (publish, NULL);
+		praat_new (publication, NULL);
 		praat_updateSelection ();
-		if (Thing_member ((Thing) publish, classSpectrum) && wcsequ (Thing_getName ((Thing) publish), L"slice")) {
+		if (Thing_member (publication, classSpectrum) && wcsequ (Thing_getName (publication), L"slice")) {
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
@@ -834,7 +833,7 @@ DIRECT (TextGrid_edit)
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, NULL);
-		Editor_setPublishCallback (editor.peek(), cb_TextGridEditor_publish, NULL);
+		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
@@ -850,7 +849,7 @@ DIRECT (TextGrid_LongSound_edit)
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, NULL);
-		Editor_setPublishCallback (editor.peek(), cb_TextGridEditor_publish, NULL);
+		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
 		praat_installEditor2 (editor.transfer(), IOBJECT, ilongSound); therror
 	}
 END
@@ -902,27 +901,27 @@ DO
 	}
 END
 
-static Data pr_TextGrid_peekTier (Any dia) {
+static Function pr_TextGrid_peekTier (Any dia) {
 	LOOP {
 		iam (TextGrid);
 		long tierNumber = GET_INTEGER (STRING_TIER_NUMBER);
 		if (tierNumber > my tiers -> size)
 			Melder_throw ("Tier number (", tierNumber, ") should not be larger than number of tiers (", my tiers -> size, ").");
-		return (Data) my tiers -> item [tierNumber];
+		return (Function) my tiers -> item [tierNumber];
 	}
 	return NULL;   // should not occur
 }
 
 static IntervalTier pr_TextGrid_peekIntervalTier (Any dia) {
-	Data tier = pr_TextGrid_peekTier (dia);
-	if (tier -> methods != (Thing_Table) classIntervalTier) Melder_throw ("Tier should be interval tier.");
+	Function tier = pr_TextGrid_peekTier (dia);
+	if (tier -> classInfo != classIntervalTier) Melder_throw ("Tier should be interval tier.");
 	return (IntervalTier) tier;
 }
 
 static TextTier pr_TextGrid_peekTextTier (Any dia) {
-	Data tier = pr_TextGrid_peekTier (dia);
+	Function tier = pr_TextGrid_peekTier (dia);
 	if (! tier) return NULL;
-	if (tier -> methods != (Thing_Table) classTextTier) Melder_throw ("Tier should be point tier (TextTier).");
+	if (tier -> classInfo != classTextTier) Melder_throw ("Tier should be point tier (TextTier).");
 	return (TextTier) tier;
 }
 
@@ -944,7 +943,7 @@ FORM (TextGrid_extractOneTier, L"TextGrid: Extract one tier", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
 	OK
 DO
-	Data tier = pr_TextGrid_peekTier (dia);   // a reference
+	Function tier = pr_TextGrid_peekTier (dia);   // a reference
 	autoTextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
 	TextGrid_addTier (grid.peek(), tier); therror   // no transfer of tier ownership, because a copy is made
 	praat_new (grid.transfer(), tier -> name);
@@ -954,8 +953,8 @@ FORM (TextGrid_extractTier, L"TextGrid: Extract tier", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
 	OK
 DO
-	Data tier = pr_TextGrid_peekTier (dia);
-	autoData thee = (Data) Data_copy (tier);
+	Function tier = pr_TextGrid_peekTier (dia);
+	autoFunction thee = Data_copy (tier);
 	praat_new (thee.transfer(), tier -> name);
 END
 
@@ -1165,7 +1164,7 @@ FORM (TextGrid_isIntervalTier, L"TextGrid: Is interval tier?", 0)
 	OK
 DO
 	Data tier = pr_TextGrid_peekTier (dia);
-	if (tier -> methods == (Thing_Table) classIntervalTier) {
+	if (tier -> classInfo == classIntervalTier) {
 		Melder_information3 (L"1 (yes, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is an interval tier)");
 	} else {
 		Melder_information3 (L"0 (no, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is a point tier)");
@@ -1282,7 +1281,7 @@ DO
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				", because that TextGrid has only ", my tiers -> size, " tiers.");
 		intervalTier = (IntervalTier) my tiers -> item [itier];
-		if (intervalTier -> methods != (Thing_Table) classIntervalTier)
+		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				", because that tier is a point tier instead of an interval tier.");
 		if (iinterval > intervalTier -> intervals -> size)
@@ -1310,7 +1309,7 @@ DO
 			Melder_throw ("You cannot remove a point from tier ", itier, " of ", me,
 				", because that TextGrid has only ", my tiers -> size, " tiers.");
 		pointTier = (TextTier) my tiers -> item [itier];
-		if (pointTier -> methods != (Thing_Table) classTextTier)
+		if (pointTier -> classInfo != classTextTier)
 			Melder_throw ("You cannot remove a point from tier ", itier, " of ", me,
 				", because that tier is an interval tier instead of a point tier.");
 		if (ipoint > pointTier -> points -> size)
@@ -1335,7 +1334,7 @@ DO
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				", because that TextGrid has only ", my tiers -> size, " tiers.");
 		intervalTier = (IntervalTier) my tiers -> item [itier];
-		if (intervalTier -> methods != (Thing_Table) classIntervalTier)
+		if (intervalTier -> classInfo != classIntervalTier)
 			Melder_throw ("You cannot remove a boundary from tier ", itier, " of ", me,
 				L", because that tier is a point tier instead of an interval tier.");
 		if (iinterval > intervalTier -> intervals -> size)
@@ -1415,7 +1414,7 @@ DIRECT (TextGrid_AnyTier_append)
 	LOOP {
 		if (CLASS == classTextGrid) oldGrid = (TextGrid) OBJECT;
 	}
-	autoTextGrid newGrid = (TextGrid) Data_copy (oldGrid);
+	autoTextGrid newGrid = Data_copy (oldGrid);
 	LOOP if (OBJECT != oldGrid) {
 		iam (AnyTier);
 		TextGrid_addTier (newGrid.peek(), me); therror
@@ -1534,12 +1533,12 @@ END
 
 /***** buttons *****/
 
-extern "C" void praat_TimeFunction_query_init (void *klas);
-extern "C" void praat_TimeTier_query_init (void *klas);
-extern "C" void praat_TimeTier_modify_init (void *klas);
+void praat_TimeFunction_query_init (ClassInfo klas);
+void praat_TimeTier_query_init (ClassInfo klas);
+void praat_TimeTier_modify_init (ClassInfo klas);
 
-extern "C" void praat_uvafon_TextGrid_init (void);
-extern "C" void praat_uvafon_TextGrid_init (void) {
+void praat_uvafon_TextGrid_init (void);
+void praat_uvafon_TextGrid_init (void) {
 	Thing_recognizeClassByOtherName (classTextTier, L"MarkTier");
 
 	TextGridEditor_prefs ();

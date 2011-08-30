@@ -20,10 +20,6 @@
  */
 
 /*
- * pb 2011/07/14
- */
-
-/*
 	class Intensity = Vector;
 
 	x = time (seconds)
@@ -35,13 +31,13 @@
 
 #include "Vector.h"
 
-Thing_declare1cpp (Intensity);
-struct structIntensity : public structVector {
+Thing_define (Intensity, Vector) {
 	// overridden methods:
-		void v_info ();
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+		virtual double v_convertStandardToSpecialUnit (double value, long ilevel, int unit);
+		virtual double v_convertSpecialToStandardUnit (double value, long ilevel, int unit);
 };
-#define Intensity__methods(klas) Vector__methods(klas)
-Thing_declare2cpp (Intensity, Vector);
 
 Intensity Intensity_create (double tmin, double tmax, long nt, double dt, double t1);
 

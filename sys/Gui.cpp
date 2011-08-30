@@ -38,10 +38,10 @@ GuiObject Gui_addMenuBar (GuiObject form) {
 	GuiObject menuBar;
 	#if gtk
 		menuBar = gtk_menu_bar_new ();
-		gtk_box_pack_start (GTK_BOX (form), menuBar, FALSE, FALSE, 0);
+		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (menuBar), FALSE, FALSE, 0);
 		
 		// we need an accelerator group for each window we're creating accelerated menus on
-		GuiObject topwin = gtk_widget_get_toplevel (form);
+		GuiObject topwin = gtk_widget_get_toplevel (GTK_WIDGET (form));
 		GtkAccelGroup *ag = gtk_accel_group_new ();
 		gtk_window_add_accel_group (GTK_WINDOW (topwin), ag);
 		// unfortunately, menu-bars don't fiddle with accel-groups, so we need a way
@@ -68,7 +68,7 @@ int Gui_getResolution (GuiObject widget) {
 			(void) widget;
 			resolution = 100;
 		#elif gtk
-			resolution = gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (widget)));
+			resolution = gdk_screen_get_resolution (gdk_display_get_default_screen (gtk_widget_get_display (GTK_WIDGET (widget))));
 		#else
 			Melder_fatal ("Gui_getResolution: unknown platform.");
 		#endif

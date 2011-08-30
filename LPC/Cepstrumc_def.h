@@ -29,14 +29,14 @@ oo_DEFINE_STRUCT (Cepstrumc_Frame)
 	#if oo_READING_BINARY
 		if (localVersion == 0)
 		{
-			oo_FLOAT_VECTOR_FROM (c, 0, my nCoefficients)
+			oo_FLOAT_VECTOR_FROM (c, 0, nCoefficients)
 		}
 		else
 		{
-			oo_DOUBLE_VECTOR_FROM (c, 0, my nCoefficients)
+			oo_DOUBLE_VECTOR_FROM (c, 0, nCoefficients)
 		}
 	#else
-		oo_DOUBLE_VECTOR_FROM (c, 0, my nCoefficients)
+		oo_DOUBLE_VECTOR_FROM (c, 0, nCoefficients)
 	#endif
 	
 oo_END_STRUCT (Cepstrumc_Frame)
@@ -48,7 +48,12 @@ oo_DEFINE_CLASS (Cepstrumc, Sampled)
 
 	oo_DOUBLE (samplingFrequency) /* from Sound */
 	oo_INT (maxnCoefficients)
-	oo_STRUCT_VECTOR (Cepstrumc_Frame, frame, my nx)
+	oo_STRUCT_VECTOR (Cepstrumc_Frame, frame, nx)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (Cepstrumc)
 #undef ooSTRUCT

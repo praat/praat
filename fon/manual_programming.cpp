@@ -19,10 +19,10 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_programming_init (ManPages me);
-extern "C" void manual_programming_init (ManPages me) {
+void manual_programming_init (ManPages me);
+void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (L"Programming with Praat", L"ppgb", 20110309)
+MAN_BEGIN (L"Programming with Praat", L"ppgb", 20110831)
 INTRO (L"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -63,11 +63,9 @@ CODE (L"DIRECT (HelloFromJane)")
 CODE1 (L"Melder_information1 (L\"Hello, I am Jane.\");")
 CODE (L"END")
 CODE (L"")
-CODE (L"extern \"C\" void praat_uvafon_init ();")
-CODE (L"")
 CODE (L"int main (int argc, char **argv) {")
 CODE1 (L"praat_init (\"Praat_Jane\", argc, argv);")
-CODE1 (L"praat_uvafon_init ();")
+CODE1 (L"INCLUDE_LIBRARY (praat_uvafon_init)")
 CODE1 (L"praat_addMenuCommand (L\"Objects\", L\"New\", L\"Hello from Jane...\", NULL, 0, DO_HelloFromJane);")
 CODE1 (L"praat_run ();")
 CODE1 (L"return 0;")

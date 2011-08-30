@@ -23,7 +23,6 @@
 #include "Graphics.h"
 
 #include "PointProcess_def.h"
-#define PointProcess__methods(klas)  Function__methods(klas)
 oo_CLASS_CREATE (PointProcess, Function);
 
 PointProcess PointProcess_create (double startingTime, double finishingTime, long initialMaxnt);

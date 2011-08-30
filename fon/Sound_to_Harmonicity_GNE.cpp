@@ -89,7 +89,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 		autoLPC lpc = Sound_to_LPC_auto (original10k.peek(), 13, 30e-3, 10e-3, 1e9);
 		autoSound flat = LPC_and_Sound_filterInverse (lpc.peek(), original10k.peek());
 		autoSpectrum flatSpectrum = Sound_to_Spectrum (flat.peek(), TRUE);
-		autoSpectrum hilbertSpectrum = (Spectrum) Data_copy (flatSpectrum.peek());
+		autoSpectrum hilbertSpectrum = Data_copy (flatSpectrum.peek());
 		for (long col = 1; col <= hilbertSpectrum -> nx; col ++) {
 			hilbertSpectrum -> z [1] [col] = flatSpectrum -> z [2] [col];
 			hilbertSpectrum -> z [2] [col] = - flatSpectrum -> z [1] [col];
@@ -101,8 +101,8 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 			/*
 			 * Step 3: calculate Hilbert envelopes of bands.
 			 */
-			autoSpectrum bandSpectrum = (Spectrum) Data_copy (flatSpectrum.peek());
-			autoSpectrum hilbertBandSpectrum = (Spectrum) Data_copy (hilbertSpectrum.peek());
+			autoSpectrum bandSpectrum = Data_copy (flatSpectrum.peek());
+			autoSpectrum hilbertBandSpectrum = Data_copy (hilbertSpectrum.peek());
 			/*
 			 * 3a: Filter both the spectrum of the original flat sound and its Hilbert transform.
 			 */

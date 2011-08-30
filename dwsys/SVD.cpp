@@ -60,6 +60,7 @@
 #include "oo_DESCRIPTION.h"
 #include "SVD_def.h"
 
+Thing_implement (SVD, Data, 0);
 
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
@@ -78,25 +79,11 @@ static void SVD_transpose (SVD me)
 	my numberOfColumns = tmpl;
 }
 
-static void classSVD_info (I)
+void structSVD :: v_info ()
 {
-	iam (SVD);
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my numberOfRows));
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
+	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
-
-class_methods (SVD, Data)
-	class_method_local (SVD, destroy)
-	class_method_local (SVD, equal)
-	class_method_local (SVD, canWriteAsEncoding)
-	class_method_local (SVD, copy)
-	class_method_local (SVD, readText)
-	class_method_local (SVD, readBinary)
-	class_method_local (SVD, writeText)
-	class_method_local (SVD, writeBinary)
-	class_method_local (SVD, description)
-	class_method_local (SVD, info)
-class_methods_end
 
 /*
 	m >=n, mxn matrix A has svd UDV', where u is mxn, D is n and V is nxn.
@@ -373,24 +360,12 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m)
 	} catch (MelderError) { Melder_throw (me, ": no synthesis."); }
 }
 
-static void classGSVD_info (I)
-{
-	iam (GSVD);
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
-}
+Thing_implement (GSVD, Data, 0);
 
-class_methods (GSVD, Data)
-	class_method_local (GSVD, destroy)
-	class_method_local (GSVD, equal)
-	class_method_local (GSVD, canWriteAsEncoding)
-	class_method_local (GSVD, copy)
-	class_method_local (GSVD, readText)
-	class_method_local (GSVD, readBinary)
-	class_method_local (GSVD, writeText)
-	class_method_local (GSVD, writeBinary)
-	class_method_local (GSVD, description)
-	class_method_local (GSVD, info)
-class_methods_end
+void structGSVD :: v_info ()
+{
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (numberOfColumns));
+}
 
 GSVD GSVD_create (long numberOfColumns)
 {

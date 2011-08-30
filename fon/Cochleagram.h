@@ -21,11 +21,11 @@
 
 #include "Matrix.h"
 
-Thing_declare1cpp (Cochleagram);
-struct structCochleagram : public structMatrix {
+Thing_define (Cochleagram, Matrix) {
+	// overridden methods:
+	protected:
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define Cochleagram__methods(klas)  Matrix__methods(klas)
-Thing_declare2cpp (Cochleagram, Matrix);
 
 /* Normally, the attributes will meet the following:
 	xmin;			// Start time (seconds).

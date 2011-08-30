@@ -18,21 +18,9 @@
  */
 
 /*
- * pb 2002/07/16 GPL
- * pb 2003/03/09 Sounds_append: silenceDuration
- * pb 2003/07/02 checks on NUMrealft
- * pb 2003/07/10 NUMbessel_i0_f
- * pb 2004/05/05 Vector_draw
- * pb 2005/02/09 Sound_setZero
+ * a selection of changes:
  * pb 2006/12/31 stereo
- * pb 2007/01/26 more stereo
- * pb 2007/01/28 corrected a bug in Sound_extractChannel
- * pb 2007/01/28 more stereo
- * pb 2007/03/17 domain quantity
- * pb 2007/12/07 enums
  * pb 2010/03/26 Sounds_convolve, Sounds_crossCorrelate, Sound_autocorrelate
- * pb 2011/06/06 C++
- * pb 2011/07/14 C++
  */
 
 #include "Sound.h"
@@ -43,6 +31,8 @@
 #include "Sound_enums.h"
 #include "enums_getValue.h"
 #include "Sound_enums.h"
+
+Thing_implement (Sound, Vector, 2);
 
 Sound Sound_clipboard;
 
@@ -107,42 +97,28 @@ void structSound :: v_info () {
 	}
 }
 
-static double getMatrix (I, long irow, long icol) {
-	iam (Sound);
-	if (irow < 1 || irow > my ny) {
+double structSound :: v_getMatrix (long irow, long icol) {
+	if (irow < 1 || irow > ny) {
 		if (irow == 0) {
-			if (icol < 1 || icol > my nx) return 0.0;
-			if (my ny == 1) return my z [1] [icol];   // Optimization.
-			if (my ny == 2) return 0.5 * (my z [1] [icol] + my z [2] [icol]);   // Optimization.
+			if (icol < 1 || icol > nx) return 0.0;
+			if (ny == 1) return z [1] [icol];   // optimization
+			if (ny == 2) return 0.5 * (z [1] [icol] + z [2] [icol]);   // optimization
 			double sum = 0.0;
-			for (long channel = 1; channel <= my ny; channel ++) {
-				sum += my z [channel] [icol];
+			for (long channel = 1; channel <= ny; channel ++) {
+				sum += z [channel] [icol];
 			}
-			return sum / my ny;
+			return sum / ny;
 		}
 		return 0.0;
 	}
-	if (icol < 1 || icol > my nx) return 0.0;
-	return my z [irow] [icol];
+	if (icol < 1 || icol > nx) return 0.0;
+	return z [irow] [icol];
 }
 
-#undef our
-#define our ((Sound_Table) my methods) ->
-#undef your
-#define your ((Sound_Table) thy methods) ->
-
-static double getFunction2 (I, double x, double y) {
-	iam (Sound);
+double structSound :: v_getFunction2 (double x, double y) {
 	long channel = (long) floor (y);
-	if (channel < 0 || channel > my ny || y != (double) channel) return 0.0;
-	return our getFunction1 (me, channel, x);
-}
-
-class_methods (Sound, Vector) {
-	class_method (getMatrix)
-	class_method (getFunction2)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
+	if (channel < 0 || channel > ny || y != (double) channel) return 0.0;
+	return v_getFunction1 (channel, x);
 }
 
 Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {
@@ -161,7 +137,7 @@ Sound Sound_createSimple (long numberOfChannels, double duration, double samplin
 }
 
 Sound Sound_convertToMono (Sound me) {
-	if (my ny == 1) return (Sound) Data_copy (me);   // optimization
+	if (my ny == 1) return Data_copy (me);   // optimization
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		if (my ny == 2) {   // Optimization.
@@ -184,7 +160,7 @@ Sound Sound_convertToMono (Sound me) {
 }
 
 Sound Sound_convertToStereo (Sound me) {
-	if (my ny == 2) return (Sound) Data_copy (me);
+	if (my ny == 2) return Data_copy (me);
 	try {
 		if (my ny > 2) {
 			Melder_throw ("The Sound has ", my ny, " channels; don't know which to choose.");
@@ -312,7 +288,7 @@ Sound Matrix_to_Sound_mono (Matrix me, long row) {
 Matrix Sound_to_Matrix (Sound me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		your copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");
@@ -348,7 +324,7 @@ Sound Sound_upsample (Sound me) {
 Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 	double upfactor = samplingFrequency * my dx;
 	if (fabs (upfactor - 2) < 1e-6) return Sound_upsample (me);
-	if (fabs (upfactor - 1) < 1e-6) return (Sound) Data_copy (me);
+	if (fabs (upfactor - 1) < 1e-6) return Data_copy (me);
 	try {
 		long numberOfSamples = floor ((my xmax - my xmin) * samplingFrequency + 0.5);
 		if (numberOfSamples < 1)
@@ -1080,7 +1056,7 @@ void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 
 Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_filterWithOneFormantInline (thee.peek(), frequency, bandwidth);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -1097,7 +1073,7 @@ void Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwi
 
 Sound Sound_filter_preemphasis (Sound me, double frequency) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_preEmphasis (thee.peek(), frequency);
 		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
 		return thee.transfer();
@@ -1108,7 +1084,7 @@ Sound Sound_filter_preemphasis (Sound me, double frequency) {
 
 Sound Sound_filter_deemphasis (Sound me, double frequency) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_deEmphasis (thee.peek(), frequency);
 		Matrix_scaleAbsoluteExtremum (thee.peek(), 0.99);
 		return thee.transfer();

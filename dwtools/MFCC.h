@@ -29,18 +29,11 @@
 
 #include "CC.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (MFCC);
-struct structMFCC : public structCC {
+Thing_define (MFCC, CC) {
 };
-#define MFCC__methods(klas) CC__methods(klas)
-oo_CLASS_CREATE (MFCC, CC);
 
 /*
-	Interpretatation:
+	Interpretation:
 	Mel frequency cepstral coefficients as a function of time.
 	c0 represents the average filter output (dB's).
 */
@@ -55,9 +48,5 @@ void MFCC_lifter (MFCC me, long lifter);
 	c[i] *= (1 + lifter / 2 * sin (NUMpi * i / lifter))
 
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _MFCC_h_ */

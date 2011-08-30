@@ -1,6 +1,6 @@
 /* KlattGrid_def.h
  *
- * Copyright (C) 2008-2009 David Weenink
+ * Copyright (C) 2008-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * djmw 20081112
  */
 
 #define ooSTRUCT PhonationPoint
@@ -72,8 +68,13 @@ oo_DEFINE_CLASS (PhonationGrid, Function)
 		oo_OBJECT (PhonationGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		my options = PhonationGridPlayOptions_create ();
-		PhonationGrid_setNames (me);
+		options = PhonationGridPlayOptions_create ();
+		PhonationGrid_setNames (this);
+	#endif
+	#if oo_DECLARING
+		// overridden methods:
+		public:
+			virtual void v_info ();
 	#endif
 oo_END_CLASS (PhonationGrid)
 #undef ooSTRUCT
@@ -102,8 +103,13 @@ oo_DEFINE_CLASS (VocalTractGrid, Function)
 		oo_OBJECT (VocalTractGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		my options = VocalTractGridPlayOptions_create ();
-		VocalTractGrid_setNames (me);
+		options = VocalTractGridPlayOptions_create ();
+		VocalTractGrid_setNames (this);
+	#endif
+	#if oo_DECLARING
+		// overridden methods:
+		public:
+			virtual void v_info ();
 	#endif
 oo_END_CLASS (VocalTractGrid)
 #undef ooSTRUCT
@@ -134,9 +140,14 @@ oo_DEFINE_CLASS (CouplingGrid, Function)
 		oo_OBJECT (CouplingGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		my options = CouplingGridPlayOptions_create();
-		my glottis = PhonationTier_create (my xmin, my xmax);
-		CouplingGrid_setNames (me);
+		options = CouplingGridPlayOptions_create ();
+		glottis = PhonationTier_create (xmin, xmax);
+		CouplingGrid_setNames (this);
+	#endif
+	#if oo_DECLARING
+		// overridden methods:
+		public:
+			virtual void v_info ();
 	#endif
 oo_END_CLASS (CouplingGrid)
 #undef ooSTRUCT
@@ -159,8 +170,13 @@ oo_DEFINE_CLASS (FricationGrid, Function)
 		oo_OBJECT (FricationGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		my options = FricationGridPlayOptions_create();
-		FricationGrid_setNames (me);
+		options = FricationGridPlayOptions_create ();
+		FricationGrid_setNames (this);
+	#endif
+	#if oo_DECLARING
+		// overridden methods:
+		public:
+			virtual void v_info ();
 	#endif
 oo_END_CLASS (FricationGrid)
 #undef ooSTRUCT
@@ -185,8 +201,13 @@ oo_DEFINE_CLASS (KlattGrid, Function)
 		oo_OBJECT (KlattGridPlayOptions, 0, options)
 	#endif
 	#if oo_READING
-		my options = KlattGridPlayOptions_create();
-		KlattGrid_setNames (me);
+		options = KlattGridPlayOptions_create ();
+		KlattGrid_setNames (this);
+	#endif
+	#if oo_DECLARING
+		// overridden methods:
+		protected:
+			virtual void v_info ();
 	#endif
 oo_END_CLASS (KlattGrid)
 #undef ooSTRUCT

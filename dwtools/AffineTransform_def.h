@@ -17,18 +17,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 2001
- djmw 20020315 GPL header
- */
 
 #define ooSTRUCT AffineTransform
 oo_DEFINE_CLASS (AffineTransform, Data)
+
 	oo_LONG (n)
-	oo_DOUBLE_VECTOR (t, my n)
-	oo_DOUBLE_MATRIX (r, my n, my n)
+	oo_DOUBLE_VECTOR (t, n)
+	oo_DOUBLE_MATRIX (r, n, n)
+
+	#if oo_DECLARING
+		// new methods:
+			virtual void v_transform (double **in, long nrows, double **out);
+			virtual Any v_invert ();
+	#endif
 
 oo_END_CLASS(AffineTransform)
 #undef ooSTRUCT
+
 
 /* End of file AffineTransform_def.h */

@@ -33,46 +33,18 @@
 #include "KlattTable.h"
 #include "Interpreter_decl.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "KlattGrid_def.h"
-
-#define PhonationPoint__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PhonationPoint, Data);
-
-#define PhonationTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (PhonationTier, Function);
-
-#define PhonationGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (PhonationGridPlayOptions, Data);
-
-#define PhonationGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (PhonationGrid, Function);
-
-#define VocalTractGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (VocalTractGridPlayOptions, Data);
-
-#define VocalTractGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (VocalTractGrid, Function);
-
-#define CouplingGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (CouplingGridPlayOptions, Data);
-
-#define CouplingGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (CouplingGrid, Function);
-
-#define FricationGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (FricationGridPlayOptions, Data);
-
-#define FricationGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (FricationGrid, Function);
-
-#define KlattGridPlayOptions__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (KlattGridPlayOptions, Data);
-
-#define KlattGrid__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (KlattGrid, Function);
 
 /******************** PhonationPoint & Tier ************************************/
@@ -268,9 +240,5 @@ Sound Sound_KlattGrid_filterByVocalTract (Sound me, KlattGrid thee, int filterMo
 Sound Sound_KlattGrid_filter_frication (Sound me, KlattGrid thee);
 
 KlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, long maximumNumberOfFormants, double maximumFormantFrequency, double windowLength, double preEmphasisFrequency, double minimumPitch, double maximumPitch, double minimumPitchIntensity, int subtractMean);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _KlattGrid_h_ */

@@ -31,8 +31,7 @@
 #include "Strings_extensions.h"
 #include "NUM2.h"
 
-class_methods (ClassificationTable, TableOfReal)
-class_methods_end
+Thing_implement (ClassificationTable, TableOfReal, 0);
 
 ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfGroups)
 {

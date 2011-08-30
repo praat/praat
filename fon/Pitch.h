@@ -26,7 +26,6 @@
 #include "Pitch_enums.h"
 
 #include "Pitch_def.h"
-#define Pitch__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (Pitch, Sampled);
 
 Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,

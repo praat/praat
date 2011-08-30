@@ -32,6 +32,7 @@ struct TimeSoundEditor_sound {
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
 	// new data:
+	public:
 		bool ownSound;
 		struct TimeSoundEditor_sound sound;
 		struct { LongSound data; } longSound;
@@ -53,7 +54,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 
 void TimeSoundEditor_prefs (void);
 
-void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound);
+void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 

@@ -17,23 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2003/09/15 better positioning of buttons
- * pb 2004/11/23 made vertical spacing dependent on font size
- * pb 2005/05/07 embedded scripts (for pictures)
- * pb 2005/07/19 moved "<1" and "1>" buttons to the top, removed horizontal scroll bar and page number
- * pb 2006/10/20 embedded scripts allow links
- * pb 2007/06/10 wchar_t
- * pb 2007/11/30 erased Graphics_printf
- * pb 2008/03/21 new Editor API
- * pb 2008/11/24 prevented crash by Melder_malloc (replaced with Melder_calloc)
- * pb 2009/03/17 split up structPraat
- * pb 2010/05/14 GTK
- * pb 2011/04/06 C++
- * pb 2011/07/01 C++
- */
-
 #include <ctype.h>
 #include "HyperPage.h"
 #include "Printer.h"
@@ -42,6 +25,8 @@
 
 #include "praat.h"
 #include "EditorM.h"
+
+Thing_implement (HyperPage, Editor, 0);
 
 #define PAGE_HEIGHT  320.0
 #define SCREEN_HEIGHT  15.0
@@ -61,15 +46,13 @@ void HyperPage_prefs (void) {
 
 /********** class HyperLink **********/
 
-class_methods (HyperLink, Data)
-class_methods_end
+Thing_implement (HyperLink, Data, 0);
 
 HyperLink HyperLink_create (const wchar_t *name, double x1DC, double x2DC, double y1DC, double y2DC) {
-	HyperLink me = Thing_new (HyperLink);
-	if (! me) return NULL;
-	Thing_setName (me, name);
+	autoHyperLink me = Thing_new (HyperLink);
+	Thing_setName (me.peek(), name);
 	my x1DC = x1DC, my x2DC = x2DC, my y1DC = y1DC, my y2DC = y2DC;
-	return me;
+	return me.transfer();
 }
 
 static void saveHistory (HyperPage me, const wchar_t *title) {
@@ -122,10 +105,10 @@ static void initScreen (HyperPage me) {
 
 void HyperPage_initSheetOfPaper (HyperPage me) {
 	int reflect = my mirror && (my pageNumber & 1) == 0;
-	wchar_t *leftHeader = reflect ? my outsideHeader : my insideHeader;
-	wchar_t *rightHeader = reflect ? my insideHeader : my outsideHeader;
-	wchar_t *leftFooter = reflect ? my outsideFooter : my insideFooter;
-	wchar_t *rightFooter = reflect ? my insideFooter : my outsideFooter;
+	wchar *leftHeader = reflect ? my outsideHeader : my insideHeader;
+	wchar *rightHeader = reflect ? my insideHeader : my outsideHeader;
+	wchar *leftFooter = reflect ? my outsideFooter : my insideFooter;
+	wchar *rightFooter = reflect ? my insideFooter : my outsideFooter;
 
 	my y = PAPER_TOP - TOP_MARGIN;
 	my x = 0;
@@ -682,21 +665,19 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 	}
 }
 
-static int menu_cb_postScriptSettings (EDITOR_ARGS) {
+static void menu_cb_postScriptSettings (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	Printer_postScriptSettings ();
-	return 1;
 }
 
 #ifdef macintosh
-static int menu_cb_pageSetup (EDITOR_ARGS) {
+static void menu_cb_pageSetup (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	Printer_pageSetup ();
-	return 1;
 }
 #endif
 
-static int menu_cb_print (EDITOR_ARGS) {
+static void menu_cb_print (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	EDITOR_FORM (L"Print", 0)
 		SENTENCE (L"Left or inside header", L"")
@@ -724,7 +705,7 @@ static int menu_cb_print (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_font (EDITOR_ARGS) {
+static void menu_cb_font (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	EDITOR_FORM (L"Font", 0)
 		RADIO (L"Font", 1)
@@ -753,13 +734,13 @@ static void setFontSize (HyperPage me, int fontSize) {
 	updateSizeMenu (me);
 }
 
-static int menu_cb_10 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 10); return 1; }
-static int menu_cb_12 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 12); return 1; }
-static int menu_cb_14 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 14); return 1; }
-static int menu_cb_18 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 18); return 1; }
-static int menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 24); return 1; }
+static void menu_cb_10 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 10); }
+static void menu_cb_12 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 12); }
+static void menu_cb_14 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 14); }
+static void menu_cb_18 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 18); }
+static void menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 24); }
 
-static int menu_cb_fontSize (EDITOR_ARGS) {
+static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	EDITOR_FORM (L"Font size", 0)
 		NATURAL (L"Font size (points)", L"12")
@@ -770,13 +751,13 @@ static int menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_searchForPage (EDITOR_ARGS) {
+static void menu_cb_searchForPage (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	EDITOR_FORM (L"Search for page", 0)
 		TEXTFIELD (L"Page", L"a")
 	EDITOR_OK
 	EDITOR_DO
-		if (! HyperPage_goToPage (me, GET_STRING (L"Page"))) return 0;
+		HyperPage_goToPage (me, GET_STRING (L"Page")); therror   // BUG
 	EDITOR_END
 }
 
@@ -800,7 +781,7 @@ static void createVerticalScrollBar (HyperPage me, GuiObject parent) {
 		GtkObject *adj = gtk_adjustment_new (1, 1, maximumScrollBarValue, 1, 1, maximumScrollBarValue - 1);
 		my verticalScrollBar = gtk_vscrollbar_new (GTK_ADJUSTMENT (adj));
 		GuiObject_show (my verticalScrollBar);
-		gtk_box_pack_end (GTK_BOX (parent), my verticalScrollBar, false, false, 3);
+		gtk_box_pack_end (GTK_BOX (parent), GTK_WIDGET (my verticalScrollBar), false, false, 3);
 	#elif motif
 		// TODO: Kan dit niet een algemele gui klasse worden?
 		my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
@@ -870,10 +851,10 @@ static void gui_cb_verticalScroll (GUI_ARGS) {
 }
 #endif
 
-static int menu_cb_pageUp (EDITOR_ARGS) {
+static void menu_cb_pageUp (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
-	if (! my verticalScrollBar) return 0;
+	if (! my verticalScrollBar) return;
 	#if	gtk
 		value = gtk_range_get_value (GTK_RANGE (my verticalScrollBar));
 		sliderSize = 1;
@@ -890,13 +871,12 @@ static int menu_cb_pageUp (EDITOR_ARGS) {
 		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
 	}
-	return 1;
 }
 
-static int menu_cb_pageDown (EDITOR_ARGS) {
+static void menu_cb_pageDown (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	int value, sliderSize, incr, pincr;
-	if (! my verticalScrollBar) return 0;
+	if (! my verticalScrollBar) return;
 	#if	gtk
 		value = gtk_range_get_value (GTK_RANGE (my verticalScrollBar));
 		sliderSize = 1;
@@ -913,29 +893,24 @@ static int menu_cb_pageDown (EDITOR_ARGS) {
 		my v_draw ();   // do not wait for expose event
 		updateVerticalScrollBar (me);
 	}
-	return 1;
 }
 
 /********** **********/
 
-static int do_back (HyperPage me) {
-	if (my historyPointer <= 0) return 1;
-	autostring page = Melder_wcsdup_f (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
+static void do_back (HyperPage me) {
+	if (my historyPointer <= 0) return;
+	autostring page = Melder_wcsdup_f (my history [-- my historyPointer]. page);   // temporary, because pointer will be moved
 	int top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.peek())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
-	} else {
-		return 0;
 	}
-	return 1;
 }
 
-static int menu_cb_back (EDITOR_ARGS) {
+static void menu_cb_back (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	do_back (me);
-	return 1;
 }
 
 static void gui_button_cb_back (I, GuiButtonEvent event) {
@@ -944,24 +919,20 @@ static void gui_button_cb_back (I, GuiButtonEvent event) {
 	do_back (me);
 }
 
-static int do_forth (HyperPage me) {
-	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return 1;
+static void do_forth (HyperPage me) {
+	if (my historyPointer >= 19 || ! my history [my historyPointer + 1]. page) return;
 	autostring page = Melder_wcsdup_f (my history [++ my historyPointer]. page);
 	int top = my history [my historyPointer]. top;
 	if (my v_goToPage (page.peek())) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
-	} else {
-		return 0;
 	}
-	return 1;
 }
 
-static int menu_cb_forth (EDITOR_ARGS) {
+static void menu_cb_forth (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	do_forth (me);
-	return 1;
 }
 
 static void gui_button_cb_forth (I, GuiButtonEvent event) {
@@ -1033,10 +1004,10 @@ void structHyperPage :: v_createChildren () {
 
 	#if gtk
 		holder = gtk_hbox_new (FALSE, 0);
-		gtk_box_pack_start (GTK_BOX (dialog), holder, false, false, 0);
+		gtk_box_pack_start (GTK_BOX (d_windowForm), GTK_WIDGET (holder), false, false, 0);
 		GuiObject_show (holder);
 	#elif motif
-		holder = dialog;
+		holder = d_windowForm;
 	#endif
 
 	/***** Create navigation buttons. *****/
@@ -1055,21 +1026,21 @@ void structHyperPage :: v_createChildren () {
 	}
 	#if gtk
 		GuiObject scrollBox = gtk_hbox_new (false, 0);
-		gtk_box_pack_end (GTK_BOX (dialog), scrollBox, true, true, 0);
+		gtk_box_pack_end (GTK_BOX (d_windowForm), GTK_WIDGET (scrollBox), true, true, 0);
 		drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollBox), 0, 600, 0, 800,
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
-		gtk_widget_set_double_buffered (drawingArea, FALSE);
-		gtk_box_pack_start (GTK_BOX (scrollBox), drawingArea, true, true, 0);
+		gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
+		gtk_box_pack_start (GTK_BOX (scrollBox), GTK_WIDGET (drawingArea), true, true, 0);
 		createVerticalScrollBar (this, scrollBox);
 		GuiObject_show (drawingArea);
 		GuiObject_show (scrollBox);
 	#elif motif
 		/***** Create scroll bar. *****/
 
-		createVerticalScrollBar (this, dialog);
+		createVerticalScrollBar (this, d_windowForm);
 
 		/***** Create drawing area. *****/
-		drawingArea = GuiDrawingArea_createShown (dialog, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
+		drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
 			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 	#endif
 }
@@ -1115,8 +1086,6 @@ void structHyperPage :: v_dataChanged () {
 	HyperPage_clear (this);
 	updateVerticalScrollBar (this);
 }
-
-Thing_implement (HyperPage, Editor, 0);
 
 int HyperPage_goToPage (I, const wchar_t *title) {
 	iam (HyperPage);

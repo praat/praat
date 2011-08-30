@@ -1,6 +1,6 @@
 /* Image_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1996/08/16
- * pb 2002/07/16 GPL
- */
-
 
 #define ooSTRUCT Image
 oo_DEFINE_CLASS (Image, Sampled)
@@ -31,7 +26,7 @@ oo_DEFINE_CLASS (Image, Sampled)
 	oo_LONG (ny)
 	oo_DOUBLE (dy)
 	oo_DOUBLE (y1)
-	oo_UBYTE_MATRIX (z, my ny, my nx)
+	oo_UBYTE_MATRIX (z, ny, nx)
 
 oo_END_CLASS (Image)
 #undef ooSTRUCT

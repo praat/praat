@@ -49,11 +49,11 @@ GuiObject GuiMenuBar_addMenu2 (GuiObject bar, const wchar_t *title, long flags, 
 		GtkAccelGroup *ag = GTK_IS_MENU_BAR (bar) ? (GtkAccelGroup *) g_object_get_data (G_OBJECT (bar), "accel-group") : (GtkAccelGroup *) gtk_menu_get_accel_group (GTK_MENU (bar));
 		gtk_menu_set_accel_group (GTK_MENU (menu), ag);
 		if (flags & GuiMenu_INSENSITIVE)
-			gtk_widget_set_sensitive (menu, FALSE);
-		gtk_menu_item_set_submenu (GTK_MENU_ITEM (*menuTitle), menu);
-		gtk_menu_shell_append (GTK_MENU_SHELL (bar), *menuTitle);
-		gtk_widget_show (menu);
-		gtk_widget_show (*menuTitle);
+			gtk_widget_set_sensitive (GTK_WIDGET (menu), FALSE);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (*menuTitle), GTK_WIDGET (menu));
+		gtk_menu_shell_append (GTK_MENU_SHELL (bar), GTK_WIDGET (*menuTitle));
+		gtk_widget_show (GTK_WIDGET (menu));
+		gtk_widget_show (GTK_WIDGET (*menuTitle));
 	#elif win || mac
 		*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
 		if (wcsequ (title, L"Help"))
@@ -74,7 +74,7 @@ static void set_position (GtkMenu *menu, gint *px, gint *py, gpointer data)
 	GtkWidget *button = (GtkWidget *) g_object_get_data (G_OBJECT (menu), "button");
 
 	if (GTK_WIDGET (menu) -> requisition. width < button->allocation.width)
-		gtk_widget_set_size_request(GTK_WIDGET(menu), button->allocation.width, -1);
+		gtk_widget_set_size_request (GTK_WIDGET (menu), button->allocation.width, -1);
 
 	gdk_window_get_origin (button->window, px, py);
 	*px += button->allocation.x;
@@ -106,12 +106,12 @@ GuiObject GuiMenuBar_addMenu3 (GuiObject parent, const wchar_t *title, long flag
 		GTK_SIGNAL_FUNC (button_press), G_OBJECT (menu), G_CONNECT_SWAPPED);
 	g_object_set_data (G_OBJECT (menu), "button", *button);
 	if (flags & GuiMenu_INSENSITIVE)
-		gtk_widget_set_sensitive (menu, FALSE);
-	gtk_menu_attach_to_widget (GTK_MENU (menu), *button, NULL);
+		gtk_widget_set_sensitive (GTK_WIDGET (menu), FALSE);
+	gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (*button), NULL);
 	/* TODO: Free button? */
-	gtk_container_add (GTK_CONTAINER (parent), *button);
-	gtk_widget_show (menu);
-	gtk_widget_show (*button);
+	gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (*button));
+	gtk_widget_show (GTK_WIDGET (menu));
+	gtk_widget_show (GTK_WIDGET (*button));
 	return menu;
 }
 #endif
@@ -215,7 +215,7 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 		} else {
 			button = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
 		}
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), button);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), GTK_WIDGET (button));
 	#elif win || mac
 		button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
 			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
@@ -259,7 +259,7 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 			GtkAccelGroup *ag = gtk_menu_get_accel_group (GTK_MENU (menu));
 
 			if (key != 0)
-				gtk_widget_add_accelerator (button, toggle ? "toggled" : "activate",
+				gtk_widget_add_accelerator (GTK_WIDGET (button), toggle ? "toggled" : "activate",
 					ag, key, modifiers, GTK_ACCEL_VISIBLE);
 
 		#elif win || mac
@@ -294,9 +294,9 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 			g_object_set_data (G_OBJECT (button), "commandCallback", (gpointer) commandCallback);
 			g_object_set_data (G_OBJECT (button), "commandClosure", (gpointer) closure);
 		} else {
-			gtk_widget_set_sensitive (button, FALSE);
+			gtk_widget_set_sensitive (GTK_WIDGET (button), FALSE);
 		}
-		gtk_widget_show (button);
+		gtk_widget_show (GTK_WIDGET (button));
 	#elif win || mac
 		XtAddCallback (button,
 			toggle ? XmNvalueChangedCallback : XmNactivateCallback,
@@ -309,8 +309,8 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 GuiObject GuiMenu_addSeparator (GuiObject menu) {
 	#if gtk
 		GuiObject separator = gtk_separator_menu_item_new ();
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), separator);
-		gtk_widget_show (separator);
+		gtk_menu_shell_append (GTK_MENU_SHELL (menu), GTK_WIDGET (separator));
+		gtk_widget_show (GTK_WIDGET (separator));
 		return separator;
 	#elif win || mac
 		return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);

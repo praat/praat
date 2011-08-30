@@ -17,115 +17,82 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1997/04/27
- * pb 2002/07/16 GPL
- * pb 2008/01/19 double
- * pb 2011/06/04 C++
- */
-
 #include "ParamCurve.h"
 
-static void destroy (I) {
-	iam (ParamCurve);
-	forget (my x);
-	forget (my y);
-	inherited (ParamCurve) destroy (me);
-}
+#include "oo_DESTROY.h"
+#include "ParamCurve_def.h"
+#include "oo_COPY.h"
+#include "ParamCurve_def.h"
+#include "oo_EQUAL.h"
+#include "ParamCurve_def.h"
+#include "oo_DESCRIPTION.h"
+#include "ParamCurve_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "ParamCurve_def.h"
 
-static void info (I) {
-	iam (ParamCurve);
+Thing_implement (ParamCurve, Function, 2);
+
+void structParamCurve :: v_info () {
 	double xmin = 1e300, xmax = -1e300, ymin = 1e300, ymax = -1e300;
-	for (long i = 1; i <= my x -> nx; i ++) {
-		double value = my x -> z [1] [i];
+	for (long i = 1; i <= x -> nx; i ++) {
+		double value = x -> z [1] [i];
 		if (value < xmin) xmin = value;
 		if (value > xmax) xmax = value;
 	}
-	for (long i = 1; i <= my y -> nx; i ++) {
-		double value = my y -> z [1] [i];
+	for (long i = 1; i <= y -> nx; i ++) {
+		double value = y -> z [1] [i];
 		if (value < ymin) ymin = value;
 		if (value > ymax) ymax = value;
 	}
-	classData -> info (me);
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Domain:");
-	MelderInfo_writeLine2 (L"   tmin: ", Melder_double (my xmin));
-	MelderInfo_writeLine2 (L"   tmax: ", Melder_double (my xmax));
+	MelderInfo_writeLine2 (L"   tmin: ", Melder_double (xmin));
+	MelderInfo_writeLine2 (L"   tmax: ", Melder_double (xmax));
 	MelderInfo_writeLine1 (L"x sampling:");
-	MelderInfo_writeLine2 (L"   Number of values of t in x: ", Melder_double (my x -> nx));
-	MelderInfo_writeLine5 (L"   t step in x: ", Melder_double (my x -> dx), L" (sampling rate ", Melder_double (1.0 / my x -> dx), L")");
-	MelderInfo_writeLine2 (L"   First t in x: ", Melder_double (my x -> x1));
+	MelderInfo_writeLine2 (L"   Number of values of t in x: ", Melder_double (x -> nx));
+	MelderInfo_writeLine5 (L"   t step in x: ", Melder_double (x -> dx), L" (sampling rate ", Melder_double (1.0 / x -> dx), L")");
+	MelderInfo_writeLine2 (L"   First t in x: ", Melder_double (x -> x1));
 	MelderInfo_writeLine1 (L"x values:");
 	MelderInfo_writeLine2 (L"   Minimum x: ", Melder_double (xmin));
 	MelderInfo_writeLine2 (L"   Maximum x: ", Melder_double (xmax));
 	MelderInfo_writeLine1 (L"y sampling:");
-	MelderInfo_writeLine2 (L"   Number of values of t in y: ", Melder_double (my y -> nx));
-	MelderInfo_writeLine5 (L"   t step in y: ", Melder_double (my y -> dx), L" (sampling rate ", Melder_double (1.0 / my y -> dx), L")");
-	MelderInfo_writeLine2 (L"   First t in y: ", Melder_double (my y -> x1));
+	MelderInfo_writeLine2 (L"   Number of values of t in y: ", Melder_double (y -> nx));
+	MelderInfo_writeLine5 (L"   t step in y: ", Melder_double (y -> dx), L" (sampling rate ", Melder_double (1.0 / y -> dx), L")");
+	MelderInfo_writeLine2 (L"   First t in y: ", Melder_double (y -> x1));
 	MelderInfo_writeLine1 (L"y values:");
 	MelderInfo_writeLine2 (L"   Minimum y: ", Melder_double (ymin));
 	MelderInfo_writeLine2 (L"   Maximum y: ", Melder_double (ymax));
 }
 
-static void copy (I, thou) {
-	iam (ParamCurve); thouart (ParamCurve);
-	thy x = NULL;
-	thy y = NULL;
-	inherited (ParamCurve) copy (me, thee); therror
-	thy x = (Sound) Data_copy (my x); therror
-	thy y = (Sound) Data_copy (my y); therror
+void structParamCurve :: v_writeText (MelderFile file) {
+	Data_writeText (x, file);
+	Data_writeText (y, file);
 }
 
-static bool equal (I, thou) {
-	iam (ParamCurve); thouart (ParamCurve);
-	return inherited (ParamCurve) equal (me, thee) && Data_equal (my x, thy x) && Data_equal (my y, thy y);
+void structParamCurve :: v_readText (MelderReadText text) {
+	x = Thing_new (Sound); therror
+	y = Thing_new (Sound); therror
+	Data_readText (x, text); therror
+	Data_readText (y, text); therror
+	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
+	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
 }
 
-static void writeText (I, MelderFile file) {
-	iam (ParamCurve);
-	Data_writeText (my x, file);
-	Data_writeText (my y, file);
+void structParamCurve :: v_writeBinary (FILE *f) {
+	Data_writeBinary (x, f); therror
+	Data_writeBinary (y, f); therror
 }
 
-static void readText (I, MelderReadText text) {
-	iam (ParamCurve);
-	my x = Thing_new (Sound); therror
-	my y = Thing_new (Sound); therror
-	Data_readText (my x, text); therror
-	Data_readText (my y, text); therror
-	my xmin = my x -> xmin > my y -> xmin ? my x -> xmin : my y -> xmin;
-	my xmax = my x -> xmax < my y -> xmax ? my x -> xmax : my y -> xmax;
-}
-
-static void writeBinary (I, FILE *f) {
-	iam (ParamCurve);
-	Data_writeBinary (my x, f); therror
-	Data_writeBinary (my y, f); therror
-}
-
-static void readBinary (I, FILE *f) {
-	iam (ParamCurve);
+void structParamCurve :: v_readBinary (FILE *f) {
 	long saveVersion = Thing_version;
 	Thing_version = 2;
-	my x = Thing_new (Sound); therror
-	my y = Thing_new (Sound); therror
-	Data_readBinary (my x, f); therror
-	Data_readBinary (my y, f); therror
+	x = Thing_new (Sound); therror
+	y = Thing_new (Sound); therror
+	Data_readBinary (x, f); therror
+	Data_readBinary (y, f); therror
 	Thing_version = saveVersion;
-	my xmin = my x -> xmin > my y -> xmin ? my x -> xmin : my y -> xmin;
-	my xmax = my x -> xmax < my y -> xmax ? my x -> xmax : my y -> xmax; 
-}
-
-class_methods (ParamCurve, Function) {
-	us -> version = 2;
-	class_method (destroy)
-	class_method (info)
-	class_method (copy)
-	class_method (equal)
-	class_method (writeText)
-	class_method (readText)
-	class_method (writeBinary)
-	class_method (readBinary)
-	class_methods_end
+	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
+	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax; 
 }
 
 void ParamCurve_init (I, Any void_x, Any void_y) {
@@ -133,8 +100,8 @@ void ParamCurve_init (I, Any void_x, Any void_y) {
 	Sound x = (Sound) void_x, y = (Sound) void_y;
 	if (x -> xmax <= y -> xmin || x -> xmin >= y -> xmax)
 		Melder_throw ("Domains do not overlap.");
-	my x = (Sound) Data_copy (x); therror
-	my y = (Sound) Data_copy (y); therror
+	my x = Data_copy (x);
+	my y = Data_copy (y);
 	my xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
 	my xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax; 
 }

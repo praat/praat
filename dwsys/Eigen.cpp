@@ -63,6 +63,8 @@
 #include "oo_DESCRIPTION.h"
 #include "Eigen_def.h"
 
+Thing_implement (Eigen, Data, 0);
+
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 #define SWAP(a,b) {temp=(a);(a)=(b);(b)=temp;}
@@ -98,18 +100,6 @@ static void Graphics_ticks (Graphics g, double min, double max, int hasNumber,
 		tick += dtick;
 	}
 }
-
-class_methods (Eigen, Data)
-	class_method_local (Eigen, destroy)
-	class_method_local (Eigen, description)
-	class_method_local (Eigen, copy)
-	class_method_local (Eigen, equal)
-	class_method_local (Eigen, canWriteAsEncoding)
-	class_method_local (Eigen, writeText)
-	class_method_local (Eigen, readText)
-	class_method_local (Eigen, writeBinary)
-	class_method_local (Eigen, readBinary)
-class_methods_end
 
 void Eigen_init (I, long numberOfEigenvalues, long dimension)
 {

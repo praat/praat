@@ -29,7 +29,7 @@ void praat_executeScriptFromText (wchar *text);
 void praat_executeScriptFromDialog (Any dia);
 void DO_praat_runScript (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar *scriptPath, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy);
-void DO_RunTheScriptFromAnyAddedEditorCommand (Any editor, const wchar *script);
+void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const wchar *script);
 
 /* End of file praat_script.h */
 #endif

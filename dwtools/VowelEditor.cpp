@@ -101,23 +101,6 @@ Thing_implement (VowelEditor, Editor, 0);
 // Too prevent the generation of inaudible short Sounds we set a minimum duration
 #define MINIMUM_SOUND_DURATION 0.01
 
-// menu callbacks
-static int menu_cb_help (EDITOR_ARGS);
-static int menu_cb_prefs (EDITOR_ARGS);
-static int menu_cb_publishSound (EDITOR_ARGS);
-static int menu_cb_extract_FormantGrid (EDITOR_ARGS);
-static int menu_cb_extract_PitchTier (EDITOR_ARGS);
-static int menu_cb_extract_KlattGrid (EDITOR_ARGS);
-static int menu_cb_showOneVowelMark (EDITOR_ARGS);
-static int menu_cb_showVowelMarks (EDITOR_ARGS);
-static int menu_cb_setF0 (EDITOR_ARGS);
-static int menu_cb_setF3F4 (EDITOR_ARGS);
-static int menu_cb_reverseTrajectory (EDITOR_ARGS);
-static int menu_cb_newTrajectory (EDITOR_ARGS);
-static int menu_cb_extendTrajectory (EDITOR_ARGS);
-static int menu_cb_modifyTrajectoryDuration (EDITOR_ARGS);
-static int menu_cb_shiftTrajectory (EDITOR_ARGS);
-static int menu_cb_showTrajectoryTimeMarkersEvery (EDITOR_ARGS);
 // button callbacks
 static void gui_button_cb_publish (I, GuiButtonEvent event);
 static void gui_button_cb_play (I, GuiButtonEvent event);
@@ -167,27 +150,26 @@ static Sound Vowel_to_Sound_pulses (Vowel me, double samplingFrequency, double a
 static struct structVowelEditor_F0 f0default = { 140.0, 0.0, 40.0, 2000.0, SAMPLING_FREQUENCY, 1, 0.0, 2000 };
 static struct structVowelEditor_F1F2Grid griddefault = { 200, 500, 0, 1, 0, 1, 0.5 };
 
-#define VOWEL_def_h \
-oo_DEFINE_CLASS (Vowel, Function)\
-	oo_OBJECT (PitchTier, 0, pt)\
-	oo_OBJECT (FormantTier, 0, ft)\
-oo_END_CLASS (Vowel)
-
 #include "oo_DESTROY.h"
-#define ooSTRUCT Vowel
-VOWEL_def_h
-#undef ooSTRUCT
+#include "Vowel_def.h"
 #include "oo_COPY.h"
-#define ooSTRUCT Vowel
-VOWEL_def_h
-#undef ooSTRUCT
+#include "Vowel_def.h"
+#include "oo_EQUAL.h"
+#include "Vowel_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "Vowel_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "Vowel_def.h"
+#include "oo_READ_TEXT.h"
+#include "Vowel_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "Vowel_def.h"
+#include "oo_READ_BINARY.h"
+#include "Vowel_def.h"
+#include "oo_DESCRIPTION.h"
+#include "Vowel_def.h"
 
-class_methods (Vowel, Function)
-{
-	class_method_local (Vowel, destroy)
-	class_method_local (Vowel, copy)
-	class_methods_end
-}
+Thing_implement (Vowel, Function, 0);
 
 static Vowel Vowel_create (double duration)
 {
@@ -802,15 +784,14 @@ static int paCallback (const void *inputBuffer, void *outputBuffer, unsigned lon
 
 /********** MENU METHODS **********/
 
-static int menu_cb_help (EDITOR_ARGS)
+static void menu_cb_help (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	(void) me;
 	Melder_help (L"VowelEditor");
-	return 1;
 }
 
-static int menu_cb_prefs (EDITOR_ARGS)
+static void menu_cb_prefs (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Preferences", 0);
@@ -837,24 +818,22 @@ static int menu_cb_prefs (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_publishSound (EDITOR_ARGS)
+static void menu_cb_publishSound (EDITOR_ARGS)
 {
 		EDITOR_IAM (VowelEditor);
 		autoSound publish = VowelEditor_createTarget (me);
-		if (my publishCallback)	my publishCallback (me, my publishClosure, publish.transfer());
-		return 1;
+		my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_extract_FormantGrid (EDITOR_ARGS)
+static void menu_cb_extract_FormantGrid (EDITOR_ARGS)
 {
 		EDITOR_IAM (VowelEditor);
 		VowelEditor_updateVowel (me);
 		autoFormantGrid publish = FormantTier_to_FormantGrid (my vowel -> ft);
-		if (my publishCallback)	my publishCallback (me, my publishClosure, publish.transfer());
-		return 1;
+		my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_extract_KlattGrid (EDITOR_ARGS)
+static void menu_cb_extract_KlattGrid (EDITOR_ARGS)
 {
 		EDITOR_IAM (VowelEditor);
 		VowelEditor_updateVowel (me);
@@ -863,20 +842,18 @@ static int menu_cb_extract_KlattGrid (EDITOR_ARGS)
 		KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90); therror
 		KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt); therror
 		KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek()); therror
-		if (my publishCallback) my publishCallback (me, my publishClosure, publish.transfer());
-		return 1;
+		my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_extract_PitchTier (EDITOR_ARGS)
+static void menu_cb_extract_PitchTier (EDITOR_ARGS)
 {
 		EDITOR_IAM (VowelEditor);
 		VowelEditor_updateVowel (me);
 		autoPitchTier publish = (PitchTier) Data_copy (my vowel -> pt);
-		if (my publishCallback)	my publishCallback (me, my publishClosure, publish.transfer());
-		return 1;
+		my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_drawTrajectory (EDITOR_ARGS)
+static void menu_cb_drawTrajectory (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Draw trajectory", 0)
@@ -894,7 +871,7 @@ static int menu_cb_drawTrajectory (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_showOneVowelMark (EDITOR_ARGS)
+static void menu_cb_showOneVowelMark (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Show one vowel mark", 0);
@@ -926,7 +903,7 @@ static int menu_cb_showOneVowelMark (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_showVowelMarks (EDITOR_ARGS)
+static void menu_cb_showVowelMarks (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Show vowel marks", 0);
@@ -946,7 +923,7 @@ static int menu_cb_showVowelMarks (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_setF0 (EDITOR_ARGS)
+static void menu_cb_setF0 (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Set F0", 0);
@@ -964,7 +941,7 @@ static int menu_cb_setF0 (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_setF3F4 (EDITOR_ARGS)
+static void menu_cb_setF3F4 (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Set F3 & F4", 0);
@@ -980,13 +957,12 @@ static int menu_cb_setF3F4 (EDITOR_ARGS)
 		VowelEditor_setF3F4 (me, f3, b3, f4, b4); therror
 	EDITOR_END
 }
-static int menu_cb_reverseTrajectory (EDITOR_ARGS)
+static void menu_cb_reverseTrajectory (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_Vowel_reverseFormantTier (me);
 
 	Graphics_updateWs (my g);
-	return 1;
 }
 
 static void VowelEditor_Vowel_addData (VowelEditor me, Vowel thee, double time, double f1, double f2, double f0)
@@ -1031,7 +1007,7 @@ static void	checkXY (double *x, double *y)
 	else if (*y > 1) *y = 1;
 }
 
-static int menu_cb_newTrajectory (EDITOR_ARGS)
+static void menu_cb_newTrajectory (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"New Trajectory", 0);
@@ -1065,7 +1041,7 @@ static int menu_cb_newTrajectory (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_extendTrajectory (EDITOR_ARGS)
+static void menu_cb_extendTrajectory (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Extend Trajectory", 0);
@@ -1088,7 +1064,7 @@ static int menu_cb_extendTrajectory (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_modifyTrajectoryDuration (EDITOR_ARGS)
+static void menu_cb_modifyTrajectoryDuration (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Modify duration", 0);
@@ -1099,7 +1075,7 @@ static int menu_cb_modifyTrajectoryDuration (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_shiftTrajectory (EDITOR_ARGS)
+static void menu_cb_shiftTrajectory (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Shift trajectory", 0);
@@ -1112,7 +1088,7 @@ static int menu_cb_shiftTrajectory (EDITOR_ARGS)
 	EDITOR_END
 }
 
-static int menu_cb_showTrajectoryTimeMarkersEvery (EDITOR_ARGS)
+static void menu_cb_showTrajectoryTimeMarkersEvery (EDITOR_ARGS)
 {
 	EDITOR_IAM (VowelEditor);
 	EDITOR_FORM (L"Show trajectory time markers every", 0);
@@ -1141,7 +1117,7 @@ static void gui_button_cb_publish (I, GuiButtonEvent event)
 		(void) event;
 		iam (VowelEditor);
 		autoSound publish = VowelEditor_createTarget (me);
-		if (my publishCallback) my publishCallback (me, my publishClosure, publish.transfer());
+		my broadcastPublication (publish.transfer());
 }
 
 static void gui_button_cb_reverse (I, GuiButtonEvent event)
@@ -1218,8 +1194,8 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
 
-	prefs.shellWidth = GuiObject_getWidth (my shell);
-	prefs.shellHeight = GuiObject_getHeight (my shell);
+	prefs.shellWidth = GuiObject_getWidth (my d_windowShell);
+	prefs.shellHeight = GuiObject_getHeight (my d_windowShell);
 }
 
 static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y)
@@ -1341,14 +1317,16 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event)
 	(void) event;
 }
 
-static void cb_publish (Any editor, void *closure, Data publish)
+static void cb_publish (Editor editor, void *closure, Data publish)
 {
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new (publish, 0); praat_updateSelection ();
-	} catch (MelderError) { Melder_flushError (0); }
-
+		praat_new (publish, 0);
+		praat_updateSelection ();
+	} catch (MelderError) {
+		Melder_flushError (0);
+	}
 }
 
 static void updateWidgets (I)
@@ -1408,73 +1386,73 @@ void structVowelEditor :: v_createChildren ()
 
 #if gtk
 	guint nrows = 25, ncols = 7, ileft, iright = 0, itop, ibottom;
-	form = dialog;
+	form = d_windowForm;
 	GuiObject table = gtk_table_new (nrows, ncols, false);
-	gtk_table_set_row_spacings(GTK_TABLE(table), 4);
-	gtk_table_set_col_spacings(GTK_TABLE(table), 4);
-	gtk_container_set_border_width(GTK_CONTAINER(table), 4);
-	gtk_container_add (GTK_CONTAINER(form), table);
+	gtk_table_set_row_spacings (GTK_TABLE (table), 4);
+	gtk_table_set_col_spacings (GTK_TABLE (table), 4);
+	gtk_container_set_border_width (GTK_CONTAINER (table), 4);
+	gtk_container_add (GTK_CONTAINER (form), GTK_WIDGET (table));
 
 	itop = nrows - 3; ibottom = itop + 2;
 
 	ileft = iright; iright = ileft + 1;
 	playButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Play", gui_button_cb_play, this, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), playButton, ileft, iright, itop, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (playButton), ileft, iright, itop, ibottom);
 
 	ileft = iright; iright = ileft + 1;
 	reverseButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Reverse", gui_button_cb_reverse, this, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), reverseButton, ileft, iright, itop, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (reverseButton), ileft, iright, itop, ibottom);
 
 	ileft = iright; iright = ileft + 1;
 	publishButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Publish", gui_button_cb_publish, this, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), publishButton, ileft, iright, itop, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (publishButton), ileft, iright, itop, ibottom);
 
 	ileft = iright; iright = ileft + 1;
 	durationLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Duration (s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), durationLabel, ileft, iright, itop, itop + 1);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (durationLabel), ileft, iright, itop, itop + 1);
 	durationTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), durationTextField, ileft, iright, itop + 1, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (durationTextField), ileft, iright, itop + 1, ibottom);
 
 	ileft = iright; iright = ileft + 1;
 	extendLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Extend (s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), extendLabel, ileft, iright, itop, itop + 1);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (extendLabel), ileft, iright, itop, itop + 1);
 	extendTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), extendTextField, ileft, iright, itop + 1, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (extendTextField), ileft, iright, itop + 1, ibottom);
 
 	ileft = iright; iright = ileft + 1;
 	f0Label = GuiLabel_create (NULL, 0, 0, 0, 0, L"Start F0 (Hz):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), f0Label, ileft, iright, itop, itop + 1);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0Label), ileft, iright, itop, itop + 1);
 	f0TextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), f0TextField, ileft, iright, itop + 1, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0TextField), ileft, iright, itop + 1, ibottom);
 
 	ileft = iright; iright = ileft + 1;
 	f0SlopeLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"F0 slope (oct/s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), f0SlopeLabel, ileft, iright, itop, itop + 1);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0SlopeLabel), ileft, iright, itop, itop + 1);
 	f0SlopeTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), f0SlopeTextField, ileft, iright, itop + 1, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0SlopeTextField), ileft, iright, itop + 1, ibottom);
 
 	itop = nrows - 1; ibottom = itop + 1;
 	ileft = 0; iright = ileft + 3;
 	startInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), startInfo, ileft, iright, itop, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (startInfo), ileft, iright, itop, ibottom);
 
 	ileft = iright + 1; iright = ileft + 3;
 	endInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), endInfo, ileft, iright, itop, ibottom);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (endInfo), ileft, iright, itop, ibottom);
 
 	drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0, gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 
-	gtk_widget_set_double_buffered (drawingArea, FALSE);
-	gtk_table_attach_defaults (GTK_TABLE (table), drawingArea, 0, ncols, 0, nrows - 3);
+	gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
+	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (drawingArea), 0, ncols, 0, nrows - 3);
 
-	gtk_widget_show_all (form);
+	gtk_widget_show_all (GTK_WIDGET (form));
 
 #elif motif
 
 	double button_width = 60, text_width = 95, status_info_width = 290;
 	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
-	form = XmCreateForm (dialog, "buttons", NULL, 0);
+	form = XmCreateForm (d_windowForm, "buttons", NULL, 0);
 	XtVaSetValues (form,
 		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
@@ -1565,7 +1543,7 @@ VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data)
 		#endif
 		my g = Graphics_create_xmdrawingarea (my drawingArea);
 		Graphics_setFontSize (my g, 12);
-		Editor_setPublishCallback (me.peek(), cb_publish, NULL);
+		my setPublicationCallback (cb_publish, NULL);
 
 		my f1min = prefs.f1min;
 		my f1max = prefs.f1max;

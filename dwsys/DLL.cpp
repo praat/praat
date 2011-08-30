@@ -19,50 +19,38 @@
 
 #include "DLL.h"
 
-static void classDLLNode_destroy (I)
+Thing_implement (DLLNode, Data, 0);
+
+void structDLLNode :: v_destroy ()
 {
-	iam (DLLNode);
-	forget (my data);
-	inherited (DLLNode) destroy (me);
+	forget (data);
+	DLLNode_Parent :: v_destroy ();
 }
 
-static void classDLLNode_copy (I,thou)
+void structDLLNode :: v_copy (thou)
 {
-	iam (DLLNode); thouart (DLLNode);
-	thy data = (Data) Data_copy (my data); therror
+	thouart (DLLNode);
+	thy data = Data_copy (data); therror
 }
 
-class_methods (DLLNode, Data)
-{
-	class_method_local (DLLNode, copy)
-	class_method_local (DLLNode, destroy)
-	class_methods_end
-}
+Thing_implement (DLL, Thing, 0);
 
-static int classDLL_compare (Any node1, Any node2)
+void structDLL :: v_destroy ()
 {
-	(void) node1;
-	(void) node2;
-	return 0;
-}
-
-static void classDLL_destroy (I)
-{
-	iam (DLL);
-	DLLNode v = my front;
+	DLLNode v = front;
 	while (v != 0) {
 		DLLNode cur = v;
 		v = v -> next;
 		forget (cur);
 	}
-	inherited (DLL) destroy (me);
+	DLL_Parent :: v_destroy ();
 }
 
-class_methods (DLL, Thing)
+int structDLL :: s_compare (Any node1, Any node2)
 {
-	class_method_local (DLL, compare)
-	class_method_local (DLL, destroy)
-	class_methods_end
+	(void) node1;
+	(void) node2;
+	return 0;
 }
 
 DLLNode DLLNode_create (Data data)
@@ -144,8 +132,6 @@ void DLL_remove (DLL me, DLLNode n)
 	my numberOfNodes++;
 }
 
-#undef our
-#define our ((DLL_Table) my methods) ->
 // Preconditions:
 //	from and to must be part of the list
 //	from must occur before to
@@ -173,6 +159,7 @@ void DLL_sortPart (DLL me, DLLNode from, DLLNode to)
 
 void DLL_sort (DLL me)
 {
+	Data_CompareFunction compare = my v_getCompareFunction ();
 	long increment = 1;
 	DLLNode front = my front, back;
 	for (;;)
@@ -208,7 +195,7 @@ void DLL_sort (DLL me)
 				{
 					 n1size--; n = n1; n1 = n1 -> next;
 				}
-				else if (our compare (n1, n2) <= 0)
+				else if (compare (n1, n2) <= 0)
 				{
 					 n1size--; n = n1; n1 = n1 -> next;
 				}

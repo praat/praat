@@ -19,30 +19,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020315 GPL header
- djmw 20110306 Latest modification.
- */
-
-#ifndef _Data_h_
-	#include "Data.h"
-#endif
-#ifndef _Graphics_h_
-	#include "Graphics.h"
-#endif
-#ifndef _TableOfReal_h_
-	#include "TableOfReal.h"
-#endif
-#ifndef _Collection_h_
-	#include "Collection.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "Graphics.h"
+#include "TableOfReal.h"
+#include "Collection.h"
 
 #include "Configuration_def.h"
-#define Configuration__methods(klas) TableOfReal__methods(klas)
 oo_CLASS_CREATE (Configuration, TableOfReal);
 
 Configuration Configuration_create (long numberOfPoints, long numberOfDimensions);
@@ -134,18 +115,9 @@ Configuration Configuration_createCarrollWishExample (void);
 
 /************************** class Configurations **************************************/
 
-Thing_declare1cpp (Configurations);
+Thing_define (Configurations, Ordered) {
+};
 
 Configurations Configurations_create (void);
-
-#ifdef __cplusplus
-	}
-
-	struct structConfigurations : public structOrdered {
-	};
-	#define Configurations__methods(klas) Ordered__methods(klas)
-	Thing_declare2cpp (Configurations, Ordered);
-
-#endif
 
 #endif /* _Configuration_h_ */

@@ -27,10 +27,7 @@
 
 #include "LFCC.h"
 
-class_methods (LFCC, CC)
-{
-	class_methods_end
-}
+Thing_implement (LFCC, CC, 1);
 
 LFCC LFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maximumNumberOfCoefficients, double fmin, double fmax)

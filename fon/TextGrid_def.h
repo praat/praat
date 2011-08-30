@@ -29,7 +29,7 @@ oo_DEFINE_CLASS (TextPoint, AnyPoint)
 
 	/* 'after' was a temporary attribute (19970211-19970307). */
 	#if oo_READING_TEXT
-		if (Thing_version == 1) texgetw2 (text);
+		if (Thing_version == 1) texgetw2 (a_text);
 	#elif oo_READING_BINARY
 		if (Thing_version == 1) bingetw2 (f);
 	#endif
@@ -43,6 +43,10 @@ oo_DEFINE_CLASS (TextInterval, Function)
 
 	oo_STRING (text)
 
+	#if oo_DECLARING
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+	#endif
+
 oo_END_CLASS (TextInterval)
 #undef ooSTRUCT
 
@@ -51,6 +55,12 @@ oo_END_CLASS (TextInterval)
 oo_DEFINE_CLASS (TextTier, Function)
 
 	oo_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
+
+	#if oo_DECLARING
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+		virtual void v_shiftX (double xfrom, double xto);
+		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+	#endif
 
 oo_END_CLASS (TextTier)
 #undef ooSTRUCT
@@ -61,6 +71,12 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 
 	oo_COLLECTION (SortedSetOfDouble, intervals, TextInterval, 0)
 
+	#if oo_DECLARING
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+		virtual void v_shiftX (double xfrom, double xto);
+		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+	#endif
+
 oo_END_CLASS (IntervalTier)
 #undef ooSTRUCT
 
@@ -68,7 +84,14 @@ oo_END_CLASS (IntervalTier)
 #define ooSTRUCT TextGrid
 oo_DEFINE_CLASS (TextGrid, Function)
 
-	oo_OBJECT (Ordered, 0, tiers)   /* TextTier and IntervalTier objects */
+	oo_OBJECT (Ordered, 0, tiers)   // TextTier and IntervalTier objects
+
+	#if oo_DECLARING
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+		virtual void v_shiftX (double xfrom, double xto);
+		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+	#endif
 
 oo_END_CLASS (TextGrid)
 #undef ooSTRUCT

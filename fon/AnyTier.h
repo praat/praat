@@ -23,11 +23,7 @@
 #include "PointProcess.h"
 
 #include "AnyTier_def.h"
-
-#define AnyPoint__methods(klas) SimpleDouble__methods(klas)
 oo_CLASS_CREATE (AnyPoint, SimpleDouble);
-
-#define AnyTier__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (AnyTier, Function);
 
 long AnyTier_timeToLowIndex (I, double time);
@@ -35,7 +31,7 @@ long AnyTier_timeToHighIndex (I, double time);
 long AnyTier_getWindowPoints (I, double tmin, double tmax, long *imin, long *imax);
 long AnyTier_timeToNearestIndex (I, double time);
 long AnyTier_hasPoint (I, double t);
-void AnyTier_addPoint (I, Any point);
+void AnyTier_addPoint (I, Data point);
 void AnyTier_removePoint (I, long i);
 void AnyTier_removePointNear (I, double time);
 void AnyTier_removePointsBetween (I, double tmin, double tmax);

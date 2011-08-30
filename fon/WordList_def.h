@@ -17,19 +17,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/03
- */
 
 #define ooSTRUCT WordList
 oo_DEFINE_CLASS (WordList, Data)
+
 	#if !oo_DESCRIBING
 		oo_LSTRING (string)
 	#endif
+
 	#if oo_DECLARING
 		oo_LONG (length)
+		// overridden methods:
+			virtual void v_info ();
 	#endif
+
 oo_END_CLASS (WordList)
 #undef ooSTRUCT
+
 
 /* End of file WordList_def.h */

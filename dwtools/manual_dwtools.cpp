@@ -162,8 +162,8 @@ static void drawPartionedMatrix (Graphics g)
 	Graphics_text (g, x1, y1, L"#S__xy_");
 }
 
-extern "C" void manual_dwtools_init (ManPages me);
-extern "C"  void manual_dwtools_init (ManPages me)
+void manual_dwtools_init (ManPages me);
+void manual_dwtools_init (ManPages me)
 {
 
 MAN_BEGIN (L"AffineTransform", L"djmw", 20010927)

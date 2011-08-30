@@ -21,12 +21,12 @@
 
 #include "Editor.h"
 
-Thing_declare1cpp (DataSubEditor);
-Thing_declare1cpp (VectorEditor);
-Thing_declare1cpp (MatrixEditor);
-Thing_declare1cpp (StructEditor);
-Thing_declare1cpp (ClassEditor);
-Thing_declare1cpp (DataEditor);
+Thing_declare (DataSubEditor);
+Thing_declare (VectorEditor);
+Thing_declare (MatrixEditor);
+Thing_declare (StructEditor);
+Thing_declare (ClassEditor);
+Thing_declare (DataEditor);
 
 typedef struct structDataSubEditor_FieldData {
 	GuiObject label, button, text;
@@ -39,8 +39,9 @@ typedef struct structDataSubEditor_FieldData {
 
 #define kDataSubEditor_MAXNUM_ROWS  12
 
-struct structDataSubEditor : public structEditor {
+Thing_define (DataSubEditor, Editor) {
 	// new data:
+	public:
 		DataEditor root;
 		void *address;
 		Data_Description description;
@@ -52,43 +53,48 @@ struct structDataSubEditor : public structEditor {
 		virtual bool v_scriptable () { return false; }
 		virtual void v_createChildren ();
 		virtual void v_createHelpMenuItems (EditorMenu menu);
+	// new methods:
+		virtual long v_countFields () { return 0; }
+		virtual void v_showMembers () { }
 };
-#define DataSubEditor__methods(Klas) \
-	long (*countFields) (Klas me); \
-	void (*showMembers) (Klas me);
-Thing_declare2cpp (DataSubEditor, Editor);
 
-struct structVectorEditor : public structDataSubEditor {
-	long minimum, maximum;
-};
-#define VectorEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2cpp (VectorEditor, DataSubEditor);
-
-struct structMatrixEditor : public structDataSubEditor {
-	long minimum, maximum, min2, max2;
-};
-#define MatrixEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2cpp (MatrixEditor, DataSubEditor);
-
-struct structStructEditor : public structDataSubEditor {
-};
-#define StructEditor__methods(Klas) DataSubEditor__methods(Klas)
-Thing_declare2cpp (StructEditor, DataSubEditor);
-
-struct structClassEditor : public structStructEditor {
-};
-#define ClassEditor__methods(Klas) StructEditor__methods(Klas)
-Thing_declare2cpp (ClassEditor, StructEditor);
-
-struct structDataEditor : public structClassEditor {
+Thing_define (VectorEditor, DataSubEditor) {
 	// new data:
+	public:
+		long minimum, maximum;
+	// overridden methods:
+		virtual long v_countFields ();
+		virtual void v_showMembers ();
+};
+
+Thing_define (MatrixEditor, DataSubEditor) {
+	// new data:
+	public:
+		long minimum, maximum, min2, max2;
+	// overridden methods:
+		virtual long v_countFields ();
+		virtual void v_showMembers ();
+};
+
+Thing_define (StructEditor, DataSubEditor) {
+	// overridden methods:
+		virtual long v_countFields ();
+		virtual void v_showMembers ();
+};
+
+Thing_define (ClassEditor, StructEditor) {
+	// overridden methods:
+		virtual void v_showMembers ();
+};
+
+Thing_define (DataEditor, ClassEditor) {
+	// new data:
+	public:
 		Collection children;
 	// overridden methods:
 		void v_destroy ();
 		void v_dataChanged ();
 };
-#define DataEditor__methods(Klas) ClassEditor__methods(Klas)
-Thing_declare2cpp (DataEditor, ClassEditor);
 
 DataEditor DataEditor_create (GuiObject parent, const wchar *title, Any data);
 

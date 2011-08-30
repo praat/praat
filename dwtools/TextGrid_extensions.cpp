@@ -277,7 +277,7 @@ TextGrid TextGrids_merge (TextGrid me, TextGrid thee)
 
 		for (long i = 1; i <= g2 -> tiers -> size; i++)
 		{
-			autoFunction tier = (Function) Data_copy (g2 -> tiers -> item [i]);
+			autoFunction tier = Data_copy ((Function) g2 -> tiers -> item [i]);
 			Collection_addItem (g1 -> tiers, tier.transfer());
 		}
 		return g1.transfer();
@@ -315,7 +315,7 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position)
 				tmax = tmin;
 				tmin = xmin;
 			}
-			if (anyTier -> methods == (Thing_Table) classIntervalTier)
+			if (anyTier -> classInfo == classIntervalTier)
 			{
 				IntervalTier tier = (IntervalTier) anyTier;
 				autoTextInterval interval = TextInterval_create (tmin, tmax, L"");
@@ -482,7 +482,7 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
 		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string can not be empty.\n"
 		"You may search for an empty string with the expression \"^$\"");
 		Data anyTier = (Data) my tiers -> item [tier];
-		if (anyTier -> methods == (Thing_Table) classIntervalTier)
+		if (anyTier -> classInfo == classIntervalTier)
 		{
 			IntervalTier_changeLabels (anyTier, from, to, search, replace, use_regexp, nmatches, nstringmatches);
 		}

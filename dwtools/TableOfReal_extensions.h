@@ -31,10 +31,6 @@
 #include "Strings.h"
 #include "SSCP.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 int TableOfReal_to_Pattern_and_Categories(I, long fromrow, long torow, long fromcol, long tocol,
 	Pattern *p, Categories *c);
 
@@ -196,24 +192,15 @@ TableOfReal TableOfReal_and_TableOfReal_crossCorrelations (I, thou, int by_colum
 
 /********************* class TablesOfReal ******************************/
 
-Thing_declare1cpp (TablesOfReal);
+Thing_define (TablesOfReal, Ordered) {
+};
 
-void TablesOfReal_init (I, void *klas);
+void TablesOfReal_init (I, ClassInfo klas);
 
 TablesOfReal TablesOfReal_create (void);
 
 TableOfReal TablesOfReal_sum (I);
 
 int TablesOfReal_checkDimensions (I);
-
-#ifdef __cplusplus
-	}
-
-	struct structTablesOfReal : public structOrdered {
-	};
-	#define TablesOfReal__methods(klas) Ordered__methods(klas)
-	Thing_declare2cpp (TablesOfReal, Ordered);
-
-#endif
 
 #endif /* _TableOfReal_extensions_h_ */

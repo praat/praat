@@ -17,19 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1997/04/06
- * pb 2002/07/16 GPL
- */
-
 
 #define ooSTRUCT FormantPoint
 oo_DEFINE_CLASS (FormantPoint, Data)
 
 	oo_DOUBLE (time)   /* AnyPoint */
 	oo_INT (numberOfFormants)
-	oo_DOUBLE_ARRAY (formant, 10, my numberOfFormants)
-	oo_DOUBLE_ARRAY (bandwidth, 10, my numberOfFormants)
+	oo_DOUBLE_ARRAY (formant, 10, numberOfFormants)
+	oo_DOUBLE_ARRAY (bandwidth, 10, numberOfFormants)
 
 oo_END_CLASS (FormantPoint)
 #undef ooSTRUCT

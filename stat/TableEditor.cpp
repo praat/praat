@@ -69,25 +69,21 @@ void structTableEditor :: v_dataChanged () {
 /********** EDIT MENU **********/
 
 #ifndef macintosh
-static int menu_cb_Cut (EDITOR_ARGS) {
+static void menu_cb_Cut (EDITOR_ARGS) {   // BUG: why only on Mac?
 	EDITOR_IAM (TableEditor);
 	GuiText_cut (my text);
-	return 1;
 }
-static int menu_cb_Copy (EDITOR_ARGS) {
+static void menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	GuiText_copy (my text);
-	return 1;
 }
-static int menu_cb_Paste (EDITOR_ARGS) {
+static void menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	GuiText_paste (my text);
-	return 1;
 }
-static int menu_cb_Erase (EDITOR_ARGS) {
+static void menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	GuiText_remove (my text);
-	return 1;
 }
 #endif
 
@@ -95,10 +91,9 @@ static int menu_cb_Erase (EDITOR_ARGS) {
 
 /********** HELP MENU **********/
 
-static int menu_cb_TableEditorHelp (EDITOR_ARGS) {
+static void menu_cb_TableEditorHelp (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
 	Melder_help (L"TableEditor");
-	return 1;
 }
 
 /********** DRAWING AREA **********/
@@ -194,7 +189,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 	iam (TableEditor);
 	(void) event;
 	Table table = static_cast<Table> (my data);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -224,9 +219,9 @@ void structTableEditor :: v_createChildren () {
 	GuiObject form;   // a form inside a form; needed to keep key presses away from the drawing area
 
 	#if gtk
-		form = dialog;
+		form = d_windowForm;
 	#elif motif
-		form = XmCreateForm (dialog, "buttons", NULL, 0);
+		form = XmCreateForm (d_windowForm, "buttons", NULL, 0);
 		XtVaSetValues (form,
 			XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
 			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
@@ -239,7 +234,7 @@ void structTableEditor :: v_createChildren () {
 
 	#if gtk
 		text = GuiText_create (NULL, 0, 0, 0, Machine_getTextHeight (), 0);
-		gtk_box_pack_start (GTK_BOX (form), text, FALSE, FALSE, 3);
+		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (text), FALSE, FALSE, 3);
 		GuiObject_show (text);
 	#else
 		text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
@@ -250,7 +245,7 @@ void structTableEditor :: v_createChildren () {
 	
 	#if gtk
 		GuiObject table_container = gtk_table_new (2, 2, FALSE);
-		gtk_box_pack_start (GTK_BOX (form), table_container, TRUE, TRUE, 3);
+		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (table_container), TRUE, TRUE, 3);
 		GuiObject_show (table_container);
 		
 		drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0,
@@ -258,9 +253,9 @@ void structTableEditor :: v_createChildren () {
 		
 		// need to turn off double buffering, otherwise we receive the expose events
 		// delayed by one event, see also FunctionEditor.c
-		gtk_widget_set_double_buffered (drawingArea, FALSE);
+		gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
 		
-		gtk_table_attach (GTK_TABLE (table_container), drawingArea, 0, 1, 0, 1,
+		gtk_table_attach (GTK_TABLE (table_container), GTK_WIDGET (drawingArea), 0, 1, 0, 1,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 		GuiObject_show (drawingArea);
 	#else
@@ -274,7 +269,7 @@ void structTableEditor :: v_createChildren () {
 	#if gtk
 		GtkAdjustment *hadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table -> numberOfColumns + 1, 1, 3, 1));
 		horizontalScrollBar = gtk_hscrollbar_new (hadj);
-		gtk_table_attach (GTK_TABLE(table_container), horizontalScrollBar, 0, 1, 1, 2,
+		gtk_table_attach (GTK_TABLE (table_container), GTK_WIDGET (horizontalScrollBar), 0, 1, 1, 2,
 			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) 0, 0, 0);
 		GuiObject_show (horizontalScrollBar);
 	#elif motif
@@ -299,7 +294,7 @@ void structTableEditor :: v_createChildren () {
 	#if gtk
 		GtkAdjustment *vadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table -> rows -> size + 1, 1, 10, 1));
 		verticalScrollBar = gtk_vscrollbar_new (vadj);
-		gtk_table_attach (GTK_TABLE (table_container), verticalScrollBar, 1, 2, 0, 1,
+		gtk_table_attach (GTK_TABLE (table_container), GTK_WIDGET (verticalScrollBar), 1, 2, 0, 1,
 			(GtkAttachOptions) 0, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
 		GuiObject_show (verticalScrollBar);
 	#elif motif

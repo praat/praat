@@ -28,12 +28,7 @@
 #include "Sampled2.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "SPINET_def.h"
-#define SPINET__methods(klas) Sampled2__methods(klas)
 oo_CLASS_CREATE (SPINET, Sampled2);
 
 SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -46,9 +41,5 @@ void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, doub
 	
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
 	double minimum, double maximum, int enhanced, int garnish);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _SPINET_h_ */

@@ -48,7 +48,7 @@ static void update_dos (I);
 
 const wchar *CategoriesEditor_EMPTYLABEL = L"(empty)";
 
-static int menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (CategoriesEditor); Melder_help (L"CategoriesEditor"); return 1; }
+static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (CategoriesEditor); Melder_help (L"CategoriesEditor"); }
 
 /**************** Some methods for Collection  ****************/
 
@@ -111,7 +111,7 @@ static void Collection_replaceItemPos (I, Any item, long pos)
 {
 	iam (Collection);
 	if (pos < 1 || pos > my size) return;
-	forget (my item[pos]);
+	forget (((SimpleString*)my item)[pos]);
 	my item[pos] = item;
 }
 
@@ -136,20 +136,22 @@ static void Ordered_moveItem (I, long from, long to)
 
 /********************** General Command **********************/
 
-Thing_declare1cpp (CategoriesEditorCommand);
-struct structCategoriesEditorCommand : public structCommand {
-	Categories categories;
-	long *selection; long nSelected, newPos;
+Thing_define (CategoriesEditorCommand, Command) {
+	// new data:
+	public:
+		Categories categories;
+		long *selection; long nSelected, newPos;
+	// overridden methods:
+		virtual void v_destroy ();
 };
-#define CategoriesEditorCommand__methods(klas) Command__methods(klas)
-Thing_declare2cpp (CategoriesEditorCommand, Command);
 
-static void classCategoriesEditorCommand_destroy (I)
+Thing_implement (CategoriesEditorCommand, Command, 0);
+
+void structCategoriesEditorCommand :: v_destroy ()
 {
-	iam (CategoriesEditorCommand);
-	NUMvector_free (my selection, 1);
-	forget (my categories);
-	inherited (CategoriesEditorCommand) destroy (me);
+	NUMvector_free (selection, 1);
+	forget (categories);
+	CategoriesEditorCommand_Parent :: v_destroy ();
 }
 
 static void CategoriesEditorCommand_init (I, const wchar_t *name,  Any data,
@@ -164,24 +166,20 @@ static void CategoriesEditorCommand_init (I, const wchar_t *name,  Any data,
 	my selection = NUMvector<long> (1, nSelected);
 }
 
-class_methods (CategoriesEditorCommand, Command)
-    class_method_local (CategoriesEditorCommand, destroy)
-class_methods_end
-
 /*********************** Insert Command ***********************/
 
-Thing_declare1cpp (CategoriesEditorInsert);
-struct structCategoriesEditorInsert : public structCategoriesEditorCommand {
+Thing_define (CategoriesEditorInsert, CategoriesEditorCommand) {
 };
-#define CategoriesEditorInsert__methods(klas) CategoriesEditorCommand__methods(klas)
-Thing_declare2cpp (CategoriesEditorInsert, CategoriesEditorCommand);
+
+Thing_implement (CategoriesEditorInsert, CategoriesEditorCommand, 0);
 
 static int CategoriesEditorInsert_execute (I)
 {
 	iam (CategoriesEditorInsert);
 	CategoriesEditor editor = (CategoriesEditor) my data;
-	autoSimpleString str = (SimpleString) Data_copy (((Categories) my categories)->item[1]);
-	Ordered_addItemPos (editor -> data, str.transfer(), my selection[1]);
+	Categories categories = (Categories) editor -> data;
+	autoSimpleString str = Data_copy ((SimpleString) ((Categories) my categories)->item[1]);
+	Ordered_addItemPos (categories, str.transfer(), my selection[1]);
 	update (editor, my selection[1], 0, my selection, 1);
 	return 1;
 }
@@ -190,7 +188,8 @@ static int CategoriesEditorInsert_undo (I)
 {
 	iam (CategoriesEditorInsert);
 	CategoriesEditor editor = (CategoriesEditor) my data;
-	Collection_removeItem (editor -> data, my selection[1]);
+	Categories categories = (Categories) editor -> data;
+	Collection_removeItem (categories, my selection[1]);
 	update (editor, my selection[1], 0, my selection, 1);
 	return 1;
 }
@@ -202,31 +201,27 @@ static CategoriesEditorInsert CategoriesEditorInsert_create (Any data, Any str, 
 		CategoriesEditorCommand_init (me.peek(), L"Insert", data, CategoriesEditorInsert_execute,
 			CategoriesEditorInsert_undo, 1, 1);
 		my selection[1] = position;
-		Collection_addItem (my categories, str);
+		Collection_addItem (my categories, (SimpleString) str);
 		return me.transfer();
 	} catch (MelderError) { Melder_throw ("CategoriesEditorInsert not created."); }
 }
 
-class_methods (CategoriesEditorInsert, CategoriesEditorCommand)
-class_methods_end
-
 /*********************** Remove Command ***********************/
 
-Thing_declare1cpp (CategoriesEditorRemove);
-struct structCategoriesEditorRemove : public structCategoriesEditorCommand {
+Thing_define (CategoriesEditorRemove, CategoriesEditorCommand) {
 };
-#define CategoriesEditorRemove__methods(klas) CategoriesEditorCommand__methods(klas)
-Thing_declare2cpp (CategoriesEditorRemove, CategoriesEditorCommand);
+
+Thing_implement (CategoriesEditorRemove, CategoriesEditorCommand, 0);
 
 static int CategoriesEditorRemove_execute (I)
 {
 	iam (CategoriesEditorRemove);
 	CategoriesEditor editor = (CategoriesEditor) my data;
-	Categories categories = (Categories) editor -> data;
+	Categories categories = (Categories) editor -> data;   // David, weer link: tweemaal dezelfde naam (categories)
 
 	for (long i = my nSelected; i >= 1; i--)
 	{
-		Ordered_addItemPos (my categories, categories -> item[my selection[i]], 1);
+		Ordered_addItemPos (my categories, (SimpleString) categories -> item[my selection[i]], 1);
 		categories -> item[my selection[i]] = 0;
 		Collection_removeItem (categories, my selection[i]);
 	}
@@ -242,7 +237,7 @@ static int CategoriesEditorRemove_undo (I)
 
 	for (long i = 1; i <= my nSelected; i++)
 	{
-		autoData item = (Data) Data_copy (my categories -> item[i]);
+		autoSimpleString item = Data_copy ((SimpleString) my categories -> item[i]);
 		Ordered_addItemPos (categories, item.transfer(), my selection[i]);
 	}
 	update (editor, my selection[1], 0, my selection, my nSelected);
@@ -260,16 +255,13 @@ static CategoriesEditorRemove CategoriesEditorRemove_create (Any data, long *pos
 	} catch (MelderError) { Melder_throw ("CategoriesEditorRemove not created."); }
 }
 
-class_methods (CategoriesEditorRemove, CategoriesEditorCommand)
-class_methods_end
 //update (me);
 /*********************** Replace Command ***********************/
 
-Thing_declare1cpp (CategoriesEditorReplace);
-struct structCategoriesEditorReplace : public structCategoriesEditorCommand {
+Thing_define (CategoriesEditorReplace, CategoriesEditorCommand) {
 };
-#define CategoriesEditorReplace__methods(klas) CategoriesEditorCommand__methods(klas)
-Thing_declare2cpp (CategoriesEditorReplace, CategoriesEditorCommand);
+
+Thing_implement (CategoriesEditorReplace, CategoriesEditorCommand, 0);
 
 static int CategoriesEditorReplace_execute (I)
 {
@@ -279,8 +271,8 @@ static int CategoriesEditorReplace_execute (I)
 
 		for (long i = my nSelected; i >= 1; i--)
 		{
-			autoData str = (Data) Data_copy (my categories -> item[1]);
-			Ordered_addItemPos (my categories, categories -> item[my selection[i]], 2);
+			autoSimpleString str = Data_copy ((SimpleString) my categories -> item[1]);
+			Ordered_addItemPos (my categories, (SimpleString) categories -> item[my selection[i]], 2);
 			categories -> item[my selection[i]] =  str.transfer();
 		}
 		update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);
@@ -295,7 +287,7 @@ static int CategoriesEditorReplace_undo (I)
 
 	for (long i = 1; i <= my nSelected; i++)
 	{
-		autoData str = (Data) Data_copy (my categories -> item[i+1]);
+		autoSimpleString str = Data_copy ((SimpleString) my categories -> item[i+1]);
 		Collection_replaceItemPos (categories, str.transfer(), my selection[i]);
 	}
 	update (editor, my selection[1], my selection[my nSelected], my selection, my nSelected);
@@ -312,21 +304,17 @@ static CategoriesEditorReplace CategoriesEditorReplace_create (Any data, Any str
 		{
 			my selection[i] = posList[i];
 		}
-		Collection_addItem (my categories, str);
+		Collection_addItem (my categories, (SimpleString) str);
 		return me.transfer();
 	} catch (MelderError) { Melder_throw ("CategoriesEditorReplace not created."); }
 }
 
-class_methods (CategoriesEditorReplace, CategoriesEditorCommand)
-class_methods_end
-
 /*********************** MoveUp Command ***********************/
 
-Thing_declare1cpp (CategoriesEditorMoveUp);
-struct structCategoriesEditorMoveUp : public structCategoriesEditorCommand {
+Thing_define (CategoriesEditorMoveUp, CategoriesEditorCommand) {
 };
-#define CategoriesEditorMoveUp__methods(klas) CategoriesEditorCommand__methods(klas)
-Thing_declare2cpp (CategoriesEditorMoveUp, CategoriesEditorCommand);
+
+Thing_implement (CategoriesEditorMoveUp, CategoriesEditorCommand, 0);
 
 static int CategoriesEditorMoveUp_execute (I)
 {
@@ -371,16 +359,12 @@ static CategoriesEditorMoveUp CategoriesEditorMoveUp_create (Any data, long *pos
 	} catch (MelderError) { Melder_throw ("CategoriesEditorMoveUp not created."); }
 }
 
-class_methods (CategoriesEditorMoveUp, CategoriesEditorCommand)
-class_methods_end
-
 /*********************** MoveDown Command ***********************/
 
-Thing_declare1cpp (CategoriesEditorMoveDown);
-struct structCategoriesEditorMoveDown : public structCategoriesEditorCommand {
+Thing_define (CategoriesEditorMoveDown, CategoriesEditorCommand) {
 };
-#define CategoriesEditorMoveDown__methods(klas) CategoriesEditorCommand__methods(klas)
-Thing_declare2cpp (CategoriesEditorMoveDown, CategoriesEditorCommand);
+
+Thing_implement (CategoriesEditorMoveDown, CategoriesEditorCommand, 0);
 
 static int CategoriesEditorMoveDown_execute (I)
 {
@@ -424,9 +408,6 @@ static CategoriesEditorMoveDown CategoriesEditorMoveDown_create (Any data, long 
 		return me.transfer();
 	} catch (MelderError) { Melder_throw ("CategoriesEditorMoveDown not created."); }
 }
-
-class_methods (CategoriesEditorMoveDown, CategoriesEditorCommand)
-class_methods_end
 
 /********************* Commands (End)  *************************************/
 
@@ -522,7 +503,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		if (size == 0)
 		{
 			autoSimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);
-			Collection_addItem (my data, str.transfer());
+			Collection_addItem ((Categories) my data, str.transfer());
 			update (me, 0, 0, 0, 0);
 			return;
 		}
@@ -791,12 +772,12 @@ void structCategoriesEditor :: v_createChildren ()
 	double left, right, top, bottom, buttons_left, buttons_top;
 
 	left = 5; right = left + button_width; top = 3 + menuBarOffset; bottom = top + text_button_height;
-	GuiLabel_createShown (dialog, left, right, top, bottom, L"Positions:", 0);
+	GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"Positions:", 0);
 	left = right + delta_x ; right = left + button_width;
-	GuiLabel_createShown (dialog, left, right, top, bottom, L"Values:", 0);
+	GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"Values:", 0);
 
 	left = 0; right = left + list_width; buttons_top = (top = bottom + delta_y); list_bottom = bottom = top + list_height;
-	list = GuiList_create (dialog, left, right, top, bottom, true, 0);
+	list = GuiList_create (d_windowForm, left, right, top, bottom, true, 0);
 	GuiList_setSelectionChangedCallback (list, gui_list_cb_extended, this);
 	GuiList_setDoubleClickCallback (list, gui_list_cb_double_click, this);
 	GuiObject_show (list);
@@ -824,30 +805,30 @@ void structCategoriesEditor :: v_createChildren ()
 	#endif
 
 	buttons_left = left = right + 2*delta_x; right = left + button_width; bottom = top + button_height;
-	GuiLabel_createShown (dialog, left, right, top, bottom, L"Value:", 0);
+	GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"Value:", 0);
 	left = right + delta_x; right = left + button_width;
-	text = GuiText_createShown (dialog, left, right, top, bottom, 0);
+	text = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
 	GuiText_setString (text, CategoriesEditor_EMPTYLABEL);
 
 	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
-	insert = GuiButton_createShown (dialog, left, right, top, bottom,	L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
+	insert = GuiButton_createShown (d_windowForm, left, right, top, bottom,	L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
 	left = right + delta_x; right = left + button_width;
-	replace = GuiButton_createShown (dialog, left, right, top, bottom, L"Replace", gui_button_cb_replace, this, 0);
+	replace = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Replace", gui_button_cb_replace, this, 0);
 	left = buttons_left; right = left + 1.5 * button_width; top = bottom + delta_y; bottom = top + button_height;
-	insertAtEnd = GuiButton_createShown (dialog, left, right, top, bottom, L"Insert at end", gui_button_cb_insertAtEnd, this, 0);
+	insertAtEnd = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Insert at end", gui_button_cb_insertAtEnd, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	undo = GuiButton_createShown (dialog, left, right, top, bottom, L"Undo", gui_button_cb_undo, this, 0);
+	undo = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Undo", gui_button_cb_undo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	redo = GuiButton_createShown (dialog, left, right, top, bottom, L"Redo", gui_button_cb_redo, this, 0);
+	redo = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Redo", gui_button_cb_redo, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	remove = GuiButton_createShown (dialog, left, right, top, bottom, L"Remove", gui_button_cb_remove, this, 0);
+	remove = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Remove", gui_button_cb_remove, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	moveUp = GuiButton_createShown (dialog, left, right, top, bottom, L"Move selection up", gui_button_cb_moveUp, this, 0);
+	moveUp = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Move selection up", gui_button_cb_moveUp, this, 0);
 	top = bottom + delta_y; bottom = top + button_height;
-	moveDown = GuiButton_createShown (dialog, left, right, top, bottom, L"Move selection down", gui_button_cb_moveDown, this, 0);
+	moveDown = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Move selection down", gui_button_cb_moveDown, this, 0);
 
 	top = list_bottom + delta_y; bottom = top + button_height; left = 5; right = left + 200;
-	outOfView = GuiLabel_createShown (dialog, left, right, top, bottom, L"", 0);
+	outOfView = GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"", 0);
 }
 
 void structCategoriesEditor :: v_dataChanged ()

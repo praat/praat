@@ -70,7 +70,7 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 		for (long i = 1; i <= activation->ny; i++)
 		{
 			long index = labelingFunction (me, activation -> z[i]);
-			autoData item = (Data) Data_copy (categories -> item[index]);
+			autoSimpleString item = Data_copy ((SimpleString) categories -> item[index]);
 			Collection_addItem (thee.peek(), item.transfer());
 		}
 		return thee.transfer();

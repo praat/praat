@@ -135,8 +135,8 @@ static void getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fm
 
 /***** Two auxiliary routines, exported. *****/
 
-extern "C" int praat_Fon_formula (UiForm dia, Interpreter interpreter);
-extern "C" int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
+int praat_Fon_formula (UiForm dia, Interpreter interpreter);
+int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 	LOOP {
 		iam (Matrix);
 		try {
@@ -1196,8 +1196,8 @@ DO
 	praat_new (thee.transfer(), GET_STRING (L"Name"));
 END
 
-static void cb_FormantGridEditor_publish (Any editor, void *closure, Data publish) {
-	(void) editor;
+static void cb_FormantGridEditor_publish (Editor me, void *closure, Data publish) {
+	(void) me;
 	(void) closure;
 	/*
 	 * Keep the gate for error handling.
@@ -1214,7 +1214,7 @@ DIRECT (FormantGrid_edit)
 	LOOP {
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		Editor_setPublishCallback (editor.peek(), cb_FormantGridEditor_publish, NULL);
+		editor -> setPublicationCallback (cb_FormantGridEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
@@ -1338,7 +1338,7 @@ DO
 	point -> numberOfFormants = numberOfFormants;
 	LOOP {
 		iam (FormantTier);
-		autoFormantPoint point2 = (FormantPoint) Data_copy (point.peek());
+		autoFormantPoint point2 = Data_copy (point.peek());
 		AnyTier_addPoint (me, point2.transfer()); therror
 		praat_dataChanged (me);
 	}
@@ -2304,11 +2304,11 @@ END
 
 /***** MANIPULATION *****/
 
-static void cb_ManipulationEditor_publish (Any editor, void *closure, Data publish) {
+static void cb_ManipulationEditor_publication (Editor editor, void *closure, Data publication) {
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new (publish, L"fromManipulationEditor");
+		praat_new (publication, L"fromManipulationEditor");
 		praat_updateSelection ();
 	} catch (MelderError) {
 		Melder_flushError (NULL);
@@ -2319,7 +2319,7 @@ DIRECT (Manipulation_edit)
 	LOOP {
 		iam (Manipulation);
 		autoManipulationEditor editor = ManipulationEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		Editor_setPublishCallback (editor.peek(), cb_ManipulationEditor_publish, NULL);
+		editor -> setPublicationCallback (cb_ManipulationEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -2328,7 +2328,7 @@ DIRECT (Manipulation_extractDurationTier)
 	LOOP {
 		iam (Manipulation);
 		if (! my duration) Melder_throw (me, ": I don't contain a DurationTier.");
-		autoDurationTier thee = reinterpret_cast <DurationTier> (Data_copy (my duration));
+		autoDurationTier thee = Data_copy (my duration);
 		praat_new (thee.transfer(), NULL);
 	}
 END
@@ -2337,7 +2337,7 @@ DIRECT (Manipulation_extractOriginalSound)
 	LOOP {
 		iam (Manipulation);
 		if (! my sound) Melder_throw (me, ": I don't contain a Sound.");
-		autoSound thee = reinterpret_cast <Sound> (Data_copy (my sound));
+		autoSound thee = Data_copy (my sound);
 		praat_new (thee.transfer(), NULL);
 	}
 END
@@ -2346,7 +2346,7 @@ DIRECT (Manipulation_extractPitchTier)
 	LOOP {
 		iam (Manipulation);
 		if (! my pitch) Melder_throw (me, ": I don't contain a PitchTier.");
-		autoPitchTier thee = reinterpret_cast <PitchTier> (Data_copy (my pitch));
+		autoPitchTier thee = Data_copy (my pitch);
 		praat_new (thee.transfer(), NULL);
 	}
 END
@@ -2355,7 +2355,7 @@ DIRECT (Manipulation_extractPulses)
 	LOOP {
 		iam (Manipulation);
 		if (! my pulses) Melder_throw (me, ": I don't contain a PointProcess.");
-		autoPointProcess thee = reinterpret_cast <PointProcess> (Data_copy (my pulses));
+		autoPointProcess thee = Data_copy (my pulses);
 		praat_new (thee.transfer(), NULL);
 	}
 END
@@ -3117,8 +3117,8 @@ DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Pitch_getMaximum (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit, GET_INTEGER (L"Interpolation") - 1);
-	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
+	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 FORM (Pitch_getMean, L"Pitch: Get mean", 0)
@@ -3129,8 +3129,8 @@ DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Pitch_getMean (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit);
-	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
+	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 FORM (Pitch_getMeanAbsoluteSlope, L"Pitch: Get mean absolute slope", 0)
@@ -3172,8 +3172,8 @@ DO
 	Pitch me = FIRST (Pitch);
 	double value = Sampled_getMinimum (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (L"Interpolation") - 1);
-	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
+	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 FORM (Pitch_getQuantile, L"Pitch: Get quantile", 0)
@@ -3186,8 +3186,8 @@ DO
 	Pitch me = FIRST (Pitch);
 	double value = Sampled_getQuantile (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		GET_REAL (L"Quantile"), Pitch_LEVEL_FREQUENCY, unit);
-	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
+	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 FORM (Pitch_getStandardDeviation, L"Pitch: Get standard deviation", 0)
@@ -3259,8 +3259,8 @@ DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Sampled_getValueAtX (me, GET_REAL (L"Time"), Pitch_LEVEL_FREQUENCY, unit, GET_INTEGER (L"Interpolation") - 1);
-	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
+	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 	
 FORM (Pitch_getValueInFrame, L"Pitch: Get value in frame", L"Pitch: Get value in frame...")
@@ -3271,8 +3271,8 @@ DO
 	enum kPitch_unit unit = GET_ENUM (kPitch_unit, L"Unit");
 	Pitch me = FIRST (Pitch);
 	double value = Sampled_getValueAtSample (me, GET_INTEGER (L"Frame number"), Pitch_LEVEL_FREQUENCY, unit);
-	value = ClassFunction_convertToNonlogarithmic (classPitch, value, Pitch_LEVEL_FREQUENCY, unit);
-	Melder_informationReal (value, ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, unit, 0));
+	value = Function_convertToNonlogarithmic (me, value, Pitch_LEVEL_FREQUENCY, unit);
+	Melder_informationReal (value, Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, 0));
 END
 
 DIRECT (Pitch_help) Melder_help (L"Pitch"); END
@@ -5794,10 +5794,10 @@ static Any chronologicalTextGridTextFileRecognizer (int nread, const char *heade
 
 /***** buttons *****/
 
-extern "C" void praat_TableOfReal_init (void *klas);   // Buttons for TableOfReal and for its subclasses.
+void praat_TableOfReal_init (ClassInfo klas);   // Buttons for TableOfReal and for its subclasses.
 
-extern "C" void praat_TimeFunction_query_init (void *klas);   // Query buttons for time-based subclasses of Function.
-extern "C" void praat_TimeFunction_query_init (void *klas) {
+void praat_TimeFunction_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of Function.
+void praat_TimeFunction_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, L"Query time domain", 0, 1, 0);
 	praat_addAction1 (klas, 1, L"Get start time", 0, 2, DO_TimeFunction_getStartTime);
 						praat_addAction1 (klas, 1, L"Get starting time", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getStartTime);
@@ -5807,8 +5807,8 @@ extern "C" void praat_TimeFunction_query_init (void *klas) {
 						praat_addAction1 (klas, 1, L"Get duration", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_getDuration);
 }
 
-extern "C" void praat_TimeFunction_modify_init (void *klas);   // Modify buttons for time-based subclasses of Function.
-extern "C" void praat_TimeFunction_modify_init (void *klas) {
+void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
+void praat_TimeFunction_modify_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, L"Modify times", 0, 1, 0);
 	praat_addAction1 (klas, 0, L"Shift times by...", 0, 2, DO_TimeFunction_shiftTimesBy);
 	praat_addAction1 (klas, 0, L"Shift times to...", 0, 2, DO_TimeFunction_shiftTimesTo);
@@ -5818,8 +5818,8 @@ extern "C" void praat_TimeFunction_modify_init (void *klas) {
 						praat_addAction1 (klas, 0, L"Scale times...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFunction_scaleTimesTo);   // hidden 2008
 }
 
-extern "C" void praat_TimeFrameSampled_query_init (void *klas);   // Query buttons for frame-based time-based subclasses of Sampled.
-extern "C" void praat_TimeFrameSampled_query_init (void *klas) {
+void praat_TimeFrameSampled_query_init (ClassInfo klas);   // Query buttons for frame-based time-based subclasses of Sampled.
+void praat_TimeFrameSampled_query_init (ClassInfo klas) {
 	praat_TimeFunction_query_init (klas);
 	praat_addAction1 (klas, 1, L"Query time sampling", 0, 1, 0);
 	praat_addAction1 (klas, 1, L"Get number of frames", 0, 2, DO_TimeFrameSampled_getNumberOfFrames);
@@ -5832,8 +5832,8 @@ extern "C" void praat_TimeFrameSampled_query_init (void *klas) {
 						praat_addAction1 (klas, 1, L"Get frame from time...", 0, praat_HIDDEN + praat_DEPTH_2, DO_TimeFrameSampled_getFrameFromTime);
 }
 
-extern "C" void praat_TimeTier_query_init (void *klas);   // Query buttons for time-based subclasses of AnyTier.
-extern "C" void praat_TimeTier_query_init (void *klas) {
+void praat_TimeTier_query_init (ClassInfo klas);   // Query buttons for time-based subclasses of AnyTier.
+void praat_TimeTier_query_init (ClassInfo klas) {
 	praat_TimeFunction_query_init (klas);
 	praat_addAction1 (klas, 1, L"Get number of points", 0, 1, DO_TimeTier_getNumberOfPoints);
 	praat_addAction1 (klas, 1, L"Get low index from time...", 0, 1, DO_TimeTier_getLowIndexFromTime);
@@ -5842,16 +5842,16 @@ extern "C" void praat_TimeTier_query_init (void *klas) {
 	praat_addAction1 (klas, 1, L"Get time from index...", 0, 1, DO_TimeTier_getTimeFromIndex);
 }
 
-extern "C" void praat_TimeTier_modify_init (void *klas);   // Modification buttons for time-based subclasses of AnyTier.
-extern "C" void praat_TimeTier_modify_init (void *klas) {
+void praat_TimeTier_modify_init (ClassInfo klas);   // Modification buttons for time-based subclasses of AnyTier.
+void praat_TimeTier_modify_init (ClassInfo klas) {
 	praat_TimeFunction_modify_init (klas);
 	praat_addAction1 (klas, 0, L"Remove point...", 0, 1, DO_TimeTier_removePoint);
 	praat_addAction1 (klas, 0, L"Remove point near...", 0, 1, DO_TimeTier_removePointNear);
 	praat_addAction1 (klas, 0, L"Remove points between...", 0, 1, DO_TimeTier_removePointsBetween);
 }
 
-extern "C" void praat_uvafon_init (void);
-extern "C" void praat_uvafon_init (void) {
+void praat_uvafon_init ();
+void praat_uvafon_init () {
 	Thing_recognizeClassesByName (classSound, classMatrix, classPolygon, classPointProcess, classParamCurve,
 		classSpectrum, classLtas, classSpectrogram, classFormant,
 		classExcitation, classCochleagram, classVocalTract, classFormantPoint, classFormantTier, classFormantGrid,
@@ -5887,7 +5887,7 @@ extern "C" void praat_uvafon_init (void) {
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Strings from raw text file...", 0, 0, DO_Strings_readFromRawTextFile);
 
-	INCLUDE_LIBRARY (praat_uvafon_Stat_init)
+	INCLUDE_LIBRARY (praat_uvafon_stat_init)
 
 	praat_addMenuCommand (L"Objects", L"New", L"Tiers", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"New", L"Create empty PointProcess...", 0, 1, DO_PointProcess_createEmpty);

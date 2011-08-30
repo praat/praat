@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/14
- */
-
 
 #define ooSTRUCT RealPoint
 oo_DEFINE_CLASS (RealPoint, AnyPoint)
@@ -38,7 +34,16 @@ oo_DEFINE_CLASS (RealTier, Function)
 
 	#if oo_DECLARING
 		// overridden methods:
-			void v_info ();
+			virtual void v_info ();
+			virtual bool v_hasGetNx        () { return true; }   virtual double v_getNx   ()        { return points -> size; }
+			virtual bool v_hasGetX         () { return true; }   virtual double v_getX    (long ix) { return ((RealPoint) points -> item [ix]) -> number; }
+			virtual bool v_hasGetNcol      () { return true; }   virtual double v_getNcol ()        { return points -> size; }
+			virtual bool v_hasGetVector    () { return true; }   virtual double v_getVector    (long irow, long icol);
+			virtual bool v_hasGetFunction1 () { return true; }   virtual double v_getFunction1 (long irow, double x);
+			virtual const wchar * v_getUnitText (long ilevel, int unit, unsigned long flags)
+				{ (void) ilevel; (void) unit; (void) flags; return L"Time (s)"; }
+			virtual void v_shiftX (double xfrom, double xto);
+			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
 	#endif
 
 oo_END_CLASS (RealTier)

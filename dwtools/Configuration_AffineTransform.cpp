@@ -233,7 +233,7 @@ Configuration Configuration_and_AffineTransform_to_Configuration (Configuration 
 
 		// Apply transformation YT
 	
-		if (your transform) your transform (thee, my data, my numberOfRows, his data);
+		thy v_transform (my data, my numberOfRows, his data);
 		return him.transfer();
 	} catch (MelderError) { Melder_throw ("Configuration not created."); }
 }

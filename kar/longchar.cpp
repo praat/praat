@@ -575,6 +575,24 @@ static struct structLongchar_Info Longchar_database [] = {
 { '\'','1', 2, { "/stress1",        200, 0,   222, 222,  200, 0,    200, 0,   0,   0   }, 200, 200, 200, 200, UNICODE_MODIFIER_LETTER_VERTICAL_LINE },
 { '\'','2', 2, { "/stress2",        200, 0,   222, 222,  200, 0,    200, 0,   0,   0   }, 199, 199, 199, 199, UNICODE_MODIFIER_LETTER_LOW_VERTICAL_LINE },
 
+{ '^', 'h', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_H },
+{ '^', 'H', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_H_WITH_HOOK },
+{ '^', 'j', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_J },
+{ '^', 'w', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_W },
+{ '^', 'Y', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_TURNED_H },
+{ '^', 'y', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_Y },
+{ '^', '?', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_GLOTTAL_STOP },
+{ '^', '9', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_REVERSED_GLOTTAL_STOP },
+{ '^', 'l', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_L },
+{ '^', 's', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_S },
+{ '^', 'g', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_GAMMA },
+{ '^', 'x', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_X },
+{ '^', 'f', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_F },
+//{ '^', 'n', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_N },
+{ '^', 'm', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_M },
+{ '^', 'N', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_ENG },
+{ '_', 'u', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_UNDERTIE },
+
 /* Dingbats. */
 /*fir  sec  al    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
 { 'p', 'f', 3, { "/fingerright",   1000, 0,   0,   0,   1000, 0,   1000, 0,   0,   0   },  43,  70,  43,  43, UNICODE_WHITE_RIGHT_POINTING_INDEX }, /* pointing finger */

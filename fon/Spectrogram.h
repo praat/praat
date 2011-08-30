@@ -22,11 +22,12 @@
 #include "Matrix.h"
 #include "Graphics.h"
 
-Thing_declare1cpp (Spectrogram);
-struct structSpectrogram : public structMatrix {
+Thing_define (Spectrogram, Matrix) {
+	// overridden methods:
+	public:
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define Spectrogram__methods(klas)  Matrix__methods(klas)
-Thing_declare2cpp (Spectrogram, Matrix);
 
 /* Attributes:
 	xmin			// Start time (seconds).

@@ -28,6 +28,7 @@
 
 Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	// new data:
+	public:
 		SpellingChecker spellingChecker;
 		long selectedTier;
 		bool useTextStyles, shiftDragMultiple, suppressRedraw;
@@ -68,7 +69,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 };
 
 TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid,
-	Function sound,   // either a Sound or a LongSound, or null
+	Sampled sound,   // either a Sound or a LongSound, or null
 	SpellingChecker spellingChecker);
 
 void TextGridEditor_prefs (void);

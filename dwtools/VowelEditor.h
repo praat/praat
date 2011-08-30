@@ -29,13 +29,8 @@
 #include "TableOfReal.h"
 #include "Editor.h"
 
-Thing_declare1cpp (Vowel);
-struct structVowel : public structFunction {
-	PitchTier pt;
-	FormantTier ft;
-};
-#define Vowel__methods(klas) Function__methods(klas)
-Thing_declare2cpp (Vowel, Function);
+#include "Vowel_def.h"
+oo_CLASS_CREATE (Vowel, Function);
 
 struct structVowelEditor_F0
 {
@@ -55,6 +50,7 @@ struct structVowelEditor_F1F2Grid
 
 Thing_define (VowelEditor, Editor) {
 	// new data:
+	public:
 		int soundFollowsMouse, shiftKeyPressed;
 		double f1min, f1max, f2min, f2max;   // domain of graphics F1-F2 area
 		Matrix f3, b3, f4, b4;

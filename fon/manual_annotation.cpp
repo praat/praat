@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_annotation_init (ManPages me);
-extern "C" void manual_annotation_init (ManPages me) {
+void manual_annotation_init (ManPages me);
+void manual_annotation_init (ManPages me) {
 
 MAN_BEGIN (L"Create TextGrid...", L"ppgb", 20101228)
 INTRO (L"A command to create a @TextGrid from scratch.")

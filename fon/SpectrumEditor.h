@@ -24,6 +24,7 @@
 
 Thing_define (SpectrumEditor, FunctionEditor) {
 	// new data:
+	public:
 		double minimum, maximum, cursorHeight;
 		double bandSmoothing, dynamicRange;
 		GuiObject publishBandButton, publishSoundButton;

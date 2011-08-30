@@ -67,26 +67,25 @@ void structOTMulti :: v_info ()
 	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
-static void writeText (I, MelderFile file) {
-	iam (OTMulti);
-	MelderFile_write7 (file, L"\n<", kOTGrammar_decisionStrategy_getText (my decisionStrategy),
-		L">\n", Melder_double (my leak), L" ! leak\n", Melder_integer (my numberOfConstraints), L" constraints");
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTConstraint constraint = & my constraints [icons];
+void structOTMulti :: v_writeText (MelderFile file) {
+	MelderFile_write7 (file, L"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
+		L">\n", Melder_double (leak), L" ! leak\n", Melder_integer (numberOfConstraints), L" constraints");
+	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
+		OTConstraint constraint = & constraints [icons];
 		MelderFile_write1 (file, L"\n\t\"");
 		for (const wchar *p = & constraint -> name [0]; *p; p ++) {
-			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
 		MelderFile_write6 (file, L"\" ", Melder_double (constraint -> ranking),
 			L" ", Melder_double (constraint -> disharmony), L" ", Melder_double (constraint -> plasticity));
 	}
-	MelderFile_write3 (file, L"\n\n", Melder_integer (my numberOfCandidates), L" candidates");
-	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
-		OTCandidate candidate = & my candidates [icand];
+	MelderFile_write3 (file, L"\n\n", Melder_integer (numberOfCandidates), L" candidates");
+	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
+		OTCandidate candidate = & candidates [icand];
 		MelderFile_write1 (file, L"\n\t\"");
 		for (const wchar *p = & candidate -> string [0]; *p; p ++) {
-			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
+			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // double any quotes within quotes
 			MelderFile_writeCharacter (file, *p);
 		}
 		MelderFile_write1 (file, L"\"  ");
@@ -103,28 +102,27 @@ void OTMulti_checkIndex (OTMulti me) {
 	OTMulti_sort (me);
 }
 
-static void readText (I, MelderReadText text) {
+void structOTMulti :: v_readText (MelderReadText text) {
 	int localVersion = Thing_version;
-	iam (OTMulti);
-	inherited (OTMulti) readText (me, text);
+	OTMulti_Parent :: v_readText (text);
 	if (localVersion >= 1) {
 		try {
-			my decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue); therror
+			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue); therror
 		} catch (MelderError) {
 			Melder_throw ("Decision strategy not read.");
 		}
 	}
 	if (localVersion >= 2) {
 		try {
-			my leak = texgetr8 (text);
+			leak = texgetr8 (text);
 		} catch (MelderError) {
 			Melder_throw ("Trying to read leak.");
 		}
 	}
-	if ((my numberOfConstraints = texgeti4 (text)) < 1) Melder_throw ("No constraints.");
-	my constraints = NUMvector <structOTConstraint> (1, my numberOfConstraints);
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTConstraint constraint = & my constraints [icons];
+	if ((numberOfConstraints = texgeti4 (text)) < 1) Melder_throw ("No constraints.");
+	constraints = NUMvector <structOTConstraint> (1, numberOfConstraints);
+	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
+		OTConstraint constraint = & constraints [icons];
 		constraint -> name = texgetw2 (text);
 		constraint -> ranking = texgetr8 (text);
 		constraint -> disharmony = texgetr8 (text);
@@ -138,34 +136,21 @@ static void readText (I, MelderReadText text) {
 			}
 		}
 	}
-	if ((my numberOfCandidates = texgeti4 (text)) < 1) Melder_throw ("No candidates.");
-	my candidates = NUMvector <structOTCandidate> (1, my numberOfCandidates);
-	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
-		OTCandidate candidate = & my candidates [icand];
+	if ((numberOfCandidates = texgeti4 (text)) < 1) Melder_throw ("No candidates.");
+	candidates = NUMvector <structOTCandidate> (1, numberOfCandidates);
+	for (long icand = 1; icand <= numberOfCandidates; icand ++) {
+		OTCandidate candidate = & candidates [icand];
 		candidate -> string = texgetw2 (text);
-		candidate -> numberOfConstraints = my numberOfConstraints;   // redundancy, needed for writing binary
+		candidate -> numberOfConstraints = numberOfConstraints;   // redundancy, needed for writing binary
 		candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints);
 		for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
 			candidate -> marks [icons] = texgeti2 (text);
 		}
 	}
-	OTMulti_checkIndex (me);
+	OTMulti_checkIndex (this);
 }
 
-class_methods (OTMulti, Data)
-{
-	us -> version = 2;
-	class_method_local (OTMulti, destroy)
-	class_method_local (OTMulti, description)
-	class_method_local (OTMulti, copy)
-	class_method_local (OTMulti, equal)
-	class_method_local (OTMulti, canWriteAsEncoding)
-	class_method (writeText)
-	class_method (readText)
-	class_method_local (OTMulti, writeBinary)
-	class_method_local (OTMulti, readBinary)
-	class_methods_end
-}
+Thing_implement (OTMulti, Data, 2);
 
 long OTMulti_getConstraintIndexFromName (OTMulti me, const wchar *name) {
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {

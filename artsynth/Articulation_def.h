@@ -1,6 +1,6 @@
 /* Articulation_def.h
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1996/06/11
- * pb 2002/07/16 GPL
- */
 
 #define ooSTRUCT Art
 oo_DEFINE_CLASS (Art, Data)
@@ -29,5 +25,6 @@ oo_DEFINE_CLASS (Art, Data)
 
 oo_END_CLASS (Art)
 #undef ooSTRUCT
+
 
 /* End of file Articulation_def.h */

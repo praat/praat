@@ -339,7 +339,7 @@ GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top,
 			| GDK_BUTTON_MOTION_MASK   // receive motion notifies when a button is pressed
 			| GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK
 			| GDK_POINTER_MOTION_HINT_MASK);   // receive fewer motion notify events (the cb might take time)
-		gtk_widget_set_events (my widget, mask);
+		gtk_widget_set_events (GTK_WIDGET (my widget), mask);
 		// TODO: maybe make this a composite widget and use connect_after for expose?
 		// see http://library.gnome.org/devel/gdk/stable/gdk-Windows.html#COMPOSITED-WINDOWS
 		g_signal_connect (G_OBJECT(my widget), "expose-event",
@@ -353,7 +353,7 @@ GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top,
 		g_signal_connect (G_OBJECT (my widget), "motion-notify-event",
 			G_CALLBACK (_GuiGtkDrawingArea_clickCallback), me);
 		if (parent != NULL) {
-			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (parent)), "key-press-event",
+			g_signal_connect (G_OBJECT (gtk_widget_get_toplevel (GTK_WIDGET (parent))), "key-press-event",
 				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
 		}
 		g_signal_connect (G_OBJECT (my widget), "size-allocate",

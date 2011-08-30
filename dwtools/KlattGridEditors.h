@@ -28,6 +28,7 @@
 
 Thing_define (KlattGrid_realTierEditor, RealTierEditor) {
 	// new data:
+	public:
 		KlattGrid klattgrid;
 	// overridden methods:
 		virtual void v_createHelpMenuItems (EditorMenu menu);
@@ -269,6 +270,7 @@ KlattGrid_fricationAmplitudeTierEditor KlattGrid_fricationAmplitudeTierEditor_cr
 
 Thing_define (KlattGrid_formantGridEditor, FormantGridEditor) {
 	// new data:
+	public:
 		KlattGrid klattgrid;
 	// overridden methods:
 		virtual void v_play (double tmin, double tmax);

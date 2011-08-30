@@ -17,9 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
 
 #define ooSTRUCT AnyPoint
 oo_DEFINE_CLASS (AnyPoint, SimpleDouble)
@@ -27,12 +24,21 @@ oo_DEFINE_CLASS (AnyPoint, SimpleDouble)
 oo_END_CLASS (AnyPoint)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT AnyTier
 oo_DEFINE_CLASS (AnyTier, Function)
 
 	oo_COLLECTION (SortedSetOfDouble, points, AnyPoint, 0)
 
+	#if oo_DECLARING
+		// overridden methods:
+		protected:
+			virtual void v_shiftX (double xfrom, double xto);
+			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+	#endif
+
 oo_END_CLASS (AnyTier)
 #undef ooSTRUCT
+
 
 /* End of file AnyTier_def.h */

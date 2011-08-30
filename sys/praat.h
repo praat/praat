@@ -60,20 +60,20 @@ void praat_init (const char *title, unsigned int argc, char **argv);
 void praat_run (void);
 void praat_setStandAloneScriptText (wchar *text);   // call before praat_init if you want to create a stand-alone application without Objects and Picture window
 
-void praat_addAction (void *class1, int n1, void *class2, int n2, void *class3, int n3,
+void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const wchar *title, const wchar *after, unsigned long flags,
 	void (*callback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure));
 /* 'class2', 'class3', 'title', 'after', and 'callback' may be NULL; 'title' is reference-copied. */
-void praat_addAction1 (void *class1, int n1,
+void praat_addAction1 (ClassInfo class1, int n1,
 	const wchar *title, const wchar *after, unsigned long flags,
 	void (*callback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure));
-void praat_addAction2 (void *class1, int n1, void *class2, int n2,
+void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
 	const wchar *title, const wchar *after, unsigned long flags,
 	void (*callback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure));
-void praat_addAction3 (void *class1, int n1, void *class2, int n2, void *class3, int n3,
+void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
 	const wchar *title, const wchar *after, unsigned long flags,
 	void (*callback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure));
-void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3, int n3, void *class4, int n4,
+void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
 	const wchar *title, const wchar *after, unsigned long flags,
 	void (*callback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure));
 /*
@@ -117,7 +117,7 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 #define praat_DEPTH_6  0x00060000
 #define praat_DEPTH_7  0x00070000
 #define praat_CTRL  0x00200000
-void praat_removeAction (void *class1, void *class2, void *class3, const wchar *title);
+void praat_removeAction (ClassInfo class1, ClassInfo class2, ClassInfo class3, const wchar *title);
 	/* 'class2' and 'class3' may be NULL. */
 	/* 'title' may be NULL; reference-copied. */
 
@@ -128,13 +128,13 @@ GuiObject praat_addMenuCommand (const wchar *window, const wchar *menu, const wc
 #define praat_MAXNUM_EDITORS 5
 #include "Ui.h"
 typedef struct {
-	void *klas;   /* The class. */
-	Any object;   /* The instance. */
-	wchar *name;   /* The name of the object as it appears in the List. */
-	long id;   /* The unique number of the object. */
-	int selected;   /* Is the name of the object inverted in the list? */
-	Any editors [praat_MAXNUM_EDITORS];   /* Are there editors open with this Object in it? */
-	structMelderFile file;   /* Is this (very large) Object (partially) in a file? */
+	ClassInfo klas;   // the class
+	Data object;   // the instance
+	wchar *name;   // the name of the object as it appears in the List
+	long id;   // the unique number of the object
+	int selected;   // is the name of the object inverted in the list?
+	Editor editors [praat_MAXNUM_EDITORS];   // are there editors open with this Object in it?
+	structMelderFile file;   // is this (very large) Object (partially) in a file?
 	int _beingCreated;
 } structPraat_Object, *praat_Object;
 
@@ -167,9 +167,9 @@ extern structPraatPicture theForegroundPraatPicture;
 extern PraatPicture theCurrentPraatPicture;
 	/* The global objects containing the state of the application; only reachable from interface files. */
 
-Any praat_onlyObject (void *klas);
+Data praat_onlyObject (ClassInfo klas);
 	/* Returns a selected Data of class 'klas'. */
-Any praat_onlyObject_generic (void *klas);
+Data praat_onlyObject_generic (ClassInfo klas);
 	/* Returns a selected Data of class 'klas' or a subclass. */
 praat_Object praat_onlyScreenObject (void);
 wchar *praat_name (int iobject);
@@ -188,7 +188,7 @@ void praat_newWithFile2 (Data me, const wchar *s1, const wchar *s2, MelderFile f
 void praat_newWithFile3 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, MelderFile file);
 void praat_newWithFile4 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, MelderFile file);
 void praat_newWithFile5 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, MelderFile file);
-void praat_name2 (wchar *name, void *klas1, void *klas2);
+void praat_name2 (wchar *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes).
 	FORM prompts the user for arguments to DO_proc.
@@ -426,20 +426,18 @@ void praat_name2 (wchar *name, void *klas1, void *klas2);
 #define ONLY(klas)  praat_onlyObject (klas)
 #define ONLY_GENERIC(klas)  praat_onlyObject_generic (klas)
 #define ONLY_OBJECT  (praat_onlyScreenObject () -> object)
-#ifdef __cplusplus
-	Any praat_firstObject (void *klas);
-	Any praat_firstObject_generic (void *klas);
-	Any praat_firstObject_any ();
-	#define FIRST(Klas)  (Klas) praat_firstObject (class##Klas)
-	#define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
-	#define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
-#endif
+Data praat_firstObject (ClassInfo klas);
+Data praat_firstObject_generic (ClassInfo klas);
+Data praat_firstObject_any ();
+#define FIRST(Klas)  (Klas) praat_firstObject (class##Klas)
+#define FIRST_GENERIC(Klas)  (Klas) praat_firstObject_generic (class##Klas)
+#define FIRST_ANY(Klas)  (Klas) praat_firstObject_any ()
 
 #define EVERY_DRAW(proc) \
 	praat_picture_open (); WHERE (SELECTED) proc; praat_picture_close (); return 1;
 
 /* Used by praat_Sybil.c, if you put an Editor on the screen: */
-int praat_installEditor (Any editor, int iobject);
+int praat_installEditor (Editor editor, int iobject);
 /* This routine adds a reference to a new editor (unless it is NULL) to the screen object
    which is in the list at position 'iobject'.
    It sets the destroyCallback and dataChangedCallback as appropriate for Praat:
@@ -456,23 +454,18 @@ int praat_installEditor (Any editor, int iobject);
 				(SpectrogramEditor_create (praat.topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
 	END
 */
-int praat_installEditor2 (Any editor, int iobject1, int iobject2);
-int praat_installEditor3 (Any editor, int iobject1, int iobject2, int iobject3);
-int praat_installEditorN (Any editor, Ordered objects);
+int praat_installEditor2 (Editor editor, int iobject1, int iobject2);
+int praat_installEditor3 (Editor editor, int iobject1, int iobject2, int iobject3);
+int praat_installEditorN (Editor editor, Ordered objects);
 
 void praat_dataChanged (Any object);
 /* Call this after changing a screen object. */
 /* Associated editors and data editors will be notified (with Editor_dataChanged). */
 
-void praat_clipboardChanged (void *closure, Any clipboard);
-/* Make this the callback for all changed clipboards, with 'closure' == NULL: */
-/* e.g. Sound_setClipboardCallback (praat_clipboardChanged, NULL); */
-/* This routine sends an Editor_clipboardChanged message to all editors. */
-
 /* Used by praat.c, praat_Basic.c, and praat_Sybil.c; defined in praat_picture.c.
 */
-void praat_picture_open (void);
-void praat_picture_close (void);
+void praat_picture_open ();
+void praat_picture_close ();
 /* These two routines should bracket drawing commands. */
 /* See also the EVERY_DRAW macro. */
 
@@ -486,7 +479,7 @@ void praat_picture_close (void);
 /* For text-only applications that do not want to see that irritating Picture window. */
 /* Works only if called before praat_init. */
 /* The program will crash if you still try to use drawing routines. */
-void praat_dontUsePictureWindow (void);
+void praat_dontUsePictureWindow ();
 
 /* Before praat_init: */
 void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g));
@@ -500,8 +493,8 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 	praat_show ();   // Needed because the selection has changed.
 */
 void praat_removeObject (int i);   /* i = 1..praat.n */
-void praat_show (void);   /* Forces an update of the dynamic menu. */
-void praat_updateSelection (void);
+void praat_show (void);   // forces an update of the dynamic menu
+void praat_updateSelection ();
 	/* If you require the correct selection immediately after calling praat_new. */
 
 void praat_addCommandsToEditor (Editor me);
@@ -512,7 +505,7 @@ void praat_addCommandsToEditor (Editor me);
 #define heis_ONLY(klas)  klas him = static_cast<klas> (ONLY (class##klas))
 #define LOOP  for (int IOBJECT = 1; IOBJECT <= theCurrentPraatObjects -> n; IOBJECT ++) if (SELECTED)
 
-Collection praat_getSelectedObjects (void);
+Collection praat_getSelectedObjects ();
 
 struct autoPraatPicture {
 	autoPraatPicture () { praat_picture_open (); }

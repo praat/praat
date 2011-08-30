@@ -74,7 +74,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	if (theLogo.graphics == NULL)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 #if gtk
-	Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+	Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget) -> window)));
 	cairo_rectangle ((cairo_t *) Graphics_x_getCR (theLogo.graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
 	cairo_clip ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
 	theLogo.draw (theLogo.graphics);

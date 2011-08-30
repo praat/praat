@@ -17,11 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 2000
- djmw 20020315 GPL header
- djmw 20080122 Version 1: float -> double
- */
 
 #define ooSTRUCT CC_Frame
 oo_DEFINE_STRUCT (CC_Frame)
@@ -31,20 +26,21 @@ oo_DEFINE_STRUCT (CC_Frame)
 		if (localVersion == 0)
 		{
 			oo_FLOAT (c0)
-			oo_FLOAT_VECTOR (c, my numberOfCoefficients)
+			oo_FLOAT_VECTOR (c, numberOfCoefficients)
 		}
 		else
 		{
 			oo_DOUBLE (c0)
-			oo_DOUBLE_VECTOR (c, my numberOfCoefficients)
+			oo_DOUBLE_VECTOR (c, numberOfCoefficients)
 		}
 	#else
 		oo_DOUBLE (c0)
-		oo_DOUBLE_VECTOR (c, my numberOfCoefficients)
+		oo_DOUBLE_VECTOR (c, numberOfCoefficients)
 	#endif
 
 oo_END_STRUCT (CC_Frame)
 #undef ooSTRUCT
+
 
 #define ooSTRUCT CC
 oo_DEFINE_CLASS (CC, Sampled)
@@ -52,9 +48,15 @@ oo_DEFINE_CLASS (CC, Sampled)
 	oo_DOUBLE (fmin)
 	oo_DOUBLE (fmax)
 	oo_LONG (maximumNumberOfCoefficients)
-	oo_STRUCT_VECTOR (CC_Frame, frame, my nx)
+	oo_STRUCT_VECTOR (CC_Frame, frame, nx)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (CC)
 #undef ooSTRUCT
+
 
 /* End of file CC_def.h */

@@ -115,7 +115,7 @@ void Polygon_reverseY (Polygon me)
 
 }
 
-void Polygon_Categories_draw (Polygon me, thou, Any graphics, double xmin, double xmax,
+void Polygon_Categories_draw (Polygon me, thou, Graphics graphics, double xmin, double xmax,
 	double ymin, double ymax, int garnish)
 {
     thouart (Categories);
@@ -162,7 +162,7 @@ void Polygon_Categories_draw (Polygon me, thou, Any graphics, double xmin, doubl
 	}
 }
 
-static void setWindow (Polygon me, Any graphics,
+static void setWindow (Polygon me, Graphics graphics,
 	double xmin, double xmax, double ymin, double ymax)
 {
 	Melder_assert (me);
@@ -526,43 +526,32 @@ double x4, double y4, double *mua, double *mub, double eps)
 // first node has prev = 0, last node has next = 0;
 // entry marks the entrance of the OTHER polygon
 
-Thing_declare1cpp (Vertex);
-Thing_declare1cpp (Vertices);
+Thing_define (Vertex, Data) {
+	// new data:
+	public:
+		double x, y, alpha;
+		DLLNode neighbour;
+		long poly_npoints, id;
+		int intersect, entry;
+		bool processed;
+	// overridden methods:
+		virtual void v_copy (Any data_to);
+};
 
-#ifdef __cplusplus
+Thing_implement (Vertex, Data, 0);
 
-	struct structVertex : public structData {
-	double x, y, alpha;
-	DLLNode neighbour;
-	long poly_npoints, id;
-	int intersect, entry;
-	bool processed;
-	};
-	#define Vertex__methods(klas) Data__methods(klas)
-	Thing_declare2cpp (Vertex, Data);
-	struct structVertices : public structDLL {
-	};
-	#define Vertices__methods(klas) DLL__methods(klas)
-	Thing_declare2cpp (Vertices, DLL);
-#endif
-
-static void classVertex_copy (I, thou)
+void structVertex :: v_copy (thou)
 {
-	iam (Vertex); thouart (Vertex);
-	thy x = my x; thy y = my y;
-	thy alpha = my alpha;
-	thy neighbour = my neighbour;
-	thy poly_npoints = my poly_npoints;
-	thy id = my id;
-	thy intersect = my intersect;
-	thy entry = my entry;
-	thy processed = my processed;
-}
-
-class_methods (Vertex, Data)
-{
-	class_method_local (Vertex, copy)
-	class_methods_end
+	thouart (Vertex);
+	thy x = x;
+	thy y = y;
+	thy alpha = alpha;
+	thy neighbour = neighbour;
+	thy poly_npoints = poly_npoints;
+	thy id = id;
+	thy intersect = intersect;
+	thy entry = entry;
+	thy processed = processed;
 }
 
 Vertex Vertex_create ();
@@ -574,24 +563,20 @@ Vertex Vertex_create ()
 	} catch (MelderError) { Melder_throw ("Vertex not created."); }
 }
 
-#if 0
-#define Vertices_members DLL_members
-#define Vertices_methods DLL_methods
-class_create (Vertices, DLL);
-#endif
+Thing_define (Vertices, DLL) {
+	// overridden methods:
+	protected:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+};
+Thing_implement (Vertices, DLL, 0);
 
 #define VERTEX(n) ((Vertex) (n -> data))
 
-static int classVertices_compare (I, thou)
+int structVertices :: s_compare (I, thou)
 {
 	iam (DLLNode); thouart (DLLNode);
 	return VERTEX (me) -> alpha < VERTEX (thee) -> alpha ? -1 : VERTEX (me) -> alpha > VERTEX (thee) -> alpha ? 1 : 0;
-}
-
-class_methods (Vertices, DLL)
-{
-	class_method_local (Vertices, compare)
-	class_methods_end
 }
 
 Vertices Vertices_create ();
@@ -1128,12 +1113,12 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 			if (not use_myinterior and not use_thyinterior and firstLocation == Polygon_INSIDE)
 			{
 				autoPolygon ap = (Polygon) Data_copy (thee);
-				Collection_addItem (ap.peek(), ap.transfer());
+				//Collection_addItem (ap.peek(), ap.transfer());   David, een Polygon is geen Collection; dit knalt
 			}
 			else
 			{
 				autoPolygon ap = (Polygon) Data_copy (me);
-				Collection_addItem (ap.peek(), ap.transfer());
+				//Collection_addItem (ap.peek(), ap.transfer());   David, een Polygon is geen Collection; dit knalt
 			}
 			return apc.transfer();
 		}

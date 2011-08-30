@@ -98,7 +98,7 @@ GuiObject GuiWindow_create (GuiObject parent, int x, int y, int width, int heigh
 		GuiWindow_setTitle (shell, title);
 
 		my widget = gtk_vbox_new (FALSE, 0);
-		gtk_container_add (GTK_CONTAINER (shell), my widget);
+		gtk_container_add (GTK_CONTAINER (shell), GTK_WIDGET (my widget));
 		_GuiObject_setUserData (my widget, me);
 	#elif win || mac
 		(void) parent;

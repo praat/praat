@@ -22,6 +22,7 @@
 #include "Graphics.h"
 #include "Gui.h"
 #include "Interpreter.h"
+Thing_declare (EditorCommand);
 
 /* Forms for getting arguments from the user. */
 
@@ -69,6 +70,50 @@
 	When you click "Standards", the standard values (including comments)
 	are restored to all items in the form.
 */
+
+Thing_define (UiField, Thing) {
+	// new data:
+	public:
+		int type;
+		const wchar *formLabel;
+		double realValue, realDefaultValue;
+		long integerValue, integerDefaultValue;
+		wchar *stringValue; const wchar *stringDefaultValue;
+		Graphics_Colour colourValue;
+		char *stringValueA;
+		Ordered options;
+		long numberOfStrings;
+		const wchar **strings;
+		GuiObject text, toggle, list, cascadeButton;
+		int y;
+	// overridden methods:
+		virtual void v_destroy ();
+};
+
+#define MAXIMUM_NUMBER_OF_FIELDS  50
+#define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
+
+Thing_define (UiForm, Thing) {
+	// new data:
+	public:
+		EditorCommand command;
+		GuiObject d_dialogParent, d_dialogShell, d_dialogForm;
+		void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
+		void (*applyCallback) (Any dia, void *closure);
+		void (*cancelCallback) (Any dia, void *closure);
+		void *buttonClosure;
+		const wchar_t *invokingButtonTitle, *helpTitle;
+		int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
+		const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
+		int numberOfFields;
+		UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
+		GuiObject okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
+		bool destroyWhenUnmanaged, isPauseForm;
+		bool (*allowExecutionHook) (void *closure);
+		void *allowExecutionClosure;
+	// overridden methods:
+		virtual void v_destroy ();
+};
 
 /* The following routines work on the screen and from batch. */
 UiForm UiForm_create (GuiObject parent, const wchar *title,

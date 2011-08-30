@@ -47,6 +47,8 @@
 #include "oo_DESCRIPTION.h"
 #include "Permutation_def.h"
 
+Thing_implement (Permutation, Data, 0);
+
 static long Permutation_checkRange (Permutation me, long *from, long *to)
 {
 	if ((*from < 0 || *from > my numberOfElements) || (*to < 0 || *to > my numberOfElements))
@@ -66,34 +68,19 @@ void Permutation_checkInvariant (Permutation me)
 	}
 }
 
-static void info (I)
+void structPermutation :: v_info ()
 {
-	iam (Permutation);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (my numberOfElements));
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (numberOfElements));
 }
 
-static void readText (I, MelderReadText text)
+void structPermutation :: v_readText (MelderReadText text)
 {
-	iam (Permutation);
-	my numberOfElements = texgeti4 (text);
-	if (my numberOfElements < 1) Melder_throw (L"(Permutation::readText:) Number of elements must be >= 1.");
-	my p = NUMlvector_readText_i4 (1, my numberOfElements, text, "p");
-	Permutation_checkInvariant (me);
+	numberOfElements = texgeti4 (text);
+	if (numberOfElements < 1) Melder_throw (L"(Permutation::readText:) Number of elements must be >= 1.");   // David, geen leesbare melding
+	p = NUMlvector_readText_i4 (1, numberOfElements, text, "p");
+	Permutation_checkInvariant (this);
 }
-
-class_methods (Permutation, Data)
-	class_method_local (Permutation, destroy)
-	class_method_local (Permutation, copy)
-	class_method_local (Permutation, equal)
-	class_method_local (Permutation, canWriteAsEncoding)
-	class_method_local (Permutation, writeText)
-	class_method_local (Permutation, writeBinary)
-	class_method (readText)
-	class_method (info)
-	class_method_local (Permutation, readBinary)
-	class_method_local (Permutation, description)
-class_methods_end
 
 void Permutation_init (Permutation me, long numberOfElements)
 {

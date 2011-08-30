@@ -29,12 +29,7 @@
 #include "TableOfReal.h"
 #include "Strings.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "CCA_def.h"
-#define CCA__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (CCA, Data);
 
 /*
@@ -130,9 +125,5 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from);
 	Given independent table, predict the dependent one, on the basis of 
 	the canonical correlations.
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* CCA.h */

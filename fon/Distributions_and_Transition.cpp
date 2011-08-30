@@ -141,7 +141,7 @@ Distributions Distributions_Transition_map (Distributions me, Transition map) {
 		/*
 		 * Create the output object.
 		 */
-		autoDistributions thee = (Distributions) Data_copy (me);
+		autoDistributions thee = Data_copy (me);
 
 		/*
 		 * Compute the elements of the surface distributions.

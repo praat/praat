@@ -17,14 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2006/12/10 MelderInfo
- * pb 2007/10/01 can write as encoding
- * pb 2011/03/03 wchar
- * pb 2011/06/12 C++
- */
-
 #include "WordList.h"
 #include "longchar.h"
 
@@ -45,6 +37,8 @@
 
 /* BUG: not Unicode-savvy */
 
+Thing_implement (WordList, Data, 0);
+
 static long WordList_count (WordList me) {
 	long n = 0;
 	for (wchar *p = my string; *p; p ++) {
@@ -53,30 +47,28 @@ static long WordList_count (WordList me) {
 	return n;
 }
 
-static void info (I) {
-	iam (WordList);
-	classData -> info (me);
-	long n = WordList_count (me);
-	if (! my length) my length = wcslen (my string);
+void structWordList :: v_info () {
+	structData :: v_info ();
+	long n = WordList_count (this);
+	if (! length) length = wcslen (string);
 	MelderInfo_writeLine2 (L"Number of words: ", Melder_integer (n));
-	MelderInfo_writeLine2 (L"Number of characters: ", Melder_integer (my length - n));
+	MelderInfo_writeLine2 (L"Number of characters: ", Melder_integer (length - n));
 }
 
-static void readBinary (I, FILE *f) {
-	iam (WordList);
+void structWordList :: v_readBinary (FILE *f) {
 	wchar *current, *p;
 	int kar = 0;
-	my length = bingeti4 (f);
-	if (my length < 0)
-		Melder_throw ("Wrong length ", my length, ".");
-	my string = Melder_calloc (wchar, my length + 1);
-	p = current = my string;
-	if (my length > 0) {
+	length = bingeti4 (f);
+	if (length < 0)
+		Melder_throw ("Wrong length ", length, ".");
+	string = Melder_calloc (wchar, length + 1);
+	p = current = string;
+	if (length > 0) {
 		/*
 		 * Read first word.
 		 */
 		for (;;) {
-			if (p - my string >= my length - 1) break;
+			if (p - string >= length - 1) break;
 			kar = fgetc (f);
 			if (kar == EOF)
 				Melder_throw (L"Early end of file.");
@@ -94,7 +86,7 @@ static void readBinary (I, FILE *f) {
 			wcsncpy (current, previous, numberOfSame);
 			p += numberOfSame;
 			for (;;) {
-				if (p - my string >= my length - 1) break;
+				if (p - string >= length - 1) break;
 				kar = fgetc (f);
 				if (kar == EOF)
 					Melder_throw (L"Early end of file.");
@@ -102,21 +94,20 @@ static void readBinary (I, FILE *f) {
 				*p ++ = kar;
 			}
 			*p ++ = '\n';
-			if (p - my string >= my length) break;
+			if (p - string >= length) break;
 		}
 	}
 	*p = '\0';
-	if (p - my string != my length)
-		Melder_throw ("Length in header (", my length, ") does not match string (", p - my string, ").");
+	if (p - string != length)
+		Melder_throw ("Length in header (", length, ") does not match string (", p - string, ").");
 }
 
-static void writeBinary (I, FILE *f) {
-	iam (WordList);
+void structWordList :: v_writeBinary (FILE *f) {
 	long currentLength, previousLength;
-	if (! my length) my length = wcslen (my string);
-	binputi4 (my length, f);
-	if (my length > 0) {
-		wchar *current = my string, *kar = current;
+	if (! length) length = wcslen (string);
+	binputi4 (length, f);
+	if (length > 0) {
+		wchar *current = string, *kar = current;
 		for (kar = current; *kar != '\n'; kar ++) { }
 		currentLength = kar - current;
 		for (long i = 0; i < currentLength; i ++)
@@ -140,20 +131,6 @@ static void writeBinary (I, FILE *f) {
 				fputc (current [numberOfSame + i], f);   // TODO: check
 		}
 	}
-}
-
-class_methods (WordList, Data) {
-	class_method (info)
-	class_method_local (WordList, description)
-	class_method_local (WordList, destroy)
-	class_method_local (WordList, copy)
-	class_method_local (WordList, equal)
-	class_method_local (WordList, canWriteAsEncoding)
-	class_method_local (WordList, writeText)
-	class_method (writeBinary)
-	class_method_local (WordList, readText)
-	class_method (readBinary)
-	class_methods_end
 }
 
 WordList Strings_to_WordList (Strings me) {

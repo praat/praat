@@ -4,13 +4,10 @@
 #include "TableOfReal.h"
 #include "Confusion.h"
 
-Thing_declare1cpp (ContingencyTable);
-struct structContingencyTable : public structTableOfReal {
+Thing_define (ContingencyTable, TableOfReal) {
 	// overridden methods:
-		void v_info ();
+		virtual void v_info ();
 };
-#define ContingencyTable__methods(klas)  TableOfReal__methods(klas)
-Thing_declare2cpp (ContingencyTable, TableOfReal);
 
 /* entries must be nonnegative numbers */
 

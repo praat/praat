@@ -24,6 +24,7 @@
 
 Thing_define (PointEditor, TimeSoundEditor) {
 	// new data:
+	public:
 		Sound monoSound;
 		GuiObject addPointAtDialog;
 	// overridden methods:

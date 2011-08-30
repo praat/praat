@@ -22,11 +22,12 @@
 #include "Vector.h"
 #include "Graphics.h"
 
-Thing_declare1cpp (Excitation);
-struct structExcitation : public structVector {
+Thing_define (Excitation, Vector) {
+	// overridden methods:
+	protected:
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_FREQUENCY_BARK; }
 };
-#define Excitation__methods(klas)  Vector__methods(klas)
-Thing_declare2cpp (Excitation, Vector);
 
 double Excitation_hertzToBark (double hertz);
 double Excitation_barkToHertz (double bark);

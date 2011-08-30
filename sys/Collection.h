@@ -19,48 +19,37 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* Collections contain a number of items whose class is a subclass of Data.
-
-	class Collection = Data {
-		void *itemClass;   // The class of which all items must be members (see Thing_member).
-		long size;
-		Any item [1..size];
-	introduce:
-		long position (I, Any data);
-	override:
-		void destroy (I);   // Destroys all the items.
-		int copy (I, thou);   // Copies all the items.
-		int equal (I, thou);   // Compares 'my item [i]' with 'thy item [i]', i = 1..size.
-	};
-	class Ordered = Collection {
-	};
-	class Sorted = Collection {
-	introduce:
-		int compare (I, thou);   // Compares the keys of two items;
-				// returns negative if me < thee, 0 if me == thee, and positive if me > thee.
-	};
-	class SortedSet = Sorted {   // Every item must be unique (by key).
-		override long position (I, Any data);   // Returns 0 (refusal) if the key of 'data' already occurs.
-	};
-	class Cyclic = Collection;   // The cyclic list (a, b, c, d) equals (b, c, d, a) but not (d, c, a, b).
-*/
+/*
+ * Collection objects contain a number of items whose class is a subclass of Data.
+ */
 
 #include "Simple.h"
 
-Thing_declare1cpp (Collection);
-struct structCollection : public structData {
+Thing_define (Collection, Data) {
 	// new data:
-		void *itemClass;
+	public:
+		ClassInfo itemClass;   // the class of which all items must be members (see Thing_member)
 		long _capacity, size;
 		bool _dontOwnItems;
-		Any *item;
+		Any *item;   // [1..size]
 	// overridden methods:
-		void v_info ();
+	public:
+		virtual void v_info ();
+		virtual void v_destroy ();   // destroys all the items
+		virtual void v_copy (Any data_to);   // copies all the items
+		virtual bool v_equal (Any data2);   // compares 'my item [i]' with 'thy item [i]', i = 1..size
+		virtual bool v_canWriteAsEncoding (int outputEncoding);
+		virtual void v_writeText (MelderFile openFile);
+		virtual void v_readText (MelderReadText text);
+		virtual void v_writeBinary (FILE *f);
+		virtual void v_readBinary (FILE *f);
+		static Data_Description s_description;
+		virtual Data_Description v_description () { return s_description; }
+		virtual long v_position (Any data) {
+			(void) data;
+			return size + 1;   // at end
+		};
 };
-#define Collection__methods(klas) Data__methods(klas) \
-	long (*position) (I, Any data);
-Thing_declare2cpp (Collection, Data);
-
 /*
 	An object of type Collection is a collection of items of any class.
 	It is the owner of its items.
@@ -73,8 +62,8 @@ Thing_declare2cpp (Collection, Data);
 		item [1..size]		// the items.
 */
 
-void Collection_init (I, void *itemClass, long initialCapacity);
-Collection Collection_create (void *itemClass, long initialCapacity);
+void Collection_init (Collection me, ClassInfo itemClass, long initialCapacity);
+Collection Collection_create (ClassInfo itemClass, long initialCapacity);
 /*
 	Function:
 		return a new empty Collection, or NULL if out of memory.
@@ -84,7 +73,7 @@ Collection Collection_create (void *itemClass, long initialCapacity);
 		my _capacity == initialCapacity;
 */
 
-void Collection_dontOwnItems (I);
+void Collection_dontOwnItems (Collection me);
 
 /*
 	Data_copy, Data_equal, Data_writeXXX, Data_readXXX
@@ -93,7 +82,7 @@ void Collection_dontOwnItems (I);
 	these routines fail with a message and return 0.
 */
 
-void Collection_addItem (I, Any item);
+void Collection_addItem (Collection me, Thing item);
 /*
 	Function:
 		add the 'item' to the collection. Return 0 if out of memory, else 1.
@@ -107,7 +96,7 @@ void Collection_addItem (I, Any item);
 	if that item already occurred in the Collection.
 */
 
-void Collection_removeItem (I, long position);
+void Collection_removeItem (Collection me, long position);
 /*
 	Function:
 		remove the item at 'position' from the collection and from memory.
@@ -118,7 +107,7 @@ void Collection_removeItem (I, long position);
 		my _capacity not changed;
 */
 
-void Collection_undangleItem (I, Any item);
+void Collection_undangleItem (Collection me, Thing item);
 /*
 	Function:
 		remove the item from the collection, without destroying it.
@@ -129,7 +118,7 @@ void Collection_undangleItem (I, Any item);
 		often used just before the item is destroyed, hence the name of this procedure.
 */
 
-Any Collection_subtractItem (I, long position);
+Any Collection_subtractItem (Collection me, long position);
 /*
 	Function:
 		remove the item at 'position' from the collection and transfer ownership to the caller.
@@ -142,7 +131,7 @@ Any Collection_subtractItem (I, long position);
 		my _capacity not changed;
 */
 
-void Collection_removeAllItems (I);
+void Collection_removeAllItems (Collection me);
 /*
 	Function:
 		remove all items from the collection and from memory.
@@ -151,7 +140,7 @@ void Collection_removeAllItems (I);
 		my _capacity not changed;
 */
 
-void Collection_shrinkToFit (I);
+void Collection_shrinkToFit (Collection me);
 /*
 	Function:
 		release as much memory as possible without affecting the items.
@@ -159,7 +148,7 @@ void Collection_shrinkToFit (I);
 		my _capacity == max (my size, 1);
 */
 
-Any Collections_merge (I, thou);
+Any Collections_merge (Collection me, Collection thee);
 /*
 	Function:
 		merge two Collections into a new one.
@@ -170,7 +159,7 @@ Any Collections_merge (I, thou);
 
 /* For the inheritors. */
 
-void _Collection_insertItem (I, Any item, long position);
+void _Collection_insertItem (Collection me, Thing item, long position);
 
 /* Methods:
 
@@ -182,20 +171,17 @@ void _Collection_insertItem (I, Any item, long position);
 
 /********** class Ordered **********/
 
-Thing_declare1cpp (Ordered);
-struct structOrdered : public structCollection {
+Thing_define (Ordered, Collection) {
 };
-#define Ordered__methods(klas) Collection__methods(klas)
-Thing_declare2cpp (Ordered, Collection);
 
 Ordered Ordered_create (void);
-void Ordered_init (I, void *itemClass, long initialCapacity);
+void Ordered_init (Ordered me, ClassInfo itemClass, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Ordered) inserts an item at the end.
 */
 
-void Ordered_addItemPos (I, Any data, long position);
+void Ordered_addItemPos (Ordered me, Thing data, long position);
 /*
 	Function:
 		insert an item at 'position'.
@@ -206,14 +192,16 @@ void Ordered_addItemPos (I, Any data, long position);
 /********** class Sorted **********/
 /* A Sorted is a sorted Collection. */
 
-Thing_declare1cpp (Sorted);
-struct structSorted : public structCollection {
+Thing_define (Sorted, Collection) {
+	// new methods:
+	public:
+		virtual long v_position (Any data);
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
+			// should compare the keys of two items; returns negative if me < thee, 0 if me == thee, and positive if me > thee
 };
-#define Sorted__methods(klas) Collection__methods(klas) \
-	int (*compare) (I, thou);
-Thing_declare2cpp (Sorted, Collection);
 
-void Sorted_init (I, void *itemClass, long initialCapacity);
+void Sorted_init (Sorted me, ClassInfo itemClass, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (Sorted) inserts an item at such a position that the collection stays sorted.
@@ -229,26 +217,31 @@ void Sorted_init (I, void *itemClass, long initialCapacity);
 	with every insertion.
 */
 
-void Sorted_addItem_unsorted (I, Any data);
+void Sorted_addItem_unsorted (Sorted me, Thing data);
 /*
 	Function:
 		add an item to the collection, quickly at the end.
 	Warning:
 		this leaves the collection unsorted; follow by Sorted_sort ().
 */
-void Sorted_sort (I);
+void Sorted_sort (Sorted me);
 /* Call this after a number of calls to Sorted_addItem_unsorted (). */
 /* The procedure used is 'heapsort'. */
 
 /********** class SortedSet **********/
 
-Thing_declare1cpp (SortedSet);
-struct structSortedSet : public structSorted {
+Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
+	// functions:
+	public:
+		bool hasItem (Any item) {
+			return v_position (item) == 0;
+		}
+	// overridden methods:
+	protected:
+		virtual long v_position (Any data);   // returns 0 (refusal) if the key of 'data' already occurs
 };
-#define SortedSet__methods(klas) Sorted__methods(klas)
-Thing_declare2cpp (SortedSet, Sorted);
 
-void SortedSet_init (I, void *itemClass, long initialCapacity);
+void SortedSet_init (SortedSet me, ClassInfo itemClass, long initialCapacity);
 
 /* Behaviour:
 	Collection_addItem (SortedSet) refuses to insert an item if this item already occurs.
@@ -256,77 +249,80 @@ void SortedSet_init (I, void *itemClass, long initialCapacity);
 	Collections_merge (SortedSet) yields a SortedSet that is the union of the two sources.
 */
 
-int SortedSet_hasItem (I, Any item);
-
 /********** class SortedSetOfInt **********/
 
-Thing_declare1cpp (SortedSetOfInt);
-struct structSortedSetOfInt : public structSortedSet {
+Thing_define (SortedSetOfInt, SortedSet) {
+	// overridden methods:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
-#define SortedSetOfInt__methods(klas) SortedSet__methods(klas)
-Thing_declare2cpp (SortedSetOfInt, SortedSet);
 
-void SortedSetOfInt_init (I);
+void SortedSetOfInt_init (SortedSetOfInt me);
 SortedSetOfInt SortedSetOfInt_create (void);
 
 /********** class SortedSetOfShort **********/
 
-Thing_declare1cpp (SortedSetOfShort);
-struct structSortedSetOfShort : public structSortedSet {
+Thing_define (SortedSetOfShort, SortedSet) {
+	// overridden methods:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
-#define SortedSetOfShort__methods(klas) SortedSet__methods(klas)
-Thing_declare2cpp (SortedSetOfShort, SortedSet);
 
-void SortedSetOfShort_init (I);
+void SortedSetOfShort_init (SortedSetOfShort me);
 SortedSetOfShort SortedSetOfShort_create (void);
 
 /********** class SortedSetOfLong **********/
 
-Thing_declare1cpp (SortedSetOfLong);
-struct structSortedSetOfLong : public structSortedSet {
+Thing_define (SortedSetOfLong, SortedSet) {
+	// overridden methods:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
-#define SortedSetOfLong__methods(klas) SortedSet__methods(klas)
-Thing_declare2cpp (SortedSetOfLong, SortedSet);
 
-void SortedSetOfLong_init (I);
+void SortedSetOfLong_init (SortedSetOfLong me);
 SortedSetOfLong SortedSetOfLong_create (void);
 
 /********** class SortedSetOfDouble **********/
 
-Thing_declare1cpp (SortedSetOfDouble);
-struct structSortedSetOfDouble : public structSortedSet {
+Thing_define (SortedSetOfDouble, SortedSet) {
+	// overridden methods:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
-#define SortedSetOfDouble__methods(klas) SortedSet__methods(klas)
-Thing_declare2cpp (SortedSetOfDouble, SortedSet);
 
-void SortedSetOfDouble_init (I);
+void SortedSetOfDouble_init (SortedSetOfDouble me);
 SortedSetOfDouble SortedSetOfDouble_create (void);
 
 /********** class SortedSetOfString **********/
 
-Thing_declare1cpp (SortedSetOfString);
-struct structSortedSetOfString : public structSortedSet {
+Thing_define (SortedSetOfString, SortedSet) {
+	// functions:
+	public:
+		void addString (const wchar *string);
+	// overridden methods:
+	protected:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
-#define SortedSetOfString__methods(klas) SortedSet__methods(klas)
-Thing_declare2cpp (SortedSetOfString, SortedSet);
 
-void SortedSetOfString_init (I);
+void SortedSetOfString_init (SortedSetOfString me);
 SortedSetOfString SortedSetOfString_create (void);
 long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string);
-void SortedSetOfString_add (SortedSetOfString me, const wchar_t *string);
 
 /********** class Cyclic **********/
 
-Thing_declare1cpp (Cyclic);
-struct structCyclic : public structCollection {
+Thing_define (Cyclic, Collection) {   // the cyclic list (a, b, c, d) equals (b, c, d, a) but not (d, c, a, b)
+	// functions:
+	public:
+		void cycleLeft ();
+		void unicize ();
+	// overridden methods:
+	protected:
+		static int s_compare (Any data1, Any data2);
+		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
 };
-#define Cyclic__methods(klas) Collection__methods(klas) \
-	int (*compare) (I, thou);   /* virtual */
-Thing_declare2cpp (Cyclic, Collection);
 
-void Cyclic_init (I, void *itemClass, long initialCapacity);
-
-void Cyclic_unicize (I);
+void Cyclic_init (Cyclic me, ClassInfo itemClass, long initialCapacity);
 
 /* End of file Collection.h */
 #endif

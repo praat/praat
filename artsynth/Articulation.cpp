@@ -31,13 +31,9 @@
 #include "Articulation_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Articulation_def.h"
-#include "oo_WRITE_CACHE.h"
-#include "Articulation_def.h"
 #include "oo_READ_TEXT.h"
 #include "Articulation_def.h"
 #include "oo_READ_BINARY.h"
-#include "Articulation_def.h"
-#include "oo_READ_CACHE.h"
 #include "Articulation_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Articulation_def.h"
@@ -47,20 +43,7 @@
 #include "enums_getValue.h"
 #include "Articulation_enums.h"
 
-class_methods (Art, Data) {
-	class_method_local (Art, destroy)
-	class_method_local (Art, copy)
-	class_method_local (Art, equal)
-	class_method_local (Art, canWriteAsEncoding)
-	class_method_local (Art, writeText)
-	class_method_local (Art, writeBinary)
-	class_method_local (Art, writeCache)
-	class_method_local (Art, readText)
-	class_method_local (Art, readBinary)
-	class_method_local (Art, readCache)
-	class_method_local (Art, description)
-	class_methods_end
-}
+Thing_implement (Art, Data, 0);
 
 Art Art_create (void) {
 	return Thing_new (Art);

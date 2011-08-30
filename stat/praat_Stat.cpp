@@ -238,16 +238,14 @@ END
 /***** TABLE *****/
 
 DIRECT (Tables_append)
-	autoCollection me = Collection_create (classTable, 10);
-	try {
-		LOOP Collection_addItem (me.peek(), OBJECT);   // dangle (share pointers)
-		autoTable thee = Tables_append (me.peek());
-		praat_new (thee.transfer(), L"appended");
-		my size = 0;   //undangle (UGLY)
-	} catch (MelderError) {
-		my size = 0;   //undangle (UGLY)
-		throw;
+	autoCollection collection = Collection_create (classTable, 10);
+	Collection_dontOwnItems (collection.peek());
+	LOOP {
+		iam (Table);
+		Collection_addItem (collection.peek(), me);
 	}
+	autoTable thee = Tables_append (collection.peek());
+	praat_new (thee.transfer(), L"appended");
 END
 
 FORM (Table_appendColumn, L"Table: Append column", 0)
@@ -1687,8 +1685,8 @@ static Any tabSeparatedFileRecognizer (int nread, const char *header, MelderFile
 	return Table_readFromCharacterSeparatedTextFile (file, '\t');
 }
 
-extern "C" void praat_TableOfReal_init (void *klas);   /* Buttons for TableOfReal and for its subclasses. */
-extern "C" void praat_TableOfReal_init (void *klas) {
+void praat_TableOfReal_init (ClassInfo klas);   /* Buttons for TableOfReal and for its subclasses. */
+void praat_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_TableOfReal_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (klas, 0, L"Draw -", 0, 0, 0);
@@ -1750,8 +1748,8 @@ extern "C" void praat_TableOfReal_init (void *klas) {
 		praat_addAction1 (klas, 0, L"To Matrix", 0, 1, DO_TableOfReal_to_Matrix);
 }
 
-extern "C" void praat_uvafon_Stat_init (void);
-extern "C" void praat_uvafon_Stat_init (void) {
+void praat_uvafon_stat_init ();
+void praat_uvafon_stat_init () {
 
 	Thing_recognizeClassesByName (classTableOfReal, classDistributions, classPairDistribution,
 		classTable, classLinearRegression, classLogisticRegression, NULL);

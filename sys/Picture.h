@@ -50,6 +50,8 @@
 #define Picture PictureNotMac
 #endif
 
+#include "Graphics.h"
+
 typedef struct structPicture *Picture;
 
 Picture Picture_create (GuiObject drawingArea, Boolean sensitive);
@@ -64,7 +66,7 @@ Picture Picture_create (GuiObject drawingArea, Boolean sensitive);
 		selection is [0, 1] x [0, 1] (NDC), which is invisible;
 */
 
-Any Picture_getGraphics (Picture me);
+Graphics Picture_getGraphics (Picture me);
 /*
 	Function:
 		return the Graphics object.

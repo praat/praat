@@ -41,31 +41,21 @@
 #include "Index_def.h"
 #include "oo_WRITE_BINARY.h"
 #include "Index_def.h"
+#include "oo_READ_TEXT.h"
+#include "Index_def.h"
 #include "oo_READ_BINARY.h"
 #include "Index_def.h"
 #include "oo_DESCRIPTION.h"
 #include "Index_def.h"
 
 
-static void info (I)
+Thing_implement (Index, Data, 0);
+
+void structIndex :: v_info ()
 {
-	iam (Index);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (my numberOfElements));
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (numberOfElements));
 }
-
-
-class_methods (Index, Data)
-	class_method_local (Index, destroy)
-	class_method_local (Index, copy)
-	class_method_local (Index, equal)
-	class_method_local (Index, canWriteAsEncoding)
-	class_method_local (Index, writeText)
-	class_method_local (Index, writeBinary)
-	class_method (info)
-	class_method_local (Index, readBinary)
-	class_method_local (Index, description)
-class_methods_end
 
 void Index_init (I, long numberOfElements)
 {
@@ -95,16 +85,7 @@ Index Index_extractPart (I, long from, long to)
 	} catch (MelderError) { Melder_throw (me, ": part not extracted."); }
 }
 
-class_methods (StringsIndex, Index)
-	class_method_local (StringsIndex, destroy)
-	class_method_local (StringsIndex, copy)
-	class_method_local (StringsIndex, equal)
-	class_method_local (StringsIndex, canWriteAsEncoding)
-	class_method_local (StringsIndex, writeText)
-	class_method_local (StringsIndex, writeBinary)
-	class_method_local (StringsIndex, readBinary)
-	class_method_local (StringsIndex, description)
-class_methods_end
+Thing_implement (StringsIndex, Index, 0);
 
 StringsIndex StringsIndex_create (long numberOfElements)
 {

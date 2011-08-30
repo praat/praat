@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_Exp_init (ManPages me);
-extern "C" void manual_Exp_init (ManPages me) {
+void manual_Exp_init (ManPages me);
+void manual_Exp_init (ManPages me) {
 
 MAN_BEGIN (L"ExperimentMFC", L"ppgb", 20051205)
 INTRO (L"One of the @@types of objects@ in Praat, "

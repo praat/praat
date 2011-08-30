@@ -30,7 +30,7 @@
 
 Thing_implement (OTMultiEditor, HyperPage, 0);
 
-static int menu_cb_evaluate (EDITOR_ARGS) {
+static void menu_cb_evaluate (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	EDITOR_FORM (L"Evaluate", 0)
 		REAL (L"Evaluation noise", L"2.0")
@@ -39,29 +39,27 @@ static int menu_cb_evaluate (EDITOR_ARGS) {
 		Editor_save (me, L"Evaluate");
 		OTMulti_newDisharmonies ((OTMulti) my data, GET_REAL (L"Evaluation noise"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
+static void menu_cb_evaluate_noise_2_0 (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	Editor_save (me, L"Evaluate (noise 2.0)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 2.0);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
+static void menu_cb_evaluate_tinyNoise (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	Editor_save (me, L"Evaluate (tiny noise)");
 	OTMulti_newDisharmonies ((OTMulti) my data, 1e-9);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_editRanking (EDITOR_ARGS) {
+static void menu_cb_editRanking (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	EDITOR_FORM (L"Edit ranking", 0)
 		LABEL (L"constraint", L"");
@@ -84,11 +82,11 @@ static int menu_cb_editRanking (EDITOR_ARGS) {
 		constraint -> disharmony = GET_REAL (L"Disharmony");
 		OTMulti_sort (grammar);
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_learnOne (EDITOR_ARGS) {
+static void menu_cb_learnOne (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	EDITOR_FORM (L"Learn one", L"OTGrammar: Learn one...")
 		OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
@@ -109,11 +107,11 @@ static int menu_cb_learnOne (EDITOR_ARGS) {
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Direction"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading")); therror
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_removeConstraint (EDITOR_ARGS) {
+static void menu_cb_removeConstraint (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	OTMulti grammar = (OTMulti) my data;
 	if (my selectedConstraint < 1 || my selectedConstraint > grammar -> numberOfConstraints)
@@ -122,11 +120,10 @@ static int menu_cb_removeConstraint (EDITOR_ARGS) {
 	Editor_save (me, L"Remove constraint");
 	OTMulti_removeConstraint (grammar, constraint -> name);
 	Graphics_updateWs (my g);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_resetAllRankings (EDITOR_ARGS) {
+static void menu_cb_resetAllRankings (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	EDITOR_FORM (L"Reset all rankings", 0)
 		REAL (L"Ranking", L"100.0")
@@ -135,15 +132,14 @@ static int menu_cb_resetAllRankings (EDITOR_ARGS) {
 		Editor_save (me, L"Reset all rankings");
 		OTMulti_reset ((OTMulti) my data, GET_REAL (L"Ranking"));
 		Graphics_updateWs (my g);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_OTLearningTutorial (EDITOR_ARGS) {
+static void menu_cb_OTLearningTutorial (EDITOR_ARGS) {
 	EDITOR_IAM (OTMultiEditor);
 	(void) me;
 	Melder_help (L"OT learning");
-	return 1;
 }
 
 static void do_limit (OTMultiEditor me) {
@@ -173,7 +169,7 @@ void structOTMultiEditor :: v_createChildren () {
 		#define STRING_SPACING 2
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	GuiButton_createShown (dialog, 4, 124, y, y + height,
+	GuiButton_createShown (d_windowForm, 4, 124, y, y + height,
 		L"Partial forms:", gui_button_cb_limit, this,
 		#ifdef _WIN32
 			GuiButton_DEFAULT   // BUG: clickedCallback should work for texts
@@ -181,12 +177,12 @@ void structOTMultiEditor :: v_createChildren () {
 			0
 		#endif
 		);
-	form1Text = GuiText_createShown (dialog, 124 + STRING_SPACING, 274 + STRING_SPACING, y, Gui_AUTOMATIC, 0);
+	form1Text = GuiText_createShown (d_windowForm, 124 + STRING_SPACING, 274 + STRING_SPACING, y, Gui_AUTOMATIC, 0);
 	#if motif
 	/* TODO */
 	XtAddCallback (form1Text, XmNactivateCallback, gui_cb_limit, (XtPointer) this);
 	#endif
-	form2Text = GuiText_createShown (dialog, 274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, Gui_AUTOMATIC, 0);
+	form2Text = GuiText_createShown (d_windowForm, 274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, Gui_AUTOMATIC, 0);
 	#if motif
 	/* TODO */
 	XtAddCallback (form2Text, XmNactivateCallback, gui_cb_limit, (XtPointer) this);

@@ -26,42 +26,42 @@
 	
 #include "Sound.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (Filter);
-struct structFilter : public structData {
-	double dT;
-	double a, b, c;
-	double p1, p2;
+Thing_define (Filter, Data) {
+	// new data:
+	public:
+		double dT;
+		double a, b, c;
+		double p1, p2;
+	// new methods:
+		virtual double v_getOutput (double input);
+		virtual void v_setFB (double f, double b);
+		virtual void v_resetMemory ();
 };
-#define Filter__methods(klas) Data__methods(klas) \
-	double (*getOutput) (I, double input); \
-	void (*setFB) (I, double f, double b); \
-	void (*resetMemory)(I);
-Thing_declare2cpp (Filter, Data);
 
-Thing_declare1cpp (Resonator);
-struct structResonator : public structFilter {
-	int normalisation;
+Thing_define (Resonator, Filter) {
+	// new data:
+	public:
+		int normalisation;
+	// overridden methods:
+		virtual void v_setFB (double f, double b);
 };
-#define Resonator__methods(klas) Filter__methods(klas)
-Thing_declare2cpp (Resonator, Filter);
 
-Thing_declare1cpp (AntiResonator);
-struct structAntiResonator : public structResonator {
+Thing_define (AntiResonator, Resonator) {
+	// overridden methods:
+		virtual double v_getOutput (double input);
+		virtual void v_setFB (double f, double b);
 };
-#define AntiResonator__methods(klas) Resonator__methods(klas)
-Thing_declare2cpp (AntiResonator, Filter);
 
-Thing_declare1cpp (ConstantGainResonator);
-struct structConstantGainResonator : public structFilter {
-	double d;
-	double p3, p4;
+Thing_define (ConstantGainResonator, Filter) {
+	// new data:
+	public:
+		double d;
+		double p3, p4;
+	// overridden methods:
+		virtual double v_getOutput (double input);
+		virtual void v_setFB (double f, double b);
+		virtual void v_resetMemory ();
 };
-#define ConstantGainResonator__methods(klas) Filter__methods(klas)
-Thing_declare2cpp (ConstantGainResonator, Filter);
 
 #define Resonator_NORMALISATION_H0 0
 #define Resonator_NORMALISATION_HMAX 1
@@ -83,10 +83,6 @@ void Filter_setFB (I, double f, double b);
 double Filter_getOutput (I, double input);
 
 void Filter_resetMemory (I);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Resonator_h_ */
 

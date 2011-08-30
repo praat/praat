@@ -25,11 +25,12 @@
 
 /********** class SpectrumTier **********/
 
-Thing_declare1cpp (SpectrumTier);
-struct structSpectrumTier : public structRealTier {
+Thing_define (SpectrumTier, RealTier) {
+	// overridden methods:
+	protected:
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_FREQUENCY_HERTZ; }
 };
-#define SpectrumTier__methods(klas) RealTier__methods(klas)
-Thing_declare2cpp (SpectrumTier, RealTier);
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax);
 /*

@@ -17,11 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 1998
- djmw 20020813 GPL header
- djmw 20060529 Added object version numbers.
-*/
 
 #define ooSTRUCT Discriminant
 oo_DEFINE_CLASS (Discriminant, Eigen)
@@ -29,8 +24,13 @@ oo_DEFINE_CLASS (Discriminant, Eigen)
 	oo_LONG (numberOfGroups)
 	oo_OBJECT (SSCPs, 0, groups)
 	oo_OBJECT (SSCP, 0, total)
-	oo_DOUBLE_VECTOR (aprioriProbabilities, my numberOfGroups)
-	oo_DOUBLE_MATRIX (costs, my numberOfGroups, my numberOfGroups)
+	oo_DOUBLE_VECTOR (aprioriProbabilities, numberOfGroups)
+	oo_DOUBLE_MATRIX (costs, numberOfGroups, numberOfGroups)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS (Discriminant)	
 #undef ooSTRUCT

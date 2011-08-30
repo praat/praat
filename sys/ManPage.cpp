@@ -17,13 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1997/01/29
- * pb 2002/03/07 GPL
- * pb 2009/03/18 modern enums
- * pb 2011/05/15 C++
- */
-
 #include "ManPage.h"
 
 #include "enums_getText.h"
@@ -31,8 +24,6 @@
 #include "enums_getValue.h"
 #include "ManPage_enums.h"
 
-class_methods (ManPage, Thing) {
-	class_methods_end
-}
+Thing_implement (ManPage, Thing, 0);
 
 /* End of file ManPage.cpp */

@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020812 GPL header
- djmw 20080122 Version 1: float -> double
-*/
 
 #define ooSTRUCT LPC_Frame
 oo_DEFINE_STRUCT (LPC_Frame)
@@ -29,30 +25,38 @@ oo_DEFINE_STRUCT (LPC_Frame)
 	#if oo_READING_BINARY
 		if (localVersion == 0) 
 		{
-			oo_FLOAT_VECTOR (a, my nCoefficients)
+			oo_FLOAT_VECTOR (a, nCoefficients)
 			oo_FLOAT (gain)
 		}
 		else
 		{
-			oo_DOUBLE_VECTOR (a, my nCoefficients)
+			oo_DOUBLE_VECTOR (a, nCoefficients)
 			oo_DOUBLE (gain)
 		}
 	#else
-		oo_DOUBLE_VECTOR (a, my nCoefficients)
+		oo_DOUBLE_VECTOR (a, nCoefficients)
 		oo_DOUBLE (gain)
 	#endif
 	
 oo_END_STRUCT (LPC_Frame)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT LPC
 oo_DEFINE_CLASS (LPC, Sampled)
+
 	/* samplingPeriod */
 	oo_DOUBLE (samplingPeriod) /* from Sound */
 	oo_INT (maxnCoefficients)
-	oo_STRUCT_VECTOR (LPC_Frame, frame, my nx)
-	
+	oo_STRUCT_VECTOR (LPC_Frame, frame, nx)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
+
 oo_END_CLASS (LPC)
 #undef ooSTRUCT
+
 
 /* End of file LPC_def.h */

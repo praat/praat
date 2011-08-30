@@ -72,27 +72,17 @@
 #include "Configuration.h"
 #include "SSCP.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /************************** class Weight **************************************/
 
-Thing_declare1cpp (Weight);
-struct structWeight : public structTableOfReal {
+Thing_define (Weight, TableOfReal) {
 };
-#define Weight__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (Weight, TableOfReal);
 
 Weight Weight_create (long numberOfPoints);
 
 /************************** class Salience **************************************/
 
-Thing_declare1cpp (Salience);
-struct structSalience : public structTableOfReal {
+Thing_define (Salience, TableOfReal) {
 };
-#define Salience__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (Salience, TableOfReal);
 
 Salience Salience_create (long numberOfSources, long numberOfDimensions);
 
@@ -105,24 +95,23 @@ void Salience_draw (Salience me, Graphics g, int xdimension, int ydimension,
 
 /************************** class MDSVec ******************************/
 
-Thing_declare1cpp (MDSVec);
-struct structMDSVec : public structData {
-	long nProximities, nPoints;
-	double *proximity;
-	long *iPoint, *jPoint;
+Thing_define (MDSVec, Data) {
+	// new data:
+	public:
+		long nProximities, nPoints;
+		double *proximity;
+		long *iPoint, *jPoint;
+	// overridden methods:
+	protected:
+		virtual void v_destroy ();
 };
-#define MDSVec__methods(klas) Data__methods(klas)
-Thing_declare2cpp (MDSVec, Data);
 
 MDSVec MDSVec_create (long nObjects);
 
 /************** class MDSVecs *********************************/
 
-Thing_declare1cpp (MDSVecs);
-struct structMDSVecs : public structOrdered {
+Thing_define (MDSVecs, Ordered) {
 };
-#define MDSVecs__methods(klas) Ordered__methods(klas)
-Thing_declare2cpp (MDSVecs, Ordered);
 
 MDSVecs MDSVecs_create (void);
 
@@ -132,23 +121,17 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me,
 
 /********************* class Proximities *******************************/
 
-Thing_declare1cpp (Proximities);
-struct structProximities : public structTablesOfReal {
+Thing_define (Proximities, TablesOfReal) {
 };
-#define Proximities__methods(klas) TablesOfReal__methods(klas)
-Thing_declare2cpp (Proximities, TablesOfReal);
 
-void Proximities_init (I, void *klas);
+void Proximities_init (I, ClassInfo klas);
 
 Proximities Proximities_create (void);
 
 /****************** class Confusions **********************************/
 
-Thing_declare1cpp (Confusions);
-struct structConfusions : public structProximities {
+Thing_define (Confusions, Proximities) {
 };
-#define Confusions__methods(klas) Proximities__methods(klas)
-Thing_declare2cpp (Confusions, Proximities);
 
 Confusions Confusions_create (void);
 
@@ -156,44 +139,30 @@ Confusion Confusions_sum (Confusions me);
 
 /************* class Distances **************************************/
 
-Thing_declare1cpp (Distances);
-struct structDistances : public structProximities {
+Thing_define (Distances, Proximities) {
 };
-#define Distances__methods(klas) Proximities__methods(klas)
-Thing_declare2cpp (Distances, Proximities);
 
 Distances Distances_create (void);
 
-
 /**************** class ScalarProduct **************************************/
 
-Thing_declare1cpp (ScalarProduct);
-struct structScalarProduct : public structTableOfReal {
+Thing_define (ScalarProduct, TableOfReal) {
 };
-#define ScalarProduct__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (ScalarProduct, TableOfReal);
 
 ScalarProduct ScalarProduct_create (long numberOfPoints);
 
-
 /************** class ScalarProducts ********************************/
 
-Thing_declare1cpp (ScalarProducts);
-struct structScalarProducts : public structTablesOfReal {
+Thing_define (ScalarProducts, TablesOfReal) {
 };
-#define ScalarProducts__methods(klas) TablesOfReal__methods(klas)
-Thing_declare2cpp (ScalarProducts, TablesOfReal);
 
 ScalarProducts ScalarProducts_create (void);
 
 
 /************* class Dissimilarity *********************************/
 
-Thing_declare1cpp (Dissimilarity);
-struct structDissimilarity : public structProximity {
+Thing_define (Dissimilarity, Proximity) {
 };
-#define Dissimilarity__methods(klas) Proximity__methods(klas)
-Thing_declare2cpp (Dissimilarity, Proximity);
 
 Dissimilarity Dissimilarity_create (long numberOfPoints);
 
@@ -208,14 +177,14 @@ int Dissimilarity_getAdditiveConstant (I, double *c);
 
 /****************** class Transformator *******************************/
 
-Thing_declare1cpp (Transformator);
-struct structTransformator : public structThing {
-	long numberOfPoints;
-	int normalization;
+Thing_define (Transformator, Thing) {
+	// new data:
+	public:
+		long numberOfPoints;
+		int normalization;
+	// new methods:
+		virtual Distance v_transform (MDSVec vec, Distance dist, Weight w);
 };
-#define Transformator__methods(klas) Thing__methods(klas)	\
-	Distance (*transform) (I, MDSVec vec, Distance dist, Weight w);
-Thing_declare2cpp (Transformator, Thing);
 
 void Transformator_init (I, long numberOfPoints);
 
@@ -225,32 +194,36 @@ void Transformator_setNormalization (I, int normalization);
 
 Distance Transformator_transform (I, MDSVec vec, Distance dist, Weight w);
 
-Thing_declare1cpp (ISplineTransformator);
-struct structISplineTransformator : public structTransformator {
-	long numberOfInteriorKnots, order, numberOfParameters;
-	double **m, *b, *knot;
+Thing_define (ISplineTransformator, Transformator) {
+	// new data:
+	public:
+		long numberOfInteriorKnots, order, numberOfParameters;
+		double **m, *b, *knot;
+	// overridden methods:
+		virtual void v_destroy ();
+		virtual Distance v_transform (MDSVec vec, Distance dist, Weight w);
 };
-#define ISplineTransformator__methods(klas) Transformator__methods(klas)
-Thing_declare2cpp (ISplineTransformator, Transformator);
 
 ISplineTransformator ISplineTransformator_create (long numberOfPoints, long numberOfInteriorKnots,
 	long order);
 
-Thing_declare1cpp (RatioTransformator);
-struct structRatioTransformator : public structTransformator {
-	double ratio;
+Thing_define (RatioTransformator, Transformator) {
+	// new data:
+	public:
+		double ratio;
+	// overridden methods:
+		virtual Distance v_transform (MDSVec vec, Distance dist, Weight w);
 };
-#define RatioTransformator__methods(klas) Transformator__methods(klas)
-Thing_declare2cpp (RatioTransformator, Transformator);
 
 RatioTransformator RatioTransformator_create (long numberOfPoints);
 
-Thing_declare1cpp (MonotoneTransformator);
-struct structMonotoneTransformator : public structTransformator {
-	int tiesProcessing;
+Thing_define (MonotoneTransformator, Transformator) {
+	// new data:
+	public:
+		int tiesProcessing;
+	// overridden methods:
+		virtual Distance v_transform (MDSVec vec, Distance dist, Weight w);
 };
-#define MonotoneTransformator__methods(klas) Transformator__methods(klas)
-Thing_declare2cpp (MonotoneTransformator, Transformator);
 
 MonotoneTransformator MonotoneTransformator_create (long numberPoints);
 
@@ -260,41 +233,36 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator,
 
 /*************** class Dissimilarities ****************************/
 
-Thing_declare1cpp (Dissimilarities);
-struct structDissimilarities : public structProximities {
+Thing_define (Dissimilarities, Proximities) {
 };
-#define Dissimilarities__methods(klas) Proximities__methods(klas)
-Thing_declare2cpp (Dissimilarities, Proximities);
 
 Dissimilarities Dissimilarities_create (void);
 
 /**************** class Similarity *****************************/
 
-Thing_declare1cpp (Similarity);
-struct structSimilarity : public structProximity {
+Thing_define (Similarity, Proximity) {
 };
-#define Similarity__methods(klas) Proximity__methods(klas)
-Thing_declare2cpp (Similarity, Proximity);
 
 Similarity Similarity_create (long numberOfPoints);
 
 
 /************** KRUSKAL *********************************************/
 
-Thing_declare1cpp (Kruskal);
-struct structKruskal : public structThing {
-	int process;
-	int measurementLevel;
-	int conditionality;
-	Configuration configuration;
-	Proximities proximities;
-	int stress_formula;
-	MDSVec vec;
-	double **dx;
-	Minimizer minimizer;
+Thing_define (Kruskal, Thing) {
+	// new data:
+	public:
+		int process;
+		int measurementLevel;
+		int conditionality;
+		Configuration configuration;
+		Proximities proximities;
+		int stress_formula;
+		MDSVec vec;
+		double **dx;
+		Minimizer minimizer;
+	// overridden methods:
+		virtual void v_destroy ();
 };
-#define Kruskal__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (Kruskal, Thing);
 
 Kruskal Kruskal_create (long numberOfpoints, long numberOfDimensions);
 
@@ -699,9 +667,5 @@ void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	int type, long order, wchar_t const *interiorKnots, int garnish);
 
 void drawMDSClassRelations (Graphics g);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _MDS_h_ */

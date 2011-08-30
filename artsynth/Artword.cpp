@@ -38,18 +38,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Artword_def.h"
 
-class_methods (Artword, Data) {
-	class_method_local (Artword, destroy)
-	class_method_local (Artword, description)
-	class_method_local (Artword, copy)
-	class_method_local (Artword, equal)
-	class_method_local (Artword, canWriteAsEncoding)
-	class_method_local (Artword, writeText)
-	class_method_local (Artword, readText)
-	class_method_local (Artword, writeBinary)
-	class_method_local (Artword, readBinary)
-	class_methods_end
-}
+Thing_implement (Artword, Data, 0);
 
 Artword Artword_create (double totalTime) {
 	Artword me = Thing_new (Artword);

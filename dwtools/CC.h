@@ -29,12 +29,7 @@
 #include "Graphics.h"
 #include "Matrix.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "CC_def.h"
-#define CC__methods(klas) Sampled__methods(klas)
 oo_CLASS_CREATE (CC, Sampled);
 
 void CC_init (I, double tmin, double tmax, long nt, double dt, double t1,
@@ -60,9 +55,5 @@ double CC_getValue (I, double t, long index);
 /******************* Frames ************************************************/
 
 void CC_Frame_init (CC_Frame me, long numberOfCoefficients);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _CC_h_ */

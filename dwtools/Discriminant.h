@@ -19,24 +19,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 2000
- djmw 20020813 GPL header
- djmw 20110306 Latest modification.
-*/
-
 #include "Graphics.h"
 #include "Configuration.h"
 #include "ClassificationTable.h"
 #include "Eigen.h"
 #include "SSCP.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Discriminant_def.h"
-#define Discriminant__methods(klas) Eigen__methods(klas)
 oo_CLASS_CREATE (Discriminant, Eigen);
 
 Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension);
@@ -101,9 +90,5 @@ Discriminant TableOfReal_to_Discriminant (I);
 
 Configuration TableOfReal_to_Configuration_lda (TableOfReal me,
 	long numberOfDimensions);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Discriminant_h_ */

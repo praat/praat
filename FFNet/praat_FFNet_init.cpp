@@ -678,8 +678,8 @@ DO
 		GET_REAL (L"Tolerance of minimizer"), &p, GET_INTEGER (L"Cost function"));
 END
 
-extern "C" void praat_uvafon_FFNet_init (void);
-extern "C" void praat_uvafon_FFNet_init (void)
+void praat_uvafon_FFNet_init (void);
+void praat_uvafon_FFNet_init (void)
 {
 	Thing_recognizeClassesByName (classFFNet, NULL);
 

@@ -19,22 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20050724
- djmw 20110306 Latest modification.
-*/
-
 #include "Collection.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Index_def.h"
-#define Index__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Index, Data);
-
-#define StringsIndex__methods(klas) Index__methods(klas)
 oo_CLASS_CREATE (StringsIndex, Index);
 
 void Index_init (I, long numberOfElements);
@@ -46,10 +34,5 @@ StringsIndex StringsIndex_create (long numberOfElements);
 int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel);
 
 long StringsIndex_countItems (StringsIndex me, int iclas);
-
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Index_h_ */

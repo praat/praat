@@ -22,8 +22,13 @@ oo_DEFINE_CLASS (GaussianMixture, Data)
 
 	oo_LONG (numberOfComponents)
 	oo_LONG (dimension)
-	oo_DOUBLE_VECTOR (mixingProbabilities, my numberOfComponents)
+	oo_DOUBLE_VECTOR (mixingProbabilities, numberOfComponents)
 	oo_COLLECTION (Ordered, covariances, Covariance, 0)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
 oo_END_CLASS(GaussianMixture)
 #undef ooSTRUCT

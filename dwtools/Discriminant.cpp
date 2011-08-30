@@ -68,31 +68,17 @@
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
-static void info (I) {
-	iam (Discriminant);
+Thing_implement (Discriminant, Eigen, 0);
 
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of groups: ", Melder_integer (my numberOfGroups));
-	MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (my dimension));
+void structDiscriminant :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of groups: ", Melder_integer (numberOfGroups));
+	MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (dimension));
 	MelderInfo_writeLine2 (L"Number of discriminant functions: ",
-		Melder_integer (Discriminant_getNumberOfFunctions (me)));
+		Melder_integer (Discriminant_getNumberOfFunctions (this)));
 	MelderInfo_writeLine2 (L"Number of observations (total): ",
-		Melder_integer (Discriminant_getNumberOfObservations (me, 0)));
+		Melder_integer (Discriminant_getNumberOfObservations (this, 0)));
 }
-
-class_methods (Discriminant, Eigen)
-	class_method_local (Discriminant, destroy)
-	class_method_local (Discriminant, description)
-	class_method_local (Discriminant, copy)
-	class_method_local (Discriminant, equal)
-	class_method_local (Discriminant, canWriteAsEncoding)
-	class_method_local (Discriminant, writeText)
-	class_method_local (Discriminant, readText)
-	class_method_local (Discriminant, writeBinary)
-	class_method_local (Discriminant, readBinary)
-	class_method (info)
-class_methods_end
-
 
 Discriminant Discriminant_create (long numberOfGroups, long numberOfEigenvalues, long dimension)
 {
@@ -346,7 +332,7 @@ SSCP Discriminant_extractWithinGroupSSCP (Discriminant me, long index)
 	try {
 		if (index < 1 || index > my numberOfGroups) Melder_throw
 			("Index must be in interval [1,", my numberOfGroups, "].");
-		autoSSCP thee = (SSCP) Data_copy (my groups -> item[index]);
+		autoSSCP thee = Data_copy ((SSCP) my groups -> item[index]);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": within group SSCP not created."); }
 }
@@ -745,7 +731,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 			// In case of a singular matrix, substitute inverse of pooled.
 
 			agroups.reset((SSCPs) Data_copy (my groups)); groups = agroups.peek();
-			long npool = 0;
+			long npool = 0;   // David, dit is de tweede definitie van npool; is dat goed?
 			for (long j = 1; j <= g; j++)
 			{
 				SSCP t = (SSCP) groups -> item[j];

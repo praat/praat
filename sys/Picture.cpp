@@ -41,7 +41,7 @@
 
 struct structPicture {
 	GuiObject drawingArea;
-	Any graphics, selectionGraphics;
+	Graphics graphics, selectionGraphics;
 	Boolean sensitive;
 	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
 	void (*selectionChangedCallback) (struct structPicture *, XtPointer, double, double, double, double);
@@ -149,8 +149,8 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		cairo_t *csgr = (cairo_t *) Graphics_x_getCR (my selectionGraphics);
 		
 		// set new cairo contexts
-		Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
-		Graphics_x_setCR (my selectionGraphics, gdk_cairo_create (GDK_DRAWABLE (event -> widget -> window)));
+		Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget) -> window)));
+		Graphics_x_setCR (my selectionGraphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget) -> window)));
 		// - Graphics_x_setCR(my graphics, Graphics_x_getCR(my selectionGraphics));
 		// g_debug ("%d %d %d %d\n", event->x, event->y, event->width, event->height);
 		cairo_rectangle ((cairo_t *) Graphics_x_getCR (my graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
@@ -361,7 +361,7 @@ void Picture_remove (Picture *pme) {
 	*pme = NULL;
 }
 
-Any Picture_getGraphics (Picture me) { return my graphics; }
+Graphics Picture_getGraphics (Picture me) { return my graphics; }
 
 void Picture_unhighlight (Picture me) {
 	if (my drawingArea) drawSelection (me, 0);   // unselect
@@ -758,7 +758,7 @@ void Picture_setSelection
 			long x1, x2, y1, y2;
 			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
+			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea), x1, y2, abs (x2 - x1), abs (y2 - y1));
 		#else
 			drawSelection (me, 0);   // unselect
 		#endif
@@ -772,7 +772,7 @@ void Picture_setSelection
 			long x1, x2, y1, y2;
 			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
+			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea), x1, y2, abs (x2 - x1), abs (y2 - y1));
 		#else
 			drawSelection (me, 1);   // select
 		#endif
@@ -794,7 +794,7 @@ void Picture_selfExpose (Picture me) {
 		long x1, x2, y1, y2;
 		Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 		Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-		gtk_widget_queue_draw_area (my drawingArea, x1, y2, abs (x2 - x1), abs (y2 - y1));
+		gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea), x1, y2, abs (x2 - x1), abs (y2 - y1));
 	}
 }
 #endif

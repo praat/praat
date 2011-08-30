@@ -49,9 +49,9 @@ oo_DEFINE_STRUCT (DTW_Path_Query)
 	oo_LONG (nx)
 	oo_LONG (ny)
 	oo_LONG (nxy)
-	oo_STRUCT_VECTOR (DTW_Path_xytime, xytimes, my nxy)
-	oo_STRUCT_VECTOR (DTW_Path_Index, xindex, my nx)
-	oo_STRUCT_VECTOR (DTW_Path_Index, yindex, my ny)
+	oo_STRUCT_VECTOR (DTW_Path_xytime, xytimes, nxy)
+	oo_STRUCT_VECTOR (DTW_Path_Index, xindex, nx)
+	oo_STRUCT_VECTOR (DTW_Path_Index, yindex, ny)
 oo_END_STRUCT (DTW_Path_Query) 
 #undef ooSTRUCT
 
@@ -59,7 +59,7 @@ oo_END_STRUCT (DTW_Path_Query)
 oo_DEFINE_CLASS (DTW, Matrix)
 	oo_DOUBLE (weightedDistance)
 	oo_LONG (pathLength)
-	oo_STRUCT_VECTOR (DTW_Path, path, my pathLength)
+	oo_STRUCT_VECTOR (DTW_Path, path, pathLength)
 	#if ! oo_READING && ! oo_WRITING
 		oo_DOUBLE (wx)
 		oo_DOUBLE (wy)
@@ -67,8 +67,12 @@ oo_DEFINE_CLASS (DTW, Matrix)
 		oo_STRUCT (DTW_Path_Query, pathQuery)
 	#endif
 	#if oo_READING
-		DTW_Path_Query_init (& my pathQuery, my ny, my nx);
-		DTW_Path_recode (me);
+		DTW_Path_Query_init (& pathQuery, ny, nx);
+		DTW_Path_recode (this);
+	#endif
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
 	#endif
 oo_END_CLASS (DTW)
 #undef ooSTRUCT

@@ -22,7 +22,7 @@
 
 Thing_implement (IntensityTierEditor, RealTierEditor, 0);
 
-static int menu_cb_IntensityTierHelp (EDITOR_ARGS) { EDITOR_IAM (IntensityTierEditor); Melder_help (L"IntensityTier"); return 1; }
+static void menu_cb_IntensityTierHelp (EDITOR_ARGS) { EDITOR_IAM (IntensityTierEditor); Melder_help (L"IntensityTier"); }
 
 void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	IntensityTierEditor_Parent :: v_createHelpMenuItems (menu);

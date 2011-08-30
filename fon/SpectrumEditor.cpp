@@ -76,7 +76,7 @@ int structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 }
 
 static Spectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
-	autoSpectrum band = (Spectrum) Data_copy (me); therror
+	autoSpectrum band = Data_copy (me);
 	double *re = band -> z [1], *im = band -> z [2];
 	long imin = Sampled_xToLowIndex (band.peek(), fmin), imax = Sampled_xToHighIndex (band.peek(), fmax);
 	for (long i = 1; i <= imin; i ++) re [i] = 0.0, im [i] = 0.0;
@@ -95,25 +95,19 @@ void structSpectrumEditor :: v_play (double fmin, double fmax) {
 	Sound_play (sound.peek(), NULL, NULL);
 }
 
-static int menu_cb_publishBand (EDITOR_ARGS) {
+static void menu_cb_publishBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
-	Spectrum publish = Spectrum_band ((Spectrum) my data, my startSelection, my endSelection);
-	if (! publish) return 0;
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	autoSpectrum publish = Spectrum_band ((Spectrum) my data, my startSelection, my endSelection);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_publishSound (EDITOR_ARGS) {
+static void menu_cb_publishSound (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
-	Sound publish = Spectrum_to_Sound_part ((Spectrum) my data, my startSelection, my endSelection);
-	if (! publish) return 0;
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	autoSound publish = Spectrum_to_Sound_part ((Spectrum) my data, my startSelection, my endSelection);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_passBand (EDITOR_ARGS) {
+static void menu_cb_passBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	EDITOR_FORM (L"Filter (pass Hann band)", L"Spectrum: Filter (pass Hann band)...");
 		REAL (L"Band smoothing (Hz)", L"100.0")
@@ -125,11 +119,11 @@ static int menu_cb_passBand (EDITOR_ARGS) {
 		Editor_save (me, L"Pass band");
 		Spectrum_passHannBand ((Spectrum) my data, my startSelection, my endSelection, my bandSmoothing);
 		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_stopBand (EDITOR_ARGS) {
+static void menu_cb_stopBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	EDITOR_FORM (L"Filter (stop Hann band)", 0)
 		REAL (L"Band smoothing (Hz)", L"100.0")
@@ -141,11 +135,11 @@ static int menu_cb_stopBand (EDITOR_ARGS) {
 		Editor_save (me, L"Stop band");
 		Spectrum_stopHannBand ((Spectrum) my data, my startSelection, my endSelection, my bandSmoothing);
 		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_setDynamicRange (EDITOR_ARGS) {
+static void menu_cb_setDynamicRange (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	EDITOR_FORM (L"Set dynamic range", 0)
 		POSITIVE (L"Dynamic range (dB)", L"60.0")
@@ -158,8 +152,8 @@ static int menu_cb_setDynamicRange (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"SpectrumEditor"); return 1; }
-static int menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"Spectrum"); return 1; }
+static void menu_cb_help_SpectrumEditor (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"SpectrumEditor"); }
+static void menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); Melder_help (L"Spectrum"); }
 
 void structSpectrumEditor :: v_createMenus () {
 	SpectrumEditor_Parent :: v_createMenus ();

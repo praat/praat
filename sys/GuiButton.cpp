@@ -57,7 +57,7 @@ typedef struct structGuiButton {
 			try {
 				my activateCallback (my activateBoss, & event);
 			} catch (MelderError) {
-				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+				Melder_error_ ("Your click on button \"", GTK_WIDGET (widget) -> name, "\" was not completely handled.");
 				Melder_flushError (NULL);
 			}
 		}
@@ -152,11 +152,11 @@ GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int 
 
 		// TODO: use gtk_box_pack_start(GTK_BOX(parent), my widget, FALSE, FALSE, ?)
 		if (parent)
-			gtk_container_add (GTK_CONTAINER (parent), my widget);
+			gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (my widget));
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
 			GTK_WIDGET_SET_FLAGS (my widget, GTK_CAN_DEFAULT);
-			GtkWidget *shell = gtk_widget_get_toplevel (my widget);
-			gtk_window_set_default (GTK_WINDOW (shell), my widget);
+			GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (my widget));
+			gtk_window_set_default (GTK_WINDOW (shell), GTK_WIDGET (my widget));
 		} else if (1) {
 			gtk_button_set_focus_on_click (GTK_BUTTON (my widget), false);
 			GTK_WIDGET_UNSET_FLAGS (my widget, GTK_CAN_DEFAULT);

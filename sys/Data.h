@@ -23,59 +23,70 @@
 /* It adds the functionality of reproduction, comparison, reading, and writing. */
 #include "Thing.h"
 
-Thing_declare1cpp (Data);
-struct structData : public structThing {
-};
-#define Data__methods(Klas) Thing__methods(Klas) \
-	struct structData_Description *description; \
-	void (*copy) (Any data_from, Any data_to); \
-	bool (*equal) (Any data1, Any data2); \
-	bool (*canWriteAsEncoding) (I, int outputEncoding); \
-	void (*writeText) (I, MelderFile openFile); \
-	void (*readText) (I, MelderReadText text); \
-	void (*writeBinary) (I, FILE *f); \
-	void (*readBinary) (I, FILE *f); \
-	void (*writeCache) (I, CACHE *f); \
-	void (*readCache) (I, CACHE *f); \
-	void (*writeLisp) (I, FILE *f); \
-	void (*readLisp) (I, FILE *f); \
-	/* Messages for scripting. */ \
-	double (*getNrow) (I); \
-	double (*getNcol) (I); \
-	double (*getXmin) (I); \
-	double (*getXmax) (I); \
-	double (*getYmin) (I); \
-	double (*getYmax) (I); \
-	double (*getNx) (I); \
-	double (*getNy) (I); \
-	double (*getDx) (I); \
-	double (*getDy) (I); \
-	double (*getX) (I, long ix); \
-	double (*getY) (I, long iy); \
-	const wchar * (*getRowStr) (I, long irow); \
-	const wchar * (*getColStr) (I, long icol); \
-	double (*getCell) (I); \
-	const wchar * (*getCellStr) (I); \
-	double (*getVector) (I, long irow, long icol); \
-	const wchar * (*getVectorStr) (I, long icol); \
-	double (*getMatrix) (I, long irow, long icol); \
-	const wchar * (*getMatrixStr) (I, long irow, long icol); \
-	double (*getFunction0) (I); \
-	double (*getFunction1) (I, long irow, double x); \
-	double (*getFunction2) (I, double x, double y); \
-	double (*getRowIndex) (I, const wchar *rowLabel); \
-	double (*getColumnIndex) (I, const wchar *columnLabel);
-Thing_declare2cpp (Data, Thing);
+typedef struct structData_Description {
+	const wchar *name;   /* The name of this field. */
+	int type;   /* bytewa..inheritwa, see below */
+	int offset;   /* The offset of this field in the enveloping struct. */
+	int size;   /* The size of this field if it is in an array. */
+	const wchar *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
+	void *tagType;   /* For structs: offset table; for classes: class pointer; for enums: enum pointer. */
+	int rank;   /* 0 = single, 1 = vector, 2 = matrix, 3 = set, -1 = array. */
+	const wchar *min1, *max1;   /* For vectors and matrices. */
+	const wchar *min2, *max2;   /* For matrices. */
+} *Data_Description;
 
-Any Data_copy (I);
+Thing_define (Data, Thing) {
+	// new methods:
+	public:
+		virtual void v_copy (Any data_to);
+		virtual bool v_equal (Any otherData);
+		virtual Data_Description v_description () { return NULL; }
+		virtual bool v_writable () { return true; }
+		virtual bool v_canWriteAsEncoding (int outputEncoding);
+		virtual void v_writeText (MelderFile openFile);
+		virtual void v_readText (MelderReadText text);
+		virtual void v_writeBinary (FILE *f);
+		virtual void v_readBinary (FILE *f);
+		// messages for scripting:
+		virtual bool v_hasGetNrow      () { return false; }   virtual double        v_getNrow      ()                      { return NUMundefined; }
+		virtual bool v_hasGetNcol      () { return false; }   virtual double        v_getNcol      ()                      { return NUMundefined; }
+		virtual bool v_hasGetXmin      () { return false; }   virtual double        v_getXmin      ()                      { return NUMundefined; }
+		virtual bool v_hasGetXmax      () { return false; }   virtual double        v_getXmax      ()                      { return NUMundefined; }
+		virtual bool v_hasGetYmin      () { return false; }   virtual double        v_getYmin      ()                      { return NUMundefined; }
+		virtual bool v_hasGetYmax      () { return false; }   virtual double        v_getYmax      ()                      { return NUMundefined; }
+		virtual bool v_hasGetNx        () { return false; }   virtual double        v_getNx        ()                      { return NUMundefined; }
+		virtual bool v_hasGetNy        () { return false; }   virtual double        v_getNy        ()                      { return NUMundefined; }
+		virtual bool v_hasGetDx        () { return false; }   virtual double        v_getDx        ()                      { return NUMundefined; }
+		virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                      { return NUMundefined; }
+		virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (long ix)               { return NUMundefined; (void) ix;   }
+		virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (long iy)               { return NUMundefined; (void) iy;   }
+		virtual bool v_hasGetRowStr    () { return false; }   virtual const wchar * v_getRowStr    (long irow)             { return NULL;         (void) irow; }
+		virtual bool v_hasGetColStr    () { return false; }   virtual const wchar * v_getColStr    (long icol)             { return NULL;         (void) icol; }
+		virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                      { return NUMundefined; }
+		virtual bool v_hasGetCellStr   () { return false; }   virtual const wchar * v_getCellStr   ()                      { return NULL; }
+		virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
+		virtual bool v_hasGetVectorStr () { return false; }   virtual const wchar * v_getVectorStr (long icol)             { return NULL;         (void) icol; }
+		virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
+		virtual bool v_hasGetMatrixStr () { return false; }   virtual const wchar * v_getMatrixStr (long irow, long icol)  { return NULL;         (void) irow; (void) icol; }
+		virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                      { return NUMundefined; }
+		virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (long irow, double x)   { return NUMundefined; (void) irow; (void) x; }
+		virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double x, double y)    { return NUMundefined; (void) x; (void) y; }
+		virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (const wchar *rowLabel) { return NUMundefined; (void) rowLabel; }
+		virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const wchar *colLabel) { return NUMundefined; (void) colLabel; }
+};
+
+template <class T> T* Data_copy (T* data) {
+	return static_cast <T*> (_Data_copy (data));
+}
+Any _Data_copy (Data me);
 /*
 	Message:
-		"return a deep copy of yourself, or NULL if out of memory."
+		"return a deep copy of yourself."
 	Postconditions:
-		result -> name == NULL;	// The only attribute NOT copied.
+		result -> name == NULL;	  // the only attribute NOT copied
 */
 
-bool Data_equal (Any data1, Any data2);
+bool Data_equal (Data data1, Data data2);
 /*
 	Message:
 		"return 1 if the shallow or deep attributes of 'data1' and 'data2' are equal;
@@ -84,14 +95,16 @@ bool Data_equal (Any data1, Any data2);
 		Data_equal (data, Data_copy (data)) should always return 1; the names are not compared.
 */
 
-bool Data_canWriteAsEncoding (I, int outputEncoding);
+typedef int (*Data_CompareFunction) (Any data1, Any data2);
+
+bool Data_canWriteAsEncoding (Data me, int outputEncoding);
 /*
 	Message:
 		"Can you write yourself in that encoding?"
 	The answer depends on whether all members can be written in that encoding.
 */
 
-bool Data_canWriteText (I);
+bool Data_canWriteText (Data me);
 /*
 	Message:
 		"Can you write yourself as text?"
@@ -99,12 +112,12 @@ bool Data_canWriteText (I);
 */
 
 MelderFile Data_createTextFile (
-	I,
+	Data me,
 	MelderFile file,
 	bool verbose
 );   // returns the input MelderFile in order to be caught by an autoMelderFile
 
-void Data_writeText (I, MelderFile openFile);
+void Data_writeText (Data me, MelderFile openFile);
 /*
 	Message:
 		"try to write yourself as text to an open file."
@@ -117,7 +130,7 @@ void Data_writeText (I, MelderFile openFile);
 		The format depends on the 'writeText' method defined by the subclass.
 */
 
-void Data_writeToTextFile (I, MelderFile file);
+void Data_writeToTextFile (Data me, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -128,7 +141,7 @@ void Data_writeToTextFile (I, MelderFile file);
 		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-void Data_writeToShortTextFile (I, MelderFile file);
+void Data_writeToShortTextFile (Data me, MelderFile file);
 /*
 	Message:
 		"try to write yourself as text to a file".
@@ -139,14 +152,14 @@ void Data_writeToShortTextFile (I, MelderFile file);
 		The format of the lines after the second line is the same as in Data_writeText.
 */
 
-bool Data_canWriteBinary (I);
+bool Data_canWriteBinary (Data me);
 /*
 	Message:
 		"Can you write yourself as binary data?"
 	The answer depends on whether the subclass defines the 'writeBinary' method.
 */
 
-void Data_writeBinary (I, FILE *f);
+void Data_writeBinary (Data me, FILE *f);
 /*
 	Message:
 		"try to write yourself as binary data to an open file."
@@ -159,7 +172,7 @@ void Data_writeBinary (I, FILE *f);
 		and IEEE floating-point format.
 */
 
-void Data_writeToBinaryFile (I, MelderFile file);
+void Data_writeToBinaryFile (Data me, MelderFile file);
 /*
 	Message:
 		"try to write yourself as binary data to a file".
@@ -169,14 +182,14 @@ void Data_writeToBinaryFile (I, MelderFile file);
 		The format of the file after this is the same as in Data_writeBinary.
 */
 
-bool Data_canWriteLisp (I);
+bool Data_canWriteLisp (Data me);
 /*
 	Message:
 		"Can you write yourself as a sequece of LISP objects?"
 	The answer depends on whether the subclass defines a 'writeLisp' method.
 */
 
-void Data_writeLisp (I, FILE *f);
+void Data_writeLisp (Data me, FILE *f);
 /*
 	Message:
 		"try to write yourself as a sequence of LISP objects to the stream <f>."
@@ -187,7 +200,7 @@ void Data_writeLisp (I, FILE *f);
 		The format depends on the 'writeLisp' method defined by the subclass.
 */
 
-void Data_writeLispToConsole (I);
+void Data_writeLispToConsole (Data me);
 /*
 	Message:
 		"try to write yourself as a sequence of LISP objects to the standard output."
@@ -198,23 +211,13 @@ void Data_writeLispToConsole (I);
 		The standard output will most often be a window named "Console".
 */
 
-void Data_writeToLispFile (I, MelderFile file);
-/*
-	Message:
-		"try to write yourself as a sequence of LISP objects to a file".
-	Description:
-		Your class name is written in the first line,
-		e.g., if you are a Person, the first line will be "PersonLispFile".
-		The format of the lines after the first line is the same as in Data_writeLisp.
-*/
-
 /*
 	The routines Data_readXXX assume that a class can be read from its name (a string).
 	You should have called Thing_recognizeClassesByName () for all the classes
 	that you want to read by name. This call is best placed in the beginning of main ().
 */
 
-bool Data_canReadText (I);
+bool Data_canReadText (Data me);
 /*
 	Message:
 		"Can you read yourself as text?"
@@ -222,7 +225,7 @@ bool Data_canReadText (I);
 	but is preferably the same as the answer from Data_canWriteText.
 */
 
-void Data_readText (I, MelderReadText text);
+void Data_readText (Data me, MelderReadText text);
 /*
 	Message:
 		"try to read yourself as text from a string."
@@ -251,7 +254,7 @@ Any Data_readFromTextFile (MelderFile file);
 		(plus those from Data_readText)
 */
 
-bool Data_canReadBinary (I);
+bool Data_canReadBinary (Data me);
 /*
 	Message:
 		"Can you read yourself as binary data?"
@@ -259,7 +262,7 @@ bool Data_canReadBinary (I);
 	but is preferably the same as the answer from Data_canWriteBinary.
 */
 
-void Data_readBinary (I, FILE *f);
+void Data_readBinary (Data me, FILE *f);
 /*
 	Message:
 		"try to read yourself as binary data from the stream <f>."
@@ -287,109 +290,6 @@ Any Data_readFromBinaryFile (MelderFile file);
 		The file <fileName> does not contain an object.
 		(plus those from Data_readBinary)
 */
-
-bool Data_canReadLisp (I);
-/*
-	Message:
-		"Can you read yourself from a sequence of LISP objects?"
-	The answer depends on whether the subclass defines a 'readLisp' method,
-	but is preferably the same as the answer from Data_canWriteLisp.
-*/
-
-void Data_readLisp (I, FILE *f);
-/*
-	Message:
-		"try to read yourself from a sequence of LISP objects in the stream <f>."
-	Failures:
-		The 'readLisp' method of the subclass failed.
-		I/O error.
-		Early end of file detected.
-	Description:
-		The format depends on the 'readLisp' method defined by the subclass,
-		but is preferably the same as the format produced by the 'writeLisp' method.
-*/
-
-Any Data_readFromLispFile (MelderFile fs);
-/*
-	Message:
-		"try to read a Data from a sequence of LISP objets in a file".
-	Description:
-		The Data's class name is read from the first line,
-		e.g., if the first line is "PersonLispFile", the Data will be a Person.
-		The format of the lines after the first line is the same as in Data_readLisp.
-	Return value:
-		the new object.
-	Failures:
-		Error opening file <fileName>.
-		The file <fileName> does not contain an object.
-		(plus those from Data_readLisp)
-*/
-
-typedef struct structData_Description {
-	const wchar_t *name;   /* The name of this field. */
-	int type;   /* bytewa..inheritwa, see below */
-	int offset;   /* The offset of this field in the enveloping struct. */
-	int size;   /* The size of this field if it is in an array. */
-	const wchar_t *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
-	void *tagType;   /* For structs: offset table; for classes: class pointer; for enums: enum pointer. */
-	int rank;   /* 0 = single, 1 = vector, 2 = matrix, 3 = set, -1 = array. */
-	const wchar_t *min1, *max1;   /* For vectors and matrices. */
-	const wchar_t *min2, *max2;   /* For matrices. */
-} *Data_Description;
-
-/* The values of 'type' in struct descriptions. */
-
-#define bytewa  1
-#define shortwa  2
-#define intwa  3
-#define longwa  4
-#define ubytewa  5
-#define ushortwa  6
-#define uintwa  7
-#define ulongwa  8
-#define boolwa 9
-#define floatwa  10
-#define doublewa  11
-#define fcomplexwa  12
-#define dcomplexwa  13
-#define enumwa  14
-#define lenumwa  15
-#define booleanwa  16
-#define questionwa  17
-#define stringwa  18
-#define lstringwa  19
-#define maxsingletypewa lstringwa
-#define structwa  20
-#define widgetwa  21
-#define objectwa  22
-#define collectionwa  23
-#define inheritwa  24
-
-/* Recursive routines for working with struct members. */
-
-int Data_Description_countMembers (Data_Description structDescription);
-/* Including inherited members. */
-
-Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *member);
-/* Find the location of member 'member' in a struct. */
-/* If 'structDescription' describes a class, the ancestor classes are also searched. */
-
-Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string);
-/* Find the first member that uses member 'string' in its size description (max1 or max2 fields). */
-
-/* Retrieving data from object + description. */
-
-long Data_Description_integer (void *structAddress, Data_Description description);
-/* Convert data found at a certain offset from 'address' to an integer, according to the given 'description'. */
-
-int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const wchar_t *formula, long *result);
-/*
- * Translates a string like '100' or 'my numberOfHorses' or 'my numberOfCows - 1' to an integer.
- * The 'algorithm' does some wild guesses as to the meanings of the 'min1' and 'max1' strings.
- * A full-fledged interpretation is preferable...
- * Returns 0 if 'formula' cannot be parsed to a number.
- */
 
 void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile fs));
 /*
@@ -450,6 +350,60 @@ Behaviour:
 */
 
 extern structMelderDir Data_directoryBeingRead;
+
+/* The values of 'type' in struct descriptions. */
+
+#define bytewa  1
+#define shortwa  2
+#define intwa  3
+#define longwa  4
+#define ubytewa  5
+#define ushortwa  6
+#define uintwa  7
+#define ulongwa  8
+#define boolwa 9
+#define floatwa  10
+#define doublewa  11
+#define fcomplexwa  12
+#define dcomplexwa  13
+#define enumwa  14
+#define lenumwa  15
+#define booleanwa  16
+#define questionwa  17
+#define stringwa  18
+#define lstringwa  19
+#define maxsingletypewa lstringwa
+#define structwa  20
+#define widgetwa  21
+#define objectwa  22
+#define collectionwa  23
+#define inheritwa  24
+
+/* Recursive routines for working with struct members. */
+
+int Data_Description_countMembers (Data_Description structDescription);
+/* Including inherited members. */
+
+Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *member);
+/* Find the location of member 'member' in a struct. */
+/* If 'structDescription' describes a class, the ancestor classes are also searched. */
+
+Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string);
+/* Find the first member that uses member 'string' in its size description (max1 or max2 fields). */
+
+/* Retrieving data from object + description. */
+
+long Data_Description_integer (void *structAddress, Data_Description description);
+/* Convert data found at a certain offset from 'address' to an integer, according to the given 'description'. */
+
+int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
+	const wchar_t *formula, long *result);
+/*
+ * Translates a string like '100' or 'my numberOfHorses' or 'my numberOfCows - 1' to an integer.
+ * The 'algorithm' does some wild guesses as to the meanings of the 'min1' and 'max1' strings.
+ * A full-fledged interpretation is preferable...
+ * Returns 0 if 'formula' cannot be parsed to a number.
+ */
 
 /* End of file Data.h */
 #endif

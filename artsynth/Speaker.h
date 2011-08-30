@@ -22,7 +22,6 @@
 #include "Data.h"
 
 #include "Speaker_def.h"
-#define Speaker__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Speaker, Data);
 
 Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses);

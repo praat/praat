@@ -30,7 +30,8 @@ Thing_declare (Editor);
 
 Thing_define (EditorMenu, Thing) {
 	// new data:
-		Editor editor;
+	public:
+		Editor d_editor;
 		const wchar *menuTitle;
 		GuiObject menuWidget;
 		Ordered commands;
@@ -40,37 +41,139 @@ Thing_define (EditorMenu, Thing) {
 
 Thing_define (EditorCommand, Thing) {
 	// new data:
-		Editor editor;
+	public:
+		Editor d_editor;
 		EditorMenu menu;
 		const wchar *itemTitle;
 		GuiObject itemWidget;
-		int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter);
+		void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter);
 		const wchar *script;
-		Any dialog;
+		UiForm d_uiform;
 	// overridden methods:
 		virtual void v_destroy ();
 };
 
 Thing_define (Editor, Thing) {
+
+	// new messages:
+	public:
+
+		void raise ()
+			/*
+			 * Message: "move your window to the front", i.e.
+			 *    if you are invisible, then make your window visible at the front;
+			 *    if you are iconized, then deiconize yourself at the front;
+			 *    if you are already visible, just move your window to the front."
+			 */
+			{
+				GuiObject_show (d_windowForm);
+			}
+
+		void dataChanged ()
+			/*
+			 * Message: "your data has changed by an action from *outside* yourself,
+			 *    so you may e.g. like to redraw yourself."
+			 */
+			{
+				v_dataChanged ();
+			}
+
+		void setDataChangedCallback (void (*dataChangedCallback) (Editor me, void *closure), void *dataChangedClosure)
+			/*
+			 * Message from boss: "notify me by calling this dataChangedCallback every time your data is changed from *inside* yourself."
+			 *
+			 * In Praat, the dataChangedCallback is useful if there is more than one editor
+			 * with the same data; in this case, the owner of all those editors will
+			 * (in the dataChangedCallback it installed) notify the change to the other editors
+			 * by sending them a dataChanged () message.
+			 */
+			{
+				d_dataChangedCallback = dataChangedCallback;
+				d_dataChangedClosure = dataChangedClosure;
+			}
+
+		void broadcastDataChanged ()
+			/*
+			 * Message to boss: "my data has changed by an action from inside myself."
+			 *
+			 * The editor has to call this after every menu command, click or key press that causes a change in the data.
+			 */
+			{
+				if (d_dataChangedCallback)
+					d_dataChangedCallback (this, d_dataChangedClosure);
+			}
+
+		void setDestructionCallback (void (*destructionCallback) (Editor me, void *closure), void *destructionClosure)
+			/*
+			 * Message from boss: "notify me by calling this destructionCallback every time you destroy yourself."
+			 *
+			 * In Praat, "destroying yourself" typically happens when the user closes the editor window
+			 * or when an object that is being viewed in an editor window is "Remove"d.
+			 * Typically, the boss will (in the destructionCallback it installed) remove all dangling references to this editor.
+			 */
+			{
+				d_destructionCallback = destructionCallback;
+				d_destructionClosure = destructionClosure;
+			}
+
+		void broadcastDestruction ()
+			/*
+			 * Message to boss: "I am destroying all my members and will free myself shortly."
+			 *
+			 * The editor calls this once, namely in Editor::v_destroy().
+			 */
+			{
+				if (d_destructionCallback)
+					d_destructionCallback (this, d_destructionClosure);
+			}
+
+		void setPublicationCallback (void (*publicationCallback) (Editor me, void *closure, Data publication), void *publicationClosure)
+			/*
+			 * Message from boss: "notify me by calling this publicationCallback every time you have a piece of data to publish."
+			 *
+			 * In Praat, editors typically "publish" a piece of data when the user chooses
+			 * things like "Extract selected sound", "Extract visible pitch curve", or "View spectral slice".
+			 * Typically, the boss will (in the publicationCallback it installed) install the published data in Praat's object list,
+			 * but the editor doesn't have to know that.
+			 */
+			{
+				d_publicationCallback = publicationCallback;
+				d_publicationClosure = publicationClosure;
+			}
+
+		void broadcastPublication (Data publication)
+			/*
+			 * Message to boss: "I have a piece of data for you to publish."
+			 *
+			 * The editor has to calls this every time the user wants to "publish" ("Extract") some data from the editor.
+			 *
+			 * Constraint: "publication" has to be new data, either "extracted" or "copied" from data in the editor.
+			 * The boss becomes the owner of this published data,
+			 * so the call to broadcastPublication() has to transfer ownership of "publication".
+			 */
+			{
+				if (d_publicationCallback)
+					d_publicationCallback (this, d_publicationClosure, publication);
+			}
+
 	// new data:
-		GuiObject parent, shell, dialog, menuBar, undoButton, searchButton;
+	public:
+		GuiObject d_windowParent, d_windowShell, d_windowForm;
+		GuiObject menuBar, undoButton, searchButton;
 		Ordered menus;
 		Data data, previousData;   // the data that can be displayed and edited
 		wchar undoText [100];
 		Graphics pictureGraphics;
-		void (*destroyCallback) (I, void *closure);
-		void *destroyClosure;
-		void (*dataChangedCallback) (I, void *closure, Data data);
-		void *dataChangedClosure;
-		void (*publishCallback) (I, void *closure, Data publish);
-		void *publishClosure;
-		void (*publish2Callback) (I, void *closure, Data publish1, Data publish2);
-		void *publish2Closure;
+		void (*d_dataChangedCallback) (Editor me, void *closure);                   void *d_dataChangedClosure;
+		void (*d_destructionCallback) (Editor me, void *closure);                   void *d_destructionClosure;
+		void (*d_publicationCallback) (Editor me, void *closure, Data publication); void *d_publicationClosure;
 	// overridden methods:
+	protected:
 		virtual void v_destroy ();
 		virtual void v_info ();
-		virtual void v_nameChanged ();
+		virtual void v_nameChanged ();   // sets the window and icon titles to reflect the new name
 	// new methods:
+	public:
 		virtual void v_goAway () { forget_nozero (this); }
 		virtual bool v_hasMenuBar () { return true; }
 		virtual bool v_canFullScreen () { return false; }
@@ -85,9 +188,8 @@ Thing_define (Editor, Thing) {
 		virtual void v_createHelpMenuItems (EditorMenu menu) { (void) menu; }
 		virtual void v_createChildren () { }
 		virtual void v_dataChanged () { }
-		virtual void v_save ();
-		virtual void v_restore ();
-		virtual void v_clipboardChanged (Data data) { (void) data; }
+		virtual void v_saveData ();
+		virtual void v_restoreData ();
 		virtual void v_form_pictureWindow (EditorCommand cmd);
 		virtual void v_ok_pictureWindow (EditorCommand cmd);
 		virtual void v_do_pictureWindow (EditorCommand cmd);
@@ -97,7 +199,7 @@ Thing_define (Editor, Thing) {
 };
 
 GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar *itemTitle, long flags,
-	int (*commandCallback) (Editor editor_me, EditorCommand, UiForm, const wchar *, Interpreter));
+	void (*commandCallback) (Editor editor_me, EditorCommand, UiForm, const wchar *, Interpreter));
 GuiObject EditorCommand_getItemWidget (EditorCommand me);
 
 EditorMenu Editor_addMenu (Editor editor, const wchar *menuTitle, long flags);
@@ -105,62 +207,19 @@ GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_HIDDEN  (1 << 14)
 GuiObject Editor_addCommand (Editor editor, const wchar *menuTitle, const wchar *itemTitle, long flags,
-	int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter));
+	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter));
 GuiObject Editor_addCommandScript (Editor editor, const wchar *menuTitle, const wchar *itemTitle, long flags,
 	const wchar *script);
 void Editor_setMenuSensitive (Any editor, const wchar_t *menu, int sensitive);
-
-/***** Public. *****/
-
-/* Thing_setName () sets the window and icon titles. */
-
-void Editor_raise (Editor me);
-	/* Raises and deiconizes the editor window. */
-
-void Editor_dataChanged (Editor me, Data data);
-/* Tell the Editor that the data has changed.
-   If 'data' is not NULL, this routine installs 'data' into the Editor's 'data' field.
-   Regardless of 'data', this routine calls the Editor's dataChanged method.
-*/
-
-void Editor_clipboardChanged (Editor me, Data data);
-/* Tell the Editor that a clipboard has changed.
-   Calls the Editor's clipboardChanged method.
-*/
-
-void Editor_setDestroyCallback (Editor me, void (*cb) (I, void *closure), void *closure);
-/* Makes the Editor notify client when user clicks "Close":	*/
-/* the Editor will destroy itself.				*/
-/* Use this callback to remove your references to "me".		*/
-
-void Editor_setDataChangedCallback (Editor me, void (*cb) (I, void *closure, Data data), void *closure);
-/* Makes the Editor notify client (boss, creator, owner) when user changes data. */
-/* 'data' is the new data (if not NULL). */
-/* Most Editors will include the following line at several places, after 'data' or '*data' has changed:
-	if (my dataChangedCallback)
-		my dataChangedCallback (me, my dataChangedClosure, my data);
-*/
-
-void Editor_broadcastChange (Editor me);
-/* A shortcut for the line above, with NULL for the 'data' argument, i.e. only '*data' has changed. */
-
-void Editor_setPublishCallback (Editor me, void (*cb) (I, void *closure, Data publish), void *closure);
-void Editor_setPublish2Callback (Editor me, void (*cb) (I, void *closure, Data publish1, Data publish2), void *closure);
-/*
-	Makes the Editor notify client when user clicks a "Publish" button:
-	the Editor should create some new Data ("publish").
-	By registering this callback, the client takes responsibility for eventually removing "publish".
-*/
-
 
 /***** For inheritors. *****/
 
 void Editor_init (Editor me, GuiObject parent, int x, int y , int width, int height,
 	const wchar *title, Data data);
 /*
-	This creates my shell and my dialog,
+	This creates my shell and my d_windowForm,
 	calls the v_createMenus and v_createChildren methods,
-	and manages my shell and my dialog.
+	and manages my shell and my d_windowForm.
 	'width' and 'height' determine the dimensions of the editor:
 	if 'width' < 0, the width of the screen is added to it;
 	if 'height' < 0, the height of the screeen is added to it;
@@ -168,24 +227,13 @@ void Editor_init (Editor me, GuiObject parent, int x, int y , int width, int hei
 	if 'height' is 0, the height is base on the children.
 	'x' and 'y' determine the position of the editor:
 	if 'x' > 0, 'x' is the distance to the left edge of the screen;
-	if 'x' < 0, |'x'| is the diatnce to the right edge of the screen;
+	if 'x' < 0, |'x'| is the distance to the right edge of the screen;
 	if 'x' is 0, the editor is horizontally centred on the screen;
 	if 'y' > 0, 'y' is the distance to the top of the screen;
-	if 'y' < 0, |'y'| is the diatnce to the bottom of the screen;
+	if 'y' < 0, |'y'| is the distance to the bottom of the screen;
 	if 'y' is 0, the editor is vertically centred on the screen;
 	This routine does not transfer ownership of 'data' to the Editor,
-	and the Editor will not destroy 'data' when the Editor itself is destroyed;
-	however, some Editors may change 'data' (and not only '*data'),
-	in which case the original 'data' IS destroyed,
-	so the creator will have to install the dataChangedCallback in order to be notified,
-	and replace its now dangling pointers with the new one.
-	To prevent synchronicity problems, the Editor should destroy the old 'data'
-	immediately AFTER calling its dataChangedCallback.
-	Most Editors, by the way, will not need to change 'data'; they only change '*data',
-	but the dataChangedCallback may still be useful if there is more than one editor
-	with the same data; in this case, the owner of all those editors will
-	(in the dataChangedCallback it installed) broadcast the change to the other editors
-	by sending them an Editor_dataChanged () message.
+	and the Editor will not destroy 'data' when the Editor itself is destroyed.
 */
 
 void Editor_save (Editor me, const wchar *text);   // for Undo
@@ -198,7 +246,7 @@ EditorCommand Editor_getMenuCommand (Editor me, const wchar *menuTitle, const wc
 void Editor_doMenuCommand (Editor me, const wchar *command, const wchar *arguments, Interpreter interpreter);
 
 /*
- * The following two procedures are in praat_picture.c.
+ * The following two procedures are in praat_picture.cpp.
  * They allow editors to draw into the Picture window.
  */
 Graphics praat_picture_editor_open (bool eraseFirst);

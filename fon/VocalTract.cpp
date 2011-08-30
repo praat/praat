@@ -17,29 +17,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2006/08/08 reduced compiler warnings
- * pb 2006/12/10 MelderInfo
- * pb 2007/03/17 domain quantity
- * pb 2008/01/19 double
- * pb 2011/04/29 C++
- */
-
 #include "VocalTract.h"
 
-static void info (I) {
-	iam (VocalTract);
-	classData -> info (me);
-	MelderInfo_writeLine3 (L"Vocal tract length: ", Melder_single (my xmax), L" metres");
-	MelderInfo_writeLine2 (L"Number of sections: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 (L"Section length: ", Melder_single (my dx), L" metres");
-}
+Thing_implement (VocalTract, Vector, 2);
 
-class_methods (VocalTract, Vector) {
-	class_method (info)
-	us -> domainQuantity = MelderQuantity_DISTANCE_FROM_GLOTTIS_METRES;
-	class_methods_end
+void structVocalTract :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine3 (L"Vocal tract length: ", Melder_single (xmax), L" metres");
+	MelderInfo_writeLine2 (L"Number of sections: ", Melder_integer (nx));
+	MelderInfo_writeLine3 (L"Section length: ", Melder_single (dx), L" metres");
 }
 
 VocalTract VocalTract_create (long nx, double dx) {

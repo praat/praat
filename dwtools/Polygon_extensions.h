@@ -36,10 +36,6 @@
 #define Polygon_EDGE 3
 #define Polygon_VERTEX 5
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Polygon Polygon_createSimple (wchar_t *xystring);
 Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
 Polygon Polygon_simplify (Polygon me);
@@ -53,7 +49,7 @@ Polygon Polygon_circularPermutation (Polygon me, long nshift);
 // Is point (x,y) Inside, Outside, Boundary (Edge or Vertex) ?
 int Polygon_getLocationOfPoint (Polygon me, double x0, double y0, double eps);
 
-void Polygon_Categories_draw (Polygon me, Any categories, Any graphics, double xmin, double xmax,
+void Polygon_Categories_draw (Polygon me, Any categories, Graphics graphics, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
 /* reverse axis when min > max */
 
@@ -92,9 +88,5 @@ Polygon Sounds_to_Polygon_enclosed (Sound me, Sound thee, int channel, double tm
 Polygon Polygons_union (Polygon me, Polygon thee);
 
 Collection Polygons_clip (Polygon me, Polygon thee);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Polygon_extensions_h_ */

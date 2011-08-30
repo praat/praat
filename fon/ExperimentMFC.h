@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/11
- */
-
 #include "Sound.h"
 #include "Categories.h"
 #include "Table.h"
@@ -30,10 +26,7 @@
 #include "Experiment_enums.h"
 
 #include "ExperimentMFC_def.h"
-#define ExperimentMFC__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (ExperimentMFC, Data);
-
-#define ResultsMFC__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (ResultsMFC, Data);
 
 int ExperimentMFC_start (ExperimentMFC me);

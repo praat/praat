@@ -17,9 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/14
- */
 
 #define ooSTRUCT NetworkNode
 oo_DEFINE_STRUCT (NetworkNode)
@@ -35,6 +32,7 @@ oo_DEFINE_STRUCT (NetworkNode)
 oo_END_STRUCT (NetworkNode)
 #undef ooSTRUCT
 
+
 #define ooSTRUCT NetworkConnection
 oo_DEFINE_STRUCT (NetworkConnection)
 
@@ -46,12 +44,13 @@ oo_DEFINE_STRUCT (NetworkConnection)
 	oo_ENDFROM
 	#if oo_READING
 		if (localVersion < 1) {
-			my plasticity = 1.0;
+			plasticity = 1.0;
 		}
 	#endif
 
 oo_END_STRUCT (NetworkConnection)
 #undef ooSTRUCT
+
 
 #define ooSTRUCT Network
 oo_DEFINE_CLASS (Network, Data)
@@ -69,13 +68,13 @@ oo_DEFINE_CLASS (Network, Data)
 	oo_DOUBLE (ymin)
 	oo_DOUBLE (ymax)
 	oo_LONG (numberOfNodes)
-	oo_STRUCT_VECTOR (NetworkNode, nodes, my numberOfNodes)
+	oo_STRUCT_VECTOR (NetworkNode, nodes, numberOfNodes)
 	oo_LONG (numberOfConnections)
-	oo_STRUCT_VECTOR (NetworkConnection, connections, my numberOfConnections)
+	oo_STRUCT_VECTOR (NetworkConnection, connections, numberOfConnections)
 
 	#if oo_DECLARING
 		// overridden methods:
-		void v_info ();
+			virtual void v_info ();
 	#endif
 
 oo_END_CLASS (Network)

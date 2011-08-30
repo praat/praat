@@ -17,17 +17,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20010926
- djmw 20020813 GPL header
-*/
 
 #define ooSTRUCT Procrustes
 oo_DEFINE_CLASS (Procrustes, AffineTransform)
 
 	oo_DOUBLE (s)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_transform (double **in, long nrows, double **out);
+			virtual Any v_invert ();
+	#endif
 			
 oo_END_CLASS (Procrustes)	
 #undef ooSTRUCT
+
 
 /* End of file Procrustes_def.h */	

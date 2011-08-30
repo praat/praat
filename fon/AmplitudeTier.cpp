@@ -17,24 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/06/10
- * pb 2004/07/14 maximum amplitude factor
- * pb 2006/12/30 new Sound_create API
- * pb 2007/01/27 compatible with stereo Sounds
- * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar
- * pb 2008/01/19 double
- * pb 2010/10/19 allow drawing without speckles
- * pb 2011/05/09 C++
- */
-
 #include "AmplitudeTier.h"
 
-class_methods (AmplitudeTier, RealTier) {
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
-}
+Thing_implement (AmplitudeTier, RealTier, 0);
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
 	try {
@@ -54,7 +39,7 @@ void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
 
 AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPressure) {
 	try {
-		return (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure, (RealTier_Table) classAmplitudeTier);
+		return (AmplitudeTier) PointProcess_upto_RealTier (me, soundPressure, classAmplitudeTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to AmplitudeTier.");
 	}
@@ -63,7 +48,7 @@ AmplitudeTier PointProcess_upto_AmplitudeTier (PointProcess me, double soundPres
 AmplitudeTier IntensityTier_to_AmplitudeTier (IntensityTier me) {
 	try {
 		autoAmplitudeTier thee = Thing_new (AmplitudeTier);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structRealTier :: v_copy (thee.peek());
 		for (long i = 1; i <= thy points -> size; i ++) {
 			RealPoint point = (RealPoint) thy points -> item [i];
 			point -> value = pow (10.0, point -> value / 20.0) * 2.0e-5;
@@ -78,7 +63,7 @@ IntensityTier AmplitudeTier_to_IntensityTier (AmplitudeTier me, double threshold
 	try {
 		double threshold_Pa = pow (10.0, threshold_dB / 20.0) * 2.0e-5;   // often zero!
 		autoIntensityTier thee = Thing_new (IntensityTier);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structRealTier :: v_copy (thee.peek());
 		for (long i = 1; i <= thy points -> size; i ++) {
 			RealPoint point = (RealPoint) thy points -> item [i];
 			double absoluteValue = fabs (point -> value);
@@ -107,7 +92,7 @@ void Sound_AmplitudeTier_multiply_inline (Sound me, AmplitudeTier amplitude) {
 
 Sound Sound_AmplitudeTier_multiply (Sound me, AmplitudeTier amplitude) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_AmplitudeTier_multiply_inline (thee.peek(), amplitude);
 		Vector_scale (thee.peek(), 0.9);
 		return thee.transfer();

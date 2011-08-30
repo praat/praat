@@ -44,8 +44,8 @@
 #include "Confusion.h"
 #include "Formula.h"
 
-extern "C" void praat_TableOfReal_init (void *klas);
-extern "C" void praat_TableOfReal_init2  (void *klas);
+void praat_TableOfReal_init (ClassInfo klas);
+void praat_TableOfReal_init2 (ClassInfo klas);
 
 static const wchar_t *QUERY_BUTTON   = L"Query -";
 static const wchar_t *DRAW_BUTTON    = L"Draw -";
@@ -1623,7 +1623,7 @@ DIRECT (TableOfReal_to_Confusion)
 	}
 END
 
-static void praat_AffineTransform_init (void *klas)
+static void praat_AffineTransform_init (ClassInfo klas)
 {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_addAction1 (klas, 1, L"Get transformation element...", QUERY_BUTTON, 1, DO_AffineTransform_getTransformationElement);
@@ -1631,12 +1631,12 @@ static void praat_AffineTransform_init (void *klas)
 	praat_addAction1 (klas, 0, L"Invert", 0, 0, DO_AffineTransform_invert);
 }
 
-static void praat_Configuration_and_AffineTransform_init (void *transform)
+static void praat_Configuration_and_AffineTransform_init (ClassInfo transform)
 {
 	praat_addAction2 (classConfiguration, 1, transform, 1, L"To Configuration", 0, 0, DO_Configuration_and_AffineTransform_to_Configuration);
 }
 
-extern "C" void praat_TableOfReal_extras (void *klas)
+extern "C" void praat_TableOfReal_extras (ClassInfo klas)
 {
 	praat_addAction1 (klas, 1, L"-- get additional --", L"Get value...", 1, 0);
 	praat_addAction1 (klas, 1, L"Get table norm", L"-- get additional --", 1, DO_TableOfReal_getTableNorm);
@@ -1649,8 +1649,8 @@ extern "C" void praat_TableOfReal_extras (void *klas)
 	praat_addAction1 (klas, 1, L"Test sorting...", L"Standardize columns", praat_DEPTH_1 + praat_HIDDEN, DO_TabelOfReal_testSorting);
 }
 
-extern "C" void praat_uvafon_MDS_init (void);
-extern "C" void praat_uvafon_MDS_init (void)
+void praat_uvafon_MDS_init (void);
+void praat_uvafon_MDS_init (void)
 {
 	Thing_recognizeClassesByName (classAffineTransform, classProcrustes,
 		classContingencyTable, classDissimilarity,

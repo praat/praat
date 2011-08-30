@@ -30,17 +30,16 @@ typedef struct structManPage_Paragraph {
 	void (*draw) (Graphics g);
 } *ManPage_Paragraph;
 
-Thing_declare1cpp (ManPage);
-struct structManPage : public structThing {
-	const wchar *title, *author;
-	long date;
-	struct structManPage_Paragraph *paragraphs;
-	long nlinksHither, nlinksThither;
-	long *linksHither, *linksThither;
-	double recordingTime;
+Thing_define (ManPage, Thing) {
+	// new data:
+	public:
+		const wchar *title, *author;
+		long date;
+		struct structManPage_Paragraph *paragraphs;
+		long nlinksHither, nlinksThither;
+		long *linksHither, *linksThither;
+		double recordingTime;
 };
-#define ManPage__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (ManPage, Thing);
 
 /* End of file ManPage.h */
 #endif

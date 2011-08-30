@@ -29,7 +29,7 @@ Thing_implement (PitchEditor, FunctionEditor, 0);
 
 /********** MENU COMMANDS **********/
 
-static int menu_cb_setCeiling (EDITOR_ARGS) {
+static void menu_cb_setCeiling (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	EDITOR_FORM (L"Change ceiling", 0)
 		POSITIVE (L"Ceiling (Hz)", L"600")
@@ -41,11 +41,11 @@ static int menu_cb_setCeiling (EDITOR_ARGS) {
 		Editor_save (me, L"Change ceiling");
 		Pitch_setCeiling (pitch, GET_REAL (L"Ceiling"));
 		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_pathFinder (EDITOR_ARGS) {
+static void menu_cb_pathFinder (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	EDITOR_FORM (L"Path finder", 0)
 		REAL (L"Silence threshold", L"0.03")
@@ -66,61 +66,56 @@ static int menu_cb_pathFinder (EDITOR_ARGS) {
 			GET_REAL (L"Octave cost"), GET_REAL (L"Octave-jump cost"),
 			GET_REAL (L"Voiced/unvoiced cost"), GET_REAL (L"Ceiling"), GET_INTEGER (L"Pull formants"));
 		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_getPitch (EDITOR_ARGS) {
+static void menu_cb_getPitch (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	if (my startSelection == my endSelection) {
 		Melder_informationReal (Pitch_getValueAtTime ((Pitch) my data, my startSelection, kPitch_unit_HERTZ, 1), L"Hz");
 	} else {
 		Melder_informationReal (Pitch_getMean ((Pitch) my data, my startSelection, my endSelection, kPitch_unit_HERTZ), L"Hz");
 	}
-	return 1;
 }
 
-static int menu_cb_octaveUp (EDITOR_ARGS) {
+static void menu_cb_octaveUp (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, L"Octave up");
 	Pitch_step (pitch, 2.0, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_fifthUp (EDITOR_ARGS) {
+static void menu_cb_fifthUp (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, L"Fifth up");
 	Pitch_step (pitch, 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_fifthDown (EDITOR_ARGS) {
+static void menu_cb_fifthDown (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, L"Fifth down");
 	Pitch_step (pitch, 1 / 1.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_octaveDown (EDITOR_ARGS) {
+static void menu_cb_octaveDown (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
 	Editor_save (me, L"Octave down");
 	Pitch_step (pitch, 0.5, 0.1, my startSelection, my endSelection);
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_voiceless (EDITOR_ARGS) {
+static void menu_cb_voiceless (EDITOR_ARGS) {
 	EDITOR_IAM (PitchEditor);
 	Pitch pitch = (Pitch) my data;
 	long ileft = Sampled_xToHighIndex (pitch, my startSelection), i, cand;
@@ -139,12 +134,11 @@ static int menu_cb_voiceless (EDITOR_ARGS) {
 		}
 	}
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_PitchEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"PitchEditor"); return 1; }
-static int menu_cb_PitchHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"Pitch"); return 1; }
+static void menu_cb_PitchEditorHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"PitchEditor"); }
+static void menu_cb_PitchHelp (EDITOR_ARGS) { EDITOR_IAM (PitchEditor); Melder_help (L"Pitch"); }
 
 void structPitchEditor :: v_createMenus () {
 	PitchEditor_Parent :: v_createMenus ();
@@ -342,7 +336,7 @@ int structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 			bestFrame -> candidate [1] = bestFrame -> candidate [bestCandidate];
 			bestFrame -> candidate [bestCandidate] = help;
 			FunctionEditor_redraw (this);
-			Editor_broadcastChange (this);
+			broadcastDataChanged ();
 			startSelection = endSelection = tmid;   // cursor will snap to candidate
 			return 1;
 		} else {

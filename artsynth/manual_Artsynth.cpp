@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_Artsynth_init (ManPages me);
-extern "C" void manual_Artsynth_init (ManPages me) {
+void manual_Artsynth_init (ManPages me);
+void manual_Artsynth_init (ManPages me) {
 
 MAN_BEGIN (L"Articulatory synthesis", L"ppgb", 201101028)
 INTRO (L"This is a description of the articulatory synthesis package in Praat. "

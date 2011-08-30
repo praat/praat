@@ -27,7 +27,7 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 
 /********** MENU COMMANDS **********/
 
-static int menu_cb_removePoints (EDITOR_ARGS) {
+static void menu_cb_removePoints (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
 	Editor_save (me, L"Remove point(s)");
 	if (my startSelection == my endSelection)
@@ -36,25 +36,23 @@ static int menu_cb_removePoints (EDITOR_ARGS) {
 		AnyTier_removePointsBetween (my data, my startSelection, my endSelection);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_addPointAtCursor (EDITOR_ARGS) {
+static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
 	if (NUMdefined (my v_minimumLegalValue ()) && my ycursor < my v_minimumLegalValue ())
 		Melder_throw ("Cannot add a point below ", my v_minimumLegalValue (), my v_rightTickUnits (), ".");
 	if (NUMdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
 		Melder_throw ("Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), ".");
 	Editor_save (me, L"Add point");
-	RealTier_addPoint (my data, 0.5 * (my startSelection + my endSelection), my ycursor);
+	RealTier_addPoint ((RealTier) my data, 0.5 * (my startSelection + my endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_addPointAt (EDITOR_ARGS) {
+static void menu_cb_addPointAt (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
 	EDITOR_FORM (L"Add point", 0)
 		REAL (L"Time (s)", L"0.0")
@@ -69,14 +67,14 @@ static int menu_cb_addPointAt (EDITOR_ARGS) {
 		if (NUMdefined (my v_maximumLegalValue ()) && desiredValue > my v_maximumLegalValue ())
 			Melder_throw ("Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), ".");
 		Editor_save (me, L"Add point");
-		RealTier_addPoint (my data, GET_REAL (L"Time"), desiredValue);
+		RealTier_addPoint ((RealTier) my data, GET_REAL (L"Time"), desiredValue);
 		RealTierEditor_updateScaling (me);
 		FunctionEditor_redraw (me);
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 	EDITOR_END
 }
 
-static int menu_cb_setRange (EDITOR_ARGS) {
+static void menu_cb_setRange (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
 	EDITOR_FORM (my v_setRangeTitle (), 0)
 		REAL (my v_yminText (), my v_defaultYminText ())
@@ -113,8 +111,8 @@ void RealTierEditor_updateScaling (RealTierEditor me) {
 		my ymin = my v_defaultYmin ();
 		my ymax = my v_defaultYmax ();
 	} else {
-		double ymin = RealTier_getMinimumValue (my data);
-		double ymax = RealTier_getMaximumValue (my data);
+		double ymin = RealTier_getMinimumValue (data);
+		double ymax = RealTier_getMaximumValue (data);
 		double range = ymax - ymin;
 		if (range == 0.0) ymin -= 1.0, ymax += 1.0;
 		else ymin -= 0.2 * range, ymax += 0.2 * range;
@@ -372,7 +370,7 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 			ycursor = v_maximumLegalValue ();
 	}
 
-	Editor_broadcastChange (this);
+	broadcastDataChanged ();
 	RealTierEditor_updateScaling (this);
 	return 1;   // update needed
 }

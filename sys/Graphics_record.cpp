@@ -78,22 +78,19 @@ double * _Graphics_check (Graphics me, long number) {
 
 /***** RECORD AND PLAY *****/
 
-bool Graphics_startRecording (I) {
-	iam (Graphics);
+bool Graphics_startRecording (Graphics me) {
 	bool wasRecording = my recording;
 	my recording = true;
 	return wasRecording;
 }
 
-bool Graphics_stopRecording (I) {
-	iam (Graphics);
+bool Graphics_stopRecording (Graphics me) {
 	bool wasRecording = my recording;
 	my recording = false;
 	return wasRecording;
 }
 
-void Graphics_clearRecording (I) {
-	iam (Graphics);
+void Graphics_clearRecording (Graphics me) {
 	if (my record) {
 		Melder_free (my record);
 		my irecord = 0;
@@ -375,8 +372,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 #define binputi4(o,f) ascputi4(o,f,"")
 #define binputr4(o,f) ascputr4(o,f,"")
 */
-void Graphics_writeRecordings (I, FILE *f) {
-	iam (Graphics);
+void Graphics_writeRecordings (Graphics me, FILE *f) {
 	double *p = my record, *endp = p + my irecord;
 	if (! p) return;
 	binputi4 (my irecord, f);
@@ -406,8 +402,7 @@ void Graphics_writeRecordings (I, FILE *f) {
 }
 
 #ifdef _WIN32
-void Graphics_readRecordings_oldWindows (I, FILE *f) {
-	iam (Graphics);
+void Graphics_readRecordings_oldWindows (Graphics me, FILE *f) {
 	long old_irecord = my irecord, i, added_irecord;
 	try {
 		added_irecord = bingeti4 (f);
@@ -425,8 +420,7 @@ void Graphics_readRecordings_oldWindows (I, FILE *f) {
 }
 #endif
 
-void Graphics_readRecordings (I, FILE *f) {
-	iam (Graphics);
+void Graphics_readRecordings (Graphics me, FILE *f) {
 	long old_irecord = my irecord;
 	long added_irecord = 0;
 	double *p = NULL, *endp = NULL;
@@ -461,24 +455,22 @@ void Graphics_readRecordings (I, FILE *f) {
 	}
 }
 
-void Graphics_markGroup (I) {
-	iam (Graphics);
+void Graphics_markGroup (Graphics me) {
 	if (my recording) { op (MARK_GROUP, 0); }
 }
 
-void Graphics_undoGroup (I) {
-	iam (Graphics);
-	long lastMark = 0;   /* Not yet found. */
+void Graphics_undoGroup (Graphics me) {
+	long lastMark = 0;   // not yet found
 	long jrecord = 0;
-	while (jrecord < my irecord) {   /* Keep looking for marks until the end. */
+	while (jrecord < my irecord) {   // keep looking for marks until the end
 		int opcode = (int) my record [++ jrecord];
 		long number = (long) my record [++ jrecord];
-		if (opcode == MARK_GROUP) lastMark = jrecord - 1;   /* Found a mark. */
+		if (opcode == MARK_GROUP) lastMark = jrecord - 1;   // found a mark
 		jrecord += number;
 	}
 	if (jrecord != my irecord) Melder_flushError ("jrecord != my irecord: %ld, %ld", jrecord, my irecord);
-	if (lastMark > 0)   /* Found? */
-		my irecord = lastMark - 1;   /* Forget all graphics from and including the last mark. */
+	if (lastMark > 0)   // found?
+		my irecord = lastMark - 1;   // forget all graphics from and including the last mark
 }
 
 /* End of file Graphics_record.cpp */

@@ -81,77 +81,37 @@
 #include "oo_DESCRIPTION.h"
 #include "Table_def.h"
 
-class_methods (TableRow, Data) {
-	class_method_local (TableRow, destroy)
-	class_method_local (TableRow, description)
-	class_method_local (TableRow, copy)
-	class_method_local (TableRow, equal)
-	class_method_local (TableRow, canWriteAsEncoding)
-	class_method_local (TableRow, writeText)
-	class_method_local (TableRow, writeBinary)
-	class_method_local (TableRow, readText)
-	class_method_local (TableRow, readBinary)
-	class_methods_end
+Thing_implement (TableRow, Data, 0);
+
+Thing_implement (Table, Data, 0);
+
+void structTable :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (rows -> size));
+	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
-static void info (I) {
-	iam (Table);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (my rows -> size));
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (my numberOfColumns));
+const wchar * structTable :: v_getColStr (long columnNumber) {
+	if (columnNumber < 1 || columnNumber > numberOfColumns) return NULL;
+	return columnHeaders [columnNumber]. label ? columnHeaders [columnNumber]. label : L"";
 }
 
-static double getNrow (I) {
-	iam (Table);
-	return my rows -> size;
-}
-static double getNcol (I) {
-	iam (Table);
-	return my numberOfColumns;
-}
-static const wchar * getColStr (I, long columnNumber) {
-	iam (Table);
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return NULL;
-	return my columnHeaders [columnNumber]. label ? my columnHeaders [columnNumber]. label : L"";
-}
-static double getMatrix (I, long rowNumber, long columnNumber) {
-	iam (Table);
-	wchar *stringValue;
-	if (rowNumber < 1 || rowNumber > my rows -> size) return NUMundefined;
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return NUMundefined;
-	stringValue = ((TableRow) my rows -> item [rowNumber]) -> cells [columnNumber]. string;
+double structTable :: v_getMatrix (long rowNumber, long columnNumber) {
+	if (rowNumber < 1 || rowNumber > rows -> size) return NUMundefined;
+	if (columnNumber < 1 || columnNumber > numberOfColumns) return NUMundefined;
+	wchar *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
 	return stringValue == NULL ? NUMundefined : Melder_atof (stringValue);
 }
-static const wchar * getMatrixStr (I, long rowNumber, long columnNumber) {
-	iam (Table);
-	if (rowNumber < 1 || rowNumber > my rows -> size) return L"";
-	if (columnNumber < 1 || columnNumber > my numberOfColumns) return L"";
-	wchar *stringValue = ((TableRow) my rows -> item [rowNumber]) -> cells [columnNumber]. string;
+
+const wchar * structTable :: v_getMatrixStr (long rowNumber, long columnNumber) {
+	if (rowNumber < 1 || rowNumber > rows -> size) return L"";
+	if (columnNumber < 1 || columnNumber > numberOfColumns) return L"";
+	wchar *stringValue = ((TableRow) rows -> item [rowNumber]) -> cells [columnNumber]. string;
 	return stringValue == NULL ? L"" : stringValue;
 }
-static double getColumnIndex (I, const wchar *columnLabel) {
-	iam (Table);
-	return Table_findColumnIndexFromColumnLabel (me, columnLabel);
-}
 
-class_methods (Table, Data) {
-	class_method_local (Table, destroy)
-	class_method_local (Table, description)
-	class_method_local (Table, copy)
-	class_method_local (Table, equal)
-	class_method_local (Table, canWriteAsEncoding)
-	class_method_local (Table, writeText)
-	class_method_local (Table, writeBinary)
-	class_method_local (Table, readText)
-	class_method_local (Table, readBinary)
-	class_method (info)
-	class_method (getNrow)
-	class_method (getNcol)
-	class_method (getColStr)
-	class_method (getMatrix)
-	class_method (getMatrixStr)
-	class_method (getColumnIndex)
-	class_methods_end
+double structTable :: v_getColIndex (const wchar *columnLabel) {
+	return Table_findColumnIndexFromColumnLabel (this, columnLabel);
 }
 
 static TableRow TableRow_create (long numberOfColumns) {
@@ -721,7 +681,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long columnNumber, int whic
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
-				autoTableRow newRow = static_cast <TableRow> (Data_copy (row));
+				autoTableRow newRow = Data_copy (row);
 				Collection_addItem (thy rows, newRow.transfer());
 			}
 		}
@@ -745,7 +705,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int whic
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
-				autoTableRow newRow = static_cast <TableRow> (Data_copy (row));
+				autoTableRow newRow = Data_copy (row);
 				Collection_addItem (thy rows, newRow.transfer()); therror
 			}
 		}

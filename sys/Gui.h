@@ -77,9 +77,9 @@
 	typedef gboolean Boolean;
 	#define True 1
 	#define False 0
-	typedef GtkWidget *GuiObject;
+	typedef void *GuiObject;
 #elif motif
-	typedef struct structGuiObject *GuiObject;   // Opaque
+	typedef class structGuiObject *GuiObject;   // Opaque
 
 	/*
 	 * Definitions of X11 types.

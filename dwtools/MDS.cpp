@@ -194,13 +194,14 @@ Similarity Distances_to_Similarity_cc (Distances me, Weight w)
 
 /***************** Transformator **********************************************/
 
-static Distance classTransformator_transform (I, MDSVec vec, Distance dist, Weight w)
+Thing_implement (Transformator, Thing, 0);
+
+Distance structTransformator :: v_transform (MDSVec vec, Distance dist, Weight w)
 {
 	try {
-		iam (Transformator);
 		(void) w;
 
-		autoDistance thee = Distance_create (my numberOfPoints);
+		autoDistance thee = Distance_create (numberOfPoints);
 		TableOfReal_copyLabels (dist, thee.peek(), 1, 1);
 		/*
 			Absolute scaling
@@ -214,10 +215,6 @@ static Distance classTransformator_transform (I, MDSVec vec, Distance dist, Weig
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw ("Distance not created."); }
 }
-
-class_methods (Transformator, Thing)
-	class_method_local (Transformator, transform)
-class_methods_end
 
 void Transformator_init (I, long numberOfPoints)
 {
@@ -236,9 +233,6 @@ Transformator Transformator_create (long numberOfPoints)
 	} catch (MelderError) { Melder_throw ("No Transformator created."); }
 }
 
-#undef our
-#define our ((Transformator_Table) my methods) ->
-
 Distance Transformator_transform (I, MDSVec vec, Distance d, Weight w)
 {
 	iam (Transformator);
@@ -246,14 +240,15 @@ Distance Transformator_transform (I, MDSVec vec, Distance d, Weight w)
 		if (my numberOfPoints != vec -> nPoints ||
 		my numberOfPoints != d -> numberOfRows ||
 		d -> numberOfRows != w -> numberOfRows) Melder_throw (L"Dimensions do not agree.");
-		return our transform (me, vec, d, w);
+		return my v_transform (vec, d, w);
 	} catch (MelderError) { Melder_throw (me, "Distance not created."); }
 }
 
-static Distance classRatioTransformator_transform (I, MDSVec vec, Distance d, Weight w)
+Thing_implement (RatioTransformator, Transformator, 0);
+
+Distance structRatioTransformator :: v_transform (MDSVec vec, Distance d, Weight w)
 {
-	iam (RatioTransformator);
-	autoDistance thee = Distance_create (my numberOfPoints);
+	autoDistance thee = Distance_create (numberOfPoints);
 	TableOfReal_copyLabels (d, thee.peek(), 1, 1);
 
 	// Determine ratio (eq. 9.4)
@@ -272,21 +267,17 @@ static Distance classRatioTransformator_transform (I, MDSVec vec, Distance d, We
 	// transform
 
 	if (etaSq == 0) Melder_throw ("Eta squared is zero.");
-	my ratio = rho / etaSq;
+	this -> ratio = rho / etaSq;
 	for (long i = 1; i <= vec -> nProximities; i++)
 	{
 		long ii = vec -> iPoint[i];
 		long jj = vec -> jPoint[i];
-		thy data[ii][jj] = thy data[jj][ii] = my ratio * vec -> proximity[i];
+		thy data[ii][jj] = thy data[jj][ii] = this -> ratio * vec -> proximity[i];
 	}
 
-	if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
+	if (normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
 	return thee.transfer();
 }
-
-class_methods (RatioTransformator, Transformator)
-	class_method_local (RatioTransformator, transform)
-class_methods_end
 
 RatioTransformator RatioTransformator_create (long numberOfPoints)
 {
@@ -297,20 +288,17 @@ RatioTransformator RatioTransformator_create (long numberOfPoints)
 	} catch (MelderError) { Melder_throw ("RatioTransformator not created."); }
 }
 
-static Distance classMonotoneTransformator_transform (I, MDSVec vec, Distance d, Weight w)
+Thing_implement (MonotoneTransformator, Transformator, 0);
+
+Distance structMonotoneTransformator :: v_transform (MDSVec vec, Distance d, Weight w)
 {
 	try {
-		iam (MonotoneTransformator);
-		autoDistance thee = MDSVec_Distance_monotoneRegression (vec, d, my tiesProcessing);
-		if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
+		autoDistance thee = MDSVec_Distance_monotoneRegression (vec, d, tiesProcessing);
+		if (normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw ("Distance not created."); }
 
 }
-
-class_methods (MonotoneTransformator, Transformator)
-	class_method_local (MonotoneTransformator, transform)
-class_methods_end
 
 MonotoneTransformator MonotoneTransformator_create (long numberOfPoints)
 {
@@ -328,21 +316,21 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator me,
 	my tiesProcessing = tiesProcessing;
 }
 
-static void classISplineTransformator_destroy (I)
+Thing_implement (ISplineTransformator, Transformator, 0);
+
+void structISplineTransformator :: v_destroy ()
 {
-	iam (ISplineTransformator);
-	NUMvector_free<double> (my b, 1);
-	NUMvector_free<double> (my knot, 1);
-	NUMmatrix_free<double> (my m, 1, 1);
-	inherited (ISplineTransformator) destroy (me);
+	NUMvector_free<double> (b, 1);
+	NUMvector_free<double> (knot, 1);
+	NUMmatrix_free<double> (m, 1, 1);
+	ISplineTransformator_Parent :: v_destroy ();
 }
 
-static Distance classISplineTransformator_transform (I, MDSVec vec, Distance dist, Weight w)
+Distance structISplineTransformator :: v_transform (MDSVec vec, Distance dist, Weight w)
 {
-	iam (ISplineTransformator);
 	double tol = 1e-6;
 	long itermax = 20, nx = vec -> nProximities;
-	long nKnots = my numberOfInteriorKnots + my order + my order + 2;
+	long nKnots = numberOfInteriorKnots + order + order + 2;
 
 	autoDistance thee = Distance_create (dist -> numberOfRows);
 	TableOfReal_copyLabels (dist, thee.peek(), 1, -1);
@@ -359,15 +347,15 @@ static Distance classISplineTransformator_transform (I, MDSVec vec, Distance dis
 		Guarantee that for each proximity x[i]: knot[j] <= x[i] < knot[j+1]
 	*/
 
-	for (long i = 1; i <= my order+1; i++)
+	for (long i = 1; i <= order+1; i++)
 	{
-		my knot[i] = vec -> proximity[1];
-		my knot[nKnots - i + 1] = vec -> proximity[nx] * 1.000001;
+		knot [i] = vec -> proximity [1];
+		knot [nKnots - i + 1] = vec -> proximity [nx] * 1.000001;
 	}
-	for (long i = 1; i <= my numberOfInteriorKnots; i++)
+	for (long i = 1; i <= numberOfInteriorKnots; i++)
 	{
-		double fraction = (double) i / (my numberOfInteriorKnots + 1);
-		my knot[my order + 1 + i] = NUMquantile (nx, vec -> proximity, fraction);
+		double fraction = (double) i / (numberOfInteriorKnots + 1);
+		knot [order + 1 + i] = NUMquantile (nx, vec -> proximity, fraction);
 	}
 
 	/*
@@ -376,18 +364,21 @@ static Distance classISplineTransformator_transform (I, MDSVec vec, Distance dis
 
 	for (long i = 1; i <= nx; i++)
 	{
-		double y, x = vec -> proximity[i];
-		my m[i][1] = 1;
-		for (long j = 2; j <= my numberOfParameters; j++)
+		double y, x = vec -> proximity [i];
+		m [i] [1] = 1;
+		for (long j = 2; j <= numberOfParameters; j++)
 		{
-			try { NUMispline (my knot, nKnots, my order, j - 1, x, &y);
-			} catch (MelderError) { Melder_throw ("I-spline[",j-1, "], data[", i,"d] = ", x); }
-			my m[i][j] = y;
+			try {
+				NUMispline (knot, nKnots, order, j - 1, x, & y);
+			} catch (MelderError) {
+				Melder_throw ("I-spline[", j - 1, "], data[", i, "d] = ", x);
+			}
+			m [i] [j] = y;
 		}
 	}
 
-	NUMsolveNonNegativeLeastSquaresRegression (my m, nx, my numberOfParameters,
-		d.peek(), tol, itermax, my b);
+	NUMsolveNonNegativeLeastSquaresRegression (m, nx, numberOfParameters,
+		d.peek(), tol, itermax, b);
 
 	for (long i = 1; i <= nx; i++)
 	{
@@ -395,22 +386,16 @@ static Distance classISplineTransformator_transform (I, MDSVec vec, Distance dis
 		long jj = vec->jPoint[i];
 		double r = 0;
 
-		for (long j = 1; j <= my numberOfParameters; j++)
+		for (long j = 1; j <= numberOfParameters; j++)
 		{
-			r += my m[i][j] * my b[j];
+			r += m[i][j] * b[j];
 		}
 		thy data[ii][jj] = thy data[jj][ii] = r;
 	}
 
-	if (my normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
+	if (normalization) Distance_Weight_smacofNormalize (thee.peek(), w);
 	return thee.transfer();
 }
-
-class_methods (ISplineTransformator, Transformator)
-	class_method_local (ISplineTransformator, destroy)
-	class_method_local (ISplineTransformator, transform)
-class_methods_end
-
 
 ISplineTransformator ISplineTransformator_create (long numberOfPoints,
 	long numberOfInteriorKnots, long order)
@@ -571,7 +556,7 @@ Dissimilarity TableOfReal_to_Dissimilarity (I)
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square tabel.");
 		TableOfReal_checkPositive (me);
 		autoDissimilarity thee = Thing_new (Dissimilarity);
-		((Dissimilarity_Table) thy methods) -> copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Dissimilarity."); }
 }
@@ -583,7 +568,7 @@ Similarity TableOfReal_to_Similarity (I)
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
 		TableOfReal_checkPositive (me);
 		autoSimilarity thee = Thing_new (Similarity);
-		((Similarity_Table) thy methods) -> copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Similarity."); }
 }
@@ -595,7 +580,7 @@ Distance TableOfReal_to_Distance (I)
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
 		TableOfReal_checkPositive (me);
 		autoDistance thee = Thing_new (Distance);
-		((Distance_Table) thy methods) -> copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Distance."); }
 }
@@ -606,7 +591,7 @@ Salience TableOfReal_to_Salience (I)
 	try {
 		TableOfReal_checkPositive (me);
 		autoSalience thee = Thing_new (Salience);
-		((Salience_Table) thy methods) -> copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Salience."); }
 }
@@ -617,7 +602,7 @@ Weight TableOfReal_to_Weight (I)
 	try {
 		TableOfReal_checkPositive (me);
 		autoWeight thee = Thing_new (Weight);
-		((Weight_Table) thy methods) -> copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to Weight."); }
 }
@@ -628,7 +613,7 @@ ScalarProduct TableOfReal_to_ScalarProduct (I)
 	try {
 		if (my numberOfRows != my numberOfColumns) Melder_throw ("TableOfReal must be a square table.");
 		autoScalarProduct thee = Thing_new (ScalarProduct);
-		((ScalarProduct_Table) thy methods) -> copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to ScalarProduct."); }
 }
@@ -673,8 +658,7 @@ Configuration Correlation_to_Configuration (Correlation me,
 
 /**************************** Weight *****************************************/
 
-class_methods (Weight, TableOfReal)
-class_methods_end
+Thing_implement (Weight, TableOfReal, 0);
 
 Weight Weight_create (long numberOfPoints)
 {
@@ -695,8 +679,7 @@ Weight Weight_create (long numberOfPoints)
 
 /**************** Salience *****************************************/
 
-class_methods (Salience, TableOfReal)
-class_methods_end
+Thing_implement (Salience, TableOfReal, 0);
 
 Salience Salience_create (long numberOfSources, long numberOfDimensions)
 {
@@ -796,18 +779,15 @@ void Salience_draw (Salience me, Graphics g, int ix, int iy, int garnish)
 
 /******** MDSVEC *******************************************/
 
-static void classMDSVec_destroy (I)
-{
-	iam (MDSVec);
-	NUMvector_free<double> (my proximity, 1);
-	NUMvector_free<long> (my iPoint, 1);
-	NUMvector_free<long> (my jPoint, 1);
-	inherited (MDSVec) destroy (me);
-}
+Thing_implement (MDSVec, Data, 0);
 
-class_methods (MDSVec, Data)
-	class_method_local (MDSVec, destroy)
-class_methods_end
+void structMDSVec :: v_destroy ()
+{
+	NUMvector_free<double> (proximity, 1);
+	NUMvector_free<long> (iPoint, 1);
+	NUMvector_free<long> (jPoint, 1);
+	MDSVec_Parent :: v_destroy ();
+}
 
 MDSVec MDSVec_create (long nPoints)
 {
@@ -851,8 +831,7 @@ MDSVec Dissimilarity_to_MDSVec (Dissimilarity me)
 /*********************** MDSVECS *******************************************/
 
 
-class_methods (MDSVecs, Ordered)
-class_methods_end
+Thing_implement (MDSVecs, Ordered, 0);
 
 MDSVecs MDSVecs_create (void)
 {
@@ -880,8 +859,7 @@ MDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me)
 
 /**************************  CONFUSIONS **************************************/
 
-class_methods (Confusions, Proximities)
-class_methods_end
+Thing_implement (Confusions, Proximities, 0);
 
 Confusions Confusions_create (void)
 {
@@ -904,8 +882,7 @@ Confusion Confusions_sum (Confusions me)
 
 /**************************  DISTANCES **************************************/
 
-class_methods (Distances, Proximities)
-class_methods_end
+Thing_implement (Distances, Proximities, 0);
 
 Distances Distances_create (void)
 {
@@ -919,8 +896,7 @@ Distances Distances_create (void)
 
 /*****************  SCALARPRODUCT ***************************************/
 
-class_methods (ScalarProduct, TableOfReal)
-class_methods_end
+Thing_implement (ScalarProduct, TableOfReal, 0);
 
 ScalarProduct ScalarProduct_create (long numberOfPoints)
 {
@@ -934,8 +910,7 @@ ScalarProduct ScalarProduct_create (long numberOfPoints)
 
 /************* SCALARPRODUCTS **************************************/
 
-class_methods (ScalarProducts, TablesOfReal)
-class_methods_end
+Thing_implement (ScalarProducts, TablesOfReal, 0);
 
 ScalarProducts ScalarProducts_create (void)
 {
@@ -948,8 +923,7 @@ ScalarProducts ScalarProducts_create (void)
 
 /******************  DISSIMILARITY **********************************/
 
-class_methods (Dissimilarity, Proximity)
-class_methods_end
+Thing_implement (Dissimilarity, Proximity, 0);
 
 Dissimilarity Dissimilarity_create (long numberOfPoints)
 {
@@ -1040,8 +1014,7 @@ int Dissimilarity_getAdditiveConstant (I, double *c) // Why not: double Diss..(I
 
 /***************  DISSIMILARITIES **************************************/
 
-class_methods (Dissimilarities, Proximities)
-class_methods_end
+Thing_implement (Dissimilarities, Proximities, 0);
 
 Dissimilarities Dissimilarities_create (void)
 {
@@ -1055,8 +1028,7 @@ Dissimilarities Dissimilarities_create (void)
 
 /*************  SIMILARITY *****************************************/
 
-class_methods (Similarity, Proximity)
-class_methods_end
+Thing_implement (Similarity, Proximity, 0);
 
 Similarity Similarity_create (long numberOfPoints)
 {
@@ -1531,10 +1503,9 @@ Distance Dissimilarity_Distance_monotoneRegression (Dissimilarity me, Distance t
 
 /*************** class Proximities **************************************/
 
-class_methods (Proximities, TablesOfReal)
-class_methods_end
+Thing_implement (Proximities, TablesOfReal, 0);
 
-void Proximities_init (I, void *klas)
+void Proximities_init (I, ClassInfo klas)
 {
 		iam (Proximities);
 		TablesOfReal_init (me, klas);
@@ -2348,20 +2319,17 @@ static void dfunc (Data object, const double p[], double dp[])
 	}
 }
 
-static void classKruskal_destroy (I)
-{
-	iam (Kruskal);
-	NUMmatrix_free<double> (my dx, 1, 1);
-	forget (my configuration);
-	forget (my proximities);
-	forget (my vec);
-	forget (my minimizer);
-	inherited (Kruskal) destroy (me);
-}
+Thing_implement (Kruskal, Thing, 0);
 
-class_methods (Kruskal, Thing)
-	class_method_local (Kruskal, destroy)
-class_methods_end
+void structKruskal :: v_destroy ()
+{
+	NUMmatrix_free<double> (dx, 1, 1);
+	forget (configuration);
+	forget (proximities);
+	forget (vec);
+	forget (minimizer);
+	Kruskal_Parent :: v_destroy ();
+}
 
 Kruskal Kruskal_create (long numberOfPoints, long numberOfDimensions)
 {

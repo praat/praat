@@ -26,19 +26,38 @@
 oo_DEFINE_CLASS (FunctionTerms, Function)
 
 	oo_LONG (numberOfCoefficients)
-	oo_DOUBLE_VECTOR (coefficients, my numberOfCoefficients)
+	oo_DOUBLE_VECTOR (coefficients, numberOfCoefficients)
+
+	#if oo_DECLARING
+		// new methods:
+			virtual double v_evaluate (double x);
+			virtual void v_evaluate_z (dcomplex *z, dcomplex *p);
+			virtual void v_evaluateTerms (double x, double terms[]);
+			virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
+			virtual long v_getDegree ();
+	#endif
 	
 oo_END_CLASS (FunctionTerms)	
 #undef ooSTRUCT
+
 
 #define ooSTRUCT Spline
 oo_DEFINE_CLASS (Spline, FunctionTerms)
 
 	oo_LONG (degree)
 	oo_LONG (numberOfKnots)
-	oo_DOUBLE_VECTOR (knots, my numberOfKnots)
+	oo_DOUBLE_VECTOR (knots, numberOfKnots)
 	
+	#if oo_DECLARING
+		// overridden methods:
+			virtual double v_evaluate (double x);
+			virtual long v_getDegree ();
+		// new methods:
+			virtual long v_getOrder ();
+	#endif
+
 oo_END_CLASS (Spline)	
 #undef ooSTRUCT
+
 
 /* End of file Polynomial_def.h */	

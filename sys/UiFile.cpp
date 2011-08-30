@@ -17,48 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2006/08/10 Windows: turned file selector into a modal dialog box
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2007/02/12 worked around a bug in Windows XP that caused Praat to crash
-                 when the user moved the mouse pointer over a file in the Desktop of the second file selector
-                 that was raised in Praat. The workaround is to temporarily disable file info tips.
- * pb 2007/03/23 new Editor API
- * pb 2007/05/30 wchar_t
- * pb 2009/01/18 arguments to UiForm callbacks
- * pb 2009/12/22 invokingButtonTitle
- * pb 2010/07/21 erased Motif stuff
- * pb 2010/07/26 split off GuiFileSelect.c
- * pb 2011/05/15 C++
- * pb 2011/07/11 C++
- */
-
 #include "UiP.h"
 #include "Editor.h"
 
-Thing_declare1cpp (UiFile);
-struct structUiFile : public structThing {
-	EditorCommand command;
-	GuiObject parent;
-	structMelderFile file;
-	const wchar *invokingButtonTitle, *helpTitle;
-	void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure);
-	void *okClosure;
-	int shiftKeyPressed;
+Thing_define (UiFile, Thing) {
+	// new data:
+	public:
+		EditorCommand command;
+		GuiObject parent;
+		structMelderFile file;
+		const wchar *invokingButtonTitle, *helpTitle;
+		void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure);
+		void *okClosure;
+		int shiftKeyPressed;
+	// overridden methods:
+		virtual void v_destroy ();
 };
-#define UiFile__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (UiFile, Thing);
 
-static void classUiFile_destroy (I) {
-	iam (UiFile);
-	inherited (UiFile) destroy (me);
+void structUiFile :: v_destroy () {
+	UiFile_Parent :: v_destroy ();
 }
 
-class_methods (UiFile, Thing) {
-	class_method_local (UiFile, destroy)
-	class_methods_end
-}
+Thing_implement (UiFile, Thing, 0);
 
 static void UiFile_init (I, GuiObject parent, const wchar_t *title) {
 	iam (UiFile);
@@ -73,18 +53,15 @@ MelderFile UiFile_getFile (I) {
 
 /********** READING A FILE **********/
 
-Thing_declare1cpp (UiInfile);
-struct structUiInfile : public structUiFile {
-	bool allowMultipleFiles;
+Thing_define (UiInfile, UiFile) {
+	// new data:
+	public:
+		bool allowMultipleFiles;
 };
-#define UiInfile__methods(klas) UiFile__methods(klas)
-Thing_declare2cpp (UiInfile, UiFile);
 
-class_methods (UiInfile, UiFile) {
-	class_methods_end
-}
+Thing_implement (UiInfile, UiFile, 0);
 
-UiForm UiInfile_create (GuiObject parent, const wchar_t *title,
+UiForm UiInfile_create (GuiObject parent, const wchar *title,
 	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure,
 	const wchar *invokingButtonTitle, const wchar *helpTitle, bool allowMultipleFiles)
 {
@@ -126,17 +103,14 @@ void UiInfile_do (I) {
 
 /********** WRITING A FILE **********/
 
-Thing_declare1cpp (UiOutfile);
-struct structUiOutfile : public structUiFile {
-	bool (*allowExecutionHook) (void *closure);
-	void *allowExecutionClosure;   // I am owner (see destroy)
+Thing_define (UiOutfile, UiFile) {
+	// new data:
+	public:
+		bool (*allowExecutionHook) (void *closure);
+		void *allowExecutionClosure;   // I am owner (see destroy)
 };
-#define UiOutfile__methods(klas) UiFile__methods(klas)
-Thing_declare2cpp (UiOutfile, UiFile);
 
-class_methods (UiOutfile, UiFile) {
-	class_methods_end
-}
+Thing_implement (UiOutfile, UiFile, 0);
 
 UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
 	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure, const wchar *invokingButtonTitle, const wchar_t *helpTitle)
@@ -156,12 +130,12 @@ static void commonOutfileCallback (UiForm sendingForm, const wchar *sendingStrin
 	EditorCommand command = (EditorCommand) closure;
 	(void) invokingButtonTitle;
 	(void) modified;
-	command -> commandCallback (command -> editor, command, sendingForm, sendingString, interpreter); therror
+	command -> commandCallback (command -> d_editor, command, sendingForm, sendingString, interpreter); therror
 }
 
 UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
-	Editor editor = (Editor) cmd -> editor;
-	UiOutfile dia = (UiOutfile) UiOutfile_create (editor -> dialog, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
+	Editor editor = (Editor) cmd -> d_editor;
+	UiOutfile dia = (UiOutfile) UiOutfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return (UiForm) dia;   // BUG
 }

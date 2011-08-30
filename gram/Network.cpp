@@ -54,19 +54,7 @@ void structNetwork :: v_info ()
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (numberOfConnections));
 }
 
-class_methods (Network, Data) {
-	us -> version = 1;
-	class_method_local (Network, destroy)
-	class_method_local (Network, description)
-	class_method_local (Network, copy)
-	class_method_local (Network, equal)
-	class_method_local (Network, canWriteAsEncoding)
-	class_method_local (Network, writeText)
-	class_method_local (Network, readText)
-	class_method_local (Network, writeBinary)
-	class_method_local (Network, readBinary)
-	class_methods_end
-}
+Thing_implement (Network, Data, 1);
 
 void Network_init (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,

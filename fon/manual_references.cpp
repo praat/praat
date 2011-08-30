@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_references_init (ManPages me);
-extern "C" void manual_references_init (ManPages me) {
+void manual_references_init (ManPages me);
+void manual_references_init (ManPages me) {
 
 MAN_BEGIN (L"Archangeli & Pulleyblank (1994)", L"ppgb", 19971021)
 NORMAL (L"Diana Archangeli & Douglas Pulleyblank (1994): %%Grounded phonology%. "

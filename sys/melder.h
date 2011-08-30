@@ -40,6 +40,14 @@
 #include <stdint.h>
 
 typedef wchar_t wchar;
+typedef int8_t int8;
+typedef uint8_t uint8;
+typedef int16_t int16;
+typedef uint16_t uint16;
+typedef int32_t int32;
+typedef uint32_t uint32;
+typedef int64_t int64;
+typedef uint64_t uint64;
 
 bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar *string1, const wchar *string2);
 
@@ -144,8 +152,8 @@ int Melder_getOutputEncoding (void);
 #define kMelder_textOutputEncoding_ISO_LATIN1  0x4C415401
 #define kMelder_textOutputEncoding_FLAC  0x464C4143
 
-typedef uint16_t MelderUtf16;
-typedef uint32_t MelderUtf32;
+typedef uint16 MelderUtf16;
+typedef uint32 MelderUtf32;
 
 bool Melder_isValidAscii (const wchar *string);
 bool Melder_strIsValidUtf8 (const char *string);
@@ -520,11 +528,14 @@ void Melder_beep (void);
 
 extern int Melder_debug;
 
+/* The following trick uses Melder_debug only because it is the only plain variable known to exist at the moment. */
+#define Melder_offsetof(klas,member) (char *) & ((klas) & Melder_debug) -> member - (char *) & Melder_debug
+
 /********** ERROR **********/
 
 class MelderError { };
 
-typedef struct structThing *Thing;
+typedef class structThing *Thing;
 wchar *Thing_messageName (Thing me);
 struct MelderArg {
 	int type;
@@ -964,7 +975,7 @@ struct autoMelderProgress {
 	~autoMelderProgress () { Melder_progress1 (1.0, NULL); }
 };
 
-typedef struct structGraphics *Graphics;
+typedef class structGraphics *Graphics;
 
 struct autoMelderMonitor {
 	autoMelderMonitor (const wchar *message) { g = (Graphics) Melder_monitor1 (0.0, message); }

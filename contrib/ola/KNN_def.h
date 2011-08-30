@@ -17,25 +17,21 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * os 2007/05/29 Intial release
- * os 2009/01/23 Bugfix: Wrong Pattern version caused serialization failure. 
- *                     Thanks to Paul Boersma for spotting this problem.
- * pb 2011/07/14 C++
- */
 
 #include "Pattern.h"
 
 #define ooSTRUCT KNN
-    oo_DEFINE_CLASS (KNN, Data)
-        oo_LONG (nInstances)
-        oo_OBJECT (Pattern, 2, input)
-        oo_OBJECT (Categories, 0, output)
+oo_DEFINE_CLASS (KNN, Data)
+	oo_LONG (nInstances)
+	oo_OBJECT (Pattern, 2, input)
+	oo_OBJECT (Categories, 0, output)
 
-		#if oo_DECLARING
-			// overridden methods:
-			void v_info ();
-		#endif
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
 
-    oo_END_CLASS (KNN)
+oo_END_CLASS (KNN)
 #undef ooSTRUCT
+
+/* End of file KNN_def.h */

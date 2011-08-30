@@ -26,7 +26,7 @@ oo_DEFINE_CLASS (DoubleVector, Data)
 
 	oo_LONG (min)
 	oo_LONG (max)
-	oo_DOUBLE_VECTOR_FROM (v, my min, my max)
+	oo_DOUBLE_VECTOR_FROM (v, min, max)
 	
 oo_END_CLASS (DoubleVector)	
 #undef ooSTRUCT
@@ -36,7 +36,7 @@ oo_DEFINE_CLASS (ComplexVector, Data)
 
 	oo_LONG (min)
 	oo_LONG (max)
-	oo_DCOMPLEX_VECTOR_FROM (v, my min, my max)
+	oo_DCOMPLEX_VECTOR_FROM (v, min, max)
 	
 oo_END_CLASS (ComplexVector)	
 #undef ooSTRUCT

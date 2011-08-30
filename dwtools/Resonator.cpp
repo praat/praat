@@ -25,52 +25,39 @@
 
 #include "Resonator.h"
 
-#undef our
-#define our ((Filter_Table) my methods) ->
+Thing_implement (Filter, Data, 0);
 
 #define SETBC(f,bw) \
-	double r = exp (-NUMpi * my dT * bw); \
-	my c = -(r * r); \
-	my b = 2.0 * r * cos (2.0 * NUMpi * f * my dT);
+	double r = exp (-NUMpi * dT * bw); \
+	c = -(r * r); \
+	b = 2.0 * r * cos (2.0 * NUMpi * f * dT);
 
-static void classFilter_resetMemory (I)
+void structFilter :: v_resetMemory ()
 {
-	iam (Filter);
-	my p1 = my p2 = 0;
+	p1 = p2 = 0;
 }
 
-static void classFilter_setFB (I, double f, double bw)
+void structFilter :: v_setFB (double f, double bw)
 {
-	iam (Filter);
 	SETBC (f, bw)
-	my a = 1.0 - my b - my c;
+	a = 1.0 - b - c;
 }
 
-static double classFilter_getOutput (I, double input)
+double structFilter :: v_getOutput (double input)
 {
-	iam (Resonator);
-	double output = my a * input + my b * my p1 + my c * my p2;
-	my p2 = my p1;
-	my p1 = output;
+	double output = a * input + b * p1 + c * p2;
+	p2 = p1;
+	p1 = output;
 	return output;
 }
 
-class_methods (Filter, Data)
-	class_method_local (Filter, setFB)
-	class_method_local (Filter, getOutput)
-	class_method_local (Filter, resetMemory)
-class_methods_end
+Thing_implement (Resonator, Filter, 0);
 
-static void classResonator_setFB (I, double f, double bw)
+void structResonator :: v_setFB (double f, double bw)
 {
-	iam (Resonator);
 	SETBC (f, bw)
-	my a = my normalisation == Resonator_NORMALISATION_H0 ? (1.0 - my b - my c) : (1 + my c) * sin (2.0 * NUMpi * f * my dT);
+	a = normalisation == Resonator_NORMALISATION_H0 ? (1.0 - b - c) : (1 + c) * sin (2.0 * NUMpi * f * dT);
 }
-
-class_methods (Resonator, Filter)
-	class_method_local (Resonator, setFB)
-class_methods_end
 
 Resonator Resonator_create (double dT, int normalisation)
 {
@@ -83,70 +70,56 @@ Resonator Resonator_create (double dT, int normalisation)
 	} catch (MelderError) { Melder_throw ("Resonator not created."); }
 }
 
-static void classAntiResonator_setFB (I, double f, double bw)
-{
-	iam (AntiResonator);
+Thing_implement (AntiResonator, Filter, 0);
 
+void structAntiResonator :: v_setFB (double f, double bw)
+{
 	if (f <= 0 && bw <= 0)
 	{
-		my a = 1; my b = -2; my c = 1; // all-pass except dc
+		a = 1; b = -2; c = 1; // all-pass except dc
 	}
 	else
 	{
 		SETBC (f, bw)
-		my a = 1 / (1.0 - my b - my c);
+		a = 1 / (1.0 - b - c);
 		// The next equations are incorporated in the getOutput function
-		//my c *= - my a; my b *= - my a;
+		//c *= - a; b *= - a;
 	}
 }
 
 /* y[n] = a * (x[n] - b * x[n-1] - c * x[n-2]) */
-static double classAntiResonator_getOutput (I, double input)
+double structAntiResonator :: v_getOutput (double input)
 {
-	iam (AntiResonator);
-	double output = my a * (input - my b * my p1 - my c * my p2);
-	my p2 = my p1;
-	my p1 = input;
+	double output = a * (input - b * p1 - c * p2);
+	p2 = p1;
+	p1 = input;
 	return output;
 }
 
-class_methods (AntiResonator, Filter)
-	class_method_local (AntiResonator, setFB)
-	class_method_local (AntiResonator, getOutput)
-class_methods_end
+Thing_implement (ConstantGainResonator, Filter, 0);
 
-static void classConstantGainResonator_resetMemory (I)
+void structConstantGainResonator :: v_resetMemory ()
 {
-	iam (ConstantGainResonator);
-	my p1 = my p2 = my p3 = my p4 = 0;
+	p1 = p2 = p3 = p4 = 0;
 }
 
-static void classConstantGainResonator_setFB (I, double f, double bw)
+void structConstantGainResonator :: v_setFB (double f, double bw)
 {
-	iam (ConstantGainResonator);
-
 	SETBC (f, bw)
-	my a = 1 - r;
-	my d = -r;
+	a = 1 - r;
+	d = -r;
 }
 
 /* y[n] = a * (x[n] + d * x[n-2]) + b * y[n-1] + c * y[n-2] */
-static double classConstantGainResonator_getOutput (I, double input)
+double structConstantGainResonator :: v_getOutput (double input)
 {
-	iam (ConstantGainResonator);
-	double output = my a * (input + my d * my p4) + my b * my p1 + my c * my p2;
-	my p2 = my p1;
-	my p1 = output;
-	my p4 = my p3;
-	my p3 = input;
+	double output = a * (input + d * p4) + b * p1 + c * p2;
+	p2 = p1;
+	p1 = output;
+	p4 = p3;
+	p3 = input;
 	return output;
 }
-
-class_methods (ConstantGainResonator, Filter)
-	class_method_local (ConstantGainResonator, setFB)
-	class_method_local (ConstantGainResonator, getOutput)
-	class_method_local (ConstantGainResonator, resetMemory)
-class_methods_end
 
 ConstantGainResonator ConstantGainResonator_create (double dT)
 {
@@ -171,19 +144,19 @@ AntiResonator AntiResonator_create (double dT)
 void Filter_setFB (I, double f, double b)
 {
 	iam (Filter);
-	our setFB (me, f, b);
+	my v_setFB (f, b);
 }
 
 double Filter_getOutput (I, double input)
 {
 	iam (Filter);
-	return our getOutput (me, input);
+	return my v_getOutput (input);
 }
 
 void Filter_resetMemory (I)
 {
 	iam (Filter);
-	our resetMemory (me);
+	my v_resetMemory ();
 }
 
 /* End of file Resonator.cpp */

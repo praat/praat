@@ -17,16 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/02/11 Excitation_soundPressureToPhon: handle zero sound pressure correctly (thanks to James Keidel)
- * pb 2006/12/10 MelderInfo
- * pb 2007/03/17 domain quantity
- * pb 2008/01/19 double
- * pb 2011/05/12 C++
- */
-
 #include "Excitation.h"
+
+Thing_implement (Excitation, Vector, 2);
 
 double Excitation_hertzToBark (double hertz) {
 	double h650 = hertz / 650;
@@ -66,27 +59,20 @@ double Excitation_soundPressureToPhon (double soundPressure, double bark) {
 	return result;
 }
 
-static void info (I) {
-	iam (Excitation);
-	double *y = my z [1];
+void structExcitation :: v_info () {
+	double *y = z [1];
 	long numberOfMaxima = 0;
-	classData -> info (me);
-	MelderInfo_writeLine3 (L"Loudness: ", Melder_half (Excitation_getLoudness (me)), L" sones");
-	for (long i = 2; i < my nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
+	structData :: v_info ();
+	MelderInfo_writeLine3 (L"Loudness: ", Melder_half (Excitation_getLoudness (this)), L" sones");
+	for (long i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		double i_real, formant_bark, strength;
 		if (++ numberOfMaxima > 15) break;
-		strength = NUMimproveMaximum (my z [1], my nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
-		formant_bark = my x1 + (i_real - 1) * my dx;
+		strength = NUMimproveMaximum (z [1], nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
+		formant_bark = x1 + (i_real - 1) * dx;
 		MelderInfo_write3 (L"Peak at ", Melder_single (formant_bark), L" Bark");
 		MelderInfo_write3 (L", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), L" Hz");
 		MelderInfo_writeLine3 (L", ", Melder_half (strength), L" phon.");
 	}
-}
-
-class_methods (Excitation, Vector) {
-	class_method (info)
-	us -> domainQuantity = MelderQuantity_FREQUENCY_BARK;
-	class_methods_end
 }
 
 Excitation Excitation_create (double df, long nf) {
@@ -147,7 +133,7 @@ void Excitation_draw (Excitation me, Graphics g,
 Matrix Excitation_to_Matrix (Excitation me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());   // BUG: safe, but compiler should be able to check
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");
@@ -157,7 +143,7 @@ Matrix Excitation_to_Matrix (Excitation me) {
 Excitation Matrix_to_Excitation (Matrix me) {
 	try {
 		autoExcitation thee = Thing_new (Excitation);
-		((Data_Table) my methods) -> copy (me, thee.peek());
+		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Excitation.");

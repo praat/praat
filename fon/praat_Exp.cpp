@@ -130,8 +130,8 @@ END
 
 /***** buttons *****/
 
-extern "C" void praat_uvafon_Exp_init (void);
-extern "C" void praat_uvafon_Exp_init (void) {
+void praat_uvafon_Exp_init (void);
+void praat_uvafon_Exp_init (void) {
 	Thing_recognizeClassesByName (classExperimentMFC, classResultsMFC, NULL);
 
 	praat_addAction1 (classCategories, 0, L"Sort", 0, 0, DO_Categories_sort);

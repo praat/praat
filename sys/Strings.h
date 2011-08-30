@@ -20,9 +20,8 @@
  */
 
 #include "Data.h"
-#include "Strings_def.h"
 
-#define Strings__methods(klas) Data__methods(klas)
+#include "Strings_def.h"
 oo_CLASS_CREATE (Strings, Data);
 
 Strings Strings_createAsFileList (const wchar *path);

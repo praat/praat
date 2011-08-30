@@ -19,19 +19,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20050706
- djmw 20110306 Latest modification
-*/
-
 #include "Collection.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "Permutation_def.h"
-#define Permutation__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (Permutation, Data);
 
 /*
@@ -94,9 +84,5 @@ void Permutation_previous_inline (Permutation me);
 
 Permutation Permutations_multiply2 (Permutation me, Permutation thee);
 Permutation Permutations_multiply (Collection me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Permutation_h_ */

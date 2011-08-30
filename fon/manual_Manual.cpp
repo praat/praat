@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_Manual_init (ManPages me);
-extern "C" void manual_Manual_init (ManPages me) {
+void manual_Manual_init (ManPages me);
+void manual_Manual_init (ManPages me) {
 
 MAN_BEGIN (L"Manual", L"ppgb", 20110101)
 INTRO (L"The documentation system for the Praat program.")

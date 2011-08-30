@@ -28,58 +28,6 @@
 
 #include "Procrustes.h"
 
-static void classProcrustes_transform (I, double **in, long nrows, double **out)
-{
-	iam (Procrustes);
-	for (long i = 1; i <= nrows; i++)
-	{
-		for (long j = 1; j <= my n; j++)
-		{
-			double tmp = 0;
-			for (long k = 1; k <= my n; k++)
-			{
-				tmp += in[i][k] * my r[k][j];
-			}
-			out[i][j] = my s * tmp + my t[j];
-		}
-	}	
-}
-
-static Any classProcrustes_invert (I)
-{
-	iam (Procrustes);
-	autoProcrustes thee = (Procrustes) Data_copy (me);
-	/*
-		R is symmetric rotation matrix --> 
-		inverse is transpose!
-	*/
-
-	thy s = my s == 0 ? 1 : 1 / my s;
-
-	for (long i = 1; i <= my n; i++)
-	{
-		for (long j = i + 1; j <= my n; j++)
-		{
-			thy r[i][j] = my r[j][i];
-			thy r[j][i] = my r[i][j];
-		}
-		thy t[i] = 0;
-		/*
-		for (j = 1; j <= thy n; j++)
-		{
-			thy t[i] -= thy r[i][j] * my t[j];
-		}
-		*/
-		for (long j = 1; j <= thy n; j++)
-		{
-			thy t[i] -= thy r[j][i] * my t[j];
-		}
-	
-		thy t[i] *= thy s;
-	}
-	return thee.transfer();
-}
-
 #include "oo_DESTROY.h"
 #include "Procrustes_def.h"
 #include "oo_COPY.h"
@@ -99,19 +47,57 @@ static Any classProcrustes_invert (I)
 #include "oo_DESCRIPTION.h"
 #include "Procrustes_def.h"
 
-class_methods (Procrustes, AffineTransform)
-	class_method_local (Procrustes, destroy)
-	class_method_local (Procrustes, copy)
-	class_method_local (Procrustes, equal)
-	class_method_local (Procrustes, canWriteAsEncoding)
-	class_method_local (Procrustes, writeText)
-	class_method_local (Procrustes, writeBinary)
-	class_method_local (Procrustes, readText)
-	class_method_local (Procrustes, readBinary)
-	class_method_local (Procrustes, description)
-	class_method_local (Procrustes, transform)
-	class_method_local (Procrustes, invert)
-class_methods_end
+Thing_implement (Procrustes, AffineTransform, 0);
+
+void structProcrustes :: v_transform (double **in, long nrows, double **out)
+{
+	for (long i = 1; i <= nrows; i++)
+	{
+		for (long j = 1; j <= n; j++)
+		{
+			double tmp = 0;
+			for (long k = 1; k <= n; k++)
+			{
+				tmp += in[i][k] * r[k][j];
+			}
+			out[i][j] = s * tmp + t[j];
+		}
+	}	
+}
+
+Any structProcrustes :: v_invert ()
+{
+	autoProcrustes thee = (Procrustes) Data_copy (this);
+	/*
+		R is symmetric rotation matrix --> 
+		inverse is transpose!
+	*/
+
+	thy s = s == 0 ? 1 : 1 / s;
+
+	for (long i = 1; i <= n; i++)
+	{
+		for (long j = i + 1; j <= n; j++)
+		{
+			thy r[i][j] = r[j][i];
+			thy r[j][i] = r[i][j];
+		}
+		thy t[i] = 0;
+		/*
+		for (j = 1; j <= thy n; j++)
+		{
+			thy t[i] -= thy r[i][j] * t[j];
+		}
+		*/
+		for (long j = 1; j <= thy n; j++)
+		{
+			thy t[i] -= thy r[j][i] * t[j];
+		}
+	
+		thy t[i] *= thy s;
+	}
+	return thee.transfer();
+}
 
 static void Procrustes_setDefaults (Procrustes me)
 {

@@ -36,7 +36,7 @@ Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double fact
 	try {
 		if (my ny > 1)
 			Melder_throw ("Overlap-add works only on mono sounds.");
-		autoSound sound = (Sound) Data_copy (me);
+		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.peek());
 		autoPitch pitch = Sound_to_Pitch (sound.peek(), 0.8 / fmin, fmin, fmax);
 		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.peek(), pitch.peek());
@@ -54,7 +54,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 	double flow, double fhigh, double slowModulation, double fastModulation, double bandSmoothing)
 {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		double maximumFactor = pow (10, enhancement_dB / 20), alpha = sqrt (log (2.0));
 		double alphaslow = alpha / slowModulation, alphafast = alpha / fastModulation;
 
@@ -65,7 +65,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 			/*
 			 * Keep the part of the sound that is outside the filter bank.
 			 */
-			autoSpectrum spec = (Spectrum) Data_copy (orgspec.peek());
+			autoSpectrum spec = Data_copy (orgspec.peek());
 			Spectrum_stopHannBand (spec.peek(), flow, fhigh, bandSmoothing);
 			autoSound filtered = Spectrum_to_Sound (spec.peek());
 			long n = thy nx;
@@ -88,7 +88,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				/*
 				 * Compute a relative intensity contour.
 				 */		
-				autoSound intensity = (Sound) Data_copy (band.peek());
+				autoSound intensity = Data_copy (band.peek());
 				n = intensity -> nx;
 				amp = intensity -> z [1];
 				for (long i = 1; i <= n; i ++) amp [i] = 10 * log10 (amp [i] * amp [i] + 1e-6);

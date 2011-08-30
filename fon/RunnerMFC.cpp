@@ -51,7 +51,7 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	my data = (Data) my experiments -> item [my iexperiment];
 	ExperimentMFC_start ((ExperimentMFC) my data); therror
 	Thing_setName (me, ((ExperimentMFC) my data) -> name);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 	Graphics_updateWs (my graphics);
 	return 1;
 }
@@ -195,15 +195,15 @@ static void do_ok (RunnerMFC me) {
 	my numberOfReplays = 0;
 	if (experiment -> trial == experiment -> numberOfTrials) {
 		experiment -> trial ++;
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 		Graphics_updateWs (my graphics);
 	} else if (experiment -> breakAfterEvery != 0 && experiment -> trial % experiment -> breakAfterEvery == 0) {
 		experiment -> pausing = TRUE;
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 		Graphics_updateWs (my graphics);
 	} else {
 		experiment -> trial ++;
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -223,7 +223,7 @@ static void do_oops (RunnerMFC me) {
 	experiment -> goodnesses [experiment -> trial] = 0;
 	experiment -> pausing = FALSE;
 	my numberOfReplays = 0;
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 	Graphics_updateWs (my graphics);
 	if (experiment -> stimuliAreSounds) {
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -234,7 +234,7 @@ static void do_replay (RunnerMFC me) {
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
 	my numberOfReplays ++;
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 	Graphics_updateWs (my graphics);
 	if (experiment -> stimuliAreSounds) {
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -252,7 +252,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & x, & y);
 	if (experiment -> trial == 0) {   // the first click of the experiment
 		experiment -> trial ++;
-		Editor_broadcastChange (me);
+		my broadcastDataChanged ();
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
 			if (experiment -> numberOfTrials < 1) {
@@ -270,7 +270,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 		} else {
 			experiment -> pausing = FALSE;
 			experiment -> trial ++;
-			Editor_broadcastChange (me);
+			my broadcastDataChanged ();
 			Graphics_updateWs (my graphics);
 			if (experiment -> stimuliAreSounds) {
 				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
@@ -304,7 +304,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
-						Editor_broadcastChange (me);
+						my broadcastDataChanged ();
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -314,7 +314,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 					GoodnessMFC cat = & experiment -> goodness [iresponse];
 					if (x > cat -> left && x < cat -> right && y > cat -> bottom && y < cat -> top) {
 						experiment -> goodnesses [experiment -> trial] = iresponse;
-						Editor_broadcastChange (me);
+						my broadcastDataChanged ();
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -380,7 +380,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 					if (experiment -> ok_right <= experiment -> ok_left && experiment -> numberOfGoodnessCategories == 0) {
 						do_ok (me);
 					} else {
-						Editor_broadcastChange (me);
+						my broadcastDataChanged ();
 						Graphics_updateWs (my graphics);
 					}
 				}
@@ -390,7 +390,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 }
 
 void structRunnerMFC :: v_createChildren () {
-	drawingArea = GuiDrawingArea_createShown (dialog, 0, 0, Machine_getMenuBarHeight (), 0,
+	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
@@ -401,7 +401,7 @@ RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered expe
 		my experiments = experiments;
 		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 		#if gtk
-			gtk_widget_set_double_buffered (my drawingArea, FALSE);
+			gtk_widget_set_double_buffered (GTK_WIDGET (my drawingArea), FALSE);
 		#endif
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };

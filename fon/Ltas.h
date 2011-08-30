@@ -24,11 +24,14 @@
 #include "PointProcess.h"
 #include "Collection.h"
 
-Thing_declare1cpp (Ltas);
-struct structLtas : public structVector {
+Thing_define (Ltas, Vector) {
+	// overridden methods:
+	protected:
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_FREQUENCY_HERTZ; }
+		virtual double v_convertStandardToSpecialUnit (double value, long ilevel, int unit);
+		virtual double v_convertSpecialToStandardUnit (double value, long ilevel, int unit);
 };
-#define Ltas__methods(klas)  Vector__methods(klas)
-Thing_declare2cpp (Ltas, Vector);
 
 /*
 	Attributes:

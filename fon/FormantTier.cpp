@@ -49,18 +49,7 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantTier_def.h"
 
-class_methods (FormantPoint, Data) {
-	class_method_local (FormantPoint, destroy)
-	class_method_local (FormantPoint, copy)
-	class_method_local (FormantPoint, equal)
-	class_method_local (FormantPoint, canWriteAsEncoding)
-	class_method_local (FormantPoint, writeText)
-	class_method_local (FormantPoint, readText)
-	class_method_local (FormantPoint, writeBinary)
-	class_method_local (FormantPoint, readBinary)
-	class_method_local (FormantPoint, description)
-	class_methods_end
-}
+Thing_implement (FormantPoint, Data, 0);
 
 FormantPoint FormantPoint_create (double time) {
 	try {
@@ -72,18 +61,7 @@ FormantPoint FormantPoint_create (double time) {
 	}
 }
 
-class_methods (FormantTier, Function) {
-	class_method_local (FormantTier, destroy)
-	class_method_local (FormantTier, copy)
-	class_method_local (FormantTier, equal)
-	class_method_local (FormantTier, canWriteAsEncoding)
-	class_method_local (FormantTier, writeText)
-	class_method_local (FormantTier, readText)
-	class_method_local (FormantTier, writeBinary)
-	class_method_local (FormantTier, readBinary)
-	class_method_local (FormantTier, description)
-	class_methods_end
-}
+Thing_implement (FormantTier, Function, 0);
 
 FormantTier FormantTier_create (double tmin, double tmax) {
 	try {
@@ -312,7 +290,7 @@ void Sound_FormantTier_filter_inline (Sound me, FormantTier formantTier) {
 
 Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
 		Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
@@ -323,7 +301,7 @@ Sound Sound_FormantTier_filter (Sound me, FormantTier formantTier) {
 
 Sound Sound_FormantTier_filter_noscale (Sound me, FormantTier formantTier) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_FormantTier_filter_inline (thee.peek(), formantTier);
 		return thee.transfer();
 	} catch (MelderError) {

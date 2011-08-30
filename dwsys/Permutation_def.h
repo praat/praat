@@ -17,16 +17,20 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20050706
-*/
 
 #define ooSTRUCT Permutation
 oo_DEFINE_CLASS (Permutation, Data)
+
 	oo_LONG (numberOfElements)
-	oo_LONG_VECTOR (p, my numberOfElements)
+	oo_LONG_VECTOR (p, numberOfElements)
 			
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
+
 oo_END_CLASS(Permutation)	
 #undef ooSTRUCT
+
 
 /* End of file Permutation_def.h */	

@@ -52,126 +52,127 @@
 	}
 #endif
 
-static void destroy (I) {
-	iam (GraphicsScreen);
+Thing_implement (GraphicsScreen, Graphics, 0);
+
+void structGraphicsScreen :: v_destroy () {
 	#if cairo
-		if (my gc != NULL) {
-			g_object_unref (my gc);			
-			my gc = NULL;
+		if (d_gdkGraphicsContext != NULL) {
+			g_object_unref (d_gdkGraphicsContext);			
+			d_gdkGraphicsContext = NULL;
 		}
-		if (my cr != NULL) {
-			cairo_destroy (my cr);
-			my cr = NULL;
+		if (d_cairoGraphicsContext != NULL) {
+			cairo_destroy (d_cairoGraphicsContext);
+			d_cairoGraphicsContext = NULL;
 		}
 	#elif win
-		if (my dc != NULL) {
-			SelectPen (my dc, GetStockPen (BLACK_PEN));
-			SelectBrush (my dc, GetStockBrush (NULL_BRUSH));
-			my dc = NULL;
+		if (d_gdiGraphicsContext != NULL) {
+			SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+			SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+			d_gdiGraphicsContext = NULL;
 		}
-		if (my pen != NULL) {
-			DeleteObject (my pen);
-			my pen = NULL;
+		if (d_winPen != NULL) {
+			DeleteObject (d_winPen);
+			d_winPen = NULL;
 		}
-		if (my brush != NULL) {
-			DeleteObject (my brush);
-			my brush = NULL;
+		if (d_winBrush != NULL) {
+			DeleteObject (d_winBrush);
+			d_winBrush = NULL;
 		}
 		/*
 		 * No ReleaseDC here, because we have not created it ourselves,
 		 * not even with GetDC.
 		 */
 	#elif mac
-		if (my macPort == NULL) {
-			CGContextEndPage (my macGraphicsContext);
-			CGContextRelease (my macGraphicsContext);
+		if (d_macPort == NULL) {
+			CGContextEndPage (d_macGraphicsContext);
+			CGContextRelease (d_macGraphicsContext);
 		}
 	#endif
-	inherited (GraphicsScreen) destroy (me);
+	GraphicsScreen_Parent :: v_destroy ();
 }
 
-void Graphics_flushWs (I) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
-		#if cairo
-			// Ik weet niet of dit is wat het zou moeten zijn ;)
-			// gdk_window_process_updates (my window, TRUE);
-			gdk_flush ();
-			// TODO: een aanroep die de eventuele grafische buffer ledigt,
-			// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
-		#elif win
-			/*GdiFlush ();*/
-		#elif mac
-			if (my drawingArea) GuiWindow_drain (my drawingArea);
-		#endif
-	}
+void structGraphicsScreen :: v_flushWs () {
+	#if cairo
+		// Ik weet niet of dit is wat het zou moeten zijn ;)
+		// gdk_window_process_updates (my window, TRUE);
+		gdk_flush ();
+		// TODO: een aanroep die de eventuele grafische buffer ledigt,
+		// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
+	#elif win
+		/*GdiFlush ();*/
+	#elif mac
+		if (d_drawingArea) GuiWindow_drain (d_drawingArea);
+	#endif
 }
 
-void Graphics_clearWs (I) {
-	iam (Graphics);
-	if (my screen) {
-		iam (GraphicsScreen);
-		#if cairo
-			GdkRectangle rect;
-			if (my x1DC < my x2DC) {
-				rect.x = my x1DC;
-				rect.width = my x2DC - my x1DC;
-			} else {
-				rect.x = my x2DC;
-				rect.width = my x1DC - my x2DC;
-			}
-			if (my y1DC < my y2DC) {
-				rect.y = my y1DC;
-				rect.height = my y2DC - my y1DC;
-			} else {
-				rect.y = my y2DC;
-				rect.height = my y1DC - my y2DC;
-			}
-			if (my cr == NULL) {
-				//Melder_casual("Clear and null");
-				//gdk_window_clear (my window);
-				//gdk_window_invalidate_rect (my window, & rect, true);   // BUG: it seems weird that this is necessary.
-			} else {
-				//Melder_casual("Clear and not null");
-				cairo_set_source_rgb (my cr, 1.0, 1.0, 1.0);
-				cairo_rectangle (my cr, rect.x, rect.y, rect.width, rect.height);
-				cairo_fill (my cr);
-				cairo_set_source_rgb (my cr, 0.0, 0.0, 0.0);
-			}
-		#elif win
-			RECT rect;
-			rect. left = rect. top = 0;
-			rect. right = my x2DC - my x1DC;
-			rect. bottom = my y2DC - my y1DC;
-			FillRect (my dc, & rect, GetStockBrush (WHITE_BRUSH));
-			/*if (my window) SendMessage (my window, WM_ERASEBKGND, (WPARAM) my dc, 0);*/
-		#elif mac
-			if (my useQuartz) {
-				QDBeginCGContext (my macPort, & my macGraphicsContext);
-				CGContextSetAlpha (my macGraphicsContext, 1.0);
-				CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
-				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
-				CGContextSetRGBFillColor (my macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
-				CGContextFillRect (my macGraphicsContext, CGRectMake (my x1DC, shellHeight - my y1DC, my x2DC - my x1DC, my y1DC - my y2DC));
-				QDEndCGContext (my macPort, & my macGraphicsContext);
-			} else { // QuickDraw
-				Rect r;
-				RGBColor white = { 65535, 65535, 65535 }, black = { 0, 0, 0 };
-				if (my drawingArea) GuiMac_clipOn (my drawingArea);
-				SetRect (& r, my x1DC, my y1DC, my x2DC, my y2DC);
-				SetPort (my macPort);
-				RGBForeColor (& white);
-				PaintRect (& r);
-				RGBForeColor (& black);
-				if (my drawingArea) GuiMac_clipOff ();
-			}
-		#endif
-	}
+void Graphics_flushWs (Graphics me) {
+	my v_flushWs ();
 }
 
-void Graphics_updateWs (I) {
+void structGraphicsScreen :: v_clearWs () {
+	#if cairo
+		GdkRectangle rect;
+		if (this -> x1DC < this -> x2DC) {
+			rect.x = this -> x1DC;
+			rect.width = this -> x2DC - this -> x1DC;
+		} else {
+			rect.x = this -> x2DC;
+			rect.width = this -> x1DC - this -> x2DC;
+		}
+		if (this -> y1DC < this -> y2DC) {
+			rect.y = this -> y1DC;
+			rect.height = this -> y2DC - this -> y1DC;
+		} else {
+			rect.y = this -> y2DC;
+			rect.height = this -> y1DC - this -> y2DC;
+		}
+		if (d_cairoGraphicsContext == NULL) {
+			//Melder_casual("Clear and null");
+			//gdk_window_clear (this -> window);
+			//gdk_window_invalidate_rect (this -> window, & rect, true);   // BUG: it seems weird that this is necessary.
+		} else {
+			//Melder_casual("Clear and not null");
+			cairo_set_source_rgb (d_cairoGraphicsContext, 1.0, 1.0, 1.0);
+			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
+			cairo_fill (d_cairoGraphicsContext);
+			cairo_set_source_rgb (d_cairoGraphicsContext, 0.0, 0.0, 0.0);
+		}
+	#elif win
+		RECT rect;
+		rect. left = rect. top = 0;
+		rect. right = x2DC - x1DC;
+		rect. bottom = y2DC - y1DC;
+		FillRect (d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
+		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
+	#elif mac
+		if (d_useQuartz) {
+			QDBeginCGContext (d_macPort, & d_macGraphicsContext);
+			CGContextSetAlpha (d_macGraphicsContext, 1.0);
+			CGContextSetBlendMode (d_macGraphicsContext, kCGBlendModeNormal);
+			//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
+			int shellHeight = GuiMac_clipOn_graphicsContext (d_drawingArea, d_macGraphicsContext);
+			CGContextSetRGBFillColor (d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+			CGContextFillRect (d_macGraphicsContext, CGRectMake (this -> x1DC, shellHeight - this -> y1DC, this -> x2DC - this -> x1DC, this -> y1DC - this -> y2DC));
+			QDEndCGContext (d_macPort, & d_macGraphicsContext);
+		} else { // QuickDraw
+			Rect r;
+			RGBColor white = { 65535, 65535, 65535 }, black = { 0, 0, 0 };
+			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
+			SetRect (& r, this -> x1DC, this -> y1DC, this -> x2DC, this -> y2DC);
+			SetPort (d_macPort);
+			RGBForeColor (& white);
+			PaintRect (& r);
+			RGBForeColor (& black);
+			if (d_drawingArea) GuiMac_clipOff ();
+		}
+	#endif
+}
+
+void Graphics_clearWs (Graphics me) {
+	my v_clearWs ();
+}
+
+void structGraphicsScreen :: v_updateWs () {
 	/*
 	 * A function that invalidates the graphics.
 	 * This function is typically called by the owner of the drawing area
@@ -179,98 +180,95 @@ void Graphics_updateWs (I) {
 	 * the idea is to generate an expose event to which the drawing area will
 	 * respond by redrawing its contents from the (changed) data.
 	 */
-	iam (Graphics);
-	if (me && my screen) {
-		iam (GraphicsScreen);
-		#if gtk
-			//GdkWindow *window = gtk_widget_get_parent_window (my drawingArea);
-			GdkRectangle rect;
+	#if gtk
+		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (my drawingArea));
+		GdkRectangle rect;
 
-			if (my x1DC < my x2DC) {
-				rect.x = my x1DC;
-				rect.width = my x2DC - my x1DC;
-			} else {
-				rect.x = my x2DC;
-				rect.width = my x1DC - my x2DC;
-			}
+		if (this -> x1DC < this -> x2DC) {
+			rect.x = this -> x1DC;
+			rect.width = this -> x2DC - this -> x1DC;
+		} else {
+			rect.x = this -> x2DC;
+			rect.width = this -> x1DC - this -> x2DC;
+		}
 
-			if (my y1DC < my y2DC) {
-				rect.y = my y1DC;
-				rect.height = my y2DC - my y1DC;
-			} else {
-				rect.y = my y2DC;
-				rect.height = my y1DC - my y2DC;
-			}
+		if (this -> y1DC < this -> y2DC) {
+			rect.y = this -> y1DC;
+			rect.height = this -> y2DC - this -> y1DC;
+		} else {
+			rect.y = this -> y2DC;
+			rect.height = this -> y1DC - this -> y2DC;
+		}
 
-			if (my cr && my drawingArea) {  // update clipping rectangle to new graphics size
-				cairo_reset_clip (my cr);
-				cairo_rectangle (my cr, rect.x, rect.y, rect.width, rect.height);
-				cairo_clip (my cr);
-			}
-			gdk_window_clear (my window);
-			gdk_window_invalidate_rect (my window, & rect, true);
-			//gdk_window_process_updates (window, true);
-		#elif win
-			//clear (me); // lll
-			if (my window) InvalidateRect (my window, NULL, TRUE);
-		#elif mac
-			Rect r;
-			if (my drawingArea) GuiMac_clipOn (my drawingArea);   // to prevent invalidating invisible parts of the canvas
-			SetRect (& r, my x1DC, my y1DC, my x2DC, my y2DC);
-			SetPort (my macPort);
-			/*EraseRect (& r);*/
-			InvalWindowRect (GetWindowFromPort ((CGrafPtr) my macPort), & r);
-			if (my drawingArea) GuiMac_clipOff ();
-		#endif
-	}
+		if (d_cairoGraphicsContext && d_drawingArea) {  // update clipping rectangle to new graphics size
+			cairo_reset_clip (d_cairoGraphicsContext);
+			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
+			cairo_clip (d_cairoGraphicsContext);
+		}
+		gdk_window_clear (d_window);
+		gdk_window_invalidate_rect (d_window, & rect, true);
+		//gdk_window_process_updates (d_window, true);
+	#elif win
+		//clear (this); // lll
+		if (d_winWindow) InvalidateRect (d_winWindow, NULL, TRUE);
+	#elif mac
+		Rect r;
+		if (d_drawingArea) GuiMac_clipOn (d_drawingArea);   // to prevent invalidating invisible parts of the canvas
+		SetRect (& r, this -> x1DC, this -> y1DC, this -> x2DC, this -> y2DC);
+		SetPort (d_macPort);
+		/*EraseRect (& r);*/
+		InvalWindowRect (GetWindowFromPort ((CGrafPtr) d_macPort), & r);
+		if (d_drawingArea) GuiMac_clipOff ();
+	#endif
 }
 
-class_methods (GraphicsScreen, Graphics)
-	class_method (destroy)
-class_methods_end
+void Graphics_updateWs (Graphics me) {
+	if (me)
+		my v_updateWs ();
+}
 
 static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned long voidWindow, int resolution) {
 
 	/* Fill in new members. */
 
 	#if cairo
-		my display = (GdkDisplay *) gdk_display_get_default ();
-		_Graphics_text_init (me);
+		my d_display = (GdkDisplay *) gdk_display_get_default ();
+		_GraphicsScreen_text_init (me);
 		my resolution = 100;
-		my window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
-		my gc = gdk_gc_new (my window);
-		my cr = gdk_cairo_create (my window);
+		my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
+		my d_gdkGraphicsContext = gdk_gc_new (my d_window);
+		my d_cairoGraphicsContext = gdk_cairo_create (my d_window);
 	#elif win
 		if (my printer) {
-			my dc = (HDC) voidWindow;
+			my d_gdiGraphicsContext = (HDC) voidWindow;
 		} else if (voidDisplay) {
-			my dc = (HDC) voidDisplay;
+			my d_gdiGraphicsContext = (HDC) voidDisplay;
 			my metafile = TRUE;
 		} else {
-			my window = (HWND) voidWindow;
-			my dc = GetDC (my window);   // window must have a constant display context; see XtInitialize ()
+			my d_winWindow = (HWND) voidWindow;
+			my d_gdiGraphicsContext = GetDC (my d_winWindow);   // window must have a constant display context; see XtInitialize ()
 		}
-		Melder_assert (my dc != NULL);
+		Melder_assert (my d_gdiGraphicsContext != NULL);
 		my resolution = resolution;
-		SetBkMode (my dc, TRANSPARENT);   // not the default!
+		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);   // not the default!
 		/*
 		 * Create pens and brushes.
 		 */
-		my pen = CreatePen (PS_SOLID, 0, RGB (0, 0, 0));
-		my brush = CreateSolidBrush (RGB (0, 0, 0));
-		SelectBrush (my dc, GetStockBrush (NULL_BRUSH));
-		SetTextAlign (my dc, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
-		_Graphics_text_init (me);
+		my d_winPen = CreatePen (PS_SOLID, 0, RGB (0, 0, 0));
+		my d_winBrush = CreateSolidBrush (RGB (0, 0, 0));
+		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+		SetTextAlign (my d_gdiGraphicsContext, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);   // baseline is not the default!
+		_GraphicsScreen_text_init (me);
 	#elif mac
 		(void) voidDisplay;
-		my macPort = (GrafPtr) voidWindow;
-		my macColour = theBlackColour;
+		my d_macPort = (GrafPtr) voidWindow;
+		my d_macColour = theBlackColour;
 		my resolution = resolution;
-		my depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
-		if (my useQuartz) {
-			(void) my macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
+		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
+		if (my d_useQuartz) {
+			(void) my d_macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
 		}
-		_Graphics_text_init (me);
+		_GraphicsScreen_text_init (me);
 	#endif
 	return 1;
 }
@@ -307,7 +305,7 @@ Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
 	my yIsZeroAtTheTop = true;
 	my printer = true;
 	#ifdef macintosh
-		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me);
 	my paperWidth = (double) thePrinter. paperWidth / thePrinter. resolution;
@@ -361,37 +359,37 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 		Dimension width, height;
 	#endif
 
-	my drawingArea = static_cast <GuiObject> (w);   /* Now !!!!!!!!!! */
+	my d_drawingArea = static_cast <GuiObject> (w);   /* Now !!!!!!!!!! */
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#if win
-		my useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
+		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
 	#elif mac
-		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me); therror
 	#ifdef macintosh
-		GraphicsScreen_init (me, XtDisplay (my drawingArea), (unsigned long) GetWindowPort ((WindowRef) XtWindow (my drawingArea)), Gui_getResolution (my drawingArea));
+		GraphicsScreen_init (me, XtDisplay (my d_drawingArea), (unsigned long) GetWindowPort ((WindowRef) XtWindow (my d_drawingArea)), Gui_getResolution (my d_drawingArea));
 	#else
 		#if gtk
-			GraphicsScreen_init (me, GTK_WIDGET (my drawingArea), (unsigned long) GTK_WIDGET (my drawingArea), Gui_getResolution(my drawingArea));
+			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea), (unsigned long) GTK_WIDGET (my d_drawingArea), Gui_getResolution (my d_drawingArea));
 		#elif motif
-			GraphicsScreen_init (me, XtDisplay (my drawingArea), (unsigned long) XtWindow (my drawingArea), Gui_getResolution (my drawingArea));
+			GraphicsScreen_init (me, XtDisplay (my d_drawingArea), (unsigned long) XtWindow (my d_drawingArea), Gui_getResolution (my d_drawingArea));
 		#endif
 	#endif
 
 	#if gtk
 		// fb: is really the request meant or rather the actual size, aka allocation?
-		gtk_widget_size_request (my drawingArea, &realsize);
+		gtk_widget_size_request (GTK_WIDGET (my d_drawingArea), & realsize);
 		// HIER WAS IK
 		//	g_debug("--> %d %d", realsize.width, realsize.height);
 		Graphics_setWsViewport ((Graphics) me, 0, realsize.width, 0, realsize.height);
 	#elif motif
-		XtVaGetValues (my drawingArea, XmNwidth, & width, XmNheight, & height, NULL);
+		XtVaGetValues (my d_drawingArea, XmNwidth, & width, XmNheight, & height, NULL);
 		Graphics_setWsViewport ((Graphics) me, 0, width, 0, height);
 	#endif
 	#ifdef macintosh
-		XtAddCallback (my drawingArea, XmNmoveCallback, cb_move, (XtPointer) me);
+		XtAddCallback (my d_drawingArea, XmNmoveCallback, cb_move, (XtPointer) me);
 	#endif
 	return (Graphics) me;
 }
@@ -403,7 +401,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh
-		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me); therror
 	my resolution = resolution;
@@ -415,7 +413,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 		CFIndex numberOfValues = 1;
 		CFDictionaryRef dictionary = CFDictionaryCreate (NULL, (const void **) & key, (const void **) & value, numberOfValues,
 			& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
-		my macGraphicsContext = CGPDFContextCreateWithURL (url, & rect, dictionary);
+		my d_macGraphicsContext = CGPDFContextCreateWithURL (url, & rect, dictionary);
 		CFRelease (url);
 		CFRelease (dictionary);
 		my x1DC = my x1DCmin = 0;
@@ -423,10 +421,10 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 		my y1DC = my y1DCmin = 0;
 		my y2DC = my y2DCmax = 11.0 * resolution;
 		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
-		CGContextBeginPage (my macGraphicsContext, & rect);
-		CGContextScaleCTM (my macGraphicsContext, 72.0/resolution, 72.0/resolution);
-		CGContextTranslateCTM (my macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
-		CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
+		CGContextBeginPage (my d_macGraphicsContext, & rect);
+		CGContextScaleCTM (my d_macGraphicsContext, 72.0/resolution, 72.0/resolution);
+		CGContextTranslateCTM (my d_macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
+		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
 	return (Graphics) me;
 }
@@ -437,56 +435,54 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh
-		my useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	if (! Graphics_init (me)) return NULL;
+	Graphics_init (me);
 	my resolution = resolution;
 	#ifdef macintosh
-		my macGraphicsContext = static_cast <CGContext *> (context);
+		my d_macGraphicsContext = static_cast <CGContext *> (context);
 		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72, (y2inches - y1inches) * 72);   // don't tire PDF viewers with funny origins
 		my x1DC = my x1DCmin = 0;
 		my x2DC = my x2DCmax = 7.5 * resolution;
 		my y1DC = my y1DCmin = 0;
 		my y2DC = my y2DCmax = 11.0 * resolution;
 		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
-		CGContextBeginPage (my macGraphicsContext, & rect);
-		CGContextScaleCTM (my macGraphicsContext, 72.0/resolution, 72.0/resolution);
-		CGContextTranslateCTM (my macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
-		CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
+		CGContextBeginPage (my d_macGraphicsContext, & rect);
+		CGContextScaleCTM (my d_macGraphicsContext, 72.0/resolution, 72.0/resolution);
+		CGContextTranslateCTM (my d_macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
+		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
 	return (Graphics) me;
 }
 
 #if cairo
-	void *Graphics_x_getCR (I) {
-		iam (GraphicsScreen);
-		return my cr;
+	void *Graphics_x_getCR (Graphics me) {
+		return ((GraphicsScreen) me) -> d_cairoGraphicsContext;
 	}
-	void Graphics_x_setCR (I, void *cr) {
-		iam (GraphicsScreen);
-		my cr = (cairo_t *) cr;
+	void Graphics_x_setCR (Graphics me, void *cairoGraphicsContext) {
+		((GraphicsScreen) me) -> d_cairoGraphicsContext = (cairo_t *) cairoGraphicsContext;
 	}
 #endif
 
 #if mac
 	void GraphicsQuartz_initDraw (GraphicsScreen me) {
-		if (my macPort) {
-			QDBeginCGContext (my macPort, & my macGraphicsContext);
+		if (my d_macPort) {
+			QDBeginCGContext (my d_macPort, & my d_macGraphicsContext);
 			//CGContextSetAlpha (my macGraphicsContext, 1.0);
 			//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-			if (my drawingArea != NULL) {
-				int shellHeight = GuiMac_clipOn_graphicsContext (my drawingArea, my macGraphicsContext);
-				CGContextTranslateCTM (my macGraphicsContext, 0, shellHeight);
+			if (my d_drawingArea != NULL) {
+				int shellHeight = GuiMac_clipOn_graphicsContext (my d_drawingArea, my d_macGraphicsContext);
+				CGContextTranslateCTM (my d_macGraphicsContext, 0, shellHeight);
 			} else if (my printer) {
-				CGContextTranslateCTM (my macGraphicsContext, 0, my y2DC - my y1DC);
+				CGContextTranslateCTM (my d_macGraphicsContext, 0, my y2DC - my y1DC);
 			}
-			CGContextScaleCTM (my macGraphicsContext, 1.0, -1.0);
+			CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 		}
 	}
 	void GraphicsQuartz_exitDraw (GraphicsScreen me) {
-		if (my macPort) {
-			CGContextSynchronize (my macGraphicsContext);
-			QDEndCGContext (my macPort, & my macGraphicsContext);
+		if (my d_macPort) {
+			CGContextSynchronize (my d_macGraphicsContext);
+			QDEndCGContext (my d_macPort, & my d_macGraphicsContext);
 		}
 	}
 #endif

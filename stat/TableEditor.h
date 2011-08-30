@@ -26,6 +26,7 @@
 
 Thing_define (TableEditor, Editor) {
 	// new data:
+	public:
 		long topRow, leftColumn, selectedRow, selectedColumn;
 		GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar;
 		double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];

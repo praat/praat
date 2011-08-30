@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/03/09
- */
-
 #include "praat.h"
 #include "praat_version.h"
 
@@ -48,14 +44,11 @@ static void logo (Graphics g) {
 	Graphics_text (g, 0.5, 0.16, L"Copyright \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
 }
 
-extern "C" void praat_uvafon_init ();
-extern "C" void praat_contrib_Ola_KNN_init ();
-
 int main (int argc, char *argv []) {
 	praat_setLogo (130, 80, logo);
 	praat_init ("Praat", argc, argv);
-	praat_uvafon_init ();
-	praat_contrib_Ola_KNN_init ();
+	INCLUDE_LIBRARY (praat_uvafon_init)
+	INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
 	praat_run ();
 	return 0;
 }

@@ -19,17 +19,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/15
- */
-
 #include "Graphics.h"
 #include "PairDistribution.h"
 #include "Distributions.h"
 #include "OTGrammar.h"
 
 #include "OTMulti_def.h"
-#define OTMulti__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (OTMulti, Data);
 
 long OTMulti_getConstraintIndexFromName (OTMulti me, const wchar *name);

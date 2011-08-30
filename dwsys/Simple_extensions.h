@@ -28,10 +28,6 @@
 #include "Graphics.h"
 #include "Simple.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void SimpleString_init (SimpleString me, const wchar_t *value);
 /* return 0 when value == NULL */
 
@@ -54,15 +50,11 @@ void SimpleString_replace_c (SimpleString me, const wchar_t *replacement);
 long SimpleString_length (SimpleString me);
 /* return my length */
 
-void SimpleString_draw (SimpleString me, Any g, double xWC, double yWC);
+void SimpleString_draw (SimpleString me, Graphics g, double xWC, double yWC);
 /* draw the string */
 
 const wchar_t * SimpleString_nativize_c (SimpleString me, int educateQuotes);
 const wchar_t * SimpleString_genericize_c (SimpleString me);
 /* see longchar.h for info */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Simple_extensions_h_ */

@@ -17,24 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/11/24 Melder_double
- * pb 2003/12/09 guard against Preference file that has been copied from one platform to another
- * pb 2005/03/04 guard against hand-edited Preference files that contain strings longer than (Preferences_STRING_BUFFER_SIZE - 1) bytes
- * pb 2007/08/12 wchar_t
- * pb 2007/09/01 bool
- * pb 2007/11/02 enum
- * pb 2007/11/14 removed swprintf(%ls) because of bug on Mac
- * pb 2007/11/30 Preferences_write forgets thePreferences
- * pb 2007/12/09 removed "resources"
- * pb 2008/01/19 removed float
- * pb 2009/03/21 modern enums
- * pb 2011/05/14 removed charwa
- * pb 2011/05/14 C++
- * pb 2011/07/11 C++
- */
-
 #include "Preferences.h"
 #include "Collection.h"
 
@@ -43,28 +25,24 @@
  * we will use SimpleString routines with it.
  */
 
-Thing_declare1cpp (Preference);
-struct structPreference : public structSimpleString {
-	int type;
-	void *value;
-	int min, max;
-	const wchar * (*getText) (int value);
-	int (*getValue) (const wchar *text);
+Thing_define (Preference, SimpleString) {
+	// new data:
+	public:
+		int type;
+		void *value;
+		int min, max;
+		const wchar * (*getText) (int value);
+		int (*getValue) (const wchar *text);
+	// overridden methods:
+		void v_destroy ();
 };
-#define Preference__methods(klas) SimpleString__methods(klas)
-Thing_declare2cpp (Preference, SimpleString);
+Thing_implement (Preference, SimpleString, 0);
 
 /* Warning: copy methods etc. not implemented. */
 
-static void destroy (I) {
-	iam (Preference);
-	Melder_free (my string);
-	inherited (Preference) destroy (me);
-}
-
-class_methods (Preference, SimpleString) {
-	class_method (destroy)
-	class_methods_end
+void structPreference :: v_destroy () {
+	Melder_free (string);
+	Preference_Parent :: v_destroy ();
 }
 
 static SortedSetOfString thePreferences;

@@ -16,25 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/22 Editor_setPublish2Callback
- * pb 2005/09/01 do not add a "(cannot) undo" button if there is no data to save
- * pb 2007/06/10 wchar_t
- * pb 2007/09/02 form/ok/do_pictureWindow
- * pb 2007/09/08 createMenuItems_file and createMenuItems_edit
- * pb 2007/09/19 info
- * pb 2007/12/05 enums
- * pb 2008/03/20 split off Help menu
- * sdk 2008/03/24 GTK
- * pb 2009/01/18 arguments to UiForm callbacks
- * pb 2009/08/19 allow editor windows without menu bar (requested by DemoEditor)
- * fb 2010/02/23 GTK
- * pb 2010/07/29 removed GuiWindow_show
- * pb 2011/04/06 C++
- * pb 2011/07/16 C++
- */
+/* some GTK stuff added by Stefan de Konink in 2008 and Franz Brausse in 2010 */
 
 #include <time.h>
 #include "ScriptEditor.h"
@@ -47,6 +29,8 @@
 #include "Editor_enums.h"
 #include "enums_getValue.h"
 #include "Editor_enums.h"
+
+Thing_implement (Editor, Thing, 0);
 
 /********** PREFERENCES **********/
 
@@ -64,27 +48,23 @@ void Editor_prefs (void) {
 
 /********** class EditorCommand **********/
 
+Thing_implement (EditorCommand, Thing, 0);
+
 void structEditorCommand :: v_destroy () {
 	Melder_free (itemTitle);
 	Melder_free (script);
-	forget (dialog);
+	forget (d_uiform);
 	EditorCommand_Parent :: v_destroy ();
 }
 
-class_methods (EditorCommand, Thing) {
-	class_methods_end
-}
-
 /********** class EditorMenu **********/
+
+Thing_implement (EditorMenu, Thing, 0);
 
 void structEditorMenu :: v_destroy () {
 	Melder_free (menuTitle);
 	forget (commands);
 	EditorMenu_Parent :: v_destroy ();
-}
-
-class_methods (EditorMenu, Thing) {
-	class_methods_end
 }
 
 /********** functions **********/
@@ -96,12 +76,12 @@ static void commonCallback (GUI_ARGS) {
 			return;
 		}
 	#endif
-	if (my editor && my editor -> v_scriptable () && ! wcsstr (my itemTitle, L"...")) {
+	if (my d_editor && my d_editor -> v_scriptable () && ! wcsstr (my itemTitle, L"...")) {
 		UiHistory_write (L"\n");
 		UiHistory_write (my itemTitle);
 	}
 	try {
-		my commandCallback (my editor, me, NULL, NULL, NULL); therror
+		my commandCallback (my d_editor, me, NULL, NULL, NULL); therror
 	} catch (MelderError) {
 		Melder_error_ ("Menu command \"", my itemTitle, "\" not completed.");
 		Melder_flushError (NULL);
@@ -109,10 +89,10 @@ static void commonCallback (GUI_ARGS) {
 }
 
 GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar *itemTitle, long flags,
-	int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
+	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
 {
 	autoEditorCommand me = Thing_new (EditorCommand);
-	my editor = menu -> editor;
+	my d_editor = menu -> d_editor;
 	my menu = menu;
 	my itemTitle = Melder_wcsdup (itemTitle);
 	my itemWidget =
@@ -129,7 +109,7 @@ GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar *itemTitle, long f
 
 EditorMenu Editor_addMenu (Editor editor, const wchar *menuTitle, long flags) {
 	autoEditorMenu me = Thing_new (EditorMenu);
-	my editor = editor;
+	my d_editor = editor;
 	my menuTitle = Melder_wcsdup (menuTitle);
 	my menuWidget = GuiMenuBar_addMenu (editor -> menuBar, menuTitle, flags);
 	my commands = Ordered_create ();
@@ -141,7 +121,7 @@ EditorMenu Editor_addMenu (Editor editor, const wchar *menuTitle, long flags) {
 /*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
 GuiObject Editor_addCommand (Editor me, const wchar *menuTitle, const wchar *itemTitle, long flags,
-	int (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
+	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
 {
 	try {
 		long numberOfMenus = my menus -> size;
@@ -156,12 +136,11 @@ GuiObject Editor_addCommand (Editor me, const wchar *menuTitle, const wchar *ite
 	}
 }
 
-static int Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter) {
+static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter) {
 	(void) sendingForm;
 	(void) sendingString;
 	(void) interpreter;
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, cmd -> script);
-	return 1;
 }
 
 GuiObject Editor_addCommandScript (Editor me, const wchar *menuTitle, const wchar *itemTitle, long flags,
@@ -173,7 +152,7 @@ GuiObject Editor_addCommandScript (Editor me, const wchar *menuTitle, const wcha
 			EditorMenu menu = (EditorMenu) my menus -> item [imenu];
 			if (wcsequ (menuTitle, menu -> menuTitle)) {
 				autoEditorCommand cmd = Thing_new (EditorCommand);
-				cmd -> editor = me;
+				cmd -> d_editor = me;
 				cmd -> menu = menu;
 				cmd -> itemTitle = Melder_wcsdup_f (itemTitle);
 				cmd -> itemWidget = script == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
@@ -238,7 +217,7 @@ void Editor_doMenuCommand (Editor me, const wchar *commandTitle, const wchar *ar
 			}
 		}
 	}
-	Melder_throw ("Command not available in ", our _className, ".");
+	Melder_throw ("Command not available in ", my classInfo -> className, ".");
 }
 
 /********** class Editor **********/
@@ -250,15 +229,15 @@ void structEditor :: v_destroy () {
 	 * Otherwise, we would be forgetting dangling command dialogs here.
 	 */
 	forget (menus);
-	if (shell) {
+	if (d_windowShell) {
 		#if gtk
-			Melder_assert (GTK_IS_WIDGET (shell));
-			gtk_widget_destroy (shell);
+			Melder_assert (GTK_IS_WIDGET (d_windowShell));
+			gtk_widget_destroy (GTK_WIDGET (d_windowShell));
 		#else
-			XtDestroyWidget (shell);
+			XtDestroyWidget (d_windowShell);
 		#endif
 	}
-	if (destroyCallback) destroyCallback (this, destroyClosure);
+	broadcastDestruction ();
 	forget (previousData);
 	Editor_Parent :: v_destroy ();
 }
@@ -269,39 +248,35 @@ void structEditor :: v_info () {
 	time_t today = time (NULL);
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   // includes a newline
 	if (data) {
-		MelderInfo_writeLine2 (L"Data type: ", data -> methods -> _className);
+		MelderInfo_writeLine2 (L"Data type: ", data -> classInfo -> className);
 		MelderInfo_writeLine2 (L"Data name: ", data -> name);
 	}
 }
 
 void structEditor :: v_nameChanged () {
 	if (name)
-		GuiWindow_setTitle (shell, name);
+		GuiWindow_setTitle (d_windowShell, name);
 }
 
-void structEditor :: v_save () {
+void structEditor :: v_saveData () {
 	if (! data) return;
 	forget (previousData);
-	previousData = (Data) Data_copy (data);
+	previousData = Data_copy (data);
 }
 
-void structEditor :: v_restore () {
-	if (data && previousData)   // swap contents of my data and my previousData
+void structEditor :: v_restoreData () {
+	if (data && previousData)
 		Thing_swap (data, previousData);
 }
 
-#undef our
-#define our ((Editor_Table) my methods) ->
-
-static int menu_cb_close (EDITOR_ARGS) {
+static void menu_cb_close (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
 	my v_goAway ();
-	return 1;
 }
 
-static int menu_cb_undo (EDITOR_ARGS) {
+static void menu_cb_undo (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	my v_restore ();
+	my v_restoreData ();
 	if (wcsnequ (my undoText, L"Undo", 4)) my undoText [0] = 'R', my undoText [1] = 'e';
 	else if (wcsnequ (my undoText, L"Redo", 4)) my undoText [0] = 'U', my undoText [1] = 'n';
 	else wcscpy (my undoText, L"Undo?");
@@ -318,27 +293,23 @@ static int menu_cb_undo (EDITOR_ARGS) {
 	/*
 	 * Send a message to my boss (e.g., she will notify the others that depend on me).
 	 */
-	Editor_broadcastChange (me);
-	return 1;
+	my broadcastDataChanged ();
 }
 
-static int menu_cb_searchManual (EDITOR_ARGS) {
+static void menu_cb_searchManual (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
 	Melder_search ();
-	return 1;
 }
 
-static int menu_cb_newScript (EDITOR_ARGS) {
+static void menu_cb_newScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	(void) ScriptEditor_createFromText (my parent, me, NULL); therror
-	return 1;
+	(void) ScriptEditor_createFromText (my d_windowParent, me, NULL); therror
 }
 
-static int menu_cb_openScript (EDITOR_ARGS) {
+static void menu_cb_openScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	ScriptEditor scriptEditor = ScriptEditor_createFromText (my parent, me, NULL); therror
-	TextEditor_showOpen (scriptEditor);
-	return 1;
+	autoScriptEditor scriptEditor = ScriptEditor_createFromText (my d_windowParent, me, NULL);
+	TextEditor_showOpen (scriptEditor.transfer());
 }
 
 void structEditor :: v_createMenuItems_file (EditorMenu menu) {
@@ -350,16 +321,14 @@ void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
 		undoButton = EditorMenu_addCommand (menu, L"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
-static int menu_cb_settingsReport (EDITOR_ARGS) {
+static void menu_cb_settingsReport (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
 	Thing_info (me);
-	return 1;
 }
 
-static int menu_cb_info (EDITOR_ARGS) {
+static void menu_cb_info (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	if (my data) Thing_info ((Thing) my data);
-	return 1;
+	if (my data) Thing_info (my data);
 }
 
 void structEditor :: v_createMenuItems_query (EditorMenu menu) {
@@ -413,10 +382,6 @@ void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
 	preferences.picture.writeNameAtTop = GET_ENUM (kEditor_writeNameAtTop, L"Write name at top");
 }
 
-class_methods (Editor, Thing) {
-	class_methods_end
-}
-
 static void gui_window_cb_goAway (I) {
 	iam (Editor);
 	my v_goAway ();
@@ -427,7 +392,7 @@ void Editor_init (Editor me, GuiObject parent, int x, int y, int width, int heig
 	#if gtk
 		GdkScreen *screen = gdk_screen_get_default ();
 		if (parent != NULL) {
-			GuiObject parent_win = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
+			GuiObject parent_win = gtk_widget_get_ancestor (GTK_WIDGET (parent), GTK_TYPE_WINDOW);
 			if (parent_win != NULL) {
 				screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
 			}
@@ -462,10 +427,10 @@ void Editor_init (Editor me, GuiObject parent, int x, int y, int width, int heig
 		top += Machine_getTitleBarHeight ();
 		bottom += Machine_getTitleBarHeight ();
 	#endif
-	my parent = parent;   /* Probably praat.topShell */
-	my dialog = GuiWindow_create (parent, left, top, right - left, bottom - top, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
-	my shell = GuiObject_parent (my dialog);   /* Note that GuiObject_parent (my shell) will be NULL! */
-	//Melder_casual ("my parent %ld my dialog %ld my shell %ld", my parent, my dialog, my shell);
+	my d_windowParent = parent;   /* Probably praat.topShell */
+	my d_windowForm = GuiWindow_create (parent, left, top, right - left, bottom - top, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
+	my d_windowShell = GuiObject_parent (my d_windowForm);   /* Note that GuiObject_parent (my shell) will be NULL! */
+	//Melder_casual ("my parent %ld my d_windowForm %ld my shell %ld", my parent, my d_windowForm, my shell);
 	Thing_setName (me, title);
 	my data = data;
 
@@ -473,7 +438,7 @@ void Editor_init (Editor me, GuiObject parent, int x, int y, int width, int heig
 
 	if (my v_hasMenuBar ()) {
 		my menus = Ordered_create ();
-		my menuBar = Gui_addMenuBar (my dialog);
+		my menuBar = Gui_addMenuBar (my d_windowForm);
 		my v_createMenus ();
 		EditorMenu helpMenu = Editor_addMenu (me, L"Help", 0);
 		my v_createHelpMenuItems (helpMenu);
@@ -493,50 +458,11 @@ void Editor_init (Editor me, GuiObject parent, int x, int y, int width, int heig
 	}
 
 	my v_createChildren ();
-	GuiObject_show (my dialog);
-}
-
-void Editor_raise (Editor me) {
-	GuiObject_show (my dialog);
-}
-
-void Editor_dataChanged (Editor me, Data data) {
-	/*if (data) my data = data; BUG */
-	(void) data;
-	my v_dataChanged ();
-}
-
-void Editor_clipboardChanged (Editor me, Data data) {
-	my v_clipboardChanged (data);
-}
-
-void Editor_setDestroyCallback (Editor me, void (*cb) (I, void *closure), void *closure) {
-	my destroyCallback = cb;
-	my destroyClosure = closure;
-}
-
-void Editor_broadcastChange (Editor me) {
-	if (my dataChangedCallback)
-		my dataChangedCallback (me, my dataChangedClosure, NULL);
-}
-
-void Editor_setDataChangedCallback (Editor me, void (*cb) (I, void *closure, Data data), void *closure) {
-	my dataChangedCallback = cb;
-	my dataChangedClosure = closure;
-}
-
-void Editor_setPublishCallback (Editor me, void (*cb) (I, void *closure, Data publish), void *closure) {
-	my publishCallback = cb;
-	my publishClosure = closure;
-}
-
-void Editor_setPublish2Callback (Editor me, void (*cb) (I, void *closure, Data publish1, Data publish2), void *closure) {
-	my publish2Callback = cb;
-	my publish2Closure = closure;
+	GuiObject_show (my d_windowForm);
 }
 
 void Editor_save (Editor me, const wchar *text) {
-	my v_save ();
+	my v_saveData ();
 	if (! my undoButton) return;
 	GuiObject_setSensitive (my undoButton, True);
 	swprintf (my undoText, 100, L"Undo %ls", text);
@@ -559,7 +485,7 @@ void Editor_closePraatPicture (Editor me) {
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
 			preferences.picture.writeNameAtTop == kEditor_writeNameAtTop_FAR,
-			((Data) my data) -> name);
+			my data -> name);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, true);

@@ -23,7 +23,6 @@
 #include "Graphics.h"
 
 #include "Polygon_def.h"
-#define Polygon__methods(klas)  Data__methods(klas)
 oo_CLASS_CREATE (Polygon, Data);
 
 Polygon Polygon_create (long numberOfPoints);
@@ -42,11 +41,11 @@ Polygon Polygon_create (long numberOfPoints);
 		result -> y [1..numberOfPoints] == 0.0;
 */
 
-void Polygon_randomize (I);   /* Randomize the order of the points. */
+void Polygon_randomize (Polygon me);   /* Randomize the order of the points. */
 
-double Polygon_perimeter (I);   /* Return the length of the closed path through all points. */
+double Polygon_perimeter (Polygon me);   /* Return the length of the closed path through all points. */
 
-void Polygon_salesperson (I, long numberOfIterations);
+void Polygon_salesperson (Polygon me, long numberOfIterations);
 /*
 	Function:
 		change the order of the points in such a way that it defines the shortest closed path.
@@ -60,18 +59,18 @@ void Polygon_salesperson (I, long numberOfIterations);
 
 /*** Drawing routines. ***/
 
-void Polygon_draw (I, Graphics g, double xmin, double xmax, double ymin, double ymax);
-void Polygon_drawClosed (I, Graphics g, double xmin, double xmax, double ymin, double ymax);
+void Polygon_draw (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax);
+void Polygon_drawClosed (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax);
 
-void Polygon_paint (I, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax);
+void Polygon_paint (Polygon me, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax);
 
-void Polygon_drawCircles (I, Graphics g,
+void Polygon_drawCircles (Polygon me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter_mm);
 
-void Polygon_paintCircles (I, Graphics g,
+void Polygon_paintCircles (Polygon me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter_mm);
 
-void Polygons_drawConnection (I, thou, Graphics g,
+void Polygons_drawConnection (Polygon me, Polygon thee, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, int hasArrow, double relativeLength);
 
 /* End of file Polygon.h */

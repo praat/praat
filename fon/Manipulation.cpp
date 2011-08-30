@@ -17,20 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/11/26 repaired a memory leak in Sound_to_Manipulation
- * pb 2006/12/30 new Sound_create API
- * pb 2007/01/27 made compatible with stereo sounds (by converting them to mono)
- * pb 2007/02/25 changed default sampling frequency to 44100 Hz
- * pb 2007/03/17 domain quantity
- * pb 2007/07/22 changed names of overlap-add method in such a way that it does not sound like an existing trademark of a diphone concatenation method
- * pb 2007/10/01 can write as encoding
- * pb 2008/01/19 double
- * pb 2008/09/23 shiftX, scaleX
- * pb 2011/06/03 C++
- */
-
 #include "Manipulation.h"
 #include "Sound_to_Pitch.h"
 #include "Pitch_to_PitchTier.h"
@@ -61,41 +47,24 @@
 #include "oo_DESCRIPTION.h"
 #include "Manipulation_def.h"
 
-static void classManipulation_shiftX (I, double xfrom, double xto) {
-	iam (Manipulation);
-	inherited (Manipulation) shiftX (me, xfrom, xto);
-	if (my sound != NULL) Function_shiftXTo (my sound, xfrom, xto);
-	if (my pulses != NULL) Function_shiftXTo (my pulses, xfrom, xto);
-	if (my pitch != NULL) Function_shiftXTo (my pitch, xfrom, xto);
-	if (my duration != NULL) Function_shiftXTo (my duration, xfrom, xto);
-	if (my lpc != NULL) Function_shiftXTo (my lpc, xfrom, xto);
+Thing_implement (Manipulation, Function, 5);
+
+void structManipulation :: v_shiftX (double xfrom, double xto) {
+	Manipulation_Parent :: v_shiftX (xfrom, xto);
+	if (sound    != NULL)  Function_shiftXTo (sound,    xfrom, xto);
+	if (pulses   != NULL)  Function_shiftXTo (pulses,   xfrom, xto);
+	if (pitch    != NULL)  Function_shiftXTo (pitch,    xfrom, xto);
+	if (duration != NULL)  Function_shiftXTo (duration, xfrom, xto);
+	if (lpc      != NULL)  Function_shiftXTo (lpc,      xfrom, xto);
 }
 
-static void classManipulation_scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (Manipulation);
-	inherited (Manipulation) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	if (my sound != NULL) ((Function_Table) my sound -> methods) -> scaleX (my sound, xminfrom, xmaxfrom, xminto, xmaxto);
-	if (my pulses != NULL) ((Function_Table) my pulses -> methods) -> scaleX (my pulses, xminfrom, xmaxfrom, xminto, xmaxto);
-	if (my pitch != NULL) ((Function_Table) my pitch -> methods) -> scaleX (my pitch, xminfrom, xmaxfrom, xminto, xmaxto);
-	if (my duration != NULL) ((Function_Table) my duration -> methods) -> scaleX (my duration, xminfrom, xmaxfrom, xminto, xmaxto);
-	if (my lpc != NULL) ((Function_Table) my lpc -> methods) -> scaleX (my lpc, xminfrom, xmaxfrom, xminto, xmaxto);
-}
-
-class_methods (Manipulation, Function) {
-	us -> version = 5;
-	class_method_local (Manipulation, destroy)
-	class_method_local (Manipulation, description)
-	class_method_local (Manipulation, copy)
-	class_method_local (Manipulation, equal)
-	class_method_local (Manipulation, canWriteAsEncoding)
-	class_method_local (Manipulation, writeText)
-	class_method_local (Manipulation, readText)
-	class_method_local (Manipulation, writeBinary)
-	class_method_local (Manipulation, readBinary)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method_local (Manipulation, shiftX);
-	class_method_local (Manipulation, scaleX);
-	class_methods_end
+void structManipulation :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	Manipulation_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (sound    != NULL)  sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (pulses   != NULL)  pulses   -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (pitch    != NULL)  pitch    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (duration != NULL)  duration -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (lpc      != NULL)  lpc      -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 }
 
 Manipulation Manipulation_create (double tmin, double tmax) {
@@ -124,7 +93,7 @@ int Manipulation_replaceOriginalSound (Manipulation me, Sound sound) {
 
 int Manipulation_replacePulses (Manipulation me, PointProcess pulses) {
 	try {
-		autoPointProcess pulses2 = (PointProcess) Data_copy (pulses);
+		autoPointProcess pulses2 = Data_copy (pulses);
 		forget (my pulses);
 		my pulses = pulses2.transfer();
 		return 1;
@@ -135,7 +104,7 @@ int Manipulation_replacePulses (Manipulation me, PointProcess pulses) {
 
 int Manipulation_replacePitchTier (Manipulation me, PitchTier pitch) {
 	try {
-		autoPitchTier pitch2 = (PitchTier) Data_copy (pitch);
+		autoPitchTier pitch2 = Data_copy (pitch);
 		forget (my pitch);
 		my pitch = pitch2.transfer();
 		return 1;
@@ -146,7 +115,7 @@ int Manipulation_replacePitchTier (Manipulation me, PitchTier pitch) {
 
 int Manipulation_replaceDurationTier (Manipulation me, DurationTier duration) {
 	try {
-		autoDurationTier duration2 = (DurationTier) Data_copy (duration);
+		autoDurationTier duration2 = Data_copy (duration);
 		forget (my duration);
 		my duration = duration2.transfer();
 		return 1;
@@ -188,7 +157,7 @@ Manipulation Sound_PointProcess_to_Manipulation (Sound sound, PointProcess point
 		autoManipulation me = Manipulation_create (sound -> xmin, sound -> xmax);
 		my sound = Sound_convertToMono (sound); therror
 		Vector_subtractMean (my sound);
-		my pulses = (PointProcess) Data_copy (point);
+		my pulses = Data_copy (point);
 		my pitch = PointProcess_to_PitchTier (point, MAX_T);
 		return me.transfer();
 	} catch (MelderError) {
@@ -202,7 +171,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 			Sound saved = my sound;
 			if (! my sound)
 				Melder_throw ("Cannot synthesize overlap-add without a sound.");
-			autoSound part = (Sound) Data_copy (my sound);
+			autoSound part = Data_copy (my sound);
 			long imin = Sampled_xToLowIndex (part.peek(), tmin), imax = Sampled_xToHighIndex (part.peek(), tmax);
 			double *amp = part -> z [1];
 			for (long i = 1; i <= imin; i ++) amp [i] = 0.0;
@@ -715,7 +684,7 @@ Sound Manipulation_to_Sound (Manipulation me, int method) {
 Manipulation Manipulation_AnyTier_to_Manipulation (Manipulation me, AnyTier tier) {
 	try {
 		if (! my pitch) Melder_throw ("Missing pitch manipulation.");
-		autoManipulation result = (Manipulation) Data_copy (me);
+		autoManipulation result = Data_copy (me);
 		/*
 		 * Create without change.
 		 */

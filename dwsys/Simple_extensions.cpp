@@ -79,7 +79,7 @@ long SimpleString_length (SimpleString me)
     return wcslen (my string);
 }
 
-void SimpleString_draw (SimpleString me, Any g, double xWC, double yWC)
+void SimpleString_draw (SimpleString me, Graphics g, double xWC, double yWC)
 {
     Graphics_text (g, xWC, yWC, my string);
 }
@@ -88,14 +88,13 @@ const wchar_t * SimpleString_nativize_c (SimpleString me, int educateQuotes)
 {
 	autoSimpleString thee = (SimpleString) Data_copy (me);
 	Longchar_nativizeW (thy string, my string, educateQuotes);
-	forget (thee);
 	return my string;
 }
 
 const wchar_t * SimpleString_genericize_c (SimpleString me)
 {
 	autoSimpleString thee = (SimpleString) Data_copy (me);
-	my string = (wchar_t *) Melder_realloc (my string, 3 * wcslen (my string) * sizeof (wchar_t));
+	my string = (wchar_t *) Melder_realloc (my string, (3 * wcslen (my string) + 1) * sizeof (wchar_t));
 	Longchar_genericizeW (thy string, my string);
 	return my string;
 }

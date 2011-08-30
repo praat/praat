@@ -35,6 +35,11 @@ oo_DEFINE_CLASS (CCA, Data)
 	oo_OBJECT(Eigen, 0, y)
 	oo_OBJECT(Eigen, 0, x)
 
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
+
 oo_END_CLASS (CCA)
 #undef ooSTRUCT
 

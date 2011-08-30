@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_pitch_init (ManPages me);
-extern "C" void manual_pitch_init (ManPages me) {
+void manual_pitch_init (ManPages me);
+void manual_pitch_init (ManPages me) {
 
 MAN_BEGIN (L"Create PitchTier...", L"ppgb", 20110101)
 INTRO (L"A command in the @@New menu@ to create an empty @PitchTier object.")
@@ -360,7 +360,7 @@ NORMAL (L"The time domain of the resulting PitchTier is a union of the domains o
 	"and PointProcess functions.")
 MAN_END
 
-MAN_BEGIN (L"PitchEditor", L"ppgb", 20030316)
+MAN_BEGIN (L"PitchEditor", L"ppgb", 20110808)
 INTRO (L"One of the @Editors in Praat, for viewing and modifying a @Pitch object.")
 ENTRY (L"What the Pitch editor shows")
 NORMAL (L"In the window of the PitchEditor, you will see the following features:")
@@ -390,7 +390,7 @@ NORMAL (L"To change the path through the candidates manually, click on the candi
 	"The changes will immediately affect the Pitch object that you are editing. To make a voiced frame "
 	"voiceless, click on the voicelessness bar.")
 NORMAL (L"To change the path automatically, choose ##Path finder...# from the #Edit menu; "
-	"this will have the same effect as filling in different values in the @@Sound: To Pitch (ac)...@ dialog, "
+	"this will have the same effect as filling in different values in the @@Sound: To Pitch (ac)...@ command window, "
 	"but is much faster because the candidates do not have to be determined again.")
 ENTRY (L"Resynthesis")
 NORMAL (L"To hum any part of the pitch contour, click on one of the buttons "

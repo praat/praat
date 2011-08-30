@@ -336,7 +336,7 @@ Formant Sound_to_Formant_any (Sound me, double dt, int numberOfPoles, double max
 	double nyquist = 0.5 / my dx;
 	autoSound sound = NULL;
 	if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
-		sound.reset ((Sound) Data_copy (me));   // will be modified
+		sound.reset (Data_copy (me));   // will be modified
 	} else {
 		sound.reset (Sound_resample (me, maximumFrequency * 2, 50));
 	}

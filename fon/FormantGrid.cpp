@@ -17,18 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2008/04/24 created
- * pb 2008/04/25 playPart
- * pb 2008/04/27 removePointsBetween, filter_noscale
- * pb 2008/09/23 shiftX, scaleX
- * pb 2008/10/28 FormantGrid_to_Formant, FormantGrid_formula
- * pb 2008/11/16 FormantGrid_init
- * pb 2009/01/18 Interpreter argument to formula
- * pb 2011/03/01 moved Formant filtering here, from FormantTier (reimplemented)
- * pb 2011/05/26 C++
- */
-
 #include "FormantGrid.h"
 #include "PitchTier_to_Sound.h"
 #include "Formula.h"
@@ -52,68 +40,40 @@
 #include "oo_DESCRIPTION.h"
 #include "FormantGrid_def.h"
 
-static double getVector (I, long irow, long icol) {
-	iam (FormantGrid);
-	RealTier tier = (RealTier) my formants -> item [irow];
+Thing_implement (FormantGrid, Function, 0);
+
+double structFormantGrid :: v_getVector (long irow, long icol) {
+	RealTier tier = (RealTier) formants -> item [irow];
 	return RealTier_getValueAtIndex (tier, icol);
 }
 
-static double getFunction1 (I, long irow, double x) {
-	iam (FormantGrid);
-	RealTier tier = (RealTier) my formants -> item [irow];
+double structFormantGrid :: v_getFunction1 (long irow, double x) {
+	RealTier tier = (RealTier) formants -> item [irow];
 	return RealTier_getValueAtTime (tier, x);
 }
 
-static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
-	(void) void_me;
-	(void) ilevel;
-	(void) unit;
-	(void) flags;
-	return ilevel & 1 ? L"Formant (Hz)" : L"Bandwidth (Hz)";
-}
-
-static void shiftX (I, double xfrom, double xto) {
-	iam (FormantGrid);
-	inherited (FormantGrid) shiftX (me, xfrom, xto);
-	for (long i = 1; i <= my formants -> size; i ++) {
-		RealTier tier = (RealTier) my formants -> item [i];
-		((Function_Table) tier -> methods) -> shiftX (tier, xfrom, xto);
+void structFormantGrid :: v_shiftX (double xfrom, double xto) {
+	FormantGrid_Parent :: v_shiftX (xfrom, xto);
+	for (long i = 1; i <= formants -> size; i ++) {
+		RealTier tier = (RealTier) formants -> item [i];
+		tier -> v_shiftX (xfrom, xto);
 	}
-	for (long i = 1; i <= my bandwidths -> size; i ++) {
-		RealTier tier = (RealTier) my bandwidths -> item [i];
-		((Function_Table) tier -> methods) -> shiftX (tier, xfrom, xto);
+	for (long i = 1; i <= bandwidths -> size; i ++) {
+		RealTier tier = (RealTier) bandwidths -> item [i];
+		tier -> v_shiftX (xfrom, xto);
 	}
 }
 
-static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (FormantGrid);
-	inherited (FormantGrid) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= my formants -> size; i ++) {
-		RealTier tier = (RealTier) my formants -> item [i];
-		((Function_Table) tier -> methods) -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+void structFormantGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	FormantGrid_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= formants -> size; i ++) {
+		RealTier tier = (RealTier) formants -> item [i];
+		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-	for (long i = 1; i <= my bandwidths -> size; i ++) {
-		RealTier tier = (RealTier) my bandwidths -> item [i];
-		((Function_Table) tier -> methods) -> scaleX (tier, xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= bandwidths -> size; i ++) {
+		RealTier tier = (RealTier) bandwidths -> item [i];
+		tier -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 	}
-}
-
-class_methods (FormantGrid, Function) {
-	class_method_local (FormantGrid, destroy)
-	class_method_local (FormantGrid, copy)
-	class_method_local (FormantGrid, equal)
-	class_method_local (FormantGrid, canWriteAsEncoding)
-	class_method_local (FormantGrid, writeText)
-	class_method_local (FormantGrid, readText)
-	class_method_local (FormantGrid, writeBinary)
-	class_method_local (FormantGrid, readBinary)
-	class_method_local (FormantGrid, description)
-	class_method (getVector)
-	class_method (getFunction1)
-	class_method (getUnitText)
-	class_method (shiftX)
-	class_method (scaleX)
-	class_methods_end
 }
 
 void FormantGrid_init (I, double tmin, double tmax, long numberOfFormants) {
@@ -182,12 +142,12 @@ void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, dou
 
 double FormantGrid_getFormantAtTime (FormantGrid me, long iformant, double t) {
 	if (iformant < 1 || iformant > my formants -> size) return NUMundefined;
-	return RealTier_getValueAtTime (my formants -> item [iformant], t);
+	return RealTier_getValueAtTime ((RealTier) my formants -> item [iformant], t);
 }
 
 double FormantGrid_getBandwidthAtTime (FormantGrid me, long iformant, double t) {
 	if (iformant < 1 || iformant > my bandwidths -> size) return NUMundefined;
-	return RealTier_getValueAtTime (my bandwidths -> item [iformant], t);
+	return RealTier_getValueAtTime ((RealTier) my bandwidths -> item [iformant], t);
 }
 
 void FormantGrid_removeFormantPointsBetween (FormantGrid me, long iformant, double tmin, double tmax) {
@@ -239,7 +199,7 @@ void Sound_FormantGrid_filter_inline (Sound me, FormantGrid formantGrid) {
 
 Sound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
 		Vector_scale (thee.peek(), 0.99);
 		return thee.transfer();
@@ -250,7 +210,7 @@ Sound Sound_FormantGrid_filter (Sound me, FormantGrid formantGrid) {
 
 Sound Sound_FormantGrid_filter_noscale (Sound me, FormantGrid formantGrid) {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		Sound_FormantGrid_filter_inline (thee.peek(), formantGrid);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -363,8 +323,8 @@ Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
 			double t = t1 + (iframe - 1) * dt;
 			for (long iformant = 1; iformant <= my formants -> size; iformant ++) {
 				Formant_Formant formant = & frame -> formant [iformant];
-				formant -> frequency = RealTier_getValueAtTime (my formants -> item [iformant], t);
-				formant -> bandwidth = RealTier_getValueAtTime (my bandwidths -> item [iformant], t);
+				formant -> frequency = RealTier_getValueAtTime ((RealTier) my formants -> item [iformant], t);
+				formant -> bandwidth = RealTier_getValueAtTime ((RealTier) my bandwidths -> item [iformant], t);
 			}
 		}
 		return thee.transfer();

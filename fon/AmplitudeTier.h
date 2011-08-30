@@ -25,11 +25,11 @@
 
 /********** class AmplitudeTier **********/
 
-Thing_declare1cpp (AmplitudeTier);
-struct structAmplitudeTier : public structRealTier {
+Thing_define (AmplitudeTier, RealTier) {
+	// overridden methods:
+	protected:
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define AmplitudeTier__methods(klas) RealTier__methods(klas)
-Thing_declare2cpp (AmplitudeTier, RealTier);
 
 AmplitudeTier AmplitudeTier_create (double tmin, double tmax);
 

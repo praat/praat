@@ -26,13 +26,13 @@
 
 #include "Sound_enums.h"
 
-Thing_declare1cpp (Sound);
-struct structSound : public structVector {
+Thing_define (Sound, Vector) {
 	// overridden methods:
-		void v_info ();
+		virtual void v_info ();
+		virtual bool v_hasGetMatrix    () { return true; }   virtual double v_getMatrix (long irow, long icol);
+		virtual bool v_hasGetFunction2 () { return true; }   virtual double v_getFunction2 (double x, double y);
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define Sound__methods(klas)  Vector__methods(klas)
-Thing_declare2cpp (Sound, Vector);
 
 /* Attributes:
 	xmin              // Start time (seconds).
@@ -246,7 +246,7 @@ Sound Sound_recordFixedTime (int inputSource,
 			Duration too long (out of memory).
 		Usage:
 			batch; in an interactive environment, it is better to use SoundRecorder_create,
-			and wait for the publishCallback.
+			and wait for broadcastPublication().
 	*/
 
 void Sound_playPart (Sound me, double tmin, double tmax,

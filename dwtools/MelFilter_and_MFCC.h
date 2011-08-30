@@ -28,10 +28,6 @@
 #include "FilterBank.h"
 #include "MFCC.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 /*
 Three slightly "different" definitions of MFCC
 1. Davis & Mermelstein
@@ -68,9 +64,5 @@ MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient,
 Calculates the Inverse CT of cepstral coefficients:
     f[j] = c0+1/N * SUM (k=1..N, F[k] * cos (pi * k * (j - 1/2) / N)),
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* MelFilter_and_MFCC.h */

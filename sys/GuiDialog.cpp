@@ -80,7 +80,7 @@ GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int heigh
 	#if gtk
 		GuiObject shell = gtk_dialog_new ();
 		if (parent) {
-			GuiObject toplevel = gtk_widget_get_ancestor (parent, GTK_TYPE_WINDOW);
+			GuiObject toplevel = gtk_widget_get_ancestor (GTK_WIDGET (parent), GTK_TYPE_WINDOW);
 			if (toplevel) {
 				gtk_window_set_transient_for (GTK_WINDOW (shell), GTK_WINDOW (toplevel));
 				gtk_window_set_destroy_with_parent (GTK_WINDOW (shell), TRUE);

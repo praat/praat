@@ -103,7 +103,7 @@ GuiObject GuiCheckButton_create (GuiObject parent, int left, int right, int top,
 		_GuiObject_setUserData (my widget, me);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		if (parent && GTK_IS_BOX (parent)) {
-			gtk_container_add (GTK_CONTAINER (parent), my widget);
+			gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (my widget));
 		}
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my widget), (flags & GuiCheckButton_SET) != 0);
 		if (flags & GuiCheckButton_INSENSITIVE) {

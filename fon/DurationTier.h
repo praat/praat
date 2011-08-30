@@ -24,13 +24,12 @@
 
 /********** class DurationTier **********/
 
-Thing_declare1cpp (DurationTier);
-struct structDurationTier : public structRealTier {
-// overridden methods:
-	void v_info ();
+Thing_define (DurationTier, RealTier) {
+	// overridden methods:
+	protected:
+		virtual void v_info ();
+		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 };
-#define DurationTier__methods(klas) RealTier__methods(klas)
-Thing_declare2cpp (DurationTier, RealTier);
 
 DurationTier DurationTier_create (double tmin, double tmax);
 

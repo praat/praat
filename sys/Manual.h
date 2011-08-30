@@ -23,7 +23,8 @@
 #include "ManPages.h"
 
 Thing_define (Manual, HyperPage) {
-	// data:
+	// new data:
+	public:
 		long path, numberOfParagraphs;
 		struct structManPage_Paragraph *paragraphs;
 		GuiObject searchText;

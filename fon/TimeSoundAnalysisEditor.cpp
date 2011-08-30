@@ -177,11 +177,11 @@ void structTimeSoundAnalysisEditor :: v_info () {
 	/* Pitch settings: */
 	MelderInfo_writeLine3 (L"Pitch floor: ", Melder_double (pitch.floor), L" Hz");
 	MelderInfo_writeLine3 (L"Pitch ceiling: ", Melder_double (pitch.ceiling), L" Hz");
-	MelderInfo_writeLine2 (L"Pitch unit: ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine2 (L"Pitch unit: ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine2 (L"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (pitch.drawingMethod));
 	/* Advanced pitch settings: */
-	MelderInfo_writeLine4 (L"Pitch view from: ", Melder_double (pitch.viewFrom), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine4 (L"Pitch view to: ", Melder_double (pitch.viewTo), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine4 (L"Pitch view from: ", Melder_double (pitch.viewFrom), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
+	MelderInfo_writeLine4 (L"Pitch view to: ", Melder_double (pitch.viewTo), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
 	MelderInfo_writeLine2 (L"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (pitch.method));
 	MelderInfo_writeLine2 (L"Pitch very accurate: ", Melder_boolean (pitch.veryAccurate));
 	MelderInfo_writeLine2 (L"Pitch max. number of candidates: ", Melder_integer (pitch.maximumNumberOfCandidates));
@@ -257,7 +257,7 @@ static int makeQueriable (TimeSoundAnalysisEditor me, int allowCursor, double *t
 	return FunctionEditor_PART_SELECTION;
 }
 
-static int menu_cb_logSettings (EDITOR_ARGS) {
+static void menu_cb_logSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Log settings", L"Log files")
 		OPTIONMENU (L"Write log 1 to", 3)
@@ -303,17 +303,16 @@ static int menu_cb_logSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int do_deleteLogFile (TimeSoundAnalysisEditor me, int which) {
+static void do_deleteLogFile (TimeSoundAnalysisEditor me, int which) {
 	structMelderFile file = { 0 };
 	(void) me;
 	Melder_pathToFile (preferences.log[which].fileName, & file);
 	MelderFile_delete (& file);
-	return 1;
 }
-static int menu_cb_deleteLogFile1 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); return do_deleteLogFile (me, 0); }
-static int menu_cb_deleteLogFile2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); return do_deleteLogFile (me, 1); }
+static void menu_cb_deleteLogFile1 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_deleteLogFile (me, 0); }
+static void menu_cb_deleteLogFile2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_deleteLogFile (me, 1); }
 
-static int do_log (TimeSoundAnalysisEditor me, int which) {
+static void do_log (TimeSoundAnalysisEditor me, int which) {
 	wchar format [1000], *p;
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
@@ -437,24 +436,21 @@ static int do_log (TimeSoundAnalysisEditor me, int which) {
 		Melder_relativePathToFile (preferences.log[which].fileName, & file);
 		MelderFile_appendText (& file, format);
 	}
-	return 1;
 }
 
-static int menu_cb_log1 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); return do_log (me, 0); }
-static int menu_cb_log2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); return do_log (me, 1); }
+static void menu_cb_log1 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_log (me, 0); }
+static void menu_cb_log2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_log (me, 1); }
 
-static int menu_cb_logScript3 (EDITOR_ARGS) {
+static void menu_cb_logScript3 (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, preferences.logScript3);
-	return 1;
 }
-static int menu_cb_logScript4 (EDITOR_ARGS) {
+static void menu_cb_logScript4 (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	DO_RunTheScriptFromAnyAddedEditorCommand (me, preferences.logScript4);
-	return 1;
 }
 
-static int menu_cb_showAnalyses (EDITOR_ARGS) {
+static void menu_cb_showAnalyses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Show analyses", 0)
 		BOOLEAN (L"Show spectrogram", 1)
@@ -481,7 +477,7 @@ static int menu_cb_showAnalyses (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_timeStepSettings (EDITOR_ARGS) {
+static void menu_cb_timeStepSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Time step settings", L"Time step settings...")
 		OPTIONMENU_ENUM (L"Time step strategy", kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT)
@@ -509,15 +505,14 @@ static int menu_cb_timeStepSettings (EDITOR_ARGS) {
 
 /***** SPECTROGRAM MENU *****/
 
-static int menu_cb_showSpectrogram (EDITOR_ARGS) {
+static void menu_cb_showSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.spectrogram.show = my spectrogram.show = ! my spectrogram.show;
 	GuiMenuItem_check (my spectrogramToggle, my spectrogram.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
-	return 1;
 }
 
-static int menu_cb_spectrogramSettings (EDITOR_ARGS) {
+static void menu_cb_spectrogramSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Spectrogram settings", L"Intro 3.2. Configuring the spectrogram")
 		REAL (L"left View range (Hz)", L"0.0")
@@ -554,7 +549,7 @@ static int menu_cb_spectrogramSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
+static void menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Advanced spectrogram settings", L"Advanced spectrogram settings...")
 		LABEL (L"", L"Time and frequency resolutions:")
@@ -591,13 +586,12 @@ static int menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_getFrequency (EDITOR_ARGS) {
+static void menu_cb_getFrequency (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	Melder_informationReal (my spectrogram.cursor, L"Hz");
-	return 1;
 }
 
-static int menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
+static void menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
@@ -613,10 +607,9 @@ static int menu_cb_getSpectralPowerAtCursorCross (EDITOR_ARGS) {
 	MelderInfo_write5 (L" Pa2/Hz (at time = ", Melder_double (tmin), L" seconds and frequency = ",
 		Melder_double (my spectrogram.cursor), L" Hz)");
 	MelderInfo_close ();
-	return 1;
 }
 
-static int menu_cb_moveFrequencyCursorTo (EDITOR_ARGS) {
+static void menu_cb_moveFrequencyCursorTo (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my spectrogram.show)
 		Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
@@ -645,23 +638,19 @@ static Sound extractSound (TimeSoundAnalysisEditor me, double tmin, double tmax)
 	return sound;
 }
 
-static int menu_cb_extractVisibleSpectrogram (EDITOR_ARGS) {
+static void menu_cb_extractVisibleSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	Spectrogram publish;
 	if (! my spectrogram.show)
 		Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 	if (! my spectrogram.data) {
 		TimeSoundAnalysisEditor_computeSpectrogram (me);
 		if (! my spectrogram.data) Melder_throw (theMessage_Cannot_compute_spectrogram);
 	}
-	publish = (Spectrogram) Data_copy (my spectrogram.data);
-	if (publish == NULL) return 0;
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	autoSpectrogram publish = Data_copy (my spectrogram.data);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
+static void menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double start = my startSelection == my endSelection ?
 		my spectrogram.windowShape == 5 ? my startSelection - my spectrogram.windowLength :
@@ -669,30 +658,24 @@ static int menu_cb_viewSpectralSlice (EDITOR_ARGS) {
 	double finish = my startSelection == my endSelection ?
 		my spectrogram.windowShape == 5 ? my endSelection + my spectrogram.windowLength :
 		my endSelection + my spectrogram.windowLength / 2 : my endSelection;
-	Sound sound = extractSound (me, start, finish);
-	Spectrum publish;
-	if (sound == NULL) return 0;
-	Sound_multiplyByWindow (sound,
+	autoSound sound = extractSound (me, start, finish);
+	Sound_multiplyByWindow (sound.peek(),
 		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_SQUARE ? kSound_windowShape_RECTANGULAR :
 		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_HAMMING ? kSound_windowShape_HAMMING :
 		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_BARTLETT ? kSound_windowShape_TRIANGULAR :
 		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_WELCH ? kSound_windowShape_PARABOLIC :
 		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_HANNING ? kSound_windowShape_HANNING :
 		my spectrogram.windowShape == kSound_to_Spectrogram_windowShape_GAUSSIAN ? kSound_windowShape_GAUSSIAN_2 : kSound_windowShape_RECTANGULAR);
-	publish = Sound_to_Spectrum (sound, TRUE);
-	forget (sound);
-	if (! publish) return 0;
+	autoSpectrum publish = Sound_to_Spectrum (sound.peek(), TRUE);
 	static MelderString sliceName = { 0 };
 	MelderString_copy (& sliceName, my data == NULL ? L"untitled" : ((Data) my data) -> name);
 	MelderString_appendCharacter (& sliceName, '_');
 	MelderString_append (& sliceName, Melder_fixed (0.5 * (my startSelection + my endSelection), 3));
-	Thing_setName (publish, sliceName.string);
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	Thing_setName (publish.peek(), sliceName.string);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
+static void menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Paint visible spectrogram", 0)
 		my v_form_pictureWindow (cmd);
@@ -726,15 +709,14 @@ static int menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 
 /***** PITCH MENU *****/
 
-static int menu_cb_showPitch (EDITOR_ARGS) {
+static void menu_cb_showPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.pitch.show = my pitch.show = ! my pitch.show;
 	GuiMenuItem_check (my pitchToggle, my pitch.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
-	return 1;
 }
 
-static int menu_cb_pitchSettings (EDITOR_ARGS) {
+static void menu_cb_pitchSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Pitch settings", L"Intro 4.2. Configuring the pitch contour")
 		POSITIVE (L"left Pitch range (Hz)", L"75.0")
@@ -779,7 +761,7 @@ static int menu_cb_pitchSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_advancedPitchSettings (EDITOR_ARGS) {
+static void menu_cb_advancedPitchSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Advanced pitch settings", L"Advanced pitch settings...")
 		LABEL (L"", L"Make view range different from analysis range:")
@@ -822,7 +804,7 @@ static int menu_cb_advancedPitchSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_pitchListing (EDITOR_ARGS) {
+static void menu_cb_pitchListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
@@ -833,10 +815,10 @@ static int menu_cb_pitchListing (EDITOR_ARGS) {
 		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine2 (L"Time_s   F0_", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
+	MelderInfo_writeLine2 (L"Time_s   F0_", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, Function_UNIT_TEXT_SHORT));
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
-		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 		MelderInfo_writeLine3 (Melder_fixed (tmin, 6), L"   ", Melder_fixed (f0, 6));
 	} else {
 		long i, i1, i2;
@@ -844,15 +826,14 @@ static int menu_cb_pitchListing (EDITOR_ARGS) {
 		for (i = i1; i <= i2; i ++) {
 			double t = Sampled_indexToX (my pitch.data, i);
 			double f0 = Sampled_getValueAtSample (my pitch.data, i, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-			f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+			f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 			MelderInfo_writeLine3 (Melder_fixed (t, 6), L"   ", Melder_fixed (f0, 6));
 		}
 	}
 	MelderInfo_close ();
-	return 1;
 }
 
-static int menu_cb_getPitch (EDITOR_ARGS) {
+static void menu_cb_getPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
@@ -864,19 +845,18 @@ static int menu_cb_getPitch (EDITOR_ARGS) {
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
-		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information4 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		Melder_information4 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 			L" (interpolated pitch at CURSOR)");
 	} else {
 		double f0 = Pitch_getMean (my pitch.data, tmin, tmax, my pitch.unit);
-		f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information6 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		Melder_information6 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 			L" (mean pitch ", FunctionEditor_partString_locative (part), L")");
 	}
-	return 1;
 }
 
-static int menu_cb_getMinimumPitch (EDITOR_ARGS) {
+static void menu_cb_getMinimumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax, f0;
 	int part = makeQueriable (me, FALSE, & tmin, & tmax);
@@ -887,13 +867,12 @@ static int menu_cb_getMinimumPitch (EDITOR_ARGS) {
 		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
 	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
-	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information6 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+	f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+	Melder_information6 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 		L" (minimum pitch ", FunctionEditor_partString_locative (part), L")");
-	return 1;
 }
 
-static int menu_cb_getMaximumPitch (EDITOR_ARGS) {
+static void menu_cb_getMaximumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax, f0;
 	int part = makeQueriable (me, FALSE, & tmin, & tmax);
@@ -901,16 +880,15 @@ static int menu_cb_getMaximumPitch (EDITOR_ARGS) {
 		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 	if (! my pitch.data) {
 		TimeSoundAnalysisEditor_computePitch (me);
-		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
+		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);   // BUG
 	}
 	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
-	f0 = ClassFunction_convertToNonlogarithmic (classPitch, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information6 (Melder_double (f0), L" ", ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+	f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+	Melder_information6 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 		L" (maximum pitch ", FunctionEditor_partString_locative (part), L")");
-	return 1;
 }
 
-static int menu_cb_moveCursorToMinimumPitch (EDITOR_ARGS) {
+static void menu_cb_moveCursorToMinimumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my pitch.show)
 		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
@@ -929,10 +907,9 @@ static int menu_cb_moveCursorToMinimumPitch (EDITOR_ARGS) {
 		my startSelection = my endSelection = time;
 		FunctionEditor_marksChanged (me);
 	}
-	return 1;
 }
 
-static int menu_cb_moveCursorToMaximumPitch (EDITOR_ARGS) {
+static void menu_cb_moveCursorToMaximumPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my pitch.show)
 		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the View menu.");
@@ -951,10 +928,9 @@ static int menu_cb_moveCursorToMaximumPitch (EDITOR_ARGS) {
 		my startSelection = my endSelection = time;
 		FunctionEditor_marksChanged (me);
 	}
-	return 1;
 }
 
-static int menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
+static void menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	if (! my pitch.show)
 		Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
@@ -962,14 +938,11 @@ static int menu_cb_extractVisiblePitchContour (EDITOR_ARGS) {
 		TimeSoundAnalysisEditor_computePitch (me);
 		if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 	}
-	Pitch publish = (Pitch) Data_copy (my pitch.data);
-	if (! publish) return 0;
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	autoPitch publish = Data_copy (my pitch.data);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
+static void menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Draw visible pitch contour", 0)
 		my v_form_pictureWindow (cmd);
@@ -997,10 +970,10 @@ static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 			if (! my pitch.data) Melder_throw (theMessage_Cannot_compute_pitch);
 		}
 		Editor_openPraatPicture (me);
-		double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		double pitchCeiling_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, my pitch.ceiling, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		double pitchFloor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		double pitchCeiling_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchFloor_hidden = Function_convertStandardToSpecialUnit (my pitch.data, my pitch.floor, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (my pitch.data, my pitch.ceiling, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchFloor_overt = Function_convertToNonlogarithmic (my pitch.data, pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
+		double pitchCeiling_overt = Function_convertToNonlogarithmic (my pitch.data, pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, my pitch.unit);
 		double pitchViewFrom_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewFrom : pitchFloor_overt;
 		double pitchViewTo_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewTo : pitchCeiling_overt;
 		Pitch_draw (my pitch.data, my pictureGraphics, my startWindow, my endWindow, pitchViewFrom_overt, pitchViewTo_overt,
@@ -1012,15 +985,14 @@ static int menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 
 /***** INTENSITY MENU *****/
 
-static int menu_cb_showIntensity (EDITOR_ARGS) {
+static void menu_cb_showIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.intensity.show = my intensity.show = ! my intensity.show;
 	GuiMenuItem_check (my intensityToggle, my intensity.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
-	return 1;
 }
 
-static int menu_cb_intensitySettings (EDITOR_ARGS) {
+static void menu_cb_intensitySettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Intensity settings", L"Intro 6.2. Configuring the intensity contour")
 		REAL (L"left View range (dB)", L"50.0")
@@ -1049,23 +1021,19 @@ static int menu_cb_intensitySettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
+static void menu_cb_extractVisibleIntensityContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	Intensity publish;
 	if (! my intensity.show)
 		Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 	if (! my intensity.data) {
 		TimeSoundAnalysisEditor_computeIntensity (me);
 		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
-	publish = (Intensity) Data_copy (my intensity.data);
-	if (! publish) return 0;
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	autoIntensity publish = Data_copy (my intensity.data);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
+static void menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Draw visible intensity contour", 0)
 		my v_form_pictureWindow (cmd);
@@ -1096,7 +1064,7 @@ static int menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_intensityListing (EDITOR_ARGS) {
+static void menu_cb_intensityListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
@@ -1121,10 +1089,9 @@ static int menu_cb_intensityListing (EDITOR_ARGS) {
 		}
 	}
 	MelderInfo_close ();
-	return 1;
 }
 
-static int menu_cb_getIntensity (EDITOR_ARGS) {
+static void menu_cb_getIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
@@ -1141,10 +1108,9 @@ static int menu_cb_getIntensity (EDITOR_ARGS) {
 		Melder_information6 (Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
 			L" dB (", methodString [my intensity.averagingMethod], L" intensity ", FunctionEditor_partString_locative (part), L")");
 	}
-	return 1;
 }
 
-static int menu_cb_getMinimumIntensity (EDITOR_ARGS) {
+static void menu_cb_getMinimumIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, FALSE, & tmin, & tmax);
@@ -1156,10 +1122,9 @@ static int menu_cb_getMinimumIntensity (EDITOR_ARGS) {
 	}
 	double intensity = Vector_getMinimum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
 	Melder_information4 (Melder_double (intensity), L" dB (minimum intensity ", FunctionEditor_partString_locative (part), L")");
-	return 1;
 }
 
-static int menu_cb_getMaximumIntensity (EDITOR_ARGS) {
+static void menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, FALSE, & tmin, & tmax);
@@ -1171,20 +1136,18 @@ static int menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 	}
 	double intensity = Vector_getMaximum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
 	Melder_information4 (Melder_double (intensity), L" dB (maximum intensity ", FunctionEditor_partString_locative (part), L")");
-	return 1;
 }
 
 /***** FORMANT MENU *****/
 
-static int menu_cb_showFormants (EDITOR_ARGS) {
+static void menu_cb_showFormants (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.formant.show = my formant.show = ! my formant.show;
 	GuiMenuItem_check (my formantToggle, my formant.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
-	return 1;
 }
 
-static int menu_cb_formantSettings (EDITOR_ARGS) {
+static void menu_cb_formantSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Formant settings", L"Intro 5.2. Configuring the formant contours")
 		POSITIVE (L"Maximum formant (Hz)", L"5500.0")
@@ -1221,7 +1184,7 @@ static int menu_cb_formantSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_advancedFormantSettings (EDITOR_ARGS) {
+static void menu_cb_advancedFormantSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Advanced formant settings", L"Advanced formant settings...")
 		RADIO_ENUM (L"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, BURG)
@@ -1237,23 +1200,19 @@ static int menu_cb_advancedFormantSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
+static void menu_cb_extractVisibleFormantContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	Formant publish;
 	if (! my formant.show)
 		Melder_throw ("No formant contour is visible.\nFirst choose \"Show formants\" from the Formant menu.");
 	if (! my formant.data) {
 		TimeSoundAnalysisEditor_computeFormants (me);
 		if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 	}
-	publish = (Formant) Data_copy (my formant.data);
-	if (! publish) return 0;
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	autoFormant publish = Data_copy (my formant.data);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
+static void menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Draw visible formant contour", 0)
 		my v_form_pictureWindow (cmd);
@@ -1285,7 +1244,7 @@ static int menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_formantListing (EDITOR_ARGS) {
+static void menu_cb_formantListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
@@ -1318,10 +1277,9 @@ static int menu_cb_formantListing (EDITOR_ARGS) {
 		}
 	}
 	MelderInfo_close ();
-	return 1;
 }
 
-static int do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
+static void do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my formant.show)
@@ -1337,9 +1295,8 @@ static int do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
 		Melder_information6 (Melder_double (Formant_getMean (my formant.data, iformant, tmin, tmax, 0)),
 			L" Hz (mean F", Melder_integer (iformant), L" ", FunctionEditor_partString_locative (part), L")");
 	}
-	return 1;
 }
-static int do_getBandwidth (TimeSoundAnalysisEditor me, int iformant) {
+static void do_getBandwidth (TimeSoundAnalysisEditor me, int iformant) {
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
 	if (! my formant.show)
@@ -1355,56 +1312,54 @@ static int do_getBandwidth (TimeSoundAnalysisEditor me, int iformant) {
 		Melder_information6 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, 0.5 * (tmin + tmax), 0)),
 			L" Hz (B", Melder_integer (iformant), L" in centre of ", FunctionEditor_partString (part), L")");
 	}
-	return 1;
 }
-static int menu_cb_getFirstFormant (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getFormant (me, 1); }
-static int menu_cb_getFirstBandwidth (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getBandwidth (me, 1); }
-static int menu_cb_getSecondFormant (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getFormant (me, 2); }
-static int menu_cb_getSecondBandwidth (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getBandwidth (me, 2); }
-static int menu_cb_getThirdFormant (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getFormant (me, 3); }
-static int menu_cb_getThirdBandwidth (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getBandwidth (me, 3); }
-static int menu_cb_getFourthFormant (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getFormant (me, 4); }
-static int menu_cb_getFourthBandwidth (EDITOR_ARGS) {
-	EDITOR_IAM (TimeSoundAnalysisEditor); return do_getBandwidth (me, 4); }
+static void menu_cb_getFirstFormant (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getFormant (me, 1); }
+static void menu_cb_getFirstBandwidth (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getBandwidth (me, 1); }
+static void menu_cb_getSecondFormant (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getFormant (me, 2); }
+static void menu_cb_getSecondBandwidth (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getBandwidth (me, 2); }
+static void menu_cb_getThirdFormant (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getFormant (me, 3); }
+static void menu_cb_getThirdBandwidth (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getBandwidth (me, 3); }
+static void menu_cb_getFourthFormant (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getFormant (me, 4); }
+static void menu_cb_getFourthBandwidth (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor); do_getBandwidth (me, 4); }
 
-static int menu_cb_getFormant (EDITOR_ARGS) {
+static void menu_cb_getFormant (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Get formant", 0)
 		NATURAL (L"Formant number", L"5")
 	EDITOR_OK
 	EDITOR_DO
-		if (! do_getFormant (me, GET_INTEGER (L"Formant number"))) return 0;
+		do_getFormant (me, GET_INTEGER (L"Formant number"));
 	EDITOR_END
 }
 
-static int menu_cb_getBandwidth (EDITOR_ARGS) {
+static void menu_cb_getBandwidth (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Get bandwidth", 0)
 		NATURAL (L"Formant number", L"5")
 	EDITOR_OK
 	EDITOR_DO
-		if (! do_getBandwidth (me, GET_INTEGER (L"Formant number"))) return 0;
+		do_getBandwidth (me, GET_INTEGER (L"Formant number"));
 	EDITOR_END
 }
 
 /***** PULSE MENU *****/
 
-static int menu_cb_showPulses (EDITOR_ARGS) {
+static void menu_cb_showPulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	preferences.pulses.show = my pulses.show = ! my pulses.show;
 	GuiMenuItem_check (my pulsesToggle, my pulses.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
-	return 1;
 }
 
-static int menu_cb_advancedPulsesSettings (EDITOR_ARGS) {
+static void menu_cb_advancedPulsesSettings (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Advanced pulses settings", L"Advanced pulses settings...")
 		POSITIVE (L"Maximum period factor", L"1.3")
@@ -1420,23 +1375,19 @@ static int menu_cb_advancedPulsesSettings (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_extractVisiblePulses (EDITOR_ARGS) {
+static void menu_cb_extractVisiblePulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	Pitch publish;
 	if (! my pulses.show)
 		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 	if (! my pulses.data) {
 		TimeSoundAnalysisEditor_computePulses (me);
 		if (! my pulses.data) Melder_throw (theMessage_Cannot_compute_pulses);
 	}
-	publish = (Pitch) Data_copy (my pulses.data);
-	if (! publish) return 0;
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, publish);
-	return 1;
+	autoPointProcess publish = Data_copy (my pulses.data);
+	my broadcastPublication (publish.transfer());
 }
 
-static int menu_cb_drawVisiblePulses (EDITOR_ARGS) {
+static void menu_cb_drawVisiblePulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	EDITOR_FORM (L"Draw visible pulses", 0)
 		my v_form_pictureWindow (cmd);
@@ -1467,7 +1418,7 @@ static int menu_cb_drawVisiblePulses (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static int menu_cb_voiceReport (EDITOR_ARGS) {
+static void menu_cb_voiceReport (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	time_t today = time (NULL);
 	double tmin, tmax;
@@ -1488,10 +1439,9 @@ static int menu_cb_voiceReport (EDITOR_ARGS) {
 	Sound_Pitch_PointProcess_voiceReport (sound.peek(), my pitch.data, my pulses.data, tmin, tmax,
 		my pitch.floor, my pitch.ceiling, my pulses.maximumPeriodFactor, my pulses.maximumAmplitudeFactor, my pitch.silenceThreshold, my pitch.voicingThreshold);
 	MelderInfo_close ();
-	return 1;
 }
 
-static int menu_cb_pulseListing (EDITOR_ARGS) {
+static void menu_cb_pulseListing (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
 	long i, i1, i2;
 	double tmin, tmax;
@@ -1511,11 +1461,10 @@ static int menu_cb_pulseListing (EDITOR_ARGS) {
 		MelderInfo_writeLine1 (Melder_fixed (t, 12));
 	}
 	MelderInfo_close ();
-	return 1;
 }
 
 /*
-static int cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_getJitter_xx) (PointProcess, double, double, double, double, double)) {
+static void cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_getJitter_xx) (PointProcess, double, double, double, double, double)) {
 	double minimumPeriod = 0.8 / my pitch.ceiling, maximumPeriod = 1.25 / my pitch.floor;
 	if (! my pulses.show)
 		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
@@ -1525,18 +1474,17 @@ static int cb_getJitter_xx (TimeSoundAnalysisEditor me, double (*PointProcess_ge
 	}
 	if (my startSelection == my endSelection)
 		Melder_throw (L"Make a selection first.");
-	if (! queriable (me)) return 0;
+	makeQueriable
 	Melder_informationReal (PointProcess_getJitter_xx (my pulses.data, my startSelection, my endSelection,
 		minimumPeriod, maximumPeriod, my pulses.maximumPeriodFactor), NULL);
-	return 1;
 }
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local) if (! cb_getJitter_xx (me, PointProcess_getJitter_local)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local_absolute) if (! cb_getJitter_xx (me, PointProcess_getJitter_local_absolute)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_rap) if (! cb_getJitter_xx (me, PointProcess_getJitter_rap)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ppq5) if (! cb_getJitter_xx (me, PointProcess_getJitter_ppq5)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ddp) if (! cb_getJitter_xx (me, PointProcess_getJitter_ddp)) return 0; END
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local) cb_getJitter_xx (me, PointProcess_getJitter_local); END
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_local_absolute) cb_getJitter_xx (me, PointProcess_getJitter_local_absolute); END
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_rap) cb_getJitter_xx (me, PointProcess_getJitter_rap); END
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ppq5) cb_getJitter_xx (me, PointProcess_getJitter_ppq5); END
+DIRECT (TimeSoundAnalysisEditor, cb_getJitter_ddp) cb_getJitter_xx (me, PointProcess_getJitter_ddp); END
 
-static int cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_Sound_getShimmer_xx) (PointProcess, Sound, double, double, double, double, double)) {
+static void cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_Sound_getShimmer_xx) (PointProcess, Sound, double, double, double, double, double)) {
 	double minimumPeriod = 0.8 / my pitch.ceiling, maximumPeriod = 1.25 / my pitch.floor;
 	if (! my pulses.show)
 		Melder_throw ("No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
@@ -1546,18 +1494,17 @@ static int cb_getShimmer_xx (TimeSoundAnalysisEditor me, double (*PointProcess_S
 	}
 	if (my startSelection == my endSelection)
 		Melder_throw ("Make a selection first.");
-	if (! queriable (me)) return 0;
+	makeQueriable
 	autoSound sound = extractSound (me, my startSelection, my endSelection);
 	Melder_informationReal (PointProcess_Sound_getShimmer_xx (my pulses.data, sound, my startSelection, my endSelection,
 		minimumPeriod, maximumPeriod, my pulses.maximumAmplitudeFactor), NULL);
-	return 1;
 }
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local_dB) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local_dB)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq3) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq3)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq5) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq5)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq11)) return 0; END
-DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) if (! cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda)) return 0; END
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local); END
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_local_dB) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_local_dB); END
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq3) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq3); END
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq5) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq5); END
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_apq11) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_apq11); END
+DIRECT (TimeSoundAnalysisEditor, cb_getShimmer_dda) cb_getShimmer_xx (me, PointProcess_Sound_getShimmer_dda); END
 */
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_view_sound (EditorMenu menu) {
@@ -1848,14 +1795,18 @@ void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me) {
 }
 
 void structTimeSoundAnalysisEditor :: v_draw_analysis () {
-	double pitchFloor_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, pitch.floor, Pitch_LEVEL_FREQUENCY, pitch.unit);
-	double pitchCeiling_hidden = ClassFunction_convertStandardToSpecialUnit (classPitch, pitch.ceiling, Pitch_LEVEL_FREQUENCY, pitch.unit);
-	double pitchFloor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, pitch.unit);
-	double pitchCeiling_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, pitch.unit);
+	/*
+	 * pitch.data may not exist yet (if shown at all, it may be going to be created in TimeSoundAnalysisEditor_computePitch (),
+	 * and even if if that fails we should see the pitch settings. So we use a dummy object.
+	 */
+	double pitchFloor_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch), pitch.floor, Pitch_LEVEL_FREQUENCY, pitch.unit);
+	double pitchCeiling_hidden = Function_convertStandardToSpecialUnit (Thing_dummyObject (Pitch), pitch.ceiling, Pitch_LEVEL_FREQUENCY, pitch.unit);
+	double pitchFloor_overt = Function_convertToNonlogarithmic (Thing_dummyObject (Pitch), pitchFloor_hidden, Pitch_LEVEL_FREQUENCY, pitch.unit);
+	double pitchCeiling_overt = Function_convertToNonlogarithmic (Thing_dummyObject (Pitch), pitchCeiling_hidden, Pitch_LEVEL_FREQUENCY, pitch.unit);
 	double pitchViewFrom_overt = pitch.viewFrom < pitch.viewTo ? pitch.viewFrom : pitchFloor_overt;
 	double pitchViewTo_overt = pitch.viewFrom < pitch.viewTo ? pitch.viewTo : pitchCeiling_overt;
-	double pitchViewFrom_hidden = ClassFunction_isUnitLogarithmic (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit) ? log10 (pitchViewFrom_overt) : pitchViewFrom_overt;
-	double pitchViewTo_hidden = ClassFunction_isUnitLogarithmic (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
+	double pitchViewFrom_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit) ? log10 (pitchViewFrom_overt) : pitchViewFrom_overt;
+	double pitchViewTo_hidden = Function_isUnitLogarithmic (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit) ? log10 (pitchViewTo_overt) : pitchViewTo_overt;
 
 	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
 	Graphics_setColour (graphics, Graphics_WHITE);
@@ -1943,24 +1894,24 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis () {
 				pitchCursor_hidden = Pitch_getValueAtTime (pitch.data, startSelection, pitch.unit, 1);
 			else
 				pitchCursor_hidden = Pitch_getMean (pitch.data, startSelection, endSelection, pitch.unit);
-			pitchCursor_overt = ClassFunction_convertToNonlogarithmic (classPitch, pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, pitch.unit);
+			pitchCursor_overt = Function_convertToNonlogarithmic (pitch.data, pitchCursor_hidden, Pitch_LEVEL_FREQUENCY, pitch.unit);
 			if (NUMdefined (pitchCursor_hidden)) {
 				Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 				Graphics_text3 (graphics, endWindow, pitchCursor_hidden, Melder_float (Melder_half (pitchCursor_overt)), L" ",
-					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit,
+					Function_getUnitText (pitch.data, Pitch_LEVEL_FREQUENCY, pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (graphics, pitchCursor_hidden - pitchViewFrom_hidden) > 5.0) {
 				Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_BOTTOM);
 				Graphics_text3 (graphics, endWindow, pitchViewFrom_hidden - Graphics_dyMMtoWC (graphics, 0.5),
 					Melder_float (Melder_half (pitchViewFrom_overt)), L" ",
-					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit,
+					Function_getUnitText (pitch.data, Pitch_LEVEL_FREQUENCY, pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 			if (! NUMdefined (pitchCursor_hidden) || Graphics_dyWCtoMM (graphics, pitchViewTo_hidden - pitchCursor_hidden) > 5.0) {
 				Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_TOP);
 				Graphics_text3 (graphics, endWindow, pitchViewTo_hidden, Melder_float (Melder_half (pitchViewTo_overt)), L" ",
-					ClassFunction_getUnitText (classPitch, Pitch_LEVEL_FREQUENCY, pitch.unit,
+					Function_getUnitText (pitch.data, Pitch_LEVEL_FREQUENCY, pitch.unit,
 						Function_UNIT_TEXT_SHORT | Function_UNIT_TEXT_GRAPHICAL));
 			}
 		} else {
@@ -2090,7 +2041,7 @@ int structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool
 	return TimeSoundAnalysisEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
 }
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Function sound, bool ownSound) {
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Sampled sound, bool ownSound) {
 	TimeSoundEditor_init (me, parent, title, data, sound, ownSound);
 	my longestAnalysis = preferences.longestAnalysis;
 	if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)

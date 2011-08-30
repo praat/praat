@@ -79,6 +79,8 @@
 #include "oo_DESCRIPTION.h"
 #include "Strings_def.h"
 
+Thing_implement (Strings, Data, 0);
+
 static long Strings_totalLength (Strings me) {
 	long totalLength = 0;
 	for (long i = 1; i <= my numberOfStrings; i ++) {
@@ -105,26 +107,10 @@ void structStrings :: v_info () {
 	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (this)), L" characters");
 }
 
-static const wchar * getVectorStr (I, long icol) {
-	iam (Strings);
-	wchar *stringValue;
-	if (icol < 1 || icol > my numberOfStrings) return L"";
-	stringValue = my strings [icol];
+const wchar * structStrings :: v_getVectorStr (long icol) {
+	if (icol < 1 || icol > numberOfStrings) return L"";
+	wchar *stringValue = strings [icol];
 	return stringValue == NULL ? L"" : stringValue;
-}
-
-class_methods (Strings, Data) {
-	class_method_local (Strings, destroy)
-	class_method_local (Strings, description)
-	class_method_local (Strings, copy)
-	class_method_local (Strings, equal)
-	class_method_local (Strings, canWriteAsEncoding)
-	class_method_local (Strings, writeText)
-	class_method_local (Strings, readText)
-	class_method_local (Strings, writeBinary)
-	class_method_local (Strings, readBinary)
-	class_method (getVectorStr)
-	class_methods_end
 }
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0

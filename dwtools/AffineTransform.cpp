@@ -30,45 +30,6 @@
 #include "AffineTransform.h"
 #include "NUM2.h"
 
-#undef our
-#define our ((AffineTransform_Table) my methods) ->
-
-static void classAffineTransform_transform (I, double **in, long nrows, double **out)
-{
-	iam (AffineTransform);
-
-	for (long i = 1; i <= nrows; i++)
-	{
-		for (long j = 1; j <= my n; j++)
-		{
-			double tmp = 0;
-			for (long k = 1; k <= my n; k++)
-			{
-				tmp += in[i][k] * my r[k][j];
-			}
-			out[i][j] = tmp + my t[j];
-		}
-	}	
-}
-
-static Any classAffineTransform_invert (I)
-{
-	iam (AffineTransform);
-	autoAffineTransform thee = (AffineTransform) Data_copy (me);
-	double tolerance = 0.000001;
-
-	NUMpseudoInverse (my r, my n, my n, thy r, tolerance); therror
-	for (long i = 1; i <= my n; i++)
-	{
-		thy t[i] = 0;
-		for (long j = 1; j <= thy n; j++)
-		{
-			thy t[i] -= thy r[i][j] * my t[j];
-		}
-	}
-	return thee.transfer();
-}
-
 #include "oo_DESTROY.h"
 #include "AffineTransform_def.h"
 #include "oo_COPY.h"
@@ -88,19 +49,40 @@ static Any classAffineTransform_invert (I)
 #include "oo_DESCRIPTION.h"
 #include "AffineTransform_def.h"
 
-class_methods (AffineTransform, Data)
-	class_method_local (AffineTransform, destroy)
-	class_method_local (AffineTransform, copy)
-	class_method_local (AffineTransform, equal)
-	class_method_local (AffineTransform, canWriteAsEncoding)
-	class_method_local (AffineTransform, writeText)
-	class_method_local (AffineTransform, writeBinary)
-	class_method_local (AffineTransform, readText)
-	class_method_local (AffineTransform, readBinary)
-	class_method_local (AffineTransform, description)
-	class_method_local (AffineTransform, transform)
-	class_method_local (AffineTransform, invert)
-class_methods_end
+void structAffineTransform :: v_transform (double **in, long nrows, double **out)
+{
+	for (long i = 1; i <= nrows; i++)
+	{
+		for (long j = 1; j <= n; j++)
+		{
+			double tmp = 0;
+			for (long k = 1; k <= n; k++)
+			{
+				tmp += in[i][k] * r[k][j];
+			}
+			out[i][j] = tmp + t[j];
+		}
+	}	
+}
+
+Any structAffineTransform :: v_invert ()
+{
+	autoAffineTransform thee = (AffineTransform) Data_copy (this);
+	double tolerance = 0.000001;
+
+	NUMpseudoInverse (r, n, n, thy r, tolerance); therror
+	for (long i = 1; i <= n; i++)
+	{
+		thy t[i] = 0;
+		for (long j = 1; j <= thy n; j++)
+		{
+			thy t[i] -= thy r[i][j] * t[j];
+		}
+	}
+	return thee.transfer();
+}
+
+Thing_implement (AffineTransform, Data, 0);
 
 void AffineTransform_init (I, long n)
 {
@@ -123,8 +105,7 @@ AffineTransform AffineTransform_create (long n)
 Any AffineTransform_invert (I)
 {
 	iam (AffineTransform);
-	AffineTransform thee = NULL;
-	if (our invert) thee = (AffineTransform) our invert (me);
+	AffineTransform thee = (AffineTransform) my v_invert ();
 	return thee;
 }
 

@@ -356,6 +356,8 @@ e-mail sensimetrics@sens.com
 #include "KlattTable.h"
 #include "Resonator.h"
 
+Thing_implement (KlattTable, Table, 0);
+
 #define CASCADE_PARALLEL 1         /* Type of synthesis model */
 #define ALL_PARALLEL     2
 #define KlattTable_NPAR	40        /* Number of control parameters */
@@ -368,9 +370,6 @@ e-mail sensimetrics@sens.com
 
 #define NUMBER_OF_SAMPLES 100
 #define SAMPLE_FACTOR 0.00001
-
-#undef your
-#define your ((KlattTable_Table) thy methods) ->
 
 /* Structure for Klatt Parameters */
 typedef struct structKlattFrame
@@ -568,9 +567,6 @@ static void KlattFrame_free (KlattFrame me)
 {
 	Melder_free (me);
 }
-
-class_methods (KlattTable, Table)
-class_methods_end
 
 KlattTable KlattTable_create (double frameDuration, double totalDuration)
 {
@@ -2671,7 +2667,7 @@ KlattTable Table_to_KlattTable (Table me)
 	try {
 		if (my numberOfColumns != KlattTable_NPAR) Melder_throw ("A KlattTable needs ", KlattTable_NPAR, L" columns.");
 		autoKlattTable thee = Thing_new (KlattTable);
-		your copy (me, thee.peek());
+		my structTable :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw ("KlattTable not created from Table."); }
 }
@@ -2680,7 +2676,7 @@ Table KlattTable_to_Table (KlattTable me)
 {
 	try {
 		autoTable thee = Thing_new (Table);
-		your copy (me, thee.peek());
+		my structTable :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw ("Table not created from KlattTable."); }
 }

@@ -23,13 +23,8 @@
 */
 
 #define ooSTRUCT Sampled2
-oo_DEFINE_CLASS (Sampled2, Data)
+oo_DEFINE_CLASS (Sampled2, Sampled)   // David, dit was Data i.p.v. Sampled!
 
-	oo_DOUBLE (xmin)
-	oo_DOUBLE (xmax)
-	oo_LONG (nx)
-	oo_DOUBLE (dx)
-	oo_DOUBLE (x1)
 	oo_DOUBLE (ymin)
 	oo_DOUBLE (ymax)
 	oo_LONG (ny)

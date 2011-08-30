@@ -777,8 +777,8 @@ DO
 		my name, L"_", thy name);
 END
 
-extern "C" void praat_HMM_init (void);
-extern "C" void praat_HMM_init (void)
+void praat_HMM_init (void);
+void praat_HMM_init (void)
 {
 	Thing_recognizeClassesByName (classHMM, classHMM_State, classHMM_Observation,
 		classHMM_ObservationSequence, classHMM_StateSequence, classGaussianMixture, NULL);

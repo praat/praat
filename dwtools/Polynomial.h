@@ -36,20 +36,9 @@
 #include "RealTier.h"
 #include "SSCP.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #define Spline_MAXIMUM_DEGREE 20
 
 #include "Polynomial_def.h"
-#define FunctionTerms__methods(klas) Function__methods(klas)	\
-	double (*evaluate) (I, double x);	\
-	void (*evaluate_z) (I, dcomplex *z, dcomplex *p); \
-	void (*evaluateTerms) (I, double x, double terms[]); \
-	void (*getExtrema) (I, double x1, double x2, double *xmin, double *ymin, \
-			double *xmax, double *ymax);	\
-	long (*getDegree) (I);
 oo_CLASS_CREATE (FunctionTerms, Function);
 
 void FunctionTerms_init (I, double xmin, double xmax, long numberOfCoefficients);
@@ -97,9 +86,15 @@ void FunctionTerms_draw (I, Graphics g, double xmin, double xmax, double ymin, d
 void FunctionTerms_drawBasisFunction (I, Graphics g, long index, double xmin, double xmax,
 	double ymin, double ymax, int extrapolate, int garnish);
 
-Thing_declare1cpp (Polynomial);
-
-Thing_declare1cpp (Roots);
+Thing_define (Polynomial, FunctionTerms) {
+	// overridden methods:
+	public:
+		virtual double v_evaluate (double x);
+		virtual void v_evaluate_z (dcomplex *z, dcomplex *p);
+		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
+		//virtual long v_getDegree ();   David, is het OK dat deze niet overschreven wordt?
+};
 
 Polynomial Polynomial_create (double xmin, double xmax, long degree);
 
@@ -131,7 +126,13 @@ Polynomial Polynomials_multiply (Polynomial me, Polynomial thee);
 
 void Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomial *r);
 
-Thing_declare1cpp (LegendreSeries);
+Thing_define (LegendreSeries, FunctionTerms) {
+	// overridden methods:
+	public:
+		virtual double v_evaluate (double x);
+		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
+};
 
 LegendreSeries LegendreSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
@@ -140,6 +141,9 @@ LegendreSeries LegendreSeries_createFromString (double xmin, double xmax, const 
 LegendreSeries LegendreSeries_getDerivative (LegendreSeries me);
 
 Polynomial LegendreSeries_to_Polynomial (LegendreSeries me);
+
+Thing_define (Roots, ComplexVector) {
+};
 
 Roots Roots_create (long numberOfRoots);
 
@@ -188,7 +192,13 @@ Spectrum Polynomial_to_Spectrum (Polynomial me, double nyquistFrequency,
 	This is equivalent to:
 		p(x) = c[1] /2 + sum (k=2..numberOfCoefficients, c[k]*T[k](x'))
 */
-Thing_declare1cpp (ChebyshevSeries);
+Thing_define (ChebyshevSeries, FunctionTerms) {
+	// overridden methods:
+	public:
+		virtual double v_evaluate (double x);
+		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
+};
 
 ChebyshevSeries ChebyshevSeries_create (double xmin, double xmax, long numberOfPolynomials);
 
@@ -196,8 +206,6 @@ ChebyshevSeries ChebyshevSeries_createFromString (double xmin, double xmax, cons
 
 Polynomial ChebyshevSeries_to_Polynomial (ChebyshevSeries me);
 
-#define Spline__methods(klas) FunctionTerms__methods(klas) \
-	long (*getOrder) (I);
 oo_CLASS_CREATE (Spline, FunctionTerms);
 
 void Spline_init (I, double xmin, double xmax, long degree, long numberOfCoefficients, long numberOfKnots);
@@ -209,13 +217,24 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 Spline Spline_scaleX (I, double xmin, double xmax);
 /* scale domain and knots to new domain */
 
-Thing_declare1cpp (MSpline);
+Thing_define (MSpline, Spline) {
+	// overridden methods:
+	public:
+		virtual double v_evaluate (double x);
+		virtual void v_evaluateTerms (double x, double terms[]);
+};
 
 MSpline MSpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
 
 MSpline MSpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots);
 
-Thing_declare1cpp (ISpline);
+Thing_define (ISpline, Spline) {
+	// overridden methods:
+	public:
+		virtual double v_evaluate (double x);
+		virtual void v_evaluateTerms (double x, double terms[]);
+		virtual long v_getOrder ();
+};
 
 ISpline ISpline_create (double xmin, double xmax, long degree, long numberOfInteriorKnots);
 ISpline ISpline_createFromStrings (double xmin, double xmax, long degree, const wchar_t *coef, const wchar_t *interiorKnots);
@@ -229,40 +248,5 @@ Polynomial RealTier_to_Polynomial (I, long degree, double tol, int ic, Covarianc
 LegendreSeries RealTier_to_LegendreSeries (I, long degree, double tol, int ic, Covariance *cvm);
 
 ChebyshevSeries RealTier_to_ChebyshevSeries (I, long degree, double tol, int ic, Covariance *cvm);
-
-#ifdef __cplusplus
-	}
-
-	struct structPolynomial : public structFunctionTerms {
-	};
-	#define Polynomial__methods(klas) FunctionTerms__methods(klas)
-	Thing_declare2cpp (Polynomial, FunctionTerms);
-
-	struct structRoots : public structComplexVector {
-	};
-	#define Roots__methods(klas) ComplexVector__methods(klas)
-	Thing_declare2cpp (Roots, ComplexVector);
-
-	struct structLegendreSeries : public structFunctionTerms {
-	};
-	#define LegendreSeries__methods(klas) FunctionTerms__methods(klas)
-	Thing_declare2cpp (LegendreSeries, FunctionTerms);
-
-	struct structChebyshevSeries : public structFunctionTerms {
-	};
-	#define ChebyshevSeries__methods(klas) FunctionTerms__methods(klas)
-	Thing_declare2cpp (ChebyshevSeries, FunctionTerms);
-
-	struct structMSpline : public structSpline {
-	};
-	#define MSpline__methods(klas) Spline__methods(klas)
-	Thing_declare2cpp (MSpline, Spline);
-
-	struct structISpline : public structSpline {
-	};
-	#define ISpline__methods(klas) Spline__methods(klas)
-	Thing_declare2cpp (ISpline, Spline);
-
-#endif
 
 #endif /* _Polynomial_h_ */

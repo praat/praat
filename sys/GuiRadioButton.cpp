@@ -110,7 +110,7 @@ GuiObject GuiRadioButton_create (GuiObject parent, int left, int right, int top,
 		_GuiObject_setUserData (my widget, me);
 //		_GuiObject_position (my widget, left, right, top, bottom);
 		if (GTK_IS_BOX (parent)) {
-			gtk_container_add (GTK_CONTAINER (parent), my widget);
+			gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (my widget));
 		}
 		if (flags & GuiRadioButton_SET) {
 			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my widget), TRUE);

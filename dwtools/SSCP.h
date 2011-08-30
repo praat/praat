@@ -19,32 +19,25 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 20020327 GPL
- djmw 20110306 Latest modification.
-*/
-
 #include "TableOfReal_extensions.h"
 #include "PCA.h"
 #include "CCA.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "SSCP_def.h"
-#define SSCP__methods(klas) TableOfReal__methods(klas)
 oo_CLASS_CREATE (SSCP, TableOfReal);
 
-Thing_declare1cpp (Covariance);
+Thing_define (Covariance, SSCP) {
+};
 
-Thing_declare1cpp (Correlation);
+Thing_define (Correlation, SSCP) {
+};
 
 /*
 	Ordered collection of SSCP's
 	All SSCP's must have the same dimensions and labels.
 */
-Thing_declare1cpp (SSCPs);
+Thing_define (SSCPs, Ordered) {
+};
 
 void SSCP_init (I, long dimension, long storage);
 
@@ -245,25 +238,4 @@ void SSCP_unExpand (I);
 void SSCP_expandLowerCholesky (I); // create lower square root of covariance matrix
 void SSCP_unExpandLowerCholesky (I);
 
-#ifdef __cplusplus
-	}
-
-	struct structCovariance : public structSSCP {
-	};
-	#define Covariance__methods(klas) SSCP__methods(klas)
-	Thing_declare2cpp (Covariance, SSCP);
-
-	struct structCorrelation : public structSSCP {
-	};
-	#define Correlation__methods(klas) SSCP__methods(klas)
-	Thing_declare2cpp (Correlation, SSCP);
-
-	struct structSSCPs : public structOrdered {
-	};
-	#define SSCPs__methods(klas) Ordered__methods(klas)
-	Thing_declare2cpp (SSCPs, Ordered);
-
-#endif
-
 #endif /* _SSCP_h_ */
-

@@ -20,8 +20,8 @@
 #include "ManPagesM.h"
 #include "praat_version.h"
 
-extern "C" void manual_Script_init (ManPages me);
-extern "C" void manual_Script_init (ManPages me) {
+void manual_Script_init (ManPages me);
+void manual_Script_init (ManPages me) {
 
 MAN_BEGIN (L"Action commands", L"ppgb", 20110129)
 INTRO (L"The commands in the @@Dynamic menu@ of the @@Object window@.")
@@ -3417,7 +3417,7 @@ NORMAL (L"You can run scripts from the @ScriptEditor. If you will have to use th
 NORMAL (L"(You can also run scripts from the command line. See @@Scripting 6.9. Calling from the command line|\\SS6.9@)")
 */
 
-MAN_BEGIN (L"Scripting 9. Turning a script into a stand-alone program", L"ppgb", 20110526)
+MAN_BEGIN (L"Scripting 9. Turning a script into a stand-alone program", L"ppgb", 20110831)
 INTRO (L"You can turn your script into a double-clickable stand-alone program by including it into Praat's #main procedure. "
 	"If you want to try this, you should already know how to compile and link the Praat program on your computer.")
 NORMAL (L"These stand-alone programs do not show the Objects window and the Picture window; "
@@ -3429,12 +3429,10 @@ CODE (L"const wchar myScript [ ] = L\"\"")
 	CODE1 (L"\"demoWaitForInput ( )\\bsn\"")
 CODE (L";")
 CODE (L"")
-CODE (L"extern \"C\" void praat_uvafon_init ();")
-CODE (L"")
 CODE (L"int main (int argc, char *argv [ ]) {")
 	CODE1 (L"praat_setStandAloneScriptText (myScript);")
 	CODE1 (L"praat_init (\"Hello\", argc, argv);")
-	CODE1 (L"praat_uvafon_init ();")
+	CODE1 (L"INCLUDE_LIBRARY (praat_uvafon_init)")
 	CODE1 (L"praat_run ();")
 	CODE1 (L"return 0;")
 CODE (L"}")

@@ -1084,10 +1084,9 @@ void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb, 
 
 /****************  TABLESOFREAL **************************************/
 
-class_methods (TablesOfReal, Ordered)
-class_methods_end
+Thing_implement (TablesOfReal, Ordered, 0);
 
-void TablesOfReal_init (I, void *klas)
+void TablesOfReal_init (I, ClassInfo klas)
 {
 	iam (TablesOfReal);
 	Ordered_init (me, klas, 10);
@@ -1107,7 +1106,7 @@ TableOfReal TablesOfReal_sum (I)
 	iam (TablesOfReal);
 	try {
 		if (my size <= 0) return 0;
-		autoTableOfReal thee = (TableOfReal) Data_copy (my item[1]);
+		autoTableOfReal thee = Data_copy ((TableOfReal) my item[1]);
 
 		for (long i = 2; i <= my size; i++)
 		{

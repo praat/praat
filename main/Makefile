@@ -1,5 +1,5 @@
 # Makefile of the 'main' routines.
-# Paul Boersma, 10 March 2011
+# Paul Boersma, 26 August 2011
 
 include ../makefile.defs
 CFLAGS = $(DEFS) -I ../num -I ../sys -I ../fon
@@ -8,7 +8,7 @@ CPPFLAGS = $(CFLAGS)
 
 .PHONY: clean
 
-main_*.o: ../sys/praat.h ../sys/praat_version.h
+main_*.o: ../sys/praat.h ../sys/praat_version.h ../sys/Graphics.h
 
 clean:
 	$(RM) main_*.o

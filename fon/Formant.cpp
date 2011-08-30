@@ -51,22 +51,22 @@
 #include "oo_DESCRIPTION.h"
 #include "Formant_def.h"
 
-static void info (I) {
-	iam (Formant);
-	classData -> info (me);
+Thing_implement (Formant, Sampled, 2);   // version 1 = with intensity, 2 = double
+
+void structFormant :: v_info () {
+	structData :: v_info ();
 	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (my xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (my xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (my xmax - my xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
 	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (my nx));
-	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (my dx), L" seconds");
-	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (my x1), L" seconds");
+	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 }
 
-static double getValueAtSample (I, long iframe, long which, int units) {
-	iam (Formant);
-	Formant_Frame frame = & my frame [iframe];
+double structFormant :: v_getValueAtSample (long iframe, long which, int units) {
+	Formant_Frame frame = & frame [iframe];
 	double frequency;
 	long iformant = which >> 1;
 	if (iformant < 1 || iformant > frame -> nFormants) return NUMundefined;
@@ -84,23 +84,6 @@ static double getValueAtSample (I, long iframe, long which, int units) {
 		return bandwidth;
 	}
 	return NUMundefined;
-}
-
-class_methods (Formant, Sampled) {
-	us -> version = 2;   /* With intensity, and double. */
-	class_method_local (Formant, destroy)
-	class_method_local (Formant, description)
-	class_method_local (Formant, copy)
-	class_method_local (Formant, equal)
-	class_method_local (Formant, canWriteAsEncoding)
-	class_method_local (Formant, writeText)
-	class_method_local (Formant, readText)
-	class_method_local (Formant, writeBinary)
-	class_method_local (Formant, readBinary)
-	class_method (info)
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_method (getValueAtSample)
-	class_methods_end
 }
 
 Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,

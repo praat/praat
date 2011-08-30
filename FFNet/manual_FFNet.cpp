@@ -31,8 +31,8 @@ static void drawFFNet_345 (Graphics g)
 	FFNet_drawTopology (me.peek(), g);
 }
 
-extern "C" void manual_FFNet_init (ManPages me);
-extern "C" void manual_FFNet_init (ManPages me)
+void manual_FFNet_init (ManPages me);
+void manual_FFNet_init (ManPages me)
 {
 
 MAN_BEGIN (L"epoch", L"djmw", 20040428)

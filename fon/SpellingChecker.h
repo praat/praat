@@ -23,7 +23,6 @@
 #include "Collection.h"
 
 #include "SpellingChecker_def.h"
-#define SpellingChecker__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (SpellingChecker, Data);
 
 SpellingChecker WordList_upto_SpellingChecker (WordList me);

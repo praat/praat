@@ -22,15 +22,18 @@
 #include "ManPage.h"
 #include "Collection.h"
 
-Thing_declare1cpp (ManPages);
-struct structManPages : public structData {
-	Ordered pages;
-	const wchar **titles;
-	int ground, dynamic, executable;
-	structMelderDir rootDirectory;
+Thing_define (ManPages, Data) {
+	// new data:
+	public:
+		Ordered pages;
+		const wchar **titles;
+		int ground, dynamic, executable;
+		structMelderDir rootDirectory;
+	// overridden methods:
+	protected:
+		virtual void v_destroy ();
+		virtual void v_readText (MelderReadText text);
 };
-#define ManPages__methods(klas) Data__methods(klas)
-Thing_declare2cpp (ManPages, Data);
 
 ManPages ManPages_create (void);
 

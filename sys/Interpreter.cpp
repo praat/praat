@@ -76,17 +76,13 @@ extern structMelderDir praatDir;
 #define Interpreter_OPTION 12
 #define Interpreter_COMMENT 13
 
-static void classInterpreterVariable_destroy (I) {
-	iam (InterpreterVariable);
-	Melder_free (my string);
-	Melder_free (my stringValue);
-	NUMdmatrix_free (my numericArrayValue. data, 1, 1);
-	inherited (InterpreterVariable) destroy (me);
-}
+Thing_implement (InterpreterVariable, SimpleString, 0);
 
-class_methods (InterpreterVariable, SimpleString) {
-	class_method_local (InterpreterVariable, destroy)
-	class_methods_end
+void structInterpreterVariable :: v_destroy () {
+	Melder_free (string);
+	Melder_free (stringValue);
+	NUMdmatrix_free (numericArrayValue. data, 1, 1);
+	InterpreterVariable_Parent :: v_destroy ();
 }
 
 static InterpreterVariable InterpreterVariable_create (const wchar *key) {
@@ -106,21 +102,17 @@ static InterpreterVariable InterpreterVariable_create (const wchar *key) {
 	}
 }
 
-static void classInterpreter_destroy (I) {
-	iam (Interpreter);
-	Melder_free (my environmentName);
+Thing_implement (Interpreter, Thing, 0);
+
+void structInterpreter :: v_destroy () {
+	Melder_free (environmentName);
 	for (int ipar = 1; ipar <= Interpreter_MAXNUM_PARAMETERS; ipar ++)
-		Melder_free (my arguments [ipar]);
-	forget (my variables);
-	inherited (Interpreter) destroy (me);
+		Melder_free (arguments [ipar]);
+	forget (variables);
+	Interpreter_Parent :: v_destroy ();
 }
 
-class_methods (Interpreter, Thing) {
-	class_method_local (Interpreter, destroy)
-	class_methods_end
-}
-
-Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass) {
+Interpreter Interpreter_create (wchar_t *environmentName, ClassInfo editorClass) {
 	try {
 		autoInterpreter me = Thing_new (Interpreter);
 		my variables = SortedSetOfString_create ();
@@ -132,9 +124,9 @@ Interpreter Interpreter_create (wchar_t *environmentName, Any editorClass) {
 	}
 }
 
-Interpreter Interpreter_createFromEnvironment (Any editor) {
+Interpreter Interpreter_createFromEnvironment (Editor editor) {
 	if (editor == NULL) return Interpreter_create (NULL, NULL);
-	return Interpreter_create (((Editor) editor) -> name, ((Editor) editor) -> methods);
+	return Interpreter_create (editor -> name, editor -> classInfo);
 }
 
 void Melder_includeIncludeFiles (wchar **text) {
@@ -311,10 +303,10 @@ long Interpreter_readParameters (Interpreter me, wchar *text) {
 	return npar;
 }
 
-Any Interpreter_createForm (Interpreter me, GuiObject parent, const wchar *path,
+UiForm Interpreter_createForm (Interpreter me, GuiObject parent, const wchar *path,
 	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure)
 {
-	Any form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
+	UiForm form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
 	Any radio = NULL;
 	if (path) UiForm_addText (form, L"$file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {

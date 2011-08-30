@@ -17,12 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1999/05/21
- * pb 2002/07/16 GPL
- * pb 2008/01/19 version 2
- */
-
 
 #define ooSTRUCT Formant_Formant
 oo_DEFINE_STRUCT (Formant_Formant)
@@ -53,7 +47,7 @@ oo_DEFINE_STRUCT (Formant_Frame)
 	oo_ENDFROM
 
 	oo_INT (nFormants)
-	oo_STRUCT_VECTOR (Formant_Formant, formant, my nFormants)
+	oo_STRUCT_VECTOR (Formant_Formant, formant, nFormants)
 
 oo_END_STRUCT (Formant_Frame)
 #undef ooSTRUCT
@@ -64,7 +58,14 @@ oo_END_STRUCT (Formant_Frame)
 oo_DEFINE_CLASS (Formant, Sampled)
 
 	oo_INT (maxnFormants)
-	oo_STRUCT_VECTOR (Formant_Frame, frame, my nx)
+	oo_STRUCT_VECTOR (Formant_Frame, frame, nx)
+
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+			virtual double v_getValueAtSample (long iframe, long which, int units);
+	#endif
 
 oo_END_CLASS (Formant)
 #undef ooSTRUCT

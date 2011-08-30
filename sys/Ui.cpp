@@ -17,44 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/30 less object-oriented
- * pb 2003/03/09 simplified calls of numeric expressions
- * pb 2003/05/19 Melder_atof
- * pb 2003/09/16 "standards" rather than "defaults"
- * pb 2004/05/09 no colons after ellipses
- * pb 2004/11/16 added Apply button
- * pb 2004/12/06 UiForm_getXXX_check
- * pb 2004/12/14 less space after LABEL unless its value is empty or ends in a period
- * pb 2005/03/06 guard against incorrect prefs files
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2007/03/23 new Editor API
- * pb 2007/04/23 moved allowExecutionHook installation from UiForm_finish to UiForm_do,
- *   so that scripts cannot prevent this hook from working
- * pb 2007/06/09 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2007/12/30 Gui
- * pb 2009/01/04 UiForm_widgetsToValues ()
- * pb 2009/01/05 pause forms (e.g. Revert button)
- * pb 2009/01/18 Interpreter argument to UiForm callbacks
- * pb 2009/01/19 multiple Continue buttons in pause forms
- * pb 2009/03/09 UI_REAL_OR_UNDEFINED
- * pb 2009/03/21 removed enums
- * pb 2009/05/09 pink
- * pb 2009/08/21 better message for "You interrupted"
- * pb 2009/10/15 corrected colon removal
- * pb 2009/12/14 colours
- * pb 2009/12/22 invokingButtonTitle
- * fb 2010/02/23 GTK
- * fb 2010/03/01 GTK
- * pb 2010/12/07 channel
- * pb 2011/02/01 cancelContinueButton
- * pb 2011/02/20 better messages
- * pb 2011/03/18 C++
- * pb 2011/07/05 C++
- */
-
 #include <wctype.h>
 #include <ctype.h>
 #include "longchar.h"
@@ -64,9 +26,6 @@
 #include "UiP.h"
 #include "Editor.h"
 #include "Graphics.h"   /* colours. */
-
-#define MAXIMUM_NUMBER_OF_FIELDS  50
-#define MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS  10
 
 /***** class UiField: the things that have values in an UiForm dialog *****/
 
@@ -89,38 +48,15 @@
 #define UI_OPTIONMENU  14
 #define UI_LIST  15
 
-Thing_declare1cpp (UiField);
+Thing_implement (UiField, Thing, 0);
 
-struct structUiField : public structThing {
-	int type;
-	const wchar *formLabel;
-	double realValue, realDefaultValue;
-	long integerValue, integerDefaultValue;
-	wchar *stringValue; const wchar *stringDefaultValue;
-	Graphics_Colour colourValue;
-	char *stringValueA;
-	Ordered options;
-	long numberOfStrings;
-	const wchar **strings;
-	GuiObject text, toggle, list, cascadeButton;
-	int y;
-};
-#define UiField__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (UiField, Thing);
-
-static void classUiField_destroy (I) {
-	iam (UiField);
-	Melder_free (my formLabel);
-	Melder_free (my stringValue);
-	Melder_free (my stringValueA);
-	Melder_free (my stringDefaultValue);
-	forget (my options);
-	inherited (UiField) destroy (me);
-}
-
-class_methods (UiField, Thing) {
-	class_method_local (UiField, destroy)
-	class_methods_end
+void structUiField :: v_destroy () {
+	Melder_free (formLabel);
+	Melder_free (stringValue);
+	Melder_free (stringValueA);
+	Melder_free (stringDefaultValue);
+	forget (options);
+	UiField_Parent :: v_destroy ();
 }
 
 static UiField UiField_create (int type, const wchar_t *name) {
@@ -146,17 +82,13 @@ static UiField UiField_create (int type, const wchar_t *name) {
 
 /***** class UiOption: radio buttons and menu options *****/
 
-Thing_declare1cpp (UiOption);
-
-struct structUiOption : public structThing {
-	GuiObject toggle;
+Thing_define (UiOption, Thing) {
+	// new data:
+	public:
+		GuiObject toggle;
 };
-#define UiOption__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (UiOption, Thing);
 
-class_methods (UiOption, Thing) {
-	class_methods_end
-}
+Thing_implement (UiOption, Thing, 0);
 
 static Any UiOption_create (const wchar_t *label) {
 	UiOption me = Thing_new (UiOption);
@@ -482,6 +414,8 @@ void UiHistory_clear (void) { MelderString_empty (& theHistory); }
 
 /***** class UiForm: dialog windows *****/
 
+Thing_implement (UiForm, Thing, 0);
+
 bool (*theAllowExecutionHookHint) (void *closure) = NULL;
 void *theAllowExecutionClosureHint = NULL;
 
@@ -490,43 +424,15 @@ void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void 
 	theAllowExecutionClosureHint = allowExecutionClosure;
 }
 
-Thing_declare1cpp (UiForm);
-
-struct structUiForm : public structThing {
-	EditorCommand command;
-	GuiObject parent, shell, dialog;
-	void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
-	void (*applyCallback) (Any dia, void *closure);
-	void (*cancelCallback) (Any dia, void *closure);
-	void *buttonClosure;
-	const wchar_t *invokingButtonTitle, *helpTitle;
-	int numberOfContinueButtons, defaultContinueButton, cancelContinueButton, clickedContinueButton;
-	const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
-	int numberOfFields;
-	UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
-	GuiObject okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
-	bool destroyWhenUnmanaged, isPauseForm;
-	bool (*allowExecutionHook) (void *closure);
-	void *allowExecutionClosure;
-};
-#define UiForm__methods(klas) Thing__methods(klas)
-Thing_declare2cpp (UiForm, Thing);
-
-static void classUiForm_destroy (I) {
-	iam (UiForm);
-	for (int ifield = 1; ifield <= my numberOfFields; ifield ++)
-		forget (my field [ifield]);
-	if (my dialog) {
-		GuiObject_destroy (GuiObject_parent (my dialog));
+void structUiForm :: v_destroy () {
+	for (int ifield = 1; ifield <= numberOfFields; ifield ++)
+		forget (field [ifield]);
+	if (d_dialogForm) {
+		GuiObject_destroy (GuiObject_parent (d_dialogForm));
 	}
-	Melder_free (my invokingButtonTitle);
-	Melder_free (my helpTitle);
-	inherited (UiForm) destroy (me);
-}
-
-class_methods (UiForm, Thing) {
-	class_method_local (UiForm, destroy)
-	class_methods_end
+	Melder_free (invokingButtonTitle);
+	Melder_free (helpTitle);
+	UiForm_Parent :: v_destroy ();
 }
 
 static void gui_button_cb_revert (I, GuiButtonEvent event) {
@@ -539,14 +445,14 @@ static void gui_button_cb_revert (I, GuiButtonEvent event) {
 static void gui_dialog_cb_close (I) {
 	iam (UiForm);
 	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
-	GuiObject_hide (my dialog);
+	GuiObject_hide (my d_dialogForm);
 	if (my destroyWhenUnmanaged) forget (me);
 }
 static void gui_button_cb_cancel (I, GuiButtonEvent event) {
 	(void) event;
 	iam (UiForm);
 	if (my cancelCallback) my cancelCallback (me, my buttonClosure);
-	GuiObject_hide (my dialog);
+	GuiObject_hide (my d_dialogForm);
 	if (my destroyWhenUnmanaged) forget (me);
 }
 
@@ -582,7 +488,7 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 	if (my revertButton) GuiObject_setSensitive (my revertButton, false);
 	if (my helpButton) GuiObject_setSensitive (my helpButton, false);
 	#if motif
-	XmUpdateDisplay (my dialog);
+	XmUpdateDisplay (my d_dialogForm);
 	#endif
 	if (my isPauseForm) {
 		for (int i = 1; i <= my numberOfContinueButtons; i ++) {
@@ -652,7 +558,7 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 			}
 		}
 		if (hide) {
-			GuiObject_hide (my dialog);
+			GuiObject_hide (my d_dialogForm);
 			if (my destroyWhenUnmanaged) {
 				forget (me);
 				return;
@@ -709,7 +615,7 @@ UiForm UiForm_create (GuiObject parent, const wchar *title,
 	const wchar *invokingButtonTitle, const wchar *helpTitle)
 {
 	autoUiForm me = Thing_new (UiForm);
-	my parent = parent;
+	my d_dialogParent = parent;
 	Thing_setName (me.peek(), title);
 	my okCallback = okCallback;
 	my buttonClosure = buttonClosure;
@@ -750,12 +656,12 @@ static void commonOkCallback (UiForm dia, const wchar *dummy, Interpreter interp
 	(void) dummy;
 	(void) invokingButtonTitle;
 	(void) modified;
-	cmd -> commandCallback (cmd -> editor, cmd, static_cast <UiForm> (cmd -> dialog), NULL, interpreter); therror
+	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform, NULL, interpreter); therror
 }
 
 UiForm UiForm_createE (EditorCommand cmd, const wchar *title, const wchar *invokingButtonTitle, const wchar *helpTitle) {
-	Editor editor = (Editor) cmd -> editor;
-	UiForm dia = UiForm_create (editor -> dialog, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle);
+	Editor editor = (Editor) cmd -> d_editor;
+	UiForm dia = UiForm_create (editor -> d_windowForm, title, commonOkCallback, cmd, invokingButtonTitle, helpTitle);
 	dia -> command = cmd;
 	return dia;
 }
@@ -896,7 +802,7 @@ static void appendColon (void) {
 
 void UiForm_finish (I) {
 	iam (UiForm);
-	if (! my parent && ! my isPauseForm) return;
+	if (! my d_dialogParent && ! my isPauseForm) return;
 
 	int size = my numberOfFields;
 	int dialogHeight = 0, x = Gui_LEFT_DIALOG_SPACING, y;
@@ -942,17 +848,17 @@ void UiForm_finish (I) {
 		#endif
 	}
 	dialogHeight += 2 * Gui_BOTTOM_DIALOG_SPACING + Gui_PUSHBUTTON_HEIGHT;
-	my dialog = GuiDialog_create (my parent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, gui_dialog_cb_close, me, 0);
+	my d_dialogForm = GuiDialog_create (my d_dialogParent, DIALOG_X, DIALOG_Y, dialogWidth, dialogHeight, my name, gui_dialog_cb_close, me, 0);
 
 	#if gtk
 		form = gtk_table_new (numberOfRows, 3, false);
 		gtk_table_set_col_spacing (GTK_TABLE (form), 0, 5);
-		gtk_container_add (GTK_CONTAINER (my dialog), form);
-		gtk_widget_show (form);
-		buttons = GTK_DIALOG (GuiObject_parent (my dialog)) -> action_area;
+		gtk_container_add (GTK_CONTAINER (my d_dialogForm), GTK_WIDGET (form));
+		gtk_widget_show (GTK_WIDGET (form));
+		buttons = GTK_DIALOG (GuiObject_parent (my d_dialogForm)) -> action_area;
 	#else
-		form = my dialog;
-		buttons = my dialog;
+		form = my d_dialogForm;
+		buttons = my d_dialogForm;
 	#endif
 
 	for (long ifield = 1; ifield <= size; ifield ++) {
@@ -979,17 +885,17 @@ void UiForm_finish (I) {
 					GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
 					#if gtk
-						gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+						gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (label), 0, 1, row, row + 1);
 					#endif
 					field -> text = GuiText_createShown (form, fieldX, fieldX + halfFieldWidth, y, Gui_AUTOMATIC, 0);
 					#if gtk
-						gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 1, 2, row, row + 1);
+						gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (field -> text), 1, 2, row, row + 1);
 					#endif
 				} else if (wcsnequ (field -> name, L"right ", 6)) {
 					field -> text = GuiText_createShown (form, fieldX + halfFieldWidth + 12, fieldX + fieldWidth,
 						y, Gui_AUTOMATIC, 0);
 					#if gtk
-						gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 2, 3, row, row + 1);
+						gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (field -> text), 2, 3, row, row + 1);
 						row += 1;
 					#endif
 				} else {
@@ -999,12 +905,12 @@ void UiForm_finish (I) {
 						ylabel, ylabel + textFieldHeight,
 						theFinishBuffer.string, GuiLabel_RIGHT);
 					#if gtk
-						gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+						gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (label), 0, 1, row, row + 1);
 					#endif
 					field -> text = GuiText_createShown (form, fieldX, fieldX + fieldWidth, // or once the dialog is a Form: - Gui_RIGHT_DIALOG_SPACING,
 						y, Gui_AUTOMATIC, 0);
 					#if gtk
-						gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 1, 3, row, row + 1);
+						gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (field -> text), 1, 3, row, row + 1);
 						row += 1;
 					#endif
 				}
@@ -1014,7 +920,7 @@ void UiForm_finish (I) {
 				field -> text = GuiText_createShown (form, x, x + dialogWidth - Gui_LEFT_DIALOG_SPACING - Gui_RIGHT_DIALOG_SPACING,
 					y, Gui_AUTOMATIC, 0);
 				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 0, 3, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (field -> text), 0, 3, row, row + 1);
 					row += 1;
 				#endif
 			} break;
@@ -1025,7 +931,7 @@ void UiForm_finish (I) {
 					x, dialogWidth /* allow to extend into the margin */, y + 5, y + 5 + textFieldHeight,
 					theFinishBuffer.string, 0);
 				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), field -> text, 0, 3, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (field -> text), 0, 3, row, row + 1);
 					row += 1;
 				#endif
 			} break;
@@ -1043,7 +949,7 @@ void UiForm_finish (I) {
 				GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_RADIOBUTTON_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (label), 0, 1, row, row + 1);
 				#endif
 				for (long ibutton = 1; ibutton <= field -> options -> size; ibutton ++) {
 					UiOption button = static_cast <UiOption> (field -> options -> item [ibutton]);
@@ -1057,7 +963,7 @@ void UiForm_finish (I) {
 							GuiRadioButton_setGroup (button -> toggle, group);
 						} 
 						group = GuiRadioButton_getGroup (button -> toggle);
-						gtk_table_attach_defaults (GTK_TABLE (form), button -> toggle, 1, 3, row, row + 1);
+						gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (button -> toggle), 1, 3, row, row + 1);
 						row += 1;
 					#endif
 				}
@@ -1074,7 +980,7 @@ void UiForm_finish (I) {
 				GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, ylabel, ylabel + Gui_OPTIONMENU_HEIGHT,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (label), 0, 1, row, row + 1);
 				#endif
 
 				#if motif
@@ -1090,7 +996,7 @@ void UiForm_finish (I) {
 					field -> cascadeButton = gtk_combo_box_new_text ();
 					gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (field -> cascadeButton), false);
 					GTK_WIDGET_UNSET_FLAGS (field -> cascadeButton, GTK_CAN_DEFAULT);
-					gtk_table_attach_defaults (GTK_TABLE (form), field -> cascadeButton, 1, 3, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (field -> cascadeButton), 1, 3, row, row + 1);
 					row += 1;
 				#elif motif
 					box = GuiMenuBar_addMenu2 (bar, L"choice", 0, & field -> cascadeButton);
@@ -1122,7 +1028,7 @@ void UiForm_finish (I) {
 					fieldX, dialogWidth /* allow to extend into the margin */, y, Gui_AUTOMATIC,
 					theFinishBuffer.string, NULL, NULL, 0);
 				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), field -> toggle, 1, 3, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (field -> toggle), 1, 3, row, row + 1);
 					row += 1;
 				#endif
 			} break;
@@ -1134,7 +1040,7 @@ void UiForm_finish (I) {
 				GuiObject label = GuiLabel_createShown (form, x, x + labelWidth, y + 1, y + 21,
 					theFinishBuffer.string, GuiLabel_RIGHT);
 				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), label, 0, 1, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), GTK_WIDGET (label), 0, 1, row, row + 1);
 				#endif
 				field -> list = GuiList_create (form, fieldX, fieldX + listWidth, y, y + LIST_HEIGHT, false, theFinishBuffer.string);
 				for (long i = 1; i <= field -> numberOfStrings; i ++) {
@@ -1142,7 +1048,7 @@ void UiForm_finish (I) {
 				}
 				GuiObject_show (field -> list);
 				#if gtk
-					gtk_table_attach_defaults (GTK_TABLE (form), gtk_widget_get_parent (field -> list), 1, 3, row, row + 1);
+					gtk_table_attach_defaults (GTK_TABLE (form), gtk_widget_get_parent (GTK_WIDGET (field -> list)), 1, 3, row, row + 1);
 					row += 1;
 				#endif
 			} break;
@@ -1156,7 +1062,7 @@ void UiForm_finish (I) {
 		my helpButton = GuiButton_createShown (buttons, HELP_BUTTON_X, HELP_BUTTON_X + HELP_BUTTON_WIDTH, y, Gui_AUTOMATIC,
 			L"Help", gui_button_cb_help, me, 0);
 		#if gtk
-			gtk_button_box_set_child_secondary(GTK_BUTTON_BOX(buttons), my helpButton, TRUE);
+			gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (buttons), GTK_WIDGET (my helpButton), TRUE);
 		#endif
 	}
 	if (my numberOfFields > 1 || (my numberOfFields > 0 && my field [1] -> type != UI_LABEL)) {
@@ -1171,7 +1077,7 @@ void UiForm_finish (I) {
 				y, Gui_AUTOMATIC, L"Standards", gui_button_cb_revert, me, 0);
 		}
 		#if gtk
-			gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (buttons), my revertButton, TRUE);
+			gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (buttons), GTK_WIDGET (my revertButton), TRUE);
 		#endif
 	}
 	if (my isPauseForm) {
@@ -1222,7 +1128,7 @@ void UiForm_do (I, bool modified) {
 	/*XtRemoveCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
 	/* This is the only place where this callback is installed. Moved from UiForm_close ppgb950613. */
 	/*XtAddCallback (my okButton, XmNactivateCallback, UiForm_ok, (XtPointer) me);*/
-	GuiObject_show (my dialog);
+	GuiObject_show (my d_dialogForm);
 	if (modified)
 		UiForm_okOrApply (me, NULL, true);
 }
@@ -1285,7 +1191,7 @@ void UiForm_parseString (I, const wchar *arguments, Interpreter interpreter) {
 }
 
 void UiForm_parseStringE (EditorCommand cmd, const wchar *arguments, Interpreter interpreter) {
-	UiForm_parseString (cmd -> dialog, arguments, interpreter);
+	UiForm_parseString (cmd -> d_uiform, arguments, interpreter);
 }
 
 static UiField findField (UiForm me, const wchar *fieldName) {
@@ -1295,13 +1201,13 @@ static UiField findField (UiForm me, const wchar *fieldName) {
 }
 
 static void fatalField (UiForm dia) {
-	Melder_fatal ("Wrong field in dialog \"%s\".", Melder_peekWcsToUtf8 (dia -> name));
+	Melder_fatal ("Wrong field in command window \"%s\".", Melder_peekWcsToUtf8 (dia -> name));
 }
 
 void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal ("(UiForm_setReal:) No field \"%s\" in dialog \"%s\".",
+	if (field == NULL) Melder_fatal ("(UiForm_setReal:) No field \"%s\" in command window \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
@@ -1323,7 +1229,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 		} break; case UI_COLOUR: {
 			GuiText_setString (field -> text, Melder_double (value));   // some grey value
 		} break; default: {
-			Melder_fatal ("Wrong field in dialog \"%s\".", Melder_peekWcsToUtf8 (my name));
+			Melder_fatal ("Wrong field in command window \"%s\".", Melder_peekWcsToUtf8 (my name));
 		}
 	}
 }
@@ -1331,7 +1237,7 @@ void UiForm_setReal (I, const wchar_t *fieldName, double value) {
 void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal ("(UiForm_setInteger:) No field \"%s\" in dialog \"%s\".",
+	if (field == NULL) Melder_fatal ("(UiForm_setInteger:) No field \"%s\" in command window \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
@@ -1371,7 +1277,7 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 void UiForm_setString (I, const wchar *fieldName, const wchar *value) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal ("(UiForm_setString:) No field \"%s\" in dialog \"%s\".",
+	if (field == NULL) Melder_fatal ("(UiForm_setString:) No field \"%s\" in command window \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	if (value == NULL) value = L"";   /* Accept NULL strings. */
 	switch (field -> type) {
@@ -1439,7 +1345,7 @@ static UiField findField_check (UiForm me, const wchar *fieldName) {
 double UiForm_getReal (I, const wchar *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal ("(UiForm_getReal:) No field \"%s\" in dialog \"%s\".",
+	if (field == NULL) Melder_fatal ("(UiForm_getReal:) No field \"%s\" in command window \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
@@ -1469,7 +1375,7 @@ double UiForm_getReal_check (I, const wchar *fieldName) {
 long UiForm_getInteger (I, const wchar *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal ("(UiForm_getInteger:) No field \"%s\" in dialog \"%s\".",
+	if (field == NULL) Melder_fatal ("(UiForm_getInteger:) No field \"%s\" in command window \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: case UI_RADIO:
@@ -1503,7 +1409,7 @@ long UiForm_getInteger_check (I, const wchar *fieldName) {
 wchar * UiForm_getString (I, const wchar *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal ("(UiForm_getString:) No field \"%s\" in dialog \"%s\".",
+	if (field == NULL) Melder_fatal ("(UiForm_getString:) No field \"%s\" in command window \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
@@ -1543,7 +1449,7 @@ wchar * UiForm_getString_check (I, const wchar *fieldName) {
 Graphics_Colour UiForm_getColour (I, const wchar *fieldName) {
 	iam (UiForm);
 	UiField field = findField (me, fieldName);
-	if (field == NULL) Melder_fatal ("(UiForm_getColour:) No field \"%s\" in dialog \"%s\".",
+	if (field == NULL) Melder_fatal ("(UiForm_getColour:) No field \"%s\" in command window \"%s\".",
 		Melder_peekWcsToUtf8 (fieldName), Melder_peekWcsToUtf8 (my name));
 	switch (field -> type) {
 		case UI_COLOUR: {

@@ -17,25 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/05/31 RealTier_formula
- * pb 2003/11/20 interpolate quadratically
- * pb 2005/03/02 RealTier_multiplyPart
- * pb 2007/01/27 Vector_to_RealTier_peaks finds peaks only within channel
- * pb 2007/01/28 made compatible with new getVector and getFunction1 API
- * pb 2007/03/30 RealTier_downto_Table: include point numbers
- * pb 2007/04/19 RealTier_formula: defence against undefined values
- * pb 2007/08/12 wchar
- * pb 2007/10/01 can write as encoding
- * pb 2008/04/30 new Formula API
- * pb 2008/09/23 shiftX, scaleX
- * pb 2009/01/18 Interpreter argument to formula
- * pb 2010/10/19 allow drawing without speckles
- * pb 2011/05/31 C++
- * pb 2011/07/11 C++
- */
-
 #include "RealTier.h"
 #include "Formula.h"
 
@@ -60,18 +41,7 @@
 
 /********** class RealPoint **********/
 
-class_methods (RealPoint, AnyPoint) {
-	class_method_local (RealPoint, destroy)
-	class_method_local (RealPoint, copy)
-	class_method_local (RealPoint, equal)
-	class_method_local (RealPoint, canWriteAsEncoding)
-	class_method_local (RealPoint, writeText)
-	class_method_local (RealPoint, readText)
-	class_method_local (RealPoint, writeBinary)
-	class_method_local (RealPoint, readBinary)
-	class_method_local (RealPoint, description)
-	class_methods_end
-}
+Thing_implement (RealPoint, AnyPoint, 0);
 
 RealPoint RealPoint_create (double time, double value) {
 	autoRealPoint me = Thing_new (RealPoint);
@@ -89,61 +59,35 @@ void structRealTier :: v_info () {
 	MelderInfo_writeLine2 (L"Maximum value: ", Melder_double (RealTier_getMaximumValue (this)));
 }
 
-static double getNx (I) { iam (RealTier); return my points -> size; }
-static double getX (I, long ix) { iam (RealTier); return ((RealPoint) my points -> item [ix]) -> number; }
-static double getNcol (I) { iam (RealTier); return my points -> size; }
-static double getVector (I, long irow, long icol) { iam (RealTier); (void) irow; return RealTier_getValueAtIndex (me, icol); }
-static double getFunction1 (I, long irow, double x) { iam (RealTier); (void) irow; return RealTier_getValueAtTime (me, x); }
-
-static const wchar * getUnitText (I, long ilevel, int unit, unsigned long flags) {
-	(void) void_me;
-	(void) ilevel;
-	(void) unit;
-	(void) flags;
-	return L"Time (s)";
+double structRealTier :: v_getVector (long irow, long icol) {
+	(void) irow;
+	return RealTier_getValueAtIndex (this, icol);
 }
 
-static void shiftX (I, double xfrom, double xto) {
-	iam (RealTier);
-	inherited (RealTier) shiftX (me, xfrom, xto);
-	for (long i = 1; i <= my points -> size; i ++) {
-		RealPoint point = (RealPoint) my points -> item [i];
+double structRealTier :: v_getFunction1 (long irow, double x) {
+	(void) irow;
+	return RealTier_getValueAtTime (this, x);
+}
+
+void structRealTier :: v_shiftX (double xfrom, double xto) {
+	RealTier_Parent :: v_shiftX (xfrom, xto);
+	for (long i = 1; i <= points -> size; i ++) {
+		RealPoint point = (RealPoint) points -> item [i];
 		NUMshift (& point -> number, xfrom, xto);
 	}
 }
 
-static void scaleX (I, double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
-	iam (RealTier);
-	inherited (RealTier) scaleX (me, xminfrom, xmaxfrom, xminto, xmaxto);
-	for (long i = 1; i <= my points -> size; i ++) {
-		RealPoint point = (RealPoint) my points -> item [i];
+void structRealTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
+	RealTier_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	for (long i = 1; i <= points -> size; i ++) {
+		RealPoint point = (RealPoint) points -> item [i];
 		NUMscale (& point -> number, xminfrom, xmaxfrom, xminto, xmaxto);
 	}
 }
 
-class_methods (RealTier, Function) {
-	class_method_local (RealTier, destroy)
-	class_method_local (RealTier, copy)
-	class_method_local (RealTier, equal)
-	class_method_local (RealTier, canWriteAsEncoding)
-	class_method_local (RealTier, writeText)
-	class_method_local (RealTier, readText)
-	class_method_local (RealTier, writeBinary)
-	class_method_local (RealTier, readBinary)
-	class_method_local (RealTier, description)
-	class_method (getNx)
-	class_method (getX)
-	class_method (getNcol)
-	class_method (getVector)
-	class_method (getFunction1)
-	class_method (getUnitText)
-	class_method (shiftX)
-	class_method (scaleX)
-	class_methods_end
-}
+Thing_implement (RealTier, Function, 0);
 
-void RealTier_init (I, double tmin, double tmax) {
-	iam (RealTier);
+void RealTier_init (RealTier me, double tmin, double tmax) {
 	my xmin = tmin;
 	my xmax = tmax;
 	my points = SortedSetOfDouble_create ();
@@ -159,35 +103,31 @@ RealTier RealTier_create (double tmin, double tmax) {
 	}
 }
 
-RealTier RealTier_createWithClass (double tmin, double tmax, RealTier_Table klas) {
+RealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas) {
 	try {
 		autoRealTier me = (RealTier) _Thing_new (klas);
 		RealTier_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw (klas -> _className, " not created.");
+		Melder_throw (klas -> className, " not created.");
 	}
 }
 
-int RealTier_addPoint (I, double t, double value) {
-	iam (RealTier);
+void RealTier_addPoint (RealTier me, double t, double value) {
 	try {
 		autoRealPoint point = RealPoint_create (t, value);
 		Collection_addItem (my points, point.transfer()); therror
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, ": point not added.");
 	}
 }
 
-double RealTier_getValueAtIndex (I, long i) {
-	iam (RealTier);
+double RealTier_getValueAtIndex (RealTier me, long i) {
 	if (i < 1 || i > my points -> size) return NUMundefined;
 	return ((RealPoint) my points -> item [i]) -> value;
 }
 
-double RealTier_getValueAtTime (I, double t) {
-	iam (RealTier);
+double RealTier_getValueAtTime (RealTier me, double t) {
 	long n = my points -> size;
 	if (n == 0) return NUMundefined;
 	RealPoint pointRight = (RealPoint) my points -> item [1];
@@ -206,8 +146,7 @@ double RealTier_getValueAtTime (I, double t) {
 		: fleft + (t - tleft) * (fright - fleft) / (tright - tleft);   /* Linear interpolation. */
 }
 
-double RealTier_getMaximumValue (I) {
-	iam (RealTier);
+double RealTier_getMaximumValue (RealTier me) {
 	double result = NUMundefined;
 	long n = my points -> size;
 	for (long i = 1; i <= n; i ++) {
@@ -218,8 +157,7 @@ double RealTier_getMaximumValue (I) {
 	return result;
 }
 
-double RealTier_getMinimumValue (I) {
-	iam (RealTier);
+double RealTier_getMinimumValue (RealTier me) {
 	double result = NUMundefined;
 	long n = my points -> size;
 	for (long i = 1; i <= n; i ++) {
@@ -230,8 +168,7 @@ double RealTier_getMinimumValue (I) {
 	return result;
 }
 
-double RealTier_getArea (I, double tmin, double tmax) {
-	iam (RealTier);
+double RealTier_getArea (RealTier me, double tmin, double tmax) {
 	long n = my points -> size, imin, imax;
 	RealPoint *points = (RealPoint *) my points -> item;
 	if (n == 0) return NUMundefined;
@@ -258,16 +195,14 @@ double RealTier_getArea (I, double tmin, double tmax) {
 	return area;
 }
 
-double RealTier_getMean_curve (I, double tmin, double tmax) {
-	iam (RealTier);
+double RealTier_getMean_curve (RealTier me, double tmin, double tmax) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindow. */
 	double area = RealTier_getArea (me, tmin, tmax);
 	if (area == NUMundefined) return NUMundefined;
 	return area / (tmax - tmin);
 }
 
-double RealTier_getStandardDeviation_curve (I, double tmin, double tmax) {
-	iam (RealTier);
+double RealTier_getStandardDeviation_curve (RealTier me, double tmin, double tmax) {
 	long n = my points -> size, imin, imax;
 	RealPoint *points = (RealPoint *) my points -> item;
 	double mean, integral = 0.0;
@@ -308,8 +243,7 @@ double RealTier_getStandardDeviation_curve (I, double tmin, double tmax) {
 	return sqrt (0.25 * integral / (tmax - tmin));
 }
 
-double RealTier_getMean_points (I, double tmin, double tmax) {
-	iam (RealTier);
+double RealTier_getMean_points (RealTier me, double tmin, double tmax) {
 	long n = my points -> size, imin, imax;
 	double sum = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
@@ -321,8 +255,7 @@ double RealTier_getMean_points (I, double tmin, double tmax) {
 	return sum / n;
 }
 
-double RealTier_getStandardDeviation_points (I, double tmin, double tmax) {
-	iam (RealTier);
+double RealTier_getStandardDeviation_points (RealTier me, double tmin, double tmax) {
 	long n = my points -> size, imin, imax;
 	double mean, sum = 0.0;
 	RealPoint *points = (RealPoint *) my points -> item;
@@ -337,8 +270,7 @@ double RealTier_getStandardDeviation_points (I, double tmin, double tmax) {
 	return sqrt (sum / (n - 1));
 }
 
-void RealTier_multiplyPart (I, double tmin, double tmax, double factor) {
-	iam (RealTier);
+void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor) {
 	long ipoint;
 	for (ipoint = 1; ipoint <= my points -> size; ipoint ++) {
 		RealPoint point = (RealPoint) my points -> item [ipoint];
@@ -349,10 +281,9 @@ void RealTier_multiplyPart (I, double tmin, double tmax, double factor) {
 	}
 }
 
-void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double fmax,
+void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fmin, double fmax,
 	int garnish, const wchar *method, const wchar *quantity)
 {
-	iam (RealTier);
 	bool drawLines = wcsstr (method, L"lines") || wcsstr (method, L"Lines");
 	bool drawSpeckles = wcsstr (method, L"speckles") || wcsstr (method, L"Speckles");
 	long n = my points -> size, imin, imax, i;
@@ -395,8 +326,7 @@ void RealTier_draw (I, Graphics g, double tmin, double tmax, double fmin, double
 	}
 }
 
-TableOfReal RealTier_downto_TableOfReal (I, const wchar *timeLabel, const wchar *valueLabel) {
-	iam (RealTier);
+TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar *timeLabel, const wchar *valueLabel) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my points -> size, 2);
 		TableOfReal_setColumnLabel (thee.peek(), 1, timeLabel); therror
@@ -412,10 +342,9 @@ TableOfReal RealTier_downto_TableOfReal (I, const wchar *timeLabel, const wchar 
 	}
 }
 
-int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int logarithmically) {
-	iam (RealTier);
+void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParabola, int logarithmically) {
 	try {
-		autoRealTier thee = (RealTier) Data_copy (me);
+		autoRealTier thee = Data_copy (me);
 		for (long ipoint = 1; ipoint < my points -> size; ipoint ++) {
 			RealPoint point1 = (RealPoint) my points -> item [ipoint], point2 = (RealPoint) my points -> item [ipoint + 1];
 			double time1 = point1 -> number, time2 = point2 -> number, tmid = 0.5 * (time1 + time2);
@@ -449,14 +378,12 @@ int RealTier_interpolateQuadratically (I, long numberOfPointsPerParabola, int lo
 			}
 		}
 		Thing_swap (me, thee.peek());
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, ": not interpolated quadratically.");
 	}
 }
 
-Table RealTier_downto_Table (I, const wchar *indexText, const wchar *timeText, const wchar *valueText) {
-	iam (RealTier);
+Table RealTier_downto_Table (RealTier me, const wchar *indexText, const wchar *timeText, const wchar *valueText) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my points -> size,
 			(indexText != NULL) + (timeText != NULL) + (valueText != NULL));
@@ -477,8 +404,7 @@ Table RealTier_downto_Table (I, const wchar *indexText, const wchar *timeText, c
 	}
 }
 
-RealTier Vector_to_RealTier (I, long channel, RealTier_Table klas) {
-	iam (Vector);
+RealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nx; i ++) {
@@ -486,12 +412,11 @@ RealTier Vector_to_RealTier (I, long channel, RealTier_Table klas) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ", klas -> _className, ".");
+		Melder_throw (me, ": not converted to ", klas -> className, ".");
 	}
 }
 
-RealTier Vector_to_RealTier_peaks (I, long channel, RealTier_Table klas) {
-	iam (Vector);
+RealTier Vector_to_RealTier_peaks (Vector me, long channel, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 2; i < my nx; i ++) {
@@ -505,12 +430,11 @@ RealTier Vector_to_RealTier_peaks (I, long channel, RealTier_Table klas) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ", klas -> _className, " (peaks).");
+		Melder_throw (me, ": not converted to ", klas -> className, " (peaks).");
 	}
 }
 
-RealTier Vector_to_RealTier_valleys (I, long channel, RealTier_Table klas) {
-	iam (Vector);
+RealTier Vector_to_RealTier_valleys (Vector me, long channel, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 2; i < my nx; i ++) {
@@ -524,11 +448,11 @@ RealTier Vector_to_RealTier_valleys (I, long channel, RealTier_Table klas) {
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to ", klas -> _className, " (valleys).");
+		Melder_throw (me, ": not converted to ", klas -> className, " (valleys).");
 	}
 }
 
-RealTier PointProcess_upto_RealTier (PointProcess me, double value, RealTier_Table klas) {
+RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nt; i ++) {
@@ -540,9 +464,7 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value, RealTier_Tab
 	}
 }
 
-int RealTier_formula (I, const wchar *expression, Interpreter interpreter, thou) {
-	iam (RealTier);
-	thouart (RealTier);
+void RealTier_formula (RealTier me, const wchar *expression, Interpreter interpreter, RealTier thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		if (thee == NULL) thee = me;
@@ -553,7 +475,6 @@ int RealTier_formula (I, const wchar *expression, Interpreter interpreter, thou)
 				Melder_throw ("Cannot put an undefined value into the tier.");
 			((RealPoint) thy points -> item [icol]) -> value = result. result.numericResult;
 		}
-		return 1;
 	} catch (MelderError) {
 		Melder_throw (me, ": formula not completed.");
 	}

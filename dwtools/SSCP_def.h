@@ -17,16 +17,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19981213
- djmw 20020813 GPL header
-*/
 
 #define ooSTRUCT SSCP
 oo_DEFINE_CLASS (SSCP, TableOfReal)
 
 	oo_DOUBLE (numberOfObservations)
-	oo_DOUBLE_VECTOR (centroid, my numberOfColumns)
+	oo_DOUBLE_VECTOR (centroid, numberOfColumns)
 	/*
 		The following definitions are only needed when we want to use many big diagonal or
 		almost diagonal matrices like for example in a GaussianMixture,
@@ -35,13 +31,13 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 	#if !oo_READING && !oo_WRITING
 		oo_LONG (expansionNumberOfRows)
 		oo_INT (dataChanged)
-		oo_DOUBLE_MATRIX (expansion, my expansionNumberOfRows, my numberOfColumns)
+		oo_DOUBLE_MATRIX (expansion, expansionNumberOfRows, numberOfColumns)
 		oo_DOUBLE (lnd)
-		oo_DOUBLE_MATRIX (lowerCholesky, my numberOfColumns, my numberOfColumns)
+		oo_DOUBLE_MATRIX (lowerCholesky, numberOfColumns, numberOfColumns)
 		oo_OBJECT (PCA, 0, pca)
 	#endif
 oo_END_CLASS (SSCP)
-
 #undef ooSTRUCT
+
 
 /* End of file SSCP_def.h */

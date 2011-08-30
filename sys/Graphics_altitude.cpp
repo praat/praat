@@ -129,12 +129,11 @@ static void smallAlt (Graphics graphics, double **z, double height) {
 				makeContour (graphics, z, height, row, col, 4);
 }
 
-void Graphics_contour (I, double **z,
+void Graphics_contour (Graphics me, double **z,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
 	double height)
 {
-	iam (Graphics);
 	if (ix2 <= ix1 || iy2 <= iy1) return;
 	dx = (x2WC - x1WC) / (ix2 - ix1);
 	dy = (y2WC - y1WC) / (iy2 - iy1);
@@ -155,12 +154,11 @@ void Graphics_contour (I, double **z,
 	}
 }
 
-void Graphics_altitude (I, double **z,
+void Graphics_altitude (Graphics me, double **z,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
 	int numberOfBorders, double borders [])
 {
-	iam (Graphics);
 	int iborder;
 	if (ix2 <= ix1 || iy2 <= iy1) return;
 	dx = (x2WC - x1WC) / (ix2 - ix1);

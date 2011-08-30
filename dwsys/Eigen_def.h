@@ -26,8 +26,8 @@ oo_DEFINE_CLASS (Eigen, Data)
 
 	oo_LONG (numberOfEigenvalues)
 	oo_LONG (dimension)
-	oo_DOUBLE_VECTOR (eigenvalues, my numberOfEigenvalues)
-	oo_DOUBLE_MATRIX (eigenvectors, my numberOfEigenvalues, my dimension)
+	oo_DOUBLE_VECTOR (eigenvalues, numberOfEigenvalues)
+	oo_DOUBLE_MATRIX (eigenvectors, numberOfEigenvalues, dimension)
 	
 oo_END_CLASS (Eigen)
 #undef ooSTRUCT

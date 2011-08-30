@@ -17,41 +17,29 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/10/16 C++ compatible structs
- * pb 2007/08/13 wchar
- * pb 2011/06/02 C++
- * pb 2011/07/02 C++
- */
-
 #include "Label.h"
 
-static void copy (I, thou) {
-	iam (Autosegment); thouart (Autosegment);
-	inherited (Autosegment) copy (me, thee);
-	if (my name) Thing_setName (thee, my name);
+Thing_implement (Autosegment, Function, 0);
+
+void structAutosegment :: v_copy (thou) {
+	thouart (Autosegment);
+	Autosegment_Parent :: v_copy (thee);
+	if (name) Thing_setName (thee, name);
 }
 
-static bool equal (I, thou) {
-	iam (Autosegment); thouart (Autosegment);
-	if (! inherited (Autosegment) equal (me, thee)) return false;
-	if (my name == NULL && thy name == NULL) return true;   // shortcut: no names
-	if (my name == NULL || thy name == NULL) return false;
-	return wcsequ (my name, thy name);
+bool structAutosegment :: v_equal (thou) {
+	thouart (Autosegment);
+	if (! Autosegment_Parent :: v_equal (thee)) return false;
+	if (name == NULL && thy name == NULL) return true;   // shortcut: no names
+	if (name == NULL || thy name == NULL) return false;
+	return wcsequ (name, thy name);
 }
 
-static struct structData_Description description [] = {
-	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theStructFunction. description },
-	{ L"name", stringwa, (char *) & ((Autosegment) & Melder_debug) -> name - (char *) & Melder_debug, sizeof (wchar *) },
+static struct structData_Description theAutosegment_description [] = {
+	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theClassInfo_Function },
+	{ L"name", stringwa, Melder_offsetof (Autosegment, name), sizeof (wchar *) },
 	{ 0 } };
-
-class_methods (Autosegment, Function) {
-	class_method (copy)
-	class_method (equal)
-	class_method (description)
-	class_methods_end
-}
+Data_Description structAutosegment :: s_description = & theAutosegment_description [0];
 
 Autosegment Autosegment_create (double tmin, double tmax, const wchar *label) {
 	try {
@@ -66,7 +54,7 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar *label) {
 	}
 }
 
-static int compare (I, thou) {
+int structTier :: compare (I, thou) {
 	iam (Function); thouart (Function);
 	if (my xmin < thy xmin) return -1;
 	if (my xmin > thy xmin) return 1;
@@ -75,10 +63,7 @@ static int compare (I, thou) {
 	return 0;
 }
 
-class_methods (Tier, Sorted) {
-	class_method (compare)
-	class_methods_end
-}
+Thing_implement (Tier, Sorted, 0);
 
 void Tier_init (I, long initialCapacity) {
 	iam (Tier);
@@ -105,9 +90,7 @@ long Tier_timeToIndex (Tier me, double t) {
 	return 0;   /* Empty tier or very large t. */
 }
 
-class_methods (Label, Ordered) {
-	class_methods_end
-}
+Thing_implement (Label, Ordered, 0);
 
 void Label_init (I, long initialNumberOfTiers) {
 	iam (Label);

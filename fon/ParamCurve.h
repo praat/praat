@@ -30,12 +30,8 @@
 #include "Sound.h"
 #include "Graphics.h"
 
-Thing_declare1cpp (ParamCurve);
-struct structParamCurve : public structFunction {
-	Sound x, y;
-};
-#define ParamCurve__methods(klas) Function__methods(klas)
-Thing_declare2cpp (ParamCurve, Function);
+#include "ParamCurve_def.h"
+oo_CLASS_CREATE (ParamCurve, Function);
 
 void ParamCurve_init (I, Any x, Any y);
 

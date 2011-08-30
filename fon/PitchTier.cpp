@@ -17,21 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/05/31 PointProcess_upto_RealTier
- * pb 2004/10/03 moved audio to PitchTier_to_Sound.c
- * pb 2005/06/16 units
- * pb 2006/12/08 info
- * pb 2007/03/17 domain quantity
- * pb 2007/08/12 wchar
- * pb 2010/10/19 allow drawing without speckles
- * pb 2011/05/31 C++
- * pb 2011/07/14 C++
- */
-
 #include "PitchTier.h"
 #include "Pitch.h"
+
+Thing_implement (PitchTier, RealTier, 0);
 
 void structPitchTier :: v_info () {
 	structData :: v_info ();
@@ -42,11 +31,6 @@ void structPitchTier :: v_info () {
 	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
 	MelderInfo_writeLine3 (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (this)), L" Hz");
 	MelderInfo_writeLine3 (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (this)), L" Hz");
-}
-
-class_methods (PitchTier, RealTier) {	
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
 }
 
 PitchTier PitchTier_create (double tmin, double tmax) {
@@ -67,7 +51,7 @@ void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
 
 PitchTier PointProcess_upto_PitchTier (PointProcess me, double frequency) {
 	try {
-		return (PitchTier) PointProcess_upto_RealTier (me, frequency, (RealTier_Table) classPitchTier);
+		return (PitchTier) PointProcess_upto_RealTier (me, frequency, classPitchTier);
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to PitchTier.");
 	}

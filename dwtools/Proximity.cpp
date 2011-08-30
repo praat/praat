@@ -25,8 +25,7 @@
 #include "Proximity.h"
 #include "TableOfReal_extensions.h"
 
-class_methods (Proximity, TableOfReal)
-class_methods_end
+Thing_implement (Proximity, TableOfReal, 0);
 
 void Proximity_init (I, long numberOfPoints)
 {

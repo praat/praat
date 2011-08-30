@@ -35,12 +35,7 @@
 #include "Minimizers.h"
 #include "TableOfReal.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "FFNet_def.h"
-#define FFNet__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (FFNet, Data);
 
 /* Parameters:
@@ -223,9 +218,5 @@ Collection FFNet_createIrisExample (long numberOfHidden1, long numberOfHidden2);
 TableOfReal FFNet_extractWeights (FFNet me, long layer);
 void FFNet_drawWeights (FFNet me, Graphics g, long layer, int garnish);
 FFNet FFNet_and_TabelOfReal_to_FFNet (FFNet me, TableOfReal him, long layer);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _FFNet_h_ */

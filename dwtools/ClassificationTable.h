@@ -19,28 +19,13 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19981121
- djmw 20020315 GPL header
- djmw 20040422 Added ClassificationTable_to_Categories_maximumProbability
- djmw 20040623 Added ClassificationTable_to_Strings_maximumProbability
- djmw 20110306 Latest modification.
- */
-
 #include "TableOfReal.h"
 #include "SSCP.h"
 #include "Confusion.h"
 #include "Strings.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
-Thing_declare1cpp (ClassificationTable);
-struct structClassificationTable : public structTableOfReal {
+Thing_define (ClassificationTable, TableOfReal) {
 };
-#define ClassificationTable__methods(klas) TableOfReal__methods(klas)
-Thing_declare2cpp (ClassificationTable, TableOfReal);
 
 ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfColumns);
 
@@ -51,10 +36,6 @@ Confusion ClassificationTable_to_Confusion (ClassificationTable me);
 
 /* Correlations between the classes (columns) */
 Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _ClassificationTable_h_ */
 

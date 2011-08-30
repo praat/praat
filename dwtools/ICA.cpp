@@ -519,10 +519,7 @@ PCA Sound_to_PCA (Sound me, double startTime, double endTime)
 
 /************************ Diagonalizer **********************************/
 
-class_methods (Diagonalizer, TableOfReal)
-{
-	class_methods_end
-}
+Thing_implement (Diagonalizer, TableOfReal, 0);
 
 Diagonalizer Diagonalizer_create (long dimension)
 {
@@ -537,10 +534,7 @@ Diagonalizer Diagonalizer_create (long dimension)
 
 /************************ MixingMatrix **********************************/
 
-class_methods (MixingMatrix, TableOfReal)
-{
-	class_methods_end
-}
+Thing_implement (MixingMatrix, TableOfReal, 0);
 
 MixingMatrix MixingMatrix_create (long numberOfChannels, long numberOfComponents)
 {
@@ -676,25 +670,20 @@ MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me)
 	try {
 		if (my numberOfColumns != my numberOfRows) Melder_throw ("Number of rows and columns must be equal.");
 		autoMixingMatrix thee = Thing_new (MixingMatrix);
-		your copy (me, thee.peek());
+		my structTableOfReal :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not converted to MixingMatrix."); }
 }
 
 /************* CrossCorrelationTable *****************************/
 
-static void classCrossCorrelationTable_info (I)
-{
-	iam (CrossCorrelationTable);
-	classSSCP -> info (me);
-	double dm = CrossCorrelationTable_getDiagonalitymeasure (me);
-	MelderInfo_writeLine2 (L"Diagonality measure: ", Melder_double (dm));
-}
+Thing_implement (CrossCorrelationTable, SSCP, 0);
 
-class_methods (CrossCorrelationTable, SSCP)
+void structCrossCorrelationTable :: v_info ()
 {
-	class_method_local (CrossCorrelationTable, info)
-	class_methods_end
+	structSSCP :: v_info ();
+	double dm = CrossCorrelationTable_getDiagonalitymeasure (this);
+	MelderInfo_writeLine2 (L"Diagonality measure: ", Melder_double (dm));
 }
 
 CrossCorrelationTable CrossCorrelationTable_create (long dimension)
@@ -751,24 +740,19 @@ double CrossCorrelationTable_getDiagonalitymeasure (CrossCorrelationTable me)
 
 /************* CrossCorrelationTables *****************************/
 
-static void classCrossCorrelationTables_info (I)
+void structCrossCorrelationTables :: v_info ()
 {
-	iam (CrossCorrelationTables);
-	classOrdered -> info (me);
-	CrossCorrelationTable thee = (CrossCorrelationTable) my item[1];
+	structOrdered :: v_info ();
+	CrossCorrelationTable thee = (CrossCorrelationTable) item[1];
 	MelderInfo_writeLine2 (L"  Number of rows and columns: ", Melder_integer (thy numberOfRows));
-	for (long i = 1; i <= my size; i++)
+	for (long i = 1; i <= size; i++)
 	{
-		double dm = CrossCorrelationTable_getDiagonalitymeasure ((CrossCorrelationTable) my item[i]);
+		double dm = CrossCorrelationTable_getDiagonalitymeasure ((CrossCorrelationTable) item[i]);
 		MelderInfo_writeLine4 (L"Diagonality measure for item ", Melder_integer (i), L": ", Melder_double (dm));
 	}
 }
 
-class_methods (CrossCorrelationTables, Ordered)
-{
-	class_method_local (CrossCorrelationTables, info)
-	class_methods_end
-}
+Thing_implement (CrossCorrelationTables, Ordered, 0);
 
 CrossCorrelationTables CrossCorrelationTables_create (void)
 {

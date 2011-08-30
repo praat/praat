@@ -228,7 +228,7 @@ END
 DIRECT  (KNN_extractInputPatterns)
     iam_ONLY (KNN);
     if (my nInstances > 0) {
-        praat_new ((Data) Data_copy (my input), L"Input Patterns");
+        praat_new (Data_copy (my input), L"Input Patterns");
     } else {
         Melder_throw ("Instance base is empty.");
 	}
@@ -237,7 +237,7 @@ END
 DIRECT  (KNN_extractOutputCategories)
     iam_ONLY (KNN);
     if (my nInstances > 0) {
-        praat_new ((Data) Data_copy (my output), L"Output Categories");
+        praat_new (Data_copy (my output), L"Output Categories");
     } else {
         Melder_throw ("Instance base is empty.");
 	}
@@ -899,8 +899,8 @@ END
 // Setting callbacks                                                                   //
 /////////////////////////////////////////////////////////////////////////////////////////
 
-extern "C" void praat_contrib_Ola_KNN_init (void);
-extern "C" void praat_contrib_Ola_KNN_init (void)
+void praat_contrib_Ola_KNN_init (void);
+void praat_contrib_Ola_KNN_init (void)
 {
 
     Thing_recognizeClassesByName (classKNN, NULL);

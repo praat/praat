@@ -23,13 +23,10 @@
 #include "Collection.h"
 
 #include "FujisakiPitch_def.h"
-#define FujisakiCommand__methods(klas) Function__methods(klas)
 oo_CLASS_CREATE (FujisakiCommand, Function);
+oo_CLASS_CREATE (FujisakiPitch, Function);
 
 FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude);
-
-#define FujisakiPitch__methods(klas) Function__methods(klas)
-oo_CLASS_CREATE (FujisakiPitch, Function);
 
 FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 	double baseFrequency, double alpha, double beta, double gamma);

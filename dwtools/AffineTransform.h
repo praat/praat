@@ -19,23 +19,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 2001
- djmw 20020315 GPL header
- djmw 20110305 Latest modification.
- */
-
 #include "Data.h"
 #include "TableOfReal.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "AffineTransform_def.h"
-#define AffineTransform__methods(klas) Data__methods(klas) \
-	void (*transform) (I, double **in, long nrows, double **out); \
-	Any (*invert) (I);
 oo_CLASS_CREATE (AffineTransform, Data);
 
 void AffineTransform_init (I, long n);
@@ -51,9 +38,5 @@ Any AffineTransform_invert (I);
 TableOfReal AffineTransform_extractMatrix (I);
 
 TableOfReal AffineTransform_extractTranslationVector (I);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _AffineTransform_h_ */

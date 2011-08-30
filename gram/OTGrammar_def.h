@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/14
- */
-
 
 #define ooSTRUCT OTGrammarConstraint
 oo_DEFINE_STRUCT (OTGrammarConstraint)
@@ -33,7 +29,7 @@ oo_DEFINE_STRUCT (OTGrammarConstraint)
 	oo_ENDFROM
 	#if oo_READING
 		if (localVersion < 2) {
-			my plasticity = 1.0;
+			plasticity = 1.0;
 		}
 	#endif
 	#if !oo_READING && !oo_WRITING
@@ -60,12 +56,12 @@ oo_DEFINE_STRUCT (OTGrammarCandidate)
 
 	oo_STRING (output)
 	oo_LONG (numberOfConstraints)
-	oo_INT_VECTOR (marks, my numberOfConstraints)
+	oo_INT_VECTOR (marks, numberOfConstraints)
 	#if !oo_READING && !oo_WRITING
 		oo_DOUBLE (harmony)
 		oo_DOUBLE (probability)
 		oo_LONG (numberOfPotentialPartialOutputsMatching)
-		oo_BOOLEAN_VECTOR (partialOutputMatches, my numberOfPotentialPartialOutputsMatching)
+		oo_BOOLEAN_VECTOR (partialOutputMatches, numberOfPotentialPartialOutputsMatching)
 	#endif
 
 oo_END_STRUCT (OTGrammarCandidate)
@@ -77,7 +73,7 @@ oo_DEFINE_STRUCT (OTGrammarTableau)
 
 	oo_STRING (input)
 	oo_LONG (numberOfCandidates)
-	oo_STRUCT_VECTOR (OTGrammarCandidate, candidates, my numberOfCandidates)
+	oo_STRUCT_VECTOR (OTGrammarCandidate, candidates, numberOfCandidates)
 
 oo_END_STRUCT (OTGrammarTableau)
 #undef ooSTRUCT
@@ -93,19 +89,19 @@ oo_DEFINE_CLASS (OTGrammar, Data)
 		oo_DOUBLE (leak)
 	oo_ENDFROM
 	oo_LONG (numberOfConstraints)
-	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, my numberOfConstraints)
-	oo_LONG_VECTOR (index, my numberOfConstraints)
+	oo_STRUCT_VECTOR (OTGrammarConstraint, constraints, numberOfConstraints)
+	oo_LONG_VECTOR (index, numberOfConstraints)
 	oo_LONG (numberOfFixedRankings)
-	oo_STRUCT_VECTOR (OTGrammarFixedRanking, fixedRankings, my numberOfFixedRankings)
+	oo_STRUCT_VECTOR (OTGrammarFixedRanking, fixedRankings, numberOfFixedRankings)
 	oo_LONG (numberOfTableaus)
-	oo_STRUCT_VECTOR (OTGrammarTableau, tableaus, my numberOfTableaus)
+	oo_STRUCT_VECTOR (OTGrammarTableau, tableaus, numberOfTableaus)
 	#if oo_READING
-		OTGrammar_sort (me);
+		OTGrammar_sort (this);
 	#endif
 
 	#if oo_DECLARING
 		// overridden methods:
-			void v_info ();
+			virtual void v_info ();
 	#endif
 
 oo_END_CLASS (OTGrammar)

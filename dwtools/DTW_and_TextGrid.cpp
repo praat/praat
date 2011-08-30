@@ -89,12 +89,12 @@ TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee)
 		{
 			Data anyTier = (Data) thy tiers -> item[i];
 		 
-			if (anyTier -> methods == (Thing_Table) classIntervalTier)
+			if (anyTier -> classInfo == classIntervalTier)
 			{
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier (me, (IntervalTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek());
 			}
-			else if (anyTier -> methods == (Thing_Table) classTextTier)
+			else if (anyTier -> classInfo == classTextTier)
 			{
 				autoTextTier tier = DTW_and_TextTier_to_TextTier (me, (TextTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek());
@@ -165,13 +165,13 @@ TextGrid DTW_and_TextGrid_to_TextGrid_old (DTW me, TextGrid thee)
 		{
 			Data anyTier = (Data) thy tiers -> item[i];
 		 
-			if (anyTier -> methods == (Thing_Table) classIntervalTier)
+			if (anyTier -> classInfo == classIntervalTier)
 			{
 			
 				autoIntervalTier tier = DTW_and_IntervalTier_to_IntervalTier_old (me, (IntervalTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek());
 			}
-			else if (anyTier -> methods == (Thing_Table) classTextTier)
+			else if (anyTier -> classInfo == classTextTier)
 			{
 				autoTextTier tier = DTW_and_TextTier_to_TextTier_old (me, (TextTier) anyTier);
 				TextGrid_addTier (him.peek(), tier.peek());

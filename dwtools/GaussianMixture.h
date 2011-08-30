@@ -29,12 +29,7 @@
 #include "SSCP.h"
 #include "TableOfReal_extensions.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 #include "GaussianMixture_def.h"
-#define GaussianMixture__methods(klas) Data__methods(klas)
 oo_CLASS_CREATE (GaussianMixture, Data);
 
 /*
@@ -117,10 +112,5 @@ void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, l
 /* with on demand expand of pca ! */
 int GaussianMixture_generateOneVector (GaussianMixture me, double *c, wchar_t **covname, double *buf);
 TableOfReal GaussianMixture_to_TableOfReal_randomSampling (GaussianMixture me, long numberOfPoints);
-
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _GaussianMixture_h_ */

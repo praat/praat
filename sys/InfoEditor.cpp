@@ -40,8 +40,8 @@ void gui_information (const wchar *message) {
 		Thing_setName (theInfoEditor, L"Praat Info");
 	}
 	GuiText_setString (theInfoEditor -> textWidget, message);
-	GuiObject_show (theInfoEditor -> dialog);
-	GuiWindow_drain (theInfoEditor -> shell);
+	GuiObject_show (theInfoEditor -> d_windowForm);
+	GuiWindow_drain (theInfoEditor -> d_windowShell);
 }
 
 /* End of file InfoEditor.cpp */

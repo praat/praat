@@ -17,22 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1995/07/24
- * pb 2002/07/16 GPL
- * pb 2007/03/17 domain quantity
- * pb 2008/01/19 double
- * pb 2011/05/09 C++
- * pb 2011/06/13 C++
- */
-
 #include "Graphics.h"
 #include "Cochleagram.h"
 
-class_methods (Cochleagram, Matrix) {
-	us -> domainQuantity = MelderQuantity_TIME_SECONDS;
-	class_methods_end
-}
+Thing_implement (Cochleagram, Matrix, 2);
 
 Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1, double df, long nf) {
 	try {
@@ -48,7 +36,7 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 	static double border [1 + 12] =
 		{ 0, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80 };
 	try {
-		autoCochleagram copy = (Cochleagram) Data_copy (me);
+		autoCochleagram copy = Data_copy (me);
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 		long itmin, itmax;
 		Matrix_getWindowSamplesX (me, tmin, tmax, & itmin, & itmax);
@@ -68,7 +56,6 @@ void Cochleagram_paint (Cochleagram me, Graphics g, double tmin, double tmax, in
 			1, my ny, 0.5 * my dy, (my ny - 0.5) * my dy,
 			12, border);
 		Graphics_unsetInner (g);
-		forget (copy);
 		if (garnish) {
 			Graphics_drawInnerBox (g);
 			Graphics_textBottom (g, 1, L"Time (s)");

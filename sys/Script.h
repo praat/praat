@@ -21,12 +21,11 @@
 
 #include "Data.h"
 
-Thing_declare1cpp (Script);
-struct structScript : public structData {
-	structMelderFile file;
+Thing_define (Script, Data) {
+	// new data:
+	public:
+		structMelderFile file;
 };
-#define Script__methods(klas) Data__methods(klas)
-Thing_declare2cpp (Script, Data);
 
 Script Script_createFromFile (MelderFile file);
 

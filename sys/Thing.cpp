@@ -17,27 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2004/05/08 less geekspeak in info ("class")
- * pb 2004/05/08 added date to info
- * pb 2004/10/16 structThing -> theStructThing etc.
- * pb 2006/12/10 info method can contain only MelderInfo_writeXXX
- * pb 2007/06/11 wchar_t
- * pb 2008/04/04 Thing_infoWithId
- * pb 2008/07/20 wchar_t
- * fb 2010/02/26 fix possible null pointer dereference
- * pb 2011/05/15 C++
- * pb 2011/07/13 C++
- */
-
 #include <stdarg.h>
 #include <time.h>
 #include "Thing.h"
 
 static long theTotalNumberOfThings;
-
-static void destroy (I) { iam (Thing); }
 
 void structThing :: v_info ()
 {
@@ -47,57 +31,47 @@ void structThing :: v_info ()
 	MelderInfo_writeLine2 (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   /* Includes a newline. */
 }
 
-static void info (I) {
-	iam (Thing);
-}
-
-static void _Thing_initialize (void *table);
-struct structThing_Table theStructThing = {
-	_Thing_initialize,
+/*
+ * Instead of the Thing_implement macro.
+ */
+struct structClassInfo theClassInfo_Thing = {
 	L"Thing",
 	NULL,      // no parent class
-	sizeof (struct structThing),
-	NULL       // no _new function (not needed; plus, it would have to be called "_Thing_new", but that name has been given to something else)
+	sizeof (class structThing),
+	NULL,      // no _new function (not needed; plus, it would have to be called "_Thing_new", but that name has been given to something else)
+	0,         // version
+	0,         // sequentialUniqueIdOfReadableClass
+	NULL       // dummyObject
 };
-Thing_Table classThing = & theStructThing;
-static void _Thing_initialize (void *table) {
-	Thing_Table us = (Thing_Table) table;
-	us -> destroy = destroy;
-	us -> info = info;
-}
+ClassInfo classThing = & theClassInfo_Thing;
 
-const wchar * Thing_className (Thing me) { return our _className; }
+const wchar * Thing_className (Thing me) { return my classInfo -> className; }
 
-Any _Thing_new (void *table) {
-	Thing_Table us = (Thing_Table) table;
-	if (us -> _initialize != NULL && ! us -> destroy) {   // table not initialized?
-		us -> _initialize (us);
-		//Melder_casual ("Initializing class %ls (%ld).", us -> _className, table);
-	}
-	Thing me = (Thing) us -> _new ();
+Any _Thing_new (ClassInfo classInfo_) {
+	Thing me = (Thing) classInfo_ -> _new ();
 	theTotalNumberOfThings += 1;
-	my methods = us;
+	my classInfo = classInfo_;
 	my name = NULL;
-	if (Melder_debug == 40) Melder_casual ("created %ls (%ld, %ld, %ld)", my methods -> _className, us, table, my methods);
+	if (Melder_debug == 40) Melder_casual ("created %ls (%ld, %ld)", classInfo_ -> className, classInfo_, me);
 	return me;
 }
 
-static int numberOfReadableClasses = 0;
-static void *readableClasses [1 + 1000];
-static void _Thing_addOneReadableClass (Thing_Table readableClass) {
-	if (++ numberOfReadableClasses > 1000)
+static int theNumberOfReadableClasses = 0;
+static ClassInfo theReadableClasses [1 + 1000];
+static void _Thing_addOneReadableClass (ClassInfo readableClass) {
+	if (++ theNumberOfReadableClasses > 1000)
 		Melder_fatal ("(Thing_recognizeClassesByName:) Too many (1001) readable classes.");
-	readableClasses [numberOfReadableClasses] = readableClass;
-	readableClass -> sequentialUniqueIdOfReadableClass = numberOfReadableClasses;
+	theReadableClasses [theNumberOfReadableClasses] = readableClass;
+	readableClass -> sequentialUniqueIdOfReadableClass = theNumberOfReadableClasses;
 }
-void Thing_recognizeClassesByName (void *readableClass, ...) {
+void Thing_recognizeClassesByName (ClassInfo readableClass, ...) {
 	va_list arg;
 	if (readableClass == NULL) return;
 	va_start (arg, readableClass);
-	_Thing_addOneReadableClass ((Thing_Table) readableClass);
-	void *klas;
-	while ((klas = va_arg (arg, void*)) != NULL) {
-		_Thing_addOneReadableClass ((Thing_Table) klas);
+	_Thing_addOneReadableClass (readableClass);
+	ClassInfo klas;
+	while ((klas = va_arg (arg, ClassInfo)) != NULL) {
+		_Thing_addOneReadableClass (klas);
 	}
 	va_end (arg);
 }
@@ -105,23 +79,27 @@ void Thing_recognizeClassesByName (void *readableClass, ...) {
 long Thing_listReadableClasses (void) {
 	Melder_clearInfo ();
 	MelderInfo_open ();
-	for (long iclass = 1; iclass <= numberOfReadableClasses; iclass ++) {
-		Thing_Table klas = (Thing_Table) readableClasses [iclass];
-		MelderInfo_writeLine3 (Melder_integer (klas -> sequentialUniqueIdOfReadableClass), L"\t", klas -> _className);
+	for (long iclass = 1; iclass <= theNumberOfReadableClasses; iclass ++) {
+		ClassInfo klas = theReadableClasses [iclass];
+		MelderInfo_writeLine3 (Melder_integer (klas -> sequentialUniqueIdOfReadableClass), L"\t", klas -> className);
 	}
 	MelderInfo_close ();
-	return numberOfReadableClasses;
+	return theNumberOfReadableClasses;
 }
 
-static int numberOfAliases = 0;
-static struct { void *readableClass; const wchar_t *otherName; } aliases [1 + 100];
-void Thing_recognizeClassByOtherName (void *readableClass, const wchar_t *otherName) {
-	aliases [++ numberOfAliases]. readableClass = readableClass;
-	aliases [numberOfAliases]. otherName = otherName;
+static int theNumberOfAliases = 0;
+static struct {
+	ClassInfo readableClass;
+	const wchar_t *otherName;
+} theAliases [1 + 100];
+
+void Thing_recognizeClassByOtherName (ClassInfo readableClass, const wchar *otherName) {
+	theAliases [++ theNumberOfAliases]. readableClass = readableClass;
+	theAliases [theNumberOfAliases]. otherName = otherName;
 }
 
-long Thing_version;   /* Global variable! */
-void *Thing_classFromClassName (const wchar_t *klas) {
+long Thing_version;   // global variable!
+ClassInfo Thing_classFromClassName (const wchar_t *klas) {
 	static wchar buffer [1+100];
 	wcsncpy (buffer, klas ? klas : L"", 100);
 	wchar *space = wcschr (buffer, ' ');
@@ -135,24 +113,20 @@ void *Thing_classFromClassName (const wchar_t *klas) {
 	/*
 	 * First try the class names that were registered with Thing_recognizeClassesByName.
 	 */
-	for (int i = 1; i <= numberOfReadableClasses; i ++) {
-		Thing_Table table = (Thing_Table) readableClasses [i];
-		if (wcsequ (buffer, table -> _className)) {
-			if (! table -> destroy)   // table not initialized?
-				table -> _initialize (table);
-			return table;
+	for (int i = 1; i <= theNumberOfReadableClasses; i ++) {
+		ClassInfo classInfo = theReadableClasses [i];
+		if (wcsequ (buffer, classInfo -> className)) {
+			return classInfo;
 		}
 	}
 
 	/*
 	 * Then try the aliases that were registered with Thing_recognizeClassByOtherName.
 	 */
-	for (int i = 1; i <= numberOfAliases; i ++) {
-		if (wcsequ (buffer, aliases [i]. otherName)) {
-			Thing_Table table = (Thing_Table) aliases [i]. readableClass;
-			if (! table -> destroy)   // table not initialized?
-				table -> _initialize (table);
-			return table;
+	for (int i = 1; i <= theNumberOfAliases; i ++) {
+		if (wcsequ (buffer, theAliases [i]. otherName)) {
+			ClassInfo classInfo = theAliases [i]. readableClass;
+			return classInfo;
 		}
 	}
 
@@ -161,8 +135,8 @@ void *Thing_classFromClassName (const wchar_t *klas) {
 
 Any Thing_newFromClassNameA (const char *className) {
 	try {
-		void *table = Thing_classFromClassName (Melder_peekUtf8ToWcs (className));
-		return _Thing_new (table);
+		ClassInfo classInfo = Thing_classFromClassName (Melder_peekUtf8ToWcs (className));
+		return _Thing_new (classInfo);
 	} catch (MelderError) {
 		Melder_throw (className, " not created.");
 	}
@@ -170,51 +144,54 @@ Any Thing_newFromClassNameA (const char *className) {
 
 Any Thing_newFromClassName (const wchar *className) {
 	try {
-		void *table = Thing_classFromClassName (className);
-		return _Thing_new (table);
+		ClassInfo classInfo = Thing_classFromClassName (className);
+		return _Thing_new (classInfo);
 	} catch (MelderError) {
 		Melder_throw (className, " not created.");
 	}
 }
 
+Thing _Thing_dummyObject (ClassInfo classInfo) {
+	if (classInfo -> dummyObject == NULL) {
+		classInfo -> dummyObject = (Thing) classInfo -> _new ();
+	}
+	Melder_assert (classInfo -> dummyObject != NULL);
+	return classInfo -> dummyObject;
+}
+
 void _Thing_forget_nozero (Thing me) {
 	if (! me) return;
-	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
-	if (our destroy != NULL) our destroy (me);
+	if (Melder_debug == 40) Melder_casual ("destroying %ls", my classInfo -> className);
 	my v_destroy ();
 	theTotalNumberOfThings -= 1;
 }
 
-void _Thing_forget (Thing *pme) {
-	Thing me = *pme;
+void _Thing_forget (Thing me) {
 	if (! me) return;
-	if (Melder_debug == 40) Melder_casual ("destroying %ls", my methods -> _className);
-	if (our destroy != NULL) our destroy (me);
+	if (Melder_debug == 40) Melder_casual ("destroying %ls", my classInfo -> className);
 	my v_destroy ();
 	Melder_free (me);
 	theTotalNumberOfThings -= 1;
-	*pme = NULL;
 }
 
-bool Thing_subclass (void *klas, void *ancestor) {
-	Thing_Table me = (Thing_Table) klas;
-	while (me != ancestor && me != NULL) me = my _parent;
-	return me != NULL;
+bool Thing_subclass (ClassInfo klas, ClassInfo ancestor) {
+	while (klas != ancestor && klas != NULL) klas = klas -> parent;
+	return klas != NULL;
 }
 
-bool Thing_member (Thing me, void *klas) {
+bool Thing_member (Thing me, ClassInfo klas) {
 	if (! me) Melder_fatal ("(Thing_member:) Found NULL object.");
-	return Thing_subclass (my methods, klas);
+	return Thing_subclass (my classInfo, klas);
 }
 
-void * _Thing_check (Thing me, void *klas, const char *fileName, int line) {
+void * _Thing_check (Thing me, ClassInfo klas, const char *fileName, int line) {
 	if (! me) Melder_fatal ("(_Thing_check:) NULL object passed to a function\n"
 		"in file %.100s at line %d.", fileName, line);
-	Thing_Table table = my methods;
-	while (table != klas && table != NULL) table = table -> _parent;
-	if (! table)
+	ClassInfo l_classInfo = my classInfo;
+	while (l_classInfo != klas && l_classInfo != NULL) l_classInfo = l_classInfo -> parent;
+	if (! l_classInfo)
 		Melder_fatal ("(_Thing_check:) Object of wrong class (%.50s) passed to a function\n"
-				"in file %.100s at line %d.", Melder_peekWcsToUtf8 (our _className), fileName, line);
+				"in file %.100s at line %d.", Melder_peekWcsToUtf8 (my classInfo -> className), fileName, line);
 	return me;
 }
 
@@ -223,7 +200,6 @@ void Thing_infoWithId (Thing me, unsigned long id) {
 	MelderInfo_open ();
 	if (id != 0) MelderInfo_writeLine2 (L"Object id: ", Melder_integer (id));
 	my v_info ();
-	if (our info != NULL) our info (me);   // this calls a set of MelderInfo_writeXXX
 	MelderInfo_close ();
 }
 
@@ -238,7 +214,7 @@ wchar * Thing_messageName (Thing me) {
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
-	MelderString_append4 (& buffers [ibuffer], our _className, L" \"", my name ? my name : L"(nameless)", L"\"");
+	MelderString_append4 (& buffers [ibuffer], my classInfo -> className, L" \"", my name ? my name : L"(nameless)", L"\"");
 	return buffers [ibuffer]. string;
 }
 
@@ -258,8 +234,8 @@ void Thing_setName (Thing me, const wchar *name) {
 long Thing_getTotalNumberOfThings (void) { return theTotalNumberOfThings; }
 
 void Thing_swap (Thing me, Thing thee) {
-	Melder_assert (my methods == thy methods);
-	int n = our _size;
+	Melder_assert (my classInfo == thy classInfo);
+	int n = my classInfo -> size;
 	char *p, *q;
 	int i;
 	for (p = (char *) me, q = (char *) thee, i = n; i > 0; i --, p ++, q ++) {

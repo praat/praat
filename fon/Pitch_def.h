@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/07/14
- */
-
 /* Attributes:
 	xmin			// Start time (seconds).
 	xmax > xmin		// End time (seconds).
@@ -73,7 +69,7 @@ oo_DEFINE_STRUCT (Pitch_Frame)
 		oo_DOUBLE (intensity)
 		oo_LONG (nCandidates)
 	#endif
-	oo_STRUCT_VECTOR (Pitch_Candidate, candidate, my nCandidates)
+	oo_STRUCT_VECTOR (Pitch_Candidate, candidate, nCandidates)
 
 oo_END_STRUCT (Pitch_Frame)
 #undef ooSTRUCT
@@ -84,11 +80,19 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 
 	oo_DOUBLE (ceiling)
 	oo_INT (maxnCandidates)
-	oo_STRUCT_VECTOR (Pitch_Frame, frame, my nx)
+	oo_STRUCT_VECTOR (Pitch_Frame, frame, nx)
 
 	#if oo_DECLARING
 		// overridden methods:
-			void v_info ();
+			virtual void v_info ();
+			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
+			virtual int v_getMinimumUnit (long ilevel);
+			virtual int v_getMaximumUnit (long ilevel);
+			virtual const wchar * v_getUnitText (long ilevel, int unit, unsigned long flags);
+			virtual bool v_isUnitLogarithmic (long ilevel, int unit);
+			virtual double v_convertStandardToSpecialUnit (double value, long ilevel, int unit);
+			virtual double v_convertSpecialToStandardUnit (double value, long ilevel, int unit);
+			virtual double v_getValueAtSample (long isamp, long ilevel, int unit);
 	#endif
 
 oo_END_CLASS (Pitch)

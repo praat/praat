@@ -17,18 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/18 Mach
- * pb 2005/08/22 renamed Control menu to "Praat"
- * pb 2006/12/26 theCurrentPraat
- * pb 2007/01/26 buttons along top
- * pb 2007/06/09 wchar_t
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2011/01/02 GTK: allow submenus even from scripts
- * pb 2011/07/01 C++
- */
-
 #include "praatP.h"
 #include "praat_script.h"
 
@@ -429,9 +417,9 @@ void praat_addFixedButtonCommand (GuiObject parent, const wchar *title, void (*c
 }
 
 void praat_sensitivizeFixedButtonCommand (const wchar *title, int sensitive) {
-	long i;
-	for (i = 1; i <= theNumberOfCommands; i ++)
-		if (wcsequ (theCommands [i]. title, title)) break;   /* Search. */
+	long i = 1;
+	for (; i <= theNumberOfCommands; i ++)
+		if (wcsequ (theCommands [i]. title, title)) break;   // search
 	theCommands [i]. executable = sensitive;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) GuiObject_setSensitive (theCommands [i]. button, sensitive);
 }
@@ -451,7 +439,7 @@ praat_Command praat_getMenuCommand (long i)
 	{ return i < 1 || i > theNumberOfCommands ? NULL : & theCommands [i]; }
 
 void praat_addCommandsToEditor (Editor me) {
-	const wchar *windowName = our _className;
+	const wchar *windowName = my classInfo -> className;
 	for (long i = 1; i <= theNumberOfCommands; i ++) if (wcsequ (theCommands [i]. window, windowName)) {
 		if (! Editor_addCommandScript (me, theCommands [i]. menu, theCommands [i]. title, 0, theCommands [i]. script))
 			Melder_flushError ("To fix this, go to Praat->Preferences->Buttons->Editors, "

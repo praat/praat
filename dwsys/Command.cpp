@@ -26,8 +26,7 @@
 
 #include "Command.h"
 
-class_methods (Command, Thing)
-class_methods_end
+Thing_implement (Command, Thing, 0);
 
 void Command_init (I, const wchar_t *name, Any data, int (*execute)(Any), int (*undo)(Any))
 {
@@ -51,8 +50,7 @@ int Command_undo (I)
 	return my undo (me);
 }
 
-class_methods (CommandHistory, Ordered)
-class_methods_end
+Thing_implement (CommandHistory, Ordered, 0);
 
 CommandHistory CommandHistory_create (long maximumCapacity)
 {
@@ -89,7 +87,7 @@ void CommandHistory_insertItem (I, Any data)
 	Melder_assert (data && (Thing_member ((Thing) data, my itemClass) || my itemClass == NULL));
 	if (my current < my size)
 	{
-		for (long i = my current+1; i <= my size; i++) forget (my item[i]);
+		for (long i = my current+1; i <= my size; i++) forget (((Command *) my item) [i]);
 		my size = my current;
 	}
 	if (my size >= my _capacity) Collection_removeItem (me, 1);

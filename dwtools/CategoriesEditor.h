@@ -25,6 +25,7 @@
 
 Thing_define (CategoriesEditor, Editor) {
 	// new data:
+	public:
 		CommandHistory history;
 		int position;
 		GuiObject list, text, outOfView, undo, redo;

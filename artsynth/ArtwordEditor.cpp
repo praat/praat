@@ -51,7 +51,7 @@ static void gui_button_cb_removeTarget (I, GuiButtonEvent event) {
 	}
 	NUMvector_free <long> (selectedPositions, 1);
 	updateList (me);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 }
 
 static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
@@ -85,7 +85,7 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 		GuiList_insertItem (my list, itemText.string, i);
 	}
 	Graphics_updateWs (my graphics);
-	Editor_broadcastChange (me);
+	my broadcastDataChanged ();
 }
 
 static void gui_radiobutton_cb_toggle (I, GuiRadioButtonEvent event) {
@@ -131,29 +131,29 @@ void structArtwordEditor :: v_dataChanged () {
 
 void structArtwordEditor :: v_createChildren () {
 	int dy = Machine_getMenuBarHeight ();
-	GuiLabel_createShown (dialog, 40, 100, dy + 3, Gui_AUTOMATIC, L"Targets:", 0);
-	GuiLabel_createShown (dialog, 5, 65, dy + 20, Gui_AUTOMATIC, L"Times:", 0);
-	GuiLabel_createShown (dialog, 80, 140, dy + 20, Gui_AUTOMATIC, L"Values:", 0);
-	list = GuiList_createShown (dialog, 0, 140, dy + 40, dy + 340, true, NULL);
+	GuiLabel_createShown (d_windowForm, 40, 100, dy + 3, Gui_AUTOMATIC, L"Targets:", 0);
+	GuiLabel_createShown (d_windowForm, 5, 65, dy + 20, Gui_AUTOMATIC, L"Times:", 0);
+	GuiLabel_createShown (d_windowForm, 80, 140, dy + 20, Gui_AUTOMATIC, L"Values:", 0);
+	list = GuiList_createShown (d_windowForm, 0, 140, dy + 40, dy + 340, true, NULL);
 
-	GuiButton_createShown (dialog, 10, 130, dy + 410, Gui_AUTOMATIC, L"Remove target", gui_button_cb_removeTarget, this, 0);
+	GuiButton_createShown (d_windowForm, 10, 130, dy + 410, Gui_AUTOMATIC, L"Remove target", gui_button_cb_removeTarget, this, 0);
 
-	drawingArea = GuiDrawingArea_createShown (dialog, 170, 470, dy + 10, dy + 310,
+	drawingArea = GuiDrawingArea_createShown (d_windowForm, 170, 470, dy + 10, dy + 310,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, this, 0);
 
-	GuiLabel_createShown (dialog, 220, 270, dy + 340, Gui_AUTOMATIC, L"Time:", 0);
-	time = GuiText_createShown (dialog, 270, 370, dy + 340, Gui_AUTOMATIC, 0);
+	GuiLabel_createShown (d_windowForm, 220, 270, dy + 340, Gui_AUTOMATIC, L"Time:", 0);
+	time = GuiText_createShown (d_windowForm, 270, 370, dy + 340, Gui_AUTOMATIC, 0);
 
-	GuiLabel_createShown (dialog, 220, 270, dy + 370, Gui_AUTOMATIC, L"Value:", 0);
-	value = GuiText_createShown (dialog, 270, 370, dy + 370, Gui_AUTOMATIC, 0);
+	GuiLabel_createShown (d_windowForm, 220, 270, dy + 370, Gui_AUTOMATIC, L"Value:", 0);
+	value = GuiText_createShown (d_windowForm, 270, 370, dy + 370, Gui_AUTOMATIC, 0);
 
-	GuiButton_createShown (dialog, 240, 360, dy + 410, Gui_AUTOMATIC, L"Add target", gui_button_cb_addTarget, this, GuiButton_DEFAULT);
+	GuiButton_createShown (d_windowForm, 240, 360, dy + 410, Gui_AUTOMATIC, L"Add target", gui_button_cb_addTarget, this, GuiButton_DEFAULT);
 
 	#if gtk
-		radio = dialog;	
+		radio = d_windowForm;	
 	#elif motif
 		radio = XtVaCreateManagedWidget
-			("radioBox", xmRowColumnWidgetClass, dialog,
+			("radioBox", xmRowColumnWidgetClass, d_windowForm,
 			 XmNradioBehavior, True, XmNx, 470, XmNy, dy, NULL);
 	#endif
 	for (int i = 1; i <= kArt_muscle_MAX; i ++) {

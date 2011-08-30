@@ -44,18 +44,7 @@
 #include "oo_DESCRIPTION.h"
 #include "FujisakiPitch_def.h"
 
-class_methods (FujisakiCommand, Function) {
-	class_method_local (FujisakiCommand, destroy)
-	class_method_local (FujisakiCommand, copy)
-	class_method_local (FujisakiCommand, equal)
-	class_method_local (FujisakiCommand, canWriteAsEncoding)
-	class_method_local (FujisakiCommand, writeText)
-	class_method_local (FujisakiCommand, readText)
-	class_method_local (FujisakiCommand, writeBinary)
-	class_method_local (FujisakiCommand, readBinary)
-	class_method_local (FujisakiCommand, description)
-	class_methods_end
-}
+Thing_implement (FujisakiCommand, Function, 0);
 
 FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitude) {
 	try {
@@ -68,18 +57,7 @@ FujisakiCommand FujisakiCommand_create (double tmin, double tmax, double amplitu
 	}
 }
 
-class_methods (FujisakiPitch, Function) {
-	class_method_local (FujisakiPitch, destroy)
-	class_method_local (FujisakiPitch, copy)
-	class_method_local (FujisakiPitch, equal)
-	class_method_local (FujisakiPitch, canWriteAsEncoding)
-	class_method_local (FujisakiPitch, writeText)
-	class_method_local (FujisakiPitch, readText)
-	class_method_local (FujisakiPitch, writeBinary)
-	class_method_local (FujisakiPitch, readBinary)
-	class_method_local (FujisakiPitch, description)
-	class_methods_end
-}
+Thing_implement (FujisakiPitch, Function, 0);
 
 FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 	double baseFrequency, double alpha, double beta, double gamma)
@@ -116,7 +94,7 @@ FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolut
 			autoFujisakiCommand phraseCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
 			Collection_addItem (thy phraseCommands, phraseCommand.transfer()); therror
 		}
-		if (intermediate1) *intermediate1 = (FujisakiPitch) Data_copy (thee.peek());
+		if (intermediate1) *intermediate1 = Data_copy (thee.peek());
 		/*
 		 * Get accent commands.
 		 */
@@ -127,12 +105,12 @@ FujisakiPitch Pitch_to_FujisakiPitch (Pitch me, double gamma, double timeResolut
 			autoFujisakiCommand accentCommand = FujisakiCommand_create (onsetTime, offsetTime, amplitude);
 			Collection_addItem (thy accentCommands, accentCommand.transfer()); therror
 		}
-		if (intermediate2) *intermediate2 = (FujisakiPitch) Data_copy (thee.peek());
+		if (intermediate2) *intermediate2 = Data_copy (thee.peek());
 		/*
 		 * Do some extra processing.
 		 */
 		/* ... */
-		if (intermediate3) *intermediate3 = (FujisakiPitch) Data_copy (thee.peek());
+		if (intermediate3) *intermediate3 = Data_copy (thee.peek());
 		/*
 		 * Tidy up.
 		 */

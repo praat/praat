@@ -17,18 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2004/01/27 paint with colours
- * pb 2004/06/15 allow reversed axes
- * pb 2007/06/21 tex
- * pb 2007/10/01 canWriteAsEncoding
- * pb 2008/01/19 double
- * pb 2009/12/14 RGB colours
- * pb 2011/06/06 C++
- * pb 2011/06/18 Polygon_drawClosed ()
- */
-
 #include "Polygon.h"
 
 #include "oo_DESTROY.h"
@@ -46,48 +34,32 @@
 #include "oo_DESCRIPTION.h"
 #include "Polygon_def.h"
 
-static void info (I) {
-	iam (Polygon);
-	classData -> info (me);
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (my numberOfPoints));
-	MelderInfo_writeLine2 (L"Perimeter: ", Melder_single (Polygon_perimeter (me)));
+Thing_implement (Polygon, Data, 1);
+
+void structPolygon :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (numberOfPoints));
+	MelderInfo_writeLine2 (L"Perimeter: ", Melder_single (Polygon_perimeter (this)));
 }
   
-static void writeText (I, MelderFile file) {
-	iam (Polygon);
-	texputi4 (file, my numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
-	for (long i = 1; i <= my numberOfPoints; i ++) {
-		texputr4 (file, my x [i], L"x [", Melder_integer (i), L"]", 0,0,0);
-		texputr4 (file, my y [i], L"y [", Melder_integer (i), L"]", 0,0,0);
+void structPolygon :: v_writeText (MelderFile file) {
+	texputi4 (file, numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
+	for (long i = 1; i <= numberOfPoints; i ++) {
+		texputr4 (file, x [i], L"x [", Melder_integer (i), L"]", 0,0,0);
+		texputr4 (file, y [i], L"y [", Melder_integer (i), L"]", 0,0,0);
 	}
 }
 
-static void readText (I, MelderReadText text) {
-	iam (Polygon);
-	my numberOfPoints = texgeti4 (text);
-	if (my numberOfPoints < 1)
-		Melder_throw ("Cannot read a Polygon with only ", my numberOfPoints, " points.");
-	my x = NUMvector <double> (1, my numberOfPoints);
-	my y = NUMvector <double> (1, my numberOfPoints);
-	for (long i = 1; i <= my numberOfPoints; i ++) {
-		my x [i] = texgetr4 (text);
-		my y [i] = texgetr4 (text);
+void structPolygon :: v_readText (MelderReadText text) {
+	numberOfPoints = texgeti4 (text);
+	if (numberOfPoints < 1)
+		Melder_throw ("Cannot read a Polygon with only ", numberOfPoints, " points.");
+	x = NUMvector <double> (1, numberOfPoints);
+	y = NUMvector <double> (1, numberOfPoints);
+	for (long i = 1; i <= numberOfPoints; i ++) {
+		x [i] = texgetr4 (text);
+		y [i] = texgetr4 (text);
 	}
-}
-
-class_methods (Polygon, Data) {
-	us -> version = 1;
-	class_method_local (Polygon, destroy)
-	class_method (info)
-	class_method_local (Polygon, description)
-	class_method_local (Polygon, copy)
-	class_method_local (Polygon, equal)
-	class_method_local (Polygon, canWriteAsEncoding)
-	class_method (writeText)
-	class_method (readText)
-	class_method_local (Polygon, writeBinary)
-	class_method_local (Polygon, readBinary)
-	class_methods_end
 }
 
 Polygon Polygon_create (long numberOfPoints) {
@@ -102,8 +74,7 @@ Polygon Polygon_create (long numberOfPoints) {
 	}
 }
 
-void Polygon_randomize (I) {
-	iam (Polygon);
+void Polygon_randomize (Polygon me) {
 	for (long i = 1; i <= my numberOfPoints; i ++) {
 		long j = NUMrandomInteger (i, my numberOfPoints);
 		double xdum = my x [i];
@@ -115,8 +86,7 @@ void Polygon_randomize (I) {
 	}
 }
 
-double Polygon_perimeter (I) {
-	iam (Polygon);
+double Polygon_perimeter (Polygon me) {
 	if (my numberOfPoints < 1) return 0.0;
 	double dx = my x [1] - my x [my numberOfPoints], dy = my y [1] - my y [my numberOfPoints];
 	double result = sqrt (dx * dx + dy * dy);
@@ -244,11 +214,9 @@ static int tryAdoption (int **distance, int *path, int numberOfCities, long *tot
 	return result;
 }
 
-void Polygon_salesperson (I, long numberOfIterations)
-{
-	iam (Polygon);
+void Polygon_salesperson (Polygon me, long numberOfIterations) {
 	try {
-		long numberOfShortest = 1, totalDistance, shortestDistance;
+		long numberOfShortest = 1, totalDistance, shortestDistance = 0;
 
 		int numberOfCities = my numberOfPoints;
 		if (numberOfCities < 1)
@@ -258,7 +226,7 @@ void Polygon_salesperson (I, long numberOfIterations)
 		autoNUMvector <int> path (0L, numberOfCities);
 		for (int i = 1; i <= numberOfCities; i ++)
 			path [i] = i;
-		path [0] = numberOfCities;   /* Close path. */
+		path [0] = numberOfCities;   // close path
 		autoNUMvector <int> shortestPath (NUMvector_copy (path.peek(), 0, numberOfCities), 0);
 		for (long iteration = 1; iteration <= numberOfIterations; iteration ++) {
 			if (iteration > 1) shuffle (path.peek(), numberOfCities);
@@ -268,12 +236,12 @@ void Polygon_salesperson (I, long numberOfIterations)
 				do {
 				} while (tryExchange (distance.peek(), path.peek(), numberOfCities, & totalDistance));
 			} while (tryAdoption (distance.peek(), path.peek(), numberOfCities, & totalDistance));
-			if (totalDistance < shortestDistance) {   /* New shortest path. */
+			if (totalDistance < shortestDistance) {   // new shortest path
 				numberOfShortest = 1;
 				for (int i = 0; i <= numberOfCities; i ++) shortestPath [i] = path [i];
 				shortestDistance = totalDistance;
 			}
-			else if (totalDistance == shortestDistance)   /* Shortest path confirmed. */
+			else if (totalDistance == shortestDistance)   // shortest path confirmed
 				numberOfShortest ++;
 		}
 		if (numberOfIterations > 1)
@@ -282,7 +250,7 @@ void Polygon_salesperson (I, long numberOfIterations)
 
 		/* Change me: I will follow the shortest path found. */
 
-		autoPolygon help = (Polygon) Data_copy (me);
+		autoPolygon help = Data_copy (me);
 		for (long i = 1; i <= numberOfCities; i ++) {
 			my x [i] = help -> x [shortestPath [i]];
 			my y [i] = help -> y [shortestPath [i]];
@@ -292,7 +260,7 @@ void Polygon_salesperson (I, long numberOfIterations)
 	}
 }
 
-static void setWindow (Polygon me, Any graphics,
+static void setWindow (Polygon me, Graphics graphics,
 	double xmin, double xmax, double ymin, double ymax)
 {
 	Melder_assert (me);
@@ -325,24 +293,21 @@ static void setWindow (Polygon me, Any graphics,
 	Graphics_setWindow (graphics, xmin, xmax, ymin, ymax);
 }
 
-void Polygon_draw (I, Graphics g, double xmin, double xmax, double ymin, double ymax) {
-	iam (Polygon);
+void Polygon_draw (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	Graphics_polyline (g, my numberOfPoints, & my x [1], & my y [1]);
 	Graphics_unsetInner (g);
 }
 
-void Polygon_drawClosed (I, Graphics g, double xmin, double xmax, double ymin, double ymax) {
-	iam (Polygon);
+void Polygon_drawClosed (Polygon me, Graphics g, double xmin, double xmax, double ymin, double ymax) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	Graphics_polyline_closed (g, my numberOfPoints, & my x [1], & my y [1]);
 	Graphics_unsetInner (g);
 }
 
-void Polygon_paint (I, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax) {
-	iam (Polygon);
+void Polygon_paint (Polygon me, Graphics g, Graphics_Colour colour, double xmin, double xmax, double ymin, double ymax) {
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	Graphics_setColour (g, colour);
@@ -350,10 +315,9 @@ void Polygon_paint (I, Graphics g, Graphics_Colour colour, double xmin, double x
 	Graphics_unsetInner (g);
 }
 
-void Polygon_drawCircles (I, Graphics g,
+void Polygon_drawCircles (Polygon me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter_mm)
 {
-	iam (Polygon);
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	for (long i = 1; i <= my numberOfPoints; i ++)
@@ -361,10 +325,9 @@ void Polygon_drawCircles (I, Graphics g,
 	Graphics_unsetInner (g);
 }
 
-void Polygon_paintCircles (I, Graphics g,
+void Polygon_paintCircles (Polygon me, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, double diameter)
 {
-	iam (Polygon);
 	Graphics_setInner (g);
 	setWindow (me, g, xmin, xmax, ymin, ymax);
 	for (long i = 1; i <= my numberOfPoints; i ++)
@@ -372,10 +335,9 @@ void Polygon_paintCircles (I, Graphics g,
 	Graphics_unsetInner (g);
 }
 
-void Polygons_drawConnection (I, thou, Graphics g,
+void Polygons_drawConnection (Polygon me, Polygon thee, Graphics g,
 	double xmin, double xmax, double ymin, double ymax, int hasArrow, double relativeLength)
 {
-	iam (Polygon); thouart (Polygon);
 	double w2 = 0.5 * (1 - relativeLength), w1 = 1 - w2;
 	long n = my numberOfPoints;
 	if (thy numberOfPoints < n) n = thy numberOfPoints;

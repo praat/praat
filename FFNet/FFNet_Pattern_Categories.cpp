@@ -96,7 +96,7 @@ Categories FFNet_Pattern_to_Categories (FFNet me, Pattern thee, int labeling)
 		{
 			FFNet_propagate (me, thy z[k], 0);
 			long index = FFNet_getWinningUnit (me, labeling);
-			autoData item = (Data) Data_copy (my outputCategories -> item[index]);
+			autoData item = Data_copy ((Data) my outputCategories -> item[index]);
 			Collection_addItem (him.peek(), item.transfer());
 		}
 		return him.transfer();

@@ -81,8 +81,8 @@ static void drawIsplineExample (Graphics g)
 	drawSplines (g, 0, 1, 0, 1.5, 2, 3, L"0.3 0.5 0.6", 1);
 }
 
-extern "C" void manual_MDS_init (ManPages me);
-extern "C" void manual_MDS_init (ManPages me)
+void manual_MDS_init (ManPages me);
+void manual_MDS_init (ManPages me)
 {
 
 MAN_BEGIN (L"CANDECOMP", L"djmw", 19971201)

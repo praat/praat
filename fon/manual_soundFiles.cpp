@@ -19,8 +19,8 @@
 
 #include "ManPagesM.h"
 
-extern "C" void manual_soundFiles_init (ManPages me);
-extern "C" void manual_soundFiles_init (ManPages me) {
+void manual_soundFiles_init (ManPages me);
+void manual_soundFiles_init (ManPages me) {
 
 MAN_BEGIN (L"Sound files", L"ppgb", 20070602)
 INTRO (L"This tutorial describes the sound files that you can read "

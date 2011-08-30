@@ -26,7 +26,7 @@
 #undef oo_INT
 #define oo_INT(x)  { L"" #x, intwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (int) },
 #undef oo_LONG
-#define oo_LONG(x)  { L"" #x, longwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (long) },
+#define oo_LONG(x)  { L"" #x, longwa, Melder_offsetof (ooSTRUCT, x), sizeof (long) },
 #undef oo_UBYTE
 #define oo_UBYTE(x)  { L"" #x, ubytewa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (unsigned char) },
 #undef oo_USHORT
@@ -278,12 +278,12 @@
 #undef oo_LSTRING_VECTOR
 #define oo_LSTRING_VECTOR(x,n)  { L"" #x, lstringwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (wchar_t *), 0, 0, 1, (const wchar *) 0, L"" #n },
 
-#define oo_STRUCT(Type,x)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, Type##_description },
-#define oo_STRUCT_ARRAY(Type,x,cap,n)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, Type##_description, - cap, (const wchar *) 0, L"" #n },
-#define oo_STRUCT_SET(Type,x,setType)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, Type##_description, 3, (const wchar *) setType##_getText, (const wchar *) setType##_getValue },
-#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, Type##_description, 1, L"" #min, L"" #max },
+#define oo_STRUCT(Type,x)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description },
+#define oo_STRUCT_ARRAY(Type,x,cap,n)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, - cap, (const wchar *) 0, L"" #n },
+#define oo_STRUCT_SET(Type,x,setType)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 3, (const wchar *) setType##_getText, (const wchar *) setType##_getValue },
+#define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 1, L"" #min, L"" #max },
 #undef oo_STRUCT_VECTOR
-#define oo_STRUCT_VECTOR(Type,x,n)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, Type##_description, 1, (const wchar *) 0, L"" #n },
+#define oo_STRUCT_VECTOR(Type,x,n)  { L"" #x, structwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 1, (const wchar *) 0, L"" #n },
 
 #define oo_WIDGET(x)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (GuiObject) },
 #define oo_WIDGET_ARRAY(x,cap,n)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (GuiObject), 0, 0, - cap, (const wchar *) 0, L"" #n },
@@ -292,17 +292,25 @@
 #undef oo_WIDGET_VECTOR
 #define oo_WIDGET_VECTOR(Type,x,n)  { L"" #x, widgetwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (GuiObject), 0, 0, 1, 0, #n },
 
-#define oo_OBJECT(Type,version,x)  { L"" #x, objectwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (Type), L"" #Type, & theStruct##Type },
-#define oo_COLLECTION(Type,x,ItemType,version)  { L"" #x, collectionwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##ItemType), L"" #Type, & theStruct##Type, 0, (const wchar_t *) & theStruct##ItemType },
+#define oo_OBJECT(Type,version,x)  { L"" #x, objectwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (Type), L"" #Type, & theClassInfo_##Type },
+#define oo_COLLECTION(Type,x,ItemType,version)  { L"" #x, collectionwa, (char *) & ((ooSTRUCT) & Melder_debug) -> x - (char *) & Melder_debug, sizeof (struct struct##ItemType), L"" #Type, & theClassInfo_##Type, 0, (const wchar_t *) & theClassInfo_##ItemType },
 #define oo_FILE(x)
 #define oo_DIR(x)
 
-#define oo_DEFINE_STRUCT(Type)  static struct structData_Description Type##_description [] = {
-#define oo_END_STRUCT(Type)  { 0 } };
+#define oo_DEFINE_STRUCT(Type) \
+	static struct structData_Description the##Type##_description [] = {
+#define oo_END_STRUCT(Type) \
+		{ 0 } \
+	}; \
+	Data_Description struct##Type :: s_description = & the##Type##_description [0];
 
-#define oo_DEFINE_CLASS(Class,Parent)  static struct structData_Description class##Class##_description [] = { \
-	{ L"" #Class, inheritwa, 0, sizeof (struct struct##Class), L"" #Class, & theStruct##Parent. description },
-#define oo_END_CLASS(Class)  { 0 } };
+#define oo_DEFINE_CLASS(Class,Parent) \
+	static struct structData_Description the##Class##_description [] = { \
+		{ L"" #Class, inheritwa, 0, sizeof (struct struct##Class), L"" #Class, & theClassInfo_##Parent },
+#define oo_END_CLASS(Class) \
+		{ 0 } \
+	}; \
+	Data_Description struct##Class :: s_description = & the##Class##_description [0];
 
 #define oo_IF(condition)
 #define oo_ENDIF

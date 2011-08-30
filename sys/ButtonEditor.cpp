@@ -82,27 +82,27 @@ static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 	} else {
 		MelderString_append5 (& text, L"@@a", Melder_integer (i), L"|", clickText, L"@ ");
 	}
-	MelderString_append (& text, ((Data_Table) cmd -> class1) -> _className);
+	MelderString_append (& text, cmd -> class1 -> className);
 	if (n1) {
 		MelderString_append3 (& text, L" (", Melder_integer (n1), L")");
 	}
 	if (cmd -> class2) {
 		int n2 = cmd -> n2;
-		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class2) -> _className);
+		MelderString_append2 (& text, L" & ", cmd -> class2 -> className);
 		if (n2) {
 			MelderString_append3 (& text, L" (", Melder_integer (n2), L")");
 		}
 	}
 	if (cmd -> class3) {
 		int n3 = cmd -> n3;
-		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class3) -> _className);
+		MelderString_append2 (& text, L" & ", cmd -> class3 -> className);
 		if (n3) {
 			MelderString_append3 (& text, L" (", Melder_integer (n3), L")");
 		}
 	}
 	if (cmd -> class4) {
 		int n4 = cmd -> n4;
-		MelderString_append2 (& text, L" & ", ((Data_Table) cmd -> class4) -> _className);
+		MelderString_append2 (& text, L" & ", cmd -> class4 -> className);
 		if (n4) {
 			MelderString_append3 (& text, L" (", Melder_integer (n4), L")");
 		}
@@ -154,7 +154,7 @@ void structButtonEditor :: v_draw () {
 		case 4:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				const wchar *klas = ((Data_Table) cmd -> class1) -> _className;
+				const wchar *klas = cmd -> class1 -> className;
 				if (wcscmp (klas, L"N") < 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -162,7 +162,7 @@ void structButtonEditor :: v_draw () {
 		case 5:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				const wchar *klas = ((Data_Table) cmd -> class1) -> _className;
+				const wchar *klas = cmd -> class1 -> className;
 				if (wcscmp (klas, L"N") >= 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -294,7 +294,7 @@ void structButtonEditor :: v_createChildren () {
 	#endif
 }
 
-static int menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (L"ButtonEditor"); return 1; }
+static void menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (L"ButtonEditor"); }
 
 void structButtonEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	ButtonEditor_Parent :: v_createHelpMenuItems (menu);
