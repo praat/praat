@@ -586,11 +586,15 @@ static struct structLongchar_Info Longchar_database [] = {
 { '^', 'l', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_L },
 { '^', 's', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_S },
 { '^', 'g', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_GAMMA },
+{ '^', 'M', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_TURNED_M },
+{ '^', 'G', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_TURNED_M_WITH_LONG_LEG },
 { '^', 'x', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_X },
 { '^', 'f', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_F },
-//{ '^', 'n', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_N },
+{ '^', 'n', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_SUPERSCRIPT_LATIN_SMALL_LETTER_N },
 { '^', 'm', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_M },
 { '^', 'N', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_SMALL_ENG },
+{ 'i', 'd', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_REVERSED_R_WITH_FISHHOOK },
+{ 'i', 'r', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_SQUAT_REVERSED_ESH },
 { '_', 'u', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_UNDERTIE },
 
 /* Dingbats. */

@@ -23,12 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110831)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110902)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.37# (2 September 2011)")
+LIST_ITEM (L"\\bu Graphics: added the Chinese phonetic symbols \\id and \\ir. See @@Phonetic symbols: vowels@.")
+LIST_ITEM (L"\\bu Formant: corrected a bug introduced in 5.2.36 that caused Praat to crash when querying quantiles.")
 NORMAL (L"##5.2.36# (30 August 2011)")
 LIST_ITEM (L"\\bu Graphics: added superscript diacritics as single symbols: \\^h (\\bs\\^ h), \\^j (\\bs\\^ j), "
 	"and many more; also \\_u (\\bs\\_ u). See @@Phonetic symbols: diacritics@.")
+LIST_ITEM (L"\\bu Praat fully converted to C++ (this may initially cause some bugs, but will be more reliable in the end).")
 NORMAL (L"##5.2.35# (5 August 2011)")
 LIST_ITEM (L"\\bu Corrected the menus of the Sound and TextGrid windows.")
 NORMAL (L"##5.2.34# (3 August 2011)")

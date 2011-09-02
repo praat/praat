@@ -880,7 +880,7 @@ DO
 		iam (Formant);
 		long frame = GET_INTEGER (L"Frame number");
 		if (frame > my nx) Melder_throw ("There is no frame ", frame, " in a Formant with only ", my nx, " frames.");
-		Melder_information2 (Melder_integer (my frame [frame]. nFormants), L" formants");
+		Melder_information2 (Melder_integer (my d_frames [frame]. nFormants), L" formants");
 		break;
 	}
 END

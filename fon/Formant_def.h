@@ -58,7 +58,7 @@ oo_END_STRUCT (Formant_Frame)
 oo_DEFINE_CLASS (Formant, Sampled)
 
 	oo_INT (maxnFormants)
-	oo_STRUCT_VECTOR (Formant_Frame, frame, nx)
+	oo_STRUCT_VECTOR (Formant_Frame, d_frames, nx)
 
 	#if oo_DECLARING
 		// overridden methods:

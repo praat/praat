@@ -32,13 +32,13 @@ Formant Excitation_to_Formant (Excitation me, int maxnFormants) {
 		double *p = my z [1];
 
 		autoFormant thee = Formant_create (0, 1, 1, 1, 0.5, maxnFormants);
-		thy frame [1]. formant = NUMvector <structFormant_Formant> (1, maxnFormants);
+		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maxnFormants);
 		for (long i = 2; i < nfreq; i ++)
 			if (p [i] > p [i - 1] && p [i] >= p [i + 1]) {
 				double min3phon, left, right;
 				double firstDerivative = p [i+1] - p [i-1], secondDerivative = 2 * p [i] - p [i-1] - p [i+1];
 				long j;
-				Formant_Formant formant = & thy frame [1]. formant [++ nform];
+				Formant_Formant formant = & thy d_frames [1]. formant [++ nform];
 				formant -> frequency = Excitation_barkToHertz (
 					my x1 + my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative));
 				min3phon = p [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative - 3.0;
@@ -53,7 +53,7 @@ Formant Excitation_to_Formant (Excitation me, int maxnFormants) {
 				formant -> bandwidth = right - left;
 				if (nform == thy maxnFormants) break;
 			}
-		thy frame [1]. nFormants = nform;
+		thy d_frames [1]. nFormants = nform;
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Formant.");

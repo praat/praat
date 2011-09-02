@@ -30,13 +30,13 @@ Formant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 		long nfreq = my nx, nform = 0;
 		autoNUMvector <double> p (1, nfreq);   // power
 		autoFormant thee = Formant_create (0, 1, 1, 1, 0.5, maxnFormants);
-		thy frame [1]. formant = NUMvector <structFormant_Formant> (1, maxnFormants);
+		thy d_frames [1]. formant = NUMvector <structFormant_Formant> (1, maxnFormants);
 		for (long i = 1; i <= nfreq; i ++)
 			p [i] = my z [1] [i] * my z [1] [i] + my z [2] [i] * my z [2] [i];
 		for (long i = 2; i < nfreq; i ++)
 			if (p [i] > p [i - 1] && p [i] >= p [i + 1]) {
 				double firstDerivative = p [i+1] - p [i-1], secondDerivative = 2 * p [i] - p [i-1] - p [i+1];
-				Formant_Formant formant = & thy frame [1]. formant [++ nform];
+				Formant_Formant formant = & thy d_frames [1]. formant [++ nform];
 				formant -> frequency = my dx * (i - 1 + 0.5 * firstDerivative / secondDerivative);
 				double min3dB = 0.5 * (p [i] + 0.125 * firstDerivative * firstDerivative / secondDerivative);
 				/* Search left. */
@@ -53,7 +53,7 @@ Formant Spectrum_to_Formant (Spectrum me, int maxnFormants) {
 					formant -> bandwidth += my dx * (j - 1 - (min3dB - p [j]) / (p [j - 1] - p [j])) - formant -> frequency;
 				if (nform == maxnFormants) break;
 			}
-		thy frame [1]. nFormants = nform;
+		thy d_frames [1]. nFormants = nform;
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Formant.");

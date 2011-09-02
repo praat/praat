@@ -143,21 +143,21 @@ void structCollection :: v_readText (MelderReadText text) {
 				Thing_setName ((Thing) item [i], line+n);
 			}
 		}
-		return;
-	}
-	long l_size = texgeti4 (text);
-	Collection_init (this, NULL, l_size);
-	for (long i = 1; i <= l_size; i ++) {
-		long saveVersion = Thing_version;   /* The version of the Collection... */
-		autostring8 className = texgets2 (text);
-		this -> item [i] = Thing_newFromClassNameA (className.peek()); therror
-		this -> size ++;
-		if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
-			Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
-		autostring objectName = texgetw2 (text);
-		Thing_setName ((Thing) item [i], objectName.peek()); therror
-		Data_readText ((Data) item [i], text); therror
-		Thing_version = saveVersion;
+	} else {
+		long l_size = texgeti4 (text);
+		Collection_init (this, NULL, l_size);
+		for (long i = 1; i <= l_size; i ++) {
+			long saveVersion = Thing_version;   /* The version of the Collection... */
+			autostring8 className = texgets2 (text);
+			this -> item [i] = Thing_newFromClassNameA (className.peek()); therror
+			this -> size ++;
+			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
+				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
+			autostring objectName = texgetw2 (text);
+			Thing_setName ((Thing) item [i], objectName.peek()); therror
+			Data_readText ((Data) item [i], text); therror
+			Thing_version = saveVersion;
+		}
 	}
 }
 

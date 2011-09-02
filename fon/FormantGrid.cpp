@@ -294,7 +294,7 @@ FormantGrid Formant_downto_FormantGrid (Formant me) {
 	try {
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, my maxnFormants);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
-			Formant_Frame frame = & my frame [iframe];
+			Formant_Frame frame = & my d_frames [iframe];
 			double t = Sampled_indexToX (me, iframe);
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant pair = & frame -> formant [iformant];
@@ -316,7 +316,7 @@ Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity) {
 		double t1 = 0.5 * (my xmin + my xmax - (nt - 1) * dt);
 		autoFormant thee = Formant_create (my xmin, my xmax, nt, dt, t1, my formants -> size);
 		for (long iframe = 1; iframe <= nt; iframe ++) {
-			Formant_Frame frame = & thy frame [iframe];
+			Formant_Frame frame = & thy d_frames [iframe];
 			frame -> intensity = intensity;
 			frame -> nFormants = my formants -> size;
 			frame -> formant = NUMvector <structFormant_Formant> (1, my formants -> size);

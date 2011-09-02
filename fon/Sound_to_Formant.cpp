@@ -237,7 +237,7 @@ static void Sound_preEmphasis (Sound me, double preEmphasisFrequency) {
 
 void Formant_sort (Formant me) {
 	for (long iframe = 1; iframe <= my nx; iframe ++) {
-		Formant_Frame frame = & my frame [iframe];
+		Formant_Frame frame = & my d_frames [iframe];
 		long n = frame -> nFormants;
 		for (long i = 1; i < n; i ++) {
 			double min = frame -> formant [i]. frequency;
@@ -309,7 +309,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 		}
 		if (maximumIntensity == HUGE_VAL)
 			Melder_throw ("Sound contains infinities.");
-		thy frame [iframe]. intensity = maximumIntensity;
+		thy d_frames [iframe]. intensity = maximumIntensity;
 		if (maximumIntensity == 0.0) continue;   // Burg cannot stand all zeroes
 
 		/* Copy a pre-emphasized window to a frame. */
@@ -317,9 +317,9 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 			frame [j] = Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) * window [j];
 
 		if (which == 1) {
-			burg (frame.peek(), endSample - startSample + 1, cof.peek(), numberOfPoles, & thy frame [iframe], 0.5 / my dx, safetyMargin);
+			burg (frame.peek(), endSample - startSample + 1, cof.peek(), numberOfPoles, & thy d_frames [iframe], 0.5 / my dx, safetyMargin);
 		} else if (which == 2) {
-			if (! splitLevinson (frame.peek(), endSample - startSample + 1, numberOfPoles, & thy frame [iframe], 0.5 / my dx)) {
+			if (! splitLevinson (frame.peek(), endSample - startSample + 1, numberOfPoles, & thy d_frames [iframe], 0.5 / my dx)) {
 				Melder_clearError ();
 				Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
 			}
