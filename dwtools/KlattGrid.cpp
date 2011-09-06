@@ -291,7 +291,7 @@ static void _Sounds_add_inline (Sound me, Sound thee)
 static Sound _Sound_diff (Sound me, int scale)
 {
 	try {
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 
 		// extremum
 		double amax1 = -1.0e34, amax2 = amax1, val, pval = 0;
@@ -512,7 +512,7 @@ static void PhonationGridPlayOptions_setDefaults (PhonationGridPlayOptions me)
 	my maximumPeriod = 0;
 }
 
-PhonationGridPlayOptions PhonationGridPlayOptions_create (void)
+PhonationGridPlayOptions PhonationGridPlayOptions_create ()
 {
 	try {
 		autoPhonationGridPlayOptions me = Thing_new (PhonationGridPlayOptions);
@@ -1085,7 +1085,7 @@ static void VocalTractGridPlayOptions_setDefaults (VocalTractGridPlayOptions me,
 	my startNasalAntiFormant = 1;
 }
 
-VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void)
+VocalTractGridPlayOptions VocalTractGridPlayOptions_create ()
 {
 	try {
 		VocalTractGridPlayOptions me = Thing_new (VocalTractGridPlayOptions);
@@ -1385,12 +1385,12 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 		check_formants (numberOfNasalAntiFormants, & (pv -> startNasalAntiFormant), & (pv -> endNasalAntiFormant));
 		check_formants (numberOfTrachealAntiFormants, & (pc -> startTrachealAntiFormant), & (pc -> endTrachealAntiFormant));
 
-		autoSound him = (Sound) Data_copy (me);
+		autoSound him = Data_copy (me);
 
 		autoFormantGrid formants = 0;
 		if (useOpenGlottisInfo)
 		{
-			formants.reset ((FormantGrid) Data_copy (thy oral_formants));
+			formants.reset (Data_copy (thy oral_formants));
 			FormantGrid_CouplingGrid_updateOpenPhases (formants.peek(), coupling);
 		}
 
@@ -1499,7 +1499,7 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 
 		if (useOpenGlottisInfo)
 		{
-			aof.reset((FormantGrid) Data_copy (thy oral_formants)); oral_formants = aof.peek();
+			aof.reset(Data_copy (thy oral_formants)); oral_formants = aof.peek();
 			FormantGrid_CouplingGrid_updateOpenPhases (oral_formants, coupling);
 		}
 
@@ -1507,7 +1507,7 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 		{
 			if (pv -> startOralFormant == 1)
 			{
-				him.reset ((Sound) Data_copy (me));
+				him.reset (Data_copy (me));
 				if (oral_formants -> formants -> size > 0)
 				{
 					Sound_FormantGrid_Intensities_filterWithOneFormant_inline (him.peek(), oral_formants, thy oral_formants_amplitudes, 1);
@@ -1522,7 +1522,7 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 
 			if (him.peek() == 0)
 			{
-				him.reset ((Sound) Data_copy (nasal.peek()));
+				him.reset (Data_copy (nasal.peek()));
 			}
 			else _Sounds_add_inline (him.peek(), nasal.peek());
 		}
@@ -1545,7 +1545,7 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 
 				if (him.peek() == 0)
 				{
-					him.reset ((Sound) Data_copy (vocalTract.peek()));
+					him.reset (Data_copy (vocalTract.peek()));
 				}
 				else _Sounds_add_inline (him.peek(), vocalTract.peek());
 			}
@@ -1559,12 +1559,12 @@ Sound Sound_VocalTractGrid_CouplingGrid_filter_parallel (Sound me, VocalTractGri
 
 			if (him.peek() == 0)
 			{
-			him.reset ((Sound) Data_copy (trachea.peek()));
+			him.reset (Data_copy (trachea.peek()));
 			}
 			else _Sounds_add_inline (him.peek(), trachea.peek());
 		}
 
-		if (him.peek() == 0) him.reset ((Sound) Data_copy (me));
+		if (him.peek() == 0) him.reset (Data_copy (me));
 		return him.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not filtered in parallel."); }
 }
@@ -1594,7 +1594,7 @@ static void CouplingGridPlayOptions_setDefaults (CouplingGridPlayOptions me, Cou
 	my endDeltaBandwidth = thy delta_formants -> bandwidths -> size;
 }
 
-CouplingGridPlayOptions CouplingGridPlayOptions_create (void)
+CouplingGridPlayOptions CouplingGridPlayOptions_create ()
 {
 	try {
 		CouplingGridPlayOptions me = Thing_new (CouplingGridPlayOptions);
@@ -1771,7 +1771,7 @@ Sound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered 
 		{
 			if (FormantGrid_Intensities_isFormantDefined (thee, amplitudes, iformant))
 			{
-				autoSound tmp = (Sound) Data_copy (me);
+				autoSound tmp = Data_copy (me);
 				Sound_FormantGrid_Intensities_filterWithOneFormant_inline (tmp.peek(), thee, amplitudes, iformant);
 				for (long is = 1; is <= my nx; is++)
 				{
@@ -1795,7 +1795,7 @@ static void FricationGridPlayOptions_setDefaults (FricationGridPlayOptions me, F
 	my bypass = 1;
 }
 
-FricationGridPlayOptions FricationGridPlayOptions_create (void)
+FricationGridPlayOptions FricationGridPlayOptions_create ()
 {
 	try {
 		FricationGridPlayOptions me = Thing_new (FricationGridPlayOptions);
@@ -1958,7 +1958,7 @@ Sound Sound_FricationGrid_filter (Sound me, FricationGrid thee)
 			him.reset (Sound_FormantGrid_Intensities_filter (me, thy frication_formants, thy frication_formants_amplitudes, startFricationFormant2, pf -> endFricationFormant, alternatingSign));
 		}
 
-		if (him.peek() == 0) him.reset ((Sound) Data_copy (me));
+		if (him.peek() == 0) him.reset (Data_copy (me));
 
 		if (pf -> bypass)
 		{
@@ -1990,7 +1990,7 @@ static void KlattGridPlayOptions_setDefaults (KlattGridPlayOptions me, KlattGrid
 	my xmax = thy xmax;
 }
 
-KlattGridPlayOptions KlattGridPlayOptions_create (void)
+KlattGridPlayOptions KlattGridPlayOptions_create ()
 {
 	try {
 		KlattGridPlayOptions me = Thing_new (KlattGridPlayOptions);
@@ -2058,7 +2058,7 @@ KlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 	} catch (MelderError) { Melder_throw ("KlattGrid not created."); }
 }
 
-KlattGrid KlattGrid_createExample (void)
+KlattGrid KlattGrid_createExample ()
 {
 	try {
 		autoKlattTable thee = KlattTable_createExample ();
@@ -2260,11 +2260,11 @@ void KlattGrid_add##Name##Point (KlattGrid me, double t, double value) \
 void KlattGrid_remove##Name##Points (KlattGrid me, double t1, double t2) \
 { AnyTier_removePointsBetween ((RealTier) my phonation -> name, t1, t2); } \
 tierType KlattGrid_extract##Name##Tier (KlattGrid me) \
-{ return (tierType) Data_copy (my phonation -> name); } \
+{ return Data_copy ((tierType) my phonation -> name); } \
 void KlattGrid_replace##Name##Tier (KlattGrid me, tierType thee) \
 { try {\
 	if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Domains must be equal"); \
-	auto##tierType any = (tierType) Data_copy (thee); \
+	auto##tierType any = Data_copy ((tierType) thee); \
 	forget (my phonation -> name); \
 	my phonation -> name = any.transfer(); \
 	} catch (MelderError) { Melder_throw (me, ": tier not replaced."); } \
@@ -2392,7 +2392,7 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iforman
 		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Domains must be equal");
 		Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		if (iformant < 0 || iformant > (*ordered) -> size) Melder_throw ("Formant does not exist.");
-		autoIntensityTier any = (IntensityTier) Data_copy (thee);
+		autoIntensityTier any = Data_copy (thee);
 		forget (((Thing*)(*ordered) -> item)[iformant]);
 		(*ordered) -> item[iformant] = any.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no ampitude tier replaced."); }
@@ -2402,7 +2402,7 @@ FormantGrid KlattGrid_extractFormantGrid (KlattGrid me, int formantType)
 {
 	try {
 		FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
-		autoFormantGrid thee = (FormantGrid) Data_copy (*fg);
+		autoFormantGrid thee = Data_copy (*fg);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no FormantGrid extracted."); }
 }
@@ -2412,7 +2412,7 @@ void KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid th
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Domains must be equal");
 		FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
-		autoFormantGrid any = (FormantGrid) Data_copy (thee);
+		autoFormantGrid any = Data_copy (thee);
 		forget (*fg);
 		*fg = any.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no FormantGrid replaced."); }
@@ -2487,7 +2487,7 @@ FormantGrid KlattGrid_extractDeltaFormantGrid (KlattGrid me)
 {
 	try {
 		FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, KlattGrid_DELTA_FORMANTS);
-		autoFormantGrid thee = (FormantGrid) Data_copy (*fg);
+		autoFormantGrid thee = Data_copy (*fg);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no delta FormantGrid extracted."); }
 }
@@ -2497,7 +2497,7 @@ void KlattGrid_replaceDeltaFormantGrid (KlattGrid me, FormantGrid thee)
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Domains must be equal");
 		FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, KlattGrid_DELTA_FORMANTS);
-		autoFormantGrid him = (FormantGrid) Data_copy (thee);
+		autoFormantGrid him = Data_copy (thee);
 		forget (*fg);
 		*fg = him.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no delta FormantGrid replaced."); }
@@ -2510,7 +2510,7 @@ FormantGrid KlattGrid_to_oralFormantGrid_openPhases (KlattGrid me, double fadeFr
 		if (fadeFraction < 0) fadeFraction = 0;
 		if (fadeFraction >= 0.5) Melder_throw ("Fade fraction must be smaller than 0.5");
 		my coupling -> options -> fadeFraction = fadeFraction;
-		autoFormantGrid thee = (FormantGrid) Data_copy (my vocalTract -> oral_formants);
+		autoFormantGrid thee = Data_copy ((FormantGrid) my vocalTract -> oral_formants);
 		KlattGrid_setGlottisCoupling (me);
 		FormantGrid_CouplingGrid_updateOpenPhases (thee.peek(), my coupling);
 		return thee.transfer();
@@ -2544,14 +2544,14 @@ void KlattGrid_removeFricationAmplitudePoints (KlattGrid me, double t1, double t
 
 IntensityTier KlattGrid_extractFricationAmplitudeTier (KlattGrid me)
 {
-	return (IntensityTier) Data_copy (my frication -> fricationAmplitude);
+	return Data_copy (my frication -> fricationAmplitude);
 }
 
 void KlattGrid_replaceFricationAmplitudeTier (KlattGrid me, IntensityTier thee)
 {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Domains must be equal");
-		autoIntensityTier him = (IntensityTier) Data_copy (thee);
+		autoIntensityTier him = Data_copy (thee);
 		forget (my frication -> fricationAmplitude);
 		my frication -> fricationAmplitude = him.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no frication amplitude tier replaced."); }
@@ -2574,14 +2574,14 @@ void KlattGrid_removeFricationBypassPoints (KlattGrid me, double t1, double t2)
 
 IntensityTier KlattGrid_extractFricationBypassTier (KlattGrid me)
 {
-	return (IntensityTier) Data_copy (my frication -> bypass);
+	return Data_copy (my frication -> bypass);
 }
 
 void KlattGrid_replaceFricationBypassTier (KlattGrid me, IntensityTier thee)
 {
 	try {
 		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Domains must be equal");
-		autoIntensityTier him = (IntensityTier) Data_copy (thee);
+		autoIntensityTier him = Data_copy (thee);
 		forget (my frication -> bypass);
 		my frication -> bypass = him.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no frication bypass tier replaced."); }
@@ -2784,7 +2784,7 @@ KlattGrid Sound_to_KlattGrid_simple (Sound me, double timeStep, long maximumNumb
 		long numberOfTrachealAntiFormants = numberOfTrachealFormants;
 		long numberOfFricationFormants =  maximumNumberOfFormants;
 		long numberOfDeltaFormants = 1;
-		autoSound sound = (Sound) Data_copy (me);
+		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.peek());
 		autoFormant f = Sound_to_Formant_burg (sound.peek(), timeStep, maximumNumberOfFormants,
 			maximumFormantFrequency, windowLength, preEmphasisFrequency);

@@ -46,7 +46,7 @@ typedef struct structmachar_Table *machar_Table;
 
 extern machar_Table NUMfpp;
 
-void NUMmachar (void);
+void NUMmachar ();
 
 #ifdef __cplusplus
 	}

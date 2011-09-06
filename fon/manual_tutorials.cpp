@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110902)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110906)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.38# (6 September 2011)")
+LIST_ITEM (L"\\bu Corrected several bugs from the Inspect windows, introduced in 5.2.36.")
 NORMAL (L"##5.2.37# (2 September 2011)")
 LIST_ITEM (L"\\bu Graphics: added the Chinese phonetic symbols \\id and \\ir. See @@Phonetic symbols: vowels@.")
 LIST_ITEM (L"\\bu Formant: corrected a bug introduced in 5.2.36 that caused Praat to crash when querying quantiles.")

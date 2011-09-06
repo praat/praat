@@ -478,7 +478,7 @@ static regularExp_CHAR *Code_Emit_Ptr;   /* When Code_Emit_Ptr is set to
                                           points to where compiled regex code is
                                           to be written. */
 static unsigned long  Reg_Size;        /* Size of compiled regex code. */
-static wchar         **Error_Ptr;       /* Place to store error messages so
+static const wchar         **Error_Ptr;       /* Place to store error messages so
                                           they can be returned by `CompileRE' */
 static wchar           Error_Text [128];/* Sting to build error messages in. */
 
@@ -488,14 +488,14 @@ static regularExp_CHAR  Letter_Char [ALNUM_CHAR_SIZE];  /* init_ansi_classes () 
                                                       /* and
                                                          shortcut_escape ().  */
 
-static regularExp_CHAR  ASCII_Digits [] = L"0123456789"; /* Same for all */
+static regularExp_CHAR  ASCII_Digits [] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }; /* Same for all */
                                                       /* locales.     */
 static int            Is_Case_Insensitive;
 static int            Match_Newline;
 
 static int            Enable_Counting_Quantifier = 1;
 static regularExp_CHAR  Brace_Char;
-static regularExp_CHAR  Default_Meta_Char [] = L"{.*+?[(|)^<>$";
+static regularExp_CHAR  Default_Meta_Char [] = { '{', '.', '*', '+', '?', '[', '(', '|', ')', '^', '<', '>', '$' };
 static regularExp_CHAR *Meta_Char;
 
 typedef struct { long lower; long upper; } len_range;
@@ -515,7 +515,7 @@ static regularExp_CHAR * emit_special    (regularExp_CHAR op_code,
 static regularExp_CHAR   literal_escape  (regularExp_CHAR c);
 static regularExp_CHAR   numeric_escape  (regularExp_CHAR c, regularExp_CHAR **parse);
 static regularExp_CHAR * atom            (int *flag_param, len_range *range_param);
-static void            reg_error       (wchar *str);
+static void            reg_error       (const wchar *str);
 static regularExp_CHAR * insert          (regularExp_CHAR op, regularExp_CHAR *opnd,
                                         long min, long max, int index);
 static regularExp_CHAR * next_ptr        (regularExp_CHAR *ptr);
@@ -546,7 +546,7 @@ static int             init_ansi_classes  (void);
  * some of the structure of the compiled regexp.
  *----------------------------------------------------------------------*/
 
-regexp * CompileRE (const regularExp_CHAR *exp, wchar **errorText, int defaultFlags) {
+regexp * CompileRE (const regularExp_CHAR *exp, const wchar **errorText, int defaultFlags) {
 
    register regexp *comp_regex = NULL;
    register regularExp_CHAR *scan;
@@ -2407,7 +2407,7 @@ static regularExp_CHAR numeric_escape (
    regularExp_CHAR    c,
    regularExp_CHAR  **parse) {
 
-   static regularExp_CHAR digits [] = L"fedcbaFEDCBA9876543210";
+   static regularExp_CHAR digits [] = { 'f', 'e', 'd', 'c', 'b', 'a', 'F', 'E', 'D', 'C', 'B', 'A', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0' };
 
    static unsigned int digit_val [] = {
       15, 14, 13, 12, 11, 10,                  /* Lower case Hex digits */
@@ -4141,7 +4141,7 @@ static void adjustcase (regularExp_CHAR *str, int len, regularExp_CHAR chgcase) 
  * reg_error
  *----------------------------------------------------------------------*/
 
-static void reg_error (wchar *str) {
+static void reg_error (const wchar *str) {
 	Melder_error_ ("Internal error processing regular expression: ", str);
 }
 

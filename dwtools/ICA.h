@@ -64,7 +64,7 @@ CrossCorrelationTable CrossCorrelationTable_createSimple (wchar_t *covars, wchar
 double CrossCorrelationTable_getDiagonalitymeasure (CrossCorrelationTable me);
 CrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee);
 
-CrossCorrelationTables CrossCorrelationTables_create (void);
+CrossCorrelationTables CrossCorrelationTables_create ();
 double CrossCorrelationTables_getDiagonalityMeasure (CrossCorrelationTables me, double *w, long start, long end);
 double CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (CrossCorrelationTables me, Diagonalizer thee, double *w, long start, long end);
 CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, long n, int firstPositiveDefinite, double sigma);

@@ -93,7 +93,7 @@ Thing_define (Polynomial, FunctionTerms) {
 		virtual void v_evaluate_z (dcomplex *z, dcomplex *p);
 		virtual void v_evaluateTerms (double x, double terms[]);
 		virtual void v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax);
-		//virtual long v_getDegree ();   David, is het OK dat deze niet overschreven wordt?
+		//virtual long v_getDegree ();   David, is het OK dat deze niet overschreven wordt? Ja
 };
 
 Polynomial Polynomial_create (double xmin, double xmax, long degree);

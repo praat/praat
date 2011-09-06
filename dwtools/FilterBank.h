@@ -68,23 +68,23 @@ Interpretation:
     dy distance between filters (bark).
     ny the number of filters.
  */
- 
+
 double FilterBank_getFrequencyInHertz (I, double f, int scale_from);
 double FilterBank_getFrequencyInBark (I, double f, int scale_from);
 double FilterBank_getFrequencyInMel (I, double f, int scale_from);
 
 int FilterBank_getFrequencyScale (I);
 
-void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double xmin, 
+void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double xmin,
 	double xmax, int verticalScale, double ymin, double ymax, int garnish);
- 
+
 void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
-	int freqScale,	int fromFilter, int toFilter, double zmin, double zmax, 
+	int freqScale,	int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish);
 
 void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax,
 	double min, double max, const wchar_t *xlabel, int garnish);
- 
+
 BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, long f1);
 
@@ -111,7 +111,7 @@ MelFilter MelFilter_create (double tmin, double tmax, long nt, double dt,
 MelFilter Matrix_to_MelFilter (I);
 
 void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
-	int freqScale, int fromFilter, int toFilter, double zmin, double zmax, 
+	int freqScale, int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish);
 
 MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
@@ -119,18 +119,18 @@ MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 Thing_define (FormantFilter, FilterBank) {
 	// overridden methods:
 	protected:
-		//virtual int v_getFrequencyScale ();   // David, is dit correct?
+		//virtual int v_getFrequencyScale ();   // David, is dit correct? ja
 	// new methods:
 	public:
-		//virtual void v_drawFilterFunction (int from, int to, void *dwrawclosure);   // David, is dit correct?
+		//virtual void v_drawFilterFunction (int from, int to, void *dwrawclosure);   // David, is dit correct? ja
 };
 
-FormantFilter FormantFilter_create (double tmin, double tmax, long nt, 
-	double dt, double t1, double fmin, double fmax, long nf, double df, 
+FormantFilter FormantFilter_create (double tmin, double tmax, long nt,
+	double dt, double t1, double fmin, double fmax, long nf, double df,
 	double f1);
-	
+
 void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double bandwidth,
-	int freqScale, int fromFilter, int toFilter, double zmin, double zmax, 
+	int freqScale, int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish);
 
 FormantFilter Matrix_to_FormantFilter (I);

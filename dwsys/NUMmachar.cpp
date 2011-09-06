@@ -51,7 +51,7 @@ ngrd
 		sfmin	'S'		safe minimum, such that 1/sfmin does not overflow
 */
 
-void NUMmachar (void)
+void NUMmachar ()
 {
 	if (NUMfpp) return;
 

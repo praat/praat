@@ -1,4 +1,4 @@
-/* NUM2.c
+/* NUM2.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -215,7 +215,7 @@ void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n
 wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp)
 {
 	wchar_t *charp = 0;
-	wchar_t *compileMsg;
+	const wchar_t *compileMsg;
 	regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) search_regexp, &compileMsg, 0);
 
 	if (compiled_regexp == 0) Melder_throw ("No regexp");
@@ -455,7 +455,7 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 	wchar_t **result = NULL;
 	try {
 		regexp *compiledRE;
-		wchar_t *compileMsg;
+		const wchar_t *compileMsg;
 		long nmatches_sub = 0;
 
 		if (searchRE == NULL || replaceRE == NULL) return NULL;
@@ -2805,7 +2805,8 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
 	double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2)
 {
-	int hline, vline, ncrossings = 0, xswap, yswap;
+	int ncrossings = 0;
+	bool xswap, yswap;
 	double a, b, x, y, t, xc[5], yc[5], xmin, xmax, ymin, ymax;
 
 	*xo1 = xl1; *yo1 = yl1; *xo2 = xl2; *yo2 = yl2;
@@ -2823,22 +2824,22 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	// Get extremes in x and y of the line for easy testing further on.
 	if (xl1 < xl2)
 	{
-		xmin = xl1; xmax = xl2; xswap = 0;
+		xmin = xl1; xmax = xl2; xswap = false;
 	}
 	else
 	{
-		xmin = xl2; xmax = xl1; xswap = 1;
+		xmin = xl2; xmax = xl1; xswap = true;
 	}
 	if (yl1 < yl2)
 	{
-		ymin = yl1; ymax = yl2; yswap = 0;
+		ymin = yl1; ymax = yl2; yswap = false;
 	}
 	else
 	{
-		ymin = yl2; ymax = yl1; yswap = 1;
+		ymin = yl2; ymax = yl1; yswap = true;
 	}
-
-	if ((hline = (yl1 == yl2)) == true)
+	bool hline = yl1 == yl2, vline = xl1 == xl2;
+	if (hline)
 	{
 		if (xmin < xr1) *xo1 = xr1;
 		if (xmax > xr2) *xo2 = xr2;
@@ -2848,7 +2849,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		}
 		return 1;
 	}
-	if ((vline = (xl1 == xl2)) == true)
+	if (vline)
 	{
 		if (ymin < yr1) *yo1 = yr1;
 		if (ymax > yr2) *yo2 = yr2;
@@ -2940,7 +2941,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	}
 	else
 	{
-		Melder_throw (L"Too many crossings found.");
+		Melder_throw ("Too many crossings found.");
 	}
 	return 1;
 }

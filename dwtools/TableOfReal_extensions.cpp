@@ -145,7 +145,7 @@ int TableOfReal_hasColumnLabels (I)
 	return 1;
 }
 
-TableOfReal TableOfReal_createIrisDataset (void)
+TableOfReal TableOfReal_createIrisDataset ()
 {
 	float iris[150][4] = {
 	5.1,3.5,1.4,0.2,4.9,3.0,1.4,0.2,4.7,3.2,1.3,0.2,4.6,3.1,1.5,0.2,5.0,3.6,1.4,0.2,
@@ -753,7 +753,7 @@ void TableOfReal_and_Categories_setRowLabels (I, Categories thee)
 				and then delete the newly created categories.
 		*/
 
-		autoCategories c = (Categories) Data_copy (thee);
+		autoCategories c = Data_copy (thee);
 
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
@@ -1092,7 +1092,7 @@ void TablesOfReal_init (I, ClassInfo klas)
 	Ordered_init (me, klas, 10);
 }
 
-TablesOfReal TablesOfReal_create (void)
+TablesOfReal TablesOfReal_create ()
 {
 	try {
 		autoTablesOfReal me = Thing_new (TablesOfReal);
@@ -1317,7 +1317,7 @@ long TableOfReal_getNumberOfLabelMatches (I, const wchar_t *search, int columnLa
 	}
 	if (use_regexp)
 	{
-		wchar_t *compileMsg;
+		const wchar_t *compileMsg;
 		compiled_regexp = CompileRE ((regularExp_CHAR *) search, &compileMsg, 0);
 		if (compiled_regexp == 0) Melder_throw (compileMsg);
 	}
@@ -1565,7 +1565,7 @@ TableOfReal TableOfReal_rankColumns (I)
 {
 	iam (TableOfReal);
 	try {
-		autoTableOfReal thee = (TableOfReal) Data_copy (me);
+		autoTableOfReal thee = Data_copy (me);
 		NUMrankColumns (thy data, 1, thy numberOfRows, 1, thy numberOfColumns);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": column ranks not created."); }
@@ -1609,7 +1609,7 @@ TableOfReal TableOfReal_choleskyDecomposition (I, int upper, int inverse)
 		long n = my numberOfColumns, lda = my numberOfRows, info;
 
 		if (n != lda) Melder_throw ("The table must be a square symmetric table.");
-		autoTableOfReal thee = (TableOfReal) Data_copy (me);
+		autoTableOfReal thee = Data_copy (me);
 
 		if (upper)
 		{

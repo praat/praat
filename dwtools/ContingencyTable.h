@@ -9,7 +9,7 @@ Thing_define (ContingencyTable, TableOfReal) {
 		virtual void v_info ();
 };
 
-/* entries must be nonnegative numbers */
+// entries must be nonnegative numbers
 
 ContingencyTable ContingencyTable_create (long numberOfRows, long numberOfColumns);
 

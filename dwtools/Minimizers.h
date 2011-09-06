@@ -115,7 +115,7 @@ Thing_define (LineMinimizer, Minimizer) {
 	// overridden methods:
 		virtual void v_destroy ();
 	// new methods:
-		//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct?
+		//virtual void v_linmin (double p[], double fp, double direction[], double *fret);	 // David, is dit correct? ja
 };
 
 void LineMinimizer_init (I, long nParameters, Data object, double (*func)

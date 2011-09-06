@@ -362,7 +362,7 @@ long HMM_and_HMM_ObservationSequence_getLongestSequence (HMM me, HMM_Observation
 
 Thing_implement (HMM_ObservationSequences, Collection, 0);
 
-HMM_ObservationSequences HMM_ObservationSequences_create (void)
+HMM_ObservationSequences HMM_ObservationSequences_create ()
 {
 	try {
 		autoHMM_ObservationSequences me = Thing_new (HMM_ObservationSequences);

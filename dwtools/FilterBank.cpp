@@ -36,7 +36,7 @@
 static double scaleFrequency (double f, int scale_from, int scale_to)
 {
 	double fhz = NUMundefined;
-	
+
 	if (scale_from == scale_to) return f;
 	if (scale_from == FilterBank_HERTZ)
 	{
@@ -50,10 +50,10 @@ static double scaleFrequency (double f, int scale_from, int scale_to)
 	{
 		fhz = MELTOHZ (f);
 	}
-	
+
 	if (scale_to == FilterBank_HERTZ || fhz == NUMundefined) return fhz;
- 
-	if (scale_to == FilterBank_BARK)	
+
+	if (scale_to == FilterBank_BARK)
 	{
 		f = HZTOBARK (fhz);
 	}
@@ -87,15 +87,15 @@ static wchar_t const *GetFreqScaleText (int scale)
 		return mel;
 	}
 	return error;
-	
+
 }
 
 static int checkLimits (I, int fromFreqScale, int toFreqScale, int *fromFilter,
-	int *toFilter, double *zmin, double *zmax, int dbScale, 
+	int *toFilter, double *zmin, double *zmax, int dbScale,
 	double *ymin, double *ymax)
 {
 	iam (Matrix);
-	
+
 	if (*fromFilter == 0)  *fromFilter = 1;
 	if (*toFilter == 0)  *toFilter = my ny;
 	if (*toFilter < *fromFilter)
@@ -110,7 +110,7 @@ static int checkLimits (I, int fromFreqScale, int toFreqScale, int *fromFilter,
 		Melder_warning3 (L"Filter numbers must be in range [1, ", Melder_integer (my ny), L"]");
 		return 0;
 	}
-		
+
 	if (*zmin < 0 || *zmax < 0)
 	{
 		Melder_warning1 (L"Frequencies must be positive.");
@@ -119,7 +119,7 @@ static int checkLimits (I, int fromFreqScale, int toFreqScale, int *fromFilter,
 	if (*zmax <= *zmin)
 	{
 		*zmin = scaleFrequency (my ymin, fromFreqScale, toFreqScale);
-		*zmax = scaleFrequency (my ymax, fromFreqScale, toFreqScale); 
+		*zmax = scaleFrequency (my ymax, fromFreqScale, toFreqScale);
 	}
 
 	if (*ymax <= *ymin)
@@ -158,19 +158,19 @@ static void setDrawingLimits (double *a, long n, double amin, double amax, long 
 				break;
 			}
 			*ibegin = i;
-			continue; 
+			continue;
 		}
 		lower = 0;
 		if (a[i] < amin)
 		{
-			a[i] = amin; 
+			a[i] = amin;
 		}
 		else if (a[i] > amax)
 		{
 			a[i] = amax;
 		}
 	}
-		
+
 	(*ibegin)++;
 	(*iend)--;
 }
@@ -191,24 +191,21 @@ BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 
 double FilterBank_getFrequencyInHertz (I, double f, int scale_from)
 {
-	(void) void_me; 
+	(void) void_me;
 	return scaleFrequency (f, scale_from, FilterBank_HERTZ);
 }
 
 double FilterBank_getFrequencyInBark (I, double f, int scale_from)
 {
-	(void) void_me; 
+	(void) void_me;
 	return scaleFrequency (f, scale_from, FilterBank_BARK);
 }
 
 double FilterBank_getFrequencyInMel (I, double f, int scale_from)
 {
-	(void) void_me; 
+	(void) void_me;
 	return scaleFrequency (f, scale_from, FilterBank_MEL);
 }
-
-#undef our
-#define our ((FilterBank_Table) my methods) ->
 
 int FilterBank_getFrequencyScale (I)
 {
@@ -216,7 +213,7 @@ int FilterBank_getFrequencyScale (I)
 	return my v_getFrequencyScale ();
 }
 
-void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double xmin, 
+void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double xmin,
 	double xmax, int verticalScale, double ymin, double ymax, int garnish)
 {
 	iam (FilterBank);
@@ -235,7 +232,7 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 		if (ymin < ymax)
 		{
 			xmint = scaleFrequency (ymin, verticalScale, myFreqScale);
-			xmaxt = scaleFrequency (ymax, verticalScale, myFreqScale); 
+			xmaxt = scaleFrequency (ymax, verticalScale, myFreqScale);
 		}
 		xmin = scaleFrequency (xmint, myFreqScale, horizontalScale);
 		xmax = scaleFrequency (xmaxt, myFreqScale, horizontalScale);
@@ -243,7 +240,7 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 
 	if (ymin >= ymax)
 	{
-		ymin = scaleFrequency (xmin, horizontalScale, verticalScale); 
+		ymin = scaleFrequency (xmin, horizontalScale, verticalScale);
 		ymax = scaleFrequency (xmax, horizontalScale, verticalScale);
 	}
 
@@ -282,13 +279,13 @@ void FilterBank_drawFrequencyScales (I, Graphics g, int horizontalScale, double 
 }
 
 void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
-	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, 
+	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish)
 {
-	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter, 
+	if (! checkLimits (me, FilterBank_BARK, toFreqScale, & fromFilter, & toFilter,
 		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
 
-	long n = 1000; 
+	long n = 1000;
 	autoNUMvector<double> a (1, n);
 
 	Graphics_setInner (g);
@@ -299,7 +296,7 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 		double df = (zmax - zmin) / (n - 1);
 		double zMid = Matrix_rowToY (me, j);
 		long ibegin, iend;
-	
+
 		for (long i = 1; i <= n; i++)
 		{
 			double f = zmin + (i - 1) * df;
@@ -315,9 +312,9 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 				if (! dbScale) a[i] = pow (10, a[i]);
 			}
 		}
-	
+
 		setDrawingLimits (a.peek(), n, ymin, ymax, &ibegin, &iend);
-	
+
 		if (ibegin <= iend)
 		{
 			double fmin = zmin + (ibegin - 1) * df;
@@ -325,8 +322,8 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 			Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
 		}
 	}
-	
-		
+
+
 	Graphics_unsetInner (g);
 
 	if (garnish)
@@ -356,15 +353,15 @@ MelFilter MelFilter_create (double tmin, double tmax, long nt, double dt,
 /*
 void FilterBank_drawFilters (I, Graphics g, long fromf, long tof,
 	double xmin, double xmax, int xlinear, double ymin, double ymax, int ydb,
-	double (*tolinf)(double f), double (*tononlin) (double f), 
+	double (*tolinf)(double f), double (*tononlin) (double f),
 	double (*filteramp)(double f0, double b, double f))
 {
 	iam (Matrix);
-	
+
 
 }*/
 
-void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, 
+void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin,
 	double fmax, double min, double max, const wchar_t *xlabel, int garnish)
 {
 	iam (Matrix);
@@ -379,12 +376,12 @@ void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin,
 }
 
 void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
-	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, 
+	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish)
 {
-	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter, 
+	if (! checkLimits (me, FilterBank_MEL, toFreqScale, & fromFilter, & toFilter,
 		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
-	long n = 1000; 
+	long n = 1000;
 	autoNUMvector<double> a (1, n);
 
 	Graphics_setInner (g);
@@ -392,13 +389,13 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 
 	for (long j = fromFilter; j <= toFilter; j++)
 	{
-		double df = (zmax - zmin) / (n - 1); 
+		double df = (zmax - zmin) / (n - 1);
 		double fc_mel = my y1 + (j - 1) * my dy;
 		double fc_hz = MELTOHZ (fc_mel);
 		double fl_hz = MELTOHZ (fc_mel - my dy);
 		double fh_hz = MELTOHZ (fc_mel + my dy);
 		long ibegin, iend;
-	
+
 		for (long i = 1; i <= n; i++)
 		{
 			// Filterfunction: triangular on a linear frequency scale AND a linear amplitude scale.
@@ -413,11 +410,11 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 				a[i] = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, z);
 				if (dbScale) a[i] = to_dB (a[i], 10, ymin);
 			}
-		
+
 		}
-			
+
 		setDrawingLimits (a.peek(), n, ymin, ymax,	&ibegin, &iend);
-	
+
 		if (ibegin <= iend)
 		{
 			double fmin = zmin + (ibegin - 1) * df;
@@ -442,7 +439,7 @@ void MelFilter_drawFilterFunctions (MelFilter me, Graphics g,
 
 /*
 void MelFilter_drawFilters (MelFilter me, Graphics g, long from, long to,
-	double fmin, double fmax, double ymin, double ymax, int dbscale, 
+	double fmin, double fmax, double ymin, double ymax, int dbscale,
 	int garnish)
 {
 	long i;
@@ -459,7 +456,7 @@ void MelFilter_drawFilters (MelFilter me, Graphics g, long from, long to,
 		to = my ny;
 	}
 	Graphics_setWindow (g, my ymin, my ymax, 0, 1);
-	Graphics_setInner (g);	
+	Graphics_setInner (g);
 	for (i = from; i <= to; i++)
 	{
 		double fc = my y1 + (i - 1) * df;
@@ -470,7 +467,7 @@ void MelFilter_drawFilters (MelFilter me, Graphics g, long from, long to,
 			Draw triangle
 		*//*
 		Graphics_line (g, fl_hz, 0, fc_hz, 1);
-		Graphics_line (g, fc_hz, 1, fh_hz, 0); 
+		Graphics_line (g, fc_hz, 1, fh_hz, 0);
 	}
 	Graphics_unsetInner (g);
 }
@@ -521,20 +518,20 @@ FormantFilter FormantFilter_create (double tmin, double tmax, long nt,
 }
 
 void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double bandwidth,
-	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax, 
+	int toFreqScale, int fromFilter, int toFilter, double zmin, double zmax,
 	int dbScale, double ymin, double ymax, int garnish)
 {
-	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter, 
+	if (! checkLimits (me, FilterBank_HERTZ, toFreqScale, & fromFilter, & toFilter,
 		& zmin, & zmax, dbScale, & ymin, & ymax)) return;
 
 	if (bandwidth <= 0)
 	{
 		Melder_warning1 (L"Bandwidth must be greater than zero.");
 	}
-	
+
 	long n = 1000;
 	autoNUMvector<double>a (1, n);
-	
+
 	Graphics_setInner (g);
 	Graphics_setWindow (g, zmin, zmax, ymin, ymax);
 
@@ -543,7 +540,7 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 		double df = (zmax - zmin) / (n - 1);
 		double fc = my y1 + (j - 1) * my dy;
 		long ibegin, iend;
-	
+
 		for (long i = 1; i <= n; i++)
 		{
 			double f = zmin + (i - 1) * df;
@@ -558,9 +555,9 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 				if (dbScale) a[i] = to_dB (a[i], 10, ymin);
 			}
 		}
-	
+
 		setDrawingLimits (a.peek(), n, ymin, ymax,	&ibegin, &iend);
-	
+
 		if (ibegin <= iend)
 		{
 			double fmin = zmin + (ibegin - 1) * df;
@@ -568,8 +565,8 @@ void FormantFilter_drawFilterFunctions (FormantFilter me, Graphics g, double ban
 			Graphics_function (g, a.peek(), ibegin, iend, fmin, fmax);
 		}
 	}
-	
-		
+
+
 	Graphics_unsetInner (g);
 
 	if (garnish)
@@ -601,12 +598,12 @@ Spectrum FormantFilter_to_Spectrum_slice (FormantFilter me, double t)
 		double sqrtref = sqrt (FilterBank_DBREF);
 		double factor2 = 2 * 10 * FilterBank_DBFAC;
 		autoSpectrum thee = Spectrum_create (my ymax, my ny);
-	
+
 		thy xmin = my ymin;
 		thy xmax = my ymax;
 		thy x1 = my y1;
 		thy dx = my dy;   /* Frequency step. */
-	
+
 		long frame = Sampled_xToIndex (me, t);
 		if (frame < 1) frame = 1;
 		if (frame > my nx) frame = my nx;
@@ -653,9 +650,9 @@ void FilterBank_equalizeIntensities (I, double intensity_db)
 		{
 			p += FilterBank_DBREF * exp (NUMln10 * my z[i][j] / 10);
 		}
-		
+
 		double delta_db = intensity_db - 10 * log10 (p / FilterBank_DBREF);
-		
+
 		for (long i = 1; i <= my ny; i++)
 		{
 			my z[i][j] += delta_db;
@@ -676,7 +673,7 @@ void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, 
 	autoMatrix him = Eigen_and_Matrix_project (thee, fcopy.peek(), component);
 	for (long j = 1; j<= my nx; j++)
 	{
-		fcopy -> z[component][j] = frequencyOffset + scale * fcopy -> z[component][j];	
+		fcopy -> z[component][j] = frequencyOffset + scale * fcopy -> z[component][j];
 	}
 	Matrix_drawRows (fcopy.peek(), g, tmin, tmax, component-0.5, component+0.5, fmin, fmax);
 }

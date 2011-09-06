@@ -39,9 +39,9 @@ Polynomial LPC_to_Polynomial (LPC me, double time)
 {
 	try {
 		long iFrame = Sampled_xToIndex (me, time);
-	
+
 		if (iFrame < 1 || iFrame > my nx) Melder_throw ("invalid frame number.");
-		autoPolynomial thee = LPC_Frame_to_Polynomial (&my frame[iFrame]);
+		autoPolynomial thee = LPC_Frame_to_Polynomial (&my d_frames[iFrame]);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ":no Polynomial created."); }
 }

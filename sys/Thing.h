@@ -36,7 +36,8 @@
 typedef void *Any;   /* Prevent compile-time type checking. */
 
 /*
-	Use the macros 'I' and 'thou' for objects in the formal parameter lists.
+	Use the macros 'I' and 'thou' for objects in the formal parameter lists
+	(if the explicit type cannot be used).
 	Use the macros 'iam' and 'thouart'
 	as the first declaration in a function definition.
 	After this, the object 'me' or 'thee' has the right class (for the compiler),

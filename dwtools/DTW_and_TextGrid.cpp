@@ -38,7 +38,7 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee)
 		if (my ymin != thy xmin || my ymax != thy xmax) Melder_throw
 			("The domain of the TextTier and the y-domain of the DTW must be equal.");
 		
-		autoTextTier him = (TextTier) Data_copy (thee);
+		autoTextTier him = Data_copy (thee);
 
 		his xmin = my xmin;
 		his xmax = my xmax;
@@ -59,7 +59,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee)
 		if ((my ymin != thy xmin) || my ymax != thy xmax) Melder_throw 
 			("The domain of the IntervalTier and the y-domain of the DTW must be equal.");
 	
-		autoIntervalTier him = (IntervalTier) Data_copy (thee);
+		autoIntervalTier him = Data_copy (thee);
 	
 		his xmin = my xmin;
 		his xmax = my xmax;
@@ -114,7 +114,7 @@ TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee)
 	try {
 		if ((my xmin != thy xmin) || my xmax != thy xmax) Melder_throw 
 			("The domain of the TextTier and the DTW must be equal.");
-		autoTextTier him =  (TextTier) Data_copy (thee);
+		autoTextTier him =  Data_copy (thee);
 		his xmin = my ymin;
 		his xmax = my ymax;
 	
@@ -134,7 +134,7 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier_old (DTW me, IntervalTier thee
 		if ((my xmin != thy xmin) || my xmax != thy xmax) Melder_throw 
 			("The domain of the IntervalTier and the DTW must be equal.");
 	
-		autoIntervalTier him = (IntervalTier) Data_copy (thee);
+		autoIntervalTier him = Data_copy (thee);
 	
 		his xmin = my ymin;
 		his xmax = my ymax;

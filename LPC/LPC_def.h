@@ -23,7 +23,7 @@ oo_DEFINE_STRUCT (LPC_Frame)
 
 	oo_INT (nCoefficients)
 	#if oo_READING_BINARY
-		if (localVersion == 0) 
+		if (localVersion == 0)
 		{
 			oo_FLOAT_VECTOR (a, nCoefficients)
 			oo_FLOAT (gain)
@@ -37,7 +37,7 @@ oo_DEFINE_STRUCT (LPC_Frame)
 		oo_DOUBLE_VECTOR (a, nCoefficients)
 		oo_DOUBLE (gain)
 	#endif
-	
+
 oo_END_STRUCT (LPC_Frame)
 #undef ooSTRUCT
 
@@ -48,7 +48,7 @@ oo_DEFINE_CLASS (LPC, Sampled)
 	/* samplingPeriod */
 	oo_DOUBLE (samplingPeriod) /* from Sound */
 	oo_INT (maxnCoefficients)
-	oo_STRUCT_VECTOR (LPC_Frame, frame, nx)
+	oo_STRUCT_VECTOR (LPC_Frame, d_frames, nx)
 
 	#if oo_DECLARING
 		// overridden methods:

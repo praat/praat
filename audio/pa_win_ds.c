@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
  * $Id: pa_win_ds.c 1286 2007-09-26 21:34:23Z rossb $
  * Portable Audio I/O Library DirectSound implementation
@@ -2506,5 +2507,6 @@ static signed long GetStreamWriteAvailable( PaStream* s )
     return 0;
 }
 
+#endif
 
 

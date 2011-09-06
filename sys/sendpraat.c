@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 30 July 2010 */
+/* 6 September 2011 */
 
 /*
  * The sendpraat subroutine (Unix with X11 or GTK; Windows; Macintosh) sends a message
@@ -28,6 +28,9 @@
 	#include <windows.h>
 	#include <stdio.h>
 	#include <wchar.h>
+	#ifdef __MINGW32__
+		#define swprintf  _snwprintf
+	#endif
 	#define gtk 0
 	#define win 1
 	#define mac 0

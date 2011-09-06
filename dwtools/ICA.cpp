@@ -311,7 +311,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		long dimension = c0 -> numberOfColumns;
 
 		autoEigen eigen = Thing_new (Eigen);
-		autoCrossCorrelationTables ccts = (CrossCorrelationTables) Data_copy (thee);
+		autoCrossCorrelationTables ccts = Data_copy (thee);
 		autoNUMmatrix<double> pinv (1, dimension, 1, dimension);
 		autoNUMmatrix<double> d (1, dimension, 1, dimension);
 		autoNUMmatrix<double> p (1, dimension, 1, dimension);
@@ -754,7 +754,7 @@ void structCrossCorrelationTables :: v_info ()
 
 Thing_implement (CrossCorrelationTables, Ordered, 0);
 
-CrossCorrelationTables CrossCorrelationTables_create (void)
+CrossCorrelationTables CrossCorrelationTables_create ()
 {
 	try {
 		autoCrossCorrelationTables me = Thing_new (CrossCorrelationTables);

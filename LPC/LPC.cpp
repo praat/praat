@@ -75,7 +75,7 @@ void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = predictionOrder;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
-	my frame = NUMvector<structLPC_Frame> (1, nt);
+	my d_frames = NUMvector<structLPC_Frame> (1, nt);
 }
 
 LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -94,11 +94,11 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	long itmin, itmax;
 	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
 	autoNUMvector<double> gain (itmin, itmax);
-	
-	for (long iframe=itmin; iframe <= itmax; iframe++) { gain[iframe] = my frame[iframe].gain; }
+
+	for (long iframe=itmin; iframe <= itmax; iframe++) { gain[iframe] = my d_frames[iframe].gain; }
 	if (gmax <= gmin) NUMdvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
 	if (gmax == gmin) { gmin = 0; gmax += 0.5; }
-	
+
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
 	for (long iframe = itmin; iframe <= itmax; iframe++)
@@ -128,14 +128,14 @@ void LPC_drawPoles (LPC me, Graphics g, double time, int garnish)
 Matrix LPC_to_Matrix (LPC me)
 {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 			1, my maxnCoefficients, my maxnCoefficients, 1, 1);
 
 		for (long i = 1; i <= my nx; i++)
 		{
-			LPC_Frame frame = & my frame[i];
+			LPC_Frame frame = & my d_frames[i];
 			for (long j = 1; j <= frame -> nCoefficients; j++)
-			{ 
+			{
 				thy z[j][i] = frame -> a[j];
 			}
 		}

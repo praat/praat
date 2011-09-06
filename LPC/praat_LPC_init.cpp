@@ -216,7 +216,7 @@ DO
 	LOOP {
 		iam (LPC);
 		if (iframe > my nx) Melder_throw ("Frame number is too large.\n\nPlease choose a number between 1 and ", my nx);
-		Melder_information2 (Melder_integer ((my frame[iframe]).nCoefficients), L" coefficients");
+		Melder_information2 (Melder_integer ((my d_frames[iframe]).nCoefficients), L" coefficients");
 	}
 END
 

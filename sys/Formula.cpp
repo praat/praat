@@ -2802,7 +2802,7 @@ static void do_stringMatchesCriterion (int criterion) {
 static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		wchar_t *errorMessage;
+		const wchar_t *errorMessage;
 		regexp *compiled_regexp = CompileRE ((const regularExp_CHAR *) t->content.string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);
@@ -2831,7 +2831,7 @@ static void do_replaceStr (void) {
 static void do_replace_regexStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-		wchar_t *errorMessage;
+		const wchar_t *errorMessage;
 		regexp *compiled_regexp = CompileRE ((const regularExp_CHAR *) t->content.string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			autostring result = Melder_wcsdup (L"");

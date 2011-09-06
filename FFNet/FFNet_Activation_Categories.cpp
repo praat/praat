@@ -62,7 +62,7 @@ Categories FFNet_Activation_to_Categories (FFNet me, Activation activation, int 
 	try {
 		Categories categories = (Categories) my outputCategories;
 		long (*labelingFunction) (I, const double act[]);
-	
+
 		if (my outputCategories == 0) Melder_throw ("No Categories (has the FFNet been trained yet?).");
 		if (my nOutputs != activation->nx) Melder_throw ("Number of columns and number of outputs must be equal.");
 		autoCategories thee = Categories_create ();
@@ -82,14 +82,14 @@ Activation FFNet_Categories_to_Activation (FFNet me, Categories thee)
 	try {
 		long hasCategories = 1;
 		autoCategories uniq = Categories_selectUniqueItems (thee, 1);
-	
+
 		if (my outputCategories == 0) Melder_throw ("The FFNet does not have categories.");
 		long nl =  OrderedOfString_isSubsetOf (uniq.peek(), my outputCategories, 0);
 		if (nl == 0)
 		{
 			Melder_throw ("The Categories do not match the categories of the FFNet.");
 		}
-	
+
 		autoActivation him = Activation_create (thy size, my nOutputs);
 		for (long i = 1; i <= thy size; i++)
 		{

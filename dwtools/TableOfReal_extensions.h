@@ -54,7 +54,7 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse);
 	thy data[reverse ? i : index[i]][j] = my data[reverse ? index[i] : i]
 */
 
-TableOfReal TableOfReal_createIrisDataset (void);
+TableOfReal TableOfReal_createIrisDataset ();
 int TableOfReal_areAllCellsDefined (I, long rb, long re, long cb, long ce);
 TableOfReal TableOfReal_createFromPolsData_50males (int include_levels);
 TableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels);
@@ -197,7 +197,7 @@ Thing_define (TablesOfReal, Ordered) {
 
 void TablesOfReal_init (I, ClassInfo klas);
 
-TablesOfReal TablesOfReal_create (void);
+TablesOfReal TablesOfReal_create ();
 
 TableOfReal TablesOfReal_sum (I);
 

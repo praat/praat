@@ -79,6 +79,6 @@ Thing_define (VowelEditor, Editor) {
 
 VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data);
 
-void VowelEditor_prefs (void);
+void VowelEditor_prefs ();
 
 #endif /* _VowelEditor_h_ */

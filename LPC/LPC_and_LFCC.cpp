@@ -30,10 +30,10 @@
 void LPC_Frame_into_CC_Frame (LPC_Frame me, CC_Frame thee)
 {
 	double *c = thy c, *a = my a;
-	
+
 	thy c0 = 0.5 * log (my gain);
 	if (my nCoefficients < 1) return;
-	
+
 	c[1] = -a[1];
 	for (long n = 2; n <= MIN(my nCoefficients, thy numberOfCoefficients); n++)
 	{
@@ -59,11 +59,11 @@ void CC_Frame_into_LPC_Frame (CC_Frame me, LPC_Frame thee)
 {
 	long n = MIN (my numberOfCoefficients, thy nCoefficients);
 	double *c = my c, *a = thy a;
-	
+
 	thy gain = exp (2 * my c0);
-	
+
 	if (n < 1) return;
-	
+
 	a[1] = -c[1];
 	for (long i = 2; i <= n; i++)
 	{
@@ -80,14 +80,14 @@ LFCC LPC_to_LFCC (LPC me, long numberOfCoefficients)
 {
 	try {
 		if (numberOfCoefficients < 1) numberOfCoefficients = my maxnCoefficients;
-	
-		autoLFCC thee = LFCC_create (my xmin, my xmax, my nx, my dx, my x1, 
+
+		autoLFCC thee = LFCC_create (my xmin, my xmax, my nx, my dx, my x1,
 			numberOfCoefficients, 0, 0.5 / my samplingPeriod);
-			
+
 		for (long i = 1; i <= my nx; i++)
 		{
 			CC_Frame_init (& thy frame[i], numberOfCoefficients);
-			LPC_Frame_into_CC_Frame (& my frame[i], & thy frame[i]);
+			LPC_Frame_into_CC_Frame (& my d_frames[i], & thy frame[i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no LFCC created."); }
@@ -99,11 +99,11 @@ LPC LFCC_to_LPC (LFCC me, long numberOfCoefficients)
 		if (numberOfCoefficients < 1) numberOfCoefficients = my maximumNumberOfCoefficients;
 		numberOfCoefficients = MIN (numberOfCoefficients, my maximumNumberOfCoefficients);
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, numberOfCoefficients, 0.5 / my fmax);
-			
+
 		for (long i = 1; i <= my nx; i++)
 		{
-			LPC_Frame_init (& thy frame[i], numberOfCoefficients);
-			CC_Frame_into_LPC_Frame (& my frame[i], & thy frame[i]);
+			LPC_Frame_init (& thy d_frames[i], numberOfCoefficients);
+			CC_Frame_into_LPC_Frame (& my frame[i], & thy d_frames[i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no LPC created."); }

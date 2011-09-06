@@ -87,7 +87,7 @@ int OrderedOfString_init (I, long initialCapacity)
 	return 1;
 }
 
-OrderedOfString OrderedOfString_create (void)
+OrderedOfString OrderedOfString_create ()
 {
 	try {
 		autoOrderedOfString me = Thing_new (OrderedOfString);
@@ -113,9 +113,9 @@ OrderedOfString OrderedOfString_joinItems (I, thou)
 	thouart (OrderedOfString);
 	try {
 
-		if (my size != thy size) Melder_throw ("sizes must be equal.");
 
-		autoOrderedOfString him = (OrderedOfString) Data_copy (me);
+		if (my size != thy size) Melder_throw ("sizes must be equal.");
+		autoOrderedOfString him = Data_copy (me);
 
 		for (long i = 1; i <= my size; i++)
 		{
@@ -138,24 +138,20 @@ OrderedOfString OrderedOfString_selectUniqueItems (I, int sort)
 				SimpleString ss = (SimpleString) my item[i];
 				if (! OrderedOfString_indexOfItem_c (him.peek(), ss -> string))
 				{
-					autoSimpleString item = (SimpleString) Data_copy (ss);
+					autoSimpleString item = Data_copy (ss);
 					Collection_addItem (him.peek(), item.transfer());
 				}
 			}
 			Collection_shrinkToFit (him.peek());
 			return him.transfer();
 		}
-		//autoSortedSet thee = Thing_new (SortedSet);
-		//SortedSet_init (thee.peek(), classSimpleString, 10);
-		//classSortedSet->compare = (int (*)(Any, Any)) SimpleString_compare; // David, dit stond hier echt; je veranderde een klassetabel!
-
-		autoSortedSetOfString thee = SortedSetOfString_create ();   // David, waarom niet deze simpele oplossing?
+		autoSortedSetOfString thee = SortedSetOfString_create ();
 		/* Collection_to_SortedSet (I, int (*compare)(I, thou)) */
 		for (long i = 1; i <= my size; i++)
 		{
 			if (! thy hasItem (my item[i]))
 			{
-				autoSimpleString item = Data_copy ((SimpleString) my item [i]);
+				autoSimpleString item = Data_copy ((SimpleString) my item[i]);
 				Collection_addItem (thee.peek(), item.transfer());
 			}
 		}
@@ -196,7 +192,7 @@ long OrderedOfString_getNumberOfDifferences (I, thou)
 	if (my size != thy size) return -1;
 	for (long i = 1; i <= my size; i++)
 	{
-		if (! Data_equal ((Data) my item[i], (Data) thy item[i])) numberOfDifferences++;
+		if (! Data_equal ((SimpleString) my item[i], (SimpleString) thy item[i])) numberOfDifferences++;
 	}
 	return numberOfDifferences;
 }
@@ -224,7 +220,7 @@ int OrderedOfString_difference (I, thou, long *ndif, double *fraction)
 	}
 	for (long i = 1; i <= my size; i++)
 	{
-		if (! Data_equal ((Data) my item[i], (Data) thy item[i])) (*ndif)++;
+		if (! Data_equal ((SimpleString) my item[i], (SimpleString) thy item[i])) (*ndif)++;
 	}
 	*fraction = *ndif;
 	*fraction /= my size;
@@ -262,48 +258,50 @@ void OrderedOfString_sequentialNumbers (I, long n)
 		Collection_addItem (me, str.transfer());
 	}
 }
-
 void OrderedOfString_changeStrings (OrderedOfString me, wchar_t *search, wchar_t *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
-	int use_regexp)
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp)
 {
 	regexp *compiled_search = NULL;
-	wchar_t *compileMsg;
-	wchar_t *r;
+	try {
+		const wchar_t *compileMsg;
+		wchar_t *r;
 
-	if (search == NULL)
-		Melder_throw ("Missing search string.");
-	if (replace == NULL)
-		Melder_throw ("Missing replace string.");
+		if (search == NULL) Melder_throw ("Missing search string.");
+		if (replace == NULL) Melder_throw ("Missing replace string.");
 
-	if (use_regexp)
-	{
-		compiled_search = CompileRE ((regularExp_CHAR *) search, &compileMsg, 0);
-		if (compiled_search == NULL) Melder_throw (compileMsg);
-	}
-	for (long i = 1; i <= my size; i++)
-	{
-		SimpleString ss = (SimpleString) my item[i];
-		long nmatches_sub;
-
-		if (use_regexp) {
-			r = str_replace_regexp (ss -> string, compiled_search,
-				replace, maximumNumberOfReplaces, &nmatches_sub);
-		}
-		else r = str_replace_literal (ss -> string, search, replace,
-			maximumNumberOfReplaces, &nmatches_sub);
-
-		Melder_free (ss -> string);
-		ss -> string = r;
-		if (nmatches_sub > 0)
+		if (use_regexp)
 		{
-			*nmatches += nmatches_sub;
-			(*nstringmatches)++;
+			compiled_search = CompileRE ((regularExp_CHAR *) search, &compileMsg, 0);
+			if (compiled_search == NULL) Melder_throw (compileMsg);
 		}
-	}
-	if (use_regexp) free (compiled_search);
-}
+		for (long i = 1; i <= my size; i++)
+		{
+			SimpleString ss = (SimpleString) my item[i];
+			long nmatches_sub;
 
+			if (use_regexp)
+			{
+				r = str_replace_regexp (ss -> string, compiled_search,
+					replace, maximumNumberOfReplaces, &nmatches_sub);
+			}
+			else r = str_replace_literal (ss -> string, search, replace,
+				maximumNumberOfReplaces, &nmatches_sub);
+
+			// Change without error:
+			Melder_free (ss -> string);
+			ss -> string = r;
+			if (nmatches_sub > 0)
+			{
+				*nmatches += nmatches_sub;
+				(*nstringmatches)++;
+			}
+		}
+		if (use_regexp) free (compiled_search);
+	} catch (MelderError) {
+		if (use_regexp) free (compiled_search);
+		Melder_throw ("Replace not completed.");
+	}
+}
 
 long OrderedOfString_isSubsetOf (I, thou, long *translation) // ?? test and give number
 {
@@ -315,7 +313,7 @@ long OrderedOfString_isSubsetOf (I, thou, long *translation) // ?? test and give
     {
     	if (translation) translation[i] = 0;
     	for (long j = 1; j <= thy size; j++)
-			if (Data_equal ((Data) my item[i], (Data) thy item[j]))
+			if (Data_equal ((SimpleString) my item[i], (SimpleString) thy item[j]))
 			{
 	    		if (translation) translation[i] = j;
 	    		nStrings++; break;

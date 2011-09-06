@@ -29,10 +29,10 @@ void LPC_Frame_into_Cepstrumc_Frame (LPC_Frame me, Cepstrumc_Frame thee)
 {
 	long n = my nCoefficients > thy nCoefficients ? thy nCoefficients : my nCoefficients;
 	double *c = thy c, *a = my a;
-	
+
 	c[0] = 0.5 * log (my gain);
 	if (n == 0) return;
-	
+
 	c[1] = -a[1];
 	for (long i = 2; i <= n; i++)
 	{
@@ -61,13 +61,13 @@ void Cepstrumc_Frame_into_LPC_Frame (Cepstrumc_Frame me, LPC_Frame thee)
 Cepstrumc LPC_to_Cepstrumc (LPC me)
 {
 	try {
-		autoCepstrumc thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1, 
+		autoCepstrumc thee = Cepstrumc_create (my xmin, my xmax, my nx, my dx, my x1,
 			my maxnCoefficients, 1.0 / my samplingPeriod);
-	
+
 		for (long i = 1; i <= my nx; i++)
 		{
-			Cepstrumc_Frame_init (& thy frame[i], my frame[i].nCoefficients);
-			LPC_Frame_into_Cepstrumc_Frame (& my frame[i], & thy frame[i]);
+			Cepstrumc_Frame_init (& thy frame[i], my d_frames[i].nCoefficients);
+			LPC_Frame_into_Cepstrumc_Frame (& my d_frames[i], & thy frame[i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Cepstrum created."); }
@@ -76,12 +76,12 @@ Cepstrumc LPC_to_Cepstrumc (LPC me)
 LPC Cepstrumc_to_LPC (Cepstrumc me)
 {
 	try {
-		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, 
+		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1,
 			my maxnCoefficients, 1.0 / my samplingFrequency);
 		for (long i = 1; i <= my nx; i++)
 		{
-			LPC_Frame_init (& thy frame[i], my frame[i].nCoefficients); 
-			Cepstrumc_Frame_into_LPC_Frame (& my frame[i], & thy frame[i]);
+			LPC_Frame_init (& thy d_frames[i], my frame[i].nCoefficients);
+			Cepstrumc_Frame_into_LPC_Frame (& my frame[i], & thy d_frames[i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ":no LPC created."); }

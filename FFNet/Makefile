@@ -3,9 +3,7 @@
 
 include ../makefile.defs
 
-CFLAGS = $(DEFS) -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
-
-CPPFLAGS = $(CFLAGS)
+CPPFLAGS = -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 OBJECTS = FFNet.o \
 	FFNet_Eigen.o FFNet_Matrix.o FFNet_Pattern.o \

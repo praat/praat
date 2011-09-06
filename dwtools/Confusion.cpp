@@ -212,31 +212,26 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction,
 
 /*************** Confusion_Matrix_draw ****************************************/
 
-Thing_define (Pointer, Polygon) {   // David, dit kan gewoon een Polygon zijn i.p.v. een nieuwe klasse,
-	// met functies Polygon_createPointer() en Polygon_drawInside() (zoals Pitch_drawInside enz.)
-};
-
-Thing_implement (Pointer, Polygon, 1);
-
 #define NPOINTS 6
-static Pointer Pointer_create (void)
+
+static Polygon Polygon_createPointer ()
 {
 	try {
 		double x[NPOINTS+1] = { 0, 0, 0.9, 1, 0.9, 0, 0 };
 		double y[NPOINTS+1] = { 0, 0, 0, 0.5,   1, 1, 0 };
-		autoPointer me = (Pointer) Polygon_create (NPOINTS);
+		autoPolygon me = Polygon_create (NPOINTS);
 		for (long i = 1; i <= NPOINTS; i++)
 		{
 			my x[i] = x[i]; my y[i] = y[i];
 		}
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Pointer not created."); }
+	} catch (MelderError) { Melder_throw ("Polygon not created."); }
 }
 
-static void Pointer_draw (I, Graphics graphics)
+static void Polygon_drawInside (I, Graphics g)
 {
 	iam (Polygon);
-	Graphics_polyline (graphics, my numberOfPoints, & my x[1], & my y[1]);
+	Graphics_polyline (g, my numberOfPoints, & my x[1], & my y[1]);
 }
 
 void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, double lowerPercentage,
@@ -300,7 +295,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 			{
 				ymin = y2; ymax = y1;
 			}
-			autoPointer p = Pointer_create();
+			autoPolygon p = Polygon_createPointer();
 			double xs = sqrt (dx * dx + dy * dy) - 2.2 * r;
 			if (xs < 0) xs = 0;
 			double ys = perc * rmax / 100;
@@ -308,7 +303,7 @@ void Confusion_Matrix_draw (Confusion me, Matrix thee, Graphics g, long index, d
 			Polygon_translate (p.peek(), x1, y1 - ys / 2);
 			Polygon_rotate (p.peek(), alpha, x1, y1);
 			Polygon_translate (p.peek(), 1.1 * r * cos (alpha), 1.1 * r * sin (alpha));
-			Pointer_draw (p.peek(), g);
+			Polygon_drawInside (p.peek(), g);
 		}
 	}
 

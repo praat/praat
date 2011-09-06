@@ -1,19 +1,19 @@
 #ifndef _Configuration_h_
 #define _Configuration_h_
 /* Configuration.h
- * 
+ *
  * Copyright (C) 1992-2011 David Weenink
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -27,7 +27,7 @@
 oo_CLASS_CREATE (Configuration, TableOfReal);
 
 Configuration Configuration_create (long numberOfPoints, long numberOfDimensions);
- 
+
 void Configuration_setMetric (Configuration me, long metric);
 
 void Configuration_setDefaultWeights (Configuration me);
@@ -44,7 +44,7 @@ void Configuration_randomize (Configuration me);
 void Configuration_normalize (Configuration me, double variance, int choice);
 /*
 	1. centre columns
-	2. 
+	2.
 	choice == !0 : each column
 	       == 0 : normalize matrix
 */
@@ -55,7 +55,7 @@ void Configuration_rotate (Configuration me, long dimension1, long dimension2, d
 		dimension1 != dimension2
 		1 <= dimension1, dimension2 <= my numberOfColumns
 */
-	
+
 void Configuration_invertDimension (Configuration me, int dimension);
 /*
 	Function:
@@ -82,17 +82,17 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
 
 void Configuration_rotateToPrincipalDirections (Configuration me);
 
-void Configuration_draw (Configuration me, Graphics g, int xCoordinate, 
-	int yCoordinate, double xmin, double xmax, double ymin, double ymax, 
+void Configuration_draw (Configuration me, Graphics g, int xCoordinate,
+	int yCoordinate, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, int useRowLabels, const wchar_t *label, int garnish);
-	
-void Configuration_drawConcentrationEllipses (Configuration me, Graphics g, 
+
+void Configuration_drawConcentrationEllipses (Configuration me, Graphics g,
 	double scale, int confidence, const wchar_t *label, long d1, long d2, double xmin, double xmax,
 	double ymin, double ymax, int fontSize, int garnish);
 
 Configuration TableOfReal_to_Configuration (I);
 
-Configuration TableOfReal_to_Configuration_pca (TableOfReal me, 
+Configuration TableOfReal_to_Configuration_pca (TableOfReal me,
 	long numberOfDimensions);
 /*
 	Precondition:
@@ -110,7 +110,7 @@ Configuration Configuration_createLetterRExample (int choice);
   	choice = 2 : result of monotone fit on distorted (d^2 + 5 +32.5*z)
 */
 
-Configuration Configuration_createCarrollWishExample (void);
+Configuration Configuration_createCarrollWishExample ();
 
 
 /************************** class Configurations **************************************/
@@ -118,6 +118,6 @@ Configuration Configuration_createCarrollWishExample (void);
 Thing_define (Configurations, Ordered) {
 };
 
-Configurations Configurations_create (void);
+Configurations Configurations_create ();
 
 #endif /* _Configuration_h_ */

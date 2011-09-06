@@ -196,7 +196,7 @@ void Covariances_equality (Collection me, int method, double *prob, double *chis
 	method = 2 : Wald (Schott, 2001)
 */
 
-SSCPs SSCPs_create (void);
+SSCPs SSCPs_create ();
 
 SSCP SSCPs_to_SSCP_sum (SSCPs me);
 /* Sum the sscp's and weigh each means with it's numberOfObservations. */

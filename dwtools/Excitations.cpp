@@ -92,7 +92,7 @@ Excitation Excitations_getItem (Excitations me, long item)
 {
 	try {
 		if (item < 1 || item > my size) Melder_throw ("Not a valid element number.");
-		autoExcitation thee = Data_copy ((Excitation) my item [item]);
+		autoExcitation thee = Data_copy ((Excitation) my item[item]);
 		Thing_setName (thee.peek(), Thing_getName ((Thing) my item[item]));
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Excitation created."); }

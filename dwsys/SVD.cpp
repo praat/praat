@@ -281,7 +281,7 @@ void SVD_sort (SVD me)
 {
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
-		autoSVD thee = (SVD) Data_copy (me);
+		autoSVD thee = Data_copy (me);
 		autoNUMvector<long> index (1, mn_min);
 
 		NUMindexx (my d, mn_min, index.peek());

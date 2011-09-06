@@ -200,7 +200,7 @@ Matrix Spectrum_unwrap (Spectrum me)
 		if (nfft / 2 != my nx - 1) Melder_throw ("Dimension of Spectrum is not (power of 2 - 1).");
 		
 		autoSound x = Spectrum_to_Sound (me);
-		autoSound nx = (Sound) Data_copy (x.peek());
+		autoSound nx = Data_copy (x.peek());
 	
 		for (long i = 1; i <= x -> nx; i++)
 		{
@@ -300,7 +300,7 @@ Spectrum Spectra_multiply (Spectrum me, Spectrum thee)
 	try {
 		if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax ||
 			my dx != thy dx) Melder_throw ("Dimensions of both spectra do not conform.");
-		autoSpectrum him = (Spectrum) Data_copy (me);
+		autoSpectrum him = Data_copy (me);
 	
 		for (long i = 1; i <= his nx; i++)
 		{

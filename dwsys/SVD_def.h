@@ -17,18 +17,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-
-#define MIN(m,n) ((m) < (n) ? (m) : (n))
-
 #define ooSTRUCT SVD
 oo_DEFINE_CLASS (SVD, Data)
 
 	oo_DOUBLE (tolerance)
 	oo_LONG (numberOfRows)
 	oo_LONG (numberOfColumns)
-	oo_DOUBLE_MATRIX (u, numberOfRows, MIN (numberOfColumns, numberOfRows))
-	oo_DOUBLE_MATRIX (v, numberOfColumns, MIN (numberOfColumns, numberOfRows))
-	oo_DOUBLE_VECTOR (d, MIN (numberOfColumns, numberOfRows))
+	oo_DOUBLE_MATRIX (u, numberOfRows, (numberOfColumns < numberOfRows ? numberOfColumns : numberOfRows))
+	oo_DOUBLE_MATRIX (v, numberOfColumns, (numberOfColumns < numberOfRows ? numberOfColumns : numberOfRows))
+	oo_DOUBLE_VECTOR (d, (numberOfColumns < numberOfRows ? numberOfColumns : numberOfRows))
 
 	#if oo_DECLARING
 		// overridden methods:

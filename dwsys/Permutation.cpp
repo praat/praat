@@ -60,7 +60,7 @@ static long Permutation_checkRange (Permutation me, long *from, long *to)
 
 void Permutation_checkInvariant (Permutation me)
 {
-	autoPermutation thee = (Permutation) Data_copy (me);
+	autoPermutation thee = Data_copy (me);
 	NUMsort_l (thy numberOfElements, thy p);
 	for (long i = 1; i <= my numberOfElements; i++)
 	{
@@ -77,7 +77,7 @@ void structPermutation :: v_info ()
 void structPermutation :: v_readText (MelderReadText text)
 {
 	numberOfElements = texgeti4 (text);
-	if (numberOfElements < 1) Melder_throw (L"(Permutation::readText:) Number of elements must be >= 1.");   // David, geen leesbare melding
+	if (numberOfElements < 1) Melder_throw (L"Found a negative mumber of elements during reading.");
 	p = NUMlvector_readText_i4 (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
 }
@@ -170,7 +170,7 @@ void Permutation_permuteRandomly_inline (Permutation me, long from, long to)
 Permutation Permutation_permuteRandomly (Permutation me, long from, long to)
 {
 	try {
-		autoPermutation thee = (Permutation) Data_copy (me);
+		autoPermutation thee = Data_copy (me);
 		Permutation_permuteRandomly_inline (thee.peek(), from, to);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not permuted."); }
@@ -182,7 +182,7 @@ Permutation Permutation_rotate (Permutation me, long from, long to, long step)
 		long n = Permutation_checkRange (me, &from, &to);
 		step = (step - 1) % n + 1;
 
-		autoPermutation thee = (Permutation) Data_copy (me);
+		autoPermutation thee = Data_copy (me);
 		for (long i = from; i <= to; i++)
 		{
 			long ifrom = i + step;
@@ -220,7 +220,7 @@ Permutation Permutation_permuteBlocksRandomly (Permutation me, long from, long t
 			autoPermutation thee = Permutation_permuteRandomly (me, from, to);
 			return thee.transfer();
 		}
-		autoPermutation thee = (Permutation) Data_copy (me);
+		autoPermutation thee = Data_copy (me);
 		if (blocksize >= n) return thee.transfer();
 
 		long nblocks  = n / blocksize, nrest = n % blocksize;
@@ -265,7 +265,7 @@ Permutation Permutation_interleave (Permutation me, long from, long to, long blo
 			"(The last block is only of size ", nrest, L" instead of ", blocksize, ").");
 		if (offset >= blocksize) Melder_throw (L"Offset must be smaller than blocksize.");
 
-		autoPermutation thee = (Permutation) Data_copy (me);
+		autoPermutation thee = Data_copy (me);
 
 		if (nblocks == 1) return thee.transfer();
 
@@ -313,7 +313,7 @@ long Permutation_getIndexAtValue (Permutation me, long value)
 Permutation Permutation_invert (Permutation me)
 {
 	try {
-		autoPermutation thee = (Permutation) Data_copy (me);
+		autoPermutation thee = Data_copy (me);
 		for (long i = 1; i <= my numberOfElements; i++)
 		{
 			thy p[my p[i]] = i;
@@ -326,13 +326,13 @@ Permutation Permutation_reverse (Permutation me, long from, long to)
 {
 	try {
 		long n = Permutation_checkRange (me, &from, &to);
-		autoPermutation thee = (Permutation) Data_copy (me);
+		autoPermutation thee = Data_copy (me);
 		for (long i = 1; i <= n; i++)
 		{
 			thy p[from + i - 1] = my p[to - i + 1];
 		}
 		return thee.transfer();
-		
+
 	} catch (MelderError) { Melder_throw (me, ": not reversed."); }
 }
 
@@ -407,7 +407,7 @@ Permutation Permutations_multiply2 (Permutation me, Permutation thee)
 {
 	try {
 		if (my numberOfElements != thy numberOfElements) Melder_throw ("Number of elements must be equal.");
-		autoPermutation him = (Permutation) Data_copy (me);
+		autoPermutation him = Data_copy (me);
 		for (long i = 1; i <= my numberOfElements; i++)
 		{
 			his p[i] = my p[thy p[i]];

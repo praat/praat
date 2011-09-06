@@ -144,32 +144,6 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 #undef INCLUDE_DTW_SLOPES
 
-#if 0
-static void pr_LongSounds_appendToExistingSoundFile (MelderFile file)
-{
-	int IOBJECT, status = 0;
-	autoOrdered me = Ordered_create ();
-	WHERE (SELECTED)
-		if (! Collection_addItem (me, OBJECT)) goto end;
-
-	status = LongSounds_appendToExistingSoundFile (me, file);
-end:
-	my size = 0; forget (me);
-	return status;
-}
-
-static int pr_LongSounds_writeToStereoAudioFile (MelderFile file, int audioFileType)
-{
-	int IOBJECT;
-	LongSound me = NULL, thee = NULL;
-	WHERE (SELECTED)
-	{
-		if (me) thee = OBJECT;
-		else me = OBJECT;
-	}
-	return LongSounds_writeToStereoAudioFile16 (me, thee, audioFileType, file);
-}
-#endif
 /********************** Activation *******************************************/
 
 FORM (Activation_formula, L"Activation: Formula", 0)
@@ -521,9 +495,9 @@ DO
 	int x_or_y = GET_INTEGER (L"X or Y");
 	int cv_from = GET_INTEGER (L"left Canonical variate range");
 	int cv_to = GET_INTEGER (L"right Canonical variate range");
-	Melder_information7 (Melder_double (CCA_and_Correlation_getVarianceFraction (cca, c, x_or_y, cv_from, cv_to)),
+	Melder_information8 (Melder_double (CCA_and_Correlation_getVarianceFraction (cca, c, x_or_y, cv_from, cv_to)),
 		L" (fraction variance from ", (x_or_y == 1 ? L"y" : L"x"), L", extracted by canonical variates ",
-		Melder_integer (cv_from), L" to ", Melder_integer (cv_to));
+		Melder_integer (cv_from), L" to ", Melder_integer (cv_to), L")");
 END
 
 FORM (CCA_and_Correlation_getRedundancy_sl, L"CCA & Correlation: Get Stewart-Love redundancy", L"CCA & Correlation: Get redundancy (sl)...")
@@ -542,9 +516,9 @@ DO
 	int x_or_y = GET_INTEGER (L"X or Y");
 	int cv_from = GET_INTEGER (L"left Canonical variate range");
 	int cv_to = GET_INTEGER (L"right Canonical variate range");
-	Melder_information7 (Melder_double (CCA_and_Correlation_getRedundancy_sl (cca, c, x_or_y, cv_from, cv_to)),
+	Melder_information8 (Melder_double (CCA_and_Correlation_getRedundancy_sl (cca, c, x_or_y, cv_from, cv_to)),
 		L" (redundancy from ", (x_or_y == 1 ? L"y" : L"x"), L" extracted by canonical variates ",
-		Melder_integer (cv_from), L" to ", Melder_integer (cv_to));
+		Melder_integer (cv_from), L" to ", Melder_integer (cv_to), L")");
 END
 
 DIRECT (CCA_and_TableOfReal_factorLoadings)
@@ -794,7 +768,7 @@ END
 
 FORM (Confusion_Matrix_draw, L"Confusion & Matrix: Draw confusions with arrows", 0)
     INTEGER (L"Category position", L"0 (=all)")
-    REAL (L"lower level(%)", L"0")
+    REAL (L"Lower level (%)", L"0")
     REAL (L"left Horizontal range", L"0.0")
     REAL (L"right Horizontal range", L"0.0")
     REAL (L"left Vertical range", L"0.0")
@@ -806,7 +780,7 @@ DO
 	REQUIRE (categoryPosition >= 0, L"Category position must be >= 0")
 	Confusion conf = FIRST (Confusion);
 	Matrix mat = FIRST (Matrix);
-	Confusion_Matrix_draw(conf, mat, GRAPHICS, categoryPosition, GET_REAL (L"lower level(%)"),
+	Confusion_Matrix_draw(conf, mat, GRAPHICS, categoryPosition, GET_REAL (L"Lower level"),
 		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
 		GET_INTEGER (L"Garnish"));
@@ -2156,7 +2130,7 @@ DIRECT (Excitation_to_Excitations)
 	autoExcitations e = Excitations_create (100);
 	LOOP {
 		iam (Excitation);
-		autoExcitation thee = (Excitation) Data_copy (me);
+		autoExcitation thee = Data_copy (me);
 		Collection_addItem (e.peek(), thee.transfer());
 	}
 	praat_new (e.transfer(), 0);
@@ -2182,7 +2156,7 @@ DIRECT (Excitations_addItem)
 	WHERE_DOWN (SELECTED && CLASS == classExcitation)
 	{
 		iam (Excitation);
-		autoExcitation thee = (Excitation) Data_copy (me);
+		autoExcitation thee = Data_copy (me);
 		Collection_addItem (e, thee.transfer());
 	}
 END
@@ -5054,6 +5028,10 @@ END
 
 /******************* TableOfReal ****************************/
 
+DIRECT (New_CreateIrisDataset)
+	praat_new (TableOfReal_createIrisDataset (), 0);
+END
+
 FORM (TableOfReal_reportMultivariateNormality, L"TableOfReal: Report multivariate normality (BHEP)", L"TableOfReal: Report multivariate normality (BHEP)...")
 	REAL (L"Smoothing parameter", L"0.0")
 	OK
@@ -5799,22 +5777,8 @@ void praat_TableOfReal_init2  (ClassInfo klas)
 	praat_addAction1 (klas, 0, L"To TableOfReal", L"To Matrix", 1, DO_TableOfReal_to_TableOfReal);
 }
 
-/* Query buttons for frame-based time-based subclasses of Sampled.
-void praat_TimeFrameSampled_query_init (void *klas)
-{
-	praat_TimeFunction_query_init (klas);
-	praat_addAction1 (klas, 1, L"Get number of frames", 0, 1,
-		DO_TimeFrameSampled_getNumberOfFrames);
-	praat_addAction1 (klas, 1, L"Get frame length", 0, 1,
-		DO_TimeFrameSampled_getFrameLength);
-	praat_addAction1 (klas, 1, L"Get time from frame...", 0, 1,
-		DO_TimeFrameSampled_getTimeFromFrame);
-	praat_addAction1 (klas, 1, L"Get frame from time...", 0, 1,
-		DO_TimeFrameSampled_getFrameFromTime);
-}
-*/
-void praat_uvafon_David_init (void);
-void praat_uvafon_David_init (void)
+void praat_uvafon_David_init ();
+void praat_uvafon_David_init ()
 {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
@@ -5834,7 +5798,8 @@ void praat_uvafon_David_init (void)
 
     praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
 
- praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
+    praat_addMenuCommand (L"Objects", L"New", L"Create iris data set", L"Create TableOfReal...", 1, DO_New_CreateIrisDataset);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
     praat_addMenuCommand (L"Objects", L"New", L"Polynomial", 0, 0, 0);
     	praat_addMenuCommand (L"Objects", L"New", L"Create Polynomial...", 0, 1, DO_Polynomial_create);
     	praat_addMenuCommand (L"Objects", L"New", L"Create LegendreSeries...", 0, 1, DO_LegendreSeries_create);
@@ -6445,4 +6410,4 @@ void praat_uvafon_David_init (void)
 	INCLUDE_LIBRARY (praat_BSS_init)
 }
 
-/* End of file praat_David.c */
+/* End of file praat_David.cpp */

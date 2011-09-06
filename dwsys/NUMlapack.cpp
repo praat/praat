@@ -1,6 +1,6 @@
-/* NUMlapack.c
+/* NUMlapack.cpp
  *
- * Copyright (C) 1994-2003 David Weenink
+ * Copyright (C) 1994-2011 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ void NUMpermuteColumns (int forward, long m, long n, double **x, long *perm)
 	}
 	else
 	{
-		for (long i=1; i <= n; i++)
+		for (long i = 1; i <= n; i++)
 		{
             if (perm[i] > 0) continue;
 			long j = perm[i] = - perm[i];
@@ -238,17 +238,17 @@ void NUMpermuteColumns (int forward, long m, long n, double **x, long *perm)
 void NUMfindHouseholder (long n, double *alpha, double x[], long incx,
 	double *tau)
 {
-	double beta, safmin, xnorm;
+	double xnorm;
 
 	if (n < 2 || (xnorm = NUMnorm2 (n - 1, x, incx)) == 0)
 	{
 		*tau = 0; return;
 	}
 
-	beta = NUMpythagoras (*alpha, xnorm);
+	double beta = NUMpythagoras (*alpha, xnorm);
 	if (*alpha > 0) beta = - beta;
 	if (! NUMfpp) NUMmachar ();
-	safmin = NUMfpp -> sfmin / NUMfpp -> eps;
+	double safmin = NUMfpp -> sfmin / NUMfpp -> eps;
 
 	if (fabs (beta) >= safmin)
 	{
@@ -258,12 +258,10 @@ void NUMfindHouseholder (long n, double *alpha, double x[], long incx,
 	}
 	else
 	{
-		/*
-			xnorm, beta may be inaccurate; scale x and recompute them
-		*/
+		// xnorm, beta may be inaccurate; scale x and recompute them
 
 		double rsafmn = 1 / safmin;
-		int i, knt = 0;
+		long knt = 0;
 		do
 		{
 			knt++;
@@ -286,19 +284,18 @@ void NUMfindHouseholder (long n, double *alpha, double x[], long incx,
 		*/
 
 		*alpha = beta;
-		for (i = 1; i <= knt; i++) *alpha *= safmin;
+		for (long i = 1; i <= knt; i++) *alpha *= safmin;
 	}
 }
 
 void NUMfindGivens (double f, double g, double *cs, double *sn, double *r)
 {
-	int count, i;
-	double f1, g1, scale, safmn2, safmx2;
+	long count;
 
 	if (! NUMfpp) NUMmachar ();
-	safmn2 = pow (NUMfpp -> base, (long)(log (NUMfpp -> sfmin / NUMfpp -> eps) /
+	double safmn2 = pow (NUMfpp -> base, (long)(log (NUMfpp -> sfmin / NUMfpp -> eps) /
 		log (NUMfpp -> base) / 2.));
-	safmx2 = 1 / safmn2;
+	double safmx2 = 1 / safmn2;
 
 	if (g == 0)
 	{
@@ -315,8 +312,8 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r)
 		return;
 	}
 
-	f1 = f; g1 = g;
-	scale = MAX (fabs (f1), fabs (g1));
+	double f1 = f, g1 = g;
+	double scale = MAX (fabs (f1), fabs (g1));
 	if (scale >= safmx2)
 	{
 		count = 0;
@@ -331,7 +328,7 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r)
 		*r = sqrt (f1 * f1 + g1 * g1);
 		*cs = f1 / *r;
 		*sn = g1 / *r;
-		for (i = 1; i <= count; i++) *r *= safmx2;
+		for (long i = 1; i <= count; i++) *r *= safmx2;
 	}
 	else if (scale <= safmn2)
 	{
@@ -347,7 +344,7 @@ void NUMfindGivens (double f, double g, double *cs, double *sn, double *r)
 		*r = sqrt (f1 * f1 + g1 * g1);
 		*cs = f1 / *r;
 		*sn = g1 / *r;
-		for (i = 1; i <= count; i++) *r *= safmn2;
+		for (long i = 1; i <= count; i++) *r *= safmn2;
 	}
 	else
 	{
@@ -420,7 +417,7 @@ void NUMapplyFactoredHouseholders (double **c, long rb, long re, long cb,
 {
 	int left = side == NUM_LEFT, transpose = trans != NUM_NOTRANSPOSE;
 	long mv = rev - rbv + 1, nv = cev - cbv + 1;
-	long i, i_begin, i_end, i_inc, numberOfHouseholders, order_v;
+	long i_begin, i_end, i_inc, numberOfHouseholders, order_v;
 	long m = re - rb + 1, n = ce - cb + 1;
 	long rbc = rb, rec = re, cbc = cb, cec = ce;
 
@@ -452,7 +449,7 @@ void NUMapplyFactoredHouseholders (double **c, long rb, long re, long cb,
 		i_inc = 1;
 	}
 
-	i = i_begin;
+	long i = i_begin;
 	while (i != i_end)
 	{
 		double save, *v1; long vr, vc;
@@ -484,7 +481,7 @@ void NUMapplyFactoredHouseholders (double **c, long rb, long re, long cb,
 void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce,
 	long lda, double tau[])
 {
-	long i, m = re - rb + 1, n = ce - cb + 1;
+	long m = re - rb + 1, n = ce - cb + 1;
 	long numberOfHouseholders = MIN (m, n);
 
 	Melder_assert (numberOfHouseholders > 0);
@@ -494,35 +491,28 @@ void NUMhouseholderQR (double **a, long rb, long re, long cb, long ce,
 		tau[m] = 0; numberOfHouseholders--;
 	}
 
-	for (i = 1; i <= numberOfHouseholders; i++)
+	for (long i = 1; i <= numberOfHouseholders; i++)
 	{
 		long ri = rb + i - 1, ci = cb + i - 1;
 
-		/*
-			Generate elementary reflector H(i) to annihilate "A(i+1:m,i)"
-		*/
+		// Generate elementary reflector H(i) to annihilate "A(i+1:m,i)"
 
-		NUMfindHouseholder (m - i + 1, &a[ri][ci], TOVEC (a[ri + 1][ci]),
-			lda, &tau[i]);
+		NUMfindHouseholder (m - i + 1, &a[ri][ci], TOVEC (a[ri + 1][ci]), lda, &tau[i]);
 
 		if (i < n)
 		{
-			/*
-				Apply H(i) to "A(i:m, i+1:n)" from the left
-			*/
+			// Apply H(i) to "A(i:m, i+1:n)" from the left
 
 			double save = a[ri][ci];
 			a[ri][ci] = 1;
-			NUMapplyFactoredHouseholder (a, ri, re, cb + i, ce,
-				TOVEC(a[ri][ci]), lda, tau[i], NUM_LEFT);
+			NUMapplyFactoredHouseholder (a, ri, re, cb + i, ce, TOVEC(a[ri][ci]), lda, tau[i], NUM_LEFT);
 			a[ri][ci] = save;
 		}
 	}
 }
 
 
-void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
-	long pivot[], double tau[])
+void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda, long pivot[], double tau[])
 {
 	long numberOfHouseholders = MIN (m, n);
 
@@ -561,9 +551,7 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 	}
 	itmp--;
 
-	/*
-		Compute the QR factorization and update remaining columns
-	*/
+	// Compute the QR factorization and update remaining columns
 
 	if (itmp > 0)
 	{
@@ -573,28 +561,21 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 			1, ma, lda, tau, NUM_LEFT, NUM_TRANSPOSE);
 	}
 
-	if (itmp >= numberOfHouseholders) return;
+	if (itmp >= numberOfHouseholders) return; // goto end;
 
-	/*
-		Initialize partial column norms. the first n elements of
-		colnorm store the exact column norms.
-	*/
+	// Initialize partial column norms. the first n elements of
+	// colnorm store the exact column norms.
 
 	for (long i = itmp + 1; i <= n; i++)
 	{
-		colnorm[n+i] = colnorm[i] = NUMnorm2 (m - itmp, TOVEC(a[itmp+1][i]),
-			lda);
+		colnorm[n+i] = colnorm[i] = NUMnorm2 (m - itmp, TOVEC(a[itmp+1][i]), lda);
 	}
 
-	/*
-		Compute factorization
-	*/
+	// Compute factorization
 
 	for (long i = itmp + 1; i <= numberOfHouseholders; i++)
 	{
-		/*
-			Determine ith pivot column and swap if necessary
-		*/
+		// Determine ith pivot column and swap if necessary
 
 		double max = colnorm[i]; long pvt = i;
 		for (long j = i + 1; j <= n; j++)
@@ -622,29 +603,22 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 			colnorm[n+pvt] = colnorm[n+i];
 		}
 
-		/*
-			Generate elementary reflector H(i)
-		*/
+		// Generate elementary reflector H(i)
 
-		NUMfindHouseholder (m - i + 1, &a[i][i], TOVEC(a[i + 1][i]), lda,
-			&tau[i]);
+		NUMfindHouseholder (m - i + 1, &a[i][i], TOVEC(a[i + 1][i]), lda, &tau[i]);
 
 		if (i < n)
 		{
-			/*
-				Apply H(i) to A(i:m,i+1:n) from the left
-			*/
+			// Apply H(i) to A(i:m,i+1:n) from the left
 
 			double save = a[i][i];
 			a[i][i] = 1;
-			NUMapplyFactoredHouseholder (a, i, m, i + 1, n, TOVEC(a[i][i]),
-				lda, tau[i], NUM_LEFT);
+			NUMapplyFactoredHouseholder (a, i, m, i + 1, n, TOVEC(a[i][i]), lda, tau[i], NUM_LEFT);
 			a[i][i] = save;
 		}
 
-		/*
-			Update partial column norms.
-		*/
+		// Update partial column norms.
+
 		for (long j = i + 1; j <= n; j++)
 		{
 			if (colnorm[j] == 0) continue;
@@ -656,8 +630,7 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 			{
 				if (m - i > 0)
 				{
-					colnorm[n+j] = colnorm[j] = NUMnorm2 (m - i,
-						TOVEC(a[i+1][j]), lda);
+					colnorm[n+j] = colnorm[j] = NUMnorm2 (m - i, TOVEC(a[i+1][j]), lda);
 				}
 				else
 				{
@@ -670,8 +643,7 @@ void NUMhouseholderQRwithColumnPivoting (long m, long n, double **a, long lda,
 }
 
 
-void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce,
-	double tau[])
+void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce, double tau[])
 {
 	long m = re - rb + 1, n = ce - cb + 1;
 	long numberOfHouseholders = MIN (m, n);
@@ -685,9 +657,7 @@ void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce,
 
 	for (long i = 1; i <= numberOfHouseholders; i++)
 	{
-		/*
-			Generate elementary reflector H(i) to annihilate "A(m-i+1,1:n-i)"
-		*/
+		// Generate elementary reflector H(i) to annihilate "A(m-i+1,1:n-i)"
 
 		long ri = re - i + 1, ci = ce - i + 1, order = n - i + 1;
 
@@ -695,9 +665,7 @@ void NUMhouseholderRQ (double **a, long rb, long re, long cb, long ce,
 
 		if (i < m)
 		{
-			/*
-				Apply H(i) to "A(1:m-i,1:n-i+1)" from the right
-			*/
+			// Apply H(i) to "A(1:m-i,1:n-i+1)" from the right
 
 			double save = a[ri][ci];
 			a[ri][ci] = 1;
@@ -720,9 +688,7 @@ void NUMparallelVectors (long n, double x[], long incx, double y[], long incy,
 		return;
 	}
 
-	/*
-		Compute the QR factorization of the n-by-2 matrix ( x y )
-	*/
+	// Compute the QR factorization of the n-by-2 matrix ( x y )
 
 	NUMfindHouseholder (n, &x[1], TOVEC(x[1 + incx]), incx, &tau);
 
@@ -747,7 +713,7 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 	double ht = h, ha = fabs (h);
 	double gt = g, ga = fabs (g);
 
-	long pmax = 1;	/* pmax: maximum absolute entry of matrix (f=1, g=2, h=3). */
+	long pmax = 1;	// pmax: maximum absolute entry of matrix (f=1, g=2, h=3).
 
 	bool swap = ha > fa;
 	if (swap)
@@ -763,7 +729,7 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 
 	if (ga == 0)
 	{
-		/* diagonal matrix */
+		// diagonal matrix
 
 		*svmin = ha;
 		*svmax = fa;
@@ -791,9 +757,7 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 		}
 		if (gasmal)
 		{
-			/*
-				normal case
-			*/
+			// normal case
 
 			double m, mm, l, t, tt, r, s, d = fa - ha;
 
@@ -809,8 +773,7 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 			*svmin = ha / a;
 			*svmax = fa * a;
 			t = mm == 0 ? (l == 0 ? SIGN (2, ft) * SIGN (1, gt) :
-					gt / SIGN (d, ft) + m / t) :
-					(m / (s + t) + m / (r + l)) * (1 + a);
+				gt / SIGN (d, ft) + m / t) : (m / (s + t) + m / (r + l)) * (1 + a);
 			l = sqrt (t * t + 4);
 			crt = 2 / l;
 			srt = t / l;
@@ -833,9 +796,7 @@ void NUMsvdcmp22 (double f, double g, double h, double *svmin, double *svmax,
 		*snr = srt;
 	}
 
-	/*
-		Correct the signs of svmin and svmax
-	*/
+	// Correct the signs of svmin and svmax
 
 	if (pmax == 1)
 		tsign = SIGN (1, *csr) * SIGN (1, *csl) * SIGN (1, f);
@@ -860,11 +821,9 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
 
 	if (upper)
 	{
-		/*
-			Input matrices A and B are upper triangular matrices
-			Form matrix C = A * adj(B) =  ( a b )
-										  ( 0 d )
-		*/
+		// Input matrices A and B are upper triangular matrices
+		// Form matrix C = A * adj(B) =  ( a b )
+		//							     ( 0 d )
 
 		if (productsvd)
 		{
@@ -898,11 +857,8 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
 
 		if (fabs (csl) >= fabs (snl) || fabs (csr) >= fabs(snr))
 		{
-
-			/*
-				Compute the (1,1) and (1,2) elements of U' * A and V' * B,
-				and (1,2) element of |U|' * |A| and |V|' * |B|.
-			*/
+			// Compute the (1,1) and (1,2) elements of U' * A and V' * B,
+			// and (1,2) element of |U|' * |A| and |V|' * |B|.
 
 			ua11r = csl * a1;
 			ua12 = csl * a2 + snl * a3;
@@ -912,13 +868,13 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
             avb12 = fabs (csr) * fabs (b2) + fabs (snr) * fabs (b3);
 			g = fabs (ua11r) + fabs (ua12);
 
-			/* Zero (1,2) elements of U'*A and V' * B */
+			// Zero (1,2) elements of U'*A and V' * B
 
 			if (g != 0 && aua12 / g <= avb12 / (fabs (vb11r) + fabs (vb12)))
 				NUMfindGivens (-ua11r, ua12, csq, snq, &r);
             else NUMfindGivens (-vb11r, vb12, csq, snq, &r);
 
-            *csu = csl;
+			*csu = csl;
 			*snu = -snl;
 			*csv = csr;
 			*snv = -snr;
@@ -937,7 +893,7 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
 			avb22 = fabs (snr) * fabs (b2) + fabs (csr) * fabs (b3);
 			g = fabs (ua21) + fabs (ua22);
 
-			/* Zero (2,2) elements of U' * A and V' * B, and then swap. */
+			// Zero (2,2) elements of U' * A and V' * B, and then swap.
 
             if (g != 0 && aua22 / g <= avb22 / (fabs (vb21) + fabs (vb22)))
 				NUMfindGivens (-ua21, ua22, csq, snq, &r);
@@ -951,11 +907,10 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
 	}
 	else
 	{
-		/*
-			Input matrices A and B are lower triangular matrices
-			Form matrix C = A * adj(B) = ( a 0 )
-										 ( c d )
-		*/
+		// Input matrices A and B are lower triangular matrices
+		// Form matrix C = A * adj(B) = ( a 0 )
+		//							    ( c d )
+
 		if (productsvd)
 		{
 			a = a1 * b1;
@@ -969,19 +924,16 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
 			c = a2 * b3 - a3 * b2;
 		}
 
-		/*
-			The svd of real 2-by-2 triangular C
-			( csl -snl ) * ( a 0 ) * (  csr  snr ) = ( r 0 )
-			( snl  csl )   ( c d )   ( -snr  csr )   ( 0 t )
-		*/
+		// The svd of real 2-by-2 triangular C
+		// ( csl -snl ) * ( a 0 ) * (  csr  snr ) = ( r 0 )
+		// ( snl  csl )   ( c d )   ( -snr  csr )   ( 0 t )
+
 		NUMsvdcmp22 (a, c, d, &s1, &s2, &snr, &csr, &snl, &csl);
 
 		if (fabs (csr) >= fabs (snr) || fabs (csl) >= fabs (snl))
 		{
-			/*
-				Compute the (2,1) and (2,2) elements of U' * A and V' * B,
-				and (2,1) element of |U|' * |A| and |V|' * |B|.
-			*/
+			// Compute the (2,1) and (2,2) elements of U' * A and V' * B,
+			// and (2,1) element of |U|' * |A| and |V|' * |B|.
 
             ua21 = -snr * a1 + csr * a2;
 			ua22r = csr * a3;
@@ -991,7 +943,7 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
             avb21 = fabs (snl) * fabs (b1) + fabs (csl) * fabs (b2);
 			g = fabs (ua21) + fabs (ua22r);
 
-			/* Zero (2,1) elements of U' * A and V' * B. */
+			// Zero (2,1) elements of U' * A and V' * B.
 
             if (g != 0 && aua21 / g <= avb21 / (fabs (vb21) + fabs(vb22r)))
 				NUMfindGivens (ua22r, ua21, csq, snq, &r);
@@ -1004,10 +956,8 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
 		}
 		else
 		{
-			/*
-				Compute the (1,1) and (1,2) elements of U' * A and V' * B,
-				and (1,1) element of |U|' * |A| and |V|' * |B|.
-			*/
+			// Compute the (1,1) and (1,2) elements of U' * A and V' * B,
+			// and (1,1) element of |U|' * |A| and |V|' * |B|.
 
             ua11 = csr * a1 + snr * a2;
 			ua12 = snr * a3;
@@ -1017,7 +967,7 @@ void NUMgsvdcmp22 (int upper, int productsvd, double a1, double a2, double a3,
             avb11 = fabs (csl) * fabs (b1) + fabs (snl) * fabs (b2);
 			g = fabs (ua11) + fabs (ua12);
 
-			/* Zero (1,1) elements of U' * A and V' * B, and then swap. */
+			// Zero (1,1) elements of U' * A and V' * B, and then swap.
 
             if (g != 0 && aua11 / g <= avb11 / (fabs (vb11) + fabs (vb12)))
 				NUMfindGivens (ua12, ua11, csq, snq, &r);
@@ -1067,11 +1017,8 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax)
 			au = fhmx / ga;
 			if( au == 0)
 			{
-				/*
-					Avoid possible harmful underflow if exponent range
-					asymmetric (true svmin may not underflow even if au
-					underflows)
-				*/
+				// Avoid possible harmful underflow if exponent range
+				// asymmetric (true svmin may not underflow even if au underflows)
 
 				*svmin = (fhmn * fhmx) / ga;
 				*svmax = ga;
@@ -1096,8 +1043,7 @@ void NUMsvcmp22 (double f, double g, double h, double *svmin, double *svmax)
 
 void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 	long p, int product, long k, long l, double tola, double tolb,
-	double *alpha, double *beta, double **u, double **v, double **q,
-	long *ncycle)
+	double *alpha, double *beta, double **u, double **v, double **q, long *ncycle)
 {
 	int upper = 0; long iter, maxmn = MAX (m, n);
 	double a1, a2, a3, b1, b2, b3, csq, csu, csv;
@@ -1135,30 +1081,21 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 				NUMgsvdcmp22 (upper, product, a1, a2, a3, b1, b2, b3,
 					&csu, &snu, &csv, &snv, &csq, &snq);
 
-				/*
-					Update (k+i)-th and (k+j)-th rows of matrix A: U'*A
-				*/
+				// Update (k+i)-th and (k+j)-th rows of matrix A: U'*A
 
 				if (k + j <= m) NUMplaneRotation (l, TOVEC(a[k+j][n-l+1]), 1,
 					TOVEC(a[k+i][n-l+1]), 1, csu, snu);
 
-				/*
-					Update i-th and j-th rows of matrix B: V' * B
-				*/
+				// Update i-th and j-th rows of matrix B: V' * B
 
 				NUMplaneRotation (l, TOVEC(b[j][n-l+1]), 1, TOVEC(b[i][n-l+1]),
 					1, csv, snv );
 
-				/*
-					Update (n-l+i)-th and (n-l+j)-th columns of matrices
-					A and B: A * Q and B * Q
-				*/
+				// Update (n-l+i)-th and (n-l+j)-th columns of matrices A and B: A * Q and B * Q
 
-				NUMplaneRotation (MIN (k+l, m), TOVEC(a[1][n-l+j]), n,
-					TOVEC(a[1][n-l+i]), n, csq, snq);
+				NUMplaneRotation (MIN (k+l, m), TOVEC(a[1][n-l+j]), n, TOVEC(a[1][n-l+i]), n, csq, snq);
 
-				NUMplaneRotation (l, TOVEC(b[1][n-l+j]), n, TOVEC(b[1][n-l+i]),
-					n, csq, snq);
+				NUMplaneRotation (l, TOVEC(b[1][n-l+j]), n, TOVEC(b[1][n-l+i]), n, csq, snq);
 
 				if (upper)
 				{
@@ -1171,33 +1108,25 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 					b[j][n - l + i] = 0;
 				}
 
-				/*
-					Update columns of orthogonal matrices U, V, Q, if desired.
-				*/
+				// Update columns of orthogonal matrices U, V, Q, if desired.
 
 				if (u && k + j <= m)
-					NUMplaneRotation (m, TOVEC(u[1][k+j]), m, TOVEC(u[1][k+i]),
-						m, csu, snu);
+					NUMplaneRotation (m, TOVEC(u[1][k+j]), m, TOVEC(u[1][k+i]), m, csu, snu);
 
-				if (v) NUMplaneRotation (p, TOVEC(v[1][j]), p, TOVEC(v[1][i]),
-					p, csv, snv );
+				if (v) NUMplaneRotation (p, TOVEC(v[1][j]), p, TOVEC(v[1][i]), p, csv, snv );
 
-				if (q) NUMplaneRotation (n, TOVEC(q[1][n-l+j]), n,
-					TOVEC(q[1][n-l+i]), n, csq, snq);
+				if (q) NUMplaneRotation (n, TOVEC(q[1][n-l+j]), n, TOVEC(q[1][n-l+i]), n, csq, snq);
 			}
 		}
 		if (! upper)
 		{
-			/*
-				The matrices A13 and B13 were lower triangular at the start
-				of the cycle, and are now upper triangular.
+			// The matrices A13 and B13 were lower triangular at the start
+			//  of the cycle, and are now upper triangular.
 
-				Convergence test: test the parallelism of the corresponding
-				rows of A and B.
-			*/
+			// Convergence test: test the parallelism of the corresponding rows of A and B.
 
             double error = 0, svmin;
-            for (long i=1; i <= MIN (l, m - k); i++)
+            for (long i = 1; i <= MIN (l, m - k); i++)
             {
 				long jj = n - l + i;
             	for (long j=1; j <= l-i+1; j++, jj++)
@@ -1213,30 +1142,27 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 		}
 	}
 
-	/*
-		Has the algorithm converged after maxit cycles?
-	*/
+	// Has the algorithm converged after maxit cycles?
 
 	if (iter == MAXIT + 1)
 	{
 		*ncycle = MAXIT;
-		Melder_throw ("NUMgsvdFromUpperTriangulars: no convergence after ", MAXIT, " iterations.");
+		Melder_throw ("No convergence after ", MAXIT, " iterations.");
 	}
 
 	*ncycle = iter;
 
-	/*
-		Compute the generalized singular value pairs (alpha, beta), and
-		set the triangular matrix R to matrix a.
-	*/
 
-	for (long i=1; i <= k; i++)
+	// Compute the generalized singular value pairs (alpha, beta), and
+	//  set the triangular matrix R to matrix a.
+
+	for (long i = 1; i <= k; i++)
 	{
          alpha[i] = 1;
 		 beta[i] = 0;
 	}
 
-	for (long i=1; i <= MIN (l, m-k); i++)
+	for (long i = 1; i <= MIN (l, m-k); i++)
 	{
          a1 = a[k + i][n - l + i];
 		 b1 = b[i][n - l + i];
@@ -1252,8 +1178,8 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 						V(1:p, i) := - V(1:p, i)
 				*/
 
-           		for (long j=n-l+i; j <= n; j++) b[i][j] = -b[i][j];
-				if (v) for (long j=1; j <= p; j++) v[j][i] = - v[j][i];
+           		for (long j = n-l+i; j <= n; j++) b[i][j] = -b[i][j];
+				if (v) for (long j = 1; j <= p; j++) v[j][i] = - v[j][i];
 			}
 
 			NUMfindGivens (fabs (gamma), 1, &beta[k+i], &alpha[k+i], &rwk);
@@ -1279,18 +1205,16 @@ void NUMgsvdFromUpperTriangulars (double **a, long m, long n, double **b,
 		}
 	}
 
-	/*
-		Post-assignment
-	*/
+	// Post-assignment
 
-	for (long i=m+1; i <= k+l; i++)
+	for (long i = m+1; i <= k+l; i++)
 	{
          alpha[i] = 0;
 		 beta[i] = 1;
 	}
 	if (k+l < n)
 	{
-		for (long i=k+l+1; i <= n; i++)
+		for (long i = k+l+1; i <= n; i++)
 		{
             alpha[i] = beta[i] = 0;
 		}
@@ -1329,15 +1253,11 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 
 	if (q) NUMpermuteColumns (forward, n, n, q, pivot.peek());
 
-	/*
-		Update A := A * P
-	*/
+	// Update A := A * P
 
 	NUMpermuteColumns (forward, m, n, a, pivot.peek());
 
-	/*
-		Determine the effective rank of matrix B and clean up B.
-	*/
+	// Determine the effective rank of matrix B and clean up B.
 
 	for (l = 0, i = 1; i <= MIN (p, n); i++)
 	{
@@ -1351,25 +1271,19 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 
 	if (p >= l && n != l)
 	{
-		/*
-			RQ factorization of (B11 B12): ( B11 B12 ) = ( 0 B12 ) * Z
-		*/
+		// RQ factorization of (B11 B12): ( B11 B12 ) = ( 0 B12 ) * Z
 
 		NUMhouseholderRQ (b, 1, l, 1, n, tau.peek());
 
-		/*
-			Update A := A * Z' and Q := Q * Z'
-			Householder vectors are stored in rows of B.
-		*/
+		// Update A := A * Z' and Q := Q * Z'
+		// Householder vectors are stored in rows of B.
 
 		NUMapplyFactoredHouseholders (a, 1, m, 1, n, b, 1, l, 1, n, 1,
 			tau.peek(), NUM_RIGHT, NUM_NOTRANSPOSE);
 		if (q) NUMapplyFactoredHouseholders (q, 1, n, 1, n, b, 1, l, 1, n, 1,
 			tau.peek(), NUM_RIGHT, NUM_NOTRANSPOSE);
 
-		/*
-			Clean up B
-		*/
+		// Clean up B
 
 		for (i=1; i <= l; i++)
 		{
@@ -1395,18 +1309,14 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 
 		NUMhouseholderQRwithColumnPivoting (m, n - l, a, lda, pivot.peek(), tau.peek());
 
-		/*
-			Determine the effective rank of A11
-		*/
+		// Determine the effective rank of A11
 
 		for (k = 0, i=1; i <= MIN (m, n - l); i++)
 		{
 			if (fabs (a[i][i]) > tola) k++;
 		}
 
-		/*
-			Update A12 := U' * A12, where A12 = A (1:m, n-l+1:n)
-		*/
+		// Update A12 := U' * A12, where A12 = A (1:m, n-l+1:n)
 
 		NUMapplyFactoredHouseholders (a, 1, m, n - l + 1, n, a, 1, m, 1, n - l,
 			lda, tau.peek(), NUM_LEFT, NUM_TRANSPOSE);
@@ -1414,16 +1324,12 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 		if (u) NUMapplyFactoredHouseholders (u, 1, m, 1, m, a, 1, m, 1, n - l,
 			lda, tau.peek(), NUM_RIGHT, NUM_NOTRANSPOSE);
 
-		/*
-			Update Q(1:n, 1:n-l)  = Q(1:n, 1:n-l) * P1
-		*/
+		// Update Q(1:n, 1:n-l)  = Q(1:n, 1:n-l) * P1
 
 		if (q) NUMpermuteColumns (forward, n, n - l, q, pivot.peek());
 
-		/*
-			Clean up A: set the strictly lower triangular part of
-			A(1:k, 1:k) = 0, and A(k+1:m, 1:n-l) = 0.
-		*/
+		// Clean up A: set the strictly lower triangular part of
+		// A(1:k, 1:k) = 0, and A(k+1:m, 1:n-l) = 0.
 
 		for (i = 2; i <= k; i++)
 		{
@@ -1436,23 +1342,17 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 	}
 	if (n - l > k)
 	{
-		/*
-			RQ factorization of ( T11 T12 ) = ( 0 T12 ) * Z1
-		*/
+		// RQ factorization of ( T11 T12 ) = ( 0 T12 ) * Z1
 
 		NUMhouseholderRQ (a, 1, k, 1, n - l, tau.peek());
 
-		/*
-			Update Q(1:n,1:n-l) = Q(1:n,1:n-l ) * Z1'
-			djmw: was transpose instead of no_transpose
-		*/
+		// Update Q(1:n,1:n-l) = Q(1:n,1:n-l ) * Z1'
+		// djmw: was transpose instead of no_transpose
 
 		if (q) NUMapplyFactoredHouseholders (q, 1, n, 1, n - l, a, 1, k, 1, n -
 			l, 1, tau.peek(), NUM_RIGHT, NUM_NOTRANSPOSE);
 
-		/*
-			Clean up A
-		*/
+		// Clean up A
 
 		for (i = 1; i <= k; i++)
 		{
@@ -1462,38 +1362,31 @@ void NUMmatricesToUpperTriangularForms (double **a, long m, long n, double **b,
 
 	if (m > k)
 	{
-		/*
-			QR factorization of A (k+1:m, n-l+1:n)
-		*/
+		// QR factorization of A (k+1:m, n-l+1:n)
 
 		NUMhouseholderQR (a, k + 1, m, n - l + 1, n, lda, tau.peek());
 
-		/*
-			Update U(:,k+1:m) := U(:,k+1:m)*U1
-		*/
+		// Update U(:,k+1:m) := U(:,k+1:m)*U1
 
 		if (u) NUMapplyFactoredHouseholders (u, 1, m, k + 1, m, a, k + 1, m,
 			n - l + 1, n, lda, tau.peek(), NUM_RIGHT, NUM_NOTRANSPOSE);
 
-		/*
-			Clean up
-		*/
+		// Clean up
 
 		for (j = n - l + 1; j <= n; j++)
 		{
 			for (i = j - n + k + l + 1; i <= m; i++) a[i][j] = 0;
 		}
 	}
+
 	*kk = k; *ll = l;
 }
 
 
 void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
-	long *k, long *l, double *alpha, double *beta, double **u, double **v,
-	double **q, int invertR)
+	long *k, long *l, double *alpha, double *beta, double **u, double **v, double **q, int invertR)
 {
 	long ncycle;
-	double anorm, bnorm, tola, tolb;
 
 	Melder_assert (m > 0 && n > 0 && p > 0);
 
@@ -1504,20 +1397,21 @@ void NUMgsvdcmp (double **a, long m, long n, double **b, long p, int productsvd,
 
 	if (! NUMfpp) NUMmachar ();
 
-	anorm = NUMfrobeniusnorm (m, n, a);
-	bnorm = NUMfrobeniusnorm (p, n, b);
+	double anorm = NUMfrobeniusnorm (m, n, a);
+	double bnorm = NUMfrobeniusnorm (p, n, b);
 
 	if (anorm == 0 || bnorm == 0)
 	{
-		Melder_throw (L"NUMgsvdcmp: empty matrix.");
+		Melder_throw ("NUMgsvdcmp: empty matrix.");
 	}
 
-	tola = MAX (m, n) * MAX (anorm, NUMfpp -> sfmin) * NUMfpp -> prec;
-	tolb = MAX (p, n) * MAX (bnorm, NUMfpp -> sfmin) * NUMfpp -> prec;
+	double tola = MAX (m, n) * MAX (anorm, NUMfpp -> sfmin) * NUMfpp -> prec;
+	double tolb = MAX (p, n) * MAX (bnorm, NUMfpp -> sfmin) * NUMfpp -> prec;
 
 	NUMmatricesToUpperTriangularForms (a, m, n, b, p, tola, tolb, k, l, u, v, q);
 
-	NUMgsvdFromUpperTriangulars (a, m, n, b, p, productsvd, *k, *l, tola, tolb, alpha, beta, u, v, q, &ncycle);
+	NUMgsvdFromUpperTriangulars (a, m, n, b, p, productsvd, *k, *l, tola,
+		tolb, alpha, beta, u, v, q, &ncycle);
 
 	if (q && invertR)
 	{
@@ -1778,4 +1672,4 @@ void NUMeigencmp22 (double a, double b, double c, double *rt1, double *rt2,
 	}
 }
 
-/* End of file NUMlapack.c */
+/* End of file NUMlapack.cpp */

@@ -809,8 +809,8 @@ void GaussianMixture_splitComponent (GaussianMixture me, long component)
 		Covariance thee = (Covariance) my covariances -> item[component];
 		// Always new PCA because we cannot be sure of data unchanged.
 		SSCP_expandPCA (thee);
-		autoCovariance cov1 = (Covariance) Data_copy (thee);
-		autoCovariance cov2 = (Covariance) Data_copy (thee);
+		autoCovariance cov1 = Data_copy ((Covariance) thee);
+		autoCovariance cov2 = Data_copy ((Covariance) thee);
 		SSCP_unExpandPCA (cov1.peek()); SSCP_unExpandPCA (cov2.peek());
 
 		// Eventually cov1 replaces component, cov2 at end
@@ -1115,7 +1115,7 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 		thouart (TableOfReal);
 		const wchar_t *criterionText = GaussianMixture_criterionText(criterion);
 		int deleteWeakComponents = minNumberOfComponents > 0;
-		autoGaussianMixture me = (GaussianMixture) Data_copy (gm);
+		autoGaussianMixture me = Data_copy (gm);
 		autoNUMmatrix<double> p (1, thy numberOfRows + 2, 1, my numberOfComponents + 1);
 
 		double *gsum = p[thy numberOfRows + 1]; // convenience array with sums
@@ -1191,7 +1191,7 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 			} while (lnew > lprev && fabs((lprev - lnew)/ lnew) > delta_l && iter < maxNumberOfIterations);
 			if (lnew > lmax)
 			{
-				best.reset ((GaussianMixture) Data_copy (me.peek()));
+				best.reset (Data_copy (me.peek()));
 				lmax = lnew;
 				if (! deleteWeakComponents) break; // TODO was got end; is dat hetzelfde?
 			}

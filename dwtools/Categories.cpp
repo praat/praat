@@ -1,17 +1,17 @@
 /* Categories.cpp
- * 
+ *
  * Copyright (C) 1993-2011 David Weenink
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -32,7 +32,7 @@ void structCategories :: v_readText (MelderReadText a_text)
 	} else if (l_size < 0) {
 		Melder_throw ("Size cannot be negative.");
 	} else {
-		OrderedOfString_init (this, l_size);   // David, in je vorige versie kon dit tweemaal aangeroepen worden (en in dat geval crashend)
+		OrderedOfString_init (this, l_size);   // David, in je vorige versie kon dit tweemaal aangeroepen worden (en in dat geval crashend): Ja dat was een bug, Ok nu
 	}
 	for (long i = 1; i <= l_size; i ++)
 	{
@@ -40,7 +40,7 @@ void structCategories :: v_readText (MelderReadText a_text)
 		item -> v_readText (a_text); therror
 		Ordered_addItemPos (this, item.transfer(), i);
 	}
-} 
+}
 
 void structCategories :: v_writeText (MelderFile file)
 {
@@ -61,7 +61,7 @@ void Categories_init (Categories me, long size)
 	OrderedOfString_init (me, size);
 }
 
-Categories Categories_create (void)
+Categories Categories_create ()
 {
 	try {
 		autoCategories me = Thing_new (Categories);
@@ -89,7 +89,7 @@ Categories Categories_selectUniqueItems (Categories me, int sorted)
 	} catch (MelderError) { Melder_throw (me, ": no unique categories created."); }
 }
 
-void Categories_drawItem (Categories me, Graphics g, long position, 
+void Categories_drawItem (Categories me, Graphics g, long position,
 	double xWC, double yWC)
 {
 	if (position < 1 || position > my size) return;
@@ -101,7 +101,7 @@ Categories OrderedOfString_to_Categories (I)
 	iam (OrderedOfString);
 	try {
 		autoCategories thee = Categories_create();
-		
+
 		for (long i = 1; i <= my size; i++)
 		{
 			autoSimpleString item = Data_copy ((SimpleString) my item [i]);
@@ -119,7 +119,7 @@ Categories TableOfReal_to_CategoriesRow (I)
 	iam (TableOfReal);
 	try {
 		autoCategories thee = Categories_create ();
-	
+
 		for (long i = 1; i <= my numberOfRows; i++)
 		{
 			if (my rowLabels[i])
@@ -134,10 +134,10 @@ Categories TableOfReal_to_CategoriesRow (I)
 
 Categories TableOfReal_to_CategoriesColumn (I)
 {
-		iam (TableOfReal); 
+	iam (TableOfReal);
 	try {
 		autoCategories thee = Categories_create ();
-	 
+
 		for (long i = 1; i <= my numberOfColumns; i++)
 		{
 			if (my columnLabels[i])

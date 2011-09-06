@@ -341,7 +341,7 @@ SSCP Discriminant_extractBetweenGroupsSSCP (Discriminant me)
 {
 	try {
 		long n = my total -> numberOfRows;
-		autoSSCP b = (SSCP) Data_copy (my total);
+		autoSSCP b = Data_copy (my total);
 		autoSSCP w = SSCPs_to_SSCP_pool (my groups);
 		for (long i = 1; i <= n; i++)
 		{
@@ -601,7 +601,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 			// Calculate the inverses of all group covariance matrices.
 			// In case of a singular matrix, substitute inverse of pooled.
 
-			agroups.reset((SSCPs) Data_copy (my groups)); groups = agroups.peek();
+			agroups.reset(Data_copy ((SSCPs) my groups)); groups = agroups.peek();
 			long npool = 0;
 			for (long j = 1; j <= g; j++)
 			{
@@ -682,7 +682,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 	try {
 		long g = Discriminant_getNumberOfGroups (me);
 		long p = Eigen_getDimensionOfComponents (me);
-		long m = thy numberOfRows, npool = 0;
+		long m = thy numberOfRows;
 
 		if (p != thy numberOfColumns) Melder_throw
 			("The number of columns does not agree with the dimension of the discriminant.");
@@ -697,7 +697,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 		autoSSCP pool = SSCPs_to_SSCP_pool (my groups);
 		autoClassificationTable him = ClassificationTable_create (m, g);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, m);
-		autoTableOfReal adisplacements = (TableOfReal) Data_copy (thee);
+		autoTableOfReal adisplacements = Data_copy (thee);
 
 		// Scale the sscp to become a covariance matrix.
 
@@ -730,8 +730,8 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 			//Calculate the inverses of all group covariance matrices.
 			// In case of a singular matrix, substitute inverse of pooled.
 
-			agroups.reset((SSCPs) Data_copy (my groups)); groups = agroups.peek();
-			long npool = 0;   // David, dit is de tweede definitie van npool; is dat goed?
+			agroups.reset(Data_copy ((SSCPs) my groups)); groups = agroups.peek();
+			long npool = 0;
 			for (long j = 1; j <= g; j++)
 			{
 				SSCP t = (SSCP) groups -> item[j];

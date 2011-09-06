@@ -4,9 +4,7 @@
 
 include ../makefile.defs
 
-CFLAGS = $(DEFS) -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../audio
-
-CPPFLAGS = $(CFLAGS)
+CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../audio
 
 OBJECTS = Activation.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \

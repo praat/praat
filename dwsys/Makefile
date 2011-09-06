@@ -3,9 +3,7 @@
 
 include ../makefile.defs
 
-CFLAGS = $(DEFS) -I ../stat -I ../num -I ../sys -I dwsys -I ../GSL -I ../kar
-
-CPPFLAGS = $(CFLAGS)
+CPPFLAGS =  -I ../stat -I ../num -I ../sys -I dwsys -I ../GSL -I ../kar
 
 all: libdwsys.a
 

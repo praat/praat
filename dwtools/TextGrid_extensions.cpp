@@ -238,7 +238,7 @@ TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile)
 		my xmax = xmax;
 		if (phnFile) // Create tier 2 with IPA symbols
 		{
-			autoIntervalTier ipa = (IntervalTier) Data_copy (timit);
+			autoIntervalTier ipa = Data_copy (timit);
 			Thing_setName (ipa.peek(), L"ipa");
 			// First change the data in ipa
 			for (long i = 1; i <= ipa -> intervals -> size; i++)
@@ -261,8 +261,8 @@ TextGrid TextGrids_merge (TextGrid me, TextGrid thee)
 	try {
 		int at_end = 0, at_start = 1;
 
-		autoTextGrid g1 = (TextGrid) Data_copy (me);
-		autoTextGrid g2 = (TextGrid) Data_copy (thee);
+		autoTextGrid g1 = Data_copy (me);
+		autoTextGrid g2 = Data_copy (thee);
 
 		// The new TextGrid will have the domain
 		// [min(g1->xmin, g2->xmin), max(g1->xmax, g2->xmax)]
@@ -293,7 +293,7 @@ void TextGrid_extendTime (TextGrid me, double extra_time, int position)
 
 		if (extra_time == 0) return;
 		extra_time = fabs (extra_time); // Just in case...
-		thee.reset ((TextGrid) Data_copy (me));
+		thee.reset (Data_copy (me));
 
 		if (at_end) xmax += extra_time;
 		else xmin -= extra_time;

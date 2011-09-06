@@ -1,11 +1,7 @@
 # Makefile for library "num/glpk"
-# Paul Boersma, 10 March 2011
+# Paul Boersma, 3 September 2011
 
 include ../../makefile.defs
-
-CFLAGS = $(DEFS)
-
-CPPFLAGS = $(CFLAGS)
 
 OBJECTS = amd_1.o amd_2.o amd_aat.o amd_control.o amd_defaults.o amd_info.o \
    amd_order.o amd_post_tree.o amd_postorder.o amd_preprocess.o amd_valid.o \

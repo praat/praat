@@ -217,13 +217,13 @@ static int CategoriesEditorRemove_execute (I)
 {
 	iam (CategoriesEditorRemove);
 	CategoriesEditor editor = (CategoriesEditor) my data;
-	Categories categories = (Categories) editor -> data;   // David, weer link: tweemaal dezelfde naam (categories)
+	Categories l_categories = (Categories) editor -> data;   // David, weer link: tweemaal dezelfde naam (categories): is ok, geen conflict. Naam toch maar aangepast
 
 	for (long i = my nSelected; i >= 1; i--)
 	{
-		Ordered_addItemPos (my categories, (SimpleString) categories -> item[my selection[i]], 1);
-		categories -> item[my selection[i]] = 0;
-		Collection_removeItem (categories, my selection[i]);
+		Ordered_addItemPos (my categories, (SimpleString) l_categories -> item[my selection[i]], 1);
+		l_categories -> item[my selection[i]] = 0;
+		Collection_removeItem (l_categories, my selection[i]);
 	}
 	update (editor, my selection[1], 0, 0, 0);
 	return 1;
@@ -348,7 +348,7 @@ static CategoriesEditorMoveUp CategoriesEditorMoveUp_create (Any data, long *pos
 {
 	try {
 		autoCategoriesEditorMoveUp me = Thing_new (CategoriesEditorMoveUp);
-		CategoriesEditorCommand_init (me.peek(), L"Move up", data, CategoriesEditorMoveUp_execute, 
+		CategoriesEditorCommand_init (me.peek(), L"Move up", data, CategoriesEditorMoveUp_execute,
 			CategoriesEditorMoveUp_undo, 0, posCount);
 		for (long i = 1; i <= posCount; i++)
 		{
@@ -535,8 +535,8 @@ static void update (I, long from, long to, const long *select, long nSelect)
 			}
 			if (itemCount > size) /* some items have been removed from Categories? */
 			{
-				for (long j = itemCount; j > size; j --) 
-				{ 
+				for (long j = itemCount; j > size; j --)
+				{
 					GuiList_deleteItem (my list, j);
 				}
 				itemCount = size;
@@ -577,7 +577,7 @@ static void update (I, long from, long to, const long *select, long nSelect)
 		else if (nSelect > 0)
 		{
 			// Select but postpone highlighting
-			
+
 			for (long i = 1; i <= nSelect; i++)
 			{
 				GuiList_selectItem (my list, select[i] > size ? size : select[i]);
@@ -660,7 +660,7 @@ static void gui_button_cb_insertAtEnd (I, GuiButtonEvent event) {
 	my position = categories -> size;
 }
 
-static void gui_button_cb_replace (I, GuiButtonEvent event) 
+static void gui_button_cb_replace (I, GuiButtonEvent event)
 {
 	(void) event;
 		iam (CategoriesEditor);
@@ -673,7 +673,7 @@ static void gui_button_cb_replace (I, GuiButtonEvent event)
 			{
 				autoSimpleString str = SimpleString_create (text.peek());
 				autoCategoriesEditorReplace command = CategoriesEditorReplace_create (me, str.transfer(),
-					posList.peek(), posCount); 
+					posList.peek(), posCount);
 				Command_do (command.peek());
 				if (my history) CommandHistory_insertItem (my history, command.transfer());
 				updateWidgets (me);

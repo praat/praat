@@ -399,7 +399,7 @@ long Data_Description_integer (void *structAddress, Data_Description description
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
 	const wchar_t *formula, long *result);
 /*
- * Translates a string like '100' or 'my numberOfHorses' or 'my numberOfCows - 1' to an integer.
+ * Translates a string like '100' or 'numberOfHorses' or 'numberOfCows - 1' to an integer.
  * The 'algorithm' does some wild guesses as to the meanings of the 'min1' and 'max1' strings.
  * A full-fledged interpretation is preferable...
  * Returns 0 if 'formula' cannot be parsed to a number.

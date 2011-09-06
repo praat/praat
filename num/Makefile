@@ -1,10 +1,9 @@
 # Makefile of the library "num"
-# Paul Boersma, 10 March 2011
+# Paul Boersma, 6 September 2011
 
 include ../makefile.defs
-CFLAGS = $(DEFS) -I ../GSL -I glpk -I ../sys -I ../dwsys
 
-CPPFLAGS = $(CFLAGS)
+CPPFLAGS = -I ../GSL -I glpk -I ../sys -I ../dwsys
 
 OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o NUMlinprog.o
 

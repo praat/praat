@@ -100,7 +100,7 @@ DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
 		if (nselected == 1) { nrows = my numberOfRows; ncols = my numberOfColumns; }
 		if (my numberOfRows != nrows || my numberOfColumns != ncols) Melder_throw ("Dimensions of table ",
 			IOBJECT, " differs from the rest.");
-		autoCrossCorrelationTable myc = (CrossCorrelationTable) Data_copy (me);
+		autoCrossCorrelationTable myc = Data_copy (me);
 		Collection_addItem (thee.peek(), myc.transfer());
 	}
 	praat_new (thee.transfer(), L"ct_", Melder_integer(nselected));

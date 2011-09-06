@@ -496,6 +496,8 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 		Melder_error_ ("A Sound cannot have a negative sampling frequency.");
 		Melder_throw ("Please set the sampling frequency to something greater than zero, e.g. 44100 Hz.");
 	}
+	if (numberOfChannels < 1)
+		Melder_throw ("A Sound cannot have zero channels.");
 	if (numberOfSamples_real < 1.0) {
 		Melder_error_ ("A Sound cannot have zero samples.");
 		if (startTime == 0.0)
@@ -512,7 +514,7 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 			Melder_throw ("Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
 	numberOfSamples = (long) numberOfSamples_real;
-	autoSound sound = NULL;
+	autoSound sound;
 	try {
 		sound.reset (Sound_create (numberOfChannels, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
 			startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency)));

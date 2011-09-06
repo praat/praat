@@ -72,7 +72,7 @@ StringsIndex HMM_and_HMM_ObservationSequence_to_StringsIndex (HMM me, HMM_Observ
 TableOfReal HMM_ObservationSequence_to_TableOfReal_transitions (HMM_ObservationSequence me, int probabilities);
 TableOfReal HMM_and_HMM_ObservationSequence_to_TableOfReal_transitions (HMM me, HMM_ObservationSequence thee, int probabilities);
 
-HMM_ObservationSequences HMM_ObservationSequences_create (void);
+HMM_ObservationSequences HMM_ObservationSequences_create ();
 long HMM_ObservationSequence_getNumberOfObservations (HMM_ObservationSequence me);
 long HMM_ObservationSequences_getLongestSequence (HMM_ObservationSequences me);
 

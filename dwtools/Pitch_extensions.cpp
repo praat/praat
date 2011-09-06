@@ -151,7 +151,7 @@ PitchTier PitchTier_normalizePitchRange (PitchTier me, double pitchMin_ref_Hz, d
 		if (ranger < 0.01 || range < 0.01) Melder_throw ("Pitch range too small.");
 		double fmidr = fminr + ranger / 2;
 		double factor = ranger / range;
-		autoPitchTier thee = (PitchTier) Data_copy (me);
+		autoPitchTier thee = Data_copy (me);
 		for (long i = 1; i <= my points -> size; i ++)
 		{
 			RealPoint point = (RealPoint) thy points -> item [i];

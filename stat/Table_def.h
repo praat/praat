@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/08/10
- */
-
 
 #define ooSTRUCT TableCell
 oo_DEFINE_STRUCT (TableCell)

@@ -191,7 +191,7 @@ static double NUMsquaredVariance (double **a, long nr, long nc, int rawPowers)
 		planar rotations: a remedy against nonoptimal varimax rotations",
 		Psychometrika 60, 437-446.
 */
-static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax, 
+static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normalizeRows, int quartimax,
 	long maximumNumberOfIterations, double tolerance)
 {
 	Melder_assert (nr > 0 && nc > 0);
@@ -230,7 +230,7 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
 
 	double varianceSq = NUMsquaredVariance (ym, nr, nc, quartimax);
 	if (varianceSq == 0) return;
-	
+
 	// Treat columns pairwise.
 
 	double varianceSq_old;
@@ -315,7 +315,7 @@ Configuration Configuration_varimax (Configuration me, int normalizeRows,
 	int quartimax, long maximumNumberOfIterations, double tolerance)
 {
 	try {
-		autoConfiguration thee = (Configuration) Data_copy (me);
+		autoConfiguration thee = Data_copy (me);
 		NUMvarimax (my data, thy data, my numberOfRows, my numberOfColumns, normalizeRows, quartimax,
 			maximumNumberOfIterations, tolerance);
 		return thee.transfer();
@@ -497,7 +497,7 @@ Configuration Configuration_createLetterRExample (int choice)
 	} catch (MelderError) { Melder_throw ("Letter R Configuration not created."); }
 }
 
-Configuration Configuration_createCarrollWishExample (void)
+Configuration Configuration_createCarrollWishExample ()
 {
 	double  x[10] = {0, -1, 0, 1, -1, 0, 1, -1,  0,  1};
 	double  y[10] = {0,  1, 1, 1,  0, 0, 0, -1, -1, -1};
@@ -519,7 +519,7 @@ Configuration Configuration_createCarrollWishExample (void)
 
 Thing_implement (Configurations, Ordered, 0);
 
-Configurations Configurations_create (void)
+Configurations Configurations_create ()
 {
 	try {
 		autoConfigurations me = Thing_new (Configurations);

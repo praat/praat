@@ -3,7 +3,7 @@
 
 include ../makefile.defs
 
-CFLAGS = -I ../sys -I ../dwsys
+CPPFLAGS = -I ../sys -I ../dwsys
 
 OBJECTS = gsl_blas__blas.o gsl_block__block.o gsl_block__file.o \
    gsl_block__init.o gsl_bspline__bspline.o gsl_cblas__caxpy.o \
@@ -202,7 +202,7 @@ OBJECTS = gsl_blas__blas.o gsl_block__block.o gsl_block__file.o \
    gsl_vector__prop.o gsl_vector__reim.o gsl_vector__subvector.o \
    gsl_vector__swap.o gsl_vector__vector.o gsl_vector__view.o \
    gsl_wavelet__bspline.o gsl_wavelet__daubechies.o gsl_wavelet__dwt.o \
-   gsl_wavelet__haar.o gsl_wavelet__wavelet.o 
+   gsl_wavelet__haar.o gsl_wavelet__wavelet.o
 
 .PHONY: all clean
 

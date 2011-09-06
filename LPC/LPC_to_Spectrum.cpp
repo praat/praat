@@ -30,10 +30,10 @@
 /*
 	PSD(f) = (sigma^2 T) /|1 + Sum (k=1..p, a[k] exp(-2 pi i f k T))|^2,
 	where sigma^2 == gain, T is samplinginterval
-	
+
 	LPC-spectrum is approximately 20 dB too high (w.r.t. 25 ms spectrum from Sound)
 */
-	
+
 void LPC_Frame_into_Spectrum (LPC_Frame me, Spectrum thee, double bandwidthReduction,
 	double deEmphasisFrequency)
 {
@@ -116,19 +116,19 @@ Spectrum LPC_to_Spectrum (LPC me, double t, double dfMin, double bandwidthReduct
 	try {
 		double samplingFrequency = 1.0 / my samplingPeriod;
 		long nfft = 2, index = Sampled_xToNearestIndex (me, t);
-	
+
 		if (index < 1) index = 1;
 		if (index > my nx) index = my nx;
 		if (dfMin <= 0)
 		{
 			nfft = 512; dfMin = samplingFrequency / nfft;
 		}
-		while (samplingFrequency / nfft > dfMin || nfft <= my frame[index].nCoefficients)
+		while (samplingFrequency / nfft > dfMin || nfft <= my d_frames[index].nCoefficients)
 		{
 			nfft *= 2;
 		}
 		autoSpectrum thee = Spectrum_create (samplingFrequency / 2, nfft / 2 + 1);
-		LPC_Frame_into_Spectrum (& my frame[index], thee.peek(), bandwidthReduction, deEmphasisFrequency); 
+		LPC_Frame_into_Spectrum (& my d_frames[index], thee.peek(), bandwidthReduction, deEmphasisFrequency);
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Spectrum created."); }
 }

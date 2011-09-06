@@ -28,54 +28,54 @@
 #include "TableOfReal_def.h"
 oo_CLASS_CREATE (TableOfReal, Data);
 
-void TableOfReal_init (I, long numberOfRows, long numberOfColumns);
+void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns);
 TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns);
-void TableOfReal_removeRow (I, long irow);
-void TableOfReal_removeColumn (I, long icol);
-void TableOfReal_insertRow (I, long irow);
-void TableOfReal_insertColumn (I, long icol);
-void TableOfReal_setRowLabel (I, long irow, const wchar_t *label);
-void TableOfReal_setColumnLabel (I, long icol, const wchar_t *label);
-long TableOfReal_rowLabelToIndex (I, const wchar_t *label);
-long TableOfReal_columnLabelToIndex (I, const wchar_t *label);
-double TableOfReal_getColumnMean (I, long icol);
-double TableOfReal_getColumnStdev (I, long icol);
+void TableOfReal_removeRow (TableOfReal me, long irow);
+void TableOfReal_removeColumn (TableOfReal me, long icol);
+void TableOfReal_insertRow (TableOfReal me, long irow);
+void TableOfReal_insertColumn (TableOfReal me, long icol);
+void TableOfReal_setRowLabel (TableOfReal me, long irow, const wchar_t *label);
+void TableOfReal_setColumnLabel (TableOfReal me, long icol, const wchar_t *label);
+long TableOfReal_rowLabelToIndex (TableOfReal me, const wchar_t *label);
+long TableOfReal_columnLabelToIndex (TableOfReal me, const wchar_t *label);
+double TableOfReal_getColumnMean (TableOfReal me, long icol);
+double TableOfReal_getColumnStdev (TableOfReal me, long icol);
 
 TableOfReal Table_to_TableOfReal (Table me, long labelColumn);
 Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn);
-void TableOfReal_formula (I, const wchar_t *expression, Interpreter interpreter, Any /* TableOfReal */ target);
-void TableOfReal_drawAsNumbers (I, Graphics g, long rowmin, long rowmax, int iformat, int precision);
-void TableOfReal_drawAsNumbers_if (I, Graphics g, long rowmin, long rowmax, int iformat, int precision,
+void TableOfReal_formula (TableOfReal me, const wchar_t *expression, Interpreter interpreter, TableOfReal target);
+void TableOfReal_drawAsNumbers (TableOfReal me, Graphics g, long rowmin, long rowmax, int iformat, int precision);
+void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics g, long rowmin, long rowmax, int iformat, int precision,
 	const wchar_t *conditionFormula, Interpreter interpreter);
-void TableOfReal_drawAsSquares (I, Graphics g, long rowmin, long rowmax,
+void TableOfReal_drawAsSquares (TableOfReal me, Graphics g, long rowmin, long rowmax,
 	long colmin, long colmax, int garnish);
-void TableOfReal_drawVerticalLines (I, Graphics g, long rowmin, long rowmax);
-void TableOfReal_drawHorizontalLines (I, Graphics g, long rowmin, long rowmax);
-void TableOfReal_drawLeftAndRightLines (I, Graphics g, long rowmin, long rowmax);
-void TableOfReal_drawTopAndBottomLines (I, Graphics g, long rowmin, long rowmax);
+void TableOfReal_drawVerticalLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
+void TableOfReal_drawHorizontalLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
+void TableOfReal_drawLeftAndRightLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
+void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics g, long rowmin, long rowmax);
 
-Any TablesOfReal_append (I, thou);
+Any TablesOfReal_append (TableOfReal me, TableOfReal thee);
 Any TablesOfReal_appendMany (Collection me);
-void TableOfReal_sortByLabel (I, long column1, long column2);
-void TableOfReal_sortByColumn (I, long column1, long column2);
+void TableOfReal_sortByLabel (TableOfReal me, long column1, long column2);
+void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2);
 
 void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file);
 TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file);
 
-TableOfReal TableOfReal_extractRowRanges (I, const wchar_t *ranges);
-TableOfReal TableOfReal_extractColumnRanges (I, const wchar_t *ranges);
+TableOfReal TableOfReal_extractRowRanges (TableOfReal me, const wchar_t *ranges);
+TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const wchar_t *ranges);
 
-TableOfReal TableOfReal_extractRowsWhereColumn (I, long icol, int which_Melder_NUMBER, double criterion);
-TableOfReal TableOfReal_extractColumnsWhereRow (I, long icol, int which_Melder_NUMBER, double criterion);
+TableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, long icol, int which_Melder_NUMBER, double criterion);
+TableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, long icol, int which_Melder_NUMBER, double criterion);
 
-TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion);
-TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion);
+TableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Melder_STRING, const wchar_t *criterion);
+TableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Melder_STRING, const wchar_t *criterion);
 
-TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpreter interpreter);
-TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interpreter interpreter);
+TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const wchar_t *condition, Interpreter interpreter);
+TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const wchar_t *condition, Interpreter interpreter);
 
-Strings TableOfReal_extractRowLabelsAsStrings (I);
-Strings TableOfReal_extractColumnLabelsAsStrings (I);
+Strings TableOfReal_extractRowLabelsAsStrings (TableOfReal me);
+Strings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me);
 
 /* End of file TableOfReal.h */
 #endif

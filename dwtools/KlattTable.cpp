@@ -1260,7 +1260,7 @@ Sound KlattTable_to_Sound (KlattTable me, double samplingFrequency, int synthesi
 }
 
 
-KlattTable KlattTable_createExample (void)
+KlattTable KlattTable_createExample ()
 {
 	long nrows = 1376;
 	struct klatt_params {

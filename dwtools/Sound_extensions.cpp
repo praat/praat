@@ -1119,7 +1119,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 		if (my xmin != his xmin || my xmax != his xmax) Melder_throw
 			("The Pitch and the Sound object must have the same start and end times.");
 
-		autoSound sound = (Sound) Data_copy (me);
+		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.peek());
 
 		if (formantMultiplier != 1)
@@ -1128,7 +1128,7 @@ Sound Sound_and_Pitch_changeSpeaker (Sound me, Pitch him,
 			Sound_overrideSamplingFrequency (sound.peek(), samplingFrequency_old * formantMultiplier);
 		}
 
-		autoPitch pitch = (Pitch) Data_copy (him);
+		autoPitch pitch = Data_copy (him);
 		Pitch_scaleDuration (pitch.peek(), 1 / formantMultiplier); //
 		Pitch_scalePitch (pitch.peek(), formantMultiplier);
 
@@ -1231,7 +1231,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 			("The Pitch and the Sound object must have the same starting times and finishing times.");
 		if (new_pitch < 0)  Melder_throw ("The new pitch median must not be negative.");
 
-		autoSound sound = (Sound) Data_copy (me);
+		autoSound sound = Data_copy (me);
 		Vector_subtractMean (sound.peek());
 
 		if (formantRatio != 1)
@@ -1501,7 +1501,7 @@ Sound Sound_localAverage (Sound me, double averagingInterval, int windowType)
 {
 	try {
 		double windowDuration = windowType == 6 ? 2 * averagingInterval : averagingInterval;
-		autoSound thee = (Sound) Data_copy (me);
+		autoSound thee = Data_copy (me);
 		autoSound window = Sound_createFromWindowFunction (windowDuration, 1 / my dx, windowType);
 
 		long nswindow2 = window -> nx / 2;
@@ -1787,62 +1787,64 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 void Sound_paintWhere (Sound me, Graphics g, Graphics_Colour colour, double tmin, double tmax,
 	double minimum, double maximum, double level, bool garnish, long numberOfBisections, const wchar_t *formula, Interpreter interpreter)
 {
-	long ixmin, ixmax;
-	struct Formula_Result result;
+	try {
+		long ixmin, ixmax;
+		struct Formula_Result result;
 
-	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
-	_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
+		_Sound_getWindowExtrema (me, &tmin, &tmax, &minimum, &maximum, &ixmin, &ixmax);
 
-	Graphics_setColour (g, colour);
-	Graphics_setInner (g);
-	for (long channel = 1; channel <= my ny; channel++)
-	{
-		Graphics_setWindow (g, tmin, tmax,
-			minimum - (my ny - channel) * (maximum - minimum),
-			maximum + (channel - 1) * (maximum - minimum));
-		bool current, previous = true, fill = false; // fill only when leaving area
-		double tmini = tmin, tmaxi = tmax, xe, ye;
-		long ix = ixmin;
-		do
+		Graphics_setColour (g, colour);
+		Graphics_setInner (g);
+		for (long channel = 1; channel <= my ny; channel++)
 		{
-			Formula_run (channel, ix, & result);
-			current = result.result.numericResult;
-			if (ix == ixmin) { previous = current; }
-			if (previous != current)
+			Graphics_setWindow (g, tmin, tmax,
+				minimum - (my ny - channel) * (maximum - minimum),
+				maximum + (channel - 1) * (maximum - minimum));
+			bool current, previous = true, fill = false; // fill only when leaving area
+			double tmini = tmin, tmaxi = tmax, xe, ye;
+			long ix = ixmin;
+			do
 			{
-				Sound_findIntermediatePoint_bs (me, channel, ix-1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xe, &ye);
-				if (current) // entering painting area
+				Formula_run (channel, ix, & result);
+				current = result.result.numericResult;
+				if (ix == ixmin) { previous = current; }
+				if (previous != current)
 				{
-					tmini = xe;
+					Sound_findIntermediatePoint_bs (me, channel, ix-1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xe, &ye);
+					if (current) // entering painting area
+					{
+						tmini = xe;
+					}
+					else //leaving painting area
+					{
+						tmaxi = xe;
+						fill = true;
+					}
+					Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 				}
-				else //leaving painting area
+				if (ix == ixmax && current) { tmaxi = tmax; fill = true; }
+				if (fill)
 				{
-					tmaxi = xe;
-					fill = true;
+					autoPolygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level);
+					Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);
+					fill = false;
 				}
-				Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
-			}
-			if (ix == ixmax && current) { tmaxi = tmax; fill = true; }
-			if (fill)
-			{
-				autoPolygon him = Sound_to_Polygon (me, channel, tmini, tmaxi, minimum, maximum, level);
-				Graphics_fillArea (g, his numberOfPoints, &his x[1], &his y[1]);
-				fill = false;
-			}
-			previous = current;
-		} while (++ix <= ixmax);
-	}
-	Graphics_setWindow (g, tmin, tmax, minimum, maximum);
-	if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
-	Graphics_unsetInner (g);
-	if (garnish) _Sound_garnish (me, g, tmin, tmax, minimum, maximum);
-	Melder_clearError ();
+				previous = current;
+			} while (++ix <= ixmax);
+		}
+		Graphics_setWindow (g, tmin, tmax, minimum, maximum);
+		if (garnish && my ny == 2) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
+		Graphics_unsetInner (g);
+		if (garnish) _Sound_garnish (me, g, tmin, tmax, minimum, maximum);
+	} catch (MelderError) { Melder_clearError (); }
 }
 
 void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour colour, double tmin, double tmax,
 	double minimum, double maximum, bool garnish)
 {
+	try {
 	long ixmin, ixmax, numberOfChannels = my ny > thy ny ? my ny : thy ny;
 	double min1 = minimum, max1 = maximum, tmin1 = tmin, tmax1 = tmax;
 	double min2 = min1, max2 = max1, tmin2 = tmin1, tmax2 = tmax1;
@@ -1873,7 +1875,7 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 	if (garnish && (my ny == 2 || thy ny == 2)) Graphics_line (g, tmin, 0.5 * (minimum + maximum), tmax, 0.5 * (minimum + maximum));
 	Graphics_unsetInner (g);
 	if (garnish) _Sound_garnish (my ny == 2 ? me : thee, g, tmin, tmax, minimum, maximum);
-	Melder_clearError ();
+	} catch (MelderError) { Melder_clearError (); }
 }
 
 /* End of file Sound_extensions.cpp 2099*/

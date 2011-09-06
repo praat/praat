@@ -1,3 +1,4 @@
+#ifdef UNIX
 /*
  * $Id: pa_unix_util.c 1232 2007-06-16 14:49:43Z rossb $
  * Portable Audio I/O Library
@@ -663,4 +664,5 @@ static void *CanaryFunc( void *userData )
     pthread_exit( NULL );
 }
 */
+#endif
 #endif

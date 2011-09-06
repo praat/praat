@@ -175,7 +175,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 }
 
 
-LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k, 
+LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k,
 	int itermax, double tol, int wantlocation)
 {
 	struct huber_struct struct_huber = { 0 };
@@ -191,10 +191,10 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		Sampled_shortTermAnalysis (me, windowDuration, thy dx, & nFrames, & t1);
 		if (nFrames != thy nx || t1 != thy x1) Melder_throw ("Incorrect retrieved analysis width");
 
-		autoSound sound = (Sound) Data_copy (me);
+		autoSound sound = Data_copy (me);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
-		autoLPC him = (LPC) Data_copy (thee);
+		autoLPC him = Data_copy (thee);
 		huber_struct_init (&struct_huber, windowDuration, p, samplingFrequency, location, wantlocation);
 
 		struct_huber.k = k;
@@ -208,8 +208,8 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 
 		for (long i = 1; i <= nFrames; i++)
 		{
-			LPC_Frame lpc = (LPC_Frame) & thy frame[i];
-			LPC_Frame lpcto = (LPC_Frame) & his frame[i];
+			LPC_Frame lpc = (LPC_Frame) & thy d_frames[i];
+			LPC_Frame lpcto = (LPC_Frame) & his d_frames[i];
 			double t = Sampled_indexToX (thee, i);
 
 			Sound_into_Sound (sound.peek(), sframe.peek(), t - windowDuration / 2);
@@ -234,7 +234,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 		L"\n   Average per frame: ", Melder_double (((double) iter)/nFrames));
 		huber_struct_destroy (&struct_huber);
 		return him.transfer();
-	} catch (MelderError) { 
+	} catch (MelderError) {
 		huber_struct_destroy (&struct_huber);
 		Melder_throw (me, ": no robust LPC created."); }
 }

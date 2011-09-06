@@ -80,7 +80,7 @@ static int Sound_into_LPC_Frame_auto (Sound me, LPC_Frame thee)
 {
 	long i = 1; // For error condition at end
 	long m = thy nCoefficients;
-	
+
 	autoNUMvector<double> r (1, m + 1);
 	autoNUMvector<double> a (1, m + 1);
 	autoNUMvector<double> rc (1, m);
@@ -395,18 +395,18 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 	// Convenience: analyse the whole sound into one LPC_frame
 	if (windowDuration > my dx * my nx) windowDuration = my dx * my nx;
 	Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
-	autoSound sound = (Sound) Data_copy (me);
+	autoSound sound = Data_copy (me);
 	autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 	autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 	autoLPC thee = LPC_create (my xmin, my xmax, nFrames, dt, t1, predictionOrder, my dx);
-	
+
 	autoMelderProgress progress (L"LPC analysis");
 
 	if (preEmphasisFrequency < samplingFrequency / 2) Sound_preEmphasis (sound.peek(), preEmphasisFrequency);
 
 	for (long i = 1; i <= nFrames; i++)
 	{
-		LPC_Frame lpcframe = (LPC_Frame) & thy frame[i];
+		LPC_Frame lpcframe = (LPC_Frame) & thy d_frames[i];
 		double t = Sampled_indexToX (thee.peek(), i);
 		LPC_Frame_init (lpcframe, predictionOrder);
 		Sound_into_Sound (sound.peek(), sframe.peek(), t - windowDuration / 2);
@@ -477,7 +477,7 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 	try {
 		if (my samplingPeriod != thy dx) Melder_throw ("Sampling frequencies are not the same.");
 		if (my xmin != thy xmin || thy xmax != my xmax) Melder_throw ("Domains of LPC and Sound are not equal.");
-		autoSound him = (Sound) Data_copy (thee);
+		autoSound him = Data_copy (thee);
 
 		double *e = his z[1], *x = thy z[1];
 		for (long i = 1; i <= his nx; i++)
@@ -486,8 +486,8 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee)
 			long iFrame = floor ((t - my x1) / my dx + 1.5); /* Sampled_xToNearestIndex (me, t) */
 			double *a; long m, j;
 			if (iFrame < 1 || iFrame > my nx) { e[i] = 0; continue; }
-			a = my frame[iFrame].a;
-			m = i > my frame[iFrame].nCoefficients ? my frame[iFrame].nCoefficients : i-1;
+			a = my d_frames[iFrame].a;
+			m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i-1;
 			for (long j = 1; j <= m; j++) e[i] += a[j] * x[i-j];
 		}
 		return him.transfer();
@@ -503,7 +503,7 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 	try {
 		if (my samplingPeriod != thy dx) Melder_throw ("Sampling frequencies are not the same.");
 		if (my xmin != thy xmin || my xmax != thy xmax) Melder_throw ("Time domains of source and filter do not match.");
-		autoSound him = (Sound) Data_copy (thee);
+		autoSound him = Data_copy (thee);
 
 		double *x = his z[1];
 		long ifirst = 0, ilast = 0;
@@ -513,8 +513,8 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 			long iFrame = floor ((t - my x1) / my dx + 1.5); /* Sampled_xToNearestIndex (me, t) */
 			if (iFrame < 1) { ifirst = i; continue; }
 			if (iFrame > my nx) { ilast = i; break; }
-			double *a = my frame[iFrame].a;
-			long m = i > my frame[iFrame].nCoefficients ? my frame[iFrame].nCoefficients : i-1;
+			double *a = my d_frames[iFrame].a;
+			long m = i > my d_frames[iFrame].nCoefficients ? my d_frames[iFrame].nCoefficients : i-1;
 			for (long j = 1; j <= m; j++) x[i] -= a[j] * x[i-j];
 		}
 
@@ -531,10 +531,10 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain)
 				long iFrame = floor (riFrame);
 				double phase = riFrame - iFrame;
 				if (iFrame < 0 || iFrame > my nx) x[i] = 0;
-				else if (iFrame == 0) x[i] *= sqrt (my frame[1].gain) * phase;
-				else if (iFrame == my nx) x[i] *= sqrt (my frame [my nx].gain) * (1 - phase);
+				else if (iFrame == 0) x[i] *= sqrt (my d_frames[1].gain) * phase;
+				else if (iFrame == my nx) x[i] *= sqrt (my d_frames[my nx].gain) * (1 - phase);
 				else x[i] *=
-					phase * sqrt (my frame[iFrame+1].gain)+(1-phase)*sqrt (my frame[iFrame].gain);
+					phase * sqrt (my d_frames[iFrame+1].gain)+(1-phase)*sqrt (my d_frames[iFrame].gain);
 			}
 		}
 		return him.transfer();
@@ -548,12 +548,12 @@ void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channe
 	if (frameIndex > my nx) frameIndex = my nx;
 	if (channel > thy ny) channel = 1;
 	if (frameIndex < 1 || frameIndex > my nx) Melder_throw ("Frame number out of range.");
-	if (channel > 0) LPC_Frame_and_Sound_filter (&(my frame[frameIndex]), thee, channel);
+	if (channel > 0) LPC_Frame_and_Sound_filter (&(my d_frames[frameIndex]), thee, channel);
 	else
 	{
 		for (long ichan = 1; ichan <= thy ny; ichan++)
 		{
-			LPC_Frame_and_Sound_filter (&(my frame[frameIndex]), thee, ichan);
+			LPC_Frame_and_Sound_filter (&(my d_frames[frameIndex]), thee, ichan);
 		}
 	}
 }
@@ -561,7 +561,7 @@ void LPC_and_Sound_filterWithFilterAtTime_inline (LPC me, Sound thee, int channe
 Sound LPC_and_Sound_filterWithFilterAtTime (LPC me, Sound thee, int channel, double time)
 {
 	try {
-		autoSound him = (Sound) Data_copy (thee);
+		autoSound him = Data_copy (thee);
 		LPC_and_Sound_filterWithFilterAtTime_inline (me, him.peek(), channel, time);
 		return him.transfer();
 	} catch (MelderError) { Melder_throw (thee, ": not filtered."); }
@@ -574,12 +574,12 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int
 		if (frameIndex < 1) frameIndex = 1;
 		if (frameIndex > my nx) frameIndex = my nx;
 		if (channel > thy ny) channel = 1;
-		if (channel > 0) LPC_Frame_and_Sound_filterInverse (&(my frame[frameIndex]), thee, channel);
+		if (channel > 0) LPC_Frame_and_Sound_filterInverse (&(my d_frames[frameIndex]), thee, channel);
 		else
 		{
 			for (long ichan = 1; ichan <= thy ny; ichan++)
 			{
-				LPC_Frame_and_Sound_filterInverse (&(my frame[frameIndex]), thee, ichan);
+				LPC_Frame_and_Sound_filterInverse (&(my d_frames[frameIndex]), thee, ichan);
 			}
 		}
 	} catch (MelderError) { Melder_throw (thee, ": not inverse filtered."); }
@@ -588,7 +588,7 @@ void LPC_and_Sound_filterInverseWithFilterAtTime_inline (LPC me, Sound thee, int
 Sound LPC_and_Sound_filterInverseWithFilterAtTime (LPC me, Sound thee, int channel, double time)
 {
 	try {
-		autoSound him = (Sound) Data_copy (thee);
+		autoSound him = Data_copy (thee);
 		LPC_and_Sound_filterInverseWithFilterAtTime_inline (me, him.peek(), channel, time);
 		return him.transfer();
 	} catch (MelderError) { Melder_throw (thee, ": not inverse filtered."); }

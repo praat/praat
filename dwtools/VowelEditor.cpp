@@ -570,7 +570,7 @@ static struct {
 	int speakerType;
 } prefs;
 
-void VowelEditor_prefs (void)
+void VowelEditor_prefs ()
 {
 	Preferences_addInt (L"VowelEditor.shellWidth", &prefs.shellWidth, 500);
 	Preferences_addInt (L"VowelEditor.shellHeight", &prefs.shellHeight, 500);
@@ -849,7 +849,7 @@ static void menu_cb_extract_PitchTier (EDITOR_ARGS)
 {
 		EDITOR_IAM (VowelEditor);
 		VowelEditor_updateVowel (me);
-		autoPitchTier publish = (PitchTier) Data_copy (my vowel -> pt);
+		autoPitchTier publish = Data_copy (my vowel -> pt);
 		my broadcastPublication (publish.transfer());
 }
 
@@ -1557,7 +1557,7 @@ VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data)
 		VowelEditor_setF3F4 (me.peek(), prefs.f3, prefs.b3, prefs.f4, prefs.b4);
 		my maximumDuration = BUFFER_SIZE_SEC;
 		my extendDuration = 0.05;
-		if (my data != 0) my vowel = (Vowel) Data_copy (data);
+		if (my data != 0) my vowel = Data_copy ((Vowel) data);
 		else my vowel = Vowel_create_twoFormantSchwa (0.2);
 		my markTraceEvery = 0.05;
 		my f0 = f0default;

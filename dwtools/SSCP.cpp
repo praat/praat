@@ -917,7 +917,7 @@ CCA SSCP_to_CCA (I, long ny)
 
 Thing_implement (SSCPs, Ordered, 0);
 
-SSCPs SSCPs_create (void)
+SSCPs SSCPs_create ()
 {
 	try {
 		autoSSCPs me = Thing_new (SSCPs);
@@ -1542,8 +1542,7 @@ static void checkTwoIndices (TableOfReal me, long index1, long index2)
 {
 	if (index1 < 1 || index1 > my numberOfColumns || index2 < 1 || index2 > my numberOfColumns)
 		Melder_throw ("Index must be in interval [1, ", my numberOfColumns, "].");
-	if (index1 == index2)
-		Melder_throw ("Indices must be different.");
+	if (index1 == index2) Melder_throw ("Indices must be different.");
 }
 
 void Covariance_getSignificanceOfOneMean (Covariance me, long index, double mu,

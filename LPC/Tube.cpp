@@ -65,12 +65,6 @@ void Tube_Frame_init (Tube_Frame me, long nSegments, double length)
 	my c = NUMvector<double> (1, nSegments);
 }
 
-
-void Tube_Frame_free (Tube_Frame me)   // David, dit wordt niet gebruikt
-{
-	my destroy ();
-}
-
 /* Gray & Markel (1979), LPTRN */
 void Tube_Frames_rc_into_area (Tube_Frame me, Tube_Frame thee)
 {
@@ -112,7 +106,7 @@ void Area_init (Area me, double tmin, double tmax, long nt, double dt, double t1
 {
 	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
-		
+
 Area Area_create (double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)
 {
@@ -127,7 +121,7 @@ Thing_implement (RC, Tube, 0);
 
 void RC_init (RC me, double tmin, double tmax, long nt, double dt, double t1,
 	long maxnSegments, double defaultLength)
-{	
+{
 	Tube_init (me, tmin, tmax, nt, dt, t1, maxnSegments, defaultLength);
 }
 
@@ -140,5 +134,5 @@ RC RC_create (double tmin, double tmax, long nt, double dt, double t1,
 		return me.transfer();
 	} catch (MelderError) { Melder_throw ("RC not crteated."); }
 }
-		
+
 /* End of file Tube.cpp */

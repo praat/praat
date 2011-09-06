@@ -1,3 +1,4 @@
+#ifdef _WIN32
 /*
  * $Id: pa_win_hostapis.c 1097 2006-08-26 08:27:53Z rossb $
  * Portable Audio I/O Library Windows initialization table
@@ -69,11 +70,12 @@ PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
         PaSkeleton_Initialize,   // 0; just for testing
         PaWinMme_Initialize,   // 1
-        PaWinDs_Initialize,   // 2
-        PaWinWdm_Initialize,   // 3
+        //PaWinDs_Initialize,   // 2
+        //PaWinWdm_Initialize,   // 3
         //PaAsio_Initialize,
 		//PaWinWasapi_Initialize,
         0   /* NULL terminated array */
     };
 
 int paDefaultHostApiIndex = 1;
+#endif

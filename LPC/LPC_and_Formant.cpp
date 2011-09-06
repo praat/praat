@@ -38,7 +38,7 @@ void Formant_Frame_scale (Formant_Frame me, double scale)
 	for (long i = 1; i <= my nFormants; i++)
 	{
 		my formant[i].frequency *= scale;
-		my formant[i].bandwidth *= scale;	
+		my formant[i].bandwidth *= scale;
 	}
 }
 
@@ -46,10 +46,10 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 {
 	long n = my max - my min + 1;
 	autoNUMvector<double> fc (1, n);
-	autoNUMvector<double> bc (1, n);	
+	autoNUMvector<double> bc (1, n);
 
 	// Determine the formants and bandwidths
-	
+
 	thy nFormants = 0;
 	double fLow = margin, fHigh = samplingFrequency / 2 - margin;
 	for (long i = my min; i <= my max; i++)
@@ -71,7 +71,7 @@ void Roots_into_Formant_Frame (Roots me, Formant_Frame thee, double samplingFreq
 	for (long i = 1; i <= thy nFormants; i++)
 	{
 		thy formant[i].frequency = fc[i];
-		thy formant[i].bandwidth = bc[i];	
+		thy formant[i].bandwidth = bc[i];
 	}
 }
 
@@ -81,7 +81,7 @@ void LPC_Frame_into_Formant_Frame (LPC_Frame me, Formant_Frame thee, double samp
 	if (my nCoefficients == 0) return;
 
 	autoPolynomial p = LPC_Frame_to_Polynomial (me);
-	autoRoots r = Polynomial_to_Roots (p.peek());    
+	autoRoots r = Polynomial_to_Roots (p.peek());
 	Roots_fixIntoUnitCircle (r.peek());
 	Roots_into_Formant_Frame (r.peek(), thee, 1 / samplingPeriod, margin);
 }
@@ -95,27 +95,27 @@ Formant LPC_to_Formant (LPC me, double margin)
 
 		if (nmax > 99) Melder_throw ("We cannot find the roots of a polynomial of order > 99.");
 		if (margin >= samplingFrequency/4) Melder_throw ("Margin must be smaller than ", samplingFrequency/4, ".");
-	 
+
 		autoFormant thee = Formant_create (my xmin, my xmax, my nx, my dx, my x1, (nmax+1)/2);
 
 		autoMelderProgress progress (L"LPC to Formant");
-	
+
 		for (long i = 1; i <= my nx; i++)
 		{
-			Formant_Frame formant = & thy d_frames [i];
-			LPC_Frame lpc = & my frame[i];
-		
+			Formant_Frame formant = & thy d_frames[i];
+			LPC_Frame lpc = & my d_frames[i];
+
 			// Initialisation of Formant_Frame is taken care of in Roots_into_Formant_Frame!
-		
+
 			try { LPC_Frame_into_Formant_Frame (lpc, formant, my samplingPeriod, margin);
 			} catch (MelderError) { Melder_clearError(); err++; }
-		
+
 			if ((interval == 1 || (i % interval) == 1)) {
-				Melder_progress5 ((double)i / my nx, L"LPC to Formant: frame ", Melder_integer (i), 
+				Melder_progress5 ((double)i / my nx, L"LPC to Formant: frame ", Melder_integer (i),
 					L" out of ", Melder_integer (my nx), L"."); therror
 			}
 		}
-	
+
 		Formant_sort (thee.peek());
 		if (err > 0) Melder_warning4 (Melder_integer (err), L" formant frames out of ", Melder_integer (my nx), L" suspect.");
 		return thee.transfer();
@@ -134,20 +134,20 @@ void Formant_Frame_into_LPC_Frame (Formant_Frame me, LPC_Frame thee, double samp
 	for (long i = 1; i <= my nFormants; i++)
 	{
 		double f = my formant[i].frequency;
-		
+
 		if (f > nyquist) continue;
-	
+
 		// D(z): 1 + p z^-1 + q z^-2
-	
+
 		double r = exp (- NUMpi * my formant[i].bandwidth * samplingPeriod);
 		double p = - 2 * r * cos (2 * NUMpi * f * samplingPeriod);
 		double q = r * r;
-	
+
 		for (long j = m; j > 0; j--)
 		{
 			lpc[j] += p * lpc[j - 1] + q * lpc[j - 2];
 		}
-	
+
 		m += 2;
 	}
 
@@ -165,13 +165,13 @@ LPC Formant_to_LPC (Formant me, double samplingPeriod)
 {
 	try {
 		autoLPC thee = LPC_create (my xmin, my xmax, my nx, my dx, my x1, 2 * my maxnFormants, samplingPeriod);
-	
+
 		for (long i = 1; i <= my nx; i++)
 		{
-			Formant_Frame f = & my d_frames [i];
-			LPC_Frame lpc = & thy frame [i];
+			Formant_Frame f = & my d_frames[i];
+			LPC_Frame lpc = & thy d_frames[i];
 			long m = 2 * f -> nFormants;
-		
+
 			LPC_Frame_init (lpc, m);
 			Formant_Frame_into_LPC_Frame (f, lpc, samplingPeriod);
 		}

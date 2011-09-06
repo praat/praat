@@ -67,7 +67,7 @@ void structProcrustes :: v_transform (double **in, long nrows, double **out)
 
 Any structProcrustes :: v_invert ()
 {
-	autoProcrustes thee = (Procrustes) Data_copy (this);
+	autoProcrustes thee = Data_copy (this);
 	/*
 		R is symmetric rotation matrix --> 
 		inverse is transpose!

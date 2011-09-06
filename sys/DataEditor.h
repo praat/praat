@@ -42,12 +42,12 @@ typedef struct structDataSubEditor_FieldData {
 Thing_define (DataSubEditor, Editor) {
 	// new data:
 	public:
-		DataEditor root;
-		void *address;
-		Data_Description description;
-		GuiObject scrollBar;
-		int irow, topField, numberOfFields;
-		struct structDataSubEditor_FieldData fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
+		DataEditor d_root;
+		void *d_address;
+		Data_Description d_description;
+		GuiObject d_scrollBar;
+		int d_irow, d_topField, d_numberOfFields;
+		struct structDataSubEditor_FieldData d_fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual bool v_scriptable () { return false; }
@@ -61,7 +61,7 @@ Thing_define (DataSubEditor, Editor) {
 Thing_define (VectorEditor, DataSubEditor) {
 	// new data:
 	public:
-		long minimum, maximum;
+		long d_minimum, d_maximum;
 	// overridden methods:
 		virtual long v_countFields ();
 		virtual void v_showMembers ();
@@ -70,7 +70,7 @@ Thing_define (VectorEditor, DataSubEditor) {
 Thing_define (MatrixEditor, DataSubEditor) {
 	// new data:
 	public:
-		long minimum, maximum, min2, max2;
+		long d_minimum, d_maximum, d_min2, d_max2;
 	// overridden methods:
 		virtual long v_countFields ();
 		virtual void v_showMembers ();
@@ -90,7 +90,7 @@ Thing_define (ClassEditor, StructEditor) {
 Thing_define (DataEditor, ClassEditor) {
 	// new data:
 	public:
-		Collection children;
+		Collection d_children;
 	// overridden methods:
 		void v_destroy ();
 		void v_dataChanged ();

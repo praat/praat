@@ -32,19 +32,19 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me)
 {
 	try {
 		autoMatrix unwrap = Spectrum_unwrap (me);
-		autoSpectrum sx = (Spectrum) Data_copy (me);
-	
+		autoSpectrum sx = Data_copy (me);
+
 		// Copy magnitude-squared and unwrapped phase.
-	
+
 		for (long i = 1; i <= my nx; i ++)
 		{
 			double xa = unwrap -> z[1][i];
 			sx -> z[1][i] = xa > 0 ? 0.5 * log (xa) : -300;
 			sx -> z[2][i] = unwrap -> z[2][i];
 		}
-	
+
 		// Compute complex cepstrum x.
-	
+
 		autoSound x = Spectrum_to_Sound (sx.peek());
 		autoCepstrum thee = Cepstrum_create (0, x -> xmax - x -> xmin, x -> nx);
 		NUMdvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
@@ -58,12 +58,12 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me)
 		autoSound x = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		NUMdvector_copyElements	(my z[1], x -> z[1], 1, my nx);
 		autoSpectrum thee = Sound_to_Spectrum (x.peek(), TRUE);
-	
+
 		for (long i = 1; i <= thy nx; i++)
 		{
 			double ar = exp (thy z[1][i]);
 			double ai = thy z[2][i];
-		
+
 			thy z[1][i] = ar * cos (ai);
 			thy z[2][i] = ar * sin (ai);
 		}

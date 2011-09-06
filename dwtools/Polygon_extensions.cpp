@@ -621,7 +621,7 @@ Polygon Polygon_circularPermutation (Polygon me, long nshift);
 Polygon Polygon_circularPermutation (Polygon me, long nshift)
 {
 	try {
-		autoPolygon thee = (Polygon) Data_copy (me);
+		autoPolygon thee = Data_copy (me);
 		if (nshift != 0)
 		{
 			for (long i = 1; i <= my numberOfPoints; i++)
@@ -665,7 +665,7 @@ Polygon Polygon_simplify (Polygon me);
 Polygon Polygon_simplify (Polygon me)
 {
 	try {
-		autoPolygon p1 = (Polygon) Data_copy (me);
+		autoPolygon p1 = Data_copy (me);
 
 		// pass 1: remove doublets
 		long np = 1;
@@ -683,7 +683,7 @@ Polygon Polygon_simplify (Polygon me)
 
 		// pass 2: remove collinearities
 
-		autoPolygon p = (Polygon) Data_copy (p1.peek());
+		autoPolygon p = Data_copy (p1.peek());
 		p -> numberOfPoints = 0;
 		// is there collinearity between the first and the last points of p1?
 		double  eps = 1e-15;
@@ -745,7 +745,7 @@ Polygon Polygon_simplify (Polygon me)
 		}
 		if (p -> numberOfPoints < 3) Melder_throw ("Not enough points left after collinear points removal.");
 
-		autoPolygon thee = (Polygon) Data_copy (p.peek()); //
+		autoPolygon thee = Data_copy (p.peek()); //
 		return thee.transfer();
 	} catch (MelderError) { Melder_throw (me, ": not simplified."); }
 }
@@ -776,7 +776,7 @@ Vertices Polygon_to_Vertices (Polygon me, bool close)
 void Vertices_print (Vertices me, Vertices thee);
 void Vertices_print (Vertices me, Vertices thee)
 {
-	long ns = 0, nc = 0, ni = 0, nt, nt2;
+	long ns = 0, nc = 0, nt, nt2;
 //	MelderInfo_open();
 	DLLNode n = my front;
 	MelderInfo_writeLine1 (L"");
@@ -882,7 +882,7 @@ void Vertices_addIntersections (Vertices me, Vertices thee)
 					ins -> alpha = mua;
 					ins -> intersect = intersection;
 					ins -> id = id;
-					autoVertex inc = (Vertex) Data_copy (ins.peek());
+					autoVertex inc = Data_copy (ins.peek());
 					inc -> alpha = mub;
 					// 2. create the nodes
 					autoDLLNode ns = DLLNode_create (0);
@@ -975,7 +975,7 @@ Vertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices thee)
 				current = current -> prev;
 				if (current == 0) current = inside ? thy back : my back;
 			}
-		} while (current != firstOutside and current != 0);
+		} while (current != firstOutside and current != 0 and poly_npoints < my numberOfNodes);
 		VERTEX(his front) -> poly_npoints = poly_npoints;
 		return him.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no clipping path."); }
@@ -1112,13 +1112,13 @@ Collection Polygons_findClippings (Polygon me, bool use_myinterior, Polygon thee
 			autoCollection apc;
 			if (not use_myinterior and not use_thyinterior and firstLocation == Polygon_INSIDE)
 			{
-				autoPolygon ap = (Polygon) Data_copy (thee);
-				//Collection_addItem (ap.peek(), ap.transfer());   David, een Polygon is geen Collection; dit knalt
+				autoPolygon ap = Data_copy (thee);
+				Collection_addItem (apc.peek(), ap.transfer());
 			}
 			else
 			{
-				autoPolygon ap = (Polygon) Data_copy (me);
-				//Collection_addItem (ap.peek(), ap.transfer());   David, een Polygon is geen Collection; dit knalt
+				autoPolygon ap = Data_copy (me);
+				Collection_addItem (apc.peek(), ap.transfer());
 			}
 			return apc.transfer();
 		}

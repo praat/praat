@@ -71,7 +71,7 @@ Strings Strings_append (Collection me)
 	} catch (MelderError) { Melder_throw (me, ": not appended."); }
 }
 
-Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces, 
+Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces,
 	long *nmatches, long *nstringmatches, int use_regexp)
 {
 	try {
@@ -86,7 +86,7 @@ Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replac
 
 void Strings_setString (Strings me, const wchar_t *newstr, long index)
 {
-	try { 
+	try {
 		if (index < 1 || index > my numberOfStrings) Melder_throw ("Index must be in range [1, ", my numberOfStrings, L"].");
 		autostring s = Melder_wcsdup (newstr);
 		Melder_free (my strings[index]);
@@ -166,7 +166,7 @@ StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes)
 		for (long i = 1; i <= numberOfClasses; i++)
 		{
 			SimpleString t = (SimpleString) tmp -> classes -> item[i];
-			autoSimpleString t2 = (SimpleString) Data_copy (t);
+			autoSimpleString t2 = Data_copy (t);
 			Collection_addItem (his classes, t2.transfer());
 		}
 		for (long j = 1; j <= my numberOfStrings; j++)

@@ -3,9 +3,7 @@
 
 include ../makefile.defs
 
-CFLAGS = $(DEFS) -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
-
-CPPFLAGS = $(CFLAGS)
+CPPFLAGS = -I ../num -I ../dwtools -I ../fon -I ../sys -I ../dwsys -I ../stat
 
 OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	LPC.o LPC_and_Cepstrumc.o LPC_and_Formant.o LPC_and_LFCC.o \

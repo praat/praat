@@ -726,7 +726,7 @@ MAN_END
 MAN_BEGIN (L"Create simple Confusion...", L"djmw", 20110517)
 INTRO (L"Creates a square @@Confusion|confusion matrix@ with equal stimulus labels and response labels.")
 ENTRY (L"Example")
-NORMAL (L"The command ##Create simple Confusion... simple u i a# results in the following Confusion:") 
+NORMAL (L"The command ##Create simple Confusion... simple u i a# results in the following Confusion:")
 CODE (L"     u    i    a   ! The response labels")
 CODE (L"u    0    0    0   ! Responses on stimulus  u,")
 CODE (L"i    0    0    0   ! Responses on stimulus  i")

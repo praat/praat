@@ -306,7 +306,7 @@ Thing_implement (VDSmagtMinimizer, Minimizer, 0);
 void structVDSmagtMinimizer :: v_minimize ()
 {
     int decrease_direction_found = 1;
-	int l_iteration = 1;   // David, dat is gevaarlijk: een locale variabele met dezelfde naam als een member; daarom hernoemd, maar is het correct?
+	int l_iteration = 1;   // David, dat is gevaarlijk: een locale variabele met dezelfde naam als een member; daarom hernoemd, maar is het correct? yes, we can iterate in steps, therefore local and global counter
     double rtemp, rtemp2;
 
 	// df is estimate of function reduction obtainable during line search
@@ -547,9 +547,9 @@ void structVDSmagtMinimizer :: v_setParameters (Any parameters)
 {
 	if (parameters)
 	{
-		VDSmagtMinimizer_parameters p = (VDSmagtMinimizer_parameters) parameters;   // David, weer link: dezelfde naam
-    	lineSearchGradient = p -> lineSearchGradient;
-    	lineSearchMaxNumOfIterations = p -> lineSearchMaxNumOfIterations;
+		VDSmagtMinimizer_parameters  vdspars= (VDSmagtMinimizer_parameters) parameters;   // David, weer link: dezelfde naam,: Nu niet meer
+    	lineSearchGradient = vdspars -> lineSearchGradient;
+    	lineSearchMaxNumOfIterations = vdspars -> lineSearchMaxNumOfIterations;
     }
 }
 

@@ -17,26 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/07/16 GPL
- * pb 2003/09/15 TableOfReal_readFromHeaderlessSpreadsheetFile: guard against cells with strings
- * dw 2004/02/27 drawAsSquares: fill colour same as outline colour
- * pb 2004/05/09 more Extract Part and Extract commands
- * pb 2004/10/01 Melder_double instead of %.17g
- * pb 2005/03/04 Melder_NUMBER and Melder_STRING as enums
- * pb 2005/06/16 Melder_NUMBER and Melder_STRING as ints
- * pb 2005/07/19 TableOfReal_readFromHeaderlessSpreadsheetFile: allow 30k row and column labels
- * pb 2005/09/18 SILIPA versus XIPA widths
- * pb 2006/04/17 getRowStr, getColStr
- * pb 2006/12/10 MelderInfo
- * pb 2007/03/17 moved Table stuff here
- * pb 2007/06/21 tex
- * pb 2007/10/01 can write as encoding
- * pb 2008/04/30 new Formula API
- * pb 2009/01/18 Interpreter argument to formula
- * pb 2011/03/20 C++
- */
-
 #include <ctype.h>
 #include "TableOfReal.h"
 #include "NUM2.h"
@@ -133,8 +113,7 @@ double structTableOfReal :: v_getColIndex (const wchar_t *columnLabel) {
 
 Thing_implement (TableOfReal, Data, 0);
 
-void TableOfReal_init (I, long numberOfRows, long numberOfColumns) {
-	iam (TableOfReal);
+void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns) {
 	if (numberOfRows < 1 || numberOfColumns < 1)
 		Melder_throw ("Cannot create cell-less table.");
 	my numberOfRows = numberOfRows;
@@ -156,24 +135,21 @@ TableOfReal TableOfReal_create (long numberOfRows, long numberOfColumns) {
 
 /***** QUERY *****/
 
-long TableOfReal_rowLabelToIndex (I, const wchar_t *label) {
-	iam (TableOfReal);
+long TableOfReal_rowLabelToIndex (TableOfReal me, const wchar_t *label) {
 	for (long irow = 1; irow <= my numberOfRows; irow ++)
 		if (my rowLabels [irow] && wcsequ (my rowLabels [irow], label))
 			return irow;
 	return 0;
 }
 
-long TableOfReal_columnLabelToIndex (I, const wchar_t *label) {
-	iam (TableOfReal);
+long TableOfReal_columnLabelToIndex (TableOfReal me, const wchar_t *label) {
 	for (long icol = 1; icol <= my numberOfColumns; icol ++)
 		if (my columnLabels [icol] && wcsequ (my columnLabels [icol], label))
 			return icol;
 	return 0;
 }
 
-double TableOfReal_getColumnMean (I, long columnNumber) {
-	iam (TableOfReal);
+double TableOfReal_getColumnMean (TableOfReal me, long columnNumber) {
 	double sum = 0.0;
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return NUMundefined;
 	if (my numberOfRows < 1) return NUMundefined;
@@ -182,8 +158,7 @@ double TableOfReal_getColumnMean (I, long columnNumber) {
 	return sum / my numberOfRows;
 }
 
-double TableOfReal_getColumnStdev (I, long columnNumber) {
-	iam (TableOfReal);
+double TableOfReal_getColumnStdev (TableOfReal me, long columnNumber) {
 	double mean = TableOfReal_getColumnMean (me, columnNumber), sum = 0.0, d;
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return NUMundefined;
 	if (my numberOfRows < 2) return NUMundefined;
@@ -194,8 +169,7 @@ double TableOfReal_getColumnStdev (I, long columnNumber) {
 
 /***** MODIFY *****/
 
-void TableOfReal_removeRow (I, long rowNumber) {
-	iam (TableOfReal);
+void TableOfReal_removeRow (TableOfReal me, long rowNumber) {
 	try {
 		if (my numberOfRows == 1)
 			Melder_throw (Thing_messageName (me), " has only one row, and a TableOfReal without rows cannot exist.");
@@ -222,8 +196,7 @@ void TableOfReal_removeRow (I, long rowNumber) {
 	}
 }
 
-void TableOfReal_insertRow (I, long rowNumber) {
-	iam (TableOfReal);
+void TableOfReal_insertRow (TableOfReal me, long rowNumber) {
 	try {
 		if (rowNumber < 1 || rowNumber > my numberOfRows + 1)
 			Melder_throw ("Cannot create row ", rowNumber, ".");
@@ -252,8 +225,7 @@ void TableOfReal_insertRow (I, long rowNumber) {
 	}
 }
 
-void TableOfReal_removeColumn (I, long columnNumber) {
-	iam (TableOfReal);
+void TableOfReal_removeColumn (TableOfReal me, long columnNumber) {
 	try {
 		if (my numberOfColumns == 1)
 			Melder_throw ("Cannot remove the only column.");
@@ -280,8 +252,7 @@ void TableOfReal_removeColumn (I, long columnNumber) {
 	}
 }
 
-void TableOfReal_insertColumn (I, long columnNumber) {
-	iam (TableOfReal);
+void TableOfReal_insertColumn (TableOfReal me, long columnNumber) {
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns + 1)
 			Melder_throw ("Cannot create column ", columnNumber, ".");
@@ -308,8 +279,7 @@ void TableOfReal_insertColumn (I, long columnNumber) {
 	}
 }
 
-void TableOfReal_setRowLabel (I, long rowNumber, const wchar_t *label) {
-	iam (TableOfReal);
+void TableOfReal_setRowLabel (TableOfReal me, long rowNumber, const wchar_t *label) {
 	try {
 		if (rowNumber < 1 || rowNumber > my numberOfRows) return;
 		autostring newLabel = Melder_wcsdup (label);
@@ -323,8 +293,7 @@ void TableOfReal_setRowLabel (I, long rowNumber, const wchar_t *label) {
 	}
 }
 
-void TableOfReal_setColumnLabel (I, long columnNumber, const wchar_t *label) {
-	iam (TableOfReal);
+void TableOfReal_setColumnLabel (TableOfReal me, long columnNumber, const wchar_t *label) {
 	try {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns) return;
 		autostring newLabel = Melder_wcsdup (label);
@@ -338,9 +307,7 @@ void TableOfReal_setColumnLabel (I, long columnNumber, const wchar_t *label) {
 	}
 }
 
-void TableOfReal_formula (I, const wchar *expression, Interpreter interpreter, thou) {
-	iam (TableOfReal);
-	thouart (TableOfReal);
+void TableOfReal_formula (TableOfReal me, const wchar *expression, Interpreter interpreter, TableOfReal thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		if (thee == NULL) thee = me;
@@ -392,8 +359,7 @@ static void copyColumn (TableOfReal me, long myCol, TableOfReal thee, long thyCo
 	}
 }
 
-TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder_NUMBER, double criterion) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractRowsWhereColumn (TableOfReal me, long column, int which_Melder_NUMBER, double criterion) {
 	try {
 		if (column < 1 || column > my numberOfColumns)
 			Melder_throw ("No such column: ", column, ".");
@@ -416,8 +382,7 @@ TableOfReal TableOfReal_extractRowsWhereColumn (I, long column, int which_Melder
 	}
 }
 
-TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractRowsWhereLabel (TableOfReal me, int which_Melder_STRING, const wchar_t *criterion) {
 	try {
 		long n = 0;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
@@ -439,8 +404,7 @@ TableOfReal TableOfReal_extractRowsWhereLabel (I, int which_Melder_STRING, const
 	}
 }
 
-TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which_Melder_NUMBER, double criterion) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractColumnsWhereRow (TableOfReal me, long row, int which_Melder_NUMBER, double criterion) {
 	try {
 		if (row < 1 || row > my numberOfRows)
 			Melder_throw ("No such row: ", row, ".");
@@ -464,8 +428,7 @@ TableOfReal TableOfReal_extractColumnsWhereRow (I, long row, int which_Melder_NU
 	}
 }
 
-TableOfReal TableOfReal_extractColumnsWhereLabel (I, int which_Melder_STRING, const wchar_t *criterion) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Melder_STRING, const wchar_t *criterion) {
 	try {
 		long n = 0;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -574,8 +537,7 @@ static long *getElementsOfRanges (const wchar *ranges, long maximumElement, long
 	return elements.transfer();
 }
 
-TableOfReal TableOfReal_extractRowRanges (I, const wchar *ranges) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractRowRanges (TableOfReal me, const wchar *ranges) {
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, L"row"), 1);
@@ -589,8 +551,7 @@ TableOfReal TableOfReal_extractRowRanges (I, const wchar *ranges) {
 	}
 }
 
-TableOfReal TableOfReal_extractColumnRanges (I, const wchar *ranges) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const wchar *ranges) {
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, L"column"), 1);
@@ -604,8 +565,7 @@ TableOfReal TableOfReal_extractColumnRanges (I, const wchar *ranges) {
 	}
 }
 
-TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpreter interpreter) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const wchar_t *condition, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		/*
@@ -649,8 +609,7 @@ TableOfReal TableOfReal_extractRowsWhere (I, const wchar_t *condition, Interpret
 	}
 }
 
-TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interpreter interpreter) {
-	iam (TableOfReal);
+TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const wchar_t *condition, Interpreter interpreter) {
 	try {
 		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
 		/*
@@ -696,8 +655,7 @@ TableOfReal TableOfReal_extractColumnsWhere (I, const wchar_t *condition, Interp
 
 /***** EXTRACT *****/
 
-Strings TableOfReal_extractRowLabelsAsStrings (I) {
-	iam (TableOfReal);
+Strings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <wchar *> (1, my numberOfRows);
@@ -711,8 +669,7 @@ Strings TableOfReal_extractRowLabelsAsStrings (I) {
 	}
 }
 
-Strings TableOfReal_extractColumnLabelsAsStrings (I) {
-	iam (TableOfReal);
+Strings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy strings = NUMvector <wchar *> (1, my numberOfColumns);
@@ -795,8 +752,7 @@ static double getMaxColumnLabelHeight (TableOfReal me, Graphics graphics, long c
 	return maxHeight;
 }
 
-void TableOfReal_drawAsNumbers (I, Graphics graphics, long rowmin, long rowmax, int iformat, int precision) {
-	iam (TableOfReal);
+void TableOfReal_drawAsNumbers (TableOfReal me, Graphics graphics, long rowmin, long rowmax, int iformat, int precision) {
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, 0.5, my numberOfColumns + 0.5, 0, 1);
@@ -830,10 +786,9 @@ void TableOfReal_drawAsNumbers (I, Graphics graphics, long rowmin, long rowmax, 
 	Graphics_unsetInner (graphics);
 }
 
-void TableOfReal_drawAsNumbers_if (I, Graphics graphics, long rowmin, long rowmax, int iformat, int precision,
+void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, long rowmin, long rowmax, int iformat, int precision,
 	const wchar_t *conditionFormula, Interpreter interpreter)
 {
-	iam (TableOfReal);
 	try {
 		autoMatrix original = TableOfReal_to_Matrix (me);
 		autoMatrix conditions = original.clone ();
@@ -874,8 +829,7 @@ void TableOfReal_drawAsNumbers_if (I, Graphics graphics, long rowmin, long rowma
 	}
 }
 
-void TableOfReal_drawVerticalLines (I, Graphics graphics, long rowmin, long rowmax) {
-	iam (TableOfReal);
+void TableOfReal_drawVerticalLines (TableOfReal me, Graphics graphics, long rowmin, long rowmax) {
 	long colmin = 1, colmax = my numberOfColumns;
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
@@ -890,8 +844,7 @@ void TableOfReal_drawVerticalLines (I, Graphics graphics, long rowmin, long rowm
 	Graphics_unsetInner (graphics);
 }
 
-void TableOfReal_drawLeftAndRightLines (I, Graphics graphics, long rowmin, long rowmax) {
-	iam (TableOfReal);
+void TableOfReal_drawLeftAndRightLines (TableOfReal me, Graphics graphics, long rowmin, long rowmax) {
 	long colmin = 1, colmax = my numberOfColumns;
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
@@ -910,8 +863,7 @@ void TableOfReal_drawLeftAndRightLines (I, Graphics graphics, long rowmin, long 
 	Graphics_unsetInner (graphics);
 }
 
-void TableOfReal_drawHorizontalLines (I, Graphics graphics, long rowmin, long rowmax) {
-	iam (TableOfReal);
+void TableOfReal_drawHorizontalLines (TableOfReal me, Graphics graphics, long rowmin, long rowmax) {
 	long colmin = 1, colmax = my numberOfColumns;
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
@@ -932,8 +884,7 @@ void TableOfReal_drawHorizontalLines (I, Graphics graphics, long rowmin, long ro
 	Graphics_unsetInner (graphics);
 }
 
-void TableOfReal_drawTopAndBottomLines (I, Graphics graphics, long rowmin, long rowmax) {
-	iam (TableOfReal);
+void TableOfReal_drawTopAndBottomLines (TableOfReal me, Graphics graphics, long rowmin, long rowmax) {
 	long colmin = 1, colmax = my numberOfColumns;
 	fixRows (me, & rowmin, & rowmax);
 	Graphics_setInner (graphics);
@@ -952,10 +903,9 @@ void TableOfReal_drawTopAndBottomLines (I, Graphics graphics, long rowmin, long 
 	Graphics_unsetInner (graphics);
 }
 
-void TableOfReal_drawAsSquares (I, Graphics graphics, long rowmin, long rowmax,
+void TableOfReal_drawAsSquares (TableOfReal me, Graphics graphics, long rowmin, long rowmax,
 	long colmin, long colmax, int garnish)
 {
-	iam (TableOfReal);
 	double dx = 1, dy = 1;
 	Graphics_Colour colour = Graphics_inqColour (graphics);
 	fixRows (me, & rowmin, & rowmax);
@@ -992,12 +942,11 @@ void TableOfReal_drawAsSquares (I, Graphics graphics, long rowmin, long rowmax,
 	}
 }
 
-Any TablesOfReal_append (I, thou) {
-	iam (TableOfReal); thouart (TableOfReal);
+Any TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 	try {
 		if (thy numberOfColumns != my numberOfColumns)
 			Melder_throw (L"Numbers of columns are ", my numberOfColumns, " and ", thy numberOfColumns, " but should be equal.");
-		autoTableOfReal him = static_cast<TableOfReal> (_Thing_new (my classInfo));
+		autoTableOfReal him = static_cast <TableOfReal> (_Thing_new (my classInfo));
 		TableOfReal_init (him.peek(), my numberOfRows + thy numberOfRows, my numberOfColumns); therror
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -1093,13 +1042,11 @@ static void TableOfReal_sort (TableOfReal me, bool useLabels, long column1, long
 	}
 }
 
-void TableOfReal_sortByLabel (I, long column1, long column2) {
-	iam (TableOfReal);
+void TableOfReal_sortByLabel (TableOfReal me, long column1, long column2) {
 	TableOfReal_sort (me, true, column1, column2);
 }
 
-void TableOfReal_sortByColumn (I, long column1, long column2) {
-	iam (TableOfReal);
+void TableOfReal_sortByColumn (TableOfReal me, long column1, long column2) {
 	TableOfReal_sort (me, false, column1, column2);
 }
 

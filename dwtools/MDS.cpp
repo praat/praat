@@ -833,7 +833,7 @@ MDSVec Dissimilarity_to_MDSVec (Dissimilarity me)
 
 Thing_implement (MDSVecs, Ordered, 0);
 
-MDSVecs MDSVecs_create (void)
+MDSVecs MDSVecs_create ()
 {
 	try {
 		autoMDSVecs me = Thing_new (MDSVecs);
@@ -861,7 +861,7 @@ MDSVecs Dissimilarities_to_MDSVecs (Dissimilarities me)
 
 Thing_implement (Confusions, Proximities, 0);
 
-Confusions Confusions_create (void)
+Confusions Confusions_create ()
 {
 	try {
 		autoConfusions me = Thing_new (Confusions);
@@ -884,7 +884,7 @@ Confusion Confusions_sum (Confusions me)
 
 Thing_implement (Distances, Proximities, 0);
 
-Distances Distances_create (void)
+Distances Distances_create ()
 {
 	try {
 		autoDistances me = Thing_new (Distances);
@@ -912,7 +912,7 @@ ScalarProduct ScalarProduct_create (long numberOfPoints)
 
 Thing_implement (ScalarProducts, TablesOfReal, 0);
 
-ScalarProducts ScalarProducts_create (void)
+ScalarProducts ScalarProducts_create ()
 {
 	try {
 		autoScalarProducts me = Thing_new (ScalarProducts);
@@ -1016,7 +1016,7 @@ int Dissimilarity_getAdditiveConstant (I, double *c) // Why not: double Diss..(I
 
 Thing_implement (Dissimilarities, Proximities, 0);
 
-Dissimilarities Dissimilarities_create (void)
+Dissimilarities Dissimilarities_create ()
 {
 	try {
 		autoDissimilarities me = Thing_new (Dissimilarities);
@@ -1342,7 +1342,7 @@ void Proximity_Distance_drawScatterDiagram (I, Distance thee, Graphics g,
 	if (n == 0) return;
 	if (! TableOfReal_equalLabels (me, thee, 1, 1))
 	{
-		Melder_throw (L"Proximity_Distance_drawScatterDiagram: Dimensions and labels must be the same.");
+		Melder_throw ("Proximity_Distance_drawScatterDiagram: Dimensions and labels must be the same.");
 	}
 	if (xmax <= xmin)
 	{
@@ -1511,7 +1511,7 @@ void Proximities_init (I, ClassInfo klas)
 		TablesOfReal_init (me, klas);
 }
 
-Proximities Proximities_create (void)
+Proximities Proximities_create ()
 {
 	try {
 		autoProximities me = Thing_new (Proximities);
@@ -1986,7 +1986,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 		if (no_weight) { aw.reset (Weight_create (nPoints)); weight = aw.peek(); }
 		autoNUMmatrix<double> v (1, nPoints, 1, nPoints);
 		autoNUMmatrix<double> vplus (1, nPoints, 1, nPoints);
-		autoConfiguration z = (Configuration) Data_copy (conf);
+		autoConfiguration z = Data_copy (conf);
 		autoMDSVec vec = Dissimilarity_to_MDSVec (me);
 
 		double **w = weight -> data;
@@ -2056,8 +2056,8 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Diss
 		int showSingle = showProgress && numberOfRepetitions == 1;
 		double stress, stressmax = 1e38;
 
-		autoConfiguration cstart = (Configuration) Data_copy (conf);
-		autoConfiguration  cbest = (Configuration) Data_copy (conf);
+		autoConfiguration cstart = Data_copy (conf);
+		autoConfiguration  cbest = Data_copy (conf);
 
 		if (showMulti) Melder_progress1 (0.0, L"MDS many times");
 
@@ -2488,7 +2488,7 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configurati
 
 		autoKruskal thee = Kruskal_create (my numberOfRows, his numberOfColumns);
 		TableOfReal_copyLabels (me, thy configuration, 1, 0);
-		autoDissimilarity dissimilarity = (Dissimilarity) Data_copy (me);
+		autoDissimilarity dissimilarity = Data_copy (me);
 		Collection_addItem (thy proximities, dissimilarity.transfer());
 		thy vec = Dissimilarity_to_MDSVec (me);
 
@@ -2506,7 +2506,7 @@ Configuration Dissimilarity_Configuration_kruskal (Dissimilarity me, Configurati
 
 		(void) func ((Data) thee.peek(), ((Minimizer)(thy minimizer)) -> p);
 
-		autoConfiguration result = (Configuration) Data_copy (thy configuration);
+		autoConfiguration result = Data_copy (thy configuration);
 		return result.transfer();
 	} catch (MelderError) { Melder_throw (me, ": no Configuration created."); }
 }
@@ -2534,7 +2534,7 @@ static void indscal_iteration_tenBerge (ScalarProducts zc, Configuration xc, Sal
 
 	for (long h = 1; h <= nDimensions; h++)
 	{
-		autoCollection sprc = (Collection) Data_copy (zc);
+		autoCollection sprc = Data_copy ((Collection) zc);
 		for (long k = 1; k <= nPoints; k++)
 		{
 			for (long l = 1; l <= nPoints; l++) { wsih[k][l] = 0; }
@@ -2629,8 +2629,8 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 		double tol = 1e-6, vafp = 0;
 		long nZeros = 0, nSources = sp -> size, iter;
 
-		autoConfiguration x = (Configuration) Data_copy (configuration);
-		autoSalience w = (Salience) Data_copy (weights);
+		autoConfiguration x = Data_copy (configuration);
+		autoSalience w = Data_copy (weights);
 
 		*out1 = 0; *out2 = 0;
 
@@ -2711,9 +2711,9 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 	try {
 		double tol = 1e-6, vafp = 0;
 		long iter, nSources = dissims -> size;;
-		autoConfiguration x = (Configuration) Data_copy (configuration);
-		autoSalience w = (Salience) Data_copy (weights);
-		autoMDSVecs vecs = (MDSVecs) Dissimilarities_to_MDSVecs (dissims);
+		autoConfiguration x = Data_copy (configuration);
+		autoSalience w = Data_copy (weights);
+		autoMDSVecs vecs = Dissimilarities_to_MDSVecs (dissims);
 
 		*out1 = 0; *out2 = 0;
 
@@ -2816,7 +2816,7 @@ Salience ScalarProducts_Configuration_to_Salience (ScalarProducts me, Configurat
 {
 	try {
 		autoSalience salience = Salience_create (my size, his numberOfColumns);
-		autoConfiguration cx = (Configuration) Data_copy (him);
+		autoConfiguration cx = Data_copy (him);
 		indscal_iteration_tenBerge (me, cx.peek(), salience.peek());
 		return salience.transfer();
 	} catch (MelderError) { Melder_throw ("No Salience created."); }
@@ -2862,8 +2862,8 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 		Distances_to_Configuration_ytl (distances.peek(), numberOfDimensions,normalizeScalarProducts, &cstart1, &wstart1);
 		autoConfiguration cstart = cstart1;
 		autoSalience wstart = wstart1;
-		autoConfiguration cbest = (Configuration) Data_copy (cstart.peek());
-		autoSalience wbest = (Salience) Data_copy (wstart.peek());
+		autoConfiguration cbest = Data_copy ((Configuration) cstart.peek());
+		autoSalience wbest = Data_copy ((Salience) wstart.peek());
 
 		if (showMulti) Melder_progress1 (0.0, L"Indscal many times");
 
@@ -2911,8 +2911,8 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 		Distances_to_Configuration_ytl (distances, numberOfDimensions, normalizeScalarProducts, &cstart1, &wstart1);
 		autoConfiguration cstart = cstart1;
 		autoSalience wstart = wstart1;
-		autoConfiguration cbest = (Configuration) Data_copy (cstart.peek());
-		autoSalience wbest = (Salience) Data_copy (wstart.peek());
+		autoConfiguration cbest = Data_copy (cstart.peek());
+		autoSalience wbest = Data_copy (wstart.peek());
 
 		if (showMulti) Melder_progress1 (0.0, L"Indscal many times");
 
@@ -3050,7 +3050,7 @@ Dissimilarity Dissimilarity_createLetterRExample (double noiseStd)
 	} catch (MelderError) { Melder_throw ("Dissimilarity for letter R example not created."); }
 }
 
-Salience Salience_createCarrollWishExample (void)
+Salience Salience_createCarrollWishExample ()
 {
 	try {
 		long nSources = 8;

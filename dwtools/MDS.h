@@ -113,7 +113,7 @@ MDSVec MDSVec_create (long nObjects);
 Thing_define (MDSVecs, Ordered) {
 };
 
-MDSVecs MDSVecs_create (void);
+MDSVecs MDSVecs_create ();
 
 
 Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me,
@@ -126,14 +126,14 @@ Thing_define (Proximities, TablesOfReal) {
 
 void Proximities_init (I, ClassInfo klas);
 
-Proximities Proximities_create (void);
+Proximities Proximities_create ();
 
 /****************** class Confusions **********************************/
 
 Thing_define (Confusions, Proximities) {
 };
 
-Confusions Confusions_create (void);
+Confusions Confusions_create ();
 
 Confusion Confusions_sum (Confusions me);
 
@@ -142,7 +142,7 @@ Confusion Confusions_sum (Confusions me);
 Thing_define (Distances, Proximities) {
 };
 
-Distances Distances_create (void);
+Distances Distances_create ();
 
 /**************** class ScalarProduct **************************************/
 
@@ -156,7 +156,7 @@ ScalarProduct ScalarProduct_create (long numberOfPoints);
 Thing_define (ScalarProducts, TablesOfReal) {
 };
 
-ScalarProducts ScalarProducts_create (void);
+ScalarProducts ScalarProducts_create ();
 
 
 /************* class Dissimilarity *********************************/
@@ -236,7 +236,7 @@ void MonotoneTransformator_setTiesProcessing (MonotoneTransformator,
 Thing_define (Dissimilarities, Proximities) {
 };
 
-Dissimilarities Dissimilarities_create (void);
+Dissimilarities Dissimilarities_create ();
 
 /**************** class Similarity *****************************/
 
@@ -661,7 +661,7 @@ Dissimilarity Dissimilarity_createLetterRExample (double noiseRange);
 
 Collection INDSCAL_createCarrollWishExample (double noiseStd);
 
-Salience Salience_createCarrollWishExample (void);
+Salience Salience_createCarrollWishExample ();
 
 void drawSplines (Graphics g, double low, double high, double ymin, double ymax,
 	int type, long order, wchar_t const *interiorKnots, int garnish);

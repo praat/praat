@@ -516,7 +516,8 @@ int Melder_stringMatchesCriterion (const wchar *value, int which_kMelder_string,
 		return (which_kMelder_string == kMelder_string_ENDS_WITH) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
-		wchar *place = NULL, *errorMessage;
+		wchar *place = NULL;
+		const wchar *errorMessage;
 		regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) criterion, & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;   // BUG: what about removing errorMessage?
 		if (ExecRE (compiled_regexp, NULL, (regularExp_CHAR *) value, NULL, 0, '\0', '\0', NULL, NULL, NULL))

@@ -285,7 +285,7 @@ long structFunctionTerms :: v_getDegree ()
 	return numberOfCoefficients - 1;
 }
 
-void structFunctionTerms :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax)   // David, geen aparte naam hier nodig
+void structFunctionTerms :: v_getExtrema (double x1, double x2, double *xmin, double *ymin, double *xmax, double *ymax)   // David, geen aparte naam hier nodig: ???
 {
 	long numberOfPoints = 1000;
 
@@ -416,7 +416,6 @@ double FunctionTerms_getXOfMaximum (I, double x1, double x2)
 
 static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y, long numberOfPoints, double ymin, double ymax)
 {
-	double  ye;
 	long index = 0;
 
 	if (numberOfPoints < 2) return;
@@ -455,7 +454,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y, l
 			{
 				// Line enters from below: start new segment. Save start values
 
-				double xb = x[i-1]; yb = y[i-1]; index = i - 1;   // David, dit klopt toch niet? xb is tweemaal gedefinieerd, en hier verdwijnt een toekenning
+				xb = x[i-1]; yb = y[i-1]; index = i - 1;   // David, dit klopt toch niet? xb is tweemaal gedefinieerd, en hier verdwijnt een toekenning; Klopt, nu niet meer (was overigens geen probleem vanwege nieuwe toekenning!)
 				y[i-1] = ymin; x[i-1] = xcros_min;
 			}
 			if (y1 < ymax && y2 > ymax)
@@ -1305,7 +1304,7 @@ void structChebyshevSeries :: v_getExtrema (double x1, double x2,
 		autoPolynomial p = ChebyshevSeries_to_Polynomial (this);
 		FunctionTerms_getExtrema (p.peek(), x1, x2, xmin, ymin, xmax, ymax);
 	} catch (MelderError) {
-		structFunctionTerms :: v_getExtrema (x1, x2, xmin, ymin, xmax, ymax);   // David, dat is fout: er moet een Melder_throw of een Melder_clearError volgen
+		Melder_throw (this, "Extrema cannot be calculated");   // David, dat is fout: er moet een Melder_throw of een Melder_clearError volgen: Klopt
 	}
 }
 
@@ -1382,7 +1381,7 @@ void FunctionTerms_and_RealTier_fit (I, thou, int *freeze, double tol, int ic, C
 
 		if (numberOfData < 2) Melder_throw ("Not enough data points.");
 
-		autoFunctionTerms frozen = (FunctionTerms) Data_copy (me);
+		autoFunctionTerms frozen = Data_copy (me);
 		autoNUMvector<double> terms (1, my numberOfCoefficients);
 		autoNUMvector<double> p (1, numberOfParameters);
 		autoNUMvector<double> y_residual (1, numberOfData);
@@ -1565,8 +1564,6 @@ static double NUMmspline2 (double points[], long numberOfPoints, long order, lon
 
 static double NUMispline2 (double points[], long numberOfPoints, long order, long index, double x)
 {
-	long orderp1 = order + 1;
-
 	Melder_assert (numberOfPoints > 2 && order > 0 && index > 0);
 
 	long index_b = index - order + 1;
@@ -1738,7 +1735,7 @@ Spline Spline_scaleX (I, double xmin, double xmax)
 		iam (Spline);
 		Melder_assert (xmin < xmax);
 
-		autoSpline thee = (Spline) Data_copy (me);
+		autoSpline thee = Data_copy (me);
 
 		thy xmin = xmin; thy xmax = xmax;
 

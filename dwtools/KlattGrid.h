@@ -58,7 +58,7 @@ PointProcess PhonationTier_to_PointProcess_closures (PhonationTier me);
 /************************ PhonationGrid *********************************************/
 
 PhonationGrid PhonationGrid_create (double tmin, double tmax);
-PhonationGridPlayOptions PhonationGridPlayOptions_create (void);
+PhonationGridPlayOptions PhonationGridPlayOptions_create ();
 void PhonationGrid_setNames (PhonationGrid me);
 
 Sound PhonationGrid_to_Sound_aspiration (PhonationGrid me, double samplingFrequency);
@@ -73,14 +73,14 @@ PhonationTier PhonationGrid_to_PhonationTier (PhonationGrid me);
 
 VocalTractGrid VocalTractGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfNasalFormants,	long numberOfNasalAntiFormants);
-VocalTractGridPlayOptions VocalTractGridPlayOptions_create (void);
+VocalTractGridPlayOptions VocalTractGridPlayOptions_create ();
 void VocalTractGrid_setNames (VocalTractGrid me);
 void VocalTractGrid_draw (VocalTractGrid me, Graphics g, int filterModel);
 
 /************************ CouplingGrid *********************************************/
-	
+
 CouplingGrid CouplingGrid_create (double tmin, double tmax, long numberOfTrachealFormants, long numberOfTrachealAntiFormants, long numberOfDeltaFormants);
-CouplingGridPlayOptions CouplingGridPlayOptions_create (void);
+CouplingGridPlayOptions CouplingGridPlayOptions_create ();
 void CouplingGrid_setNames (CouplingGrid me);
 double CouplingGrid_getDeltaFormantAtTime (CouplingGrid me, long iformant, double t);
 double CouplingGrid_getDeltaBandwidthAtTime (CouplingGrid me, long iformant, double t);
@@ -99,7 +99,7 @@ Sound Sound_FormantGrid_Intensities_filter (Sound me, FormantGrid thee, Ordered 
 /************************ FricationGrid *********************************************/
 
 FricationGrid FricationGrid_create (double tmin, double tmax, long numberOfFormants);
-FricationGridPlayOptions FricationGridPlayOptions_create (void);
+FricationGridPlayOptions FricationGridPlayOptions_create ();
 void FricationGrid_setNames (FricationGrid me);
 void FricationGrid_draw (FricationGrid me, Graphics g);
 
@@ -118,8 +118,8 @@ KlattGrid KlattGrid_create (double tmin, double tmax, long numberOfFormants,
 	long numberOfTrachealFormants, long numberOfTrachealAntiFormants,
 	long numberOfFricationFormants, long numberOfDeltaFormants);
 
-KlattGrid KlattGrid_createExample (void);
-KlattGridPlayOptions KlattGridPlayOptions_create (void);
+KlattGrid KlattGrid_createExample ();
+KlattGridPlayOptions KlattGridPlayOptions_create ();
 void KlattGrid_setNames (KlattGrid me);
 KlattGrid KlattTable_to_KlattGrid (KlattTable me, double frameDuration);
 
@@ -146,7 +146,7 @@ void KlattGrid_remove##Name##Points (KlattGrid me, double t1, double t2); \
 tierType KlattGrid_extract##Name##Tier (KlattGrid me); \
 void KlattGrid_replace##Name##Tier (KlattGrid me, tierType thee);
 
-// Generate 55 prototypes	
+// Generate 55 prototypes
 PhonationGrid_QUERY_ADD_REMOVE_EXTRACT_REPLACE_PROTO (Pitch, PitchTier)
 PhonationGrid_QUERY_ADD_REMOVE_EXTRACT_REPLACE_PROTO (Flutter, RealTier)
 PhonationGrid_QUERY_ADD_REMOVE_EXTRACT_REPLACE_PROTO (DoublePulsing, RealTier)

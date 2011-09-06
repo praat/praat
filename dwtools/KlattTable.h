@@ -99,7 +99,7 @@ double flutter, int outputType);
 
 Sound KlattTable_and_Sound_to_Sound (KlattTable me, Sound thee);
 
-KlattTable KlattTable_createExample (void);
+KlattTable KlattTable_createExample ();
 
 KlattTable Table_to_KlattTable (Table me);
 Table KlattTable_to_Table (KlattTable me);

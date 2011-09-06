@@ -334,7 +334,7 @@ int Data_Description_countMembers (Data_Description structDescription) {
 	for (desc = structDescription; desc -> name; desc ++)
 		count ++;
 	if (structDescription [0]. type == inheritwa) {
-		Data_Description parentDescription = * (Data_Description *) structDescription [0]. tagType;
+		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
 		if (parentDescription)
 			return count + Data_Description_countMembers (parentDescription);
 	}
@@ -346,7 +346,7 @@ Data_Description Data_Description_findMatch (Data_Description structDescription,
 	for (desc = structDescription; desc -> name; desc ++)
 		if (wcsequ (name, desc -> name)) return desc;
 	if (structDescription [0]. type == inheritwa) {
-		Data_Description parentDescription = * (Data_Description *) structDescription [0]. tagType;
+		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
 		if (parentDescription)
 			return Data_Description_findMatch (parentDescription, name);
 	}
@@ -360,7 +360,7 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 		if (desc -> max2 && wcsequ (desc -> max2, string)) return desc;
 	}
 	if (structDescription [0]. type == inheritwa) {
-		Data_Description parentDescription = * (Data_Description *) structDescription [0]. tagType;
+		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
 		if (parentDescription)
 			return Data_Description_findNumberUse (parentDescription, string);
 	}
@@ -393,14 +393,14 @@ int Data_Description_evaluateInteger (void *structAddress, Data_Description stru
 		*result = 1;
 		return 1;
 	}
-	if (wcsnequ (formula, L"my ", 3)) {
+	if (formula [0] >= 'a' && formula [0] <= 'z') {
 		wchar buffer [100], *minus1, *psize;
 		Data_Description sizeDescription;
-		wcscpy (buffer, formula + 3);   /* Skip leading "my ". */
+		wcscpy (buffer, formula);
 		if ((minus1 = wcsstr (buffer, L" - 1")) != NULL)
-			*minus1 = '\0';   /* Strip trailing " - 1", but remember. */
+			*minus1 = '\0';   // strip trailing " - 1", but remember
 		if ((psize = wcsstr (buffer, L" -> size")) != NULL)
-			*psize = '\0';   /* Strip trailing " -> size". */
+			*psize = '\0';   // strip trailing " -> size"
 		if (! (sizeDescription = Data_Description_findMatch (structDescription, buffer))) {
 			*result = 0;
 			return 0 /*Melder_error ("Cannot find member \"%ls\".", buffer)*/;

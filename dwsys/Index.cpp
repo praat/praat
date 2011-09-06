@@ -74,7 +74,7 @@ Index Index_extractPart (I, long from, long to)
 		if (to == 0) to = my numberOfElements;
 		if (to < from || from < 1 || to > my numberOfElements) Melder_throw 
 			("Range should be in interval [1,", my numberOfElements, "].");
-		autoIndex thee = (Index) Data_copy (me);
+		autoIndex thee = Data_copy (me);
 		thy numberOfElements = to - from + 1;
 		/* */
 		for (long i = 1; i <= thy numberOfElements; i++)

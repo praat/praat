@@ -39,7 +39,7 @@ Thing_define (OrderedOfString, Ordered) {
 		virtual void v_info ();
 };
 
-OrderedOfString OrderedOfString_create (void);
+OrderedOfString OrderedOfString_create ();
 int OrderedOfString_init (I, long initialCapacity);
 
 int OrderedOfString_append (I, wchar_t *append);
@@ -63,15 +63,14 @@ long OrderedOfString_getNumberOfDifferences (I, thou);
 const wchar_t *OrderedOfString_itemAtIndex_c (I, long index);
 long OrderedOfString_indexOfItem_c (I, const wchar_t *str);
 
-void OrderedOfString_drawItem (I, Graphics graphics, long index, double xWC, double yWC);
+void OrderedOfString_drawItem (I, Graphics g, long index, double xWC, double yWC);
 
 void OrderedOfString_sequentialNumbers (I, long n);
 
 void OrderedOfString_removeOccurrences (I, const wchar_t *search, int user_regexp);
 
 void OrderedOfString_changeStrings (OrderedOfString me, wchar_t *search, wchar_t *replace,
-	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
-	int use_regexp);
+	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp);
 
 long OrderedOfString_isSubsetOf (I, thou, long *translation);
 /* Check whether my items are (a subset of)|(in) thy items.
