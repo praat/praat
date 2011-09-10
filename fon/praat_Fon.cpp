@@ -137,6 +137,7 @@ static void getTminTmaxFminFmax (Any dia, double *tmin, double *tmax, double *fm
 
 int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
+	int IOBJECT;
 	LOOP {
 		iam (Matrix);
 		try {

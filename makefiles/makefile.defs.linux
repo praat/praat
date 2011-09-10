@@ -1,7 +1,7 @@
 # File: makefile.defs.linux
 
 # System: Linux
-# Paul Boersma, 6 September 2011
+# Paul Boersma, 8 September 2011
 
 CC = gcc -std=gnu99
 
@@ -9,7 +9,7 @@ CXX = g++
 
 CFLAGS = -DUNIX -Dlinux `pkg-config --cflags gtk+-2.0` -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O
 
-CXXFLAGS = $(CFLAGS)
+CXXFLAGS = $(CFLAGS) -Wshadow
 
 LINK = g++
 

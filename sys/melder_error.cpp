@@ -59,7 +59,9 @@ static void appendErrorW (const wchar *message) {
 	wcscpy (errors + length, message);
 }
 
-int Melder_hasError (void) { return errors [0] != L'\0'; }
+bool Melder_hasError () { return errors [0] != L'\0'; }
+
+bool Melder_hasError (const wchar_t *partialError) { return wcsstr (errors, partialError) != NULL; }
 
 void Melder_clearError (void) { errors [0] = L'\0'; }
 

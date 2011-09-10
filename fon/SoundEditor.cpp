@@ -403,11 +403,11 @@ void structSoundEditor :: v_draw () {
 	}
 }
 
-void structSoundEditor :: v_play (double tmin, double tmax) {
+void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 	if (longSound.data)
-		LongSound_playPart ((LongSound) data, tmin, tmax, theFunctionEditor_playCallback, this);
+		LongSound_playPart ((LongSound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	else
-		Sound_playPart ((Sound) data, tmin, tmax, theFunctionEditor_playCallback, this);
+		Sound_playPart ((Sound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
 int structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {

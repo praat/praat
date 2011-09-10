@@ -233,8 +233,8 @@ void Sorted_sort (Sorted me);
 Thing_define (SortedSet, Sorted) {   // every item must be unique (by key)
 	// functions:
 	public:
-		bool hasItem (Any item) {
-			return v_position (item) == 0;
+		bool hasItem (Any a_item) {
+			return v_position (a_item) == 0;
 		}
 	// overridden methods:
 	protected:

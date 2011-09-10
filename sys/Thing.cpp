@@ -214,7 +214,11 @@ wchar * Thing_messageName (Thing me) {
 	static int ibuffer = 0;
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
-	MelderString_append4 (& buffers [ibuffer], my classInfo -> className, L" \"", my name ? my name : L"(nameless)", L"\"");
+	if (my name) {
+		MelderString_append4 (& buffers [ibuffer], my classInfo -> className, L" \"", my name, L"\"");
+	} else {
+		MelderString_append1 (& buffers [ibuffer], my classInfo -> className);
+	}
 	return buffers [ibuffer]. string;
 }
 

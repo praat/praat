@@ -446,7 +446,7 @@ static PicHandle copyToPict (Picture me) {
 	OpenCPicParams openCPicParams;
 	Graphics pictGraphics;
 	SetRect (& rect, my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES);
-	pictGraphics = Graphics_create_screen (NULL, (unsigned long) XtWindow (my drawingArea), RES);
+	pictGraphics = Graphics_create_screen (NULL, XtWindow (my drawingArea), RES);
 	Graphics_setWsViewport (pictGraphics, 0, MAC_WIDTH * RES, 0, MAC_HEIGHT * RES);
 	Graphics_setWsWindow (pictGraphics, 0.0, MAC_WIDTH, 12.0 - MAC_HEIGHT, 12.0);
 	SetPortWindowPort ((WindowPtr) XtWindow (my drawingArea));
@@ -482,7 +482,7 @@ static PicHandle copyToPict_screenImage (Picture me) {
 	SetGWorld (offscreenWorld, NULL);
 	EraseRect (& rect);
 	GetGWorld ((CGrafPtr *) & offscreenPort, & offscreenDevice);
-	offScreen = Graphics_create_port (NULL, (unsigned long) offscreenPort, 72);
+	offScreen = Graphics_create_port (NULL, offscreenPort, 72);
 	Graphics_setWsViewport (offScreen, 0, MAC_WIDTH * 72, 0, MAC_HEIGHT * 72);
 	Graphics_setWsWindow (offScreen, 0.0, MAC_WIDTH, 12.0 - MAC_HEIGHT, 12.0);
 	Graphics_play ((Graphics) my graphics, offScreen);
@@ -642,7 +642,7 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 			MelderInfo_writeLine2 (L"orientation ", Melder_integer (devMode -> dmOrientation));
 		MelderInfo_close ();
 	}
-	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, 0, resolution);
+	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, NULL, resolution);
 	Graphics_setWsViewport (pictGraphics.peek(), 0, WIN_WIDTH * resolution, 0, WIN_HEIGHT * resolution);
 	Graphics_setWsWindow (pictGraphics.peek(), 0.0, WIN_WIDTH, 12.0 - WIN_HEIGHT, 12.0);
 	Graphics_play ((Graphics) my graphics, pictGraphics.peek());

@@ -1495,7 +1495,7 @@ void FunctionEditor_insetViewport (FunctionEditor me) {
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, 0, 1);
 }
 
-int structFunctionEditor :: v_playCallback (int phase, double tmin, double tmax, double t) {
+int structFunctionEditor :: v_playCallback (int phase, double a_tmin, double a_tmax, double t) {
 	/*
 	 * This callback will often be called by the Melder workproc during playback.
 	 * However, it will sometimes be called by Melder_stopPlaying with phase=3.
@@ -1503,7 +1503,7 @@ int structFunctionEditor :: v_playCallback (int phase, double tmin, double tmax,
 	 * So we had better make no assumptions about the current viewport.
 	 */
 	double x1NDC, x2NDC, y1NDC, y2NDC;
-	(void) tmin;
+	(void) a_tmin;
 	Graphics_inqViewport (graphics, & x1NDC, & x2NDC, & y1NDC, & y2NDC);
 	FunctionEditor_insetViewport (this);
 	Graphics_xorOn (graphics, Graphics_MAROON);
@@ -1537,7 +1537,7 @@ int structFunctionEditor :: v_playCallback (int phase, double tmin, double tmax,
 	Graphics_setViewport (graphics, x1NDC, x2NDC, y1NDC, y2NDC);
 	playCursor = t;
 	if (phase == 3) {
-		if (t < tmax && MelderAudio_stopWasExplicit ()) {
+		if (t < a_tmax && MelderAudio_stopWasExplicit ()) {
 			if (t > startSelection && t < endSelection)
 				startSelection = t;
 			else
@@ -1552,9 +1552,9 @@ int structFunctionEditor :: v_playCallback (int phase, double tmin, double tmax,
 	return 1;
 }
 
-int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, double tmax, double t) {
+int theFunctionEditor_playCallback (void *void_me, int phase, double a_tmin, double a_tmax, double t) {
 	iam (FunctionEditor);
-	return my v_playCallback (phase, tmin, tmax, t);
+	return my v_playCallback (phase, a_tmin, a_tmax, t);
 }
 
 void structFunctionEditor :: v_highlightSelection (double left, double right, double bottom, double top) {

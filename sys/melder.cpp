@@ -229,7 +229,7 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 				/*
 				 * Ignore all mouse-down messages, except click in Interrupt button.
 				 */
-				GuiObject me = (GuiObject) GetWindowLong (event. hwnd, GWL_USERDATA);
+				GuiObject me = (GuiObject) GetWindowLongPtr (event. hwnd, GWLP_USERDATA);
 				if (me == cancelButton) {
 					XtUnmanageChild (dia);
 					return false;   // don't continue

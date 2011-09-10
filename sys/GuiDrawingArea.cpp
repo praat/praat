@@ -377,7 +377,7 @@ GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top,
 		my widget -> window = CreateWindowEx (0, _GuiWin_getDrawingAreaClassName (), L"drawingArea",
 			WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 			my widget -> x, my widget -> y, my widget -> width, my widget -> height, my widget -> parent -> window, NULL, theGui.instance, NULL);
-		SetWindowLong (my widget -> window, GWL_USERDATA, (long) my widget);
+		SetWindowLongPtr (my widget -> window, GWLP_USERDATA, (LONG_PTR) my widget);
 		_GuiObject_position (my widget, left, right, top, bottom);
 	#elif mac
 		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");

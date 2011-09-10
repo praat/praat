@@ -38,10 +38,10 @@
 	#include <Carbon/Carbon.h>
 	#include "macport_off.h"
 #elif defined (_WIN32)
-	#define Polygon PolygonNotWin
+	#include "winport_on.h"
 	#include <windows.h>
 	#include <windowsx.h>
-	#undef Polygon
+	#include "winport_off.h"
 #endif
 
 #define GUI_ARGS  GuiObject w, XtPointer void_me, XtPointer call
@@ -93,7 +93,7 @@
 	typedef long Cardinal;
 	typedef unsigned int Dimension;
 	typedef int Position;
-	typedef long Window;
+	typedef void *Window;
 	typedef char *String;
 	typedef struct Display Display;
 	/*typedef long Time;*/

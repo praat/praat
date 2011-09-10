@@ -198,19 +198,19 @@ Thing_define (Editor, Thing) {
 		virtual void v_do_pictureMargins (EditorCommand cmd);
 };
 
-GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar *itemTitle, long flags,
-	void (*commandCallback) (Editor editor_me, EditorCommand, UiForm, const wchar *, Interpreter));
+GuiObject EditorMenu_addCommand (EditorMenu me, const wchar *itemTitle, long flags,
+	void (*commandCallback) (Editor me, EditorCommand, UiForm, const wchar *, Interpreter));
 GuiObject EditorCommand_getItemWidget (EditorCommand me);
 
-EditorMenu Editor_addMenu (Editor editor, const wchar *menuTitle, long flags);
+EditorMenu Editor_addMenu (Editor me, const wchar *menuTitle, long flags);
 GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_HIDDEN  (1 << 14)
-GuiObject Editor_addCommand (Editor editor, const wchar *menuTitle, const wchar *itemTitle, long flags,
-	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter));
-GuiObject Editor_addCommandScript (Editor editor, const wchar *menuTitle, const wchar *itemTitle, long flags,
+GuiObject Editor_addCommand (Editor me, const wchar *menuTitle, const wchar *itemTitle, long flags,
+	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter));
+GuiObject Editor_addCommandScript (Editor me, const wchar *menuTitle, const wchar *itemTitle, long flags,
 	const wchar *script);
-void Editor_setMenuSensitive (Any editor, const wchar_t *menu, int sensitive);
+void Editor_setMenuSensitive (Editor me, const wchar_t *menu, int sensitive);
 
 /***** For inheritors. *****/
 

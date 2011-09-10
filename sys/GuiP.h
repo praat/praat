@@ -90,10 +90,10 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 					struct { GuiObject menuBar; int uniqueItemID, duringMoveWindow; } shell;
 
 					/* XmPushButton (if in menu), XmToggleButton (if in menu), XmCascadeButton (if in menu): */
-					struct { HMENU handle; int id; } entry;
+					struct { HMENU handle; ULONG_PTR id; } entry;
 
 					/* XmMenuBar, XmPulldownMenu: */
-					struct { HMENU handle; int id; } menu;
+					struct { HMENU handle; ULONG_PTR id; } menu;
 				} nat;
 			#elif mac
 				Rect rect;   /* Window coordinates. */

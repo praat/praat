@@ -1379,7 +1379,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my startWindow && tmin < my endWindow) {   /* Interval visible? */
-			int selected = iinterval == selectedInterval;
+			int intervalIsSelected = iinterval == selectedInterval;
 			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my greenMethod, my greenString);
 			if (tmin < my startWindow) tmin = my startWindow;
 			if (tmax > my endWindow) tmax = my endWindow;
@@ -1387,7 +1387,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 				Graphics_setColour (my graphics, Graphics_LIME);
 				Graphics_fillRectangle (my graphics, tmin, tmax, 0.0, 1.0);
 			}
-			if (selected) {
+			if (intervalIsSelected) {
 				if (labelMatches) {
 					tmin = 0.85 * tmin + 0.15 * tmax;
 					tmax = 0.15 * tmin + 0.85 * tmax;
@@ -1424,17 +1424,16 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
-		int selected;
 		if (tmin < my tmin) tmin = my tmin; if (tmax > my tmax) tmax = my tmax;
 		if (tmin >= tmax) continue;
-		selected = selectedInterval == iinterval;
+		bool intervalIsSelected = selectedInterval == iinterval;
 
 		/*
 		 * Draw left boundary.
 		 */
 		if (tmin >= my startWindow && tmin <= my endWindow && iinterval > 1) {
-			int selected = ( my selectedTier == itier && tmin == my startSelection );
-			Graphics_setColour (my graphics, selected ? Graphics_RED : Graphics_BLUE);
+			bool boundaryIsSelected = ( my selectedTier == itier && tmin == my startSelection );
+			Graphics_setColour (my graphics, boundaryIsSelected ? Graphics_RED : Graphics_BLUE);
 			Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics, tmin, 0.0, tmin, 1.0);
 
@@ -1455,7 +1454,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		if (interval -> text && tmax >= my startWindow && tmin <= my endWindow) {
 			double t1 = my startWindow > tmin ? my startWindow : tmin;
 			double t2 = my endWindow < tmax ? my endWindow : tmax;
-			Graphics_setColour (my graphics, selected ? Graphics_RED : Graphics_BLACK);
+			Graphics_setColour (my graphics, intervalIsSelected ? Graphics_RED : Graphics_BLACK);
 			Graphics_textRect (my graphics, t1, t2, 0.0, 1.0, interval -> text);
 			Graphics_setColour (my graphics, Graphics_BLACK);
 		}
@@ -1504,8 +1503,8 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 		TextPoint point = (TextPoint) tier -> points -> item [ipoint];
 		double t = point -> number;
 		if (t >= my startWindow && t <= my endWindow) {
-			int selected = ( itier == my selectedTier && t == my startSelection );
-			Graphics_setColour (my graphics, selected ? Graphics_RED : Graphics_BLUE);
+			bool pointIsSelected = ( itier == my selectedTier && t == my startSelection );
+			Graphics_setColour (my graphics, pointIsSelected ? Graphics_RED : Graphics_BLUE);
 			Graphics_setLineWidth (my graphics, platformUsesAntiAliasing ? 6.0 : 5.0);
 			Graphics_line (my graphics, t, 0.0, t, 0.2);
 			Graphics_line (my graphics, t, 0.8, t, 1);
@@ -1526,7 +1525,7 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 				Graphics_line (my graphics, t, 0.0, t, 0.2);
 				Graphics_line (my graphics, t, 0.8, t, 1.0);
 			}
-			Graphics_setColour (my graphics, selected ? Graphics_RED : Graphics_BLUE);
+			Graphics_setColour (my graphics, pointIsSelected ? Graphics_RED : Graphics_BLUE);
 			if (point -> mark) Graphics_text (my graphics, t, 0.5, point -> mark);
 		}
 	}
@@ -1570,7 +1569,7 @@ void structTextGridEditor :: v_draw () {
 	Graphics_setWindow (graphics, startWindow, endWindow, 0.0, 1.0);
 	for (itier = 1; itier <= ntier; itier ++) {
 		Function anyTier = (Function) grid -> tiers -> item [itier];
-		bool selected = itier == selectedTier;
+		bool tierIsSelected = itier == selectedTier;
 		bool isIntervalTier = anyTier -> classInfo == classIntervalTier;
 		vp2 = Graphics_insetViewport (graphics, 0.0, 1.0,
 			1.0 - (double) itier / (double) ntier,
@@ -1581,11 +1580,11 @@ void structTextGridEditor :: v_draw () {
 		/*
 		 * Show the number and the name of the tier.
 		 */
-		Graphics_setColour (graphics, selected ? Graphics_RED : Graphics_BLACK);
+		Graphics_setColour (graphics, tierIsSelected ? Graphics_RED : Graphics_BLACK);
 		Graphics_setFont (graphics, oldFont);
 		Graphics_setFontSize (graphics, 14);
 		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text2 (graphics, startWindow, 0.5, selected ? L"\\pf " : L"", Melder_integer (itier));
+		Graphics_text2 (graphics, startWindow, 0.5, tierIsSelected ? L"\\pf " : L"", Melder_integer (itier));
 		Graphics_setFontSize (graphics, oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (graphics, Graphics_LEFT,

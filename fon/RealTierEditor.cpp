@@ -375,9 +375,9 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	return 1;   // update needed
 }
 
-void structRealTierEditor :: v_play (double tmin, double tmax) {
+void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
 	if (sound.data)
-		Sound_playPart (sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+		Sound_playPart (sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
 void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar *title, RealTier data, Sound sound, bool ownSound) {

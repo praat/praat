@@ -23,7 +23,7 @@
  djmw 20040422 FFNet_drawActivation: nodes with activity > 0.05 had incorrect size.
  djmw 20040422 FFNet_extractWeights added.
  djmw 20040425 FFNet_drawTopology fill input units; increase distance from arrow for output labels
- djmw 20040513 Info changes. 
+ djmw 20040513 Info changes.
  djmw 20040526 Adapted FFNet_drawCostHistory.
  djmw 20050131 Reversed sign of derivative in minimumCrossEntropy.
  djmw 20060811 Changed %d to %ld in sprintf for longs.
@@ -71,7 +71,7 @@ static void FFNet_checkLayerNumber (FFNet me, long layer)
 		if (layer == 0) Melder_throw (L"A Layer number of 0 is not allowed.");
 		else if (layer < 0) Melder_throw (L"A negative layer number is not allowed.");
 		else if (layer > my nLayers) Melder_throw (L"A layer number of ", layer, " is too big.");
-		
+
 		Melder_error_ ("This FFNet has ", layer, " layer", (my nLayers > 1 ? "s\n" : "\n"));
 		if (my nLayers == 1) Melder_throw (L"Layer number must be equal to 1.");
 		else if (my nLayers == 2) Melder_throw (L"Layer number must be equal to 1 or 2.");
@@ -82,7 +82,7 @@ static void FFNet_checkLayerNumber (FFNet me, long layer)
 
 wchar_t * FFNet_createNameFromTopology (FFNet me)
 {
-	MelderString name = { 0 }; 
+	MelderString name = { 0 };
 	MelderString_copy (&name, Melder_integer (my nUnitsInLayer[0]));
 	for (long i = 1; i <= my nLayers; i++)
 	{
@@ -209,12 +209,12 @@ void structFFNet :: v_info ()
 	}
 	MelderInfo_writeLine2 (L"   Number of units in layer 0 (input): ", Melder_integer (nUnitsInLayer[0]));
 	MelderInfo_writeLine2 (L"Outputs are linear: ", Melder_boolean (outputsAreLinear));
-	MelderInfo_writeLine5 (L"Number of weights: ", Melder_integer (nWeights), L" (", 
+	MelderInfo_writeLine5 (L"Number of weights: ", Melder_integer (nWeights), L" (",
 		Melder_integer (FFNet_dimensionOfSearchSpace (this)), L" selected)");
 	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (nNodes));
-} 
+}
 
-void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2, 
+void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2,
 	long numberOfOutputs, int outputsAreLinear)
 {
 	long numberOfLayers = 3;

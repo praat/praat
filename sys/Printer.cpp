@@ -430,7 +430,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			} else {
 				StartDoc (theWinDC, & docInfo);
 				StartPage (theWinDC);
-				thePrinter. graphics = Graphics_create_screenPrinter (NULL, (unsigned long) theWinDC);
+				thePrinter. graphics = Graphics_create_screenPrinter (NULL, theWinDC);
 				draw (boss, thePrinter. graphics);
 				forget (thePrinter. graphics);
 				if (EndPage (theWinDC) < 0) {
@@ -522,7 +522,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				forget (thePrinter. graphics);
 				closePostScript ();
 			} else {
-				thePrinter. graphics = Graphics_create_screenPrinter (NULL, (unsigned long) theMacPort);
+				thePrinter. graphics = Graphics_create_screenPrinter (NULL, theMacPort);
 				draw (boss, thePrinter. graphics);
 				forget (thePrinter. graphics);
 			}

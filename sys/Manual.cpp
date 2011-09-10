@@ -259,7 +259,7 @@ static void menu_cb_printRange (EDITOR_ARGS) {
 		newline = wcschr (date, '\n'); if (newline) *newline = '\0';
 		SET_STRING (L"Left or inside header", date)
 		SET_STRING (L"Right or outside header", my name)
-		if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
+		if (my d_printingPageNumber) SET_INTEGER (L"First page number", my d_printingPageNumber + 1)
 		if (my path >= 1 && my path <= manPages -> pages -> size) {
 			ManPage page = (ManPage) manPages -> pages -> item [my path];
 			SET_STRING (L"Print pages starting with", page -> title);
@@ -273,7 +273,7 @@ static void menu_cb_printRange (EDITOR_ARGS) {
 		my outsideFooter = GET_STRING (L"Right or outside footer");
 		my mirror = GET_INTEGER (L"Mirror even/odd headers");
 		my printPagesStartingWith = GET_STRING (L"Print pages starting with");
-		my pageNumber = GET_INTEGER (L"First page number");
+		my d_printingPageNumber = GET_INTEGER (L"First page number");
 		my suppressLinksHither = GET_INTEGER (L"Suppress \"Links to this page\"");
 		Printer_print (print, me);
 	EDITOR_END
@@ -487,14 +487,14 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 	ManPages manPages = (ManPages) my data;
 	if (my path) {
 		wchar_t string [400];
-		static const wchar_t *month [] =
+		static const wchar_t *shortMonth [] =
 			{ L"Jan", L"Feb", L"Mar", L"Apr", L"May", L"Jun", L"Jul", L"Aug", L"Sep", L"Oct", L"Nov", L"Dec" };
 		ManPage page = (ManPage) manPages -> pages -> item [my path];
 		long date = page -> date;
 		SET_STRING (L"Right or outside header", page -> title)
 		SET_STRING (L"Left or inside footer", page -> author)
 		if (date) {
-			swprintf (string, 400, L"%ls %ld, %ld", month [date % 10000 / 100 - 1], date % 100, date / 10000);
+			swprintf (string, 400, L"%ls %ld, %ld", shortMonth [date % 10000 / 100 - 1], date % 100, date / 10000);
 			SET_STRING (L"Left or inside header", string)
 		}
 	}

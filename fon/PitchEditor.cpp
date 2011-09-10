@@ -186,7 +186,7 @@ void structPitchEditor :: v_draw () {
 	 * Show pitch.
 	 */
 	{
-		long f, df =
+		long df =
 			pitch -> ceiling > 10000 ? 2000 :
 			pitch -> ceiling > 5000 ? 1000 :
 			pitch -> ceiling > 2000 ? 500 :
@@ -216,7 +216,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_setColour (graphics, Graphics_BLUE);
 		Graphics_setLineType (graphics, Graphics_DOTTED);
 		Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
-		for (f = df; f <= pitch -> ceiling; f += df) {
+		for (long f = df; f <= pitch -> ceiling; f += df) {
 			Graphics_line (graphics, startWindow, f, endWindow, f);
 			Graphics_text2 (graphics, endWindow + radius/2, f, Melder_integer (f), L" Hz");
 		}
@@ -235,7 +235,7 @@ void structPitchEditor :: v_draw () {
 			Graphics_setColour (graphics, Graphics_BLACK);
 			Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
 			for (int icand = 1; icand <= frame -> nCandidates; icand ++) {
-				int strength = floor (10 * frame -> candidate [icand]. strength + 0.5);
+				int strength = (int) floor (10 * frame -> candidate [icand]. strength + 0.5);
 				f = frame -> candidate [icand]. frequency;
 				if (strength > 9) strength = 9;
 				if (f > 0 && f <= pitch -> ceiling) Graphics_text1 (graphics, t, f, Melder_integer (strength));
@@ -260,7 +260,7 @@ void structPitchEditor :: v_draw () {
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
 			double t = Sampled_indexToX (pitch, it);
-			int strength = floor (10 * frame -> intensity + 0.5);   /* Map 0.0-1.0 to 0-9 */
+			int strength = (int) floor (10 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
 			if (strength > 9) strength = 9;
 			Graphics_text1 (graphics, t, 0.5, Melder_integer (strength));
 		}
@@ -296,8 +296,8 @@ void structPitchEditor :: v_draw () {
 	}
 }
 
-void structPitchEditor :: v_play (double tmin, double tmax) {
-	Pitch_hum ((Pitch) data, tmin, tmax);
+void structPitchEditor :: v_play (double a_tmin, double a_tmax) {
+	Pitch_hum ((Pitch) data, a_tmin, a_tmax);
 }
 
 int structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {

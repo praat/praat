@@ -175,6 +175,7 @@ END
 static void pr_TextGrid_Pitch_draw (Any dia, int speckle, int unit) {
 	TextGrid grid = NULL;
 	Pitch pitch = NULL;
+	int IOBJECT;
 	LOOP {
 		if (CLASS == classTextGrid) grid = (TextGrid) OBJECT;
 		if (CLASS == classPitch) pitch = (Pitch) OBJECT;
@@ -262,6 +263,7 @@ END
 static void pr_TextGrid_Pitch_drawSeparately (Any dia, int speckle, int unit) {
 	TextGrid grid = NULL;
 	Pitch pitch = NULL;
+	int IOBJECT;
 	LOOP {
 		if (CLASS == classTextGrid) grid = (TextGrid) OBJECT;
 		if (CLASS == classPitch) pitch = (Pitch) OBJECT;
@@ -635,6 +637,7 @@ FORM (SpellingChecker_edit, L"Edit spelling checker", L"SpellingChecker")
 	SENTENCE (L"Allow all words starting with", L"")
 	SENTENCE (L"Allow all words ending in", L"")
 	OK
+int IOBJECT;
 LOOP {
 	iam (SpellingChecker);
 	SET_STRING (L"Forbidden strings", my forbiddenStrings)
@@ -814,6 +817,7 @@ static void cb_TextGridEditor_publication (Editor editor, void *closure, Data pu
 		praat_new (publication, NULL);
 		praat_updateSelection ();
 		if (Thing_member (publication, classSpectrum) && wcsequ (Thing_getName (publication), L"slice")) {
+			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
@@ -902,6 +906,7 @@ DO
 END
 
 static Function pr_TextGrid_peekTier (Any dia) {
+	int IOBJECT;
 	LOOP {
 		iam (TextGrid);
 		long tierNumber = GET_INTEGER (STRING_TIER_NUMBER);

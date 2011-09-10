@@ -17,15 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2003/10/15 check whether AmplitudeTier is NULL
- * pb 2004/04/17 maximum period factor for jitter
- * pb 2004/07/14 maximum amplitude factor for shimmer
- * pb 2005/06/16 units
- * pb 2005/08/30 voice report: say explicitly that the reported harmonicity is for the voiced parts only
- * pb 2011/06/12 C++
- */
-
 #include "VoiceAnalysis.h"
 #include "AmplitudeTier.h"
 
@@ -142,7 +133,12 @@ double PointProcess_Sound_getShimmer_local (PointProcess me, Sound thee, double 
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_local (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": shimmer (local) not computed.");
+		if (Melder_hasError (L"Too few pulses between ")) {
+			Melder_clearError ();
+			return NUMundefined;
+		} else {
+			Melder_throw (me, " & ", thee, ": shimmer (local) not computed.");
+		}
 	}
 }
 
@@ -154,7 +150,12 @@ double PointProcess_Sound_getShimmer_local_dB (PointProcess me, Sound thee, doub
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_local_dB (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": shimmer (local, dB) not computed.");
+		if (Melder_hasError (L"Too few pulses between ")) {
+			Melder_clearError ();
+			return NUMundefined;
+		} else {
+			Melder_throw (me, " & ", thee, ": shimmer (local, dB) not computed.");
+		}
 	}
 }
 
@@ -166,7 +167,12 @@ double PointProcess_Sound_getShimmer_apq3 (PointProcess me, Sound thee, double t
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": shimmer (apq3) not computed.");
+		if (Melder_hasError (L"Too few pulses between ")) {
+			Melder_clearError ();
+			return NUMundefined;
+		} else {
+			Melder_throw (me, " & ", thee, ": shimmer (apq3) not computed.");
+		}
 	}
 }
 
@@ -178,7 +184,12 @@ double PointProcess_Sound_getShimmer_apq5 (PointProcess me, Sound thee, double t
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq5 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": shimmer (apq5) not computed.");
+		if (Melder_hasError (L"Too few pulses between ")) {
+			Melder_clearError ();
+			return NUMundefined;
+		} else {
+			Melder_throw (me, " & ", thee, ": shimmer (apq5) not computed.");
+		}
 	}
 }
 
@@ -190,7 +201,12 @@ double PointProcess_Sound_getShimmer_apq11 (PointProcess me, Sound thee, double 
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
 		return AmplitudeTier_getShimmer_apq11 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": shimmer (apq11) not computed.");
+		if (Melder_hasError (L"Too few pulses between ")) {
+			Melder_clearError ();
+			return NUMundefined;
+		} else {
+			Melder_throw (me, " & ", thee, ": shimmer (apq11) not computed.");
+		}
 	}
 }
 
@@ -203,7 +219,12 @@ double PointProcess_Sound_getShimmer_dda (PointProcess me, Sound thee, double tm
 		double apq3 = AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 		return NUMdefined (apq3) ? 3.0 * apq3 : NUMundefined;
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": shimmer (dda) not computed.");
+		if (Melder_hasError (L"Too few pulses between ")) {
+			Melder_clearError ();
+			return NUMundefined;
+		} else {
+			Melder_throw (me, " & ", thee, ": shimmer (dda) not computed.");
+		}
 	}
 }
 
@@ -214,14 +235,24 @@ void PointProcess_Sound_getShimmer_multi (PointProcess me, Sound thee, double tm
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
 		autoAmplitudeTier peaks = PointProcess_Sound_to_AmplitudeTier_period (me, thee, tmin, tmax, pmin, pmax, maximumPeriodFactor);
-		if (local) *local = AmplitudeTier_getShimmer_local (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (local_dB) *local_dB = AmplitudeTier_getShimmer_local_dB (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq3) *apq3 = AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq5) *apq5 = AmplitudeTier_getShimmer_apq5 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (apq11) *apq11 = AmplitudeTier_getShimmer_apq11 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
-		if (dda) *dda = 3.0 * AmplitudeTier_getShimmer_apq3 (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		if (local)    *local    =       AmplitudeTier_getShimmer_local    (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		if (local_dB) *local_dB =       AmplitudeTier_getShimmer_local_dB (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq3)     *apq3     =       AmplitudeTier_getShimmer_apq3     (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq5)     *apq5     =       AmplitudeTier_getShimmer_apq5     (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		if (apq11)    *apq11    =       AmplitudeTier_getShimmer_apq11    (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
+		if (dda)      *dda      = 3.0 * AmplitudeTier_getShimmer_apq3     (peaks.peek(), pmin, pmax, maximumAmplitudeFactor);
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": shimmer measures not computed.");
+		if (Melder_hasError (L"Too few pulses between ")) {
+			Melder_clearError ();
+			if (local)    *local    = NUMundefined;
+			if (local_dB) *local_dB = NUMundefined;
+			if (apq3)     *apq3     = NUMundefined;
+			if (apq5)     *apq5     = NUMundefined;
+			if (apq11)    *apq11    = NUMundefined;
+			if (dda)      *dda      = NUMundefined;
+		} else {
+			Melder_throw (me, " & ", thee, ": shimmer measures not computed.");
+		}
 	}
 }
 

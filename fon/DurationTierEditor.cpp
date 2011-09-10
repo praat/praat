@@ -29,11 +29,11 @@ void structDurationTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"DurationTier help", 0, menu_cb_DurationTierHelp);
 }
 
-void structDurationTierEditor :: v_play (double tmin, double tmax) {
+void structDurationTierEditor :: v_play (double a_tmin, double a_tmax) {
 	if (sound.data) {
-		Sound_playPart (sound.data, tmin, tmax, NULL, NULL);
+		Sound_playPart (sound.data, a_tmin, a_tmax, NULL, NULL);
 	} else {
-		//DurationTier_playPart (data, tmin, tmax, FALSE);
+		//DurationTier_playPart (data, a_tmin, a_tmax, FALSE);
 	}
 }
 

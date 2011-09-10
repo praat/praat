@@ -346,7 +346,7 @@ GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bo
 			( allowMultipleSelection ? LBS_EXTENDEDSEL : 0 ),
 			my widget -> x, my widget -> y, my widget -> width, my widget -> height,
 			my widget -> parent -> window, NULL, theGui.instance, NULL);
-		SetWindowLong (my widget -> window, GWL_USERDATA, (long) my widget);
+		SetWindowLongPtr (my widget -> window, GWLP_USERDATA, (LONG_PTR) my widget);
 		SetWindowFont (my widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
 		/*if (MEMBER (my parent, ScrolledWindow)) {
 			XtDestroyWidget (my widget -> parent -> motiff.scrolledWindow.horizontalBar);

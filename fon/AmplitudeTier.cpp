@@ -156,7 +156,7 @@ AmplitudeTier PointProcess_Sound_to_AmplitudeTier_period (PointProcess me, Sound
 		long imin, imax, numberOfPeaks;
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;
 		numberOfPeaks = PointProcess_getWindowPoints (me, tmin, tmax, & imin, & imax);
-		if (numberOfPeaks < 3) return NULL;
+		if (numberOfPeaks < 3) Melder_throw ("Too few pulses between ", tmin, " and ", tmax, " seconds.");
 		autoAmplitudeTier him = AmplitudeTier_create (tmin, tmax);
 		for (long i = imin + 1; i < imax; i ++) {
 			double p1 = my t [i] - my t [i - 1], p2 = my t [i + 1] - my t [i];

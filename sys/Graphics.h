@@ -120,16 +120,16 @@ Thing_define (Graphics, Thing) {
 	// new methods:
 		virtual void v_polyline (long numberOfPoints, long *xyDC, bool close) { (void) numberOfPoints; (void) xyDC; (void) close; }
 		virtual void v_fillArea (long numberOfPoints, long *xyDC) { (void) numberOfPoints; (void) xyDC; }
-		virtual void v_rectangle (long x1DC, long x2DC, long y1DC, long y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
-		virtual void v_fillRectangle (long x1DC, long x2DC, long y1DC, long y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
+		virtual void v_rectangle (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+		virtual void v_fillRectangle (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
 		virtual void v_circle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
-		virtual void v_ellipse (long x1DC, long x2DC, long y1DC, long y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
+		virtual void v_ellipse (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
 		virtual void v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle) { (void) xDC; (void) yDC; (void) rDC; (void) fromAngle; (void) toAngle; }
 		virtual void v_fillCircle (long xDC, long yDC, long rDC) { (void) xDC; (void) yDC; (void) rDC; }
-		virtual void v_fillEllipse (long x1DC, long x2DC, long y1DC, long y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
-		virtual void v_button (long x1DC, long x2DC, long y1DC, long y2DC)
+		virtual void v_fillEllipse (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+		virtual void v_button (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC)
 			{
-				v_rectangle (x1DC, x2DC, y1DC, y2DC);   // the simplest implementation
+				v_rectangle (a_x1DC, a_x2DC, a_y1DC, a_y2DC);   // the simplest implementation
 			}
 		virtual void v_roundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r);
 		virtual void v_fillRoundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r);
@@ -151,10 +151,10 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 Graphics Graphics_create_pdf (void *context, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches);
 Graphics Graphics_create_postscriptprinter (void);
-Graphics Graphics_create_screenPrinter (void *display, unsigned long window);
-Graphics Graphics_create_screen (void *display, unsigned long window, int resolution);
+Graphics Graphics_create_screenPrinter (void *display, void *window);
+Graphics Graphics_create_screen (void *display, void *window, int resolution);
 #ifdef macintosh
-	Graphics Graphics_create_port (void *display, unsigned long port, int resolution);
+	Graphics Graphics_create_port (void *display, void *port, int resolution);
 #endif
 Graphics Graphics_create_xmdrawingarea (/* GuiObject */ void *drawingArea);
 

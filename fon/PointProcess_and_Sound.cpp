@@ -158,15 +158,17 @@ Sound PointProcess_to_Sound_phonation
 			/*
 			 * Fill in the samples to the left of the current point.
 			 */
-			long beginSample = midSample - floor (te / thy dx);
-			if (beginSample < 1) beginSample = 1;
-			long endSample = midSample;
-			if (endSample > thy nx) endSample = thy nx;
-			for (long isamp = beginSample; isamp <= endSample; isamp ++) {
-				double tsamp = thy x1 + (isamp - 1) * thy dx;
-				phase = (tsamp - (t - te)) / (period * openPhase);
-				if (phase > 0.0)
-					sound [isamp] += amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
+			{// scope
+				long beginSample = midSample - floor (te / thy dx);
+				if (beginSample < 1) beginSample = 1;
+				long endSample = midSample;
+				if (endSample > thy nx) endSample = thy nx;
+				for (long isamp = beginSample; isamp <= endSample; isamp ++) {
+					double tsamp = thy x1 + (isamp - 1) * thy dx;
+					phase = (tsamp - (t - te)) / (period * openPhase);
+					if (phase > 0.0)
+						sound [isamp] += amplitude * (power1 * pow (phase, power1 - 1.0) - power2 * pow (phase, power2 - 1.0));
+				}
 			}
 			/*
 			 * Determine the signal parameters at the current point.

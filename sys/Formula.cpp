@@ -1289,12 +1289,12 @@ static void parsePowerFactor (void) {
 			//theOptimize = 1;
 			nieuwontleed (NUMBER_); parsenumber (0.0);   // initialize the sum
 			pas (HAAKJEOPENEN_);
-			int symbol = nieuwlees;
-			if (symbol == NUMERIC_VARIABLE_) {   // an existing variable
+			int symbol2 = nieuwlees;
+			if (symbol2 == NUMERIC_VARIABLE_) {   // an existing variable
 				nieuwontleed (VARIABLE_REFERENCE_);
 				InterpreterVariable loopVariable = lexan [ilexan]. content.variable;
 				parse [iparse]. content.variable = loopVariable;
-			} else if (symbol == VARIABLE_NAME_) {   // a new variable
+			} else if (symbol2 == VARIABLE_NAME_) {   // a new variable
 				InterpreterVariable loopVariable = Interpreter_lookUpVariable (theInterpreter, lexan [ilexan]. content.string);
 				nieuwontleed (VARIABLE_REFERENCE_);
 				parse [iparse]. content.variable = loopVariable;
@@ -4379,15 +4379,15 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case COLSTR_: { do_colStr ();
 } break; case SQR_: { do_sqr ();
 } break; case STRING_: {
-	autostring result = Melder_wcsdup (f [programPointer]. content.string);
-	pushString (result.transfer());
+	autostring string = Melder_wcsdup (f [programPointer]. content.string);
+	pushString (string.transfer());
 } break; case NUMERIC_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	pushNumber (var -> numericValue);
 } break; case STRING_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	autostring result = Melder_wcsdup (var -> stringValue);
-	pushString (result.transfer());
+	autostring string = Melder_wcsdup (var -> stringValue);
+	pushString (string.transfer());
 } break; case NUMERIC_ARRAY_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	double **data = NUMdmatrix_copy (var -> numericArrayValue. data,

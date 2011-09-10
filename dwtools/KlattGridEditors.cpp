@@ -26,9 +26,8 @@
  */
 
 #include "Preferences.h"
-#include "EditorM.h"
-
 #include "KlattGridEditors.h"
+#include "EditorM.h"
 
 static void KlattGrid_Editor_defaultPlay (KlattGrid me, double tmin, double tmax)
 {

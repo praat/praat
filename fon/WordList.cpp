@@ -99,7 +99,7 @@ void structWordList :: v_readBinary (FILE *f) {
 	}
 	*p = '\0';
 	if (p - string != length)
-		Melder_throw ("Length in header (", length, ") does not match string (", p - string, ").");
+		Melder_throw ("Length in header (", length, ") does not match lenth of string (", (long) (p - string), ").");
 }
 
 void structWordList :: v_writeBinary (FILE *f) {

@@ -690,6 +690,7 @@ static void cb_SoundEditor_publication (Editor editor, void *closure, Data publi
 		praat_new (publication, NULL);
 		praat_updateSelection ();
 		if (Thing_member (publication, classSpectrum)) {
+			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);

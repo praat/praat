@@ -215,7 +215,7 @@ void structCollection :: v_readBinary (FILE *f) {
 
 static struct structData_Description theCollection_description [] = {
 	{ L"size", longwa, Melder_offsetof (Collection, size), sizeof (long) },
-	{ L"item", objectwa, Melder_offsetof (Collection, item), sizeof (Data), L"Data", & theClassInfo_Data, 1, 0, L"my size" },
+	{ L"item", objectwa, Melder_offsetof (Collection, item), sizeof (Data), L"Data", & theClassInfo_Data, 1, 0, L"size" },
 	{ 0 }
 };
 Data_Description structCollection :: s_description = & theCollection_description [0];

@@ -918,7 +918,7 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			| ( flags & GuiText_SCROLLED ? WS_HSCROLL | WS_VSCROLL : 0 ),
 			my widget -> x, my widget -> y, my widget -> width, my widget -> height,
 			my widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
-		SetWindowLong (my widget -> window, GWL_USERDATA, (long) my widget);
+		SetWindowLongPtr (my widget -> window, GWLP_USERDATA, (LONG_PTR) my widget);
 		static HFONT font;
 		if (! font) font = CreateFont (16, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
 		SetWindowFont (my widget -> window, font /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, FALSE);

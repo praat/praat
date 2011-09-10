@@ -227,7 +227,7 @@ void Graphics_updateWs (Graphics me) {
 		my v_updateWs ();
 }
 
-static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned long voidWindow, int resolution) {
+static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *voidWindow, int resolution) {
 
 	/* Fill in new members. */
 
@@ -273,14 +273,14 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, unsigned l
 	return 1;
 }
 
-Graphics Graphics_create_screen (void *display, unsigned long window, int resolution) {
+Graphics Graphics_create_screen (void *display, void *window, int resolution) {
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	Graphics_init (me);
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
 	#if mac
-		GraphicsScreen_init (me, display, (unsigned long) GetWindowPort ((WindowRef) window), resolution);
+		GraphicsScreen_init (me, display, GetWindowPort ((WindowRef) window), resolution);
 	#else
 		GraphicsScreen_init (me, display, window, resolution);
 	#endif
@@ -288,18 +288,18 @@ Graphics Graphics_create_screen (void *display, unsigned long window, int resolu
 }
 
 #ifdef macintosh
-Graphics Graphics_create_port (void *display, unsigned long port, int resolution) {
+Graphics Graphics_create_port (void *display, void *port, int resolution) {
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	Graphics_init (me);
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
-	GraphicsScreen_init (me, display, (unsigned long) port, resolution);
+	GraphicsScreen_init (me, display, port, resolution);
 	return (Graphics) me;
 }
 #endif
 
-Graphics Graphics_create_screenPrinter (void *display, unsigned long window) {
+Graphics Graphics_create_screenPrinter (void *display, void *window) {
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
@@ -369,12 +369,12 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#endif
 	Graphics_init (me); therror
 	#ifdef macintosh
-		GraphicsScreen_init (me, XtDisplay (my d_drawingArea), (unsigned long) GetWindowPort ((WindowRef) XtWindow (my d_drawingArea)), Gui_getResolution (my d_drawingArea));
+		GraphicsScreen_init (me, XtDisplay (my d_drawingArea), GetWindowPort ((WindowRef) XtWindow (my d_drawingArea)), Gui_getResolution (my d_drawingArea));
 	#else
 		#if gtk
-			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea), (unsigned long) GTK_WIDGET (my d_drawingArea), Gui_getResolution (my d_drawingArea));
+			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea), GTK_WIDGET (my d_drawingArea), Gui_getResolution (my d_drawingArea));
 		#elif motif
-			GraphicsScreen_init (me, XtDisplay (my d_drawingArea), (unsigned long) XtWindow (my d_drawingArea), Gui_getResolution (my d_drawingArea));
+			GraphicsScreen_init (me, XtDisplay (my d_drawingArea), XtWindow (my d_drawingArea), Gui_getResolution (my d_drawingArea));
 		#endif
 	#endif
 

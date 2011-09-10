@@ -30,7 +30,7 @@
 #include "GraphicsP.h"
 
 #if win
-	#include <gdiplus.h>
+	#include <GdiPlus.h>
 #elif mac
 	#include <time.h>
 	#include "macport_on.h"

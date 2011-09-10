@@ -96,22 +96,22 @@ static void saveHistory (HyperPage me, const wchar_t *title) {
  */
 
 static void initScreen (HyperPage me) {
-	my y = PAGE_HEIGHT + my top / 5.0;
-	my x = 0;
+	my d_y = PAGE_HEIGHT + my top / 5.0;
+	my d_x = 0;
 	my previousBottomSpacing = 0.0;
 	forget (my links);
 	my links = Collection_create (classHyperLink, 100);
 }
 
 void HyperPage_initSheetOfPaper (HyperPage me) {
-	int reflect = my mirror && (my pageNumber & 1) == 0;
+	int reflect = my mirror && (my d_printingPageNumber & 1) == 0;
 	wchar *leftHeader = reflect ? my outsideHeader : my insideHeader;
 	wchar *rightHeader = reflect ? my insideHeader : my outsideHeader;
 	wchar *leftFooter = reflect ? my outsideFooter : my insideFooter;
 	wchar *rightFooter = reflect ? my insideFooter : my outsideFooter;
 
-	my y = PAPER_TOP - TOP_MARGIN;
-	my x = 0;
+	my d_y = PAPER_TOP - TOP_MARGIN;
+	my d_x = 0;
 	my previousBottomSpacing = 0.0;
 	Graphics_setFont (my ps, kGraphics_font_TIMES);
 	Graphics_setFontSize (my ps, 12);
@@ -141,8 +141,8 @@ void HyperPage_initSheetOfPaper (HyperPage me) {
 		Graphics_text (my ps, 0.7 + 6, PAPER_BOTTOM, rightFooter);
 	}
 	Graphics_setFontStyle (my ps, Graphics_NORMAL);
-	if (my pageNumber)
-		Graphics_text1 (my ps, 0.7 + ( reflect ? 0 : 6 ), PAPER_BOTTOM, Melder_integer (my pageNumber));
+	if (my d_printingPageNumber)
+		Graphics_text1 (my ps, 0.7 + ( reflect ? 0 : 6 ), PAPER_BOTTOM, Melder_integer (my d_printingPageNumber));
 	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 }
 
@@ -163,21 +163,21 @@ if (! my printing) {
 	Graphics_Link *paragraphLinks;
 	int numberOfParagraphLinks, ilink;
 	if (my entryHint && (method & HyperPage_USE_ENTRY_HINT) && wcsequ (text, my entryHint)) {
-		my entryPosition = my y;
+		my entryPosition = my d_y;
 	}
-	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my y -= size * (1.2/72);
-	my x = x;
+	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= size * (1.2/72);
+	my d_x = x;
 
-	if (/* my y > PAGE_HEIGHT + 2.0 + heightGuess || */ my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
-		my y -= heightGuess;
+	if (/* my d_y > PAGE_HEIGHT + 2.0 + heightGuess || */ my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+		my d_y -= heightGuess;
 	} else {
 		Graphics_setFont (my g, font);
 		Graphics_setFontSize (my g, size);
 		Graphics_setWrapWidth (my g, my rightMargin - x - 0.1);
 		Graphics_setSecondIndent (my g, secondIndent);
 		Graphics_setFontStyle (my g, style);
-		Graphics_text (my g, my x, my y, text);
+		Graphics_text (my g, my d_x, my d_y, text);
 		numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 		if (my links) for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
 			HyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
@@ -187,40 +187,40 @@ if (! my printing) {
 		}
 		if (method & HyperPage_ADD_BORDER) {
 			Graphics_setLineWidth (my g, 2);
-			Graphics_line (my g, 0.0, my y, my rightMargin, my y);
+			Graphics_line (my g, 0.0, my d_y, my rightMargin, my d_y);
 			Graphics_setLineWidth (my g, 1);
 		}
 		/*
 		 * The text may have wrapped.
 		 * Ask the Graphics manager by how much, and update our text position accordingly.
 		 */
-		my y = Graphics_inqTextY (my g);
+		my d_y = Graphics_inqTextY (my g);
 	}
 } else {
 	Graphics_setFont (my ps, font);
 	Graphics_setFontSize (my ps, size);
-	my y -= my y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my y -= size * (1.2/72);
-	if (my y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance + size * (1.2/72) * (wcslen (text) / (6.0 * 10))) {
+	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= size * (1.2/72);
+	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance + size * (1.2/72) * (wcslen (text) / (6.0 * 10))) {
 		Graphics_nextSheetOfPaper (my ps);
-		if (my pageNumber) my pageNumber ++;
+		if (my d_printingPageNumber) my d_printingPageNumber ++;
 		HyperPage_initSheetOfPaper (me);
 		Graphics_setFont (my ps, font);
 		Graphics_setFontSize (my ps, size);
-		my y -= size * (1.2/72);
+		my d_y -= size * (1.2/72);
 	}
-	my x = 0.7 + x;
+	my d_x = 0.7 + x;
 	Graphics_setWrapWidth (my ps, 6.0 - x);
 	Graphics_setSecondIndent (my ps, secondIndent);
 	Graphics_setFontStyle (my ps, style);
-	Graphics_text (my ps, my x, my y, text);
+	Graphics_text (my ps, my d_x, my d_y, text);
 	if (method & HyperPage_ADD_BORDER) {
 		Graphics_setLineWidth (my ps, 3);
-		/*Graphics_line (my ps, 0.7, my y, 6.7, my y);*/
-		Graphics_line (my ps, 0.7, my y + size * (1.2/72) + 0.07, 6.7, my y + size * (1.2/72) + 0.07);
+		/*Graphics_line (my ps, 0.7, my d_y, 6.7, my d_y);*/
+		Graphics_line (my ps, 0.7, my d_y + size * (1.2/72) + 0.07, 6.7, my d_y + size * (1.2/72) + 0.07);
 		Graphics_setLineWidth (my ps, 1);
 	}
-	my y = Graphics_inqTextY (my ps);
+	my d_y = Graphics_inqTextY (my ps);
 }
 	my previousBottomSpacing = bottomSpacing;
 	return 1;
@@ -325,35 +325,35 @@ int HyperPage_formula (I, const wchar_t *formula) {
 	kGraphics_font font = my font;
 	int size = my fontSize;
 if (! my printing) {
-	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my y -= size * (1.2/72);
-	if (my y > PAGE_HEIGHT + 2.0 || my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= size * (1.2/72);
+	if (my d_y > PAGE_HEIGHT + 2.0 || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
 	} else {
 		Graphics_setFont (my g, font);
 		Graphics_setFontStyle (my g, 0);
 		Graphics_setFontSize (my g, size);
 		Graphics_setWrapWidth (my g, 0);
 		Graphics_setTextAlignment (my g, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text (my g, my rightMargin / 2, my y, formula);
+		Graphics_text (my g, my rightMargin / 2, my d_y, formula);
 		Graphics_setTextAlignment (my g, Graphics_LEFT, Graphics_BOTTOM);
 	}
 } else {
 	Graphics_setFont (my ps, font);
 	Graphics_setFontStyle (my ps, 0);
 	Graphics_setFontSize (my ps, size);
-	my y -= my y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my y -= size * (1.2/72);
-	if (my y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
+	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= size * (1.2/72);
+	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
 		Graphics_nextSheetOfPaper (my ps);
-		if (my pageNumber) my pageNumber ++;
+		if (my d_printingPageNumber) my d_printingPageNumber ++;
 		HyperPage_initSheetOfPaper (me);
 		Graphics_setFont (my ps, font);
 		Graphics_setFontSize (my ps, size);
-		my y -= size * (1.2/72);
+		my d_y -= size * (1.2/72);
 	}
 	Graphics_setWrapWidth (my ps, 0);
 	Graphics_setTextAlignment (my ps, Graphics_CENTRE, Graphics_BOTTOM);
-	Graphics_text (my ps, 3.7, my y, formula);
+	Graphics_text (my ps, 3.7, my d_y, formula);
 	Graphics_setTextAlignment (my ps, Graphics_LEFT, Graphics_BOTTOM);
 }
 	my previousBottomSpacing = bottomSpacing;
@@ -368,17 +368,17 @@ int HyperPage_picture (I, double width_inches, double height_inches, void (*draw
 	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
 	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
 if (! my printing) {
-	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	if (my y > PAGE_HEIGHT + height_inches || my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
-		my y -= height_inches;
+	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	if (my d_y > PAGE_HEIGHT + height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+		my d_y -= height_inches;
 	} else {
-		my y -= height_inches;
+		my d_y -= height_inches;
 		Graphics_setFont (my g, font);
 		Graphics_setFontStyle (my g, 0);
 		Graphics_setFontSize (my g, size);
-		my x = width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - width_inches);
+		my d_x = width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - width_inches);
 		Graphics_setWrapWidth (my g, 0);
-		Graphics_setViewport (my g, my x, my x + width_inches, my y, my y + height_inches);
+		Graphics_setViewport (my g, my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
 		draw (my g);
 		Graphics_setViewport (my g, 0, 1, 0, 1);
 		Graphics_setWindow (my g, 0, 1, 0, 1);
@@ -388,20 +388,20 @@ if (! my printing) {
 	Graphics_setFont (my ps, font);
 	Graphics_setFontStyle (my ps, 0);
 	Graphics_setFontSize (my ps, size);
-	my y -= my y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my y -= height_inches;
-	if (my y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
+	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= height_inches;
+	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
 		Graphics_nextSheetOfPaper (my ps);
-		if (my pageNumber) my pageNumber ++;
+		if (my d_printingPageNumber) my d_printingPageNumber ++;
 		HyperPage_initSheetOfPaper (me);
 		Graphics_setFont (my ps, font);
 		Graphics_setFontSize (my ps, size);
-		my y -= height_inches;
+		my d_y -= height_inches;
 	}
-	my x = 3.7 - 0.5 * width_inches;
-	if (my x < 0) my x = 0;
+	my d_x = 3.7 - 0.5 * width_inches;
+	if (my d_x < 0) my d_x = 0;
 	Graphics_setWrapWidth (my ps, 0);
-	Graphics_setViewport (my ps, my x, my x + width_inches, my y, my y + height_inches);
+	Graphics_setViewport (my ps, my d_x, my d_x + width_inches, my d_y, my d_y + height_inches);
 	draw (my ps);
 	Graphics_setViewport (my ps, 0, 1, 0, 1);
 	Graphics_setWindow (my ps, 0, 1, 0, 1);
@@ -421,15 +421,15 @@ int HyperPage_script (I, double width_inches, double height_inches, const wchar_
 	double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : size / 12.0 );
 	double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : size / 12.0 );
 if (! my printing) {
-	my y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	if (my y > PAGE_HEIGHT + true_height_inches || my y < PAGE_HEIGHT - SCREEN_HEIGHT) {
-		my y -= true_height_inches;
+	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	if (my d_y > PAGE_HEIGHT + true_height_inches || my d_y < PAGE_HEIGHT - SCREEN_HEIGHT) {
+		my d_y -= true_height_inches;
 	} else {
-		my y -= true_height_inches;
+		my d_y -= true_height_inches;
 		Graphics_setFont (my g, font);
 		Graphics_setFontStyle (my g, 0);
 		Graphics_setFontSize (my g, size);
-		my x = true_width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - true_width_inches);
+		my d_x = true_width_inches > my rightMargin ? 0 : 0.5 * (my rightMargin - true_width_inches);
 		Graphics_setWrapWidth (my g, 0);
 		long x1DCold, x2DCold, y1DCold, y2DCold;
 		Graphics_inqWsViewport (my g, & x1DCold, & x2DCold, & y1DCold, & y2DCold);
@@ -451,10 +451,10 @@ if (! my printing) {
 			theCurrentPraatPicture -> colour = Graphics_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
 			theCurrentPraatPicture -> arrowSize = 1.0;
-			theCurrentPraatPicture -> x1NDC = my x;
-			theCurrentPraatPicture -> x2NDC = my x + true_width_inches;
-			theCurrentPraatPicture -> y1NDC = my y;
-			theCurrentPraatPicture -> y2NDC = my y + true_height_inches;
+			theCurrentPraatPicture -> x1NDC = my d_x;
+			theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
+			theCurrentPraatPicture -> y1NDC = my d_y;
+			theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
 
 			Graphics_setViewport (my g, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 			Graphics_setWindow (my g, 0.0, 1.0, 0.0, 1.0);
@@ -513,18 +513,18 @@ if (! my printing) {
 	Graphics_setFont (my ps, font);
 	Graphics_setFontStyle (my ps, 0);
 	Graphics_setFontSize (my ps, size);
-	my y -= my y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
-	my y -= true_height_inches;
-	if (my y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
+	my d_y -= my d_y == PAPER_TOP - TOP_MARGIN ? 0 : ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
+	my d_y -= true_height_inches;
+	if (my d_y < PAPER_BOTTOM + BOTTOM_MARGIN + minFooterDistance) {
 		Graphics_nextSheetOfPaper (my ps);
-		if (my pageNumber) my pageNumber ++;
+		if (my d_printingPageNumber) my d_printingPageNumber ++;
 		HyperPage_initSheetOfPaper (me);
 		Graphics_setFont (my ps, font);
 		Graphics_setFontSize (my ps, size);
-		my y -= true_height_inches;
+		my d_y -= true_height_inches;
 	}
-	my x = 3.7 - 0.5 * true_width_inches;
-	if (my x < 0) my x = 0;
+	my d_x = 3.7 - 0.5 * true_width_inches;
+	if (my d_x < 0) my d_x = 0;
 	Graphics_setWrapWidth (my ps, 0);
 	long x1DCold, x2DCold, y1DCold, y2DCold;
 	Graphics_inqWsViewport (my ps, & x1DCold, & x2DCold, & y1DCold, & y2DCold);
@@ -545,10 +545,10 @@ if (! my printing) {
 		theCurrentPraatPicture -> colour = Graphics_BLACK;
 		theCurrentPraatPicture -> lineWidth = 1.0;
 		theCurrentPraatPicture -> arrowSize = 1.0;
-		theCurrentPraatPicture -> x1NDC = my x;
-		theCurrentPraatPicture -> x2NDC = my x + true_width_inches;
-		theCurrentPraatPicture -> y1NDC = my y;
-		theCurrentPraatPicture -> y2NDC = my y + true_height_inches;
+		theCurrentPraatPicture -> x1NDC = my d_x;
+		theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
+		theCurrentPraatPicture -> y1NDC = my d_y;
+		theCurrentPraatPicture -> y2NDC = my d_y + true_height_inches;
 
 		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 		Graphics_setWindow (my ps, 0.0, 1.0, 0.0, 1.0);
@@ -691,7 +691,7 @@ static void menu_cb_print (EDITOR_ARGS) {
 		INTEGER (L"First page number", L"0 (= no page numbers)")
 	EDITOR_OK
 		my v_defaultHeaders (cmd);
-		if (my pageNumber) SET_INTEGER (L"First page number", my pageNumber + 1)
+		if (my d_printingPageNumber) SET_INTEGER (L"First page number", my d_printingPageNumber + 1)
 	EDITOR_DO
 		my insideHeader = GET_STRING (L"Left or inside header");
 		my middleHeader = GET_STRING (L"Middle header");
@@ -700,7 +700,7 @@ static void menu_cb_print (EDITOR_ARGS) {
 		my middleFooter = GET_STRING (L"Middle footer");
 		my outsideFooter = GET_STRING (L"Right or outside footer");
 		my mirror = GET_INTEGER (L"Mirror even/odd headers");
-		my pageNumber = GET_INTEGER (L"First page number");
+		my d_printingPageNumber = GET_INTEGER (L"First page number");
 		Printer_print (print, me);
 	EDITOR_END
 }

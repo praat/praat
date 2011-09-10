@@ -212,7 +212,7 @@ void * KNN_threadTestAux(void * dummy)
     dummy = NULL; // dummy assignment to avoid compiler warnings;
 
     for(int i = 0; i < 50000; ++i)
-        for(int i = 0; i < 50000; ++i);
+        for(int i = 0; i < 50000; ++i) ;
 
     return(NULL);
 }

@@ -333,7 +333,7 @@ static int NativeButton_preferredHeight (GuiObject me) {
 
 GuiObject _Gui_initializeWidget (int widgetClass, GuiObject parent, const wchar_t *name) {
 	GuiObject me = Melder_calloc_f (struct structGuiObject, 1);
-	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%ld\t%ld\t%ld\n", (long) me, 1L, (long) sizeof (struct structGuiObject));
+	if (Melder_debug == 34) fprintf (stderr, "from _Gui_initializeWidget\t%p\t%ld\t%ld\n", me, 1L, (long) sizeof (struct structGuiObject));
 	my magicNumber = 15111959;
 	numberOfWidgets ++;
 	my widgetClass = widgetClass;
@@ -946,7 +946,7 @@ static void NativeMenuItem_setText (GuiObject me) {
  * but do not show them on the screen yet (ideally).
  * A reference must be made from widget to native object and back.
  * On Mac, we normally use the RefCon fields of the windows and controls.
- * On Win, we use SetWindowLong (window, GWL_USERDATA, widget).
+ * On Win, we use SetWindowLongPtr (window, GWLP_USERDATA, (LONG_PTR) widget).
  */
 
 static void _GuiNativizeWidget (GuiObject me) {
@@ -1000,7 +1000,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 			#if win
 				my window = CreateWindowEx (0, theWindowClassName, L"bulletinBoard", WS_CHILD | WS_BORDER | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 			#endif
 		} break;
 		case xmDrawingAreaWidgetClass: Melder_fatal ("Should be implemented in GuiDrawingArea."); break;
@@ -1008,14 +1008,14 @@ static void _GuiNativizeWidget (GuiObject me) {
 			#if win
 				my window = CreateWindowEx (0, theWindowClassName, L"form", WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 			#endif
 		} break;
 		case xmRowColumnWidgetClass: {
 			#if win
 				my window = CreateWindowEx (0, theWindowClassName, L"rowColumn", WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 			#endif
 		} break;
 		case xmListWidgetClass: Melder_fatal ("Should be implemented in GuiList."); break;
@@ -1032,7 +1032,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 					my rowColumnType = XmMENU_BAR;
 					my window = CreateWindowEx (0, theWindowClassName, L"rowColumn", WS_CHILD,
 						my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-					SetWindowLong (my window, GWL_USERDATA, (long) me);
+					SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 				}
 			#elif mac
 				/*
@@ -1133,7 +1133,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 					my window = CreateWindow (L"button", _GuiWin_expandAmpersands (my name),
 						WS_CHILD | BS_PUSHBUTTON | WS_CLIPSIBLINGS,
 						my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
-					SetWindowLong (my window, GWL_USERDATA, (long) me);
+					SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 					SetWindowFont (my window, GetStockFont (ANSI_VAR_FONT), FALSE);
 				#elif mac
 					if (wcsstr (my name, L" -") || (my parent -> rowColumnType == XmMENU_BAR && my parent -> y < 5)) {
@@ -1167,7 +1167,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 			#if win
 				my window = CreateWindow (PROGRESS_CLASS, _GuiWin_expandAmpersands (my name), WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 				SendMessage (my window, PBM_SETRANGE, (WPARAM) 0, (LPARAM) MAKELONG (0, 1000));
 			#endif
 		} break;
@@ -1176,7 +1176,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 				my window = CreateWindow (L"scrollbar", my name, WS_CHILD |
 					( wcsequ (my name, L"verticalScrollBar") ? SBS_VERT : SBS_HORZ ) | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 				NativeScrollBar_set (me);
 			#elif mac
 				my nat.control.handle = NewControl (my macWindow, & my rect,
@@ -1204,7 +1204,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 			#if win
 				my window = CreateWindowEx (0, theWindowClassName, L"scrolledWindow", WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, NULL, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 			#endif
 			my motiff.scrolledWindow.horizontalBar = XmCreateScrollBar (me, "horizontalScrollBar", NULL, 0);
 			my motiff.scrolledWindow.verticalBar = XmCreateScrollBar (me, "verticalScrollBar", NULL, 0);
@@ -1237,7 +1237,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 					theDialogHint ? WS_CAPTION | WS_SYSMENU : WS_OVERLAPPEDWINDOW,
 					CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,  my parent ? my parent -> window : NULL, NULL, theGui.instance, NULL);
 				className = theWindowClassName;   /* All later windows. */
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 			#elif mac
 				Rect r = my rect;
 				if (wcsstr (my name, L"fullscreen")) {
@@ -2225,7 +2225,7 @@ void XtDestroyWidget (GuiObject me) {
 	 */
 	#if win
 		HWND natWindow;
-		if (my window) SetWindowLong (my window, GWL_USERDATA, 0);
+		if (my window) SetWindowLongPtr (my window, GWLP_USERDATA, 0);
 	#endif
 	if (my widgetClass == xmShellWidgetClass) {
 		XtUnmanageChild (me);
@@ -2420,7 +2420,7 @@ static void mapWidget (GuiObject me) {
 						my nat.entry.id, _GuiWin_expandAmpersands (my name));
 				} break;
 				case xmCascadeButtonWidgetClass: {
-					my nat.entry.id = (UINT) my subMenuId -> nat.menu.handle;
+					my nat.entry.id = (ULONG_PTR) my subMenuId -> nat.menu.handle;
 					InsertMenu (my nat.entry.handle, position, MF_POPUP | MF_BYPOSITION | ( my insensitive ? MF_GRAYED : MF_ENABLED ),
 						my nat.entry.id, _GuiWin_expandAmpersands (my name));
 				} break;
@@ -2514,7 +2514,7 @@ static void mapWidget (GuiObject me) {
 				my window = CreateWindow (L"scrollbar", my name, WS_CHILD |
 					( my orientation == XmHORIZONTAL ? SBS_HORZ : SBS_VERT) | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
-				SetWindowLong (my window, GWL_USERDATA, (long) me);
+				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
 				NativeScrollBar_set (me);
 			}
 			#endif
@@ -2840,7 +2840,11 @@ GuiObject GuiInitialize (const char *name, unsigned int *argc, char **argv)
 			exit (0);   // possible problem
 		}
 
-		theGui.instance = (HINSTANCE) atol (argv [1]);
+		#ifdef _WIN64
+			theGui.instance = (HINSTANCE) atoll (argv [1]);
+		#else
+			theGui.instance = (HINSTANCE) atol (argv [1]);
+		#endif
 
 		windowClass. cbSize = sizeof (WNDCLASSEX);
 		windowClass. style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS |
@@ -4279,7 +4283,7 @@ void XtDispatchEvent (XEvent *xevent) {
 {
 	int kar = LOWORD (message -> wParam);
 	int modifiers = 0;
-	GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
+	GuiObject me = (GuiObject) GetWindowLongPtr (message -> hwnd, GWLP_USERDATA);
 	if (GetKeyState (VK_CONTROL) < 0) modifiers |= _motif_COMMAND_MASK;
 	if (GetKeyState (VK_MENU) < 0) modifiers |= _motif_OPTION_MASK;
 	if (GetKeyState (VK_SHIFT) < 0) modifiers |= _motif_SHIFT_MASK;
@@ -4301,7 +4305,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			message -> message == WM_SYSKEYDOWN && GetKeyState (VK_CONTROL) < 0)
 		{
 			int kar = LOWORD (message -> wParam);
-			GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
+			GuiObject me = (GuiObject) GetWindowLongPtr (message -> hwnd, GWLP_USERDATA);
 			int modifiers = 0;
 			if (GetKeyState (VK_CONTROL) < 0) modifiers |= _motif_COMMAND_MASK;
 			if (GetKeyState (VK_MENU) < 0) modifiers |= _motif_OPTION_MASK;
@@ -4400,7 +4404,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * Catch character messages to push buttons and toggle buttons:
 			 * divert them to a drawing area, if possible.
 			 */
-			GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
+			GuiObject me = (GuiObject) GetWindowLongPtr (message -> hwnd, GWLP_USERDATA);
 			if (me && MEMBER2 (me, PushButton, ToggleButton)) {
 				GuiObject drawingArea = _motif_findDrawingArea (my shell);
 				if (drawingArea) {
@@ -4424,7 +4428,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * Catch mouse-down messages to cascade buttons:
 			 * post the associated menu, if any.
 			 */
-			GuiObject me = (GuiObject) GetWindowLong (message -> hwnd, GWL_USERDATA);
+			GuiObject me = (GuiObject) GetWindowLongPtr (message -> hwnd, GWLP_USERDATA);
 			if (me && MEMBER (me, CascadeButton) && my subMenuId) {
 				RECT rect;
 				GetWindowRect (my window, & rect);
@@ -4450,10 +4454,15 @@ void GuiMainLoop () {
 	extern int main (int argc, char *argv []);
 	int APIENTRY WinMain (HINSTANCE instance, HINSTANCE previousInstance, LPSTR commandLine, int commandShow) {
 		int argc = 4;
-		char instanceString [20], commandShowString [20], *argv [4];
+		char instanceString [20], commandShowString [20];
+		const char *argv [4];
 		(void) previousInstance;
 		argv [0] = "dummy";
-		sprintf (instanceString, "%ld", (long) instance);
+		#ifdef _WIN64
+			sprintf (instanceString, "%lld", (ULONG_PTR) instance);
+		#else
+			sprintf (instanceString, "%ld", (ULONG_PTR) instance);
+		#endif
 		sprintf (commandShowString, "%d", commandShow);
 		argv [1] = & instanceString [0];
 		argv [2] = & commandShowString [0];
@@ -4467,11 +4476,11 @@ void GuiMainLoop () {
 			while (argv [3] [0] != ' ' && argv [3] [0] != '\0')  { argv [3] ++; }
 			if (argv [3] [0] == ' ') argv [3] ++;
 		}
-		return main (argc, & argv [0]);
+		return main (argc, (char **) & argv [0]);
 	}
 
 	static void on_close (HWND window) {
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me) {
 			if (my widgetClass == xmShellWidgetClass) {
 				int deleteResponse = my deleteResponse;   /* Save this, in case the callback should kill the widget (XmDO_NOTHING). */
@@ -4511,10 +4520,10 @@ void GuiMainLoop () {
 		return NULL;
 	}
 	static void on_command (HWND window, int id, HWND controlWindow, UINT codeNotify) {
-		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (parent) {
 			if (controlWindow) {
-				GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
+				GuiObject control = (GuiObject) GetWindowLongPtr (controlWindow, GWLP_USERDATA);
 				if (control) {
 					switch (control -> widgetClass) {
 						/*
@@ -4581,7 +4590,7 @@ void GuiMainLoop () {
 		(void) window;
 	}
 	static void on_lbuttonDown (HWND window, BOOL doubleClick, int x, int y, UINT flags) {
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me) {
 			if (MEMBER (me, DrawingArea)) {
 				_GuiWinDrawingArea_handleClick (me, x, y);
@@ -4589,7 +4598,7 @@ void GuiMainLoop () {
 		} else FORWARD_WM_LBUTTONDOWN (window, doubleClick, x, y, flags, DefWindowProc);
 	}
 	static void on_paint (HWND window) {
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me) {
 			if (my widgetClass == xmDrawingAreaWidgetClass) {
 				_GuiWinDrawingArea_update (me);
@@ -4597,25 +4606,25 @@ void GuiMainLoop () {
 		} else FORWARD_WM_PAINT (window, DefWindowProc);
 	}
 	static void on_hscroll (HWND window, HWND controlWindow, UINT code, int pos) {
-		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (parent) {
-			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLongPtr (controlWindow, GWLP_USERDATA);
 			if (control) {
 				on_scroll (control, code, pos);
 			} else FORWARD_WM_HSCROLL (window, controlWindow, code, pos, DefWindowProc);
 		} else FORWARD_WM_HSCROLL (window, controlWindow, code, pos, DefWindowProc);
 	}
 	static void on_vscroll (HWND window, HWND controlWindow, UINT code, int pos) {
-		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (parent) {
-			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLongPtr (controlWindow, GWLP_USERDATA);
 			if (control) {
 				on_scroll (control, code, pos);
 			} else FORWARD_WM_VSCROLL (window, controlWindow, code, pos, DefWindowProc);
 		} else FORWARD_WM_VSCROLL (window, controlWindow, code, pos, DefWindowProc);
 	}
 	static void on_size (HWND window, UINT state, int cx, int cy) {
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me && MEMBER (me, Shell) && (state == SIZE_RESTORED || state == SIZE_MAXIMIZED)) {
 			int oldWidth = my width, oldHeight = my height;
 			int newWidth = cx;
@@ -4633,7 +4642,7 @@ void GuiMainLoop () {
 	}
 	static void on_key (HWND window, UINT key, BOOL down, int repeat, UINT flags) {
 		Melder_assert (down == true);
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me && key >= VK_LEFT && key <= VK_DOWN) {
 			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
@@ -4650,7 +4659,7 @@ void GuiMainLoop () {
 		}
 	}
 	static void on_char (HWND window, TCHAR kar, int repeat) {
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me) {
 			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
@@ -4667,7 +4676,7 @@ void GuiMainLoop () {
 		}
 	}
 	static void on_move (HWND window, int x, int y) {
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		/*if (me && MEMBER (me, Shell)) {
 			my x = x - ( my motiff.shell.isDialog ? GetSystemMetrics (SM_CXFIXEDFRAME) : GetSystemMetrics (SM_CXSIZEFRAME) );
 			my y = y - GetSystemMetrics (SM_CYCAPTION) - ( my motiff.shell.isDialog ? GetSystemMetrics (SM_CYFIXEDFRAME) :
@@ -4676,10 +4685,10 @@ void GuiMainLoop () {
 		FORWARD_WM_MOVE (window, x, y, DefWindowProc);
 	}
 	static HBRUSH on_ctlColorStatic (HWND window, HDC hdc, HWND controlWindow, int type) {
-		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		(void) type;
 		if (parent) {
-			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLongPtr (controlWindow, GWLP_USERDATA);
 			if (control) {
 				SetBkMode (hdc, TRANSPARENT);
 				return GetStockBrush (LTGRAY_BRUSH);
@@ -4688,10 +4697,10 @@ void GuiMainLoop () {
 		return FORWARD_WM_CTLCOLORSTATIC (window, hdc, controlWindow, DefWindowProc);
 	}
 	static HBRUSH on_ctlColorBtn (HWND window, HDC hdc, HWND controlWindow, int type) {
-		GuiObject parent = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject parent = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		(void) type;
 		if (parent) {
-			GuiObject control = (GuiObject) GetWindowLong (controlWindow, GWL_USERDATA);
+			GuiObject control = (GuiObject) GetWindowLongPtr (controlWindow, GWLP_USERDATA);
 			if (control) {
 				SetBkMode (hdc, TRANSPARENT);
 				return GetStockBrush (LTGRAY_BRUSH);
@@ -4700,7 +4709,7 @@ void GuiMainLoop () {
 		return FORWARD_WM_CTLCOLORBTN (window, hdc, controlWindow, DefWindowProc);
 	}
 	static void on_activate (HWND window, UINT state, HWND hActive, BOOL minimized) {
-		GuiObject me = (GuiObject) GetWindowLong (window, GWL_USERDATA);
+		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me && my widgetClass == xmShellWidgetClass) {
 			if (state == WA_INACTIVE || minimized) {
 				_GuiText_handleFocusLoss (my textFocus);

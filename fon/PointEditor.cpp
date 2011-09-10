@@ -203,11 +203,11 @@ void structPointEditor :: v_draw () {
 	v_updateMenuItems_file ();
 }
 
-void structPointEditor :: v_play (double tmin, double tmax) {
+void structPointEditor :: v_play (double a_tmin, double a_tmax) {
 	if (sound.data) {
-		Sound_playPart (sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+		Sound_playPart (sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
-		PointProcess_playPart ((PointProcess) data, tmin, tmax); therror
+		PointProcess_playPart ((PointProcess) data, a_tmin, a_tmax); therror
 	}
 }
 

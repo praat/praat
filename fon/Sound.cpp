@@ -50,33 +50,35 @@ void structSound :: v_info () {
 	MelderInfo_writeLine3 (L"   Sampling period: ", Melder_double (dx), L" seconds");
 	MelderInfo_writeLine3 (L"   Sampling frequency: ", Melder_single (1.0 / dx), L" Hz");
 	MelderInfo_writeLine3 (L"   First sample centred at: ", Melder_double (x1), L" seconds");
-	double sum = 0.0, sumOfSquares = 0.0;
-	for (long channel = 1; channel <= ny; channel ++) {
-		double *amplitude = z [channel];
-		for (long i = 1; i <= nx; i ++) {
-			double value = amplitude [i];
-			sum += value;
-			sumOfSquares += value * value;
-			if (value < minimum) minimum = value;
-			if (value > maximum) maximum = value;
+	{// scope
+		double sum = 0.0, sumOfSquares = 0.0;
+		for (long channel = 1; channel <= ny; channel ++) {
+			double *amplitude = z [channel];
+			for (long i = 1; i <= nx; i ++) {
+				double value = amplitude [i];
+				sum += value;
+				sumOfSquares += value * value;
+				if (value < minimum) minimum = value;
+				if (value > maximum) maximum = value;
+			}
 		}
-	}
-	MelderInfo_writeLine1 (L"Amplitude:");
-	MelderInfo_writeLine3 (L"   Minimum: ", Melder_single (minimum), L" Pascal");
-	MelderInfo_writeLine3 (L"   Maximum: ", Melder_single (maximum), L" Pascal");
-	double mean = sum / (nx * ny);
-	MelderInfo_writeLine3 (L"   Mean: ", Melder_single (mean), L" Pascal");
-	MelderInfo_writeLine3 (L"   Root-mean-square: ", Melder_single (sqrt (sumOfSquares / (nx * ny))), L" Pascal");
-	double penergy = sumOfSquares * dx / ny;   /* Pa2 s = kg2 m-2 s-3 */
-	MelderInfo_write3 (L"Total energy: ", Melder_single (penergy), L" Pascal\u00B2 sec");
-	double energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
-	MelderInfo_writeLine3 (L" (energy in air: ", Melder_single (energy), L" Joule/m\u00B2)");
-	double power = energy / (dx * nx);   /* kg s-3 = Watt/m2 */
-	MelderInfo_write3 (L"Mean power (intensity) in air: ", Melder_single (power), L" Watt/m\u00B2");
-	if (power != 0.0) {
-		MelderInfo_writeLine3 (L" = ", Melder_half (10 * log10 (power / 1e-12)), L" dB");
-	} else {
-		MelderInfo_writeLine1 (L"");
+		MelderInfo_writeLine1 (L"Amplitude:");
+		MelderInfo_writeLine3 (L"   Minimum: ", Melder_single (minimum), L" Pascal");
+		MelderInfo_writeLine3 (L"   Maximum: ", Melder_single (maximum), L" Pascal");
+		double mean = sum / (nx * ny);
+		MelderInfo_writeLine3 (L"   Mean: ", Melder_single (mean), L" Pascal");
+		MelderInfo_writeLine3 (L"   Root-mean-square: ", Melder_single (sqrt (sumOfSquares / (nx * ny))), L" Pascal");
+		double penergy = sumOfSquares * dx / ny;   /* Pa2 s = kg2 m-2 s-3 */
+		MelderInfo_write3 (L"Total energy: ", Melder_single (penergy), L" Pascal\u00B2 sec");
+		double energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
+		MelderInfo_writeLine3 (L" (energy in air: ", Melder_single (energy), L" Joule/m\u00B2)");
+		double power = energy / (dx * nx);   /* kg s-3 = Watt/m2 */
+		MelderInfo_write3 (L"Mean power (intensity) in air: ", Melder_single (power), L" Watt/m\u00B2");
+		if (power != 0.0) {
+			MelderInfo_writeLine3 (L" = ", Melder_half (10 * log10 (power / 1e-12)), L" dB");
+		} else {
+			MelderInfo_writeLine1 (L"");
+		}
 	}
 	if (nx > 1) {
 		for (long channel = 1; channel <= ny; channel ++) {

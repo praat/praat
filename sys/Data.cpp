@@ -329,9 +329,8 @@ Any Data_readFromFile (MelderFile file) {
 /* Recursive routines for working with struct members. */
 
 int Data_Description_countMembers (Data_Description structDescription) {
-	Data_Description desc;
 	int count = 0;
-	for (desc = structDescription; desc -> name; desc ++)
+	for (Data_Description desc = structDescription; desc -> name; desc ++)
 		count ++;
 	if (structDescription [0]. type == inheritwa) {
 		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
@@ -342,8 +341,7 @@ int Data_Description_countMembers (Data_Description structDescription) {
 }
 
 Data_Description Data_Description_findMatch (Data_Description structDescription, const wchar_t *name) {
-	Data_Description desc;
-	for (desc = structDescription; desc -> name; desc ++)
+	for (Data_Description desc = structDescription; desc -> name; desc ++)
 		if (wcsequ (name, desc -> name)) return desc;
 	if (structDescription [0]. type == inheritwa) {
 		Data_Description parentDescription = ((Data) _Thing_dummyObject ((ClassInfo) structDescription [0]. tagType)) -> v_description ();
@@ -354,8 +352,7 @@ Data_Description Data_Description_findMatch (Data_Description structDescription,
 }
 
 Data_Description Data_Description_findNumberUse (Data_Description structDescription, const wchar_t *string) {
-	Data_Description desc;
-	for (desc = structDescription; desc -> name; desc ++) {
+	for (Data_Description desc = structDescription; desc -> name; desc ++) {
 		if (desc -> max1 && wcsequ (desc -> max1, string)) return desc;
 		if (desc -> max2 && wcsequ (desc -> max2, string)) return desc;
 	}
@@ -371,17 +368,17 @@ Data_Description Data_Description_findNumberUse (Data_Description structDescript
 
 long Data_Description_integer (void *address, Data_Description description) {
 	switch (description -> type) {
-		case bytewa: return * (signed char *) ((char *) address + description -> offset);
-		case shortwa: return * (short *) ((char *) address + description -> offset);
-		case intwa: return * (int *) ((char *) address + description -> offset);
-		case longwa: return * (long *) ((char *) address + description -> offset);
-		case ubytewa: return * (unsigned char *) ((char *) address + description -> offset);
-		case ushortwa: return * (unsigned short *) ((char *) address + description -> offset);
-		case uintwa: return * (unsigned int *) ((char *) address + description -> offset);
-		case ulongwa: return * (unsigned long *) ((char *) address + description -> offset);
-		case boolwa: return * (bool *) ((char *) address + description -> offset);
-		case objectwa: return (* (Collection *) ((char *) address + description -> offset)) -> size;
-		case collectionwa: return (* (Collection *) ((char *) address + description -> offset)) -> size;
+		case bytewa:       return * (signed char *)    ((char *) address + description -> offset);
+		case shortwa:      return * (short *)          ((char *) address + description -> offset);
+		case intwa:        return * (int *)            ((char *) address + description -> offset);
+		case longwa:       return * (long *)           ((char *) address + description -> offset);
+		case ubytewa:      return * (unsigned char *)  ((char *) address + description -> offset);
+		case ushortwa:     return * (unsigned short *) ((char *) address + description -> offset);
+		case uintwa:       return * (unsigned int *)   ((char *) address + description -> offset);
+		case ulongwa:      return * (unsigned long *)  ((char *) address + description -> offset);
+		case boolwa:       return * (bool *)           ((char *) address + description -> offset);
+		case objectwa:     return (* (Collection *)    ((char *) address + description -> offset)) -> size;
+		case collectionwa: return (* (Collection *)    ((char *) address + description -> offset)) -> size;
 		default: return 0;
 	}
 }

@@ -49,8 +49,6 @@
 	#endif
 #endif
 
-#include "Strings.h"
-#include "longchar.h"
 #if USE_STAT
 	#include <sys/types.h>
 	//#define __USE_BSD
@@ -58,8 +56,14 @@
 	#include <dirent.h>
 #endif
 #if defined (_WIN32)
+	#include "winport_on.h"
 	#include <windows.h>
+	#include "winport_off.h"
 #endif
+
+#include "Strings.h"
+#include "longchar.h"
+
 #include "oo_DESTROY.h"
 #include "Strings_def.h"
 #include "oo_COPY.h"

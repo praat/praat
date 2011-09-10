@@ -88,40 +88,40 @@ static void commonCallback (GUI_ARGS) {
 	}
 }
 
-GuiObject EditorMenu_addCommand (EditorMenu menu, const wchar *itemTitle, long flags,
-	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
+GuiObject EditorMenu_addCommand (EditorMenu me, const wchar *itemTitle, long flags,
+	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
 {
-	autoEditorCommand me = Thing_new (EditorCommand);
-	my d_editor = menu -> d_editor;
-	my menu = menu;
-	my itemTitle = Melder_wcsdup (itemTitle);
-	my itemWidget =
-		commandCallback == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
+	autoEditorCommand thee = Thing_new (EditorCommand);
+	thy d_editor = my d_editor;
+	thy menu = me;
+	thy itemTitle = Melder_wcsdup (itemTitle);
+	thy itemWidget =
+		commandCallback == NULL ? GuiMenu_addSeparator (my menuWidget) :
 		flags & Editor_HIDDEN ? NULL :
-		GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, me.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
-	my commandCallback = commandCallback;
-	GuiObject result = my itemWidget;
-	Collection_addItem (menu -> commands, me.transfer());
+		GuiMenu_addItem (my menuWidget, itemTitle, flags, commonCallback, thee.peek());   // DANGLE BUG: me can be killed by Collection_addItem(), but EditorCommand::destroy doesn't remove the item
+	thy commandCallback = commandCallback;
+	GuiObject result = thy itemWidget;
+	Collection_addItem (my commands, thee.transfer());
 	return result;
 }
 
 /*GuiObject EditorCommand_getItemWidget (EditorCommand me) { return my itemWidget; }*/
 
-EditorMenu Editor_addMenu (Editor editor, const wchar *menuTitle, long flags) {
-	autoEditorMenu me = Thing_new (EditorMenu);
-	my d_editor = editor;
-	my menuTitle = Melder_wcsdup (menuTitle);
-	my menuWidget = GuiMenuBar_addMenu (editor -> menuBar, menuTitle, flags);
-	my commands = Ordered_create ();
-	EditorMenu result = me.peek();
-	Collection_addItem (editor -> menus, me.transfer());
+EditorMenu Editor_addMenu (Editor me, const wchar *menuTitle, long flags) {
+	autoEditorMenu thee = Thing_new (EditorMenu);
+	thy d_editor = me;
+	thy menuTitle = Melder_wcsdup (menuTitle);
+	thy menuWidget = GuiMenuBar_addMenu (my menuBar, menuTitle, flags);
+	thy commands = Ordered_create ();
+	EditorMenu result = thee.peek();
+	Collection_addItem (my menus, thee.transfer());
 	return result;
 }
 
 /*GuiObject EditorMenu_getMenuWidget (EditorMenu me) { return my menuWidget; }*/
 
 GuiObject Editor_addCommand (Editor me, const wchar *menuTitle, const wchar *itemTitle, long flags,
-	void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
+	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter))
 {
 	try {
 		long numberOfMenus = my menus -> size;
@@ -176,8 +176,7 @@ GuiObject Editor_addCommandScript (Editor me, const wchar *menuTitle, const wcha
 	}
 }
 
-void Editor_setMenuSensitive (Any editor, const wchar *menuTitle, int sensitive) {
-	Editor me = (Editor) editor;
+void Editor_setMenuSensitive (Editor me, const wchar *menuTitle, int sensitive) {
 	int numberOfMenus = my menus -> size;
 	for (int imenu = 1; imenu <= numberOfMenus; imenu ++) {
 		EditorMenu menu = (EditorMenu) my menus -> item [imenu];

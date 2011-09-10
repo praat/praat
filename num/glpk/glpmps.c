@@ -370,7 +370,7 @@ static double read_number(struct csa *csa)
       if (csa->field[0] == '\0')
          error(csa, "missing numeric value in field %d\n", csa->fldno);
       /* skip initial spaces of the field */
-      for (s = csa->field; *s == ' '; s++);
+      for (s = csa->field; *s == ' '; s++) ;
       /* perform conversion */
       if (str2num(s, &x) != 0)
          error(csa, "cannot convert `%s' to floating-point number\n",

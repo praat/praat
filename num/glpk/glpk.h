@@ -28,7 +28,7 @@
 #include <stdarg.h>
 #include <stddef.h>
 
-#if defined (__MINGW__) && ! defined (DBL_EPSILON)
+#if defined (__MINGW32__) && ! defined (DBL_EPSILON)
 	#define DBL_EPSILON  2.2204460492503131e-16   // ppgb 20110903
 #endif
 

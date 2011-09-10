@@ -203,16 +203,18 @@ long Interpreter_readParameters (Interpreter me, wchar *text) {
 	/*
 	 * Look for a "form" line.
 	 */
-	wchar *p = text;
-	for (;;) {
-		while (*p == ' ' || *p == '\t') p ++;
-		if (wcsnequ (p, L"form ", 5)) {
-			formLocation = p;
-			break;
+	{// scope
+		wchar *p = text;
+		for (;;) {
+			while (*p == ' ' || *p == '\t') p ++;
+			if (wcsnequ (p, L"form ", 5)) {
+				formLocation = p;
+				break;
+			}
+			while (*p != '\0' && *p != '\n') p ++;
+			if (*p == '\0') break;
+			p ++;   /* Skip newline symbol. */
 		}
-		while (*p != '\0' && *p != '\n') p ++;
-		if (*p == '\0') break;
-		p ++;   /* Skip newline symbol. */
 	}
 	/*
 	 * If there is no "form" line, there are no parameters.

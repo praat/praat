@@ -228,6 +228,7 @@ Data praat_onlyObject (ClassInfo klas) {
 }
 
 Data praat_firstObject (ClassInfo klas) {
+	int IOBJECT;
 	LOOP {
 		if (CLASS == klas) return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
@@ -242,6 +243,7 @@ Data praat_onlyObject_generic (ClassInfo klas) {
 }
 
 Data praat_firstObject_generic (ClassInfo klas) {
+	int IOBJECT;
 	LOOP {
 		if (Thing_subclass ((ClassInfo) CLASS, klas)) return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
@@ -256,6 +258,7 @@ praat_Object praat_onlyScreenObject (void) {
 }
 
 Data praat_firstObject_any () {
+	int IOBJECT;
 	LOOP {
 		return theCurrentPraatObjects -> list [IOBJECT]. object;
 	}
@@ -265,6 +268,7 @@ Data praat_firstObject_any () {
 Collection praat_getSelectedObjects (void) {
 	autoCollection thee = Collection_create (NULL, 10);
 	Collection_dontOwnItems (thee.peek());
+	int IOBJECT;
 	LOOP {
 		iam_LOOP (Data);
 		Collection_addItem (thee.peek(), me);

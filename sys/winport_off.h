@@ -18,5 +18,7 @@
  */
 
 #undef Graphics
+#undef Data
+#undef Polygon
 
 /* End of file winport_off.h */

@@ -36,8 +36,8 @@ Thing_define (HyperPage, Editor) {
 	public:
 		GuiObject drawingArea, verticalScrollBar;
 		Graphics g, ps;
-		double x, y, rightMargin, previousBottomSpacing;
-		long pageNumber;
+		double d_x, d_y, rightMargin, previousBottomSpacing;
+		long d_printingPageNumber;
 		Collection links;
 		int printing, top, mirror;
 		wchar *insideHeader, *middleHeader, *outsideHeader;

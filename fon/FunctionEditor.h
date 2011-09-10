@@ -80,7 +80,7 @@ Thing_define (FunctionEditor, Editor) {
 		virtual const wchar * v_format_selection () { return L"%f (%.3f / s)"; }
 		virtual int v_fixedPrecision_long () { return 6; }
 		virtual bool v_hasText () { return false; }
-		virtual void v_play (double tmin, double tmax) { (void) tmin; (void) tmax; }
+		virtual void v_play (double a_tmin, double a_tmax) { (void) a_tmin; (void) a_tmax; }
 			/*
 			 * Message: "the user clicked in one of the rectangles above or below the data window."
 			 */

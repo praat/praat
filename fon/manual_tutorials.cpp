@@ -23,14 +23,17 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110906)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110910)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.39# (10 September 2011)")
+LIST_ITEM (L"\\bu 64-bit edition for Windows.")
+LIST_ITEM (L"\\bu Corrected a bug that caused Praat to crash instead of saying \"undefined\" when reporting the shimmer of a sound with fewer than 3 pulses.")
 NORMAL (L"##5.2.38# (6 September 2011)")
-LIST_ITEM (L"\\bu Corrected several bugs from the Inspect windows, introduced in 5.2.36.")
+LIST_ITEM (L"\\bu Corrected several bugs that were introduced in 5.2.36 in the Inspect window.")
 NORMAL (L"##5.2.37# (2 September 2011)")
 LIST_ITEM (L"\\bu Graphics: added the Chinese phonetic symbols \\id and \\ir. See @@Phonetic symbols: vowels@.")
-LIST_ITEM (L"\\bu Formant: corrected a bug introduced in 5.2.36 that caused Praat to crash when querying quantiles.")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 5.2.36 that caused Praat to crash when querying formant quantiles.")
 NORMAL (L"##5.2.36# (30 August 2011)")
 LIST_ITEM (L"\\bu Graphics: added superscript diacritics as single symbols: \\^h (\\bs\\^ h), \\^j (\\bs\\^ j), "
 	"and many more; also \\_u (\\bs\\_ u). See @@Phonetic symbols: diacritics@.")

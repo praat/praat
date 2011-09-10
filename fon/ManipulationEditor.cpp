@@ -1264,13 +1264,13 @@ int structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	return ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
-void structManipulationEditor :: v_play (double tmin, double tmax) {
+void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
 	Manipulation ana = (Manipulation) data;
 	if (shiftKeyPressed) {
 		if (ana -> sound)
-			Sound_playPart (ana -> sound, tmin, tmax, theFunctionEditor_playCallback, this);
+			Sound_playPart (ana -> sound, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
-		Manipulation_playPart (ana, tmin, tmax, synthesisMethod);
+		Manipulation_playPart (ana, a_tmin, a_tmax, synthesisMethod);
 	}
 }
 

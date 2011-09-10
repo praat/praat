@@ -18,5 +18,7 @@
  */
 
 #define Graphics WindowsGraphics
+#define Data WindowsData
+#define Polygon WindowsPolygon
 
 /* End of file winport_on.h */

@@ -496,10 +496,10 @@ class autoNUMvector {
 	T* ptr;
 	long from;
 public:
-	autoNUMvector<T> (long from, long to) : from (from) {
-		ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
+	autoNUMvector<T> (long a_from, long a_to) : from (a_from) {
+		ptr = static_cast <T*> (NUMvector (sizeof (T), a_from, a_to)); therror
 	}
-	autoNUMvector (T *ptr, long from) : ptr (ptr), from (from) {
+	autoNUMvector (T *a_ptr, long a_from) : ptr (a_ptr), from (a_from) {
 		therror
 	}
 	autoNUMvector () : ptr (NULL), from (1) {
@@ -556,10 +556,10 @@ class autoNUMmatrix {
 	T** ptr;
 	long row1, col1;
 public:
-	autoNUMmatrix (long row1, long row2, long col1, long col2) : row1 (row1), col1 (col1) {
-		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror
+	autoNUMmatrix (long a_row1, long a_row2, long a_col1, long a_col2) : row1 (a_row1), col1 (a_col1) {
+		ptr = static_cast <T**> (NUMmatrix (sizeof (T), a_row1, a_row2, a_col1, a_col2)); therror
 	}
-	autoNUMmatrix (T **ptr, long row1, long col1) : ptr (ptr), row1 (row1), col1 (col1) {
+	autoNUMmatrix (T **a_ptr, long a_row1, long a_col1) : ptr (a_ptr), row1 (a_row1), col1 (a_col1) {
 		therror
 	}
 	autoNUMmatrix () : ptr (NULL), row1 (0), col1 (0) {

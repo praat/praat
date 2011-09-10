@@ -259,7 +259,7 @@ extern long Thing_version;
 
 template <class T>
 class _Thing_auto {
-	T *ptr;
+	T *d_ptr;
 public:
 	/*
 	 * Things like
@@ -268,35 +268,31 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	_Thing_auto (T *ptr) : ptr (ptr) {
-		//if (Melder_debug == 37) Melder_casual ("begin initializing autopointer %ld with pointer %ld", this, ptr);
+	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
 		therror;   // if this happens, the destructor won't be called, but that is not necessary anyway
-		//if (Melder_debug == 37) Melder_casual ("end initializing autopointer %ld with pointer %ld", this, ptr);
 	}
-	_Thing_auto () : ptr (NULL) { }
+	_Thing_auto () : d_ptr (NULL) { }
 	/*
 	 * pitch should be destroyed when going out of scope,
 	 * both at the end of the try block and when a throw occurs.
 	 */
 	~_Thing_auto () {
-		//if (Melder_debug == 37) Melder_casual ("begin forgetting autopointer %ld with pointer %ld", this, ptr);
-		if (ptr) forget (ptr);
-		//if (Melder_debug == 37) Melder_casual ("end forgetting autopointer %ld with pointer %ld", this, ptr);
+		if (d_ptr) forget (d_ptr);
 	}
 	T* peek () const {
-		return ptr;
+		return d_ptr;
 	}
 	/*
 	 * The expression
-	 *    pitch.ptr -> xmin
+	 *    pitch.d_ptr -> xmin
 	 * should be abbreviatable by
 	 *    pitch -> xmin
 	 */
 	T* operator-> () const {   // as r-value
-		return ptr;
+		return d_ptr;
 	}
 	T& operator* () const {   // as l-value
-		return *ptr;
+		return *d_ptr;
 	}
 	/*
 	 * There are two ways to access the pointer; with and without transfer of ownership.
@@ -316,17 +312,17 @@ public:
 	 *    praat_new (pitch.transfer(), my name);
 	 */
 	T* transfer () {
-		T* temp = ptr;
-		ptr = NULL;   // make the pointer non-automatic again
+		T* temp = d_ptr;
+		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
-	//operator T* () { return ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
+	//operator T* () { return d_ptr; }   // this way only if peek() and transfer() are the same, e.g. in case of reference counting
 	// template <class Y> Y* operator= (_Thing_auto<Y>& a) { }
 	/*
 	 * An autoThing can be cloned. This can be used for giving ownership without losing ownership.
 	 */
 	T* clone () const {
-		return static_cast<T *> (Data_copy (ptr));
+		return static_cast<T *> (Data_copy (d_ptr));
 	}
 	/*
 	 * Replacing a pointer in an existing autoThing should be an exceptional phenomenon,
@@ -334,9 +330,9 @@ public:
 	 * so that you can easily spot ugly places in your source code.
 	 * In order not to leak memory, the old object is destroyed.
 	 */
-	void reset (T* const newPtr) {
-		if (ptr) forget (ptr);
-		ptr = newPtr;
+	void reset (T* const ptr) {
+		if (d_ptr) forget (d_ptr);
+		d_ptr = ptr;
 		therror;
 	}
 private:
@@ -356,38 +352,45 @@ private:
 
 template <class T>
 class autoThingVector {
-	T* ptr;
-	long from, to;
+	T* d_ptr;
+	long d_from, d_to;
 public:
-	autoThingVector<T> (long from, long to) : from (from), to (to) {
-		ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
+	autoThingVector<T> (long from, long to) : d_from (from), d_to (to) {
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
 	}
-	autoThingVector (T *ptr, long from, long to) : ptr (ptr), from (from), to (to) {
+	autoThingVector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
 		therror
 	}
-	autoThingVector () : ptr (NULL), from (1), to (0) {
+	autoThingVector () : d_ptr (NULL), d_from (1), d_to (0) {
 	}
 	~autoThingVector<T> () {
-		if (ptr) {
-			for (long i = from; i <= to; i ++)
-				forget (ptr [i]);
-			NUMvector_free (sizeof (T), ptr, from);
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				forget (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
 		}
 	}
 	T& operator[] (long i) {
-		return ptr [i];
+		return d_ptr [i];
 	}
 	T* peek () const {
-		return ptr;
+		return d_ptr;
 	}
 	T* transfer () {
-		T* temp = ptr;
-		ptr = NULL;   // make the pointer non-automatic again
+		T* temp = d_ptr;
+		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
-	void reset (long newFrom, long to) {
-		if (ptr) NUMvector_free (sizeof (T), ptr, from);
-		ptr = static_cast <T*> (NUMvector (sizeof (T), from = newFrom, to)); therror
+	void reset (long from, long to) {
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				forget (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = NULL;
+		}
+		d_from = from;   // this assignment is safe, because d_ptr is NULL
+		d_to = to;
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
 	}
 };
 

@@ -1,5 +1,5 @@
 # Makefile of the 'main' routines.
-# Paul Boersma, 3 September 2011
+# Paul Boersma, 10 September 2011
 
 include ../makefile.defs
 
@@ -16,4 +16,4 @@ clean:
 # The following is only for Windows.
 
 praat_win.o: praat_win.rc
-	windres -o praat_win.o praat_win.rc
+	$(WINDRES) -o praat_win.o praat_win.rc
