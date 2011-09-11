@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110910)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110911)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.40# (11 September 2011)")
+LIST_ITEM (L"\\bu Corrected a bug in the 64-bit Windows edition that led to an incorrect location for the preferences files.")
 NORMAL (L"##5.2.39# (10 September 2011)")
 LIST_ITEM (L"\\bu 64-bit edition for Windows.")
 LIST_ITEM (L"\\bu Corrected a bug that caused Praat to crash instead of saying \"undefined\" when reporting the shimmer of a sound with fewer than 3 pulses.")

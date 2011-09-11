@@ -17,7 +17,7 @@ EXECUTABLE = Praat.exe
 
 LIBS = -L/mingw64/lib -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 /mingw64/lib/GdiPlus.dll -lcomdlg32 -static-libgcc -static-libstdc++ -mwindows
 
-AS = /mingw64/bin/as
+AR = /mingw64/bin/ar
 RANLIB = /mingw64/bin/ranlib
 WINDRES = /mingw64/bin/windres
 ICON = praat_win.o

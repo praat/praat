@@ -1121,11 +1121,11 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * Make sure that the program's private directory exists.
 		 */
 		#if defined (UNIX)
-			swprintf (name, 256, L".%s-dir", programName);   /* For example .myProg-dir */
+			swprintf (name, 256, L".%ls-dir", Melder_utf8ToWcs (programName));   /* For example .myProg-dir */
 		#elif defined (macintosh)
-			swprintf (name, 256, L"%s Prefs", praatP.title);   /* For example MyProg Prefs */
+			swprintf (name, 256, L"%ls Prefs", Melder_utf8ToWcs (praatP.title));   /* For example MyProg Prefs */
 		#elif defined (_WIN32)
-			swprintf (name, 256, L"%s", praatP.title);   /* For example MyProg */
+			swprintf (name, 256, L"%ls", Melder_utf8ToWcs (praatP.title));   /* For example MyProg */
 		#endif
 		#if defined (UNIX) || defined (macintosh)
 			Melder_createDirectory (& prefParentDir, name, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
