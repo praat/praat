@@ -34,21 +34,20 @@
 	without Phase Unwrapping or Integration, IEEE Trans. on ASSP 33,
 	1014-1017 (Does not work yet).
 */
-Cepstrum Sound_to_Cepstrum_bw (Sound me)
-{
+Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 	try {
 		long nfft = 2;
-		while (nfft < my nx) nfft *= 2;
-		long nfftd2 = nfft / 2;
-	
+		while (nfft < my nx) {
+			nfft *= 2;
+		}
+
 		double qmax = (my xmax - my xmin) * nfft / my nx;
 		autoCepstrum thee = Cepstrum_create (0, qmax, nfft);
 
 		autoNUMvector<double> x (1, nfft);
 		autoNUMvector<double> nx (1, nfft);
 
-		for (long i = 1; i <= my nx; i++)
-		{
+		for (long i = 1; i <= my nx; i++) {
 			x[i] = my z[1][i];
 			nx[i] = (i - 1) * x[i];
 		}
@@ -58,80 +57,77 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me)
 
 		NUMforwardRealFastFourierTransform (x.peek() , nfft);
 		NUMforwardRealFastFourierTransform (nx.peek(), nfft);
-	
+
 		// Step 2: Multiply {X^*(f) * NX(f)} / |X(f)|^2
 		// Compute Avg (ln |X(f)|) as Avg (ln |X(f)|^2) / 2.
 		// Treat i=1 separately: x[1] * nx[1] / |x[1]|^2
-	
+
 		double lnxa = 0;
-		if (x[1] != 0)
-		{
+		if (x[1] != 0) {
 			lnxa = 2 * log (fabs (x[1]));
 			x[1] = nx[1] / x[1];
 		}
-		if (x[2] != 0)
-		{
+		if (x[2] != 0) {
 			lnxa = 2 * log (fabs (x[2]));
 			x[2] = nx[2] / x[2];
 		}
-	
-		for (long i = 3; i < nfft; i +=2)
-		{
+
+		for (long i = 3; i < nfft; i += 2) {
 			double xr = x[i], nxr = nx[i];
-			double xi = x[i+1], nxi = nx[i+1];
+			double xi = x[i + 1], nxi = nx[i + 1];
 			double xa = xr * xr + xi * xi;
-			if (xa > 0)
-			{
+			if (xa > 0) {
 				x[i]   = (xr * nxr + xi * nxi) / xa;
-				x[i+1] = (xr * nxi - xi * nxr) / xa;
+				x[i + 1] = (xr * nxi - xi * nxr) / xa;
 				lnxa += log (xa);
-			}
-			else
-			{
-				x[i] = x[i+1] = 0;
+			} else {
+				x[i] = x[i + 1] = 0;
 			}
 		}
-	
+
 		lnxa /= 2 * nfft / 2;
 
 		// Step 4: Inverse transform of complex array x
 		//	results in: n * xhat (n)
-		
+
 		NUMreverseRealFastFourierTransform (x.peek(), nfft);
 
-		// Step 5: Inverse fft-correction factor: 1/nfftd2 
+		// Step 5: Inverse fft-correction factor: 1/nfftd2
 		// Divide n * xhat (n) by n
-	
-		for (long i = 2; i <= my nx; i++)
-		{
-			thy z[1][i] = x[i] / ((i-1) * nfft);
+
+		for (long i = 2; i <= my nx; i++) {
+			thy z[1][i] = x[i] / ( (i - 1) * nfft);
 		}
-	
+
 		// Step 6: xhat[0] = Avg (ln |X(f)|)
-	
+
 		thy z[1][1] = lnxa;
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Cepstrum created."); } 
+	} catch (MelderError) {
+		Melder_throw (me, ": no Cepstrum created.");
+	}
 }
 
 /* Zijn nog niet elkaars inverse!!!!*/
 
-Cepstrum Sound_to_Cepstrum (Sound me)
-{
+Cepstrum Sound_to_Cepstrum (Sound me) {
 	try {
 		autoSpectrum sx = Sound_to_Spectrum (me, TRUE);
 		autoCepstrum thee = Spectrum_to_Cepstrum (sx.peek());
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Cepstrum calculated."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Cepstrum calculated.");
+	}
 }
 
-Sound Cepstrum_to_Sound (Cepstrum me)
-{
+Sound Cepstrum_to_Sound (Cepstrum me) {
 	try {
 		autoSpectrum sx = Cepstrum_to_Spectrum (me);
 		autoSound thee = Spectrum_to_Sound (sx.peek());
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Sound calculated."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Sound calculated.");
+	}
 }
 
 /* End of file Sound_and_Cepstrum.cpp  */

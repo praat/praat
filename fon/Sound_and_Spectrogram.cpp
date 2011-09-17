@@ -150,8 +150,8 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 				}
 				for (long j = nsamp_window + 1; j <= nsampFFT; j ++) frame [j] = 0.0f;
 
-				Melder_progress4 (iframe / (numberOfTimes + 1.0),
-					L"Sound to Spectrogram: analysis of frame ", Melder_integer (iframe), L" out of ", Melder_integer (numberOfTimes)); therror
+				Melder_progress (iframe / (numberOfTimes + 1.0),
+					L"Sound to Spectrogram: analysis of frame ", Melder_integer (iframe), L" out of ", Melder_integer (numberOfTimes));
 
 				/* Compute Fast Fourier Transform of the frame. */
 

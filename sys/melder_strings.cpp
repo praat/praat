@@ -113,16 +113,7 @@ void MelderString_ncopy (MelderString *me, const wchar *source, unsigned long n)
 	my length = length;
 }
 
-void MelderString_append (MelderString *me, const wchar *source) {
-	if (source == NULL) source = L"";
-	unsigned long length = wcslen (source);
-	unsigned long sizeNeeded = my length + length + 1;
-	expandIfNecessary (wchar)
-	wcscpy (my string + my length, source);
-	my length += length;
-}
-
-void MelderString_append1 (MelderString *me, const wchar *s1) {
+void MelderString_append (MelderString *me, const wchar *s1) {
 	if (s1 == NULL) s1 = L"";
 	unsigned long length1 = wcslen (s1);
 	unsigned long sizeNeeded = my length + length1 + 1;
@@ -131,7 +122,7 @@ void MelderString_append1 (MelderString *me, const wchar *s1) {
 	my length += length1;
 }
 
-void MelderString_append2 (MelderString *me, const wchar *s1, const wchar *s2) {
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	unsigned long length1 = wcslen (s1);
@@ -144,7 +135,7 @@ void MelderString_append2 (MelderString *me, const wchar *s1, const wchar *s2) {
 	my length += length2;
 }
 
-void MelderString_append3 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3) {
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
@@ -161,7 +152,7 @@ void MelderString_append3 (MelderString *me, const wchar *s1, const wchar *s2, c
 	my length += length3;
 }
 
-void MelderString_append4 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
@@ -182,7 +173,7 @@ void MelderString_append4 (MelderString *me, const wchar *s1, const wchar *s2, c
 	my length += length4;
 }
 
-void MelderString_append5 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5)
 {
 	if (s1 == NULL) s1 = L"";
@@ -209,7 +200,7 @@ void MelderString_append5 (MelderString *me, const wchar *s1, const wchar *s2, c
 	my length += length5;
 }
 
-void MelderString_append6 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6)
 {
 	if (s1 == NULL) s1 = L"";
@@ -240,7 +231,7 @@ void MelderString_append6 (MelderString *me, const wchar *s1, const wchar *s2, c
 	my length += length6;
 }
 
-void MelderString_append7 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6, const wchar *s7)
 {
 	if (s1 == NULL) s1 = L"";
@@ -275,7 +266,7 @@ void MelderString_append7 (MelderString *me, const wchar *s1, const wchar *s2, c
 	my length += length7;
 }
 
-void MelderString_append8 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8)
 {
 	if (s1 == NULL) s1 = L"";
@@ -314,7 +305,7 @@ void MelderString_append8 (MelderString *me, const wchar *s1, const wchar *s2, c
 	my length += length8;
 }
 
-void MelderString_append9 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9)
 {
 	if (s1 == NULL) s1 = L"";
@@ -418,59 +409,59 @@ double MelderString_deallocationSize (void) {
 static MelderString buffer [NUMBER_OF_BUFFERS] = { { 0 } };
 static int ibuffer = 0;
 
-const wchar * Melder_wcscat2 (const wchar *s1, const wchar *s2) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append2 (& buffer [ibuffer], s1, s2);
+	MelderString_append (& buffer [ibuffer], s1, s2);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat3 (const wchar *s1, const wchar *s2, const wchar *s3) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append3 (& buffer [ibuffer], s1, s2, s3);
+	MelderString_append (& buffer [ibuffer], s1, s2, s3);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat4 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append4 (& buffer [ibuffer], s1, s2, s3, s4);
+	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat5 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append5 (& buffer [ibuffer], s1, s2, s3, s4, s5);
+	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat6 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append6 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6);
+	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat7 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append7 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7);
+	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat8 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append8 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8);
+	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
-	MelderString_append9 (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	return buffer [ibuffer].string;
 }
 

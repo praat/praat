@@ -197,7 +197,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			 * Go to the middle of the voice stretch.
 			 */
 			double tmiddle = (tleft + tright) / 2;
-			Melder_progress1 ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), L"Sound & Pitch to PointProcess"); therror
+			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), L"Sound & Pitch to PointProcess");
 			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit_HERTZ, Pitch_LINEAR);
 
 			/*
@@ -209,7 +209,7 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 			}
 			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, TRUE, TRUE);
 			Melder_assert (NUMdefined (tmax));
-			PointProcess_addPoint (point.peek(), tmax); therror
+			PointProcess_addPoint (point.peek(), tmax);
 
 			double tsave = tmax;
 			for (;;) {
@@ -219,13 +219,13 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 				if (correlation == -1) /*break*/ tmax -= 1.0 / f0;   /* This one period will drop out. */
 				if (tmax < tleft) {
 					if (correlation > 0.7 && peak > 0.023333 * globalPeak && tmax - addedRight > 0.8 / f0) {
-						PointProcess_addPoint (point.peek(), tmax); therror
+						PointProcess_addPoint (point.peek(), tmax);
 					}
 					break;
 				}
 				if (correlation > 0.3 && (peak == 0.0 || peak > 0.01 * globalPeak)) {
-					if (tmax - addedRight > 0.8 / f0) {   /* Do not fill in a short originally unvoiced interval twice. */
-						PointProcess_addPoint (point.peek(), tmax); therror
+					if (tmax - addedRight > 0.8 / f0) {   // do not fill in a short originally unvoiced interval twice
+						PointProcess_addPoint (point.peek(), tmax);
 					}
 				}
 			}
@@ -237,13 +237,13 @@ PointProcess Sound_Pitch_to_PointProcess_cc (Sound sound, Pitch pitch) {
 				if (correlation == -1) /*break*/ tmax += 1.0 / f0;
 				if (tmax > tright) {
 					if (correlation > 0.7 && peak > 0.023333 * globalPeak) {
-						PointProcess_addPoint (point.peek(), tmax); therror
+						PointProcess_addPoint (point.peek(), tmax);
 						addedRight = tmax;
 					}
 					break;
 				}
 				if (correlation > 0.3 && (peak == 0.0 || peak > 0.01 * globalPeak)) {
-					PointProcess_addPoint (point.peek(), tmax); therror
+					PointProcess_addPoint (point.peek(), tmax);
 					addedRight = tmax;
 				}
 			}
@@ -273,7 +273,7 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 			 * Go to the middle of the voiced interval.
 			 */
 			double tmiddle = (tleft + tright) / 2;
-			Melder_progress1 ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), L"Sound & Pitch: To PointProcess"); therror
+			Melder_progress ((tmiddle - sound -> xmin) / (sound -> xmax - sound -> xmin), L"Sound & Pitch: To PointProcess");
 			double f0middle = Pitch_getValueAtTime (pitch, tmiddle, kPitch_unit_HERTZ, Pitch_LINEAR);
 
 			/*
@@ -282,7 +282,7 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 			Melder_assert (NUMdefined (f0middle));
 			double tmax = Sound_findExtremum (sound, tmiddle - 0.5 / f0middle, tmiddle + 0.5 / f0middle, includeMaxima, includeMinima);
 			Melder_assert (NUMdefined (tmax));
-			PointProcess_addPoint (point.peek(), tmax); therror
+			PointProcess_addPoint (point.peek(), tmax);
 
 			double tsave = tmax;
 			for (;;) {
@@ -291,12 +291,12 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 				tmax = Sound_findExtremum (sound, tmax - 1.25 / f0, tmax - 0.8 / f0, includeMaxima, includeMinima);
 				if (tmax < tleft) {
 					if (tmax - addedRight > 0.8 / f0) {
-						PointProcess_addPoint (point.peek(), tmax); therror
+						PointProcess_addPoint (point.peek(), tmax);
 					}
 					break;
 				}
-				if (tmax - addedRight > 0.8 / f0) {   /* Do not fill in a short originally unvoiced interval twice. */
-					PointProcess_addPoint (point.peek(), tmax); therror
+				if (tmax - addedRight > 0.8 / f0) {   // do not fill in a short originally unvoiced interval twice
+					PointProcess_addPoint (point.peek(), tmax);
 				}
 			}
 			tmax = tsave;
@@ -305,11 +305,11 @@ PointProcess Sound_Pitch_to_PointProcess_peaks (Sound sound, Pitch pitch, int in
 				if (f0 == NUMundefined) break;
 				tmax = Sound_findExtremum (sound, tmax + 0.8 / f0, tmax + 1.25 / f0, includeMaxima, includeMinima);
 				if (tmax > tright) {
-					PointProcess_addPoint (point.peek(), tmax); therror
+					PointProcess_addPoint (point.peek(), tmax);
 					addedRight = tmax;
 					break;
 				}
-				PointProcess_addPoint (point.peek(), tmax); therror
+				PointProcess_addPoint (point.peek(), tmax);
 				addedRight = tmax;
 			}
 			t = tright;

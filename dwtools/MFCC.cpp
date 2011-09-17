@@ -30,34 +30,33 @@
 Thing_implement (MFCC, CC, 0);
 
 MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
-	long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel)
-{
+                  long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
 	try {
 		autoMFCC me = Thing_new (MFCC);
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin_mel, fmax_mel);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("MFCC not created."); }
+	} catch (MelderError) {
+		Melder_throw ("MFCC not created.");
+	}
 }
 
-void MFCC_lifter (MFCC me, long lifter)
-{
+void MFCC_lifter (MFCC me, long lifter) {
 	try {
 		Melder_assert (lifter > 0);
-		autoNUMvector<double> c (1, my maximumNumberOfCoefficients);	
-		for (long i=1; i <= my maximumNumberOfCoefficients; i++)
-		{
+		autoNUMvector<double> c (1, my maximumNumberOfCoefficients);
+		for (long i = 1; i <= my maximumNumberOfCoefficients; i++) {
 			c[i] = (1 + lifter / 2 * sin (NUMpi * i / lifter));
 		}
-	
-		for (long frame=1; frame <= my nx; frame++)
-		{
+
+		for (long frame = 1; frame <= my nx; frame++) {
 			CC_Frame cf = (CC_Frame) & my frame[frame];
-			for (long i=1; i <= cf -> numberOfCoefficients; i++)
-			{
+			for (long i = 1; i <= cf -> numberOfCoefficients; i++) {
 				cf -> c[i] *= c[i];
 			}
 		}
-	} catch (MelderError) { Melder_throw (me, ": not lifted."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": not lifted.");
+	}
 }
 
 /* End of file MFCC.cpp */

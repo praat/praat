@@ -686,7 +686,7 @@ Table Table_extractRowsWhereColumn_number (Table me, long columnNumber, int whic
 			}
 		}
 		if (thy rows -> size == 0) {
-			Melder_warning1 (L"No row matches criterion.");
+			Melder_warning (L"No row matches criterion.");
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -710,7 +710,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int whic
 			}
 		}
 		if (thy rows -> size == 0) {
-			Melder_warning1 (L"No row matches criterion.");
+			Melder_warning (L"No row matches criterion.");
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -802,27 +802,27 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 		{
 			long icol = 0;
 			for (long i = 1; i <= numberOfFactors; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, factors [i]); therror
+				Table_setColumnLabel (thee.peek(), ++ icol, factors [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, factors [i]);
 			}
 			for (long i = 1; i <= numberToSum; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToSum [i]); therror
+				Table_setColumnLabel (thee.peek(), ++ icol, columnsToSum [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToSum [i]);
 			}
 			for (long i = 1; i <= numberToAverage; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToAverage [i]); therror
+				Table_setColumnLabel (thee.peek(), ++ icol, columnsToAverage [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverage [i]);
 			}
 			for (long i = 1; i <= numberToMedianize; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToMedianize [i]); therror
+				Table_setColumnLabel (thee.peek(), ++ icol, columnsToMedianize [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianize [i]);
 			}
 			for (long i = 1; i <= numberToAverageLogarithmically; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToAverageLogarithmically [i]); therror
+				Table_setColumnLabel (thee.peek(), ++ icol, columnsToAverageLogarithmically [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToAverageLogarithmically [i]);
 			}
 			for (long i = 1; i <= numberToMedianizeLogarithmically; i ++) {
-				Table_setColumnLabel (thee.peek(), ++ icol, columnsToMedianizeLogarithmically [i]); therror
+				Table_setColumnLabel (thee.peek(), ++ icol, columnsToMedianizeLogarithmically [i]);
 				columns [icol] = Table_findColumnIndexFromColumnLabel (me, columnsToMedianizeLogarithmically [i]);
 			}
 			Melder_assert (icol == thy numberOfColumns);
@@ -1066,7 +1066,7 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 			}
 			#if 0
 			if (rowmax - rowmin > numberOfLevels && ! warned) {
-				Melder_warning1 (L"Some rows of the original table have not been included in the new table. "
+				Melder_warning (L"Some rows of the original table have not been included in the new table. "
 					"You could perhaps add more factors.");
 				warned = true;
 			}
@@ -1088,7 +1088,7 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 					long level = myRow -> cells [columnToTranspose]. number;
 					long thyColumn = numberOfFactors + (iexpand - 1) * numberOfLevels + level;
 					if (thyRow -> cells [thyColumn]. string != NULL && ! warned) {
-						Melder_warning1 (L"Some information from the original table has not been included in the new table. "
+						Melder_warning (L"Some information from the original table has not been included in the new table. "
 							"You could perhaps add more factors.");
 						warned = true;
 					}
@@ -1174,7 +1174,7 @@ Table Tables_append (Collection me) {
 		}
 		autoTable him = Table_createWithoutColumnNames (nrow, ncol);
 		for (long icol = 1; icol <= ncol; icol ++) {
-			Table_setColumnLabel (him.peek(), icol, thy columnHeaders [icol]. label); therror
+			Table_setColumnLabel (him.peek(), icol, thy columnHeaders [icol]. label);
 		}
 		nrow = 0;
 		for (long itab = 1; itab <= my size; itab ++) {

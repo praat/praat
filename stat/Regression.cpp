@@ -112,7 +112,7 @@ LinearRegression Table_to_LinearRegression (Table me) {
 		if (numberOfParameters < 1)   /* Includes intercept. */
 			Melder_throw ("Not enough columns (has to be more than 1).");
 		if (numberOfCells < numberOfParameters) {
-			Melder_warning1 (L"Solution is not unique (more parameters than cases).");
+			Melder_warning (L"Solution is not unique (more parameters than cases).");
 		}
 		autoNUMmatrix <double> u (1, numberOfCells, 1, numberOfParameters);
 		autoNUMvector <double> b (1, numberOfCells);

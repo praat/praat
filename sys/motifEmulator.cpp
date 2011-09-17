@@ -909,7 +909,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			const wchar_t *keyString = keyStrings [acc] ? keyStrings [acc] : L"???";
 			MelderString_empty (& title);
-			MelderString_append6 (&title, _GuiWin_expandAmpersands (my name), L"\t",
+			MelderString_append (&title, _GuiWin_expandAmpersands (my name), L"\t",
 				modifiers & _motif_COMMAND_MASK ? L"Ctrl-" : NULL,
 				modifiers & _motif_OPTION_MASK ? L"Alt-" : NULL,
 				modifiers & _motif_SHIFT_MASK ? L"Shift-" : NULL, keyString);
@@ -2700,7 +2700,7 @@ void XtUnmanageChildren (GuiObjectList children, Cardinal num_children) {
 		(void) reply;
 		(void) handlerRefCon;
 		return noErr;
-		Melder_warning1 (L"Open app event.");
+		Melder_warning (L"Open app event.");
 	}
 	static pascal OSErr _motif_processQuitApplicationMessage (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
 		/*
@@ -2840,11 +2840,7 @@ GuiObject GuiInitialize (const char *name, unsigned int *argc, char **argv)
 			exit (0);   // possible problem
 		}
 
-		#ifdef _WIN64
-			theGui.instance = (HINSTANCE) atoll (argv [1]);
-		#else
-			theGui.instance = (HINSTANCE) atol (argv [1]);
-		#endif
+		sscanf (argv [1], "%p", & theGui.instance);
 
 		windowClass. cbSize = sizeof (WNDCLASSEX);
 		windowClass. style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS |
@@ -3444,9 +3440,9 @@ static void on_scroll (GuiObject me, UINT part, int pos) {
 	if (my value > my maximum - my sliderSize) my value = my maximum - my sliderSize;
 	NativeScrollBar_set (me);
 	if (part == SB_THUMBTRACK || part == SB_THUMBPOSITION)
-		_Gui_callCallbacks (me, & my motiff.scrollBar.dragCallbacks, (XtPointer) (long) part);
+		_Gui_callCallbacks (me, & my motiff.scrollBar.dragCallbacks, (XtPointer) (ULONG_PTR) part);
 	else
-		_Gui_callCallbacks (me, & my motiff.scrollBar.valueChangedCallbacks, (XtPointer) (long) part);
+		_Gui_callCallbacks (me, & my motiff.scrollBar.valueChangedCallbacks, (XtPointer) (ULONG_PTR) part);
 }
 #elif mac
 static pascal void _motif_scrollBarAction (ControlHandle maccontrol, short part) {
@@ -4323,7 +4319,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 					} else if (kar == VK_TAB) {   /* Shortcut or text. */
 						if (acc & 1 << GuiMenu_TAB) { win_processKeyboardEquivalent (my shell, GuiMenu_TAB, modifiers); return; }
 					} else if (kar == VK_RETURN) {   /* Shortcut, default button, or text. */
-						//Melder_information4 (L"RETURN ", Melder_integer (acc), L" def ", Melder_integer ((long) my shell -> defaultButton));
+						//Melder_information (L"RETURN ", Melder_integer (acc), L" def ", Melder_integer ((long) my shell -> defaultButton));
 						if (acc & 1 << GuiMenu_ENTER) { win_processKeyboardEquivalent (my shell, GuiMenu_ENTER, modifiers); return; }
 						else {
 							if (my shell -> defaultButton && _GuiWinButton_tryToHandleShortcutKey (my shell -> defaultButton)) return;
@@ -4458,11 +4454,7 @@ void GuiMainLoop () {
 		const char *argv [4];
 		(void) previousInstance;
 		argv [0] = "dummy";
-		#ifdef _WIN64
-			sprintf (instanceString, "%lld", (ULONG_PTR) instance);
-		#else
-			sprintf (instanceString, "%ld", (ULONG_PTR) instance);
-		#endif
+		sprintf (instanceString, "%p", instance);
 		sprintf (commandShowString, "%d", commandShow);
 		argv [1] = & instanceString [0];
 		argv [2] = & commandShowString [0];

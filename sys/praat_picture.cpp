@@ -1724,7 +1724,7 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Help", L"Phonetic symbols", 0, 0, DO_PhoneticSymbols);
 	praat_addMenuCommand (L"Picture", L"Help", L"-- manual --", 0, 0, 0);
 	MelderString_empty (& itemTitle_search);
-	MelderString_append3 (& itemTitle_search, L"Search ", Melder_peekUtf8ToWcs (praatP.title), L" manual...");
+	MelderString_append (& itemTitle_search, L"Search ", Melder_peekUtf8ToWcs (praatP.title), L" manual...");
 	praat_addMenuCommand (L"Picture", L"Help", itemTitle_search.string, 0, 'M', DO_SearchManual);
 
 	if (! theCurrentPraatApplication -> batch) {

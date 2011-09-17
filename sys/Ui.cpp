@@ -302,10 +302,10 @@ static void UiField_widgetToValue (UiField me) {
 		} break; case UI_LIST: {
 			long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);   // BUG memory
 			if (selected == NULL) {
-				Melder_warning1 (L"No items selected.");
+				Melder_warning (L"No items selected.");
 				my integerValue = 1;
 			} else {
-				if (numberOfSelected > 1) Melder_warning1 (L"More than one item selected.");
+				if (numberOfSelected > 1) Melder_warning (L"More than one item selected.");
 				my integerValue = selected [1];
 				NUMvector_free <long> (selected, 1);
 			}

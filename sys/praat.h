@@ -313,6 +313,7 @@ void praat_name2 (wchar *name, ClassInfo klas1, ClassInfo klas2);
 				} catch (MelderError) { \
 					Melder_clearError (); \
 					Melder_error_ (parkedError); \
+					Melder_free (parkedError); \
 					throw; \
 				} \
 				Melder_free (parkedError); \
@@ -418,7 +419,7 @@ void praat_name2 (wchar *name, ClassInfo klas1, ClassInfo klas2);
 #define GRAPHICS  theCurrentPraatPicture -> graphics
 #define FULL_NAME  (theCurrentPraatObjects -> list [IOBJECT]. name)
 #define ID  (theCurrentPraatObjects -> list [IOBJECT]. id)
-#define ID_AND_FULL_NAME  Melder_wcscat3 (Melder_integer (ID), L". ", FULL_NAME)
+#define ID_AND_FULL_NAME  Melder_wcscat (Melder_integer (ID), L". ", FULL_NAME)
 #define NAME  praat_name (IOBJECT)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)

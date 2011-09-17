@@ -222,10 +222,10 @@ void structOTMultiEditor :: v_draw () {
 	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
 		MelderString_empty (& buffer);
-		MelderString_append8 (& buffer, L"\t", icons == selectedConstraint ? L"\\sp " : L"   ", L"@@", Melder_integer (icons),
+		MelderString_append (& buffer, L"\t", icons == selectedConstraint ? L"\\sp " : L"   ", L"@@", Melder_integer (icons),
 			L"|", constraint -> name, L"@\t      ", Melder_fixed (constraint -> ranking, 3));
-		MelderString_append2 (& buffer, L"\t      ", Melder_fixed (constraint -> disharmony, 3));
-		MelderString_append2 (& buffer, L"\t      ", Melder_fixed (constraint -> plasticity, 6));
+		MelderString_append (& buffer, L"\t      ", Melder_fixed (constraint -> disharmony, 3));
+		MelderString_append (& buffer, L"\t      ", Melder_fixed (constraint -> plasticity, 6));
 		HyperPage_listItem (this, buffer.string);
 	}
 	Graphics_setAtSignIsLink (g, FALSE);

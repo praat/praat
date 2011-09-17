@@ -35,33 +35,30 @@
 
 static const wchar_t *formant_names[] = { L"", L"oral ", L"nasal ", L"frication ", L"tracheal ", L"nasal anti", L"tracheal anti", L"delta "};
 
-static void KlattGrid_4formants_addCommonField (void *dia)
-{
+static void KlattGrid_4formants_addCommonField (void *dia) {
 	Any radio;
-	OPTIONMENU(L"Formant type", 1)
+	OPTIONMENU (L"Formant type", 1)
 	OPTION (L"Normal formant")
 	OPTION (L"Nasal formant")
 	OPTION (L"Frication formant")
 	OPTION (L"Tracheal formant")
 }
 
-static void KlattGrid_6formants_addCommonField (void *dia)
-{
+static void KlattGrid_6formants_addCommonField (void *dia) {
 	Any radio;
-	OPTIONMENU(L"Formant type", 1)
+	OPTIONMENU (L"Formant type", 1)
 	OPTION (L"Normal formant")
 	OPTION (L"Nasal formant")
 	OPTION (L"Frication formant")
 	OPTION (L"Tracheal formant")
 	OPTION (L"Nasal antiformant")
 	OPTION (L"Tracheal antiformant")
-//	OPTION (L"Delta formant")
+	//	OPTION (L"Delta formant")
 }
 
-static void KlattGrid_7formants_addCommonField (void *dia)
-{
+static void KlattGrid_7formants_addCommonField (void *dia) {
 	Any radio;
-	OPTIONMENU(L"Formant type", 1)
+	OPTIONMENU (L"Formant type", 1)
 	OPTION (L"Normal formant")
 	OPTION (L"Nasal formant")
 	OPTION (L"Frication formant")
@@ -71,8 +68,7 @@ static void KlattGrid_7formants_addCommonField (void *dia)
 	OPTION (L"Delta formant")
 }
 
-static void KlattGrid_PhonationGridPlayOptions_addCommonFields (void *dia)
-{
+static void KlattGrid_PhonationGridPlayOptions_addCommonFields (void *dia) {
 	Any radio;
 	//LABEL (L"", L"Phonation options")
 	BOOLEAN (L"Voicing", 1)
@@ -89,30 +85,28 @@ static void KlattGrid_PhonationGridPlayOptions_addCommonFields (void *dia)
 	BOOLEAN (L"Breathiness", 1)
 }
 
-static void KlattGrid_PhonationGridPlayOptions_getCommonFields (void *dia, KlattGrid thee)
-{
-		PhonationGridPlayOptions pp = thy phonation -> options;
-		pp -> voicing = GET_INTEGER (L"Voicing");
-		pp -> flutter = GET_INTEGER (L"Flutter");
-		pp -> doublePulsing = GET_INTEGER (L"Double pulsing");
-		pp -> collisionPhase = GET_INTEGER (L"Collision phase");
-		pp -> spectralTilt = GET_INTEGER (L"Spectral tilt");
-		pp -> flowFunction = GET_INTEGER (L"Flow function");
-		pp -> flowDerivative = GET_INTEGER (L"Flow derivative");
-		pp -> aspiration = GET_INTEGER (L"Aspiration");
-		pp -> breathiness = GET_INTEGER (L"Breathiness");
+static void KlattGrid_PhonationGridPlayOptions_getCommonFields (void *dia, KlattGrid thee) {
+	PhonationGridPlayOptions pp = thy phonation -> options;
+	pp -> voicing = GET_INTEGER (L"Voicing");
+	pp -> flutter = GET_INTEGER (L"Flutter");
+	pp -> doublePulsing = GET_INTEGER (L"Double pulsing");
+	pp -> collisionPhase = GET_INTEGER (L"Collision phase");
+	pp -> spectralTilt = GET_INTEGER (L"Spectral tilt");
+	pp -> flowFunction = GET_INTEGER (L"Flow function");
+	pp -> flowDerivative = GET_INTEGER (L"Flow derivative");
+	pp -> aspiration = GET_INTEGER (L"Aspiration");
+	pp -> breathiness = GET_INTEGER (L"Breathiness");
 }
 
-static void KlattGrid_PlayOptions_addCommonFields (void *dia, int sound)
-{
+static void KlattGrid_PlayOptions_addCommonFields (void *dia, int sound) {
 	Any radio;
 	//LABEL (L"", L"Time domain")
 	REAL (L"left Time range (s)", L"0")
 	REAL (L"right Time range (s)", L"0")
 	if (sound) POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	BOOLEAN (L"Scale peak", 1)
-	KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
-	OPTIONMENU(L"Filter options", 1)
+		BOOLEAN (L"Scale peak", 1)
+		KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
+	OPTIONMENU (L"Filter options", 1)
 	OPTION (L"Cascade")
 	OPTION (L"Parallel")
 	REAL (L"left Oral formant range", L"1")
@@ -136,76 +130,77 @@ static void KlattGrid_PlayOptions_addCommonFields (void *dia, int sound)
 	BOOLEAN (L"Frication bypass", 1)
 }
 
-static void KlattGrid_PlayOptions_getCommonFields (void *dia, int sound, KlattGrid thee)
-{
-		KlattGrid_setDefaultPlayOptions (thee);
-		KlattGridPlayOptions pk = thy options;
-		pk -> scalePeak = GET_INTEGER (L"Scale peak");
-		pk -> xmin = GET_REAL (L"left Time range");
-		pk -> xmax = GET_REAL (L"right Time range");
-		if (sound) pk -> samplingFrequency = GET_REAL (L"Sampling frequency");
-		pk -> scalePeak = GET_INTEGER (L"Scale peak");
-		KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, thee);
-		VocalTractGridPlayOptions pv = thy vocalTract -> options;
-		pv -> filterModel = GET_INTEGER (L"Filter options") == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL;
-		pv -> startOralFormant = GET_REAL (L"left Oral formant range");
-		pv -> endOralFormant  = GET_REAL (L"right Oral formant range");
-		pv -> startNasalFormant = GET_REAL (L"left Nasal formant range");
-		pv -> endNasalFormant = GET_REAL (L"right Nasal formant range");
-		pv -> startNasalAntiFormant = GET_REAL (L"left Nasal antiformant range");
-		pv -> endNasalAntiFormant = GET_REAL (L"right Nasal antiformant range");
-		CouplingGridPlayOptions pc = thy coupling -> options;
-		pc -> startTrachealFormant = GET_REAL (L"left Tracheal formant range");
-		pc -> endTrachealFormant = GET_REAL (L"right Tracheal formant range");
-		pc -> startTrachealAntiFormant = GET_REAL (L"left Tracheal antiformant range");
-		pc -> endTrachealAntiFormant = GET_REAL (L"right Tracheal antiformant range");
-		pc -> startDeltaFormant = GET_REAL (L"left Delta formant range");
-		pc -> endDeltaFormant = GET_REAL (L"right Delta formant range");
-		pc -> startDeltaBandwidth = GET_REAL (L"left Delta bandwidth range");
-		pc -> endDeltaFormant = GET_REAL (L"right Delta bandwidth range");
-		FricationGridPlayOptions pf = thy frication -> options;
-		pf -> startFricationFormant = GET_REAL (L"left Frication formant range");
-		pf -> endFricationFormant = GET_REAL (L"right Frication formant range");
-		pf -> bypass = GET_INTEGER (L"Frication bypass");
+static void KlattGrid_PlayOptions_getCommonFields (void *dia, int sound, KlattGrid thee) {
+	KlattGrid_setDefaultPlayOptions (thee);
+	KlattGridPlayOptions pk = thy options;
+	pk -> scalePeak = GET_INTEGER (L"Scale peak");
+	pk -> xmin = GET_REAL (L"left Time range");
+	pk -> xmax = GET_REAL (L"right Time range");
+	if (sound) {
+		pk -> samplingFrequency = GET_REAL (L"Sampling frequency");
+	}
+	pk -> scalePeak = GET_INTEGER (L"Scale peak");
+	KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, thee);
+	VocalTractGridPlayOptions pv = thy vocalTract -> options;
+	pv -> filterModel = GET_INTEGER (L"Filter options") == 1 ? KlattGrid_FILTER_CASCADE : KlattGrid_FILTER_PARALLEL;
+	pv -> startOralFormant = GET_REAL (L"left Oral formant range");
+	pv -> endOralFormant  = GET_REAL (L"right Oral formant range");
+	pv -> startNasalFormant = GET_REAL (L"left Nasal formant range");
+	pv -> endNasalFormant = GET_REAL (L"right Nasal formant range");
+	pv -> startNasalAntiFormant = GET_REAL (L"left Nasal antiformant range");
+	pv -> endNasalAntiFormant = GET_REAL (L"right Nasal antiformant range");
+	CouplingGridPlayOptions pc = thy coupling -> options;
+	pc -> startTrachealFormant = GET_REAL (L"left Tracheal formant range");
+	pc -> endTrachealFormant = GET_REAL (L"right Tracheal formant range");
+	pc -> startTrachealAntiFormant = GET_REAL (L"left Tracheal antiformant range");
+	pc -> endTrachealAntiFormant = GET_REAL (L"right Tracheal antiformant range");
+	pc -> startDeltaFormant = GET_REAL (L"left Delta formant range");
+	pc -> endDeltaFormant = GET_REAL (L"right Delta formant range");
+	pc -> startDeltaBandwidth = GET_REAL (L"left Delta bandwidth range");
+	pc -> endDeltaFormant = GET_REAL (L"right Delta bandwidth range");
+	FricationGridPlayOptions pf = thy frication -> options;
+	pf -> startFricationFormant = GET_REAL (L"left Frication formant range");
+	pf -> endFricationFormant = GET_REAL (L"right Frication formant range");
+	pf -> bypass = GET_INTEGER (L"Frication bypass");
 }
 
 DIRECT (KlattGrid_createExample)
-	praat_new (KlattGrid_createExample(), L"example");
+praat_new (KlattGrid_createExample(), L"example");
 END
 
 FORM (KlattGrid_create, L"Create KlattGrid", L"Create KlattGrid...")
-	WORD (L"Name", L"kg")
-	REAL (L"Start time (s)", L"0.0")
-	REAL (L"End time (s)", L"1.0")
-	INTEGER (L"Number of oral formants", L"6")
-	INTEGER (L"Number of nasal formants", L"1")
-	INTEGER (L"Number of nasal antiformants", L"1")
-	INTEGER (L"Number of frication formants", L"6")
-	LABEL (L"", L"Coupling between source and filter")
-	INTEGER (L"Number of tracheal formants", L"1")
-	INTEGER (L"Number of tracheal antiformants", L"1")
-	INTEGER (L"Number of delta formants", L"1")
-	OK
+WORD (L"Name", L"kg")
+REAL (L"Start time (s)", L"0.0")
+REAL (L"End time (s)", L"1.0")
+INTEGER (L"Number of oral formants", L"6")
+INTEGER (L"Number of nasal formants", L"1")
+INTEGER (L"Number of nasal antiformants", L"1")
+INTEGER (L"Number of frication formants", L"6")
+LABEL (L"", L"Coupling between source and filter")
+INTEGER (L"Number of tracheal formants", L"1")
+INTEGER (L"Number of tracheal antiformants", L"1")
+INTEGER (L"Number of delta formants", L"1")
+OK
 DO
-	double tmin = GET_REAL (L"Start time");
-	double tmax = GET_REAL (L"End time");
-	REQUIRE (tmin < tmax, L"The start time must lie before the end time.")
-	long numberOfOralFormants = GET_INTEGER (L"Number of oral formants");
-	long numberOfNasalFormants = GET_INTEGER (L"Number of nasal formants");
-	long numberOfNasalAntiFormants = GET_INTEGER (L"Number of nasal antiformants");
-	long numberOfTrachealFormants = GET_INTEGER (L"Number of tracheal formants");
-	long numberOfTrachealAntiFormants = GET_INTEGER (L"Number of tracheal antiformants");
-	long numberOfFricationFormants = GET_INTEGER (L"Number of frication formants");
-	long numberOfDeltaFormants = GET_INTEGER (L"Number of delta formants");
-	REQUIRE (numberOfOralFormants>=0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0
-		&& numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
-		&& numberOfFricationFormants >= 0 && numberOfDeltaFormants >= 0,
-		L"The number of (..) formants cannot be negative!")
-	praat_new (KlattGrid_create (tmin, tmax, numberOfOralFormants,
-		numberOfNasalFormants, numberOfNasalAntiFormants,
-		numberOfTrachealFormants, numberOfTrachealAntiFormants,
-		numberOfFricationFormants, numberOfDeltaFormants),
-		GET_STRING (L"Name"));
+double tmin = GET_REAL (L"Start time");
+double tmax = GET_REAL (L"End time");
+REQUIRE (tmin < tmax, L"The start time must lie before the end time.")
+long numberOfOralFormants = GET_INTEGER (L"Number of oral formants");
+long numberOfNasalFormants = GET_INTEGER (L"Number of nasal formants");
+long numberOfNasalAntiFormants = GET_INTEGER (L"Number of nasal antiformants");
+long numberOfTrachealFormants = GET_INTEGER (L"Number of tracheal formants");
+long numberOfTrachealAntiFormants = GET_INTEGER (L"Number of tracheal antiformants");
+long numberOfFricationFormants = GET_INTEGER (L"Number of frication formants");
+long numberOfDeltaFormants = GET_INTEGER (L"Number of delta formants");
+REQUIRE (numberOfOralFormants >= 0 && numberOfNasalFormants >= 0 && numberOfNasalAntiFormants >= 0
+         && numberOfTrachealFormants >= 0 && numberOfTrachealAntiFormants >= 0
+         && numberOfFricationFormants >= 0 && numberOfDeltaFormants >= 0,
+         L"The number of (..) formants cannot be negative!")
+praat_new (KlattGrid_create (tmin, tmax, numberOfOralFormants,
+                             numberOfNasalFormants, numberOfNasalAntiFormants,
+                             numberOfTrachealFormants, numberOfTrachealAntiFormants,
+                             numberOfFricationFormants, numberOfDeltaFormants),
+           GET_STRING (L"Name"));
 END
 
 
@@ -241,20 +236,20 @@ DIRECT (KlattGrid_edit##Name##FormantGrid) \
 	if (theCurrentPraatApplication -> batch) { Melder_throw ("Cannot edit a KlattGrid from batch."); } \
 	LOOP {\
 		iam (KlattGrid); \
-		const wchar_t *id_and_name = Melder_wcscat4 (Melder_integer (ID), L". ", formant_names[formantType], L"formant grid"); \
+		const wchar_t *id_and_name = Melder_wcscat (Melder_integer (ID), L". ", formant_names[formantType], L"formant grid"); \
 		autoKlattGrid_formantGridEditor editor = KlattGrid_formantGridEditor_create (theCurrentPraatApplication -> topShell, id_and_name, me, formantType); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 		Melder_free (id_and_name); \
 	} \
 END
 
-KlattGRID_EDIT_FORMANTGRID(Oral,KlattGrid_ORAL_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID(Nasal,KlattGrid_NASAL_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID(Tracheal,KlattGrid_TRACHEAL_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID(NasalAnti,KlattGrid_NASAL_ANTIFORMANTS)
-KlattGRID_EDIT_FORMANTGRID(TrachealAnti,KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGRID_EDIT_FORMANTGRID(Delta,KlattGrid_DELTA_FORMANTS)
-KlattGRID_EDIT_FORMANTGRID(Frication,KlattGrid_FRICATION_FORMANTS)
+KlattGRID_EDIT_FORMANTGRID (Oral, KlattGrid_ORAL_FORMANTS)
+KlattGRID_EDIT_FORMANTGRID (Nasal, KlattGrid_NASAL_FORMANTS)
+KlattGRID_EDIT_FORMANTGRID (Tracheal, KlattGrid_TRACHEAL_FORMANTS)
+KlattGRID_EDIT_FORMANTGRID (NasalAnti, KlattGrid_NASAL_ANTIFORMANTS)
+KlattGRID_EDIT_FORMANTGRID (TrachealAnti, KlattGrid_TRACHEAL_ANTIFORMANTS)
+KlattGRID_EDIT_FORMANTGRID (Delta, KlattGrid_DELTA_FORMANTS)
+KlattGRID_EDIT_FORMANTGRID (Frication, KlattGrid_FRICATION_FORMANTS)
 
 #undef KlattGRID_EDIT_FORMANTGRID
 
@@ -270,17 +265,17 @@ DO \
 		Ordered *amp = KlattGrid_getAddressOfAmplitudes (me, formantType); \
 		if (amp == NULL) Melder_throw ("Unknown formant type"); \
 		if (formantNumber > (*amp) -> size) Melder_throw ("Formant number does not exist."); \
-		const wchar_t *id_and_name = Melder_wcscat4 (Melder_integer (ID), L". ", formant_names[formantType], L"formant amplitude tier"); \
+		const wchar_t *id_and_name = Melder_wcscat (Melder_integer (ID), L". ", formant_names[formantType], L"formant amplitude tier"); \
 		autoKlattGrid_decibelTierEditor editor = KlattGrid_decibelTierEditor_create (theCurrentPraatApplication -> topShell, id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 		Melder_free (id_and_name); \
 	} \
 END
 
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral,oral,KlattGrid_ORAL_FORMANTS)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal,nasal,KlattGrid_NASAL_FORMANTS)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Tracheal,tracheal,KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication,frication,KlattGrid_FRICATION_FORMANTS)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Oral, oral, KlattGrid_ORAL_FORMANTS)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Tracheal, tracheal, KlattGrid_TRACHEAL_FORMANTS)
+KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER (Frication, frication, KlattGrid_FRICATION_FORMANTS)
 
 #undef KlattGrid_EDIT_FORMANT_AMPLITUDE_TIER
 
@@ -329,32 +324,32 @@ END
 
 // 55 DO_KlattGrid... functions
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Pitch, pitch, L" (Hz)", (L"100.0"),
-	(value>=0), (L"Pitch must be greater equal zero."), L"f0", PitchTier)
-KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE(VoicingAmplitude,voicing amplitude, L" (dB SPL)", L"90.0",
-	(1), L"", L"voicing", IntensityTier)
+        (value >= 0), (L"Pitch must be greater equal zero."), L"f0", PitchTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (VoicingAmplitude, voicing amplitude, L" (dB SPL)", L"90.0",
+        (1), L"", L"voicing", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Flutter, flutter, L" (0..1)", (L"0.0"),
-	(value>=0&&value<=1), (L"Flutter must be in [0,1]."),L"flutter",RealTier)
+        (value >= 0 && value <= 1), (L"Flutter must be in [0,1]."), L"flutter", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Power1, power1, L"", L"3",
-	(value>0), L"Power1 needs to be positive.",L"power1",RealTier)
+        (value > 0), L"Power1 needs to be positive.", L"power1", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (Power2, power2, L"", L"4",
-	(value>0), L"Power2 needs to be positive.",L"power2",RealTier)
+        (value > 0), L"Power2 needs to be positive.", L"power2", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (OpenPhase, open phase, L"", L"0.7",
-	(value >=0&&value<=1), L"Open phase must be greater than zero and smaller equal one.", L"openPhase",RealTier)
+        (value >= 0 && value <= 1), L"Open phase must be greater than zero and smaller equal one.", L"openPhase", RealTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (CollisionPhase, collision phase, L"", L"0.03",
-	(value>=0&&value<1), L"Collision phase must be greater equal zero and smaller than one.", L"collisionPhase",RealTier)
-KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (DoublePulsing,double pulsing,L" (0..1)",L"0.0",
-	(value>=0&&value<=1), L"Double pulsing must be greater equal zero and smaller equal one.",L"doublePulsing",RealTier)
-KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (SpectralTilt,spectral tilt,L" (dB)",L"0.0",
-	(value>=0), L"Spectral tilt must be greater equal zero.", L"spectralTilt",IntensityTier)
+        (value >= 0 && value < 1), L"Collision phase must be greater equal zero and smaller than one.", L"collisionPhase", RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (DoublePulsing, double pulsing, L" (0..1)", L"0.0",
+        (value >= 0 && value <= 1), L"Double pulsing must be greater equal zero and smaller equal one.", L"doublePulsing", RealTier)
+KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (SpectralTilt, spectral tilt, L" (dB)", L"0.0",
+        (value >= 0), L"Spectral tilt must be greater equal zero.", L"spectralTilt", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (AspirationAmplitude, aspiration amplitude, L" (dB SPL)", L"0.0",
-	(1), L"", L"aspiration", IntensityTier)
+        (1), L"", L"aspiration", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (BreathinessAmplitude, breathiness amplitude, L" (dB SPL)", L"30.0",
-	(1), L"", L"breathiness", IntensityTier)
+        (1), L"", L"breathiness", IntensityTier)
 
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (FricationAmplitude, frication amplitude, L" (dB SPL)", L"30.0",
-	(1), L"", L"frication", IntensityTier)
+        (1), L"", L"frication", IntensityTier)
 KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE (FricationBypass, frication bypass, L" (dB)", L"30.0",
-	(1), L"", L"bypass", IntensityTier)
+        (1), L"", L"bypass", IntensityTier)
 
 #undef KlattGrid_PHONATION_GET_ADD_REMOVE_EXTRACT_REPLACE
 
@@ -453,13 +448,13 @@ KlattGrid_REMOVE_FBA_VALUE (Name, namef, Bandwidth, Bandwidth, bandwidth, forman
 KlattGrid_ADD_FORMANT(Name,namef,formantType) \
 KlattGrid_REMOVE_FORMANT(Name,namef,formantType)
 
-KlattGrid_FORMULA_ADD_REMOVE_FBA(Oral,oral f,KlattGrid_ORAL_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FBA(Nasal,nasal f,KlattGrid_NASAL_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FB(NasalAnti,nasal antif,KlattGrid_NASAL_ANTIFORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA(Delta,delta f,KlattGrid_DELTA_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FBA(Tracheal,tracheal f,KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FB(TrachealAnti,tracheal antif,KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGrid_FORMULA_ADD_REMOVE_FBA(Frication,frication f,KlattGrid_FRICATION_FORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Oral, oral f, KlattGrid_ORAL_FORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Nasal, nasal f, KlattGrid_NASAL_FORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FB (NasalAnti, nasal antif, KlattGrid_NASAL_ANTIFORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FB_DELTA (Delta, delta f, KlattGrid_DELTA_FORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Tracheal, tracheal f, KlattGrid_TRACHEAL_FORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FB (TrachealAnti, tracheal antif, KlattGrid_TRACHEAL_ANTIFORMANTS)
+KlattGrid_FORMULA_ADD_REMOVE_FBA (Frication, frication f, KlattGrid_FRICATION_FORMANTS)
 
 #undef KlattGrid_FORMULA_ADD_REMOVE_FB
 #undef KlattGrid_FORMULA_ADD_REMOVE
@@ -469,38 +464,38 @@ KlattGrid_FORMULA_ADD_REMOVE_FBA(Frication,frication f,KlattGrid_FRICATION_FORMA
 #undef KlattGrid_FORMULA_FORMANT_FB_VALUE
 
 DIRECT (KlattGrid_extractPointProcess_glottalClosures)
-	LOOP {
-		iam (KlattGrid);
-		praat_new (KlattGrid_extractPointProcess_glottalClosures (me), my name);
-	}
+LOOP {
+	iam (KlattGrid);
+	praat_new (KlattGrid_extractPointProcess_glottalClosures (me), my name);
+}
 END
 
 FORM (KlattGrid_formula_frequencies, L"KlattGrid: Formula (frequencies)", L"Formant: Formula (frequencies)...")
-	KlattGrid_6formants_addCommonField (dia);
-	LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (L"formula", L"if row = 2 then self + 200 else self fi")
-	OK
+KlattGrid_6formants_addCommonField (dia);
+LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+TEXTFIELD (L"formula", L"if row = 2 then self + 200 else self fi")
+OK
 DO
-	int formantType = GET_INTEGER (L"Formant type");
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_formula_frequencies (me, formantType, GET_STRING (L"formula"), interpreter);
-		praat_dataChanged (me);
-	}
+int formantType = GET_INTEGER (L"Formant type");
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_formula_frequencies (me, formantType, GET_STRING (L"formula"), interpreter);
+	praat_dataChanged (me);
+}
 END
 
 FORM (KlattGrid_formula_bandwidths, L"KlattGrid: Formula (bandwidths)", L"Formant: Formula (bandwidths)...")
-	KlattGrid_6formants_addCommonField (dia);
-	LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
-	TEXTFIELD (L"formula", L"if row = 2 then self + 200 else self fi")
-	OK
+KlattGrid_6formants_addCommonField (dia);
+LABEL (L"", L"row is formant number, col is point number: for row from 1 to nrow do for col from 1 to ncol do F (row, col) :=")
+TEXTFIELD (L"formula", L"if row = 2 then self + 200 else self fi")
+OK
 DO
-	int formantType = GET_INTEGER (L"Formant type");
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_formula_bandwidths (me, formantType, GET_STRING (L"formula"), interpreter);
-		praat_dataChanged (me);
-	}
+int formantType = GET_INTEGER (L"Formant type");
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_formula_bandwidths (me, formantType, GET_STRING (L"formula"), interpreter);
+	praat_dataChanged (me);
+}
 END
 
 #define KlattGrid_FORMANT_GET_FB_VALUE(Name,name,ForB,forb,FormB,formantType) \
@@ -529,17 +524,17 @@ END
 KlattGrid_FORMANT_GET_FB_VALUE(Name,name,Frequency,frequency,Formant,formantType) \
 KlattGrid_FORMANT_GET_FB_VALUE(Name,name,Bandwidth,bandwidth,Bandwidth,formantType)
 
-KlattGrid_FORMANT_GET_FB_VALUES(Oral,oral,KlattGrid_ORAL_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE(Oral,oral,KlattGrid_ORAL_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES(Nasal,nasal,KlattGrid_NASAL_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE(Nasal,nasal,KlattGrid_NASAL_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES(NasalAnti,nasal anti,KlattGrid_NASAL_ANTIFORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES(Tracheal,tracheal f,KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE(Tracheal,tracheal f,KlattGrid_TRACHEAL_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES(Delta,delta f,KlattGrid_DELTA_FORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES(TrachealAnti,tracheal antif,KlattGrid_TRACHEAL_ANTIFORMANTS)
-KlattGrid_FORMANT_GET_FB_VALUES(Frication,frication,KlattGrid_FRICATION_FORMANTS)
-KlattGrid_FORMANT_GET_A_VALUE(Frication,frication,KlattGrid_FRICATION_FORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (Oral, oral, KlattGrid_ORAL_FORMANTS)
+KlattGrid_FORMANT_GET_A_VALUE (Oral, oral, KlattGrid_ORAL_FORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
+KlattGrid_FORMANT_GET_A_VALUE (Nasal, nasal, KlattGrid_NASAL_FORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (NasalAnti, nasal anti, KlattGrid_NASAL_ANTIFORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (Tracheal, tracheal f, KlattGrid_TRACHEAL_FORMANTS)
+KlattGrid_FORMANT_GET_A_VALUE (Tracheal, tracheal f, KlattGrid_TRACHEAL_FORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (Delta, delta f, KlattGrid_DELTA_FORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (TrachealAnti, tracheal antif, KlattGrid_TRACHEAL_ANTIFORMANTS)
+KlattGrid_FORMANT_GET_FB_VALUES (Frication, frication, KlattGrid_FRICATION_FORMANTS)
+KlattGrid_FORMANT_GET_A_VALUE (Frication, frication, KlattGrid_FRICATION_FORMANTS)
 
 #undef KlattGrid_FORMANT_GET_FB_VALUES
 #undef KlattGrid_FORMANT_GET_A_VALUE
@@ -684,237 +679,236 @@ DO \
 	} \
 END
 
-KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, L" (Hz)", L"500.0", (value>0), L"Frequency must be greater than zero.")
-KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, L" (Hz)", L"50.0", (value>0), L"Bandwidth must be greater than zero.")
+KlattGrid_FORMANT_GET_ADD_REMOVE (Formant, formant, L" (Hz)", L"500.0", (value > 0), L"Frequency must be greater than zero.")
+KlattGrid_FORMANT_GET_ADD_REMOVE (Bandwidth, bandwidth, L" (Hz)", L"50.0", (value > 0), L"Bandwidth must be greater than zero.")
 
 #undef KlattGrid_FORMANT_GET_ADD_REMOVE
 
 FORM (KlattGrid_addFormantAndBandwidthTier, L"", 0)
-	KlattGrid_7formants_addCommonField (dia);
-	INTEGER (L"Position", L"0 (=at end)")
-	OK
+KlattGrid_7formants_addCommonField (dia);
+INTEGER (L"Position", L"0 (=at end)")
+OK
 DO
-	long gridType = GET_INTEGER (L"Formant type");
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_addFormantAndBandwidthTier (me, gridType, GET_INTEGER (L"Position"));
-		praat_dataChanged (me);
-	}
+long gridType = GET_INTEGER (L"Formant type");
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_addFormantAndBandwidthTier (me, gridType, GET_INTEGER (L"Position"));
+	praat_dataChanged (me);
+}
 END
 
 FORM (KlattGrid_extractFormantGrid, L"KlattGrid: Extract formant grid", 0)
-	KlattGrid_6formants_addCommonField (dia);
-	OK
+KlattGrid_6formants_addCommonField (dia);
+OK
 DO
-	long gridType = GET_INTEGER (L"Formant type");
-	LOOP {
-		iam (KlattGrid);
-		praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names[gridType]);
-	}
+long gridType = GET_INTEGER (L"Formant type");
+LOOP {
+	iam (KlattGrid);
+	praat_new (KlattGrid_extractFormantGrid (me, gridType), formant_names[gridType]);
+}
 END
 
 FORM (KlattGrid_replaceFormantGrid, L"KlattGrid: Replace formant grid", 0)
-	KlattGrid_6formants_addCommonField (dia);
-	OK
+KlattGrid_6formants_addCommonField (dia);
+OK
 DO
-	KlattGrid me = FIRST (KlattGrid);
-	FormantGrid thee = FIRST (FormantGrid);
-	KlattGrid_replaceFormantGrid (me, GET_INTEGER (L"Formant type"), thee);
-	praat_dataChanged (OBJECT);
+KlattGrid me = FIRST (KlattGrid);
+FormantGrid thee = FIRST (FormantGrid);
+KlattGrid_replaceFormantGrid (me, GET_INTEGER (L"Formant type"), thee);
+praat_dataChanged (OBJECT);
 END
 
 FORM (KlattGrid_getAmplitudeAtTime, L"KlattGrid: Get amplitude at time", 0) \
-	KlattGrid_4formants_addCommonField (dia);
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	OK
+KlattGrid_4formants_addCommonField (dia);
+NATURAL (L"Formant number", L"1")
+REAL (L"Time (s)", L"0.5")
+OK
 DO
-	int formantType = GET_INTEGER (L"Formant type");
-	LOOP {
-		iam (KlattGrid);
-		Melder_informationReal (KlattGrid_getAmplitudeAtTime (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (dB)");
-	}
+int formantType = GET_INTEGER (L"Formant type");
+LOOP {
+	iam (KlattGrid);
+	Melder_informationReal (KlattGrid_getAmplitudeAtTime (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time")), L" (dB)");
+}
 END
 
 FORM (KlattGrid_addAmplitudePoint, L"KlattGrid: Add amplitude point", 0)
-	KlattGrid_4formants_addCommonField (dia);
-	NATURAL (L"Formant number", L"1")
-	REAL (L"Time (s)", L"0.5")
-	REAL (L"Value (Hz)", L"80.0")
-	OK
+KlattGrid_4formants_addCommonField (dia);
+NATURAL (L"Formant number", L"1")
+REAL (L"Time (s)", L"0.5")
+REAL (L"Value (Hz)", L"80.0")
+OK
 DO
-	int formantType = GET_INTEGER (L"Formant type");
-	double value = GET_REAL (L"Value");
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_addAmplitudePoint (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value);
-		praat_dataChanged (me);
-	}
+int formantType = GET_INTEGER (L"Formant type");
+double value = GET_REAL (L"Value");
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_addAmplitudePoint (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), value);
+	praat_dataChanged (me);
+}
 END
 
 FORM (KlattGrid_removeAmplitudePoints, L"Remove amplitude points", 0) \
-	KlattGrid_4formants_addCommonField (dia);
-	NATURAL (L"Formant number", L"1")
-	REAL (L"From time (s)", L"0.3")
-	REAL (L"To time (s)", L"0.7")
-	OK
+KlattGrid_4formants_addCommonField (dia);
+NATURAL (L"Formant number", L"1")
+REAL (L"From time (s)", L"0.3")
+REAL (L"To time (s)", L"0.7")
+OK
 DO
-	int formantType = GET_INTEGER (L"Formant type");
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_removeAmplitudePoints (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
-		praat_dataChanged (me);
-	}
+int formantType = GET_INTEGER (L"Formant type");
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_removeAmplitudePoints (me, formantType, GET_INTEGER (L"Formant number"), GET_REAL (L"From time"), GET_REAL (L"To time"));
+	praat_dataChanged (me);
+}
 END
 
 FORM (KlattGrid_extractAmplitudeTier, L"", 0)
-	KlattGrid_4formants_addCommonField (dia);
-	NATURAL (L"Formant number", L"1")
-	OK
+KlattGrid_4formants_addCommonField (dia);
+NATURAL (L"Formant number", L"1")
+OK
 DO
-	int formantType = GET_INTEGER (L"Formant type");
-	LOOP {
-		iam (KlattGrid);
-		praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number")), formant_names[formantType]);
-	}
+int formantType = GET_INTEGER (L"Formant type");
+LOOP {
+	iam (KlattGrid);
+	praat_new (KlattGrid_extractAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number")), formant_names[formantType]);
+}
 END
 
 FORM (KlattGrid_replaceAmplitudeTier, L"KlattGrid: Replace amplitude tier", 0)
-	KlattGrid_4formants_addCommonField (dia);
-	NATURAL (L"Formant number", L"1")
-	OK
+KlattGrid_4formants_addCommonField (dia);
+NATURAL (L"Formant number", L"1")
+OK
 DO
-	int formantType = GET_INTEGER (L"Formant type");
-	KlattGrid me = FIRST (KlattGrid);
-	IntensityTier thee = FIRST (IntensityTier);
-	KlattGrid_replaceAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number"), thee);
-	praat_dataChanged (me);
+int formantType = GET_INTEGER (L"Formant type");
+KlattGrid me = FIRST (KlattGrid);
+IntensityTier thee = FIRST (IntensityTier);
+KlattGrid_replaceAmplitudeTier (me, formantType, GET_INTEGER (L"Formant number"), thee);
+praat_dataChanged (me);
 END
 
 FORM (KlattGrid_to_Sound_special, L"KlattGrid: To Sound (special)", L"KlattGrid: To Sound (special)...")
-	KlattGrid_PlayOptions_addCommonFields (dia, 1);
-	OK
+KlattGrid_PlayOptions_addCommonFields (dia, 1);
+OK
 DO
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_setDefaultPlayOptions (me);
-		KlattGrid_PlayOptions_getCommonFields (dia, 1, me);
-		praat_new (KlattGrid_to_Sound (me), my name);
-	}
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_setDefaultPlayOptions (me);
+	KlattGrid_PlayOptions_getCommonFields (dia, 1, me);
+	praat_new (KlattGrid_to_Sound (me), my name);
+}
 END
 
 DIRECT (KlattGrid_to_Sound)
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_setDefaultPlayOptions (me);
-		praat_new (KlattGrid_to_Sound (me), my name);
-	}
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_setDefaultPlayOptions (me);
+	praat_new (KlattGrid_to_Sound (me), my name);
+}
 END
 
 FORM (KlattGrid_playSpecial, L"KlattGrid: Play special", L"KlattGrid: Play special...")
-	KlattGrid_PlayOptions_addCommonFields (dia, 0);
-	OK
+KlattGrid_PlayOptions_addCommonFields (dia, 0);
+OK
 DO
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_setDefaultPlayOptions (me);
-		KlattGrid_PlayOptions_getCommonFields (dia, 0, me);
-		KlattGrid_playSpecial (me);
-	}
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_setDefaultPlayOptions (me);
+	KlattGrid_PlayOptions_getCommonFields (dia, 0, me);
+	KlattGrid_playSpecial (me);
+}
 END
 
 FORM (KlattGrid_to_Sound_phonation, L"KlattGrid: To Sound (phonation)", L"KlattGrid: To Sound (phonation)...")
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
-	OK
+POSITIVE (L"Sampling frequency (Hz)", L"44100")
+KlattGrid_PhonationGridPlayOptions_addCommonFields (dia);
+OK
 DO
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, me);
-		my options -> samplingFrequency = GET_REAL (L"Sampling frequency");
-		praat_new (KlattGrid_to_Sound_phonation (me), my name, L"_phonation");
-	}
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_PhonationGridPlayOptions_getCommonFields (dia, me);
+	my options -> samplingFrequency = GET_REAL (L"Sampling frequency");
+	praat_new (KlattGrid_to_Sound_phonation (me), my name, L"_phonation");
+}
 END
 
 DIRECT (KlattGrid_help) Melder_help (L"KlattGrid"); END
 
 DIRECT (KlattGrid_play)
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_play (me);
-	}
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_play (me);
+}
 END
 
 FORM (KlattGrid_draw, L"KlattGrid: Draw", 0)
-	RADIO (L"Synthesis model", 1)
-	RADIOBUTTON (L"Cascade")
-	RADIOBUTTON (L"Parallel")
-	OK
+RADIO (L"Synthesis model", 1)
+RADIOBUTTON (L"Cascade")
+RADIOBUTTON (L"Parallel")
+OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_draw (me, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1);
-	}
+autoPraatPicture picture;
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_draw (me, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1);
+}
 END
 
 FORM (KlattGrid_drawVocalTract, L"KlattGrid: Draw vocal tract", 0)
-	RADIO (L"Synthesis model", 1)
-	RADIOBUTTON (L"Cascade")
-	RADIOBUTTON (L"Parallel")
-	BOOLEAN (L"Include tracheal formants", 1);
-	OK
+RADIO (L"Synthesis model", 1)
+RADIOBUTTON (L"Cascade")
+RADIOBUTTON (L"Parallel")
+BOOLEAN (L"Include tracheal formants", 1);
+OK
 DO
-	autoPraatPicture picture;
-	LOOP {
-		iam (KlattGrid);
-		KlattGrid_drawVocalTract (me, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1, GET_INTEGER (L"Include tracheal formants"));
-	}
+autoPraatPicture picture;
+LOOP {
+	iam (KlattGrid);
+	KlattGrid_drawVocalTract (me, GRAPHICS, GET_INTEGER (L"Synthesis model") - 1, GET_INTEGER (L"Include tracheal formants"));
+}
 END
 
-DIRECT(KlattGrid_drawPhonation)
-	autoPraatPicture picture;
-	LOOP {
-		iam (KlattGrid);
-		PhonationGrid_draw (my phonation, GRAPHICS);
-	}
+DIRECT (KlattGrid_drawPhonation)
+autoPraatPicture picture;
+LOOP {
+	iam (KlattGrid);
+	PhonationGrid_draw (my phonation, GRAPHICS);
+}
 END
 
-DIRECT(KlattGrid_drawFrication)
-	autoPraatPicture picture;
-	LOOP {
-		iam (KlattGrid);
-		FricationGrid_draw (my frication, GRAPHICS);
-	}
+DIRECT (KlattGrid_drawFrication)
+autoPraatPicture picture;
+LOOP {
+	iam (KlattGrid);
+	FricationGrid_draw (my frication, GRAPHICS);
+}
 END
 
 FORM (KlattGrid_to_oralFormantGrid_openPhases, L"KlattGrid: Extract oral formant grid (open phases)", L"KlattGrid: Extract oral formant grid (open phases)...")
-	REAL (L"Fade fraction (0..0.5)", L"0.1")
-	OK
+REAL (L"Fade fraction (0..0.5)", L"0.1")
+OK
 DO
-	double fadeFraction = GET_REAL (L"Fade fraction");
-	REQUIRE (fadeFraction < 0.5, L"Fade fraction has to be smaller than 0.5.")
-	LOOP {
-		iam (KlattGrid);
-		praat_new (KlattGrid_to_oralFormantGrid_openPhases (me, fadeFraction), L"corrected");
-	}
+double fadeFraction = GET_REAL (L"Fade fraction");
+REQUIRE (fadeFraction < 0.5, L"Fade fraction has to be smaller than 0.5.")
+LOOP {
+	iam (KlattGrid);
+	praat_new (KlattGrid_to_oralFormantGrid_openPhases (me, fadeFraction), L"corrected");
+}
 END
 
 FORM (Sound_KlattGrid_filterByVocalTract, L"Sound & KlattGrid: Filter by vocal tract", L"Sound & KlattGrid: Filter by vocal tract...")
-	RADIO (L"Vocal tract filter model", 1)
-	RADIOBUTTON (L"Cascade")
-	RADIOBUTTON (L"Parallel")
-	OK
+RADIO (L"Vocal tract filter model", 1)
+RADIOBUTTON (L"Cascade")
+RADIOBUTTON (L"Parallel")
+OK
 DO
-	Sound me = FIRST (Sound);
-	KlattGrid thee = FIRST (KlattGrid);
-	int filterModel = GET_INTEGER (L"Vocal tract filter model") - 1;
-	praat_new (Sound_KlattGrid_filterByVocalTract (me, thee, filterModel), my name, L"_", thy name);
+Sound me = FIRST (Sound);
+KlattGrid thee = FIRST (KlattGrid);
+int filterModel = GET_INTEGER (L"Vocal tract filter model") - 1;
+praat_new (Sound_KlattGrid_filterByVocalTract (me, thee, filterModel), my name, L"_", thy name);
 END
 
 void praat_KlattGrid_init ();
-void praat_KlattGrid_init ()
-{
+void praat_KlattGrid_init () {
 
 	Thing_recognizeClassesByName (classKlattGrid, NULL);
 
@@ -922,44 +916,44 @@ void praat_KlattGrid_init ()
 	praat_addMenuCommand (L"Objects", L"New", L"KlattGrid help", 0, 1, DO_KlattGrid_help);
 	praat_addMenuCommand (L"Objects", L"New", L"-- the synthesizer grid --", 0, 1, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid...", 0, 1, DO_KlattGrid_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid example", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_createExample);
+	praat_addMenuCommand (L"Objects", L"New", L"Create KlattGrid example", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_createExample);
 
-/*
-Edit oral/nasal/tracheal/frication/delta formant grid
-Edit nasal/tracheal antiformant grid
-Get oral/nasal/tracheal/frication/delta formant at time...
-Get nasal/tracheal antiformant at time...
-Get oral/nasal/tracheal/frication/delta formant bandwidth at time...
-Get nasal/tracheal antiformant bandwidth at time...
-Get oral/nasal/tracheal/frication formant amplitude at time...
-Formula (oral/nasal/tracheal/frication/delta formant frequencies)...
-Formula (nasal/tracheal antiformant frequencies)...
-Formula (oral/nasal/tracheal/frication/delta formant bandwidths)...
-Formula (nasal/tracheal antiformant bandwidths)...
-Add oral/nasal/tracheal/frication/delta formant point...
-Add nasal/tracheal antiformant point...
-Add oral/nasal/tracheal/frication/delta formant bandwidth point...
-Add nasal/tracheal antiformant bandwidth point...
-Add oral/nasal/tracheal/frication formant amplitude point...
-Remove oral/nasal/tracheal/frication/delta formant points...
-Remove nasal/tracheal antiformant points...
-Remove oral/nasal/tracheal/frication/delta bandwidth points...
-Remove nasal/tracheal antiformant bandwidth points...
-Remove oral/nasal/tracheal/frication formant amplitude points...
-Extract oral/nasal/tracheal/frication/delta formant grid
-Extract nasal/tracheal antiformant grid
-Replace oral/nasal/tracheal/frication/delta formant grid
-Replace nasal/tracheal antiformant grid
-Add oral/nasal/tracheal/frication/delta formant and bandwidth tier
-Add nasal/tracheal antiformant and bandwidth tier
-#define KlattGrid_ORAL_FORMANTS 1
-#define KlattGrid_NASAL_FORMANTS 2
-#define KlattGrid_FRICATION_FORMANTS 3
-#define KlattGrid_TRACHEAL_FORMANTS 4
-#define KlattGrid_NASAL_ANTIFORMANTS 5
-#define KlattGrid_TRACHEAL_ANTIFORMANTS 6
-#define KlattGrid_DELTA_FORMANTS 7
-*/
+	/*
+	Edit oral/nasal/tracheal/frication/delta formant grid
+	Edit nasal/tracheal antiformant grid
+	Get oral/nasal/tracheal/frication/delta formant at time...
+	Get nasal/tracheal antiformant at time...
+	Get oral/nasal/tracheal/frication/delta formant bandwidth at time...
+	Get nasal/tracheal antiformant bandwidth at time...
+	Get oral/nasal/tracheal/frication formant amplitude at time...
+	Formula (oral/nasal/tracheal/frication/delta formant frequencies)...
+	Formula (nasal/tracheal antiformant frequencies)...
+	Formula (oral/nasal/tracheal/frication/delta formant bandwidths)...
+	Formula (nasal/tracheal antiformant bandwidths)...
+	Add oral/nasal/tracheal/frication/delta formant point...
+	Add nasal/tracheal antiformant point...
+	Add oral/nasal/tracheal/frication/delta formant bandwidth point...
+	Add nasal/tracheal antiformant bandwidth point...
+	Add oral/nasal/tracheal/frication formant amplitude point...
+	Remove oral/nasal/tracheal/frication/delta formant points...
+	Remove nasal/tracheal antiformant points...
+	Remove oral/nasal/tracheal/frication/delta bandwidth points...
+	Remove nasal/tracheal antiformant bandwidth points...
+	Remove oral/nasal/tracheal/frication formant amplitude points...
+	Extract oral/nasal/tracheal/frication/delta formant grid
+	Extract nasal/tracheal antiformant grid
+	Replace oral/nasal/tracheal/frication/delta formant grid
+	Replace nasal/tracheal antiformant grid
+	Add oral/nasal/tracheal/frication/delta formant and bandwidth tier
+	Add nasal/tracheal antiformant and bandwidth tier
+	#define KlattGrid_ORAL_FORMANTS 1
+	#define KlattGrid_NASAL_FORMANTS 2
+	#define KlattGrid_FRICATION_FORMANTS 3
+	#define KlattGrid_TRACHEAL_FORMANTS 4
+	#define KlattGrid_NASAL_ANTIFORMANTS 5
+	#define KlattGrid_TRACHEAL_ANTIFORMANTS 6
+	#define KlattGrid_DELTA_FORMANTS 7
+	*/
 	praat_addAction1 (classKlattGrid, 0, L"KlattGrid help", 0, 0, DO_KlattGrid_help);
 	praat_addAction1 (classKlattGrid, 0, L"Edit phonation -", 0, 0, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Edit pitch tier", 0, 1, DO_KlattGrid_editPitchTier);
@@ -1018,11 +1012,11 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 1, L"Get breathiness amplitude at time...", 0, 1, DO_KlattGrid_getBreathinessAmplitudeAtTime);
 
 	praat_addAction1 (classKlattGrid, 0, L"Query filters -", 0, 0, 0);
-	praat_addAction1 (classKlattGrid, 1, L"Get formant at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getFormantAtTime);
-	praat_addAction1 (classKlattGrid, 1, L"Get bandwidth at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getBandwidthAtTime);
-	praat_addAction1 (classKlattGrid, 1, L"Get amplitude at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getAmplitudeAtTime);
-	praat_addAction1 (classKlattGrid, 1, L"Get delta formant at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getDeltaFormantAtTime);
-	praat_addAction1 (classKlattGrid, 1, L"Get delta bandwidth at time...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_getDeltaBandwidthAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get formant at time...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_getFormantAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get bandwidth at time...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_getBandwidthAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get amplitude at time...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_getAmplitudeAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get delta formant at time...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_getDeltaFormantAtTime);
+	praat_addAction1 (classKlattGrid, 1, L"Get delta bandwidth at time...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_getDeltaBandwidthAtTime);
 
 #define KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Name,namef) \
 	praat_addAction1 (classKlattGrid, 1, L"Get " #namef "ormant frequency at time...", 0, 1, DO_KlattGrid_get##Name##FormantFrequencyAtTime); \
@@ -1031,20 +1025,20 @@ Add nasal/tracheal antiformant and bandwidth tier
 #define KlattGRID_GET_FORMANT_A_VALUES_ACTION(Name,name) \
 	praat_addAction1 (classKlattGrid, 1, L"Get " #name " formant amplitude at time...", 0, 1, DO_KlattGrid_get##Name##FormantAmplitudeAtTime); \
 
-	KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Oral,oral f)
-	KlattGRID_GET_FORMANT_A_VALUES_ACTION(Oral,oral)
-	KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Nasal,nasal f)
-	KlattGRID_GET_FORMANT_A_VALUES_ACTION(Nasal,nasal)
-	KlattGRID_GET_FORMANT_FB_VALUES_ACTION(NasalAnti,nasal antif)
+	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (Oral, oral f)
+	KlattGRID_GET_FORMANT_A_VALUES_ACTION (Oral, oral)
+	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (Nasal, nasal f)
+	KlattGRID_GET_FORMANT_A_VALUES_ACTION (Nasal, nasal)
+	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (NasalAnti, nasal antif)
 
 	praat_addAction1 (classKlattGrid, 1, L"-- query delta characteristics", 0, 1, 0);
-	KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Delta,delta f)
-	KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Tracheal,tracheal f)
-	KlattGRID_GET_FORMANT_A_VALUES_ACTION(Tracheal,tracheal)
-	KlattGRID_GET_FORMANT_FB_VALUES_ACTION(TrachealAnti,tracheal antif)
+	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (Delta, delta f)
+	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (Tracheal, tracheal f)
+	KlattGRID_GET_FORMANT_A_VALUES_ACTION (Tracheal, tracheal)
+	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (TrachealAnti, tracheal antif)
 	praat_addAction1 (classKlattGrid, 1, L"-- query frication characteristics", 0, 1, 0);
-	KlattGRID_GET_FORMANT_FB_VALUES_ACTION(Frication,frication f)
-	KlattGRID_GET_FORMANT_A_VALUES_ACTION(Frication,frication)
+	KlattGRID_GET_FORMANT_FB_VALUES_ACTION (Frication, frication f)
+	KlattGRID_GET_FORMANT_A_VALUES_ACTION (Frication, frication)
 
 #undef KlattGRID_GET_FORMANT_A_VALUES_ACTION
 #undef KlattGRID_GET_FORMANT_A_VALUES_ACTION
@@ -1069,7 +1063,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"Remove " #name " points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_remove##Name##Points); \
 	praat_addAction1 (classKlattGrid, 0, L"Remove " #name " points...", 0, 1, DO_KlattGrid_remove##Name##Points);
 
-	KlattGrid_REMOVE_POINTS_ACTION (Pitch,pitch)
+	KlattGrid_REMOVE_POINTS_ACTION (Pitch, pitch)
 	KlattGrid_REMOVE_POINTS_ACTION (VoicingAmplitude, voicing amplitude)
 	KlattGrid_REMOVE_POINTS_ACTION (Flutter, flutter)
 	KlattGrid_REMOVE_POINTS_ACTION (Power1, power1)
@@ -1111,14 +1105,14 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"-- nasal modify separator --", 0, 1, 0);
 	KlattGrid_MODIFY_ACTION_FB (NasalAnti, nasal antif)
 
-	praat_addAction1 (classKlattGrid, 0, L"Formula (frequencies)...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_formula_frequencies);
-	praat_addAction1 (classKlattGrid, 0, L"Formula (bandwidths)...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_formula_bandwidths);
-	praat_addAction1 (classKlattGrid, 0, L"Add formant point...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_addFormantPoint);
-	praat_addAction1 (classKlattGrid, 0, L"Add bandwidth point...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_addBandwidthPoint);
-	praat_addAction1 (classKlattGrid, 0, L"Add amplitude point...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_addAmplitudePoint);
-	praat_addAction1 (classKlattGrid, 0, L"Remove formant points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_removeFormantPoints);
-	praat_addAction1 (classKlattGrid, 0, L"Remove bandwidth points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_removeBandwidthPoints);
-	praat_addAction1 (classKlattGrid, 0, L"Remove amplitude points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_removeAmplitudePoints);
+	praat_addAction1 (classKlattGrid, 0, L"Formula (frequencies)...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_formula_frequencies);
+	praat_addAction1 (classKlattGrid, 0, L"Formula (bandwidths)...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_formula_bandwidths);
+	praat_addAction1 (classKlattGrid, 0, L"Add formant point...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_addFormantPoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add bandwidth point...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_addBandwidthPoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add amplitude point...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_addAmplitudePoint);
+	praat_addAction1 (classKlattGrid, 0, L"Remove formant points between...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_removeFormantPoints);
+	praat_addAction1 (classKlattGrid, 0, L"Remove bandwidth points between...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_removeBandwidthPoints);
+	praat_addAction1 (classKlattGrid, 0, L"Remove amplitude points between...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_removeAmplitudePoints);
 	praat_addAction1 (classKlattGrid, 0, L"Modify coupling - ", 0, 0, 0);
 	KlattGrid_MODIFY_ACTION_FB (Delta, delta f)
 	praat_addAction1 (classKlattGrid, 0, L"-- delta modify separator --", 0, 1, 0);
@@ -1126,10 +1120,10 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"-- nasal modify separator --", 0, 1, 0);
 	KlattGrid_MODIFY_ACTION_FB (TrachealAnti, tracheal antif)
 
-	praat_addAction1 (classKlattGrid, 0, L"Add delta formant point...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_addDeltaFormantPoint);
-	praat_addAction1 (classKlattGrid, 0, L"Add delta bandwidth point...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_addDeltaBandwidthPoint);
-	praat_addAction1 (classKlattGrid, 0, L"Remove delta formant points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_removeDeltaFormantPoints);
-	praat_addAction1 (classKlattGrid, 0, L"Remove delta bandwidth points between...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_removeDeltaBandwidthPoints);
+	praat_addAction1 (classKlattGrid, 0, L"Add delta formant point...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_addDeltaFormantPoint);
+	praat_addAction1 (classKlattGrid, 0, L"Add delta bandwidth point...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_addDeltaBandwidthPoint);
+	praat_addAction1 (classKlattGrid, 0, L"Remove delta formant points between...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_removeDeltaFormantPoints);
+	praat_addAction1 (classKlattGrid, 0, L"Remove delta bandwidth points between...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_removeDeltaBandwidthPoints);
 
 	praat_addAction1 (classKlattGrid, 0, L"Modify frication -", 0, 0, 0);
 	KlattGrid_MODIFY_ACTION_FBA (Frication, frication f)
@@ -1139,7 +1133,7 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"Add frication amplitude point...", 0, 1, DO_KlattGrid_addFricationAmplitudePoint);
 	KlattGrid_REMOVE_POINTS_ACTION (FricationBypass, frication bypass)
 	KlattGrid_REMOVE_POINTS_ACTION (FricationAmplitude, frication amplitude)
-	praat_addAction1 (classKlattGrid, 0, L"Add formant and bandwidth tier...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_addFormantAndBandwidthTier);
+	praat_addAction1 (classKlattGrid, 0, L"Add formant and bandwidth tier...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_addFormantAndBandwidthTier);
 
 #undef KlattGrid_REMOVE_POINTS_ACTION
 #undef KlattGrid_MODIFY_ACTION_FB
@@ -1166,24 +1160,24 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction1 (classKlattGrid, 0, L"Extract " #name " formant amplitude tier...", 0, 1, DO_KlattGrid_extract##Name##FormantAmplitudeTier);
 
 	praat_addAction1 (classKlattGrid, 0, L"Extract filters -", 0, 0, 0);
-	praat_addAction1 (classKlattGrid, 0, L"Extract formant grid...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_extractFormantGrid); // deprecated
-	KlattGRID_EXTRACT_FORMANT_GRID_ACTION(Oral,oral f)
-	praat_addAction1 (classKlattGrid, 0, L"Extract amplitude tier...", 0, praat_DEPTH_1+praat_HIDDEN, DO_KlattGrid_extractAmplitudeTier); // deprecated
+	praat_addAction1 (classKlattGrid, 0, L"Extract formant grid...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_extractFormantGrid); // deprecated
+	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Oral, oral f)
+	praat_addAction1 (classKlattGrid, 0, L"Extract amplitude tier...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_KlattGrid_extractAmplitudeTier); // deprecated
 	praat_addAction1 (classKlattGrid, 0, L"Extract formant grid (open phases)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_KlattGrid_to_oralFormantGrid_openPhases);
 	praat_addAction1 (classKlattGrid, 0, L"Extract oral formant grid (open phases)...", 0, 1, DO_KlattGrid_to_oralFormantGrid_openPhases);
-	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION(Oral,oral)
-	KlattGRID_EXTRACT_FORMANT_GRID_ACTION(Nasal,nasal f)
-	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION(Nasal,nasal)
-	KlattGRID_EXTRACT_FORMANT_GRID_ACTION(NasalAnti,nasal antif)
+	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Oral, oral)
+	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Nasal, nasal f)
+	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Nasal, nasal)
+	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (NasalAnti, nasal antif)
 
 	praat_addAction1 (classKlattGrid, 0, L"-- extract delta characteristics", 0, 1, 0);
 	praat_addAction1 (classKlattGrid, 0, L"Extract delta formant grid", 0, 1, DO_KlattGrid_extractDeltaFormantGrid);
-	KlattGRID_EXTRACT_FORMANT_GRID_ACTION(Tracheal,tracheal f)
-	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION(Tracheal,tracheal)
-	KlattGRID_EXTRACT_FORMANT_GRID_ACTION(TrachealAnti,tracheal antif)
+	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Tracheal, tracheal f)
+	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Tracheal, tracheal)
+	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (TrachealAnti, tracheal antif)
 	praat_addAction1 (classKlattGrid, 0, L"-- extract frication characteristics", 0, 1, 0);
-	KlattGRID_EXTRACT_FORMANT_GRID_ACTION(Frication,frication f)
-	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION(Frication,frication)
+	KlattGRID_EXTRACT_FORMANT_GRID_ACTION (Frication, frication f)
+	KlattGRID_EXTRACT_FORMANT_AMPLITUDE_ACTION (Frication, frication)
 	praat_addAction1 (classKlattGrid, 0, L"Extract frication bypass tier", 0, 1, DO_KlattGrid_extractFricationBypassTier);
 	praat_addAction1 (classKlattGrid, 0, L"Extract frication amplitude tier", 0, 1, DO_KlattGrid_extractFricationAmplitudeTier);
 
@@ -1206,22 +1200,22 @@ Add nasal/tracheal antiformant and bandwidth tier
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace " #namef "ormant amplitude tier...", 0, 1, DO_KlattGrid_replace##Name##FormantAmplitudeTier);
 
 
-	KlattGrid_REPLACE_FORMANTGRID_ACTION(Oral, oral f)
-	KlattGrid_REPLACE_FORMANTGRID_ACTION(Nasal, nasal f)
-	KlattGrid_REPLACE_FORMANTGRID_ACTION(NasalAnti, nasal antif)
+	KlattGrid_REPLACE_FORMANTGRID_ACTION (Oral, oral f)
+	KlattGrid_REPLACE_FORMANTGRID_ACTION (Nasal, nasal f)
+	KlattGrid_REPLACE_FORMANTGRID_ACTION (NasalAnti, nasal antif)
 	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, L"-- replace coupling --", 0, 1, 0);
-	KlattGrid_REPLACE_FORMANTGRID_ACTION(Tracheal, tracheal f)
-	KlattGrid_REPLACE_FORMANTGRID_ACTION(TrachealAnti, tracheal antif)
-	KlattGrid_REPLACE_FORMANTGRID_ACTION(Delta, delta f)
+	KlattGrid_REPLACE_FORMANTGRID_ACTION (Tracheal, tracheal f)
+	KlattGrid_REPLACE_FORMANTGRID_ACTION (TrachealAnti, tracheal antif)
+	KlattGrid_REPLACE_FORMANTGRID_ACTION (Delta, delta f)
 	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, L"-- replace frication --", 0, 1, 0);
-	KlattGrid_REPLACE_FORMANTGRID_ACTION(Frication, frication f)
+	KlattGrid_REPLACE_FORMANTGRID_ACTION (Frication, frication f)
 	praat_addAction2 (classKlattGrid, 1, classFormantGrid, 1, L"Replace formant grid...", 0, praat_HIDDEN + praat_DEPTH_1, DO_KlattGrid_replaceFormantGrid);
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace voicing amplitude tier", 0, 1, DO_KlattGrid_replaceVoicingAmplitudeTier);
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace spectral tilt tier", 0, 1, DO_KlattGrid_replaceSpectralTiltTier);
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace aspiration amplitude tier", 0, 1,
-		DO_KlattGrid_replaceAspirationAmplitudeTier);
+	                  DO_KlattGrid_replaceAspirationAmplitudeTier);
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace breathiness amplitude tier", 0, 1,
-		DO_KlattGrid_replaceBreathinessAmplitudeTier);
+	                  DO_KlattGrid_replaceBreathinessAmplitudeTier);
 	praat_addAction2 (classKlattGrid, 1, classIntensityTier, 1, L"Replace amplitude tier...", 0, praat_HIDDEN + praat_DEPTH_1, DO_KlattGrid_replaceAmplitudeTier);
 	KlattGrid_REPLACE_FORMANT_AMPLITUDE_ACTION (Oral, oral f)
 	KlattGrid_REPLACE_FORMANT_AMPLITUDE_ACTION (Nasal, nasal f)

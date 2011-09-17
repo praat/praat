@@ -24,8 +24,7 @@
 
 #include "Categories.h"
 
-void structCategories :: v_readText (MelderReadText a_text)
-{
+void structCategories :: v_readText (MelderReadText a_text) {
 	long l_size = texgeti4 (a_text);
 	if (l_size == 0) {
 		OrderedOfString_init (this, 1);
@@ -34,21 +33,18 @@ void structCategories :: v_readText (MelderReadText a_text)
 	} else {
 		OrderedOfString_init (this, l_size);   // David, in je vorige versie kon dit tweemaal aangeroepen worden (en in dat geval crashend): Ja dat was een bug, Ok nu
 	}
-	for (long i = 1; i <= l_size; i ++)
-	{
+	for (long i = 1; i <= l_size; i ++) {
 		autoSimpleString item = Thing_new (SimpleString);
 		item -> v_readText (a_text); therror
 		Ordered_addItemPos (this, item.transfer(), i);
 	}
 }
 
-void structCategories :: v_writeText (MelderFile file)
-{
-	texputi4 (file, size, L"size", 0,0,0,0,0);
-	for (long i = 1; i <= size; i++)
-	{
+void structCategories :: v_writeText (MelderFile file) {
+	texputi4 (file, size, L"size", 0, 0, 0, 0, 0);
+	for (long i = 1; i <= size; i++) {
 		SimpleString data = (SimpleString) item [i];
-		texputintro (file, L"item" " [", Melder_integer (i), L"]:", 0,0,0);
+		texputintro (file, L"item" " [", Melder_integer (i), L"]:", 0, 0, 0);
 		data -> structSimpleString :: v_writeText (file);
 		texexdent (file);
 	}
@@ -56,98 +52,101 @@ void structCategories :: v_writeText (MelderFile file)
 
 Thing_implement (Categories, OrderedOfString, 0);
 
-void Categories_init (Categories me, long size)
-{
+void Categories_init (Categories me, long size) {
 	OrderedOfString_init (me, size);
 }
 
-Categories Categories_create ()
-{
+Categories Categories_create () {
 	try {
 		autoCategories me = Thing_new (Categories);
 		Categories_init (me.peek(), 10);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Categories not created."); }
+	} catch (MelderError) {
+		Melder_throw ("Categories not created.");
+	}
 }
 
-Categories Categories_sequentialNumbers (long n)
-{
+Categories Categories_sequentialNumbers (long n) {
 	try {
 		autoCategories me = Thing_new (Categories);
 		OrderedOfString_init (me.peek(), 5);
 		OrderedOfString_sequentialNumbers (me.peek(), n);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Sequential number Categories not created."); }
+	} catch (MelderError) {
+		Melder_throw ("Sequential number Categories not created.");
+	}
 }
 
-Categories Categories_selectUniqueItems (Categories me, int sorted)
-{
+Categories Categories_selectUniqueItems (Categories me, int sorted) {
 	try {
 		autoOrderedOfString s = OrderedOfString_selectUniqueItems (me, sorted);
 		autoCategories thee = OrderedOfString_to_Categories (s.peek());
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no unique categories created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no unique categories created.");
+	}
 }
 
 void Categories_drawItem (Categories me, Graphics g, long position,
-	double xWC, double yWC)
-{
-	if (position < 1 || position > my size) return;
-	SimpleString_draw ((SimpleString) my item[position], g, xWC, yWC);
+                          double xWC, double yWC) {
+	if (position < 1 || position > my size) {
+		return;
+	}
+	SimpleString_draw ( (SimpleString) my item[position], g, xWC, yWC);
 }
 
-Categories OrderedOfString_to_Categories (I)
-{
+Categories OrderedOfString_to_Categories (I) {
 	iam (OrderedOfString);
 	try {
 		autoCategories thee = Categories_create();
 
-		for (long i = 1; i <= my size; i++)
-		{
-			autoSimpleString item = Data_copy ((SimpleString) my item [i]);
+		for (long i = 1; i <= my size; i++) {
+			autoSimpleString item = Data_copy ( (SimpleString) my item [i]);
 			Collection_addItem (thee.peek(), item.transfer());
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": not converted to Categories."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": not converted to Categories.");
+	}
 }
 
-long Categories_getSize (Categories me) { return my size; }
+long Categories_getSize (Categories me) {
+	return my size;
+}
 
 /* TableOfReal_Rowlabels_to_Categories  ??? */
-Categories TableOfReal_to_CategoriesRow (I)
-{
+Categories TableOfReal_to_CategoriesRow (I) {
 	iam (TableOfReal);
 	try {
 		autoCategories thee = Categories_create ();
 
-		for (long i = 1; i <= my numberOfRows; i++)
-		{
-			if (my rowLabels[i])
-			{
+		for (long i = 1; i <= my numberOfRows; i++) {
+			if (my rowLabels[i]) {
 				autoSimpleString s = SimpleString_create (my rowLabels[i]);
 				Collection_addItem (thee.peek(), s.transfer());
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": row labels not converted to Categories."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": row labels not converted to Categories.");
+	}
 }
 
-Categories TableOfReal_to_CategoriesColumn (I)
-{
+Categories TableOfReal_to_CategoriesColumn (I) {
 	iam (TableOfReal);
 	try {
 		autoCategories thee = Categories_create ();
 
-		for (long i = 1; i <= my numberOfColumns; i++)
-		{
-			if (my columnLabels[i])
-			{
+		for (long i = 1; i <= my numberOfColumns; i++) {
+			if (my columnLabels[i]) {
 				autoSimpleString s = SimpleString_create (my columnLabels[i]);
 				Collection_addItem (thee.peek(), s.transfer());
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": columnlabels not converted to Categories."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": columnlabels not converted to Categories.");
+	}
 }
 
 /* End of file Categories.cpp */

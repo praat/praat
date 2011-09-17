@@ -37,7 +37,7 @@ PitchTier Pitch_to_PitchTier (Pitch me) {
 			 */
 			if (frequency > 0.0 && frequency < my ceiling) {
 				double time = Sampled_indexToX (me, i);
-				RealTier_addPoint (thee.peek(), time, frequency); therror
+				RealTier_addPoint (thee.peek(), time, frequency);
 			}
 		}
 		return thee.transfer();

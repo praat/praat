@@ -164,7 +164,7 @@ static void NativeMenuItem_setText (GuiObject me) {
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 			const wchar_t *keyString = keyStrings [acc] ? keyStrings [acc] : L"???";
 			MelderString_empty (& title);
-			MelderString_append6 (&title, _GuiWin_expandAmpersands (my name), L"\t",
+			MelderString_append (&title, _GuiWin_expandAmpersands (my name), L"\t",
 				modifiers & _motif_COMMAND_MASK ? L"Ctrl-" : NULL,
 				modifiers & _motif_OPTION_MASK ? L"Alt-" : NULL,
 				modifiers & _motif_SHIFT_MASK ? L"Shift-" : NULL, keyString);

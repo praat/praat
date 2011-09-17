@@ -60,7 +60,7 @@ NORMAL (L"You can edit ##main/main_Praat.cpp#. "
 CODE (L"\\# include \"praat.h\"")
 CODE (L"")
 CODE (L"DIRECT (HelloFromJane)")
-CODE1 (L"Melder_information1 (L\"Hello, I am Jane.\");")
+CODE1 (L"Melder_information (L\"Hello, I am Jane.\");")
 CODE (L"END")
 CODE (L"")
 CODE (L"int main (int argc, char **argv) {")

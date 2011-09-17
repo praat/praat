@@ -63,7 +63,7 @@ void NUMvector_free (long elementSize, void *v, long lo) {
 void * NUMvector_copy (long elementSize, void *v, long lo, long hi) {
 	try {
 		if (v == NULL) return NULL;
-		char *result = reinterpret_cast<char*> (NUMvector (elementSize, lo, hi)); therror
+		char *result = reinterpret_cast <char *> (NUMvector (elementSize, lo, hi));
 		long offset = lo * elementSize;
 		memcpy (result + offset, (char *) v + offset, (hi - lo + 1) * elementSize);
 		return result;
@@ -88,7 +88,7 @@ void NUMvector_append (long elementSize, void **v, long lo, long *hi) {
 	try {
 		char *result;
 		if (*v == NULL) {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo)); therror
+			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo));
 			*hi = lo;
 		} else {
 			long offset = lo * elementSize;
@@ -110,11 +110,11 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 	try {
 		char *result;
 		if (*v == NULL) {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo)); therror
+			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, lo));
 			*hi = lo;
 			Melder_assert (position == lo);
 		} else {
-			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, *hi + 1)); therror
+			result = reinterpret_cast <char *> (NUMvector (elementSize, lo, *hi + 1));
 			Melder_assert (position >= lo && position <= *hi + 1);
 			NUMvector_copyElements (elementSize, *v, result, lo, position - 1);
 			NUMvector_copyElements (elementSize, *v, result + elementSize, position, *hi);
@@ -138,7 +138,7 @@ void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2) 
 		char **result;
 		Melder_assert (sizeof (char) == 1);   // true by definition
 		for (;;) {
-			result = reinterpret_cast <char **> (_Melder_malloc_f (numberOfRows * sizeof (char *))); therror   // assume that all pointers have the same size
+			result = reinterpret_cast <char **> (_Melder_malloc_f (numberOfRows * sizeof (char *)));   // assume that all pointers have the same size
 			result -= row1;
 			if (result != NULL) break;   // this will normally succeed at the first try
 			(void) Melder_realloc_f (result + row1, 1);   // make "sure" that the second try will succeed

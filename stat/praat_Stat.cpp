@@ -148,7 +148,7 @@ END
 DIRECT (PairDistribution_getNumberOfPairs)
 	LOOP {
 		iam (PairDistribution);
-		Melder_information1 (Melder_integer (my pairs -> size));
+		Melder_information (Melder_integer (my pairs -> size));
 	}
 END
 
@@ -159,7 +159,7 @@ DO
 	LOOP {
 		iam (PairDistribution);
 		const wchar *string1 = PairDistribution_getString1 (me, GET_INTEGER (L"Pair number")); therror
-		Melder_information1 (string1);
+		Melder_information (string1);
 	}
 END
 
@@ -170,7 +170,7 @@ DO
 	LOOP {
 		iam (PairDistribution);
 		const wchar *string2 = PairDistribution_getString2 (me, GET_INTEGER (L"Pair number")); therror
-		Melder_information1 (string2);
+		Melder_information (string2);
 	}
 END
 
@@ -181,7 +181,7 @@ DO
 	LOOP {
 		iam (PairDistribution);
 		double weight = PairDistribution_getWeight (me, GET_INTEGER (L"Pair number")); therror
-		Melder_information1 (Melder_double (weight));
+		Melder_information (Melder_double (weight));
 	}
 END
 
@@ -405,7 +405,7 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution")); therror
 		long row = Table_drawRowFromDistribution (me, icol); therror
-		Melder_information1 (Melder_integer (row));
+		Melder_information (Melder_integer (row));
 	}
 END
 
@@ -494,7 +494,7 @@ FORM (Table_getColumnIndex, L"Table: Get column index", 0)
 DO
 	LOOP {
 		iam (Table);
-		Melder_information1 (Melder_integer (Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"))));
+		Melder_information (Melder_integer (Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"))));
 	}
 END
 
@@ -506,7 +506,7 @@ DO
 		iam (Table);
 		long icol = GET_INTEGER (L"Column number");
 		if (icol > my numberOfColumns) Melder_throw ("Column number must not be greater than number of columns.");
-		Melder_information1 (my columnHeaders [icol]. label);
+		Melder_information (my columnHeaders [icol]. label);
 	}
 END
 
@@ -520,7 +520,7 @@ DO
 		iam (Table);
 		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
-		Melder_information1 (Melder_double (Table_getGroupMean (static_cast <Table> ONLY_OBJECT, column, groupColumn, GET_STRING (L"Group"))));
+		Melder_information (Melder_double (Table_getGroupMean (static_cast <Table> ONLY_OBJECT, column, groupColumn, GET_STRING (L"Group"))));
 	}
 END
 
@@ -532,7 +532,7 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		double maximum = Table_getMaximum (me, icol); therror
-		Melder_information1 (Melder_double (maximum));
+		Melder_information (Melder_double (maximum));
 	}
 END
 
@@ -544,7 +544,7 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		double mean = Table_getMean (me, icol); therror
-		Melder_information1 (Melder_double (mean));
+		Melder_information (Melder_double (mean));
 	}
 END
 
@@ -556,7 +556,7 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		double minimum = Table_getMinimum (me, icol); therror
-		Melder_information1 (Melder_double (minimum));
+		Melder_information (Melder_double (minimum));
 	}
 END
 
@@ -569,7 +569,7 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		double quantile = Table_getQuantile (me, icol, GET_REAL (L"Quantile")); therror
-		Melder_information1 (Melder_double (quantile));
+		Melder_information (Melder_double (quantile));
 	}
 END
 
@@ -581,21 +581,21 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
 		double stdev = Table_getStdev (me, icol); therror
-		Melder_information1 (Melder_double (stdev));
+		Melder_information (Melder_double (stdev));
 	}
 END
 
 DIRECT (Table_getNumberOfColumns)
 	LOOP {
 		iam (Table);
-		Melder_information1 (Melder_integer (my numberOfColumns));
+		Melder_information (Melder_integer (my numberOfColumns));
 	}
 END
 
 DIRECT (Table_getNumberOfRows)
 	LOOP {
 		iam (Table);
-		Melder_information1 (Melder_integer (my rows -> size));
+		Melder_information (Melder_integer (my rows -> size));
 	}
 END
 
@@ -609,7 +609,7 @@ DO
 		long rowNumber = GET_INTEGER (L"Row number");
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		Melder_information1 (((TableRow) my rows -> item [rowNumber]) -> cells [icol]. string);
+		Melder_information (((TableRow) my rows -> item [rowNumber]) -> cells [icol]. string);
 	}
 END
 
@@ -963,7 +963,7 @@ DO
 	LOOP {
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		Melder_information1 (Melder_integer (Table_searchColumn (me, icol, GET_STRING (L"Value"))));
+		Melder_information (Melder_integer (Table_searchColumn (me, icol, GET_STRING (L"Value"))));
 	}
 END
 	
@@ -1358,7 +1358,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label")); therror
-		Melder_information1 (Melder_integer (columnNumber));
+		Melder_information (Melder_integer (columnNumber));
 	}
 END
 	
@@ -1370,7 +1370,7 @@ DO
 		iam (TableOfReal);
 		long columnNumber = GET_INTEGER (L"Column number");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
-		Melder_information1 (my columnLabels == NULL ? L"" : my columnLabels [columnNumber]);
+		Melder_information (my columnLabels == NULL ? L"" : my columnLabels [columnNumber]);
 	}
 END
 	
@@ -1429,14 +1429,14 @@ END
 DIRECT (TableOfReal_getNumberOfColumns)
 	LOOP {
 		iam (TableOfReal);
-		Melder_information1 (Melder_integer (my numberOfColumns));
+		Melder_information (Melder_integer (my numberOfColumns));
 	}
 END
 
 DIRECT (TableOfReal_getNumberOfRows)
 	LOOP {
 		iam (TableOfReal);
-		Melder_information1 (Melder_integer (my numberOfRows));
+		Melder_information (Melder_integer (my numberOfRows));
 	}
 END
 
@@ -1447,7 +1447,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Row label")); therror
-		Melder_information1 (Melder_integer (rowNumber));
+		Melder_information (Melder_integer (rowNumber));
 	}
 END
 	
@@ -1459,7 +1459,7 @@ DO
 		iam (TableOfReal);
 		long rowNumber = GET_INTEGER (L"Row number");
 		if (rowNumber > my numberOfRows) Melder_throw (me, ": row number must not be greater than number of rows.");
-		Melder_information1 (my rowLabels == NULL ? L"" : my rowLabels [rowNumber]);
+		Melder_information (my rowLabels == NULL ? L"" : my rowLabels [rowNumber]);
 	}
 END
 
@@ -1534,7 +1534,7 @@ FORM (TableOfReal_setColumnLabel_index, L"Set column label", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		TableOfReal_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label")); therror
+		TableOfReal_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END
@@ -1547,7 +1547,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Old label")); therror
-		TableOfReal_setColumnLabel (me, columnNumber, GET_STRING (L"New label")); therror
+		TableOfReal_setColumnLabel (me, columnNumber, GET_STRING (L"New label"));
 		praat_dataChanged (me);
 	}
 END
@@ -1559,7 +1559,7 @@ FORM (TableOfReal_setRowLabel_index, L"Set row label", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		TableOfReal_setRowLabel (me, GET_INTEGER (L"Row number"), GET_STRING (L"Label")); therror
+		TableOfReal_setRowLabel (me, GET_INTEGER (L"Row number"), GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END

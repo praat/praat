@@ -344,7 +344,13 @@ void texputintro (MelderFile file, const wchar_t *s1, const wchar_t *s2, const w
 		for (int iindent = 1; iindent <= file -> indent; iindent ++) {
 			MelderFile_write1 (file, L" ");
 		}
-		MelderFile_write6 (file, s1, s2, s3, s4, s5, s6);
+		MelderFile_write6 (file,
+			s1 && s1 [0] == 'd' && s1 [1] == '_' ? & s1 [2] : & s1 [0],
+			s2 && s2 [0] == 'd' && s2 [1] == '_' ? & s2 [2] : & s2 [0],
+			s3 && s3 [0] == 'd' && s3 [1] == '_' ? & s3 [2] : & s3 [0],
+			s4 && s4 [0] == 'd' && s4 [1] == '_' ? & s4 [2] : & s4 [0],
+			s5 && s5 [0] == 'd' && s5 [1] == '_' ? & s5 [2] : & s5 [0],
+			s6 && s6 [0] == 'd' && s6 [1] == '_' ? & s6 [2] : & s6 [0]);
 	}
 	file -> indent += 4;
 }
@@ -355,7 +361,13 @@ void texputintro (MelderFile file, const wchar_t *s1, const wchar_t *s2, const w
 		for (int iindent = 1; iindent <= file -> indent; iindent ++) { \
 			MelderFile_write1 (file, L" "); \
 		} \
-		MelderFile_write6 (file, s1, s2, s3, s4, s5, s6); \
+		MelderFile_write6 (file, \
+			s1 && s1 [0] == 'd' && s1 [1] == '_' ? & s1 [2] : & s1 [0], \
+			s2 && s2 [0] == 'd' && s2 [1] == '_' ? & s2 [2] : & s2 [0], \
+			s3 && s3 [0] == 'd' && s3 [1] == '_' ? & s3 [2] : & s3 [0], \
+			s4 && s4 [0] == 'd' && s4 [1] == '_' ? & s4 [2] : & s4 [0], \
+			s5 && s5 [0] == 'd' && s5 [1] == '_' ? & s5 [2] : & s5 [0], \
+			s6 && s6 [0] == 'd' && s6 [1] == '_' ? & s6 [2] : & s6 [0]); \
 	}
 
 void texputi1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {

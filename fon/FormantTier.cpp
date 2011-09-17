@@ -169,7 +169,7 @@ FormantTier Formant_downto_FormantTier (Formant me) {
 				point -> formant [j-1] = pair -> frequency;
 				point -> bandwidth [j-1] = pair -> bandwidth;
 			}
-			Collection_addItem (thy points, point.transfer()); therror
+			Collection_addItem (thy points, point.transfer());
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -194,7 +194,7 @@ FormantTier Formant_PointProcess_to_FormantTier (Formant me, PointProcess pp) {
 				point -> bandwidth [iformant-1] = value;
 			}
 			point -> numberOfFormants = iformant - 1;
-			Collection_addItem (thy points, point.transfer()); therror
+			Collection_addItem (thy points, point.transfer());
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -228,16 +228,16 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 		autoTableOfReal thee = TableOfReal_create (my points -> size, 1 +
 			( includeFormants ? maximumNumberOfFormants : 0 ) +
 			( includeBandwidths ? maximumNumberOfFormants : 0 ));
-		TableOfReal_setColumnLabel (thee.peek(), 1, L"Time"); therror
+		TableOfReal_setColumnLabel (thee.peek(), 1, L"Time");
 		for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
 			wchar label [4];
 			if (includeFormants) {
 				swprintf (label, 4, L"F%d", iformant);
-				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label); therror
+				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
 			}
 			if (includeBandwidths) {
 				swprintf (label, 4, L"B%d", iformant);
-				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label); therror
+				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
 			}
 		}
 		for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {

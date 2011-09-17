@@ -30,46 +30,50 @@
 
 Thing_implement (Cepstrum, Matrix, 2);
 
-Cepstrum Cepstrum_create (double qmin, double qmax, long nq)
-{
+Cepstrum Cepstrum_create (double qmin, double qmax, long nq) {
 	try {
 		autoCepstrum me = Thing_new (Cepstrum);
 		double dx = (qmax - qmin) / nq;
 
-		Matrix_init (me.peek(), qmin, qmax, nq, dx, qmin + dx/2, 1, 1, 1, 1, 1);
+		Matrix_init (me.peek(), qmin, qmax, nq, dx, qmin + dx / 2, 1, 1, 1, 1, 1);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Cepstrum not created."); }
+	} catch (MelderError) {
+		Melder_throw ("Cepstrum not created.");
+	}
 }
 
 void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
-	double minimum, double maximum, int garnish)
-{
+                    double minimum, double maximum, int garnish) {
 	int autoscaling = minimum >= maximum;
 
 	Graphics_setInner (g);
 
-	if (qmax <= qmin)
-	{
+	if (qmax <= qmin) {
 		qmin = my xmin; qmax = my xmax;
 	}
 
 	long imin, imax;
-	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) return;
+	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
+		return;
+	}
 	autoNUMvector<double> y (imin, imax);
 
 	double *z = my z[1];
 
-	for (long i = imin; i <= imax; i++)
-	{
+	for (long i = imin; i <= imax; i++) {
 		y[i] = z[i];
 	}
 
-	if (autoscaling) NUMdvector_extrema (y.peek(), imin, imax, & minimum, & maximum);
+	if (autoscaling) {
+		NUMdvector_extrema (y.peek(), imin, imax, & minimum, & maximum);
+	}
 
-	for (long i = imin; i <= imax; i ++)
-	{
-		if (y[i] > maximum) y[i] = maximum;
-		else if (y[i] < minimum) y[i] = minimum;
+	for (long i = imin; i <= imax; i ++) {
+		if (y[i] > maximum) {
+			y[i] = maximum;
+		} else if (y[i] < minimum) {
+			y[i] = minimum;
+		}
 	}
 
 	Graphics_setWindow (g, qmin, qmax, minimum, maximum);
@@ -85,25 +89,33 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 	}
 }
 
-Matrix Cepstrum_to_Matrix (Cepstrum me)
-{
+Matrix Cepstrum_to_Matrix (Cepstrum me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Matrix created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Matrix created.");
+	}
 }
 
-Cepstrum Matrix_to_Cepstrum (Matrix me, long row)
-{
+Cepstrum Matrix_to_Cepstrum (Matrix me, long row) {
 	try {
 		autoCepstrum thee = Cepstrum_create (my xmin, my xmax, my nx);
-		if (row < 0) row = my ny + 1 - row;
-		if (row < 1) row = 1;
-		if (row > my ny) row = my ny;
+		if (row < 0) {
+			row = my ny + 1 - row;
+		}
+		if (row < 1) {
+			row = 1;
+		}
+		if (row > my ny) {
+			row = my ny;
+		}
 		NUMdvector_copyElements (my z[row], thy z[1], 1, my nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Cepstrum created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Cepstrum created.");
+	}
 }
 
 

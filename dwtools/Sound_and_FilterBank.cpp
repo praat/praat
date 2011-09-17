@@ -47,8 +47,7 @@
 	To compare with the rectangular window we need to divide this by the
 	window width (n-1) x 1^2.
 */
-static double gaussian_window_squared_correction (long n)
-{
+static double gaussian_window_squared_correction (long n) {
 	double e12 = exp (-12), denum = (e12 - 1) * (e12 - 1) * 24 * (n - 1);
 	double sqrt3 = sqrt (3), sqrt2 = sqrt (2), sqrtpi = sqrt (NUMpi);
 	double arg1 = 2 * sqrt3 * (n - 1) / (n + 1), arg2 = arg1 * sqrt2;
@@ -58,11 +57,10 @@ static double gaussian_window_squared_correction (long n)
 	return (p2 - p1 + 24 * (n - 1) * e12 * e12) / denum;
 }
 
-static Matrix Sound_to_spectralpower (Sound me)
-{
+static Matrix Sound_to_spectralpower (Sound me) {
 	try {
 		autoSpectrum s = Sound_to_Spectrum (me, TRUE);
-		autoMatrix thee = Matrix_create (s -> xmin, s -> xmax, s -> nx, s -> dx,s -> x1, 1, 1, 1, 1, 1);
+		autoMatrix thee = Matrix_create (s -> xmin, s -> xmax, s -> nx, s -> dx, s -> x1, 1, 1, 1, 1, 1);
 		double scale = 2.0 * s -> dx / (my xmax - my xmin);
 
 		// factor '2' because of positive and negative frequencies
@@ -70,8 +68,7 @@ static Matrix Sound_to_spectralpower (Sound me)
 		// my xmax - my xmin : duration of sound
 
 		double *z = thy z[1], *re = s -> z[1], *im = s -> z[2];
-		for (long i = 1; i <= s -> nx; i++)
-		{
+		for (long i = 1; i <= s -> nx; i++) {
 			z[i] = scale * (re[i] * re[i] + im[i] * im [i]);
 		}
 
@@ -80,27 +77,25 @@ static Matrix Sound_to_spectralpower (Sound me)
 		z[1] *= 0.5;
 		z[s -> nx] *= 0.5;
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Matrix with spectral power created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Matrix with spectral power created.");
+	}
 }
 
-static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, long frame)
-{
+static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, long frame) {
 	autoMatrix pv = Sound_to_spectralpower (me);
 	long nf = pv -> nx;
 	autoNUMvector<double> z (1, nf);
 
-	for (long j = 1; j <= nf; j++)
-	{
+	for (long j = 1; j <= nf; j++) {
 		z[j] = HZTOBARK (pv -> x1 + (j - 1) * pv -> dx);
 	}
 
-	for (long i = 1; i <= thy ny; i++)
-	{
+	for (long i = 1; i <= thy ny; i++) {
 		double p = 0;
 		double z0 = thy y1 + (i - 1) * thy dy;
 		double *pow = pv -> z[1]; // TODO ??
-		for (long j = 1; j <= nf; j++)
-		{
+		for (long j = 1; j <= nf; j++) {
 			// Sekey & Hanson filter is defined in the power domain.
 			// We therefore multiply the power with a (and not a^2).
 			// integral (F(z),z=0..25) = 1.58/9
@@ -114,8 +109,7 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, long frame)
 }
 
 BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
-	double f1_bark, double fmax_bark, double df_bark)
-{
+                                double f1_bark, double fmax_bark, double df_bark) {
 	try {
 		double t1, nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist;
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
@@ -125,70 +119,77 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 
 		// Check defaults.
 
-		if (f1_bark <= 0) f1_bark = 1;
-		if (fmax_bark <= 0) fmax_bark = zmax;
-		if (df_bark <= 0) df_bark = 1;
+		if (f1_bark <= 0) {
+			f1_bark = 1;
+		}
+		if (fmax_bark <= 0) {
+			fmax_bark = zmax;
+		}
+		if (df_bark <= 0) {
+			df_bark = 1;
+		}
 
 		fmax_bark = MIN (fmax_bark, zmax);
-		long nf = floor ((fmax_bark - f1_bark) / df_bark + 0.5);
-		if (nf <= 0) Melder_throw ("The combination of filter parameters is not valid.");
+		long nf = floor ( (fmax_bark - f1_bark) / df_bark + 0.5);
+		if (nf <= 0) {
+			Melder_throw ("The combination of filter parameters is not valid.");
+		}
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoBarkFilter thee = BarkFilter_create (my xmin, my xmax, nt, dt, t1,
-				fmin_bark, fmax_bark, nf, df_bark, f1_bark);
+		                      fmin_bark, fmax_bark, nf, df_bark, f1_bark);
 
 		autoMelderProgress progess (L"BarkFilter analysis");
 
-		for (long i = 1; i <= nt; i++)
-		{
+		for (long i = 1; i <= nt; i++) {
 			double t = Sampled_indexToX (thee.peek(), i);
 
-			Sound_into_Sound (me, sframe.peek(), t - windowDuration/2);
+			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2);
 
 			Sounds_multiply (sframe.peek(), window.peek());
 
-			if (! Sound_into_BarkFilter_frame (sframe.peek(), thee.peek(), i)) frameErrorCount++;
+			if (! Sound_into_BarkFilter_frame (sframe.peek(), thee.peek(), i)) {
+				frameErrorCount++;
+			}
 
-			if ((i % 10) == 1) {
-				Melder_progress5 ((double)i / nt,  L"BarkFilter analysis: frame ",
-					Melder_integer (i), L" from ", Melder_integer (nt), L"."); therror
+			if ( (i % 10) == 1) {
+				Melder_progress ( (double) i / nt,  L"BarkFilter analysis: frame ",
+				                   Melder_integer (i), L" from ", Melder_integer (nt), L"."); therror
 			}
 		}
 
-		if (frameErrorCount > 0)
-		{
-			Melder_warning5 (L"Analysis results of ", Melder_integer (frameErrorCount), L" frame(s) out of ",
-				Melder_integer (nt), L" will be suspect.");
+		if (frameErrorCount > 0) {
+			Melder_warning (L"Analysis results of ", Melder_integer (frameErrorCount), L" frame(s) out of ",
+			                Melder_integer (nt), L" will be suspect.");
 		}
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 
 		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no BarkFilter created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no BarkFilter created.");
+	}
 }
 
 
-static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame)
-{
+static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame) {
 	autoMatrix pv = Sound_to_spectralpower (me);
 
 	double z1 = pv -> x1;
 	double dz = pv -> dx;
 	long nf = pv -> nx;
 	double df = thy dy;
-	for (long i = 1; i <= thy ny; i++)
-	{
+	for (long i = 1; i <= thy ny; i++) {
 		double p = 0;
 		double fc_mel = thy y1 + (i - 1) * df;
 		double fc_hz = MELTOHZ (fc_mel);
 		double fl_hz = MELTOHZ (fc_mel - df);
 		double fh_hz =  MELTOHZ (fc_mel + df);
 		double *pow = pv -> z[1];
-		for (long j = 1; j <= nf; j++)
-		{
+		for (long j = 1; j <= nf; j++) {
 			// Filter with a triangular filter the power (=amplitude-squared)
 
 			double f = z1 + (j - 1) * dz;
@@ -201,8 +202,7 @@ static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame)
 }
 
 MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
-	double f1_mel, double fmax_mel, double df_mel)
-{
+                              double f1_mel, double fmax_mel, double df_mel) {
 	try {
 		double t1, samplingFrequency = 1 / my dx, nyquist = 0.5 * samplingFrequency;
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
@@ -212,41 +212,47 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 
 		// Check defaults.
 
-		if (fmax_mel <= 0 || fmax_mel > fceiling) fmax_mel = fceiling;
-		if (fmax_mel <= f1_mel)
-		{
+		if (fmax_mel <= 0 || fmax_mel > fceiling) {
+			fmax_mel = fceiling;
+		}
+		if (fmax_mel <= f1_mel) {
 			f1_mel = fbottom; fmax_mel = fceiling;
 		}
-		if (f1_mel <= 0) f1_mel = fbottom;
-		if (df_mel <= 0) df_mel = 100.0;
+		if (f1_mel <= 0) {
+			f1_mel = fbottom;
+		}
+		if (df_mel <= 0) {
+			df_mel = 100.0;
+		}
 
 		// Determine the number of filters.
 
-		long nf = floor ((fmax_mel - f1_mel) / df_mel + 0.5);
+		long nf = floor ( (fmax_mel - f1_mel) / df_mel + 0.5);
 		fmax_mel = f1_mel + nf * df_mel;
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel,
-			fmax_mel, nf, df_mel, f1_mel);
+		                                       fmax_mel, nf, df_mel, f1_mel);
 
-		autoMelderProgress progress ( L"MelFilters analysis");
+		autoMelderProgress progress (L"MelFilters analysis");
 
-		for (long i = 1; i <= nt; i++)
-		{
+		for (long i = 1; i <= nt; i++) {
 			double t = Sampled_indexToX (thee.peek(), i);
 			Sound_into_Sound (me, sframe.peek(), t - windowDuration / 2);
 			Sounds_multiply (sframe.peek(), window.peek());
-			if (! Sound_into_MelFilter_frame (sframe.peek(), thee.peek(), i)) frameErrorCount++;
-			if ((i % 10) == 1) {
-				Melder_progress5 ((double)i / nt, L"Frame ", Melder_integer (i), L" out of ",
-					Melder_integer (nt), L"."); therror
+			if (! Sound_into_MelFilter_frame (sframe.peek(), thee.peek(), i)) {
+				frameErrorCount++;
+			}
+			if ( (i % 10) == 1) {
+				Melder_progress ( (double) i / nt, L"Frame ", Melder_integer (i), L" out of ",
+				                   Melder_integer (nt), L"."); therror
 			}
 		}
 
-		if (frameErrorCount) Melder_warning5 (L"Analysis results of ", Melder_integer (frameErrorCount),
-			L" frame(s) out of ", Melder_integer (nt), L" will be suspect.");
+		if (frameErrorCount) Melder_warning (L"Analysis results of ", Melder_integer (frameErrorCount),
+			                                     L" frame(s) out of ", Melder_integer (nt), L" will be suspect.");
 
 		// Window correction.
 
@@ -254,28 +260,27 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 
 		NUMdmatrix_to_dBs (thy z, 1, thy ny, 1, thy nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no MelFilter created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no MelFilter created.");
+	}
 }
 
 /*
 	Analog formant filter response :
 	H(f) = i f B / (f1^2 - f^2 + i f B)
 */
-static int Sound_into_FormantFilter_frame (Sound me, FormantFilter thee, long frame, double bw)
-{
+static int Sound_into_FormantFilter_frame (Sound me, FormantFilter thee, long frame, double bw) {
 	Melder_assert (bw > 0);
 	autoMatrix pv = Sound_to_spectralpower (me);
 	double z1 = pv -> x1;
 	double dz = pv -> dx;
 	long nf = pv -> nx;
 
-	for (long i = 1; i <= thy ny; i++)
-	{
+	for (long i = 1; i <= thy ny; i++) {
 		double p = 0;
 		double fc = thy y1 + (i - 1) * thy dy;
 		double *pow = pv -> z[1];
-		for (long j = 1; j <= nf; j++)
-		{
+		for (long j = 1; j <= nf; j++) {
 			// H(f) = ifB / (fc^2 - f^2 + ifB)
 			// H(f)| = fB / sqrt ((fc^2 - f^2)^2 + f^2B^2)
 			//|H(f)|^2 = f^2B^2 / ((fc^2 - f^2)^2 + f^2B^2)
@@ -291,28 +296,31 @@ static int Sound_into_FormantFilter_frame (Sound me, FormantFilter thee, long fr
 }
 
 FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
-	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
-	double minimumPitch, double maximumPitch)
-{
+                                      double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
+                                      double minimumPitch, double maximumPitch) {
 	try {
 		double floor = 80, ceiling = 600;
-		if (minimumPitch >= maximumPitch)
-		{
+		if (minimumPitch >= maximumPitch) {
 			minimumPitch = floor; maximumPitch = ceiling;
 		}
-		if (minimumPitch <= 0) minimumPitch = floor;
-		if (maximumPitch <= 0) maximumPitch = ceiling;
+		if (minimumPitch <= 0) {
+			minimumPitch = floor;
+		}
+		if (maximumPitch <= 0) {
+			maximumPitch = ceiling;
+		}
 
 		autoPitch thee = Sound_to_Pitch (me, dt, minimumPitch, maximumPitch);
 		autoFormantFilter ff = Sound_and_Pitch_to_FormantFilter (me, thee.peek(), analysisWidth, dt,
-			f1_hz, fmax_hz, df_hz, relative_bw);
+		                       f1_hz, fmax_hz, df_hz, relative_bw);
 		return ff.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no FormantFilter created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no FormantFilter created.");
+	}
 }
 
 FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double analysisWidth, double dt,
-	double f1_hz, double fmax_hz, double df_hz, double relative_bw)
-{
+        double f1_hz, double fmax_hz, double df_hz, double relative_bw) {
 	try {
 		double t1, windowDuration = 2 * analysisWidth; /* gaussian window */
 		double nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist, fmin_hz = 0;
@@ -323,36 +331,41 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 
 		double f0_median = Pitch_getQuantile (thee, thy xmin, thy xmax, 0.5, kPitch_unit_HERTZ);
 
-		if (f0_median == NUMundefined || f0_median == 0)
-		{
+		if (f0_median == NUMundefined || f0_median == 0) {
 			f0_median = 100;
-			Melder_warning1 (L"Pitch values undefined. Bandwith fixed to 100 Hz. ");
+			Melder_warning (L"Pitch values undefined. Bandwith fixed to 100 Hz. ");
 		}
 
-		if (f1_hz <= 0) f1_hz = 100;
-		if (fmax_hz <= 0) fmax_hz = nyquist;
-		if (df_hz <= 0) df_hz = f0_median / 2;
-		if (relative_bw <= 0) relative_bw = 1.1;
+		if (f1_hz <= 0) {
+			f1_hz = 100;
+		}
+		if (fmax_hz <= 0) {
+			fmax_hz = nyquist;
+		}
+		if (df_hz <= 0) {
+			df_hz = f0_median / 2;
+		}
+		if (relative_bw <= 0) {
+			relative_bw = 1.1;
+		}
 
 		fmax_hz = MIN (fmax_hz, nyquist);
-		long nf = floor ((fmax_hz - f1_hz) / df_hz + 0.5);
+		long nf = floor ( (fmax_hz - f1_hz) / df_hz + 0.5);
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
 		autoFormantFilter him = FormantFilter_create (my xmin, my xmax, nt, dt, t1,
-			fmin_hz, fmax_hz, nf, df_hz, f1_hz);
+		                        fmin_hz, fmax_hz, nf, df_hz, f1_hz);
 
 		// Temporary objects
 
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
 		autoMelderProgress progress (L"Sound & Pitch: To FormantFilter");
-		for (long i = 1; i <= nt; i++)
-		{
+		for (long i = 1; i <= nt; i++) {
 			double t = Sampled_indexToX (him.peek(), i);
 			double b, f0 = Pitch_getValueAtTime (thee, t, kPitch_unit_HERTZ, 0);
 
-			if (f0 == NUMundefined || f0 == 0)
-			{
+			if (f0 == NUMundefined || f0 == 0) {
 				f0_undefined++; f0 = f0_median;
 			}
 			b = relative_bw * f0;
@@ -361,16 +374,18 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 
 			Sound_into_FormantFilter_frame (sframe.peek(), him.peek(), i, b);
 
-			if ((i % 10) == 1) {
-				Melder_progress5 ((double)i / nt, L"Frame ", Melder_integer (i), L" out of ",
-					Melder_integer (nt), L"."); therror
+			if ( (i % 10) == 1) {
+				Melder_progress ( (double) i / nt, L"Frame ", Melder_integer (i), L" out of ",
+				                   Melder_integer (nt), L"."); therror
 			}
 		}
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
 		NUMdmatrix_to_dBs (his z, 1, his ny, 1, his nx, ref, FilterBank_DBFAC, FilterBank_DBFLOOR);
 		return him.transfer();
-	} catch (MelderError) { Melder_throw ("FormantFilter not created from Pitch & FormantFilter."); }
+	} catch (MelderError) {
+		Melder_throw ("FormantFilter not created from Pitch & FormantFilter.");
+	}
 }
 
 /* End of file Sound_and_FilterBank.cpp */

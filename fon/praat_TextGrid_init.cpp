@@ -166,7 +166,7 @@ DIRECT (Label_Sound_to_TextGrid)
 END
 
 DIRECT (info_Label_Sound_to_TextGrid)
-	Melder_information1 (L"This is an old-style Label object. To turn it into a TextGrid, L"
+	Melder_information (L"This is an old-style Label object. To turn it into a TextGrid, L"
 		"select it together with a Sound of the appropriate duration, and click \"To TextGrid\".");
 END
 
@@ -695,7 +695,7 @@ DO
 	LOOP {
 		iam (SpellingChecker);
 		bool isWordAllowed = SpellingChecker_isWordAllowed (me, GET_STRING (L"Word"));
-		Melder_information1 (isWordAllowed ? L"1 (allowed)" : L"0 (not allowed)");
+		Melder_information (isWordAllowed ? L"1 (allowed)" : L"0 (not allowed)");
 	}
 END
 
@@ -712,7 +712,7 @@ DO
 		if (startingCharacter < 0) Melder_throw ("Starting character should be 0 or positive.");
 		if (startingCharacter > (int) wcslen (sentence)) Melder_throw ("Starting character should not exceed end of sentence.");
 		wchar *nextNotAllowedWord = SpellingChecker_nextNotAllowedWord (me, sentence, & startingCharacter);
-		Melder_information1 (nextNotAllowedWord);
+		Melder_information (nextNotAllowedWord);
 	}
 END
 
@@ -728,7 +728,7 @@ DIRECT (SpellingChecker_replaceWordList)
 END
 
 DIRECT (SpellingChecker_replaceWordList_help)
-	Melder_information1 (L"To replace the checker's word list\nby the contents of a Strings object:\n"
+	Melder_information (L"To replace the checker's word list\nby the contents of a Strings object:\n"
 		"1. select the Strings;\n2. convert to a WordList object;\n3. select the SpellingChecker and the WordList;\n"
 		"4. choose Replace.");
 END
@@ -753,7 +753,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		long numberOfLabels = TextGrid_countLabels (me, GET_INTEGER (STRING_TIER_NUMBER), GET_STRING (L"Label text"));
-		Melder_information2 (Melder_integer (numberOfLabels), L" labels");
+		Melder_information (Melder_integer (numberOfLabels), L" labels");
 	}
 END
 
@@ -986,7 +986,7 @@ FORM (TextGrid_getHighIndexFromTime, L"Get high index", L"AnyTier: Get high inde
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
 	long highIndex = AnyTier_timeToHighIndex (textTier, GET_REAL (L"Time"));
-	Melder_information1 (Melder_integer (highIndex));
+	Melder_information (Melder_integer (highIndex));
 END
 
 FORM (TextGrid_getLowIndexFromTime, L"Get low index", L"AnyTier: Get low index from time...")
@@ -996,7 +996,7 @@ FORM (TextGrid_getLowIndexFromTime, L"Get low index", L"AnyTier: Get low index f
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
 	long lowIndex = AnyTier_timeToLowIndex (textTier, GET_REAL (L"Time"));
-	Melder_information1 (Melder_integer (lowIndex));
+	Melder_information (Melder_integer (lowIndex));
 END
 
 FORM (TextGrid_getNearestIndexFromTime, L"Get nearest index", L"AnyTier: Get nearest index from time...")
@@ -1006,7 +1006,7 @@ FORM (TextGrid_getNearestIndexFromTime, L"Get nearest index", L"AnyTier: Get nea
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
 	long nearestIndex = AnyTier_timeToNearestIndex (textTier, GET_REAL (L"Time"));
-	Melder_information1 (Melder_integer (nearestIndex));
+	Melder_information (Melder_integer (nearestIndex));
 END
 
 FORM (TextGrid_getIntervalAtTime, L"TextGrid: Get interval at time", 0)
@@ -1016,7 +1016,7 @@ FORM (TextGrid_getIntervalAtTime, L"TextGrid: Get interval at time", 0)
 DO
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
 	long index = IntervalTier_timeToIndex (intervalTier, GET_REAL (L"Time"));
-	Melder_information1 (Melder_integer (index));
+	Melder_information (Melder_integer (index));
 END
 
 FORM (TextGrid_getNumberOfIntervals, L"TextGrid: Get number of intervals", 0)
@@ -1025,14 +1025,14 @@ FORM (TextGrid_getNumberOfIntervals, L"TextGrid: Get number of intervals", 0)
 DO
 	IntervalTier intervalTier = pr_TextGrid_peekIntervalTier (dia);
 	long numberOfIntervals = intervalTier -> intervals -> size;
-	Melder_information1 (Melder_integer (numberOfIntervals));
+	Melder_information (Melder_integer (numberOfIntervals));
 END
 
 DIRECT (TextGrid_getNumberOfTiers)
 	LOOP {
 		iam (TextGrid);
 		long numberOfTiers = my tiers -> size;
-		Melder_information1 (Melder_integer (numberOfTiers));
+		Melder_information (Melder_integer (numberOfTiers));
 	}
 END
 
@@ -1073,7 +1073,7 @@ FORM (TextGrid_getNumberOfPoints, L"TextGrid: Get number of points", 0)
 DO
 	TextTier textTier = pr_TextGrid_peekTextTier (dia);
 	long numberOfPoints = textTier -> points -> size;
-	Melder_information1 (Melder_integer (numberOfPoints));
+	Melder_information (Melder_integer (numberOfPoints));
 END
 	
 FORM (TextGrid_getTierName, L"TextGrid: Get tier name", 0)
@@ -1081,7 +1081,7 @@ FORM (TextGrid_getTierName, L"TextGrid: Get tier name", 0)
 	OK
 DO
 	Data tier = pr_TextGrid_peekTier (dia);
-	Melder_information1 (tier -> name);
+	Melder_information (tier -> name);
 END
 
 FORM (TextGrid_getTimeOfPoint, L"TextGrid: Get time of point", 0)
@@ -1099,7 +1099,7 @@ FORM (TextGrid_getLabelOfPoint, L"TextGrid: Get label of point", 0)
 	OK
 DO
 	TextPoint point = pr_TextGrid_peekPoint (dia);
-	Melder_information1 (point -> mark);
+	Melder_information (point -> mark);
 END
 	
 DIRECT (TextGrid_help) Melder_help (L"TextGrid"); END
@@ -1170,9 +1170,9 @@ FORM (TextGrid_isIntervalTier, L"TextGrid: Is interval tier?", 0)
 DO
 	Data tier = pr_TextGrid_peekTier (dia);
 	if (tier -> classInfo == classIntervalTier) {
-		Melder_information3 (L"1 (yes, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is an interval tier)");
+		Melder_information (L"1 (yes, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is an interval tier)");
 	} else {
-		Melder_information3 (L"0 (no, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is a point tier)");
+		Melder_information (L"0 (no, tier ", Melder_integer (GET_INTEGER (STRING_TIER_NUMBER)), L" is a point tier)");
 	}
 END
 
@@ -1197,7 +1197,7 @@ DIRECT (TextGrids_merge)
 END
 
 DIRECT (info_TextGrid_Pitch_draw)
-	Melder_information1 (L"You can draw a TextGrid together with a Pitch after selecting them both.");
+	Melder_information (L"You can draw a TextGrid together with a Pitch after selecting them both.");
 END
 
 FORM (TextGrid_removeBoundaryAtTime, L"TextGrid: Remove boundary at time", 0)
@@ -1369,12 +1369,12 @@ DO
 END
 
 DIRECT (info_TextGrid_Sound_edit)
-	Melder_information1 (L"To include a copy of a Sound in your TextGrid editor:\n"
+	Melder_information (L"To include a copy of a Sound in your TextGrid editor:\n"
 		"   select a TextGrid and a Sound, and click \"View & Edit\".");
 END
 
 DIRECT (info_TextGrid_Sound_draw)
-	Melder_information1 (L"You can draw a TextGrid together with a Sound after selecting them both.");
+	Melder_information (L"You can draw a TextGrid together with a Sound after selecting them both.");
 END
 
 FORM (TextGrid_setIntervalText, L"TextGrid: Set interval text", 0)
@@ -1490,7 +1490,7 @@ DO
 		long ipoint = GET_INTEGER (L"Point number");
 		if (ipoint > my points -> size) Melder_throw ("No such point.");
 		TextPoint point = (TextPoint) my points -> item [ipoint];
-		Melder_information1 (point -> mark);
+		Melder_information (point -> mark);
 	}
 END
 
@@ -1516,7 +1516,7 @@ DO
 	LOOP {
 		iam (WordList);
 		bool hasWord = WordList_hasWord (me, GET_STRING (L"Word"));
-		Melder_information1 (hasWord ? L"1" : L"0");
+		Melder_information (hasWord ? L"1" : L"0");
 	}
 END
 

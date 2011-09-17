@@ -86,7 +86,7 @@ IntensityTier IntensityTier_PointProcess_to_IntensityTier (IntensityTier me, Poi
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
 			double value = RealTier_getValueAtTime (me, time);
-			RealTier_addPoint (thee.peek(), time, value); therror
+			RealTier_addPoint (thee.peek(), time, value);
 		}
 		return thee.transfer();
 	} catch (MelderError) {

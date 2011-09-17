@@ -105,7 +105,7 @@ END
 DIRECT (LongSound_getNumberOfSamples)
 	LOOP {
 		iam (LongSound);
-		Melder_information2 (Melder_integer (my nx), L" samples");
+		Melder_information (Melder_integer (my nx), L" samples");
 	}
 END
 
@@ -1048,7 +1048,7 @@ DIRECT (Sound_getNumberOfChannels)
 	LOOP {
 		iam (Sound);
 		long numberOfChannels = my ny;
-		Melder_information2 (Melder_integer (numberOfChannels), numberOfChannels == 1 ? L" channel (mono)" : numberOfChannels == 2 ? L" channels (stereo)" : L"channels");
+		Melder_information (Melder_integer (numberOfChannels), numberOfChannels == 1 ? L" channel (mono)" : numberOfChannels == 2 ? L" channels (stereo)" : L"channels");
 	}
 END
 
@@ -1056,7 +1056,7 @@ DIRECT (Sound_getNumberOfSamples)
 	LOOP {
 		iam (Sound);
 		long numberOfSamples = my nx;
-		Melder_information2 (Melder_integer (numberOfSamples), L" samples");
+		Melder_information (Melder_integer (numberOfSamples), L" samples");
 	}
 END
 

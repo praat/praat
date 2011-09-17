@@ -48,9 +48,9 @@ void structScriptEditor :: v_nameChanged () {
 	static MelderString buffer = { 0 };
 	MelderString_copy (& buffer, name ? L"Script" : L"untitled script");
 	if (editorClass)
-		MelderString_append3 (& buffer, L" [", environmentName, L"]");
+		MelderString_append (& buffer, L" [", environmentName, L"]");
 	if (name)
-		MelderString_append2 (& buffer, L" ", MelderFile_messageName (& file));
+		MelderString_append (& buffer, L" ", MelderFile_messageName (& file));
 	if (dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, L" (modified)");
 	GuiWindow_setTitle (d_windowShell, buffer.string);

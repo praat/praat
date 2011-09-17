@@ -237,7 +237,7 @@ static void LongSound_init (LongSound me, MelderFile file) {
 		mp3f_set_callback (my mp3f, _LongSound_MP3_convert, me);
 		if (! mp3f_analyze (my mp3f))
 			Melder_throw ("Unable to analyze MP3 file.");
-		Melder_warning1 (L"Time measurements in MP3 files can be off by several tens of milliseconds. "
+		Melder_warning (L"Time measurements in MP3 files can be off by several tens of milliseconds. "
 			"Please convert to WAV file if you need time precision or annotation.");
 	}
 }

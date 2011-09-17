@@ -155,20 +155,20 @@ void Preferences_write (MelderFile file) {
 	static MelderString buffer = { 0 };
 	for (long ipref = 1; ipref <= thePreferences -> size; ipref ++) {
 		Preference pref = (Preference) thePreferences -> item [ipref];
-		MelderString_append2 (& buffer, pref -> string, L": ");
+		MelderString_append (& buffer, pref -> string, L": ");
 		switch (pref -> type) {
-			case bytewa: MelderString_append1 (& buffer, Melder_integer (* (signed char *) pref -> value)); break;
-			case shortwa: MelderString_append1 (& buffer, Melder_integer (* (short *) pref -> value)); break;
-			case intwa: MelderString_append1 (& buffer, Melder_integer (* (int *) pref -> value)); break;
-			case longwa: MelderString_append1 (& buffer, Melder_integer (* (long *) pref -> value)); break;
-			case ubytewa: MelderString_append1 (& buffer, Melder_integer (* (unsigned char *) pref -> value)); break;
-			case ushortwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned short *) pref -> value)); break;
-			case uintwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned int *) pref -> value)); break;
-			case ulongwa: MelderString_append1 (& buffer, Melder_integer (* (unsigned long *) pref -> value)); break;
-			case boolwa: MelderString_append1 (& buffer, Melder_boolean (* (bool *) pref -> value)); break;
-			case doublewa: MelderString_append1 (& buffer, Melder_double (* (double *) pref -> value)); break;
-			case stringwa: MelderString_append1 (& buffer, (const wchar *) pref -> value); break;
-			case enumwa: MelderString_append1 (& buffer, pref -> getText (* (enum kPreferences_dummy *) pref -> value)); break;
+			case bytewa:   MelderString_append (& buffer, Melder_integer (* (signed char *)    pref -> value)); break;
+			case shortwa:  MelderString_append (& buffer, Melder_integer (* (short *)          pref -> value)); break;
+			case intwa:    MelderString_append (& buffer, Melder_integer (* (int *)            pref -> value)); break;
+			case longwa:   MelderString_append (& buffer, Melder_integer (* (long *)           pref -> value)); break;
+			case ubytewa:  MelderString_append (& buffer, Melder_integer (* (unsigned char *)  pref -> value)); break;
+			case ushortwa: MelderString_append (& buffer, Melder_integer (* (unsigned short *) pref -> value)); break;
+			case uintwa:   MelderString_append (& buffer, Melder_integer (* (unsigned int *)   pref -> value)); break;
+			case ulongwa:  MelderString_append (& buffer, Melder_integer (* (unsigned long *)  pref -> value)); break;
+			case boolwa:   MelderString_append (& buffer, Melder_boolean (* (bool *)           pref -> value)); break;
+			case doublewa: MelderString_append (& buffer, Melder_double  (* (double *)         pref -> value)); break;
+			case stringwa: MelderString_append (& buffer, (const wchar *) pref -> value); break;
+			case enumwa:   MelderString_append (& buffer, pref -> getText (* (enum kPreferences_dummy *) pref -> value)); break;
 		}
 		MelderString_appendCharacter (& buffer, '\n');
 	}

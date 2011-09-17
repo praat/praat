@@ -456,7 +456,7 @@ double NUMlinprog_getPrimalValue (NUMlinprog me, long ivar);
 
 template <class T>
 T* NUMvector (long from, long to) {
-	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
+	T* result = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	return result;
 }
 
@@ -467,7 +467,7 @@ void NUMvector_free (T* ptr, long from) {
 
 template <class T>
 T* NUMvector_copy (T* ptr, long lo, long hi) {
-	T* result = static_cast <T*> (NUMvector_copy (sizeof (T), ptr, lo, hi)); therror
+	T* result = static_cast <T*> (NUMvector_copy (sizeof (T), ptr, lo, hi));
 	return result;
 }
 
@@ -483,50 +483,54 @@ void NUMvector_copyElements (T* vfrom, T* vto, long lo, long hi) {
 
 template <class T>
 void NUMvector_append (T** v, long lo, long *hi) {
-	NUMvector_append (sizeof (T), (void**) v, lo, hi); therror
+	NUMvector_append (sizeof (T), (void**) v, lo, hi);
 }
 
 template <class T>
 void NUMvector_insert (T** v, long lo, long *hi, long position) {
-	NUMvector_insert (sizeof (T), (void**) v, lo, hi, position); therror
+	NUMvector_insert (sizeof (T), (void**) v, lo, hi, position);
 }
 
 template <class T>
 class autoNUMvector {
-	T* ptr;
-	long from;
+	T* d_ptr;
+	long d_from;
 public:
-	autoNUMvector<T> (long a_from, long a_to) : from (a_from) {
-		ptr = static_cast <T*> (NUMvector (sizeof (T), a_from, a_to)); therror
+	autoNUMvector<T> (long from, long to) : d_from (from) {
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
-	autoNUMvector (T *a_ptr, long a_from) : ptr (a_ptr), from (a_from) {
+	autoNUMvector (T *ptr, long from) : d_ptr (ptr), d_from (from) {
 		therror
 	}
-	autoNUMvector () : ptr (NULL), from (1) {
+	autoNUMvector () : d_ptr (NULL), d_from (1) {
 	}
 	~autoNUMvector<T> () {
-		if (ptr) NUMvector_free (sizeof (T), ptr, from);
+		if (d_ptr) NUMvector_free (sizeof (T), d_ptr, d_from);
 	}
 	T& operator[] (long i) {
-		return ptr [i];
+		return d_ptr [i];
 	}
 	T* peek () const {
-		return ptr;
+		return d_ptr;
 	}
 	T* transfer () {
-		T* temp = ptr;
-		ptr = NULL;   // make the pointer non-automatic again
+		T* temp = d_ptr;
+		d_ptr = NULL;   // make the pointer non-automatic again
 		return temp;
 	}
-	void reset (long newFrom, long to) {
-		if (ptr) NUMvector_free (sizeof (T), ptr, from);
-		ptr = static_cast <T*> (NUMvector (sizeof (T), from = newFrom, to)); therror
+	void reset (long from, long to) {
+		if (d_ptr) {
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = NULL;
+		}
+		d_from = from;
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
 };
 
 template <class T>
 T** NUMmatrix (long row1, long row2, long col1, long col2) {
-	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2)); therror
+	T** result = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
 	return result;
 }
 
@@ -537,7 +541,7 @@ void NUMmatrix_free (T** ptr, long row1, long col1) {
 
 template <class T>
 T** NUMmatrix_copy (T** ptr, long row1, long row2, long col1, long col2) {
-	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2)); therror
+	T** result = static_cast <T**> (NUMmatrix_copy (sizeof (T), ptr, row1, row2, col1, col2));
 	return result;
 }
 
@@ -553,34 +557,39 @@ void NUMmatrix_copyElements (T** mfrom, T** mto, long row1, long row2, long col1
 
 template <class T>
 class autoNUMmatrix {
-	T** ptr;
-	long row1, col1;
+	T** d_ptr;
+	long d_row1, d_col1;
 public:
-	autoNUMmatrix (long a_row1, long a_row2, long a_col1, long a_col2) : row1 (a_row1), col1 (a_col1) {
-		ptr = static_cast <T**> (NUMmatrix (sizeof (T), a_row1, a_row2, a_col1, a_col2)); therror
+	autoNUMmatrix (long row1, long row2, long col1, long col2) : d_row1 (row1), d_col1 (col1) {
+		d_ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
 	}
-	autoNUMmatrix (T **a_ptr, long a_row1, long a_col1) : ptr (a_ptr), row1 (a_row1), col1 (a_col1) {
+	autoNUMmatrix (T **ptr, long row1, long col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
 		therror
 	}
-	autoNUMmatrix () : ptr (NULL), row1 (0), col1 (0) {
+	autoNUMmatrix () : d_ptr (NULL), d_row1 (0), d_col1 (0) {
 	}
 	~autoNUMmatrix () {
-		if (ptr) NUMmatrix_free (sizeof (T), ptr, row1, col1);
+		if (d_ptr) NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
 	}
 	T*& operator[] (long row) {
-		return ptr [row];
+		return d_ptr [row];
 	}
 	T** peek () const {
-		return ptr;
+		return d_ptr;
 	}
 	T** transfer () {
-		T** temp = ptr;
-		ptr = NULL;
+		T** temp = d_ptr;
+		d_ptr = NULL;
 		return temp;
 	}
-	void reset (long newRow1, long row2, long newCol1, long col2) {
-		if (ptr) NUMmatrix_free (sizeof (T), ptr, row1, col1);
-		ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1 = newRow1, row2, col1 = newCol1, col2)); therror
+	void reset (long row1, long row2, long col1, long col2) {
+		if (d_ptr) {
+			NUMmatrix_free (sizeof (T), d_ptr, d_row1, d_col1);
+			d_ptr = NULL;
+		}
+		d_row1 = row1;
+		d_col1 = col1;
+		d_ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
 	}
 };
 

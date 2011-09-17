@@ -27,8 +27,7 @@
 
 Thing_implement (Proximity, TableOfReal, 0);
 
-void Proximity_init (I, long numberOfPoints)
-{
+void Proximity_init (I, long numberOfPoints) {
 	iam (Proximity);
 	TableOfReal_init (me, numberOfPoints, numberOfPoints);
 	TableOfReal_setSequentialRowLabels (me, 0, 0, NULL, 1, 1);

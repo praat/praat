@@ -30,31 +30,30 @@
 #define FFT_DATA_TYPE double
 #include "NUMfft_core.h"
 
-void NUMforwardRealFastFourierTransform (double *data, long n)
-{
+void NUMforwardRealFastFourierTransform (double *data, long n) {
 	autoNUMfft_Table table;
 	NUMfft_Table_init (& table, n);
 	NUMfft_forward (& table, data);
 
-	if (n > 1)
-	{
+	if (n > 1) {
 		// To be compatible with old behaviour
 		double tmp = data[n];
-		for (long i = n; i > 2; i--)
+		for (long i = n; i > 2; i--) {
 			data[i] = data[i - 1];
+		}
 		data[2] = tmp;
 	}
 }
 
-void NUMreverseRealFastFourierTransform (double *data, long n)
-{
+void NUMreverseRealFastFourierTransform (double *data, long n) {
 	autoNUMfft_Table table;
 
-	if (n > 1)
-	{
+	if (n > 1) {
 		// To be compatible with old behaviour
 		double tmp = data[2];
-		for (long i = 2; i < n; i++) data[i] = data[i + 1];
+		for (long i = 2; i < n; i++) {
+			data[i] = data[i + 1];
+		}
 		data[n] = tmp;
 	}
 
@@ -62,32 +61,30 @@ void NUMreverseRealFastFourierTransform (double *data, long n)
 	NUMfft_backward (& table, data);
 }
 
-void NUMfft_forward (NUMfft_Table me, double *data)
-{
-	if (my n == 1)
+void NUMfft_forward (NUMfft_Table me, double *data) {
+	if (my n == 1) {
 		return;
+	}
 	drftf1 (my n, &data[1], my trigcache, my trigcache + my n, my splitcache);
 }
 
-void NUMfft_backward (NUMfft_Table me, double *data)
-{
-	if (my n == 1)
+void NUMfft_backward (NUMfft_Table me, double *data) {
+	if (my n == 1) {
 		return;
+	}
 	drftb1 (my n, &data[1], my trigcache, my trigcache + my n, my splitcache);
 }
 
-void NUMfft_Table_init (NUMfft_Table me, long n)
-{
-        my n = n;
-        my trigcache = NUMvector <double> (0, 3 * n - 1);
-        my splitcache = NUMvector <long> (0, 31);
-        NUMrffti (n, my trigcache, my splitcache);
+void NUMfft_Table_init (NUMfft_Table me, long n) {
+	my n = n;
+	my trigcache = NUMvector <double> (0, 3 * n - 1);
+	my splitcache = NUMvector <long> (0, 31);
+	NUMrffti (n, my trigcache, my splitcache);
 }
 
-void NUMrealft (double *data, long n, int isign)
-{
+void NUMrealft (double *data, long n, int isign) {
 	isign == 1 ? NUMforwardRealFastFourierTransform (data, n) :
-		NUMreverseRealFastFourierTransform (data, n);
+	NUMreverseRealFastFourierTransform (data, n);
 }
 
 /* End of file NUMfft.c */

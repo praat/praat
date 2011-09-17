@@ -386,7 +386,7 @@ static void menu_cb_GetLabelOfInterval (EDITOR_ARGS) {
 		long iinterval = IntervalTier_timeToIndex (tier, my startSelection);
 		const wchar_t *label = iinterval < 1 || iinterval > tier -> intervals -> size ? L"" :
 			((TextInterval) tier -> intervals -> item [iinterval]) -> text;
-		Melder_information1 (label);
+		Melder_information (label);
 	} else {
 		Melder_throw ("The selected tier is not an interval tier.");
 	}
@@ -649,7 +649,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			if (interval -> xmin != t1)
 				Melder_fatal ("Boundary unequal: %.17g versus %.17g.", interval -> xmin, t1);
 			interval -> xmax = t2;
-			TextInterval_setText (interval, Melder_wcscat2 (interval -> text, midNewInterval -> text));
+			TextInterval_setText (interval, Melder_wcscat (interval -> text, midNewInterval -> text));
 			forget (midNewInterval);
 		} else if (t2IsABoundary) {
 			/*
@@ -661,7 +661,7 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			Melder_assert (rightNewInterval -> xmin == t2);
 			Melder_assert (rightNewInterval -> xmax == t2);
 			rightNewInterval -> xmin = t1;
-			TextInterval_setText (rightNewInterval, Melder_wcscat2 (midNewInterval -> text, rightNewInterval -> text));
+			TextInterval_setText (rightNewInterval, Melder_wcscat (midNewInterval -> text, rightNewInterval -> text));
 			forget (midNewInterval);
 		} else {
 			interval -> xmax = t1;
@@ -1094,7 +1094,7 @@ static void menu_cb_AddIntervalTier (EDITOR_ARGS) {
 		TextGrid grid = (TextGrid) my data;
 		static MelderString text = { 0 };
 		MelderString_empty (& text);
-		MelderString_append2 (& text, Melder_integer (grid -> tiers -> size + 1), L" (= at bottom)");
+		MelderString_append (& text, Melder_integer (grid -> tiers -> size + 1), L" (= at bottom)");
 		SET_STRING (L"Position", text.string)
 		SET_STRING (L"Name", L"")
 	EDITOR_DO
@@ -1124,7 +1124,7 @@ static void menu_cb_AddPointTier (EDITOR_ARGS) {
 		TextGrid grid = (TextGrid) my data;
 		static MelderString text = { 0 };
 		MelderString_empty (& text);
-		MelderString_append2 (& text, Melder_integer (grid -> tiers -> size + 1), L" (= at bottom)");
+		MelderString_append (& text, Melder_integer (grid -> tiers -> size + 1), L" (= at bottom)");
 		SET_STRING (L"Position", text.string)
 		SET_STRING (L"Name", L"")
 	EDITOR_DO
@@ -1828,7 +1828,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 			if (iDraggedPoint) {
 				long dropSiteHasPoint = AnyTier_hasPoint (textTier, xWC);
 				if (dropSiteHasPoint) {
-					Melder_warning1 (L"Cannot drop point on an existing point.");
+					Melder_warning (L"Cannot drop point on an existing point.");
 				} else {
 					TextPoint point = (TextPoint) textTier -> points -> item [iDraggedPoint];
 					/*

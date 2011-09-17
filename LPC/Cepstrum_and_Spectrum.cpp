@@ -28,16 +28,14 @@
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrum.h"
 
-Cepstrum Spectrum_to_Cepstrum (Spectrum me)
-{
+Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 	try {
 		autoMatrix unwrap = Spectrum_unwrap (me);
 		autoSpectrum sx = Data_copy (me);
 
 		// Copy magnitude-squared and unwrapped phase.
 
-		for (long i = 1; i <= my nx; i ++)
-		{
+		for (long i = 1; i <= my nx; i ++) {
 			double xa = unwrap -> z[1][i];
 			sx -> z[1][i] = xa > 0 ? 0.5 * log (xa) : -300;
 			sx -> z[2][i] = unwrap -> z[2][i];
@@ -49,18 +47,18 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me)
 		autoCepstrum thee = Cepstrum_create (0, x -> xmax - x -> xmin, x -> nx);
 		NUMdvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Cepstrum created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Cepstrum created.");
+	}
 }
 
-Spectrum Cepstrum_to_Spectrum (Cepstrum me)
-{
+Spectrum Cepstrum_to_Spectrum (Cepstrum me) {
 	try {
 		autoSound x = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		NUMdvector_copyElements	(my z[1], x -> z[1], 1, my nx);
 		autoSpectrum thee = Sound_to_Spectrum (x.peek(), TRUE);
 
-		for (long i = 1; i <= thy nx; i++)
-		{
+		for (long i = 1; i <= thy nx; i++) {
 			double ar = exp (thy z[1][i]);
 			double ai = thy z[2][i];
 
@@ -68,7 +66,9 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me)
 			thy z[2][i] = ar * sin (ai);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Spectrum created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Spectrum created.");
+	}
 }
 
 /* End of file Cepstrum_and_Spectrum.cpp  */

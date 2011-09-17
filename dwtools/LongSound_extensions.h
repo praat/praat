@@ -25,10 +25,13 @@
  djmw 20110702 Latest modification
 */
 
-#ifndef _LongSound_h_
-	#include "LongSound.h"
-#endif
+#include "LongSound.h"
 
+#if defined (_WIN32)
+        #include "winport_on.h"
+        #include <windows.h>
+        #include "winport_off.h"
+#endif
 #ifdef __cplusplus
 	extern "C" {
 #endif

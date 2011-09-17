@@ -26,22 +26,23 @@
 #include "Configuration_and_Procrustes.h"
 #include "NUM2.h"
 
-Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal)
-{
+Procrustes Configurations_to_Procrustes (Configuration me, Configuration thee, int orthogonal) {
 	try {
-		if (my numberOfRows != thy numberOfRows || my numberOfColumns != thy numberOfColumns) 
+		if (my numberOfRows != thy numberOfRows || my numberOfColumns != thy numberOfColumns) {
 			Melder_throw ("Configurations must have the same number of points and the same dimension.");
+		}
 
 		autoProcrustes p = Procrustes_create (my numberOfColumns);
 		double *translation = 0, *scale = 0;
-		if (! orthogonal)
-		{
+		if (! orthogonal) {
 			translation = p -> t;
-			scale = &(p -> s);
+			scale = & (p -> s);
 		}
 		NUMProcrustes (my data, thy data, my numberOfRows, my numberOfColumns, p -> r, translation, scale);
 		return p.transfer();
-	} catch (MelderError) { Melder_throw ("Procrustes from two Configurations not created."); }
+	} catch (MelderError) {
+		Melder_throw ("Procrustes from two Configurations not created.");
+	}
 }
 
 /* End of file Configuration_and_Procrustes.c */

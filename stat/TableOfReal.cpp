@@ -950,16 +950,16 @@ Any TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 		TableOfReal_init (him.peek(), my numberOfRows + thy numberOfRows, my numberOfColumns); therror
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (him.peek(), icol, my columnLabels [icol]); therror
+			TableOfReal_setColumnLabel (him.peek(), icol, my columnLabels [icol]);
 		}
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
-			TableOfReal_setRowLabel (him.peek(), irow, my rowLabels [irow]); therror
+			TableOfReal_setRowLabel (him.peek(), irow, my rowLabels [irow]);
 			for (long icol = 1; icol <= my numberOfColumns; icol ++)
 				his data [irow] [icol] = my data [irow] [icol];
 		}
 		for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 			long hisRow = irow + my numberOfRows;
-			TableOfReal_setRowLabel (him.peek(), hisRow, thy rowLabels [irow]); therror
+			TableOfReal_setRowLabel (him.peek(), hisRow, thy rowLabels [irow]);
 			for (long icol = 1; icol <= my numberOfColumns; icol ++)
 				his data [hisRow] [icol] = thy data [irow] [icol];
 		}
@@ -984,14 +984,14 @@ Any TablesOfReal_appendMany (Collection me) {
 		TableOfReal_init (him.peek(), totalNumberOfRows, numberOfColumns); therror
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= numberOfColumns; icol ++) {
-			TableOfReal_setColumnLabel (him.peek(), icol, thy columnLabels [icol]); therror
+			TableOfReal_setColumnLabel (him.peek(), icol, thy columnLabels [icol]);
 		}
 		totalNumberOfRows = 0;
 		for (long itab = 1; itab <= my size; itab ++) {
 			thee = static_cast <TableOfReal> (my item [itab]);
 			for (long irow = 1; irow <= thy numberOfRows; irow ++) {
 				totalNumberOfRows ++;
-				TableOfReal_setRowLabel (him.peek(), totalNumberOfRows, thy rowLabels [irow]); therror
+				TableOfReal_setRowLabel (him.peek(), totalNumberOfRows, thy rowLabels [irow]);
 				for (long icol = 1; icol <= numberOfColumns; icol ++)
 					his data [totalNumberOfRows] [icol] = thy data [irow] [icol];
 			}
@@ -1059,15 +1059,15 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 		}
 		if (labelColumn) {
 			for (long icol = 1; icol < labelColumn; icol ++) {
-				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label); therror
+				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label);
 			}
 			for (long icol = labelColumn + 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.peek(), icol - 1, my columnHeaders [icol]. label); therror
+				TableOfReal_setColumnLabel (thee.peek(), icol - 1, my columnHeaders [icol]. label);
 			}
 			for (long irow = 1; irow <= my rows -> size; irow ++) {
 				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 				wchar_t *string = row -> cells [labelColumn]. string;
-				TableOfReal_setRowLabel (thee.peek(), irow, string ? string : L""); therror
+				TableOfReal_setRowLabel (thee.peek(), irow, string ? string : L"");
 				for (long icol = 1; icol < labelColumn; icol ++) {
 					thy data [irow] [icol] = row -> cells [icol]. number;   // Optimization.
 					//thy data [irow] [icol] = Table_getNumericValue_Assert (me, irow, icol);
@@ -1079,7 +1079,7 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 			}
 		} else {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label); therror
+				TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [icol]. label);
 			}
 			for (long irow = 1; irow <= my rows -> size; irow ++) {
 				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
@@ -1098,7 +1098,7 @@ TableOfReal Table_to_TableOfReal (Table me, long labelColumn) {
 Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my numberOfRows, my numberOfColumns + 1);
-		Table_setColumnLabel (thee.peek(), 1, labelOfFirstColumn); therror
+		Table_setColumnLabel (thee.peek(), 1, labelOfFirstColumn);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			wchar_t *columnLabel = my columnLabels [icol];
 			thy columnHeaders [icol + 1]. label = Melder_wcsdup (columnLabel && columnLabel [0] ? columnLabel : L"?");
@@ -1205,7 +1205,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 				MelderString_appendCharacter (& buffer, *p); therror
 				p ++;
 			}
-			TableOfReal_setColumnLabel (me.peek(), icol, buffer.string); therror
+			TableOfReal_setColumnLabel (me.peek(), icol, buffer.string);
 			MelderString_empty (& buffer);
 		}
 		for (long irow = 1; irow <= nrow; irow ++) {

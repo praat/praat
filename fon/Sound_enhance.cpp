@@ -42,7 +42,7 @@ Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double fact
 		autoPointProcess pulses = Sound_Pitch_to_PointProcess_cc (sound.peek(), pitch.peek());
 		autoPitchTier pitchTier = Pitch_to_PitchTier (pitch.peek());
 		autoDurationTier duration = DurationTier_create (my xmin, my xmax);
-		RealTier_addPoint (duration.peek(), 0.5 * (my xmin + my xmax), factor); therror
+		RealTier_addPoint (duration.peek(), 0.5 * (my xmin + my xmax), factor);
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(), duration.peek(), 1.5 / fmin);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -81,7 +81,7 @@ Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,
 				double fmid_bark = NUMhertzToBark (fmin) + 0.5, ceiling;
 				double fmax = NUMbarkToHertz (NUMhertzToBark (fmin) + 1);
 				if (fmax > fhigh) fmax = fhigh;
-				Melder_progress5 (fmin / fhigh, L"Band: ", Melder_fixed (fmin, 0), L" ... ", Melder_fixed (fmax, 0), L" Hz"); therror
+				Melder_progress (fmin / fhigh, L"Band: ", Melder_fixed (fmin, 0), L" ... ", Melder_fixed (fmax, 0), L" Hz");
 				NUMdmatrix_copyElements (orgspec -> z, spec -> z, 1, 2, 1, spec -> nx);
 				Spectrum_passHannBand (spec.peek(), fmin, fmax, bandSmoothing);
 				autoSound band = Spectrum_to_Sound (spec.peek());

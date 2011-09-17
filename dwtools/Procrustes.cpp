@@ -49,36 +49,29 @@
 
 Thing_implement (Procrustes, AffineTransform, 0);
 
-void structProcrustes :: v_transform (double **in, long nrows, double **out)
-{
-	for (long i = 1; i <= nrows; i++)
-	{
-		for (long j = 1; j <= n; j++)
-		{
+void structProcrustes :: v_transform (double **in, long nrows, double **out) {
+	for (long i = 1; i <= nrows; i++) {
+		for (long j = 1; j <= n; j++) {
 			double tmp = 0;
-			for (long k = 1; k <= n; k++)
-			{
+			for (long k = 1; k <= n; k++) {
 				tmp += in[i][k] * r[k][j];
 			}
 			out[i][j] = s * tmp + t[j];
 		}
-	}	
+	}
 }
 
-Any structProcrustes :: v_invert ()
-{
+Any structProcrustes :: v_invert () {
 	autoProcrustes thee = Data_copy (this);
 	/*
-		R is symmetric rotation matrix --> 
+		R is symmetric rotation matrix -->
 		inverse is transpose!
 	*/
 
 	thy s = s == 0 ? 1 : 1 / s;
 
-	for (long i = 1; i <= n; i++)
-	{
-		for (long j = i + 1; j <= n; j++)
-		{
+	for (long i = 1; i <= n; i++) {
+		for (long j = i + 1; j <= n; j++) {
 			thy r[i][j] = r[j][i];
 			thy r[j][i] = r[i][j];
 		}
@@ -89,38 +82,35 @@ Any structProcrustes :: v_invert ()
 			thy t[i] -= thy r[i][j] * t[j];
 		}
 		*/
-		for (long j = 1; j <= thy n; j++)
-		{
+		for (long j = 1; j <= thy n; j++) {
 			thy t[i] -= thy r[j][i] * t[j];
 		}
-	
+
 		thy t[i] *= thy s;
 	}
 	return thee.transfer();
 }
 
-static void Procrustes_setDefaults (Procrustes me)
-{
+static void Procrustes_setDefaults (Procrustes me) {
 	my s = 1;
-	for (long i = 1; i <= my n; i++)
-	{
+	for (long i = 1; i <= my n; i++) {
 		my t[i] = 0;
 		my r[i][i] = 1;
-		for (long j = i + 1; j <= my n; j++)
-		{
+		for (long j = i + 1; j <= my n; j++) {
 			my r[i][j] = my r[j][i] = 0;
 		}
 	}
 }
 
-Procrustes Procrustes_create (long n)
-{
+Procrustes Procrustes_create (long n) {
 	try {
 		autoProcrustes me = (Procrustes) Thing_new (Procrustes);
 		AffineTransform_init (me.peek(), n);
 		Procrustes_setDefaults (me.peek());
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Procrustes not created."); }
+	} catch (MelderError) {
+		Melder_throw ("Procrustes not created.");
+	}
 }
 
 

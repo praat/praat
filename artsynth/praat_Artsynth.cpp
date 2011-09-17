@@ -106,7 +106,7 @@ DO
 	LOOP {
 		iam (Artword);
 		double target = Artword_getTarget (me, GET_INTEGER (L"Muscle"), GET_REAL (L"Time"));
-		Melder_information1 (Melder_double (target));
+		Melder_information (Melder_double (target));
 	}
 END
 

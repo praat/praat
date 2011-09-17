@@ -168,7 +168,7 @@ void Data_writeToBinaryFile (Data me, MelderFile file) {
 			Melder_throw ("Cannot write first bytes of file.");
 		binputw1 (
 			my classInfo -> version > 0 ?
-				Melder_wcscat3 (my classInfo -> className, L" ", Melder_integer (my classInfo -> version)) :
+				Melder_wcscat (my classInfo -> className, L" ", Melder_integer (my classInfo -> version)) :
 				my classInfo -> className,
 			file -> filePointer);
 		Data_writeBinary (me, file -> filePointer);

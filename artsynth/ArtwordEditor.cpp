@@ -34,7 +34,7 @@ static void updateList (ArtwordEditor me) {
 	for (int i = 1; i <= a -> numberOfTargets; i ++) {
 		static MelderString itemText = { 0 };
 		MelderString_empty (& itemText);
-		MelderString_append3 (& itemText, Melder_single (a -> times [i]), L"  ", Melder_single (a -> targets [i]));
+		MelderString_append (& itemText, Melder_single (a -> times [i]), L"  ", Melder_single (a -> targets [i]));
 		GuiList_insertItem (my list, itemText.string, i);
 	}
 	Graphics_updateWs (my graphics);
@@ -78,7 +78,7 @@ static void gui_button_cb_addTarget (I, GuiButtonEvent event) {
 	}
 	static MelderString itemText = { 0 };
 	MelderString_empty (& itemText);
-	MelderString_append3 (& itemText, Melder_single (tim), L"  ", Melder_single (value));
+	MelderString_append (& itemText, Melder_single (tim), L"  ", Melder_single (value));
 	if (a -> numberOfTargets == oldCount) {
 		GuiList_replaceItem (my list, itemText.string, i);
 	} else {

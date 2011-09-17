@@ -32,19 +32,18 @@
 	#include "Discriminant.h"
 #endif
 
-static TableOfReal getStandardizedLogFrequencyPolsData (int includeLevels)
-{
+static TableOfReal getStandardizedLogFrequencyPolsData (int includeLevels) {
 	autoTableOfReal me = TableOfReal_createFromPolsData_50males (includeLevels);
-	for (long i = 1; i <= my numberOfRows; i++)
-	{
-		for (long j = 1; j <= 3; j++) my data[i][j] = log10 (my data[i][j]);
+	for (long i = 1; i <= my numberOfRows; i++) {
+		for (long j = 1; j <= 3; j++) {
+			my data[i][j] = log10 (my data[i][j]);
+		}
 	}
 	TableOfReal_standardizeColumns (me.peek());
 	TableOfReal_setColumnLabel (me.peek(), 1, L"standardized log (%F__1_)");
 	TableOfReal_setColumnLabel (me.peek(), 2, L"standardized log (%F__2_)");
 	TableOfReal_setColumnLabel (me.peek(), 3, L"standardized log (%F__3_)");
-	if (includeLevels)
-	{
+	if (includeLevels) {
 		TableOfReal_setColumnLabel (me.peek(), 4, L"standardized %L__1_");
 		TableOfReal_setColumnLabel (me.peek(), 5, L"standardized %L__1_");
 		TableOfReal_setColumnLabel (me.peek(), 6, L"standardized %L__3_");
@@ -52,30 +51,26 @@ static TableOfReal getStandardizedLogFrequencyPolsData (int includeLevels)
 	return me.transfer();
 }
 
-static void drawPolsF1F2_log (Graphics g)
-{
+static void drawPolsF1F2_log (Graphics g) {
 	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
 	Graphics_setWindow (g, -2.9, 2.9, -2.9, 2.9);
 	TableOfReal_drawScatterPlot (me.peek(), g, 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, 1, L"+", 1);
 }
 
-static void drawPolsF1F2ConcentrationEllipses (Graphics g)
-{
+static void drawPolsF1F2ConcentrationEllipses (Graphics g) {
 	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.peek());
 	Discriminant_drawConcentrationEllipses (d.peek(), g, 1, 0, NULL, 0, 1, 2, -2.9, 2.9, -2.9, 2.9, 12, 1);
 }
 
-static void drawPolsDiscriminantConfiguration (Graphics g)
-{
+static void drawPolsDiscriminantConfiguration (Graphics g) {
 	autoTableOfReal me = getStandardizedLogFrequencyPolsData (0);
 	autoDiscriminant d = TableOfReal_to_Discriminant (me.peek());
 	autoConfiguration c = Discriminant_and_TableOfReal_to_Configuration (d.peek(), me.peek(), 2);
 	Configuration_draw (c.peek(), g, 1, 2, -2.9, 2.9, -2.9, 2.9, 0, 1, L"", 1);
 }
 
-static void drawBoxPlot (Graphics g)
-{
+static void drawBoxPlot (Graphics g) {
 	double q25 = 25, q50 = 50, q75 = 60, mean = 45;
 	double hspread = q75 - q25, r = 0.05, w = 0.2;
 	double lowerInnerFence = q25 - 1.5 * hspread;
@@ -140,8 +135,7 @@ static void drawBoxPlot (Graphics g)
 	Graphics_unsetInner (g);
 }
 
-static void drawPartionedMatrix (Graphics g)
-{
+static void drawPartionedMatrix (Graphics g) {
 	double min = 0, max = 10, x1, x2, y1, y2;
 	Graphics_setWindow (g, min, max, min, max);
 	x1 = 0; x2 = max; y1 = y2 = 7;
@@ -163,8 +157,7 @@ static void drawPartionedMatrix (Graphics g)
 }
 
 void manual_dwtools_init (ManPages me);
-void manual_dwtools_init (ManPages me)
-{
+void manual_dwtools_init (ManPages me) {
 
 MAN_BEGIN (L"AffineTransform", L"djmw", 20010927)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")

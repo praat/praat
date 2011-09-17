@@ -1,6 +1,6 @@
-/* FFNet_Pattern.cpp
+/* Harmonics_def.h
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -9,27 +9,30 @@
  *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- djmw 19950113
- djmw 20020712 GPL header
-*/
 
-#include "FFNet_Pattern.h"
+#define ooSTRUCT Harmonics
+oo_DEFINE_CLASS (Harmonics, Data)
 
-void FFNet_Pattern_drawActivation (FFNet me, Pattern pattern, Graphics g, long index) {
-	if (index < 1 || index > pattern->ny) {
-		return;
-	}
-	FFNet_propagate (me, pattern->z[index], NULL);
-	FFNet_drawActivation (me, g);
-}
+	oo_LONG (numberOfHarmonics)
 
-/* End of file FFNet_Pattern.cpp */
+	oo_DOUBLE_VECTOR (harmonics, numberOfHarmonics)
+
+	#if oo_DECLARING
+		// overridden methods:
+		public:
+			virtual void v_info ();
+	#endif
+
+oo_END_CLASS (Harmonics)
+#undef ooSTRUCT
+
+
+/* End of file Harmonics_def.h */

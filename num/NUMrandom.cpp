@@ -96,7 +96,7 @@
 		NUMrandomRestart (310952);
 		for (i = 1; i <= 1009 * 2009 - 100 + 1; i ++)
 			x = NUMrandomFraction ();
-		Melder_information1 (Melder_double (x));
+		Melder_information (Melder_double (x));
 
 	With QUALITY set to 100, this should give 0.27452626307394156768 (Knuth:603).
 	With QUALITY set to 1009, it should give 0.73203216867254750078.

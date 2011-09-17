@@ -44,31 +44,28 @@
 #define PPVPHA(x,y,test) ((test) ? atan2 (-(y),-(x)) : atan2 ((y),(x)))
 #define PHADVT(xr,xi,yr,yi,xa) ((xa) > 0 ? ((xr)*(yr)+(xi)*(yi))/ (xa) : 0)
 
-struct tribolet_struct
-{
+struct tribolet_struct {
 	double thlinc, thlcon;
 	double ddf, dvtmn2;
 	double *x;
 	long nx, l, count;
-	int reverse_sign;	
+	int reverse_sign;
 };
 
 /*
 	Perform modified Goertzel algorithm to calculate, at frequency 'freq_rad',
 	the real and imaginary part of the spectrum and the d/df of the
-	spectrum of x.	
+	spectrum of x.
 	Reference: Bonzanigo (1978), IEEE Trans. ASSP, Vol. 26.
 */
 static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
-	double *xr, double *xi, double *nxr, double *nxi)
-{
+                               double *xr, double *xi, double *nxr, double *nxi) {
 	double cosf = cos (freq_rad), sinf = sin (freq_rad);
 	double a = 2 * cosf, b, u1 = 0, u2 = u1, w1 = u1, w2 = u1;
 	double *x = tbs -> x;
 	long nx = tbs -> nx;
-	
-	for (long j = 1; j <= nx; j++)
-	{
+
+	for (long j = 1; j <= nx; j++) {
 		double xj = x[j];
 		double u0 =           xj + a * u1 - u2;
 		double w0 = (j - 1) * xj + a * w1 - w2;
@@ -81,16 +78,16 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
 	/*
 		Bonzanigo's phase correction
 	*/
-		
+
 	a = freq_rad * (nx - 1);
 	u1 =   cos (a);
 	u2 = - sin (a);
-	
+
 	a = u1 - u2 * cosf;
 	b =      u2 * sinf;
 	*xr  = u1 * a - u2 * b;
 	*xi  = u2 * a + u1 * b;
-	
+
 	a = w1 - w2 * cosf;
 	b =      w2 * sinf;
 	*nxr = u1 * a - u2 * b;
@@ -102,16 +99,17 @@ static void getSpectralValues (struct tribolet_struct *tbs, double freq_rad,
 	Find the closest unwrapped phase estimate from the two admissible
 	phase values (a1 & a2).
 */
-static int phase_check (double pv, double *phase, double thlcon)
-{
+static int phase_check (double pv, double *phase, double thlcon) {
 	double a0 = (*phase - pv) / NUM2pi;
 	long k = a0;
 	double a1 = pv + k * NUM2pi;
-	double a2 = a1 + SIGN (NUM2pi, a0);	
+	double a2 = a1 + SIGN (NUM2pi, a0);
 	double a3 = fabs (a1 - *phase);
 	double a4 = fabs (a2 - *phase);
 
-	if (a3 > thlcon && a4 > thlcon ) return 0;
+	if (a3 > thlcon && a4 > thlcon) {
+		return 0;
+	}
 	*phase = a3 > a4 ? a2 : a1;
 	return 1;
 }
@@ -121,13 +119,12 @@ static int phase_check (double pv, double *phase, double thlcon)
 	the unwrapped phase estimate is returned.
 */
 static double phase_unwrap (struct tribolet_struct *tbs, double pfreq,
-	double ppv, double pdvt, double *pphase, double *ppdvt)
-{
+                            double ppv, double pdvt, double *pphase, double *ppdvt) {
 	double sdvt[25], sppv[25];
 	double freq, phase = 0, phase_inc;
 	double delta, xr, xi, xmsq, nxr, nxi;
 	long k, sindex[25], pindex = 1, sp = 1;
-	
+
 	sppv[sp] = ppv;
 	sdvt[sp] = pdvt;
 	sindex[sp] = tbs -> l + 1;
@@ -137,12 +134,14 @@ static double phase_unwrap (struct tribolet_struct *tbs, double pfreq,
 p20:
 
 	/*
-		When the routine runs out of stack space, there probably is 
-		a zero very near the unit circle that results in a jump of 
-		pi in the phase.	
+		When the routine runs out of stack space, there probably is
+		a zero very near the unit circle that results in a jump of
+		pi in the phase.
 	*/
 
-	if ((sindex[sp] - pindex) <= 1) return phase;
+	if ( (sindex[sp] - pindex) <= 1) {
+		return phase;
+	}
 
 	/*	p30:
 		Get the intermediate frequency value and compute its phase
@@ -154,77 +153,86 @@ p20:
 	sindex[++sp] = k;
 	sppv[sp] = PPVPHA (xr, xi, tbs -> reverse_sign);
 	xmsq = xr * xr + xi * xi;
-	sdvt[sp] = PHADVT (xr, xi, nxr, nxi, xmsq); 
-	
+	sdvt[sp] = PHADVT (xr, xi, nxr, nxi, xmsq);
+
 p40:
 	/*
 		Evaluate the phase increment.
 		If the phase increment, reduced by the expected linear phase
 		increment, is greater than the specified threshold, adapt step size.
 	*/
-	
+
 	delta = 0.5 * tbs -> ddf * (sindex[sp] - pindex);
 	phase_inc = delta * (*ppdvt + sdvt[sp]);
-	
-	if (fabs (phase_inc - delta * tbs -> dvtmn2) > tbs -> thlinc) goto p20;
+
+	if (fabs (phase_inc - delta * tbs -> dvtmn2) > tbs -> thlinc) {
+		goto p20;
+	}
 
 	phase = *pphase + phase_inc;
-	
-	if (! phase_check (sppv[sp], &phase, tbs -> thlcon)) goto p20;
-	
-	if (fabs (phase - *pphase) > NUMpi) goto p20;
-	
-	if (sp == 1) return phase;
-	
+
+	if (! phase_check (sppv[sp], &phase, tbs -> thlcon)) {
+		goto p20;
+	}
+
+	if (fabs (phase - *pphase) > NUMpi) {
+		goto p20;
+	}
+
+	if (sp == 1) {
+		return phase;
+	}
+
 	/*
 		p10: Update previous estimate.
 	*/
-		
+
 	pindex = sindex[sp];
 	*pphase = phase;
 	*ppdvt = sdvt[sp--];
-	
+
 	goto p40;
 }
 
-Matrix Spectrum_unwrap (Spectrum me)
-{
+Matrix Spectrum_unwrap (Spectrum me) {
 	try {
 		struct tribolet_struct tbs;
 		int remove_linear_part = 1;
 
 		long nfft = 2;
-		while (nfft < my nx - 1) nfft *= 2;
+		while (nfft < my nx - 1) {
+			nfft *= 2;
+		}
 		nfft *= 2;
 
-		if (nfft / 2 != my nx - 1) Melder_throw ("Dimension of Spectrum is not (power of 2 - 1).");
-		
+		if (nfft / 2 != my nx - 1) {
+			Melder_throw ("Dimension of Spectrum is not (power of 2 - 1).");
+		}
+
 		autoSound x = Spectrum_to_Sound (me);
 		autoSound nx = Data_copy (x.peek());
-	
-		for (long i = 1; i <= x -> nx; i++)
-		{
+
+		for (long i = 1; i <= x -> nx; i++) {
 			nx -> z[1][i] *= (i - 1);
 		}
 		autoSpectrum snx = Sound_to_Spectrum (nx.peek(), 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1);
-	
+
 		// Common variables.
-	
+
 		tbs.thlinc = THLINC;
 		tbs.thlcon = THLCON;
 		tbs.x = x -> z[1];
 		tbs.nx = x -> nx;
-		tbs.l =  (pow (2, EXP2) + 0.1);
-		tbs.ddf = NUM2pi / ((tbs.l) * nfft);
+		tbs.l = (pow (2, EXP2) + 0.1);
+		tbs.ddf = NUM2pi / ( (tbs.l) * nfft);
 		tbs.reverse_sign = my z[1][1] < 0;
 		tbs.count = 0;
-	
+
 		// Reuse snx : put phase derivative (d/df) in imaginary part.
-	
+
 		tbs.dvtmn2 = 0;
-		for (long i = 1; i <= my nx; i ++)
-		{
+		for (long i = 1; i <= my nx; i ++) {
 			double xr = my z[1][i], xi = my z[2][i];
 			double nxr = snx -> z[1][i], nxi = snx -> z[2][i];
 			double xmsq = xr * xr + xi * xi;
@@ -233,88 +241,81 @@ Matrix Spectrum_unwrap (Spectrum me)
 			snx -> z[2][i] = pdvt;
 			tbs.dvtmn2 += pdvt;
 		}
-	
+
 		tbs.dvtmn2 = (2 * tbs.dvtmn2 - snx -> z[2][1] - snx -> z[2][my nx]) / (my nx - 1);
-		
+
 		autoMelderProgress progress (L"Phase unwrapping");
-	
+
 		double pphase = 0, phase = 0;
 		double ppdvt = snx -> z[2][1];
 		thy z[2][1] = PPVPHA (my z[1][1], my z[2][1], tbs.reverse_sign);
-		for (long i = 2; i <= my nx; i ++)
-		{
+		for (long i = 2; i <= my nx; i ++) {
 			double pfreq = NUM2pi * (i - 1) / nfft;
 			double pdvt = snx -> z[2][i];
 			double ppv = PPVPHA (my z[1][i], my z[2][i], tbs.reverse_sign);
 			phase = phase_unwrap (&tbs, pfreq, ppv, pdvt, &pphase, &ppdvt);
 			ppdvt = pdvt;
 			thy z[2][i] = pphase = phase;
-			Melder_progress4 ((double)i / my nx, Melder_integer (i),
-				L" unwrapped phases from ", Melder_integer (my nx), L"."); therror
+			Melder_progress ( (double) i / my nx, Melder_integer (i),
+			                   L" unwrapped phases from ", Melder_integer (my nx), L"."); therror
 		}
 
 		long iphase = (phase / NUMpi + 0.1);
-		
-		if (remove_linear_part)
-		{
+
+		if (remove_linear_part) {
 			phase /= my nx - 1;
-			for (long i = 2; i <= my nx; i ++)
-			{
+			for (long i = 2; i <= my nx; i ++) {
 				thy z[2][i] -= phase * (i - 1);
 			}
 		}
-		Melder_information2 (L"Number of spectral values: ", Melder_integer (tbs.count));
-		Melder_information2 (L" iphase = ", Melder_integer (iphase));
+		Melder_information (L"Number of spectral values: ", Melder_integer (tbs.count));
+		Melder_information (L" iphase = ", Melder_integer (iphase));
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": not unwrapped."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": not unwrapped.");
+	}
 }
 
 void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
-	double phase_min, double phase_max, int unwrap, int garnish)
-{
+                          double phase_min, double phase_max, int unwrap, int garnish) {
 	autoMatrix thee = 0;
 	int reverse_sign = my z[1][1] < 0;
 
-	if (unwrap)
-	{
-		thee.reset(Spectrum_unwrap (me));
-	}
-	else
-	{
-		thee.reset(Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1));
-		for (long i = 1; i <= my nx; i ++)
-		{
+	if (unwrap) {
+		thee.reset (Spectrum_unwrap (me));
+	} else {
+		thee.reset (Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 2, 2, 1, 1));
+		for (long i = 1; i <= my nx; i ++) {
 			thy z[2][i] = PPVPHA (my z[1][i], my z[2][i], reverse_sign);
 		}
 	}
 
 	Matrix_drawRows (thee.peek(), g, fmin, fmax, 1.9, 2.1, phase_min, phase_max);
-	if (garnish)
-	{
+	if (garnish) {
 
-	}	
+	}
 }
 
-Spectrum Spectra_multiply (Spectrum me, Spectrum thee)
-{
+Spectrum Spectra_multiply (Spectrum me, Spectrum thee) {
 	try {
 		if (my nx != thy nx || my x1 != thy x1 || my xmax != thy xmax ||
-			my dx != thy dx) Melder_throw ("Dimensions of both spectra do not conform.");
+		        my dx != thy dx) {
+			Melder_throw ("Dimensions of both spectra do not conform.");
+		}
 		autoSpectrum him = Data_copy (me);
-	
-		for (long i = 1; i <= his nx; i++)
-		{
+
+		for (long i = 1; i <= his nx; i++) {
 			his z[1][i] = my z[1][i] * thy z[1][i] - my z[2][i] * thy z[2][i];
-			his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i]; 
+			his z[2][i] = my z[1][i] * thy z[2][i] + my z[2][i] * thy z[1][i];
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_throw (me, ": not multiplied."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": not multiplied.");
+	}
 }
 
-void Spectrum_conjugate (Spectrum me)
-{
-	for (long i = 1; i <= my nx; i++)
-	{
+void Spectrum_conjugate (Spectrum me) {
+	for (long i = 1; i <= my nx; i++) {
 		my z[2][i] = - my z[2][i];
 	}
 }

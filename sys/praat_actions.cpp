@@ -174,7 +174,7 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 static void deleteDynamicMenu (void) {
 	if (praatP.phase != praat_HANDLING_EVENTS) return;
 //static int deletions;
-//Melder_information1(Melder_integer(++deletions));
+//Melder_information(Melder_integer(++deletions));
 	if (praat_dynamicMenu) {
 		GuiObject_destroy (praat_dynamicMenu);
 		praat_dynamicMenu = NULL;

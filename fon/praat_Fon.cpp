@@ -363,7 +363,7 @@ DO
 END
 
 DIRECT (info_AmplitudeTier_Sound_edit)
-	Melder_information1 (L"To include a copy of a Sound in your AmplitudeTier editor:\n"
+	Melder_information (L"To include a copy of a Sound in your AmplitudeTier editor:\n"
 		"   select an AmplitudeTier and a Sound, and click \"View & Edit\".");
 END
 
@@ -626,7 +626,7 @@ END
 DIRECT (DurationTier_help) Melder_help (L"DurationTier"); END
 
 DIRECT (info_DurationTier_Sound_edit)
-	Melder_information1 (L"To include a copy of a Sound in your DurationTier editor:\n"
+	Melder_information (L"To include a copy of a Sound in your DurationTier editor:\n"
 		"   select a DurationTier and a Sound, and click \"View & Edit\".");
 END
 
@@ -821,7 +821,7 @@ DIRECT (Formant_getMaximumNumberOfFormants)
 	LOOP {
 		iam (Formant);
 		long maximumNumberOfFormants = Formant_getMaxNumFormants (me);
-		Melder_information2 (Melder_integer (maximumNumberOfFormants), L" (there are at most this many formants in every frame)");
+		Melder_information (Melder_integer (maximumNumberOfFormants), L" (there are at most this many formants in every frame)");
 		break;
 	}
 END
@@ -868,7 +868,7 @@ DIRECT (Formant_getMinimumNumberOfFormants)
 	LOOP {
 		iam (Formant);
 		long minimumNumberOfFormants = Formant_getMinNumFormants (me);
-		Melder_information2 (Melder_integer (minimumNumberOfFormants), L" (there are at least this many formants in every frame)");
+		Melder_information (Melder_integer (minimumNumberOfFormants), L" (there are at least this many formants in every frame)");
 		break;
 	}
 END
@@ -881,7 +881,7 @@ DO
 		iam (Formant);
 		long frame = GET_INTEGER (L"Frame number");
 		if (frame > my nx) Melder_throw ("There is no frame ", frame, " in a Formant with only ", my nx, " frames.");
-		Melder_information2 (Melder_integer (my d_frames [frame]. nFormants), L" formants");
+		Melder_information (Melder_integer (my d_frames [frame]. nFormants), L" formants");
 		break;
 	}
 END
@@ -1340,7 +1340,7 @@ DO
 	LOOP {
 		iam (FormantTier);
 		autoFormantPoint point2 = Data_copy (point.peek());
-		AnyTier_addPoint (me, point2.transfer()); therror
+		AnyTier_addPoint (me, point2.transfer());
 		praat_dataChanged (me);
 	}
 END
@@ -1936,7 +1936,7 @@ DIRECT (IntensityTier_to_AmplitudeTier)
 END
 
 DIRECT (info_IntensityTier_Sound_edit)
-	Melder_information1 (L"To include a copy of a Sound in your IntensityTier editor:\n"
+	Melder_information (L"To include a copy of a Sound in your IntensityTier editor:\n"
 		"   select an IntensityTier and a Sound, and click \"View & Edit\".");
 END
 
@@ -2207,7 +2207,7 @@ END
 DIRECT (Ltas_getNumberOfBins)
 	Ltas me = FIRST (Ltas);
 	long numberOfBins = my nx;
-	Melder_information2 (Melder_integer (numberOfBins), L" bins");
+	Melder_information (Melder_integer (numberOfBins), L" bins");
 END
 
 FORM (Ltas_getSlope, L"Ltas: Get slope", 0)
@@ -2418,12 +2418,12 @@ FORM_WRITE (Manipulation_writeToTextFileWithoutSound, L"Text file without Sound"
 END
 
 DIRECT (info_DurationTier_Manipulation_replace)
-	Melder_information1 (L"To replace the DurationTier in a Manipulation object,\n"
+	Melder_information (L"To replace the DurationTier in a Manipulation object,\n"
 		"select a DurationTier object and a Manipulation object\nand choose \"Replace duration\".");
 END
 
 DIRECT (info_PitchTier_Manipulation_replace)
-	Melder_information1 (L"To replace the PitchTier in a Manipulation object,\n"
+	Melder_information (L"To replace the PitchTier in a Manipulation object,\n"
 		"select a PitchTier object and a Manipulation object\nand choose \"Replace pitch\".");
 END
 
@@ -2627,12 +2627,12 @@ END
 
 DIRECT (Matrix_getNumberOfColumns)
 	Matrix me = FIRST_ANY (Matrix);
-	Melder_information1 (Melder_integer (my nx));
+	Melder_information (Melder_integer (my nx));
 END
 
 DIRECT (Matrix_getNumberOfRows)
 	Matrix me = FIRST_ANY (Matrix);
-	Melder_information1 (Melder_integer (my ny));
+	Melder_information (Melder_integer (my ny));
 END
 
 DIRECT (Matrix_getColumnDistance)
@@ -2673,7 +2673,7 @@ DO
 	Matrix me = FIRST_ANY (Matrix);
 	double x = GET_REAL (L"X"), y = GET_REAL (L"Y");
 	double value = Matrix_getValueAtXY (me, x, y);
-	Melder_information6 (Melder_double (value), L" (at x = ", Melder_double (x), L" and y = ", Melder_double (y), L")");
+	Melder_information (Melder_double (value), L" (at x = ", Melder_double (x), L" and y = ", Melder_double (y), L")");
 END
 
 FORM (Matrix_getValueInCell, L"Matrix: Get value in cell", 0)
@@ -2987,7 +2987,7 @@ DIRECT (ParamCurve_help) Melder_help (L"ParamCurve"); END
 
 DIRECT (Pitch_getNumberOfVoicedFrames)
 	Pitch me = FIRST (Pitch);
-	Melder_information2 (Melder_integer (Pitch_countVoicedFrames (me)), L" voiced frames");
+	Melder_information (Melder_integer (Pitch_countVoicedFrames (me)), L" voiced frames");
 END
 
 DIRECT (Pitch_difference)
@@ -3148,9 +3148,9 @@ DO
 	long nVoiced = (unit == 1 ? Pitch_getMeanAbsSlope_hertz : unit == 2 ? Pitch_getMeanAbsSlope_mel : unit == 3 ? Pitch_getMeanAbsSlope_semitones : Pitch_getMeanAbsSlope_erb)
 		(me, & slope);
 	if (nVoiced < 2) {
-		Melder_information1 (L"--undefined--");
+		Melder_information (L"--undefined--");
 	} else {
-		Melder_information4 (Melder_double (slope), L" ", GET_STRING (L"Unit"), L"/s");
+		Melder_information (Melder_double (slope), L" ", GET_STRING (L"Unit"), L"/s");
 	}
 END
 
@@ -3906,7 +3906,7 @@ DO
 END
 
 DIRECT (info_PitchTier_Sound_edit)
-	Melder_information1 (L"To include a copy of a Sound in your PitchTier editor:\n"
+	Melder_information (L"To include a copy of a Sound in your PitchTier editor:\n"
 		"   select a PitchTier and a Sound, and click \"View & Edit\".");
 END
 
@@ -4100,33 +4100,33 @@ FORM (PointProcess_getLowIndex, L"PointProcess: Get low index", L"PointProcess: 
 	REAL (L"Time (s)", L"0.5")
 	OK
 DO
-	Melder_information1 (Melder_integer (PointProcess_getLowIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
+	Melder_information (Melder_integer (PointProcess_getLowIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
 END
 
 FORM (PointProcess_getHighIndex, L"PointProcess: Get high index", L"PointProcess: Get high index...")
 	REAL (L"Time (s)", L"0.5")
 	OK
 DO
-	Melder_information1 (Melder_integer (PointProcess_getHighIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
+	Melder_information (Melder_integer (PointProcess_getHighIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
 END
 
 FORM (PointProcess_getNearestIndex, L"PointProcess: Get nearest index", L"PointProcess: Get nearest index...")
 	REAL (L"Time (s)", L"0.5")
 	OK
 DO
-	Melder_information1 (Melder_integer (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
+	Melder_information (Melder_integer (PointProcess_getNearestIndex (FIRST_ANY (PointProcess), GET_REAL (L"Time"))));
 END
 
 DIRECT (PointProcess_getNumberOfPoints)
 	PointProcess me = FIRST_ANY (PointProcess);
-	Melder_information1 (Melder_integer (my nt));
+	Melder_information (Melder_integer (my nt));
 END
 
 FORM (PointProcess_getNumberOfPeriods, L"PointProcess: Get number of periods", L"PointProcess: Get number of periods...")
 	dia_PointProcess_getRangeProperty (dia);
 	OK
 DO
-	Melder_information1 (Melder_integer (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess),
+	Melder_information (Melder_integer (PointProcess_getNumberOfPeriods (FIRST_ANY (PointProcess),
 		GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 		GET_REAL (L"Shortest period"), GET_REAL (L"Longest period"), GET_REAL (L"Maximum period factor"))));
 END
@@ -4137,7 +4137,7 @@ FORM (PointProcess_getTimeFromIndex, L"Get time", 0 /*"PointProcess: Get time fr
 DO
 	PointProcess me = FIRST_ANY (PointProcess);
 	long i = GET_INTEGER (L"Point number");
-	if (i > my nt) Melder_information1 (L"--undefined--");
+	if (i > my nt) Melder_information (L"--undefined--");
 	else Melder_informationReal (my t [i], L"seconds");
 END
 
@@ -4369,7 +4369,7 @@ DO
 END
 
 DIRECT (info_PointProcess_Sound_edit)
-	Melder_information1 (L"To include a copy of a Sound in your PointProcess editor:\n"
+	Melder_information (L"To include a copy of a Sound in your PointProcess editor:\n"
 		"   select a PointProcess and a Sound, and click \"View & Edit\".");
 END
 
@@ -5022,7 +5022,7 @@ END
 DIRECT (Spectrum_getNumberOfBins)
 	LOOP {
 		iam (Spectrum);
-		Melder_information2 (Melder_integer (my nx), L" bins");
+		Melder_information (Melder_integer (my nx), L" bins");
 	}
 END
 
@@ -5338,7 +5338,7 @@ DIRECT (Strings_equal)
 	Strings s1 = NULL, s2 = NULL;
 	LOOP (s1 ? s2 : s1) = (Strings) OBJECT;
 	bool equal = Data_equal (s1, s2);
-	Melder_information1 (Melder_integer (equal));
+	Melder_information (Melder_integer (equal));
 END
 
 DIRECT (Strings_genericize)
@@ -5357,7 +5357,7 @@ END
 DIRECT (Strings_getNumberOfStrings)
 	LOOP {
 		iam (Strings);
-		Melder_information1 (Melder_integer (my numberOfStrings));
+		Melder_information (Melder_integer (my numberOfStrings));
 	}
 END
 
@@ -5368,7 +5368,7 @@ DO
 	LOOP {
 		iam (Strings);
 		long index = GET_INTEGER (L"Index");
-		Melder_information1 (index > my numberOfStrings ? L"" : my strings [index]);   // TODO
+		Melder_information (index > my numberOfStrings ? L"" : my strings [index]);   // TODO
 	}
 END
 
@@ -5471,7 +5471,7 @@ DIRECT (TimeFrameSampled_getNumberOfFrames)
 	LOOP {
 		iam (Sampled);
 		long numberOfFrames = my nx;
-		Melder_information2 (Melder_integer (numberOfFrames), L" frames");
+		Melder_information (Melder_integer (numberOfFrames), L" frames");
 	}
 END
 
@@ -5599,7 +5599,7 @@ FORM (TimeTier_getHighIndexFromTime, L"Get high index", L"AnyTier: Get high inde
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information1 (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (L"Time"))));
+		Melder_information (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToHighIndex (me, GET_REAL (L"Time"))));
 	}
 END
 
@@ -5609,7 +5609,7 @@ FORM (TimeTier_getLowIndexFromTime, L"Get low index", L"AnyTier: Get low index f
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information1 (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (L"Time"))));
+		Melder_information (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToLowIndex (me, GET_REAL (L"Time"))));
 	}
 END
 
@@ -5619,14 +5619,14 @@ FORM (TimeTier_getNearestIndexFromTime, L"Get nearest index", L"AnyTier: Get nea
 DO
 	LOOP {
 		iam (AnyTier);
-		Melder_information1 (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (L"Time"))));
+		Melder_information (my points -> size == 0 ? L"--undefined--" : Melder_integer (AnyTier_timeToNearestIndex (me, GET_REAL (L"Time"))));
 	}
 END
 
 DIRECT (TimeTier_getNumberOfPoints)
 	LOOP {
 		iam (AnyTier);
-		Melder_information2 (Melder_integer (my points -> size), L" points");
+		Melder_information (Melder_integer (my points -> size), L" points");
 	}
 END
 
@@ -5637,7 +5637,7 @@ DO
 	LOOP {
 		iam (AnyTier);
 		long i = GET_INTEGER (L"Point number");
-		if (i > my points -> size) Melder_information1 (L"--undefined--");
+		if (i > my points -> size) Melder_information (L"--undefined--");
 		else Melder_informationReal (((AnyPoint) my points -> item [i]) -> number, L"seconds");
 	}
 END

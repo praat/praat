@@ -24,33 +24,33 @@
 
 #include "LPC_to_Spectrogram.h"
 
-Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction, double deEmphasisFrequency)
-{
+Spectrogram LPC_to_Spectrogram (LPC me, double dfMin, double bandwidthReduction, double deEmphasisFrequency) {
 	try {
 		double samplingFrequency = 1.0 / my samplingPeriod;
 		long nfft = 2;
-		if (dfMin <= 0)
-		{
+		if (dfMin <= 0) {
 			nfft = 512; dfMin = samplingFrequency / nfft;
 		}
-		while (samplingFrequency / nfft > dfMin || nfft <= my maxnCoefficients) nfft *= 2;
+		while (samplingFrequency / nfft > dfMin || nfft <= my maxnCoefficients) {
+			nfft *= 2;
+		}
 		double freqStep = samplingFrequency / nfft;
-	
+
 		autoSpectrogram thee = (Spectrogram) Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1,
-			0, samplingFrequency / 2, nfft / 2 + 1, freqStep, 0);
-		
-		for (long i = 1; i <= my nx; i++)
-		{
+		                       0, samplingFrequency / 2, nfft / 2 + 1, freqStep, 0);
+
+		for (long i = 1; i <= my nx; i++) {
 			double t = Sampled_indexToX (me, i);
 			autoSpectrum spec = LPC_to_Spectrum (me, t, dfMin, bandwidthReduction, deEmphasisFrequency);
-			for (long j = 1; j <= spec -> nx; j++)
-			{
+			for (long j = 1; j <= spec -> nx; j++) {
 				double re = spec -> z[1][j], im = spec -> z[2][j];
 				thy z[j][i] =  re * re + im * im;
 			}
-		}	
+		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Spectrogram created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Spectrogram created.");
+	}
 }
 
 /* End of file LPC_to_Spectrogram.cpp */

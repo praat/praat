@@ -59,7 +59,7 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (max >= min) { \
-		x = NUM##t##vector (min, max); therror \
+		x = NUM##t##vector (min, max); \
 		for (long i = min; i <= max; i ++) { \
 			x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); \
 	}
@@ -111,7 +111,7 @@
 #define oo_OBJECT(Class,version,x)  \
 	if (bingetex (f)) { \
 		long saveVersion = Thing_version; \
-		x = Thing_new (Class); therror \
+		x = Thing_new (Class); \
 		Thing_version = version; \
 		x -> v_readBinary (f); therror \
 		Thing_version = saveVersion; \

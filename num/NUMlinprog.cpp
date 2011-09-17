@@ -128,7 +128,7 @@ void NUMlinprog_run (NUMlinprog me) {
 			default: break;
 		}
 		if (my status == GLP_FEAS) {
-			Melder_warning1 (L"Linear programming solution is feasible but not optimal.");
+			Melder_warning (L"Linear programming solution is feasible but not optimal.");
 		}
 	} catch (MelderError) {
 		Melder_throw ("Linear programming: not run.");

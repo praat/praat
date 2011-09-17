@@ -30,3 +30,4 @@ libdwsys.a: $(OBJECTS) NUMmachar.o
 	$(RANLIB) libdwsys.a
 
 $(OBJECTS): *.h ../stat/*.h ../num/NUM.h ../sys/*.h ../GSL/*.h ../dwsys/*.h ../kar/*.h
+

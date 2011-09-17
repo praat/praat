@@ -194,7 +194,7 @@ long AnyTier_hasPoint (I, double t) {
 void AnyTier_addPoint (I, Data point) {
 	iam (AnyTier);
 	try {
-		Collection_addItem (my points, point); therror
+		Collection_addItem (my points, point);
 	} catch (MelderError) {
 		Melder_throw (me, ": point not added.");
 	}

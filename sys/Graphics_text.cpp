@@ -138,7 +138,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		ipaInited = TRUE;
 		if (! charisAvailable && ! doulosAvailable) {
 			/* BUG: The next warning may cause reentry of drawing (on window exposure) and lead to crash. Some code must be non-reentrant !! */
-			Melder_warning1 (L"The phonetic font is not available.\nSeveral characters will not look correct.\nSee www.praat.org");
+			Melder_warning (L"The phonetic font is not available.\nSeveral characters will not look correct.\nSee www.praat.org");
 		} else {
 			ipaAvailable = true;
 		}
@@ -381,7 +381,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					if (theIpaTimesFont != 0) {
 						ipaAvailable = TRUE;
 					} else {
-						Melder_warning1 (L"The phonetic font SILDoulos IPA93 is not available.\nPraat will use an ugly bitmap font instead.\nSee http://www.praat.org");
+						Melder_warning (L"The phonetic font SILDoulos IPA93 is not available.\nPraat will use an ugly bitmap font instead.\nSee http://www.praat.org");
 					}
 					lc -> font.integer = theIpaTimesFont;
 				}
@@ -1736,7 +1736,7 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 	theZapfDingbatsAtsuiFont = ATSFontFindFromName (CFSTR ("Zapf Dingbats"), kATSOptionFlagsDefault);
 	if (! theZapfDingbatsAtsuiFont) theZapfDingbatsAtsuiFont = theTimesAtsuiFont;
 	if (! theTimesAtsuiFont || ! theHelveticaAtsuiFont || ! theCourierAtsuiFont || ! theSymbolAtsuiFont) {
-		Melder_warning1 (L"Praat cannot find one or more of the fonts Times (or Times New Roman), "
+		Melder_warning (L"Praat cannot find one or more of the fonts Times (or Times New Roman), "
 			"Helvetica (or Arial), Courier (or Courier New), and Symbol. "
 			"Praat will have limited capabilities for international text.");
 		return false;
@@ -1747,7 +1747,7 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 		if (theIpaPalatinoAtsuiFont) {
 			theIpaTimesAtsuiFont = theIpaPalatinoAtsuiFont;
 		} else {
-			Melder_warning1 (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
+			Melder_warning (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
 				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
 			theIpaTimesAtsuiFont = theTimesAtsuiFont;
 			theIpaPalatinoAtsuiFont = thePalatinoAtsuiFont;

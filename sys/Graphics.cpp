@@ -127,11 +127,11 @@ void Graphics_setWsViewport (Graphics me,
 	if (x1DC < my x1DCmin || x2DC > my x2DCmax || y1DC < my y1DCmin || y2DC > my y2DCmax) {
 		static MelderString warning = { 0 };
 		MelderString_empty (& warning);
-		MelderString_append8 (& warning, L"Graphics_setWsViewport: coordinates too large:\n",
+		MelderString_append (& warning, L"Graphics_setWsViewport: coordinates too large:\n",
 			Melder_integer (x1DC), L"..", Melder_integer (x2DC), L" x ", Melder_integer (y1DC), L"..", Melder_integer (y2DC));
-		MelderString_append9 (& warning, L" goes outside ",
+		MelderString_append (& warning, L" goes outside ",
 			Melder_integer (my x1DCmin), L"..", Melder_integer (my x2DCmax), L" x ", Melder_integer (my y1DCmin), L"..", Melder_integer (my y2DCmax), L".");
-		Melder_warning1 (warning.string);
+		Melder_warning (warning.string);
 		x1DC = my x1DCmin;
 		x2DC = my x2DCmax;
 		y1DC = my y1DCmin;

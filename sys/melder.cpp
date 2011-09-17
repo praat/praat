@@ -359,49 +359,49 @@ static void _Melder_progress (double progress, const wchar *message) {
 
 static MelderString theProgressBuffer = { 0 };
 
-void Melder_progress1 (double progress, const wchar *s1) {
+void Melder_progress (double progress, const wchar *s1) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append1 (& theProgressBuffer, s1);
+	MelderString_append (& theProgressBuffer, s1);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress2 (double progress, const wchar *s1, const wchar *s2) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append2 (& theProgressBuffer, s1, s2);
+	MelderString_append (& theProgressBuffer, s1, s2);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress3 (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append3 (& theProgressBuffer, s1, s2, s3);
+	MelderString_append (& theProgressBuffer, s1, s2, s3);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress4 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append4 (& theProgressBuffer, s1, s2, s3, s4);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress5 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append5 (& theProgressBuffer, s1, s2, s3, s4, s5);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress6 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append6 (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress7 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append7 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress8 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append8 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress9 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append9 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
 
@@ -433,49 +433,49 @@ static void * _Melder_monitor (double progress, const wchar *message) {
 	return progress <= 0.0 ? NULL /* no Graphics */ : & progress /* any non-NULL pointer */;
 }
 
-void * Melder_monitor1 (double progress, const wchar *s1) {
+void * Melder_monitor (double progress, const wchar *s1) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append1 (& theProgressBuffer, s1);
+	MelderString_append (& theProgressBuffer, s1);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor2 (double progress, const wchar *s1, const wchar *s2) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append2 (& theProgressBuffer, s1, s2);
+	MelderString_append (& theProgressBuffer, s1, s2);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor3 (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append3 (& theProgressBuffer, s1, s2, s3);
+	MelderString_append (& theProgressBuffer, s1, s2, s3);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor4 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append4 (& theProgressBuffer, s1, s2, s3, s4);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor5 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append5 (& theProgressBuffer, s1, s2, s3, s4, s5);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor6 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append6 (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor7 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append7 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor8 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append8 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor9 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	MelderString_empty (& theProgressBuffer);
-	MelderString_append9 (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
 
@@ -547,37 +547,46 @@ static MelderString theWarningBuffer = { 0 };
 void Melder_warning (const MelderArg& arg1) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append1 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append2 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
 		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append3 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append4 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
 		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append5 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
@@ -585,9 +594,12 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append6 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
 		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
@@ -596,10 +608,14 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append7 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
@@ -607,10 +623,14 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append8 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
 		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
@@ -619,11 +639,16 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append9 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
-		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8), arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
+		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8),
+		arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
@@ -631,12 +656,18 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append9 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
-		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8), arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
-	MelderString_append1 (& theWarningBuffer, arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
+		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8),
+		arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
@@ -645,12 +676,18 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append9 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
-		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8), arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
-	MelderString_append2 (& theWarningBuffer, arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
+		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8),
+		arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
 		arg11.type == 1 ? arg11.argW : Melder_peekUtf8ToWcs (arg11.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
@@ -660,13 +697,20 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append9 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
-		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8), arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
-	MelderString_append4 (& theWarningBuffer, arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
-		arg11.type == 1 ? arg11.argW : Melder_peekUtf8ToWcs (arg11.arg8), arg12.type == 1 ? arg12.argW : Melder_peekUtf8ToWcs (arg12.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
+		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8),
+		arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
+		arg11.type == 1 ? arg11.argW : Melder_peekUtf8ToWcs (arg11.arg8),
+		arg12.type == 1 ? arg12.argW : Melder_peekUtf8ToWcs (arg12.arg8),
 		arg13.type == 1 ? arg13.argW : Melder_peekUtf8ToWcs (arg13.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
@@ -676,14 +720,22 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append9 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
-		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8), arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
-	MelderString_append6 (& theWarningBuffer, arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
-		arg11.type == 1 ? arg11.argW : Melder_peekUtf8ToWcs (arg11.arg8), arg12.type == 1 ? arg12.argW : Melder_peekUtf8ToWcs (arg12.arg8),
-		arg13.type == 1 ? arg13.argW : Melder_peekUtf8ToWcs (arg13.arg8), arg14.type == 1 ? arg14.argW : Melder_peekUtf8ToWcs (arg14.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
+		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8),
+		arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
+		arg11.type == 1 ? arg11.argW : Melder_peekUtf8ToWcs (arg11.arg8),
+		arg12.type == 1 ? arg12.argW : Melder_peekUtf8ToWcs (arg12.arg8),
+		arg13.type == 1 ? arg13.argW : Melder_peekUtf8ToWcs (arg13.arg8),
+		arg14.type == 1 ? arg14.argW : Melder_peekUtf8ToWcs (arg14.arg8),
 		arg15.type == 1 ? arg15.argW : Melder_peekUtf8ToWcs (arg15.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
@@ -694,17 +746,28 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append9 (& theWarningBuffer, arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
-		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8), arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
-		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8), arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
-		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8), arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
-		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8), arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
-	MelderString_append9 (& theWarningBuffer, arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
-		arg11.type == 1 ? arg11.argW : Melder_peekUtf8ToWcs (arg11.arg8), arg12.type == 1 ? arg12.argW : Melder_peekUtf8ToWcs (arg12.arg8),
-		arg13.type == 1 ? arg13.argW : Melder_peekUtf8ToWcs (arg13.arg8), arg14.type == 1 ? arg14.argW : Melder_peekUtf8ToWcs (arg14.arg8),
-		arg15.type == 1 ? arg15.argW : Melder_peekUtf8ToWcs (arg15.arg8), arg16.type == 1 ? arg16.argW : Melder_peekUtf8ToWcs (arg16.arg8),
-		arg17.type == 1 ? arg17.argW : Melder_peekUtf8ToWcs (arg17.arg8), arg18.type == 1 ? arg18.argW : Melder_peekUtf8ToWcs (arg18.arg8));
-	MelderString_append2 (& theWarningBuffer, arg19.type == 1 ? arg19.argW : Melder_peekUtf8ToWcs (arg19.arg8),
+	MelderString_append (& theWarningBuffer,
+		arg1.type == 1 ? arg1.argW : Melder_peekUtf8ToWcs (arg1.arg8),
+		arg2.type == 1 ? arg2.argW : Melder_peekUtf8ToWcs (arg2.arg8),
+		arg3.type == 1 ? arg3.argW : Melder_peekUtf8ToWcs (arg3.arg8),
+		arg4.type == 1 ? arg4.argW : Melder_peekUtf8ToWcs (arg4.arg8),
+		arg5.type == 1 ? arg5.argW : Melder_peekUtf8ToWcs (arg5.arg8),
+		arg6.type == 1 ? arg6.argW : Melder_peekUtf8ToWcs (arg6.arg8),
+		arg7.type == 1 ? arg7.argW : Melder_peekUtf8ToWcs (arg7.arg8),
+		arg8.type == 1 ? arg8.argW : Melder_peekUtf8ToWcs (arg8.arg8),
+		arg9.type == 1 ? arg9.argW : Melder_peekUtf8ToWcs (arg9.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg10.type == 1 ? arg10.argW : Melder_peekUtf8ToWcs (arg10.arg8),
+		arg11.type == 1 ? arg11.argW : Melder_peekUtf8ToWcs (arg11.arg8),
+		arg12.type == 1 ? arg12.argW : Melder_peekUtf8ToWcs (arg12.arg8),
+		arg13.type == 1 ? arg13.argW : Melder_peekUtf8ToWcs (arg13.arg8),
+		arg14.type == 1 ? arg14.argW : Melder_peekUtf8ToWcs (arg14.arg8),
+		arg15.type == 1 ? arg15.argW : Melder_peekUtf8ToWcs (arg15.arg8),
+		arg16.type == 1 ? arg16.argW : Melder_peekUtf8ToWcs (arg16.arg8),
+		arg17.type == 1 ? arg17.argW : Melder_peekUtf8ToWcs (arg17.arg8),
+		arg18.type == 1 ? arg18.argW : Melder_peekUtf8ToWcs (arg18.arg8));
+	MelderString_append (& theWarningBuffer,
+		arg19.type == 1 ? arg19.argW : Melder_peekUtf8ToWcs (arg19.arg8),
 		arg20.type == 1 ? arg20.argW : Melder_peekUtf8ToWcs (arg20.arg8));
 	theMelder. warning (theWarningBuffer.string);
 }
@@ -712,55 +775,55 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 void Melder_warning1 (const wchar *s1) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append1 (& theWarningBuffer, s1);
+	MelderString_append (& theWarningBuffer, s1);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning2 (const wchar *s1, const wchar *s2) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append2 (& theWarningBuffer, s1, s2);
+	MelderString_append (& theWarningBuffer, s1, s2);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning3 (const wchar *s1, const wchar *s2, const wchar *s3) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append3 (& theWarningBuffer, s1, s2, s3);
+	MelderString_append (& theWarningBuffer, s1, s2, s3);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning4 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append4 (& theWarningBuffer, s1, s2, s3, s4);
+	MelderString_append (& theWarningBuffer, s1, s2, s3, s4);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning5 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append5 (& theWarningBuffer, s1, s2, s3, s4, s5);
+	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning6 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append6 (& theWarningBuffer, s1, s2, s3, s4, s5, s6);
+	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning7 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append7 (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7);
+	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning8 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append8 (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
+	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	theMelder. warning (theWarningBuffer.string);
 }
 void Melder_warning9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	if (theWarningDepth < 0) return;
 	MelderString_empty (& theWarningBuffer);
-	MelderString_append9 (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	theMelder. warning (theWarningBuffer.string);
 }
 

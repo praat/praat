@@ -25,7 +25,7 @@
 #include "melder.h"
 
 #ifndef _NUMcblas_h_
-	#include "NUMcblas.h"
+#include "NUMcblas.h"
 #endif
 
 static struct structmachar_Table machar_table;
@@ -51,22 +51,23 @@ ngrd
 		sfmin	'S'		safe minimum, such that 1/sfmin does not overflow
 */
 
-void NUMmachar ()
-{
-	if (NUMfpp) return;
+void NUMmachar () {
+	if (NUMfpp) {
+		return;
+	}
 
 	NUMfpp = & machar_table;
 
-    NUMfpp -> base  = (int) NUMblas_dlamch ("Base");
-    NUMfpp -> t     = (int) NUMblas_dlamch ("Number of digits in mantissa");
-    NUMfpp -> emin  = (int) NUMblas_dlamch ("Minimum exponent");
-    NUMfpp -> emax  = (int) NUMblas_dlamch ("Largest exponent");
-    NUMfpp -> rnd   = (int) NUMblas_dlamch ("Rounding mode");
-    NUMfpp -> prec  = NUMblas_dlamch ("Precision");
+	NUMfpp -> base  = (int) NUMblas_dlamch ("Base");
+	NUMfpp -> t     = (int) NUMblas_dlamch ("Number of digits in mantissa");
+	NUMfpp -> emin  = (int) NUMblas_dlamch ("Minimum exponent");
+	NUMfpp -> emax  = (int) NUMblas_dlamch ("Largest exponent");
+	NUMfpp -> rnd   = (int) NUMblas_dlamch ("Rounding mode");
+	NUMfpp -> prec  = NUMblas_dlamch ("Precision");
 	NUMfpp -> eps   = NUMblas_dlamch ("Epsilon");
-    NUMfpp -> rmin  = NUMblas_dlamch ("Underflow threshold");
-   	NUMfpp -> sfmin = NUMblas_dlamch ("Safe minimum");
-    NUMfpp -> rmax  = NUMblas_dlamch ("Overflow threshold");
+	NUMfpp -> rmin  = NUMblas_dlamch ("Underflow threshold");
+	NUMfpp -> sfmin = NUMblas_dlamch ("Safe minimum");
+	NUMfpp -> rmax  = NUMblas_dlamch ("Overflow threshold");
 }
 
 /* End of file NUMmachar.c */

@@ -412,14 +412,14 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 			int arglen = wcslen (formattedNumber);
 			static MelderString buffer = { 0 };
 			MelderString_ncopy (& buffer, format, headlen);
-			MelderString_append2 (& buffer, formattedNumber, p + varlen + 2);
+			MelderString_append (& buffer, formattedNumber, p + varlen + 2);
 			wcscpy (format, buffer.string);
 			p += arglen - 1;
 		} else if (stringValue != NULL) {
 			int varlen = (q - p) - 1, headlen = p - format, arglen = wcslen (stringValue);
 			static MelderString buffer = { 0 };
 			MelderString_ncopy (& buffer, format, headlen);
-			MelderString_append2 (& buffer, stringValue, p + varlen + 2);
+			MelderString_append (& buffer, stringValue, p + varlen + 2);
 			wcscpy (format, buffer.string);
 			p += arglen - 1;
 		} else {
@@ -846,12 +846,12 @@ static void menu_cb_getPitch (EDITOR_ARGS) {
 	if (part == FunctionEditor_PART_CURSOR) {
 		double f0 = Pitch_getValueAtTime (my pitch.data, tmin, my pitch.unit, TRUE);
 		f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information4 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		Melder_information (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 			L" (interpolated pitch at CURSOR)");
 	} else {
 		double f0 = Pitch_getMean (my pitch.data, tmin, tmax, my pitch.unit);
 		f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-		Melder_information6 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+		Melder_information (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 			L" (mean pitch ", FunctionEditor_partString_locative (part), L")");
 	}
 }
@@ -868,7 +868,7 @@ static void menu_cb_getMinimumPitch (EDITOR_ARGS) {
 	}
 	f0 = Pitch_getMinimum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information6 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+	Melder_information (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 		L" (minimum pitch ", FunctionEditor_partString_locative (part), L")");
 }
 
@@ -884,7 +884,7 @@ static void menu_cb_getMaximumPitch (EDITOR_ARGS) {
 	}
 	f0 = Pitch_getMaximum (my pitch.data, tmin, tmax, my pitch.unit, TRUE);
 	f0 = Function_convertToNonlogarithmic (my pitch.data, f0, Pitch_LEVEL_FREQUENCY, my pitch.unit);
-	Melder_information6 (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
+	Melder_information (Melder_double (f0), L" ", Function_getUnitText (my pitch.data, Pitch_LEVEL_FREQUENCY, my pitch.unit, 0),
 		L" (maximum pitch ", FunctionEditor_partString_locative (part), L")");
 }
 
@@ -1102,10 +1102,10 @@ static void menu_cb_getIntensity (EDITOR_ARGS) {
 		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information2 (Melder_double (Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR)), L" dB (intensity at CURSOR)");
+		Melder_information (Melder_double (Vector_getValueAtX (my intensity.data, tmin, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_LINEAR)), L" dB (intensity at CURSOR)");
 	} else {
 		static const wchar_t *methodString [] = { L"median", L"mean-energy", L"mean-sones", L"mean-dB" };
-		Melder_information6 (Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
+		Melder_information (Melder_double (Intensity_getAverage (my intensity.data, tmin, tmax, my intensity.averagingMethod)),
 			L" dB (", methodString [my intensity.averagingMethod], L" intensity ", FunctionEditor_partString_locative (part), L")");
 	}
 }
@@ -1121,7 +1121,7 @@ static void menu_cb_getMinimumIntensity (EDITOR_ARGS) {
 		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	double intensity = Vector_getMinimum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
-	Melder_information4 (Melder_double (intensity), L" dB (minimum intensity ", FunctionEditor_partString_locative (part), L")");
+	Melder_information (Melder_double (intensity), L" dB (minimum intensity ", FunctionEditor_partString_locative (part), L")");
 }
 
 static void menu_cb_getMaximumIntensity (EDITOR_ARGS) {
@@ -1135,7 +1135,7 @@ static void menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 		if (! my intensity.data) Melder_throw (theMessage_Cannot_compute_intensity);
 	}
 	double intensity = Vector_getMaximum (my intensity.data, tmin, tmax, NUM_PEAK_INTERPOLATE_PARABOLIC);
-	Melder_information4 (Melder_double (intensity), L" dB (maximum intensity ", FunctionEditor_partString_locative (part), L")");
+	Melder_information (Melder_double (intensity), L" dB (maximum intensity ", FunctionEditor_partString_locative (part), L")");
 }
 
 /***** FORMANT MENU *****/
@@ -1289,10 +1289,10 @@ static void do_getFormant (TimeSoundAnalysisEditor me, int iformant) {
 		if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information4 (Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)),
+		Melder_information (Melder_double (Formant_getValueAtTime (my formant.data, iformant, tmin, 0)),
 			L" Hz (nearest F", Melder_integer (iformant), L" to CURSOR)");
 	} else {
-		Melder_information6 (Melder_double (Formant_getMean (my formant.data, iformant, tmin, tmax, 0)),
+		Melder_information (Melder_double (Formant_getMean (my formant.data, iformant, tmin, tmax, 0)),
 			L" Hz (mean F", Melder_integer (iformant), L" ", FunctionEditor_partString_locative (part), L")");
 	}
 }
@@ -1306,10 +1306,10 @@ static void do_getBandwidth (TimeSoundAnalysisEditor me, int iformant) {
 		if (! my formant.data) Melder_throw (theMessage_Cannot_compute_formant);
 	}
 	if (part == FunctionEditor_PART_CURSOR) {
-		Melder_information4 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)),
+		Melder_information (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, tmin, 0)),
 			L" Hz (nearest B", Melder_integer (iformant), L" to CURSOR)");
 	} else {
-		Melder_information6 (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, 0.5 * (tmin + tmax), 0)),
+		Melder_information (Melder_double (Formant_getBandwidthAtTime (my formant.data, iformant, 0.5 * (tmin + tmax), 0)),
 			L" Hz (B", Melder_integer (iformant), L" in centre of ", FunctionEditor_partString (part), L")");
 	}
 }
@@ -1970,13 +1970,13 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis () {
 		Graphics_setColour (graphics, Graphics_BLACK);
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (graphics, spectrogram.cursor - spectrogram.viewFrom) > 5.0) {
 			MelderString_empty (& text);
-			MelderString_append2 (& text, Melder_half (spectrogram.viewFrom), L" Hz");
+			MelderString_append (& text, Melder_half (spectrogram.viewFrom), L" Hz");
 			Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_BOTTOM);
 			Graphics_text (graphics, startWindow, spectrogram.viewFrom - Graphics_dyMMtoWC (graphics, 0.5), Melder_float (text.string));
 		}
 		if (! frequencyCursorVisible || Graphics_dyWCtoMM (graphics, spectrogram.viewTo - spectrogram.cursor) > 5.0) {
 			MelderString_empty (& text);
-			MelderString_append2 (& text, Melder_half (spectrogram.viewTo), L" Hz");
+			MelderString_append (& text, Melder_half (spectrogram.viewTo), L" Hz");
 			Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
 			Graphics_text (graphics, startWindow, spectrogram.viewTo, Melder_float (text.string));
 		}

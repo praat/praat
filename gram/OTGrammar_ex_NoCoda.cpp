@@ -51,7 +51,7 @@ OTGrammar OTGrammar_create_NoCoda_grammar (void) {
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates =  1);
 			candidate = & tableau -> candidates [1];
 				candidate -> output = Melder_wcsdup (L"pa");
-				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2); therror
+				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 2);
 		OTGrammar_checkIndex (me.peek()); therror
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
 		return me.transfer();

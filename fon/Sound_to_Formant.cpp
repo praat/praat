@@ -324,7 +324,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 				Melder_casual ("(Sound_to_Formant:) Analysis results of frame %ld will be wrong.", iframe);
 			}
 		}
-		Melder_progress2 ((double) iframe / (double) nFrames, L"Formant analysis: frame ", Melder_integer (iframe)); therror
+		Melder_progress ((double) iframe / (double) nFrames, L"Formant analysis: frame ", Melder_integer (iframe));
 	}
 	Formant_sort (thee.peek());
 	return thee.transfer();

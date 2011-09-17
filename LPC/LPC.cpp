@@ -52,26 +52,25 @@
 
 Thing_implement (LPC, Sampled, 1);
 
-void structLPC :: v_info ()
-{
+void structLPC :: v_info () {
 	structData :: v_info ();
 	MelderInfo_writeLine5 (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax),
-		L" (s).");
+	                       L" (s).");
 	MelderInfo_writeLine2 (L"Prediction order: ", Melder_integer (maxnCoefficients));
 	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (nx));
 	MelderInfo_writeLine3 (L"Time step: ", Melder_double (dx), L" (s).");
 	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (x1), L" (s).");
 }
 
-void LPC_Frame_init (LPC_Frame me, int nCoefficients)
-{
-	if (nCoefficients != 0) my a = NUMvector<double> (1, nCoefficients);
+void LPC_Frame_init (LPC_Frame me, int nCoefficients) {
+	if (nCoefficients != 0) {
+		my a = NUMvector<double> (1, nCoefficients);
+	}
 	my nCoefficients = nCoefficients;
 }
 
 void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
-	int predictionOrder, double samplingPeriod)
-{
+               int predictionOrder, double samplingPeriod) {
 	my samplingPeriod = samplingPeriod;
 	my maxnCoefficients = predictionOrder;
 	Sampled_init (me, tmin, tmax, nt, dt, t1);
@@ -79,36 +78,46 @@ void LPC_init (LPC me, double tmin, double tmax, long nt, double dt, double t1,
 }
 
 LPC LPC_create (double tmin, double tmax, long nt, double dt, double t1,
-	int predictionOrder, double samplingPeriod)
-{
+                int predictionOrder, double samplingPeriod) {
 	try {
 		autoLPC me = Thing_new (LPC);
 		LPC_init (me.peek(), tmin, tmax, nt, dt, t1, predictionOrder, samplingPeriod);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("LPC not created."); }
+	} catch (MelderError) {
+		Melder_throw ("LPC not created.");
+	}
 }
 
-void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, int garnish)
-{
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
+void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, double gmax, int garnish) {
+	if (tmax <= tmin) {
+		tmin = my xmin;
+		tmax = my xmax;
+	}
 	long itmin, itmax;
-	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) return;
+	if (! Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) {
+		return;
+	}
 	autoNUMvector<double> gain (itmin, itmax);
 
-	for (long iframe=itmin; iframe <= itmax; iframe++) { gain[iframe] = my d_frames[iframe].gain; }
-	if (gmax <= gmin) NUMdvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
-	if (gmax == gmin) { gmin = 0; gmax += 0.5; }
+	for (long iframe = itmin; iframe <= itmax; iframe++) {
+		gain[iframe] = my d_frames[iframe].gain;
+	}
+	if (gmax <= gmin) {
+		NUMdvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
+	}
+	if (gmax == gmin) {
+		gmin = 0;
+		gmax += 0.5;
+	}
 
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
-	for (long iframe = itmin; iframe <= itmax; iframe++)
-	{
+	for (long iframe = itmin; iframe <= itmax; iframe++) {
 		double x = Sampled_indexToX (me, iframe);
 		Graphics_fillCircle_mm (g, x, gain[iframe], 1.0);
 	}
 	Graphics_unsetInner (g);
-	if (garnish)
-	{
+	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, 1, L"Time (seconds)");
 		Graphics_textLeft (g, 1, L"Gain");
@@ -117,30 +126,28 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	}
 }
 
-void LPC_drawPoles (LPC me, Graphics g, double time, int garnish)
-{
+void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 	autoPolynomial p = LPC_to_Polynomial (me, time);
 	autoRoots r = Polynomial_to_Roots (p.peek());
 	Roots_draw (r.peek(), g, -1, 1, -1, 1, L"+", 12, garnish);
 }
 
 
-Matrix LPC_to_Matrix (LPC me)
-{
+Matrix LPC_to_Matrix (LPC me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-			1, my maxnCoefficients, my maxnCoefficients, 1, 1);
+		                                 1, my maxnCoefficients, my maxnCoefficients, 1, 1);
 
-		for (long i = 1; i <= my nx; i++)
-		{
+		for (long i = 1; i <= my nx; i++) {
 			LPC_Frame frame = & my d_frames[i];
-			for (long j = 1; j <= frame -> nCoefficients; j++)
-			{
+			for (long j = 1; j <= frame -> nCoefficients; j++) {
 				thy z[j][i] = frame -> a[j];
 			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Matrix created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Matrix created.");
+	}
 }
 
 /* End of file LPC.cpp */

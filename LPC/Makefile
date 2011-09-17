@@ -29,3 +29,5 @@ libLPC.a: $(OBJECTS)
 	$(RANLIB) libLPC.a
 
 $(OBJECTS): *.h ../num/NUM.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h
+
+

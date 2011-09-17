@@ -47,7 +47,7 @@ PointProcess PitchTier_to_PointProcess (PitchTier me) {
 				area -= 1.0;
 				discriminant = f2 * f2 - 2.0 * area * slope;
 				if (discriminant < 0.0) discriminant = 0.0;   // catch rounding errors
-				PointProcess_addPoint (thee.peek(), t2 - 2.0 * area / (f2 + sqrt (discriminant))); therror
+				PointProcess_addPoint (thee.peek(), t2 - 2.0 * area / (f2 + sqrt (discriminant)));
 			}
 		}
 		return thee.transfer();
@@ -66,7 +66,7 @@ PointProcess PitchTier_Pitch_to_PointProcess (PitchTier me, Pitch vuv) {
 		for (long i = 1; i <= fullPoint -> nt; i ++) {
 			double t = fullPoint -> t [i];
 			if (Pitch_isVoiced_t (vuv, t)) {
-				PointProcess_addPoint (thee.peek(), t); therror
+				PointProcess_addPoint (thee.peek(), t);
 			}
 		}
 		return thee.transfer();
@@ -97,7 +97,7 @@ PointProcess PitchTier_Point_to_PointProcess (PitchTier me, PointProcess vuv, do
 		for (long i = 1; i <= fullPoint -> nt; i ++) {
 			double t = fullPoint -> t [i];
 			if (PointProcess_isVoiced_t (vuv, t, maxT)) {
-				PointProcess_addPoint (thee.peek(), t); therror
+				PointProcess_addPoint (thee.peek(), t);
 			}
 		}
 		return thee.transfer();

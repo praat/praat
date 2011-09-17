@@ -69,88 +69,92 @@ void structPCA :: v_info () {
 	MelderInfo_writeLine2 (L"Number of observations: ", Melder_integer (numberOfObservations));
 }
 
-PCA PCA_create (long numberOfComponents, long dimension)
-{
+PCA PCA_create (long numberOfComponents, long dimension) {
 	try {
 		autoPCA me = Thing_new (PCA);
 		Eigen_init (me.peek(), numberOfComponents, dimension);
 		my labels = NUMvector<wchar_t *> (1, dimension);
 		my centroid = NUMvector<double> (1, dimension);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("PCA not created"); }
+	} catch (MelderError) {
+		Melder_throw ("PCA not created");
+	}
 }
 
-void PCA_setNumberOfObservations (PCA me, long numberOfObservations)
-{
+void PCA_setNumberOfObservations (PCA me, long numberOfObservations) {
 	my numberOfObservations = numberOfObservations;
 }
 
-long PCA_getNumberOfObservations (PCA me)
-{
+long PCA_getNumberOfObservations (PCA me) {
 	return my numberOfObservations;
 }
 
-void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *probability, double *chisq, long *ndf)
-{
+void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative, double *probability, double *chisq, long *ndf) {
 	double sum = 0, sumln = 0;
 
 	*probability = 1;
 	*ndf = 0;
 	*chisq = 0;
 
-	if ((from > 0 && to == from) || to > my numberOfEigenvalues) return;
+	if ( (from > 0 && to == from) || to > my numberOfEigenvalues) {
+		return;
+	}
 
-	if (to <= from)
-	{
+	if (to <= from) {
 		from = 1;
 		to = my numberOfEigenvalues;
 	}
 	long i;
-	for (i = from; i <= to; i++)
-	{
-		if (my eigenvalues[i] <= 0) break;
+	for (i = from; i <= to; i++) {
+		if (my eigenvalues[i] <= 0) {
+			break;
+		}
 		sum += my eigenvalues[i];
 		sumln += log (my eigenvalues[i]);
 	}
-	if (sum == 0) return;
+	if (sum == 0) {
+		return;
+	}
 	long r = i - from;
 	long n = my numberOfObservations - 1;
-	if (conservative) n -= from + (r * (2 * r + 1) + 2) / (6 * r);
+	if (conservative) {
+		n -= from + (r * (2 * r + 1) + 2) / (6 * r);
+	}
 
 	*ndf = r * (r + 1) / 2 - 1;
 	*chisq = n * (r * log (sum / r) - sumln);
 	*probability = NUMchiSquareQ (*chisq, *ndf);
 }
 
-PCA TableOfReal_to_PCA (I)
-{
+PCA TableOfReal_to_PCA (I) {
 	iam (TableOfReal);
 	try {
 		long m = my numberOfRows, n = my numberOfColumns;
 
-		if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) Melder_throw ("Undefined cells.");
+		if (! TableOfReal_areAllCellsDefined (me, 0, 0, 0, 0)) {
+			Melder_throw ("Undefined cells.");
+		}
 
 		if (m < 2) Melder_throw ("There is not enough data to perform a PCA.\n"
-		"Your table has less than 2 rows.");
+			                         "Your table has less than 2 rows.");
 
-		if (m < n) Melder_warning1 (L"The number of rows in your table is less than the\n"
-		"number of columns. ");
+		if (m < n) Melder_warning (L"The number of rows in your table is less than the\n"
+			                           "number of columns. ");
 
-		if (NUMfrobeniusnorm (m, n, my data) == 0) Melder_throw  ("All values in your table are zero.");
+		if (NUMfrobeniusnorm (m, n, my data) == 0) {
+			Melder_throw ("All values in your table are zero.");
+		}
 		autoPCA thee = Thing_new (PCA);
 		autoNUMmatrix<double> a (NUMdmatrix_copy (my data, 1, m, 1, n), 1, 1);
 		thy centroid = NUMvector<double> (1, n);
 
-		for (long j = 1; j <= n; j++)
-		{
+		for (long j = 1; j <= n; j++) {
 			double colmean = a[1][j];
-			for (long i = 2; i <= m; i++)
-			{
+			for (long i = 2; i <= m; i++) {
 				colmean += a[i][j];
 			}
 			colmean /= m;
-			for (long i = 1; i <= m; i++)
-			{
+			for (long i = 1; i <= m; i++) {
 				a[i][j] -= colmean;
 			}
 			thy centroid[j] = colmean;
@@ -168,20 +172,19 @@ PCA TableOfReal_to_PCA (I)
 			eigenvectors, but the eigenvalues have to be divided by (N-1).
 		*/
 
-		for (long i = 1; i <= thy numberOfEigenvalues; i++)
-		{
+		for (long i = 1; i <= thy numberOfEigenvalues; i++) {
 			thy eigenvalues[i] /= (m - 1);
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": PCA not created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": PCA not created.");
+	}
 }
 
-Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions)
-{
+Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions) {
 	try {
 		thouart (TableOfReal);
-		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues)
-		{
+		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues) {
 			numberOfDimensions = my numberOfEigenvalues;
 		}
 
@@ -191,68 +194,75 @@ Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfD
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
 		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, L"pc", 1, 1);
 		return him.transfer();
-	} catch (MelderError) { Melder_throw ("Configuration not created from PCA & TableOfReal."); }
+	} catch (MelderError) {
+		Melder_throw ("Configuration not created from PCA & TableOfReal.");
+	}
 }
 
-TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou)
-{
+TableOfReal PCA_and_Configuration_to_TableOfReal_reconstruct (PCA me, thou) {
 	try {
 		thouart (Configuration);
 		long npc = thy numberOfColumns;
 
-		if (thy numberOfColumns > my dimension) Melder_throw ("The dimension of the Configuration must be less than or equal to the dimension of the PCA.");
+		if (thy numberOfColumns > my dimension) {
+			Melder_throw ("The dimension of the Configuration must be less than or equal to the dimension of the PCA.");
+		}
 
-		if (npc > my numberOfEigenvalues) npc = my numberOfEigenvalues;
+		if (npc > my numberOfEigenvalues) {
+			npc = my numberOfEigenvalues;
+		}
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, my dimension);
 		NUMstrings_copyElements (my labels, his columnLabels, 1, my dimension);
 		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
-		
-		for (long i = 1; i <= thy numberOfRows; i++)
-		{
+
+		for (long i = 1; i <= thy numberOfRows; i++) {
 			double *hisdata = his data[i];
-			for (long k = 1; k <= npc; k++)
-			{
+			for (long k = 1; k <= npc; k++) {
 				double *evec = my eigenvectors[k], pc = thy data[i][k];
-				for (long j = 1; j <= my dimension; j++)
-				{
+				for (long j = 1; j <= my dimension; j++) {
 					hisdata[j] += pc * evec[j];
 				}
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_throw ("TableOfReal not reconstructed."); }
+	} catch (MelderError) {
+		Melder_throw ("TableOfReal not reconstructed.");
+	}
 }
 
-double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to)
-{
+double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to) {
 	try {
 		thouart (TableOfReal);
 		double fraction = NUMundefined;
 
-		if (from < 1 || from > to || to > thy numberOfColumns) return NUMundefined;
+		if (from < 1 || from > to || to > thy numberOfColumns) {
+			return NUMundefined;
+		}
 
 		autoSSCP s = TableOfReal_to_SSCP (thee, 0, 0, 0, 0);
 		autoSSCP sp = Eigen_and_SSCP_project (me, s.peek());
 		fraction = SSCP_getFractionVariation (sp.peek(), from, to);
 		return fraction;
-	} catch (MelderError) { return NUMundefined; } 
+	} catch (MelderError) {
+		return NUMundefined;
+	}
 }
 
-TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, wchar_t *numstring)
-{
+TableOfReal PCA_to_TableOfReal_reconstruct1 (PCA me, wchar_t *numstring) {
 	try {
 		long npc;
 		autoNUMvector<double> pc (NUMstring_to_numbers (numstring, & npc), 1);
 
 		autoConfiguration c = Configuration_create (1, npc);
-		for (long j = 1; j <= npc; j++)
-		{
+		for (long j = 1; j <= npc; j++) {
 			c -> data [1][j] = pc[j];
 		}
 		autoTableOfReal him = PCA_and_Configuration_to_TableOfReal_reconstruct (me, c.peek());
 		return him.transfer();
-	} catch (MelderError) { Melder_throw (me, " not reconstructed."); }
+	} catch (MelderError) {
+		Melder_throw (me, " not reconstructed.");
+	}
 }
 
 

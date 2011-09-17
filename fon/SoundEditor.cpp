@@ -150,7 +150,7 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 			FunctionEditor_marksChanged (me);
 			my broadcastDataChanged ();
 		} else {
-			Melder_warning1 (L"No samples selected.");
+			Melder_warning (L"No samples selected.");
 		}
 	} catch (MelderError) {
 		Melder_throw ("Sound selection not cut to clipboard.");
@@ -164,7 +164,7 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 	long oldNumberOfSamples = sound -> nx, newNumberOfSamples;
 	double **oldData = sound -> z;
 	if (! Sound_clipboard) {
-		Melder_warning1 (L"(SoundEditor_paste:) Clipboard is empty; nothing pasted.");
+		Melder_warning (L"Clipboard is empty; nothing pasted.");
 		return;
 	}
 	if (Sound_clipboard -> ny != sound -> ny)

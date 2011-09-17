@@ -24,43 +24,56 @@
 
 #include "FFNet_Matrix.h"
 
-Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights)
-{
+Matrix FFNet_weightsToMatrix (FFNet me, long layer, int deltaWeights) {
 	try {
-		if (layer < 1 || layer > my nLayers) Melder_throw ("Layer must be > 0 and < ",my nLayers, ".");
+		if (layer < 1 || layer > my nLayers) {
+			Melder_throw ("Layer must be > 0 and < ", my nLayers, ".");
+		}
 		autoMatrix thee = Matrix_create (
-			0.5, my nUnitsInLayer[layer] + 0.5, my nUnitsInLayer[layer], 1, 1,
-			0.5, my nUnitsInLayer[layer-1]+1+0.5, my nUnitsInLayer[layer-1]+1, 1, 1);
+		                      0.5, my nUnitsInLayer[layer] + 0.5, my nUnitsInLayer[layer], 1, 1,
+		                      0.5, my nUnitsInLayer[layer - 1] + 1 + 0.5, my nUnitsInLayer[layer - 1] + 1, 1, 1);
 		long node = 1;
-		for (long i = 0; i < layer; i++) node += my nUnitsInLayer[i] + 1;
-		for (long i = 1; i <= my nUnitsInLayer[layer]; i++, node++)
-		{
+		for (long i = 0; i < layer; i++) {
+			node += my nUnitsInLayer[i] + 1;
+		}
+		for (long i = 1; i <= my nUnitsInLayer[layer]; i++, node++) {
 			long k = 1;
-			for (long j = my wFirst[node]; j <= my wLast[node]; j++)
+			for (long j = my wFirst[node]; j <= my wLast[node]; j++) {
 				thy z[k++][i] = deltaWeights ? my dwi[j] : my w[j];
+			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Matrix created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Matrix created.");
+	}
 }
 
-FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer)
-{
+FFNet FFNet_weightsFromMatrix (FFNet me, Matrix him, long layer) {
 	try {
-		if (layer < 1 || layer > my nLayers) Melder_throw ("Layer must be > 0 and < ", my nLayers, ".");
+		if (layer < 1 || layer > my nLayers) {
+			Melder_throw ("Layer must be > 0 and < ", my nLayers, ".");
+		}
 		if (my nUnitsInLayer[layer] != his nx) Melder_throw (L"The #columns (", his nx, ") must equal "
-			"#units (", my nUnitsInLayer[layer], ") in layer ", layer, ".");
+			        "#units (", my nUnitsInLayer[layer], ") in layer ", layer, ".");
 		long nunits = my nUnitsInLayer[layer - 1] + 1;
-		if (nunits != his ny) Melder_throw (" The #rows (", his ny, ")  must equal #units (", nunits , ") in layer ", layer-1, ".");
+		if (nunits != his ny) {
+			Melder_throw (" The #rows (", his ny, ")  must equal #units (", nunits , ") in layer ", layer - 1, ".");
+		}
 		autoFFNet thee = (FFNet) Data_copy (me);
 		long node = 1;
-		for (long i = 0; i < layer; i++) { node += thy nUnitsInLayer[i] + 1; }
-		for (long i = 1; i <= thy nUnitsInLayer[layer]; i++, node++)
-		{
+		for (long i = 0; i < layer; i++) {
+			node += thy nUnitsInLayer[i] + 1;
+		}
+		for (long i = 1; i <= thy nUnitsInLayer[layer]; i++, node++) {
 			long k = 1;
-			for (long j = thy wFirst[node]; j <= thy wLast[node]; j++, k++) { thy w[j] = his z[k][i]; }
+			for (long j = thy wFirst[node]; j <= thy wLast[node]; j++, k++) {
+				thy w[j] = his z[k][i];
+			}
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no FFNet created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no FFNet created.");
+	}
 }
 
 /* End of file FFNet_Matrix.cpp */

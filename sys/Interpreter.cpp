@@ -806,7 +806,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							Melder_double (var -> numericValue);
 						int arglen = wcslen (string);
 						MelderString_ncopy (& buffer, command2.string, headlen);
-						MelderString_append2 (& buffer, string, q + 1);
+						MelderString_append (& buffer, string, q + 1);
 						MelderString_copy (& command2, buffer.string);   // This invalidates p!! (really bad bug 20070203)
 						p = command2.string + headlen + arglen - 1;
 					} else {

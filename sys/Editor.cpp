@@ -340,7 +340,7 @@ void structEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 	if (data) {
 		static MelderString title = { 0 };
 		MelderString_empty (& title);
-		MelderString_append2 (& title, Thing_className (data), L" info");
+		MelderString_append (& title, Thing_className (data), L" info");
 		EditorMenu_addCommand (menu, title.string, 0, menu_cb_info);
 	}
 }

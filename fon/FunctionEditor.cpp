@@ -1625,7 +1625,7 @@ void FunctionEditor_ungroup (FunctionEditor me) {
 void FunctionEditor_drawRangeMark (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, int verticalAlignment) {
 	static MelderString text = { 0 };
 	MelderString_empty (& text);
-	MelderString_append2 (& text, yWC_string, units);
+	MelderString_append (& text, yWC_string, units);
 	double textWidth = Graphics_textWidth (my graphics, text.string) + Graphics_dxMMtoWC (my graphics, 0.5);
 	Graphics_setColour (my graphics, Graphics_BLUE);
 	Graphics_line (my graphics, my endWindow, yWC, my endWindow + textWidth, yWC);
@@ -1646,7 +1646,7 @@ void FunctionEditor_drawCursorFunctionValue (FunctionEditor me, double yWC, cons
 void FunctionEditor_insertCursorFunctionValue (FunctionEditor me, double yWC, const wchar_t *yWC_string, const wchar_t *units, double minimum, double maximum) {
 	static MelderString text = { 0 };
 	MelderString_empty (& text);
-	MelderString_append2 (& text, yWC_string, units);
+	MelderString_append (& text, yWC_string, units);
 	double textX = my endWindow, textY = yWC, textWidth;
 	int tooHigh = Graphics_dyWCtoMM (my graphics, maximum - textY) < 5.0;
 	int tooLow = Graphics_dyWCtoMM (my graphics, textY - minimum) < 5.0;

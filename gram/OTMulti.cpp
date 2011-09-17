@@ -682,11 +682,11 @@ static Table OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long num
 	try {
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery;   /* E.g. 0, 20, 40, ... */
 		autoTable thee = Table_createWithoutColumnNames (1 + numberOfSamplingPoints, 3 + my numberOfConstraints);
-		Table_setColumnLabel (thee.peek(), 1, L"Datum"); therror
-		Table_setColumnLabel (thee.peek(), 2, L"Form1"); therror
-		Table_setColumnLabel (thee.peek(), 3, L"Form2"); therror
+		Table_setColumnLabel (thee.peek(), 1, L"Datum");
+		Table_setColumnLabel (thee.peek(), 2, L"Form1");
+		Table_setColumnLabel (thee.peek(), 3, L"Form2");
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			Table_setColumnLabel (thee.peek(), 3 + icons, my constraints [icons]. name); therror
+			Table_setColumnLabel (thee.peek(), 3 + icons, my constraints [icons]. name);
 		}
 		Table_setNumericValue (thee.peek(), 1, 1, 0); therror
 		Table_setStringValue (thee.peek(), 1, 2, L"(initial)"); therror
@@ -723,16 +723,16 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out)
 {
+	long idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 	try {
-		long idatum = 0, numberOfData = numberOfPlasticities * replicationsPerPlasticity;
 		double plasticity = initialPlasticity;
-		Table history = NULL;
 		autoMelderMonitor monitor (L"Learning from partial pairs...");
 		if (monitor.graphics()) {
 			Graphics_clearWs (monitor.graphics());
 		}
+		autoTable history;
 		if (storeHistoryEvery) {
-			history = OTMulti_createHistory (me, storeHistoryEvery, numberOfData); therror
+			history.reset (OTMulti_createHistory (me, storeHistoryEvery, numberOfData));
 		}
 		for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
@@ -756,24 +756,36 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 						Graphics_flushWs (monitor.graphics());   /* Because drawing is faster than progress loop. */
 					}
 				}
-				if (! Melder_monitor8 ((double) idatum / numberOfData,
-					L"Processing partial pair ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData),
-						L":\n      ", form1, L"     ", form2))
-				{
-					Melder_flushError ("Only %ld partial pairs out of %ld were processed.", idatum - 1, numberOfData);
-					return;
+				try {
+					Melder_monitor ((double) idatum / numberOfData,
+						L"Processing partial pair ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData),
+						L":\n      ", form1, L"     ", form2);
+				} catch (MelderError) {
+					if (history_out)
+						*history_out = history.transfer();   // so that we can inspect
+					throw;
 				}
 				OTMulti_newDisharmonies (me, evaluationNoise); therror
-				OTMulti_learnOne (me, form1, form2, updateRule, direction, plasticity, relativePlasticityNoise); therror
-				if (history) {
-					OTMulti_updateHistory (me, history, storeHistoryEvery, idatum, form1, form2); therror
+				try {
+					OTMulti_learnOne (me, form1, form2, updateRule, direction, plasticity, relativePlasticityNoise); therror
+				} catch (MelderError) {
+					if (history.peek()) {
+						OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2); therror
+					}
+					throw;
+				}
+				if (history.peek()) {
+					OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2); therror
 				}
 			}
 			plasticity *= plasticityDecrement;
 		}
-		*history_out = history;   // LEAK
+		if (history_out)
+			*history_out = history.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": learning from partial pairs not completed.");
+		if (idatum > 1)
+			Melder_error_ ("Only ", idatum - 1, " input-output pairs out of ", numberOfData, " were processed.");
+		Melder_throw (me, " & ", thee, ": learning from partial pairs not completed.");
 	}
 }
 

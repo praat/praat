@@ -105,7 +105,7 @@
 	if (max >= min) { \
 		my x = NUMvector <struct##Type> (min, max); \
 		for (long i = min; i <= max; i ++) { \
-			Type##_readCache (& my x [i], f); therror \
+			Type##_readCache (& my x [i], f); \
 		} \
 	}
 

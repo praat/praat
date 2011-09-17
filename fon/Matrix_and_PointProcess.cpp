@@ -42,7 +42,7 @@ PointProcess Matrix_to_PointProcess (Matrix me) {
 	try {
 		autoPointProcess thee = PointProcess_create (my z [1] [1], my z [1] [my nx], my nx);
 		for (long i = 1; i <= my nx; i ++) {
-			PointProcess_addPoint (thee.peek(), my z [1] [i]); therror
+			PointProcess_addPoint (thee.peek(), my z [1] [i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) {

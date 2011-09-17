@@ -114,19 +114,19 @@
 }
 
 void NUMsort2_fl (long n, float a[], long b[])
-	MACRO_NUMsort2 (float, long)
+MACRO_NUMsort2 (float, long)
 
 void NUMsort2_ff (long n, float a[], float b[])
-	MACRO_NUMsort2 (float, float)
+MACRO_NUMsort2 (float, float)
 
 void NUMsort2_dl (long n, double a[], long b[])
-	MACRO_NUMsort2 (double, long)
+MACRO_NUMsort2 (double, long)
 
 void NUMsort2_dd (long n, double a[], double b[])
-	MACRO_NUMsort2 (double, double)
+MACRO_NUMsort2 (double, double)
 
 void NUMsort2_ll (long n, long a[], long b[])
-	MACRO_NUMsort2 (long, long)
+MACRO_NUMsort2 (long, long)
 
 #undef MACRO_NUMsort2
 
@@ -148,25 +148,29 @@ void NUMsort2_ll (long n, long a[], long b[])
 }
 
 void NUMrank_f (long n, float a[])
-	MACRO_NUMrank(float)
+MACRO_NUMrank (float)
 
 void NUMrank (long n, double a[])
-	MACRO_NUMrank(double)
+MACRO_NUMrank (double)
 
 
-void NUMrankColumns (double **m, long rb, long re, long cb, long ce)
-{
+void NUMrankColumns (double **m, long rb, long re, long cb, long ce) {
 	long nr = re - rb + 1;
 	autoNUMvector<double> v (1, nr);
 	autoNUMvector<long> index (1, nr);
 
-	for (long j = cb; j <= ce; j++)
-	{
-		for (long i = 1; i <= nr; i++) v[i] = m[rb + i - 1][j];
-		for (long i = 1; i <= nr; i++) index[i] = i;
+	for (long j = cb; j <= ce; j++) {
+		for (long i = 1; i <= nr; i++) {
+			v[i] = m[rb + i - 1][j];
+		}
+		for (long i = 1; i <= nr; i++) {
+			index[i] = i;
+		}
 		NUMsort2_dl (nr, v.peek(), index.peek());
 		NUMrank (nr, v.peek());
-		for (long i = 1; i <= nr; i++) { m[rb + index[i] - 1][j] = v[i]; }
+		for (long i = 1; i <= nr; i++) {
+			m[rb + index[i] - 1][j] = v[i];
+		}
 	}
 }
 
@@ -250,15 +254,15 @@ void NUMrankColumns (double **m, long rb, long re, long cb, long ce)
 #define COMPARELT(x,y) ((x) < (y))
 
 void NUMindexx_f (const float a[], long n, long index[])
-	MACRO_NUMindex(float)
+MACRO_NUMindex (float)
 
 void NUMindexx (const double a[], long n, long index[])
-	MACRO_NUMindex(float)
+MACRO_NUMindex (float)
 
 #undef COMPARELT
 #define COMPARELT(x,y) (Melder_wcscmp (x,y) <  0)
 void NUMindexx_s (wchar_t **a, long n, long index[])
-	MACRO_NUMindex(wchar_t *)
+MACRO_NUMindex (wchar_t *)
 
 #undef COMPARELT
 #undef MACRO_INDEXX
@@ -351,7 +355,7 @@ void NUMindexx_s (wchar_t **a, long n, long index[])
 
 void NUMsort1_d (long n, double a[]);
 void NUMsort1_d (long n, double a[])
-	MACRO_NUMsortkf (double)
+MACRO_NUMsortkf (double)
 
 #undef MACRO_NUMsortkf
 

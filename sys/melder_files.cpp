@@ -794,7 +794,7 @@ wchar * Melder_peekExpandBackslashes (const wchar *message) {
 }
 
 const wchar * MelderFile_messageName (MelderFile file) {
-	return Melder_wcscat3 (L_LEFT_DOUBLE_QUOTE, file -> path, L_RIGHT_DOUBLE_QUOTE);
+	return Melder_wcscat (L_LEFT_DOUBLE_QUOTE, file -> path, L_RIGHT_DOUBLE_QUOTE);
 }
 
 void Melder_getDefaultDir (MelderDir dir) {

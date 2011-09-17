@@ -1201,7 +1201,7 @@ void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short
 		}
 	} catch (MelderError) {
 		Melder_clearError ();
-		Melder_warning1 (L"Audio file too short. Missing samples were set to zero.");
+		Melder_warning (L"Audio file too short. Missing samples were set to zero.");
 	}
 }
 

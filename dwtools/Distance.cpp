@@ -26,17 +26,17 @@
 
 Thing_implement (Distance, Proximity, 0);
 
-Distance Distance_create (long numberOfPoints)
-{
+Distance Distance_create (long numberOfPoints) {
 	try {
 		autoDistance me = Thing_new (Distance);
 		Proximity_init (me.peek(), numberOfPoints);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Distance not created."); }
+	} catch (MelderError) {
+		Melder_throw ("Distance not created.");
+	}
 }
 
-void Distance_drawDendogram (Distance me, Graphics g, int method)
-{
+void Distance_drawDendogram (Distance me, Graphics g, int method) {
 	(void) me;
 	(void) g;
 	(void) method;

@@ -26,13 +26,14 @@
 #include "Sound_and_FilterBank.h"
 
 MFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth,
-	double dt, double f1_mel, double fmax_mel, double df_mel)
-{
+                    double dt, double f1_mel, double fmax_mel, double df_mel) {
 	try {
 		autoMelFilter mf = Sound_to_MelFilter (me, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
 		autoMFCC mfcc = MelFilter_to_MFCC (mf.peek(), numberOfCoefficients);
 		return mfcc.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no MFCC created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no MFCC created.");
+	}
 }
 
 /* End of file Sound_to_MFCC.cpp */

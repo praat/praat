@@ -50,9 +50,16 @@ DIRECT (ExperimentMFC_run)
 	Collection_dontOwnItems (experiments.peek());
 	WHERE (SELECTED) {
 		iam_LOOP (ExperimentMFC);
+		Melder_assert (my classInfo == classExperimentMFC);
 		Collection_addItem (experiments.peek(), me);   // reference copy of me
 	}
+	Melder_assert (experiments-> size >= 1);
+	Melder_assert (((Data) experiments -> item [1]) -> classInfo == classExperimentMFC);
+	Melder_assert (((Data) experiments -> item [experiments -> size]) -> classInfo == classExperimentMFC);
 	autoOrdered experimentsCopy = experiments.clone();   // we need a copy, because we do a transfer, then a peek
+	Melder_assert (experimentsCopy -> size == experiments -> size);
+	Melder_assert (experimentsCopy -> item [1] == experiments -> item [1]);
+	Melder_assert (experimentsCopy -> item [experimentsCopy -> size] == experiments -> item [experiments -> size]);
 	autoRunnerMFC runner = RunnerMFC_create (theCurrentPraatApplication -> topShell, L"listening experiments", experimentsCopy.transfer());
 	praat_installEditorN (runner.transfer(), experiments.peek()); therror
 END
@@ -69,7 +76,7 @@ END
 
 DIRECT (ResultsMFC_getNumberOfTrials)
 	iam_ONLY (ResultsMFC);
-	Melder_information1 (Melder_integer (my numberOfTrials));
+	Melder_information (Melder_integer (my numberOfTrials));
 END
 
 FORM (ResultsMFC_getResponse, L"ResultsMFC: Get response", 0)
@@ -80,7 +87,7 @@ DO
 	long trial = GET_INTEGER (L"Trial");
 	if (trial > my numberOfTrials)
 		Melder_throw ("Trial ", trial, " does not exist (maximum ", my numberOfTrials, ").");
-	Melder_information1 (my result [trial]. response);
+	Melder_information (my result [trial]. response);
 END
 
 FORM (ResultsMFC_getStimulus, L"ResultsMFC: Get stimulus", 0)
@@ -91,7 +98,7 @@ DO
 	long trial = GET_INTEGER (L"Trial");
 	if (trial > my numberOfTrials)
 		Melder_throw ("Trial ", trial, " does not exist (maximum ", my numberOfTrials, ").");
-	Melder_information1 (my result [trial]. stimulus);
+	Melder_information (my result [trial]. stimulus);
 END
 
 DIRECT (ResultsMFC_removeUnsharedStimuli)

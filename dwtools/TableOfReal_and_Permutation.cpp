@@ -25,29 +25,32 @@
 #include "TableOfReal_extensions.h"
 #include "NUM2.h"
 
-TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee)
-{
+TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee) {
 	iam (TableOfReal);
 	try {
-		if (my numberOfRows != thy numberOfElements) Melder_throw (L"The number of rows in the table and the number of elements in the Permutation must be equal.");
+		if (my numberOfRows != thy numberOfElements) {
+			Melder_throw (L"The number of rows in the table and the number of elements in the Permutation must be equal.");
+		}
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, my numberOfColumns);
-	
-		for (long i = 1; i <= thy numberOfElements; i++)
-		{
+
+		for (long i = 1; i <= thy numberOfElements; i++) {
 			TableOfReal_copyOneRowWithLabel (me, him.peek(), thy p[i], i);
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_throw (me, ": not permuted."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": not permuted.");
+	}
 }
 
-Permutation TableOfReal_to_Permutation_sortRowLabels (I)
-{
+Permutation TableOfReal_to_Permutation_sortRowLabels (I) {
 	iam (TableOfReal);
 	try {
 		autoPermutation thee = Permutation_create (my numberOfRows);
 		NUMindexx_s (my rowLabels, my numberOfRows, thy p);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no Permutation created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no Permutation created.");
+	}
 }
 
 /* End of file TableOfReal_and_Permutation.cpp */

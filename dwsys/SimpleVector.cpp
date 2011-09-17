@@ -45,38 +45,38 @@
 
 Thing_implement (DoubleVector, Data, 0);
 
-void DoubleVector_init (I, long min, long max)
-{
+void DoubleVector_init (I, long min, long max) {
 	iam (DoubleVector);
 	my min = min; my max = max;
 	my v = NUMvector<double> (min, max);
 }
 
-DoubleVector DoubleVector_create (long min, long max)
-{
+DoubleVector DoubleVector_create (long min, long max) {
 	try {
 		autoDoubleVector me = Thing_new (DoubleVector);
 		DoubleVector_init (me.peek(), min, max);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("DoubleVector not created."); }
+	} catch (MelderError) {
+		Melder_throw ("DoubleVector not created.");
+	}
 }
 
 Thing_implement (ComplexVector, Data, 0);
 
-void ComplexVector_init (I, long min, long max)
-{
-		iam (ComplexVector);
-		my min = min; my max = max;
-		my v = NUMdcvector (min, max);
+void ComplexVector_init (I, long min, long max) {
+	iam (ComplexVector);
+	my min = min; my max = max;
+	my v = NUMdcvector (min, max);
 }
 
-ComplexVector ComplexVector_create (long min, long max)
-{
+ComplexVector ComplexVector_create (long min, long max) {
 	try {
 		autoComplexVector me = Thing_new (ComplexVector);
 		ComplexVector_init (me.peek(), min, max);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("ComplexVector not created."); }
+	} catch (MelderError) {
+		Melder_throw ("ComplexVector not created.");
+	}
 }
 
 /* End of file SimpleVector.cpp */

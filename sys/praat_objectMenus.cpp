@@ -73,11 +73,11 @@ DO
 	praat_cleanUpName (string);   /* This is allowed because "string" is local and dispensible. */
 	static MelderString fullName = { 0 };
 	MelderString_empty (& fullName);
-	MelderString_append3 (& fullName, Thing_className ((Thing) OBJECT), L" ", string);
+	MelderString_append (& fullName, Thing_className ((Thing) OBJECT), L" ", string);
 	if (! wcsequ (fullName.string, FULL_NAME)) {
 		Melder_free (FULL_NAME), FULL_NAME = Melder_wcsdup_f (fullName.string);
 		MelderString listName = { 0 };
-		MelderString_append3 (& listName, Melder_integer (ID), L". ", fullName.string);
+		MelderString_append (& listName, Melder_integer (ID), L". ", fullName.string);
 		praat_list_renameAndSelect (IOBJECT, listName.string);
 		MelderString_free (& listName);
 		for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
@@ -368,7 +368,7 @@ static void readFromFile (MelderFile file) {
 		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
 		Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, object.transfer()); therror
 		if (pages -> executable)
-			Melder_warning1 (L"These manual pages contain links to executable scripts.\n"
+			Melder_warning (L"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
 		return;
 	}
@@ -560,7 +560,7 @@ void praat_addMenus (GuiObject bar) {
 		helpMenu = GuiMenuBar_addMenu (bar, L"Help", 0);
 	}
 
-	MelderString_append3 (& itemTitle_about, L"About ", Melder_peekUtf8ToWcs (praatP.title), L"...");
+	MelderString_append (& itemTitle_about, L"About ", Melder_peekUtf8ToWcs (praatP.title), L"...");
 	#ifdef macintosh
 		praat_addMenuCommand (L"Objects", L"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
 	#endif
@@ -618,7 +618,7 @@ void praat_addMenus2 (void) {
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Go to manual page...", 0, 0, DO_GoToManualPage);
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", L"Write manual to HTML directory...", 0, praat_HIDDEN, DO_WriteManualToHtmlDirectory);
 	MelderString_empty (& itemTitle_search);
-	MelderString_append3 (& itemTitle_search, L"Search ", Melder_peekUtf8ToWcs (praatP.title), L" manual...");
+	MelderString_append (& itemTitle_search, L"Search ", Melder_peekUtf8ToWcs (praatP.title), L" manual...");
 	praat_addMenuCommand (L"Objects", L"ApplicationHelp", itemTitle_search.string, 0, 'M', DO_SearchManual);
 	#ifdef _WIN32
 		praat_addMenuCommand (L"Objects", L"Help", L"-- about --", 0, 0, 0);

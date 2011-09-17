@@ -126,7 +126,7 @@ Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long ti
 			TextInterval segment = (TextInterval) tier -> intervals -> item [iseg];
 			autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 			Thing_setName (interval.peek(), segment -> text ? segment -> text : L"untitled");
-			Collection_addItem (collection.peek(), interval.transfer()); therror 
+			Collection_addItem (collection.peek(), interval.transfer()); 
 		}
 		return collection.transfer();
 	} catch (MelderError) {
@@ -143,10 +143,10 @@ Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, lo
 			if (segment -> text != NULL && segment -> text [0] != '\0') {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
 				Thing_setName (interval.peek(), segment -> text ? segment -> text : L"untitled");
-				Collection_addItem (collection.peek(), interval.transfer()); therror
+				Collection_addItem (collection.peek(), interval.transfer());
 			}
 		}
-		if (collection -> size == 0) Melder_warning1 (L"No non-empty intervals were found.");
+		if (collection -> size == 0) Melder_warning (L"No non-empty intervals were found.");
 		return collection.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, " & ", sound, ": non-empty intervals not extracted.");
@@ -296,7 +296,7 @@ void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, doub
 		}
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
-		MelderString_append3 (& buffer, L"Pitch (", Function_getUnitText (pitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
+		MelderString_append (& buffer, L"Pitch (", Function_getUnitText (pitch, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
 		Graphics_textLeft (g, true, buffer.string);
 		Graphics_textBottom (g, true, L"Time (s)");
 		Graphics_marksBottom (g, 2, true, true, true);

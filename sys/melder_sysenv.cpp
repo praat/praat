@@ -30,7 +30,7 @@
  */
 
 #if defined (_WIN32)
-	#if ! defined (__CYGWIN__) && ! defined (MINGW)
+	#if ! defined (__CYGWIN__) && ! defined (__MINGW32__)
 		#include <crtl.h>
 	#endif
 	#include <windows.h>
@@ -40,7 +40,7 @@
 #include "melder.h"
 
 wchar_t * Melder_getenv (const wchar_t *variableName) {
-	#if defined (macintosh) || defined (UNIX) || defined (MINGW)
+	#if defined (macintosh) || defined (UNIX) || defined (__MINGW32__)
 		return Melder_peekUtf8ToWcs (getenv (Melder_peekWcsToUtf8 (variableName)));
 	#elif defined (_WIN32)
 		static wchar_t buffer [11] [255];
@@ -85,7 +85,7 @@ void Melder_system (const wchar *command) {
 				}
 			}
 		}
-		MelderString_append2 (& buffer, L" /c ", command);
+		MelderString_append (& buffer, L" /c ", command);
         memset (& siStartInfo, 0, sizeof (siStartInfo));
         siStartInfo. cb = sizeof (siStartInfo);
 		if (! CreateProcess (NULL, buffer.string, NULL, NULL, TRUE, 0, NULL, NULL, & siStartInfo, & piProcInfo))

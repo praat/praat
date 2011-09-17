@@ -265,7 +265,7 @@ PointProcess PointProcesses_union (PointProcess me, PointProcess thee) {
 		if (thy xmin < my xmin) his xmin = thy xmin;
 		if (thy xmax > my xmax) his xmax = thy xmax;
 		for (long i = 1; i <= thy nt; i ++) {
-			PointProcess_addPoint (him.peek(), thy t [i]); therror
+			PointProcess_addPoint (him.peek(), thy t [i]);
 		}
 		return him.transfer();
 	} catch (MelderError) {
@@ -322,7 +322,7 @@ void PointProcess_fill (PointProcess me, double tmin, double tmax, double period
 		long n = floor ((tmax - tmin) / period), i;
 		double t = 0.5 * (tmin + tmax - n * period);
 		for (i = 1, t = 0.5 * (tmin + tmax - n * period); i <= n; i ++, t += period) {
-			PointProcess_addPoint (me, t); therror
+			PointProcess_addPoint (me, t);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, ": not filled.");

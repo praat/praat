@@ -163,7 +163,7 @@ FORM (Network_getActivity, L"Network: Get activity", 0)
 DO
 	iam_ONLY (Network);
 	double activity = Network_getActivity (me, GET_INTEGER (L"Node")); therror
-	Melder_information1 (Melder_double (activity));
+	Melder_information (Melder_double (activity));
 END
 
 FORM (Network_getWeight, L"Network: Get weight", 0)
@@ -172,7 +172,7 @@ FORM (Network_getWeight, L"Network: Get weight", 0)
 DO
 	iam_ONLY (Network);
 	double weight = Network_getWeight (me, GET_INTEGER (L"Connection")); therror
-	Melder_information1 (Melder_double (weight));
+	Melder_information (Melder_double (weight));
 END
 
 FORM (Network_normalizeActivities, L"Network: Normalize activities", 0)
@@ -369,7 +369,7 @@ DO
 	tableau = & my tableaus [itab];
 	if (icand > tableau -> numberOfCandidates)
 		Melder_throw ("The specified candidate should not exceed the number of candidates.");
-	Melder_information1 (tableau -> candidates [icand]. output);
+	Melder_information (tableau -> candidates [icand]. output);
 END
 
 FORM (OTGrammar_getConstraint, L"Get constraint name", 0)
@@ -380,7 +380,7 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (my constraints [icons]. name);
+	Melder_information (my constraints [icons]. name);
 END
 
 FORM (OTGrammar_getDisharmony, L"Get disharmony", 0)
@@ -391,7 +391,7 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (Melder_double (my constraints [icons]. disharmony));
+	Melder_information (Melder_double (my constraints [icons]. disharmony));
 END
 
 FORM (OTGrammar_getInput, L"Get input", 0)
@@ -402,7 +402,7 @@ DO
 	long itab = GET_INTEGER (L"Tableau number");
 	if (itab > my numberOfTableaus)
 		Melder_throw ("The specified tableau number should not exceed the number of tableaus.");
-	Melder_information1 (my tableaus [itab]. input);
+	Melder_information (my tableaus [itab]. input);
 END
 
 DIRECT (OTGrammar_getInputs)
@@ -420,7 +420,7 @@ DO
 	iam_ONLY (OTGrammar);
 	long bestInput, bestOutput;
 	OTGrammar_getInterpretiveParse (me, GET_STRING (L"Partial output"), & bestInput, & bestOutput); therror
-	Melder_information8 (L"Best input = ", Melder_integer (bestInput), L": ", my tableaus [bestInput]. input,
+	Melder_information (L"Best input = ", Melder_integer (bestInput), L": ", my tableaus [bestInput]. input,
 		L"\nBest output = ", Melder_integer (bestOutput), L": ", my tableaus [bestInput]. candidates [bestOutput]. output);
 END
 
@@ -432,12 +432,12 @@ DO
 	long itab = GET_INTEGER (L"Tableau number");
 	if (itab > my numberOfTableaus)
 		Melder_throw ("The specified tableau number should not exceed the number of tableaus.");
-	Melder_information1 (Melder_integer (my tableaus [itab]. numberOfCandidates));
+	Melder_information (Melder_integer (my tableaus [itab]. numberOfCandidates));
 END
 
 DIRECT (OTGrammar_getNumberOfConstraints)
 	iam_ONLY (OTGrammar);
-	Melder_information1 (Melder_integer (my numberOfConstraints));
+	Melder_information (Melder_integer (my numberOfConstraints));
 END
 
 FORM (OTGrammar_getNumberOfOptimalCandidates, L"Get number of optimal candidates", 0)
@@ -448,12 +448,12 @@ DO
 	long itab = GET_INTEGER (L"Tableau number");
 	if (itab > my numberOfTableaus)
 		Melder_throw ("The specified tableau number should not exceed the number of tableaus.");
-	Melder_information1 (Melder_integer (OTGrammar_getNumberOfOptimalCandidates (me, itab)));
+	Melder_information (Melder_integer (OTGrammar_getNumberOfOptimalCandidates (me, itab)));
 END
 
 DIRECT (OTGrammar_getNumberOfTableaus)
 	iam_ONLY (OTGrammar);
-	Melder_information1 (Melder_integer (my numberOfTableaus));
+	Melder_information (Melder_integer (my numberOfTableaus));
 END
 
 FORM (OTGrammar_getNumberOfViolations, L"Get number of violations", 0)
@@ -470,7 +470,7 @@ DO
 		Melder_throw ("The specified candidate should not exceed the number of candidates.");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (Melder_integer (my tableaus [itab]. candidates [icand]. marks [icons]));
+	Melder_information (Melder_integer (my tableaus [itab]. candidates [icand]. marks [icons]));
 END
 
 FORM (OTGrammar_compareCandidates, L"Compare candidates", 0)
@@ -491,7 +491,7 @@ DO
 		Melder_throw ("The specified candidate (number 1) should not exceed the number of candidates for this tableau.");
 	if (icand2 > my tableaus [itab1]. numberOfCandidates)
 		Melder_throw ("The specified candidate (number 2) should not exceed the number of candidates for this tableau.");
-	Melder_information1 (Melder_integer (OTGrammar_compareCandidates (me, itab1, icand1, itab2, icand2)));
+	Melder_information (Melder_integer (OTGrammar_compareCandidates (me, itab1, icand1, itab2, icand2)));
 END
 
 FORM (OTGrammar_getRankingValue, L"Get ranking value", 0)
@@ -502,7 +502,7 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (Melder_double (my constraints [icons]. ranking));
+	Melder_information (Melder_double (my constraints [icons]. ranking));
 END
 
 FORM (OTGrammar_getWinner, L"Get winner", 0)
@@ -513,7 +513,7 @@ DO
 	long itab = GET_INTEGER (L"Tableau");
 	if (itab > my numberOfTableaus)
 		Melder_throw ("The specified tableau number should not exceed the number of tableaus.");
-	Melder_information1 (Melder_integer (OTGrammar_getWinner (me, itab)));
+	Melder_information (Melder_integer (OTGrammar_getWinner (me, itab)));
 END
 
 FORM (OTGrammar_inputToOutput, L"OTGrammar: Input to output", L"OTGrammar: Input to output...")
@@ -524,7 +524,7 @@ DO
 	iam_ONLY (OTGrammar);
 	wchar output [100];
 	OTGrammar_inputToOutput (me, GET_STRING (L"Input form"), output, GET_REAL (L"Evaluation noise"));
-	Melder_information1 (output);
+	Melder_information (output);
 	praat_dataChanged (me);
 END
 
@@ -563,7 +563,7 @@ DO
 	long icand = GET_INTEGER (L"Candidate");
 	if (icand > my tableaus [itab]. numberOfCandidates)
 		Melder_throw ("The specified candidate should not exceed the number of candidates.");
-	Melder_information1 (Melder_integer (OTGrammar_isCandidateGrammatical (me, itab, icand)));
+	Melder_information (Melder_integer (OTGrammar_isCandidateGrammatical (me, itab, icand)));
 END
 
 FORM (OTGrammar_isCandidateSinglyGrammatical, L"Is candidate singly grammatical?", 0)
@@ -578,7 +578,7 @@ DO
 	long icand = GET_INTEGER (L"Candidate");
 	if (icand > my tableaus [itab]. numberOfCandidates)
 		Melder_throw ("The specified candidate should not exceed the number of candidates.");
-	Melder_information1 (Melder_integer (OTGrammar_isCandidateSinglyGrammatical (me, itab, icand)));
+	Melder_information (Melder_integer (OTGrammar_isCandidateSinglyGrammatical (me, itab, icand)));
 END
 
 FORM (OTGrammar_isPartialOutputGrammatical, L"Is partial output grammatical?", 0)
@@ -586,7 +586,7 @@ FORM (OTGrammar_isPartialOutputGrammatical, L"Is partial output grammatical?", 0
 	OK
 DO
 	iam_ONLY (OTGrammar);
-	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputGrammatical (me, GET_STRING (L"Partial output"))));
+	Melder_information (Melder_integer (OTGrammar_isPartialOutputGrammatical (me, GET_STRING (L"Partial output"))));
 END
 
 FORM (OTGrammar_isPartialOutputSinglyGrammatical, L"Is partial output singly grammatical?", 0)
@@ -594,7 +594,7 @@ FORM (OTGrammar_isPartialOutputSinglyGrammatical, L"Is partial output singly gra
 	OK
 DO
 	iam_ONLY (OTGrammar);
-	Melder_information1 (Melder_integer (OTGrammar_isPartialOutputSinglyGrammatical (me, GET_STRING (L"Partial output"))));
+	Melder_information (Melder_integer (OTGrammar_isPartialOutputSinglyGrammatical (me, GET_STRING (L"Partial output"))));
 END
 
 FORM (OTGrammar_learn, L"OTGrammar: Learn", L"OTGrammar & 2 Strings: Learn...")
@@ -893,7 +893,7 @@ DO
 		praat_dataChanged (me);
 		throw;
 	}
-	Melder_information1 (Melder_integer (result));
+	Melder_information (Melder_integer (result));
 END
 
 FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", L"OT learning 6. Shortcut to OT learning")
@@ -1034,7 +1034,7 @@ DO
 	long icand = GET_INTEGER (L"Candidate");
 	if (icand > my numberOfCandidates)
 		Melder_throw ("The specified candidate number should not exceed the number of candidates.");
-	Melder_information1 (my candidates [icand]. string);
+	Melder_information (my candidates [icand]. string);
 END
 
 FORM (OTMulti_getConstraint, L"Get constraint name", 0)
@@ -1045,7 +1045,7 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (my constraints [icons]. name);
+	Melder_information (my constraints [icons]. name);
 END
 
 FORM (OTMulti_getConstraintIndexFromName, L"OTMulti: Get constraint number", 0)
@@ -1053,7 +1053,7 @@ FORM (OTMulti_getConstraintIndexFromName, L"OTMulti: Get constraint number", 0)
 	OK
 DO
 	iam_ONLY (OTMulti);
-	Melder_information1 (Melder_integer (OTMulti_getConstraintIndexFromName (me, GET_STRING (L"Constraint name"))));
+	Melder_information (Melder_integer (OTMulti_getConstraintIndexFromName (me, GET_STRING (L"Constraint name"))));
 END
 
 FORM (OTMulti_getDisharmony, L"Get disharmony", 0)
@@ -1064,17 +1064,17 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (Melder_double (my constraints [icons]. disharmony));
+	Melder_information (Melder_double (my constraints [icons]. disharmony));
 END
 
 DIRECT (OTMulti_getNumberOfCandidates)
 	iam_ONLY (OTMulti);
-	Melder_information1 (Melder_integer (my numberOfCandidates));
+	Melder_information (Melder_integer (my numberOfCandidates));
 END
 
 DIRECT (OTMulti_getNumberOfConstraints)
 	iam_ONLY (OTMulti);
-	Melder_information1 (Melder_integer (my numberOfConstraints));
+	Melder_information (Melder_integer (my numberOfConstraints));
 END
 
 FORM (OTMulti_getNumberOfViolations, L"Get number of violations", 0)
@@ -1089,7 +1089,7 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (Melder_integer (my candidates [icand]. marks [icons]));
+	Melder_information (Melder_integer (my candidates [icand]. marks [icons]));
 END
 
 FORM (OTMulti_getRankingValue, L"Get ranking value", 0)
@@ -1100,7 +1100,7 @@ DO
 	long icons = GET_INTEGER (L"Constraint number");
 	if (icons > my numberOfConstraints)
 		Melder_throw ("The specified constraint number should not exceed the number of constraints.");
-	Melder_information1 (Melder_double (my constraints [icons]. ranking));
+	Melder_information (Melder_double (my constraints [icons]. ranking));
 END
 
 FORM (OTMulti_getWinner, L"OTMulti: Get winner", 0)
@@ -1109,7 +1109,7 @@ FORM (OTMulti_getWinner, L"OTMulti: Get winner", 0)
 	OK
 DO
 	iam_ONLY (OTMulti);
-	Melder_information1 (Melder_integer (OTMulti_getWinner (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"))));
+	Melder_information (Melder_integer (OTMulti_getWinner (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"))));
 END
 
 FORM (OTMulti_generateOptimalForm, L"OTMulti: Generate optimal form", 0)
@@ -1122,7 +1122,7 @@ DO
 	wchar output [100];
 	OTMulti_generateOptimalForm (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
 		output, GET_REAL (L"Evaluation noise")); therror
-	Melder_information1 (output);
+	Melder_information (output);
 	praat_dataChanged (me);
 END
 

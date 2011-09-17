@@ -712,7 +712,7 @@ static void pas (int symbol) {
 		const wchar *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
 		bool needQuotes1 = wcschr (symbolName1, ' ') == NULL;
 		bool needQuotes2 = wcschr (symbolName2, ' ') == NULL;
-		MelderString_append8 (& melding,
+		MelderString_append (& melding,
 			L"Expected ", needQuotes1 ? L"\"" : NULL, symbolName1, needQuotes1 ? L"\"" : NULL,
 			L", but found ", needQuotes2 ? L"\"" : NULL, symbolName2, needQuotes2 ? L"\"" : NULL);
 		formulefout (melding.string, lexan [ilexan]. position);
@@ -2618,7 +2618,7 @@ static void do_indexedNumericVariable (void) {
 		Stackel index = & theStack [w + iindex];
 		if (index -> which != Stackel_NUMBER)
 			Melder_throw ("In indexed variables, the index has to be a number, not ", Stackel_whichText (index), ".");
-		MelderString_append2 (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
+		MelderString_append (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (var == NULL)
@@ -2640,7 +2640,7 @@ static void do_indexedStringVariable (void) {
 		Stackel index = & theStack [w + iindex];
 		if (index -> which != Stackel_NUMBER)
 			Melder_throw ("In indexed variables, the index has to be a number, not ", Stackel_whichText (index), ".");
-		MelderString_append2 (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
+		MelderString_append (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (var == NULL)
@@ -4405,7 +4405,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 				result -> result.numericResult = theStack [1]. content.number;
 			} else {
-				Melder_information1 (Melder_double (theStack [1]. content.number));
+				Melder_information (Melder_double (theStack [1]. content.number));
 			}
 		} else if (theExpressionType == kFormula_EXPRESSION_TYPE_STRING) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw ("Found a numeric expression instead of a string expression.");
@@ -4414,7 +4414,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 				result -> result.stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL;   /* Undangle. */
 			} else {
-				Melder_information1 (theStack [1]. content.string);
+				Melder_information (theStack [1]. content.string);
 			}
 		} else if (theExpressionType == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw ("Found a numeric expression instead of a numeric array expression.");
@@ -4423,7 +4423,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY;
 				result -> result.numericArrayResult = theStack [1]. content.numericArray; theStack [1]. content.numericArray = theZeroNumericArray;   /* Undangle. */
 			} else {
-				//Melder_information1 (theStack [1]. content.string);  // TODO: implement
+				//Melder_information (theStack [1]. content.string);  // TODO: implement
 			}
 		} else {
 			Melder_assert (theExpressionType == kFormula_EXPRESSION_TYPE_UNKNOWN);
@@ -4432,7 +4432,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 					result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 					result -> result.numericResult = theStack [1]. content.number;
 				} else {
-					Melder_information1 (Melder_double (theStack [1]. content.number));
+					Melder_information (Melder_double (theStack [1]. content.number));
 				}
 			} else {
 				Melder_assert (theStack [1]. which == Stackel_STRING);
@@ -4440,7 +4440,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 					result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 					result -> result.stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL;   /* Undangle. */
 				} else {
-					Melder_information1 (theStack [1]. content.string);
+					Melder_information (theStack [1]. content.string);
 				}
 			}
 		}

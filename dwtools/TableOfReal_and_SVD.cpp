@@ -27,66 +27,74 @@
 
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
-TableOfReal SVD_to_TableOfReal (SVD me, long from, long to)
-{
+TableOfReal SVD_to_TableOfReal (SVD me, long from, long to) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
 		SVD_synthesize (me, from, to, thy data);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no TableOfReal synthesized."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no TableOfReal synthesized.");
+	}
 }
 
-SVD TableOfReal_to_SVD (I)
-{
+SVD TableOfReal_to_SVD (I) {
 	iam (TableOfReal);
 	try {
 		autoSVD thee = SVD_create_d (my data, my numberOfRows, my numberOfColumns);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": no SVD created."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": no SVD created.");
+	}
 }
 
-TableOfReal SVD_extractLeftSingularVectors (I)
-{
+TableOfReal SVD_extractLeftSingularVectors (I) {
 	iam (SVD);
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, mn_min);
 		NUMdmatrix_copyElements (my u, thy data, 1, my numberOfRows, 1, mn_min);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": left singular vector not extracted."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": left singular vector not extracted.");
+	}
 }
 
-TableOfReal SVD_extractRightSingularVectors (I)
-{
+TableOfReal SVD_extractRightSingularVectors (I) {
 	iam (SVD);
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, mn_min);
 		NUMdmatrix_copyElements (my v, thy data, 1, my numberOfColumns, 1, mn_min);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": right singular vector not extracted."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": right singular vector not extracted.");
+	}
 }
 
-TableOfReal SVD_extractSingularValues (I)
-{
+TableOfReal SVD_extractSingularValues (I) {
 	iam (SVD);
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoTableOfReal thee = TableOfReal_create (1, mn_min);
 		NUMdvector_copyElements (my d, thy data[1], 1, mn_min);
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": singular values not extracted."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": singular values not extracted.");
+	}
 }
 
-GSVD TablesOfReal_to_GSVD (I, thou)
-{
+GSVD TablesOfReal_to_GSVD (I, thou) {
 	iam (TableOfReal);
 	thouart (TableOfReal);
 	try {
-		if (my numberOfColumns != thy numberOfColumns) Melder_throw ("Both tables must have the same number of columns.");
+		if (my numberOfColumns != thy numberOfColumns) {
+			Melder_throw ("Both tables must have the same number of columns.");
+		}
 		autoGSVD him = GSVD_create_d (my data, my numberOfRows, my numberOfColumns, thy data, thy numberOfRows);
 		return him.transfer();
-	} catch (MelderError) { Melder_throw ("GSVD not constructed from TablesOfReal."); }
+	} catch (MelderError) {
+		Melder_throw ("GSVD not constructed from TablesOfReal.");
+	}
 }
 
 /* End of file SVD_and_TableOfReal.cpp */

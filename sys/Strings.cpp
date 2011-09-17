@@ -272,7 +272,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 	autoMelderString buffer;
 	for (long i = 1; i <= my numberOfStrings; i ++) {
-		MelderString_append2 (& buffer, my strings [i], L"\n");
+		MelderString_append (& buffer, my strings [i], L"\n");
 	}
 	MelderFile_writeText (file, buffer.string);
 }

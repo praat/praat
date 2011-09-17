@@ -59,7 +59,7 @@ void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
 		Graphics_DCtoWC (this, xDC, yDC, xWC, yWC);
 	#elif win
 		POINT pos;
-		if (! GetCursorPos (& pos)) { Melder_warning1 (L"Cannot get cursor position."); return; }
+		if (! GetCursorPos (& pos)) { Melder_warning (L"Cannot get cursor position."); return; }
 		ScreenToClient (d_winWindow, & pos);
 		Graphics_DCtoWC (this, pos. x, pos. y, xWC, yWC);
 	#elif mac

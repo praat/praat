@@ -32,19 +32,16 @@ Thing_implement (Filter, Data, 0);
 	c = -(r * r); \
 	b = 2.0 * r * cos (2.0 * NUMpi * f * dT);
 
-void structFilter :: v_resetMemory ()
-{
+void structFilter :: v_resetMemory () {
 	p1 = p2 = 0;
 }
 
-void structFilter :: v_setFB (double f, double bw)
-{
+void structFilter :: v_setFB (double f, double bw) {
 	SETBC (f, bw)
 	a = 1.0 - b - c;
 }
 
-double structFilter :: v_getOutput (double input)
-{
+double structFilter :: v_getOutput (double input) {
 	double output = a * input + b * p1 + c * p2;
 	p2 = p1;
 	p1 = output;
@@ -53,33 +50,29 @@ double structFilter :: v_getOutput (double input)
 
 Thing_implement (Resonator, Filter, 0);
 
-void structResonator :: v_setFB (double f, double bw)
-{
+void structResonator :: v_setFB (double f, double bw) {
 	SETBC (f, bw)
 	a = normalisation == Resonator_NORMALISATION_H0 ? (1.0 - b - c) : (1 + c) * sin (2.0 * NUMpi * f * dT);
 }
 
-Resonator Resonator_create (double dT, int normalisation)
-{
+Resonator Resonator_create (double dT, int normalisation) {
 	try {
 		autoResonator me = Thing_new (Resonator);
 		my a = 1; // all-pass
 		my dT = dT;
 		my normalisation = normalisation;
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("Resonator not created."); }
+	} catch (MelderError) {
+		Melder_throw ("Resonator not created.");
+	}
 }
 
 Thing_implement (AntiResonator, Filter, 0);
 
-void structAntiResonator :: v_setFB (double f, double bw)
-{
-	if (f <= 0 && bw <= 0)
-	{
+void structAntiResonator :: v_setFB (double f, double bw) {
+	if (f <= 0 && bw <= 0) {
 		a = 1; b = -2; c = 1; // all-pass except dc
-	}
-	else
-	{
+	} else {
 		SETBC (f, bw)
 		a = 1 / (1.0 - b - c);
 		// The next equations are incorporated in the getOutput function
@@ -88,8 +81,7 @@ void structAntiResonator :: v_setFB (double f, double bw)
 }
 
 /* y[n] = a * (x[n] - b * x[n-1] - c * x[n-2]) */
-double structAntiResonator :: v_getOutput (double input)
-{
+double structAntiResonator :: v_getOutput (double input) {
 	double output = a * (input - b * p1 - c * p2);
 	p2 = p1;
 	p1 = input;
@@ -98,21 +90,18 @@ double structAntiResonator :: v_getOutput (double input)
 
 Thing_implement (ConstantGainResonator, Filter, 0);
 
-void structConstantGainResonator :: v_resetMemory ()
-{
+void structConstantGainResonator :: v_resetMemory () {
 	p1 = p2 = p3 = p4 = 0;
 }
 
-void structConstantGainResonator :: v_setFB (double f, double bw)
-{
+void structConstantGainResonator :: v_setFB (double f, double bw) {
 	SETBC (f, bw)
 	a = 1 - r;
 	d = -r;
 }
 
 /* y[n] = a * (x[n] + d * x[n-2]) + b * y[n-1] + c * y[n-2] */
-double structConstantGainResonator :: v_getOutput (double input)
-{
+double structConstantGainResonator :: v_getOutput (double input) {
 	double output = a * (input + d * p4) + b * p1 + c * p2;
 	p2 = p1;
 	p1 = output;
@@ -121,40 +110,39 @@ double structConstantGainResonator :: v_getOutput (double input)
 	return output;
 }
 
-ConstantGainResonator ConstantGainResonator_create (double dT)
-{
+ConstantGainResonator ConstantGainResonator_create (double dT) {
 	try {
 		autoConstantGainResonator me = Thing_new (ConstantGainResonator);
 		my a = 1; // all-pass
 		my dT = dT;
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("ConstantGainResonator not created."); }
+	} catch (MelderError) {
+		Melder_throw ("ConstantGainResonator not created.");
+	}
 }
 
-AntiResonator AntiResonator_create (double dT)
-{
+AntiResonator AntiResonator_create (double dT) {
 	try {
 		autoAntiResonator me = Thing_new (AntiResonator);
 		my a = 1; // all-pass
 		my dT = dT;
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("AntiResonator not created."); }
+	} catch (MelderError) {
+		Melder_throw ("AntiResonator not created.");
+	}
 }
 
-void Filter_setFB (I, double f, double b)
-{
+void Filter_setFB (I, double f, double b) {
 	iam (Filter);
 	my v_setFB (f, b);
 }
 
-double Filter_getOutput (I, double input)
-{
+double Filter_getOutput (I, double input) {
 	iam (Filter);
 	return my v_getOutput (input);
 }
 
-void Filter_resetMemory (I)
-{
+void Filter_resetMemory (I) {
 	iam (Filter);
 	my v_resetMemory ();
 }

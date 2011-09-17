@@ -87,7 +87,7 @@ END
 
 DIRECT (KNN_getNumberOfInstances)
     iam_ONLY (KNN);
-    Melder_information2 (Melder_integer (my nInstances), L" units");
+    Melder_information (Melder_integer (my nInstances), L" units");
 END
 
 FORM (KNN_getOptimumModel, L"kNN model selection", L"kNN classifiers 1.1.2. Model selection")
@@ -121,13 +121,13 @@ DO
     KNN_modelSearch (me, fws.peek(), &k, &dist, mode, lrate, nseeds);
     switch (dist) {
         case kOla_SQUARED_DISTANCE_WEIGHTED_VOTING:
-            Melder_information3 (L"Vote weighting: Inversed squared distance\n", L"k: ", Melder_integer(k));
+            Melder_information (L"Vote weighting: Inversed squared distance\n", L"k: ", Melder_integer(k));
             break;
         case kOla_DISTANCE_WEIGHTED_VOTING:
-            Melder_information3 (L"Vote weighting: Inversed distance\n", L"k: ", Melder_integer(k));
+            Melder_information (L"Vote weighting: Inversed distance\n", L"k: ", Melder_integer(k));
             break;
         case kOla_FLAT_VOTING:
-            Melder_information3 (L"Vote weighting: Flat\n", L"k: ", Melder_integer(k));
+            Melder_information (L"Vote weighting: Flat\n", L"k: ", Melder_integer(k));
             break;
     }
 END
@@ -175,7 +175,7 @@ DO
     double result = KNN_evaluate (me, fws.peek(), k, vt, mode);
     if (lround (result) == kOla_FWEIGHTS_MISMATCH)
 		Melder_throw ("The number of feature weights should be equal to the dimensionality of the Pattern.");
-    Melder_information2 (Melder_double (100 * result), L" percent of the instances correctly classified.");   // BUG: use Melder_percent
+    Melder_information (Melder_double (100 * result), L" percent of the instances correctly classified.");   // BUG: use Melder_percent
 END
 
 FORM (KNN_evaluateWithFeatureWeights, L"Evaluation", L"KNN & FeatureWeights: Get accuracy estimate...")
@@ -221,7 +221,7 @@ DO
     double result = KNN_evaluate (me, thee, k, vt, mode);
     if (lround (result) == kOla_FWEIGHTS_MISMATCH)
         Melder_throw ("The number of feature weights should be equal to the dimensionality of the Pattern.");
-    Melder_information2 (Melder_double (100 * result), L" percent of the instances correctly classified.");
+    Melder_information (Melder_double (100 * result), L" percent of the instances correctly classified.");
 END
 
 
@@ -279,7 +279,7 @@ DO
     if (n <= 0 || n > 1 || r <= 0 || r > 1)
         Melder_throw ("Please select a pruning degree d such that 0 < d <= 1.");
     long npruned = KNN_prune_prune (me, n, r, k);
-    Melder_information4 (Melder_integer (npruned), L" instances discarded. \n", L"Size of new instance base: ", Melder_integer (oldn - npruned));
+    Melder_information (Melder_integer (npruned), L" instances discarded. \n", L"Size of new instance base: ", Melder_integer (oldn - npruned));
 END
 
 
@@ -370,7 +370,7 @@ DO
         Melder_throw ("The dimensionality of Pattern should be equal to that of the instance base.");
     autoFeatureWeights fws = FeatureWeights_create (thy nx);
     double result = KNN_evaluateWithTestSet (me, thee, him, fws.peek(), k, vt);
-    Melder_information2 (Melder_double (100 * result), L" percent of the instances correctly classified.");
+    Melder_information (Melder_double (100 * result), L" percent of the instances correctly classified.");
 END
 
 FORM (KNN_evaluateWithTestSetAndFeatureWeights, L"Evaluation", L"KNN & Pattern & Categories & FeatureWeights: Evaluate...")
@@ -409,7 +409,7 @@ DO
     if (p->nx != fws -> fweights -> numberOfColumns)
         Melder_throw ("The number of feature weights should be equal to the dimensionality of the Pattern.");
     double result = KNN_evaluateWithTestSet (me, p, c, fws, k, vt);
-    Melder_information2 (Melder_double (100 * result), L" percent of the instances correctly classified.");
+    Melder_information (Melder_double (100 * result), L" percent of the instances correctly classified.");
 END
 
 
@@ -836,7 +836,7 @@ DIRECT (KNN_debug_KNN_SA_partition)
 END
 
 DIRECT (KNN_debug_KNN_getNumberOfCPUs)
-    Melder_information2 (Melder_integer(KNN_getNumberOfCPUs()), L" CPUs available");
+    Melder_information (Melder_integer(KNN_getNumberOfCPUs()), L" CPUs available");
 END
 
 DIRECT (KNN_debug_KNN_threadTest)
@@ -858,35 +858,35 @@ DIRECT (KNN_help)
 END
 
 DIRECT (hint_KNN_and_FeatureWeights_evaluate)
-    Melder_information1 (L"The accuracy of a KNN can be estimated by selecting a KNN and a FeatureWeights object and choosing \"Evaluate...\".");
+    Melder_information (L"The accuracy of a KNN can be estimated by selecting a KNN and a FeatureWeights object and choosing \"Evaluate...\".");
 END
 
 DIRECT (hint_KNN_and_Pattern_classify)
-    Melder_information1 (L"You can use the KNN as a classifier by selecting a KNN and a Pattern and choosing \"To Categories...\" or \"To TableOfReal...\".");
+    Melder_information (L"You can use the KNN as a classifier by selecting a KNN and a Pattern and choosing \"To Categories...\" or \"To TableOfReal...\".");
 END
 
 DIRECT (hint_KNN_and_Pattern_and_FeatureWeights_classify)
-    Melder_information1 (L"You can use the KNN as a classifier by selecting a KNN, a Pattern and an FeatureWeights object and choosing \"To Categories...\" or \"To TableOfReal...\".");
+    Melder_information (L"You can use the KNN as a classifier by selecting a KNN, a Pattern and an FeatureWeights object and choosing \"To Categories...\" or \"To TableOfReal...\".");
 END
 
 DIRECT (hint_KNN_and_Pattern_and_Categories_learn)
-    Melder_information1 (L"You can train a KNN by selecting a KNN, a Pattern and a Categories object together and choosing \"Learn...\".");
+    Melder_information (L"You can train a KNN by selecting a KNN, a Pattern and a Categories object together and choosing \"Learn...\".");
 END
 
 DIRECT (hint_KNN_and_Pattern_and_Categories_evaluate)
-    Melder_information1 (L"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern and the corresponding Categories object and choosing \"Evaluate...\".");
+    Melder_information (L"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern and the corresponding Categories object and choosing \"Evaluate...\".");
 END
 
 DIRECT (hint_KNN_and_Pattern_and_Categories_and_FeatureWeights_evaluate)
-    Melder_information1 (L"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern, an FeatureWeights object, and the corresponding Categories object and choosing \"Evaluate...\".");
+    Melder_information (L"The accuracy of a KNN can be estimated by selecting a KNN, a test Pattern, an FeatureWeights object, and the corresponding Categories object and choosing \"Evaluate...\".");
 END
 
 DIRECT (hint_Pattern_and_FeatureWeights_to_Categories)
-    Melder_information1 (L"A Pattern object and a FeatureWeights object can be used to compute a fixed number of clusters using the k-means clustering clustering algorithm.");
+    Melder_information (L"A Pattern object and a FeatureWeights object can be used to compute a fixed number of clusters using the k-means clustering clustering algorithm.");
 END
 
 DIRECT (hint_Pattern_and_FeatureWeights_to_Dissimilarity)
-    Melder_information1 (L"A Dissimilarity matrix can be generated from a Pattern and a FeatureWeights object.");
+    Melder_information (L"A Dissimilarity matrix can be generated from a Pattern and a FeatureWeights object.");
 END
 
 

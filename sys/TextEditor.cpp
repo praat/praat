@@ -59,13 +59,13 @@ void structTextEditor :: v_nameChanged () {
 				MelderString_append (& windowTitle, L", modified");
 			MelderString_append (& windowTitle, L")");
 		} else {
-			MelderString_append2 (& windowTitle, L"File ", MelderFile_messageName (& file));
+			MelderString_append (& windowTitle, L"File ", MelderFile_messageName (& file));
 			if (dirty && ! dirtinessAlreadyShown)
 				MelderString_append (& windowTitle, L" (modified)");
 		}
 		GuiWindow_setTitle (d_windowShell, windowTitle.string);
 		MelderString_empty (& windowTitle);
-		MelderString_append2 (& windowTitle, dirty && ! dirtinessAlreadyShown ? L"*" : L"", name == NULL ? L"(untitled)" : MelderFile_name (& file));
+		MelderString_append (& windowTitle, dirty && ! dirtinessAlreadyShown ? L"*" : L"", name == NULL ? L"(untitled)" : MelderFile_name (& file));
 		#if motif	
 			XtVaSetValues (d_windowShell, XmNiconName, Melder_peekWcsToUtf8 (windowTitle.string), NULL);
 		#endif
@@ -534,11 +534,11 @@ static void menu_cb_whereAmI (EDITOR_ARGS) {
 	EDITOR_IAM (TextEditor);
 	long numberOfLinesLeft, numberOfLinesRight;
 	if (! getSelectedLines (me, & numberOfLinesLeft, & numberOfLinesRight)) {
-		Melder_information3 (L"The cursor is on line ", Melder_integer (numberOfLinesLeft), L".");
+		Melder_information (L"The cursor is on line ", Melder_integer (numberOfLinesLeft), L".");
 	} else if (numberOfLinesLeft == numberOfLinesRight) {
-		Melder_information3 (L"The selection is on line ", Melder_integer (numberOfLinesLeft), L".");
+		Melder_information (L"The selection is on line ", Melder_integer (numberOfLinesLeft), L".");
 	} else {
-		Melder_information5 (L"The selection runs from line ", Melder_integer (numberOfLinesLeft),
+		Melder_information (L"The selection runs from line ", Melder_integer (numberOfLinesLeft),
 			L" to line ", Melder_integer (numberOfLinesRight), L".");
 	}
 }

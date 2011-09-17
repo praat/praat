@@ -25,25 +25,27 @@
 #include "TableOfReal.h"
 #include "Matrix_Categories.h"
 
-Discriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee)
-{
+Discriminant Pattern_and_Categories_to_Discriminant (Pattern me, Categories thee) {
 	try {
 		autoTableOfReal t = Matrix_and_Categories_to_TableOfReal (me, thee);
 		autoDiscriminant him = TableOfReal_to_Discriminant (t.peek());
 		return him.transfer();
-	} catch (MelderError) { Melder_throw ("Discriminant not created from Pattern & Categories."); }
+	} catch (MelderError) {
+		Melder_throw ("Discriminant not created from Pattern & Categories.");
+	}
 }
 
-Categories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee, 
-	int poolCovarianceMatrices,int useAprioriProbabilities)
-{
+Categories Discriminant_and_Pattern_to_Categories (Discriminant me, Pattern thee,
+        int poolCovarianceMatrices, int useAprioriProbabilities) {
 	try {
 		autoTableOfReal t = Matrix_to_TableOfReal (thee);
-		autoClassificationTable ct = Discriminant_and_TableOfReal_to_ClassificationTable (me, t.peek(), 
-			poolCovarianceMatrices, useAprioriProbabilities);
+		autoClassificationTable ct = Discriminant_and_TableOfReal_to_ClassificationTable (me, t.peek(),
+		                             poolCovarianceMatrices, useAprioriProbabilities);
 		autoCategories him =  ClassificationTable_to_Categories_maximumProbability (ct.peek());
 		return him.transfer();
-	} catch (MelderError) { Melder_throw ("Categories not created from Pattern & Discriminant."); }
+	} catch (MelderError) {
+		Melder_throw ("Categories not created from Pattern & Discriminant.");
+	}
 }
 
 /* End of file Discriminant_Pattern_Categories.cpp */

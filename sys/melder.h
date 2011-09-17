@@ -366,21 +366,29 @@ void MelderString_empty (MelderString *me);   // sets to empty string (buffer no
 void MelderString16_empty (MelderString16 *me);   // sets to empty string (buffer not freed)
 void MelderString_copy (MelderString *me, const wchar *source);
 void MelderString_ncopy (MelderString *me, const wchar *source, unsigned long n);
-void MelderString_append (MelderString *me, const wchar *source);
-void MelderString_append1 (MelderString *me, const wchar *s1);   // Identical to MelderString_append.
-void MelderString_append2 (MelderString *me, const wchar *s1, const wchar *s2);
-void MelderString_append3 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3);
-void MelderString_append4 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
-void MelderString_append5 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1);
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2);
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3);
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5);
-void MelderString_append6 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6);
-void MelderString_append7 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6, const wchar *s7);
-void MelderString_append8 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
-void MelderString_append9 (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
+void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+#define MelderString_append1 MelderString_append
+#define MelderString_append2 MelderString_append
+#define MelderString_append3 MelderString_append
+#define MelderString_append4 MelderString_append
+#define MelderString_append5 MelderString_append
+#define MelderString_append6 MelderString_append
+#define MelderString_append7 MelderString_append
+#define MelderString_append8 MelderString_append
+#define MelderString_append9 MelderString_append
 void MelderString_appendCharacter (MelderString *me, wchar character);
 void MelderString16_appendCharacter (MelderString16 *me, wchar character);
 void MelderString_get (MelderString *me, wchar *destination);   // performs no boundary checking
@@ -404,14 +412,22 @@ long MelderReadText_getNumberOfLines (MelderReadText me);
 const wchar * MelderReadText_getLineNumber (MelderReadText text);
 void MelderReadText_delete (MelderReadText text);
 
-const wchar * Melder_wcscat2 (const wchar *s1, const wchar *s2);
-const wchar * Melder_wcscat3 (const wchar *s1, const wchar *s2, const wchar *s3);
-const wchar * Melder_wcscat4 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
-const wchar * Melder_wcscat5 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
-const wchar * Melder_wcscat6 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
-const wchar * Melder_wcscat7 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
-const wchar * Melder_wcscat8 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
-const wchar * Melder_wcscat9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
+const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+#define Melder_wcscat2 Melder_wcscat
+#define Melder_wcscat3 Melder_wcscat
+#define Melder_wcscat4 Melder_wcscat
+#define Melder_wcscat5 Melder_wcscat
+#define Melder_wcscat6 Melder_wcscat
+#define Melder_wcscat7 Melder_wcscat
+#define Melder_wcscat8 Melder_wcscat
+#define Melder_wcscat9 Melder_wcscat
 
 /********** NUMBER AND STRING COMPARISON **********/
 
@@ -488,15 +504,24 @@ void MelderInfo_writeLine8 (const wchar *s1, const wchar *s2, const wchar *s3, c
 void MelderInfo_writeLine9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
 void MelderInfo_close (void);   /* Flush the background info to the Info window. */
 
-void Melder_information1 (const wchar *s1);
-void Melder_information2 (const wchar *s1, const wchar *s2);
-void Melder_information3 (const wchar *s1, const wchar *s2, const wchar *s3);
-void Melder_information4 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
-void Melder_information5 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
-void Melder_information6 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
-void Melder_information7 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
-void Melder_information8 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
-void Melder_information9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+void Melder_information (const wchar *s1);
+void Melder_information (const wchar *s1, const wchar *s2);
+void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3);
+void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
+void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
+void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
+void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
+void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
+void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+#define Melder_information1 Melder_information
+#define Melder_information2 Melder_information
+#define Melder_information3 Melder_information
+#define Melder_information4 Melder_information
+#define Melder_information5 Melder_information
+#define Melder_information6 Melder_information
+#define Melder_information7 Melder_information
+#define Melder_information8 Melder_information
+#define Melder_information9 Melder_information
 
 void Melder_informationReal (double value, const wchar *units);   /* %.17g or --undefined--; units may be NULL */
 
@@ -510,19 +535,6 @@ const wchar * Melder_getInfo (void);
 void Melder_help (const wchar *query);
 
 void Melder_search (void);
-
-/* Give warning to stderr (batch) or to a "Warning" dialog. */
-void Melder_warning1 (const wchar *s1);
-void Melder_warning2 (const wchar *s1, const wchar *s2);
-void Melder_warning3 (const wchar *s1, const wchar *s2, const wchar *s3);
-void Melder_warning4 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
-void Melder_warning5 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
-void Melder_warning6 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
-void Melder_warning7 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
-void Melder_warning8 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
-void Melder_warning9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
-void Melder_warningOff (void);
-void Melder_warningOn (void);
 	
 void Melder_beep (void);
 
@@ -543,17 +555,17 @@ struct MelderArg {
 		const wchar *argW;
 		const char *arg8;
 	};
-	MelderArg (const wchar *arg) : type (1), argW (arg) { }
-	MelderArg (const char *arg) : type (2), arg8 (arg) { }
-	MelderArg (const double arg) : type (1), argW (Melder_double (arg)) { }
-	MelderArg (const long arg) : type (1), argW (Melder_integer (arg)) { }
-	MelderArg (const unsigned long arg) : type (1), argW (Melder_integer (arg)) { }
-	MelderArg (const int arg) : type (1), argW (Melder_integer (arg)) { }
-	MelderArg (const unsigned int arg) : type (1), argW (Melder_integer (arg)) { }
-	MelderArg (const short arg) : type (1), argW (Melder_integer (arg)) { }
-	MelderArg (const unsigned short arg) : type (1), argW (Melder_integer (arg)) { }
-	MelderArg (Thing arg) : type (1), argW (Thing_messageName (arg)) { }
-	MelderArg (MelderFile arg) : type (1), argW (MelderFile_messageName (arg)) { }
+	MelderArg (const wchar *        arg) : type (1), argW (arg) { }
+	MelderArg (const  char *        arg) : type (2), arg8 (arg) { }
+	MelderArg (const double         arg) : type (1), argW (Melder_double          (arg)) { }
+	MelderArg (const          long  arg) : type (1), argW (Melder_integer         (arg)) { }
+	MelderArg (const unsigned long  arg) : type (1), argW (Melder_integer         (arg)) { }
+	MelderArg (const          int   arg) : type (1), argW (Melder_integer         (arg)) { }
+	MelderArg (const unsigned int   arg) : type (1), argW (Melder_integer         (arg)) { }
+	MelderArg (const          short arg) : type (1), argW (Melder_integer         (arg)) { }
+	MelderArg (const unsigned short arg) : type (1), argW (Melder_integer         (arg)) { }
+	MelderArg (Thing                arg) : type (1), argW (Thing_messageName      (arg)) { }
+	MelderArg (MelderFile           arg) : type (1), argW (MelderFile_messageName (arg)) { }
 };
 void Melder_throw (const MelderArg& arg1);
 void Melder_throw (const MelderArg& arg1, const MelderArg& arg2);
@@ -576,10 +588,10 @@ void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11);
 void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
-	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13);
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13 = L"");
 void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
 	const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
-	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15);
+	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15 = L"");
 void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
@@ -606,10 +618,10 @@ void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, const MelderAr
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11);
 void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
-	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13);
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13 = L"");
 void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
 	const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
-	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15);
+	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15 = L"");
 void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
 	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
@@ -645,19 +657,79 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 	/* Call Melder_fatal with a message based on the following template: */
 	/*    "Assertion failed in file <fileName> on line <lineNumber>: <condition>" */
 
+/********** WARNING: ive warning to stderr (batch) or to a "Warning" dialog **********/
+
+void Melder_warning (const MelderArg& arg1);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11);
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13 = L"");
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
+	const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
+	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15 = L"");
+void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
+	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
+	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
+	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
+	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
+#define Melder_warning1 Melder_warning
+#define Melder_warning2 Melder_warning
+#define Melder_warning3 Melder_warning
+#define Melder_warning4 Melder_warning
+#define Melder_warning5 Melder_warning
+#define Melder_warning6 Melder_warning
+#define Melder_warning7 Melder_warning
+#define Melder_warning8 Melder_warning
+#define Melder_warning9 Melder_warning
+
+void Melder_warningOff (void);
+void Melder_warningOn (void);
+
+class autoMelderWarningOff {
+public:
+	autoMelderWarningOff () { Melder_warningOff (); }
+	~autoMelderWarningOff () { Melder_warningOn (); }
+};
+
 /********** PROGRESS ROUTINES **********/
 
-void Melder_progress1 (double progress, const wchar *s1);
-void Melder_progress2 (double progress, const wchar *s1, const wchar *s2);
-void Melder_progress3 (double progress, const wchar *s1, const wchar *s2, const wchar *s3);
-void Melder_progress4 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
-void Melder_progress5 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
-void Melder_progress6 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
-void Melder_progress7 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
-void Melder_progress8 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
-void Melder_progress9 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+void Melder_progress (double progress, const wchar *s1);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
+void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
 void Melder_progressOff (void);
 void Melder_progressOn (void);
+#define Melder_progress1 Melder_progress
+#define Melder_progress2 Melder_progress
+#define Melder_progress3 Melder_progress
+#define Melder_progress4 Melder_progress
+#define Melder_progress5 Melder_progress
+#define Melder_progress6 Melder_progress
+#define Melder_progress7 Melder_progress
+#define Melder_progress8 Melder_progress
+#define Melder_progress9 Melder_progress
 /*
 	Function:
 		Show the progress of a time-consuming process.
@@ -673,26 +745,49 @@ void Melder_progressOn (void);
 		- if 'progress' >= 1, hide the window.
 	Usage:
 		- call with 'progress' = 0.0 before the process starts:
-			  (void) Melder_progress (0.0, "Starting work...");
-		- at every turn in your loop, call with 'progress' between 0 and 1,
-		  and check the return value to see if the user clicked the Cancel button:
-			  if (! Melder_progress5 (i / (n + 1.0), L"Working on part ", Melder_integer (i), L" out of ", Melder_integer (n), L"...")) {
-				  forget (me);   // Clean up.
-				  return Melder_errorp1 (L"Work interrupted, not finished");   // Interrupt.
-			  }
+		      (void) Melder_progress (0.0, "Starting work...");
+		- at every turn in your loop, call with 'progress' between 0 and 1:
+		      Melder_progress (i / (n + 1.0), L"Working on part ", i, L" out of ", n, L"...");
+		  an exception is thrown if the user clicks Cancel; if you don't want that, catch it:
+		      try {
+		          Melder_progress (i / (n + 1.0), L"Working on part ", i, L" out of ", n, L"...");
+		      } catch (MelderError) {
+		          Melder_clearError ();
+		          break;
+		      }
 		- after the process has finished, call with 'progress' = 1.0:
-			  (void) Melder_progress1 (1.0, NULL);
+		      (void) Melder_progress (1.0, NULL);
+		- the first and third steps can be automated by autoMelderProgress:
+		      autoMelderProgress progress ("Starting work...");
 */
-	
-void * Melder_monitor1 (double progress, const wchar *s1);
-void * Melder_monitor2 (double progress, const wchar *s1, const wchar *s2);
-void * Melder_monitor3 (double progress, const wchar *s1, const wchar *s2, const wchar *s3);
-void * Melder_monitor4 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
-void * Melder_monitor5 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
-void * Melder_monitor6 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
-void * Melder_monitor7 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
-void * Melder_monitor8 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
-void * Melder_monitor9 (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+class autoMelderProgress {
+public:
+	autoMelderProgress (const wchar *message) {
+		Melder_progress (0.0, message);
+	}
+	~autoMelderProgress () {
+		Melder_progress (1.0, NULL);
+	}
+};
+
+void * Melder_monitor (double progress, const wchar *s1);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
+void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
+#define Melder_monitor1 Melder_monitor
+#define Melder_monitor2 Melder_monitor
+#define Melder_monitor3 Melder_monitor
+#define Melder_monitor4 Melder_monitor
+#define Melder_monitor5 Melder_monitor
+#define Melder_monitor6 Melder_monitor
+#define Melder_monitor7 Melder_monitor
+#define Melder_monitor8 Melder_monitor
+#define Melder_monitor9 Melder_monitor
 /*
 	Function:
 		Show the progress of a time-consuming process.
@@ -710,22 +805,44 @@ void * Melder_monitor9 (double progress, const wchar *s1, const wchar *s2, const
 	Usage:
 		- call with 'progress' = 0.0 before the process starts.
 		- assign the return value to a Graphics:
-			Graphics graphics = Melder_monitor1 (0.0, L"Starting work...");
+		      Graphics graphics = Melder_monitor (0.0, L"Starting work...");
 		- at every turn of your loop, draw something in the Graphics:
-			if (graphics) {   // Always check; might be batch.
-				Graphics_clearWs (graphics);   // Only if you redraw all every time.
-				Graphics_polyline (graphics, ...);
-				Graphics_text1 (graphics, ...);
-			}
-		- immediately after this in your loop, call with 'progress' between 0 and 1,
-		  and check the return value to see if the user clicked the Cancel button:
-			if (! Melder_monitor5 (i / (n + 1.0), L"Working on part ", Melder_integer (i), L" out of ", Melder_integer (n), L"...")) {
-				forget (me);   // Clean up.
-				return Melder_errorp1 (L"Work interrupted, not finished");   // Interrupt.
-			}
+		      if (graphics) {   // always check; might be batch
+		          Graphics_clearWs (graphics);   // only if you redraw all every time
+		          Graphics_polyline (graphics, ...);
+		          Graphics_text (graphics, ...);
+		      }
+		- immediately after this in your loop, call with 'progress' between 0 and 1:
+		      Melder_monitor (i / (n + 1.0), L"Working on part ", Melder_integer (i), L" out of ", Melder_integer (n), L"...");
+		  an exception is thrown if the user clicks Cancel; if you don't want that, catch it:
+		      try {
+		          Melder_monitor (i / (n + 1.0), L"Working on part ", Melder_integer (i), L" out of ", Melder_integer (n), L"...");
+		      } catch (MelderError) {
+		          Melder_clearError ();
+		          break;
+		      }
 		- after the process has finished, call with 'progress' = 1.0:
-			(void) Melder_monitor1 (1.0, NULL);
+		      (void) Melder_monitor (1.0, NULL);
+		- the first and third steps can be automated by autoMelderMonitor:
+		      autoMelderMonitor monitor ("Starting work...");
+		      if (monitor.graphics()) {   // always check; might be batch
+		          Graphics_clearWs (monitor.graphics());   // only if you redraw all every time
+		          Graphics_polyline (monitor.graphics(), ...);
+		          Graphics_text (monitor.graphics(), ...);
+		      }
 */
+typedef class structGraphics *Graphics;
+class autoMelderMonitor {
+	Graphics d_graphics;
+public:
+	autoMelderMonitor (const wchar *message) {
+		d_graphics = (Graphics) Melder_monitor (0.0, message);
+	}
+	~autoMelderMonitor () {
+		Melder_monitor1 (1.0, NULL);
+	}
+	Graphics graphics () { return d_graphics; }
+};
 
 /********** RECORD AND PLAY ROUTINES **********/
 
@@ -938,58 +1055,6 @@ const wchar * MelderQuantity_getShortUnitText (int quantity);   // e.g. "s"
 wchar * Melder_getenv (const wchar *variableName);
 void Melder_system (const wchar *command);   // spawn a system command
 double Melder_clock (void);   // seconds since 1969
-
-
-extern "C++" void Melder_warning (const MelderArg& arg1);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
-	const MelderArg& arg9, const MelderArg& arg10);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
-	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
-	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4, const MelderArg& arg5,
-	const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8, const MelderArg& arg9, const MelderArg& arg10,
-	const MelderArg& arg11, const MelderArg& arg12, const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15);
-extern "C++" void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3, const MelderArg& arg4,
-	const MelderArg& arg5, const MelderArg& arg6, const MelderArg& arg7, const MelderArg& arg8,
-	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
-	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
-	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
-
-struct autoMelderProgress {
-	autoMelderProgress (const wchar *message) { Melder_progress1 (0.0, message); }
-	~autoMelderProgress () { Melder_progress1 (1.0, NULL); }
-};
-
-typedef class structGraphics *Graphics;
-
-struct autoMelderMonitor {
-	autoMelderMonitor (const wchar *message) { g = (Graphics) Melder_monitor1 (0.0, message); }
-	~autoMelderMonitor () { Melder_monitor1 (1.0, NULL); }
-	Graphics graphics () { return g; }
-private:
-	Graphics g;
-};
-
-struct autoMelderWarningOff {
-	autoMelderWarningOff () { Melder_warningOff (); }
-	~autoMelderWarningOff () { Melder_warningOn (); }
-};
 
 struct autoMelderProgressOff {
 	autoMelderProgressOff () { Melder_progressOff (); }

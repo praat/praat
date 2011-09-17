@@ -33,6 +33,10 @@ static void psPrepareLine (GraphicsPostscript me) {
 		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long) (my resolution / 100), (long) (my resolution / 75 + lineWidth_pixels));
 	else if (my lineType == Graphics_DASHED)
 		my d_printf (my d_file, "[%ld %ld] 0 setdash\n", (long) (my resolution / 25), (long) (my resolution / 50 + lineWidth_pixels));
+	else if (my lineType == Graphics_DASHED_DOTTED)
+		my d_printf (my d_file, "[%ld %ld %ld %ld] 0 setdash\n",
+			(long) (my resolution / 100), (long) (my resolution / 60 + lineWidth_pixels),
+			(long) (my resolution / 25), (long) (my resolution / 60 + lineWidth_pixels));
 	if (my lineWidth != 1.0)
 		my d_printf (my d_file, "%g setlinewidth\n", lineWidth_pixels);
 }
@@ -40,7 +44,7 @@ static void psRevertLine (GraphicsPostscript me) {
 	if (my lineType != Graphics_DRAWN)
 		my d_printf (my d_file, "[] 0 setdash\n");
 	if (my lineWidth != 1.0)
-		my d_printf (my d_file, "%g setlinewidth\n", my resolution > 192 ? my resolution / 192.0 : 1.0);   /* 0.375 point */
+		my d_printf (my d_file, "%g setlinewidth\n", my resolution > 192 ? my resolution / 192.0 : 1.0);   // 0.375 point
 }
 
 #if cairo
@@ -334,7 +338,7 @@ void structGraphicsPostscript :: v_fillArea (long numberOfPoints, long *xyDC) {
 	 */
 	#if 0
 		if (numberOfPoints > POSTSCRIPT_MAXPATH) {
-			Melder_warning1 (L"GraphicsPostscript::fillArea: path truncated.");
+			Melder_warning (L"GraphicsPostscript::fillArea: path truncated.");
 			numberOfPoints = POSTSCRIPT_MAXPATH, nn = numberOfPoints + numberOfPoints;
 		}
 	#endif

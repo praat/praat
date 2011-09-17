@@ -26,13 +26,12 @@
 
 static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1);
 static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, double *rmin, long *emax,
-	double *rmax);
+                    double *rmax);
 static double dlamc3_ (double *, double *);
 static int dlamc4_ (long *emin, double *start, long *base);
 static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, double *rmax);
 
-int NUMblas_daxpy (long *n, double *da, double *dx, long *incx, double *dy, long *incy)
-{
+int NUMblas_daxpy (long *n, double *da, double *dx, long *incx, double *dy, long *incy) {
 	/* System generated locals */
 	long i__1;
 
@@ -42,32 +41,26 @@ int NUMblas_daxpy (long *n, double *da, double *dx, long *incx, double *dy, long
 	--dy;
 	--dx;
 	/* Function Body */
-	if (*n <= 0)
-	{
+	if (*n <= 0) {
 		return 0;
 	}
-	if (*da == 0.)
-	{
+	if (*da == 0.) {
 		return 0;
 	}
-	if (*incx == 1 && *incy == 1)
-	{
+	if (*incx == 1 && *incy == 1) {
 		goto L20;
 	}
 	/* code for unequal increments or equal increments not equal to 1 */
 	ix = 1;
 	iy = 1;
-	if (*incx < 0)
-	{
-		ix = (-(*n) + 1) * *incx + 1;
+	if (*incx < 0) {
+		ix = (- (*n) + 1) * *incx + 1;
 	}
-	if (*incy < 0)
-	{
-		iy = (-(*n) + 1) * *incy + 1;
+	if (*incy < 0) {
+		iy = (- (*n) + 1) * *incy + 1;
 	}
 	i__1 = *n;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dy[iy] += *da * dx[ix];
 		ix += *incx;
 		iy += *incy;
@@ -75,27 +68,23 @@ int NUMblas_daxpy (long *n, double *da, double *dx, long *incx, double *dy, long
 	}
 	return 0;
 	/* code for both increments equal to 1 clean-up loop */
-  L20:
+L20:
 	m = *n % 4;
-	if (m == 0)
-	{
+	if (m == 0) {
 		goto L40;
 	}
 	i__1 = m;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dy[i__] += *da * dx[i__];
 		/* L30: */
 	}
-	if (*n < 4)
-	{
+	if (*n < 4) {
 		return 0;
 	}
-  L40:
+L40:
 	mp1 = m + 1;
 	i__1 = *n;
-	for (i__ = mp1; i__ <= i__1; i__ += 4)
-	{
+	for (i__ = mp1; i__ <= i__1; i__ += 4) {
 		dy[i__] += *da * dx[i__];
 		dy[i__ + 1] += *da * dx[i__ + 1];
 		dy[i__ + 2] += *da * dx[i__ + 2];
@@ -105,8 +94,7 @@ int NUMblas_daxpy (long *n, double *da, double *dx, long *incx, double *dy, long
 	return 0;
 }								/* NUMblas_daxpy */
 
-int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy)
-{
+int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy) {
 	/* System generated locals */
 	long i__1;
 
@@ -116,28 +104,23 @@ int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy)
 	--dy;
 	--dx;
 	/* Function Body */
-	if (*n <= 0)
-	{
+	if (*n <= 0) {
 		return 0;
 	}
-	if (*incx == 1 && *incy == 1)
-	{
+	if (*incx == 1 && *incy == 1) {
 		goto L20;
 	}
 	/* code for unequal increments or equal increments not equal to 1 */
 	ix = 1;
 	iy = 1;
-	if (*incx < 0)
-	{
-		ix = (-(*n) + 1) * *incx + 1;
+	if (*incx < 0) {
+		ix = (- (*n) + 1) * *incx + 1;
 	}
-	if (*incy < 0)
-	{
-		iy = (-(*n) + 1) * *incy + 1;
+	if (*incy < 0) {
+		iy = (- (*n) + 1) * *incy + 1;
 	}
 	i__1 = *n;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dy[iy] = dx[ix];
 		ix += *incx;
 		iy += *incy;
@@ -145,27 +128,23 @@ int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy)
 	}
 	return 0;
 	/* code for both increments equal to 1 clean-up loop */
-  L20:
+L20:
 	m = *n % 7;
-	if (m == 0)
-	{
+	if (m == 0) {
 		goto L40;
 	}
 	i__1 = m;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dy[i__] = dx[i__];
 		/* L30: */
 	}
-	if (*n < 7)
-	{
+	if (*n < 7) {
 		return 0;
 	}
-  L40:
+L40:
 	mp1 = m + 1;
 	i__1 = *n;
-	for (i__ = mp1; i__ <= i__1; i__ += 7)
-	{
+	for (i__ = mp1; i__ <= i__1; i__ += 7) {
 		dy[i__] = dx[i__];
 		dy[i__ + 1] = dx[i__ + 1];
 		dy[i__ + 2] = dx[i__ + 2];
@@ -178,8 +157,7 @@ int NUMblas_dcopy (long *n, double *dx, long *incx, double *dy, long *incy)
 	return 0;
 }								/* NUMblas_dcopy */
 
-double NUMblas_ddot (long *n, double *dx, long *incx, double *dy, long *incy)
-{
+double NUMblas_ddot (long *n, double *dx, long *incx, double *dy, long *incy) {
 	/* System generated locals */
 	long i__1;
 	double ret_val;
@@ -195,28 +173,23 @@ double NUMblas_ddot (long *n, double *dx, long *incx, double *dy, long *incy)
 	/* Function Body */
 	ret_val = 0.;
 	dtemp = 0.;
-	if (*n <= 0)
-	{
+	if (*n <= 0) {
 		return ret_val;
 	}
-	if (*incx == 1 && *incy == 1)
-	{
+	if (*incx == 1 && *incy == 1) {
 		goto L20;
 	}
 	/* code for unequal increments or equal increments not equal to 1 */
 	ix = 1;
 	iy = 1;
-	if (*incx < 0)
-	{
-		ix = (-(*n) + 1) * *incx + 1;
+	if (*incx < 0) {
+		ix = (- (*n) + 1) * *incx + 1;
 	}
-	if (*incy < 0)
-	{
-		iy = (-(*n) + 1) * *incy + 1;
+	if (*incy < 0) {
+		iy = (- (*n) + 1) * *incy + 1;
 	}
 	i__1 = *n;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dtemp += dx[ix] * dy[iy];
 		ix += *incx;
 		iy += *incy;
@@ -225,40 +198,35 @@ double NUMblas_ddot (long *n, double *dx, long *incx, double *dy, long *incy)
 	ret_val = dtemp;
 	return ret_val;
 	/* code for both increments equal to 1 clean-up loop */
-  L20:
+L20:
 	m = *n % 5;
-	if (m == 0)
-	{
+	if (m == 0) {
 		goto L40;
 	}
 	i__1 = m;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dtemp += dx[i__] * dy[i__];
 		/* L30: */
 	}
-	if (*n < 5)
-	{
+	if (*n < 5) {
 		goto L60;
 	}
-  L40:
+L40:
 	mp1 = m + 1;
 	i__1 = *n;
-	for (i__ = mp1; i__ <= i__1; i__ += 5)
-	{
+	for (i__ = mp1; i__ <= i__1; i__ += 5) {
 		dtemp =
-			dtemp + dx[i__] * dy[i__] + dx[i__ + 1] * dy[i__ + 1] + dx[i__ + 2] * dy[i__ + 2] + dx[i__ +
-			3] * dy[i__ + 3] + dx[i__ + 4] * dy[i__ + 4];
+		    dtemp + dx[i__] * dy[i__] + dx[i__ + 1] * dy[i__ + 1] + dx[i__ + 2] * dy[i__ + 2] + dx[i__ +
+		            3] * dy[i__ + 3] + dx[i__ + 4] * dy[i__ + 4];
 		/* L50: */
 	}
-  L60:
+L60:
 	ret_val = dtemp;
 	return ret_val;
 }								/* NUMblas_ddot */
 
 int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, long *k, double *alpha, double *a, long *lda,
-	double *b, long *ldb, double *beta, double *c__, long *ldc)
-{
+                   double *b, long *ldb, double *beta, double *c__, long *ldc) {
 	/* System generated locals */
 	long a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset, i__1, i__2, i__3;
 
@@ -288,93 +256,62 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
 	/* Function Body */
 	nota = lsame_ (transa, "N");
 	notb = lsame_ (transb, "N");
-	if (nota)
-	{
+	if (nota) {
 		nrowa = *m;
 		ncola = *k;
-	}
-	else
-	{
+	} else {
 		nrowa = *k;
 		ncola = *m;
 	}
-	if (notb)
-	{
+	if (notb) {
 		nrowb = *k;
-	}
-	else
-	{
+	} else {
 		nrowb = *n;
 	}
 	/* Test the input parameters. */
 	info = 0;
-	if (!nota && !lsame_ (transa, "C") && !lsame_ (transa, "T"))
-	{
+	if (!nota && !lsame_ (transa, "C") && !lsame_ (transa, "T")) {
 		info = 1;
-	}
-	else if (!notb && !lsame_ (transb, "C") && !lsame_ (transb, "T"))
-	{
+	} else if (!notb && !lsame_ (transb, "C") && !lsame_ (transb, "T")) {
 		info = 2;
-	}
-	else if (*m < 0)
-	{
+	} else if (*m < 0) {
 		info = 3;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 4;
-	}
-	else if (*k < 0)
-	{
+	} else if (*k < 0) {
 		info = 5;
-	}
-	else if (*lda < MAX (1, nrowa))
-	{
+	} else if (*lda < MAX (1, nrowa)) {
 		info = 8;
-	}
-	else if (*ldb < MAX (1, nrowb))
-	{
+	} else if (*ldb < MAX (1, nrowb)) {
 		info = 10;
-	}
-	else if (*ldc < MAX (1, *m))
-	{
+	} else if (*ldc < MAX (1, *m)) {
 		info = 13;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DGEMM ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*m == 0 || *n == 0 || (*alpha == 0. || *k == 0) && *beta == 1.)
-	{
+	if (*m == 0 || *n == 0 || (*alpha == 0. || *k == 0) && *beta == 1.) {
 		return 0;
 	}
 	/* And if alpha.eq.zero. */
-	if (*alpha == 0.)
-	{
-		if (*beta == 0.)
-		{
+	if (*alpha == 0.) {
+		if (*beta == 0.) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					c___ref (i__, j) = 0.;
 					/* L10: */
 				}
 				/* L20: */
 			}
-		}
-		else
-		{
+		} else {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					c___ref (i__, j) = *beta * c___ref (i__, j);
 					/* L30: */
 				}
@@ -384,41 +321,30 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
 		return 0;
 	}
 	/* Start the operations. */
-	if (notb)
-	{
-		if (nota)
-		{
+	if (notb) {
+		if (nota) {
 			/* Form C := alpha*A*B + beta*C. */
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (*beta == 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (*beta == 0.) {
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = 0.;
 						/* L50: */
 					}
-				}
-				else if (*beta != 1.)
-				{
+				} else if (*beta != 1.) {
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = *beta * c___ref (i__, j);
 						/* L60: */
 					}
 				}
 				i__2 = *k;
-				for (l = 1; l <= i__2; ++l)
-				{
-					if (b_ref (l, j) != 0.)
-					{
+				for (l = 1; l <= i__2; ++l) {
+					if (b_ref (l, j) != 0.) {
 						temp = *alpha * b_ref (l, j);
 						i__3 = *m;
-						for (i__ = 1; i__ <= i__3; ++i__)
-						{
+						for (i__ = 1; i__ <= i__3; ++i__) {
 							c___ref (i__, j) = c___ref (i__, j) + temp * a_ref (i__, l);
 							/* L70: */
 						}
@@ -427,29 +353,21 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
 				}
 				/* L90: */
 			}
-		}
-		else
-		{
+		} else {
 			/* Form C := alpha*A'*B + beta*C */
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					temp = 0.;
 					i__3 = *k;
-					for (l = 1; l <= i__3; ++l)
-					{
+					for (l = 1; l <= i__3; ++l) {
 						temp += a_ref (l, i__) * b_ref (l, j);
 						/* L100: */
 					}
-					if (*beta == 0.)
-					{
+					if (*beta == 0.) {
 						c___ref (i__, j) = *alpha * temp;
-					}
-					else
-					{
+					} else {
 						c___ref (i__, j) = *alpha * temp + *beta * c___ref (i__, j);
 					}
 					/* L110: */
@@ -457,42 +375,30 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
 				/* L120: */
 			}
 		}
-	}
-	else
-	{
-		if (nota)
-		{
+	} else {
+		if (nota) {
 			/* Form C := alpha*A*B' + beta*C */
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (*beta == 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (*beta == 0.) {
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = 0.;
 						/* L130: */
 					}
-				}
-				else if (*beta != 1.)
-				{
+				} else if (*beta != 1.) {
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = *beta * c___ref (i__, j);
 						/* L140: */
 					}
 				}
 				i__2 = *k;
-				for (l = 1; l <= i__2; ++l)
-				{
-					if (b_ref (j, l) != 0.)
-					{
+				for (l = 1; l <= i__2; ++l) {
+					if (b_ref (j, l) != 0.) {
 						temp = *alpha * b_ref (j, l);
 						i__3 = *m;
-						for (i__ = 1; i__ <= i__3; ++i__)
-						{
+						for (i__ = 1; i__ <= i__3; ++i__) {
 							c___ref (i__, j) = c___ref (i__, j) + temp * a_ref (i__, l);
 							/* L150: */
 						}
@@ -501,29 +407,21 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
 				}
 				/* L170: */
 			}
-		}
-		else
-		{
+		} else {
 			/* Form C := alpha*A'*B' + beta*C */
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					temp = 0.;
 					i__3 = *k;
-					for (l = 1; l <= i__3; ++l)
-					{
+					for (l = 1; l <= i__3; ++l) {
 						temp += a_ref (l, i__) * b_ref (j, l);
 						/* L180: */
 					}
-					if (*beta == 0.)
-					{
+					if (*beta == 0.) {
 						c___ref (i__, j) = *alpha * temp;
-					}
-					else
-					{
+					} else {
 						c___ref (i__, j) = *alpha * temp + *beta * c___ref (i__, j);
 					}
 					/* L190: */
@@ -541,8 +439,7 @@ int NUMblas_dgemm (const char *transa, const char *transb, long *m, long *n, lon
 #undef a_ref
 
 int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double *y, long *incy, double *a,
-	long *lda)
-{
+                  long *lda) {
 	/* System generated locals */
 	long a_dim1, a_offset, i__1, i__2;
 
@@ -560,57 +457,39 @@ int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double
 	a -= a_offset;
 	/* Function Body */
 	info = 0;
-	if (*m < 0)
-	{
+	if (*m < 0) {
 		info = 1;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 2;
-	}
-	else if (*incx == 0)
-	{
+	} else if (*incx == 0) {
 		info = 5;
-	}
-	else if (*incy == 0)
-	{
+	} else if (*incy == 0) {
 		info = 7;
-	}
-	else if (*lda < MAX (1, *m))
-	{
+	} else if (*lda < MAX (1, *m)) {
 		info = 9;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DGER  ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*m == 0 || *n == 0 || *alpha == 0.)
-	{
+	if (*m == 0 || *n == 0 || *alpha == 0.) {
 		return 0;
 	}
 	/* Start the operations. In this version the elements of A are accessed
 	   sequentially with one pass through A. */
-	if (*incy > 0)
-	{
+	if (*incy > 0) {
 		jy = 1;
-	}
-	else
-	{
+	} else {
 		jy = 1 - (*n - 1) * *incy;
 	}
-	if (*incx == 1)
-	{
+	if (*incx == 1) {
 		i__1 = *n;
-		for (j = 1; j <= i__1; ++j)
-		{
-			if (y[jy] != 0.)
-			{
+		for (j = 1; j <= i__1; ++j) {
+			if (y[jy] != 0.) {
 				temp = *alpha * y[jy];
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					a_ref (i__, j) = a_ref (i__, j) + x[i__] * temp;
 					/* L10: */
 				}
@@ -618,27 +497,19 @@ int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double
 			jy += *incy;
 			/* L20: */
 		}
-	}
-	else
-	{
-		if (*incx > 0)
-		{
+	} else {
+		if (*incx > 0) {
 			kx = 1;
-		}
-		else
-		{
+		} else {
 			kx = 1 - (*m - 1) * *incx;
 		}
 		i__1 = *n;
-		for (j = 1; j <= i__1; ++j)
-		{
-			if (y[jy] != 0.)
-			{
+		for (j = 1; j <= i__1; ++j) {
+			if (y[jy] != 0.) {
 				temp = *alpha * y[jy];
 				ix = kx;
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					a_ref (i__, j) = a_ref (i__, j) + x[ix] * temp;
 					ix += *incx;
 					/* L30: */
@@ -654,8 +525,7 @@ int NUMblas_dger (long *m, long *n, double *alpha, double *x, long *incx, double
 #undef a_ref
 
 int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a, long *lda, double *x, long *incx,
-	double *beta, double *y, long *incy)
-{
+                   double *beta, double *y, long *incy) {
 	/* System generated locals */
 	long a_dim1, a_offset, i__1, i__2;
 
@@ -675,111 +545,75 @@ int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a
 	--y;
 	/* Function Body */
 	info = 0;
-	if (!lsame_ (trans, "N") && !lsame_ (trans, "T") && !lsame_ (trans, "C"))
-	{
+	if (!lsame_ (trans, "N") && !lsame_ (trans, "T") && !lsame_ (trans, "C")) {
 		info = 1;
-	}
-	else if (*m < 0)
-	{
+	} else if (*m < 0) {
 		info = 2;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 3;
-	}
-	else if (*lda < MAX (1, *m))
-	{
+	} else if (*lda < MAX (1, *m)) {
 		info = 6;
-	}
-	else if (*incx == 0)
-	{
+	} else if (*incx == 0) {
 		info = 8;
-	}
-	else if (*incy == 0)
-	{
+	} else if (*incy == 0) {
 		info = 11;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DGEMV ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*m == 0 || *n == 0 || *alpha == 0. && *beta == 1.)
-	{
+	if (*m == 0 || *n == 0 || *alpha == 0. && *beta == 1.) {
 		return 0;
 	}
 	/* Set LENX and LENY, the lengths of the vectors x and y, and set up the
 	   start points in X and Y. */
-	if (lsame_ (trans, "N"))
-	{
+	if (lsame_ (trans, "N")) {
 		lenx = *n;
 		leny = *m;
-	}
-	else
-	{
+	} else {
 		lenx = *m;
 		leny = *n;
 	}
-	if (*incx > 0)
-	{
+	if (*incx > 0) {
 		kx = 1;
-	}
-	else
-	{
+	} else {
 		kx = 1 - (lenx - 1) * *incx;
 	}
-	if (*incy > 0)
-	{
+	if (*incy > 0) {
 		ky = 1;
-	}
-	else
-	{
+	} else {
 		ky = 1 - (leny - 1) * *incy;
 	}
 	/* Start the operations. In this version the elements of A are accessed
 	   sequentially with one pass through A. First form y := beta*y. */
-	if (*beta != 1.)
-	{
-		if (*incy == 1)
-		{
-			if (*beta == 0.)
-			{
+	if (*beta != 1.) {
+		if (*incy == 1) {
+			if (*beta == 0.) {
 				i__1 = leny;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[i__] = 0.;
 					/* L10: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = leny;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[i__] = *beta * y[i__];
 					/* L20: */
 				}
 			}
-		}
-		else
-		{
+		} else {
 			iy = ky;
-			if (*beta == 0.)
-			{
+			if (*beta == 0.) {
 				i__1 = leny;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[iy] = 0.;
 					iy += *incy;
 					/* L30: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = leny;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[iy] = *beta * y[iy];
 					iy += *incy;
 					/* L40: */
@@ -787,25 +621,19 @@ int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a
 			}
 		}
 	}
-	if (*alpha == 0.)
-	{
+	if (*alpha == 0.) {
 		return 0;
 	}
-	if (lsame_ (trans, "N"))
-	{
+	if (lsame_ (trans, "N")) {
 		/* Form y := alpha*A*x + y. */
 		jx = kx;
-		if (*incy == 1)
-		{
+		if (*incy == 1) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (x[jx] != 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (x[jx] != 0.) {
 					temp = *alpha * x[jx];
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						y[i__] += temp * a_ref (i__, j);
 						/* L50: */
 					}
@@ -813,19 +641,14 @@ int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a
 				jx += *incx;
 				/* L60: */
 			}
-		}
-		else
-		{
+		} else {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (x[jx] != 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (x[jx] != 0.) {
 					temp = *alpha * x[jx];
 					iy = ky;
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						y[iy] += temp * a_ref (i__, j);
 						iy += *incy;
 						/* L70: */
@@ -835,20 +658,15 @@ int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a
 				/* L80: */
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Form y := alpha*A'*x + y. */
 		jy = ky;
-		if (*incx == 1)
-		{
+		if (*incx == 1) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				temp = 0.;
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					temp += a_ref (i__, j) * x[i__];
 					/* L90: */
 				}
@@ -856,17 +674,13 @@ int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a
 				jy += *incy;
 				/* L100: */
 			}
-		}
-		else
-		{
+		} else {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				temp = 0.;
 				ix = kx;
 				i__2 = *m;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					temp += a_ref (i__, j) * x[ix];
 					ix += *incx;
 					/* L110: */
@@ -882,8 +696,7 @@ int NUMblas_dgemv (const char *trans, long *m, long *n, double *alpha, double *a
 
 #undef a_ref
 
-double NUMblas_dlamch (const char *cmach)
-{
+double NUMblas_dlamch (const char *cmach) {
 	/* Initialized data */
 	static long first = TRUE;
 
@@ -903,20 +716,16 @@ double NUMblas_dlamch (const char *cmach)
 	static long it;
 	static double rnd, eps;
 
-	if (first)
-	{
+	if (first) {
 		first = FALSE;
 		dlamc2_ (&beta, &it, &lrnd, &eps, &imin, &rmin, &imax, &rmax);
 		base = (double) beta;
 		t = (double) it;
-		if (lrnd)
-		{
+		if (lrnd) {
 			rnd = 1.;
 			i__1 = 1 - it;
 			eps = pow_di (&base, &i__1) / 2;
-		}
-		else
-		{
+		} else {
 			rnd = 0.;
 			i__1 = 1 - it;
 			eps = pow_di (&base, &i__1);
@@ -926,8 +735,7 @@ double NUMblas_dlamch (const char *cmach)
 		emax = (double) imax;
 		sfmin = rmin;
 		smal = 1. / rmax;
-		if (smal >= sfmin)
-		{
+		if (smal >= sfmin) {
 
 			/* Use smal plus a bit, to avoid the possibility of rounding
 			   causing overflow when computing 1/sfmin. */
@@ -936,44 +744,25 @@ double NUMblas_dlamch (const char *cmach)
 		}
 	}
 
-	if (lsame_ (cmach, "E"))
-	{
+	if (lsame_ (cmach, "E")) {
 		rmach = eps;
-	}
-	else if (lsame_ (cmach, "S"))
-	{
+	} else if (lsame_ (cmach, "S")) {
 		rmach = sfmin;
-	}
-	else if (lsame_ (cmach, "B"))
-	{
+	} else if (lsame_ (cmach, "B")) {
 		rmach = base;
-	}
-	else if (lsame_ (cmach, "P"))
-	{
+	} else if (lsame_ (cmach, "P")) {
 		rmach = prec;
-	}
-	else if (lsame_ (cmach, "N"))
-	{
+	} else if (lsame_ (cmach, "N")) {
 		rmach = t;
-	}
-	else if (lsame_ (cmach, "R"))
-	{
+	} else if (lsame_ (cmach, "R")) {
 		rmach = rnd;
-	}
-	else if (lsame_ (cmach, "M"))
-	{
+	} else if (lsame_ (cmach, "M")) {
 		rmach = emin;
-	}
-	else if (lsame_ (cmach, "U"))
-	{
+	} else if (lsame_ (cmach, "U")) {
 		rmach = rmin;
-	}
-	else if (lsame_ (cmach, "L"))
-	{
+	} else if (lsame_ (cmach, "L")) {
 		rmach = emax;
-	}
-	else if (lsame_ (cmach, "O"))
-	{
+	} else if (lsame_ (cmach, "O")) {
 		rmach = rmax;
 	}
 
@@ -981,8 +770,7 @@ double NUMblas_dlamch (const char *cmach)
 	return ret_val;
 }								/* NUMblas_dlamch */
 
-static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
-{
+static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1) {
 	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
 	   Lab, and Rice University October 31, 1992
@@ -1037,8 +825,7 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 	static long lt;
 	static double one, qtr;
 
-	if (first)
-	{
+	if (first) {
 		first = FALSE;
 		one = 1.;
 
@@ -1054,9 +841,8 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 		c = 1.;
 
 		/* + WHILE( C.EQ.ONE )LOOP */
-	  L10:
-		if (c == one)
-		{
+L10:
+		if (c == one) {
 			a *= 2;
 			c = dlamc3_ (&a, &one);
 			d__1 = -a;
@@ -1072,9 +858,8 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 		c = dlamc3_ (&a, &b);
 
 		/* + WHILE( C.EQ.A )LOOP */
-	  L20:
-		if (c == a)
-		{
+L20:
+		if (c == a) {
 			b *= 2;
 			c = dlamc3_ (&a, &b);
 			goto L20;
@@ -1100,20 +885,16 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 		d__2 = -b / 100;
 		f = dlamc3_ (&d__1, &d__2);
 		c = dlamc3_ (&f, &a);
-		if (c == a)
-		{
+		if (c == a) {
 			lrnd = TRUE;
-		}
-		else
-		{
+		} else {
 			lrnd = FALSE;
 		}
 		d__1 = b / 2;
 		d__2 = b / 100;
 		f = dlamc3_ (&d__1, &d__2);
 		c = dlamc3_ (&f, &a);
-		if (lrnd && c == a)
-		{
+		if (lrnd && c == a) {
 			lrnd = FALSE;
 		}
 
@@ -1139,9 +920,8 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 		c = 1.;
 
 		/* + WHILE( C.EQ.ONE )LOOP */
-	  L30:
-		if (c == one)
-		{
+L30:
+		if (c == one) {
 			++lt;
 			a *= lbeta;
 			c = dlamc3_ (&a, &one);
@@ -1161,8 +941,7 @@ static int dlamc1_ (long *beta, long *t, long *rnd, long *ieee1)
 }								/* dlamc1_ */
 
 static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, double *rmin, long *emax,
-	double *rmax)
-{
+                    double *rmax) {
 	/* -- LAPACK auxiliary routine (version 3.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
 	   Lab, and Rice University October 31, 1992
@@ -1230,8 +1009,7 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 	static long lt, ngnmin, ngpmin;
 	static double one, two;
 
-	if (first)
-	{
+	if (first) {
 		first = FALSE;
 		zero = 0.;
 		one = 1.;
@@ -1263,17 +1041,15 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 		b = dlamc3_ (&third, &d__1);
 		b = dlamc3_ (&b, &sixth);
 		b = fabs (b);
-		if (b < leps)
-		{
+		if (b < leps) {
 			b = leps;
 		}
 
 		leps = 1.;
 
 		/* + WHILE( ( LEPS.GT.B ).AND.( B.GT.ZERO ) )LOOP */
-	  L10:
-		if (leps > b && b > zero)
-		{
+L10:
+		if (leps > b && b > zero) {
 			leps = b;
 			d__1 = half * leps;
 			/* Computing 5th power */
@@ -1292,8 +1068,7 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 		}
 		/* + END WHILE */
 
-		if (a < leps)
-		{
+		if (a < leps) {
 			leps = a;
 		}
 
@@ -1304,8 +1079,7 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 
 		rbase = one / lbeta;
 		smal = one;
-		for (i = 1; i <= 3; ++i)
-		{
+		for (i = 1; i <= 3; ++i) {
 			d__1 = smal * rbase;
 			smal = dlamc3_ (&d__1, &zero);
 			/* L20: */
@@ -1319,63 +1093,45 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 		dlamc4_ (&gnmin, &d__1, &lbeta);
 		ieee = FALSE;
 
-		if (ngpmin == ngnmin && gpmin == gnmin)
-		{
-			if (ngpmin == gpmin)
-			{
+		if (ngpmin == ngnmin && gpmin == gnmin) {
+			if (ngpmin == gpmin) {
 				lemin = ngpmin;
 				/* ( Non twos-complement machines, no gradual underflow;
 				   e.g., VAX ) */
-			}
-			else if (gpmin - ngpmin == 3)
-			{
+			} else if (gpmin - ngpmin == 3) {
 				lemin = ngpmin - 1 + lt;
 				ieee = TRUE;
 				/* ( Non twos-complement machines, with gradual underflow;
 				   e.g., IEEE standard followers ) */
-			}
-			else
-			{
+			} else {
 				lemin = MIN (ngpmin, gpmin);
 				/* ( A guess; no known machine ) */
 				iwarn = TRUE;
 			}
 
-		}
-		else if (ngpmin == gpmin && ngnmin == gnmin)
-		{
-			if ((i__1 = ngpmin - ngnmin, abs (i__1)) == 1)
-			{
+		} else if (ngpmin == gpmin && ngnmin == gnmin) {
+			if ( (i__1 = ngpmin - ngnmin, abs (i__1)) == 1) {
 				lemin = MAX (ngpmin, ngnmin);
 				/* ( Twos-complement machines, no gradual underflow; e.g.,
 				   CYBER 205 ) */
-			}
-			else
-			{
+			} else {
 				lemin = MIN (ngpmin, ngnmin);
 				/* ( A guess; no known machine ) */
 				iwarn = TRUE;
 			}
 
-		}
-		else if ((i__1 = ngpmin - ngnmin, abs (i__1)) == 1 && gpmin == gnmin)
-		{
-			if (gpmin - MIN (ngpmin, ngnmin) == 3)
-			{
+		} else if ( (i__1 = ngpmin - ngnmin, abs (i__1)) == 1 && gpmin == gnmin) {
+			if (gpmin - MIN (ngpmin, ngnmin) == 3) {
 				lemin = MAX (ngpmin, ngnmin) - 1 + lt;
 				/* ( Twos-complement machines with gradual underflow; no
 				   known machine ) */
-			}
-			else
-			{
+			} else {
 				lemin = MIN (ngpmin, ngnmin);
 				/* ( A guess; no known machine ) */
 				iwarn = TRUE;
 			}
 
-		}
-		else
-		{
+		} else {
 			/* Computing MIN */
 			i__1 = MIN (ngpmin, ngnmin), i__1 = MIN (i__1, gpmin);
 			lemin = MIN (i__1, gnmin);
@@ -1383,13 +1139,12 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 			iwarn = TRUE;
 		}
 		/* Comment out this if block if EMIN is ok */
-		if (iwarn)
-		{
+		if (iwarn) {
 			first = TRUE;
-			Melder_warning3 (L"\n\n WARNING. The value EMIN may be incorrect:- " "EMIN = ", Melder_integer (lemin),
-				L"\nIf, after inspection, the value EMIN looks acceptable"
-				"please comment out \n the IF block as marked within the"
-				"code of routine DLAMC2, \n otherwise supply EMIN" "explicitly.\n");
+			Melder_warning (L"\n\n WARNING. The value EMIN may be incorrect:- " "EMIN = ", Melder_integer (lemin),
+			                L"\nIf, after inspection, the value EMIN looks acceptable"
+			                "please comment out \n the IF block as marked within the"
+			                "code of routine DLAMC2, \n otherwise supply EMIN" "explicitly.\n");
 		}
 		/* ** Assume IEEE arithmetic if we found denormalised numbers above,
 		   or if arithmetic seems to round in the IEEE style, determined in
@@ -1404,8 +1159,7 @@ static int dlamc2_ (long *beta, long *t, long *rnd, double *eps, long *emin, dou
 
 		lrmin = 1.;
 		i__1 = 1 - lemin;
-		for (i = 1; i <= 1 - lemin; ++i)
-		{
+		for (i = 1; i <= 1 - lemin; ++i) {
 			d__1 = lrmin * rbase;
 			lrmin = dlamc3_ (&d__1, &zero);
 			/* L30: */
@@ -1447,8 +1201,7 @@ static double dlamc3_ (double *a, double *b)
 	return ret_val;
 }								/* dlamc3_ */
 
-static int dlamc4_ (long *emin, double *start, long *base)
-{
+static int dlamc4_ (long *emin, double *start, long *base) {
 	/* -- LAPACK auxiliary routine (version 2.0) -- Univ. of Tennessee, Univ.
 	   of California Berkeley, NAG Ltd., Courant Institute, Argonne National
 	   Lab, and Rice University October 31, 1992
@@ -1494,10 +1247,9 @@ static int dlamc4_ (long *emin, double *start, long *base)
 	d2 = a;
 	/* + WHILE( ( C1.EQ.A ).AND.( C2.EQ.A ).AND. $ ( D1.EQ.A ).AND.( D2.EQ.A
 	   ) )LOOP */
-  L10:
-	if (c1 == a && c2 == a && d1 == a && d2 == a)
-	{
-		--(*emin);
+L10:
+	if (c1 == a && c2 == a && d1 == a && d2 == a) {
+		-- (*emin);
 		a = b1;
 		d__1 = a / *base;
 		b1 = dlamc3_ (&d__1, &zero);
@@ -1505,8 +1257,7 @@ static int dlamc4_ (long *emin, double *start, long *base)
 		c1 = dlamc3_ (&d__1, &zero);
 		d1 = zero;
 		i__1 = *base;
-		for (i = 1; i <= *base; ++i)
-		{
+		for (i = 1; i <= *base; ++i) {
 			d1 += b1;
 			/* L20: */
 		}
@@ -1516,8 +1267,7 @@ static int dlamc4_ (long *emin, double *start, long *base)
 		c2 = dlamc3_ (&d__1, &zero);
 		d2 = zero;
 		i__1 = *base;
-		for (i = 1; i <= *base; ++i)
-		{
+		for (i = 1; i <= *base; ++i) {
 			d2 += b2;
 			/* L30: */
 		}
@@ -1528,8 +1278,7 @@ static int dlamc4_ (long *emin, double *start, long *base)
 	return 0;
 }								/* dlamc4_ */
 
-static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, double *rmax)
-{
+static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, double *rmax) {
 	/*
 	   First compute LEXP and UEXP, two powers of 2 that bound abs(EMIN). We
 	   then assume that EMAX + abs(EMIN) will sum approximately to the bound
@@ -1553,20 +1302,16 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 
 	lexp = 1;
 	exbits = 1;
-  L10:
+L10:
 	try__ = lexp << 1;
-	if (try__ <= -(*emin))
-	{
+	if (try__ <= - (*emin)) {
 		lexp = try__;
 		++exbits;
 		goto L10;
 	}
-	if (lexp == -(*emin))
-	{
+	if (lexp == - (*emin)) {
 		uexp = lexp;
-	}
-	else
-	{
+	} else {
 		uexp = try__;
 		++exbits;
 	}
@@ -1575,12 +1320,9 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 	   equal to EMIN. EXBITS is the number of bits needed to store the
 	   exponent. */
 
-	if (uexp + *emin > -lexp - *emin)
-	{
+	if (uexp + *emin > -lexp - *emin) {
 		expsum = lexp << 1;
-	}
-	else
-	{
+	} else {
 		expsum = uexp << 1;
 	}
 
@@ -1593,8 +1335,7 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 	/* NBITS is the total number of bits needed to store a floating-point
 	   number. */
 
-	if (nbits % 2 == 1 && *beta == 2)
-	{
+	if (nbits % 2 == 1 && *beta == 2) {
 
 		/* Either there are an odd number of bits used to store a
 		   floating-point number, which is unlikely, or some bits are not
@@ -1605,14 +1346,13 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 		   to reduce EMAX by one because there must be some way of
 		   representing zero in an implicit-bit system. On machines like
 		   Cray, we are reducing EMAX by one unnecessarily. */
-		--(*emax);
+		-- (*emax);
 	}
 
-	if (*ieee)
-	{
+	if (*ieee) {
 		/* Assume we are on an IEEE machine which reserves one exponent for
 		   infinity and NaN. */
-		--(*emax);
+		-- (*emax);
 	}
 
 	/* Now create RMAX, the largest machine number, which should be equal to
@@ -1623,26 +1363,22 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 	z = *beta - 1.;
 	y = 0.;
 	i__1 = *p;
-	for (i = 1; i <= *p; ++i)
-	{
+	for (i = 1; i <= *p; ++i) {
 		z *= recbas;
-		if (y < 1.)
-		{
+		if (y < 1.) {
 			oldy = y;
 		}
 		y = dlamc3_ (&y, &z);
 		/* L20: */
 	}
-	if (y >= 1.)
-	{
+	if (y >= 1.) {
 		y = oldy;
 	}
 
 	/* Now multiply by BETA**EMAX to get RMAX. */
 
 	i__1 = *emax;
-	for (i = 1; i <= *emax; ++i)
-	{
+	for (i = 1; i <= *emax; ++i) {
 		d__1 = y * *beta;
 		y = dlamc3_ (&d__1, &c_b5);
 		/* L30: */
@@ -1652,8 +1388,7 @@ static int dlamc5_ (long *beta, long *p, long *emin, long *ieee, long *emax, dou
 	return 0;
 }								/* dlamc5_ */
 
-double NUMblas_dnrm2 (long *n, double *x, long *incx)
-{
+double NUMblas_dnrm2 (long *n, double *x, long *incx) {
 	/* The following loop is equivalent to this call to the LAPACK auxiliary
 	   routine: CALL DLASSQ( N, X, INCX, SCALE, SSQ ) */
 	/* System generated locals */
@@ -1667,35 +1402,25 @@ double NUMblas_dnrm2 (long *n, double *x, long *incx)
 
 	--x;
 	/* Function Body */
-	if (*n < 1 || *incx < 1)
-	{
+	if (*n < 1 || *incx < 1) {
 		norm = 0.;
-	}
-	else if (*n == 1)
-	{
+	} else if (*n == 1) {
 		norm = fabs (x[1]);
-	}
-	else
-	{
+	} else {
 		scale = 0.;
 		ssq = 1.;
 
 		i__1 = (*n - 1) * *incx + 1;
 		i__2 = *incx;
-		for (ix = 1; i__2 < 0 ? ix >= i__1 : ix <= i__1; ix += i__2)
-		{
-			if (x[ix] != 0.)
-			{
+		for (ix = 1; i__2 < 0 ? ix >= i__1 : ix <= i__1; ix += i__2) {
+			if (x[ix] != 0.) {
 				absxi = (d__1 = x[ix], fabs (d__1));
-				if (scale < absxi)
-				{
+				if (scale < absxi) {
 					/* Computing 2nd power */
 					d__1 = scale / absxi;
 					ssq = ssq * (d__1 * d__1) + 1.;
 					scale = absxi;
-				}
-				else
-				{
+				} else {
 					/* Computing 2nd power */
 					d__1 = absxi / scale;
 					ssq += d__1 * d__1;
@@ -1710,8 +1435,7 @@ double NUMblas_dnrm2 (long *n, double *x, long *incx)
 	return ret_val;
 }								/* NUMblas_dnrm2 */
 
-int NUMblas_drot (long *n, double *dx, long *incx, double *dy, long *incy, double *c__, double *s)
-{
+int NUMblas_drot (long *n, double *dx, long *incx, double *dy, long *incy, double *c__, double *s) {
 	/* System generated locals */
 	long i__1;
 
@@ -1727,28 +1451,23 @@ int NUMblas_drot (long *n, double *dx, long *incx, double *dy, long *incy, doubl
 	--dy;
 	--dx;
 	/* Function Body */
-	if (*n <= 0)
-	{
+	if (*n <= 0) {
 		return 0;
 	}
-	if (*incx == 1 && *incy == 1)
-	{
+	if (*incx == 1 && *incy == 1) {
 		goto L20;
 	}
 	/* code for unequal increments or equal increments not equal to 1 */
 	ix = 1;
 	iy = 1;
-	if (*incx < 0)
-	{
-		ix = (-(*n) + 1) * *incx + 1;
+	if (*incx < 0) {
+		ix = (- (*n) + 1) * *incx + 1;
 	}
-	if (*incy < 0)
-	{
-		iy = (-(*n) + 1) * *incy + 1;
+	if (*incy < 0) {
+		iy = (- (*n) + 1) * *incy + 1;
 	}
 	i__1 = *n;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dtemp = *c__ * dx[ix] + *s * dy[iy];
 		dy[iy] = *c__ * dy[iy] - *s * dx[ix];
 		dx[ix] = dtemp;
@@ -1758,10 +1477,9 @@ int NUMblas_drot (long *n, double *dx, long *incx, double *dy, long *incy, doubl
 	}
 	return 0;
 	/* code for both increments equal to 1 */
-  L20:
+L20:
 	i__1 = *n;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dtemp = *c__ * dx[i__] + *s * dy[i__];
 		dy[i__] = *c__ * dy[i__] - *s * dx[i__];
 		dx[i__] = dtemp;
@@ -1770,8 +1488,7 @@ int NUMblas_drot (long *n, double *dx, long *incx, double *dy, long *incy, doubl
 	return 0;
 }								/* NUMblas_drot */
 
-int NUMblas_dscal (long *n, double *da, double *dx, long *incx)
-{
+int NUMblas_dscal (long *n, double *da, double *dx, long *incx) {
 	/* System generated locals */
 	long i__1, i__2;
 
@@ -1781,46 +1498,39 @@ int NUMblas_dscal (long *n, double *da, double *dx, long *incx)
 	/* Parameter adjustments */
 	--dx;
 	/* Function Body */
-	if (*n <= 0 || *incx <= 0)
-	{
+	if (*n <= 0 || *incx <= 0) {
 		return 0;
 	}
-	if (*incx == 1)
-	{
+	if (*incx == 1) {
 		goto L20;
 	}
 	/* code for increment not equal to 1 */
 	nincx = *n * *incx;
 	i__1 = nincx;
 	i__2 = *incx;
-	for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2)
-	{
+	for (i__ = 1; i__2 < 0 ? i__ >= i__1 : i__ <= i__1; i__ += i__2) {
 		dx[i__] = *da * dx[i__];
 		/* L10: */
 	}
 	return 0;
 	/* code for increment equal to 1 clean-up loop */
-  L20:
+L20:
 	m = *n % 5;
-	if (m == 0)
-	{
+	if (m == 0) {
 		goto L40;
 	}
 	i__2 = m;
-	for (i__ = 1; i__ <= i__2; ++i__)
-	{
+	for (i__ = 1; i__ <= i__2; ++i__) {
 		dx[i__] = *da * dx[i__];
 		/* L30: */
 	}
-	if (*n < 5)
-	{
+	if (*n < 5) {
 		return 0;
 	}
-  L40:
+L40:
 	mp1 = m + 1;
 	i__2 = *n;
-	for (i__ = mp1; i__ <= i__2; i__ += 5)
-	{
+	for (i__ = mp1; i__ <= i__2; i__ += 5) {
 		dx[i__] = *da * dx[i__];
 		dx[i__ + 1] = *da * dx[i__ + 1];
 		dx[i__ + 2] = *da * dx[i__ + 2];
@@ -1831,8 +1541,7 @@ int NUMblas_dscal (long *n, double *da, double *dx, long *incx)
 	return 0;
 }								/* dscal_ */
 
-int NUMblas_dswap (long *n, double *dx, long *incx, double *dy, long *incy)
-{
+int NUMblas_dswap (long *n, double *dx, long *incx, double *dy, long *incy) {
 	/* System generated locals */
 	long i__1;
 
@@ -1847,28 +1556,23 @@ int NUMblas_dswap (long *n, double *dx, long *incx, double *dy, long *incy)
 	--dy;
 	--dx;
 	/* Function Body */
-	if (*n <= 0)
-	{
+	if (*n <= 0) {
 		return 0;
 	}
-	if (*incx == 1 && *incy == 1)
-	{
+	if (*incx == 1 && *incy == 1) {
 		goto L20;
 	}
 	/* code for unequal increments or equal increments not equal to 1 */
 	ix = 1;
 	iy = 1;
-	if (*incx < 0)
-	{
-		ix = (-(*n) + 1) * *incx + 1;
+	if (*incx < 0) {
+		ix = (- (*n) + 1) * *incx + 1;
 	}
-	if (*incy < 0)
-	{
-		iy = (-(*n) + 1) * *incy + 1;
+	if (*incy < 0) {
+		iy = (- (*n) + 1) * *incy + 1;
 	}
 	i__1 = *n;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dtemp = dx[ix];
 		dx[ix] = dy[iy];
 		dy[iy] = dtemp;
@@ -1878,29 +1582,25 @@ int NUMblas_dswap (long *n, double *dx, long *incx, double *dy, long *incy)
 	}
 	return 0;
 	/* code for both increments equal to 1 clean-up loop */
-  L20:
+L20:
 	m = *n % 3;
-	if (m == 0)
-	{
+	if (m == 0) {
 		goto L40;
 	}
 	i__1 = m;
-	for (i__ = 1; i__ <= i__1; ++i__)
-	{
+	for (i__ = 1; i__ <= i__1; ++i__) {
 		dtemp = dx[i__];
 		dx[i__] = dy[i__];
 		dy[i__] = dtemp;
 		/* L30: */
 	}
-	if (*n < 3)
-	{
+	if (*n < 3) {
 		return 0;
 	}
-  L40:
+L40:
 	mp1 = m + 1;
 	i__1 = *n;
-	for (i__ = mp1; i__ <= i__1; i__ += 3)
-	{
+	for (i__ = mp1; i__ <= i__1; i__ += 3) {
 		dtemp = dx[i__];
 		dx[i__] = dy[i__];
 		dy[i__] = dtemp;
@@ -1916,8 +1616,7 @@ int NUMblas_dswap (long *n, double *dx, long *incx, double *dy, long *incy)
 }								/* NUMblas_dswap */
 
 int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *lda, double *x, long *incx, double *beta,
-	double *y, long *incy)
-{
+                   double *y, long *incy) {
 	/* System generated locals */
 	long a_dim1, a_offset, i__1, i__2;
 
@@ -1936,97 +1635,66 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
 	--y;
 	/* Function Body */
 	info = 0;
-	if (!lsame_ (uplo, "U") && !lsame_ (uplo, "L"))
-	{
+	if (!lsame_ (uplo, "U") && !lsame_ (uplo, "L")) {
 		info = 1;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 2;
-	}
-	else if (*lda < MAX (1, *n))
-	{
+	} else if (*lda < MAX (1, *n)) {
 		info = 5;
-	}
-	else if (*incx == 0)
-	{
+	} else if (*incx == 0) {
 		info = 7;
-	}
-	else if (*incy == 0)
-	{
+	} else if (*incy == 0) {
 		info = 10;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DSYMV ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0 || *alpha == 0. && *beta == 1.)
-	{
+	if (*n == 0 || *alpha == 0. && *beta == 1.) {
 		return 0;
 	}
 	/* Set up the start points in X and Y. */
-	if (*incx > 0)
-	{
+	if (*incx > 0) {
 		kx = 1;
-	}
-	else
-	{
+	} else {
 		kx = 1 - (*n - 1) * *incx;
 	}
-	if (*incy > 0)
-	{
+	if (*incy > 0) {
 		ky = 1;
-	}
-	else
-	{
+	} else {
 		ky = 1 - (*n - 1) * *incy;
 	}
 	/* Start the operations. In this version the elements of A are accessed
 	   sequentially with one pass through the triangular part of A. First
 	   form y := beta*y. */
-	if (*beta != 1.)
-	{
-		if (*incy == 1)
-		{
-			if (*beta == 0.)
-			{
+	if (*beta != 1.) {
+		if (*incy == 1) {
+			if (*beta == 0.) {
 				i__1 = *n;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[i__] = 0.;
 					/* L10: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[i__] = *beta * y[i__];
 					/* L20: */
 				}
 			}
-		}
-		else
-		{
+		} else {
 			iy = ky;
-			if (*beta == 0.)
-			{
+			if (*beta == 0.) {
 				i__1 = *n;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[iy] = 0.;
 					iy += *incy;
 					/* L30: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (i__ = 1; i__ <= i__1; ++i__)
-				{
+				for (i__ = 1; i__ <= i__1; ++i__) {
 					y[iy] = *beta * y[iy];
 					iy += *incy;
 					/* L40: */
@@ -2034,23 +1702,18 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
 			}
 		}
 	}
-	if (*alpha == 0.)
-	{
+	if (*alpha == 0.) {
 		return 0;
 	}
-	if (lsame_ (uplo, "U"))
-	{
+	if (lsame_ (uplo, "U")) {
 		/* Form y when A is stored in upper triangle. */
-		if (*incx == 1 && *incy == 1)
-		{
+		if (*incx == 1 && *incy == 1) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				temp1 = *alpha * x[j];
 				temp2 = 0.;
 				i__2 = j - 1;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					y[i__] += temp1 * a_ref (i__, j);
 					temp2 += a_ref (i__, j) * x[i__];
 					/* L50: */
@@ -2058,21 +1721,17 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
 				y[j] = y[j] + temp1 * a_ref (j, j) + *alpha * temp2;
 				/* L60: */
 			}
-		}
-		else
-		{
+		} else {
 			jx = kx;
 			jy = ky;
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				temp1 = *alpha * x[jx];
 				temp2 = 0.;
 				ix = kx;
 				iy = ky;
 				i__2 = j - 1;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					y[iy] += temp1 * a_ref (i__, j);
 					temp2 += a_ref (i__, j) * x[ix];
 					ix += *incx;
@@ -2085,21 +1744,16 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
 				/* L80: */
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Form y when A is stored in lower triangle. */
-		if (*incx == 1 && *incy == 1)
-		{
+		if (*incx == 1 && *incy == 1) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				temp1 = *alpha * x[j];
 				temp2 = 0.;
 				y[j] += temp1 * a_ref (j, j);
 				i__2 = *n;
-				for (i__ = j + 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = j + 1; i__ <= i__2; ++i__) {
 					y[i__] += temp1 * a_ref (i__, j);
 					temp2 += a_ref (i__, j) * x[i__];
 					/* L90: */
@@ -2107,22 +1761,18 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
 				y[j] += *alpha * temp2;
 				/* L100: */
 			}
-		}
-		else
-		{
+		} else {
 			jx = kx;
 			jy = ky;
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				temp1 = *alpha * x[jx];
 				temp2 = 0.;
 				y[jy] += temp1 * a_ref (j, j);
 				ix = jx;
 				iy = jy;
 				i__2 = *n;
-				for (i__ = j + 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = j + 1; i__ <= i__2; ++i__) {
 					ix += *incx;
 					iy += *incy;
 					y[iy] += temp1 * a_ref (i__, j);
@@ -2142,8 +1792,7 @@ int NUMblas_dsymv (const char *uplo, long *n, double *alpha, double *a, long *ld
 #undef a_ref
 
 int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha, double *x, long *incx, double *y, long *incy, double *a,
-	long *lda)
-{
+                   long *lda) {
 	/* System generated locals */
 	long a_dim1, a_offset, i__1, i__2;
 
@@ -2162,54 +1811,36 @@ int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha, double *x, long *in
 	a -= a_offset;
 	/* Function Body */
 	info = 0;
-	if (!lsame_ (uplo, "U") && !lsame_ (uplo, "L"))
-	{
+	if (!lsame_ (uplo, "U") && !lsame_ (uplo, "L")) {
 		info = 1;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 2;
-	}
-	else if (*incx == 0)
-	{
+	} else if (*incx == 0) {
 		info = 5;
-	}
-	else if (*incy == 0)
-	{
+	} else if (*incy == 0) {
 		info = 7;
-	}
-	else if (*lda < MAX (1, *n))
-	{
+	} else if (*lda < MAX (1, *n)) {
 		info = 9;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DSYR2 ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0 || *alpha == 0.)
-	{
+	if (*n == 0 || *alpha == 0.) {
 		return 0;
 	}
 	/* Set up the start points in X and Y if the increments are not both
 	   unity. */
-	if (*incx != 1 || *incy != 1)
-	{
-		if (*incx > 0)
-		{
+	if (*incx != 1 || *incy != 1) {
+		if (*incx > 0) {
 			kx = 1;
-		}
-		else
-		{
+		} else {
 			kx = 1 - (*n - 1) * *incx;
 		}
-		if (*incy > 0)
-		{
+		if (*incy > 0) {
 			ky = 1;
-		}
-		else
-		{
+		} else {
 			ky = 1 - (*n - 1) * *incy;
 		}
 		jx = kx;
@@ -2217,42 +1848,32 @@ int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha, double *x, long *in
 	}
 	/* Start the operations. In this version the elements of A are accessed
 	   sequentially with one pass through the triangular part of A. */
-	if (lsame_ (uplo, "U"))
-	{
+	if (lsame_ (uplo, "U")) {
 		/* Form A when A is stored in the upper triangle. */
-		if (*incx == 1 && *incy == 1)
-		{
+		if (*incx == 1 && *incy == 1) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (x[j] != 0. || y[j] != 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (x[j] != 0. || y[j] != 0.) {
 					temp1 = *alpha * y[j];
 					temp2 = *alpha * x[j];
 					i__2 = j;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						a_ref (i__, j) = a_ref (i__, j) + x[i__] * temp1 + y[i__] * temp2;
 						/* L10: */
 					}
 				}
 				/* L20: */
 			}
-		}
-		else
-		{
+		} else {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (x[jx] != 0. || y[jy] != 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (x[jx] != 0. || y[jy] != 0.) {
 					temp1 = *alpha * y[jy];
 					temp2 = *alpha * x[jx];
 					ix = kx;
 					iy = ky;
 					i__2 = j;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						a_ref (i__, j) = a_ref (i__, j) + x[ix] * temp1 + y[iy] * temp2;
 						ix += *incx;
 						iy += *incy;
@@ -2264,43 +1885,32 @@ int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha, double *x, long *in
 				/* L40: */
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Form A when A is stored in the lower triangle. */
-		if (*incx == 1 && *incy == 1)
-		{
+		if (*incx == 1 && *incy == 1) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (x[j] != 0. || y[j] != 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (x[j] != 0. || y[j] != 0.) {
 					temp1 = *alpha * y[j];
 					temp2 = *alpha * x[j];
 					i__2 = *n;
-					for (i__ = j; i__ <= i__2; ++i__)
-					{
+					for (i__ = j; i__ <= i__2; ++i__) {
 						a_ref (i__, j) = a_ref (i__, j) + x[i__] * temp1 + y[i__] * temp2;
 						/* L50: */
 					}
 				}
 				/* L60: */
 			}
-		}
-		else
-		{
+		} else {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (x[jx] != 0. || y[jy] != 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (x[jx] != 0. || y[jy] != 0.) {
 					temp1 = *alpha * y[jy];
 					temp2 = *alpha * x[jx];
 					ix = jx;
 					iy = jy;
 					i__2 = *n;
-					for (i__ = j; i__ <= i__2; ++i__)
-					{
+					for (i__ = j; i__ <= i__2; ++i__) {
 						a_ref (i__, j) = a_ref (i__, j) + x[ix] * temp1 + y[iy] * temp2;
 						ix += *incx;
 						iy += *incy;
@@ -2319,8 +1929,7 @@ int NUMblas_dsyr2 (const char *uplo, long *n, double *alpha, double *x, long *in
 #undef a_ref
 
 int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, double *alpha, double *a, long *lda, double *b,
-	long *ldb, double *beta, double *c__, long *ldc)
-{
+                    long *ldb, double *beta, double *c__, long *ldc) {
 	/* System generated locals */
 	long a_dim1, a_offset, b_dim1, b_offset, c_dim1, c_offset, i__1, i__2, i__3;
 
@@ -2345,112 +1954,76 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, doubl
 	c_offset = 1 + c_dim1 * 1;
 	c__ -= c_offset;
 	/* Function Body */
-	if (lsame_ (trans, "N"))
-	{
+	if (lsame_ (trans, "N")) {
 		nrowa = *n;
-	}
-	else
-	{
+	} else {
 		nrowa = *k;
 	}
 	upper = lsame_ (uplo, "U");
 	info = 0;
-	if (!upper && !lsame_ (uplo, "L"))
-	{
+	if (!upper && !lsame_ (uplo, "L")) {
 		info = 1;
-	}
-	else if (!lsame_ (trans, "N") && !lsame_ (trans, "T") && !lsame_ (trans, "C"))
-	{
+	} else if (!lsame_ (trans, "N") && !lsame_ (trans, "T") && !lsame_ (trans, "C")) {
 		info = 2;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 3;
-	}
-	else if (*k < 0)
-	{
+	} else if (*k < 0) {
 		info = 4;
-	}
-	else if (*lda < MAX (1, nrowa))
-	{
+	} else if (*lda < MAX (1, nrowa)) {
 		info = 7;
-	}
-	else if (*ldb < MAX (1, nrowa))
-	{
+	} else if (*ldb < MAX (1, nrowa)) {
 		info = 9;
-	}
-	else if (*ldc < MAX (1, *n))
-	{
+	} else if (*ldc < MAX (1, *n)) {
 		info = 12;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DSYR2K", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0 || (*alpha == 0. || *k == 0) && *beta == 1.)
-	{
+	if (*n == 0 || (*alpha == 0. || *k == 0) && *beta == 1.) {
 		return 0;
 	}
 	/* And when alpha.eq.zero. */
-	if (*alpha == 0.)
-	{
-		if (upper)
-		{
-			if (*beta == 0.)
-			{
+	if (*alpha == 0.) {
+		if (upper) {
+			if (*beta == 0.) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					i__2 = j;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = 0.;
 						/* L10: */
 					}
 					/* L20: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					i__2 = j;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = *beta * c___ref (i__, j);
 						/* L30: */
 					}
 					/* L40: */
 				}
 			}
-		}
-		else
-		{
-			if (*beta == 0.)
-			{
+		} else {
+			if (*beta == 0.) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					i__2 = *n;
-					for (i__ = j; i__ <= i__2; ++i__)
-					{
+					for (i__ = j; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = 0.;
 						/* L50: */
 					}
 					/* L60: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					i__2 = *n;
-					for (i__ = j; i__ <= i__2; ++i__)
-					{
+					for (i__ = j; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = *beta * c___ref (i__, j);
 						/* L70: */
 					}
@@ -2461,44 +2034,33 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, doubl
 		return 0;
 	}
 	/* Start the operations. */
-	if (lsame_ (trans, "N"))
-	{
+	if (lsame_ (trans, "N")) {
 		/* Form C := alpha*A*B' + alpha*B*A' + C. */
-		if (upper)
-		{
+		if (upper) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (*beta == 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (*beta == 0.) {
 					i__2 = j;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = 0.;
 						/* L90: */
 					}
-				}
-				else if (*beta != 1.)
-				{
+				} else if (*beta != 1.) {
 					i__2 = j;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = *beta * c___ref (i__, j);
 						/* L100: */
 					}
 				}
 				i__2 = *k;
-				for (l = 1; l <= i__2; ++l)
-				{
-					if (a_ref (j, l) != 0. || b_ref (j, l) != 0.)
-					{
+				for (l = 1; l <= i__2; ++l) {
+					if (a_ref (j, l) != 0. || b_ref (j, l) != 0.) {
 						temp1 = *alpha * b_ref (j, l);
 						temp2 = *alpha * a_ref (j, l);
 						i__3 = j;
-						for (i__ = 1; i__ <= i__3; ++i__)
-						{
+						for (i__ = 1; i__ <= i__3; ++i__) {
 							c___ref (i__, j) =
-								c___ref (i__, j) + a_ref (i__, l) * temp1 + b_ref (i__, l) * temp2;
+							    c___ref (i__, j) + a_ref (i__, l) * temp1 + b_ref (i__, l) * temp2;
 							/* L110: */
 						}
 					}
@@ -2506,42 +2068,31 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, doubl
 				}
 				/* L130: */
 			}
-		}
-		else
-		{
+		} else {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
-				if (*beta == 0.)
-				{
+			for (j = 1; j <= i__1; ++j) {
+				if (*beta == 0.) {
 					i__2 = *n;
-					for (i__ = j; i__ <= i__2; ++i__)
-					{
+					for (i__ = j; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = 0.;
 						/* L140: */
 					}
-				}
-				else if (*beta != 1.)
-				{
+				} else if (*beta != 1.) {
 					i__2 = *n;
-					for (i__ = j; i__ <= i__2; ++i__)
-					{
+					for (i__ = j; i__ <= i__2; ++i__) {
 						c___ref (i__, j) = *beta * c___ref (i__, j);
 						/* L150: */
 					}
 				}
 				i__2 = *k;
-				for (l = 1; l <= i__2; ++l)
-				{
-					if (a_ref (j, l) != 0. || b_ref (j, l) != 0.)
-					{
+				for (l = 1; l <= i__2; ++l) {
+					if (a_ref (j, l) != 0. || b_ref (j, l) != 0.) {
 						temp1 = *alpha * b_ref (j, l);
 						temp2 = *alpha * a_ref (j, l);
 						i__3 = *n;
-						for (i__ = j; i__ <= i__3; ++i__)
-						{
+						for (i__ = j; i__ <= i__3; ++i__) {
 							c___ref (i__, j) =
-								c___ref (i__, j) + a_ref (i__, l) * temp1 + b_ref (i__, l) * temp2;
+							    c___ref (i__, j) + a_ref (i__, l) * temp1 + b_ref (i__, l) * temp2;
 							/* L160: */
 						}
 					}
@@ -2550,63 +2101,46 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, doubl
 				/* L180: */
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Form C := alpha*A'*B + alpha*B'*A + C. */
-		if (upper)
-		{
+		if (upper) {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				i__2 = j;
-				for (i__ = 1; i__ <= i__2; ++i__)
-				{
+				for (i__ = 1; i__ <= i__2; ++i__) {
 					temp1 = 0.;
 					temp2 = 0.;
 					i__3 = *k;
-					for (l = 1; l <= i__3; ++l)
-					{
+					for (l = 1; l <= i__3; ++l) {
 						temp1 += a_ref (l, i__) * b_ref (l, j);
 						temp2 += b_ref (l, i__) * a_ref (l, j);
 						/* L190: */
 					}
-					if (*beta == 0.)
-					{
+					if (*beta == 0.) {
 						c___ref (i__, j) = *alpha * temp1 + *alpha * temp2;
-					}
-					else
-					{
+					} else {
 						c___ref (i__, j) = *beta * c___ref (i__, j) + *alpha * temp1 + *alpha * temp2;
 					}
 					/* L200: */
 				}
 				/* L210: */
 			}
-		}
-		else
-		{
+		} else {
 			i__1 = *n;
-			for (j = 1; j <= i__1; ++j)
-			{
+			for (j = 1; j <= i__1; ++j) {
 				i__2 = *n;
-				for (i__ = j; i__ <= i__2; ++i__)
-				{
+				for (i__ = j; i__ <= i__2; ++i__) {
 					temp1 = 0.;
 					temp2 = 0.;
 					i__3 = *k;
-					for (l = 1; l <= i__3; ++l)
-					{
+					for (l = 1; l <= i__3; ++l) {
 						temp1 += a_ref (l, i__) * b_ref (l, j);
 						temp2 += b_ref (l, i__) * a_ref (l, j);
 						/* L220: */
 					}
-					if (*beta == 0.)
-					{
+					if (*beta == 0.) {
 						c___ref (i__, j) = *alpha * temp1 + *alpha * temp2;
-					}
-					else
-					{
+					} else {
 						c___ref (i__, j) = *beta * c___ref (i__, j) + *alpha * temp1 + *alpha * temp2;
 					}
 					/* L230: */
@@ -2623,8 +2157,7 @@ int NUMblas_dsyr2k (const char *uplo, const char *trans, long *n, long *k, doubl
 #undef a_ref
 
 int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const char *diag, long *m, long *n, double *alpha, double *a,
-	long *lda, double *b, long *ldb)
-{
+                   long *lda, double *b, long *ldb) {
 	/* System generated locals */
 	long a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
 
@@ -2651,68 +2184,45 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 	b -= b_offset;
 	/* Function Body */
 	lside = lsame_ (side, "L");
-	if (lside)
-	{
+	if (lside) {
 		nrowa = *m;
-	}
-	else
-	{
+	} else {
 		nrowa = *n;
 	}
 	nounit = lsame_ (diag, "N");
 	upper = lsame_ (uplo, "U");
 	info = 0;
-	if (!lside && !lsame_ (side, "R"))
-	{
+	if (!lside && !lsame_ (side, "R")) {
 		info = 1;
-	}
-	else if (!upper && !lsame_ (uplo, "L"))
-	{
+	} else if (!upper && !lsame_ (uplo, "L")) {
 		info = 2;
-	}
-	else if (!lsame_ (transa, "N") && !lsame_ (transa, "T") && !lsame_ (transa, "C"))
-	{
+	} else if (!lsame_ (transa, "N") && !lsame_ (transa, "T") && !lsame_ (transa, "C")) {
 		info = 3;
-	}
-	else if (!lsame_ (diag, "U") && !lsame_ (diag, "N"))
-	{
+	} else if (!lsame_ (diag, "U") && !lsame_ (diag, "N")) {
 		info = 4;
-	}
-	else if (*m < 0)
-	{
+	} else if (*m < 0) {
 		info = 5;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 6;
-	}
-	else if (*lda < MAX (1, nrowa))
-	{
+	} else if (*lda < MAX (1, nrowa)) {
 		info = 9;
-	}
-	else if (*ldb < MAX (1, *m))
-	{
+	} else if (*ldb < MAX (1, *m)) {
 		info = 11;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DTRMM ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0)
-	{
+	if (*n == 0) {
 		return 0;
 	}
 	/* And when alpha.eq.zero. */
-	if (*alpha == 0.)
-	{
+	if (*alpha == 0.) {
 		i__1 = *n;
-		for (j = 1; j <= i__1; ++j)
-		{
+		for (j = 1; j <= i__1; ++j) {
 			i__2 = *m;
-			for (i__ = 1; i__ <= i__2; ++i__)
-			{
+			for (i__ = 1; i__ <= i__2; ++i__) {
 				b_ref (i__, j) = 0.;
 				/* L10: */
 			}
@@ -2721,30 +2231,22 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 		return 0;
 	}
 	/* Start the operations. */
-	if (lside)
-	{
-		if (lsame_ (transa, "N"))
-		{
+	if (lside) {
+		if (lsame_ (transa, "N")) {
 			/* Form B := alpha*A*B. */
-			if (upper)
-			{
+			if (upper) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					i__2 = *m;
-					for (k = 1; k <= i__2; ++k)
-					{
-						if (b_ref (k, j) != 0.)
-						{
+					for (k = 1; k <= i__2; ++k) {
+						if (b_ref (k, j) != 0.) {
 							temp = *alpha * b_ref (k, j);
 							i__3 = k - 1;
-							for (i__ = 1; i__ <= i__3; ++i__)
-							{
+							for (i__ = 1; i__ <= i__3; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) + temp * a_ref (i__, k);
 								/* L30: */
 							}
-							if (nounit)
-							{
+							if (nounit) {
 								temp *= a_ref (k, k);
 							}
 							b_ref (k, j) = temp;
@@ -2753,25 +2255,18 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 					}
 					/* L50: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					for (k = *m; k >= 1; --k)
-					{
-						if (b_ref (k, j) != 0.)
-						{
+				for (j = 1; j <= i__1; ++j) {
+					for (k = *m; k >= 1; --k) {
+						if (b_ref (k, j) != 0.) {
 							temp = *alpha * b_ref (k, j);
 							b_ref (k, j) = temp;
-							if (nounit)
-							{
+							if (nounit) {
 								b_ref (k, j) = b_ref (k, j) * a_ref (k, k);
 							}
 							i__2 = *m;
-							for (i__ = k + 1; i__ <= i__2; ++i__)
-							{
+							for (i__ = k + 1; i__ <= i__2; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) + temp * a_ref (i__, k);
 								/* L60: */
 							}
@@ -2781,25 +2276,18 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 					/* L80: */
 				}
 			}
-		}
-		else
-		{
+		} else {
 			/* Form B := alpha*A'*B. */
-			if (upper)
-			{
+			if (upper) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					for (i__ = *m; i__ >= 1; --i__)
-					{
+				for (j = 1; j <= i__1; ++j) {
+					for (i__ = *m; i__ >= 1; --i__) {
 						temp = b_ref (i__, j);
-						if (nounit)
-						{
+						if (nounit) {
 							temp *= a_ref (i__, i__);
 						}
 						i__2 = i__ - 1;
-						for (k = 1; k <= i__2; ++k)
-						{
+						for (k = 1; k <= i__2; ++k) {
 							temp += a_ref (k, i__) * b_ref (k, j);
 							/* L90: */
 						}
@@ -2808,23 +2296,17 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 					}
 					/* L110: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						temp = b_ref (i__, j);
-						if (nounit)
-						{
+						if (nounit) {
 							temp *= a_ref (i__, i__);
 						}
 						i__3 = *m;
-						for (k = i__ + 1; k <= i__3; ++k)
-						{
+						for (k = i__ + 1; k <= i__3; ++k) {
 							temp += a_ref (k, i__) * b_ref (k, j);
 							/* L120: */
 						}
@@ -2835,36 +2317,26 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 				}
 			}
 		}
-	}
-	else
-	{
-		if (lsame_ (transa, "N"))
-		{
+	} else {
+		if (lsame_ (transa, "N")) {
 			/* Form B := alpha*B*A. */
-			if (upper)
-			{
-				for (j = *n; j >= 1; --j)
-				{
+			if (upper) {
+				for (j = *n; j >= 1; --j) {
 					temp = *alpha;
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (j, j);
 					}
 					i__1 = *m;
-					for (i__ = 1; i__ <= i__1; ++i__)
-					{
+					for (i__ = 1; i__ <= i__1; ++i__) {
 						b_ref (i__, j) = temp * b_ref (i__, j);
 						/* L150: */
 					}
 					i__1 = j - 1;
-					for (k = 1; k <= i__1; ++k)
-					{
-						if (a_ref (k, j) != 0.)
-						{
+					for (k = 1; k <= i__1; ++k) {
+						if (a_ref (k, j) != 0.) {
 							temp = *alpha * a_ref (k, j);
 							i__2 = *m;
-							for (i__ = 1; i__ <= i__2; ++i__)
-							{
+							for (i__ = 1; i__ <= i__2; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) + temp * b_ref (i__, k);
 								/* L160: */
 							}
@@ -2873,32 +2345,24 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 					}
 					/* L180: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					temp = *alpha;
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (j, j);
 					}
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						b_ref (i__, j) = temp * b_ref (i__, j);
 						/* L190: */
 					}
 					i__2 = *n;
-					for (k = j + 1; k <= i__2; ++k)
-					{
-						if (a_ref (k, j) != 0.)
-						{
+					for (k = j + 1; k <= i__2; ++k) {
+						if (a_ref (k, j) != 0.) {
 							temp = *alpha * a_ref (k, j);
 							i__3 = *m;
-							for (i__ = 1; i__ <= i__3; ++i__)
-							{
+							for (i__ = 1; i__ <= i__3; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) + temp * b_ref (i__, k);
 								/* L200: */
 							}
@@ -2908,24 +2372,17 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 					/* L220: */
 				}
 			}
-		}
-		else
-		{
+		} else {
 			/* Form B := alpha*B*A'. */
-			if (upper)
-			{
+			if (upper) {
 				i__1 = *n;
-				for (k = 1; k <= i__1; ++k)
-				{
+				for (k = 1; k <= i__1; ++k) {
 					i__2 = k - 1;
-					for (j = 1; j <= i__2; ++j)
-					{
-						if (a_ref (j, k) != 0.)
-						{
+					for (j = 1; j <= i__2; ++j) {
+						if (a_ref (j, k) != 0.) {
 							temp = *alpha * a_ref (j, k);
 							i__3 = *m;
-							for (i__ = 1; i__ <= i__3; ++i__)
-							{
+							for (i__ = 1; i__ <= i__3; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) + temp * b_ref (i__, k);
 								/* L230: */
 							}
@@ -2933,35 +2390,26 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 						/* L240: */
 					}
 					temp = *alpha;
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (k, k);
 					}
-					if (temp != 1.)
-					{
+					if (temp != 1.) {
 						i__2 = *m;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							b_ref (i__, k) = temp * b_ref (i__, k);
 							/* L250: */
 						}
 					}
 					/* L260: */
 				}
-			}
-			else
-			{
-				for (k = *n; k >= 1; --k)
-				{
+			} else {
+				for (k = *n; k >= 1; --k) {
 					i__1 = *n;
-					for (j = k + 1; j <= i__1; ++j)
-					{
-						if (a_ref (j, k) != 0.)
-						{
+					for (j = k + 1; j <= i__1; ++j) {
+						if (a_ref (j, k) != 0.) {
 							temp = *alpha * a_ref (j, k);
 							i__2 = *m;
-							for (i__ = 1; i__ <= i__2; ++i__)
-							{
+							for (i__ = 1; i__ <= i__2; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) + temp * b_ref (i__, k);
 								/* L270: */
 							}
@@ -2969,15 +2417,12 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 						/* L280: */
 					}
 					temp = *alpha;
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (k, k);
 					}
-					if (temp != 1.)
-					{
+					if (temp != 1.) {
 						i__1 = *m;
-						for (i__ = 1; i__ <= i__1; ++i__)
-						{
+						for (i__ = 1; i__ <= i__1; ++i__) {
 							b_ref (i__, k) = temp * b_ref (i__, k);
 							/* L290: */
 						}
@@ -2993,8 +2438,7 @@ int NUMblas_dtrmm (const char *side, const char *uplo, const char *transa, const
 #undef b_ref
 #undef a_ref
 
-int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *n, double *a, long *lda, double *x, long *incx)
-{
+int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *n, double *a, long *lda, double *x, long *incx) {
 	/* System generated locals */
 	long a_dim1, a_offset, i__1, i__2;
 
@@ -3016,99 +2460,70 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *
 	--x;
 	/* Function Body */
 	info = 0;
-	if (!lsame_ (uplo, "U") && !lsame_ (uplo, "L"))
-	{
+	if (!lsame_ (uplo, "U") && !lsame_ (uplo, "L")) {
 		info = 1;
-	}
-	else if (!lsame_ (trans, "N") && !lsame_ (trans, "T") && !lsame_ (trans, "C"))
-	{
+	} else if (!lsame_ (trans, "N") && !lsame_ (trans, "T") && !lsame_ (trans, "C")) {
 		info = 2;
-	}
-	else if (!lsame_ (diag, "U") && !lsame_ (diag, "N"))
-	{
+	} else if (!lsame_ (diag, "U") && !lsame_ (diag, "N")) {
 		info = 3;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 4;
-	}
-	else if (*lda < MAX (1, *n))
-	{
+	} else if (*lda < MAX (1, *n)) {
 		info = 6;
-	}
-	else if (*incx == 0)
-	{
+	} else if (*incx == 0) {
 		info = 8;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DTRMV ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0)
-	{
+	if (*n == 0) {
 		return 0;
 	}
 	nounit = lsame_ (diag, "N");
 	/* Set up the start point in X if the increment is not unity. This will
 	   be ( N - 1 )*INCX too small for descending loops. */
-	if (*incx <= 0)
-	{
+	if (*incx <= 0) {
 		kx = 1 - (*n - 1) * *incx;
-	}
-	else if (*incx != 1)
-	{
+	} else if (*incx != 1) {
 		kx = 1;
 	}
 	/* Start the operations. In this version the elements of A are accessed
 	   sequentially with one pass through A. */
-	if (lsame_ (trans, "N"))
-	{
+	if (lsame_ (trans, "N")) {
 		/* Form x := A*x. */
-		if (lsame_ (uplo, "U"))
-		{
-			if (*incx == 1)
-			{
+		if (lsame_ (uplo, "U")) {
+			if (*incx == 1) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					if (x[j] != 0.)
-					{
+				for (j = 1; j <= i__1; ++j) {
+					if (x[j] != 0.) {
 						temp = x[j];
 						i__2 = j - 1;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							x[i__] += temp * a_ref (i__, j);
 							/* L10: */
 						}
-						if (nounit)
-						{
+						if (nounit) {
 							x[j] *= a_ref (j, j);
 						}
 					}
 					/* L20: */
 				}
-			}
-			else
-			{
+			} else {
 				jx = kx;
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					if (x[jx] != 0.)
-					{
+				for (j = 1; j <= i__1; ++j) {
+					if (x[jx] != 0.) {
 						temp = x[jx];
 						ix = kx;
 						i__2 = j - 1;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							x[ix] += temp * a_ref (i__, j);
 							ix += *incx;
 							/* L30: */
 						}
-						if (nounit)
-						{
+						if (nounit) {
 							x[jx] *= a_ref (j, j);
 						}
 					}
@@ -3116,49 +2531,36 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *
 					/* L40: */
 				}
 			}
-		}
-		else
-		{
-			if (*incx == 1)
-			{
-				for (j = *n; j >= 1; --j)
-				{
-					if (x[j] != 0.)
-					{
+		} else {
+			if (*incx == 1) {
+				for (j = *n; j >= 1; --j) {
+					if (x[j] != 0.) {
 						temp = x[j];
 						i__1 = j + 1;
-						for (i__ = *n; i__ >= i__1; --i__)
-						{
+						for (i__ = *n; i__ >= i__1; --i__) {
 							x[i__] += temp * a_ref (i__, j);
 							/* L50: */
 						}
-						if (nounit)
-						{
+						if (nounit) {
 							x[j] *= a_ref (j, j);
 						}
 					}
 					/* L60: */
 				}
-			}
-			else
-			{
+			} else {
 				kx += (*n - 1) * *incx;
 				jx = kx;
-				for (j = *n; j >= 1; --j)
-				{
-					if (x[jx] != 0.)
-					{
+				for (j = *n; j >= 1; --j) {
+					if (x[jx] != 0.) {
 						temp = x[jx];
 						ix = kx;
 						i__1 = j + 1;
-						for (i__ = *n; i__ >= i__1; --i__)
-						{
+						for (i__ = *n; i__ >= i__1; --i__) {
 							x[ix] += temp * a_ref (i__, j);
 							ix -= *incx;
 							/* L70: */
 						}
-						if (nounit)
-						{
+						if (nounit) {
 							x[jx] *= a_ref (j, j);
 						}
 					}
@@ -3167,43 +2569,31 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *
 				}
 			}
 		}
-	}
-	else
-	{
+	} else {
 		/* Form x := A'*x. */
-		if (lsame_ (uplo, "U"))
-		{
-			if (*incx == 1)
-			{
-				for (j = *n; j >= 1; --j)
-				{
+		if (lsame_ (uplo, "U")) {
+			if (*incx == 1) {
+				for (j = *n; j >= 1; --j) {
 					temp = x[j];
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (j, j);
 					}
-					for (i__ = j - 1; i__ >= 1; --i__)
-					{
+					for (i__ = j - 1; i__ >= 1; --i__) {
 						temp += a_ref (i__, j) * x[i__];
 						/* L90: */
 					}
 					x[j] = temp;
 					/* L100: */
 				}
-			}
-			else
-			{
+			} else {
 				jx = kx + (*n - 1) * *incx;
-				for (j = *n; j >= 1; --j)
-				{
+				for (j = *n; j >= 1; --j) {
 					temp = x[jx];
 					ix = jx;
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (j, j);
 					}
-					for (i__ = j - 1; i__ >= 1; --i__)
-					{
+					for (i__ = j - 1; i__ >= 1; --i__) {
 						ix -= *incx;
 						temp += a_ref (i__, j) * x[ix];
 						/* L110: */
@@ -3213,44 +2603,33 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *
 					/* L120: */
 				}
 			}
-		}
-		else
-		{
-			if (*incx == 1)
-			{
+		} else {
+			if (*incx == 1) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					temp = x[j];
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (j, j);
 					}
 					i__2 = *n;
-					for (i__ = j + 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = j + 1; i__ <= i__2; ++i__) {
 						temp += a_ref (i__, j) * x[i__];
 						/* L130: */
 					}
 					x[j] = temp;
 					/* L140: */
 				}
-			}
-			else
-			{
+			} else {
 				jx = kx;
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					temp = x[jx];
 					ix = jx;
-					if (nounit)
-					{
+					if (nounit) {
 						temp *= a_ref (j, j);
 					}
 					i__2 = *n;
-					for (i__ = j + 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = j + 1; i__ <= i__2; ++i__) {
 						ix += *incx;
 						temp += a_ref (i__, j) * x[ix];
 						/* L150: */
@@ -3268,8 +2647,7 @@ int NUMblas_dtrmv (const char *uplo, const char *trans, const char *diag, long *
 #undef a_ref
 
 int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const char *diag, long *m, long *n,
-	double *alpha, double *a, long *lda, double *b, long *ldb)
-{
+                   double *alpha, double *a, long *lda, double *b, long *ldb) {
 	/* System generated locals */
 	long a_dim1, a_offset, b_dim1, b_offset, i__1, i__2, i__3;
 
@@ -3293,68 +2671,45 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 	b -= b_offset;
 	/* Function Body */
 	lside = lsame_ (side, "L");
-	if (lside)
-	{
+	if (lside) {
 		nrowa = *m;
-	}
-	else
-	{
+	} else {
 		nrowa = *n;
 	}
 	nounit = lsame_ (diag, "N");
 	upper = lsame_ (uplo, "U");
 	info = 0;
-	if (!lside && !lsame_ (side, "R"))
-	{
+	if (!lside && !lsame_ (side, "R")) {
 		info = 1;
-	}
-	else if (!upper && !lsame_ (uplo, "L"))
-	{
+	} else if (!upper && !lsame_ (uplo, "L")) {
 		info = 2;
-	}
-	else if (!lsame_ (transa, "N") && !lsame_ (transa, "T") && !lsame_ (transa, "C"))
-	{
+	} else if (!lsame_ (transa, "N") && !lsame_ (transa, "T") && !lsame_ (transa, "C")) {
 		info = 3;
-	}
-	else if (!lsame_ (diag, "U") && !lsame_ (diag, "N"))
-	{
+	} else if (!lsame_ (diag, "U") && !lsame_ (diag, "N")) {
 		info = 4;
-	}
-	else if (*m < 0)
-	{
+	} else if (*m < 0) {
 		info = 5;
-	}
-	else if (*n < 0)
-	{
+	} else if (*n < 0) {
 		info = 6;
-	}
-	else if (*lda < MAX (1, nrowa))
-	{
+	} else if (*lda < MAX (1, nrowa)) {
 		info = 9;
-	}
-	else if (*ldb < MAX (1, *m))
-	{
+	} else if (*ldb < MAX (1, *m)) {
 		info = 11;
 	}
-	if (info != 0)
-	{
+	if (info != 0) {
 		xerbla_ ("DTRSM ", &info);
 		return 0;
 	}
 	/* Quick return if possible. */
-	if (*n == 0)
-	{
+	if (*n == 0) {
 		return 0;
 	}
 	/* And when alpha.eq.zero. */
-	if (*alpha == 0.)
-	{
+	if (*alpha == 0.) {
 		i__1 = *n;
-		for (j = 1; j <= i__1; ++j)
-		{
+		for (j = 1; j <= i__1; ++j) {
 			i__2 = *m;
-			for (i__ = 1; i__ <= i__2; ++i__)
-			{
+			for (i__ = 1; i__ <= i__2; ++i__) {
 				b_ref (i__, j) = 0.;
 				/* L10: */
 			}
@@ -3363,36 +2718,26 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 		return 0;
 	}
 	/* Start the operations. */
-	if (lside)
-	{
-		if (lsame_ (transa, "N"))
-		{
+	if (lside) {
+		if (lsame_ (transa, "N")) {
 			/* Form B := alpha*inv( A )*B. */
-			if (upper)
-			{
+			if (upper) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					if (*alpha != 1.)
-					{
+				for (j = 1; j <= i__1; ++j) {
+					if (*alpha != 1.) {
 						i__2 = *m;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							b_ref (i__, j) = *alpha * b_ref (i__, j);
 							/* L30: */
 						}
 					}
-					for (k = *m; k >= 1; --k)
-					{
-						if (b_ref (k, j) != 0.)
-						{
-							if (nounit)
-							{
+					for (k = *m; k >= 1; --k) {
+						if (b_ref (k, j) != 0.) {
+							if (nounit) {
 								b_ref (k, j) = b_ref (k, j) / a_ref (k, k);
 							}
 							i__2 = k - 1;
-							for (i__ = 1; i__ <= i__2; ++i__)
-							{
+							for (i__ = 1; i__ <= i__2; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) - b_ref (k, j) * a_ref (i__, k);
 								/* L40: */
 							}
@@ -3401,33 +2746,24 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 					}
 					/* L60: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					if (*alpha != 1.)
-					{
+				for (j = 1; j <= i__1; ++j) {
+					if (*alpha != 1.) {
 						i__2 = *m;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							b_ref (i__, j) = *alpha * b_ref (i__, j);
 							/* L70: */
 						}
 					}
 					i__2 = *m;
-					for (k = 1; k <= i__2; ++k)
-					{
-						if (b_ref (k, j) != 0.)
-						{
-							if (nounit)
-							{
+					for (k = 1; k <= i__2; ++k) {
+						if (b_ref (k, j) != 0.) {
+							if (nounit) {
 								b_ref (k, j) = b_ref (k, j) / a_ref (k, k);
 							}
 							i__3 = *m;
-							for (i__ = k + 1; i__ <= i__3; ++i__)
-							{
+							for (i__ = k + 1; i__ <= i__3; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) - b_ref (k, j) * a_ref (i__, k);
 								/* L80: */
 							}
@@ -3437,27 +2773,20 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 					/* L100: */
 				}
 			}
-		}
-		else
-		{
+		} else {
 			/* Form B := alpha*inv( A' )*B. */
-			if (upper)
-			{
+			if (upper) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
+				for (j = 1; j <= i__1; ++j) {
 					i__2 = *m;
-					for (i__ = 1; i__ <= i__2; ++i__)
-					{
+					for (i__ = 1; i__ <= i__2; ++i__) {
 						temp = *alpha * b_ref (i__, j);
 						i__3 = i__ - 1;
-						for (k = 1; k <= i__3; ++k)
-						{
+						for (k = 1; k <= i__3; ++k) {
 							temp -= a_ref (k, i__) * b_ref (k, j);
 							/* L110: */
 						}
-						if (nounit)
-						{
+						if (nounit) {
 							temp /= a_ref (i__, i__);
 						}
 						b_ref (i__, j) = temp;
@@ -3465,23 +2794,17 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 					}
 					/* L130: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					for (i__ = *m; i__ >= 1; --i__)
-					{
+				for (j = 1; j <= i__1; ++j) {
+					for (i__ = *m; i__ >= 1; --i__) {
 						temp = *alpha * b_ref (i__, j);
 						i__2 = *m;
-						for (k = i__ + 1; k <= i__2; ++k)
-						{
+						for (k = i__ + 1; k <= i__2; ++k) {
 							temp -= a_ref (k, i__) * b_ref (k, j);
 							/* L140: */
 						}
-						if (nounit)
-						{
+						if (nounit) {
 							temp /= a_ref (i__, i__);
 						}
 						b_ref (i__, j) = temp;
@@ -3491,86 +2814,64 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 				}
 			}
 		}
-	}
-	else
-	{
-		if (lsame_ (transa, "N"))
-		{
+	} else {
+		if (lsame_ (transa, "N")) {
 			/* Form B := alpha*B*inv( A ). */
-			if (upper)
-			{
+			if (upper) {
 				i__1 = *n;
-				for (j = 1; j <= i__1; ++j)
-				{
-					if (*alpha != 1.)
-					{
+				for (j = 1; j <= i__1; ++j) {
+					if (*alpha != 1.) {
 						i__2 = *m;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							b_ref (i__, j) = *alpha * b_ref (i__, j);
 							/* L170: */
 						}
 					}
 					i__2 = j - 1;
-					for (k = 1; k <= i__2; ++k)
-					{
-						if (a_ref (k, j) != 0.)
-						{
+					for (k = 1; k <= i__2; ++k) {
+						if (a_ref (k, j) != 0.) {
 							i__3 = *m;
-							for (i__ = 1; i__ <= i__3; ++i__)
-							{
+							for (i__ = 1; i__ <= i__3; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) - a_ref (k, j) * b_ref (i__, k);
 								/* L180: */
 							}
 						}
 						/* L190: */
 					}
-					if (nounit)
-					{
+					if (nounit) {
 						temp = 1. / a_ref (j, j);
 						i__2 = *m;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							b_ref (i__, j) = temp * b_ref (i__, j);
 							/* L200: */
 						}
 					}
 					/* L210: */
 				}
-			}
-			else
-			{
-				for (j = *n; j >= 1; --j)
-				{
-					if (*alpha != 1.)
-					{
+			} else {
+				for (j = *n; j >= 1; --j) {
+					if (*alpha != 1.) {
 						i__1 = *m;
-						for (i__ = 1; i__ <= i__1; ++i__)
-						{
+						for (i__ = 1; i__ <= i__1; ++i__) {
 							b_ref (i__, j) = *alpha * b_ref (i__, j);
 							/* L220: */
 						}
 					}
 					i__1 = *n;
-					for (k = j + 1; k <= i__1; ++k)
-					{
-						if (a_ref (k, j) != 0.)
-						{
+					for (k = j + 1; k <= i__1; ++k) {
+						if (a_ref (k, j) != 0.) {
 							i__2 = *m;
-							for (i__ = 1; i__ <= i__2; ++i__)
-							{
+							for (i__ = 1; i__ <= i__2; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) - a_ref (k, j) * b_ref (i__, k);
 								/* L230: */
 							}
 						}
 						/* L240: */
 					}
-					if (nounit)
-					{
+					if (nounit) {
 						temp = 1. / a_ref (j, j);
 						i__1 = *m;
-						for (i__ = 1; i__ <= i__1; ++i__)
-						{
+						for (i__ = 1; i__ <= i__1; ++i__) {
 							b_ref (i__, j) = temp * b_ref (i__, j);
 							/* L250: */
 						}
@@ -3578,86 +2879,65 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 					/* L260: */
 				}
 			}
-		}
-		else
-		{
+		} else {
 			/* Form B := alpha*B*inv( A' ). */
-			if (upper)
-			{
-				for (k = *n; k >= 1; --k)
-				{
-					if (nounit)
-					{
+			if (upper) {
+				for (k = *n; k >= 1; --k) {
+					if (nounit) {
 						temp = 1. / a_ref (k, k);
 						i__1 = *m;
-						for (i__ = 1; i__ <= i__1; ++i__)
-						{
+						for (i__ = 1; i__ <= i__1; ++i__) {
 							b_ref (i__, k) = temp * b_ref (i__, k);
 							/* L270: */
 						}
 					}
 					i__1 = k - 1;
-					for (j = 1; j <= i__1; ++j)
-					{
-						if (a_ref (j, k) != 0.)
-						{
+					for (j = 1; j <= i__1; ++j) {
+						if (a_ref (j, k) != 0.) {
 							temp = a_ref (j, k);
 							i__2 = *m;
-							for (i__ = 1; i__ <= i__2; ++i__)
-							{
+							for (i__ = 1; i__ <= i__2; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) - temp * b_ref (i__, k);
 								/* L280: */
 							}
 						}
 						/* L290: */
 					}
-					if (*alpha != 1.)
-					{
+					if (*alpha != 1.) {
 						i__1 = *m;
-						for (i__ = 1; i__ <= i__1; ++i__)
-						{
+						for (i__ = 1; i__ <= i__1; ++i__) {
 							b_ref (i__, k) = *alpha * b_ref (i__, k);
 							/* L300: */
 						}
 					}
 					/* L310: */
 				}
-			}
-			else
-			{
+			} else {
 				i__1 = *n;
-				for (k = 1; k <= i__1; ++k)
-				{
-					if (nounit)
-					{
+				for (k = 1; k <= i__1; ++k) {
+					if (nounit) {
 						temp = 1. / a_ref (k, k);
 						i__2 = *m;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							b_ref (i__, k) = temp * b_ref (i__, k);
 							/* L320: */
 						}
 					}
 					i__2 = *n;
-					for (j = k + 1; j <= i__2; ++j)
-					{
-						if (a_ref (j, k) != 0.)
-						{
+					for (j = k + 1; j <= i__2; ++j) {
+						if (a_ref (j, k) != 0.) {
 							temp = a_ref (j, k);
 							i__3 = *m;
-							for (i__ = 1; i__ <= i__3; ++i__)
-							{
+							for (i__ = 1; i__ <= i__3; ++i__) {
 								b_ref (i__, j) = b_ref (i__, j) - temp * b_ref (i__, k);
 								/* L330: */
 							}
 						}
 						/* L340: */
 					}
-					if (*alpha != 1.)
-					{
+					if (*alpha != 1.) {
 						i__2 = *m;
-						for (i__ = 1; i__ <= i__2; ++i__)
-						{
+						for (i__ = 1; i__ <= i__2; ++i__) {
 							b_ref (i__, k) = *alpha * b_ref (i__, k);
 							/* L350: */
 						}
@@ -3673,8 +2953,7 @@ int NUMblas_dtrsm (const char *side, const char *uplo, const char *transa, const
 #undef b_ref
 #undef a_ref
 
-long NUMblas_idamax (long *n, double *dx, long *incx)
-{
+long NUMblas_idamax (long *n, double *dx, long *incx) {
 	/* System generated locals */
 	long ret_val, i__1;
 	double d__1;
@@ -3690,17 +2969,14 @@ long NUMblas_idamax (long *n, double *dx, long *incx)
 	--dx;
 	/* Function Body */
 	ret_val = 0;
-	if (*n < 1 || *incx <= 0)
-	{
+	if (*n < 1 || *incx <= 0) {
 		return ret_val;
 	}
 	ret_val = 1;
-	if (*n == 1)
-	{
+	if (*n == 1) {
 		return ret_val;
 	}
-	if (*incx == 1)
-	{
+	if (*incx == 1) {
 		goto L20;
 	}
 	/* code for increment not equal to 1 */
@@ -3708,32 +2984,28 @@ long NUMblas_idamax (long *n, double *dx, long *incx)
 	dmax__ = fabs (dx[1]);
 	ix += *incx;
 	i__1 = *n;
-	for (i__ = 2; i__ <= i__1; ++i__)
-	{
-		if ((d__1 = dx[ix], fabs (d__1)) <= dmax__)
-		{
+	for (i__ = 2; i__ <= i__1; ++i__) {
+		if ( (d__1 = dx[ix], fabs (d__1)) <= dmax__) {
 			goto L5;
 		}
 		ret_val = i__;
 		dmax__ = (d__1 = dx[ix], fabs (d__1));
-	  L5:
+L5:
 		ix += *incx;
 		/* L10: */
 	}
 	return ret_val;
 	/* code for increment equal to 1 */
-  L20:
+L20:
 	dmax__ = fabs (dx[1]);
 	i__1 = *n;
-	for (i__ = 2; i__ <= i__1; ++i__)
-	{
-		if ((d__1 = dx[i__], fabs (d__1)) <= dmax__)
-		{
+	for (i__ = 2; i__ <= i__1; ++i__) {
+		if ( (d__1 = dx[i__], fabs (d__1)) <= dmax__) {
 			goto L30;
 		}
 		ret_val = i__;
 		dmax__ = (d__1 = dx[i__], fabs (d__1));
-	  L30:
+L30:
 		;
 	}
 	return ret_val;

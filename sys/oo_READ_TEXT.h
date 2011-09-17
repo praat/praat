@@ -71,7 +71,7 @@
 
 #define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
 	if (max >= min) { \
-		x = NUM##t##vector (min, max); therror \
+		x = NUM##t##vector (min, max); \
 		for (long i = min; i <= max; i ++) { \
 			x [i] = texget##storage (a_text, & Type##_getValue); \
 		} \
@@ -132,7 +132,7 @@
 #define oo_OBJECT(Class,version,x)  \
 	if (texgetex (a_text) == 1) { \
 		long saveVersion = Thing_version; \
-		x = Thing_new (Class); therror \
+		x = Thing_new (Class); \
 		Thing_version = version; \
 		x -> v_readText (a_text); therror \
 		Thing_version = saveVersion; \

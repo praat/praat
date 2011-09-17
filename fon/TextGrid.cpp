@@ -606,7 +606,7 @@ PointProcess TextGrid_getStartingPoints (TextGrid me, long tierNumber, int which
 		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
 			TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
-				PointProcess_addPoint (thee.peek(), interval -> xmin); therror
+				PointProcess_addPoint (thee.peek(), interval -> xmin);
 			}
 		}
 		return thee.transfer();
@@ -622,7 +622,7 @@ PointProcess TextGrid_getEndPoints (TextGrid me, long tierNumber, int which_Meld
 		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
 			TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
-				PointProcess_addPoint (thee.peek(), interval -> xmax); therror
+				PointProcess_addPoint (thee.peek(), interval -> xmax);
 			}
 		}
 		return thee.transfer();
@@ -638,7 +638,7 @@ PointProcess TextGrid_getCentrePoints (TextGrid me, long tierNumber, int which_M
 		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
 			TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
-				PointProcess_addPoint (thee.peek(), 0.5 * (interval -> xmin + interval -> xmax)); therror
+				PointProcess_addPoint (thee.peek(), 0.5 * (interval -> xmin + interval -> xmax));
 			}
 		}
 		return thee.transfer();
@@ -654,7 +654,7 @@ PointProcess TextGrid_getPoints (TextGrid me, long tierNumber, int which_Melder_
 		for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
 			TextPoint point = (TextPoint) tier -> points -> item [ipoint];
 			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
-				PointProcess_addPoint (thee.peek(), point -> number); therror
+				PointProcess_addPoint (thee.peek(), point -> number);
 			}
 		}
 		return thee.transfer();
@@ -761,7 +761,7 @@ TableOfReal TextTier_downto_TableOfReal_any (TextTier me) {
 
 static void IntervalTier_addInterval_unsafe (IntervalTier me, double tmin, double tmax, const wchar_t *label) {
 	autoTextInterval interval = TextInterval_create (tmin, tmax, label);
-	Collection_addItem (my intervals, interval.transfer()); therror
+	Collection_addItem (my intervals, interval.transfer());
 }
 
 IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
@@ -1050,7 +1050,7 @@ void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval) {
 		} else {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
-			MelderString_append2 (& buffer, left -> text, right -> text);
+			MelderString_append (& buffer, left -> text, right -> text);
 			TextInterval_setText (left, buffer.string);
 		}
 		Collection_removeItem (my intervals, iinterval);   // remove right interval
@@ -1198,9 +1198,9 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 				tier -> name = texgetw2 (text.peek());
 				tier -> structFunction :: v_readText (text.peek());
 				tier -> intervals = SortedSetOfDouble_create (); therror
-				Collection_addItem (my tiers, tier.transfer()); therror
+				Collection_addItem (my tiers, tier.transfer());
 			} else if (wcsequ (klas.peek(), L"TextTier")) {
-				autoTextTier tier = Thing_new (TextTier); therror
+				autoTextTier tier = Thing_new (TextTier);
 				tier -> name = texgetw2 (text.peek());
 				tier -> structFunction :: v_readText (text.peek());
 				tier -> points = SortedSetOfDouble_create (); therror
@@ -1414,7 +1414,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 					newPhraseTier -> xmax = my xmax;
 					Thing_setName (newPhraseTier.peek(), Melder_peekUtf8ToWcs (speakerName)); therror
 					phraseTier = newPhraseTier.peek();
-					Collection_addItem (my tiers, newPhraseTier.transfer()); therror
+					Collection_addItem (my tiers, newPhraseTier.transfer());
 				} else {
 					sentenceTier = (IntervalTier) my tiers -> item [speakerTier];
 					phraseTier = (IntervalTier) my tiers -> item [speakerTier + 1];
@@ -1429,14 +1429,14 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 					TextInterval latestInterval = (TextInterval) sentenceTier -> intervals -> item [sentenceTier -> intervals -> size];
 					if (tb > latestInterval -> xmax) {
 						autoTextInterval interval = TextInterval_create (latestInterval -> xmax, tb, L"");
-						Collection_addItem (sentenceTier -> intervals, interval.transfer()); therror
+						Collection_addItem (sentenceTier -> intervals, interval.transfer());
 					} else if (tb < latestInterval -> xmax) {
 						Melder_throw ("Overlap on tier not allowed.");
 					}
 				} else {
 					if (tb > 0.0) {
 						TextInterval interval = TextInterval_create (0.0, tb, L"");
-						Collection_addItem (sentenceTier -> intervals, interval); therror
+						Collection_addItem (sentenceTier -> intervals, interval);
 					} else if (tb < 0.0) {
 						Melder_throw ("Negative times not allowed.");
 					}
@@ -1444,7 +1444,7 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 				char label [10];
 				sprintf (label, "%ld", ++ sentenceNumber);
 				autoTextInterval interval = TextInterval_create (tb, te, Melder_peekUtf8ToWcs (label));
-				Collection_addItem (sentenceTier -> intervals, interval.transfer()); therror
+				Collection_addItem (sentenceTier -> intervals, interval.transfer());
 			} else if (strnequ (line, "    <tw ref=\"", 13)) {
 				int length;
 				double tb, te;
@@ -1484,14 +1484,14 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 						TextInterval latestInterval = (TextInterval) phraseTier -> intervals -> item [phraseTier -> intervals -> size];
 						if (tb > latestInterval -> xmax) {
 							autoTextInterval interval = TextInterval_create (latestInterval -> xmax, tb, L"");
-							Collection_addItem (phraseTier -> intervals, interval.transfer()); therror
+							Collection_addItem (phraseTier -> intervals, interval.transfer());
 						} else if (tb < latestInterval -> xmax) {
 							Melder_throw ("Overlap on tier not allowed.");
 						}
 					} else {
 						if (tb > 0.0) {
 							autoTextInterval interval = TextInterval_create (0.0, tb, L"");
-							Collection_addItem (phraseTier -> intervals, interval.transfer()); therror
+							Collection_addItem (phraseTier -> intervals, interval.transfer());
 						} else if (tb < 0.0) {
 							Melder_throw ("Negative times not allowed.");
 						}
@@ -1516,11 +1516,11 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 				TextInterval latestInterval = (TextInterval) tier -> intervals -> item [tier -> intervals -> size];
 				if (my xmax > latestInterval -> xmax) {
 					autoTextInterval interval = TextInterval_create (latestInterval -> xmax, my xmax, L"");
-					Collection_addItem (tier -> intervals, interval.transfer()); therror
+					Collection_addItem (tier -> intervals, interval.transfer());
 				}
 			} else {
 				autoTextInterval interval = TextInterval_create (my xmin, my xmax, L"");
-				Collection_addItem (tier -> intervals, interval.transfer()); therror
+				Collection_addItem (tier -> intervals, interval.transfer());
 			}
 		}
 		mfile.close ();

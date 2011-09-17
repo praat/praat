@@ -70,8 +70,8 @@ void structParamCurve :: v_writeText (MelderFile file) {
 }
 
 void structParamCurve :: v_readText (MelderReadText text) {
-	x = Thing_new (Sound); therror
-	y = Thing_new (Sound); therror
+	x = Thing_new (Sound);
+	y = Thing_new (Sound);
 	Data_readText (x, text); therror
 	Data_readText (y, text); therror
 	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
@@ -86,8 +86,8 @@ void structParamCurve :: v_writeBinary (FILE *f) {
 void structParamCurve :: v_readBinary (FILE *f) {
 	long saveVersion = Thing_version;
 	Thing_version = 2;
-	x = Thing_new (Sound); therror
-	y = Thing_new (Sound); therror
+	x = Thing_new (Sound);
+	y = Thing_new (Sound);
 	Data_readBinary (x, f); therror
 	Data_readBinary (y, f); therror
 	Thing_version = saveVersion;

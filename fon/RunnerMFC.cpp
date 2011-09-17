@@ -49,6 +49,7 @@ void structRunnerMFC :: v_dataChanged () {
 
 static int RunnerMFC_startExperiment (RunnerMFC me) {
 	my data = (Data) my experiments -> item [my iexperiment];
+	Melder_assert (my data -> classInfo == classExperimentMFC);
 	ExperimentMFC_start ((ExperimentMFC) my data); therror
 	Thing_setName (me, ((ExperimentMFC) my data) -> name);
 	my broadcastDataChanged ();

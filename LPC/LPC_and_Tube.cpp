@@ -27,31 +27,33 @@
 #include "LPC_and_Tube.h"
 #include "LPC_and_Formant.h"
 
-void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee)
-{
+void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee) {
 	long p = my nCoefficients;
 	Melder_assert (p <= thy nSegments); //TODO
 
 	autoNUMvector<double> b (1, p);
 	autoNUMvector<double> a (1, p);
 
-	for (long i = 1; i <= p; i++) a[i] = my a[i];
+	for (long i = 1; i <= p; i++) {
+		a[i] = my a[i];
+	}
 
 	double *rc = thy c;
-	for (long m = p; m > 0; m--)
-	{
+	for (long m = p; m > 0; m--) {
 		rc[m] = a[m];
-		if (fabs (rc[m]) > 1) Melder_throw ("rc larger 1."); // TODO kan er geen Tube worden gemaakt?
-		for (long i = 1; i < m; i++) b[i] = a[i];
-		for (long i = 1; i < m; i++)
-		{
-			a[i] = (b[i] - rc[m] * b[m-i]) / (1.0 - rc[m] * rc[m]);
+		if (fabs (rc[m]) > 1) {
+			Melder_throw ("rc larger 1.");    // TODO kan er geen Tube worden gemaakt?
+		}
+		for (long i = 1; i < m; i++) {
+			b[i] = a[i];
+		}
+		for (long i = 1; i < m; i++) {
+			a[i] = (b[i] - rc[m] * b[m - i]) / (1.0 - rc[m] * rc[m]);
 		}
 	}
 }
 
-void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee)
-{
+void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee) {
 	struct structTube_Frame rc_struct = { 0 };
 	Tube_Frame rc = & rc_struct;
 	Tube_Frame_init (rc, my nCoefficients, thy length);
@@ -60,8 +62,7 @@ void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee)
 	rc -> destroy ();
 }
 
-double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength)
-{
+double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength) {
 	struct structLPC_Frame lpc_struct;
 	LPC_Frame lpc = & lpc_struct;
 	struct structFormant_Frame f_struct;
@@ -72,15 +73,14 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 		long m = my nCoefficients;
 		double length, dlength = 0.001, wakita_length = NUMundefined;
 		double varMin = 1e38;
-		double fscale = 1;
 
-		memset(& lpc_struct, 0, sizeof(lpc_struct));
-		memset(& f_struct, 0, sizeof(f_struct));
-		memset(& rc_struct, 0, sizeof(rc_struct));
-		memset(& af_struct, 0, sizeof(af_struct));
+		memset (& lpc_struct, 0, sizeof (lpc_struct));
+		memset (& f_struct, 0, sizeof (f_struct));
+		memset (& rc_struct, 0, sizeof (rc_struct));
+		memset (& af_struct, 0, sizeof (af_struct));
 
 
-		LPC_Frame_init  (lpc, m);
+		LPC_Frame_init (lpc, m);
 		Tube_Frame_init (rc, m, refLength);
 		Tube_Frame_init (af, m, refLength);
 
@@ -90,18 +90,18 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 
 		// LPC_Frame_into_Formant_Frame performs the Formant_Frame_init !!
 
-		if (f -> nFormants < 1) Melder_throw ("Not enough formants.");
+		if (f -> nFormants < 1) {
+			Melder_throw ("Not enough formants.");
+		}
 
 		double *area = af -> c;
 		double lmin = length = 0.10;
 		double plength = refLength;
-		while (length <= 0.25)
-		{
+		while (length <= 0.25) {
 			// Step 3
 
 			double fscale = plength / length;
-			for (long i = 1; i <= f -> nFormants; i++)
-			{
+			for (long i = 1; i <= f -> nFormants; i++) {
 				f -> formant[i].frequency *= fscale;
 				f -> formant[i].bandwidth *= fscale;
 			}
@@ -133,22 +133,19 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 			// step 6.2 Log(areas)
 
 			double logSum = 0;
-			for (long i = 1; i <= af -> nSegments; i++)
-			{
+			for (long i = 1; i <= af -> nSegments; i++) {
 				area[i] = log (area[i]);
 				logSum += area[i];
 			}
 
 			// step 6.3 and 7
 			double var = 0;
-			for (long i = 1; i <= af -> nSegments; i++)
-			{
+			for (long i = 1; i <= af -> nSegments; i++) {
 				double delta = area[i] - logSum / af -> nSegments;
 				var += delta * delta;
 			}
 
-			if (var < varMin)
-			{
+			if (var < varMin) {
 				lmin = length; varMin = var;
 			}
 			plength = length;
@@ -170,31 +167,33 @@ double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refL
 	}
 }
 
-int Tube_Frame_into_LPC_Frame_area (Tube_Frame me, LPC_Frame thee)
-{
+int Tube_Frame_into_LPC_Frame_area (Tube_Frame me, LPC_Frame thee) {
 	(void) me;
 	(void) thee;
 	return 0;
 }
 
-int Tube_Frame_into_LPC_Frame_rc (Tube_Frame me, LPC_Frame thee)
-{
+int Tube_Frame_into_LPC_Frame_rc (Tube_Frame me, LPC_Frame thee) {
 	(void) me;
 	(void) thee;
 	return 0;
 }
 
 
-VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
-{
+VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita) {
 	autoVocalTract thee = 0;
+	(void) wakita;
 	struct structTube_Frame area_struct = { 0 };   // David, moet dit niet op nul geinitialiseerd? = { 0 };ja
 	Tube_Frame area = & area_struct;
 	try {
 		long iframe = Sampled_xToIndex (me, time);
 
-		if (iframe < 1) iframe = 1;
-		if (iframe > my nx) iframe = my nx;
+		if (iframe < 1) {
+			iframe = 1;
+		}
+		if (iframe > my nx) {
+			iframe = my nx;
+		}
 
 		//memset (& area_struct, 0, sizeof(area_struct));   // David, ja zo kan het ook (is dit op tijd voor alle throws? kan je niet weten...); init op nul is boven
 
@@ -204,12 +203,11 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita)
 		Tube_Frame_init (area, m, length);
 		LPC_Frame_into_Tube_Frame_area (lpc, area);
 
-		thee.reset(VocalTract_create (m, area -> length / m));
+		thee.reset (VocalTract_create (m, area -> length / m));
 
 		// area[lips..glottis] (m^2) to VocalTract[glottis..lips] (m^2)
 
-		for (long i = 1; i <= m; i++)
-		{
+		for (long i = 1; i <= m; i++) {
 			thy z[1][i] = area -> c[m + 1 - i];
 		}
 		//if (wakita) double wakita_length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);   // David, dit heeft geen betekenis, toch?

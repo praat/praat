@@ -158,7 +158,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 	if (maximumIntensity == 0.0 || suppress_dB <= 0.0)
 		minimumIntensity = 0.0;   /* Ignore. */
 	else
-		minimumIntensity = maximumIntensity / pow (10, suppress_dB / 10);
+		minimumIntensity = maximumIntensity / pow (10.0, suppress_dB / 10.0);
 
 	for (long iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
@@ -367,7 +367,7 @@ void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,
 
 Matrix Formant_to_Matrix (Formant me, int iformant) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			thy z [1] [iframe] = iformant <= frame -> nFormants ?
@@ -381,7 +381,7 @@ Matrix Formant_to_Matrix (Formant me, int iformant) {
 
 Matrix Formant_to_Matrix_bandwidths (Formant me, int iformant) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1);
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			thy z [1] [iframe] = iformant <= frame -> nFormants ?
@@ -449,7 +449,7 @@ Formant Formant_tracker (Formant me, int ntrack,
 		/* BUG: limit costs to 1e10 or so */
 		parm.me = me;
 		parm.thee = thee.peek();
-		parm.dfCost = dfCost / 1000;   // per Hz
+		parm.dfCost = dfCost / 1000.0;   // per Hz
 		parm.bfCost = bfCost;
 		parm.octaveJumpCost = octaveJumpCost;
 		parm.refF [1] = refF1;
@@ -475,13 +475,13 @@ Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
 		autoTable thee = Table_createWithoutColumnNames (my nx, includeFrameNumbers + includeTimes + includeIntensity +
 			includeNumberOfFormants + my maxnFormants * (1 + includeBandwidths));
 		long icol = 0;
-		if (includeFrameNumbers) { Table_setColumnLabel (thee.peek(), ++ icol, L"frame"); therror }
-		if (includeTimes) { Table_setColumnLabel (thee.peek(), ++ icol, L"time(s)"); therror }
-		if (includeIntensity) { Table_setColumnLabel (thee.peek(), ++ icol, L"intensity"); therror }
-		if (includeNumberOfFormants) { Table_setColumnLabel (thee.peek(), ++ icol, L"nformants"); therror }
+		if (includeFrameNumbers)     Table_setColumnLabel (thee.peek(), ++ icol, L"frame");
+		if (includeTimes)            Table_setColumnLabel (thee.peek(), ++ icol, L"time(s)");
+		if (includeIntensity)        Table_setColumnLabel (thee.peek(), ++ icol, L"intensity");
+		if (includeNumberOfFormants) Table_setColumnLabel (thee.peek(), ++ icol, L"nformants");
 		for (long iformant = 1; iformant <= my maxnFormants; iformant ++) {
-			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat3 (L"F", Melder_integer (iformant), L"(Hz)")); therror
-			if (includeBandwidths) { Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat3 (L"B", Melder_integer (iformant), L"(Hz)")); therror }
+			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (L"F", Melder_integer (iformant), L"(Hz)")); therror
+			if (includeBandwidths) { Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (L"B", Melder_integer (iformant), L"(Hz)")); }
 		}
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;

@@ -51,65 +51,71 @@
 
 Thing_implement (Index, Data, 0);
 
-void structIndex :: v_info ()
-{
+void structIndex :: v_info () {
 	structData :: v_info ();
 	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (numberOfElements));
 }
 
-void Index_init (I, long numberOfElements)
-{
+void Index_init (I, long numberOfElements) {
 	iam (Index);
-	if (numberOfElements < 1) Melder_throw ("Cannot create index without elements.");
+	if (numberOfElements < 1) {
+		Melder_throw ("Cannot create index without elements.");
+	}
 	my classes = Ordered_create ();
 	my numberOfElements = numberOfElements;
 	my classIndex = NUMvector<long> (1, numberOfElements);
 }
 
-Index Index_extractPart (I, long from, long to)
-{
+Index Index_extractPart (I, long from, long to) {
 	iam (Index);
 	try {
-		if (from == 0) from = 1;
-		if (to == 0) to = my numberOfElements;
-		if (to < from || from < 1 || to > my numberOfElements) Melder_throw 
+		if (from == 0) {
+			from = 1;
+		}
+		if (to == 0) {
+			to = my numberOfElements;
+		}
+		if (to < from || from < 1 || to > my numberOfElements) Melder_throw
 			("Range should be in interval [1,", my numberOfElements, "].");
 		autoIndex thee = Data_copy (me);
 		thy numberOfElements = to - from + 1;
 		/* */
-		for (long i = 1; i <= thy numberOfElements; i++)
-		{
+		for (long i = 1; i <= thy numberOfElements; i++) {
 			thy classIndex[i] = my classIndex[from + i - 1];
 		}
 		return thee.transfer();
-	} catch (MelderError) { Melder_throw (me, ": part not extracted."); }
+	} catch (MelderError) {
+		Melder_throw (me, ": part not extracted.");
+	}
 }
 
 Thing_implement (StringsIndex, Index, 0);
 
-StringsIndex StringsIndex_create (long numberOfElements)
-{
+StringsIndex StringsIndex_create (long numberOfElements) {
 	try {
 		autoStringsIndex me = (StringsIndex) Thing_new (StringsIndex);
 		Index_init (me.peek(), numberOfElements);
 		return me.transfer();
-	} catch (MelderError) { Melder_throw ("StringsIndex not created."); }
+	} catch (MelderError) {
+		Melder_throw ("StringsIndex not created.");
+	}
 }
 
-int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel)
-{
-	for (long i = 1; i <= my classes -> size; i++)
-	{
+int StringsIndex_getClass (StringsIndex me, wchar_t *classLabel) {
+	for (long i = 1; i <= my classes -> size; i++) {
 		SimpleString ss = (SimpleString) my classes -> item[i];
-		if (Melder_wcscmp (ss -> string, classLabel) == 0) return i;
+		if (Melder_wcscmp (ss -> string, classLabel) == 0) {
+			return i;
+		}
 	}
 	return 0;
 }
 
-long StringsIndex_countItems (StringsIndex me, int iclass)
-{
+long StringsIndex_countItems (StringsIndex me, int iclass) {
 	long sum = 0;
-	for (long i = 1; i <= my numberOfElements; i++) if (my classIndex[i] == iclass) sum++;
+	for (long i = 1; i <= my numberOfElements; i++) if (my classIndex[i] == iclass) {
+			sum++;
+		}
 	return sum;
 }
 

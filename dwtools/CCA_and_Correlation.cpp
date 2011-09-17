@@ -1,17 +1,17 @@
 /* CCA_and_Correlation.cpp
- * 
+ *
  * Copyright (C) 1993-2011 David Weenink
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or (at
  * your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -27,59 +27,56 @@
 #include "CCA_and_Correlation.h"
 #include "NUM2.h"
 
-TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee)
-{
+TableOfReal CCA_and_Correlation_factorLoadings (CCA me, Correlation thee) {
 	try {
 		long ny = my y -> dimension, nx = my x -> dimension;
 
 		if (ny + nx != thy numberOfColumns) Melder_throw ("The number of columns in the Correlation "
-		"must equal the sum of the dimensions in the CCA object");
+			        "must equal the sum of the dimensions in the CCA object");
 
 		autoTableOfReal him = TableOfReal_create (2 * my numberOfCoefficients, thy numberOfColumns);
-	
+
 		NUMstrings_copyElements (thy columnLabels, his columnLabels, 1, thy numberOfColumns);
 		TableOfReal_setSequentialRowLabels (him.peek(), 1, my numberOfCoefficients, L"dv", 1, 1);
 		TableOfReal_setSequentialRowLabels (him.peek(), my numberOfCoefficients + 1,
-			2 * my numberOfCoefficients, L"iv", 1, 1);
+		                                    2 * my numberOfCoefficients, L"iv", 1, 1);
 
 		double **evecy = my y -> eigenvectors, **evecx = my x -> eigenvectors;
-		for (long i = 1; i <= thy numberOfRows; i++)
-		{
-			for (long j = 1; j <= my numberOfCoefficients; j++)
-			{
+		for (long i = 1; i <= thy numberOfRows; i++) {
+			for (long j = 1; j <= my numberOfCoefficients; j++) {
 				double t = 0;
-				for (long k = 1; k <= ny; k++)
-				{
+				for (long k = 1; k <= ny; k++) {
 					t += thy data[i][k] * evecy[j][k];
 				}
 				his data[j][i] = t;
 			}
-			for (long j = 1; j <= my numberOfCoefficients; j++)
-			{
+			for (long j = 1; j <= my numberOfCoefficients; j++) {
 				double t = 0;
-				for (long k = 1; k <= nx; k++)
-				{
+				for (long k = 1; k <= nx; k++) {
 					t += thy data[i][ny + k] * evecx[j][k];
 				}
 				his data[my numberOfCoefficients + j][i] = t;
 			}
 		}
 		return him.transfer();
-	} catch (MelderError) { Melder_throw ("TableOfReal not created from CCA & Correlation."); }
+	} catch (MelderError) {
+		Melder_throw ("TableOfReal not created from CCA & Correlation.");
+	}
 }
 
-static void _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to)
-{
-	if (my y -> dimension + my x -> dimension != thy numberOfColumns)
+static void _CCA_and_Correlation_check (CCA me, Correlation thee, int canonicalVariate_from, int canonicalVariate_to) {
+	if (my y -> dimension + my x -> dimension != thy numberOfColumns) {
 		Melder_throw ("The number of columns in the Correlation object must equal the sum of the dimensions in the CCA object");
-	if (canonicalVariate_to < canonicalVariate_from)
+	}
+	if (canonicalVariate_to < canonicalVariate_from) {
 		Melder_throw ("The second value in the \"Canonical variate range\" must be equal or larger than the first.");
-	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients)
+	}
+	if (canonicalVariate_from < 1 || canonicalVariate_to > my numberOfCoefficients) {
 		Melder_throw ("The \"Canonical variate range\" must be within the interval [1, ", my numberOfCoefficients, "].");
+	}
 }
 
-double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to)
-{
+double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to) {
 	_CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to);
 
 	/* For the formulas see:
@@ -96,50 +93,46 @@ double CCA_and_Correlation_getVarianceFraction (CCA me, Correlation thee, int x_
 		varianceFraction = s'.s / n = c'Rxx' Rxx c/n = (e'.Rxx' Rxx.e) /(e'.Rxx.e) * 1/n
 		(for one can. variate)
 	*/
-	
+
 	long n = my x -> dimension;
 	double **evec = my x -> eigenvectors;
 	long ioffset = my y -> dimension;
-	if (x_or_y == 1) /* y: dependent set */
-	{
+	if (x_or_y == 1) { /* y: dependent set */
 		n = my y -> dimension;
 		evec = my y -> eigenvectors;
 		ioffset = 0;
 	}
-		
+
 	double varianceFraction = 0;
-	for (long icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++)
-	{
+	for (long icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++) {
 		double variance = 0, varianceScaling = 0;
 
-		for (long i = 1; i <= n; i++)
-		{
+		for (long i = 1; i <= n; i++) {
 			double si = 0;
-			for (long j = 1; j <= n; j++)
-			{
-				si += thy data[ioffset+i][ioffset+j] * evec[icv][j]; /* Rxx.e */
+			for (long j = 1; j <= n; j++) {
+				si += thy data[ioffset + i][ioffset + j] * evec[icv][j]; /* Rxx.e */
 			}
 			variance += si * si; /* (Rxx.e)'(Rxx.e) =  e'.Rxx'.Rxx.e */
 			varianceScaling +=  evec[icv][i] * si; /* e'.Rxx.e*/
 		}
 		varianceFraction += (variance / varianceScaling) / n;
 	}
-	
+
 	return varianceFraction;
 }
 
-double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to)
-{
+double CCA_and_Correlation_getRedundancy_sl (CCA me, Correlation thee, int x_or_y, int canonicalVariate_from, int canonicalVariate_to) {
 	_CCA_and_Correlation_check (me, thee, canonicalVariate_from, canonicalVariate_to);
-	
+
 	double redundancy = 0;
-	for (long icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++)
-	{
+	for (long icv = canonicalVariate_from; icv <= canonicalVariate_to; icv++) {
 		double varianceFraction = CCA_and_Correlation_getVarianceFraction (me, thee, x_or_y, icv, icv);
-		if (varianceFraction == NUMundefined) return NUMundefined;
+		if (varianceFraction == NUMundefined) {
+			return NUMundefined;
+		}
 		redundancy += varianceFraction * my y -> eigenvalues[icv];
 	}
-		
+
 	return redundancy;
 }
 

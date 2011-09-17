@@ -42,28 +42,28 @@ static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 		(isToggled ? L"SHOWN" :  (isAdded ? (cmd -> uniqueID ? L"ADDED" : L"START-UP") : L"shown"));
 	MelderString_empty (& text);
 	if (cmd -> unhidable) {
-		MelderString_append1 (& text, L"#unhidable ");
+		MelderString_append (& text, L"#unhidable ");
 	} else {
-		MelderString_append5 (& text, L"@@m", Melder_integer (i), L"|", clickText, L"@ ");
+		MelderString_append (& text, L"@@m", Melder_integer (i), L"|", clickText, L"@ ");
 	}
-	MelderString_append2 (& text, cmd -> window, L": ");
+	MelderString_append (& text, cmd -> window, L": ");
 	if (cmd -> menu) {
-		MelderString_append2 (& text, cmd -> menu, L": ");
+		MelderString_append (& text, cmd -> menu, L": ");
 	}
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderString_append5 (& text, L"@@p", Melder_integer (i), L"|", cmd -> title, L"@");
+			MelderString_append (& text, L"@@p", Melder_integer (i), L"|", cmd -> title, L"@");
 		} else {
-			MelderString_append1 (& text, cmd -> title);
+			MelderString_append (& text, cmd -> title);
 		}
 	} else {
-		MelderString_append1 (& text, L"---------");
+		MelderString_append (& text, L"---------");
 	}
 	if (cmd -> after) {
-		MelderString_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
+		MelderString_append (& text, L", %%%%after \"", cmd -> after, L"\"%%");
 	}
 	if (cmd -> script) {
-		MelderString_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
+		MelderString_append (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
 	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
@@ -78,50 +78,50 @@ static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 	int n1 = cmd -> n1;
 	MelderString_empty (& text);
 	if (cmd -> class4) {
-		MelderString_append1 (& text, L"#unhidable ");
+		MelderString_append (& text, L"#unhidable ");
 	} else {
-		MelderString_append5 (& text, L"@@a", Melder_integer (i), L"|", clickText, L"@ ");
+		MelderString_append (& text, L"@@a", Melder_integer (i), L"|", clickText, L"@ ");
 	}
 	MelderString_append (& text, cmd -> class1 -> className);
 	if (n1) {
-		MelderString_append3 (& text, L" (", Melder_integer (n1), L")");
+		MelderString_append (& text, L" (", Melder_integer (n1), L")");
 	}
 	if (cmd -> class2) {
 		int n2 = cmd -> n2;
-		MelderString_append2 (& text, L" & ", cmd -> class2 -> className);
+		MelderString_append (& text, L" & ", cmd -> class2 -> className);
 		if (n2) {
-			MelderString_append3 (& text, L" (", Melder_integer (n2), L")");
+			MelderString_append (& text, L" (", Melder_integer (n2), L")");
 		}
 	}
 	if (cmd -> class3) {
 		int n3 = cmd -> n3;
-		MelderString_append2 (& text, L" & ", cmd -> class3 -> className);
+		MelderString_append (& text, L" & ", cmd -> class3 -> className);
 		if (n3) {
-			MelderString_append3 (& text, L" (", Melder_integer (n3), L")");
+			MelderString_append (& text, L" (", Melder_integer (n3), L")");
 		}
 	}
 	if (cmd -> class4) {
 		int n4 = cmd -> n4;
-		MelderString_append2 (& text, L" & ", cmd -> class4 -> className);
+		MelderString_append (& text, L" & ", cmd -> class4 -> className);
 		if (n4) {
-			MelderString_append3 (& text, L" (", Melder_integer (n4), L")");
+			MelderString_append (& text, L" (", Melder_integer (n4), L")");
 		}
 	}
 	MelderString_append (& text, L": ");
 	if (cmd -> title) {
 		if (cmd -> executable) {
-			MelderString_append5 (& text, L"@@e", Melder_integer (i), L"|", cmd -> title, L"@");
+			MelderString_append (& text, L"@@e", Melder_integer (i), L"|", cmd -> title, L"@");
 		} else {
-			MelderString_append1 (& text, cmd -> title);
+			MelderString_append (& text, cmd -> title);
 		}
 	} else {
-		MelderString_append1 (& text, L"---------");
+		MelderString_append (& text, L"---------");
 	}
 	if (cmd -> after) {
-		MelderString_append3 (& text, L", %%%%after \"", cmd -> after, L"\"%%");
+		MelderString_append (& text, L", %%%%after \"", cmd -> after, L"\"%%");
 	}
 	if (cmd -> script) {
-		MelderString_append3 (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
+		MelderString_append (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
 	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);

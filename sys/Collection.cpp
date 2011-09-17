@@ -51,7 +51,7 @@ void structCollection :: v_copy (thou) {
 	for (long i = 1; i <= size; i ++) {
 		Thing itempie = (Thing) item [i];
 		if (_dontOwnItems) {
-			thy item [i] = item;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Data
+			thy item [i] = itempie;   // reference copy: if me doesn't own the items, then thee shouldn't either   // NOTE: the items don't have to be Data
 		} else {
 			if (! Thing_member (itempie, classData))
 				Melder_throw ("Cannot copy item of class ", Thing_className (itempie), ".");
@@ -99,7 +99,7 @@ void structCollection :: v_writeText (MelderFile file) {
 			Melder_throw ("Objects of class ", classInfo -> className, " cannot be written.");
 		texputw2 (file,
 			classInfo -> version > 0 ?
-				Melder_wcscat3 (classInfo -> className, L" ", Melder_integer (classInfo -> version)) :
+				Melder_wcscat (classInfo -> className, L" ", Melder_integer (classInfo -> version)) :
 				classInfo -> className,
 			L"class", 0,0,0,0,0);
 		texputw2 (file, thing -> name, L"name", 0,0,0,0,0);
@@ -169,7 +169,7 @@ void structCollection :: v_writeBinary (FILE *f) {
 		if (! Thing_member (thing, classData) || ! Data_canWriteBinary ((Data) thing))
 			Melder_throw ("Objects of class ", classInfo -> className, L" cannot be written.");
 		binputw1 (classInfo -> version > 0 ?
-			Melder_wcscat3 (classInfo -> className, L" ", Melder_integer (classInfo -> version)) : classInfo -> className, f);
+			Melder_wcscat (classInfo -> className, L" ", Melder_integer (classInfo -> version)) : classInfo -> className, f);
 		binputw2 (thing -> name, f);
 		Data_writeBinary ((Data) thing, f);
 	}

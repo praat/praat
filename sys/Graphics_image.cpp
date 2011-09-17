@@ -467,7 +467,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			RGBForeColor (& theBlackColour);
 		}
 	#endif
-	/*Melder_information2("duration ",Melder_integer(clock()-t));*/
+	/*Melder_information("duration ",Melder_integer(clock()-t));*/
 	#if mac
 		if (my d_drawingArea) GuiMac_clipOff ();
 	#endif

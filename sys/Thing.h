@@ -356,7 +356,7 @@ class autoThingVector {
 	long d_from, d_to;
 public:
 	autoThingVector<T> (long from, long to) : d_from (from), d_to (to) {
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
 	autoThingVector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
 		therror
@@ -390,7 +390,7 @@ public:
 		}
 		d_from = from;   // this assignment is safe, because d_ptr is NULL
 		d_to = to;
-		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to)); therror
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
 };
 

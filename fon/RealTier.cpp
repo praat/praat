@@ -329,8 +329,8 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar *timeLabel, const wchar *valueLabel) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my points -> size, 2);
-		TableOfReal_setColumnLabel (thee.peek(), 1, timeLabel); therror
-		TableOfReal_setColumnLabel (thee.peek(), 2, valueLabel); therror
+		TableOfReal_setColumnLabel (thee.peek(), 1, timeLabel);
+		TableOfReal_setColumnLabel (thee.peek(), 2, valueLabel);
 		for (long i = 1; i <= my points -> size; i ++) {
 			RealPoint point = (RealPoint) my points -> item [i];
 			thy data [i] [1] = point -> number;
@@ -360,12 +360,12 @@ void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParab
 				double phase = (newTime - time1) / (tmid - time1);
 				double newValue = value1 + (valuemid - value1) * phase * phase;
 				if (logarithmically) newValue = exp (newValue);
-				RealTier_addPoint (thee.peek(), newTime, newValue); therror
+				RealTier_addPoint (thee.peek(), newTime, newValue);
 			}
 			/*
 			 * The midpoint.
 			 */
-			RealTier_addPoint (thee.peek(), tmid, logarithmically ? exp (valuemid) : valuemid); therror
+			RealTier_addPoint (thee.peek(), tmid, logarithmically ? exp (valuemid) : valuemid);
 			/*
 			 * Right from the midpoint.
 			 */
@@ -374,7 +374,7 @@ void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParab
 				double phase = (time2 - newTime) / (time2 - tmid);
 				double newValue = value2 + (valuemid - value2) * phase * phase;
 				if (logarithmically) newValue = exp (newValue);
-				RealTier_addPoint (thee.peek(), newTime, newValue); therror
+				RealTier_addPoint (thee.peek(), newTime, newValue);
 			}
 		}
 		Thing_swap (me, thee.peek());
@@ -388,9 +388,9 @@ Table RealTier_downto_Table (RealTier me, const wchar *indexText, const wchar *t
 		autoTable thee = Table_createWithoutColumnNames (my points -> size,
 			(indexText != NULL) + (timeText != NULL) + (valueText != NULL));
 		long icol = 0;
-		if (indexText != NULL) { Table_setColumnLabel (thee.peek(), ++ icol, indexText); therror }
-		if (timeText != NULL) { Table_setColumnLabel (thee.peek(), ++ icol, timeText); therror }
-		if (valueText != NULL) { Table_setColumnLabel (thee.peek(), ++ icol, valueText); therror }
+		if (indexText != NULL) Table_setColumnLabel (thee.peek(), ++ icol, indexText);
+		if (timeText  != NULL) Table_setColumnLabel (thee.peek(), ++ icol, timeText);
+		if (valueText != NULL) Table_setColumnLabel (thee.peek(), ++ icol, valueText);
 		for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {
 			RealPoint point = (RealPoint) my points -> item [ipoint];
 			icol = 0;

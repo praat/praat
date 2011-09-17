@@ -1036,14 +1036,14 @@ Distributions OTGrammar_to_Distribution (OTGrammar me, long trialsPerInput, doub
 		autoMelderProgress progress (L"OTGrammar: compute output distribution.");
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\""); therror
+			Melder_progress ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\"");
 			/*
 			 * Set the row labels to the output strings.
 			 */
 			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				static MelderString buffer = { 0 };
 				MelderString_empty (& buffer);
-				MelderString_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
+				MelderString_append (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
 				thy rowLabels [nout + icand] = Melder_wcsdup (buffer.string);
 			}
 			/*
@@ -1083,7 +1083,7 @@ PairDistribution OTGrammar_to_PairDistribution (OTGrammar me, long trialsPerInpu
 		autoMelderProgress progress (L"OTGrammar: compute output distribution.");
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\""); therror
+			Melder_progress ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\"");
 			/*
 			 * Copy the input and output strings to the target object.
 			 */
@@ -1146,14 +1146,14 @@ Distributions OTGrammar_measureTypology (OTGrammar me) {
 		autoMelderProgress progress (L"Measuring typology...");
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			Melder_progress3 ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\"");
+			Melder_progress ((itab - 0.5) / my numberOfTableaus, L"Measuring input \"", tableau -> input, L"\"");
 			/*
 			 * Set the row labels to the output strings.
 			 */
 			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				static MelderString buffer = { 0 };
 				MelderString_empty (& buffer);
-				MelderString_append3 (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
+				MelderString_append (& buffer, tableau -> input, L" \\-> ", tableau -> candidates [icand]. output);
 				thy rowLabels [nout + icand] = Melder_wcsdup_f (buffer.string);
 			}
 			/*
@@ -1568,7 +1568,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 					}
 					Graphics_flushWs (monitor.graphics());   // because drawing is faster than progress loop
 				}
-				Melder_monitor8 ((double) idatum / numberOfData,
+				Melder_monitor ((double) idatum / numberOfData,
 					L"Processing input-output pair ", Melder_integer (idatum),
 					L" out of ", Melder_integer (numberOfData), L": ", input, L" -> ", output); therror
 				for (long ichew = 1; ichew <= numberOfChews; ichew ++) {
@@ -1835,11 +1835,11 @@ static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, 
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   // e.g. 0, 20, 40, ...
 		autoOTHistory thee = Thing_new (OTHistory);
 		TableOfReal_init (thee.peek(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints); therror
-		TableOfReal_setColumnLabel (thee.peek(), 1, L"Datum"); therror
+		TableOfReal_setColumnLabel (thee.peek(), 1, L"Datum");
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
-			TableOfReal_setColumnLabel (thee.peek(), icons + 1, my constraints [icons]. name); therror
+			TableOfReal_setColumnLabel (thee.peek(), icons + 1, my constraints [icons]. name);
 		}
-		TableOfReal_setRowLabel (thee.peek(), 1, L"Initial state"); therror
+		TableOfReal_setRowLabel (thee.peek(), 1, L"Initial state");
 		thy data [1] [1] = 0;
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			thy data [1] [icons + 1] = my constraints [icons]. ranking;
@@ -1854,7 +1854,7 @@ static void OTGrammar_updateHistory (OTGrammar me, OTHistory thee, long storeHis
 	try {
 		if (idatum % storeHistoryEvery == 0) {
 			long irow = 2 * idatum / storeHistoryEvery;
-			TableOfReal_setRowLabel (thee, irow, input); therror
+			TableOfReal_setRowLabel (thee, irow, input);
 			thy data [irow] [1] = idatum;
 			thy data [irow + 1] [1] = idatum;
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -1869,7 +1869,7 @@ static void OTGrammar_updateHistory (OTGrammar me, OTHistory thee, long storeHis
 
 static void OTGrammar_finalizeHistory (OTGrammar me, OTHistory thee, long idatum) {
 	try {
-		TableOfReal_setRowLabel (thee, thy numberOfRows, L"Final state"); therror
+		TableOfReal_setRowLabel (thee, thy numberOfRows, L"Final state");
 		thy data [thy numberOfRows] [1] = idatum;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			thy data [thy numberOfRows] [icons + 1] = my constraints [icons]. ranking;
@@ -2002,7 +2002,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 						}
 						Graphics_flushWs (monitor.graphics());   /* Because drawing is faster than progress loop. */
 					}
-					Melder_monitor6 ((double) idatum / numberOfData,
+					Melder_monitor ((double) idatum / numberOfData,
 						L"Processing partial output ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": ",
 						thy rowLabels [ipartialOutput]); therror
 					try {
@@ -2358,7 +2358,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 				my fixedRankings [my numberOfFixedRankings]. higher = icons;
 				my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 				OTGrammar_reset (me, 100.0);
-				Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
+				Melder_progress ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
 					my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
 				ipair ++;
 				for (itrial = 1; itrial <= 40; itrial ++) {
@@ -2388,7 +2388,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			}
 		}
 		my numberOfFixedRankings ++;
-		Melder_progress1 (0.0, L"");
+		Melder_progress (0.0, L"");
 		npair = npair * npair;
 		autoOrdered list = Ordered_create ();
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -2405,7 +2405,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 						my fixedRankings [my numberOfFixedRankings]. higher = kcons;
 						my fixedRankings [my numberOfFixedRankings]. lower = lcons;
 						OTGrammar_reset (me, 100.0);
-						Melder_progress3 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair));
+						Melder_progress ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair));
 						ipair ++;
 						for (itrial = 1; itrial <= 40; itrial ++) {
 							int grammarHasChangedDuringCycle = FALSE;
@@ -2438,7 +2438,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 				}
 			}
 		}
-		Melder_progress1 (1.0, L"");
+		Melder_progress (1.0, L"");
 		/*
 		 * Improve list.
 		 */
@@ -2543,7 +2543,7 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 				my fixedRankings [my numberOfFixedRankings]. higher = icons;
 				my fixedRankings [my numberOfFixedRankings]. lower = jcons;
 				OTGrammar_reset (me, 100.0);
-				Melder_progress7 ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
+				Melder_progress ((double) ipair / npair, Melder_integer (ipair + 1), L"/", Melder_integer (npair), L": Trying ranking ",
 					my constraints [icons]. name, L" >> ", my constraints [jcons]. name);
 				ipair ++;
 				Melder_progressOff ();
@@ -2596,10 +2596,10 @@ static void printConstraintNames (OTGrammar me, MelderString *buffer) {
 			wcscpy (text, constraint -> name);
 			newLine = wcschr (text, '\n');
 			*newLine = '\0';
-			MelderString_append2 (buffer, L"\t", text);
+			MelderString_append (buffer, L"\t", text);
 			secondLine = true;
 		} else {
-			MelderString_append2 (buffer, L"\t", constraint -> name);
+			MelderString_append (buffer, L"\t", constraint -> name);
 		}
 	}
 	MelderString_appendCharacter (buffer, '\n');
@@ -2608,7 +2608,7 @@ static void printConstraintNames (OTGrammar me, MelderString *buffer) {
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
 			wchar *newLine = wcschr (constraint -> name, '\n');
-			MelderString_append2 (buffer, L"\t", newLine ? newLine + 1 : L"");
+			MelderString_append (buffer, L"\t", newLine ? newLine + 1 : L"");
 		}
 		MelderString_appendCharacter (buffer, '\n');
 	}
@@ -2617,17 +2617,17 @@ static void printConstraintNames (OTGrammar me, MelderString *buffer) {
 void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) {
 	try {
 		autoMelderString buffer;
-		MelderString_append1 (& buffer, L"CONSTRAINTS\t");
+		MelderString_append (& buffer, L"CONSTRAINTS\t");
 		printConstraintNames (me, & buffer);
-		MelderString_append1 (& buffer, L"rankings\t");
+		MelderString_append (& buffer, L"rankings\t");
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
-			MelderString_append2 (& buffer, L"\t", Melder_double (constraint -> ranking));
+			MelderString_append (& buffer, L"\t", Melder_double (constraint -> ranking));
 		}
-		MelderString_append1 (& buffer, L"\ndisharmonies\t");
+		MelderString_append (& buffer, L"\ndisharmonies\t");
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
-			MelderString_append2 (& buffer, L"\t", Melder_double (constraint -> disharmony));
+			MelderString_append (& buffer, L"\t", Melder_double (constraint -> disharmony));
 		}
 		MelderString_appendCharacter (& buffer, '\n');
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
@@ -2636,7 +2636,7 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 			for (long icons = 1; icons <= my numberOfConstraints + 1; icons ++) {
 				MelderString_appendCharacter (& buffer, '\t');
 			}
-			MelderString_append2 (& buffer, L"\nINPUT\t", tableau -> input);
+			MelderString_append (& buffer, L"\nINPUT\t", tableau -> input);
 			printConstraintNames (me, & buffer);
 			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 				if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0) {
@@ -2647,7 +2647,7 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 				OTGrammarCandidate candidate = & tableau -> candidates [icand];
 				bool candidateIsOptimal = OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0;
 				long crucialCell = OTGrammar_crucialCell (me, itab, icand, winner, numberOfOptimalCandidates);
-				MelderString_append3 (& buffer,
+				MelderString_append (& buffer,
 					candidateIsOptimal == false ? L"loser" : numberOfOptimalCandidates > 1 ? L"co-winner" : L"winner",
 					L"\t",
 					candidate -> output);
@@ -2678,7 +2678,7 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 						for (long imark = 1; imark <= candidate -> marks [index]; imark ++)
 							wcscat (markString, L"*");
 					}
-					MelderString_append2 (& buffer, L"\t", markString);
+					MelderString_append (& buffer, L"\t", markString);
 				}
 				MelderString_appendCharacter (& buffer, '\n');
 			}

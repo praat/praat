@@ -62,7 +62,7 @@ void UiPause_begin (GuiObject topShell, const wchar *title, Interpreter interpre
 	if (theEventLoopDepth > 0)
 		Melder_throw ("Praat cannot have more than one pause form at a time.");
 	forget (thePauseForm);   // in case an earlier build-up of another pause window was interrupted
-	thePauseForm = UiForm_create (topShell, Melder_wcscat2 (L"Pause: ", title),
+	thePauseForm = UiForm_create (topShell, Melder_wcscat (L"Pause: ", title),
 		thePauseFormOkCallback, interpreter,   // pass interpreter as closure!
 		NULL, NULL);
 }

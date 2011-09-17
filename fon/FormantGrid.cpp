@@ -82,9 +82,9 @@ void FormantGrid_init (I, double tmin, double tmax, long numberOfFormants) {
 	my bandwidths = Ordered_create (); therror
 	for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
 		RealTier formant = RealTier_create (tmin, tmax); therror
-		Collection_addItem (my formants, formant); therror
+		Collection_addItem (my formants, formant);
 		RealTier bandwidth = RealTier_create (tmin, tmax); therror
-		Collection_addItem (my bandwidths, bandwidth); therror
+		Collection_addItem (my bandwidths, bandwidth);
 	}
 	my xmin = tmin;
 	my xmax = tmax;
@@ -123,7 +123,7 @@ void FormantGrid_addFormantPoint (FormantGrid me, long iformant, double t, doubl
 		if (iformant < 1 || iformant > my formants -> size)
 			Melder_throw ("No such formant number.");
 		RealTier formantTier = (RealTier) my formants -> item [iformant];
-		RealTier_addPoint (formantTier, t, value); therror
+		RealTier_addPoint (formantTier, t, value);
 	} catch (MelderError) {
 		Melder_throw (me, ": formant point not added.");
 	}
@@ -134,7 +134,7 @@ void FormantGrid_addBandwidthPoint (FormantGrid me, long iformant, double t, dou
 		if (iformant < 1 || iformant > my formants -> size)
 			Melder_throw ("No such formant number.");
 		RealTier bandwidthTier = (RealTier) my bandwidths -> item [iformant];
-		RealTier_addPoint (bandwidthTier, t, value); therror
+		RealTier_addPoint (bandwidthTier, t, value);
 	} catch (MelderError) {
 		Melder_throw (me, ": bandwidth point not added.");
 	}
@@ -224,9 +224,9 @@ Sound FormantGrid_to_Sound (FormantGrid me, double samplingFrequency,
 {
 	try {
 		autoPitchTier pitch = PitchTier_create (my xmin, my xmax);
-		RealTier_addPoint (pitch.peek(), my xmin + tStart * (my xmax - my xmin), f0Start); therror
-		RealTier_addPoint (pitch.peek(), my xmin + tMid * (my xmax - my xmin), f0Mid); therror
-		RealTier_addPoint (pitch.peek(), my xmax - (1.0 - tEnd) * (my xmax - my xmin), f0End); therror
+		RealTier_addPoint (pitch.peek(), my xmin + tStart * (my xmax - my xmin), f0Start);
+		RealTier_addPoint (pitch.peek(), my xmin + tMid * (my xmax - my xmin), f0Mid);
+		RealTier_addPoint (pitch.peek(), my xmax - (1.0 - tEnd) * (my xmax - my xmin), f0End);
 		autoSound thee = PitchTier_to_Sound_phonation (pitch.peek(), samplingFrequency,
 			adaptFactor, maximumPeriod, openPhase, collisionPhase, power1, power2, false);
 		Sound_FormantGrid_filter_inline (thee.peek(), me);

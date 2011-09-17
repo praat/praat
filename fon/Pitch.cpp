@@ -582,7 +582,7 @@ void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, do
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
-		MelderString_append3 (& buffer, L"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
+		MelderString_append (& buffer, L"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
 		Graphics_textLeft (g, TRUE, buffer.string);
 		if (Function_isUnitLogarithmic (me, Pitch_LEVEL_FREQUENCY, unit)) {
 			Graphics_marksLeftLogarithmic (g, 6, TRUE, TRUE, FALSE);

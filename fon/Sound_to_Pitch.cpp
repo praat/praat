@@ -233,8 +233,8 @@ Pitch Sound_to_Pitch_any (Sound me,
 			double t = Sampled_indexToX (thee.peek(), iframe), localPeak;
 			long leftSample = Sampled_xToLowIndex (me, t), rightSample = leftSample + 1;
 			long startSample, endSample;
-			Melder_progress4 (0.1 + (0.8 * iframe) / (nFrames + 1),
-				L"Sound to Pitch: analysis of frame ", Melder_integer (iframe), L" out of ", Melder_integer (nFrames)); therror
+			Melder_progress (0.1 + (0.8 * iframe) / (nFrames + 1),
+				L"Sound to Pitch: analysis of frame ", Melder_integer (iframe), L" out of ", Melder_integer (nFrames));
 
 			for (long channel = 1; channel <= my ny; channel ++) {
 				/*
@@ -430,7 +430,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			}
 		}   /* Next frame. */
 
-		Melder_progress1 (0.95, L"Sound to Pitch: path finder");   // progress (0.95, L"Sound to Pitch: path finder");
+		Melder_progress (0.95, L"Sound to Pitch: path finder");   // progress (0.95, L"Sound to Pitch: path finder");
 		Pitch_pathFinder (thee.peek(), silenceThreshold, voicingThreshold,
 			octaveCost, octaveJumpCost, voicedUnvoicedCost, ceiling, Melder_debug == 31 ? true : false);
 

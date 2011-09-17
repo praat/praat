@@ -116,7 +116,7 @@ Matrix Sound_to_Harmonicity_GNE (Sound me,
 				Graphics_clearWs (graphics);
 				Spectrum_draw (bandSpectrum, graphics, 0, 5000, 0, 0, TRUE);
 			}*/
-			Melder_monitor3 (ienvelope / (nenvelopes + 1.0), L"Computing Hilbert envelope ", Melder_integer (ienvelope), L"..."); therror
+			Melder_monitor (ienvelope / (nenvelopes + 1.0), L"Computing Hilbert envelope ", Melder_integer (ienvelope), L"..."); therror
 			autoSound hilbertBand = Spectrum_to_Sound (hilbertBandSpectrum.peek());
 			envelope [ienvelope].reset (Sound_extractPart (band.peek(), 0, duration, kSound_windowShape_RECTANGULAR, 1.0, TRUE));
 			/*

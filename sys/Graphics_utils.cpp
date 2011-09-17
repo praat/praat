@@ -34,42 +34,42 @@ void Graphics_text1 (Graphics me, double x, double y, const wchar_t *s1) {
 }
 void Graphics_text2 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append2 (& theGraphicsTextBuffer, s1, s2);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 void Graphics_text3 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append3 (& theGraphicsTextBuffer, s1, s2, s3);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2, s3);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 void Graphics_text4 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append4 (& theGraphicsTextBuffer, s1, s2, s3, s4);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2, s3, s4);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 void Graphics_text5 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append5 (& theGraphicsTextBuffer, s1, s2, s3, s4, s5);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2, s3, s4, s5);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 void Graphics_text6 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append6 (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 void Graphics_text7 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append7 (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6, s7);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6, s7);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 void Graphics_text8 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append8 (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 void Graphics_text9 (Graphics me, double x, double y, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_empty (& theGraphicsTextBuffer);
-	MelderString_append9 (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	MelderString_append (& theGraphicsTextBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	Graphics_text (me, x, y, theGraphicsTextBuffer.string);
 }
 

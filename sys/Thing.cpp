@@ -51,8 +51,8 @@ Any _Thing_new (ClassInfo classInfo_) {
 	Thing me = (Thing) classInfo_ -> _new ();
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo_;
-	my name = NULL;
-	if (Melder_debug == 40) Melder_casual ("created %ls (%ld, %ld)", classInfo_ -> className, classInfo_, me);
+	Melder_assert (my name == NULL);   // check that _new called calloc
+	if (Melder_debug == 40) Melder_casual ("created %ls (%p, %p)", classInfo_ -> className, classInfo_, me);
 	return me;
 }
 
@@ -215,9 +215,9 @@ wchar * Thing_messageName (Thing me) {
 	if (++ ibuffer == 11) ibuffer = 0;
 	MelderString_empty (& buffers [ibuffer]);
 	if (my name) {
-		MelderString_append4 (& buffers [ibuffer], my classInfo -> className, L" \"", my name, L"\"");
+		MelderString_append (& buffers [ibuffer], my classInfo -> className, L" \"", my name, L"\"");
 	} else {
-		MelderString_append1 (& buffers [ibuffer], my classInfo -> className);
+		MelderString_append (& buffers [ibuffer], my classInfo -> className);
 	}
 	return buffers [ibuffer]. string;
 }

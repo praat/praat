@@ -161,7 +161,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 				Graphics_function (graphics, area, 65, 78, 0.5, 1);
 				Graphics_setLineType (graphics, Graphics_DRAWN);
 				Graphics_resetViewport (graphics, vp);
-				Melder_monitor3 ((double) sample / numberOfSamples, L"Articulatory synthesis: ", Melder_half (time), L" seconds"); therror
+				Melder_monitor ((double) sample / numberOfSamples, L"Articulatory synthesis: ", Melder_half (time), L" seconds"); therror
 			}
 			for (n = 1; n <= oversampling; n ++) {
 				for (m = 1; m <= M; m ++) {

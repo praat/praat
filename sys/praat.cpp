@@ -287,11 +287,11 @@ void praat_write_do (Any dia, const wchar_t *extension) {
 	if (found == 1) {
 		MelderString_append (& defaultFileName, data -> name);
 		if (defaultFileName.length > 50) { defaultFileName.string [50] = '\0'; defaultFileName.length = 50; }
-		MelderString_append2 (& defaultFileName, L".", extension ? extension : Thing_className (data));
+		MelderString_append (& defaultFileName, L".", extension ? extension : Thing_className (data));
 	} else if (extension == NULL) {
 		MelderString_append (& defaultFileName, L"praat.Collection");
 	} else {
-		MelderString_append2 (& defaultFileName, L"praat.", extension);
+		MelderString_append (& defaultFileName, L"praat.", extension);
 	}
 	UiOutfile_do (dia, defaultFileName.string);
 }
@@ -389,7 +389,7 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 	} else {
 		MelderString_copy (& givenName, my name && my name [0] ? my name : L"untitled");
 	}
-	MelderString_append3 (& name, Thing_className (me), L" ", givenName.string);
+	MelderString_append (& name, Thing_className (me), L" ", givenName.string);
 
 	if (theCurrentPraatObjects -> n == praat_MAXNUM_OBJECTS) {
 		forget (me);
@@ -408,7 +408,7 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 			#endif
 		#endif
 		MelderString listName = { 0 };
-		MelderString_append3 (& listName, Melder_integer (theCurrentPraatObjects -> uniqueId), L". ", name.string);
+		MelderString_append (& listName, Melder_integer (theCurrentPraatObjects -> uniqueId), L". ", name.string);
 		GuiList_insertItem (praatList_objects, listName.string, theCurrentPraatObjects -> n);
 		MelderString_free (& listName);
 	}
@@ -433,22 +433,22 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 static MelderString thePraatNewName = { 0 };
 void praat_newWithFile2 (Data me, const wchar *s1, const wchar *s2, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append2 (& thePraatNewName, s1, s2);
+	MelderString_append (& thePraatNewName, s1, s2);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
 void praat_newWithFile3 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append3 (& thePraatNewName, s1, s2, s3);
+	MelderString_append (& thePraatNewName, s1, s2, s3);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
 void praat_newWithFile4 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append4 (& thePraatNewName, s1, s2, s3, s4);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
 void praat_newWithFile5 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
 void praat_new1 (Data me, const wchar *s1) {
@@ -456,42 +456,42 @@ void praat_new1 (Data me, const wchar *s1) {
 }
 void praat_new2 (Data me, const wchar *s1, const wchar *s2) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append2 (& thePraatNewName, s1, s2);
+	MelderString_append (& thePraatNewName, s1, s2);
 	praat_new1 (me, thePraatNewName.string);
 }
 void praat_new3 (Data me, const wchar *s1, const wchar *s2, const wchar *s3) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append3 (& thePraatNewName, s1, s2, s3);
+	MelderString_append (& thePraatNewName, s1, s2, s3);
 	praat_new1 (me, thePraatNewName.string);
 }
 void praat_new4 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append4 (& thePraatNewName, s1, s2, s3, s4);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4);
 	return praat_new1 (me, thePraatNewName.string);
 }
 void praat_new5 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append5 (& thePraatNewName, s1, s2, s3, s4, s5);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5);
 	praat_new1 (me, thePraatNewName.string);
 }
 void praat_new6 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append6 (& thePraatNewName, s1, s2, s3, s4, s5, s6);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6);
 	praat_new1 (me, thePraatNewName.string);
 }
 void praat_new7 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append7 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
 	praat_new1 (me, thePraatNewName.string);
 }
 void praat_new8 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append8 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
 	praat_new1 (me, thePraatNewName.string);
 }
 void praat_new9 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
 	MelderString_empty (& thePraatNewName);
-	MelderString_append9 (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	praat_new1 (me, thePraatNewName.string);
 }
 
@@ -818,7 +818,7 @@ int praat_installEditorN (Editor editor, Ordered objects) {
 
 void praat_dataChanged (Any object) {
 	/*
-	 * This function can be called at error time.
+	 * This function can be called at error time, which is weird.
 	 */
 	wchar *saveError = NULL;
 	bool duringError = Melder_hasError ();
@@ -837,7 +837,7 @@ void praat_dataChanged (Any object) {
 	}
 	if (duringError) {
 		Melder_error_ (saveError);   // BUG: this appends an empty newline to the original error message
-		Melder_free (saveError);
+		Melder_free (saveError);   // BUG: who will catch the error?
 	}
 }
 
@@ -1195,10 +1195,10 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			MelderString_empty (& theCurrentPraatApplication -> batchName);
 			for (unsigned int i = iarg_batchName; i < argc; i ++) {
 				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == iarg_batchName || i < argc - 1);
-				if (i > 1) MelderString_append1 (& theCurrentPraatApplication -> batchName, L" ");
-				if (needsQuoting) MelderString_append1 (& theCurrentPraatApplication -> batchName, L"\"");
-				MelderString_append1 (& theCurrentPraatApplication -> batchName, Melder_peekUtf8ToWcs (argv [i]));
-				if (needsQuoting) MelderString_append1 (& theCurrentPraatApplication -> batchName, L"\"");
+				if (i > 1) MelderString_append (& theCurrentPraatApplication -> batchName, L" ");
+				if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, L"\"");
+				MelderString_append (& theCurrentPraatApplication -> batchName, Melder_peekUtf8ToWcs (argv [i]));
+				if (needsQuoting) MelderString_append (& theCurrentPraatApplication -> batchName, L"\"");
 			}
 		#elif defined (_WIN32)
 			MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peekUtf8ToWcs (argv [3]));

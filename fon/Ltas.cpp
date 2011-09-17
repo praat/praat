@@ -40,7 +40,7 @@ void structLtas :: v_info () {
 	MelderInfo_writeLine3 (L"   Width of each band: ", Melder_double (dx), L" Hz");
 	MelderInfo_writeLine3 (L"   First band centred at: ", Melder_double (x1), L" Hz");
 	meanPowerDensity = Sampled_getMean (this, xmin, xmax, 0, 1, FALSE);
-	MelderInfo_writeLine3 (L"Total SPL: ", Melder_single (10 * log10 (meanPowerDensity * (xmax - xmin))), L" dB");
+	MelderInfo_writeLine3 (L"Total SPL: ", Melder_single (10.0 * log10 (meanPowerDensity * (xmax - xmin))), L" dB");
 }
 
 double structLtas :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
@@ -66,7 +66,7 @@ double structLtas :: v_convertSpecialToStandardUnit (double value, long ilevel, 
 Ltas Ltas_create (long nx, double dx) {
 	try {
 		autoLtas me = Thing_new (Ltas);
-		Matrix_init (me.peek(), 0, nx * dx, nx, dx, 0.5 * dx, 1, 1, 1, 1, 1); therror
+		Matrix_init (me.peek(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0); therror
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Ltas not created.");
@@ -269,7 +269,7 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 			double fmin = thy xmin + (iband - 1) * bandWidth;
 			double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, FALSE);
 			double meanPowerDensity = meanEnergyDensity * my dx;   // as an approximation for a division by the original duration
-			thy z [1] [iband] = meanPowerDensity == 0.0 ? -300.0 : 10 * log10 (meanPowerDensity / 4.0e-10);
+			thy z [1] [iband] = meanPowerDensity == 0.0 ? -300.0 : 10.0 * log10 (meanPowerDensity / 4.0e-10);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -280,7 +280,7 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 Ltas Spectrum_to_Ltas_1to1 (Spectrum me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
-		Matrix_init (thee.peek(), my xmin, my xmax, my nx, my dx, my x1, 1, 1, 1, 1, 1); therror
+		Matrix_init (thee.peek(), my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0); therror
 		for (long iband = 1; iband <= my nx; iband ++) {
 			thy z [1] [iband] = Sampled_getValueAtSample (me, iband, 0, 2);
 		}
@@ -294,7 +294,7 @@ Ltas Sound_to_Ltas (Sound me, double bandwidth) {
 	try {
 		autoSpectrum thee = Sound_to_Spectrum (me, TRUE);
 		autoLtas him = Spectrum_to_Ltas (thee.peek(), bandwidth);
-		double correction = -10 * log10 (thy dx * my nx * my dx);
+		double correction = -10.0 * log10 (thy dx * my nx * my dx);
 		for (long iband = 1; iband <= his nx; iband ++) {
 			his z [1] [iband] += correction;
 		}
@@ -320,7 +320,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 			double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 			double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
 			double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
-			Melder_progress4 ((double) ipulse / pulses -> nt, L"Sound & PointProcess: To Ltas: pulse ", Melder_integer (ipulse), L" out of ", Melder_integer (pulses -> nt));
+			Melder_progress ((double) ipulse / pulses -> nt, L"Sound & PointProcess: To Ltas: pulse ", Melder_integer (ipulse), L" out of ", Melder_integer (pulses -> nt));
 			if (leftInterval >= shortestPeriod && leftInterval <= longestPeriod &&
 				rightInterval >= shortestPeriod && rightInterval <= longestPeriod &&
 				intervalFactor <= maximumPeriodFactor)
@@ -351,7 +351,7 @@ Ltas PointProcess_Sound_to_Ltas (PointProcess pulses, Sound sound,
 		if (numberOfPeriods < 1)
 			Melder_throw ("There are no periods in the point process.");
 		for (long iband = 1; iband <= ltas -> nx; iband ++) {
-			if (numbers -> z [1] [iband] == 0) {
+			if (numbers -> z [1] [iband] == 0.0) {
 				ltas -> z [1] [iband] = NUMundefined;
 			} else {
 				/*
@@ -432,7 +432,7 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 			double leftInterval = pulses -> t [ipulse] - pulses -> t [ipulse - 1];
 			double rightInterval = pulses -> t [ipulse + 1] - pulses -> t [ipulse];
 			double intervalFactor = leftInterval > rightInterval ? leftInterval / rightInterval : rightInterval / leftInterval;
-			Melder_progress4 ((double) ipulse / pulses -> nt, L"Sound & PointProcess: To Ltas: pulse ", Melder_integer (ipulse), L" out of ", Melder_integer (pulses -> nt));
+			Melder_progress ((double) ipulse / pulses -> nt, L"Sound & PointProcess: To Ltas: pulse ", Melder_integer (ipulse), L" out of ", Melder_integer (pulses -> nt));
 			if (leftInterval >= shortestPeriod && leftInterval <= longestPeriod &&
 				rightInterval >= shortestPeriod && rightInterval <= longestPeriod &&
 				intervalFactor <= maximumPeriodFactor)
@@ -459,8 +459,8 @@ Ltas PointProcess_Sound_to_Ltas_harmonics (PointProcess pulses, Sound sound,
 		if (numberOfPeriods < 1)
 			Melder_throw (L"There are no periods in the point process.");
 		for (long iharm = 1; iharm <= ltas -> nx; iharm ++) {
-			if (ltas -> z [1] [iharm] == 0) {
-				ltas -> z [1] [iharm] = -300;
+			if (ltas -> z [1] [iharm] == 0.0) {
+				ltas -> z [1] [iharm] = -300.0;
 			} else {
 				double energyInThisBand = ltas -> z [1] [iharm];
 				double powerInThisBand = energyInThisBand / (sound -> xmax - sound -> xmin);
