@@ -1765,6 +1765,7 @@ LOOP {
 		}
 		praat_dataChanged (me);
 	} catch (MelderError) {
+		praat_dataChanged (me);
 		throw;
 	}
 }

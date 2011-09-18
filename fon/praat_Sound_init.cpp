@@ -2238,20 +2238,6 @@ static Any kayFileRecognizer (int nread, const char *header, MelderFile file) {
 	return Sound_readFromKayFile (file);
 }
 
-static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
-	const wchar *fileName = MelderFile_name (file);
-	bool isBdfFile = wcsstr (fileName, L".bdf") != NULL || wcsstr (fileName, L".BDF") != NULL;
-	bool isEdfFile = wcsstr (fileName, L".edf") != NULL || wcsstr (fileName, L".EDF") != NULL;
-	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
-	TextGrid textGrid;
-	Sound sound;
-	TextGrid_Sound_readFromBdfFile (file, & textGrid, & sound); therror;
-	Collection collection = Collection_create (classData, 2);
-	Collection_addItem (collection, sound);
-	Collection_addItem (collection, textGrid);
-	return collection;
-}
-
 /***** override play and record buttons in manuals *****/
 
 static Sound melderSound, melderSoundFromFile, last;
@@ -2301,7 +2287,6 @@ void praat_uvafon_Sound_init (void) {
 	Data_recognizeFileType (sesamFileRecognizer);
 	Data_recognizeFileType (bellLabsFileRecognizer);
 	Data_recognizeFileType (kayFileRecognizer);
-	Data_recognizeFileType (bdfFileRecognizer);
 
 	SoundRecorder_prefs ();
 	FunctionEditor_prefs ();

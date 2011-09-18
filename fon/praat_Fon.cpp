@@ -145,7 +145,7 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
-			return 0;
+			throw;
 		}
 	}
 	return 1;
@@ -1233,6 +1233,7 @@ DO
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
+			throw;
 		}
 	}
 END
@@ -1249,6 +1250,7 @@ DO
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
+			throw;
 		}
 	}
 END
@@ -1464,6 +1466,7 @@ DO
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Harmonicity may have partically changed
+			throw;
 		}
 	}
 END
@@ -1899,6 +1902,7 @@ DO
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the IntensityTier may have partially changed
+			throw;
 		}
 	}
 END
@@ -4364,6 +4368,7 @@ DO
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
+			throw;
 		}
 	}
 END
@@ -6623,6 +6628,7 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_FFNet_init)
 	INCLUDE_LIBRARY (praat_uvafon_LPC_init)
 	INCLUDE_LIBRARY (praat_uvafon_Exp_init)
+	INCLUDE_LIBRARY (praat_EEG_init)
 }
 
 /* End of file praat_Fon.c */

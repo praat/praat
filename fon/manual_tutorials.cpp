@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110917)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110918)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.42# (18 September 2011)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 5.2.36 that prevented formulas from working on FormantGrid objects.")
 NORMAL (L"##5.2.41# (17 September 2011)")
 LIST_ITEM (L"\\bu Improved dashed-dotted lines in EPS files.")
 LIST_ITEM (L"\\bu Corrected a bug introduced in 5.2.36 that caused Praat to crash when running an ExperimentMFC.")
@@ -1330,7 +1332,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN (L"Acknowledgments", L"ppgb", 20100523)
+MAN_BEGIN (L"Acknowledgments", L"ppgb", 20110920)
 NORMAL (L"The following people contributed source code to Praat:")
 LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1338,7 +1340,7 @@ LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, 
 	"@@Intro 7. Annotation|annotation@, @@Intro 8. Manipulation|speech manipulation@, @@voice|voice report@, "
 	"@@ExperimentMFC|listening experiments@, "
 	"@@articulatory synthesis@, @@OT learning|optimality-theoretic learning@, "
-	"tables, @formulas, @scripting, and adaptation of PortAudio and GLPK.")
+	"tables, @formulas, @scripting, and adaptation of PortAudio, GLPK, and regular expressions.")
 LIST_ITEM (L"David Weenink: "
 	"@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC, "
 	"@VowelEditor, "
@@ -1349,14 +1351,14 @@ LIST_ITEM (L"Ola S\\o\"der: @@kNN classifiers@, @@k-means clustering@.")
 LIST_ITEM (L"Rafael Laboissi\\e`re: adaptation of XIPA.")
 LIST_ITEM (L"Darryl Purnell created the first version of audio for Praat for Linux.")
 NORMAL (L"We included the following freely available software libraries in Praat (sometimes with adaptations):")
-LIST_ITEM (L"IPA font for Unix (XIPA) by Fukui Rei (GPL).")
-LIST_ITEM (L"GNU Scientific Library (GSL) by Gerard Jungman and Brian Gough (GPL).")
-LIST_ITEM (L"GNU Linear Programming Kit (GLPK) by Andrew Makhorin (GPL).")
-LIST_ITEM (L"Portable Audio Library (PortAudio) by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs.")
-LIST_ITEM (L"MPEG Audio Decoder (MAD) by Underbit Technologies (GPL).")
-LIST_ITEM (L"Free Lossless Audio Codec (FLAC) by Josh Coalson.")
-LIST_ITEM (L"Public domain Fourier transforms (fftpack) by Paul Swarztrauber and Monty.")
-LIST_ITEM (L"Public domain LAPACK by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
+LIST_ITEM (L"XIPA: IPA font for Unix by Fukui Rei (GPL).")
+LIST_ITEM (L"GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL).")
+LIST_ITEM (L"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL).")
+LIST_ITEM (L"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs.")
+LIST_ITEM (L"MAD: MPEG Audio Decoder by Underbit Technologies (GPL).")
+LIST_ITEM (L"FLAC: Free Lossless Audio Codec by Josh Coalson.")
+LIST_ITEM (L"fftpack: public domain Fourier transforms by Paul Swarztrauber and Monty.")
+LIST_ITEM (L"LAPACK: public domain numeric algorithms by Univ. of Tennessee, Univ. of California Berkeley, NAG Ltd., "
 	"Courant Institute, Argonne National Lab, and Rice University.")
 LIST_ITEM (L"Regular expressions by Henry Spencer, Mark Edel, Christopher Conrad, Eddy De Greef (GPL).")
 NORMAL (L"For technical support and advice:")

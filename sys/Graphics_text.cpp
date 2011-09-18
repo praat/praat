@@ -145,12 +145,12 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 	}
 	wcscpy (spec. lfFaceName,
 		font == kGraphics_font_HELVETICA ? L"Arial" :
-		font == kGraphics_font_TIMES ? L"Times New Roman" :
-		font == kGraphics_font_COURIER ? L"Courier New" :
-		font == kGraphics_font_PALATINO ? L"Book Antiqua" :
-		font == kGraphics_font_SYMBOL ? L"Symbol" :
-		font == kGraphics_font_IPATIMES ? ( doulosAvailable && style == 0 ? L"Doulos SIL" : charisAvailable ? L"Charis SIL" : L"Times New Roman" ) :
-		font == kGraphics_font_DINGBATS ? L"Wingdings" :
+		font == kGraphics_font_TIMES     ? L"Times New Roman" :
+		font == kGraphics_font_COURIER   ? L"Courier New" :
+		font == kGraphics_font_PALATINO  ? L"Book Antiqua" :
+		font == kGraphics_font_SYMBOL    ? L"Symbol" :
+		font == kGraphics_font_IPATIMES  ? ( doulosAvailable && style == 0 ? L"Doulos SIL" : charisAvailable ? L"Charis SIL" : L"Times New Roman" ) :
+		font == kGraphics_font_DINGBATS  ? L"Wingdings" :
 		L"");
 	return CreateFontIndirectW (& spec);
 }
@@ -276,8 +276,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 				int normalSize = my fontSize * my resolution / 72.0;
 				lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
 				lc -> baseline *= 0.01 * normalSize;
-				long saveFont = lc -> font.integer;   // Save!
-				lc -> font.string = NULL;   // This erases font.integer!
+				long saveFont = lc -> font.integer;   // save!
+				lc -> font.string = NULL;   // this erases font.integer!
 				ATSFontRef atsuiFont =
 					info -> alphabet == Longchar_SYMBOL ? theSymbolAtsuiFont :
 					info -> alphabet == Longchar_PHONETIC ? ( my font == kGraphics_font_TIMES && lc -> style == 0 ? theIpaTimesAtsuiFont : theIpaPalatinoAtsuiFont ) :
@@ -288,7 +288,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					my font == kGraphics_font_HELVETICA ? theHelveticaAtsuiFont :
 					my font == kGraphics_font_COURIER ? theCourierAtsuiFont : theTimesAtsuiFont;
 				Melder_assert (atsuiFont != 0);
-				lc -> font.integer = (int) atsuiFont;   // BUG: not 64-bit compatible
+				lc -> font.integer = (long) atsuiFont;
 				lc -> code = lc -> kar;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
@@ -363,8 +363,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 				int normalSize = my fontSize * my resolution / 72.0;
 				lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : /*lc -> size > 100 ? 1.2 * normalSize :*/ normalSize;
 				lc -> baseline *= 0.01 * normalSize;
-				long saveFont = lc -> font.integer;   // Save!
-				lc -> font.string = NULL;   // This erases font.integer!
+				long saveFont = lc -> font.integer;   // save!
+				lc -> font.string = NULL;   // this erases font.integer!
 				lc -> font.integer =
 					info -> alphabet == Longchar_SYMBOL ? theSymbolFont :
 					info -> alphabet == Longchar_PHONETIC ? theIpaTimesFont :
@@ -375,8 +375,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> style =
 					(lc -> style & Graphics_ITALIC ? italic : 0) +
 					(lc -> style & Graphics_BOLD ? bold : 0);
-				if (lc -> font.integer == 0 && ! ipaInited && Melder_debug != 15) {   /* SIL Doulos IPA not initialized. */
-					GetFNum ((const unsigned char *) "\017SILDoulos IPA93", & theIpaTimesFont);   /* May be 0. */
+				if (lc -> font.integer == 0 && ! ipaInited && Melder_debug != 15) {   // SIL Doulos IPA not initialized
+					GetFNum ((const unsigned char *) "\017SILDoulos IPA93", & theIpaTimesFont);   // may be 0
 					ipaInited = TRUE;
 					if (theIpaTimesFont != 0) {
 						ipaAvailable = TRUE;
@@ -385,7 +385,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					}
 					lc -> font.integer = theIpaTimesFont;
 				}
-				if (lc -> font.integer == 0) {   /* SIL Doulos IPA not available. */
+				if (lc -> font.integer == 0) {   // SIL Doulos IPA not available
 					int overstrike = ipaSerifRegular24 [info -> psEncoding - 32] [0] [0] == 'o';
 					if (overstrike)
 						lc -> width = 0;
@@ -525,35 +525,35 @@ static void charSize (I, _Graphics_widechar *lc) {
 		lc -> baseline *= normalSize * 0.01;
 
 		if (font == kGraphics_font_COURIER) {
-			lc -> width = 600;   /* Courier. */
+			lc -> width = 600;   // Courier
 		} else if (style == 0) {
 			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.times;
 			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helvetica;
 			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatino;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
-			else lc -> width = info -> ps.times;   /* XIPA. */
+			else lc -> width = info -> ps.times;   // XIPA
 		} else if (style == Graphics_BOLD) {
 			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.timesBold;
 			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helveticaBold;
 			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatinoBold;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
-			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
+			else lc -> width = info -> ps.times;   // Symbol, IPA
 		} else if (style == Graphics_ITALIC) {
 			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.timesItalic;
 			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helvetica;
 			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatinoItalic;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesItalic;
-			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
+			else lc -> width = info -> ps.times;   // Symbol, IPA
 		} else if (style == Graphics_BOLD_ITALIC) {
 			if (font == kGraphics_font_TIMES) lc -> width = info -> ps.timesBoldItalic;
 			else if (font == kGraphics_font_HELVETICA) lc -> width = info -> ps.helveticaBold;
 			else if (font == kGraphics_font_PALATINO) lc -> width = info -> ps.palatinoBoldItalic;
 			else if (font == kGraphics_font_SYMBOL) lc -> width = info -> ps.times;
 			else if (my useSilipaPS) lc -> width = info -> ps.timesBoldItalic;
-			else lc -> width = info -> ps.times;   /* Symbol, IPA. */
+			else lc -> width = info -> ps.times;   // Symbol, IPA
 		}
 		lc -> width *= lc -> size / 1000.0;
 		lc -> code = font == kGraphics_font_IPATIMES && my useSilipaPS ? info -> macEncoding : info -> psEncoding;
@@ -590,7 +590,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 	if (my postScript) {
 		iam (GraphicsPostscript);
 		bool onlyRegular = lc -> font.string [0] == 'S' ||
-			(lc -> font.string [0] == 'T' && lc -> font.string [1] == 'e');   /* Symbol & SILDoulos ! */
+			(lc -> font.string [0] == 'T' && lc -> font.string [1] == 'e');   // Symbol & SILDoulos !
 		int slant = (lc -> style & Graphics_ITALIC) && onlyRegular;
 		int thick = (lc -> style & Graphics_BOLD) && onlyRegular;
 		if (lc -> font.string != my lastFid || lc -> size != my lastSize)
@@ -648,7 +648,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				static ATSUTextLayout theAtsuiTextLayout;
 				if (theAtsuiTextLayout == NULL) {
 					OSStatus err = ATSUCreateTextLayout (& theAtsuiTextLayout);
-					if (err != 0) Melder_fatal ("Graphics_text/ATSUCreateTextLayout drawing: unknown MacOS error %d.", (int) err);
+					if (err != 0) {
+						if (err == kATSUInvalidFontID) {
+							Melder_fatal ("Praat detected an invalid font ID and will now crash, beause this is a system error. "
+								"Please use Font Book to check for duplicate or corrupted fonts.");
+						} else {
+							Melder_fatal ("Graphics_text/ATSUCreateTextLayout drawing: unknown MacOS error %d.", (int) err);
+						}
+					}
 				}
 				bool hasHighUnicodeValues = false;
 				for (long i = 0; i < nchars; i ++) {
@@ -904,18 +911,18 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				 * Rotated native font.
 				 */
 				#if cairo
-					enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
+					enum _cairo_font_slant  slant  = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
 					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
 					cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
 					switch (font) {
 						case kGraphics_font_HELVETICA: cairo_select_font_face (my d_cairoGraphicsContext, "Helvetica", slant, weight); break;
-						case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times", slant, weight); break;
-						case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier", slant, weight); break;
-						case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino", slant, weight); break;
-						case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol", slant, weight); break;
+						case kGraphics_font_TIMES:     cairo_select_font_face (my d_cairoGraphicsContext, "Times"    , slant, weight); break;
+						case kGraphics_font_COURIER:   cairo_select_font_face (my d_cairoGraphicsContext, "Courier"  , slant, weight); break;
+						case kGraphics_font_PALATINO:  cairo_select_font_face (my d_cairoGraphicsContext, "Palatino" , slant, weight); break;
+						case kGraphics_font_SYMBOL:    cairo_select_font_face (my d_cairoGraphicsContext, "Symbol"   , slant, weight); break;
 						case kGraphics_font_IPATIMES:  cairo_select_font_face (my d_cairoGraphicsContext, "IPA Times", slant, weight); break;
-						case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats", slant, weight); break;
-						default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans", slant, weight); break;
+						case kGraphics_font_DINGBATS:  cairo_select_font_face (my d_cairoGraphicsContext, "Dingbats" , slant, weight); break;
+						default:                       cairo_select_font_face (my d_cairoGraphicsContext, "Sans"     , slant, weight); break;
 					}
 					cairo_save (my d_cairoGraphicsContext);
 					cairo_translate (my d_cairoGraphicsContext, xDC, yDC);
@@ -950,7 +957,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				int ix, iy /*, baseline = 1 + ascent * 2*/;
 				double cosa, sina;
 				#if win
-					int maxWidth = 1000, maxHeight = 600;   /* BUG: printer??? */
+					int maxWidth = 1000, maxHeight = 600;   // BUG: printer???
 					int baseline = maxHeight / 4, top = baseline - ascent - 1, bottom = baseline + descent + 1;
 					static int inited = 0;
 					static HDC dc;
@@ -1174,7 +1181,7 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 	switch (my horizontalTextAlignment) {
 		case Graphics_LEFT:      dx = 2; break;
 		case Graphics_CENTRE:    dx = - width / 2; break;
-		case Graphics_RIGHT:     dx = width ? - width - 1 : 0; break;   /* If width is zero, do not step left. */
+		case Graphics_RIGHT:     dx = width ? - width - 1 : 0; break;   // if width is zero, do not step left
 		default:                 dx = 2; break;
 	}
 	switch (my verticalTextAlignment) {
@@ -1196,9 +1203,9 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 		else { double a = my textRotation * NUMpi / 180.0; cosa = cos (a); sina = sin (a); }
 		for (plc = lc; plc -> kar > '\t'; plc ++) {
 			_Graphics_widechar *next = plc + 1;
-			charCodes [nchars] = plc -> code;   /* Buffer... */
-			charCodes8 [nchars] = plc -> code;   /* Buffer... */
-			charCodes16 [nchars ++] = plc -> code;   /* Buffer... */
+			charCodes [nchars] = plc -> code;   // buffer...
+			charCodes8 [nchars] = plc -> code;   // buffer...
+			charCodes16 [nchars ++] = plc -> code;   // buffer...
 			x += plc -> width;
 			/*
 			 * We can draw stretches of characters:
@@ -1216,9 +1223,9 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 				double dy2 = dy + plc -> baseline;
 				double xr = cosa * xbegin - sina * dy2;
 				double yr = sina * xbegin + cosa * dy2;
-				charCodes [nchars] = '\0';   /* ...and flush. */
-				charCodes8 [nchars] = '\0';   /* ...and flush. */
-				charCodes16 [nchars] = '\0';   /* ...and flush. */
+				charCodes [nchars] = '\0';   // ...and flush
+				charCodes8 [nchars] = '\0';   // ...and flush
+				charCodes16 [nchars] = '\0';   // ...and flush
 				charDraw (me, xDC + xr, my yIsZeroAtTheTop ? yDC - yr : yDC + yr,
 					plc, charCodes, charCodes8, charCodes16, nchars, x - xbegin);
 				nchars = 0;
@@ -1234,15 +1241,15 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 			 */
 			int xmax = xDC + my wrapWidth * my scaleX;
 			for (plc = lc; plc -> kar >= ' '; plc ++) {
-				if (x > xmax) {   /* Wrap (if wrapWidth is too small, each word will be on a separate line). */
+				if (x > xmax) {   // wrap (if wrapWidth is too small, each word will be on a separate line)
 					while (plc >= lastlc) {
-						if (plc -> kar == ' ' && ! plc -> link)   /* Keep links contiguous. */
+						if (plc -> kar == ' ' && ! plc -> link)   // keep links contiguous
 							break;
 						plc --;
 					}
-					if (plc <= lastlc) break;   /* Hopeless situation: no spaces; get over it. */
+					if (plc <= lastlc) break;   // hopeless situation: no spaces; get over it
 					lastlc = plc;
-					plc -> kar = '\n';   // Replace space with newline.
+					plc -> kar = '\n';   // replace space with newline
 					x = xDC + dx + my secondIndent * my scaleX;
 				} else {
 					x += plc -> width;
@@ -1268,18 +1275,18 @@ static void drawOneCell (Graphics me, int xDC, int yDC, _Graphics_widechar lc []
 				xbegin = x = xDC + dx + my secondIndent * my scaleX;
 				y = my yIsZeroAtTheTop ? y + (1.2/72) * my fontSize * my resolution : y - (1.2/72) * my fontSize * my resolution;
 			} else {
-				charCodes [nchars] = plc -> code;   /* Buffer... */
-				charCodes8 [nchars] = plc -> code;   /* Buffer... */
-				charCodes16 [nchars ++] = plc -> code;   /* Buffer... */
+				charCodes [nchars] = plc -> code;   // buffer...
+				charCodes8 [nchars] = plc -> code;   // buffer...
+				charCodes16 [nchars ++] = plc -> code;   // buffer...
 				x += plc -> width;
 				if (next->kar < ' ' || next->style != plc->style ||
 					next->baseline != plc->baseline || next->size != plc->size || next->link != plc->link ||
 					next->font.integer != plc->font.integer || next->font.string != plc->font.string ||
 					next->rightToLeft != plc->rightToLeft)
 				{
-					charCodes [nchars] = '\0';   /* ...and flush. */
-					charCodes8 [nchars] = '\0';   /* ...and flush. */
-					charCodes16 [nchars] = '\0';   /* ...and flush. */
+					charCodes [nchars] = '\0';   // ...and flush
+					charCodes8 [nchars] = '\0';   // ...and flush
+					charCodes16 [nchars] = '\0';   // ...and flush
 					charDraw (me, xbegin, my yIsZeroAtTheTop ? y - plc -> baseline : y + plc -> baseline,
 						plc, charCodes, charCodes8, charCodes16, nchars, x - xbegin);
 					nchars = 0;
@@ -1352,19 +1359,19 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 		} else if (kar == '_' && my underscoreIsSubscript) {
 			if (globalSubscript) { globalSubscript = 0; wordItalic = wordBold = wordCode = 0; continue; }
 			else if (in [0] == '_') { globalSubscript = 1; in ++; wordItalic = wordBold = wordCode = 0; continue; }
-			else if (! my dollarSignIsCode) { charSubscript = 1; wordItalic = wordBold = wordCode = 0; continue; }   // Not in manuals.
+			else if (! my dollarSignIsCode) { charSubscript = 1; wordItalic = wordBold = wordCode = 0; continue; }   // not in manuals
 			else
 				;   // A normal underscore in manuals.
 		} else if (kar == '%' && my percentSignIsItalic) {
 			if (globalItalic) globalItalic = 0;
 			else if (in [0] == '%') { globalItalic = 1; in ++; }
-			else if (my dollarSignIsCode) wordItalic = 1;   // In manuals.
+			else if (my dollarSignIsCode) wordItalic = 1;   // in manuals
 			else charItalic = 1;
 			continue;
 		} else if (kar == '#' && my numberSignIsBold) {
 			if (globalBold) globalBold = 0;
 			else if (in [0] == '#') { globalBold = 1; in ++; }
-			else if (my dollarSignIsCode) wordBold = 1;   // In manuals.
+			else if (my dollarSignIsCode) wordBold = 1;   // in manuals
 			else charBold = 1;
 			continue;
 		} else if (kar == '$' && my dollarSignIsCode) {
@@ -1372,8 +1379,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			else if (in [0] == '$') { globalCode = 1; in ++; }
 			else wordCode = 1;
 			continue;
-		} else if (kar == '@' && my atSignIsLink   /* Recognize links. */
-		           && ! my textRotation)   /* No links allowed in rotated text, because links are identified by 2-point rectangles. */
+		} else if (kar == '@' && my atSignIsLink   // recognize links
+		           && ! my textRotation)   // no links allowed in rotated text, because links are identified by 2-point rectangles
 		{
 			wchar_t *to, *max;
 			/*
@@ -1392,8 +1399,8 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				 * Detected the third '@' in strings like "@@Link with spaces@".
 				 * This closes the link text (which will be shown in blue).
 				 */
-				globalLink = 0;   /* Close the drawn link text (the normal colour will take over). */
-				continue;   /* The '@' must not be drawn. */
+				globalLink = 0;   // close the drawn link text (the normal colour will take over)
+				continue;   // the '@' must not be drawn
 			} else if (in [0] == '@') {
 				/*
 				 * Detected the second '@' in strings like "@@Link with spaces@".
@@ -1401,13 +1408,13 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				 * First step: collect the page text (the link information);
 				 * it is everything between "@@" and "|" or "@" or end of string.
 				 */
-				const wchar_t *from = in + 1;   /* Start with first character after "@@". */
-				if (! links [++ numberOfLinks]. name)   /* Make room for saving link info. */
+				const wchar_t *from = in + 1;   // start with first character after "@@"
+				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (wchar_t, MAX_LINK_LENGTH + 1);
 				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
-				while (*from && *from != '@' && *from != '|' && to < max)   /* Until end-of-string or '@' or '|'... */
-					* to ++ = * from ++;   /* ... copy one character. */
-				*to = '\0';   /* Close saved link info. */
+				while (*from && *from != '@' && *from != '|' && to < max)   // until end-of-string or '@' or '|'...
+					* to ++ = * from ++;   // ... copy one character
+				*to = '\0';   // close saved link info
 				/*
 				 * Second step: collect the link text that is to be drawn.
 				 * Its characters will be collected during the normal cycles of the loop.
@@ -1423,26 +1430,26 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 				/*
 				 * Both '@' must be skipped and must not be drawn.
 				 */
-				in ++;   /* Skip second '@'. */
-				continue;   /* Do not draw. */
+				in ++;   // skip second '@'
+				continue;   // do not draw
 			} else {
 				/*
 				 * Detected a single-word link, like in "this is a @Link that consists of one word".
 				 * First step: collect the page text: letters, digits, and underscores.
 				 */
-				const wchar_t *from = in;   /* Start with first character after "@". */
-				if (! links [++ numberOfLinks]. name)   /* Make room for saving link info. */
+				const wchar_t *from = in;   // start with first character after "@"
+				if (! links [++ numberOfLinks]. name)   // make room for saving link info
 					links [numberOfLinks]. name = Melder_calloc_f (wchar_t, MAX_LINK_LENGTH + 1);
 				to = links [numberOfLinks]. name, max = to + MAX_LINK_LENGTH;
-				while (*from && (isalnum (*from) || *from == '_') && to < max)   /* Until end-of-word... */
-					*to ++ = *from++;   /* ... copy one character. */
-				*to = '\0';   /* Close saved link info. */
+				while (*from && (isalnum (*from) || *from == '_') && to < max)   // until end-of-word...
+					*to ++ = *from++;   // ... copy one character
+				*to = '\0';   // close saved link info
 				/*
 				 * Second step: collect the link text that is to be drawn.
 				 * Its characters will be collected during the normal cycles of the loop.
 				 * The link info is equal to the link text, so no skipping is needed.
 				 */
-				wordLink = 1;   /* Enter the single-word link-text-collection mode. */
+				wordLink = 1;   // enter the single-word link-text-collection mode
 			}
 			continue;
 		} else if (kar == '\\') {
@@ -1454,7 +1461,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			 * ... except if kar1 or kar2 is null: in that case, draw the backslash.
 			 */
 			if (! (kar1 = in [0]) || ! (kar2 = in [1])) {
-				;   // Normal backslash symbol.
+				;   // normal backslash symbol
 			/*
 			 * Catch "\s{", which means: small characters until corresponding '}'.
 			 */
@@ -1494,7 +1501,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			globalSubscript = globalSuperscript = globalItalic = globalBold = globalCode = globalLink = globalSmall = 0;
 			charItalic = charBold = charSuperscript = charSubscript = 0;
 			out ++;
-			continue;   /* Do not draw. */
+			continue;   // do not draw
 		} else if (kar == '\n') {
 			kar = ' ';
 		}
@@ -1516,7 +1523,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 			out -> baseline -= out -> size / 12;
 			out -> size += out -> size / 10;
 		}
-		out -> code = '?';   // Does this have any meaning?
+		out -> code = '?';   // does this have any meaning?
 		out -> kar = kar;
 		out -> rightToLeft =
 			(kar >= 0x0590 && kar <= 0x06FF) ||
@@ -1525,7 +1532,7 @@ static void parseTextIntoCellsLinesRuns (Graphics me, const wchar_t *txt, _Graph
 		charItalic = charBold = charSuperscript = charSubscript = 0;
 		out ++;
 	}
-	out -> kar = '\0';   // End of text.
+	out -> kar = '\0';   // end of text
 	out -> rightToLeft = false;
 }
 
@@ -1721,19 +1728,29 @@ double Graphics_textWidth_ps (Graphics me, const wchar_t *txt, bool useSilipaPS)
 }
 
 #if mac
+static ATSFontRef findFont (CFStringRef name) {
+	ATSFontRef fontRef = ATSFontFindFromPostScriptName (name, kATSOptionFlagsDefault);
+	if (fontRef == 0 || fontRef == kATSUInvalidFontID) {
+		fontRef = ATSFontFindFromName (name, kATSOptionFlagsDefault);
+		if (fontRef == 0 || fontRef == kATSUInvalidFontID) {
+			return 0;
+		}
+	}
+	return fontRef;		
+}
 bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 	if (theTimesAtsuiFont != 0) return true;   // once
-	theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times"), kATSOptionFlagsDefault);
-	if (! theTimesAtsuiFont) theTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Times New Roman"), kATSOptionFlagsDefault);
-	theHelveticaAtsuiFont = ATSFontFindFromName (CFSTR ("Helvetica"), kATSOptionFlagsDefault);
-	if (! theHelveticaAtsuiFont) theHelveticaAtsuiFont = ATSFontFindFromName (CFSTR ("Arial"), kATSOptionFlagsDefault);
-	theCourierAtsuiFont = ATSFontFindFromName (CFSTR ("Courier"), kATSOptionFlagsDefault);
-	if (! theCourierAtsuiFont) theCourierAtsuiFont = ATSFontFindFromName (CFSTR ("Courier New"), kATSOptionFlagsDefault);
-	theSymbolAtsuiFont = ATSFontFindFromName (CFSTR ("Symbol"), kATSOptionFlagsDefault);
-	thePalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Palatino"), kATSOptionFlagsDefault);
-	if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Book Antiqua"), kATSOptionFlagsDefault);
+	theTimesAtsuiFont = findFont (CFSTR ("Times"));
+	if (! theTimesAtsuiFont) theTimesAtsuiFont = findFont (CFSTR ("Times New Roman"));
+	theHelveticaAtsuiFont = findFont (CFSTR ("Helvetica"));
+	if (! theHelveticaAtsuiFont) theHelveticaAtsuiFont = findFont (CFSTR ("Arial"));
+	theCourierAtsuiFont = findFont (CFSTR ("Courier"));
+	if (! theCourierAtsuiFont) theCourierAtsuiFont = findFont (CFSTR ("Courier New"));
+	theSymbolAtsuiFont = findFont (CFSTR ("Symbol"));
+	thePalatinoAtsuiFont = findFont (CFSTR ("Palatino"));
+	if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = findFont (CFSTR ("Book Antiqua"));
 	if (! thePalatinoAtsuiFont) thePalatinoAtsuiFont = theTimesAtsuiFont;
-	theZapfDingbatsAtsuiFont = ATSFontFindFromName (CFSTR ("Zapf Dingbats"), kATSOptionFlagsDefault);
+	theZapfDingbatsAtsuiFont = findFont (CFSTR ("Zapf Dingbats"));
 	if (! theZapfDingbatsAtsuiFont) theZapfDingbatsAtsuiFont = theTimesAtsuiFont;
 	if (! theTimesAtsuiFont || ! theHelveticaAtsuiFont || ! theCourierAtsuiFont || ! theSymbolAtsuiFont) {
 		Melder_warning (L"Praat cannot find one or more of the fonts Times (or Times New Roman), "
@@ -1741,8 +1758,8 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 			"Praat will have limited capabilities for international text.");
 		return false;
 	}
-	theIpaTimesAtsuiFont = ATSFontFindFromName (CFSTR ("Doulos SIL"), kATSOptionFlagsDefault);
-	theIpaPalatinoAtsuiFont = ATSFontFindFromName (CFSTR ("Charis SIL"), kATSOptionFlagsDefault);
+	theIpaTimesAtsuiFont = findFont (CFSTR ("Doulos SIL"));
+	theIpaPalatinoAtsuiFont = findFont (CFSTR ("Charis SIL"));
 	if (! theIpaTimesAtsuiFont) {
 		if (theIpaPalatinoAtsuiFont) {
 			theIpaTimesAtsuiFont = theIpaPalatinoAtsuiFont;

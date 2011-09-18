@@ -34,6 +34,4 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
 	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
 
-void TextGrid_Sound_readFromBdfFile (MelderFile file, TextGrid *textGrid, Sound *sound);
-
 /* End of file TextGrid_Sound.h */

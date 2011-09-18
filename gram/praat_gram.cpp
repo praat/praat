@@ -618,6 +618,7 @@ DO
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);   // partial change
+		throw;
 	}
 END
 
@@ -644,6 +645,7 @@ DO
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);   // e.g. in case of partial learning
+		Melder_flushError (NULL);
 		// trickle down to save history
 	}
 	if (history) praat_new (history, my name);
@@ -833,6 +835,7 @@ DO
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);
+		Melder_flushError (NULL);
 	}
 	if (history) praat_new (history, my name);
 END
@@ -1147,6 +1150,7 @@ DO
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
+			throw;
 		}
 	}
 END
@@ -1271,6 +1275,7 @@ DO
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);   // e.g. in case of partial learning
+		Melder_flushError (NULL);
 		// trickle down to save history
 	}
 	if (history) praat_new (history, my name);

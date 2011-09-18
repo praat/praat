@@ -233,7 +233,6 @@ void structFormantGridEditor :: v_draw () {
 	FormantGrid grid = (FormantGrid) data;
 	Ordered tiers = editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier selectedTier = (RealTier) tiers -> item [selectedFormant];
-	long ifirstSelected, ilastSelected, n = selectedTier -> points -> size, imin, imax;
 	double ymin = editingBandwidths ? bandwidthFloor : formantFloor;
 	double ymax = editingBandwidths ? bandwidthCeiling : formantCeiling;
 	Graphics_setColour (graphics, Graphics_WHITE);
@@ -280,10 +279,11 @@ void structFormantGridEditor :: v_draw () {
 		}
 	}
 	Graphics_setColour (graphics, Graphics_BLUE);
-	ifirstSelected = AnyTier_timeToHighIndex (selectedTier, startSelection);
-	ilastSelected = AnyTier_timeToLowIndex (selectedTier, endSelection);
-	imin = AnyTier_timeToHighIndex (selectedTier, startWindow);
-	imax = AnyTier_timeToLowIndex (selectedTier, endWindow);
+	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier, startSelection);
+	long ilastSelected = AnyTier_timeToLowIndex (selectedTier, endSelection);
+	long n = selectedTier -> points -> size;
+	long imin = AnyTier_timeToHighIndex (selectedTier, startWindow);
+	long imax = AnyTier_timeToLowIndex (selectedTier, endWindow);
 	Graphics_setLineWidth (graphics, 2);
 	if (n == 0) {
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);

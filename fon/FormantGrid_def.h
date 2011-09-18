@@ -25,8 +25,8 @@ oo_DEFINE_CLASS (FormantGrid, Function)
 
 	#if oo_DECLARING
 		// overridden methods:
-			virtual double v_getVector (long irow, long icol);
-			virtual double v_getFunction1 (long irow, double x);
+			virtual bool v_hasGetVector    () { return true; }   virtual double v_getVector    (long irow, long icol);
+			virtual bool v_hasGetFunction1 () { return true; }   virtual double v_getFunction1 (long irow, double x);
 			virtual const wchar * v_getUnitText (long ilevel, int unit, unsigned long flags)
 				{ (void) unit; (void) flags; return ilevel & 1 ? L"Formant (Hz)" : L"Bandwidth (Hz)"; }
 			virtual void v_shiftX (double xfrom, double xto);

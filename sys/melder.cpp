@@ -772,61 +772,6 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 	theMelder. warning (theWarningBuffer.string);
 }
 
-void Melder_warning1 (const wchar *s1) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning2 (const wchar *s1, const wchar *s2) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning3 (const wchar *s1, const wchar *s2, const wchar *s3) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2, s3);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning4 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2, s3, s4);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning5 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning6 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning7 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning8 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
-	theMelder. warning (theWarningBuffer.string);
-}
-void Melder_warning9 (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
-	if (theWarningDepth < 0) return;
-	MelderString_empty (& theWarningBuffer);
-	MelderString_append (& theWarningBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
-	theMelder. warning (theWarningBuffer.string);
-}
-
 void Melder_beep (void) {
 	#ifdef macintosh
 		SysBeep (0);

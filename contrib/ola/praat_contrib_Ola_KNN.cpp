@@ -22,6 +22,7 @@
  * os 2009/01/23 Bugfix: Removed MUX:ing (KNN_learn) incompatible with the scripting engine. Thanks to Paul Boersma for spotting this problem.
  * pb 2010/12/28 in messages: typos, English, interpunction
  * pb 2011/07/12 C++ and removed several errors
+ * pb 2011/09/18 made a start with handling dataChanged at all
  */
 
 #include "KNN.h"
@@ -251,6 +252,7 @@ DO
     forget (my input);
     forget (my output);
     my nInstances = 0;
+	praat_dataChanged (me);   // BUG: this should be inserted much more often
 END
 
 DIRECT  (KNN_shuffle)

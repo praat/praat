@@ -58,8 +58,10 @@
 	#include "pa_mac_core.h"
 	#include "macport_off.h"
 #elif defined (_WIN32)
+	#include "winport_on.h"
 	#include <windows.h>
 	#include <mmsystem.h>
+	#include "winport_off.h"
 #elif defined (linux)
 	#include <fcntl.h>
 	#if defined (__OpenBSD__) || defined (__NetBSD__)
