@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110918)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110921)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.43# (21 September 2011)")
+LIST_ITEM (L"\\bu Linux: you can now change the font size of the script window.")
+LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when opening an already open file in the script window.")
 NORMAL (L"##5.2.42# (18 September 2011)")
 LIST_ITEM (L"\\bu Corrected a bug introduced in 5.2.36 that prevented formulas from working on FormantGrid objects.")
 NORMAL (L"##5.2.41# (17 September 2011)")

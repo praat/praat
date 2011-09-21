@@ -83,6 +83,7 @@ static void openDocument (TextEditor me, MelderFile file) {
 				Melder_error_ ("Text file ", file, " is already open.");
 				forget (me);   // don't forget me before Melder_error_, because "file" is owned by one of my dialogs
 				Melder_flushError (NULL);
+				return;
 			}
 		}
 	}

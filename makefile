@@ -12,16 +12,16 @@ include makefile.defs
 # Makes the Praat executable in the source directory.
 all:
 	$(MAKE) -C GSL
+	$(MAKE) -C kar
 	$(MAKE) -C num
 	$(MAKE) -C num/glpk
-	$(MAKE) -C kar
 	$(MAKE) -C audio
 	$(MAKE) -C audio/FLAC
 	$(MAKE) -C audio/mp3
 	$(MAKE) -C sys
+	$(MAKE) -C dwsys
 	$(MAKE) -C stat
 	$(MAKE) -C fon
-	$(MAKE) -C dwsys
 	$(MAKE) -C dwtools
 	$(MAKE) -C LPC
 	$(MAKE) -C EEG
@@ -41,9 +41,9 @@ all:
 
 clean:
 	$(MAKE) -C GSL clean
+	$(MAKE) -C kar clean
 	$(MAKE) -C num clean
 	$(MAKE) -C num/glpk clean
-	$(MAKE) -C kar clean
 	$(MAKE) -C audio clean
 	$(MAKE) -C audio/FLAC clean
 	$(MAKE) -C audio/mp3 clean
