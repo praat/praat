@@ -552,7 +552,10 @@ void Picture_copyToClipboard (Picture me) {
 }
 void Picture_copyToQuickDrawClipboard (Picture me) {
 	PicHandle pict = copyToPict (me);
-	if (! pict) Melder_flushError (NULL);
+	if (! pict) {
+		Melder_flushError (NULL);
+		return;
+	}
 	HLock ((Handle) pict);
 	ScrapRef scrap;
 	ClearCurrentScrap ();
@@ -563,7 +566,10 @@ void Picture_copyToQuickDrawClipboard (Picture me) {
 }
 void Picture_copyToClipboard_screenImage (Picture me) {
 	PicHandle pict = copyToPict_screenImage (me);
-	if (! pict) Melder_flushError (NULL);
+	if (! pict) {
+		Melder_flushError (NULL);
+		return;
+	}
 	HLock ((Handle) pict);
 	ScrapRef scrap;
 	ClearCurrentScrap ();

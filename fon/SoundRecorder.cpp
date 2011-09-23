@@ -620,8 +620,12 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 					my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
 					err = SPBRecord (& my spb, true);   /* Asynchronous. */
 					if (err == notEnoughMemoryErr) {
-						Melder_flushError ("Out of memory. Quit other programs."); return;
-					} else if (err != noErr) { onceError ("SPBRecord", err); return; }
+						Melder_flushError ("Out of memory. Quit other programs.");
+						return;
+					} else if (err != noErr) {
+						onceError ("SPBRecord", err);
+						return;
+					}
 				#endif
 			}
 		}

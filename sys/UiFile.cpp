@@ -77,28 +77,26 @@ UiForm UiInfile_create (GuiObject parent, const wchar *title,
 
 void UiInfile_do (I) {
 	iam (UiInfile);
-	SortedSetOfString infileNames = GuiFileSelect_getInfileNames (my parent, my name, my allowMultipleFiles);
-	if (infileNames == NULL) {
-		Melder_flushError (NULL);
-		return;
-	}
-	for (long ifile = 1; ifile <= infileNames -> size; ifile ++) {
-		SimpleString infileName = (SimpleString) infileNames -> item [ifile];
-		Melder_pathToFile (infileName -> string, & my file);
-		UiHistory_write (L"\n");
-		UiHistory_write (my invokingButtonTitle);
-		UiHistory_write (L" ");
-		UiHistory_write (infileName -> string);
-		structMelderFile file;
-		MelderFile_copy (& my file, & file);
-		try {
-			my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure);
-		} catch (MelderError) {
-			Melder_error_ ("File ", & file, " not finished.");
-			Melder_flushError (NULL);
+	try {
+		autoSortedSetOfString infileNames = GuiFileSelect_getInfileNames (my parent, my name, my allowMultipleFiles);
+		for (long ifile = 1; ifile <= infileNames -> size; ifile ++) {
+			SimpleString infileName = (SimpleString) infileNames -> item [ifile];
+			Melder_pathToFile (infileName -> string, & my file);
+			UiHistory_write (L"\n");
+			UiHistory_write (my invokingButtonTitle);
+			UiHistory_write (L" ");
+			UiHistory_write (infileName -> string);
+			structMelderFile file;
+			MelderFile_copy (& my file, & file);
+			try {
+				my okCallback ((UiForm) me, NULL, NULL, my invokingButtonTitle, false, my okClosure);
+			} catch (MelderError) {
+				Melder_throw ("File ", & file, " not finished.");
+			}
 		}
+	} catch (MelderError) {
+		Melder_flushError (NULL);
 	}
-	forget (infileNames);
 }
 
 /********** WRITING A FILE **********/

@@ -276,25 +276,25 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 	if (fieldData -> description -> rank == 1 || fieldData -> description -> rank == 3 || fieldData -> description -> rank < 0) {
 		MelderString_append (& name, fieldData -> history, L". ", strip_d (fieldData -> description -> name),
 			L" [", Melder_integer (fieldData -> minimum), L"..", Melder_integer (fieldData -> maximum), L"]");
-		if (! VectorEditor_create (my d_root, name.string, fieldData -> address,
-			fieldData -> description, fieldData -> minimum, fieldData -> maximum)) Melder_flushError (NULL);
+		VectorEditor_create (my d_root, name.string, fieldData -> address,
+			fieldData -> description, fieldData -> minimum, fieldData -> maximum);
 	} else if (fieldData -> description -> rank == 2) {
 		MelderString_append (& name, fieldData -> history, L". ", strip_d (fieldData -> description -> name),
 			L" [", Melder_integer (fieldData -> minimum), L"..", Melder_integer (fieldData -> maximum), L"]");
 		MelderString_append (& name, L" [", Melder_integer (fieldData -> min2), L"..", Melder_integer (fieldData -> max2), L"]");
-		if (! MatrixEditor_create (my d_root, name.string, fieldData -> address, fieldData -> description,
-			fieldData -> minimum, fieldData -> maximum, fieldData -> min2, fieldData -> max2)) Melder_flushError (NULL);
+		MatrixEditor_create (my d_root, name.string, fieldData -> address, fieldData -> description,
+			fieldData -> minimum, fieldData -> maximum, fieldData -> min2, fieldData -> max2);
 	} else if (fieldData -> description -> type == structwa) {
 		MelderString_append (& name, fieldData -> history, L". ", strip_d (fieldData -> description -> name));
-		if (! StructEditor_create (my d_root, name.string, fieldData -> address,
-			* (Data_Description *) fieldData -> description -> tagType)) Melder_flushError (NULL);
+		StructEditor_create (my d_root, name.string, fieldData -> address,
+			* (Data_Description *) fieldData -> description -> tagType);
 	} else if (fieldData -> description -> type == objectwa || fieldData -> description -> type == collectionwa) {
 		MelderString_append (& name, fieldData -> history, L". ", strip_d (fieldData -> description -> name));
-		if (! ClassEditor_create (my d_root, name.string, fieldData -> address,
-			Class_getDescription ((ClassInfo) fieldData -> description -> tagType))) Melder_flushError (NULL);
+		ClassEditor_create (my d_root, name.string, fieldData -> address,
+			Class_getDescription ((ClassInfo) fieldData -> description -> tagType));
 	} else /*if (fieldData -> description -> type == inheritwa)*/ {
-		if (! ClassEditor_create (my d_root, fieldData -> history, fieldData -> address,
-			fieldData -> description)) Melder_flushError (NULL);
+		ClassEditor_create (my d_root, fieldData -> history, fieldData -> address,
+			fieldData -> description);
 /*	} else {
 		Melder_casual ("Strange editor \"%s\" required (type %d, rank %d).",
 			strip_d (fieldData -> description -> name),

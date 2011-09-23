@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20110921)
+MAN_BEGIN (L"What's new?", L"ppgb", 20110923)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.2.44# (23 September 2011)")
+LIST_ITEM (L"\\bu Corrected a very old bug in the history mechanism (the button title wouldn't always show up).")
 NORMAL (L"##5.2.43# (21 September 2011)")
 LIST_ITEM (L"\\bu Linux: you can now change the font size of the script window.")
 LIST_ITEM (L"\\bu Corrected a bug that could cause Praat to crash when opening an already open file in the script window.")

@@ -429,7 +429,7 @@ int praat_doMenuCommand (const wchar *command, const wchar *arguments, Interpret
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! wcsequ (theCommands [i]. title, command) ||
 		(! wcsequ (theCommands [i]. window, L"Objects") && ! wcsequ (theCommands [i]. window, L"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
-	theCommands [i]. callback (NULL, arguments, interpreter, NULL, false, NULL); therror
+	theCommands [i]. callback (NULL, arguments, interpreter, command, false, NULL); therror
 	return 1;
 }
 

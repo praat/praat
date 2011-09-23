@@ -893,7 +893,7 @@ int praat_doAction (const wchar *command, const wchar *arguments, Interpreter in
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || wcscmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   /* Not found. */
-	theActions [i]. callback (NULL, arguments, interpreter, NULL, false, NULL); therror
+	theActions [i]. callback (NULL, arguments, interpreter, command, false, NULL); therror
 	return 1;
 }
 
