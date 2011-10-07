@@ -96,6 +96,10 @@ typedef struct structGuiText {
 	#define isMLTE(w)  ((w) -> macMlteObject != NULL)
 #endif
 
+#if win
+	static HFONT font10, font12, font14, font18, font24;
+#endif
+
 /*
  * (1) KEYBOARD FOCUS
  *
@@ -919,9 +923,14 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			my widget -> x, my widget -> y, my widget -> width, my widget -> height,
 			my widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
 		SetWindowLongPtr (my widget -> window, GWLP_USERDATA, (LONG_PTR) my widget);
-		static HFONT font;
-		if (! font) font = CreateFont (16, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
-		SetWindowFont (my widget -> window, font /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, FALSE);
+		if (! font10) {
+			font10 = CreateFont (13, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font12 = CreateFont (16, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font14 = CreateFont (19, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font18 = CreateFont (24, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+			font24 = CreateFont (32, 0, 0, 0, 0, 0, 0, 0, DEFAULT_CHARSET, 0, 0, 0, 0/*FIXED_PITCH | FF_MODERN*/, /*L"Doulos SIL"*/L"Courier New");
+		}
+		SetWindowFont (my widget -> window, font12 /*theScrolledHint ? font : GetStockFont (ANSI_VAR_FONT)*/, FALSE);
 		Edit_LimitText (my widget -> window, 0);
 		_GuiObject_position (my widget, left, right, top, bottom);
 		/*
@@ -1020,6 +1029,7 @@ void GuiText_cut (GuiObject widget) {
 		iam_text;
 		if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
 		SendMessage (widget -> window, WM_CUT, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
+		UpdateWindow (widget -> window);
 	#elif mac
 		iam_text;
 		if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
@@ -1150,6 +1160,7 @@ void GuiText_paste (GuiObject widget) {
 		iam_text;
 		if (! my editable) return;
 		SendMessage (widget -> window, WM_PASTE, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
+		UpdateWindow (widget -> window);
 	#elif mac
 		iam_text;
 		if (! my editable) return;
@@ -1189,6 +1200,7 @@ void GuiText_remove (GuiObject widget) {
 		iam_text;
 		if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
 		SendMessage (widget -> window, WM_CLEAR, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
+		UpdateWindow (widget -> window);
 	#elif mac
 		iam_text;
 		if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
@@ -1237,6 +1249,7 @@ void GuiText_replace (GuiObject widget, long from_pos, long to_pos, const wchar_
 		GuiText_setSelection (widget, from_pos, to_pos);
 		Edit_ReplaceSel (widget -> window, winText);
 		Melder_free (winText);
+		UpdateWindow (widget -> window);
 	#elif mac
 		iam_text;
 		long length = wcslen (text), i;
@@ -1324,6 +1337,27 @@ void GuiText_setFontSize (GuiObject widget, int size) {
 		modStyle -> font_desc = fontDesc;
 		gtk_widget_modify_style (GTK_WIDGET (widget), modStyle);
 	#elif win
+		iam_text;
+		// a trick to update the window. BUG: why doesn't UpdateWindow seem to suffice?
+		long first, last;
+		wchar *text = GuiText_getStringAndSelectionPosition (my widget, & first, & last);
+		GuiText_setString (my widget, L"");   // erase all
+		UpdateWindow (my widget -> window);
+		if (size <= 10) {
+			SetWindowFont (my widget -> window, font10, FALSE);
+		} else if (size <= 12) {
+			SetWindowFont (my widget -> window, font12, FALSE);
+		} else if (size <= 14) {
+			SetWindowFont (my widget -> window, font14, FALSE);
+		} else if (size <= 18) {
+			SetWindowFont (my widget -> window, font18, FALSE);
+		} else {
+			SetWindowFont (my widget -> window, font24, FALSE);
+		}
+		GuiText_setString (my widget, text);
+		Melder_free (text);
+		GuiText_setSelection (my widget, first, last);
+		UpdateWindow (my widget -> window);
 	#elif mac
 		iam_text;
 		if (isMLTE (me)) {
@@ -1379,6 +1413,7 @@ void GuiText_setSelection (GuiObject widget, long first, long last) {
 		last += numberOfLeadingLineBreaks + numberOfSelectedLineBreaks;
 		Melder_free (text);
 		Edit_SetSel (widget -> window, first, last);
+		UpdateWindow (widget -> window);
 	#elif mac
 		iam_text;
 		wchar_t *text = GuiText_getString (widget);
@@ -1428,6 +1463,7 @@ void GuiText_setString (GuiObject widget, const wchar_t *text) {
 		*to = '\0';
 		SetWindowText (widget -> window, winText);
 		Melder_free (winText);
+		UpdateWindow (widget -> window);
 	#elif mac
 		iam_text;
 		long length_utf32 = wcslen (text), length_utf16 = wcslen_utf16 (text, false);

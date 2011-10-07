@@ -1073,10 +1073,17 @@ DO
 	}
 END
 
-FORM_WRITE (Table_writeToTableFile, L"Save Table as table file", 0, L"Table")
+FORM_WRITE (Table_writeToCommaSeparatedFile, L"Save Table as comma-separated file", 0, L"Table")
 	LOOP {
 		iam (Table);
-		Table_writeToTableFile (me, file); therror
+		Table_writeToCommaSeparatedFile (me, file); therror
+	}
+END
+
+FORM_WRITE (Table_writeToTabSeparatedFile, L"Save Table as tab-separated file", 0, L"Table")
+	LOOP {
+		iam (Table);
+		Table_writeToTabSeparatedFile (me, file); therror
 	}
 END
 
@@ -1796,9 +1803,10 @@ void praat_uvafon_stat_init () {
 	praat_addAction1 (classPairDistribution, 1, L"Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
 
 	praat_addAction1 (classTable, 0, L"Table help", 0, 0, DO_Table_help);
-	praat_addAction1 (classTable, 1, L"Save as tab-separated file...", 0, 0, DO_Table_writeToTableFile);
-	praat_addAction1 (classTable, 1, L"Save as table file...", 0, praat_HIDDEN, DO_Table_writeToTableFile);
-	praat_addAction1 (classTable, 1, L"Write to table file...", 0, praat_HIDDEN, DO_Table_writeToTableFile);
+	praat_addAction1 (classTable, 1, L"Save as tab-separated file...", 0, 0, DO_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, L"Save as comma-separated file...", 0, 0, DO_Table_writeToCommaSeparatedFile);
+	praat_addAction1 (classTable, 1, L"Save as table file...", 0, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
+	praat_addAction1 (classTable, 1, L"Write to table file...", 0, praat_HIDDEN, DO_Table_writeToTabSeparatedFile);
 	praat_addAction1 (classTable, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Table_edit);
 	praat_addAction1 (classTable, 1, L"Edit", 0, praat_HIDDEN, DO_Table_edit);
 	praat_addAction1 (classTable, 0, L"Draw -", 0, 0, 0);

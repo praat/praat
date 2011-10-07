@@ -1868,27 +1868,39 @@ void Table_list (Table me, bool includeRowNumbers) {
 	MelderInfo_close ();
 }
 
-void Table_writeToTableFile (Table me, MelderFile file) {
-	try {
-		autoMelderString buffer;
+static void _Table_writeToCharacterSeparatedFile (Table me, MelderFile file, wchar kar) {
+	autoMelderString buffer;
+	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+		if (icol != 1) MelderString_appendCharacter (& buffer, kar);
+		wchar *s = my columnHeaders [icol]. label;
+		MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?"); therror
+	}
+	MelderString_appendCharacter (& buffer, '\n'); therror
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			if (icol != 1) MelderString_appendCharacter (& buffer, '\t');
-			wchar *s = my columnHeaders [icol]. label;
+			if (icol != 1) MelderString_appendCharacter (& buffer, kar);
+			wchar *s = row -> cells [icol]. string;
 			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?"); therror
 		}
 		MelderString_appendCharacter (& buffer, '\n'); therror
-		for (long irow = 1; irow <= my rows -> size; irow ++) {
-			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
-			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-				if (icol != 1) MelderString_appendCharacter (& buffer, '\t');
-				wchar *s = row -> cells [icol]. string;
-				MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?"); therror
-			}
-			MelderString_appendCharacter (& buffer, '\n'); therror
-		}
-		MelderFile_writeText (file, buffer.string); therror
+	}
+	MelderFile_writeText (file, buffer.string); therror
+}
+
+void Table_writeToTabSeparatedFile (Table me, MelderFile file) {
+	try {
+		_Table_writeToCharacterSeparatedFile (me, file, '\t');
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to tab-separated file.");
+	}
+}
+
+void Table_writeToCommaSeparatedFile (Table me, MelderFile file) {
+	try {
+		_Table_writeToCharacterSeparatedFile (me, file, ',');
+	} catch (MelderError) {
+		Melder_throw (me, ": not written to comma-separated file.");
 	}
 }
 

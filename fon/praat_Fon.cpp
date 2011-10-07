@@ -2916,6 +2916,14 @@ DIRECT (Matrix_to_Polygon)
 	}
 END
 
+DIRECT (Matrix_to_Sound)
+	LOOP {
+		iam (Matrix);
+		autoSound thee = Matrix_to_Sound (me);
+		praat_new (thee.transfer(), my name);
+	}
+END
+
 FORM (Matrix_to_Sound_mono, L"Matrix: To Sound (mono)", 0)
 	INTEGER (L"Row", L"1")
 	LABEL (L"", L"(negative values count from last row)")
@@ -6250,6 +6258,7 @@ praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classMatrix, 0, L"To Pitch", 0, 1, DO_Matrix_to_Pitch);
 		praat_addAction1 (classMatrix, 0, L"To PointProcess", 0, 1, DO_Matrix_to_PointProcess);
 		praat_addAction1 (classMatrix, 0, L"To Polygon", 0, 1, DO_Matrix_to_Polygon);
+		praat_addAction1 (classMatrix, 0, L"To Sound", 0, 1, DO_Matrix_to_Sound);
 		praat_addAction1 (classMatrix, 0, L"To Sound (slice)...", 0, 1, DO_Matrix_to_Sound_mono);
 		praat_addAction1 (classMatrix, 0, L"To Spectrogram", 0, 1, DO_Matrix_to_Spectrogram);
 		praat_addAction1 (classMatrix, 0, L"To TableOfReal", 0, 1, DO_Matrix_to_TableOfReal);

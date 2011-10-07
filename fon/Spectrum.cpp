@@ -25,6 +25,7 @@
  */
 
 #include "Sound_and_Spectrum.h"
+#include "SpectrumTier.h"
 
 #include "oo_DESTROY.h"
 #include "Spectrum_def.h"
@@ -433,6 +434,20 @@ double Spectrum_getKurtosis (Spectrum me, double power) {
 	double m4 = Spectrum_getCentralMoment (me, 4.0, power);
 	if (m2 == NUMundefined || m4 == NUMundefined || m2 == 0) return NUMundefined;
 	return m4 / (m2 * m2) - 3;
+}
+
+void Spectrum_getNearestMaximum (Spectrum me, double frequency, double *frequencyOfMaximum, double *heightOfMaximum) {
+	try {
+		autoSpectrumTier thee = Spectrum_to_SpectrumTier_peaks (me);
+		long index = AnyTier_timeToNearestIndex (thee.peek(), frequency);
+		if (index == 0)
+			Melder_throw ("No peak.");
+		RealPoint point = (RealPoint) thy points -> item [index];
+		*frequencyOfMaximum = point -> number;
+		*heightOfMaximum = point -> value;
+	} catch (MelderError) {
+		Melder_throw (me, ": no nearest maximum found.");
+	}
 }
 
 /* End of file Spectrum.cpp */

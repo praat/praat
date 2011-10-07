@@ -103,5 +103,7 @@ Spectrum Spectrum_cepstralSmoothing (Spectrum me, double bandWidth);
 void Spectrum_passHannBand (Spectrum me, double fmin, double fmax, double smooth);
 void Spectrum_stopHannBand (Spectrum me, double fmin, double fmax, double smooth);
 
+void Spectrum_getNearestMaximum (Spectrum me, double frequency, double *frequencyOfMaximum, double *heightOfMaximum);
+
 /* End of file Spectrum.h */
 #endif

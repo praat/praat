@@ -107,7 +107,8 @@ void Table_drawEllipse_e (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, int garnish);
 
 void Table_list (Table me, bool includeRowNumbers);
-void Table_writeToTableFile (Table me, MelderFile file);
+void Table_writeToTabSeparatedFile (Table me, MelderFile file);
+void Table_writeToCommaSeparatedFile (Table me, MelderFile file);
 Table Table_readFromTableFile (MelderFile file);
 Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar separator);
 

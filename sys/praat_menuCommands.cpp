@@ -79,7 +79,8 @@ static void do_menu (I, unsigned long modified) {
 			try {
 				callback (NULL, NULL, NULL, my title, modified, NULL); therror
 			} catch (MelderError) {
-				Melder_flushError ("Fixed command not executed.");
+				Melder_error_ ("Command \"", my title, "\" not executed.");
+				Melder_flushError (NULL);
 			}
 			praat_updateSelection (); return;
 		}
@@ -95,7 +96,8 @@ static void do_menu (I, unsigned long modified) {
 			try {
 				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL); therror
 			} catch (MelderError) {
-				Melder_flushError ("Script from added menu command not executed.");
+				Melder_error_ ("Command \"", my title, "\" not executed.");
+				Melder_flushError (NULL);
 			}
 			praat_updateSelection (); return;
 		}

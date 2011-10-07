@@ -29,7 +29,7 @@
 oo_CLASS_CREATE (ExperimentMFC, Data);
 oo_CLASS_CREATE (ResultsMFC, Data);
 
-int ExperimentMFC_start (ExperimentMFC me);
+void ExperimentMFC_start (ExperimentMFC me);
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim);
 void ExperimentMFC_playResponse (ExperimentMFC me, long iresp);
 

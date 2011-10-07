@@ -4425,6 +4425,7 @@ modifiers & _motif_SHIFT_MASK ? " shift" : "", message -> message == WM_KEYDOWN 
 			 * post the associated menu, if any.
 			 */
 			GuiObject me = (GuiObject) GetWindowLongPtr (message -> hwnd, GWLP_USERDATA);
+			//Melder_information (Melder_integer ((long) me), L" -- ", Melder_integer ((long) my subMenuId));
 			if (me && MEMBER (me, CascadeButton) && my subMenuId) {
 				RECT rect;
 				GetWindowRect (my window, & rect);

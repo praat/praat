@@ -287,6 +287,16 @@ Sound Matrix_to_Sound_mono (Matrix me, long row) {
 	}
 }
 
+Sound Matrix_to_Sound (Matrix me) {
+	try {
+		autoSound thee = Thing_new (Sound);
+		my structMatrix :: v_copy (thee.peek());
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": not converted to Sound.");
+	}
+}
+
 Matrix Sound_to_Matrix (Sound me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);

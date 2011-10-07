@@ -508,7 +508,8 @@ static void do_menu (I, bool modified) {
 			try {
 				callback (NULL, NULL, NULL, my title, modified, NULL); therror
 			} catch (MelderError) {
-				Melder_flushError ("Command not executed.");
+				Melder_error_ ("Command \"", my title, "\" not executed.");
+				Melder_flushError (NULL);
 			}
 			Ui_setAllowExecutionHook (NULL, NULL);
 			praat_updateSelection (); return;
@@ -525,7 +526,8 @@ static void do_menu (I, bool modified) {
 			try {
 				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL); therror
 			} catch (MelderError) {
-				Melder_flushError ("Script not executed.");
+				Melder_error_ ("Command \"", my title, "\" not executed.");
+				Melder_flushError (NULL);
 			}
 			praat_updateSelection (); return;
 		}
@@ -542,13 +544,9 @@ static void cb_menu (GUI_ARGS) {
 			modified = event -> what == mouseDown &&
 				(event -> modifiers & (cmdKey | shiftKey | optionKey | controlKey)) != 0;
 		#elif defined (_WIN32)
-			modified = FALSE;
+			modified = false;   // TODO: implement
 		#else
-			#if motif
-			XButtonPressedEvent *event = (XButtonPressedEvent *) ((XmDrawingAreaCallbackStruct *) call) -> event;
-			modified = event -> type == ButtonPress &&
-				((event -> state & (ShiftMask | ControlMask | Mod1Mask)) != 0 || event -> button == Button2 || event -> button == Button3);
-			#endif
+			modified = false;   // TODO: implement
 		#endif
 	}
 	do_menu (void_me, modified);
@@ -838,14 +836,6 @@ void praat_actions_createDynamicMenu (GuiObject form, int width) {
 				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
 				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, -1,
 				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, -1,
-				XmNwidth, width,
-				NULL);
-		#elif defined (UNIX)
-			(void) width;
-			XtVaSetValues (praat_dynamicMenuWindow,
-				XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMainWindowMenuBarHeight (),
-				XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 0,
-				XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
 				XmNwidth, width,
 				NULL);
 		#else

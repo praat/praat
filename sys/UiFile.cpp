@@ -35,6 +35,7 @@ Thing_define (UiFile, Thing) {
 };
 
 void structUiFile :: v_destroy () {
+	Melder_free (invokingButtonTitle);
 	UiFile_Parent :: v_destroy ();
 }
 
@@ -68,7 +69,7 @@ UiForm UiInfile_create (GuiObject parent, const wchar *title,
 	UiInfile me = Thing_new (UiInfile);
 	my okCallback = okCallback;
 	my okClosure = okClosure;
-	my invokingButtonTitle = invokingButtonTitle;
+	my invokingButtonTitle = Melder_wcsdup (invokingButtonTitle);
 	my helpTitle = helpTitle;
 	my allowMultipleFiles = allowMultipleFiles;
 	UiFile_init (me, parent, title);
@@ -116,7 +117,7 @@ UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
 	UiOutfile me = Thing_new (UiOutfile);
 	my okCallback = okCallback;
 	my okClosure = okClosure;
-	my invokingButtonTitle = invokingButtonTitle;
+	my invokingButtonTitle = Melder_wcsdup (invokingButtonTitle);
 	my helpTitle = helpTitle;
 	UiFile_init (me, parent, title);
 	my allowExecutionHook = theAllowExecutionHookHint;

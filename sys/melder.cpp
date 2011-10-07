@@ -839,7 +839,7 @@ static void gui_fatal (const wchar *message) {
 		mac_message (kAlertStopAlert, message);
 		SysError (11);
 	#elif defined (_WIN32)
-		MessageBox (NULL, message, L"Fatal error", MB_OK);
+		MessageBox (NULL, message, L"Fatal error", MB_OK | MB_TOPMOST);
 	#endif
 }
 
@@ -857,7 +857,7 @@ static void gui_error (const wchar *message) {
 		mac_message (kAlertStopAlert, message);
 		XmUpdateDisplay (0);
 	#elif defined (_WIN32)
-		MessageBox (NULL, message, L"Message", MB_OK);
+		MessageBox (NULL, message, L"Message", MB_OK | MB_TOPMOST | MB_ICONEXCLAMATION);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
 	#endif
 	if (memoryIsLow) {
 		theMessageFund = (char *) malloc (theMessageFund_SIZE);
@@ -887,7 +887,7 @@ static void gui_warning (const wchar *message) {
 		mac_message (kAlertNoteAlert, message);
 		XmUpdateDisplay (0);
 	#elif defined (_WIN32)
-		MessageBox (NULL, message, L"Warning", MB_OK);
+		MessageBox (NULL, message, L"Warning", MB_OK | MB_TOPMOST);
 	#endif
 }
 

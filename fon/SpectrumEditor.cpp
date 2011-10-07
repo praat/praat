@@ -139,6 +139,15 @@ static void menu_cb_stopBand (EDITOR_ARGS) {
 	EDITOR_END
 }
 
+static void menu_cb_moveCursorToPeak (EDITOR_ARGS) {
+	EDITOR_IAM (SpectrumEditor);
+	double frequencyOfMaximum, heightOfMaximum;
+	Spectrum_getNearestMaximum ((Spectrum) my data, 0.5 * (my startSelection + my endSelection), & frequencyOfMaximum, & heightOfMaximum);
+	my startSelection = my endSelection = frequencyOfMaximum;
+	my cursorHeight = heightOfMaximum;
+	FunctionEditor_marksChanged (me);
+}
+
 static void menu_cb_setDynamicRange (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	EDITOR_FORM (L"Set dynamic range", 0)
@@ -163,6 +172,8 @@ void structSpectrumEditor :: v_createMenus () {
 	Editor_addCommand (this, L"Edit", L"-- edit band --", 0, NULL);
 	Editor_addCommand (this, L"Edit", L"Pass band...", 0, menu_cb_passBand);
 	Editor_addCommand (this, L"Edit", L"Stop band...", 0, menu_cb_stopBand);
+	Editor_addCommand (this, L"Select", L"-- move to peak --", 0, 0);
+	Editor_addCommand (this, L"Select", L"Move cursor to nearest peak", 'K', menu_cb_moveCursorToPeak);
 }
 
 void structSpectrumEditor :: v_createMenuItems_view (EditorMenu menu) {

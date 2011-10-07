@@ -169,7 +169,7 @@ static void permuteRandomly (ExperimentMFC me, long first, long last) {
 	}
 }
 
-int ExperimentMFC_start (ExperimentMFC me) {
+void ExperimentMFC_start (ExperimentMFC me) {
 	try {
 		long maximumStimulusPlaySamples, maximumResponsePlaySamples, maximumPlaySamples;
 		long stimulusCarrierBeforeSamples = 0, stimulusCarrierAfterSamples = 0, maximumStimulusSamples = 0;
@@ -269,12 +269,11 @@ int ExperimentMFC_start (ExperimentMFC me) {
 				my stimuli [itrial] = NUMrandomInteger (1, my numberOfDifferentStimuli);
 		}
 		Melder_warningOn ();
-		return 1;
 	} catch (MelderError) {
 		Melder_warningOn ();
 		my numberOfTrials = 0;
 		NUMvector_free (my stimuli, 1); my stimuli = NULL;
-		return 0;
+		Melder_throw (me, ": not started.");
 	}
 }
 

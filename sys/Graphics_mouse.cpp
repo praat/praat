@@ -63,7 +63,7 @@ void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
 		ScreenToClient (d_winWindow, & pos);
 		Graphics_DCtoWC (this, pos. x, pos. y, xWC, yWC);
 	#elif mac
-		if (HIGetMousePosition != NULL) {   // AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER
+		if (HIGetMousePosition != NULL && false) {   // AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER
 			//Melder_casual ("HIGetMousePosition exists");
 			HIPoint mouseLoc;
 			HIGetMousePosition (kHICoordSpaceWindow, GetWindowFromPort (d_macPort), & mouseLoc);

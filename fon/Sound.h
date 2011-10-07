@@ -190,6 +190,8 @@ Matrix Sound_to_Matrix (Sound me);
 	Return NULL if out of memory.  
 */
 
+Sound Matrix_to_Sound (Matrix me);
+
 Sound Matrix_to_Sound_mono (Matrix me, long row);
 /*
 	Function:

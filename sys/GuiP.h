@@ -72,7 +72,8 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 			struct { XtCallbackProc proc; XtPointer closure; } pairs [MAXNUM_CALLBACKS];
 		} XtCallbackList;
 
-		struct structGuiObject {
+		class structGuiObject {
+		public:
 			long magicNumber;
 			unsigned long widgetClass;
 			GuiObject parent, previousSibling, nextSibling, firstChild;

@@ -678,7 +678,7 @@ void structTextEditor :: v_createMenus () {
 	Editor_addCommand (this, L"Search", L"Go to line...", 'L', menu_cb_goToLine);
 	Editor_addMenu (this, L"Convert", 0);
 	Editor_addCommand (this, L"Convert", L"Convert to C string", 0, menu_cb_convertToCString);
-	#if defined (macintosh) || defined (UNIX)
+	#if defined (macintosh) || defined (UNIX) || defined (_WIN32)
 		Editor_addMenu (this, L"Font", 0);
 		Editor_addCommand (this, L"Font", L"Font size...", 0, menu_cb_fontSize);
 		fontSizeButton_10 = Editor_addCommand (this, L"Font", L"10", GuiMenu_CHECKBUTTON, menu_cb_10);
