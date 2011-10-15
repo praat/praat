@@ -201,7 +201,7 @@ static void GaussianMixture_setDefaultMixtureNames (GaussianMixture me) {
 	autoMelderString s;
 	for (long im = 1; im <= my numberOfComponents; im++) {
 		Covariance cov = (Covariance) my covariances -> item[im];
-		MelderString_append2 (&s, L"m", Melder_integer (im));
+		MelderString_append (&s, L"m", Melder_integer (im));
 		Thing_setName (cov, s.string);
 		MelderString_empty (&s);
 	}

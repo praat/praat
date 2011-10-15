@@ -1344,8 +1344,8 @@ static void OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, lon
 			}
 			if (icons > my numberOfConstraints) {   // completed the loop?
 				if (warnIfStalled && ! equivalent)
-					Melder_warning6 (L"Correct output is harmonically bounded (by having strict superset violations as compared to the learner's output)! EDCD stalls.\n"
-						"Input: ", tableau -> input, L"\nCorrect output: ", loser -> output, L"\nLearner's output: ", winner -> output);
+					Melder_warning ("Correct output is harmonically bounded (by having strict superset violations as compared to the learner's output)! EDCD stalls.\n"
+						"Input: ", tableau -> input, "\nCorrect output: ", loser -> output, "\nLearner's output: ", winner -> output);
 				return;
 			}
 			/*

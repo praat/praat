@@ -774,7 +774,7 @@ static void initialize (SoundRecorder me) {
 							case 44100: my fsamp_ [SoundRecorder_IFSAMP_44100]. canDo = true; break;
 							case 48000: my fsamp_ [SoundRecorder_IFSAMP_48000]. canDo = true; break;
 							case 64000: my fsamp_ [SoundRecorder_IFSAMP_64000]. canDo = true; break;
-							default: Melder_warning3 (L"Your computer seems to support a sampling frequency of ", Melder_integer (rate_ushort), L" Hz. "
+							default: Melder_warning ("Your computer seems to support a sampling frequency of ", rate_ushort, " Hz. "
 								"Contact the author (paul.boersma@uva.nl) to make this frequency available to you.");
 						}
 					}

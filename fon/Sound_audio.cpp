@@ -266,7 +266,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				OSErr err = SPBSetDeviceInfo (refNum, siInputSource, & macInputSource);
 				if (err != noErr) {
 					static int notified = FALSE;
-					if (! notified) Melder_warning5 (L"(Sound_record:) Cannot set input source to ", Melder_integer (inputSource), L". Error #", Melder_integer (err), L".");
+					if (! notified) Melder_warning ("(Sound_record:) Cannot set input source to ", inputSource, ". Error #", err, ".");
 					notified = TRUE;
 				}
 			}

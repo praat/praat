@@ -99,39 +99,39 @@ static void drawBoxPlot (Graphics g) {
 	y = q75 + 2.5 * hspread;
 	Graphics_text (g, x, y, L"*");
 	Graphics_arrow (g, xar, y, xal1, y);
-	Graphics_text (g, xtl, y, L"outlier > %upperInnerFence");
+	Graphics_text (g, xtl, y, L"outlier > %%upperInnerFence%");
 	y = q75 + 3.5 * hspread;
 	Graphics_text (g, x, y, L"o");
 	Graphics_arrow (g, xar, y, xal1, y);
-	Graphics_text (g, xtl, y, L"outlier > %upperOuterFence");
+	Graphics_text (g, xtl, y, L"outlier > %%upperOuterFence%");
 	y = upperOuterFence;
 	Graphics_setLineType (g, Graphics_DOTTED);
 	Graphics_line (g, -xtl, y, xtl, y);
-	Graphics_text (g, xtl, y, L"%upperOuterFence");
+	Graphics_text (g, xtl, y, L"%%upperOuterFence%");
 	y = upperInnerFence;
 	Graphics_line (g, -xtl, y, xtl, y);
-	Graphics_text (g, xtl, y, L"%upperInnerFence");
+	Graphics_text (g, xtl, y, L"%%upperInnerFence%");
 	Graphics_line (g, x - w, mean, x + w, mean);
 	Graphics_setLineType (g, Graphics_DRAWN);
 	y = upperWhisker;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%upperWhisker");
+	Graphics_text (g, xtl, y, L"%%upperWhisker%");
 	y = lowerWhisker;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%lowerWhisker");
+	Graphics_text (g, xtl, y, L"%%lowerWhisker%");
 
 	y = q75;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%q75");
+	Graphics_text (g, xtl, y, L"%%q75%");
 	y = q25;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%q25");
+	Graphics_text (g, xtl, y, L"%%q25%");
 	y = q50;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%q50");
+	Graphics_text (g, xtl, y, L"%%q50%");
 	y = mean;
 	Graphics_arrow (g, xar, y, xal2, y);
-	Graphics_text (g, xtl, y, L"%mean");
+	Graphics_text (g, xtl, y, L"%%mean%");
 	Graphics_unsetInner (g);
 }
 
@@ -147,13 +147,13 @@ static void drawPartionedMatrix (Graphics g) {
 	x1 = 1.5; y1 = 7+3/2;
 	Graphics_setFontSize (g, 14);
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	Graphics_text (g, x1, y1, L"#S__yy_");
+	Graphics_text (g, x1, y1, L"##S__yy_#");
 	x1 = 3 + 7/2;
-	Graphics_text (g, x1, y1, L"#S__yx_");
+	Graphics_text (g, x1, y1, L"##S__yx_#");
 	y1 = 7/2;
-	Graphics_text (g, x1, y1, L"#S__xx_");
+	Graphics_text (g, x1, y1, L"##S__xx_#");
 	x1 = 1.5;
-	Graphics_text (g, x1, y1, L"#S__xy_");
+	Graphics_text (g, x1, y1, L"##S__xy_#");
 }
 
 void manual_dwtools_init (ManPages me);
@@ -226,33 +226,33 @@ NORMAL (L"This is a very simple recipe: If you want an overall significance "
 	"by %k to obtain the significance level for the individual tests.")
 MAN_END
 
-MAN_BEGIN (L"box plot", L"djmw", 20000524)
+MAN_BEGIN (L"box plot", L"djmw", 20111010)
 INTRO (L"A box plot provides a simple graphical summary of data. These plots "
 	"originate from the work of @@Tukey (1977)@.")
 ENTRY (L"Definitions")
 NORMAL (L"The following figure shows an annotated box plot.")
 PICTURE (5.0, 5.0, drawBoxPlot)
 NORMAL (L"To understand the box plot we need the following definitions:")
-LIST_ITEM (L"%q25 = lower quartile, 25\\% of the data lie below this value")
-LIST_ITEM (L"%q50 = median, 50\\% of the data lie below this value")
-LIST_ITEM (L"%q75 = upper quartile, 25\\% of the data lie above this value")
+LIST_ITEM (L"%%q25% = lower quartile, 25\\%  of the data lie below this value")
+LIST_ITEM (L"%%q50% = median, 50\\%  of the data lie below this value")
+LIST_ITEM (L"%%q75% = upper quartile, 25\\%  of the data lie above this value")
 NORMAL (L"The following definitions all depend on these quantiles:")
-LIST_ITEM (L"%hspread = |%q75 \\-- %q25| (50\\% interval)")
-LIST_ITEM (L"%lowerOuterFence = %q25 \\-- 3.0 * %hspread (not in figure)")
-LIST_ITEM (L"%lowerInnerFence = %q25 \\-- 1.5 * %hspread (not in figure)")
-LIST_ITEM (L"%upperInnerFence = %q75 + 1.5 * %hspread")
-LIST_ITEM (L"%upperOuterFence = %q75 + 3.0 * %hspread")
-LIST_ITEM (L"%lowerWhisker = smallest data value larger then %lowerInnerFence")
-LIST_ITEM (L"%upperWhisker = largest data value smaller then %upperInnerFence")
+LIST_ITEM (L"%%hspread% = |%%q75% \\-- %%q25%| (50\\%  interval)")
+LIST_ITEM (L"%%lowerOuterFence% = %%q25% \\-- 3.0 * %%hspread% (not in figure)")
+LIST_ITEM (L"%%lowerInnerFence% = %%q25% \\-- 1.5 * %%hspread% (not in figure)")
+LIST_ITEM (L"%%upperInnerFence% = %%q75% + 1.5 * %%hspread%")
+LIST_ITEM (L"%%upperOuterFence% = %%q75% + 3.0 * %%hspread%")
+LIST_ITEM (L"%%lowerWhisker% = smallest data value larger then %%lowerInnerFence%")
+LIST_ITEM (L"%%upperWhisker% = largest data value smaller then %%upperInnerFence%")
 NORMAL (L"The box plot is a summary of the data in which:")
 LIST_ITEM (L"\\bu the horizontal lines of the rectangle correspond to "
-	"%q25, %q50 and %q75, respectively.")
+	"%%q25%, %%q50% and %%q75%, respectively.")
 LIST_ITEM (L"\\bu the dotted line corresponds to the mean.")
-LIST_ITEM (L"\\bu the outliers outside the %outerFences are drawn with an 'o'.")
-LIST_ITEM (L"\\bu the outliers in the intervals (%lowerOuterFence, %lowerInnerFence) "
-	"and (%upperInnerFence, %upperOuterFence) are drawn with an '*'.")
-LIST_ITEM (L"\\bu the whisker lines outside the rectangle connect %q25 with %lowerWhisker, and, "
-	"%q75 with %upperWhisker, respectively. With no outliers present, the "
+LIST_ITEM (L"\\bu the outliers outside the %%outerFences% are drawn with an 'o'.")
+LIST_ITEM (L"\\bu the outliers in the intervals (%%lowerOuterFence%, %%lowerInnerFence%) "
+	"and (%%upperInnerFence%, %%upperOuterFence%) are drawn with an '*'.")
+LIST_ITEM (L"\\bu the whisker lines outside the rectangle connect %%q25% with %%lowerWhisker%, and, "
+	"%%q75% with %%upperWhisker%, respectively. With no outliers present, the "
 	"whiskers mark minimum and/or maximum of the data.")
 MAN_END
 
@@ -4308,10 +4308,10 @@ NORMAL (L"D.J.P.J. Van Nierop, L.C.W. Pols & R. Plomp (1973): \"Frequency "
 	"analysis of Dutch vowels from 25 female speakers.\" %%Acustica% #29: 110\\--118")
 MAN_END
 
-MAN_BEGIN (L"Weenink (1985)", L"djmw", 20040225)
-NORMAL (L"D.J.M. Weenink (1999), \"Formant analysis of Dutch vowels from 10 children\", "
+MAN_BEGIN (L"Weenink (1985)", L"djmw", 20111010)
+NORMAL (L"D.J.M. Weenink (1985), \"Formant analysis of Dutch vowels from 10 children\", "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
-		"University of Amsterdam% #25, 81\\--99.")
+		"University of Amsterdam% #9, 45\\--52.")
 MAN_END
 
 MAN_BEGIN (L"Watrous (1991)", L"djmw", 20080125)
@@ -4319,15 +4319,15 @@ NORMAL (L"R.L. Watrous (1991): \"Current status of Peterson-Barney vowel formant
 	"%%Journal of the Acoustical Society of America% #89: 2459\\--2460.")
 MAN_END
 
-MAN_BEGIN (L"Weenink (1985)", L"djmw", 20041217)
-NORMAL (L"D.J.M. Weenink (1985): \"Accurate algorithms for performing "
+MAN_BEGIN (L"Weenink (1999)", L"djmw", 20041217)
+NORMAL (L"D.J.M. Weenink (1999): \"Accurate algorithms for performing "
  		"principal component analysis and discriminant analysis.\" "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
-		"University of Amsterdam% #19: 45\\--52.")
+		"University of Amsterdam% #23: 77\\--89.")
 MAN_END
 
 MAN_BEGIN (L"Weenink (2003)", L"djmw", 20040225)
-NORMAL (L"D.J.M. Weenink (1999): \"Canonical correlation analysis.\" "
+NORMAL (L"D.J.M. Weenink (2003): \"Canonical correlation analysis.\" "
 		"%%Proceedings of the Institute of Phonetic Sciences of the "
 		"University of Amsterdam% #25: 81\\--99.")
 MAN_END

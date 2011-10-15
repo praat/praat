@@ -176,7 +176,7 @@ static wchar * _MelderFile_readText (MelderFile file, char **string8) {
 					}
 				}
 				if (numberOfNullBytes > 0) {
-					Melder_warning5 (L"Ignored ", Melder_integer (numberOfNullBytes), L" null bytes in text file ", MelderFile_messageName (file), L".");
+					Melder_warning ("Ignored ", numberOfNullBytes, " null bytes in text file ", file, ".");
 				}
 			}
 			if (string8 != NULL) {

@@ -380,15 +380,6 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
 void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
 	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
-#define MelderString_append1 MelderString_append
-#define MelderString_append2 MelderString_append
-#define MelderString_append3 MelderString_append
-#define MelderString_append4 MelderString_append
-#define MelderString_append5 MelderString_append
-#define MelderString_append6 MelderString_append
-#define MelderString_append7 MelderString_append
-#define MelderString_append8 MelderString_append
-#define MelderString_append9 MelderString_append
 void MelderString_appendCharacter (MelderString *me, wchar character);
 void MelderString16_appendCharacter (MelderString16 *me, wchar character);
 void MelderString_get (MelderString *me, wchar *destination);   // performs no boundary checking
@@ -513,15 +504,6 @@ void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, cons
 void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
 void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
 void Melder_information (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
-#define Melder_information1 Melder_information
-#define Melder_information2 Melder_information
-#define Melder_information3 Melder_information
-#define Melder_information4 Melder_information
-#define Melder_information5 Melder_information
-#define Melder_information6 Melder_information
-#define Melder_information7 Melder_information
-#define Melder_information8 Melder_information
-#define Melder_information9 Melder_information
 
 void Melder_informationReal (double value, const wchar *units);   /* %.17g or --undefined--; units may be NULL */
 
@@ -689,15 +671,6 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
 	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
 	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
-#define Melder_warning1 Melder_warning
-#define Melder_warning2 Melder_warning
-#define Melder_warning3 Melder_warning
-#define Melder_warning4 Melder_warning
-#define Melder_warning5 Melder_warning
-#define Melder_warning6 Melder_warning
-#define Melder_warning7 Melder_warning
-#define Melder_warning8 Melder_warning
-#define Melder_warning9 Melder_warning
 
 void Melder_warningOff (void);
 void Melder_warningOn (void);
@@ -721,15 +694,6 @@ void Melder_progress (double progress, const wchar *s1, const wchar *s2, const w
 void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
 void Melder_progressOff (void);
 void Melder_progressOn (void);
-#define Melder_progress1 Melder_progress
-#define Melder_progress2 Melder_progress
-#define Melder_progress3 Melder_progress
-#define Melder_progress4 Melder_progress
-#define Melder_progress5 Melder_progress
-#define Melder_progress6 Melder_progress
-#define Melder_progress7 Melder_progress
-#define Melder_progress8 Melder_progress
-#define Melder_progress9 Melder_progress
 /*
 	Function:
 		Show the progress of a time-consuming process.
@@ -779,15 +743,6 @@ void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const 
 void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7);
 void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8);
 void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9);
-#define Melder_monitor1 Melder_monitor
-#define Melder_monitor2 Melder_monitor
-#define Melder_monitor3 Melder_monitor
-#define Melder_monitor4 Melder_monitor
-#define Melder_monitor5 Melder_monitor
-#define Melder_monitor6 Melder_monitor
-#define Melder_monitor7 Melder_monitor
-#define Melder_monitor8 Melder_monitor
-#define Melder_monitor9 Melder_monitor
 /*
 	Function:
 		Show the progress of a time-consuming process.
@@ -839,7 +794,7 @@ public:
 		d_graphics = (Graphics) Melder_monitor (0.0, message);
 	}
 	~autoMelderMonitor () {
-		Melder_monitor1 (1.0, NULL);
+		Melder_monitor (1.0, NULL);
 	}
 	Graphics graphics () { return d_graphics; }
 };

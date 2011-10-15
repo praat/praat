@@ -20,6 +20,8 @@
 #include <ctype.h>
 #include "ManPages.h"
 #include "longchar.h"
+#include "Interpreter.h"
+#include "praat.h"
 
 Thing_implement (ManPages, Data, 0);
 
@@ -145,7 +147,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		try {
 			par -> type = texgete1 (text, kManPage_type_getValue);
 		} catch (MelderError) {
-			if (wcsstr (Melder_getError (), L"end of text")) {
+			if (Melder_hasError (L"end of text")) {
 				Melder_clearError ();
 				break;
 			} else {
@@ -173,7 +175,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 				 */
 				MelderDir_relativePathToFile (& my rootDirectory, link + 3, & file2);
 				if (! MelderFile_exists (& file2)) {
-					Melder_warning3 (L"Cannot find sound file ", MelderFile_messageName (& file2), L".");
+					Melder_warning (L"Cannot find sound file ", MelderFile_messageName (& file2), L".");
 				}
 			} else if (link [0] == '\\' && link [1] == 'S' && link [2] == 'C') {
 				/*
@@ -192,7 +194,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 				}
 				MelderDir_relativePathToFile (& my rootDirectory, fileName, & file2);
 				if (! MelderFile_exists (& file2)) {
-					Melder_warning3 (L"Cannot find script ", MelderFile_messageName (& file2), L".");
+					Melder_warning (L"Cannot find script ", MelderFile_messageName (& file2), L".");
 				}
 				my executable = TRUE;
 			} else {
@@ -348,7 +350,7 @@ static void grind (ManPages me) {
 	}
 	if (ndangle) {
 		MelderInfo_close ();
-		Melder_warning3 (L"(ManPages::grind:) ", Melder_integer (ndangle), L" dangling links encountered. See console window.");
+		Melder_warning ("(ManPages::grind:) ", ndangle, " dangling links encountered. See console window.");
 	}
 
 	/*
@@ -478,6 +480,7 @@ static struct stylesInfo {
 };
 
 static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragraph paragraphs, MelderString *buffer) {
+	long numberOfPictures = 0;
 	bool inList = false, inItalic = false, inBold = false;
 	bool inSub = false, inCode = false, inSuper = false, ul = false, inSmall = false;
 	bool wordItalic = false, wordBold = false, wordCode = false, letterSuper = false;
@@ -490,31 +493,111 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			(type >= kManPage_type_TAG1 && type <= kManPage_type_TAG3);
 		bool isDefinition = type == kManPage_type_DEFINITION ||
 			(type >= kManPage_type_DEFINITION1 && type <= kManPage_type_DEFINITION3);
-		/*int isCode = type == kManPage_type_CODE ||
+		/*bool isCode = type == kManPage_type_CODE ||
 			(type >= kManPage_type_CODE1 && type <= kManPage_type_CODE5);*/
 
-		/*
-		 * We do not recognize pictures yet.
-		 */
-		if (! p) {
-			#ifdef macintoshxxx
-				if (type == kManPage_type_PICTURE) {
-					Graphics graphics = Graphics_create_pdffile (file, 75, 0.0, paragraph -> width, 0.0, paragraph -> height);
-					Graphics_setFont (graphics, kGraphics_font_TIMES);
-					Graphics_setFontStyle (graphics, 0);
-					Graphics_setFontSize (graphics, 12);
-					Graphics_setWrapWidth (graphics, 0);
-					Graphics_setViewport (graphics, 0.0, paragraph -> width, 0.0, paragraph -> height);
-					paragraph -> draw (graphics);
-					Graphics_setViewport (graphics, 0, 1, 0, 1);
-					Graphics_setWindow (graphics, 0, 1, 0, 1);
-					Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_BOTTOM);
-					forget (graphics);
-					//MelderString_append
+		if (type == kManPage_type_PICTURE) {
+			numberOfPictures ++;
+			structMelderFile pdfFile;
+			MelderFile_copy (file, & pdfFile);
+			pdfFile. path [wcslen (pdfFile. path) - 5] = '\0';   // delete extension ".html"
+			wcscat (pdfFile. path, Melder_wcscat (L"_", Melder_integer (numberOfPictures), L".pdf"));
+			Graphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
+			Graphics_setFont (graphics, kGraphics_font_TIMES);
+			Graphics_setFontStyle (graphics, 0);
+			Graphics_setFontSize (graphics, 12);
+			Graphics_setWrapWidth (graphics, 0);
+			Graphics_setViewport (graphics, 0.0, paragraph -> width, 0.0, paragraph -> height);
+			paragraph -> draw (graphics);
+			Graphics_setViewport (graphics, 0, 1, 0, 1);
+			Graphics_setWindow (graphics, 0, 1, 0, 1);
+			Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_BOTTOM);
+			forget (graphics);
+			structMelderFile tiffFile;
+			MelderFile_copy (file, & tiffFile);
+			tiffFile. path [wcslen (tiffFile. path) - 5] = '\0';   // delete extension ".html"
+			wcscat (tiffFile. path, Melder_wcscat (L"_", Melder_integer (numberOfPictures), L".png"));
+			system (Melder_peekWcsToUtf8 (Melder_wcscat (L"/usr/local/bin/gs -q -dNOPAUSE "
+				"-r200x200 -sDEVICE=png16m -sOutputFile=", tiffFile.path,
+				L" ", pdfFile. path, L" quit.ps")));
+			MelderFile_delete (& pdfFile);
+			MelderString_append (buffer, Melder_wcscat (L"<p align=middle><img height=", Melder_integer (paragraph -> height * 100),
+				L" width=", Melder_integer (paragraph -> width * 100), L" src=", MelderFile_name (& tiffFile), L"></p>"));
+			continue;
+		}
+		if (type == kManPage_type_SCRIPT) {
+			autoInterpreter interpreter = Interpreter_createFromEnvironment (NULL);
+			numberOfPictures ++;
+			structMelderFile pdfFile;
+			MelderFile_copy (file, & pdfFile);
+			pdfFile. path [wcslen (pdfFile. path) - 5] = '\0';   // delete extension ".html"
+			wcscat (pdfFile. path, Melder_wcscat (L"_", Melder_integer (numberOfPictures), L".pdf"));
+			Graphics graphics = Graphics_create_pdffile (& pdfFile, 100, 0.0, paragraph -> width, 0.0, paragraph -> height);
+			Graphics_setFont (graphics, kGraphics_font_TIMES);
+			Graphics_setFontStyle (graphics, 0);
+			Graphics_setFontSize (graphics, 12);
+			Graphics_setWrapWidth (graphics, 0);
+			static structPraatApplication praatApplication;
+			static structPraatObjects praatObjects;
+			static structPraatPicture praatPicture;
+			theCurrentPraatApplication = & praatApplication;
+			theCurrentPraatApplication -> batch = true;
+			theCurrentPraatObjects = (PraatObjects) & praatObjects;
+			theCurrentPraatPicture = (PraatPicture) & praatPicture;
+			theCurrentPraatPicture -> graphics = graphics;
+			theCurrentPraatPicture -> font = kGraphics_font_TIMES;
+			theCurrentPraatPicture -> fontSize = 12;
+			theCurrentPraatPicture -> lineType = Graphics_DRAWN;
+			theCurrentPraatPicture -> colour = Graphics_BLACK;
+			theCurrentPraatPicture -> lineWidth = 1.0;
+			theCurrentPraatPicture -> arrowSize = 1.0;
+			theCurrentPraatPicture -> x1NDC = 0;
+			theCurrentPraatPicture -> x2NDC = paragraph -> width;
+			theCurrentPraatPicture -> y1NDC = 0;
+			theCurrentPraatPicture -> y2NDC = paragraph -> height;
+			Graphics_setViewport (graphics, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
+			Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
+			long x1DC, y1DC, x2DC, y2DC;
+			Graphics_WCtoDC (graphics, 0.0, 0.0, & x1DC, & y2DC);
+			Graphics_WCtoDC (graphics, 1.0, 1.0, & x2DC, & y1DC);
+			Graphics_resetWsViewport (graphics, x1DC, x2DC, y1DC, y2DC);
+			Graphics_setWsWindow (graphics, 0, paragraph -> width, 0, paragraph -> height);
+			theCurrentPraatPicture -> x1NDC = 0;
+			theCurrentPraatPicture -> x2NDC = paragraph -> width;
+			theCurrentPraatPicture -> y1NDC = 0;
+			theCurrentPraatPicture -> y2NDC = paragraph -> height;
+			Graphics_setViewport (graphics, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
+			{ // scope
+				autoMelderProgressOff progress;
+				autoMelderWarningOff warning;
+				autoMelderSaveDefaultDir saveDir;
+				if (! MelderDir_isNull (& my rootDirectory)) {
+					Melder_setDefaultDir (& my rootDirectory);
 				}
-			#else
-				MelderString_append (buffer, L"<p><font size=-2>[sorry, no pictures yet in the web version of this manual]</font></p>\n");
-			#endif
+				try {
+					autostring text = Melder_wcsdup (p);
+					Interpreter_run (interpreter.peek(), text.peek());
+				} catch (MelderError) {
+					Melder_flushError (NULL);
+				}
+			}
+			Graphics_setViewport (graphics, 0, 1, 0, 1);
+			Graphics_setWindow (graphics, 0, 1, 0, 1);
+			Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_BOTTOM);
+			forget (graphics);
+			structMelderFile tiffFile;
+			MelderFile_copy (file, & tiffFile);
+			tiffFile. path [wcslen (tiffFile. path) - 5] = '\0';   // delete extension ".html"
+			wcscat (tiffFile. path, Melder_wcscat (L"_", Melder_integer (numberOfPictures), L".png"));
+			system (Melder_peekWcsToUtf8 (Melder_wcscat (L"/usr/local/bin/gs -q -dNOPAUSE "
+				"-r200x200 -sDEVICE=png16m -sOutputFile=", tiffFile.path,
+				L" ", pdfFile. path, L" quit.ps")));
+			MelderFile_delete (& pdfFile);
+			MelderString_append (buffer, Melder_wcscat (L"<p align=middle><img height=", Melder_integer (paragraph -> height * 100),
+				L" width=", Melder_integer (paragraph -> width * 100), L" src=", MelderFile_name (& tiffFile), L"></p>"));
+			theCurrentPraatApplication = & theForegroundPraatApplication;
+			theCurrentPraatObjects = & theForegroundPraatObjects;
+			theCurrentPraatPicture = & theForegroundPraatPicture;
 			continue;
 		}
 
@@ -522,14 +605,14 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			if (! inList) {
 				ul = isListItem && p [0] == '\\' && p [1] == 'b' && p [2] == 'u';
 				MelderString_append (buffer, ul ? L"<ul>\n" : L"<dl>\n");
-				inList = TRUE;
+				inList = true;
 			}
 			if (ul && p [0] == '\\' && p [1] == 'b' && p [2] == 'u' && p [3] == ' ') p += 3;
 			MelderString_append (buffer, ul ? L"<li>" : stylesInfo [paragraph -> type]. htmlIn, L"\n");
 		} else {
 			if (inList) {
 				MelderString_append (buffer, ul ? L"</ul>\n" : L"</dl>\n");
-				inList = ul = FALSE;
+				inList = ul = false;
 			}
 			MelderString_append (buffer, stylesInfo [paragraph -> type]. htmlIn, L"\n");
 		}
@@ -631,8 +714,8 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					MelderString_append (buffer, L"<sup>"); inSuper = TRUE; p += 2;
 				} else {
 					/*if (wordItalic) { MelderString_append (buffer, L"</i>"); wordItalic = FALSE; }
-					if (wordBold) { MelderString_append1 (buffer, L"</b>"); wordBold = FALSE; }*/
-					MelderString_append1 (buffer, L"<sup>"); letterSuper = TRUE; p ++;
+					if (wordBold) { MelderString_append (buffer, L"</b>"); wordBold = FALSE; }*/
+					MelderString_append (buffer, L"<sup>"); letterSuper = TRUE; p ++;
 				}
 			} else if (*p == '}') {
 				if (inSmall) { MelderString_append (buffer, L"</font>"); inSmall = FALSE; p ++; }
@@ -720,10 +803,10 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 				MelderString_append (buffer, L"<li><a href=\"");
 				for (p = title; *p; p ++) {
 					if (p - title >= LONGEST_FILE_NAME) break;
-					if (! isAllowedFileNameCharacter (*p)) MelderString_append1 (buffer, L"_");
+					if (! isAllowedFileNameCharacter (*p)) MelderString_append (buffer, L"_");
 					else MelderString_appendCharacter (buffer, *p);
 				}
-				if (title [0] == '\0') MelderString_append1 (buffer, L"_");
+				if (title [0] == '\0') MelderString_append (buffer, L"_");
 				MelderString_append (buffer, L".html\">", title, L"</a>\n");
 			}
 		}

@@ -147,1093 +147,1091 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 /********************** Activation *******************************************/
 
 FORM (Activation_formula, L"Activation: Formula", 0)
-LABEL (L"label", L"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
-TEXTFIELD (L"formula", L"self")
-OK
+	LABEL (L"label", L"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }}")
+	TEXTFIELD (L"formula", L"self")
+	OK
 DO
-praat_Fon_formula (dia, interpreter);
+	praat_Fon_formula (dia, interpreter);
 END
 
 DIRECT (Activation_to_Matrix)
-LOOP {
-	iam (Activation);
-	praat_new (Activation_to_Matrix (me), my name);
-}
+	LOOP {
+		iam (Activation);
+		praat_new (Activation_to_Matrix (me), my name);
+	}
 END
 
 /********************** BarkFilter *******************************************/
 
 DIRECT (BarkFilter_help)
-Melder_help (L"BarkFilter");
+	Melder_help (L"BarkFilter");
 END
 
 FORM (BarkFilter_drawSpectrum, L"BarkFilter: Draw spectrum (slice)", L"FilterBank: Draw spectrum (slice)...")
-POSITIVE (L"Time (s)", L"0.1")
-REAL (L"left Frequency range (Bark)", L"0.0")
-REAL (L"right Frequency range (Bark)", L"0.0")
-REAL (L"left Amplitude range (dB)", L"0.0")
-REAL (L"right Amplitude range (dB)", L"0.0")
-BOOLEAN (L"Garnish", 1)
-OK
+	POSITIVE (L"Time (s)", L"0.1")
+	REAL (L"left Frequency range (Bark)", L"0.0")
+	REAL (L"right Frequency range (Bark)", L"0.0")
+	REAL (L"left Amplitude range (dB)", L"0.0")
+	REAL (L"right Amplitude range (dB)", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (BarkFilter);
-	FilterBank_drawTimeSlice (me, GRAPHICS, GET_REAL (L"Time"), GET_REAL (L"left Frequency range"),
-	GET_REAL (L"right Frequency range"), GET_REAL (L"left Amplitude range"),
-	GET_REAL (L"right Amplitude range"), L"Barks", GET_INTEGER (L"Garnish"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (BarkFilter);
+		FilterBank_drawTimeSlice (me, GRAPHICS, GET_REAL (L"Time"), GET_REAL (L"left Frequency range"),
+			GET_REAL (L"right Frequency range"), GET_REAL (L"left Amplitude range"),
+			GET_REAL (L"right Amplitude range"), L"Barks", GET_INTEGER (L"Garnish"));
+	}
 END
 
 FORM (BarkFilter_drawSekeyHansonFilterFunctions, L"BarkFilter: Draw filter functions", L"FilterBank: Draw filter functions...")
-INTEGER (L"left Filter range", L"0")
-INTEGER (L"right Filter range", L"0")
-RADIO (L"Frequency scale", 1)
-RADIOBUTTON (L"Hertz")
-RADIOBUTTON (L"Bark")
-RADIOBUTTON (L"mel")
-REAL (L"left Frequency range", L"0.0")
-REAL (L"right Frequency range", L"0.0")
-BOOLEAN (L"Amplitude scale in dB", 1)
-REAL (L"left Amplitude range", L"0.0")
-REAL (L"right Amplitude range", L"0.0")
-BOOLEAN (L"Garnish", 1)
-OK
+	INTEGER (L"left Filter range", L"0")
+	INTEGER (L"right Filter range", L"0")
+	RADIO (L"Frequency scale", 1)
+	RADIOBUTTON (L"Hertz")
+	RADIOBUTTON (L"Bark")
+	RADIOBUTTON (L"mel")
+	REAL (L"left Frequency range", L"0.0")
+	REAL (L"right Frequency range", L"0.0")
+	BOOLEAN (L"Amplitude scale in dB", 1)
+	REAL (L"left Amplitude range", L"0.0")
+	REAL (L"right Amplitude range", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (BarkFilter);
-	BarkFilter_drawSekeyHansonFilterFunctions (me, GRAPHICS, GET_INTEGER (L"Frequency scale"),
-	GET_INTEGER (L"left Filter range"), GET_INTEGER (L"right Filter range"),
-	GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
-	GET_INTEGER (L"Amplitude scale in dB"), GET_REAL (L"left Amplitude range"),
-	GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (BarkFilter);
+		BarkFilter_drawSekeyHansonFilterFunctions (me, GRAPHICS, GET_INTEGER (L"Frequency scale"),
+			GET_INTEGER (L"left Filter range"), GET_INTEGER (L"right Filter range"),
+			GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+			GET_INTEGER (L"Amplitude scale in dB"), GET_REAL (L"left Amplitude range"),
+			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
 END
 /********************** Categories  ****************************************/
 
 FORM (Categories_append, L"Categories: Append 1 category", L"Categories: Append 1 category...")
-SENTENCE (L"Category", L"")
-OK
+	SENTENCE (L"Category", L"")
+	OK
 DO
-LOOP {
-	iam (Categories);
-	OrderedOfString_append (me, GET_STRING (L"Category"));
-}
+	LOOP {
+		iam (Categories);
+		OrderedOfString_append (me, GET_STRING (L"Category"));
+	}
 END
 
 DIRECT (Categories_edit)
-if (theCurrentPraatApplication -> batch) {
-	Melder_throw ("Cannot edit a Categories from batch.");
-} else {
-	LOOP {
-		iam (Categories);
-		praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
-		my name, me), IOBJECT);
+	if (theCurrentPraatApplication -> batch) {
+		Melder_throw ("Cannot edit a Categories from batch.");
+	} else {
+		LOOP {
+			iam (Categories);
+			praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
+				my name, me), IOBJECT);
+		}
 	}
-}
 END
 
 DIRECT (Categories_getNumberOfCategories)
-LOOP {
-	iam (Categories);
-	Melder_information (Melder_integer (my size), L" categories");
-}
+	LOOP {
+		iam (Categories);
+		Melder_information (Melder_integer (my size), L" categories");
+	}
 END
 
 DIRECT (Categories_getNumberOfDifferences)
-Categories c1 = 0, c2 = 0;
-LOOP {
-	iam (Categories);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
+	Categories c1 = 0, c2 = 0;
+	LOOP {
+		iam (Categories);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
 
-long NumberOfDifferences = OrderedOfString_getNumberOfDifferences (c1, c2);
-if (NumberOfDifferences < 0) {
-	Melder_information (L"-1 (undefined: number of elements differ!)");
-} else {
-	Melder_information (Melder_integer (NumberOfDifferences), L" differences");
-}
+	long NumberOfDifferences = OrderedOfString_getNumberOfDifferences (c1, c2);
+	if (NumberOfDifferences < 0) {
+		Melder_information (L"-1 (undefined: number of elements differ!)");
+	} else {
+		Melder_information (Melder_integer (NumberOfDifferences), L" differences");
+	}
 END
 
 DIRECT (Categories_getFractionDifferent)
-Categories c1 = 0, c2 = 0;
-LOOP {
-	iam (Categories);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-Melder_information (Melder_double (OrderedOfString_getFractionDifferent (c1, c2)));
+	Categories c1 = 0, c2 = 0;
+	LOOP {
+		iam (Categories);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	Melder_information (Melder_double (OrderedOfString_getFractionDifferent (c1, c2)));
 END
 
 DIRECT (Categories_difference)
-Categories c1 = 0, c2 = 0;
-LOOP {
-	iam (Categories);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-double fraction; long n;
-OrderedOfString_difference (c1, c2, &n, &fraction);
-Melder_information (Melder_integer (n), L" differences");
+	Categories c1 = 0, c2 = 0;
+	LOOP {
+		iam (Categories);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	double fraction; long n;
+	OrderedOfString_difference (c1, c2, &n, &fraction);
+	Melder_information (Melder_integer (n), L" differences");
 END
 
 DIRECT (Categories_selectUniqueItems)
-LOOP {
-	iam (Categories);
-	praat_new (Categories_selectUniqueItems (me, 1), my name, L"_uniq");
-}
+	LOOP {
+		iam (Categories);
+		praat_new (Categories_selectUniqueItems (me, 1), my name, L"_uniq");
+	}
 END
 
 DIRECT (Categories_to_Confusion)
-Categories c1 = 0, c2 = 0;
-LOOP {
-	iam (Categories);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-praat_new (Categories_to_Confusion (c1, c2), Thing_getName (c1), L"_", Thing_getName (c2));
+	Categories c1 = 0, c2 = 0;
+	LOOP {
+		iam (Categories);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	praat_new (Categories_to_Confusion (c1, c2), Thing_getName (c1), L"_", Thing_getName (c2));
 END
 
 DIRECT (Categories_to_Strings)
-LOOP {
-	iam (Categories);
-	praat_new (Categories_to_Strings (me), my name);
-}
+	LOOP {
+		iam (Categories);
+		praat_new (Categories_to_Strings (me), my name);
+	}
 END
 
 DIRECT (Categories_join)
-Categories c1 = 0, c2 = 0;
-LOOP {
-	iam (Categories);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-praat_new (OrderedOfString_joinItems (c1, c2), 0);
+	Categories c1 = 0, c2 = 0;
+	LOOP {
+		iam (Categories);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	praat_new (OrderedOfString_joinItems (c1, c2), 0);
 END
 
 DIRECT (Categories_permuteItems)
-LOOP {
-	iam (Collection);
-	praat_new (Collection_permuteItems (me), my name, L"_perm");
-}
+	LOOP {
+		iam (Collection);
+		praat_new (Collection_permuteItems (me), my name, L"_perm");
+	}
 END
 
 /***************** CC ****************************************/
 
 FORM (CC_getValue, L"CC: Get value", L"CC: Get value...")
-REAL (L"Time (s)", L"0.1")
-NATURAL (L"Index", L"1")
-OK
+	REAL (L"Time (s)", L"0.1")
+	NATURAL (L"Index", L"1")
+	OK
 DO
-LOOP {
-	iam (CC); // ?? generic
-	Melder_informationReal (CC_getValue (me, GET_REAL (L"Time"), GET_INTEGER (L"Index")), 0);
-}
+	LOOP {
+		iam (CC); // ?? generic
+		Melder_informationReal (CC_getValue (me, GET_REAL (L"Time"), GET_INTEGER (L"Index")), 0);
+	}
 END
 
 FORM (CC_paint, L"CC: Paint", L"CC: Paint...")
-REAL (L"left Time range (s)", L"0.0")
-REAL (L"right Time range (s)", L"0.0")
-INTEGER (L"From coefficient", L"0")
-INTEGER (L"To coefficient", L"0")
-REAL (L"Minimum", L"0.0")
-REAL (L"Maximum", L"0.0")
-BOOLEAN (L"Garnish", 1)
-OK
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	INTEGER (L"From coefficient", L"0")
+	INTEGER (L"To coefficient", L"0")
+	REAL (L"Minimum", L"0.0")
+	REAL (L"Maximum", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (CC);
-	CC_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-	GET_INTEGER (L"From coefficient"), GET_INTEGER (L"To coefficient"),
-	GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (CC);
+		CC_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_INTEGER (L"From coefficient"), GET_INTEGER (L"To coefficient"),
+			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 FORM (CC_drawC0, L"CC: Draw c0", L"CC: Draw c0...")
-REAL (L"left Time range (s)", L"0.0")
-REAL (L"right Time range (s)", L"0.0")
-REAL (L"left Amplitude range", L"0.0")
-REAL (L"right Amplitude range", L"0.0")
-BOOLEAN (L"Garnish", 1)
-OK
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Amplitude range", L"0.0")
+	REAL (L"right Amplitude range", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (CC);
-	CC_drawC0 (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-	GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (CC);
+		CC_drawC0 (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 FORM (CCs_to_DTW, L"CC: To DTW", L"CC: To DTW...")
-LABEL (L"", L"Distance  between cepstral coefficients")
-REAL (L"Cepstral weight", L"1.0")
-REAL (L"Log energy weight", L"0.0")
-REAL (L"Regression weight", L"0.0")
-REAL (L"Regression weight log energy", L"0.0")
-REAL (L"Regression coefficients window (s)", L"0.056")
-DTW_constraints_addCommonFields (dia);
-OK
+	LABEL (L"", L"Distance  between cepstral coefficients")
+	REAL (L"Cepstral weight", L"1.0")
+	REAL (L"Log energy weight", L"0.0")
+	REAL (L"Regression weight", L"0.0")
+	REAL (L"Regression weight log energy", L"0.0")
+	REAL (L"Regression coefficients window (s)", L"0.056")
+	DTW_constraints_addCommonFields (dia);
+	OK
 DO
-CC c1 = 0, c2 = 0;
-LOOP {
-	iam (CC);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-int begin, end, slope;
-DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
+	CC c1 = 0, c2 = 0;
+	LOOP {
+		iam (CC);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	int begin, end, slope;
+	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
 
-praat_new (CCs_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"), GET_REAL (L"Log energy weight"),
-                       GET_REAL (L"Regression weight"), GET_REAL (L"Regression weight log energy"),
-                       GET_REAL (L"Regression coefficients window"), begin, end, slope), 0);
+	praat_new (CCs_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"), GET_REAL (L"Log energy weight"),
+		GET_REAL (L"Regression weight"), GET_REAL (L"Regression weight log energy"),
+		GET_REAL (L"Regression coefficients window"), begin, end, slope), 0);
 END
 
 DIRECT (CC_to_Matrix)
-LOOP {
-	iam (CC);
-	praat_new (CC_to_Matrix (me), my name);
-}
+	LOOP {
+		iam (CC);
+		praat_new (CC_to_Matrix (me), my name);
+	}
 END
 
 /******************* class CCA ********************************/
 
 FORM (CCA_drawEigenvector, L"CCA: Draw eigenvector", L"Eigen: Draw eigenvector...")
-OPTIONMENU (L"X or Y", 1)
-OPTION (L"y")
-OPTION (L"x")
-INTEGER (L"Eigenvector number", L"1")
-LABEL (L"", L"Multiply by eigenvalue?")
-BOOLEAN (L"Component loadings", 0)
-LABEL (L"", L"Select part of the eigenvector:")
-INTEGER (L"left Element range", L"0")
-INTEGER (L"right Element range", L"0")
-REAL (L"left Amplitude range", L"-1.0")
-REAL (L"right Amplitude range", L"1.0")
-POSITIVE (L"Mark size (mm)", L"1.0")
-SENTENCE (L"Mark string (+xo.)", L"+")
-BOOLEAN (L"Connect points", 1)
-BOOLEAN (L"Garnish", 1)
-OK
+	OPTIONMENU (L"X or Y", 1)
+	OPTION (L"y")
+	OPTION (L"x")
+	INTEGER (L"Eigenvector number", L"1")
+	LABEL (L"", L"Multiply by eigenvalue?")
+	BOOLEAN (L"Component loadings", 0)
+	LABEL (L"", L"Select part of the eigenvector:")
+	INTEGER (L"left Element range", L"0")
+	INTEGER (L"right Element range", L"0")
+	REAL (L"left Amplitude range", L"-1.0")
+	REAL (L"right Amplitude range", L"1.0")
+	POSITIVE (L"Mark size (mm)", L"1.0")
+	SENTENCE (L"Mark string (+xo.)", L"+")
+	BOOLEAN (L"Connect points", 1)
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (CCA);
-	CCA_drawEigenvector (me, GRAPHICS, GET_INTEGER (L"X or Y"), GET_INTEGER (L"Eigenvector number"),
-	GET_INTEGER (L"left Element range"), GET_INTEGER (L"right Element range"),
-	GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"),
-	GET_INTEGER (L"Component loadings"), GET_REAL (L"Mark size"),
-	GET_STRING (L"Mark string"), GET_INTEGER (L"Connect points"),
-	GET_INTEGER (L"Garnish"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (CCA);
+		CCA_drawEigenvector (me, GRAPHICS, GET_INTEGER (L"X or Y"), GET_INTEGER (L"Eigenvector number"),
+			GET_INTEGER (L"left Element range"), GET_INTEGER (L"right Element range"),
+			GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"),
+			GET_INTEGER (L"Component loadings"), GET_REAL (L"Mark size"),
+			GET_STRING (L"Mark string"), GET_INTEGER (L"Connect points"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 DIRECT (CCA_getNumberOfCorrelations)
-LOOP {
-	iam (CCA);
-	Melder_information (Melder_double (my numberOfCoefficients));
-}
+	LOOP {
+		iam (CCA);
+		Melder_information (Melder_double (my numberOfCoefficients));
+	}
 END
 
 FORM (CCA_getCorrelationCoefficient, L"CCA: Get canonical correlation coefficient", L"CCA: Get canonical correlation coefficient")
-NATURAL (L"Coefficient number", L"1")
-OK
+	NATURAL (L"Coefficient number", L"1")
+	OK
 DO
-LOOP {
-	iam (CCA);
-	Melder_information (Melder_double (CCA_getCorrelationCoefficient (me, GET_INTEGER (L"Coefficient number"))));
-}
+	LOOP {
+		iam (CCA);
+		Melder_information (Melder_double (CCA_getCorrelationCoefficient (me, GET_INTEGER (L"Coefficient number"))));
+	}
 END
 
 FORM (CCA_getEigenvectorElement, L"CCA: Get eigenvector element", L"Eigen: Get eigenvector element...")
-OPTIONMENU (L"X or Y", 1)
-OPTION (L"y")
-OPTION (L"x")
-NATURAL (L"Eigenvector number", L"1")
-NATURAL (L"Element number", L"1")
-OK
+	OPTIONMENU (L"X or Y", 1)
+	OPTION (L"y")
+	OPTION (L"x")
+	NATURAL (L"Eigenvector number", L"1")
+	NATURAL (L"Element number", L"1")
+	OK
 DO
-LOOP {
-	iam (CCA);
-	Melder_information (Melder_double (CCA_getEigenvectorElement (me, GET_INTEGER (L"X or Y"),
-	GET_INTEGER (L"Eigenvector number"), GET_INTEGER (L"Element number"))));
-}
+	LOOP {
+		iam (CCA);
+		Melder_information (Melder_double (CCA_getEigenvectorElement (me, GET_INTEGER (L"X or Y"),
+		GET_INTEGER (L"Eigenvector number"), GET_INTEGER (L"Element number"))));
+	}
 END
 
 FORM (CCA_getZeroCorrelationProbability, L"CCA: Get zero correlation probability", L"CCA: Get zero correlation probability...")
-NATURAL (L"Coefficient number", L"1")
-OK
+	NATURAL (L"Coefficient number", L"1")
+	OK
 DO
-LOOP {
-	iam (CCA);
-	double p, chisq; long ndf;
-	CCA_getZeroCorrelationProbability (me, GET_INTEGER (L"Coefficient number"), &chisq, &ndf, &p);
-	Melder_information (Melder_double (p), L" (=probability for chisq = ", Melder_double (chisq),
-	L" and ndf = ", Melder_integer (ndf), L")");
-}
+	LOOP {
+		iam (CCA);
+		double p, chisq; long ndf;
+		CCA_getZeroCorrelationProbability (me, GET_INTEGER (L"Coefficient number"), &chisq, &ndf, &p);
+		Melder_information (Melder_double (p), L" (=probability for chisq = ", Melder_double (chisq),
+		L" and ndf = ", Melder_integer (ndf), L")");
+	}
 END
 
 DIRECT (CCA_and_Correlation_factorLoadings)
-CCA cca = FIRST (CCA);
-Correlation c = FIRST (Correlation);
-praat_new (CCA_and_Correlation_factorLoadings (cca, c), Thing_getName (cca), L"_loadings");
+	CCA cca = FIRST (CCA);
+	Correlation c = FIRST (Correlation);
+	praat_new (CCA_and_Correlation_factorLoadings (cca, c), Thing_getName (cca), L"_loadings");
 END
 
 FORM (CCA_and_Correlation_getVarianceFraction, L"CCA & Correlation: Get variance fraction", L"CCA & Correlation: Get variance fraction...")
-LABEL (L"", L"Get the fraction of variance from the data in set...")
-OPTIONMENU (L"X or Y", 1)
-OPTION (L"y")
-OPTION (L"x")
-LABEL (L"", L"extracted by...")
-NATURAL (L"left Canonical variate range", L"1")
-NATURAL (L"right Canonical variate range", L"1")
-OK
+	LABEL (L"", L"Get the fraction of variance from the data in set...")
+	OPTIONMENU (L"X or Y", 1)
+	OPTION (L"y")
+	OPTION (L"x")
+	LABEL (L"", L"extracted by...")
+	NATURAL (L"left Canonical variate range", L"1")
+	NATURAL (L"right Canonical variate range", L"1")
+	OK
 DO
-CCA cca = FIRST (CCA);
-Correlation c = FIRST (Correlation);
-int x_or_y = GET_INTEGER (L"X or Y");
-int cv_from = GET_INTEGER (L"left Canonical variate range");
-int cv_to = GET_INTEGER (L"right Canonical variate range");
-Melder_information (Melder_double (CCA_and_Correlation_getVarianceFraction (cca, c, x_or_y, cv_from, cv_to)),
-                    L" (fraction variance from ", (x_or_y == 1 ? L"y" : L"x"), L", extracted by canonical variates ",
-                    Melder_integer (cv_from), L" to ", Melder_integer (cv_to), L")");
+	CCA cca = FIRST (CCA);
+	Correlation c = FIRST (Correlation);
+	int x_or_y = GET_INTEGER (L"X or Y");
+	int cv_from = GET_INTEGER (L"left Canonical variate range");
+	int cv_to = GET_INTEGER (L"right Canonical variate range");
+	Melder_information (Melder_double (CCA_and_Correlation_getVarianceFraction (cca, c, x_or_y, cv_from, cv_to)),
+		L" (fraction variance from ", (x_or_y == 1 ? L"y" : L"x"), L", extracted by canonical variates ",
+		Melder_integer (cv_from), L" to ", Melder_integer (cv_to), L")");
 END
 
 FORM (CCA_and_Correlation_getRedundancy_sl, L"CCA & Correlation: Get Stewart-Love redundancy", L"CCA & Correlation: Get redundancy (sl)...")
-LABEL (L"", L"Get the redundancy of the data in set...")
-OPTIONMENU (L"X or Y", 1)
-OPTION (L"y")
-OPTION (L"x")
-LABEL (L"", L"extracted by...")
-NATURAL (L"left Canonical variate range", L"1")
-NATURAL (L"right Canonical variate range", L"1")
-LABEL (L"", L"...given the availability of the data in the other set.")
-OK
+	LABEL (L"", L"Get the redundancy of the data in set...")
+	OPTIONMENU (L"X or Y", 1)
+	OPTION (L"y")
+	OPTION (L"x")
+	LABEL (L"", L"extracted by...")
+	NATURAL (L"left Canonical variate range", L"1")
+	NATURAL (L"right Canonical variate range", L"1")
+	LABEL (L"", L"...given the availability of the data in the other set.")
+	OK
 DO
-CCA cca = FIRST (CCA);
-Correlation c = FIRST (Correlation);
-int x_or_y = GET_INTEGER (L"X or Y");
-int cv_from = GET_INTEGER (L"left Canonical variate range");
-int cv_to = GET_INTEGER (L"right Canonical variate range");
-Melder_information (Melder_double (CCA_and_Correlation_getRedundancy_sl (cca, c, x_or_y, cv_from, cv_to)),
-                    L" (redundancy from ", (x_or_y == 1 ? L"y" : L"x"), L" extracted by canonical variates ",
-                    Melder_integer (cv_from), L" to ", Melder_integer (cv_to), L")");
+	CCA cca = FIRST (CCA);
+	Correlation c = FIRST (Correlation);
+	int x_or_y = GET_INTEGER (L"X or Y");
+	int cv_from = GET_INTEGER (L"left Canonical variate range");
+	int cv_to = GET_INTEGER (L"right Canonical variate range");
+	Melder_information (Melder_double (CCA_and_Correlation_getRedundancy_sl (cca, c, x_or_y, cv_from, cv_to)),
+		L" (redundancy from ", (x_or_y == 1 ? L"y" : L"x"), L" extracted by canonical variates ",
+		Melder_integer (cv_from), L" to ", Melder_integer (cv_to), L")");
 END
 
 DIRECT (CCA_and_TableOfReal_factorLoadings)
-CCA cca = FIRST (CCA);
-TableOfReal tr = FIRST (TableOfReal);
-praat_new (CCA_and_TableOfReal_factorLoadings (cca, tr), Thing_getName (cca), L"_loadings");
+	CCA cca = FIRST (CCA);
+	TableOfReal tr = FIRST (TableOfReal);
+	praat_new (CCA_and_TableOfReal_factorLoadings (cca, tr), Thing_getName (cca), L"_loadings");
 END
 
 FORM (CCA_and_TableOfReal_scores, L"CCA & TableOfReal: To TableOfReal (scores)", L"CCA & TableOfReal: To TableOfReal (scores)...")
-INTEGER (L"Number of canonical correlations", L"0 (=all)")
-OK
+	INTEGER (L"Number of canonical correlations", L"0 (=all)")
+	OK
 DO
-CCA cca = FIRST (CCA);
-TableOfReal tr = FIRST (TableOfReal);
-praat_new2 (CCA_and_TableOfReal_scores (cca, tr, GET_INTEGER (L"Number of canonical correlations")),
-            Thing_getName (cca), L"_scores");
+	CCA cca = FIRST (CCA);
+	TableOfReal tr = FIRST (TableOfReal);
+	praat_new2 (CCA_and_TableOfReal_scores (cca, tr, GET_INTEGER (L"Number of canonical correlations")),
+		Thing_getName (cca), L"_scores");
 END
 
 FORM (CCA_and_TableOfReal_predict, L"CCA & TableOfReal: Predict", L"CCA & TableOfReal: Predict...")
-LABEL (L"", L"The data set from which to predict starts at...")
-INTEGER (L"Column number", L"1")
-OK
+	LABEL (L"", L"The data set from which to predict starts at...")
+	INTEGER (L"Column number", L"1")
+	OK
 DO
-CCA cca = FIRST (CCA);
-TableOfReal tr = FIRST (TableOfReal);
-praat_new (CCA_and_TableOfReal_predict (cca, tr, GET_INTEGER (L"Column number")), 0);
+	CCA cca = FIRST (CCA);
+	TableOfReal tr = FIRST (TableOfReal);
+	praat_new (CCA_and_TableOfReal_predict (cca, tr, GET_INTEGER (L"Column number")), 0);
 END
 
 /***************** ChebyshevSeries ****************************************/
 
 DIRECT (ChebyshevSeries_help)
-Melder_help (L"ChebyshevSeries");
+	Melder_help (L"ChebyshevSeries");
 END
 
 FORM (ChebyshevSeries_create, L"Create ChebyshevSeries", L"Create ChebyshevSeries...")
-WORD (L"Name", L"cs")
-LABEL (L"", L"Domain")
-REAL (L"Xmin", L"-1")
-REAL (L"Xmax", L"1")
-LABEL (L"", L"ChebyshevSeries(x) = c[1] T[0](x) + c[2] T[1](x) + ... c[n+1] T[n](x)")
-LABEL (L"", L"T[k] is a Chebyshev polynomial of degree k")
-SENTENCE (L"Coefficients (c[k])", L"0 0 1.0")
-OK
+	WORD (L"Name", L"cs")
+	LABEL (L"", L"Domain")
+	REAL (L"Xmin", L"-1")
+	REAL (L"Xmax", L"1")
+	LABEL (L"", L"ChebyshevSeries(x) = c[1] T[0](x) + c[2] T[1](x) + ... c[n+1] T[n](x)")
+	LABEL (L"", L"T[k] is a Chebyshev polynomial of degree k")
+	SENTENCE (L"Coefficients (c[k])", L"0 0 1.0")
+	OK
 DO
-double xmin = GET_REAL (L"Xmin"), xmax = GET_REAL (L"Xmax");
-REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
-praat_new (ChebyshevSeries_createFromString (xmin, xmax, GET_STRING (L"Coefficients")), GET_STRING (L"Name"));
+	double xmin = GET_REAL (L"Xmin"), xmax = GET_REAL (L"Xmax");
+	REQUIRE (xmin < xmax, L"Xmin must be smaller than Xmax.")
+	praat_new (ChebyshevSeries_createFromString (xmin, xmax, GET_STRING (L"Coefficients")), GET_STRING (L"Name"));
 END
 
 DIRECT (ChebyshevSeries_to_Polynomial)
-LOOP {
-	iam (ChebyshevSeries);
-	praat_new (ChebyshevSeries_to_Polynomial (me), my name);
-}
+	LOOP {
+		iam (ChebyshevSeries);
+		praat_new (ChebyshevSeries_to_Polynomial (me), my name);
+	}
 END
 
 /***************** ClassificationTable ****************************************/
 
 DIRECT (ClassificationTable_help)
-Melder_help (L"ClassificationTable");
+	Melder_help (L"ClassificationTable");
 END
 
 DIRECT (ClassificationTable_to_Confusion)
-LOOP {
-	iam (ClassificationTable);
-	praat_new (ClassificationTable_to_Confusion (me), 0);
-}
+	LOOP {
+		iam (ClassificationTable);
+		praat_new (ClassificationTable_to_Confusion (me), 0);
+	}
 END
 
 DIRECT (ClassificationTable_to_Correlation_columns)
-LOOP {
-	iam (ClassificationTable);
-	praat_new (ClassificationTable_to_Correlation_columns (me), my name, L"_col");
-}
+	LOOP {
+		iam (ClassificationTable);
+		praat_new (ClassificationTable_to_Correlation_columns (me), my name, L"_col");
+	}
 END
 
 DIRECT (ClassificationTable_to_Strings_maximumProbability)
-LOOP {
-	iam (ClassificationTable);
-	praat_new (ClassificationTable_to_Strings_maximumProbability (me), my name);
-}
+	LOOP {
+		iam (ClassificationTable);
+		praat_new (ClassificationTable_to_Strings_maximumProbability (me), my name);
+	}
 END
 
 /********************** Confusion *******************************************/
 
 DIRECT (Confusion_help)
-Melder_help (L"Confusion");
+	Melder_help (L"Confusion");
 END
 
 FORM (Confusion_createSimple, L"Create simple Confusion", L"Create simple Confusion...")
-WORD (L"Name", L"simple")
-SENTENCE (L"Labels", L"u i a")
-OK
+	WORD (L"Name", L"simple")
+	SENTENCE (L"Labels", L"u i a")
+	OK
 DO
-praat_new (Confusion_createSimple (GET_STRING (L"Labels")), GET_STRING (L"Name"));
+	praat_new (Confusion_createSimple (GET_STRING (L"Labels")), GET_STRING (L"Name"));
 END
 
 FORM (Confusion_increase, L"Confusion: Increase", L"Confusion: Increase...")
-WORD (L"Stimulus", L"u")
-WORD (L"Response", L"i")
-OK
+	WORD (L"Stimulus", L"u")
+	WORD (L"Response", L"i")
+	OK
 DO
-LOOP {
-	iam (Confusion);
-	Confusion_increase (me, GET_STRING (L"Stimulus"), GET_STRING (L"Response"));
-	praat_dataChanged (me);
-}
+	LOOP {
+		iam (Confusion);
+		Confusion_increase (me, GET_STRING (L"Stimulus"), GET_STRING (L"Response"));
+		praat_dataChanged (me);
+	}
 END
 
 FORM (Confusion_getValue, L"Confusion: Get value", 0)
-WORD (L"Stimulus", L"u")
-WORD (L"Response", L"i")
-OK
+	WORD (L"Stimulus", L"u")
+	WORD (L"Response", L"i")
+	OK
 DO
-wchar_t *stim = GET_STRING (L"Stimulus");
-wchar_t *resp = GET_STRING (L"Response");
-LOOP {
-	iam (Confusion);
-	Melder_information (Melder_double (Confusion_getValue (me, stim, resp)),
-	L" ( [\"", stim, L"\", \"",  resp, L"\"] )");
-}
+	wchar_t *stim = GET_STRING (L"Stimulus");
+	wchar_t *resp = GET_STRING (L"Response");
+	LOOP {
+		iam (Confusion);
+		Melder_information (Melder_double (Confusion_getValue (me, stim, resp)),
+		L" ( [\"", stim, L"\", \"",  resp, L"\"] )");
+	}
 END
 
 FORM (Confusion_getResponseSum, L"Confusion: Get response sum", L"Confusion: Get response sum...")
-WORD (L"Response", L"u")
-OK
+	WORD (L"Response", L"u")
+	OK
 DO
-LOOP {
-	iam (TableOfReal);
-	Melder_information (Melder_double (TableOfReal_getColumnSumByLabel (me, GET_STRING (L"Response"))));
-}
+	LOOP {
+		iam (TableOfReal);
+		Melder_information (Melder_double (TableOfReal_getColumnSumByLabel (me, GET_STRING (L"Response"))));
+	}
 END
 
 FORM (Confusion_getStimulusSum, L"Confusion: Get stimulus sum", L"Confusion: Get stimulus sum...")
-WORD (L"Stimulus", L"u")
-OK
+	WORD (L"Stimulus", L"u")
+	OK
 DO
-LOOP {
-	iam (TableOfReal);
-	Melder_information (Melder_double (TableOfReal_getRowSumByLabel (me, GET_STRING (L"Stimulus"))));
-}
+	LOOP {
+		iam (TableOfReal);
+		Melder_information (Melder_double (TableOfReal_getRowSumByLabel (me, GET_STRING (L"Stimulus"))));
+	}
 END
 
 DIRECT (Confusion_to_TableOfReal_marginals)
-LOOP {
-	iam (TableOfReal);
-	praat_new (Confusion_to_TableOfReal_marginals (me), my name);
-}
+	LOOP {
+		iam (TableOfReal);
+		praat_new (Confusion_to_TableOfReal_marginals (me), my name);
+	}
 END
 
 DIRECT (Confusion_difference)
-Confusion c1 = 0, c2 = 0;
-LOOP {
-	iam (Confusion);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-praat_new (Confusion_difference (c1, c2), L"diffs");
+	Confusion c1 = 0, c2 = 0;
+	LOOP {
+		iam (Confusion);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	praat_new (Confusion_difference (c1, c2), L"diffs");
 END
 
 FORM (Confusion_condense, L"Confusion: Condense", L"Confusion: Condense...")
-SENTENCE (L"Search", L"^(u|i)$")
-SENTENCE (L"Replace", L"high")
-INTEGER (L"Replace limit", L"0 (=unlimited)")
-RADIO (L"Search and replace are", 2)
-RADIOBUTTON (L"Literals")
-RADIOBUTTON (L"Regular Expressions")
-OK
+	SENTENCE (L"Search", L"^(u|i)$")
+	SENTENCE (L"Replace", L"high")
+	INTEGER (L"Replace limit", L"0 (=unlimited)")
+	RADIO (L"Search and replace are", 2)
+	RADIOBUTTON (L"Literals")
+	RADIOBUTTON (L"Regular Expressions")
+	OK
 DO
-LOOP {
-	iam (Confusion);
-	praat_new (Confusion_condense (me, GET_STRING (L"Search"), GET_STRING (L"Replace"),
-	GET_INTEGER (L"Replace limit"), GET_INTEGER (L"Search and replace are") - 1), my name, L"_cnd");
-}
+	LOOP {
+		iam (Confusion);
+		praat_new (Confusion_condense (me, GET_STRING (L"Search"), GET_STRING (L"Replace"),
+		GET_INTEGER (L"Replace limit"), GET_INTEGER (L"Search and replace are") - 1), my name, L"_cnd");
+	}
 END
 
 FORM (Confusion_group, L"Confusion: Group stimuli & responses", L"Confusion: Group...")
-SENTENCE (L"Stimuli & Responses", L"u i")
-SENTENCE (L"New label", L"high")
-INTEGER (L"New label position", L"0 (=at start)")
-OK
+	SENTENCE (L"Stimuli & Responses", L"u i")
+	SENTENCE (L"New label", L"high")
+	INTEGER (L"New label position", L"0 (=at start)")
+	OK
 DO
-const wchar_t *newlabel = GET_STRING (L"New label");
-LOOP {
-	iam (Confusion);
-	praat_new (Confusion_group (me, GET_STRING (L"Stimuli & Responses"), newlabel,
-	GET_INTEGER (L"New label position")), Thing_getName (me), L"_sr", newlabel);
-}
+	const wchar_t *newlabel = GET_STRING (L"New label");
+	LOOP {
+		iam (Confusion);
+		praat_new (Confusion_group (me, GET_STRING (L"Stimuli & Responses"), newlabel,
+		GET_INTEGER (L"New label position")), Thing_getName (me), L"_sr", newlabel);
+	}
 END
 
 FORM (Confusion_groupStimuli, L"Confusion: Group stimuli", L"Confusion: Group stimuli...")
-SENTENCE (L"Stimuli", L"u i")
-SENTENCE (L"New label", L"high")
-INTEGER (L"New label position", L"0")
-OK
+	SENTENCE (L"Stimuli", L"u i")
+	SENTENCE (L"New label", L"high")
+	INTEGER (L"New label position", L"0")
+	OK
 DO
-const wchar_t *newlabel = GET_STRING (L"New label");
-LOOP {
-	iam (Confusion);
-	praat_new (Confusion_groupStimuli (me, GET_STRING (L"Stimuli"), newlabel,
-	GET_INTEGER (L"New label position")), Thing_getName (me), L"_s", newlabel);
-}
+	const wchar_t *newlabel = GET_STRING (L"New label");
+	LOOP {
+		iam (Confusion);
+		praat_new (Confusion_groupStimuli (me, GET_STRING (L"Stimuli"), newlabel,
+		GET_INTEGER (L"New label position")), Thing_getName (me), L"_s", newlabel);
+	}
 END
 
 FORM (Confusion_groupResponses, L"Confusion: Group responses", L"Confusion: Group responses...")
-SENTENCE (L"Responses", L"a i")
-SENTENCE (L"New label", L"front")
-INTEGER (L"New label position", L"0")
-OK
+	SENTENCE (L"Responses", L"a i")
+	SENTENCE (L"New label", L"front")
+	INTEGER (L"New label position", L"0")
+	OK
 DO
-const wchar_t *newlabel = GET_STRING (L"New label");
-LOOP {
-	iam (Confusion);
-	praat_new (Confusion_groupResponses (me, GET_STRING (L"Responses"), newlabel,
-	GET_INTEGER (L"New label position")), Thing_getName (me), L"_s", newlabel);
-}
+	const wchar_t *newlabel = GET_STRING (L"New label");
+	LOOP {
+		iam (Confusion);
+		praat_new (Confusion_groupResponses (me, GET_STRING (L"Responses"), newlabel,
+		GET_INTEGER (L"New label position")), Thing_getName (me), L"_s", newlabel);
+	}
 END
 
 FORM (Confusion_drawAsNumbers, L"", L"")
-BOOLEAN (L"Draw marginals", 1)
-RADIO (L"Format", 3)
-RADIOBUTTON (L"decimal")
-RADIOBUTTON (L"exponential")
-RADIOBUTTON (L"free")
-RADIOBUTTON (L"rational")
-NATURAL (L"Precision", L"5")
-OK
+	BOOLEAN (L"Draw marginals", 1)
+	RADIO (L"Format", 3)
+	RADIOBUTTON (L"decimal")
+	RADIOBUTTON (L"exponential")
+	RADIOBUTTON (L"free")
+	RADIOBUTTON (L"rational")
+	NATURAL (L"Precision", L"5")
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (Confusion);
-	Confusion_drawAsNumbers (me, GRAPHICS, GET_INTEGER (L"Draw marginals"),
-	GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (Confusion);
+		Confusion_drawAsNumbers (me, GRAPHICS, GET_INTEGER (L"Draw marginals"),
+		GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"));
+	}
 END
 
 DIRECT (Confusion_getFractionCorrect)
-LOOP {
-	iam (Confusion);
-	double f; long n;
-	Confusion_getFractionCorrect (me, &f, &n);
-	Melder_information (Melder_double (f), L" (fraction correct)");
-}
+	LOOP {
+		iam (Confusion);
+		double f; long n;
+		Confusion_getFractionCorrect (me, &f, &n);
+		Melder_information (Melder_double (f), L" (fraction correct)");
+	}
 END
 
 /******************* Confusion & Matrix *************************************/
 
 FORM (Confusion_Matrix_draw, L"Confusion & Matrix: Draw confusions with arrows", 0)
-INTEGER (L"Category position", L"0 (=all)")
-REAL (L"Lower level (%)", L"0")
-REAL (L"left Horizontal range", L"0.0")
-REAL (L"right Horizontal range", L"0.0")
-REAL (L"left Vertical range", L"0.0")
-REAL (L"right Vertical range", L"0.0")
-BOOLEAN (L"Garnish", 1)
-OK
+	INTEGER (L"Category position", L"0 (=all)")
+	REAL (L"Lower level (%)", L"0")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-long categoryPosition = GET_INTEGER (L"Category position");
-REQUIRE (categoryPosition >= 0, L"Category position must be >= 0")
-Confusion conf = FIRST (Confusion);
-Matrix mat = FIRST (Matrix);
-Confusion_Matrix_draw (conf, mat, GRAPHICS, categoryPosition, GET_REAL (L"Lower level"),
-                       GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
-                       GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
-                       GET_INTEGER (L"Garnish"));
+	long categoryPosition = GET_INTEGER (L"Category position");
+	REQUIRE (categoryPosition >= 0, L"Category position must be >= 0")
+	Confusion conf = FIRST (Confusion);
+	Matrix mat = FIRST (Matrix);
+	Confusion_Matrix_draw (conf, mat, GRAPHICS, categoryPosition, GET_REAL (L"Lower level"),
+		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"));
 END
 
 /**********************Correlation *******************************************/
 
 DIRECT (Correlation_help)
-Melder_help (L"Correlation");
+	Melder_help (L"Correlation");
 END
 
 FORM (Correlation_confidenceIntervals, L"Correlation: Confidence intervals...", L"Correlation: Confidence intervals...")
-POSITIVE (L"Confidence level (0-1)", L"0.95")
-INTEGER (L"Number of tests (Bonferroni correction)", L"0")
-RADIO (L"Approximation", 1)
-RADIOBUTTON (L"Ruben")
-RADIOBUTTON (L"Fisher")
-OK
+	POSITIVE (L"Confidence level (0-1)", L"0.95")
+	INTEGER (L"Number of tests (Bonferroni correction)", L"0")
+	RADIO (L"Approximation", 1)
+	RADIOBUTTON (L"Ruben")
+	RADIOBUTTON (L"Fisher")
+	OK
 DO
-double cl = GET_REAL (L"Confidence level");
-double numberOfTests = GET_INTEGER (L"Number of tests");
-LOOP {
-	iam (Correlation);
-	praat_new (Correlation_confidenceIntervals (me, cl, numberOfTests, GET_INTEGER (L"Approximation")), L"conf_intervals");
-}
+	double cl = GET_REAL (L"Confidence level");
+	double numberOfTests = GET_INTEGER (L"Number of tests");
+	LOOP {
+		iam (Correlation);
+		praat_new (Correlation_confidenceIntervals (me, cl, numberOfTests, GET_INTEGER (L"Approximation")), L"conf_intervals");
+	}
 END
 
 FORM (Correlation_testDiagonality_bartlett, L"Correlation: Get diagonality (bartlett)", L"SSCP: Get diagonality (bartlett)...")
-NATURAL (L"Number of contraints", L"1")
-OK
+	NATURAL (L"Number of contraints", L"1")
+	OK
 DO
-double chisq, p;
-long nc = GET_INTEGER (L"Number of contraints");
-LOOP {
-	iam (Correlation);
-	Correlation_testDiagonality_bartlett (me, nc, &chisq, &p);
-	Melder_information (Melder_double (p), L" (=probability, based on chisq = ",
-	Melder_double (chisq), L"and ndf = ", Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2));
-}
+	double chisq, p;
+	long nc = GET_INTEGER (L"Number of contraints");
+	LOOP {
+		iam (Correlation);
+		Correlation_testDiagonality_bartlett (me, nc, &chisq, &p);
+		Melder_information (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (my numberOfRows * (my numberOfRows - 1) / 2));
+	}
 END
 
 DIRECT (Correlation_to_PCA)
-LOOP {
-	iam (Correlation);
-	praat_new (SSCP_to_PCA (me), my name);
-}
+	LOOP {
+		iam (Correlation);
+		praat_new (SSCP_to_PCA (me), my name);
+	}
 END
 
 /**********************Covariance *******************************************/
 
 DIRECT (Covariance_help)
-Melder_help (L"Covariance");
+	Melder_help (L"Covariance");
 END
 
 FORM (Covariance_createSimple, L"Create simple Covariance", L"Create simple Covariance...")
-WORD (L"Name", L"c")
-SENTENCE (L"Covariances", L"1.0 0.0 1.0")
-SENTENCE (L"Centroid", L"0.0 0.0")
-POSITIVE (L"Number of observations", L"100.0")
-OK
+	WORD (L"Name", L"c")
+	SENTENCE (L"Covariances", L"1.0 0.0 1.0")
+	SENTENCE (L"Centroid", L"0.0 0.0")
+	POSITIVE (L"Number of observations", L"100.0")
+	OK
 DO
-praat_new (Covariance_createSimple (GET_STRING (L"Covariances"), GET_STRING (L"Centroid"),
-                                    GET_REAL (L"Number of observations")), GET_STRING (L"Name"));
+	praat_new (Covariance_createSimple (GET_STRING (L"Covariances"), GET_STRING (L"Centroid"),
+		GET_REAL (L"Number of observations")), GET_STRING (L"Name"));
 END
 
 FORM (Covariance_getProbabilityAtPosition, L"Covariance: Get probability at position", 0)
-SENTENCE (L"Position", L"10.0 20.0")
-OK
+	SENTENCE (L"Position", L"10.0 20.0")
+	OK
 DO
-wchar_t *position = GET_STRING (L"Position");
-LOOP {
-	iam (Covariance);
-	double p = Covariance_getProbabilityAtPosition_string (me, position);
-	Melder_information (Melder_double (p), L" (= probability at position ", position, L")");
-}
+	wchar_t *position = GET_STRING (L"Position");
+	LOOP {
+		iam (Covariance);
+		double p = Covariance_getProbabilityAtPosition_string (me, position);
+		Melder_information (Melder_double (p), L" (= probability at position ", position, L")");
+	}
 END
 
 FORM (Covariance_getSignificanceOfOneMean, L"Covariance: Get significance of one mean", L"Covariance: Get significance of one mean...")
-LABEL (L"", L"Get probability that the mean with")
-NATURAL (L"Index", L"1")
-LABEL (L"", L"differs from")
-REAL (L"Value", L"0.0")
-LABEL (L"", L"(Null hypothesis: the observed difference is due to chance.)")
-OK
+	LABEL (L"", L"Get probability that the mean with")
+	NATURAL (L"Index", L"1")
+	LABEL (L"", L"differs from")
+	REAL (L"Value", L"0.0")
+	LABEL (L"", L"(Null hypothesis: the observed difference is due to chance.)")
+	OK
 DO
-LOOP {
-	iam (Covariance);
-	double t, p; double ndf;
-	Covariance_getSignificanceOfOneMean (me, GET_INTEGER (L"Index"), GET_REAL (L"Value"), &p, &t , &ndf);
-	Melder_information (Melder_double (p), L" (=probability, based on t = ", Melder_double (t), L" and ndf = ", Melder_integer (ndf));
-}
+	LOOP {
+		iam (Covariance);
+		double t, p; double ndf;
+		Covariance_getSignificanceOfOneMean (me, GET_INTEGER (L"Index"), GET_REAL (L"Value"), &p, &t , &ndf);
+		Melder_information (Melder_double (p), L" (=probability, based on t = ", Melder_double (t), L" and ndf = ", Melder_integer (ndf));
+	}
 END
 
 FORM (Covariance_getSignificanceOfMeansDifference, L"Covariance: Get significance of means difference", L"Covariance: Get significance of means difference...")
-LABEL (L"", L"Get probability that the difference between means")
-NATURAL (L"Index1", L"1")
-NATURAL (L"Index2", L"2")
-LABEL (L"", L"differs from")
-REAL (L"Value", L"0.0")
-LABEL (L"", L"when the means are")
-BOOLEAN (L"Paired", 1)
-LABEL (L"", L"and have")
-BOOLEAN (L"Equal variances", 1)
-OK
+	LABEL (L"", L"Get probability that the difference between means")
+	NATURAL (L"Index1", L"1")
+	NATURAL (L"Index2", L"2")
+	LABEL (L"", L"differs from")
+	REAL (L"Value", L"0.0")
+	LABEL (L"", L"when the means are")
+	BOOLEAN (L"Paired", 1)
+	LABEL (L"", L"and have")
+	BOOLEAN (L"Equal variances", 1)
+	OK
 DO
-LOOP {
-	iam (Covariance);
-	double t, p; double ndf;
-	Covariance_getSignificanceOfMeansDifference (me, GET_INTEGER (L"Index1"), GET_INTEGER (L"Index2"),
-	GET_REAL (L"Value"), GET_INTEGER (L"Paired"), GET_INTEGER (L"Equal variances"), &p, &t , &ndf);
-	Melder_information (Melder_double (p), L" (=probability, based on t = ",
-	Melder_double (t), L"and ndf = ", Melder_integer (ndf), L")");
-}
+	LOOP {
+		iam (Covariance);
+		double t, p; double ndf;
+		Covariance_getSignificanceOfMeansDifference (me, GET_INTEGER (L"Index1"), GET_INTEGER (L"Index2"),
+		GET_REAL (L"Value"), GET_INTEGER (L"Paired"), GET_INTEGER (L"Equal variances"), &p, &t , &ndf);
+		Melder_information (Melder_double (p), L" (=probability, based on t = ",
+		Melder_double (t), L"and ndf = ", Melder_integer (ndf), L")");
+	}
 END
 
 FORM (Covariance_getSignificanceOfOneVariance, L"Covariance: Get significance of one variance", L"Covariance: Get significance of one variance...")
-LABEL (L"", L"Get probability that the variance with")
-NATURAL (L"Index", L"1")
-LABEL (L"", L"differs from")
-REAL (L"Value", L"0.0")
-LABEL (L"", L"(Null hypothesis: the observed difference is due to chance.)")
-OK
+	LABEL (L"", L"Get probability that the variance with")
+	NATURAL (L"Index", L"1")
+	LABEL (L"", L"differs from")
+	REAL (L"Value", L"0.0")
+	LABEL (L"", L"(Null hypothesis: the observed difference is due to chance.)")
+	OK
 DO
-LOOP {
-	iam (Covariance);
-	double chisq, p; long ndf;
-	Covariance_getSignificanceOfOneVariance (me, GET_INTEGER (L"Index"), GET_REAL (L"Value"), &p, &chisq , &ndf);
-	Melder_information (Melder_double (p), L" (=probability, based on chisq = ", Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
-}
+	LOOP {
+		iam (Covariance);
+		double chisq, p; long ndf;
+		Covariance_getSignificanceOfOneVariance (me, GET_INTEGER (L"Index"), GET_REAL (L"Value"), &p, &chisq , &ndf);
+		Melder_information (Melder_double (p), L" (=probability, based on chisq = ", Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
+	}
 END
 
 FORM (Covariance_getSignificanceOfVariancesRatio, L"Covariance: Get significance of variances ratio", L"Covariance: Get significance of variances ratio...")
-NATURAL (L"Index1", L"1")
-NATURAL (L"Index2", L"2")
-REAL (L"Hypothesized ratio", L"1.0")
-OK
+	NATURAL (L"Index1", L"1")
+	NATURAL (L"Index2", L"2")
+	REAL (L"Hypothesized ratio", L"1.0")
+	OK
 DO
-LOOP {
-	iam (Covariance);
-	double f, p; long ndf;
-	Covariance_getSignificanceOfVariancesRatio (me, GET_INTEGER (L"Index1"), GET_INTEGER (L"Index2"),
-	GET_REAL (L"Hypothesized ratio"), &p, &f , &ndf);
-	Melder_information (Melder_double (p), L" (=probability, based on F = ", Melder_double (f),
-	L"and ndf1 = ", Melder_integer (ndf), L" and ndf2 = ", Melder_integer (ndf));
-}
+	LOOP {
+		iam (Covariance);
+		double f, p; long ndf;
+		Covariance_getSignificanceOfVariancesRatio (me, GET_INTEGER (L"Index1"), GET_INTEGER (L"Index2"),
+		GET_REAL (L"Hypothesized ratio"), &p, &f , &ndf);
+		Melder_information (Melder_double (p), L" (=probability, based on F = ", Melder_double (f),
+		L"and ndf1 = ", Melder_integer (ndf), L" and ndf2 = ", Melder_integer (ndf));
+	}
 END
 
 FORM (Covariance_getFractionVariance, L"Covariance: Get fraction variance", L"Covariance: Get fraction variance...")
-NATURAL (L"From dimension", L"1")
-NATURAL (L"To dimension", L"1")
-OK
+	NATURAL (L"From dimension", L"1")
+	NATURAL (L"To dimension", L"1")
+	OK
 DO
-LOOP {
-	iam (Covariance);
-	Melder_information (Melder_double (SSCP_getFractionVariation (me, GET_INTEGER (L"From dimension"), GET_INTEGER (L"To dimension"))));
-}
+	LOOP {
+		iam (Covariance);
+		Melder_information (Melder_double (SSCP_getFractionVariation (me, GET_INTEGER (L"From dimension"), GET_INTEGER (L"To dimension"))));
+	}
 END
 
 FORM (Covariances_reportMultivariateMeanDifference, L"Covariances: Report multivariate mean difference",
       L"Covariances: Report multivariate mean difference...")
-BOOLEAN (L"Covariances are equal", 1)
-OK
+	BOOLEAN (L"Covariances are equal", 1)
+	OK
 DO
-Covariance c1 = 0, c2 = 0;
-LOOP {
-	iam (Covariance);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-double prob, fisher, df1, df2, difference;
-int equalCovariances = GET_INTEGER (L"Covariances are equal");
-MelderInfo_open ();
-difference = Covariances_getMultivariateCentroidDifference (c1, c2, equalCovariances, &prob, &fisher, &df1, &df2);
-MelderInfo_writeLine3 (L"Under the assumption that the two covariances are", (equalCovariances ? L" " : L" not "), L"equal:");
-MelderInfo_writeLine2 (L"Difference between multivariate means = ", Melder_double (difference));
-MelderInfo_writeLine2 (L"Fisher's F = ", Melder_double (fisher));
-MelderInfo_writeLine2 (L"Significance from zero = ", Melder_double (prob));
-MelderInfo_writeLine4 (L"Degrees of freedom = ", Melder_double (df1), L", ", Melder_double (df2));
-MelderInfo_writeLine4 (L"(Number of observations = ", Melder_integer (c1->numberOfObservations), L", ",
-                       Melder_integer (c2->numberOfObservations));
-MelderInfo_writeLine3 (L"Dimension of covariance matrices = ", Melder_integer (c1-> numberOfRows), L")");
-MelderInfo_close ();
+	Covariance c1 = 0, c2 = 0;
+	LOOP {
+		iam (Covariance);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	double prob, fisher, df1, df2, difference;
+	int equalCovariances = GET_INTEGER (L"Covariances are equal");
+	MelderInfo_open ();
+	difference = Covariances_getMultivariateCentroidDifference (c1, c2, equalCovariances, &prob, &fisher, &df1, &df2);
+	MelderInfo_writeLine3 (L"Under the assumption that the two covariances are", (equalCovariances ? L" " : L" not "), L"equal:");
+	MelderInfo_writeLine2 (L"Difference between multivariate means = ", Melder_double (difference));
+	MelderInfo_writeLine2 (L"Fisher's F = ", Melder_double (fisher));
+	MelderInfo_writeLine2 (L"Significance from zero = ", Melder_double (prob));
+	MelderInfo_writeLine4 (L"Degrees of freedom = ", Melder_double (df1), L", ", Melder_double (df2));
+	MelderInfo_writeLine4 (L"(Number of observations = ", Melder_integer (c1->numberOfObservations), L", ",
+						Melder_integer (c2->numberOfObservations));
+	MelderInfo_writeLine3 (L"Dimension of covariance matrices = ", Melder_integer (c1-> numberOfRows), L")");
+	MelderInfo_close ();
 END
 
 FORM (Covariance_to_TableOfReal_randomSampling, L"Covariance: To TableOfReal (random sampling)", L"Covariance: To TableOfReal (random sampling)...")
-INTEGER (L"Number of data points", L"0")
-OK
+	INTEGER (L"Number of data points", L"0")
+	OK
 DO
-LOOP {
-	iam (Covariance);
-	praat_new (Covariance_to_TableOfReal_randomSampling (me, GET_INTEGER (L"Number of data points")), my name);
-}
+	LOOP {
+		iam (Covariance);
+		praat_new (Covariance_to_TableOfReal_randomSampling (me, GET_INTEGER (L"Number of data points")), my name);
+	}
 END
 
 DIRECT (Covariances_reportEquality)
-autoCollection set = praat_getSelectedObjects ();
-MelderInfo_open ();
-{
-	double chisq, p, df;
-	Covariances_equality (set.peek(), 1, &p, &chisq, &df);
-	MelderInfo_writeLine1 (L"Difference between covariance matrices:");
-	MelderInfo_writeLine2 (L"Significance of difference (bartlett) = ", Melder_double (p));
-	MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
-	MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
-	Covariances_equality (set.peek(), 2, &p, &chisq, &df);
-	MelderInfo_writeLine2 (L"Significance of difference (wald) = ", Melder_double (p));
-	MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
-	MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
-}
-MelderInfo_close ();
+	autoCollection set = praat_getSelectedObjects ();
+	MelderInfo_open ();
+	{
+		double chisq, p, df;
+		Covariances_equality (set.peek(), 1, &p, &chisq, &df);
+		MelderInfo_writeLine1 (L"Difference between covariance matrices:");
+		MelderInfo_writeLine2 (L"Significance of difference (bartlett) = ", Melder_double (p));
+		MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
+		MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
+		Covariances_equality (set.peek(), 2, &p, &chisq, &df);
+		MelderInfo_writeLine2 (L"Significance of difference (wald) = ", Melder_double (p));
+		MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
+		MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
+	}
+	MelderInfo_close ();
 END
 
 DIRECT (Covariance_to_Correlation)
-LOOP {
-	iam (Covariance);
-	praat_new (SSCP_to_Correlation (me), my name);
-}
+	LOOP {
+		iam (Covariance);
+		praat_new (SSCP_to_Correlation (me), my name);
+	}
 END
 
 DIRECT (Covariance_to_PCA)
-LOOP {
-	iam (Covariance);
-	praat_new (SSCP_to_PCA (me), my name);
-}
+	LOOP {
+		iam (Covariance);
+		praat_new (SSCP_to_PCA (me), my name);
+	}
 END
 
 FORM (Covariance_and_TableOfReal_mahalanobis, L"Covariance & TableOfReal: To TableOfReal (mahalanobis)", L"Covariance & TableOfReal: To TableOfReal (mahalanobis)...")
-BOOLEAN (L"Centroid from table", 0)
-OK
+	BOOLEAN (L"Centroid from table", 0)
+	OK
 DO
-Covariance cov = FIRST (Covariance);
-TableOfReal tr = FIRST (TableOfReal);
-praat_new (Covariance_and_TableOfReal_mahalanobis (cov, tr, GET_INTEGER (L"Centroid from table")), L"mahalanobis");
+	Covariance cov = FIRST (Covariance);
+	TableOfReal tr = FIRST (TableOfReal);
+	praat_new (Covariance_and_TableOfReal_mahalanobis (cov, tr, GET_INTEGER (L"Centroid from table")), L"mahalanobis");
 END
 
 /********************** Discriminant **********************************/
 
 DIRECT (Discriminant_help)
-Melder_help (L"Discriminant");
+	Melder_help (L"Discriminant");
 END
 
 DIRECT (Discriminant_setGroupLabels)
-Discriminant me = FIRST (Discriminant);
-Strings ss = FIRST (Strings);
-Discriminant_setGroupLabels (me, ss);
-praat_dataChanged (me);
+	Discriminant me = FIRST (Discriminant);
+	Strings ss = FIRST (Strings);
+	Discriminant_setGroupLabels (me, ss);
+	praat_dataChanged (me);
 END
 
 FORM (Discriminant_and_Pattern_to_Categories, L"Discriminant & Pattern: To Categories", L"Discriminant & Pattern: To Categories...")
-BOOLEAN (L"Pool covariance matrices", 1)
-BOOLEAN (L"Use apriori probabilities", 1)
-OK
+	BOOLEAN (L"Pool covariance matrices", 1)
+	BOOLEAN (L"Use apriori probabilities", 1)
+	OK
 DO
-Discriminant me = FIRST (Discriminant);
-Pattern pat = FIRST (Pattern);
-praat_new (Discriminant_and_Pattern_to_Categories (me, pat, GET_INTEGER (L"Pool covariance matrices"),
-           GET_INTEGER (L"Use apriori probabilities")), 0);
+	Discriminant me = FIRST (Discriminant);
+	Pattern pat = FIRST (Pattern);
+	praat_new (Discriminant_and_Pattern_to_Categories (me, pat, GET_INTEGER (L"Pool covariance matrices"),
+		GET_INTEGER (L"Use apriori probabilities")), 0);
 END
 
 FORM (Discriminant_and_TableOfReal_to_Configuration, L"Discriminant & TableOfReal: To Configuration", L"Discriminant & TableOfReal: To Configuration...")
-INTEGER (L"Number of dimensions", L"0")
-OK
+		INTEGER (L"Number of dimensions", L"0")
+		OK
 DO
-long dimension = GET_INTEGER (L"Number of dimensions");
-REQUIRE (dimension >= 0, L"Number of dimensions must be greater equal zero.")
-Discriminant me = FIRST (Discriminant);
-TableOfReal tr = FIRST_GENERIC (TableOfReal);
-praat_new (Discriminant_and_TableOfReal_to_Configuration (me, tr, dimension), 0);
+	long dimension = GET_INTEGER (L"Number of dimensions");
+	REQUIRE (dimension >= 0, L"Number of dimensions must be greater equal zero.")
+	Discriminant me = FIRST (Discriminant);
+	TableOfReal tr = FIRST_GENERIC (TableOfReal);
+	praat_new (Discriminant_and_TableOfReal_to_Configuration (me, tr, dimension), 0);
 END
 
 DIRECT (hint_Discriminant_and_TableOfReal_to_ClassificationTable)
-Melder_information (L"You can use the Discriminant as a classifier by \nselecting a Discriminant and a TableOfReal object together.");
+	Melder_information (L"You can use the Discriminant as a classifier by \nselecting a Discriminant and a TableOfReal object together.");
 END
 
 FORM (Discriminant_and_TableOfReal_to_ClassificationTable, L"Discriminant & TableOfReal: To ClassificationTable", L"Discriminant & TableOfReal: To ClassificationTable...")
-BOOLEAN (L"Pool covariance matrices", 1)
-BOOLEAN (L"Use apriori probabilities", 1)
-OK
+	BOOLEAN (L"Pool covariance matrices", 1)
+	BOOLEAN (L"Use apriori probabilities", 1)
+	OK
 DO
-Discriminant me = FIRST (Discriminant);
-TableOfReal tr = FIRST_GENERIC (TableOfReal);
-praat_new (Discriminant_and_TableOfReal_to_ClassificationTable (me, tr,
-           GET_INTEGER (L"Pool covariance matrices"), GET_INTEGER (L"Use apriori probabilities")),
-           Thing_getName (me), L"_", Thing_getName (tr));
+	Discriminant me = FIRST (Discriminant);
+	TableOfReal tr = FIRST_GENERIC (TableOfReal);
+	praat_new (Discriminant_and_TableOfReal_to_ClassificationTable (me, tr,
+		GET_INTEGER (L"Pool covariance matrices"), GET_INTEGER (L"Use apriori probabilities")),
+		Thing_getName (me), L"_", Thing_getName (tr));
 END
 
 FORM (Discriminant_and_TableOfReal_mahalanobis, L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)", L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...")
-SENTENCE (L"Group label", L"")
-BOOLEAN (L"Pool covariance matrices", 0)
-OK
+	SENTENCE (L"Group label", L"")
+	BOOLEAN (L"Pool covariance matrices", 0)
+	OK
 DO
-Discriminant me = FIRST (Discriminant);
-TableOfReal tr = FIRST (TableOfReal);
-long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
-REQUIRE (group > 0, L"Group label does not exist.")
-praat_new (Discriminant_and_TableOfReal_mahalanobis (me, tr, group, GET_INTEGER (L"Pool covariance matrices")), L"mahalanobis");
+	Discriminant me = FIRST (Discriminant);
+	TableOfReal tr = FIRST (TableOfReal);
+	long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
+	REQUIRE (group > 0, L"Group label does not exist.")
+	praat_new (Discriminant_and_TableOfReal_mahalanobis (me, tr, group, GET_INTEGER (L"Pool covariance matrices")), L"mahalanobis");
 END
 
 FORM (Discriminant_getWilksLambda, L"Discriminant: Get Wilks' lambda", L"Discriminant: Get Wilks' lambda...")
-LABEL (L"", L"Product (i=from..numberOfEigenvalues, 1 / (1 + eigenvalue[i]))")
-INTEGER (L"From", L"1")
-OK
+	LABEL (L"", L"Product (i=from..numberOfEigenvalues, 1 / (1 + eigenvalue[i]))")
+	INTEGER (L"From", L"1")
+	OK
 DO
-long from = GET_INTEGER (L"From");
-REQUIRE (from >= 1, L"Number must be greater than or equal to one.")
-LOOP {
-	iam (Discriminant);
-	Melder_information (Melder_double (Discriminant_getWilksLambda (me, from)));
-}
+	long from = GET_INTEGER (L"From");
+	REQUIRE (from >= 1, L"Number must be greater than or equal to one.")
+	LOOP {
+		iam (Discriminant);
+		Melder_information (Melder_double (Discriminant_getWilksLambda (me, from)));
+	}
 END
 
 FORM (Discriminant_getCumulativeContributionOfComponents, L"Discriminant: Get cumulative contribution of components", L"Eigen: Get cumulative contribution of components...")
-NATURAL (L"From component", L"1")
-NATURAL (L"To component", L"1")
-OK
+	NATURAL (L"From component", L"1")
+	NATURAL (L"To component", L"1")
+	OK
 DO
-LOOP {
-	iam (Discriminant);
-	Melder_information (Melder_double (Eigen_getCumulativeContributionOfComponents (me,
-	GET_INTEGER (L"From component"), GET_INTEGER (L"To component"))));
-}
+	LOOP {
+		iam (Discriminant);
+		Melder_information (Melder_double (Eigen_getCumulativeContributionOfComponents (me,
+		GET_INTEGER (L"From component"), GET_INTEGER (L"To component"))));
+	}
 END
 
 
 FORM (Discriminant_getPartialDiscriminationProbability, L"Discriminant: Get partial discrimination probability", L"Discriminant: Get partial discrimination probability...")
-INTEGER (L"Number of dimensions", L"1")
-OK
+	INTEGER (L"Number of dimensions", L"1")
+	OK
 DO
-long ndf, n = GET_INTEGER (L"Number of dimensions");
-double chisq, p;
-REQUIRE (n >= 0, L"Number of dimensions must be greater than or equal to zero.")
-LOOP {
-	iam (Discriminant);
-	Discriminant_getPartialDiscriminationProbability (me, n, &p, &chisq, &ndf);
-	Melder_information (Melder_double (p), L" (=probability, based on chisq = ", Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
-}
+	long ndf, n = GET_INTEGER (L"Number of dimensions");
+	double chisq, p;
+	REQUIRE (n >= 0, L"Number of dimensions must be greater than or equal to zero.")
+	LOOP {
+		iam (Discriminant);
+		Discriminant_getPartialDiscriminationProbability (me, n, &p, &chisq, &ndf);
+		Melder_information (Melder_double (p), L" (=probability, based on chisq = ", Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
+	}
 END
 
 DIRECT (Discriminant_getHomegeneityOfCovariances_box)
-LOOP {
-	iam (Discriminant);
-	double chisq, p; long ndf;
-	SSCPs_getHomegeneityOfCovariances_box ( (SSCPs) my groups, &p, &chisq, &ndf);
-	Melder_information (Melder_double (p), L" (=probability, based on chisq = ",
-	Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
-}
+	LOOP {
+		iam (Discriminant);
+		double chisq, p; long ndf;
+		SSCPs_getHomegeneityOfCovariances_box ( (SSCPs) my groups, &p, &chisq, &ndf);
+		Melder_information (Melder_double (p), L" (=probability, based on chisq = ",
+		Melder_double (chisq), L"and ndf = ", Melder_integer (ndf));
+	}
 END
 
 DIRECT (Discriminant_reportEqualityOfCovariances_wald)
-MelderInfo_open ();
-LOOP {
-	iam (Discriminant);
-	double chisq, prob, df;
-	Covariances_equality ( (Collection) my groups, 2, &prob, &chisq, &df);
-	MelderInfo_writeLine1 (L"Wald test for equality of covariance matrices:");
-	MelderInfo_writeLine2 (L"Chi squared: ", Melder_double (chisq));
-	MelderInfo_writeLine2 (L"Significance: ", Melder_double (prob));
-	MelderInfo_writeLine2 (L"Degrees of freedom: ", Melder_double (df));
-	MelderInfo_writeLine2 (L"Number of matrices: ", Melder_integer (my groups -> size));
-}
-MelderInfo_close ();
+	MelderInfo_open ();
+	LOOP {
+		iam (Discriminant);
+		double chisq, prob, df;
+		Covariances_equality ( (Collection) my groups, 2, &prob, &chisq, &df);
+		MelderInfo_writeLine1 (L"Wald test for equality of covariance matrices:");
+		MelderInfo_writeLine2 (L"Chi squared: ", Melder_double (chisq));
+		MelderInfo_writeLine2 (L"Significance: ", Melder_double (prob));
+		MelderInfo_writeLine2 (L"Degrees of freedom: ", Melder_double (df));
+		MelderInfo_writeLine2 (L"Number of matrices: ", Melder_integer (my groups -> size));
+	}
+	MelderInfo_close ();
 END
 
 FORM (Discriminant_getConcentrationEllipseArea, L"Discriminant: Get concentration ellipse area", L"Discriminant: Get concentration ellipse area...")
-SENTENCE (L"Group label", L"")
-POSITIVE (L"Number of sigmas", L"1.0")
-BOOLEAN (L"Discriminant plane", 1)
-INTEGER (L"X-dimension", L"1")
-INTEGER (L"Y-dimension", L"2")
-OK
+	SENTENCE (L"Group label", L"")
+	POSITIVE (L"Number of sigmas", L"1.0")
+	BOOLEAN (L"Discriminant plane", 1)
+	INTEGER (L"X-dimension", L"1")
+	INTEGER (L"Y-dimension", L"2")
+	OK
 DO
-LOOP {
-	iam (Discriminant);
-	long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
-	REQUIRE (group > 0, L"Group label does not exist.")
-	Melder_information (Melder_double (Discriminant_getConcentrationEllipseArea (me, group,
-	GET_REAL (L"Number of sigmas"), 0, GET_INTEGER (L"Discriminant plane"),
-	GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"))));
-}
+	LOOP {
+		iam (Discriminant);
+		long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
+		REQUIRE (group > 0, L"Group label does not exist.")
+		Melder_information (Melder_double (Discriminant_getConcentrationEllipseArea (me, group,
+		GET_REAL (L"Number of sigmas"), 0, GET_INTEGER (L"Discriminant plane"),
+		GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"))));
+	}
 END
 
 FORM (Discriminant_getConfidenceEllipseArea, L"Discriminant: Get confidence ellipse area", L"Discriminant: Get confidence ellipse area...")
-SENTENCE (L"Group label", L"")
-POSITIVE (L"Confidence level (0-1)", L"0.95")
-BOOLEAN (L"Discriminant plane", 1)
-INTEGER (L"X-dimension", L"1")
-INTEGER (L"Y-dimension", L"2")
-OK
+	SENTENCE (L"Group label", L"")
+	POSITIVE (L"Confidence level (0-1)", L"0.95")
+	BOOLEAN (L"Discriminant plane", 1)
+	INTEGER (L"X-dimension", L"1")
+	INTEGER (L"Y-dimension", L"2")
+	OK
 DO
-LOOP {
-	iam (Discriminant);
-	long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
-	REQUIRE (group > 0, L"Group label does not exist.")
-	Melder_information (Melder_double (Discriminant_getConcentrationEllipseArea (me, group,
-	GET_REAL (L"Confidence level"), 1, GET_INTEGER (L"Discriminant plane"),
-	GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"))));
-}
+	LOOP {
+		iam (Discriminant);
+		long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
+		REQUIRE (group > 0, L"Group label does not exist.")
+		Melder_information (Melder_double (Discriminant_getConcentrationEllipseArea (me, group,
+		GET_REAL (L"Confidence level"), 1, GET_INTEGER (L"Discriminant plane"),
+		GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"))));
+	}
 END
 
 FORM (Discriminant_getLnDeterminant_group, L"Discriminant: Get determinant (group)", L"Discriminant: Get determinant (group)...")
-SENTENCE (L"Group label", L"")
-OK
+	SENTENCE (L"Group label", L"")
+	OK
 DO
-LOOP {
-	iam (Discriminant);
-	long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
-	REQUIRE (group > 0, L"Group label does not exist.")
-	Melder_information (Melder_double (Discriminant_getLnDeterminant_group (me, group)));
-}
+	LOOP {
+		iam (Discriminant);
+		long group = Discriminant_groupLabelToIndex (me, GET_STRING (L"Group label"));
+		REQUIRE (group > 0, L"Group label does not exist.")
+		Melder_information (Melder_double (Discriminant_getLnDeterminant_group (me, group)));
+	}
 END
 
 DIRECT (Discriminant_getLnDeterminant_total)
-LOOP {
-	iam (Discriminant);
-	Melder_information (Melder_double (Discriminant_getLnDeterminant_total (me)));
-}
+	LOOP {
+		iam (Discriminant);
+		Melder_information (Melder_double (Discriminant_getLnDeterminant_total (me)));
+	}
 END
 
 FORM (Discriminant_invertEigenvector, L"Discriminant: Invert eigenvector", 0)
-NATURAL (L"Index of eigenvector", L"1")
-OK
+	NATURAL (L"Index of eigenvector", L"1")
+	OK
 DO
-LOOP {
-	iam (Discriminant);
-	Eigen_invertEigenvector (me, GET_INTEGER (L"Index of eigenvector"));
-	praat_dataChanged (me);
-}
+	LOOP {
+		iam (Discriminant);
+		Eigen_invertEigenvector (me, GET_INTEGER (L"Index of eigenvector"));
+		praat_dataChanged (me);
+	}
 END
 
 FORM (Discriminant_drawSigmaEllipses, L"Discriminant: Draw sigma ellipses", L"Discriminant: Draw sigma ellipses...")
-POSITIVE (L"Number of sigmas", L"1.0")
-BOOLEAN (L"Discriminant plane", 1)
-INTEGER (L"X-dimension", L"1")
-INTEGER (L"Y-dimension", L"2")
-REAL (L"left Horizontal range", L"0.0")
-REAL (L"right Horizontal range", L"0.0")
-REAL (L"left Vertical range", L"0.0")
-REAL (L"right Vertical range", L"0.0")
-INTEGER (L"Label size", L"12")
-BOOLEAN (L"Garnish", 1)
-OK
+	POSITIVE (L"Number of sigmas", L"1.0")
+	BOOLEAN (L"Discriminant plane", 1)
+	INTEGER (L"X-dimension", L"1")
+	INTEGER (L"Y-dimension", L"2")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	INTEGER (L"Label size", L"12")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (Discriminant);
-	Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (L"Number of sigmas"), 0, 0,
-	GET_INTEGER (L"Discriminant plane"), GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"),
-	GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
-	GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
-	GET_INTEGER (L"Label size"), GET_INTEGER (L"Garnish"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (Discriminant);
+		Discriminant_drawConcentrationEllipses (me, GRAPHICS, GET_REAL (L"Number of sigmas"), 0, 0,
+		GET_INTEGER (L"Discriminant plane"), GET_INTEGER (L"X-dimension"), GET_INTEGER (L"Y-dimension"),
+		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+		GET_INTEGER (L"Label size"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 FORM (Discriminant_drawOneSigmaEllipse, L"Discriminant: Draw one sigma ellipse", L"Discriminant: Draw one sigma ellipse...")
@@ -4675,6 +4673,7 @@ LOOP {
 	(s1 ? s2 : s1) = me;
 }
 Melder_assert (s1 && s2);
+autoPraatPicture picture;
 Sounds_paintEnclosed (s1, s2, GRAPHICS, GET_COLOUR (L"Colour"),
                       GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
                       GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"));

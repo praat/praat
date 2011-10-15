@@ -412,11 +412,11 @@ static const wchar * singleTypeToText (void *address, int type, void *tagType, M
 		case floatwa:  MelderString_append (buffer, Melder_single  (* (double *)         address)); break;
 		case doublewa: MelderString_append (buffer, Melder_double  (* (double *)         address)); break;
 		case fcomplexwa: { fcomplex value = * (fcomplex *) address;
-			MelderString_append4 (buffer, Melder_single (value. re), L" + ", Melder_single (value. im), L" i"); } break;
+			MelderString_append (buffer, Melder_single (value. re), L" + ", Melder_single (value. im), L" i"); } break;
 		case dcomplexwa: { dcomplex value = * (dcomplex *) address;
-			MelderString_append4 (buffer, Melder_double (value. re), L" + ", Melder_double (value. im), L" i"); } break;
-		case enumwa:  MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed char *)  address), L">"); break;
-		case lenumwa: MelderString_append3 (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed short *) address), L">"); break;
+			MelderString_append (buffer, Melder_double (value. re), L" + ", Melder_double (value. im), L" i"); } break;
+		case enumwa:  MelderString_append (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed char *)  address), L">"); break;
+		case lenumwa: MelderString_append (buffer, L"<", ((const wchar_t * (*) (int)) tagType) (* (signed short *) address), L">"); break;
 		case booleanwa:  MelderString_append (buffer, * (signed char *) address ? L"<true>" : L"<false>"); break;
 		case questionwa: MelderString_append (buffer, * (signed char *) address ? L"<yes>"  : L"<no>"   ); break;
 		case stringwa:

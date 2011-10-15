@@ -112,13 +112,13 @@ static bool RealTier_valuesInRange (I, double min, double max) {
 	for (long i = 1; i <= my points -> size; i++) {
 		RealPoint p = (RealPoint) my points -> item[i];
 		if (NUMdefined (min) && p -> value < min) {
-			return 0;
+			return false;
 		}
 		if (NUMdefined (max) && p -> value < max) {
-			return 0;
+			return false;
 		}
 	}
-	return 1;
+	return true;
 }
 
 static double PointProcess_getPeriodAtIndex (PointProcess me, long it, double maximumPeriod) {

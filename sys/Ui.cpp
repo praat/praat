@@ -128,7 +128,7 @@ static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
 			if (Melder_debug == 11) {
-				Melder_warning4 (Melder_integer (i), L" \"", b -> name, L"\"");
+				Melder_warning (i, " \"", b -> name, "\"");
 			}
 		} else {
 			XmToggleButtonSetState (b -> toggle, FALSE, FALSE);

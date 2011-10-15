@@ -171,7 +171,7 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 			}
 		}
 		if (collection -> size == 0)
-			Melder_warning5 (L"No label that ", kMelder_string_getText (comparison_Melder_STRING), L" the text \"", text, L"\" was found.");
+			Melder_warning ("No label that ", kMelder_string_getText (comparison_Melder_STRING), " the text \"", text, "\" was found.");
 		return collection.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, " & ", sound, ": intervals not extracted.");

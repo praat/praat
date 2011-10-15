@@ -743,15 +743,15 @@ void _GuiNativeControl_setTitle (GuiObject me) {
 
 static int _XmScrollBar_check (GuiObject me) {
 	if (my maximum < my minimum)
-		Melder_warning5 (L"XmScrollBar: maximum (", Melder_integer (my maximum), L") less than minimum (", Melder_integer (my minimum), L").");
+		Melder_warning ("XmScrollBar: maximum (", my maximum, ") less than minimum (", my minimum, ").");
 	else if (my sliderSize > my maximum - my minimum)
-		Melder_warning7 (L"XmScrollBar: slider size (", Melder_integer (my sliderSize), L") greater than maximum (",
-			Melder_integer (my maximum), L") minus minimum (", Melder_integer (my minimum), L").");
+		Melder_warning ("XmScrollBar: slider size (", my sliderSize, ") greater than maximum (",
+			my maximum, ") minus minimum (", my minimum, ").");
 	else if (my value < my minimum)
-		Melder_warning5 (L"XmScrollBar: value (", Melder_integer (my value), L") less than minimum (", Melder_integer (my minimum), L").");
+		Melder_warning ("XmScrollBar: value (", my value, ") less than minimum (", my minimum, ").");
 	else if (my value > my maximum - my sliderSize)
-		Melder_warning7 (L"XmScrollBar: value (", Melder_integer (my value), L") greater than maximum (",
-			Melder_integer (my maximum), L") minus slider size (", Melder_integer (my sliderSize), L").");
+		Melder_warning ("XmScrollBar: value (", my value, ") greater than maximum (",
+			my maximum, ") minus slider size (", my sliderSize, ").");
 	else return 1;
 	return 0;
 }
@@ -4637,7 +4637,7 @@ void GuiMainLoop () {
 		Melder_assert (down == true);
 		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me && key >= VK_LEFT && key <= VK_DOWN) {
-			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
+			//Melder_warning ("Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
 				GuiObject drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {
@@ -4654,7 +4654,7 @@ void GuiMainLoop () {
 	static void on_char (HWND window, TCHAR kar, int repeat) {
 		GuiObject me = (GuiObject) GetWindowLongPtr (window, GWLP_USERDATA);
 		if (me) {
-			//Melder_warning2 (L"Widget type ", Melder_integer (my widgetClass));
+			//Melder_warning ("Widget type ", Melder_integer (my widgetClass));
 			if (MEMBER (me, Shell)) {
 				GuiObject drawingArea = _motif_findDrawingArea (me);
 				if (drawingArea) {

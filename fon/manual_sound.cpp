@@ -196,11 +196,11 @@ NORMAL (L"This command also works if you select more than one stereo Sound. "
 	"For each of them, Praat creates a new mono Sound.")
 MAN_END
 
-MAN_BEGIN (L"Read two sounds from stereo file...", L"ppgb", 20051218)
+MAN_BEGIN (L"Read separate channels from sound file...", L"ppgb", 20111010)
 INTRO (L"A command in the @@Open menu@ of the #Objects window. "
-	"You use this if you want to get the two channels of a @stereo sound file "
-	"as two separate @Sound objects in the list. "
-	"Praat will name the two channels %left and %right.")
+	"You use this if you want to get the channels of a @stereo (or multi-channel) sound file "
+	"as two (or more) separate @Sound objects in the list. "
+	"If the file name is hello.wav, Praat will name the channels hello_ch1, hello_ch2, and so on.")
 MAN_END
 
 MAN_BEGIN (L"Record mono Sound...", L"ppgb", 20021212)

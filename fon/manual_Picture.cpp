@@ -41,7 +41,7 @@ static void drawOneIpaSymbol (Graphics g, double x, double y, const wchar_t *sym
 }
 
 static void draw_IPA_consonant_chart (Graphics graphics) {
-	Graphics_setWindow (graphics, 0, 20, 6, 19.5);
+	Graphics_setWindow (graphics, -0.8, 20, 6, 19.5);
 	Graphics_setFontStyle (graphics, Graphics_ITALIC);
 	Graphics_setTextRotation (graphics, 60);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
@@ -100,7 +100,7 @@ static void draw_IPA_consonant_chart (Graphics graphics) {
 }
 
 static void draw_IPA_vowel_chart (Graphics graphics) {
-	Graphics_setWindow (graphics, 0, 19, -0.5, 7.5);
+	Graphics_setWindow (graphics, -0.7, 19, -0.5, 7.5);
 	Graphics_setFontStyle (graphics, Graphics_ITALIC);
 	Graphics_setTextRotation (graphics, 60);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);

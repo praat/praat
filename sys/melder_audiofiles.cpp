@@ -432,7 +432,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 	while (fread (chunkID, 1, 4, f) == 4) {
 		long chunkSize = bingeti4LE (f);
 		if (Melder_debug == 23) {
-			Melder_warning9 (Melder_integer (chunkID [0]), L" ", Melder_integer (chunkID [1]), L" ",
+			Melder_warning (Melder_integer (chunkID [0]), L" ", Melder_integer (chunkID [1]), L" ",
 				Melder_integer (chunkID [2]), L" ", Melder_integer (chunkID [3]), L" ", Melder_integer (chunkSize));
 		}
 		if (strnequ (chunkID, "fmt ", 4)) {
@@ -818,7 +818,7 @@ static void Melder_DecodeMp3_convert (const MP3F_SAMPLE *channels [MP3F_MAX_CHAN
 static void Melder_DecodeFlac_error (const FLAC__StreamDecoder *decoder, FLAC__StreamDecoderErrorStatus status, void *client_data) {
 	(void) decoder;
 	(void) client_data;
-	Melder_warning2 (L"FLAC decoder error: ", Melder_peekUtf8ToWcs (FLAC__StreamDecoderErrorStatusString [status]));
+	Melder_warning ("FLAC decoder error: ", FLAC__StreamDecoderErrorStatusString [status]);
 }
 
 static void Melder_readFlacFile (FILE *f, int numberOfChannels, double **buffer, long numberOfSamples) {
@@ -880,7 +880,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 8-bit).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 8-bit).\nMissing samples set to zero.");
 				}
 			} break;
 			case Melder_LINEAR_8_UNSIGNED:
@@ -892,7 +892,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 8-bit).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 8-bit).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_LINEAR_16_BIG_ENDIAN: {
@@ -926,7 +926,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 16-bit).\nMissing samples set to zero.");
+					Melder_warning (L"File too small (", numberOfChannels, "-channel 16-bit).\nMissing samples set to zero.");
 				}
 			} break;
 			case Melder_LINEAR_16_LITTLE_ENDIAN: {
@@ -960,7 +960,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 16-bit).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 16-bit).\nMissing samples set to zero.");
 				}
 			} break;
 			case Melder_LINEAR_24_BIG_ENDIAN: {
@@ -996,7 +996,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 24-bit).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 24-bit).\nMissing samples set to zero.");
 				}
 			} break;
 			case Melder_LINEAR_24_LITTLE_ENDIAN: {
@@ -1032,7 +1032,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 24-bit).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 24-bit).\nMissing samples set to zero.");
 				}
 			} break;
 			case Melder_LINEAR_32_BIG_ENDIAN:
@@ -1044,7 +1044,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 32-bit).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 32-bit).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_LINEAR_32_LITTLE_ENDIAN:
@@ -1056,7 +1056,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 32-bit).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 32-bit).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_IEEE_FLOAT_32_BIG_ENDIAN:
@@ -1068,7 +1068,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 32-bit floating point).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 32-bit floating point).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
@@ -1080,7 +1080,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 32-bit floating point).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 32-bit floating point).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_MULAW:
@@ -1092,7 +1092,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 8-bit " "-law).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 8-bit " "-law).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_ALAW:
@@ -1104,7 +1104,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					}
 				} catch (MelderError) {
 					Melder_clearError ();
-					Melder_warning3 (L"File too small (", Melder_integer (numberOfChannels), L"-channel 8-bit A-law).\nMissing samples set to zero.");
+					Melder_warning ("File too small (", numberOfChannels, "-channel 8-bit A-law).\nMissing samples set to zero.");
 				}
 				break;
 			case Melder_FLAC_COMPRESSION:
@@ -1390,7 +1390,7 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 				Melder_throw (L"Unknown format.");
 		}
 		if (nclipped > 0 && warnIfClipped)
-			Melder_warning5 (L"Writing samples to audio file: ", Melder_integer (nclipped), L" out of ", Melder_integer (numberOfSamples), L" samples have been clipped.\n"
+			Melder_warning ("Writing samples to audio file: ", nclipped, " out of ", numberOfSamples, " samples have been clipped.\n"
 				"Advice: you could scale the amplitudes or write to a binary file.");
 	} catch (MelderError) {
 		Melder_throw ("Samples not written to audio file.");

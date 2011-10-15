@@ -23,9 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20111007)
+MAN_BEGIN (L"What's new?", L"ppgb", 20111015)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3# (15 October 2011)")
 NORMAL (L"##5.2.46# (7 October 2011)")
 LIST_ITEM (L"\\bu Corrected the same very old bug as in 5.2.44, but now also for opening and saving files.")
 LIST_ITEM (L"\\bu Many better messages.")

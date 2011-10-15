@@ -518,8 +518,8 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 		}
 		if (icons > my numberOfConstraints) {   // completed the loop?
 			if (warnIfStalled && ! equivalent)
-				Melder_warning4 (L"Correct output is harmonically bounded (by having strict superset violations as compared to the learner's output)! EDCD stalls.\n"
-					"Correct output: ", loser -> string, L"\nLearner's output: ", winner -> string);
+				Melder_warning ("Correct output is harmonically bounded (by having strict superset violations as compared to the learner's output)! EDCD stalls.\n"
+					"Correct output: ", loser -> string, "\nLearner's output: ", winner -> string);
 			return;
 		}
 		/*

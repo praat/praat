@@ -270,7 +270,7 @@ void Melder_relativePathToFile (const wchar *path, MelderFile file) {
 			Melder_getDefaultDir (& dir);   /* BUG */
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
-			MelderString_append3 (& buffer,
+			MelderString_append (& buffer,
 				dir. path,
 				dir. path [0] != '\0' && dir. path [wcslen (dir. path) - 1] == '\\' ? L"" : L"\\",
 				path);

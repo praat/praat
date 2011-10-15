@@ -2022,7 +2022,7 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis_pulses () {
 
 int structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
 	if (pitch.show) {
-		//Melder_warning3 (Melder_double (xbegin), L" ", Melder_double (ybegin));
+		//Melder_warning (xbegin, L" ", ybegin);
 		if (xbegin >= endWindow && ybegin > 0.48 && ybegin <= 0.50) {
 			pitch.ceiling *= 1.26;
 			forget (pitch.data);

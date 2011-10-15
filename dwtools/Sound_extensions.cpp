@@ -1,4 +1,4 @@
-/* Sound_extensions.c
+/* Sound_extensions.cpp
  *
  * Copyright (C) 1993-2011 David Weenink
  *
@@ -1784,7 +1784,7 @@ static void Sound_findIntermediatePoint_bs (Sound me, long ichannel, long isampl
 }
 
 void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double minimum, double maximum,
-                      bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter) {
+	bool garnish, const wchar_t *method, long numberOfBisections, const wchar_t *formula, Interpreter interpreter) {
 	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 
 	long ixmin, ixmax;
@@ -1795,9 +1795,8 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 	Graphics_setInner (g);
 	struct Formula_Result result;
 	for (long channel = 1; channel <= my ny; channel ++) {
-		Graphics_setWindow (g, tmin, tmax,
-		                    minimum - (my ny - channel) * (maximum - minimum),
-		                    maximum + (channel - 1) * (maximum - minimum));
+		Graphics_setWindow (g, tmin, tmax, minimum - (my ny - channel) * (maximum - minimum),
+			maximum + (channel - 1) * (maximum - minimum));
 		if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				Formula_run (channel, ix, & result);
@@ -1851,7 +1850,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 			for (long ix = ixmin; ix <= ixmax; ix++) {
 				Formula_run (channel, ix, & result);
 				current = result.result.numericResult; // true means draw
-				if (previous && ! current) { // leaving drawing segment
+				if (previous && not current) { // leaving drawing segment
 					if (ix != ixmin) {
 						if (ix - istart > 1) {
 							xe = Matrix_columnToX (me, istart);
@@ -1865,7 +1864,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 						Graphics_line (g, xb, yb, xe, ye);
 						Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_NUMERIC, true);
 					}
-				} else if (current && ! previous) { // entry drawing segment
+				} else if (current && not previous) { // entry drawing segment
 					istart = ix;
 					Sound_findIntermediatePoint_bs (me, channel, ix - 1, previous, current, formula, interpreter, Vector_VALUE_INTERPOLATION_LINEAR, numberOfBisections, &xb, &yb);
 					xe = Sampled_indexToX (me, ix), ye = my z[channel][ix];
