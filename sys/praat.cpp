@@ -1218,7 +1218,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 				Gui_setOpenDocumentCallback (cb_openDocument);
 			#endif
 			theCurrentPraatApplication -> topShell = GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
-			XtVaSetValues (theCurrentPraatApplication -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
+			double left;
+			Gui_getWindowPositioningBounds (& left, NULL, NULL, NULL);
+			XtVaSetValues (theCurrentPraatApplication -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, (int) left + 10, NULL);
 			#if defined (macintosh) || defined (_WIN32)
 				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
 			#endif

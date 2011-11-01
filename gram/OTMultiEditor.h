@@ -28,6 +28,7 @@ Thing_define (OTMultiEditor, HyperPage) {
 		const wchar *form1, *form2;
 		GuiObject form1Text, form2Text;
 		long selectedConstraint;
+		bool d_constraintsAreDrawnVertically;
 	// overridden methods:
 		virtual bool v_editable () { return true; }
 		virtual void v_createChildren ();

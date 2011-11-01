@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20111015)
+MAN_BEGIN (L"What's new?", L"ppgb", 20111101)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.01# (1 November 2011)")
+LIST_ITEM (L"\\bu Macintosh and Windows: better window positioning if the Dock or Task Bar is on the left or right.")
+LIST_ITEM (L"\\bu IPA symbol: you can now use \\bs.f for the half-length sign (\\.f).")
+LIST_ITEM (L"\\bu EEG window.")
 NORMAL (L"##5.3# (15 October 2011)")
 NORMAL (L"##5.2.46# (7 October 2011)")
 LIST_ITEM (L"\\bu Corrected the same very old bug as in 5.2.44, but now also for opening and saving files.")
@@ -1252,7 +1256,7 @@ ENTRY (L"Praat 3.5, 27 May 1997")
 	LIST_ITEM (L"\\bu Tables and pictures in manual.")
 	LIST_ITEM (L"\\bu Printing the entire manual.")
 	LIST_ITEM (L"\\bu Logo.")
-	NORMAL (L"New classes:")
+	NORMAL (L"New types:")
 	LIST_ITEM (L"\\bu Labelling & segmentation: #TextGrid, #IntervalTier, #TextTier.")
 	LIST_ITEM (L"\\bu Analysis & manipulation: #Analysis.")
 	LIST_ITEM (L"\\bu Statistics: #TableOfReal, #Distributions, #Transition")
@@ -1278,7 +1282,7 @@ ENTRY (L"Praat 3.5, 27 May 1997")
 	LIST_ITEM (L"\\bu Keyboard shortcuts, text editor, help under question mark, etc.")
 ENTRY (L"Praat 3.3, 6 October 1996")
 	LIST_ITEM (L"\\bu Documentation: hypertext help browser, including the first 190 man pages.")
-	LIST_ITEM (L"\\bu New editors: class #TextTier for labelling times instead of intervals.")
+	LIST_ITEM (L"\\bu New editors: type #TextTier for labelling times instead of intervals.")
 	LIST_ITEM (L"\\bu New actions: #Formant: Viterbi tracker, Statistics menu, Scatter plot.")
 	LIST_ITEM (L"\\bu Evaluation: For HNR analysis of speech, the cross-correlation method, "
 		"which has a sensitivity of 60 dB and a typical time resolution of 12 milliseconds, "
@@ -1293,7 +1297,7 @@ ENTRY (L"Praat 3.3, 6 October 1996")
 	LIST_ITEM (L"\\bu Graphics: eight colours, small caps, text rotation.")
 	LIST_ITEM (L"\\bu File formats: Sun/NexT mu-law files, raw matrix text files, Xwaves mark files.")
 	LIST_ITEM (L"\\bu Accelerations: keyboard shortcuts, faster dynamic menu, Shift-OK keeps file selector on screen.")
-	LIST_ITEM (L"\\bu Class changes: #StylPitch and #MarkTier are now called #PitchTier and #TextTier, respectively. "
+	LIST_ITEM (L"\\bu Object type changes: #StylPitch and #MarkTier are now called #PitchTier and #TextTier, respectively. "
 		"Old files can still be read.")
 	LIST_ITEM (L"\\bu Script warning: all times in dialogs are in seconds now: milliseconds have gone.")
 ENTRY (L"Praat 3.2, 29 April 1996")
@@ -1405,10 +1409,10 @@ MAN_BEGIN (L"Praat menu", L"ppgb", 20050822)
 INTRO (L"The first menu in the @@Object window@. On MacOS X, this menu is in the main menu bar.")
 MAN_END
 
-MAN_BEGIN (L"Copy...", L"ppgb", 20110808)
+MAN_BEGIN (L"Copy...", L"ppgb", 20111018)
 INTRO (L"One of the fixed buttons in the @@Object window@.")
 ENTRY (L"Availability")
-NORMAL (L"You can choose this command after selecting one object of any class.")
+NORMAL (L"You can choose this command after selecting one object of any type.")
 ENTRY (L"Behaviour")
 NORMAL (L"The Object window copies the selected object, and all the data it contains, "
 	"to a new object, which will appear at the bottom of the List of Objects.")
@@ -2703,16 +2707,16 @@ ENTRY (L"Usage")
 NORMAL (L"To save your data to a disk file before quitting, choose a command from the @@Save menu@.")
 MAN_END
 
-MAN_BEGIN (L"Read from file...", L"ppgb", 20110129)
+MAN_BEGIN (L"Read from file...", L"ppgb", 20111018)
 INTRO (L"One of the commands in the @@Open menu@.")
 ENTRY (L"Purpose")
 NORMAL (L"To read one or more @objects from a file on disk.")
 ENTRY (L"Behaviour")
 NORMAL (L"Many kinds of files are recognized:")
 LIST_ITEM (L"1. Text files that are structured as described under @@Save as text file...@; "
-	"these can contain an object of any class, or a collection of objects.")
-LIST_ITEM (L"2. Files that were produced by @@Save as binary file...@ (any class).")
-LIST_ITEM (L"3. Files in a LISP text format (only for classes that can be written to a LISP file).")
+	"these can contain an object of any type, or a collection of objects.")
+LIST_ITEM (L"2. Files that were produced by @@Save as binary file...@ (any type).")
+LIST_ITEM (L"3. Files in a LISP text format (only for object types that can be written to a LISP file).")
 LIST_ITEM (L"4. Files that were made recognizable by the libraries built on Praat. "
 	"For instance, the phonetics library adds recognizers for many kinds of sound files.")
 NORMAL (L"If the file contains more than one object, these objects will appear in the list, "
@@ -2722,8 +2726,8 @@ ENTRY (L"Examples")
 LIST_ITEM (L"\\bu If the file contains only one Pitch object and is called \"hallo.pit\", "
 	"an object with the name \"Pitch hallo\" will appear in the list of objects. "
 	"You may have more objects with the same name.")
-LIST_ITEM (L"\\bu If the file contains one object of class Pitch, named \"hallo\", "
-	"and one object of class Polygon, named \"kromme\", "
+LIST_ITEM (L"\\bu If the file contains one object of type Pitch, named \"hallo\", "
+	"and one object of type Polygon, named \"kromme\", "
 	"there will appear two objects in the list, "
 	"called \"Pitch hallo\" and \"Polygon kromme\".")
 MAN_END
@@ -2746,10 +2750,10 @@ NORMAL (L"The selected objects will permanently disappear from the list, "
 NORMAL (L"To save your data before removing, choose a command from the @@Save menu@.")
 MAN_END
 
-MAN_BEGIN (L"Rename...", L"ppgb", 19960904)
+MAN_BEGIN (L"Rename...", L"ppgb", 20111018)
 INTRO (L"One of the fixed buttons in the @@Object window@.")
 ENTRY (L"Availability")
-NORMAL (L"You can choose this command after selecting one object of any class.")
+NORMAL (L"You can choose this command after selecting one object of any type.")
 ENTRY (L"Purpose")
 NORMAL (L"You can give the selected object a new name.")
 ENTRY (L"Behaviour")
@@ -2760,6 +2764,92 @@ MAN_BEGIN (L"Resource fork", L"ppgb", 20030316)
 INTRO (L"One of the two %forks of a Macintosh file (the other is the %%data fork%). "
 	"If a Macintosh file is moved to another platform directly, the resource fork is lost. "
 	"To backup your Macintosh files, use compression, for instance with #DropStuff\\tm.")
+MAN_END
+
+MAN_BEGIN (L"Save menu", L"ppgb", 20111018)
+INTRO (L"One of the menus in the @@Object window@.")
+ENTRY (L"Purpose")
+NORMAL (L"With the #Save menu, you write one or more selected @objects from memory to a file on disk. "
+	"The data can be read in again with one of the commands in the @@Open menu@ "
+	"(most often simply with @@Read from file...@).")
+ENTRY (L"Usage: save your work")
+NORMAL (L"You will often choose a command from this menu just before clicking the @Remove button "
+	"or choosing the @Quit command.")
+ENTRY (L"Fixed commands")
+NORMAL (L"If no object is selected, the #Save menu is empty. "
+	"If any object is selected, it will at least contain the following commands:")
+LIST_ITEM (L"\\bu @@Write to console")
+LIST_ITEM (L"\\bu @@Save as text file...")
+LIST_ITEM (L"\\bu @@Save as short text file...")
+LIST_ITEM (L"\\bu @@Save as binary file...")
+ENTRY (L"Dynamic commands")
+NORMAL (L"Depending on the type of the selected object, the following commands may be available "
+	"in the #Save menu:")
+MAN_END
+
+MAN_BEGIN (L"Save as binary file...", L"ppgb", 20110129)
+INTRO (L"One of the commands in the @@Save menu@.")
+ENTRY (L"Availability")
+NORMAL (L"You can choose this command after selecting one or more @objects.")
+ENTRY (L"Behaviour")
+NORMAL (L"The Object window will ask you for a file name. "
+	"After you click OK, the objects will be written to a binary file on disk.")
+ENTRY (L"Usage")
+NORMAL (L"The file can be read again with @@Read from file...@.")
+ENTRY (L"File format")
+NORMAL (L"These files are in a device-independent binary format, "
+	"and can be written and read on any machine.")
+MAN_END
+
+MAN_BEGIN (L"Save as short text file...", L"ppgb", 20110129)
+INTRO (L"One of the commands in the @@Save menu@.")
+ENTRY (L"Availability")
+NORMAL (L"You can choose this command after selecting one or more @objects.")
+ENTRY (L"Behaviour")
+NORMAL (L"The Object window will ask you for a file name. "
+	"After you click OK, the objects will be written to a text file on disk.")
+ENTRY (L"File format")
+NORMAL (L"The format is much shorter than the one described at @@Save as text file...@. "
+	"Most of the comments are gone, and there is normally one piece of data per line.")
+NORMAL (L"The file can be read again with the all-purpose @@Read from file...@.")
+MAN_END
+
+MAN_BEGIN (L"Save as text file...", L"ppgb", 20110129)
+INTRO (L"One of the commands in the @@Save menu@.")
+ENTRY (L"Availability")
+NORMAL (L"You can choose this command after selecting one or more @objects.")
+ENTRY (L"Behaviour")
+NORMAL (L"The Object window will ask you for a file name. "
+	"After you click OK, the objects will be written to a text file on disk.")
+ENTRY (L"File format")
+NORMAL (L"If you selected a single object, e.g., of type Pitch, "
+	"the file will start with the lines:")
+CODE (L"File type = \"ooTextFile\"")
+CODE (L"Object class = \"Pitch\"")
+NORMAL (L"After this, the pitch data will follow.")
+LIST_ITEM (L"If you selected more than one object, e.g., `Pitch hallo' and `Polygon kromme', "
+	"the file will look like:")
+CODE (L"File type = \"ooTextFile\"")
+CODE (L"Object class = \"Collection\"")
+CODE (L"size = 2")
+CODE (L"item []:")
+CODE (L"    item [1]:")
+CODE (L"        class = \"Pitch\"")
+CODE (L"        name = \"hallo\"")
+CODE (L"        (pitch data...)")
+CODE (L"    item [2]:")
+CODE (L"        class = \"Polygon\"")
+CODE (L"        name = \"kromme\"")
+CODE (L"        (polygon data...)")
+NORMAL (L"The file can be read again with @@Read from file...@, "
+	"which, by the way, does not need the verbosity of the above example. "
+	"The following minimal format will also be read correctly:")
+CODE (L"\"ooTextFile\"")
+CODE (L"\"Collection\"  2")
+CODE (L"\"Pitch\"  \"hallo\"  (pitch data...)")
+CODE (L"\"Polygon\"  \"kromme\"  (polygon data...)")
+NORMAL (L"Thus, all text that is not a free-standing number and is not enclosed in double quotes or < >, "
+	"is considered a comment, as is all text following an exclamation mark (`!') on the same line.")
 MAN_END
 
 MAN_BEGIN (L"Segmentation", L"ppgb", 20010408)
@@ -2987,7 +3077,7 @@ NORMAL (L"In this example, filtering was done without automatic scaling, so that
 	"between -1 and +1 Pascal.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20100407)
+MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20111018)
 ENTRY (L"1. How to extract the %filter from an existing speech sound")
 NORMAL (L"You can separate source and filter with the help of the technique of %%linear prediction% "
 	"(see @@Sound: LPC analysis@). This technique tries to approximate a given frequency spectrum with "
@@ -3047,7 +3137,7 @@ NORMAL (L"A @Formant object has a fixed sampling (time step, frame length), and 
 	"%%formant frame%, it contains a number of formant-bandwidth pairs.")
 NORMAL (L"From a Formant object, you can create a @FormantGrid with @@Formant: Down to FormantGrid@. "
 	"A FormantGrid object contains a number of tiers with time-stamped %%formant points% and %%bandwidth points%.")
-NORMAL (L"Any of these three classes (@LPC, @Formant, and @FormantGrid) can represent the %filter "
+NORMAL (L"Any of these three types (@LPC, @Formant, and @FormantGrid) can represent the %filter "
 	"in source-filter synthesis.")
 ENTRY (L"2. How to extract the %source from an existing speech sound")
 NORMAL (L"If you are only interested in the %filter characteristics, you can get by with @Formant objects. "
@@ -3248,41 +3338,6 @@ MAN_BEGIN (L"View", L"ppgb", 20010512)
 INTRO (L"One of the menus in several @editors and in the @manual.")
 MAN_END
 
-MAN_BEGIN (L"Save menu", L"ppgb", 20110129)
-INTRO (L"One of the menus in the @@Object window@.")
-ENTRY (L"Purpose")
-NORMAL (L"With the #Save menu, you write one or more selected @objects from memory to a file on disk. "
-	"The data can be read in again with one of the commands in the @@Open menu@ "
-	"(most often simply with @@Read from file...@).")
-ENTRY (L"Usage: save your work")
-NORMAL (L"You will often choose a command from this menu just before clicking the @Remove button "
-	"or choosing the @Quit command.")
-ENTRY (L"Fixed commands")
-NORMAL (L"If no object is selected, the #Save menu is empty. "
-	"If any object is selected, it will at least contain the following commands:")
-LIST_ITEM (L"\\bu @@Write to console")
-LIST_ITEM (L"\\bu @@Save as text file...")
-LIST_ITEM (L"\\bu @@Save as short text file...")
-LIST_ITEM (L"\\bu @@Save as binary file...")
-ENTRY (L"Dynamic commands")
-NORMAL (L"Depending on the class of the selected object, the following commands may be available "
-	"in the #Save menu:")
-MAN_END
-
-MAN_BEGIN (L"Save as binary file...", L"ppgb", 20110129)
-INTRO (L"One of the commands in the @@Save menu@.")
-ENTRY (L"Availability")
-NORMAL (L"You can choose this command after selecting one or more @objects.")
-ENTRY (L"Behaviour")
-NORMAL (L"The Object window will ask you for a file name. "
-	"After you click OK, the objects will be written to a binary file on disk.")
-ENTRY (L"Usage")
-NORMAL (L"The file can be read again with @@Read from file...@.")
-ENTRY (L"File format")
-NORMAL (L"These files are in a device-independent binary format, "
-	"and can be written and read on any machine.")
-MAN_END
-
 MAN_BEGIN (L"Write to console", L"ppgb", 20110129)
 INTRO (L"One of the commands in the @@Save menu@.")
 NORMAL (L"You can choose this command after selecting one object. "
@@ -3291,57 +3346,6 @@ NORMAL (L"You can choose this command after selecting one object. "
 	"in the same format as with the @@Save as text file...@ command, "
 	"except for the first line, which reads something like:")
 CODE (L"Write to console: class Sound,  name \"hallo\"")
-MAN_END
-
-MAN_BEGIN (L"Save as short text file...", L"ppgb", 20110129)
-INTRO (L"One of the commands in the @@Save menu@.")
-ENTRY (L"Availability")
-NORMAL (L"You can choose this command after selecting one or more @objects.")
-ENTRY (L"Behaviour")
-NORMAL (L"The Object window will ask you for a file name. "
-	"After you click OK, the objects will be written to a text file on disk.")
-ENTRY (L"File format")
-NORMAL (L"The format is much shorter than the one described at @@Save as text file...@. "
-	"Most of the comments are gone, and there is normally one piece of data per line.")
-NORMAL (L"The file can be read again with the all-purpose @@Read from file...@.")
-MAN_END
-
-MAN_BEGIN (L"Save as text file...", L"ppgb", 20110129)
-INTRO (L"One of the commands in the @@Save menu@.")
-ENTRY (L"Availability")
-NORMAL (L"You can choose this command after selecting one or more @objects.")
-ENTRY (L"Behaviour")
-NORMAL (L"The Object window will ask you for a file name. "
-	"After you click OK, the objects will be written to a text file on disk.")
-ENTRY (L"File format")
-NORMAL (L"If you selected a single object, e.g., of class Pitch, "
-	"the file will start with the lines:")
-CODE (L"File type = \"ooTextFile\"")
-CODE (L"Object class = \"Pitch\"")
-NORMAL (L"After this, the pitch data will follow.")
-LIST_ITEM (L"If you selected more than one object, e.g., `Pitch hallo' and `Polygon kromme', "
-	"the file will look like:")
-CODE (L"File type = \"ooTextFile\"")
-CODE (L"Object class = \"Collection\"")
-CODE (L"size = 2")
-CODE (L"item []:")
-CODE (L"    item [1]:")
-CODE (L"        class = \"Pitch\"")
-CODE (L"        name = \"hallo\"")
-CODE (L"        (pitch data...)")
-CODE (L"    item [2]:")
-CODE (L"        class = \"Polygon\"")
-CODE (L"        name = \"kromme\"")
-CODE (L"        (polygon data...)")
-NORMAL (L"The file can be read again with @@Read from file...@, "
-	"which, by the way, does not need the verbosity of the above example. "
-	"The following minimal format will also be read correctly:")
-CODE (L"\"ooTextFile\"")
-CODE (L"\"Collection\"  2")
-CODE (L"\"Pitch\"  \"hallo\"  (pitch data...)")
-CODE (L"\"Polygon\"  \"kromme\"  (polygon data...)")
-NORMAL (L"Thus, all text that is not a free-standing number and is not enclosed in double quotes or < >, "
-	"is considered a comment, as is all text following an exclamation mark (`!') on the same line.")
 MAN_END
 
 }

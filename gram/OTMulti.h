@@ -54,7 +54,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wchar *form2, int showDisharmonies);
+void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wchar *form2, bool vertical, bool showDisharmonies);
 
 void OTMulti_reset (OTMulti me, double ranking);
 void OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);

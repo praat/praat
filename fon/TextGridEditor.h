@@ -38,8 +38,13 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		enum kTextGridEditor_showNumberOf showNumberOf;
 		enum kMelder_string greenMethod;
 		GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
+	// functions:
+	public:
+		void f_init (GuiObject parent, const wchar *title, TextGrid grid,
+			Sampled sound,   // either a Sound or a LongSound, or null
+			bool ownSound,
+			SpellingChecker spellingChecker);
 	// overridden methods:
-		virtual void v_destroy ();
 		virtual void v_info ();
 		virtual void v_createChildren ();
 		virtual void v_createMenus ();
@@ -63,6 +68,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		virtual void v_createMenuItems_view_timeDomain (EditorMenu menu);
 		virtual void v_highlightSelection (double left, double right, double bottom, double top);
 		virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
+		virtual double v_getBottomOfSoundArea ();
 		virtual double v_getBottomOfSoundAndAnalysisArea ();
 		virtual void v_updateMenuItems_file ();
 		virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
@@ -70,6 +76,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 
 TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid,
 	Sampled sound,   // either a Sound or a LongSound, or null
+	bool ownSound,
 	SpellingChecker spellingChecker);
 
 void TextGridEditor_prefs (void);

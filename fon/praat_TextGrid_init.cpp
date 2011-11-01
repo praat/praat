@@ -836,7 +836,7 @@ DIRECT (TextGrid_edit)
 	}
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, NULL);
+		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, true, NULL);
 		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
@@ -852,7 +852,7 @@ DIRECT (TextGrid_LongSound_edit)
 	Melder_assert (ilongSound != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, NULL);
+		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, false, NULL);
 		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
 		praat_installEditor2 (editor.transfer(), IOBJECT, ilongSound); therror
 	}
@@ -870,7 +870,7 @@ DIRECT (TextGrid_SpellingChecker_edit)
 	Melder_assert (ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, spellingChecker);
+		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, true, spellingChecker);
 		praat_installEditor2 (editor.transfer(), IOBJECT, ispellingChecker);
 	}
 END
@@ -887,7 +887,7 @@ DIRECT (TextGrid_LongSound_SpellingChecker_edit)
 	Melder_assert (ilongSound != 0 && ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, spellingChecker);
+		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, false, spellingChecker);
 		praat_installEditor3 (editor.transfer(), IOBJECT, ilongSound, ispellingChecker);
 	}
 END

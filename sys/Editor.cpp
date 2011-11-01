@@ -388,47 +388,75 @@ static void gui_window_cb_goAway (I) {
 
 void praat_addCommandsToEditor (Editor me);
 void Editor_init (Editor me, GuiObject parent, int x, int y, int width, int height, const wchar *title, Data data) {
-	#if gtk
-		GdkScreen *screen = gdk_screen_get_default ();
-		if (parent != NULL) {
-			GuiObject parent_win = gtk_widget_get_ancestor (GTK_WIDGET (parent), GTK_TYPE_WINDOW);
-			if (parent_win != NULL) {
-				screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
-			}
-		}
-		int screenWidth = gdk_screen_get_width (screen);
-		int screenHeight = gdk_screen_get_height (screen);
-	#elif motif
-		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
-		int screenHeight = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
-	#endif
+	double xmin, ymin, widthmax, heightmax;
+	Gui_getWindowPositioningBounds (& xmin, & ymin, & widthmax, & heightmax);
+	/*
+	 * Negative widths are relative to the whole screen.
+	 */
+	if (width < 0) width += (int) widthmax;
+	if (height < 0) height += (int) heightmax;
+	/*
+	 * Don't start with a maximized window, because then the user doesn't know what a click on the maximize button means.
+	 */
+	if (width > (int) widthmax - 100) width = (int) widthmax - 100;
+	if (height > (int) heightmax - 100) height = (int) heightmax - 100;
+	/*
+	 * Make sure that the window has at least a sane size.
+	 * Just in case the user made the previous window very small (Praat's FunctionEditor saves the last size),
+	 * or the user edited the preferences file (which might save a window size).
+	 */
+	if (width < 200) width = 200;
+	if (height < 150) height = 150;
+	/*
+	 * Now that the size is right, establish the position.
+	 */
 	int left, right, top, bottom;
-	screenHeight -= Machine_getTitleBarHeight ();
-	if (width < 0) width += screenWidth;
-	if (height < 0) height += screenHeight;
-	if (width > screenWidth - 10) width = screenWidth - 10;
-	if (height > screenHeight - 10) height = screenHeight - 10;
 	if (x > 0) {
-		right = (left = x) + width;
+		/*
+		 * Positive x: relative to the left edge of the screen.
+		 */
+		left = (int) xmin + x;
+		right = left + width;
 	} else if (x < 0) {
-		left = (right = screenWidth + x) - width;
-	} else { /* Randomize. */
-		right = (left = NUMrandomInteger (4, screenWidth - width - 4)) + width;
+		/*
+		 * Negative x: relative to the right edge of the screen.
+		 */
+		right = (int) xmin + (int) widthmax + x;
+		left = right - width;
+	} else {
+		/*
+		 * Zero x: randomize between the left and right edge of the screen.
+		 */
+		left = NUMrandomInteger ((int) xmin + 4, (int) xmin + (int) widthmax - width - 4);
+		right = left + width;
 	}
 	if (y > 0) {
-		bottom = (top = y) + height;
+		/*
+		 * Positive y: relative to the top of the screen.
+		 */
+		top = (int) ymin + y;
+		bottom = top + height;
 	} else if (y < 0) {
-		top = (bottom = screenHeight + y) - height;
-	} else { /* Randomize. */
-		bottom = (top = NUMrandomInteger (4, screenHeight - height - 4)) + height;
+		/*
+		 * Negative y: relative to the bottom of the screen.
+		 */
+		bottom = (int) ymin + (int) heightmax + y;
+		top = bottom - height;
+	} else {
+		/*
+		 * Zero y: randomize between the top and bottom of the screen.
+		 */
+		top = NUMrandomInteger ((int) ymin + 4, (int) ymin + (int) heightmax - height - 4);
+		//Melder_casual ("%d %d %d %d", (int) ymin, (int) heightmax, height, top);
+		bottom = top + height;
 	}
-	#ifndef _WIN32
+	#if defined (macintoshXXX) || gtk
 		top += Machine_getTitleBarHeight ();
 		bottom += Machine_getTitleBarHeight ();
 	#endif
-	my d_windowParent = parent;   /* Probably praat.topShell */
-	my d_windowForm = GuiWindow_create (parent, left, top, right - left, bottom - top, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
-	my d_windowShell = GuiObject_parent (my d_windowForm);   /* Note that GuiObject_parent (my shell) will be NULL! */
+	my d_windowParent = parent;   // probably praat.topShell
+	my d_windowForm = GuiWindow_create (parent, left, top, width, height, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
+	my d_windowShell = GuiObject_parent (my d_windowForm);   // note that GuiObject_parent (my shell) will be NULL!
 	//Melder_casual ("my parent %ld my d_windowForm %ld my shell %ld", my parent, my d_windowForm, my shell);
 	Thing_setName (me, title);
 	my data = data;

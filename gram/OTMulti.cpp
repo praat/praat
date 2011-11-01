@@ -823,7 +823,7 @@ static long OTMulti_crucialCell (OTMulti me, long icand, long iwinner, long numb
 	return my numberOfConstraints;   /* Nothing grey. */
 }
 
-static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, int showDisharmony) {
+static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, bool showDisharmony) {
 	wchar text [100], *newLine;
 	double maximumWidth = showDisharmony ? 0.8 * Graphics_textWidth_ps (g, Melder_fixed (constraint -> disharmony, 1), TRUE) : 0.0,
 		firstWidth, secondWidth;
@@ -842,14 +842,12 @@ static double OTMulti_constraintWidth (Graphics g, OTConstraint constraint, int 
 	return maximumWidth;
 }
 
-void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wchar *form2, int showDisharmonies) {
-	long winner, winner1 = 0, winner2 = 0, numberOfMatchingCandidates;
-	long numberOfOptimalCandidates, numberOfOptimalCandidates1, numberOfOptimalCandidates2;
-	double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
-	double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
+void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wchar *form2, bool vertical, bool showDisharmonies) {
+	long winner, winner1 = 0, winner2 = 0;
+	double x, y, fontSize = Graphics_inqFontSize (g);
 	Graphics_Colour colour = Graphics_inqColour (g);
 	wchar text [200];
-	int bidirectional = form1 [0] != '\0' && form2 [0] != '\0';
+	bool bidirectional = form1 [0] != '\0' && form2 [0] != '\0';
 	try {
 		winner = OTMulti_getWinner (me, form1, form2); therror
 	} catch (MelderError) {
@@ -866,30 +864,46 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 		winner2 = OTMulti_getWinner (me, form2, L"");
 	}
 	Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
-	margin = Graphics_dxMMtoWC (g, 1.0);
-	fingerWidth = Graphics_dxMMtoWC (g, 7.0) * fontSize / 12.0;
-	doubleLineDx = Graphics_dxMMtoWC (g, 0.9);
-	doubleLineDy = Graphics_dyMMtoWC (g, 0.9);
-	rowHeight = Graphics_dyMMtoWC (g, 1.5 * fontSize * 25.4 / 72);
-	descent = rowHeight * 0.5;
+	const double margin = Graphics_dxMMtoWC (g, 1.0);
+	const double fingerWidth = Graphics_dxMMtoWC (g, 7.0) * fontSize / 12.0;
+	const double doubleLineDx = Graphics_dxMMtoWC (g, 0.9);
+	const double doubleLineDy = Graphics_dyMMtoWC (g, 0.9);
+	const double rowHeight = Graphics_dyMMtoWC (g, 1.5 * fontSize * 25.4 / 72);
+	const double descent = rowHeight * 0.5;
+	const double worldAspectRatio = Graphics_dyMMtoWC (g, 1.0) / Graphics_dxMMtoWC (g, 1.0);   // because Graphics_textWidth measures in the x direction only
 	/*
 	 * Compute height of header row.
 	 */
-	headerHeight = rowHeight;
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTConstraint constraint = & my constraints [icons];
-		if (wcschr (constraint -> name, '\n')) {
-			headerHeight += 0.7 * rowHeight;
-			break;
+	double headerHeight;
+	if (vertical) {
+		headerHeight = 0.0;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			OTConstraint constraint = & my constraints [icons];
+			double constraintTextWidth = Graphics_textWidth (g, constraint -> name);
+			if (constraintTextWidth > headerHeight)
+				headerHeight = constraintTextWidth;
+		}
+		headerHeight += margin * 2;
+		headerHeight *= worldAspectRatio;
+	} else {
+		headerHeight = rowHeight;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			OTConstraint constraint = & my constraints [icons];
+			if (wcschr (constraint -> name, '\n')) {
+				headerHeight += 0.7 * rowHeight;
+				break;
+			}
 		}
 	}
 	/*
 	 * Compute longest candidate string.
 	 * Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
 	 */
-	candWidth = Graphics_textWidth_ps (g, form1, TRUE) + Graphics_textWidth_ps (g, form2, true);
-	numberOfMatchingCandidates = 0;
-	numberOfOptimalCandidates = numberOfOptimalCandidates1 = numberOfOptimalCandidates2 = 0;
+	double candWidth = Graphics_textWidth_ps (g, form1, TRUE) + Graphics_textWidth_ps (g, form2, true);
+	long numberOfMatchingCandidates = 0;
+	long numberOfOptimalCandidates = 0;
+	long numberOfOptimalCandidates1 = 0;
+	long numberOfOptimalCandidates2 = 0;
 	for (long icand = 1; icand <= my numberOfCandidates; icand ++) {
 		if ((form1 [0] != '\0' && OTMulti_candidateMatches (me, icand, form1, L"")) ||
 		    (form2 [0] != '\0' && OTMulti_candidateMatches (me, icand, form2, L"")) ||
@@ -913,16 +927,20 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 	/*
 	 * Compute tableau width.
 	 */
-	tableauWidth = candWidth + doubleLineDx;
-	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-		OTConstraint constraint = & my constraints [icons];
-		tableauWidth += OTMulti_constraintWidth (g, constraint, showDisharmonies);
+	double tableauWidth = candWidth + doubleLineDx;
+	if (vertical) {
+		tableauWidth += rowHeight * my numberOfConstraints / worldAspectRatio;
+	} else {
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			OTConstraint constraint = & my constraints [icons];
+			tableauWidth += OTMulti_constraintWidth (g, constraint, showDisharmonies);
+		}
+		tableauWidth += margin * 2 * my numberOfConstraints;
 	}
-	tableauWidth += margin * 2 * my numberOfConstraints;
 	/*
 	 * Draw box.
 	 */
-	x = doubleLineDx;   /* Left side of tableau. */
+	x = doubleLineDx;   // left side of tableau
 	y = 1.0 - doubleLineDy;
 	if (showDisharmonies) y -= 0.6 * rowHeight;
 	Graphics_rectangle (g, x, x + tableauWidth,
@@ -938,9 +956,10 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 	 * Draw constraint names.
 	 */
 	x += candWidth + doubleLineDx;
+	if (vertical) Graphics_setTextRotation (g, 90.0);
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTConstraint constraint = & my constraints [my index [icons]];
-		double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
+		double width = vertical ? rowHeight / worldAspectRatio : OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 		if (wcschr (constraint -> name, '\n')) {
 			wchar *newLine;
 			wcscpy (text, constraint -> name);
@@ -950,6 +969,9 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 			Graphics_text (g, x + 0.5 * width, y + headerHeight, text);
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 			Graphics_text (g, x + 0.5 * width, y, newLine + 1);
+		} else if (vertical) {
+			Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+			Graphics_text (g, x + 0.5 * width, y + margin, constraint -> name);
 		} else {
 			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 			Graphics_text (g, x + 0.5 * width, y + 0.5 * headerHeight, constraint -> name);
@@ -964,6 +986,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 		Graphics_line (g, x, y, x + width, y);
 		x += width;
 	}
+	if (vertical) Graphics_setTextRotation (g, 0.0);
 	/*
 	 * Draw candidates.
 	 */
@@ -1020,7 +1043,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				int index = my index [icons];
 				OTConstraint constraint = & my constraints [index];
-				double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
+				double width = vertical ? rowHeight / worldAspectRatio : OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 				if (icons > crucialCell)
 					Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
 				x += width;
@@ -1035,7 +1058,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			int index = my index [icons];
 			OTConstraint constraint = & my constraints [index];
-			double width = OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
+			double width = vertical ? rowHeight / worldAspectRatio : OTMulti_constraintWidth (g, constraint, showDisharmonies) + margin * 2;
 			wchar markString [40];
 			markString [0] = '\0';
 			if (bidirectional && my candidates [icand]. marks [index] > 0) {

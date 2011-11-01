@@ -1,6 +1,8 @@
-/* macport_on.h
+#ifndef _Movie_h_
+#define _Movie_h_
+/* Movie.h
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +19,15 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#define Polygon MacintoshPolygon
-#define Pattern MacintoshPattern
-#define Boolean MacintoshBoolean
-#define Collection MacintoshCollection
-#define Picture MacintoshPicture
-#define Movie QuickTimeMovie
+#include "Sampled.h"
+#include "Graphics.h"
+#include "Sound.h"
+#include "Strings.h"
 
-/* End of file macport_on.h */
+#include "Movie_def.h"
+oo_CLASS_CREATE (Movie, Sampled);
+
+Movie Movie_openFromSoundFile (MelderFile file);
+
+/* End of file Movie.h */
+#endif

@@ -1,4 +1,4 @@
-/* EEG_def.h
+/* Movie_def.h
  *
  * Copyright (C) 2011 Paul Boersma
  *
@@ -18,28 +18,25 @@
  */
 
 
-#define ooSTRUCT EEG
-oo_DEFINE_CLASS (EEG, Function)
+#define ooSTRUCT Movie
+oo_DEFINE_CLASS (Movie, Sampled)
 
-	oo_LONG (d_numberOfChannels)
-	oo_STRING_VECTOR (d_channelNames, d_numberOfChannels)
 	oo_OBJECT (Sound, 2, d_sound)
-	oo_OBJECT (TextGrid, 0, d_textgrid)
+	oo_STRING (d_folderName)
+	oo_OBJECT (Strings, 0, d_fileNames)
 
 	#if oo_DECLARING
 		// functions:
-		public:
-			void f_init (double tmin, double tmax);
-			Sound f_extractSound () { return Data_copy (d_sound); }
-			TextGrid f_extractTextGrid () { return Data_copy (d_textgrid); }
+			void f_init (Sound sound, const wchar *folderName, Strings fileNames);
+			void f_paintOneImageInside (Graphics graphics, long frameNumber, double a_xmin, double a_xmax, double a_ymin, double a_ymax);
+			void f_paintOneImage (Graphics graphics, long frameNumber, double a_xmin, double a_xmax, double a_ymin, double a_ymax);
+			void f_play (Graphics graphics, double tmin, double tmax, int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure);
 		// overridden methods:
-		protected:
-			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-			virtual void v_shiftX (double xfrom, double xto);
-			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+			virtual void v_info ();
 	#endif
 
-oo_END_CLASS (EEG)
+oo_END_CLASS (Movie)
 #undef ooSTRUCT
 
-/* End of file EEG_def.h */
+
+/* End of file Movie_def.h */

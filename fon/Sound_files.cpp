@@ -256,7 +256,7 @@ Sound Sound_readFromMovieFile (MelderFile file) {
 	#if (defined (macintosh) || defined (_WIN32)) && ! defined (DONT_INCLUDE_QUICKTIME)
 		Handle extension = NULL;
 		SoundDescriptionHandle hSoundDescription = NULL;   // not NewHandle yet (on Windows, initialize QuickTime first)
-		Movie movie = 0;
+		QuickTimeMovie movie = 0;
 		Handle inputBufferHandle = NULL;
 		AudioFormatAtomPtr decompressionAtom = NULL;
 		SoundConverter soundConverter = NULL;

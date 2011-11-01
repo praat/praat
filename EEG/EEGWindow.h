@@ -1,4 +1,6 @@
-/* EEG_def.h
+#ifndef _EEGWindow_h_
+#define _EEGWindow_h_
+/* EEGWindow.h
  *
  * Copyright (C) 2011 Paul Boersma
  *
@@ -17,29 +19,27 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "TextGridEditor.h"
+#include "EEG.h"
 
-#define ooSTRUCT EEG
-oo_DEFINE_CLASS (EEG, Function)
-
-	oo_LONG (d_numberOfChannels)
-	oo_STRING_VECTOR (d_channelNames, d_numberOfChannels)
-	oo_OBJECT (Sound, 2, d_sound)
-	oo_OBJECT (TextGrid, 0, d_textgrid)
-
-	#if oo_DECLARING
-		// functions:
+Thing_define (EEGWindow, TextGridEditor) {
+	// new data:
 		public:
-			void f_init (double tmin, double tmax);
-			Sound f_extractSound () { return Data_copy (d_sound); }
-			TextGrid f_extractTextGrid () { return Data_copy (d_textgrid); }
-		// overridden methods:
+			EEG d_eeg;
+	// functions:
+		public:
+			void f_init (GuiObject parent, const wchar *title, EEG eeg);
+	// overridden methods:
 		protected:
-			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
-			virtual void v_shiftX (double xfrom, double xto);
-			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
-	#endif
+			virtual bool v_hasAnalysis () { return false; }
+			virtual void v_createMenus ();
+			virtual void v_createHelpMenuItems (EditorMenu menu);
+			virtual const wchar * v_getChannelName (long channelNumber);
+};
 
-oo_END_CLASS (EEG)
-#undef ooSTRUCT
+EEGWindow EEGWindow_create (GuiObject parent, const wchar *title, EEG eeg);
 
-/* End of file EEG_def.h */
+void EEGWindow_preferences (void);
+
+/* End of file EEGWindow.h */
+#endif

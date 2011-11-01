@@ -93,8 +93,20 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		if (numberOfBytesInHeaderRecord != (numberOfChannels + 1) * 256)
 			Melder_throw ("Number of bytes in header record (", numberOfBytesInHeaderRecord,
 				") doesn't match number of channels (", numberOfChannels, ").");
+		autoNUMvector <wchar *> channelNames (1, numberOfChannels);   // BUG: this can leak memory; should be autostringvector
 		for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 16, f); buffer [16] = '\0';   // labels of the channels
+			/*
+			 * Strip all final spaces.
+			 */
+			for (int i = 15; i >= 0; i --) {
+				if (buffer [i] == ' ') {
+					buffer [i] = '\0';
+				} else {
+					break;
+				}
+			}
+			channelNames [ichannel] = Melder_wcsdup (Melder_peekUtf8ToWcs (buffer));
 		}
 		double samplingFrequency = NUMundefined;
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
@@ -147,6 +159,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		for (long record = 1; record <= numberOfDataRecords; record ++) {
 			for (long channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
+				if (channel != numberOfChannels) factor /= 1000000.0;
 				for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 					long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 					Melder_assert (sample <= my nx);
@@ -172,6 +185,8 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		}
 		f.close (file);
 		autoEEG him = EEG_create (0, duration);
+		his d_numberOfChannels = numberOfChannels;
+		his d_channelNames = channelNames.transfer();
 		his d_sound = me.transfer();
 		his d_textgrid = thee.transfer();
 		return him.transfer();

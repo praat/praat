@@ -28,6 +28,7 @@
   djmw 20110304 Thing_new
   djmw 20110308 struc connections -> struct structconnections
   djmw 20110329 Table_get(Numeric|String)Value is now Table_get(Numeric|String)Value_Assert
+  djmw 20111011 Sound_VocalTractGrid_CouplingGrid_filter_cascade: group warnings
 */
 
 #include "FormantGrid_extensions.h"
@@ -1439,50 +1440,59 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			FormantGrid_CouplingGrid_updateOpenPhases (formants.peek(), coupling);
 		}
 
+		long nasal_formant_warning = 0, any_warning = 0;
 		if (pv -> endNasalFormant > 0) { // Nasal formants
 			antiformants = 0;
 			for (long iformant = pv -> startNasalFormant; iformant <= pv -> endNasalFormant; iformant++) {
 				if (FormantGrid_isFormantDefined (thy nasal_formants, iformant)) {
 					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), thy nasal_formants, iformant, antiformants);
 				} else {
-					Melder_warning ("Nasal formant", iformant, ": frequency and/or bandwidth missing.");
+					// Melder_warning ("Nasal formant", iformant, ": frequency and/or bandwidth missing.");
+					nasal_formant_warning++; any_warning++;
 				}
 			}
 		}
 
+		long nasal_antiformant_warning = 0;
 		if (pv -> endNasalAntiFormant > 0) { // Nasal anti formants
 			antiformants = 1;
 			for (long iformant = pv -> startNasalAntiFormant; iformant <= pv -> endNasalAntiFormant; iformant++) {
 				if (FormantGrid_isFormantDefined (thy nasal_antiformants, iformant)) {
 					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), thy nasal_antiformants, iformant, antiformants);
 				} else {
-					Melder_warning ("Nasal antiformant", iformant, ": frequency and/or bandwidth missing.");
+					// Melder_warning ("Nasal antiformant", iformant, ": frequency and/or bandwidth missing.");
+					nasal_antiformant_warning++; any_warning++;
 				}
 			}
 		}
 
+		long tracheal_formant_warning = 0;
 		if (pc -> endTrachealFormant > 0) { // Tracheal formants
 			antiformants = 0;
 			for (long iformant = pc -> startTrachealFormant; iformant <= pc -> endTrachealFormant; iformant++) {
 				if (FormantGrid_isFormantDefined (tracheal_formants, iformant)) {
 					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), tracheal_formants, iformant, antiformants);
 				} else {
-					Melder_warning ("Tracheal formant", iformant, ": frequency and/or bandwidth missing.");
+					// Melder_warning ("Tracheal formant", iformant, ": frequency and/or bandwidth missing.");
+					tracheal_formant_warning++; any_warning++;
 				}
 			}
 		}
 
+		long tracheal_antiformant_warning = 0;
 		if (pc -> endTrachealAntiFormant > 0) { // Tracheal anti formants
 			antiformants = 1;
 			for (long iformant = pc -> startTrachealAntiFormant; iformant <= pc -> endTrachealAntiFormant; iformant++) {
 				if (FormantGrid_isFormantDefined (tracheal_antiformants, iformant)) {
 					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), tracheal_antiformants, iformant, antiformants);
 				} else {
-					Melder_warning ("Tracheal antiformant", iformant, ": frequency and/or bandwidth missing.");
+					// Melder_warning ("Tracheal antiformant", iformant, ": frequency and/or bandwidth missing.");
+					tracheal_antiformant_warning++; any_warning++;
 				}
 			}
 		}
 
+		long oral_formant_warning = 0;
 		if (pv -> endOralFormant > 0) { // Oral formants
 			antiformants = 0;
 			if (formants.peek() == 0) {
@@ -1492,9 +1502,30 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 				if (FormantGrid_isFormantDefined (formants.peek(), iformant)) {
 					_Sound_FormantGrid_filterWithOneFormant_inline (him.peek(), formants.peek(), iformant, antiformants);
 				} else {
-					Melder_warning ("Oral formant", iformant, ": frequency and/or bandwidth missing.");
+					// Melder_warning ("Oral formant", iformant, ": frequency and/or bandwidth missing.");
+					oral_formant_warning++; any_warning++;
 				}
 			}
+		}
+		if (any_warning > 0)
+		{
+			autoMelderString warning;
+			if (nasal_formant_warning > 0) {
+				MelderString_append (&warning, L"Nasal formants: one or more are missing.\n");
+			}
+			if (nasal_antiformant_warning) {
+				MelderString_append (&warning, L"Nasal antiformants: one or more are missing.\n");
+			}
+			if (tracheal_formant_warning) {
+				MelderString_append (&warning, L"Tracheal formants: one or more are missing.\n");
+			}
+			if (tracheal_antiformant_warning) {
+				MelderString_append (&warning, L"Tracheal antiformants: one or more are missing.\n");
+			}
+			if (oral_formant_warning) {
+				MelderString_append (&warning, L"Oral formants: one or more are missing.\n");
+			}
+			Melder_warning (warning.string);
 		}
 		return him.transfer();
 	} catch (MelderError) {

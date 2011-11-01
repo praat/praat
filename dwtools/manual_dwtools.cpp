@@ -246,7 +246,7 @@ LIST_ITEM (L"%%lowerWhisker% = smallest data value larger then %%lowerInnerFence
 LIST_ITEM (L"%%upperWhisker% = largest data value smaller then %%upperInnerFence%")
 NORMAL (L"The box plot is a summary of the data in which:")
 LIST_ITEM (L"\\bu the horizontal lines of the rectangle correspond to "
-	"%%q25%, %%q50% and %%q75%, respectively.")
+	" %%q25%, %%q50% and %%q75%, respectively.")
 LIST_ITEM (L"\\bu the dotted line corresponds to the mean.")
 LIST_ITEM (L"\\bu the outliers outside the %%outerFences% are drawn with an 'o'.")
 LIST_ITEM (L"\\bu the outliers in the intervals (%%lowerOuterFence%, %%lowerInnerFence%) "

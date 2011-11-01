@@ -995,7 +995,7 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 			Melder_throw ("In order to nest table data, you must supply at least one dependent variable (to expand).");
 		Table_columns_checkExist (me, columnsToExpand_names.peek(), numberToExpand);
 		Table_columns_checkCrossSectionEmpty (factors_names.peek(), numberOfFactors, columnsToExpand_names.peek(), numberToExpand);
-		autoNUMvector <wchar *> levels_names (_Table_getLevels (me, columnToTranspose, & numberOfLevels), 1);
+		autoNUMvector <wchar *> levels_names (_Table_getLevels (me, columnToTranspose, & numberOfLevels), 1);   // BUG: leak?
 		/*
 		 * Get the column numbers for the factors.
 		 */

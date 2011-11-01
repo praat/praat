@@ -303,10 +303,52 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>EEG</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat electro-encephalogram</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>PairDistribution</string>
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Praat distribution of string pairs</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>bdf</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>BDF electro-encephalogram</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Movie</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat movie file</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
@@ -335,9 +377,9 @@
 	<string>PpgB</string>
 	<key>CFBundleVersion</key>
 	<string>PRAAT_VERSION_STR</string>
-	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 1992-PRAAT_YEAR by Paul Boersma and David Weenink</string>
 	<key>LSRequiresCarbon</key>
 	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 1992-PRAAT_YEAR by Paul Boersma and David Weenink</string>
 </dict>
 </plist>

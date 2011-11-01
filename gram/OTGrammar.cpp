@@ -731,43 +731,54 @@ static double OTGrammar_constraintWidth (Graphics g, const wchar *name) {
 	return Graphics_textWidth (g, text);
 }
 
-void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
+void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar *input) {
 	try {
-		long itab, winner, numberOfOptimalCandidates;
-		OTGrammarTableau tableau;
-		double candWidth, margin, fingerWidth, doubleLineDx, doubleLineDy;
-		double tableauWidth, rowHeight, headerHeight, descent, x, y, fontSize = Graphics_inqFontSize (g);
+		double x, y, fontSize = Graphics_inqFontSize (g);
 		Graphics_Colour colour = Graphics_inqColour (g);
 		wchar text [200];
-		itab = OTGrammar_getTableau (me, input);
+		const long itab = OTGrammar_getTableau (me, input);
 		_OTGrammar_fillInHarmonies (me, itab);
-		winner = OTGrammar_getWinner (me, itab);
+		const long winner = OTGrammar_getWinner (me, itab);
 		
 		Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
-		margin = Graphics_dxMMtoWC (g, 1.0);
-		fingerWidth = Graphics_dxMMtoWC (g, 7.0) * fontSize / 12.0;
-		doubleLineDx = Graphics_dxMMtoWC (g, 0.9);
-		doubleLineDy = Graphics_dyMMtoWC (g, 0.9);
-		rowHeight = Graphics_dyMMtoWC (g, 1.5 * fontSize * 25.4 / 72);
-		descent = rowHeight * 0.5;
+		const double margin = Graphics_dxMMtoWC (g, 1.0);
+		const double fingerWidth = Graphics_dxMMtoWC (g, 7.0) * fontSize / 12.0;
+		const double doubleLineDx = Graphics_dxMMtoWC (g, 0.9);
+		const double doubleLineDy = Graphics_dyMMtoWC (g, 0.9);
+		const double rowHeight = Graphics_dyMMtoWC (g, 1.5 * fontSize * 25.4 / 72);
+		const double descent = rowHeight * 0.5;
+		const double worldAspectRatio = Graphics_dyMMtoWC (g, 1.0) / Graphics_dxMMtoWC (g, 1.0);   // because Graphics_textWidth measures in the x direction only
 		/*
-		 * Compute height of header row.
+		 * Compute the height of the header row.
 		 */
-		headerHeight = rowHeight;
-		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			OTGrammarConstraint constraint = & my constraints [icons];
-			if (wcschr (constraint -> name, '\n')) {
-				headerHeight *= 1.6;
-				break;
+		double headerHeight;
+		if (vertical) {
+			headerHeight = 0.0;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				OTGrammarConstraint constraint = & my constraints [icons];
+				double constraintTextWidth = Graphics_textWidth (g, constraint -> name);
+				if (constraintTextWidth > headerHeight)
+					headerHeight = constraintTextWidth;
+			}
+			headerHeight += margin * 2;
+			headerHeight *= worldAspectRatio;
+		} else {
+			headerHeight = rowHeight;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				OTGrammarConstraint constraint = & my constraints [icons];
+				if (wcschr (constraint -> name, '\n')) {
+					headerHeight *= 1.6;
+					break;
+				}
 			}
 		}
 		/*
 		 * Compute longest candidate string.
 		 * Also count the number of optimal candidates (if there are more than one, the fingers will be drawn in red).
 		 */
-		candWidth = Graphics_textWidth (g, input);
-		tableau = & my tableaus [itab];
-		numberOfOptimalCandidates = 0;
+		double candWidth = Graphics_textWidth (g, input);
+		OTGrammarTableau tableau = & my tableaus [itab];
+		long numberOfOptimalCandidates = 0;
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			double width = Graphics_textWidth (g, tableau -> candidates [icand]. output);
 			if (OTGrammar_compareCandidates (me, itab, icand, itab, winner) == 0) {
@@ -780,16 +791,20 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
 		/*
 		 * Compute tableau width.
 		 */
-		tableauWidth = candWidth + doubleLineDx;
-		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			OTGrammarConstraint constraint = & my constraints [icons];
-			tableauWidth += OTGrammar_constraintWidth (g, constraint -> name);
+		double tableauWidth = candWidth + doubleLineDx;
+		if (vertical) {
+			tableauWidth += rowHeight * my numberOfConstraints / worldAspectRatio;
+		} else {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				OTGrammarConstraint constraint = & my constraints [icons];
+				tableauWidth += OTGrammar_constraintWidth (g, constraint -> name);
+			}
+			tableauWidth += margin * 2 * my numberOfConstraints;
 		}
-		tableauWidth += margin * 2 * my numberOfConstraints;
 		/*
 		 * Draw box.
 		 */
-		x = doubleLineDx;   /* Left side of tableau. */
+		x = doubleLineDx;   // left side of tableau
 		y = 1.0 - doubleLineDy;
 		Graphics_rectangle (g, x, x + tableauWidth,
 			y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);
@@ -804,10 +819,11 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
 		 * Draw constraint names.
 		 */
 		x += candWidth + doubleLineDx;
+		if (vertical) Graphics_setTextRotation (g, 90.0);
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
-			double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
-			if (wcschr (constraint -> name, '\n')) {
+			double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
+			if (wcschr (constraint -> name, '\n') && ! vertical) {
 				wchar *newLine;
 				wcscpy (text, constraint -> name);
 				newLine = wcschr (text, '\n');
@@ -816,6 +832,9 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
 				Graphics_text (g, x + 0.5 * width, y + headerHeight, text);
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
 				Graphics_text (g, x + 0.5 * width, y, newLine + 1);
+			} else if (vertical) {
+				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+				Graphics_text (g, x + 0.5 * width, y + margin, constraint -> name);
 			} else {
 				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 				Graphics_text (g, x + 0.5 * width, y + 0.5 * headerHeight, constraint -> name);
@@ -827,6 +846,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
 			Graphics_line (g, x, y, x + width, y);
 			x += width;
 		}
+		if (vertical) Graphics_setTextRotation (g, 0.0);
 		/*
 		 * Draw candidates.
 		 */
@@ -858,7 +878,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				int index = my index [icons];
 				OTGrammarConstraint constraint = & my constraints [index];
-				double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
+				double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 				if (icons > crucialCell)
 					Graphics_fillRectangle (g, x, x + width, y, y + rowHeight);
 				x += width;
@@ -872,7 +892,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				int index = my index [icons];
 				OTGrammarConstraint constraint = & my constraints [index];
-				double width = OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
+				double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 				wchar markString [40];
 				markString [0] = '\0';
 				if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
@@ -936,7 +956,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input) {
 		/*
 		 * Draw box.
 		 */
-		x = doubleLineDx;   /* Left side of tableau. */
+		x = doubleLineDx;   // left side of tableau
 		y = 1.0 - doubleLineDy;
 		Graphics_rectangle (g, x, x + tableauWidth,
 			y - headerHeight - tableau -> numberOfCandidates * rowHeight - doubleLineDy, y);

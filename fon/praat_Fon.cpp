@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/06/18
- */
-
 #include "praat.h"
 
 #include "AmplitudeTier.h"
@@ -42,6 +38,7 @@
 #include "Matrix_and_Pitch.h"
 #include "Matrix_and_PointProcess.h"
 #include "Matrix_and_Polygon.h"
+#include "MovieWindow.h"
 #include "ParamCurve.h"
 #include "Pitch_Intensity.h"
 #include "Pitch_to_PitchTier.h"
@@ -462,7 +459,7 @@ DO
 	LOOP {
 		iam (Distributions);
 		autoTransition thee = Distributions_to_Transition (me, NULL, GET_INTEGER (L"Environment"), NULL, GET_INTEGER (L"Greedy"));
-		praat_new (thee.transfer(), NULL);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2334,7 +2331,7 @@ DIRECT (Manipulation_extractDurationTier)
 		iam (Manipulation);
 		if (! my duration) Melder_throw (me, ": I don't contain a DurationTier.");
 		autoDurationTier thee = Data_copy (my duration);
-		praat_new (thee.transfer(), NULL);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2343,7 +2340,7 @@ DIRECT (Manipulation_extractOriginalSound)
 		iam (Manipulation);
 		if (! my sound) Melder_throw (me, ": I don't contain a Sound.");
 		autoSound thee = Data_copy (my sound);
-		praat_new (thee.transfer(), NULL);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2352,7 +2349,7 @@ DIRECT (Manipulation_extractPitchTier)
 		iam (Manipulation);
 		if (! my pitch) Melder_throw (me, ": I don't contain a PitchTier.");
 		autoPitchTier thee = Data_copy (my pitch);
-		praat_new (thee.transfer(), NULL);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2361,7 +2358,7 @@ DIRECT (Manipulation_extractPulses)
 		iam (Manipulation);
 		if (! my pulses) Melder_throw (me, ": I don't contain a PointProcess.");
 		autoPointProcess thee = Data_copy (my pulses);
-		praat_new (thee.transfer(), NULL);
+		praat_new (thee.transfer(), my name);
 	}
 END
 
@@ -2968,6 +2965,38 @@ END
 FORM_WRITE (Matrix_writeToHeaderlessSpreadsheetFile, L"Save Matrix as spreadsheet", 0, L"txt")
 	Matrix me = FIRST (Matrix);
 	Matrix_writeToHeaderlessSpreadsheetFile (me, file);
+END
+
+/***** MOVIE *****/
+
+FORM_READ (Movie_openFromSoundFile, L"Open movie file", 0, true)
+	autoMovie me = Movie_openFromSoundFile (file);
+	praat_new (me.transfer(), MelderFile_name (file));
+END
+
+FORM (Movie_paintOneImage, L"Movie: Paint one image", 0)
+	NATURAL (L"Frame number", L"1")
+	REAL (L"From x =", L"0.0")
+	REAL (L"To x =", L"1.0")
+	REAL (L"From y =", L"0.0")
+	REAL (L"To y =", L"1.0")
+	OK
+DO
+	LOOP {
+		iam (Movie);
+		autoPraatPicture picture;
+		my f_paintOneImage (GRAPHICS, GET_INTEGER (L"Frame number"),
+			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
+	}
+END
+
+DIRECT (Movie_viewAndEdit)
+	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Movie from batch.");
+	LOOP {
+		iam (Movie);
+		autoMovieWindow editor = MovieWindow_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		praat_installEditor (editor.transfer(), IOBJECT);
+	}
 END
 
 /***** PARAMCURVE *****/
@@ -5875,6 +5904,7 @@ void praat_uvafon_init () {
 		classRealPoint, classRealTier, classPitchTier, classIntensityTier, classDurationTier, classAmplitudeTier, classSpectrumTier,
 		classManipulation, classTextPoint, classTextInterval, classTextTier,
 		classIntervalTier, classTextGrid, classLongSound, classWordList, classSpellingChecker,
+		classMovie,
 		NULL);
 	Thing_recognizeClassByOtherName (classManipulation, L"Psola");
 	Thing_recognizeClassByOtherName (classManipulation, L"Analysis");
@@ -5896,6 +5926,8 @@ void praat_uvafon_init () {
 	praat_addMenuCommand (L"Objects", L"New", L"Matrix", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"New", L"Create Matrix...", 0, 1, DO_Matrix_create);
 		praat_addMenuCommand (L"Objects", L"New", L"Create simple Matrix...", 0, 1, DO_Matrix_createSimple);
+	praat_addMenuCommand (L"Objects", L"Open", L"-- read movie --", 0, praat_HIDDEN, 0);
+	praat_addMenuCommand (L"Objects", L"Open", L"Open movie file...", 0, praat_HIDDEN, DO_Movie_openFromSoundFile);
 	praat_addMenuCommand (L"Objects", L"Open", L"-- read raw --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Matrix from raw text file...", 0, 0, DO_Matrix_readFromRawTextFile);
 	praat_addMenuCommand (L"Objects", L"Open", L"Read Matrix from LVS AP file...", 0, praat_HIDDEN, DO_Matrix_readAP);
@@ -6265,6 +6297,9 @@ praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classMatrix, 0, L"To Spectrum", 0, 1, DO_Matrix_to_Spectrum);
 		praat_addAction1 (classMatrix, 0, L"To Transition", 0, 1, DO_Matrix_to_Transition);
 		praat_addAction1 (classMatrix, 0, L"To VocalTract", 0, 1, DO_Matrix_to_VocalTract);
+
+	praat_addAction1 (classMovie, 1, L"Paint one image...", 0, 1, DO_Movie_paintOneImage);
+	praat_addAction1 (classMovie, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Movie_viewAndEdit);
 
 	praat_addAction1 (classParamCurve, 0, L"ParamCurve help", 0, 0, DO_ParamCurve_help);
 	praat_addAction1 (classParamCurve, 0, L"Draw", 0, 0, 0);

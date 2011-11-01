@@ -78,7 +78,7 @@ bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar *partialOut
 bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar *partialOutput);
 	/* Is every optimal output that contains this partial output the only optimal output in its tableau? */
 
-void OTGrammar_drawTableau (OTGrammar me, Graphics g, const wchar *input);
+void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar *input);
 
 Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials);
 Strings OTGrammar_getInputs (OTGrammar me);

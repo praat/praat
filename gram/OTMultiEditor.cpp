@@ -209,8 +209,9 @@ void structOTMultiEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 static OTMulti drawTableau_grammar;
 static const wchar *drawTableau_form1, *drawTableau_form2;
+static bool drawTableau_constraintsAreDrawnVertically;
 static void drawTableau (Graphics g) {
-	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, TRUE);
+	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, drawTableau_constraintsAreDrawnVertically, true);
 }
 
 void structOTMultiEditor :: v_draw () {
@@ -237,6 +238,7 @@ void structOTMultiEditor :: v_draw () {
 	}
 	drawTableau_form1 = form1;
 	drawTableau_form2 = form2;
+	drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 	HyperPage_picture (this, 20, tableauHeight, drawTableau);
 	Graphics_setAtSignIsLink (g, TRUE);
 }

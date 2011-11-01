@@ -196,8 +196,9 @@ void structOTGrammarEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 static OTGrammar drawTableau_ot;
 static const wchar *drawTableau_input;
+static bool drawTableau_constraintsAreDrawnVertically;
 static void drawTableau (Graphics g) {
-	OTGrammar_drawTableau (drawTableau_ot, g, drawTableau_input);
+	OTGrammar_drawTableau (drawTableau_ot, g, drawTableau_constraintsAreDrawnVertically, drawTableau_input);
 }
 
 void structOTGrammarEditor :: v_draw () {
@@ -234,6 +235,7 @@ void structOTGrammarEditor :: v_draw () {
 		double tableauHeight = rowHeight * (tableau -> numberOfCandidates + 2);
 		drawTableau_ot = ot;
 		drawTableau_input = tableau -> input;
+		drawTableau_constraintsAreDrawnVertically = d_constraintsAreDrawnVertically;
 		HyperPage_picture (this, 20, tableauHeight, drawTableau);
 	}
 	Graphics_setAtSignIsLink (g, TRUE);

@@ -1,6 +1,6 @@
 /* macport_off.h
  *
- * Copyright (C) 1993-2002 Paul Boersma
+ * Copyright (C) 1993-2011 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1998/06/28
- * pb 2002/03/07 GPL
- */
-
 #undef Polygon
 #undef Pattern
 #undef Boolean
 #undef Collection
 #undef Picture
+#undef Movie
 
 /* End of file macport_off.h */

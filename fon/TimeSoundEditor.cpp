@@ -20,6 +20,7 @@
 #include "TimeSoundEditor.h"
 #include "Preferences.h"
 #include "EditorM.h"
+#include "UnicodeData.h"
 
 Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 
@@ -425,14 +426,15 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		Graphics_text (my graphics, 0.5, 0.5, L"(zoom out to see the data)");
 		return;
 	}
-	for (int ichan = 1; ichan <= nchan; ichan ++) {
+	const int numberOfVisibleChannels = nchan > 8 ? 8 : nchan;
+	for (int ichan = my sound.channelOffset + 1; ichan <= my sound.channelOffset + numberOfVisibleChannels; ichan ++) {
 		double cursorFunctionValue = longSound ? 0.0 :
 			Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70);
 		/*
 		 * BUG: this will only work for mono or stereo, until Graphics_function16 handles quadro.
 		 */
-		double ymin = (double) (nchan - ichan) / nchan;
-		double ymax = (double) (nchan + 1 - ichan) / nchan;
+		double ymin = (double) (numberOfVisibleChannels - ichan + my sound.channelOffset) / numberOfVisibleChannels;
+		double ymax = (double) (numberOfVisibleChannels + 1 - ichan + my sound.channelOffset) / numberOfVisibleChannels;
 		Graphics_Viewport vp = Graphics_insetViewport (my graphics, 0, 1, ymin, ymax);
 		bool horizontal = false;
 		double minimum = sound ? globalMinimum : -1.0, maximum = sound ? globalMaximum : 1.0;
@@ -447,15 +449,15 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		if (horizontal) {
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
 			double mid = 0.5 * (minimum + maximum);
-			Graphics_text1 (my graphics, my startWindow, mid, Melder_half (mid));
+			Graphics_text1 (my graphics, my startWindow, mid, Melder_fixed (mid, 6));
 		} else {
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, cursorFunctionValue - minimum) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
-				Graphics_text1 (my graphics, my startWindow, minimum, Melder_half (minimum));
+				Graphics_text1 (my graphics, my startWindow, minimum, Melder_fixed (minimum, 6));
 			}
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, maximum - cursorFunctionValue) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-				Graphics_text1 (my graphics, my startWindow, maximum, Melder_half (maximum));
+				Graphics_text1 (my graphics, my startWindow, maximum, Melder_fixed (maximum, 6));
 			}
 		}
 		if (minimum < 0 && maximum > 0 && ! horizontal) {
@@ -476,6 +478,21 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		Graphics_setColour (my graphics, Graphics_CYAN);
 		Graphics_innerRectangle (my graphics, 0, 1, 0, 1);
 		Graphics_setColour (my graphics, Graphics_BLACK);
+		if (nchan > 1) {
+			Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_HALF);
+			static MelderString channelLabel;
+			const wchar *channelName = my v_getChannelName (ichan);
+			MelderString_copy (& channelLabel, channelName ? L"ch" : L"Channel ");
+			MelderString_append (& channelLabel, Melder_integer (ichan));
+			if (channelName)
+				MelderString_append (& channelLabel, L": ", channelName);
+			if (ichan > 8 && ichan - my sound.channelOffset == 1) {
+				MelderString_append (& channelLabel, L" " UNITEXT_UPWARDS_ARROW);
+			} else if (ichan >= 8 && ichan - my sound.channelOffset == 8 && ichan < nchan) {
+				MelderString_append (& channelLabel, L" " UNITEXT_DOWNWARDS_ARROW);
+			}
+			Graphics_text1 (my graphics, 1, 0.5, channelLabel.string);
+		}
 		/*
 		 * Draw a very thin separator line underneath.
 		 */
@@ -490,7 +507,7 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		if (sound) {
 			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 			if (cursorVisible)
-				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
+				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_fixed (cursorFunctionValue, 6), L"");
 			Graphics_setColour (my graphics, Graphics_BLACK);
 			Graphics_function (my graphics, sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
@@ -504,6 +521,26 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 	}
 	Graphics_setWindow (my graphics, 0, 1, 0, 1);
 	Graphics_rectangle (my graphics, 0, 1, 0, 1);
+}
+
+int structTimeSoundEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
+	Sound sound = this -> sound.data;
+	LongSound longSound = this -> longSound.data;
+	Melder_assert ((sound == NULL) != (longSound == NULL));
+	ybegin = (ybegin - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
+	int nchan = sound ? sound -> ny : longSound -> numberOfChannels;
+	if (nchan > 8) {
+		//Melder_casual ("%f %f %d %d", xbegin, ybegin, (int) nchan, (int) this -> sound.channelOffset);
+		if (xbegin >= endWindow && ybegin > 0.875 && ybegin <= 1.000 && this -> sound.channelOffset > 0) {
+			this -> sound.channelOffset -= 8;
+			return 1;
+		}
+		if (xbegin >= endWindow && ybegin > 0.000 && ybegin <= 0.125 && this -> sound.channelOffset < nchan - 8) {
+			this -> sound.channelOffset += 8;
+			return 1;
+		}
+	}
+	return TimeSoundEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
 }
 
 void TimeSoundEditor_init (TimeSoundEditor me, GuiObject parent, const wchar *title, Function data, Sampled sound, bool ownSound) {

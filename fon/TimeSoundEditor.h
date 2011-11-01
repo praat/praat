@@ -28,6 +28,7 @@ struct TimeSoundEditor_sound {
 	Sound data;
 	bool autoscaling;
 	double minimum, maximum;
+	long channelOffset;
 };
 
 Thing_define (TimeSoundEditor, FunctionEditor) {
@@ -47,9 +48,11 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		virtual void v_createMenuItems_file_extract (EditorMenu menu);
 		virtual void v_createMenuItems_file_write (EditorMenu menu);
 		virtual void v_createMenuItems_view (EditorMenu menu);
+		virtual int v_click (double xbegin, double ybegin, bool shiftKeyPressed);   // catch channel scrolling
 	// new methods:
 		virtual void v_createMenuItems_view_sound (EditorMenu menu);
 		virtual void v_updateMenuItems_file ();
+		virtual const wchar * v_getChannelName (long channelNumber) { (void) channelNumber; return NULL; }
 };
 
 void TimeSoundEditor_prefs (void);

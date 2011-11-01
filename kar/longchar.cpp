@@ -539,6 +539,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { '?', '-', 2, { "/glotbar",        500, 0,   440, 477,  500, 0,    500, 0,   0,   0   },  63, 251, 251,  63, UNICODE_LATIN_LETTER_GLOTTAL_STOP_WITH_STROKE }, // epiglottal plosive
 { '9', '-', 2, { "/glotrevbar",     500, 0,   440, 477,  500, 0,    500, 0,   0,   0   }, 192, 185, 185, 192, UNICODE_LATIN_LETTER_REVERSED_GLOTTAL_STOP_WITH_STROKE }, // epiglottal fricative
 { ':', 'f', 2, { "/lengthsign",     250, 0,   217, 235,  250, 0,    250, 0,   0,   0   }, 249, 249, 249, 249, UNICODE_MODIFIER_LETTER_TRIANGULAR_COLON },
+{ '.', 'f', 2, { "/halflength",     250, 0,   217, 235,  250, 0,    250, 0,   0,   0   },  62,  62,  62,  62, UNICODE_MODIFIER_LETTER_HALF_TRIANGULAR_COLON },
 { 'h', 'r', 2, { "/righthook",      300, 0,   250, 265,  300, 0,    300, 0,   0,   0   }, 213, 213, 213, 213, UNICODE_MODIFIER_LETTER_RHOTIC_HOOK }, // or rturnsuper
 { '`', '^', 2, { "/graveover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  36,  36,  36,  36, UNICODE_COMBINING_GRAVE_ACCENT },
 { '\'','^', 2, { "/acuteover",        0, 0,   0,   0,      0, 0,      0, 0,   0,   0   },  64,  64,  64,  64, UNICODE_COMBINING_ACUTE_ACCENT },

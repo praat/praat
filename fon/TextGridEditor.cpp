@@ -43,19 +43,19 @@ Thing_implement (TextGridEditor, TimeSoundAnalysisEditor, 0);
 #define TextGridEditor_DEFAULT_GREEN_STRING  L"some text here for green paint"
 
 static struct {
-		bool useTextStyles, shiftDragMultiple;
-		int fontSize;
-		enum kGraphics_horizontalAlignment alignment;
-		enum kTextGridEditor_showNumberOf showNumberOf;
-		enum kMelder_string greenMethod;
-		wchar greenString [Preferences_STRING_BUFFER_SIZE];
+	bool useTextStyles, shiftDragMultiple;
+	int fontSize;
+	enum kGraphics_horizontalAlignment alignment;
+	enum kTextGridEditor_showNumberOf showNumberOf;
+	enum kMelder_string greenMethod;
+	wchar greenString [Preferences_STRING_BUFFER_SIZE];
+	struct {
+		bool showBoundaries;
+		bool garnish;
 		struct {
-			bool showBoundaries;
-			bool garnish;
-			struct {
-				bool speckle;
-			} pitch;
-		} picture;
+			bool speckle;
+		} pitch;
+	} picture;
 }
 	preferences;
 
@@ -84,9 +84,11 @@ void structTextGridEditor :: v_info () {
 
 static double _TextGridEditor_computeSoundY (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
-	int ntier = grid -> tiers -> size;
-	int showAnalysis = (my spectrogram.show || my pitch.show || my intensity.show || my formant.show) && (my longSound.data || my sound.data);
-	return my sound.data || my longSound.data ? ntier / (2.0 + ntier * (showAnalysis ? 1.8 : 1.3)) : 1.0;
+	int numberOfTiers = grid -> tiers -> size;
+	bool showAnalysis = my v_hasAnalysis () && (my spectrogram.show || my pitch.show || my intensity.show || my formant.show) && (my longSound.data || my sound.data);
+	int numberOfVisibleChannels = my sound.data ? (my sound.data -> ny > 8 ? 8 : my sound.data -> ny) :
+		my longSound.data ? (my longSound.data -> numberOfChannels > 8 ? 8 : my longSound.data -> numberOfChannels) : 1;
+	return my sound.data || my longSound.data ? numberOfTiers / (2.0 * numberOfVisibleChannels + numberOfTiers * (showAnalysis ? 1.8 : 1.3)) : 1.0;
 }
 
 static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier, TextTier *textTier) {
@@ -188,11 +190,6 @@ static void scrollToView (TextGridEditor me, double t) {
  * always has the cursor in it, and that the cursor always selects an interval
  * if the selected tier is an interval tier.
  */
-
-void structTextGridEditor :: v_destroy () {
-	forget (sound.data);
-	TextGridEditor_Parent :: v_destroy ();
-}
 
 /***** FILE MENU *****/
 
@@ -1273,7 +1270,9 @@ void structTextGridEditor :: v_createMenus () {
 	}
 
 	if (sound.data || longSound.data) {
-		v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
+		if (v_hasAnalysis ()) {
+			v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
+		}
 	}
 }
 
@@ -1541,7 +1540,7 @@ void structTextGridEditor :: v_draw () {
 	long itier, ntier = grid -> tiers -> size;
 	enum kGraphics_font oldFont = Graphics_inqFont (graphics);
 	int oldFontSize = Graphics_inqFontSize (graphics);
-	int showAnalysis = (spectrogram.show || pitch.show || intensity.show || formant.show) && (longSound.data || sound.data);
+	bool showAnalysis = v_hasAnalysis () && (spectrogram.show || pitch.show || intensity.show || formant.show) && (longSound.data || sound.data);
 	double soundY = _TextGridEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
 
 	/*
@@ -1651,7 +1650,7 @@ void structTextGridEditor :: v_draw () {
 		if (pulses.show) {
 			vp1 = Graphics_insetViewport (graphics, 0.0, 1.0, soundY2, 1.0);
 			v_draw_analysis_pulses ();
-			TimeSoundEditor_draw_sound (this, -1.0, 1.0);   /* Second time, partially across the pulses. */
+			TimeSoundEditor_draw_sound (this, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_flushWs (graphics);
 			Graphics_resetViewport (graphics, vp1);
 		}
@@ -1884,15 +1883,17 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 
-	if (xclick <= startWindow || xclick >= endWindow) {
-		return FunctionEditor_NO_UPDATE_NEEDED;
-	}
-
 	/*
 	 * She clicked in the grid part.
 	 * We select the tier in which she clicked.
 	 */
 	iClickedTier = _TextGridEditor_yWCtoTier (this, yWC);
+
+	if (xclick <= startWindow || xclick >= endWindow) {
+		selectedTier = iClickedTier;
+		return FunctionEditor_UPDATE_NEEDED;
+	}
+
 	_TextGridEditor_timeToInterval (this, xclick, iClickedTier, & tmin, & tmax);
 	_AnyTier_identifyClass ((Function) grid -> tiers -> item [iClickedTier], & intervalTier, & textTier);
 
@@ -2144,7 +2145,7 @@ void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 void structTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (spectrogram.show && (longSound.data || sound.data)) {
 		TextGrid grid = (TextGrid) data;
-		double soundY = grid -> tiers -> size / (2.0 + grid -> tiers -> size * 1.8), soundY2 = 0.5 * (1.0 + soundY);
+		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		Graphics_highlight (graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_highlight (graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
@@ -2155,12 +2156,16 @@ void structTextGridEditor :: v_highlightSelection (double left, double right, do
 void structTextGridEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (spectrogram.show) {
 		TextGrid grid = (TextGrid) data;
-		double soundY = grid -> tiers -> size / (2.0 + grid -> tiers -> size * 1.8), soundY2 = 0.5 * (1.0 + soundY);
+		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		Graphics_unhighlight (graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_unhighlight (graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
 		Graphics_unhighlight (graphics, left, right, bottom, top);
 	}
+}
+
+double structTextGridEditor :: v_getBottomOfSoundArea () {
+	return _TextGridEditor_computeSoundY (this);
 }
 
 double structTextGridEditor :: v_getBottomOfSoundAndAnalysisArea () {
@@ -2181,36 +2186,34 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid, Sampled sound, SpellingChecker spellingChecker) {
+void structTextGridEditor :: f_init (GuiObject parent, const wchar *title, TextGrid grid, Sampled a_sound, bool a_ownSound, SpellingChecker a_spellingChecker)
+{
+	this -> spellingChecker = a_spellingChecker;   // set in time
+
+	TimeSoundAnalysisEditor_init (this, parent, title, grid, a_sound, a_ownSound);
+
+	this -> useTextStyles = preferences.useTextStyles;
+	this -> fontSize = preferences.fontSize;
+	this -> alignment = preferences.alignment;
+	this -> shiftDragMultiple = preferences.shiftDragMultiple;
+	this -> showNumberOf = preferences.showNumberOf;
+	this -> greenMethod = preferences.greenMethod;
+	wcscpy (this -> greenString, preferences.greenString);
+	this -> selectedTier = 1;
+	if (this -> endWindow - this -> startWindow > 30.0) {
+		this -> endWindow = this -> startWindow + 30.0;
+		if (this -> startWindow == this -> tmin)
+			this -> startSelection = this -> endSelection = 0.5 * (this -> startWindow + this -> endWindow);
+		FunctionEditor_marksChanged (this);
+	}
+	if (a_spellingChecker != NULL)
+		GuiText_setSelection (this -> text, 0, 0);
+}
+
+TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		my spellingChecker = spellingChecker;   // set in time
-
-		/*
-		 * Include a deep copy of the Sound, owned by the TextGridEditor, or a pointer to the LongSound.
-		 */
-		if (sound && Thing_member (sound, classSound)) {
-			TimeSoundAnalysisEditor_init (me.peek(), parent, title, grid, sound, true);
-		} else {
-			TimeSoundAnalysisEditor_init (me.peek(), parent, title, grid, sound, false);
-		}
-
-		my useTextStyles = preferences.useTextStyles;
-		my fontSize = preferences.fontSize;
-		my alignment = preferences.alignment;
-		my shiftDragMultiple = preferences.shiftDragMultiple;
-		my showNumberOf = preferences.showNumberOf;
-		my greenMethod = preferences.greenMethod;
-		wcscpy (my greenString, preferences.greenString);
-		my selectedTier = 1;
-		if (my endWindow - my startWindow > 30.0) {
-			my endWindow = my startWindow + 30.0;
-			if (my startWindow == my tmin)
-				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-			FunctionEditor_marksChanged (me.peek());
-		}
-		if (spellingChecker != NULL)
-			GuiText_setSelection (my text, 0, 0);
+		my f_init (parent, title, grid, sound, ownSound, spellingChecker);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("TextGrid window not created.");

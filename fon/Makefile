@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 3 September 2011
+# Paul Boersma, 1 November 2011
 
 include ../makefile.defs
 
@@ -30,6 +30,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
    ExperimentMFC.o RunnerMFC.o manual_Exp.o praat_Exp.o \
+   Movie.o MovieWindow.o \
    manual_Picture.o manual_Manual.o manual_Script.o \
    manual_soundFiles.o manual_tutorials.o manual_references.o \
    manual_programming.o manual_Fon.o manual_voice.o Praat_tests.o \

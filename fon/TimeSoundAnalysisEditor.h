@@ -134,6 +134,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 		virtual void v_createMenuItems_view_sound (EditorMenu menu);
 	// new methods:
+		virtual bool v_hasAnalysis () { return true; }
 		virtual void v_destroy_analysis ();
 		virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
 		virtual void v_createMenuItems_pitch_picture (EditorMenu menu);

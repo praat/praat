@@ -3982,14 +3982,14 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 				newWidth = LoWord (newSize), newHeight = HiWord (newSize);
 				shell -> width = newWidth;
 				shell -> height = newHeight;
-				/*Melder_casual ("%d %d %d %d",oldWidth,oldHeight,newWidth,newHeight);*/
+				//Melder_casual ("Grow: old and new size: %d %d %d %d", oldWidth, oldHeight, newWidth, newHeight);
 				shellResizeWidget (shell, 0, 0, newWidth - oldWidth, newHeight - oldHeight);
 			}
 		} break;
 		case inZoomIn: case inZoomOut: {
 			GuiObject shell = (GuiObject) GetWRefCon (macvenster);
 			if (shell) {
-				int oldWidth = shell -> width, oldHeight = shell -> height, newWidth, newHeight;
+				int oldWidth = shell -> width, oldHeight = shell -> height;
 				Rect bounds;
 				if (shell -> motiff.shell.canFullScreen) {
 					if (part == inZoomOut) {
@@ -4005,8 +4005,9 @@ static void _motif_processMouseDownEvent (EventRecord *event) {
 					ZoomWindow (macvenster, part, 1);
 				}
 				GetWindowPortBounds (macvenster, & bounds);
-				newWidth = bounds.right - bounds.left;
-				newHeight = bounds.bottom - bounds.top;
+				int newWidth = bounds.right - bounds.left;
+				int newHeight = bounds.bottom - bounds.top;
+				//Melder_casual ("Zoom: old and new size %d %d %d %d", oldWidth, oldHeight, newWidth, newHeight);
 				shell -> width = newWidth;
 				shell -> height = newHeight;
 				shellResizeWidget (shell, 0, 0, newWidth - oldWidth, newHeight - oldHeight);

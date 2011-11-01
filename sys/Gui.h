@@ -301,6 +301,7 @@
 
 GuiObject Gui_addMenuBar (GuiObject form);
 int Gui_getResolution (GuiObject widget);
+void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height);
 
 /* GuiButton creation flags: */
 #define GuiButton_DEFAULT  1

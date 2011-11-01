@@ -1605,7 +1605,7 @@ void Graphics_textRect (Graphics me, double x1, double x2, double y1, double y2,
 }
 
 void Graphics_text (Graphics me, double xWC, double yWC, const wchar_t *txt) {
-	if (my wrapWidth == 0.0 && wcschr (txt, '\n')) {
+	if (my wrapWidth == 0.0 && wcschr (txt, '\n') && my textRotation == 0.0) {
 		double lineSpacingWC = (1.2/72) * my fontSize * my resolution / fabs (my scaleY);
 		long numberOfLines = 1;
 		for (const wchar_t *p = & txt [0]; *p != '\0'; p ++) {
@@ -1617,10 +1617,10 @@ void Graphics_text (Graphics me, double xWC, double yWC, const wchar_t *txt) {
 			my verticalTextAlignment == Graphics_TOP ? 0 :
 			my verticalTextAlignment == Graphics_HALF ? 0.5 * (numberOfLines - 1) * lineSpacingWC:
 			(numberOfLines - 1) * lineSpacingWC;
-		const wchar *linesToDraw = Melder_wcsdup_f (txt);
-		const wchar *p = & linesToDraw [0];
+		autostring linesToDraw = Melder_wcsdup_f (txt);
+		wchar *p = & linesToDraw [0];
 		for (;;) {
-			wchar_t *newline = const_cast <wchar *> (wcschr (p, '\n'));
+			wchar_t *newline = wcschr (p, '\n');
 			if (newline != NULL) *newline = '\0';
 			Graphics_text (me, xWC, yWC, p);
 			yWC -= lineSpacingWC;
@@ -1630,7 +1630,6 @@ void Graphics_text (Graphics me, double xWC, double yWC, const wchar_t *txt) {
 				break;
 			}
 		}
-		Melder_free (linesToDraw);
 		return;
 	}
 	if (! initBuffer (txt)) return;

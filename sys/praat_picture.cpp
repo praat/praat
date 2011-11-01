@@ -1496,27 +1496,22 @@ void praat_picture_init (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		char pictureWindowTitle [100];
 		// Ook al eerder gezien... Migreren naar UI?
-		#if gtk
-			GdkScreen *screen = gtk_window_get_screen (GTK_WINDOW (theCurrentPraatApplication -> topShell));
-			int screenWidth = gdk_screen_get_width (screen);
-//	        int screenHeight = gdk_screen_get_height (screen);
-		#elif motif
-			int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraatApplication -> topShell)));
-		#endif
+		double screenX, screenY, screenWidth, screenHeight;
+		Gui_getWindowPositioningBounds (& screenX, & screenY, & screenWidth, & screenHeight);
 		resolution = Gui_getResolution (theCurrentPraatApplication -> topShell);
 		#if defined (macintosh)
 			margin = 2, width = 6 * resolution + 20;
 			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
-			x = screenWidth - width - 14;
+			x = screenX + screenWidth - width - 14;
 			width += margin * 2;
 		#elif defined (_WIN32)
 			margin = 2, width = 6 * resolution + 22;
 			height = 9 * resolution + 24;
-			x = screenWidth - width - 17;
+			x = screenX + screenWidth - width - 17;
 		#else
 			margin = 0, width = 6 * resolution + 30;
 			height = width * 3 / 2 + Machine_getTitleBarHeight ();
-			x = screenWidth - width - 10;
+			x = screenX + screenWidth - width - 10;
 			width += margin * 2;
 		#endif
 		sprintf (pictureWindowTitle, "%s Picture", praatP.title);

@@ -77,4 +77,52 @@ int Gui_getResolution (GuiObject widget) {
 	return resolution;
 }
 
+void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height) {
+	#if defined (macintosh)
+		HIRect rect;
+		HIWindowGetAvailablePositioningBounds (kCGNullDirectDisplay, kHICoordSpaceScreenPixel, & rect);
+		if (x) *x = rect. origin. x;
+		if (y) *y = rect. origin. y;
+		if (width) *width = rect. size. width;
+		if (height) *height = rect. size. height - 22;   // subtract title bar height (or is it the menu height?)
+	#elif defined (_WIN32)
+		#if 1
+		RECT rect;
+		SystemParametersInfo (SPI_GETWORKAREA, 0, & rect, 0);   // BUG: use GetMonitorInfo instead
+		if (x) *x = rect. left;
+		if (y) *y = rect. top;
+		if (width) *width = rect. right - rect. left - 2 * GetSystemMetrics (SM_CXSIZEFRAME);
+		if (height) *height = rect.bottom - rect.top - GetSystemMetrics (SM_CYCAPTION) - 2 * GetSystemMetrics (SM_CYSIZEFRAME);
+		#else
+		HMONITOR monitor = MonitorFromWindow (HWND window, MONITOR_DEFAULTTONEAREST);
+		MONITORINFO monitorInfo;
+		monitorInfo. cbSize = sizeof (MONITORINFO);
+		GetMonitorInfo (monitor, & monitorInfo);
+		if (x) *x = monitorInfo. rcWork. left;
+		if (y) *y = monitorInfo. rcWork. top;
+		if (width) *width = monitorInfo. rcWork. right - monitorInfo. rcWork. left;
+		if (height) *height = monitorInfo. rcWork.bottom - monitorInfo. rcWork.top /*- GetSystemMetrics (SM_CYMINTRACK)*/;   // SM_CXSIZEFRAME  SM_CYCAPTION
+		#endif
+	#elif gtk
+		GdkScreen *screen = gdk_screen_get_default ();
+		/*
+		if (parent != NULL) {
+			GuiObject parent_win = gtk_widget_get_ancestor (GTK_WIDGET (parent), GTK_TYPE_WINDOW);
+			if (parent_win != NULL) {
+				screen = gtk_window_get_screen (GTK_WINDOW (parent_win));
+			}
+		}
+		*/
+		if (x) *x = 0;
+		if (y) *y = 0;
+		if (width) *width = gdk_screen_get_width (screen);
+		if (height) *height = gdk_screen_get_height (screen);
+	#else
+		if (x) *x = 0;
+		if (y) *y = 0;
+		if (width) *width = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
+		if (height) *height = HeightOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));
+	#endif
+}
+
 /* End of file Gui.cpp */

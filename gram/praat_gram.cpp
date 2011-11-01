@@ -321,7 +321,18 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (OTGrammar);
-		OTGrammar_drawTableau (me, GRAPHICS, GET_STRING (L"Input string"));
+		OTGrammar_drawTableau (me, GRAPHICS, false, GET_STRING (L"Input string"));
+	}
+END
+
+FORM (OTGrammar_drawTableau_narrowly, L"Draw tableau (narrowly)", L"OT learning")
+	SENTENCE (L"Input string", L"")
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (OTGrammar);
+		OTGrammar_drawTableau (me, GRAPHICS, true, GET_STRING (L"Input string"));
 	}
 END
 
@@ -993,7 +1004,21 @@ DO
 	LOOP {
 		iam (OTMulti);
 		OTMulti_drawTableau (me, GRAPHICS, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
-			GET_INTEGER (L"Show disharmonies"));
+			false, GET_INTEGER (L"Show disharmonies"));
+	}
+END
+
+FORM (OTMulti_drawTableau_narrowly, L"Draw tableau (narrowly)", L"OT learning")
+	SENTENCE (L"Partial form 1", L"")
+	SENTENCE (L"Partial form 2", L"")
+	BOOLEAN (L"Show disharmonies", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (OTMulti);
+		OTMulti_drawTableau (me, GRAPHICS, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
+			true, GET_INTEGER (L"Show disharmonies"));
 	}
 END
 
@@ -1312,6 +1337,7 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classOTGrammar, 0, L"View & Edit", 0, praat_ATTRACTIVE, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, L"Edit", 0, praat_HIDDEN, DO_OTGrammar_edit);
 	praat_addAction1 (classOTGrammar, 0, L"Draw tableau...", 0, 0, DO_OTGrammar_drawTableau);
+	praat_addAction1 (classOTGrammar, 0, L"Draw tableau (narrowly)...", 0, 0, DO_OTGrammar_drawTableau_narrowly);
 	praat_addAction1 (classOTGrammar, 1, L"Save as headerless spreadsheet file...", 0, 0, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classOTGrammar, 1, L"Write to headerless spreadsheet file...", 0, praat_HIDDEN, DO_OTGrammar_writeToHeaderlessSpreadsheetFile);
 	praat_addAction1 (classOTGrammar, 0, L"Query -", 0, 0, 0);
@@ -1362,6 +1388,7 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classOTMulti, 0, L"View & Edit", 0, praat_ATTRACTIVE, DO_OTMulti_edit);
 	praat_addAction1 (classOTMulti, 0, L"Edit", 0, praat_HIDDEN, DO_OTMulti_edit);
 	praat_addAction1 (classOTMulti, 0, L"Draw tableau...", 0, 0, DO_OTMulti_drawTableau);
+	praat_addAction1 (classOTMulti, 0, L"Draw tableau (narrowly)...", 0, 0, DO_OTMulti_drawTableau_narrowly);
 	praat_addAction1 (classOTMulti, 0, L"Query -", 0, 0, 0);
 	praat_addAction1 (classOTMulti, 1, L"Get number of constraints", 0, 1, DO_OTMulti_getNumberOfConstraints);
 	praat_addAction1 (classOTMulti, 1, L"Get constraint...", 0, 1, DO_OTMulti_getConstraint);

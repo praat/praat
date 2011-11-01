@@ -22,19 +22,19 @@
 
 static void draw_NoCoda_pat (Graphics g) {
 	OTGrammar ot = OTGrammar_create_NoCoda_grammar ();
-	OTGrammar_drawTableau (ot, g, L"pat");
+	OTGrammar_drawTableau (ot, g, false, L"pat");
 	forget (ot);
 }
 static void draw_NoCoda_pa (Graphics g) {
 	OTGrammar ot = OTGrammar_create_NoCoda_grammar ();
-	OTGrammar_drawTableau (ot, g, L"pa");
+	OTGrammar_drawTableau (ot, g, false, L"pa");
 	forget (ot);
 }
 static void draw_NoCoda_reverse (Graphics g) {
 	OTGrammar ot = OTGrammar_create_NoCoda_grammar ();
 	ot -> index [1] = 2;
 	ot -> index [2] = 1;
-	OTGrammar_drawTableau (ot, g, L"pat");
+	OTGrammar_drawTableau (ot, g, false, L"pat");
 	forget (ot);
 }
 static void draw_NPA_assimilate_anpa (Graphics g) {
@@ -42,7 +42,7 @@ static void draw_NPA_assimilate_anpa (Graphics g) {
 	ot -> index [1] = 3;
 	ot -> index [2] = 1;
 	ot -> index [3] = 2;
-	OTGrammar_drawTableau (ot, g, L"an+pa");
+	OTGrammar_drawTableau (ot, g, false, L"an+pa");
 	forget (ot);
 }
 static void draw_NPA_assimilate_atma (Graphics g) {
@@ -50,7 +50,7 @@ static void draw_NPA_assimilate_atma (Graphics g) {
 	ot -> index [1] = 3;
 	ot -> index [2] = 1;
 	ot -> index [3] = 2;
-	OTGrammar_drawTableau (ot, g, L"at+ma");
+	OTGrammar_drawTableau (ot, g, false, L"at+ma");
 	forget (ot);
 }
 static void draw_NPA_faithful_anpa (Graphics g) {
@@ -58,7 +58,7 @@ static void draw_NPA_faithful_anpa (Graphics g) {
 	ot -> index [1] = 3;
 	ot -> index [2] = 2;
 	ot -> index [3] = 1;
-	OTGrammar_drawTableau (ot, g, L"an+pa");
+	OTGrammar_drawTableau (ot, g, false, L"an+pa");
 	forget (ot);
 }
 static void draw_NPA_faithful_atma (Graphics g) {
@@ -66,27 +66,27 @@ static void draw_NPA_faithful_atma (Graphics g) {
 	ot -> index [1] = 3;
 	ot -> index [2] = 2;
 	ot -> index [3] = 1;
-	OTGrammar_drawTableau (ot, g, L"at+ma");
+	OTGrammar_drawTableau (ot, g, false, L"at+ma");
 	forget (ot);
 }
 static void draw_Wolof_ItI (Graphics g) {
 	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, L"\\ict\\ic");
+	OTGrammar_drawTableau (ot, g, false, L"\\ict\\ic");
 	forget (ot);
 }
 static void draw_Wolof_itE (Graphics g) {
 	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, L"it\\ep");
+	OTGrammar_drawTableau (ot, g, false, L"it\\ep");
 	forget (ot);
 }
 static void draw_Wolof_etE (Graphics g) {
 	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, L"et\\ep");
+	OTGrammar_drawTableau (ot, g, false, L"et\\ep");
 	forget (ot);
 }
 static void draw_Wolof_schwatschwa (Graphics g) {
 	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, L"\\swt\\sw");
+	OTGrammar_drawTableau (ot, g, false, L"\\swt\\sw");
 	forget (ot);
 }
 static void draw_Infant_swtI (Graphics g) {
@@ -97,7 +97,7 @@ static void draw_Infant_swtI (Graphics g) {
 	ot -> constraints [4]. disharmony = 1;
 	ot -> constraints [5]. disharmony = 5;
 	OTGrammar_sort (ot);
-	OTGrammar_drawTableau (ot, g, L"\\swt\\ic");
+	OTGrammar_drawTableau (ot, g, false, L"\\swt\\ic");
 	forget (ot);
 }
 

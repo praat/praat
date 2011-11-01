@@ -67,121 +67,121 @@ Melder_help (L"Cepstrum");
 END
 
 FORM (Cepstrum_draw, L"Cepstrum: Draw", L"Cepstrum: Draw...")
-REAL (L"Minimum quefrency", L"0.0")
-REAL (L"Maximum quefrency", L"0.0")
-REAL (L"Minimum", L"0.0")
-REAL (L"Maximum", L"0.0")
-BOOLEAN (L"Garnish", 0)
-OK
+	REAL (L"Minimum quefrency", L"0.0")
+	REAL (L"Maximum quefrency", L"0.0")
+	REAL (L"Minimum", L"0.0")
+	REAL (L"Maximum", L"0.0")
+	BOOLEAN (L"Garnish", 0)
+	OK
 DO
-autoPraatPicture picture;
-LOOP {
-	iam (Cepstrum);
-	Cepstrum_draw (me, GRAPHICS, GET_REAL (L"Minimum quefrency"), GET_REAL (L"Maximum quefrency"),
-	GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
-}
+	autoPraatPicture picture;
+	LOOP {
+		iam (Cepstrum);
+		Cepstrum_draw (me, GRAPHICS, GET_REAL (L"Minimum quefrency"), GET_REAL (L"Maximum quefrency"),
+			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 FORM (Cepstrum_formula, L"Cepstrum: Formula...", L"Cepstrum: Formula...")
-LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
-       "for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
-TEXTFIELD (L"formula", L"self")
-OK
+	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
+	TEXTFIELD (L"formula", L"self")
+	OK
 DO
-praat_Fon_formula (dia, interpreter);
+	praat_Fon_formula (dia, interpreter);
 END
 
 
 DIRECT (Cepstrum_to_Spectrum)
-LOOP {
-	iam (Cepstrum);
-	praat_new (Cepstrum_to_Spectrum (me), my name);
-}
+	LOOP {
+		iam (Cepstrum);
+		praat_new (Cepstrum_to_Spectrum (me), my name);
+	}
 END
 
 DIRECT (Cepstrum_to_Matrix)
-LOOP {
-	iam (Cepstrum);
-	praat_new (Cepstrum_to_Matrix (me), my name);
-}
+	LOOP {
+		iam (Cepstrum);
+		praat_new (Cepstrum_to_Matrix (me), my name);
+	}
 END
 
 /********************** Cepstrumc  ****************************************/
 
 DIRECT (Cepstrumc_to_LPC)
-LOOP {
-	iam (Cepstrumc);
-	praat_new (Cepstrumc_to_LPC (me), 0);
-}
+	LOOP {
+		iam (Cepstrumc);
+		praat_new (Cepstrumc_to_LPC (me), my name);
+	}
 END
 
 FORM (Cepstrumc_to_DTW, L"Cepstrumc: To DTW", L"Cepstrumc: To DTW...")
-LABEL (L"", L"Distance calculation between Cepstra")
-REAL (L"Cepstral weight", L"1.0")
-REAL (L"Log energy weight", L"0.0")
-REAL (L"Regression weight", L"0.0")
-REAL (L"Regression weight log energy", L"0.0")
-REAL (L"Window for regression coefficients (seconds)", L"0.056")
-LABEL (L"", L"Boundary conditions for time warp")
-BOOLEAN (L"Match begin positions", 0)
-BOOLEAN (L"Match end positions", 0)
-RADIO (L"Slope constraints", 1)
-RADIOBUTTON (L"no restriction")
-RADIOBUTTON (L"1/3 < slope < 3")
-RADIOBUTTON (L"1/2 < slope < 2")
-RADIOBUTTON (L"2/3 < slope < 3/2")
-OK
+	LABEL (L"", L"Distance calculation between Cepstra")
+	REAL (L"Cepstral weight", L"1.0")
+	REAL (L"Log energy weight", L"0.0")
+	REAL (L"Regression weight", L"0.0")
+	REAL (L"Regression weight log energy", L"0.0")
+	REAL (L"Window for regression coefficients (seconds)", L"0.056")
+	LABEL (L"", L"Boundary conditions for time warp")
+	BOOLEAN (L"Match begin positions", 0)
+	BOOLEAN (L"Match end positions", 0)
+	RADIO (L"Slope constraints", 1)
+	RADIOBUTTON (L"no restriction")
+	RADIOBUTTON (L"1/3 < slope < 3")
+	RADIOBUTTON (L"1/2 < slope < 2")
+	RADIOBUTTON (L"2/3 < slope < 3/2")
+	OK
 DO
-Cepstrumc c1 = 0, c2 = 0;
-LOOP {
-	iam (Cepstrumc);
-	(c1 ? c2 : c1) = me;
-}
-Melder_assert (c1 && c2);
-praat_new (Cepstrumc_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"),
-                             GET_REAL (L"Log energy weight"), GET_REAL (L"Regression weight"),
-                             GET_REAL (L"Regression weight log energy"), GET_REAL (L"Window for regression coefficients"),
-                             GET_INTEGER (L"Match begin positions"), GET_INTEGER (L"Match end positions"),
-                             GET_INTEGER (L"Slope constraints")), 0);
+	Cepstrumc c1 = 0, c2 = 0;
+	LOOP {
+		iam (Cepstrumc);
+		(c1 ? c2 : c1) = me;
+	}
+	Melder_assert (c1 && c2);
+	praat_new (Cepstrumc_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"),
+		GET_REAL (L"Log energy weight"), GET_REAL (L"Regression weight"),
+		GET_REAL (L"Regression weight log energy"), GET_REAL (L"Window for regression coefficients"),
+		GET_INTEGER (L"Match begin positions"), GET_INTEGER (L"Match end positions"),
+		GET_INTEGER (L"Slope constraints")), c1->name, L"_", c2->name);
 END
 
 DIRECT (Cepstrumc_to_Matrix)
-LOOP {
-	iam (Cepstrumc);
-	praat_new (Cepstrumc_to_Matrix (me), my name);
-}
+	LOOP {
+		iam (Cepstrumc);
+		praat_new (Cepstrumc_to_Matrix (me), my name);
+	}
 END
 
 /******************** Formant ********************************************/
 
 FORM (Formant_to_LPC, L"Formant: To LPC", 0)
-POSITIVE (L"Sampling frequency (Hz)", L"16000.0")
-OK
+	POSITIVE (L"Sampling frequency (Hz)", L"16000.0")
+	OK
 DO
-LOOP {
-	iam (Formant);
-	praat_new (Formant_to_LPC (me, 1.0 / GET_REAL (L"Sampling frequency")), my name);
-}
+	LOOP {
+		iam (Formant);
+		praat_new (Formant_to_LPC (me, 1.0 / GET_REAL (L"Sampling frequency")), my name);
+	}
 END
 
 /********************LFCC ********************************************/
 
 DIRECT (LFCC_help)
-Melder_help (L"LFCC");
+	Melder_help (L"LFCC");
 END
 
 FORM (LFCC_to_LPC, L"LFCC: To LPC", L"LFCC: To LPC...")
-INTEGER (L"Number of coefficients", L"0")
-OK
+	INTEGER (L"Number of coefficients", L"0")
+	OK
 DO
-long ncof = GET_INTEGER (L"Number of coefficients");
-if (ncof < 0) {
-	Melder_throw ("Number of coefficients must be greater or equal zero.");
-}
-LOOP {
-	iam (LFCC);
-	praat_new (LFCC_to_LPC (me, ncof), my name);
-}
+	long ncof = GET_INTEGER (L"Number of coefficients");
+	if (ncof < 0) {
+		Melder_throw ("Number of coefficients must be greater or equal zero.");
+	}
+	LOOP {
+		iam (LFCC);
+		praat_new (LFCC_to_LPC (me, ncof), my name);
+	}
 END
 
 /********************LPC ********************************************/
@@ -189,135 +189,135 @@ END
 DIRECT (LPC_help) Melder_help (L"LPC"); END
 
 FORM (LPC_drawGain, L"LPC: Draw gain", L"LPC: Draw gain...")
-REAL (L"From time (seconds)", L"0.0")
-REAL (L"To time (seconds)", L"0.0 (=all)")
-REAL (L"Minimum gain", L"0.0")
-REAL (L"Maximum gain", L"0.0")
-BOOLEAN (L"Garnish", 1)
-OK
+	REAL (L"From time (seconds)", L"0.0")
+	REAL (L"To time (seconds)", L"0.0 (=all)")
+	REAL (L"Minimum gain", L"0.0")
+	REAL (L"Maximum gain", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-LOOP {
-	iam (LPC);
-	LPC_drawGain (me, GRAPHICS, GET_REAL (L"From time"), GET_REAL (L"To time"),
-	GET_REAL (L"Minimum gain"), GET_REAL (L"Maximum gain"), GET_INTEGER (L"Garnish"));
-}
+	LOOP {
+		iam (LPC);
+		LPC_drawGain (me, GRAPHICS, GET_REAL (L"From time"), GET_REAL (L"To time"),
+			GET_REAL (L"Minimum gain"), GET_REAL (L"Maximum gain"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 DIRECT (LPC_getSamplingInterval)
-LOOP {
-	iam (LPC);
-	Melder_information (Melder_double (my samplingPeriod), L" seconds");
-}
+	LOOP {
+		iam (LPC);
+		Melder_information (Melder_double (my samplingPeriod), L" seconds");
+	}
 END
 
 FORM (LPC_getNumberOfCoefficients, L"LPC: Get number of coefficients", L"LPC: Get number of coefficients...")
-NATURAL (L"Frame number", L"1")
-OK
+	NATURAL (L"Frame number", L"1")
+	OK
 DO
-long iframe = GET_INTEGER (L"Frame number");
-LOOP {
-	iam (LPC);
-	if (iframe > my nx) {
-		Melder_throw ("Frame number is too large.\n\nPlease choose a number between 1 and ", my nx);
+	long iframe = GET_INTEGER (L"Frame number");
+	LOOP {
+		iam (LPC);
+		if (iframe > my nx) {
+			Melder_throw ("Frame number is too large.\n\nPlease choose a number between 1 and ", my nx);
+		}
+		Melder_information (Melder_integer ( (my d_frames[iframe]).nCoefficients), L" coefficients");
 	}
-	Melder_information (Melder_integer ( (my d_frames[iframe]).nCoefficients), L" coefficients");
-}
 END
 
 FORM (LPC_drawPoles, L"LPC: Draw poles", L"LPC: Draw poles...")
-REAL (L"Time (seconds)", L"0.0")
-BOOLEAN (L"Garnish", 1)
-OK
+	REAL (L"Time (seconds)", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
 DO
-LOOP {
-	iam (LPC);
-	LPC_drawPoles (me, GRAPHICS, GET_REAL (L"Time"), GET_INTEGER (L"Garnish"));
-}
+	LOOP {
+		iam (LPC);
+		LPC_drawPoles (me, GRAPHICS, GET_REAL (L"Time"), GET_INTEGER (L"Garnish"));
+	}
 END
 
 DIRECT (LPC_to_Formant)
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_Formant (me, 50), my name);
-}
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_Formant (me, 50), my name);
+	}
 END
 
 DIRECT (LPC_to_Formant_keep_all)
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_Formant (me, 0), my name);
-}
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_Formant (me, 0), my name);
+	}
 END
 
 FORM (LPC_to_LFCC, L"LPC: To LFCC", L"LPC: To LFCC...")
-INTEGER (L"Number of coefficients", L"0")
-OK
+	INTEGER (L"Number of coefficients", L"0")
+	OK
 DO
-long ncof = GET_INTEGER (L"Number of coefficients");
-if (ncof < 0) {
-	Melder_throw ("Number of coefficients must be greater or equal zero.");
-}
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_LFCC (me, ncof), my name);
-}
+	long ncof = GET_INTEGER (L"Number of coefficients");
+	if (ncof < 0) {
+		Melder_throw ("Number of coefficients must be greater or equal zero.");
+	}
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_LFCC (me, ncof), my name);
+	}
 END
 
 FORM (LPC_to_Polynomial, L"LPC: To Polynomial", L"LPC: To Polynomial (slice)...")
-REAL (L"Time (seconds)", L"0.0")
-OK
-DO
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_Polynomial (me, GET_REAL (L"Time")), my name);
-}
+	REAL (L"Time (seconds)", L"0.0")
+	OK
+	DO
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_Polynomial (me, GET_REAL (L"Time")), my name);
+	}
 END
 
 FORM (LPC_to_Spectrum, L"LPC: To Spectrum", L"LPC: To Spectrum (slice)...")
-REAL (L"Time (seconds)", L"0.0")
-REAL (L"Minimum frequency resolution (Hz)", L"20.0")
-REAL (L"Bandwidth reduction (Hz)", L"0.0")
-REAL (L"De-emphasis frequency (Hz)", L"50.0")
-OK
+	REAL (L"Time (seconds)", L"0.0")
+	REAL (L"Minimum frequency resolution (Hz)", L"20.0")
+	REAL (L"Bandwidth reduction (Hz)", L"0.0")
+	REAL (L"De-emphasis frequency (Hz)", L"50.0")
+	OK
 DO
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_Spectrum (me, GET_REAL (L"Time"), GET_REAL (L"Minimum frequency resolution"),
-	GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name);
-}
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_Spectrum (me, GET_REAL (L"Time"), GET_REAL (L"Minimum frequency resolution"),
+		GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name);
+	}
 END
 
 FORM (LPC_to_Spectrogram, L"LPC: To Spectrogram", L"LPC: To Spectrogram...")
-REAL (L"Minimum frequency resolution (Hz)", L"20.0")
-REAL (L"Bandwidth reduction (Hz)", L"0.0")
-REAL (L"De-emphasis frequency (Hz)", L"50.0")
-OK
+	REAL (L"Minimum frequency resolution (Hz)", L"20.0")
+	REAL (L"Bandwidth reduction (Hz)", L"0.0")
+	REAL (L"De-emphasis frequency (Hz)", L"50.0")
+	OK
 DO
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_Spectrogram (me, GET_REAL (L"Minimum frequency resolution"),
-	GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name);
-}
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_Spectrogram (me, GET_REAL (L"Minimum frequency resolution"),
+			GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name);
+	}
 END
 
 FORM (LPC_to_VocalTract, L"LPC: To VocalTract", L"LPC: To VocalTract (slice)...")
-REAL (L"Time (s)", L"0.0")
-POSITIVE (L"Length (m)", L"0.17")
-BOOLEAN (L"Length according to Wakita", 0)
-OK
+	REAL (L"Time (s)", L"0.0")
+	POSITIVE (L"Length (m)", L"0.17")
+	BOOLEAN (L"Length according to Wakita", 0)
+	OK
 DO
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), GET_REAL (L"Length"),
-	GET_INTEGER (L"Length according to Wakita")), my name);
-}
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), GET_REAL (L"Length"),
+			GET_INTEGER (L"Length according to Wakita")), my name);
+	}
 END
 
 DIRECT (LPC_to_Matrix)
-LOOP {
-	iam (LPC);
-	praat_new (LPC_to_Matrix (me), my name);
-}
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_Matrix (me), my name);
+	}
 END
 
 /********************** Sound *******************************************/
@@ -345,154 +345,154 @@ static void Sound_to_LPC_checkCommonFields (void *dia, long *predictionOrder, do
 }
 
 FORM (Sound_to_LPC_auto, L"Sound: To LPC (autocorrelation)", L"Sound: To LPC (autocorrelation)...")
-Sound_to_LPC_addCommonFields (dia);
-OK
+	Sound_to_LPC_addCommonFields (dia);
+	OK
 DO
-long numberOfPoles;
-double analysisWindowDuration, timeStep, preemphasisFrequency;
-Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, &preemphasisFrequency);
-LOOP {
-	iam (Sound);
-	praat_new (Sound_to_LPC_auto (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
-}
+	long numberOfPoles;
+	double analysisWindowDuration, timeStep, preemphasisFrequency;
+	Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, &preemphasisFrequency);
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_LPC_auto (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
+	}
 END
 
 FORM (Sound_to_LPC_covar, L"Sound: To LPC (covariance)", L"Sound: To LPC (covariance)...")
-Sound_to_LPC_addCommonFields (dia);
-OK
+	Sound_to_LPC_addCommonFields (dia);
+	OK
 DO
-long numberOfPoles;
-double analysisWindowDuration, timeStep, preemphasisFrequency;
-Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, & preemphasisFrequency);
-LOOP {
-	iam (Sound);
-	praat_new (Sound_to_LPC_covar (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
-}
+	long numberOfPoles;
+	double analysisWindowDuration, timeStep, preemphasisFrequency;
+	Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, & preemphasisFrequency);
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_LPC_covar (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
+	}
 END
 
 FORM (Sound_to_LPC_burg, L"Sound: To LPC (burg)", L"Sound: To LPC (burg)...")
-Sound_to_LPC_addCommonFields (dia);
-OK
+	Sound_to_LPC_addCommonFields (dia);
+	OK
 DO
-long numberOfPoles;
-double analysisWindowDuration, timeStep, preemphasisFrequency;
-Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, & preemphasisFrequency);
-LOOP {
-	iam (Sound);
-	praat_new (Sound_to_LPC_burg (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
-}
+	long numberOfPoles;
+	double analysisWindowDuration, timeStep, preemphasisFrequency;
+	Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, & timeStep, & preemphasisFrequency);
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_LPC_burg (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency), my name);
+	}
 END
 
 FORM (Sound_to_LPC_marple, L"Sound: To LPC (marple)", L"Sound: To LPC (marple)...")
-Sound_to_LPC_addCommonFields (dia);
-POSITIVE (L"Tolerance 1", L"1e-6")
-POSITIVE (L"Tolerance 2", L"1e-6")
-OK
+	Sound_to_LPC_addCommonFields (dia);
+	POSITIVE (L"Tolerance 1", L"1e-6")
+	POSITIVE (L"Tolerance 2", L"1e-6")
+	OK
 DO
-long numberOfPoles;
-double analysisWindowDuration, timeStep, preemphasisFrequency;
-Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, &timeStep, & preemphasisFrequency);
-LOOP {
-	iam (Sound);
-	praat_new (Sound_to_LPC_marple (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency,
-	GET_REAL (L"Tolerance 1"), GET_REAL (L"Tolerance 2")), my name);
-}
+	long numberOfPoles;
+	double analysisWindowDuration, timeStep, preemphasisFrequency;
+	Sound_to_LPC_checkCommonFields (dia, & numberOfPoles, & analysisWindowDuration, &timeStep, & preemphasisFrequency);
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_LPC_marple (me, numberOfPoles, analysisWindowDuration, timeStep, preemphasisFrequency,
+		GET_REAL (L"Tolerance 1"), GET_REAL (L"Tolerance 2")), my name);
+	}
 END
 
 FORM (Sound_to_MFCC, L"Sound: To MFCC", L"Sound: To MFCC...")
-NATURAL (L"Number of coefficients", L"12")
-POSITIVE (L"Window length (s)", L"0.015")
-POSITIVE (L"Time step (s)", L"0.005")
-LABEL (L"", L"Filter bank parameters")
-POSITIVE (L"Position of first filter (mel)", L"100.0")
-POSITIVE (L"Distance between filters (mel)", L"100.0")
-REAL (L"Maximum frequency (mel)", L"0.0");
-OK
+	NATURAL (L"Number of coefficients", L"12")
+	POSITIVE (L"Window length (s)", L"0.015")
+	POSITIVE (L"Time step (s)", L"0.005")
+	LABEL (L"", L"Filter bank parameters")
+	POSITIVE (L"Position of first filter (mel)", L"100.0")
+	POSITIVE (L"Distance between filters (mel)", L"100.0")
+	REAL (L"Maximum frequency (mel)", L"0.0");
+	OK
 DO
-long p = GET_INTEGER (L"Number of coefficients");
-if (p > 24) {
-	Melder_throw ("Number of coefficients must be < 25.");
-}
-LOOP {
-	iam (Sound);
-	praat_new (Sound_to_MFCC (me, p, GET_REAL (L"Window length"),
-	GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
-	GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), my name);
-}
+	long p = GET_INTEGER (L"Number of coefficients");
+	if (p > 24) {
+		Melder_throw ("Number of coefficients must be < 25.");
+	}
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_MFCC (me, p, GET_REAL (L"Window length"),
+			GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
+			GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), my name);
+	}
 END
 
 DIRECT (VocalTract_getLength)
-LOOP {
-	iam (VocalTract);
-	double length = my xmax - my xmin;
-	if (length <= 0.02) {
-		length = NUMundefined;
+	LOOP {
+		iam (VocalTract);
+		double length = my xmax - my xmin;
+		if (length <= 0.02) {
+			length = NUMundefined;
+		}
+		Melder_information (Melder_integer (length), L" m");
 	}
-	Melder_information (Melder_integer (length), L" m");
-}
 END
 
 /******************* LPC & Sound *************************************/
 
 FORM (LPC_and_Sound_filter, L"LPC & Sound: Filter", L"LPC & Sound: Filter...")
-BOOLEAN (L"Use LPC gain", 0)
-OK
+	BOOLEAN (L"Use LPC gain", 0)
+	OK
 DO
-LPC me = FIRST (LPC);
-Sound s = FIRST (Sound);
-praat_new (LPC_and_Sound_filter (me , s, GET_INTEGER (L"Use LPC gain")), my name);
+	LPC me = FIRST (LPC);
+	Sound s = FIRST (Sound);
+	praat_new (LPC_and_Sound_filter (me , s, GET_INTEGER (L"Use LPC gain")), my name);
 END
 
 FORM (LPC_and_Sound_filterWithFilterAtTime, L"LPC & Sound: Filter with one filter at time",
       L"LPC & Sound: Filter with filter at time...")
-OPTIONMENU (L"Channel", 2)
-OPTION (L"Both")
-OPTION (L"Left")
-OPTION (L"Right")
-REAL (L"Use filter at time (s)", L"0.0")
-OK
+	OPTIONMENU (L"Channel", 2)
+	OPTION (L"Both")
+	OPTION (L"Left")
+	OPTION (L"Right")
+	REAL (L"Use filter at time (s)", L"0.0")
+	OK
 DO
-LPC me = FIRST (LPC);
-Sound s = FIRST (Sound);
-long channel = GET_INTEGER (L"Channel") - 1;
-praat_new (LPC_and_Sound_filterWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), my name);
+	LPC me = FIRST (LPC);
+	Sound s = FIRST (Sound);
+	long channel = GET_INTEGER (L"Channel") - 1;
+	praat_new (LPC_and_Sound_filterWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), my name);
 END
 
 DIRECT (LPC_and_Sound_filterInverse)
-LPC me = FIRST (LPC);
-Sound s = FIRST (Sound);
-praat_new (LPC_and_Sound_filterInverse (me , s), my name);
+	LPC me = FIRST (LPC);
+	Sound s = FIRST (Sound);
+	praat_new (LPC_and_Sound_filterInverse (me , s), my name);
 END
 
 FORM (LPC_and_Sound_filterInverseWithFilterAtTime, L"LPC & Sound: Filter (inverse) with filter at time",
       L"LPC & Sound: Filter (inverse) with filter at time...")
-OPTIONMENU (L"Channel", 2)
-OPTION (L"Both")
-OPTION (L"Left")
-OPTION (L"Right")
-REAL (L"Use filter at time (s)", L"0.0")
-OK
+	OPTIONMENU (L"Channel", 2)
+	OPTION (L"Both")
+	OPTION (L"Left")
+	OPTION (L"Right")
+	REAL (L"Use filter at time (s)", L"0.0")
+	OK
 DO
-LPC me = FIRST (LPC);
-Sound s = FIRST (Sound);
-long channel = GET_INTEGER (L"Channel") - 1;
-praat_new (LPC_and_Sound_filterInverseWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), my name);
+	LPC me = FIRST (LPC);
+	Sound s = FIRST (Sound);
+	long channel = GET_INTEGER (L"Channel") - 1;
+	praat_new (LPC_and_Sound_filterInverseWithFilterAtTime (me , s, channel, GET_REAL (L"Use filter at time")), my name);
 END
 
 FORM (LPC_and_Sound_to_LPC_robust, L"Robust LPC analysis", L"LPC & Sound: To LPC (robust)...")
-POSITIVE (L"Window length (s)", L"0.025")
-POSITIVE (L"Pre-emphasis frequency (Hz)", L"50.0")
-POSITIVE (L"Number of std. dev.", L"1.5")
-NATURAL (L"Maximum number of iterations", L"5")
-REAL (L"Tolerance", L"0.000001")
-BOOLEAN (L"Variable location", 0)
-OK
+	POSITIVE (L"Window length (s)", L"0.025")
+	POSITIVE (L"Pre-emphasis frequency (Hz)", L"50.0")
+	POSITIVE (L"Number of std. dev.", L"1.5")
+	NATURAL (L"Maximum number of iterations", L"5")
+	REAL (L"Tolerance", L"0.000001")
+	BOOLEAN (L"Variable location", 0)
+	OK
 DO
-LPC me = FIRST (LPC);
-Sound s = FIRST (Sound);
-praat_new (LPC_and_Sound_to_LPC_robust (me, s, GET_REAL (L"Window length"), GET_REAL (L"Pre-emphasis frequency"),
-                                        GET_REAL (L"Number of std. dev."), GET_INTEGER (L"Maximum number of iterations"),
-                                        GET_REAL (L"Tolerance"), GET_INTEGER (L"Variable location")), my name, L"_r");
+	LPC me = FIRST (LPC);
+	Sound s = FIRST (Sound);
+	praat_new (LPC_and_Sound_to_LPC_robust (me, s, GET_REAL (L"Window length"), GET_REAL (L"Pre-emphasis frequency"),
+		GET_REAL (L"Number of std. dev."), GET_INTEGER (L"Maximum number of iterations"),
+		GET_REAL (L"Tolerance"), GET_INTEGER (L"Variable location")), my name, L"_r");
 END
 
 void praat_uvafon_LPC_init (void);

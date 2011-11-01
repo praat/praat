@@ -32,13 +32,15 @@
 #include "LongSound_extensions.h"
 
 #if defined (_WIN32)
-#include <windows.h>
-#elif defined(linux)
-#include <unistd.h>
-#include <sys/types.h>
-#include <string.h>
+	#include "winport_on.h"
+	#include <windows.h>
+	#include "winport_off.h"
+#elif defined (linux)
+	#include <unistd.h>
+	#include <sys/types.h>
+	#include <string.h>
 #elif defined (macintosh)
-#include <unistd.h>
+	#include <unistd.h>
 #endif
 
 #include "NUM2.h"

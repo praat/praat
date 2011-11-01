@@ -26,6 +26,7 @@ Thing_define (OTGrammarEditor, HyperPage) {
 	// new data:
 	public:
 		long selected;
+		bool d_constraintsAreDrawnVertically;
 	// overridden methods:
 		virtual bool v_editable () { return true; }
 		virtual void v_createMenus ();

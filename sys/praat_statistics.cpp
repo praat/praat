@@ -103,7 +103,11 @@ void praat_memoryInfo (void) {
 	MelderInfo_writeLine9 (L"\nMemory addressing: short ", Melder_integer (sizeof (short) * 8), L" bits, int ", Melder_integer (sizeof (int) * 8), L" bits, long ",
 		Melder_integer (sizeof (long) * 8), L" bits, pointer ", Melder_integer (sizeof (void *) * 8), L" bits");
 	MelderInfo_writeLine2 (L"\nNumber of actions: ", Melder_integer (praat_getNumberOfActions ()));
-	#ifdef macintosh
+	double x, y, width, height;
+	Gui_getWindowPositioningBounds (& x, & y, & width, & height);
+	MelderInfo_writeLine8 (L"\nWindow positioning area: x = ", Melder_double (x), L", y = ", Melder_double (y),
+		L", width = ", Melder_double (width), L", height = ", Melder_double (height));
+	#if defined (macintosh)
 		CGDirectDisplayID screen = CGMainDisplayID ();
 		CGSize screenSize_mm = CGDisplayScreenSize (screen);
 		double diagonal_mm = sqrt (screenSize_mm. width * screenSize_mm. width + screenSize_mm. height * screenSize_mm. height);
@@ -115,6 +119,9 @@ void praat_memoryInfo (void) {
 		MelderInfo_writeLine5 (L"Screen \"resolution\": ", Melder_integer (screenWidth_pixels), L" x ", Melder_integer (screenHeight_pixels), L" pixels");
 		double resolution = 25.4 * screenWidth_pixels / screenSize_mm. width;
 		MelderInfo_writeLine3 (L"Screen resolution: ", Melder_fixed (resolution, 1), L" pixels/inch");
+	#elif defined (_WIN32)
+		/*for (int i = 0; i <= 88; i ++)
+			MelderInfo_writeLine4 (L"System metric ", Melder_integer (i), L": ", Melder_integer (GetSystemMetrics (i)));*/
 	#endif
 	MelderInfo_close ();
 }

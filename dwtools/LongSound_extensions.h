@@ -27,22 +27,9 @@
 
 #include "LongSound.h"
 
-#if defined (_WIN32)
-        #include "winport_on.h"
-        #include <windows.h>
-        #include "winport_off.h"
-#endif
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee,
 	int audioFileType, MelderFile file);
 
 void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _LongSound_extensions_h_ */

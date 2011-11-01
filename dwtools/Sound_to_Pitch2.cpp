@@ -142,7 +142,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 
 		for (long i = 1; i <= numberOfFrames; i++) {
 			Pitch_Frame pitchFrame = &thy frame[i];
-			double hm = 1, f0, strength, localMean, localPeak;
+			double hm = 1, f0, pitch_strength, localMean, localPeak;
 			double tmid = Sampled_indexToX (thee.peek(), i); /* The center of this frame */
 			long nx_tmp = frame -> nx;
 
@@ -243,7 +243,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 				pitch, e.g. Shepard sounds.
 			*/
 
-			Pitch_Frame_getPitch (pitchFrame, &f0, &strength);
+			Pitch_Frame_getPitch (pitchFrame, &f0, &pitch_strength);
 			if (f0 > 0) {
 				cc[i] = Sound_correlateParts (sound.peek(), tmid - 1.0 / f0, tmid, 1.0 / f0);
 			}
