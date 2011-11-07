@@ -303,10 +303,10 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>EEG</string>
+				<string>PairDistribution</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Praat electro-encephalogram</string>
+			<string>Praat distribution of string pairs</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
@@ -317,10 +317,10 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>PairDistribution</string>
+				<string>EEG</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Praat distribution of string pairs</string>
+			<string>Praat electro-encephalogram</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>
@@ -349,6 +349,20 @@
 			</array>
 			<key>CFBundleTypeName</key>
 			<string>Praat movie file</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Corpus</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat corpus file</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>LSTypeIsPackage</key>

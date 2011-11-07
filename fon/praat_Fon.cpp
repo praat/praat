@@ -22,6 +22,7 @@
 #include "AmplitudeTier.h"
 #include "AmplitudeTierEditor.h"
 #include "Cochleagram_and_Excitation.h"
+#include "Corpus.h"
 #include "Distributions_and_Strings.h"
 #include "Distributions_and_Transition.h"
 #include "DurationTierEditor.h"
@@ -61,7 +62,7 @@
 #include "SpectrumEditor.h"
 #include "SpellingChecker.h"
 #include "StringsEditor.h"
-#include "Table.h"
+#include "TableEditor.h"
 #include "TextGrid.h"
 #include "VocalTract.h"
 #include "VoiceAnalysis.h"
@@ -446,6 +447,27 @@ DIRECT (Cochleagram_to_Matrix)
 		iam (Cochleagram);
 		autoMatrix thee = Cochleagram_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
+	}
+END
+
+/***** CORPUS *****/
+
+FORM (Corpus_create, L"Create Corpus", L"Create Corpus...")
+	WORD (L"Name", L"myCorpus")
+	LABEL (L"", L"Folder with sound files:")
+	TEXTFIELD (L"folderWithSoundFiles", L"")
+	LABEL (L"", L"Folder with annotation files:")
+	TEXTFIELD (L"folderWithAnnotationFiles", L"")
+	OK
+DO
+END
+
+DIRECT (Corpus_edit)
+	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit a Corpus from batch.");
+	LOOP {
+		iam (Corpus);
+		autoTableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		praat_installEditor (editor.transfer(), IOBJECT); therror
 	}
 END
 
@@ -5904,7 +5926,7 @@ void praat_uvafon_init () {
 		classRealPoint, classRealTier, classPitchTier, classIntensityTier, classDurationTier, classAmplitudeTier, classSpectrumTier,
 		classManipulation, classTextPoint, classTextInterval, classTextTier,
 		classIntervalTier, classTextGrid, classLongSound, classWordList, classSpellingChecker,
-		classMovie,
+		classMovie, classCorpus,
 		NULL);
 	Thing_recognizeClassByOtherName (classManipulation, L"Psola");
 	Thing_recognizeClassByOtherName (classManipulation, L"Analysis");
@@ -5947,6 +5969,7 @@ void praat_uvafon_init () {
 		praat_addMenuCommand (L"Objects", L"New", L"Create AmplitudeTier...", 0, 1, DO_AmplitudeTier_create);
 	praat_addMenuCommand (L"Objects", L"New", L"-- new textgrid --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"Create TextGrid...", 0, 0, DO_TextGrid_create);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Corpus...", 0, praat_HIDDEN, DO_Corpus_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as file list...", 0, 0, DO_Strings_createAsFileList);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as directory list...", 0, 0, DO_Strings_createAsDirectoryList);
 
@@ -6011,6 +6034,8 @@ praat_addAction1 (classCochleagram, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classCochleagram, 0, L"To Excitation (slice)...", 0, 0, DO_Cochleagram_to_Excitation);
 praat_addAction1 (classCochleagram, 0, L"Hack", 0, 0, 0);
 	praat_addAction1 (classCochleagram, 0, L"To Matrix", 0, 0, DO_Cochleagram_to_Matrix);
+
+	praat_addAction1 (classCorpus, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Corpus_edit);
 
 praat_addAction1 (classDistributions, 0, L"Learn", 0, 0, 0);
 	praat_addAction1 (classDistributions, 1, L"To Transition...", 0, 0, DO_Distributions_to_Transition);

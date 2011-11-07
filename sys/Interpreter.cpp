@@ -629,7 +629,7 @@ static void parameterToVariable (Interpreter me, int type, const wchar_t *in_par
 }
 
 void Interpreter_run (Interpreter me, wchar *text) {
-	autoNUMvector <wchar *> lines;
+	autoNUMvector <wchar *> lines;   // not autostringvector, because the elements are reference copies
 	long lineNumber = 0;
 	bool assertionFailed = false;
 	try {
@@ -1330,9 +1330,8 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							 * Example: name$ = Get name
 							 */
 							MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
-							Melder_divertInfo (& valueString);
+							autoMelderDivertInfo divert (& valueString);
 							praat_executeCommand (me, p);
-							Melder_divertInfo (NULL); therror
 							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName); therror
 							Melder_free (var -> stringValue);
 							var -> stringValue = Melder_wcsdup (valueString.string);
@@ -1448,25 +1447,22 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							 * Get the value of the query.
 							 */
 							MelderString_empty (& valueString);
-							Melder_divertInfo (& valueString);
+							autoMelderDivertInfo divert (& valueString);
 							MelderString_appendCharacter (& valueString, 1);
 							praat_executeCommand (me, p);
 							if (valueString.string [0] == 1) {
 								int IOBJECT, result = 0, found = 0;
 								WHERE (SELECTED) { result = IOBJECT; found += 1; }
 								if (found > 1) {
-									Melder_divertInfo (NULL);
 									Melder_throw ("Multiple objects selected. Cannot assign ID to variable.");
 								} else if (found == 0) {
-									Melder_divertInfo (NULL);
 									Melder_throw ("No objects selected. Cannot assign ID to variable.");
 								} else {
 									value = theCurrentPraatObjects -> list [result]. id;
 								}
 							} else {
-								value = Melder_atof (valueString.string);   /* Including --undefined-- */
+								value = Melder_atof (valueString.string);   // including --undefined--
 							}
-							Melder_divertInfo (NULL); therror
 						} else {
 							/*
 							 * Get the value of the formula.

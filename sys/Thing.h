@@ -57,7 +57,7 @@ struct structClassInfo {
 	const wchar *className;
 	ClassInfo parent;
 	long size;
-	void * (* _new) ();
+	Thing (* _new) ();
 	long version;
 	long sequentialUniqueIdOfReadableClass;
 	Thing dummyObject;
@@ -75,7 +75,7 @@ struct structClassInfo {
 	class struct##klas : public struct##parentKlas
 
 #define Thing_implement(klas,parentKlas,version) \
-	static void *_##klas##_new () { return (Thing) new struct##klas; } \
+	static Thing _##klas##_new () { return (Thing) new struct##klas; } \
 	struct structClassInfo theClassInfo_##klas = { L"" #klas, & theClassInfo_##parentKlas, sizeof (class struct##klas), _##klas##_new, version, 0, NULL }; \
 	ClassInfo class##klas = & theClassInfo_##klas
 

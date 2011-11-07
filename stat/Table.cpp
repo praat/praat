@@ -959,7 +959,7 @@ static wchar ** _Table_getLevels (Table me, long column, long *numberOfLevels) {
 			(*numberOfLevels) ++;
 			while (++ irow <= my rows -> size && ((TableRow) my rows -> item [irow]) -> cells [column]. number == value) { }
 		}
-		autoNUMvector <wchar *> result (1, *numberOfLevels);
+		autostringvector result (1, *numberOfLevels);
 		*numberOfLevels = 0;
 		irow = 1;
 		while (irow <= my rows -> size) {
@@ -995,7 +995,8 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 			Melder_throw ("In order to nest table data, you must supply at least one dependent variable (to expand).");
 		Table_columns_checkExist (me, columnsToExpand_names.peek(), numberToExpand);
 		Table_columns_checkCrossSectionEmpty (factors_names.peek(), numberOfFactors, columnsToExpand_names.peek(), numberToExpand);
-		autoNUMvector <wchar *> levels_names (_Table_getLevels (me, columnToTranspose, & numberOfLevels), 1);   // BUG: leak?
+		wchar ** dummy = _Table_getLevels (me, columnToTranspose, & numberOfLevels);
+		autostringvector levels_names (dummy, 1, numberOfLevels);
 		/*
 		 * Get the column numbers for the factors.
 		 */
@@ -1665,8 +1666,7 @@ double Table_getGroupDifference_wilcoxonRankSum (Table me, long column, long gro
 	long n = n1 + n2;
 	if (n1 < 1 || n2 < 1 || n < 3) return NUMundefined;
 	Table ranks = Table_createWithoutColumnNames (n, 3);   // column 1 = group, 2 = value, 3 = rank
-	long jrow = 0;
-	for (long irow = 1; irow <= my rows -> size; irow ++) {
+	for (long irow = 1, jrow = 0; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		if (row -> cells [groupColumn]. string != NULL) {
 			if (wcsequ (row -> cells [groupColumn]. string, group1)) {

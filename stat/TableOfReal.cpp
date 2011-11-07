@@ -201,9 +201,9 @@ void TableOfReal_insertRow (TableOfReal me, long rowNumber) {
 		if (rowNumber < 1 || rowNumber > my numberOfRows + 1)
 			Melder_throw ("Cannot create row ", rowNumber, ".");
 		autoNUMmatrix <double> data (1, my numberOfRows + 1, 1, my numberOfColumns);
-		autoNUMvector <wchar *> rowLabels (1, my numberOfRows + 1);
+		autoNUMvector <wchar *> rowLabels (1, my numberOfRows + 1);   // not autostringvector...
 		for (long irow = 1; irow < rowNumber; irow ++)	{
-			rowLabels [irow] = my rowLabels [irow];
+			rowLabels [irow] = my rowLabels [irow];   // ...because this is a dangling copy
 			for (long icol = 1; icol <= my numberOfColumns; icol ++)
 				data [irow] [icol] = my data [irow] [icol];
 		}
@@ -257,9 +257,9 @@ void TableOfReal_insertColumn (TableOfReal me, long columnNumber) {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns + 1)
 			Melder_throw ("Cannot create column ", columnNumber, ".");
 		autoNUMmatrix <double> data (1, my numberOfRows, 1, my numberOfColumns + 1);
-		autoNUMvector <wchar*> columnLabels (1, my numberOfColumns + 1);
+		autoNUMvector <wchar*> columnLabels (1, my numberOfColumns + 1);   // not autostringvector...
 		for (long j = 1; j < columnNumber; j ++) {
-			columnLabels [j] = my columnLabels [j];
+			columnLabels [j] = my columnLabels [j];   // ...because this is a dangling copy
 			for (long i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j];
 		}
 		for (long j = my numberOfColumns + 1; j > columnNumber; j --) {

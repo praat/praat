@@ -509,6 +509,12 @@ void Melder_informationReal (double value, const wchar *units);   /* %.17g or --
 
 void Melder_divertInfo (MelderString *buffer);   /* NULL = back to normal. */
 
+class autoMelderDivertInfo {
+	public:
+		autoMelderDivertInfo (MelderString *buffer) { Melder_divertInfo (buffer); }
+		~autoMelderDivertInfo () { Melder_divertInfo (NULL); }
+};
+
 void Melder_print (const wchar *s);
 	/* Write formatted text to the Info window without clearing it, and without adding a new-line symbol at the end. */
 

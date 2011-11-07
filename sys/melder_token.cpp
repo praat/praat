@@ -59,7 +59,7 @@ wchar ** Melder_getTokens (const wchar *string, long *n) {
 	long itoken = 0;
 	*n = Melder_countTokens (string);
 	if (*n == 0) return NULL;
-	autoNUMvector <wchar *> result (1, *n);
+	autostringvector result (1, *n);
 	for (token = Melder_firstToken (string); token != NULL; token = Melder_nextToken ()) {
 		result [++ itoken] = Melder_wcsdup (token);
 	}

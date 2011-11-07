@@ -593,5 +593,52 @@ public:
 	}
 };
 
+template <class T>
+class autodatavector {
+	T* d_ptr;
+	long d_from, d_to;
+public:
+	autodatavector<T> (long from, long to) : d_from (from), d_to (to) {
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
+	}
+	autodatavector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
+		therror
+	}
+	autodatavector () : d_ptr (NULL), d_from (1), d_to (0) {
+	}
+	~autodatavector<T> () {
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				Melder_free (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+		}
+	}
+	T& operator[] (long i) {
+		return d_ptr [i];
+	}
+	T* peek () const {
+		return d_ptr;
+	}
+	T* transfer () {
+		T* temp = d_ptr;
+		d_ptr = NULL;   // make the pointer non-automatic again
+		return temp;
+	}
+	void reset (long from, long to) {
+		if (d_ptr) {
+			for (long i = d_from; i <= d_to; i ++)
+				Melder_free (d_ptr [i]);
+			NUMvector_free (sizeof (T), d_ptr, d_from);
+			d_ptr = NULL;
+		}
+		d_from = from;   // this assignment is safe, because d_ptr is NULL
+		d_to = to;
+		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
+	}
+};
+
+typedef autodatavector <wchar *> autostringvector;
+typedef autodatavector <char *> autostring8vector;
+
 /* End of file NUM.h */
 #endif

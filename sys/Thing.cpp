@@ -170,7 +170,8 @@ void _Thing_forget (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual ("destroying %ls", my classInfo -> className);
 	my v_destroy ();
-	Melder_free (me);
+	//Melder_free (me);
+	delete me;
 	theTotalNumberOfThings -= 1;
 }
 

@@ -526,18 +526,19 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 int structTimeSoundEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
 	Sound sound = this -> sound.data;
 	LongSound longSound = this -> longSound.data;
-	Melder_assert ((sound == NULL) != (longSound == NULL));
-	ybegin = (ybegin - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
-	int nchan = sound ? sound -> ny : longSound -> numberOfChannels;
-	if (nchan > 8) {
-		//Melder_casual ("%f %f %d %d", xbegin, ybegin, (int) nchan, (int) this -> sound.channelOffset);
-		if (xbegin >= endWindow && ybegin > 0.875 && ybegin <= 1.000 && this -> sound.channelOffset > 0) {
-			this -> sound.channelOffset -= 8;
-			return 1;
-		}
-		if (xbegin >= endWindow && ybegin > 0.000 && ybegin <= 0.125 && this -> sound.channelOffset < nchan - 8) {
-			this -> sound.channelOffset += 8;
-			return 1;
+	if ((sound == NULL) != (longSound == NULL)) {
+		ybegin = (ybegin - v_getBottomOfSoundArea ()) / (1.0 - v_getBottomOfSoundArea ());
+		int nchan = sound ? sound -> ny : longSound -> numberOfChannels;
+		if (nchan > 8) {
+			//Melder_casual ("%f %f %d %d", xbegin, ybegin, (int) nchan, (int) this -> sound.channelOffset);
+			if (xbegin >= endWindow && ybegin > 0.875 && ybegin <= 1.000 && this -> sound.channelOffset > 0) {
+				this -> sound.channelOffset -= 8;
+				return 1;
+			}
+			if (xbegin >= endWindow && ybegin > 0.000 && ybegin <= 0.125 && this -> sound.channelOffset < nchan - 8) {
+				this -> sound.channelOffset += 8;
+				return 1;
+			}
 		}
 	}
 	return TimeSoundEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);

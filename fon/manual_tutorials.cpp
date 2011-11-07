@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20111101)
+MAN_BEGIN (L"What's new?", L"ppgb", 20111107)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.02# (2 November 2011)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 5.3.01 that could cause the PitchTier or PointProcess window to crash.")
+LIST_ITEM (L"\\bu Corrected a bug that could cause the Info window to freeze after an error message in a script window.")
 NORMAL (L"##5.3.01# (1 November 2011)")
 LIST_ITEM (L"\\bu Macintosh and Windows: better window positioning if the Dock or Task Bar is on the left or right.")
 LIST_ITEM (L"\\bu IPA symbol: you can now use \\bs.f for the half-length sign (\\.f).")

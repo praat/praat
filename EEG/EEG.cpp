@@ -93,7 +93,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		if (numberOfBytesInHeaderRecord != (numberOfChannels + 1) * 256)
 			Melder_throw ("Number of bytes in header record (", numberOfBytesInHeaderRecord,
 				") doesn't match number of channels (", numberOfChannels, ").");
-		autoNUMvector <wchar *> channelNames (1, numberOfChannels);   // BUG: this can leak memory; should be autostringvector
+		autostringvector channelNames (1, numberOfChannels);
 		for (long ichannel = 1; ichannel <= numberOfChannels; ichannel ++) {
 			fread (buffer, 1, 16, f); buffer [16] = '\0';   // labels of the channels
 			/*

@@ -1482,7 +1482,7 @@ void praat_picture_editor_close (void) {
 
 void praat_picture_init (void) {
 	GuiObject dialog, scrollWindow, menuBar, drawingArea = NULL;
-	int margin, width, height, resolution, x;
+	int margin, width, height, resolution, x, y;
 	static MelderString itemTitle_search = { 0 };
 	theCurrentPraatPicture -> lineType = Graphics_DRAWN;
 	theCurrentPraatPicture -> colour = Graphics_BLACK;
@@ -1503,19 +1503,22 @@ void praat_picture_init (void) {
 			margin = 2, width = 6 * resolution + 20;
 			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
 			x = screenX + screenWidth - width - 14;
+			y = screenY + 0;
 			width += margin * 2;
 		#elif defined (_WIN32)
 			margin = 2, width = 6 * resolution + 22;
 			height = 9 * resolution + 24;
 			x = screenX + screenWidth - width - 17;
+			y = screenY + 0;
 		#else
 			margin = 0, width = 6 * resolution + 30;
 			height = width * 3 / 2 + Machine_getTitleBarHeight ();
 			x = screenX + screenWidth - width - 10;
+			y = screenY + 0;
 			width += margin * 2;
 		#endif
 		sprintf (pictureWindowTitle, "%s Picture", praatP.title);
-		dialog = GuiWindow_create (theCurrentPraatApplication -> topShell, x, Gui_AUTOMATIC, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
+		dialog = GuiWindow_create (theCurrentPraatApplication -> topShell, x, y, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
 		shell = GuiObject_parent (dialog);
 		#ifdef UNIX
 			#if motif
