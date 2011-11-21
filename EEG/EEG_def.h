@@ -30,6 +30,13 @@ oo_DEFINE_CLASS (EEG, Function)
 		// functions:
 		public:
 			void f_init (double tmin, double tmax);
+			long f_getChannelNumber (const wchar *channelName);
+			void f_setChannelName (long channelNumber, const wchar *a_name);
+			void f_setExternalElectrodeNames (const wchar *nameExg1, const wchar *nameExg2, const wchar *nameExg3, const wchar *nameExg4,
+				const wchar *nameExg5, const wchar *nameExg6, const wchar *nameExg7, const wchar *nameExg8);
+			void f_detrend ();
+			void f_filter (double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz);
+			void f_subtractReference (const wchar *channelNumber1, const wchar *channelNumber2);
 			Sound f_extractSound () { return Data_copy (d_sound); }
 			TextGrid f_extractTextGrid () { return Data_copy (d_textgrid); }
 		// overridden methods:

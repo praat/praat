@@ -241,6 +241,7 @@ void Editor_save (Editor me, const wchar *text);   // for Undo
 UiForm UiForm_createE (EditorCommand cmd, const wchar *title, const wchar *invokingButtonTitle, const wchar *helpTitle);
 void UiForm_parseStringE (EditorCommand cmd, const wchar *arguments, Interpreter interpreter);
 UiForm UiOutfile_createE (EditorCommand cmd, const wchar *title, const wchar *invokingButtonTitle, const wchar *helpTitle);
+UiForm UiInfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 
 EditorCommand Editor_getMenuCommand (Editor me, const wchar *menuTitle, const wchar *itemTitle);
 void Editor_doMenuCommand (Editor me, const wchar *command, const wchar *arguments, Interpreter interpreter);

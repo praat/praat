@@ -345,6 +345,24 @@ NORMAL (L"where %N represents the number of filters and %c__%i_ the %i-th "
 	"cepstral coefficient.")
 MAN_END
 
+MAN_BEGIN (L"Sound: To Formant (robust)...", L"djmw", 20111027)
+INTRO (L"A command that creates a @@Formant@ object from every selected @@Sound@. ")
+ENTRY (L"Settings")
+NORMAL (L"The settings for ##Time step (s)#, ##Maximum number of formants#, ##Maximum formant (Hz), "
+	"##Window length (s)# and ##Pre emphasis from (Hz)# are as in @@Sound: To Formant (burg)...@. "
+	" The following settings determine aspects of the iterative formant frequency refinement.")
+TAG (L"%%Number of std. dev.%,")
+DEFINITION (L"determines the number of standard deviation from where selective weighing of samples starts. ")
+TAG (L"%%Maximum number of iterations%,")
+DEFINITION (L"determines the maximum number of iterations allowed in the refinement step.")
+TAG (L"%%Tolerance%,")
+DEFINITION (L"detemines another stop ctriterion for the refinement step. If the relative change in variance "
+	"between successive iterations is less then this value, iteration stops. Iteration stops whenever "
+	"one of the two defined stop criteria is reached.")
+ENTRY (L"Algorithm")
+NORMAL (L"First the sound is downsampled to twice the maximum formant frequency. Next the LPC coefficients are determined by the autocorrelation method. Finally, in an iterative procedure as described by @@Lee (1988)@ the formant frequencies and bandwidths are refined by selectively weighting of samples values.")
+MAN_END
+
 MAN_BEGIN (L"Sound: LPC analysis", L"djmw", 19970126)
 INTRO (L"You can perform this analysis by selecting one or more @Sound objects and "
 	"choosing the appropriate command to generate an @LPC.")
@@ -436,13 +454,17 @@ NORMAL (L"N. Anderson (1978): \"On the calculation of filter coefficients for "
 	"IEEE Press: 252\\--255.")
 MAN_END
 
+MAN_BEGIN (L"Lee (1988)", L"djmw", 20111027)
+NORMAL (L"C.-H. Lee (1988): \"On Robust Linear Prediction of Speech.\", %%IEEE Trans. on ASSP #36: 642\\--649.")
+MAN_END
+
 MAN_BEGIN (L"Markel & Gray (1976)", L"djmw", 19980114)
 NORMAL (L"J.D. Markel & A.H. Gray, Jr. (1976): %%Linear Prediction of Speech.% "
 	"Springer Verlag, Berlin.")
 MAN_END
 
 MAN_BEGIN (L"Marple (1980)", L"djmw", 19980114)
-NORMAL (L"L. Marple (1980): \" A new autoregressive spectrum analysis algorithm.\" "
+NORMAL (L"L. Marple (1980): \"A new autoregressive spectrum analysis algorithm.\" "
 	"%%IEEE Trans. on ASSP% #28, 441\\--454.")
 MAN_END
 

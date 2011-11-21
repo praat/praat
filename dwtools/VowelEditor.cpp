@@ -598,6 +598,7 @@ static void VowelEditor_setMarks (VowelEditor me, int dataset, int speakerType, 
 		}
 	} else {
 		forget (my marks);
+		return;
 	}
 	autoTable thee = Table_collapseRows (te.peek(), L"IPA", L"", L"F1 F2", L"", L"", L"");
 	Table_appendColumn (thee.peek(), L"fontSize"); therror
@@ -805,7 +806,7 @@ static void menu_cb_extract_KlattGrid (EDITOR_ARGS) {
 	EDITOR_IAM (VowelEditor);
 	VowelEditor_updateVowel (me);
 	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft);
-	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants -> size, 1, 1, 1, 1, 6, 1);
+	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants -> size, 0, 0, 0, 0, 0, 0);
 	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90); therror
 	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt); therror
 	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek()); therror
@@ -1322,8 +1323,9 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, L"File", L"Extract KlattGrid", 0, menu_cb_extract_KlattGrid);
 	Editor_addCommand (this, L"File", L"Extract FormantGrid", 0, menu_cb_extract_FormantGrid);
 	Editor_addCommand (this, L"File", L"Extract PitchTier", 0, menu_cb_extract_PitchTier);
-	Editor_addCommand (this, L"File", L"-- script stuff --", 0, NULL);
+	Editor_addCommand (this, L"File", L"-- drawing --", 0, NULL);
 	Editor_addCommand (this, L"File", L"Draw trajectory...", 0, menu_cb_drawTrajectory);
+	Editor_addCommand (this, L"File", L"-- scripting --", 0, NULL);
 	Editor_addCommand (this, L"Edit", L"Show one vowel mark...", 0, menu_cb_showOneVowelMark);
 	Editor_addCommand (this, L"Edit", L"Show vowel marks...", 0, menu_cb_showVowelMarks);
 	Editor_addCommand (this, L"Edit", L"-- f0 --", 0, NULL);
@@ -1336,6 +1338,7 @@ void structVowelEditor :: v_createMenus () {
 	Editor_addCommand (this, L"Edit", L"Extend trajectory...", 0, menu_cb_extendTrajectory);
 	Editor_addCommand (this, L"Edit", L"Shift trajectory...", 0, menu_cb_shiftTrajectory);
 	Editor_addCommand (this, L"Edit", L"Show trajectory time markers every...", 0, menu_cb_showTrajectoryTimeMarkersEvery);
+
 }
 
 void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {

@@ -18,6 +18,7 @@
  */
 
 #include "EEG.h"
+#include "Sound_and_Spectrum.h"
 
 #include "oo_DESTROY.h"
 #include "EEG_def.h"
@@ -61,6 +62,15 @@ EEG EEG_create (double tmin, double tmax) {
 	} catch (MelderError) {
 		Melder_throw ("EEG object not created.");
 	}
+}
+
+long structEEG :: f_getChannelNumber (const wchar *channelName) {
+	for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
+		if (Melder_wcsequ (d_channelNames [ichan], channelName)) {
+			return ichan;
+		}
+	}
+	return 0;
 }
 
 EEG EEG_readFromBdfFile (MelderFile file) {
@@ -159,7 +169,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		for (long record = 1; record <= numberOfDataRecords; record ++) {
 			for (long channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
-				if (channel != numberOfChannels) factor /= 1000000.0;
+				if (channel < numberOfChannels - 8) factor /= 1000000.0;
 				for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 					long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 					Melder_assert (sample <= my nx);
@@ -189,9 +199,149 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		his d_channelNames = channelNames.transfer();
 		his d_sound = me.transfer();
 		his d_textgrid = thee.transfer();
+		if (numberOfChannels == 80) {
+			his f_setChannelName (1, L"Fp1");
+			his f_setChannelName (2, L"AF7");
+			his f_setChannelName (3, L"AF3");
+			his f_setChannelName (4, L"F1");
+			his f_setChannelName (5, L"F3");
+			his f_setChannelName (6, L"F5");
+			his f_setChannelName (7, L"F7");
+			his f_setChannelName (8, L"FT7");
+			his f_setChannelName (9, L"FC5");
+			his f_setChannelName (10, L"FC3");
+			his f_setChannelName (11, L"FC1");
+			his f_setChannelName (12, L"C1");
+			his f_setChannelName (13, L"C3");
+			his f_setChannelName (14, L"C5");
+			his f_setChannelName (15, L"T7");
+			his f_setChannelName (16, L"TP7");
+			his f_setChannelName (17, L"CP5");
+			his f_setChannelName (18, L"CP3");
+			his f_setChannelName (19, L"CP1");
+			his f_setChannelName (20, L"P1");
+			his f_setChannelName (21, L"P3");
+			his f_setChannelName (22, L"P5");
+			his f_setChannelName (23, L"P7");
+			his f_setChannelName (24, L"P9");
+			his f_setChannelName (25, L"PO7");
+			his f_setChannelName (26, L"PO3");
+			his f_setChannelName (27, L"O1");
+			his f_setChannelName (28, L"Iz");
+			his f_setChannelName (29, L"Oz");
+			his f_setChannelName (30, L"POz");
+			his f_setChannelName (31, L"Pz");
+			his f_setChannelName (32, L"CPz");
+			his f_setChannelName (33, L"Fpz");
+			his f_setChannelName (34, L"Fp2");
+			his f_setChannelName (35, L"AF8");
+			his f_setChannelName (36, L"AF4");
+			his f_setChannelName (37, L"AFz");
+			his f_setChannelName (38, L"Fz");
+			his f_setChannelName (39, L"F2");
+			his f_setChannelName (40, L"F4");
+			his f_setChannelName (41, L"F6");
+			his f_setChannelName (42, L"F8");
+			his f_setChannelName (43, L"FT8");
+			his f_setChannelName (44, L"FC6");
+			his f_setChannelName (45, L"FC4");
+			his f_setChannelName (46, L"FC2");
+			his f_setChannelName (47, L"FCz");
+			his f_setChannelName (48, L"Cz");
+			his f_setChannelName (49, L"C2");
+			his f_setChannelName (50, L"C4");
+			his f_setChannelName (51, L"C6");
+			his f_setChannelName (52, L"T8");
+			his f_setChannelName (53, L"TP8");
+			his f_setChannelName (54, L"CP6");
+			his f_setChannelName (55, L"CP4");
+			his f_setChannelName (56, L"CP2");
+			his f_setChannelName (57, L"P2");
+			his f_setChannelName (58, L"P4");
+			his f_setChannelName (59, L"P6");
+			his f_setChannelName (60, L"P8");
+			his f_setChannelName (61, L"P10");
+			his f_setChannelName (62, L"PO8");
+			his f_setChannelName (63, L"PO4");
+			his f_setChannelName (64, L"O2");
+		}
 		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw ("BDF file not read.");
+	}
+}
+
+static void detrend (double *a, long numberOfSamples) {
+	double firstValue = a [1], lastValue = a [numberOfSamples];
+	a [1] = a [numberOfSamples] = 0.0;
+	for (long isamp = 2; isamp < numberOfSamples; isamp ++) {
+		a [isamp] -= ((isamp - 1.0) * lastValue + (numberOfSamples - isamp) * firstValue) / (numberOfSamples - 1);
+	}
+}
+
+void structEEG :: f_detrend () {
+	for (long ichan = 1; ichan <= d_numberOfChannels - 8; ichan ++) {
+		detrend (d_sound -> z [ichan], d_sound -> nx);
+	}
+}
+
+void structEEG :: f_filter (double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz) {
+	try {
+/*
+	long nsampFFT = 1;
+	while (nsampFFT < d_sound -> nx)
+		nsampFFT *= 2;
+	autoNUMfft_Table fftTable;
+	NUMfft_Table_init (& fftTable, nsampFFT); therror
+*/
+		for (long ichan = 1; ichan <= d_numberOfChannels - 8; ichan ++) {
+			autoSound channel = Sound_extractChannel (d_sound, ichan);
+			autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
+			Spectrum_passHannBand (spec.peek(), lowFrequency, 0.0, lowWidth);
+			Spectrum_passHannBand (spec.peek(), 0.0, highFrequency, highWidth);
+			if (doNotch50Hz) {
+				Spectrum_stopHannBand (spec.peek(), 48.0, 52.0, 1.0);
+			}
+			autoSound him = Spectrum_to_Sound (spec.peek());
+			NUMdvector_copyElements (his z [1], d_sound -> z [ichan], 1, d_sound -> nx);
+		}
+	} catch (MelderError) {
+		Melder_throw (this, ": not filtered.");
+	}
+}
+
+void structEEG :: f_setChannelName (long channelNumber, const wchar *a_name) {
+	autostring l_name = Melder_wcsdup (a_name);
+	Melder_free (d_channelNames [channelNumber]);
+	d_channelNames [channelNumber] = l_name.transfer();
+}
+
+void structEEG :: f_setExternalElectrodeNames (const wchar *nameExg1, const wchar *nameExg2, const wchar *nameExg3, const wchar *nameExg4,
+	const wchar *nameExg5, const wchar *nameExg6, const wchar *nameExg7, const wchar *nameExg8)
+{
+	f_setChannelName (d_numberOfChannels - 15, nameExg1);
+	f_setChannelName (d_numberOfChannels - 14, nameExg2);
+	f_setChannelName (d_numberOfChannels - 13, nameExg3);
+	f_setChannelName (d_numberOfChannels - 12, nameExg4);
+	f_setChannelName (d_numberOfChannels - 11, nameExg5);
+	f_setChannelName (d_numberOfChannels - 10, nameExg6);
+	f_setChannelName (d_numberOfChannels -  9, nameExg7);
+	f_setChannelName (d_numberOfChannels -  8, nameExg8);
+}
+
+void structEEG :: f_subtractReference (const wchar *channelNumber1_text, const wchar *channelNumber2_text) {
+	long channelNumber1 = f_getChannelNumber (channelNumber1_text);
+	if (channelNumber1 == 0)
+		Melder_throw (this, ": no channel named \"", channelNumber1_text, "\".");
+	long channelNumber2 = f_getChannelNumber (channelNumber2_text);
+	if (channelNumber2 == 0 && channelNumber2_text [0] != '\0')
+		Melder_throw (this, ": no channel named \"", channelNumber2_text, "\".");
+	for (long isamp = 1; isamp <= d_sound -> nx; isamp ++) {
+		double referenceValue = channelNumber2 == 0 ? d_sound -> z [channelNumber1] [isamp] :
+			0.5 * (d_sound -> z [channelNumber1] [isamp] + d_sound -> z [channelNumber2] [isamp]);
+		for (long ichan = 1; ichan <= d_numberOfChannels - 8; ichan ++) {
+			d_sound -> z [ichan] [isamp] -= referenceValue;
+		}
 	}
 }
 

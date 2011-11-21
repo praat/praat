@@ -1671,6 +1671,7 @@ static void praat_Configuration_and_AffineTransform_init (ClassInfo transform) {
 	praat_addAction2 (classConfiguration, 1, transform, 1, L"To Configuration", 0, 0, DO_Configuration_and_AffineTransform_to_Configuration);
 }
 
+void praat_TableOfReal_extras (ClassInfo klas);
 void praat_TableOfReal_extras (ClassInfo klas) {
 	praat_addAction1 (klas, 1, L"-- get additional --", L"Get value...", 1, 0);
 	praat_addAction1 (klas, 1, L"Get table norm", L"-- get additional --", 1, DO_TableOfReal_getTableNorm);

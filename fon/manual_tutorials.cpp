@@ -23,10 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20111107)
+MAN_BEGIN (L"What's new?", L"ppgb", 20111121)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
-NORMAL (L"##5.3.02# (2 November 2011)")
+NORMAL (L"##5.3.03# (21 November 2011)")
+LIST_ITEM (L"\\bu EEG: filtering, editing, more viewing.")
+NORMAL (L"##5.3.02# (7 November 2011)")
 LIST_ITEM (L"\\bu Corrected a bug introduced in 5.3.01 that could cause the PitchTier or PointProcess window to crash.")
 LIST_ITEM (L"\\bu Corrected a bug that could cause the Info window to freeze after an error message in a script window.")
 NORMAL (L"##5.3.01# (1 November 2011)")

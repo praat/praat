@@ -121,7 +121,7 @@ void NUMstatistics_huber (double *x, long n, double *location, int wantlocation,
 			}
 			s1 = sqrt (s1 / (n1 * beta));
 		}
-	} while (fabs (mu0 - mu1) > tol * s0 || fabs (s0 - s1) > tol * s0);
+	} while (fabs (mu0 - mu1) > tol * s0 || fabs (s0 - s1) > tol * s0); //TODO fabs (mu0 - mu1) > tol * s0 ??
 
 	if (wantlocation) {
 		*location = mu1;

@@ -507,18 +507,16 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 	}
 
 	// Begin optimization: add the items from a table instead of separately.
-	autoNUMvector<wchar_t *> table;
 	try {
+		autostringvector table (from, to);
 		autoMelderString itemText;
-		table.reset (0, to - from + 1); // TODO 0 or 1 base
 		long itemCount = GuiList_getNumberOfItems (my list);
-		long k = 0;
 		for (long i = from; i <= to; i++) {
 			wchar_t wcindex[20];
 			MelderString_empty (&itemText);
 			swprintf (wcindex, 19, L"%5ld ", i);
 			MelderString_append (&itemText, wcindex, OrderedOfString_itemAtIndex_c (my data, i));
-			table[k++] = Melder_wcsdup_f (itemText.string);
+			table[i] = Melder_wcsdup_f (itemText.string);
 		}
 		if (itemCount > size) { /* some items have been removed from Categories? */
 			for (long j = itemCount; j > size; j --) {
@@ -528,23 +526,16 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 		}
 		if (to > itemCount) {
 			for (long j = 1; j <= to - itemCount; j ++) {
-				GuiList_insertItem (my list, table [itemCount - from + j], 0);
+				GuiList_insertItem (my list, table [itemCount + j], 0);
 			}
 		}
 		if (from <= itemCount) {
 			long n = (to < itemCount ? to : itemCount);
-			for (long j = 0; j < n - from + 1; j++) {
-				GuiList_replaceItem (my list, table[j], from + j);
+			for (long j = from; j <= n; j++) {
+				GuiList_replaceItem (my list, table[j], j);
 			}
 		}
-		k = 0;
-		for (long i = from; i <= to; i++) {
-			Melder_free (table[k++]);
-		}
 	} catch (MelderError) {
-		long k = 0; for (long i = from; i <= to; i++) {
-			Melder_free (table[k++]);
-		}
 		throw;
 	}
 

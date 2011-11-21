@@ -60,6 +60,7 @@
  djmw 20100426 replace wcstok by Melder_wcstok
  djmw 20101209 removed NUMwcscmp is Melder_wcscmp now
  djmw 20110304 Thing_new
+ djmw 20111110 use autostringvector
 */
 
 #include <vector>
@@ -437,13 +438,12 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 	return buf.transfer();
 }
 
-static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
-                                       const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces,
-                                       long *nmatches, long *nstringmatches) {
+static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi, const wchar_t *search,
+	const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
 	if (search == NULL || replace == NULL) {
 		return NULL;
 	}
-	autoNUMvector<wchar_t *> result (lo, hi);
+	autostringvector result (lo, hi);
 	try {
 		long nmatches_sub = 0;
 		*nmatches = 0; *nstringmatches = 0;
@@ -459,21 +459,16 @@ static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi,
 		}
 		return result.transfer();
 	} catch (MelderError) {
-		for (long i = lo; i <= hi; i++) {
-			Melder_free (result[i]);
-		}
 		return 0;
 	}
 }
 
-
-static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
-                                      const wchar_t *searchRE, const wchar_t *replaceRE, int maximumNumberOfReplaces,
-                                      long *nmatches, long *nstringmatches) {
+static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi, const wchar_t *searchRE,
+	const wchar_t *replaceRE, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
 	if (searchRE == NULL || replaceRE == NULL) {
 		return NULL;
 	}
-	autoNUMvector<wchar_t *> result;
+	autostringvector result;
 	try {
 		regexp *compiledRE;
 		const wchar_t *compileMsg;
@@ -499,9 +494,6 @@ static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi,
 		}
 		return result.transfer();
 	} catch (MelderError) {
-		for (long i = lo; i <= hi; i++) {
-			Melder_free (result[i]);
-		}
 		return 0;
 	}
 }

@@ -139,6 +139,13 @@ UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t
 	return (UiForm) dia;   // BUG
 }
 
+UiForm UiInfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
+	Editor editor = (Editor) cmd -> d_editor;
+	UiInfile dia = (UiInfile) UiInfile_create (editor -> d_windowForm, title, commonOutfileCallback, cmd, invokingButtonTitle, helpTitle, false);
+	dia -> command = cmd;
+	return (UiForm) dia;   // BUG
+}
+
 void UiOutfile_do (I, const wchar_t *defaultName) {
 	iam (UiOutfile);
 	wchar_t *outfileName = GuiFileSelect_getOutfileName (NULL, my name, defaultName);

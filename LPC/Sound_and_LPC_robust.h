@@ -21,15 +21,12 @@
 
 /*
  djmw 20030815 GPL header
- djmw 20110307 Latest modification
+ djmw 20111027 Latest modification
 */
 
 #include "LPC.h"
+#include "Formant.h"
 #include "Sound.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct huber_struct *hs);
 /*int LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, void *huber);
@@ -42,8 +39,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	double preEmphasisFrequency, double k, int itermax, double tol, int wantlocation);
 
-#ifdef __cplusplus
-	}
-#endif
+Formant Sound_to_Formant_robust (Sound me, double dt_in, int numberOfPoles, double maximumFrequency,
+	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, int itermax, double tol, int wantlocation);
 
 #endif /* _Sound_and_LPC_robust_h_ */

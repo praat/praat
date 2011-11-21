@@ -439,12 +439,13 @@ void IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, co
 			TextInterval interval = (TextInterval) my intervals -> item[i];
 			labels[i - from + 1] = interval -> text;   // Shallow copy.
 		}
-		autoNUMvector<wchar_t *> newlabels (strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp), 1);
+		autostringvector newlabels (strs_replace (labels.peek(), 1, nlabels, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nlabels);
 
 		for (long i = from; i <= to; i++) {
 			TextInterval interval = (TextInterval) my intervals -> item[i];
 			Melder_free (interval -> text);
-			interval -> text = newlabels[i - from + 1];   // Shallow copy.
+			interval -> text = newlabels[i - from + 1];   // Transfer of ownership.
+			newlabels[i - from + 1] = 0;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, ": labels not changed.");
@@ -473,12 +474,13 @@ void TextTier_changeLabels (I, long from, long to, const wchar_t *search, const 
 			TextPoint point = (TextPoint) my points -> item[i];
 			marks[i - from + 1] = point -> mark;   // Shallow copy.
 		}
-		autoNUMvector<wchar_t *> newmarks (strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp), 1);
+		autostringvector newmarks (strs_replace (marks.peek(), 1, nmarks, search, replace, 0, nmatches, nstringmatches, use_regexp), 1, nmarks);
 
 		for (long i = from; i <= to; i++) {
 			TextPoint point = (TextPoint) my points -> item[i];
 			Melder_free (point -> mark);
-			point -> mark = newmarks[i - from + 1];   // Shallow copy.
+			point -> mark = newmarks[i - from + 1];   // Transfer of ownership.
+			newmarks[i - from + 1] = 0;
 		}
 	} catch (MelderError) {
 		Melder_throw (me, ": no labels changed.");

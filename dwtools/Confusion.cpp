@@ -24,6 +24,7 @@
  djmw 20070620 Latest modification.
  djmw 20080521 +Confusion_drawAsNumbers
  djmw 20110304 Thing_new
+ djmw 20111110 Use autostringvector
 */
 
 #include "Confusion.h"
@@ -380,18 +381,18 @@ static void create_index (wchar_t **s, long sb, long se, wchar_t **ref, long rb,
 }
 
 Confusion Confusion_condense (Confusion me, const wchar_t *search, const wchar_t *replace,
-                              long maximumNumberOfReplaces, int use_regexp) {
+	long maximumNumberOfReplaces, int use_regexp) {
 	try {
 		long nmatches, nstringmatches;
 
 		if (my rowLabels == 0 || my columnLabels == 0) {
 			Melder_throw ("No row or column labels.");
 		}
-		autoNUMvector<wchar_t *> rowLabels (strs_replace (my rowLabels, 1, my numberOfRows,
-		                                    search, replace, maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1);
+		autostringvector rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, search, replace,
+			maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1, my numberOfRows);
 
-		autoNUMvector<wchar_t *> columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns,
-		                                       search, replace, maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1);
+		autostringvector columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns,  search, replace,
+			 maximumNumberOfReplaces, &nmatches, &nstringmatches, use_regexp), 1, my numberOfColumns);
 
 		autoStrings srow = Thing_new (Strings);
 		srow -> numberOfStrings = my numberOfRows;

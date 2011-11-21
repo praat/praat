@@ -322,6 +322,26 @@ END
 
 /********************** Sound *******************************************/
 
+FORM (Sound_to_Formant_robust, L"Sound: To Formant (robust)", L"Sound: To Formant (robust)...")
+	REAL (L"Time step (s)", L"0.0 (= auto)")
+	POSITIVE (L"Max. number of formants", L"5")
+	REAL (L"Maximum formant (Hz)", L"5500 (= adult female)")
+	POSITIVE (L"Window length (s)", L"0.025")
+	POSITIVE (L"Pre-emphasis from (Hz)", L"50")
+	POSITIVE (L"Number of std. dev.", L"1.5")
+	NATURAL (L"Maximum number of iterations", L"5")
+	REAL (L"Tolerance", L"0.000001")
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_Formant_robust (me, GET_REAL (L"Time step"), GET_REAL (L"Max. number of formants"),
+			GET_REAL (L"Maximum formant"), GET_REAL (L"Window length"), GET_REAL (L"Pre-emphasis from"), 50.0,
+			GET_REAL (L"Number of std. dev."), GET_INTEGER (L"Maximum number of iterations"),
+			GET_REAL (L"Tolerance"), 1), my name);
+	}
+END
+
 static void Sound_to_LPC_addCommonFields (void *dia) {
 	LABEL (L"", L"Warning 1:  for formant analysis, use \"To Formant\" instead.")
 	LABEL (L"", L"Warning 2:  if you do use \"To LPC\", you may want to resample first.")
@@ -552,6 +572,7 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classSound, 0, L"To LPC (burg)...", L"To LPC (covariance)...", 1, DO_Sound_to_LPC_burg);
 	praat_addAction1 (classSound, 0, L"To LPC (marple)...", L"To LPC (burg)...", 1, DO_Sound_to_LPC_marple);
 	praat_addAction1 (classSound, 0, L"To MFCC...", L"To LPC (marple)...", 1, DO_Sound_to_MFCC);
+	praat_addAction1 (classSound, 0, L"To Formant (robust)...", L"To Formant (sl)...", 2, DO_Sound_to_Formant_robust);
 
 	praat_addAction1 (classVocalTract, 1, L"Get length", L"Draw", 0, DO_VocalTract_getLength);
 

@@ -46,6 +46,7 @@
  djmw 20091009 +TableOfReal_drawColumnAsDistribution
  djmw 20100222 Corrected a bug in TableOfReal_copyOneRowWithLabel which caused label corruption if
                from and to table were equal and rows were equal too.
+ djmw 20111110 Use autostringvector
 */
 
 #include <ctype.h>
@@ -1313,11 +1314,11 @@ TableOfReal TableOfReal_bootstrap (TableOfReal me) {
 	}
 }
 
-void TableOfReal_changeRowLabels (I, const wchar_t *search, const wchar_t *replace,
-                                  int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
+void TableOfReal_changeRowLabels (I, const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
 	iam (TableOfReal);
 	try {
-		autoNUMvector<wchar_t *> rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp), 1);
+		autostringvector rowLabels (strs_replace (my rowLabels, 1, my numberOfRows, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp), 1, my numberOfRows);
+		NUMstrings_free (my rowLabels, 1, my numberOfRows);
 		my rowLabels = rowLabels.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": row labels not changed.");
@@ -1327,8 +1328,8 @@ void TableOfReal_changeRowLabels (I, const wchar_t *search, const wchar_t *repla
 void TableOfReal_changeColumnLabels (I, const wchar_t *search, const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
 	iam (TableOfReal);
 	try {
-		autoNUMvector<wchar_t *> columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns, search, replace, maximumNumberOfReplaces, nmatches,
-		                                       nstringmatches, use_regexp), 1);
+		autostringvector columnLabels (strs_replace (my columnLabels, 1, my numberOfColumns, search, replace, maximumNumberOfReplaces, nmatches, nstringmatches, use_regexp), 1, my numberOfColumns);
+		NUMstrings_free (my columnLabels, 1, my numberOfColumns);
 		my columnLabels = columnLabels.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": column labels not changed.");

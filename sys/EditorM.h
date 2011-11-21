@@ -107,6 +107,15 @@
 		if (sendingString == NULL) file = UiFile_getFile (sendingForm); \
 		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
 
+#define EDITOR_FORM_READ(title,helpTitle) \
+	if (cmd -> d_uiform == NULL) { \
+		cmd -> d_uiform = UiInfile_createE (cmd, title, cmd -> itemTitle, helpTitle); \
+		} if (sendingForm == NULL && sendingString == NULL) {
+#define EDITOR_DO_READ \
+	UiInfile_do (cmd -> d_uiform); } else { MelderFile file; structMelderFile file2 = { 0 }; \
+		if (sendingString == NULL) file = UiFile_getFile (sendingForm); \
+		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+
 #define GET_REAL(name)  UiForm_getReal (cmd -> d_uiform, name)
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> d_uiform, name)
 #define GET_STRING(name)  UiForm_getString (cmd -> d_uiform, name)

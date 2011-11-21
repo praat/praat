@@ -449,15 +449,15 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		if (horizontal) {
 			Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_HALF);
 			double mid = 0.5 * (minimum + maximum);
-			Graphics_text1 (my graphics, my startWindow, mid, Melder_fixed (mid, 6));
+			Graphics_text1 (my graphics, my startWindow, mid, Melder_float (Melder_half (mid)));
 		} else {
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, cursorFunctionValue - minimum) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_BOTTOM);
-				Graphics_text1 (my graphics, my startWindow, minimum, Melder_fixed (minimum, 6));
+				Graphics_text1 (my graphics, my startWindow, minimum, Melder_float (Melder_half (minimum)));
 			}
 			if (! cursorVisible || Graphics_dyWCtoMM (my graphics, maximum - cursorFunctionValue) > 5.0) {
 				Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-				Graphics_text1 (my graphics, my startWindow, maximum, Melder_fixed (maximum, 6));
+				Graphics_text1 (my graphics, my startWindow, maximum, Melder_float (Melder_half (maximum)));
 			}
 		}
 		if (minimum < 0 && maximum > 0 && ! horizontal) {
@@ -507,7 +507,7 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		if (sound) {
 			Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);
 			if (cursorVisible)
-				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_fixed (cursorFunctionValue, 6), L"");
+				FunctionEditor_drawCursorFunctionValue (me, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
 			Graphics_setColour (my graphics, Graphics_BLACK);
 			Graphics_function (my graphics, sound -> z [ichan], first, last,
 				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));

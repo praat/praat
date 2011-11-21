@@ -24,8 +24,10 @@
  djmw 20080122 float -> double
  djmw 20101008 New LPC_Frame_filterInverse interface.
  djmw 20110302 Corrected a number of pointer initialisations
+ djmw 20111027 +Sound_to_Formant_robust
 */
 
+#include "LPC_and_Formant.h"
 #include "Sound_and_LPC.h"
 #include "Sound_and_LPC_robust.h"
 #include "Sound_extensions.h"
@@ -171,7 +173,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 
 
 LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, double preEmphasisFrequency, double k,
-                                 int itermax, double tol, int wantlocation) {
+	int itermax, double tol, int wantlocation) {
 	struct huber_struct struct_huber = { 0 };
 	try {
 		double t1, samplingFrequency = 1.0 / my dx, tol_svd = 0.000001;
@@ -240,6 +242,29 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 	} catch (MelderError) {
 		huber_struct_destroy (&struct_huber);
 		Melder_throw (me, ": no robust LPC created.");
+	}
+}
+
+Formant Sound_to_Formant_robust (Sound me, double dt_in, int numberOfPoles, double maximumFrequency,
+	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, int itermax, double tol, int wantlocation)
+{
+	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
+	double nyquist = 0.5 / my dx;
+	long predictionOrder = 2 * numberOfPoles;
+	try {
+		autoSound sound = NULL;
+		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {
+			sound.reset (Data_copy (me));   // will be modified
+		} else {
+			sound.reset (Sound_resample (me, maximumFrequency * 2, 50));
+		}
+
+		autoLPC lpc = Sound_to_LPC_auto (sound.peek(), predictionOrder, halfdt_window, dt, preEmphasisFrequency);
+		autoLPC lpcr = LPC_and_Sound_to_LPC_robust (lpc.peek(), sound.peek(), halfdt_window, preEmphasisFrequency, k, itermax, tol, wantlocation);
+		autoFormant thee = LPC_to_Formant (lpcr.peek(), safetyMargin);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no robust Formant created.");
 	}
 }
 
