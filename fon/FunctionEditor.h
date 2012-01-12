@@ -43,7 +43,9 @@ Thing_define (FunctionEditor, Editor) {
 		double arrowScrollStep;
 
 		Graphics graphics;   // used in the 'draw' method
-		short width, height;   // size of drawing area in pixels
+		short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
+		short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
+		short height;   // size of drawing areas in pixels
 		GuiObject text;   // optional text at top
 		int shiftKeyPressed;   // information for the 'play' method.
 		bool playingCursor, playingSelection;   // information for end of play
@@ -51,7 +53,7 @@ Thing_define (FunctionEditor, Editor) {
 
 		/* Private: */
 		GuiObject drawingArea, scrollBar, groupButton, bottomArea;
-		bool group, enableUpdates;
+		bool group, enableUpdates, d_hasSelectionViewer;
 		int nrect;
 		struct { double left, right, bottom, top; } rect [8];
 		double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory;
@@ -70,6 +72,7 @@ Thing_define (FunctionEditor, Editor) {
 			/*
 			 * Message: "draw your part of the data between startWindow and endWindow."
 			 */
+		virtual void v_drawSelectionViewer () { }
 		virtual void v_prepareDraw () { }   // for less flashing
 		virtual const wchar * v_format_domain () { return L"Time domain:"; }
 		virtual const wchar * v_format_short () { return L"%.3f"; }

@@ -44,7 +44,7 @@ Thing_implement (FunctionEditor, Editor, 0);
 
 static struct {
 	int shellWidth, shellHeight;
-	bool synchronizedZoomAndScroll;
+	bool synchronizedZoomAndScroll, showSelectionViewer;
 	double arrowScrollStep;
 	struct { bool drawSelectionTimes, drawSelectionHairs; } picture;
 } preferences;
@@ -53,6 +53,7 @@ void FunctionEditor_prefs (void) {
 	Preferences_addInt (L"FunctionEditor.shellWidth", & preferences.shellWidth, 700);
 	Preferences_addInt (L"FunctionEditor.shellHeight", & preferences.shellHeight, 440);
 	Preferences_addBool (L"FunctionEditor.synchronizedZoomAndScroll", & preferences.synchronizedZoomAndScroll, true);
+	Preferences_addBool (L"FunctionEditor.showSelectionViewer", & preferences.showSelectionViewer, false);
 	Preferences_addDouble (L"FunctionEditor.arrowScrollStep", & preferences.arrowScrollStep, 0.05);   // BUG: seconds?
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes", & preferences.picture.drawSelectionTimes, true);
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs", & preferences.picture.drawSelectionHairs, true);
@@ -117,7 +118,7 @@ static void drawNow (FunctionEditor me) {
 	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
 	int selection = my endSelection > my startSelection;
 	int beginVisible, endVisible;
-	double verticalCorrection, bottom;
+	double verticalCorrection;
 	wchar text [100];
 
 	/* Update selection. */
@@ -142,23 +143,23 @@ static void drawNow (FunctionEditor me) {
 
 	/* 0: rectangle for total. */
 
-	my rect [0]. left = leftFromWindow ? 0 : MARGIN;
-	my rect [0]. right = my width - (rightFromWindow ? 0 : MARGIN);
+	my rect [0]. left = my functionViewerLeft + ( leftFromWindow ? 0 : MARGIN );
+	my rect [0]. right = my functionViewerRight - ( rightFromWindow ? 0 : MARGIN );
 	my rect [0]. bottom = BOTTOM_MARGIN;
 	my rect [0]. top = BOTTOM_MARGIN + space;
 
 	/* 1: rectangle for visible part. */
 
-	my rect [1]. left = MARGIN;
-	my rect [1]. right = my width - MARGIN;
+	my rect [1]. left = my functionViewerLeft + MARGIN;
+	my rect [1]. right = my functionViewerRight - MARGIN;
 	my rect [1]. bottom = BOTTOM_MARGIN + space;
 	my rect [1]. top = BOTTOM_MARGIN + space * (my numberOfMarkers > 1 ? 2 : 3);
 
 	/* 2: rectangle for left from visible part. */
 
 	if (leftFromWindow) {
-		my rect [2]. left = 0.0;
-		my rect [2]. right = MARGIN;
+		my rect [2]. left = my functionViewerLeft;
+		my rect [2]. right = my functionViewerLeft + MARGIN;
 		my rect [2]. bottom = BOTTOM_MARGIN + space;
 		my rect [2]. top = BOTTOM_MARGIN + space * 2;
 	}
@@ -166,8 +167,8 @@ static void drawNow (FunctionEditor me) {
 	/* 3: rectangle for right from visible part. */
 
 	if (rightFromWindow) {
-		my rect [3]. left = my width - MARGIN;
-		my rect [3]. right = my width;
+		my rect [3]. left = my functionViewerRight - MARGIN;
+		my rect [3]. right = my functionViewerRight;
 		my rect [3]. bottom = BOTTOM_MARGIN + space;
 		my rect [3]. top = BOTTOM_MARGIN + space * 2;
 	}
@@ -177,9 +178,9 @@ static void drawNow (FunctionEditor me) {
 	if (my numberOfMarkers > 1) {
 		double window = my endWindow - my startWindow;
 		for (int i = 1; i <= my numberOfMarkers; i ++) {
-			my rect [3 + i]. left = i == 1 ? MARGIN : MARGIN + (my width - MARGIN * 2) *
+			my rect [3 + i]. left = i == 1 ? my functionViewerLeft + MARGIN : my functionViewerLeft + MARGIN + (my functionViewerRight - my functionViewerLeft - MARGIN * 2) *
 				(my marker [i - 1] - my startWindow) / window;
-			my rect [3 + i]. right = MARGIN + (my width - MARGIN * 2) *
+			my rect [3 + i]. right = my functionViewerLeft + MARGIN + (my functionViewerRight - my functionViewerLeft - MARGIN * 2) *
 				(my marker [i] - my startWindow) / window;
 			my rect [3 + i]. bottom = BOTTOM_MARGIN + space * 2;
 			my rect [3 + i]. top = BOTTOM_MARGIN + space * 3;
@@ -189,17 +190,17 @@ static void drawNow (FunctionEditor me) {
 	if (selection) {
 		double window = my endWindow - my startWindow;
 		double left =
-			my startSelection == my startWindow ? MARGIN :
-			my startSelection == my tmin ? 0.0 :
-			my startSelection < my startWindow ? MARGIN * 0.3 :
-			my startSelection < my endWindow ? MARGIN + (my width - MARGIN * 2) * (my startSelection - my startWindow) / window :
-			my startSelection == my endWindow ? my width - MARGIN : my width - MARGIN * 0.7;
+			my startSelection == my startWindow ? my functionViewerLeft + MARGIN :
+			my startSelection == my tmin ? my functionViewerLeft :
+			my startSelection < my startWindow ? my functionViewerLeft + MARGIN * 0.3 :
+			my startSelection < my endWindow ? my functionViewerLeft + MARGIN + (my functionViewerRight - my functionViewerLeft - MARGIN * 2) * (my startSelection - my startWindow) / window :
+			my startSelection == my endWindow ? my functionViewerRight - MARGIN : my functionViewerRight - MARGIN * 0.7;
 		double right =
-			my endSelection < my startWindow ? MARGIN * 0.7 :
-			my endSelection == my startWindow ? MARGIN :
-			my endSelection < my endWindow ? MARGIN + (my width - MARGIN * 2) * (my endSelection - my startWindow) / window :
-			my endSelection == my endWindow ? my width - MARGIN :
-			my endSelection < my tmax ? my width - MARGIN * 0.3 : my width;
+			my endSelection < my startWindow ? my functionViewerLeft + MARGIN * 0.7 :
+			my endSelection == my startWindow ? my functionViewerLeft + MARGIN :
+			my endSelection < my endWindow ? my functionViewerLeft + MARGIN + (my functionViewerRight - my functionViewerLeft - MARGIN * 2) * (my endSelection - my startWindow) / window :
+			my endSelection == my endWindow ? my functionViewerRight - MARGIN :
+			my endSelection < my tmax ? my functionViewerRight - MARGIN * 0.3 : my functionViewerRight;
 		my rect [7]. left = left;
 		my rect [7]. right = right;
 		my rect [7]. bottom = my height - space - TOP_MARGIN;
@@ -209,18 +210,25 @@ static void drawNow (FunctionEditor me) {
 	/*
 	 * Be responsive: update the markers now.
 	 */
-	Graphics_setViewport (my graphics, 0, my width, 0, my height);
-	Graphics_setWindow (my graphics, 0, my width, 0, my height);
+	Graphics_setViewport (my graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
+	Graphics_setWindow (my graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 	Graphics_setGrey (my graphics, 0.85);
-	Graphics_fillRectangle (my graphics, MARGIN, my width - MARGIN, my height - TOP_MARGIN - space, my height);
-	Graphics_fillRectangle (my graphics, 0, MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
-	Graphics_fillRectangle (my graphics, my width - MARGIN, my width, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
+	Graphics_fillRectangle (my graphics, my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
+	Graphics_fillRectangle (my graphics, my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
+	Graphics_fillRectangle (my graphics, my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
+	Graphics_setViewport (my graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
+	Graphics_setWindow (my graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
+	Graphics_fillRectangle (my graphics, my selectionViewerLeft, my selectionViewerLeft + MARGIN, BOTTOM_MARGIN, my height);
+	Graphics_fillRectangle (my graphics, my selectionViewerRight - MARGIN, my selectionViewerRight, BOTTOM_MARGIN, my height);
+	Graphics_fillRectangle (my graphics, my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, 0, BOTTOM_MARGIN + space * 3);
 	Graphics_setGrey (my graphics, 0.0);
 	#if defined (macintosh)
-		Graphics_line (my graphics, 0, 2, my width, 2);
-		Graphics_line (my graphics, 0, my height - 2, my width, my height - 2);
+		Graphics_line (my graphics, my functionViewerLeft, 2, my selectionViewerRight, 2);
+		Graphics_line (my graphics, my functionViewerLeft, my height - 2, my selectionViewerRight, my height - 2);
 	#endif
 
+	Graphics_setViewport (my graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
+	Graphics_setWindow (my graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 	Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
 	for (int i = 0; i < 8; i ++) {
 		double left = my rect [i]. left, right = my rect [i]. right;
@@ -278,7 +286,7 @@ static void drawNow (FunctionEditor me) {
 		}
 	}
 
-	Graphics_setViewport (my graphics, MARGIN, my width - MARGIN, 0, my height);
+	Graphics_setViewport (my graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, 0, my height);
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, 0, my height);
 	/*Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_fillRectangle (my graphics, my startWindow, my endWindow, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));*/
@@ -311,10 +319,10 @@ static void drawNow (FunctionEditor me) {
 	/*
 	 * Start of inner drawing.
 	 */
-	Graphics_setViewport (my graphics, MARGIN, my width - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+	Graphics_setViewport (my graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 
 	my v_draw ();
-	Graphics_setViewport (my graphics, MARGIN, my width - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+	Graphics_setViewport (my graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 
 	/*
 	 * Red dotted marker lines.
@@ -322,7 +330,7 @@ static void drawNow (FunctionEditor me) {
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, 0.0, 1.0);
 	Graphics_setColour (my graphics, Graphics_RED);
 	Graphics_setLineType (my graphics, Graphics_DOTTED);
-	bottom = my v_getBottomOfSoundAndAnalysisArea ();
+	double bottom = my v_getBottomOfSoundAndAnalysisArea ();
 	if (cursorVisible)
 		Graphics_line (my graphics, my startSelection, bottom, my startSelection, 1.0);
 	if (beginVisible)
@@ -343,9 +351,17 @@ static void drawNow (FunctionEditor me) {
 	}
 
 	/*
+	 * Draw the selection part.
+	 */
+	if (my d_hasSelectionViewer) {
+		Graphics_setViewport (my graphics, my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
+		my v_drawSelectionViewer ();
+	}
+
+	/*
 	 * End of inner drawing.
 	 */
-	Graphics_setViewport (my graphics, 0, my width, 0, my height);
+	Graphics_setViewport (my graphics, my functionViewerLeft, my selectionViewerRight, 0, my height);
 }
 
 /********** METHODS **********/
@@ -374,20 +390,56 @@ void structFunctionEditor :: v_info () {
 
 /********** FILE MENU **********/
 
+static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
+	iam (FunctionEditor);
+	if (my graphics == NULL) return;   // Could be the case in the very beginning.
+	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
+	short width = event -> width + 21;
+	/*
+	 * Put the function viewer at the left and the selection viewer at the right.
+	 */
+	my functionViewerLeft = 0;
+	my functionViewerRight = my d_hasSelectionViewer ? width * (2.0/3) : width;
+	my selectionViewerLeft = my functionViewerRight;
+	my selectionViewerRight = width;
+	my height = event -> height + 111;
+	Graphics_setWsWindow (my graphics, 0, width, 0, my height);
+	Graphics_setViewport (my graphics, 0, width, 0, my height);
+	#if gtk
+		// updateWs() also resizes the cairo clipping context to the new window size
+	#endif
+	Graphics_updateWs (my graphics);
+
+	/* Save the current shell size as the user's preference for a new FunctionEditor. */
+
+	preferences.shellWidth = GuiObject_getWidth (my d_windowShell);
+	preferences.shellHeight = GuiObject_getHeight (my d_windowShell);
+}
+
 static void menu_cb_preferences (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Preferences", 0)
 		BOOLEAN (L"Synchronize zoom and scroll", 1)
+		BOOLEAN (L"Show selection viewer", 0)
 		POSITIVE (L"Arrow scroll step (s)", L"0.05")
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
 		SET_INTEGER (L"Synchronize zoom and scroll", preferences.synchronizedZoomAndScroll)
+		SET_INTEGER (L"Show selection viewer", preferences.showSelectionViewer)
 		SET_REAL (L"Arrow scroll step", my arrowScrollStep)
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
 		bool oldSynchronizedZoomAndScroll = preferences.synchronizedZoomAndScroll;
+		bool oldShowSelectionViewer = my d_hasSelectionViewer;
 		preferences.synchronizedZoomAndScroll = GET_INTEGER (L"Synchronize zoom and scroll");
+		preferences.showSelectionViewer = my d_hasSelectionViewer = GET_INTEGER (L"Show selection viewer");
 		preferences.arrowScrollStep = my arrowScrollStep = GET_REAL (L"Arrow scroll step");
+		if (my d_hasSelectionViewer != oldShowSelectionViewer) {
+			struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
+			event. width = GuiObject_getWidth (my drawingArea);
+			event. height = GuiObject_getHeight (my drawingArea);
+			gui_drawingarea_cb_resize (me, & event);
+		}
 		if (! oldSynchronizedZoomAndScroll && preferences.synchronizedZoomAndScroll) {
 			updateGroup (me);
 		}
@@ -1040,12 +1092,12 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 if (gtk && event -> type != BUTTON_PRESS) return;
 	double xWC, yWC;
 	my shiftKeyPressed = event -> shiftKeyPressed;
-	Graphics_setWindow (my graphics, 0, my width, 0, my height);
+	Graphics_setWindow (my graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
 
 	if (yWC > BOTTOM_MARGIN + space * 3 && yWC < my height - (TOP_MARGIN + space)) {   /* In signal region? */
 		int needsUpdate;
-		Graphics_setViewport (my graphics, MARGIN, my width - MARGIN,
+		Graphics_setViewport (my graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 			BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0.0, 1.0);
 		Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
@@ -1073,7 +1125,7 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 			event -> button == 2 ? my v_clickB (xWC, yWC) : my v_clickE (xWC, yWC);
 #endif
 		if (needsUpdate) my v_updateText ();
-		Graphics_setViewport (my graphics, 0, my width, 0, my height);
+		Graphics_setViewport (my graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 		if (needsUpdate) /*Graphics_updateWs (my graphics);*/ drawNow (me);
 		if (needsUpdate) updateGroup (me);
 	}
@@ -1100,25 +1152,6 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	iam (FunctionEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	my v_key (event -> key);
-}
-
-static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
-	iam (FunctionEditor);
-	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
-	my width = event -> width + 21;
-	my height = event -> height + 111;
-	Graphics_setWsWindow (my graphics, 0, my width, 0, my height);
-	Graphics_setViewport (my graphics, 0, my width, 0, my height);
-	#if gtk
-		// updateWs() also resizes the cairo clipping context to the new window size
-	#endif
-	Graphics_updateWs (my graphics);
-
-	/* Save the current shell size as the user's preference for a new FunctionEditor. */
-
-	preferences.shellWidth = GuiObject_getWidth (my d_windowShell);
-	preferences.shellHeight = GuiObject_getHeight (my d_windowShell);
 }
 
 void structFunctionEditor :: v_createChildren () {
@@ -1490,7 +1523,7 @@ int structFunctionEditor :: v_clickE (double xWC, double yWC) {
 }
 
 void FunctionEditor_insetViewport (FunctionEditor me) {
-	Graphics_setViewport (my graphics, MARGIN, my width - MARGIN,
+	Graphics_setViewport (my graphics, my functionViewerLeft + MARGIN, my functionViewerRight - MARGIN,
 		BOTTOM_MARGIN + space * 3, my height - (TOP_MARGIN + space));
 	Graphics_setWindow (my graphics, my startWindow, my endWindow, 0, 1);
 }
@@ -1578,6 +1611,7 @@ void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *titl
 	#endif
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setFontSize (my graphics, 12);
+	my d_hasSelectionViewer = preferences.showSelectionViewer;   // before resizing
 
 // This exdents because it's a hack:
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };

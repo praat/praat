@@ -2143,7 +2143,7 @@ void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 }
 
 void structTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (spectrogram.show && (longSound.data || sound.data)) {
+	if (v_hasAnalysis () && spectrogram.show && (longSound.data || sound.data)) {
 		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		Graphics_highlight (graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
@@ -2154,7 +2154,7 @@ void structTextGridEditor :: v_highlightSelection (double left, double right, do
 }
 
 void structTextGridEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (spectrogram.show) {
+	if (v_hasAnalysis () && spectrogram.show && (longSound.data || sound.data)) {
 		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		Graphics_unhighlight (graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);

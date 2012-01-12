@@ -92,6 +92,9 @@ HMM HMM_createFullContinuousModel (int leftToRight, long numberOfStates, long nu
 	long numberOfFeatureStreams, long *dimensionOfStream, long *numberOfGaussiansforStream);
 HMM HMM_createFromHMM_ObservationSequence (HMM_ObservationSequence me, long numberOfStates, int leftToRight);
 void HMM_draw (HMM me, Graphics g, int garnish);
+void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish);
+void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish);
+void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garnish);
 void HMM_addObservation (HMM me, thou);
 void HMM_addState (HMM me, thou);
 void HMM_setDefaultStates (HMM me);

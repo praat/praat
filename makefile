@@ -1,7 +1,7 @@
 # File: makefile
 
 # Makefile for Praat.
-# Paul Boersma, 21 September 2011
+# Paul Boersma, 12 January 2012
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -18,6 +18,7 @@ all:
 	$(MAKE) -C audio
 	$(MAKE) -C audio/FLAC
 	$(MAKE) -C audio/mp3
+	$(MAKE) -C espeak
 	$(MAKE) -C sys
 	$(MAKE) -C dwsys
 	$(MAKE) -C stat
@@ -37,6 +38,7 @@ all:
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
 		sys/libsys.a num/libnum.a GSL/libgsl.a num/glpk/libglpk.a kar/libkar.a \
 		audio/libaudio.a audio/FLAC/libFLAC.a audio/mp3/libmp3.a \
+		espeak/libespeak.a \
 		$(LIBS)
 
 clean:
@@ -47,6 +49,7 @@ clean:
 	$(MAKE) -C audio clean
 	$(MAKE) -C audio/FLAC clean
 	$(MAKE) -C audio/mp3 clean
+	$(MAKE) -C espeak clean
 	$(MAKE) -C sys clean
 	$(MAKE) -C stat clean
 	$(MAKE) -C fon clean

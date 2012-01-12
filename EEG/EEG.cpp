@@ -345,4 +345,56 @@ void structEEG :: f_subtractReference (const wchar *channelNumber1_text, const w
 	}
 }
 
+void structEEG :: f_setChannelToZero (long channelNumber) {
+	try {
+		if (channelNumber < 1 || channelNumber > d_numberOfChannels)
+			Melder_throw ("No channel ", channelNumber, ".");
+		long numberOfSamples = d_sound -> nx;
+		double *channel = d_sound -> z [channelNumber];
+		for (long isample = 1; isample <= numberOfSamples; isample ++) {
+			channel [isample] = 0.0;
+		}
+	} catch (MelderError) {
+		Melder_throw (this, ": channel ", channelNumber, " not set to zero.");
+	}
+}
+
+void structEEG :: f_setChannelToZero (const wchar *channelName) {
+	try {
+		long channelNumber = f_getChannelNumber (channelName);
+		if (channelNumber == 0)
+			Melder_throw ("No channel named \"", channelName, "\".");
+		f_setChannelToZero (channelNumber);
+	} catch (MelderError) {
+		Melder_throw (this, ": channel ", channelName, " not set to zero.");
+	}
+}
+
+EEG structEEG :: f_extractChannel (long channelNumber) {
+	try {
+		if (channelNumber < 1 || channelNumber > d_numberOfChannels)
+			Melder_throw ("No channel ", channelNumber, ".");
+		autoEEG thee = EEG_create (xmin, xmax);
+		thee -> d_numberOfChannels = 1;
+		thee -> d_channelNames = NUMvector <wchar *> (1, 1);
+		thee -> d_channelNames [1] = Melder_wcsdup (d_channelNames [1]);
+		thee -> d_sound = Sound_extractChannel (d_sound, channelNumber);
+		thee -> d_textgrid = Data_copy (d_textgrid);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": channel ", channelNumber, " not extracted.");
+	}
+}
+
+EEG structEEG :: f_extractChannel (const wchar *channelName) {
+	try {
+		long channelNumber = f_getChannelNumber (channelName);
+		if (channelNumber == 0)
+			Melder_throw ("No channel named \"", channelName, "\".");
+		return f_extractChannel (channelNumber);
+	} catch (MelderError) {
+		Melder_throw (this, ": channel ", channelName, " not extracted.");
+	}
+}
+
 /* End of file EEG.cpp */

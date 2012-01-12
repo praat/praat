@@ -1,4 +1,4 @@
-/* EEG_def.h
+/* ERPTier_def.h
  *
  * Copyright (C) 2011 Paul Boersma
  *
@@ -18,31 +18,41 @@
  */
 
 
-#define ooSTRUCT EEG
-oo_DEFINE_CLASS (EEG, Function)
+#define ooSTRUCT ERPPoint
+oo_DEFINE_CLASS (ERPPoint, AnyPoint)
+
+	oo_OBJECT (Sound, 2, d_erp)
+
+oo_END_CLASS (ERPPoint)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT ERPTier
+oo_DEFINE_CLASS (ERPTier, Function)
+
+	oo_COLLECTION (SortedSetOfDouble, d_events, ERPPoint, 0)
 
 	oo_LONG (d_numberOfChannels)
 	oo_STRING_VECTOR (d_channelNames, d_numberOfChannels)
-	oo_OBJECT (Sound, 2, d_sound)
-	oo_OBJECT (TextGrid, 0, d_textgrid)
 
 	#if oo_DECLARING
 		// functions:
 		public:
 			void f_init (double tmin, double tmax);
 			long f_getChannelNumber (const wchar *channelName);
-			void f_setChannelName (long channelNumber, const wchar *a_name);
-			void f_setExternalElectrodeNames (const wchar *nameExg1, const wchar *nameExg2, const wchar *nameExg3, const wchar *nameExg4,
-				const wchar *nameExg5, const wchar *nameExg6, const wchar *nameExg7, const wchar *nameExg8);
-			void f_detrend ();
-			void f_filter (double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz);
-			void f_subtractReference (const wchar *channelNumber1, const wchar *channelNumber2);
-			void f_setChannelToZero (long channelNumber);
-			void f_setChannelToZero (const wchar *channelName);
-			EEG f_extractChannel (long channelNumber);
-			EEG f_extractChannel (const wchar *channelName);
-			Sound f_extractSound () { return Data_copy (d_sound); }
-			TextGrid f_extractTextGrid () { return Data_copy (d_textgrid); }
+			void f_checkEventNumber (long eventNumber) {
+				if (eventNumber < 1)
+					Melder_throw ("The specified event number is ", eventNumber, " but should have been positive.");
+				if (eventNumber > d_events -> size)
+					Melder_throw ("The specified event number (", eventNumber, ") exceeds the number of events (", d_events -> size, ".");
+			}
+			ERPPoint f_peekEvent (long i) { return static_cast <ERPPoint> (d_events -> item [i]); }
+			double f_getMean (long pointNumber, long channelNumber, double tmin, double tmax);
+			double f_getMean (long pointNumber, const wchar *channelName, double tmin, double tmax);
+			void f_subtractBaseline (double tmin, double tmax);
+			void f_rejectArtefacts (double threshold);
+			ERP f_extractERP (long pointNumber);
+			ERP f_toERP_mean ();
 		// overridden methods:
 		protected:
 			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
@@ -50,7 +60,8 @@ oo_DEFINE_CLASS (EEG, Function)
 			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
 	#endif
 
-oo_END_CLASS (EEG)
+oo_END_CLASS (ERPTier)
 #undef ooSTRUCT
 
-/* End of file EEG_def.h */
+
+/* End of file ERPTier_def.h */

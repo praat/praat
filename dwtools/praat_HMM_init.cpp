@@ -1,4 +1,4 @@
-/* praat_HMM_init.c
+/* praat_HMM_init.cpp
  *
  * Copyright (C) 2010-2011 David Weenink
  *
@@ -352,6 +352,21 @@ DO
 	HMM me = FIRST (HMM);
 	HMM_StateSequence hmm_ss = FIRST (HMM_StateSequence);
 	HMM_and_HMM_StateSequence_drawTrellis (me, hmm_ss, GRAPHICS, GET_INTEGER (L"Connect"), GET_INTEGER (L"Garnish"));
+END
+
+DIRECT (HMM_drawForwardProbabilitiesIllustration)
+	autoPraatPicture picture;
+	HMM_drawForwardProbabilitiesIllustration (GRAPHICS, true);
+END
+
+DIRECT (HMM_drawBackwardProbabilitiesIllustration)
+	autoPraatPicture picture;
+	HMM_drawBackwardProbabilitiesIllustration (GRAPHICS, true);
+END
+
+DIRECT (HMM_drawForwardAndBackwardProbabilitiesIllustration)
+	autoPraatPicture picture;
+	HMM_drawForwardAndBackwardProbabilitiesIllustration (GRAPHICS, true);
 END
 
 FORM (HMM_getTransitionProbability, L"HMM: Get transition probability", L"HMM: Get transition probability...")
@@ -788,6 +803,10 @@ void praat_HMM_init () {
 	praat_addMenuCommand (L"Objects", L"New", L"Create HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create continuous HMM...", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_createContinuousModel);
+	praat_addMenuCommand (L"Objects", L"New", L"--drawings--", 0, praat_HIDDEN + praat_DEPTH_1, 0);
+	praat_addMenuCommand (L"Objects", L"New", L"Draw forward probabilities illustration", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_drawForwardProbabilitiesIllustration);
+	praat_addMenuCommand (L"Objects", L"New", L"Draw backward probabilities illustration", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_drawBackwardProbabilitiesIllustration);
+	praat_addMenuCommand (L"Objects", L"New", L"Draw forward and backward probabilities illustration", 0, praat_HIDDEN + praat_DEPTH_1, DO_HMM_drawForwardAndBackwardProbabilitiesIllustration);
 
 	praat_addAction1 (classGaussianMixture, 0, L"GaussianMixture help", 0, 0, DO_GaussianMixture_help);
 	praat_addAction1 (classGaussianMixture, 0, L"Draw concentration ellipses...", 0, 0, DO_GaussianMixture_drawConcentrationEllipses);
@@ -873,4 +892,4 @@ void praat_HMM_init () {
 	INCLUDE_MANPAGES (manual_HMM)
 }
 
-/* End of file praat_HMM_init.c */
+/* End of file praat_HMM_init.cpp */

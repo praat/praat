@@ -19,7 +19,6 @@
 
 /*
 	djmw 20101009 Initial version
-	djmw 20101101 Latest modification
 */
 
 #include "ManPagesM.h"
@@ -27,6 +26,18 @@
 void manual_HMM (ManPages me);
 void manual_HMM (ManPages me)
 {
+
+MAN_BEGIN (L"expectation-maximization", L"djmw", 20111130)
+NORMAL (L"Expectation-maximization (EM) is an iterative method used to find maximum "
+	"likelihood estimates of parameters in probabilistic models, where the model depends on "
+	"unobserved, also called %%latent%, variables. EM alternates between performing an expectation (E) step, "
+	"which computes an expectation of the likelihood by including the latent variables as if they "
+	"were observed, and a maximization (M) step, which computes the maximum likelihood "
+	"estimates of the parameters by maximizing the expected likelihood found in the E step. The "
+	"parameters found on the M step are then used to start another E step, and the process is "
+	"repeated until some criterion is satisfied. EM is frequently used for data clustering like for example in "
+	"@@TableOfReal: To GaussianMixture...|Gaussian mixtures@ or in the @@HMM & HMM_ObservationSequences: Learn...|Baum-Welch training@ of a Hidden Markov Model.")
+MAN_END
 
 MAN_BEGIN (L"GaussianMixture", L"djmw", 20101026)
 INTRO (L"A Gaussian mixture is a probability density function (p.d.f.). It is a combination of several Gaussian densities.")
@@ -108,9 +119,9 @@ NORMAL (L"2. According to the procedure described in @@Covariance: To TableOfRea
 	"data point will be generated.")
 MAN_END
 
-MAN_BEGIN (L"TableOfReal: To GaussianMixture...", L"djmw", 20101101)
-INTRO (L"Creates a  @@GaussianMixture@ from the selected  @TableOfReal by an iterative EM (Expectation Maximization)"
-	" procedure.")
+MAN_BEGIN (L"TableOfReal: To GaussianMixture...", L"djmw", 20111130)
+INTRO (L"Creates a  @@GaussianMixture@ from the selected  @@TableOfReal@ by an @@expectation-maximization|"
+	"expectation-maximization@ procedure.")
 ENTRY (L"Settings")
 TAG (L"##Number of components")
 DEFINITION (L"defines the number of Gaussians in the mixture.")
@@ -175,8 +186,8 @@ NORMAL (L"In the formulas above %n is the number of data points, %k is the numbe
 FORMULA (L"\\ga__%%im%_= \\al__%m_\\.c%p__%%im%_ /(\\Si__%j=1..%k_ \\al__%j_\\.c%p__%%ij%_).")
 MAN_END
 
-MAN_BEGIN (L"GaussianMixture & TableOfReal: Improve likelihood...", L"djmw", 20101101)
-INTRO (L"Try to improve the likelihood of the parameters in the  @@GaussianMixture@ by an iterative EM algorithm.")
+MAN_BEGIN (L"GaussianMixture & TableOfReal: Improve likelihood...", L"djmw", 20111130)
+INTRO (L"Try to improve the likelihood of the parameters in the  @@GaussianMixture@ by an @@expectation-maximization@ algorithm.")
 ENTRY (L"Settings & EM Algorithm")
 NORMAL (L"As decribed in  @@TableOfReal: To GaussianMixture...@.")
 MAN_END
@@ -404,10 +415,10 @@ INTRO (L"Get a table with bigrams form the selected @HMM_ObservationSequence.")
 NORMAL (L"See also @@HMM & HMM_ObservationSequence: To TableOfReal (bigrams)...@.")
 MAN_END
 
-MAN_BEGIN (L"HMM & HMM_ObservationSequences: Learn...", L"djmw", 20101010)
+MAN_BEGIN (L"HMM & HMM_ObservationSequences: Learn...", L"djmw", 20111130)
 INTRO (L"Train the transition and emission probabilities of the @HMM from the observations.")
 ENTRY (L"Algorithm")
-NORMAL (L"Baum-Welch: uses forward and backward procedure to (re)estimate the parameters until convergence is reached.")
+NORMAL (L"The Baum-Welch @@expectation-maximization@ procedure. It uses the forward and backward procedures to (re)estimate the parameters until convergence is reached.")
 MAN_END
 
 MAN_BEGIN (L"Bishop (2006)", L"djmw", 20101026)

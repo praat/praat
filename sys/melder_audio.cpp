@@ -137,8 +137,7 @@ long MelderAudio_getOutputBestSampleRate (long fsamp) {
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
 			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;
 	#elif defined (linux)
-		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
-			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 44100;
+		return fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;
 	#else
 		return 44100;
 	#endif
@@ -245,6 +244,7 @@ static bool flush (void) {
 }
 
 bool MelderAudio_stopPlaying (bool explicitStop) {
+	//Melder_casual ("stop playing!");
 	struct MelderPlay *me = & thePlay;
 	my explicitStop = explicitStop;
 	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return false;

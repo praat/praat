@@ -25,28 +25,14 @@
  djmw 20110307 Latest modification
 */
 
-#ifndef _DTW_h_
-	#include "DTW.h"
-#endif
-
-#ifndef _TextGrid_h_
-	#include "TextGrid.h"
-#endif
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
+#include "DTW.h"
+#include "TextGrid.h"
 
 TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee);
 IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee);
 TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee);
 /*
 	Purpose: Create the new TextGrid with all times determined by the DTW.
-		The y-dimension of the DTW determines the new times.
 */
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _DTW_and_TextGrid_h_ */

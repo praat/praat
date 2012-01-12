@@ -47,6 +47,7 @@
  djmw 20100222 Corrected a bug in TableOfReal_copyOneRowWithLabel which caused label corruption if
                from and to table were equal and rows were equal too.
  djmw 20111110 Use autostringvector
+ djmw 20111123 Always use Melder_wcscmp
 */
 
 #include <ctype.h>
@@ -723,7 +724,7 @@ int TableOfReal_equalLabels (I, thou, int rowLabels, int columnLabels) {
 			return 1;
 		}
 		for (long i = 1; i <= my numberOfColumns; i++) {
-			if (Melder_wcscmp (my columnLabels[i], thy columnLabels[i])) {
+			if (Melder_wcscmp (my columnLabels[i], thy columnLabels[i]) != 0) {
 				return 0;
 			}
 		}
@@ -821,7 +822,7 @@ void TableOfReal_centreColumns_byRowLabel (I) {
 
 	for (long i = 2; i <= my numberOfRows; i++) {
 		wchar_t *li = my rowLabels[i];
-		if (li != 0 && li != label && wcscmp (li, label)) {
+		if (Melder_wcscmp (li, label) != 0) {
 			NUMcentreColumns (my data, index, i - 1, 1, my numberOfColumns, 0);
 			label = li; index = i;
 		}
@@ -1573,7 +1574,7 @@ TableOfReal TableOfReal_meansByRowLabels (I, int expand, int stats) {
 		wchar_t const *label = sorted -> rowLabels[1];
 		for (long i = 2; i <= my numberOfRows; i++) {
 			wchar_t const *li = sorted -> rowLabels[i];
-			if (li != 0 && li != label && (label == 0 || wcscmp (li, label))) {
+			if (Melder_wcscmp (li, label) != 0) {
 				NUMstatsColumns (sorted -> data, indexi, i - 1, 1, my numberOfColumns, stats);
 
 				if (expand == 0) {
@@ -1718,7 +1719,7 @@ TableOfReal TableOfReal_appendColumns (I, thou) {
 		NUMstrings_copyElements (my columnLabels, his columnLabels,  1, my numberOfColumns);
 		NUMstrings_copyElements (thy columnLabels, &his columnLabels[my numberOfColumns], 1, thy numberOfColumns);
 		for (long i = 1; i <= my numberOfRows; i++) {
-			if (Melder_wcscmp (my rowLabels[i], thy rowLabels[i])) {
+			if (Melder_wcscmp (my rowLabels[i], thy rowLabels[i]) != 0) {
 				labeldiffs++;
 			}
 			NUMdvector_copyElements (my data[i], his data[i], 1, my numberOfColumns);

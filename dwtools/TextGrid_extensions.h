@@ -21,14 +21,10 @@
 
 /*
  djmw 20020516 GPL header
- djmw 20110307 Latest modification
+ djmw 20111226 Latest modification
 */
 
 #include "TextGrid.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 TextGrid TextGrid_readFromTIMITLabelFile (MelderFile file, int phnFile);
 /*
@@ -92,9 +88,27 @@ void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, const wchar_t
 
 void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-#ifdef __cplusplus
-	}
-#endif
+/* Set the start/end time to a smaller/larger value.
+ * If mark is NULL, only times are changed
+ * If mark != NULL mark the previous start/end time
+ *    For a TextTier this involves adding a point with the marker
+ *    For an IntervalTier this involves adding a new interval
+ */
+void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const wchar_t *mark);
+void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const wchar_t *mark);
+void TextTier_setLaterEndTime (TextTier me, double xmax, const wchar_t *mark);
+void TextTier_setEarlierStartTime (TextTier me, double xmin, const wchar_t *mark);
+void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const wchar_t *imark, const wchar_t *pmark);
+void TextGrid_setLaterEndTime (TextGrid me, double xmax, const wchar_t *imark, const wchar_t *pmark);
 
+
+// Precondition: if (preserveTimes) { my xmax <= thy xmin }
+// Postcondition: my xmin preserved
+void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes);
+void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes);
+void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes);
+
+// Postcondition:
+TextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes);
 
 #endif /* _TextGrid_extensions_h_ */

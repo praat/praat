@@ -133,6 +133,9 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		virtual void v_createMenuItems_query (EditorMenu menu);
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 		virtual void v_createMenuItems_view_sound (EditorMenu menu);
+		virtual double v_getBottomOfSoundArea () {
+			return spectrogram.show || pitch.show || intensity.show || formant.show ? 0.5 : 0.0;
+		}
 	// new methods:
 		virtual bool v_hasAnalysis () { return true; }
 		virtual void v_destroy_analysis ();

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20111121)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120112)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.04# (12 January 2012)")
+LIST_ITEM (L"\\bu EEG: draw scalp distribution.")
+LIST_ITEM (L"\\bu Linux: better audio compatibility with Ubuntu 11.10.")
 NORMAL (L"##5.3.03# (21 November 2011)")
 LIST_ITEM (L"\\bu EEG: filtering, editing, more viewing.")
 NORMAL (L"##5.3.02# (7 November 2011)")

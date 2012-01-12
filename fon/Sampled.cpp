@@ -90,16 +90,15 @@ void Sampled_init (Sampled me, double xmin, double xmax, long nx, double dx, dou
 }
 
 void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeStep, long *numberOfFrames, double *firstTime) {
-	double myDuration, thyDuration, ourMidTime;
 	Melder_assert (windowDuration > 0.0);
 	Melder_assert (timeStep > 0.0);
-	myDuration = my dx * my nx;
+	volatile double myDuration = my dx * my nx;
 	if (windowDuration > myDuration)
 		Melder_throw (me, ": shorter than window length."); 
 	*numberOfFrames = floor ((myDuration - windowDuration) / timeStep) + 1;
 	Melder_assert (*numberOfFrames >= 1);
-	ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;
-	thyDuration = *numberOfFrames * timeStep;
+	double ourMidTime = my x1 - 0.5 * my dx + 0.5 * myDuration;
+	double thyDuration = *numberOfFrames * timeStep;
 	*firstTime = ourMidTime - 0.5 * thyDuration + 0.5 * timeStep;
 }
 

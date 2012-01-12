@@ -34,9 +34,9 @@ void structCategories :: v_readText (MelderReadText a_text) {
 		OrderedOfString_init (this, l_size);   // David, in je vorige versie kon dit tweemaal aangeroepen worden (en in dat geval crashend): Ja dat was een bug, Ok nu
 	}
 	for (long i = 1; i <= l_size; i ++) {
-		autoSimpleString item = Thing_new (SimpleString);
-		item -> v_readText (a_text); therror
-		Ordered_addItemPos (this, item.transfer(), i);
+		autoSimpleString itemi = Thing_new (SimpleString);
+		itemi -> v_readText (a_text); therror
+		Ordered_addItemPos (this, itemi.transfer(), i);
 	}
 }
 

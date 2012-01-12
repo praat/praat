@@ -2043,19 +2043,21 @@ int structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool
 
 void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Sampled sound, bool ownSound) {
 	TimeSoundEditor_init (me, parent, title, data, sound, ownSound);
-	my longestAnalysis = preferences.longestAnalysis;
-	if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)
-		preferences.log[0].toLogFile = TRUE, preferences.log[0].toInfoWindow = TRUE;
-	if (preferences.log[1].toLogFile == FALSE && preferences.log[1].toInfoWindow == FALSE)
-		preferences.log[1].toLogFile = TRUE, preferences.log[1].toInfoWindow = TRUE;
-	my timeStepStrategy = preferences.timeStepStrategy;
-	my fixedTimeStep = preferences.fixedTimeStep;
-	my numberOfTimeStepsPerView = preferences.numberOfTimeStepsPerView;
-	my spectrogram = preferences.spectrogram;
-	my pitch = preferences.pitch;
-	my intensity = preferences.intensity;
-	my formant = preferences.formant;
-	my pulses = preferences.pulses;
+	if (my v_hasAnalysis ()) {
+		my longestAnalysis = preferences.longestAnalysis;
+		if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)
+			preferences.log[0].toLogFile = TRUE, preferences.log[0].toInfoWindow = TRUE;
+		if (preferences.log[1].toLogFile == FALSE && preferences.log[1].toInfoWindow == FALSE)
+			preferences.log[1].toLogFile = TRUE, preferences.log[1].toInfoWindow = TRUE;
+		my timeStepStrategy = preferences.timeStepStrategy;
+		my fixedTimeStep = preferences.fixedTimeStep;
+		my numberOfTimeStepsPerView = preferences.numberOfTimeStepsPerView;
+		my spectrogram = preferences.spectrogram;
+		my pitch = preferences.pitch;
+		my intensity = preferences.intensity;
+		my formant = preferences.formant;
+		my pulses = preferences.pulses;
+	}
 }
 
 /* End of file TimeSoundAnalysisEditor.cpp */

@@ -25,10 +25,6 @@
 #include "Network_def.h"
 oo_CLASS_CREATE (Network, Data);
 
-void Network_init (Network me, double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
-	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
-
 Network Network_create (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
@@ -41,22 +37,6 @@ Network Network_create_rectangle_vertical (double minimumActivity, double maximu
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight);
-
-void Network_addNode (Network me, double x, double y, double activity, bool clamped);
-void Network_addConnection (Network me, long nodeFrom, long nodeTo, double weight, double plasticity);
-
-void Network_draw (Network me, Graphics graphics, bool colour);
-
-double Network_getActivity (Network me, long inode);
-void Network_setActivity (Network me, long inode, double activity);
-double Network_getWeight (Network me, long iconn);
-void Network_setWeight (Network me, long iconn, double weight);
-void Network_setClamping (Network me, long inode, bool clamped);
-
-void Network_zeroActivities (Network me, long nodeMin, long nodeMax);
-void Network_normalizeActivities (Network me, long nodeMin, long nodeMax);
-void Network_spreadActivities (Network me, long numberOfSteps);
-void Network_updateWeights (Network me);
 
 /* End of file Network.h */
 #endif

@@ -117,13 +117,21 @@ NORMAL (L"With ##Index range# = [0,0], ##Index# = 3, ##Forbid same# is %off and 
 	"(1,2,3,4,5) permutation is forbidden and the outcome could only be one of the four remaining permutations.")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Permute randomly...", L"djmw", 20110105)
-INTRO (L"Generates a random permutation for the elements in the given range.")
+MAN_BEGIN (L"Permutation: Permute randomly...", L"djmw", 20111123)
+INTRO (L"Generates a new @@Permutation@ by randomly permuting a range of elements in the selected Permutation object.")
 ENTRY (L"Setting")
 TAG (L"##Index range#")
-DEFINITION (L"defines the range of elements that will be permuted.")
+DEFINITION (L"defines the range of elements that will be permuted. The elements outside this range will be kept intact.")
 ENTRY (L"Example")
-NORMAL (L"With ##Index range# = [3,6], the permutation (1,2,3,4,5,6,7) is turned into one of 24 (= 4!) possible permutations, for example (1,2,(4,5,3,6),7).")
+NORMAL (L"If we start with the permutation (4,6,3,1,5,2,7) and a chosen ##Index range# that runs from 3 to 6, a new permutation will be generated as follows:")
+LIST_ITEM (L"1. A new permutation of the same dimension as the selected one will be created. ")
+LIST_ITEM (L"2. Because the index range starts at 3, the first two elements of the selected permutation will be copied "
+	"to the first two locations in the newly created permutation. The new permutation is now (4,6,.,.,.,.,.), where a "
+	"dot (.) means that the element is unspecified.")
+LIST_ITEM (L"3. The elements 3 to 6 of the selected permutation, i.e. the numbers (3,1,5,2) will be randomly permuted. "
+	"There are 24 possible permutations of these 4 numbers. Say the outcome happens to be (5,1,3,2). The new permutation is now (4,6,5,1,3,2,.).")
+LIST_ITEM (L"4. The remaining element (7) is copied to the new permutation. Finally, this results "
+	"in the new permutation being (4,6,5,1,3,2,7).")
 MAN_END
 
 MAN_BEGIN (L"Permutation: Permute randomly (blocks)...", L"djmw", 20110105)

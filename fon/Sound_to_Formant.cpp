@@ -269,7 +269,7 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 
 	if (nsamp_window < numberOfPoles + 1)
 		Melder_throw ("Window too short.");
-	t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt); /* Centre of first frame. */
+	t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt);   // centre of first frame
 	if (nFrames < 1) {
 		nFrames = 1;
 		t1 = my x1 + 0.5 * duration;

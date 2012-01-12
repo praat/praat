@@ -370,6 +370,34 @@
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ERPTier</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat event-related potentials</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>ERP</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat event-related potential</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSTypeIsPackage</key>
+			<false/>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>Binary</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Praat</string>

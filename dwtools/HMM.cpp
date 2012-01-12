@@ -358,6 +358,7 @@ StringsIndex HMM_ObservationSequence_to_StringsIndex (HMM_ObservationSequence me
 long HMM_and_HMM_ObservationSequence_getLongestSequence (HMM me, HMM_ObservationSequence thee, long symbolNumber) {
 	autoStringsIndex si = HMM_and_HMM_ObservationSequence_to_StringsIndex (me, thee);
 	// TODO
+	(void) symbolNumber;
 	return 1;
 }
 
@@ -953,6 +954,7 @@ void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences th
 			HMM_and_HMM_BaumWelch_reestimate (me, bw.peek());
 			MelderInfo_writeLine4 (L"Iteration: ", Melder_integer (iter), L" ln(prob): ", Melder_double (bw -> lnProb));
 		} while (fabs ( (lnp - bw -> lnProb) / bw -> lnProb) > delta_lnp);
+
 		MelderInfo_writeLine1 (L"******** Learning summary *********");
 		MelderInfo_writeLine3 (L"  Processed ", Melder_integer (thy size), L" sequences,");
 		MelderInfo_writeLine3 (L"  consisting of ", Melder_integer (bw -> totalNumberOfSequences), L" observation sequences.");
@@ -1010,6 +1012,160 @@ void HMM_and_HMM_StateSequence_drawTrellis (HMM me, HMM_StateSequence thee, Grap
 	}
 }
 
+void HMM_drawBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
+	double xmin = 0, xmax = 1, ymin = 0, ymax = 1;
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	double xleft  = 0.1, xright = 0.9, r = 0.03;
+	long np = 6;
+	double dy = (1 - 0.3) / (np - 1);
+	double x0 = xleft, y0 = 0.5;
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	Graphics_circle (g, x0, y0, r);
+	double x = xright, y = 0.9;
+	for (long i = 1; i <= np; i++) {
+		if (i < 4 or i == np) {
+			Graphics_circle (g, x, y, r);
+			double xx = x0 - x, yy = y - y0;
+			double c = sqrt (xx * xx + yy * yy);
+			double cosa = xx / c, sina = yy / c;
+			Graphics_line (g, x0 - r * cosa, y0 + r * sina, x + r * cosa, y - r * sina);
+		} else if (i == 4) {
+			double ddy = 3*dy/4;
+			Graphics_fillCircle (g, x, y + dy - ddy, 0.5 * r);
+			Graphics_fillCircle (g, x, y + dy - 2 * ddy, 0.5 * r);
+			Graphics_fillCircle (g, x, y + dy - 3 * ddy, 0.5 * r);
+		}
+		y -= dy;
+	}
+	if (garnish) {
+		double x1 = xright + 1.5 * r, x2 = x1 - 0.2, y1 = 0.9;
+
+		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+		Graphics_text (g, x1, y1, L"%s__1_");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x2, y1, L"%a__%i1_");
+
+		y1 = 0.9 - dy;
+		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+		Graphics_text (g, x1, y1, L"%s__2_");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x2, y1, L"%a__%i2_");
+
+		y1 = 0.9 - (np - 1) * dy;
+		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+		Graphics_text (g, x1, y1, L"%s__%N_");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x2, y1, L"%a__%%iN%_");
+
+		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (g, x0 - 1.5 * r, y0, L"%s__%i_");
+
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (g, x0, 0, L"%t");
+		Graphics_text (g, x, 0, L"%t+1");
+
+		double y3 = 0.10;
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x0, y3, L"%\\be__%t_(%i)%");
+		Graphics_text (g, x, y3, L"%\\be__%t+1_(%j)");
+	}
+}
+
+void HMM_drawForwardProbabilitiesIllustration (Graphics g, bool garnish) {
+	double xmin = 0, xmax = 1, ymin = 0, ymax = 1;
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	double xleft  = 0.1, xright = 0.9, r = 0.03;
+	long np = 6;
+	double dy = (1 - 0.3) / (np - 1);
+	double x0 = xright, y0 = 0.5;
+	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+	Graphics_circle (g, x0, y0, r);
+	double x = xleft, y = 0.9;
+	for (long i = 1; i <= np; i++) {
+		if (i < 4 or i == np) {
+			Graphics_circle (g, x, y, r);
+			double xx = x0 - x, yy = y - y0;
+			double c = sqrt (xx * xx + yy * yy);
+			double cosa = xx / c, sina = yy / c;
+			Graphics_line (g, x0 - r * cosa, y0 + r * sina, x + r * cosa, y - r * sina);
+		} else if (i == 4) {
+			double ddy = 3*dy/4;
+			Graphics_fillCircle (g, x, y + dy - ddy, 0.5 * r);
+			Graphics_fillCircle (g, x, y + dy - 2 * ddy, 0.5 * r);
+			Graphics_fillCircle (g, x, y + dy - 3 * ddy, 0.5 * r);
+		}
+		y -= dy;
+	}
+	if (garnish) {
+		double x1 = xleft - 1.5 * r, x2 = x1 + 0.2, y1 = 0.9;
+
+		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (g, x1, y1, L"%s__1_");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x2, y1, L"%a__1%j_");
+
+		y1 = 0.9 - dy;
+		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (g, x1, y1, L"%s__2_");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x2, y1, L"%a__2%j_");
+
+		y1 = 0.9 - (np - 1) * dy;
+		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_HALF);
+		Graphics_text (g, x1, y1, L"%s__%N_");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x2, y1, L"%a__%%Nj%_");
+
+		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
+		Graphics_text (g, x0 + 1.5 * r, y0, L"%s__%j_");
+
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (g, x, 0, L"%t");
+		Graphics_text (g, x0, 0, L"%t+1");
+
+		double y3 = 0.10;
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (g, x, y3, L"%\\al__%t_(%i)%");
+		Graphics_text (g, x0, y3, L"%\\al__%t+1_(%j)");
+	}
+}
+
+void HMM_drawForwardAndBackwardProbabilitiesIllustration (Graphics g, bool garnish) {
+	double xfrac = 0.1, xs =  1 / (0.5 - xfrac), r = 0.03;
+	Graphics_Viewport vp = Graphics_insetViewport (g, 0, 0.5-xfrac, 0, 1);
+	HMM_drawForwardProbabilitiesIllustration (g, false);
+	Graphics_resetViewport (g, vp);
+	Graphics_insetViewport (g, 0.5 + xfrac, 1, 0, 1);
+	HMM_drawBackwardProbabilitiesIllustration (g, false);
+	Graphics_resetViewport (g, vp);
+	Graphics_setWindow (g, 0, xs, 0, 1);
+	if (garnish) {
+		double rx1 = 1 + xs * 2 * xfrac + 0.1, rx2 = rx1 + 0.9 - 0.1, y1 = 0.1;
+		Graphics_line (g, 0.9 + r, 0.5, rx1 - r, 0.5);
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (g, 0.9, 0.5 + r, L"%s__%i_");
+		Graphics_text (g, rx1, 0.5 + r, L"%s__%j_");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+		Graphics_text (g, 1.0 + xfrac * xs, 0.5, L"%a__%%ij%_%b__%j_(O__%t+1_)");
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_BOTTOM);
+		Graphics_text (g, 0.1, 0, L"%t-1");
+		Graphics_text (g, 0.9, 0, L"%t");
+		Graphics_text (g, rx1, 0, L"%t+1");
+		Graphics_text (g, rx2, 0, L"%t+2");
+		Graphics_setLineType (g, Graphics_DASHED);
+		double x4 = rx1 - 0.06, x3 = 0.9 + 0.06;
+		Graphics_line (g, x3, 0.7, x3, 0);
+		Graphics_line (g, x4, 0.7, x4, 0);
+		Graphics_setLineType (g, Graphics_DRAWN);
+		Graphics_arrow (g, x4, y1, x4 + 0.2, y1);
+		Graphics_arrow (g, x3, y1, x3 - 0.2, y1);
+		Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_BOTTOM);
+		Graphics_text (g, x3 - 0.01, y1, L"\\al__%t_(i)");
+		Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text (g, x4 + 0.01, y1, L"\\be__%t+1_(j)");
+	}
+}
+
 void HMM_and_HMM_BaumWelch_getXi (HMM me, HMM_BaumWelch thee, long *obs) {
 
 	for (long it = 1; it <= thy numberOfTimes - 1; it++) {
@@ -1017,7 +1173,7 @@ void HMM_and_HMM_BaumWelch_getXi (HMM me, HMM_BaumWelch thee, long *obs) {
 		for (long is = 1; is <= thy numberOfStates; is++) {
 			for (long js = 1; js <= thy numberOfStates; js++) {
 				thy xi[it][is][js] = thy alpha[is][it] * thy beta[js][it + 1] *
-				                     my transitionProbs[is][js] * my emissionProbs[js][ obs[it + 1] ];
+					my transitionProbs[is][js] * my emissionProbs[js][ obs[it + 1] ];
 				sum += thy xi[it][is][js];
 			}
 		}

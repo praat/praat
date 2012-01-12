@@ -432,21 +432,25 @@ void structSoundEditor :: v_unhighlightSelection (double left, double right, dou
 		Graphics_unhighlight (graphics, left, right, bottom, top);
 }
 
+void structSoundEditor :: f_init (GuiObject parent, const wchar *title, Sampled data) {
+	/*
+	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
+	 * because createMenus expect that one of them is not NULL.
+	 */
+	TimeSoundAnalysisEditor_init (this, parent, title, data, data, false); therror
+	if (this -> longSound.data && this -> endWindow - this -> startWindow > 30.0) {
+		this -> endWindow = this -> startWindow + 30.0;
+		if (this -> startWindow == this -> tmin)
+			this -> startSelection = this -> endSelection = 0.5 * (this -> startWindow + this -> endWindow);
+		FunctionEditor_marksChanged (this);
+	}
+}
+
 SoundEditor SoundEditor_create (GuiObject parent, const wchar *title, Sampled data) {
 	Melder_assert (data != NULL);
 	try {
 		autoSoundEditor me = Thing_new (SoundEditor);
-		/*
-		 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
-		 * because createMenus expect that one of them is not NULL.
-		 */
-		TimeSoundAnalysisEditor_init (me.peek(), parent, title, data, data, false); therror
-		if (my longSound.data && my endWindow - my startWindow > 30.0) {
-			my endWindow = my startWindow + 30.0;
-			if (my startWindow == my tmin)
-				my startSelection = my endSelection = 0.5 * (my startWindow + my endWindow);
-			FunctionEditor_marksChanged (me.peek());
-		}
+		me -> f_init (parent, title, data);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Sound window not created.");

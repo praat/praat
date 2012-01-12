@@ -193,8 +193,7 @@ double Confusion_getValue (Confusion me, const wchar_t *stim, const wchar_t *res
 	return my data[stimIndex][respIndex];
 }
 
-void Confusion_getFractionCorrect (Confusion me, double *fraction,
-                                   long *numberOfCorrect) {
+void Confusion_getFractionCorrect (Confusion me, double *fraction, long *numberOfCorrect) {
 	*fraction = NUMundefined;
 	*numberOfCorrect = -1;
 
@@ -205,7 +204,7 @@ void Confusion_getFractionCorrect (Confusion me, double *fraction,
 				return;
 			}
 			ct += my data[i][j];
-			if (! wcscmp (my rowLabels[i], my columnLabels[j])) {
+			if (wcscmp (my rowLabels[i], my columnLabels[j]) == 0) {
 				c += my data[i][j];
 			}
 		}
@@ -467,6 +466,7 @@ Confusion Confusion_groupStimuli (Confusion me, const wchar_t *labels, const wch
 			for (long i = 1; i <= my numberOfRows; i++) {
 				if (Melder_wcsequ (token, my rowLabels[i])) {
 					irow[i] = 0;
+					break;
 				}
 			}
 		}
@@ -527,6 +527,7 @@ Confusion Confusion_groupResponses (Confusion me, const wchar_t *labels, const w
 			for (long i = 1; i <= my numberOfColumns; i++) {
 				if (Melder_wcsequ (token, my columnLabels[i])) {
 					icol[i] = 0;
+					break;
 				}
 			}
 		}

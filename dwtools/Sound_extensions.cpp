@@ -46,6 +46,7 @@
  djmw 20091211 Sound_fade: removed erroneous warning
  djmw 20100318 Cross-correlation, convolution and autocorrelation
  djmw 20100325 -Cross-correlation, convolution and autocorrelation
+ djmw 20111227 Sound_trimSilences and Sound_getStartAndEndTimesOfSounding
 */
 
 #include "Formula.h"
@@ -1328,8 +1329,8 @@ Sound Sound_changeSpeaker (Sound me, double pitchMin, double pitchMax,
 }
 
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
-        double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-        wchar_t *silentLabel, wchar_t *soundingLabel) {
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
+	const wchar_t *silentLabel, const wchar_t *soundingLabel) {
 	try {
 		int subtractMeanPressure = 1;
 		autoIntensity thee = Sound_to_Intensity (me, minPitch, timeStep, subtractMeanPressure);
@@ -1337,6 +1338,46 @@ TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double tim
 		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no TextGrid with silences created.");
+	}
+}
+
+void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
+	try {
+		const wchar_t *silentLabel = L"-", *soundingLabel = L"+";
+		autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
+			minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
+		IntervalTier itier = (IntervalTier) dbs -> tiers -> item[1];
+		TextInterval ti = (TextInterval) itier -> intervals -> item[1];
+		*t1 = my xmin;
+		if (Melder_wcsequ (ti -> text, silentLabel)) {
+			*t1 = ti -> xmax;
+		}
+		*t2 = my xmax;
+		ti = (TextInterval) itier -> intervals -> item[itier -> intervals -> size];
+		if (Melder_wcsequ (ti -> text, silentLabel)) {
+			*t2 = ti -> xmin;
+		}
+	} catch (MelderError) {
+		Melder_throw ("Sounding times not found.");
+	}
+}
+
+Sound Sound_trimSilences (Sound me, bool atStart, bool atEnd, double minPitch, double timeStep,
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
+	try {
+		double t1t, t2t;
+		Sound_getStartAndEndTimesOfSounding (me, minPitch, timeStep, silenceThreshold, minSilenceDuration,
+			minSoundingDuration, &t1t, &t2t);
+		if (t1t >= t2t) {
+			Melder_throw ("Sound is all silent.");
+		}
+		autoSound thee = Sound_extractPart (me, t1t, t2t, kSound_windowShape_RECTANGULAR, 1, true);
+		if (t1 != NULL) *t1 = t1t;
+		if (t2 != NULL) *t2 = t2t;
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Silences not trimmed.");
 	}
 }
 

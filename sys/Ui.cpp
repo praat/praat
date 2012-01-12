@@ -165,7 +165,7 @@ static void UiField_setDefault (UiField me) {
 			}
 		} break; case UI_OPTIONMENU: {
 			#if gtk
-				gtk_combo_box_set_active (GTK_COMBO_BOX (my cascadeButton), (my integerDefaultValue - 1));
+				gtk_combo_box_set_active (GTK_COMBO_BOX (my cascadeButton), my integerDefaultValue - 1);
 			#elif motif
 				for (int i = 1; i <= my options -> size; i ++) {
 					UiOption b = static_cast <UiOption> (my options -> item [i]);
@@ -1256,15 +1256,17 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 			}
 		} break; case UI_OPTIONMENU: {
 			if (value < 1 || value > field -> options -> size) value = 1;   /* Guard against incorrect prefs file. */
-			for (int i = 1; i <= field -> options -> size; i ++) {
-				UiOption b = static_cast <UiOption> (field -> options -> item [i]);
-				#if motif
-				XmToggleButtonSetState (b -> toggle, i == value, False);
-				if (i == value) {
-					XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
+			#if gtk
+				gtk_combo_box_set_active (GTK_COMBO_BOX (field -> cascadeButton), value - 1);
+			#elif motif
+				for (int i = 1; i <= field -> options -> size; i ++) {
+					UiOption b = static_cast <UiOption> (field -> options -> item [i]);
+					XmToggleButtonSetState (b -> toggle, i == value, False);
+					if (i == value) {
+						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
+					}
 				}
-				#endif
-			}
+			#endif
 		} break; case UI_LIST: {
 			if (value < 1 || value > field -> numberOfStrings) value = 1;   /* Guard against incorrect prefs file. */
 			GuiList_selectItem (field -> list, value);
@@ -1300,25 +1302,24 @@ void UiForm_setString (I, const wchar *fieldName, const wchar *value) {
 			}
 			/* If not found: do nothing (guard against incorrect prefs file). */
 		} break; case UI_OPTIONMENU: {
-			bool found = false;
+			int integerValue = 0;
 			for (int i = 1; i <= field -> options -> size; i ++) {
 				UiOption b = static_cast <UiOption> (field -> options -> item [i]);
 				if (wcsequ (value, b -> name)) {
-					#if motif
-					XmToggleButtonSetState (b -> toggle, True, False);
-					#endif
-					found = true;
-					if (field -> type == UI_OPTIONMENU) {
-						#if motif
-						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
-						#endif
-					}
-				} else {
-					#if motif
-						XmToggleButtonSetState (b -> toggle, False, False);
-					#endif
+					integerValue = i;
+					break;
 				}
 			}
+			#if gtk
+				gtk_combo_box_set_active (GTK_COMBO_BOX (field -> cascadeButton), integerValue - 1);
+			#else
+				for (int i = 1; i <= field -> options -> size; i ++) {
+					UiOption b = static_cast <UiOption> (field -> options -> item [i]);
+					XmToggleButtonSetState (b -> toggle, i == integerValue, False);
+					if (i == integerValue)
+						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
+				}
+			#endif
 			/* If not found: do nothing (guard against incorrect prefs file). */
 		} break; case UI_LIST: {
 			long i;

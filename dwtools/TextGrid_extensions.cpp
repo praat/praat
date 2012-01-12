@@ -304,6 +304,94 @@ TextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 	}
 }
 
+void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const wchar_t *mark) {
+	try {
+		if (xmax <= my xmax) return; // nothing to be done
+		if (mark != NULL) {
+			autoTextInterval interval = TextInterval_create (my xmax, xmax, mark);
+			Collection_addItem (my intervals, interval.transfer());
+		}
+		my xmax = xmax;
+	} catch (MelderError) {
+		Melder_throw (L"Larger end time of IntervalTier not set.");
+	}
+}
+
+void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const wchar_t *mark) {
+	try {
+		if (xmin >= my xmin) return; // nothing to be done
+		if (mark != NULL) {
+			autoTextInterval interval = TextInterval_create (xmin, my xmin, mark);
+			Collection_addItem (my intervals, interval.transfer());
+		}
+		my xmin = xmin;
+	} catch (MelderError) {
+		Melder_throw (L"Earlier start time of IntervalTier not set.");
+	}
+}
+
+void TextTier_setLaterEndTime (TextTier me, double xmax, const wchar_t *mark) {
+	try {
+		if (xmax <= my xmax) return; // nothing to be done
+		if (mark != NULL) {
+			autoTextPoint textpoint = TextPoint_create (my xmax, mark);
+			Collection_addItem (my points, textpoint.transfer());
+		}
+		my xmax = xmax;
+	} catch (MelderError) {
+		Melder_throw (L"Larger end time of TextTier not set.");
+	}
+}
+
+void TextTier_setEarlierStartTime (TextTier me, double xmin, const wchar_t *mark) {
+	try {
+		if (xmin >= my xmin) return; // nothing to be done
+		if (mark != NULL) {
+			autoTextPoint textpoint = TextPoint_create (my xmin, mark);
+			Collection_addItem (my points, textpoint.transfer());
+		}
+		my xmin = xmin;
+	} catch (MelderError) {
+		Melder_throw (L"Earlier start time of TextTier not set.");
+	}
+}
+
+void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const wchar_t *imark, const wchar_t *pmark) {
+	try {
+		if (xmin >= my xmin) return;
+		for (long tierNumber = 1 ; tierNumber <= my tiers -> size; tierNumber++) {
+			Function tier = (Function) my tiers -> item [tierNumber];
+			if (tier -> classInfo == classIntervalTier) {
+				IntervalTier_setEarlierStartTime ((IntervalTier) tier, xmin, imark);
+
+			} else {
+				TextTier_setEarlierStartTime ((TextTier) tier, xmin, pmark);
+			}
+		}
+		my xmin = xmin;
+	} catch (MelderError) {
+		Melder_throw (L"Earlier start time of TextGrid not set.");
+	}
+}
+
+void TextGrid_setLaterEndTime (TextGrid me, double xmax, const wchar_t *imark, const wchar_t *pmark) {
+	try {
+		if (xmax <= my xmax) return;
+		for (long tierNumber =1 ; tierNumber <= my tiers -> size; tierNumber++) {
+			Function tier = (Function) my tiers -> item [tierNumber];
+			if (tier -> classInfo == classIntervalTier) {
+				IntervalTier_setLaterEndTime ((IntervalTier) tier, xmax, imark);
+
+			} else {
+				TextTier_setLaterEndTime ((TextTier) tier, xmax, pmark);
+			}
+		}
+		my xmax = xmax;
+	} catch (MelderError) {
+		Melder_throw (L"Larger end time of TextGrid not set.");
+	}
+}
+
 void TextGrid_extendTime (TextGrid me, double extra_time, int position) {
 	autoTextGrid thee = 0;
 	try {
@@ -503,6 +591,83 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
 		}
 	} catch (MelderError) {
 		Melder_throw (me, ": labels not changed");
+	}
+}
+
+// Precondition: if (preserveTimes) { my xmax <= thy xmin }
+// Postcondition: my xmin preserved
+void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes) {
+	try {
+		if (preserveTimes && my xmax < thy xmin) {
+			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, L"");
+			Collection_addItem (my intervals, connection.transfer());
+		}
+		for (long iint = 1; iint <= thy intervals -> size; iint++) {
+			autoTextInterval ti = (TextInterval) Data_copy ((Data) thy intervals -> item[iint]);
+			if (not preserveTimes) {
+				ti -> xmin += my xmax - thy xmin;
+				ti -> xmax += my xmax - thy xmin;
+			}
+			Collection_addItem (my intervals, ti.transfer());
+		}
+		my xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
+	} catch (MelderError) {
+		Melder_throw ("IntervalTiers not appended.");
+	}
+}
+
+// Precondition: if (preserveTimes) { my xmax <= thy xmin }
+void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
+	try {
+		for (long iint = 1; iint <= thy points -> size; iint++) {
+			autoTextPoint tp = (TextPoint) Data_copy ((Data) thy points -> item[iint]);
+			if (not preserveTimes) {
+				tp -> number += my xmax - thy xmin;
+			}
+			Collection_addItem (my points, tp.transfer());
+		}
+		my xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
+	} catch (MelderError) {
+		Melder_throw ("TextTiers not appended.");
+	}
+}
+
+void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
+{
+	try {
+		if (my tiers -> size != thy tiers -> size) {
+			Melder_throw ("The number of tiers must be equal.");
+		}
+		if (preserveTimes && thy xmin < my xmax) {
+			Melder_throw ("The start time of the second TextGrid can't be earlier than the end time of the first one if you want to preserve times.");
+		}
+		for (long itier = 1; itier <= my tiers -> size; itier++) {
+			Function anyTier = (Function) my tiers -> item [itier];
+			if (anyTier -> classInfo == classIntervalTier) {
+				IntervalTiers_append_inline ((IntervalTier) anyTier, (IntervalTier) thy tiers -> item [itier], preserveTimes);
+			} else { // TextTier
+				TextTiers_append_inline ((TextTier) anyTier, (TextTier) thy tiers -> item [itier], preserveTimes);
+			}
+		}
+		my xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
+	} catch (MelderError) {
+		Melder_throw ("TextGrids not appended.");
+	}
+}
+
+TextGrid TextGrids_to_TextGrid_appendContinuous (Collection me, bool preserveTimes) {
+	try {
+		if (my size == 1) {
+			return (TextGrid) Data_copy ((Data) my item[1]);
+		}
+		autoTextGrid thee = (TextGrid) Data_copy ((Data) my item[1]);
+		for (long igrid = 2; igrid <= my size; igrid++) {
+			TextGrids_append_inline (thee.peek(), (TextGrid) my item[igrid], preserveTimes);
+		}
+		if (not preserveTimes) Function_shiftXBy ((Function) thee.peek(), -thy xmin);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw ("No aligned TextGrid created from Collection.");
 	}
 }
 

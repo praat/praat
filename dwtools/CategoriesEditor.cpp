@@ -32,6 +32,7 @@
  djmw 20090107 Removed a bug in update that caused editor to crash on replace
  djmw 20090203 Removed potential crashes in CategoriesEditor<command>_create.
  djmw 20110304 Thing_new
+ djmw 20111110 Use autostringvector
 */
 
 #define CategoriesEditor_TEXTMAXLENGTH 100
@@ -485,7 +486,7 @@ static void updateWidgets (I) { /*all buttons except undo & redo */
 
 static void update (I, long from, long to, const long *select, long nSelect) {
 	iam (CategoriesEditor);
-	long size = ( (Categories) my data) -> size;
+	long size = ((Categories) my data) -> size;
 
 	if (size == 0) {
 		autoSimpleString str = SimpleString_create (CategoriesEditor_EMPTYLABEL);

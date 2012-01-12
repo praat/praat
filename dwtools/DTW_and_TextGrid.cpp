@@ -34,20 +34,29 @@ TextTier DTW_and_TextTier_to_TextTier_old (DTW me, TextTier thee);
 /* Get times from TextGrid and substitute new time form the y-times of the DTW. */
 TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee) {
 	try {
-		if (my ymin != thy xmin || my ymax != thy xmax) Melder_throw
-			("The domain of the TextTier and the y-domain of the DTW must be equal.");
-
-		autoTextTier him = Data_copy (thee);
-
-		his xmin = my xmin;
-		his xmax = my xmax;
-		for (long i = 1; i <= his points -> size; i++) {
-			TextPoint textpoint = (TextPoint) his points -> item[i];
-			double time = DTW_getXTimeFromYTime (me, textpoint -> number);
-
-			textpoint -> number = time;
+		if (my ymin == thy xmin && my ymax == thy xmax) { // map from Y to X
+			autoTextTier him = Data_copy (thee);
+			his xmin = my xmin;
+			his xmax = my xmax;
+			for (long i = 1; i <= his points -> size; i++) {
+				TextPoint textpoint = (TextPoint) his points -> item[i];
+				double time = DTW_getXTimeFromYTime (me, textpoint -> number);
+				textpoint -> number = time;
+			}
+			return him.transfer();
+		} else if (my xmin == thy xmin && my xmax == thy xmax) { // map from X to Y
+			autoTextTier him = Data_copy (thee);
+			his xmin = my ymin;
+			his xmax = my ymax;
+			for (long i = 1; i <= his points -> size; i++) {
+				TextPoint textpoint = (TextPoint) his points -> item[i];
+				double time = DTW_getYTimeFromXTime (me, textpoint -> number);
+				textpoint -> number = time;
+			}
+			return him.transfer();
+		} else {
+			Melder_throw ("The domain of the TextTier and one of the domains of the DTW must be equal.");
 		}
-		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw ("TextTier not created from DTW & TextTier.");
 	}
@@ -55,21 +64,33 @@ TextTier DTW_and_TextTier_to_TextTier (DTW me, TextTier thee) {
 
 IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee) {
 	try {
-		if ( (my ymin != thy xmin) || my ymax != thy xmax) Melder_throw
-			("The domain of the IntervalTier and the y-domain of the DTW must be equal.");
-
-		autoIntervalTier him = Data_copy (thee);
-
-		his xmin = my xmin;
-		his xmax = my xmax;
-		for (long i = 1; i <= his intervals -> size; i++) {
-			TextInterval textinterval = (TextInterval) his intervals -> item[i];
-			double xmin = DTW_getXTimeFromYTime (me, textinterval -> xmin);
-			textinterval -> xmin = xmin;
-			double xmax = DTW_getXTimeFromYTime (me, textinterval -> xmax);
-			textinterval -> xmax = xmax;
+		if (my ymin == thy xmin && my ymax == thy xmax) { // map from Y to X
+			autoIntervalTier him = Data_copy (thee);
+			his xmin = my xmin;
+			his xmax = my xmax;
+			for (long i = 1; i <= his intervals -> size; i++) {
+				TextInterval textinterval = (TextInterval) his intervals -> item[i];
+				double xmin = DTW_getXTimeFromYTime (me, textinterval -> xmin);
+				textinterval -> xmin = xmin;
+				double xmax = DTW_getXTimeFromYTime (me, textinterval -> xmax);
+				textinterval -> xmax = xmax;
+			}
+			return him.transfer();
+		} else if (my xmin == thy xmin && my xmax == thy xmax) { // map from X to Y
+			autoIntervalTier him = Data_copy (thee);
+			his xmin = my ymin;
+			his xmax = my ymax;
+			for (long i = 1; i <= his intervals -> size; i++) {
+				TextInterval textinterval = (TextInterval) his intervals -> item[i];
+				double xmin = DTW_getYTimeFromXTime (me, textinterval -> xmin);
+				textinterval -> xmin = xmin;
+				double xmax = DTW_getYTimeFromXTime (me, textinterval -> xmax);
+				textinterval -> xmax = xmax;
+			}
+			return him.transfer();
+		} else {
+			Melder_throw ("The domain of the IntervalTier and one of the domains of the DTW must be equal.");
 		}
-		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw ("IntervalTier not created from DTW & IntervalTier.");
 	}
@@ -78,12 +99,16 @@ IntervalTier DTW_and_IntervalTier_to_IntervalTier (DTW me, IntervalTier thee) {
 TextGrid DTW_and_TextGrid_to_TextGrid (DTW me, TextGrid thee) {
 	try {
 		autoTextGrid him = Thing_new (TextGrid);
-		if ( (my ymin != thy xmin) || my ymax != thy xmax) {
-			Melder_throw ("The domain of the TextGrid and the y-domain of the DTW must be equal.");
+		if (my ymin == thy xmin && my ymax == thy xmax) {
+			his xmin = my xmin;
+			his xmax = my xmax;
+		} else if (my xmin == thy xmin && my xmax == thy xmax) {
+			his xmin = my ymin;
+			his xmax = my ymax;
+		} else {
+			Melder_throw ("The domain of the TextGrid must be equal to one of the domains of the DTW.");
 		}
 
-		his xmin = my xmin;
-		his xmax = my xmax;
 		his tiers = Ordered_create ();
 
 		for (long i = 1; i <= thy tiers -> size; i++) {

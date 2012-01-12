@@ -22,19 +22,24 @@
 #include "TimeSoundAnalysisEditor.h"
 
 Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
-	// new data
-		GuiObject cutButton, copyButton, pasteButton, zeroButton, reverseButton;
-		double maxBuffer;
+	// new data:
+		private:
+			GuiObject cutButton, copyButton, pasteButton, zeroButton, reverseButton;
+			double maxBuffer;
+	// functions:
+		public:
+			void f_init (GuiObject parent, const wchar *title, Sampled data);
 	// overridden methods:
-		virtual void v_createMenus ();
-		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_dataChanged ();
-		virtual void v_prepareDraw ();
-		virtual void v_draw ();
-		virtual void v_play (double tmin, double tmax);
-		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
-		virtual void v_highlightSelection (double left, double right, double bottom, double top);
-		virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
+		private:
+			virtual void v_createMenus ();
+			virtual void v_createHelpMenuItems (EditorMenu menu);
+			virtual void v_dataChanged ();
+			virtual void v_prepareDraw ();
+			virtual void v_draw ();
+			virtual void v_play (double tmin, double tmax);
+			virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
+			virtual void v_highlightSelection (double left, double right, double bottom, double top);
+			virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
 };
 
 SoundEditor SoundEditor_create (

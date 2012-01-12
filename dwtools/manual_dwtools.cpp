@@ -3521,6 +3521,44 @@ INTRO (L"Reverses the sign of the complex part of the selected @Spectrum object(
 NORMAL (L"For real signals, conjugation in the spectral domain amounts to time-inversion in the time domain.")
 MAN_END
 
+MAN_BEGIN (L"SpeechSynthesizer", L"djmw", 20111217)
+NORMAL (L"This is an interface for the @@Espeak@ speech synthesizer.")
+MAN_END
+
+MAN_BEGIN (L"espeak language-voice combination", L"djmw", 20111221)
+INTRO (L"A list of the possible language voice combination in the current @@Espeak@ speech synthesizer.")
+NORMAL (L"Under construction")
+MAN_END
+
+MAN_BEGIN (L"Create SpeechSynthesizer...", L"djmw", 20111221)
+INTRO (L"Creates the @@Espeak@ speech synthesizer.")
+ENTRY (L"Settings")
+TAG (L"%%Language code")
+DEFINITION (L"The code for the @@espeak language-voice combination@ you want to use. In the current version 59 options are available. For example, choose \"en\" for English, \"es\" for spanish, \"zh\" for mandarin etc.")
+TAG (L"%%Espeak-data path,")
+DEFINITION (L"is the directory where the \"espeak-data\" directory can be found.")
+TAG (L"%%Gap between words (s),")
+DEFINITION (L"determines the extra pause length after each spoken word.")
+TAG (L"%%Pitch adjustment (0-99),")
+DEFINITION (L"determines the amount of Hz the pitch of the voice is increased, default is 50).")
+TAG (L"Words per minute (80-450),")
+DEFINITION (L"determines the speeking rate in words per minute, default is 175.")
+TAG (L"%%Extra pause at sentence end,")
+DEFINITION (L"determines whether there is an extra final sentence pause or not.")
+TAG (L"%%Speak punctuations")
+DEFINITION (L"determines how punctuation is spoken.")
+TAG (L"%%Speak CAPITAL characters,")
+DEFINITION (L"determines how capital letters in the text are spoken. ")
+TAG (L"%%Increased pitch of capitals (Hz)")
+DEFINITION (L"determines the amount of pitch increase in Hz on a capital if the option "
+	"\"Capital gets increased pitch\" was chosen.")
+TAG (L"%%Interpret SSML,")
+DEFINITION (L"determines whether Speech Synthesis Markup Language tags in the text will be used "
+	"during synthesis or not. ")
+TAG (L"%%Interpret phoneme codes,")
+DEFINITION (L"determines whether phoneme codes in the text will be used during synthesis or not.")
+MAN_END
+
 MAN_BEGIN (L"SSCP", L"djmw", 19981103)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (L"An object of type SSCP represents the sums of squares and cross products of "
@@ -4072,12 +4110,15 @@ NORMAL (L"The text corpus design was done by the Massachusetts Institute of "
 	"of Standards and Technology (NIST) (@@Lamel et al. (1986)@).")
 MAN_END
 
-MAN_BEGIN (L"VowelEditor", L"djmw", 20080328)
+MAN_BEGIN (L"VowelEditor", L"djmw", 20111124)
 INTRO (L"An Editor for generating vowel-like @@sound|Sound@s from mouse movements.")
 ENTRY (L"How to get a sound")
 NORMAL (L"With the mouse button down, you can move the mouse cursor around in the plane "
-	"spanned by the first two formants. While you move the cursor around, the positions you trace will be indicated by  blue dots. After you release the mouse button, the color of the trajectory will change to black and you will hear the vowel-like sound whose "
-	"first two formants follow this trajectory. The small bars on the trajectory are time markers. Default they are at 50 milliseconds apart and they may give you an indication of the speed you traversed the trajectory.")
+	"spanned by the first two formants. While you move the cursor around, the positions you trace will be "
+	"indicated by  blue dots. After you release the mouse button, the color of the trajectory will change "
+	"to black and you will hear the vowel-like sound whose "
+	"first two formants follow this trajectory. The small bars on the trajectory are time markers. With "
+	"default settings time markers are at 50 milliseconds apart and they may give you an indication of the speed you traversed the trajectory.")
 ENTRY (L"The interface")
 NORMAL (L"In the lower part of the editor a number of buttons and fields are displayed.")
 TAG (L"##Play")
@@ -4095,11 +4136,7 @@ DEFINITION (L"determines the fundamental frequency at the start of the trajector
 TAG (L"##F0 slope (oct/s)")
 DEFINITION (L"determines how many octaves the pitch will changes during the course of the trajectory.")
 NORMAL (L"The bottom line in the Editor displays the first and second formant frequency and the fundamental frequency at the start point and the endpoint of the trajectory.")
-ENTRY (L"Editing")
-TAG (L"##Show one vowel mark...")
-DEFINITION (L"Show extra marker in the editor.")
-TAG (L"##Show vowel marks...")
-DEFINITION (L"Show or don't show reference vowel marker sets for American English or Dutch. ")
+ENTRY (L"Edit menu")
 TAG (L"##Set F0...")
 DEFINITION (L"Set pitch and slope.")
 TAG (L"##Set F3 & F4...")
@@ -4114,8 +4151,19 @@ TAG (L"##Extend trajectory...")
 DEFINITION (L"Extend current trajectory to...")
 TAG (L"##Shift trajectory...")
 DEFINITION (L"Shift current trajectory.")
+ENTRY (L"View menu")
+TAG (L"##F1 & F2 range...#")
+DEFINITION (L"Modify the horizontal and vertical scales.")
+TAG (L"##Show vowel marks from fixed set...#")
+DEFINITION (L"Show the vowel marks in the editor from a fixed set of vowel inventories.")
+TAG (L"##Show vowel marks from Table file...#")
+DEFINITION (L"Put your own marks in the editor. The Table needs to have at least three mandatory columns "
+	"labeled \"Vowel\", \"F1\" and  \"F2\" and "
+	"one optional column labeled \"Size\". The Vowel column contains the vowel marker labels, the F1 and "
+	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
+	"the font size of the vowel markers.")
 TAG (L"##Show trajectory time markers every...")
-DEFINITION (L"")
+DEFINITION (L"Shows time markers as small bars orthogonal to the trajectory. ")
 ENTRY (L"Publishing")
 TAG (L"##Publish Sound")
 TAG (L"##Extract FormantTier")
@@ -4123,6 +4171,15 @@ TAG (L"##Extract PitchTier")
 DEFINITION (L"Publish the Sound, the PitchTier and the FormantTier from the trajectory.")
 TAG (L"##Draw trajectory...")
 DEFINITION (L"Draws the trajectory in the picture window")
+MAN_END
+
+MAN_BEGIN (L"VowelEditor: Show vowel marks from Table file...", L"djmw", 20111124)
+INTRO (L"A command in the @@VowelEditor@ that lets you set your own vowel marks. ")
+ENTRY (L"Layout of the Table")
+NORMAL (L"The Table needs at least three mandatory columns labeled \"Vowel\", \"F1\" and  \"F2\" and "
+	"one optional column labeled \"Size\". The Vowel column contains the vowel marker labels, the F1 and "
+	"F2 columns have the first and second formant frequencies in Hertz. The optional Size column contains "
+	"the font size of the vowel markers.")
 MAN_END
 
 /********************** GSL ********************************************/
@@ -4182,6 +4239,10 @@ MAN_END
 MAN_BEGIN (L"Efron & Tibshirani (1993)", L"djmw", 20031103)
 NORMAL (L"B. Efron & R.J. Tibshirani (1993): %%An introduction "
 	"to the bootstrap%. Chapman & Hall.")
+MAN_END
+
+MAN_BEGIN (L"Espeak", L"djmw", 20111217)
+NORMAL (L"Jonathan Duddington's Espeak speech synthesizer, available via http://espeak.sourceforge.net/")
 MAN_END
 
 MAN_BEGIN (L"Flanagan (1960)", L"djmw", 19980713)

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20110307 Latest modification
+ djmw 20111227 Latest modification
 */
 
 
@@ -31,10 +31,6 @@
 #include "PointProcess.h"
 #include "TextGrid.h"
 #include "Interpreter_decl.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 int Sound_writeToNistAudioFile (Sound me, MelderFile file);
 
@@ -194,11 +190,10 @@ Sound Sound_changeGender_old (Sound me, double fmin, double fmax, double formant
 
 TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration,
-	wchar_t *silentLabel, wchar_t *soundingLabel);
-
-
-#ifdef __cplusplus
-	}
-#endif
+	const wchar_t *silentLabel, const wchar_t *soundingLabel);
+void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
+Sound Sound_trimSilences (Sound me, bool atStart, bool atEnd, double minPitch, double timeStep,
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
 #endif /* _Sound_extensions_h_ */

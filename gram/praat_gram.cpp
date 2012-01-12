@@ -127,7 +127,7 @@ FORM (Network_addConnection, L"Network: Add connection", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		Network_addConnection (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity")); therror
+		me -> f_addConnection (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -141,7 +141,7 @@ FORM (Network_addNode, L"Network: Add node", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		Network_addNode (me, GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping")); therror
+		me -> f_addNode (GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -153,7 +153,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam_LOOP (Network);
-		Network_draw (me, GRAPHICS, GET_INTEGER (L"Colour"));
+		me -> f_draw (GRAPHICS, GET_INTEGER (L"Colour"));
 	}
 END
 
@@ -162,7 +162,7 @@ FORM (Network_getActivity, L"Network: Get activity", 0)
 	OK
 DO
 	iam_ONLY (Network);
-	double activity = Network_getActivity (me, GET_INTEGER (L"Node")); therror
+	double activity = me -> f_getActivity (GET_INTEGER (L"Node")); therror
 	Melder_information (Melder_double (activity));
 END
 
@@ -171,7 +171,7 @@ FORM (Network_getWeight, L"Network: Get weight", 0)
 	OK
 DO
 	iam_ONLY (Network);
-	double weight = Network_getWeight (me, GET_INTEGER (L"Connection")); therror
+	double weight = me -> f_getWeight (GET_INTEGER (L"Connection")); therror
 	Melder_information (Melder_double (weight));
 END
 
@@ -182,7 +182,7 @@ FORM (Network_normalizeActivities, L"Network: Normalize activities", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		Network_normalizeActivities (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
+		me -> f_normalizeActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -194,7 +194,7 @@ FORM (Network_setActivity, L"Network: Set activity", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		Network_setActivity (me, GET_INTEGER (L"Node"), GET_REAL (L"Activity")); therror
+		me -> f_setActivity (GET_INTEGER (L"Node"), GET_REAL (L"Activity")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -206,7 +206,7 @@ FORM (Network_setWeight, L"Network: Set weight", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		Network_setWeight (me, GET_INTEGER (L"Connection"), GET_REAL (L"Weight")); therror
+		me -> f_setWeight (GET_INTEGER (L"Connection"), GET_REAL (L"Weight")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -218,7 +218,7 @@ FORM (Network_setClamping, L"Network: Set clamping", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		Network_setClamping (me, GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
+		me -> f_setClamping (GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
 		praat_dataChanged (me);
 	}
 END
@@ -229,7 +229,7 @@ FORM (Network_spreadActivities, L"Network: Spread activities", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		Network_spreadActivities (me, GET_INTEGER (L"Number of steps"));
+		me -> f_spreadActivities (GET_INTEGER (L"Number of steps"));
 		praat_dataChanged (me);
 	}
 END
@@ -237,7 +237,7 @@ END
 DIRECT (Network_updateWeights)
 	LOOP {
 		iam_LOOP (Network);
-		Network_updateWeights (me);
+		me -> f_updateWeights ();
 		praat_dataChanged (me);
 	}
 END
@@ -249,7 +249,7 @@ FORM (Network_zeroActivities, L"Network: Zero activities", 0)
 DO
 	LOOP {
 		iam (Network);
-		Network_zeroActivities (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
+		me -> f_zeroActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
 		praat_dataChanged (me);
 	}
 END

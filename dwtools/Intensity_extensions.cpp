@@ -46,8 +46,8 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	Sorted_addItem_unsorted (my intervals, ti_new.transfer());
 }
 
-TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration,
-        double minSoundingDuration, const wchar_t *silenceLabel, const wchar_t *soundingLabel) {
+TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB,
+		double minSilenceDuration, double minSoundingDuration, const wchar_t *silenceLabel, const wchar_t *soundingLabel) {
 	try {
 		double duration = my xmax - my xmin, time;
 

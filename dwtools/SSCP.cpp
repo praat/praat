@@ -663,7 +663,7 @@ SSCPs TableOfReal_to_SSCPs_byLabel (I) {
 		for (long i = 2; i <= numberOfCases; i++) {
 			long nrows = 0;
 			const wchar_t *li = mew -> rowLabels[i];
-			if (li != 0 && li != label && wcscmp (li, label)) {
+			if (Melder_wcscmp (li, label) != 0) {
 				// current label different from previous one(s)
 				nrows = i - index; lastrow = i - 1;
 			} else if (i == numberOfCases) {

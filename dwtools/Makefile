@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20110721 Latest modification
+# djmw 20111222 Latest modification
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../audio
+CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../audio -I ../espeak
 
 OBJECTS = Activation.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
@@ -40,6 +40,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Sound_to_MFCC.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrum_extensions.o SSCP.o Strings_extensions.o \
+	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o\
 	Table_extensions.o TableOfReal_and_SVD.o\
 	TableOfReal_extensions.o \
 	TableOfReal_and_Permutation.o \

@@ -1985,7 +1985,7 @@ Sound FricationGrid_to_Sound (FricationGrid me, double samplingFrequency) {
 				double dba = RealTier_getValueAtTime (my fricationAmplitude, t);
 				a = dba == NUMundefined ? 0 : DBSPL_to_A (dba);
 			}
-			lastval = (val += 0.75 * lastval); // soft low-pass
+			lastval = (val += 0.75 * lastval); // TODO: soft low-pass coefficient must be Fs dependent!
 			thy z[1][i] = val * a;
 		}
 
@@ -2257,7 +2257,7 @@ void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
 	} else { // Parallel
 		// source connection tract connection, out
 		//     frication
-		double yf_parallel, yh_parallel, ytrans_phonation, ytrans_parallel, yh_overlap = 0.3, yin_vocalTract_p, yout_vocalTract_p;
+		double yf_parallel, yh_parallel, yh_overlap = 0.3, yin_vocalTract_p, yout_vocalTract_p;
 		double xw[6] = { 0, 1.75, 0.125, 3, 0.25, 0.125 };
 
 		rel_to_abs (xw, xws, 5, xmax2 - xmin);
@@ -2281,8 +2281,8 @@ void KlattGrid_draw (KlattGrid me, Graphics g, int filterModel) {
 
 		double ycs = ymax - 0.5 * height_phonation; // source output connector
 		double ycp = ymax - yf_parallel * yunit; // parallel input connector
-		ytrans_phonation = ycs > ycp ? ycp - ycs : 0;
-		ytrans_parallel = ycp > ycs ? ycs - ycp : 0;
+		double ytrans_phonation = ycs > ycp ? ycp - ycs : 0;
+		double ytrans_parallel = ycp > ycs ? ycs - ycp : 0;
 
 		// source, tract, frication
 		xs1 = xmin; xs2 = xs1 + xw[1];

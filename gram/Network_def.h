@@ -55,24 +55,41 @@ oo_END_STRUCT (NetworkConnection)
 #define ooSTRUCT Network
 oo_DEFINE_CLASS (Network, Data)
 
-	oo_DOUBLE (minimumActivity)
-	oo_DOUBLE (maximumActivity)
-	oo_DOUBLE (spreadingRate)
-	oo_DOUBLE (selfExcitation)
-	oo_DOUBLE (minimumWeight)
-	oo_DOUBLE (maximumWeight)
-	oo_DOUBLE (learningRate)
-	oo_DOUBLE (leak)
-	oo_DOUBLE (xmin)
-	oo_DOUBLE (xmax)
-	oo_DOUBLE (ymin)
-	oo_DOUBLE (ymax)
-	oo_LONG (numberOfNodes)
-	oo_STRUCT_VECTOR (NetworkNode, nodes, numberOfNodes)
-	oo_LONG (numberOfConnections)
-	oo_STRUCT_VECTOR (NetworkConnection, connections, numberOfConnections)
+	oo_DOUBLE (d_minimumActivity)
+	oo_DOUBLE (d_maximumActivity)
+	oo_DOUBLE (d_spreadingRate)
+	oo_DOUBLE (d_selfExcitation)
+	oo_DOUBLE (d_minimumWeight)
+	oo_DOUBLE (d_maximumWeight)
+	oo_DOUBLE (d_learningRate)
+	oo_DOUBLE (d_leak)
+	oo_DOUBLE (d_xmin)
+	oo_DOUBLE (d_xmax)
+	oo_DOUBLE (d_ymin)
+	oo_DOUBLE (d_ymax)
+	oo_LONG (d_numberOfNodes)
+	oo_STRUCT_VECTOR (NetworkNode, d_nodes, d_numberOfNodes)
+	oo_LONG (d_numberOfConnections)
+	oo_STRUCT_VECTOR (NetworkConnection, d_connections, d_numberOfConnections)
 
 	#if oo_DECLARING
+		// functions:
+			void f_init (double minimumActivity, double maximumActivity, double spreadingRate,
+				double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+				double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
+			void f_addNode (double x, double y, double activity, bool clamped);
+			void f_addConnection (long nodeFrom, long nodeTo, double weight, double plasticity);
+			void f_draw (Graphics graphics, bool colour);
+			double f_getActivity (long inode);
+			void f_setActivity (long inode, double activity);
+			double f_getWeight (long iconn);
+			void f_setWeight (long iconn, double weight);
+			void f_setClamping (long inode, bool clamped);
+			void f_zeroActivities (long nodeMin, long nodeMax);
+			void f_normalizeActivities (long nodeMin, long nodeMax);
+			void f_spreadActivities (long numberOfSteps);
+			void f_updateWeights ();
+
 		// overridden methods:
 			virtual void v_info ();
 	#endif

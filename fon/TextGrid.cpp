@@ -1315,12 +1315,14 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = (IntervalTier) anyTier;
 					TextInterval interval = (TextInterval) tier -> intervals -> item [firstRemainingElement];
+					if (tier -> name) MelderFile_write3 (file, L"\n\n! ", tier -> name, L":");
 					MelderFile_write6 (file, L"\n", Melder_integer (firstRemainingTier), L" ", Melder_double (interval -> xmin), L" ",
 						Melder_double (interval -> xmax));
 					texputw4 (file, interval -> text, L"", 0,0,0,0,0);
 				} else {
 					TextTier tier = (TextTier) anyTier;
 					TextPoint point = (TextPoint) tier -> points -> item [firstRemainingElement];
+					if (tier -> name) MelderFile_write3 (file, L"\n\n! ", tier -> name, L":");
 					MelderFile_write5 (file, L"\n", Melder_integer (firstRemainingTier), L" ", Melder_double (point -> number), L" ");
 					texputw4 (file, point -> mark, L"", 0,0,0,0,0);
 				}
