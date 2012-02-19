@@ -2,7 +2,7 @@
 #define _Manual_h_
 /* Manual.h
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,6 @@ Thing_define (Manual, HyperPage) {
 		int suppressLinksHither;
 		wchar *printPagesStartingWith;
 	// overridden methods:
-		virtual void v_destroy ();
 		virtual bool v_scriptable () { return false; }
 		virtual void v_createChildren ();
 		virtual void v_createMenus ();
@@ -50,8 +49,8 @@ Thing_define (Manual, HyperPage) {
 		virtual bool v_isOrdered () { return true; }
 };
 
-void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data);
-Manual Manual_create (GuiObject parent, const wchar *title, Data data);
+void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data, bool ownData);
+Manual Manual_create (GuiObject parent, const wchar *title, Data data, bool ownData);
 
 void Manual_search (Manual me, const wchar *query);
 

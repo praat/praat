@@ -363,16 +363,16 @@ END
 
 static void readFromFile (MelderFile file) {
 	autoData object = (Data) Data_readFromFile (file);
-	if (object.peek() && Thing_member (object.peek(), classManPages)) {
+	if (object.peek() && Thing_member (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
 		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
-		Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, object.transfer()); therror
+		Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, object.transfer(), true); therror
 		if (pages -> executable)
 			Melder_warning (L"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
 		return;
 	}
-	if (object.peek() && Thing_member (object.peek(), classScript)) {
+	if (object.peek() && Thing_member (object.peek(), classScript) && ! Melder_batch) {
 		ScriptEditor_createFromScript (theCurrentPraatApplication -> topShell, NULL, (Script) object.peek());
 		return;
 	}
@@ -422,6 +422,33 @@ FORM_WRITE (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0)
 	}
 END
 
+FORM (ManPages_saveToHtmlDirectory, L"Save all pages as HTML files", 0)
+	LABEL (L"", L"Type a directory name:")
+	TEXTFIELD (L"directory", L"")
+	OK
+structMelderDir currentDirectory = { { 0 } };
+Melder_getDefaultDir (& currentDirectory);
+SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
+DO
+	wchar *directory = GET_STRING (L"directory");
+	LOOP {
+		iam (ManPages);
+		ManPages_writeAllToHtmlDir (me, directory);
+	}
+END
+
+DIRECT (ManPages_view)
+	LOOP {
+		iam (ManPages);
+		ManPage firstPage = static_cast<ManPage> (my pages -> item [1]);
+		autoManual manual = Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, me, false);
+		if (my executable)
+			Melder_warning (L"These manual pages contain links to executable scripts.\n"
+				"Only navigate these pages if you trust their author!");
+		praat_installEditor (manual.transfer(), IOBJECT);
+	}
+END
+
 /********** Callbacks of the Help menu. **********/
 
 FORM (SearchManual, L"Search manual", L"Manual")
@@ -429,10 +456,9 @@ FORM (SearchManual, L"Search manual", L"Manual")
 	TEXTFIELD (L"query", L"")
 	OK
 DO
-	Manual manPage;
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (L"Cannot view a manual from batch.");
-	manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages);
+	Manual manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages, false);
 	Manual_search (manPage, GET_STRING (L"query"));
 END
 
@@ -442,10 +468,9 @@ FORM (GoToManualPage, L"Go to manual page", 0)
 	LIST (L"Page", numberOfPages, pages, 1)}
 	OK
 DO
-	Manual manPage;
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (L"Cannot view a manual from batch.");
-	manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages);
+	Manual manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages, false);
 	HyperPage_goToPage_i (manPage, GET_INTEGER (L"Page")); therror
 END
 
@@ -610,6 +635,9 @@ void praat_addMenus (GuiObject bar) {
 	praat_addAction1 (classData, 0, L"Write to short text file...", 0, praat_HIDDEN, DO_Data_writeToShortTextFile);
 	praat_addAction1 (classData, 0, L"Save as binary file...", 0, 0, DO_Data_writeToBinaryFile);
 	praat_addAction1 (classData, 0, L"Write to binary file...", 0, praat_HIDDEN, DO_Data_writeToBinaryFile);
+
+	praat_addAction1 (classManPages, 1, L"Save to HTML directory...", 0, 0, DO_ManPages_saveToHtmlDirectory);
+	praat_addAction1 (classManPages, 1, L"View", 0, 0, DO_ManPages_view);
 }
 
 void praat_addMenus2 (void) {

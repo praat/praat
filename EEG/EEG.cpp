@@ -41,6 +41,24 @@
 
 Thing_implement (EEG, Function, 0);
 
+void structEEG :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine1 (L"Time domain:");
+	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	if (d_sound != NULL) {
+		MelderInfo_writeLine1 (L"Time sampling of the signal:");
+		MelderInfo_writeLine2 (L"   Number of samples: ", Melder_integer (d_sound -> nx));
+		MelderInfo_writeLine3 (L"   Sampling period: ", Melder_double (d_sound -> dx), L" seconds");
+		MelderInfo_writeLine3 (L"   Sampling frequency: ", Melder_single (1.0 / d_sound -> dx), L" Hz");
+		MelderInfo_writeLine3 (L"   First sample centred at: ", Melder_double (d_sound -> x1), L" seconds");
+	}
+	MelderInfo_writeLine2 (L"Number of cap electrodes: ", Melder_integer (f_getNumberOfCapElectrodes ()));
+	MelderInfo_writeLine2 (L"Number of external electrodes: ", Melder_integer (f_getNumberOfExternalElectrodes ()));
+	MelderInfo_writeLine2 (L"Number of extra sensors: ", Melder_integer (f_getNumberOfExtraSensors ()));
+}
+
 void structEEG :: v_shiftX (double xfrom, double xto) {
 	EEG_Parent :: v_shiftX (xfrom, xto);
 	if (d_sound    != NULL)  Function_shiftXTo (d_sound,    xfrom, xto);
@@ -165,11 +183,13 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 			fread (buffer, 1, 32, f); buffer [32] = '\0';   // reserved
 		}
 		double duration = numberOfDataRecords * durationOfDataRecord;
+		autoEEG him = EEG_create (0, duration);
+		his d_numberOfChannels = numberOfChannels;
 		autoSound me = Sound_createSimple (numberOfChannels, duration, samplingFrequency);
 		for (long record = 1; record <= numberOfDataRecords; record ++) {
 			for (long channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
-				if (channel < numberOfChannels - 8) factor /= 1000000.0;
+				if (channel < numberOfChannels - his f_getNumberOfExtraSensors ()) factor /= 1000000.0;
 				for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 					long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 					Melder_assert (sample <= my nx);
@@ -194,12 +214,43 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 			}
 		}
 		f.close (file);
-		autoEEG him = EEG_create (0, duration);
-		his d_numberOfChannels = numberOfChannels;
 		his d_channelNames = channelNames.transfer();
 		his d_sound = me.transfer();
 		his d_textgrid = thee.transfer();
-		if (numberOfChannels == 80) {
+		if (his f_getNumberOfCapElectrodes () == 32) {
+			his f_setChannelName (1, L"Fp1");
+			his f_setChannelName (2, L"AF3");
+			his f_setChannelName (3, L"F7");
+			his f_setChannelName (4, L"F3");
+			his f_setChannelName (5, L"FC1");
+			his f_setChannelName (6, L"FC5");
+			his f_setChannelName (7, L"T7");
+			his f_setChannelName (8, L"C3");
+			his f_setChannelName (9, L"CP1");
+			his f_setChannelName (10, L"CP5");
+			his f_setChannelName (11, L"P7");
+			his f_setChannelName (12, L"P3");
+			his f_setChannelName (13, L"Pz");
+			his f_setChannelName (14, L"PO3");
+			his f_setChannelName (15, L"O1");
+			his f_setChannelName (16, L"Oz");
+			his f_setChannelName (17, L"O2");
+			his f_setChannelName (18, L"PO4");
+			his f_setChannelName (19, L"P4");
+			his f_setChannelName (20, L"P8");
+			his f_setChannelName (21, L"CP6");
+			his f_setChannelName (22, L"CP2");
+			his f_setChannelName (23, L"C4");
+			his f_setChannelName (24, L"T8");
+			his f_setChannelName (25, L"FC6");
+			his f_setChannelName (26, L"FC2");
+			his f_setChannelName (27, L"F4");
+			his f_setChannelName (28, L"F8");
+			his f_setChannelName (29, L"AF4");
+			his f_setChannelName (30, L"Fp2");
+			his f_setChannelName (31, L"Fz");
+			his f_setChannelName (32, L"Cz");
+		} else if (his f_getNumberOfCapElectrodes () == 64) {
 			his f_setChannelName (1, L"Fp1");
 			his f_setChannelName (2, L"AF7");
 			his f_setChannelName (3, L"AF3");
@@ -280,7 +331,7 @@ static void detrend (double *a, long numberOfSamples) {
 }
 
 void structEEG :: f_detrend () {
-	for (long ichan = 1; ichan <= d_numberOfChannels - 8; ichan ++) {
+	for (long ichan = 1; ichan <= d_numberOfChannels - f_getNumberOfExtraSensors (); ichan ++) {
 		detrend (d_sound -> z [ichan], d_sound -> nx);
 	}
 }
@@ -294,7 +345,7 @@ void structEEG :: f_filter (double lowFrequency, double lowWidth, double highFre
 	autoNUMfft_Table fftTable;
 	NUMfft_Table_init (& fftTable, nsampFFT); therror
 */
-		for (long ichan = 1; ichan <= d_numberOfChannels - 8; ichan ++) {
+		for (long ichan = 1; ichan <= d_numberOfChannels - f_getNumberOfExtraSensors (); ichan ++) {
 			autoSound channel = Sound_extractChannel (d_sound, ichan);
 			autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
 			Spectrum_passHannBand (spec.peek(), lowFrequency, 0.0, lowWidth);
@@ -319,14 +370,17 @@ void structEEG :: f_setChannelName (long channelNumber, const wchar *a_name) {
 void structEEG :: f_setExternalElectrodeNames (const wchar *nameExg1, const wchar *nameExg2, const wchar *nameExg3, const wchar *nameExg4,
 	const wchar *nameExg5, const wchar *nameExg6, const wchar *nameExg7, const wchar *nameExg8)
 {
-	f_setChannelName (d_numberOfChannels - 15, nameExg1);
-	f_setChannelName (d_numberOfChannels - 14, nameExg2);
-	f_setChannelName (d_numberOfChannels - 13, nameExg3);
-	f_setChannelName (d_numberOfChannels - 12, nameExg4);
-	f_setChannelName (d_numberOfChannels - 11, nameExg5);
-	f_setChannelName (d_numberOfChannels - 10, nameExg6);
-	f_setChannelName (d_numberOfChannels -  9, nameExg7);
-	f_setChannelName (d_numberOfChannels -  8, nameExg8);
+	if (f_getNumberOfExternalElectrodes () != 8)
+		Melder_throw (L"There aren't 8 external electrodes.");
+	const long firstExternalElectrode = f_getNumberOfCapElectrodes () + 1;
+	f_setChannelName (firstExternalElectrode, nameExg1);
+	f_setChannelName (firstExternalElectrode + 1, nameExg2);
+	f_setChannelName (firstExternalElectrode + 2, nameExg3);
+	f_setChannelName (firstExternalElectrode + 3, nameExg4);
+	f_setChannelName (firstExternalElectrode + 4, nameExg5);
+	f_setChannelName (firstExternalElectrode + 5, nameExg6);
+	f_setChannelName (firstExternalElectrode + 6, nameExg7);
+	f_setChannelName (firstExternalElectrode + 7, nameExg8);
 }
 
 void structEEG :: f_subtractReference (const wchar *channelNumber1_text, const wchar *channelNumber2_text) {
@@ -336,10 +390,31 @@ void structEEG :: f_subtractReference (const wchar *channelNumber1_text, const w
 	long channelNumber2 = f_getChannelNumber (channelNumber2_text);
 	if (channelNumber2 == 0 && channelNumber2_text [0] != '\0')
 		Melder_throw (this, ": no channel named \"", channelNumber2_text, "\".");
+	const long numberOfElectrodeChannels = d_numberOfChannels - f_getNumberOfExtraSensors ();
 	for (long isamp = 1; isamp <= d_sound -> nx; isamp ++) {
 		double referenceValue = channelNumber2 == 0 ? d_sound -> z [channelNumber1] [isamp] :
 			0.5 * (d_sound -> z [channelNumber1] [isamp] + d_sound -> z [channelNumber2] [isamp]);
-		for (long ichan = 1; ichan <= d_numberOfChannels - 8; ichan ++) {
+		for (long ichan = 1; ichan <= numberOfElectrodeChannels; ichan ++) {
+			d_sound -> z [ichan] [isamp] -= referenceValue;
+		}
+	}
+}
+
+void structEEG :: f_subtractMeanChannel (long fromChannel, long toChannel) {
+	if (fromChannel < 1 || fromChannel > d_numberOfChannels)
+		Melder_throw ("No channel ", fromChannel, ".");
+	if (toChannel < 1 || toChannel > d_numberOfChannels)
+		Melder_throw ("No channel ", toChannel, ".");
+	if (fromChannel > toChannel)
+		Melder_throw ("Channel range cannot run from ", fromChannel, " to ", toChannel, ". Please reverse.");
+	const long numberOfElectrodeChannels = d_numberOfChannels - f_getNumberOfExtraSensors ();
+	for (long isamp = 1; isamp <= d_sound -> nx; isamp ++) {
+		double referenceValue = 0.0;
+		for (long ichan = fromChannel; ichan <= toChannel; ichan ++) {
+			referenceValue += d_sound -> z [ichan] [isamp];
+		}
+		referenceValue /= (toChannel - fromChannel + 1);
+		for (long ichan = 1; ichan <= numberOfElectrodeChannels; ichan ++) {
 			d_sound -> z [ichan] [isamp] -= referenceValue;
 		}
 	}

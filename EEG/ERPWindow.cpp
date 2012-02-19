@@ -21,7 +21,9 @@
 
 Thing_implement (ERPWindow, SoundEditor, 0);
 
-static struct { int inclination, azimuth; double topX, topY; } biosemiCapCoordinates [1+64] =
+typedef struct { int inclination, azimuth; double topX, topY; } BiosemiLocationData;
+
+static BiosemiLocationData biosemiCapCoordinates64 [1+64] =
 {
 	/*
 	 * BioSemi says:
@@ -29,6 +31,7 @@ static struct { int inclination, azimuth; double topX, topY; } biosemiCapCoordin
 	 *     by inclination (from Cz, pos is right hemisphere, neg is left hemisphere),
      *     and azimuth (from T7 for left hemisphere, and from T8 for the right hemisphere, pos is anti-clockwise, neg is clockwise)"
 	 */
+	{0,0},
 	{ -92, -72 },   //  1 Fp1
 	{ -92, -54 },   //  2 AF7
 	{ -74, -65 },   //  3 AF3
@@ -95,24 +98,78 @@ static struct { int inclination, azimuth; double topX, topY; } biosemiCapCoordin
 	{  92, -72 }    // 64 O2
 };
 
+static BiosemiLocationData biosemiCapCoordinates32 [1+32] =
+{
+	/*
+	 * BioSemi says:
+	 *    "Spherical coordinates in degrees,
+	 *     by inclination (from Cz, pos is right hemisphere, neg is left hemisphere),
+     *     and azimuth (from T7 for left hemisphere, and from T8 for the right hemisphere, pos is anti-clockwise, neg is clockwise)"
+	 */
+	{0,0},
+	{ -92, -72 },   //  1 Fp1
+	{ -74, -65 },   //  2 AF3
+	{ -92, -36 },   //  3 F7
+	{ -60, -51 },   //  4 F3
+	{ -32, -45 },   //  5 FC1
+	{ -72, -21 },   //  6 FC5
+	{ -92,   0 },   //  7 T7
+	{ -46,   0 },   //  8 C3
+	{ -32,  45 },   //  9 CP1
+	{ -72,  21 },   // 10 CP5
+	{ -92,  36 },   // 11 P7
+	{ -60,  51 },   // 12 P3
+	{  46, -90 },   // 13 Pz
+	{ -74,  65 },   // 14 PO3
+	{ -92,  72 },   // 15 O1
+	{  92, -90 },   // 16 Oz
+	{  92, -72 },    // 17 O2
+	{  74, -65 },   // 18 PO4
+	{  60, -51 },   // 19 P4
+	{  92, -36 },   // 20 P8
+	{  72, -21 },   // 21 CP6
+	{  32, -45 },   // 22 CP2
+	{  46,   0 },   // 23 C4
+	{  92,   0 },   // 24 T8
+	{  72,  21 },   // 25 FC6
+	{  32,  45 },   // 26 FC2
+	{  60,  51 },   // 27 F4
+	{  92,  36 },   // 28 F8
+	{  74,  65 },   // 29 AF4
+	{  92,  72 },   // 30 Fp2
+	{  46,  90 },   // 31 Fz
+	{   0,   0 },   // 32 Cz
+};
+
 void structERPWindow :: v_drawSelectionViewer () {
 	ERP erp = (ERP) data;
-	long sampleNumber = Sampled_xToNearestIndex (erp, startSelection);
 	Graphics_setWindow (graphics, -1.1, 1.1, -1.01, 1.19);
 	Graphics_setGrey (graphics, 0.85);
 	Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (graphics, Graphics_BLACK);
-	for (long ichan = 1; ichan <= 64; ichan ++) {
-		double inclination = (double) biosemiCapCoordinates [ichan]. inclination;
-		double azimuth = (double) biosemiCapCoordinates [ichan]. azimuth;
+	long numberOfDrawableChannels =
+			erp -> ny >= 64 && Melder_wcsequ (erp -> d_channelNames [64], L"O2") ? 64 :
+			erp -> ny >= 32 && Melder_wcsequ (erp -> d_channelNames [32], L"Cz") ? 32 :
+			0;
+	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
+	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
+		double inclination = (double) biosemiLocationData [ichan]. inclination;
+		double azimuth = (double) biosemiLocationData [ichan]. azimuth;
 		bool rightHemisphere = inclination >= 0.0;
 		double r = fabs (inclination / 115.0);
 		double theta = rightHemisphere ? azimuth * (NUMpi / 180.0) : (azimuth + 180.0) * (NUMpi / 180.0);
-		biosemiCapCoordinates [ichan]. topX = r * cos (theta);
-		biosemiCapCoordinates [ichan]. topY = r * sin (theta);
+		biosemiLocationData [ichan]. topX = r * cos (theta);
+		biosemiLocationData [ichan]. topY = r * sin (theta);
 	}
 	long n = 201;
 	double d = 2.0 / (n - 1);
+	autoNUMvector <double> mean (1, numberOfDrawableChannels);
+	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
+		mean [ichan] =
+			startSelection == endSelection ?
+				Sampled_getValueAtX (erp, startSelection, ichan, 0, true) :
+				Vector_getMean (erp, startSelection, endSelection, ichan);
+	}
 	autoNUMmatrix <double> image (1, n, 1, n);
 	for (long irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
@@ -120,19 +177,19 @@ void structERPWindow :: v_drawSelectionViewer () {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y <= 1.0) {
 				double value = NUMundefined, sum = 0.0, weight = 0.0;
-				for (long ichan = 1; ichan <= 64; ichan ++) {
-					double dx = x - biosemiCapCoordinates [ichan]. topX;
-					double dy = y - biosemiCapCoordinates [ichan]. topY;
+				for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
+					double dx = x - biosemiLocationData [ichan]. topX;
+					double dy = y - biosemiLocationData [ichan]. topY;
 					double distance = sqrt (dx * dx + dy * dy);
 					if (distance < 1e-12) {
-						value = erp -> z [ichan] [sampleNumber];
+						value = mean [ichan];
 						break;
 					}
-					distance = distance * distance * distance;
-					sum += erp -> z [ichan] [sampleNumber] / distance;
+					distance = distance * distance * distance * distance * distance * distance;
+					sum += mean [ichan] / distance;
 					weight += 1.0 / distance;
 				}
-				if (value == NUMundefined) value = sum / weight;
+				if (value == NUMundefined) value = sum == 0.0 ? 0.0 : sum / weight;
 				image [irow] [icol] = value;
 			}
 		}
@@ -151,7 +208,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 		for (long icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y > 1.0) {
-				image [irow] [icol] = -0.63 * absoluteExtremum;
+				image [irow] [icol] = -0.625 * absoluteExtremum;
 			}
 		}
 	}

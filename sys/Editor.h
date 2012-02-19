@@ -162,6 +162,7 @@ Thing_define (Editor, Thing) {
 		GuiObject menuBar, undoButton, searchButton;
 		Ordered menus;
 		Data data, previousData;   // the data that can be displayed and edited
+		bool d_ownData;
 		wchar undoText [100];
 		Graphics pictureGraphics;
 		void (*d_dataChangedCallback) (Editor me, void *closure);                   void *d_dataChangedClosure;

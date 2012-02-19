@@ -96,12 +96,6 @@ static void menu_cb_searchForPageList (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-void structManual :: v_destroy () {
-	ManPages pages = (ManPages) data;
-	if (pages && pages -> dynamic) forget (pages);
-	Manual_Parent :: v_destroy ();
-}
-
 void structManual :: v_draw () {
 	ManPages manPages = (ManPages) data;
 	ManPage page;
@@ -553,7 +547,7 @@ int structManual :: v_goToPage (const wchar_t *title) {
 	}
 }
 
-void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data) {
+void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data, bool ownData) {
 	ManPages manPages = (ManPages) data;
 	wchar windowTitle [101];
 	long i;
@@ -574,15 +568,16 @@ void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data) {
 	} else {
 		wcscpy (windowTitle, L"Manual");
 	}
+	my d_ownData = ownData;
 	HyperPage_init (me, parent, windowTitle, data);
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_wcsdup_f (title);   /* BAD */
 }
 
-Manual Manual_create (GuiObject parent, const wchar *title, Data data) {
+Manual Manual_create (GuiObject parent, const wchar *title, Data data, bool ownData) {
 	try {
 		autoManual me = Thing_new (Manual);
-		Manual_init (me.peek(), parent, title, data);
+		Manual_init (me.peek(), parent, title, data, ownData);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Manual window not created.");

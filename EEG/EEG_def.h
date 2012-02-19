@@ -32,11 +32,15 @@ oo_DEFINE_CLASS (EEG, Function)
 			void f_init (double tmin, double tmax);
 			long f_getChannelNumber (const wchar *channelName);
 			void f_setChannelName (long channelNumber, const wchar *a_name);
+			long f_getNumberOfCapElectrodes () { return (d_numberOfChannels - 1) & ~ 15L; }   // BUG
+			long f_getNumberOfExternalElectrodes () { return d_numberOfChannels - f_getNumberOfCapElectrodes () - f_getNumberOfExtraSensors (); }
+			long f_getNumberOfExtraSensors () { return d_numberOfChannels & 1 ? 1 : 8; }   // BUG
 			void f_setExternalElectrodeNames (const wchar *nameExg1, const wchar *nameExg2, const wchar *nameExg3, const wchar *nameExg4,
 				const wchar *nameExg5, const wchar *nameExg6, const wchar *nameExg7, const wchar *nameExg8);
 			void f_detrend ();
 			void f_filter (double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz);
 			void f_subtractReference (const wchar *channelNumber1, const wchar *channelNumber2);
+			void f_subtractMeanChannel (long fromChannel, long toChannel);
 			void f_setChannelToZero (long channelNumber);
 			void f_setChannelToZero (const wchar *channelName);
 			EEG f_extractChannel (long channelNumber);
@@ -45,6 +49,7 @@ oo_DEFINE_CLASS (EEG, Function)
 			TextGrid f_extractTextGrid () { return Data_copy (d_textgrid); }
 		// overridden methods:
 		protected:
+			virtual void v_info ();
 			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 			virtual void v_shiftX (double xfrom, double xto);
 			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);

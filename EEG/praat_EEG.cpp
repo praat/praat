@@ -160,6 +160,19 @@ DO
 	}
 END
 
+FORM (EEG_subtractMeanChannel, L"Subtract mean channel", 0)
+	LABEL (L"label", L"Range of reference channels:")
+	NATURAL (L"From channel", L"1")
+	NATURAL (L"To channel", L"32")
+	OK
+DO
+	LOOP {
+		iam (EEG);
+		my f_subtractMeanChannel (GET_INTEGER (L"From channel"), GET_INTEGER (L"To channel"));
+		praat_dataChanged (me);
+	}
+END
+
 FORM (EEG_subtractReference, L"Subtract reference", 0)
 	WORD (L"Reference channel 1", L"MASL")
 	WORD (L"Reference channel 2 (optional)", L"MASR")
@@ -560,6 +573,7 @@ void praat_EEG_init (void) {
 		praat_addAction1 (classEEG, 1, L"Edit external electrode names...", 0, 1, DO_EEG_editExternalElectrodeNames);
 		praat_addAction1 (classEEG, 0, L"-- processing --", 0, 1, DO_EEG_detrend);
 		praat_addAction1 (classEEG, 0, L"Subtract reference...", 0, 1, DO_EEG_subtractReference);
+		praat_addAction1 (classEEG, 0, L"Subtract mean channel...", 0, 1, DO_EEG_subtractMeanChannel);
 		praat_addAction1 (classEEG, 0, L"Detrend", 0, 1, DO_EEG_detrend);
 		praat_addAction1 (classEEG, 0, L"Filter...", 0, 1, DO_EEG_filter);
 		praat_addAction1 (classEEG, 0, L"Set channel to zero...", 0, 1, DO_EEG_setChannelToZero);

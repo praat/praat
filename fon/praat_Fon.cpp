@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -6688,6 +6688,7 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
 	INCLUDE_MANPAGES (manual_programming_init)
 	INCLUDE_MANPAGES (manual_gram_init)
 	INCLUDE_MANPAGES (manual_Exp_init)
+	INCLUDE_MANPAGES (manual_EEG_init)
 
 	praat_addMenuCommand (L"Objects", L"New", L"-- new synthesis --", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_Artsynth_init)
@@ -6700,4 +6701,4 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_EEG_init)
 }
 
-/* End of file praat_Fon.c */
+/* End of file praat_Fon.cpp */

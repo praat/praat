@@ -48,6 +48,15 @@ Strings Strings_createFixedLength (long numberOfStrings) {
 	}
 }
 
+long Strings_findString (Strings me, const wchar_t *string) {
+	for (long i = 1; i <= my numberOfStrings; i++) {
+		if (Melder_wcsequ (my strings[i], string)) {
+			return i;
+		}
+	}
+	return 0;
+}
+
 Strings Strings_append (Collection me) {
 	try {
 		long index = 1, numberOfStrings = 0;

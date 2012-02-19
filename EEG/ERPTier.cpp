@@ -82,7 +82,7 @@ ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit) {
 	try {
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), fromTime, toTime);
-		thy d_numberOfChannels = my d_numberOfChannels - 8;
+		thy d_numberOfChannels = my d_numberOfChannels - my f_getNumberOfExtraSensors ();
 		thy d_channelNames = NUMvector <wchar *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (my d_channelNames [ichan]);
@@ -146,8 +146,6 @@ void structERPTier :: f_rejectArtefacts (double threshold) {
 		return;   // nothing to do
 	ERPPoint firstEvent = f_peekEvent (1);
 	long numberOfChannels = firstEvent -> d_erp -> ny;
-	if (numberOfChannels <= 8)
-		return;   // nothing to do
 	long numberOfSamples = firstEvent -> d_erp -> nx;
 	if (numberOfSamples < 1)
 		return;   // nothing to do
@@ -155,7 +153,7 @@ void structERPTier :: f_rejectArtefacts (double threshold) {
 		ERPPoint event = f_peekEvent (ievent);
 		double minimum = event -> d_erp -> z [1] [1];
 		double maximum = minimum;
-		for (long ichannel = 1; ichannel <= numberOfChannels - 8; ichannel ++) {
+		for (long ichannel = 1; ichannel <= (numberOfChannels & ~ 15); ichannel ++) {
 			double *channel = event -> d_erp -> z [ichannel];
 			for (long isample = 1; isample <= numberOfSamples; isample ++) {
 				double value = channel [isample];

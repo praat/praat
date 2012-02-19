@@ -1,6 +1,6 @@
 /* SpeechSynthesizer_and_TextGrid.cpp
  *
- * Copyright (C) 2011 David Weenink
+ * Copyright (C) 2011-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ Sound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInt
 			MelderString_append (&text, L"[[ ", thy text, L" ]]");
 		}
 		autoSound him = SpeechSynthesizer_to_Sound_special (me, (isPhonemeTier ? text.string : thy text),
-			my d_wordgap, my d_pitchAdjustment, my d_wordsPerMinute, my d_interpretSSML,
+			my d_wordgap, my d_pitchAdjustment, my d_pitchRange, my d_wordsPerMinute, my d_interpretSSML,
 			interpretPhonemeCodes, my d_ipa, tg, NULL);
 		return him.transfer();
 	} catch (MelderError) {
@@ -135,7 +135,7 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer m
 		if (hasSilence_s2) {
 			s_atg2.reset (TextGrid_extractPart (atg2.peek(), t1_s2, t2_s2, true));
 		}
-		// fot the MFCC analysis
+		// for the MFCC analysis
 		long numberOfCoefficients = 12;
 		double analysisWidth = 0.02, dt = 0.005, f1_mel = 100, fmax_mel = 0, df_mel = 100;
 		autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.peek() : thee),

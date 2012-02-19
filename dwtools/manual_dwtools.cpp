@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3530,7 +3530,7 @@ INTRO (L"A list of the possible language voice combination in the current @@Espe
 NORMAL (L"Under construction")
 MAN_END
 
-MAN_BEGIN (L"Create SpeechSynthesizer...", L"djmw", 20111221)
+MAN_BEGIN (L"Create SpeechSynthesizer...", L"djmw", 20120113)
 INTRO (L"Creates the @@Espeak@ speech synthesizer.")
 ENTRY (L"Settings")
 TAG (L"%%Language code")
@@ -3541,17 +3541,10 @@ TAG (L"%%Gap between words (s),")
 DEFINITION (L"determines the extra pause length after each spoken word.")
 TAG (L"%%Pitch adjustment (0-99),")
 DEFINITION (L"determines the amount of Hz the pitch of the voice is increased, default is 50).")
+TAG (L"%%Pitch range (0-99),")
+DEFINITION (L"determines the pitch range: 0 means monotonic, 50 means normal.")
 TAG (L"Words per minute (80-450),")
 DEFINITION (L"determines the speeking rate in words per minute, default is 175.")
-TAG (L"%%Extra pause at sentence end,")
-DEFINITION (L"determines whether there is an extra final sentence pause or not.")
-TAG (L"%%Speak punctuations")
-DEFINITION (L"determines how punctuation is spoken.")
-TAG (L"%%Speak CAPITAL characters,")
-DEFINITION (L"determines how capital letters in the text are spoken. ")
-TAG (L"%%Increased pitch of capitals (Hz)")
-DEFINITION (L"determines the amount of pitch increase in Hz on a capital if the option "
-	"\"Capital gets increased pitch\" was chosen.")
 TAG (L"%%Interpret SSML,")
 DEFINITION (L"determines whether Speech Synthesis Markup Language tags in the text will be used "
 	"during synthesis or not. ")

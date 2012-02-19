@@ -25,7 +25,7 @@
  djmw 20040629 Strings_append now accepts an Ordered of Strings.
  djmw 20050714 Permutations
  djmw 20050724 Index
- djmw 20110307 Latest modification
+ djmw 20120128 Latest modification
 */
 
 #include "Collection.h"
@@ -38,7 +38,7 @@
 #endif
 
 Strings Strings_createFixedLength (long numberOfStrings);
-
+long Strings_findString (Strings me, const wchar_t *string);
 Strings Strings_append (Collection me);
 
 Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replace,

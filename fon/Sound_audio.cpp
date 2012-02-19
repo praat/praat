@@ -50,7 +50,7 @@
  */
 #include "Sound.h"
 #include "Preferences.h"
-#include "portaudio.h"
+#include "../external/portaudio/portaudio.h"
 
 #if defined (macintosh)
 	#include "macport_on.h"

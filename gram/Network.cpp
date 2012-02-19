@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009-2011 Paul Boersma
+ * Copyright (C) 2009-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,7 +97,7 @@ double structNetwork :: f_getActivity (long nodeNumber) {
 	try {
 		double activity = NUMundefined;
 		if (nodeNumber <= 0 || nodeNumber > d_numberOfNodes)
-			Melder_throw (this, ": node number (", nodeNumber, " out of the range 1..", d_numberOfNodes);
+			Melder_throw (this, ": node number (", nodeNumber, ") out of the range 1..", d_numberOfNodes, ".");
 		activity = d_nodes [nodeNumber]. activity;
 		return activity;
 	} catch (MelderError) {
@@ -108,7 +108,7 @@ double structNetwork :: f_getActivity (long nodeNumber) {
 void structNetwork :: f_setActivity (long nodeNumber, double activity) {
 	try {
 		if (nodeNumber <= 0 || nodeNumber > d_numberOfNodes)
-			Melder_throw (this, ": node number (", nodeNumber, " out of the range 1..", d_numberOfNodes);
+			Melder_throw (this, ": node number (", nodeNumber, ") out of the range 1..", d_numberOfNodes, ".");
 		d_nodes [nodeNumber]. activity = activity;
 	} catch (MelderError) {
 		Melder_throw (this, ": activity not set.");
@@ -119,7 +119,7 @@ double structNetwork :: f_getWeight (long connectionNumber) {
 	try {
 		double weight = NUMundefined;
 		if (connectionNumber <= 0 || connectionNumber > d_numberOfConnections)
-			Melder_throw (this, ": connection number (", connectionNumber, " out of the range 1..", d_numberOfConnections);
+			Melder_throw (this, ": connection number (", connectionNumber, ") out of the range 1..", d_numberOfConnections, ".");
 		weight = d_connections [connectionNumber]. weight;
 		return weight;
 	} catch (MelderError) {
@@ -130,18 +130,18 @@ double structNetwork :: f_getWeight (long connectionNumber) {
 void structNetwork :: f_setWeight (long connectionNumber, double weight) {
 	try {
 		if (connectionNumber <= 0 || connectionNumber > d_numberOfConnections)
-			Melder_throw (this, ": connection number (", connectionNumber, " out of the range 1..", d_numberOfConnections);
+			Melder_throw (this, ": connection number (", connectionNumber, ") out of the range 1..", d_numberOfConnections, ".");
 		d_connections [connectionNumber]. weight = weight;
 	} catch (MelderError) {
 		Melder_throw (this, ": weight not set.");
 	}
 }
 
-void structNetwork :: f_setClamping (long connectionNumber, bool clamped) {
+void structNetwork :: f_setClamping (long nodeNumber, bool clamped) {
 	try {
-		if (connectionNumber <= 0 || connectionNumber > d_numberOfConnections)
-			Melder_throw (this, ": connection number (", connectionNumber, " out of the range 1..", d_numberOfConnections);
-		d_nodes [connectionNumber]. clamped = clamped;
+		if (nodeNumber <= 0 || nodeNumber > d_numberOfNodes)
+			Melder_throw (this, ": node number (", nodeNumber, ") out of the range 1..", d_numberOfNodes, ".");
+		d_nodes [nodeNumber]. clamped = clamped;
 	} catch (MelderError) {
 		Melder_throw (this, ": clamping not set.");
 	}
@@ -343,7 +343,7 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 
 void structNetwork :: f_addNode (double x, double y, double activity, bool clamped) {
 	try {
-		NUMvector_append <structNetworkNode> (& d_nodes, 1, & d_numberOfNodes);
+		NUMvector_append (& d_nodes, 1, & d_numberOfNodes);
 		d_nodes [d_numberOfNodes]. x = x;
 		d_nodes [d_numberOfNodes]. y = y;
 		d_nodes [d_numberOfNodes]. activity = activity;
@@ -355,7 +355,7 @@ void structNetwork :: f_addNode (double x, double y, double activity, bool clamp
 
 void structNetwork :: f_addConnection (long nodeFrom, long nodeTo, double weight, double plasticity) {
 	try {
-		NUMvector_append <structNetworkConnection> (& d_connections, 1, & d_numberOfConnections);
+		NUMvector_append (& d_connections, 1, & d_numberOfConnections);
 		d_connections [d_numberOfConnections]. nodeFrom = nodeFrom;
 		d_connections [d_numberOfConnections]. nodeTo = nodeTo;
 		d_connections [d_numberOfConnections]. weight = weight;

@@ -56,7 +56,7 @@ trajectory --> path ????
 
 #include "FormantGrid.h"
 #include "KlattGrid.h"
-#include "portaudio.h"
+#include "../external/portaudio/portaudio.h"
 #include "praat.h"
 #include "PitchTier_to_PointProcess.h"
 #include "PitchTier_to_Sound.h"

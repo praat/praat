@@ -427,7 +427,10 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		return;
 	}
 	const int numberOfVisibleChannels = nchan > 8 ? 8 : nchan;
-	for (int ichan = my sound.channelOffset + 1; ichan <= my sound.channelOffset + numberOfVisibleChannels; ichan ++) {
+	const int firstVisibleChannel = my sound.channelOffset + 1;
+	int lastVisibleChannel = my sound.channelOffset + numberOfVisibleChannels;
+	if (lastVisibleChannel > nchan) lastVisibleChannel = nchan;
+	for (int ichan = firstVisibleChannel; ichan <= lastVisibleChannel; ichan ++) {
 		double cursorFunctionValue = longSound ? 0.0 :
 			Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70);
 		/*

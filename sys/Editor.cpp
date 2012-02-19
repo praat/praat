@@ -238,6 +238,7 @@ void structEditor :: v_destroy () {
 	}
 	broadcastDestruction ();
 	forget (previousData);
+	if (d_ownData) forget (data);
 	Editor_Parent :: v_destroy ();
 }
 

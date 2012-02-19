@@ -1,9 +1,9 @@
 # Makefile of the library "gram"
-# Paul Boersma, 3 September 2011
+# Paul Boersma, 14 January 2012
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../audio -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
+CPPFLAGS = -I ../num -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
 
 OBJECTS = Network.o \
    OTGrammar.o OTGrammarEditor.o manual_gram.o praat_gram.o OTMulti.o OTMultiEditor.o \
@@ -23,4 +23,4 @@ libgram.a: $(OBJECTS)
 	ar cq libgram.a $(OBJECTS)
 	$(RANLIB) libgram.a
 
-$(OBJECTS): *.h ../num/NUM.h ../audio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h
+$(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h

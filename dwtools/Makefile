@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20111222 Latest modification
+# djmw 20120116 Latest modification
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../audio -I ../espeak
+CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak
 
 OBJECTS = Activation.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \

@@ -24,7 +24,7 @@
 #include "Editor.h"
 #include "Sound.h"
 
-#include "portaudio.h"
+#include "../external/portaudio/portaudio.h"
 #if defined (_WIN32)
 #elif defined (macintosh)
 #elif defined (linux)

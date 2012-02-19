@@ -44,7 +44,7 @@ oo_DEFINE_CLASS (ERPTier, Function)
 				if (eventNumber < 1)
 					Melder_throw ("The specified event number is ", eventNumber, " but should have been positive.");
 				if (eventNumber > d_events -> size)
-					Melder_throw ("The specified event number (", eventNumber, ") exceeds the number of events (", d_events -> size, ".");
+					Melder_throw ("The specified event number (", eventNumber, ") exceeds the number of events (", d_events -> size, ").");
 			}
 			ERPPoint f_peekEvent (long i) { return static_cast <ERPPoint> (d_events -> item [i]); }
 			double f_getMean (long pointNumber, long channelNumber, double tmin, double tmax);

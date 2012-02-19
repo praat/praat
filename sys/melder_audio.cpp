@@ -71,7 +71,7 @@
 	#include <errno.h>
 #endif
 
-#include "portaudio.h"
+#include "../external/portaudio/portaudio.h"
 
 static struct {
 	enum kMelder_asynchronicityLevel maximumAsynchronicity;

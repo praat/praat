@@ -1,12 +1,12 @@
 # Makefile of the library "EEG"
-# Paul Boersma, 12 January 2012
+# Paul Boersma, 20 February 2012
 
 include ../makefile.defs
 
 CPPFLAGS = -I ../num -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../fon
 
 OBJECTS = EEG.o EEGWindow.o ERPTier.o ERP.o ERPWindow.o \
-   praat_EEG.o
+   praat_EEG.o manual_EEG.o
 
 .PHONY: all clean
 

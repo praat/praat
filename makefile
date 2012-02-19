@@ -1,7 +1,7 @@
 # File: makefile
 
 # Makefile for Praat.
-# Paul Boersma, 12 January 2012
+# Paul Boersma, 14 January 2012
 
 # System-dependent definitions of CC, LIBS, ICON and MAIN_ICON should be in
 # makefile.defs, which has to be copied and renamed
@@ -11,14 +11,14 @@ include makefile.defs
 
 # Makes the Praat executable in the source directory.
 all:
-	$(MAKE) -C GSL
+	$(MAKE) -C external/gsl
+	$(MAKE) -C external/glpk
+	$(MAKE) -C external/mp3
+	$(MAKE) -C external/flac
+	$(MAKE) -C external/portaudio
+	$(MAKE) -C external/espeak
 	$(MAKE) -C kar
 	$(MAKE) -C num
-	$(MAKE) -C num/glpk
-	$(MAKE) -C audio
-	$(MAKE) -C audio/FLAC
-	$(MAKE) -C audio/mp3
-	$(MAKE) -C espeak
 	$(MAKE) -C sys
 	$(MAKE) -C dwsys
 	$(MAKE) -C stat
@@ -36,24 +36,25 @@ all:
 		FFNet/libFFNet.a gram/libgram.a EEG/libEEG.a \
 		LPC/libLPC.a dwtools/libdwtools.a \
 		fon/libfon.a stat/libstat.a dwsys/libdwsys.a \
-		sys/libsys.a num/libnum.a GSL/libgsl.a num/glpk/libglpk.a kar/libkar.a \
-		audio/libaudio.a audio/FLAC/libFLAC.a audio/mp3/libmp3.a \
-		espeak/libespeak.a \
+		sys/libsys.a num/libnum.a kar/libkar.a \
+		external/espeak/libespeak.a external/portaudio/libportaudio.a \
+		external/flac/libflac.a external/mp3/libmp3.a \
+		external/glpk/libglpk.a external/gsl/libgsl.a \
 		$(LIBS)
 
 clean:
-	$(MAKE) -C GSL clean
+	$(MAKE) -C external/gsl clean
+	$(MAKE) -C external/glpk clean
+	$(MAKE) -C external/mp3 clean
+	$(MAKE) -C external/flac clean
+	$(MAKE) -C external/portaudio clean
+	$(MAKE) -C external/espeak clean
 	$(MAKE) -C kar clean
 	$(MAKE) -C num clean
-	$(MAKE) -C num/glpk clean
-	$(MAKE) -C audio clean
-	$(MAKE) -C audio/FLAC clean
-	$(MAKE) -C audio/mp3 clean
-	$(MAKE) -C espeak clean
 	$(MAKE) -C sys clean
+	$(MAKE) -C dwsys clean
 	$(MAKE) -C stat clean
 	$(MAKE) -C fon clean
-	$(MAKE) -C dwsys clean
 	$(MAKE) -C dwtools clean
 	$(MAKE) -C LPC clean
 	$(MAKE) -C EEG clean

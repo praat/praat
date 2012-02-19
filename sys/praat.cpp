@@ -847,7 +847,7 @@ static void helpProc (const wchar_t *query) {
 		return;
 	}
 	try {
-		Manual_create (theCurrentPraatApplication -> topShell, query, theCurrentPraatApplication -> manPages);
+		Manual_create (theCurrentPraatApplication -> topShell, query, theCurrentPraatApplication -> manPages, false);
 	} catch (MelderError) {
 		Melder_flushError ("help: no help on \"%ls\".", query);
 	}

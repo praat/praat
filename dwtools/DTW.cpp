@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,6 +66,25 @@
 Thing_implement (DTW, Matrix, 2);
 
 #define DTW_BIG 1e38
+
+void structDTW :: v_info () {
+	structData :: v_info ();
+	MelderInfo_writeLine5 (L"Domain prototype:", Melder_double (ymin), L" to ",
+	                       Melder_double (ymax), L" (s).");
+	MelderInfo_writeLine5 (L"Domain candidate:", Melder_double (xmin), L" to ",
+	                       Melder_double (xmax), L" (s).");
+	MelderInfo_writeLine2 (L"Number of frames prototype: ", Melder_integer (ny));
+	MelderInfo_writeLine2 (L"Number of frames candidate: ", Melder_integer (nx));
+	MelderInfo_writeLine2 (L"Path length (frames): ", Melder_integer (pathLength));
+	MelderInfo_writeLine2 (L"Global warped distance: ", Melder_double (weightedDistance));
+	if (nx == ny) {
+		double dd = 0;
+		for (long i = 1; i <= nx; i++) {
+			dd += z[i][i];
+		}
+		MelderInfo_writeLine2 (L"Distance along diagonal: ", Melder_double (dd / nx));
+	}
+}
 
 static void DTW_drawWarpX_raw (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish, int inset);
 static void DTW_paintDistances_raw (DTW me, Graphics g, double xmin, double xmax, double ymin,
@@ -458,25 +477,6 @@ static void get_ylimitsFromAdjustmentwindow (DTW me, double sakoeChibaBand,
 	}
 }
 
-void structDTW :: v_info () {
-	structData :: v_info ();
-	MelderInfo_writeLine5 (L"Domain prototype:", Melder_double (ymin), L" to ",
-	                       Melder_double (ymax), L" (s).");
-	MelderInfo_writeLine5 (L"Domain candidate:", Melder_double (xmin), L" to ",
-	                       Melder_double (xmax), L" (s).");
-	MelderInfo_writeLine2 (L"Number of frames prototype: ", Melder_integer (ny));
-	MelderInfo_writeLine2 (L"Number of frames candidate: ", Melder_integer (nx));
-	MelderInfo_writeLine2 (L"Path length (frames): ", Melder_integer (pathLength));
-	MelderInfo_writeLine2 (L"Global warped distance: ", Melder_double (weightedDistance));
-	if (nx == ny) {
-		double dd = 0;
-		for (long i = 1; i <= nx; i++) {
-			dd += z[i][i];
-		}
-		MelderInfo_writeLine2 (L"Distance along diagonal: ", Melder_double (dd / nx));
-	}
-}
-
 /* Prototype must be on y-axis and test on x-axis */
 
 DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
@@ -571,7 +571,7 @@ static int get_ylimits_x (DTW me, int choice, double sakoeChibaBand,
 }
 
 static int slope_constraints (long x, long y, long nsteps_x, long nsteps_y, long nsteps_xandy, long **psi) {
-	long xm = 0, ym = 0; /* mx and my as variables gives compilation errors */
+	long xm = 0, ym = 0;
 	long minsteps_xory = nsteps_x < nsteps_y ? nsteps_x : nsteps_y;
 
 	/* No constraints ?*/
@@ -617,7 +617,7 @@ static int slope_constraints (long x, long y, long nsteps_x, long nsteps_y, long
 
 /* Does not check validity of parameters! */
 static int _DTW_pathFinder (DTW me, int choice, double sakoeChibaBand, int adjustment_window_includes_end,
-                            long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy) {
+    long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy) {
 	double minimum;
 	long x, y, xmargin = my dx, ymargin = my dy, ylow, yhigh, xpos, ypos;
 	long numberOfCells = 0, nodirection_assigned = 0;
@@ -639,7 +639,7 @@ static int _DTW_pathFinder (DTW me, int choice, double sakoeChibaBand, int adjus
 	int no_slope_constraints = choice != DTW_SLOPES || nsteps_xandy == 0;
 	for (x = 1; x <= my nx; x++) {
 		if (! get_ylimits_x (me, choice, sakoeChibaBand, adjustment_window_includes_end,
-		                     nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) {
+		    nsteps_xory, nsteps_xandy, x, &ylow, &yhigh)) {
 			return 1;
 		}
 		/*Melder_casual ("x, ylow yhigh: %5d %5d %5d", x, ylow, yhigh);*/
@@ -855,6 +855,7 @@ Matrix DTW_to_Matrix_accumulatedCosts (DTW me, double sakoeChibaBand, double ita
 }
 #endif
 
+
 void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope) {
 	try {
 		long pathIndex = my nx + my ny - 1; /* At maximum path length */
@@ -872,9 +873,9 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope) {
 
 		if (dtw_slope > slopeConstraint[slope]) {
 			Melder_warning (L"DTW_findPath: There is a conflict between the chosen slope constraint and the relative  duration.\n "
-			                "The duration ratio of the longest and the shortest object is ", Melder_double (dtw_slope),
-			                L". This implies that the largest slope in the \n"
-			                "constraint must have a value greater or equal to this ratio.");
+			"The duration ratio of the longest and the shortest object is ", Melder_double (dtw_slope),
+			L". This implies that the largest slope in the \n"
+			"constraint must have a value greater or equal to this ratio.");
 		}
 
 		autoNUMmatrix<double> delta (NUMdmatrix_copy (my z, 1, my ny, 1, my nx), 1, 1);
@@ -908,105 +909,105 @@ void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope) {
 				minimum = delta[i - 1][j - 1] + 2 * my z[i][j];
 
 				switch (slope) {
-					case 1: /* no restriction */
+				case 1: /* no restriction */
 s1:				{
-							if ( (g = delta[i][j - 1] + my z[i][j]) < minimum) {
-								minimum = g;
-								direction = DTW_X;
-							}
-							if ( (g = delta[i - 1][j] + my z[i][j]) < minimum) {
-								minimum = g;
-								direction = DTW_Y;
-							}
-						}
-						break;
-
-						// P = 1/2
-
-					case 2: /* P = 1/2 */
-					/*s2:*/			{
-						if (i < 4 || j < 4) {
-							goto s1;
-						}
-
-						if (psi[i][j - 1] == DTW_X && psi[i][j - 2] == DTW_XANDY &&
-						        (g = delta[i - 1][j - 3] + 2 * my z[i][j - 2] + my z[i][j - 1] +
-						             my z[i][j]) < minimum) {
-							minimum = g;
-							direction = DTW_X;
-						}
-
-						if (psi[i][j - 1] == DTW_XANDY &&
-						        (g = delta[i - 1][j - 2] + 2 * my z[i][j - 1] + my z[i][j]) < minimum) {
-							minimum = g;
-							direction = DTW_X;
-						}
-
-						if (psi[i - 1][j] == DTW_XANDY &&
-						        (g = delta[i - 2][j - 1] + 2 * my z[i - 1][j] + my z[i][j]) < minimum) {
-							minimum = g;
-							direction = DTW_Y;
-						}
-
-						if (psi[i - 1][j] == DTW_Y && psi[i - 2][j] == DTW_XANDY &&
-						        (g = delta[i - 3][j - 1] + 2 * my z[i - 2][j] + my z[i - 1][j] + my z[i][j]) < minimum) {
-							minimum = g;
-							direction = DTW_Y;
-						}
+					if ((g = delta[i][j - 1] + my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_X;
 					}
-					break;
+					if ((g = delta[i - 1][j] + my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_Y;
+					}
+				}
+				break;
+
+				// P = 1/2
+
+				case 2: /* P = 1/2 */
+/*s2:*/			{
+					if (i < 4 || j < 4) {
+						goto s1;
+					}
+
+					if (psi[i][j - 1] == DTW_X && psi[i][j - 2] == DTW_XANDY &&
+							(g = delta[i - 1][j - 3] + 2 * my z[i][j - 2] + my z[i][j - 1] +
+									my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_X;
+					}
+
+					if (psi[i][j - 1] == DTW_XANDY &&
+							(g = delta[i - 1][j - 2] + 2 * my z[i][j - 1] + my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_X;
+					}
+
+					if (psi[i - 1][j] == DTW_XANDY &&
+							(g = delta[i - 2][j - 1] + 2 * my z[i - 1][j] + my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_Y;
+					}
+
+					if (psi[i - 1][j] == DTW_Y && psi[i - 2][j] == DTW_XANDY &&
+							(g = delta[i - 3][j - 1] + 2 * my z[i - 2][j] + my z[i - 1][j] + my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_Y;
+					}
+				}
+				break;
 
 					// P = 1
 
-					case 3:
+				case 3:
 s3:				{
-							if (i < 3 || j < 3) {
-								goto s1;
-							}
-
-							if (psi[i][j - 1] == DTW_XANDY &&
-							        (g = delta[i - 1][j - 2] + 2 * my z[i][j - 1] + my z[i][j]) < minimum) {
-								minimum = g;
-								direction = DTW_X;
-							}
-
-							if (psi[i - 1][j] == DTW_XANDY &&
-							        (g = delta[i - 2][j - 1] + 2 * my z[i - 1][j] + my z[i][j]) < minimum) {
-								minimum = g;
-								direction = DTW_Y;
-							}
-						}
-						break;
-
-						// P = 2
-
-					case 4:
-					/*s4:*/			{
-						if (j > 3 && i > 2) {
-							if (psi[i][j - 1] == DTW_XANDY && psi[i - 1][j - 2] == DTW_XANDY &&
-							        (g = delta[i - 2][j - 3] + 2 * my z[i - 1][j - 2] + 2 * my z[i][j - 1] + my z[i][j]) < minimum) {
-								minimum = g;
-								direction = DTW_X;
-							}
-
-							if (psi[i - 1][j] == DTW_XANDY && psi[i - 2][j - 1] == DTW_XANDY &&
-							        (g = delta[i - 3][j - 2] + 2 * my z[i - 2][j - 1] + 2 * my z[i - 1][j] + my z[i][j]) < minimum) {
-								minimum = g;
-								direction = DTW_Y;
-							}
-						} else {
-							goto s3;
-						}
+					if (i < 3 || j < 3) {
+						goto s1;
 					}
+
+					if (psi[i][j - 1] == DTW_XANDY &&
+							(g = delta[i - 1][j - 2] + 2 * my z[i][j - 1] + my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_X;
+					}
+
+					if (psi[i - 1][j] == DTW_XANDY &&
+							(g = delta[i - 2][j - 1] + 2 * my z[i - 1][j] + my z[i][j]) < minimum) {
+						minimum = g;
+						direction = DTW_Y;
+					}
+				}
+				break;
+
+					// P = 2
+
+				case 4:
+/*s4:*/			{
+					if (j > 3 && i > 2) {
+						if (psi[i][j - 1] == DTW_XANDY && psi[i - 1][j - 2] == DTW_XANDY &&
+								(g = delta[i - 2][j - 3] + 2 * my z[i - 1][j - 2] + 2 * my z[i][j - 1] + my z[i][j]) < minimum) {
+							minimum = g;
+							direction = DTW_X;
+						}
+
+						if (psi[i - 1][j] == DTW_XANDY && psi[i - 2][j - 1] == DTW_XANDY &&
+								(g = delta[i - 3][j - 2] + 2 * my z[i - 2][j - 1] + 2 * my z[i - 1][j] + my z[i][j]) < minimum) {
+							minimum = g;
+							direction = DTW_Y;
+						}
+					} else {
+						goto s3;
+					}
+				}
+				break;
+				default:
 					break;
-					default:
-						break;
 				}
 
 				psi[i][j] = direction;
 				delta[i][j] = minimum;
 			}
-			if ( (j % 10) == 2) {
+			if ((j % 10) == 2) {
 				Melder_progress (0.999 * j / my nx, L"Calculate time warp: frame ",
 				                  Melder_integer (j), L" from ", Melder_integer (my nx), L"."); therror
 			}
@@ -1871,6 +1872,84 @@ void DTW_and_Matrix_replace (DTW me, Matrix thee) {
 		NUMmatrix_copyElements<double> (thy z, my z, 1, my ny, 1, my nx);
 	} catch (MelderError) {
 		Melder_throw (me, ": distances not replaced.");
+	}
+}
+
+/****************** new implementation ********/
+void DTW_findPath_new (DTW me, bool useConstraints, long maxNumberOfSteps1, long maxNumberOfSteps2) {
+	try {
+		if (useConstraints && (maxNumberOfSteps1 < 1 || maxNumberOfSteps2 < 1)) {
+			Melder_throw ("The maximum number of steps in any direction must be a positive number.");
+		}
+		bool matchStart = true, matchEnd = true;
+		long xstepsmax, ystepsmax;
+		if (useConstraints) { // check contraints
+			double dx = my ymax - my ymin, dy = my ymax - my ymin;
+			double slopeFromContraints, slopeFromDTW = dy / dx;
+			if (dx < dy) {
+				xstepsmax = maxNumberOfSteps1 < maxNumberOfSteps2 ? maxNumberOfSteps1 : maxNumberOfSteps2;
+				ystepsmax = maxNumberOfSteps1 > maxNumberOfSteps2 ? maxNumberOfSteps1 : maxNumberOfSteps2;
+				slopeFromContraints = double (ystepsmax) / double (xstepsmax);
+				if (slopeFromContraints < slopeFromDTW) {
+					Melder_throw ("Your step constraints are too tight: the duration ratio of the longest "
+					"and shortest object in the DTW is ", Melder_double (slopeFromDTW), L".");
+				}
+			} else {
+				xstepsmax = maxNumberOfSteps1 > maxNumberOfSteps2 ? maxNumberOfSteps1 : maxNumberOfSteps2;
+				ystepsmax = maxNumberOfSteps1 < maxNumberOfSteps2 ? maxNumberOfSteps1 : maxNumberOfSteps2;
+				slopeFromContraints = double (ystepsmax) / double (xstepsmax);
+				if (slopeFromContraints > slopeFromDTW) {
+					Melder_throw ("Your step constraints are too tight: the duration ratio of the longest "
+					"and shortest object in the DTW is ", Melder_double (slopeFromDTW), L".");
+				}
+			}
+		}
+		autoNUMmatrix<double> delta (NUMdmatrix_copy (my z, 1, my ny, 1, my nx), 1, 1);
+		autoNUMmatrix<long> psi (1, my ny, 1, my nx);
+		if (matchStart) {
+			for (long i = 2; i <= my ny; i++) {
+				delta[i][1] = DTW_BIG;
+				psi[i][1] = DTW_START;
+			}
+		}
+		long numberOfBackWardsSteps = useConstraints ? xstepsmax + ystepsmax - 1 : 0;
+		for (long j = 2; j <= my nx; j++) {
+			delta[1][j] = delta[1][j - 1] + my z[1][j];
+			psi[1][j] =  DTW_X;
+			for (long i = 2; i <= my ny; i++) {
+				long nx, ny, direction = DTW_XANDY;
+				double g;
+				/* move along the diagonal */
+				double minimum = delta[i - 1][j - 1] + 2 * my z[i][j];
+				// left
+				long pnx = 1, pny = 0;
+				double gx = 0;
+				for (long k = 1; k <= numberOfBackWardsSteps; k++) {
+
+				}
+				// diagonal
+				nx = 1; ny = 1;
+				// bottom
+				nx = 0; ny = 1;
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, " cannot find path.");
+	}
+}
+
+bool DTW_checkConstraints (long maxNumberOfSteps1, long maxNumberOfSteps2, double marginAtStart, double marginAtEnd) {
+	if (maxNumberOfSteps1 < 1 || maxNumberOfSteps2 < 1) {
+			Melder_throw ("The maximum number of steps in any direction must be a positive number.");
+		}
+
+}
+
+void DTW_setContraints (DTW me, long maxNumberOfSteps1, long maxNumberOfSteps2, double marginAtStart, double marginAtEnd) {
+	try {
+
+	} catch (MelderError) {
+		Melder_throw ("No constrints could be set.");
 	}
 }
 

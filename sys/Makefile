@@ -1,9 +1,9 @@
 # Makefile of the library "sys"
-# Paul Boersma, 6 September 2011
+# Paul Boersma, 14 January 2012
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../audio -I ../audio/FLAC -I ../audio/mp3
+CPPFLAGS = -I ../num -I ../sys -I ../dwsys -I ../kar -I ../external/portaudio -I ../external/flac -I ../external/mp3
 
 OBJECTS = abcio.o lispio.o complex.o \
    melder_ftoa.o melder_atof.o melder_error.o melder_alloc.o melder.o melder_strings.o \
@@ -41,4 +41,4 @@ libsys.a: $(OBJECTS)
 	ar cq libsys.a $(OBJECTS)
 	$(RANLIB) libsys.a
 
-$(OBJECTS): *.h ../num/NUM.h ../dwsys/*.h ../kar/*.h ../audio/*.h ../audio/FLAC/*.h ../audio/mp3/mp3.h
+$(OBJECTS): *.h ../num/NUM.h ../dwsys/*.h ../kar/*.h ../external/portaudio/*.h ../external/flac/*.h ../external/mp3/mp3.h

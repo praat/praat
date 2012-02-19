@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120112)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120219)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.05# (19 February 2012)")
+LIST_ITEM (L"\\bu SpeechSynthesizer (#New menu \\-> #Sound): text-to-speech.")
+LIST_ITEM (L"\\bu @EEG: better scalp distribution drawing for both 32-channel and 64-channel recordings.")
 NORMAL (L"##5.3.04# (12 January 2012)")
 LIST_ITEM (L"\\bu EEG: draw scalp distribution.")
 LIST_ITEM (L"\\bu Linux: better audio compatibility with Ubuntu 11.10.")
@@ -1360,7 +1363,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN (L"Acknowledgments", L"ppgb", 20110920)
+MAN_BEGIN (L"Acknowledgments", L"ppgb", 20120219)
 NORMAL (L"The following people contributed source code to Praat:")
 LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1372,7 +1375,7 @@ LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, 
 LIST_ITEM (L"David Weenink: "
 	"@@feedforward neural networks@, @@principal component analysis@, @@multidimensional scaling@, @@discriminant analysis@, @LPC, "
 	"@VowelEditor, "
-	"and adaptation of GSL, LAPACK, fftpack, and regular expressions.")
+	"and adaptation of GSL, LAPACK, fftpack, regular expressions, and Espeak.")
 LIST_ITEM (L"Stefan de Konink and Franz Brau\\sse: major help in port to GTK.")
 LIST_ITEM (L"Erez Volk: adaptation of FLAC and MAD.")
 LIST_ITEM (L"Ola S\\o\"der: @@kNN classifiers@, @@k-means clustering@.")
@@ -1383,6 +1386,7 @@ LIST_ITEM (L"XIPA: IPA font for Unix by Fukui Rei (GPL).")
 LIST_ITEM (L"GSL: GNU Scientific Library by Gerard Jungman and Brian Gough (GPL).")
 LIST_ITEM (L"GLPK: GNU Linear Programming Kit by Andrew Makhorin (GPL).")
 LIST_ITEM (L"PortAudio: Portable Audio Library by Ross Bencina, Phil Burk, Bjorn Roche, Dominic Mazzoni, Darren Gibbs.")
+LIST_ITEM (L"Espeak: text-to-speech synthesizer by Jonathan Duddington (GPL).")
 LIST_ITEM (L"MAD: MPEG Audio Decoder by Underbit Technologies (GPL).")
 LIST_ITEM (L"FLAC: Free Lossless Audio Codec by Josh Coalson.")
 LIST_ITEM (L"fftpack: public domain Fourier transforms by Paul Swarztrauber and Monty.")
