@@ -32,7 +32,6 @@ Thing_define (FileInMemory, Data) {
 		wchar_t *d_id;
 		long d_numberOfBytes;
 		char *d_data;
-		bool _dontOwnData;
 	// overridden methods:
 		void v_copy (Any data_to);
 		void v_destroy ();

@@ -116,7 +116,8 @@ static void init_path(const char *path)
 {//====================================
 #ifdef PLATFORM_WINDOWS
 
-
+near line 464: sleep is not a WIN64 function, but luckily we don't need it.
+// sleep(1)
 
 >> dictionary.cpp
 
@@ -179,6 +180,7 @@ int LoadDictionary_old(Translator *tr, const char *name, int no_error)
 
 ************ klatt.cpp  ***************
 
+replace the gen_noise with the corrected version:
 static double gen_noise(double noisedummy) // repaired ppgb 20111223
 {
         long temp;
@@ -191,4 +193,18 @@ static double gen_noise(double noisedummy) // repaired ppgb 20111223
         nlast = noise;
 
         return(noise);
+}
+
+???
+template <size_t _align_to, typename T> T *align_address (T *p)
+{
+	union {
+		T* ptr;
+		size_t integer;
+	};
+	const size_t bit_mask = ~(_align_to - 1);
+	ptr = p;
+	Melder_assert (sizeof (size_t) == sizeof (void *));
+	integer &= bit_mask;
+	return ptr;
 }

@@ -56,8 +56,7 @@ static void regression (I, long frame, double r[], long nr) {
 	}
 }
 
-
-DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dtr, int matchStart, int matchEnd, int constraint) {
+DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dtr) {
 	try {
 		iam (CC); thouart (CC);
 
@@ -138,7 +137,6 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 				Melder_progress (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L"."); therror
 			}
 		}
-		DTW_findPath (him.peek(), matchStart, matchEnd, constraint);
 		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw ("DTW not created from CCs.");

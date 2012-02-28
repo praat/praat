@@ -160,7 +160,8 @@ static void InitGroups(Translator *tr)
 
 		if(p[0] == RULE_REPLACEMENTS)
 		{
-			pw = (unsigned int *)(((long64)p+4) & ~3);  // advance to next word boundary
+//			pw = (unsigned int *)(((long64)p+4) & ~3);  // advance to next word boundary
+			pw = (unsigned int *) align_address <4, char> (p+4);  // advance to next word boundary
 			tr->langopts.replace_chars = pw;
 			while(pw[0] != 0)
 			{

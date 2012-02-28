@@ -35,8 +35,7 @@
 #include "translate.h"
 #include "wave.h"
 
-
-const char *version_string = "1.46.13  14.Jan.12";
+const char *version_string = "1.46.14  22.Feb.12";
 const int version_phdata  = 0x014600;
 
 int option_device_number = -1;
@@ -81,7 +80,7 @@ static char *ReadPhFile(void *ptr, const char *fname, int *size)
 
 	sprintf(buf,"%s%c%s",path_home,PATHSEP,fname);
 	length = GetFileLength(buf);
-
+	
 	if((f_in = fopen(buf,"rb")) == NULL)
 	{
 		fprintf(stderr,"Can't read data file: '%s'\n",buf);
@@ -90,7 +89,7 @@ static char *ReadPhFile(void *ptr, const char *fname, int *size)
 
 	if(ptr != NULL)
 		Free(ptr);
-
+		
 	if((p = Alloc(length)) == NULL)
 	{
 		fclose(f_in);
@@ -243,7 +242,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 	SPECT_SEQK *seqk, *seqk2;
 	frame_t *frame;
 	static frameref_t frames_buf[N_SEQ_FRAMES];
-
+	
 	seq = (SPECT_SEQ *)(&phondata_ptr[fmt_params->fmt_addr]);
 	seqk = (SPECT_SEQK *)seq;
 	nf = seq->n_frames;
@@ -281,7 +280,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 			nf -= seq_break;
 		}
 	}
-
+	
 	// do we need to modify a frame for blending with a consonant?
 	if((this_ph->type == phVOWEL) && (fmt_params->fmt2_addr == 0) && (fmt_params->use_vowelin))
 	{
@@ -299,7 +298,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 		// add these spectra to the main sequence
 		seq2 = (SPECT_SEQ *)(&phondata_ptr[fmt_params->fmt2_addr]);
 		seqk2 = (SPECT_SEQK *)seq2;
-
+	
 		// first frame of the addition just sets the length of the last frame of the main seq
 		nf--;
 		for(ix=0; ix<seq2->n_frames; ix++)
@@ -319,7 +318,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 		}
 		wavefile_ix = 0;
 	}
-
+	
 	if(length1 > 0)
 	{
 		if(which==2)
@@ -337,7 +336,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 
 
 			length_factor = (length_std * 256)/ length1;
-
+			
 			for(ix=0; ix<nf1; ix++)
 			{
 				frames[ix].length = (frames[ix].length * length_factor)/256;
@@ -375,7 +374,7 @@ frameref_t *LookupSpect(PHONEME_TAB *this_ph, int which, FMT_PARAMS *fmt_params,
 			}
 		}
 	}
-
+	
 	*n_frames = nf;
 	return(frames);
 }  //  end of LookupSpect
@@ -575,7 +574,7 @@ static bool StressCondition(Translator *tr, PHONEME_LIST *plist, int condition, 
 			// change phoneme.  Don't change phonemes which are given for the word in the dictionary.
 			return(false);
 		}
-
+	
 		if((tr->langopts.param[LOPT_REDUCE] & 0x2) && (stress_level >= pl->wordstress))
 		{
 			// treat the most stressed syllable in an unstressed word as stressed
@@ -752,7 +751,7 @@ static bool InterpretCondition(Translator *tr, int control, PHONEME_LIST *plist,
 					plist--;
 					if((plist->stresslevel & 0xf) >= 4)
 						return(true);
-
+					
 				} while (plist->sourceix == 0);
 				break;
 
@@ -914,13 +913,13 @@ void InterpretPhoneme(Translator *tr, int control, PHONEME_LIST *plist, PHONEME_
 		return;
 
 	end_flag = 0;
-
+	
 	for(prog = &phoneme_index[ph->program]; end_flag != 1; prog++)
 	{
 		instn = *prog;
 		instn2 = (instn >> 8) & 0xf;
 		or_flag = 0;
-
+		
 		switch(instn >> 12)
 		{
 		case 0:   // 0xxx
@@ -1023,7 +1022,7 @@ void InterpretPhoneme(Translator *tr, int control, PHONEME_LIST *plist, PHONEME_
 					// instruction after a condition is not JUMP_FALSE, so skip the instruction.
 					prog += NumInstnWords(prog);
 					if((prog[0] & 0xfe00) == 0x6000)
-						prog++;    // and skip ELSE jump
+						prog++;    // and skip ELSE jump 
 				}
 			}
 			prog--;

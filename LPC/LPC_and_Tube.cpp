@@ -183,7 +183,7 @@ int Tube_Frame_into_LPC_Frame_rc (Tube_Frame me, LPC_Frame thee) {
 VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita) {
 	autoVocalTract thee = 0;
 	(void) wakita;
-	struct structTube_Frame area_struct = { 0 };   // David, moet dit niet op nul geinitialiseerd? = { 0 };ja
+	struct structTube_Frame area_struct = { 0 };
 	Tube_Frame area = & area_struct;
 	try {
 		long iframe = Sampled_xToIndex (me, time);
@@ -194,8 +194,6 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita) {
 		if (iframe > my nx) {
 			iframe = my nx;
 		}
-
-		//memset (& area_struct, 0, sizeof(area_struct));   // David, ja zo kan het ook (is dit op tijd voor alle throws? kan je niet weten...); init op nul is boven
 
 		LPC_Frame lpc = & my d_frames[iframe];
 		long m = lpc -> nCoefficients;
@@ -210,7 +208,7 @@ VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakita) {
 		for (long i = 1; i <= m; i++) {
 			thy z[1][i] = area -> c[m + 1 - i];
 		}
-		//if (wakita) double wakita_length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);   // David, dit heeft geen betekenis, toch?
+		//if (wakita) double wakita_length =  LPC_Frame_getVTL_wakita (lpc, my samplingPeriod, length);
 		area -> destroy ();
 		return thee.transfer();
 	} catch (MelderError) {

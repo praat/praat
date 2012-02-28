@@ -2,7 +2,7 @@
 #define _Polygon_extensions_h_
 /* Polygon_extensions.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 /*
  djmw 1996
  djmw 20020813 GPL header
- djmw 20110307 Latest modification
+ djmw 20120220 Latest modification
 */
 
 #include "Polygon.h"
@@ -36,6 +36,7 @@
 #define Polygon_EDGE 3
 #define Polygon_VERTEX 5
 
+void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax);
 Polygon Polygon_createSimple (wchar_t *xystring);
 Polygon Polygon_createFromRandomVertices (long numberOfVertices, double xmin, double xmax, double ymin, double ymax);
 Polygon Polygon_simplify (Polygon me);

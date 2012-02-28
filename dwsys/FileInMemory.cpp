@@ -30,16 +30,13 @@ void structFileInMemory :: v_copy (thou) {
 	thy d_numberOfBytes = d_numberOfBytes;
 	thy d_data = NUMvector<char> (0, d_numberOfBytes);
 	memcpy (thy d_data, d_data, d_numberOfBytes+1);
-	thy _dontOwnData = false; // The copy owns the data!
 }
 
 void structFileInMemory :: v_destroy () {
-	if (! _dontOwnData) {
-		Melder_free (d_path);
-		Melder_free (d_id);
-		NUMvector_free <char>  (d_data, 0);
-		FileInMemory_Parent :: v_destroy ();
-	}
+	Melder_free (d_path);
+	Melder_free (d_id);
+	NUMvector_free <char>  (d_data, 0);
+	FileInMemory_Parent :: v_destroy ();
 }
 
 void structFileInMemory :: v_info () {
@@ -76,10 +73,6 @@ FileInMemory FileInMemory_create (MelderFile file) {
 	}
 }
 
-void FileInMemory_dontOwnData (FileInMemory me) {
-	my _dontOwnData = true;
-}
-
 FileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, const wchar_t *path, const wchar_t *id) {
 	try {
 		autoFileInMemory me = Thing_new (FileInMemory);
@@ -87,7 +80,6 @@ FileInMemory FileInMemory_createWithData (long numberOfBytes, const char *data, 
 		my d_id = Melder_wcsdup (id);
 		my d_numberOfBytes = numberOfBytes;
 		my d_data = const_cast<char *> (data); // copy pointer to data only
-		my _dontOwnData = true; // data has to stay in memory!
 		return me.transfer ();
 	} catch (MelderError) {
 		Melder_throw ("FileInMemory not create from data.");

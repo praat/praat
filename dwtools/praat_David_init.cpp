@@ -101,6 +101,7 @@
 #include "Polygon_extensions.h"
 #include "Polynomial.h"
 #include "Sound_extensions.h"
+#include "Sounds_to_DTW.h"
 #include "Spectrum_extensions.h"
 #include "Spectrogram.h"
 #include "SpeechSynthesizer.h"
@@ -391,10 +392,11 @@ DO
 	Melder_assert (c1 && c2);
 	int begin, end, slope;
 	DTW_constraints_getCommonFields (dia, &begin, &end, &slope);
-
-	praat_new (CCs_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"), GET_REAL (L"Log energy weight"),
-		GET_REAL (L"Regression weight"), GET_REAL (L"Regression weight log energy"),
-		GET_REAL (L"Regression coefficients window"), begin, end, slope), 0);
+    autoDTW thee = CCs_to_DTW (c1, c2, GET_REAL (L"Cepstral weight"), GET_REAL (L"Log energy weight"),
+        GET_REAL (L"Regression weight"), GET_REAL (L"Regression weight log energy"),
+        GET_REAL (L"Regression coefficients window"));
+    DTW_findPath (thee.peek(), begin, end, slope);
+	praat_new (thee.transfer(), 0);
 END
 
 DIRECT (CC_to_Matrix)
@@ -1397,6 +1399,36 @@ END
 
 /********************** DTW *******************************************/
 
+FORM (DTW_and_Polygon_findPathInside, L"DTW & Polygon: Find path inside", 0)
+    RADIO (L"Slope constraint", 1)
+    RADIOBUTTON (L"no restriction")
+    RADIOBUTTON (L"1/3 < slope < 3")
+    RADIOBUTTON (L"1/2 < slope < 2")
+    RADIOBUTTON (L"2/3 < slope < 3/2")
+    OK
+DO
+    int localSlope = GET_INTEGER (L"Slope constraint");
+    DTW me = FIRST (DTW);
+    Polygon thee = FIRST (Polygon);
+    DTW_and_Polygon_findPathInside (me, thee, localSlope, 0);
+
+END
+
+FORM (DTW_and_Polygon_to_Matrix_cummulativeDistances, L"DTW & Polygon: To Matrix (cumm. distances)", 0)
+    RADIO (L"Slope constraint", 1)
+    RADIOBUTTON (L"no restriction")
+    RADIOBUTTON (L"1/3 < slope < 3")
+    RADIOBUTTON (L"1/2 < slope < 2")
+    RADIOBUTTON (L"2/3 < slope < 3/2")
+    OK
+DO
+    int localSlope = GET_INTEGER (L"Slope constraint");
+    DTW me = FIRST (DTW);
+    Polygon thee = FIRST (Polygon);
+    autoMatrix him = DTW_and_Polygon_to_Matrix_cummulativeDistances (me, thee, localSlope);
+    praat_new (him.transfer(), my name, L"_", Melder_integer (localSlope));
+END
+
 FORM (DTW_and_Sounds_draw, L"DTW & Sounds: Draw", L"DTW & Sounds: Draw...")
 	REAL (L"left Horizontal range", L"0.0")
 	REAL (L"right Horizontal range", L"0.0")
@@ -1449,7 +1481,7 @@ void DTW_constraints_addCommonFields (void *dia) {
 	LABEL (L"", L"Boundary conditions")
 	BOOLEAN (L"Match begin positions", 0)
 	BOOLEAN (L"Match end positions", 0)
-	RADIO (L"Slope constraints", 1)
+	RADIO (L"Slope constraint", 1)
 	RADIOBUTTON (L"no restriction")
 	RADIOBUTTON (L"1/3 < slope < 3")
 	RADIOBUTTON (L"1/2 < slope < 2")
@@ -1459,7 +1491,7 @@ void DTW_constraints_addCommonFields (void *dia) {
 void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope) {
 	*begin = GET_INTEGER (L"Match begin positions");
 	*end = GET_INTEGER (L"Match end positions");
-	*slope = GET_INTEGER (L"Slope constraints");
+	*slope = GET_INTEGER (L"Slope constraint");
 }
 
 DIRECT (DTW_help) Melder_help (L"DTW"); END
@@ -1760,7 +1792,7 @@ FORM (DTW_formulaDistances, L"DTW: Formula (distances)", 0)
 DO
 	LOOP {
 		iam (DTW);
-		autoMatrix cp = DTW_distancesToMatrix (me);
+		autoMatrix cp = DTW_to_Matrix_distances (me);
 		try {
 			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, 0);
 			double minimum, maximum;
@@ -1816,89 +1848,63 @@ DO
 	}
 END
 
-#ifdef INCLUDE_DTW_SLOPES
-	FORM (DTW_pathFinder_slopes, L"DTW: Find path (slopes)", L"DTW: Find path (slopes)...")
-	LABEL (L"", L"Slope constraints:")
-	LABEL (L"", L"This number of")
-	INTEGER (L"Non-diagonal steps", L"1")
-	LABEL (L"", L"must be followed by at least this number of")
-	INTEGER (L"Diagonal steps", L"0 (=no constraints)")
-	LABEL (L"", L"Directional weights")
-	REAL (L"X weight", L"1.0")
-	REAL (L"Y weight", L"1.0")
-	REAL (L"Diagonal weight", L"2.0")
-	OK
+FORM (DTW_findPath_bandAndSlope, L"DTW: find path (band & slope)", 0)
+    REAL (L"Sakoe-Chiba band (s)", L"0.05")
+    RADIO (L"Slope constraint", 1)
+    RADIOBUTTON (L"no restriction")
+    RADIOBUTTON (L"1/3 < slope < 3")
+    RADIOBUTTON (L"1/2 < slope < 2")
+    RADIOBUTTON (L"2/3 < slope < 3/2")
+    OK
 DO
-	LOOP {
-		iam (DTW);
-		DTW_pathFinder_slopes (me, GET_INTEGER (L"Non-diagonal steps"), GET_INTEGER (L"Diagonal steps"),
-		GET_REAL (L"X weight"), GET_REAL (L"Y weight"), GET_REAL (L"Diagonal weight"));
-	}
-END
-#endif
-
-FORM (DTW_pathFinder_band, L"DTW: Find path (Sakoe-Chiba band)", L"DTW: Find path (band)...")
-	REAL (L"Adjustment window duration (s)", L"0.1")
-	BOOLEAN (L"Adjustment window includes end", 0)
-	LABEL (L"", L"Directional weights")
-	REAL (L"X weight", L"1.0")
-	REAL (L"Y weight", L"1.0")
-	REAL (L"Diagonal weight", L"2.0")
-	OK
-DO
-	LOOP {
-		iam (DTW);
-		DTW_pathFinder_band (me, GET_REAL (L"Adjustment window duration"), GET_INTEGER (L"Adjustment window includes end"),
-		GET_REAL (L"X weight"), GET_REAL (L"Y weight"), GET_REAL (L"Diagonal weight"));
-	}
+    double band = GET_REAL (L"Sakoe-Chiba band");
+    int slope = GET_INTEGER (L"Slope constraint");
+    LOOP {
+        iam (DTW);
+        DTW_findPath_bandAndSlope (me, band, slope, 0);
+    }
 END
 
-FORM (DTW_to_Polygon_localConstraints, L"DTW: To Polygon (local constraints)", L"DTW: To Polygon (slopes)...")
-	LABEL (L"", L"Slope constraints:")
-	LABEL (L"", L"This number of")
-	INTEGER (L"Non-diagonal steps", L"1")
-	LABEL (L"", L"must be followed by at least this number of")
-	INTEGER (L"Diagonal steps", L"0 (=no constraints)")
-	OK
+FORM (DTW_to_Matrix_cummulativeDistances, L"DTW: To Matrix", 0)
+    REAL (L"Sakoe-Chiba band (s)", L"0.05")
+    RADIO (L"Slope constraint", 1)
+    RADIOBUTTON (L"no restriction")
+    RADIOBUTTON (L"1/3 < slope < 3")
+    RADIOBUTTON (L"1/2 < slope < 2")
+    RADIOBUTTON (L"2/3 < slope < 3/2")
+    OK
 DO
-	LOOP {
-		iam (DTW);
-		praat_new (DTW_to_Polygon_localConstraints (me, GET_INTEGER (L"Non-diagonal steps"), GET_INTEGER (L"Diagonal steps")), my name, L"_local");
-	}
+    double band = GET_REAL (L"Sakoe-Chiba band");
+    int slope = GET_INTEGER (L"Slope constraint");
+    LOOP {
+        iam (DTW);
+        autoMatrix thee = DTW_to_Matrix_cummulativeDistances (me, band, slope);
+        praat_new (thee.transfer(), my name, L"_cd");
+    }
 END
 
-FORM (DTW_to_Polygon_globalConstraints, L"DTW: To Polygon (global constraints)", 0)
-	REAL (L"Sakoe-Chiba band (s)", L"0.1")
-	BOOLEAN (L"Use Itakura slope", 1)
-	POSITIVE (L"Itakura slope", L"2.0 (= like 1 / 2.0)")
-	OK
+FORM (DTW_to_Polygon, L"DTW: To Polygon...", 0)
+    REAL (L"Sakoe-Chiba band (s)", L"0.1")
+    RADIO (L"Slope constraint", 1)
+    RADIOBUTTON (L"no restriction")
+    RADIOBUTTON (L"1/3 < slope < 3")
+    RADIOBUTTON (L"1/2 < slope < 2")
+    RADIOBUTTON (L"2/3 < slope < 3/2")
+    OK
 DO
-	double scband = GET_REAL (L"Sakoe-Chiba band");
-	if (scband < 0) {
-		Melder_throw ("The Sakoe-Chiba band duration cannot be negative.");
-	}
-	double slope = GET_REAL (L"Itakura slope");
-	LOOP {
-		iam (DTW);
-		praat_new (DTW_to_Polygon_globalConstraints (me, scband, slope, GET_INTEGER (L"Use Itakura slope")), my name, L"_global");
-	}
+    double band = GET_REAL (L"Sakoe-Chiba band");
+    int slope = GET_INTEGER (L"Slope constraint");
+    LOOP {
+        iam (DTW);
+        autoPolygon thee = DTW_to_Polygon (me, band, slope);
+        praat_new (thee.transfer(), my name);
+    }
 END
 
-FORM (DTW_to_Polygon_band, L"DTW: To Polygon (band)", L"DTW: To Polygon (band)...")
-	REAL (L"Sakoe-Chiba band (s)", L"0.1")
-	BOOLEAN (L"Sakoe-Chiba band includes end", 0)
-	OK
-DO
+DIRECT (DTW_to_Matrix_distances)
 	LOOP {
 		iam (DTW);
-		praat_new (DTW_to_Polygon_band (me, GET_REAL (L"Sakoe-Chiba band"), GET_INTEGER (L"Sakoe-Chiba band includes end")), my name, L"_sakoeChiba");
-	}
-END
-
-DIRECT (DTW_distancesToMatrix)
-	LOOP {
-		iam (DTW);
-		praat_new (DTW_distancesToMatrix (me), my name);
+		praat_new (DTW_to_Matrix_distances (me), my name);
 	}
 END
 
@@ -4346,25 +4352,6 @@ static void Sound_create_checkCommonFields (void *dia, double *startingTime, dou
 	}
 }
 
-static void Sound_create_check (Sound me, double startingTime, double finishingTime, double samplingFrequency) {
-	if (me != 0) {
-		return;
-	}
-
-	if (wcsstr (Melder_getError (), L"memory")) {
-		double numberOfSamples_real = floor ( (finishingTime - startingTime) * samplingFrequency + 0.5);
-		Melder_clearError ();
-		Melder_throw ("There is not enough memory to create a Sound that contains ", Melder_bigInteger (numberOfSamples_real), L" samples.\n");
-#if 0
-		if (startingTime == 0.0) {
-			Melder_throw (L"You could lower the finishing time or the sampling frequency and try again.");
-		} else {
-			Melder_throw ("You could raise the starting time or lower the finishing time or the sampling frequency, and try again.");
-		}
-#endif
-	}
-}
-
 FORM (Sound_and_Pitch_to_FormantFilter, L"Sound & Pitch: To FormantFilter", L"Sound & Pitch: To FormantFilter...")
 	POSITIVE (L"Analysis window duration (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
@@ -4489,6 +4476,46 @@ DO
 		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"), GET_INTEGER (L"Garnish"),
 		GET_STRING (L"Drawing method"), numberOfBisections, GET_STRING (L"Formula"), interpreter);
 	}
+END
+
+FORM (Sound_playOneChannel, L"Sound: Play one channel", 0)
+    NATURAL (L"Channel", L"1")
+    OK
+DO
+    long ichannel = GET_INTEGER (L"Channel");
+    LOOP {
+        iam (Sound);
+        if (ichannel > my ny) {
+            Melder_throw (me, " there is no channel 6. Sound in channel not played.");
+        }
+        autoSound thee = Sound_extractChannel (me, ichannel);
+        Sound_play (thee.peek(), 0, 0);
+    }
+END
+
+FORM (Sounds_to_DTW, L"Sounds: To DTW", 0)
+    POSITIVE (L"Window length (s)", L"0.015")
+    POSITIVE (L"Time step (s)", L"0.005")
+    LABEL (L"", L"")
+    REAL (L"Sakoe-Chiba band (s)", L"0.1")
+    RADIO (L"Slope constraint", 1)
+    RADIOBUTTON (L"no restriction")
+    RADIOBUTTON (L"1/3 < slope < 3")
+    RADIOBUTTON (L"1/2 < slope < 2")
+    RADIOBUTTON (L"2/3 < slope < 3/2")
+    OK
+DO
+    double analysisWidth = GET_REAL (L"Window length");
+    double dt = GET_REAL (L"Time step");
+    double band = GET_REAL (L"Sakoe-Chiba band");
+    int slope = GET_INTEGER (L"Slope constraint");
+    Sound s1 = 0, s2 = 0;
+    LOOP {
+        iam (Sound);
+        (s1 ? s2 : s1) = me;
+    }
+    Melder_assert (s1 && s2);
+    praat_new (Sounds_to_DTW (s1, s2, analysisWidth, dt, band, slope), s1 -> name, L"_", s2 -> name);
 END
 
 FORM (Sound_to_TextGrid_detectSilences, L"Sound: To TextGrid (silences)", L"Sound: To TextGrid (silences)...")
@@ -4965,8 +4992,7 @@ static void SpeechSynthesizer_addCommonFields (void *dia) {
 }
 
 static void SpeechSynthesizer_CheckCommonFields (void *dia, double *wordgap, long *pitchAdjustment,
-	long *pitchRange, long *wordsPerMinute, bool *interpretSSML, bool *interpretPhonemeCodes)
-{
+	long *pitchRange, long *wordsPerMinute, bool *interpretSSML, bool *interpretPhonemeCodes) {
 	*wordgap = GET_REAL (L"Gap between words");
 	if (*wordgap < 0) *wordgap = 0;
 	*pitchAdjustment = GET_INTEGER (L"Pitch adjustment");
@@ -4985,7 +5011,7 @@ DIRECT (SpeechSynthesizer_help)
 	Melder_help (L"SpeechSynthesizer");
 END
 
-FORM (SpeechSynthesizer_create, L"Create a speech synthesizer", L"Create SpeechSynthesizer...")
+FORM (SpeechSynthesizer_create, L"Create SpeechSynthesizer", L"Create SpeechSynthesizer...")
 	long prefVoice = Strings_findString (espeakdata_voices_names, L"english");
 	if (prefVoice == 0) {
 		prefVoice = 1;
@@ -5000,7 +5026,7 @@ FORM (SpeechSynthesizer_create, L"Create a speech synthesizer", L"Create SpeechS
 	OK
 DO
 	long voiceIndex = GET_INTEGER (L"Voice");
-	long variantIndex = GET_INTEGER (L"Voice variant");
+	long variantIndex = GET_INTEGER (L"Voice variant"); // default is not in the list!
 	double wordgap;
 	long pitchAdjustment, pitchRange, wordsPerMinute;
 	bool interpretSSML, interpretPhonemeCodes;
@@ -5008,9 +5034,9 @@ DO
 		&interpretSSML, &interpretPhonemeCodes);
 	autoSpeechSynthesizer me = SpeechSynthesizer_create (voiceIndex, variantIndex,
 		GET_REAL (L"Sampling frequency"), wordgap,
-		pitchAdjustment, pitchRange, wordsPerMinute, interpretSSML, interpretPhonemeCodes); therror
-	praat_new (me.transfer(), espeakdata_voices_names -> strings[voiceIndex], L"_",
-		espeakdata_variants_names -> strings[variantIndex]);
+		pitchAdjustment, pitchRange, wordsPerMinute, interpretSSML, interpretPhonemeCodes);
+    praat_new (me.transfer(),  espeakdata_voices_names -> strings[voiceIndex], L"_",
+        espeakdata_variants_names -> strings[variantIndex]);
 END
 
 FORM (SpeechSynthesizer_playText, L"SpeechSynthesizer: Play text", 0)
@@ -6314,7 +6340,7 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from gamma-tone...", L"Create Sound from tone complex...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_createFromGammaTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from Shepard tone...", L"Create Sound from gammatone...", 1, DO_Sound_createFromShepardTone);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Sound from VowelEditor...", L"Create Sound from Shepard tone...", praat_DEPTH_1, DO_VowelEditor_create);
-	praat_addMenuCommand (L"Objects", L"New", L"Create SpeechSynthesizer...", L"Create Sound from VowelEditor...", 1, DO_SpeechSynthesizer_create);
+	praat_addMenuCommand (L"Objects", L"New", L"Create SpeechSynthesizer...", L"Create Sound from VowelEditor...", praat_DEPTH_1, DO_SpeechSynthesizer_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Pols & Van Nierop 1973)", L"Create Table...", 1, DO_Table_createFromPolsVanNieropData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Peterson & Barney 1952)", L"Create Table...", 1, DO_Table_createFromPetersonBarneyData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create formant table (Weenink 1985)", L"Create formant table (Peterson & Barney 1952)", 1, DO_Table_createFromWeeninkData);
@@ -6570,21 +6596,18 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classDTW, 0, L"Set distance value...", 0, 1, DO_DTW_setDistanceValue);
 
 	praat_addAction1 (classDTW, 0, L"Analyse", 0, 0, 0);
-	praat_addAction1 (classDTW, 0, L"Find path...", 0, 0, DO_DTW_findPath);
-	praat_addAction1 (classDTW, 0, L"Find path (band)...", 0, 0, DO_DTW_pathFinder_band);
-#ifdef INCLUDE_DTW_SLOPES
-	praat_addAction1 (classDTW, 0, L"Find path (slopes)...", 0, 0, DO_DTW_pathFinder_slopes);
-#endif
-	praat_addAction1 (classDTW, 0, L"To Polygon (global constraints)...", 0, 1, DO_DTW_to_Polygon_globalConstraints);
-	praat_addAction1 (classDTW, 0, L"To Polygon (band)...", 0, praat_HIDDEN, DO_DTW_to_Polygon_band);
-	praat_addAction1 (classDTW, 0, L"To Polygon (local constraints)...", 0, 0, DO_DTW_to_Polygon_localConstraints);
-	praat_addAction1 (classDTW, 0, L"To Polygon (slopes)...", 0, praat_HIDDEN, DO_DTW_to_Polygon_localConstraints);
-	praat_addAction1 (classDTW, 0, L"To Matrix (distances)", 0, 0, DO_DTW_distancesToMatrix);
+    praat_addAction1 (classDTW, 0, L"Find path...", 0, praat_HIDDEN, DO_DTW_findPath);
+    praat_addAction1 (classDTW, 0, L"Find path (band & slope)...", 0, 0, DO_DTW_findPath_bandAndSlope);
+    praat_addAction1 (classDTW, 0, L"To Polygon...", 0, 1, DO_DTW_to_Polygon);
+	praat_addAction1 (classDTW, 0, L"To Matrix (distances)", 0, 0, DO_DTW_to_Matrix_distances);
+    praat_addAction1 (classDTW, 0, L"To Matrix (cumm. distances)...", 0, 0, DO_DTW_to_Matrix_cummulativeDistances);
 	praat_addAction1 (classDTW, 0, L"Swap axes", 0, 0, DO_DTW_swapAxes);
 
 	praat_addAction2 (classDTW, 1, classMatrix, 1, L"Replace matrix", 0, 0, DO_DTW_and_Matrix_replace);
 	praat_addAction2 (classDTW, 1, classTextGrid, 1, L"To TextGrid (warp times)", 0, 0, DO_DTW_and_TextGrid_to_TextGrid);
 
+    praat_addAction2 (classDTW, 1, classPolygon, 1, L"Find path inside...", 0, 0, DO_DTW_and_Polygon_findPathInside);
+    praat_addAction2 (classDTW, 1, classPolygon, 1, L"To Matrix (cumm. distances)...", 0, 0, DO_DTW_and_Polygon_to_Matrix_cummulativeDistances);
 	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw...", 0, 0, DO_DTW_and_Sounds_draw);
 	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw warp (x)...", 0, 0, DO_DTW_and_Sounds_drawWarpX);
 
@@ -6799,7 +6822,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 1, L"Write to raw 16-bit Little Endian file...", 0, praat_HIDDEN, DO_Sound_writeToRawFileLE);
 
 	praat_addAction1 (classSound, 0, L"To TextGrid (silences)...", L"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
-
+    praat_addAction1 (classSound, 0, L"Play one channel...", L"Play", praat_HIDDEN, DO_Sound_playOneChannel);
 	praat_addAction1 (classSound, 0, L"Draw where...", L"Draw...", 1, DO_Sound_drawWhere);
 	//	praat_addAction1 (classSound, 0, L"Paint where...", L"Draw where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_paintWhere);
 	praat_addAction1 (classSound, 0, L"Paint where...", L"Draw where...", 1, DO_Sound_paintWhere);
@@ -6818,7 +6841,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, L"To MelFilter...", L"To BarkFilter...", 1, DO_Sound_to_MelFilter);
 
 	praat_addAction1 (classSound, 0, L"To Polygon...", L"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_Polygon);
-	praat_addAction1 (classSound, 2, L"To Polygon (enclosed)...", L"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_to_Polygon_enclosed);
+    praat_addAction1 (classSound, 2, L"To Polygon (enclosed)...", L"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_to_Polygon_enclosed);
+    praat_addAction1 (classSound, 2, L"To DTW...", L"Cross-correlate...", praat_DEPTH_1, DO_Sounds_to_DTW);
 
 	praat_addAction1 (classSound, 0, L"Filter (gammatone)...", L"Filter (formula)...", 1, DO_Sound_filterByGammaToneFilter4);
 

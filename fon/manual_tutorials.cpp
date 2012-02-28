@@ -23,9 +23,10 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120219)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120228)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.06# (28 February 2012)")
 NORMAL (L"##5.3.05# (19 February 2012)")
 LIST_ITEM (L"\\bu SpeechSynthesizer (#New menu \\-> #Sound): text-to-speech.")
 LIST_ITEM (L"\\bu @EEG: better scalp distribution drawing for both 32-channel and 64-channel recordings.")

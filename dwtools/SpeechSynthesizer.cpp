@@ -148,6 +148,7 @@ SpeechSynthesizer SpeechSynthesizer_create (long voiceIndex, long voiceVariantIn
 		FileInMemory fim = (FileInMemory) espeakdata_voices -> item[voiceIndex];
 		my d_voiceName = Melder_wcsdup (fim -> d_id);
 		if (voiceVariantIndex != 1) { // 1 is default, i.e. no variant
+            voiceVariantIndex--; // !!!
 			FileInMemory vfim = (FileInMemory) espeakdata_variants -> item[voiceVariantIndex];
 			my d_voiceVariantName = Melder_wcsdup (vfim -> d_id);
 		} else {

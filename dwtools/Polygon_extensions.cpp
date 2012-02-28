@@ -1,6 +1,6 @@
 /* Polygon_extensions.c
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,22 @@
 
 //
 
+void Polygon_getExtrema (Polygon me, double *xmin, double *xmax, double *ymin, double *ymax) {
+    *xmin = my x[1]; *xmax = my x[1];
+    *ymin = my y[1]; *ymax = my y[1];
+    for (long i = 2; i <= my numberOfPoints; i++) {
+        if (my x[i] < *xmin) {
+            *xmin = my x[i];
+        } else if (my x[i] > *xmax) {
+            *xmax = my x[i];
+        }
+        if (my y[i] < *ymin) {
+            *ymin = my y[i];
+        } else if (my y[i] > *ymax) {
+            *ymax = my y[i];
+        }
+    }
+}
 Polygon Polygon_createSimple (wchar_t *xystring) {
 	try {
 		long numberOfPoints;

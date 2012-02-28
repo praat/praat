@@ -2,7 +2,7 @@
 #define _ICA_h_
 /* ICA.h
  *
- * Copyright (C) 2010-2011 David Weenink
+ * Copyright (C) 2010-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,7 @@ CrossCorrelationTable CrossCorrelationTable_create (long dimension);
 CrossCorrelationTable CrossCorrelationTable_createSimple (wchar_t *covars, wchar_t *centroid, long numberOfSamples);
 
 /* (sum(i,j=1..dimension, i!=j; C[i][j]^2))/(dimension*(dimension-1)) */
-double CrossCorrelationTable_getDiagonalitymeasure (CrossCorrelationTable me);
+double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me);
 CrossCorrelationTable CrossCorrelationTable_and_Diagonalizer_diagonalize (CrossCorrelationTable me, Diagonalizer thee);
 
 CrossCorrelationTables CrossCorrelationTables_create ();

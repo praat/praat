@@ -1769,36 +1769,14 @@ MAN_BEGIN (L"DTW: Draw warp (x)...", L"djmw", 20071204)
 INTRO (L"Draws the warp given a time on the \"x-direction\"")
 MAN_END
 
-MAN_BEGIN (L"DTW: Find path (band)...", L"djmw", 20050306)
-INTRO (L"Finds the optimal path for the selected @DTW satisfying constraints within a Sakoe-Chiba band.")
+MAN_BEGIN (L"DTW: Find path (band & slope)...", L"djmw", 20120223)
+INTRO (L"Finds the optimal path for the selected @DTW that lies within the union of the sakoe-chiba band and local slope limits.")
 ENTRY (L"Settings")
-TAG (L"##Adjustment window duration (s)")
-DEFINITION (L"The maximum distance from the start of the sound that a path may start. This is the parameter "
-	"that determines the @@Sakoe & Chiba (1978)@ band.")
-TAG (L"##Adjustment window includes end")
-DEFINITION (L"determines whether the adjustment window includes the endpoint. When off and when the durations of "
-	"the two objects in the DTW differ by more than the adjustment window duration, the last part of the longest object "
-	"cannot be matched at all.")
-TAG (L"##X weight#, ##Y weight#, ##Diagonal weight#")
-DEFINITION (L"determine the weights in the cumulative distance calculation.")
-NORMAL (L"To visualize the Sakoe-Chiba band, select a DTW and chose @@DTW: To Polygon (band)...|To Polygon (band)...@. "
-	"Next select ##Draw...# (don't forget to make the drawing domains equal to the domains of the two objects in the DTW).")
-NORMAL (L"For more information see the article of @@Sakoe & Chiba (1978)@.")
-MAN_END
-
-MAN_BEGIN (L"DTW: Find path (slopes)...", L"djmw", 20050306)
-INTRO (L"Finds the optimal path for the selected @DTW satisfying slope constraints.")
-TAG (L"##Number of non-diagonal steps#, ##Number of diagonal steps#")
-DEFINITION (L"implement a slope constraint. Every ##Number of non-diagonal steps# steps in a X or Y direction must be followed by "
-	"at least ##Number of diagonal steps# steps in the diagonal direction. By setting ##Number of non-diagonal steps# to 0 you explicitly forbid "
-	"non-diagonal steps, while setting ##Number of diagonal steps# to 0 does not impose any slope constraints at all.")
-TAG (L"##X weight#, ##Y weight#, ##Diagonal weight#")
-DEFINITION (L"determine the weights in the cumulative distance calculation.")
-ENTRY (L"Examples")
-NORMAL (L"For the constraint 1/2 <= slope <= 2, set %nonDiagonalSteps = 2 and %diagonalSteps = 1.")
-NORMAL (L"For the constraint 1/3 <= slope <= 3, set %nonDiagonalSteps = 3 and %diagonalSteps = 1.")
-NORMAL (L"To visualize the slope constraints, select a DTW and chose @@DTW: To Polygon (slopes)...|To Polygon (slopes)...@. "
-	"Next select ##Draw...# (don't forget to make the drawing domains equal to the domains of the two objects in the DTW).")
+TAG (L"##Sakoe-Chiba band (s)#,")
+DEFINITION (L"The maximum distance from the start/end of the sound where a path may start/finish.")
+TAG (L"##Slope constraint#,")
+DEFINITION (L"determines the maximum and minimum local slopes in the optimal path. For example, the constraint "
+    "1/3 < slope < 3 forces the path locally after having taken three steps in the same direction direction to take the next step in the other direction, or after having taken two steps in the same direction to take the next step in the diagonal direction. At the same time the global consequences of the \"1/3 < slope < 3\" constraint mandates that the durations of the two domains do not differ by more than a factor of three. ")
 NORMAL (L"For more information see the article of @@Sakoe & Chiba (1978)@.")
 MAN_END
 
@@ -1877,14 +1855,9 @@ MAN_BEGIN (L"DTW: Swap axes", L"djmw", 20050306)
 INTRO (L"Swap the x and y-axes of the selected @DTW.")
 MAN_END
 
-MAN_BEGIN (L"DTW: To Polygon (band)...", L"djmw", 20050307)
-INTRO (L"A command to convert for a selected @DTW the Sakoe-Chiba band, as implemented by the window adjustment duration parameter, "
-	"to a @Polygon object. The polygon shows the boundaries of the search domain for the optimal path.")
-MAN_END
-
-MAN_BEGIN (L"DTW: To Polygon (slopes)...", L"djmw", 20050307)
-INTRO (L"A command to convert for a selected @DTW the slope constraints "
-	"to a @Polygon object. The polygon shows the boundaries of the search domain for the optimal path.")
+MAN_BEGIN (L"DTW: To Polygon...", L"djmw", 20120223)
+INTRO (L"A command to convert for a selected @DTW the Sakoe-Chiba band and the local slope constraint "
+	"to a @Polygon object. The polygon will show the boundaries of the search domain for the optimal path.")
 MAN_END
 
 MAN_BEGIN (L"DTW & TextGrid: To TextGrid (warp times)", L"djmw", 20110603)
@@ -2467,10 +2440,10 @@ SCRIPT (4,4, L"Create simple Polygon... p 0.0 0.0 0.0 1.0 1.0 0.0\n"
 	"Remove\n")
 MAN_END
 
-MAN_BEGIN (L"Polygon: Get location of point...", L"djmw", 20110617)
+MAN_BEGIN (L"Polygon: Get location of point...", L"djmw", 20120220)
 INTRO (L"Determines whether a given point is on the ##I#nside, the ##O#utside, on an ##E#dge or on a ##V#ertex of the selected Polygon.")
 ENTRY (L"Algorithm")
-NORMAL (L"We determine how often a horizontal line extending from the point crosses the polygon. If this results in an even number the point is outside, else inside. Special care is taken to be able to detect idf a point is on the boundary of the polygon. The used algorithm is from @@Hormann & Agathos (2001)@")
+NORMAL (L"We determine how often a horizontal line extending from the point crosses the polygon. If the number of crossings is even, the point is on the outside, else on the inside. Special care is taken to be able to detect if a point is on the boundary of the polygon. The used algorithm is from @@Hormann & Agathos (2001)@")
 MAN_END
 
 MAN_BEGIN (L"Polygon: Simplify", L"djmw", 20110615)
@@ -3525,30 +3498,27 @@ MAN_BEGIN (L"SpeechSynthesizer", L"djmw", 20111217)
 NORMAL (L"This is an interface for the @@Espeak@ speech synthesizer.")
 MAN_END
 
-MAN_BEGIN (L"espeak language-voice combination", L"djmw", 20111221)
-INTRO (L"A list of the possible language voice combination in the current @@Espeak@ speech synthesizer.")
-NORMAL (L"Under construction")
-MAN_END
-
-MAN_BEGIN (L"Create SpeechSynthesizer...", L"djmw", 20120113)
+MAN_BEGIN (L"Create SpeechSynthesizer...", L"djmw", 20120221)
 INTRO (L"Creates the @@Espeak@ speech synthesizer.")
 ENTRY (L"Settings")
-TAG (L"%%Language code")
-DEFINITION (L"The code for the @@espeak language-voice combination@ you want to use. In the current version 59 options are available. For example, choose \"en\" for English, \"es\" for spanish, \"zh\" for mandarin etc.")
-TAG (L"%%Espeak-data path,")
-DEFINITION (L"is the directory where the \"espeak-data\" directory can be found.")
-TAG (L"%%Gap between words (s),")
+TAG (L"##Voice#,")
+DEFINITION (L"a list of the possible language-voice combinations you can use.")
+TAG (L"##Voice variant#,")
+DEFINITION (L"a list of variants of a voice such as male, female and whispered variants.")
+TAG (L"##Sampling frequency#,")
+DEFINITION (L"the sampling frequency of a resulting sound.")
+TAG (L"##Gap between words (s)#,")
 DEFINITION (L"determines the extra pause length after each spoken word.")
-TAG (L"%%Pitch adjustment (0-99),")
+TAG (L"##Pitch adjustment (0-99)#,")
 DEFINITION (L"determines the amount of Hz the pitch of the voice is increased, default is 50).")
-TAG (L"%%Pitch range (0-99),")
+TAG (L"##Pitch range (0-99)#,")
 DEFINITION (L"determines the pitch range: 0 means monotonic, 50 means normal.")
-TAG (L"Words per minute (80-450),")
+TAG (L"##Words per minute (80-450)#,")
 DEFINITION (L"determines the speeking rate in words per minute, default is 175.")
-TAG (L"%%Interpret SSML,")
+TAG (L"##Interpret SSML#,")
 DEFINITION (L"determines whether Speech Synthesis Markup Language tags in the text will be used "
 	"during synthesis or not. ")
-TAG (L"%%Interpret phoneme codes,")
+TAG (L"##Interpret phoneme codes#,")
 DEFINITION (L"determines whether phoneme codes in the text will be used during synthesis or not.")
 MAN_END
 

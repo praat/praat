@@ -22,7 +22,7 @@
 */
 
 #include "DTW.h"
-#include "Sound_to_MFCC.h"
+#include "Sounds_to_DTW.h"
 #include "Sound_extensions.h"
 #include "SpeechSynthesizer_and_TextGrid.h"
 #include "CCs_to_DTW.h"
@@ -135,16 +135,16 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer m
 		if (hasSilence_s2) {
 			s_atg2.reset (TextGrid_extractPart (atg2.peek(), t1_s2, t2_s2, true));
 		}
-		// for the MFCC analysis
-		long numberOfCoefficients = 12;
-		double analysisWidth = 0.02, dt = 0.005, f1_mel = 100, fmax_mel = 0, df_mel = 100;
-		autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.peek() : thee),
-			numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		autoMFCC m2 = Sound_to_MFCC ((hasSilence_s2 ? s_s2.peek() : s2.peek()),
-			numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
-		int matchStart = 1, matchEnd = 1, constraint = 4; // no 1/3 1/2 2/3
-		autoDTW dtw = CCs_to_DTW (m1.peek(), m2.peek(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
+		double analysisWidth = 0.02, dt = 0.005, band = 0.0;
+        int constraint = 4;
+		//autoMFCC m1 = Sound_to_MFCC ((hasSilence_thee ? s_thee.peek() : thee),
+		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
+		//autoMFCC m2 = Sound_to_MFCC ((hasSilence_s2 ? s_s2.peek() : s2.peek()),
+		//	numberOfCoefficients, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
+		//double wc = 1, wle = 0, wr = 0, wer = 0, dtr = 0;
+		//int matchStart = 1, matchEnd = 1, constraint = 4; // no 1/3 1/2 2/3
+		//autoDTW dtw = CCs_to_DTW (m1.peek(), m2.peek(), wc, wle, wr, wer, dtr, matchStart, matchEnd, constraint);
+        autoDTW dtw = Sounds_to_DTW ((hasSilence_thee ? s_thee.peek() : thee), (hasSilence_s2 ? s_s2.peek() : s2.peek()), analysisWidth, dt, band, constraint);
 		autoTextGrid result = DTW_and_TextGrid_to_TextGrid (dtw.peek(),
 			(hasSilence_s2 ? s_atg2.peek() : atg2.peek()));
 		if (hasSilence_thee) {

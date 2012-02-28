@@ -25,7 +25,7 @@
 */
 
 #include "Spectrogram.h"
-#include "Polygon.h"
+#include "Polygon_extensions.h"
 #include "Pitch.h"
 #include "DurationTier.h"
 #include "Sound.h"
@@ -36,8 +36,8 @@ oo_CLASS_CREATE (DTW, Matrix);
 #define DTW_SAKOECHIBA 1
 #define DTW_SLOPES 2
 
-#define DTW_UNREACHABLE 0
-#define DTW_FORBIDDEN 1
+#define DTW_UNREACHABLE -1
+#define DTW_FORBIDDEN -2
 #define DTW_START 3
 #define DTW_XANDY 2
 #define DTW_X 4
@@ -50,27 +50,24 @@ DTW DTW_create (double tminp, double tmaxp, long ntp, double dtp, double t1p,
 	double tminc, double tmaxc, long ntc, double dtc, double t1c);
 
 void DTW_setWeights (DTW me, double wx, double wy, double wd);
-	
+
 DTW DTW_swapAxes (DTW me);
 
-int DTW_pathFinder_band (DTW me, double adjustment_window_duration, int adjustment_window_includes_end, 
-	 double costs_x, double costs_y, double costs_xandy);
-int DTW_pathFinder_slopes (DTW me, long nsteps_xory, long nsteps_xandy, double costs_x, double costs_y, double costs_xandy);
-
-void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope);
+void DTW_findPath_bandAndSlope (DTW me, double sakoeChibaBand, int localSlope, Matrix *cummulativeDists);
+void DTW_findPath (DTW me, int matchStart, int matchEnd, int slope); // deprecated
 /* Obsolete
 	Function:
 		Calculate the minimum path (through a distance matrix).
-		 
+
 	Possible constraints:
-	
+
 	matchStart:	path starts at position (1,1) (bottom-left)
 	matchEnd:	path ends at (I,J) (top-right)
 	slope:	1	no constraints
 			2	1/3 < slope < 3
 			3	1/2 < slope < 2
 			4	2/3 < slope < 3/2
-					
+
 	For algorithm and DP-equations see the article (& especially table I) in:
 	Sakoe, H. & Chiba, S. (1978), Dynamic Programming Algorithm Optimization
 		for Spoken Word	recognition, IEEE Trans. on ASSP, vol 26, 43-49.
@@ -92,23 +89,25 @@ void DTW_paintDistances (DTW me, Graphics g, double xmin, double xmax, double ym
 
 void DTW_drawPath (DTW me, Graphics g, double xmin, double xmax, double ymin,
 	double ymax, int garnish);
-void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish);	
+void DTW_drawWarpX (DTW me, Graphics g, double xmin, double xmax, double ymin, double ymax, double tx, int garnish);
 void DTW_pathRemoveRedundantNodes (DTW me);
 void DTW_pathQueryRecode (DTW me);
 
 void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax,
 	double dmin, double dmax, int garnish);
-	
-void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
+
+void DTW_and_Sounds_draw (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, int garnish);
-void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax, 
+void DTW_and_Sounds_drawWarpX (DTW me, Sound yy, Sound xx, Graphics g, double xmin, double xmax,
 	double ymin, double ymax, double tx, int garnish);
-	
-Polygon DTW_to_Polygon_globalConstraints (DTW me, double sakoeChibaBand, double itakuraSlope, bool useItakuraSlope);
-Polygon DTW_to_Polygon_band (DTW me, double sakoeChibaBand, int sakoeChibaBand_includes_end);
-Polygon DTW_to_Polygon_localConstraints (DTW me, long nsteps_xory, long nsteps_xandy);
-	
-Matrix DTW_distancesToMatrix (DTW me);
+
+Polygon DTW_to_Polygon (DTW me, double band, int slope);
+
+void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matrix *cummulativeDists);
+
+Matrix DTW_to_Matrix_distances(DTW me);
+Matrix DTW_to_Matrix_cummulativeDistances (DTW me, double sakoeChibaBand, int slope);
+Matrix DTW_and_Polygon_to_Matrix_cummulativeDistances (DTW me, Polygon thee, int localSlope);
 
 DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metric);
 

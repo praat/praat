@@ -78,7 +78,18 @@ typedef unsigned char  UCHAR;
 typedef double DOUBLEX;
 typedef uint64_t long64;   // use this for conversion between pointers and integers
 
-
+template <size_t _align_to, typename T> T *align_address (T *p)
+{
+	union {
+		T* ptr;
+		size_t integer;
+	};
+	const size_t bit_mask = ~(_align_to - 1);
+	ptr = p;
+    Melder_assert (sizeof (size_t) == sizeof (void *));
+	integer &= bit_mask;
+	return ptr;
+}
 
 
 typedef struct {

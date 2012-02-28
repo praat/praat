@@ -1,6 +1,6 @@
 /* ICA.c
  *
- * Copyright (C) 2010-2011 David Weenink
+ * Copyright (C) 2010-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -268,7 +268,7 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 }
 
 /*
-	The folowing two routine are modeled after qdiag.m from
+	The folowing two routines are modeled after qdiag.m from
 	R. Vollgraf and K. Obermayer, Quadratic Optimization for Simultaneous
 	Matrix Diagonalization, IEEE Transaction on Signal Processing, 2006,
 */
@@ -710,7 +710,7 @@ Thing_implement (CrossCorrelationTable, SSCP, 0);
 
 void structCrossCorrelationTable :: v_info () {
 	structSSCP :: v_info ();
-	double dm = CrossCorrelationTable_getDiagonalitymeasure (this);
+	double dm = CrossCorrelationTable_getDiagonalityMeasure (this);
 	MelderInfo_writeLine2 (L"Diagonality measure: ", Melder_double (dm));
 }
 
@@ -763,7 +763,7 @@ CrossCorrelationTable CrossCorrelationTable_createSimple (wchar_t *covars, wchar
 	}
 }
 
-double CrossCorrelationTable_getDiagonalitymeasure (CrossCorrelationTable me) {
+double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me) {
 	return NUMdmatrix_diagonalityMeasure (my data, my numberOfColumns);
 }
 
@@ -774,7 +774,7 @@ void structCrossCorrelationTables :: v_info () {
 	CrossCorrelationTable thee = (CrossCorrelationTable) item[1];
 	MelderInfo_writeLine2 (L"  Number of rows and columns: ", Melder_integer (thy numberOfRows));
 	for (long i = 1; i <= size; i++) {
-		double dm = CrossCorrelationTable_getDiagonalitymeasure ( (CrossCorrelationTable) item[i]);
+		double dm = CrossCorrelationTable_getDiagonalityMeasure ( (CrossCorrelationTable) item[i]);
 		MelderInfo_writeLine4 (L"Diagonality measure for item ", Melder_integer (i), L": ", Melder_double (dm));
 	}
 }
@@ -945,6 +945,8 @@ CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, lon
 }
 
 static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix thee, long maxNumberOfIterations, double tol, int method) {
+    (void) tol;
+    (void) method;
 	try {
 		long iter = 0;
 		if (my ny != thy numberOfColumns) {
