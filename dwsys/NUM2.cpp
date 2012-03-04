@@ -530,7 +530,7 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *na
 
 double **NUMdmatrix_transpose (double **m, long nr, long nc) {
 	long i = 1, j = 1;
-	double **to = NUMdmatrix (1, nc, 1, nr);
+	double **to = NUMmatrix <double> (1, nc, 1, nr);
 
 	if (to == NULL) {
 		return NULL;
@@ -1208,10 +1208,10 @@ void NUMeigensystem (double **a, long n, double **evec, double eval[]) {
 	autoEigen me = Thing_new (Eigen);
 	Eigen_initFromSymmetricMatrix (me.peek(), a, n);
 	if (evec) {
-		NUMdmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
+		NUMmatrix_copyElements (my eigenvectors, evec, 1, n, 1, n);
 	}
 	if (eval) {
-		NUMdvector_copyElements (my eigenvalues, eval, 1, n);
+		NUMvector_copyElements (my eigenvalues, eval, 1, n);
 	}
 }
 
@@ -1275,7 +1275,7 @@ void NUMprincipalComponents (double **a, long n, long nComponents, double **pc) 
 
 void NUMdmatrix_into_principalComponents (double **m, long nrows, long ncols, long numberOfComponents, double **pc) {
 	Melder_assert (numberOfComponents > 0 && numberOfComponents <= ncols);
-	autoNUMmatrix<double> mc (NUMdmatrix_copy (m, 1, nrows, 1, ncols), 1, 1);
+	autoNUMmatrix<double> mc (NUMmatrix_copy (m, 1, nrows, 1, ncols), 1, 1);
 
 	/*NUMcentreColumns (mc, nrows, ncols);*/
 	autoSVD svd = SVD_create_d (mc.peek(), nrows, ncols);
@@ -1694,7 +1694,7 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 	autoNUMmatrix<double> c (1, nDimensions, 1, nDimensions);
 	autoNUMmatrix<double> yc (1, nPoints, 1, nDimensions);
-	NUMdmatrix_copyElements (y, yc.peek(), 1, nPoints, 1, nDimensions);
+	NUMmatrix_copyElements (y, yc.peek(), 1, nPoints, 1, nDimensions);
 
 	/*
 		Reference: Borg & Groenen (1997), Modern multidimensional scaling,
@@ -1740,7 +1740,7 @@ void NUMProcrustes (double **x, double **y, long nPoints, long nDimensions, doub
 
 	if (! orthogonal) {
 		autoNUMmatrix<double> xc (1, nPoints, 1, nDimensions);
-		NUMdmatrix_copyElements (x, xc.peek(), 1, nPoints, 1, nDimensions);
+		NUMmatrix_copyElements (x, xc.peek(), 1, nPoints, 1, nDimensions);
 		autoNUMmatrix<double> yt (1, nPoints, 1, nDimensions);
 
 		// 4. Dilation factor s = (tr X'JYT) / (tr Y'JY)
@@ -2323,7 +2323,7 @@ double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *bet
 
 	autoNUMvector<double> zero (1, p);
 	autoNUMmatrix<double> covar (1, p, 1, p);
-	autoNUMmatrix<double> x (NUMdmatrix_copy (data, 1, n, 1, p), 1, 1);
+	autoNUMmatrix<double> x (NUMmatrix_copy (data, 1, n, 1, p), 1, 1);
 
 	NUMcentreColumns (x.peek(), 1, n, 1, p, NULL); // x - xmean
 

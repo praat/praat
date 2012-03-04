@@ -354,7 +354,7 @@ void structEEG :: f_filter (double lowFrequency, double lowWidth, double highFre
 				Spectrum_stopHannBand (spec.peek(), 48.0, 52.0, 1.0);
 			}
 			autoSound him = Spectrum_to_Sound (spec.peek());
-			NUMdvector_copyElements (his z [1], d_sound -> z [ichan], 1, d_sound -> nx);
+			NUMvector_copyElements (his z [1], d_sound -> z [ichan], 1, d_sound -> nx);
 		}
 	} catch (MelderError) {
 		Melder_throw (this, ": not filtered.");

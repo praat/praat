@@ -61,7 +61,7 @@ Activation Matrix_to_Activation (I) {
 	iam (Matrix);
 	try {
 		autoActivation thee = Activation_create (my ny, my nx);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Activation.");
@@ -73,7 +73,7 @@ Matrix Activation_to_Matrix (I) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		                                 my ymin, my ymax, my ny, my dy, my y1);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");

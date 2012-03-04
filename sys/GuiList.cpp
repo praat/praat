@@ -491,7 +491,7 @@ long * GuiList_getSelectedPositions (GuiObject widget, long *numberOfSelectedPos
 			GList *list = gtk_tree_selection_get_selected_rows (selection, (GtkTreeModel **) & list_store);
 			long ipos = 1;
 			*numberOfSelectedPositions = n;
-			selectedPositions = NUMlvector (1, *numberOfSelectedPositions);
+			selectedPositions = NUMvector <long> (1, *numberOfSelectedPositions);
 			Melder_assert (selectedPositions != NULL);
 			for (GList *l = g_list_first (list); l != NULL; l = g_list_next (l)) {
 				gint *index = gtk_tree_path_get_indices ((GtkTreePath *) l -> data);
@@ -526,7 +526,7 @@ long * GuiList_getSelectedPositions (GuiObject widget, long *numberOfSelectedPos
 			ListBox_GetSelItems (widget -> window, n, indices);
 		}
 		*numberOfSelectedPositions = n;
-		selectedPositions = NUMlvector (1, *numberOfSelectedPositions);
+		selectedPositions = NUMvector <long> (1, *numberOfSelectedPositions);
 		Melder_assert (selectedPositions != NULL);
 		for (long ipos = 1; ipos <= *numberOfSelectedPositions; ipos ++) {
 			selectedPositions [ipos] = indices [ipos - 1] + 1;   // convert from zero-based list of zero-based indices
@@ -539,7 +539,7 @@ long * GuiList_getSelectedPositions (GuiObject widget, long *numberOfSelectedPos
 		if (n < 1) {
 			return selectedPositions;
 		}
-		selectedPositions = NUMlvector (1, n);   // probably too big (ergo, probably reallocable), but the caller will throw it away anyway
+		selectedPositions = NUMvector <long> (1, n);   // probably too big (ergo, probably reallocable), but the caller will throw it away anyway
 		for (long i = 1; i <= n; i ++) {
 			cell. v = i - 1;
 			if (LGetSelect (false, & cell, my macListHandle)) {
@@ -547,7 +547,7 @@ long * GuiList_getSelectedPositions (GuiObject widget, long *numberOfSelectedPos
 			}
 		}
 		if (*numberOfSelectedPositions == 0) {
-			NUMlvector_free (selectedPositions, 1);
+			NUMvector_free (selectedPositions, 1);
 			selectedPositions = NULL;
 		}
 	#endif

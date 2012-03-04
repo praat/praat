@@ -443,7 +443,7 @@ Matrix FilterBank_to_Matrix (I) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
 		                                 my ymin, my ymax, my ny, my dy, my y1);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");
@@ -455,7 +455,7 @@ BarkFilter Matrix_to_BarkFilter (I) {
 	try {
 		autoBarkFilter thee = BarkFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		                      my ymin, my ymax, my ny, my dy, my y1);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to BarkFilter.");
@@ -467,7 +467,7 @@ MelFilter Matrix_to_MelFilter (I) {
 	try {
 		autoMelFilter thee = MelFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		                                       my ymin, my ymax, my ny, my dy, my y1);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to MelFilter.");
@@ -551,7 +551,7 @@ FormantFilter Matrix_to_FormantFilter (I) {
 	try {
 		autoFormantFilter thee = FormantFilter_create (my xmin, my xmax, my nx, my dx, my x1,
 		                         my ymin, my ymax, my ny, my dy, my y1);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to FormantFilter.");

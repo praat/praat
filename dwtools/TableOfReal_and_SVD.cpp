@@ -52,7 +52,7 @@ TableOfReal SVD_extractLeftSingularVectors (I) {
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, mn_min);
-		NUMdmatrix_copyElements (my u, thy data, 1, my numberOfRows, 1, mn_min);
+		NUMmatrix_copyElements (my u, thy data, 1, my numberOfRows, 1, mn_min);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": left singular vector not extracted.");
@@ -64,7 +64,7 @@ TableOfReal SVD_extractRightSingularVectors (I) {
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoTableOfReal thee = TableOfReal_create (my numberOfColumns, mn_min);
-		NUMdmatrix_copyElements (my v, thy data, 1, my numberOfColumns, 1, mn_min);
+		NUMmatrix_copyElements (my v, thy data, 1, my numberOfColumns, 1, mn_min);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": right singular vector not extracted.");
@@ -76,7 +76,7 @@ TableOfReal SVD_extractSingularValues (I) {
 	try {
 		long mn_min = MIN (my numberOfRows, my numberOfColumns);
 		autoTableOfReal thee = TableOfReal_create (1, mn_min);
-		NUMdvector_copyElements (my d, thy data[1], 1, mn_min);
+		NUMvector_copyElements (my d, thy data[1], 1, mn_min);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": singular values not extracted.");

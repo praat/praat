@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2011 Paul Boersma
+ * Copyright (C) 1994-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,13 +30,13 @@
 	for (int i = 0; i <= setType##_MAX; i ++) \
 		if (x [i] != thy x [i]) return false; \
 
-#define oo_VECTOR(type,t,storage,x,min,max)  \
+#define oo_VECTOR(type,storage,x,min,max)  \
 	if (! x != ! thy x || \
 		(x && ! NUMvector_equal <type> (x, thy x, min, max))) return false;
 
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
+#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	if (! x != ! thy x || \
-		(x && ! NUM##t##matrix_equal (x, thy x, row1, row2, col1, col2))) return false;
+		(x && ! NUMmatrix_equal <type> (x, thy x, row1, row2, col1, col2))) return false;
 
 #define oo_ENUMx(type,storage,Type,x)  \
 	if (x != thy x) return false;
@@ -47,9 +47,9 @@
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) if (x [i] != thy x [i]) return false;
 
-#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
+#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	if (! x != ! thy x || \
-		(x && ! NUM##t##vector_equal (x, thy x, min, max))) return false;
+		(x && ! NUMvector_equal <type> (x, thy x, min, max))) return false;
 
 #define oo_STRINGx(storage,x)  \
 	if (! Melder_wcsequ (x, thy x)) return false;

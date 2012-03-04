@@ -96,7 +96,7 @@ double Cochleagram_difference (Cochleagram me, Cochleagram thee, double tmin, do
 Cochleagram Matrix_to_Cochleagram (Matrix me) {
 	try {
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, my nx, my dx, my x1, my dy, my ny);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Cochleagram.");
@@ -106,7 +106,7 @@ Cochleagram Matrix_to_Cochleagram (Matrix me) {
 Matrix Cochleagram_to_Matrix (Cochleagram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMdmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
+		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");

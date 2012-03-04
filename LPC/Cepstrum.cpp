@@ -111,7 +111,7 @@ Cepstrum Matrix_to_Cepstrum (Matrix me, long row) {
 		if (row > my ny) {
 			row = my ny;
 		}
-		NUMdvector_copyElements (my z[row], thy z[1], 1, my nx);
+		NUMvector_copyElements (my z[row], thy z[1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no Cepstrum created.");

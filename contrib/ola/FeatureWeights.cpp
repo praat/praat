@@ -430,7 +430,7 @@ FeatureWeights FeatureWeights_computeRELIEF
 	autoNUMvector <double> min (0L, p->nx - 1);
 	autoNUMvector <double> max (0L, p->nx - 1);
 	for (long x = 1; x <= p -> nx; x ++) {
-		max [x] = p -> z [1] [x];
+		max [x] = p -> z [1] [x];   // BUG: this will just crash because of array index out of bounds
 		min [x] = max [x];
 	}
 
@@ -443,7 +443,7 @@ FeatureWeights FeatureWeights_computeRELIEF
 
 	autoNUMvector <double> alfa (0L, p -> nx - 1);
 	for (long x = 1; x <= p -> nx; x ++) {
-		alfa [x] = max [x] - min [x];
+		alfa [x] = max [x] - min [x];   // BUG: this will just crash because of array index out of bounds
 	}
 
 	for (long y = 1; y <= p->ny; y++) {

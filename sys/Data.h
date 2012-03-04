@@ -2,7 +2,7 @@
 #define _Data_h_
 /* Data.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -354,30 +354,28 @@ extern structMelderDir Data_directoryBeingRead;
 /* The values of 'type' in struct descriptions. */
 
 #define bytewa  1
-#define shortwa  2
-#define intwa  3
-#define longwa  4
-#define ubytewa  5
-#define ushortwa  6
-#define uintwa  7
-#define ulongwa  8
-#define boolwa 9
-#define floatwa  10
-#define doublewa  11
-#define fcomplexwa  12
-#define dcomplexwa  13
-#define enumwa  14
-#define lenumwa  15
-#define booleanwa  16
-#define questionwa  17
-#define stringwa  18
-#define lstringwa  19
+#define intwa  2
+#define longwa  3
+#define ubytewa  4
+#define uintwa  5
+#define ulongwa  6
+#define boolwa 7
+#define floatwa  8
+#define doublewa  9
+#define fcomplexwa  10
+#define dcomplexwa  11
+#define enumwa  12
+#define lenumwa  13
+#define booleanwa  14
+#define questionwa  15
+#define stringwa  16
+#define lstringwa  17
 #define maxsingletypewa lstringwa
-#define structwa  20
-#define widgetwa  21
-#define objectwa  22
-#define collectionwa  23
-#define inheritwa  24
+#define structwa  18
+#define widgetwa  19
+#define objectwa  20
+#define collectionwa  21
+#define inheritwa  22
 
 /* Recursive routines for working with struct members. */
 

@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120228)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120304)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.07# (4 March 2012)")
+LIST_ITEM (L"\\bu Praat can now save Sounds as 24-bit and 32-bit WAV files.")
 NORMAL (L"##5.3.06# (28 February 2012)")
 NORMAL (L"##5.3.05# (19 February 2012)")
 LIST_ITEM (L"\\bu SpeechSynthesizer (#New menu \\-> #Sound): text-to-speech.")

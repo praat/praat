@@ -223,7 +223,7 @@ static bool flush (void) {
 	#endif
 	}
 	if (my fakeMono) {
-		NUMsvector_free ((short *) my buffer, 0);
+		NUMvector_free ((short *) my buffer, 0);
 		my buffer = NULL;
 	}
 	MelderAudio_isPlaying = false;

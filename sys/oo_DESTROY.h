@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2011 Paul Boersma
+ * Copyright (C) 1994-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,10 @@
 
 #define oo_SET(type,storage,x,setType)
 
-#define oo_VECTOR(type,t,storage,x,min,max)  \
+#define oo_VECTOR(type,storage,x,min,max)  \
 	NUMvector_free <type> (x, min);
 
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
+#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	NUMmatrix_free <type> (x, row1, col1);
 
 
@@ -38,8 +38,8 @@
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)
 
-#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
-	NUM##t##vector_free (x, min);
+#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
+	NUMvector_free <type> (x, min);
 
 #define oo_STRINGx(storage,x)  \
 	Melder_free (x);
@@ -82,7 +82,7 @@
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
 				x [i] [j] -> destroy (); \
-		NUMstructmatrix_free (Type, x, row1, col1); \
+		NUMmatrix_free <struct##Type> (x, row1, col1); \
 	}
 
 #define oo_WIDGET(x)  \

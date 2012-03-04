@@ -276,7 +276,7 @@ TableOfReal CCA_and_TableOfReal_predict (CCA me, TableOfReal thee, long from) {
 		double **v = my y -> eigenvectors;
 		double *d = my y -> eigenvalues;
 		for (long i = 1; i <= thy numberOfRows; i++) {
-			NUMdvector_copyElements (his data[i], buf.peek(), 1, ny);
+			NUMvector_copyElements (his data[i], buf.peek(), 1, ny);
 			for (long j = 1; j <= ny; j++) {
 				double t = 0;
 				for (long k = 1; k <= ny; k++) {

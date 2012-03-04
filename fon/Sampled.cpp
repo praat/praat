@@ -142,7 +142,7 @@ long Sampled_countDefinedSamples (Sampled me, long ilevel, int unit) {
 
 double * Sampled_getSortedValues (Sampled me, long ilevel, int unit, long *return_numberOfValues) {
 	long isamp, numberOfDefinedSamples = 0;
-	double *values = NUMdvector (1, my nx);
+	double *values = NUMvector <double> (1, my nx);
 	if (values == NULL) return NULL;
 	for (isamp = 1; isamp <= my nx; isamp ++) {
 		double value = my v_getValueAtSample (isamp, ilevel, unit);

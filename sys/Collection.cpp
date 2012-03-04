@@ -437,27 +437,6 @@ SortedSetOfInt SortedSetOfInt_create (void) {
 	return me.transfer();
 }
 
-/********** class SortedSetOfShort **********/
-
-Thing_implement (SortedSetOfShort, SortedSet, 0);
-
-int structSortedSetOfShort :: s_compare (I, thou) {
-	iam (SimpleShort); thouart (SimpleShort);
-	if (my number < thy number) return -1;
-	if (my number > thy number) return +1;
-	return 0;
-}
-
-void SortedSetOfShort_init (SortedSetOfShort me) {
-	SortedSet_init (me, classSimpleShort, 10);
-}
-
-SortedSetOfShort SortedSetOfShort_create (void) {
-	autoSortedSetOfShort me = Thing_new (SortedSetOfShort);
-	SortedSetOfShort_init (me.peek());
-	return me.transfer();
-}
-
 /********** class SortedSetOfLong **********/
 
 Thing_implement (SortedSetOfLong, SortedSet, 0);

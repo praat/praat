@@ -107,7 +107,7 @@ TableOfReal AffineTransform_extractMatrix (I) {
 	iam (AffineTransform);
 	try {
 		autoTableOfReal thee = TableOfReal_create (my n, my n);
-		NUMdmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
+		NUMmatrix_copyElements (my r, thy data, 1, my n, 1, my n);
 		for (long i = 1; i <= my n; i++) {
 			wchar_t label[20];
 			(void) swprintf (label, 20, L"%ld", i);

@@ -1,6 +1,6 @@
 /* Manipulation.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,14 +283,14 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 	if (imax > my nx) imax = my nx;
 	if (imax < imin) return;
 	iminTarget = Sampled_xToHighIndex (thee, tminTarget);
-	NUMdvector_copyElements (my z [1] + imin, thy z [1] + iminTarget, 0, imax - imin);
+	NUMvector_copyElements (my z [1] + imin, thy z [1] + iminTarget, 0, imax - imin);
 }
 
 Sound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess target, double maxT) {
 	try {
 		autoSound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		if (source -> nt < 2 || target -> nt < 2) {   /* Almost completely voiceless? */
-			NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
+			NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
 			return thee.transfer();
 		}
 		for (long i = 1; i <= target -> nt; i ++) {

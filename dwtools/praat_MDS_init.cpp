@@ -73,12 +73,12 @@ static void TabelOfReal_testSorting (I, long rowtoindex) {
 		}
 
 		// Copy 1->3 and sort 3 inplace
-		NUMdvector_copyElements (my data[1], my data[3], 1, nc);
+		NUMvector_copyElements (my data[1], my data[3], 1, nc);
 		NUMsort_d (nc, my data[3]);
 
 		// Copy 1->4 and 2->5, sort 4+5 in parallel
-		NUMdvector_copyElements (my data[1], my data[4], 1, nc);
-		NUMdvector_copyElements (my data[2], my data[5], 1, nc);
+		NUMvector_copyElements (my data[1], my data[4], 1, nc);
+		NUMvector_copyElements (my data[2], my data[5], 1, nc);
 		NUMsort2_dd (nc, my data[4], my data[5]);
 
 		NUMindexx (my data[rowtoindex], nc, index.peek());

@@ -158,7 +158,7 @@ static int tryExchange (int **distance, int *path, int numberOfCities, long *tot
 
 static int tryAdoption (int **distance, int *path, int numberOfCities, long *totalDistance)
 {
-	int *help = NUMivector (0, numberOfCities);
+	int *help = NUMvector <int> (0, numberOfCities);
 	int i, maximumGainLeft, result = 0;
 
 	/* Compute maximum distance between two successive cities. */
@@ -210,7 +210,7 @@ static int tryAdoption (int **distance, int *path, int numberOfCities, long *tot
 		}
 		result |= ! cont;
 	}
-	NUMivector_free (help, 0);
+	NUMvector_free (help, 0);
 	return result;
 }
 

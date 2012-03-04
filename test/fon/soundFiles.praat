@@ -6,12 +6,50 @@ procedure test .type$ .extension$ .duration
 		sound = Create Sound from formula... sound numberOfChannels 0 .duration/numberOfChannels 44100 1/4 * sin(2*pi*377*x) + randomGauss(0,0.05)
 		Formula... round (self * 32768) / 32768
 		energy1 = Get energy in air
-		Write to '.type$' file... kanweg.'.extension$'
+		Save as '.type$' file... kanweg.'.extension$'
 		stopwatch
 		sound2 = Read from file... kanweg.'.extension$'
 		t = stopwatch
 		energy2 = Get energy in air
-		assert "'energy1:11'" = "'energy2:11'"
+		assert "'energy1:12'" = "'energy2:12'"
+		plus sound
+		Remove
+		deleteFile ("kanweg." + .extension$)
+		printline  't:4' seconds
+	endfor
+endproc
+procedure test24 .type$ .extension$ .duration
+	printline Testing 24-bit '.type$' files...
+	for numberOfChannels from 1 to 8
+		print 'numberOfChannels' channels:
+		sound = Create Sound from formula... sound numberOfChannels 0 .duration/numberOfChannels 44100 1/4 * sin(2*pi*377*x) + randomGauss(0,0.05)
+		Formula... round (self * 32768*256) / (32768*256)
+		energy1 = Get energy in air
+		Save as 24-bit '.type$' file... kanweg.'.extension$'
+		stopwatch
+		sound2 = Read from file... kanweg.'.extension$'
+		t = stopwatch
+		energy2 = Get energy in air
+		assert "'energy1:12'" = "'energy2:12'"
+		plus sound
+		Remove
+		deleteFile ("kanweg." + .extension$)
+		printline  't:4' seconds
+	endfor
+endproc
+procedure test32 .type$ .extension$ .duration
+	printline Testing 32-bit '.type$' files...
+	for numberOfChannels from 1 to 8
+		print 'numberOfChannels' channels:
+		sound = Create Sound from formula... sound numberOfChannels 0 .duration/numberOfChannels 44100 1/4 * sin(2*pi*377*x) + randomGauss(0,0.05)
+		Formula... round (self * 32768*65536) / (32768*65536)
+		energy1 = Get energy in air
+		Save as 32-bit '.type$' file... kanweg.'.extension$'
+		stopwatch
+		sound2 = Read from file... kanweg.'.extension$'
+		t = stopwatch
+		energy2 = Get energy in air
+		assert "'energy1:12'" = "'energy2:12'"
 		plus sound
 		Remove
 		deleteFile ("kanweg." + .extension$)
@@ -26,6 +64,8 @@ call test Next/Sun au 3
 call test NIST nist 3
 call test FLAC flac 3
 call test WAV wav 30
+call test24 WAV wav 3
+call test32 WAV wav 3
 
 procedure do
 	Read from file... test.wav
@@ -36,7 +76,7 @@ procedure do
 	flacEnergy = Get energy in air
 	Remove
 
-	assert "'wavEnergy:11'" = "'flacEnergy:11'"
+	assert "'wavEnergy:12'" = "'flacEnergy:12'"
 endproc
 printline Optimized:
 Debug... 0

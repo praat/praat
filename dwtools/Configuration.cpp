@@ -185,7 +185,7 @@ static void NUMvarimax (double **xm, double **ym, long nr, long nc, int normaliz
                         long maximumNumberOfIterations, double tolerance) {
 	Melder_assert (nr > 0 && nc > 0);
 
-	NUMdmatrix_copyElements (xm, ym, 1, nr, 1, nc);
+	NUMmatrix_copyElements (xm, ym, 1, nr, 1, nc);
 
 	if (nc == 1) {
 		return;
@@ -327,7 +327,7 @@ Configuration Configuration_congruenceRotation (Configuration me, Configuration 
 
 void Configuration_rotateToPrincipalDirections (Configuration me) {
 	try {
-		autoNUMmatrix<double> m (NUMdmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
+		autoNUMmatrix<double> m (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
 
 		NUMdmatrix_into_principalComponents (my data, my numberOfRows, my numberOfColumns, my numberOfColumns, m.peek());
 		NUMvector_free (my data, 1);
@@ -421,7 +421,7 @@ Configuration TableOfReal_to_Configuration (I) {
 	try {
 		autoConfiguration thee = Configuration_create (my numberOfRows, my numberOfColumns);
 
-		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
 		return thee.transfer();
 	} catch (MelderError) {

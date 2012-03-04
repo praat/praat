@@ -359,7 +359,7 @@ static void grind (ManPages me) {
 	 * Forget nlinksHither and nlinksThither.
 	 */
 	if (grandNlinks == 0) { my ground = TRUE; return; }
-	if (! (grandLinksHither = NUMlvector (1, grandNlinks)) || ! (grandLinksThither = NUMlvector (1, grandNlinks))) {
+	if (! (grandLinksHither = NUMvector <long> (1, grandNlinks)) || ! (grandLinksThither = NUMvector <long> (1, grandNlinks))) {
 		Melder_flushError (NULL);
 		return;
 	}

@@ -1,6 +1,6 @@
 /* DataEditor.cpp
  *
- * Copyright (C) 1995-2011 Paul Boersma
+ * Copyright (C) 1995-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,12 +37,12 @@ static Data_Description Class_getDescription (ClassInfo table) {
 }
 
 /*static const char * typeStrings [] = { "none",
-	"byte", "short", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
+	"byte", "int", "long", "ubyte", "ushort", "uint", "ulong", "bool",
 	"float", "double", "fcomplex", "dcomplex",
 	"enum", "lenum", "boolean", "question", "stringw", "lstringw",
 	"struct", "widget", "object", "collection" };*/
 static int stringLengths [] = { 0,
-	4, 6, 6, 11, 3, 5, 5, 10, 1,
+	4, 6, 11, 3, 5, 10, 1,
 	15, 27, 35, 59,
 	33, 33, 8, 6, 60, 60 };
 
@@ -137,19 +137,6 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 						}
 					}
 				} break;
-				case shortwa: {
-					short oldValue = * (short *) my d_fieldData [i]. address, newValue = wcstol (text, NULL, 10);
-					if (newValue != oldValue) {
-						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [i]. description -> name);
-						if (numberUse) {
-							Melder_error_ ("Changing field \"", strip_d (my d_fieldData [i]. description -> name),
-								"\" would damage the array \"", strip_d (numberUse -> name), "\".");
-							Melder_flushError (NULL);
-						} else {
-							* (short *) my d_fieldData [i]. address = newValue;
-						}
-					}
-				} break;
 				case intwa: {
 					int oldValue = * (int *) my d_fieldData [i]. address, newValue = wcstol (text, NULL, 10);
 					if (newValue != oldValue) {
@@ -177,7 +164,6 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 					}
 				} break;
 				case ubytewa: { * (unsigned char *) my d_fieldData [i]. address = wcstoul (text, NULL, 10); } break;
-				case ushortwa: { * (unsigned short *) my d_fieldData [i]. address = wcstoul (text, NULL, 10); } break;
 				case uintwa: { * (unsigned int *) my d_fieldData [i]. address = wcstoul (text, NULL, 10); } break;
 				case ulongwa: { * (unsigned long *) my d_fieldData [i]. address = wcstoul (text, NULL, 10); } break;
 				case boolwa: { * (bool *) my d_fieldData [i]. address = wcstol (text, NULL, 10); } break;
@@ -401,11 +387,9 @@ long structStructEditor :: v_countFields () {
 static const wchar * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
 	switch (type) {
 		case bytewa:   MelderString_append (buffer, Melder_integer (* (signed char *)    address)); break;
-		case shortwa:  MelderString_append (buffer, Melder_integer (* (short *)          address)); break;
 		case intwa:    MelderString_append (buffer, Melder_integer (* (int *)            address)); break;
 		case longwa:   MelderString_append (buffer, Melder_integer (* (long *)           address)); break;
 		case ubytewa:  MelderString_append (buffer, Melder_integer (* (unsigned char *)  address)); break;
-		case ushortwa: MelderString_append (buffer, Melder_integer (* (unsigned short *) address)); break;
 		case uintwa:   MelderString_append (buffer, Melder_integer (* (unsigned int *)   address)); break;
 		case ulongwa:  MelderString_append (buffer, Melder_integer (* (unsigned long *)  address)); break;
 		case boolwa:   MelderString_append (buffer, Melder_integer (* (bool *)           address)); break;

@@ -1,6 +1,6 @@
 /* Simple_def.h
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2008/03/19
- */
-
 #define ooSTRUCT SimpleInt
 oo_DEFINE_CLASS (SimpleInt, Data)
 	oo_INT (number)
 oo_END_CLASS (SimpleInt)
-#undef ooSTRUCT
-
-#define ooSTRUCT SimpleShort
-oo_DEFINE_CLASS (SimpleShort, Data)
-	oo_SHORT (number)
-oo_END_CLASS (SimpleShort)
 #undef ooSTRUCT
 
 #define ooSTRUCT SimpleLong

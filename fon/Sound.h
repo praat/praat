@@ -294,7 +294,7 @@ void Sound_play (Sound me,
 
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
-void Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType);
+void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
 #ifdef macintosh
 	void Sound_writeToMacSoundFile (Sound me, MelderFile file);   /* 8 bit */
 #endif

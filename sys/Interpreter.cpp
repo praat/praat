@@ -81,7 +81,7 @@ Thing_implement (InterpreterVariable, SimpleString, 0);
 void structInterpreterVariable :: v_destroy () {
 	Melder_free (string);
 	Melder_free (stringValue);
-	NUMdmatrix_free (numericArrayValue. data, 1, 1);
+	NUMmatrix_free (numericArrayValue. data, 1, 1);
 	InterpreterVariable_Parent :: v_destroy ();
 }
 
@@ -1368,7 +1368,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 						struct Formula_NumericArray value;
 						Interpreter_numericArrayExpression (me, p, & value); therror
 						InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string); therror
-						NUMdmatrix_free (var -> numericArrayValue. data, 1, 1);
+						NUMmatrix_free (var -> numericArrayValue. data, 1, 1);
 						var -> numericArrayValue = value;
 					} else {
 						/*

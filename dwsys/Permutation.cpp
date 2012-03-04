@@ -82,7 +82,7 @@ void structPermutation :: v_readText (MelderReadText text) {
 	if (numberOfElements < 1) {
 		Melder_throw (L"Found a negative mumber of elements during reading.");
 	}
-	p = NUMlvector_readText_i4 (1, numberOfElements, text, "p");
+	p = NUMvector_readText_i4 (1, numberOfElements, text, "p");
 	Permutation_checkInvariant (this);
 }
 

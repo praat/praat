@@ -1,6 +1,6 @@
 /* PointProcess.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,7 +184,7 @@ void PointProcess_addPoint (PointProcess me, double t) {
 			 * Create without change.
 			 */
 			autoNUMvector <double> dum (1, 2 * my maxnt);
-			NUMdvector_copyElements (my t, dum.peek(), 1, my nt);
+			NUMvector_copyElements (my t, dum.peek(), 1, my nt);
 			/*
 			 * Change without error.
 			 */

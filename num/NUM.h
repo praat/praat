@@ -216,34 +216,6 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 	The matrices need not have been created by NUM...matrix.
 */
 
-/* The following ANSI-C power trick generates the declarations of 130 functions. */
-#define FUNCTION(t,type)  \
-	type * NUM##t##vector (long lo, long hi); \
-	void NUM##t##vector_free (type *v, long lo); \
-	type * NUM##t##vector_copy (const type *v, long lo, long hi); \
-	void NUM##t##vector_copyElements (const type *v, type *to, long lo, long hi); \
-	bool NUM##t##vector_equal (const type *v1, const type *v2, long lo, long hi); \
-	void NUM##t##vector_append (type **v, long lo, long *hi); \
-	void NUM##t##vector_insert (type **v, long lo, long *hi, long position); \
-	type ** NUM##t##matrix (long row1, long row2, long col1, long col2); \
-	void NUM##t##matrix_free (type **m, long row1, long col1); \
-	type ** NUM##t##matrix_copy (type **m, long row1, long row2, long col1, long col2); \
-	void NUM##t##matrix_copyElements (type **m, type **to, long row1, long row2, long col1, long col2); \
-	bool NUM##t##matrix_equal (type **m1, type **m2, long row1, long row2, long col1, long col2);
-FUNCTION (b, signed char)
-FUNCTION (s, short)
-FUNCTION (i, int)
-FUNCTION (l, long)
-FUNCTION (ub, unsigned char)
-FUNCTION (us, unsigned short)
-FUNCTION (ui, unsigned int)
-FUNCTION (ul, unsigned long)
-FUNCTION (f, float)
-FUNCTION (d, double)
-FUNCTION (fc, fcomplex)
-FUNCTION (dc, dcomplex)
-#undef FUNCTION
-
 long NUM_getTotalNumberOfArrays (void);   /* For debugging. */
 
 /********** Special functions (NUM.c) **********/
@@ -383,66 +355,64 @@ void NUMdeemphasize_f (double x [], long n, double dt, double frequency);
 void NUMautoscale (double x [], long n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
-#define FUNCTION(t,type,storage)  \
-	void NUM##t##vector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar *name); \
-	void NUM##t##vector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
-	void NUM##t##vector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f); \
-	type * NUM##t##vector_readText_##storage (long lo, long hi, MelderReadText text, const char *name); \
-	type * NUM##t##vector_readBinary_##storage (long lo, long hi, FILE *f); \
-	type * NUM##t##vector_readCache_##storage (long lo, long hi, CACHE *f); \
-	void NUM##t##matrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name); \
-	void NUM##t##matrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
-	void NUM##t##matrix_writeCache_##storage (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
-	type ** NUM##t##matrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadText text, const char *name); \
-	type ** NUM##t##matrix_readBinary_##storage (long r1, long r2, long c1, long c2, FILE *f); \
-	type ** NUM##t##matrix_readCache_##storage (long r1, long r2, long c1, long c2, CACHE *f);
-FUNCTION (b, signed char, i1)
-FUNCTION (s, short, i2)
-FUNCTION (i, int, i2)
-FUNCTION (l, long, i4)
-FUNCTION (ub, unsigned char, u1)
-FUNCTION (us, unsigned short, u2)
-FUNCTION (ui, unsigned int, u2)
-FUNCTION (ul, unsigned long, u4)
-FUNCTION (d, double, r4)
-FUNCTION (d, double, r8)
-FUNCTION (fc, fcomplex, c8)
-FUNCTION (dc, dcomplex, c16)
+#define FUNCTION(type,storage)  \
+	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar *name); \
+	void NUMvector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
+	void NUMvector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f); \
+	type * NUMvector_readText_##storage (long lo, long hi, MelderReadText text, const char *name); \
+	type * NUMvector_readBinary_##storage (long lo, long hi, FILE *f); \
+	type * NUMvector_readCache_##storage (long lo, long hi, CACHE *f); \
+	void NUMmatrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name); \
+	void NUMmatrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
+	void NUMmatrix_writeCache_##storage (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
+	type ** NUMmatrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadText text, const char *name); \
+	type ** NUMmatrix_readBinary_##storage (long r1, long r2, long c1, long c2, FILE *f); \
+	type ** NUMmatrix_readCache_##storage (long r1, long r2, long c1, long c2, CACHE *f);
+FUNCTION (signed char, i1)
+FUNCTION (int, i2)
+FUNCTION (long, i4)
+FUNCTION (unsigned char, u1)
+FUNCTION (unsigned int, u2)
+FUNCTION (unsigned long, u4)
+FUNCTION (double, r4)
+FUNCTION (double, r8)
+FUNCTION (fcomplex, c8)
+FUNCTION (dcomplex, c16)
 #undef FUNCTION
 
 /*
-void NUMdvector_writeBinary_r8 (const double *v, long lo, long hi, FILE *f);   // etc
+void NUMvector_writeBinary_r8 (const double *v, long lo, long hi, FILE *f);   // etc
 	write the vector elements v [lo..hi] as machine-independent
 	binary data to the stream f.
-	Return 0 if anything went wrong, else return 1.
+	Throw an error message if anything went wrong.
 	The vectors need not have been created by NUM...vector.
-double * NUMdvector_readText_r8 (long lo, long hi, MelderReadString *text, const char *name);   // etc
+double * NUMvector_readText_r8 (long lo, long hi, MelderReadString *text, const char *name);   // etc
 	create and read a vector as text.
-	Queue an error message and return NULL if anything went wrong.
+	Throw an error message if anything went wrong.
 	Every element is supposed to be on the beginning of a line.
-double * NUMdvector_readBinary_r8 (long lo, long hi, FILE *f);   // etc
+double * NUMvector_readBinary_r8 (long lo, long hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
-	Queue an error message and return NULL if anything went wrong.
-void NUMdvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const wchar *name);   // etc
-	write the vector elements v [lo..hi] as text to the stream f,
+	Throw an error message if anything went wrong.
+void NUMvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const wchar *name);   // etc
+	write the vector elements v [lo..hi] as text to the open file,
 	each element on its own line, preceded by "name [index]: ".
-	Return 0 if anything went wrong, else return 1.
+	Throw an error message if anything went wrong.
 	The vectors need not have been created by NUMvector.
-void NUMdmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name);   // etc
-	write the matrix elements m [r1..r2] [c1..c2] as text to the stream f.
-	Return 0 if anything went wrong, else return 1.
+void NUMmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name);   // etc
+	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
+	Throw an error message if anything went wrong.
 	The matrices need not have been created by NUMmatrix.
-void NUMdmatrix_writeBinary_r8 (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
+void NUMmatrix_writeBinary_r8 (double **m, long r1, long r2, long c1, long c2, FILE *f);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as machine-independent
 	binary data to the stream f.
-	Return 0 if anything went wrong, else return 1.
+	Throw an error message if anything went wrong.
 	The matrices need not have been created by NUMmatrix.
-double ** NUMdmatrix_readText_r8 (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
+double ** NUMmatrix_readText_r8 (long r1, long r2, long c1, long c2, MelderReadString *text, const char *name);   // etc
 	create and read a matrix as text.
-	Give an error message and return NULL if anything went wrong.
-double ** NUMdmatrix_readBinary_r8 (long r1, long r2, long c1, long c2, FILE *f);   // etc
+	Throw an error message if anything went wrong.
+double ** NUMmatrix_readBinary_r8 (long r1, long r2, long c1, long c2, FILE *f);   // etc
 	create and read a matrix as machine-independent binary data from the stream f.
-	Give an error message and return NULL if anything went wrong.
+	Throw an error message if anything went wrong.
 */
 
 typedef struct structNUMlinprog *NUMlinprog;
@@ -546,7 +516,7 @@ T** NUMmatrix_copy (T** ptr, long row1, long row2, long col1, long col2) {
 }
 
 template <class T>
-bool NUMmatrix_equal (T* m1, T* m2, long row1, long row2, long col1, long col2) {
+bool NUMmatrix_equal (T** m1, T** m2, long row1, long row2, long col1, long col2) {
 	return NUMmatrix_equal (sizeof (T), m1, m2, row1, row2, col1, col2);
 }
 

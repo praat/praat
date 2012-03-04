@@ -49,8 +49,6 @@
 
 /***** WRITING *****/
 
-#define BYTES_PER_SAMPLE_PER_CHANNEL  2
-#define BITS_PER_SAMPLE_PER_CHANNEL  16
 #ifndef WAVE_FORMAT_PCM
 	#define WAVE_FORMAT_PCM  0x0001
 #endif
@@ -59,14 +57,15 @@
 #define WAVE_FORMAT_MULAW  0x0007
 #define WAVE_FORMAT_DVI_ADPCM  0x0011
 
-void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels) {
+void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
 		FILE *f = file -> filePointer;
 		if (f == NULL) return;
+		const int numberOfBytesPerSamplePoint = (numberOfBitsPerSamplePoint + 7) / 8;
 		switch (audioFileType) {
 			case Melder_AIFF: {
 				try {
-					long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
+					long dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
 
 					/* Form Chunk: contains all other chunks. */
 					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FORM statement.");
@@ -83,7 +82,7 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 					binputi4 (18, f);   // the size of what follows
 					binputi2 (numberOfChannels, f);
 					binputi4 (numberOfSamples, f);
-					binputi2 (BITS_PER_SAMPLE_PER_CHANNEL, f);
+					binputi2 (numberOfBitsPerSamplePoint, f);
 					binputr10 (sampleRate, f);
 
 					/* Sound Data Chunk: 8 + 8 bytes + samples. */
@@ -97,7 +96,7 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 			} break;
 			case Melder_AIFC: {
 				try {
-					long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
+					long dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
 
 					/* Form Chunk: contains all other chunks. */
 					if (fwrite ("FORM", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FORM statement.");
@@ -114,7 +113,7 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 					binputi4 (24, f);   // the size of what follows
 					binputi2 (numberOfChannels, f);
 					binputi4 (numberOfSamples, f);
-					binputi2 (BITS_PER_SAMPLE_PER_CHANNEL, f);
+					binputi2 (numberOfBitsPerSamplePoint, f);
 					binputr10 (sampleRate, f);
 					if (fwrite ("NONE", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the compression type.");
 					binputi2 (0, f);   // name of compression
@@ -130,7 +129,7 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 			} break;
 			case Melder_WAV: {
 				try {
-					long dataSize = numberOfSamples * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels;
+					long dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
 
 					/* RIFF Chunk: contains all other chunks. */
 					if (fwrite ("RIFF", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the RIFF statement.");
@@ -143,9 +142,9 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 					binputi2LE (WAVE_FORMAT_PCM, f);
 					binputi2LE (numberOfChannels, f);
 					binputi4LE (sampleRate, f);   // number of samples per second
-					binputi4LE (sampleRate * BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels, f);   // average number of bytes per second
-					binputi2LE (BYTES_PER_SAMPLE_PER_CHANNEL * numberOfChannels, f);   // block alignment
-					binputi2LE (BITS_PER_SAMPLE_PER_CHANNEL, f);   // bits per sample point
+					binputi4LE (sampleRate * numberOfBytesPerSamplePoint * numberOfChannels, f);   // average number of bytes per second
+					binputi2LE (numberOfBytesPerSamplePoint * numberOfChannels, f);   // block alignment
+					binputi2LE (numberOfBitsPerSamplePoint, f);
 
 					/* Data Chunk: 8 bytes + samples. */
 					if (fwrite ("data", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the DATA statement.");
@@ -175,13 +174,13 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 					sprintf (header, "NIST_1A\n   1024\n"
 						"channel_count -i %d\n"
 						"sample_count -i %ld\n"
-						"sample_n_bytes -i 2\n"
+						"sample_n_bytes -i %d\n"
 						"sample_byte_format -s2 01\n" /* 01=LE 10=BE */
 						"sample_coding -s3 pcm\n"
 						"sample_rate -i %ld\n"
 						"sample_min -i -32768\n"
 						"sample_max -i 32767\n"
-						"end_head\n", numberOfChannels, numberOfSamples, sampleRate);
+						"end_head\n", numberOfChannels, numberOfSamples, numberOfBytesPerSamplePoint, sampleRate);
 					if (fwrite (header, 1, 1024, f) != 1024) Melder_throw ("Error in file while trying to write the NIST header.");
 				} catch (MelderError) {
 					Melder_throw ("NIST header not written.");
@@ -197,7 +196,7 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 						Melder_throw ("FLAC files cannot have more than 8 channels.");
 					if ((encoder = FLAC__stream_encoder_new ()) == NULL)
 						Melder_throw ("Error creating FLAC stream encoder.");
-					FLAC__stream_encoder_set_bits_per_sample (encoder, 16);
+					FLAC__stream_encoder_set_bits_per_sample (encoder, numberOfBitsPerSamplePoint);
 					FLAC__stream_encoder_set_channels (encoder, numberOfChannels);
 					FLAC__stream_encoder_set_sample_rate (encoder, sampleRate);
 					FLAC__stream_encoder_set_total_samples_estimate (encoder, numberOfSamples);
@@ -218,6 +217,18 @@ void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long
 	}
 }
 
+void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
+	(void) sampleRate;
+	bool shouldPadTheDataToAnEvenNumberOfBytes = audioFileType == Melder_WAV;
+	bool numberOfSamplesIsOdd = (numberOfSamples & 1) != 0;
+	bool numberOfChannelsIsOdd = (numberOfChannels & 1) != 0;
+	int numberOfBytesPerSamplePoint = (numberOfBitsPerSamplePoint + 7) / 8;
+	bool numberOfBytesPerSamplePointIsOdd = (numberOfBytesPerSamplePoint & 1) != 0;
+	bool needToPadOneByte = shouldPadTheDataToAnEvenNumberOfBytes && numberOfSamplesIsOdd && numberOfChannelsIsOdd && numberOfBytesPerSamplePointIsOdd;
+	if (needToPadOneByte && file -> filePointer)
+		binputi1 (0, file -> filePointer);
+}
+
 static const wchar *audioFileTypeString [] = { L"none", L"AIFF", L"AIFC", L"WAV", L"NeXT/Sun", L"NIST", L"Sound Designer II", L"FLAC", L"MP3" };
 const wchar * Melder_audioFileTypeString (int audioFileType) { return audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : audioFileTypeString [audioFileType]; }
 static const wchar *macAudioFileType [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
@@ -229,14 +240,28 @@ const wchar * Melder_winAudioFileExtension (int audioFileType) { return winAudio
 static int defaultAudioFileEncoding16 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { 0, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN,
 	     Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN, Melder_LINEAR_16_BIG_ENDIAN,
-	     Melder_FLAC_COMPRESSION, Melder_MPEG_COMPRESSION };
-int Melder_defaultAudioFileEncoding16 (int audioFileType) { return defaultAudioFileEncoding16 [audioFileType]; }
+	     Melder_FLAC_COMPRESSION_16, Melder_MPEG_COMPRESSION_16 };
+static int defaultAudioFileEncoding24 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
+	= { 0, Melder_LINEAR_24_BIG_ENDIAN, Melder_LINEAR_24_BIG_ENDIAN, Melder_LINEAR_24_LITTLE_ENDIAN,
+	     Melder_LINEAR_24_BIG_ENDIAN, Melder_LINEAR_24_LITTLE_ENDIAN, Melder_LINEAR_24_BIG_ENDIAN,
+	     Melder_FLAC_COMPRESSION_24, Melder_MPEG_COMPRESSION_24 };
+static int defaultAudioFileEncoding32 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
+	= { 0, Melder_LINEAR_32_BIG_ENDIAN, Melder_LINEAR_32_BIG_ENDIAN, Melder_LINEAR_32_LITTLE_ENDIAN,
+	     Melder_LINEAR_32_BIG_ENDIAN, Melder_LINEAR_32_LITTLE_ENDIAN, Melder_LINEAR_32_BIG_ENDIAN,
+	     Melder_FLAC_COMPRESSION_32, Melder_MPEG_COMPRESSION_32 };
+int Melder_defaultAudioFileEncoding (int audioFileType, int numberOfBitsPerSamplePoint) {
+	return
+		numberOfBitsPerSamplePoint == 16 ? defaultAudioFileEncoding16 [audioFileType] :
+		numberOfBitsPerSamplePoint == 24 ? defaultAudioFileEncoding24 [audioFileType] :
+		defaultAudioFileEncoding32 [audioFileType];
+}
 
-void MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels) {
+void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file, macAudioFileType [audioFileType], L"PpgB", winAudioFileExtension [audioFileType]);
-		MelderFile_writeAudioFileHeader16 (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels);
+		MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint);
 		MelderFile_writeShortToAudio (file, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
+		MelderFile_writeAudioFileTrailer (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw ("16-bit audio file not written.");
@@ -672,7 +697,7 @@ static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *e
 		Melder_throw ("Invalid FLAC file");
 	info = & metadata. data. stream_info;
 	*numberOfChannels = info -> channels;
-	*encoding = Melder_FLAC_COMPRESSION;
+	*encoding = Melder_FLAC_COMPRESSION_16;
 	*sampleRate = (double) info -> sample_rate;
 	*startOfData = 0;   // meaningless: libFLAC does the I/O
 	*numberOfSamples = info -> total_samples;   // FIXME: may lose bits above LONG_MAX
@@ -689,7 +714,7 @@ static void Melder_checkMp3File (FILE *f, int *numberOfChannels, int *encoding,
 		mp3f_delete (mp3f);
 		Melder_throw ("Cannot analyze MP3 file");
 	}
-	*encoding = Melder_MPEG_COMPRESSION;
+	*encoding = Melder_MPEG_COMPRESSION_16;
 	*numberOfChannels = mp3f_channels (mp3f);
 	*sampleRate = mp3f_frequency (mp3f);
 	*numberOfSamples = mp3f_samples (mp3f);
@@ -1107,10 +1132,14 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					Melder_warning ("File too small (", numberOfChannels, "-channel 8-bit A-law).\nMissing samples set to zero.");
 				}
 				break;
-			case Melder_FLAC_COMPRESSION:
+			case Melder_FLAC_COMPRESSION_16:
+			case Melder_FLAC_COMPRESSION_24:
+			case Melder_FLAC_COMPRESSION_32:
 				Melder_readFlacFile (f, numberOfChannels, buffer, numberOfSamples);
 				break;
-			case Melder_MPEG_COMPRESSION:
+			case Melder_MPEG_COMPRESSION_16:
+			case Melder_MPEG_COMPRESSION_24:
+			case Melder_MPEG_COMPRESSION_32:
 				Melder_readMp3File (f, numberOfChannels, buffer, numberOfSamples);
 				break;
 			default:
@@ -1249,7 +1278,10 @@ void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int en
 			break; case Melder_IEEE_FLOAT_32_LITTLE_ENDIAN:
 				for (i = start; i < n; i += step)
 					binputr4LE (buffer [i] / 32768.0, f);
-			break; case Melder_FLAC_COMPRESSION:
+			break;
+			case Melder_FLAC_COMPRESSION_16:
+			case Melder_FLAC_COMPRESSION_24:
+			case Melder_FLAC_COMPRESSION_32:
 				if (! file -> flacEncoder)
 					Melder_throw ("FLAC encoder not initialized.");
 				for (i = start; i < n; i += step * numberOfChannels) {
@@ -1369,7 +1401,9 @@ void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int en
 					}
 				}
 				break;
-			case Melder_FLAC_COMPRESSION:
+			case Melder_FLAC_COMPRESSION_16:
+			case Melder_FLAC_COMPRESSION_24:
+			case Melder_FLAC_COMPRESSION_32:
 				if (! file -> flacEncoder)
 					Melder_throw ("FLAC encoder not initialized.");
 				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {

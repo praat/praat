@@ -48,8 +48,8 @@
 Thing_implement (Minimizer, Thing, 0);
 
 void structMinimizer :: v_destroy () {
-	NUMdvector_free (p, 1);
-	NUMdvector_free (history, 1);
+	NUMvector_free (p, 1);
+	NUMvector_free (history, 1);
 	Minimizer_Parent :: v_destroy ();
 }
 
@@ -149,7 +149,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 		Minimizer_minimize (me, maxIterationsPerTime, tolerance, monitorSingle);
 		Melder_casual ("Current %ld: minimum = %.17g", i, my minimum);
 		if (my minimum < fopt) {
-			NUMdvector_copyElements (my p, popt.peek(), 1, my nParameters);
+			NUMvector_copyElements (my p, popt.peek(), 1, my nParameters);
 			fopt = my minimum;
 		}
 		Minimizer_reset (me, 0);

@@ -240,7 +240,7 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 	double *out_hertz, double *out_mel, double *out_semitones, double *out_erb, double *out_withoutOctaveJumps)
 {
 	long firstVoicedFrame = 0, lastVoicedFrame = 0, nVoiced = 0, i;
-	double *frequencies = NUMdvector (1, my nx);
+	double *frequencies = NUMvector <double> (1, my nx);
 	for (i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
 		frequencies [i] = frequency > 0.0 && frequency < my ceiling ? frequency : 0.0;
@@ -278,7 +278,7 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 		if (out_erb) *out_erb = NUMundefined;
 		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = NUMundefined;
 	}
-	NUMdvector_free (frequencies, 1);
+	NUMvector_free (frequencies, 1);
 	return nVoiced;
 }
 
@@ -370,7 +370,7 @@ void structPitch :: v_info () {
 			MelderInfo_writeLine4 (Melder_half (stdevSemitones), L" semitones = ", Melder_half (stdevErb), L" ERB");
 		}
 	}
-	NUMdvector_free (frequencies, 1);
+	NUMvector_free (frequencies, 1);
 	if (nVoiced > 1) {   /* Variability: mean absolute slope. */
 		double slopeHertz, slopeMel, slopeSemitones, slopeErb, slopeWithoutOctaveJumps;
 		Pitch_getMeanAbsoluteSlope (this, & slopeHertz, & slopeMel, & slopeSemitones, & slopeErb, & slopeWithoutOctaveJumps);

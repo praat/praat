@@ -125,7 +125,7 @@ void TableOfReal_copyOneRowWithLabel (I, thou, long myrow, long thyrow) {
 		thy rowLabels[thyrow] = Melder_wcsdup (my rowLabels[myrow]);
 
 		if (my data[myrow] != thy data[thyrow]) {
-			NUMdvector_copyElements (my data[myrow], thy data[thyrow], 1, my numberOfColumns);
+			NUMvector_copyElements (my data[myrow], thy data[thyrow], 1, my numberOfColumns);
 		}
 	} catch (MelderError) {
 		Melder_throw (me, ": row ", myrow, " not copied to ", thee);
@@ -423,7 +423,7 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax, double ymi
 
 	autoSVD svd = SVD_create (nr, nc);
 
-	NUMdmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
+	NUMmatrix_copyElements (my data, svd -> u, 1, nr, 1, nc);
 	NUMcentreColumns (svd -> u, 1, nr, 1, nc, 0);
 
 	SVD_compute (svd.peek());
@@ -1304,7 +1304,7 @@ TableOfReal TableOfReal_bootstrap (TableOfReal me) {
 
 		for (long i = 1; i <= my numberOfRows; i++) {
 			long p = NUMrandomInteger (1, my numberOfRows);
-			NUMdvector_copyElements (my data[p], thy data[i], 1, my numberOfColumns);
+			NUMvector_copyElements (my data[p], thy data[i], 1, my numberOfColumns);
 			if (my rowLabels[p]) {
 				TableOfReal_setRowLabel (thee.peek(), i, my rowLabels[p]);
 			}
@@ -1652,7 +1652,7 @@ TableOfReal TableOfReal_to_TableOfReal (I) {
 	iam (TableOfReal);
 	try {
 		autoTableOfReal thee = TableOfReal_create (my numberOfRows, my numberOfColumns);
-		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -1722,8 +1722,8 @@ TableOfReal TableOfReal_appendColumns (I, thou) {
 			if (Melder_wcscmp (my rowLabels[i], thy rowLabels[i]) != 0) {
 				labeldiffs++;
 			}
-			NUMdvector_copyElements (my data[i], his data[i], 1, my numberOfColumns);
-			NUMdvector_copyElements (thy data[i], &his data[i][my numberOfColumns], 1, thy numberOfColumns);
+			NUMvector_copyElements (my data[i], his data[i], 1, my numberOfColumns);
+			NUMvector_copyElements (thy data[i], &his data[i][my numberOfColumns], 1, thy numberOfColumns);
 		}
 		if (labeldiffs > 0) {
 			Melder_warning (Melder_integer (labeldiffs), L" row labels differed.");
@@ -1846,8 +1846,8 @@ TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int center, in
 		}
 
 		autoTableOfReal him = TableOfReal_create (my numberOfRows, thy numberOfRows);
-		autoNUMmatrix<double> my_data (NUMdmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-		autoNUMmatrix<double> thy_data (NUMdmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
+		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
+		autoNUMmatrix<double> thy_data (NUMmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
 		if (center) {
 			NUMcentreRows (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns);
 			NUMcentreRows (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns);
@@ -1881,8 +1881,8 @@ TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int center,
 		}
 
 		autoTableOfReal him = TableOfReal_create (my numberOfColumns, thy numberOfColumns);
-		autoNUMmatrix<double> my_data (NUMdmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
-		autoNUMmatrix<double> thy_data (NUMdmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
+		autoNUMmatrix<double> my_data (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfColumns), 1, 1);
+		autoNUMmatrix<double> thy_data (NUMmatrix_copy (thy data, 1, thy numberOfRows, 1, thy numberOfColumns), 1, 1);
 		if (center) {
 			NUMcentreColumns (my_data.peek(), 1, my numberOfRows, 1, my numberOfColumns, NULL);
 			NUMcentreColumns (thy_data.peek(), 1, thy numberOfRows, 1, thy numberOfColumns, NULL);

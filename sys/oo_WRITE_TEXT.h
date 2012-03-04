@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2011 Paul Boersma
+ * Copyright (C) 1994-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@
 		texput##storage (file, x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
 	texexdent (file);
 
-#define oo_VECTOR(type,t,storage,x,min,max)  \
+#define oo_VECTOR(type,storage,x,min,max)  \
 	if (x) \
-		NUM##t##vector_writeText_##storage (x, min, max, file, L"" #x);
+		NUMvector_writeText_##storage (x, min, max, file, L"" #x);
 
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
+#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	if (x) \
-		NUM##t##matrix_writeText_##storage (x, row1, row2, col1, col2, file, L"" #x);
+		NUMmatrix_writeText_##storage (x, row1, row2, col1, col2, file, L"" #x);
 
 #define oo_ENUMx(type,storage,Type,x)  \
 	texput##storage (file, x, Type##_getText, L"" #x, 0,0,0,0,0);
@@ -57,7 +57,7 @@
 		texput##storage (file, x [i], Type##_getText, L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
 	texexdent (file);
 
-#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
+#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
 		texput##storage (file, x [i], Type##_getText, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \

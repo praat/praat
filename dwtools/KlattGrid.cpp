@@ -344,8 +344,8 @@ static void connections_free (connections me) {
 	if (me == NULL) {
 		return;
 	}
-	NUMdvector_free (my x, 1);
-	NUMdvector_free (my y, 1);
+	NUMvector_free (my x, 1);
+	NUMvector_free (my y, 1);
 	Melder_free (me);
 }
 

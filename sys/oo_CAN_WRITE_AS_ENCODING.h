@@ -1,6 +1,6 @@
 /* oo_CAN_WRITE_AS_ENCODING.h
  *
- * Copyright (C) 2007-2011 Paul Boersma
+ * Copyright (C) 2007-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 
 #define oo_SET(type,storage,x,setType)
 
-#define oo_VECTOR(type,t,storage,x,min,max)
+#define oo_VECTOR(type,storage,x,min,max)
 
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)
+#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)
 
 #define oo_ENUMx(type,storage,Type,x)
 
@@ -35,7 +35,7 @@
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)
 
-#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)
+#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)
 
 #define oo_STRINGx(storage,x)  \
 	if (x && ! Melder_isEncodable (x, encoding)) return false;

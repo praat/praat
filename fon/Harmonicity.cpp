@@ -1,6 +1,6 @@
 /* Harmonicity.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,7 +132,7 @@ Harmonicity Harmonicity_create (double tmin, double tmax, long nt, double dt, do
 Matrix Harmonicity_to_Matrix (Harmonicity me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
-		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
+		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, "not converted to Matrix.");
@@ -142,7 +142,7 @@ Matrix Harmonicity_to_Matrix (Harmonicity me) {
 Harmonicity Matrix_to_Harmonicity (Matrix me) {
 	try {
 		autoHarmonicity thee = Harmonicity_create (my xmin, my xmax, my nx, my dx, my x1);
-		NUMdvector_copyElements (my z [1], thy z [1], 1, my nx);
+		NUMvector_copyElements (my z [1], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, "not converted to Harmonicity.");

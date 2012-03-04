@@ -1,6 +1,6 @@
 /* Preferences.cpp
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,9 +63,6 @@ static void Preferences_add (const wchar *string, int type, void *value, int min
 void Preferences_addByte (const wchar_t *string, signed char *value, signed char defaultValue)
 	{ *value = defaultValue; Preferences_add (string, bytewa, value, 0, 0, NULL, NULL); }
 
-void Preferences_addShort (const wchar_t *string, short *value, short defaultValue)
-	{ *value = defaultValue; Preferences_add (string, shortwa, value, 0, 0, NULL, NULL); }
-
 void Preferences_addInt (const wchar_t *string, int *value, int defaultValue)
 	{ *value = defaultValue; Preferences_add (string, intwa, value, 0, 0, NULL, NULL); }
 
@@ -74,9 +71,6 @@ void Preferences_addLong (const wchar_t *string, long *value, long defaultValue)
 
 void Preferences_addUbyte (const wchar_t *string, unsigned char *value, unsigned char defaultValue)
 	{ *value = defaultValue; Preferences_add (string, ubytewa, value, 0, 0, NULL, NULL); }
-
-void Preferences_addUshort (const wchar_t *string, unsigned short *value, unsigned short defaultValue)
-	{ *value = defaultValue; Preferences_add (string, ushortwa, value, 0, 0, NULL, NULL); }
 
 void Preferences_addUint (const wchar_t *string, unsigned int *value, unsigned int defaultValue)
 	{ *value = defaultValue; Preferences_add (string, uintwa, value, 0, 0, NULL, NULL); }
@@ -121,11 +115,9 @@ void Preferences_read (MelderFile file) {
 			Preference pref = (Preference) thePreferences -> item [ipref];
 			switch (pref -> type) {
 				case bytewa: * (signed char *) pref -> value = wcstol (value, NULL, 10); break;
-				case shortwa: * (short *) pref -> value = wcstol (value, NULL, 10); break;
 				case intwa: * (int *) pref -> value = wcstol (value, NULL, 10); break;
 				case longwa: * (long *) pref -> value = wcstol (value, NULL, 10); break;
 				case ubytewa: * (unsigned char *) pref -> value = wcstoul (value, NULL, 10); break;
-				case ushortwa: * (unsigned short *) pref -> value = wcstoul (value, NULL, 10); break;
 				case uintwa: * (unsigned int *) pref -> value = wcstoul (value, NULL, 10); break;
 				case ulongwa: * (unsigned long *) pref -> value = wcstoul (value, NULL, 10); break;
 				case boolwa: * (bool *) pref -> value =
@@ -158,11 +150,9 @@ void Preferences_write (MelderFile file) {
 		MelderString_append (& buffer, pref -> string, L": ");
 		switch (pref -> type) {
 			case bytewa:   MelderString_append (& buffer, Melder_integer (* (signed char *)    pref -> value)); break;
-			case shortwa:  MelderString_append (& buffer, Melder_integer (* (short *)          pref -> value)); break;
 			case intwa:    MelderString_append (& buffer, Melder_integer (* (int *)            pref -> value)); break;
 			case longwa:   MelderString_append (& buffer, Melder_integer (* (long *)           pref -> value)); break;
 			case ubytewa:  MelderString_append (& buffer, Melder_integer (* (unsigned char *)  pref -> value)); break;
-			case ushortwa: MelderString_append (& buffer, Melder_integer (* (unsigned short *) pref -> value)); break;
 			case uintwa:   MelderString_append (& buffer, Melder_integer (* (unsigned int *)   pref -> value)); break;
 			case ulongwa:  MelderString_append (& buffer, Melder_integer (* (unsigned long *)  pref -> value)); break;
 			case boolwa:   MelderString_append (& buffer, Melder_boolean (* (bool *)           pref -> value)); break;

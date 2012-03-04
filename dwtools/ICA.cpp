@@ -249,11 +249,11 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 				}
 			}
 			// update V
-			NUMdmatrix_copyElements (v, vnew.peek(), 1, dimension, 1, dimension);
+			NUMmatrix_copyElements (v, vnew.peek(), 1, dimension, 1, dimension);
 			NUMdmatrices_multiply_VC (v, w.peek(), dimension, dimension, vnew.peek(), dimension);
 			for (long k = 1; k <= ccts -> size; k++) {
 				CrossCorrelationTable ct = (CrossCorrelationTable) ccts -> item[k];
-				NUMdmatrix_copyElements (ct -> data, cc.peek(), 1, dimension, 1, dimension);
+				NUMmatrix_copyElements (ct -> data, cc.peek(), 1, dimension, 1, dimension);
 				NUMdmatrices_multiply_VCVp (ct -> data, w.peek(), dimension, dimension, cc.peek(), 1);
 			}
 			dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), 0, 0, 0);
@@ -411,7 +411,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		// Take transpose to make W*C[i]W' diagonal instead of W'*C[i]*W => (P'*W)'=W'*P
 		// Calculate the "real" diagonality measure
 
-		NUMdmatrix_copyElements (w, wc.peek(), 1, dimension, 1, dimension);
+		NUMmatrix_copyElements (w, wc.peek(), 1, dimension, 1, dimension);
 		NUMdmatrices_multiply_VpC (w, wc.peek(), dimension, dimension, p.peek(), dimension); // W = W'*P: final result
 
 		double dm = CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
@@ -952,7 +952,7 @@ static void Sound_and_MixingMatrix_improveUnmixing_fica (Sound me, MixingMatrix 
 		if (my ny != thy numberOfColumns) {
 			Melder_throw ("Dimensions do not agree.");
 		}
-		autoNUMmatrix<double> x (NUMdmatrix_copy (my z, 1, my ny, 1, my nx), 1, 1);
+		autoNUMmatrix<double> x (NUMmatrix_copy (my z, 1, my ny, 1, my nx), 1, 1);
 		do {
 			iter++;
 		} while (/*fabs((dm_old - dm_new) / dm_new) > tol &&*/ iter < maxNumberOfIterations);

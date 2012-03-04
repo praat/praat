@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,14 +149,14 @@ Sound Sound_filter_formula (Sound me, const wchar *formula, Interpreter interpre
 			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
 			Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL); therror
 			autoSound him = Spectrum_to_Sound (spec.peek());
-			NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
+			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
 				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
 				Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL); therror
 				autoSound him = Spectrum_to_Sound (spec.peek());
-				NUMdvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
+				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}
 		}
 		return thee.transfer();
@@ -172,14 +172,14 @@ Sound Sound_filter_passHannBand (Sound me, double fmin, double fmax, double smoo
 			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
 			Spectrum_passHannBand (spec.peek(), fmin, fmax, smooth);
 			autoSound him = Spectrum_to_Sound (spec.peek());
-			NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
+			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
 				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
 				Spectrum_passHannBand (spec.peek(), fmin, fmax, smooth);
 				autoSound him = Spectrum_to_Sound (spec.peek());
-				NUMdvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
+				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}
 		}
 		return thee.transfer();
@@ -195,14 +195,14 @@ Sound Sound_filter_stopHannBand (Sound me, double fmin, double fmax, double smoo
 			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
 			Spectrum_stopHannBand (spec.peek(), fmin, fmax, smooth);
 			autoSound him = Spectrum_to_Sound (spec.peek());
-			NUMdvector_copyElements (his z [1], thy z [1], 1, thy nx);
+			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
 				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
 				Spectrum_stopHannBand (spec.peek(), fmin, fmax, smooth);
 				autoSound him = Spectrum_to_Sound (spec.peek());
-				NUMdvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
+				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}
 		}
 		return thee.transfer();

@@ -56,7 +56,7 @@ oo_DEFINE_STRUCT (Pitch_Frame)
 
 	#if oo_READING_BINARY
 		if (localVersion < 0) {
-			oo_SHORT (nCandidates)
+			oo_INT (nCandidates)
 			oo_FLOAT (intensity)
 		} else if (localVersion == 0) {
 			oo_FLOAT (intensity)

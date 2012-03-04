@@ -190,11 +190,11 @@ static void menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 	EDITOR_END
 }
 
-static void do_write (TimeSoundEditor me, MelderFile file, int format) {
+static void do_write (TimeSoundEditor me, MelderFile file, int format, int numberOfBitsPersamplePoint) {
 	if (my startSelection >= my endSelection)
 		Melder_throw ("No samples selected.");
 	if (my longSound.data) {
-		LongSound_writePartToAudioFile16 (my longSound.data, format, my startSelection, my endSelection, file); therror
+		LongSound_writePartToAudioFile (my longSound.data, format, my startSelection, my endSelection, file); therror
 	} else if (my sound.data) {
 		Sound sound = my sound.data;
 		double margin = 0.0;
@@ -213,7 +213,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format) {
 					save -> z [channel] [i - offset] = sound -> z [channel] [i];
 				}
 			}
-			Sound_writeToAudioFile16 (save.peek(), file, format); therror
+			Sound_writeToAudioFile (save.peek(), file, format, numberOfBitsPersamplePoint); therror
 		}
 	}
 }
@@ -223,7 +223,27 @@ static void menu_cb_WriteWav (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as WAV file", 0)
 		swprintf (defaultName, 300, L"%ls.wav", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		do_write (me, file, Melder_WAV);
+		do_write (me, file, Melder_WAV, 16);
+	EDITOR_END
+}
+
+static void menu_cb_SaveAs24BitWav (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundEditor);
+	EDITOR_FORM_WRITE (L"Save selected sound as 24-bit WAV file", 0)
+		Melder_assert (my longSound.data == NULL && my sound.data != NULL);
+		swprintf (defaultName, 300, L"%ls.wav", my sound.data -> name);
+	EDITOR_DO_WRITE
+		do_write (me, file, Melder_WAV, 24);
+	EDITOR_END
+}
+
+static void menu_cb_SaveAs32BitWav (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundEditor);
+	EDITOR_FORM_WRITE (L"Save selected sound as 32-bit WAV file", 0)
+		Melder_assert (my longSound.data == NULL && my sound.data != NULL);
+		swprintf (defaultName, 300, L"%ls.wav", my sound.data -> name);
+	EDITOR_DO_WRITE
+		do_write (me, file, Melder_WAV, 32);
 	EDITOR_END
 }
 
@@ -232,7 +252,7 @@ static void menu_cb_WriteAiff (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as AIFF file", 0)
 		swprintf (defaultName, 300, L"%ls.aiff", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		do_write (me, file, Melder_AIFF);
+		do_write (me, file, Melder_AIFF, 16);
 	EDITOR_END
 }
 
@@ -241,7 +261,7 @@ static void menu_cb_WriteAifc (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as AIFC file", 0)
 		swprintf (defaultName, 300, L"%ls.aifc", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		do_write (me, file, Melder_AIFC);
+		do_write (me, file, Melder_AIFC, 16);
 	EDITOR_END
 }
 
@@ -250,7 +270,7 @@ static void menu_cb_WriteNextSun (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as NeXT/Sun file", 0)
 		swprintf (defaultName, 300, L"%ls.au", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		do_write (me, file, Melder_NEXT_SUN);
+		do_write (me, file, Melder_NEXT_SUN, 16);
 	EDITOR_END
 }
 
@@ -259,7 +279,7 @@ static void menu_cb_WriteNist (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as NIST file", 0)
 		swprintf (defaultName, 300, L"%ls.nist", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		do_write (me, file, Melder_NIST);
+		do_write (me, file, Melder_NIST, 16);
 	EDITOR_END
 }
 
@@ -268,7 +288,7 @@ static void menu_cb_WriteFlac (EDITOR_ARGS) {
 	EDITOR_FORM_WRITE (L"Save selected sound as FLAC file", 0)
 		swprintf (defaultName, 300, L"%ls.flac", my longSound.data ? my longSound.data -> name : my sound.data -> name);
 	EDITOR_DO_WRITE
-		do_write (me, file, Melder_FLAC);
+		do_write (me, file, Melder_FLAC, 16);
 	EDITOR_END
 }
 
@@ -305,6 +325,10 @@ void structTimeSoundEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 			EditorMenu_addCommand (menu, L"Write selected sound to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write sound selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
 			EditorMenu_addCommand (menu, L"Write selection to WAV file...", Editor_HIDDEN, menu_cb_WriteWav);
+		if (sound.data) {
+			d_saveAs24BitWavButton = EditorMenu_addCommand (menu, L"Save selected sound as 24-bit WAV file...", 0, menu_cb_SaveAs24BitWav);
+			d_saveAs32BitWavButton = EditorMenu_addCommand (menu, L"Save selected sound as 32-bit WAV file...", 0, menu_cb_SaveAs32BitWav);
+		}
 		writeAiffButton = EditorMenu_addCommand (menu, L"Save selected sound as AIFF file...", 0, menu_cb_WriteAiff);
 			EditorMenu_addCommand (menu, L"Write selected sound to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
 			EditorMenu_addCommand (menu, L"Write sound selection to AIFF file...", Editor_HIDDEN, menu_cb_WriteAiff);
@@ -388,6 +412,8 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 		if (publishWindowButton) GuiObject_setSensitive (publishWindowButton, selectedSamples != 0);
 	}
 	GuiObject_setSensitive (writeWavButton, selectedSamples != 0);
+	GuiObject_setSensitive (d_saveAs24BitWavButton, selectedSamples != 0);
+	GuiObject_setSensitive (d_saveAs32BitWavButton, selectedSamples != 0);
 	GuiObject_setSensitive (writeAiffButton, selectedSamples != 0);
 	GuiObject_setSensitive (writeAifcButton, selectedSamples != 0);
 	GuiObject_setSensitive (writeNextSunButton, selectedSamples != 0);

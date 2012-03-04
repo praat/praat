@@ -91,7 +91,7 @@ void structMatrix :: v_readText (MelderReadText text) {
 		Melder_throw ("dx should be greater than 0.0.");
 	if (dy <= 0.0)
 		Melder_throw ("dy should be greater than 0.0.");
-	z = NUMdmatrix_readText_r8 (1, ny, 1, nx, text, "z"); therror
+	z = NUMmatrix_readText_r8 (1, ny, 1, nx, text, "z"); therror
 }
 
 double structMatrix :: v_getValueAtSample (long isamp, long ilevel, int unit) {

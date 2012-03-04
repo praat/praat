@@ -542,8 +542,8 @@ TableOfReal Covariance_and_TableOfReal_mahalanobis (Covariance me, thou, bool us
 		thouart (TableOfReal);
 
 		autoTableOfReal him = TableOfReal_create (thy numberOfRows, 1);
-		autoNUMvector<double> centroid (NUMdvector_copy (my centroid, 1, thy numberOfColumns), 1);
-		autoNUMmatrix<double> covari (NUMdmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfRows), 1, 1);
+		autoNUMvector<double> centroid (NUMvector_copy (my centroid, 1, thy numberOfColumns), 1);
+		autoNUMmatrix<double> covari (NUMmatrix_copy (my data, 1, my numberOfRows, 1, my numberOfRows), 1, 1);
 
 		// Mahalanobis distance calculation. S = L.L' -> S**-1 = L**-1' . L**-1
 		// (x-m)'S**-1 (x-m) = (x-m)'L**-1' . L**-1. (x-m) =
@@ -720,7 +720,7 @@ PCA SSCP_to_PCA (I) {
 		}
 		NUMstrings_copyElements (my columnLabels, thy labels, 1, my numberOfColumns);
 		Eigen_initFromSymmetricMatrix (thee.peek(), data, my numberOfColumns);
-		NUMdvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
+		NUMvector_copyElements (my centroid, thy centroid, 1, my numberOfColumns);
 		PCA_setNumberOfObservations (thee.peek(), my numberOfObservations);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -862,7 +862,7 @@ CCA SSCP_to_CCA (I, long ny) {
 		}
 
 		autoGSVD gsvd = GSVD_create_d (a.peek(), nx, ny, syy.peek(), ny);
-		autoNUMmatrix<double> ri (NUMdmatrix_copy (gsvd -> r, 1, gsvd -> numberOfColumns, 1, gsvd -> numberOfColumns), 1, 1);
+		autoNUMmatrix<double> ri (NUMmatrix_copy (gsvd -> r, 1, gsvd -> numberOfColumns, 1, gsvd -> numberOfColumns), 1, 1);
 		thy y = Eigen_create (gsvd -> numberOfColumns, gsvd -> numberOfColumns);
 		thy x = Eigen_create (thy y -> numberOfEigenvalues, nx);
 
@@ -1080,7 +1080,7 @@ TableOfReal SSCP_extractCentroid (I) {
 		long n = my numberOfColumns;
 
 		autoTableOfReal thee = TableOfReal_create (1, n);
-		NUMdvector_copyElements (my centroid, thy data[1], 1, n);
+		NUMvector_copyElements (my centroid, thy data[1], 1, n);
 		thy columnLabels = NUMstrings_copy (my columnLabels, 1, n);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -1350,7 +1350,7 @@ double Covariances_getMultivariateCentroidDifference (Covariance me, Covariance 
 	if (equalCovariances) {
 		// Morrison, page 141
 		autoCovariance pool = Covariances_pool (me, thee);
-		autoNUMmatrix<double> s (NUMdmatrix_copy (my data, 1, p, 1, p), 1, 1);
+		autoNUMmatrix<double> s (NUMmatrix_copy (my data, 1, p, 1, p), 1, 1);
 		double lndet;
 		NUMlowerCholeskyInverse (s.peek(), p, &lndet);
 
@@ -1512,7 +1512,7 @@ void Covariance_difference (Covariance me, Covariance thee, double *prob, double
 		Melder_throw ("Number of observations too small.");
 	}
 
-	autoNUMmatrix<double> linv (NUMdmatrix_copy (thy data, 1, p, 1, p), 1, 1);
+	autoNUMmatrix<double> linv (NUMmatrix_copy (thy data, 1, p, 1, p), 1, 1);
 	NUMlowerCholeskyInverse (linv.peek(), p, & ln_thee);
 	NUMdeterminant_cholesky (my data, p, &ln_me);
 
@@ -1807,7 +1807,7 @@ void SSCP_unExpand (I) {
 	if (my expansionNumberOfRows == 0) {
 		return;
 	}
-	NUMdmatrix_free (my data, 1, 1);
+	NUMmatrix_free (my data, 1, 1);
 	my data = my expansion;
 	my expansion = 0;
 	my numberOfRows = my expansionNumberOfRows;
@@ -1850,7 +1850,7 @@ void SSCP_expandLowerCholesky (I) {
 
 void SSCP_unExpandLowerCholesky (I) {
 	iam (SSCP);
-	NUMdmatrix_free (my lowerCholesky, 1, 1);
+	NUMmatrix_free (my lowerCholesky, 1, 1);
 	my lnd = 0;
 }
 

@@ -324,7 +324,7 @@ static void search (Manual me, const wchar *query) {
 		*p = tolower (*p);
 	}
 	if (! goodnessOfMatch)
-		goodnessOfMatch = NUMdvector (1, numberOfPages);
+		goodnessOfMatch = NUMvector <double> (1, numberOfPages);
 	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
 		wchar *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;

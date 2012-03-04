@@ -315,7 +315,7 @@ void FunctionTerms_initFromString (I, double xmin, double xmax, const wchar_t *s
 	}
 
 	FunctionTerms_init (me, xmin, xmax, numberOfCoefficients);
-	NUMdvector_copyElements (numbers.peek(), my coefficients, 1, numberOfCoefficients);
+	NUMvector_copyElements (numbers.peek(), my coefficients, 1, numberOfCoefficients);
 }
 
 long FunctionTerms_getDegree (I) {
@@ -770,7 +770,7 @@ void Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomi
 		degree = MAX (m - n, 0);
 		aq.reset (Polynomial_create (my xmin, my xmax, degree));
 		if (degree >= 0) {
-			NUMdvector_copyElements (qc.peek(), aq -> coefficients, 1, degree + 1);
+			NUMvector_copyElements (qc.peek(), aq -> coefficients, 1, degree + 1);
 		}
 	}
 	if (*r) {
@@ -785,7 +785,7 @@ void Polynomials_divide (Polynomial me, Polynomial thee, Polynomial *q, Polynomi
 			degree--;
 		}
 		ar.reset (Polynomial_create (my xmin, my xmax, degree));
-		NUMdvector_copyElements (rc.peek(), ar -> coefficients, 1, degree + 1);
+		NUMvector_copyElements (rc.peek(), ar -> coefficients, 1, degree + 1);
 	}
 	*q = aq.transfer();
 	*r = ar.transfer();

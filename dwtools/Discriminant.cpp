@@ -175,7 +175,7 @@ TableOfReal Discriminant_extractGroupCentroids (Discriminant me) {
 		for (long i = 1; i <= m; i++) {
 			SSCP sscp = (SSCP) my groups -> item[i];
 			TableOfReal_setRowLabel (thee.peek(), i, Thing_getName (sscp));
-			NUMdvector_copyElements (sscp -> centroid, thy data[i], 1, n);
+			NUMvector_copyElements (sscp -> centroid, thy data[i], 1, n);
 		}
 		NUMstrings_copyElements ( ( (SSCP) my groups -> item[m]) -> columnLabels, thy columnLabels, 1, n);
 		return thee.transfer();
@@ -534,7 +534,7 @@ TableOfReal Discriminant_and_TableOfReal_mahalanobis (Discriminant me, TableOfRe
 		autoCovariance cov = SSCP_to_Covariance ( (SSCP) my groups -> item[group], 1);
 		autoTableOfReal him = 0;
 		if (poolCovarianceMatrices) { // use group mean instead of overall mean!
-			NUMdvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
+			NUMvector_copyElements (cov -> centroid, covg -> centroid, 1, cov -> numberOfColumns);
 			him.reset (Covariance_and_TableOfReal_mahalanobis (covg.peek(), thee, false));
 		} else {
 			him.reset (Covariance_and_TableOfReal_mahalanobis (cov.peek(), thee, false));

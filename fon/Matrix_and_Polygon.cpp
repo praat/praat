@@ -1,6 +1,6 @@
 /* Matrix_and_Polygon.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,8 +34,8 @@ Polygon Matrix_to_Polygon (I) {
 		autoPolygon thee = NULL;
 		if (my ny == 2) {
 			thee.reset (Polygon_create (my nx));
-			NUMdvector_copyElements (my z [1], thy x, 1, my nx);
-			NUMdvector_copyElements (my z [2], thy y, 1, my nx);
+			NUMvector_copyElements (my z [1], thy x, 1, my nx);
+			NUMvector_copyElements (my z [2], thy y, 1, my nx);
 		} else {
 			thee.reset (Polygon_create (my ny));
 			for (long i = 1; i <= my ny; i ++) {
@@ -53,8 +53,8 @@ Matrix Polygon_to_Matrix (I) {
 	iam (Polygon);
 	try {
 		autoMatrix thee = Matrix_create (1, my numberOfPoints, my numberOfPoints, 1, 1, 1, 2, 2, 1, 1);
-		NUMdvector_copyElements (my x, thy z [1], 1, my numberOfPoints);
-		NUMdvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
+		NUMvector_copyElements (my x, thy z [1], 1, my numberOfPoints);
+		NUMvector_copyElements (my y, thy z [2], 1, my numberOfPoints);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Matrix.");

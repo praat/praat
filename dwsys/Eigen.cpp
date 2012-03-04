@@ -251,7 +251,7 @@ void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
 		Eigen_init (me, n, n);
 	}
 
-	NUMdmatrix_copyElements (a, my eigenvectors, 1, n, 1, n);
+	NUMmatrix_copyElements (a, my eigenvectors, 1, n, 1, n);
 
 	/*
 		Get size of work array

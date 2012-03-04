@@ -973,11 +973,16 @@ const wchar * Melder_winAudioFileExtension (int audioFileType);   /* ".aiff", ".
 #define Melder_POLYPHONE  12
 #define Melder_IEEE_FLOAT_32_BIG_ENDIAN  13
 #define Melder_IEEE_FLOAT_32_LITTLE_ENDIAN  14
-#define Melder_FLAC_COMPRESSION 15
-#define Melder_MPEG_COMPRESSION 16
-int Melder_defaultAudioFileEncoding16 (int audioFileType);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN */
-void MelderFile_writeAudioFileHeader16 (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels);
-void MelderFile_writeAudioFile16 (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels);
+#define Melder_FLAC_COMPRESSION_16 15
+#define Melder_FLAC_COMPRESSION_24 16
+#define Melder_FLAC_COMPRESSION_32 17
+#define Melder_MPEG_COMPRESSION_16 18
+#define Melder_MPEG_COMPRESSION_24 19
+#define Melder_MPEG_COMPRESSION_32 20
+int Melder_defaultAudioFileEncoding (int audioFileType, int numberOfBitsPerSamplePoint);   /* BIG_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN, LITTLE_ENDIAN, BIG_ENDIAN */
+void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
+void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
+void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint);
 
 int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *encoding,
 	double *sampleRate, long *startOfData, long *numberOfSamples);

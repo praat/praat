@@ -1,6 +1,6 @@
 /* oo_READ_BINARY.h
  *
- * Copyright (C) 1994-2011 Paul Boersma
+ * Copyright (C) 1994-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,14 +33,14 @@
 		x [i] = binget##storage (f); \
 	}
 
-#define oo_VECTOR(type,t,storage,x,min,max)  \
+#define oo_VECTOR(type,storage,x,min,max)  \
 	if (max >= min) { \
-		x = NUM##t##vector_readBinary_##storage (min, max, f); therror \
+		x = NUMvector_readBinary_##storage (min, max, f); therror \
 	}
 
-#define oo_MATRIX(type,t,storage,x,row1,row2,col1,col2)  \
+#define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1) { \
-	    x = NUM##t##matrix_readBinary_##storage (row1, row2, col1, col2, f); therror \
+	    x = NUMmatrix_readBinary_##storage (row1, row2, col1, col2, f); therror \
 	}
 
 #define oo_ENUMx(type,storage,Type,x)  \
@@ -57,9 +57,9 @@
 		x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); \
 	}
 
-#define oo_ENUMx_VECTOR(type,t,storage,Type,x,min,max)  \
+#define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	if (max >= min) { \
-		x = NUM##t##vector (min, max); \
+		x = NUMvector <type> (min, max); \
 		for (long i = min; i <= max; i ++) { \
 			x [i] = binget##storage (f, Type##_MIN, Type##_MAX, L"" #Type); \
 	}

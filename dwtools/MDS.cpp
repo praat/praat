@@ -441,7 +441,7 @@ Configuration ContingencyTable_to_Configuration_ca (ContingencyTable me, long nu
 		long nr = my numberOfRows, nc = my numberOfColumns;
 		long dimmin = nr < nc ? nr : nc;
 
-		autoNUMmatrix<double> h (NUMdmatrix_copy (my data, 1, nr, 1, nc), 1, 1);
+		autoNUMmatrix<double> h (NUMmatrix_copy (my data, 1, nr, 1, nc), 1, 1);
 		autoNUMvector<double> rowsum (1, nr);
 		autoNUMvector<double> colsum (1, nc);
 		autoConfiguration thee = Configuration_create (nr + nc, numberOfDimensions);
@@ -1052,7 +1052,7 @@ Similarity Confusion_to_Similarity (Confusion me, int normalize,
 
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
 
-		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 
 		if (normalize) {
 			NUMdmatrix_normalizeRows (thy data, nxy, nxy);
@@ -1068,7 +1068,7 @@ Similarity Confusion_to_Similarity (Confusion me, int normalize,
 				}
 			}
 		} else if (symmetrizeMethod == 3) { // Method Houtgast.
-			autoNUMmatrix<double> p (NUMdmatrix_copy (thy data, 1, nxy, 1, nxy), 1, 1);
+			autoNUMmatrix<double> p (NUMmatrix_copy (thy data, 1, nxy, 1, nxy), 1, 1);
 			for (long i = 1; i <= nxy; i++) {
 				for (long j = i; j <= nxy; j++) {
 					double tmp = 0;
@@ -1092,7 +1092,7 @@ Dissimilarity Similarity_to_Dissimilarity (Similarity me,
 		double max = 0;
 		autoDissimilarity thee = Dissimilarity_create (nxy);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
-		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 
 		for (long i = 1; i <= nxy; i++) {
 			for (long j = 1; j <= nxy; j++) {
@@ -1172,7 +1172,7 @@ Dissimilarity Confusion_to_Dissimilarity_pdf (Confusion me, double minimumConfus
 		Melder_assert (minimumConfusionLevel > 0);
 		autoDissimilarity thee = Dissimilarity_create (my numberOfColumns);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
-		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 
 		/*
 			Correct "zero" responses.
@@ -1249,7 +1249,7 @@ Dissimilarity Distance_to_Dissimilarity (Distance me) {
 	try {
 		autoDissimilarity thee = Dissimilarity_create (my numberOfRows);
 		TableOfReal_copyLabels (me, thee.peek(), 1, 1);
-		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Dissimilarity not created from Distance.");
@@ -1592,7 +1592,7 @@ void ScalarProducts_to_Configuration_ytl (ScalarProducts me, int numberOfDimensi
 		// extracting the first 'numberOfDimensions' principal components of Pmean.
 
 		NUMdmatrix_into_principalComponents (pmean.peek(), nPoints, nPoints, numberOfDimensions, y.peek());
-		NUMdmatrix_copyElements (y.peek(), thy data, 1, nPoints, 1, numberOfDimensions);
+		NUMmatrix_copyElements (y.peek(), thy data, 1, nPoints, 1, numberOfDimensions);
 
 		// We cannot determine weights from only one sp-matrix.
 
@@ -2002,7 +2002,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 
 			// Make Z = X
 
-			NUMdmatrix_copyElements (conf -> data, z -> data, 1, nPoints, 1, nDimensions);
+			NUMmatrix_copyElements (conf -> data, z -> data, 1, nPoints, 1, nDimensions);
 
 			stressp = *stress;
 			if (showProgress) {
@@ -2774,10 +2774,10 @@ Distances MDSVecs_Configuration_Salience_monotoneRegression (MDSVecs vecs,
         Configuration conf, Salience weights, int tiesProcessing) {
 	try {
 		long nDimensions = conf -> numberOfColumns;
-		autoNUMvector<double> w (NUMdvector_copy (conf -> w, 1, nDimensions), 1);
+		autoNUMvector<double> w (NUMvector_copy (conf -> w, 1, nDimensions), 1);
 		autoDistances distances = Distances_create ();
 		for (long i = 1; i <= vecs -> size; i++) {
-			NUMdvector_copyElements (weights -> data[i], conf -> w, 1, nDimensions);
+			NUMvector_copyElements (weights -> data[i], conf -> w, 1, nDimensions);
 			autoDistance dc = Configuration_to_Distance (conf);
 			autoDistance dist = MDSVec_Distance_monotoneRegression ( (MDSVec) vecs -> item[i], dc.peek(), tiesProcessing);
 			Collection_addItem (distances.peek(), dist.transfer());
@@ -2987,7 +2987,7 @@ void ScalarProduct_Configuration_getVariances (ScalarProduct me,
 }
 
 void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, Configuration thee, Salience him, double *vaf) {
-	autoNUMvector<double> w (NUMdvector_copy (thy w, 1, thy numberOfColumns), 1); // save weights
+	autoNUMvector<double> w (NUMvector_copy (thy w, 1, thy numberOfColumns), 1); // save weights
 	try {
 		if (my size != his numberOfRows || thy numberOfColumns != his numberOfColumns) Melder_throw
 			("Dimensions of input objects must conform.");
@@ -3013,9 +3013,9 @@ void ScalarProducts_Configuration_Salience_vaf (ScalarProducts me, Configuration
 		}
 
 		*vaf = n > 0 ? 1.0 - t / n : 0;
-		NUMdvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
+		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns); // restore weights
 	} catch (MelderError) {
-		NUMdvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns);
+		NUMvector_copyElements (w.peek(), thy w, 1, thy numberOfColumns);
 		Melder_throw ("No vaf calculasted.");
 	}
 }

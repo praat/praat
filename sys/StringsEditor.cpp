@@ -54,7 +54,7 @@ static void gui_button_cb_insert (I, GuiButtonEvent event) {
 	 */
 	long numberOfSelected, *selected = GuiList_getSelectedPositions (my list, & numberOfSelected);
 	long position = selected == NULL ? strings -> numberOfStrings + 1 : selected [1];
-	NUMlvector_free (selected, 1);
+	NUMvector_free (selected, 1);
 	wchar_t *text = GuiText_getString (my text);
 	/*
 	 * Change the data.
@@ -102,7 +102,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent event) {
 	for (long iselected = numberOfSelected; iselected >= 1; iselected --) {
 		Strings_remove ((Strings) my data, selected [iselected]);
 	}
-	NUMlvector_free (selected, 1);
+	NUMvector_free (selected, 1);
 	updateList (me);
 	my broadcastDataChanged ();
 }

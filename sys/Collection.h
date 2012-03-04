@@ -260,17 +260,6 @@ Thing_define (SortedSetOfInt, SortedSet) {
 void SortedSetOfInt_init (SortedSetOfInt me);
 SortedSetOfInt SortedSetOfInt_create (void);
 
-/********** class SortedSetOfShort **********/
-
-Thing_define (SortedSetOfShort, SortedSet) {
-	// overridden methods:
-		static int s_compare (Any data1, Any data2);
-		virtual Data_CompareFunction v_getCompareFunction () { return s_compare; }
-};
-
-void SortedSetOfShort_init (SortedSetOfShort me);
-SortedSetOfShort SortedSetOfShort_create (void);
-
 /********** class SortedSetOfLong **********/
 
 Thing_define (SortedSetOfLong, SortedSet) {

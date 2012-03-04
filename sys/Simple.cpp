@@ -1,6 +1,6 @@
 /* Simple.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,14 +42,6 @@ Thing_implement (SimpleInt, Data, 0);
 
 SimpleInt SimpleInt_create (int number) {
 	autoSimpleInt me = Thing_new (SimpleInt);
-	my number = number;
-	return me.transfer();
-}
-
-Thing_implement (SimpleShort, Data, 0);
-
-SimpleShort SimpleShort_create (short number) {
-	autoSimpleShort me = Thing_new (SimpleShort);
 	my number = number;
 	return me.transfer();
 }

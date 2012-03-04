@@ -183,7 +183,7 @@ static void Covariance_into_Covariance (Covariance me, Covariance thee) {
 	// Are the matrix sizes equal
 	if (my numberOfRows == thy numberOfRows) {
 		NUMstrings_copyElements (my rowLabels, thy rowLabels, 1, thy numberOfRows);
-		NUMdmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
+		NUMmatrix_copyElements (my data, thy data, 1, my numberOfRows, 1, my numberOfColumns);
 		return;
 	} else {
 		for (long ir = 1; ir <= my numberOfRows; ir++) {

@@ -66,7 +66,7 @@ Thing_implement (ComplexVector, Data, 0);
 void ComplexVector_init (I, long min, long max) {
 	iam (ComplexVector);
 	my min = min; my max = max;
-	my v = NUMdcvector (min, max);
+	my v = NUMvector <dcomplex> (min, max);
 }
 
 ComplexVector ComplexVector_create (long min, long max) {

@@ -1,6 +1,6 @@
 /* KNN.cpp
  *
- * Copyright (C) 2008 Ola So"der, 2010-2011 Paul Boersma
+ * Copyright (C) 2008 Ola So"der, 2010-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,7 +198,7 @@ Categories KNN_classifyToCategories
 
 {
     int nthreads = KNN_getNumberOfCPUs();
-    long *outputindices = NUMlvector (0, ps->ny);
+    long *outputindices = NUMvector <long> (0, ps->ny);
     long chunksize =  ps->ny / nthreads;
 
     Melder_assert(nthreads > 0); 
@@ -272,7 +272,7 @@ Categories KNN_classifyToCategories
         for (long i = 1; i <= ps->ny; ++i)
             Collection_addItem (output, Data_copy ((SimpleString) my output -> item [outputindices [i]]));
     }
-	NUMlvector_free (outputindices, 0);
+	NUMvector_free (outputindices, 0);
     return output;
 }
 
@@ -296,11 +296,11 @@ void * KNN_classifyToCategoriesAux
     long ncollected;
     long ncategories;
 
-    long *indices = NUMlvector (0, ((KNN_input_ToCategories_t *) input)->k);
-    long *freqindices = NUMlvector (0, ((KNN_input_ToCategories_t *) input)->k);
+    long *indices = NUMvector <long> (0, ((KNN_input_ToCategories_t *) input)->k);
+    long *freqindices = NUMvector <long> (0, ((KNN_input_ToCategories_t *) input)->k);
 
-    double *distances = NUMdvector (0, ((KNN_input_ToCategories_t *) input)->k);
-    double *freqs = NUMdvector (0, ((KNN_input_ToCategories_t *) input)->k);
+    double *distances = NUMvector <double> (0, ((KNN_input_ToCategories_t *) input)->k);
+    double *freqs = NUMvector <double> (0, ((KNN_input_ToCategories_t *) input)->k);
  
     for (long y = ((KNN_input_ToCategories_t *) input)->istart; y <= ((KNN_input_ToCategories_t *) input)->istop; ++y)
     {
@@ -347,10 +347,10 @@ void * KNN_classifyToCategoriesAux
         ((KNN_input_ToCategories_t *) input)->output[y] = freqindices[KNN_max(freqs, ncategories)];
     }
 
-	NUMlvector_free (indices, 0);
-	NUMlvector_free (freqindices, 0);
-	NUMdvector_free (distances, 0);
-	NUMdvector_free (freqs, 0);
+	NUMvector_free (indices, 0);
+	NUMvector_free (freqindices, 0);
+	NUMvector_free (distances, 0);
+	NUMvector_free (freqs, 0);
     return(NULL);
 
 }
@@ -485,8 +485,8 @@ void * KNN_classifyToTableOfRealAux
 
 {
     long ncategories = Categories_getSize (((KNN_input_ToTableOfReal_t *) input)->uniqueCategories);
-    long *indices = NUMlvector (0, ((KNN_input_ToTableOfReal_t *) input)->k);
-    double *distances = NUMdvector (0, ((KNN_input_ToTableOfReal_t *) input)->k);
+    long *indices = NUMvector <long> (0, ((KNN_input_ToTableOfReal_t *) input)->k);
+    double *distances = NUMvector <double> (0, ((KNN_input_ToTableOfReal_t *) input)->k);
 
     for (long y = ((KNN_input_ToTableOfReal_t *) input)->istart; y <= ((KNN_input_ToTableOfReal_t *) input)->istop; ++y)
     {
@@ -548,8 +548,8 @@ void * KNN_classifyToTableOfRealAux
             }
 
     }
-	NUMlvector_free (indices, 0);
-	NUMdvector_free (distances, 0);
+	NUMvector_free (indices, 0);
+	NUMvector_free (distances, 0);
     return(NULL);
 }
 
@@ -1162,7 +1162,7 @@ long KNN_kFriends
     long maxi;
     long dc = 0;
     long py = 1;
-    double *distances = NUMdvector (0, k - 1);
+    double *distances = NUMvector <double> (0, k - 1);
 
     Melder_assert(jy <= j->ny  && k <= p->ny && k > 0);
     Melder_assert(indices);
@@ -1194,7 +1194,7 @@ long KNN_kFriends
         ++py;
     }
 
-	NUMdvector_free (distances, 0);
+	NUMvector_free (distances, 0);
     return(OlaMIN(k,dc));
 
 }
@@ -1305,7 +1305,7 @@ long KNN_kUniqueEnemies
     long maxi;
     long dc = 0;
     long py = 1;
-    double *distances = NUMdvector (0, k - 1);
+    double *distances = NUMvector <double> (0, k - 1);
 
     Melder_assert (jy <= j->ny);
 	Melder_assert (k <= p->ny);
@@ -1352,7 +1352,7 @@ long KNN_kUniqueEnemies
         }
         ++py;
     }
-	NUMdvector_free (distances, 0);
+	NUMvector_free (distances, 0);
     return(OlaMIN(k,dc));
 }
 
@@ -1798,8 +1798,8 @@ void KNN_SA_partition
     long c1 = (long) lround(NUMrandomUniform(i1, i2));
     long c2 = (long) lround(NUMrandomUniform(i1, i2));
 
-    double *p1 = NUMdvector (1, p->nx); 
-    double *p2 = NUMdvector (1, p->nx);
+    double *p1 = NUMvector <double> (1, p->nx); 
+    double *p2 = NUMvector <double> (1, p->nx);
 
     for(long x = 1; x <= p->nx; ++x)
     {
@@ -1868,8 +1868,8 @@ void KNN_SA_partition
             ++j;
         }
     }
-    NUMdvector_free (p1, 1);
-    NUMdvector_free (p2, 1);
+    NUMvector_free (p1, 1);
+    NUMvector_free (p2, 1);
 }
 
 

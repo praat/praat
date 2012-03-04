@@ -45,7 +45,7 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 
 		autoSound x = Spectrum_to_Sound (sx.peek());
 		autoCepstrum thee = Cepstrum_create (0, x -> xmax - x -> xmin, x -> nx);
-		NUMdvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
+		NUMvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no Cepstrum created.");
@@ -55,7 +55,7 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 Spectrum Cepstrum_to_Spectrum (Cepstrum me) {
 	try {
 		autoSound x = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		NUMdvector_copyElements	(my z[1], x -> z[1], 1, my nx);
+		NUMvector_copyElements	(my z[1], x -> z[1], 1, my nx);
 		autoSpectrum thee = Sound_to_Spectrum (x.peek(), TRUE);
 
 		for (long i = 1; i <= thy nx; i++) {

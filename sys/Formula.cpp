@@ -273,7 +273,7 @@ static int languageNameCompare (const void *first, const void *second) {
 static int Formula_hasLanguageName (const wchar *f) {
 	static int *index;
 	if (index == NULL) {
-		index = NUMivector (1, hoogsteInvoersymbool);
+		index = NUMvector <int> (1, hoogsteInvoersymbool);
 		for (int tok = 1; tok <= hoogsteInvoersymbool; tok ++) {
 			index [tok] = tok;
 		}
@@ -1867,7 +1867,7 @@ static void Stackel_cleanUp (Stackel me) {
 	if (my which == Stackel_STRING) {
 		Melder_free (my content.string);
 	} else if (my which == Stackel_NUMERIC_ARRAY) {
-		NUMdmatrix_free (my content.numericArray.data, 1, 1);
+		NUMmatrix_free (my content.numericArray.data, 1, 1);
 		my content.numericArray = theZeroNumericArray;
 	}
 }
@@ -2277,7 +2277,7 @@ static void do_function_dd_d_numar (double (*f) (double, double)) {
 	if (a->which == Stackel_NUMERIC_ARRAY && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		long numberOfRows = a->content.numericArray.numberOfRows;
 		long numberOfColumns = a->content.numericArray.numberOfColumns;
-		double **newData = NUMdmatrix (1, numberOfRows, 1, numberOfColumns); therror
+		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns); therror
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (x->content.number, y->content.number);
@@ -2299,7 +2299,7 @@ static void do_function_ll_l_numar (long (*f) (long, long)) {
 	if (a->which == Stackel_NUMERIC_ARRAY && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		long numberOfRows = a->content.numericArray.numberOfRows;
 		long numberOfColumns = a->content.numericArray.numberOfColumns;
-		double **newData = NUMdmatrix (1, numberOfRows, 1, numberOfColumns); therror
+		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns); therror
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (x->content.number, y->content.number);
@@ -4390,7 +4390,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	pushString (string.transfer());
 } break; case NUMERIC_ARRAY_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
-	double **data = NUMdmatrix_copy (var -> numericArrayValue. data,
+	double **data = NUMmatrix_copy (var -> numericArrayValue. data,
 		1, var -> numericArrayValue. numberOfRows, 1, var -> numericArrayValue. numberOfColumns); therror
 	pushNumericArray (var -> numericArrayValue. numberOfRows, var -> numericArrayValue. numberOfColumns, data);
 } break; default: Melder_throw ("Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], "\" without action.");

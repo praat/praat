@@ -1,6 +1,6 @@
 /* Sound.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,7 +280,7 @@ Sound Matrix_to_Sound_mono (Matrix me, long row) {
 		if (row < 0) row = my ny + 1 + row;
 		if (row < 1) row = 1;
 		if (row > my ny) row = my ny;
-		NUMdvector_copyElements (my z [row], thy z [1], 1, my nx);
+		NUMvector_copyElements (my z [row], thy z [1], 1, my nx);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Sound.");
@@ -314,7 +314,7 @@ Sound Sound_upsample (Sound me) {
 		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * 2, my dx / 2, my x1);
 		autoNUMvector <double> data (1, 2 * nfft);
 		for (long channel = 1; channel <= my ny; channel ++) {
-			NUMdvector_copyElements (my z [channel], & data [1000], 1, my nx);
+			NUMvector_copyElements (my z [channel], & data [1000], 1, my nx);
 			NUMrealft (data.peek(), nfft, 1); therror
 			long imin = (long) (nfft * 0.95);
 			for (long i = imin + 1; i <= nfft; i ++) {
@@ -351,7 +351,7 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 				for (long i = 1; i <= nfft; i ++) {
 					data [i] = 0;
 				}
-				NUMdvector_copyElements (my z [channel], & data [antiTurnAround], 1, my nx);
+				NUMvector_copyElements (my z [channel], & data [antiTurnAround], 1, my nx);
 				NUMrealft (data.peek(), nfft, 1); therror   // go to the frequency domain
 				for (long i = floor (upfactor * nfft); i <= nfft; i ++) {
 					data [i] = 0;   /* Filter away high frequencies. */
@@ -403,8 +403,8 @@ Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 			Melder_throw ("The sampling frequencies are not equal.");
 		autoSound him = Sound_create (my ny, 0, nx * my dx, nx, my dx, 0.5 * my dx);
 		for (long channel = 1; channel <= my ny; channel ++) {
-			NUMdvector_copyElements (my z [channel], his z [channel], 1, my nx);
-			NUMdvector_copyElements (thy z [channel], his z [channel] + my nx + nx_silence, 1, thy nx);
+			NUMvector_copyElements (my z [channel], his z [channel], 1, my nx);
+			NUMvector_copyElements (thy z [channel], his z [channel] + my nx + nx_silence, 1, thy nx);
 		}
 		return him.transfer();
 	} catch (MelderError) {
@@ -459,7 +459,7 @@ Sound Sounds_concatenate_e (Collection me, double overlapTime) {
 				{
 					thy z [channel] [thySample] += sound -> z [channel] [mySample] * smoother [j];   // add
 				}
-				NUMdvector_copyElements (sound -> z [channel], thy z [channel] + nx,
+				NUMvector_copyElements (sound -> z [channel], thy z [channel] + nx,
 					1 + numberOfSmoothingSamplesAtTheStartOfThisSound, sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound);
 				for (long j = 1, mySample = sound -> nx - numberOfSmoothingSamplesAtTheEndOfThisSound + 1, thySample = mySample + nx;
 					 j <= numberOfSmoothingSamplesAtTheEndOfThisSound;
@@ -1031,7 +1031,7 @@ Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape
 		 * The *virtual* samples will remain at zero.
 		 */
 		for (long channel = 1; channel <= my ny; channel ++) {
-			NUMdvector_copyElements (my z [channel], thy z [channel] + 1 - ix1,
+			NUMvector_copyElements (my z [channel], thy z [channel] + 1 - ix1,
 					( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
 		}
 		/*

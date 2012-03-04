@@ -32,13 +32,13 @@ int Praat_tests (int itest, wchar *arg1, wchar *arg2, wchar *arg3, wchar *arg4) 
 		} break;
 		case kPraatTests_TIME_SORT: {
 			long m = wcstol (arg2, NULL, 10);
-			long *array = NUMlvector (1, m);
+			long *array = NUMvector <long> (1, m);
 			for (i = 1; i <= m; i ++)
 				array [i] = NUMrandomInteger (1, 100);
 			Melder_stopwatch ();
 			for (i = 1; i <= n; i ++)
 				NUMsort_l (m, array);
-			NUMlvector_free (array, 1);
+			NUMvector_free (array, 1);
 		} break;
 	}
 	MelderInfo_writeLine2 (Melder_single (Melder_stopwatch () / n * 1e9), L" nanoseconds");

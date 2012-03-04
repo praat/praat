@@ -145,7 +145,7 @@ PCA TableOfReal_to_PCA (I) {
 			Melder_throw ("All values in your table are zero.");
 		}
 		autoPCA thee = Thing_new (PCA);
-		autoNUMmatrix<double> a (NUMdmatrix_copy (my data, 1, m, 1, n), 1, 1);
+		autoNUMmatrix<double> a (NUMmatrix_copy (my data, 1, m, 1, n), 1, 1);
 		thy centroid = NUMvector<double> (1, n);
 
 		for (long j = 1; j <= n; j++) {

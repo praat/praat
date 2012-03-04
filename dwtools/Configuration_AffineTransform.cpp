@@ -189,7 +189,7 @@ AffineTransform Configurations_to_AffineTransform_congruence (Configuration me,
 		                       p -> n, p -> r, maximumNumberOfIterations, tolerance);
 
 		autoAffineTransform at = AffineTransform_create (p -> n);
-		NUMdmatrix_copyElements (p -> r, at -> r, 1, p -> n, 1, p -> n);
+		NUMmatrix_copyElements (p -> r, at -> r, 1, p -> n, 1, p -> n);
 		return at.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no congruence transformation created.");
