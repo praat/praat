@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120304)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120305)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.08# (5 March 2012)")
+LIST_ITEM (L"\\bu Removed a bug introduced in 5.3.07 that could cause Praat to crash when viewing a LongSound.")
 NORMAL (L"##5.3.07# (4 March 2012)")
 LIST_ITEM (L"\\bu Praat can now save Sounds as 24-bit and 32-bit WAV files.")
 NORMAL (L"##5.3.06# (28 February 2012)")

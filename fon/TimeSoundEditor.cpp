@@ -412,8 +412,10 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 		if (publishWindowButton) GuiObject_setSensitive (publishWindowButton, selectedSamples != 0);
 	}
 	GuiObject_setSensitive (writeWavButton, selectedSamples != 0);
-	GuiObject_setSensitive (d_saveAs24BitWavButton, selectedSamples != 0);
-	GuiObject_setSensitive (d_saveAs32BitWavButton, selectedSamples != 0);
+	if (d_saveAs24BitWavButton)
+		GuiObject_setSensitive (d_saveAs24BitWavButton, selectedSamples != 0);
+	if (d_saveAs32BitWavButton)
+		GuiObject_setSensitive (d_saveAs32BitWavButton, selectedSamples != 0);
 	GuiObject_setSensitive (writeAiffButton, selectedSamples != 0);
 	GuiObject_setSensitive (writeAifcButton, selectedSamples != 0);
 	GuiObject_setSensitive (writeNextSunButton, selectedSamples != 0);
