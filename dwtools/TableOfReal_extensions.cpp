@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -356,7 +356,7 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, const wchar_t *rows, long c
 		}
 		if (ymin >= ymax) {
 			double min, max;
-			NUMdvector_extrema (my data[irow], colb, cole, &min, &max);
+			NUMvector_extrema (my data[irow], colb, cole, &min, &max);
 			if (i > 1) {
 				if (min < ymin) {
 					ymin = min;
@@ -450,13 +450,13 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax, double ymi
 	}
 
 	if (xmax <= xmin) {
-		NUMdvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
+		NUMvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
 	}
 	if (xmax <= xmin) {
 		xmax += 1; xmin -= 1;
 	}
 	if (ymax <= ymin) {
-		NUMdvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
+		NUMvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
 	}
 	if (ymax <= ymin) {
 		ymax += 1;
@@ -670,7 +670,7 @@ void TableOfReal_drawBoxPlots (I, Graphics g, long rowmin, long rowmax, long col
 		colmax = my numberOfColumns;
 	}
 	if (ymax <= ymin) {
-		NUMdmatrix_extrema (my data, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
+		NUMmatrix_extrema (my data, rowmin, rowmax, colmin, colmax, &ymin, &ymax);
 	}
 	autoNUMvector<double> data (1, numberOfRows);
 
@@ -1392,8 +1392,8 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1, long colx2,
 
 	double min, max;
 	if (xmin >= xmax) {
-		NUMdmatrix_extrema (my data, 1, ny, colx1, colx1, &min, &max);
-		NUMdmatrix_extrema (my data, 1, ny, colx2, colx2, &xmin, &xmax);
+		NUMmatrix_extrema (my data, 1, ny, colx1, colx1, &min, &max);
+		NUMmatrix_extrema (my data, 1, ny, colx2, colx2, &xmin, &xmax);
 		if (min < xmin) {
 			xmin = min;
 		}
@@ -1402,8 +1402,8 @@ void TableOfReal_drawVectors (I, Graphics g, long colx1, long coly1, long colx2,
 		}
 	}
 	if (ymin >= ymax) {
-		NUMdmatrix_extrema (my data, 1, ny, coly1, coly1, &min, &max);
-		NUMdmatrix_extrema (my data, 1, ny, coly2, coly2, &ymin, &ymax);
+		NUMmatrix_extrema (my data, 1, ny, coly1, coly1, &min, &max);
+		NUMmatrix_extrema (my data, 1, ny, coly2, coly2, &ymin, &ymax);
 		if (min < ymin) {
 			ymin = min;
 		}
@@ -1480,7 +1480,7 @@ TableOfReal TableOfReal_sortRowsByIndex (I, long *index, int reverse) {
 		}
 
 		double min, max;
-		NUMlvector_extrema (index, 1, my numberOfRows, &min, &max);
+		NUMvector_extrema (index, 1, my numberOfRows, &min, &max);
 		if (min < 1 || max > my numberOfRows) {
 			Melder_throw ("One or more indices out of range [1, ", my numberOfRows, "].");
 		}

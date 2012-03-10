@@ -1,6 +1,6 @@
 /* SPINET.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -125,7 +125,7 @@ void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, do
 		spec[i] = z[i][icol];
 	}
 	if (maximum <= minimum) {
-		NUMdvector_extrema (spec.peek(), ifmin, ifmax, &minimum, &maximum);
+		NUMvector_extrema (spec.peek(), ifmin, ifmax, &minimum, &maximum);
 	}
 	if (maximum <= minimum) {
 		minimum -= 1;

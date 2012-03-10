@@ -1,6 +1,6 @@
 /* NUMsort.c
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  djmw 20030121 Initial version
  djmw 20030627 Removed bug in MACRO_NUMindex
- djmw 20110503 Latest modification
+ djmw 20120305 Latest modification
 */
 
 #include "NUM2.h"
@@ -36,124 +36,6 @@
 	    Floyd's optimization (page 642) is used.
 */
 
-#define MACRO_NUMsort2(TYPE,TYPE2) \
-{ \
-	long l, r, j, i, imin; \
-	TYPE k, min; \
-	TYPE2 kb, min2; \
-	if (n < 2) return;   /* Already sorted. */ \
-	if (n == 2) \
-	{ \
-		if (a[1] > a[2]) \
-		{\
-			min = a[2]; a[2] = a[1]; a[1] = min; \
-			min2 = b[2]; b[2] = b[1]; b[1] = min2; \
-		} \
-		return; \
-	} \
-	if (n <= 12) \
-	{ \
-		for (i = 1; i < n; i++) \
-		{ \
-			min = a[i]; \
-			imin = i; \
-			for (j = i + 1; j <= n; j++) \
-			{\
-				if (a[j] < min)\
-				{ \
-					min = a [j]; \
-					imin = j; \
-				} \
-			} \
-			a[imin] = a[i]; a[i] = min; \
-			min2 = b[imin]; b[imin] = b[i]; b[i] = min2; \
-		} \
-		return; \
-	} \
-	/* H1 */\
-	l = (n >> 1) + 1; \
-	r = n; \
-	for (;;) /* H2 */\
-	{ \
-		if (l > 1) { \
-			l--; \
-			k = a[l]; kb = b[l]; \
-		} else /* l == 1 */ { \
-			k = a[r]; kb = b[r]; \
-			a[r] = a[1]; b[r] = b[1]; \
-			r--; \
-			if (r == 1) \
-			{ \
-				a[1] = k; b[1] = kb; return; \
-			} \
-		} \
-		/* H3 */ \
-		j = l; \
-		for (;;) { \
-			/* H4 */ \
-			i = j; \
-			j = j << 1; \
-			if (j > r) break; \
-			if (j < r && a[j] < a[j + 1]) j++; /* H5 */\
-			/* if (k >= a[j]) break; H6 */\
-			a[i] = a[j]; b[i] = b[j]; /* H7 */\
-		} \
-		/* a[i] = k; b[i] = kb; H8 */\
-		for (;;)  /*H8' */\
-		{\
-			j = i; \
-			i = j >> 1; \
-			/* H9' */ \
-			if (j == l || k <= a[i]) \
-			{ \
-				a[j] = k; b[j] = kb; break; \
-			} \
-			a[j] = a[i]; b[j] = b[i]; \
-		}\
-	} \
-}
-
-void NUMsort2_fl (long n, float a[], long b[])
-MACRO_NUMsort2 (float, long)
-
-void NUMsort2_ff (long n, float a[], float b[])
-MACRO_NUMsort2 (float, float)
-
-void NUMsort2_dl (long n, double a[], long b[])
-MACRO_NUMsort2 (double, long)
-
-void NUMsort2_dd (long n, double a[], double b[])
-MACRO_NUMsort2 (double, double)
-
-void NUMsort2_ll (long n, long a[], long b[])
-MACRO_NUMsort2 (long, long)
-
-#undef MACRO_NUMsort2
-
-#define MACRO_NUMrank(TYPE)	\
-{ \
-	TYPE rank; \
-	long jt, j = 1; \
-	while (j < n) \
-	{ \
-		for (jt = j + 1; jt <= n && a[jt] == a[j]; jt++) {} \
-		rank = (j + jt - 1) * 0.5; \
-		for (long i = j; i <= jt - 1; i++) \
-		{ \
-			a[i] = rank; \
-		} \
-		j = jt;	\
-	} \
-	if (j == n) a[n] = n;	\
-}
-
-void NUMrank_f (long n, float a[])
-MACRO_NUMrank (float)
-
-void NUMrank (long n, double a[])
-MACRO_NUMrank (double)
-
-
 void NUMrankColumns (double **m, long rb, long re, long cb, long ce) {
 	long nr = re - rb + 1;
 	autoNUMvector<double> v (1, nr);
@@ -166,7 +48,7 @@ void NUMrankColumns (double **m, long rb, long re, long cb, long ce) {
 		for (long i = 1; i <= nr; i++) {
 			index[i] = i;
 		}
-		NUMsort2_dl (nr, v.peek(), index.peek());
+		NUMsort2 (nr, v.peek(), index.peek());
 		NUMrank (nr, v.peek());
 		for (long i = 1; i <= nr; i++) {
 			m[rb + index[i] - 1][j] = v[i];

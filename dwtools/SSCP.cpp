@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1760,7 +1760,7 @@ void Correlation_testDiagonality_bartlett (Correlation me, long numberOfContrain
 		numberOfContraints = 1;
 	}
 	if (numberOfContraints > my numberOfObservations) {
-		Melder_warning (L"Correlation_testDiagonality_bartlett: number of constraints can not exceed the number of observations.");
+		Melder_warning (L"Correlation_testDiagonality_bartlett: number of constraints cannot exceed the number of observations.");
 		return;
 	}
 	long p = my numberOfRows;

@@ -644,8 +644,8 @@ static void DTW_drawPath_raw (DTW me, Graphics g, double xmin, double xmax, doub
 	for (long i = 1; i < thy nxy; i++) {
 		double x1, y1, x2, y2;
 		if (NUMclipLineWithinRectangle (thy xytimes[i].x, thy xytimes[i].y,
-		                                thy xytimes[i + 1].x, thy xytimes[i + 1].y,
-		                                xmin, ymin, xmax, ymax, &x1, &y1, &x2, &y2)) {
+            thy xytimes[i + 1].x, thy xytimes[i + 1].y,
+            xmin, ymin, xmax, ymax, &x1, &y1, &x2, &y2)) {
 			Graphics_line (g, x1, y1, x2, y2);
 		}
 	}
@@ -874,7 +874,7 @@ void DTW_drawDistancesAlongPath (DTW me, Graphics g, double xmin, double xmax, d
 	}
 
 	if (dmin >= dmax) {
-		NUMdvector_extrema (d.peek(), ixmin, ixmax, &dmin, &dmax);
+		NUMvector_extrema (d.peek(), ixmin, ixmax, &dmin, &dmax);
 	} else {
 		for (long i = ixmin; i <= ixmax; i++) {
 			if (d[i] > dmax) {
@@ -1183,6 +1183,7 @@ static void DTW_and_Polygon_setUnreachableParts (DTW me, Polygon thee, long **ps
         for (long ix = 2; ix <= my nx; ix++) {
             double x = my x1 + (ix - 1) * my dx;
             long iystart = (dtw_slope * ix * (my dx / my dy)); // start 1 lower
+            if (iystart > my ny) iystart = my ny;
             for (long iy = iystart - 1; iy >= 1; iy--) {
                 double y = my y1 + (iy - 1) * my dy;
                 if (Polygon_getLocationOfPoint (thee, x, y, eps) == Polygon_OUTSIDE) {
@@ -1233,9 +1234,22 @@ Polygon DTW_to_Polygon (DTW me, double band, int slope) {
             } else {
                 autoPolygon thee = Polygon_create (4);
                 thy x[1] = my xmin; thy y[1] = my ymin;
-                getIntersectionPoint (my xmin, my ymin, my xmax, my ymax, slopes[slope], &thy x[2], &thy y[2]);
                 thy x[3] = my xmax; thy y[3] = my ymax;
-                getIntersectionPoint (my xmin, my ymin, my xmax, my ymax, 1 / slopes[slope], &thy x[4], &thy y[4]);
+                double x, y;
+                getIntersectionPoint (my xmin, my ymin, my xmax, my ymax, slopes[slope], &x, &y);
+                if (x < my xmin) x = my xmin;
+                if (x > my xmax) x = my xmax;
+                if (y < my ymin) y = my ymin;
+                if (y > my ymax) y = my ymax;
+                thy x[2] = x;
+                thy y[2] = y;
+                getIntersectionPoint (my xmin, my ymin, my xmax, my ymax, 1 / slopes[slope], &x, &y);
+                if (x < my xmin) x = my xmin;
+                if (x > my xmax) x = my xmax;
+                if (y < my ymin) y = my ymin;
+                if (y > my ymax) y = my ymax;
+                thy x[4] = x;
+                thy y[4] = y;
                 return thee.transfer();
             }
         } else {
@@ -1250,13 +1264,26 @@ Polygon DTW_to_Polygon (DTW me, double band, int slope) {
                 return thee.transfer();
             } else {
                 autoPolygon thee = Polygon_create (8);
+                double x, y;
                 thy x[1] = my xmin; thy y[1] = my ymin;
                 thy x[2] = my xmin; thy y[2] = my ymin + band;
-                getIntersectionPoint (my xmin, my ymin + band, my xmax - band, my ymax, slopes[slope], &thy x[3], &thy y[3]);
+                getIntersectionPoint (my xmin, my ymin + band, my xmax - band, my ymax, slopes[slope], &x, &y);
+                if (x < my xmin) x = my xmin;
+                if (x > my xmax) x = my xmax;
+                if (y < my ymin) y = my ymin;
+                if (y > my ymax) y = my ymax;
+                thy x[3] = x;
+                thy y[3] = y;
                 thy x[4] = my xmax - band; thy y[4] = my ymax;
                 thy x[5] = my xmax; thy y[5]= my ymax;
                 thy x[6] = my xmax; thy y[6] = my ymax - band;
-                getIntersectionPoint (my xmin + band, my ymin, my xmax, my ymax - band, 1 / slopes[slope], &thy x[7], &thy y[7]);
+                getIntersectionPoint (my xmin + band, my ymin, my xmax, my ymax - band, 1 / slopes[slope], &x, &y);
+                if (x < my xmin) x = my xmin;
+                if (x > my xmax) x = my xmax;
+                if (y < my ymin) y = my ymin;
+                if (y > my ymax) y = my ymax;
+                thy x[7] = x;
+                thy y[7] = y;
                 thy x[8] = my xmin + band; thy y[8] = my ymin;
                 return thee.transfer();
             }

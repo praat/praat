@@ -103,7 +103,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 		gain[iframe] = my d_frames[iframe].gain;
 	}
 	if (gmax <= gmin) {
-		NUMdvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
+		NUMvector_extrema (gain.peek(), itmin, itmax, & gmin, & gmax);
 	}
 	if (gmax == gmin) {
 		gmin = 0;

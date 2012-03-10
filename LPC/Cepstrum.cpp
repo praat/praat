@@ -1,6 +1,6 @@
 /* Cepstrum.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 	}
 
 	if (autoscaling) {
-		NUMdvector_extrema (y.peek(), imin, imax, & minimum, & maximum);
+		NUMvector_extrema (y.peek(), imin, imax, & minimum, & maximum);
 	}
 
 	for (long i = imin; i <= imax; i ++) {

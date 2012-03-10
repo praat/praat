@@ -1043,7 +1043,7 @@ static regularExp_CHAR *piece (int *flag_param, len_range *range_param) {
 			}
 		}
 
-		/* A max of zero can not be specified directly in the regex since it would
+		/* A max of zero cannot be specified directly in the regex since it would
 		   signal a max of infinity.  This code specifically disallows `{0,0}',
 		   `{,0}', and `{0}' which really means nothing to humans but would be
 		   interpreted as `{0,infinity}' or `*' if we didn't make this check. */
@@ -1532,7 +1532,7 @@ static regularExp_CHAR *atom (int *flag_param, len_range *range_param) {
 	range_param->upper = 0;
 
 	/* Process any regex comments, e.g. `(?# match next token->)'.  The
-	   terminating right parenthesis can not be escaped.  The comment stops at
+	   terminating right parenthesis cannot be escaped.  The comment stops at
 	   the first right parenthesis encountered (or the end of the regex
 	   string)... period.  Handles multiple sequential comments,
 	   e.g. `(?# one)(?# two)...'  */

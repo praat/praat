@@ -1,6 +1,6 @@
 /* SimpleVector.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ Thing_implement (ComplexVector, Data, 0);
 void ComplexVector_init (I, long min, long max) {
 	iam (ComplexVector);
 	my min = min; my max = max;
-	my v = NUMvector <dcomplex> (min, max);
+	my v = NUMvector<dcomplex> (min, max);
 }
 
 ComplexVector ComplexVector_create (long min, long max) {

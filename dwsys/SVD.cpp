@@ -392,8 +392,8 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, doubl
 		long lwork = MAX (MAX (3 * n, m), p) + n;
 
 		// Store the matrices a and b as column major!
-		autoNUMmatrix<double> a (NUMdmatrix_transpose (m1, m, n), 1, 1);
-		autoNUMmatrix<double> b (NUMdmatrix_transpose (m2, p, n), 1, 1);
+		autoNUMmatrix<double> a (NUMmatrix_transpose (m1, m, n), 1, 1);
+		autoNUMmatrix<double> b (NUMmatrix_transpose (m2, p, n), 1, 1);
 		autoNUMmatrix<double> q (1, n, 1, n);
 		autoNUMvector<double> alpha (1, n);
 		autoNUMvector<double> beta (1, n);
@@ -404,8 +404,8 @@ GSVD GSVD_create_d (double **m1, long numberOfRows1, long numberOfColumns, doubl
 		char jobu1 = 'N', jobu2 = 'N', jobq = 'Q';
 		long k, l, info;
 		NUMlapack_dggsvd (&jobu1, &jobu2, &jobq, &m, &n, &p, &k, &l,
-		                  &a[1][1], &m, &b[1][1], &p, &alpha[1], &beta[1], NULL, &m,
-		                  NULL, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
+		    &a[1][1], &m, &b[1][1], &p, &alpha[1], &beta[1], NULL, &m,
+		    NULL, &p, &q[1][1], &n, &work[1], &iwork[1], &info);
 		if (info != 0) {
 			Melder_throw ("dggsvd failed, error = ", info);
 		}

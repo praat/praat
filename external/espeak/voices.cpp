@@ -693,24 +693,24 @@ voice_t *LoadVoice(const char *vname, int control)
 
 				if(tone_only)
 					break;
-	
+
 				priority = DEFAULT_LANGUAGE_PRIORITY;
 				language_name[0] = 0;
-	
+
 				sscanf(p,"%s %d",language_name,&priority);
 				if(strcmp(language_name,"variant") == 0)
 					break;
-	
+
 				len = strlen(language_name) + 2;
 				// check for space in languages[]
 				if(len < (sizeof(voice_languages)-langix-1))
 				{
 					voice_languages[langix] = priority;
-	
+
 					strcpy(&voice_languages[langix+1],language_name);
 					langix += len;
 				}
-	
+
 				// only act on the first language line
 				if(language_set == 0)
 				{
@@ -720,10 +720,10 @@ voice_t *LoadVoice(const char *vname, int control)
 					strcpy(new_dictionary,language_type);
 					strcpy(phonemes_name,language_type);
 					SelectPhonemeTableName(phonemes_name);
-		
+
 					if(new_translator != NULL)
 							DeleteTranslator(new_translator);
-		
+
 					new_translator = SelectTranslator(translator_name);
 					langopts = &new_translator->langopts;
 				}
@@ -1078,10 +1078,10 @@ static char *ExtractVoiceVariantName(char *vname, int variant_num, int add_dir)
 			{
 				// voice variant name, not number
 				sprintf(variant_name, "%s%s", variant_prefix, p);
-			}	
+			}
 		}
 	}
-	
+
 	if(variant_num > 0)
 	{
 		if(variant_num < 10)
@@ -1119,7 +1119,7 @@ voice_t *LoadVoiceVariant(const char *vname, int variant_num)
 
 
 
-static int __cdecl VoiceNameSorter(const void *p1, const void *p2)
+static int VoiceNameSorter(const void *p1, const void *p2)
 {//=======================================================
 	int ix;
 	espeak_VOICE *v1 = *(espeak_VOICE **)p1;
@@ -1134,7 +1134,7 @@ static int __cdecl VoiceNameSorter(const void *p1, const void *p2)
 }
 
 
-static int __cdecl VoiceScoreSorter(const void *p1, const void *p2)
+static int VoiceScoreSorter(const void *p1, const void *p2)
 {//========================================================
 	int ix;
 	espeak_VOICE *v1 = *(espeak_VOICE **)p1;
@@ -1333,7 +1333,7 @@ static int SetVoiceScores(espeak_VOICE *voice_select, espeak_VOICE **voices, int
 		return(0);
 
 	// sort the selected voices by their score
-	qsort(voices,nv,sizeof(espeak_VOICE *),(int (__cdecl *)(const void *,const void *))VoiceScoreSorter);
+	qsort(voices,nv,sizeof(espeak_VOICE *),(int (*)(const void *,const void *))VoiceScoreSorter);
 
 	return(nv);
 }  // end of SetVoiceScores
@@ -1440,13 +1440,13 @@ char const *SelectVoice(espeak_VOICE *voice_select, int *found)
 	{
 		// no language is specified. Get language from the named voice
 		static char buf[60];
-	
+
 		if(voice_select2.name == NULL)
 		{
 			if((voice_select2.name = voice_select2.identifier) == NULL)
 				voice_select2.name = "default";
 		}
-	
+
 		strncpy0(buf,voice_select2.name,sizeof(buf));
 		variant_name = ExtractVoiceVariantName(buf,0,0);
 
@@ -1511,7 +1511,7 @@ char const *SelectVoice(espeak_VOICE *voice_select, int *found)
 		}
 		if(skip==0)
 		{
-			voices2[ix2++] = vp; 
+			voices2[ix2++] = vp;
 		}
 
 		for(j=0; (j < vp->xx1) && (n_variants < N_VOICE_VARIANTS);)
@@ -1598,10 +1598,10 @@ static void GetVoices(const char *path)
 		}
 		else
 		{
-			// a regular line, add it to the voices list	
+			// a regular line, add it to the voices list
 			if((f_voice = fopen(fname,"r")) == NULL)
 				continue;
-		
+
 			// pass voice file name within the voices directory
 			voice_data = ReadVoiceFile(f_voice, fname+len_path_voices, &buf[20]);
 			fclose(f_voice);
@@ -1636,10 +1636,10 @@ static void GetVoices(const char *path)
 		else
 		if(ftype > 0)
 		{
-			// a regular line, add it to the voices list	
+			// a regular line, add it to the voices list
 			if((f_voice = fopen(fname,"r")) == NULL)
 				continue;
-		
+
 			// pass voice file name within the voices directory
 			voice_data = ReadVoiceFile(f_voice, fname+len_path_voices, FindFileData.cFileName);
 			fclose(f_voice);
@@ -1676,10 +1676,10 @@ static void GetVoices(const char *path)
 		else
 		if(ftype > 0)
 		{
-			// a regular line, add it to the voices list	
+			// a regular line, add it to the voices list
 			if((f_voice = fopen(fname,"r")) == NULL)
 				continue;
-		
+
 			// pass voice file name within the voices directory
 			voice_data = ReadVoiceFile(f_voice, fname+len_path_voices, ent->d_name);
 			fclose(f_voice);
@@ -1805,7 +1805,7 @@ ESPEAK_API const espeak_VOICE **espeak_ListVoices(espeak_VOICE *voice_spec)
 
 	// sort the voices list
 	qsort(voices_list,n_voices_list,sizeof(espeak_VOICE *),
-		(int (__cdecl *)(const void *,const void *))VoiceNameSorter);
+		(int (*)(const void *,const void *))VoiceNameSorter);
 
 
 	if(voice_spec)

@@ -1511,21 +1511,24 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 		{
 			autoMelderString warning;
 			if (nasal_formant_warning > 0) {
-				MelderString_append (&warning, L"Nasal formants: one or more are missing.\n");
+				MelderString_append (&warning, L"\tNasal formants: one or more are missing.\n");
 			}
 			if (nasal_antiformant_warning) {
-				MelderString_append (&warning, L"Nasal antiformants: one or more are missing.\n");
+				MelderString_append (&warning, L"\tNasal antiformants: one or more are missing.\n");
 			}
 			if (tracheal_formant_warning) {
-				MelderString_append (&warning, L"Tracheal formants: one or more are missing.\n");
+				MelderString_append (&warning, L"\tTracheal formants: one or more are missing.\n");
 			}
 			if (tracheal_antiformant_warning) {
-				MelderString_append (&warning, L"Tracheal antiformants: one or more are missing.\n");
+				MelderString_append (&warning, L"\tTracheal antiformants: one or more are missing.\n");
 			}
 			if (oral_formant_warning) {
-				MelderString_append (&warning, L"Oral formants: one or more are missing.\n");
+				MelderString_append (&warning, L"\tOral formants: one or more are missing.\n");
 			}
-			Melder_warning (warning.string);
+			MelderInfo_open();
+            MelderInfo_writeLine1 (L"Warning:");
+			MelderInfo_writeLine1 (warning.string);
+            MelderInfo_close();
 		}
 		return him.transfer();
 	} catch (MelderError) {

@@ -178,6 +178,9 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesizer m
 				Collection_addItem (textgrids.peek(), atg.transfer());
 			}
 		}
+		if (textgrids -> size == 0) {
+            Melder_throw ("Nothing could be aligned. Was your IntervalTier empty?");
+        }
 		autoTextGrid aligned = TextGrids_to_TextGrid_appendContinuous (textgrids.peek(), true);
 		return aligned.transfer();
 	} catch (MelderError) {
@@ -186,7 +189,7 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesizer m
 }
 
 TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
-	try {
+	try {//TODO: check not empty tier
 		TextGrid_checkSpecifiedTierNumberWithinRange (him, tierNumber);
 		Function iTier = (Function) his tiers -> item [tierNumber];
 		if (iTier -> classInfo != classIntervalTier) {

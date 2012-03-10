@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -517,7 +517,7 @@ void IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, co
 		if (from > to || from < 1 || to > my intervals -> size) {
 			Melder_throw ("Incorrect specification of where to act.");
 		}
-		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string can not be empty.\n"
+		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string cannot be empty.\n"
 			        "You may search for an empty string with the expression \"^$\"");
 
 		long nlabels = to - from + 1;
@@ -552,7 +552,7 @@ void TextTier_changeLabels (I, long from, long to, const wchar_t *search, const 
 		if (from > to || from < 1 || to > my points -> size) {
 			Melder_throw ("Incorrect specification of where to act.");
 		}
-		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string can not be empty.\n"
+		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string cannot be empty.\n"
 			        "You may search for an empty string with the expression \"^$\"");
 
 		long nmarks = to - from + 1;
@@ -581,7 +581,7 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
 
 		if (tier < 1 || tier > ntiers) Melder_throw ("The tier number (", tier, ") should not be "
 			        "larger than the number of tiers (", ntiers, ").");
-		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string can not be empty.\n"
+		if (use_regexp && wcslen (search) == 0) Melder_throw ("The regex search string cannot be empty.\n"
 			        "You may search for an empty string with the expression \"^$\"");
 		Data anyTier = (Data) my tiers -> item [tier];
 		if (anyTier -> classInfo == classIntervalTier) {

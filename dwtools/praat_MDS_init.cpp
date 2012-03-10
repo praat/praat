@@ -1,6 +1,6 @@
 /* praat_MDS_init.cpp
  *
- * Copyright (C) 1992-2011 David Weenink
+ * Copyright (C) 1992-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ static void TabelOfReal_testSorting (I, long rowtoindex) {
 		// Copy 1->4 and 2->5, sort 4+5 in parallel
 		NUMvector_copyElements (my data[1], my data[4], 1, nc);
 		NUMvector_copyElements (my data[2], my data[5], 1, nc);
-		NUMsort2_dd (nc, my data[4], my data[5]);
+		NUMsort2 (nc, my data[4], my data[5]);
 
 		NUMindexx (my data[rowtoindex], nc, index.peek());
 		for (long i = 1; i <= nc; i++) {

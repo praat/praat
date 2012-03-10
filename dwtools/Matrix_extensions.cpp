@@ -243,7 +243,7 @@ void Matrix_drawDistribution (I, Graphics g, double xmin, double xmax,
 		if (cumulative) {
 			freqMin = 0; freqMax = 1.0;
 		} else {
-			NUMlvector_extrema (freq.peek(), 1, nBins, & freqMin, & freqMax);
+			NUMvector_extrema (freq.peek(), 1, nBins, & freqMin, & freqMax);
 			if (freqMax <= freqMin) {
 				freqMin = freqMin > 1 ? freqMin - 1 : 0;
 				freqMax += 1.0;

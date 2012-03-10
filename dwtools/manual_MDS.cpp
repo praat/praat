@@ -1250,7 +1250,7 @@ FORMULA (L"%f(%X, %W__1_,..., %W__%numberOfSources_) = "
 NORMAL (L"")
 MAN_END
 
-MAN_BEGIN (L"INDSCAL analysis", L"djmw", 19970424)
+MAN_BEGIN (L"INDSCAL analysis", L"djmw", 20120306)
 INTRO (L"A method for @@individual difference scaling@ analysis in P\\s{RAAT}.")
 NORMAL (L"An INDSCAL analysis can be performed on objects of type Distance.")
 NORMAL (L"If you start with @Dissimilarity objects you first have to transform "
@@ -1284,7 +1284,7 @@ FORMULA (L"%g(%X, %Y, %W__1_,..., %W__%numberOfSources_) = "
 NORMAL (L"Carroll & Chang claimed that for most practical circumstances %X "
 	"and %Y converge to matrices that will be columnwise proportional. "
 	"However, INDSCAL does not only require symmetry of the solution, "
-	"but also non-negativity of the weights. Both these aspects can not be "
+	"but also non-negativity of the weights. Both these aspects cannot be "
 	"guaranteed with the CANDECOMP algorithm.")
 NORMAL (L"@@Ten Berge, Kiers & Krijnen (1993)@ describe an algorithm that "
 	"automatically satisfies symmetry because it solves %f directly, and, "
@@ -1388,7 +1388,7 @@ INTRO (L"According to the measurement theory of @@Stevens (1951)@, there are fou
 	"two levels, Nominal and Ordinal, are often called %non-%metric. The last two are %metric.")
 MAN_END
 
-MAN_BEGIN (L"Multidimensional scaling", L"djmw", 20010409)
+MAN_BEGIN (L"Multidimensional scaling", L"djmw", 20120306)
 INTRO (L"This tutorial describes how you can use P\\s{RAAT} to "
 	"perform ##M#ulti##D#imensional ##S#caling (MDS) analysis.")
 NORMAL (L"MDS helps us to represent %dissimilarities between objects as "
@@ -1498,7 +1498,7 @@ NORMAL (L"When you have multiple Dissimilarity objects you can also perform "
 	"@@individual difference scaling@ (often called @@INDSCAL analysis@). ")
 NORMAL (L"As an example we can use an @@Create INDSCAL Carroll & Wish "
 	"example...| example taken from Carrol & Wish@. "
-	"Because INDSCAL only works on metrical data, we can not use Dissimilarity "
+	"Because INDSCAL only works on metrical data, we cannot use Dissimilarity "
 	"objects directly. We have to transform them first @@Dissimilarity: To "
 	"Distance...|to Distance@ objects.")
 NORMAL (L"This type of analysis on multiple objects results in two new objects: "

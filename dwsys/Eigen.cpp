@@ -1,6 +1,6 @@
 /* Eigen.c
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,12 +170,12 @@ void Eigen_initFromSquareRootPair (I, double **a, long numberOfRows,
 	autoNUMvector<double> work (1, lwork);
 	autoNUMvector<long> iwork (1, n);
 	autoNUMmatrix<double> q (1, n, 1, n);
-	autoNUMmatrix<double> ac (NUMdmatrix_transpose (a, numberOfRows, numberOfColumns), 1, 1);
-	autoNUMmatrix<double> bc (NUMdmatrix_transpose (b, numberOfRows_b, numberOfColumns), 1, 1);
+	autoNUMmatrix<double> ac (NUMmatrix_transpose (a, numberOfRows, numberOfColumns), 1, 1);
+	autoNUMmatrix<double> bc (NUMmatrix_transpose (b, numberOfRows_b, numberOfColumns), 1, 1);
 
 	(void) NUMlapack_dggsvd (&jobu, &jobv, &jobq, &m, &n, &p, &k, &ll,
-	                         &ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
-	                         v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
+	    &ac[1][1], &lda, &bc[1][1], &ldb, &alpha[1], &beta[1], u, &ldu,
+	    v, &ldv, &q[1][1], &ldq, &work[1], &iwork[1], &info);
 
 	if (info != 0) {
 		Melder_throw ("dggsvd fails.");
@@ -473,7 +473,7 @@ void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	*/
 
 	if (ymax == ymin) {
-		NUMdvector_extrema (vec, first, last, &ymin, &ymax);
+		NUMvector_extrema (vec, first, last, &ymin, &ymax);
 		ymax *= w; ymin *= w;
 	}
 	Graphics_setInner (g);

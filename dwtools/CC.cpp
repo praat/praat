@@ -1,6 +1,6 @@
 /* CC.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,13 +126,13 @@ void CC_drawC0 (I, Graphics g, double xmin, double xmax, double ymin,
 		c[i] = cf -> c0;
 	}
 	if (ymin >= ymax) {
-		NUMdvector_extrema (c.peek(), bframe, eframe, &ymin, &ymax);
+		NUMvector_extrema (c.peek(), bframe, eframe, &ymin, &ymax);
 		if (ymax <= ymin) {
 			ymin -= 1.0;
 			ymax += 1.0;
 		}
 	} else {
-		NUMdvector_clip (c.peek(), bframe, eframe, ymin, ymax);
+		NUMvector_clip (c.peek(), bframe, eframe, ymin, ymax);
 	}
 	Graphics_setInner (g);
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);

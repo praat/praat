@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -348,7 +348,7 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 	}
 
 	int string_length = wcslen (string);
-	int replace_length = wcslen (replaceRE);
+	//int replace_length = wcslen (replaceRE);
 	if (string_length == 0) {
 		maximumNumberOfReplaces = 1;
 	}
@@ -526,22 +526,6 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *na
 		MelderInfo_write1 (i < nr ? L";\n" : L"];\n");
 	}
 	MelderInfo_close ();
-}
-
-double **NUMdmatrix_transpose (double **m, long nr, long nc) {
-	long i = 1, j = 1;
-	double **to = NUMmatrix <double> (1, nc, 1, nr);
-
-	if (to == NULL) {
-		return NULL;
-	}
-
-	for (i = 1; i <= nr; i++) {
-		for (j = 1; j <= nc; j++) {
-			to[j][i] = m[i][j];
-		}
-	}
-	return to;
 }
 
 void NUMcentreRows (double **a, long rb, long re, long cb, long ce) {
@@ -966,29 +950,26 @@ void NUMlocate (double *xx, long n, double x, long *index) {
 	Regression is ascending
 */
 void NUMmonotoneRegression (const double x[], long n, double xs[]) {
-	double sum;
 	double xt = NUMundefined; // Only to stop gcc complaining "may be used unitialized"
-	//
-	long i, j, nt;
 
-	for (i = 1; i <= n; i++) {
+	for (long i = 1; i <= n; i++) {
 		xs[i] = x[i];
 	}
 
-	for (i = 2; i <= n; i++) {
+	for (long i = 2; i <= n; i++) {
 		if (xs[i] >= xs[i - 1]) {
 			continue;
 		}
-		sum = xs[i];
-		nt = 1;
-		for (j = 1; j <= i - 1; j++) {
+		double sum = xs[i];
+		long nt = 1;
+		for (long j = 1; j <= i - 1; j++) {
 			sum += xs[i - j]; nt++;
 			xt = sum / nt; // i >= 2 -> xt always gets a value
 			if (j < i - 1 && xt >= xs[i - j - 1]) {
 				break;
 			}
 		}
-		for (j = i - nt + 1; j <= i; j++) {
+		for (long j = i - nt + 1; j <= i; j++) {
 			xs[j] = xt;
 		}
 	}
@@ -1010,37 +991,7 @@ float NUMfvector_getNorm2 (const float v[], long n) {
 	return sqrt (norm);
 }
 
-float NUMfvector_normalize1 (float v[], long n) {
-	float norm = 0; long i;
-	for (i = 1; i <= n; i++) {
-		norm += fabs (v[i]);
-	}
-	for (i = 1; i <= n; i++) {
-		v[i] /= norm;
-	}
-	return norm;
-}
-
-float NUMfvector_normalize2 (float v[], long n) {
-	float norm = 0; long i;
-	for (i = 1; i <= n; i++) {
-		norm += v[i] * v[i];
-	}
-	norm = sqrt (norm);
-	for (i = 1; i <= n; i++) {
-		v[i] /= norm;
-	}
-	return norm;
-}
-double NUMdvector_getNorm1 (const double v[], long n) {
-	double norm = 0; long i;
-	for (i = 1; i <= n; i++) {
-		norm += fabs (v[i]);
-	}
-	return norm;
-}
-
-double NUMdvector_getNorm2 (const double v[], long n) {
+double NUMvector_getNorm2 (const double v[], long n) {
 	double norm = 0; long i;
 	for (i = 1; i <= n; i++) {
 		norm += v[i] * v[i];
@@ -1048,7 +999,7 @@ double NUMdvector_getNorm2 (const double v[], long n) {
 	return sqrt (norm);
 }
 
-double NUMdvector_normalize1 (double v[], long n) {
+double NUMvector_normalize1 (double v[], long n) {
 	double norm = 0; long i;
 	for (i = 1; i <= n; i++) {
 		norm += fabs (v[i]);
@@ -1059,7 +1010,7 @@ double NUMdvector_normalize1 (double v[], long n) {
 	return norm;
 }
 
-double NUMdvector_normalize2 (double v[], long n) {
+double NUMvector_normalize2 (double v[], long n) {
 	double norm = 0; long i;
 	for (i = 1; i <= n; i++) {
 		norm += v[i] * v[i];
@@ -2659,101 +2610,6 @@ double NUMsincpi (const double x) {
 	int status = gsl_sf_sinc_e (x, &result);
 	return status == GSL_SUCCESS ? result. val : NUMundefined;
 }
-
-#define MACRO_NUMvector_extrema(TYPE) \
-{ \
-	TYPE tmin = v[lo]; \
-	TYPE tmax = tmin; \
-	for (long i = lo + 1; i <= hi; i++) \
-	{ \
-		if (v[i] < tmin) tmin = v[i]; \
-		else if (v[i] > tmax) tmax = v[i]; \
-	} \
-	*min = tmin; *max = tmax; \
-}
-
-void NUMlvector_extrema (long v[], long lo, long hi, double *min, double *max)
-MACRO_NUMvector_extrema (long)
-
-void NUMfvector_extrema (float v[], long lo, long hi, double *min, double *max)
-MACRO_NUMvector_extrema (float)
-
-void NUMivector_extrema (int v[], long lo, long hi, double *min, double *max)
-MACRO_NUMvector_extrema (int)
-
-void NUMdvector_extrema (double v[], long lo, long hi, double *min, double *max)
-MACRO_NUMvector_extrema (double)
-
-void NUMsvector_extrema (short v[], long lo, long hi, double *min, double *max)
-MACRO_NUMvector_extrema (short)
-
-#undef MACRO_NUMvector_extrema
-
-#define MACRO_NUMclip(TYPE)\
-{\
-	TYPE tmin = min, tmax = max; \
-	for (long i = lo; i <= hi; i++) \
-	{ \
-		if (v[i] < tmin) v[i] = tmin;\
-		else if (v[i] > tmax) v[i] = tmax;\
-	}\
-}
-
-
-void NUMlvector_clip (long v[], long lo, long hi, double min, double max)
-MACRO_NUMclip (long)
-
-void NUMfvector_clip (float v[], long lo, long hi, double min, double max)
-MACRO_NUMclip (float)
-
-void NUMivector_clip (int v[], long lo, long hi, double min, double max)
-MACRO_NUMclip (int)
-
-void NUMdvector_clip (double v[], long lo, long hi, double min, double max)
-MACRO_NUMclip (double)
-
-void NUMsvector_clip (short v[], long lo, long hi, double min, double max)
-MACRO_NUMclip (short)
-
-#undef MACRO_NUMclip
-
-#define MACRO_NUMmatrix_extrema(TYPE)\
-{\
-	TYPE xmin, xmax;\
-	xmax = xmin = x[rb][cb];\
-	for (long i = rb; i <= re; i++)\
-	{\
-		for (long j = cb; j <= ce; j++)\
-		{\
-			TYPE t = x[i][j];\
-			if (t < xmin) xmin = t; \
-			else if (t > xmax) xmax = t;\
-		}\
-	}\
-	*min = xmin; *max = xmax;\
-}
-
-void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce,
-                         double *min, double *max)
-MACRO_NUMmatrix_extrema (double)
-
-void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce,
-                         double *min, double *max)
-MACRO_NUMmatrix_extrema (float)
-
-void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce,
-                         double *min, double *max)
-MACRO_NUMmatrix_extrema (long)
-
-void NUMimatrix_extrema (int **x, long rb, long re, long cb, long ce,
-                         double *min, double *max)
-MACRO_NUMmatrix_extrema (int)
-
-void NUMsmatrix_extrema (short **x, long rb, long re, long cb, long ce,
-                         double *min, double *max)
-MACRO_NUMmatrix_extrema (short)
-
-#undef MACRO_NUMmatrix_extrema
 
 /* Does the line segment from (x1,y1) to (x2,y2) intersect with the line segment from (x3,y3) to (x4,y4)? */
 int NUMdoLineSegmentsIntersect (double x1, double y1, double x2, double y2, double x3, double y3,

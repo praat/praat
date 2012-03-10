@@ -137,13 +137,13 @@ void Polygon_Categories_draw (Polygon me, thou, Graphics graphics, double xmin, 
 	}
 
 	if (xmax == xmin) {
-		NUMdvector_extrema (my x, 1, my numberOfPoints, & min, & max);
+		NUMvector_extrema (my x, 1, my numberOfPoints, & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		xmin = min - tmp; xmax = max + tmp;
 	}
 
 	if (ymax == ymin) {
-		NUMdvector_extrema (my y, 1, my numberOfPoints, & min, & max);
+		NUMvector_extrema (my y, 1, my numberOfPoints, & min, & max);
 		tmp = max - min == 0 ? 0.5 : 0.0;
 		ymin = min - tmp; ymax = max + tmp;
 	}

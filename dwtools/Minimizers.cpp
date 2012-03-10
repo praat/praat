@@ -216,7 +216,7 @@ void Minimizer_drawHistory (Minimizer me, Graphics g, long iFrom, long iTo, doub
 		itmax = my iteration;
 	}
 	if (hmax <= hmin) {
-		NUMdvector_extrema (history.peek(), itmin, itmax, & hmin, & hmax);
+		NUMvector_extrema (history.peek(), itmin, itmax, & hmin, & hmax);
 	}
 	if (hmax <= hmin) {
 		hmin -= 0.5 * fabs (hmin);

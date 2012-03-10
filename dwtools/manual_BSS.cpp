@@ -96,6 +96,11 @@ FORMULA (L"cross-corr (%c__%i_, %c__%j_) [%\\ta] \\=3 \\su__%t_ %c__%i_[%t] %c__
 NORMAL (L"where %t and %t+%\\ta are discrete times and %%\\Det% is the @@sampling period@. ")
 MAN_END
 
+MAN_BEGIN (L"Sound: To Covariance (channels)...", L"djmw", 20120303)
+INTRO (L"Detemines the @@Covariance|covariances@ between the channels of a selected @Sound.")
+NORMAL (L"The covariance of a sound is determined by calculating the @@CrossCorrelationTable@ of a multichannel sound for a lag time equal to zero.")
+MAN_END
+
 MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20120224)
 INTRO (L"Analyze the selected multi-channel sound into its independent components by an iterative method.")
 NORMAL (L"The @@blind source separation@ method to find the independent components tries to simultaneously diagonalize a number of "
@@ -216,6 +221,20 @@ NORMAL (L"The first two panels will not change between different sessions of pra
     "unique up to a scale factor and a permutation. Therefore the channels in the unmixed sound do not necessarily correspond to the corresponding channel in our \"original\" stereo sound.")
 MAN_END
 
+MAN_BEGIN (L"Sound: To Sound (whiten channels)...", L"djmw", 20120303)
+INTRO (L"Transforms the channels of the selected @Sound linearly to make them white, i.e. the new channels will be uncorrelated and their variances equal unity.")
+ENTRY (L"Settings")
+TAG (L"##Variance fraction to keep#,")
+DEFINITION (L"determines, indirectly, how many channels the final sound will have.")
+ENTRY (L"Algorithm")
+NORMAL (L"We start by determining the @@Sound: To Covariance (channels)...|covariance@ of the selected sound. "
+   "Next a @@Principal component analysis|principal component analysis@ determines the eigenvalues and eigenvectors of the covariance matrix. The settings of the variance fraction to keep determines how many eigenvalues and eigenvectors we use for the whitening. This number, %p, will also be equal to the number of channels of the resulting whitened sound.")
+NORMAL (L"In mathematical terms. For an %n-channel sound, if #E is the matrix with the eigenvectors and #D=diag (%d__1_, %d__2_,..., %d__n_) is the diagonal matrix with the "
+    "eigenvalues of the covariance matrix, then the whitening matrix is #W = #E#D^^-1/2^#E\\'p, where #D^^-1/2^=diag (%d__1_^^-1/2^, ..., %d__p_^^-1/2^, 0, ..., 0). Only the %p most important eigenvalues have been retained, where %p was determined as the smallest integer for which (%d__1_+%d__2_+...%d__%p_)/(%d__1_+%d__2_+ ... + %d__%n_) >= %%varianceFractionToKeep%.")
+NORMAL (L"The resulting sound samples of the whitened sound, %w__%ij_, are then calculated from the samples of the "
+    "original sound, %s__%kj_, as %w__%ij_ = \\Si__%k_ W__%ik_ %s__%kj_, where 1 \\<_ %i \\<_%p, 1 \\<_ %j \\<_ numberOfSamples and 1 \\<_ %k \\<_ %n.")
+MAN_END
+
 MAN_BEGIN (L"blind source separation", L"djmw", 20120223)
 INTRO (L"Blind source separation (BSS) is a technique for estimating individual source components from their mixtures "
 	"at multiple sensors. It is called %blind because we don't use any other information besides the mixtures. ")
@@ -259,7 +278,9 @@ MAN_END
 
 MAN_BEGIN (L"reverberation time", L"djmw", 20110107)
 NORMAL (L"Reverberation is the persistence of sound in a room after the sound source has silenced. ")
-NORMAL (L"The %%reverberation time% is normally defined as the time required for the persistence of a direct sound to decay by 60 dB after the direct sound has silenced. Sometimes this dB level is indicated with a subscript and the reverberation time is given by the symbol %T__60_. "
+NORMAL (L"The %%reverberation time% is normally defined as the time required for the persistence of a direct sound "
+    "to decay by 60 dB after the direct sound has silenced. Sometimes this dB level is indicated with a subscript "
+    "and the reverberation time is given by the symbol %T__60_. "
 	"The reverberation time depends mainly on a room's volume and area and on the absorption at the walls. Generally absorption is frequency dependent and therefore the reverberation time of a room varies with frequency. ")
 MAN_END
 

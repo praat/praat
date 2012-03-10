@@ -1,6 +1,6 @@
 /* Configuration.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -360,14 +360,14 @@ void Configuration_draw (Configuration me, Graphics g, int xCoordinate, int yCoo
 		y[i] = numberOfDimensions > 1 ? my data[i][yCoordinate] * my w[yCoordinate] : 0;
 	}
 	if (xmax <= xmin) {
-		NUMdvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
+		NUMvector_extrema (x.peek(), 1, nPoints, &xmin, &xmax);
 	}
 	if (xmax <= xmin) {
 		xmax += 1;
 		xmin -= 1;
 	}
 	if (ymax <= ymin) {
-		NUMdvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
+		NUMvector_extrema (y.peek(), 1, nPoints, &ymin, &ymax);
 	}
 	if (ymax <= ymin) {
 		ymax += 1;

@@ -24,13 +24,6 @@
 #include "espeakdata_FileInMemory.h"
 #define DATA_FROM_SOURCECODE_FILES
 
-
-// pb 20111227
-#ifdef _WIN32
-	wchar_t * Melder_peekUtf8ToWcs (const char *string);
-	const uint16_t * Melder_peekWcsToUtf16 (const wchar_t *string);
-#endif
-
 // conditional compilation options
 #define INCLUDE_KLATT
 /* ppgb, 23 December 2011 */
@@ -55,7 +48,6 @@
 //#define USE_PULSEAUDIO
 /* ppgb, 23 December 2011 */
 #undef USE_NANOSLEEP
-#define __cdecl
 //#define ESPEAK_API  extern "C"
 
 #ifdef LIBRARY

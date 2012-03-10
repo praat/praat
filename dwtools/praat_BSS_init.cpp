@@ -81,15 +81,13 @@ DIRECT (CrossCorrelationTable_to_PCA)
 	}
 END
 
-FORM (Sound_and_PCA_to_Sound_pc, L"Sound & PCA: To Sound (pc)", 0)
-	NATURAL (L"Number of components", L"15")
-	BOOLEAN (L"Whiten", 1)
+FORM (Sound_and_PCA_whitenChannels, L"Sound & PCA: To Sound (whiten channels)", 0)
+	NATURAL (L"Number of components", L"0")
 	OK
 DO
 	Sound me = FIRST (Sound);
 	PCA thee = FIRST (PCA);
-	praat_new (Sound_and_PCA_to_Sound_pc (me, thee, GET_INTEGER (L"Number of components"),
-		GET_INTEGER (L"Whiten")), Thing_getName (me), L"_pc");
+	praat_new (Sound_and_PCA_whitenChannels (me, thee, GET_INTEGER (L"Number of components")), Thing_getName (me), L"_white");
 END
 
 DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
@@ -109,17 +107,28 @@ DIRECT (CrossCorrelationTable_to_CrossCorrelationTables)
 	praat_new (thee.transfer(), L"ct_", Melder_integer (nselected));
 END
 
-FORM (Sound_to_CrossCorrelationTable, L"Sound: To CrossCorrelationTable", L"Sound: To CrossCorrelationTable...")
+FORM (Sound_to_Covariance_channels, L"Sound: To Covariance (channels)", L"Sound: To Covariance (channels)...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
-	REAL (L"Lag time (s)", L"0.0")
 	OK
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_CrossCorrelationTable (me, GET_REAL (L"left Time range"),
-		GET_REAL (L"right Time range"), GET_REAL (L"Lag time")), my name);
+		praat_new (Sound_to_Covariance_channels (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range")), my name);
 	}
+END
+
+FORM (Sound_to_CrossCorrelationTable, L"Sound: To CrossCorrelationTable", L"Sound: To CrossCorrelationTable...")
+    REAL (L"left Time range (s)", L"0.0")
+    REAL (L"right Time range (s)", L"10.0")
+    REAL (L"Lag time (s)", L"0.0")
+    OK
+DO
+    LOOP {
+        iam (Sound);
+        praat_new (Sound_to_CrossCorrelationTable (me, GET_REAL (L"left Time range"),
+        GET_REAL (L"right Time range"), GET_REAL (L"Lag time")), my name);
+    }
 END
 
 DIRECT (CrossCorrelationTables_help)
@@ -286,6 +295,19 @@ DO
 	}
 END
 
+FORM (Sound_to_Sound_whitenChannels, L"Sound: To Sound (whiten channels)", L"Sound: To Sound (whiten channels)...")
+    POSITIVE (L"Variance fraction to keep", L"0.99")
+    OK
+DO
+    double varianceFraction = GET_REAL (L"Variance fraction to keep");
+    if (varianceFraction > 1) varianceFraction = 1;
+    long permille = varianceFraction * 1000.0;
+    LOOP {
+        iam (Sound);
+        praat_new (Sound_whitenChannels (me, varianceFraction), my name, L"_", Melder_integer (permille));
+    }
+END
+
 DIRECT (Sound_and_MixingMatrix_mix)
 	Sound s = FIRST (Sound);
 	MixingMatrix mm = FIRST (MixingMatrix);
@@ -354,17 +376,19 @@ void praat_BSS_init (void) {
 	praat_TableOfReal_init3 (classMixingMatrix);
 
 	praat_addAction1 (classSound, 0, L"To MixingMatrix...",  L"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_MixingMatrix);
-	praat_addAction1 (classSound, 0, L"To CrossCorrelationTable...",  L"Resample...", 1, DO_Sound_to_CrossCorrelationTable);
+    praat_addAction1 (classSound, 0, L"To CrossCorrelationTable...",  L"Resample...", 1, DO_Sound_to_CrossCorrelationTable);
+    praat_addAction1 (classSound, 0, L"To Covariance (channels)...",  L"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_Covariance_channels);
 	praat_addAction1 (classSound, 0, L"To CrossCorrelationTables...",  L"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_CrossCorrelationTables);
 
 	praat_addAction1 (classSound, 0, L"To Sound (blind source separation)...", L"Resample...", 1, DO_Sound_to_Sound_bss);
+    praat_addAction1 (classSound, 0, L"To Sound (whiten channels)...", L"Resample...", 1, DO_Sound_to_Sound_whitenChannels);
 
 	praat_addAction1 (classTableOfReal, 0, L"To MixingMatrix", L"To Configuration", praat_HIDDEN, DO_TableOfReal_to_MixingMatrix);
 
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, L"Mix", 0, 0, DO_Sound_and_MixingMatrix_mix);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, L"Unmix", 0, 0, DO_Sound_and_MixingMatrix_unmix);
 
-	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (pc)...", 0 , 0, DO_Sound_and_PCA_to_Sound_pc);
+	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (whiten channels)...", 0 , 0, DO_Sound_and_PCA_whitenChannels);
 
 	praat_addAction2 (classCrossCorrelationTable, 1, classDiagonalizer, 1, L"Diagonalize", 0 , 0, DO_CrossCorrelationTable_and_Diagonalizer_diagonalize);
 

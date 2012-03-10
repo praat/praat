@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1997-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
 
 /* machine precision */
 #define NUMeps 2.2e-16
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 int NUMstrcmp (const char *s1, const char *s2);
 /*
@@ -108,17 +104,6 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *search_compiled,
 	The number of matches found is returned in 'nmatches'.
 */
 
-void NUMlvector_extrema (long v[], long lo, long hi, double *min, double *max);
-void NUMfvector_extrema (float v[], long lo, long hi, double *min, double *max);
-void NUMivector_extrema (int v[], long lo, long hi, double *min, double *max);
-void NUMdvector_extrema (double v[], long lo, long hi, double *min,
-	double *max);
-void NUMsvector_extrema (short v[], long lo, long hi, double *min, double *max);
-/*  Function:
-		compute minimum and maximum values of array v[lo..hi].
-	Precondition:
-		lo and hi must be valid indices in the array.
-*/
 
 void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *name);
 /*
@@ -137,38 +122,73 @@ double **NUMdmatrix_transpose (double **m, long nr, long nc);
 	Transpose a nr x nc matrix.
 */
 
-void NUMdmatrix_extrema (double **x, long rb, long re, long cb, long ce,
-	double *min, double *max);
-void NUMfmatrix_extrema (float **x, long rb, long re, long cb, long ce,
-	double *min, double *max);
-void NUMlmatrix_extrema (long **x, long rb, long re, long cb, long ce,
-	double *min, double *max);
-void NUMimatrix_extrema (int **x, long rb, long re, long cb, long ce,
-	double *min, double *max);
-void NUMsmatrix_extrema (short **x, long rb, long re, long cb, long ce,
-	double *min, double *max);
 
-
-void NUMlvector_clip (long v[], long lo, long hi, double min, double max);
-void NUMfvector_clip (float v[], long lo, long hi, double min, double max);
-void NUMivector_clip (int v[], long lo, long hi, double min, double max);
-void NUMdvector_clip (double v[], long lo, long hi, double min, double max);
-void NUMsvector_clip (short v[], long lo, long hi, double min, double max);
-/*
-	Clip array values.
-	c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
+/*  NUMvector_extrema
+ * Function:
+ *     compute minimum and maximum values of array v[lo..hi].
+ * Precondition:
+ *     lo and hi must be valid indices in the array.
 */
+template <class T>
+void NUMvector_extrema (T *v, long lo, long hi, double *min, double *max) {
+    T tmin = v[lo];
+    T tmax = tmin;
+    for (long i = lo + 1; i <= hi; i++)
+    {
+        if (v[i] < tmin) tmin = v[i];
+        else if (v[i] > tmax) tmax = v[i];
+    }
+    *min = tmin; *max = tmax;
+}
+
+template <class T>
+void NUMmatrix_extrema (T **x, long rb, long re, long cb, long ce, double *min, double *max) {
+    T xmin, xmax;
+    xmax = xmin = x[rb][cb];
+    for (long i = rb; i <= re; i++) {
+        for (long j = cb; j <= ce; j++) {
+            T t = x[i][j];
+            if (t < xmin) xmin = t;
+            else if (t > xmax) xmax = t;
+        }
+    }
+    *min = xmin; *max = xmax;
+}
+
+
+
+/* NUMvector_clip
+    Clip array values.
+    c[i] = c[i] < min ? min : (c[i] > max ? max : c[i])
+*/
+template <class T>
+void NUMvector_clip (T *v, long lo, long hi, double min, double max) {
+    T tmin = min, tmax = max;
+    for (long i = lo; i <= hi; i++)
+    {
+        if (v[i] < tmin) v[i] = tmin;
+        else if (v[i] > tmax) v[i] = tmax;
+    }
+}
+
+template<class T>
+T ** NUMmatrix_transpose (T **m, long nr, long nc) {
+    autoNUMmatrix<T> to (1, nc, 1, nr);
+
+    for (long i = 1; i <= nr; i++) {
+        for (long j = 1; j <= nc; j++) {
+            to[j][i] = m[i][j];
+        }
+    }
+    return to.transfer();
+}
 
 int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce);
 
-float NUMfvector_normalize1 (float v[], long n);
-float NUMfvector_normalize2 (float v[], long n);
-float NUMfvector_getNorm1 (const float v[], long n);
-float NUMfvector_getNorm2 (const float v[], long n);
-double NUMdvector_normalize1 (double v[], long n);
-double NUMdvector_normalize2 (double v[], long n);
-double NUMdvector_getNorm1 (const double v[], long n);
-double NUMdvector_getNorm2 (const double v[], long n);
+double NUMvector_normalize1 (double v[], long n);
+double NUMvector_normalize2 (double v[], long n);
+double NUMvector_getNorm1 (const double v[], long n);
+double NUMvector_getNorm2 (const double v[], long n);
 
 void  NUMcentreRows (double **a, long rb, long re, long cb, long ce);
 /*
@@ -268,19 +288,89 @@ void NUMmonotoneRegression (const double x[], long n, double xs[]);
 	The xs[i] will be ascending.
 */
 
-void NUMsort2_fl (long n, float a[], long b[]);
-void NUMsort2_ff (long n, float a[], float b[]);
-void NUMsort2_dl (long n, double a[], long b[]);
-void NUMsort2_dd (long n, double a[], double b[]);
-void NUMsort2_ll (long n, long a[], long b[]);
-/*
-	Sorts (inplace) an array a[1..n] into ascending order using the Heapsort algorithm,
-	while making the corresponding rearrangement of the companion
-	array b[1..n]. A characteristic of heapsort is that it does not conserve
-	the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3.
-	It may occur that a_sorted[1] = a_presorted[2] and a_sorted[2] = a_presorted[1]
-	no g
+
+/* NUMsort2:
+    NUMsort2 uses heapsort to sort the second array in parallel with the first one.
+
+    Algorithm follows p. 145 and 642 in:
+    Donald E. Knuth (1998): The art of computer programming. Third edition. Vol. 3: sorting and searching.
+        Boston: Addison-Wesley, printed may 2002.
+    Modification: there is no distinction between record and key and
+        Floyd's optimization (page 642) is used.
+    Sorts (inplace) an array a[1..n] into ascending order using the Heapsort algorithm,
+    while making the corresponding rearrangement of the companion
+    array b[1..n]. A characteristic of heapsort is that it does not conserve
+    the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3.
+    It may occur that a_sorted[1] = a_presorted[2] and a_sorted[2] = a_presorted[1]
+    no g
 */
+template<class T1, class T2>
+void NUMsort2 (long n, T1 *a, T2 *b) {
+    long l, r, j, i, imin;
+    T1 k, min;
+    T2 kb, min2;
+    if (n < 2) {
+        return;   /* Already sorted. */
+    }
+    if (n == 2) {
+        if (a[1] > a[2]) {
+            min = a[2]; a[2] = a[1]; a[1] = min;
+            min2 = b[2]; b[2] = b[1]; b[1] = min2;
+        }
+        return;
+    }
+    if (n <= 12) {
+        for (i = 1; i < n; i++) {
+            min = a[i];
+            imin = i;
+            for (j = i + 1; j <= n; j++) {
+                if (a[j] < min) {
+                    min = a [j];
+                    imin = j;
+                }
+            }
+            a[imin] = a[i]; a[i] = min;
+            min2 = b[imin]; b[imin] = b[i]; b[i] = min2;
+        }
+        return;
+    }
+    /* H1 */
+    l = (n >> 1) + 1;
+    r = n;
+    for (;;) {
+        if (l > 1) {
+            l--;
+            k = a[l]; kb = b[l];
+        } else /* l == 1 */ {
+            k = a[r]; kb = b[r];
+            a[r] = a[1]; b[r] = b[1];
+            r--;
+            if (r == 1) {
+                a[1] = k; b[1] = kb; return;
+            }
+        }
+        /* H3 */
+        j = l;
+        for (;;) { /* H4 */
+            i = j;
+            j = j << 1;
+            if (j > r) break;
+            if (j < r && a[j] < a[j + 1]) j++; /* H5 */
+            /* if (k >= a[j]) break; H6 */
+            a[i] = a[j]; b[i] = b[j]; /* H7 */
+        }
+        /* a[i] = k; b[i] = kb; H8 */
+        for (;;) { /*H8' */
+            j = i;
+            i = j >> 1;
+            /* H9' */
+            if (j == l || k <= a[i]) {
+                a[j] = k; b[j] = kb; break;
+            }
+            a[j] = a[i]; b[j] = b[i];
+        }
+    }
+}
 
 void NUMindexx_f (const float a[], long n, long indx[]);
 void NUMindexx (const double a[], long n, long indx[]);
@@ -291,23 +381,27 @@ void NUMindexx_s (wchar_t *a[], long n, long indx[]);
 	No preservation of order amoung equals (see NUMsort2_...)
 */
 
-void NUMrank_f (long n, float a []);
-void NUMrank (long n, double a []);
-/*
-	Replace content of array by rank number, including midranking of ties.
-	E.g. The elements {10, 20.1, 20.1, 20.1, 20.1, 30} in array a will be replaced
-    by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively.
-*/
-void NUMrankColumns (double **m, long rb, long re, long cb, long ce);
 
-void NUMhunt_f (float xx[], long n, float x, long *jlo);
-void NUMhunt (double xx[], long n, double x, long *jlo);
-/*
-	Given an array xx[1..n], and given a value x, returns a value jlo such that
-	x is between xx[jlo] and xx[jlo+1]. xx[1..n] must be monotonic, either
-	increasing or decreasing. jlo=0 and jlo=n are out of range indicators.
-	jlo on input is taken as the initial guess.
-*/
+/* NUMrank:
+ *  Replace content of array by rank number, including midranking of ties.
+ *  E.g. The elements {10, 20.1, 20.1, 20.1, 20.1, 30} in array a will be replaced
+ *  by {1, 3.5, 3.5, 3.5, 3.5, 4}, respectively. *
+ */
+template <class T>
+void NUMrank (long n, T *a) {
+    long jt, j = 1;
+    while (j < n) {
+        for (jt = j + 1; jt <= n && a[jt] == a[j]; jt++) {}
+        T rank = (j + jt - 1) * 0.5;
+        for (long i = j; i <= jt - 1; i++) {
+            a[i] = rank;
+        }
+        j = jt;
+    }
+    if (j == n) a[n] = n;
+}
+
+void NUMrankColumns (double **m, long rb, long re, long cb, long ce);
 
 void NUMlocate_f (float *xx, long n, float x, long *index);
 void NUMlocate (double *xx, long n, double x, long *index);
@@ -1131,9 +1225,5 @@ void NUMrealft_f (float *data, long n, int direction);    /* Please stop using. 
 void NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif // _NUM2_h_

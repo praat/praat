@@ -3936,7 +3936,7 @@ FORM (Polygon_getLocationOfPoint, L"Get location of point", L"Polygon: Get locat
 	OK
 DO
 	double eps = GET_REAL (L"Precision");
-	REQUIRE (eps >= 0, L"The precision can not be negative.")
+	REQUIRE (eps >= 0, L"The precision cannot be negative.")
 	LOOP {
 		iam (Polygon);
 		int loc = Polygon_getLocationOfPoint (me, GET_REAL (L"X"), GET_REAL (L"Y"), eps);

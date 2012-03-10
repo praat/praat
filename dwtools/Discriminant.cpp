@@ -1,6 +1,6 @@
 /* Discriminant.c
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -635,7 +635,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable (Discrim
 		// Normalize the sum of the apriori probabilities to 1.
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
-		NUMdvector_normalize1 (my aprioriProbabilities, g);
+		NUMvector_normalize1 (my aprioriProbabilities, g);
 		double logg = log (g);
 		for (long j = 1; j <= g; j++) {
 			log_apriori[j] = useAprioriProbabilities ? log (my aprioriProbabilities[j]) : - logg;
@@ -760,7 +760,7 @@ ClassificationTable Discriminant_and_TableOfReal_to_ClassificationTable_dw (Disc
 		// Next take ln (p) because otherwise probabilities might be too small to represent.
 
 		double logg = log (g);
-		NUMdvector_normalize1 (my aprioriProbabilities, g);
+		NUMvector_normalize1 (my aprioriProbabilities, g);
 		for (long j = 1; j <= g; j++) {
 			log_apriori[j] = useAprioriProbabilities ? log (my aprioriProbabilities[j]) : - logg;
 		}

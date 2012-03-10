@@ -487,6 +487,18 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 	}
 }
 
+Covariance Sound_to_Covariance_channels (Sound me, double startTime, double endTime) {
+    try {
+        double lagTime = 0.0;
+        autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, lagTime);
+        autoCovariance him = Thing_new (Covariance);
+        thy structCrossCorrelationTable :: v_copy (him.peek());
+        return him.transfer();
+    } catch (MelderError) {
+        Melder_throw (me, ": no Covariance created.");
+    }
+}
+
 CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagTime, long ncovars) {
 	try {
 		if (lagTime < my dx) {
@@ -521,7 +533,7 @@ Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncova
 	}
 }
 
-PCA Sound_to_PCA (Sound me, double startTime, double endTime) {
+PCA Sound_to_PCA_channels (Sound me, double startTime, double endTime) {
 	try {
 		autoCrossCorrelationTable thee = Sound_to_CrossCorrelationTable (me, startTime, endTime, 0);
 		autoPCA him = SSCP_to_PCA (thee.peek());
@@ -634,10 +646,10 @@ MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me) {
 
 Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee) {
 	try {
-		if (my ny != thy numberOfRows) {
-			Melder_throw ("The MixingMatrix and the Sound must have the same number of channels.");
+		if (my ny != thy numberOfColumns) {
+			Melder_throw ("The number of components in the MixingMatrix and the number of channels in the Sound must be equal.");
 		}
-		autoSound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
+		autoSound him = Sound_create (thy numberOfRows, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= thy numberOfRows; i++) {
 			for (long j = 1; j <= my nx; j++) {
 				double mix = 0;
@@ -661,7 +673,7 @@ Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee) {
 
 		autoNUMmatrix<double> minv (1, thy numberOfColumns, 1, thy numberOfRows);
 		NUMpseudoInverse (thy data, thy numberOfRows, thy numberOfColumns, minv.peek(), 0);
-		autoSound him = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
+		autoSound him = Sound_create (thy numberOfColumns, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= thy numberOfColumns; i++) {
 			for (long j = 1; j <= my nx; j++) {
 				double s = 0;
@@ -871,26 +883,55 @@ void Diagonalizer_and_CrossCorrelationTables_improveDiagonality (Diagonalizer me
 	}
 }
 
-Sound Sound_and_PCA_to_Sound_pc (Sound me, PCA thee, long numberOfComponents, int whiten) {
+Sound Sound_whitenChannels (Sound me, double varianceFraction) {
+    try {
+        autoCovariance cov = Sound_to_Covariance_channels (me, 0.0, 0.0);
+        autoSound thee = Sound_and_Covariance_whitenChannels (me, cov.peek(), varianceFraction);
+        return thee.transfer();
+    } catch (MelderError) {
+        Melder_throw (me, ": not whitened.");
+    }
+}
+
+Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction) {
+    try {
+        autoPCA pca = SSCP_to_PCA (thee);
+        long numberOfComponents = Eigen_getDimensionOfFraction (pca.peek(), varianceFraction);
+        autoSound him = Sound_and_PCA_whitenChannels (me, pca.peek(), numberOfComponents);
+        return him.transfer ();
+    } catch (MelderError) {
+        Melder_throw (me, ": not whitened from ", thee);
+    }
+}
+
+Sound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents) {
 	try {
 		if (my ny != thy dimension) {
 			Melder_throw ("The number of channels of the sound and the dimension of the PCA must be equal.");
 		}
-		if (numberOfComponents > my ny) {
-			numberOfComponents = my ny;
-		}
-
+		if (numberOfComponents > thy numberOfEigenvalues) {
+            numberOfComponents = thy numberOfEigenvalues;
+        }
+        autoNUMmatrix<double> whiten (1, my ny, 1, my ny);
+        for (long i = 1; i <= my ny; i++) {
+            for (long j = i; j <= my ny; j++) {
+                double wij = 0;
+                for (long k = 1; k <= numberOfComponents; k++) {
+                    wij += thy eigenvectors[k][i] * thy eigenvectors[k][j] / sqrt (thy eigenvalues[k]);
+                }
+                whiten[i][j] = whiten[j][i] = wij;
+            }
+        }
 		autoSound him = Sound_create (numberOfComponents, my xmin, my xmax, my nx, my dx, my x1);
 		for (long i = 1; i <= his ny; i++) {
-			double scalef = whiten ? 1 / sqrt (thy eigenvalues[i]) : 1;
-			for (long j = 1; j <= his nx; j++) {
-				double s = 0;
-				for (long k = 1; k <= my ny; k++) {
-					s += thy eigenvectors[i][k] * my z[k][j];
-				}
-				his z[i][j] = s * scalef;
-			}
-		}
+            for (long j = 1; j <= his nx; j++) {
+                double hisij = 0;
+                for (long k = 1; k <= my ny; k++) {
+                    hisij += whiten[i][k] * my z[k][j];
+                }
+                his z[i][j] = hisij;
+            }
+        }
 		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Sound not created.");
@@ -925,7 +966,6 @@ CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, lon
 
 		for (long k = 1; k <= n; k++) {
 			autoCrossCorrelationTable ct = CrossCorrelationTable_create (dimension);
-			Collection_addItem (me.peek(), ct.transfer());
 			double low = k == 1 && firstPositiveDefinite ? 0.1 : -1;
 			for (long i = 1; i <= dimension; i++) {
 				d[i][i] = NUMrandomUniform (low, 1);
@@ -937,6 +977,7 @@ CrossCorrelationTables CrossCorrelationTables_createTestSet (long dimension, lon
 			}
 			// we need V'DV, however our V has eigenvectors row-wise -> VDV'
 			NUMdmatrices_multiply_VCVp (ct -> data, v.peek(), dimension, dimension, d.peek(), 1);
+            Collection_addItem (me.peek(), ct.transfer());
 		}
 		return me.transfer();
 	} catch (MelderError) {
