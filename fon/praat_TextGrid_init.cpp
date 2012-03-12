@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/05/04
- */
-
 #include "praat.h"
 
 #include "Pitch_AnyTier_to_PitchTier.h"
@@ -34,9 +30,9 @@
 #undef iam
 #define iam iam_LOOP
 
-extern "C" void praat_dia_timeRange (Any dia);
-extern "C" void praat_get_timeRange (Any dia, double *tmin, double *tmax);
-extern "C" int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
+void praat_dia_timeRange (Any dia);
+void praat_get_timeRange (Any dia, double *tmin, double *tmax);
+int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
 
 static const wchar *STRING_FROM_FREQUENCY_HZ = L"left Frequency range (Hz)";
 static const wchar *STRING_TO_FREQUENCY_HZ = L"right Frequency range (Hz)";
@@ -1190,6 +1186,12 @@ DO
 	}
 END
 
+DIRECT (TextGrids_concatenate)
+	autoCollection textGrids = praat_getSelectedObjects ();
+	autoTextGrid thee = TextGrids_concatenate (textGrids.peek());
+	praat_new (thee.transfer(), L"chain");
+END
+
 DIRECT (TextGrids_merge)
 	autoCollection textGrids = praat_getSelectedObjects ();
 	autoTextGrid thee = TextGrid_merge (textGrids.peek());
@@ -1644,6 +1646,7 @@ praat_addAction1 (classTextGrid, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classTextGrid, 1, L"Get points...", 0, 1, DO_TextGrid_getPoints);
 praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 0, L"Merge", 0, 0, DO_TextGrids_merge);
+	praat_addAction1 (classTextGrid, 0, L"Concatenate", 0, 0, DO_TextGrids_concatenate);
 
 	praat_addAction1 (classTextTier, 0, L"TextTier help", 0, 0, DO_TextTier_help);
 	praat_addAction1 (classTextTier, 0, L"Query -", 0, 0, 0);
@@ -1725,4 +1728,4 @@ praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction3 (classSound, 1, classSpellingChecker, 1, classTextGrid, 1, L"Edit", 0, praat_HIDDEN, DO_TextGrid_SpellingChecker_edit);
 }
 
-/* End of file praat_TextGrid_init.c */
+/* End of file praat_TextGrid_init.cpp */

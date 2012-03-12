@@ -472,4 +472,45 @@ EEG structEEG :: f_extractChannel (const wchar *channelName) {
 	}
 }
 
+EEG EEGs_concatenate (Collection me) {
+	try {
+		if (my size < 1)
+			Melder_throw ("Cannot concatenate zero EEG objects.");
+		EEG first = (EEG) my item [1];
+		long numberOfChannels = first -> d_numberOfChannels;
+		wchar **channelNames = first -> d_channelNames;
+		for (long ieeg = 2; ieeg <= my size; ieeg ++) {
+			EEG other = (EEG) my item [ieeg];
+			if (other -> d_numberOfChannels != numberOfChannels)
+				Melder_throw ("The number of channels of ", other, " does not match the number of channels of ", first, ".");
+			for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+				if (! Melder_wcsequ (other -> d_channelNames [ichan], channelNames [ichan]))
+					Melder_throw ("Channel ", ichan, " has a different name in ", other, " (", other -> d_channelNames [ichan], ") than in ", first, " (", channelNames [ichan], ").");
+			}
+		}
+		autoOrdered soundCollection = Ordered_create ();
+		Collection_dontOwnItems (soundCollection.peek());
+		autoOrdered textgridCollection = Ordered_create ();
+		Collection_dontOwnItems (textgridCollection.peek());
+		for (long ieeg = 1; ieeg <= my size; ieeg ++) {
+			EEG eeg = (EEG) my item [ieeg];
+			Collection_addItem (soundCollection.peek(), eeg -> d_sound);
+			Collection_addItem (textgridCollection.peek(), eeg -> d_textgrid);
+		}
+		autoEEG thee = Thing_new (EEG);
+		thy d_numberOfChannels = numberOfChannels;
+		thy d_channelNames = NUMvector <wchar *> (1, numberOfChannels);
+		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
+			thy d_channelNames [ichan] = Melder_wcsdup (channelNames [ichan]);
+		}
+		thy d_sound = Sounds_concatenate_e (soundCollection.peek(), 0.0);
+		thy d_textgrid = TextGrids_concatenate (textgridCollection.peek());
+		thy xmin = thy d_textgrid -> xmin;
+		thy xmax = thy d_textgrid -> xmax;
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw ("TextGrids not concatenated.");
+	}
+}
+
 /* End of file EEG.cpp */

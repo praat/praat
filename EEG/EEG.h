@@ -2,7 +2,7 @@
 #define _EEG_h_
 /* EEG.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@ oo_CLASS_CREATE (EEG, Function);
 EEG EEG_create (double tmin, double tmax);
 
 EEG EEG_readFromBdfFile (MelderFile file);
+
+EEG EEGs_concatenate (Collection me);
 
 /* End of file EEG.h */
 #endif

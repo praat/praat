@@ -169,7 +169,7 @@ double RealTier_getMinimumValue (RealTier me) {
 }
 
 double RealTier_getArea (RealTier me, double tmin, double tmax) {
-	long n = my points -> size, imin, imax;
+	long n = my f_getNumberOfPoints (), imin, imax;
 	RealPoint *points = (RealPoint *) my points -> item;
 	if (n == 0) return NUMundefined;
 	if (n == 1) return (tmax - tmin) * points [1] -> value;
@@ -392,7 +392,7 @@ Table RealTier_downto_Table (RealTier me, const wchar *indexText, const wchar *t
 		if (timeText  != NULL) Table_setColumnLabel (thee.peek(), ++ icol, timeText);
 		if (valueText != NULL) Table_setColumnLabel (thee.peek(), ++ icol, valueText);
 		for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {
-			RealPoint point = (RealPoint) my points -> item [ipoint];
+			RealPoint point = my f_peekPoint (ipoint);
 			icol = 0;
 			if (indexText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, ipoint); therror }
 			if (timeText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> number); therror }

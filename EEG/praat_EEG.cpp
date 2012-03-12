@@ -29,6 +29,12 @@
 
 /***** EEG *****/
 
+DIRECT (EEGs_concatenate)
+	autoCollection eegs = praat_getSelectedObjects ();
+	autoEEG thee = EEGs_concatenate (eegs.peek());
+	praat_new (thee.transfer(), L"chain");
+END
+
 DIRECT (EEG_detrend)
 	LOOP {
 		iam (EEG);
@@ -580,6 +586,8 @@ void praat_EEG_init (void) {
 	praat_addAction1 (classEEG, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Extract channel...", 0, 0, DO_EEG_extractChannel);
 		praat_addAction1 (classEEG, 0, L"To ERPTier...", 0, 0, DO_EEG_to_ERPTier);
+	praat_addAction1 (classEEG, 0, L"Synthesize", 0, 0, 0);
+		praat_addAction1 (classEEG, 0, L"Concatenate", 0, 0, DO_EEGs_concatenate);
 	praat_addAction1 (classEEG, 0, L"Hack -", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Extract waveforms as Sound", 0, 1, DO_EEG_extractSound);
 		praat_addAction1 (classEEG, 0, L"Extract marks as TextGrid", 0, 1, DO_EEG_extractTextGrid);

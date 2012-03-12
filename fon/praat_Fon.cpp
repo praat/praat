@@ -82,18 +82,18 @@ static const wchar_t *STRING_TO_FREQUENCY = L"right Frequency range";
 
 /***** Common dialog contents. *****/
 
-extern "C" void praat_dia_timeRange (Any dia);
-extern "C" void praat_dia_timeRange (Any dia) {
+void praat_dia_timeRange (Any dia);
+void praat_dia_timeRange (Any dia) {
 	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
 	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
 }
-extern "C" void praat_get_timeRange (Any dia, double *tmin, double *tmax);
-extern "C" void praat_get_timeRange (Any dia, double *tmin, double *tmax) {
+void praat_get_timeRange (Any dia, double *tmin, double *tmax);
+void praat_get_timeRange (Any dia, double *tmin, double *tmax) {
 	*tmin = GET_REAL (STRING_FROM_TIME);
 	*tmax = GET_REAL (STRING_TO_TIME);
 }
-extern "C" int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
-extern "C" int praat_get_frequencyRange (Any dia, double *fmin, double *fmax) {
+int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
+int praat_get_frequencyRange (Any dia, double *fmin, double *fmax) {
 	*fmin = GET_REAL (STRING_FROM_FREQUENCY);
 	*fmax = GET_REAL (STRING_TO_FREQUENCY);
 	REQUIRE (*fmax > *fmin, L"Maximum frequency must be greater than minimum frequency.")

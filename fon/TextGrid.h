@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,6 +117,9 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file);
 
 Table TextGrid_downto_Table (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
 void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool includeTierNames, bool includeEmptyIntervals);
+
+void TextGrid_correctRoundingErrors (TextGrid me);
+TextGrid TextGrids_concatenate (Collection me);
 
 /* End of file TextGrid.h */
 #endif

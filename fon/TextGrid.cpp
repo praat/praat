@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,8 @@
 #include "TextGrid_def.h"
 #include "oo_DESCRIPTION.h"
 #include "TextGrid_def.h"
+
+#include "TextGrid_extensions.h"
 
 Thing_implement (TextPoint, AnyPoint, 0);
 
@@ -1611,4 +1613,33 @@ void TextGrid_list (TextGrid me, bool includeLineNumbers, int timeDecimals, bool
 	}
 }
 
-/* End of file TextGrid.c */
+void TextGrid_correctRoundingErrors (TextGrid me) {
+	for (long itier = 1; itier <= my tiers -> size; itier ++) {
+		Function anyTier = (Function) my tiers -> item [itier];
+		if (anyTier -> classInfo == classIntervalTier) {
+			IntervalTier tier = (IntervalTier) anyTier;
+			for (long iinterval = 1; iinterval < tier -> intervals -> size; iinterval ++) {
+				TextInterval left = (TextInterval) tier -> intervals -> item [iinterval];
+				TextInterval right = (TextInterval) tier -> intervals -> item [iinterval + 1];
+				right -> xmin = left -> xmax;
+				Melder_assert (right -> xmin < right -> xmax);
+			}
+			TextInterval last = (TextInterval) tier -> intervals -> item [tier -> intervals -> size];
+			last -> xmax = my xmax;
+			Melder_assert (last -> xmax > last -> xmin);
+		}
+		anyTier -> xmax = my xmax;
+	}
+}
+
+TextGrid TextGrids_concatenate (Collection me) {
+	try {
+		autoTextGrid thee = TextGrids_to_TextGrid_appendContinuous (me, false);
+		TextGrid_correctRoundingErrors (thee.peek());
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw ("TextGrids not concatenated.");
+	}
+}
+
+/* End of file TextGrid.cpp */

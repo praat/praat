@@ -1,6 +1,6 @@
 /* RealTier_def.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,9 @@ oo_DEFINE_CLASS (RealTier, Function)
 				{ (void) ilevel; (void) unit; (void) flags; return L"Time (s)"; }
 			virtual void v_shiftX (double xfrom, double xto);
 			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
+		// new functions:
+			long f_getNumberOfPoints () { return points -> size; }
+			RealPoint f_peekPoint (long ipoint) { return (RealPoint) points -> item [ipoint]; }
 	#endif
 
 oo_END_CLASS (RealTier)
