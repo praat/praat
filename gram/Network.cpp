@@ -23,6 +23,7 @@
  * pb 2009/05/14 zeroActivities, normalizeActivities
  * pb 2009/06/11 connection plasticities
  * pb 2011/03/29 C++
+ * pb 2012/03/18 more weight update rules: instar, outstar, inoutstar
  */
 
 #include "Network.h"
@@ -46,6 +47,11 @@
 #include "oo_DESCRIPTION.h"
 #include "Network_def.h"
 
+#include "enums_getText.h"
+#include "Network_enums.h"
+#include "enums_getValue.h"
+#include "Network_enums.h"
+
 void structNetwork :: v_info ()
 {
 	structData :: v_info ();
@@ -54,7 +60,7 @@ void structNetwork :: v_info ()
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (d_numberOfConnections));
 }
 
-Thing_implement (Network, Data, 1);
+Thing_implement (Network, Data, 2);
 
 void structNetwork :: f_init (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
@@ -95,11 +101,9 @@ Network Network_create (double minimumActivity, double maximumActivity, double s
 
 double structNetwork :: f_getActivity (long nodeNumber) {
 	try {
-		double activity = NUMundefined;
 		if (nodeNumber <= 0 || nodeNumber > d_numberOfNodes)
 			Melder_throw (this, ": node number (", nodeNumber, ") out of the range 1..", d_numberOfNodes, ".");
-		activity = d_nodes [nodeNumber]. activity;
-		return activity;
+		return d_nodes [nodeNumber]. activity;
 	} catch (MelderError) {
 		Melder_throw (this, ": activity not gotten.");
 	}
@@ -117,11 +121,9 @@ void structNetwork :: f_setActivity (long nodeNumber, double activity) {
 
 double structNetwork :: f_getWeight (long connectionNumber) {
 	try {
-		double weight = NUMundefined;
 		if (connectionNumber <= 0 || connectionNumber > d_numberOfConnections)
 			Melder_throw (this, ": connection number (", connectionNumber, ") out of the range 1..", d_numberOfConnections, ".");
-		weight = d_connections [connectionNumber]. weight;
-		return weight;
+		return d_connections [connectionNumber]. weight;
 	} catch (MelderError) {
 		Melder_throw (this, ": weight not gotten.");
 	}
@@ -201,9 +203,26 @@ void structNetwork :: f_updateWeights () {
 		NetworkConnection connection = & d_connections [iconn];
 		NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
 		NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
-		connection -> weight += connection -> plasticity * d_learningRate * nodeFrom -> activity * nodeTo -> activity - d_leak * connection -> weight;
-		if (connection -> weight < d_minimumWeight) connection -> weight = d_minimumWeight;
-		else if (connection -> weight > d_maximumWeight) connection -> weight = d_maximumWeight;
+		switch (d_weightUpdateRule) {
+			case kNetwork_weightUpdateRule_HEBBIAN:
+				connection -> weight += connection -> plasticity * d_learningRate *
+					nodeFrom -> activity * nodeTo -> activity - d_leak * connection -> weight;
+				if (connection -> weight < d_minimumWeight) connection -> weight = d_minimumWeight;
+				else if (connection -> weight > d_maximumWeight) connection -> weight = d_maximumWeight;
+			break;
+			case kNetwork_weightUpdateRule_INSTAR:
+				connection -> weight += connection -> plasticity * d_learningRate *
+					nodeTo -> activity * (nodeFrom -> activity - connection -> weight);
+			break;
+			case kNetwork_weightUpdateRule_OUTSTAR:
+				connection -> weight += connection -> plasticity * d_learningRate *
+					nodeFrom -> activity * (nodeTo -> activity - connection -> weight);
+			break;
+			case kNetwork_weightUpdateRule_INOUTSTAR:
+				connection -> weight += connection -> plasticity * d_learningRate *
+					(2 * nodeFrom -> activity * nodeTo -> activity - (nodeFrom -> activity + nodeTo -> activity) * connection -> weight);
+			break;
+		}
 	}
 }
 
@@ -363,6 +382,10 @@ void structNetwork :: f_addConnection (long nodeFrom, long nodeTo, double weight
 	} catch (MelderError) {
 		Melder_throw (this, ": connection not added.");
 	}
+}
+
+void structNetwork :: f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule) {
+	d_weightUpdateRule = weightUpdateRule;
 }
 
 /* End of file Network.cpp */

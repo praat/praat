@@ -543,6 +543,34 @@ DIRECT (ERPTier_to_ERP_mean)
 	}
 END
 
+/***** ERPTier & Table *****/
+
+FORM (ERPTier_Table_extractEventsWhereColumn_number, L"Extract events where column (number)", 0)
+	WORD (L"Extract all events where column...", L"")
+	RADIO_ENUM (L"...is...", kMelder_number, DEFAULT)
+	REAL (L"...the number", L"0.0")
+	OK
+DO
+	ERPTier erpTier = FIRST (ERPTier);
+	Table table = FIRST (Table);
+	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (L"Extract all events where column..."));
+	autoERPTier thee = erpTier -> f_extractEventsWhereColumn_number (table, columnNumber, GET_ENUM (kMelder_number, L"...is..."), GET_REAL (L"...the number"));
+	praat_new (thee.transfer(), erpTier -> name);
+END
+
+FORM (ERPTier_Table_extractEventsWhereColumn_text, L"Extract events where column (text)", 0)
+	WORD (L"Extract all events where column...", L"")
+	OPTIONMENU_ENUM (L"...", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"hi")
+	OK
+DO
+	ERPTier erpTier = FIRST (ERPTier);
+	Table table = FIRST (Table);
+	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (L"Extract all events where column..."));
+	autoERPTier thee = erpTier -> f_extractEventsWhereColumn_string (table, columnNumber, GET_ENUM (kMelder_string, L"..."), GET_STRING (L"...the text"));
+	praat_new (thee.transfer(), erpTier -> name);
+END
+
 /***** Help menus *****/
 
 DIRECT (EEG_help)     Melder_help (L"EEG");     END
@@ -626,6 +654,11 @@ void praat_EEG_init (void) {
 	praat_addAction1 (classERPTier, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classERPTier, 0, L"Extract ERP...", 0, 0, DO_ERPTier_to_ERP);
 		praat_addAction1 (classERPTier, 0, L"To ERP (mean)", 0, 0, DO_ERPTier_to_ERP_mean);
+
+	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract -", 0, 0, 0);
+	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract events where column (number)...", 0, 1, DO_ERPTier_Table_extractEventsWhereColumn_number);
+	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract events where column (text)...", 0, 1, DO_ERPTier_Table_extractEventsWhereColumn_text);
+
 }
 
-/* End of file praat_Sound.cpp */
+/* End of file praat_EEG.cpp */

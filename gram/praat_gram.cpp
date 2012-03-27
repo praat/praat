@@ -199,6 +199,18 @@ DO
 	}
 END
 
+FORM (Network_setClamping, L"Network: Set clamping", 0)
+	NATURAL (L"Node", L"1")
+	BOOLEAN (L"Clamping", 1)
+	OK
+DO
+	LOOP {
+		iam_LOOP (Network);
+		me -> f_setClamping (GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
+		praat_dataChanged (me);
+	}
+END
+
 FORM (Network_setWeight, L"Network: Set weight", 0)
 	NATURAL (L"Connection", L"1")
 	REAL (L"Weight", L"1.0")
@@ -211,16 +223,15 @@ DO
 	}
 END
 
-FORM (Network_setClamping, L"Network: Set clamping", 0)
-	NATURAL (L"Node", L"1")
-	BOOLEAN (L"Clamping", 1)
+FORM (Network_setWeightUpdateRule, L"Network: Set weight update rule", 0)
+	RADIO_ENUM (L"Weight update rule", kNetwork_weightUpdateRule, DEFAULT)
 	OK
+iam_ONLY (Network);
+SET_ENUM (L"Weight update rule", kNetwork_weightUpdateRule, my d_weightUpdateRule);
 DO
-	LOOP {
-		iam_LOOP (Network);
-		me -> f_setClamping (GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
-		praat_dataChanged (me);
-	}
+	iam_ONLY (Network);
+	my f_setWeightUpdateRule (GET_ENUM (kNetwork_weightUpdateRule, L"Weight update rule"));
+	praat_dataChanged (me);
 END
 
 FORM (Network_spreadActivities, L"Network: Spread activities", 0)
@@ -1449,6 +1460,7 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 0, DO_Network_spreadActivities);
 	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 0, DO_Network_setWeight);
 	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 0, DO_Network_updateWeights);
+	praat_addAction1 (classNetwork, 1, L"Set weight update rule...", 0, 0, DO_Network_setWeightUpdateRule);
 }
 
 /* End of file praat_gram.c */

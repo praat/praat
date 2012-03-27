@@ -1618,6 +1618,9 @@ void TextGrid_correctRoundingErrors (TextGrid me) {
 		Function anyTier = (Function) my tiers -> item [itier];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
+			TextInterval first = (TextInterval) tier -> intervals -> item [1];
+			first -> xmin = my xmin;
+			Melder_assert (first -> xmin < first -> xmax);
 			for (long iinterval = 1; iinterval < tier -> intervals -> size; iinterval ++) {
 				TextInterval left = (TextInterval) tier -> intervals -> item [iinterval];
 				TextInterval right = (TextInterval) tier -> intervals -> item [iinterval + 1];
@@ -1628,6 +1631,7 @@ void TextGrid_correctRoundingErrors (TextGrid me) {
 			last -> xmax = my xmax;
 			Melder_assert (last -> xmax > last -> xmin);
 		}
+		anyTier -> xmin = my xmax;
 		anyTier -> xmax = my xmax;
 	}
 }

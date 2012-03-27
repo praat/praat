@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120312)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120327)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.11# (27 March 2012)")
+LIST_ITEM (L"\\bu @EEG: a selected ERPTier can extract events on the basis of a column of a selected Table.")
 NORMAL (L"##5.3.10# (12 March 2012)")
 LIST_ITEM (L"\\bu @EEG: Concatenate.")
 NORMAL (L"##5.3.09# (10 March 2012)")

@@ -1,6 +1,6 @@
 /* Table_def.h
  *
- * Copyright (C) 2002-2007 Paul Boersma
+ * Copyright (C) 2002-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,6 +63,8 @@ oo_DEFINE_CLASS (Table, Data)
 	oo_COLLECTION (Ordered, rows, TableRow, 0)
 
 	#if oo_DECLARING
+		// functions:
+			TableRow f_peekRow (long i) { return static_cast <TableRow> (rows -> item [i]); }
 		// overridden methods:
 			virtual void v_info ();
 			virtual bool v_hasGetNrow      () { return true; }   virtual double        v_getNrow      () { return rows -> size; }

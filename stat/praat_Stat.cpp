@@ -445,7 +445,7 @@ DO
 		iam (Table);
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
 		autoTable thee = Table_extractRowsWhereColumn_string (me, icol, GET_ENUM (kMelder_string, L"..."), value);
-		praat_new3 (thee.transfer(), my name, L"_", value);
+		praat_new (thee.transfer(), my name, L"_", value);
 		praat_dataChanged (me);   // WHY?
 	}
 END

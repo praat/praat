@@ -1,6 +1,6 @@
 /* ERPTier.cpp
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -231,5 +231,67 @@ ERP structERPTier :: f_toERP_mean () {
 		Melder_throw (this, ": mean not computed.");
 	}
 }
+
+ERPTier structERPTier :: f_extractEventsWhereColumn_number (Table table, long columnNumber, int which_Melder_NUMBER, double criterion) {
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
+		Table_numericize_Assert (table, columnNumber);   // extraction should work even if cells are not defined
+		if (d_events -> size != table -> rows -> size)
+			Melder_throw (this, " & ", table, ": the number of rows in the table (", table -> rows -> size, ") doesn't match the number of events (", d_events -> size, ").");
+		autoERPTier thee = Thing_new (ERPTier);
+		Function_init (thee.peek(), this -> xmin, this -> xmax);
+		thy d_numberOfChannels = this -> d_numberOfChannels;
+		thy d_channelNames = NUMvector <wchar *> (1, thy d_numberOfChannels);
+		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
+			thy d_channelNames [ichan] = Melder_wcsdup (this -> d_channelNames [ichan]);
+		}
+		thy d_events = SortedSetOfDouble_create ();
+		for (long ievent = 1; ievent <= d_events -> size; ievent ++) {
+			ERPPoint oldEvent = this -> f_peekEvent (ievent);
+			TableRow row = table -> f_peekRow (ievent);
+			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
+				autoERPPoint newEvent = Data_copy (oldEvent);
+				Collection_addItem (thy d_events, newEvent.transfer());
+			}
+		}
+		if (thy d_events -> size == 0) {
+			Melder_warning ("No event matches criterion.");
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": events not extracted.");
+	}
+}
+
+ERPTier structERPTier :: f_extractEventsWhereColumn_string (Table table, long columnNumber, int which_Melder_STRING, const wchar *criterion) {
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
+		if (d_events -> size != table -> rows -> size)
+			Melder_throw (this, " & ", table, ": the number of rows in the table (", table -> rows -> size, ") doesn't match the number of events (", d_events -> size, ").");
+		autoERPTier thee = Thing_new (ERPTier);
+		Function_init (thee.peek(), this -> xmin, this -> xmax);
+		thy d_numberOfChannels = this -> d_numberOfChannels;
+		thy d_channelNames = NUMvector <wchar *> (1, thy d_numberOfChannels);
+		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
+			thy d_channelNames [ichan] = Melder_wcsdup (this -> d_channelNames [ichan]);
+		}
+		thy d_events = SortedSetOfDouble_create ();
+		for (long ievent = 1; ievent <= d_events -> size; ievent ++) {
+			ERPPoint oldEvent = this -> f_peekEvent (ievent);
+			TableRow row = table -> f_peekRow (ievent);
+			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
+				autoERPPoint newEvent = Data_copy (oldEvent);
+				Collection_addItem (thy d_events, newEvent.transfer());
+			}
+		}
+		if (thy d_events -> size == 0) {
+			Melder_warning ("No event matches criterion.");
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": events not extracted.");
+	}
+}
+
 
 /* End of file ERPTier.cpp */

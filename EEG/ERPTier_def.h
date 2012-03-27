@@ -53,6 +53,8 @@ oo_DEFINE_CLASS (ERPTier, Function)
 			void f_rejectArtefacts (double threshold);
 			ERP f_extractERP (long pointNumber);
 			ERP f_toERP_mean ();
+			ERPTier f_extractEventsWhereColumn_number (Table table, long columnNumber, int which_Melder_NUMBER, double criterion);
+			ERPTier f_extractEventsWhereColumn_string (Table table, long columnNumber, int which_Melder_STRING, const wchar *criterion);
 		// overridden methods:
 		protected:
 			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }

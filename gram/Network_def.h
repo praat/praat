@@ -61,6 +61,9 @@ oo_DEFINE_CLASS (Network, Data)
 	oo_DOUBLE (d_selfExcitation)
 	oo_DOUBLE (d_minimumWeight)
 	oo_DOUBLE (d_maximumWeight)
+	oo_FROM (2)
+		oo_ENUM (kNetwork_weightUpdateRule, d_weightUpdateRule)
+	oo_ENDFROM
 	oo_DOUBLE (d_learningRate)
 	oo_DOUBLE (d_leak)
 	oo_DOUBLE (d_xmin)
@@ -89,6 +92,7 @@ oo_DEFINE_CLASS (Network, Data)
 			void f_normalizeActivities (long nodeMin, long nodeMax);
 			void f_spreadActivities (long numberOfSteps);
 			void f_updateWeights ();
+			void f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule);
 
 		// overridden methods:
 			virtual void v_info ();
