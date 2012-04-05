@@ -379,14 +379,16 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 	while (p < endp) {
 		#define get  (* ++ p)
 		int opcode = (int) get;
-		long numberOfArguments = (long) get;
-		if (numberOfArguments > 0x000FFFFF) {
-			Melder_throw ("This picture has more than 16 million points "
-				"and can therefore not be saved in a Praat picture file. "
-				"Contact paul.boersma@uva.nl to have this corrected.");
-		}
 		binputr4 ((float) opcode, f);
-		binputr4 ((float) numberOfArguments, f);
+		long numberOfArguments = (long) get;
+		const long largestIntegerRepresentableAs32BitFloat = 0x00FFFFFF;
+		if (numberOfArguments > largestIntegerRepresentableAs32BitFloat) {
+			binputr4 (-1.0, f);
+			binputi4 (numberOfArguments, f);
+			//Melder_warning ("This picture is very large!");
+		} else {
+			binputr4 ((float) numberOfArguments, f);
+		}
 		if (opcode == TEXT) {
 			binputr4 (get, f);   /* x */
 			binputr4 (get, f);   /* y */
@@ -434,8 +436,11 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 		double *endp = p + added_irecord;
 		while (p < endp) {
 			opcode = (int) bingetr4 (f);
-			numberOfArguments = (long) bingetr4 (f);
 			put (opcode);
+			numberOfArguments = (long) bingetr4 (f);
+			if (numberOfArguments == -1) {
+				numberOfArguments = bingeti4 (f);
+			}
 			put (numberOfArguments);
 			if (opcode == TEXT) {
 				put (bingetr4 (f));   // x

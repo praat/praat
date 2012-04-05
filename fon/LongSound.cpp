@@ -570,7 +570,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 				   thy numberOfSamples, my numberOfChannels, melderPlayCallback, thee); therror
 			}
 		} else {
-			long newSampleRate = my sampleRate < 11025 ? 11025 : my sampleRate < 22050 ? 22050 : 44100;
+			long newSampleRate = bestSampleRate;
 			long newN = ((double) n * newSampleRate) / my sampleRate - 1, i;
 			long silenceBefore = (long) (newSampleRate * MelderAudio_getOutputSilenceBefore ());
 			long silenceAfter = (long) (newSampleRate * MelderAudio_getOutputSilenceAfter ());

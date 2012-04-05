@@ -123,6 +123,9 @@ void praat_memoryInfo (void) {
 		/*for (int i = 0; i <= 88; i ++)
 			MelderInfo_writeLine4 (L"System metric ", Melder_integer (i), L": ", Melder_integer (GetSystemMetrics (i)));*/
 	#endif
+	//volatile long i = 0, i2;
+	//do { volatile float r = ++ i; i2 = r; } while (i == i2);
+	//MelderInfo_writeLine2 (L"Highest integer representable in a 32-bit float: ", Melder_integer (i2 - 1));
 	MelderInfo_close ();
 }
 
