@@ -36,6 +36,10 @@ void Matrix_drawAsSquares (I, Graphics graphics, double xmin, double xmax, doubl
 /* Draw a Matrix as small squares whose area correspond to the matrix element */
 /* The square is filled with black if the weights are negative					*/
 
+void Matrix_drawRowsAsLineSegments (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+	double minimum, double maximum, int connect);
+/* draw a row as segments */
+
 void Matrix_scale (I, int choice);
 /* choice = 1 :divide each elmnt by the maximum (abs) */
 /* choice = 2 :rows, divide each row elmnt by the maximum (abs) of that row	*/

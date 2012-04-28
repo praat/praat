@@ -1,6 +1,6 @@
 /* praat_LPC_init.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include <math.h>
 #include "praat.h"
 #include "Cepstrumc.h"
+#include "Cepstrum_and_Spectrum.h"
 #include "DTW.h"
 #include "LPC.h"
 #include "MFCC.h"
@@ -47,7 +48,7 @@
 #include "Sound_and_LPC_robust.h"
 #include "Sound_and_Cepstrum.h"
 #include "Sound_to_MFCC.h"
-#include "Cepstrum_and_Spectrum.h"
+#include "VocalTractTier.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -63,7 +64,7 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 
 DIRECT (Cepstrum_help)
-Melder_help (L"Cepstrum");
+	Melder_help (L"Cepstrum");
 END
 
 FORM (Cepstrum_draw, L"Cepstrum: Draw", L"Cepstrum: Draw...")
@@ -300,23 +301,51 @@ DO
 	}
 END
 
+FORM (LPC_to_VocalTract_special, L"LPC: To VocalTract", L"LPC: To VocalTract (slice, special)...")
+	REAL (L"Time (s)", L"0.0")
+	REAL (L"Glottal damping", L"0.1")
+	BOOLEAN (L"Radiation damping", 1)
+	BOOLEAN (L"Internal damping", 1)
+	OK
+DO
+	double glottalDamping = GET_REAL (L"Glottal damping");
+	bool radiationDamping = GET_INTEGER (L"Radiation damping");
+	bool internalDamping = GET_INTEGER (L"Internal damping");
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), glottalDamping, radiationDamping, internalDamping), my name);
+	}
+END
+
 FORM (LPC_to_VocalTract, L"LPC: To VocalTract", L"LPC: To VocalTract (slice)...")
 	REAL (L"Time (s)", L"0.0")
 	POSITIVE (L"Length (m)", L"0.17")
-	BOOLEAN (L"Length according to Wakita", 0)
 	OK
 DO
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), GET_REAL (L"Length"),
-			GET_INTEGER (L"Length according to Wakita")), my name);
+		praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), GET_REAL (L"Length")), my name);
 	}
 END
 
-DIRECT (LPC_to_Matrix)
+DIRECT (LPC_downto_Matrix_lpc)
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_Matrix (me), my name);
+		praat_new (LPC_downto_Matrix_lpc (me), my name, L"_lpc");
+	}
+END
+
+DIRECT (LPC_downto_Matrix_rc)
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_downto_Matrix_rc (me), my name, L"_rc");
+	}
+END
+
+DIRECT (LPC_downto_Matrix_area)
+	LOOP {
+		iam (LPC);
+		praat_new (LPC_downto_Matrix_area (me), my name, L"_area");
 	}
 END
 
@@ -441,6 +470,22 @@ DO
 	}
 END
 
+FORM (VocalTract_drawSegments, L"VocalTract: Draw segments", 0)
+	POSITIVE (L"Maximum length (cm)", L"20.0")
+	POSITIVE (L"Maximum area (cm^2)", L"90.0")
+	BOOLEAN (L"Closed at glottis", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	double maxLength = GET_REAL (L"Maximum length") / 100;
+	double maxArea = GET_REAL (L"Maximum area") / 10000;
+	bool closedAtGlottis = GET_INTEGER (L"Closed at glottis");
+	LOOP {
+		iam (VocalTract);
+		VocalTract_drawSegments (me, GRAPHICS, maxLength, maxArea, closedAtGlottis);
+	}
+END
+
 DIRECT (VocalTract_getLength)
 	LOOP {
 		iam (VocalTract);
@@ -448,8 +493,72 @@ DIRECT (VocalTract_getLength)
 		if (length <= 0.02) {
 			length = NUMundefined;
 		}
-		Melder_information (Melder_integer (length), L" m");
+		Melder_information (Melder_double (length), L" m");
 	}
+END
+
+FORM (VocalTract_setLength, L"", 0)
+	POSITIVE (L"New length (m)", L"0.17")
+	OK
+DO
+	double newLength = GET_REAL (L"New length");
+	LOOP {
+		iam (VocalTract);
+		VocalTract_setLength (me, newLength);
+	}
+END
+
+FORM (VocalTract_to_VocalTractTier, L"VocalTract: To VocalTractTier", 0)
+	REAL (L"Tier start time (s)", L"0.0")
+	REAL (L"Tier end time (s)", L"1.0")
+	REAL (L"Insert at time (s)", L"0.5")
+	OK
+DO
+	double xmin = GET_REAL (L"Tier start time");
+	double xmax = GET_REAL (L"Tier end time");
+	double time = GET_REAL (L"Insert at time");
+	REQUIRE (xmin < xmax, L"The start time must be before the end time.")
+	REQUIRE (time >= xmin and time <= xmax, L"The insert time must be between start en end time.")
+	LOOP {
+		iam (VocalTract);
+		autoVocalTractTier thee = VocalTract_to_VocalTractTier (me, xmin, xmax, time);
+		praat_new (thee.transfer(), my name);
+	}
+END
+
+DIRECT (VocalTractTier_help)
+	Melder_help (L"VocalTractTier");
+END
+
+FORM (VocalTractTier_to_LPC, L"VocalTractTier: To LPC", 0)
+	POSITIVE (L"Time step", L"0.005")
+	OK
+DO
+	LOOP {
+		iam (VocalTractTier);
+		praat_new (VocalTractTier_to_LPC (me, GET_REAL (L"Time step")), my name);
+	}
+END
+
+FORM (VocalTractTier_to_VocalTract, L"", 0)
+	REAL (L"Time (s)", L"0.1")
+	OK
+DO
+	double time = GET_REAL (L"Time");
+	LOOP {
+		iam (VocalTractTier);
+		praat_new (VocalTractTier_to_VocalTract (me, time), my name);
+	}
+END
+
+FORM (VocalTractTier_addVocalTract, L"VocalTractTier: Add VocalTract", 0)
+	REAL (L"Time", L"0.1")
+	OK
+DO
+	VocalTractTier me = FIRST (VocalTractTier);
+	VocalTract thee = FIRST (VocalTract);
+	VocalTractTier_addVocalTract (me, GET_REAL (L"Time"), thee);
+	praat_dataChanged (me);
 END
 
 /******************* LPC & Sound *************************************/
@@ -515,9 +624,11 @@ DO
 		GET_REAL (L"Tolerance"), GET_INTEGER (L"Variable location")), my name, L"_r");
 END
 
+extern void praat_TimeTier_query_init (ClassInfo klas);
+extern void praat_TimeTier_modify_init (ClassInfo klas);
 void praat_uvafon_LPC_init (void);
 void praat_uvafon_LPC_init (void) {
-	Thing_recognizeClassesByName (classCepstrumc, classLPC, classLFCC, classMFCC, NULL);
+	Thing_recognizeClassesByName (classCepstrumc, classLPC, classLFCC, classMFCC, classVocalTractTier, NULL);
 
 	praat_addAction1 (classCepstrum, 0, L"Cepstrum help", 0, 0, DO_Cepstrum_help);
 	praat_addAction1 (classCepstrum, 0, L"Draw...", 0, 0, DO_Cepstrum_draw);
@@ -551,8 +662,11 @@ void praat_uvafon_LPC_init (void) {
 
 	praat_addAction1 (classLPC, 0, L"To Spectrum (slice)...", 0, 0, DO_LPC_to_Spectrum);
 	praat_addAction1 (classLPC, 0, L"To VocalTract (slice)...", 0, 0, DO_LPC_to_VocalTract);
+	praat_addAction1 (classLPC, 0, L"To VocalTract (slice, special)...", 0, 0, DO_LPC_to_VocalTract_special);
 	praat_addAction1 (classLPC, 0, L"To Polynomial (slice)...", 0, 0, DO_LPC_to_Polynomial);
-	praat_addAction1 (classLPC, 0, L"To Matrix", 0, 0, DO_LPC_to_Matrix);
+	praat_addAction1 (classLPC, 0, L"Down to Matrix (lpc)", 0, 0, DO_LPC_downto_Matrix_lpc);
+	praat_addAction1 (classLPC, 0, L"Down to Matrix (rc)", 0, praat_HIDDEN, DO_LPC_downto_Matrix_rc);
+	praat_addAction1 (classLPC, 0, L"Down to Matrix (area)", 0, praat_HIDDEN, DO_LPC_downto_Matrix_area);
 	praat_addAction1 (classLPC, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classLPC, 0, L"To Formant", 0, 0, DO_LPC_to_Formant);
 	praat_addAction1 (classLPC, 0, L"To Formant (keep all)", 0, 0, DO_LPC_to_Formant_keep_all);
@@ -574,8 +688,18 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classSound, 0, L"To MFCC...", L"To LPC (marple)...", 1, DO_Sound_to_MFCC);
 	praat_addAction1 (classSound, 0, L"To Formant (robust)...", L"To Formant (sl)...", 2, DO_Sound_to_Formant_robust);
 
-	praat_addAction1 (classVocalTract, 1, L"Get length", L"Draw", 0, DO_VocalTract_getLength);
-
+	praat_addAction1 (classVocalTract, 0, L"Draw segments...", L"Draw", 0, DO_VocalTract_drawSegments);
+	praat_addAction1 (classVocalTract, 1, L"Get length", L"Draw segments...", 0, DO_VocalTract_getLength);
+	praat_addAction1 (classVocalTract, 1, L"Set length", L"Formula...", 0, DO_VocalTract_getLength);
+	praat_addAction1 (classVocalTract, 0, L"To VocalTractTier...", L"To Spectrum...", 0, DO_VocalTract_to_VocalTractTier);
+	praat_addAction1 (classVocalTractTier, 0, L"VocalTractTier help", 0, 0, DO_VocalTractTier_help);
+	praat_addAction1 (classVocalTractTier, 0, L"Query -", 0, 0, 0);
+		praat_TimeTier_query_init (classVocalTractTier);
+	praat_addAction1 (classVocalTractTier, 0, L"Modify -", 0, 0, 0);
+		praat_TimeTier_modify_init (classVocalTractTier);
+	praat_addAction1 (classVocalTractTier, 0, L"To LPC...", 0, 0, DO_VocalTractTier_to_LPC);
+	praat_addAction1 (classVocalTractTier, 0, L"To VocalTract...", 0, 0, DO_VocalTractTier_to_VocalTract);
+	praat_addAction2 (classVocalTractTier, 1, classVocalTract, 1, L"Add VocalTract...", 0, 0, DO_VocalTractTier_addVocalTract);
 	INCLUDE_MANPAGES (manual_LPC_init)
 
 }

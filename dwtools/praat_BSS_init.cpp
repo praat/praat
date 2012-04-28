@@ -81,8 +81,17 @@ DIRECT (CrossCorrelationTable_to_PCA)
 	}
 END
 
+FORM (Sound_and_PCA_projectChannels, L"Sound & PCA: To Sound (project channels)", 0)
+	NATURAL (L"Number of components", L"10")
+	OK
+DO
+	Sound me = FIRST (Sound);
+	PCA thee = FIRST (PCA);
+	praat_new (Sound_and_PCA_projectChannels (me, thee, GET_INTEGER (L"Number of components")), Thing_getName (me), L"_projected");
+END
+
 FORM (Sound_and_PCA_whitenChannels, L"Sound & PCA: To Sound (whiten channels)", 0)
-	NATURAL (L"Number of components", L"0")
+	NATURAL (L"Number of components", L"10")
 	OK
 DO
 	Sound me = FIRST (Sound);
@@ -124,11 +133,29 @@ FORM (Sound_to_CrossCorrelationTable, L"Sound: To CrossCorrelationTable", L"Soun
     REAL (L"Lag time (s)", L"0.0")
     OK
 DO
+	double lagTime = fabs (GET_REAL (L"Lag time"));
     LOOP {
         iam (Sound);
         praat_new (Sound_to_CrossCorrelationTable (me, GET_REAL (L"left Time range"),
-        GET_REAL (L"right Time range"), GET_REAL (L"Lag time")), my name);
+        GET_REAL (L"right Time range"), lagTime), my name);
     }
+END
+
+FORM (Sounds_to_CrossCorrelationTable_combined, L"Sound: To CrossCorrelationTable (combined)", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"10.0")
+	REAL (L"Lag time (s)", L"0.0")
+	OK
+DO
+	Sound s1 = NULL, s2 = NULL;
+	LOOP {
+		iam (Sound);
+		(s1 ? s2 : s1) = me;
+	}
+	Melder_assert (s1 != NULL && s2 != NULL);
+	autoCrossCorrelationTable thee = Sounds_to_CrossCorrelationTable_combined (s1, s2, GET_REAL (L"left Time range"),
+		GET_REAL (L"right Time range"), GET_REAL (L"Lag time"));
+	praat_new (thee.transfer(), s1 -> name, L"_", s2 -> name, L"_cc");
 END
 
 DIRECT (CrossCorrelationTables_help)
@@ -382,6 +409,7 @@ void praat_BSS_init (void) {
 
 	praat_addAction1 (classSound, 0, L"To Sound (blind source separation)...", L"Resample...", 1, DO_Sound_to_Sound_bss);
     praat_addAction1 (classSound, 0, L"To Sound (whiten channels)...", L"Resample...", 1, DO_Sound_to_Sound_whitenChannels);
+    praat_addAction1 (classSound, 0, L"To CrossCorrelationTable (combined)...",  L"Cross-correlate...", 1, DO_Sounds_to_CrossCorrelationTable_combined);
 
 	praat_addAction1 (classTableOfReal, 0, L"To MixingMatrix", L"To Configuration", praat_HIDDEN, DO_TableOfReal_to_MixingMatrix);
 
@@ -389,6 +417,7 @@ void praat_BSS_init (void) {
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, L"Unmix", 0, 0, DO_Sound_and_MixingMatrix_unmix);
 
 	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (whiten channels)...", 0 , 0, DO_Sound_and_PCA_whitenChannels);
+	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (project channels)...", 0 , 0, DO_Sound_and_PCA_projectChannels);
 
 	praat_addAction2 (classCrossCorrelationTable, 1, classDiagonalizer, 1, L"Diagonalize", 0 , 0, DO_CrossCorrelationTable_and_Diagonalizer_diagonalize);
 

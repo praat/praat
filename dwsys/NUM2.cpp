@@ -832,25 +832,6 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method) 
 	return kurt;
 }
 
-/* obsolete 20080121
-
-#define HUBER_MAD NUMmad_f
-#define HUBER_STATISTICS_HUBER NUMstatistics_huber_f
-#define HUBER_DATA_TYPE float
-#define HUBER_VECTOR  NUMfvector
-#define HUBER_VECTOR_FREE  NUMfvector_free
-#define HUBER_QUANTILE NUMquantile_f
-#define HUBER_SORT NUMsort_f
-#include "NUMhuber_core.h"
-#undef HUBER_MAD
-#undef HUBER_STATISTICS_HUBER
-#undef HUBER_DATA_TYPE
-#undef HUBER_VECTOR
-#undef HUBER_VECTOR_FREE
-#undef HUBER_QUANTILE
-#undef HUBER_SORT
-*/
-
 void eigenSort (double d[], double **v, long n, int sort) {
 	long i, j, k;
 	if (sort == 0) {
@@ -2386,11 +2367,10 @@ double NUMbarkToHertz2 (double bark) {
 }
 
 double NUMhertzToBark2 (double hz) {
-	double h650;
 	if (hz < 0) {
 		return NUMundefined;
 	}
-	h650 = hz / 650;
+	double h650 = hz / 650;
 	return 7.0 * log (h650 + sqrt (1 + h650 * h650));
 }
 
@@ -2992,6 +2972,110 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p) {
 		psum += probs[++index];
 	}
 	return index;
+}
+
+// IEEE: Programs for digital signal processing section 4.3 LPTRN
+// lpc[1..n] to rc[1..n]
+void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc) {
+	autoNUMvector<double> b (1, p);
+	autoNUMvector<double> a (NUMvector_copy<double> (lpc, 1, p), 1);
+	for (long m = p; m > 0; m--) {
+		rc[m] = a[m];
+		if (fabs (rc[m]) > 1) {
+			Melder_throw ("Relection coefficient [", Melder_integer(m), "] larger 1.");
+		}
+		for (long i = 1; i < m; i++) {
+			b[i] = a[i];
+		}
+		for (long i = 1; i < m; i++) {
+			a[i] = (b[i] - rc[m] * b[m - i]) / (1.0 - rc[m] * rc[m]);
+		}
+	}
+}
+
+void NUMlpc_rc_to_area2 (double *rc, long n, double *area) {
+	double s = 0.0001; /* 1.0 cm^2 at glottis */
+	for (long i = n; i > 0; i--) {
+		s *= (1.0 + rc[i]) / (1.0 - rc[i]);
+		area[i] = s;
+	}
+}
+void NUMlpc_area_to_lpc2 (double *area, long n, double *lpc) {
+	// from area to reflection coefficients
+	autoNUMvector<double> rc (1, n);
+	// normalisation: area[n+1] = 0.0001
+	for (long j = n; j > 0; j--) {
+		double ar = area[j+1] / area[j];
+		rc[j] = (1 - ar) / (1 + ar);
+	}
+	// LPTRAN works from mouth to lips:
+	for (long j = 1; j <= n; j++) {
+		lpc[j] = rc[n - j + 1];
+	}
+	for (long j = 2; j <= n; j++) {
+		long nh = j / 2;
+		double q = rc[j];
+		for (long k = 1; k <= nh; k++) {
+			double at = lpc[k] + q * lpc[j - k];
+			lpc[j - k] += q * lpc[k];
+			lpc[k] = at;
+		}
+	}
+}
+
+void NUMlpc_lpc_to_rc2 (double *lpc, long m, double *rc) { // klopt nog niet
+	NUMvector_copyElements<double> (lpc, rc, 1, m);
+	for (long j = 2; j <= m; j++) {
+		long jb = m + 1 - j;
+		long mh = (jb + 1) / 2;
+		double rct = rc[jb+1];
+		double d = 1 - rct * rct;
+		for (long k = 1; k <= mh; k++) {
+			rc[k] *= (1 - rct) / d;
+		}
+	}
+}
+// area[1] at lips generates n+1 areas from n rc's
+void NUMlpc_rc_to_area (double *rc, long m, double *area) {
+	area[m+1] = 0.0001; /* 1.0 cm^2 */
+	for (long j = 1; j <= m; j++) {
+		double ar = (1 - rc[m+1-j]) / (1 + rc[m+1-j]);
+		area[m+1-j] = area[m+2-j] / ar;
+	}
+}
+
+// returns m-1 reflection coefficients from m areas
+void NUMlpc_area_to_rc (double *area, long m, double *rc) {
+	for (long j = 1; j <= m - 1; j++) {
+		double ar = area[j+1] / area[j];
+		rc[j] = (1 - ar) / (1 + ar);
+	}
+}
+
+void NUMlpc_rc_to_lpc (double *rc, long m, double *lpc) {
+	NUMvector_copyElements<double> (rc, lpc, 1, m);
+	for (long j = 2; j <= m; j++) {
+		for (long k = 1; k <= j / 2; k++) {
+			double at = lpc[k] + rc[j] * lpc[j - k];
+			lpc[j - k] += rc[j] * lpc[k];
+			lpc[k] = at;
+		}
+	}
+}
+
+void NUMlpc_area_to_lpc (double *area, long m, double *lpc) {
+	// from area to reflection coefficients
+	autoNUMvector<double> rc (1, m);
+	// normalisation: area[n+1] = 0.0001
+	NUMlpc_area_to_rc (area, m, rc.peek());
+	NUMlpc_rc_to_lpc (rc.peek(), m - 1, lpc);
+}
+
+void NUMlpc_lpc_to_area (double *lpc, long m, double *area) {
+	autoNUMvector<double> rc (1, m);
+	NUMlpc_lpc_to_rc (lpc, m, rc.peek());
+	NUMlpc_rc_to_area (rc.peek(), m, area);
+
 }
 
 #undef MAX

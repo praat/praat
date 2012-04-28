@@ -2,7 +2,7 @@
 #define _Sound_extensions_h_
 /* Sound_extensions.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20111227 Latest modification
+ djmw 20120323 Latest modification
 */
 
 
@@ -193,7 +193,15 @@ TextGrid Sound_to_TextGrid_detectSilences (Sound me, double minPitch, double tim
 	const wchar_t *silentLabel, const wchar_t *soundingLabel);
 void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
-Sound Sound_trimSilences (Sound me, bool atStart, bool atEnd, double minPitch, double timeStep,
-	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 
+Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const wchar_t *match);
+/* Cut intervals that match the label from the sound. The starting time of the new sound is
+ * (1) my xmin if the first interval is not matching
+ * (2) the end time of the first interval if matching
+ */
+
+Sound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
+	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
+Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
+    double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const wchar_t *trimLabel);
 #endif /* _Sound_extensions_h_ */

@@ -21,7 +21,7 @@
 
 /*
   djmw 20101202 Initial version
-  djmw 20120301 Latest modification.
+  djmw 20120406 Latest modification.
 */
 
 #include "SSCP.h"
@@ -83,6 +83,7 @@ MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, 
 Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double delta_w, int method);
 
 Sound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents);
+Sound Sound_and_PCA_projectChannels (Sound me, PCA thee, long numberOfComponents);
 PCA Sound_to_PCA_channels (Sound me, double startTime, double endTime);
 Sound Sound_whitenChannels (Sound me, double varianceFraction);
 Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
@@ -110,6 +111,8 @@ MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me);
 		sum(k=1..nsamples; (z[i][k] - mean[i])(z[j][k + lag] - mean[j])) / (nsamples - 1).
 */
 CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagTime);
+CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagTime);
+
 // The covariance is the cross-correlation with lag 0.
 Covariance Sound_to_Covariance_channels (Sound me, double startTime, double endTime);
 /*

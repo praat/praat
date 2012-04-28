@@ -46,7 +46,7 @@
  djmw 20091211 Sound_fade: removed erroneous warning
  djmw 20100318 Cross-correlation, convolution and autocorrelation
  djmw 20100325 -Cross-correlation, convolution and autocorrelation
- djmw 20111227 Sound_trimSilences and Sound_getStartAndEndTimesOfSounding
+ djmw 20111227 Sound_trimSilencesAtStartAndEnd and Sound_getStartAndEndTimesOfSounding
 */
 
 #include "Formula.h"
@@ -1363,21 +1363,122 @@ void Sound_getStartAndEndTimesOfSounding (Sound me, double minPitch, double time
 	}
 }
 
-Sound Sound_trimSilences (Sound me, bool atStart, bool atEnd, double minPitch, double timeStep,
+Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee, const wchar_t *match) {
+    try {
+        // count samples of the trimmed sound
+        long ixmin, ixmax, numberOfSamples = 0, previous_ixmax = 0;
+		double xmin = my xmin; // start time of output sound is start time of input sound
+        for (long iint = 1; iint <= thy intervals -> size; iint++) {
+            TextInterval ti = (TextInterval) thy intervals -> item[iint];
+            if (! Melder_wcsequ (ti -> text, match)) {
+                numberOfSamples += Sampled_getWindowSamples (me, ti -> xmin, ti -> xmax, &ixmin, &ixmax);
+                // if two contiguous intervals have to be copied then the last sample of previous interval
+                // and first sample of current interval might sometimes be equal
+                numberOfSamples = ixmin == previous_ixmax ? --numberOfSamples : numberOfSamples;
+				previous_ixmax = ixmax;
+			} else { // matches label
+				if (iint == 1) { // Start time of output sound is end time of first interval
+					xmin = ti -> xmax;
+				}
+            }
+        }
+        // Now copy the parts. The output sound starts at xmin
+        autoSound him = Sound_create (my ny, xmin, xmin + numberOfSamples * my dx, numberOfSamples, my dx, xmin + 0.5 * my dx);
+        numberOfSamples = 0; previous_ixmax = 0;
+        for (long iint = 1; iint <= thy intervals -> size; iint++) {
+            TextInterval ti = (TextInterval) thy intervals -> item[iint];
+            if (! Melder_wcsequ (ti -> text, match)) {
+				long ipos;
+                Sampled_getWindowSamples (me, ti -> xmin, ti -> xmax, &ixmin, &ixmax);
+				if (ixmin == previous_ixmax) {
+					ixmin++;
+				}
+				previous_ixmax = ixmax;
+                for (long ichan = 1; ichan <= my ny; ichan++) {
+                    ipos = numberOfSamples + 1;
+                    for (long i = ixmin; i <= ixmax; i++, ipos++) {
+                        his z[ichan][ipos] = my z[ichan][i];
+                    }
+                }
+                numberOfSamples = --ipos;
+            }
+        }
+        Melder_assert (numberOfSamples == his nx);
+        return him.transfer();
+    } catch (MelderError) {
+        Melder_throw (me, ": intervals not trimmed.");
+    }
+}
+
+Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const wchar_t *trimLabel) {
+    try {
+        if (my ny > 1) {
+            Melder_throw ("The sound must be a mono sound.");
+        }
+        const wchar_t *silentLabel = L"silent", *soundingLabel = L"sounding";
+        const wchar_t *copyLabel = L"";
+        autoTextGrid dbs = Sound_to_TextGrid_detectSilences (me, minPitch, timeStep, silenceThreshold,
+            minSilenceDuration, minSoundingDuration, silentLabel, soundingLabel);
+        autoIntervalTier itg = (IntervalTier) Data_copy ((IntervalTier) dbs -> tiers -> item[1]);
+        IntervalTier itier = (IntervalTier) dbs -> tiers -> item[1];
+        for (long iint = 1; iint <= itier -> intervals -> size; iint++) {
+            TextInterval ti = (TextInterval) itier -> intervals -> item[iint];
+            TextInterval ati = (TextInterval) itg -> intervals -> item[iint];
+            double duration = ti -> xmax - ti -> xmin;
+            if (duration > trimDuration && Melder_wcsequ (ti -> text, silentLabel)) { // silent
+				const wchar_t * label = trimLabel;
+                if (iint == 1) { // first is special
+                    double trim_t = ti -> xmax - trimDuration;
+                    IntervalTier_moveBoundary (itg.peek(), iint, false, trim_t);
+                } else if (iint == itier -> intervals -> size) { // last is special
+                    double trim_t = ti -> xmin + trimDuration;
+                    IntervalTier_moveBoundary (itg.peek(), iint, true, trim_t);
+                } else {
+					if (onlyAtStartAndEnd) {
+						label = ati -> text;
+					} else {
+                    	double trim_t = ti -> xmin + 0.5 * trimDuration;
+						IntervalTier_moveBoundary (itg.peek(), iint, true, trim_t);
+                    	trim_t = ti -> xmax - 0.5 * trimDuration;
+                    	IntervalTier_moveBoundary (itg.peek(), iint, false, trim_t);
+					}
+                }
+                TextInterval_setText (ati, label);
+            } else { // sounding
+                TextInterval_setText (ati, copyLabel);
+            }
+        }
+        autoSound thee = Sound_and_IntervalTier_cutPartsMatchingLabel (me, itg.peek(), trimLabel);
+        if (tg != NULL) {
+			TextGrid_addTier (dbs.peek(), itg.transfer());
+            *tg = dbs.transfer();
+        }
+        return thee.transfer();
+    } catch (MelderError) {
+        Melder_throw (me, ": silences not trimmed.");
+    }
+}
+
+Sound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double minPitch, double timeStep,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2) {
 	try {
-		double t1t, t2t;
-		Sound_getStartAndEndTimesOfSounding (me, minPitch, timeStep, silenceThreshold, minSilenceDuration,
-			minSoundingDuration, &t1t, &t2t);
-		if (t1t >= t2t) {
-			Melder_throw ("Sound is all silent.");
+		TextGrid tg;
+		autoSound thee = Sound_trimSilences (me, trimDuration, true, minPitch, timeStep, silenceThreshold, minSilenceDuration, minSoundingDuration, &tg, L"trimmed");
+		autoTextGrid atg = tg;
+		IntervalTier trim = (IntervalTier) tg -> tiers -> item[2];
+		TextInterval ti1 = (TextInterval) trim -> intervals -> item[1];
+		*t1 = my xmin;
+		if (Melder_wcsequ (ti1 -> text, L"trimmed")) {
+			*t1 = ti1 -> xmax;
 		}
-		autoSound thee = Sound_extractPart (me, t1t, t2t, kSound_windowShape_RECTANGULAR, 1, true);
-		if (t1 != NULL) *t1 = t1t;
-		if (t2 != NULL) *t2 = t2t;
+		TextInterval ti2 = (TextInterval) trim -> intervals -> item[trim -> intervals -> size];
+		*t2 = my xmax;
+		if (Melder_wcsequ (ti2 -> text, L"trimmed")) {
+			*t2 = ti2 -> xmin;
+		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Silences not trimmed.");
+		Melder_throw (me, ": silences not trimmed.");
 	}
 }
 

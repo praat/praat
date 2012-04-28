@@ -215,16 +215,6 @@ void structTextGridEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 		EditorMenu_addCommand (menu, L"Extract selected TextGrid (time from zero)", 0, menu_cb_ExtractSelectedTextGrid_timeFromZero);
 }
 
-static void menu_cb_WriteSelectionToTextFile (EDITOR_ARGS) {
-	EDITOR_IAM (TextGridEditor);
-	EDITOR_FORM_WRITE (L"Save selection as TextGrid text file", 0)
-		swprintf (defaultName, 300, L"%ls.TextGrid", ((Thing) my data) -> name);
-	EDITOR_DO_WRITE
-		autoTextGrid publish = TextGrid_extractPart ((TextGrid) my data, my startSelection, my endSelection, false);
-		Data_writeToTextFile (publish.peek(), file);
-	EDITOR_END
-}
-
 static void menu_cb_WriteToTextFile (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	EDITOR_FORM_WRITE (L"Save as TextGrid text file", 0)
@@ -237,7 +227,6 @@ static void menu_cb_WriteToTextFile (EDITOR_ARGS) {
 void structTextGridEditor :: v_createMenuItems_file_write (EditorMenu menu) {
 	TextGridEditor_Parent :: v_createMenuItems_file_write (menu);
 	EditorMenu_addCommand (menu, L"Save TextGrid as text file...", 'S', menu_cb_WriteToTextFile);
-	writeSelectedTextGridButton = EditorMenu_addCommand (menu, L"Save selected TextGrid to text file...", 0, menu_cb_WriteSelectionToTextFile);
 }
 
 static void menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
@@ -2179,7 +2168,6 @@ void structTextGridEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {
 
 void structTextGridEditor :: v_updateMenuItems_file () {
 	TextGridEditor_Parent :: v_updateMenuItems_file ();
-	GuiObject_setSensitive (writeSelectedTextGridButton, endSelection > startSelection);
 	GuiObject_setSensitive (extractSelectedTextGridPreserveTimesButton, endSelection > startSelection);
 	GuiObject_setSensitive (extractSelectedTextGridTimeFromZeroButton, endSelection > startSelection);
 }

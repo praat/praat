@@ -262,7 +262,8 @@ void NUMmad (double *x, long n, double *location, int wantlocation,
 /*
 	Computes the median absolute deviation, i.e., the median of the
 	absolute deviations from the median, and adjust by a factor for
-	asymptotically normal consistency.
+	asymptotically normal consistency, i.e. the returned value is 1.4826*mad which
+	makes the returned value "equal" to the standard deviation if the data is normally distributed.
 	You either GIVE the median location (if wantlocation = 0) or it
 	will be calculated (if wantlocation = 1);
 
@@ -1225,5 +1226,22 @@ void NUMrealft_f (float *data, long n, int direction);    /* Please stop using. 
 void NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
+
+// IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
+
+// lpc[1..n] to rc[1..n]
+void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc);
+
+// rc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
+void NUMlpc_rc_to_area (double *rc, long n, double *area);
+
+// area[1..n] to rc[1..n-1] (modification: LPTRN assumes area[n+1])
+void NUMlpc_area_to_rc (double *area, long n, double *rc);
+
+// area[1..n] to lpc[1..n-1]! (modification: lptrn gives lpc[1] = 1 we don't)
+void NUMlpc_area_to_lpc (double *area, long n, double *lpc);
+
+// lpc[1..n] to area[1..n+1], area[m+1] = 0.0001; (1 cm^2)
+void NUMlpc_lpc_to_area (double *lpc, long m, double *area);
 
 #endif // _NUM2_h_

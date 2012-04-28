@@ -83,6 +83,7 @@ void Matrix_scatterPlot (I, Graphics g, long icx, long icy,
 	}
 }
 
+
 void Matrix_drawAsSquares (I, Graphics g, double xmin, double xmax, double ymin, double ymax, int garnish) {
 	iam (Matrix);
 	Graphics_Colour colour = Graphics_inqColour (g);

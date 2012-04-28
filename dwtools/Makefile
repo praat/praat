@@ -16,6 +16,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Configuration_and_Procrustes.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_Pattern_Categories.o \
+	EditDistanceTable.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \

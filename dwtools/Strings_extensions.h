@@ -2,7 +2,7 @@
 #define _Strings_extensions_h_
 /* Strings_extensions.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  djmw 20040629 Strings_append now accepts an Ordered of Strings.
  djmw 20050714 Permutations
  djmw 20050724 Index
- djmw 20120128 Latest modification
+ djmw 20120407 Latest modification
 */
 
 #include "Collection.h"
@@ -33,11 +33,11 @@
 #include "Permutation.h"
 #include "Index.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 Strings Strings_createFixedLength (long numberOfStrings);
+Strings Strings_createAsCharacters (const wchar_t *string);
+Strings Strings_createAsTokens (const wchar_t *string);
+
 long Strings_findString (Strings me, const wchar_t *string);
 Strings Strings_append (Collection me);
 
@@ -66,9 +66,5 @@ Strings StringsIndex_to_Strings (StringsIndex me);
 Permutation Strings_to_Permutation (Strings me, int sort);
 
 Strings Strings_and_Permutation_permuteStrings (Strings me, Permutation thee);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Strings_extensions_h_ */

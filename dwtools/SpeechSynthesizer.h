@@ -26,47 +26,47 @@
 #include "Sound.h"
 #include "TextGrid.h"
 
+#define SpeechSynthesizer_PHONEMECODINGS_IPA 2
+#define SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM 1
+#define SpeechSynthesizer_INPUT_TEXTONLY 1
+#define SpeechSynthesizer_INPUT_PHONEMESONLY 2
+#define SpeechSynthesizer_INPUT_TAGGEDTEXT 3
+
 Thing_define (SpeechSynthesizer, Data) {
 	public:
+		// sythesizers language /voice
 		long d_voice, d_voiceVariant;
+		wchar_t *d_voiceName, *d_voiceVariantName;
+		wchar_t *d_punctuations;
+		// text input
+		int d_inputTextFormat; // text-only, phonemes-only, mixed
+		int d_inputPhonemeCoding; // 1/: output phonemes in espeak/ notation
+		// speech output
+		long d_numberOfSamples, d_wavCapacity;
+		short *d_wav;
 		double d_samplingFrequency;
 		double d_internalSamplingFrequency;
 		double d_wordgap;
 		long d_pitchAdjustment, d_pitchRange;
 		long d_wordsPerMinute;
-		wchar_t *d_voiceName, *d_voiceVariantName;
-		wchar_t *d_punctuations;
+		bool d_estimateWordsPerMinute;
+		// TextGrid
 		bool d_createEventPerPhoneme;
-		bool d_interpretSSML; // Elements within < > are treated as SSML elements (if not recognised ignored)
-		bool d_interpretPhonemeCodes;  // Text within [[ ]] is treated as phonemes codes (Hirshenbaum encoding)
-		bool d_ipa; // output phonems in IPA notation
-		// Filled by the call back
-		Table events;
-		long d_numberOfSamples, d_wavCapacity;
-		short *d_wav;
+		int d_outputPhonemeCoding; // 1/2: output phonemes in espeak/IPA notation
+		Table d_events; // Filled by the call back
 	// overridden methods:
 		void v_destroy ();
 		void v_info ();
 };
 
-SpeechSynthesizer SpeechSynthesizer_create (long voice, long voiceVariant,
-	double samplingFrequency, double wordgap, long pitchAdjustment, long pitchRange, long wordsPerMinute,
-	bool interpretSSML, bool interpretPhonemeCodes);
+SpeechSynthesizer SpeechSynthesizer_create (long voice, long voiceVariant);
 
-void SpeechSynthesizer_setSamplingFrequency (SpeechSynthesizer me, double samplingFrequency);
-void SpeechSynthesizer_setSpeakingRate (SpeechSynthesizer me, double wordsPerMinute);
-void SpeechSynthesizer_setWordGap (SpeechSynthesizer me, double wordgap);
+void SpeechSynthesizer_setTextInputSettings (SpeechSynthesizer me, int inputTextFormat, int inputPhonemeCoding);
+void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double samplingFrequency, double wordgap, long pitchAdjustment, long pitchRange, long wordsPerMinute, bool estimateWordsPerMinute, int outputPhonemeCodes);
 
-void SpeechSynthesizer_setDefaults (SpeechSynthesizer me, double samplingFrequency, double wordgap,
-	long pitchAdjustment, long pitchRange, long wordsPerMinute, bool interpretSSML, bool interpretPhonemeCodes);
-
-Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const wchar_t *text);
+Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const wchar_t *text, TextGrid *tg, Table *events);
 
 void SpeechSynthesizer_playText (SpeechSynthesizer me, const wchar_t *text);
-
-Sound SpeechSynthesizer_to_Sound_special (SpeechSynthesizer me, const wchar_t *text, double wordgap,
-	long pitchAdjustment, long pitchRange, long wordsPerMinute, bool interpretSSML, bool interpretPhonemeCodes,
-	bool ipa, TextGrid *tg, Table *events);
 
 
 /* End of file SpeechSynthesizer.h */

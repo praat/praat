@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2011 David Weenink
+ * Copyright (C) 1997-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3197,5 +3197,28 @@ void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xc
 		Graphics_marksBottom (g, 2, 1, 1, 0);
 	}
 }
+
+double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
+	try {
+		Table_checkSpecifiedColumnNumberWithinRange (me, columnNumber);
+		Table_numericize_Assert (me, columnNumber);
+		if (my rows -> size < 1) {
+			return NUMundefined;
+		}
+		autoNUMvector<double> data (1, my rows -> size);
+		for (long irow = 1; irow <= my rows -> size; irow ++) {
+			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
+			data[irow] = row -> cells[columnNumber].number;
+			if (data[irow] == NUMundefined) {
+				Melder_throw (me, ": the cell in row ", irow, " of column \"",
+					my columnHeaders[columnNumber].label ? my columnHeaders[columnNumber].label : Melder_integer (columnNumber), " is undefined.");
+			}
+		}
+		double mad, location;
+		NUMmad (data.peek(), my rows -> size, &location, 1, &mad, 0);
+		return mad;
+	} catch (MelderError) {
+		Melder_throw (me, ": cannot compute median absolute deviation of column ", columnNumber, ".");
+	}
 
 /* End of file Table_extensions.cpp */

@@ -2,7 +2,7 @@
 #define _SpeechSynthesizer_and_TextGrid_h_
 /* SpeechSynthesizer_and_TextGrid.h
  *
- * Copyright (C) 2011 David Weenink
+ * Copyright (C) 2011-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,10 +25,11 @@
 
 #include "SpeechSynthesizer.h"
 #include "TextGrid_extensions.h"
+#include "EditDistanceTable.h"
 
-Sound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, bool isPhonemeTier, TextGrid *tg);
+Sound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, TextGrid *tg);
 
-Sound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid thee, long itier, long iiint, bool isPhonemeTier, TextGrid *tg);
+Sound SpeechSynthesizer_and_TextGrid_to_Sound (SpeechSynthesizer me, TextGrid thee, long itier, long iiint, TextGrid *tg);
 
 TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer me, Sound thee, TextInterval him,
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration);
@@ -36,6 +37,13 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align (SpeechSynthesizer m
 	long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration);
 TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him,
 	long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration);
+TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align2 (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration);
 
+Table IntervalTiers__to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
+Table TextGrids_to_Table_textAlignmentment (TextGrid target, long ttier, TextGrid source, long stier, EditCostsTable costs);
+
+/* For testing purposes only */
+TextGrid TextGrid_and_IntervalTier_patch (TextGrid me, IntervalTier thee, const wchar_t *patchLabel, double precision);
+TextGrid TextGrid_and_IntervalTier_cutPartsMatchingLabel (TextGrid me, IntervalTier thee, const wchar_t *label, double precision);
 
 #endif // _SpeechSynthesizer_and_TextGrid_h_

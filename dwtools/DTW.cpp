@@ -42,7 +42,6 @@
 #include "Sound_extensions.h"
 #include "NUM2.h"
 #include "NUMmachar.h"
-#include "GraphicsP.h"
 
 #include "oo_DESTROY.h"
 #include "DTW_def.h"
@@ -1144,10 +1143,9 @@ static void DTW_checkSlopeConstraints (DTW me, double band, int slope) {
             dtw_slope = 1 / dtw_slope;
         }
             if (dtw_slope > slopes[slope]) {
-            Melder_warning (L"There is a conflict between the chosen slope constraint and the relative  duration.\n "
-            "The duration ratio of the longest and the shortest object is ", Melder_double (dtw_slope),
-            L". This implies that the largest slope in the \n"
-            "constraint must have a value greater or equal to this ratio.");
+            Melder_warning (L"There is a conflict between the chosen slope constraint and the relative duration. "
+				"The duration ratio of the longest and the shortest object is ", Melder_double (dtw_slope),
+				L". This implies that the largest slope in the constraint must have a value greater or equal to this ratio.");
         }
     } catch (MelderError) {
         Melder_throw ("Slope constraints can't be met.");
@@ -1208,7 +1206,7 @@ static void DTW_findPath_special (DTW me, int matchStart, int matchEnd, int slop
        autoPolygon thee = DTW_to_Polygon (me, 0.0, slope);
        DTW_and_Polygon_findPathInside (me, thee.peek(), slope, cummulativeDists);
 	} catch (MelderError) {
-		Melder_throw (me, "cannot find path.");
+		Melder_throw (me, ": cannot find path.");
 	}
 }
 
@@ -1527,7 +1525,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matri
             *cummulativeDists = him.transfer();
         }
     } catch (MelderError) {
-        Melder_throw (me, "cannot find path.");
+        Melder_throw (me, ": cannot find path.");
     }
 }
 

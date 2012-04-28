@@ -2,7 +2,7 @@
 #define _LPC_and_Tube_h_
 /* LPC_and_Tube.h
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,29 +28,21 @@
 #include "Tube.h"
 #include "VocalTract.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 void LPC_Frame_into_Tube_Frame_rc (LPC_Frame me, Tube_Frame thee);
 void LPC_Frame_into_Tube_Frame_area (LPC_Frame me, Tube_Frame thee);
 
+VocalTract LPC_Frame_to_VocalTract (LPC_Frame me, double length);
+
 double LPC_Frame_getVTL_wakita (LPC_Frame me, double samplingPeriod, double refLength);
+double VocalTract_and_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee, double glottalDamping, bool radiationDamping, bool internalDamping);
 
 int Tube_Frame_into_LPC_Frame_area (Tube_Frame me, LPC_Frame thee);
 
 int Tube_Frame_into_LPC_Frame_rc (Tube_Frame me, LPC_Frame thee);
 
-VocalTract LPC_to_VocalTract (LPC me, double time, double length, int wakitaLength);
-/* Calculate a vocal tract via the transformation of lpc coeffs to area functions.
- *	`length' will be the length of the vocal tract.
- * if wakitaLength != 0 then the vocal tract length is calculated according to:
- *      H. Wakita (1976), Normalization of vowels by vocal-tract length and its
- *      application to vowel identification, IEEE on ASSP 25, 183-192.
- * Here `length' will be used as the reference length for the calculations. */
+VocalTract LPC_to_VocalTract (LPC me, double time, double length);
+void VocalTract_setLength (VocalTract me, double newLength);
 
-#ifdef __cplusplus
-	}
-#endif
+VocalTract LPC_to_VocalTract (LPC me, double time, double glottalDamping, bool radiationDamping, bool internalDamping);
 
 #endif /* _LPC_and_Tube_h_ */

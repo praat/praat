@@ -57,6 +57,9 @@ oo_DEFINE_CLASS (Network, Data)
 
 	oo_DOUBLE (d_minimumActivity)
 	oo_DOUBLE (d_maximumActivity)
+	oo_FROM (3)
+		oo_ENUM (kNetwork_activationSpreadingRule, d_activationSpreadingRule)
+	oo_ENDFROM
 	oo_DOUBLE (d_spreadingRate)
 	oo_DOUBLE (d_selfExcitation)
 	oo_DOUBLE (d_minimumWeight)
@@ -93,6 +96,7 @@ oo_DEFINE_CLASS (Network, Data)
 			void f_spreadActivities (long numberOfSteps);
 			void f_updateWeights ();
 			void f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule);
+			void f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule);
 
 		// overridden methods:
 			virtual void v_info ();

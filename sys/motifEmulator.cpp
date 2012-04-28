@@ -963,9 +963,9 @@ static void _GuiNativizeWidget (GuiObject me) {
 				 */
 				my nat.menu.handle = CreatePopupMenu ();
 			#elif mac
-				int id;
-				for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
-				my nat.menu.id = id;
+				int ident;
+				for (ident = 1; ident <= MAXIMUM_NUMBER_OF_MENUS; ident ++) if (! theMenus [ident]) break;
+				my nat.menu.id = ident;
 				theMenus [my nat.menu.id] = me;   /* Instead of RefCon fields. */
 				/*
 				 * This will be a hierarchical menu.
@@ -1088,9 +1088,9 @@ static void _GuiNativizeWidget (GuiObject me) {
 					my nat.menu.handle = CreatePopupMenu ();
 				}
 			#elif mac
-				int id;
-				for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) if (! theMenus [id]) break;
-				my nat.menu.id = id;
+				int ident;
+				for (ident = 1; ident <= MAXIMUM_NUMBER_OF_MENUS; ident ++) if (! theMenus [ident]) break;
+				my nat.menu.id = ident;
 				theMenus [my nat.menu.id] = me;   /* Instead of RefCon fields. */
 				if (MEMBER (my parent, MenuBar)) {
 					/*
@@ -1105,10 +1105,10 @@ static void _GuiNativizeWidget (GuiObject me) {
 						int beforeID = 0;
 						CreateNewMenu (my nat.menu.id, 0, & my nat.menu.handle);
 						SetMenuTitleWithCFString (my nat.menu.handle, (CFStringRef) Melder_peekWcsToCfstring (my name));
-						for (id = 1; id <= MAXIMUM_NUMBER_OF_MENUS; id ++) {
-							GuiObject menu = theMenus [id];
+						for (ident = 1; ident <= MAXIMUM_NUMBER_OF_MENUS; ident ++) {
+							GuiObject menu = theMenus [ident];
 							if (menu && wcsequ (menu -> name, L"Help")) {
-								beforeID = id;
+								beforeID = ident;
 								break;
 							}
 						}

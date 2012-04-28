@@ -24,6 +24,7 @@
  * pb 2009/06/11 connection plasticities
  * pb 2011/03/29 C++
  * pb 2012/03/18 more weight update rules: instar, outstar, inoutstar
+ * pb 2012/04/19 more activation spreading rules: linear
  */
 
 #include "Network.h"
@@ -60,7 +61,7 @@ void structNetwork :: v_info ()
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (d_numberOfConnections));
 }
 
-Thing_implement (Network, Data, 2);
+Thing_implement (Network, Data, 3);
 
 void structNetwork :: f_init (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
@@ -165,8 +166,15 @@ void structNetwork :: f_spreadActivities (long numberOfSteps) {
 		for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
 			NetworkNode node = & d_nodes [inode];
 			if (! node -> clamped) {
-				node -> activity = (d_maximumActivity - d_minimumActivity) *
-					NUMsigmoid (d_spreadingRate * node -> excitation) + d_minimumActivity;
+				switch (d_activationSpreadingRule) {
+					case kNetwork_activationSpreadingRule_SIGMOID:
+						node -> activity = (d_maximumActivity - d_minimumActivity) *
+							NUMsigmoid (d_spreadingRate * node -> excitation) + d_minimumActivity;
+					break;
+					case kNetwork_activationSpreadingRule_LINEAR:
+						node -> activity = d_spreadingRate * node -> excitation;
+					break;
+				}
 			}
 		}
 	}
@@ -386,6 +394,10 @@ void structNetwork :: f_addConnection (long nodeFrom, long nodeTo, double weight
 
 void structNetwork :: f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule) {
 	d_weightUpdateRule = weightUpdateRule;
+}
+
+void structNetwork :: f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule) {
+	d_activationSpreadingRule = activationSpreadingRule;
 }
 
 /* End of file Network.cpp */

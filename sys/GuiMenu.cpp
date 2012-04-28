@@ -287,12 +287,24 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 	#endif
 	#if gtk
 		if (commandCallback != NULL) {
-			gulong handlerId = g_signal_connect (G_OBJECT (button),
-				toggle ? "toggled" : "activate",
-				G_CALLBACK (commandCallback), (gpointer) closure);
-			g_object_set_data (G_OBJECT (button), "handlerId", (gpointer) handlerId);
-			g_object_set_data (G_OBJECT (button), "commandCallback", (gpointer) commandCallback);
-			g_object_set_data (G_OBJECT (button), "commandClosure", (gpointer) closure);
+			if (flags == GuiMenu_TAB) {
+				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu)));
+				//Melder_casual ("tab set in window %ld", shell);
+				g_object_set_data (G_OBJECT (shell), "tabCallback", (gpointer) commandCallback);
+				g_object_set_data (G_OBJECT (shell), "tabClosure", (gpointer) closure);
+			} else if (flags == (GuiMenu_TAB | GuiMenu_SHIFT)) {
+				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu)));
+				//Melder_casual ("shift-tab set in window %ld", shell);
+				g_object_set_data (G_OBJECT (shell), "shiftTabCallback", (gpointer) commandCallback);
+				g_object_set_data (G_OBJECT (shell), "shiftTabClosure", (gpointer) closure);
+			} else {
+				gulong handlerId = g_signal_connect (G_OBJECT (button),
+					toggle ? "toggled" : "activate",
+					G_CALLBACK (commandCallback), (gpointer) closure);
+				g_object_set_data (G_OBJECT (button), "handlerId", (gpointer) handlerId);
+				g_object_set_data (G_OBJECT (button), "commandCallback", (gpointer) commandCallback);
+				g_object_set_data (G_OBJECT (button), "commandClosure", (gpointer) closure);
+			}
 		} else {
 			gtk_widget_set_sensitive (GTK_WIDGET (button), FALSE);
 		}

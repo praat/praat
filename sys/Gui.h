@@ -36,7 +36,13 @@
 #elif defined (macintosh)
 	#include "macport_on.h"
 	#include <Carbon/Carbon.h>
+	#include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
+	#if useCarbon == 1
+		#define carbon 1
+	#else
+		#define carbon 0
+	#endif
 #elif defined (_WIN32)
 	#include "winport_on.h"
 	#include <windows.h>

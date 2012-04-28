@@ -853,12 +853,15 @@ void praat_actions_createDynamicMenu (GuiObject form, int width) {
 }
 
 void praat_saveAddedActions (FILE *f) {
-	long i, id, maxID = 0;
-	for (i = 1; i <= theNumberOfActions; i ++) if (theActions [i]. uniqueID > maxID) maxID = theActions [i]. uniqueID;
-	for (id = 1; id <= maxID; id ++)
-		for (i = 1; i <= theNumberOfActions; i ++) {
-			praat_Command me = & theActions [i];
-			if (my uniqueID == id && ! my hidden && my title) {
+	long maxID = 0;
+	for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
+		if (theActions [iaction]. uniqueID > maxID)
+			maxID = theActions [iaction]. uniqueID;
+	}
+	for (long ident = 1; ident <= maxID; ident ++)
+		for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
+			praat_Command me = & theActions [iaction];
+			if (my uniqueID == ident && ! my hidden && my title) {
 				fwprintf (f, L"Add action command... %ls %d %ls %d %ls %d \"%ls\" \"%ls\" %d %ls\n",
 					my class1 -> className, my n1,
 					my class2 ? my class2 -> className : L"\"\"", my n2,
@@ -867,8 +870,8 @@ void praat_saveAddedActions (FILE *f) {
 				break;
 			}
 		}
-	for (i = 1; i <= theNumberOfActions; i ++) {
-		praat_Command me = & theActions [i];
+	for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
+		praat_Command me = & theActions [iaction];
 		if (my toggled && my title && ! my uniqueID && ! my script)
 			fwprintf (f, L"%ls action command... %ls %ls %ls %ls\n",
 				my hidden ? L"Hide" : L"Show",

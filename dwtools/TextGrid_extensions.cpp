@@ -24,9 +24,9 @@
  	a file was not 0 (in that case an empty interval was added as the first element in the tier).
  djmw 20060517 Added (TextTier|IntervalTier|TextGrid)_changeLabels.
  djmw 20060712 TextGrid_readFromTIMITLabelFile: don't set first boundary to zero for .wrd files.
- djmw 20060921 Added IntervalTier_removeBoundary_equalLabels, IntervalTier_removeBoundary_minimumDuration
+ djmw 20060921 Added IntervalTier_cutIntervalOnLabelMatch, IntervalTier_cutIntervals_minimumDuration
  djmw 20061113 Reassign item in list after a deletion.
- djmw 20061116 Added IntervalTier_removeInterval to correct a bug in IntervalTier_removeBoundary...
+ djmw 20061116 Added IntervalTier_cutInterval to correct a bug in IntervalTier_removeBoundary...
  djmw 20071008 Removed two unused variables.
  djmw 20071202 Melder_warning<n>
 */
@@ -34,7 +34,6 @@
 #include <ctype.h>
 #include "TextGrid_extensions.h"
 #include "NUM2.h"
-#include "praat.h"
 
 struct TIMIT_key {
 	const char *timitLabel, *ipaLabel;
@@ -307,9 +306,14 @@ TextGrid TextGrids_merge (TextGrid me, TextGrid thee) {
 void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const wchar_t *mark) {
 	try {
 		if (xmax <= my xmax) return; // nothing to be done
+		TextInterval ti = (TextInterval) my intervals -> item[my intervals -> size];
+		Melder_assert (xmax > ti -> xmax);
 		if (mark != NULL) {
-			autoTextInterval interval = TextInterval_create (my xmax, xmax, mark);
+			autoTextInterval interval = TextInterval_create (ti -> xmax, xmax, mark);
 			Collection_addItem (my intervals, interval.transfer());
+		} else {
+			// extend last interval
+			ti -> xmax = xmax;
 		}
 		my xmax = xmax;
 	} catch (MelderError) {
@@ -320,15 +324,48 @@ void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const wchar_t *
 void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const wchar_t *mark) {
 	try {
 		if (xmin >= my xmin) return; // nothing to be done
+		TextInterval ti = (TextInterval) my intervals -> item[1];
+		Melder_assert (xmin < ti -> xmin);
 		if (mark != NULL) {
-			autoTextInterval interval = TextInterval_create (xmin, my xmin, mark);
+			autoTextInterval interval = TextInterval_create (xmin, ti -> xmin, mark);
 			Collection_addItem (my intervals, interval.transfer());
+		} else {
+			// extend first interval
+			ti -> xmin = xmin;
 		}
 		my xmin = xmin;
 	} catch (MelderError) {
 		Melder_throw (L"Earlier start time of IntervalTier not set.");
 	}
 }
+
+void IntervalTier_moveBoundary (IntervalTier me, long iint, bool atStart, double newTime) {
+    try {
+        if (iint < 1 or iint > my intervals -> size) {
+            Melder_throw ("Interval out of range.");
+        }
+        if ((iint == 1 && atStart) or ((iint == my intervals -> size && not atStart))) {
+            Melder_throw ("Cannot change the domain.");
+        }
+        TextInterval interval = (TextInterval) my intervals -> item[iint];
+        if (atStart) {
+            TextInterval pinterval = (TextInterval) my intervals -> item[iint-1];
+            if (newTime <= pinterval -> xmin) {
+                Melder_throw ("Cannot move past the start of previous interval.");
+            }
+            pinterval -> xmax = interval -> xmin = newTime;
+        } else {
+            TextInterval ninterval = (TextInterval) my intervals -> item[iint+1];
+            if (newTime >= ninterval -> xmax) {
+                Melder_throw ("Cannot move past the end of next interval.");
+            }
+            ninterval -> xmin = interval -> xmax = newTime;
+        }
+    } catch (MelderError) {
+        Melder_throw (me, ": boundary not moved.");
+    }
+}
+
 
 void TextTier_setLaterEndTime (TextTier me, double xmax, const wchar_t *mark) {
 	try {
@@ -448,7 +485,7 @@ void TextGrid_setTierName (TextGrid me, long itier, const wchar_t *newName) {
 	}
 }
 
-static void IntervalTier_removeInterval (IntervalTier me, long index, int extend_option) {
+static void IntervalTier_cutInterval (IntervalTier me, long index, int extend_option) {
 	long size_pre = my intervals -> size;
 
 	/* There always must be at least one interval */
@@ -477,20 +514,37 @@ static void IntervalTier_removeInterval (IntervalTier me, long index, int extend
 	}
 }
 
-void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, const wchar_t *label, double minimumDuration) {
+void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const wchar_t *label) {
+    try {
+        for (long iint = my intervals -> size; iint > 1; iint--) {
+            TextInterval ti = (TextInterval) my intervals -> item[iint];
+            if (Melder_wcsequ (ti -> text, label)) {
+                TextInterval tim1 = (TextInterval) my intervals -> item[iint - 1];
+                if (Melder_wcsequ (tim1 -> text, label)) {
+                    Melder_free (tim1 -> text);
+                    IntervalTier_removeLeftBoundary (me, iint);
+                }
+            }
+        }
+    } catch (MelderError) {
+        Melder_throw (me, ": boundaries not removed.");
+    }
+}
+
+void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const wchar_t *label, double minimumDuration) {
 	long i = 1;
 	while (i <= my intervals -> size) {
 		TextInterval ti = (TextInterval) my intervals -> item[i];
 		if ( (label == 0 || (ti -> text != 0 && wcsequ (ti -> text, label))) &&
 		        ti -> xmax - ti -> xmin < minimumDuration) {
-			IntervalTier_removeInterval (me, i, 0);
+			IntervalTier_cutInterval (me, i, 0);
 		} else {
 			i++;
 		}
 	}
 }
 
-void IntervalTier_removeBoundary_equalLabels (IntervalTier me, const wchar_t *label) {
+void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const wchar_t *label) {
 	long i = 1;
 	while (i < my intervals -> size) {
 		TextInterval ti = (TextInterval) my intervals -> item[i];
@@ -498,7 +552,7 @@ void IntervalTier_removeBoundary_equalLabels (IntervalTier me, const wchar_t *la
 		if ( (label == 0 || (ti -> text != 0 && wcsequ (ti -> text, label))) &&
 		        (Melder_wcscmp (ti -> text, tip1 -> text) == 0)) {
 
-			IntervalTier_removeInterval (me, i, 1);
+			IntervalTier_cutInterval (me, i, 1);
 		} else {
 			i++;
 		}
@@ -598,19 +652,21 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
 // Postcondition: my xmin preserved
 void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes) {
 	try {
+        double xmax_previous = my xmax, time_shift = my xmax - thy xmin;
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, L"");
+            xmax_previous = thy xmin;
 			Collection_addItem (my intervals, connection.transfer());
 		}
 		for (long iint = 1; iint <= thy intervals -> size; iint++) {
 			autoTextInterval ti = (TextInterval) Data_copy ((Data) thy intervals -> item[iint]);
 			if (not preserveTimes) {
-				ti -> xmin += my xmax - thy xmin;
-				ti -> xmax += my xmax - thy xmin;
-			}
+				ti -> xmin = xmax_previous;
+				xmax_previous = ti -> xmax += time_shift;
+            }
 			Collection_addItem (my intervals, ti.transfer());
 		}
-		my xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
+		my xmax = preserveTimes ? thy xmax : xmax_previous;
 	} catch (MelderError) {
 		Melder_throw ("IntervalTiers not appended.");
 	}
@@ -641,15 +697,25 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 		if (preserveTimes && thy xmin < my xmax) {
 			Melder_throw ("The start time of the second TextGrid can't be earlier than the end time of the first one if you want to preserve times.");
 		}
+		// all tiers must have the same end time
+		// last intervals must have the same end time
+		double xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 		for (long itier = 1; itier <= my tiers -> size; itier++) {
-			Function anyTier = (Function) my tiers -> item [itier];
+			Function anyTier = (Function) my tiers -> item[itier];
 			if (anyTier -> classInfo == classIntervalTier) {
-				IntervalTiers_append_inline ((IntervalTier) anyTier, (IntervalTier) thy tiers -> item [itier], preserveTimes);
+                IntervalTier ti = (IntervalTier) anyTier;
+				IntervalTiers_append_inline (ti, (IntervalTier) thy tiers -> item[itier], preserveTimes);
+                // make sure last interval has correct end tTime
+                TextInterval last = (TextInterval) ti -> intervals -> item [ti -> intervals -> size];
+                last -> xmax = xmax;
+                Melder_assert (last -> xmax > last -> xmin);
 			} else { // TextTier
-				TextTiers_append_inline ((TextTier) anyTier, (TextTier) thy tiers -> item [itier], preserveTimes);
+                TextTier ti = (TextTier) anyTier;
+				TextTiers_append_inline (ti, (TextTier) thy tiers -> item [itier], preserveTimes);
+                ti -> xmax = xmax;
 			}
 		}
-		my xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
+		my xmax = xmax;
 	} catch (MelderError) {
 		Melder_throw ("TextGrids not appended.");
 	}

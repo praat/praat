@@ -53,11 +53,12 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 		NavDialogCreationOptions dialogOptions;
 		NavGetDefaultDialogCreationOptions (& dialogOptions);
 		dialogOptions. optionFlags |= kNavDontAutoTranslate;
-		dialogOptions. windowTitle = (CFStringRef) Melder_peekWcsToCfstring (title);
+		//dialogOptions. windowTitle = (CFStringRef) Melder_peekWcsToCfstring (title);
 		if (! allowMultipleFiles) dialogOptions. optionFlags &= ~ kNavAllowMultipleFiles;
 		err = NavCreateChooseFileDialog (& dialogOptions, NULL, NULL, NULL, NULL, NULL, & dialogRef);
 		if (err == noErr) {
 			NavReplyRecord reply;
+			[(NSOpenPanel *) dialogRef setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
 			NavDialogRun (dialogRef);
 			err = NavDialogGetReply (dialogRef, & reply);
 			if (err == noErr && reply. validRecord) {

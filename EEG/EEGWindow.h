@@ -26,6 +26,7 @@ Thing_define (EEGWindow, TextGridEditor) {
 	// new data:
 		public:
 			EEG d_eeg;
+			GuiObject d_extractSelectedEEGPreserveTimesButton, d_extractSelectedEEGTimeFromZeroButton;
 	// functions:
 		public:
 			void f_init (GuiObject parent, const wchar *title, EEG eeg);
@@ -35,6 +36,8 @@ Thing_define (EEGWindow, TextGridEditor) {
 			virtual void v_createMenus ();
 			virtual void v_createHelpMenuItems (EditorMenu menu);
 			virtual const wchar * v_getChannelName (long channelNumber);
+			virtual void v_createMenuItems_file_extract (EditorMenu menu);
+			virtual void v_updateMenuItems_file ();
 };
 
 EEGWindow EEGWindow_create (GuiObject parent, const wchar *title, EEG eeg);

@@ -1,6 +1,6 @@
-/* Network_enums.h
+/* VocalTractTier_def.h
  *
- * Copyright (C) 2012 Paul Boersma
+ * Copyright (C) 2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,22 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-enums_begin (kNetwork_weightUpdateRule, 0)
-	enums_add (kNetwork_weightUpdateRule, 0, HEBBIAN, L"Hebbian")
-	enums_add (kNetwork_weightUpdateRule, 1, INSTAR, L"instar")
-	enums_add (kNetwork_weightUpdateRule, 2, OUTSTAR, L"outstar")
-	enums_add (kNetwork_weightUpdateRule, 3, INOUTSTAR, L"inoutstar")
-enums_end (kNetwork_weightUpdateRule, 3, HEBBIAN)
+#define ooSTRUCT VocalTractPoint
+oo_DEFINE_CLASS (VocalTractPoint, AnyPoint)
 
-enums_begin (kNetwork_activationSpreadingRule, 0)
-	enums_add (kNetwork_activationSpreadingRule, 0, SIGMOID, L"sigmoid")
-	enums_add (kNetwork_activationSpreadingRule, 1, LINEAR, L"linear")
-enums_end (kNetwork_activationSpreadingRule, 1, SIGMOID)
+	oo_OBJECT (VocalTract, 0, d_vocalTract)
 
-/* End of file Network_enums.h */
+oo_END_CLASS (VocalTractPoint)
+#undef ooSTRUCT
+
+
+#define ooSTRUCT VocalTractTier
+oo_DEFINE_CLASS (VocalTractTier, Function)
+
+	oo_COLLECTION (SortedSetOfDouble, d_vocalTracts, VocalTractPoint, 0)
+
+oo_END_CLASS (VocalTractTier)
+#undef ooSTRUCT
+
+
+/* End of file VocalTract_def.h */

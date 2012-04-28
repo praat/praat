@@ -23,11 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120405)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120428)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.14# (28 April 2012)")
+LIST_ITEM (L"\\bu Linux: Tab shortcut for playing the selection.")
+LIST_ITEM (L"\\bu EPS files: higher minimum image resolution for spectrograms (300 instead of 106 dpi).")
+NORMAL (L"##5.3.13# (11 April 2012)")
+LIST_ITEM (L"\\bu @EEG: Extract part...")
 NORMAL (L"##5.3.12# (5 April 2012)")
-LIST_ITEM (L"\\bu Praat picture file: allow drawings with more than a million points.")
+LIST_ITEM (L"\\bu Praat picture file: allow larger function drawings (up to 10^9 instead of 10^6 points).")
 LIST_ITEM (L"\\bu Linux: better audio compatibility with Ubuntu 11.10 (support for unusual sampling frequencies when playing LongSounds).")
 NORMAL (L"##5.3.11# (27 March 2012)")
 LIST_ITEM (L"\\bu @EEG: a selected ERPTier can extract events on the basis of a column of a selected Table.")

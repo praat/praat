@@ -87,6 +87,19 @@ DO
 	}
 END
 
+FORM (EEG_extractPart, L"EEG: Extract part", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"1.0")
+	BOOLEAN (L"Preserve times", 0)
+	OK
+DO
+	LOOP {
+		iam (EEG);
+		autoEEG thee = my f_extractPart (GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Preserve times"));
+		praat_new (thee.transfer(), my name, L"_part");
+	}
+END
+
 DIRECT (EEG_extractSound)
 	LOOP {
 		iam (EEG);
@@ -613,6 +626,7 @@ void praat_EEG_init (void) {
 		praat_addAction1 (classEEG, 0, L"Set channel to zero...", 0, 1, DO_EEG_setChannelToZero);
 	praat_addAction1 (classEEG, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Extract channel...", 0, 0, DO_EEG_extractChannel);
+		praat_addAction1 (classEEG, 1, L"Extract part...", 0, 0, DO_EEG_extractPart);
 		praat_addAction1 (classEEG, 0, L"To ERPTier...", 0, 0, DO_EEG_to_ERPTier);
 	praat_addAction1 (classEEG, 0, L"Synthesize", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Concatenate", 0, 0, DO_EEGs_concatenate);

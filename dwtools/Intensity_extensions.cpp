@@ -113,10 +113,10 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 		// This works much better than first removing short silence intervals and
 		// then short non-silence intervals.
 
-		IntervalTier_removeBoundary_minimumDuration (it, soundingLabel, minSoundingDuration);
-		IntervalTier_removeBoundary_equalLabels (it, silenceLabel);
-		IntervalTier_removeBoundary_minimumDuration (it, silenceLabel, minSilenceDuration);
-		IntervalTier_removeBoundary_equalLabels (it, soundingLabel);
+		IntervalTier_cutIntervals_minimumDuration (it, soundingLabel, minSoundingDuration);
+		IntervalTier_cutIntervalsOnLabelMatch (it, silenceLabel);
+		IntervalTier_cutIntervals_minimumDuration (it, silenceLabel, minSilenceDuration);
+		IntervalTier_cutIntervalsOnLabelMatch (it, soundingLabel);
 
 		return thee.transfer();
 	} catch (MelderError) {

@@ -2,7 +2,7 @@
 #define _Eigen_h_
 /* Eigen.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20110306 Latest modification 
+ djmw 20110306 Latest modification
 */
 
 #include "Collection.h"
@@ -76,20 +76,20 @@ void Eigen_sort (I);
 
 void Eigen_invertEigenvector (I, long ivec);
 
-void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax, 
+void Eigen_drawEigenvalues (I, Graphics g, long first, long last, double ymin, double ymax,
 	int fractionOfTotal, int cumulative, double size_mm, const wchar_t *mark, int garnish);
-	
+
 void Eigen_drawEigenvector (I, Graphics g, long ivec, long first, long last,
 	double minimum, double maximum, int weigh, double size_mm, const wchar_t *mark,
 	int connect, wchar_t **rowLabels, int garnish);
 /*
 	Draw eigenvector. When rowLabels != NULL, draw row text labels on bottom axis.
 */
-	
+
 void Eigens_alignEigenvectors (Collection me);
 /*
 	Correlate all eigenvectors with the eigenvectors of the first Eigen.
-	If r < 0 then mirror the eigenvectors of 
+	If r < 0 then mirror the eigenvectors of
 */
 
 double Eigens_getAngleBetweenEigenplanes_degrees (I, thou);

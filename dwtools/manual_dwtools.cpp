@@ -2148,6 +2148,10 @@ NORMAL (L"Suppose we have a sample #%x = (%x__1_, %x__2_,...%x__n_) and wish to 
 	"removed.")
 MAN_END
 
+MAN_BEGIN (L"Kirshenbaum phonetic encoding", L"djmw", 20120413)
+INTRO (L"The Kirshenbaum phonetic encoding represents International Phonetic Alphabet symbols using ascii characters. See: http://www.kirshenbaum.net/IPA/ascii-ipa.pdf. The @@espeak@ speech synthesizer on which our synthesizer is based accepts this encoding as text input. ")
+MAN_END
+
 MAN_BEGIN (L"Legendre polynomials", L"djmw", 19990620)
 INTRO (L"The Legendre polynomials %P__%n_(%x) of degree %n are special "
 	"orthogonal polynomial functions defined on the domain [-1, 1].")
@@ -3417,6 +3421,21 @@ NORMAL (L"The effectiveness of the %%Minimum silent interval duration% and %%Min
 	"or silent intervals with a duration smaller than this effective analysis window duration.")
 MAN_END
 
+MAN_BEGIN (L"Sound: Trim silences...", L"djmw", 20120323)
+INTRO (L"A command that creates from the selected @Sound a new sound in which all silence durations are not longer than a specified value.")
+ENTRY (L"Settings")
+TAG (L"%%Trim duration (s)%,")
+DEFINITION (L"specifies the maximum allowed silence duration.")
+TAG (L"%%Minimum pitch (Hz)%, and, %Time step (s)%,")
+DEFINITION (L"determine how we measure the intensities on which the determination of silent intervals is based. See @@Sound: To Intensity...@ for more info.")
+TAG (L"%%Silence threshold (dB)%, %%Minimum silent interval duration (s)%, and %%Minimum sounding interval duration%,")
+DEFINITION (L"determine how the silent intervals will be determined. See @@Intensity: To TextGrid (silences)...@ for more info.")
+TAG (L"%%Save trimming info as TextGrid%,")
+DEFINITION (L"determines if a TextGrid with trimming information will also be created. The TextGrid will have one tier where interval of the %%originating% sound that were trimmed have been labeled. ")
+TAG (L"%%Trim label%,")
+DEFINITION (L"determines the label that the trimmed intervals in the TextGrid will get.")
+MAN_END
+
 MAN_BEGIN (L"Sound & Pitch: To FormantFilter...", L"djmw", 20010404)
 INTRO (L"A command that creates a @FormantFilter object from the selected "
 	"@Sound and @Pitch objects by @@band filtering in the frequency domain@ with a "
@@ -3494,32 +3513,69 @@ INTRO (L"Reverses the sign of the complex part of the selected @Spectrum object(
 NORMAL (L"For real signals, conjugation in the spectral domain amounts to time-inversion in the time domain.")
 MAN_END
 
-MAN_BEGIN (L"SpeechSynthesizer", L"djmw", 20111217)
-NORMAL (L"This is an interface for the @@Espeak@ speech synthesizer.")
+MAN_BEGIN (L"SpeechSynthesizer", L"djmw", 20120413)
+INTRO (L"The SpeechSynthesizer is one of the @@types of objects@ in Praat. It creates a speech sound from text. The actual text-to-speech synthesis is performed by the @@Espeak@ speech synthsizer and therefore our SpeechSynthsizer is merely an interface to Espeak.")
+ENTRY (L"Commands")
+NORMAL (L"Creation:")
+LIST_ITEM (L"\\bu @@Create SpeechSynthesizer...@")
+NORMAL (L"Playing:")
+LIST_ITEM (L"\\bu @@SpeechSynthesizer: Play text...|Play text...@")
+LIST_ITEM (L"\\bu @@SpeechSynthesizer: To Sound...|To Sound...@")
+NORMAL (L"Modification:")
+LIST_ITEM (L"\\bu @@SpeechSynthesizer: Set text input settings...|Set text input settings...@")
+LIST_ITEM (L"\\bu @@SpeechSynthesizer: Set speech output settings...|Set speech output settings...@")
 MAN_END
 
 MAN_BEGIN (L"Create SpeechSynthesizer...", L"djmw", 20120221)
 INTRO (L"Creates the @@Espeak@ speech synthesizer.")
 ENTRY (L"Settings")
-TAG (L"##Voice#,")
-DEFINITION (L"a list of the possible language-voice combinations you can use.")
-TAG (L"##Voice variant#,")
-DEFINITION (L"a list of variants of a voice such as male, female and whispered variants.")
-TAG (L"##Sampling frequency#,")
-DEFINITION (L"the sampling frequency of a resulting sound.")
-TAG (L"##Gap between words (s)#,")
-DEFINITION (L"determines the extra pause length after each spoken word.")
-TAG (L"##Pitch adjustment (0-99)#,")
-DEFINITION (L"determines the amount of Hz the pitch of the voice is increased, default is 50).")
-TAG (L"##Pitch range (0-99)#,")
-DEFINITION (L"determines the pitch range: 0 means monotonic, 50 means normal.")
-TAG (L"##Words per minute (80-450)#,")
-DEFINITION (L"determines the speeking rate in words per minute, default is 175.")
-TAG (L"##Interpret SSML#,")
-DEFINITION (L"determines whether Speech Synthesis Markup Language tags in the text will be used "
-	"during synthesis or not. ")
-TAG (L"##Interpret phoneme codes#,")
-DEFINITION (L"determines whether phoneme codes in the text will be used during synthesis or not.")
+TAG (L"##Language#")
+DEFINITION (L"determines the language of the synthesizer.")
+TAG (L"##Voice variant#")
+DEFINITION (L"determines which voice type the synthesizer uses (male, female or whispered voices).")
+MAN_END
+
+MAN_BEGIN (L"SpeechSynthesizer: Play text...", L"djmw", 20120413)
+INTRO (L"The selected @@SpeechSynthesizer@ plays a text")
+ENTRY (L"Settings")
+TAG (L"##Text#")
+DEFINITION (L"is the text to be played. Text within [[ ]] is treated as phonemes codes in @@Kirshenbaum phonetic encoding@. For example, besides a text like \"This is text\", you might also input \"This [[Iz]] text\".")
+MAN_END
+
+MAN_BEGIN (L"SpeechSynthesizer: To Sound...", L"djmw", 20120414)
+INTRO (L"The selected @@SpeechSynthesizer@ converts a text to the corresponding speech sound.")
+ENTRY (L"Settings")
+TAG (L"##Text#")
+DEFINITION (L"is the text to be played. Text within [[ ]] is treated as phonemes codes in @@Kirshenbaum phonetic encoding@. For example, besides a text like \"This is text\", you might also input \"This [[Iz]] text\".")
+TAG (L"##Create TextGrid with annotations#")
+DEFINITION (L"determines whether, besides the sound, a TextGrid with multiple-tier annotations will appear.")
+MAN_END
+
+MAN_BEGIN (L"SpeechSynthesizer: Set text input settings...", L"djmw", 20120414)
+INTRO (L"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
+ENTRY (L"Settings")
+TAG (L"##Input text format is#")
+DEFINITION (L"determines how the input text will be synthesized.")
+TAG (L"##Input phoneme codes are#")
+DEFINITION (L"")
+MAN_END
+
+MAN_BEGIN (L"SpeechSynthesizer: Set speech output settings...", L"djmw", 20120414)
+INTRO (L"A command available in the ##Modify# menu when you select a @@SpeechSynthesizer@.")
+ENTRY (L"Settings")
+TAG (L"##Sampling frequency#")
+DEFINITION (L"determines how the sampling frequency of the sound.")
+TAG (L"##Gap between words#")
+DEFINITION (L"determines the amount of silence between words.")
+TAG (L"##Pitch adjustment#")
+DEFINITION (L"")
+TAG (L"##Pitch range#")
+DEFINITION (L"")
+TAG (L"##Words per minute#")
+DEFINITION (L"determines the speaking rate in words per minute.")
+TAG (L"##estimate words per minute from data#")
+DEFINITION (L"")
+TAG (L"##Output phoneme codes are#")
 MAN_END
 
 MAN_BEGIN (L"SSCP", L"djmw", 19981103)
@@ -3703,6 +3759,17 @@ NORMAL (L"The test depends on a smoothing parameter %%h% that can be chosen in v
 NORMAL (L"@@Henze & Wagner (1997)@ recommend %h = 1.41, while")
 NORMAL (L"@@Tenreiro (2009)@ recommends  %h__%%s% _= 0.448 + 0.026\\.c%d for short tailed alternatives and "
 " %h__%%l%_ = 0.928 + 0.049\\.c%d for long tailed alternatives.")
+MAN_END
+
+MAN_BEGIN (L"Table: Get median absolute deviation...", L"djmw", 20120405)
+INTRO (L"Get the median absolute deviation (MAD) of the column in the selected @@Table@ (adjusted by a scale factor).")
+ENTRY (L"Algorithm")
+NORMAL (L"From the %n numbers %x__1_, %x__2_, ..., %x__%n_ in the selected column we first calculate the @@quantile algorithm|median@ "
+	"value %x__median_. Next we calculate the %n absolute deviations from this median: %d__1_, %d__2_, ..., %d__%n_, "
+	"where %d__%j_=|%x__%j_ - %x__median_|. "
+	"Then we calculate the MAD value, which is the median of the %n values %d__1_, %d__2_, ..., %d__%n_. Finally we multiply the MAD "
+	"value by the scale factor 1.4826. This last multiplication makes the result comparable with the value of the standard deviation if "
+	"the %x values are normally distributed.")
 MAN_END
 
 MAN_BEGIN (L"TableOfReal: Report multivariate normality (BHEP)...", L"djmw", 20090701)

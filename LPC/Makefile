@@ -1,5 +1,5 @@
 # Makefile of the library "LPC"
-# David Weenink, 20110530
+# David Weenink, 20120419
 
 include ../makefile.defs
 
@@ -12,6 +12,7 @@ OBJECTS = Cepstrum.o Cepstrumc.o Cepstrum_and_Spectrum.o \
 	LPC_and_Tube.o \
 	Sound_and_LPC.o  Sound_and_LPC_robust.o \
 	Sound_and_Cepstrum.o Tube.o \
+	VocalTractTier.o \
 	praat_LPC_init.o manual_LPC.o
 
 .PHONY: all clean

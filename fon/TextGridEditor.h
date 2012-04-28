@@ -37,7 +37,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		wchar *findString, greenString [Preferences_STRING_BUFFER_SIZE];
 		enum kTextGridEditor_showNumberOf showNumberOf;
 		enum kMelder_string greenMethod;
-		GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton, writeSelectedTextGridButton;
+		GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	// functions:
 	public:
 		void f_init (GuiObject parent, const wchar *title, TextGrid grid,

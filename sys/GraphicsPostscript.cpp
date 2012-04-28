@@ -71,7 +71,7 @@ static void downloadPrologAndSetUp (GraphicsPostscript me) {
 	 * Document setup: graphics state changes persistent across showpage calls.
 	 */
 	my d_printf (my d_file, "%%%%BeginSetup\n");
-	my d_printf (my d_file, "%d %d { dup mul exch dup mul add 1.0 exch sub } setscreen\n", my spotsDensity, my spotsAngle);
+	//my d_printf (my d_file, "%d %d { dup mul exch dup mul add 1.0 exch sub } setscreen\n", my spotsDensity, my spotsAngle);
 	my d_printf (my d_file, "true setstrokeadjust\n");
 	my d_printf (my d_file, "%%%%EndSetup\n");
 }

@@ -1,6 +1,6 @@
 /* Strings_extensions.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  djmw 20050714 New: Strings_to_Permutation, Strings_and_Permutation_permuteStrings.
  djmw 20050721 Extra argument in Strings_to_Permutation.
  djmw 20101007 StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes)
+ djmw 20120407 + Strings_createFromCharacters
 */
 
 #include "Strings_extensions.h"
@@ -45,6 +46,38 @@ Strings Strings_createFixedLength (long numberOfStrings) {
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Strings not created.");
+	}
+}
+
+Strings Strings_createAsCharacters (const wchar_t *string) {
+	try {
+		autoStrings me = Thing_new (Strings);
+		my numberOfStrings = wcslen (string);
+		my strings = NUMvector<wchar_t *> (1, my numberOfStrings);
+		autoMelderString s;
+		for (long i = 1; i <= my numberOfStrings; i++) {
+			MelderString_appendCharacter (&s, *string++);
+			my strings[i] = Melder_wcsdup (s.string);
+			MelderString_empty (&s);
+		}
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Strings from characters not created.");
+	}
+}
+
+Strings Strings_createAsTokens (const wchar_t *string) {
+	try {
+		autoStrings me = Thing_new (Strings);
+		my numberOfStrings =  Melder_countTokens (string);
+		my strings = NUMvector<wchar_t *> (1, my numberOfStrings);
+		long i = 1;
+		for (wchar_t *token = Melder_firstToken (string); token != 0; token = Melder_nextToken ()) {
+			my strings[i++] = Melder_wcsdup (token);
+		}
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Strings from characters not created.");
 	}
 }
 
@@ -238,6 +271,11 @@ Strings StringsIndex_to_Strings (StringsIndex me) {
 	} catch (MelderError) {
 		Melder_throw (me, ": no Strings created.");
 	}
+}
+
+double strings_defaultInsertionCost (const wchar *symbol) {
+	(void) symbol;
+	return 1;
 }
 
 /* End of file Strings_extensions.cpp */

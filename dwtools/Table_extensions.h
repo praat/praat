@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,20 +32,14 @@
 #include "SSCP.h"
 #include "Table.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
-
 Table Table_createFromPetersonBarneyData ();
 Table Table_createFromPolsVanNieropData ();
 Table Table_createFromWeeninkData ();
 
+double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
+
 void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
 	long yci_min, long yci_max, double bar_mm, int garnish);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif // _Table_extensions_h_

@@ -1,6 +1,6 @@
 /* manual_LPC.c
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -257,6 +257,7 @@ TAG (L"##Time (s)")
 DEFINITION (L"the time of the nearest frame, in seconds.")
 TAG (L"##Length (m)")
 DEFINITION (L"the length of the vocal tract, in metres.")
+/*
 TAG (L"##Compute length according to Wakita")
 DEFINITION (L"the length of the vocal tract is calculated according "
 	"to the algorithm as described in @@Wakita (1977)@.")
@@ -268,7 +269,7 @@ NORMAL (L"If ##Compute length according to Wakita# is on, the optimal length is 
 	"with respect to the @@Nyquist frequency@. For example, there is a large difference "
 	"between the vocal tract length estimates if the highest formant is just below or just above the "
 	"Nyquist frequency. "
-	"The algorithm is not very reliable in vocal tract length estimation and we do not recommend using it. " )
+	"The algorithm is not very reliable in vocal tract length estimation and we do not recommend using it. " )*/
 MAN_END
 
 MAN_BEGIN (L"LPC & Sound: Filter...", L"djmw", 20040407)
@@ -446,6 +447,10 @@ LIST_ITEM (L"1.  We perform a filter bank analysis on a mel frequency scale "
 	"(see @@Sound: To MelFilter...@ for details).")
 LIST_ITEM (L"2.  We convert the filter values to mel frequency cepstral "
 	"coefficients (see @@MelFilter: To MFCC...@ for details).")
+MAN_END
+
+MAN_BEGIN (L"VocalTractTier", L"djmw", 20120423)
+INTRO (L"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%time, %VocalTract) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
 
 MAN_BEGIN (L"Anderson (1978)", L"djmw", 20030701)

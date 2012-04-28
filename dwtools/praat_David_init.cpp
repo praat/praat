@@ -76,7 +76,9 @@
 #include "Collection_extensions.h"
 #include "Confusion.h"
 #include "Discriminant.h"
+#include "EditDistanceTable.h"
 #include "Editor.h"
+#include "EditDistanceTable.h"
 #include "Eigen_and_Matrix.h"
 #include "Eigen_and_Procrustes.h"
 #include "Eigen_and_SSCP.h"
@@ -1925,7 +1927,180 @@ END
 DIRECT (DTW_and_TextGrid_to_TextGrid)
 	DTW me = FIRST (DTW);
 	TextGrid tg = FIRST (TextGrid);
-	praat_new (DTW_and_TextGrid_to_TextGrid (me, tg), 0);
+	praat_new (DTW_and_TextGrid_to_TextGrid (me, tg, 0), 0);
+END
+
+DIRECT (DTW_and_IntervalTier_to_Table)
+	DTW me = FIRST (DTW);
+	IntervalTier ti = FIRST (IntervalTier);
+	praat_new (DTW_and_IntervalTier_to_Table (me, ti, 1.0/44100), my name);
+END
+
+/******************** EditDistanceTable & EditCostsTable ********************************************/
+
+DIRECT (EditDistanceTable_to_TableOfReal_directions)
+	LOOP {
+		iam (EditDistanceTable);
+		praat_new (EditDistanceTable_to_TableOfReal_directions (me), my name);
+	}
+END
+
+DIRECT (EditDistanceTable_setEditCosts)
+	EditDistanceTable me = FIRST (EditDistanceTable);
+	EditCostsTable thee = FIRST(EditCostsTable);
+	EditDistanceTable_setEditCosts (me, thee);
+END
+
+FORM (EditDistanceTable_draw, L"EditDistanceTable_draw", 0)
+	RADIO (L"Format", 3)
+		RADIOBUTTON (L"decimal")
+		RADIOBUTTON (L"exponential")
+		RADIOBUTTON (L"free")
+		RADIOBUTTON (L"rational")
+	NATURAL (L"Precision", L"1")
+	REAL (L"Rotate source labels by (degrees)", L"0.0")
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (EditDistanceTable);
+		EditDistanceTable_draw (me, GRAPHICS, GET_INTEGER (L"Format"), GET_INTEGER (L"Precision"), GET_REAL (L"Rotate source labels by"));
+	}
+END
+
+DIRECT (EditDistanceTable_drawEditOperations)
+	autoPraatPicture picture;
+	LOOP {
+		iam(EditDistanceTable);
+		EditDistanceTable_drawEditOperations (me, GRAPHICS);
+	}
+END
+
+DIRECT (EditCostsTable_help)
+	Melder_help (L"EditCostsTable");
+END
+
+FORM (EditCostsTable_getTargetIndex, L"EditCostsTable: Get target index", 0)
+	SENTENCE (L"Target", L"")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		Melder_informationReal (EditCostsTable_getTargetIndex (me, GET_STRING (L"Target")), NULL);
+	}
+END
+
+FORM (EditCostsTable_getSourceIndex, L"EditCostsTable: Get source index", 0)
+	SENTENCE (L"Source", L"")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		Melder_informationReal (EditCostsTable_getSourceIndex (me, GET_STRING (L"Source")), NULL);
+	}
+END
+
+FORM (EditCostsTable_getInsertionCost, L"EditCostsTable: Get insertion cost", 0)
+	SENTENCE (L"Target", L"")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		Melder_informationReal (EditCostsTable_getInsertionCost (me, GET_STRING (L"Target")), NULL);
+	}
+END
+
+FORM (EditCostsTable_getDeletionCost, L"EditCostsTable: Get deletion cost", 0)
+	SENTENCE (L"Source", L"")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		Melder_informationReal (EditCostsTable_getDeletionCost (me, GET_STRING (L"Source")), NULL);
+	}
+END
+
+FORM (EditCostsTable_getSubstitutionCost, L"EditCostsTable: Get substitution cost", 0)
+	SENTENCE (L"Target", L"")
+	SENTENCE (L"Source", L"")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		Melder_informationReal (EditCostsTable_getSubstitutionCost (me, GET_STRING (L"Target"), GET_STRING (L"Source")), NULL);
+	}
+END
+
+FORM (EditCostsTable_setTargetSymbol_index, L"EditCostsTable: Set target symbol (index)", 0)
+	NATURAL (L"Index", L"1")
+	SENTENCE (L"Target", L"a")
+	OK
+DO
+	LOOP {
+		iam (TableOfReal);
+		TableOfReal_setRowLabel (me, GET_INTEGER (L"Index"), GET_STRING (L"Target"));
+	}
+END
+
+FORM (EditCostsTable_setSourceSymbol_index, L"EditCostsTable: Set source symbol (index)", 0)
+	NATURAL (L"Index", L"1")
+	SENTENCE (L"Source", L"a")
+	OK
+DO
+	LOOP {
+		iam (TableOfReal);
+		TableOfReal_setColumnLabel (me, GET_INTEGER (L"Index"), GET_STRING (L"Source"));
+	}
+END
+
+FORM (EditCostsTable_setInsertionCosts, L"EditCostsTable: Set insertion costs", 0)
+	SENTENCE (L"Targets", L"")
+	REAL (L"Cost", L"2.0")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		EditCostsTable_setInsertionCosts (me, GET_STRING (L"Targets"), GET_REAL (L"Cost"));
+	}
+END
+
+FORM (EditCostsTable_setDeletionCosts, L"EditCostsTable: Set deletion costs", 0)
+	SENTENCE (L"Sources", L"")
+	REAL (L"Cost", L"2.0")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		EditCostsTable_setDeletionCosts (me, GET_STRING (L"Sources"), GET_REAL (L"Cost"));
+	}
+END
+
+FORM (EditCostsTable_setSubstitutionCosts, L"EditCostsTable: Set substitution costs", 0)
+	SENTENCE (L"Targets", L"a i u")
+	SENTENCE (L"Sources", L"a i u")
+	REAL (L"Cost", L"2.0")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		EditCostsTable_setSubstitutionCosts (me, GET_STRING (L"Targets"), GET_STRING (L"Sources"), GET_REAL (L"Cost"));
+	}
+END
+
+DIRECT (EditCostsTable_to_TableOfReal)
+	LOOP {
+		iam (EditCostsTable);
+		praat_new (EditCostsTable_to_TableOfReal (me), my name);
+	}
+END
+
+FORM (EditCostsTable_createEmpty, L"Create empty EditCostsTable", 0)
+	SENTENCE (L"Name", L"editCosts")
+	NATURAL (L"Target alphabet size", L"10")
+	NATURAL (L"Source alphabet size", L"10")
+	OK
+DO
+	praat_new (EditCostsTable_create (GET_INTEGER (L"Target alphabet size"), GET_INTEGER (L"Source alphabet size")), GET_STRING (L"Name"));
 END
 
 /******************** Eigen ********************************************/
@@ -2860,7 +3035,7 @@ END
 FORM (Intensity_to_TextGrid_detectSilences, L"Intensity: To TextGrid (silences)", L"Intensity: To TextGrid (silences)...")
 	REAL (L"Silence threshold (dB)", L"-25.0")
 	POSITIVE (L"Minimum silent interval duration (s)", L"0.1")
-	POSITIVE (L"Minimum sounding interval duration (s)", L"0.1")
+	POSITIVE (L"Minimum sounding interval duration (s)", L"0.05")
 	WORD (L"Silent interval label", L"silent")
 	WORD (L"Sounding interval label", L"sounding")
 	OK
@@ -2963,6 +3138,18 @@ DIRECT (Table_to_KlattTable)
 	LOOP {
 		iam (Table);
 		praat_new (Table_to_KlattTable (me), my name);
+	}
+END
+
+FORM (Table_getMedianAbsoluteDeviation, L"Table: Get median absolute deviation", L"Table: Get median absolute deviation...")
+	SENTENCE (L"Column label", L"")
+	OK
+DO
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		double mad = Table_getMedianAbsoluteDeviation (me, icol);
+		Melder_information (Melder_double (mad));
 	}
 END
 
@@ -4397,6 +4584,16 @@ DO
 		GET_REAL (L"Multiply pitch by"), GET_REAL (L"Multiply pitch range by"), GET_REAL (L"Multiply duration")), my name, L"_", p->name);
 END
 
+FORM (Sound_and_IntervalTier_cutPartsMatchingLabel, L"Sound & IntervalTier: Cut parts matching label", 0)
+	SENTENCE (L"Label", L"cut")
+	OK
+DO
+	const wchar_t *label = GET_STRING (L"Label");
+	Sound me = FIRST (Sound);
+	IntervalTier thee = FIRST (IntervalTier);
+	praat_new (Sound_and_IntervalTier_cutPartsMatchingLabel (me, thee, label), my name, L"_cut");
+END
+
 FORM (Sound_createFromGammaTone, L"Create a gammatone", L"Create Sound from gammatone...")
 	WORD (L"Name", L"gammatone")
 	Sound_create_addCommonFields (dia);
@@ -4539,29 +4736,41 @@ DO
 	}
 END
 
-FORM (Sound_trimSilences, L"Sound: Trim silences", 0)
-	BOOLEAN (L"At start", 1)
-	BOOLEAN (L"At end", 1)
+FORM (Sound_trimSilences, L"Sound: Trim silences", L"Sound: Trim silences...")
+    REAL (L"Trim duration (s)", L"0.08")
+	BOOLEAN (L"Only at start and end", 1);
 	LABEL (L"", L"Parameters for the intensity analysis")
 	POSITIVE (L"Minimum pitch (Hz)", L"100")
 	REAL (L"Time step (s)", L"0.0 (= auto)")
 	LABEL (L"", L"Silent intervals detection")
-	REAL (L"Silence threshold (dB)", L"-25.0")
+	REAL (L"Silence threshold (dB)", L"-35.0")
 	POSITIVE (L"Minimum silent interval duration (s)", L"0.1")
-	POSITIVE (L"Minimum sounding interval duration (s)", L"0.1")
+	POSITIVE (L"Minimum sounding interval duration (s)", L"0.05")
+    BOOLEAN (L"Save trimming info as TextGrid", 0)
+    WORD (L"Trim label", L"trimmed")
 	OK
 DO
-	bool atStart = GET_INTEGER (L"At start");
-	bool atEnd = GET_INTEGER (L"At end");
+    double trimDuration = GET_REAL (L"Trim duration");
+    if (trimDuration < 0) {
+        trimDuration = 0;
+    }
+	bool onlyAtStartAndEnd = GET_INTEGER (L"Only at start and end");
 	double minPitch = GET_REAL (L"Minimum pitch");
 	double timeStep = GET_REAL (L"Time step");
 	double silenceThreshold = GET_REAL (L"Silence threshold");
 	double minSilenceDuration = GET_REAL (L"Minimum silent interval duration");
 	double minSoundingDuration = GET_REAL (L"Minimum sounding interval duration");
+    bool saveTextGrid = GET_INTEGER (L"Save trimming info as TextGrid");
+    const wchar_t *trimlabel = GET_STRING (L"Trim label");
 	LOOP {
 		iam (Sound);
-		autoSound thee = Sound_trimSilences (me, atStart, atEnd, minPitch, timeStep, silenceThreshold,
-			minSilenceDuration, minSoundingDuration, NULL, NULL);
+        TextGrid tg = NULL;
+		autoSound thee = Sound_trimSilences (me, trimDuration, onlyAtStartAndEnd, minPitch, timeStep, silenceThreshold,
+			minSilenceDuration, minSoundingDuration, (saveTextGrid ? &tg : 0), trimlabel);
+        autoTextGrid atg = tg;
+        if (saveTextGrid) {
+            praat_new (atg.transfer(), my name, L"_trimmed");
+        }
 		praat_new (thee.transfer(), my name, L"_trimmed");
 	}
 END
@@ -4982,64 +5191,30 @@ END
 
 /************* SpeechSynthesizer *************************************************/
 
-static void SpeechSynthesizer_addCommonFields (void *dia) {
-	REAL (L"Gap between words (s)", L"0.01")
-	INTEGER (L"Pitch adjustment (0-99)", L"50")
-	INTEGER (L"Pitch range (0-99)", L"50");
-	NATURAL (L"Words per minute (80-450)", L"175");
-	BOOLEAN (L"Interpret SSML", 1);
-	BOOLEAN (L"Interpret phoneme codes", 0);
-}
-
-static void SpeechSynthesizer_CheckCommonFields (void *dia, double *wordgap, long *pitchAdjustment,
-	long *pitchRange, long *wordsPerMinute, bool *interpretSSML, bool *interpretPhonemeCodes) {
-	*wordgap = GET_REAL (L"Gap between words");
-	if (*wordgap < 0) *wordgap = 0;
-	*pitchAdjustment = GET_INTEGER (L"Pitch adjustment");
-	if (*pitchAdjustment < 0) *pitchAdjustment = 0;
-	if (*pitchAdjustment > 99) *pitchAdjustment = 99;
-	*pitchRange = GET_INTEGER (L"Pitch range");
-	if (*pitchRange < 0) *pitchRange = 0;
-	if (*pitchRange > 99) *pitchRange = 99;
-
-	*wordsPerMinute = GET_INTEGER (L"Words per minute");
-	*interpretSSML = GET_INTEGER (L"Interpret SSML");
-	*interpretPhonemeCodes = GET_INTEGER (L"Interpret phoneme codes");
-}
-
 DIRECT (SpeechSynthesizer_help)
 	Melder_help (L"SpeechSynthesizer");
 END
 
 FORM (SpeechSynthesizer_create, L"Create SpeechSynthesizer", L"Create SpeechSynthesizer...")
-	long prefVoice = Strings_findString (espeakdata_voices_names, L"english");
+	long prefVoice = Strings_findString (espeakdata_voices_names, L"English");
 	if (prefVoice == 0) {
 		prefVoice = 1;
 	}
-	LIST (L"Voice", espeakdata_voices_names -> numberOfStrings, (const wchar_t **) espeakdata_voices_names -> strings, prefVoice)
+	LIST (L"Language", espeakdata_voices_names -> numberOfStrings, (const wchar_t **) espeakdata_voices_names -> strings, prefVoice)
 	long prefVariant = Strings_findString (espeakdata_variants_names, L"default");
 	LABEL (L"", L"The voice variants will only work in a future version o Praat")
 	LIST (L"Voice variant", espeakdata_variants_names -> numberOfStrings,
 		(const wchar_t **) espeakdata_variants_names -> strings, prefVariant)
-	POSITIVE (L"Sampling frequency (Hz)", L"44100")
-	SpeechSynthesizer_addCommonFields (dia);
 	OK
 DO
-	long voiceIndex = GET_INTEGER (L"Voice");
+	long voiceIndex = GET_INTEGER (L"Language");
 	long variantIndex = GET_INTEGER (L"Voice variant"); // default is not in the list!
-	double wordgap;
-	long pitchAdjustment, pitchRange, wordsPerMinute;
-	bool interpretSSML, interpretPhonemeCodes;
-	SpeechSynthesizer_CheckCommonFields (dia, &wordgap, &pitchAdjustment, &pitchRange, &wordsPerMinute,
-		&interpretSSML, &interpretPhonemeCodes);
-	autoSpeechSynthesizer me = SpeechSynthesizer_create (voiceIndex, variantIndex,
-		GET_REAL (L"Sampling frequency"), wordgap,
-		pitchAdjustment, pitchRange, wordsPerMinute, interpretSSML, interpretPhonemeCodes);
+	autoSpeechSynthesizer me = SpeechSynthesizer_create (voiceIndex, variantIndex);
     praat_new (me.transfer(),  espeakdata_voices_names -> strings[voiceIndex], L"_",
         espeakdata_variants_names -> strings[variantIndex]);
 END
 
-FORM (SpeechSynthesizer_playText, L"SpeechSynthesizer: Play text", 0)
+FORM (SpeechSynthesizer_playText, L"SpeechSynthesizer: Play text", L"SpeechSynthesizer: Play text...")
 	SENTENCE (L"Text", L"This is some text.")
 	OK
 DO
@@ -5050,62 +5225,20 @@ DO
 	}
 END
 
-FORM (SpeechSynthesizer_playText_special, L"SpeechSynthesizer: Play text (special)", 0)
+FORM (SpeechSynthesizer_to_Sound, L"SpeechSynthesizer: To Sound", L"SpeechSynthesizer: To Sound...")
 	SENTENCE (L"Text", L"This is some text.")
-	SpeechSynthesizer_addCommonFields (dia);
+	BOOLEAN (L"Create TextGrid with annotations", 0);
 	OK
 DO
 	const wchar_t *text = GET_STRING (L"Text");
-	double wordgap;
-	long pitchAdjustment, pitchRange, wordsPerMinute;
-	bool interpretSSML, interpretPhonemeCodes;
-	SpeechSynthesizer_CheckCommonFields (dia, &wordgap, &pitchAdjustment, &pitchRange, &wordsPerMinute,
-		&interpretSSML, &interpretPhonemeCodes);
-	LOOP {
-		iam (SpeechSynthesizer);
-		autoSound thee = SpeechSynthesizer_to_Sound_special (me, text, wordgap, pitchAdjustment, pitchRange,
-			wordsPerMinute, interpretSSML, interpretPhonemeCodes, false, NULL, NULL);
-		Sound_play (thee.peek(), 0, 0);
-	}
-END
-
-
-FORM (SpeechSynthesizer_to_Sound, L"SpeechSynthesizer: To_Sound", L"")
-	SENTENCE (L"Text", L"This is some text.")
-	OK
-DO
-	const wchar_t *text = GET_STRING (L"Text");
-	LOOP {
-		iam (SpeechSynthesizer);
-		autoSound thee = SpeechSynthesizer_to_Sound (me, text);
-		praat_new (thee.transfer(), my name);
-	}
-END
-
-FORM (SpeechSynthesizer_to_Sound_special, L"SpeechSynthesizer: To_Sound (special)", L"")
-	SENTENCE (L"Text", L"This is some text.")
-	SpeechSynthesizer_addCommonFields (dia);
-	BOOLEAN (L"TextGrid with annotations", 0);
-	BOOLEAN (L"IPA annotation", 1);
-	OK
-DO
-	const wchar_t *text = GET_STRING (L"Text");
-	double wordgap;
-	long pitchAdjustment, pitchRange, wordsPerMinute;
-	bool interpretSSML, interpretPhonemeCodes;
-	SpeechSynthesizer_CheckCommonFields (dia, &wordgap, &pitchAdjustment, &pitchRange, &wordsPerMinute,
-		&interpretSSML, &interpretPhonemeCodes);
-	bool getAnnotation = GET_INTEGER (L"TextGrid with annotations");
-	bool ipa = GET_INTEGER (L"IPA annotation");
+	bool createTextGrid = GET_INTEGER (L"Create TextGrid with annotations");
 	LOOP {
 		iam (SpeechSynthesizer);
 		TextGrid tg = 0; Table t = 0;
-		autoSound thee = SpeechSynthesizer_to_Sound_special (me, text, wordgap,
-			pitchAdjustment, pitchRange, wordsPerMinute, interpretSSML, interpretPhonemeCodes, ipa,
-			(getAnnotation ? &tg : NULL), (Melder_debug == -2 ? &t : NULL));
+		autoSound thee = SpeechSynthesizer_to_Sound (me, text, (createTextGrid ? &tg : NULL), (Melder_debug == -2 ? &t : NULL));
 		autoTextGrid atg = tg; autoTable atr = t;
 		praat_new (thee.transfer(), my name);
-		if (getAnnotation) {
+		if (createTextGrid) {
 			praat_new (atg.transfer(), my name);
 		}
 		if (Melder_debug == -2) {
@@ -5128,36 +5261,51 @@ DIRECT (SpeechSynthesizer_getVoiceVariant)
 	}
 END
 
-FORM (SpeechSynthesizer_setSamplingFrequency, L"SpeechSynthesizer: Set sampling frequency", 0)
+FORM (SpeechSynthesizer_setTextInputSettings, L"SpeechSynthesizer: Set text input settings", L"SpeechSynthesizer: Set text input settings...")
+	OPTIONMENU (L"Input text format is", 1)
+	OPTION (L"Text only")
+	OPTION (L"Phoneme codes only")
+	OPTION (L"Mixed with tags")
+	OPTIONMENU (L"Input phoneme codes are", 1)
+	OPTION (L"Hirschenbaum_espeak")
+	OK
+DO
+	int inputTextFormat = GET_INTEGER (L"Input text format is");
+	int inputPhonemeCoding = SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM; //
+	LOOP {
+		iam (SpeechSynthesizer);
+		SpeechSynthesizer_setTextInputSettings (me, inputTextFormat, inputPhonemeCoding);
+	}
+END
+
+FORM (SpeechSynthesizer_setSpeechOutputSettings, L"SpeechSynthesizer: Set speech output settings", L"SpeechSynthesizer: Set speech output settings...")
 	POSITIVE (L"Sampling frequency (Hz)", L"44100")
+	REAL (L"Gap between words (s)", L"0.01")
+	INTEGER (L"Pitch adjustment (0-99)", L"50")
+	INTEGER (L"Pitch range (0-99)", L"50");
+	NATURAL (L"Words per minute (80-450)", L"175");
+	BOOLEAN (L"Estimate words per minute from data", 1);
+	OPTIONMENU (L"Output phoneme codes are", 2)
+	OPTION (L"Hirschenbaum_espeak")
+	OPTION (L"IPA")
 	OK
 DO
 	double samplingFrequency = GET_REAL (L"Sampling frequency");
-	LOOP {
-		iam (SpeechSynthesizer);
-		SpeechSynthesizer_setSamplingFrequency (me, samplingFrequency);
-	}
-END
-
-FORM (SpeechSynthesizer_setSpeakingRate, L"SpeechSynthesizer: Set speaking rate", 0)
-	POSITIVE (L"Speaking rate (words per minute)", L"175")
-	OK
-DO
-	double speakingRate = GET_REAL (L"Speaking rate");
-	LOOP {
-		iam (SpeechSynthesizer);
-		SpeechSynthesizer_setSpeakingRate (me, speakingRate);
-	}
-END
-
-FORM (SpeechSynthesizer_setWordGap, L"SpeechSynthesizer: Set word gap", 0)
-	POSITIVE (L"Gap between words (s)", L"0.01")
-	OK
-DO
 	double wordgap = GET_REAL (L"Gap between words");
+	if (wordgap < 0) wordgap = 0;
+	double pitchAdjustment = GET_INTEGER (L"Pitch adjustment");
+	if (pitchAdjustment < 0) pitchAdjustment = 0;
+	if (pitchAdjustment > 99) pitchAdjustment = 99;
+	double pitchRange = GET_INTEGER (L"Pitch range");
+	if (pitchRange < 0) pitchRange = 0;
+	if (pitchRange > 99) pitchRange = 99;
+	double wordsPerMinute = GET_INTEGER (L"Words per minute");
+	bool estimateWordsPerMinute = GET_INTEGER (L"Estimate words per minute from data");
+	int outputPhonemeCodes = GET_INTEGER (L"Output phoneme codes are");
+
 	LOOP {
 		iam (SpeechSynthesizer);
-		SpeechSynthesizer_setWordGap (me, wordgap);
+		SpeechSynthesizer_setSpeechOutputSettings (me, samplingFrequency, wordgap, pitchAdjustment, pitchRange, wordsPerMinute, estimateWordsPerMinute, outputPhonemeCodes);
 	}
 END
 
@@ -5166,19 +5314,17 @@ END
 FORM (SpeechSynthesizer_and_TextGrid_to_Sound, L"SpeechSynthesizer & TextGrid: To Sound", 0)
 	NATURAL (L"Tier number", L"1")
 	NATURAL (L"Interval number", L"1")
-	BOOLEAN (L"Add phoneme identification", 0)
-	BOOLEAN (L"TextGrid with annotations", 0);
+	BOOLEAN (L"Create TextGrid with annotations", 0);
 	OK
 DO
-	bool getAnnotation = GET_INTEGER (L"TextGrid with annotations");
+	bool createTextGrid = GET_INTEGER (L"Create TextGrid with annotations");
 	SpeechSynthesizer me = FIRST (SpeechSynthesizer);
 	TextGrid thee = FIRST (TextGrid), tg = 0;
-	autoSound him = SpeechSynthesizer_and_TextGrid_to_Sound (me, thee,
-		GET_INTEGER (L"Tier number"), GET_INTEGER (L"Interval number"),
-		GET_INTEGER (L"Add phoneme identification"), (getAnnotation ? &tg : NULL));
+	autoSound him = SpeechSynthesizer_and_TextGrid_to_Sound (me, thee, GET_INTEGER (L"Tier number"),
+		GET_INTEGER (L"Interval number"), (createTextGrid ? &tg : NULL));
 	autoTextGrid atg = tg;
 	praat_new (him.transfer(), my name);
-	if (getAnnotation) {
+	if (createTextGrid) {
 		praat_new (atg.transfer(), my name);
 	}
 END
@@ -5202,6 +5348,32 @@ DO
 		GET_INTEGER (L"Tier number"), GET_INTEGER (L"From interval number"),
 		GET_INTEGER (L"To interval number"), silenceThreshold, minSilenceDuration, minSoundingDuration);
 	praat_new (thee.transfer(), thy name, L"_aligned");
+END
+
+FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align2, L"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", 0)
+    NATURAL (L"Tier number", L"1")
+    NATURAL (L"From interval number", L"1")
+    NATURAL (L"To interval number", L"1")
+    REAL (L"Silence threshold (dB)", L"-35.0")
+    POSITIVE (L"Minimum silent interval duration (s)", L"0.1")
+    POSITIVE (L"Minimum sounding interval duration (s)", L"0.1")
+    REAL (L"Silence trim duration (s)", L"0.08")
+    OK
+DO
+    double silenceThreshold = GET_REAL (L"Silence threshold");
+    double minSilenceDuration = GET_REAL (L"Minimum silent interval duration");
+    double minSoundingDuration = GET_REAL (L"Minimum sounding interval duration");
+    double trimDuration = GET_REAL (L"Silence trim duration");
+    if (trimDuration < 0) {
+        trimDuration = 0;
+    }
+    SpeechSynthesizer synth = FIRST (SpeechSynthesizer);
+    Sound s = FIRST (Sound);
+    TextGrid tg = FIRST (TextGrid);
+    autoTextGrid thee = SpeechSynthesizer_and_Sound_and_TextGrid_align2 (synth, s, tg,
+        GET_INTEGER (L"Tier number"), GET_INTEGER (L"From interval number"),
+        GET_INTEGER (L"To interval number"), silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
+    praat_new (thee.transfer(), thy name, L"_aligned");
 END
 
 /************* Spline *************************************************/
@@ -5427,6 +5599,20 @@ DIRECT (Strings_createFromEspeakVoices)
 	praat_new (NULL, L"voices");
 END
 
+FORM (Strings_createAsCharacters, L"Strings: Create as characters", 0)
+	SENTENCE (L"Text", L"intention")
+	OK
+DO
+	praat_new (Strings_createAsCharacters (GET_STRING (L"Text")), 0);
+END
+
+FORM (Strings_createAsTokens, L"Strings: Create as tokens", 0)
+	SENTENCE (L"Text", L"There are seven tokens in this text")
+	OK
+DO
+	praat_new (Strings_createAsTokens (GET_STRING (L"Text")), 0);
+END
+
 DIRECT (Strings_append)
 	autoCollection set = praat_getSelectedObjects ();
 	praat_new (Strings_append (set.transfer()), L"appended");
@@ -5477,6 +5663,17 @@ DO
 		iam (Strings);
 		praat_new (Strings_extractPart (me, GET_INTEGER (L"From index"), GET_INTEGER (L"To index")), my name, L"_part");
 	}
+END
+
+DIRECT (Strings_to_EditDistanceTable)
+	Strings s1 = NULL, s2 = NULL;
+	LOOP {
+		iam(Strings);
+		(s1 ? s2 : s1) = me;
+	}
+	Melder_assert (s1 != NULL && s2 != NULL);
+	autoEditDistanceTable table = EditDistanceTable_create (s1, s2);
+	praat_new (table.transfer(), s1 -> name, L"_", s2 -> name);
 END
 
 FORM (Strings_to_Permutation, L"Strings: To Permutation", L"Strings: To Permutation...")
@@ -6114,6 +6311,20 @@ DO
 	}
 END
 
+FORM (TextGrids_to_Table_textAlignmentment, L"TextGrids: To Table (text alignment)", 0)
+	NATURAL (L"Target tier", L"1")
+	NATURAL (L"Source tier", L"1")
+	OK
+DO
+	TextGrid tg1 = 0, tg2 = 0;
+    LOOP {
+        iam (TextGrid);
+        (tg1 ? tg2 : tg1) = me;
+    }
+    Melder_assert (tg1 && tg2);
+	praat_new (TextGrids_to_Table_textAlignmentment (tg1, GET_INTEGER (L"Target tier"), tg2, GET_INTEGER (L"Source tier"), 0), tg1 -> name, L"_", tg2 -> name);
+END
+
 FORM (TextGrid_setTierName, L"TextGrid: Set tier name", L"TextGrid: Set tier name...")
 	NATURAL (L"Tier number:", L"1")
 	SENTENCE (L"Name", L"");
@@ -6306,6 +6517,20 @@ void praat_TableOfReal_init2 (ClassInfo klas) {
 	praat_addAction1 (klas, 0, L"To TableOfReal", L"To Matrix", 1, DO_TableOfReal_to_TableOfReal);
 }
 
+void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas) {
+	praat_TableOfReal_init (klas);
+	praat_removeAction (klas, NULL, NULL, L"Draw as numbers...");
+	praat_addAction1 (klas, 0, L"Draw...", L"Draw -", 1, DO_EditDistanceTable_draw);
+	praat_addAction1 (klas, 0, L"Draw edit operations...", L"Draw...", 1, DO_EditDistanceTable_drawEditOperations);
+	praat_removeAction (klas, NULL, NULL, L"Draw as numbers if...");
+	praat_removeAction (klas, NULL, NULL, L"Draw as squares...");
+	praat_removeAction (klas, NULL, NULL, L"Draw vertical lines...");
+	praat_removeAction (klas, NULL, NULL, L"Draw horizontal lines...");
+	praat_removeAction (klas, NULL, NULL, L"Draw left and right lines...");
+	praat_removeAction (klas, NULL, NULL, L"Draw top and bottom lines...");
+	praat_removeAction (klas, NULL, NULL, L"-- draw lines --");
+}
+
 void praat_uvafon_David_init ();
 void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
@@ -6315,7 +6540,8 @@ void praat_uvafon_David_init () {
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
-		classEigen, classExcitations, classFileInMemory, classFilesInMemory, classFormantFilter,
+		classEigen, classExcitations, classEditCostsTable, classEditDistanceTable,
+		classFileInMemory, classFilesInMemory, classFormantFilter,
 		classIndex, classKlattTable,
 		classPermutation, classISpline, classLegendreSeries,
 		classMelFilter, classMSpline, classPattern, classPCA, classPolynomial, classRoots,
@@ -6349,7 +6575,12 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (L"Objects", L"New", L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Van Nierop 1973)...", 1, DO_TableOfReal_createFromWeeninkData);
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple Confusion...", L"Create TableOfReal (Weenink 1985)...", 1, DO_Confusion_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple Covariance...", L"Create simple Confusion...", 1, DO_Covariance_createSimple);
+	praat_addMenuCommand (L"Objects", L"New", L"Create empty EditCostsTable...", L"Create simple Covariance...", 1, DO_EditCostsTable_createEmpty);
+
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, DO_KlattTable_createExample);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as characters", L"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsCharacters);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as tokens", L"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsTokens);
+
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple Polygon...", 0, praat_HIDDEN, DO_Polygon_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Polygon (random vertices)...", 0, praat_HIDDEN, DO_Polygon_createFromRandomVertices);
 	praat_addMenuCommand (L"Objects", L"New", L"FilesInMemory", 0, praat_HIDDEN, 0);
@@ -6605,11 +6836,31 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classDTW, 1, classMatrix, 1, L"Replace matrix", 0, 0, DO_DTW_and_Matrix_replace);
 	praat_addAction2 (classDTW, 1, classTextGrid, 1, L"To TextGrid (warp times)", 0, 0, DO_DTW_and_TextGrid_to_TextGrid);
+	praat_addAction2 (classDTW, 1, classIntervalTier, 1, L"To Table (distances)", 0, 0, DO_DTW_and_IntervalTier_to_Table);
 
     praat_addAction2 (classDTW, 1, classPolygon, 1, L"Find path inside...", 0, 0, DO_DTW_and_Polygon_findPathInside);
     praat_addAction2 (classDTW, 1, classPolygon, 1, L"To Matrix (cumm. distances)...", 0, 0, DO_DTW_and_Polygon_to_Matrix_cummulativeDistances);
 	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw...", 0, 0, DO_DTW_and_Sounds_draw);
 	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw warp (x)...", 0, 0, DO_DTW_and_Sounds_drawWarpX);
+
+	praat_EditDistanceTable_as_TableOfReal_init (classEditDistanceTable);
+	praat_addAction1 (classEditDistanceTable, 1, L"To TableOfReal (directions)...", 0, 0, DO_EditDistanceTable_to_TableOfReal_directions);
+	praat_addAction2 (classEditDistanceTable, 1, classEditCostsTable, 1, L"Set new edit costs", 0, 0, DO_EditDistanceTable_setEditCosts);
+
+	praat_addAction1 (classEditCostsTable, 1, L"EditCostsTable help", 0, 0, DO_EditCostsTable_help);
+	praat_addAction1 (classEditCostsTable, 0, QUERY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classEditCostsTable, 1, L"Get target index...", 0, 1, DO_EditCostsTable_getTargetIndex);
+	praat_addAction1 (classEditCostsTable, 1, L"Get source index...", 0, 1, DO_EditCostsTable_getSourceIndex);
+	praat_addAction1 (classEditCostsTable, 1, L"Get insertion cost...", 0, 1, DO_EditCostsTable_getInsertionCost);
+	praat_addAction1 (classEditCostsTable, 1, L"Get deletion cost...", 0, 1, DO_EditCostsTable_getDeletionCost);
+	praat_addAction1 (classEditCostsTable, 1, L"Get substitution cost...", 0, 1, DO_EditCostsTable_getSubstitutionCost);
+	praat_addAction1 (classEditCostsTable, 0, MODIFY_BUTTON, 0, 0, 0);
+	praat_addAction1 (classEditCostsTable, 1, L"Set target symbol (index)...", 0, 1, DO_EditCostsTable_setTargetSymbol_index);
+	praat_addAction1 (classEditCostsTable, 1, L"Set source symbol (index)...", 0, 1, DO_EditCostsTable_setSourceSymbol_index);
+	praat_addAction1 (classEditCostsTable, 1, L"Set insertion costs...", 0, 1, DO_EditCostsTable_setInsertionCosts);
+	praat_addAction1 (classEditCostsTable, 1, L"Set deletion costs...", 0, 1, DO_EditCostsTable_setDeletionCosts);
+	praat_addAction1 (classEditCostsTable, 1, L"Set substitution costs...", 0, 1, DO_EditCostsTable_setSubstitutionCosts);
+	praat_addAction1 (classEditCostsTable, 1, L"To TableOfReal", 0, 0, DO_EditCostsTable_to_TableOfReal);
 
 	praat_Index_init (classStringsIndex);
 	praat_addAction1 (classIndex, 0, L"Index help", 0, 0, DO_Index_help);
@@ -6855,7 +7106,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classSound, 1, classPitch, 1, L"Change gender...", 0, 0, DO_Sound_and_Pitch_changeGender);
 	praat_addAction2 (classSound, 1, classPitch, 1, L"Change speaker...", 0, praat_HIDDEN, DO_Sound_and_Pitch_changeSpeaker);
-
+	praat_addAction2 (classSound, 1, classIntervalTier, 1, L"Cut parts matching label...", 0, 0, DO_Sound_and_IntervalTier_cutPartsMatchingLabel);
 	praat_addAction1 (classSpectrogram, 2, L"To DTW...", L"To Spectrum (slice)...", 0, DO_Spectrograms_to_DTW);
 
 	praat_addAction1 (classSpectrum, 0, L"Draw phases...", L"Draw (log freq)...", 1, DO_Spectrum_drawPhases);
@@ -6866,20 +7117,17 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classSpeechSynthesizer, 0, L"SpeechSynthesizer help", 0, 0, DO_SpeechSynthesizer_help);
 	praat_addAction1 (classSpeechSynthesizer, 0, L"Play text...", 0, 0, DO_SpeechSynthesizer_playText);
-	praat_addAction1 (classSpeechSynthesizer, 0, L"Play text (special)...", 0, 0, DO_SpeechSynthesizer_playText_special);
 	praat_addAction1 (classSpeechSynthesizer, 0, L"To Sound...", 0, 0, DO_SpeechSynthesizer_to_Sound);
-	praat_addAction1 (classSpeechSynthesizer, 0, L"To Sound (special)...", 0, 0, DO_SpeechSynthesizer_to_Sound_special);
 	praat_addAction1 (classSpeechSynthesizer, 0, QUERY_BUTTON, 0, 0, 0);
 		praat_addAction1 (classSpeechSynthesizer, 1, L"Get voice name", 0, 1, DO_SpeechSynthesizer_getVoiceName);
 		praat_addAction1 (classSpeechSynthesizer, 1, L"Get voice variant", 0, 1, DO_SpeechSynthesizer_getVoiceVariant);
 	praat_addAction1 (classSpeechSynthesizer, 0, MODIFY_BUTTON, 0, 0, 0);
-		praat_addAction1 (classSpeechSynthesizer, 0, L"Set sampling frequency...", 0, 1, DO_SpeechSynthesizer_setSamplingFrequency);
-		praat_addAction1 (classSpeechSynthesizer, 0, L"Set speaking rate...", 0, 1, DO_SpeechSynthesizer_setSpeakingRate);
-		praat_addAction1 (classSpeechSynthesizer, 0, L"Set word gap...", 0, 1, DO_SpeechSynthesizer_setWordGap);
-
+		praat_addAction1 (classSpeechSynthesizer, 0, L"Set text input settings...", 0, 1, DO_SpeechSynthesizer_setTextInputSettings);
+		praat_addAction1 (classSpeechSynthesizer, 0, L"Set speech output settings...", 0, 1, DO_SpeechSynthesizer_setSpeechOutputSettings);
 	praat_addAction2 (classSpeechSynthesizer, 1, classTextGrid, 1, L"To Sound...", 0, 0, DO_SpeechSynthesizer_and_TextGrid_to_Sound);
 
 	praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, L"To TextGrid (align)...", 0, 0, DO_SpeechSynthesizer_and_Sound_and_TextGrid_align);
+    praat_addAction3 (classSpeechSynthesizer, 1, classSound, 1, classTextGrid, 1, L"To TextGrid (align,trim)...", 0, 0, DO_SpeechSynthesizer_and_Sound_and_TextGrid_align2);
 
 	praat_addAction1 (classSSCP, 0, L"SSCP help", 0, 0, DO_SSCP_help);
 	praat_TableOfReal_init2 (classSSCP);
@@ -6903,6 +7151,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classStrings, 0, L"Change...", L"Set string...", 0, DO_Strings_change);
 	praat_addAction1 (classStrings, 0, L"Extract part...", L"Change...", 0, DO_Strings_extractPart);
 	praat_addAction1 (classStrings, 0, L"To Permutation...", L"To Distributions", 0, DO_Strings_to_Permutation);
+	praat_addAction1 (classStrings, 2, L"To EditDistanceTable", L"To Distributions", 0, DO_Strings_to_EditDistanceTable);
 
 	praat_addAction1 (classSVD, 0, L"To TableOfReal...", 0, 0, DO_SVD_to_TableOfReal);
 	praat_addAction1 (classSVD, 0, L"Extract left singular vectors", 0, 0, DO_SVD_extractLeftSingularVectors);
@@ -6911,6 +7160,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classTable, 0, L"Scatter plot (ci)...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_Table_drawScatterPlotWithConfidenceIntervals);
 	praat_addAction1 (classTable, 0, L"To KlattTable", 0, praat_HIDDEN, DO_Table_to_KlattTable);
+	praat_addAction1 (classTable, 1, L"Get median absolute deviation...", L"Get standard deviation...", 1, DO_Table_getMedianAbsoluteDeviation);
 
 	praat_addAction1 (classTableOfReal, 1, L"Report multivariate normality...", L"Get column stdev (label)...",
 	                  praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_reportMultivariateNormality);
@@ -6961,6 +7211,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 1, L"Set tier name...", L"Remove tier...", 1, DO_TextGrid_setTierName);
 	praat_addAction1 (classTextGrid, 0, L"Replace interval text...", L"Set interval text...", 2, DO_TextGrid_replaceIntervalTexts);
 	praat_addAction1 (classTextGrid, 0, L"Replace point text...", L"Set point text...", 2, DO_TextGrid_replacePointTexts);
+	praat_addAction1 (classTextGrid, 2, L"To Table (text alignment)...", L"Extract part...", 0, DO_TextGrids_to_Table_textAlignmentment);
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

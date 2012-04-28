@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2009/08/10 image from file
  * fb 2010/02/24 GTK
  * pb 2011/03/17 C++
+ * pb 2012/04/21 on PostScript, minimal image resolution raised from 106 to 300 dpi
  */
 
 #include "GraphicsP.h"
@@ -480,7 +481,7 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 	long clipx1, long clipx2, long clipy1, long clipy2, int interpolate)
 {
 	long interpolateX = 1, interpolateY = 1;
-	long ix, iy, nx = ix2 - ix1 + 1, ny = iy2 - iy1 + 1, filling = 0;
+	long nx = ix2 - ix1 + 1, ny = iy2 - iy1 + 1, filling = 0;
 	double scale = ( my photocopyable ? 200.1f : 255.1f ) / (maximum - minimum);
 	double offset = 255.1f + minimum * scale;
 	int minimalGrey = my photocopyable ? 55 : 0;
@@ -489,12 +490,14 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 	my d_printf (my d_file, "%ld %ld translate %ld %ld scale\n",
 		x1DC, y1DC, x2DC - x1DC, y2DC - y1DC);
 	if (interpolate) {
-		/* Base largest spot size on 106 dpi. */
-		#define LARGEST_SPOT_MM  0.24
-		double colSize_mm = (double) (x2DC - x1DC) / nx * 25.4 / my resolution;
-		double rowSize_mm = (double) (y2DC - y1DC) / ny * 25.4 / my resolution;
-		interpolateX = ceil (colSize_mm / LARGEST_SPOT_MM);
-		interpolateY = ceil (rowSize_mm / LARGEST_SPOT_MM);
+		/* The smallest image resolution is 300 dpi. If a sample takes up more than 25.4/300 mm, the 300 dpi resolution is achieved by interpolation. */
+		const double smallestImageResolution = 300.0;
+		double colSize_pixels = (double) (x2DC - x1DC) / nx;
+		double rowSize_pixels = (double) (y2DC - y1DC) / ny;
+		double colSize_inches = colSize_pixels / my resolution;
+		double rowSize_inches = rowSize_pixels / my resolution;
+		interpolateX = ceil (colSize_inches * smallestImageResolution);   // number of interpolation points per horizontal sample
+		interpolateY = ceil (rowSize_inches * smallestImageResolution);   // number of interpolation points per vertical sample
 	}
 
 	if (interpolateX <= 1 && interpolateY <= 1) {
@@ -631,7 +634,7 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 			"} for\n"
 			"/irow irow 1 add def scanline } image\n");
 	}
-	for (iy = iy1; iy <= iy2; iy ++) for (ix = ix1; ix <= ix2; ix ++) {
+	for (long iy = iy1; iy <= iy2; iy ++) for (long ix = ix1; ix <= ix2; ix ++) {
 		int value = (int) (offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] ));
 		my d_printf (my d_file, "%.2x", value <= minimalGrey ? minimalGrey : value >= 255 ? 255 : value);
 		if (++ filling == 39) { my d_printf (my d_file, "\n"); filling = 0; }

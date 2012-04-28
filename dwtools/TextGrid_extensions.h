@@ -2,7 +2,7 @@
 #define _TextGrid_extensions_h_
 /* TextGrid_extensions.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020516 GPL header
- djmw 20111226 Latest modification
+ djmw 20120418 Latest modification
 */
 
 #include "TextGrid.h"
@@ -83,8 +83,10 @@ void TextTier_changeLabels (I, long from, long to, const wchar_t *search, const 
 
 void IntervalTier_changeLabels (I, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
-void IntervalTier_removeBoundary_equalLabels (IntervalTier me, const wchar_t *label);
-void IntervalTier_removeBoundary_minimumDuration (IntervalTier me, const wchar_t *label, double minimumDuration);
+void IntervalTier_removeBoundariesBetweenIdenticallyLabeledIntervals (IntervalTier me, const wchar_t *label);
+
+void IntervalTier_cutIntervalsOnLabelMatch (IntervalTier me, const wchar_t *label);
+void IntervalTier_cutIntervals_minimumDuration (IntervalTier me, const wchar_t *label, double minimumDuration);
 
 void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wchar_t *search, const wchar_t *replace, int use_regexp, long *nmatches, long *nstringmatches);
 
@@ -96,6 +98,8 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
  */
 void IntervalTier_setLaterEndTime (IntervalTier me, double xmax, const wchar_t *mark);
 void IntervalTier_setEarlierStartTime (IntervalTier me, double xmin, const wchar_t *mark);
+
+void IntervalTier_moveBoundary (IntervalTier me, long interval, bool atStart, double newTime);
 void TextTier_setLaterEndTime (TextTier me, double xmax, const wchar_t *mark);
 void TextTier_setEarlierStartTime (TextTier me, double xmin, const wchar_t *mark);
 void TextGrid_setEarlierStartTime (TextGrid me, double xmin, const wchar_t *imark, const wchar_t *pmark);

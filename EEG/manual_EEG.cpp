@@ -22,7 +22,7 @@
 void manual_EEG_init (ManPages me);
 void manual_EEG_init (ManPages me) {
 
-MAN_BEGIN (L"EEG", L"ppgb", 20120220)
+MAN_BEGIN (L"EEG", L"ppgb", 20120511)
 INTRO (L"EEG means electro-encephalography: brain potentials recorded via e.g. 32 or 64 electrodes on the scalp. "
 	"In Praat, an EEG object looks like a combination of a Sound object with e.g. 32 or 64 channels "
 	"and a TextGrid object that marks the events.")
@@ -62,9 +62,9 @@ NORMAL (L"##Subtracting a reference signal.# The voltage on the whole scalp may 
 	"you can use ##Subtract reference...# to subtract the average of the two mastoid channels from all electrode channels (including the external electrodes themselves). "
 	"If you have no such recordings, you can still regard the average of a range of electrode channels as a reference signal, "
 	"and use ##Subtract mean channel...# to subtract this from each electrode channel.")
-NORMAL (L"##Detrend.# Subtract from each electrode channel a line in such a way that the first sample and the last sample become zero. "
+NORMAL (L"##Detrending.# With #Detrend, you subtract from each electrode channel a line in such a way that the first sample and the last sample become zero. "
 	"Detrending and reference subtraction can be performed in either order.")
-NORMAL (L"##Filter.# Band-pass filter each electrode channel. Filtering has to be done after detrending, but "
+NORMAL (L"##Filtering.# With ##Filter...#, you band-pass filter each electrode channel. Filtering has to be done after detrending, but "
 	"filtering and reference subtraction can be performed in either order.")
 ENTRY (L"4. How to do an ERP analysis")
 NORMAL (L"An ERP is an Event-Related Potential. Events are marked somewhere in S1, S2, ... S8. In the above example, "
@@ -72,6 +72,15 @@ NORMAL (L"An ERP is an Event-Related Potential. Events are marked somewhere in S
 	"##To Time# to 0.39 seconds, and ##Marker bit# to 4. This way, an ERPTier object appears in the list, containing "
 	"the parts of the EEG signal that lie in a time window of [-0.11, 0.39] seconds around each event on the S4 (deviant) tier. "
 	"Thus, if S4 contains 150 events, the resulting ERPTier will contain 150 pieces of the original EEG signal (without the extra sensors).")
+NORMAL (L"You are typically interested in the part of each ERP in the ERPTier after the event. "
+	"That is, you are probably interested in how this part compares to the part not influenced by the event, "
+	"i.e. the part before the event. To make this comparison easier, you can do ##Subtract baseline...#: "
+	"the waveform of the ERP will be moved up or down in such a way that the average amplitude of the part between the specified times becomes zero; "
+	"the times you will typically fill in here are the starting time of the ERP (a negative number) and the time of the event (0.0).")
+NORMAL (L"After you subtract the baseline, the part after the event contains the interesting part of the ERP: "
+	"even its sign (positive or negative) is meaningful now. Some ERPs, however, will contain very large positive or negative peaks "
+	"because of eye movements and other disturbing signals. To remove those ERPs from the ERPTier, "
+	"do ##Reject artefacts...#, while specifying the amount by which you allow the amplitude of an ERP to go above or below zero.")
 NORMAL (L"Once you have an ERPTier, you can extract each of the 150 ERPs from it with ##Extract ERP...#. "
 	"It is perhaps more interesting to compute the average of all those 150 ERPs with ##To ERP (mean)#. "
 	"These commands put a new ERP object in the list.")

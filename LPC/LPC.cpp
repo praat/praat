@@ -1,6 +1,6 @@
 /* LPC.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -132,21 +132,54 @@ void LPC_drawPoles (LPC me, Graphics g, double time, int garnish) {
 	Roots_draw (r.peek(), g, -1, 1, -1, 1, L"+", 12, garnish);
 }
 
-
-Matrix LPC_to_Matrix (LPC me) {
+Matrix LPC_downto_Matrix_lpc (LPC me) {
 	try {
-		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1,
-		                                 1, my maxnCoefficients, my maxnCoefficients, 1, 1);
-
-		for (long i = 1; i <= my nx; i++) {
-			LPC_Frame frame = & my d_frames[i];
-			for (long j = 1; j <= frame -> nCoefficients; j++) {
-				thy z[j][i] = frame -> a[j];
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1, 1);
+		for (long j = 1; j <= my nx; j++) {
+			LPC_Frame lpc = & my d_frames[j];
+			for (long i = 1; i <= lpc -> nCoefficients; i++) {
+				thy z[i][j] = lpc -> a[i];
 			}
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Matrix created.");
+		Melder_throw (me, ": no Matrix with linear prediction coefficients created.");
+	}
+}
+
+Matrix LPC_downto_Matrix_rc (LPC me) {
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1, 1);
+		autoNUMvector<double> rc (1, my maxnCoefficients);
+		for (long j = 1; j <= my nx; j++) {
+			LPC_Frame lpc = & my d_frames[j];
+			NUMlpc_lpc_to_rc (lpc -> a, lpc -> nCoefficients, rc.peek());
+			for (long i = 1; i <= lpc -> nCoefficients; i++) {
+				thy z[i][j] = rc[i];
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Matrix with relection coefficients created.");
+	}
+}
+
+Matrix LPC_downto_Matrix_area (LPC me) {
+	try {
+		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 0.5, 0.5 + my maxnCoefficients, my maxnCoefficients, 1, 1);
+		autoNUMvector<double> rc (1, my maxnCoefficients);
+		autoNUMvector<double> area (1, my maxnCoefficients);
+		for (long j = 1; j <= my nx; j++) {
+			LPC_Frame lpc = & my d_frames[j];
+			NUMlpc_lpc_to_rc (lpc -> a, lpc -> nCoefficients, rc.peek());
+			NUMlpc_rc_to_area (rc.peek(), lpc -> nCoefficients, area.peek());
+			for (long i = 1; i <= lpc -> nCoefficients; i++) {
+				thy z[i][j] = area[i];
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Matrix with areas created.");
 	}
 }
 

@@ -430,6 +430,34 @@ void MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, C
 	NUMpseudoInverse (his data, his numberOfRows, his numberOfColumns, my data, 0);
 }
 
+
+/* Preconditions:
+ * 	x[1..nrows][1..ncols], cc[1..nrows][1..nrows], centroid[1..nrows]
+ * 	if (lag>0) {i2 + lag <= ncols} else {i1-lag >= 1}
+ * 	no array boundary checks!
+ * 	lag >= 0
+ */
+static void NUMcrossCorrelate_rows (double **x, long nrows, long i1, long i2, long lag, double **cc, double *centroid, double scale) {
+	lag = abs (lag);
+	long nsamples = i2 - i1 + 1 + lag;
+	for (long i = 1; i <= nrows; i++) {
+		double sum = 0;
+		for (long k = i1; k <= i2 + lag; k++) {
+			sum += x[i][k];
+		}
+		centroid[i] = sum / nsamples;
+	}
+	for (long i = 1; i <= nrows; i++) {
+		for (long j = i; j <= nrows; j++) {
+			double ccor = 0;
+			for (long k = i1; k <= i2; k++) {
+				ccor += (x[i][k] - centroid[i]) * (x[j][k + lag] - centroid[j]);
+			}
+			cc[j][i] = cc[i][j] = ccor * scale;
+		}
+	}
+}
+
 /*
 	This is for multi-channel "sounds" like EEG signals.
 	The cross-correlation between channel i and channel j is defined as
@@ -441,7 +469,7 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 			startTime = my xmin;
 			endTime = my xmax;
 		}
-		long ndelta = lagTime / my dx;
+		long lag = lagTime / my dx;
 		long i1 = Sampled_xToNearestIndex (me, startTime);
 		if (i1 < 1) {
 			i1 = 1;
@@ -450,38 +478,66 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 		if (i2 > my nx) {
 			i2 = my nx;
 		}
-		i2 -= ndelta;
+		i2 -= lag;
 		long nsamples = i2 - i1 + 1;
 		if (nsamples <= my ny) {
 			Melder_throw ("Not enough samples");
 		}
 		autoCrossCorrelationTable thee = CrossCorrelationTable_create (my ny);
-		double **data = my z;
 
-		for (long ichan = 1; ichan <= my ny; ichan++) {
-			double *z = my z[ichan];
-			double sum = 0;
-			for (long k = i1; k <= i2; k++) {
-				sum += z[k];
-			}
-			thy centroid[ichan] = sum / nsamples;
-		}
-
-		double *mean = thy centroid;
-
-		for (long i = 1; i <= my ny; i++) {
-			for (long j = i; j <= my ny; j++) {
-				double cc = 0;
-				for (long k = i1; k <= i2; k++) {
-					cc += (data[i][k] - mean[i]) * (data[j][k + ndelta] - mean[j]);
-				}
-				thy data[j][i] = thy data[i][j] = cc * my dx;
-			}
-		}
+		NUMcrossCorrelate_rows (my z, my ny, i1, i2, lag, thy data, thy centroid, my dx);
 
 		thy numberOfObservations = nsamples;
 
 		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": CrossCorrelationTable not created.");
+	}
+}
+
+/* Calculate the CrossCorrelationTable between the channels of two multichannel sounds irrespective of the domains.
+ * Both sounds are treated as if their domain runs from 0 to duration.
+ * Outside the chose interval the sounds are assumed yo be zero
+ *
+ *
+ */
+CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagTime) {
+	try {
+		if (my dx != thy dx) {
+			Melder_throw ("Sampling frequencies must be equal.");
+		}
+		if (relativeEndTime <= relativeStartTime) {
+			relativeStartTime = my xmin;
+			relativeEndTime = my xmax;
+		}
+		long ndelta = lagTime / my dx, nchannels = my ny + thy ny;
+		long i1 = Sampled_xToNearestIndex (me, relativeStartTime);
+		if (i1 < 1) {
+			i1 = 1;
+		}
+		long i2 = Sampled_xToNearestIndex (me, relativeEndTime);
+		if (i2 > my nx) {
+			i2 = my nx;
+		}
+		i2 -= ndelta;
+		long nsamples = i2 - i1 + 1;
+		if (nsamples <= nchannels) {
+			Melder_throw ("Not enough samples");
+		}
+		autoCrossCorrelationTable him = CrossCorrelationTable_create (nchannels);
+		autoNUMvector<double *> data (1, nchannels);
+		for (long i = 1; i <= my ny; i++) {
+			data[i] = my z[i];
+		}
+		for (long i = 1; i <= thy ny; i++) {
+			data[i + my ny] = thy z[i];
+		}
+
+		NUMcrossCorrelate_rows (data.peek(), nchannels, i1, i2, ndelta, his data, his centroid, my dx);
+
+		his numberOfObservations = nsamples;
+
+		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": CrossCorrelationTable not created.");
 	}
@@ -904,12 +960,34 @@ Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double var
     }
 }
 
+Sound Sound_and_PCA_projectChannels (Sound me, PCA thee, long numberOfComponents) {
+	try {
+		if (my ny != thy dimension) {
+			Melder_throw ("The number of channels of the sound and the dimension of the PCA must be equal.");
+		}
+		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
+            numberOfComponents = thy numberOfEigenvalues;
+        }
+ 		autoSound him = Sound_create (numberOfComponents, my xmin, my xmax, my nx, my dx, my x1);
+		for (long ichan = 1; ichan <= numberOfComponents; ichan++) {
+			for (long is = 1; is <= my nx; is++) {
+				for (long evi = 1; evi <= thy dimension; evi++) {
+					his z[ichan][is] += thy eigenvectors[ichan][evi] * my z[evi][is];
+				}
+			}
+		}
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": not projected.");
+	}
+}
+
 Sound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents) {
 	try {
 		if (my ny != thy dimension) {
 			Melder_throw ("The number of channels of the sound and the dimension of the PCA must be equal.");
 		}
-		if (numberOfComponents > thy numberOfEigenvalues) {
+		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
             numberOfComponents = thy numberOfEigenvalues;
         }
         autoNUMmatrix<double> whiten (1, my ny, 1, my ny);

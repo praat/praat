@@ -187,6 +187,17 @@ DO
 	}
 END
 
+FORM (Network_setActivationSpreadingRule, L"Network: Set activation spreading rule", 0)
+	RADIO_ENUM (L"Activation spreading rule", kNetwork_activationSpreadingRule, DEFAULT)
+	OK
+iam_ONLY (Network);
+SET_ENUM (L"Activation spreading rule", kNetwork_activationSpreadingRule, my d_activationSpreadingRule);
+DO
+	iam_ONLY (Network);
+	my f_setActivationSpreadingRule (GET_ENUM (kNetwork_activationSpreadingRule, L"Activation spreading rule"));
+	praat_dataChanged (me);
+END
+
 FORM (Network_setActivity, L"Network: Set activity", 0)
 	NATURAL (L"Node", L"1")
 	REAL (L"Activity", L"1.0")
@@ -1451,16 +1462,19 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 1, L"Get activity...", 0, 0, DO_Network_getActivity);
 	praat_addAction1 (classNetwork, 1, L"Get weight...", 0, 0, DO_Network_getWeight);
 	praat_addAction1 (classNetwork, 0, L"Modify -", 0, 0, 0);
-	praat_addAction1 (classNetwork, 0, L"Add node...", 0, 0, DO_Network_addNode);
-	praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 0, DO_Network_addConnection);
-	praat_addAction1 (classNetwork, 0, L"Set activity...", 0, 0, DO_Network_setActivity);
-	praat_addAction1 (classNetwork, 0, L"Set clamping...", 0, 0, DO_Network_setClamping);
-	praat_addAction1 (classNetwork, 0, L"Zero activities...", 0, 0, DO_Network_zeroActivities);
-	praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 0, DO_Network_normalizeActivities);
-	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 0, DO_Network_spreadActivities);
-	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 0, DO_Network_setWeight);
-	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 0, DO_Network_updateWeights);
-	praat_addAction1 (classNetwork, 1, L"Set weight update rule...", 0, 0, DO_Network_setWeightUpdateRule);
+	praat_addAction1 (classNetwork, 0, L"Add node...", 0, 1, DO_Network_addNode);
+	praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 1, DO_Network_addConnection);
+	praat_addAction1 (classNetwork, 1, L"-- activity --", 0, 1, 0);
+	praat_addAction1 (classNetwork, 0, L"Set activity...", 0, 1, DO_Network_setActivity);
+	praat_addAction1 (classNetwork, 0, L"Set clamping...", 0, 1, DO_Network_setClamping);
+	praat_addAction1 (classNetwork, 0, L"Zero activities...", 0, 1, DO_Network_zeroActivities);
+	praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 1, DO_Network_normalizeActivities);
+	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 1, DO_Network_spreadActivities);
+	praat_addAction1 (classNetwork, 1, L"Set activation spreading rule...", 0, 1, DO_Network_setActivationSpreadingRule);
+	praat_addAction1 (classNetwork, 1, L"-- weight --", 0, 1, 0);
+	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 1, DO_Network_setWeight);
+	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 1, DO_Network_updateWeights);
+	praat_addAction1 (classNetwork, 1, L"Set weight update rule...", 0, 1, DO_Network_setWeightUpdateRule);
 }
 
 /* End of file praat_gram.c */

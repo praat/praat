@@ -1328,6 +1328,42 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 	}
 }
 
+#if gtk
+	#include <gdk/gdkkeysyms.h>
+	static gint theKeySnooper (GtkWidget *widget, GdkEventKey *event, gpointer data) {
+		//Melder_casual ("keyval %ld, type %ld", (long) event -> keyval, (long) event -> type);
+		if ((event -> keyval == GDK_Tab || event -> keyval == GDK_KEY_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
+			//Melder_casual ("tab key pressed in window %ld", widget);
+			if (event -> state == 0) {
+				if (GTK_IS_WINDOW (widget)) {
+					GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
+					//Melder_casual ("tab pressed in window %ld", shell);
+					void (*tabCallback) (GuiObject, XtPointer, XtPointer) = (void (*) (GuiObject, XtPointer, XtPointer)) g_object_get_data (G_OBJECT (widget), "tabCallback");
+					if (tabCallback) {
+						//Melder_casual ("a tab callback exists");
+						void *tabClosure = g_object_get_data (G_OBJECT (widget), "tabClosure");
+						tabCallback (widget, tabClosure, tabClosure);
+						return TRUE;
+					}
+				}
+			} else if (event -> state == GDK_SHIFT_MASK) {   // BUG: 
+				if (GTK_IS_WINDOW (widget)) {
+					GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
+					//Melder_casual ("shift-tab pressed in window %ld", shell);
+					void (*tabCallback) (GuiObject, XtPointer, XtPointer) = (void (*) (GuiObject, XtPointer, XtPointer)) g_object_get_data (G_OBJECT (widget), "shiftTabCallback");
+					if (tabCallback) {
+						//Melder_casual ("a shift tab callback exists");
+						void *tabClosure = g_object_get_data (G_OBJECT (widget), "shiftTabClosure");
+						tabCallback (widget, tabClosure, tabClosure);
+						return TRUE;
+					}
+				}
+			}
+		}
+		return FALSE;   // pass event on
+	}
+#endif
+
 void praat_run (void) {
 	FILE *f;
 
@@ -1480,6 +1516,7 @@ void praat_run (void) {
 		#if gtk
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
 			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell), "client-event", G_CALLBACK (cb_userMessage), NULL);
+			gtk_key_snooper_install (theKeySnooper, 0);
 			gtk_main ();
 		#else
 			#if defined (_WIN32)

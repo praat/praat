@@ -181,7 +181,6 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 		while (gtk_events_pending ())
 			gtk_main_iteration ();
 	#elif defined (macintosh)
-	{
 		EventRecord event;
 		while (GetNextEvent (mDownMask, & event)) {
 			WindowPtr macWindow;
@@ -212,9 +211,7 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 			}
 		}
 		do { XtNextEvent ((XEvent *) & event); XtDispatchEvent ((XEvent *) & event); } while (event.what);
-	}
 	#elif defined (_WIN32)
-	{
 		XEvent event;
 		while (PeekMessage (& event, 0, 0, 0, PM_REMOVE)) {
 			if (event. message == WM_KEYDOWN) {
@@ -241,15 +238,12 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 				DispatchMessage (& event);
 			}
 		}
-	}
 	#else
-	{
 		XEvent event;
 		if (XCheckTypedWindowEvent (XtDisplay (cancelButton), XtWindow (cancelButton), ButtonPress, & event)) {
 			XtUnmanageChild (dia);
 			return false;   // don't continue
 		}
-	}
 	#endif
 	if (progress >= 1.0) {
 		GuiObject_hide (dia);
@@ -775,6 +769,7 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 void Melder_beep (void) {
 	#ifdef macintosh
 		SysBeep (0);
+		//AudioServicesPlayAlertSound (kUserPreferredAlert);
 	#else
 		fprintf (stderr, "\a");
 	#endif

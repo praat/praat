@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -510,6 +510,24 @@ EEG EEGs_concatenate (Collection me) {
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw ("TextGrids not concatenated.");
+	}
+}
+
+EEG structEEG :: f_extractPart (double tmin, double tmax, bool preserveTimes) {
+	try {
+		autoEEG thee = Thing_new (EEG);
+		thy d_numberOfChannels = d_numberOfChannels;
+		thy d_channelNames = NUMvector <wchar *> (1, d_numberOfChannels);
+		for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
+			thy d_channelNames [ichan] = Melder_wcsdup (d_channelNames [ichan]);
+		}
+		thy d_sound = Sound_extractPart (d_sound, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
+		thy d_textgrid = TextGrid_extractPart (d_textgrid, tmin, tmax, preserveTimes);
+		thy xmin = thy d_textgrid -> xmin;
+		thy xmax = thy d_textgrid -> xmax;
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": part not extracted.");
 	}
 }
 
