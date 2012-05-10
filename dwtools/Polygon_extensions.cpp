@@ -942,7 +942,7 @@ Vertices Verticeses_connectClippingPathsUnion (Vertices me, Vertices thee) {
 					continue;
 				}
 				firstOutside = ni; break;
-			} else if (VERTEX (ni) -> entry = Polygon_EN) {
+			} else if (VERTEX (ni) -> entry == Polygon_EN) {
 				break;
 			}
 			// We were inside

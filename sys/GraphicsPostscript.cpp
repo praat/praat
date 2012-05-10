@@ -155,10 +155,10 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	 * equals one dot if the printer's resolution is 'resolution' dots per inch.
 	 * Take a sensible default margin: half an inch on all sides.
 	 */
-	my x1DC = my x1DCmin = resolution / 2;
-	my x2DC = my x2DCmax = (my paperWidth - 0.5) * resolution;
-	my y1DC = my y1DCmin = resolution / 2;
-	my y2DC = my y2DCmax = (my paperHeight - 0.5) * resolution;
+	my d_x1DC = my d_x1DCmin = resolution / 2;
+	my d_x2DC = my d_x2DCmax = (my paperWidth - 0.5) * resolution;
+	my d_y1DC = my d_y1DCmin = resolution / 2;
+	my d_y2DC = my d_y2DCmax = (my paperHeight - 0.5) * resolution;
 	/*
 	 * Now don't just set x1wNDC etc, but force computation of the scaling as well.
 	 */
@@ -218,10 +218,10 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 	my includeFonts = includeFonts;
 	my useSilipaPS = useSilipaPS;
 	my d_file = Melder_fopen (file, "w");
-	my x1DC = my x1DCmin = 0;
-	my x2DC = my x2DCmax = my paperWidth * resolution; /* 600 dpi -> 4500 virtual dots */
-	my y1DC = my y1DCmin = 0;
-	my y2DC = my y2DCmax = my paperHeight * resolution; /* 600 dpi -> 6600 virtual dots */
+	my d_x1DC = my d_x1DCmin = 0;
+	my d_x2DC = my d_x2DCmax = my paperWidth * resolution; /* 600 dpi -> 4500 virtual dots */
+	my d_y1DC = my d_y1DCmin = 0;
+	my d_y2DC = my d_y2DCmax = my paperHeight * resolution; /* 600 dpi -> 6600 virtual dots */
 	Graphics_setWsWindow ((Graphics) me.peek(), 0, my paperWidth, 12.0 - my paperHeight, 12.0);   // force scaling
 	/*
 	 * We will honour version 3.0 of the DSC for Encapsulated PostScript files,
@@ -229,8 +229,8 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 	 */
 	left = (int) floor (x1inches * 72);
 	right = (int) ceil (x2inches * 72);
-	top = (int) ceil ((y2inches - my y1wNDC) * 72);
-	bottom = (int) floor ((y1inches - my y1wNDC) * 72);
+	top = (int) ceil ((y2inches - my d_y1wNDC) * 72);
+	bottom = (int) floor ((y1inches - my d_y1wNDC) * 72);
 	my d_printf (my d_file, "%%!PS-Adobe-3.0 EPSF-3.0\n");
 	my d_printf (my d_file, "%%%%BoundingBox: %d %d %d %d\n", left, bottom, right, top);
 	my d_printf (my d_file, "%%%%Creator: Praat Shell 5.1\n");
@@ -263,10 +263,10 @@ Graphics Graphics_create_postscriptprinter (void) {
 	my landscape = thePrinter. orientation == kGraphicsPostscript_orientation_LANDSCAPE;
 	my magnification = thePrinter. magnification;
 	my includeFonts = TRUE;
-	my x1DC = my x1DCmin = my resolution / 2;
-	my x2DC = my x2DCmax = (my paperWidth - 0.5) * my resolution;
-	my y1DC = my y1DCmin = my resolution / 2;
-	my y2DC = my y2DCmax = (my paperHeight - 0.5) * my resolution;
+	my d_x1DC = my d_x1DCmin = my resolution / 2;
+	my d_x2DC = my d_x2DCmax = (my paperWidth - 0.5) * my resolution;
+	my d_y1DC = my d_y1DCmin = my resolution / 2;
+	my d_y2DC = my d_y2DCmax = (my paperHeight - 0.5) * my resolution;
 	Graphics_setWsWindow ((Graphics) me, 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
 	downloadPrologAndSetUp (me);
 	initPage (me);

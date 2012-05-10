@@ -1,6 +1,6 @@
 /* Eigen_and_TableOfReal.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,10 +59,12 @@ void Eigen_and_TableOfReal_project_into (I, thou, long thee_from, long thee_to,
 	if (thee_from < 1 || thee_to > thy numberOfColumns || his_from < 1 || his_to > his numberOfColumns) {
 		Melder_throw (L"Column selection not correct.");
 	}
-	if (thee_ncols != my dimension) Melder_throw ("The number of selected columns to project (", thee_ncols,
-		        ") must equal the dimension of the eigenvectors (", my dimension, ").");
-	if (his_ncols > my numberOfEigenvalues) Melder_throw ("The number of selected columns in the result (",
-		        his_ncols, ") cannot exceed the number of eigenvectors (", my numberOfEigenvalues, ").");
+	if (thee_ncols != my dimension) {
+		Melder_throw ("The number of selected columns to project (", thee_ncols, ") must equal the dimension of the eigenvectors (", my dimension, ").");
+	}
+	if (his_ncols > my numberOfEigenvalues) {
+		Melder_throw ("The number of selected columns in the result (", his_ncols, ") cannot exceed the number of eigenvectors (", my numberOfEigenvalues, ").");
+	}
 
 	for (long i = 1; i <= thy numberOfRows; i++) { /* row */
 		for (long j = 1; j <= his_ncols; j++) {

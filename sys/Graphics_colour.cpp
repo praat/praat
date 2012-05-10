@@ -1,6 +1,6 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,12 +138,6 @@ void _Graphics_setGrey (Graphics graphics, double fgrey) {
 		#elif mac
 			if (fgrey < 0.0) fgrey = 0.0; else if (fgrey > 1.0) fgrey = 1.0;
 			my d_macColour. red = my d_macColour. green = my d_macColour. blue = fgrey * 65535;
-			if (my d_useQuartz) {
-			} else {   // QuickDraw
-				/* Superfluous? */
-				SetPort (my d_macPort);
-				//RGBForeColor (& my macColour);
-			}
 		#endif
 	} else if (graphics ->  postScript) {
 		GraphicsPostscript me = static_cast <GraphicsPostscript> (graphics);
@@ -304,13 +298,7 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 			colour. blue = ((uint16_t) (colour. blue * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
 		#elif mac
-			if (my d_useQuartz) {
-				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
-			} else {
-				SetPort (my d_macPort);
-				PenMode (patXor);
-				TextMode (srcXor);
-			}
+			//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
 		#endif
 		my duringXor = true;
 		if (graphics -> recording) { op (XOR_ON, 3); put (colour. red); put (colour. green); put (colour. blue); }
@@ -331,13 +319,7 @@ void Graphics_xorOff (Graphics graphics) {
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			_Graphics_setColour (me, my colour);
 		#elif mac
-			if (my d_useQuartz) {
-				//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
-			} else {
-				SetPort (my d_macPort);
-				PenMode (patCopy);
-				TextMode (srcOr);
-			}
+			//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
 		#endif
 		my duringXor = false;
 		if (graphics -> recording) { op (XOR_OFF, 0); }

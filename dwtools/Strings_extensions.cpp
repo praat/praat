@@ -273,9 +273,4 @@ Strings StringsIndex_to_Strings (StringsIndex me) {
 	}
 }
 
-double strings_defaultInsertionCost (const wchar *symbol) {
-	(void) symbol;
-	return 1;
-}
-
 /* End of file Strings_extensions.cpp */

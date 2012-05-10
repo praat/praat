@@ -1878,8 +1878,29 @@ MAN_BEGIN (L"DTW & Sounds: Draw warp (x)...", L"djmw", 20071204)
 INTRO (L"Draws the warp given a time on the \"x-direction\" for the selected @DTW and the two selected @@Sound|Sounds@.")
 MAN_END
 
+MAN_BEGIN (L"EditDistanceTable", L"djmw", 20120503)
+INTRO (L"One of the @@types of objects@ in Praat.")
+NORMAL (L"An EditDistanceTable shows the (accumulated) distances between a target string and a sources string. "
+	"For example, the (accumulated) distances between the tartget string \"intention\" and the source string "
+	"\"execution\" are expressed by the following EditDistanceTable:")
+SCRIPT (4, 4, L"target = Create Strings as characters... intention\n"
+	"source = Create Strings as characters... execution\n"
+	"plus target\n"
+	"edt = To EditDistanceTable\n"
+	"Draw... rational 1 0\n"
+	"plus target\n"
+	"plus source\n"
+	"Remove\n")
+NORMAL (L"Each cell, dist[%i, %j], contains the distance between the first %i characters of the target and the first %j characters of the source. The values in each cell of the matrix are computed by taking the minimum of the distances from three possible paths, i.e. the paths that come from the left, from the diagonal and from below.")
+CODE (L"dist[i,j] = min (d__left_, d__diag_, d__below_), ")
+NORMAL (L"where ")
+CODE (L" d__left _ = dist[i-1,j]   + insertionCost(target[i])")
+CODE (L" d__diag _ = dist[i-1,j-1] + substitutionCost(source[j],target[i])")
+CODE (L" d__below_ = dist[i,j-1]   + deletionCost(source[j])")
+MAN_END
+
 MAN_BEGIN (L"Eigen", L"djmw", 19981102)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"An object of type Eigen represents the eigen structure of "
 	"a matrix whose eigenvalues and eigenvectors are real.")
 ENTRY (L"Inside an Eigen")
@@ -2250,6 +2271,12 @@ NORMAL (L"where %N represents the number of filters and %P__%j_ the power in dB 
 NORMAL (L"This transformation was first used by @@Davis & Mermelstein (1980)@.")
 MAN_END
 
+MAN_BEGIN (L"MFCC: To TableOfReal...", L"djmw", 20120504)
+INTRO (L"Convert the selected @@MFCC@ object to a @@TableOfReal@ object. Each MFCC frame results "
+	"in one row in the TableOfReal. If the \"Include energy\" option is chosen, the zeroth MFCC "
+	"coefficient will be saved in the first column.")
+MAN_END
+
 MAN_BEGIN (L"MSpline", L"djmw", 19990627)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. ")
 NORMAL (L"An object of type MSpline represents a linear combination of basis "
@@ -2408,6 +2435,22 @@ NORMAL (L"Because the algorithm performs a projection, the resulting Configurati
 	"##only be centered#, i.e., its centroid will be at ##0#, if the data in the "
 	"TableOfReal object are centered too. ")
 NORMAL (L"See also @@Eigen & TableOfReal: Project...@.")
+MAN_END
+
+MAN_BEGIN (L"PCA & TableOfReal: To TableOfReal (z-scores)...", L"djmw", 20120510)
+INTRO (L"A command to construct a @TableOfReal with z-scores from the selected @TableOfReal"
+	" and @PCA.")
+ENTRY (L"Setting")
+TAG (L"##Number of dimensions")
+DEFINITION (L"determines the number of dimensions of the resulting Configuration.")
+ENTRY (L"Algorithm")
+NORMAL (L"The values %d__%ij_ in the new TableOfReal are calculated as")
+FORMULA (L"%d__%ij_ = ##eigenvector#__j_\\.c ##z#__%i_,")
+NORMAL (L"which is the inproduct of the %j-th eigenvector and the z-score vector ##z#__%i_ of the %i-th row whose elements %z__%ij_ are defined as")
+FORMULA (L"%z__%ij_ = (data__%ij_ - mean__%j_) / sqrt (eigenvalue__%j_),")
+NORMAL (L"in which data__%ij_ is the data value at row %i and column %j of the selected TableOfReal and mean__%j_ is the "
+	"%j-th centroid value of the PCA. The square root of the %j-th eigenvalue is the standard deviation in "
+	" the %j-th principal direction.")
 MAN_END
 
 MAN_BEGIN (L"PCA & TableOfReal: Get fraction variance...", L"djmw", 20040324)

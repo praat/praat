@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -295,18 +295,12 @@ void Sound_play (Sound me,
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
 void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
-#ifdef macintosh
-	void Sound_writeToMacSoundFile (Sound me, MelderFile file);   /* 8 bit */
-#endif
 void Sound_writeToRaw8bitSignedFile (Sound me, MelderFile file);   /* 8 bit */
 void Sound_writeToRaw8bitUnsignedFile (Sound me, MelderFile file);   /* 8 bit */
 void Sound_writeToKayFile (Sound me, MelderFile file);   /* 16 bit */
 void Sound_writeToSesamFile (Sound me, MelderFile file);   /* 12-bit SESAM/LVS */
 
 Sound Sound_readFromSoundFile (MelderFile file);   /* AIFF, WAV, NeXT/Sun, or NIST */
-#ifdef macintosh
-	Sound Sound_readFromMacSoundFile (MelderFile file);   /* 8 bit */
-#endif
 Sound Sound_readFromKayFile (MelderFile file);   /* 16 bit */
 Sound Sound_readFromSesamFile (MelderFile file);   /* 12 bit SESAM/LVS */
 Sound Sound_readFromBellLabsFile (MelderFile file);   /* 16 bit */

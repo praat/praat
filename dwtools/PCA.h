@@ -4,7 +4,7 @@
  *
  * Principal Component Analysis
  * 
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ void PCA_getEqualityOfEigenvalues (PCA me, long from, long to, int conservative,
 /* Morrison, Multivariate statistical methods, page 336 */
 
 Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions);
+TableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions);
 
 double PCA_and_TableOfReal_getFractionVariance (PCA me, thou, long from, long to);
 /*	Get fraction variance of the table projected in the pca-space.

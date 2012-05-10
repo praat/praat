@@ -101,7 +101,7 @@ INTRO (L"Detemines the @@Covariance|covariances@ between the channels of a selec
 NORMAL (L"The covariance of a sound is determined by calculating the @@CrossCorrelationTable@ of a multichannel sound for a lag time equal to zero.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20120224)
+MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20120428)
 INTRO (L"Analyze the selected multi-channel sound into its independent components by an iterative method.")
 NORMAL (L"The @@blind source separation@ method to find the independent components tries to simultaneously diagonalize a number of "
 	"@@CrossCorrelationTable@s that are calculated from the multi-channel sound at different lag times.")
@@ -166,11 +166,12 @@ NORMAL (L"Unfortunately the convergence criteria of these two algorithms cannot 
 	"change in the eigenvectors norm during an iteration.")
 ENTRY (L"Example")
 NORMAL (L"We start by creating a speech synthesizer that need to create two sounds. We will mix the two sounds and finally our blind source separation software will try to undo our mixing by extracting the two original sounds as well as possible from the two mixtures.")
-CODE(L"synth = Create SpeechSynthesizer... English default 44100 0.01 50 50 175 yes no")
-CODE(L"s1 = To Sound (special)... \"This is some text\" 0.01 50 50 175 yes no no yes")
+CODE(L"synth = Create SpeechSynthesizer... English default")
+CODE(L"s1 = To Sound... \"This is some text\" no")
 NORMAL (L"The first speech sound was created from the text \"This is some text\" at a speed of 175 words per minute.")
 CODE(L"select synth")
-CODE(L"s2 = To Sound (special)... \"Abracadabra, abra\" 0.01 80 50 145 yes no no yes")
+CODE(L"Set speech output settings... 44100 0.01 80 50 145 n IPA")
+CODE(L"s2 = To Sound... \"Abracadabra, abra\" 0.01 80 50 145 yes no no yes")
 NORMAL (L"The second sound \"Abracadabra, abra\" was synthesized at 145 words per minute with a somewhat larger pitch excursion (80) than the previous sound (50).")
 CODE(L"plus s1")
 CODE(L"stereo = Combine to stereo")
@@ -188,10 +189,11 @@ NORMAL (L"The two channels in the new sound that results from this command conta
 NORMAL (L"In the top panel the two speech sounds \"This is some text\" and \"abracadabra, abra\". "
     "The middle panel shows the two mixed sounds while the lower panel shows the two sounds after unmixing.")
 SCRIPT (6, 6, L" "
-    "syn = Create SpeechSynthesizer... English default 44100 0.01 50 50 175 yes no\n"
-    "s1 = To Sound (special)... \"This is some text\" 0.01 50 50 175 yes no no yes\n"
+    "syn = Create SpeechSynthesizer... English default\n"
+    "s1 = To Sound... \"This is some text\" no\n"
     "select syn\n"
-    "s2 =To Sound (special)... \"abracadabra, abra\" 0.01 80 50 145 yes no no yes\n"
+	"Set speech output settings... 44100 0.01 80 50 145 n IPA\n"
+    "s2 =To Sound... \"abracadabra, abra\" no\n"
     "plus s1\n"
     "stereo = Combine to stereo\n"
     "Select inner viewport... 1 6 0.1 1.9\n"

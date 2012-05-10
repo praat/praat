@@ -1,15 +1,13 @@
 # File: makefile.defs.mingw32
 
 # System: MinGW
-# Paul Boersma, 14 September 2011
+# Paul Boersma, 29 April 2012
 
 CC = /mingw32/bin/gcc -std=gnu99 -isystem /mingw32/include
 
 CXX = /mingw32/bin/g++ -isystem /mingw32/include/c++/4.7.0 -isystem /mingw32/include -Wshadow
-#CXX = /mingw32/bin/g++ -isystem /mingw32/include/c++/4.7.0 -isystem /mingw32/include -isystem /mingw32/include/QuickTime
 
-CFLAGS = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -DUNICODE -DDONT_INCLUDE_QUICKTIME -Dmain=wingwmain -O2
-#CFLAGS = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -DUNICODE -Dmain=wingwmain -O2
+CFLAGS = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -DUNICODE -Dmain=wingwmain -O2
 
 CXXFLAGS = $(CFLAGS)
 
@@ -18,7 +16,6 @@ LINK = /mingw32/bin/g++
 EXECUTABLE = Praat.exe
 
 LIBS = -L/mingw32/lib -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mwindows
-#LIBS = -L/mingw32/lib -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 /mingw32/lib/QTMLClient.lib -static-libgcc -static-libstdc++ -mwindows
 
 AR = /mingw32/bin/ar
 RANLIB = /mingw32/bin/ranlib

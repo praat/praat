@@ -415,23 +415,6 @@ FORM_READ (Picture_readFromPraatPictureFile, L"Read picture from praat picture f
 	Picture_readFromPraatPictureFile (praat_picture, file);
 END
 
-FORM_READ (Picture_readFromOldPraatPictureFile, L"Read picture from old praat picture file", 0, false)
-	Graphics_setWsWindow (GRAPHICS, 0, 2, -1, 1);
-	try {
-		Picture_readFromPraatPictureFile (praat_picture, file);
-	} catch (MelderError) {
-		Graphics_setWsWindow (GRAPHICS, 0, 12, 0, 12);
-		throw;
-	}
-	Graphics_setWsWindow (GRAPHICS, 0, 12, 0, 12);
-END
-
-#ifdef _WIN32
-FORM_READ (Picture_readFromOldWindowsPraatPictureFile, L"Read picture from praat picture file", 0, false)
-	Picture_readFromOldWindowsPraatPictureFile (praat_picture, file);
-END
-#endif
-
 static void DO_Picture_writeToEpsFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) interpreter;
@@ -529,23 +512,6 @@ DIRECT (Print)
 	Picture_print (praat_picture);
 END
 
-#ifdef macintosh
-	static void DO_Picture_writeToMacPictFile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
-		static Any dia;
-		(void) interpreter;
-		(void) modified;
-		(void) dummy;
-		if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as Mac PICT file",
-			DO_Picture_writeToMacPictFile, NULL, invokingButtonTitle, NULL);
-		if (sendingForm == NULL && sendingString == NULL) {
-			UiOutfile_do (dia, L"praat.pict");
-		} else { MelderFile file; structMelderFile file2 = { 0 };
-			if (sendingString == NULL) file = UiFile_getFile (dia);
-			else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
-			Picture_writeToMacPictFile (praat_picture, file);
-		}
-	}
-#endif
 #ifdef _WIN32
 	static void DO_Picture_writeToWindowsMetafile (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 		static Any dia;
@@ -564,20 +530,9 @@ END
 	}
 #endif
 
-#if defined (_WIN32)
+#if defined (_WIN32) || defined (macintosh)
 	DIRECT (Copy_picture_to_clipboard)
 		Picture_copyToClipboard (praat_picture);
-	END
-#endif
-#if defined (macintosh)
-	DIRECT (Copy_picture_to_clipboard)
-		Picture_copyToClipboard (praat_picture);
-	END
-	DIRECT (Copy_picture_to_QuickDraw_clipboard)
-		Picture_copyToQuickDrawClipboard (praat_picture);
-	END
-	DIRECT (Copy_screen_image_to_clipboard)
-		Picture_copyToClipboard_screenImage (praat_picture);
 	END
 #endif
 
@@ -1542,10 +1497,6 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"File", L"Picture settings report", 0, praat_HIDDEN, DO_Picture_settings_report);
 	praat_addMenuCommand (L"Picture", L"File", L"-- read --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"File", L"Read from praat picture file...", 0, 0, DO_Picture_readFromPraatPictureFile);
-	praat_addMenuCommand (L"Picture", L"File", L"Read from old praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldPraatPictureFile);
-	#ifdef _WIN32
-	praat_addMenuCommand (L"Picture", L"File", L"Read from old Windows praat picture file...", 0, praat_HIDDEN, DO_Picture_readFromOldWindowsPraatPictureFile);
-	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"-- write --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"File", L"Save as praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (L"Picture", L"File", L"Write to praat picture file...", 0, praat_HIDDEN, DO_Picture_writeToPraatPictureFile);
@@ -1557,8 +1508,6 @@ void praat_picture_init (void) {
 		praat_addMenuCommand (L"Picture", L"File", L"Save as PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
 		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, praat_HIDDEN, DO_Picture_writeToPdfFile);
 		praat_addMenuCommand (L"Picture", L"File", L"Save EPS file", 0, 0, NULL);
-			praat_addMenuCommand (L"Picture", L"File", L"Save as Mac PICT file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToMacPictFile);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to Mac PICT file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToMacPictFile);
 			praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 1, DO_PostScript_settings);
 			praat_addMenuCommand (L"Picture", L"File", L"Save as EPS file...", 0, 1, DO_Picture_writeToEpsFile);
 			praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToEpsFile);
@@ -1582,12 +1531,7 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"File", L"Print...", 0, 'P', DO_Print);
 
 	praat_addMenuCommand (L"Picture", L"Edit", L"Undo", 0, 'Z', DO_Undo);
-	#if defined (macintosh)
-		praat_addMenuCommand (L"Picture", L"Edit", L"-- clipboard --", 0, 0, 0);
-		praat_addMenuCommand (L"Picture", L"Edit", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
-		praat_addMenuCommand (L"Picture", L"Edit", L"Copy to QuickDraw clipboard", 0, praat_HIDDEN + praat_DEPTH_1, DO_Copy_picture_to_QuickDraw_clipboard);
-		praat_addMenuCommand (L"Picture", L"Edit", L"Copy screen image to clipboard", 0, praat_HIDDEN + praat_DEPTH_1, DO_Copy_screen_image_to_clipboard);
-	#elif defined (_WIN32)
+	#if defined (macintosh) || defined (_WIN32)
 		praat_addMenuCommand (L"Picture", L"Edit", L"-- clipboard --", 0, 0, 0);
 		praat_addMenuCommand (L"Picture", L"Edit", L"Copy to clipboard", 0, 'C', DO_Copy_picture_to_clipboard);
 	#endif

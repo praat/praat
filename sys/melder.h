@@ -889,7 +889,7 @@ long Melder_killReturns_inline (char *text);
 
 #if defined (macintosh) || defined (_WIN32) || defined (linux)
 	#define kMelderAudio_inputUsesPortAudio_DEFAULT  true
-		// Mac: in order to have CoreAudio (so that rogue applications cannot attack our sample rate anymore)
+		// Mac: in order to have CoreAudio
 		// Win: in order to allow recording for over 64 megabytes (paMME)
 		// Linux: in order to use ALSA and therefore be compatible with Ubuntu 10.10 and later
 #else
@@ -899,7 +899,7 @@ void MelderAudio_setInputUsesPortAudio (bool inputUsesPortAudio);
 bool MelderAudio_getInputUsesPortAudio (void);
 #if defined (macintosh) || defined (linux)
 	#define kMelderAudio_outputUsesPortAudio_DEFAULT  true
-		// Mac: in order to have CoreAudio (so that rogue applications cannot attack our sample rate anymore)
+		// Mac: in order to have CoreAudio
 		// Linux: in order to use ALSA and therefore be compatible with Ubuntu 10.10 and later
 #else
 	#define kMelderAudio_outputUsesPortAudio_DEFAULT  false

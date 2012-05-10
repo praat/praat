@@ -125,7 +125,7 @@ static void cb_optionChanged (GuiObject w, XtPointer void_me, XtPointer call) {
 		UiOption b = static_cast <UiOption> (my options -> item [i]);
 		#if motif
 		if (b -> toggle == w) {
-			XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
+			XtVaSetValues (my cascadeButton, XmNlabelString, Melder_peekWcsToUtf8 (b -> name), NULL);
 			XmToggleButtonSetState (b -> toggle, TRUE, FALSE);
 			if (Melder_debug == 11) {
 				Melder_warning (i, " \"", b -> name, "\"");
@@ -171,7 +171,7 @@ static void UiField_setDefault (UiField me) {
 					UiOption b = static_cast <UiOption> (my options -> item [i]);
 					XmToggleButtonSetState (b -> toggle, i == my integerDefaultValue, False);
 					if (i == my integerDefaultValue) {
-						XtVaSetValues (my cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
+						XtVaSetValues (my cascadeButton, XmNlabelString, Melder_peekWcsToUtf8 (b -> name), NULL);
 					}
 				}
 			#endif
@@ -1263,7 +1263,7 @@ void UiForm_setInteger (I, const wchar_t *fieldName, long value) {
 					UiOption b = static_cast <UiOption> (field -> options -> item [i]);
 					XmToggleButtonSetState (b -> toggle, i == value, False);
 					if (i == value) {
-						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (b -> name)), NULL);
+						XtVaSetValues (field -> cascadeButton, XmNlabelString, Melder_peekWcsToUtf8 (b -> name), NULL);
 					}
 				}
 			#endif
@@ -1317,7 +1317,7 @@ void UiForm_setString (I, const wchar *fieldName, const wchar *value) {
 					UiOption b = static_cast <UiOption> (field -> options -> item [i]);
 					XmToggleButtonSetState (b -> toggle, i == integerValue, False);
 					if (i == integerValue)
-						XtVaSetValues (field -> cascadeButton, motif_argXmString (XmNlabelString, Melder_peekWcsToUtf8 (value)), NULL);
+						XtVaSetValues (field -> cascadeButton, XmNlabelString, Melder_peekWcsToUtf8 (value), NULL);
 				}
 			#endif
 			/* If not found: do nothing (guard against incorrect prefs file). */

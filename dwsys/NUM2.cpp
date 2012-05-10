@@ -956,6 +956,7 @@ void NUMmonotoneRegression (const double x[], long n, double xs[]) {
 	}
 }
 
+float NUMfvector_getNorm1 (const float v[], long n);
 float NUMfvector_getNorm1 (const float v[], long n) {
 	float norm = 0; long i;
 	for (i = 1; i <= n; i++) {
@@ -964,6 +965,7 @@ float NUMfvector_getNorm1 (const float v[], long n) {
 	return norm;
 }
 
+float NUMfvector_getNorm2 (const float v[], long n);
 float NUMfvector_getNorm2 (const float v[], long n) {
 	float norm = 0; long i;
 	for (i = 1; i <= n; i++) {
@@ -2993,6 +2995,7 @@ void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc) {
 	}
 }
 
+void NUMlpc_rc_to_area2 (double *rc, long n, double *area);
 void NUMlpc_rc_to_area2 (double *rc, long n, double *area) {
 	double s = 0.0001; /* 1.0 cm^2 at glottis */
 	for (long i = n; i > 0; i--) {
@@ -3000,6 +3003,8 @@ void NUMlpc_rc_to_area2 (double *rc, long n, double *area) {
 		area[i] = s;
 	}
 }
+
+void NUMlpc_area_to_lpc2 (double *area, long n, double *lpc);
 void NUMlpc_area_to_lpc2 (double *area, long n, double *lpc) {
 	// from area to reflection coefficients
 	autoNUMvector<double> rc (1, n);
@@ -3023,6 +3028,7 @@ void NUMlpc_area_to_lpc2 (double *area, long n, double *lpc) {
 	}
 }
 
+void NUMlpc_lpc_to_rc2 (double *lpc, long m, double *rc);
 void NUMlpc_lpc_to_rc2 (double *lpc, long m, double *rc) { // klopt nog niet
 	NUMvector_copyElements<double> (lpc, rc, 1, m);
 	for (long j = 2; j <= m; j++) {
@@ -3052,6 +3058,7 @@ void NUMlpc_area_to_rc (double *area, long m, double *rc) {
 	}
 }
 
+void NUMlpc_rc_to_lpc (double *rc, long m, double *lpc);
 void NUMlpc_rc_to_lpc (double *rc, long m, double *lpc) {
 	NUMvector_copyElements<double> (rc, lpc, 1, m);
 	for (long j = 2; j <= m; j++) {

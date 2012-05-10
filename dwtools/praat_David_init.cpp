@@ -149,6 +149,7 @@ void DTW_constraints_addCommonFields (void *dia);
 void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope);
 void praat_Matrixft_query_init (ClassInfo klas);
 int praat_Fon_formula (UiForm dia, Interpreter interpreter);
+void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
 #undef INCLUDE_DTW_SLOPES
 
@@ -1938,6 +1939,10 @@ END
 
 /******************** EditDistanceTable & EditCostsTable ********************************************/
 
+DIRECT (EditDistanceTable_help)
+	Melder_help (L"EditDistanceTable");
+END
+
 DIRECT (EditDistanceTable_to_TableOfReal_directions)
 	LOOP {
 		iam (EditDistanceTable);
@@ -1949,6 +1954,30 @@ DIRECT (EditDistanceTable_setEditCosts)
 	EditDistanceTable me = FIRST (EditDistanceTable);
 	EditCostsTable thee = FIRST(EditCostsTable);
 	EditDistanceTable_setEditCosts (me, thee);
+END
+
+FORM (EditDistanceTable_setDefaultCosts, L"", 0)
+	REAL (L"Insertion costs", L"1.0")
+	REAL (L"Deletion costs", L"1.0")
+	REAL (L"Substitution costs", L"2.0")
+	OK
+DO
+	double insertionCosts = GET_REAL (L"Insertion costs");
+	if (insertionCosts < 0) {
+		Melder_throw ("Insertion costs cannot be negative.");
+	}
+	double deletionCosts = GET_REAL (L"Deletion costs");
+	if (deletionCosts < 0) {
+		Melder_throw ("Deletion costs cannot be negative.");
+	}
+	double substitutionCosts = GET_REAL (L"Substitution costs");
+	if (substitutionCosts < 0) {
+		Melder_throw ("Substitution costs cannot be negative.");
+	}
+	LOOP {
+		iam (EditDistanceTable);
+		EditDistanceTable_setDefaultCosts (me, insertionCosts, deletionCosts, substitutionCosts);
+	}
 END
 
 FORM (EditDistanceTable_draw, L"EditDistanceTable_draw", 0)
@@ -2771,6 +2800,32 @@ DIRECT (FilterBank_to_Matrix)
 	}
 END
 
+FORM (FilterBanks_crossCorrelate, L"FilterBanks: Cross-correlate", 0)
+	RADIO_ENUM (L"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (L"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	OK
+DO
+	FilterBank f1 = 0, f2 = 0;
+	LOOP { iam (FilterBank); (f1 ? f2 : f1) = me; }
+	Melder_assert (f1 != 0 && f2 != 0);
+	praat_new (FilterBanks_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, L"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, L"Signal outside time domain is...")),
+		f1 -> name, L"_", f2 -> name);
+END
+
+FORM (FilterBanks_convolve, L"FilterBanks: Convolve", 0)
+	RADIO_ENUM (L"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (L"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	OK
+DO
+	FilterBank f1 = 0, f2 = 0;
+	LOOP { iam (FilterBank); (f1 ? f2 : f1) = me; }
+	Melder_assert (f1 != 0 && f2 != 0);
+	praat_new (FilterBanks_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, L"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, L"Signal outside time domain is...")),
+		f1 -> name, L"_", f2 -> name);
+END
+
 DIRECT (FilterBank_to_Intensity)
 	LOOP {
 		iam (FilterBank);
@@ -3565,6 +3620,57 @@ DO
 	}
 END
 
+FORM (MFCC_to_TableOfReal, L"MFCC: To TableOfReal", L"MFCC: To TableOfReal...")
+	BOOLEAN (L"Include energy", 0)
+	OK
+DO
+	LOOP {
+		iam (MFCC);
+		praat_new (MFCC_to_TableOfReal (me, GET_INTEGER (L"Include energy")), my name);
+	}
+END
+
+FORM (MFCCs_crossCorrelate, L"MFCC & MFCC: Cross-correlate", 0)
+	RADIO_ENUM (L"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (L"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	OK
+DO
+	MFCC m1 = 0, m2 = 0;
+	LOOP {
+		iam (MFCC);
+		(m1 ? m2 : m1) = me;
+	}
+	Melder_assert (m1 && m2);
+	praat_new (MFCCs_crossCorrelate (m1, m2,
+		GET_ENUM (kSounds_convolve_scaling, L"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, L"Signal outside time domain is...")),
+		m1 -> name, L"_", m2 -> name);
+END
+
+FORM (MFCCs_convolve, L"MFCC & MFCC: Convolve", 0)
+	RADIO_ENUM (L"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (L"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	OK
+DO
+	MFCC m1 = 0, m2 = 0;
+	LOOP {
+		iam (MFCC);
+		(m1 ? m2 : m1) = me;
+	}
+	Melder_assert (m1 && m2);
+	praat_new (MFCCs_convolve (m1, m2,
+		GET_ENUM (kSounds_convolve_scaling, L"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, L"Signal outside time domain is...")),
+		m1 -> name, L"_", m2 -> name);
+END
+
+DIRECT (MFCC_to_Sound)
+	LOOP {
+		iam (MFCC);
+		praat_new (MFCC_to_Sound (me), my name);
+	}
+END
+
 /**************** MSpline *******************************************/
 
 FORM (MSpline_create, L"Create MSpline", L"Create MSpline...")
@@ -3703,6 +3809,19 @@ DO
 	PCA me = FIRST (PCA);
 	TableOfReal tab = FIRST_GENERIC (TableOfReal);
 	praat_new (PCA_and_TableOfReal_to_Configuration (me, tab, dimension), my name, L"_", tab->name);
+END
+
+FORM (PCA_and_TableOfReal_to_TableOfReal_zscores, L"PCA & TableOfReal: To TableOfReal (z-scores)", L"PCA & TableOfReal: To TableOfReal (z-scores)...")
+	INTEGER (L"Number of dimensions", L"0 (=all)")
+	OK
+DO
+	long dimension = GET_INTEGER (L"Number of dimensions");
+	if (dimension < 0) {
+		Melder_throw ("Number of dimensions must be greater than or equal to zero.");
+	}
+	PCA me = FIRST (PCA);
+	TableOfReal thee = FIRST_GENERIC (TableOfReal);
+	praat_new (PCA_and_TableOfReal_to_TableOfReal_zscores (me, thee, dimension), my name, L"_", thy name, L"_zscores");
 END
 
 FORM (PCA_getCentroidElement, L"PCA: Get centroid element...", 0)
@@ -4788,7 +4907,7 @@ DO
 		iam (Sound);
 		praat_new (Sound_to_BarkFilter (me, GET_REAL (L"Window length"),
 		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
-		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), 0);
+		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), my name);
 	}
 END
 
@@ -5267,7 +5386,7 @@ FORM (SpeechSynthesizer_setTextInputSettings, L"SpeechSynthesizer: Set text inpu
 	OPTION (L"Phoneme codes only")
 	OPTION (L"Mixed with tags")
 	OPTIONMENU (L"Input phoneme codes are", 1)
-	OPTION (L"Hirschenbaum_espeak")
+	OPTION (L"Kirshenbaum_espeak")
 	OK
 DO
 	int inputTextFormat = GET_INTEGER (L"Input text format is");
@@ -5286,7 +5405,7 @@ FORM (SpeechSynthesizer_setSpeechOutputSettings, L"SpeechSynthesizer: Set speech
 	NATURAL (L"Words per minute (80-450)", L"175");
 	BOOLEAN (L"Estimate words per minute from data", 1);
 	OPTIONMENU (L"Output phoneme codes are", 2)
-	OPTION (L"Hirschenbaum_espeak")
+	OPTION (L"Kirshenbaum_espeak")
 	OPTION (L"IPA")
 	OK
 DO
@@ -6325,6 +6444,23 @@ DO
 	praat_new (TextGrids_to_Table_textAlignmentment (tg1, GET_INTEGER (L"Target tier"), tg2, GET_INTEGER (L"Source tier"), 0), tg1 -> name, L"_", tg2 -> name);
 END
 
+FORM (TextGrids_and_EditCostsTable_to_Table_textAlignmentment, L"TextGrids & EditCostsTable: To Table(text alignmentment)", 0)
+	NATURAL (L"Target tier", L"1")
+	NATURAL (L"Source tier", L"1")
+	OK
+DO
+	TextGrid tg1 = 0, tg2 = 0; EditCostsTable ect = 0;
+    LOOP {
+        if (CLASS == classTextGrid) {
+        	(tg1 ? tg2 : tg1) = (TextGrid) OBJECT;
+		} else {
+			ect = (EditCostsTable) OBJECT;
+		}
+    }
+ 	Melder_assert (tg1 && tg2 && ect);
+	praat_new (TextGrids_to_Table_textAlignmentment (tg1, GET_INTEGER (L"Target tier"), tg2, GET_INTEGER (L"Source tier"), ect), tg1 -> name, L"_", tg2 -> name);
+END
+
 FORM (TextGrid_setTierName, L"TextGrid: Set tier name", L"TextGrid: Set tier name...")
 	NATURAL (L"Tier number:", L"1")
 	SENTENCE (L"Name", L"");
@@ -6423,6 +6559,8 @@ static void praat_FilterBank_all_init (ClassInfo klas) {
 	praat_FilterBank_modify_init (klas);
 	praat_addAction1 (klas, 0, L"To Intensity", 0, 0, DO_FilterBank_to_Intensity);
 	praat_addAction1 (klas, 0, L"To Matrix", 0, 0, DO_FilterBank_to_Matrix);
+	praat_addAction1 (klas, 2, L"Cross-correlate...", 0, 0, DO_FilterBanks_crossCorrelate);
+	praat_addAction1 (klas, 2, L"Convolve...", 0, 0, DO_FilterBanks_convolve);
 }
 
 static void praat_FunctionTerms_init (ClassInfo klas) {
@@ -6519,6 +6657,7 @@ void praat_TableOfReal_init2 (ClassInfo klas) {
 
 void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas) {
 	praat_TableOfReal_init (klas);
+	praat_addAction1 (klas, 0, L"Set default costs...", L"Formula...", 1, DO_EditDistanceTable_setDefaultCosts);
 	praat_removeAction (klas, NULL, NULL, L"Draw as numbers...");
 	praat_addAction1 (klas, 0, L"Draw...", L"Draw -", 1, DO_EditDistanceTable_draw);
 	praat_addAction1 (klas, 0, L"Draw edit operations...", L"Draw...", 1, DO_EditDistanceTable_drawEditOperations);
@@ -6578,8 +6717,8 @@ void praat_uvafon_David_init () {
 	praat_addMenuCommand (L"Objects", L"New", L"Create empty EditCostsTable...", L"Create simple Covariance...", 1, DO_EditCostsTable_createEmpty);
 
 	praat_addMenuCommand (L"Objects", L"New", L"Create KlattTable example", L"Create TableOfReal (Weenink 1985)...", praat_DEPTH_1 + praat_HIDDEN, DO_KlattTable_createExample);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as characters", L"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsCharacters);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as tokens", L"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsTokens);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as characters...", L"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsCharacters);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Strings as tokens...", L"Create TextGrid...", praat_HIDDEN, DO_Strings_createAsTokens);
 
 	praat_addMenuCommand (L"Objects", L"New", L"Create simple Polygon...", 0, praat_HIDDEN, DO_Polygon_createSimple);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Polygon (random vertices)...", 0, praat_HIDDEN, DO_Polygon_createFromRandomVertices);
@@ -6843,8 +6982,9 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw...", 0, 0, DO_DTW_and_Sounds_draw);
 	praat_addAction2 (classDTW, 1, classSound, 2, L"Draw warp (x)...", 0, 0, DO_DTW_and_Sounds_drawWarpX);
 
+	praat_addAction1 (classEditDistanceTable, 1, L"EditDistanceTable help", 0, 0, DO_EditDistanceTable_help);
 	praat_EditDistanceTable_as_TableOfReal_init (classEditDistanceTable);
-	praat_addAction1 (classEditDistanceTable, 1, L"To TableOfReal (directions)...", 0, 0, DO_EditDistanceTable_to_TableOfReal_directions);
+	praat_addAction1 (classEditDistanceTable, 1, L"To TableOfReal (directions)...", 0, praat_HIDDEN, DO_EditDistanceTable_to_TableOfReal_directions);
 	praat_addAction2 (classEditDistanceTable, 1, classEditCostsTable, 1, L"Set new edit costs", 0, 0, DO_EditDistanceTable_setEditCosts);
 
 	praat_addAction1 (classEditCostsTable, 1, L"EditCostsTable help", 0, 0, DO_EditCostsTable_help);
@@ -6952,6 +7092,10 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMFCC, 0, L"MFCC help", 0, 0, DO_MFCC_help);
 	praat_CC_init (classMFCC);
 	praat_addAction1 (classMFCC, 0, L"To MelFilter...", 0, 0, DO_MFCC_to_MelFilter);
+	praat_addAction1 (classMFCC, 0, L"To TableOfReal...", 0, 0, DO_MFCC_to_TableOfReal);
+	praat_addAction1 (classMFCC, 0, L"To Sound", 0, praat_HIDDEN, DO_MFCC_to_Sound);
+	praat_addAction1 (classMFCC, 2, L"Cross-correlate...", 0, 0, DO_MFCCs_crossCorrelate);
+	praat_addAction1 (classMFCC, 2, L"Convolve...", 0, 0, DO_MFCCs_convolve);
 
 	praat_addAction1 (classMSpline, 0, L"MSpline help", 0, 0, DO_MSpline_help);
 	praat_Spline_init (classMSpline);
@@ -6989,6 +7133,7 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classPCA, 1, classConfiguration, 1, L"To TableOfReal (reconstruct)", 0, 0, DO_PCA_and_Configuration_to_TableOfReal_reconstruct);
 	praat_addAction2 (classPCA, 1, classSSCP, 1, L"Project", 0, 0, DO_Eigen_and_SSCP_project);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, L"To Configuration...", 0, 0, DO_PCA_and_TableOfReal_to_Configuration);
+	praat_addAction2 (classPCA, 1, classTableOfReal, 1, L"To TableOfReal (z-scores)...", 0, 0, DO_PCA_and_TableOfReal_to_TableOfReal_zscores);
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, L"Get fraction variance...", 0, 0, DO_PCA_and_TableOfReal_getFractionVariance);
 	praat_addAction2 (classPCA, 1, classCovariance, 1, L"Project", 0, 0, DO_Eigen_and_Covariance_project);
 
@@ -7212,6 +7357,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classTextGrid, 0, L"Replace interval text...", L"Set interval text...", 2, DO_TextGrid_replaceIntervalTexts);
 	praat_addAction1 (classTextGrid, 0, L"Replace point text...", L"Set point text...", 2, DO_TextGrid_replacePointTexts);
 	praat_addAction1 (classTextGrid, 2, L"To Table (text alignment)...", L"Extract part...", 0, DO_TextGrids_to_Table_textAlignmentment);
+	praat_addAction2 (classTextGrid, 2, classEditCostsTable, 1, L"To Table (text alignment)...", 0, 0, DO_TextGrids_and_EditCostsTable_to_Table_textAlignmentment);
 
 	INCLUDE_MANPAGES (manual_dwtools_init)
 	INCLUDE_MANPAGES (manual_Permutation_init)

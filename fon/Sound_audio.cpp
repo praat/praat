@@ -165,12 +165,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		volatile struct Sound_recordFixedTime_Info info = { 0 };
 		PaStreamParameters streamParameters = { 0 };
 		#if defined (macintosh)
-			SPB spb;
-			long soundFeatures;
-			(void) gain;
-			(void) balance;
-			can16bit = Gestalt (gestaltSoundAttr, & soundFeatures) == 0 &&
-				(soundFeatures & (1 << gestalt16BitAudioSupport)) != 0;
 		#elif defined (_WIN32)
 			WAVEFORMATEX waveFormat;
 			WAVEHDR waveHeader;
@@ -229,8 +223,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			}
 		} else {
 			#if defined (macintosh)
-				if (SPBOpenDevice (NULL, siWritePermission, & refNum) != noErr)
-					Melder_throw ("Cannot open audio input device.\nPerhaps somebody else is recording on your computer.");
 			#elif defined (_WIN32)
 			#else
 				/* We must open the port now, because we use an ioctl to set the info to an open port. */
@@ -261,15 +253,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			streamParameters. device = inputSource - 1;
 		} else {
 			#if defined (macintosh)
-			{
-				short macInputSource = inputSource;
-				OSErr err = SPBSetDeviceInfo (refNum, siInputSource, & macInputSource);
-				if (err != noErr) {
-					static int notified = FALSE;
-					if (! notified) Melder_warning ("(Sound_record:) Cannot set input source to ", inputSource, ". Error #", err, ".");
-					notified = TRUE;
-				}
-			}
 			#elif defined (linux)
 				fd_mixer = open ("/dev/mixer", O_WRONLY);		
 				if (fd_mixer == -1)
@@ -316,9 +299,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			// Set while opening.
 		} else {
 			#if defined (macintosh)
-				unsigned long sampleRate_uf = sampleRate * 65536.0;
-				if (SPBSetDeviceInfo (refNum, siSampleRate, & sampleRate_uf) != noErr)
-					Melder_throw ("Cannot set sampling frequency to ", sampleRate, " Hz.");
 			#elif defined (linux)
 				int sampleRate_int = (int) sampleRate;
 				if (ioctl (fd, SNDCTL_DSP_SPEED, & sampleRate_int) == -1)
@@ -334,9 +314,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			streamParameters. channelCount = 1;
 		} else {
 			#if defined (macintosh)
-				short numberOfChannels = 1;
-				if (SPBSetDeviceInfo (refNum, siNumberChannels, & numberOfChannels) != noErr)
-					fakeMonoByStereo = TRUE;
 			#elif defined (linux)
 				val = 1;
 				if (ioctl (fd, SNDCTL_DSP_CHANNELS, & val) == -1)
@@ -352,12 +329,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			streamParameters. sampleFormat = paInt16;
 		} else {
 			#if defined (macintosh)
-				OSType compressionType = 'NONE';
-				short sampleSize = can16bit ? 16 : 8;
-				if (SPBSetDeviceInfo (refNum, siCompressionType, & compressionType) != noErr)
-					Melder_throw ("Cannot set to linear.");
-				if (SPBSetDeviceInfo (refNum, siSampleSize, & sampleSize) != noErr)
-					Melder_throw ("Cannot set to ", sampleSize, "-bit.");
 			#elif defined (linux)
 				#if __BYTE_ORDER == __BIG_ENDIAN
 					val = AFMT_S16_BE;
@@ -410,17 +381,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				Melder_throw ("start ", Pa_GetErrorText (err));
 		} else {
 			#if defined (macintosh)
-				spb. inRefNum = refNum;
-				spb. bufferLength = spb. count = numberOfSamples * (can16bit ? 2 : 1) * (fakeMonoByStereo ? 2 : 1);
-				spb. milliseconds = 0;
-				spb. bufferPtr = (char *) & buffer [1];
-				spb. completionRoutine = NULL;
-				spb. interruptRoutine = NULL;
-				spb. userLong = 0;
-				spb. error = noErr;
-				spb. unused1 = 0;
-				if (SPBRecord (& spb, false) != noErr)
-					Melder_throw ("Cannot create audio buffer.");
 			#elif defined (_WIN32)
 				waveFormat. cbSize = 0;
 				err = waveInOpen (& hWaveIn, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL);
@@ -498,7 +458,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			Pa_CloseStream (portaudioStream);
 		} else {
 			#if defined (macintosh)
-				SPBCloseDevice (refNum);
 			#elif defined (_WIN32)
 				err = waveInClose (hWaveIn);
 				if (err != MMSYSERR_NOERROR)
@@ -517,7 +476,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			if (portaudioStream) Pa_CloseStream (portaudioStream);
 		} else {
 			#if defined (macintosh)
-				SPBCloseDevice (refNum);
 			#elif defined (_WIN32)
 				if (hWaveIn != 0) waveInClose (hWaveIn);
 			#else

@@ -1755,7 +1755,7 @@ SCRIPT (6, 3, L""
 	"Draw rectangle... 0 560 0 260\n"
 )
 NORMAL (L"In other words, #printline writes lines into the Info window without erasing it, even if you run a script anew. "
-	"This is why many Praat scripts that write into the Info window do an #echo first, and follow it be a series of #printlines.")
+	"This is why many Praat scripts that write into the Info window do an #echo first, and follow it with a series of #printlines.")
 NORMAL (L"For more information on these commands, see @@Scripting 6.2. Writing to the Info window@.")
 ENTRY (L"2. \"Hello world\" in the Picture window.")
 NORMAL (L"You can also show text in the Picture window. If you are an experienced Praat user, you have probably used the comamnd ##Text top...# before. "

@@ -1985,15 +1985,12 @@ END
 
 FORM (SoundInputPrefs, L"Sound recording preferences", L"SoundRecorder")
 	NATURAL (L"Buffer size (MB)", L"20")
-	BOOLEAN (L"Input uses PortAudio", kMelderAudio_inputUsesPortAudio_DEFAULT)
 	OK
 SET_INTEGER (L"Buffer size", SoundRecorder_getBufferSizePref_MB ())
-SET_INTEGER (L"Input uses PortAudio", MelderAudio_getInputUsesPortAudio ())
 DO
 	long size = GET_INTEGER (L"Buffer size");
 	if (size > 1000) Melder_throw ("Buffer size cannot exceed 1000 megabytes.");
 	SoundRecorder_setBufferSizePref_MB (size);
-	MelderAudio_setInputUsesPortAudio (GET_INTEGER (L"Input uses PortAudio"));
 END
 
 FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
@@ -2005,20 +2002,14 @@ FORM (SoundOutputPrefs, L"Sound playing preferences", 0)
 	#define str(s) #s
 	REAL (L"Silence before (s)", L"" xstr (kMelderAudio_outputSilenceBefore_DEFAULT))
 	REAL (L"Silence after (s)", L"" xstr (kMelderAudio_outputSilenceAfter_DEFAULT))
-	BOOLEAN (L"Output uses PortAudio", kMelderAudio_outputUsesPortAudio_DEFAULT)
-	BOOLEAN (L"Output uses blocking", 0)
 	OK
 SET_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_getOutputMaximumAsynchronicity ())
 SET_REAL (L"Silence before", MelderAudio_getOutputSilenceBefore ())
 SET_REAL (L"Silence after", MelderAudio_getOutputSilenceAfter ())
-SET_INTEGER (L"Output uses PortAudio", MelderAudio_getOutputUsesPortAudio ())
-SET_INTEGER (L"Output uses blocking", MelderAudio_getOutputUsesBlocking ())
 DO
 	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, L"Maximum asynchronicity"));
 	MelderAudio_setOutputSilenceBefore (GET_REAL (L"Silence before"));
 	MelderAudio_setOutputSilenceAfter (GET_REAL (L"Silence after"));
-	MelderAudio_setOutputUsesPortAudio (GET_INTEGER (L"Output uses PortAudio"));
-	MelderAudio_setOutputUsesBlocking (GET_INTEGER (L"Output uses blocking"));
 END
 
 FORM_WRITE (Sound_writeToAifcFile, L"Save as AIFC file", 0, L"aifc")
@@ -2042,15 +2033,6 @@ FORM_WRITE (Sound_writeToKayFile, L"Save as Kay sound file", 0, L"kay")
 		Sound_writeToKayFile (me, file);
 	}
 END
-
-#ifdef macintosh
-FORM_WRITE (Sound_writeToMacSoundFile, L"Save as Macintosh sound file", 0, L"macsound")
-	LOOP {
-		iam (Sound);
-		Sound_writeToMacSoundFile (me, file);
-	}
-END
-#endif
 
 FORM_WRITE (Sound_writeToNextSunFile, L"Save as NeXT/Sun file", 0, L"au")
 	autoCollection set = praat_getSelectedObjects ();
@@ -2194,11 +2176,7 @@ static Any macSoundOrEmptyFileRecognizer (int nread, const char *header, MelderF
 	/***** No data in file? This may be a Macintosh sound file with only a resource fork. *****/
 	(void) header;
 	if (nread > 0) return NULL;
-	#ifdef macintosh
-		return Sound_readFromMacSoundFile (file);
-	#else
-		Melder_throw ("File ", file, " is empty.");   // !!!
-	#endif
+	Melder_throw ("File ", file, " contains no audio data.");   // !!!
 }
 
 static Any soundFileRecognizer (int nread, const char *header, MelderFile file) {
@@ -2224,7 +2202,8 @@ static Any movieFileRecognizer (int nread, const char *header, MelderFile file) 
 		header [7], header [8], header [9]);*/
 	if (nread < 512 || (! wcsstr (fileName, L".mov") && ! wcsstr (fileName, L".MOV") &&
 	    ! wcsstr (fileName, L".avi") && ! wcsstr (fileName, L".AVI"))) return NULL;
-	return Sound_readFromMovieFile (file);
+	Melder_throw ("This Praat version cannot open movie files.");
+	return NULL;
 }
 
 static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
@@ -2404,10 +2383,6 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classSound, 0, L"Write to NIST file...", 0, praat_HIDDEN, DO_Sound_writeToNistFile);
 	praat_addAction1 (classSound, 0, L"Save as FLAC file...", 0, 0, DO_Sound_writeToFlacFile);
 	praat_addAction1 (classSound, 0, L"Write to FLAC file...", 0, praat_HIDDEN, DO_Sound_writeToFlacFile);
-	#ifdef macintosh
-	praat_addAction1 (classSound, 1, L"Save as Mac sound file...", 0, praat_HIDDEN, DO_Sound_writeToMacSoundFile);
-	praat_addAction1 (classSound, 1, L"Write to Mac sound file...", 0, praat_HIDDEN, DO_Sound_writeToMacSoundFile);
-	#endif
 	praat_addAction1 (classSound, 1, L"Save as Kay sound file...", 0, 0, DO_Sound_writeToKayFile);
 	praat_addAction1 (classSound, 1, L"Write to Kay sound file...", 0, praat_HIDDEN, DO_Sound_writeToKayFile);
 	praat_addAction1 (classSound, 1, L"Save as Sesam file...", 0, praat_HIDDEN, DO_Sound_writeToSesamFile);

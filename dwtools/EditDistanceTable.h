@@ -39,6 +39,7 @@ long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long irow, long *icol1,
 long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long icol, long *irow1, long *irow2);
 
 EditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphabetSize);
+void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts);
 long EditCostsTable_getTargetIndex (EditCostsTable me, const wchar_t *symbol);
 long EditCostsTable_getSourceIndex (EditCostsTable me, const wchar_t *symbol);
 double EditCostsTable_getInsertionCost (EditCostsTable me, const wchar_t *symbol);
@@ -54,6 +55,7 @@ EditDistanceTable EditDistanceTable_create (Strings target, Strings source);
 EditDistanceTable EditDistanceTable_createFromCharacterStrings (const wchar_t *chars1, const wchar_t *chars2);
 void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iformat, int precision, double angle);
 void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphics);
+void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCosts, double deletionCosts, double substitutionCosts);
 void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions);
 
 void EditDistanceTable_setEditCosts (EditDistanceTable me, EditCostsTable thee);

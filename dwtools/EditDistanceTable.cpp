@@ -42,6 +42,9 @@
 #include "oo_DESCRIPTION.h"
 #include "EditDistanceTable_def.h"
 
+// prototypes
+EditCostsTable EditCostsTable_createDefault ();
+
 /* The insertion, deletion and substitution costs are specified in a TableOfReal
  * 1..n-2 target symbols/alphabet
  * 1..m-2 source symbols/alphabet
@@ -180,6 +183,12 @@ EditCostsTable EditCostsTable_createDefault () {
 	} catch (MelderError) {
 		Melder_throw ("Default EditCostsTable not created.");
 	}
+}
+
+void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts) {
+	my data[my numberOfRows][my numberOfColumns] = substitutionCosts;
+	my data[my numberOfRows][my numberOfColumns - 1] = insertionCosts;
+	my data[my numberOfRows - 1][my numberOfColumns] = deletionCosts;
 }
 
 long EditCostsTable_getTargetIndex (EditCostsTable me, const wchar_t *symbol) {
@@ -487,6 +496,11 @@ void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphi
 		}
 		Graphics_line (graphics, x, ysource + lineSpacing, x, ytarget - 0.1 * lineSpacing);
 	}
+}
+
+void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCosts, double deletionCosts, double substitutionCosts) {
+	EditCostsTable_setDefaultCosts (my d_editCostsTable, insertionCosts, deletionCosts, substitutionCosts);
+	EditDistanceTable_findPath (me, 0);
 }
 
 TableOfReal EditDistanceTable_to_TableOfReal_directions (EditDistanceTable me) {

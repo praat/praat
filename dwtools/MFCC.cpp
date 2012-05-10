@@ -2,7 +2,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,8 @@
 #include "MFCC.h"
 #include "NUM2.h"
 
-Thing_implement (MFCC, CC, 0);
+
+Thing_implement (MFCC, CC, 1);
 
 MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
                   long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
@@ -56,6 +57,80 @@ void MFCC_lifter (MFCC me, long lifter) {
 		}
 	} catch (MelderError) {
 		Melder_throw (me, ": not lifted.");
+	}
+}
+
+TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0) {
+	try {
+		long numberOfColumns = my maximumNumberOfCoefficients + (includeC0 ? 1 : 0);
+		autoTableOfReal thee = TableOfReal_create (my nx, numberOfColumns);
+		autoMelderString columnLabel;
+		for (long i = 1; i <= numberOfColumns; i++) {
+			MelderString_append (&columnLabel, L"c", Melder_integer (includeC0 ? i - 1 : i));
+			TableOfReal_setColumnLabel (thee.peek(), i, columnLabel.string);
+			MelderString_empty (&columnLabel);
+		}
+		long offset = includeC0 ? 1 : 0;
+		for (long iframe = 1; iframe <= my nx; iframe++) {
+			CC_Frame cf = (CC_Frame) & my frame[iframe];
+			for (long j = 1; j <= cf -> numberOfCoefficients; j++) {
+				thy data[iframe][j + offset] = cf -> c[j];
+			}
+			if (includeC0) {
+				thy data[iframe][1] = cf -> c0;
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": not converted to TabelOfReal.");
+	}
+}
+
+Sound MFCC_to_Sound (MFCC me) {
+	try {
+		autoSound thee = Sound_create (my maximumNumberOfCoefficients, my xmin, my xmax, my nx, my dx, my x1);
+		for (long iframe = 1; iframe <= my nx; iframe++) {
+			CC_Frame cf = (CC_Frame) & my frame[iframe];
+			for (long j = 1; j <= my maximumNumberOfCoefficients; j++) {
+				thy z[j][iframe] = cf -> c[j];
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": not represented as Sound.");
+	}
+}
+Sound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+	try {
+		if (my dx != thy dx) {
+			Melder_throw ("The samplings of the two MFCC's have to be equal.");
+		}
+		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
+			Melder_throw ("The number of coefficients in the two MFCC's have to be equal.");
+		}
+		autoSound target = MFCC_to_Sound (me);
+		autoSound source = MFCC_to_Sound (thee);
+		autoSound cc = Sounds_crossCorrelate (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
+		return cc.transfer();
+	} catch (MelderError) {
+		Melder_throw ("No cross-correlation between ", me, " and ", thee, " calculated.");
+	}
+}
+
+Sound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+	try {
+		if (my dx != thy dx) {
+			Melder_throw ("The samplings of the two MFCC's have to be equal.");
+		}
+		if (my maximumNumberOfCoefficients != thy maximumNumberOfCoefficients) {
+			Melder_throw ("The number of coefficients in the two MFCC's have to be equal.");
+		}
+		autoSound target = MFCC_to_Sound (me);
+		autoSound source = MFCC_to_Sound (thee);
+		autoSound cc = Sounds_convolve (target.peek(), source.peek(), scaling, signalOutsideTimeDomain);
+		return cc.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, " and ", thee, " not convolved.");
 	}
 }
 

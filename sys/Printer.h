@@ -2,7 +2,7 @@
 #define _Printer_h_
 /* Printer.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ struct Printer {
 	enum kGraphicsPostscript_spots spots;
 	enum kGraphicsPostscript_paperSize paperSize;
 	enum kGraphicsPostscript_orientation orientation;
-	bool postScript, allowDirectPostScript, epsFilesHavePreview;
+	bool postScript, allowDirectPostScript;
 	enum kGraphicsPostscript_fontChoiceStrategy fontChoiceStrategy;
 	long resolution, paperWidth, paperHeight;
 	double magnification;

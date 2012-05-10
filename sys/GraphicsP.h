@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,10 +64,10 @@ Thing_define (GraphicsScreen, Graphics) {
 			int d_macFont, d_macStyle;
 			int d_depth;
 			RGBColor d_macColour;
-			bool d_useQuartz;
 			CGContextRef d_macGraphicsContext;
 		#endif
 	// overridden methods:
+	protected:
 		virtual void v_destroy ();
 		virtual void v_polyline (long numberOfPoints, long *xyDC, bool close);
 		virtual void v_fillArea (long numberOfPoints, long *xyDC);

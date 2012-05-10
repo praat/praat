@@ -503,25 +503,31 @@ Sound LPC_and_Sound_filterInverse (LPC me, Sound thee) {
 */
 Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 	try {
+		double xmin = my xmin > thy xmin ? my xmin : thy xmin;
+		double xmax = my xmax < thy xmax ? my xmax : thy xmax;
+		if (xmin >= xmax) {
+			Melder_throw ("Domains of Sound [", Melder_double(thy xmin), ",", Melder_double(thy xmax), "] and LPC [",
+				Melder_double(my xmin), ",", Melder_double(my xmax), "] do not overlap.");
+		}
+		// resample sound if samplings don't match
+		autoSound source = 0;
 		if (my samplingPeriod != thy dx) {
-			Melder_throw ("Sampling frequencies are not the same.");
+			source.reset (Sound_resample (thee, 1.0 / my samplingPeriod, 50));
+			thee = source.peek();   // reference copy; remove at end
 		}
-		if (my xmin != thy xmin || my xmax != thy xmax) {
-			Melder_throw ("Time domains of source and filter do not match.");
-		}
+
 		autoSound him = Data_copy (thee);
 
 		double *x = his z[1];
-		long ifirst = 0, ilast = 0;
-		for (long i = 1; i <= his nx; i++) {
+		long ifirst = Sampled_xToHighIndex (thee, xmin);
+		long ilast = Sampled_xToLowIndex (thee, xmax);
+		for (long i = ifirst; i <= ilast; i++) {
 			double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 			long iFrame = floor ( (t - my x1) / my dx + 1.5); /* Sampled_xToNearestIndex (me, t) */
 			if (iFrame < 1) {
-				ifirst = i;
 				continue;
 			}
 			if (iFrame > my nx) {
-				ilast = i;
 				break;
 			}
 			double *a = my d_frames[iFrame].a;
@@ -536,11 +542,12 @@ Sound LPC_and_Sound_filter (LPC me, Sound thee, int useGain) {
 		for (long i = 1; i < ifirst; i++) {
 			x[i] = 0;
 		}
-		if (ilast > 0) for (long i = ilast + 1; i <= his nx; i++) {
-				x[i] = 0;
-			}
+
+		for (long i = ilast + 1; i <= his nx; i++) {
+			x[i] = 0;
+		}
 		if (useGain) {
-			for (long i = 1; i <= his nx; i++) {
+			for (long i = ifirst; i <= ilast; i++) {
 				double t = his x1 + (i - 1) * his dx; /* Sampled_indexToX (him, i) */
 				double riFrame = (t - my x1) / my dx + 1; /* Sampled_xToIndex (me, t); */
 				long iFrame = floor (riFrame);

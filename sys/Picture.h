@@ -2,7 +2,7 @@
 #define _Picture_h_
 /* Picture.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* A self-recording picture inside a Motif DrawingArea widget.
+/* A self-recording picture inside a DrawingArea widget.
 	All drawing is kept in a Graphics.
 	If the picture is sensitive,
 	the user can select the viewport by dragging the mouse across the drawing area.
@@ -41,7 +41,7 @@
 		Graphics_text (g, 0.5, 0.3, L"Goodbye");
 		Picture_highlight (p);
 		... (event handling)
-		Picture_writeToPostscriptFile (p, L"HelloGoodbye.ps");
+		Picture_writeToEpsFile (p, L"HelloGoodbye.eps");
 		Picture_print (p, GraphicsPostscript_FINE);
 		Picture_remove (& p);
 */
@@ -112,19 +112,14 @@ void Picture_erase (Picture me);   /* Clears the screen. */
 
 void Picture_writeToPraatPictureFile (Picture me, MelderFile file);
 void Picture_readFromPraatPictureFile (Picture me, MelderFile file);
-#ifdef _WIN32
-	void Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file);
-#endif
+
 void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS);
 void Picture_writeToPdfFile (Picture me, MelderFile file);
 
 void Picture_print (Picture me);
 void Picture_printToPostScriptPrinter (Picture me, int spots, int paperSize, int rotation, double magnification);
 #ifdef macintosh
-	void Picture_writeToMacPictFile (Picture me, MelderFile file);
 	void Picture_copyToClipboard (Picture me);
-	void Picture_copyToQuickDrawClipboard (Picture me);
-	void Picture_copyToClipboard_screenImage (Picture me);
 #endif
 #ifdef _WIN32
 	void Picture_copyToClipboard (Picture me);

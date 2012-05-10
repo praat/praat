@@ -557,46 +557,25 @@ static void gui_button_cb_menu (I, GuiButtonEvent event) {
 }
 
 void praat_actions_show (void) {
-	long i;
-	#if motif
-		GuiObject buttons [1000], writeButtons [50];
-	#endif
-
-	/* The selection has changed;
+	/*
+	 * The selection has changed;
 	 * kill the dynamic menu and the write menu.
 	 */
 	if (! theCurrentPraatApplication -> batch) {
-		#if defined (macintosh) || defined (_WIN32) || 1
-			deleteDynamicMenu ();
-		#endif
+		deleteDynamicMenu ();
 		if (! Melder_backgrounding) {
-			#if motif
-				int nbuttons = 0, nwriteButtons = 0;
-			#endif
 			GuiObject_setSensitive (praat_writeMenuTitle, False);
 			if (praat_writeMenuSeparator) GuiObject_hide (praat_writeMenuSeparator);
 			if (praat_dynamicMenu) GuiObject_hide (praat_dynamicMenu);
-			for (i = theNumberOfActions; i >= 1; i --) {
+			for (long i = theNumberOfActions; i >= 1; i --) {
 				praat_Command me = & theActions [i];
 				if (! my visible) continue;
 				if (my button) {
 					if (GuiObject_parent (my button) == praat_dynamicMenu)   /* Unmanage only level-1 visible buttons. */
-						#if gtk
-							GuiObject_hide (my button);
-						#elif motif
-							buttons [nbuttons ++] = my button;
-						#endif
+						GuiObject_hide (my button);
 					else if (my title && (wcsnequ (my title, L"Save ", 5) || wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
-						#if gtk
-							GuiObject_hide (my button);
-						#elif motif
-							writeButtons [nwriteButtons ++] = my button;
-						#endif
+						GuiObject_hide (my button);
 				}
-				#if motif
-					if (nbuttons) XtUnmanageChildren (buttons, nbuttons);   // multiple hide
-					if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);   // multiple hide
-				#endif
 			}
 			/*
 			 * BUG: Despite all these precautions,
@@ -611,7 +590,7 @@ void praat_actions_show (void) {
 		if (theCurrentPraatObjects -> totalSelection != 0 && ! Melder_backgrounding)
 			GuiObject_setSensitive (praat_writeMenuTitle, True);
 	}
-	for (i = 1; i <= theNumberOfActions; i ++) {
+	for (long i = 1; i <= theNumberOfActions; i ++) {
 		int sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
 		int n1 = theActions [i]. n1, n2 = theActions [i]. n2, n3 = theActions [i]. n3, n4 = theActions [i]. n4;
 
@@ -642,9 +621,6 @@ void praat_actions_show (void) {
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		GuiObject currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
-		#if motif
-			int nbuttons = 0, nwriteButtons = 0;
-		#endif
 		if (! praat_dynamicMenu) {
 			#if gtk
 				praat_dynamicMenu = gtk_vbutton_box_new ();
@@ -655,7 +631,7 @@ void praat_actions_show (void) {
 				praat_dynamicMenu = XmCreateRowColumn (praat_dynamicMenuWindow, "menu", NULL, 0);
 			#endif
 		}
-		for (i = 1; i <= theNumberOfActions; i ++) {   /* Add buttons or make existing buttons sensitive (executable). */
+		for (long i = 1; i <= theNumberOfActions; i ++) {   /* Add buttons or make existing buttons sensitive (executable). */
 			praat_Command me = & theActions [i];
 			if (my depth == 0) currentSubmenu1 = NULL, currentSubmenu2 = NULL;   /* Prevent attachment of later deep actions to earlier submenus after removal of label. */
 			if (my depth == 1) currentSubmenu2 = NULL;   /* Prevent attachment of later deep actions to earlier submenus after removal of label. */
@@ -711,17 +687,13 @@ void praat_actions_show (void) {
 						writeMenuGoingToSeparate = TRUE;
 					}
 					#if motif
-						writeButtons [nwriteButtons ++] = my button;
+						GuiObject_show (my button);
 					#endif
 					GuiObject_setSensitive (my button, my executable);
 				} else {
 					GuiObject_setSensitive (my button, my executable);
 					if (GuiObject_parent (my button) == praat_dynamicMenu)
-						#if gtk
-							GuiObject_show (my button);
-						#elif motif
-							buttons [nbuttons ++] = my button;
-						#endif
+						GuiObject_show (my button);
 				}
 			} else if (i == theNumberOfActions || theActions [i + 1]. depth == 0) {
 				/*
@@ -731,11 +703,7 @@ void praat_actions_show (void) {
 					my button = GuiLabel_createShown (praat_dynamicMenu, 0, BUTTON_WIDTH - 20, Gui_AUTOMATIC, Gui_AUTOMATIC, my title, 0);
 				} else {
 					if (GuiObject_parent (my button) == praat_dynamicMenu)
-						#if gtk
-							GuiObject_show (my button);
-						#elif motif
-							buttons [nbuttons ++] = my button;
-						#endif
+						GuiObject_show (my button);
 				}
 			} else if (my title == NULL || my title [0] == '-') {
 				/*
@@ -781,18 +749,10 @@ void praat_actions_show (void) {
 					GuiObject_show (my button);
 				} else {
 					if (GuiObject_parent (my button) == praat_dynamicMenu)
-						#if gtk
-							GuiObject_show (my button);
-						#elif motif
-							buttons [nbuttons++] = my button;
-						#endif
+						GuiObject_show (my button);
 				}
 			}
 		}
-		#if motif
-			if (nbuttons) XtManageChildren (buttons, nbuttons);   // multiple show
-			if (nwriteButtons) XtManageChildren (writeButtons, nwriteButtons);   // multiple show
-		#endif
 		GuiObject_show (praat_dynamicMenu);
 	}
 }
@@ -815,10 +775,6 @@ void praat_actions_init (void) {
 
 void praat_actions_createDynamicMenu (GuiObject form, int width) {
 	if (theCurrentPraatApplication -> batch) return;
-	// Kan dit bovenstaande niet met een #if constructie?
-	// Wat doet dit?
-	// Dit maakt de buitenkant van de dynamische knoppenlijst (Sound help, Edit, Draw, Modify...):
-	// een scrolledWindow met daarin een kolom.
 	#if gtk
 		praat_dynamicMenu = gtk_vbutton_box_new ();
 		gtk_button_box_set_layout (GTK_BUTTON_BOX (praat_dynamicMenu), GTK_BUTTONBOX_START);

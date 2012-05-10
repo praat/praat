@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,26 +149,6 @@ static void psRevertLine (GraphicsPostscript me) {
 		CGContextSetRGBFillColor (my d_macGraphicsContext, my d_macColour.red / 65536.0, my d_macColour.green / 65536.0, my d_macColour.blue / 65536.0, 1.0);
 	}
 	static RGBColor theBlackColour = { 0, 0, 0 };
-	static void quickdrawPrepareLine (GraphicsScreen me) {
-		MacintoshPattern pattern;
-		long lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me) + 0.5;
-		SetPort (my d_macPort);
-		if (my lineType == Graphics_DOTTED) PenPat (GetQDGlobalsLightGray (& pattern));
-		if (my lineType == Graphics_DASHED) PenPat (GetQDGlobalsDarkGray (& pattern));
-		if (my lineType == Graphics_DASHED_DOTTED) PenPat (GetQDGlobalsGray (& pattern));
-		if (! lineWidth_pixels) lineWidth_pixels = 1;
-		PenSize (lineWidth_pixels, lineWidth_pixels);
-		if (my d_macColour.red != 0 || my d_macColour.green != 0 || my d_macColour.blue != 0)
-			RGBForeColor (& my d_macColour);
-	}
-	static void quickdrawRevertLine (GraphicsScreen me) {
-		MacintoshPattern pattern;
-		if (my d_macColour.red != 0 || my d_macColour.green != 0 || my d_macColour.blue != 0)
-			RGBForeColor (& theBlackColour);
-		if (my lineType != Graphics_DRAWN)
-			PenPat (GetQDGlobalsBlack (& pattern));
-		PenSize (1, 1);
-	}
 #endif
 
 /* First level. */
@@ -221,31 +201,18 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, long *xyDC, bool c
 		}
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareLine (this);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextMoveToPoint (d_macGraphicsContext, xyDC [0], xyDC [1]);
-			for (long i = 1; i < numberOfPoints; i ++) {
-				CGContextAddLineToPoint (d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
-			}
-			if (close)
-				CGContextClosePath (d_macGraphicsContext);
-			CGContextStrokePath (d_macGraphicsContext);
-			quartzRevertLine (this);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			int halfLine = ceil (0.5 * lineWidth);
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			quickdrawPrepareLine (this);
-			MoveTo (xyDC [0] - halfLine, xyDC [1] - halfLine);
-			for (long i = 1; i < numberOfPoints; i ++)
-				LineTo (xyDC [i + i] - halfLine, xyDC [i + i + 1] - halfLine);
-			if (close)
-				LineTo (xyDC [0] - halfLine, xyDC [1] - halfLine);
-			quickdrawRevertLine (this);
-			if (d_drawingArea) GuiMac_clipOff ();
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareLine (this);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextMoveToPoint (d_macGraphicsContext, xyDC [0], xyDC [1]);   // starts a new subpath
+		for (long i = 1; i < numberOfPoints; i ++) {
+			CGContextAddLineToPoint (d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		}
+		if (close)
+			CGContextClosePath (d_macGraphicsContext);   // closes only the subpath
+		CGContextStrokePath (d_macGraphicsContext);
+		quartzRevertLine (this);
+		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -273,12 +240,12 @@ void structGraphicsPostscript :: v_polyline (long numberOfPoints, long *xyDC, bo
 			d_printf (d_file, "%ld %ld L\n", dx, dy);
 		}
 		if (++ ipath >= POSTSCRIPT_MAXPATH && i != nn - 2) {
-			if (close)
-				d_printf (d_file, "closepath ");
 			d_printf (d_file, "currentpoint stroke moveto\n");
 			ipath = 1;
 		}
 	}
+	if (close)
+		d_printf (d_file, "closepath ");
 	d_printf (d_file, "stroke\n");
 	psRevertLine (this);
 }
@@ -302,30 +269,15 @@ void structGraphicsScreen :: v_fillArea (long numberOfPoints, long *xyDC) {
 		FillPath (d_gdiGraphicsContext);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareFill (this);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextMoveToPoint (d_macGraphicsContext, xyDC [0], xyDC [1]);
-			for (long i = 1; i < numberOfPoints; i ++) {
-				CGContextAddLineToPoint (d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
-			}
-			CGContextFillPath (d_macGraphicsContext);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetPort (d_macPort);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& d_macColour);
-			PolyHandle macpolygon = OpenPoly ();
-			MoveTo (xyDC [0], xyDC [1]);
-			for (long i = 1; i < numberOfPoints; i ++)
-				LineTo (xyDC [i + i], xyDC [i + i + 1]);
-			ClosePoly ();
-			PaintPoly (macpolygon);
-			KillPoly (macpolygon);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& theBlackColour);
-			if (d_drawingArea) GuiMac_clipOff ();
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareFill (this);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextMoveToPoint (d_macGraphicsContext, xyDC [0], xyDC [1]);
+		for (long i = 1; i < numberOfPoints; i ++) {
+			CGContextAddLineToPoint (d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		}
+		CGContextFillPath (d_macGraphicsContext);
+		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -366,22 +318,11 @@ void structGraphicsScreen :: v_rectangle (long x1DC, long x2DC, long y1DC, long 
 		Rectangle (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareLine (this);
-			CGContextStrokeRect (d_macGraphicsContext, CGRectMake (x1DC - 0.5, y2DC - 0.5, x2DC - x1DC, y1DC - y2DC));
-			quartzRevertLine (this);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			Rect rect;
-			double halfLine = 0.5 * lineWidth;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetRect (& rect, x1DC - halfLine, y2DC - halfLine, x2DC + halfLine, y1DC + halfLine);
-			quickdrawPrepareLine (this);
-			FrameRect (& rect);
-			quickdrawRevertLine (this);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareLine (this);
+		CGContextStrokeRect (d_macGraphicsContext, CGRectMake (x1DC - 0.5, y2DC - 0.5, x2DC - x1DC, y1DC - y2DC));
+		quartzRevertLine (this);
+		GraphicsQuartz_exitDraw (this);
 	#else
 		long xyDC [8];
 		xyDC [0] = x1DC;	xyDC [1] = y1DC;
@@ -414,21 +355,10 @@ void structGraphicsScreen :: v_fillRectangle (long x1DC, long x2DC, long y1DC, l
 		Rectangle (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareFill (this);
-			CGContextFillRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			Rect rect;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
-			SetPort (d_macPort);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& d_macColour);
-			PaintRect (& rect);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& theBlackColour);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareFill (this);
+		CGContextFillRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
+		GraphicsQuartz_exitDraw (this);
 	#else
 		long xyDC [10];
 		xyDC [0] = x1DC;	xyDC [1] = y1DC;
@@ -465,24 +395,13 @@ void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 		Ellipse (d_gdiGraphicsContext, xDC - rDC, yDC - rDC, xDC + rDC + 1, yDC + rDC + 1);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareLine (this);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
-			CGContextStrokePath (d_macGraphicsContext);
-			quartzRevertLine (this);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			Rect rect;
-			double halfLine = 0.5 * lineWidth;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetRect (& rect, xDC - rDC - halfLine, yDC - rDC - halfLine, xDC + rDC + halfLine, yDC + rDC + halfLine);
-			quickdrawPrepareLine (this);
-			FrameOval (& rect);
-			quickdrawRevertLine (this);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareLine (this);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
+		CGContextStrokePath (d_macGraphicsContext);
+		quartzRevertLine (this);
+		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -510,29 +429,18 @@ void structGraphicsScreen :: v_ellipse (long x1DC, long x2DC, long y1DC, long y2
 		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareLine (this);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextSaveGState (d_macGraphicsContext);
-			CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
-			CGContextScaleCTM (d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
-			CGContextAddArc (d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
-			CGContextScaleCTM (d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
-			CGContextStrokePath (d_macGraphicsContext);
-			CGContextRestoreGState (d_macGraphicsContext);
-			quartzRevertLine (this);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			Rect rect;
-			double halfLine = 0.5 * lineWidth;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetRect (& rect, x1DC - halfLine, y2DC - halfLine, x2DC + halfLine, y1DC + halfLine);
-			quickdrawPrepareLine (this);
-			FrameOval (& rect);
-			quickdrawRevertLine (this);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareLine (this);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextSaveGState (d_macGraphicsContext);
+		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+		CGContextScaleCTM (d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+		CGContextAddArc (d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
+		CGContextScaleCTM (d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
+		CGContextStrokePath (d_macGraphicsContext);
+		CGContextRestoreGState (d_macGraphicsContext);
+		quartzRevertLine (this);
+		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -568,27 +476,13 @@ void structGraphicsScreen :: v_arc (long xDC, long yDC, long rDC, double fromAng
 		AngleArc (d_gdiGraphicsContext, xDC, yDC, rDC, fromAngle, arcAngle);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareLine (this);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, NUM2pi - NUMpi / 180 * toAngle, NUM2pi - NUMpi / 180 * fromAngle, 0);
-			CGContextStrokePath (d_macGraphicsContext);
-			quartzRevertLine (this);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			Rect rect;
-			double halfLine = 0.5 * lineWidth;
-			int startAngle = 90 - (int) fromAngle;
-			int arcAngle = (int) fromAngle - (int) toAngle;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			if (arcAngle > 0) arcAngle -= 360;
-			SetRect (& rect, xDC - rDC - halfLine, yDC - rDC - halfLine, xDC + rDC + halfLine, yDC + rDC + halfLine);
-			quickdrawPrepareLine (this);
-			FrameArc (& rect, startAngle, arcAngle);
-			quickdrawRevertLine (this);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareLine (this);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, NUM2pi - NUMpi / 180 * toAngle, NUM2pi - NUMpi / 180 * fromAngle, 0);
+		CGContextStrokePath (d_macGraphicsContext);
+		quartzRevertLine (this);
+		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 
@@ -614,23 +508,12 @@ void structGraphicsScreen :: v_fillCircle (long xDC, long yDC, long rDC) {
 		Ellipse (d_gdiGraphicsContext, xDC - rDC - 1, yDC - rDC - 1, xDC + rDC + 1, yDC + rDC + 1);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareFill (this);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
-			CGContextFillPath (d_macGraphicsContext);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			Rect rect;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetRect (& rect, xDC - rDC, yDC - rDC, xDC + rDC, yDC + rDC);
-			SetPort (d_macPort);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& d_macColour);
-			PaintOval (& rect);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& theBlackColour);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareFill (this);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextAddArc (d_macGraphicsContext, xDC, yDC, rDC, 0.0, NUM2pi, 0);
+		CGContextFillPath (d_macGraphicsContext);
+		GraphicsQuartz_exitDraw (this);
 	#else
 		v_circle (xDC, yDC, rDC);
 	#endif
@@ -656,28 +539,17 @@ void structGraphicsScreen :: v_fillEllipse (long x1DC, long x2DC, long y1DC, lon
 		Ellipse (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareFill (this);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextSaveGState (d_macGraphicsContext);
-			CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
-			CGContextScaleCTM (d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
-			CGContextAddArc (d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
-			CGContextScaleCTM (d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
-			CGContextFillPath (d_macGraphicsContext);
-			CGContextRestoreGState (d_macGraphicsContext);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			Rect rect;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
-			SetPort (d_macPort);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& d_macColour);
-			PaintOval (& rect);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0) RGBForeColor (& theBlackColour);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareFill (this);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextSaveGState (d_macGraphicsContext);
+		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
+		CGContextScaleCTM (d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
+		CGContextAddArc (d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
+		CGContextScaleCTM (d_macGraphicsContext, 2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
+		CGContextFillPath (d_macGraphicsContext);
+		CGContextRestoreGState (d_macGraphicsContext);
+		GraphicsQuartz_exitDraw (this);
 	#else
 		v_ellipse (x1DC, x2DC, y1DC, y2DC);
 	#endif
@@ -917,7 +789,7 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 
 #define MACRO_Graphics_function(TYPE) \
 	long x1DC, x2DC; \
-	long clipy1 = wdy (my y1WC), clipy2 = wdy (my y2WC); \
+	long clipy1 = wdy (my d_y1WC), clipy2 = wdy (my d_y2WC); \
 	double dx, offsetX, translation, scale; \
 	long i, n = ix2 - ix1 + 1; \
  \
@@ -1161,41 +1033,20 @@ void structGraphicsScreen :: v_arrowHead (long xDC, long yDC, double angle) {
 		FillPath (d_gdiGraphicsContext);
 		DEFAULT
 	#elif mac
-		if (d_useQuartz) {
-			GraphicsQuartz_initDraw (this);
-			quartzPrepareFill (this);
-			CGContextSaveGState (d_macGraphicsContext);
-			CGContextBeginPath (d_macGraphicsContext);
-			CGContextTranslateCTM (d_macGraphicsContext, xDC, yDC);
-			CGContextRotateCTM (d_macGraphicsContext, - angle * NUMpi / 180);
-			CGContextMoveToPoint (d_macGraphicsContext, 0.0, 0.0);
-			double size = 10.0 * resolution * arrowSize / 72.0;
-			double radius = resolution * arrowSize / 30;
-			CGContextAddArc (d_macGraphicsContext, - size, 0.0, radius, - NUMpi / 3.0, NUMpi / 3.0, 0);
-			CGContextAddLineToPoint (d_macGraphicsContext, 0.0, 0.0);
-			CGContextFillPath (d_macGraphicsContext);
-			CGContextRestoreGState (d_macGraphicsContext);
-			GraphicsQuartz_exitDraw (this);
-		} else {   // QuickDraw
-			double size = 10.0 * resolution * arrowSize / 72.0;
-			PolyHandle macpolygon;
-			MacintoshPattern pattern;
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetPort (d_macPort);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0)
-				RGBForeColor (& d_macColour);
-			macpolygon = OpenPoly ();
-			MoveTo (xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size);
-			LineTo (xDC, yDC);
-			LineTo (xDC + cos ((angle - 160) * NUMpi / 180) * size, yDC - sin ((angle - 160) * NUMpi / 180) * size);
-			LineTo (xDC + cos ((angle - 180) * NUMpi / 180) * 0.7 * size, yDC - sin ((angle - 180) * NUMpi / 180) * 0.7 * size);
-			ClosePoly ();
-			FillPoly (macpolygon, GetQDGlobalsBlack (& pattern));
-			KillPoly (macpolygon);
-			if (d_macColour.red != 0 || d_macColour.green != 0 || d_macColour.blue != 0)
-				RGBForeColor (& theBlackColour);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		GraphicsQuartz_initDraw (this);
+		quartzPrepareFill (this);
+		CGContextSaveGState (d_macGraphicsContext);
+		CGContextBeginPath (d_macGraphicsContext);
+		CGContextTranslateCTM (d_macGraphicsContext, xDC, yDC);
+		CGContextRotateCTM (d_macGraphicsContext, - angle * NUMpi / 180);
+		CGContextMoveToPoint (d_macGraphicsContext, 0.0, 0.0);
+		double size = 10.0 * resolution * arrowSize / 72.0;
+		double radius = resolution * arrowSize / 30;
+		CGContextAddArc (d_macGraphicsContext, - size, 0.0, radius, - NUMpi / 3.0, NUMpi / 3.0, 0);
+		CGContextAddLineToPoint (d_macGraphicsContext, 0.0, 0.0);
+		CGContextFillPath (d_macGraphicsContext);
+		CGContextRestoreGState (d_macGraphicsContext);
+		GraphicsQuartz_exitDraw (this);
 	#endif
 }
 

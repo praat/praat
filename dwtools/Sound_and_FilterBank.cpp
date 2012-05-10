@@ -1,6 +1,6 @@
 /* Sound_and_FilterBank.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,8 @@
 #include "NUM2.h"
 
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
+// prototypes
+Sound FilterBank_as_Sound (FilterBank me);
 
 /*
 	The gaussian(x) = (exp(-48*((i-(n+1)/2)/(n+1))^2)-exp(-12))/(1-exp(-12));
@@ -385,6 +387,37 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw ("FormantFilter not created from Pitch & FormantFilter.");
+	}
+}
+
+Sound FilterBank_as_Sound (FilterBank me) {
+	try {
+		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1);
+		for (long i = 1; i <= my ny; i++) {
+			for (long j = 1; j <= my nx; j++)
+				thy z[i][j] = my z[i][j];
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Sound created.");
+	}
+}
+
+Sound FilterBanks_crossCorrelate (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+	try {
+		autoSound cc = Sounds_crossCorrelate ((Sound) me, (Sound) thee, scaling, signalOutsideTimeDomain);
+		return cc.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, " and ", thee, " not cross-correlated.");
+	}
+}
+
+Sound FilterBanks_convolve (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain) {
+	try {
+		autoSound cc = Sounds_convolve ((Sound) me, (Sound) thee, scaling, signalOutsideTimeDomain);
+		return cc.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, " and ", thee, " not convolved.");
 	}
 }
 

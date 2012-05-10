@@ -4,7 +4,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +24,12 @@
 /*
  djmw 20010501
  djmw 20020813 GPL header
- djmw 20110306 Latest modification.
+ djmw 20120504 Latest modification.
 */
 
 #include "CC.h"
+#include "Sound.h"
+#include "TableOfReal.h"
 
 Thing_define (MFCC, CC) {
 };
@@ -44,9 +46,13 @@ MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
 void MFCC_lifter (MFCC me, long lifter);
 /*
 	Lifter the cepstral coefficients:
-	
 	c[i] *= (1 + lifter / 2 * sin (NUMpi * i / lifter))
-
 */
+
+TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0);
+
+Sound MFCC_to_Sound (MFCC me);
+Sound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+Sound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
 #endif /* _MFCC_h_ */

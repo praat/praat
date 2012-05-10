@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@
 #include "Preferences.h"
 
 /* The explanations in this header file assume
-	that you put your extra commands in praat_Sybil.c
-	and the main() function in main_Sybil.c,
+	that you put your extra commands in praat_Sybil.cpp
+	and the main() function in main_Sybil.cpp,
 	but these files may have different names if you are not Sybil.
 	Linking with the rest of Praat will create an executable
 	that has all the functionality of the basic Praat,
-	plus everything that you made available in praat_Sybil.c.
+	plus everything that you made available in praat_Sybil.cpp.
 */
 
 /* Program example:
-// File main_Sybil.c: //
+// File main_Sybil.cpp: //
 int main (unsigned int argc, char **argv)
 {
 	praat_init ("Praat_Sybil", argc, argv);   // Obligatory.
@@ -40,7 +40,7 @@ int main (unsigned int argc, char **argv)
 	INCLUDE_MANPAGES (manual_Sybil)
 	praat_run ();   // Obligatory.
 }
-// File praat_Sybil.c: //
+// File praat_Sybil.cpp: //
 void praat_Sybil (void)
 {
 	...
@@ -463,14 +463,14 @@ void praat_dataChanged (Any object);
 /* Call this after changing a screen object. */
 /* Associated editors and data editors will be notified (with Editor_dataChanged). */
 
-/* Used by praat.c, praat_Basic.c, and praat_Sybil.c; defined in praat_picture.c.
+/* Used by praat.cpp, praat_Basic.cpp, and praat_Sybil.cpp; defined in praat_picture.cpp.
 */
 void praat_picture_open ();
 void praat_picture_close ();
 /* These two routines should bracket drawing commands. */
 /* See also the EVERY_DRAW macro. */
 
-/* For main.c */
+/* For main.cpp */
 
 #define INCLUDE_LIBRARY(praat_xxx_init) \
    { extern void praat_xxx_init (void); praat_xxx_init (); }

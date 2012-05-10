@@ -112,19 +112,19 @@ void Graphics_flushWs (Graphics me) {
 void structGraphicsScreen :: v_clearWs () {
 	#if cairo
 		GdkRectangle rect;
-		if (this -> x1DC < this -> x2DC) {
-			rect.x = this -> x1DC;
-			rect.width = this -> x2DC - this -> x1DC;
+		if (this -> d_x1DC < this -> d_x2DC) {
+			rect.x = this -> d_x1DC;
+			rect.width = this -> d_x2DC - this -> d_x1DC;
 		} else {
-			rect.x = this -> x2DC;
-			rect.width = this -> x1DC - this -> x2DC;
+			rect.x = this -> d_x2DC;
+			rect.width = this -> d_x1DC - this -> d_x2DC;
 		}
-		if (this -> y1DC < this -> y2DC) {
-			rect.y = this -> y1DC;
-			rect.height = this -> y2DC - this -> y1DC;
+		if (this -> d_y1DC < this -> d_y2DC) {
+			rect.y = this -> d_y1DC;
+			rect.height = this -> d_y2DC - this -> d_y1DC;
 		} else {
-			rect.y = this -> y2DC;
-			rect.height = this -> y1DC - this -> y2DC;
+			rect.y = this -> d_y2DC;
+			rect.height = this -> d_y1DC - this -> d_y2DC;
 		}
 		if (d_cairoGraphicsContext == NULL) {
 			//Melder_casual("Clear and null");
@@ -140,31 +140,19 @@ void structGraphicsScreen :: v_clearWs () {
 	#elif win
 		RECT rect;
 		rect. left = rect. top = 0;
-		rect. right = x2DC - x1DC;
-		rect. bottom = y2DC - y1DC;
+		rect. right = d_x2DC - d_x1DC;
+		rect. bottom = d_y2DC - d_y1DC;
 		FillRect (d_gdiGraphicsContext, & rect, GetStockBrush (WHITE_BRUSH));
 		/*if (d_winWindow) SendMessage (d_winWindow, WM_ERASEBKGND, (WPARAM) d_gdiGraphicsContext, 0);*/
 	#elif mac
-		if (d_useQuartz) {
-			QDBeginCGContext (d_macPort, & d_macGraphicsContext);
-			CGContextSetAlpha (d_macGraphicsContext, 1.0);
-			CGContextSetBlendMode (d_macGraphicsContext, kCGBlendModeNormal);
-			//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
-			int shellHeight = GuiMac_clipOn_graphicsContext (d_drawingArea, d_macGraphicsContext);
-			CGContextSetRGBFillColor (d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
-			CGContextFillRect (d_macGraphicsContext, CGRectMake (this -> x1DC, shellHeight - this -> y1DC, this -> x2DC - this -> x1DC, this -> y1DC - this -> y2DC));
-			QDEndCGContext (d_macPort, & d_macGraphicsContext);
-		} else { // QuickDraw
-			Rect r;
-			RGBColor white = { 65535, 65535, 65535 }, black = { 0, 0, 0 };
-			if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
-			SetRect (& r, this -> x1DC, this -> y1DC, this -> x2DC, this -> y2DC);
-			SetPort (d_macPort);
-			RGBForeColor (& white);
-			PaintRect (& r);
-			RGBForeColor (& black);
-			if (d_drawingArea) GuiMac_clipOff ();
-		}
+		QDBeginCGContext (d_macPort, & d_macGraphicsContext);
+		CGContextSetAlpha (d_macGraphicsContext, 1.0);
+		CGContextSetBlendMode (d_macGraphicsContext, kCGBlendModeNormal);
+		//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
+		int shellHeight = GuiMac_clipOn_graphicsContext (d_drawingArea, d_macGraphicsContext);
+		CGContextSetRGBFillColor (d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+		CGContextFillRect (d_macGraphicsContext, CGRectMake (this -> d_x1DC, shellHeight - this -> d_y1DC, this -> d_x2DC - this -> d_x1DC, this -> d_y1DC - this -> d_y2DC));
+		QDEndCGContext (d_macPort, & d_macGraphicsContext);
 	#endif
 }
 
@@ -184,20 +172,20 @@ void structGraphicsScreen :: v_updateWs () {
 		//GdkWindow *window = gtk_widget_get_parent_window (GTK_WIDGET (my drawingArea));
 		GdkRectangle rect;
 
-		if (this -> x1DC < this -> x2DC) {
-			rect.x = this -> x1DC;
-			rect.width = this -> x2DC - this -> x1DC;
+		if (this -> d_x1DC < this -> d_x2DC) {
+			rect.x = this -> d_x1DC;
+			rect.width = this -> d_x2DC - this -> d_x1DC;
 		} else {
-			rect.x = this -> x2DC;
-			rect.width = this -> x1DC - this -> x2DC;
+			rect.x = this -> d_x2DC;
+			rect.width = this -> d_x1DC - this -> d_x2DC;
 		}
 
-		if (this -> y1DC < this -> y2DC) {
-			rect.y = this -> y1DC;
-			rect.height = this -> y2DC - this -> y1DC;
+		if (this -> d_y1DC < this -> d_y2DC) {
+			rect.y = this -> d_y1DC;
+			rect.height = this -> d_y2DC - this -> d_y1DC;
 		} else {
-			rect.y = this -> y2DC;
-			rect.height = this -> y1DC - this -> y2DC;
+			rect.y = this -> d_y2DC;
+			rect.height = this -> d_y1DC - this -> d_y2DC;
 		}
 
 		if (d_cairoGraphicsContext && d_drawingArea) {  // update clipping rectangle to new graphics size
@@ -214,7 +202,7 @@ void structGraphicsScreen :: v_updateWs () {
 	#elif mac
 		Rect r;
 		if (d_drawingArea) GuiMac_clipOn (d_drawingArea);   // to prevent invalidating invisible parts of the canvas
-		SetRect (& r, this -> x1DC, this -> y1DC, this -> x2DC, this -> y2DC);
+		SetRect (& r, this -> d_x1DC, this -> d_y1DC, this -> d_x2DC, this -> d_y2DC);
 		SetPort (d_macPort);
 		/*EraseRect (& r);*/
 		InvalWindowRect (GetWindowFromPort ((CGrafPtr) d_macPort), & r);
@@ -265,9 +253,7 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		my d_macColour = theBlackColour;
 		my resolution = resolution;
 		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
-		if (my d_useQuartz) {
-			(void) my d_macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
-		}
+		(void) my d_macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
 		_GraphicsScreen_text_init (me);
 	#endif
 	return 1;
@@ -287,41 +273,29 @@ Graphics Graphics_create_screen (void *display, void *window, int resolution) {
 	return (Graphics) me;
 }
 
-#ifdef macintosh
-Graphics Graphics_create_port (void *display, void *port, int resolution) {
-	GraphicsScreen me = Thing_new (GraphicsScreen);
-	my screen = true;
-	my yIsZeroAtTheTop = true;
-	Graphics_init (me);
-	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
-	GraphicsScreen_init (me, display, port, resolution);
-	return (Graphics) me;
-}
-#endif
-
 Graphics Graphics_create_screenPrinter (void *display, void *window) {
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	my printer = true;
 	#ifdef macintosh
-		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me);
 	my paperWidth = (double) thePrinter. paperWidth / thePrinter. resolution;
 	my paperHeight = (double) thePrinter. paperHeight / thePrinter. resolution;
-	my x1DC = my x1DCmin = thePrinter. resolution / 2;
-	my x2DC = my x2DCmax = (my paperWidth - 0.5) * thePrinter. resolution;
-	my y1DC = my y1DCmin = thePrinter. resolution / 2;
-	my y2DC = my y2DCmax = (my paperHeight - 0.5) * thePrinter. resolution;
+	my d_x1DC = my d_x1DCmin = thePrinter. resolution / 2;
+	my d_x2DC = my d_x2DCmax = (my paperWidth - 0.5) * thePrinter. resolution;
+	my d_y1DC = my d_y1DCmin = thePrinter. resolution / 2;
+	my d_y2DC = my d_y2DCmax = (my paperHeight - 0.5) * thePrinter. resolution;
 	#if win
 		/*
 		 * Map page coordinates to paper coordinates.
 		 */
-		my x1DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
-		my x2DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
-		my y1DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
-		my y2DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
+		my d_x1DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
+		my d_x2DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETX);
+		my d_y1DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
+		my d_y2DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
 	#endif
 	Graphics_setWsWindow ((Graphics) me, 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
 	GraphicsScreen_init (me, display, window, thePrinter. resolution);
@@ -365,7 +339,7 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#if win
 		my d_useGdiplus = _GraphicsWindows_tryToInitializeGdiPlus ();
 	#elif mac
-		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me); therror
 	#ifdef macintosh
@@ -401,7 +375,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh
-		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me); therror
 	my resolution = resolution;
@@ -416,10 +390,10 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 		my d_macGraphicsContext = CGPDFContextCreateWithURL (url, & rect, dictionary);
 		CFRelease (url);
 		CFRelease (dictionary);
-		my x1DC = my x1DCmin = 0;
-		my x2DC = my x2DCmax = 7.5 * resolution;
-		my y1DC = my y1DCmin = 0;
-		my y2DC = my y2DCmax = 11.0 * resolution;
+		my d_x1DC = my d_x1DCmin = 0;
+		my d_x2DC = my d_x2DCmax = 7.5 * resolution;
+		my d_y1DC = my d_y1DCmin = 0;
+		my d_y2DC = my d_y2DCmax = 11.0 * resolution;
 		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
 		CGContextBeginPage (my d_macGraphicsContext, & rect);
 		CGContextScaleCTM (my d_macGraphicsContext, 72.0/resolution, 72.0/resolution);
@@ -435,17 +409,17 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh
-		my d_useQuartz = _GraphicsMacintosh_tryToInitializeQuartz ();
+		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me);
 	my resolution = resolution;
 	#ifdef macintosh
 		my d_macGraphicsContext = static_cast <CGContext *> (context);
 		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72, (y2inches - y1inches) * 72);   // don't tire PDF viewers with funny origins
-		my x1DC = my x1DCmin = 0;
-		my x2DC = my x2DCmax = 7.5 * resolution;
-		my y1DC = my y1DCmin = 0;
-		my y2DC = my y2DCmax = 11.0 * resolution;
+		my d_x1DC = my d_x1DCmin = 0;
+		my d_x2DC = my d_x2DCmax = 7.5 * resolution;
+		my d_y1DC = my d_y1DCmin = 0;
+		my d_y2DC = my d_y2DCmax = 11.0 * resolution;
 		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
 		CGContextBeginPage (my d_macGraphicsContext, & rect);
 		CGContextScaleCTM (my d_macGraphicsContext, 72.0/resolution, 72.0/resolution);
@@ -474,7 +448,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 				int shellHeight = GuiMac_clipOn_graphicsContext (my d_drawingArea, my d_macGraphicsContext);
 				CGContextTranslateCTM (my d_macGraphicsContext, 0, shellHeight);
 			} else if (my printer) {
-				CGContextTranslateCTM (my d_macGraphicsContext, 0, my y2DC - my y1DC);
+				CGContextTranslateCTM (my d_macGraphicsContext, 0, my d_y2DC - my d_y1DC);
 			}
 			CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 		}

@@ -181,6 +181,31 @@ PCA TableOfReal_to_PCA (I) {
 	}
 }
 
+TableOfReal PCA_and_TableOfReal_to_TableOfReal_zscores (PCA me, TableOfReal thee, long numberOfDimensions) {
+	try {
+		if (numberOfDimensions == 0 || numberOfDimensions > my numberOfEigenvalues) {
+			numberOfDimensions = my numberOfEigenvalues;
+		}
+		autoTableOfReal him = TableOfReal_create (thy numberOfRows, numberOfDimensions);
+		for (long i = 1; i <= thy numberOfRows; i++) { /* row */
+			for (long j = 1; j <= numberOfDimensions; j++) {
+				double r = 0, sigma = sqrt (my eigenvalues[j]);
+				for (long k = 1; k <= my dimension; k++) {
+					// eigenvector in row, data in row
+					r += my eigenvectors[j][k] * (thy data[i][k] - my centroid[k]) / sigma;
+				}
+				his data[i][j] = r;
+			}
+		}
+		NUMstrings_copyElements (thy rowLabels, his rowLabels, 1, thy numberOfRows);
+		TableOfReal_setSequentialColumnLabels (him.peek(), 0, 0, L"pc", 1, 1);
+		return him.transfer();
+
+	} catch (MelderError) {
+		Melder_throw ("TableOfReal (zscores) not created from PCA & TableOfReal.");
+	}
+}
+
 Configuration PCA_and_TableOfReal_to_Configuration (PCA me, thou, long numberOfDimensions) {
 	try {
 		thouart (TableOfReal);

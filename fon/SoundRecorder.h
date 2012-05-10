@@ -101,7 +101,6 @@ Thing_define (SoundRecorder, Editor) {
 		#elif defined (macintosh)
 			short macSource [1+8];
 			Str255 hybridDeviceNames [1+8];
-			SPB spb;
 			long refNum;
 		#elif defined (linux)
 			int fd;

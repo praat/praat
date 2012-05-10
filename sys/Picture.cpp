@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,13 +75,6 @@ static void drawMarkers (Picture me)
 	Graphics_fillRectangle (my selectionGraphics, 0, SIDE, 0, SIDE);
 
 	/* Draw yellow grid lines for coarse navigation. */
-
-	//Graphics_setLineWidth (my selectionGraphics, 2.0);
-	// TODO: Paul, ik ben van mening dat je dit moet zetten,
-	// en niet moet vertrouwen op een statemachine die niet is geimplementeerd.
-	// Stefan, "selectionGraphics" begint met een lijndikte van 1, en verandert nooit;
-	// in het bijzonder kan/mag selectionGraphics niet door andere graphicsen beinvloed worden.
-	// Maar leg het nog maar eens rustig uit.
 
 	Graphics_setColour (my selectionGraphics, Graphics_YELLOW);
 	for (i = YELLOW_GRID; i < SIDE; i += YELLOW_GRID) {
@@ -391,120 +384,27 @@ void Picture_writeToPraatPictureFile (Picture me, MelderFile file) {
 	}
 }
 
-static void Picture_readFromPraatPictureFile_any (Picture me, MelderFile file, bool old) {
-	autofile f = Melder_fopen (file, "rb");
-	char line [200];
-	int n = fread (line, 1, 199, f);
-	line [n] = '\0';
-	const char *tag = "PraatPictureFile";
-	char *end = strstr (line, tag);
-	if (! end) Melder_throw ("This is not a Praat picture file.");
-	*end = '\0';
-	rewind (f);
-	fread (line, 1, end - line + strlen (tag), f);
-	if (old) {
-		#ifdef _WIN32
-			Graphics_readRecordings_oldWindows (my graphics, f);
-		#endif
-	} else {
-		Graphics_readRecordings (my graphics, f);
-	}
-	Graphics_updateWs (my graphics);
-	f.close (file);
-}
-
 void Picture_readFromPraatPictureFile (Picture me, MelderFile file) {
 	try {
-		Picture_readFromPraatPictureFile_any (me, file, false);
+		autofile f = Melder_fopen (file, "rb");
+		char line [200];
+		int n = fread (line, 1, 199, f);
+		line [n] = '\0';
+		const char *tag = "PraatPictureFile";
+		char *end = strstr (line, tag);
+		if (! end) Melder_throw ("This is not a Praat picture file.");
+		*end = '\0';
+		rewind (f);
+		fread (line, 1, end - line + strlen (tag), f);
+		Graphics_readRecordings (my graphics, f);
+		Graphics_updateWs (my graphics);
+		f.close (file);
 	} catch (MelderError) {
 		Melder_throw ("Praat picture not read from file ", file);
 	}
 }
-
-#ifdef _WIN32
-void Picture_readFromOldWindowsPraatPictureFile (Picture me, MelderFile file) {
-	try {
-		Picture_readFromPraatPictureFile_any (me, file, true);
-	} catch (MelderError) {
-		Melder_throw ("Praat picture not read from file ", file);
-	}
-}
-#endif
 
 #ifdef macintosh
-/* Macintosh pictures.
- * The maximum size for clipboard pictures, PICT pictures, and EPS previews is 7.5x11 inches.
- * Larger pictures may show recursion at the right, and noise at the bottom.
- * A4 printing in QuickDraw is also 7.5x11 inches.
- */
-#define MAC_WIDTH  /*7.5*/ 12
-#define MAC_HEIGHT  /*11*/ 12
-static PicHandle copyToPict (Picture me) {
-	PicHandle pict;
-	Rect rect;
-	#define RES 600
-	OpenCPicParams openCPicParams;
-	Graphics pictGraphics;
-	SetRect (& rect, my selx1 * RES, (12 - my sely2) * RES, my selx2 * RES, (12 - my sely1) * RES);
-	pictGraphics = Graphics_create_screen (NULL, XtWindow (my drawingArea), RES);
-	Graphics_setWsViewport (pictGraphics, 0, MAC_WIDTH * RES, 0, MAC_HEIGHT * RES);
-	Graphics_setWsWindow (pictGraphics, 0.0, MAC_WIDTH, 12.0 - MAC_HEIGHT, 12.0);
-	SetPortWindowPort ((WindowPtr) XtWindow (my drawingArea));
-	openCPicParams. srcRect = rect;
-	openCPicParams. hRes = RES << 16;
-	openCPicParams. vRes = RES << 16;
-	openCPicParams. version = -2;
-	openCPicParams. reserved1 = 0;
-	openCPicParams. reserved2 = 0;
-	pict = OpenCPicture (& openCPicParams);
-	if (! pict) Melder_throw ("Cannot create PICT.");
-	PenSize (0, 0); MoveTo (0, 0); LineTo (0, 0); PenSize (1, 1);   /* Flush GrafPort state. */
-	Graphics_play ((Graphics) my graphics, pictGraphics);
-	ClosePicture ();
-	forget (pictGraphics);
-	/*{PictInfo info;
-	GetPictInfo(pict,&info,recordComments,0, systemMethod,0);
-	Melder_warning("res %d %d",info.hRes>>16,info.vRes>>16);
-	}*/
-	return pict;
-}
-static PicHandle copyToPict_screenImage (Picture me) {
-	CGrafPtr savePort;
-	GrafPtr offscreenPort;
-	GDHandle saveDevice, offscreenDevice;
-	GWorldPtr offscreenWorld;
-	PicHandle pict;
-	Graphics offScreen;
-	Rect rect;
-	GetGWorld (& savePort, & saveDevice);
-	SetRect (& rect, 0, 0, MAC_WIDTH * 72, MAC_HEIGHT * 72);
-	NewGWorld (& offscreenWorld, 16, & rect, NULL, NULL, keepLocal);
-	SetGWorld (offscreenWorld, NULL);
-	EraseRect (& rect);
-	GetGWorld ((CGrafPtr *) & offscreenPort, & offscreenDevice);
-	offScreen = Graphics_create_port (NULL, offscreenPort, 72);
-	Graphics_setWsViewport (offScreen, 0, MAC_WIDTH * 72, 0, MAC_HEIGHT * 72);
-	Graphics_setWsWindow (offScreen, 0.0, MAC_WIDTH, 12.0 - MAC_HEIGHT, 12.0);
-	Graphics_play ((Graphics) my graphics, offScreen);
-	/*
-	 * Copy the contents of the bitmap to a PICT.
-	 */
-	SetRect (& rect, my selx1 * 72, (12 - my sely2) * 72, my selx2 * 72, (12 - my sely1) * 72);
-	SetPort (offscreenPort);
-	pict = OpenPicture (& rect);
-	/* The following statement may make the PICT larger than 32 kilobytes.
-	 * BUG: from what system version is this possible?
-	 * For 1-bit previews, it will usually be smaller than 32k,
-	 * since Macintosh seems to use some sort of data compression.
-	 */
-	CopyBits (GetPortBitMapForCopyBits (offscreenPort), GetPortBitMapForCopyBits (offscreenPort),
-			& rect, & rect, srcCopy, NULL);
-	ClosePicture ();
-	SetGWorld (savePort, saveDevice);
-	DisposeGWorld (offscreenWorld);
-	forget (offScreen);
-	return pict;
-}
 static size_t appendBytes (void *info, const void *buffer, size_t count) {
     CFDataAppendBytes ((CFMutableDataRef) info, (const UInt8 *) buffer, count);
     return count;
@@ -532,71 +432,9 @@ void Picture_copyToClipboard (Picture me) {
 	PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePDF, data, kPasteboardFlavorNoFlags);
 	CFRelease (data);
 	/*
-	 * Add a PICT flavour to the clipboard.
-	 */
-	PicHandle pict = copyToPict (me);
-	if (pict != NULL) {
-		HLock ((Handle) pict);
-		data = CFDataCreate (kCFAllocatorDefault, (const UInt8 *) *pict, GetHandleSize ((Handle) pict));
-		HUnlock ((Handle) pict);
-		KillPicture (pict);
-		PasteboardPutItemFlavor (clipboard, (PasteboardItemID) 1, kUTTypePICT, data, kPasteboardFlavorNoFlags);
-		CFRelease (data);
-	} else {
-		Melder_flushError (NULL);
-	}
-	/*
 	 * Forget the clipboard.
 	 */
 	CFRelease (clipboard);
-}
-void Picture_copyToQuickDrawClipboard (Picture me) {
-	PicHandle pict = copyToPict (me);
-	if (! pict) {
-		Melder_flushError (NULL);
-		return;
-	}
-	HLock ((Handle) pict);
-	ScrapRef scrap;
-	ClearCurrentScrap ();
-	GetCurrentScrap (& scrap);
-	PutScrapFlavor (scrap, 'PICT', 0, GetHandleSize ((Handle) pict), (Ptr) *pict);
-	HUnlock ((Handle) pict);
-	KillPicture (pict);
-}
-void Picture_copyToClipboard_screenImage (Picture me) {
-	PicHandle pict = copyToPict_screenImage (me);
-	if (! pict) {
-		Melder_flushError (NULL);
-		return;
-	}
-	HLock ((Handle) pict);
-	ScrapRef scrap;
-	ClearCurrentScrap ();
-	GetCurrentScrap (& scrap);
-	PutScrapFlavor (scrap, 'PICT', 0, GetHandleSize ((Handle) pict), (Ptr) *pict);
-	HUnlock ((Handle) pict);
-	KillPicture (pict);
-}
-void Picture_writeToMacPictFile (Picture me, MelderFile file) {
-	try {
-		PicHandle pict = copyToPict (me);	
-		MelderFile_delete (file);   // overwrite any existing file with the same name
-		autofile f = Melder_fopen (file, "wb");
-		long zero = 0, count;
-		count = 4;
-		for (int i = 1; i <= 128; i ++)
-			fwrite (& zero, 4, 1, f);
-		HLock ((Handle) pict);
-		count = GetHandleSize ((Handle) pict);
-		fwrite (*pict, count, 1, f);
-		HUnlock ((Handle) pict);
-		f.close (file);
-		KillPicture (pict);
-		MelderFile_setMacTypeAndCreator (file, 'PICT', 'PpgB');
-	} catch (MelderError) {
-		Melder_throw ("Picture not written to Mac picture file ", file, ".");
-	}
 }
 #endif
 
@@ -693,44 +531,8 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int 
 			Graphics_play ((Graphics) my graphics, ps.peek());
 		}
 		MelderFile_setMacTypeAndCreator (file, 'EPSF', 'vgrd');
-
-		#ifdef macintosh
-		/*
-			Create an 8-bit screen preview.
-		*/
-		if (thePrinter. epsFilesHavePreview) {
-			PicHandle pict = copyToPict_screenImage (me);
-			/*
-			 * Copy the PICT to the file.
-			 */
-			FSRef macFileReference;
-			Melder_fileToMach (file, & macFileReference);
-			HFSUniStr255 resourceForkName;
-			FSGetResourceForkName (& resourceForkName);
-			OSErr err = FSCreateResourceFork (& macFileReference, resourceForkName. length, resourceForkName. unicode, 0);
-			if (err != noErr)
-				Melder_throw ("Unexpected error ", err, " trying to create a screen preview .");
-			int path = FSOpenResFile (& macFileReference, fsWrPerm);
-
-			/* Save the data to the file as a 'PICT' resource. */
-			/* The Id of this resource is 256 (PS. Lang. Ref. Man., 2nd ed., p. 728. */
-
-			if (path != -1) {
-				AddResource ((Handle) pict, 'PICT', 256, (unsigned char *) "pict");   // owned by resource manager
-				if (ResError () != noErr) {
-					/*
-					 * Disk full, or PICT resource larger than 32 kilobytes?
-					 */
-					CloseResFile (path);
-					Melder_throw ("Not enough disk space.");
-				}
-				SetResAttrs ((Handle) pict, resPurgeable + resChanged);
-				CloseResFile (path);
-			}
-		}
-		#endif
 	} catch (MelderError) {
-		Melder_throw ("Picture not written to Windows metafile ", file);
+		Melder_throw ("Picture not written to EPS file ", file);
 	}
 }
 

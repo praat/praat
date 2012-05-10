@@ -247,7 +247,6 @@
 	void XmUpdateDisplay (GuiObject dummy);
 
 	#if defined (macintosh)
-		#define motif_argXmString(r,t)  r, t
 		void motif_mac_defaultFont (void);
 		void GuiMac_clipOn (GuiObject widget);   /* Clip to the inner area of a drawingArea (for drawing);
 			used by graphics drivers for Macintosh (clipping is automatic for Xwindows). */
@@ -256,7 +255,6 @@
 		void motif_mac_setUserMessageCallbackA (int (*userMessageCallback) (char *message));
 		void motif_mac_setUserMessageCallbackW (int (*userMessageCallback) (wchar_t *message));
 	#elif defined (_WIN32)
-		#define motif_argXmString(r,t)  r, t
 		int motif_win_mouseStillDown (void);
 		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 	#endif

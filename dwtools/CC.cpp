@@ -191,7 +191,7 @@ long CC_getMaximumNumberOfCoefficients (I, long startframe, long endframe) {
 double CC_getValue (I, double t, long index) {
 	iam (CC);
 	long iframe = Sampled_xToNearestIndex (me, t);
-	if (iframe < 0 || iframe > my nx) {
+	if (iframe < 1 || iframe > my nx) {
 		return NUMundefined;
 	}
 	CC_Frame cf = & me -> frame[iframe];

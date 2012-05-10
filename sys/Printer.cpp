@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2011 Paul Boersma
+ * Copyright (C) 1998-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@
 
 /* exported */ struct Printer thePrinter = {
 	kGraphicsPostscript_spots_DEFAULT, kGraphicsPostscript_paperSize_DEFAULT, kGraphicsPostscript_orientation_DEFAULT, false,
-	true, true, kGraphicsPostscript_fontChoiceStrategy_DEFAULT,
+	true, kGraphicsPostscript_fontChoiceStrategy_DEFAULT,
 	600, 5100, 6600,
 	1.0,
 	NULL
@@ -64,7 +64,6 @@ void Printer_prefs (void) {
 	Preferences_addEnum (L"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, DEFAULT);
 	Preferences_addEnum (L"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, DEFAULT);
 	Preferences_addBool (L"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
-	Preferences_addBool (L"Printer.epsFilesHavePreview", & thePrinter. epsFilesHavePreview, true);
 	Preferences_addEnum (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
 }
 
@@ -119,7 +118,7 @@ void Printer_prefs (void) {
 	}
 #endif
 
-#if defined (_WIN32) || defined (macintosh)
+#if defined (_WIN32)
 	static void initPostScriptPage (void) {
 		/*
 		 * Save the driver's state.
@@ -143,36 +142,6 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 	}
 	static void exitPostScriptPage (void) {
 		Printer_postScript_printf (NULL, "PraatPictureSaveObject restore\n");
-	}
-#endif
-
-#if defined (macintosh)
-	static bool openPostScript (void) {
-		PenState pen;
-		/*
-		 * Flush GrafPort state.
-		 */
-		SetPort ((GrafPtr) theMacPort);   /* Some warning message could have drawn ThePort away... */
-		GetPenState (& pen);
-		PenSize (0, 0);
-		Line (0, 0);
-		PenSize (pen. pnSize.h, pen. pnSize.v);
-		/*
-		 * Send direct PostScript commands.
-		 */
-		if (PMSessionPostScriptBegin (theMacPrintSession)) {
-			Melder_throw ("Cannot begin PostScript.");
-		}
-		initPostScriptPage ();
-		return true;
-	}
-	static void closePostScript (void) {
-		/*
-		 * Restore the driver's state.
-		 */
-		SetPort ((GrafPtr) theMacPort);
-		exitPostScriptPage ();
-		PMSessionPostScriptEnd (theMacPrintSession);
 	}
 #endif
 
@@ -206,13 +175,11 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 
 void Printer_nextPage (void) {
 	#if defined (macintosh)
-		if (thePrinter. postScript) closePostScript ();
 		PMSessionEndPage (theMacPrintSession);
 		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
 		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
 		SetPort (theMacPort);
-		if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
-		if (thePrinter. postScript) openPostScript ();
+		SetOrigin (- paperSize. left, - paperSize. top);
 	#elif defined (_WIN32)
 		if (thePrinter. postScript) {
 			exitPostScriptPage ();
@@ -246,7 +213,7 @@ static void DO_Printer_postScriptSettings (UiForm dia, const wchar *sendingStrin
 	(void) invokingButtonTitle;
 	(void) modified;
 	(void) dummy;
-	#if defined (_WIN32) || defined (macintosh)
+	#if defined (_WIN32)
 		thePrinter. allowDirectPostScript = GET_INTEGER (L"Allow direct PostScript");
 	#endif
 	thePrinter. spots = GET_ENUM (kGraphicsPostscript_spots, L"Grey resolution");
@@ -267,9 +234,6 @@ static void DO_Printer_postScriptSettings (UiForm dia, const wchar *sendingStrin
 		Site_setPrintCommand (GET_STRING (L"printCommand"));
 	#endif
 	thePrinter. fontChoiceStrategy = GET_ENUM (kGraphicsPostscript_fontChoiceStrategy, L"Font choice strategy");
-	#if defined (macintosh)
-		thePrinter. epsFilesHavePreview = GET_INTEGER (L"EPS files include preview");
-	#endif
 }
 
 int Printer_postScriptSettings (void) {
@@ -277,7 +241,7 @@ int Printer_postScriptSettings (void) {
 	if (dia == NULL) {
 		Any radio;
 		dia = UiForm_create (theCurrentPraatApplication -> topShell, L"PostScript settings", DO_Printer_postScriptSettings, NULL, L"PostScript settings...", L"PostScript settings...");
-		#if defined (_WIN32) || defined (macintosh)
+		#if defined (_WIN32)
 			BOOLEAN (L"Allow direct PostScript", TRUE);
 		#endif
 		RADIO_ENUM (L"Grey resolution", kGraphicsPostscript_spots, DEFAULT)
@@ -293,12 +257,9 @@ int Printer_postScriptSettings (void) {
 			#endif
 		#endif
 		RADIO_ENUM (L"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
-		#if defined (macintosh)
-			BOOLEAN (L"EPS files include preview", TRUE);
-		#endif
 		UiForm_finish (dia);
 	}
-	#if defined (_WIN32) || defined (macintosh)
+	#if defined (_WIN32)
 		SET_INTEGER (L"Allow direct PostScript", thePrinter. allowDirectPostScript);
 	#endif
 	SET_ENUM (L"Grey resolution", kGraphicsPostscript_spots, thePrinter. spots);
@@ -309,9 +270,6 @@ int Printer_postScriptSettings (void) {
 		SET_STRING (L"printCommand", Site_getPrintCommand ());
 	#endif
 	SET_ENUM (L"Font choice strategy", kGraphicsPostscript_fontChoiceStrategy, thePrinter. fontChoiceStrategy);
-	#if defined (macintosh)
-		SET_INTEGER (L"EPS files include preview", thePrinter. epsFilesHavePreview);
-	#endif
 	UiForm_do (dia, false);
 	return 1;
 }
@@ -460,41 +418,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			PMGetAdjustedPaperRect (theMacPageFormat, & paperSize);
 			thePrinter. paperWidth = paperSize. right - paperSize. left;
 			thePrinter. paperHeight = paperSize. bottom - paperSize. top;
-			Boolean isPostScriptDriver = FALSE;
-			//PMSessionIsDocumentFormatSupported (theMacPrintSession,
-			//	kPMDocumentFormatPICTPS, & isPostScriptDriver);
-			CFArrayRef supportedFormats;
-			PMSessionGetDocumentFormatGeneration (theMacPrintSession, & supportedFormats);
-			CFIndex numberOfSupportedFormats = CFArrayGetCount (supportedFormats);
-			if (Melder_debug == 21) {
-				MelderInfo_open ();
-				MelderInfo_writeLine1 (L"Supported document formats:");
-			}
-			for (CFIndex i = 0; i < numberOfSupportedFormats; i ++) {
-				CFStringRef supportedFormat = (CFStringRef) CFArrayGetValueAtIndex (supportedFormats, i);
-				if (CFStringCompare (supportedFormat, kPMDocumentFormatPICTPS, 0) == 0) {
-					isPostScriptDriver = TRUE;
-				}
-				if (Melder_debug == 21) {
-					MelderInfo_writeLine3 (Melder_integer (i), L": ",
-						Melder_peekUtf8ToWcs (CFStringGetCStringPtr (supportedFormat, kCFStringEncodingUTF8)));
-				}
-			}
-			if (Melder_debug == 21) {
-				MelderInfo_close ();
-			}
-			CFRelease (supportedFormats);
-			isPostScriptDriver = FALSE;   // OVERRIDE, because from 10.4 on we have something better: we'll be sending PDF
-			thePrinter. postScript = thePrinter. allowDirectPostScript && isPostScriptDriver;
-			if (thePrinter. postScript) {
-				CFStringRef strings [1];
-				strings [0] = kPMGraphicsContextQuickdraw;
-				CFArrayRef array = CFArrayCreate (kCFAllocatorDefault, (const void **) strings, 1, & kCFTypeArrayCallBacks);
-				OSStatus err = PMSessionSetDocumentFormatGeneration (theMacPrintSession, kPMDocumentFormatPICTPS, array, NULL);
-				CFRelease (array);
-				if (err != 0)
-					Melder_throw ("PMSessionSetDocumentFormatGeneration: error ", err);
-			}
+			thePrinter. postScript = false;
 			PMOrientation orientation;
 			PMGetOrientation (theMacPageFormat, & orientation);
 			thePrinter. orientation = orientation == kPMLandscape ||
@@ -514,18 +438,10 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			 * Under Carbon, the port has to be set inside the page.
 			 */
 			SetPort (theMacPort);
-			if (! thePrinter. postScript) SetOrigin (- paperSize. left, - paperSize. top);
-			if (thePrinter. postScript) {
-				openPostScript ();
-				thePrinter. graphics = Graphics_create_postscriptprinter ();
-				draw (boss, thePrinter. graphics);
-				forget (thePrinter. graphics);
-				closePostScript ();
-			} else {
-				thePrinter. graphics = Graphics_create_screenPrinter (NULL, theMacPort);
-				draw (boss, thePrinter. graphics);
-				forget (thePrinter. graphics);
-			}
+			SetOrigin (- paperSize. left, - paperSize. top);
+			thePrinter. graphics = Graphics_create_screenPrinter (NULL, theMacPort);
+			draw (boss, thePrinter. graphics);
+			forget (thePrinter. graphics);
 			if (theMacPort) {
 				PMSessionEndPage (theMacPrintSession);
 				PMSessionEndDocument (theMacPrintSession);

@@ -1,4 +1,4 @@
-/* Graphics_grey.c
+/* Graphics_grey.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *

@@ -29,6 +29,13 @@
 #include "DTW_and_TextGrid.h"
 #include "NUMmachar.h"
 
+// prototypes
+void IntervalTier_splitInterval (IntervalTier me, double time, const wchar_t *leftLabel, long interval, double precision);
+IntervalTier IntervalTier_and_IntervalTier_cutPartsMatchingLabel (IntervalTier me, IntervalTier thee, const wchar_t *label, double precision);
+IntervalTier IntervalTiers_patch_noBoundaries (IntervalTier me, IntervalTier thee, const wchar_t *patchLabel, double precision);
+TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechSynthesizer me, Sound thee, IntervalTier him, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration);
+Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTier source, EditCostsTable costs);
+
 Sound SpeechSynthesizer_and_TextInterval_to_Sound (SpeechSynthesizer me, TextInterval thee, TextGrid *tg)
 {
 	try {
@@ -645,12 +652,8 @@ TextGrid SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (SpeechSynthesizer 
 
 TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration) {
 	try {//TODO: check not empty tier
-		TextGrid_checkSpecifiedTierNumberWithinRange (him, tierNumber);
-		Function iTier = (Function) his tiers -> item [tierNumber];
-		if (iTier -> classInfo != classIntervalTier) {
-			Melder_throw ("Tier is not an IntervalTier.");
-		}
-		autoTextGrid tg = SpeechSynthesizer_and_Sound_and_IntervalTier_align (me, thee, (IntervalTier) iTier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
+		IntervalTier iTier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
+		autoTextGrid tg = SpeechSynthesizer_and_Sound_and_IntervalTier_align (me, thee, iTier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration);
 		return tg.transfer();
 	} catch (MelderError) {
 		Melder_throw ("");
@@ -660,12 +663,8 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align (SpeechSynthesizer me, S
 
 TextGrid SpeechSynthesizer_and_Sound_and_TextGrid_align2 (SpeechSynthesizer me, Sound thee, TextGrid him, long tierNumber, long istart, long iend, double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double trimDuration) {
     try {//TODO: check not empty tier
-        TextGrid_checkSpecifiedTierNumberWithinRange (him, tierNumber);
-        Function iTier = (Function) his tiers -> item [tierNumber];
-        if (iTier -> classInfo != classIntervalTier) {
-            Melder_throw ("Tier is not an IntervalTier.");
-        }
-        autoTextGrid tg = SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (me, thee, (IntervalTier) iTier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
+    	IntervalTier iTier = TextGrid_checkSpecifiedTierIsIntervalTier (him, tierNumber);
+        autoTextGrid tg = SpeechSynthesizer_and_Sound_and_IntervalTier_align2 (me, thee, iTier, istart, iend, silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
         return tg.transfer();
     } catch (MelderError) {
         Melder_throw ("");
@@ -707,12 +706,11 @@ Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTie
 		for (long i = 2; i <= pathLength; i++) {
 			structPairOfInteger p = edit -> d_warpingPath -> d_path[i];
 			structPairOfInteger p1 = edit -> d_warpingPath -> d_path[i - 1];
-			// path has offset of 1 wrt to intervals
-			long targetInterval = targetOrigin[p.y - 1], sourceInterval = sourceOrigin[p.x -1];
 			double targetStart = NUMundefined, targetEnd =  NUMundefined;
 			double sourceStart = NUMundefined, sourceEnd =  NUMundefined;
 			const wchar_t * targetText = L"", *sourceText = L"";
-			long irow = i - 1;
+			long targetInterval = p.y > 1 ? targetOrigin[p.y - 1] : 0;
+			long sourceInterval = p.x > 1 ? sourceOrigin[p.x - 1] : 0;
 			if (targetInterval > 0) {
 				TextInterval ti = (TextInterval) target -> intervals -> item[targetInterval];
 				targetStart = ti -> xmin;
@@ -725,6 +723,7 @@ Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTie
 				sourceEnd =  ti -> xmax;
 				sourceText = ti -> text;
 			}
+			long irow = i - 1;
 			if (p.y == p1.y) { // deletion
 				Table_setNumericValue (thee.peek(), irow, 1, 0);
 				Table_setStringValue  (thee.peek(), irow, 2, L"");
@@ -765,15 +764,9 @@ Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTie
 
 Table TextGrids_to_Table_textAlignmentment (TextGrid target, long ttier, TextGrid source, long stier, EditCostsTable costs) {
 	try {
-		Function targetTier = (Function) target -> tiers -> item[ttier];
-		if (targetTier -> classInfo != classIntervalTier) {
-			Melder_throw (target, ": tier number ", Melder_integer (ttier), " is not an IntervalTier.");
-		}
- 		Function sourceTier = (Function) source -> tiers -> item[stier];
-		if (sourceTier -> classInfo != classIntervalTier) {
-			Melder_throw (source, ": tier number ", Melder_integer (stier), " is not an IntervalTier.");
-		}
-		return IntervalTiers_to_Table_textAlignmentment ((IntervalTier) targetTier, (IntervalTier) sourceTier, costs);
+		IntervalTier targetTier = TextGrid_checkSpecifiedTierIsIntervalTier (target, ttier);
+		IntervalTier sourceTier = TextGrid_checkSpecifiedTierIsIntervalTier (source, stier);
+		return IntervalTiers_to_Table_textAlignmentment (targetTier, sourceTier, costs);
 	} catch (MelderError) {
 		Melder_throw (L"No text alignment table created from TextGrids ", target, " and ", source, L".");
 	}

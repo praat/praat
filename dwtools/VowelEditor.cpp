@@ -104,14 +104,14 @@ Thing_implement (VowelEditor, Editor, 0);
 // maximum number of marks
 #define VowelEditor_MAXIMUM_MARKERS 30
 
-// button callbacks
+// prototypes: button callbacks
 static void gui_button_cb_publish (I, GuiButtonEvent event);
 static void gui_button_cb_play (I, GuiButtonEvent event);
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event);
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event);
 static void gui_button_cb_reverse (I, GuiButtonEvent event);
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event);
-// helpers
+//  prototypes: helpers
 static double getRealFromTextWidget (GuiObject me);
 static double getCoordinate (double fmin, double fmax, double f);
 static double getF0 (structVowelEditor_F0 *f0p, double time);
@@ -141,6 +141,7 @@ static void VowelEditor_setMarks (VowelEditor me, int marksDataset, int speakerT
 static void VowelEditor_setF3F4 (VowelEditor me, double f3, double b3, double f4, double b4);
 static void VowelEditor_getF3F4 (VowelEditor me, double f1, double f2, double *f3, double *b3, double *f4, double *b4);
 static void VowelEditor_getVowelMarksFromTableFile (VowelEditor me, MelderFile file);
+static void VowelEditor_createTableFromVowelMarksInPreferences (VowelEditor me);
 static void Table_addColumn_size (Table me, int size);
 static double Matrix_getValue (Matrix me, double x, double y);
 static void VowelEditor_drawBackground (VowelEditor me, Graphics g);

@@ -394,7 +394,7 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr4 (get, f);   /* y */
 			binputr4 (get, f);   /* length */
 			Melder_assert (sizeof (double) == 8);
-			if (fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
+			if ((long) fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
 				Melder_throw ("Error writing graphics recordings.");
 			p += numberOfArguments - 4;
 		} else {
@@ -402,25 +402,6 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 		}
 	}
 }
-
-#ifdef _WIN32
-void Graphics_readRecordings_oldWindows (Graphics me, FILE *f) {
-	long old_irecord = my irecord, i, added_irecord;
-	try {
-		added_irecord = bingeti4 (f);
-		double *p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
-		if (! p) return;
-		Melder_assert (my irecord == old_irecord + added_irecord);
-		for (i = 1; i <= added_irecord; i ++) {
-			double value = bingetr4 (f);
-			* ++ p = value;
-		}   
-	} catch (MelderError) {
-		my irecord = old_irecord;
-		Melder_throw ("Error reading graphics record ", i, " out of ", added_irecord, ".");
-	}
-}
-#endif
 
 void Graphics_readRecordings (Graphics me, FILE *f) {
 	long old_irecord = my irecord;
@@ -430,10 +411,10 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 	int opcode = 0;
 	try {
 		added_irecord = bingeti4 (f);
-		double *p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
+		p = _Graphics_check (me, added_irecord - RECORDING_HEADER_LENGTH);
 		if (! p) return;
 		Melder_assert (my irecord == old_irecord + added_irecord);
-		double *endp = p + added_irecord;
+		endp = p + added_irecord;
 		while (p < endp) {
 			opcode = (int) bingetr4 (f);
 			put (opcode);
@@ -446,7 +427,7 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				put (bingetr4 (f));   // x
 				put (bingetr4 (f));   // y
 				put (bingetr4 (f));   // length
-				if (fread (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
+				if ((long) fread (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
 					Melder_throw ("Error reading graphics recordings.");
 				p += numberOfArguments - 4;
 			} else {

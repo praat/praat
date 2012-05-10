@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,13 +61,13 @@ Thing_define (Graphics, Thing) {
 			/* Also used as a boolean. */
 		int resolution;
 			/* Dots per inch. */
-		long x1DCmin, x2DCmax, y1DCmin, y2DCmax;
+		long d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
 			/* Maximum dimensions of the output device. */
 			/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */
 			/* The point (x1DCmin, y1DCmin) can be either in the top left */
 			/* or in the bottom left, depending on the yIsZeroAtTheTop flag. */
 			/* Device variables. */
-		long x1DC, x2DC, y1DC, y2DC;
+		long d_x1DC, d_x2DC, d_y1DC, d_y2DC;
 			/* Current dimensions of the output device, or: */
 			/* device coordinates of the viewport rectangle. */
 			/* x1DCmin <= x1DC < x2DC <= x2DCmax; */
@@ -75,14 +75,14 @@ Thing_define (Graphics, Thing) {
 			/* Graphics_create_xxxxxx sets these coordinates to */
 			/* x1DCmin, x2DCmax, y1DCmin, and y2DCmax. */
 			/* They can be changed by Graphics_setWsViewport. */
-		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
+		double d_x1wNDC, d_x2wNDC, d_y1wNDC, d_y2wNDC;
 			/* Normalized device coordinates of */
 			/* the device viewport rectangle. */
 			/* The point (x1wNDC, y1wNDC) is always in the bottom left.	*/
 			/* Graphics_create_xxxxxx sets these coordinates to */
 			/* 0.0, 1.0, 0.0, and 1.0. */
 			/* They can be changed by Graphics_setWsWindow. */
-		double x1NDC, x2NDC, y1NDC, y2NDC;
+		double d_x1NDC, d_x2NDC, d_y1NDC, d_y2NDC;
 			/* Normalized device coordinates of the user output viewport, */
 			/* which is a part of the device viewport rectangle. */
 			/* x1wNDC <= x1NDC < x2NDC <= x2wNDC; */
@@ -90,7 +90,7 @@ Thing_define (Graphics, Thing) {
 			/* Graphics_create_xxxxxx sets these coordinates to */
 			/* 0.0, 1.0, 0.0, and 1.0. */
 			/* They can be changed by Graphics_setViewport. */
-		double x1WC, x2WC, y1WC, y2WC;
+		double d_x1WC, d_x2WC, d_y1WC, d_y2WC;
 			/* World coordinates of the user output viewport rectangle.	*/
 			/* They bear a relation to the "real" world, */
 			/* and are used in the drawing routines. */
@@ -153,9 +153,6 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 Graphics Graphics_create_postscriptprinter (void);
 Graphics Graphics_create_screenPrinter (void *display, void *window);
 Graphics Graphics_create_screen (void *display, void *window, int resolution);
-#ifdef macintosh
-	Graphics Graphics_create_port (void *display, void *port, int resolution);
-#endif
 Graphics Graphics_create_xmdrawingarea (/* GuiObject */ void *drawingArea);
 
 int Graphics_getResolution (Graphics me);
@@ -347,9 +344,6 @@ void Graphics_clearRecording (Graphics me);
 void Graphics_play (Graphics from, Graphics to);
 void Graphics_writeRecordings (Graphics me, FILE *f);
 void Graphics_readRecordings (Graphics me, FILE *f);
-#ifdef _WIN32
-void Graphics_readRecordings_oldWindows (Graphics me, FILE *f);
-#endif
 void Graphics_markGroup (Graphics me);
 void Graphics_undoGroup (Graphics me);
 

@@ -62,7 +62,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 			NavDialogRun (dialogRef);
 			err = NavDialogGetReply (dialogRef, & reply);
 			if (err == noErr && reply. validRecord) {
-				SInt32 numberOfSelectedFiles;
+				long numberOfSelectedFiles;
 				AECountItems (& reply. selection, & numberOfSelectedFiles);
 				for (int ifile = 1; ifile <= numberOfSelectedFiles; ifile ++) {
 					AEKeyword keyWord;

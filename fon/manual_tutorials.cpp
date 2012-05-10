@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120428)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120510)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.15# (10 May 2012)")
+LIST_ITEM (L"\\bu Improvements in clipboards, PDF and EPS files.")
 NORMAL (L"##5.3.14# (28 April 2012)")
 LIST_ITEM (L"\\bu Linux: Tab shortcut for playing the selection.")
 LIST_ITEM (L"\\bu EPS files: higher minimum image resolution for spectrograms (300 instead of 106 dpi).")

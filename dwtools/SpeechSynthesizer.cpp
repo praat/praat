@@ -230,12 +230,6 @@ static void IntervalTier_addBoundaryUnsorted (IntervalTier me, long iinterval, d
 	Sorted_addItem_unsorted (my intervals, ti_new.transfer());
 }
 
-void MelderString_removeSpecialCharactersFromEnd (MelderString *me) {
-	wchar_t kar;
-	while (my length > 0 && (kar = my string[my length - 1]) == ' ') { my length --; }
-	my string[my length] = '\0';
-}
-
 static void Table_setEventTypeString (Table me) {
 	try {
 		for (long i = 1; i <= my rows -> size; i++) {

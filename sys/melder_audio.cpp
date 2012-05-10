@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -86,7 +86,7 @@ void Melder_audio_prefs (void) {
 	Preferences_addBool (L"Audio.outputUsesBlocking", & preferences. outputUsesBlocking, false);
 	Preferences_addDouble (L"Audio.silenceBefore", & preferences. silenceBefore, 0.0);
 	Preferences_addDouble (L"Audio.silenceAfter", & preferences. silenceAfter, 0.5);
-	Preferences_addBool (L"Audio.inputUsesPortAudio", & preferences.inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
+	Preferences_addBool (L"Audio.inputUsesPortAudio2", & preferences.inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
 }
 
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity) {
@@ -164,7 +164,6 @@ static struct MelderPlay {
 	PaStream *stream;
 	double paStartingTime;
 	#if defined (macintosh)
-		SndChannelPtr soundChannel;
 	#elif defined (linux)
 		int audio_fd, val, err;
 	#elif defined (_WIN32)
@@ -195,9 +194,6 @@ static bool flush (void) {
 		if (my stream != NULL) Pa_CloseStream (my stream), my stream = NULL;
 	} else {
 	#if defined (macintosh)
-		if (my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS) {   /* Other asynchronicities are handled within Melder_play16 (). */
-			SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
-		}
 	#elif defined (linux)
 		/*
 		 * As on Sun.
@@ -311,16 +307,6 @@ static bool workProc (void *closure) {
 		}
 	} else {
 	#if defined (macintosh)
-		SCStatus status;
-		SndChannelStatus (my soundChannel, sizeof (SCStatus), & status);
-		if (status. scChannelBusy) {
-			my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
-			if (my callback && ! my callback (my closure, my samplesPlayed))
-				return flush ();
-		} else {
-			my samplesPlayed = my numberOfSamples;
-			return flush ();
-		}
 	#elif defined (linux)
 		if (my samplesLeft > 0) {
 			int dsamples = my samplesLeft > 500 ? 500 : my samplesLeft;
@@ -636,97 +622,6 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 		return;
 	} else {
 		#if defined (macintosh)
-			if (my asynchronicity == kMelder_asynchronicityLevel_SYNCHRONOUS) {
-				static char listResource [500];
-				SndListPtr data = (SndListPtr) & listResource [0];
-				ExtSoundHeaderPtr soundHeader;
-				data -> format = 1;
-				data -> numModifiers = 1;
-				data -> modifierPart [0]. modNumber = sampledSynth;
-				data -> modifierPart [0]. modInit = initStereo;
-				data -> numCommands = 1;
-				data -> commandPart [0]. cmd = bufferCmd + dataOffsetFlag;
-				data -> commandPart [0]. param1 = 0;
-				data -> commandPart [0]. param2 = 20;
-				soundHeader = (ExtSoundHeader *) & data -> dataPart;
-				soundHeader -> samplePtr = (char *) my buffer;
-				soundHeader -> numChannels = my numberOfChannels;
-				soundHeader -> sampleRate = (UnsignedFixed) (unsigned long) floor (65536.0 * my sampleRate);
-				soundHeader -> loopStart = 0L;
-				soundHeader -> loopEnd = 0L;
-				soundHeader -> encode = extSH;
-				soundHeader -> baseFrequency = 60;
-				soundHeader -> numFrames = my numberOfSamples;
-				soundHeader -> sampleSize = 16;
-				(void) SndPlay (NULL, (SndListResource **) (Handle) & data, false);
-				my samplesPlayed = my numberOfSamples;
-			} else {
-			/*	long soundFeatures;
-				int can16bit = Gestalt (gestaltSoundAttr, & soundFeatures) == 0 &&
-					(soundFeatures & (1 << gestalt16BitAudioSupport)) != 0;
-				*/
-				static char hdr [300];
-				SndCommand cmd;
-				ExtSoundHeaderPtr soundHeader = (ExtSoundHeaderPtr) & hdr;
-				soundHeader -> samplePtr = (char *) my buffer;
-				soundHeader -> numChannels = my numberOfChannels;
-				soundHeader -> sampleRate = (UnsignedFixed) (unsigned long) floor (65536.0 * my sampleRate);
-				double2real10 (my sampleRate, (unsigned char *) & soundHeader -> AIFFSampleRate);
-				soundHeader -> loopStart = 0L;
-				soundHeader -> loopEnd = 0L;
-				soundHeader -> encode = extSH;
-				soundHeader -> baseFrequency = 60;
-				soundHeader -> numFrames = my numberOfSamples;
-				soundHeader -> sampleSize = 16;
-				SndNewChannel (& my soundChannel, sampledSynth, initStereo, NULL /*NewSndCallBackProc (channelCallback)*/);
-				cmd. cmd = bufferCmd;
-				cmd. param1 = 0;
-				cmd. param2 = (long) soundHeader;
-				theStartingTime = Melder_clock ();
-				SndDoCommand (my soundChannel, & cmd, 0);
-				if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
-					SCStatus status;
-					while (SndChannelStatus (my soundChannel, sizeof (SCStatus), & status), status. scChannelBusy) {
-						bool interrupted = false;
-						EventRecord event;
-						my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
-						if (my callback && ! my callback (my closure, my samplesPlayed))
-							interrupted = true;
-						/*
-						 * Safe operation: only listen to key-down events.
-						 * Do this on the lowest level that will work.
-						 */
-						if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && ! interrupted && EventAvail (keyDownMask, & event)) {
-							/*
-							 * Remove the event, even if it was a different key.
-							 * Otherwise, the key will block the future availability of the Escape key.
-							 */
-							FlushEvents (keyDownMask, 0);
-							/*
-							 * Catch Escape and Command-period.
-							 */
-							if ((event. message & charCodeMask) == 27 ||
-								((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
-								my explicitStop = MelderAudio_EXPLICIT, interrupted = true;
-						}
-						if (interrupted) {
-							my samplesPlayed = (Melder_clock () - theStartingTime) * my sampleRate;
-							/*FlushEvents (everyEvent, 0);*/
-							SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
-							flush ();
-							return;
-						}
-						Pa_Sleep (10);
-					}
-					SndDisposeChannel (my soundChannel, 0), my soundChannel = NULL;
-					my samplesPlayed = my numberOfSamples;
-				} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
-					my workProcId_motif = GuiAddWorkProc (workProc_motif, NULL);
-					return;
-				}
-			}
-			flush ();
-			return;
 		#elif defined (linux)
 			try {
 				/* Big-endian version added by Stefan de Konink, Nov 29, 2007 */

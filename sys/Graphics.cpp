@@ -53,10 +53,10 @@ static void widgetToWindowCoordinates (I) {
 					shellY += y;
 					widget = GuiObject_parent (widget);
 				} while (! XtIsShell (widget));
-				my x1DC += shellX;
-				my x2DC += shellX;
-				my y1DC += shellY;
-				my y2DC += shellY;
+				my d_x1DC += shellX;
+				my d_x2DC += shellX;
+				my d_y1DC += shellY;
+				my d_y2DC += shellY;
 			}
 		}
 	#else
@@ -67,19 +67,19 @@ static void widgetToWindowCoordinates (I) {
 static void computeTrafo (I) {
 	iam (Graphics);
 	double worldScaleX, worldScaleY, workScaleX, workScaleY;
-	worldScaleX = (my x2NDC - my x1NDC) / (my x2WC - my x1WC);
-	worldScaleY = (my y2NDC - my y1NDC) / (my y2WC - my y1WC);
-	my deltaX = my x1NDC - my x1WC * worldScaleX;
-	my deltaY = my y1NDC - my y1WC * worldScaleY;
-	workScaleX = (my x2DC - my x1DC) / (my x2wNDC - my x1wNDC);
-	my deltaX = my x1DC - (my x1wNDC - my deltaX) * workScaleX;
+	worldScaleX = (my d_x2NDC - my d_x1NDC) / (my d_x2WC - my d_x1WC);
+	worldScaleY = (my d_y2NDC - my d_y1NDC) / (my d_y2WC - my d_y1WC);
+	my deltaX = my d_x1NDC - my d_x1WC * worldScaleX;
+	my deltaY = my d_y1NDC - my d_y1WC * worldScaleY;
+	workScaleX = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC);
+	my deltaX = my d_x1DC - (my d_x1wNDC - my deltaX) * workScaleX;
 	my scaleX = worldScaleX * workScaleX;
 	if (my yIsZeroAtTheTop) {
-		workScaleY = ((int) my y1DC - (int) my y2DC) / (my y2wNDC - my y1wNDC);
-		my deltaY = my y2DC - (my y1wNDC - my deltaY) * workScaleY;
+		workScaleY = ((int) my d_y1DC - (int) my d_y2DC) / (my d_y2wNDC - my d_y1wNDC);
+		my deltaY = my d_y2DC - (my d_y1wNDC - my deltaY) * workScaleY;
 	} else {
-		workScaleY = ((int) my y2DC - (int) my y1DC) / (my y2wNDC - my y1wNDC);
-		my deltaY = my y1DC - (my y1wNDC - my deltaY) * workScaleY;
+		workScaleY = ((int) my d_y2DC - (int) my d_y1DC) / (my d_y2wNDC - my d_y1wNDC);
+		my deltaY = my d_y1DC - (my d_y1wNDC - my deltaY) * workScaleY;
 	}
 	my scaleY = worldScaleY * workScaleY;
 }
@@ -87,12 +87,12 @@ static void computeTrafo (I) {
 /***** WORKSTATION FUNCTIONS *****/
 
 void Graphics_init (Graphics me) {
-	my x1DC = my x1DCmin = 0;	my x2DC = my x2DCmax = 32767;
-	my y1DC = my y1DCmin = 0;	my y2DC = my y2DCmax = 32767;
-	my x1WC = my x1NDC = my x1wNDC = 0.0;
-	my x2WC = my x2NDC = my x2wNDC = 1.0;
-	my y1WC = my y1NDC = my y1wNDC = 0.0;
-	my y2WC = my y2NDC = my y2wNDC = 1.0;
+	my d_x1DC = my d_x1DCmin = 0;	my d_x2DC = my d_x2DCmax = 32767;
+	my d_y1DC = my d_y1DCmin = 0;	my d_y2DC = my d_y2DCmax = 32767;
+	my d_x1WC = my d_x1NDC = my d_x1wNDC = 0.0;
+	my d_x2WC = my d_x2NDC = my d_x2wNDC = 1.0;
+	my d_y1WC = my d_y1NDC = my d_y1wNDC = 0.0;
+	my d_y2WC = my d_y2NDC = my d_y2wNDC = 1.0;
 	widgetToWindowCoordinates (me);
 	computeTrafo (me);
 	my lineWidth = 1.0;
@@ -124,23 +124,23 @@ int Graphics_getResolution (Graphics me) {
 void Graphics_setWsViewport (Graphics me,
 	long x1DC, long x2DC, long y1DC, long y2DC)
 {
-	if (x1DC < my x1DCmin || x2DC > my x2DCmax || y1DC < my y1DCmin || y2DC > my y2DCmax) {
+	if (x1DC < my d_x1DCmin || x2DC > my d_x2DCmax || y1DC < my d_y1DCmin || y2DC > my d_y2DCmax) {
 		static MelderString warning = { 0 };
 		MelderString_empty (& warning);
 		MelderString_append (& warning, L"Graphics_setWsViewport: coordinates too large:\n",
 			Melder_integer (x1DC), L"..", Melder_integer (x2DC), L" x ", Melder_integer (y1DC), L"..", Melder_integer (y2DC));
 		MelderString_append (& warning, L" goes outside ",
-			Melder_integer (my x1DCmin), L"..", Melder_integer (my x2DCmax), L" x ", Melder_integer (my y1DCmin), L"..", Melder_integer (my y2DCmax), L".");
+			Melder_integer (my d_x1DCmin), L"..", Melder_integer (my d_x2DCmax), L" x ", Melder_integer (my d_y1DCmin), L"..", Melder_integer (my d_y2DCmax), L".");
 		Melder_warning (warning.string);
-		x1DC = my x1DCmin;
-		x2DC = my x2DCmax;
-		y1DC = my y1DCmin;
-		y2DC = my y2DCmax;
+		x1DC = my d_x1DCmin;
+		x2DC = my d_x2DCmax;
+		y1DC = my d_y1DCmin;
+		y2DC = my d_y2DCmax;
 	}
-	my x1DC = x1DC;
-	my x2DC = x2DC;
-	my y1DC = y1DC;
-	my y2DC = y2DC;
+	my d_x1DC = x1DC;
+	my d_x2DC = x2DC;
+	my d_y1DC = y1DC;
+	my d_y2DC = y2DC;
 	widgetToWindowCoordinates (me);
 	#if win
 		if (my screen && my printer) {
@@ -148,10 +148,10 @@ void Graphics_setWsViewport (Graphics me,
 			/*
 			 * Map page coordinates to paper coordinates.
 			 */
-			mescreen -> x1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
-			mescreen -> x2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
-			mescreen -> y1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
-			mescreen -> y2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
+			mescreen -> d_x1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
+			mescreen -> d_x2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETX);
+			mescreen -> d_y1DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
+			mescreen -> d_y2DC -=  GetDeviceCaps (mescreen -> d_gdiGraphicsContext, PHYSICALOFFSETY);
 		}
 	#endif
 	computeTrafo (me);
@@ -160,35 +160,35 @@ void Graphics_setWsViewport (Graphics me,
 void Graphics_resetWsViewport (Graphics me,
 	long x1DC, long x2DC, long y1DC, long y2DC)
 {
-	my x1DC = x1DC;
-	my x2DC = x2DC;
-	my y1DC = y1DC;
-	my y2DC = y2DC;
+	my d_x1DC = x1DC;
+	my d_x2DC = x2DC;
+	my d_y1DC = y1DC;
+	my d_y2DC = y2DC;
 	computeTrafo (me);
 }
 
 void Graphics_inqWsViewport (Graphics me, long *x1DC, long *x2DC, long *y1DC, long *y2DC) {
-	*x1DC = my x1DC;
-	*x2DC = my x2DC;
-	*y1DC = my y1DC;
-	*y2DC = my y2DC;
+	*x1DC = my d_x1DC;
+	*x2DC = my d_x2DC;
+	*y1DC = my d_y1DC;
+	*y2DC = my d_y2DC;
 }
 
 void Graphics_setWsWindow (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
-	my x1wNDC = x1NDC;
-	my x2wNDC = x2NDC;
-	my y1wNDC = y1NDC;
-	my y2wNDC = y2NDC;
+	my d_x1wNDC = x1NDC;
+	my d_x2wNDC = x2NDC;
+	my d_y1wNDC = y1NDC;
+	my d_y2wNDC = y2NDC;
 	computeTrafo (me);
 	if (my recording)
 		{ op (SET_WS_WINDOW, 4); put (x1NDC); put (x2NDC); put (y1NDC); put (y2NDC); }
 }
 
 void Graphics_inqWsWindow (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC) {
-	*x1NDC = my x1wNDC;
-	*x2NDC = my x2wNDC;
-	*y1NDC = my y1wNDC;
-	*y2NDC = my y2wNDC;
+	*x1NDC = my d_x1wNDC;
+	*x2NDC = my d_x2wNDC;
+	*y1NDC = my d_y1wNDC;
+	*y2NDC = my d_y2wNDC;
 }
 
 /***** CO-ORDINATE TRANFORMATIONS *****/
@@ -214,52 +214,52 @@ void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC)
 /***** OUTPUT PRIMITIVES, RECORDABLE *****/
 
 void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
-	my x1NDC = x1NDC;
-	my x2NDC = x2NDC;
-	my y1NDC = y1NDC;
-	my y2NDC = y2NDC;
+	my d_x1NDC = x1NDC;
+	my d_x2NDC = x2NDC;
+	my d_y1NDC = y1NDC;
+	my d_y2NDC = y2NDC;
 	computeTrafo (me);
 	if (my recording)
 		{ op (SET_VIEWPORT, 4); put (x1NDC); put (x2NDC); put (y1NDC); put (y2NDC); }
 }
 
 void Graphics_setInner (Graphics me) {
-	double margin = 2.8 * my fontSize * my resolution / 72.0, wDC, hDC, dx, dy;
-	wDC = (my x2DC - my x1DC) / (my x2wNDC - my x1wNDC) * (my x2NDC - my x1NDC);
-	hDC = abs (my y2DC - my y1DC) / (my y2wNDC - my y1wNDC) * (my y2NDC - my y1NDC);
-	dx = 1.5 * margin / wDC;
-	dy = margin / hDC;
+	double margin = 2.8 * my fontSize * my resolution / 72.0;
+	double wDC = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC) * (my d_x2NDC - my d_x1NDC);
+	double hDC = abs (my d_y2DC - my d_y1DC) / (my d_y2wNDC - my d_y1wNDC) * (my d_y2NDC - my d_y1NDC);
+	double dx = 1.5 * margin / wDC;
+	double dy = margin / hDC;
 	my horTick = 0.06 * dx, my vertTick = 0.09 * dy;
 	if (dx > 0.4) dx = 0.4;
 	if (dy > 0.4) dy = 0.4;
 	my horTick /= 1 - 2 * dx, my vertTick /= 1 - 2 * dy;
-	my outerViewport.x1NDC = my x1NDC;
-	my outerViewport.x2NDC = my x2NDC;
-	my outerViewport.y1NDC = my y1NDC;
-	my outerViewport.y2NDC = my y2NDC;
-	my x1NDC = (1 - dx) * my outerViewport.x1NDC + dx * my outerViewport.x2NDC;
-	my x2NDC = (1 - dx) * my outerViewport.x2NDC + dx * my outerViewport.x1NDC;
-	my y1NDC = (1 - dy) * my outerViewport.y1NDC + dy * my outerViewport.y2NDC;
-	my y2NDC = (1 - dy) * my outerViewport.y2NDC + dy * my outerViewport.y1NDC;
+	my outerViewport.x1NDC = my d_x1NDC;
+	my outerViewport.x2NDC = my d_x2NDC;
+	my outerViewport.y1NDC = my d_y1NDC;
+	my outerViewport.y2NDC = my d_y2NDC;
+	my d_x1NDC = (1 - dx) * my outerViewport.x1NDC + dx * my outerViewport.x2NDC;
+	my d_x2NDC = (1 - dx) * my outerViewport.x2NDC + dx * my outerViewport.x1NDC;
+	my d_y1NDC = (1 - dy) * my outerViewport.y1NDC + dy * my outerViewport.y2NDC;
+	my d_y2NDC = (1 - dy) * my outerViewport.y2NDC + dy * my outerViewport.y1NDC;
 	computeTrafo (me);
 	if (my recording) { op (SET_INNER, 0); }
 }
 
 void Graphics_unsetInner (Graphics me) {
-	my x1NDC = my outerViewport.x1NDC;
-	my x2NDC = my outerViewport.x2NDC;
-	my y1NDC = my outerViewport.y1NDC;
-	my y2NDC = my outerViewport.y2NDC;
+	my d_x1NDC = my outerViewport.x1NDC;
+	my d_x2NDC = my outerViewport.x2NDC;
+	my d_y1NDC = my outerViewport.y1NDC;
+	my d_y2NDC = my outerViewport.y2NDC;
 	computeTrafo (me);
 	if (my recording)
 		{ op (UNSET_INNER, 0); }
 }
 
 void Graphics_setWindow (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	my x1WC = x1WC;
-	my x2WC = x2WC;
-	my y1WC = y1WC;
-	my y2WC = y2WC;
+	my d_x1WC = x1WC;
+	my d_x2WC = x2WC;
+	my d_y1WC = y1WC;
+	my d_y2WC = y2WC;
 	computeTrafo (me);
 	if (my recording)
 		{ op (SET_WINDOW, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
@@ -268,32 +268,32 @@ void Graphics_setWindow (Graphics me, double x1WC, double x2WC, double y1WC, dou
 /***** INQUIRIES TO CURRENT GRAPHICS *****/
 
 void Graphics_inqViewport (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC) {
-	*x1NDC = my x1NDC;
-	*x2NDC = my x2NDC;
-	*y1NDC = my y1NDC;
-	*y2NDC = my y2NDC;
+	*x1NDC = my d_x1NDC;
+	*x2NDC = my d_x2NDC;
+	*y1NDC = my d_y1NDC;
+	*y2NDC = my d_y2NDC;
 }
 
 void Graphics_inqWindow (Graphics me, double *x1WC, double *x2WC, double *y1WC, double *y2WC) {
-	*x1WC = my x1WC;
-	*x2WC = my x2WC;
-	*y1WC = my y1WC;
-	*y2WC = my y2WC;
+	*x1WC = my d_x1WC;
+	*x2WC = my d_x2WC;
+	*y1WC = my d_y1WC;
+	*y2WC = my d_y2WC;
 }
 
 Graphics_Viewport Graphics_insetViewport
 	(Graphics me, double x1rel, double x2rel, double y1rel, double y2rel)
 {
 	Graphics_Viewport previous;
-	previous.x1NDC = my x1NDC;
-	previous.x2NDC = my x2NDC;
-	previous.y1NDC = my y1NDC;
-	previous.y2NDC = my y2NDC;
+	previous.x1NDC = my d_x1NDC;
+	previous.x2NDC = my d_x2NDC;
+	previous.y1NDC = my d_y1NDC;
+	previous.y2NDC = my d_y2NDC;
 	Graphics_setViewport
-		(me, (1 - x1rel) * my x1NDC + x1rel * my x2NDC,
-			  x2rel * my x2NDC + (1 - x2rel) * my x1NDC,
-			  (1 - y1rel) * my y1NDC + y1rel * my y2NDC,
-			  y2rel * my y2NDC + (1 - y2rel) * my y1NDC);
+		(me, (1 - x1rel) * my d_x1NDC + x1rel * my d_x2NDC,
+			  x2rel * my d_x2NDC + (1 - x2rel) * my d_x1NDC,
+			  (1 - y1rel) * my d_y1NDC + y1rel * my d_y2NDC,
+			  y2rel * my d_y2NDC + (1 - y2rel) * my d_y1NDC);
 	return previous;
 }
 
