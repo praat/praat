@@ -145,7 +145,8 @@ Any TextGrid_TIMITLabelFileRecognizer (int nread, const char *header, MelderFile
 	        sscanf (header, "%ld%ld%s%n\n", &it[1], &it[2], label1, &length) != 3 ||
 	        it[1] < 0 || it[2] <= it[1] ||
 	        sscanf (&header[length], "%ld%ld%s\n", &it[3], &it[4], label2) != 3 ||
-	        it[3] < it[2] || it[4] <= it[3]) {
+	        // 20120512 djmw removed the extra "it[3] < it[2]" check, because otherwise train/dr7/mdlm0/si1864.wrd cannot be read
+	        it[4] <= it[3]) {
 		return 0;
 	}
 	if (! strcmp (label1, hkruis)) {

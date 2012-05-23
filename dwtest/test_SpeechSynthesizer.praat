@@ -1,5 +1,5 @@
 # test_SpeechSynthesizer.praat
-# djmw 20120130
+# djmw 20120130, 20120522
 
 printline SpeechSynthesizer test...
 
@@ -18,12 +18,17 @@ for ivoice to nvoices
 		variant$ = Get string... ivariant
 		printline 'tab$''tab$' 'variant$'
 		# some voices have spaces!
-		ss = Create SpeechSynthesizer... "'voice$'" 'variant$' 44100 0.01 50 50 175 y y
+		ss = Create SpeechSynthesizer... "'voice$'" 'variant$'
 		sound = To Sound... a e u
 		Remove
 		select ss
 		Remove
 	endfor
 endfor
+
+select variantslist
+plus voiceslist
+Remove
+
 
 printline SpeechSynthesizer test OK

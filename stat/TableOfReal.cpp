@@ -188,7 +188,7 @@ void TableOfReal_removeRow (TableOfReal me, long rowNumber) {
 		Melder_free (my rowLabels [rowNumber]);
 		for (long irow = rowNumber; irow < my numberOfRows; irow ++)
 			my rowLabels [irow] = my rowLabels [irow + 1];
-		NUMmatrix_free <double> (my data, 1, 1);
+		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfRows --;
 	} catch (MelderError) {
@@ -215,9 +215,9 @@ void TableOfReal_insertRow (TableOfReal me, long rowNumber) {
 		/*
 		 * Change without error.
 		 */
-		NUMvector_free <wchar *> (my rowLabels, 1);
+		NUMvector_free (my rowLabels, 1);
 		my rowLabels = rowLabels.transfer();
-		NUMmatrix_free <double> (my data, 1, 1);
+		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfRows ++;
 	} catch (MelderError) {
@@ -244,7 +244,7 @@ void TableOfReal_removeColumn (TableOfReal me, long columnNumber) {
 		Melder_free (my columnLabels [columnNumber]);
 		for (long icol = columnNumber; icol < my numberOfColumns; icol ++)
 			my columnLabels [icol] = my columnLabels [icol + 1];
-		NUMmatrix_free <double> (my data, 1, 1);
+		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfColumns --;
 	} catch (MelderError) {
@@ -269,9 +269,9 @@ void TableOfReal_insertColumn (TableOfReal me, long columnNumber) {
 		/*
 		 * Change without error.
 		 */
-		NUMvector_free <wchar *> (my columnLabels, 1);
+		NUMvector_free (my columnLabels, 1);
 		my columnLabels = columnLabels.transfer();
-		NUMmatrix_free <double> (my data, 1, 1);
+		NUMmatrix_free (my data, 1, 1);
 		my data = data.transfer();
 		my numberOfColumns ++;
 	} catch (MelderError) {

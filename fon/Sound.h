@@ -295,8 +295,6 @@ void Sound_play (Sound me,
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
 void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint);
-void Sound_writeToRaw8bitSignedFile (Sound me, MelderFile file);   /* 8 bit */
-void Sound_writeToRaw8bitUnsignedFile (Sound me, MelderFile file);   /* 8 bit */
 void Sound_writeToKayFile (Sound me, MelderFile file);   /* 16 bit */
 void Sound_writeToSesamFile (Sound me, MelderFile file);   /* 12-bit SESAM/LVS */
 

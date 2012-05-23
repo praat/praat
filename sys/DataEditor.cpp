@@ -117,6 +117,8 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 		#elif gtk
 			gboolean visible;
 			g_object_get (G_OBJECT (my d_fieldData [i]. text), "visible", & visible, NULL);
+		#elif ! useCarbon
+			bool visible = false;   // TODO
 		#endif
 		if (visible) {
 			int type = my d_fieldData [i]. description -> type;
@@ -343,6 +345,8 @@ void structDataSubEditor :: v_createChildren () {
 		GuiObject_show (outerBox);
 		GuiObject_show (buttonBox);
 		GuiObject_show (scrolledWindow);
+	#elif ! useCarbon
+		GuiObject form = NULL;   // TODO
 	#endif
 	
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {

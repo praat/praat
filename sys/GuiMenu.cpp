@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ GuiObject GuiMenuBar_addMenu2 (GuiObject bar, const wchar_t *title, long flags, 
 		gtk_menu_shell_append (GTK_MENU_SHELL (bar), GTK_WIDGET (*menuTitle));
 		gtk_widget_show (GTK_WIDGET (menu));
 		gtk_widget_show (GTK_WIDGET (*menuTitle));
-	#elif win || mac
+	#elif win
 		*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
 		if (wcsequ (title, L"Help"))
 			XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
@@ -63,6 +63,18 @@ GuiObject GuiMenuBar_addMenu2 (GuiObject bar, const wchar_t *title, long flags, 
 			XtSetSensitive (menu, False);
 		XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
 		XtManageChild (*menuTitle);
+	#elif mac
+		#if useCarbon
+			*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
+			if (wcsequ (title, L"Help"))
+				XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
+			menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
+			if (flags & GuiMenu_INSENSITIVE)
+				XtSetSensitive (menu, False);
+			XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
+			XtManageChild (*menuTitle);
+		#else
+		#endif
 	#endif
 	return menu;
 }
@@ -132,12 +144,17 @@ void GuiMenuItem_check (GuiObject menuItem, bool check) {
 		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuItem), check);
 		handlerId = g_signal_connect (G_OBJECT (menuItem), "toggled", G_CALLBACK (commandCallback), (gpointer) commandClosure);
 		g_object_set_data (G_OBJECT (menuItem), "handlerId", (gpointer) handlerId);
-	#elif win || mac
+	#elif win
 		XmToggleButtonGadgetSetState (menuItem, check, False);
+	#elif mac
+		#if useCarbon
+			XmToggleButtonGadgetSetState (menuItem, check, False);
+		#else
+		#endif
 	#endif
 }
 
-#if win || mac
+#if win || mac && useCarbon
 static void NativeMenuItem_setText (GuiObject me) {
 	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
 	#if win
@@ -216,9 +233,15 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 			button = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
 		}
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu), GTK_WIDGET (button));
-	#elif win || mac
+	#elif win
 		button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
 			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
+	#elif mac
+		#if useCarbon
+			button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
+				toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
+		#else
+		#endif
 	#endif
 	Melder_assert (button != NULL);
 	if (flags & GuiMenu_INSENSITIVE)
@@ -226,8 +249,13 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 	if (flags & GuiMenu_TOGGLE_ON)
 		#if gtk
 			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (button), TRUE);
-		#elif win || mac
+		#elif win
 			XmToggleButtonGadgetSetState (button, True, False);
+		#elif mac
+			#if useCarbon
+				XmToggleButtonGadgetSetState (button, True, False);
+			#else
+			#endif
 		#endif
 	if (accelerator) {
 		/*
@@ -262,7 +290,7 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 				gtk_widget_add_accelerator (GTK_WIDGET (button), toggle ? "toggled" : "activate",
 					ag, key, modifiers, GTK_ACCEL_VISIBLE);
 
-		#elif win || mac
+		#elif win
 			int modifiers = 0;
 			if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;
 			if (flags & GuiMenu_SHIFT) modifiers |= _motif_SHIFT_MASK;
@@ -277,9 +305,27 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 			button -> motiff.pushButton.acceleratorChar = accelerator;
 			button -> motiff.pushButton.acceleratorModifiers = modifiers;
 			NativeMenuItem_setText (button);
+		#elif mac
+			#if useCarbon
+				int modifiers = 0;
+				if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;
+				if (flags & GuiMenu_SHIFT) modifiers |= _motif_SHIFT_MASK;
+				if (flags & GuiMenu_OPTION) modifiers |= _motif_OPTION_MASK;
+				if (accelerator > 0 && accelerator < 32) {
+					button -> shell -> motiff.shell.lowAccelerators [modifiers] |= 1 << accelerator;
+				} else if (accelerator == '?' || accelerator == '{' || accelerator == '}' || accelerator == '\"' ||
+					accelerator == '<' || accelerator == '>' || accelerator == '|' || accelerator == '_' || accelerator == '+' || accelerator == '~')
+				{
+					modifiers |= _motif_SHIFT_MASK;
+				}
+				button -> motiff.pushButton.acceleratorChar = accelerator;
+				button -> motiff.pushButton.acceleratorModifiers = modifiers;
+				NativeMenuItem_setText (button);
+			#else
+			#endif
 		#endif
 	}
-	#if mac
+	#if mac && useCarbon
 		if (flags & GuiMenu_ATTRACTIVE) {
 			//Melder_casual ("attractive!");
 			SetItemStyle (button -> nat.entry.handle, button -> nat.entry.item, bold);
@@ -309,10 +355,17 @@ GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
 			gtk_widget_set_sensitive (GTK_WIDGET (button), FALSE);
 		}
 		gtk_widget_show (GTK_WIDGET (button));
-	#elif win || mac
+	#elif win
 		XtAddCallback (button,
 			toggle ? XmNvalueChangedCallback : XmNactivateCallback,
 			commandCallback, (XtPointer) closure);
+	#elif mac
+		#if useCarbon
+			XtAddCallback (button,
+				toggle ? XmNvalueChangedCallback : XmNactivateCallback,
+				commandCallback, (XtPointer) closure);
+		#else
+		#endif
 	#endif
 
 	return button;
@@ -324,8 +377,14 @@ GuiObject GuiMenu_addSeparator (GuiObject menu) {
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu), GTK_WIDGET (separator));
 		gtk_widget_show (GTK_WIDGET (separator));
 		return separator;
-	#elif win || mac
+	#elif win
 		return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
+	#elif mac
+		#if useCarbon
+			return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
+		#else
+			return NULL;   // TODO
+		#endif
 	#endif
 }
 

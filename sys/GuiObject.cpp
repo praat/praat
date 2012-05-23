@@ -1,6 +1,6 @@
 /* GuiObject.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,17 +31,17 @@
 #include "machine.h"
 
 static int _Gui_defaultHeight (GuiObject me) {
-	#if win || mac
-	WidgetClass klas = XtClass (me);
-	if (klas == xmLabelWidgetClass) return Gui_LABEL_HEIGHT;
-	if (klas == xmPushButtonWidgetClass) return Gui_PUSHBUTTON_HEIGHT;
-	if (klas == xmTextWidgetClass) return Gui_TEXTFIELD_HEIGHT;
-	if (klas == xmToggleButtonWidgetClass) return
-		#ifdef UNIX
-			Gui_CHECKBUTTON_HEIGHT;   // BUG
-		#else
-			my isRadioButton ? Gui_RADIOBUTTON_HEIGHT : Gui_CHECKBUTTON_HEIGHT;
-		#endif
+	#if win || mac && useCarbon
+		WidgetClass klas = XtClass (me);
+		if (klas == xmLabelWidgetClass) return Gui_LABEL_HEIGHT;
+		if (klas == xmPushButtonWidgetClass) return Gui_PUSHBUTTON_HEIGHT;
+		if (klas == xmTextWidgetClass) return Gui_TEXTFIELD_HEIGHT;
+		if (klas == xmToggleButtonWidgetClass) return
+			#ifdef UNIX
+				Gui_CHECKBUTTON_HEIGHT;   // BUG
+			#else
+				my isRadioButton ? Gui_RADIOBUTTON_HEIGHT : Gui_CHECKBUTTON_HEIGHT;
+			#endif
 	#endif
 	return 100;
 }
@@ -49,7 +49,7 @@ static int _Gui_defaultHeight (GuiObject me) {
 void _GuiObject_position (GuiObject me, int left, int right, int top, int bottom) {
 	#if gtk
 		// TODO: ...nog even te creatief
-	#else
+	#elif win || mac && useCarbon
 		if (left >= 0) {
 			if (right > 0) {
 				XtVaSetValues (me, XmNx, left, XmNwidth, right - left, NULL);
@@ -95,8 +95,13 @@ void * _GuiObject_getUserData (GuiObject me) {
 	void *userData = NULL;
 	#if gtk
 		userData = (void *) g_object_get_data (G_OBJECT (me), "praat");
-	#else
+	#elif win
 		XtVaGetValues (me, XmNuserData, & userData, NULL);
+	#elif mac
+		#if useCarbon
+			XtVaGetValues (me, XmNuserData, & userData, NULL);
+		#else
+		#endif
 	#endif
 	return userData;
 }
@@ -104,16 +109,26 @@ void * _GuiObject_getUserData (GuiObject me) {
 void _GuiObject_setUserData (GuiObject me, void *userData) {
 	#if gtk
 		g_object_set_data (G_OBJECT (me), "praat", userData);
-	#else
+	#elif win
 		XtVaSetValues (me, XmNuserData, userData, NULL);
+	#elif mac
+		#if useCarbon
+			XtVaSetValues (me, XmNuserData, userData, NULL);
+		#else
+		#endif
 	#endif
 }
 
 void GuiObject_destroy (GuiObject me) {
 	#if gtk
 		gtk_widget_destroy (GTK_WIDGET (me));
-	#else
+	#elif win
 		XtDestroyWidget (me);
+	#elif mac
+		#if useCarbon
+			XtDestroyWidget (me);
+		#else
+		#endif
 	#endif
 }
 
@@ -121,8 +136,13 @@ long GuiObject_getHeight (GuiObject me) {
 	long height = 0;
 	#if gtk
 		height = GTK_WIDGET (me) -> allocation.height;
-	#elif win || mac
+	#elif win
 		height = my height;
+	#elif mac
+		#if useCarbon
+			height = my height;
+		#else
+		#endif
 	#endif
 	return height;
 }
@@ -131,8 +151,13 @@ long GuiObject_getWidth (GuiObject me) {
 	long width = 0;
 	#if gtk
 		width = GTK_WIDGET (me) -> allocation.width;
-	#elif win || mac
+	#elif win
 		width = my width;
+	#elif mac
+		#if useCarbon
+			width = my width;
+		#else
+		#endif
 	#endif
 	return width;
 }
@@ -141,8 +166,13 @@ long GuiObject_getX (GuiObject me) {
 	long x = 0;
 	#if gtk
 		x = GTK_WIDGET (me) -> allocation.x;
-	#elif win || mac
+	#elif win
 		x = my x;
+	#elif mac
+		#if useCarbon
+			x = my x;
+		#else
+		#endif
 	#endif
 	return x;
 }
@@ -151,15 +181,20 @@ long GuiObject_getY (GuiObject me) {
 	long y = 0;
 	#if gtk
 		y = GTK_WIDGET (me) -> allocation.y;
-	#elif win || mac
+	#elif win
 		y = my y;
+	#elif mac
+		#if useCarbon
+			y = my y;
+		#else
+		#endif
 	#endif
 	return y;
 }
 
 void GuiObject_move (GuiObject me, long x, long y) {
 	#if gtk
-	#elif win || mac
+	#elif win || mac && useCarbon
 		if (x != Gui_AUTOMATIC) {
 			if (y != Gui_AUTOMATIC) {
 				XtVaSetValues (me, XmNx, (Position) x, XmNy, (Position) y, NULL);   // 64-bit-compatible
@@ -180,14 +215,16 @@ void GuiObject_hide (GuiObject me) {
 		} else {
 			gtk_widget_hide (GTK_WIDGET (me));
 		}
-	#else
+	#elif win
 		XtUnmanageChild (me);
-		#if win
-			// nothing, because the scrolled window is not a widget
-		#elif mac
+		// nothing, because the scrolled window is not a widget
+	#elif mac
+		#if useCarbon
+			XtUnmanageChild (me);
 			if (my widgetClass == xmListWidgetClass) {
 				XtUnmanageChild (my parent);   // the containing scrolled window; BUG if created with XmScrolledList?
 			}
+		#else
 		#endif
 	#endif
 }
@@ -195,16 +232,27 @@ void GuiObject_hide (GuiObject me) {
 GuiObject GuiObject_parent (GuiObject me) {
 	#if gtk
 		return gtk_widget_get_parent (GTK_WIDGET (me));
-	#elif win || mac
+	#elif win
 		return my parent;
+	#elif mac
+		#if useCarbon
+			return my parent;
+		#else
+			return NULL;   // TODO
+		#endif
 	#endif
 }
 
 void GuiObject_setSensitive (GuiObject me, bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (GTK_WIDGET (me), sensitive);
-	#else
+	#elif win
 		XtSetSensitive (me, sensitive);
+	#elif mac
+		#if useCarbon
+			XtSetSensitive (me, sensitive);
+		#else
+		#endif
 	#endif
 }
 
@@ -221,7 +269,7 @@ void GuiObject_show (GuiObject me) {
 		} else {
 			gtk_widget_show (GTK_WIDGET (me));
 		}
-	#elif win || mac
+	#elif win
 		XtManageChild (me);
 		GuiObject parent = my parent;
 		if (parent -> widgetClass == xmShellWidgetClass) {
@@ -229,6 +277,17 @@ void GuiObject_show (GuiObject me) {
 		} else if (mac && my widgetClass == xmListWidgetClass) {
 			XtManageChild (parent);   // the containing scrolled window; BUG if created with XmScrolledList?
 		}
+	#elif mac
+		#if useCarbon
+			XtManageChild (me);
+			GuiObject parent = my parent;
+			if (parent -> widgetClass == xmShellWidgetClass) {
+				XMapRaised (XtDisplay (parent), XtWindow (parent));
+			} else if (mac && my widgetClass == xmListWidgetClass) {
+				XtManageChild (parent);   // the containing scrolled window; BUG if created with XmScrolledList?
+			}
+		#else
+		#endif
 	#endif
 }
 
@@ -237,7 +296,7 @@ void GuiObject_size (GuiObject me, long width, long height) {
 		if (width == Gui_AUTOMATIC || width <= 0) width = -1;
 		if (height == Gui_AUTOMATIC || height <= 0) height = -1;
 		gtk_widget_set_size_request (GTK_WIDGET (me), width, height);
-	#elif win || mac
+	#elif win || mac && useCarbon
 		if (width != Gui_AUTOMATIC) {
 			if (height != Gui_AUTOMATIC) {
 				XtVaSetValues (me, XmNwidth, (Dimension) width, XmNheight, (Dimension) height, NULL);   // 64-bit-compatible

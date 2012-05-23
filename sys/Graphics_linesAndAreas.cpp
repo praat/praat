@@ -123,7 +123,7 @@ static void psRevertLine (GraphicsPostscript me) {
 		}
 		double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);
 		CGContextSetLineWidth (my d_macGraphicsContext, lineWidth_pixels);
-		float lengths [4];
+		CGFloat lengths [4];
 		if (my lineType == Graphics_DOTTED)
 			lengths [0] = my resolution > 192 ? my resolution / 100.0 : 2,
 			lengths [1] = my resolution > 192 ? my resolution / 75.0 + lineWidth_pixels : 2;

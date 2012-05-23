@@ -1,6 +1,6 @@
 /* GuiCheckButton.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,21 +62,26 @@ typedef struct structGuiCheckButton {
 			my valueChangedCallback (my valueChangedBoss, & event);
 		}
 	}
-#elif win || mac
-	void _GuiWinMacCheckButton_destroy (GuiObject widget) {
+#elif win
+	void _GuiWinCheckButton_destroy (GuiObject widget) {
 		iam_checkbutton;
 		_GuiNativeControl_destroy (widget);
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
-	#if win
-		void _GuiWinCheckButton_handleClick (GuiObject widget) {
-			iam_checkbutton;
-			if (my valueChangedCallback != NULL) {
-				struct structGuiCheckButtonEvent event = { widget };
-				my valueChangedCallback (my valueChangedBoss, & event);
-			}
+	void _GuiWinCheckButton_handleClick (GuiObject widget) {
+		iam_checkbutton;
+		if (my valueChangedCallback != NULL) {
+			struct structGuiCheckButtonEvent event = { widget };
+			my valueChangedCallback (my valueChangedBoss, & event);
 		}
-	#elif mac
+	}
+#elif mac
+	#if useCarbon
+		void _GuiMacCheckButton_destroy (GuiObject widget) {
+			iam_checkbutton;
+			_GuiNativeControl_destroy (widget);
+			Melder_free (me);   // NOTE: my widget is not destroyed here
+		}
 		void _GuiMacCheckButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 			iam_checkbutton;
 			_GuiMac_clipOnParent (widget);
@@ -89,6 +94,7 @@ typedef struct structGuiCheckButton {
 				}
 			}
 		}
+	#else
 	#endif
 #endif
 
@@ -129,20 +135,23 @@ GuiObject GuiCheckButton_create (GuiObject parent, int left, int right, int top,
 			GuiObject_setSensitive (my widget, false);
 		}
 	#elif mac
-		my widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent, buttonText);
-		_GuiObject_setUserData (my widget, me);
-		my widget -> isRadioButton = false;
-		CreateCheckBoxControl (my widget -> macWindow, & my widget -> rect, NULL,
-			(flags & GuiCheckButton_SET) != 0, true, & my widget -> nat.control.handle);
-		Melder_assert (my widget -> nat.control.handle != NULL);
-		SetControlReference (my widget -> nat.control.handle, (long) my widget);
-		my widget -> isControl = true;
-		_GuiNativeControl_setFont (my widget, 0, 13);
-		_GuiNativeControl_setTitle (my widget);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		if (flags & GuiCheckButton_INSENSITIVE) {
-			GuiObject_setSensitive (my widget, false);
-		}
+		#if useCarbon
+			my widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent, buttonText);
+			_GuiObject_setUserData (my widget, me);
+			my widget -> isRadioButton = false;
+			CreateCheckBoxControl (my widget -> macWindow, & my widget -> rect, NULL,
+				(flags & GuiCheckButton_SET) != 0, true, & my widget -> nat.control.handle);
+			Melder_assert (my widget -> nat.control.handle != NULL);
+			SetControlReference (my widget -> nat.control.handle, (long) my widget);
+			my widget -> isControl = true;
+			_GuiNativeControl_setFont (my widget, 0, 13);
+			_GuiNativeControl_setTitle (my widget);
+			_GuiObject_position (my widget, left, right, top, bottom);
+			if (flags & GuiCheckButton_INSENSITIVE) {
+				GuiObject_setSensitive (my widget, false);
+			}
+		#else
+		#endif
 	#endif
 	return my widget;
 }
@@ -162,7 +171,10 @@ bool GuiCheckButton_getValue (GuiObject widget) {
 	#elif win
 		value = (Button_GetState (widget -> window) & 0x0003) == BST_CHECKED;
 	#elif mac
-		value = GetControlValue (widget -> nat.control.handle);
+		#if useCarbon
+			value = GetControlValue (widget -> nat.control.handle);
+		#else
+		#endif
 	#endif
 	return value;
 }
@@ -179,7 +191,10 @@ void GuiCheckButton_setValue (GuiObject widget, bool value) {
 	#elif win
 		Button_SetCheck (widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
 	#elif mac
-		SetControlValue (widget -> nat.control.handle, value);
+		#if useCarbon
+			SetControlValue (widget -> nat.control.handle, value);
+		#else
+		#endif
 	#endif
 }
 

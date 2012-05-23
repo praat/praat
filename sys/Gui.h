@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +22,17 @@
 #if defined (UNIX)
 	#define gtk 1
 	#define motif 0
-#else
+#elif defined (_WIN32)
 	#define gtk 0
 	#define motif 1
+#elif defined (macintosh)
+	#if useCarbon
+		#define gtk 0
+		#define motif 1
+	#else
+		#define gtk 0
+		#define motif 0
+	#endif
 #endif
 
 #include "Collection.h"
@@ -38,11 +46,6 @@
 	#include <Carbon/Carbon.h>
 	#include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
-	#if useCarbon == 1
-		#define carbon 1
-	#else
-		#define carbon 0
-	#endif
 #elif defined (_WIN32)
 	#include "winport_on.h"
 	#include <windows.h>
@@ -259,6 +262,13 @@
 		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 	#endif
 
+#else
+	typedef void *GuiObject;
+	typedef void *XtPointer;
+	typedef unsigned char Boolean;
+	#define True 1
+	#define False 0
+	typedef unsigned int Dimension;
 #endif
 
 /* Button layout and state: */

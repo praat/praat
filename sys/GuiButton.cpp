@@ -1,6 +1,6 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,8 +62,8 @@ typedef struct structGuiButton {
 			}
 		}
 	}
-#elif win || mac
-	void _GuiWinMacButton_destroy (GuiObject widget) {
+#elif win
+	void _GuiWinButton_destroy (GuiObject widget) {
 		iam_button;
 		if (widget == widget -> shell -> defaultButton)
 			widget -> shell -> defaultButton = NULL;   // remove dangling reference
@@ -72,34 +72,43 @@ typedef struct structGuiButton {
 		_GuiNativeControl_destroy (widget);
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
-	#if win
-		void _GuiWinButton_handleClick (GuiObject widget) {
-			iam_button;
-			if (my activateCallback != NULL) {
-				struct structGuiButtonEvent event = { widget, 0 };
-				try {
-					my activateCallback (my activateBoss, & event);
-				} catch (MelderError) {
-					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-					Melder_flushError (NULL);
-				}
+	void _GuiWinButton_handleClick (GuiObject widget) {
+		iam_button;
+		if (my activateCallback != NULL) {
+			struct structGuiButtonEvent event = { widget, 0 };
+			try {
+				my activateCallback (my activateBoss, & event);
+			} catch (MelderError) {
+				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+				Melder_flushError (NULL);
 			}
 		}
-		bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
-			iam_button;
-			if (my activateCallback != NULL) {
-				struct structGuiButtonEvent event = { widget, 0 };
-				try {
-					my activateCallback (my activateBoss, & event);
-				} catch (MelderError) {
-					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-					Melder_flushError (NULL);
-				}
-				return true;
+	}
+	bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
+		iam_button;
+		if (my activateCallback != NULL) {
+			struct structGuiButtonEvent event = { widget, 0 };
+			try {
+				my activateCallback (my activateBoss, & event);
+			} catch (MelderError) {
+				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+				Melder_flushError (NULL);
 			}
-			return false;
+			return true;
 		}
-	#elif mac
+		return false;
+	}
+#elif mac
+	#if useCarbon
+		void _GuiMacButton_destroy (GuiObject widget) {
+			iam_button;
+			if (widget == widget -> shell -> defaultButton)
+				widget -> shell -> defaultButton = NULL;   // remove dangling reference
+			if (widget == widget -> shell -> cancelButton)
+				widget -> shell -> cancelButton = NULL;   // remove dangling reference
+			_GuiNativeControl_destroy (widget);
+			Melder_free (me);   // NOTE: my widget is not destroyed here
+		}
 		void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 			iam_button;
 			_GuiMac_clipOnParent (widget);
@@ -136,6 +145,7 @@ typedef struct structGuiButton {
 			}
 			return false;
 		}
+	#else
 	#endif
 #endif
 
@@ -187,23 +197,26 @@ GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int 
 			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 		}
 	#elif mac
-		my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
-		_GuiObject_setUserData (my widget, me);
-		CreatePushButtonControl (my widget -> macWindow, & my widget -> rect, NULL, & my widget -> nat.control.handle);
-		Melder_assert (my widget -> nat.control.handle != NULL);
-		SetControlReference (my widget -> nat.control.handle, (long) my widget);
-		my widget -> isControl = true;
-		_GuiNativeControl_setFont (my widget, flags & GuiButton_ATTRACTIVE ? /*1*/0 : 0, 13);
-		_GuiNativeControl_setTitle (my widget);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
-			parent -> shell -> defaultButton = parent -> defaultButton = my widget;
-			Boolean set = true;
-			SetControlData (my widget -> nat.control.handle, kControlEntireControl, kControlPushButtonDefaultTag, sizeof (Boolean), & set);
-		}
-		if (flags & GuiButton_CANCEL) {
-			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
-		}
+		#if useCarbon
+			my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
+			_GuiObject_setUserData (my widget, me);
+			CreatePushButtonControl (my widget -> macWindow, & my widget -> rect, NULL, & my widget -> nat.control.handle);
+			Melder_assert (my widget -> nat.control.handle != NULL);
+			SetControlReference (my widget -> nat.control.handle, (long) my widget);
+			my widget -> isControl = true;
+			_GuiNativeControl_setFont (my widget, flags & GuiButton_ATTRACTIVE ? /*1*/0 : 0, 13);
+			_GuiNativeControl_setTitle (my widget);
+			_GuiObject_position (my widget, left, right, top, bottom);
+			if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
+				parent -> shell -> defaultButton = parent -> defaultButton = my widget;
+				Boolean set = true;
+				SetControlData (my widget -> nat.control.handle, kControlEntireControl, kControlPushButtonDefaultTag, sizeof (Boolean), & set);
+			}
+			if (flags & GuiButton_CANCEL) {
+				parent -> shell -> cancelButton = parent -> cancelButton = my widget;
+			}
+		#else
+		#endif
 	#endif
 	if (flags & GuiButton_INSENSITIVE) {
 		GuiObject_setSensitive (my widget, false);
@@ -223,10 +236,17 @@ GuiObject GuiButton_createShown (GuiObject parent, int left, int right, int top,
 void GuiButton_setString (GuiObject widget, const wchar_t *text) {
 	#if gtk
 		gtk_button_set_label (GTK_BUTTON (widget), Melder_peekWcsToUtf8 (text));
-	#elif win || mac
+	#elif win
 		Melder_free (widget -> name);
 		widget -> name = Melder_wcsdup_f (text);
 		_GuiNativeControl_setTitle (widget);
+	#elif mac
+		#if useCarbon
+			Melder_free (widget -> name);
+			widget -> name = Melder_wcsdup_f (text);
+			_GuiNativeControl_setTitle (widget);
+		#else
+		#endif
 	#endif
 }
 

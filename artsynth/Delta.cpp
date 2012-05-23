@@ -1,6 +1,6 @@
 /* Delta.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,19 +26,19 @@ void structDelta :: v_destroy () {
 	Delta_Parent :: v_destroy ();
 }
 
-void structDelta :: init (int numberOfTubes) {
-	Melder_assert (numberOfTubes >= 1);
-	this -> numberOfTubes = numberOfTubes;
-	this -> tube = NUMvector <struct structDelta_Tube> (1, numberOfTubes);
-	for (int itube = 1; itube <= numberOfTubes; itube ++) {
+void structDelta :: init (int a_numberOfTubes) {
+	Melder_assert (a_numberOfTubes >= 1);
+	this -> numberOfTubes = a_numberOfTubes;
+	this -> tube = NUMvector <struct structDelta_Tube> (1, a_numberOfTubes);
+	for (int itube = 1; itube <= a_numberOfTubes; itube ++) {
 		Delta_Tube t = this -> tube + itube;
 		t -> parallel = 1;
 	}
 }
 
-Delta Delta_create (int numberOfTubes) {
+Delta Delta_create (int a_numberOfTubes) {
 	autoDelta me = Thing_new (Delta);
-	my init (numberOfTubes);
+	my init (a_numberOfTubes);
 	return me.transfer();
 }
 

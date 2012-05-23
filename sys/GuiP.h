@@ -2,7 +2,7 @@
 #define _GuiP_h_
 /* GuiP.h
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -184,48 +184,57 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 		void _GuiNativeControl_setSensitive (GuiObject me);
 		wchar_t * _GuiWin_expandAmpersands (const wchar_t *title);
 
-		/********** GuiButton.c **********/
-		void _GuiWinMacButton_destroy (GuiObject widget);
+		/********** GuiButton.cpp **********/
 		#if win
+			void _GuiWinButton_destroy (GuiObject widget);
 			void _GuiWinButton_handleClick (GuiObject widget);
 			bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget);
 		#elif mac
+			void _GuiMacButton_destroy (GuiObject widget);
 			void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent);
 			bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent);
 		#endif
 
-		/********** GuiCheckButton.c **********/
-		void _GuiWinMacCheckButton_destroy (GuiObject widget);
+		/********** GuiCheckButton.cpp **********/
 		#if win
+			void _GuiWinCheckButton_destroy (GuiObject widget);
 			void _GuiWinCheckButton_handleClick (GuiObject widget);
 		#elif mac
+			void _GuiMacCheckButton_destroy (GuiObject widget);
 			void _GuiMacCheckButton_handleClick (GuiObject widget, EventRecord *macEvent);
 		#endif
 
-		/********** GuiDrawingArea.c **********/
-		void _GuiWinMacDrawingArea_destroy (GuiObject widget);
+		/********** GuiDrawingArea.cpp **********/
 		#if win
+			void _GuiWinDrawingArea_destroy (GuiObject widget);
 			void _GuiWinDrawingArea_update (GuiObject widget);
 			void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y);
 			void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar);
 			void _GuiWinDrawingArea_shellResize (GuiObject widget);
 		#elif mac
+			void _GuiMacDrawingArea_destroy (GuiObject widget);
 			void _GuiMacDrawingArea_update (GuiObject widget);
 			void _GuiMacDrawingArea_handleClick (GuiObject widget, EventRecord *macEvent);
 			bool _GuiMacDrawingArea_tryToHandleKey (GuiObject widget, EventRecord *macEvent);
 			void _GuiMacDrawingArea_shellResize (GuiObject widget);
 		#endif
 
-		/********** GuiLabel.c **********/
-		void _GuiWinMacLabel_destroy (GuiObject widget);
-
-		/********** GuiList.c **********/
-		void _GuiWinMacList_destroy (GuiObject widget);
-		void _GuiWinMacList_map (GuiObject widget);
+		/********** GuiLabel.cpp **********/
 		#if win
+			void _GuiWinLabel_destroy (GuiObject widget);
+		#elif mac
+			void _GuiMacLabel_destroy (GuiObject widget);
+		#endif
+
+		/********** GuiList.cpp **********/
+		#if win
+			void _GuiWinList_destroy (GuiObject widget);
+			void _GuiWinList_map (GuiObject widget);
 			void _GuiWinList_destroy (GuiObject widget);
 			void _GuiWinList_handleClick (GuiObject widget);
 		#elif mac
+			void _GuiMacList_destroy (GuiObject widget);
+			void _GuiMacList_map (GuiObject widget);
 			void _GuiMacList_activate (GuiObject widget, bool activate);
 			void _GuiMacList_handleClick (GuiObject widget, EventRecord *event);
 			void _GuiMacList_handleControlClick (GuiObject widget, EventRecord *event);
@@ -235,17 +244,23 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 			void _GuiMacList_update (GuiObject widget, RgnHandle visRgn);
 		#endif
 
-		/********** GuiRadioButton.c **********/
-		void _GuiWinMacRadioButton_destroy (GuiObject widget);
+		/********** GuiRadioButton.cpp **********/
 		#if win
+			void _GuiWinRadioButton_destroy (GuiObject widget);
 			void _GuiWinRadioButton_handleClick (GuiObject widget);
 		#elif mac
+			void _GuiMacRadioButton_destroy (GuiObject widget);
 			void _GuiMacRadioButton_handleClick (GuiObject widget, EventRecord *macEvent);
 		#endif
 
-		/********** GuiText.c **********/
-		void _GuiWinMacText_destroy (GuiObject widget);
-		void _GuiWinMacText_map (GuiObject widget);
+		/********** GuiText.cpp **********/
+		#if win
+			void _GuiWinText_destroy (GuiObject widget);
+			void _GuiWinText_map (GuiObject widget);
+		#elif mac
+			void _GuiMacText_destroy (GuiObject widget);
+			void _GuiMacText_map (GuiObject widget);
+		#endif
 		void _GuiText_handleFocusReception (GuiObject widget);
 		void _GuiText_handleFocusLoss (GuiObject widget);
 		#if mac

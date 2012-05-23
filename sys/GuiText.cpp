@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@
 #include "GuiP.h"
 #undef iam
 #define iam(x)  x me = (x) void_me
-#if win || mac
+#if win || mac && useCarbon
 	#define iam_text \
 		Melder_assert (widget -> widgetClass == xmTextWidgetClass); \
 		GuiText me = (GuiText) widget -> userData
@@ -89,7 +89,7 @@ typedef struct structGuiText {
 	#endif
 } *GuiText;
 
-#ifndef UNIX
+#if win || mac && useCarbon
 
 #if mac
 	#define isTextControl(w)  ((w) -> isControl != 0)
@@ -373,7 +373,36 @@ void _GuiText_unmanage (GuiObject widget) {
  * VISIBILITY
  */
 
-#if mac
+#if win
+	void _GuiWinText_destroy (GuiObject widget) {
+		if (widget == theGui.textFocus)
+			theGui.textFocus = NULL;   // remove dangling reference
+		if (widget == widget -> shell -> textFocus)
+			widget -> shell -> textFocus = NULL;   // remove dangling reference
+		iam_text;
+		DestroyWindow (widget -> window);
+		Melder_free (me);   // NOTE: my widget is not destroyed here
+	}
+	void _GuiWinText_map (GuiObject widget) {
+		iam_text;
+		ShowWindow (widget -> window, SW_SHOW);
+	}
+#elif mac
+	void _GuiMacText_destroy (GuiObject widget) {
+		if (widget == theGui.textFocus)
+			theGui.textFocus = NULL;   // remove dangling reference
+		if (widget == widget -> shell -> textFocus)
+			widget -> shell -> textFocus = NULL;   // remove dangling reference
+		iam_text;
+		if (isTextControl (widget)) {
+			_GuiMac_clipOnParent (widget);
+			DisposeControl (widget -> nat.control.handle);
+			GuiMac_clipOff ();
+		} else if (isMLTE (me)) {
+			TXNDeleteObject (my macMlteObject);
+		}
+		Melder_free (me);   // NOTE: my widget is not destroyed here
+	}
 	void _GuiMacText_update (GuiObject widget) {
 		iam_text;
 		_GuiMac_clipOnParent (widget);
@@ -384,43 +413,20 @@ void _GuiText_unmanage (GuiObject widget) {
 		}
 		GuiMac_clipOff ();
 	}
-#endif
-
-void _GuiWinMacText_destroy (GuiObject widget) {
-	if (widget == theGui.textFocus)
-		theGui.textFocus = NULL;   // remove dangling reference
-	if (widget == widget -> shell -> textFocus)
-		widget -> shell -> textFocus = NULL;   // remove dangling reference
-	iam_text;
-	#if win
-		DestroyWindow (widget -> window);
-	#elif mac
-		if (isTextControl (widget)) {
-			_GuiMac_clipOnParent (widget);
-			DisposeControl (widget -> nat.control.handle);
-			GuiMac_clipOff ();
-		} else if (isMLTE (me)) {
-			TXNDeleteObject (my macMlteObject);
-		}
-	#endif
-	Melder_free (me);   // NOTE: my widget is not destroyed here
-}
-
-void _GuiWinMacText_map (GuiObject widget) {
-	iam_text;
-	#if win
-		ShowWindow (widget -> window, SW_SHOW);
-	#elif mac
+	void _GuiMacText_map (GuiObject widget) {
+		iam_text;
 		if (isTextControl (widget)) {
 			_GuiNativeControl_show (widget);
 		} else if (isMLTE (me)) {
 		}
-	#endif
-}
+	}
 #endif
 
 
-#if mac || win
+#endif
+
+
+#if mac && useCarbon || win
 
 static long NativeText_getLength (GuiObject widget) {
 	#if win
@@ -940,48 +946,51 @@ GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bo
 			my widget -> shell -> textFocus = my widget;   /* Even if not-yet-managed. But in that case it will not receive global focus. */
 		}
 	#elif mac
-		if (flags & GuiText_SCROLLED) {
-			my widget = _Gui_initializeWidget (xmTextWidgetClass, parent, L"scrolledText");
-			_GuiObject_setUserData (my widget, me);
-			my editable = (flags & GuiText_NONEDITABLE) == 0;
-			TXNLongRect destRect;
-			TXNMargins margins;
-			TXNControlData controlData;
-			TXNControlTag controlTag = kTXNMarginsTag;
-			TXNNewObject (NULL,   /* No file. */
-				my widget -> macWindow, & my widget -> rect, kTXNWantHScrollBarMask | kTXNWantVScrollBarMask
-					| kTXNMonostyledTextMask | kTXNDrawGrowIconMask,
-				kTXNTextEditStyleFrameType, kTXNTextensionFile,
-				/*kTXNMacOSEncoding*/ kTXNSystemDefaultEncoding, & my macMlteObject, & my macMlteFrameId, me);
-			destRect. left = 0;
-			destRect. top = 0;
-			destRect. right = 10000;
-			destRect. bottom = 2000000000;
-			TXNSetRectBounds (my macMlteObject, NULL, & destRect, FALSE);
-			margins. leftMargin = 3;
-			margins. topMargin = 3;
-			margins. rightMargin = 0;
-			margins. bottomMargin = 0;
-			controlData. marginsPtr = & margins;
-			TXNSetTXNObjectControls (my macMlteObject, FALSE, 1, & controlTag, & controlData);
-			_GuiObject_position (my widget, left, right, top, bottom);
-		} else {
-			my widget = _Gui_initializeWidget (xmTextWidgetClass, parent, L"text");
-			_GuiObject_setUserData (my widget, me);
-			my editable = (flags & GuiText_NONEDITABLE) == 0;
-			Rect r = my widget -> rect;
-			InsetRect (& r, 3, 3);
-			CreateEditUnicodeTextControl (my widget -> macWindow, & r, NULL, false, NULL, & my widget -> nat.control.handle);
-			SetControlReference (my widget -> nat.control.handle, (long) my widget);
-			my widget -> isControl = TRUE;
-			_GuiObject_position (my widget, left, right, top, bottom);
-		}
-		/*
-		 * The first created text widget shall attract the input focus.
-		 */
-		if (! my widget -> shell -> textFocus) {
-			my widget -> shell -> textFocus = my widget;   /* Even if not-yet-managed. But in that case it will not receive global focus. */
-		}
+		#if useCarbon
+			if (flags & GuiText_SCROLLED) {
+				my widget = _Gui_initializeWidget (xmTextWidgetClass, parent, L"scrolledText");
+				_GuiObject_setUserData (my widget, me);
+				my editable = (flags & GuiText_NONEDITABLE) == 0;
+				TXNLongRect destRect;
+				TXNMargins margins;
+				TXNControlData controlData;
+				TXNControlTag controlTag = kTXNMarginsTag;
+				TXNNewObject (NULL,   /* No file. */
+					my widget -> macWindow, & my widget -> rect, kTXNWantHScrollBarMask | kTXNWantVScrollBarMask
+						| kTXNMonostyledTextMask | kTXNDrawGrowIconMask,
+					kTXNTextEditStyleFrameType, kTXNTextensionFile,
+					/*kTXNMacOSEncoding*/ kTXNSystemDefaultEncoding, & my macMlteObject, & my macMlteFrameId, me);
+				destRect. left = 0;
+				destRect. top = 0;
+				destRect. right = 10000;
+				destRect. bottom = 2000000000;
+				TXNSetRectBounds (my macMlteObject, NULL, & destRect, FALSE);
+				margins. leftMargin = 3;
+				margins. topMargin = 3;
+				margins. rightMargin = 0;
+				margins. bottomMargin = 0;
+				controlData. marginsPtr = & margins;
+				TXNSetTXNObjectControls (my macMlteObject, FALSE, 1, & controlTag, & controlData);
+				_GuiObject_position (my widget, left, right, top, bottom);
+			} else {
+				my widget = _Gui_initializeWidget (xmTextWidgetClass, parent, L"text");
+				_GuiObject_setUserData (my widget, me);
+				my editable = (flags & GuiText_NONEDITABLE) == 0;
+				Rect r = my widget -> rect;
+				InsetRect (& r, 3, 3);
+				CreateEditUnicodeTextControl (my widget -> macWindow, & r, NULL, false, NULL, & my widget -> nat.control.handle);
+				SetControlReference (my widget -> nat.control.handle, (long) my widget);
+				my widget -> isControl = TRUE;
+				_GuiObject_position (my widget, left, right, top, bottom);
+			}
+			/*
+			 * The first created text widget shall attract the input focus.
+			 */
+			if (! my widget -> shell -> textFocus) {
+				my widget -> shell -> textFocus = my widget;   /* Even if not-yet-managed. But in that case it will not receive global focus. */
+			}
+		#else
+		#endif
 	#endif
 	
 	return my widget;
@@ -1006,13 +1015,16 @@ void GuiText_copy (GuiObject widget) {
 		if (! NativeText_getSelectionRange (widget, NULL, NULL)) return;
 		SendMessage (widget -> window, WM_COPY, 0, 0);
 	#elif mac
-		iam_text;
-		if (! NativeText_getSelectionRange (widget, NULL, NULL)) return;
-		if (isTextControl (widget)) {
-			HandleControlKey (widget -> nat.control.handle, 0, 'C', cmdKey);
-		} else if (isMLTE (me)) {
-			TXNCopy (my macMlteObject);
-		}
+		#if useCarbon
+			iam_text;
+			if (! NativeText_getSelectionRange (widget, NULL, NULL)) return;
+			if (isTextControl (widget)) {
+				HandleControlKey (widget -> nat.control.handle, 0, 'C', cmdKey);
+			} else if (isMLTE (me)) {
+				TXNCopy (my macMlteObject);
+			}
+		#else
+		#endif
 	#endif
 }
 
@@ -1031,16 +1043,19 @@ void GuiText_cut (GuiObject widget) {
 		SendMessage (widget -> window, WM_CUT, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 		UpdateWindow (widget -> window);
 	#elif mac
-		iam_text;
-		if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
-		if (isTextControl (widget)) {
-			_GuiMac_clipOnParent (widget);
-			HandleControlKey (widget -> nat.control.handle, 0, 'X', cmdKey);
-			GuiMac_clipOff ();
-		} else if (isMLTE (me)) {
-			TXNCut (my macMlteObject);
-		}
-		_GuiText_handleValueChanged (widget);
+		#if useCarbon
+			iam_text;
+			if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
+			if (isTextControl (widget)) {
+				_GuiMac_clipOnParent (widget);
+				HandleControlKey (widget -> nat.control.handle, 0, 'X', cmdKey);
+				GuiMac_clipOff ();
+			} else if (isMLTE (me)) {
+				TXNCut (my macMlteObject);
+			}
+			_GuiText_handleValueChanged (widget);
+		#else
+		#endif
 	#endif
 }
 
@@ -1068,7 +1083,7 @@ wchar_t * GuiText_getSelection (GuiObject widget) {
 				return result;
 			}
 		}
-	#elif win || mac
+	#elif win
 		long start, end;
 		NativeText_getSelectionRange (widget, & start, & end);
 		if (end > start) {   // at least one character selected?
@@ -1081,10 +1096,6 @@ wchar_t * GuiText_getSelection (GuiObject widget) {
 			/*
 			 * Zoom in on selection.
 			 */
-			#if mac
-				for (long i = 0; i < start; i ++) if (result [i] > 0xFFFF) { start --; end --; }
-				for (long i = start; i < end; i ++) if (result [i] > 0xFFFF) { end --; }
-			#endif
 			length = end - start;
 			memmove (result, result + start, length * sizeof (wchar_t));   /* Not because of realloc, but because of free! */
 			result [length] = '\0';
@@ -1092,6 +1103,33 @@ wchar_t * GuiText_getSelection (GuiObject widget) {
 			Melder_killReturns_inlineW (result);   /* AFTER zooming! */
 			return result;
 		}
+	#elif mac
+		#if useCarbon
+			long start, end;
+			NativeText_getSelectionRange (widget, & start, & end);
+			if (end > start) {   // at least one character selected?
+				/*
+				 * Get all text.
+				 */
+				long length = NativeText_getLength (widget);
+				wchar_t *result = Melder_malloc_f (wchar_t, length + 1);
+				NativeText_getText (widget, result, length);
+				/*
+				 * Zoom in on selection.
+				 */
+				#if mac
+					for (long i = 0; i < start; i ++) if (result [i] > 0xFFFF) { start --; end --; }
+					for (long i = start; i < end; i ++) if (result [i] > 0xFFFF) { end --; }
+				#endif
+				length = end - start;
+				memmove (result, result + start, length * sizeof (wchar_t));   /* Not because of realloc, but because of free! */
+				result [length] = '\0';
+				result = (wchar *) Melder_realloc_f (result, (length + 1) * sizeof (wchar_t));   /* Optional. */
+				Melder_killReturns_inlineW (result);   /* AFTER zooming! */
+				return result;
+			}
+		#else
+		#endif
 	#endif
 	return NULL;   // zero characters selected
 }
@@ -1136,14 +1174,18 @@ wchar_t * GuiText_getStringAndSelectionPosition (GuiObject widget, long *first, 
 		Melder_killReturns_inlineW (result);
 		return result;
 	#elif mac
-		long length = NativeText_getLength (widget);   // UTF-16 length; should be enough for UTF-32 buffer
-		wchar_t *result = Melder_malloc_f (wchar_t, length + 1);
-		NativeText_getText (widget, result, length);
-		NativeText_getSelectionRange (widget, first, last);   // 'first' and 'last' are expressed in UTF-16 words
-		for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
-		for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
-		Melder_killReturns_inlineW (result);
-		return result;
+		#if useCarbon
+			long length = NativeText_getLength (widget);   // UTF-16 length; should be enough for UTF-32 buffer
+			wchar_t *result = Melder_malloc_f (wchar_t, length + 1);
+			NativeText_getText (widget, result, length);
+			NativeText_getSelectionRange (widget, first, last);   // 'first' and 'last' are expressed in UTF-16 words
+			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
+			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
+			Melder_killReturns_inlineW (result);
+			return result;
+		#else
+			return NULL;   // TODO
+		#endif
 	#endif
 }
 
@@ -1162,26 +1204,32 @@ void GuiText_paste (GuiObject widget) {
 		SendMessage (widget -> window, WM_PASTE, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 		UpdateWindow (widget -> window);
 	#elif mac
-		iam_text;
-		if (! my editable) return;
-		if (isTextControl (widget)) {
-			_GuiMac_clipOnParent (widget);
-			HandleControlKey (widget -> nat.control.handle, 0, 'V', cmdKey);
-			GuiMac_clipOff ();
-		} else if (isMLTE (me)) {
-			TXNPaste (my macMlteObject);
-		}
-		_GuiText_handleValueChanged (widget);
+		#if useCarbon
+			iam_text;
+			if (! my editable) return;
+			if (isTextControl (widget)) {
+				_GuiMac_clipOnParent (widget);
+				HandleControlKey (widget -> nat.control.handle, 0, 'V', cmdKey);
+				GuiMac_clipOff ();
+			} else if (isMLTE (me)) {
+				TXNPaste (my macMlteObject);
+			}
+			_GuiText_handleValueChanged (widget);
+		#else
+		#endif
 	#endif
 }
 
 void GuiText_redo (GuiObject widget) {
 	#if mac
-		iam_text;
-		if (isMLTE (me)) {
-			TXNRedo (my macMlteObject);
-		}
-		_GuiText_handleValueChanged (widget);
+		#if useCarbon
+			iam_text;
+			if (isMLTE (me)) {
+				TXNRedo (my macMlteObject);
+			}
+			_GuiText_handleValueChanged (widget);
+		#else
+		#endif
 	#else
 		iam_text;
 		history_do(me, 0);
@@ -1202,16 +1250,19 @@ void GuiText_remove (GuiObject widget) {
 		SendMessage (widget -> window, WM_CLEAR, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
 		UpdateWindow (widget -> window);
 	#elif mac
-		iam_text;
-		if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
-		if (isTextControl (widget)) {
-			_GuiMac_clipOnParent (widget);
-			HandleControlKey (widget -> nat.control.handle, 0, 8, 0);   /* Backspace key. */
-			GuiMac_clipOff ();
-		} else if (isMLTE (me)) {
-			TXNClear (my macMlteObject);
-		}
-		_GuiText_handleValueChanged (widget);
+		#if useCarbon
+			iam_text;
+			if (! my editable || ! NativeText_getSelectionRange (widget, NULL, NULL)) return;
+			if (isTextControl (widget)) {
+				_GuiMac_clipOnParent (widget);
+				HandleControlKey (widget -> nat.control.handle, 0, 8, 0);   /* Backspace key. */
+				GuiMac_clipOff ();
+			} else if (isMLTE (me)) {
+				TXNClear (my macMlteObject);
+			}
+			_GuiText_handleValueChanged (widget);
+		#else
+		#endif
 	#endif
 }
 
@@ -1251,55 +1302,58 @@ void GuiText_replace (GuiObject widget, long from_pos, long to_pos, const wchar_
 		Melder_free (winText);
 		UpdateWindow (widget -> window);
 	#elif mac
-		iam_text;
-		long length = wcslen (text), i;
-		wchar_t *macText = Melder_malloc_f (wchar_t, length + 1);
-		Melder_assert (widget -> widgetClass == xmTextWidgetClass);
-		wcsncpy (macText, text, length);
-		macText [length] = '\0';
-		/*
-		 * Replace all LF with CR.
-		 */
-		for (i = 0; i < length; i ++) if (macText [i] == '\n') macText [i] = 13;
-		/*
-		 * We DON'T replace any text without selecting it, so we can deselect any other text,
-		 * thus allowing ourselves to select [from_pos, to_pos] and use selection replacement.
-		 */
-		if (my widget -> managed) _GuiMac_clipOnParent (widget);
-		if (isTextControl (widget)) {
-			// BUG: this is not UTF-32-savvy; this is acceptable because it isn't used in Praat
-			long oldLength = NativeText_getLength (widget);
-			wchar_t *totalText = Melder_malloc_f (wchar_t, oldLength - (to_pos - from_pos) + length + 1);
-			wchar_t *oldText = Melder_malloc_f (wchar_t, oldLength + 1);
-			NativeText_getText (widget, oldText, oldLength);
-			wcsncpy (totalText, oldText, from_pos);
-			wcscpy (totalText + from_pos, macText);
-			wcscpy (totalText + from_pos + length, oldText + to_pos);
-			CFStringRef totalText_cfstring = (CFStringRef) Melder_peekWcsToCfstring (totalText);
-			SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & totalText_cfstring);
-			Melder_free (oldText);
-			Melder_free (totalText);
-		} else if (isMLTE (me)) {
-			long oldLength = NativeText_getLength (widget);
-			wchar_t *oldText = Melder_malloc_f (wchar_t, oldLength + 1);
-			NativeText_getText (widget, oldText, oldLength);
-			long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-			for (long i = 0; i < from_pos; i ++) if (oldText [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-			for (long i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
-			from_pos += numberOfLeadingHighUnicodeValues;
-			to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-			const UniChar *macText_utf16 = Melder_peekWcsToUtf16 (macText);
-			TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText_utf16, wcslen_utf16 (macText, 0) * 2, from_pos, to_pos);
-		}
-		Melder_free (macText);
-		if (widget -> managed) {
+		#if useCarbon
+			iam_text;
+			long length = wcslen (text), i;
+			wchar_t *macText = Melder_malloc_f (wchar_t, length + 1);
+			Melder_assert (widget -> widgetClass == xmTextWidgetClass);
+			wcsncpy (macText, text, length);
+			macText [length] = '\0';
+			/*
+			 * Replace all LF with CR.
+			 */
+			for (i = 0; i < length; i ++) if (macText [i] == '\n') macText [i] = 13;
+			/*
+			 * We DON'T replace any text without selecting it, so we can deselect any other text,
+			 * thus allowing ourselves to select [from_pos, to_pos] and use selection replacement.
+			 */
+			if (my widget -> managed) _GuiMac_clipOnParent (widget);
 			if (isTextControl (widget)) {
-				Draw1Control (widget -> nat.control.handle);
+				// BUG: this is not UTF-32-savvy; this is acceptable because it isn't used in Praat
+				long oldLength = NativeText_getLength (widget);
+				wchar_t *totalText = Melder_malloc_f (wchar_t, oldLength - (to_pos - from_pos) + length + 1);
+				wchar_t *oldText = Melder_malloc_f (wchar_t, oldLength + 1);
+				NativeText_getText (widget, oldText, oldLength);
+				wcsncpy (totalText, oldText, from_pos);
+				wcscpy (totalText + from_pos, macText);
+				wcscpy (totalText + from_pos + length, oldText + to_pos);
+				CFStringRef totalText_cfstring = (CFStringRef) Melder_peekWcsToCfstring (totalText);
+				SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & totalText_cfstring);
+				Melder_free (oldText);
+				Melder_free (totalText);
 			} else if (isMLTE (me)) {
+				long oldLength = NativeText_getLength (widget);
+				wchar_t *oldText = Melder_malloc_f (wchar_t, oldLength + 1);
+				NativeText_getText (widget, oldText, oldLength);
+				long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+				for (long i = 0; i < from_pos; i ++) if (oldText [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+				for (long i = from_pos; i < to_pos; i ++) if (oldText [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+				from_pos += numberOfLeadingHighUnicodeValues;
+				to_pos += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
+				const UniChar *macText_utf16 = Melder_peekWcsToUtf16 (macText);
+				TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText_utf16, wcslen_utf16 (macText, 0) * 2, from_pos, to_pos);
 			}
-			GuiMac_clipOff ();
-		}
-		_GuiText_handleValueChanged (widget);
+			Melder_free (macText);
+			if (widget -> managed) {
+				if (isTextControl (widget)) {
+					Draw1Control (widget -> nat.control.handle);
+				} else if (isMLTE (me)) {
+				}
+				GuiMac_clipOff ();
+			}
+			_GuiText_handleValueChanged (widget);
+		#else
+		#endif
 	#endif
 }
 
@@ -1314,12 +1368,15 @@ void GuiText_scrollToSelection (GuiObject widget) {
 	#elif win
 		Edit_ScrollCaret (widget -> window);
 	#elif mac
-		iam_text;
-		if (isTextControl (widget)) {
-			;
-		} else if (isMLTE (me)) {
-			TXNShowSelection (my macMlteObject, false);
-		}
+		#if useCarbon
+			iam_text;
+			if (isTextControl (widget)) {
+				;
+			} else if (isMLTE (me)) {
+				TXNShowSelection (my macMlteObject, false);
+			}
+		#else
+		#endif
 	#endif
 }
 
@@ -1359,14 +1416,17 @@ void GuiText_setFontSize (GuiObject widget, int size) {
 		GuiText_setSelection (my widget, first, last);
 		UpdateWindow (my widget -> window);
 	#elif mac
-		iam_text;
-		if (isMLTE (me)) {
-			TXNTypeAttributes attr;
-			attr. tag = kTXNQDFontSizeAttribute;
-			attr. size = kTXNFontSizeAttributeSize;
-			attr. data. dataValue = (unsigned long) size << 16;
-			TXNSetTypeAttributes (my macMlteObject, 1, & attr, 0, 2000000000);
-		}
+		#if useCarbon
+			iam_text;
+			if (isMLTE (me)) {
+				TXNTypeAttributes attr;
+				attr. tag = kTXNQDFontSizeAttribute;
+				attr. size = kTXNFontSizeAttributeSize;
+				attr. data. dataValue = (unsigned long) size << 16;
+				TXNSetTypeAttributes (my macMlteObject, 1, & attr, 0, 2000000000);
+			}
+		#else
+		#endif
 	#endif
 }
 
@@ -1415,25 +1475,28 @@ void GuiText_setSelection (GuiObject widget, long first, long last) {
 		Edit_SetSel (widget -> window, first, last);
 		UpdateWindow (widget -> window);
 	#elif mac
-		iam_text;
-		wchar_t *text = GuiText_getString (widget);
-		if (first < 0) first = 0;
-		if (last < 0) last = 0;
-		long length = wcslen (text);
-		if (first >= length) first = length;
-		if (last >= length) last = length;
-		long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
-		for (long i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
-		for (long i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
-		first += numberOfLeadingHighUnicodeValues;
-		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
-		Melder_free (text);
-		if (isTextControl (widget)) {
-			ControlEditTextSelectionRec rec = { first, last };
-			SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextSelectionTag, sizeof (rec), & rec);
-		} else if (isMLTE (me)) {
-			TXNSetSelection (my macMlteObject, first, last);
-		}
+		#if useCarbon
+			iam_text;
+			wchar_t *text = GuiText_getString (widget);
+			if (first < 0) first = 0;
+			if (last < 0) last = 0;
+			long length = wcslen (text);
+			if (first >= length) first = length;
+			if (last >= length) last = length;
+			long numberOfLeadingHighUnicodeValues = 0, numberOfSelectedHighUnicodeValues = 0;
+			for (long i = 0; i < first; i ++) if (text [i] > 0xFFFF) numberOfLeadingHighUnicodeValues ++;
+			for (long i = first; i < last; i ++) if (text [i] > 0xFFFF) numberOfSelectedHighUnicodeValues ++;
+			first += numberOfLeadingHighUnicodeValues;
+			last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
+			Melder_free (text);
+			if (isTextControl (widget)) {
+				ControlEditTextSelectionRec rec = { first, last };
+				SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextSelectionTag, sizeof (rec), & rec);
+			} else if (isMLTE (me)) {
+				TXNSetSelection (my macMlteObject, first, last);
+			}
+		#else
+		#endif
 	#endif
 	}
 }
@@ -1465,51 +1528,54 @@ void GuiText_setString (GuiObject widget, const wchar_t *text) {
 		Melder_free (winText);
 		UpdateWindow (widget -> window);
 	#elif mac
-		iam_text;
-		long length_utf32 = wcslen (text), length_utf16 = wcslen_utf16 (text, false);
-		UniChar *macText = Melder_malloc_f (UniChar, length_utf16 + 1);
-		Melder_assert (widget -> widgetClass == xmTextWidgetClass);
-		/*
-		 * Convert from UTF-32 to UTF-16 and replace all LF with CR.
-		 */
-		long j = 0;
-		for (long i = 0; i < length_utf32; i ++) {
-			MelderUtf32 kar = text [i];
-			if (kar == '\n') {   // LF
-				macText [j ++] = 13;   // CR
-			} else if (kar <= 0xFFFF) {
-				macText [j ++] = kar;
-			} else {
-				Melder_assert (kar <= 0x10FFFF);
-				kar -= 0x10000;
-				macText [j ++] = 0xD800 | (kar >> 10);   // first UTF-16 surrogate character
-				macText [j ++] = 0xDC00 | (kar & 0x3FF);   // second UTF-16 surrogate character
-			}
-		}
-		macText [j] = '\0';
-		if (j != length_utf16)
-			Melder_fatal ("GuiText_setString: incorrect number of UTF-16 words (%ld instead of %ld): <<%ls>>.", j, length_utf16, text);
-		if (isTextControl (widget)) {
-			CFStringRef cfString = CFStringCreateWithCharacters (NULL, macText, length_utf16);
-			SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString);
-			CFRelease (cfString);
-		} else if (isMLTE (me)) {
-			TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText, length_utf16*2, 0, NativeText_getLength (widget));
-		}
-		Melder_free (macText);
-		if (widget -> managed) {
-			if (theGui.duringUpdate) {
-				_Gui_invalidateWidget (widget);   /* HACK: necessary because VisRgn has temporarily been changed (not used in Praat any longer). */
-			} else {
-				if (isTextControl (widget)) {
-					_GuiMac_clipOnParent (widget);
-					Draw1Control (widget -> nat.control.handle);
-					GuiMac_clipOff ();
-				} else if (isMLTE (me)) {
+		#if useCarbon
+			iam_text;
+			long length_utf32 = wcslen (text), length_utf16 = wcslen_utf16 (text, false);
+			UniChar *macText = Melder_malloc_f (UniChar, length_utf16 + 1);
+			Melder_assert (widget -> widgetClass == xmTextWidgetClass);
+			/*
+			 * Convert from UTF-32 to UTF-16 and replace all LF with CR.
+			 */
+			long j = 0;
+			for (long i = 0; i < length_utf32; i ++) {
+				MelderUtf32 kar = text [i];
+				if (kar == '\n') {   // LF
+					macText [j ++] = 13;   // CR
+				} else if (kar <= 0xFFFF) {
+					macText [j ++] = kar;
+				} else {
+					Melder_assert (kar <= 0x10FFFF);
+					kar -= 0x10000;
+					macText [j ++] = 0xD800 | (kar >> 10);   // first UTF-16 surrogate character
+					macText [j ++] = 0xDC00 | (kar & 0x3FF);   // second UTF-16 surrogate character
 				}
 			}
-		}
-		_GuiText_handleValueChanged (widget);
+			macText [j] = '\0';
+			if (j != length_utf16)
+				Melder_fatal ("GuiText_setString: incorrect number of UTF-16 words (%ld instead of %ld): <<%ls>>.", j, length_utf16, text);
+			if (isTextControl (widget)) {
+				CFStringRef cfString = CFStringCreateWithCharacters (NULL, macText, length_utf16);
+				SetControlData (widget -> nat.control.handle, kControlEntireControl, kControlEditTextCFStringTag, sizeof (CFStringRef), & cfString);
+				CFRelease (cfString);
+			} else if (isMLTE (me)) {
+				TXNSetData (my macMlteObject, kTXNUnicodeTextData, macText, length_utf16*2, 0, NativeText_getLength (widget));
+			}
+			Melder_free (macText);
+			if (widget -> managed) {
+				if (theGui.duringUpdate) {
+					_Gui_invalidateWidget (widget);   /* HACK: necessary because VisRgn has temporarily been changed (not used in Praat any longer). */
+				} else {
+					if (isTextControl (widget)) {
+						_GuiMac_clipOnParent (widget);
+						Draw1Control (widget -> nat.control.handle);
+						GuiMac_clipOff ();
+					} else if (isMLTE (me)) {
+					}
+				}
+			}
+			_GuiText_handleValueChanged (widget);
+		#else
+		#endif
 	#endif
 }
 
@@ -1534,11 +1600,14 @@ void GuiText_undo (GuiObject widget) {
 		history_do (me, 1);
 	#elif win
 	#elif mac
-		iam_text;
-		if (isMLTE (me)) {
-			TXNUndo (my macMlteObject);
-		}
-		_GuiText_handleValueChanged (widget);
+		#if useCarbon
+			iam_text;
+			if (isMLTE (me)) {
+				TXNUndo (my macMlteObject);
+			}
+			_GuiText_handleValueChanged (widget);
+		#else
+		#endif
 	#endif
 }
 

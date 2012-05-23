@@ -35,7 +35,11 @@
 
 /* Define to 1 if you have the declaration of `finite', and to 0 if you don't.
    */
-#define HAVE_DECL_FINITE 1
+#if defined(linux) || defined (_WIN32)
+   #define HAVE_DECL_FINITE 1
+#else
+   #define HAVE_DECL_FINITE 0
+#endif
 
 /* Define to 1 if you have the declaration of `frexp', and to 0 if you don't.
    */

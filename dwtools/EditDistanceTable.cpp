@@ -48,11 +48,11 @@ EditCostsTable EditCostsTable_createDefault ();
 /* The insertion, deletion and substitution costs are specified in a TableOfReal
  * 1..n-2 target symbols/alphabet
  * 1..m-2 source symbols/alphabet
- * row n-1 and col m-1 specify no match
- * row n insertion costs
- * col m deletion costs
- *  [n-1][m-1] if nomatch and target == source
- *  [n][m] if nomatch and target != source
+ * row n-1 and col m-1 specify nomatch symbols
+ * cells [n][1..m-2] specify insertion costs
+ * cells [1..n-1][m] specify deletion costs
+ * cell [n-1][m-1] if nomatch target == nomatch source
+ * cell [n][m] if nomatch target != nomatch source
  */
 
 Thing_implement (WarpingPath, Data, 0);
@@ -186,9 +186,10 @@ EditCostsTable EditCostsTable_createDefault () {
 }
 
 void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts) {
+	my data[my numberOfRows - 1][my numberOfColumns - 1] = 0;
 	my data[my numberOfRows][my numberOfColumns] = substitutionCosts;
-	my data[my numberOfRows][my numberOfColumns - 1] = insertionCosts;
-	my data[my numberOfRows - 1][my numberOfColumns] = deletionCosts;
+	my data[my numberOfRows][my numberOfColumns - 1] = deletionCosts;
+	my data[my numberOfRows - 1][my numberOfColumns] = insertionCosts;
 }
 
 long EditCostsTable_getTargetIndex (EditCostsTable me, const wchar_t *symbol) {
@@ -212,19 +213,31 @@ long EditCostsTable_getSourceIndex (EditCostsTable me, const wchar_t *symbol) {
 void EditCostsTable_setInsertionCosts (EditCostsTable me, wchar_t *targets, double cost) {
 	for (wchar_t *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
 		long irow = EditCostsTable_getTargetIndex (me, token);
-		if (irow > 0) {
-			my data[irow][my numberOfColumns] = cost;
-		}
+		irow = irow > 0 ? irow : my numberOfRows - 1; // nomatch condition to penultimate row
+		my data[irow][my numberOfColumns] = cost;
 	}
 }
 
 void EditCostsTable_setDeletionCosts (EditCostsTable me, wchar_t *sources, double cost) {
 	for (wchar_t *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
 		long icol = EditCostsTable_getSourceIndex (me, token);
-		if (icol > 0) {
-			my data[my numberOfRows][icol] = cost;
-		}
+		icol = icol > 0 ? icol : my numberOfColumns - 1; // nomatch condition to penultimate column
+		my data[my numberOfRows][icol] = cost;
 	}
+}
+
+void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCost, double deletionCost, double substitutionCost_equal, double substitutionCost_unequal) {
+	my data[my numberOfRows - 1][my numberOfColumns] = insertionCost;
+	my data[my numberOfRows][my numberOfColumns - 1] = deletionCost;
+	my data[my numberOfRows - 1][my numberOfColumns - 1] = substitutionCost_equal;
+	my data[my numberOfRows][my numberOfColumns] = substitutionCost_unequal;
+}
+
+double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
+	return costType == 1 ? my data[my numberOfRows - 1][my numberOfColumns] : //insertion
+		costType == 2 ? my data[my numberOfRows][my numberOfColumns - 1] : // deletion
+		costType == 3 ? my data[my numberOfRows - 1][my numberOfColumns - 1] : // equality
+		 my data[my numberOfRows][my numberOfColumns]; // inequality
 }
 
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, wchar_t *sources, double cost) {
@@ -264,14 +277,14 @@ void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, w
 
 double EditCostsTable_getInsertionCost (EditCostsTable me, const wchar_t *symbol) {
 	long irow = EditCostsTable_getTargetIndex (me, symbol);
-	irow = irow == 0 ? my numberOfRows : irow;
-	return my data[irow][my numberOfColumns - 1];
+	irow = irow == 0 ? my numberOfRows - 1 : irow; // others is penultimate row
+	return my data[irow][my numberOfColumns];
 }
 
-double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *symbol) {
-	long icol = EditCostsTable_getSourceIndex (me, symbol);
-	icol = icol == 0 ? my numberOfColumns : icol;
-	return my data[my numberOfRows - 1][icol];
+double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *sourceSymbol) {
+	long icol = EditCostsTable_getSourceIndex (me, sourceSymbol);
+	icol = icol == 0 ? my numberOfColumns - 1 : icol; // others is penultimate column
+	return my data[my numberOfRows][icol];
 }
 
 double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar *replacement) {
@@ -422,7 +435,7 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 	double leftMargin = getLeftMargin (graphics);   // not earlier!
 	double lineSpacing = getLineSpacing (graphics);   // not earlier!
 	double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
-	double y;
+	double y = 1 + 0.1 * lineSpacing;
 	autoNUMmatrix<bool> onPath (1, my numberOfRows, 1, my numberOfColumns);
 	for (long i = 1; i <= my d_warpingPath -> d_pathLength; i++) {
 		structPairOfInteger poi = my d_warpingPath -> d_path[i];
@@ -430,7 +443,6 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 	}
 
 	for (long irow = my numberOfRows; irow > 0; irow --) {
-		y = 1 - lineSpacing * (my numberOfRows - irow - 0.5 + 0.6);
 		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
 		if (my rowLabels && my rowLabels [irow] && my rowLabels [irow] [0])
 			Graphics_text (graphics, 0.5 - leftMargin, y, my rowLabels [irow]);
@@ -444,10 +456,10 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 				Graphics_rectangle (graphics, icol-0.5, icol+0.5, y - 0.5*lineSpacing, y + 0.5*lineSpacing);
 			}
 		}
+		y -= lineSpacing;
 		Graphics_setBold (graphics, false);
 	}
 
-	y -= lineSpacing;
 	double left = 0.5;
 	if (maxTextWidth > 0.0) left -= maxTextWidth + 2 * leftMargin;
 	Graphics_line (graphics, left, y, my numberOfColumns + 0.5, y);

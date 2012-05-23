@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,12 +45,21 @@ typedef struct structGuiLabel {
 		iam (GuiLabel);
 		Melder_free (me);
 	}
-#elif win || mac
-	void _GuiWinMacLabel_destroy (GuiObject widget) {
+#elif win
+	void _GuiWinLabel_destroy (GuiObject widget) {
 		iam_label;
 		_GuiNativeControl_destroy (widget);
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
+#elif mac
+	#if useCarbon
+		void _GuiMacLabel_destroy (GuiObject widget) {
+			iam_label;
+			_GuiNativeControl_destroy (widget);
+			Melder_free (me);   // NOTE: my widget is not destroyed here
+		}
+	#else
+	#endif
 #endif
 
 GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int bottom,
@@ -83,19 +92,22 @@ GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int b
 		SetWindowFont (my widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
 		_GuiObject_position (my widget, left, right, top, bottom);
 	#elif mac
-		my widget = _Gui_initializeWidget (xmLabelWidgetClass, parent, labelText);
-		_GuiObject_setUserData (my widget, me);
-		ControlFontStyleRec macFontStyleRecord = { 0 };   // BUG: _GuiNativeControl_setFont will reset alignment (should do inheritance)
-		macFontStyleRecord. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
-		macFontStyleRecord. font = systemFont;
-		macFontStyleRecord. size = 13;
-		macFontStyleRecord. just = ( flags & GuiLabel_RIGHT ? teFlushRight : flags & GuiLabel_CENTRE ? teCenter : teFlushLeft );
-		CreateStaticTextControl (my widget -> macWindow, & my widget -> rect, NULL, & macFontStyleRecord, & my widget -> nat.control.handle);
-		Melder_assert (my widget -> nat.control.handle != NULL);
-		SetControlReference (my widget -> nat.control.handle, (long) my widget);
-		my widget -> isControl = true;
-		_GuiNativeControl_setTitle (my widget);
-		_GuiObject_position (my widget, left, right, top, bottom);
+		#if useCarbon
+			my widget = _Gui_initializeWidget (xmLabelWidgetClass, parent, labelText);
+			_GuiObject_setUserData (my widget, me);
+			ControlFontStyleRec macFontStyleRecord = { 0 };   // BUG: _GuiNativeControl_setFont will reset alignment (should do inheritance)
+			macFontStyleRecord. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
+			macFontStyleRecord. font = systemFont;
+			macFontStyleRecord. size = 13;
+			macFontStyleRecord. just = ( flags & GuiLabel_RIGHT ? teFlushRight : flags & GuiLabel_CENTRE ? teCenter : teFlushLeft );
+			CreateStaticTextControl (my widget -> macWindow, & my widget -> rect, NULL, & macFontStyleRecord, & my widget -> nat.control.handle);
+			Melder_assert (my widget -> nat.control.handle != NULL);
+			SetControlReference (my widget -> nat.control.handle, (long) my widget);
+			my widget -> isControl = true;
+			_GuiNativeControl_setTitle (my widget);
+			_GuiObject_position (my widget, left, right, top, bottom);
+		#else
+		#endif
 	#endif
 	return my widget;
 }
@@ -111,10 +123,17 @@ GuiObject GuiLabel_createShown (GuiObject parent, int left, int right, int top, 
 void GuiLabel_setString (GuiObject widget, const wchar_t *text) {
 	#if gtk
 		gtk_label_set_text (GTK_LABEL (widget), Melder_peekWcsToUtf8 (text));
-	#elif win || mac
+	#elif win
 		Melder_free (widget -> name);
 		widget -> name = Melder_wcsdup_f (text);
 		_GuiNativeControl_setTitle (widget);
+	#elif mac
+		#if useCarbon
+			Melder_free (widget -> name);
+			widget -> name = Melder_wcsdup_f (text);
+			_GuiNativeControl_setTitle (widget);
+		#else
+		#endif
 	#endif
 }
 

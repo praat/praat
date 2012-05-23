@@ -423,8 +423,8 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			PMGetOrientation (theMacPageFormat, & orientation);
 			thePrinter. orientation = orientation == kPMLandscape ||
 				orientation == kPMReverseLandscape ? kGraphicsPostscript_orientation_LANDSCAPE : kGraphicsPostscript_orientation_PORTRAIT;
-			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
-			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
+			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);   // PMSessionBeginCGDocumentNoDialog
+			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);   // PMSessionBeginPageNoDialog
 			PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
 			/*
 			 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
@@ -443,8 +443,8 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
 			if (theMacPort) {
-				PMSessionEndPage (theMacPrintSession);
-				PMSessionEndDocument (theMacPrintSession);
+				PMSessionEndPage (theMacPrintSession);   // PMSessionEndPageNoDialog
+				PMSessionEndDocument (theMacPrintSession);   // PMSessionEndDocumentNoDialog
 				theMacPort = NULL;
 			}
 		#endif

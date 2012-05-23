@@ -1,6 +1,6 @@
 /* GuiList.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,12 +76,27 @@ typedef struct structGuiList {
 			my selectionChangedCallback (my selectionChangedBoss, & event);
 		}
 	}
-#elif win || mac
-	void _GuiWinMacList_destroy (GuiObject widget) {
+#elif win
+	void _GuiWinList_destroy (GuiObject widget) {
 		iam_list;
-		#if win
-			DestroyWindow (widget -> window);
-		#elif mac
+		DestroyWindow (widget -> window);
+		Melder_free (me);   // NOTE: my widget is not destroyed here
+	}
+	void _GuiWinList_map (GuiObject widget) {
+		iam_list;
+		ShowWindow (widget -> window, SW_SHOW);
+	}
+	void _GuiWinList_handleClick (GuiObject widget) {
+		iam_list;
+		if (my selectionChangedCallback != NULL) {
+			struct structGuiListEvent event = { widget };
+			my selectionChangedCallback (my selectionChangedBoss, & event);
+		}
+	}
+#elif mac
+	#if useCarbon
+		void _GuiMacList_destroy (GuiObject widget) {
+			iam_list;
 			_GuiMac_clipOnParent (widget);
 			if (widget -> isControl) {
 				DisposeControl (widget -> nat.control.handle);
@@ -89,14 +104,10 @@ typedef struct structGuiList {
 				LDispose (my macListHandle);
 			}
 			GuiMac_clipOff ();
-		#endif
-		Melder_free (me);   // NOTE: my widget is not destroyed here
-	}
-	void _GuiWinMacList_map (GuiObject widget) {
-		iam_list;
-		#if win
-			ShowWindow (widget -> window, SW_SHOW);
-		#elif mac
+			Melder_free (me);   // NOTE: my widget is not destroyed here
+		}
+		void _GuiMacList_map (GuiObject widget) {
+			iam_list;
 			if (widget -> isControl) {
 				_GuiNativeControl_show (widget);
 				Melder_casual ("showing a list");
@@ -108,17 +119,7 @@ typedef struct structGuiList {
 				LSetDrawingMode (true, my macListHandle);
 				_GuiMac_clipOffInvalid (widget);
 			}
-		#endif
-	}
-	#if win
-		void _GuiWinList_handleClick (GuiObject widget) {
-			iam_list;
-			if (my selectionChangedCallback != NULL) {
-				struct structGuiListEvent event = { widget };
-				my selectionChangedCallback (my selectionChangedBoss, & event);
-			}
 		}
-	#elif mac
 		void _GuiMacList_activate (GuiObject widget, bool activate) {
 			iam_list;
 			_GuiMac_clipOnParent (widget);
@@ -176,10 +177,11 @@ typedef struct structGuiList {
 			}
 			GuiMac_clipOff ();
 		}
+	#else
 	#endif
 #endif
 
-#if mac
+#if mac && useCarbon
 	static pascal void mac_listDefinition (short message, Boolean select, Rect *rect, Cell cell, short dataOffset, short dataLength, ListHandle handle) {
 		GuiObject widget = (GuiObject) GetListRefCon (handle);
 		(void) cell;
@@ -356,34 +358,37 @@ GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bo
 		}*/
 		_GuiObject_position (my widget, left, right, top, bottom);
 	#elif mac
-		my scrolled = XmCreateScrolledWindow (parent, "scrolled", NULL, 0);
-		_GuiObject_position (my scrolled, left, right, top, bottom);
-		my widget = _Gui_initializeWidget (xmListWidgetClass, my scrolled, L"list");
-		_GuiObject_setUserData (my widget, me);
-		if (USE_MAC_LISTBOX_CONTROL) {
-			CreateListBoxControl (my widget -> macWindow, & my widget -> rect, false, 1000, 1, true, true,
-				CELL_HEIGHT, 400, false, NULL, & my widget -> nat.control.handle);
-			GetControlData (my widget -> nat.control.handle, kControlEntireControl, kControlListBoxListHandleTag,
-				sizeof (my macListHandle), & my macListHandle, NULL);
-			SetControlReference (my widget -> nat.control.handle, (long) my widget);
-			my widget -> isControl = TRUE;
-			_GuiNativeControl_setFont (my widget, 0, 12);
-		} else {
-			Rect dataBounds = { 0, 0, 0, 1 };
-			Point cSize;
-			SetPt (& cSize, my widget -> rect.right - my widget -> rect.left + 1, CELL_HEIGHT);
-			static ListDefSpec listDefSpec;
-			if (listDefSpec. u. userProc == NULL) {
-				listDefSpec. defType = kListDefUserProcType;
-				listDefSpec. u. userProc = mac_listDefinition;
+		#if useCarbon
+			my scrolled = XmCreateScrolledWindow (parent, "scrolled", NULL, 0);
+			_GuiObject_position (my scrolled, left, right, top, bottom);
+			my widget = _Gui_initializeWidget (xmListWidgetClass, my scrolled, L"list");
+			_GuiObject_setUserData (my widget, me);
+			if (USE_MAC_LISTBOX_CONTROL) {
+				CreateListBoxControl (my widget -> macWindow, & my widget -> rect, false, 1000, 1, true, true,
+					CELL_HEIGHT, 400, false, NULL, & my widget -> nat.control.handle);
+				GetControlData (my widget -> nat.control.handle, kControlEntireControl, kControlListBoxListHandleTag,
+					sizeof (my macListHandle), & my macListHandle, NULL);
+				SetControlReference (my widget -> nat.control.handle, (long) my widget);
+				my widget -> isControl = TRUE;
+				_GuiNativeControl_setFont (my widget, 0, 12);
+			} else {
+				Rect dataBounds = { 0, 0, 0, 1 };
+				Point cSize;
+				SetPt (& cSize, my widget -> rect.right - my widget -> rect.left + 1, CELL_HEIGHT);
+				static ListDefSpec listDefSpec;
+				if (listDefSpec. u. userProc == NULL) {
+					listDefSpec. defType = kListDefUserProcType;
+					listDefSpec. u. userProc = mac_listDefinition;
+				}
+				CreateCustomList (& my widget -> rect, & dataBounds, cSize, & listDefSpec, my widget -> macWindow,
+					false, false, false, false, & my macListHandle);
+				SetListRefCon (my macListHandle, (long) my widget);
 			}
-			CreateCustomList (& my widget -> rect, & dataBounds, cSize, & listDefSpec, my widget -> macWindow,
-				false, false, false, false, & my macListHandle);
-			SetListRefCon (my macListHandle, (long) my widget);
-		}
-		if (allowMultipleSelection)
-			SetListSelectionFlags (my macListHandle, lExtendDrag | lNoRect);
-		XtVaSetValues (my widget, XmNwidth, right > 0 ? right - left + 100 : 530, NULL);
+			if (allowMultipleSelection)
+				SetListSelectionFlags (my macListHandle, lExtendDrag | lNoRect);
+			XtVaSetValues (my widget, XmNwidth, right > 0 ? right - left + 100 : 530, NULL);
+		#else
+		#endif
 	#endif
 	return my widget;
 }
@@ -404,10 +409,13 @@ void GuiList_deleteAllItems (GuiObject widget) {
 	#elif win
 		ListBox_ResetContent (widget -> window);
 	#elif mac
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		LDelRow (0, 0, my macListHandle);
-		GuiMac_clipOff ();
+		#if useCarbon
+			iam_list;
+			_GuiMac_clipOnParent (widget);
+			LDelRow (0, 0, my macListHandle);
+			GuiMac_clipOff ();
+		#else
+		#endif
 	#endif
 }
 
@@ -424,12 +432,15 @@ void GuiList_deleteItem (GuiObject widget, long position) {
 	#elif win
 		ListBox_DeleteString (widget -> window, position - 1);
 	#elif mac
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		LDelRow (1, position - 1, my macListHandle);
-		GuiMac_clipOff ();
-		long n = (** my macListHandle). dataBounds. bottom;
-		XtVaSetValues (widget, XmNheight, n * CELL_HEIGHT, NULL);
+		#if useCarbon
+			iam_list;
+			_GuiMac_clipOnParent (widget);
+			LDelRow (1, position - 1, my macListHandle);
+			GuiMac_clipOff ();
+			long n = (** my macListHandle). dataBounds. bottom;
+			XtVaSetValues (widget, XmNheight, n * CELL_HEIGHT, NULL);
+		#else
+		#endif
 	#endif
 }
 
@@ -443,12 +454,14 @@ void GuiList_deselectAllItems (GuiObject widget) {
 	#elif win
 		ListBox_SetSel (widget -> window, False, -1);
 	#elif mac
-		iam_list;
-		long n = (** my macListHandle). dataBounds. bottom;
-		Cell cell; cell.h = 0;
-		_GuiMac_clipOnParent (widget);
-		for (long i = 0; i < n; i ++) { cell.v = i; LSetSelect (false, cell, my macListHandle); }
-		GuiMac_clipOff ();
+		#if useCarbon
+			iam_list;
+			long n = (** my macListHandle). dataBounds. bottom;
+			Cell cell; cell.h = 0;
+			_GuiMac_clipOnParent (widget);
+			for (long i = 0; i < n; i ++) { cell.v = i; LSetSelect (false, cell, my macListHandle); }
+			GuiMac_clipOff ();
+		#endif
 	#endif
 }
 
@@ -470,13 +483,15 @@ void GuiList_deselectItem (GuiObject widget, long position) {
 	#elif win
 		ListBox_SetSel (widget -> window, False, position - 1);
 	#elif mac
-		iam_list;
-		Cell cell;
-		cell. h = 0;
-		cell. v = position - 1; 
-		_GuiMac_clipOnParent (widget);
-		LSetSelect (false, cell, my macListHandle);
-		GuiMac_clipOff ();
+		#if useCarbon
+			iam_list;
+			Cell cell;
+			cell. h = 0;
+			cell. v = position - 1; 
+			_GuiMac_clipOnParent (widget);
+			LSetSelect (false, cell, my macListHandle);
+			GuiMac_clipOff ();
+		#endif
 	#endif
 }
 
@@ -533,23 +548,25 @@ long * GuiList_getSelectedPositions (GuiObject widget, long *numberOfSelectedPos
 		}
 		Melder_free (indices);
 	#elif mac
-		iam_list;
-		long n = (** my macListHandle). dataBounds. bottom;
-		Cell cell; cell.h = 0;
-		if (n < 1) {
-			return selectedPositions;
-		}
-		selectedPositions = NUMvector <long> (1, n);   // probably too big (ergo, probably reallocable), but the caller will throw it away anyway
-		for (long i = 1; i <= n; i ++) {
-			cell. v = i - 1;
-			if (LGetSelect (false, & cell, my macListHandle)) {
-				selectedPositions [++ *numberOfSelectedPositions] = i;
+		#if useCarbon
+			iam_list;
+			long n = (** my macListHandle). dataBounds. bottom;
+			Cell cell; cell.h = 0;
+			if (n < 1) {
+				return selectedPositions;
 			}
-		}
-		if (*numberOfSelectedPositions == 0) {
-			NUMvector_free (selectedPositions, 1);
-			selectedPositions = NULL;
-		}
+			selectedPositions = NUMvector <long> (1, n);   // probably too big (ergo, probably reallocable), but the caller will throw it away anyway
+			for (long i = 1; i <= n; i ++) {
+				cell. v = i - 1;
+				if (LGetSelect (false, & cell, my macListHandle)) {
+					selectedPositions [++ *numberOfSelectedPositions] = i;
+				}
+			}
+			if (*numberOfSelectedPositions == 0) {
+				NUMvector_free (selectedPositions, 1);
+				selectedPositions = NULL;
+			}
+		#endif
 	#endif
 	return selectedPositions;
 }
@@ -565,18 +582,22 @@ long GuiList_getBottomPosition (GuiObject widget) {
 		if (bottom > n) bottom = n;
 		return bottom;
 	#elif mac
-		iam_list;
-		Melder_assert (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
-		GuiObject clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
-		GuiObject workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
-		long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
-		long visible = (clipWindow -> rect.bottom - clipWindow -> rect.top - 5) / CELL_HEIGHT + 1;
-		long n = (** my macListHandle). dataBounds. bottom;
-		if (visible > n) visible = n;
-		long bottom = top + visible - 1;
-		if (bottom < 1) bottom = 1;
-		if (bottom > n) bottom = n;
-		return bottom;
+		#if useCarbon
+			iam_list;
+			Melder_assert (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
+			GuiObject clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
+			GuiObject workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
+			long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
+			long visible = (clipWindow -> rect.bottom - clipWindow -> rect.top - 5) / CELL_HEIGHT + 1;
+			long n = (** my macListHandle). dataBounds. bottom;
+			if (visible > n) visible = n;
+			long bottom = top + visible - 1;
+			if (bottom < 1) bottom = 1;
+			if (bottom > n) bottom = n;
+			return bottom;
+		#else
+			return 1;   // TODO
+		#endif
 	#endif
 }
 
@@ -588,8 +609,11 @@ long GuiList_getNumberOfItems (GuiObject widget) {
 	#elif win
 		numberOfItems = ListBox_GetCount (widget -> window);
 	#elif mac
-		iam_list;
-		numberOfItems = (** my macListHandle). dataBounds. bottom;
+		#if useCarbon
+			iam_list;
+			numberOfItems = (** my macListHandle). dataBounds. bottom;
+		#else
+		#endif
 	#endif
 	return numberOfItems;
 }
@@ -605,15 +629,19 @@ long GuiList_getTopPosition (GuiObject widget) {
 		if (top > n) top = 0;
 		return top;
 	#elif mac
-		iam_list;
-		Melder_assert (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
-		GuiObject clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
-		GuiObject workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
-		long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
-		if (top < 1) top = 1;
-		long n = (** my macListHandle). dataBounds. bottom;
-		if (top > n) top = 0;
-		return top;
+		#if useCarbon
+			iam_list;
+			Melder_assert (widget -> parent -> widgetClass == xmScrolledWindowWidgetClass);
+			GuiObject clipWindow = widget -> parent -> motiff.scrolledWindow.clipWindow;
+			GuiObject workWindow = widget -> parent -> motiff.scrolledWindow.workWindow;
+			long top = (clipWindow -> rect.top - workWindow -> rect.top + 5) / CELL_HEIGHT + 1;
+			if (top < 1) top = 1;
+			long n = (** my macListHandle). dataBounds. bottom;
+			if (top > n) top = 0;
+			return top;
+		#else
+			return 1;   // TODO
+		#endif
 	#endif
 }
 
@@ -638,19 +666,22 @@ void GuiList_insertItem (GuiObject widget, const wchar_t *itemText, long positio
 		else
 			ListBox_AddString (widget -> window, itemText);   // insert at end
 	#elif mac
-		iam_list;
-		long n = (** my macListHandle). dataBounds. bottom;
-		if (position == 0)
-			position = n + 1;   // insert at end
-		Cell cell;
-		cell.h = 0; cell. v = position - 1;   // mac lists start with item 0
-		_GuiMac_clipOnParent (widget);
-		LAddRow (1, position - 1, my macListHandle);
-		const char *itemText_utf8 = Melder_peekWcsToUtf8 (itemText);   // although defProc will convert again...
-		LSetCell (itemText_utf8, (short) strlen (itemText_utf8), cell, my macListHandle);
-		(** my macListHandle). visible. bottom = n + 1;
-		_GuiMac_clipOffInvalid (widget);
-		XtVaSetValues (widget, XmNheight, (n + 1) * CELL_HEIGHT, NULL);
+		#if useCarbon
+			iam_list;
+			long n = (** my macListHandle). dataBounds. bottom;
+			if (position == 0)
+				position = n + 1;   // insert at end
+			Cell cell;
+			cell.h = 0; cell. v = position - 1;   // mac lists start with item 0
+			_GuiMac_clipOnParent (widget);
+			LAddRow (1, position - 1, my macListHandle);
+			const char *itemText_utf8 = Melder_peekWcsToUtf8 (itemText);   // although defProc will convert again...
+			LSetCell (itemText_utf8, (short) strlen (itemText_utf8), cell, my macListHandle);
+			(** my macListHandle). visible. bottom = n + 1;
+			_GuiMac_clipOffInvalid (widget);
+			XtVaSetValues (widget, XmNheight, (n + 1) * CELL_HEIGHT, NULL);
+		#else
+		#endif
 	#endif
 }
 
@@ -677,15 +708,18 @@ void GuiList_replaceItem (GuiObject widget, const wchar_t *itemText, long positi
 		ListBox_DeleteString (widget -> window, nativePosition);
 		ListBox_InsertString (widget -> window, nativePosition, itemText);
 	#elif mac
-		iam_list;
-		_GuiMac_clipOnParent (widget);
-		Cell cell;
-		cell.h = 0;
-		cell.v = position - 1;
-		const char *itemText_utf8 = Melder_peekWcsToUtf8 (itemText);
-		LSetCell (itemText_utf8, strlen (itemText_utf8), cell, my macListHandle);
-		LDraw (cell, my macListHandle);
-		GuiMac_clipOff ();
+		#if useCarbon
+			iam_list;
+			_GuiMac_clipOnParent (widget);
+			Cell cell;
+			cell.h = 0;
+			cell.v = position - 1;
+			const char *itemText_utf8 = Melder_peekWcsToUtf8 (itemText);
+			LSetCell (itemText_utf8, strlen (itemText_utf8), cell, my macListHandle);
+			LDraw (cell, my macListHandle);
+			GuiMac_clipOff ();
+		#else
+		#endif
 	#endif
 }
 
@@ -713,19 +747,22 @@ void GuiList_selectItem (GuiObject widget, long position) {
 			ListBox_SetSel (widget -> window, True, position - 1);
 		}
 	#elif mac
-		iam_list;
-		Cell cell; cell.h = 0;
-		_GuiMac_clipOnParent (widget);
-		if (! my allowMultipleSelection) {
-			long n = (** my macListHandle). dataBounds. bottom;
-			for (long i = 0; i < n; i ++) if (i != position - 1) {
-				cell.v = i;
-				LSetSelect (false, cell, my macListHandle);
+		#if useCarbon
+			iam_list;
+			Cell cell; cell.h = 0;
+			_GuiMac_clipOnParent (widget);
+			if (! my allowMultipleSelection) {
+				long n = (** my macListHandle). dataBounds. bottom;
+				for (long i = 0; i < n; i ++) if (i != position - 1) {
+					cell.v = i;
+					LSetSelect (false, cell, my macListHandle);
+				}
 			}
-		}
-		cell.v = position - 1; 
-		LSetSelect (true, cell, my macListHandle);
-		GuiMac_clipOff ();
+			cell.v = position - 1; 
+			LSetSelect (true, cell, my macListHandle);
+			GuiMac_clipOff ();
+		#else
+		#endif
 	#endif
 }
 
@@ -755,12 +792,15 @@ void GuiList_setTopPosition (GuiObject widget, long topPosition) {
 	#elif win
 		ListBox_SetTopIndex (widget -> window, topPosition - 1);
 	#elif mac
-		iam_list;
-		//_GuiMac_clipOnParent (widget);
-		//LScroll (0, topPosition - (** my macListHandle). visible. top - 1, my macListHandle);   // TODO: implement
-		//GuiMac_clipOff ();
-		//my scrolled -> motiff.scrolledWindow.verticalBar;   // TODO: implement
-		XtVaSetValues (widget, XmNy, - (topPosition - 1) * CELL_HEIGHT, NULL);
+		#if useCarbon
+			iam_list;
+			//_GuiMac_clipOnParent (widget);
+			//LScroll (0, topPosition - (** my macListHandle). visible. top - 1, my macListHandle);   // TODO: implement
+			//GuiMac_clipOff ();
+			//my scrolled -> motiff.scrolledWindow.verticalBar;   // TODO: implement
+			XtVaSetValues (widget, XmNy, - (topPosition - 1) * CELL_HEIGHT, NULL);
+		#else
+		#endif
 	#endif
 }
 

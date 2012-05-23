@@ -1878,11 +1878,32 @@ MAN_BEGIN (L"DTW & Sounds: Draw warp (x)...", L"djmw", 20071204)
 INTRO (L"Draws the warp given a time on the \"x-direction\" for the selected @DTW and the two selected @@Sound|Sounds@.")
 MAN_END
 
-MAN_BEGIN (L"EditDistanceTable", L"djmw", 20120503)
+MAN_BEGIN (L"EditCostsTable", L"djmw", 20120522)
 INTRO (L"One of the @@types of objects@ in Praat.")
-NORMAL (L"An EditDistanceTable shows the (accumulated) distances between a target string and a sources string. "
-	"For example, the (accumulated) distances between the tartget string \"intention\" and the source string "
-	"\"execution\" are expressed by the following EditDistanceTable:")
+NORMAL (L"The EditCostsTable shows the costs involved in changing one string of symbols into another one, the so called %%string edit costs%. These costs are generally divided into %%insertion%, %%deletion% and %%substitution% costs. An EditCostsTable is used to calculated the @@EditDistanceTable@. ")
+NORMAL (L"The most simple EditCostsTable has two rows and two columns only, and the cells in this table have the following interpretation:\n")
+TAG (L"Cell [1][1]:")
+DEFINITION (L"defines the cost of the substitution of a source symbol with a target symbol that doesn't match it. A good default value for the substitution cost is 2.0.")
+TAG (L"Cell [1][2]:")
+DEFINITION (L"defines the cost of the insertion of a target symbol in the source string. A good default value is 1.0.")
+TAG (L"Cell [2][1]:")
+DEFINITION (L"defines the cost of the deletion of a source symbol. A good default value is 1.0.")
+TAG (L"Cell [2][2]:")
+DEFINITION (L"defines the cost of substitution a source symbol with a target symbol that matches it. A good default is 0.0.")
+NORMAL (L"In general we can define a table for %%numberOfTargets% target symbols and %%numberOfSources% source symbols. The EditCostTable will need one extra dimensions to accommodate target symbol insertion costs and source symbol deletion costs and another extra dimension to represent other target and source symbols that don't have separate entries and can therefore be treated as one group. The dimension of the table will then be (%%numberOfTargets% + 2) \\xx (%%numberOfSources% + 2). The %%numberOfTargets% \\xx %%numberOfSources% part will show at cell [%i][%j] the costs of substitution of the %j-th source symbol by the %i-th target symbol. The values in row (%%numberOfTargets% + 1) represent the costs of substitution of the %j-th source symbol with one of the target from the rest category (this is the group of targets that do not belong to the %%numberOfTargets% targets represented in the upper part of the matrix). The first %%numberOfSources% cells in the last row represent the deletion cost of these symbols. The first %%numberOfTargets% cells in the last column represent the insertion costs of the corresponding target symbols. ")
+NORMAL (L"We can extend this minimal table with more rows and columns. Let us assume that we extend it by one target and one source symbol, \"t1\" and \"s1\", respectively. The EditCostTable will then be a 3 by 3 table:")
+CODE (L"    s1         ")
+CODE (L"t1 1.1 1.2 1.3")
+CODE (L"   1.4 1.5 1.6")
+CODE (L"   1.7 1.8 0.0")
+NORMAL (L"The table has one labeled column: the first column is labeled with source symbol \"s1\". The first row is also labeled with the target symbol \"t1\". The numbers in the table have been to be distinctive and do probably not correspond to any practical situation. The table says that substitution of source symbol \"s1\" with target symbol \"t1\" costs 1.1, while the substitution of \"s1\" with any other target symbol costs 1.4. The substitution of any other source symbol by target \"t1\" costs 1.2 while the substitution with any othe target symbol costs 1.5 if they don't match and 0.0 if they match. The deletion costs of \"s1\" are 1.7 while the deletion cost of all other source symbols is 1.8. The insertion cost of \"t1\" is 1.3 while the other target symbols can be inserted with a cost of 1.6.")
+MAN_END
+
+MAN_BEGIN (L"EditDistanceTable", L"djmw", 20120523)
+INTRO (L"One of the @@types of objects@ in Praat.")
+NORMAL (L"An EditDistanceTable shows the accumulated distances between a target string and a sources string. "
+	"For example, the accumulated distances between the target string \"intention\" and the source string "
+	"\"execution\" can be expressed by the following EditDistanceTable:")
 SCRIPT (4, 4, L"target = Create Strings as characters... intention\n"
 	"source = Create Strings as characters... execution\n"
 	"plus target\n"
@@ -1891,12 +1912,33 @@ SCRIPT (4, 4, L"target = Create Strings as characters... intention\n"
 	"plus target\n"
 	"plus source\n"
 	"Remove\n")
-NORMAL (L"Each cell, dist[%i, %j], contains the distance between the first %i characters of the target and the first %j characters of the source. The values in each cell of the matrix are computed by taking the minimum of the distances from three possible paths, i.e. the paths that come from the left, from the diagonal and from below.")
+NORMAL (L"The target string is always displayed vertically while the source string is displayed horizontally and the origin is at the bottom-left corner of the table. Each cell of this table, dist[%i, %j], contains the accumulated distance between the first %i characters "
+	"of the target and the first %j characters of the source. The cells on the path through this table which have the "
+	"minimum accumulated cost are shown with boxes around them. Below we will explain how this path is calculated.")
+NORMAL (L"The local directional steps in this path show which %%edit operations% we have to perform on the source string symbols to obtain the target string symbols. Three edit operations exist: (1) %%insertion% of a target symbol in the source string. This happens each time we take a step in the vertical direction along the path. (2) %%deletion% of a symbol in the source string. This happens each time we take a step in horizontal direction along the path. (3) %%substitution% of a source symbol by a target symbol happens at each diagonal step along the path.")
+NORMAL (L"If we trace the path from its start at the origin to its end, we see that it first moves up, indicating the insertion of an \"i\" symbol in the source string. In the next step which is in the diagonal direction, the \"n\" target is substituted for the \"e\" source symbol. Next follows another substitution, \"t\" for \"x\". The next diagonal step substitutes \"e\" for an identical \"e\". This step is followed by a horizontal step in which the source symbol \"c\" is deleted. The next diagonal step substitutes an \"n\" for a \"u\". The path now continues in the diagonal direction until the end point and only identical substitutions occur in the last part. The following figure shows these operations more explicitly.")
+SCRIPT (4, 1.5,  L"target = Create Strings as characters... intention\n"
+	"source = Create Strings as characters... execution\n"
+	"plus target\n"
+	"edt = To EditDistanceTable\n"
+	"Draw edit operations\n"
+	"plus target\n"
+	"plus source\n"
+	"Remove\n")
+NORMAL (L"The value of the accumulated costs in a cell of the table is computed by taking the minimum of the accumulated distances from three possible paths that end in the current cell, i.e. the paths that come from the %%left%, from the %%diagonal% and from %%below%.")
 CODE (L"dist[i,j] = min (d__left_, d__diag_, d__below_), ")
 NORMAL (L"where ")
 CODE (L" d__left _ = dist[i-1,j]   + insertionCost(target[i])")
 CODE (L" d__diag _ = dist[i-1,j-1] + substitutionCost(source[j],target[i])")
 CODE (L" d__below_ = dist[i,j-1]   + deletionCost(source[j])")
+NORMAL (L"Since the calculation is recursive we start at the origin. After calculating the accumulative distances for each cell in the table as based on the algorithm above, the cell at the top-right position will contain the accumulated edit distance. This distance happens to be 8 for the given example. The value 8 results from using the target-indepent value of 1.0 for the insertion cost, the source-independent value of 1.0 for the deletion costs and a constant value of 2.0 for the substitution costs. If target and source symbol happen to be equal no costs are assigned, or, equivalently the substitution costs are zero if target and source symbol match. If you want more control over these costs you can create an @@EditCostsTable@ and specify your special costs and then @@EditDistanceTable & EditCostsTable: Set new edit costs|set the new edit costs@.")
+NORMAL (L"If during the calculations we also keep track of which of the three cells resulted in the local minimum accumulated distance, we can use this directional "
+	"information to backtrack from the cell at the top-right position to the cell at the bottom-right position and obtain the minimum path.")
+MAN_END
+
+MAN_BEGIN (L"EditDistanceTable & EditCostsTable: Set new edit costs", L"djmw", 20120522)
+INTRO (L"A command available in the dynamic menu if an @@EditDistanceTable@ and an @@EditCostsTable@ are chosen together.")
+NORMAL (L"New accumulated cost values will be calculated and a new path based on these values will be calculated.")
 MAN_END
 
 MAN_BEGIN (L"Eigen", L"djmw", 19981102)
@@ -2636,7 +2678,7 @@ FORMULA (L"%z__%k_ = %r e^^%i %k %\\fi^, where,")
 FORMULA (L"%\\fi = \\pi / (%numberOfFrequencies \\-- 1) and %r = 1.")
 MAN_END
 
-MAN_BEGIN (L"Principal component analysis", L"djmw", 20101110)
+MAN_BEGIN (L"Principal component analysis", L"djmw", 20120510)
 INTRO (L"This tutorial describes how you can perform principal component "
        "analysis with P\\s{RAAT}.")
 NORMAL (L"Principal component analysis (PCA) involves a mathematical procedure "
@@ -2675,12 +2717,10 @@ ENTRY (L"3. Determining the number of components")
 NORMAL (L"There are two methods to help you to choose the number of components. "
 	"Both methods are based on relations between the eigenvalues.")
 LIST_ITEM (L"\\bu Plot the eigenvalues, @@Eigen: Draw eigenvalues...|"
-	"Draw eigenvalues...@")
-LIST_ITEM1 (L"If the points on the graph tend to level out (show an \"elbow\"), "
+	"Draw eigenvalues...@. If the points on the graph tend to level out (show an \"elbow\"), "
 	"these eigenvalues are usually close enough to zero that they can be "
 	"ignored.")
-LIST_ITEM (L"\\bu Limit variance accounted for, @@PCA: Get number of components "
-	"(VAF)...|Get number of components (VAF)...@.")
+LIST_ITEM (L"\\bu Limit the number of components to that number that accounts for a certain fraction of the total variance. For example, if you are satisfied with 95% of the total variance explained then use the number you get by the query ##Get number of components (VAF)... 0.95#.")
 ENTRY (L"4. Getting the principal components")
 NORMAL (L"Principal components are obtained by projecting the multivariate "
 	"datavectors on the space spanned by the eigenvectors. This can be done "
@@ -3021,8 +3061,9 @@ NORMAL (L"A scree plot shows the sorted eigenvalues, from large to "
 	"small, as a function of the eigenvalue index.")
 MAN_END
 
-MAN_BEGIN (L"singular value decomposition", L"djmw", 19981007)
-INTRO (L"For %m > %n, the %%singular value decomposition% (svd) of a real %m \\xx %n matrix #A is the "
+MAN_BEGIN (L"singular value decomposition", L"djmw", 20120510)
+INTRO (L"The %%singular value decomposition% (SVD) is a matrix factorization algorithm.")
+NORMAL (L"For %m > %n, the singular value decomposition of a real %m \\xx %n matrix #A is the "
 	"factorization")
 FORMULA (L"#A = #U #\\Si #V\\'p,")
 NORMAL (L"The matrices in this factorization have the following properties:")

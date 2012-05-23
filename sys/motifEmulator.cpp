@@ -48,7 +48,7 @@
  *              (Apple's special number for delayed menu attachment); needed for stand-alone Praat demo window
  * pb 2011/04/06 C++
  */
-#ifndef UNIX
+#if defined (macintosh) && useCarbon || defined (_WIN32)
 
 /* The Motif emulator for Macintosh and Windows. */
 
@@ -2255,7 +2255,13 @@ void XtDestroyWidget (GuiObject me) {
 	}
 	if (my destroyCallback) my destroyCallback (me, my destroyClosure, NULL);
 	switch (my widgetClass) {
-		case xmLabelWidgetClass: _GuiWinMacLabel_destroy (me); break;
+		case xmLabelWidgetClass: {
+			#if win
+				_GuiWinLabel_destroy (me);
+			#elif mac
+				_GuiMacLabel_destroy (me);
+			#endif
+		} break;
 		case xmCascadeButtonWidgetClass: {
 			#if win
 				if (! my inMenu && ! MEMBER (my parent, MenuBar)) _GuiNativeControl_destroy (me);
@@ -2282,9 +2288,19 @@ void XtDestroyWidget (GuiObject me) {
 			#endif
 			_motif_removeShell (me);
 		} break;
-		case xmListWidgetClass: _GuiWinMacList_destroy (me); break;
+		case xmListWidgetClass: {
+			#if win
+				_GuiWinList_destroy (me);
+			#elif mac
+				_GuiMacList_destroy (me);
+			#endif
+		} break;
 		case xmDrawingAreaWidgetClass: {
-			_GuiWinMacDrawingArea_destroy (me);
+			#if win
+				_GuiWinDrawingArea_destroy (me);
+			#else
+				_GuiMacDrawingArea_destroy (me);
+			#endif
 		} break;
 		case xmRowColumnWidgetClass:
 		case xmFormWidgetClass:
@@ -2293,7 +2309,13 @@ void XtDestroyWidget (GuiObject me) {
 				DestroyWindow (my window);
 			#endif
 		} break;
-		case xmTextWidgetClass: _GuiWinMacText_destroy (me); break;
+		case xmTextWidgetClass: {
+			#if win
+				_GuiWinText_destroy (me);
+			#elif mac
+				_GuiMacText_destroy (me);
+			#endif
+		} break;
 		case xmPushButtonWidgetClass: {
 			if (my inMenu) {
 				#if win
@@ -2306,7 +2328,11 @@ void XtDestroyWidget (GuiObject me) {
 					}
 				#endif
 			} else {
-				_GuiWinMacButton_destroy (me);
+				#if win
+					_GuiWinButton_destroy (me);
+				#elif mac
+					_GuiMacButton_destroy (me);
+				#endif
 			}
 		} break;
 		case xmToggleButtonWidgetClass: {
@@ -2322,9 +2348,17 @@ void XtDestroyWidget (GuiObject me) {
 				#endif
 			} else {
 				if (my isRadioButton) {
-					_GuiWinMacRadioButton_destroy (me);
+					#if win
+						_GuiWinRadioButton_destroy (me);
+					#elif mac
+						_GuiMacRadioButton_destroy (me);
+					#endif
 				} else {
-					_GuiWinMacCheckButton_destroy (me);
+					#if win
+						_GuiWinCheckButton_destroy (me);
+					#elif mac
+						_GuiMacCheckButton_destroy (me);
+					#endif
 				}
 			}
 		} break;
@@ -2535,8 +2569,20 @@ static void mapWidget (GuiObject me) {
 				_Gui_invalidateWidget (me);
 			#endif
 		} break;
-		case xmTextWidgetClass: _GuiWinMacText_map (me); break;
-		case xmListWidgetClass: _GuiWinMacList_map (me); break;
+		case xmTextWidgetClass: {
+			#if win
+				_GuiWinText_map (me);
+			#elif mac
+				_GuiMacText_map (me);
+			#endif
+		} break;
+		case xmListWidgetClass: {
+			#if win
+				_GuiWinList_map (me);
+			#elif mac
+				_GuiMacList_map (me);
+			#endif
+		} break;
 		default:
 			break;
 	}

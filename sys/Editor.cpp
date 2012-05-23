@@ -232,8 +232,9 @@ void structEditor :: v_destroy () {
 		#if gtk
 			Melder_assert (GTK_IS_WIDGET (d_windowShell));
 			gtk_widget_destroy (GTK_WIDGET (d_windowShell));
-		#else
+		#elif motif
 			XtDestroyWidget (d_windowShell);
+		#elif ! useCarbon
 		#endif
 	}
 	broadcastDestruction ();

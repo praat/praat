@@ -1,6 +1,6 @@
 /* GuiDrawingArea.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,74 +180,76 @@ typedef struct structGuiDrawingArea {
 		return FALSE;
 	}
 
-#elif win || mac
-	void _GuiWinMacDrawingArea_destroy (GuiObject widget) {
+#elif win
+	void _GuiWinDrawingArea_destroy (GuiObject widget) {
 		iam_drawingarea;
-		#if win
-			DestroyWindow (widget -> window);
-		#endif
+		DestroyWindow (widget -> window);
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
-	#if win
-		void _GuiWinDrawingArea_update (GuiObject widget) {
-			iam_drawingarea;
-			PAINTSTRUCT paintStruct;
-			BeginPaint (widget -> window, & paintStruct);
-			if (my exposeCallback) {
-				struct structGuiDrawingAreaExposeEvent event = { widget };
-				try {
-					my exposeCallback (my exposeBoss, & event);
-				} catch (MelderError) {
-					Melder_flushError ("Redrawing not completed");
-				}
-			}
-			EndPaint (widget -> window, & paintStruct);
-		}
-		void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y) {
-			iam_drawingarea;
-			if (my clickCallback) {
-				struct structGuiDrawingAreaClickEvent event = { widget, 0 };
-				event. x = x;
-				event. y = y;
-				event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
-				try {
-					my clickCallback (my clickBoss, & event);
-				} catch (MelderError) {
-					Melder_flushError ("Mouse click not completely handled.");
-				}
+	void _GuiWinDrawingArea_update (GuiObject widget) {
+		iam_drawingarea;
+		PAINTSTRUCT paintStruct;
+		BeginPaint (widget -> window, & paintStruct);
+		if (my exposeCallback) {
+			struct structGuiDrawingAreaExposeEvent event = { widget };
+			try {
+				my exposeCallback (my exposeBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError ("Redrawing not completed");
 			}
 		}
-		void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
-			iam_drawingarea;
-			if (my keyCallback) {
-				struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
-				event. key = kar;
-				if (event. key == VK_LEFT) event. key = 0x2190;
-				if (event. key == VK_RIGHT) event. key = 0x2192;
-				if (event. key == VK_UP) event. key = 0x2191;
-				if (event. key == VK_DOWN) event. key = 0x2193;
-				event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
-				try {
-					my keyCallback (my keyBoss, & event);
-				} catch (MelderError) {
-					Melder_flushError ("Key press not completely handled.");
-				}
+		EndPaint (widget -> window, & paintStruct);
+	}
+	void _GuiWinDrawingArea_handleClick (GuiObject widget, int x, int y) {
+		iam_drawingarea;
+		if (my clickCallback) {
+			struct structGuiDrawingAreaClickEvent event = { widget, 0 };
+			event. x = x;
+			event. y = y;
+			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
+			try {
+				my clickCallback (my clickBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError ("Mouse click not completely handled.");
 			}
 		}
-		void _GuiWinDrawingArea_shellResize (GuiObject widget) {
-			iam_drawingarea;
-			if (my resizeCallback) {
-				struct structGuiDrawingAreaResizeEvent event = { widget };
-				event. width = widget -> width;
-				event. height = widget -> height;
-				try {
-					my resizeCallback (my resizeBoss, & event);
-				} catch (MelderError) {
-					Melder_flushError ("Window resizing not completely handled.");
-				}
+	}
+	void _GuiWinDrawingArea_handleKey (GuiObject widget, TCHAR kar) {   // TODO: event?
+		iam_drawingarea;
+		if (my keyCallback) {
+			struct structGuiDrawingAreaKeyEvent event = { widget, 0 };
+			event. key = kar;
+			if (event. key == VK_LEFT) event. key = 0x2190;
+			if (event. key == VK_RIGHT) event. key = 0x2192;
+			if (event. key == VK_UP) event. key = 0x2191;
+			if (event. key == VK_DOWN) event. key = 0x2193;
+			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
+			try {
+				my keyCallback (my keyBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError ("Key press not completely handled.");
 			}
 		}
-	#elif mac
+	}
+	void _GuiWinDrawingArea_shellResize (GuiObject widget) {
+		iam_drawingarea;
+		if (my resizeCallback) {
+			struct structGuiDrawingAreaResizeEvent event = { widget };
+			event. width = widget -> width;
+			event. height = widget -> height;
+			try {
+				my resizeCallback (my resizeBoss, & event);
+			} catch (MelderError) {
+				Melder_flushError ("Window resizing not completely handled.");
+			}
+		}
+	}
+#elif mac
+	#if useCarbon
+		void _GuiMacDrawingArea_destroy (GuiObject widget) {
+			iam_drawingarea;
+			Melder_free (me);   // NOTE: my widget is not destroyed here
+		}
 		void _GuiMacDrawingArea_update (GuiObject widget) {
 			iam_drawingarea;
 			if (my exposeCallback) {
@@ -313,6 +315,7 @@ typedef struct structGuiDrawingArea {
 				}
 			}
 		}
+	#else
 	#endif
 #endif
 
@@ -380,9 +383,12 @@ GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top,
 		SetWindowLongPtr (my widget -> window, GWLP_USERDATA, (LONG_PTR) my widget);
 		_GuiObject_position (my widget, left, right, top, bottom);
 	#elif mac
-		my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
-		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
+		#if useCarbon
+			my widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent, L"drawingArea");
+			_GuiObject_setUserData (my widget, me);
+			_GuiObject_position (my widget, left, right, top, bottom);
+		#else
+		#endif
 	#endif
 	return my widget;
 }

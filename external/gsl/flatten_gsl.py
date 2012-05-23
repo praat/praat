@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# djmw 20080323
+# djmw 20080323, 20120511, 20120515
 #
 #  Makes the directory structure of gsl flat by renaming all files and references by #include
 #  E.g. the file 'd/a.c' will be renamed as: gsl_d__a.c
@@ -207,7 +207,7 @@ Replace the #define "haves" with
 #else
    #define HAVE_DECL_EXPM1 0
 #endif
-#if defined(linux)
+#if defined(linux) || defined (_WIN32)
    #define HAVE_DECL_FINITE 1
 #else
    #define HAVE_DECL_FINITE 0
@@ -289,7 +289,7 @@ Replace the #define "haves" with
  #undef HAVE_DARWIN86_IEEE_INTERFACE
 
  #define GSL_DISABLE_DEPRECATED 1
- 
+
 #define USE_BLAS 0
 
 By hand: Corrected in the fromdir/specfun/coupling.c:

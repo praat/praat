@@ -1176,11 +1176,17 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		if (! Melder_batch)
 			motif_win_setUserMessageCallback (cb_userMessage);
 	#elif defined (macintosh)
-		if (! Melder_batch) {
-			motif_mac_setUserMessageCallbackA (cb_userMessageA);
-			motif_mac_setUserMessageCallbackW (cb_userMessageW);
-			Gui_setQuitApplicationCallback (cb_quitApplication);
-		}
+		#if useCarbon
+			if (! Melder_batch) {
+				motif_mac_setUserMessageCallbackA (cb_userMessageA);
+				motif_mac_setUserMessageCallbackW (cb_userMessageW);
+				Gui_setQuitApplicationCallback (cb_quitApplication);
+			}
+		#else
+			if (! Melder_batch) {
+				Gui_setQuitApplicationCallback (cb_quitApplication);
+			}
+		#endif
 	#endif
 
 	/*
@@ -1212,11 +1218,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			raam = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit_gtk, NULL, 0);
 			theCurrentPraatApplication -> topShell = gtk_widget_get_parent (GTK_WIDGET (raam));
 			GuiObject_show (theCurrentPraatApplication -> topShell);
-		#else
-			#ifdef _WIN32
-				argv [0] = & praatP. title [0];   /* argc == 4 */
-				Gui_setOpenDocumentCallback (cb_openDocument);
-			#endif
+		#elif defined (_WIN32)
+			argv [0] = & praatP. title [0];   /* argc == 4 */
+			Gui_setOpenDocumentCallback (cb_openDocument);
 			theCurrentPraatApplication -> topShell = GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
 			double x, y;
 			Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
@@ -1224,11 +1228,23 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 				XmNx, (int) x + 10,
 				XmNy, (int) y + 0,
 				NULL);
-			#if defined (macintosh) || defined (_WIN32)
-				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
-			#endif
+			XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
 			/* Catch Window Manager "Close" and "Quit". */
 			XmAddWMProtocolCallback (theCurrentPraatApplication -> topShell, 'delw', gui_cb_quit, 0);
+		#elif defined (macintosh)
+			#if useCarbon
+				theCurrentPraatApplication -> topShell = GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
+				double x, y;
+				Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
+				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle,
+					XmNx, (int) x + 10,
+					XmNy, (int) y + 0,
+					NULL);
+				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
+				/* Catch Window Manager "Close" and "Quit". */
+				XmAddWMProtocolCallback (theCurrentPraatApplication -> topShell, 'delw', gui_cb_quit, 0);
+			#else
+			#endif
 		#endif
 	}
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);

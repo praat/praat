@@ -38,12 +38,25 @@ WarpingPath WarpingPath_create (long length);
 long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long irow, long *icol1, long *icol2);
 long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long icol, long *irow1, long *irow2);
 
+
 EditCostsTable EditCostsTable_create (long targetAlphabetSize, long sourceAlphabetSize);
+/* The insertion, deletion and substitution costs are specified in this table
+ * 1..n-2 target symbols (target alphabet)
+ * 1..m-2 source symbols (source alphabet)
+ * row n-1 and col m-1 specify no-match symbols
+ * cells [n][1..m-1] specify insertion costs
+ * cells [1..n-1][m] specify deletion costs
+ * cell [n-1][m-1] no-match target == no-match source
+ * cell [n][m] no-match target != no-match source
+ */
+
 void EditCostsTable_setDefaultCosts (EditCostsTable me, double insertionCosts, double deletionCosts, double substitutionCosts);
 long EditCostsTable_getTargetIndex (EditCostsTable me, const wchar_t *symbol);
 long EditCostsTable_getSourceIndex (EditCostsTable me, const wchar_t *symbol);
 double EditCostsTable_getInsertionCost (EditCostsTable me, const wchar_t *symbol);
 void EditCostsTable_setInsertionCosts (EditCostsTable me, wchar_t *targets, double cost);
+void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCosts, double deletionCost, double substitutionCost_equal, double substitutionCost_unequal);
+double EditCostsTable_getOthersCost (EditCostsTable me, int type);
 double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *symbol);
 void EditCostsTable_setDeletionCosts (EditCostsTable me, wchar_t *sources, double cost);
 double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar *replacement);

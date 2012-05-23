@@ -2060,6 +2060,20 @@ DO
 	}
 END
 
+FORM (EditCostsTable_getOthersCost, L"EditCostsTable: Get cost (others)", 0)
+	RADIO (L"Others cost type", 1)
+	RADIOBUTTON (L"Insertion")
+	RADIOBUTTON (L"Deletion")
+	RADIOBUTTON (L"Equality")
+	RADIOBUTTON (L"Inequality")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		Melder_informationReal (EditCostsTable_getOthersCost (me, GET_INTEGER (L"Others cost type")), NULL);
+	}
+END
+
 FORM (EditCostsTable_setTargetSymbol_index, L"EditCostsTable: Set target symbol (index)", 0)
 	NATURAL (L"Index", L"1")
 	SENTENCE (L"Target", L"a")
@@ -2116,6 +2130,21 @@ DO
 	}
 END
 
+FORM (EditCostsTable_setOthersCosts, L"EditCostsTable: Set costs (others)", 0)
+	LABEL (L"", L"Others costs")
+	REAL (L"Insertion", L"1.0")
+	REAL (L"Deletion", L"1.0")
+	LABEL (L"", L"Substitution costs")
+	REAL (L"Equality", L"0.0")
+	REAL (L"Inequality", L"2.0")
+	OK
+DO
+	LOOP {
+		iam (EditCostsTable);
+		EditCostsTable_setOthersCosts (me, GET_REAL (L"Insertion"), GET_REAL (L"Deletion"), GET_REAL (L"Equality"), GET_REAL (L"Inequality"));
+	}
+END
+
 DIRECT (EditCostsTable_to_TableOfReal)
 	LOOP {
 		iam (EditCostsTable);
@@ -2125,11 +2154,15 @@ END
 
 FORM (EditCostsTable_createEmpty, L"Create empty EditCostsTable", 0)
 	SENTENCE (L"Name", L"editCosts")
-	NATURAL (L"Target alphabet size", L"10")
-	NATURAL (L"Source alphabet size", L"10")
+	INTEGER (L"Target alphabet size", L"0")
+	INTEGER (L"Source alphabet size", L"0")
 	OK
 DO
-	praat_new (EditCostsTable_create (GET_INTEGER (L"Target alphabet size"), GET_INTEGER (L"Source alphabet size")), GET_STRING (L"Name"));
+	long targetAlphabetSize = GET_INTEGER (L"Target alphabet size");
+	targetAlphabetSize = targetAlphabetSize < 0 ? 0 : targetAlphabetSize;
+	long sourceAlphabetSize = GET_INTEGER (L"Source alphabet size");
+	sourceAlphabetSize = sourceAlphabetSize < 0 ? 0 : sourceAlphabetSize;
+	praat_new (EditCostsTable_create (targetAlphabetSize, sourceAlphabetSize), GET_STRING (L"Name"));
 END
 
 /******************** Eigen ********************************************/
@@ -6660,7 +6693,7 @@ void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, L"Set default costs...", L"Formula...", 1, DO_EditDistanceTable_setDefaultCosts);
 	praat_removeAction (klas, NULL, NULL, L"Draw as numbers...");
 	praat_addAction1 (klas, 0, L"Draw...", L"Draw -", 1, DO_EditDistanceTable_draw);
-	praat_addAction1 (klas, 0, L"Draw edit operations...", L"Draw...", 1, DO_EditDistanceTable_drawEditOperations);
+	praat_addAction1 (klas, 0, L"Draw edit operations", L"Draw...", 1, DO_EditDistanceTable_drawEditOperations);
 	praat_removeAction (klas, NULL, NULL, L"Draw as numbers if...");
 	praat_removeAction (klas, NULL, NULL, L"Draw as squares...");
 	praat_removeAction (klas, NULL, NULL, L"Draw vertical lines...");
@@ -6994,12 +7027,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classEditCostsTable, 1, L"Get insertion cost...", 0, 1, DO_EditCostsTable_getInsertionCost);
 	praat_addAction1 (classEditCostsTable, 1, L"Get deletion cost...", 0, 1, DO_EditCostsTable_getDeletionCost);
 	praat_addAction1 (classEditCostsTable, 1, L"Get substitution cost...", 0, 1, DO_EditCostsTable_getSubstitutionCost);
+	praat_addAction1 (classEditCostsTable, 1, L"Get cost (others)...", 0, 1, DO_EditCostsTable_getOthersCost);
 	praat_addAction1 (classEditCostsTable, 0, MODIFY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classEditCostsTable, 1, L"Set target symbol (index)...", 0, 1, DO_EditCostsTable_setTargetSymbol_index);
 	praat_addAction1 (classEditCostsTable, 1, L"Set source symbol (index)...", 0, 1, DO_EditCostsTable_setSourceSymbol_index);
 	praat_addAction1 (classEditCostsTable, 1, L"Set insertion costs...", 0, 1, DO_EditCostsTable_setInsertionCosts);
 	praat_addAction1 (classEditCostsTable, 1, L"Set deletion costs...", 0, 1, DO_EditCostsTable_setDeletionCosts);
 	praat_addAction1 (classEditCostsTable, 1, L"Set substitution costs...", 0, 1, DO_EditCostsTable_setSubstitutionCosts);
+	praat_addAction1 (classEditCostsTable, 1, L"Set costs (others)...", 0, 1, DO_EditCostsTable_setOthersCosts);
 	praat_addAction1 (classEditCostsTable, 1, L"To TableOfReal", 0, 0, DO_EditCostsTable_to_TableOfReal);
 
 	praat_Index_init (classStringsIndex);

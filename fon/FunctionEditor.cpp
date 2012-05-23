@@ -924,7 +924,7 @@ static void gui_cb_scroll (GtkRange *rng, gpointer void_me) {
 		}
 	}
 }
-#else
+#elif motif
 static void gui_cb_scroll (GUI_ARGS) {
 	GUI_IAM (FunctionEditor);
 	if (my graphics == NULL) return;   // ignore events during creation
@@ -950,6 +950,7 @@ static void gui_cb_scroll (GUI_ARGS) {
 		}
 	}
 }
+#elif ! useCarbon
 #endif
 
 static void gui_checkbutton_cb_group (I, GuiCheckButtonEvent event) {

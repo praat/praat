@@ -27,7 +27,7 @@ typedef struct { double red, green, blue; } Graphics_Colour;
 
 typedef struct { double x1NDC, x2NDC, y1NDC, y2NDC; } Graphics_Viewport;
 
-#if defined (UNIX)
+#if defined (UNIX) || defined (macintosh) && ! useCarbon
 	typedef void *GuiObject;
 #else
 	Thing_declare (GuiObject);

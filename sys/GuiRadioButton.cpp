@@ -1,6 +1,6 @@
 /* GuiRadioButton.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,21 +60,26 @@ typedef struct structGuiRadioButton {
 			my valueChangedCallback (my valueChangedBoss, & event);
 		}
 	}
-#elif win || mac
-	void _GuiWinMacRadioButton_destroy (GuiObject widget) {
+#elif win
+	void _GuiWinRadioButton_destroy (GuiObject widget) {
 		iam_radiobutton;
 		_GuiNativeControl_destroy (widget);
 		Melder_free (me);   // NOTE: my widget is not destroyed here
 	}
-	#if win
-		void _GuiWinRadioButton_handleClick (GuiObject widget) {
-			iam_radiobutton;
-			if (my valueChangedCallback != NULL) {
-				struct structGuiRadioButtonEvent event = { widget };
-				my valueChangedCallback (my valueChangedBoss, & event);
-			}
+	void _GuiWinRadioButton_handleClick (GuiObject widget) {
+		iam_radiobutton;
+		if (my valueChangedCallback != NULL) {
+			struct structGuiRadioButtonEvent event = { widget };
+			my valueChangedCallback (my valueChangedBoss, & event);
 		}
-	#elif mac
+	}
+#elif mac
+	#if useCarbon
+		void _GuiMacRadioButton_destroy (GuiObject widget) {
+			iam_radiobutton;
+			_GuiNativeControl_destroy (widget);
+			Melder_free (me);   // NOTE: my widget is not destroyed here
+		}
 		void _GuiMacRadioButton_handleClick (GuiObject widget, EventRecord *macEvent) {
 			iam_radiobutton;
 			_GuiMac_clipOnParent (widget);
@@ -96,6 +101,7 @@ typedef struct structGuiRadioButton {
 				}
 			}
 		}
+	#else
 	#endif
 #endif
 
@@ -140,20 +146,22 @@ GuiObject GuiRadioButton_create (GuiObject parent, int left, int right, int top,
 			GuiObject_setSensitive (my widget, false);
 		}
 	#elif mac
-		my widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent, buttonText);
-		_GuiObject_setUserData (my widget, me);
-		my widget -> isRadioButton = true;
-		CreateRadioButtonControl (my widget -> macWindow, & my widget -> rect, NULL,
-			(flags & GuiRadioButton_SET) != 0, true, & my widget -> nat.control.handle);
-		Melder_assert (my widget -> nat.control.handle != NULL);
-		SetControlReference (my widget -> nat.control.handle, (long) my widget);
-		my widget -> isControl = true;
-		_GuiNativeControl_setFont (my widget, 0, 13);
-		_GuiNativeControl_setTitle (my widget);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		if (flags & GuiRadioButton_INSENSITIVE) {
-			GuiObject_setSensitive (my widget, false);
-		}
+		#if useCarbon
+			my widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent, buttonText);
+			_GuiObject_setUserData (my widget, me);
+			my widget -> isRadioButton = true;
+			CreateRadioButtonControl (my widget -> macWindow, & my widget -> rect, NULL,
+				(flags & GuiRadioButton_SET) != 0, true, & my widget -> nat.control.handle);
+			Melder_assert (my widget -> nat.control.handle != NULL);
+			SetControlReference (my widget -> nat.control.handle, (long) my widget);
+			my widget -> isControl = true;
+			_GuiNativeControl_setFont (my widget, 0, 13);
+			_GuiNativeControl_setTitle (my widget);
+			_GuiObject_position (my widget, left, right, top, bottom);
+			if (flags & GuiRadioButton_INSENSITIVE) {
+				GuiObject_setSensitive (my widget, false);
+			}
+		#endif
 	#endif
 	return my widget;
 }
@@ -173,7 +181,10 @@ bool GuiRadioButton_getValue (GuiObject widget) {
 	#elif win
 		value = (Button_GetState (widget -> window) & 0x0003) == BST_CHECKED;
 	#elif mac
-		value = GetControlValue (widget -> nat.control.handle);
+		#if useCarbon
+			value = GetControlValue (widget -> nat.control.handle);
+		#else
+		#endif
 	#endif
 	return value;
 }
@@ -190,7 +201,10 @@ void GuiRadioButton_setValue (GuiObject widget, bool value) {
 	#elif win
 		Button_SetCheck (widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
 	#elif mac
-		SetControlValue (widget -> nat.control.handle, value);
+		#if useCarbon
+			SetControlValue (widget -> nat.control.handle, value);
+		#else
+		#endif
 	#endif
 }
 

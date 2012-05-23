@@ -1,6 +1,6 @@
 /* Gui.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,9 +48,11 @@ GuiObject Gui_addMenuBar (GuiObject form) {
 		// to pass it to the sub-menus created upon this bar for their items to have
 		// access to the accel-group
 		g_object_set_data (G_OBJECT (menuBar), "accel-group", ag);
-	#elif defined (_WIN32) || defined (macintosh)
+	#elif defined (_WIN32) || defined (macintosh) && useCarbon
 		menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
 		XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
+	#else
+		menuBar = NULL;   // TODO
 	#endif
 	return menuBar;
 }
@@ -80,7 +82,10 @@ int Gui_getResolution (GuiObject widget) {
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height) {
 	#if defined (macintosh)
 		HIRect rect;
-		HIWindowGetAvailablePositioningBounds (kCGNullDirectDisplay, kHICoordSpaceScreenPixel, & rect);
+		#if useCarbon
+			HIWindowGetAvailablePositioningBounds (kCGNullDirectDisplay, kHICoordSpaceScreenPixel, & rect);
+		#else
+		#endif
 		if (x) *x = rect. origin. x;
 		if (y) *y = rect. origin. y;
 		if (width) *width = rect. size. width;

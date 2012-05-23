@@ -1,6 +1,6 @@
 /* GuiDialog.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int heigh
 		GuiWindow_setTitle (shell, title);
 		my widget = GTK_DIALOG (shell) -> vbox;
 		g_signal_connect (G_OBJECT (my widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me);
-	#elif win || mac
+	#elif win
 		GuiObject shell = XmCreateDialogShell (parent, "dialogShell", NULL, 0);
 		XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, NULL);
 		if (goAwayCallback) {
@@ -110,6 +110,24 @@ GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int heigh
 		XtVaSetValues (my widget, XmNdialogStyle,
 			(flags & GuiDialog_MODAL) ? XmDIALOG_FULL_APPLICATION_MODAL : XmDIALOG_MODELESS,
 			XmNautoUnmanage, False, NULL);
+	#elif mac
+		#if useCarbon
+			GuiObject shell = XmCreateDialogShell (parent, "dialogShell", NULL, 0);
+			XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, XmNx, x, XmNy, y, NULL);
+			if (goAwayCallback) {
+				XmAddWMProtocolCallback (shell, 'delw', _GuiMotifDialog_goAwayCallback, (char *) me);
+			}
+			GuiWindow_setTitle (shell, title);
+			my widget = XmCreateForm (shell, "dialog", NULL, 0);
+			if (width != Gui_AUTOMATIC) XtVaSetValues (my widget, XmNwidth, (Dimension) width, NULL);
+			if (height != Gui_AUTOMATIC) XtVaSetValues (my widget, XmNheight, (Dimension) height, NULL);
+			_GuiObject_setUserData (my widget, me);
+			XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifDialog_destroyCallback, me);
+			XtVaSetValues (my widget, XmNdialogStyle,
+				(flags & GuiDialog_MODAL) ? XmDIALOG_FULL_APPLICATION_MODAL : XmDIALOG_MODELESS,
+				XmNautoUnmanage, False, NULL);
+		#else
+		#endif
 	#endif
 	return my widget;
 }

@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@ typedef struct structGuiWindow {
 		}
 		return TRUE;
 	}
-#elif win || mac
+#elif win || mac && useCarbon
 	static void _GuiMotifWindow_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
 		iam (GuiWindow);
@@ -100,7 +100,7 @@ GuiObject GuiWindow_create (GuiObject parent, int x, int y, int width, int heigh
 		my widget = gtk_vbox_new (FALSE, 0);
 		gtk_container_add (GTK_CONTAINER (shell), GTK_WIDGET (my widget));
 		_GuiObject_setUserData (my widget, me);
-	#elif win || mac
+	#elif win || mac && useCarbon
 		(void) parent;
 		GuiObject shell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
 		XtVaSetValues (shell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
@@ -124,7 +124,10 @@ void GuiWindow_setTitle (GuiObject shell, const wchar_t *title) {
 	#if gtk
 		gtk_window_set_title (GTK_WINDOW (shell), Melder_peekWcsToUtf8 (title));
 	#elif mac
-		SetWindowTitleWithCFString (shell -> nat.window.ptr, (CFStringRef) Melder_peekWcsToCfstring (title));
+		#if useCarbon
+			SetWindowTitleWithCFString (shell -> nat.window.ptr, (CFStringRef) Melder_peekWcsToCfstring (title));
+		#else
+		#endif
 	#elif win
 		SetWindowText (shell -> window, title);
 	#endif
@@ -132,7 +135,10 @@ void GuiWindow_setTitle (GuiObject shell, const wchar_t *title) {
 
 int GuiWindow_setDirty (GuiObject shell, int dirty) {
 	#if mac
-		SetWindowModified (shell -> nat.window.ptr, dirty);
+		#if useCarbon
+			SetWindowModified (shell -> nat.window.ptr, dirty);
+		#else
+		#endif
 		return 1;
 	#else
 		(void) shell;
@@ -146,19 +152,22 @@ void GuiWindow_drain (GuiObject me) {
 		//gdk_window_flush (gtk_widget_get_window (me));
 		gdk_flush ();
 	#elif mac
-		QDFlushPortBuffer (GetWindowPort (my macWindow), NULL);
-		/*
-		 * The following TRICK cost me half a day to work out.
-		 * It turns out that after a call to QDFlushPortBuffer (),
-		 * it takes MacOS ages to compute a new dirty region while
-		 * the next graphics commands are executed. Such a dirty region
-		 * could well be the region that includes all the pixels drawn by
-		 * the graphics commands, and nothing else. One can imagine
-		 * that such a thing takes five seconds when the graphics is
-		 * a simple Graphics_function () of e.g. noise.
-		 */
-		static Rect bounds = { -32768, -32768, 32767, 32767 };
-		QDAddRectToDirtyRegion (GetWindowPort (my macWindow), & bounds);
+		#if useCarbon
+			QDFlushPortBuffer (GetWindowPort (my macWindow), NULL);
+			/*
+			 * The following TRICK cost me half a day to work out.
+			 * It turns out that after a call to QDFlushPortBuffer (),
+			 * it takes MacOS ages to compute a new dirty region while
+			 * the next graphics commands are executed. Such a dirty region
+			 * could well be the region that includes all the pixels drawn by
+			 * the graphics commands, and nothing else. One can imagine
+			 * that such a thing takes five seconds when the graphics is
+			 * a simple Graphics_function () of e.g. noise.
+			 */
+			static Rect bounds = { -32768, -32768, 32767, 32767 };
+			QDAddRectToDirtyRegion (GetWindowPort (my macWindow), & bounds);
+		#else
+		#endif
 	#else
 		(void) me;
 	#endif

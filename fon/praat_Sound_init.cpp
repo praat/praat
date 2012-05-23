@@ -2044,35 +2044,59 @@ FORM_WRITE (Sound_writeToNistFile, L"Save as NIST file", 0, L"nist")
 	LongSound_concatenate (set.peek(), file, Melder_NIST, 16); therror
 END
 
-FORM_WRITE (Sound_writeToRaw8bitUnsignedFile, L"Save as raw 8-bit unsigned sound file", 0, L"8uns")
+FORM_WRITE (Sound_saveAsRaw8bitSignedFile, L"Save as raw 8-bit signed sound file", 0, L"8sig")
 	LOOP {
 		iam (Sound);
-		Sound_writeToRaw8bitUnsignedFile (me, file);
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_8_SIGNED);
 	}
 END
 
-FORM_WRITE (Sound_writeToRaw8bitSignedFile, L"Save as raw 8-bit signed sound file", 0, L"8sig")
+FORM_WRITE (Sound_saveAsRaw8bitUnsignedFile, L"Save as raw 8-bit unsigned sound file", 0, L"8uns")
 	LOOP {
 		iam (Sound);
-		Sound_writeToRaw8bitSignedFile (me, file);
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_8_UNSIGNED);
 	}
 END
 
-FORM (Sound_writeToRawSoundFile, L"Save as raw sound file", 0)
-	LABEL (L"", L"Raw binary file:")
-	TEXTFIELD (L"Raw binary file", L"")
-	RADIO (L"Encoding", 3)
-		RADIOBUTTON (L"Linear 8-bit signed")
-		RADIOBUTTON (L"Linear 8-bit unsigned")
-		RADIOBUTTON (L"Linear 16-bit big-endian")
-		RADIOBUTTON (L"Linear 16-bit little-endian")
-	OK
-DO
-	structMelderFile file = { 0 };
-	Melder_relativePathToFile (GET_STRING (L"Raw binary file"), & file);
+FORM_WRITE (Sound_saveAsRaw16bitBigEndianFile, L"Save as raw 16-bit big-endian sound file", 0, L"16be")
 	LOOP {
 		iam (Sound);
-		Sound_writeToRawSoundFile (me, & file, GET_INTEGER (L"Encoding"));
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_16_BIG_ENDIAN);
+	}
+END
+
+FORM_WRITE (Sound_saveAsRaw16bitLittleEndianFile, L"Save as raw 16-bit little-endian sound file", 0, L"16le")
+	LOOP {
+		iam (Sound);
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_16_LITTLE_ENDIAN);
+	}
+END
+
+FORM_WRITE (Sound_saveAsRaw24bitBigEndianFile, L"Save as raw 24-bit big-endian sound file", 0, L"24be")
+	LOOP {
+		iam (Sound);
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_24_BIG_ENDIAN);
+	}
+END
+
+FORM_WRITE (Sound_saveAsRaw24bitLittleEndianFile, L"Save as raw 24-bit little-endian sound file", 0, L"24le")
+	LOOP {
+		iam (Sound);
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_24_LITTLE_ENDIAN);
+	}
+END
+
+FORM_WRITE (Sound_saveAsRaw32bitBigEndianFile, L"Save as raw 32-bit big-endian sound file", 0, L"32be")
+	LOOP {
+		iam (Sound);
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_32_BIG_ENDIAN);
+	}
+END
+
+FORM_WRITE (Sound_saveAsRaw32bitLittleEndianFile, L"Save as raw 32-bit little-endian sound file", 0, L"32le")
+	LOOP {
+		iam (Sound);
+		Sound_writeToRawSoundFile (me, file, Melder_LINEAR_32_LITTLE_ENDIAN);
 	}
 END
 
@@ -2387,20 +2411,25 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classSound, 1, L"Write to Kay sound file...", 0, praat_HIDDEN, DO_Sound_writeToKayFile);
 	praat_addAction1 (classSound, 1, L"Save as Sesam file...", 0, praat_HIDDEN, DO_Sound_writeToSesamFile);
 	praat_addAction1 (classSound, 1, L"Write to Sesam file...", 0, praat_HIDDEN, DO_Sound_writeToSesamFile);
-	#ifndef _WIN32
-	praat_addAction1 (classSound, 1, L"Save as raw sound file...", 0, 0, DO_Sound_writeToRawSoundFile);
-	praat_addAction1 (classSound, 1, L"Write to raw sound file...", 0, praat_HIDDEN, DO_Sound_writeToRawSoundFile);
-	#endif
 	praat_addAction1 (classSound, 0, L"Save as 24-bit WAV file...", 0, 0, DO_Sound_saveAs24BitWavFile);
 	praat_addAction1 (classSound, 0, L"Save as 32-bit WAV file...", 0, 0, DO_Sound_saveAs32BitWavFile);
-	praat_addAction1 (classSound, 1, L"Save as raw 8-bit signed file...", 0, praat_HIDDEN, DO_Sound_writeToRaw8bitSignedFile);
-	praat_addAction1 (classSound, 1, L"Write to raw 8-bit unsigned file...", 0, praat_HIDDEN, DO_Sound_writeToRaw8bitUnsignedFile);
 	praat_addAction1 (classSound, 2, L"Write to stereo WAV file...", 0, praat_HIDDEN, DO_Sound_writeToStereoWavFile);   // deprecated 2007
 	praat_addAction1 (classSound, 2, L"Write to stereo AIFF file...", 0, praat_HIDDEN, DO_Sound_writeToStereoAiffFile);   // deprecated 2007
 	praat_addAction1 (classSound, 2, L"Write to stereo AIFC file...", 0, praat_HIDDEN, DO_Sound_writeToStereoAifcFile);   // deprecated 2007
 	praat_addAction1 (classSound, 2, L"Write to stereo Next/Sun file...", 0, praat_HIDDEN, DO_Sound_writeToStereoNextSunFile);   // deprecated 2007
 	praat_addAction1 (classSound, 2, L"Write to stereo NIST file...", 0, praat_HIDDEN, DO_Sound_writeToStereoNistFile);   // deprecated 2007
 	praat_addAction1 (classSound, 2, L"Write to stereo FLAC file...", 0, praat_HIDDEN, DO_Sound_writeToStereoFlacFile);
+	//praat_addAction1 (classSound, 1, L"Save as raw sound file", 0, 0, 0);
+	praat_addAction1 (classSound, 1, L"Save as raw 8-bit signed file...", 0, 0, DO_Sound_saveAsRaw8bitSignedFile);
+	praat_addAction1 (classSound, 1, L"Write to raw 8-bit signed file...", 0, praat_HIDDEN, DO_Sound_saveAsRaw8bitSignedFile);
+	praat_addAction1 (classSound, 1, L"Save as raw 8-bit unsigned file...", 0, 0, DO_Sound_saveAsRaw8bitUnsignedFile);
+	praat_addAction1 (classSound, 1, L"Write to raw 8-bit unsigned file...", 0, praat_HIDDEN, DO_Sound_saveAsRaw8bitUnsignedFile);
+	praat_addAction1 (classSound, 1, L"Save as raw 16-bit big-endian file...", 0, 0, DO_Sound_saveAsRaw16bitBigEndianFile);
+	praat_addAction1 (classSound, 1, L"Save as raw 16-bit little-endian file...", 0, 0, DO_Sound_saveAsRaw16bitLittleEndianFile);
+	praat_addAction1 (classSound, 1, L"Save as raw 24-bit big-endian file...", 0, 0, DO_Sound_saveAsRaw24bitBigEndianFile);
+	praat_addAction1 (classSound, 1, L"Save as raw 24-bit little-endian file...", 0, 0, DO_Sound_saveAsRaw24bitLittleEndianFile);
+	praat_addAction1 (classSound, 1, L"Save as raw 32-bit big-endian file...", 0, 0, DO_Sound_saveAsRaw32bitBigEndianFile);
+	praat_addAction1 (classSound, 1, L"Save as raw 32-bit little-endian file...", 0, 0, DO_Sound_saveAsRaw32bitLittleEndianFile);
 	praat_addAction1 (classSound, 0, L"Sound help", 0, 0, DO_Sound_help);
 	praat_addAction1 (classSound, 1, L"Edit", 0, praat_HIDDEN, DO_Sound_edit);   // deprecated 2011
 	praat_addAction1 (classSound, 1, L"Open", 0, praat_HIDDEN, DO_Sound_edit);   // deprecated 2011

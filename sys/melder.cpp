@@ -181,24 +181,28 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 		while (gtk_events_pending ())
 			gtk_main_iteration ();
 	#elif defined (macintosh)
-		EventRecord event;
-		while (GetNextEvent (mDownMask, & event)) {
-			WindowPtr macWindow;
-			int part = FindWindow (event. where, & macWindow);
-			if (part == inContent) {
-				if (GetWindowKind (macWindow) == userKind) {
-					SetPortWindowPort (macWindow);
-					GlobalToLocal (& event. where);
-					ControlPartCode controlPart;
-					ControlHandle macControl = FindControlUnderMouse (event. where, macWindow, & controlPart);
-					if (macControl) {
-						GuiObject control = (GuiObject) GetControlReference (macControl);
-						if (control == cancelButton) {
-							FlushEvents (everyEvent, 0);
-							XtUnmanageChild (dia);
-							return false;   // don't continue
+		#if useCarbon
+			EventRecord event;
+			while (GetNextEvent (mDownMask, & event)) {
+				WindowPtr macWindow;
+				int part = FindWindow (event. where, & macWindow);
+				if (part == inContent) {
+					if (GetWindowKind (macWindow) == userKind) {
+						SetPortWindowPort (macWindow);
+						GlobalToLocal (& event. where);
+						ControlPartCode controlPart;
+						ControlHandle macControl = FindControlUnderMouse (event. where, macWindow, & controlPart);
+						if (macControl) {
+							GuiObject control = (GuiObject) GetControlReference (macControl);
+							if (control == cancelButton) {
+								FlushEvents (everyEvent, 0);
+								XtUnmanageChild (dia);
+								return false;   // don't continue
+							} else {
+								break;
+							}
 						} else {
-							break;
+							XtDispatchEvent ((XEvent *) & event);
 						}
 					} else {
 						XtDispatchEvent ((XEvent *) & event);
@@ -206,11 +210,11 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 				} else {
 					XtDispatchEvent ((XEvent *) & event);
 				}
-			} else {
-				XtDispatchEvent ((XEvent *) & event);
 			}
-		}
-		do { XtNextEvent ((XEvent *) & event); XtDispatchEvent ((XEvent *) & event); } while (event.what);
+			do { XtNextEvent ((XEvent *) & event); XtDispatchEvent ((XEvent *) & event); } while (event.what);
+		#else
+			// Cocoa
+		#endif
 	#elif defined (_WIN32)
 		XEvent event;
 		while (PeekMessage (& event, 0, 0, 0, PM_REMOVE)) {
@@ -270,7 +274,7 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 			// check whether cancelButton has the "pressed" key set
 			if (g_object_steal_data (G_OBJECT (cancelButton), "pressed"))
 				return false;   // don't continue
-		#else
+		#elif motif
 			XmScaleSetValue (scale, floor (progress * 1000.0));
 			XmUpdateDisplay (dia);
 		#endif
@@ -768,8 +772,11 @@ void Melder_warning (const MelderArg& arg1, const MelderArg& arg2, const MelderA
 
 void Melder_beep (void) {
 	#ifdef macintosh
-		SysBeep (0);
-		//AudioServicesPlayAlertSound (kUserPreferredAlert);
+		#if useCarbon
+			SysBeep (0);
+		#else
+			//AudioServicesPlayAlertSound (kUserPreferredAlert);
+		#endif
 	#else
 		fprintf (stderr, "\a");
 	#endif
@@ -813,10 +820,17 @@ static void mac_message (int macAlertType, const wchar *messageW) {
 			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
 		}
 	}
-	CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
-	CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
-	CFRelease (messageCF);
-	RunStandardAlert (dialog, NULL, NULL);
+	#if useCarbon
+		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
+		CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
+		CFRelease (messageCF);
+		RunStandardAlert (dialog, NULL, NULL);
+	#else
+		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
+		//CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
+		CFRelease (messageCF);
+		//RunStandardAlert (dialog, NULL, NULL);
+	#endif
 }
 #endif
 
@@ -831,8 +845,13 @@ static void gui_fatal (const wchar *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		mac_message (kAlertStopAlert, message);
-		SysError (11);
+		#if useCarbon
+			mac_message (kAlertStopAlert, message);
+			SysError (11);
+		#else
+			mac_message (kAlertStopAlert, message);
+			SysError (11);
+		#endif
 	#elif defined (_WIN32)
 		MessageBox (NULL, message, L"Fatal error", MB_OK | MB_TOPMOST);
 	#endif
@@ -849,8 +868,13 @@ static void gui_error (const wchar *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		mac_message (kAlertStopAlert, message);
-		XmUpdateDisplay (0);
+		#if useCarbon
+			mac_message (kAlertStopAlert, message);
+			XmUpdateDisplay (0);
+		#else
+			mac_message (kAlertStopAlert, message);
+			// TODO
+		#endif
 	#elif defined (_WIN32)
 		MessageBox (NULL, message, L"Message", MB_OK | MB_TOPMOST | MB_ICONEXCLAMATION);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
 	#endif
@@ -863,8 +887,13 @@ static void gui_error (const wchar *message) {
 				gtk_dialog_run (GTK_DIALOG (dialog));
 				gtk_widget_destroy (GTK_WIDGET (dialog));
 			#elif defined (macintosh)
-				mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
-				XmUpdateDisplay (0);
+				#if useCarbon
+					mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+					XmUpdateDisplay (0);
+				#else
+					mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+					// TODO
+				#endif
 			#elif defined (_WIN32)
 				MessageBox (NULL, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
 			#endif
@@ -879,8 +908,13 @@ static void gui_warning (const wchar *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		mac_message (kAlertNoteAlert, message);
-		XmUpdateDisplay (0);
+		#if useCarbon
+			mac_message (kAlertNoteAlert, message);
+			XmUpdateDisplay (0);
+		#else
+			mac_message (kAlertNoteAlert, message);
+			// TODO
+		#endif
 	#elif defined (_WIN32)
 		MessageBox (NULL, message, L"Warning", MB_OK | MB_TOPMOST);
 	#endif

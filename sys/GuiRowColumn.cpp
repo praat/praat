@@ -1,6 +1,6 @@
 /* GuiRowColumn.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,10 +49,17 @@ typedef struct structGuiRowColumn {
 GuiObject GuiColumn_createShown (GuiObject parent, unsigned long flags) {
 	GuiRowColumn me = Melder_calloc_f (struct structGuiRowColumn, 1);
 	#if gtk
-	#elif win || mac
+	#elif win
 		my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent, XmNorientation, XmVERTICAL, NULL);
 		_GuiObject_setUserData (my widget, me);
 		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
+	#elif mac
+		#if useCarbon
+			my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent, XmNorientation, XmVERTICAL, NULL);
+			_GuiObject_setUserData (my widget, me);
+			XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
+		#else
+		#endif
 	#endif
 	return my widget;
 }
@@ -60,10 +67,17 @@ GuiObject GuiColumn_createShown (GuiObject parent, unsigned long flags) {
 GuiObject GuiRow_createShown (GuiObject parent, unsigned long flags) {
 	GuiRowColumn me = Melder_calloc_f (struct structGuiRowColumn, 1);
 	#if gtk
-	#elif win || mac
+	#elif win
 		my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent, XmNorientation, XmHORIZONTAL, NULL);
 		_GuiObject_setUserData (my widget, me);
 		XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
+	#elif mac
+		#if useCarbon
+			my widget = XtVaCreateManagedWidget ("column1", xmRowColumnWidgetClass, parent, XmNorientation, XmHORIZONTAL, NULL);
+			_GuiObject_setUserData (my widget, me);
+			XtAddCallback (my widget, XmNdestroyCallback, _GuiMotifRowColumn_destroyCallback, me);
+		#else
+		#endif
 	#endif
 	return my widget;
 }

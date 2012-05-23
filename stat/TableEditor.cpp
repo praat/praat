@@ -352,6 +352,12 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 			{ int slider, incr, pincr; \
 			  XmScrollBarGetValues(w, &var, &slider, &incr, &pincr); } \
 			do
+#elif ! useCarbon
+	#define gui_cb_scroll(name, var) \
+		void gui_cb_ ## name ## Scroll(GUI_ARGS) { \
+			GUI_IAM(TableEditor); \
+			int var; \
+			do
 #endif
 #define gui_cb_scroll_end while (0); }
 

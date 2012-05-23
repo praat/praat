@@ -342,12 +342,4 @@ void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
 	}
 }
 
-void Sound_writeToRaw8bitSignedFile (Sound me, MelderFile file) {
-	Sound_writeToRawSoundFile (me, file, Melder_LINEAR_8_SIGNED);
-}
-
-void Sound_writeToRaw8bitUnsignedFile (Sound me, MelderFile file) {
-	Sound_writeToRawSoundFile (me, file, Melder_LINEAR_8_UNSIGNED);
-}
-
 /* End of file Sound_files.cpp */

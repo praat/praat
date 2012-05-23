@@ -216,12 +216,21 @@ void Demo_waitForInput (Interpreter interpreter) {
 				do {
 					gtk_main_iteration ();
 				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
-			#else
+			#elif defined (_WIN32)
 				do {
 					XEvent event;
 					GuiNextEvent (& event);
 					XtDispatchEvent (& event);
 				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+			#elif defined (macintosh)
+				#if useCarbon
+					do {
+						XEvent event;
+						GuiNextEvent (& event);
+						XtDispatchEvent (& event);
+					} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+				#else
+				#endif
 			#endif
 		} catch (MelderError) {
 			Melder_flushError ("An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");

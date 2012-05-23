@@ -39,7 +39,7 @@
  */
 
 #include <AudioUnit/AudioUnit.h>
-//#include <AudioToolbox/AudioToolbox.h>
+#include <AudioToolbox/AudioToolbox.h>
 
 #ifdef __cplusplus
 extern "C" {
