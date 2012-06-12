@@ -525,6 +525,18 @@ DO
 	}
 END
 
+FORM (ERPTier_removeEventsBetween, L"Remove events", L"ERPTier: Remove events between...")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"1.0")
+	OK
+DO
+	LOOP {
+		iam (ERPTier);
+		AnyTier_removePointsBetween (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
+		praat_dataChanged (me);
+	}
+END
+
 FORM (ERPTier_subtractBaseline, L"Subtract baseline", 0)
 	REAL (L"From time (s)", L"-0.11")
 	REAL (L"To time (s)", L"0.0")
@@ -665,6 +677,8 @@ void praat_EEG_init (void) {
 	praat_addAction1 (classERPTier, 0, L"Modify -", 0, 0, 0);
 		praat_addAction1 (classERPTier, 0, L"Subtract baseline...", 0, 1, DO_ERPTier_subtractBaseline);
 		praat_addAction1 (classERPTier, 0, L"Reject artefacts...", 0, 1, DO_ERPTier_rejectArtefacts);
+		praat_addAction1 (classERPTier, 0, L"-- structure --", 0, 1, 0);
+		praat_addAction1 (classERPTier, 0, L"Remove events between...", 0, 1, DO_ERPTier_removeEventsBetween);
 	praat_addAction1 (classERPTier, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classERPTier, 0, L"Extract ERP...", 0, 0, DO_ERPTier_to_ERP);
 		praat_addAction1 (classERPTier, 0, L"To ERP (mean)", 0, 0, DO_ERPTier_to_ERP_mean);

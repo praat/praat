@@ -1,6 +1,6 @@
 /* Spectrogram.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ void structSpectrogram :: v_info () {
 	MelderInfo_writeLine1 (L"Frequency domain:");
 	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (ymin), L" Hz");
 	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (ymax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
+	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (ymax - ymin), L" Hz");
 	MelderInfo_writeLine1 (L"Frequency sampling:");
 	MelderInfo_writeLine2 (L"   Number of frequency bands (bins): ", Melder_integer (ny));
 	MelderInfo_writeLine3 (L"   Frequency step (bin width): ", Melder_double (dy), L" Hz");

@@ -187,6 +187,17 @@ DO
 	}
 END
 
+FORM (Network_setActivationClippingRule, L"Network: Set activation clipping rule", 0)
+	RADIO_ENUM (L"Activation clipping rule", kNetwork_activationClippingRule, DEFAULT)
+	OK
+iam_ONLY (Network);
+SET_ENUM (L"Activation clipping rule", kNetwork_activationClippingRule, my d_activationClippingRule);
+DO
+	iam_ONLY (Network);
+	me -> f_setActivationClippingRule (GET_ENUM (kNetwork_activationClippingRule, L"Activation clipping rule"));
+	praat_dataChanged (me);
+END
+
 FORM (Network_setActivationSpreadingRule, L"Network: Set activation spreading rule", 0)
 	RADIO_ENUM (L"Activation spreading rule", kNetwork_activationSpreadingRule, DEFAULT)
 	OK
@@ -194,7 +205,7 @@ iam_ONLY (Network);
 SET_ENUM (L"Activation spreading rule", kNetwork_activationSpreadingRule, my d_activationSpreadingRule);
 DO
 	iam_ONLY (Network);
-	my f_setActivationSpreadingRule (GET_ENUM (kNetwork_activationSpreadingRule, L"Activation spreading rule"));
+	me -> f_setActivationSpreadingRule (GET_ENUM (kNetwork_activationSpreadingRule, L"Activation spreading rule"));
 	praat_dataChanged (me);
 END
 
@@ -205,7 +216,7 @@ FORM (Network_setActivity, L"Network: Set activity", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_setActivity (GET_INTEGER (L"Node"), GET_REAL (L"Activity")); therror
+		me -> f_setActivity (GET_INTEGER (L"Node"), GET_REAL (L"Activity"));
 		praat_dataChanged (me);
 	}
 END
@@ -217,7 +228,18 @@ FORM (Network_setClamping, L"Network: Set clamping", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_setClamping (GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping")); therror
+		me -> f_setClamping (GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping"));
+		praat_dataChanged (me);
+	}
+END
+
+FORM (Network_setShunting, L"Network: Set shunting", 0)
+	REAL (L"Shunting", L"1.0")
+	OK
+DO
+	LOOP {
+		iam_LOOP (Network);
+		me -> f_setShunting (GET_REAL (L"Shunting"));
 		praat_dataChanged (me);
 	}
 END
@@ -229,7 +251,7 @@ FORM (Network_setWeight, L"Network: Set weight", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_setWeight (GET_INTEGER (L"Connection"), GET_REAL (L"Weight")); therror
+		me -> f_setWeight (GET_INTEGER (L"Connection"), GET_REAL (L"Weight"));
 		praat_dataChanged (me);
 	}
 END
@@ -241,7 +263,7 @@ iam_ONLY (Network);
 SET_ENUM (L"Weight update rule", kNetwork_weightUpdateRule, my d_weightUpdateRule);
 DO
 	iam_ONLY (Network);
-	my f_setWeightUpdateRule (GET_ENUM (kNetwork_weightUpdateRule, L"Weight update rule"));
+	me -> f_setWeightUpdateRule (GET_ENUM (kNetwork_weightUpdateRule, L"Weight update rule"));
 	praat_dataChanged (me);
 END
 
@@ -271,7 +293,7 @@ FORM (Network_zeroActivities, L"Network: Zero activities", 0)
 DO
 	LOOP {
 		iam (Network);
-		me -> f_zeroActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
+		me -> f_zeroActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"));
 		praat_dataChanged (me);
 	}
 END
@@ -1471,6 +1493,8 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 1, DO_Network_normalizeActivities);
 	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 1, DO_Network_spreadActivities);
 	praat_addAction1 (classNetwork, 1, L"Set activation spreading rule...", 0, 1, DO_Network_setActivationSpreadingRule);
+	praat_addAction1 (classNetwork, 1, L"Set shunting...", 0, 1, DO_Network_setShunting);
+	praat_addAction1 (classNetwork, 1, L"Set activation clipping rule...", 0, 1, DO_Network_setActivationClippingRule);
 	praat_addAction1 (classNetwork, 1, L"-- weight --", 0, 1, 0);
 	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 1, DO_Network_setWeight);
 	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 1, DO_Network_updateWeights);

@@ -1,6 +1,6 @@
 /* Network_def.h
  *
- * Copyright (C) 2009-2011 Paul Boersma
+ * Copyright (C) 2009-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,10 @@ oo_DEFINE_CLASS (Network, Data)
 	oo_FROM (3)
 		oo_ENUM (kNetwork_activationSpreadingRule, d_activationSpreadingRule)
 	oo_ENDFROM
+	oo_FROM (4)
+		oo_DOUBLE (d_shunting)
+		oo_ENUM (kNetwork_activationClippingRule, d_activationClippingRule)
+	oo_ENDFROM
 	oo_DOUBLE (d_spreadingRate)
 	oo_DOUBLE (d_selfExcitation)
 	oo_DOUBLE (d_minimumWeight)
@@ -97,6 +101,8 @@ oo_DEFINE_CLASS (Network, Data)
 			void f_updateWeights ();
 			void f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule);
 			void f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule);
+			void f_setShunting (double shunting);
+			void f_setActivationClippingRule (enum kNetwork_activationClippingRule activationClippingRule);
 
 		// overridden methods:
 			virtual void v_info ();

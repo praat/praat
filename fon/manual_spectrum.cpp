@@ -331,7 +331,7 @@ NORMAL (L"For purposes of computation speed, Praat may decide to change the time
 	"This is because the time step never needs to be smaller than 1/(8\\Vr\\pi) of the window length, "
 	"and the frequency step never needs to be smaller than (\\Vr\\pi)/8 of the inverse of the window length. "
 	"For instance, if the window length is 29 ms, the actual time step will be never be less than 29/(8\\Vr\\pi) = 2.045 ms. "
-	"And if the window length is 5 ms, the actual frequency step will never be less than (\\Vr\\pi)/8/0.005 = 44.32 Hz.")
+	"And if the window length is 5 ms, the actual frequency step will never be less than (\\Vr\\pi)/8/0.005 = 44.31 Hz.")
 ENTRY (L"Tests of the bandwidth")
 NORMAL (L"You can check the bandwidth formula with the following procedure:")
 CODE (L"! create a 1000-Hz sine wave, windowed by a 0.2-seconds Gaussian window.")

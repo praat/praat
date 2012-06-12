@@ -24,9 +24,15 @@ enums_begin (kNetwork_weightUpdateRule, 0)
 	enums_add (kNetwork_weightUpdateRule, 3, INOUTSTAR, L"inoutstar")
 enums_end (kNetwork_weightUpdateRule, 3, HEBBIAN)
 
+enums_begin (kNetwork_activationClippingRule, 0)
+	enums_add (kNetwork_activationClippingRule, 0, SIGMOID, L"sigmoid")
+	enums_add (kNetwork_activationClippingRule, 1, LINEAR, L"linear")
+	enums_add (kNetwork_activationClippingRule, 2, TOP_SIGMOID, L"top-sigmoid")
+enums_end (kNetwork_activationClippingRule, 2, SIGMOID)
+
 enums_begin (kNetwork_activationSpreadingRule, 0)
-	enums_add (kNetwork_activationSpreadingRule, 0, SIGMOID, L"sigmoid")
-	enums_add (kNetwork_activationSpreadingRule, 1, LINEAR, L"linear")
-enums_end (kNetwork_activationSpreadingRule, 1, SIGMOID)
+	enums_add (kNetwork_activationSpreadingRule, 0, SUDDEN, L"sudden")
+	enums_add (kNetwork_activationSpreadingRule, 1, GRADUAL, L"gradual")
+enums_end (kNetwork_activationSpreadingRule, 1, SUDDEN)
 
 /* End of file Network_enums.h */

@@ -458,6 +458,24 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 	const int firstVisibleChannel = my sound.channelOffset + 1;
 	int lastVisibleChannel = my sound.channelOffset + numberOfVisibleChannels;
 	if (lastVisibleChannel > nchan) lastVisibleChannel = nchan;
+	double maximumExtent = 0.0;
+	if (my sound.autoscaling && nchan > 2) {
+		double visibleChannelMinimum, visibleChannelMaximum;
+		if (longSound)
+			LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, firstVisibleChannel, & visibleChannelMinimum, & visibleChannelMaximum);
+		else
+			Matrix_getWindowExtrema (sound, first, last, firstVisibleChannel, firstVisibleChannel, & visibleChannelMinimum, & visibleChannelMaximum);
+		maximumExtent = visibleChannelMaximum - visibleChannelMinimum;
+		for (int ichan = firstVisibleChannel + 1; ichan <= lastVisibleChannel; ichan ++) {
+			if (longSound)
+				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & visibleChannelMinimum, & visibleChannelMaximum);
+			else
+				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & visibleChannelMinimum, & visibleChannelMaximum);
+			double channelExtent = visibleChannelMaximum - visibleChannelMinimum;
+			if (channelExtent > maximumExtent)
+				maximumExtent = channelExtent;
+		}
+	}
 	for (int ichan = firstVisibleChannel; ichan <= lastVisibleChannel; ichan ++) {
 		double cursorFunctionValue = longSound ? 0.0 :
 			Vector_getValueAtX (sound, 0.5 * (my startSelection + my endSelection), ichan, 70);
@@ -470,10 +488,16 @@ void TimeSoundEditor_draw_sound (TimeSoundEditor me, double globalMinimum, doubl
 		bool horizontal = false;
 		double minimum = sound ? globalMinimum : -1.0, maximum = sound ? globalMaximum : 1.0;
 		if (my sound.autoscaling) {
-			if (longSound)
+			if (longSound) {
 				LongSound_getWindowExtrema (longSound, my startWindow, my endWindow, ichan, & minimum, & maximum);
-			else
+			} else {
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
+			}
+			if (maximumExtent > 0.0) {
+				double middle = 0.5 * (minimum + maximum);
+				minimum = middle - 0.5 * maximumExtent;
+				maximum = middle + 0.5 * maximumExtent;
+			}
 		}
 		if (minimum == maximum) { horizontal = true; minimum -= 1; maximum += 1;}
 		Graphics_setWindow (my graphics, my startWindow, my endWindow, minimum, maximum);

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120523)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120612)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.17# (12 June 2012)")
+LIST_ITEM (L"\\bu @EEG window: extent autoscaling by window.")
+LIST_ITEM (L"\\bu ERPTier: Remove events between...")
 NORMAL (L"##5.3.16# (23 May 2012)")
 NORMAL (L"##5.3.15# (10 May 2012)")
 LIST_ITEM (L"\\bu Improvements in clipboards, PDF and EPS files.")
@@ -2044,7 +2047,7 @@ ENTRY (L"Advanced settings")
 NORMAL (L"The Spectrum menu also contains @@Advanced spectrogram settings...@.")
 MAN_END
 
-MAN_BEGIN (L"Advanced spectrogram settings...", L"ppgb", 20110128)
+MAN_BEGIN (L"Advanced spectrogram settings...", L"ppgb", 20120531)
 ENTRY (L"Optimization")
 TAG (L"%%Number of time steps%")
 DEFINITION (L"the maximum number of points along the time window for which Praat has to compute "
@@ -2059,10 +2062,9 @@ DEFINITION (L"the maximum number of points along the frequency axis for which Pr
 NORMAL (L"For purposes of computation speed, Praat may decide to change the time step and the frequency step. "
 	"This is because the time step never needs to be smaller than 1/(8\\Vr\\pi) of the window length, "
 	"and the frequency step never needs to be smaller than (\\Vr\\pi)/8 of the inverse of the window length. "
-	"For instance, if the window length is 30 ms, "
-	"the actual time step will never be less than 30/(8\\Vr\\pi) = 2.116 ms. "
-	"And if the window length is 5 ms, "
-	"the actual frequency step will never be less than (\\Vr\\pi)/8/0.005 = 44.32 Hz.")
+	"For instance, if the window length is 5 ms, "
+	"the actual time step will never be less than 5/(8\\Vr\\pi) = 0.353 ms, "
+	"and the actual frequency step will never be less than (\\Vr\\pi)/8/0.005 = 44.31 Hz.")
 ENTRY (L"Spectrogram analysis settings")
 TAG (L"%%Method")
 DEFINITION (L"there is currently only one method available in this window for computing a spectrum from "

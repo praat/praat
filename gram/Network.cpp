@@ -24,7 +24,8 @@
  * pb 2009/06/11 connection plasticities
  * pb 2011/03/29 C++
  * pb 2012/03/18 more weight update rules: instar, outstar, inoutstar
- * pb 2012/04/19 more activation spreading rules: linear
+ * pb 2012/04/19 more activation clipping rules: linear
+ * pb 2012/06/02 activation spreading rules: sudden, gradual
  */
 
 #include "Network.h"
@@ -61,7 +62,7 @@ void structNetwork :: v_info ()
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (d_numberOfConnections));
 }
 
-Thing_implement (Network, Data, 3);
+Thing_implement (Network, Data, 4);
 
 void structNetwork :: f_init (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
@@ -114,7 +115,7 @@ void structNetwork :: f_setActivity (long nodeNumber, double activity) {
 	try {
 		if (nodeNumber <= 0 || nodeNumber > d_numberOfNodes)
 			Melder_throw (this, ": node number (", nodeNumber, ") out of the range 1..", d_numberOfNodes, ".");
-		d_nodes [nodeNumber]. activity = activity;
+		d_nodes [nodeNumber]. activity = d_nodes [nodeNumber]. excitation = activity;
 	} catch (MelderError) {
 		Melder_throw (this, ": activity not set.");
 	}
@@ -152,28 +153,86 @@ void structNetwork :: f_setClamping (long nodeNumber, bool clamped) {
 
 void structNetwork :: f_spreadActivities (long numberOfSteps) {
 	for (long istep = 1; istep <= numberOfSteps; istep ++) {
-		for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
-			NetworkNode node = & d_nodes [inode];
-			node -> excitation = node -> activity * d_selfExcitation;
-		}
-		for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
-			NetworkConnection connection = & d_connections [iconn];
-			NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
-			NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
-			nodeFrom -> excitation += nodeTo -> activity * d_connections [iconn]. weight;
-			nodeTo -> excitation += nodeFrom -> activity * d_connections [iconn]. weight;
-		}
-		for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
-			NetworkNode node = & d_nodes [inode];
-			if (! node -> clamped) {
-				switch (d_activationSpreadingRule) {
-					case kNetwork_activationSpreadingRule_SIGMOID:
-						node -> activity = (d_maximumActivity - d_minimumActivity) *
-							NUMsigmoid (d_spreadingRate * node -> excitation) + d_minimumActivity;
-					break;
-					case kNetwork_activationSpreadingRule_LINEAR:
-						node -> activity = d_spreadingRate * node -> excitation;
-					break;
+		if (d_activationSpreadingRule == kNetwork_activationSpreadingRule_GRADUAL) {
+			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+				NetworkNode node = & d_nodes [inode];
+				if (! node -> clamped)
+					node -> excitation += d_spreadingRate * node -> activity * d_selfExcitation;
+			}
+			for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
+				NetworkConnection connection = & d_connections [iconn];
+				NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
+				NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
+				if (d_connections [iconn]. weight >= 0.0 && d_shunting > 0.0) {
+					/*
+					 * Excitatory connection: shunting.
+					 */
+					if (! nodeFrom -> clamped)
+						nodeFrom -> excitation += d_spreadingRate * nodeTo -> activity * (d_connections [iconn]. weight - d_shunting * nodeFrom -> activity);
+					if (! nodeTo -> clamped)
+						nodeTo -> excitation += d_spreadingRate * nodeFrom -> activity * (d_connections [iconn]. weight - d_shunting * nodeTo -> activity);
+				} else {
+					/*
+					 * Explicit inhibitory connection: additive.
+					 */
+					if (! nodeFrom -> clamped)
+						nodeFrom -> excitation += d_spreadingRate * nodeTo -> activity * d_connections [iconn]. weight;
+					if (! nodeTo -> clamped)
+						nodeTo -> excitation += d_spreadingRate * nodeFrom -> activity * d_connections [iconn]. weight;
+				}
+			}
+			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+				NetworkNode node = & d_nodes [inode];
+				if (! node -> clamped) {
+					node -> activity = node -> excitation;
+					switch (d_activationClippingRule) {
+						case kNetwork_activationClippingRule_LINEAR:
+							if (node -> activity < d_minimumActivity) {
+								node -> activity = node -> excitation = d_minimumActivity;
+							}
+							if (node -> activity > d_maximumActivity) {
+								node -> activity = node -> excitation = d_maximumActivity;
+							}
+						break;
+						case kNetwork_activationClippingRule_TOP_SIGMOID:
+							if (node -> activity <= d_minimumActivity) {
+								node -> activity = node -> excitation = d_minimumActivity;
+							} else {
+								node -> activity = (d_maximumActivity - d_minimumActivity) * (2.0 * NUMsigmoid (2.0 * (node -> activity - d_minimumActivity)) - 1.0) + d_minimumActivity;
+							}
+						break;
+					}
+				}
+			}
+		} else {
+			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+				NetworkNode node = & d_nodes [inode];
+				node -> excitation = node -> activity * d_selfExcitation;
+			}
+			for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
+				NetworkConnection connection = & d_connections [iconn];
+				NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
+				NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
+				nodeFrom -> excitation += nodeTo -> activity * d_connections [iconn]. weight;
+				nodeTo -> excitation += nodeFrom -> activity * d_connections [iconn]. weight;
+			}
+			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+				NetworkNode node = & d_nodes [inode];
+				if (! node -> clamped) {
+					node -> activity = d_spreadingRate * node -> excitation;
+					switch (d_activationClippingRule) {
+						case kNetwork_activationClippingRule_SIGMOID:
+							node -> activity = (d_maximumActivity - d_minimumActivity) * NUMsigmoid (node -> activity) + d_minimumActivity;
+						break;
+						case kNetwork_activationClippingRule_LINEAR:
+							if (node -> activity < d_minimumActivity) {
+								node -> activity = d_minimumActivity;
+							}
+							if (node -> activity > d_maximumActivity) {
+								node -> activity = d_maximumActivity;
+							}
+						break;
+					}
 				}
 			}
 		}
@@ -186,7 +245,7 @@ void structNetwork :: f_zeroActivities (long nodeMin, long nodeMax) {
 	if (nodeMin < 1) nodeMin = 1;
 	if (nodeMax > d_numberOfNodes) nodeMax = d_numberOfNodes;
 	for (long inode = nodeMin; inode <= nodeMax; inode ++) {
-		d_nodes [inode]. activity = 0.0;
+		d_nodes [inode]. activity = d_nodes [inode]. excitation = 0.0;
 	}
 }
 
@@ -215,8 +274,6 @@ void structNetwork :: f_updateWeights () {
 			case kNetwork_weightUpdateRule_HEBBIAN:
 				connection -> weight += connection -> plasticity * d_learningRate *
 					nodeFrom -> activity * nodeTo -> activity - d_leak * connection -> weight;
-				if (connection -> weight < d_minimumWeight) connection -> weight = d_minimumWeight;
-				else if (connection -> weight > d_maximumWeight) connection -> weight = d_maximumWeight;
 			break;
 			case kNetwork_weightUpdateRule_INSTAR:
 				connection -> weight += connection -> plasticity * d_learningRate *
@@ -228,9 +285,11 @@ void structNetwork :: f_updateWeights () {
 			break;
 			case kNetwork_weightUpdateRule_INOUTSTAR:
 				connection -> weight += connection -> plasticity * d_learningRate *
-					(2 * nodeFrom -> activity * nodeTo -> activity - (nodeFrom -> activity + nodeTo -> activity) * connection -> weight);
+					(2 * nodeFrom -> activity * nodeTo -> activity - (nodeFrom -> activity + nodeTo -> activity + 2 * d_leak) * connection -> weight);
 			break;
 		}
+		if (connection -> weight < d_minimumWeight) connection -> weight = d_minimumWeight;
+		else if (connection -> weight > d_maximumWeight) connection -> weight = d_maximumWeight;
 	}
 }
 
@@ -373,7 +432,7 @@ void structNetwork :: f_addNode (double x, double y, double activity, bool clamp
 		NUMvector_append (& d_nodes, 1, & d_numberOfNodes);
 		d_nodes [d_numberOfNodes]. x = x;
 		d_nodes [d_numberOfNodes]. y = y;
-		d_nodes [d_numberOfNodes]. activity = activity;
+		d_nodes [d_numberOfNodes]. activity = d_nodes [d_numberOfNodes]. excitation = activity;
 		d_nodes [d_numberOfNodes]. clamped = clamped;
 	} catch (MelderError) {
 		Melder_throw (this, ": node not added.");
@@ -398,6 +457,17 @@ void structNetwork :: f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weig
 
 void structNetwork :: f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule) {
 	d_activationSpreadingRule = activationSpreadingRule;
+	f_zeroActivities (0, 0);
+}
+
+void structNetwork :: f_setShunting (double shunting) {
+	d_shunting = shunting;
+	f_zeroActivities (0, 0);
+}
+
+void structNetwork :: f_setActivationClippingRule (enum kNetwork_activationClippingRule activationClippingRule) {
+	d_activationClippingRule = activationClippingRule;
+	f_zeroActivities (0, 0);
 }
 
 /* End of file Network.cpp */
