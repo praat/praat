@@ -232,7 +232,7 @@ static void cb_EEGWindow_publication (Editor editor, void *closure, Data publica
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.transfer(), IOBJECT); therror
+				praat_installEditor (editor2.transfer(), IOBJECT);
 			}
 		}
 	} catch (MelderError) {
@@ -245,7 +245,7 @@ DIRECT (EEG_viewAndEdit)
 		iam (EEG);
 		autoEEGWindow editor = EEGWindow_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
 		editor -> setPublicationCallback (cb_EEGWindow_publication, NULL);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -281,7 +281,7 @@ DO
 	LOOP {
 		iam (ERP);
 		try {
-			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the ERP may have partially changed
@@ -458,7 +458,7 @@ static void cb_ERPWindow_publication (Editor editor, void *closure, Data publica
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.transfer(), IOBJECT); therror
+				praat_installEditor (editor2.transfer(), IOBJECT);
 			}
 		}
 	} catch (MelderError) {
@@ -471,7 +471,7 @@ DIRECT (ERP_viewAndEdit)
 		iam (ERP);
 		autoERPWindow editor = ERPWindow_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
 		editor -> setPublicationCallback (cb_ERPWindow_publication, NULL);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 

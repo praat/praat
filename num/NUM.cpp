@@ -626,7 +626,7 @@ void NUM_viterbi_multi (
 	parm. getTransitionCost = getTransitionCost;
 	parm. putResult = putResult;
 	parm. closure = closure;
-	NUM_viterbi (nframe, ncomb, getNumberOfCandidates_n, getLocalCost_n, getTransitionCost_n, putResult_n, & parm); therror
+	NUM_viterbi (nframe, ncomb, getNumberOfCandidates_n, getLocalCost_n, getTransitionCost_n, putResult_n, & parm);
 }
 
 int NUMrotationsPointInPolygon (double x0, double y0, long n, double x [], double y []) {

@@ -376,7 +376,7 @@ static void DataSubEditor_init (DataSubEditor me, DataEditor root, const wchar_t
 	my d_description = description;
 	my d_topField = 1;
 	my d_numberOfFields = my v_countFields ();
-	Editor_init (me, root -> d_windowParent, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL); therror
+	Editor_init (me, root -> d_windowParent, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL);
 	update (me);
 }
 
@@ -811,7 +811,7 @@ DataEditor DataEditor_create (GuiObject parent, const wchar *title, Any data) {
 		if (Class_getDescription (klas) == NULL)
 			Melder_throw ("Class ", klas -> className, " cannot be inspected.");
 		autoDataEditor me = Thing_new (DataEditor);
-		my d_children = Collection_create (classDataSubEditor, 10); therror
+		my d_children = Collection_create (classDataSubEditor, 10);
 		my d_windowParent = parent;
 		ClassEditor_init (me.peek(), me.peek(), title, data, Class_getDescription (klas));
 		return me.transfer();

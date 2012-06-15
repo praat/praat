@@ -46,7 +46,7 @@ Autosegment Autosegment_create (double tmin, double tmax, const wchar *label) {
 		autoAutosegment me = Thing_new (Autosegment);
 		Function_init (me.peek(), tmin, tmax);
 		if (label != NULL) {
-			Thing_setName (me.peek(), label); therror
+			Thing_setName (me.peek(), label);
 		}
 		return me.transfer();
 	} catch (MelderError) {

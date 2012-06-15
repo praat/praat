@@ -66,7 +66,7 @@ Thing_implement (FormantTier, Function, 0);
 FormantTier FormantTier_create (double tmin, double tmax) {
 	try {
 		autoFormantTier me = Thing_new (FormantTier);
-		my points = SortedSetOfDouble_create (); therror
+		my points = SortedSetOfDouble_create ();
 		my xmin = tmin;
 		my xmax = tmax;
 		return me.transfer();

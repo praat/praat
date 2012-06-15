@@ -38,7 +38,7 @@ Sound Pitch_to_Sound (Pitch me, double tmin, double tmax, int hum) {
 		autoPointProcess point = Pitch_to_PointProcess (me);
 		autoSound sound = PointProcess_to_Sound_pulseTrain (point.peek(), 44100, 0.7, 0.05, 30);
 		if (hum) {
-			Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth); therror
+			Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth);
 		}
 		return sound.transfer();
 	} catch (MelderError) {

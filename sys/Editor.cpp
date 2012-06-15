@@ -81,7 +81,7 @@ static void commonCallback (GUI_ARGS) {
 		UiHistory_write (my itemTitle);
 	}
 	try {
-		my commandCallback (my d_editor, me, NULL, NULL, NULL); therror
+		my commandCallback (my d_editor, me, NULL, NULL, NULL);
 	} catch (MelderError) {
 		Melder_error_ ("Menu command \"", my itemTitle, "\" not completed.");
 		Melder_flushError (NULL);
@@ -211,7 +211,7 @@ void Editor_doMenuCommand (Editor me, const wchar *commandTitle, const wchar *ar
 		for (long icommand = 1; icommand <= numberOfCommands; icommand ++) {
 			EditorCommand command = (EditorCommand) menu -> commands -> item [icommand];
 			if (wcsequ (commandTitle, command -> itemTitle)) {
-				command -> commandCallback (me, command, NULL, arguments, interpreter); therror
+				command -> commandCallback (me, command, NULL, arguments, interpreter);
 				return;
 			}
 		}
@@ -304,7 +304,7 @@ static void menu_cb_searchManual (EDITOR_ARGS) {
 
 static void menu_cb_newScript (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
-	(void) ScriptEditor_createFromText (my d_windowParent, me, NULL); therror
+	(void) ScriptEditor_createFromText (my d_windowParent, me, NULL);
 }
 
 static void menu_cb_openScript (EDITOR_ARGS) {

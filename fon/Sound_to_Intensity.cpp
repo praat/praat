@@ -64,7 +64,7 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		long numberOfFrames;
 		double thyFirstTime;
 		try {
-			Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime); therror
+			Sampled_shortTermAnalysis (me, windowDuration, timeStep, & numberOfFrames, & thyFirstTime);
 		} catch (MelderError) {
 			Melder_throw ("The duration of the sound in an intensity analysis should be at least 6.4 divided by the minimum pitch (", minimumPitch, " Hz), "
 				"i.e. at least ", 6.4 / minimumPitch, " s, instead of ", my xmax - my xmin, " s.");

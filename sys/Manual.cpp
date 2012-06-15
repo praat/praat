@@ -92,7 +92,7 @@ static void menu_cb_searchForPageList (EDITOR_ARGS) {
 		LIST (L"Page", manPages -> pages -> size, pages, 1)
 	EDITOR_OK
 	EDITOR_DO
-		HyperPage_goToPage_i (me, GET_INTEGER (L"Page")); therror
+		HyperPage_goToPage_i (me, GET_INTEGER (L"Page"));
 	EDITOR_END
 }
 

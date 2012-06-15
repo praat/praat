@@ -90,7 +90,7 @@ Formant Formant_create (double tmin, double tmax, long nt, double dt, double t1,
 {
 	try {
 		autoFormant me = Thing_new (Formant);
-		Sampled_init (me.peek(), tmin, tmax, nt, dt, t1); therror
+		Sampled_init (me.peek(), tmin, tmax, nt, dt, t1);
 		my d_frames = NUMvector <structFormant_Frame> (1, nt);
 		my maxnFormants = maxnFormants;
 		return me.transfer();
@@ -198,7 +198,7 @@ void Formant_formula_bandwidths (Formant me, const wchar *formula, Interpreter i
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. bandwidth;
 		}
-		Matrix_formula (mat.peek(), formula, interpreter, NULL); therror
+		Matrix_formula (mat.peek(), formula, interpreter, NULL);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -220,7 +220,7 @@ void Formant_formula_frequencies (Formant me, const wchar *formula, Interpreter 
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
 				mat -> z [iformant] [iframe] = frame -> formant [iformant]. frequency;
 		}
-		Matrix_formula (mat.peek(), formula, interpreter, NULL); therror
+		Matrix_formula (mat.peek(), formula, interpreter, NULL);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++)
@@ -458,7 +458,7 @@ Formant Formant_tracker (Formant me, int ntrack,
 		parm.refF [4] = refF4;
 		parm.refF [5] = refF5;
 		NUM_viterbi_multi (my nx, my maxnFormants, ntrack,
-			getLocalCost, getTransitionCost, putResult, & parm); therror
+			getLocalCost, getTransitionCost, putResult, & parm);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not tracked.");
@@ -480,24 +480,30 @@ Table Formant_downto_Table (Formant me, bool includeFrameNumbers,
 		if (includeIntensity)        Table_setColumnLabel (thee.peek(), ++ icol, L"intensity");
 		if (includeNumberOfFormants) Table_setColumnLabel (thee.peek(), ++ icol, L"nformants");
 		for (long iformant = 1; iformant <= my maxnFormants; iformant ++) {
-			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (L"F", Melder_integer (iformant), L"(Hz)")); therror
+			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (L"F", Melder_integer (iformant), L"(Hz)"));
 			if (includeBandwidths) { Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (L"B", Melder_integer (iformant), L"(Hz)")); }
 		}
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			icol = 0;
-			if (includeFrameNumbers) { Table_setNumericValue (thee.peek(), iframe, ++ icol, iframe); therror }
-			if (includeTimes) { Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (my x1 + (iframe - 1) * my dx, timeDecimals)); therror }
+			if (includeFrameNumbers)
+				Table_setNumericValue (thee.peek(), iframe, ++ icol, iframe);
+			if (includeTimes)
+				Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (my x1 + (iframe - 1) * my dx, timeDecimals));
 			Formant_Frame frame = & my d_frames [iframe];
-			if (includeIntensity) { Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (frame -> intensity, intensityDecimals)); therror }
-			if (includeNumberOfFormants) { Table_setNumericValue (thee.peek(), iframe, ++ icol, frame -> nFormants); therror }
+			if (includeIntensity)
+				Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (frame -> intensity, intensityDecimals));
+			if (includeNumberOfFormants)
+				Table_setNumericValue (thee.peek(), iframe, ++ icol, frame -> nFormants);
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant formant = & frame -> formant [iformant];
-				Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (formant -> frequency, frequencyDecimals)); therror
-				if (includeBandwidths) { Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (formant -> bandwidth, frequencyDecimals)); therror }
+				Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (formant -> frequency, frequencyDecimals));
+				if (includeBandwidths)
+					Table_setStringValue (thee.peek(), iframe, ++ icol, Melder_fixed (formant -> bandwidth, frequencyDecimals));
 			}
 			for (long iformant = frame -> nFormants + 1; iformant <= my maxnFormants; iformant ++) {
-				Table_setNumericValue (thee.peek(), iframe, ++ icol, NUMundefined); therror
-				if (includeBandwidths) { Table_setNumericValue (thee.peek(), iframe, ++ icol, NUMundefined); therror }
+				Table_setNumericValue (thee.peek(), iframe, ++ icol, NUMundefined);
+				if (includeBandwidths)
+					Table_setNumericValue (thee.peek(), iframe, ++ icol, NUMundefined);
 			}
 		}
 		return thee.transfer();

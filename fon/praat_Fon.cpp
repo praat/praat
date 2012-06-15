@@ -139,7 +139,7 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 	LOOP {
 		iam (Matrix);
 		try {
-			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -175,7 +175,7 @@ FORM (AmplitudeTier_addPoint, L"Add one point", L"AmplitudeTier: Add point...")
 DO
 	LOOP {
 		iam (AmplitudeTier);
-		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Sound pressure")); therror
+		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Sound pressure"));
 		praat_dataChanged (me);
 	}
 END
@@ -234,7 +234,7 @@ DO
 	LOOP {
 		iam (AmplitudeTier);
 		try {
-			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -400,7 +400,7 @@ DO
 	LOOP {
 		iam (Cochleagram);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Cochleagram may have partially changed
@@ -467,7 +467,7 @@ DIRECT (Corpus_edit)
 	LOOP {
 		iam (Corpus);
 		autoTableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -599,7 +599,7 @@ DO
 	LOOP {
 		iam (DurationTier);
 		try {
-			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -677,7 +677,7 @@ DO
 	LOOP {
 		iam (Excitation);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -772,7 +772,7 @@ DO
 	LOOP {
 		iam (Formant);
 		try {
-			Formant_formula_bandwidths (me, GET_STRING (L"formula"), interpreter); therror
+			Formant_formula_bandwidths (me, GET_STRING (L"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
@@ -789,7 +789,7 @@ DO
 	LOOP {
 		iam (Formant);
 		try {
-			Formant_formula_frequencies (me, GET_STRING (L"formula"), interpreter); therror
+			Formant_formula_frequencies (me, GET_STRING (L"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Formant may have partially changed
@@ -1179,7 +1179,7 @@ FORM (FormantGrid_addBandwidthPoint, L"FormantGrid: Add bandwidth point", L"Form
 DO
 	LOOP {
 		iam (FormantGrid);
-		FormantGrid_addBandwidthPoint (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Bandwidth")); therror
+		FormantGrid_addBandwidthPoint (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Bandwidth"));
 		praat_dataChanged (me);
 	}
 END
@@ -1192,7 +1192,7 @@ FORM (FormantGrid_addFormantPoint, L"FormantGrid: Add formant point", L"FormantG
 DO
 	LOOP {
 		iam (FormantGrid);
-		FormantGrid_addFormantPoint (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Frequency")); therror
+		FormantGrid_addFormantPoint (me, GET_INTEGER (L"Formant number"), GET_REAL (L"Time"), GET_REAL (L"Frequency"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -1235,7 +1235,7 @@ DIRECT (FormantGrid_edit)
 		iam (FormantGrid);
 		autoFormantGridEditor editor = FormantGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
 		editor -> setPublicationCallback (cb_FormantGridEditor_publish, NULL);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -1248,7 +1248,7 @@ DO
 	LOOP {
 		iam (FormantGrid);
 		try {
-			FormantGrid_formula_bandwidths (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			FormantGrid_formula_bandwidths (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
@@ -1265,7 +1265,7 @@ DO
 	LOOP {
 		iam (FormantGrid);
 		try {
-			FormantGrid_formula_frequencies (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			FormantGrid_formula_frequencies (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the FormantGrid may have partially changed
@@ -1481,7 +1481,7 @@ DO
 	LOOP {
 		iam (Harmonicity);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Harmonicity may have partically changed
@@ -1635,7 +1635,7 @@ DO
 	LOOP {
 		iam (Intensity);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Intensity may have partially changed
@@ -1857,7 +1857,7 @@ FORM (IntensityTier_addPoint, L"Add one point", L"IntensityTier: Add point...")
 DO
 	LOOP {
 		iam (IntensityTier);
-		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Intensity")); therror
+		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Intensity"));
 		praat_dataChanged (me);
 	}
 END
@@ -2080,7 +2080,7 @@ DO
 	LOOP {
 		iam (Ltas);
 		try {
-			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula (reinterpret_cast <Matrix> (me), GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Ltas may have partially changed
@@ -2405,14 +2405,14 @@ DIRECT (Manipulation_help) Melder_help (L"Manipulation"); END
 DIRECT (Manipulation_play_lpc)
 	LOOP {
 		iam (Manipulation);
-		Manipulation_play (me, Manipulation_PITCH_LPC); therror
+		Manipulation_play (me, Manipulation_PITCH_LPC);
 	}
 END
 
 DIRECT (Manipulation_play_overlapAdd)
 	LOOP {
 		iam (Manipulation);
-		Manipulation_play (me, Manipulation_OVERLAPADD); therror
+		Manipulation_play (me, Manipulation_OVERLAPADD);
 	}
 END
 
@@ -2454,7 +2454,7 @@ END
 
 DIRECT (Manipulation_replaceDurationTier)
 	Manipulation me = FIRST (Manipulation);
-	Manipulation_replaceDurationTier (me, FIRST (DurationTier)); therror
+	Manipulation_replaceDurationTier (me, FIRST (DurationTier));
 	praat_dataChanged (me);
 END
 
@@ -2464,7 +2464,7 @@ DIRECT (Manipulation_replaceDurationTier_help) Melder_help (L"Manipulation: Repl
 
 DIRECT (Manipulation_replacePitchTier)
 	Manipulation me = FIRST (Manipulation);
-	Manipulation_replacePitchTier (me, FIRST (PitchTier)); therror
+	Manipulation_replacePitchTier (me, FIRST (PitchTier));
 	praat_dataChanged (me);
 END
 
@@ -2474,7 +2474,7 @@ DIRECT (Manipulation_replacePitchTier_help) Melder_help (L"Manipulation: Replace
 
 DIRECT (Manipulation_replacePulses)
 	Manipulation me = FIRST (Manipulation);
-	Manipulation_replacePulses (me, FIRST (PointProcess)); therror
+	Manipulation_replacePulses (me, FIRST (PointProcess));
 	praat_dataChanged (me);
 END
 
@@ -2482,7 +2482,7 @@ END
 
 DIRECT (Manipulation_replaceOriginalSound)
 	Manipulation me = FIRST (Manipulation);
-	Manipulation_replaceOriginalSound (me, FIRST (Sound)); therror
+	Manipulation_replaceOriginalSound (me, FIRST (Sound));
 	praat_dataChanged (me);
 END
 
@@ -2527,7 +2527,7 @@ DO
 	autoMatrix me = Matrix_create (
 		xmin, xmax, GET_INTEGER (L"Number of columns"), GET_REAL (L"dx"), GET_REAL (L"x1"),
 		ymin, ymax, GET_INTEGER (L"Number of rows"), GET_REAL (L"dy"), GET_REAL (L"y1"));
-	Matrix_formula (me.peek(), GET_STRING (L"formula"), interpreter, NULL); therror
+	Matrix_formula (me.peek(), GET_STRING (L"formula"), interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
@@ -2540,7 +2540,7 @@ FORM (Matrix_createSimple, L"Create simple Matrix", L"Create simple Matrix...")
 	OK
 DO
 	autoMatrix me = Matrix_createSimple (GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"));
-	Matrix_formula (me.peek(), GET_STRING (L"formula"), interpreter, NULL); therror
+	Matrix_formula (me.peek(), GET_STRING (L"formula"), interpreter, NULL);
 	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
@@ -2619,7 +2619,7 @@ DO
 	LOOP {
 		iam (Matrix);
 		try {
-			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Matrix may have partially changed
@@ -3161,7 +3161,7 @@ DO
 	LOOP {
 		iam (Pitch);
 		try {
-			Pitch_formula (me, GET_STRING (L"formula"), interpreter); therror
+			Pitch_formula (me, GET_STRING (L"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Pitch may have partially changed
@@ -3344,7 +3344,7 @@ DIRECT (Pitch_help) Melder_help (L"Pitch"); END
 DIRECT (Pitch_hum)
 	LOOP {
 		iam (Pitch);
-		Pitch_hum (me, 0, 0); therror
+		Pitch_hum (me, 0, 0);
 	}
 END
 
@@ -3367,7 +3367,7 @@ END
 DIRECT (Pitch_play)
 	LOOP {
 		iam (Pitch);
-		Pitch_play (me, 0, 0); therror
+		Pitch_play (me, 0, 0);
 	}
 END
 
@@ -3662,7 +3662,7 @@ FORM (PitchTier_addPoint, L"PitchTier: Add point", L"PitchTier: Add point...")
 DO
 	LOOP {
 		iam (PitchTier);
-		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Pitch")); therror
+		RealTier_addPoint (me, GET_REAL (L"Time"), GET_REAL (L"Pitch"));
 		praat_dataChanged (me);
 	}
 END
@@ -3749,7 +3749,7 @@ DIRECT (PitchTier_edit)
 	LOOP if (CLASS == classPitchTier) {
 		iam (PitchTier);
 		autoPitchTierEditor editor = PitchTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, TRUE);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -3766,7 +3766,7 @@ DO
 	LOOP {
 		iam (PitchTier);
 		try {
-			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			RealTier_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PitchTier may have partially changed
@@ -3822,7 +3822,7 @@ DIRECT (PitchTier_help) Melder_help (L"PitchTier"); END
 DIRECT (PitchTier_hum)
 	LOOP {
 		iam (PitchTier);
-		PitchTier_hum (me); therror
+		PitchTier_hum (me);
 	}
 END
 
@@ -3843,7 +3843,7 @@ END
 DIRECT (PitchTier_play)
 	LOOP {
 		iam (PitchTier);
-		PitchTier_play (me); therror
+		PitchTier_play (me);
 	}
 END
 
@@ -3876,7 +3876,7 @@ DO
 	LOOP {
 		iam (PitchTier);
 		try {
-			PitchTier_shiftFrequencies (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Frequency shift"), unit); therror
+			PitchTier_shiftFrequencies (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Frequency shift"), unit);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PitchTier may have partially changed
@@ -3976,14 +3976,14 @@ END
 FORM_WRITE (PitchTier_writeToPitchTierSpreadsheetFile, L"Save PitchTier as spreadsheet", 0, L"PitchTier")
 	LOOP {
 		iam (PitchTier);
-		PitchTier_writeToPitchTierSpreadsheetFile (me, file); therror
+		PitchTier_writeToPitchTierSpreadsheetFile (me, file);
 	}
 END
 
 FORM_WRITE (PitchTier_writeToHeaderlessSpreadsheetFile, L"Save PitchTier as spreadsheet", 0, L"txt")
 	LOOP {
 		iam (PitchTier);
-		PitchTier_writeToHeaderlessSpreadsheetFile (me, file); therror
+		PitchTier_writeToHeaderlessSpreadsheetFile (me, file);
 	}
 END
 
@@ -4004,7 +4004,7 @@ FORM (PointProcess_addPoint, L"PointProcess: Add point", L"PointProcess: Add poi
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_addPoint (me, GET_REAL (L"Time")); therror
+		PointProcess_addPoint (me, GET_REAL (L"Time"));
 		praat_dataChanged (me);
 	}
 END
@@ -4073,7 +4073,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		try {
-			PointProcess_fill (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Period")); therror
+			PointProcess_fill (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Period"));
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
@@ -4209,7 +4209,7 @@ DIRECT (PointProcess_help) Melder_help (L"PointProcess"); END
 DIRECT (PointProcess_hum)
 	LOOP {
 		iam (PointProcess);
-		PointProcess_hum (me, my xmin, my xmax); therror
+		PointProcess_hum (me, my xmin, my xmax);
 	}
 END
 
@@ -4223,7 +4223,7 @@ END
 DIRECT (PointProcess_play)
 	LOOP {
 		iam (PointProcess);
-		PointProcess_play (me); therror
+		PointProcess_play (me);
 	}
 END
 
@@ -4233,7 +4233,7 @@ FORM (PointProcess_removePoint, L"PointProcess: Remove point", L"PointProcess: R
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePoint (me, GET_INTEGER (L"Index")); therror
+		PointProcess_removePoint (me, GET_INTEGER (L"Index"));
 		praat_dataChanged (me);
 	}
 END
@@ -4244,7 +4244,7 @@ FORM (PointProcess_removePointNear, L"PointProcess: Remove point near", L"PointP
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePointNear (me, GET_REAL (L"Time")); therror
+		PointProcess_removePointNear (me, GET_REAL (L"Time"));
 		praat_dataChanged (me);
 	}
 END
@@ -4256,7 +4256,7 @@ FORM (PointProcess_removePoints, L"PointProcess: Remove points", L"PointProcess:
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePoints (me, GET_INTEGER (L"From index"), GET_INTEGER (L"To index")); therror
+		PointProcess_removePoints (me, GET_INTEGER (L"From index"), GET_INTEGER (L"To index"));
 		praat_dataChanged (me);
 	}
 END
@@ -4268,7 +4268,7 @@ FORM (PointProcess_removePointsBetween, L"PointProcess: Remove points between", 
 DO
 	LOOP {
 		iam (PointProcess);
-		PointProcess_removePointsBetween (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range")); therror
+		PointProcess_removePointsBetween (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
 		praat_dataChanged (me);
 	}
 END
@@ -4423,7 +4423,7 @@ DO
 	LOOP {
 		iam (PointProcess);
 		try {
-			PointProcess_voice (me, GET_REAL (L"Period"), GET_REAL (L"Maximum voiced period")); therror
+			PointProcess_voice (me, GET_REAL (L"Period"), GET_REAL (L"Maximum voiced period"));
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the PointProcess may have partially changed
@@ -4791,7 +4791,7 @@ DO
 	LOOP {
 		iam (Spectrogram);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Spectrogram may have partially changed
@@ -4858,7 +4858,7 @@ DIRECT (Spectrogram_view)
 	LOOP {
 		iam (Spectrogram);
 		autoSpectrogramEditor editor = SpectrogramEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -4914,7 +4914,7 @@ DIRECT (Spectrum_edit)
 	LOOP {
 		iam (Spectrum);
 		autoSpectrumEditor editor = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -5409,7 +5409,7 @@ DIRECT (Strings_genericize)
 	LOOP {
 		iam (Strings);
 		try {
-			Strings_genericize (me); therror
+			Strings_genericize (me);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // BUG: in case of error, the Strings may have partially changed
@@ -5442,7 +5442,7 @@ DIRECT (Strings_nativize)
 	LOOP {
 		iam (Strings);
 		try {
-			Strings_nativize (me); therror
+			Strings_nativize (me);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // BUG: in case of error, the Strings may have partially changed
@@ -5491,7 +5491,7 @@ END
 FORM_WRITE (Strings_writeToRawTextFile, L"Save Strings as text file", 0, L"txt")
 	LOOP {
 		iam (Strings);
-		Strings_writeToRawTextFile (me, file); therror
+		Strings_writeToRawTextFile (me, file);
 	}
 END
 
@@ -5770,7 +5770,7 @@ DIRECT (Transition_eigen)
 	LOOP {
 		iam (Transition);
 		Matrix vec_, val_;
-		Transition_eigen (me, & vec_, & val_); therror
+		Transition_eigen (me, & vec_, & val_);
 		autoMatrix vec = vec_;
 		autoMatrix val = val_;
 		praat_new (vec.transfer(), L"eigenvectors");

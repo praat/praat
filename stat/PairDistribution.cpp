@@ -58,7 +58,7 @@ PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *s
 PairDistribution PairDistribution_create () {
 	try {
 		autoPairDistribution me = Thing_new (PairDistribution);
-		my pairs = Ordered_create (); therror
+		my pairs = Ordered_create ();
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("PairDistribution not created.");
@@ -103,7 +103,7 @@ double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
 }
 
 void PairDistribution_add (PairDistribution me, const wchar *string1, const wchar *string2, double weight) {
-	PairProbability pair = PairProbability_create (string1, string2, weight); therror
+	PairProbability pair = PairProbability_create (string1, string2, weight);
 	Collection_addItem (my pairs, pair);
 }
 
@@ -303,9 +303,9 @@ Table PairDistribution_to_Table (PairDistribution me) {
 		autoTable thee = Table_createWithColumnNames (my pairs -> size, L"string1 string2 weight");
 		for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
 			PairProbability prob = static_cast <PairProbability> (my pairs -> item [ipair]);
-			Table_setStringValue (thee.peek(), ipair, 1, prob -> string1); therror
-			Table_setStringValue (thee.peek(), ipair, 2, prob -> string2); therror
-			Table_setNumericValue (thee.peek(), ipair, 3, prob -> weight); therror
+			Table_setStringValue (thee.peek(), ipair, 1, prob -> string1);
+			Table_setStringValue (thee.peek(), ipair, 2, prob -> string2);
+			Table_setNumericValue (thee.peek(), ipair, 3, prob -> weight);
 		}
 		return thee.transfer();
 	} catch (MelderError) {

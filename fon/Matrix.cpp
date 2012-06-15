@@ -91,7 +91,7 @@ void structMatrix :: v_readText (MelderReadText text) {
 		Melder_throw ("dx should be greater than 0.0.");
 	if (dy <= 0.0)
 		Melder_throw ("dy should be greater than 0.0.");
-	z = NUMmatrix_readText_r8 (1, ny, 1, nx, text, "z"); therror
+	z = NUMmatrix_readText_r8 (1, ny, 1, nx, text, "z");
 }
 
 double structMatrix :: v_getValueAtSample (long isamp, long ilevel, int unit) {
@@ -121,7 +121,7 @@ void Matrix_init
 	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,
 	            double ymin, double ymax, long ny, double dy, double y1)
 {
-	Sampled_init (me, xmin, xmax, nx, dx, x1); therror
+	Sampled_init (me, xmin, xmax, nx, dx, x1);
 	my ymin = ymin;
 	my ymax = ymax;
 	my ny = ny;
@@ -136,7 +136,7 @@ Matrix Matrix_create
 {
 	try {
 		autoMatrix me = Thing_new (Matrix);
-		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1); therror
+		Matrix_init (me.peek(), xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Matrix object not created.");
@@ -147,7 +147,7 @@ Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 	try {
 		autoMatrix me = Thing_new (Matrix);
 		Matrix_init (me.peek(), 0.5, numberOfColumns + 0.5, numberOfColumns, 1, 1,
-			0.5, numberOfRows + 0.5, numberOfRows, 1, 1); therror
+			0.5, numberOfRows + 0.5, numberOfRows, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Matrix object not created.");
@@ -572,7 +572,7 @@ void Matrix_eigen (I, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
 			Melder_throw ("(Matrix not square.");
 
 		autoEigen eigen = Thing_new (Eigen);
-		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx); therror
+		Eigen_initFromSymmetricMatrix (eigen.peek(), my z, my nx);
 		autoMatrix eigenvectors = Data_copy (me);
 		autoMatrix eigenvalues = Matrix_create (1, 1, 1, 1, 1, my ymin, my ymax, my ny, my dy, my y1);
 		for (long i = 1; i <= my nx; i ++) {
@@ -650,11 +650,11 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 void Matrix_formula (Matrix me, const wchar *expression, Interpreter interpreter, Matrix target) {
 	try {
 		struct Formula_Result result;
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (target == NULL) target = me;
 		for (long irow = 1; irow <= my ny; irow ++) {
 			for (long icol = 1; icol <= my nx; icol ++) {
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				target -> z [irow] [icol] = result. result.numericResult;
 			}
 		}
@@ -673,11 +673,11 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 		(void) Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax);
 		(void) Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax);
 		struct Formula_Result result;
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (target == NULL) target = me;
 		for (long irow = iymin; irow <= iymax; irow ++) {
 			for (long icol = ixmin; icol <= ixmax; icol ++) {
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				target -> z [irow] [icol] = result. result.numericResult;
 			}
 		}

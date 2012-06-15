@@ -40,7 +40,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
 			for (GSList *element = infileNames_list; element != NULL; element = g_slist_next (element)) {
 				char *infileName_utf8 = (char *) element -> data;
-				my addString (Melder_peekUtf8ToWcs (infileName_utf8)); therror
+				my addString (Melder_peekUtf8ToWcs (infileName_utf8));
 				g_free (infileName_utf8);
 			}
 			g_slist_free (infileNames_list);
@@ -72,7 +72,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 					structMelderFile file;
 					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 						Melder_machToFile (& machFile, & file);
-					my addString (Melder_fileToPath (& file)); therror
+					my addString (Melder_fileToPath (& file));
 				}
 				NavDisposeReply (& reply);
 			}
@@ -113,7 +113,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 				/*
 				 * The user selected one file.
 				 */
-				my addString (fullFileName); therror
+				my addString (fullFileName);
 			} else {
 				/*
 				 * The user selected multiple files.
@@ -124,7 +124,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 				for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
 					structMelderFile file;
 					MelderDir_getFile (& dir, p, & file);
-					my addString (Melder_fileToPath (& file)); therror
+					my addString (Melder_fileToPath (& file));
 				}
 			}
 		}

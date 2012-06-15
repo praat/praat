@@ -237,7 +237,7 @@ void ExperimentMFC_start (ExperimentMFC me) {
 			+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 1;
 		maximumPlaySamples = maximumStimulusPlaySamples > maximumResponsePlaySamples ? maximumStimulusPlaySamples : maximumResponsePlaySamples;
 		my playBuffer = Sound_create (my numberOfChannels, 0.0, maximumPlaySamples * my samplePeriod,
-			maximumPlaySamples, my samplePeriod, 0.5 * my samplePeriod); therror
+			maximumPlaySamples, my samplePeriod, 0.5 * my samplePeriod);
 		/*
 		 * Determine the order in which the stimuli will be presented to the subject.
 		 */
@@ -403,24 +403,26 @@ Table ResultsMFCs_to_Table (Collection me) {
 			}
 		}
 		autoTable thee = Table_create (irow, 3 + hasGoodnesses + hasReactionTimes);
-		Table_setColumnLabel (thee.peek(), 1, L"subject"); therror
-		Table_setColumnLabel (thee.peek(), 2, L"stimulus"); therror
-		Table_setColumnLabel (thee.peek(), 3, L"response"); therror
-		if (hasGoodnesses) { Table_setColumnLabel (thee.peek(), 4, L"goodness"); therror }
-		if (hasReactionTimes) { Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, L"reactionTime"); therror }
+		Table_setColumnLabel (thee.peek(), 1, L"subject");
+		Table_setColumnLabel (thee.peek(), 2, L"stimulus");
+		Table_setColumnLabel (thee.peek(), 3, L"response");
+		if (hasGoodnesses)
+			Table_setColumnLabel (thee.peek(), 4, L"goodness");
+		if (hasReactionTimes)
+			Table_setColumnLabel (thee.peek(), 4 + hasGoodnesses, L"reactionTime");
 		irow = 0;
 		for (long iresults = 1; iresults <= my size; iresults ++) {
 			ResultsMFC results = (ResultsMFC) my item [iresults];
 			for (long itrial = 1; itrial <= results -> numberOfTrials; itrial ++) {
 				irow ++;
-				Table_setStringValue (thee.peek(), irow, 1, results -> name); therror
-				Table_setStringValue (thee.peek(), irow, 2, results -> result [itrial]. stimulus); therror
-				Table_setStringValue (thee.peek(), irow, 3, results -> result [itrial]. response); therror
+				Table_setStringValue (thee.peek(), irow, 1, results -> name);
+				Table_setStringValue (thee.peek(), irow, 2, results -> result [itrial]. stimulus);
+				Table_setStringValue (thee.peek(), irow, 3, results -> result [itrial]. response);
 				if (hasGoodnesses) {
-					Table_setNumericValue (thee.peek(), irow, 4, results -> result [itrial]. goodness); therror
+					Table_setNumericValue (thee.peek(), irow, 4, results -> result [itrial]. goodness);
 				}
 				if (hasReactionTimes) {
-					Table_setNumericValue (thee.peek(), irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime); therror
+					Table_setNumericValue (thee.peek(), irow, 4 + hasGoodnesses, results -> result [itrial]. reactionTime);
 				}
 			}
 		}
@@ -435,7 +437,7 @@ Categories ResultsMFC_to_Categories_stimuli (ResultsMFC me) {
 		autoCategories thee = Categories_create ();
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			autoSimpleString category = SimpleString_create (my result [trial]. stimulus);
-			Collection_addItem (thee.peek(), category.transfer()); therror
+			Collection_addItem (thee.peek(), category.transfer());
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -448,7 +450,7 @@ Categories ResultsMFC_to_Categories_responses (ResultsMFC me) {
 		autoCategories thee = Categories_create ();
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			autoSimpleString category = SimpleString_create (my result [trial]. response);
-			Collection_addItem (thee.peek(), category.transfer()); therror
+			Collection_addItem (thee.peek(), category.transfer());
 		}
 		return thee.transfer();
 	} catch (MelderError) {

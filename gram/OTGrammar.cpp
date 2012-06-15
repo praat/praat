@@ -172,7 +172,7 @@ void structOTGrammar :: v_readText (MelderReadText text) {
 	OTGrammar_Parent :: v_readText (text);
 	if (localVersion >= 1) {
 		try {
-			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue); therror
+			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue);
 		} catch (MelderError) {
 			Melder_throw ("Trying to read decision strategy.");
 		}
@@ -1013,7 +1013,7 @@ Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluati
 		his strings = NUMvector <wchar*> (1, n);
 		for (long i = 1; i <= n; i ++) {
 			wchar output [100];
-			OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise); therror
+			OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise);
 			his strings [i] = Melder_wcsdup (output);
 		}
 		return him.transfer();
@@ -1029,7 +1029,7 @@ Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar *input, long n, doub
 		thy strings = NUMvector <wchar*> (1, n);
 		for (long i = 1; i <= n; i ++) {
 			wchar output [100];
-			OTGrammar_inputToOutput (me, input, output, evaluationNoise); therror
+			OTGrammar_inputToOutput (me, input, output, evaluationNoise);
 			thy strings [i] = Melder_wcsdup (output);
 		}
 		return thee.transfer();
@@ -1535,7 +1535,7 @@ void OTGrammar_learnOne (OTGrammar me, const wchar *underlyingForm, const wchar 
 		 * The grammar will have to change.
 		 */
 		OTGrammar_modifyRankings (me, itab, iwinner, iloser, updateRule, honourLocalRankings,
-			plasticity, relativePlasticityNoise, warnIfStalled, grammarHasChanged); therror
+			plasticity, relativePlasticityNoise, warnIfStalled, grammarHasChanged);
 	} catch (MelderError) {
 		Melder_throw (me, ": not learned from input \"", underlyingForm, "\" and adult output \"", adultOutput, "\".");
 	}
@@ -1554,7 +1554,7 @@ void OTGrammar_learn (OTGrammar me, Strings inputs, Strings outputs,
 			for (long ichew = 1; ichew <= numberOfChews; ichew ++) {
 				OTGrammar_learnOne (me, inputs -> strings [i], outputs -> strings [i],
 					evaluationNoise, updateRule, honourLocalRankings,
-					plasticity, relativePlasticityNoise, TRUE, TRUE, NULL); therror
+					plasticity, relativePlasticityNoise, TRUE, TRUE, NULL);
 			}
 		}
 	} catch (MelderError) {
@@ -1577,7 +1577,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 		for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 				wchar *input, *output;
-				PairDistribution_peekPair (thee, & input, & output); therror
+				PairDistribution_peekPair (thee, & input, & output);
 				++ idatum;
 				if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
 					Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
@@ -1590,11 +1590,11 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 				}
 				Melder_monitor ((double) idatum / numberOfData,
 					L"Processing input-output pair ", Melder_integer (idatum),
-					L" out of ", Melder_integer (numberOfData), L": ", input, L" -> ", output); therror
+					L" out of ", Melder_integer (numberOfData), L": ", input, L" -> ", output);
 				for (long ichew = 1; ichew <= numberOfChews; ichew ++) {
 					OTGrammar_learnOne (me, input, output,
 						evaluationNoise, updateRule, honourLocalRankings,
-						plasticity, relativePlasticityNoise, TRUE, TRUE, NULL); therror
+						plasticity, relativePlasticityNoise, TRUE, TRUE, NULL);
 				}
 			}
 			plasticity *= plasticityDecrement;
@@ -1667,13 +1667,13 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 			OTGrammarCandidate optimalCandidate = & tab -> candidates [ioptimalCandidate];
 			for (long icand = 1; icand <= tab -> numberOfCandidates; icand ++) if (icand != ioptimalCandidate) {
 				OTGrammarCandidate cand = & tab -> candidates [icand];
-				NUMlinprog_addConstraint (linprog, marginOfSeparation, NUMundefined); therror
+				NUMlinprog_addConstraint (linprog, marginOfSeparation, NUMundefined);
 				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 					NUMlinprog_addConstraintCoefficient (linprog, cand -> marks [icons] - optimalCandidate -> marks [icons]);
 				}
 			}
 		}
-		NUMlinprog_run (linprog); therror
+		NUMlinprog_run (linprog);
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			double weighting = NUMlinprog_getPrimalValue (linprog, icons);
 			Melder_assert (weighting >= weightFloor);
@@ -1784,7 +1784,7 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar *partialAdul
 				my tableaus [assumedAdultInputTableau]. input,
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output,
 				evaluationNoise, updateRule, honourLocalRankings,
-				plasticity, relativePlasticityNoise, FALSE, warnIfStalled, & grammarHasChanged); therror
+				plasticity, relativePlasticityNoise, FALSE, warnIfStalled, & grammarHasChanged);
 			if (! grammarHasChanged) return;
 		}
 		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy_EDCD && ichew > numberOfChews) {
@@ -1826,7 +1826,7 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, long ipartial
 				my tableaus [assumedAdultInputTableau]. input,
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output,
 				evaluationNoise, updateRule, honourLocalRankings,
-				plasticity, relativePlasticityNoise, FALSE, warnIfStalled, & grammarHasChanged); therror
+				plasticity, relativePlasticityNoise, FALSE, warnIfStalled, & grammarHasChanged);
 			if (! grammarHasChanged) return;
 		}
 		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy_EDCD && ichew > numberOfChews) {
@@ -1854,7 +1854,7 @@ static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, 
 	try {
 		long numberOfSamplingPoints = numberOfData / storeHistoryEvery, icons;   // e.g. 0, 20, 40, ...
 		autoOTHistory thee = Thing_new (OTHistory);
-		TableOfReal_init (thee.peek(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints); therror
+		TableOfReal_init (thee.peek(), 2 + numberOfSamplingPoints * 2, 1 + my numberOfConstraints);
 		TableOfReal_setColumnLabel (thee.peek(), 1, L"Datum");
 		for (icons = 1; icons <= my numberOfConstraints; icons ++) {
 			TableOfReal_setColumnLabel (thee.peek(), icons + 1, my constraints [icons]. name);
@@ -1914,15 +1914,15 @@ void OTGrammar_learnFromPartialOutputs (OTGrammar me, Strings partialOutputs,
 				try {
 					OTGrammar_learnOneFromPartialOutput (me, partialOutputs -> strings [idatum],
 						evaluationNoise, updateRule, honourLocalRankings,
-						plasticity, relativePlasticityNoise, numberOfChews, FALSE); therror
+						plasticity, relativePlasticityNoise, numberOfChews, FALSE);
 				} catch (MelderError) {
 					if (history.peek()) {
-						OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]); therror   // so that we can inspect
+						OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);   // so that we can inspect
 					}
 					throw;
 				}
 				if (history.peek()) {
-					OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]); therror
+					OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, partialOutputs -> strings [idatum]);
 				}
 			}
 			if (history.peek()) {
@@ -2011,7 +2011,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 			for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 				for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 					long ipartialOutput;
-					Distributions_peek_opt (thee, columnNumber, & ipartialOutput); therror
+					Distributions_peek_opt (thee, columnNumber, & ipartialOutput);
 					++ idatum;
 					if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
 						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
@@ -2024,11 +2024,11 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 					}
 					Melder_monitor ((double) idatum / numberOfData,
 						L"Processing partial output ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": ",
-						thy rowLabels [ipartialOutput]); therror
+						thy rowLabels [ipartialOutput]);
 					try {
 						OTGrammar_learnOneFromPartialOutput_opt (me, ipartialOutput,
 							evaluationNoise, updateRule, honourLocalRankings,
-							plasticity, relativePlasticityNoise, numberOfChews, FALSE); therror   // no warning if stalled: RIP form is allowed to be harmonically bounded
+							plasticity, relativePlasticityNoise, numberOfChews, FALSE);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
 						if (history.peek()) {
 							OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
@@ -2067,7 +2067,7 @@ double OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribu
 		long numberOfCorrect = 0;
 		for (long ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
 			wchar *input, *adultOutput;
-			PairDistribution_peekPair (thee, & input, & adultOutput); therror
+			PairDistribution_peekPair (thee, & input, & adultOutput);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
 			long inputTableau = OTGrammar_getTableau (me, input);
 			OTGrammarCandidate learnerCandidate = & my tableaus [inputTableau]. candidates [OTGrammar_getWinner (me, inputTableau)];
@@ -2115,10 +2115,10 @@ double OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions t
 		OTGrammar_Distributions_opt_createOutputMatching (me, thee, columnNumber);
 		for (long ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
 			long ipartialOutput;
-			Distributions_peek_opt (thee, columnNumber, & ipartialOutput); therror
+			Distributions_peek_opt (thee, columnNumber, & ipartialOutput);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
 			long assumedAdultInputTableau, assumedAdultCandidate;
-			OTGrammar_getInterpretiveParse_opt (me, ipartialOutput, & assumedAdultInputTableau, & assumedAdultCandidate); therror
+			OTGrammar_getInterpretiveParse_opt (me, ipartialOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
 			OTGrammarCandidate learnerCandidate = & my tableaus [assumedAdultInputTableau]. candidates [OTGrammar_getWinner (me, assumedAdultInputTableau)];
 			if (wcsequ (learnerCandidate -> output, my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output))
 				numberOfCorrect ++;
@@ -2353,7 +2353,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 					int grammarHasChanged;
 					OTGrammar_learnOne (me, prob -> string1, prob -> string2,
 						evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-						1.0, 0.0, FALSE, TRUE, & grammarHasChanged); therror
+						1.0, 0.0, FALSE, TRUE, & grammarHasChanged);
 					if (grammarHasChanged) {
 						OTGrammar_newDisharmonies (me, evaluationNoise);
 					}
@@ -2391,7 +2391,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 							int grammarHasChanged;
 							OTGrammar_learnOne (me, prob -> string1, prob -> string2,
 								evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-								1.0, 0.0, FALSE, TRUE, & grammarHasChanged); therror
+								1.0, 0.0, FALSE, TRUE, & grammarHasChanged);
 							if (grammarHasChanged) {
 								OTGrammar_newDisharmonies (me, evaluationNoise);
 							}
@@ -2437,7 +2437,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 									int grammarHasChanged;
 									OTGrammar_learnOne (me, prob -> string1, prob -> string2,
 										evaluationNoise, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-										1.0, 0.0, FALSE, TRUE, & grammarHasChanged); therror
+										1.0, 0.0, FALSE, TRUE, & grammarHasChanged);
 									if (grammarHasChanged) {
 										OTGrammar_newDisharmonies (me, evaluationNoise);
 									}
@@ -2569,7 +2569,7 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 				Melder_progressOff ();
 				OTGrammar_Distributions_learnFromPartialOutputs (me, thee, columnNumber,
 					1e-9, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-					1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL); therror
+					1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL);
 				Melder_progressOn ();
 				for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
 					if (my constraints [kcons]. ranking < 0.0) {
@@ -2703,7 +2703,7 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 				MelderString_appendCharacter (& buffer, '\n');
 			}
 		}
-		MelderFile_writeText (file, buffer.string); therror
+		MelderFile_writeText (file, buffer.string);
 	} catch (MelderError) {
 		Melder_throw (me, ": not saved to tab-separated file ", file, ".");
 	}

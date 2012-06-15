@@ -210,14 +210,14 @@ void PointProcess_playPart (PointProcess me, double tmin, double tmax) {
 }
 
 void PointProcess_play (PointProcess me) {
-	PointProcess_playPart (me, my xmin, my xmax); therror
+	PointProcess_playPart (me, my xmin, my xmax);
 }
 
 void PointProcess_hum (PointProcess me, double tmin, double tmax) {
 	static double formant [1 + 6] = { 0, 600, 1400, 2400, 3400, 4500, 5500 };
 	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
 	autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
-	Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth); therror
+	Sound_filterWithFormants (sound.peek(), tmin, tmax, 6, formant, bandwidth);
 	Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 }
 
@@ -226,7 +226,7 @@ Sound PointProcess_to_Sound_hum (PointProcess me) {
 	static double bandwidth [1 + 6] = { 0, 50, 100, 200, 300, 400, 500 };
 	try {
 		autoSound sound = PointProcess_to_Sound_pulseTrain (me, 44100, 0.7, 0.05, 30);
-		Sound_filterWithFormants (sound.peek(), my xmin, my xmax, 6, formant, bandwidth); therror
+		Sound_filterWithFormants (sound.peek(), my xmin, my xmax, 6, formant, bandwidth);
 		return sound.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Sound (hum).");

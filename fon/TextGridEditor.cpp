@@ -720,7 +720,7 @@ static void menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 		if (! selectedLeftBoundary) Melder_throw ("To remove a boundary, first click on it.");
 
 		Editor_save (me, L"Remove boundary");
-		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary); therror;
+		IntervalTier_removeLeftBoundary (tier, selectedLeftBoundary);
 	} else {
 		TextTier tier = (TextTier) anyTier;
 		long selectedPoint = getSelectedPoint (me);
@@ -992,7 +992,7 @@ static void menu_cb_AddToUserDictionary (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
 	if (my spellingChecker) {
 		autostring word = GuiText_getSelection (my text);
-		SpellingChecker_addNewWord (my spellingChecker, word.peek()); therror
+		SpellingChecker_addNewWord (my spellingChecker, word.peek());
 		my broadcastDataChanged ();
 	}
 }
@@ -1029,7 +1029,7 @@ static void menu_cb_PublishTier (EDITOR_ARGS) {
 	checkTierSelection (me, L"publish a tier");
 	Function tier = (Function) grid -> tiers -> item [my selectedTier];
 	autoTextGrid publish = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier (publish.peek(), tier); therror
+	TextGrid_addTier (publish.peek(), tier);
 	Thing_setName (publish.peek(), tier -> name);
 	my broadcastPublication (publish.transfer());
 }

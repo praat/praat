@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120612)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120615)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.18# (15 June 2012)")
+LIST_ITEM (L"\\bu Corrected a bug in @@Sound: Change gender...@ that caused a part of the sound not to be changed.")
 NORMAL (L"##5.3.17# (12 June 2012)")
 LIST_ITEM (L"\\bu @EEG window: extent autoscaling by window.")
 LIST_ITEM (L"\\bu ERPTier: Remove events between...")

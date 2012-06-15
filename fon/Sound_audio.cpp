@@ -552,7 +552,7 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 			}
 			if (thy callback) thy callback (thy closure, 1, tmin, tmax, tmin);
 			MelderAudio_play16 (thy buffer + 1, ifsamp,
-				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee); therror
+				thy silenceBefore + thy numberOfSamples + thy silenceAfter, numberOfChannels, melderPlayCallback, thee);
 		} else {
 			autoSound resampled = Sound_resample (me, bestSampleRate, 1);
 			Sound_playPart (resampled.peek(), tmin, tmax, callback, closure);   // recursively

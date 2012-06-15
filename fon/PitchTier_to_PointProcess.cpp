@@ -112,7 +112,7 @@ PitchTier PointProcess_to_PitchTier (PointProcess me, double maximumInterval) {
 		for (long i = 1; i < my nt; i ++) {
 			double interval = my t [i + 1] - my t [i];
 			if (interval <= maximumInterval) {
-				RealTier_addPoint (thee.peek(), my t [i] + 0.5 * interval, 1.0 / interval); therror
+				RealTier_addPoint (thee.peek(), my t [i] + 0.5 * interval, 1.0 / interval);
 			}
 		}
 		return thee.transfer();
@@ -138,7 +138,7 @@ PitchTier PitchTier_PointProcess_to_PitchTier (PitchTier me, PointProcess pp) {
 		for (long i = 1; i <= pp -> nt; i ++) {
 			double time = pp -> t [i];
 			double value = RealTier_getValueAtTime (me, time);
-			RealTier_addPoint (thee.peek(), time, value); therror
+			RealTier_addPoint (thee.peek(), time, value);
 		}
 		return thee.transfer();
 	} catch (MelderError) {

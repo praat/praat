@@ -66,7 +66,7 @@ double structLtas :: v_convertSpecialToStandardUnit (double value, long ilevel, 
 Ltas Ltas_create (long nx, double dx) {
 	try {
 		autoLtas me = Thing_new (Ltas);
-		Matrix_init (me.peek(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0); therror
+		Matrix_init (me.peek(), 0.0, nx * dx, nx, dx, 0.5 * dx, 1.0, 1.0, 1, 1.0, 1.0);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Ltas not created.");
@@ -264,7 +264,7 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 		if (bandWidth <= my dx)
 			Melder_throw ("Bandwidth must be greater than ", my dx, ".");
 		autoLtas thee = Thing_new (Ltas);
-		Matrix_init (thee.peek(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1, 1, 1, 1, 1); therror
+		Matrix_init (thee.peek(), my xmin, my xmax, numberOfBands, bandWidth, my xmin + 0.5 * bandWidth, 1, 1, 1, 1, 1);
 		for (long iband = 1; iband <= numberOfBands; iband ++) {
 			double fmin = thy xmin + (iband - 1) * bandWidth;
 			double meanEnergyDensity = Sampled_getMean (me, fmin, fmin + bandWidth, 0, 1, FALSE);
@@ -280,7 +280,7 @@ Ltas Spectrum_to_Ltas (Spectrum me, double bandWidth) {
 Ltas Spectrum_to_Ltas_1to1 (Spectrum me) {
 	try {
 		autoLtas thee = Thing_new (Ltas);
-		Matrix_init (thee.peek(), my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0); therror
+		Matrix_init (thee.peek(), my xmin, my xmax, my nx, my dx, my x1, 1.0, 1.0, 1, 1.0, 1.0);
 		for (long iband = 1; iband <= my nx; iband ++) {
 			thy z [1] [iband] = Sampled_getValueAtSample (me, iband, 0, 2);
 		}

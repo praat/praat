@@ -46,11 +46,11 @@ Pitch Matrix_to_Pitch (Matrix me) {
 		for (long i = 1; i <= my nx; i ++) {
 			Pitch_Frame frame = & thy frame [i];
 			if (my z [1] [i] == 0.0) {
-				Pitch_Frame_init (frame, 1); therror
+				Pitch_Frame_init (frame, 1);
 				frame->candidate[1].frequency = 0.0;   // voiceless candidate always present
 				frame->candidate[1].strength = 0.4;
 			} else {
-				Pitch_Frame_init (frame, 2); therror
+				Pitch_Frame_init (frame, 2);
 				frame->intensity = 1;
 				frame->candidate[1].frequency = my z [1] [i];
 				frame->candidate[1].strength = 0.9;
@@ -72,7 +72,7 @@ void Pitch_formula (Pitch me, const wchar *formula, Interpreter interpreter) {
 			for (long icand = 1; icand <= frame -> nCandidates; icand ++)
 				m -> z [icand] [iframe] = frame -> candidate [icand]. frequency;
 		}
-		Matrix_formula (m.peek(), formula, interpreter, NULL); therror
+		Matrix_formula (m.peek(), formula, interpreter, NULL);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Pitch_Frame frame = & my frame [iframe];
 			for (long icand = 1; icand <= frame -> nCandidates; icand ++)

@@ -94,7 +94,7 @@ void structPointProcess :: v_scaleX (double xminfrom, double xmaxfrom, double xm
 
 void PointProcess_init (I, double tmin, double tmax, long initialMaxnt) {
 	iam (PointProcess);
-	Function_init (me, tmin, tmax); therror
+	Function_init (me, tmin, tmax);
 	if (initialMaxnt < 1) initialMaxnt = 1;
 	my maxnt = initialMaxnt;
 	my nt = 0;
@@ -335,7 +335,7 @@ void PointProcess_voice (PointProcess me, double period, double maxT) {
 		double beginVoiceless = my xmin, endVoiceless;
 		for (long ipointleft = 1; ipointleft <= my nt; ipointleft = ipointright + 1) {
 			endVoiceless = my t [ipointleft];
-			PointProcess_fill (me, beginVoiceless, endVoiceless, period); therror
+			PointProcess_fill (me, beginVoiceless, endVoiceless, period);
 			for (ipointright = ipointleft + 1; ipointright <= my nt; ipointright ++)
 				if (my t [ipointright] - my t [ipointright - 1] > maxT)
 					break;
@@ -343,7 +343,7 @@ void PointProcess_voice (PointProcess me, double period, double maxT) {
 			beginVoiceless = my t [ipointright] + 0.005;
 		}
 		endVoiceless = my xmax;
-		PointProcess_fill (me, beginVoiceless, endVoiceless, period); therror
+		PointProcess_fill (me, beginVoiceless, endVoiceless, period);
 	} catch (MelderError) {
 		Melder_throw (me, ": not voiced.");
 	}

@@ -112,7 +112,7 @@ DIRECT (IntervalTier_help) Melder_help (L"IntervalTier"); END
 FORM_WRITE (IntervalTier_writeToXwaves, L"Xwaves label file", 0, 0)
 	LOOP {
 		iam (IntervalTier);
-		IntervalTier_writeToXwaves (me, file); therror
+		IntervalTier_writeToXwaves (me, file);
 	}
 END
 
@@ -178,7 +178,7 @@ static void pr_TextGrid_Pitch_draw (Any dia, int speckle, int unit) {
 	}
 	double tmin, tmax, fmin, fmax;
 	praat_get_timeRange (dia, & tmin, & tmax);
-	praat_get_frequencyRange (dia, & fmin, & fmax); therror
+	praat_get_frequencyRange (dia, & fmin, & fmax);
 	autoPraatPicture picture;
 	TextGrid_Pitch_draw (grid, pitch, GRAPHICS,
 		GET_INTEGER (STRING_TIER_NUMBER), tmin, tmax, fmin, fmax, GET_INTEGER (L"Font size"),
@@ -266,7 +266,7 @@ static void pr_TextGrid_Pitch_drawSeparately (Any dia, int speckle, int unit) {
 	}
 	double tmin, tmax, fmin, fmax;
 	praat_get_timeRange (dia, & tmin, & tmax);
-	praat_get_frequencyRange (dia, & fmin, & fmax); therror
+	praat_get_frequencyRange (dia, & fmin, & fmax);
 	autoPraatPicture picture;
 	TextGrid_Pitch_drawSeparately (grid, pitch, GRAPHICS,
 		tmin, tmax, fmin, fmax, GET_INTEGER (L"Show boundaries"),
@@ -610,7 +610,7 @@ FORM (SpellingChecker_addNewWord, L"Add word to user dictionary", L"SpellingChec
 DO
 	LOOP {
 		iam (SpellingChecker);
-		SpellingChecker_addNewWord (me, GET_STRING (L"New word")); therror
+		SpellingChecker_addNewWord (me, GET_STRING (L"New word"));
 		praat_dataChanged (me);
 	}
 END
@@ -718,7 +718,7 @@ DIRECT (SpellingChecker_replaceWordList)
 	LOOP {
 		if (CLASS == classSpellingChecker) spellingChecker = (SpellingChecker) OBJECT;
 		if (CLASS == classWordList) wordList = (WordList) OBJECT;
-		SpellingChecker_replaceWordList (spellingChecker, wordList); therror
+		SpellingChecker_replaceWordList (spellingChecker, wordList);
 		praat_dataChanged (spellingChecker);
 	}
 END
@@ -817,7 +817,7 @@ static void cb_TextGridEditor_publication (Editor editor, void *closure, Data pu
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.transfer(), IOBJECT); therror
+				praat_installEditor (editor2.transfer(), IOBJECT);
 			}
 		}
 	} catch (MelderError) {
@@ -834,7 +834,7 @@ DIRECT (TextGrid_edit)
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, true, NULL);
 		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -850,7 +850,7 @@ DIRECT (TextGrid_LongSound_edit)
 		iam (TextGrid);
 		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, false, NULL);
 		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
-		praat_installEditor2 (editor.transfer(), IOBJECT, ilongSound); therror
+		praat_installEditor2 (editor.transfer(), IOBJECT, ilongSound);
 	}
 END
 
@@ -946,7 +946,7 @@ FORM (TextGrid_extractOneTier, L"TextGrid: Extract one tier", 0)
 DO
 	Function tier = pr_TextGrid_peekTier (dia);   // a reference
 	autoTextGrid grid = TextGrid_createWithoutTiers (1e30, -1e30);
-	TextGrid_addTier (grid.peek(), tier); therror   // no transfer of tier ownership, because a copy is made
+	TextGrid_addTier (grid.peek(), tier);   // no transfer of tier ownership, because a copy is made
 	praat_new (grid.transfer(), tier -> name);
 END
 
@@ -962,7 +962,7 @@ END
 DIRECT (TextGrid_genericize)
 	LOOP {
 		iam (TextGrid);
-		TextGrid_genericize (me); therror
+		TextGrid_genericize (me);
 		praat_dataChanged (me);
 	}
 END
@@ -970,7 +970,7 @@ END
 DIRECT (TextGrid_nativize)
 	LOOP {
 		iam (TextGrid);
-		TextGrid_nativize (me); therror
+		TextGrid_nativize (me);
 		praat_dataChanged (me);
 	}
 END
@@ -1107,7 +1107,7 @@ FORM (TextGrid_insertBoundary, L"TextGrid: Insert boundary", 0)
 DO
 	LOOP {
 		iam (TextGrid);
-		TextGrid_insertBoundary (me, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL (L"Time")); therror
+		TextGrid_insertBoundary (me, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL (L"Time"));
 		praat_dataChanged (me);
 	}
 END
@@ -1123,8 +1123,8 @@ DO
 		wchar *name = GET_STRING (L"Name");
 		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
-		Thing_setName (tier.peek(), name); therror
-		Ordered_addItemPos (my tiers, tier.transfer(), position); therror
+		Thing_setName (tier.peek(), name);
+		Ordered_addItemPos (my tiers, tier.transfer(), position);
 		praat_dataChanged (me);
 	}
 END
@@ -1138,7 +1138,7 @@ FORM (TextGrid_insertPoint, L"TextGrid: Insert point", 0)
 DO
 	LOOP {
 		iam (TextGrid);
-		TextGrid_insertPoint (me, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL (L"Time"), GET_STRING (L"text")); therror
+		TextGrid_insertPoint (me, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL (L"Time"), GET_STRING (L"text"));
 		praat_dataChanged (me);
 	}
 END
@@ -1154,8 +1154,8 @@ DO
 		wchar *name = GET_STRING (L"Name");
 		autoTextTier tier = TextTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
-		Thing_setName (tier.peek(), name); therror
-		Ordered_addItemPos (my tiers, tier.transfer(), position); therror
+		Thing_setName (tier.peek(), name);
+		Ordered_addItemPos (my tiers, tier.transfer(), position);
 		praat_dataChanged (me);
 	}
 END
@@ -1209,7 +1209,7 @@ FORM (TextGrid_removeBoundaryAtTime, L"TextGrid: Remove boundary at time", 0)
 DO
 	LOOP {
 		iam (TextGrid);
-		TextGrid_removeBoundaryAtTime (me, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL (L"Time")); therror
+		TextGrid_removeBoundaryAtTime (me, GET_INTEGER (STRING_TIER_NUMBER), GET_REAL (L"Time"));
 		praat_dataChanged (me);
 	}
 END
@@ -1297,7 +1297,7 @@ DO
 		if (iinterval == 1)
 			Melder_throw ("You cannot remove the left boundary from interval 1 of tier ", itier, " of ", me,
 				", because this is at the left edge of the tier.");
-		IntervalTier_removeLeftBoundary (intervalTier, iinterval); therror
+		IntervalTier_removeLeftBoundary (intervalTier, iinterval);
 		praat_dataChanged (me);
 	}
 END
@@ -1322,7 +1322,7 @@ DO
 		if (ipoint > pointTier -> points -> size)
 			Melder_throw ("You cannot remove point ", ipoint, " from tier ", itier, " of ", me,
 				", because that tier has only ", pointTier -> points -> size, " points.");
-		TextTier_removePoint (pointTier, ipoint); therror
+		TextTier_removePoint (pointTier, ipoint);
 		praat_dataChanged (me);
 	}
 END
@@ -1350,7 +1350,7 @@ DO
 		if (iinterval == intervalTier -> intervals -> size)
 			Melder_throw ("You cannot remove the right boundary from interval ", iinterval, " of tier ", itier, " of ", me,
 				", because this is at the right edge of the tier.");
-		IntervalTier_removeLeftBoundary (intervalTier, iinterval + 1); therror
+		IntervalTier_removeLeftBoundary (intervalTier, iinterval + 1);
 		praat_dataChanged (me);
 	}
 END
@@ -1388,7 +1388,7 @@ FORM (TextGrid_setIntervalText, L"TextGrid: Set interval text", 0)
 DO
 	LOOP {
 		iam (TextGrid);
-		TextGrid_setIntervalText (me, GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (STRING_INTERVAL_NUMBER), GET_STRING (L"text")); therror
+		TextGrid_setIntervalText (me, GET_INTEGER (STRING_TIER_NUMBER), GET_INTEGER (STRING_INTERVAL_NUMBER), GET_STRING (L"text"));
 		praat_dataChanged (me);
 	}
 END
@@ -1410,7 +1410,7 @@ END
 FORM_WRITE (TextGrid_writeToChronologicalTextFile, L"Text file", 0, 0)
 	LOOP {
 		iam (TextGrid);
-		TextGrid_writeToChronologicalTextFile (me, file); therror
+		TextGrid_writeToChronologicalTextFile (me, file);
 	}
 END
 
@@ -1424,7 +1424,7 @@ DIRECT (TextGrid_AnyTier_append)
 	autoTextGrid newGrid = Data_copy (oldGrid);
 	LOOP if (OBJECT != oldGrid) {
 		iam (AnyTier);
-		TextGrid_addTier (newGrid.peek(), me); therror
+		TextGrid_addTier (newGrid.peek(), me);
 	}
 	praat_new (newGrid.transfer(), oldGrid -> name);
 END
@@ -1451,7 +1451,7 @@ FORM (TextTier_addPoint, L"TextTier: Add point", L"TextTier: Add point...")
 DO
 	LOOP {
 		iam (TextTier);
-		TextTier_addPoint (me, GET_REAL (L"Time"), GET_STRING (L"Text")); therror
+		TextTier_addPoint (me, GET_REAL (L"Time"), GET_STRING (L"Text"));
 		praat_dataChanged (me);
 	}
 END

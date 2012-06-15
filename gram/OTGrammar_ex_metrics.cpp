@@ -486,10 +486,10 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp, int trochaicityConst
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
 			for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
-				computeViolationMarks (& tableau -> candidates [icand]); therror
+				computeViolationMarks (& tableau -> candidates [icand]);
 			}
 		}
-		OTGrammar_checkIndex (me.peek()); therror
+		OTGrammar_checkIndex (me.peek());
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
 		if (trochaicityConstraint == 1) {
 			OTGrammar_removeConstraint (me.peek(), L"Trochaic");

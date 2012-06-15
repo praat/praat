@@ -69,7 +69,7 @@ OTGrammar OTGrammar_create_NPA_grammar (void) {
 				candidate -> output = Melder_wcsdup (L"apma");
 				candidate -> marks = NUMvector <int> (1, candidate -> numberOfConstraints = 3);
 				candidate -> marks [3] = 1;
-		OTGrammar_checkIndex (me.peek()); therror
+		OTGrammar_checkIndex (me.peek());
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
 		return me.transfer();
 	} catch (MelderError) {

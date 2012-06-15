@@ -143,7 +143,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 		continueText6, continueText7, continueText8, continueText9, continueText10,
 		thePauseFormCancelCallback);
 	theCancelContinueButton = cancelContinueButton;
-	UiForm_finish (thePauseForm); therror
+	UiForm_finish (thePauseForm);
 	bool wasBackgrounding = Melder_backgrounding;
 	//if (theCurrentPraatApplication -> batch) goto end;
 	if (wasBackgrounding) praat_foreground ();

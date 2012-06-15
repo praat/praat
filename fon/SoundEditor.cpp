@@ -437,7 +437,7 @@ void structSoundEditor :: f_init (GuiObject parent, const wchar *title, Sampled 
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
 	 * because createMenus expect that one of them is not NULL.
 	 */
-	TimeSoundAnalysisEditor_init (this, parent, title, data, data, false); therror
+	TimeSoundAnalysisEditor_init (this, parent, title, data, data, false);
 	if (this -> longSound.data && this -> endWindow - this -> startWindow > 30.0) {
 		this -> endWindow = this -> startWindow + 30.0;
 		if (this -> startWindow == this -> tmin)

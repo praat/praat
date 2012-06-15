@@ -71,7 +71,7 @@ FORM (Distributions_getProbability, L"Get probability", 0)
 DO
 	LOOP {
 		iam (Distributions);
-		double probability = Distributions_getProbability (me, GET_STRING (L"String"), GET_INTEGER (L"Column number")); therror
+		double probability = Distributions_getProbability (me, GET_STRING (L"String"), GET_INTEGER (L"Column number"));
 		Melder_informationReal (probability, NULL);
 	}
 END
@@ -118,12 +118,12 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (LogisticRegression);
-		long xfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Horizontal factor")); therror
-		long yfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Vertical factor")); therror
+		long xfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Horizontal factor"));
+		long yfactor = Regression_getFactorIndexFromFactorName_e (me, GET_STRING (L"Vertical factor"));
 		LogisticRegression_drawBoundary (me, GRAPHICS,
 			xfactor, GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 			yfactor, GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
-			GET_INTEGER (L"Garnish")); therror
+			GET_INTEGER (L"Garnish"));
 	}
 END
 
@@ -132,7 +132,7 @@ END
 DIRECT (PairDistribution_getFractionCorrect_maximumLikelihood)
 	LOOP {
 		iam (PairDistribution);
-		double fractionCorrect = PairDistribution_getFractionCorrect_maximumLikelihood (me); therror
+		double fractionCorrect = PairDistribution_getFractionCorrect_maximumLikelihood (me);
 		Melder_informationReal (fractionCorrect, NULL);
 	}
 END
@@ -140,7 +140,7 @@ END
 DIRECT (PairDistribution_getFractionCorrect_probabilityMatching)
 	LOOP {
 		iam (PairDistribution);
-		double fractionCorrect = PairDistribution_getFractionCorrect_probabilityMatching (me); therror
+		double fractionCorrect = PairDistribution_getFractionCorrect_probabilityMatching (me);
 		Melder_informationReal (fractionCorrect, NULL);
 	}
 END
@@ -158,7 +158,7 @@ FORM (PairDistribution_getString1, L"Get string1", 0)
 DO
 	LOOP {
 		iam (PairDistribution);
-		const wchar *string1 = PairDistribution_getString1 (me, GET_INTEGER (L"Pair number")); therror
+		const wchar *string1 = PairDistribution_getString1 (me, GET_INTEGER (L"Pair number"));
 		Melder_information (string1);
 	}
 END
@@ -169,7 +169,7 @@ FORM (PairDistribution_getString2, L"Get string2", 0)
 DO
 	LOOP {
 		iam (PairDistribution);
-		const wchar *string2 = PairDistribution_getString2 (me, GET_INTEGER (L"Pair number")); therror
+		const wchar *string2 = PairDistribution_getString2 (me, GET_INTEGER (L"Pair number"));
 		Melder_information (string2);
 	}
 END
@@ -180,7 +180,7 @@ FORM (PairDistribution_getWeight, L"Get weight", 0)
 DO
 	LOOP {
 		iam (PairDistribution);
-		double weight = PairDistribution_getWeight (me, GET_INTEGER (L"Pair number")); therror
+		double weight = PairDistribution_getWeight (me, GET_INTEGER (L"Pair number"));
 		Melder_information (Melder_double (weight));
 	}
 END
@@ -190,7 +190,7 @@ DIRECT (PairDistribution_help) Melder_help (L"PairDistribution"); END
 DIRECT (PairDistribution_removeZeroWeights)
 	LOOP {
 		iam (PairDistribution);
-		PairDistribution_removeZeroWeights (me); therror
+		PairDistribution_removeZeroWeights (me);
 		praat_dataChanged (me);
 	}
 END
@@ -231,7 +231,7 @@ DO
 		if (CLASS == classPairDistribution) me = (PairDistribution) OBJECT;
 		if (CLASS == classDistributions) thee = (Distributions) OBJECT;
 	}
-	double fractionCorrect = PairDistribution_Distributions_getFractionCorrect (me, thee, GET_INTEGER (L"Column")); therror
+	double fractionCorrect = PairDistribution_Distributions_getFractionCorrect (me, thee, GET_INTEGER (L"Column"));
 	Melder_informationReal (fractionCorrect, NULL);
 END
 
@@ -254,7 +254,7 @@ FORM (Table_appendColumn, L"Table: Append column", 0)
 DO
 	LOOP {
 		iam (Table);
-		Table_appendColumn (me, GET_STRING (L"Label")); therror
+		Table_appendColumn (me, GET_STRING (L"Label"));
 		praat_dataChanged (OBJECT);
 	}
 END
@@ -267,9 +267,9 @@ FORM (Table_appendDifferenceColumn, L"Table: Append difference column", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
-		Table_appendDifferenceColumn (me, icol, jcol, GET_STRING (L"Label")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns"));
+		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns"));
+		Table_appendDifferenceColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END
@@ -282,9 +282,9 @@ FORM (Table_appendProductColumn, L"Table: Append product column", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
-		Table_appendProductColumn (me, icol, jcol, GET_STRING (L"Label")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns"));
+		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns"));
+		Table_appendProductColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END
@@ -297,9 +297,9 @@ FORM (Table_appendQuotientColumn, L"Table: Append quotient column", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
-		Table_appendQuotientColumn (me, icol, jcol, GET_STRING (L"Label")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns"));
+		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns"));
+		Table_appendQuotientColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END
@@ -312,9 +312,9 @@ FORM (Table_appendSumColumn, L"Table: Append sum column", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
-		Table_appendSumColumn (me, icol, jcol, GET_STRING (L"Label")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns"));
+		long jcol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns"));
+		Table_appendSumColumn (me, icol, jcol, GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END
@@ -388,12 +388,12 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Table);
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); therror
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); therror
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
 		Table_drawEllipse_e (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
-			GET_REAL (L"Number of sigmas"), GET_INTEGER (L"Garnish")); therror
+			GET_REAL (L"Number of sigmas"), GET_INTEGER (L"Garnish"));
 	}
 END
 
@@ -403,8 +403,8 @@ FORM (Table_drawRowFromDistribution, L"Table: Draw row from distribution", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution")); therror
-		long row = Table_drawRowFromDistribution (me, icol); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with distribution"));
+		long row = Table_drawRowFromDistribution (me, icol);
 		Melder_information (Melder_integer (row));
 	}
 END
@@ -414,7 +414,7 @@ DIRECT (Table_edit)
 	LOOP {
 		iam (Table);
 		autoTableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -427,7 +427,7 @@ DO
 	double value = GET_REAL (L"...the number");
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column..."));
 		autoTable thee = Table_extractRowsWhereColumn_number (me, icol, GET_ENUM (kMelder_number, L"...is..."), value);
 		praat_new (thee.transfer(), my name, L"_", Table_messageColumn (static_cast <Table> OBJECT, icol), L"_", NUMdefined (value) ? Melder_integer ((long) round (value)) : L"undefined");
 		praat_dataChanged (me);   // WHY?
@@ -443,7 +443,7 @@ DO
 	const wchar_t *value = GET_STRING (L"...the text");
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column...")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Extract all rows where column..."));
 		autoTable thee = Table_extractRowsWhereColumn_string (me, icol, GET_ENUM (kMelder_string, L"..."), value);
 		praat_new (thee.transfer(), my name, L"_", value);
 		praat_dataChanged (me);   // WHY?
@@ -458,8 +458,8 @@ DO
 	LOOP {
 		iam (Table);
 		try {
-			long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-			Table_formula (me, icol, GET_STRING (L"formula"), interpreter); therror
+			long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+			Table_formula (me, icol, GET_STRING (L"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Table may have partially changed
@@ -477,9 +477,9 @@ DO
 	LOOP {
 		iam (Table);
 		try {
-			long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"From column label")); therror
-			long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label")); therror
-			Table_formula_columnRange (me, icol1, icol2, GET_STRING (L"formula"), interpreter); therror
+			long icol1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"From column label"));
+			long icol2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"To column label"));
+			Table_formula_columnRange (me, icol1, icol2, GET_STRING (L"formula"), interpreter);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Table may have partially changed
@@ -518,8 +518,8 @@ FORM (Table_getGroupMean, L"Table: Get group mean", 0)
 DO
 	LOOP {
 		iam (Table);
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column"));
 		Melder_information (Melder_double (Table_getGroupMean (static_cast <Table> ONLY_OBJECT, column, groupColumn, GET_STRING (L"Group"))));
 	}
 END
@@ -530,8 +530,8 @@ FORM (Table_getMaximum, L"Table: Get maximum", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		double maximum = Table_getMaximum (me, icol); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		double maximum = Table_getMaximum (me, icol);
 		Melder_information (Melder_double (maximum));
 	}
 END
@@ -542,8 +542,8 @@ FORM (Table_getMean, L"Table: Get mean", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		double mean = Table_getMean (me, icol); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		double mean = Table_getMean (me, icol);
 		Melder_information (Melder_double (mean));
 	}
 END
@@ -554,8 +554,8 @@ FORM (Table_getMinimum, L"Table: Get minimum", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		double minimum = Table_getMinimum (me, icol); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		double minimum = Table_getMinimum (me, icol);
 		Melder_information (Melder_double (minimum));
 	}
 END
@@ -567,8 +567,8 @@ FORM (Table_getQuantile, L"Table: Get quantile", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		double quantile = Table_getQuantile (me, icol, GET_REAL (L"Quantile")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		double quantile = Table_getQuantile (me, icol, GET_REAL (L"Quantile"));
 		Melder_information (Melder_double (quantile));
 	}
 END
@@ -579,8 +579,8 @@ FORM (Table_getStandardDeviation, L"Table: Get standard deviation", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		double stdev = Table_getStdev (me, icol); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		double stdev = Table_getStdev (me, icol);
 		Melder_information (Melder_double (stdev));
 	}
 END
@@ -608,7 +608,7 @@ DO
 		iam (Table);
 		long rowNumber = GET_INTEGER (L"Row number");
 		Table_checkSpecifiedRowNumberWithinRange (me, rowNumber);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
 		Melder_information (((TableRow) my rows -> item [rowNumber]) -> cells [icol]. string);
 	}
 END
@@ -622,7 +622,7 @@ FORM (Table_insertColumn, L"Table: Insert column", 0)
 DO
 	LOOP {
 		iam (Table);
-		Table_insertColumn (me, GET_INTEGER (L"Position"), GET_STRING (L"Label")); therror
+		Table_insertColumn (me, GET_INTEGER (L"Position"), GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END
@@ -633,7 +633,7 @@ FORM (Table_insertRow, L"Table: Insert row", 0)
 DO
 	LOOP {
 		iam (Table);
-		Table_insertRow (me, GET_INTEGER (L"Position")); therror
+		Table_insertRow (me, GET_INTEGER (L"Position"));
 		praat_dataChanged (me);
 	}
 END
@@ -666,8 +666,8 @@ FORM (Table_removeColumn, L"Table: Remove column", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		Table_removeColumn (me, icol); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		Table_removeColumn (me, icol);
 		praat_dataChanged (me);
 	}
 END
@@ -678,7 +678,7 @@ FORM (Table_removeRow, L"Table: Remove row", 0)
 DO
 	LOOP {
 		iam (Table);
-		Table_removeRow (me, GET_INTEGER (L"Row number")); therror
+		Table_removeRow (me, GET_INTEGER (L"Row number"));
 		praat_dataChanged (me);
 	}
 END
@@ -691,8 +691,8 @@ FORM (Table_reportCorrelation_kendallTau, L"Report correlation (Kendall tau)", 0
 DO
 	LOOP {
 		iam (Table);
-		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
+		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns"));
+		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns"));
 		double unconfidence = GET_REAL (L"One-tailed unconfidence");
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_kendallTau (me, column1, column2, unconfidence,
@@ -719,8 +719,8 @@ FORM (Table_reportCorrelation_pearsonR, L"Report correlation (Pearson r)", 0)
 DO
 	LOOP {
 		iam (Table);
-		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
+		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns"));
+		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns"));
 		double unconfidence = GET_REAL (L"One-tailed unconfidence");
 		double correlation, significance, lowerLimit, upperLimit;
 		correlation = Table_getCorrelation_pearsonR (me, column1, column2, unconfidence,
@@ -748,8 +748,8 @@ FORM (Table_reportDifference_studentT, L"Report difference (Student t)", 0)
 DO
 	LOOP {
 		iam (Table);
-		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns")); therror
-		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns")); therror
+		long column1 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"left Columns"));
+		long column2 = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"right Columns"));
 		double unconfidence = GET_REAL (L"One-tailed unconfidence");
 		double difference, t, numberOfDegreesOfFreedom, significance, lowerLimit, upperLimit;
 		difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
@@ -780,8 +780,8 @@ FORM (Table_reportGroupDifference_studentT, L"Report group difference (Student t
 DO
 	LOOP {
 		iam (Table);
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column"));
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column"));
 		double unconfidence = GET_REAL (L"One-tailed unconfidence");
 		wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
@@ -812,8 +812,8 @@ FORM (Table_reportGroupDifference_wilcoxonRankSum, L"Report group difference (Wi
 DO
 	LOOP {
 		iam (Table);
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column"));
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column"));
 		wchar_t *group1 = GET_STRING (L"Group 1"), *group2 = GET_STRING (L"Group 2");
 		double areaUnderCurve, rankSum, significanceFromZero;
 		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, column, groupColumn, group1, group2,
@@ -838,8 +838,8 @@ FORM (Table_reportGroupMean_studentT, L"Report group mean (Student t)", 0)
 DO
 	LOOP {
 		iam (Table);
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
-		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column")); therror
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column"));
+		long groupColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Group column"));
 		double unconfidence = GET_REAL (L"One-tailed unconfidence");
 		wchar_t *group = GET_STRING (L"Group");
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
@@ -868,7 +868,7 @@ FORM (Table_reportMean_studentT, L"Report mean (Student t)", 0)
 DO
 	LOOP {
 		iam (Table);
-		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column")); therror
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column"));
 		double unconfidence = GET_REAL (L"One-tailed unconfidence");
 		double mean, tFromZero, numberOfDegreesOfFreedom, significanceFromZero, lowerLimit, upperLimit;
 		mean = Table_getMean_studentT (me, column, unconfidence,
@@ -900,7 +900,7 @@ DO
 	const wchar_t *columnLabel = GET_STRING (L"Column to transpose");
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
 		autoTable thee = Table_rowsToColumns (me, GET_STRING (L"factors"), icol, GET_STRING (L"columnsToExpand"));
 		praat_new (thee.transfer(), NAME, L"_nested");
 	}
@@ -921,9 +921,9 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Table);
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); therror
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); therror
-		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with marks")); therror
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
+		long markColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column with marks"));
 		Table_scatterPlot (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
@@ -946,8 +946,8 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Table);
-		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column")); therror
-		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column")); therror
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
 		Table_scatterPlot_mark (me, GRAPHICS, xcolumn, ycolumn,
 			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
@@ -962,7 +962,7 @@ FORM (Table_searchColumn, L"Table: Search column", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
 		Melder_information (Melder_integer (Table_searchColumn (me, icol, GET_STRING (L"Value"))));
 	}
 END
@@ -974,7 +974,7 @@ FORM (Table_setColumnLabel_index, L"Set column label", 0)
 DO
 	LOOP {
 		iam (Table);
-		Table_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label")); therror
+		Table_setColumnLabel (me, GET_INTEGER (L"Column number"), GET_STRING (L"Label"));
 		praat_dataChanged (me);
 	}
 END
@@ -986,7 +986,7 @@ FORM (Table_setColumnLabel_label, L"Set column label", 0)
 DO
 	LOOP {
 		iam (Table);
-		Table_setColumnLabel (me, Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Old label")), GET_STRING (L"New label")); therror
+		Table_setColumnLabel (me, Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Old label")), GET_STRING (L"New label"));
 		praat_dataChanged (me);
 	}
 END
@@ -999,8 +999,8 @@ FORM (Table_setNumericValue, L"Table: Set numeric value", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		Table_setNumericValue (me, GET_INTEGER (L"Row number"), icol, GET_REAL (L"Numeric value")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		Table_setNumericValue (me, GET_INTEGER (L"Row number"), icol, GET_REAL (L"Numeric value"));
 		praat_dataChanged (me);
 	}
 END
@@ -1013,8 +1013,8 @@ FORM (Table_setStringValue, L"Table: Set string value", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label")); therror
-		Table_setStringValue (me, GET_INTEGER (L"Row number"), icol, GET_STRING (L"String value")); therror
+		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
+		Table_setStringValue (me, GET_INTEGER (L"Row number"), icol, GET_STRING (L"String value"));
 		praat_dataChanged (me);
 	}
 END
@@ -1034,7 +1034,7 @@ FORM (Table_sortRows, L"Table: Sort rows", 0)
 DO
 	LOOP {
 		iam (Table);
-		Table_sortRows_string (me, GET_STRING (L"columnLabels")); therror
+		Table_sortRows_string (me, GET_STRING (L"columnLabels"));
 		praat_dataChanged (me);
 	}
 END
@@ -1067,7 +1067,7 @@ FORM (Table_to_TableOfReal, L"Table: Down to TableOfReal", 0)
 DO
 	LOOP {
 		iam (Table);
-		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels")); therror
+		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels"));
 		autoTableOfReal thee = Table_to_TableOfReal (me, icol);
 		praat_new (thee.transfer(), NAME);
 	}
@@ -1076,14 +1076,14 @@ END
 FORM_WRITE (Table_writeToCommaSeparatedFile, L"Save Table as comma-separated file", 0, L"Table")
 	LOOP {
 		iam (Table);
-		Table_writeToCommaSeparatedFile (me, file); therror
+		Table_writeToCommaSeparatedFile (me, file);
 	}
 END
 
 FORM_WRITE (Table_writeToTabSeparatedFile, L"Save Table as tab-separated file", 0, L"Table")
 	LOOP {
 		iam (Table);
-		Table_writeToTabSeparatedFile (me, file); therror
+		Table_writeToTabSeparatedFile (me, file);
 	}
 END
 
@@ -1349,7 +1349,7 @@ DO
 	LOOP {
 		iam (TableOfReal);
 		try {
-			TableOfReal_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			TableOfReal_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -1364,7 +1364,7 @@ FORM (TableOfReal_getColumnIndex, L"Get column index", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label")); therror
+		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
 		Melder_information (Melder_integer (columnNumber));
 	}
 END
@@ -1389,7 +1389,7 @@ DO
 		iam (TableOfReal);
 		long columnNumber = GET_INTEGER (L"Column number");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
-		double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
+		double columnMean = TableOfReal_getColumnMean (me, columnNumber);
 		Melder_informationReal (columnMean, NULL);
 	}
 END
@@ -1402,7 +1402,7 @@ DO
 		iam (TableOfReal);
 		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
 		if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
-		double columnMean = TableOfReal_getColumnMean (me, columnNumber); therror
+		double columnMean = TableOfReal_getColumnMean (me, columnNumber);
 		Melder_informationReal (columnMean, NULL);
 	}
 END
@@ -1415,7 +1415,7 @@ DO
 		iam (TableOfReal);
 		long columnNumber = GET_INTEGER (L"Column number");
 		if (columnNumber > my numberOfColumns) Melder_throw (me, ": column number must not be greater than number of columns.");
-		double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
+		double stdev = TableOfReal_getColumnStdev (me, columnNumber);
 		Melder_informationReal (stdev, NULL);
 	}
 END
@@ -1428,7 +1428,7 @@ DO
 		iam (TableOfReal);
 		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Column label"));
 		if (columnNumber == 0) Melder_throw (me, ": column label does not exist.");
-		double stdev = TableOfReal_getColumnStdev (me, columnNumber); therror
+		double stdev = TableOfReal_getColumnStdev (me, columnNumber);
 		Melder_informationReal (stdev, NULL);
 	}
 END
@@ -1453,7 +1453,7 @@ FORM (TableOfReal_getRowIndex, L"Get row index", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Row label")); therror
+		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Row label"));
 		Melder_information (Melder_integer (rowNumber));
 	}
 END
@@ -1492,7 +1492,7 @@ FORM (TableOfReal_insertColumn, L"Insert column", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		TableOfReal_insertColumn (me, GET_INTEGER (L"Column number")); therror
+		TableOfReal_insertColumn (me, GET_INTEGER (L"Column number"));
 		praat_dataChanged (me);
 	}
 END
@@ -1503,7 +1503,7 @@ FORM (TableOfReal_insertRow, L"Insert row", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		TableOfReal_insertRow (me, GET_INTEGER (L"Row number")); therror
+		TableOfReal_insertRow (me, GET_INTEGER (L"Row number"));
 		praat_dataChanged (me);
 	}
 END
@@ -1553,7 +1553,7 @@ FORM (TableOfReal_setColumnLabel_label, L"Set column label", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Old label")); therror
+		long columnNumber = TableOfReal_columnLabelToIndex (me, GET_STRING (L"Old label"));
 		TableOfReal_setColumnLabel (me, columnNumber, GET_STRING (L"New label"));
 		praat_dataChanged (me);
 	}
@@ -1594,7 +1594,7 @@ FORM (TableOfReal_setRowLabel_label, L"Set row label", 0)
 DO
 	LOOP {
 		iam (TableOfReal);
-		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Old label")); therror
+		long rowNumber = TableOfReal_rowLabelToIndex (me, GET_STRING (L"Old label"));
 		TableOfReal_setRowLabel (me, rowNumber, GET_STRING (L"New label"));
 		praat_dataChanged (me);
 	}

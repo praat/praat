@@ -39,7 +39,7 @@ Sound PitchTier_to_Sound_pulseTrain (PitchTier me, double samplingFrequency,
 		autoPointProcess point = PitchTier_to_PointProcess (me);
 		autoSound sound = PointProcess_to_Sound_pulseTrain (point.peek(), samplingFrequency, adaptFactor, adaptTime, interpolationDepth);
 		if (hum) {
-			Sound_filterWithFormants (sound.peek(), 0, 0, 6, formant, bandwidth); therror
+			Sound_filterWithFormants (sound.peek(), 0, 0, 6, formant, bandwidth);
 		}
 		return sound.transfer();
 	} catch (MelderError) {
@@ -57,7 +57,7 @@ Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 		autoSound sound = PointProcess_to_Sound_phonation (point.peek(), samplingFrequency, adaptFactor,
 			maximumPeriod, openPhase, collisionPhase, power1, power2);
 		if (hum) {
-			Sound_filterWithFormants (sound.peek(), 0, 0, 6, formant, bandwidth); therror
+			Sound_filterWithFormants (sound.peek(), 0, 0, 6, formant, bandwidth);
 		}
 		return sound.transfer();
 	} catch (MelderError) {
@@ -68,7 +68,7 @@ Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 void PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum) {
 	try {
 		autoSound sound = PitchTier_to_Sound_pulseTrain (me, 44100.0, 0.7, 0.05, 30, hum);
-		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL); therror
+		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
 		Melder_throw (me, ": not played.");
 	}
@@ -107,7 +107,7 @@ void PitchTier_playPart_sine (PitchTier me, double tmin, double tmax) {
 	try {
 		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // autowindowing
 		autoSound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 44100.0);
-		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL); therror
+		Sound_playPart (sound.peek(), tmin, tmax, NULL, NULL);
 	} catch (MelderError) {
 		Melder_throw (me, ": not played.");
 	}

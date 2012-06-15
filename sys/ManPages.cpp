@@ -345,7 +345,6 @@ static void grind (ManPages me) {
 					ndangle ++;
 				}
 			}
-			therror;
 		}
 	}
 	if (ndangle) {
@@ -403,7 +402,6 @@ static void grind (ManPages me) {
 					}
 				}
 			}
-			therror;
 		}
 	}
 
@@ -782,7 +780,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 		L"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
 		L"<font face=\"Palatino,Times\" size=6 color=\"#999900\"><b>\n",
 		page -> title, L"\n</b></font></table></table>\n");
-	writeParagraphsAsHtml (me, file, paragraphs, buffer); therror
+	writeParagraphsAsHtml (me, file, paragraphs, buffer);
 	if (ManPages_uniqueLinksHither (me, ipage)) {
 		long ilink, jlink, lastParagraph = 0;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
@@ -826,7 +824,7 @@ static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderStr
 void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
-	writePageAsHtml (me, file, ipage, & buffer); therror
+	writePageAsHtml (me, file, ipage, & buffer);
 	MelderFile_writeText (file, buffer.string);
 }
 

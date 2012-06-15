@@ -695,10 +695,10 @@ DO
 	function -> nx = n;
 	function -> x1 = fromX;
 	function -> dx = (toX - fromX) / (n - 1);
-	Formula_compile (interpreter, function.peek(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+	Formula_compile (interpreter, function.peek(), formula, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 	for (long i = 1; i <= n; i ++) {
 		struct Formula_Result result;
-		Formula_run (1, i, & result); therror
+		Formula_run (1, i, & result);
 		y [i] = result. result.numericResult;
 	}
 	autoPraatPicture picture;

@@ -25,7 +25,7 @@ Thing_implement (Cochleagram, Matrix, 2);
 Cochleagram Cochleagram_create (double tmin, double tmax, long nt, double dt, double t1, double df, long nf) {
 	try {
 		autoCochleagram me = Thing_new (Cochleagram);
-		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 0.0, nf * df, nf, df, 0.5 * df); therror
+		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, 0.0, nf * df, nf, df, 0.5 * df);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Cochleagram with ", nt, " times and ", nf, " frequencies not created.");

@@ -127,7 +127,7 @@ void Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns) {
 		Melder_throw ("Cannot create table without columns.");
 	my numberOfColumns = numberOfColumns;
 	my columnHeaders = NUMvector <structTableColumnHeader> (1, numberOfColumns);
-	my rows = Ordered_create (); therror
+	my rows = Ordered_create ();
 	for (long irow = 1; irow <= numberOfRows; irow ++) {
 		Table_appendRow (me);
 	}
@@ -136,7 +136,7 @@ void Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns) {
 Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 	try {
 		autoTable me = Thing_new (Table);
-		Table_initWithoutColumnNames (me.peek(), numberOfRows, numberOfColumns); therror
+		Table_initWithoutColumnNames (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Table not created.");
@@ -145,11 +145,11 @@ Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 
 void Table_initWithColumnNames (I, long numberOfRows, const wchar *columnNames) {
 	iam (Table);
-	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames)); therror
+	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames));
 	long icol = 0;
 	for (wchar *columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {
 		icol ++;
-		Table_setColumnLabel (me, icol, columnName); therror
+		Table_setColumnLabel (me, icol, columnName);
 	}
 }
 
@@ -244,7 +244,7 @@ void Table_insertRow (Table me, long rowNumber) {
 		/*
 		 * Safe change.
 		 */
-		Ordered_addItemPos (my rows, row.transfer(), rowNumber); therror
+		Ordered_addItemPos (my rows, row.transfer(), rowNumber);
 		/*
 		 * Changes without error.
 		 */
@@ -706,7 +706,7 @@ Table Table_extractRowsWhereColumn_string (Table me, long columnNumber, int whic
 			TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoTableRow newRow = Data_copy (row);
-				Collection_addItem (thy rows, newRow.transfer()); therror
+				Collection_addItem (thy rows, newRow.transfer());
 			}
 		}
 		if (thy rows -> size == 0) {
@@ -869,13 +869,13 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 			/*
 			 * We have the stretch.
 			 */
-			Table_insertRow (thee.peek(), thy rows -> size + 1); therror
+			Table_insertRow (thee.peek(), thy rows -> size + 1);
 			{
 				long icol = 0;
 				for (long i = 1; i <= numberOfFactors; i ++) {
 					++ icol;
 					Table_setStringValue (thee.peek(), thy rows -> size, icol,
-						((TableRow) my rows -> item [rowmin]) -> cells [columns [icol]]. string); therror
+						((TableRow) my rows -> item [rowmin]) -> cells [columns [icol]]. string);
 				}
 				for (long i = 1; i <= numberToSum; i ++) {
 					++ icol;
@@ -883,7 +883,7 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 					for (long jrow = rowmin; jrow <= rowmax; jrow ++) {
 						sum += ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
 					}
-					Table_setNumericValue (thee.peek(), thy rows -> size, icol, sum); therror
+					Table_setNumericValue (thee.peek(), thy rows -> size, icol, sum);
 				}
 				for (long i = 1; i <= numberToAverage; i ++) {
 					++ icol;
@@ -891,7 +891,7 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 					for (long jrow = rowmin; jrow <= rowmax; jrow ++) {
 						sum += ((TableRow) my rows -> item [jrow]) -> cells [columns [icol]]. number;
 					}
-					Table_setNumericValue (thee.peek(), thy rows -> size, icol, sum / (rowmax - rowmin + 1)); therror
+					Table_setNumericValue (thee.peek(), thy rows -> size, icol, sum / (rowmax - rowmin + 1));
 				}
 				for (long i = 1; i <= numberToMedianize; i ++) {
 					++ icol;
@@ -900,7 +900,7 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 					}
 					NUMsort_d (rowmax - rowmin + 1, & sortingColumn [rowmin - 1]);
 					double median = NUMquantile (rowmax - rowmin + 1, & sortingColumn [rowmin - 1], 0.5);
-					Table_setNumericValue (thee.peek(), thy rows -> size, icol, median); therror
+					Table_setNumericValue (thee.peek(), thy rows -> size, icol, median);
 				}
 				for (long i = 1; i <= numberToAverageLogarithmically; i ++) {
 					++ icol;
@@ -914,7 +914,7 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 								" is not positive.\nCannot average logarithmically.");
 						sum += log (value);
 					}
-					Table_setNumericValue (thee.peek(), thy rows -> size, icol, exp (sum / (rowmax - rowmin + 1))); therror
+					Table_setNumericValue (thee.peek(), thy rows -> size, icol, exp (sum / (rowmax - rowmin + 1)));
 				}
 				for (long i = 1; i <= numberToMedianizeLogarithmically; i ++) {
 					++ icol;
@@ -929,7 +929,7 @@ Table Table_collapseRows (Table me, const wchar *factors_string, const wchar *co
 					}
 					NUMsort_d (rowmax - rowmin + 1, & sortingColumn [rowmin - 1]);
 					double median = NUMquantile (rowmax - rowmin + 1, & sortingColumn [rowmin - 1], 0.5);
-					Table_setNumericValue (thee.peek(), thy rows -> size, icol, exp (median)); therror
+					Table_setNumericValue (thee.peek(), thy rows -> size, icol, exp (median));
 				}
 				Melder_assert (icol == thy numberOfColumns);
 			}
@@ -1027,10 +1027,10 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 		autoMelderString columnLabel;
 		for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 			for (long ilevel = 1; ilevel <= numberOfLevels; ilevel ++) {
-				MelderString_copy (& columnLabel, columnsToExpand_names [iexpand]); therror
-				MelderString_appendCharacter (& columnLabel, '.'); therror
-				MelderString_append (& columnLabel, levels_names [ilevel]); therror
-				Table_setColumnLabel (thee.peek(), numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel, columnLabel.string); therror
+				MelderString_copy (& columnLabel, columnsToExpand_names [iexpand]);
+				MelderString_appendCharacter (& columnLabel, '.');
+				MelderString_append (& columnLabel, levels_names [ilevel]);
+				Table_setColumnLabel (thee.peek(), numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel, columnLabel.string);
 			}
 		}
 		/*
@@ -1076,11 +1076,11 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 			/*
 			 * We have the stretch.
 			 */
-			Table_insertRow (thee.peek(), thy rows -> size + 1); therror
+			Table_insertRow (thee.peek(), thy rows -> size + 1);
 			TableRow thyRow = static_cast <TableRow> (thy rows -> item [thy rows -> size]);
 			for (long ifactor = 1; ifactor <= numberOfFactors; ifactor ++) {
 				Table_setStringValue (thee.peek(), thy rows -> size, ifactor,
-					((TableRow) my rows -> item [rowmin]) -> cells [factorColumns [ifactor]]. string); therror
+					((TableRow) my rows -> item [rowmin]) -> cells [factorColumns [ifactor]]. string);
 			}
 			for (long iexpand = 1; iexpand <= numberToExpand; iexpand ++) {
 				for (long jrow = rowmin; jrow <= rowmax; jrow ++) {
@@ -1093,7 +1093,7 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 							"You could perhaps add more factors.");
 						warned = true;
 					}
-					Table_setNumericValue (thee.peek(), thy rows -> size, thyColumn, value); therror
+					Table_setNumericValue (thee.peek(), thy rows -> size, thyColumn, value);
 				}
 			}
 			irow = rowmax;
@@ -1183,7 +1183,7 @@ Table Tables_append (Collection me) {
 			for (long irow = 1; irow <= thy rows -> size; irow ++) {
 				nrow ++;
 				for (long icol = 1; icol <= ncol; icol ++) {
-					Table_setStringValue (him.peek(), nrow, icol, Table_getStringValue_Assert (thee, irow, icol)); therror
+					Table_setStringValue (him.peek(), nrow, icol, Table_getStringValue_Assert (thee, irow, icol));
 				}
 			}
 		}
@@ -1205,12 +1205,12 @@ void Table_appendSumColumn (Table me, long column1, long column2, const wchar *l
 		autoTable thee = Table_createWithoutColumnNames (my rows -> size, 1);
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow myRow = static_cast <TableRow> (my rows -> item [irow]);
-			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number + myRow -> cells [column2]. number); therror
+			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number + myRow -> cells [column2]. number);
 		}
 		/*
 		 * Safe change.
 		 */
-		Table_appendColumn (me, label); therror
+		Table_appendColumn (me, label);
 		/*
 		 * Change without error.
 		 */
@@ -1240,12 +1240,12 @@ void Table_appendDifferenceColumn (Table me, long column1, long column2, const w
 		autoTable thee = Table_createWithoutColumnNames (my rows -> size, 1);
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow myRow = static_cast <TableRow> (my rows -> item [irow]);
-			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number - myRow -> cells [column2]. number); therror
+			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number - myRow -> cells [column2]. number);
 		}
 		/*
 		 * Safe change.
 		 */
-		Table_appendColumn (me, label); therror
+		Table_appendColumn (me, label);
 		/*
 		 * Change without error.
 		 */
@@ -1275,12 +1275,12 @@ void Table_appendProductColumn (Table me, long column1, long column2, const wcha
 		autoTable thee = Table_createWithoutColumnNames (my rows -> size, 1);
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			TableRow myRow = static_cast <TableRow> (my rows -> item [irow]);
-			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number * myRow -> cells [column2]. number); therror
+			Table_setNumericValue (thee.peek(), irow, 1, myRow -> cells [column1]. number * myRow -> cells [column2]. number);
 		}
 		/*
 		 * Safe change.
 		 */
-		Table_appendColumn (me, label); therror
+		Table_appendColumn (me, label);
 		/*
 		 * Change without error.
 		 */
@@ -1312,12 +1312,12 @@ void Table_appendQuotientColumn (Table me, long column1, long column2, const wch
 			TableRow myRow = static_cast <TableRow> (my rows -> item [irow]);
 			double value = myRow -> cells [column2]. number == 0.0 ? NUMundefined :
 				myRow -> cells [column1]. number / myRow -> cells [column2]. number;
-			Table_setNumericValue (thee.peek(), irow, 1, value); therror
+			Table_setNumericValue (thee.peek(), irow, 1, value);
 		}
 		/*
 		 * Safe change.
 		 */
-		Table_appendColumn (me, label); therror
+		Table_appendColumn (me, label);
 		/*
 		 * Change without error.
 		 */
@@ -1339,11 +1339,11 @@ void Table_formula_columnRange (Table me, long fromColumn, long toColumn, const 
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (me, fromColumn);
 		Table_checkSpecifiedColumnNumberWithinRange (me, toColumn);
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE); therror
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
 		for (long irow = 1; irow <= my rows -> size; irow ++) {
 			for (long icol = fromColumn; icol <= toColumn; icol ++) {
 				struct Formula_Result result;
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				if (result. expressionType == kFormula_EXPRESSION_TYPE_STRING) {
 					Table_setStringValue (me, irow, icol, result. result.stringResult);
 					Melder_free (result. result.stringResult);
@@ -1873,19 +1873,19 @@ static void _Table_writeToCharacterSeparatedFile (Table me, MelderFile file, wch
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (icol != 1) MelderString_appendCharacter (& buffer, kar);
 		wchar *s = my columnHeaders [icol]. label;
-		MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?"); therror
+		MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 	}
-	MelderString_appendCharacter (& buffer, '\n'); therror
+	MelderString_appendCharacter (& buffer, '\n');
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		TableRow row = static_cast <TableRow> (my rows -> item [irow]);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			if (icol != 1) MelderString_appendCharacter (& buffer, kar);
 			wchar *s = row -> cells [icol]. string;
-			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?"); therror
+			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 		}
-		MelderString_appendCharacter (& buffer, '\n'); therror
+		MelderString_appendCharacter (& buffer, '\n');
 	}
-	MelderFile_writeText (file, buffer.string); therror
+	MelderFile_writeText (file, buffer.string);
 }
 
 void Table_writeToTabSeparatedFile (Table me, MelderFile file) {
@@ -1948,7 +1948,7 @@ Table Table_readFromTableFile (MelderFile file) {
 		 * Create empty table.
 		 */
 		nrow = nelements / ncol - 1;
-		me = Table_create (nrow, ncol); therror
+		me = Table_create (nrow, ncol);
 
 		/*
 		 * Read elements.
@@ -2025,11 +2025,11 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar separator
 			MelderString_empty (& buffer);
 			while (*p != separator && *p != '\n') {
 				Melder_assert (*p != '\0');
-				MelderString_appendCharacter (& buffer, *p); therror
+				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
 			p ++;
-			Table_setColumnLabel (me.peek(), icol, buffer.string); therror
+			Table_setColumnLabel (me.peek(), icol, buffer.string);
 			MelderString_empty (& buffer);
 		}
 
@@ -2042,7 +2042,7 @@ Table Table_readFromCharacterSeparatedTextFile (MelderFile file, wchar separator
 				static MelderString buffer = { 0 };
 				MelderString_empty (& buffer);
 				while (*p != separator && *p != '\n' && *p != '\0') {
-					MelderString_appendCharacter (& buffer, *p); therror
+					MelderString_appendCharacter (& buffer, *p);
 					p ++;
 				}
 				if (*p == '\0') {

@@ -215,7 +215,7 @@ void SpellingChecker_addNewWord (SpellingChecker me, const wchar *word) {
 			my userDictionary = SortedSetOfString_create ();
 		autostring generic = Melder_calloc (wchar, 3 * wcslen (word) + 1);
 		Longchar_genericizeW (word, generic.peek());
-		my userDictionary -> addString (generic.transfer()); therror
+		my userDictionary -> addString (generic.transfer());
 	} catch (MelderError) {
 		Melder_throw (me, ": word \"", word, "\" not added.");
 	}

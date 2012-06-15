@@ -193,7 +193,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 				for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 					long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 					Melder_assert (sample <= my nx);
-					my z [channel] [sample] = bingeti3LE (f) * factor; therror
+					my z [channel] [sample] = bingeti3LE (f) * factor;
 				}
 			}
 		}
@@ -343,7 +343,7 @@ void structEEG :: f_filter (double lowFrequency, double lowWidth, double highFre
 	while (nsampFFT < d_sound -> nx)
 		nsampFFT *= 2;
 	autoNUMfft_Table fftTable;
-	NUMfft_Table_init (& fftTable, nsampFFT); therror
+	NUMfft_Table_init (& fftTable, nsampFFT);
 */
 		for (long ichan = 1; ichan <= d_numberOfChannels - f_getNumberOfExtraSensors (); ichan ++) {
 			autoSound channel = Sound_extractChannel (d_sound, ichan);

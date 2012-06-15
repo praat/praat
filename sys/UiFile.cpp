@@ -129,7 +129,7 @@ static void commonOutfileCallback (UiForm sendingForm, const wchar *sendingStrin
 	EditorCommand command = (EditorCommand) closure;
 	(void) invokingButtonTitle;
 	(void) modified;
-	command -> commandCallback (command -> d_editor, command, sendingForm, sendingString, interpreter); therror
+	command -> commandCallback (command -> d_editor, command, sendingForm, sendingString, interpreter);
 }
 
 UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {

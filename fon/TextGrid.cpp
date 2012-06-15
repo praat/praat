@@ -127,7 +127,7 @@ void structTextTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto
 TextTier TextTier_create (double tmin, double tmax) {
 	try {
 		autoTextTier me = Thing_new (TextTier);
-		my points = SortedSetOfDouble_create (); therror
+		my points = SortedSetOfDouble_create ();
 		my xmin = tmin;
 		my xmax = tmax;
 		return me.transfer();
@@ -261,7 +261,7 @@ Thing_implement (TextGrid, Function, 0);
 TextGrid TextGrid_createWithoutTiers (double tmin, double tmax) {
 	try {
 		autoTextGrid me = Thing_new (TextGrid);
-		my tiers = Ordered_create (); therror
+		my tiers = Ordered_create ();
 		my xmin = tmin;
 		my xmax = tmax;
 		return me.transfer();
@@ -322,7 +322,7 @@ TextTier TextTier_readFromXwaves (MelderFile file) {
 		 * Search for a line that starts with '#'.
 		 */
 		for (;;) {
-			line = MelderFile_readLine (file); therror
+			line = MelderFile_readLine (file);
 			if (line == NULL)
 				Melder_throw ("Missing '#' line.");
 			if (line [0] == '#') break;
@@ -332,7 +332,7 @@ TextTier TextTier_readFromXwaves (MelderFile file) {
 		 * Read a mark from every line.
 		 */
 		for (;;) {
-			line = MelderFile_readLine (file); therror
+			line = MelderFile_readLine (file);
 			if (line == NULL) break;   // normal end-of-file
 			double time;
 			long colour;
@@ -426,7 +426,7 @@ TextGrid TextGrid_merge (Collection textGrids) {
 		for (long igrid = 2; igrid <= textGrids -> size; igrid ++) {
 			TextGrid textGrid = (TextGrid) textGrids -> item [igrid];
 			for (long itier = 1; itier <= textGrid -> tiers -> size; itier ++) {
-				TextGrid_addTier (thee.peek(), (TextGrid) textGrid -> tiers -> item [itier]); therror
+				TextGrid_addTier (thee.peek(), (TextGrid) textGrid -> tiers -> item [itier]);
 			}
 		}
 		return thee.transfer();
@@ -517,7 +517,7 @@ TextTier PointProcess_upto_TextTier (PointProcess me, const wchar_t *text) {
 	try {
 		autoTextTier thee = TextTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nt; i ++) {
-			TextTier_addPoint (thee.peek(), my t [i], text); therror
+			TextTier_addPoint (thee.peek(), my t [i], text);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -778,7 +778,7 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 		 * Search for a line that starts with '#'.
 		 */
 		for (;;) {
-			line = MelderFile_readLine (file); therror
+			line = MelderFile_readLine (file);
 			if (line == NULL)
 				Melder_throw ("Missing '#' line.");
 			if (line [0] == '#') break;
@@ -792,7 +792,7 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 			long colour, numberOfElements;
 			char mark [300];
 
-			line = MelderFile_readLine (file); therror
+			line = MelderFile_readLine (file);
 			if (line == NULL) break;   // normal end-of-file
 			numberOfElements = sscanf (line, "%lf%ld%s", & time, & colour, mark);
 			if (numberOfElements == 0) {
@@ -805,9 +805,9 @@ IntervalTier IntervalTier_readFromXwaves (MelderFile file) {
 			if (lastTime == 0.0) {
 				TextInterval interval = (TextInterval) my intervals -> item [1];
 				interval -> xmax = time;
-				TextInterval_setText (interval, Melder_peekUtf8ToWcs (mark)); therror
+				TextInterval_setText (interval, Melder_peekUtf8ToWcs (mark));
 			} else {
-				IntervalTier_addInterval_unsafe (me.peek(), lastTime, time, Melder_peekUtf8ToWcs (mark)); therror
+				IntervalTier_addInterval_unsafe (me.peek(), lastTime, time, Melder_peekUtf8ToWcs (mark));
 			}
 			lastTime = time;
 		}
@@ -1191,7 +1191,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			Melder_throw ("This is not a chronological TextGrid text file.");
 		autoTextGrid me = Thing_new (TextGrid);
 		my structFunction :: v_readText (text.peek());
-		my tiers = Ordered_create (); therror
+		my tiers = Ordered_create ();
 		long numberOfTiers = texgeti4 (text.peek());
 		for (long itier = 1; itier <= numberOfTiers; itier ++) {
 			autostring klas = texgetw2 (text.peek());
@@ -1199,13 +1199,13 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 				autoIntervalTier tier = Thing_new (IntervalTier);
 				tier -> name = texgetw2 (text.peek());
 				tier -> structFunction :: v_readText (text.peek());
-				tier -> intervals = SortedSetOfDouble_create (); therror
+				tier -> intervals = SortedSetOfDouble_create ();
 				Collection_addItem (my tiers, tier.transfer());
 			} else if (wcsequ (klas.peek(), L"TextTier")) {
 				autoTextTier tier = Thing_new (TextTier);
 				tier -> name = texgetw2 (text.peek());
 				tier -> structFunction :: v_readText (text.peek());
-				tier -> points = SortedSetOfDouble_create (); therror
+				tier -> points = SortedSetOfDouble_create ();
 				Collection_addItem (my tiers, tier.transfer());
 			} else {
 				Melder_throw ("Unknown tier class \"", klas.peek(), L"\".");
@@ -1232,7 +1232,7 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 			} else {
 				TextTier tier = (TextTier) my tiers -> item [tierNumber];
 				autoTextPoint point = Thing_new (TextPoint);
-				point -> v_readText (text.peek()); therror
+				point -> v_readText (text.peek());
 				Collection_addItem (tier -> points, point.transfer());   // not earlier: sorting depends on contents of point
 			}
 		}
@@ -1256,7 +1256,7 @@ static void writeQuotedString (MelderFile file, const wchar_t *string) {
 
 void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 	try {
-		Data_createTextFile (me, file, false); therror
+		Data_createTextFile (me, file, false);
 		autoMelderFile mfile = file;
 		/*
 		 * The "elements" (intervals and points) are sorted primarily by time and secondarily by tier.
@@ -1406,17 +1406,17 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 					 * Create two new tiers.
 					 */
 					autoIntervalTier newSentenceTier = Thing_new (IntervalTier);
-					newSentenceTier -> intervals = SortedSetOfDouble_create (); therror
+					newSentenceTier -> intervals = SortedSetOfDouble_create ();
 					newSentenceTier -> xmin = 0.0;
 					newSentenceTier -> xmax = my xmax;
-					Thing_setName (newSentenceTier.peek(), Melder_peekUtf8ToWcs (speakerName)); therror
+					Thing_setName (newSentenceTier.peek(), Melder_peekUtf8ToWcs (speakerName));
 					sentenceTier = newSentenceTier.peek();   // for later use; this seems safe
-					Collection_addItem (my tiers, newSentenceTier.transfer()); therror
+					Collection_addItem (my tiers, newSentenceTier.transfer());
 					autoIntervalTier newPhraseTier = Thing_new (IntervalTier);
-					newPhraseTier -> intervals = SortedSetOfDouble_create (); therror
+					newPhraseTier -> intervals = SortedSetOfDouble_create ();
 					newPhraseTier -> xmin = 0.0;
 					newPhraseTier -> xmax = my xmax;
-					Thing_setName (newPhraseTier.peek(), Melder_peekUtf8ToWcs (speakerName)); therror
+					Thing_setName (newPhraseTier.peek(), Melder_peekUtf8ToWcs (speakerName));
 					phraseTier = newPhraseTier.peek();
 					Collection_addItem (my tiers, newPhraseTier.transfer());
 				} else {
@@ -1475,8 +1475,8 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 				} else {
 					/* Begin a phrase. */
 					if (lastInterval) {
-						sgmlToPraat (phrase); therror
-						TextInterval_setText (lastInterval, Melder_peekUtf8ToWcs (phrase)); therror
+						sgmlToPraat (phrase);
+						TextInterval_setText (lastInterval, Melder_peekUtf8ToWcs (phrase));
 					}
 					phrase [0] = '\0';
 					length = strlen (arg7);
@@ -1511,8 +1511,8 @@ TextGrid TextGrid_readFromCgnSyntaxFile (MelderFile file) {
 			}
 		}
 		if (lastInterval) {
-			sgmlToPraat (phrase); therror
-			TextInterval_setText (lastInterval, Melder_peekUtf8ToWcs (phrase)); therror
+			sgmlToPraat (phrase);
+			TextInterval_setText (lastInterval, Melder_peekUtf8ToWcs (phrase));
 		}
 		for (long itier = 1; itier <= my tiers -> size; itier ++) {
 			IntervalTier tier = (IntervalTier) my tiers -> item [itier];

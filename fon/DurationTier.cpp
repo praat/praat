@@ -52,7 +52,7 @@ DurationTier PointProcess_upto_DurationTier (PointProcess me) {
 	try {
 		autoDurationTier thee = DurationTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nt; i ++) {
-			RealTier_addPoint (thee.peek(), my t [i], 1.0); therror
+			RealTier_addPoint (thee.peek(), my t [i], 1.0);
 		}
 		return thee.transfer();
 	} catch (MelderError) {

@@ -207,9 +207,9 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		} else if (wcsnequ (command, L"pause ", 6) || wcsequ (command, L"pause")) {
 			if (theCurrentPraatApplication -> batch)
 				return;   // in batch we ignore pause statements
-			UiPause_begin (theCurrentPraatApplication -> topShell, L"stop or continue", interpreter); therror
-			UiPause_comment (wcsequ (command, L"pause") ? L"..." : command + 6); therror
-			UiPause_end (1, 1, 0, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter); therror
+			UiPause_begin (theCurrentPraatApplication -> topShell, L"stop or continue", interpreter);
+			UiPause_comment (wcsequ (command, L"pause") ? L"..." : command + 6);
+			UiPause_end (1, 1, 0, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter);
 		} else if (wcsnequ (command, L"execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (wcsnequ (command, L"editor", 6)) {
@@ -333,7 +333,7 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		/* First try loose commands, then fixed commands. */
 
 		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
-			Editor_doMenuCommand ((Editor) praatP. editor, command, arguments, interpreter); therror
+			Editor_doMenuCommand ((Editor) praatP. editor, command, arguments, interpreter);
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (wcsnequ (command, L"Save ", 5) ||
 			 wcsnequ (command, L"Write ", 6) ||
@@ -415,13 +415,13 @@ void praat_executeScriptFromFile (MelderFile file, const wchar *arguments) {
 	try {
 		autostring text = MelderFile_readText (file);
 		autoMelderFileSetDefaultDir dir (file);   // so that relative file names can be used inside the script
-		Melder_includeIncludeFiles (& text); therror
-		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor); therror
+		Melder_includeIncludeFiles (& text);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (arguments) {
-			Interpreter_readParameters (interpreter.peek(), text.peek()); therror
-			Interpreter_getArgumentsFromString (interpreter.peek(), arguments); therror
+			Interpreter_readParameters (interpreter.peek(), text.peek());
+			Interpreter_getArgumentsFromString (interpreter.peek(), arguments);
 		}
-		Interpreter_run (interpreter.peek(), text.peek()); therror
+		Interpreter_run (interpreter.peek(), text.peek());
 	} catch (MelderError) {
 		Melder_throw ("Script ", file, " not completed.");
 	}
@@ -470,10 +470,10 @@ void praat_executeScriptFromDialog (Any dia) {
 	Melder_pathToFile (path, & file);
 	autostring text = MelderFile_readText (& file);
 	autoMelderFileSetDefaultDir dir (& file);
-	Melder_includeIncludeFiles (& text); therror
+	Melder_includeIncludeFiles (& text);
 	autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
-	Interpreter_readParameters (interpreter.peek(), text.peek()); therror
-	Interpreter_getArgumentsFromDialog (interpreter.peek(), dia); therror
+	Interpreter_readParameters (interpreter.peek(), text.peek());
+	Interpreter_getArgumentsFromDialog (interpreter.peek(), dia);
 	autoPraatBackground background;
 	Interpreter_run (interpreter.peek(), text.peek());
 }
@@ -484,7 +484,7 @@ static void secondPassThroughScript (UiForm sendingForm, const wchar_t *sendingS
 	(void) invokingButtonTitle;
 	(void) modified;
 	(void) dummy;
-	praat_executeScriptFromDialog (sendingForm); therror
+	praat_executeScriptFromDialog (sendingForm);
 }
 
 static void firstPassThroughScript (MelderFile file) {
@@ -492,7 +492,7 @@ static void firstPassThroughScript (MelderFile file) {
 		autostring text = MelderFile_readText (file);
 		{ // scope
 			autoMelderFileSetDefaultDir dir (file);
-			Melder_includeIncludeFiles (& text); therror
+			Melder_includeIncludeFiles (& text);
 		}
 		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
 		if (Interpreter_readParameters (interpreter.peek(), text.peek()) > 0) {
@@ -539,7 +539,7 @@ void DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Inter
 		/*
 		 * A script called "Run script..."
 		 */
-		praat_executeScriptFromFileNameWithArguments (sendingString); therror
+		praat_executeScriptFromFileNameWithArguments (sendingString);
 	}
 }
 

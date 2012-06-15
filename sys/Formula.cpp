@@ -1828,9 +1828,9 @@ void Formula_compile (Any interpreter, Any data, const wchar *expression, int ex
 		numberOfStringConstants = 0;
 	}
 
-	Formula_lexan (); therror
+	Formula_lexan ();
 	if (Melder_debug == 17) Formula_print (lexan);
-	Formula_parseExpression (); therror
+	Formula_parseExpression ();
 	if (Melder_debug == 17) Formula_print (parse);
 	if (theOptimize) {
 		Formula_optimizeFlow ();
@@ -2277,7 +2277,7 @@ static void do_function_dd_d_numar (double (*f) (double, double)) {
 	if (a->which == Stackel_NUMERIC_ARRAY && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		long numberOfRows = a->content.numericArray.numberOfRows;
 		long numberOfColumns = a->content.numericArray.numberOfColumns;
-		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns); therror
+		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (x->content.number, y->content.number);
@@ -2299,7 +2299,7 @@ static void do_function_ll_l_numar (long (*f) (long, long)) {
 	if (a->which == Stackel_NUMERIC_ARRAY && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		long numberOfRows = a->content.numericArray.numberOfRows;
 		long numberOfColumns = a->content.numericArray.numberOfColumns;
-		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns); therror
+		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
 				newData [irow] [icol] = f (x->content.number, y->content.number);
@@ -2930,7 +2930,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (a->content.string);
 			result = praat_getIdOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
 			result = praat_getIdOfSelected (NULL, a->content.number);
@@ -2940,7 +2940,7 @@ static void do_selected (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (s->content.string);
 			result = praat_getIdOfSelected (klas, x->content.number);
 		} else {
 			Melder_throw ("The function \"selected\" requires a string (an object type name) and/or a number.");
@@ -2960,7 +2960,7 @@ static void do_selectedStr (void) {
 	} else if (n->content.number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (a->content.string);
 			name = praat_getNameOfSelected (klas, 0);
 			result.reset (Melder_wcsdup (name));
 		} else if (a->which == Stackel_NUMBER) {
@@ -2972,7 +2972,7 @@ static void do_selectedStr (void) {
 	} else if (n->content.number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (s->content.string);
 			name = praat_getNameOfSelected (klas, x->content.number);
 			result.reset (Melder_wcsdup (name));
 		} else {
@@ -2989,7 +2989,7 @@ static void do_numberOfSelected (void) {
 	} else if (n->content.number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (s->content.string); therror
+			ClassInfo klas = Thing_classFromClassName (s->content.string);
 			result = praat_selection (klas);
 		} else {
 			Melder_throw ("The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), ".");
@@ -3023,7 +3023,7 @@ static void do_deleteFile (void) {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFile file = { 0 };
-		Melder_relativePathToFile (f->content.string, & file); therror
+		Melder_relativePathToFile (f->content.string, & file);
 		MelderFile_delete (& file);
 		pushNumber (1);
 	} else {
@@ -3038,9 +3038,9 @@ static void do_createDirectory (void) {
 		structMelderDir currentDirectory = { { 0 } };
 		Melder_getDefaultDir (& currentDirectory);
 		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectory (& currentDirectory, f->content.string, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH); therror
+			Melder_createDirectory (& currentDirectory, f->content.string, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		#else
-			Melder_createDirectory (& currentDirectory, f->content.string, 0); therror
+			Melder_createDirectory (& currentDirectory, f->content.string, 0);
 		#endif
 		pushNumber (1);
 	} else {
@@ -3357,7 +3357,7 @@ static void do_endPauseForm (void) {
 		co [5] == NULL ? NULL : co[5]->content.string, co [6] == NULL ? NULL : co[6]->content.string,
 		co [7] == NULL ? NULL : co[7]->content.string, co [8] == NULL ? NULL : co[8]->content.string,
 		co [9] == NULL ? NULL : co[9]->content.string, co [10] == NULL ? NULL : co[10]->content.string,
-		theInterpreter); therror
+		theInterpreter);
 	//Melder_casual ("Button %d", buttonClicked);
 	pushNumber (buttonClicked);
 }
@@ -3421,7 +3421,7 @@ static void do_demoWindowTitle (void) {
 	if (n->content.number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			Demo_windowTitle (title->content.string); therror
+			Demo_windowTitle (title->content.string);
 		} else {
 			Melder_throw ("The argument of \"demoWindowTitle\" must be a string (the title), not ", Stackel_whichText (title), ".");
 		}
@@ -3434,14 +3434,14 @@ static void do_demoShow (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoShow\" requires 0 arguments, not ", n->content.number, ".");
-	Demo_show (); therror
+	Demo_show ();
 	pushNumber (1);
 }
 static void do_demoWaitForInput (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoWaitForInput\" requires 0 arguments, not ", n->content.number, ".");
-	Demo_waitForInput (theInterpreter); therror
+	Demo_waitForInput (theInterpreter);
 	pushNumber (1);
 }
 static void do_demoInput (void) {
@@ -3449,7 +3449,7 @@ static void do_demoInput (void) {
 	if (n->content.number == 1) {
 		Stackel keys = pop;
 		if (keys->which == Stackel_STRING) {
-			bool result = Demo_input (keys->content.string); therror
+			bool result = Demo_input (keys->content.string);
 			pushNumber (result);
 		} else {
 			Melder_throw ("The argument of \"demoInput\" must be a string (the keys), not ", Stackel_whichText (keys), ".");
@@ -3463,7 +3463,7 @@ static void do_demoClickedIn (void) {
 	if (n->content.number == 4) {
 		Stackel top = pop, bottom = pop, right = pop, left = pop;
 		if (left->which == Stackel_NUMBER && right->which == Stackel_NUMBER && bottom->which == Stackel_NUMBER && top->which == Stackel_NUMBER) {
-			bool result = Demo_clickedIn (left->content.number, right->content.number, bottom->content.number, top->content.number); therror
+			bool result = Demo_clickedIn (left->content.number, right->content.number, bottom->content.number, top->content.number);
 			pushNumber (result);
 		} else {
 			Melder_throw ("All arguments of \"demoClickedIn\" must be numbers (the x and y ranges).");
@@ -3476,28 +3476,28 @@ static void do_demoClicked (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoClicked\" requires 0 arguments, not ", n->content.number, ".");
-	bool result = Demo_clicked (); therror
+	bool result = Demo_clicked ();
 	pushNumber (result);
 }
 static void do_demoX (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoX\" requires 0 arguments, not ", n->content.number, ".");
-	double result = Demo_x (); therror
+	double result = Demo_x ();
 	pushNumber (result);
 }
 static void do_demoY (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoY\" requires 0 arguments, not ", n->content.number, L".");
-	double result = Demo_y (); therror
+	double result = Demo_y ();
 	pushNumber (result);
 }
 static void do_demoKeyPressed (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
-	bool result = Demo_keyPressed (); therror
+	bool result = Demo_keyPressed ();
 	pushNumber (result);
 }
 static void do_demoKey (void) {
@@ -3505,7 +3505,7 @@ static void do_demoKey (void) {
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoKey\" requires 0 arguments, not ", n->content.number, ".");
 	autostring key = Melder_malloc (wchar, 2);
-	key [0] = Demo_key (); therror
+	key [0] = Demo_key ();
 	key [1] = '\0';
 	pushString (key.transfer());
 }
@@ -3513,28 +3513,28 @@ static void do_demoShiftKeyPressed (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoShiftKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
-	bool result = Demo_shiftKeyPressed (); therror
+	bool result = Demo_shiftKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoCommandKeyPressed (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoCommandKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
-	bool result = Demo_commandKeyPressed (); therror
+	bool result = Demo_commandKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoOptionKeyPressed (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoOptionKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
-	bool result = Demo_optionKeyPressed (); therror
+	bool result = Demo_optionKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoExtraControlKeyPressed (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoControlKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
-	bool result = Demo_extraControlKeyPressed (); therror
+	bool result = Demo_extraControlKeyPressed ();
 	pushNumber (result);
 }
 static long Stackel_getRowNumber (Stackel row, Data thee) {
@@ -4391,7 +4391,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case NUMERIC_ARRAY_VARIABLE_: {
 	InterpreterVariable var = f [programPointer]. content.variable;
 	double **data = NUMmatrix_copy (var -> numericArrayValue. data,
-		1, var -> numericArrayValue. numberOfRows, 1, var -> numericArrayValue. numberOfColumns); therror
+		1, var -> numericArrayValue. numberOfRows, 1, var -> numericArrayValue. numberOfColumns);
 	pushNumericArray (var -> numericArrayValue. numberOfRows, var -> numericArrayValue. numberOfColumns, data);
 } break; default: Melder_throw ("Symbol \"", Formula_instructionNames [parse [programPointer]. symbol], "\" without action.");
 			} // endswitch

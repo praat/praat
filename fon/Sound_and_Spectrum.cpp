@@ -44,12 +44,12 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 		long numberOfFrequencies = numberOfSamples / 2 + 1;   // 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2
 		autoNUMvector <double> data (1, numberOfSamples);
 		autoNUMfft_Table fourierTable;
-		NUMfft_Table_init (& fourierTable, numberOfSamples); therror
+		NUMfft_Table_init (& fourierTable, numberOfSamples);
 
 		for (long i = 1; i <= my nx; i ++)
 			data [i] = my ny == 1 ? my z [1] [i] : 0.5 * (my z [1] [i] + my z [2] [i]);
-		NUMfft_forward (& fourierTable, data.peek()); therror
-		autoSpectrum thee = Spectrum_create (0.5 / my dx, numberOfFrequencies); therror
+		NUMfft_forward (& fourierTable, data.peek());
+		autoSpectrum thee = Spectrum_create (0.5 / my dx, numberOfFrequencies);
 		thy dx = 1.0 / (my dx * numberOfSamples);   // override
 		double *re = thy z [1];
 		double *im = thy z [2];
@@ -97,7 +97,7 @@ Sound Spectrum_to_Sound (Spectrum me) {
 		} else {
 			amp [2] = re [my nx] * scaling;
 		}
-		NUMrealft (amp, numberOfSamples, -1); therror
+		NUMrealft (amp, numberOfSamples, -1);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not converted to Sound.");
@@ -123,7 +123,7 @@ Spectrum Spectrum_lpcSmoothing (Spectrum me, int numberOfPeaks, double preemphas
 		data [1] = 1;
 		for (long i = 1; i <= ndata; i ++)
 			data [i + 1] = a [i];
-		NUMrealft (data.peek(), nfft, 1); therror
+		NUMrealft (data.peek(), nfft, 1);
 		double *re = thy z [1];
 		double *im = thy z [2];
 		re [1] = scale / data [1];
@@ -147,14 +147,14 @@ Sound Sound_filter_formula (Sound me, const wchar *formula, Interpreter interpre
 		autoSound thee = Data_copy (me);
 		if (my ny == 1) {
 			autoSpectrum spec = Sound_to_Spectrum (me, TRUE);
-			Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL); therror
+			Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL);
 			autoSound him = Spectrum_to_Sound (spec.peek());
 			NUMvector_copyElements (his z [1], thy z [1], 1, thy nx);
 		} else {
 			for (long ichan = 1; ichan <= my ny; ichan ++) {
 				autoSound channel = Sound_extractChannel (me, ichan);
 				autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
-				Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL); therror
+				Matrix_formula ((Matrix) spec.peek(), formula, interpreter, NULL);
 				autoSound him = Spectrum_to_Sound (spec.peek());
 				NUMvector_copyElements (his z [1], thy z [ichan], 1, thy nx);
 			}

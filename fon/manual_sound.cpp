@@ -1533,6 +1533,18 @@ ENTRY (L"Algorithm")
 NORMAL (L"The autocorrelation is calculated as the @@Sounds: Cross-correlate...|cross-correlation@ of a sound with itself.")
 MAN_END
 
+MAN_BEGIN (L"Sound: Scale intensity...", L"ppgb", 20120614)
+INTRO (L"A command available in the #Modify menu when you select one or more @Sound objects. "
+	"With this command you multiply the amplitude of each Sound in such a way that its average (i.e. root-mean-square) intensity becomes "
+	"the ##new average intensity# that you specify (see Settings).")
+ENTRY (L"Settings")
+TAG (L"##New average intensity")
+DEFINITION (L"the new average intensity of the Sound. The standard value is 70 dB SPL. This means that the root-mean-square amplitude "
+	"of the sound will come to lie 70 dB above the assumed auditory threshold of 0.00002 Pa. Please check whether as a result a peak in the sound "
+	"does not get below -1 Pa or above +1 Pa. If that happens, the sound will be clipped when played, which will be audible as distortion; "
+	"in thast case you may want to set this number to 60 dB or even lower.")
+MAN_END
+
 MAN_BEGIN (L"Sound: Scale peak...", L"ppgb", 20100328)
 INTRO (L"A command available in the #Modify menu when you select one or more @Sound objects. "
 	"With this command you multiply the amplitude of each Sound in such a way that its absolute peak becomes "

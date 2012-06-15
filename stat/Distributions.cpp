@@ -30,7 +30,7 @@ void structDistributions :: v_info () {
 Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
 	try {
 		autoDistributions me = Thing_new (Distributions);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns); therror
+		TableOfReal_init (me.peek(), numberOfRows, numberOfColumns);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Distributions not created.");

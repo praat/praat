@@ -185,7 +185,7 @@ static void menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 		preferences.extract.preserveTimes = GET_INTEGER (L"Preserve times");
 		autoSound extract = Sound_extractPart (sound, my startSelection, my endSelection, preferences.extract.windowShape,
 			preferences.extract.relativeWidth, preferences.extract.preserveTimes);
-		Thing_setName (extract.peek(), GET_STRING (L"Name")); therror
+		Thing_setName (extract.peek(), GET_STRING (L"Name"));
 		my broadcastPublication (extract.transfer());
 	EDITOR_END
 }
@@ -194,7 +194,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 	if (my startSelection >= my endSelection)
 		Melder_throw ("No samples selected.");
 	if (my longSound.data) {
-		LongSound_writePartToAudioFile (my longSound.data, format, my startSelection, my endSelection, file); therror
+		LongSound_writePartToAudioFile (my longSound.data, format, my startSelection, my endSelection, file);
 	} else if (my sound.data) {
 		Sound sound = my sound.data;
 		double margin = 0.0;
@@ -213,7 +213,7 @@ static void do_write (TimeSoundEditor me, MelderFile file, int format, int numbe
 					save -> z [channel] [i - offset] = sound -> z [channel] [i];
 				}
 			}
-			Sound_writeToAudioFile (save.peek(), file, format, numberOfBitsPersamplePoint); therror
+			Sound_writeToAudioFile (save.peek(), file, format, numberOfBitsPersamplePoint);
 		}
 	}
 }

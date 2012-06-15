@@ -72,15 +72,15 @@ void structParamCurve :: v_writeText (MelderFile file) {
 void structParamCurve :: v_readText (MelderReadText text) {
 	x = Thing_new (Sound);
 	y = Thing_new (Sound);
-	Data_readText (x, text); therror
-	Data_readText (y, text); therror
+	Data_readText (x, text);
+	Data_readText (y, text);
 	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
 	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
 }
 
 void structParamCurve :: v_writeBinary (FILE *f) {
-	Data_writeBinary (x, f); therror
-	Data_writeBinary (y, f); therror
+	Data_writeBinary (x, f);
+	Data_writeBinary (y, f);
 }
 
 void structParamCurve :: v_readBinary (FILE *f) {
@@ -88,8 +88,8 @@ void structParamCurve :: v_readBinary (FILE *f) {
 	Thing_version = 2;
 	x = Thing_new (Sound);
 	y = Thing_new (Sound);
-	Data_readBinary (x, f); therror
-	Data_readBinary (y, f); therror
+	Data_readBinary (x, f);
+	Data_readBinary (y, f);
 	Thing_version = saveVersion;
 	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
 	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax; 
@@ -109,7 +109,7 @@ void ParamCurve_init (I, Any void_x, Any void_y) {
 ParamCurve ParamCurve_create (Any x, Any y) {
 	try {
 		autoParamCurve me = Thing_new (ParamCurve);
-		ParamCurve_init (me.peek(), x, y); therror
+		ParamCurve_init (me.peek(), x, y);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("ParamCurve not created.");

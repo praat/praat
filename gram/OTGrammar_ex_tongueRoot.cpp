@@ -116,13 +116,13 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 			/*
 			 * Generate the four tongue-root variants as output candidates.
 			 */
-			OTGrammarCandidate_init (& tableau -> candidates [1], ncons, v1, v2); therror
+			OTGrammarCandidate_init (& tableau -> candidates [1], ncons, v1, v2);
 				/* Faithful: no PARSE constraints violated. */
-			OTGrammarCandidate_init (& tableau -> candidates [2], ncons, fliptr (v1), v2); therror
+			OTGrammarCandidate_init (& tableau -> candidates [2], ncons, fliptr (v1), v2);
 				/* First vowel flipped: violated one PARSE constraint. */
-			OTGrammarCandidate_init (& tableau -> candidates [3], ncons, v1, fliptr (v2)); therror
+			OTGrammarCandidate_init (& tableau -> candidates [3], ncons, v1, fliptr (v2));
 				/* Second vowel flipped. */
-			OTGrammarCandidate_init (& tableau -> candidates [4], ncons, fliptr (v1), fliptr (v2)); therror
+			OTGrammarCandidate_init (& tableau -> candidates [4], ncons, fliptr (v1), fliptr (v2));
 				/* Both vowels flipped. */
 			/*
 			 * Count PARSE violations.
@@ -143,7 +143,7 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 			}
 			itab ++;
 		}
-		OTGrammar_checkIndex (me.peek()); therror
+		OTGrammar_checkIndex (me.peek());
 		OTGrammar_newDisharmonies (me.peek(), 0.0);
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++)
 			my constraints [icons]. plasticity = 1.0;

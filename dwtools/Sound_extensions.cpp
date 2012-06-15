@@ -1562,7 +1562,7 @@ Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio
 		RealTier_addPoint (duration.peek(), (my xmin + my xmax) / 2, formantRatio * durationFactor);
 
 		autoSound thee = Sound_Point_Pitch_Duration_to_Sound (sound.peek(), pulses.peek(), pitchTier.peek(),
-		                 duration.peek(), 0.8 / Pitch_getMinimum (pitch.peek(), 0.0, 0.0, kPitch_unit_HERTZ, false));
+		                 duration.peek(), 1.25 / Pitch_getMinimum (pitch.peek(), 0.0, 0.0, kPitch_unit_HERTZ, false));
 
 		// Resample to the original sampling frequency
 

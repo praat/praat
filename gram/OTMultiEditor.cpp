@@ -105,7 +105,7 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 		my form2 = GuiText_getString (my form2Text);
 		OTMulti_learnOne ((OTMulti) my data, my form1, my form2,
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Direction"),
-			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading")); therror
+			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 		Graphics_updateWs (my g);
 		my broadcastDataChanged ();
 	EDITOR_END

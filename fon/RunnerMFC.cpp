@@ -50,7 +50,7 @@ void structRunnerMFC :: v_dataChanged () {
 static int RunnerMFC_startExperiment (RunnerMFC me) {
 	my data = (Data) my experiments -> item [my iexperiment];
 	Melder_assert (my data -> classInfo == classExperimentMFC);
-	ExperimentMFC_start ((ExperimentMFC) my data); therror
+	ExperimentMFC_start ((ExperimentMFC) my data);
 	Thing_setName (me, ((ExperimentMFC) my data) -> name);
 	my broadcastDataChanged ();
 	Graphics_updateWs (my graphics);
@@ -411,7 +411,7 @@ event. height = GuiObject_getHeight (my drawingArea);
 gui_drawingarea_cb_resize (me.peek(), & event);
 
 		my iexperiment = 1;
-		RunnerMFC_startExperiment (me.peek()); therror
+		RunnerMFC_startExperiment (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Experiment window not created.");

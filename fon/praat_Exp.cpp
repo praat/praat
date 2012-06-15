@@ -30,7 +30,7 @@
 
 DIRECT (Categories_getEntropy)
 	iam_ONLY (Categories);
-	double entropy = Categories_getEntropy (me); therror
+	double entropy = Categories_getEntropy (me);
 	Melder_informationReal (entropy, L"bits");
 END
 
@@ -61,7 +61,7 @@ DIRECT (ExperimentMFC_run)
 	Melder_assert (experimentsCopy -> item [1] == experiments -> item [1]);
 	Melder_assert (experimentsCopy -> item [experimentsCopy -> size] == experiments -> item [experiments -> size]);
 	autoRunnerMFC runner = RunnerMFC_create (theCurrentPraatApplication -> topShell, L"listening experiments", experimentsCopy.transfer());
-	praat_installEditorN (runner.transfer(), experiments.peek()); therror
+	praat_installEditorN (runner.transfer(), experiments.peek());
 END
 
 DIRECT (ExperimentMFC_extractResults)

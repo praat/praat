@@ -70,7 +70,7 @@ FeatureWeights FeatureWeights_create
 {
 	try {
 		autoFeatureWeights me = Thing_new (FeatureWeights);
-		my fweights = TableOfReal_create (1, nweights); therror
+		my fweights = TableOfReal_create (1, nweights);
 		for (long i = 1; i <= nweights; i ++) {
 			my fweights -> data [1] [i] = 1;
 		}
@@ -181,7 +181,7 @@ FeatureWeights FeatureWeights_computeWrapperInt
 
 		autoThingVector <FeatureWeights> cs (0L, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
-			cs [y] = FeatureWeights_create (my input -> nx); therror
+			cs [y] = FeatureWeights_create (my input -> nx);
 		}
 
 		for (long x = 1; x <= my input -> nx; x ++)
@@ -287,7 +287,7 @@ FeatureWeights FeatureWeights_computeWrapperExt
 
 		autoThingVector <FeatureWeights> cs (0L, nseeds);
 		for (long y = 0; y <= nseeds; y++) {
-			cs [y] = FeatureWeights_create (pp -> nx); therror
+			cs [y] = FeatureWeights_create (pp -> nx);
 		}
 
 		for (long x = 1; x <= pp -> nx; x ++)

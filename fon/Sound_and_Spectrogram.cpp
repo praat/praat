@@ -101,7 +101,7 @@ Spectrogram Sound_to_Spectrogram (Sound me, double effectiveAnalysisWidth, doubl
 		autoNUMvector <double> spec (1, nsampFFT);
 		autoNUMvector <double> window (1, nsamp_window);
 		autoNUMfft_Table fftTable;
-		NUMfft_Table_init (& fftTable, nsampFFT); therror
+		NUMfft_Table_init (& fftTable, nsampFFT);
 
 		autoMelderProgress progress (L"Sound to Spectrogram...");
 		for (long i = 1; i <= nsamp_window; i ++) {

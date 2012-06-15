@@ -106,7 +106,7 @@ static void newDocument (TextEditor me) {
 
 static void saveDocument (TextEditor me, MelderFile file) {
 	autostring text = GuiText_getString (my textWidget);
-	MelderFile_writeText (file, text.peek()); therror
+	MelderFile_writeText (file, text.peek());
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
 	if (my v_fileBased ()) Thing_setName (me, Melder_fileToPath (file));

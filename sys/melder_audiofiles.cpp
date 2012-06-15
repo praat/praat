@@ -912,7 +912,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingetu1 (f) * (1.0 / 128) - 1.0; therror
+							buffer [ichan] [isamp] = bingetu1 (f) * (1.0 / 128) - 1.0;
 						}
 					}
 				} catch (MelderError) {
@@ -926,7 +926,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					if (numberOfChannels > (int) sizeof (double) / numberOfBytesPerSamplePerChannel) {
 						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 							for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-								buffer [ichan] [isamp] = bingeti2 (f) * (1.0 / 32768); therror
+								buffer [ichan] [isamp] = bingeti2 (f) * (1.0 / 32768);
 							}
 						}
 					} else { // optimize
@@ -960,7 +960,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					if (numberOfChannels > (int) sizeof (double) / numberOfBytesPerSamplePerChannel) {
 						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 							for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-								buffer [ichan] [isamp] = bingeti2LE (f) * (1.0 / 32768); therror
+								buffer [ichan] [isamp] = bingeti2LE (f) * (1.0 / 32768);
 							}
 						}
 					} else { // optimize
@@ -994,7 +994,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					if (numberOfChannels > (int) sizeof (double) / numberOfBytesPerSamplePerChannel) {
 						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 							for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-								buffer [ichan] [isamp] = bingeti3 (f) * (1.0 / 8388608); therror
+								buffer [ichan] [isamp] = bingeti3 (f) * (1.0 / 8388608);
 							}
 						}
 					} else { // optimize
@@ -1030,7 +1030,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					if (numberOfChannels > (int) sizeof (double) / numberOfBytesPerSamplePerChannel) {
 						for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 							for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-								buffer [ichan] [isamp] = bingeti3LE (f) * (1.0 / 8388608); therror
+								buffer [ichan] [isamp] = bingeti3LE (f) * (1.0 / 8388608);
 							}
 						}
 					} else { // optimize
@@ -1064,7 +1064,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingeti4 (f) * (1.0 / 32768 / 65536); therror
+							buffer [ichan] [isamp] = bingeti4 (f) * (1.0 / 32768 / 65536);
 						}
 					}
 				} catch (MelderError) {
@@ -1076,7 +1076,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingeti4LE (f) * (1.0 / 32768 / 65536); therror
+							buffer [ichan] [isamp] = bingeti4LE (f) * (1.0 / 32768 / 65536);
 						}
 					}
 				} catch (MelderError) {
@@ -1088,7 +1088,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingetr4 (f); therror
+							buffer [ichan] [isamp] = bingetr4 (f);
 						}
 					}
 				} catch (MelderError) {
@@ -1100,7 +1100,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = bingetr4LE (f); therror
+							buffer [ichan] [isamp] = bingetr4LE (f);
 						}
 					}
 				} catch (MelderError) {
@@ -1112,7 +1112,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = ulaw2linear [bingetu1 (f)] * (1.0 / 32768); therror
+							buffer [ichan] [isamp] = ulaw2linear [bingetu1 (f)] * (1.0 / 32768);
 						}
 					}
 				} catch (MelderError) {
@@ -1124,7 +1124,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 				try {
 					for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 						for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-							buffer [ichan] [isamp] = alaw2linear [bingetu1 (f)] * (1.0 / 32768); therror
+							buffer [ichan] [isamp] = alaw2linear [bingetu1 (f)] * (1.0 / 32768);
 						}
 					}
 				} catch (MelderError) {

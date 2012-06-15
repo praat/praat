@@ -224,13 +224,13 @@ static void stopRecording (SoundRecorder me) {
 					my nsamp = 0;
 					if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
 						my nsamp = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
-					win_waveInReset (me); therror
+					win_waveInReset (me);
 					if (my nsamp == 0)
 						my nsamp = my waveHeader [0]. dwBytesRecorded / (sizeof (short) * my numberOfChannels);
 					if (my nsamp > my nmax)
 						my nsamp = my nmax;
-					win_waveInUnprepareHeader (me, 0); therror
-					win_waveInClose (me); therror
+					win_waveInUnprepareHeader (me, 0);
+					win_waveInClose (me);
 				#endif
 			}
 		}
@@ -733,7 +733,7 @@ static void gui_radiobutton_cb_input (I, GuiRadioButtonEvent event) {
 		#elif defined (macintosh)
 			//SPBCloseDevice (my refNum);
 			try {
-				initialize (me); therror
+				initialize (me);
 			} catch (MelderError) {
 				Melder_flushError (NULL);
 			}
@@ -783,10 +783,10 @@ static void gui_radiobutton_cb_fsamp (I, GuiRadioButtonEvent event) {
 				// deferred to the start of recording
 			#elif defined (macintosh)
 				//SPBCloseDevice (my refNum);
-				initialize (me); therror
+				initialize (me);
 			#elif defined (linux)		
 				close (my fd);
-				initialize (me); therror
+				initialize (me);
 			#endif
 		}
 	} catch (MelderError) {
@@ -1017,7 +1017,7 @@ void structSoundRecorder :: v_createChildren () {
 static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
 	long nsamp = my nsamp / 2;
 	autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
-	MelderFile_writeAudioFileHeader (file, audioFileType, theControlPanel. sampleRate, nsamp, 1, 16); therror
+	MelderFile_writeAudioFileHeader (file, audioFileType, theControlPanel. sampleRate, nsamp, 1, 16);
 	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
 		for (long i = 0; i < nsamp; i ++)
 			binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
@@ -1025,7 +1025,7 @@ static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileT
 		for (long i = 0; i < nsamp; i ++)
 			binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 	}
-	MelderFile_writeAudioFileTrailer (file, audioFileType, theControlPanel. sampleRate, nsamp, 1, 16); therror
+	MelderFile_writeAudioFileTrailer (file, audioFileType, theControlPanel. sampleRate, nsamp, 1, 16);
 	mfile.close ();
 }
 
@@ -1034,7 +1034,7 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 		if (my fakeMono) {
 			writeFakeMonoFile (me, file, audioFileType);
 		} else {
-			MelderFile_writeAudioFile (file, audioFileType, my buffer, theControlPanel. sampleRate, my nsamp, my numberOfChannels, 16); therror
+			MelderFile_writeAudioFile (file, audioFileType, my buffer, theControlPanel. sampleRate, my nsamp, my numberOfChannels, 16);
 		}
 	} catch (MelderError) {
 		Melder_throw ("Audio file not written.");
@@ -1258,7 +1258,7 @@ SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels) {
 		 * Some systems take initial values from the system control panel
 		 * (automatically in the workProc), other systems from theControlPanel.
 		 */
-		initialize (me.peek()); therror
+		initialize (me.peek());
 
 		Editor_init (me.peek(), parent, 100, 100, 600, 500, L"SoundRecorder", NULL);
 		#if motif

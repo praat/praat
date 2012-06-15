@@ -42,7 +42,7 @@ void structCollection :: v_info ()
 void structCollection :: v_copy (thou) {
 	thouart (Collection);
 	thy item = NULL;   // kill shallow copy of item  // BUG
-	Collection_Parent :: v_copy (thee); therror
+	Collection_Parent :: v_copy (thee);
 	thy itemClass = itemClass;
 	thy _capacity = _capacity;
 	thy size = size;
@@ -130,12 +130,12 @@ void structCollection :: v_readText (MelderReadText text) {
 					" while expecting ", i, ".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw ("Collection::readText: wrong header at object ", i, ".");
-			this -> item [i] = Thing_newFromClassNameA (klas); therror
+			this -> item [i] = Thing_newFromClassNameA (klas);
 			Thing_version = -1;   /* Override. */
 			this -> size ++;
 			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
 				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
-			Data_readText ((Data) item [i], text); therror
+			Data_readText ((Data) item [i], text);
 			if (stringsRead == 3) {
 				if (line [n] == ' ') n ++;   // skip space character
 				length = wcslen (line+n);
@@ -149,13 +149,13 @@ void structCollection :: v_readText (MelderReadText text) {
 		for (long i = 1; i <= l_size; i ++) {
 			long saveVersion = Thing_version;   /* The version of the Collection... */
 			autostring8 className = texgets2 (text);
-			this -> item [i] = Thing_newFromClassNameA (className.peek()); therror
+			this -> item [i] = Thing_newFromClassNameA (className.peek());
 			this -> size ++;
 			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
 				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
 			autostring objectName = texgetw2 (text);
-			Thing_setName ((Thing) item [i], objectName.peek()); therror
-			Data_readText ((Data) item [i], text); therror
+			Thing_setName ((Thing) item [i], objectName.peek());
+			Data_readText ((Data) item [i], text);
 			Thing_version = saveVersion;
 		}
 	}
@@ -177,37 +177,37 @@ void structCollection :: v_writeBinary (FILE *f) {
 
 void structCollection :: v_readBinary (FILE *f) {
 	if (Thing_version < 0) {
-		long l_size = bingeti4 (f); therror
+		long l_size = bingeti4 (f);
 		if (l_size < 0)
 			Melder_throw ("Empty collection.");
-		Collection_init (this, NULL, l_size); therror
+		Collection_init (this, NULL, l_size);
 		for (long i = 1; i <= l_size; i ++) {
 			char klas [200], name [2000];
 			if (fscanf (f, "%s%s", klas, name) < 2)
 				Melder_throw ("Cannot read class and name.");
-			item [i] = Thing_newFromClassNameA (klas); therror
+			item [i] = Thing_newFromClassNameA (klas);
 			Thing_version = -1;   /* Override. */
 			this -> size ++;
 			if (! Thing_member ((Thing) item [i], classData))
 				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), ".");
 			if (fgetc (f) != ' ')
 				Melder_throw ("Cannot read space.");
-			Data_readBinary ((Data) item [i], f); therror
+			Data_readBinary ((Data) item [i], f);
 			if (strcmp (name, "?")) Thing_setName ((Thing) item [i], Melder_peekUtf8ToWcs (name));
 		}
 	} else {
-		long l_size = bingeti4 (f); therror
-		Collection_init (this, NULL, l_size); therror
+		long l_size = bingeti4 (f);
+		Collection_init (this, NULL, l_size);
 		for (long i = 1; i <= l_size; i ++) {
 			long saveVersion = Thing_version;   // the version of the Collection...
 			autostring8 klas = bingets1 (f);
-			item [i] = Thing_newFromClassNameA (klas.peek()); therror
+			item [i] = Thing_newFromClassNameA (klas.peek());
 			this -> size ++;
 			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadBinary ((Data) item [i]))
 				Melder_throw ("Objects of class ", Thing_className ((Thing) item [i]), " cannot be read.");
 			autostring name = bingetw2 (f);
-			Thing_setName ((Thing) item [i], name.peek()); therror
-			Data_readBinary ((Data) item [i], f); therror
+			Thing_setName ((Thing) item [i], name.peek());
+			Data_readBinary ((Data) item [i], f);
 			Thing_version = saveVersion;
 		}
 	}

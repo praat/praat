@@ -128,7 +128,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		 * because that allows us to compare the two methods.
 		 */
 		try {
-			Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1 / minimumPitch + dt_window : dt_window, dt, & nFrames, & t1); therror
+			Sampled_shortTermAnalysis (me, method >= FCC_NORMAL ? 1 / minimumPitch + dt_window : dt_window, dt, & nFrames, & t1);
 		} catch (MelderError) {
 			Melder_throw ("The pitch analysis would give zero pitch frames.");
 		}
@@ -186,7 +186,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			frame.reset (1, my ny, 1, nsampFFT);
 			windowR.reset (1, nsampFFT);
 			window.reset (1, nsamp_window);
-			NUMfft_Table_init (& fftTable, nsampFFT); therror
+			NUMfft_Table_init (& fftTable, nsampFFT);
 			ac.reset (1, nsampFFT);
 
 			/*
@@ -348,7 +348,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 			/*
 			 * Create (too much) space for candidates.
 			 */
-			Pitch_Frame_init (pitchFrame, maxnCandidates); therror
+			Pitch_Frame_init (pitchFrame, maxnCandidates);
 
 			/*
 			 * Register the first candidate, which is always present: voicelessness.

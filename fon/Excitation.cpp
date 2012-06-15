@@ -78,7 +78,7 @@ void structExcitation :: v_info () {
 Excitation Excitation_create (double df, long nf) {
 	try {
 		autoExcitation me = Thing_new (Excitation);
-		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1); therror
+		Matrix_init (me.peek(), 0.0, nf * df, nf, df, 0.5 * df, 1, 1, 1, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Excitation not created.");

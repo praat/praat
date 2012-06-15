@@ -59,7 +59,7 @@ Any _Data_copy (Data me) {
 	try {
 		if (me == NULL) return NULL;
 		autoData thee = (Data) _Thing_new (my classInfo);
-		my v_copy (thee.peek()); therror
+		my v_copy (thee.peek());
 		Thing_setName (thee.peek(), my name);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -84,7 +84,7 @@ bool Data_canWriteText (Data me) {
 }
 
 void Data_writeText (Data me, MelderFile openFile) {
-	my v_writeText (openFile); therror
+	my v_writeText (openFile);
 	if (ferror (openFile -> filePointer))
 		Melder_throw ("I/O error.");
 }
@@ -154,7 +154,7 @@ bool Data_canWriteBinary (Data me) {
 }
 
 void Data_writeBinary (Data me, FILE *f) {
-	my v_writeBinary (f); therror
+	my v_writeBinary (f);
 	if (ferror (f))
 		Melder_throw ("I/O error.");
 }
@@ -185,7 +185,7 @@ bool Data_canReadText (Data me) {
 
 void Data_readText (Data me, MelderReadText text) {
 	try {
-		my v_readText (text); therror
+		my v_readText (text);
 	} catch (MelderError) {
 		Melder_throw (Thing_className (me), " not read.");
 	}
@@ -194,7 +194,7 @@ void Data_readText (Data me, MelderReadText text) {
 Any Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
-		wchar *line = MelderReadText_readLine (text.peek()); therror
+		wchar *line = MelderReadText_readLine (text.peek());
 		if (line == NULL)
 			Melder_throw ("No lines.");
 		wchar *end = wcsstr (line, L"ooTextFile");   // oo format?
@@ -211,7 +211,7 @@ Any Data_readFromTextFile (MelderFile file) {
 			Thing_version = -1;   // old version: override version number, which was set to 0 by newFromClassName
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readText (me.peek(), text.peek()); therror
+		Data_readText (me.peek(), text.peek());
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Data not read from text file ", file, ".");
@@ -224,7 +224,7 @@ bool Data_canReadBinary (Data me) {
 
 void Data_readBinary (Data me, FILE *f) {
 	try {
-		my v_readBinary (f); therror
+		my v_readBinary (f);
 		if (feof (f))
 			Melder_throw ("Early end of file.");
 		if (ferror (f))
@@ -257,7 +257,7 @@ Any Data_readFromBinaryFile (MelderFile file) {
 			fread (line, 1, end - line + strlen ("BinaryFile"), f);
 		}
 		MelderFile_getParentDir (file, & Data_directoryBeingRead);
-		Data_readBinary (me.peek(), f); therror
+		Data_readBinary (me.peek(), f);
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {

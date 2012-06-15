@@ -165,7 +165,7 @@ void Transition_eigen (Transition me, Matrix *out_eigenvectors, Matrix *out_eige
 	try {
 		autoEigen eigen = Thing_new (Eigen);
 		Transition_transpose (me);
-		Eigen_initFromSymmetricMatrix (eigen.peek(), my data, my numberOfStates); therror
+		Eigen_initFromSymmetricMatrix (eigen.peek(), my data, my numberOfStates);
 		Transition_transpose (me);
 		transposed = true;
 		autoMatrix eigenvectors = Matrix_createSimple (my numberOfStates, my numberOfStates);

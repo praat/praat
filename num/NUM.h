@@ -470,7 +470,6 @@ public:
 		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
 	autoNUMvector (T *ptr, long from) : d_ptr (ptr), d_from (from) {
-		therror
 	}
 	autoNUMvector () : d_ptr (NULL), d_from (1) {
 	}
@@ -534,7 +533,6 @@ public:
 		d_ptr = static_cast <T**> (NUMmatrix (sizeof (T), row1, row2, col1, col2));
 	}
 	autoNUMmatrix (T **ptr, long row1, long col1) : d_ptr (ptr), d_row1 (row1), d_col1 (col1) {
-		therror
 	}
 	autoNUMmatrix () : d_ptr (NULL), d_row1 (0), d_col1 (0) {
 	}
@@ -572,7 +570,6 @@ public:
 		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
 	autodatavector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
-		therror
 	}
 	autodatavector () : d_ptr (NULL), d_from (1), d_to (0) {
 	}

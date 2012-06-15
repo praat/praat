@@ -69,8 +69,8 @@ FujisakiPitch FujisakiPitch_create (double tmin, double tmax,
 		my alpha = alpha;
 		my beta = beta;
 		my gamma = gamma;
-		my phraseCommands = SortedSetOfDouble_create (); therror
-		my accentCommands = SortedSetOfDouble_create (); therror
+		my phraseCommands = SortedSetOfDouble_create ();
+		my accentCommands = SortedSetOfDouble_create ();
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("FujisakiPitch not created.");

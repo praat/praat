@@ -107,7 +107,7 @@ void structOTMulti :: v_readText (MelderReadText text) {
 	OTMulti_Parent :: v_readText (text);
 	if (localVersion >= 1) {
 		try {
-			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue); therror
+			decisionStrategy = texgete1 (text, kOTGrammar_decisionStrategy_getValue);
 		} catch (MelderError) {
 			Melder_throw ("Decision strategy not read.");
 		}
@@ -665,14 +665,14 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 int OTMulti_learnOne (OTMulti me, const wchar *form1, const wchar *form2,
 	enum kOTGrammar_rerankingStrategy updateRule, int direction, double plasticity, double relativePlasticityNoise)
 {
-	long iloser = OTMulti_getWinner (me, form1, form2); therror
+	long iloser = OTMulti_getWinner (me, form1, form2);
 	if (direction & OTMulti_LEARN_FORWARD) {
-		long iwinner = OTMulti_getWinner (me, form1, L""); therror
-		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise); therror
+		long iwinner = OTMulti_getWinner (me, form1, L"");
+		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
 	}
 	if (direction & OTMulti_LEARN_BACKWARD) {
-		long iwinner = OTMulti_getWinner (me, form2, L""); therror
-		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise); therror
+		long iwinner = OTMulti_getWinner (me, form2, L"");
+		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
 	}
 	return 1;
 }
@@ -688,11 +688,11 @@ static Table OTMulti_createHistory (OTMulti me, long storeHistoryEvery, long num
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			Table_setColumnLabel (thee.peek(), 3 + icons, my constraints [icons]. name);
 		}
-		Table_setNumericValue (thee.peek(), 1, 1, 0); therror
-		Table_setStringValue (thee.peek(), 1, 2, L"(initial)"); therror
-		Table_setStringValue (thee.peek(), 1, 3, L"(initial)"); therror
+		Table_setNumericValue (thee.peek(), 1, 1, 0);
+		Table_setStringValue (thee.peek(), 1, 2, L"(initial)");
+		Table_setStringValue (thee.peek(), 1, 3, L"(initial)");
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-			Table_setNumericValue (thee.peek(), 1, 3 + icons, my constraints [icons]. ranking); therror
+			Table_setNumericValue (thee.peek(), 1, 3 + icons, my constraints [icons]. ranking);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -705,11 +705,11 @@ static int OTMulti_updateHistory (OTMulti me, Table thee, long storeHistoryEvery
 	try {
 		if (idatum % storeHistoryEvery == 0) {
 			long irow = 1 + idatum / storeHistoryEvery;
-			Table_setNumericValue (thee, irow, 1, idatum); therror
-			Table_setStringValue (thee, irow, 2, form1); therror
-			Table_setStringValue (thee, irow, 3, form2); therror
+			Table_setNumericValue (thee, irow, 1, idatum);
+			Table_setStringValue (thee, irow, 2, form1);
+			Table_setStringValue (thee, irow, 3, form2);
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
-				Table_setNumericValue (thee, irow, 3 + icons, my constraints [icons]. ranking); therror
+				Table_setNumericValue (thee, irow, 3 + icons, my constraints [icons]. ranking);
 			}
 		}
 		return 1;
@@ -737,7 +737,7 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 		for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
 				wchar *form1, *form2;
-				PairDistribution_peekPair (thee, & form1, & form2); therror
+				PairDistribution_peekPair (thee, & form1, & form2);
 				++ idatum;
 				if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
 					long numberOfDrawnConstraints = my numberOfConstraints < 14 ? my numberOfConstraints : 14;
@@ -765,17 +765,17 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee, double e
 						*history_out = history.transfer();   // so that we can inspect
 					throw;
 				}
-				OTMulti_newDisharmonies (me, evaluationNoise); therror
+				OTMulti_newDisharmonies (me, evaluationNoise);
 				try {
-					OTMulti_learnOne (me, form1, form2, updateRule, direction, plasticity, relativePlasticityNoise); therror
+					OTMulti_learnOne (me, form1, form2, updateRule, direction, plasticity, relativePlasticityNoise);
 				} catch (MelderError) {
 					if (history.peek()) {
-						OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2); therror
+						OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2);
 					}
 					throw;
 				}
 				if (history.peek()) {
-					OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2); therror
+					OTMulti_updateHistory (me, history.peek(), storeHistoryEvery, idatum, form1, form2);
 				}
 			}
 			plasticity *= plasticityDecrement;
@@ -849,7 +849,7 @@ void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar *form1, const wcha
 	wchar text [200];
 	bool bidirectional = form1 [0] != '\0' && form2 [0] != '\0';
 	try {
-		winner = OTMulti_getWinner (me, form1, form2); therror
+		winner = OTMulti_getWinner (me, form1, form2);
 	} catch (MelderError) {
 		Melder_clearError ();
 		Graphics_setWindow (g, 0.0, 1.0, 0.0, 1.0);
@@ -1225,7 +1225,7 @@ void OTMulti_removeConstraint (OTMulti me, const wchar *constraintName) {
 void OTMulti_generateOptimalForm (OTMulti me, const wchar *form1, const wchar *form2, wchar *optimalForm, double evaluationNoise) {
 	try {
 		OTMulti_newDisharmonies (me, evaluationNoise);
-		long winner = OTMulti_getWinner (me, form1, form2); therror
+		long winner = OTMulti_getWinner (me, form1, form2);
 		wcscpy (optimalForm, my candidates [winner]. string);
 	} catch (MelderError) {
 		Melder_throw (me, ": optimal form not generated.");
@@ -1240,7 +1240,7 @@ Strings OTMulti_Strings_generateOptimalForms (OTMulti me, Strings thee, double e
 		outputs -> strings = NUMvector <wchar*> (1, n);
 		for (long i = 1; i <= n; i ++) {
 			wchar output [100];
-			OTMulti_generateOptimalForm (me, thy strings [i], L"", output, evaluationNoise); therror
+			OTMulti_generateOptimalForm (me, thy strings [i], L"", output, evaluationNoise);
 			outputs -> strings [i] = Melder_wcsdup (output);
 		}
 		return outputs.transfer();
@@ -1256,7 +1256,7 @@ Strings OTMulti_generateOptimalForms (OTMulti me, const wchar *form1, const wcha
 		outputs -> strings = NUMvector <wchar*> (1, numberOfTrials);
 		for (long i = 1; i <= numberOfTrials; i ++) {
 			wchar output [100];
-			OTMulti_generateOptimalForm (me, form1, form2, output, evaluationNoise); therror
+			OTMulti_generateOptimalForm (me, form1, form2, output, evaluationNoise);
 			outputs -> strings [i] = Melder_wcsdup (output);
 		}
 		return outputs.transfer();
@@ -1298,7 +1298,7 @@ Distributions OTMulti_to_Distribution (OTMulti me, const wchar *form1, const wch
 		 */
 		for (long itrial = 1; itrial <= numberOfTrials; itrial ++) {
 			OTMulti_newDisharmonies (me, evaluationNoise);
-			long iwinner = OTMulti_getWinner (me, form1, form2); therror
+			long iwinner = OTMulti_getWinner (me, form1, form2);
 			thy data [index [iwinner]] [1] += 1;
 		}
 		return thee.transfer();

@@ -148,9 +148,9 @@ DO
 	LOOP {
 		iam (LongSound);
 		structMelderFile file = { 0 };
-		Melder_relativePathToFile (GET_STRING (L"Audio file"), & file); therror
+		Melder_relativePathToFile (GET_STRING (L"Audio file"), & file);
 		LongSound_writePartToAudioFile (me, GET_INTEGER (L"Type"),
-			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), & file); therror
+			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), & file);
 	}
 END
 	
@@ -171,38 +171,38 @@ DIRECT (LongSound_view)
 	LOOP {
 		iam (LongSound);
 		autoSoundEditor editor = SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
 FORM_WRITE (LongSound_writeToAifcFile, L"Save as AIFC file", 0, L"aifc")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
 END
 
 FORM_WRITE (LongSound_writeToAiffFile, L"Save as AIFF file", 0, L"aiff")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
 END
 
 FORM_WRITE (LongSound_writeToNextSunFile, L"Save as NeXT/Sun file", 0, L"au")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END
 
 FORM_WRITE (LongSound_writeToNistFile, L"Save as NIST file", 0, L"nist")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NIST, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
 END
 
 FORM_WRITE (LongSound_writeToFlacFile, L"Save as FLAC file", 0, L"flac")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
 END
 
 FORM_WRITE (LongSound_writeToWavFile, L"Save as WAV file", 0, L"wav")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
 END
 
 FORM_WRITE (LongSound_writeLeftChannelToAifcFile, L"Save left channel as AIFC file", 0, L"aifc")
@@ -306,32 +306,32 @@ END
 
 FORM_WRITE (LongSound_Sound_writeToAifcFile, L"Save as AIFC file", 0, L"aifc")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
 END
 
 FORM_WRITE (LongSound_Sound_writeToAiffFile, L"Save as AIFF file", 0, L"aiff")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
 END
 
 FORM_WRITE (LongSound_Sound_writeToNextSunFile, L"Save as NeXT/Sun file", 0, L"au")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END
 
 FORM_WRITE (LongSound_Sound_writeToNistFile, L"Save as NIST file", 0, L"nist")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NIST, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
 END
 
 FORM_WRITE (LongSound_Sound_writeToFlacFile, L"Save as FLAC file", 0, L"flac")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
 END
 
 FORM_WRITE (LongSound_Sound_writeToWavFile, L"Save as WAV file", 0, L"wav")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
 END
 
 /********** SOUND **********/
@@ -417,9 +417,9 @@ DIRECT (Sounds_concatenateRecoverably)
 		}
 		iinterval ++;
 		if (iinterval > 1) {
-			TextGrid_insertBoundary (him.peek(), 1, tmin); therror
+			TextGrid_insertBoundary (him.peek(), 1, tmin);
 		}
-		TextGrid_setIntervalText (him.peek(), 1, iinterval, my name); therror
+		TextGrid_setIntervalText (him.peek(), 1, iinterval, my name);
 		nx += my nx;
 		tmin = tmax;
 	}
@@ -526,7 +526,7 @@ static void common_Sound_create (void *dia, Interpreter interpreter, bool allowM
 			throw;   // unexpected error; wait for generic message
 		}
 	}
-	Matrix_formula ((Matrix) sound.peek(), GET_STRING (L"formula"), interpreter, NULL); therror
+	Matrix_formula ((Matrix) sound.peek(), GET_STRING (L"formula"), interpreter, NULL);
 	praat_new (sound.transfer(), GET_STRING (L"Name"));
 	//praat_updateSelection ();
 }
@@ -690,7 +690,7 @@ static void cb_SoundEditor_publication (Editor editor, void *closure, Data publi
 			LOOP {
 				iam (Spectrum);
 				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-				praat_installEditor (editor2.transfer(), IOBJECT); therror
+				praat_installEditor (editor2.transfer(), IOBJECT);
 			}
 		}
 	} catch (MelderError) {
@@ -703,7 +703,7 @@ DIRECT (Sound_edit)
 		iam (Sound);
 		autoSoundEditor editor = SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
 		editor -> setPublicationCallback (cb_SoundEditor_publication, NULL);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -861,7 +861,7 @@ DO
 	LOOP {
 		iam (Sound);
 		try {
-			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);   // in case of error, the Sound may have partially changed
@@ -919,7 +919,7 @@ FORM (Sound_getEnergy, L"Sound: Get energy", L"Sound: Get energy...")
 DO
 	LOOP {
 		iam (Sound);
-		double energy = Sound_getEnergy (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range")); therror
+		double energy = Sound_getEnergy (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
 		Melder_informationReal (energy, L"Pa2 sec");
 	}
 END
@@ -938,7 +938,7 @@ FORM (Sound_getIndexFromTime, L"Get sample number from time", L"Get sample numbe
 DO
 	LOOP {
 		iam (Sound);
-		double realIndex = Sampled_xToIndex (me, GET_REAL (L"Time")); therror
+		double realIndex = Sampled_xToIndex (me, GET_REAL (L"Time"));
 		Melder_informationReal (realIndex, NULL);
 	}
 END
@@ -946,7 +946,7 @@ END
 DIRECT (Sound_getIntensity_dB)
 	LOOP {
 		iam (Sound);
-		double intensity = Sound_getIntensity_dB (me); therror
+		double intensity = Sound_getIntensity_dB (me);
 		Melder_informationReal (intensity, L"dB");
 	}
 END
@@ -1442,12 +1442,12 @@ END
 
 FORM_WRITE (Sound_saveAs24BitWavFile, L"Save as 24-bit WAV file", 0, L"wav")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 24); therror
+	LongSound_concatenate (set.peek(), file, Melder_WAV, 24);
 END
 
 FORM_WRITE (Sound_saveAs32BitWavFile, L"Save as 32-bit WAV file", 0, L"wav")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 32); therror
+	LongSound_concatenate (set.peek(), file, Melder_WAV, 32);
 END
 
 FORM (Sound_scalePeak, L"Sound: Scale peak", L"Sound: Scale peak...")
@@ -1461,8 +1461,8 @@ DO
 	}
 END
 
-FORM (Sound_scaleIntensity, L"Sound: Scale intensity", 0)
-	POSITIVE (L"New average intensity (dB)", L"70.0")
+FORM (Sound_scaleIntensity, L"Sound: Scale intensity", L"Sound: Scale intensity")
+	POSITIVE (L"New average intensity (dB SPL)", L"70.0")
 	OK
 DO
 	LOOP {
@@ -2014,17 +2014,17 @@ END
 
 FORM_WRITE (Sound_writeToAifcFile, L"Save as AIFC file", 0, L"aifc")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_AIFC, 16);
 END
 
 FORM_WRITE (Sound_writeToAiffFile, L"Save as AIFF file", 0, L"aiff")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_AIFF, 16);
 END
 
 FORM_WRITE (Sound_writeToFlacFile, L"Save as FLAC file", 0, L"flac")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_FLAC, 16);
 END
 
 FORM_WRITE (Sound_writeToKayFile, L"Save as Kay sound file", 0, L"kay")
@@ -2036,12 +2036,12 @@ END
 
 FORM_WRITE (Sound_writeToNextSunFile, L"Save as NeXT/Sun file", 0, L"au")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END
 
 FORM_WRITE (Sound_writeToNistFile, L"Save as NIST file", 0, L"nist")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NIST, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_NIST, 16);
 END
 
 FORM_WRITE (Sound_saveAsRaw8bitSignedFile, L"Save as raw 8-bit signed sound file", 0, L"8sig")
@@ -2175,12 +2175,12 @@ END
 
 FORM_WRITE (Sound_writeToSunAudioFile, L"Save as NeXT/Sun file", 0, L"au")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_NEXT_SUN, 16);
 END
 
 FORM_WRITE (Sound_writeToWavFile, L"Save as WAV file", 0, L"wav")
 	autoCollection set = praat_getSelectedObjects ();
-	LongSound_concatenate (set.peek(), file, Melder_WAV, 16); therror
+	LongSound_concatenate (set.peek(), file, Melder_WAV, 16);
 END
 
 /***** STOP *****/

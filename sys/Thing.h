@@ -268,9 +268,7 @@ public:
 	 *    autoPitch pitch = Pitch_create (...);
 	 * should work.
 	 */
-	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) {
-		therror;   // if this happens, the destructor won't be called, but that is not necessary anyway
-	}
+	_Thing_auto (T *a_ptr) : d_ptr (a_ptr) { }
 	_Thing_auto () : d_ptr (NULL) { }
 	/*
 	 * pitch should be destroyed when going out of scope,
@@ -333,7 +331,6 @@ public:
 	void reset (T* const ptr) {
 		if (d_ptr) forget (d_ptr);
 		d_ptr = ptr;
-		therror;
 	}
 private:
 	/*
@@ -359,7 +356,6 @@ public:
 		d_ptr = static_cast <T*> (NUMvector (sizeof (T), from, to));
 	}
 	autoThingVector (T *ptr, long from, long to) : d_ptr (ptr), d_from (from), d_to (to) {
-		therror
 	}
 	autoThingVector () : d_ptr (NULL), d_from (1), d_to (0) {
 	}

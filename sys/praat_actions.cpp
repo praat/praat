@@ -211,13 +211,13 @@ void praat_addActionScript (const wchar *className1, int n1, const wchar *classN
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title && after && script);
 		if (wcslen (className1)) {
-			class1 = Thing_classFromClassName (className1); therror
+			class1 = Thing_classFromClassName (className1);
 		}
 		if (wcslen (className2)) {
-			class2 = Thing_classFromClassName (className2); therror
+			class2 = Thing_classFromClassName (className2);
 		}
 		if (wcslen (className3)) {
-			class3 = Thing_classFromClassName (className3); therror
+			class3 = Thing_classFromClassName (className3);
 		}
 		fixSelectionSpecification (& class1, & n1, & class2, & n2, & class3, & n3);
 
@@ -322,15 +322,15 @@ void praat_removeAction_classNames (const wchar_t *className1, const wchar_t *cl
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (wcslen (className1)) {
-			class1 = Thing_classFromClassName (className1); therror
+			class1 = Thing_classFromClassName (className1);
 		}
 		if (wcslen (className2)) {
-			class2 = Thing_classFromClassName (className2); therror
+			class2 = Thing_classFromClassName (className2);
 		}
 		if (wcslen (className3)) {
-			class3 = Thing_classFromClassName (className3); therror
+			class3 = Thing_classFromClassName (className3);
 		}
-		praat_removeAction (class1, class2, class3, title); therror
+		praat_removeAction (class1, class2, class3, title);
 		updateDynamicMenu ();
 	} catch (MelderError) {
 		Melder_throw ("Praat: action not removed.");
@@ -365,15 +365,15 @@ void praat_hideAction_classNames (const wchar_t *className1, const wchar_t *clas
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (wcslen (className1)) {
-			class1 = Thing_classFromClassName (className1); therror
+			class1 = Thing_classFromClassName (className1);
 		}
 		if (wcslen (className2)) {
-			class2 = Thing_classFromClassName (className2); therror
+			class2 = Thing_classFromClassName (className2);
 		}
 		if (wcslen (className3)) {
-			class3 = Thing_classFromClassName (className3); therror
+			class3 = Thing_classFromClassName (className3);
 		}
-		praat_hideAction (class1, class2, class3, title); therror
+		praat_hideAction (class1, class2, class3, title);
 	} catch (MelderError) {
 		Melder_throw ("Praat: action not hidden.");
 	}
@@ -407,15 +407,15 @@ void praat_showAction_classNames (const wchar *className1, const wchar *classNam
 		ClassInfo class1 = NULL, class2 = NULL, class3 = NULL;
 		Melder_assert (className1 && className2 && className3 && title);
 		if (wcslen (className1)) {
-			class1 = Thing_classFromClassName (className1); therror
+			class1 = Thing_classFromClassName (className1);
 		}
 		if (wcslen (className2)) {
-			class2 = Thing_classFromClassName (className2); therror
+			class2 = Thing_classFromClassName (className2);
 		}
 		if (wcslen (className3)) {
-			class3 = Thing_classFromClassName (className3); therror
+			class3 = Thing_classFromClassName (className3);
 		}
-		praat_showAction (class1, class2, class3, title); therror
+		praat_showAction (class1, class2, class3, title);
 	} catch (MelderError) {
 		Melder_throw ("Praat: action not shown.");
 	}
@@ -506,7 +506,7 @@ static void do_menu (I, bool modified) {
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 			try {
-				callback (NULL, NULL, NULL, my title, modified, NULL); therror
+				callback (NULL, NULL, NULL, my title, modified, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -524,7 +524,7 @@ static void do_menu (I, bool modified) {
 				UiHistory_write (L"\"");
 			}
 			try {
-				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL); therror
+				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -842,7 +842,7 @@ int praat_doAction (const wchar *command, const wchar *arguments, Interpreter in
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || wcscmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   /* Not found. */
-	theActions [i]. callback (NULL, arguments, interpreter, command, false, NULL); therror
+	theActions [i]. callback (NULL, arguments, interpreter, command, false, NULL);
 	return 1;
 }
 

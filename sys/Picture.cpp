@@ -552,7 +552,7 @@ static void print (I, Graphics printer) {
 
 void Picture_print (Picture me) {
 	try {
-		Printer_print (print, me); therror
+		Printer_print (print, me);
 	} catch (MelderError) {
 		Melder_flushError ("Picture not printed.");
 	}

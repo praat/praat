@@ -78,12 +78,12 @@ void structFormantGrid :: v_scaleX (double xminfrom, double xmaxfrom, double xmi
 
 void FormantGrid_init (I, double tmin, double tmax, long numberOfFormants) {
 	iam (FormantGrid);
-	my formants = Ordered_create (); therror
-	my bandwidths = Ordered_create (); therror
+	my formants = Ordered_create ();
+	my bandwidths = Ordered_create ();
 	for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
-		RealTier formant = RealTier_create (tmin, tmax); therror
+		RealTier formant = RealTier_create (tmin, tmax);
 		Collection_addItem (my formants, formant);
-		RealTier bandwidth = RealTier_create (tmin, tmax); therror
+		RealTier bandwidth = RealTier_create (tmin, tmax);
 		Collection_addItem (my bandwidths, bandwidth);
 	}
 	my xmin = tmin;
@@ -108,9 +108,9 @@ FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,
 		autoFormantGrid me = FormantGrid_createEmpty (tmin, tmax, numberOfFormants);
 		for (long iformant = 1; iformant <= numberOfFormants; iformant ++) {
 			FormantGrid_addFormantPoint (me.peek(), iformant, 0.5 * (tmin + tmax),
-				initialFirstFormant + (iformant - 1) * initialFormantSpacing); therror
+				initialFirstFormant + (iformant - 1) * initialFormantSpacing);
 			FormantGrid_addBandwidthPoint (me.peek(), iformant, 0.5 * (tmin + tmax),
-				initialFirstBandwidth + (iformant - 1) * initialBandwidthSpacing); therror
+				initialFirstBandwidth + (iformant - 1) * initialBandwidthSpacing);
 		}
 		return me.transfer();
 	} catch (MelderError) {
@@ -254,13 +254,13 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 
 void FormantGrid_formula_bandwidths (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
 		for (long irow = 1; irow <= my formants -> size; irow ++) {
 			RealTier bandwidth = (RealTier) thy bandwidths -> item [irow];
 			for (long icol = 1; icol <= bandwidth -> points -> size; icol ++) {
 				struct Formula_Result result;
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
 					Melder_throw ("Cannot put an undefined value into the tier.\nFormula not finished.");
 				((RealPoint) bandwidth -> points -> item [icol]) -> value = result. result.numericResult;
@@ -273,13 +273,13 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const wchar *expression, In
 
 void FormantGrid_formula_frequencies (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
 		for (long irow = 1; irow <= my formants -> size; irow ++) {
 			RealTier formant = (RealTier) thy formants -> item [irow];
 			for (long icol = 1; icol <= formant -> points -> size; icol ++) {
 				struct Formula_Result result;
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				if (result. result.numericResult == NUMundefined)
 					Melder_throw ("Cannot put an undefined value into the tier.\nFormula not finished.");
 				((RealPoint) formant -> points -> item [icol]) -> value = result. result.numericResult;
@@ -298,8 +298,8 @@ FormantGrid Formant_downto_FormantGrid (Formant me) {
 			double t = Sampled_indexToX (me, iframe);
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant pair = & frame -> formant [iformant];
-				FormantGrid_addFormantPoint (thee.peek(), iformant, t, pair -> frequency); therror
-				FormantGrid_addBandwidthPoint (thee.peek(), iformant, t, pair -> bandwidth); therror
+				FormantGrid_addFormantPoint (thee.peek(), iformant, t, pair -> frequency);
+				FormantGrid_addBandwidthPoint (thee.peek(), iformant, t, pair -> bandwidth);
 			}
 		}
 		return thee.transfer();

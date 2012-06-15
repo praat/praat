@@ -20,7 +20,7 @@
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	x = binget##storage (f); therror
+	x = binget##storage (f);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
@@ -35,12 +35,12 @@
 
 #define oo_VECTOR(type,storage,x,min,max)  \
 	if (max >= min) { \
-		x = NUMvector_readBinary_##storage (min, max, f); therror \
+		x = NUMvector_readBinary_##storage (min, max, f); \
 	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1) { \
-	    x = NUMmatrix_readBinary_##storage (row1, row2, col1, col2, f); therror \
+	    x = NUMmatrix_readBinary_##storage (row1, row2, col1, col2, f); \
 	}
 
 #define oo_ENUMx(type,storage,Type,x)  \
@@ -65,7 +65,7 @@
 	}
 
 #define oo_STRINGx(storage,x)  \
-	x = binget##storage (f); therror
+	x = binget##storage (f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
@@ -87,24 +87,24 @@
 	}
 
 #define oo_STRUCT(Type,x)  \
-	x. readBinary (f); therror
+	x. readBinary (f);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
 	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
 	for (int i = 0; i < n; i ++) { \
-		x [i]. readBinary (f); therror \
+		x [i]. readBinary (f); \
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
 	for (int i = 0; i <= setType##_MAX; i ++) { \
-		x [i]. readBinary (f); therror \
+		x [i]. readBinary (f); \
 	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
 		x = NUMvector <struct##Type> (min, max); \
 		for (long i = min; i <= max; i ++) { \
-			x [i]. readBinary (f); therror \
+			x [i]. readBinary (f); \
 		} \
 	}
 
@@ -113,19 +113,19 @@
 		long saveVersion = Thing_version; \
 		x = Thing_new (Class); \
 		Thing_version = version; \
-		x -> v_readBinary (f); therror \
+		x -> v_readBinary (f); \
 		Thing_version = saveVersion; \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
 		long n = bingeti4 (f); \
-		x = Class##_create (); therror \
+		x = Class##_create (); \
 		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			Thing_version = version; \
-			item.peek() -> v_readBinary (f); therror \
+			item.peek() -> v_readBinary (f); \
 			Thing_version = saveVersion; \
 			Collection_addItem (x, item.transfer()); \
 		} \
@@ -147,7 +147,7 @@
 		int localVersion = Thing_version; (void) localVersion; \
 		if (localVersion > this -> classInfo -> version) \
 			Melder_throw ("The format of this file is too new. Download a newer version of Praat."); \
-		Class##_Parent :: v_readBinary (f); therror
+		Class##_Parent :: v_readBinary (f);
 
 #define oo_END_CLASS(Class)  \
 	}

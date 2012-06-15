@@ -116,7 +116,7 @@ RealTier RealTier_createWithClass (double tmin, double tmax, ClassInfo klas) {
 void RealTier_addPoint (RealTier me, double t, double value) {
 	try {
 		autoRealPoint point = RealPoint_create (t, value);
-		Collection_addItem (my points, point.transfer()); therror
+		Collection_addItem (my points, point.transfer());
 	} catch (MelderError) {
 		Melder_throw (me, ": point not added.");
 	}
@@ -394,9 +394,9 @@ Table RealTier_downto_Table (RealTier me, const wchar *indexText, const wchar *t
 		for (long ipoint = 1; ipoint <= my points -> size; ipoint ++) {
 			RealPoint point = my f_peekPoint (ipoint);
 			icol = 0;
-			if (indexText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, ipoint); therror }
-			if (timeText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> number); therror }
-			if (valueText != NULL) { Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> value); therror }
+			if (indexText != NULL) Table_setNumericValue (thee.peek(), ipoint, ++ icol, ipoint);
+			if (timeText != NULL)  Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> number);
+			if (valueText != NULL) Table_setNumericValue (thee.peek(), ipoint, ++ icol, point -> value);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -408,7 +408,7 @@ RealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nx; i ++) {
-			RealTier_addPoint (thee.peek(), Sampled_indexToX (me, i), my z [channel] [i]); therror
+			RealTier_addPoint (thee.peek(), Sampled_indexToX (me, i), my z [channel] [i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -425,7 +425,7 @@ RealTier Vector_to_RealTier_peaks (Vector me, long channel, ClassInfo klas) {
 				double x, maximum;
 				Vector_getMaximumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
 					channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & maximum, & x);
-				RealTier_addPoint (thee.peek(), x, maximum); therror
+				RealTier_addPoint (thee.peek(), x, maximum);
 			}
 		}
 		return thee.transfer();
@@ -443,7 +443,7 @@ RealTier Vector_to_RealTier_valleys (Vector me, long channel, ClassInfo klas) {
 				double x, minimum;
 				Vector_getMinimumAndX (me, my x1 + (i - 2.5) * my dx, my x1 + (i + 0.5) * my dx,
 					channel, NUM_PEAK_INTERPOLATE_PARABOLIC, & minimum, & x);
-				RealTier_addPoint (thee.peek(), x, minimum); therror
+				RealTier_addPoint (thee.peek(), x, minimum);
 			}
 		}
 		return thee.transfer();
@@ -456,7 +456,7 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo kl
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nt; i ++) {
-			RealTier_addPoint (thee.peek(), my t [i], value); therror
+			RealTier_addPoint (thee.peek(), my t [i], value);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -466,11 +466,11 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo kl
 
 void RealTier_formula (RealTier me, const wchar *expression, Interpreter interpreter, RealTier thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
 		for (long icol = 1; icol <= my points -> size; icol ++) {
 			struct Formula_Result result;
-			Formula_run (0, icol, & result); therror
+			Formula_run (0, icol, & result);
 			if (result. result.numericResult == NUMundefined)
 				Melder_throw ("Cannot put an undefined value into the tier.");
 			((RealPoint) thy points -> item [icol]) -> value = result. result.numericResult;

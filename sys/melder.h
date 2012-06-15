@@ -615,7 +615,8 @@ void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, const MelderAr
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
 	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
 	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
-#define therror  if (Melder_hasError ()) { Melder_error_ ("PLEASE SEND THIS ENTIRE ERROR MESSAGE TO PAUL.BOERSMA@UVA.NL (file ", __FILE__, ", line ", __LINE__, ")."); throw MelderError (); }
+//#define therror  if (Melder_hasError ()) { Melder_error_ ("PLEASE SEND THIS ENTIRE ERROR MESSAGE TO PAUL.BOERSMA@UVA.NL (file ", __FILE__, ", line ", __LINE__, ")."); throw MelderError (); }
+#define therror
 #define Melder_throw(...)  do { Melder_error_ (__VA_ARGS__); throw MelderError (); } while (false)
 
 void Melder_flushError (const char *format, ...);
@@ -1035,7 +1036,6 @@ struct autoMelderString : MelderString {
 struct autoMelderReadText {
 	MelderReadText text;
 	autoMelderReadText (MelderReadText a_text) : text (a_text) {
-		therror;
 	}
 	~autoMelderReadText () {
 		if (text) MelderReadText_delete (text);
@@ -1057,7 +1057,6 @@ class autofile {
 	FILE *ptr;
 public:
 	autofile (FILE *f) : ptr (f) {
-		therror;
 	}
 	autofile () : ptr (NULL) {
 	}
@@ -1070,13 +1069,12 @@ public:
 	void reset (FILE *f) {
 		if (ptr) fclose (ptr);   // BUG: not a normal closure
 		ptr = f;
-		therror;
 	}
 	void close (MelderFile file) {
 		if (ptr) {
 			FILE *tmp = ptr;
 			ptr = NULL;
-			Melder_fclose (file, tmp); therror
+			Melder_fclose (file, tmp);
 		}
 	}
 };
@@ -1085,7 +1083,6 @@ class autoMelderFile {
 	MelderFile file;
 public:
 	autoMelderFile (MelderFile a_file) : file (a_file) {
-		therror;
 	}
 	~autoMelderFile () {
 		if (file) MelderFile_close_nothrow (file);
@@ -1094,7 +1091,7 @@ public:
 		if (file && file -> filePointer) {
 			MelderFile tmp = file;
 			file = NULL;
-			MelderFile_close (tmp); therror
+			MelderFile_close (tmp);
 		}
 	}
 	MelderFile transfer () {
@@ -1146,7 +1143,7 @@ public:
 		tokens = NULL;
 	}
 	autoMelderTokens (const wchar *string, long *n) {
-		tokens = Melder_getTokens (string, n); therror
+		tokens = Melder_getTokens (string, n);
 	}
 	~autoMelderTokens () {
 		if (tokens) Melder_freeTokens (& tokens);
@@ -1159,7 +1156,7 @@ public:
 	}
 	void reset (const wchar *string, long *n) {
 		if (tokens) Melder_freeTokens (& tokens);
-		tokens = Melder_getTokens (string, n); therror
+		tokens = Melder_getTokens (string, n);
 	}
 };
 
@@ -1168,9 +1165,7 @@ class _autostring {
 	T *ptr;
 public:
 	_autostring (T *string) : ptr (string) {
-		//if (Melder_debug == 39) Melder_casual ("autostring: entering constructor from C-string %ld", ptr);
-		therror;
-		//if (Melder_debug == 39) Melder_casual ("autostring: leaving constructor from C-string");
+		//if (Melder_debug == 39) Melder_casual ("autostring: constructor from C-string %ld", ptr);
 	}
 	_autostring () : ptr (0) {
 		//if (Melder_debug == 39) Melder_casual ("autostring: zero constructor");
@@ -1185,7 +1180,6 @@ public:
 		//if (Melder_debug == 39) Melder_casual ("autostring: entering assignment from C-string; old = %ld", ptr);
 		if (ptr) Melder_free (ptr);
 		ptr = string;
-		therror;
 		//if (Melder_debug == 39) Melder_casual ("autostring: leaving assignment from C-string; new = %ld", ptr);
 	}
 	#endif
@@ -1206,7 +1200,6 @@ public:
 	void reset (T *string) {
 		if (ptr) Melder_free (ptr);
 		ptr = string;
-		therror;
 	}
 	void resize (long new_size) {
 		T *tmp = (T *) Melder_realloc (ptr, new_size * sizeof (T));

@@ -309,12 +309,12 @@ void TableOfReal_setColumnLabel (TableOfReal me, long columnNumber, const wchar_
 
 void TableOfReal_formula (TableOfReal me, const wchar *expression, Interpreter interpreter, TableOfReal thee) {
 	try {
-		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				struct Formula_Result result;
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				thy data [irow] [icol] = result. result.numericResult;
 			}
 		}
@@ -567,7 +567,7 @@ TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const wchar *ranges
 
 TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const wchar_t *condition, Interpreter interpreter) {
 	try {
-		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		/*
 		 * Count the new number of rows.
 		 */
@@ -575,7 +575,7 @@ TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const wchar_t *conditi
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 				struct Formula_Result result;
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				if (result. result.numericResult != 0.0) {
 					numberOfElements ++;
 					break;
@@ -611,7 +611,7 @@ TableOfReal TableOfReal_extractRowsWhere (TableOfReal me, const wchar_t *conditi
 
 TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const wchar_t *condition, Interpreter interpreter) {
 	try {
-		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE); therror
+		Formula_compile (interpreter, me, condition, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		/*
 		 * Count the new number of columns.
 		 */
@@ -619,7 +619,7 @@ TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const wchar_t *cond
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			for (long irow = 1; irow <= my numberOfRows; irow ++) {
 				struct Formula_Result result;
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				if (result. result.numericResult != 0.0) {
 					numberOfElements ++;
 					break;
@@ -640,7 +640,7 @@ TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const wchar_t *cond
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			for (long irow = 1; irow <= my numberOfRows; irow ++) {
 				struct Formula_Result result;
-				Formula_run (irow, icol, & result); therror
+				Formula_run (irow, icol, & result);
 				if (result. result.numericResult != 0.0) {
 					copyColumn (me, icol, thee.peek(), ++ numberOfElements);
 					break;
@@ -799,7 +799,7 @@ void TableOfReal_drawAsNumbers_if (TableOfReal me, Graphics graphics, long rowmi
 		double lineSpacing = getLineSpacing (graphics);   // not earlier!
 		double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
 		double maxTextHeight = getMaxColumnLabelHeight (me, graphics, 1, my numberOfColumns);
-		Matrix_formula (original.peek(), conditionFormula, interpreter, conditions.peek()); therror
+		Matrix_formula (original.peek(), conditionFormula, interpreter, conditions.peek());
 
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
@@ -947,7 +947,7 @@ Any TablesOfReal_append (TableOfReal me, TableOfReal thee) {
 		if (thy numberOfColumns != my numberOfColumns)
 			Melder_throw (L"Numbers of columns are ", my numberOfColumns, " and ", thy numberOfColumns, " but should be equal.");
 		autoTableOfReal him = static_cast <TableOfReal> (_Thing_new (my classInfo));
-		TableOfReal_init (him.peek(), my numberOfRows + thy numberOfRows, my numberOfColumns); therror
+		TableOfReal_init (him.peek(), my numberOfRows + thy numberOfRows, my numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			TableOfReal_setColumnLabel (him.peek(), icol, my columnLabels [icol]);
@@ -981,7 +981,7 @@ Any TablesOfReal_appendMany (Collection me) {
 			if (thy numberOfColumns != numberOfColumns) Melder_throw ("Numbers of columns do not match.");
 		}
 		autoTableOfReal him = static_cast <TableOfReal> (_Thing_new (thy classInfo));
-		TableOfReal_init (him.peek(), totalNumberOfRows, numberOfColumns); therror
+		TableOfReal_init (him.peek(), totalNumberOfRows, numberOfColumns);
 		/* Unsafe: new attributes not initialized. */
 		for (long icol = 1; icol <= numberOfColumns; icol ++) {
 			TableOfReal_setColumnLabel (him.peek(), icol, thy columnLabels [icol]);
@@ -1121,24 +1121,24 @@ Table TableOfReal_to_Table (TableOfReal me, const wchar_t *labelOfFirstColumn) {
 void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile file) {
 	try {
 		autoMelderString buffer;
-		MelderString_copy (& buffer, L"rowLabel"); therror
+		MelderString_copy (& buffer, L"rowLabel");
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-			MelderString_appendCharacter (& buffer, '\t'); therror
+			MelderString_appendCharacter (& buffer, '\t');
 			wchar_t *s = my columnLabels [icol];
-			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?"); therror
+			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 		}
-		MelderString_appendCharacter (& buffer, '\n'); therror
+		MelderString_appendCharacter (& buffer, '\n');
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			wchar_t *s = my rowLabels [irow];
-			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?"); therror
+			MelderString_append (& buffer, s != NULL && s [0] != '\0' ? s : L"?");
 			for (long icol = 1; icol <= my numberOfColumns; icol ++) {
-				MelderString_appendCharacter (& buffer, '\t'); therror
+				MelderString_appendCharacter (& buffer, '\t');
 				double x = my data [irow] [icol];
-				MelderString_append (& buffer, Melder_double (x)); therror
+				MelderString_append (& buffer, Melder_double (x));
 			}
-			MelderString_appendCharacter (& buffer, '\n'); therror
+			MelderString_appendCharacter (& buffer, '\n');
 		}
-		MelderFile_writeText (file, buffer.string); therror
+		MelderFile_writeText (file, buffer.string);
 	} catch (MelderError) {
 		Melder_throw (me, ": not saved to tab-separated file.");
 	}
@@ -1202,7 +1202,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			while (*p != ' ' && *p != '\t' && *p != '\n') {
-				MelderString_appendCharacter (& buffer, *p); therror
+				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
 			TableOfReal_setColumnLabel (me.peek(), icol, buffer.string);
@@ -1213,7 +1213,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			while (*p != ' ' && *p != '\t') {
-				MelderString_appendCharacter (& buffer, *p); therror
+				MelderString_appendCharacter (& buffer, *p);
 				p ++;
 			}
 			TableOfReal_setRowLabel (me.peek(), irow, buffer.string);
@@ -1222,7 +1222,7 @@ TableOfReal TableOfReal_readFromHeaderlessSpreadsheetFile (MelderFile file) {
 				while (*p == ' ' || *p == '\t' || *p == '\n') { Melder_assert (*p != '\0'); p ++; }
 				MelderString_empty (& buffer);
 				while (*p != ' ' && *p != '\t' && *p != '\n' && *p != '\0') {
-					MelderString_appendCharacter (& buffer, *p); therror
+					MelderString_appendCharacter (& buffer, *p);
 					p ++;
 				}
 				my data [irow] [icol] = Melder_atof (buffer.string);   /* If cell contains a string, this will be 0. */

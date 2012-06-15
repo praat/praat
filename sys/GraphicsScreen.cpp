@@ -341,7 +341,7 @@ Graphics Graphics_create_xmdrawingarea (void *w) {   /* w = XmDrawingArea widget
 	#elif mac
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me); therror
+	Graphics_init (me);
 	#ifdef macintosh
 		GraphicsScreen_init (me, XtDisplay (my d_drawingArea), GetWindowPort ((WindowRef) XtWindow (my d_drawingArea)), Gui_getResolution (my d_drawingArea));
 	#else
@@ -377,7 +377,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	#ifdef macintosh
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me); therror
+	Graphics_init (me);
 	my resolution = resolution;
 	#ifdef macintosh
 		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, (CFStringRef) Melder_peekWcsToCfstring (file -> path), kCFURLPOSIXPathStyle, false);

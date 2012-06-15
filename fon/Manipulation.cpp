@@ -71,7 +71,7 @@ Manipulation Manipulation_create (double tmin, double tmax) {
 	try {
 		autoManipulation me = Thing_new (Manipulation);
 		my xmin = tmin, my xmax = tmax;
-		my duration = DurationTier_create (tmin, tmax); therror
+		my duration = DurationTier_create (tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Manipulation object not created.");
@@ -127,11 +127,11 @@ int Manipulation_replaceDurationTier (Manipulation me, DurationTier duration) {
 Manipulation Sound_to_Manipulation (Sound me, double timeStep, double minimumPitch, double maximumPitch) {
 	try {
 		autoManipulation thee = Manipulation_create (my xmin, my xmax);
-		thy sound = Sound_convertToMono (me); therror
+		thy sound = Sound_convertToMono (me);
 		Vector_subtractMean (thy sound);
 		autoPitch pitch = Sound_to_Pitch (thy sound, timeStep, minimumPitch, maximumPitch);
-		thy pulses = Sound_Pitch_to_PointProcess_cc (thy sound, pitch.peek()); therror
-		thy pitch = Pitch_to_PitchTier (pitch.peek()); therror
+		thy pulses = Sound_Pitch_to_PointProcess_cc (thy sound, pitch.peek());
+		thy pitch = Pitch_to_PitchTier (pitch.peek());
 		/* (DurationTier has been done at creation time) */
 		return thee.transfer();
 	} catch (MelderError) {
@@ -142,7 +142,7 @@ Manipulation Sound_to_Manipulation (Sound me, double timeStep, double minimumPit
 Manipulation Sound_Pitch_to_Manipulation (Sound sound, Pitch pitch) {
 	try {
 		autoManipulation me = Manipulation_create (sound -> xmin, sound -> xmax);
-		my sound = Sound_convertToMono (sound); therror
+		my sound = Sound_convertToMono (sound);
 		Vector_subtractMean (my sound);
 		my pulses = Sound_Pitch_to_PointProcess_cc (my sound, pitch);
 		my pitch = Pitch_to_PitchTier (pitch);
@@ -155,7 +155,7 @@ Manipulation Sound_Pitch_to_Manipulation (Sound sound, Pitch pitch) {
 Manipulation Sound_PointProcess_to_Manipulation (Sound sound, PointProcess point) {
 	try {
 		autoManipulation me = Manipulation_create (sound -> xmin, sound -> xmax);
-		my sound = Sound_convertToMono (sound); therror
+		my sound = Sound_convertToMono (sound);
 		Vector_subtractMean (my sound);
 		my pulses = Data_copy (point);
 		my pitch = PointProcess_to_PitchTier (point, MAX_T);
@@ -624,7 +624,7 @@ static Sound synthesize_pulses_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw ("Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound, 10000, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0); therror
+			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
 		}
 		if (! my pulses) Melder_throw ("Missing pulses analysis.");
 		autoSound train = PointProcess_to_Sound_pulseTrain (my pulses, 1 / my lpc -> samplingPeriod, 0.7, 0.05, 30);
@@ -644,7 +644,7 @@ static Sound synthesize_pitch_lpc (Manipulation me) {
 		if (! my lpc) {
 			if (! my sound) Melder_throw ("Missing original sound.");
 			autoSound sound10k = Sound_resample (my sound, 10000, 50);
-			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0); therror
+			my lpc = Sound_to_LPC_burg (sound10k.peek(), 20, 0.025, 0.01, 50.0);
 		}
 		if (! my pitch)  Melder_throw ("Missing pitch manipulation.");
 		if (! my pulses) Melder_throw ("Missing pulses analysis.");
@@ -706,7 +706,7 @@ int Manipulation_writeToTextFileWithoutSound (Manipulation me, MelderFile file) 
 	Sound saved = my sound;
 	try {
 		my sound = NULL;
-		Data_writeToTextFile (me, file); therror
+		Data_writeToTextFile (me, file);
 		my sound = saved;
 		return 1;
 	} catch (MelderError) {
@@ -719,7 +719,7 @@ int Manipulation_writeToBinaryFileWithoutSound (Manipulation me, MelderFile file
 	Sound saved = my sound;
 	try {
 		my sound = NULL;
-		Data_writeToBinaryFile (me, file); therror
+		Data_writeToBinaryFile (me, file);
 		my sound = saved;
 		return 1;
 	} catch (MelderError) {

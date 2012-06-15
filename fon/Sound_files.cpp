@@ -80,7 +80,7 @@ Sound Sound_readFromSoundFile (MelderFile file) {
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / sampleRate, sampleRate);
 		if (encoding == Melder_SHORTEN || encoding == Melder_POLYPHONE)
 			Melder_throw ("Cannot unshorten. Write to paul.boersma@uva.nl for more information.");
-		Melder_readAudioToFloat (file -> filePointer, numberOfChannels, encoding, my z, numberOfSamples); therror
+		Melder_readAudioToFloat (file -> filePointer, numberOfChannels, encoding, my z, numberOfSamples);
 		mfile.close ();
 		return me.transfer();
 	} catch (MelderError) {
@@ -204,11 +204,11 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		if (fread (data, 1, 4, f) < 4) readError ();
 		if (! strnequ (data, "HEDR", 4))
 			Melder_throw ("Missing HEDR chunk.");
-		unsigned long chunkSize = bingetu4LE (f); therror
+		unsigned long chunkSize = bingetu4LE (f);
 		if (chunkSize & 1) ++ chunkSize;
 		if (fread (data, 1, chunkSize - 12, f) < chunkSize - 12) readError ();
-		double samplingFrequency = bingetu4LE (f); therror
-		unsigned long numberOfSamples = bingetu4LE (f); therror
+		double samplingFrequency = bingetu4LE (f);
+		unsigned long numberOfSamples = bingetu4LE (f);
 		if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000)
 			Melder_throw ("Not a correct Kay file.");
 		if (fread (data, 1, 4, f) < 4) readError ();   // absolute extrema A/B
@@ -219,18 +219,18 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
 			if (feof (f))
 				Melder_throw ("Missing or unreadable SD chunk.");
-			chunkSize = bingetu4LE (f); therror
+			chunkSize = bingetu4LE (f);
 			if (chunkSize & 1) ++ chunkSize;
 			if (fread (data, 1, chunkSize, f) < chunkSize) readError ();
 			if (fread (data, 1, 4, f) < 4) readError ();
 		}
-		chunkSize = bingetu4LE (f); therror
+		chunkSize = bingetu4LE (f);
 		if (chunkSize != numberOfSamples * 2)
 			Melder_throw ("Incomplete SD chunk.");
 
 		autoSound me = Sound_createSimple (1, numberOfSamples / samplingFrequency, samplingFrequency);
 		for (unsigned long i = 1; i <= numberOfSamples; i ++) {
-			my z [1] [i] = bingeti2LE (f) / 32768.0; therror
+			my z [1] [i] = bingeti2LE (f) / 32768.0;
 		}
 		f.close (file);
 		return me.transfer();
@@ -247,7 +247,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 		long numberOfSamples = ftell (f);
 		rewind (f);
 		autoSound me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate); 
-		Melder_readAudioToFloat (f, 1, Melder_ALAW, my z, numberOfSamples); therror
+		Melder_readAudioToFloat (f, 1, Melder_ALAW, my z, numberOfSamples);
 		f.close (file);
 		return me.transfer();
 	} catch (MelderError) {
@@ -258,9 +258,9 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
-		MelderFile_writeAudioFileHeader (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint); therror
-		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, TRUE); therror
-		MelderFile_writeAudioFileTrailer (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint); therror
+		MelderFile_writeAudioFileHeader (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint);
+		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, TRUE);
+		MelderFile_writeAudioFileTrailer (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to 16-bit sound file ", file, ".");
@@ -325,7 +325,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 		fwrite ("SDA_", 1, 4, file -> filePointer);
 		binputi4LE (my nx * 2, file -> filePointer);   // chunk size
 
-		MelderFile_writeFloatToAudio (file, my ny, Melder_LINEAR_16_LITTLE_ENDIAN, my z, my nx, TRUE); therror
+		MelderFile_writeFloatToAudio (file, my ny, Melder_LINEAR_16_LITTLE_ENDIAN, my z, my nx, TRUE);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to Kay sound file ", file, ".");
@@ -335,7 +335,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
 	try {
 		autoMelderFile mfile = MelderFile_create (file, L"BINA", L"PpgB", L"rawSound");
-		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, TRUE); therror
+		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, TRUE);
 		mfile.close ();
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to raw sound file ", file, ".");

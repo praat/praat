@@ -92,7 +92,7 @@ DIRECT (Artword_edit)
 	WHERE (SELECTED) {
 		iam_LOOP (Artword);
 		autoArtwordEditor editor = ArtwordEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -126,7 +126,7 @@ DO
 	if (time < 0.0) Melder_throw ("Specified time should not be less than 0.");
 	LOOP {
 		iam (Artword);
-		Artword_setTarget (me, GET_INTEGER (L"Muscle"), time, GET_REAL (L"Target value")); therror
+		Artword_setTarget (me, GET_INTEGER (L"Muscle"), time, GET_REAL (L"Target value"));
 		praat_dataChanged (me);
 	}
 END
@@ -306,7 +306,7 @@ DO
 	LOOP {
 		iam (VocalTract);
 		try {
-			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL); therror
+			Matrix_formula (me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);

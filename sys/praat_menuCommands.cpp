@@ -77,7 +77,7 @@ static void do_menu (I, unsigned long modified) {
 				UiHistory_write (my title);
 			}
 			try {
-				callback (NULL, NULL, NULL, my title, modified, NULL); therror
+				callback (NULL, NULL, NULL, my title, modified, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -94,7 +94,7 @@ static void do_menu (I, unsigned long modified) {
 				UiHistory_write (L"\"");
 			}
 			try {
-				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL); therror
+				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -431,7 +431,7 @@ int praat_doMenuCommand (const wchar *command, const wchar *arguments, Interpret
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! wcsequ (theCommands [i]. title, command) ||
 		(! wcsequ (theCommands [i]. window, L"Objects") && ! wcsequ (theCommands [i]. window, L"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
-	theCommands [i]. callback (NULL, arguments, interpreter, command, false, NULL); therror
+	theCommands [i]. callback (NULL, arguments, interpreter, command, false, NULL);
 	return 1;
 }
 

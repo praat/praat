@@ -67,7 +67,7 @@ Thing_implement (Regression, Data, 0);
 
 void Regression_init (I) {
 	iam (Regression);
-	my parameters = Ordered_create (); therror
+	my parameters = Ordered_create ();
 }
 
 void Regression_addParameter (I, const wchar *label, double minimum, double maximum, double value) {
@@ -98,7 +98,7 @@ Thing_implement (LinearRegression, Regression, 0);
 LinearRegression LinearRegression_create (void) {
 	try {
 		autoLinearRegression me = Thing_new (LinearRegression);
-		Regression_init (me.peek()); therror
+		Regression_init (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("LinearRegression not created.");
@@ -119,9 +119,9 @@ LinearRegression Table_to_LinearRegression (Table me) {
 		autoNUMvector <double> x (1, numberOfParameters);
 		autoLinearRegression thee = LinearRegression_create ();
 		for (ivar = 1; ivar <= numberOfIndependentVariables; ivar ++) {
-			double minimum = Table_getMinimum (me, ivar); therror
-			double maximum = Table_getMaximum (me, ivar); therror
-			Regression_addParameter (thee.peek(), my columnHeaders [ivar]. label, minimum, maximum, 0.0); therror
+			double minimum = Table_getMinimum (me, ivar);
+			double maximum = Table_getMaximum (me, ivar);
+			Regression_addParameter (thee.peek(), my columnHeaders [ivar]. label, minimum, maximum, 0.0);
 		}
 		for (icell = 1; icell <= numberOfCells; icell ++) {
 			for (ivar = 1; ivar < numberOfParameters; ivar ++) {

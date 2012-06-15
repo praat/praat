@@ -80,13 +80,13 @@ static void args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Int
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (& text); therror
+	Melder_includeIncludeFiles (& text);
 
 	Interpreter_getArgumentsFromDialog (my interpreter, sendingForm);
 
 	autoPraatBackground background;
 	if (my name) MelderFile_setDefaultDir (& file);
-	Interpreter_run (my interpreter, text); therror
+	Interpreter_run (my interpreter, text);
 	Melder_free (text);
 }
 
@@ -96,8 +96,8 @@ static void run (ScriptEditor me, wchar_t **text) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (text); therror
-	int npar = Interpreter_readParameters (my interpreter, *text); therror
+	Melder_includeIncludeFiles (text);
+	int npar = Interpreter_readParameters (my interpreter, *text);
 	if (npar) {
 		/*
 		 * Pop up a dialog box for querying the arguments.
@@ -108,7 +108,7 @@ static void run (ScriptEditor me, wchar_t **text) {
 	} else {
 		autoPraatBackground background;
 		if (my name) MelderFile_setDefaultDir (& file);
-		Interpreter_run (my interpreter, *text); therror
+		Interpreter_run (my interpreter, *text);
 	}
 }
 
@@ -243,7 +243,7 @@ static void menu_cb_expandIncludeFiles (EDITOR_ARGS) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (& text); therror
+	Melder_includeIncludeFiles (& text);
 	GuiText_setString (my textWidget, text.peek());
 }
 
@@ -335,7 +335,7 @@ ScriptEditor ScriptEditor_createFromScript (GuiObject parent, Editor environment
 		autostring text = MelderFile_readText (& script -> file);
 		autoScriptEditor me = ScriptEditor_createFromText (parent, environment, text.peek());
 		MelderFile_copy (& script -> file, & my file);
-		Thing_setName (me.peek(), Melder_fileToPath (& script -> file)); therror
+		Thing_setName (me.peek(), Melder_fileToPath (& script -> file));
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Script window not created.");

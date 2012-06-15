@@ -47,12 +47,12 @@
 
 #define oo_VECTOR(type,storage,x,min,max)  \
 	if (max >= min) { \
-		x = NUMvector_readText_##storage (min, max, a_text, #x); therror \
+		x = NUMvector_readText_##storage (min, max, a_text, #x); \
 	}
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
 	if (row2 >= row1 && col2 >= col1) { \
-	    x = NUMmatrix_readText_##storage (row1, row2, col1, col2, a_text, #x); therror \
+	    x = NUMmatrix_readText_##storage (row1, row2, col1, col2, a_text, #x); \
 	}
 
 #define oo_ENUMx(type,storage,Type,x)  \
@@ -61,7 +61,7 @@
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
 	for (long i = 0; i < n; i ++) { \
-		x [i] = texget##storage (a_text, Type##_getValue); therror \
+		x [i] = texget##storage (a_text, Type##_getValue); \
 	}
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
@@ -108,24 +108,24 @@
 	}
 
 #define oo_STRUCT(Type,x)  \
-	x. readText (a_text); therror
+	x. readText (a_text);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n) \
 	if (n > cap) Melder_throw ("Number of \"", #x, "\" (", n, ") greater than ", cap, "."); \
 	for (long i = 0; i < n; i ++) { \
-		x [i]. readText (a_text); therror \
+		x [i]. readText (a_text); \
 	}
 
 #define oo_STRUCT_SET(Type,x,setType) \
 	for (long i = 0; i <= setType##_MAX; i ++) { \
-		x [i]. readText (a_text); therror \
+		x [i]. readText (a_text); \
 	}
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (max >= min) { \
 		x = NUMvector <struct##Type> (min, max); \
 		for (long i = min; i <= max; i ++) { \
-			x [i]. readText (a_text); therror \
+			x [i]. readText (a_text); \
 		} \
 	}
 
@@ -134,19 +134,19 @@
 		long saveVersion = Thing_version; \
 		x = Thing_new (Class); \
 		Thing_version = version; \
-		x -> v_readText (a_text); therror \
+		x -> v_readText (a_text); \
 		Thing_version = saveVersion; \
 	}
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
 	{ \
 		long n = texgeti4 (a_text); \
-		x = Class##_create (); therror \
+		x = Class##_create (); \
 		for (long i = 1; i <= n; i ++) { \
 			long saveVersion = Thing_version; \
 			auto##ItemClass item = (ItemClass) Thing_new (ItemClass); \
 			Thing_version = version; \
-			item.peek() -> v_readText (a_text); therror \
+			item.peek() -> v_readText (a_text); \
 			Thing_version = saveVersion; \
 			Collection_addItem (x, item.transfer()); \
 		} \
@@ -168,7 +168,7 @@
 		int localVersion = Thing_version; (void) localVersion; \
 		if (localVersion > this -> classInfo -> version) \
 			Melder_throw ("The format of this file is too new. Download a newer version of Praat."); \
-		Class##_Parent :: v_readText (a_text); therror
+		Class##_Parent :: v_readText (a_text);
 
 #define oo_END_CLASS(Class)  \
 	}

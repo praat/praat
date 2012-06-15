@@ -223,7 +223,7 @@ static void UiField_widgetToValue (UiField me) {
 	switch (my type) {
 		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
 			autostring dirty = GuiText_getString (my text);   // the text as typed by the user
-			Interpreter_numericExpression (NULL, dirty.peek(), & my realValue); therror
+			Interpreter_numericExpression (NULL, dirty.peek(), & my realValue);
 			/*
 			 * Put a clean version of the new value in the form.
 			 * If the value is equal to the default, make sure that any default comments are included.
@@ -255,7 +255,7 @@ static void UiField_widgetToValue (UiField me) {
 				my integerValue = 2;
 			} else {
 				double realValue;
-				Interpreter_numericExpression (NULL, dirty.peek(), & realValue); therror
+				Interpreter_numericExpression (NULL, dirty.peek(), & realValue);
 				my integerValue = floor (realValue + 0.5);
 			}
 			if (my integerValue == wcstol (my stringDefaultValue, NULL, 10)) {
@@ -314,7 +314,7 @@ static void UiField_widgetToValue (UiField me) {
 			if (colourToValue (me, string.peek())) {
 				// do nothing
 			} else {
-				Interpreter_numericExpression (NULL, string.peek(), & my colourValue. red); therror
+				Interpreter_numericExpression (NULL, string.peek(), & my colourValue. red);
 				my colourValue. green = my colourValue. blue = my colourValue. red;
 			}
 		}
@@ -501,7 +501,7 @@ static void UiForm_okOrApply (I, GuiObject button, int hide) {
 	 * Keep the gate for error handling.
 	 */
 	try {
-		my okCallback (me, NULL, NULL, NULL, false, my buttonClosure); therror
+		my okCallback (me, NULL, NULL, NULL, false, my buttonClosure);
 		/*
 		 * Write everything to history. Before destruction!
 		 */
@@ -656,7 +656,7 @@ static void commonOkCallback (UiForm dia, const wchar *dummy, Interpreter interp
 	(void) dummy;
 	(void) invokingButtonTitle;
 	(void) modified;
-	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform, NULL, interpreter); therror
+	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform, NULL, interpreter);
 }
 
 UiForm UiForm_createE (EditorCommand cmd, const wchar *title, const wchar *invokingButtonTitle, const wchar *helpTitle) {
@@ -1187,7 +1187,7 @@ void UiForm_parseString (I, const wchar *arguments, Interpreter interpreter) {
 			Melder_throw ("Don't understand contents of field \"", my field [size] -> name, "\".");
 		}
 	}
-	my okCallback (me, NULL, interpreter, NULL, false, my buttonClosure); therror
+	my okCallback (me, NULL, interpreter, NULL, false, my buttonClosure);
 }
 
 void UiForm_parseStringE (EditorCommand cmd, const wchar *arguments, Interpreter interpreter) {
@@ -1492,29 +1492,29 @@ void UiForm_Interpreter_addVariables (I, Interpreter interpreter) {
 		}
 		switch (field -> type) {
 			case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: case UI_BOOLEAN: {
-				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); therror
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> integerValue;
 			} break; case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); therror
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> realValue;
 			} break; case UI_RADIO: case UI_OPTIONMENU: {
-				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); therror
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> integerValue;
 				MelderString_appendCharacter (& lowerCaseFieldName, '$');
-				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); therror
+				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				Melder_free (var -> stringValue);
 				UiOption b = static_cast <UiOption> (field -> options -> item [field -> integerValue]);
 				var -> stringValue = Melder_wcsdup_f (b -> name);
 			} break; case UI_LIST: {
-				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); therror
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				var -> numericValue = field -> integerValue;
 				MelderString_appendCharacter (& lowerCaseFieldName, '$');
-				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); therror
+				var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				Melder_free (var -> stringValue);
 				var -> stringValue = Melder_wcsdup_f ((wchar *) field -> strings [field -> integerValue]);
 			} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
 				MelderString_appendCharacter (& lowerCaseFieldName, '$');
-				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string); therror
+				InterpreterVariable var = Interpreter_lookUpVariable (interpreter, lowerCaseFieldName.string);
 				Melder_free (var -> stringValue);
 				var -> stringValue = Melder_wcsdup_f (field -> stringValue);
 			} break; case UI_COLOUR: {

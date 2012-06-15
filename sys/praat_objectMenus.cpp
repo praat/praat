@@ -117,7 +117,7 @@ DIRECT (Inspect)
 		Melder_throw ("Cannot inspect data from batch.");
 	} else {
 		WHERE (SELECTED) {
-			praat_installEditor (DataEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT); therror
+			praat_installEditor (DataEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
 		}
 	}
 END
@@ -366,7 +366,7 @@ static void readFromFile (MelderFile file) {
 	if (object.peek() && Thing_member (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
 		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
-		Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, object.transfer(), true); therror
+		Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, object.transfer(), true);
 		if (pages -> executable)
 			Melder_warning (L"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
@@ -376,7 +376,7 @@ static void readFromFile (MelderFile file) {
 		ScriptEditor_createFromScript (theCurrentPraatApplication -> topShell, NULL, (Script) object.peek());
 		return;
 	}
-	praat_new1 (object.transfer(), MelderFile_name (file)); therror
+	praat_new1 (object.transfer(), MelderFile_name (file));
 	praat_updateSelection ();
 }
 
@@ -390,11 +390,11 @@ FORM_WRITE (Data_writeToTextFile, L"Save Object(s) as one text file", 0, 0)
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Data);
-			Data_writeToTextFile (me, file); therror
+			Data_writeToTextFile (me, file);
 		}
 	} else {
 		autoCollection set = praat_getSelectedObjects ();
-		Data_writeToTextFile (set.peek(), file); therror
+		Data_writeToTextFile (set.peek(), file);
 	}
 END
 
@@ -402,11 +402,11 @@ FORM_WRITE (Data_writeToShortTextFile, L"Save Object(s) as one short text file",
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Data);
-			Data_writeToShortTextFile (me, file); therror
+			Data_writeToShortTextFile (me, file);
 		}
 	} else {
 		autoCollection set = praat_getSelectedObjects ();
-		Data_writeToShortTextFile (set.peek(), file); therror
+		Data_writeToShortTextFile (set.peek(), file);
 	}
 END
 
@@ -414,11 +414,11 @@ FORM_WRITE (Data_writeToBinaryFile, L"Save Object(s) as one binary file", 0, 0)
 	if (theCurrentPraatObjects -> totalSelection == 1) {
 		LOOP {
 			iam (Data);
-			Data_writeToBinaryFile (me, file); therror
+			Data_writeToBinaryFile (me, file);
 		}
 	} else {
 		autoCollection set = praat_getSelectedObjects ();
-		Data_writeToBinaryFile (set.peek(), file); therror
+		Data_writeToBinaryFile (set.peek(), file);
 	}
 END
 
@@ -471,7 +471,7 @@ DO
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (L"Cannot view a manual from batch.");
 	Manual manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages, false);
-	HyperPage_goToPage_i (manPage, GET_INTEGER (L"Page")); therror
+	HyperPage_goToPage_i (manPage, GET_INTEGER (L"Page"));
 END
 
 FORM (WriteManualToHtmlDirectory, L"Save all pages as HTML files", 0)
@@ -554,7 +554,7 @@ static Any scriptRecognizer (int nread, const char *header, MelderFile file) {
 
 static void cb_openDocument (MelderFile file) {
 	try {
-		readFromFile (file); therror
+		readFromFile (file);
 	} catch (MelderError) {
 		Melder_flushError (NULL);
 	}

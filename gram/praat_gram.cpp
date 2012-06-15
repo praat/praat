@@ -127,7 +127,7 @@ FORM (Network_addConnection, L"Network: Add connection", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_addConnection (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity")); therror
+		me -> f_addConnection (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity"));
 		praat_dataChanged (me);
 	}
 END
@@ -141,7 +141,7 @@ FORM (Network_addNode, L"Network: Add node", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_addNode (GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping")); therror
+		me -> f_addNode (GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping"));
 		praat_dataChanged (me);
 	}
 END
@@ -162,7 +162,7 @@ FORM (Network_getActivity, L"Network: Get activity", 0)
 	OK
 DO
 	iam_ONLY (Network);
-	double activity = me -> f_getActivity (GET_INTEGER (L"Node")); therror
+	double activity = me -> f_getActivity (GET_INTEGER (L"Node"));
 	Melder_information (Melder_double (activity));
 END
 
@@ -171,7 +171,7 @@ FORM (Network_getWeight, L"Network: Get weight", 0)
 	OK
 DO
 	iam_ONLY (Network);
-	double weight = me -> f_getWeight (GET_INTEGER (L"Connection")); therror
+	double weight = me -> f_getWeight (GET_INTEGER (L"Connection"));
 	Melder_information (Melder_double (weight));
 END
 
@@ -182,7 +182,7 @@ FORM (Network_normalizeActivities, L"Network: Normalize activities", 0)
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_normalizeActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node")); therror
+		me -> f_normalizeActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"));
 		praat_dataChanged (me);
 	}
 END
@@ -385,7 +385,7 @@ DIRECT (OTGrammar_edit)
 	LOOP {
 		iam (OTGrammar);
 		autoOTGrammarEditor editor = OTGrammarEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -474,7 +474,7 @@ FORM (OTGrammar_getInterpretiveParse, L"OTGrammar: Interpretive parse", 0)
 DO
 	iam_ONLY (OTGrammar);
 	long bestInput, bestOutput;
-	OTGrammar_getInterpretiveParse (me, GET_STRING (L"Partial output"), & bestInput, & bestOutput); therror
+	OTGrammar_getInterpretiveParse (me, GET_STRING (L"Partial output"), & bestInput, & bestOutput);
 	Melder_information (L"Best input = ", Melder_integer (bestInput), L": ", my tableaus [bestInput]. input,
 		L"\nBest output = ", Melder_integer (bestOutput), L": ", my tableaus [bestInput]. candidates [bestOutput]. output);
 END
@@ -669,7 +669,7 @@ DO
 			GET_REAL (L"Evaluation noise"),
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
 			GET_INTEGER (L"Honour local rankings"),
-			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews")); therror
+			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"));
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);   // partial change
@@ -696,7 +696,7 @@ DO
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
 			GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
-			GET_INTEGER (L"Store history every"), & history); therror
+			GET_INTEGER (L"Store history every"), & history);
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);   // e.g. in case of partial learning
@@ -761,7 +761,7 @@ FORM (OTGrammar_removeConstraint, L"OTGrammar: Remove constraint", 0)
 DO
 	LOOP {
 		iam (OTGrammar);
-		OTGrammar_removeConstraint (me, GET_STRING (L"Constraint name")); therror
+		OTGrammar_removeConstraint (me, GET_STRING (L"Constraint name"));
 		praat_dataChanged (me);
 	}
 END
@@ -772,7 +772,7 @@ FORM (OTGrammar_removeHarmonicallyBoundedCandidates, L"OTGrammar: Remove harmoni
 DO
 	LOOP {
 		iam (OTGrammar);
-		OTGrammar_removeHarmonicallyBoundedCandidates (me, GET_INTEGER (L"Singly")); therror
+		OTGrammar_removeHarmonicallyBoundedCandidates (me, GET_INTEGER (L"Singly"));
 		praat_dataChanged (me);
 	}
 END
@@ -842,7 +842,7 @@ FORM (OTGrammar_setRanking, L"OTGrammar: Set ranking", 0)
 DO
 	LOOP {
 		iam (OTGrammar);
-		OTGrammar_setRanking (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Ranking"), GET_REAL (L"Disharmony")); therror
+		OTGrammar_setRanking (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Ranking"), GET_REAL (L"Disharmony"));
 		praat_dataChanged (me);
 	}
 END
@@ -856,7 +856,7 @@ DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Distributions);
 	double result = OTGrammar_Distributions_getFractionCorrect (me, thee, GET_INTEGER (L"Column number"),
-		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications")); therror
+		GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications"));
 	praat_dataChanged (me);
 	Melder_informationReal (result, NULL);
 END
@@ -901,7 +901,7 @@ FORM (OTGrammar_Distributions_listObligatoryRankings, L"OTGrammar & Distribution
 DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (Distributions);
-	OTGrammar_Distributions_listObligatoryRankings (me, thee, GET_INTEGER (L"Column number")); therror
+	OTGrammar_Distributions_listObligatoryRankings (me, thee, GET_INTEGER (L"Column number"));
 END
 
 FORM (OTGrammar_PairDistribution_findPositiveWeights, L"OTGrammar & PairDistribution: Find positive weights", L"OTGrammar & PairDistribution: Find positive weights...")
@@ -912,7 +912,7 @@ DO
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (PairDistribution);
 	OTGrammar_PairDistribution_findPositiveWeights_e (me, thee,
-		GET_REAL (L"Weight floor"), GET_REAL (L"Margin of separation")); therror
+		GET_REAL (L"Weight floor"), GET_REAL (L"Margin of separation"));
 	praat_dataChanged (me);
 END
 
@@ -926,7 +926,7 @@ DO
 	double result;
 	try {
 		result = OTGrammar_PairDistribution_getFractionCorrect (me, thee,
-			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications")); therror
+			GET_REAL (L"Evaluation noise"), GET_INTEGER (L"Replications"));
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);
@@ -973,7 +973,7 @@ DO
 			GET_REAL (L"Evaluation noise"), GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Honour local rankings"),
 			GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 			GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
-			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews")); therror
+			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"));
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);
@@ -984,7 +984,7 @@ END
 DIRECT (OTGrammar_PairDistribution_listObligatoryRankings)
 	iam_ONLY (OTGrammar);
 	thouart_ONLY (PairDistribution);
-	OTGrammar_PairDistribution_listObligatoryRankings (me, thee); therror
+	OTGrammar_PairDistribution_listObligatoryRankings (me, thee);
 END
 
 FORM (OTGrammar_to_Distributions, L"OTGrammar: Compute output distributions", L"OTGrammar: To output Distributions...")
@@ -1035,7 +1035,7 @@ END
 
 FORM_WRITE (OTGrammar_writeToHeaderlessSpreadsheetFile, L"Write OTGrammar to spreadsheet", 0, L"txt")
 	iam_ONLY (OTGrammar);
-	OTGrammar_writeToHeaderlessSpreadsheetFile (me, file); therror
+	OTGrammar_writeToHeaderlessSpreadsheetFile (me, file);
 END
 
 FORM (OTMulti_drawTableau, L"Draw tableau", L"OT learning")
@@ -1071,7 +1071,7 @@ DIRECT (OTMulti_edit)
 	LOOP {
 		iam (OTMulti);
 		autoOTMultiEditor editor = OTMultiEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
-		praat_installEditor (editor.transfer(), IOBJECT); therror
+		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
 
@@ -1193,7 +1193,7 @@ DO
 	iam_ONLY (OTMulti);
 	wchar output [100];
 	OTMulti_generateOptimalForm (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
-		output, GET_REAL (L"Evaluation noise")); therror
+		output, GET_REAL (L"Evaluation noise"));
 	Melder_information (output);
 	praat_dataChanged (me);
 END
@@ -1215,7 +1215,7 @@ DO
 		try {
 			OTMulti_learnOne (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
 				GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
-				GET_INTEGER (L"Direction"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading")); therror
+				GET_INTEGER (L"Direction"), GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
 			praat_dataChanged (me);
 		} catch (MelderError) {
 			praat_dataChanged (me);
@@ -1230,7 +1230,7 @@ FORM (OTMulti_removeConstraint, L"OTMulti: Remove constraint", 0)
 DO
 	LOOP {
 		iam (OTMulti);
-		OTMulti_removeConstraint (me, GET_STRING (L"Constraint name")); therror
+		OTMulti_removeConstraint (me, GET_STRING (L"Constraint name"));
 		praat_dataChanged (me);
 	}
 END
@@ -1241,7 +1241,7 @@ FORM (OTMulti_resetAllRankings, L"OTMulti: Reset all rankings", 0)
 DO
 	LOOP {
 		iam (OTMulti);
-		OTMulti_reset (me, GET_REAL (L"Ranking")); therror
+		OTMulti_reset (me, GET_REAL (L"Ranking"));
 		praat_dataChanged (me);
 	}
 END
@@ -1253,7 +1253,7 @@ FORM (OTMulti_setConstraintPlasticity, L"OTMulti: Set constraint plasticity", 0)
 DO
 	LOOP {
 		iam (OTMulti);
-		OTMulti_setConstraintPlasticity (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Plasticity")); therror
+		OTMulti_setConstraintPlasticity (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Plasticity"));
 		praat_dataChanged (me);
 	}
 END
@@ -1288,7 +1288,7 @@ FORM (OTMulti_setRanking, L"OTMulti: Set ranking", 0)
 DO
 	LOOP {
 		iam (OTMulti);
-		OTMulti_setRanking (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Ranking"), GET_REAL (L"Disharmony")); therror
+		OTMulti_setRanking (me, GET_INTEGER (L"Constraint"), GET_REAL (L"Ranking"), GET_REAL (L"Disharmony"));
 		praat_dataChanged (me);
 	}
 END
@@ -1340,7 +1340,7 @@ DO
 			GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 			GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
 			GET_REAL (L"Rel. plasticity spreading"),
-			GET_INTEGER (L"Store history every"), & history); therror
+			GET_INTEGER (L"Store history every"), & history);
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);   // e.g. in case of partial learning

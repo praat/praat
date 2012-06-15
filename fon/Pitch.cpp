@@ -398,14 +398,14 @@ Pitch Pitch_create (double tmin, double tmax, long nt, double dt, double t1,
 {
 	try {
 		autoPitch me = Thing_new (Pitch);
-		Sampled_init (me.peek(), tmin, tmax, nt, dt, t1); therror
+		Sampled_init (me.peek(), tmin, tmax, nt, dt, t1);
 		my ceiling = ceiling;
 		my maxnCandidates = maxnCandidates;
 		my frame = NUMvector <structPitch_Frame> (1, nt);
 
 		/* Put one candidate in every frame (unvoiced, silent). */
 		for (long it = 1; it <= nt; it ++) {
-			Pitch_Frame_init (& my frame [it], 1); therror
+			Pitch_Frame_init (& my frame [it], 1);
 		}
 
 		return me.transfer();

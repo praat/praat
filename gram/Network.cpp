@@ -94,7 +94,7 @@ Network Network_create (double minimumActivity, double maximumActivity, double s
 		autoNetwork me = Thing_new (Network);
 		me -> f_init (minimumActivity, maximumActivity, spreadingRate,
 			selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
-			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections); therror
+			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Network not created.");

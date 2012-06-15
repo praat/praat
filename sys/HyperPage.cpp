@@ -757,7 +757,7 @@ static void menu_cb_searchForPage (EDITOR_ARGS) {
 		TEXTFIELD (L"Page", L"a")
 	EDITOR_OK
 	EDITOR_DO
-		HyperPage_goToPage (me, GET_STRING (L"Page")); therror   // BUG
+		HyperPage_goToPage (me, GET_STRING (L"Page"));   // BUG
 	EDITOR_END
 }
 
@@ -1047,7 +1047,7 @@ void structHyperPage :: v_createChildren () {
 
 void HyperPage_init (HyperPage me, GuiObject parent, const wchar *title, Data data) {
 	resolution = Gui_getResolution (parent);
-	Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data); therror
+	Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data);
 	#if motif
 		Melder_assert (XtWindow (my drawingArea));
 	#endif

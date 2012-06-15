@@ -384,7 +384,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 		switch (my types [ipar]) {
 			case Interpreter_REAL:
 			case Interpreter_POSITIVE: {
-				double value = UiForm_getReal_check (dialog, parameter); therror
+				double value = UiForm_getReal_check (dialog, parameter);
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_calloc_f (wchar_t, 40);
 				wcscpy (my arguments [ipar], Melder_double (value));
@@ -393,7 +393,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_INTEGER:
 			case Interpreter_NATURAL:
 			case Interpreter_BOOLEAN: {
-				long value = UiForm_getInteger (dialog, parameter); therror
+				long value = UiForm_getInteger (dialog, parameter);
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_calloc_f (wchar_t, 40);
 				swprintf (my arguments [ipar], 40, L"%ld", value);
@@ -403,8 +403,8 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_OPTIONMENU: {
 				long integerValue = 0;
 				wchar_t *stringValue = NULL;
-				integerValue = UiForm_getInteger (dialog, parameter); therror
-				stringValue = UiForm_getString (dialog, parameter); therror
+				integerValue = UiForm_getInteger (dialog, parameter);
+				stringValue = UiForm_getString (dialog, parameter);
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_calloc_f (wchar, 40);
 				swprintf (my arguments [ipar], 40, L"%ld", integerValue);
@@ -713,10 +713,10 @@ void Interpreter_run (Interpreter me, wchar *text) {
 			 * Create variable names as-are and variable names without capitals.
 			 */
 			wcscpy (parameter, my parameters [ipar]);
-			parameterToVariable (me, my types [ipar], parameter, ipar); therror
+			parameterToVariable (me, my types [ipar], parameter, ipar);
 			if (parameter [0] >= 'A' && parameter [0] <= 'Z') {
 				parameter [0] = tolower (parameter [0]);
-				parameterToVariable (me, my types [ipar], parameter, ipar); therror
+				parameterToVariable (me, my types [ipar], parameter, ipar);
 			}
 		}
 		/*
@@ -815,7 +815,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 				}
 				c0 = command2.string [0];   /* Resume in order to allow things like 'c$' = 5 */
 				if ((c0 < 'a' || c0 > 'z') && ! (c0 == '.' && command2.string [1] >= 'a' && command2.string [1] <= 'z')) {
-					praat_executeCommand (me, command2.string); therror
+					praat_executeCommand (me, command2.string);
 				/*
 				 * Interpret control flow and variables.
 				 */
@@ -826,7 +826,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 					case 'a':
 						if (wcsnequ (command2.string, L"assert ", 7)) {
 							double value;
-							Interpreter_numericExpression (me, command2.string + 7, & value); therror
+							Interpreter_numericExpression (me, command2.string + 7, & value);
 							if (value == 0.0 || value == NUMundefined) {
 								assertionFailed = TRUE;
 								Melder_throw ("Script assertion fails in line ", lineNumber,
@@ -909,7 +909,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 											}
 											if (q [-1] == '$') {
 												save = *q; *q = '\0';
-												InterpreterVariable var = Interpreter_lookUpVariable (me, par); *q = save; therror
+												InterpreterVariable var = Interpreter_lookUpVariable (me, par); *q = save;
 												Melder_free (var -> stringValue);
 												var -> stringValue = Melder_wcsdup_f (arg.string);
 											} else {
@@ -918,7 +918,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 												Interpreter_numericExpression (me, arg.string, & value);
 												my callDepth ++;
 												save = *q; *q = '\0'; 
-												InterpreterVariable var = Interpreter_lookUpVariable (me, par); *q = save; therror
+												InterpreterVariable var = Interpreter_lookUpVariable (me, par); *q = save;
 												var -> numericValue = value;
 											}
 										}
@@ -935,7 +935,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 						break;
 					case 'd':
 						if (wcsnequ (command2.string, L"dec ", 4)) {
-							InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string + 4); therror
+							InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string + 4);
 							var -> numericValue -= 1.0;
 						} else fail = TRUE;
 						break;
@@ -989,7 +989,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							if (fromif) {
 								double value;
 								fromif = FALSE;
-								Interpreter_numericExpression (me, command2.string + 5, & value); therror
+								Interpreter_numericExpression (me, command2.string + 5, & value);
 								if (value == 0.0) {
 									int depth = 0;
 									long iline;
@@ -1031,7 +1031,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							/*
 							 * Make sure that lines like "echo = 3" will not be regarded as assignments.
 							 */
-							praat_executeCommand (me, command2.string); therror
+							praat_executeCommand (me, command2.string);
 						} else fail = TRUE;
 						break;
 					case 'f':
@@ -1045,13 +1045,13 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							while (*varpos == ' ') varpos ++;
 							if (endvar - varpos < 0) Melder_throw ("Missing loop variable after \'for\'.");
 							InterpreterVariable var = Interpreter_lookUpVariable (me, varpos);
-							Interpreter_numericExpression (me, topos + 4, & toValue); therror
+							Interpreter_numericExpression (me, topos + 4, & toValue);
 							if (fromendfor) {
 								fromendfor = FALSE;
 								loopVariable = var -> numericValue + 1.0;
 							} else if (frompos) {
 								*topos = '\0';
-								Interpreter_numericExpression (me, frompos + 6, & loopVariable); therror
+								Interpreter_numericExpression (me, frompos + 6, & loopVariable);
 							} else {
 								loopVariable = 1.0;
 							}
@@ -1087,7 +1087,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							if (space) {
 								double value;
 								*space = '\0';
-								Interpreter_numericExpression (me, command2.string + 6 + wcslen (labelName), & value); therror
+								Interpreter_numericExpression (me, command2.string + 6 + wcslen (labelName), & value);
 								if (value == 0.0) dojump = FALSE;
 							}
 							if (dojump) {
@@ -1102,7 +1102,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 					case 'i':
 						if (command2.string [1] == 'f' && command2.string [2] == ' ') {   /* if_ */
 							double value;
-							Interpreter_numericExpression (me, command2.string + 3, & value); therror
+							Interpreter_numericExpression (me, command2.string + 3, & value);
 							if (value == 0.0) {
 								int depth = 0;
 								long iline;
@@ -1123,7 +1123,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 								Melder_throw ("The value of the 'if' condition is undefined.");
 							}
 						} else if (wcsnequ (command2.string, L"inc ", 4)) {
-							InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string + 4); therror
+							InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string + 4);
 							var -> numericValue += 1.0;
 						} else fail = TRUE;
 						break;
@@ -1162,7 +1162,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							 * Make sure that lines like "print = 3" will not be regarded as assingments.
 							 */
 							if (command2.string [5] == ' ' || (wcsnequ (command2.string + 5, L"line", 4) && (command2.string [9] == ' ' || command2.string [9] == '\0'))) {
-								praat_executeCommand (me, command2.string); therror
+								praat_executeCommand (me, command2.string);
 							} else fail = TRUE;
 						} else fail = TRUE;
 						break;
@@ -1185,7 +1185,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 					case 'u':
 						if (wcsnequ (command2.string, L"until ", 6)) {
 							double value;
-							Interpreter_numericExpression (me, command2.string + 6, & value); therror
+							Interpreter_numericExpression (me, command2.string + 6, & value);
 							if (value == 0.0) {
 								int depth = 0;
 								long iline;
@@ -1207,7 +1207,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 					case 'w':
 						if (wcsnequ (command2.string, L"while ", 6)) {
 							double value;
-							Interpreter_numericExpression (me, command2.string + 6, & value); therror
+							Interpreter_numericExpression (me, command2.string + 6, & value);
 							if (value == 0.0) {
 								int depth = 0;
 								long iline;
@@ -1276,7 +1276,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 								if (*p == '\n' || *p == '\0')
 									Melder_throw ("Missing closing bracket (]) in indexed variable.");
 								double numericIndexValue;
-								Interpreter_numericExpression (me, index.string, & numericIndexValue); therror
+								Interpreter_numericExpression (me, index.string, & numericIndexValue);
 								MelderString_append (& indexedVariableName, Melder_double (numericIndexValue));
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == ']') {
@@ -1308,22 +1308,22 @@ void Interpreter_run (Interpreter me, wchar *text) {
 						}
 						if (withFile) {
 							structMelderFile file = { 0 };
-							Melder_relativePathToFile (p, & file); therror
+							Melder_relativePathToFile (p, & file);
 							if (withFile == 1) {
-								wchar_t *stringValue = MelderFile_readText (& file); therror
-								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName); therror
+								wchar_t *stringValue = MelderFile_readText (& file);
+								InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 								Melder_free (var -> stringValue);
 								var -> stringValue = stringValue;   /* var becomes owner */
 							} else if (withFile == 2) {
 								if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw ("Commands that write to a file are not available inside pictures.");
-								InterpreterVariable var = Interpreter_hasVariable (me, variableName); therror
+								InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 								if (! var) Melder_throw ("Variable ", variableName, " undefined.");
-								MelderFile_appendText (& file, var -> stringValue); therror
+								MelderFile_appendText (& file, var -> stringValue);
 							} else {
 								if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw ("Commands that write to a file are not available inside pictures.");
-								InterpreterVariable var = Interpreter_hasVariable (me, variableName); therror
+								InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 								if (! var) Melder_throw ("Variable ", variableName, " undefined.");
-								MelderFile_writeText (& file, var -> stringValue); therror
+								MelderFile_writeText (& file, var -> stringValue);
 							}
 						} else if (isCommand (p)) {
 							/*
@@ -1332,7 +1332,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 							autoMelderDivertInfo divert (& valueString);
 							praat_executeCommand (me, p);
-							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName); therror
+							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 							Melder_free (var -> stringValue);
 							var -> stringValue = Melder_wcsdup (valueString.string);
 						} else {
@@ -1345,8 +1345,8 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							 *       ... else "" fi
 							 */
 							wchar_t *stringValue;
-							Interpreter_stringExpression (me, p, & stringValue); therror
-							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName); therror
+							Interpreter_stringExpression (me, p, & stringValue);
+							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 							Melder_free (var -> stringValue);
 							var -> stringValue = stringValue;   /* var becomes owner */
 						}
@@ -1366,8 +1366,8 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							Melder_throw ("Missing expression after variable ", command2.string, ".");
 						}
 						struct Formula_NumericArray value;
-						Interpreter_numericArrayExpression (me, p, & value); therror
-						InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string); therror
+						Interpreter_numericArrayExpression (me, p, & value);
+						InterpreterVariable var = Interpreter_lookUpVariable (me, command2.string);
 						NUMmatrix_free (var -> numericArrayValue. data, 1, 1);
 						var -> numericArrayValue = value;
 					} else {
@@ -1381,7 +1381,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							/*
 							 * Command ends here: it may be a PraatShell command.
 							 */
-							praat_executeCommand (me, command2.string); therror
+							praat_executeCommand (me, command2.string);
 							continue;   // next line
 						}
 						wchar_t *endOfVariable = p;
@@ -1413,7 +1413,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 								}
 								if (*p == '\n' || *p == '\0')
 									Melder_throw ("Missing closing bracket (]) in indexed variable.");
-								Interpreter_numericExpression (me, index.string, & value); therror
+								Interpreter_numericExpression (me, index.string, & value);
 								MelderString_append (& indexedVariableName, Melder_double (value));
 								MelderString_appendCharacter (& indexedVariableName, *p);
 								if (*p == ']') {
@@ -1430,7 +1430,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							/*
 							 * Not an assignment: perhaps a PraatShell command (select, echo, execute, pause ...).
 							 */
-							praat_executeCommand (me, variableName); therror
+							praat_executeCommand (me, variableName);
 							continue;   // next line
 						}
 						p += typeOfAssignment == 0 ? 1 : 2;
@@ -1467,7 +1467,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							/*
 							 * Get the value of the formula.
 							 */
-							Interpreter_numericExpression (me, p, & value); therror
+							Interpreter_numericExpression (me, p, & value);
 						}
 						/*
 						 * Assign the value to a variable.
@@ -1477,13 +1477,13 @@ void Interpreter_run (Interpreter me, wchar *text) {
 							 * Use an existing variable, or create a new one.
 							 */
 							//Melder_casual ("looking up variable %ls", variableName);
-							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName); therror
+							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 							var -> numericValue = value;
 						} else {
 							/*
 							 * Modify an existing variable.
 							 */
-							InterpreterVariable var = Interpreter_hasVariable (me, variableName); therror
+							InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 							if (var == NULL) Melder_throw ("Unknown variable ", variableName, ".");
 							if (var -> numericValue == NUMundefined) {
 								/* Keep it that way. */
@@ -1555,9 +1555,9 @@ void Interpreter_stop (Interpreter me) {
 }
 
 void Interpreter_voidExpression (Interpreter me, const wchar *expression) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); therror
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE);
 	struct Formula_Result result;
-	Formula_run (0, 0, & result); therror
+	Formula_run (0, 0, & result);
 }
 
 void Interpreter_numericExpression (Interpreter me, const wchar *expression, double *value) {
@@ -1565,30 +1565,30 @@ void Interpreter_numericExpression (Interpreter me, const wchar *expression, dou
 	if (wcsstr (expression, L"(=")) {
 		*value = Melder_atof (expression);
 	} else {
-		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE); therror
+		Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE);
 		struct Formula_Result result;
-		Formula_run (0, 0, & result); therror
+		Formula_run (0, 0, & result);
 		*value = result. result.numericResult;
 	}
 }
 
 void Interpreter_stringExpression (Interpreter me, const wchar *expression, wchar **value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, FALSE); therror
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, FALSE);
 	struct Formula_Result result;
-	Formula_run (0, 0, & result); therror
+	Formula_run (0, 0, & result);
 	*value = result. result.stringResult;
 }
 
 void Interpreter_numericArrayExpression (Interpreter me, const wchar *expression, struct Formula_NumericArray *value) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, FALSE); therror
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, FALSE);
 	struct Formula_Result result;
-	Formula_run (0, 0, & result); therror
+	Formula_run (0, 0, & result);
 	*value = result. result.numericArrayResult;
 }
 
 void Interpreter_anyExpression (Interpreter me, const wchar_t *expression, struct Formula_Result *result) {
-	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, FALSE); therror
-	Formula_run (0, 0, result); therror
+	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_UNKNOWN, FALSE);
+	Formula_run (0, 0, result);
 }
 
 /* End of file Interpreter.cpp */

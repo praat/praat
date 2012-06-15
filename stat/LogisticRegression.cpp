@@ -76,7 +76,7 @@ void structLogisticRegression :: v_info () {
 LogisticRegression LogisticRegression_create (const wchar *dependent1, const wchar *dependent2) {
 	try {
 		autoLogisticRegression me = Thing_new (LogisticRegression);
-		Regression_init (me.peek()); therror
+		Regression_init (me.peek());
 		my dependent1 = Melder_wcsdup (dependent1);
 		my dependent2 = Melder_wcsdup (dependent2);	
 		return me.transfer();
@@ -102,9 +102,9 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 	autoNUMmatrix <double> smallMatrix (0, numberOfFactors, 0, numberOfParameters);
 	autoLogisticRegression thee = LogisticRegression_create (my columnHeaders [dependent1]. label, my columnHeaders [dependent2]. label);
 	for (long ivar = 1; ivar <= numberOfFactors; ivar ++) {
-		double minimum = Table_getMinimum (me, factors [ivar]); therror
-		double maximum = Table_getMaximum (me, factors [ivar]); therror
-		Regression_addParameter (thee.peek(), my columnHeaders [factors [ivar]]. label, minimum, maximum, 0.0); therror
+		double minimum = Table_getMinimum (me, factors [ivar]);
+		double maximum = Table_getMaximum (me, factors [ivar]);
+		Regression_addParameter (thee.peek(), my columnHeaders [factors [ivar]]. label, minimum, maximum, 0.0);
 	}
 	for (long icell = 1; icell <= numberOfCells; icell ++) {
 		y0 [icell] = Table_getNumericValue_Assert (me, icell, dependent1);
@@ -278,8 +278,8 @@ LogisticRegression Table_to_LogisticRegression (Table me, const wchar *factors_c
 	try {
 		long numberOfFactors;
 		autoNUMvector <long> factors_columnIndices (Table_getColumnIndicesFromColumnLabelString (me, factors_columnLabelString, & numberOfFactors), 1);
-		long dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel); therror
-		long dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel); therror
+		long dependent1_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent1_columnLabel);
+		long dependent2_columnIndex = Table_getColumnIndexFromColumnLabel (me, dependent2_columnLabel);
 		autoLogisticRegression thee = _Table_to_LogisticRegression (me, factors_columnIndices.peek(), numberOfFactors, dependent1_columnIndex, dependent2_columnIndex);
 		return thee.transfer();
 	} catch (MelderError) {

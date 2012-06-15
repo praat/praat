@@ -207,7 +207,7 @@ void structPointEditor :: v_play (double a_tmin, double a_tmax) {
 	if (sound.data) {
 		Sound_playPart (sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
-		PointProcess_playPart ((PointProcess) data, a_tmin, a_tmax); therror
+		PointProcess_playPart ((PointProcess) data, a_tmin, a_tmax);
 	}
 }
 
@@ -215,7 +215,7 @@ PointEditor PointEditor_create (GuiObject parent, const wchar *title, PointProce
 	try {
 		autoPointEditor me = Thing_new (PointEditor);
 		if (sound) {
-			my monoSound = Sound_convertToMono (sound); therror
+			my monoSound = Sound_convertToMono (sound);
 		}
 		TimeSoundEditor_init (me.peek(), parent, title, point, my monoSound, false);
 		return me.transfer();
