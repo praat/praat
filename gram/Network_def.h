@@ -69,10 +69,22 @@ oo_DEFINE_CLASS (Network, Data)
 	oo_DOUBLE (d_minimumWeight)
 	oo_DOUBLE (d_maximumWeight)
 	oo_FROM (2)
-		oo_ENUM (kNetwork_weightUpdateRule, d_weightUpdateRule)
+		oo_ENUM (kNetwork_weightUpdateRule, d_dummyWeightUpdateRule)
 	oo_ENDFROM
 	oo_DOUBLE (d_learningRate)
+	oo_FROM (5)
+		oo_DOUBLE (d_instar)
+		oo_DOUBLE (d_outstar)
+	oo_ENDFROM
 	oo_DOUBLE (d_leak)
+	#if oo_READING
+		if (localVersion < 5) {
+			if (d_learningRate != 0.0) d_leak /= d_learningRate;
+			if (d_dummyWeightUpdateRule == kNetwork_weightUpdateRule_INSTAR)    d_instar = 1.0, d_outstar = 0.0;
+			if (d_dummyWeightUpdateRule == kNetwork_weightUpdateRule_OUTSTAR)   d_instar = 0.0, d_outstar = 1.0;
+			if (d_dummyWeightUpdateRule == kNetwork_weightUpdateRule_INOUTSTAR) d_instar = 0.5, d_outstar = 0.5;
+		}
+	#endif
 	oo_DOUBLE (d_xmin)
 	oo_DOUBLE (d_xmax)
 	oo_DOUBLE (d_ymin)
@@ -100,6 +112,9 @@ oo_DEFINE_CLASS (Network, Data)
 			void f_spreadActivities (long numberOfSteps);
 			void f_updateWeights ();
 			void f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule);
+			void f_setInstar (double instar);
+			void f_setOutstar (double outstar);
+			void f_setLeak (double leak);
 			void f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule);
 			void f_setShunting (double shunting);
 			void f_setActivationClippingRule (enum kNetwork_activationClippingRule activationClippingRule);

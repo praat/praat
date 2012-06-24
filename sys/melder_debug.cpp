@@ -70,6 +70,8 @@ the behaviour of that program changes in the following way:
 41: OTGrammar_getWinner: always first choice rather than random choice 
 42: OTGrammar_getWinner: always last choice rather than random choice
 43: trace class table initialization
+44: trace Collection
+45: tracing structMatrix :: read ()
 1264: Mac: Sound_recordFixedTime uses microphone "FW Solo (1264)"
 
 (negative values are for David)

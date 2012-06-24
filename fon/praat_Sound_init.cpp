@@ -50,6 +50,11 @@ void praat_TimeFunction_modify_init (ClassInfo klas);
 
 /***** LONGSOUND *****/
 
+DIRECT (LongSound_concatenate)
+	Melder_information (L"To concatenate LongSound objects, select them in the list\nand choose \"Save as WAV file...\" or a similar command.\n"
+		"The result will be a sound file that contains\nthe concatenation of the selected sounds.");
+END
+
 FORM (LongSound_extractPart, L"LongSound: Extract part", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"1.0")
@@ -2354,6 +2359,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classLongSound, 0, L"To TextGrid...", 0, 1, DO_LongSound_to_TextGrid);
 	praat_addAction1 (classLongSound, 0, L"Convert to Sound", 0, 0, 0);
 	praat_addAction1 (classLongSound, 0, L"Extract part...", 0, 0, DO_LongSound_extractPart);
+	praat_addAction1 (classLongSound, 0, L"Concatenate?", 0, 0, DO_LongSound_concatenate);
 	praat_addAction1 (classLongSound, 0, L"Save as WAV file...", 0, 0, DO_LongSound_writeToWavFile);
 	praat_addAction1 (classLongSound, 0, L"Write to WAV file...", 0, praat_HIDDEN, DO_LongSound_writeToWavFile);
 	praat_addAction1 (classLongSound, 0, L"Save as AIFF file...", 0, 0, DO_LongSound_writeToAiffFile);

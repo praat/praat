@@ -360,6 +360,7 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 	}
 }
 
+#if 0
 void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned) {
 	try {
 		long nClip = 0;
@@ -402,6 +403,7 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int li
 		Melder_throw (me, ": saving as raw file not performed.");
 	}
 }
+#endif
 
 struct dialogic_adpcm {
 	char code;

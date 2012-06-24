@@ -90,6 +90,8 @@ extern const char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 	#include "macport_off.h"
 	static ATSFontRef theTimesAtsuiFont, theHelveticaAtsuiFont, theCourierAtsuiFont, theSymbolAtsuiFont,
 		thePalatinoAtsuiFont, theIpaTimesAtsuiFont, theIpaPalatinoAtsuiFont, theZapfDingbatsAtsuiFont, theArabicAtsuiFont;
+	static CTFontRef theTimesCoreTextFont, theHelveticaCoreTextFont, theCourierCoreTextFont, theSymbolCoreTextFont,
+		thePalatinoCoreTextFont, theIpaTimesCoreTextFont, theIpaPalatinoCoreTextFont, theZapfDingbatsCoreTextFont, theArabicCoreTextFont;
 	static RGBColor theWhiteColour = { 0xFFFF, 0xFFFF, 0xFFFF }, theBlueColour = { 0, 0, 0xFFFF };
 #endif
 
@@ -285,6 +287,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				my font == kGraphics_font_COURIER ? theCourierAtsuiFont : theTimesAtsuiFont;
 			Melder_assert (atsuiFont != 0);
 			lc -> font.integer = (long) atsuiFont;
+			//CTFontRef ctFont = CTFontCreateWithName (CFSTR("Times"), 48, NULL);
 			lc -> code = lc -> kar;
 			if (lc -> code == 0) {
 				_Graphics_widechar *lc2;
@@ -1613,6 +1616,34 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 	}
 	Melder_assert (theTimesAtsuiFont != 0);
 	ATSUFindFontFromName (NULL, 0, 0, 0, 0, kFontArabicLanguage, & theArabicAtsuiFont);
+	if (theTimesCoreTextFont != 0) return true;   // once
+	theTimesCoreTextFont = CTFontCreateWithName (CFSTR ("Times"), 0.0, NULL);
+	if (! theTimesCoreTextFont) theTimesCoreTextFont = CTFontCreateWithName (CFSTR ("Times New Roman"), 0.0, NULL);
+	theHelveticaCoreTextFont = CTFontCreateWithName (CFSTR ("Helvetica"), 0.0, NULL);
+	if (! theHelveticaCoreTextFont) theHelveticaCoreTextFont = CTFontCreateWithName (CFSTR ("Arial"), 0.0, NULL);
+	theCourierCoreTextFont = CTFontCreateWithName (CFSTR ("Courier"), 0.0, NULL);
+	if (! theCourierCoreTextFont) theCourierCoreTextFont = CTFontCreateWithName (CFSTR ("Courier New"), 0.0, NULL);
+	theSymbolCoreTextFont = CTFontCreateWithName (CFSTR ("Symbol"), 0.0, NULL);
+	thePalatinoCoreTextFont = CTFontCreateWithName (CFSTR ("Palatino"), 0.0, NULL);
+	if (! thePalatinoCoreTextFont) thePalatinoCoreTextFont = CTFontCreateWithName (CFSTR ("Book Antiqua"), 0.0, NULL);
+	if (! thePalatinoCoreTextFont) thePalatinoCoreTextFont = theTimesCoreTextFont;
+	theZapfDingbatsCoreTextFont = CTFontCreateWithName (CFSTR ("Zapf Dingbats"), 0.0, NULL);
+	if (! theZapfDingbatsCoreTextFont) theZapfDingbatsCoreTextFont = theTimesCoreTextFont;
+	theIpaTimesCoreTextFont = CTFontCreateWithName (CFSTR ("Doulos SIL"), 0.0, NULL);
+	theIpaPalatinoCoreTextFont = CTFontCreateWithName (CFSTR ("Charis SIL"), 0.0, NULL);
+	if (! theIpaTimesCoreTextFont) {
+		if (theIpaPalatinoCoreTextFont) {
+			theIpaTimesCoreTextFont = theIpaPalatinoCoreTextFont;
+		} else {
+			Melder_warning (L"Praat cannot find the Charis SIL or Doulos SIL font.\n"
+				"Phonetic characters will not look well.");   // because ATSUI will use the "last resort font"
+			theIpaTimesCoreTextFont = theTimesCoreTextFont;
+			theIpaPalatinoCoreTextFont = thePalatinoCoreTextFont;
+		}
+	} else if (! theIpaPalatinoCoreTextFont) {
+		theIpaPalatinoCoreTextFont = theIpaTimesCoreTextFont;
+	}
+	Melder_assert (theTimesCoreTextFont != 0);
 	return true;
 }
 #endif

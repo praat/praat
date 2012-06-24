@@ -62,7 +62,7 @@ void structNetwork :: v_info ()
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (d_numberOfConnections));
 }
 
-Thing_implement (Network, Data, 4);
+Thing_implement (Network, Data, 5);
 
 void structNetwork :: f_init (double minimumActivity, double maximumActivity, double spreadingRate,
 	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
@@ -75,6 +75,8 @@ void structNetwork :: f_init (double minimumActivity, double maximumActivity, do
 	d_minimumWeight = minimumWeight;
 	d_maximumWeight = maximumWeight;
 	d_learningRate = learningRate;
+	d_instar = 0.0;
+	d_outstar = 0.0;
 	d_leak = leak;
 	d_xmin = xmin;
 	d_xmax = xmax;
@@ -270,24 +272,8 @@ void structNetwork :: f_updateWeights () {
 		NetworkConnection connection = & d_connections [iconn];
 		NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
 		NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
-		switch (d_weightUpdateRule) {
-			case kNetwork_weightUpdateRule_HEBBIAN:
-				connection -> weight += connection -> plasticity * d_learningRate *
-					nodeFrom -> activity * nodeTo -> activity - d_leak * connection -> weight;
-			break;
-			case kNetwork_weightUpdateRule_INSTAR:
-				connection -> weight += connection -> plasticity * d_learningRate *
-					nodeTo -> activity * (nodeFrom -> activity - connection -> weight);
-			break;
-			case kNetwork_weightUpdateRule_OUTSTAR:
-				connection -> weight += connection -> plasticity * d_learningRate *
-					nodeFrom -> activity * (nodeTo -> activity - connection -> weight);
-			break;
-			case kNetwork_weightUpdateRule_INOUTSTAR:
-				connection -> weight += connection -> plasticity * d_learningRate *
-					(2 * nodeFrom -> activity * nodeTo -> activity - (nodeFrom -> activity + nodeTo -> activity + 2 * d_leak) * connection -> weight);
-			break;
-		}
+		connection -> weight += connection -> plasticity * d_learningRate *
+			(nodeFrom -> activity * nodeTo -> activity - (d_instar * nodeTo -> activity + d_outstar * nodeFrom -> activity + d_leak) * connection -> weight);
 		if (connection -> weight < d_minimumWeight) connection -> weight = d_minimumWeight;
 		else if (connection -> weight > d_maximumWeight) connection -> weight = d_maximumWeight;
 	}
@@ -452,7 +438,26 @@ void structNetwork :: f_addConnection (long nodeFrom, long nodeTo, double weight
 }
 
 void structNetwork :: f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule) {
-	d_weightUpdateRule = weightUpdateRule;
+	if (weightUpdateRule == kNetwork_weightUpdateRule_HEBBIAN)
+		d_instar = 0.0, d_outstar = 0.0;
+	else if (weightUpdateRule == kNetwork_weightUpdateRule_INSTAR)
+		d_instar = 1.0, d_outstar = 0.0;
+	else if (weightUpdateRule == kNetwork_weightUpdateRule_OUTSTAR)
+		d_instar = 0.0, d_outstar = 1.0;
+	else if (weightUpdateRule == kNetwork_weightUpdateRule_INSTAR)
+		d_instar = 0.5, d_outstar = 0.5;
+}
+
+void structNetwork :: f_setInstar (double instar) {
+	d_instar = instar;
+}
+
+void structNetwork :: f_setOutstar (double outstar) {
+	d_outstar = outstar;
+}
+
+void structNetwork :: f_setLeak (double leak) {
+	d_leak = leak;
 }
 
 void structNetwork :: f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule) {

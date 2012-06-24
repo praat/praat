@@ -5258,20 +5258,6 @@ FORM_READ (KlattTable_readFromRawTextFile, L"KlattTable_readFromRawTextFile", 0,
 	praat_new (KlattTable_readFromRawTextFile (file), MelderFile_name (file));
 END
 
-FORM_WRITE (Sound_writeToRawFileBE, L"Sound: Save as raw 16-bit Big Endian file", 0, L"raw")
-	LOOP {
-		iam (Sound);
-		Sound_writeToRawFile (me, file, 0, 0, 16, 0);
-	}
-END
-
-FORM_WRITE (Sound_writeToRawFileLE, L"Sound: Save as raw 16-bit Little Endian file", 0, L"raw")
-	LOOP {
-		iam (Sound);
-		Sound_writeToRawFile (me, file, 0, 1, 16, 0);
-	}
-END
-
 /************ Spectrograms *********************************************/
 
 FORM (Spectrograms_to_DTW, L"Spectrograms: To DTW", 0)
@@ -7246,11 +7232,6 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classRoots, 0, L"To Spectrum...", 0, 0, DO_Roots_to_Spectrum);
 
 	praat_addAction2 (classRoots, 1, classPolynomial, 1, L"Polish roots", 0, 0, DO_Roots_and_Polynomial_polish);
-
-	praat_addAction1 (classSound, 1, L"Save as raw 16-bit Big Endian file...", 0, 0, DO_Sound_writeToRawFileBE);
-	praat_addAction1 (classSound, 1, L"Write to raw 16-bit Big Endian file...", 0, praat_HIDDEN, DO_Sound_writeToRawFileBE);
-	praat_addAction1 (classSound, 1, L"Save as raw 16-bit Little Endian file...", 0, 0, DO_Sound_writeToRawFileLE);
-	praat_addAction1 (classSound, 1, L"Write to raw 16-bit Little Endian file...", 0, praat_HIDDEN, DO_Sound_writeToRawFileLE);
 
 	praat_addAction1 (classSound, 0, L"To TextGrid (silences)...", L"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
     praat_addAction1 (classSound, 0, L"Play one channel...", L"Play", praat_HIDDEN, DO_Sound_playOneChannel);

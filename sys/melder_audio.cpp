@@ -82,11 +82,11 @@ static struct {
 void Melder_audio_prefs (void) {
 	Preferences_addEnum (L"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, DEFAULT);
 	Preferences_addBool (L"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
-	Preferences_addBool (L"Audio.outputUsesPortAudio", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
-	Preferences_addBool (L"Audio.outputUsesBlocking", & preferences. outputUsesBlocking, false);
-	Preferences_addDouble (L"Audio.silenceBefore", & preferences. silenceBefore, 0.0);
-	Preferences_addDouble (L"Audio.silenceAfter", & preferences. silenceAfter, 0.5);
-	Preferences_addBool (L"Audio.inputUsesPortAudio2", & preferences.inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
+	Preferences_addBool (L"Audio.outputUsesPortAudio2", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
+	Preferences_addBool (L"Audio.outputUsesBlocking2", & preferences. outputUsesBlocking, false);
+	Preferences_addDouble (L"Audio.silenceBefore", & preferences. silenceBefore, kMelderAudio_outputSilenceBefore_DEFAULT);
+	Preferences_addDouble (L"Audio.silenceAfter", & preferences. silenceAfter, kMelderAudio_outputSilenceAfter_DEFAULT);
+	Preferences_addBool (L"Audio.inputUsesPortAudio2", & preferences. inputUsesPortAudio, kMelderAudio_inputUsesPortAudio_DEFAULT);
 }
 
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity) {

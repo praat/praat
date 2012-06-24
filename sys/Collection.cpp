@@ -197,15 +197,21 @@ void structCollection :: v_readBinary (FILE *f) {
 		}
 	} else {
 		long l_size = bingeti4 (f);
+		if (Melder_debug == 44)
+			Melder_casual ("structCollection :: v_readBinary: Reading %ld objects", l_size);
 		Collection_init (this, NULL, l_size);
 		for (long i = 1; i <= l_size; i ++) {
 			long saveVersion = Thing_version;   // the version of the Collection...
 			autostring8 klas = bingets1 (f);
+			if (Melder_debug == 44)
+				Melder_casual ("structCollection :: v_readBinary: Reading object of type %s", klas.peek());
 			item [i] = Thing_newFromClassNameA (klas.peek());
 			this -> size ++;
 			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadBinary ((Data) item [i]))
 				Melder_throw ("Objects of class ", Thing_className ((Thing) item [i]), " cannot be read.");
 			autostring name = bingetw2 (f);
+			if (Melder_debug == 44)
+				Melder_casual ("structCollection :: v_readBinary: Reading object with name %ls", name.peek());
 			Thing_setName ((Thing) item [i], name.peek());
 			Data_readBinary ((Data) item [i], f);
 			Thing_version = saveVersion;

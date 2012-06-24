@@ -233,6 +233,39 @@ DO
 	}
 END
 
+FORM (Network_setInstar, L"Network: Set instar", 0)
+	REAL (L"Instar", L"0.0")
+	OK
+iam_ONLY (Network);
+SET_REAL (L"Instar", my d_instar);
+DO
+	iam_ONLY (Network);
+	me -> f_setInstar (GET_REAL (L"Instar"));
+	praat_dataChanged (me);
+END
+
+FORM (Network_setLeak, L"Network: Set leak", 0)
+	REAL (L"Leak", L"0.0")
+	OK
+iam_ONLY (Network);
+SET_REAL (L"Leak", my d_leak);
+DO
+	iam_ONLY (Network);
+	me -> f_setLeak (GET_REAL (L"Leak"));
+	praat_dataChanged (me);
+END
+
+FORM (Network_setOutstar, L"Network: Set outstar", 0)
+	REAL (L"Outstar", L"0.0")
+	OK
+iam_ONLY (Network);
+SET_REAL (L"Outstar", my d_outstar);
+DO
+	iam_ONLY (Network);
+	me -> f_setOutstar (GET_REAL (L"Outstar"));
+	praat_dataChanged (me);
+END
+
 FORM (Network_setShunting, L"Network: Set shunting", 0)
 	REAL (L"Shunting", L"1.0")
 	OK
@@ -259,8 +292,6 @@ END
 FORM (Network_setWeightUpdateRule, L"Network: Set weight update rule", 0)
 	RADIO_ENUM (L"Weight update rule", kNetwork_weightUpdateRule, DEFAULT)
 	OK
-iam_ONLY (Network);
-SET_ENUM (L"Weight update rule", kNetwork_weightUpdateRule, my d_weightUpdateRule);
 DO
 	iam_ONLY (Network);
 	me -> f_setWeightUpdateRule (GET_ENUM (kNetwork_weightUpdateRule, L"Weight update rule"));
@@ -1498,7 +1529,10 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 1, L"-- weight --", 0, 1, 0);
 	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 1, DO_Network_setWeight);
 	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 1, DO_Network_updateWeights);
-	praat_addAction1 (classNetwork, 1, L"Set weight update rule...", 0, 1, DO_Network_setWeightUpdateRule);
+	praat_addAction1 (classNetwork, 1, L"Set weight update rule...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Network_setWeightUpdateRule);
+	praat_addAction1 (classNetwork, 1, L"Set instar...", 0, 1, DO_Network_setInstar);
+	praat_addAction1 (classNetwork, 1, L"Set outstar...", 0, 1, DO_Network_setOutstar);
+	praat_addAction1 (classNetwork, 1, L"Set leak...", 0, 1, DO_Network_setLeak);
 }
 
 /* End of file praat_gram.c */
