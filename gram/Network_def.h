@@ -80,9 +80,7 @@ oo_DEFINE_CLASS (Network, Data)
 	#if oo_READING
 		if (localVersion < 5) {
 			if (d_learningRate != 0.0) d_leak /= d_learningRate;
-			if (d_dummyWeightUpdateRule == kNetwork_weightUpdateRule_INSTAR)    d_instar = 1.0, d_outstar = 0.0;
-			if (d_dummyWeightUpdateRule == kNetwork_weightUpdateRule_OUTSTAR)   d_instar = 0.0, d_outstar = 1.0;
-			if (d_dummyWeightUpdateRule == kNetwork_weightUpdateRule_INOUTSTAR) d_instar = 0.5, d_outstar = 0.5;
+			f_setWeightUpdateRule ((enum kNetwork_weightUpdateRule) d_dummyWeightUpdateRule);
 		}
 	#endif
 	oo_DOUBLE (d_xmin)

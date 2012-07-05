@@ -249,7 +249,15 @@ DIRECT (EEG_viewAndEdit)
 	}
 END
 
-/***** ERP *****/
+#pragma mark EEG & TextGrid
+
+DIRECT (EEG_TextGrid_replaceTextGrid)
+	EEG me = FIRST (EEG);
+	me -> f_replaceTextGrid (FIRST (TextGrid));
+	praat_dataChanged (me);
+END
+
+#pragma mark ERP
 
 FORM (ERP_draw, L"ERP: Draw", 0)
 	SENTENCE (L"Channel name", L"Cz")
@@ -683,6 +691,7 @@ void praat_EEG_init (void) {
 		praat_addAction1 (classERPTier, 0, L"Extract ERP...", 0, 0, DO_ERPTier_to_ERP);
 		praat_addAction1 (classERPTier, 0, L"To ERP (mean)", 0, 0, DO_ERPTier_to_ERP_mean);
 
+	praat_addAction2 (classEEG, 1, classTextGrid, 1, L"Replace TextGrid", 0, 0, DO_EEG_TextGrid_replaceTextGrid);
 	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract -", 0, 0, 0);
 	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract events where column (number)...", 0, 1, DO_ERPTier_Table_extractEventsWhereColumn_number);
 	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract events where column (text)...", 0, 1, DO_ERPTier_Table_extractEventsWhereColumn_text);

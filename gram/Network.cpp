@@ -444,7 +444,7 @@ void structNetwork :: f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weig
 		d_instar = 1.0, d_outstar = 0.0;
 	else if (weightUpdateRule == kNetwork_weightUpdateRule_OUTSTAR)
 		d_instar = 0.0, d_outstar = 1.0;
-	else if (weightUpdateRule == kNetwork_weightUpdateRule_INSTAR)
+	else if (weightUpdateRule == kNetwork_weightUpdateRule_INOUTSTAR)
 		d_instar = 0.5, d_outstar = 0.5;
 }
 

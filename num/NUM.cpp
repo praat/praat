@@ -1,6 +1,6 @@
 /* NUM.cpp
  *
- * Copyright (C) 1992-2008 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,8 +84,7 @@ double NUMftopreemphasis (double f, double dt) {
 }
 
 void NUMpreemphasize_a (double x [], long n, double preemphasis) {
-	long i;
-	for (i = n; i >= 2; i --)
+	for (long i = n; i >= 2; i --)
 		x [i] -= preemphasis * x [i - 1];
 }
 
@@ -104,13 +103,12 @@ void NUMdeemphasize_f (double x [], long n, double dt, double frequency) {
 }
 
 void NUMautoscale (double x [], long n, double scale) {
-	long i;
 	double maximum = 0.0;
-	for (i = 1; i <= n; i ++)
+	for (long i = 1; i <= n; i ++)
 		if (fabs (x [i]) > maximum) maximum = fabs (x [i]);
 	if (maximum > 0.0) {
 		double factor = scale / maximum;
-		for (i = 1; i <= n; i ++)
+		for (long i = 1; i <= n; i ++)
 			x [i] *= factor;
 	}
 }
@@ -185,11 +183,10 @@ double NUMinvBinomialQ (double p, double k, double n) {
 
 /* Modified Bessel function I0. Abramowicz & Stegun, p. 378.*/
 double NUMbessel_i0_f (double x) {
-	double t;
 	if (x < 0.0) return NUMbessel_i0_f (- x);
 	if (x < 3.75) {
 		/* Formula 9.8.1. Accuracy 1.6e-7. */
-		t = x / 3.75;
+		double t = x / 3.75;
 		t *= t;
 		return 1.0 + t * (3.5156229 + t * (3.0899424 + t * (1.2067492
 			+ t * (0.2659732 + t * (0.0360768 + t * 0.0045813)))));
@@ -198,7 +195,7 @@ double NUMbessel_i0_f (double x) {
 		otherwise: x >= 3.75
 	*/
 	/* Formula 9.8.2. Accuracy of the polynomial factor 1.9e-7. */
-	t = 3.75 / x;   /* <= 1.0 */
+	double t = 3.75 / x;   /* <= 1.0 */
 	return exp (x) / sqrt (x) * (0.39894228 + t * (0.01328592
 		+ t * (0.00225319 + t * (-0.00157565 + t * (0.00916281
 		+ t * (-0.02057706 + t * (0.02635537 + t * (-0.01647633
@@ -207,11 +204,10 @@ double NUMbessel_i0_f (double x) {
 
 /* Modified Bessel function I1. Abramowicz & Stegun, p. 378. */
 double NUMbessel_i1_f (double x) {
-	double t;
 	if (x < 0.0) return - NUMbessel_i1_f (- x);
 	if (x < 3.75) {
 		/* Formula 9.8.3. Accuracy of the polynomial factor 8e-9. */
-		t = x / 3.75;
+		double t = x / 3.75;
 		t *= t;
 		return x * (0.5 + t * (0.87890594 + t * (0.51498869 + t * (0.15084934
 			+ t * (0.02658733 + t * (0.00301532 + t * 0.00032411))))));
@@ -220,7 +216,7 @@ double NUMbessel_i1_f (double x) {
 		otherwise: x >= 3.75
 	*/
 	/* Formula 9.8.4. Accuracy of the polynomial factor 2.2e-7. */
-	t = 3.75 / x;   /* <= 1.0 */
+	double t = 3.75 / x;   /* <= 1.0 */
 	return exp (x) / sqrt (x) * (0.39894228 + t * (-0.03988024
 		+ t * (-0.00362018 + t * (0.00163801 + t * (-0.01031555
 		+ t * (0.02282967 + t * (-0.02895312 + t * (0.01787654
@@ -235,7 +231,6 @@ double NUMbesselI (long n, double x) {
 
 /* Modified Bessel function K0. Abramowicz & Stegun, p. 379. */
 double NUMbessel_k0_f (double x) {
-	double t;
 	if (x <= 0.0) return NUMundefined;   /* Positive infinity. */
 	if (x <= 2.0) {
 		/* Formula 9.8.5. Accuracy 1e-8. */
@@ -248,7 +243,7 @@ double NUMbessel_k0_f (double x) {
 		otherwise: 2 < x < positive infinity
 	*/
 	/* Formula 9.8.6. Accuracy of the polynomial factor 1.9e-7. */
-	t = 2.0 / x;   /* < 1.0 */
+	double t = 2.0 / x;   /* < 1.0 */
 	return exp (- x) / sqrt (x) * (1.25331414 + t * (-0.07832358
 		+ t * (0.02189568 + t * (-0.01062446 + t * (0.00587872
 		+ t * (-0.00251540 + t * 0.00053208))))));
@@ -256,7 +251,6 @@ double NUMbessel_k0_f (double x) {
 
 /* Modified Bessel function K1. Abramowicz & Stegun, p. 379. */
 double NUMbessel_k1_f (double x) {
-	double t;
 	if (x <= 0.0) return NUMundefined;   /* Positive infinity. */
 	if (x <= 2.0) {
 		/* Formula 9.8.7. Accuracy  of the polynomial factor 8e-9. */
@@ -269,7 +263,7 @@ double NUMbessel_k1_f (double x) {
 		otherwise: 2 < x < positive infinity
 	*/
 	/* Formula 9.8.8. Accuracy of the polynomial factor 2.2e-7. */
-	t = 2.0 / x;   /* < 1.0 */
+	double t = 2.0 / x;   /* < 1.0 */
 	return exp (- x) / sqrt (x) * (1.25331414 + t * (0.23498619
 			 + t * (-0.03655620 + t * (0.01504268 + t * (-0.00780353
 			 + t * (0.00325614 + t * (-0.00068245)))))));

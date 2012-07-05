@@ -1,6 +1,6 @@
 /* NUMlinprog.cpp
  *
- * Copyright (C) 2008-2011 Paul Boersma
+ * Copyright (C) 2008-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ void NUMlinprog_delete (NUMlinprog me) {
 NUMlinprog NUMlinprog_new (bool maximize) {
 	NUMlinprog me = NULL;
 	try {
-		Melder_calloc (structNUMlinprog, 1);
+		me = Melder_calloc (structNUMlinprog, 1);
 		my linearProgram = glp_create_prob ();   // TODO: check
 		glp_set_obj_dir (my linearProgram, maximize ? GLP_MAX : GLP_MIN);
 	} catch (MelderError) {

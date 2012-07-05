@@ -189,7 +189,7 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 				if (part == inContent) {
 					if (GetWindowKind (macWindow) == userKind) {
 						SetPortWindowPort (macWindow);
-						GlobalToLocal (& event. where);
+						GlobalToLocal (& event. where);  //CGContextConvertPointToUserSpace
 						ControlPartCode controlPart;
 						ControlHandle macControl = FindControlUnderMouse (event. where, macWindow, & controlPart);
 						if (macControl) {

@@ -61,6 +61,11 @@
 	#include <signal.h>
 	#include <locale.h>
 #endif
+#ifdef macintosh
+	#include "macport_on.h"
+	#include <Gestalt.h>
+	#include "macport_off.h"
+#endif
 #if defined (UNIX) || defined __MWERKS__
 	#include <unistd.h>
 #endif
@@ -992,7 +997,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	#endif
 	char *p;
 	#ifdef macintosh
-		Gestalt ('sysv', (long *) & Melder_systemVersion);
+		SInt32 macSystemVersion;
+		Gestalt ('sysv', & macSystemVersion);
+		Melder_systemVersion = macSystemVersion;
 	#endif
 	/*
 		Initialize numerical libraries.

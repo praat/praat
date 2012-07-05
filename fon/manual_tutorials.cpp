@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120624)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120705)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.20# (5 July 2012)")
+LIST_ITEM (L"\\bu @EEG: ##Replace TextGrid#.")
 NORMAL (L"##5.3.19# (24 June 2012)")
 NORMAL (L"##5.3.18# (15 June 2012)")
 LIST_ITEM (L"\\bu Corrected a bug in @@Sound: Change gender...@ that caused a part of the sound not to be changed.")

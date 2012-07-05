@@ -531,4 +531,14 @@ EEG structEEG :: f_extractPart (double tmin, double tmax, bool preserveTimes) {
 	}
 }
 
+void structEEG :: f_replaceTextGrid (TextGrid textgrid) {
+	try {
+		autoTextGrid textgrid2 = Data_copy (textgrid);
+		forget (d_textgrid);
+		d_textgrid = textgrid2.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": TextGrid not replaced with ", textgrid, ".");
+	}
+}
+
 /* End of file EEG.cpp */
