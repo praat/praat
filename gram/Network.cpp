@@ -57,27 +57,37 @@
 void structNetwork :: v_info ()
 {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Leak: ", Melder_double (d_leak));
+	MelderInfo_writeLine2 (L"Spreading rate: ", Melder_double (d_spreadingRate));
+	MelderInfo_writeLine2 (L"Activity clipping rule: ", kNetwork_activityClippingRule_getText (d_activityClippingRule));
+	MelderInfo_writeLine2 (L"Minimum activity: ", Melder_double (d_minimumActivity));
+	MelderInfo_writeLine2 (L"Maximum activity: ", Melder_double (d_maximumActivity));
+	MelderInfo_writeLine2 (L"Activity leak: ", Melder_double (d_activityLeak));
+	MelderInfo_writeLine2 (L"Learning rate: ", Melder_double (d_learningRate));
+	MelderInfo_writeLine2 (L"Minimum weight: ", Melder_double (d_minimumWeight));
+	MelderInfo_writeLine2 (L"Maximum weight: ", Melder_double (d_maximumWeight));
+	MelderInfo_writeLine2 (L"Weight leak: ", Melder_double (d_weightLeak));
 	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (d_numberOfNodes));
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (d_numberOfConnections));
 }
 
 Thing_implement (Network, Data, 5);
 
-void structNetwork :: f_init (double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+void structNetwork :: f_init (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double minimumActivity, double maximumActivity, double activityLeak,
+	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
+	d_spreadingRate = spreadingRate;
+	d_activityClippingRule = activityClippingRule;
 	d_minimumActivity = minimumActivity;
 	d_maximumActivity = maximumActivity;
-	d_spreadingRate = spreadingRate;
-	d_selfExcitation = selfExcitation;
+	d_activityLeak = activityLeak;
+	d_learningRate = learningRate;
 	d_minimumWeight = minimumWeight;
 	d_maximumWeight = maximumWeight;
-	d_learningRate = learningRate;
+	d_weightLeak = weightLeak;
 	d_instar = 0.0;
 	d_outstar = 0.0;
-	d_leak = leak;
 	d_xmin = xmin;
 	d_xmax = xmax;
 	d_ymin = ymin;
@@ -88,14 +98,15 @@ void structNetwork :: f_init (double minimumActivity, double maximumActivity, do
 	d_connections = NUMvector <structNetworkConnection> (1, numberOfConnections);
 }
 
-Network Network_create (double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+Network Network_create (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double minimumActivity, double maximumActivity, double activityLeak,
+	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections)
 {
 	try {
 		autoNetwork me = Thing_new (Network);
-		me -> f_init (minimumActivity, maximumActivity, spreadingRate,
-			selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
+		me -> f_init (spreadingRate, activityClippingRule, minimumActivity, maximumActivity, activityLeak,
+			learningRate, minimumWeight, maximumWeight, weightLeak,
 			xmin, xmax, ymin, ymax, numberOfNodes, numberOfConnections);
 		return me.transfer();
 	} catch (MelderError) {
@@ -155,86 +166,46 @@ void structNetwork :: f_setClamping (long nodeNumber, bool clamped) {
 
 void structNetwork :: f_spreadActivities (long numberOfSteps) {
 	for (long istep = 1; istep <= numberOfSteps; istep ++) {
-		if (d_activationSpreadingRule == kNetwork_activationSpreadingRule_GRADUAL) {
-			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
-				NetworkNode node = & d_nodes [inode];
-				if (! node -> clamped)
-					node -> excitation += d_spreadingRate * node -> activity * d_selfExcitation;
-			}
-			for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
-				NetworkConnection connection = & d_connections [iconn];
-				NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
-				NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
-				if (d_connections [iconn]. weight >= 0.0 && d_shunting > 0.0) {
-					/*
-					 * Excitatory connection: shunting.
-					 */
-					if (! nodeFrom -> clamped)
-						nodeFrom -> excitation += d_spreadingRate * nodeTo -> activity * (d_connections [iconn]. weight - d_shunting * nodeFrom -> activity);
-					if (! nodeTo -> clamped)
-						nodeTo -> excitation += d_spreadingRate * nodeFrom -> activity * (d_connections [iconn]. weight - d_shunting * nodeTo -> activity);
-				} else {
-					/*
-					 * Explicit inhibitory connection: additive.
-					 */
-					if (! nodeFrom -> clamped)
-						nodeFrom -> excitation += d_spreadingRate * nodeTo -> activity * d_connections [iconn]. weight;
-					if (! nodeTo -> clamped)
-						nodeTo -> excitation += d_spreadingRate * nodeFrom -> activity * d_connections [iconn]. weight;
-				}
-			}
-			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
-				NetworkNode node = & d_nodes [inode];
-				if (! node -> clamped) {
-					node -> activity = node -> excitation;
-					switch (d_activationClippingRule) {
-						case kNetwork_activationClippingRule_LINEAR:
-							if (node -> activity < d_minimumActivity) {
-								node -> activity = node -> excitation = d_minimumActivity;
-							}
-							if (node -> activity > d_maximumActivity) {
-								node -> activity = node -> excitation = d_maximumActivity;
-							}
-						break;
-						case kNetwork_activationClippingRule_TOP_SIGMOID:
-							if (node -> activity <= d_minimumActivity) {
-								node -> activity = node -> excitation = d_minimumActivity;
-							} else {
-								node -> activity = (d_maximumActivity - d_minimumActivity) * (2.0 * NUMsigmoid (2.0 * (node -> activity - d_minimumActivity)) - 1.0) + d_minimumActivity;
-							}
-						break;
-					}
-				}
-			}
-		} else {
-			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
-				NetworkNode node = & d_nodes [inode];
-				node -> excitation = node -> activity * d_selfExcitation;
-			}
-			for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
-				NetworkConnection connection = & d_connections [iconn];
-				NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
-				NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
-				nodeFrom -> excitation += nodeTo -> activity * d_connections [iconn]. weight;
-				nodeTo -> excitation += nodeFrom -> activity * d_connections [iconn]. weight;
-			}
-			for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
-				NetworkNode node = & d_nodes [inode];
-				if (! node -> clamped) {
-					node -> activity = d_spreadingRate * node -> excitation;
-					switch (d_activationClippingRule) {
-						case kNetwork_activationClippingRule_SIGMOID:
-							node -> activity = (d_maximumActivity - d_minimumActivity) * NUMsigmoid (node -> activity) + d_minimumActivity;
-						break;
-						case kNetwork_activationClippingRule_LINEAR:
-							if (node -> activity < d_minimumActivity) {
-								node -> activity = d_minimumActivity;
-							}
-							if (node -> activity > d_maximumActivity) {
-								node -> activity = d_maximumActivity;
-							}
-						break;
-					}
+		for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+			NetworkNode node = & d_nodes [inode];
+			if (! node -> clamped)
+				node -> excitation -= d_spreadingRate * d_activityLeak * node -> excitation;
+		}
+		for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
+			NetworkConnection connection = & d_connections [iconn];
+			NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
+			NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
+			double shunting = d_connections [iconn]. weight >= 0.0 ? d_shunting : 0.0;   // only for excitatory connections
+			if (! nodeFrom -> clamped)
+				nodeFrom -> excitation += d_spreadingRate * nodeTo -> activity * (d_connections [iconn]. weight - shunting * nodeFrom -> excitation);
+			if (! nodeTo -> clamped)
+				nodeTo -> excitation += d_spreadingRate * nodeFrom -> activity * (d_connections [iconn]. weight - shunting * nodeTo -> excitation);
+		}
+		for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+			NetworkNode node = & d_nodes [inode];
+			if (! node -> clamped) {
+				switch (d_activityClippingRule) {
+					case kNetwork_activityClippingRule_SIGMOID:
+						node -> activity = d_minimumActivity +
+							(d_maximumActivity - d_minimumActivity) * NUMsigmoid (node -> excitation - 0.5 * (d_minimumActivity + d_maximumActivity));
+					break;
+					case kNetwork_activityClippingRule_LINEAR:
+						if (node -> excitation < d_minimumActivity) {
+							node -> activity = d_minimumActivity;
+						} else if (node -> excitation > d_maximumActivity) {
+							node -> activity = d_maximumActivity;
+						} else {
+							node -> activity = node -> excitation;
+						}
+					break;
+					case kNetwork_activityClippingRule_TOP_SIGMOID:
+						if (node -> excitation <= d_minimumActivity) {
+							node -> activity = d_minimumActivity;
+						} else {
+							node -> activity = d_minimumActivity +
+								(d_maximumActivity - d_minimumActivity) * (2.0 * NUMsigmoid (2.0 * (node -> excitation - d_minimumActivity)) - 1.0);
+						}
+					break;
 				}
 			}
 		}
@@ -273,20 +244,21 @@ void structNetwork :: f_updateWeights () {
 		NetworkNode nodeFrom = & d_nodes [connection -> nodeFrom];
 		NetworkNode nodeTo = & d_nodes [connection -> nodeTo];
 		connection -> weight += connection -> plasticity * d_learningRate *
-			(nodeFrom -> activity * nodeTo -> activity - (d_instar * nodeTo -> activity + d_outstar * nodeFrom -> activity + d_leak) * connection -> weight);
+			(nodeFrom -> activity * nodeTo -> activity - (d_instar * nodeTo -> activity + d_outstar * nodeFrom -> activity + d_weightLeak) * connection -> weight);
 		if (connection -> weight < d_minimumWeight) connection -> weight = d_minimumWeight;
 		else if (connection -> weight > d_maximumWeight) connection -> weight = d_maximumWeight;
 	}
 }
 
-Network Network_create_rectangle (double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+Network Network_create_rectangle (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double minimumActivity, double maximumActivity, double activityLeak,
+	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight)
 {
 	try {
-		autoNetwork me = Network_create (minimumActivity, maximumActivity, spreadingRate,
-			selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
+		autoNetwork me = Network_create (spreadingRate, activityClippingRule, minimumActivity, maximumActivity, activityLeak,
+			learningRate, minimumWeight, maximumWeight, weightLeak,
 			0.0, numberOfColumns, 0.0, numberOfRows, numberOfRows * numberOfColumns,
 			numberOfRows * (numberOfColumns - 1) + numberOfColumns * (numberOfRows - 1));
 		/*
@@ -328,14 +300,15 @@ Network Network_create_rectangle (double minimumActivity, double maximumActivity
 	}
 }
 
-Network Network_create_rectangle_vertical (double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+Network Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double minimumActivity, double maximumActivity, double activityLeak,
+	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight)
 {
 	try {
-		autoNetwork me = Network_create (minimumActivity, maximumActivity, spreadingRate,
-			selfExcitation, minimumWeight, maximumWeight, learningRate, leak,
+		autoNetwork me = Network_create (spreadingRate, activityClippingRule, minimumActivity, maximumActivity, activityLeak,
+			learningRate, minimumWeight, maximumWeight, weightLeak,
 			0.0, numberOfColumns, 0.0, numberOfRows, numberOfRows * numberOfColumns,
 			numberOfColumns * numberOfColumns * (numberOfRows - 1));
 		/*
@@ -374,8 +347,10 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 	double saveLineWidth = Graphics_inqLineWidth (graphics);
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, d_xmin, d_xmax, d_ymin, d_ymax);
-	Graphics_setColour (graphics, Graphics_SILVER);
-	Graphics_fillRectangle (graphics, d_xmin, d_xmax, d_ymin, d_ymax);
+	if (colour) {
+		Graphics_setColour (graphics, Graphics_SILVER);
+		Graphics_fillRectangle (graphics, d_xmin, d_xmax, d_ymin, d_ymax);
+	}
 	/*
 	 * Draw connections.
 	 */
@@ -385,7 +360,7 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 			NetworkNode nodeFrom = & d_nodes [conn -> nodeFrom];
 			NetworkNode nodeTo = & d_nodes [conn -> nodeTo];
 			Graphics_setLineWidth (graphics, fabs (conn -> weight) * 6.0);
-			Graphics_setColour (graphics, conn -> weight < 0.0 ? Graphics_WHITE : Graphics_BLACK);
+			Graphics_setColour (graphics, conn -> weight < 0.0 ? (colour ? Graphics_WHITE : Graphics_SILVER) : Graphics_BLACK);
 			Graphics_line (graphics, nodeFrom -> x, nodeFrom -> y, nodeTo -> x, nodeTo -> y);
 		}
 	}
@@ -395,21 +370,23 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 	 */
 	for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
 		NetworkNode node = & d_nodes [inode];
+		Graphics_setColour (graphics, colour ? Graphics_SILVER : Graphics_WHITE);
+		Graphics_fillCircle_mm (graphics, node -> x, node -> y, 5.0);
 		double diameter = fabs (node -> activity) * 5.0;
 		if (diameter != 0.0) {
 			Graphics_setColour (graphics,
 				colour ? ( node -> activity < 0.0 ? Graphics_BLUE : Graphics_RED )
-				: ( node -> activity < 0.0 ? Graphics_WHITE : Graphics_BLACK));
+				: ( node -> activity < 0.0 ? Graphics_SILVER : Graphics_BLACK));
 			Graphics_fillCircle_mm (graphics, node -> x, node -> y, diameter);
 		}
-		if (node -> clamped) {
-			Graphics_setColour (graphics, Graphics_BLACK);
-			Graphics_setLineWidth (graphics, 2.0);
-			Graphics_circle_mm (graphics, node -> x, node -> y, 5.0);
-		}
+		Graphics_setColour (graphics, Graphics_BLACK);
+		Graphics_setLineWidth (graphics, 2.0);
+		Graphics_setLineType (graphics, node -> clamped ? Graphics_DRAWN : Graphics_DOTTED);
+		Graphics_circle_mm (graphics, node -> x, node -> y, 5.2);
 	}
 	Graphics_setColour (graphics, Graphics_BLACK);
 	Graphics_setLineWidth (graphics, saveLineWidth);
+	Graphics_setLineType (graphics, Graphics_DRAWN);
 	Graphics_unsetInner (graphics);
 }
 
@@ -437,17 +414,6 @@ void structNetwork :: f_addConnection (long nodeFrom, long nodeTo, double weight
 	}
 }
 
-void structNetwork :: f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule) {
-	if (weightUpdateRule == kNetwork_weightUpdateRule_HEBBIAN)
-		d_instar = 0.0, d_outstar = 0.0;
-	else if (weightUpdateRule == kNetwork_weightUpdateRule_INSTAR)
-		d_instar = 1.0, d_outstar = 0.0;
-	else if (weightUpdateRule == kNetwork_weightUpdateRule_OUTSTAR)
-		d_instar = 0.0, d_outstar = 1.0;
-	else if (weightUpdateRule == kNetwork_weightUpdateRule_INOUTSTAR)
-		d_instar = 0.5, d_outstar = 0.5;
-}
-
 void structNetwork :: f_setInstar (double instar) {
 	d_instar = instar;
 }
@@ -456,12 +422,12 @@ void structNetwork :: f_setOutstar (double outstar) {
 	d_outstar = outstar;
 }
 
-void structNetwork :: f_setLeak (double leak) {
-	d_leak = leak;
+void structNetwork :: f_setWeightLeak (double weightLeak) {
+	d_weightLeak = weightLeak;
 }
 
-void structNetwork :: f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule) {
-	d_activationSpreadingRule = activationSpreadingRule;
+void structNetwork :: f_setActivityLeak (double activityLeak) {
+	d_activityLeak = activityLeak;
 	f_zeroActivities (0, 0);
 }
 
@@ -470,8 +436,8 @@ void structNetwork :: f_setShunting (double shunting) {
 	f_zeroActivities (0, 0);
 }
 
-void structNetwork :: f_setActivationClippingRule (enum kNetwork_activationClippingRule activationClippingRule) {
-	d_activationClippingRule = activationClippingRule;
+void structNetwork :: f_setActivityClippingRule (enum kNetwork_activityClippingRule activityClippingRule) {
+	d_activityClippingRule = activityClippingRule;
 	f_zeroActivities (0, 0);
 }
 

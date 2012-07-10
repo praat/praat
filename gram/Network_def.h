@@ -58,29 +58,34 @@ oo_DEFINE_CLASS (Network, Data)
 	oo_DOUBLE (d_minimumActivity)
 	oo_DOUBLE (d_maximumActivity)
 	oo_FROM (3)
-		oo_ENUM (kNetwork_activationSpreadingRule, d_activationSpreadingRule)
+		oo_BYTE (d_dummyActivitySpreadingRule)
 	oo_ENDFROM
 	oo_FROM (4)
 		oo_DOUBLE (d_shunting)
-		oo_ENUM (kNetwork_activationClippingRule, d_activationClippingRule)
+		oo_ENUM (kNetwork_activityClippingRule, d_activityClippingRule)
 	oo_ENDFROM
 	oo_DOUBLE (d_spreadingRate)
-	oo_DOUBLE (d_selfExcitation)
+	oo_DOUBLE (d_activityLeak)
 	oo_DOUBLE (d_minimumWeight)
 	oo_DOUBLE (d_maximumWeight)
 	oo_FROM (2)
-		oo_ENUM (kNetwork_weightUpdateRule, d_dummyWeightUpdateRule)
+		oo_BYTE (d_dummyWeightUpdateRule)
 	oo_ENDFROM
 	oo_DOUBLE (d_learningRate)
 	oo_FROM (5)
 		oo_DOUBLE (d_instar)
 		oo_DOUBLE (d_outstar)
 	oo_ENDFROM
-	oo_DOUBLE (d_leak)
+	oo_DOUBLE (d_weightLeak)
 	#if oo_READING
-		if (localVersion < 5) {
-			if (d_learningRate != 0.0) d_leak /= d_learningRate;
-			f_setWeightUpdateRule ((enum kNetwork_weightUpdateRule) d_dummyWeightUpdateRule);
+		if (localVersion < 6) {
+			if (localVersion < 5) {
+				if (d_learningRate != 0.0) d_weightLeak /= d_learningRate;
+				if (d_dummyWeightUpdateRule == 1) d_instar = 1.0, d_outstar = 0.0;
+				if (d_dummyWeightUpdateRule == 2) d_instar = 0.0, d_outstar = 1.0;
+				if (d_dummyWeightUpdateRule == 3) d_instar = 0.5, d_outstar = 0.5;
+			}
+			d_activityLeak = - d_activityLeak;   // convert self-excitation to activation leak
 		}
 	#endif
 	oo_DOUBLE (d_xmin)
@@ -94,8 +99,10 @@ oo_DEFINE_CLASS (Network, Data)
 
 	#if oo_DECLARING
 		// functions:
-			void f_init (double minimumActivity, double maximumActivity, double spreadingRate,
-				double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+			void f_init (
+				double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+				double minimumActivity, double maximumActivity, double activityLeak,
+				double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 				double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 			void f_addNode (double x, double y, double activity, bool clamped);
 			void f_addConnection (long nodeFrom, long nodeTo, double weight, double plasticity);
@@ -109,13 +116,12 @@ oo_DEFINE_CLASS (Network, Data)
 			void f_normalizeActivities (long nodeMin, long nodeMax);
 			void f_spreadActivities (long numberOfSteps);
 			void f_updateWeights ();
-			void f_setWeightUpdateRule (enum kNetwork_weightUpdateRule weightUpdateRule);
 			void f_setInstar (double instar);
 			void f_setOutstar (double outstar);
-			void f_setLeak (double leak);
-			void f_setActivationSpreadingRule (enum kNetwork_activationSpreadingRule activationSpreadingRule);
+			void f_setWeightLeak (double weightLeak);
+			void f_setActivityLeak (double activityLeak);
 			void f_setShunting (double shunting);
-			void f_setActivationClippingRule (enum kNetwork_activationClippingRule activationClippingRule);
+			void f_setActivityClippingRule (enum kNetwork_activityClippingRule activityClippingRule);
 
 		// overridden methods:
 			virtual void v_info ();

@@ -415,7 +415,7 @@ void Table_setNumericValue (Table me, long rowNumber, long columnNumber, double 
 	}
 }
 
-static bool Table_isCellNumeric_ErrorFalse (Table me, long rowNumber, long columnNumber) {
+bool Table_isCellNumeric_ErrorFalse (Table me, long rowNumber, long columnNumber) {
 	if (rowNumber < 1 || rowNumber > my rows -> size) return false;
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return false;
 	TableRow row = static_cast <TableRow> (my rows -> item [rowNumber]);
@@ -437,7 +437,7 @@ static bool Table_isCellNumeric_ErrorFalse (Table me, long rowNumber, long colum
 	return Melder_isStringNumeric_nothrow (cell);
 }
 
-static bool Table_isColumnNumeric_ErrorFalse (Table me, long columnNumber) {
+bool Table_isColumnNumeric_ErrorFalse (Table me, long columnNumber) {
 	if (columnNumber < 1 || columnNumber > my numberOfColumns) return false;
 	for (long irow = 1; irow <= my rows -> size; irow ++) {
 		if (! Table_isCellNumeric_ErrorFalse (me, irow, columnNumber)) return false;

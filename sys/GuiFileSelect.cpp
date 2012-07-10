@@ -22,6 +22,7 @@
  * pb 2010/11/27 GuiFileSelect_getDirectoryName ()
  * pb 2011/04/06 C++
  * pb 2011/07/05 C++
+ * pb 2012/07/08 GTK's file opener shows working directory (on first time) or last-used directory (later)
  */
 
 #include "Gui.h"
@@ -33,10 +34,18 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 	autoSortedSetOfString me = SortedSetOfString_create ();
 	#if gtk
 		(void) parent;
+		static structMelderDir dir;
 		GuiObject dialog = gtk_file_chooser_dialog_new (Melder_peekWcsToUtf8 (title), NULL, GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL, GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT, NULL);
 		gtk_file_chooser_set_select_multiple (GTK_FILE_CHOOSER (dialog), allowMultipleFiles);
+		if (MelderDir_isNull (& dir))   // first time?
+			Melder_getDefaultDir (& dir);
+		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (Melder_dirToPath (& dir)));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
+			wchar_t *infolderName = Melder_peekUtf8ToWcs (infolderName_utf8);
+			g_free (infolderName_utf8);
+			Melder_pathToDir (infolderName, & dir);
 			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
 			for (GSList *element = infileNames_list; element != NULL; element = g_slist_next (element)) {
 				char *infileName_utf8 = (char *) element -> data;
@@ -146,7 +155,7 @@ wchar * GuiFileSelect_getOutfileName (GuiObject parent, const wchar *title, cons
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			outfileName = Melder_utf8ToWcs (outfileName_utf8);
+			outfileName = Melder_peekUtf8ToWcs (outfileName_utf8);
 			g_free (outfileName_utf8);
 			Melder_pathToFile (outfileName, & file);
 		}

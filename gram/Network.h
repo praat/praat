@@ -27,16 +27,19 @@
 #include "Network_def.h"
 oo_CLASS_CREATE (Network, Data);
 
-Network Network_create (double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+Network Network_create (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double minimumActivity, double maximumActivity, double activityLeak,
+	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	double xmin, double xmax, double ymin, double ymax, long numberOfNodes, long numberOfConnections);
 
-Network Network_create_rectangle (double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+Network Network_create_rectangle (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double minimumActivity, double maximumActivity, double activityLeak,
+	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight);
-Network Network_create_rectangle_vertical (double minimumActivity, double maximumActivity, double spreadingRate,
-	double selfExcitation, double minimumWeight, double maximumWeight, double learningRate, double leak,
+Network Network_create_rectangle_vertical (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
+	double minimumActivity, double maximumActivity, double activityLeak,
+	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
 	long numberOfRows, long numberOfColumns, bool bottomRowClamped,
 	double initialMinimumWeight, double initialMaximumWeight);
 

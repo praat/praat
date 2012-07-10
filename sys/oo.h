@@ -149,7 +149,7 @@
 /*** Enumerated types. ***/
 
 /* The possible storage types give these binary formats: */
-/*    e1: store as signed big-endian integer in 1 byte. */
+/*    e1: store as signed integer in 1 byte. */
 /*    e2: store in signed big-endian integer in 2 bytes. */
 /*    eb: store as byte 170 (false) or byte 185 (true). */
 /*    eq: store as byte 150 (no) or byte 165 (yes). */

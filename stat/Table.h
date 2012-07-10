@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2011 Paul Boersma
+ * Copyright (C) 2002-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +121,8 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 
 void Table_checkSpecifiedRowNumberWithinRange (Table me, long rowNumber);
 void Table_checkSpecifiedColumnNumberWithinRange (Table me, long columnNumber);
+bool Table_isCellNumeric_ErrorFalse (Table me, long rowNumber, long columnNumber);
+bool Table_isColumnNumeric_ErrorFalse (Table me, long columnNumber);
 
 /* End of file Table.h */
 #endif

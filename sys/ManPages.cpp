@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,7 +234,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 	}
 	++ par;   // Room for the last paragraph (because counting starts at 0).
 	++ par;   // Room for the final zero-type paragraph.
-	Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
+	page -> paragraphs = (ManPage_Paragraph) Melder_realloc (page -> paragraphs, sizeof (struct structManPage_Paragraph) * (par - page -> paragraphs));
 }
 void structManPages :: v_readText (MelderReadText text) {
 	dynamic = TRUE;

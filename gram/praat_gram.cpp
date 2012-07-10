@@ -41,16 +41,18 @@ DIRECT (OTGrammar_help) Melder_help (L"OTGrammar"); END
 /***** NETWORK *****/
 
 static void UiForm_addNetworkFields (UiForm dia) {
+	Any radio;
 	LABEL (L"", L"Activity spreading settings:")
-	REAL (L"left Activity range", L"-1.0")
+	REAL (L"Spreading rate", L"0.01")
+	OPTIONMENU_ENUM (L"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
+	REAL (L"left Activity range", L"0.0")
 	REAL (L"right Activity range", L"1.0")
-	REAL (L"Spreading rate", L"1.0")
-	REAL (L"Self-excitation", L"1.0")
+	REAL (L"Activity leak", L"1.0")
 	LABEL (L"", L"Weight update settings:")
+	REAL (L"Learning rate", L"0.1")
 	REAL (L"left Weight range", L"-1.0")
 	REAL (L"right Weight range", L"1.0")
-	REAL (L"Learning rate", L"0.1")
-	REAL (L"Leak", L"0.0")
+	REAL (L"Weight leak", L"0.0")
 }
 
 FORM (Create_empty_Network, L"Create empty Network", 0)
@@ -63,10 +65,9 @@ FORM (Create_empty_Network, L"Create empty Network", 0)
 	REAL (L"right y range", L"10.0")
 	OK
 DO
-	autoNetwork me = Network_create (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
-		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
-		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
-		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),
+	autoNetwork me = Network_create (GET_REAL (L"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, L"Activity clipping rule"),
+		GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"), GET_REAL (L"Activity leak"),
+		GET_REAL (L"Learning rate"), GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"), GET_REAL (L"Weight leak"),
 		GET_REAL (L"left x range"), GET_REAL (L"right x range"), GET_REAL (L"left y range"), GET_REAL (L"right y range"),
 		0, 0);
 	praat_new (me.transfer(), GET_STRING (L"Name"));
@@ -83,10 +84,9 @@ FORM (Create_rectangular_Network, L"Create rectangular Network", 0)
 	REAL (L"right Initial weight range", L"0.1")
 	OK
 DO
-	autoNetwork me = Network_create_rectangle (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
-		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
-		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
-		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),
+	autoNetwork me = Network_create_rectangle (GET_REAL (L"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, L"Activity clipping rule"),
+		GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"), GET_REAL (L"Activity leak"),
+		GET_REAL (L"Learning rate"), GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"), GET_REAL (L"Weight leak"),
 		GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"),
 		GET_INTEGER (L"Bottom row clamped"),
 		GET_REAL (L"left Initial weight range"), GET_REAL (L"right Initial weight range"));
@@ -106,10 +106,9 @@ FORM (Create_rectangular_Network_vertical, L"Create rectangular Network (vertica
 	REAL (L"right Initial weight range", L"0.1")
 	OK
 DO
-	autoNetwork me = Network_create_rectangle_vertical (GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"),
-		GET_REAL (L"Spreading rate"), GET_REAL (L"Self-excitation"),
-		GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"),
-		GET_REAL (L"Learning rate"), GET_REAL (L"Leak"),
+	autoNetwork me = Network_create_rectangle_vertical (GET_REAL (L"Spreading rate"), GET_ENUM (kNetwork_activityClippingRule, L"Activity clipping rule"),
+		GET_REAL (L"left Activity range"), GET_REAL (L"right Activity range"), GET_REAL (L"Activity leak"),
+		GET_REAL (L"Learning rate"), GET_REAL (L"left Weight range"), GET_REAL (L"right Weight range"), GET_REAL (L"Weight leak"),
 		GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"),
 		GET_INTEGER (L"Bottom row clamped"),
 		GET_REAL (L"left Initial weight range"), GET_REAL (L"right Initial weight range"));
@@ -187,28 +186,6 @@ DO
 	}
 END
 
-FORM (Network_setActivationClippingRule, L"Network: Set activation clipping rule", 0)
-	RADIO_ENUM (L"Activation clipping rule", kNetwork_activationClippingRule, DEFAULT)
-	OK
-iam_ONLY (Network);
-SET_ENUM (L"Activation clipping rule", kNetwork_activationClippingRule, my d_activationClippingRule);
-DO
-	iam_ONLY (Network);
-	me -> f_setActivationClippingRule (GET_ENUM (kNetwork_activationClippingRule, L"Activation clipping rule"));
-	praat_dataChanged (me);
-END
-
-FORM (Network_setActivationSpreadingRule, L"Network: Set activation spreading rule", 0)
-	RADIO_ENUM (L"Activation spreading rule", kNetwork_activationSpreadingRule, DEFAULT)
-	OK
-iam_ONLY (Network);
-SET_ENUM (L"Activation spreading rule", kNetwork_activationSpreadingRule, my d_activationSpreadingRule);
-DO
-	iam_ONLY (Network);
-	me -> f_setActivationSpreadingRule (GET_ENUM (kNetwork_activationSpreadingRule, L"Activation spreading rule"));
-	praat_dataChanged (me);
-END
-
 FORM (Network_setActivity, L"Network: Set activity", 0)
 	NATURAL (L"Node", L"1")
 	REAL (L"Activity", L"1.0")
@@ -219,6 +196,28 @@ DO
 		me -> f_setActivity (GET_INTEGER (L"Node"), GET_REAL (L"Activity"));
 		praat_dataChanged (me);
 	}
+END
+
+FORM (Network_setActivityClippingRule, L"Network: Set activity clipping rule", 0)
+	RADIO_ENUM (L"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
+	OK
+iam_ONLY (Network);
+SET_ENUM (L"Activity clipping rule", kNetwork_activityClippingRule, my d_activityClippingRule);
+DO
+	iam_ONLY (Network);
+	me -> f_setActivityClippingRule (GET_ENUM (kNetwork_activityClippingRule, L"Activity clipping rule"));
+	praat_dataChanged (me);
+END
+
+FORM (Network_setActivityLeak, L"Network: Set activity leak", 0)
+	REAL (L"Activity leak", L"1.0")
+	OK
+iam_ONLY (Network);
+SET_REAL (L"Activity leak", my d_activityLeak);
+DO
+	iam_ONLY (Network);
+	me -> f_setActivityLeak (GET_REAL (L"Activity leak"));
+	praat_dataChanged (me);
 END
 
 FORM (Network_setClamping, L"Network: Set clamping", 0)
@@ -244,14 +243,14 @@ DO
 	praat_dataChanged (me);
 END
 
-FORM (Network_setLeak, L"Network: Set leak", 0)
-	REAL (L"Leak", L"0.0")
+FORM (Network_setWeightLeak, L"Network: Set weight leak", 0)
+	REAL (L"Weight leak", L"0.0")
 	OK
 iam_ONLY (Network);
-SET_REAL (L"Leak", my d_leak);
+SET_REAL (L"Weight leak", my d_weightLeak);
 DO
 	iam_ONLY (Network);
-	me -> f_setLeak (GET_REAL (L"Leak"));
+	me -> f_setWeightLeak (GET_REAL (L"Weight leak"));
 	praat_dataChanged (me);
 END
 
@@ -287,15 +286,6 @@ DO
 		me -> f_setWeight (GET_INTEGER (L"Connection"), GET_REAL (L"Weight"));
 		praat_dataChanged (me);
 	}
-END
-
-FORM (Network_setWeightUpdateRule, L"Network: Set weight update rule", 0)
-	RADIO_ENUM (L"Weight update rule", kNetwork_weightUpdateRule, DEFAULT)
-	OK
-DO
-	iam_ONLY (Network);
-	me -> f_setWeightUpdateRule (GET_ENUM (kNetwork_weightUpdateRule, L"Weight update rule"));
-	praat_dataChanged (me);
 END
 
 FORM (Network_spreadActivities, L"Network: Spread activities", 0)
@@ -1523,16 +1513,15 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 0, L"Zero activities...", 0, 1, DO_Network_zeroActivities);
 	praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 1, DO_Network_normalizeActivities);
 	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 1, DO_Network_spreadActivities);
-	praat_addAction1 (classNetwork, 1, L"Set activation spreading rule...", 0, 1, DO_Network_setActivationSpreadingRule);
+	praat_addAction1 (classNetwork, 1, L"Set activity clipping rule...", 0, 1, DO_Network_setActivityClippingRule);
+	praat_addAction1 (classNetwork, 1, L"Set activity leak...", 0, 1, DO_Network_setActivityLeak);
 	praat_addAction1 (classNetwork, 1, L"Set shunting...", 0, 1, DO_Network_setShunting);
-	praat_addAction1 (classNetwork, 1, L"Set activation clipping rule...", 0, 1, DO_Network_setActivationClippingRule);
 	praat_addAction1 (classNetwork, 1, L"-- weight --", 0, 1, 0);
 	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 1, DO_Network_setWeight);
 	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 1, DO_Network_updateWeights);
-	praat_addAction1 (classNetwork, 1, L"Set weight update rule...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Network_setWeightUpdateRule);
 	praat_addAction1 (classNetwork, 1, L"Set instar...", 0, 1, DO_Network_setInstar);
 	praat_addAction1 (classNetwork, 1, L"Set outstar...", 0, 1, DO_Network_setOutstar);
-	praat_addAction1 (classNetwork, 1, L"Set leak...", 0, 1, DO_Network_setLeak);
+	praat_addAction1 (classNetwork, 1, L"Set weight leak...", 0, 1, DO_Network_setWeightLeak);
 }
 
 /* End of file praat_gram.c */
