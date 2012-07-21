@@ -70,7 +70,7 @@ void structNetwork :: v_info ()
 	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (d_numberOfConnections));
 }
 
-Thing_implement (Network, Data, 5);
+Thing_implement (Network, Data, 6);
 
 void structNetwork :: f_init (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,

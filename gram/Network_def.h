@@ -85,7 +85,7 @@ oo_DEFINE_CLASS (Network, Data)
 				if (d_dummyWeightUpdateRule == 2) d_instar = 0.0, d_outstar = 1.0;
 				if (d_dummyWeightUpdateRule == 3) d_instar = 0.5, d_outstar = 0.5;
 			}
-			d_activityLeak = - d_activityLeak;   // convert self-excitation to activation leak
+			d_activityLeak = - d_activityLeak;   // convert self-excitation to activity leak
 		}
 	#endif
 	oo_DOUBLE (d_xmin)

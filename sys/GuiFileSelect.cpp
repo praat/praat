@@ -43,9 +43,11 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 		gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (Melder_dirToPath (& dir)));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *infolderName_utf8 = gtk_file_chooser_get_current_folder (GTK_FILE_CHOOSER (dialog));
-			wchar_t *infolderName = Melder_peekUtf8ToWcs (infolderName_utf8);
-			g_free (infolderName_utf8);
-			Melder_pathToDir (infolderName, & dir);
+			if (infolderName_utf8 != NULL) {
+				wchar_t *infolderName = Melder_peekUtf8ToWcs (infolderName_utf8);   // dangle
+				Melder_pathToDir (infolderName, & dir);
+				g_free (infolderName_utf8);
+			}
 			GSList *infileNames_list = gtk_file_chooser_get_filenames (GTK_FILE_CHOOSER (dialog));
 			for (GSList *element = infileNames_list; element != NULL; element = g_slist_next (element)) {
 				char *infileName_utf8 = (char *) element -> data;

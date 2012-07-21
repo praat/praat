@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120710)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120721)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.22# (21 July 2012)")
+LIST_ITEM (L"\\bu Linux: removed a bug introduced in 5.3.21 that could cause Praat to crash when opening files.")
+LIST_ITEM (L"\\bu Neural networks: correct writing and reading of learning settings.")
 NORMAL (L"##5.3.21# (10 July 2012)")
 LIST_ITEM (L"\\bu Linux: better folder choice in file selector window for opening files.")
 LIST_ITEM (L"\\bu Repaired a bug that caused Praat to crash when opening a ManPages file on some platforms.")
