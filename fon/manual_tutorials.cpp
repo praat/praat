@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120721)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120807)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.23# (7 August 2012)")
+LIST_ITEM (L"\\bu Mac: removed a bug introduced in September 2011 that could cause incorrect behaviour of regular expressions since July 2012.")
 NORMAL (L"##5.3.22# (21 July 2012)")
 LIST_ITEM (L"\\bu Linux: removed a bug introduced in 5.3.21 that could cause Praat to crash when opening files.")
 LIST_ITEM (L"\\bu Neural networks: correct writing and reading of learning settings.")

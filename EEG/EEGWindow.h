@@ -2,7 +2,7 @@
 #define _EEGWindow_h_
 /* EEGWindow.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,8 @@ Thing_define (EEGWindow, TextGridEditor) {
 		public:
 			void f_init (GuiObject parent, const wchar *title, EEG eeg);
 	// overridden methods:
-		protected:
+			static bool s_showSelectionViewer;
+			virtual bool * vs_showSelectionViewer () { return & s_showSelectionViewer; }
 			virtual bool v_hasAnalysis () { return false; }
 			virtual void v_createMenus ();
 			virtual void v_createHelpMenuItems (EditorMenu menu);

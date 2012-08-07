@@ -85,10 +85,10 @@ void structTextGridEditor :: v_info () {
 static double _TextGridEditor_computeSoundY (TextGridEditor me) {
 	TextGrid grid = (TextGrid) my data;
 	int numberOfTiers = grid -> tiers -> size;
-	bool showAnalysis = my v_hasAnalysis () && (my spectrogram.show || my pitch.show || my intensity.show || my formant.show) && (my longSound.data || my sound.data);
-	int numberOfVisibleChannels = my sound.data ? (my sound.data -> ny > 8 ? 8 : my sound.data -> ny) :
-		my longSound.data ? (my longSound.data -> numberOfChannels > 8 ? 8 : my longSound.data -> numberOfChannels) : 1;
-	return my sound.data || my longSound.data ? numberOfTiers / (2.0 * numberOfVisibleChannels + numberOfTiers * (showAnalysis ? 1.8 : 1.3)) : 1.0;
+	bool showAnalysis = my v_hasAnalysis () && (my spectrogram.show || my pitch.show || my intensity.show || my formant.show) && (my d_longSound.data || my d_sound.data);
+	int numberOfVisibleChannels = my d_sound.data ? (my d_sound.data -> ny > 8 ? 8 : my d_sound.data -> ny) :
+		my d_longSound.data ? (my d_longSound.data -> numberOfChannels > 8 ? 8 : my d_longSound.data -> numberOfChannels) : 1;
+	return my d_sound.data || my d_longSound.data ? numberOfTiers / (2.0 * numberOfVisibleChannels + numberOfTiers * (showAnalysis ? 1.8 : 1.3)) : 1.0;
 }
 
 static void _AnyTier_identifyClass (Function anyTier, IntervalTier *intervalTier, TextTier *textTier) {
@@ -272,9 +272,9 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 		my v_do_pictureSelection (cmd);
 		preferences.picture.garnish = GET_INTEGER (L"Garnish");
 		Editor_openPraatPicture (me);
-		Sound publish = my longSound.data ?
-			LongSound_extractPart (my longSound.data, my startWindow, my endWindow, true) :
-			Sound_extractPart (my sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, true);
+		Sound publish = my d_longSound.data ?
+			LongSound_extractPart (my d_longSound.data, my startWindow, my endWindow, true) :
+			Sound_extractPart (my d_sound.data, my startWindow, my endWindow, kSound_windowShape_RECTANGULAR, 1.0, true);
 		TextGrid_Sound_draw ((TextGrid) my data, publish, my pictureGraphics, my startWindow, my endWindow, true, my useTextStyles, preferences.picture.garnish);
 		forget (publish);
 		FunctionEditor_garnish (me);
@@ -285,7 +285,7 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 void structTextGridEditor :: v_createMenuItems_file_draw (EditorMenu menu) {
 	TextGridEditor_Parent :: v_createMenuItems_file_draw (menu);
 	EditorMenu_addCommand (menu, L"Draw visible TextGrid...", 0, menu_cb_DrawVisibleTextGrid);
-	if (sound.data || longSound.data)
+	if (d_sound.data || d_longSound.data)
 		EditorMenu_addCommand (menu, L"Draw visible sound and TextGrid...", 0, menu_cb_DrawVisibleSoundAndTextGrid);
 }
 
@@ -489,7 +489,7 @@ static void menu_cb_ExtendSelectNextInterval (EDITOR_ARGS) {
 
 static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	double zero = Sound_getNearestZeroCrossing (my sound.data, my startSelection, 1);   // STEREO BUG
+	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my startSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = zero;
 		if (my startSelection > my endSelection) {
@@ -503,7 +503,7 @@ static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
 
 static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	double zero = Sound_getNearestZeroCrossing (my sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
+	double zero = Sound_getNearestZeroCrossing (my d_sound.data, 0.5 * (my startSelection + my endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my startSelection = my endSelection = zero;
 		FunctionEditor_marksChanged (me);
@@ -512,7 +512,7 @@ static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 
 static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
 	EDITOR_IAM (TextGridEditor);
-	double zero = Sound_getNearestZeroCrossing (my sound.data, my endSelection, 1);   // STEREO BUG
+	double zero = Sound_getNearestZeroCrossing (my d_sound.data, my endSelection, 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my endSelection = zero;
 		if (my startSelection > my endSelection) {
@@ -737,7 +737,7 @@ static void menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
 static void do_movePointOrBoundary (TextGridEditor me, int where) {
 	double position;
 	TextGrid grid = (TextGrid) my data;
-	if (where == 0 && my sound.data == NULL) return;
+	if (where == 0 && my d_sound.data == NULL) return;
 	checkTierSelection (me, L"move a point or boundary");
 	Function anyTier = (Function) grid -> tiers -> item [my selectedTier];
 	if (anyTier -> classInfo == classIntervalTier) {
@@ -750,7 +750,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 		left = (TextInterval) tier -> intervals -> item [selectedLeftBoundary - 1];
 		right = (TextInterval) tier -> intervals -> item [selectedLeftBoundary];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
-			Sound_getNearestZeroCrossing (my sound.data, left -> xmax, 1);   // STEREO BUG
+			Sound_getNearestZeroCrossing (my d_sound.data, left -> xmax, 1);   // STEREO BUG
 		if (position == NUMundefined)
 			Melder_throw ("There is no zero crossing to move to.");
 		if (position <= left -> xmin || position >= right -> xmax)
@@ -768,7 +768,7 @@ static void do_movePointOrBoundary (TextGridEditor me, int where) {
 			Melder_throw ("To move a point, first click on it.");
 		point = (TextPoint) tier -> points -> item [selectedPoint];
 		position = where == 1 ? my startSelection : where == 2 ? my endSelection :
-			Sound_getNearestZeroCrossing (my sound.data, point -> number, 1);   // STEREO BUG
+			Sound_getNearestZeroCrossing (my d_sound.data, point -> number, 1);   // STEREO BUG
 		if (position == NUMundefined)
 			Melder_throw ("There is no zero crossing to move to.");
 
@@ -1196,7 +1196,7 @@ void structTextGridEditor :: v_createMenus () {
 	Editor_addCommand (this, L"Edit", L"Find...", 'F', menu_cb_Find);
 	Editor_addCommand (this, L"Edit", L"Find again", 'G', menu_cb_FindAgain);
 
-	if (sound.data) {
+	if (d_sound.data) {
 		Editor_addCommand (this, L"Select", L"-- move to zero --", 0, 0);
 		Editor_addCommand (this, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
 		Editor_addCommand (this, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
@@ -1222,7 +1222,7 @@ void structTextGridEditor :: v_createMenus () {
 	menu = Editor_addMenu (this, L"Boundary", 0);
 	/*EditorMenu_addCommand (menu, L"Move to B", 0, menu_cb_MoveToB);
 	EditorMenu_addCommand (menu, L"Move to E", 0, menu_cb_MoveToE);*/
-	if (sound.data)
+	if (d_sound.data)
 		EditorMenu_addCommand (menu, L"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
 	EditorMenu_addCommand (menu, L"-- insert boundary --", 0, NULL);
 	EditorMenu_addCommand (menu, L"Add on selected tier", GuiMenu_ENTER, menu_cb_InsertOnSelectedTier);
@@ -1258,7 +1258,7 @@ void structTextGridEditor :: v_createMenus () {
 		EditorMenu_addCommand (menu, L"Add selected word to user dictionary", 0, menu_cb_AddToUserDictionary);
 	}
 
-	if (sound.data || longSound.data) {
+	if (d_sound.data || d_longSound.data) {
 		if (v_hasAnalysis ()) {
 			v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the TextGrid menus
 		}
@@ -1335,9 +1335,9 @@ void structTextGridEditor :: v_dataChanged () {
 /********** DRAWING AREA **********/
 
 void structTextGridEditor :: v_prepareDraw () {
-	if (longSound.data) {
+	if (d_longSound.data) {
 		try {
-			LongSound_haveWindow (longSound.data, startWindow, endWindow);
+			LongSound_haveWindow (d_longSound.data, startWindow, endWindow);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -1529,13 +1529,13 @@ void structTextGridEditor :: v_draw () {
 	long itier, ntier = grid -> tiers -> size;
 	enum kGraphics_font oldFont = Graphics_inqFont (graphics);
 	int oldFontSize = Graphics_inqFontSize (graphics);
-	bool showAnalysis = v_hasAnalysis () && (spectrogram.show || pitch.show || intensity.show || formant.show) && (longSound.data || sound.data);
+	bool showAnalysis = v_hasAnalysis () && (spectrogram.show || pitch.show || intensity.show || formant.show) && (d_longSound.data || d_sound.data);
 	double soundY = _TextGridEditor_computeSoundY (this), soundY2 = showAnalysis ? 0.5 * (1.0 + soundY) : soundY;
 
 	/*
 	 * Draw optional sound.
 	 */
-	if (longSound.data || sound.data) {
+	if (d_longSound.data || d_sound.data) {
 		vp1 = Graphics_insetViewport (graphics, 0.0, 1.0, soundY2, 1.0);
 		Graphics_setColour (graphics, Graphics_WHITE);
 		Graphics_setWindow (graphics, 0, 1, 0, 1);
@@ -1548,7 +1548,7 @@ void structTextGridEditor :: v_draw () {
 	/*
 	 * Draw tiers.
 	 */
-	if (longSound.data || sound.data) vp1 = Graphics_insetViewport (graphics, 0.0, 1.0, 0.0, soundY);
+	if (d_longSound.data || d_sound.data) vp1 = Graphics_insetViewport (graphics, 0.0, 1.0, 0.0, soundY);
 	Graphics_setColour (graphics, Graphics_WHITE);
 	Graphics_setWindow (graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
@@ -1627,7 +1627,7 @@ void structTextGridEditor :: v_draw () {
 	Graphics_setColour (graphics, Graphics_BLACK);
 	Graphics_setFont (graphics, oldFont);
 	Graphics_setFontSize (graphics, oldFontSize);
-	if (longSound.data || sound.data) Graphics_resetViewport (graphics, vp1);
+	if (d_longSound.data || d_sound.data) Graphics_resetViewport (graphics, vp1);
 	Graphics_flushWs (graphics);
 
 	if (showAnalysis) {
@@ -1645,7 +1645,7 @@ void structTextGridEditor :: v_draw () {
 		}
 	}
 	Graphics_setWindow (graphics, startWindow, endWindow, 0.0, 1.0);
-	if (longSound.data || sound.data) {
+	if (d_longSound.data || d_sound.data) {
 		Graphics_line (graphics, startWindow, soundY, endWindow, soundY);
 		if (showAnalysis) {
 			Graphics_line (graphics, startWindow, soundY2, endWindow, soundY2);
@@ -2045,10 +2045,10 @@ int structTextGridEditor :: v_clickE (double t, double yWC) {
 }
 
 void structTextGridEditor :: v_play (double tmin, double tmax) {
-	if (longSound.data) {
-		LongSound_playPart (longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
-	} else if (sound.data) {
-		Sound_playPart (sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+	if (d_longSound.data) {
+		LongSound_playPart (d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+	} else if (d_sound.data) {
+		Sound_playPart (d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 	}
 }
 
@@ -2132,7 +2132,7 @@ void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 }
 
 void structTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (v_hasAnalysis () && spectrogram.show && (longSound.data || sound.data)) {
+	if (v_hasAnalysis () && spectrogram.show && (d_longSound.data || d_sound.data)) {
 		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		Graphics_highlight (graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
@@ -2143,7 +2143,7 @@ void structTextGridEditor :: v_highlightSelection (double left, double right, do
 }
 
 void structTextGridEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (v_hasAnalysis () && spectrogram.show && (longSound.data || sound.data)) {
+	if (v_hasAnalysis () && spectrogram.show && (d_longSound.data || d_sound.data)) {
 		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		Graphics_unhighlight (graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);

@@ -34,9 +34,9 @@ struct TimeSoundEditor_sound {
 Thing_define (TimeSoundEditor, FunctionEditor) {
 	// new data:
 	public:
-		bool ownSound;
-		struct TimeSoundEditor_sound sound;
-		struct { LongSound data; } longSound;
+		bool d_ownSound;
+		struct TimeSoundEditor_sound d_sound;
+		struct { LongSound data; } d_longSound;
 		GuiObject drawButton, publishButton, publishPreserveButton, publishWindowButton;
 		GuiObject writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 	// overridden methods:

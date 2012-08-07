@@ -214,7 +214,7 @@ ClassInfo Thing_classFromClassName (const wchar_t *className);
 */
 
 #define Thing_dummyObject(klas) \
-	(klas) _Thing_dummyObject (class##klas)
+	((klas) _Thing_dummyObject (class##klas))
 Thing _Thing_dummyObject (ClassInfo classInfo);
 
 wchar * Thing_getName (Thing me);

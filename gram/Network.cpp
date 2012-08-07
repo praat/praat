@@ -356,7 +356,7 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 	 */
 	for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
 		NetworkConnection conn = & d_connections [iconn];
-		if (conn -> weight != 0.0) {
+		if (fabs (conn -> weight) >= 0.01) {
 			NetworkNode nodeFrom = & d_nodes [conn -> nodeFrom];
 			NetworkNode nodeTo = & d_nodes [conn -> nodeTo];
 			Graphics_setLineWidth (graphics, fabs (conn -> weight) * 6.0);
@@ -366,12 +366,28 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 	}
 	Graphics_setLineWidth (graphics, 1.0);
 	/*
-	 * Draw nodes.
+	 * Draw the backgrounds of the nodes.
 	 */
 	for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
 		NetworkNode node = & d_nodes [inode];
 		Graphics_setColour (graphics, colour ? Graphics_SILVER : Graphics_WHITE);
 		Graphics_fillCircle_mm (graphics, node -> x, node -> y, 5.0);
+	}
+	/*
+	 * Draw the edges of the nodes.
+	 */
+	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setLineWidth (graphics, 2.0);
+	for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+		NetworkNode node = & d_nodes [inode];
+		Graphics_setLineType (graphics, node -> clamped ? Graphics_DRAWN : Graphics_DOTTED);
+		Graphics_circle_mm (graphics, node -> x, node -> y, 5.2);
+	}
+	/*
+	 * Draw the activities of the nodes.
+	 */
+	for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
+		NetworkNode node = & d_nodes [inode];
 		double diameter = fabs (node -> activity) * 5.0;
 		if (diameter != 0.0) {
 			Graphics_setColour (graphics,
@@ -379,10 +395,6 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 				: ( node -> activity < 0.0 ? Graphics_SILVER : Graphics_BLACK));
 			Graphics_fillCircle_mm (graphics, node -> x, node -> y, diameter);
 		}
-		Graphics_setColour (graphics, Graphics_BLACK);
-		Graphics_setLineWidth (graphics, 2.0);
-		Graphics_setLineType (graphics, node -> clamped ? Graphics_DRAWN : Graphics_DOTTED);
-		Graphics_circle_mm (graphics, node -> x, node -> y, 5.2);
 	}
 	Graphics_setColour (graphics, Graphics_BLACK);
 	Graphics_setLineWidth (graphics, saveLineWidth);

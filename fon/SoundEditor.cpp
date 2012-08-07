@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2011,2012 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ Thing_implement (SoundEditor, TimeSoundAnalysisEditor, 0);
 void structSoundEditor :: v_dataChanged () {
 	Sound sound = (Sound) data;
 	Melder_assert (sound != NULL);   // LongSound objects should not get v_dataChanged messages
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & this -> sound.minimum, & this -> sound.maximum);   // BUG unreadable
+	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & d_sound.minimum, & d_sound.maximum);   // BUG unreadable
 	v_destroy_analysis ();
 	SoundEditor_Parent :: v_dataChanged ();
 }
@@ -43,7 +43,7 @@ static void menu_cb_Copy (EDITOR_ARGS) {
 		/*
 		 * Create without change.
 		 */
-		autoSound publish = my longSound.data ? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, FALSE) :
+		autoSound publish = my d_longSound.data ? LongSound_extractPart ((LongSound) my data, my startSelection, my endSelection, FALSE) :
 			Sound_extractPart ((Sound) my data, my startSelection, my endSelection, kSound_windowShape_RECTANGULAR, 1.0, FALSE);
 		/*
 		 * Change without error.
@@ -144,7 +144,7 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 
 			/* Force FunctionEditor to show changes. */
 
-			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
+			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 			my v_destroy_analysis ();
 			FunctionEditor_ungroup (me);
 			FunctionEditor_marksChanged (me);
@@ -214,7 +214,7 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 
 	/* Force FunctionEditor to show changes. */
 
-	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my sound.minimum, & my sound.maximum);
+	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 	my v_destroy_analysis ();
 	FunctionEditor_ungroup (me);
 	FunctionEditor_marksChanged (me);
@@ -293,19 +293,19 @@ static void menu_cb_LongSoundEditorHelp (EDITOR_ARGS) { EDITOR_IAM (SoundEditor)
 void structSoundEditor :: v_createMenus () {
 	SoundEditor_Parent :: v_createMenus ();
 	Melder_assert (data != NULL);
-	Melder_assert (sound.data != NULL || longSound.data != NULL);
+	Melder_assert (d_sound.data != NULL || d_longSound.data != NULL);
 
 	Editor_addCommand (this, L"Edit", L"-- cut copy paste --", 0, NULL);
-	if (sound.data) cutButton = Editor_addCommand (this, L"Edit", L"Cut", 'X', menu_cb_Cut);
+	if (d_sound.data) cutButton = Editor_addCommand (this, L"Edit", L"Cut", 'X', menu_cb_Cut);
 	copyButton = Editor_addCommand (this, L"Edit", L"Copy selection to Sound clipboard", 'C', menu_cb_Copy);
-	if (sound.data) pasteButton = Editor_addCommand (this, L"Edit", L"Paste after selection", 'V', menu_cb_Paste);
-	if (sound.data) {
+	if (d_sound.data) pasteButton = Editor_addCommand (this, L"Edit", L"Paste after selection", 'V', menu_cb_Paste);
+	if (d_sound.data) {
 		Editor_addCommand (this, L"Edit", L"-- zero --", 0, NULL);
 		zeroButton = Editor_addCommand (this, L"Edit", L"Set selection to zero", 0, menu_cb_SetSelectionToZero);
 		reverseButton = Editor_addCommand (this, L"Edit", L"Reverse selection", 'R', menu_cb_ReverseSelection);
 	}
 
-	if (sound.data) {
+	if (d_sound.data) {
 		Editor_addCommand (this, L"Select", L"-- move to zero --", 0, 0);
 		Editor_addCommand (this, L"Select", L"Move start of selection to nearest zero crossing", ',', menu_cb_MoveBtoZero);
 		Editor_addCommand (this, L"Select", L"Move begin of selection to nearest zero crossing", Editor_HIDDEN, menu_cb_MoveBtoZero);
@@ -325,9 +325,9 @@ void structSoundEditor :: v_createHelpMenuItems (EditorMenu menu) {
 /********** UPDATE **********/
 
 void structSoundEditor :: v_prepareDraw () {
-	if (longSound.data) {
+	if (d_longSound.data) {
 		try {
-			LongSound_haveWindow (longSound.data, startWindow, endWindow);
+			LongSound_haveWindow (d_longSound.data, startWindow, endWindow);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -339,18 +339,18 @@ void structSoundEditor :: v_draw () {
 	Graphics_Viewport viewport;
 	bool showAnalysis = spectrogram.show || pitch.show || intensity.show || formant.show;
 	Melder_assert (data != NULL);
-	Melder_assert (sound.data != NULL || longSound.data != NULL);
+	Melder_assert (d_sound.data != NULL || d_longSound.data != NULL);
 
 	/*
 	 * We check beforehand whether the window fits the LongSound buffer.
 	 */
-	if (longSound.data && endWindow - startWindow > longSound.data -> bufferLength) {
+	if (d_longSound.data && endWindow - startWindow > d_longSound.data -> bufferLength) {
 		Graphics_setColour (graphics, Graphics_WHITE);
 		Graphics_setWindow (graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (graphics, 0, 1, 0, 1);
 		Graphics_setColour (graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
-		Graphics_text3 (graphics, 0.5, 0.5, L"(window longer than ", Melder_float (Melder_single (longSound.data -> bufferLength)), L" seconds)");
+		Graphics_text3 (graphics, 0.5, 0.5, L"(window longer than ", Melder_float (Melder_single (d_longSound.data -> bufferLength)), L" seconds)");
 		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_TOP);
 		Graphics_text1 (graphics, 0.5, 0.5, L"(zoom in to see the samples)");
 		return;
@@ -363,7 +363,7 @@ void structSoundEditor :: v_draw () {
 	Graphics_setColour (graphics, Graphics_WHITE);
 	Graphics_setWindow (graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
-	TimeSoundEditor_draw_sound (this, sound.minimum, sound.maximum);
+	TimeSoundEditor_draw_sound (this, d_sound.minimum, d_sound.maximum);
 	Graphics_flushWs (graphics);
 	if (showAnalysis)
 		Graphics_resetViewport (graphics, viewport);
@@ -384,7 +384,7 @@ void structSoundEditor :: v_draw () {
 		if (showAnalysis)
 			viewport = Graphics_insetViewport (graphics, 0, 1, 0.5, 1);
 		v_draw_analysis_pulses ();
-		TimeSoundEditor_draw_sound (this, sound.minimum, sound.maximum);   // second time, partially across the pulses
+		TimeSoundEditor_draw_sound (this, d_sound.minimum, d_sound.maximum);   // second time, partially across the pulses
 		Graphics_flushWs (graphics);
 		if (showAnalysis)
 			Graphics_resetViewport (graphics, viewport);
@@ -395,8 +395,8 @@ void structSoundEditor :: v_draw () {
 	long first, last;
 	long selectedSamples = Sampled_getWindowSamples (data, startSelection, endSelection, & first, & last);
 	v_updateMenuItems_file ();
-	if (sound.data) {
-		GuiObject_setSensitive (cutButton, selectedSamples != 0 && selectedSamples < sound.data -> nx);
+	if (d_sound.data) {
+		GuiObject_setSensitive (cutButton, selectedSamples != 0 && selectedSamples < d_sound.data -> nx);
 		GuiObject_setSensitive (copyButton, selectedSamples != 0);
 		GuiObject_setSensitive (zeroButton, selectedSamples != 0);
 		GuiObject_setSensitive (reverseButton, selectedSamples != 0);
@@ -404,7 +404,7 @@ void structSoundEditor :: v_draw () {
 }
 
 void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
-	if (longSound.data)
+	if (d_longSound.data)
 		LongSound_playPart ((LongSound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	else
 		Sound_playPart ((Sound) data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
@@ -438,7 +438,7 @@ void structSoundEditor :: f_init (GuiObject parent, const wchar *title, Sampled 
 	 * because createMenus expect that one of them is not NULL.
 	 */
 	TimeSoundAnalysisEditor_init (this, parent, title, data, data, false);
-	if (this -> longSound.data && this -> endWindow - this -> startWindow > 30.0) {
+	if (d_longSound.data && this -> endWindow - this -> startWindow > 30.0) {
 		this -> endWindow = this -> startWindow + 30.0;
 		if (this -> startWindow == this -> tmin)
 			this -> startSelection = this -> endSelection = 0.5 * (this -> startWindow + this -> endWindow);

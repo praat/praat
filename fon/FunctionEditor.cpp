@@ -44,7 +44,7 @@ Thing_implement (FunctionEditor, Editor, 0);
 
 static struct {
 	int shellWidth, shellHeight;
-	bool synchronizedZoomAndScroll, showSelectionViewer;
+	bool synchronizedZoomAndScroll;
 	double arrowScrollStep;
 	struct { bool drawSelectionTimes, drawSelectionHairs; } picture;
 } preferences;
@@ -53,7 +53,7 @@ void FunctionEditor_prefs (void) {
 	Preferences_addInt (L"FunctionEditor.shellWidth", & preferences.shellWidth, 700);
 	Preferences_addInt (L"FunctionEditor.shellHeight", & preferences.shellHeight, 440);
 	Preferences_addBool (L"FunctionEditor.synchronizedZoomAndScroll", & preferences.synchronizedZoomAndScroll, true);
-	Preferences_addBool (L"FunctionEditor.showSelectionViewer", & preferences.showSelectionViewer, false);
+	Preferences_addBool (L"FunctionEditor.showSelectionViewer", Thing_dummyObject (FunctionEditor) -> vs_showSelectionViewer (), false);
 	Preferences_addDouble (L"FunctionEditor.arrowScrollStep", & preferences.arrowScrollStep, 0.05);   // BUG: seconds?
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionTimes", & preferences.picture.drawSelectionTimes, true);
 	Preferences_addBool (L"FunctionEditor.picture.drawSelectionHairs", & preferences.picture.drawSelectionHairs, true);
@@ -425,14 +425,14 @@ static void menu_cb_preferences (EDITOR_ARGS) {
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
 		SET_INTEGER (L"Synchronize zoom and scroll", preferences.synchronizedZoomAndScroll)
-		SET_INTEGER (L"Show selection viewer", preferences.showSelectionViewer)
+		SET_INTEGER (L"Show selection viewer", * my vs_showSelectionViewer ())
 		SET_REAL (L"Arrow scroll step", my arrowScrollStep)
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
 		bool oldSynchronizedZoomAndScroll = preferences.synchronizedZoomAndScroll;
 		bool oldShowSelectionViewer = my d_hasSelectionViewer;
 		preferences.synchronizedZoomAndScroll = GET_INTEGER (L"Synchronize zoom and scroll");
-		preferences.showSelectionViewer = my d_hasSelectionViewer = GET_INTEGER (L"Show selection viewer");
+		* my vs_showSelectionViewer () = my d_hasSelectionViewer = GET_INTEGER (L"Show selection viewer");
 		preferences.arrowScrollStep = my arrowScrollStep = GET_REAL (L"Arrow scroll step");
 		if (my d_hasSelectionViewer != oldShowSelectionViewer) {
 			struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
@@ -1612,7 +1612,7 @@ void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *titl
 	#endif
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setFontSize (my graphics, 12);
-	my d_hasSelectionViewer = preferences.showSelectionViewer;   // before resizing
+	my d_hasSelectionViewer = * my vs_showSelectionViewer ();   // before resizing
 
 // This exdents because it's a hack:
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
@@ -1731,4 +1731,6 @@ void FunctionEditor_garnish (FunctionEditor me) {
 	}
 }
 
-/* End of file FunctionEditor.c */
+bool structFunctionEditor :: s_showSelectionViewer;
+
+/* End of file FunctionEditor.cpp */

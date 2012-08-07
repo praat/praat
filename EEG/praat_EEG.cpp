@@ -696,6 +696,8 @@ void praat_EEG_init (void) {
 	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract events where column (number)...", 0, 1, DO_ERPTier_Table_extractEventsWhereColumn_number);
 	praat_addAction2 (classERPTier, 1, classTable, 1, L"Extract events where column (text)...", 0, 1, DO_ERPTier_Table_extractEventsWhereColumn_text);
 
+	EEGWindow_preferences ();
+	ERPWindow_preferences ();
 }
 
 /* End of file praat_EEG.cpp */

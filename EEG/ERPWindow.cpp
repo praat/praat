@@ -18,8 +18,15 @@
  */
 
 #include "ERPWindow.h"
+#include "Preferences.h"
 
 Thing_implement (ERPWindow, SoundEditor, 0);
+
+bool structERPWindow :: s_showSelectionViewer;
+
+void ERPWindow_preferences (void) {
+	Preferences_addBool (L"ERPWindow.showSelectionViewer", Thing_dummyObject (ERPWindow) -> vs_showSelectionViewer (), true);
+}
 
 typedef struct { int inclination, azimuth; double topX, topY; } BiosemiLocationData;
 

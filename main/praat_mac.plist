@@ -398,6 +398,18 @@
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>Network</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>Praat neural network</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Praat</string>

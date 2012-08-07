@@ -22,7 +22,10 @@
 
 Thing_implement (EEGWindow, TextGridEditor, 0);
 
+bool structEEGWindow :: s_showSelectionViewer;
+
 void EEGWindow_preferences (void) {
+	Preferences_addBool (L"EEGWindow.showSelectionViewer", Thing_dummyObject (EEGWindow) -> vs_showSelectionViewer (), false);
 }
 
 static void menu_cb_EEGWindowHelp (EDITOR_ARGS) { EDITOR_IAM (EEGWindow); Melder_help (L"EEG window"); }

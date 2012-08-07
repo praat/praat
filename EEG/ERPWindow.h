@@ -23,15 +23,20 @@
 #include "ERP.h"
 
 Thing_define (ERPWindow, SoundEditor) {
+	public:
 	// overridden methods:
 		virtual const wchar * v_getChannelName (long channelNumber) {
 			ERP erp = (ERP) this -> data;
 			return erp -> d_channelNames [channelNumber];
 		}
+		static bool s_showSelectionViewer;
+		virtual bool * vs_showSelectionViewer () { return & s_showSelectionViewer; }
 		virtual void v_drawSelectionViewer ();
 };
 
 ERPWindow ERPWindow_create (GuiObject parent, const wchar *title, ERP data);
+
+void ERPWindow_preferences (void);
 
 /* End of file ERPWindow.h */
 #endif

@@ -1,6 +1,6 @@
 /* RealTierEditor.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ void structRealTierEditor :: v_draw () {
 	RealTier data = (RealTier) this -> data;
 	long ifirstSelected, ilastSelected, n = data -> points -> size, imin, imax, i;
 	Graphics_Viewport viewport;
-	if (sound.data) {
+	if (d_sound.data) {
 		viewport = Graphics_insetViewport (graphics, 0, 1, 1 - SOUND_HEIGHT, 1.0);
 		Graphics_setColour (graphics, Graphics_WHITE);
 		Graphics_setWindow (graphics, 0, 1, 0, 1);
@@ -257,7 +257,7 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	 * Perform the default action: move cursor.
 	 */
 	//my startSelection = my endSelection = xWC;
-	if (sound.data) {
+	if (d_sound.data) {
 		if (yWC < 1 - SOUND_HEIGHT) {   /* Clicked in tier area? */
 			yWC /= 1 - SOUND_HEIGHT;
 			ycursor = (1.0 - yWC) * ymin + yWC * ymax;
@@ -278,7 +278,7 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	if (inearestPoint == 0) return RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	nearestPoint = (RealPoint) pitch -> points -> item [inearestPoint];
 	if (Graphics_distanceWCtoMM (graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
-		if (sound.data) Graphics_resetViewport (graphics, viewport);
+		if (d_sound.data) Graphics_resetViewport (graphics, viewport);
 		return RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -376,8 +376,8 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 }
 
 void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
-	if (sound.data)
-		Sound_playPart (sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+	if (d_sound.data)
+		Sound_playPart (d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
 void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar *title, RealTier data, Sound sound, bool ownSound) {

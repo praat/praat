@@ -1030,7 +1030,11 @@ Table Table_rowsToColumns (Table me, const wchar *factors_string, long columnToT
 				MelderString_copy (& columnLabel, columnsToExpand_names [iexpand]);
 				MelderString_appendCharacter (& columnLabel, '.');
 				MelderString_append (& columnLabel, levels_names [ilevel]);
-				Table_setColumnLabel (thee.peek(), numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel, columnLabel.string);
+				//Melder_casual ("Number of factors: %ld", numberOfFactors);
+				//Melder_casual ("Level: %ld out of %ld", ilevel, numberOfLevels);
+				long columnNumber = numberOfFactors + (iexpand - 1) * numberOfLevels + ilevel;
+				//Melder_casual ("Column number: %ld", columnNumber);
+				Table_setColumnLabel (thee.peek(), columnNumber, columnLabel.string);
 			}
 		}
 		/*

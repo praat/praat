@@ -1,6 +1,6 @@
-/* praat_gram.c
+/* praat_gram.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2011/05/03
  */
 
 #include "praat.h"
@@ -1502,8 +1498,8 @@ void praat_uvafon_gram_init (void) {
 
 	praat_addAction1 (classNetwork, 0, L"Draw...", 0, 0, DO_Network_draw);
 	praat_addAction1 (classNetwork, 0, L"Query -", 0, 0, 0);
-	praat_addAction1 (classNetwork, 1, L"Get activity...", 0, 0, DO_Network_getActivity);
-	praat_addAction1 (classNetwork, 1, L"Get weight...", 0, 0, DO_Network_getWeight);
+	praat_addAction1 (classNetwork, 1, L"Get activity...", 0, 1, DO_Network_getActivity);
+	praat_addAction1 (classNetwork, 1, L"Get weight...", 0, 1, DO_Network_getWeight);
 	praat_addAction1 (classNetwork, 0, L"Modify -", 0, 0, 0);
 	praat_addAction1 (classNetwork, 0, L"Add node...", 0, 1, DO_Network_addNode);
 	praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 1, DO_Network_addConnection);
@@ -1524,4 +1520,4 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction1 (classNetwork, 1, L"Set weight leak...", 0, 1, DO_Network_setWeightLeak);
 }
 
-/* End of file praat_gram.c */
+/* End of file praat_gram.cpp */

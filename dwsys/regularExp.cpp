@@ -488,14 +488,14 @@ static regularExp_CHAR  Letter_Char [ALNUM_CHAR_SIZE];  /* init_ansi_classes () 
 /* and
    shortcut_escape ().  */
 
-static regularExp_CHAR  ASCII_Digits [] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' }; /* Same for all */
+static regularExp_CHAR  ASCII_Digits [] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '\0' }; /* Same for all */
 /* locales.     */
 static int            Is_Case_Insensitive;
 static int            Match_Newline;
 
 static int            Enable_Counting_Quantifier = 1;
 static regularExp_CHAR  Brace_Char;
-static regularExp_CHAR  Default_Meta_Char [] = { '{', '.', '*', '+', '?', '[', '(', '|', ')', '^', '<', '>', '$' };
+static regularExp_CHAR  Default_Meta_Char [] = { '{', '.', '*', '+', '?', '[', '(', '|', ')', '^', '<', '>', '$', '\0' };
 static regularExp_CHAR *Meta_Char;
 
 typedef struct {
@@ -2464,7 +2464,7 @@ static regularExp_CHAR numeric_escape (
     regularExp_CHAR    c,
     regularExp_CHAR  **parse) {
 
-	static regularExp_CHAR digits [] = { 'f', 'e', 'd', 'c', 'b', 'a', 'F', 'E', 'D', 'C', 'B', 'A', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0' };
+	static regularExp_CHAR digits [] = { 'f', 'e', 'd', 'c', 'b', 'a', 'F', 'E', 'D', 'C', 'B', 'A', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '\0' };
 
 	static unsigned int digit_val [] = {
 		15, 14, 13, 12, 11, 10,                  /* Lower case Hex digits */
@@ -2472,9 +2472,9 @@ static regularExp_CHAR numeric_escape (
 		9,  8,  7,  6,  5,  4,  3,  2,  1,  0
 	}; /* Decimal Digits */
 
-	register regularExp_CHAR *scan;
-	register regularExp_CHAR *pos_ptr;
-	register regularExp_CHAR *digit_str;
+	regularExp_CHAR *scan;
+	regularExp_CHAR *pos_ptr;
+	regularExp_CHAR *digit_str;
 	unsigned int   value     =  0;
 	unsigned int   radix     =  8;
 	int   width     =  3; /* Can not be bigger than \0377 */

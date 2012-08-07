@@ -47,7 +47,7 @@ Thing_define (FunctionEditor, Editor) {
 		short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
 		short height;   // size of drawing areas in pixels
 		GuiObject text;   // optional text at top
-		int shiftKeyPressed;   // information for the 'play' method.
+		int shiftKeyPressed;   // information for the 'play' method
 		bool playingCursor, playingSelection;   // information for end of play
 		struct FunctionEditor_picture picture;
 
@@ -72,6 +72,8 @@ Thing_define (FunctionEditor, Editor) {
 			/*
 			 * Message: "draw your part of the data between startWindow and endWindow."
 			 */
+		static bool s_showSelectionViewer;
+		virtual bool * vs_showSelectionViewer () { return & s_showSelectionViewer; }
 		virtual void v_drawSelectionViewer () { }
 		virtual void v_prepareDraw () { }   // for less flashing
 		virtual const wchar * v_format_domain () { return L"Time domain:"; }

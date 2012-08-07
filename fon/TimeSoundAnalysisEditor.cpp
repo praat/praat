@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -626,14 +626,14 @@ static void menu_cb_moveFrequencyCursorTo (EDITOR_ARGS) {
 
 static Sound extractSound (TimeSoundAnalysisEditor me, double tmin, double tmax) {
 	Sound sound = NULL;
-	if (my longSound.data) {
-		if (tmin < my longSound.data -> xmin) tmin = my longSound.data -> xmin;
-		if (tmax > my longSound.data -> xmax) tmax = my longSound.data -> xmax;
-		sound = LongSound_extractPart (my longSound.data, tmin, tmax, TRUE);
-	} else if (my sound.data) {
-		if (tmin < my sound.data -> xmin) tmin = my sound.data -> xmin;
-		if (tmax > my sound.data -> xmax) tmax = my sound.data -> xmax;
-		sound = Sound_extractPart (my sound.data, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, TRUE);
+	if (my d_longSound.data) {
+		if (tmin < my d_longSound.data -> xmin) tmin = my d_longSound.data -> xmin;
+		if (tmax > my d_longSound.data -> xmax) tmax = my d_longSound.data -> xmax;
+		sound = LongSound_extractPart (my d_longSound.data, tmin, tmax, TRUE);
+	} else if (my d_sound.data) {
+		if (tmin < my d_sound.data -> xmin) tmin = my d_sound.data -> xmin;
+		if (tmax > my d_sound.data -> xmax) tmax = my d_sound.data -> xmax;
+		sound = Sound_extractPart (my d_sound.data, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, TRUE);
 	}
 	return sound;
 }
@@ -1521,7 +1521,7 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_view_sound_analysis (Edi
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_query (EditorMenu menu) {
 	TimeSoundAnalysisEditor_Parent :: v_createMenuItems_query (menu);
-	if (sound.data || longSound.data) {
+	if (d_sound.data || d_longSound.data) {
 		v_createMenuItems_query_log (menu);
 	}
 }

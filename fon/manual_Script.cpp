@@ -3228,7 +3228,7 @@ LIST_ITEM (L"3. Choose ##New editor script# from the @@File menu@ in the SoundEd
 LIST_ITEM (L"4. Type the following lines into the ScriptEditor:")
 CODE2 (L"cursor = Get cursor")
 CODE2 (L"Select... cursor-0.02 cursor+0.02")
-CODE2 (L"Extract selection sound (windowed)... slice Kaiser2 2 no")
+CODE2 (L"Extract selected sound (windowed)... slice Kaiser2 2 no")
 CODE1 (L"#endeditor")
 CODE1 (L"To Spectrum... yes")
 CODE1 (L"View & Edit")
