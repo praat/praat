@@ -154,7 +154,7 @@ void structButtonEditor :: v_draw () {
 		case 4:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				const wchar *klas = cmd -> class1 -> className;
+				const wchar_t *klas = cmd -> class1 -> className;
 				if (wcscmp (klas, L"N") < 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -162,7 +162,7 @@ void structButtonEditor :: v_draw () {
 		case 5:
 			for (long i = 1, n = praat_getNumberOfActions (); i <= n; i ++) {
 				praat_Command cmd = praat_getAction (i);
-				const wchar *klas = cmd -> class1 -> className;
+				const wchar_t *klas = cmd -> class1 -> className;
 				if (wcscmp (klas, L"N") >= 0)
 					drawAction (this, praat_getAction (i), i);
 			}
@@ -245,13 +245,7 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 
 static void which (ButtonEditor me, int show) {
 	my show = show;
-	#if motif
-	GuiRadioButton_setValue (my button1, show == 1);
-	GuiRadioButton_setValue (my button2, show == 2);
-	GuiRadioButton_setValue (my button3, show == 3);
-	GuiRadioButton_setValue (my button4, show == 4);
-	GuiRadioButton_setValue (my button5, show == 5);
-	#endif
+	( show == 1 ? my button1 : show == 2 ? my button2 : show == 3 ? my button3 : show == 4 ? my button4 : my button5 ) -> f_set ();
 	HyperPage_goToPage (me, L"Buttons");
 }
 
@@ -263,35 +257,23 @@ static void gui_radiobutton_cb_actionsNZ (I, GuiRadioButtonEvent event) { (void)
 
 void structButtonEditor :: v_createChildren () {
 	ButtonEditor_Parent :: v_createChildren ();
-	#if gtk
-		void *group = NULL;
-	#endif
 	int x = 3, y = Machine_getMenuBarHeight () + 4;
-	button1 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	GuiRadioGroup_begin ();
+	button1 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		L"Objects", gui_radiobutton_cb_objects, this, GuiRadioButton_SET);
 	x += BUTTON_WIDTH + 5;
-	button2 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	button2 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		L"Picture", gui_radiobutton_cb_picture, this, 0);
 	x += BUTTON_WIDTH + 5;
-	button3 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH, y, Gui_AUTOMATIC,
+	button3 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH, y, y + Gui_RADIOBUTTON_HEIGHT,
 		L"Editors", gui_radiobutton_cb_editors, this, 0);
 	x += BUTTON_WIDTH + 5;
-	button4 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+	button4 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
 		L"Actions A-M", gui_radiobutton_cb_actionsAM, this, 0);
 	x += BUTTON_WIDTH + 35;
-	button5 = GuiRadioButton_createShown (holder, x, x + BUTTON_WIDTH + 30, y, Gui_AUTOMATIC,
+	button5 = GuiRadioButton_createShown (d_windowForm, x, x + BUTTON_WIDTH + 30, y, y + Gui_RADIOBUTTON_HEIGHT,
 		L"Actions N-Z", gui_radiobutton_cb_actionsNZ, this, 0);
-	
-	#if gtk
-		group = GuiRadioButton_getGroup (button1);
-		GuiRadioButton_setGroup (button2, group);
-		group = GuiRadioButton_getGroup (button2);
-		GuiRadioButton_setGroup (button3, group);
-		group = GuiRadioButton_getGroup (button3);
-		GuiRadioButton_setGroup (button4, group);
-		group = GuiRadioButton_getGroup (button4);
-		GuiRadioButton_setGroup (button5, group);
-	#endif
+	GuiRadioGroup_end ();
 }
 
 static void menu_cb_ButtonEditorHelp (EDITOR_ARGS) { EDITOR_IAM (ButtonEditor); Melder_help (L"ButtonEditor"); }
@@ -301,10 +283,10 @@ void structButtonEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"ButtonEditor help", '?', menu_cb_ButtonEditorHelp);
 }
 
-ButtonEditor ButtonEditor_create (GuiObject parent) {
+ButtonEditor ButtonEditor_create () {
 	try {
 		autoButtonEditor me = Thing_new (ButtonEditor);
-		HyperPage_init (me.peek(), parent, L"Buttons", NULL);
+		HyperPage_init (me.peek(), L"Buttons", NULL);
 		which (me.peek(), 1);
 		return me.transfer();
 	} catch (MelderError) {

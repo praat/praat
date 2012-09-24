@@ -40,12 +40,12 @@
 #include "site.h"
 
 struct structPicture {
-	GuiObject drawingArea;
+	GuiDrawingArea drawingArea;
 	Graphics graphics, selectionGraphics;
-	Boolean sensitive;
+	bool sensitive;
 	double selx1, selx2, sely1, sely2;   // selection in NDC co-ordinates
-	void (*selectionChangedCallback) (struct structPicture *, XtPointer, double, double, double, double);
-	XtPointer selectionChangedClosure;
+	void (*selectionChangedCallback) (struct structPicture *, void *, double, double, double, double);
+	void *selectionChangedClosure;
 	int backgrounding, mouseSelectsInnerViewport;
 	#if gtk
 		bool selectionInProgress;
@@ -133,57 +133,18 @@ static void drawSelection (Picture me, int high) {
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (Picture);
+	(void) event;
 	#if gtk
-	//	g_debug("EXPOSE DRAWING AREA");
-		
-		// save old cairo contexts
-		cairo_t *cgr = (cairo_t *) Graphics_x_getCR (my graphics);
-		Melder_assert (cgr != NULL);
-		cairo_t *csgr = (cairo_t *) Graphics_x_getCR (my selectionGraphics);
-		
-		// set new cairo contexts
-		Graphics_x_setCR (my graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget) -> window)));
-		Graphics_x_setCR (my selectionGraphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget) -> window)));
-		// - Graphics_x_setCR(my graphics, Graphics_x_getCR(my selectionGraphics));
-		// g_debug ("%d %d %d %d\n", event->x, event->y, event->width, event->height);
-		cairo_rectangle ((cairo_t *) Graphics_x_getCR (my graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
-		cairo_clip ((cairo_t *) Graphics_x_getCR (my graphics));
-		drawMarkers (me);
-		Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
-		drawSelection (me, 1);
-	//	cairo_set_source_rgb(Graphics_x_getCR (my graphics), test / 3.0, test / 2.0, test);
-	//	cairo_fill(Graphics_x_getCR (my graphics));
-		cairo_destroy ((cairo_t *) Graphics_x_getCR (my selectionGraphics));
-		cairo_destroy ((cairo_t *) Graphics_x_getCR (my graphics));
-
-		// restore old cairo contexts
-		Graphics_x_setCR (my graphics, cgr);
-		Graphics_x_setCR (my selectionGraphics, csgr);
-
-	//	test+=0.1;
-	//	if (test > 3) test = 0.1;
-	//	g_debug("%d", test);
-	#elif defined (macintosh) && 0
-		WindowPtr window = (WindowPtr) ((EventRecord *) call) -> message;
-		static RgnHandle visRgn;
-		Rect rect;
-		long x1DC, x2DC, y1DC, y2DC;
-		Graphics_inqWsViewport (my selectionGraphics, & x1DC, & x2DC, & y1DC, & y2DC);
-		SetRect (& rect, x1DC, y1DC, x2DC, y2DC);
-		/* No clearing needed; macintosh clips to update region. */
-		if (visRgn == NULL) visRgn = NewRgn ();
-		GetPortVisibleRegion (GetWindowPort (window), visRgn);
-		if (RectInRgn (& rect, visRgn)) {
-			drawMarkers (me);
-			Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
-			drawSelection (me, 1);
-		}
-	#elif defined (_WIN32) || 1
-		(void) event;
-		drawMarkers (me);
-		Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
-		drawSelection (me, 1);
+		/*
+		 * The size of the viewable part of the drawing area may have changed.
+		 */
+		Melder_assert (event -> widget);
+		gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my graphics),          GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
+		gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my selectionGraphics), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
 	#endif
+	drawMarkers (me);
+	Graphics_play ((Graphics) my graphics, (Graphics) my graphics);
+	drawSelection (me, 1);
 }
 
 // TODO: Paul, als praat nu 100dpi zou zijn waarom zie ik hier dan nog 72.0 onder?
@@ -266,10 +227,10 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 				if (xmargin > ix2 - ix1 + 1) xmargin = ix2 - ix1 + 1;
 				if (ymargin > iy2 - iy1 + 1) ymargin = iy2 - iy1 + 1;
 				Picture_setSelection (me, 0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
-					0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin, False);
+					0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin, false);
 			} else {
 				Picture_setSelection (me, 0.5 * (ix1 - 1), 0.5 * ix2,
-					0.5 * (SQUARES - iy2), 0.5 * (SQUARES + 1 - iy1), False);
+					0.5 * (SQUARES - iy2), 0.5 * (SQUARES + 1 - iy1), false);
 				#if gtk
 					Graphics_flushWs (my graphics);
 				#endif
@@ -288,7 +249,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 #endif
 }
 
-Picture Picture_create (GuiObject drawingArea, Boolean sensitive) {
+Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 	Picture me = NULL;
 	try {
 		me = Melder_calloc (struct structPicture, 1);
@@ -307,7 +268,7 @@ Picture Picture_create (GuiObject drawingArea, Boolean sensitive) {
 		if (drawingArea) {
 			/* The drawing area must have been realized; see manual at XtWindow. */
 			my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-			GuiDrawingArea_setExposeCallback (my drawingArea, gui_drawingarea_cb_expose, me);
+			my drawingArea -> f_setExposeCallback (gui_drawingarea_cb_expose, me);
 		} else {
 			/*
 			 * Create a dummy Graphics.
@@ -322,7 +283,7 @@ Picture Picture_create (GuiObject drawingArea, Boolean sensitive) {
 		if (my sensitive) {
 			my selectionGraphics = Graphics_create_xmdrawingarea (my drawingArea);
 			Graphics_setWindow (my selectionGraphics, 0, 12, 0, 12);
-			GuiDrawingArea_setClickCallback (my drawingArea, gui_drawingarea_cb_click, me);
+			my drawingArea -> f_setClickCallback (gui_drawingarea_cb_click, me);
 		}
 		Graphics_startRecording (my graphics);
 		return me;
@@ -333,8 +294,8 @@ Picture Picture_create (GuiObject drawingArea, Boolean sensitive) {
 }
 
 void Picture_setSelectionChangedCallback (Picture me,
-	void (*selectionChangedCallback) (Picture, XtPointer, double, double, double, double),
-	XtPointer selectionChangedClosure)
+	void (*selectionChangedCallback) (Picture, void *, double, double, double, double),
+	void *selectionChangedClosure)
 {
 	my selectionChangedCallback = selectionChangedCallback;
 	my selectionChangedClosure = selectionChangedClosure;
@@ -459,31 +420,31 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	if (Melder_debug == 6) {
 		DEVMODE *devMode = * (DEVMODE **) defaultPrinter. hDevMode;
 		MelderInfo_open ();
-		MelderInfo_writeLine1 (L"DEVICE CAPS:");
-		MelderInfo_writeLine4 (L"aspect x ", Melder_integer (GetDeviceCaps (dc, ASPECTX)),
+		MelderInfo_writeLine (L"DEVICE CAPS:");
+		MelderInfo_writeLine (L"aspect x ", Melder_integer (GetDeviceCaps (dc, ASPECTX)),
 			L" y ", Melder_integer (GetDeviceCaps (dc, ASPECTY)));
-		MelderInfo_writeLine4 (L"res(pixels) hor ", Melder_integer (GetDeviceCaps (dc, HORZRES)),
+		MelderInfo_writeLine (L"res(pixels) hor ", Melder_integer (GetDeviceCaps (dc, HORZRES)),
 			L" vert ", Melder_integer (GetDeviceCaps (dc, VERTRES)));
-		MelderInfo_writeLine4 (L"size(mm) hor ", Melder_integer (GetDeviceCaps (dc, HORZSIZE)),
+		MelderInfo_writeLine (L"size(mm) hor ", Melder_integer (GetDeviceCaps (dc, HORZSIZE)),
 			L" vert ", Melder_integer (GetDeviceCaps (dc, VERTSIZE)));
-		MelderInfo_writeLine4 (L"pixels/inch hor ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSX)),
+		MelderInfo_writeLine (L"pixels/inch hor ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSX)),
 			L" vert ", Melder_integer (GetDeviceCaps (dc, LOGPIXELSY)));
-		MelderInfo_writeLine4 (L"physicalOffset(pixels) hor ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETX)),
+		MelderInfo_writeLine (L"physicalOffset(pixels) hor ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETX)),
 			L" vert ", Melder_integer (GetDeviceCaps (dc, PHYSICALOFFSETY)));
-		MelderInfo_writeLine1 (L"PRINTER:");
-		MelderInfo_writeLine2 (L"dmFields ", Melder_integer (devMode -> dmFields));
+		MelderInfo_writeLine (L"PRINTER:");
+		MelderInfo_writeLine (L"dmFields ", Melder_integer (devMode -> dmFields));
 		if (devMode -> dmFields & DM_YRESOLUTION)
-			MelderInfo_writeLine2 (L"y resolution ", Melder_integer (devMode -> dmYResolution));
+			MelderInfo_writeLine (L"y resolution ", Melder_integer (devMode -> dmYResolution));
 		if (devMode -> dmFields & DM_PRINTQUALITY)
-			MelderInfo_writeLine2 (L"print quality ", Melder_integer (devMode -> dmPrintQuality));
+			MelderInfo_writeLine (L"print quality ", Melder_integer (devMode -> dmPrintQuality));
 		if (devMode -> dmFields & DM_PAPERWIDTH)
-			MelderInfo_writeLine2 (L"paper width ", Melder_integer (devMode -> dmPaperWidth));
+			MelderInfo_writeLine (L"paper width ", Melder_integer (devMode -> dmPaperWidth));
 		if (devMode -> dmFields & DM_PAPERLENGTH)
-			MelderInfo_writeLine2 (L"paper length ", Melder_integer (devMode -> dmPaperLength));
+			MelderInfo_writeLine (L"paper length ", Melder_integer (devMode -> dmPaperLength));
 		if (devMode -> dmFields & DM_PAPERSIZE)
-			MelderInfo_writeLine2 (L"paper size ", Melder_integer (devMode -> dmPaperSize));
+			MelderInfo_writeLine (L"paper size ", Melder_integer (devMode -> dmPaperSize));
 		if (devMode -> dmFields & DM_ORIENTATION)
-			MelderInfo_writeLine2 (L"orientation ", Melder_integer (devMode -> dmOrientation));
+			MelderInfo_writeLine (L"orientation ", Melder_integer (devMode -> dmOrientation));
 		MelderInfo_close ();
 	}
 	autoGraphics pictGraphics = Graphics_create_screen ((void *) dc, NULL, resolution);
@@ -559,14 +520,15 @@ void Picture_print (Picture me) {
 }
 
 void Picture_setSelection
-	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, Boolean notify)
+	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, bool notify)
 {
 	if (my drawingArea) {
+		Melder_assert (my drawingArea -> d_widget);
 		#if gtk
 			long x1, x2, y1, y2;
 			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea), x1, y2, abs (x2 - x1), abs (y2 - y1));
+			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
 		#else
 			drawSelection (me, 0);   // unselect
 		#endif
@@ -580,7 +542,7 @@ void Picture_setSelection
 			long x1, x2, y1, y2;
 			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea), x1, y2, abs (x2 - x1), abs (y2 - y1));
+			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
 		#else
 			drawSelection (me, 1);   // select
 		#endif
@@ -599,10 +561,11 @@ void Picture_foreground (Picture me) { my backgrounding = FALSE; }
 #if gtk
 void Picture_selfExpose (Picture me) {
 	if (my drawingArea) {
+		Melder_assert (my drawingArea -> d_widget);
 		long x1, x2, y1, y2;
 		Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
 		Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-		gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea), x1, y2, abs (x2 - x1), abs (y2 - y1));
+		gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
 	}
 }
 #endif

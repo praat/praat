@@ -146,7 +146,6 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	bool inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
 	PaStream *portaudioStream = NULL;
 	#if defined (macintosh)
-		long refNum;
 	#elif defined (_WIN32)
 		HWAVEIN hWaveIn = 0;
 	#else
@@ -165,6 +164,8 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		volatile struct Sound_recordFixedTime_Info info = { 0 };
 		PaStreamParameters streamParameters = { 0 };
 		#if defined (macintosh)
+			(void) gain;
+			(void) balance;
 		#elif defined (_WIN32)
 			WAVEFORMATEX waveFormat;
 			WAVEHDR waveHeader;

@@ -170,7 +170,7 @@ long Melder_killReturns_inlineW (wchar_t *text) {
 	return to - text;
 }
 
-wchar Melder_decodeMacRoman [256] = {
+wchar_t Melder_decodeMacRoman [256] = {
 	  0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14,  15,  16,  17,  18,  19,
 	 20,  21,  22,  23,  24,  25,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,
 	 40,  41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,  52,  53,  54,  55,  56,  57,  58,  59,
@@ -262,8 +262,8 @@ wchar_t Melder_decodeWindowsLatin1 [256] = {
 	220, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230, 231, 232, 233, 234, 235, 236, 237, 238, 239,
 	240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255 };
 
-void Melder_8bitToWcs_inline (const char *string, wchar *wcs, int inputEncoding) {
-	wchar *q = & wcs [0];
+void Melder_8bitToWcs_inline (const char *string, wchar_t *wcs, int inputEncoding) {
+	wchar_t *q = & wcs [0];
 	if (inputEncoding == 0) {
 		inputEncoding = preferences. inputEncoding;
 		/*
@@ -343,21 +343,21 @@ void Melder_8bitToWcs_inline (const char *string, wchar *wcs, int inputEncoding)
 	(void) Melder_killReturns_inlineW (wcs);
 }
 
-wchar * Melder_8bitToWcs (const char *string, int inputEncoding) {
+wchar_t * Melder_8bitToWcs (const char *string, int inputEncoding) {
 	if (string == NULL) return NULL;
-	autostring result = Melder_malloc (wchar, strlen (string) + 1);
+	autostring result = Melder_malloc (wchar_t, strlen (string) + 1);
 	Melder_8bitToWcs_inline (string, result.peek(), inputEncoding);
 	return result.transfer();
 }
 
-wchar * Melder_utf8ToWcs (const char *string) {
+wchar_t * Melder_utf8ToWcs (const char *string) {
 	if (string == NULL) return NULL;
-	autostring result = Melder_malloc (wchar, strlen (string) + 1);
+	autostring result = Melder_malloc (wchar_t, strlen (string) + 1);
 	Melder_8bitToWcs_inline (string, result.peek(), kMelder_textInputEncoding_UTF8);
 	return result.transfer();
 }
 
-wchar * Melder_peekUtf8ToWcs (const char *textA) {
+wchar_t * Melder_peekUtf8ToWcs (const char *textA) {
 	if (textA == NULL) return NULL;
 	static MelderString buffers [11] = { { 0 } };
 	static int ibuffer = 0;
@@ -524,14 +524,14 @@ void Melder_wcsToUtf8_inline (const wchar_t *wcs, char *utf8) {
 	utf8 [j] = '\0';
 }
 
-char * Melder_wcsToUtf8 (const wchar *string) {
+char * Melder_wcsToUtf8 (const wchar_t *string) {
 	if (string == NULL) return NULL;
 	autostring8 result = Melder_malloc (char, wcslen_utf8 (string, true) + 1);
 	Melder_wcsToUtf8_inline (string, result.peek());
 	return result.transfer();
 }
 
-char * Melder_peekWcsToUtf8 (const wchar *text) {
+char * Melder_peekWcsToUtf8 (const wchar_t *text) {
 	if (text == NULL) return NULL;
 	static char *buffer [11] = { NULL };
 	static long bufferSize [11] = { 0 };
@@ -551,7 +551,7 @@ char * Melder_peekWcsToUtf8 (const wchar *text) {
 	return buffer [ibuffer];
 }
 
-const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar *text) {
+const MelderUtf16 * Melder_peekWcsToUtf16 (const wchar_t *text) {
 	if (text == NULL) return NULL;
 	static MelderString16 buffers [11] = { { 0 } };
 	static int ibuffer = 0;

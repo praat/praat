@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #include "Printer.h"
 #include "Preferences.h"
 #include "machine.h"
+#include "GuiP.h"
 
 #include "praat.h"
 #include "EditorM.h"
@@ -105,10 +106,10 @@ static void initScreen (HyperPage me) {
 
 void HyperPage_initSheetOfPaper (HyperPage me) {
 	int reflect = my mirror && (my d_printingPageNumber & 1) == 0;
-	wchar *leftHeader = reflect ? my outsideHeader : my insideHeader;
-	wchar *rightHeader = reflect ? my insideHeader : my outsideHeader;
-	wchar *leftFooter = reflect ? my outsideFooter : my insideFooter;
-	wchar *rightFooter = reflect ? my insideFooter : my outsideFooter;
+	wchar_t *leftHeader = reflect ? my outsideHeader : my insideHeader;
+	wchar_t *rightHeader = reflect ? my insideHeader : my outsideHeader;
+	wchar_t *leftFooter = reflect ? my outsideFooter : my insideFooter;
+	wchar_t *rightFooter = reflect ? my insideFooter : my outsideFooter;
 
 	my d_y = PAPER_TOP - TOP_MARGIN;
 	my d_x = 0;
@@ -722,11 +723,11 @@ static void menu_cb_font (EDITOR_ARGS) {
 }
 
 static void updateSizeMenu (HyperPage me) {
-	GuiMenuItem_check (my fontSizeButton_10, my fontSize == 10);
-	GuiMenuItem_check (my fontSizeButton_12, my fontSize == 12);
-	GuiMenuItem_check (my fontSizeButton_14, my fontSize == 14);
-	GuiMenuItem_check (my fontSizeButton_18, my fontSize == 18);
-	GuiMenuItem_check (my fontSizeButton_24, my fontSize == 24);
+	my fontSizeButton_10 -> f_check (my fontSize == 10);
+	my fontSizeButton_12 -> f_check (my fontSize == 12);
+	my fontSizeButton_14 -> f_check (my fontSize == 14);
+	my fontSizeButton_18 -> f_check (my fontSize == 18);
+	my fontSizeButton_24 -> f_check (my fontSize == 24);
 }
 static void setFontSize (HyperPage me, int fontSize) {
 	prefs_fontSize = my fontSize = fontSize;
@@ -775,94 +776,39 @@ static void menu_cb_searchForPage (EDITOR_ARGS) {
  * The 'pageIncrement' is sliderSize - 1.
  */
 
-static void createVerticalScrollBar (HyperPage me, GuiObject parent) {
-	#if gtk
-		int maximumScrollBarValue = (int) (PAGE_HEIGHT * 5);
-		GtkObject *adj = gtk_adjustment_new (1, 1, maximumScrollBarValue, 1, 1, maximumScrollBarValue - 1);
-		my verticalScrollBar = gtk_vscrollbar_new (GTK_ADJUSTMENT (adj));
-		GuiObject_show (my verticalScrollBar);
-		gtk_box_pack_end (GTK_BOX (parent), GTK_WIDGET (my verticalScrollBar), false, false, 3);
-	#elif motif
-		// TODO: Kan dit niet een algemele gui klasse worden?
-		my verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
-			xmScrollBarWidgetClass, parent, XmNorientation, XmVERTICAL,
-			XmNrightAttachment, XmATTACH_FORM,
-			XmNtopAttachment, XmATTACH_FORM,
-				XmNtopOffset, Machine_getMenuBarHeight () + Machine_getTextHeight () + 12,
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
-			XmNwidth, Machine_getScrollBarWidth (),
-			XmNminimum, 0, XmNmaximum, (int) (PAGE_HEIGHT * 5),
-			XmNsliderSize, 25, XmNvalue, 0,
-			XmNincrement, 1, XmNpageIncrement, 24,
-			NULL);
-	#endif
+static void gui_cb_verticalScroll (I, GuiScrollBarEvent	event) {
+	iam (HyperPage);
+	double value = event -> scrollBar -> f_getValue ();
+	if (value != my top) {
+		my top = value;
+		Graphics_clearWs (my g);
+		initScreen (me);
+		my v_draw ();   // do not wait for expose event
+		updateVerticalScrollBar (me);
+	}
+}
+
+static void createVerticalScrollBar (HyperPage me, GuiForm parent) {
+	my verticalScrollBar = GuiScrollBar_createShown (parent,
+		- Machine_getScrollBarWidth (), 0,
+		Machine_getMenuBarHeight () + Machine_getTextHeight () + 12, - Machine_getScrollBarWidth (),
+		0, PAGE_HEIGHT * 5, 0, 25, 1, 24,
+		gui_cb_verticalScroll, me, 0);
 }
 
 static void updateVerticalScrollBar (HyperPage me)
 /* We cannot call this immediately after creation. */
 /* This has to be called after changing 'my topParagraph'. */
 {
-	Dimension width, height;
-	int sliderSize;
-	#if motif
-		XtVaGetValues (my drawingArea, XmNwidth, & width, XmNheight, & height, NULL);
-	#endif
-	sliderSize = 25 /*height / resolution * 5*/;   /* Don't change slider unless you clip value! */
-	#if gtk
-		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (my verticalScrollBar));
-		adj -> page_size = sliderSize;
-		//gtk_adjustment_set_value (adj, value);
-		gtk_adjustment_changed (adj);
-		gtk_range_set_increments (GTK_RANGE (my verticalScrollBar), 1, sliderSize - 1);
-	#elif motif
-		XmScrollBarSetValues (my verticalScrollBar, my top, sliderSize, 1, sliderSize - 1, False);
-	#endif
+	int sliderSize = 25;
+	my verticalScrollBar -> f_set (NUMundefined, NUMundefined, my top, sliderSize, 1, sliderSize - 1);
 	my history [my historyPointer]. top = 0/*my top*/;
 }
 
-#if gtk
-static void gui_cb_verticalScroll (GtkRange *rng, gpointer void_me) {
-	iam (HyperPage);
-	double value = gtk_range_get_value (GTK_RANGE (rng));
-	if (value != my top) {
-		my top = value;
-		Graphics_clearWs (my g);
-		initScreen (me);
-		my v_draw ();   // do not wait for expose event
-		updateVerticalScrollBar (me);
-	}
-}
-#else
-static void gui_cb_verticalScroll (GUI_ARGS) {
-	GUI_IAM (HyperPage);
-	int value, sliderSize, incr, pincr;
-	#if gtk
-		double value = gtk_range_get_value (GTK_RANGE (w));
-	#elif motif
-		XmScrollBarGetValues (w, & value, & sliderSize, & incr, & pincr);
-	#endif
-	if (value != my top) {
-		my top = value;
-		Graphics_clearWs (my g);
-		initScreen (me);
-		my v_draw ();   // do not wait for expose event
-		updateVerticalScrollBar (me);
-	}
-}
-#endif
-
 static void menu_cb_pageUp (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
-	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return;
-	#if	gtk
-		value = gtk_range_get_value (GTK_RANGE (my verticalScrollBar));
-		sliderSize = 1;
-		pincr = PAGE_HEIGHT * 5 - 1;
-	#elif motif
-		XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
-	#endif
-	value -= pincr;
+	int value = my verticalScrollBar -> f_getValue () - 24;
 	if (value < 0) value = 0;
 	if (value != my top) {
 		my top = value;
@@ -875,17 +821,9 @@ static void menu_cb_pageUp (EDITOR_ARGS) {
 
 static void menu_cb_pageDown (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
-	int value, sliderSize, incr, pincr;
 	if (! my verticalScrollBar) return;
-	#if	gtk
-		value = gtk_range_get_value (GTK_RANGE (my verticalScrollBar));
-		sliderSize = 1;
-		pincr = PAGE_HEIGHT * 5 - 1;
-	#elif motif
-		XmScrollBarGetValues (my verticalScrollBar, & value, & sliderSize, & incr, & pincr);
-	#endif
-	value += pincr;
-	if (value > (int) (PAGE_HEIGHT * 5) - sliderSize) value = (int) (PAGE_HEIGHT * 5) - sliderSize;
+	int value = my verticalScrollBar -> f_getValue () + 24;
+	if (value > (int) (PAGE_HEIGHT * 5) - 25) value = (int) (PAGE_HEIGHT * 5) - 25;
 	if (value != my top) {
 		my top = value;
 		Graphics_clearWs (my g);
@@ -1002,54 +940,35 @@ void structHyperPage :: v_createChildren () {
 	int height = Machine_getTextHeight ();
 	int y = Machine_getMenuBarHeight () + 4;
 
-	#if gtk
-		holder = gtk_hbox_new (FALSE, 0);
-		gtk_box_pack_start (GTK_BOX (d_windowForm), GTK_WIDGET (holder), false, false, 0);
-		GuiObject_show (holder);
-	#elif motif
-		holder = d_windowForm;
-	#endif
-
 	/***** Create navigation buttons. *****/
 
 	if (v_hasHistory ()) {
-		GuiButton_createShown (holder, 4, 48, y, y + height,
+		GuiButton_createShown (d_windowForm, 4, 48, y, y + height,
 			L"<", gui_button_cb_back, this, 0);
-		GuiButton_createShown (holder, 54, 98, y, y + height,
+		GuiButton_createShown (d_windowForm, 54, 98, y, y + height,
 			L">", gui_button_cb_forth, this, 0);
 	}
 	if (v_isOrdered ()) {
-		GuiButton_createShown (holder, 174, 218, y, y + height,
+		GuiButton_createShown (d_windowForm, 174, 218, y, y + height,
 			L"< 1", gui_button_cb_previousPage, this, 0);
-		GuiButton_createShown (holder, 224, 268, y, y + height,
+		GuiButton_createShown (d_windowForm, 224, 268, y, y + height,
 			L"1 >", gui_button_cb_nextPage, this, 0);
 	}
-	#if gtk
-		GuiObject scrollBox = gtk_hbox_new (false, 0);
-		gtk_box_pack_end (GTK_BOX (d_windowForm), GTK_WIDGET (scrollBox), true, true, 0);
-		drawingArea = GuiDrawingArea_create (GTK_WIDGET (scrollBox), 0, 600, 0, 800,
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
-		gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
-		gtk_box_pack_start (GTK_BOX (scrollBox), GTK_WIDGET (drawingArea), true, true, 0);
-		createVerticalScrollBar (this, scrollBox);
-		GuiObject_show (drawingArea);
-		GuiObject_show (scrollBox);
-	#elif motif
-		/***** Create scroll bar. *****/
 
-		createVerticalScrollBar (this, d_windowForm);
+	/***** Create scroll bar. *****/
 
-		/***** Create drawing area. *****/
-		drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
-	#endif
+	createVerticalScrollBar (this, d_windowForm);
+
+	/***** Create drawing area. *****/
+	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 }
 
-void HyperPage_init (HyperPage me, GuiObject parent, const wchar *title, Data data) {
-	resolution = Gui_getResolution (parent);
-	Editor_init (me, parent, 0, 0, 6 * resolution + 30, 800, title, data);
+void HyperPage_init (HyperPage me, const wchar_t *title, Data data) {
+	resolution = Gui_getResolution (NULL);
+	Editor_init (me, 0, 0, 6 * resolution + 30, 800, title, data);
 	#if motif
-		Melder_assert (XtWindow (my drawingArea));
+		Melder_assert (XtWindow (my drawingArea -> d_widget));
 	#endif
 	my g = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setAtSignIsLink (my g, TRUE);
@@ -1061,16 +980,10 @@ void HyperPage_init (HyperPage me, GuiObject parent, const wchar *title, Data da
 	setFontSize (me, prefs_fontSize);	
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-event. width = GuiObject_getWidth (my drawingArea);
-event. height = GuiObject_getHeight (my drawingArea);
+event. width  = my drawingArea -> f_getWidth  ();
+event. height = my drawingArea -> f_getHeight ();
 gui_drawingarea_cb_resize (me, & event);
 
-	#if gtk
-		g_signal_connect (G_OBJECT (my verticalScrollBar), "value-changed", G_CALLBACK (gui_cb_verticalScroll), me);
-	#elif motif
-		XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me);
-		XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me);
-	#endif
 	updateVerticalScrollBar (me);   // scroll to the top (my top == 0)
 }
 

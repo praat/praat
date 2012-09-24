@@ -40,7 +40,7 @@ oo_DEFINE_CLASS (RealTier, Function)
 			virtual bool v_hasGetNcol      () { return true; }   virtual double v_getNcol ()        { return points -> size; }
 			virtual bool v_hasGetVector    () { return true; }   virtual double v_getVector    (long irow, long icol);
 			virtual bool v_hasGetFunction1 () { return true; }   virtual double v_getFunction1 (long irow, double x);
-			virtual const wchar * v_getUnitText (long ilevel, int unit, unsigned long flags)
+			virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags)
 				{ (void) ilevel; (void) unit; (void) flags; return L"Time (s)"; }
 			virtual void v_shiftX (double xfrom, double xto);
 			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);

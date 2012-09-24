@@ -37,9 +37,9 @@ void structDemoEditor :: v_destroy () {
 
 void structDemoEditor :: v_info () {
 	DemoEditor_Parent :: v_info ();
-	MelderInfo_writeLine2 (L"Colour: ", Graphics_Colour_name (((PraatPicture) praatPicture) -> colour));
-	MelderInfo_writeLine2 (L"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
-	MelderInfo_writeLine2 (L"Font size: ", Melder_integer (((PraatPicture) praatPicture) -> fontSize));
+	MelderInfo_writeLine (L"Colour: ", Graphics_Colour_name (((PraatPicture) praatPicture) -> colour));
+	MelderInfo_writeLine (L"Font: ", kGraphics_font_getText (((PraatPicture) praatPicture) -> font));
+	MelderInfo_writeLine (L"Font size: ", Melder_integer (((PraatPicture) praatPicture) -> fontSize));
 }
 
 void structDemoEditor :: v_goAway () {
@@ -102,7 +102,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (DemoEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-	Dimension marginWidth = 0, marginHeight = 0;
+	int marginWidth = 0, marginHeight = 0;
 	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
 	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
 	Graphics_setViewport (my graphics, 0, 100, 0, 100);
@@ -112,13 +112,10 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 void structDemoEditor :: v_createChildren () {
 	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, 0, 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
-	#if gtk
-		gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
-	#endif
 }
 
-void DemoEditor_init (DemoEditor me, GuiObject parent) {
-	Editor_init (me, parent, 0, 0, 1024, 768, L"", NULL);
+void DemoEditor_init (DemoEditor me) {
+	Editor_init (me, 0, 0, 1024, 768, L"", NULL);
 	my graphics = Graphics_create_xmdrawingarea (my drawingArea);
 	Graphics_setColour (my graphics, Graphics_WHITE);
 	Graphics_setWindow (my graphics, 0, 1, 0, 1);
@@ -130,15 +127,15 @@ void DemoEditor_init (DemoEditor me, GuiObject parent) {
 	//Graphics_line (my graphics, 0, 100, 100, 0);
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-event. width = GuiObject_getWidth (my drawingArea);
-event. height = GuiObject_getHeight (my drawingArea);
+event. width  = my drawingArea -> f_getWidth  ();
+event. height = my drawingArea -> f_getHeight ();
 gui_drawingarea_cb_resize (me, & event);
 }
 
-DemoEditor DemoEditor_create (GuiObject parent) {
+DemoEditor DemoEditor_create () {
 	try {
 		autoDemoEditor me = Thing_new (DemoEditor);
-		DemoEditor_init (me.peek(), parent);
+		DemoEditor_init (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Demo window not created.");
@@ -154,7 +151,7 @@ void Demo_open (void) {
 			//Melder_batch = false;
 		}
 		if (theDemoEditor == NULL) {
-			theDemoEditor = DemoEditor_create ((GuiObject) Melder_topShell);
+			theDemoEditor = DemoEditor_create ();
 			Melder_assert (theDemoEditor != NULL);
 			//GuiObject_show (theDemoEditor -> d_windowForm);
 			theDemoEditor -> praatPicture = Melder_calloc_f (structPraatPicture, 1);
@@ -191,8 +188,8 @@ int Demo_windowTitle (const wchar_t *title) {
 int Demo_show (void) {
 	if (theDemoEditor == NULL) return 0;
 	autoDemoOpen demo;
-	GuiObject_show (theDemoEditor -> d_windowForm);
-	GuiWindow_drain (theDemoEditor -> d_windowShell);
+	theDemoEditor -> d_windowForm -> f_show ();
+	theDemoEditor -> d_windowForm -> f_drain ();
 	return 1;
 }
 
@@ -290,7 +287,7 @@ bool Demo_keyPressed (void) {
 	return theDemoEditor -> keyPressed;
 }
 
-wchar Demo_key (void) {
+wchar_t Demo_key (void) {
 	if (theDemoEditor == NULL) return 0;
 	if (theDemoEditor -> waitingForInput) {
 		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "

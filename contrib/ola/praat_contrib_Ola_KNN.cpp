@@ -32,9 +32,9 @@
 #include "FeatureWeights.h"
 #include "praat.h"
 
-static const wchar *QUERY_BUTTON   = L"Query -";
-static const wchar *MODIFY_BUTTON  = L"Modify -";
-static const wchar *EXTRACT_BUTTON = L"Extract -";
+static const wchar_t *QUERY_BUTTON   = L"Query -";
+static const wchar_t *MODIFY_BUTTON  = L"Modify -";
+static const wchar_t *EXTRACT_BUTTON = L"Extract -";
 
 
 /////////////////////////////////////////////////////////////////////////////////////////

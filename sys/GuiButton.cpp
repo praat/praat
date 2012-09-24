@@ -1,6 +1,6 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma
+ * Copyright (C) 1993-2012 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,51 +17,71 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb & sdk 2007/12/25 gtk
- * fb 2010/02/23 GTK
- * pb 2010/06/14 HandleControlClick
- * pb 2010/08/10 removed Motif
- * pb 2011/02/07 GuiButton_ATTRACTIVE
- * pb 2011/04/06 C++
- */
-
 #include "GuiP.h"
+
+Thing_implement (GuiButton, GuiControl, 0);
+
 #undef iam
 #define iam(x)  x me = (x) void_me
-#if win || mac
-	#define iam_button \
-		Melder_assert (widget -> widgetClass == xmPushButtonWidgetClass); \
-		GuiButton me = (GuiButton) widget -> userData
-#else
-	#define iam_button \
-		GuiButton me = (GuiButton) _GuiObject_getUserData (widget)
+#if gtk
+	#define iam_button  GuiButton me = (GuiButton) _GuiObject_getUserData (widget)
+#elif cocoa
+	#define iam_button  GuiButton me = (GuiButton) [(GuiCocoaButton *) widget userData];
+#elif motif
+	#define iam_button  GuiButton me = (GuiButton) widget -> userData
 #endif
-
-typedef struct structGuiButton {
-	GuiObject widget;
-	void (*activateCallback) (void *boss, GuiButtonEvent event);
-	void *activateBoss;
-} *GuiButton;
 
 #if gtk
 	static void _GuiGtkButton_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiButton);
-		Melder_free (me);
+		trace ("destroying GuiButton %p", me);
+		forget (me);
 	}
 	static void _GuiGtkButton_activateCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiButton);
-		struct structGuiButtonEvent event = { widget, 0 };
-		if (my activateCallback != NULL) {
+		struct structGuiButtonEvent event = { me, 0 };
+		if (my d_activateCallback != NULL) {
 			try {
-				my activateCallback (my activateBoss, & event);
+				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
 				Melder_error_ ("Your click on button \"", GTK_WIDGET (widget) -> name, "\" was not completely handled.");
 				Melder_flushError (NULL);
 			}
 		}
 	}
+#elif cocoa
+	@interface GuiCocoaButton : NSButton
+	@end
+	@implementation GuiCocoaButton {
+		GuiButton d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiButton me = d_userData;
+		forget (me);
+		Melder_casual ("deleting a button");
+		[super dealloc];
+	}
+	- (GuiButton) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiButton) userData {
+		d_userData = userData;
+	}
+	- (void) _guiCocoaButton_activateCallback: (id) widget {
+		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
+		GuiButton me = d_userData;
+		if (my d_activateCallback != NULL) {
+			struct structGuiButtonEvent event = { me, 0 };
+			try {
+				my d_activateCallback (my d_activateBoss, & event);
+			} catch (MelderError) {
+				Melder_error_ ("Your click on button \"", "xx", "\" was not completely handled.");
+				Melder_flushError (NULL);
+			}
+		}
+	}
+	@end
 #elif win
 	void _GuiWinButton_destroy (GuiObject widget) {
 		iam_button;
@@ -70,14 +90,14 @@ typedef struct structGuiButton {
 		if (widget == widget -> shell -> cancelButton)
 			widget -> shell -> cancelButton = NULL;   // remove dangling reference
 		_GuiNativeControl_destroy (widget);
-		Melder_free (me);   // NOTE: my widget is not destroyed here
+		forget (me);   // NOTE: my widget is not destroyed here
 	}
 	void _GuiWinButton_handleClick (GuiObject widget) {
 		iam_button;
-		if (my activateCallback != NULL) {
-			struct structGuiButtonEvent event = { widget, 0 };
+		if (my d_activateCallback != NULL) {
+			struct structGuiButtonEvent event = { me, 0 };
 			try {
-				my activateCallback (my activateBoss, & event);
+				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
 				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
 				Melder_flushError (NULL);
@@ -86,10 +106,10 @@ typedef struct structGuiButton {
 	}
 	bool _GuiWinButton_tryToHandleShortcutKey (GuiObject widget) {
 		iam_button;
-		if (my activateCallback != NULL) {
-			struct structGuiButtonEvent event = { widget, 0 };
+		if (my d_activateCallback != NULL) {
+			struct structGuiButtonEvent event = { me, 0 };
 			try {
-				my activateCallback (my activateBoss, & event);
+				my d_activateCallback (my d_activateBoss, & event);
 			} catch (MelderError) {
 				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
 				Melder_flushError (NULL);
@@ -99,154 +119,151 @@ typedef struct structGuiButton {
 		return false;
 	}
 #elif mac
-	#if useCarbon
-		void _GuiMacButton_destroy (GuiObject widget) {
-			iam_button;
-			if (widget == widget -> shell -> defaultButton)
-				widget -> shell -> defaultButton = NULL;   // remove dangling reference
-			if (widget == widget -> shell -> cancelButton)
-				widget -> shell -> cancelButton = NULL;   // remove dangling reference
-			_GuiNativeControl_destroy (widget);
-			Melder_free (me);   // NOTE: my widget is not destroyed here
-		}
-		void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent) {
-			iam_button;
-			_GuiMac_clipOnParent (widget);
-			bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
-			GuiMac_clipOff ();
-			if (pushed && my activateCallback != NULL) {
-				struct structGuiButtonEvent event = { widget, 0 };
-				//enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
-				Melder_assert (macEvent -> what == mouseDown);
-				event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
-				event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
-				event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
-				event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
-				try {
-					my activateCallback (my activateBoss, & event);
-				} catch (MelderError) {
-					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-					Melder_flushError (NULL);
-				}
+	void _GuiMacButton_destroy (GuiObject widget) {
+		iam_button;
+		if (widget == widget -> shell -> defaultButton)
+			widget -> shell -> defaultButton = NULL;   // remove dangling reference
+		if (widget == widget -> shell -> cancelButton)
+			widget -> shell -> cancelButton = NULL;   // remove dangling reference
+		_GuiNativeControl_destroy (widget);
+		forget (me);   // NOTE: my widget is not destroyed here
+	}
+	void _GuiMacButton_handleClick (GuiObject widget, EventRecord *macEvent) {
+		iam_button;
+		_GuiMac_clipOnParent (widget);
+		bool pushed = HandleControlClick (widget -> nat.control.handle, macEvent -> where, macEvent -> modifiers, NULL);
+		GuiMac_clipOff ();
+		if (pushed && my d_activateCallback != NULL) {
+			struct structGuiButtonEvent event = { me, 0 };
+			//enum { cmdKey = 256, shiftKey = 512, optionKey = 2048, controlKey = 4096 };
+			Melder_assert (macEvent -> what == mouseDown);
+			event. shiftKeyPressed = (macEvent -> modifiers & shiftKey) != 0;
+			event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
+			event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
+			event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
+			try {
+				my d_activateCallback (my d_activateBoss, & event);
+			} catch (MelderError) {
+				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+				Melder_flushError (NULL);
 			}
 		}
-		bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent) {
-			iam_button;
-			if (my activateCallback != NULL) {
-				struct structGuiButtonEvent event = { widget, 0 };
-				// ignore modifier keys for Enter
-				try {
-					my activateCallback (my activateBoss, & event);
-				} catch (MelderError) {
-					Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
-					Melder_flushError (NULL);
-				}
-				return true;
+	}
+	bool _GuiMacButton_tryToHandleShortcutKey (GuiObject widget, EventRecord *macEvent) {
+		iam_button;
+		if (my d_activateCallback != NULL) {
+			struct structGuiButtonEvent event = { me, 0 };
+			// ignore modifier keys for Enter
+			try {
+				my d_activateCallback (my d_activateBoss, & event);
+			} catch (MelderError) {
+				Melder_error_ ("Your click on button \"", widget -> name, "\" was not completely handled.");
+				Melder_flushError (NULL);
 			}
-			return false;
+			return true;
 		}
-	#else
-	#endif
+		return false;
+	}
 #endif
 
-GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int bottom,
+GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*activateCallback) (void *boss, GuiButtonEvent event), void *activateBoss, unsigned long flags)
 {
-	GuiButton me = Melder_calloc_f (struct structGuiButton, 1);
-	my activateCallback = activateCallback;
-	my activateBoss = activateBoss;
+	GuiButton me = Thing_new (GuiButton);
+	my d_shell = parent -> d_shell;
+	my d_parent = parent;
+	my d_activateCallback = activateCallback;
+	my d_activateBoss = activateBoss;
 	#if gtk
-		my widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
-		_GuiObject_setUserData (my widget, me);
-//		_GuiObject_position (my widget, left, right, top, bottom);
-
-		// TODO: use gtk_box_pack_start(GTK_BOX(parent), my widget, FALSE, FALSE, ?)
-		if (parent)
-			gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (my widget));
+		my d_widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (buttonText));
+		_GuiObject_setUserData (my d_widget, me);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
-			GTK_WIDGET_SET_FLAGS (my widget, GTK_CAN_DEFAULT);
-			GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (my widget));
-			gtk_window_set_default (GTK_WINDOW (shell), GTK_WIDGET (my widget));
+			GTK_WIDGET_SET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
+			GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (my d_widget));
+			Melder_assert (shell != NULL);
+			gtk_window_set_default (GTK_WINDOW (shell), GTK_WIDGET (my d_widget));
 		} else if (1) {
-			gtk_button_set_focus_on_click (GTK_BUTTON (my widget), false);
-			GTK_WIDGET_UNSET_FLAGS (my widget, GTK_CAN_DEFAULT);
+			gtk_button_set_focus_on_click (GTK_BUTTON (my d_widget), false);
+			GTK_WIDGET_UNSET_FLAGS (my d_widget, GTK_CAN_DEFAULT);
 		}
-		g_signal_connect (G_OBJECT (my widget), "destroy",
-				G_CALLBACK (_GuiGtkButton_destroyCallback), me);
-		g_signal_connect (GTK_BUTTON (my widget), "clicked",
-				G_CALLBACK (_GuiGtkButton_activateCallback), me);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkButton_destroyCallback), me);
+		g_signal_connect (GTK_BUTTON (my d_widget), "clicked", G_CALLBACK (_GuiGtkButton_activateCallback), me);
 //		if (flags & GuiButton_CANCEL) {
 //			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 //		}
+	#elif cocoa
+		my d_widget = (GuiObject) [GuiCocoaButton alloc];
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[(GuiCocoaButton *) my d_widget setUserData: me];
+		[(NSButton *) my d_widget setButtonType: NSMomentaryPushInButton];
+		[(NSButton *) my d_widget setBezelStyle: NSRoundedBezelStyle];
+		[(NSButton *) my d_widget setImagePosition: NSNoImage];
+		[(NSButton *) my d_widget setBordered: YES];
+		[(NSButton *) my d_widget setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[(NSButton *) my d_widget setTarget: (id) my d_widget];
+		[(NSButton *) my d_widget setAction: @selector (_guiCocoaButton_activateCallback:)];
 	#elif win
-		my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
-		_GuiObject_setUserData (my widget, me);
-		my widget -> window = CreateWindow (L"button", _GuiWin_expandAmpersands (my widget -> name),
+		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
+		_GuiObject_setUserData (my d_widget, me);
+		my d_widget -> window = CreateWindow (L"button", _GuiWin_expandAmpersands (my d_widget -> name),
 			WS_CHILD
 			| ( flags & (GuiButton_DEFAULT | GuiButton_ATTRACTIVE) ? BS_DEFPUSHBUTTON : BS_PUSHBUTTON )
 			| WS_CLIPSIBLINGS,
-			my widget -> x, my widget -> y, my widget -> width, my widget -> height,
-			my widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
-		SetWindowLongPtr (my widget -> window, GWLP_USERDATA, (LONG_PTR) my widget);
-		SetWindowFont (my widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
-		_GuiObject_position (my widget, left, right, top, bottom);
+			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
+		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
-			parent -> shell -> defaultButton = parent -> defaultButton = my widget;
+			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
 		}
 		if (flags & GuiButton_CANCEL) {
-			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
+			parent -> d_widget -> shell -> cancelButton = parent -> d_widget -> cancelButton = my d_widget;
 		}
 	#elif mac
-		#if useCarbon
-			my widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent, buttonText);
-			_GuiObject_setUserData (my widget, me);
-			CreatePushButtonControl (my widget -> macWindow, & my widget -> rect, NULL, & my widget -> nat.control.handle);
-			Melder_assert (my widget -> nat.control.handle != NULL);
-			SetControlReference (my widget -> nat.control.handle, (long) my widget);
-			my widget -> isControl = true;
-			_GuiNativeControl_setFont (my widget, flags & GuiButton_ATTRACTIVE ? /*1*/0 : 0, 13);
-			_GuiNativeControl_setTitle (my widget);
-			_GuiObject_position (my widget, left, right, top, bottom);
-			if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
-				parent -> shell -> defaultButton = parent -> defaultButton = my widget;
-				Boolean set = true;
-				SetControlData (my widget -> nat.control.handle, kControlEntireControl, kControlPushButtonDefaultTag, sizeof (Boolean), & set);
-			}
-			if (flags & GuiButton_CANCEL) {
-				parent -> shell -> cancelButton = parent -> cancelButton = my widget;
-			}
-		#else
-		#endif
+		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
+		_GuiObject_setUserData (my d_widget, me);
+		CreatePushButtonControl (my d_widget -> macWindow, & my d_widget -> rect, NULL, & my d_widget -> nat.control.handle);
+		Melder_assert (my d_widget -> nat.control.handle != NULL);
+		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
+		my d_widget -> isControl = true;
+		_GuiNativeControl_setFont (my d_widget, flags & GuiButton_ATTRACTIVE ? /*1*/0 : 0, 13);
+		_GuiNativeControl_setTitle (my d_widget);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
+			parent -> d_widget -> shell -> defaultButton = parent -> d_widget -> defaultButton = my d_widget;
+			Boolean set = true;
+			SetControlData (my d_widget -> nat.control.handle, kControlEntireControl, kControlPushButtonDefaultTag, sizeof (Boolean), & set);
+		}
+		if (flags & GuiButton_CANCEL) {
+			parent -> d_widget -> shell -> cancelButton = parent -> d_widget -> cancelButton = my d_widget;
+		}
 	#endif
 	if (flags & GuiButton_INSENSITIVE) {
-		GuiObject_setSensitive (my widget, false);
+		my f_setSensitive (false);
 	}
 
-	return my widget;
-}
-
-GuiObject GuiButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
-	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *clickedBoss, unsigned long flags)
-{
-	GuiObject me = GuiButton_create (parent, left, right, top, bottom, buttonText, clickedCallback, clickedBoss, flags);
-	GuiObject_show (me);
 	return me;
 }
 
-void GuiButton_setString (GuiObject widget, const wchar_t *text) {
+GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
+	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *clickedBoss, unsigned long flags)
+{
+	GuiButton me = GuiButton_create (parent, left, right, top, bottom, buttonText, clickedCallback, clickedBoss, flags);
+	my f_show ();
+	return me;
+}
+
+void structGuiButton :: f_setString (const wchar_t *text) {
 	#if gtk
-		gtk_button_set_label (GTK_BUTTON (widget), Melder_peekWcsToUtf8 (text));
-	#elif win
-		Melder_free (widget -> name);
-		widget -> name = Melder_wcsdup_f (text);
-		_GuiNativeControl_setTitle (widget);
-	#elif mac
-		#if useCarbon
-			Melder_free (widget -> name);
-			widget -> name = Melder_wcsdup_f (text);
-			_GuiNativeControl_setTitle (widget);
-		#else
-		#endif
+		gtk_button_set_label (GTK_BUTTON (d_widget), Melder_peekWcsToUtf8 (text));
+	#elif cocoa
+		[(NSButton *) d_widget setTitle: (NSString *) Melder_peekWcsToCfstring (text)];
+	#elif motif
+		Melder_free (d_widget -> name);
+		d_widget -> name = Melder_wcsdup_f (text);
+		_GuiNativeControl_setTitle (d_widget);
 	#endif
 }
 

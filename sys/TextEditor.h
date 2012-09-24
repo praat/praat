@@ -25,13 +25,13 @@ Thing_define (TextEditor, Editor) {
 	// new data:
 	public:
 		structMelderFile file;
-		GuiObject textWidget;
+		GuiText textWidget;
 		UiForm openDialog, saveDialog, printDialog, findDialog;
 		int dirty, fontSize;
-		GuiObject dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
-		GuiObject fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+		GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
+		GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 	// functions:
-		void init (GuiObject parent, const wchar *initialText);
+		void init (const wchar_t *initialText);
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual void v_nameChanged ();
@@ -45,8 +45,7 @@ Thing_define (TextEditor, Editor) {
 };
 
 TextEditor TextEditor_create (
-	GuiObject parent,
-	const wchar *initialText   // may be NULL
+	const wchar_t *initialText   // may be NULL
 );
 
 void TextEditor_showOpen (TextEditor me);

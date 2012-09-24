@@ -1,6 +1,6 @@
 /* macport_on.h
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 #define Polygon MacintoshPolygon
 #define Pattern MacintoshPattern
-#define Boolean MacintoshBoolean
 #define Collection MacintoshCollection
 #define Picture MacintoshPicture
 #define Movie QuickTimeMovie

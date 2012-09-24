@@ -19,19 +19,26 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+ * Determine the widget set.
+ */
 #if defined (UNIX)
 	#define gtk 1
 	#define motif 0
+	#define cocoa 0
 #elif defined (_WIN32)
 	#define gtk 0
 	#define motif 1
+	#define cocoa 0
 #elif defined (macintosh)
 	#if useCarbon
 		#define gtk 0
 		#define motif 1
+		#define cocoa 0
 	#else
 		#define gtk 0
 		#define motif 0
+		#define cocoa 1
 	#endif
 #endif
 
@@ -53,9 +60,9 @@
 	#include "winport_off.h"
 #endif
 
-#define GUI_ARGS  GuiObject w, XtPointer void_me, XtPointer call
+#define GUI_ARGS  void *void_me, GuiMenuItemEvent event
 
-#define GUI_IAM(klas)  (void) w; (void) void_me; (void) call; iam (klas);
+#define GUI_IAM(klas)  (void) void_me; (void) event; iam (klas);
 
 #define Gui_LEFT_DIALOG_SPACING  20
 #define Gui_RIGHT_DIALOG_SPACING  20
@@ -71,22 +78,26 @@
 #define Gui_CHECKBUTTON_HEIGHT  20
 #define Gui_LABEL_SPACING  8
 #define Gui_OPTIONMENU_HEIGHT  20
-#define Gui_PUSHBUTTON_HEIGHT  20
+#if gtk || cocoa
+	#define Gui_PUSHBUTTON_HEIGHT  25
+#else
+	#define Gui_PUSHBUTTON_HEIGHT  20
+#endif
 #define Gui_OK_BUTTON_WIDTH  69
 #define Gui_CANCEL_BUTTON_WIDTH  69
 #define Gui_APPLY_BUTTON_WIDTH  69
 
-#define Gui_AUTOMATIC  -32768
 #define Gui_HOMOGENEOUS  1
 
 #if gtk
 	typedef GMainContext *AppContext;
-	typedef void *XtPointer;
 	typedef gint Dimension;
 	typedef gboolean Boolean;
 	#define True 1
 	#define False 0
 	typedef void *GuiObject;
+#elif cocoa
+	typedef class structGuiObject *GuiObject;   // Opaque
 #elif motif
 	typedef class structGuiObject *GuiObject;   // Opaque
 
@@ -124,7 +135,7 @@
 	typedef GuiObject *GuiObjectList;
 	typedef long XtWorkProcId, XtIntervalId;
 	typedef void (*XtCallbackProc) (GuiObject w, XtPointer client_data, XtPointer call_data);
-	typedef Boolean (*XtWorkProc) (XtPointer client_data);
+	typedef bool (*XtWorkProc) (void *client_data);
 	typedef void (*XtTimerCallbackProc) (XtPointer, XtIntervalId *);
 	typedef unsigned long WidgetClass;
 	#define False 0
@@ -144,7 +155,7 @@
 	void XtDestroyWidget (GuiObject w);
 	void XtDispatchEvent (XEvent *event);
 	#define XtDisplay(w)  0
-	GuiObject GuiInitialize (const char *name, unsigned int *argc, char **argv);
+	void GuiInitialize (const char *name, unsigned int *argc, char **argv);
 	Boolean XtIsManaged (GuiObject w);
 	Boolean XtIsShell (GuiObject w);
 	void XtManageChild (GuiObject w);
@@ -157,8 +168,9 @@
 	void XtSetSensitive (GuiObject w, Boolean value);
 	void XtUnmanageChild (GuiObject self);
 	void XtUnmanageChildren (GuiObjectList children, Cardinal num_children);
-	GuiObject GuiAppInitialize (const char *name,
+	void GuiAppInitialize (const char *name,
 		void *dum1, int dum2, unsigned int *argc, char **argv, void *dum3, void *dum4);
+	void GuiApp_setApplicationShell (GuiObject shell);
 	GuiObject XtVaCreateWidget (const char *name, int widgetClass, GuiObject parent, ...);
 	GuiObject XtVaCreateManagedWidget (const char *name, int widgetClass, GuiObject parent, ...);
 	void XtVaGetValues (GuiObject w, ...);
@@ -261,14 +273,6 @@
 		int motif_win_mouseStillDown (void);
 		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 	#endif
-
-#else
-	typedef void *GuiObject;
-	typedef void *XtPointer;
-	typedef unsigned char Boolean;
-	#define True 1
-	#define False 0
-	typedef unsigned int Dimension;
 #endif
 
 /* Button layout and state: */
@@ -313,220 +317,588 @@
 #define GuiMenu_F11  27
 #define GuiMenu_F12  28
 
-GuiObject Gui_addMenuBar (GuiObject form);
 int Gui_getResolution (GuiObject widget);
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height);
+
+Thing_declare (GuiForm);
+Thing_declare (GuiMenu);
+Thing_declare (GuiScrolledWindow);
+Thing_declare (GuiShell);
+Thing_declare (GuiWindow);
+
+Thing_define (GuiThing, Thing) { public:
+	GuiShell d_shell;
+	GuiThing d_parent;
+	GuiObject d_widget;
+	/*
+	 * Messages:
+	 */
+	void f_show ();
+	void f_hide ();
+	void f_setSensitive (bool sensitive);
+	/*
+	 * Methods:
+	 */
+	virtual void v_show ();
+	virtual void v_hide ();
+	virtual void v_setSensitive (bool sensitive);
+};
+
+Thing_define (GuiControl, GuiThing) { public:
+	int d_left, d_right, d_top, d_bottom;
+	/*
+	 * Messages:
+	 */
+	int f_getX ();
+	int f_getY ();
+	int f_getWidth ();
+	int f_getHeight ();
+	void f_move (int x, int y);
+	void f_setSize (int width, int height);
+	/*
+	 * Methods:
+	 */
+	virtual void v_positionInForm (GuiObject widget, int left, int right, int top, int bottom, GuiForm parent);
+	virtual void v_positionInScrolledWindow (GuiObject widget, int width, int height, GuiScrolledWindow parent);
+};
+
+Thing_define (GuiForm, GuiControl) {
+};
+
+Thing_define (GuiShell, GuiForm) { public:
+	int d_width, d_height;
+	#if gtk
+		GtkWindow *d_gtkWindow;
+	#elif cocoa
+		NSWindow *d_nsWindow;
+	#elif motif
+		GuiObject d_xmShell;
+	#endif
+	void (*d_goAwayCallback) (void *boss);
+	void *d_goAwayBoss;
+	/*
+	 * Messages:
+	 */
+	int f_getShellWidth ();
+	int f_getShellHeight ();
+	void f_setTitle (const wchar_t *title);
+	void f_drain ();   // drain the double graphics buffer
+};
+
+/********** GuiButton **********/
+
+Thing_declare (GuiButton);
+
+typedef struct structGuiButtonEvent {
+	GuiButton button;
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+} *GuiButtonEvent;
+
+Thing_define (GuiButton, GuiControl) { public:
+	void (*d_activateCallback) (void *boss, GuiButtonEvent event);
+	void *d_activateBoss;
+	GuiMenu d_menu;   // for cascade buttons
+	/*
+	 * Messages:
+	 */
+	void f_setString (const wchar_t * text);
+};
 
 /* GuiButton creation flags: */
 #define GuiButton_DEFAULT  1
 #define GuiButton_CANCEL  2
 #define GuiButton_INSENSITIVE  4
 #define GuiButton_ATTRACTIVE  8
-typedef struct structGuiButtonEvent {
-	GuiObject button;
-	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
-} *GuiButtonEvent;
-GuiObject GuiButton_create (GuiObject parent, int left, int right, int top, int bottom,
+GuiButton GuiButton_create      (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *boss, unsigned long flags);
-GuiObject GuiButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
+GuiButton GuiButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*clickedCallback) (void *boss, GuiButtonEvent event), void *boss, unsigned long flags);
-void GuiButton_setString (GuiObject widget, const wchar_t *text);   // rarely used
+
+/********** GuiCheckButton **********/
+
+Thing_declare (GuiCheckButton);
+
+typedef struct structGuiCheckButtonEvent {
+	GuiCheckButton toggle;
+} *GuiCheckButtonEvent;
+
+Thing_define (GuiCheckButton, GuiControl) { public:
+	void (*d_valueChangedCallback) (void *boss, GuiCheckButtonEvent event);
+	void *d_valueChangedBoss;
+	#if gtk
+		gulong d_valueChangedHandlerId;
+	#endif
+	/*
+	 * Messages:
+	 */
+	bool f_getValue ();
+	void f_setValue (bool value);
+};
 
 /* GuiCheckButton creation flags: */
 #define GuiCheckButton_SET  1
 #define GuiCheckButton_INSENSITIVE  2
-typedef struct structGuiCheckButtonEvent {
-	GuiObject toggle;
-} *GuiCheckButtonEvent;
-GuiObject GuiCheckButton_create (GuiObject parent, int left, int right, int top, int bottom,
+GuiCheckButton GuiCheckButton_create      (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags);
-GuiObject GuiCheckButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
+GuiCheckButton GuiCheckButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiCheckButtonEvent event), void *valueChangedBoss, unsigned long flags);
-bool GuiCheckButton_getValue (GuiObject widget);
-void GuiCheckButton_setValue (GuiObject widget, bool value);
 
-GuiObject GuiColumn_createShown (GuiObject parent, unsigned long flags);
-GuiObject GuiRow_createShown (GuiObject parent, unsigned long flags);
+/********** GuiDialog **********/
+
+Thing_declare (GuiDialog);
+
+Thing_define (GuiDialog, GuiShell) { public:
+};
 
 /* GuiDialog creation flags: */
 #define GuiDialog_MODAL  1
-GuiObject GuiDialog_create (GuiObject parent, int x, int y, int width, int height,
+GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
-GuiObject GuiDialog_getButtonArea (GuiObject widget);
 
-SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar_t *title, bool allowMultipleFiles);
-wchar_t * GuiFileSelect_getOutfileName (GuiObject parent, const wchar_t *title, const wchar_t *defaultName);
-wchar_t * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar_t *title);
+/********** GuiDrawingArea **********/
 
-/* GuiDrawingArea creation flags: */
-#define GuiDrawingArea_BORDER  1
+Thing_declare (GuiDrawingArea);
+
 enum mouse_events { MOTION_NOTIFY = 1, BUTTON_PRESS, BUTTON_RELEASE };
 typedef struct structGuiDrawingAreaExposeEvent {
-	GuiObject widget;
+	GuiDrawingArea widget;
 	int x, y, width, height;
 } *GuiDrawingAreaExposeEvent;
 typedef struct structGuiDrawingAreaClickEvent {
-	GuiObject widget;
+	GuiDrawingArea widget;
 	int x, y;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 	int button;
 	enum mouse_events type;
 } *GuiDrawingAreaClickEvent;
 typedef struct structGuiDrawingAreaKeyEvent {
-	GuiObject widget;
+	GuiDrawingArea widget;
 	wchar_t key;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 } *GuiDrawingAreaKeyEvent;
 typedef struct structGuiDrawingAreaResizeEvent {
-	GuiObject widget;
+	GuiDrawingArea widget;
 	int width, height;
 } *GuiDrawingAreaResizeEvent;
-GuiObject GuiDrawingArea_create (GuiObject parent, int left, int right, int top, int bottom,
+
+Thing_define (GuiDrawingArea, GuiControl) { public:
+	void (*d_exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event);
+	void *d_exposeBoss;
+	void (*d_clickCallback) (void *boss, GuiDrawingAreaClickEvent event);
+	void *d_clickBoss;
+	void (*d_keyCallback) (void *boss, GuiDrawingAreaKeyEvent event);
+	void *d_keyBoss;
+	void (*d_resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event);
+	void *d_resizeBoss;
+	/*
+	 * Messages:
+	 */
+	void f_setExposeCallback (void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
+	void f_setClickCallback  (void (*callback) (void *boss, GuiDrawingAreaClickEvent  event), void *boss);
+	void f_setResizeCallback (void (*callback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss);
+};
+
+/* GuiDrawingArea creation flags: */
+#define GuiDrawingArea_BORDER  1
+GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
 	unsigned long flags);
-GuiObject GuiDrawingArea_createShown (GuiObject parent, int left, int right, int top, int bottom,
+GuiDrawingArea GuiDrawingArea_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
 	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
 	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
 	unsigned long flags);
-void GuiDrawingArea_setExposeCallback (GuiObject widget, void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
-void GuiDrawingArea_setClickCallback (GuiObject widget, void (*callback) (void *boss, GuiDrawingAreaClickEvent event), void *boss);
+GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int height,
+	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
+	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
+	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
+	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	unsigned long flags);
+GuiDrawingArea GuiDrawingArea_createShown (GuiScrolledWindow parent, int width, int height,
+	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
+	void (*clickCallback) (void *boss, GuiDrawingAreaClickEvent event),
+	void (*keyCallback) (void *boss, GuiDrawingAreaKeyEvent event),
+	void (*resizeCallback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss,
+	unsigned long flags);
+
+SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t *title, bool allowMultipleFiles);
+wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, const wchar_t *defaultName);
+wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title);
+
+/********** GuiForm **********/
+
+GuiForm GuiForm_createInScrolledWindow (GuiScrolledWindow parent);
+
+/********** GuiLabel **********/
+
+Thing_declare (GuiLabel);
+
+Thing_define (GuiLabel, GuiControl) { public:
+	void f_setString (const wchar_t * text);
+};
 
 /* GuiLabel creation flags: */
 #define GuiLabel_CENTRE  1
 #define GuiLabel_RIGHT  2
-GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int bottom,
+GuiLabel GuiLabel_create      (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags);
-GuiObject GuiLabel_createShown (GuiObject parent, int left, int right, int top, int bottom,
+GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags);
-void GuiLabel_setString (GuiObject widget, const wchar_t *text);
+
+/********** GuiList **********/
+
+Thing_declare (GuiList);
+Thing_declare (GuiScrolledWindow);
 
 typedef struct structGuiListEvent {
-	GuiObject list;
+	GuiList list;
 } *GuiListEvent;
-GuiObject GuiList_create (GuiObject parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
-GuiObject GuiList_createShown (GuiObject parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
-void GuiList_deleteAllItems (GuiObject me);
-void GuiList_deleteItem (GuiObject me, long position);
-void GuiList_deselectAllItems (GuiObject me);
-void GuiList_deselectItem (GuiObject me, long position);
-long GuiList_getBottomPosition (GuiObject me);
-long GuiList_getNumberOfItems (GuiObject me);
-long * GuiList_getSelectedPositions (GuiObject me, long *numberOfSelected);
-long GuiList_getTopPosition (GuiObject me);
-void GuiList_insertItem (GuiObject me, const wchar_t *itemText, long position);
-void GuiList_replaceItem (GuiObject me, const wchar_t *itemText, long position);
-void GuiList_setTopPosition (GuiObject me, long topPosition);
-void GuiList_selectItem (GuiObject me, long position);
-void GuiList_setSelectionChangedCallback (GuiObject me, void (*callback) (void *boss, GuiListEvent event), void *boss);
-void GuiList_setDoubleClickCallback (GuiObject me, void (*callback) (void *boss, GuiListEvent event), void *boss);
 
-GuiObject GuiMenuBar_addMenu (GuiObject bar, const wchar_t *title, long flags);
-GuiObject GuiMenuBar_addMenu2 (GuiObject bar, const wchar_t *title, long flags, GuiObject *menuTitle);
-#if gtk
-GuiObject GuiMenuBar_addMenu3 (GuiObject parent, const wchar_t *title, long flags, GuiObject *button);
-#endif
+Thing_define (GuiList, GuiControl) { public:
+	bool d_allowMultipleSelection, d_blockSelectionChangedCallback;
+	void (*d_selectionChangedCallback) (void *boss, GuiListEvent event);
+	void *d_selectionChangedBoss;
+	void (*d_doubleClickCallback) (void *boss, GuiListEvent event);
+	void *d_doubleClickBoss;
+	#if gtk
+		GtkListStore *d_liststore;
+	#elif cocoa
+	#elif motif && useCarbon
+		GuiObject d_xmScrolled, d_xmList;
+		ListHandle d_macListHandle;
+	#endif
+	/*
+	 * Messages:
+	 */
+	void f_deleteAllItems ();
+	void f_deleteItem (long position);
+	void f_deselectAllItems ();
+	void f_deselectItem (long position);
+	long f_getBottomPosition ();
+	long f_getNumberOfItems ();
+	long * f_getSelectedPositions (long *numberOfSelected);
+	long f_getTopPosition ();
+	void f_insertItem (const wchar_t *itemText, long position);
+	void f_replaceItem (const wchar_t *itemText, long position);
+	void f_setTopPosition (long topPosition);
+	void f_selectItem (long position);
+	void f_setSelectionChangedCallback (void (*callback) (void *boss, GuiListEvent event), void *boss);
+	void f_setDoubleClickCallback (void (*callback) (void *boss, GuiListEvent event), void *boss);
+};
 
+GuiList GuiList_create      (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
+GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int bottom, bool allowMultipleSelection, const wchar_t *header);
+
+/********** GuiMenu **********/
+
+Thing_declare (GuiMenuItem);
+
+Thing_define (GuiMenu, GuiThing) { public:
+	GuiMenuItem d_menuItem;
+	GuiButton d_cascadeButton;
+	#if gtk
+		GtkMenuItem *d_gtkMenuTitle;
+	#elif cocoa
+		NSMenuItem *d_nsMenuItem;
+		NSPopUpButton *d_nsMenuButton;
+	#elif motif
+		GuiObject d_xmMenuTitle;   // in case the menu is in a menu bar
+		GuiObject d_xmMenuBar;   // in case the menu is in a form
+	#endif
+	/*
+	 * Messages:
+	 */
+	void f_empty ();
+	/*
+	 * Overridden methods:
+	 */
+	virtual void v_destroy ();
+	virtual void v_show ();
+	virtual void v_hide ();
+	virtual void v_setSensitive (bool sensitive);
+};
+
+GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long flags);
+GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const wchar_t *title, long flags);
+GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, const wchar_t *title, long flags);
+
+/********** GuiMenuItem **********/
+
+Thing_declare (GuiMenuItem);
+
+typedef struct structGuiMenuItemEvent {
+	GuiMenuItem menuItem;
+	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
+} *GuiMenuItemEvent;
+
+Thing_define (GuiMenuItem, GuiThing) { public:
+	GuiMenu d_menu;
+	void (*d_commandCallback) (void *boss, GuiMenuItemEvent event);
+	void *d_boss;
+	#if gtk
+		bool d_callbackBlocked;
+	#endif
+	/*
+	 * Messages:
+	 */
+	void f_check (bool check);
+};
+
+GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
+	void (*commandCallback) (void *boss, GuiMenuItemEvent event), void *boss);
 /* Flags is a combination of the above defines. */
+GuiMenuItem GuiMenu_addSeparator (GuiMenu menu);
 
-GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
-	void (*commandCallback) (GuiObject, XtPointer, XtPointer), const void *closure);
-/* Flags is a combination of the above defines. */
-GuiObject GuiMenu_addSeparator (GuiObject menu);
-void GuiMenuItem_check (GuiObject menuItem, bool check);
+/********** GuiOptionMenu **********/
+
+Thing_define (GuiOptionMenu, GuiControl) { public:
+	/*
+	 * Messages:
+	 */
+	void f_init (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+	void f_addOption (const wchar_t *text);
+	int f_getValue ();
+	void f_setValue (int value);
+	/*
+	 * Hidden data:
+	 */
+	//private:
+		int d_value;
+		Ordered d_options;   // of SimpleString
+		#if gtk
+			//GtkComboBox *d_gtkCascadeButton;
+		#elif cocoa
+		#elif motif
+			GuiObject d_xmMenuBar, d_xmCascadeButton;
+		#endif
+	/*
+	 * Methods:
+	 */
+	virtual void v_show ();   // overridden
+};
+
+GuiOptionMenu GuiOptionMenu_create      (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+
+/********** GuiProgressBar **********/
+
+Thing_declare (GuiProgressBar);
+
+Thing_define (GuiProgressBar, GuiControl) { public:
+	/*
+	 * Messages:
+	 */
+	void f_setValue (double value);   // between 0.0 and 1.0
+};
+
+GuiProgressBar GuiProgressBar_create      (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+GuiProgressBar GuiProgressBar_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+
+/********** GuiRadioButton **********/
+
+Thing_declare (GuiRadioButton);
+
+typedef struct structGuiRadioButtonEvent {
+	GuiRadioButton toggle;
+	int position;
+} *GuiRadioButtonEvent;
+
+Thing_define (GuiRadioButton, GuiControl) { public:
+	GuiRadioButton d_previous, d_next;   // there's a linked list of grouped radio buttons
+	void (*d_valueChangedCallback) (void *boss, GuiRadioButtonEvent event);
+	void *d_valueChangedBoss;
+	#if gtk
+		gulong d_valueChangedHandlerId;
+	#endif
+	/*
+	 * Messages:
+	 */
+	bool f_getValue ();
+	void f_set ();
+};
 
 /* GuiRadioButton creation flags: */
 #define GuiRadioButton_SET  1
 #define GuiRadioButton_INSENSITIVE  2
-typedef struct structGuiRadioButtonEvent {
-	GuiObject toggle;
-} *GuiRadioButtonEvent;
-GuiObject GuiRadioButton_create (GuiObject parent, int left, int right, int top, int bottom,
+GuiRadioButton GuiRadioButton_create      (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags);
-GuiObject GuiRadioButton_createShown (GuiObject parent, int left, int right, int top, int bottom,
+GuiRadioButton GuiRadioButton_createShown (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *buttonText, void (*valueChangedCallback) (void *boss, GuiRadioButtonEvent event), void *valueChangedBoss, unsigned long flags);
-bool GuiRadioButton_getValue (GuiObject widget);
-void GuiRadioButton_setValue (GuiObject widget, bool value);
 
-#if gtk
-void * GuiRadioButton_getGroup (GuiObject widget);
-void GuiRadioButton_setGroup (GuiObject widget, void *group);
-#endif
+void GuiRadioGroup_begin ();
+void GuiRadioGroup_end ();
+
+/********** GuiScale **********/
+
+Thing_declare (GuiScale);
+
+Thing_define (GuiScale, GuiControl) { public:
+	/*
+	 * Messages:
+	 */
+	int f_getValue ();
+	void f_setValue (int value);
+};
+
+GuiScale GuiScale_create      (GuiForm parent, int left, int right, int top, int bottom,
+	int minimum, int maximum, int value, unsigned long flags);
+GuiScale GuiScale_createShown (GuiForm parent, int left, int right, int top, int bottom,
+	int minimum, int maximum, int value, unsigned long flags);
+
+/********** GuiScrollBar **********/
+
+Thing_declare (GuiScrollBar);
+
+typedef struct structGuiScrollBarEvent {
+	GuiScrollBar scrollBar;
+} *GuiScrollBarEvent;
+
+Thing_define (GuiScrollBar, GuiControl) { public:
+	void (*d_valueChangedCallback) (void *boss, GuiScrollBarEvent event);
+	void *d_valueChangedBoss;
+	/*
+	 * Messages:
+	 */
+	int f_getValue ();
+	void f_set (double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement);
+};
+
+/* GuiScrollBar creation flags: */
+#define GuiScrollBar_HORIZONTAL  1
+GuiScrollBar GuiScrollBar_create      (GuiForm parent, int left, int right, int top, int bottom,
+	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
+	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, unsigned long flags);
+GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int top, int bottom,
+	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
+	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, unsigned long flags);
+
+/********** GuiScrolledWindow **********/
+
+Thing_declare (GuiScrolledWindow);
+
+Thing_define (GuiScrolledWindow, GuiControl) { public:
+};
+
+GuiScrolledWindow GuiScrolledWindow_create      (GuiForm parent, int left, int right, int top, int bottom,
+	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, unsigned long flags);
+GuiScrolledWindow GuiScrolledWindow_createShown (GuiForm parent, int left, int right, int top, int bottom,
+	int horizontalScrollbarPersistence, int verticalScrollbarPersistence, unsigned long flags);
+
+/********** GuiText **********/
+
+Thing_declare (GuiText);
 
 typedef struct structGuiTextEvent {
-	GuiObject text;
+	GuiText text;
 } *GuiTextEvent;
+
+#if gtk
+	typedef gchar * history_data;
+#else
+	typedef char * history_data;
+#endif
+
+typedef struct _history_entry_s history_entry;
+struct _history_entry_s {
+	history_entry *prev, *next;
+	long first, last;
+	history_data text;
+	bool type_del : 1;
+};
+
+Thing_define (GuiText, GuiControl) { public:
+	void (*d_changeCallback) (void *boss, GuiTextEvent event);
+	void *d_changeBoss;
+	#if useCarbon
+		TXNObject d_macMlteObject;
+		TXNFrameID d_macMlteFrameId;
+	#else
+		history_entry *d_prev, *d_next;
+		GuiMenuItem d_undo_item, d_redo_item;
+		bool d_history_change : 1;
+	#endif
+	#if motif
+		bool d_editable;
+	#endif
+	/*
+	 * Messages:
+	 */
+	void f_copy ();
+	void f_cut ();
+	wchar_t * f_getSelection ();
+	wchar_t * f_getString ();
+	wchar_t * f_getStringAndSelectionPosition (long *first, long *last);
+	void f_paste ();
+	void f_redo ();
+	void f_remove ();
+	void f_replace (long from_pos, long to_pos, const wchar_t *value);
+	void f_scrollToSelection ();
+	void f_setChangeCallback (void (*changeCallback) (void *boss, GuiTextEvent event), void *changeBoss);
+	void f_setFontSize (int size);
+	void f_setRedoItem (GuiMenuItem item);
+	void f_setSelection (long first, long last);
+	void f_setString (const wchar_t *text);
+	void f_setUndoItem (GuiMenuItem item);
+	void f_undo ();
+	void f_updateChangeCountAfterSave ();
+};
 
 /* GuiText creation flags: */
 #define GuiText_SCROLLED  1
 #define GuiText_MULTILINE  2
 #define GuiText_WORDWRAP  4
 #define GuiText_NONEDITABLE  8
-GuiObject GuiText_create (GuiObject parent, int left, int right, int top, int bottom, unsigned long flags);
-GuiObject GuiText_createShown (GuiObject parent, int left, int right, int top, int bottom, unsigned long flags);
-void GuiText_copy (GuiObject widget);
-void GuiText_cut (GuiObject widget);
-wchar_t * GuiText_getSelection (GuiObject widget);
-wchar_t * GuiText_getString (GuiObject widget);
-wchar_t * GuiText_getStringAndSelectionPosition (GuiObject widget, long *first, long *last);
-void GuiText_paste (GuiObject widget);
-void GuiText_redo (GuiObject widget);
-void GuiText_remove (GuiObject widget);
-void GuiText_replace (GuiObject widget, long from_pos, long to_pos, const wchar_t *value);
-void GuiText_scrollToSelection (GuiObject widget);
-void GuiText_setChangeCallback (GuiObject widget, void (*changeCallback) (void *boss, GuiTextEvent event), void *changeBoss);
-void GuiText_setFontSize (GuiObject widget, int size);
-void GuiText_setRedoItem (GuiObject widget, GuiObject item);
-void GuiText_setSelection (GuiObject widget, long first, long last);
-void GuiText_setString (GuiObject widget, const wchar_t *text);
-void GuiText_setUndoItem (GuiObject widget, GuiObject item);
-void GuiText_undo (GuiObject widget);
-void GuiText_updateChangeCountAfterSave (GuiObject widget);
+GuiText GuiText_create      (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+GuiText GuiText_createShown (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags);
+
+/********** GuiWindow **********/
+
+Thing_define (GuiWindow, GuiShell) { public:
+	#if gtk
+		GtkMenuBar *d_gtkMenuBar;
+	#elif cocoa
+		int d_menuBarWidth;
+	#elif motif
+		GuiObject d_xmMenuBar;
+	#endif
+	/*
+	 * Messages:
+	 */
+	void f_addMenuBar ();
+	bool f_setDirty (bool dirty);
+	/*
+		Purpose: on OSX you get a little dot in the red close button,
+			and the window proxy icon dims.
+		Return value:
+			TRUE if the system supports this feature, FALSE if not;
+			the point of this is that you can use a different user feedback strategy, like appending
+			the text "(modified)" to the window title, if this feature is not supported.
+	*/
+	void f_setFile (MelderFile file);
+	/*
+		Purpose: set the window title, and (on MacOS X) the window proxy icon and the window path menu.
+	*/
+};
 
 /* GuiWindow creation flags: */
 #define GuiWindow_FULLSCREEN  1
-GuiObject GuiWindow_create (GuiObject parentOfShell, int x, int y, int width, int height,
+GuiWindow GuiWindow_create (int x, int y, int width, int height,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags);
 	// returns a Form widget that has a new Shell parent.
-void GuiWindow_setTitle (GuiObject shell, const wchar_t *title);
-int GuiWindow_setDirty (GuiObject shell, int dirty);
-/*
-	Purpose: like on MacOSX you get this little dot in the red close button,
-		and the window proxy icon dims.
-	Return value:
-		TRUE if the system supports this feature, FALSE if not;
-		the point of this is that you can use a different user feedback strategy, like appending
-		the text "(modified)" to the window title, if this feature is not supported.
-*/
-void GuiWindow_setFile (GuiObject shell, MelderFile file);
-/*
-	Purpose: set the window title, and (on MacOS X) the window proxy icon and the window path menu.
-*/
-void GuiWindow_drain (GuiObject me);
-/*
-	Purpose: drain the double graphics buffer.
-*/
 
 void GuiObject_destroy (GuiObject me);
-long GuiObject_getHeight (GuiObject me);
-long GuiObject_getWidth (GuiObject me);
-long GuiObject_getX (GuiObject me);
-long GuiObject_getY (GuiObject me);
-void GuiObject_hide (GuiObject me);
-void GuiObject_move (GuiObject me, long x, long y);
-GuiObject GuiObject_parent (GuiObject w);
-void GuiObject_setSensitive (GuiObject me, bool sensitive);
-void GuiObject_show (GuiObject me);
-void GuiObject_size (GuiObject me, long width, long height);
 
 /********** EVENTS **********/
 
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file));
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void));
+
+extern GuiObject theGuiTopMenuBar;
+extern unsigned long theGuiTopLowAccelerators [8];
 
 /* End of file Gui.h */
 #endif

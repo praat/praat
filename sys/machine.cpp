@@ -1,6 +1,6 @@
 /* machine.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2004/06/17 Machine_getMainWindowMenuBarHeight ()
  * pb 2011/05/15 C++
+ * pb 2012/09/02 Cocoa
  */
 
 #include "machine.h"
@@ -35,6 +36,7 @@
 #define LookAndFeel_MAC  6
 #define LookAndFeel_WIN32  7
 #define LookAndFeel_LINUX  8
+#define LookAndFeel_COCOA  9
 
 static int lookAndFeel;
 
@@ -48,7 +50,8 @@ int Machine_getMenuBarHeight (void) {
 		26,   /* Sun4 */
 		36,   /* Mac */
 		0,    /* Win32 */
-		30    /* Linux */
+		30,   /* Linux */
+		36    /* Cocoa */
 	};
 	return heights [lookAndFeel];
 }
@@ -71,7 +74,8 @@ int Machine_getTitleBarHeight (void) {
 		26,   /* Sun4 */
 		22,   /* Mac */
 		20,   /* Win32 */
-		30    /* Linux */
+		30,   /* Linux */
+		22    /* Cocoa */
 	};
 	return heights [lookAndFeel];
 }
@@ -86,7 +90,8 @@ int Machine_getScrollBarWidth (void) {
 		22,   /* Sun4 */
 		16,   /* Mac */
 		17,   /* Win32 */
-		18    /* Linux */
+		18,   /* Linux */
+		16    /* Cocoa */
 	};
 	return widths [lookAndFeel];
 }
@@ -101,7 +106,8 @@ int Machine_getTextHeight (void) {
 		29,   /* Sun4 */
 		22,   /* Mac */
 		20,   /* Win32 */
-		29    /* Linux */
+		25,   /* Linux */
+		25    /* Cocoa */
 	};
 	return heights [lookAndFeel];
 }
@@ -111,7 +117,11 @@ void Machine_initLookAndFeel (unsigned int argc, char **argv) {
 	 * Determining the appropriate look-and-feel: the default depends on the client machine.
 	 */
 	#if defined (macintosh)
-		lookAndFeel = LookAndFeel_MAC;
+		#if useCarbon
+			lookAndFeel = LookAndFeel_MAC;
+		#else
+			lookAndFeel = LookAndFeel_COCOA;
+		#endif
 		return;
 	#elif defined (_WIN32)
 		lookAndFeel = LookAndFeel_WIN32;
@@ -132,6 +142,7 @@ void Machine_initLookAndFeel (unsigned int argc, char **argv) {
 		else if (strequ (argv [1], "-sun4")) lookAndFeel = LookAndFeel_SUN4;
 		else if (strequ (argv [1], "-mac")) lookAndFeel = LookAndFeel_MAC;
 		else if (strequ (argv [1], "-linux")) lookAndFeel = LookAndFeel_LINUX;
+		else if (strequ (argv [1], "-cocoa")) lookAndFeel = LookAndFeel_COCOA;
 	}
 }
 

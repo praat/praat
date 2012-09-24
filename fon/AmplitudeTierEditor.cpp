@@ -37,10 +37,10 @@ void structAmplitudeTierEditor :: v_play (double tmin, double tmax) {
 	}
 }
 
-AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar *title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
+AmplitudeTierEditor AmplitudeTierEditor_create (const wchar_t *title, AmplitudeTier amplitude, Sound sound, bool ownSound) {
 	try {
 		autoAmplitudeTierEditor me = Thing_new (AmplitudeTierEditor);
-		RealTierEditor_init (me.peek(), parent, title, (RealTier) amplitude, sound, ownSound);
+		RealTierEditor_init (me.peek(), title, (RealTier) amplitude, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("AmplitudeTier window not created.");

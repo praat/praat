@@ -28,7 +28,7 @@ oo_CLASS_CREATE (Harmonics, Data);
 Harmonics Harmonics_create (long numberOfHarmonics);
 
 void Harmonics_draw (Harmonics me, Graphics g, double fmin, double fmax,
-	double minimum, double maximum, int garnish, const wchar *method);
+	double minimum, double maximum, int garnish, const wchar_t *method);
 
 Matrix Harmonics_to_Matrix (Harmonics me);
 Harmonics Matrix_to_Harmonics (Matrix me);

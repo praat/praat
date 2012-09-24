@@ -97,7 +97,7 @@
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (max >= min) { \
-		x = NUMvector <wchar*> (min, max); \
+		x = NUMvector <wchar_t*> (min, max); \
 		for (long i = min; i <= max; i ++) { \
 			try { \
 				x [i] = texget##storage (a_text); \

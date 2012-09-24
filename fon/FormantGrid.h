@@ -55,8 +55,8 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 	double adaptFactor, double maximumPeriod, double openPhase, double collisionPhase, double power1, double power2,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 
-void FormantGrid_formula_frequencies (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee);
-void FormantGrid_formula_bandwidths (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee);
+void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee);
+void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee);
 
 FormantGrid Formant_downto_FormantGrid (Formant me);
 Formant FormantGrid_to_Formant (FormantGrid me, double dt, double intensity);

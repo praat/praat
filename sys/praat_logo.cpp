@@ -1,6 +1,6 @@
-/* praat_logo.c
+/* praat_logo.cpp
  *
- * Copyright (C) 1996-2010 Paul Boersma
+ * Copyright (C) 1996-2012 Paul Boersma, 2008 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,17 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2006/12/28 theCurrentPraat
- * pb 2007/06/10 wchar_t
- * pb 2007/12/09 enums
- * sdk 2008/03/24 GTK
- * pb 2009/06/02 date updated
- * pb 2010/01/10 date and authorship updated
- * pb 2010/07/29 removed GuiDialog_show
  */
 
 #include "praatP.h"
@@ -52,7 +41,9 @@ static void logo_defaultDraw (Graphics g) {
 static struct {
 	double width_mm, height_mm;
 	void (*draw) (Graphics g);
-	GuiObject dia, form, drawingArea;
+	GuiDialog dia;
+	GuiForm form;
+	GuiDrawingArea drawingArea;
 	Graphics graphics;
 } theLogo = { 90, 40, logo_defaultDraw };
 
@@ -60,7 +51,7 @@ static struct {
 static void logo_timeOut (XtPointer closure, XtIntervalId *id) {
 	(void) closure;
 	(void) id;
- 	GuiObject_hide (theLogo.form);
+ 	theLogo.form -> f_hide ();
 }
 #endif
 
@@ -74,7 +65,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	if (theLogo.graphics == NULL)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 #if gtk
-	Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget) -> window)));
+	Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
 	cairo_rectangle ((cairo_t *) Graphics_x_getCR (theLogo.graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
 	cairo_clip ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
 	theLogo.draw (theLogo.graphics);
@@ -91,12 +82,12 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	(void) void_me;
 	(void) event;
- 	GuiObject_hide (theLogo.form);
+ 	theLogo.form -> f_hide ();
 }
 
 static void gui_cb_goAway (I) {
 	(void) void_me;
- 	GuiObject_hide (theLogo.form);
+ 	theLogo.form -> f_hide ();
 }
 
 void praat_showLogo (int autoPopDown) {
@@ -118,20 +109,17 @@ void praat_showLogo (int autoPopDown) {
 	#else
 		if (theCurrentPraatApplication -> batch || ! theLogo.draw) return;
 		if (! theLogo.dia) {
-			theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"About", gui_cb_goAway, NULL, 0);
-			#if gtk
-				theLogo.form = GTK_DIALOG (theLogo.dia) -> vbox;
-			#else
-				theLogo.form = theLogo.dia;
-			#endif
-			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form,
-				0, (int) (theLogo.width_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
-				0, (int) (theLogo.height_mm / 25.4 * Gui_getResolution (theLogo.drawingArea)),
+			int width  = theLogo.width_mm  / 25.4 * Gui_getResolution (NULL);
+			int height = theLogo.height_mm / 25.4 * Gui_getResolution (NULL);
+			theLogo.dia = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width, height,
+				L"About", gui_cb_goAway, NULL, 0);
+			theLogo.form = theLogo.dia;
+			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
 				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
 		}
 
-		GuiObject_show (theLogo.form);
-		GuiObject_show (theLogo.dia);
+		theLogo.form -> f_show ();
+		theLogo.dia -> f_show ();
 		
 		#if motif
 			if (autoPopDown)
@@ -140,4 +128,4 @@ void praat_showLogo (int autoPopDown) {
 	#endif
 }
 
-/* End of file praat_logo.c */
+/* End of file praat_logo.cpp */

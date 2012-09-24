@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Strings.h"
+#include "Strings_.h"
 #include "Table.h"
 #include "Distributions.h"
 
@@ -27,17 +27,17 @@
 oo_CLASS_CREATE (PairProbability, Data);
 oo_CLASS_CREATE (PairDistribution, Data);
 
-PairProbability PairProbability_create (const wchar *string1, const wchar *string2, double weight);
+PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight);
 PairDistribution PairDistribution_create (void);
 
-const wchar * PairDistribution_getString1 (PairDistribution me, long pairNumber);
-const wchar * PairDistribution_getString2 (PairDistribution me, long pairNumber);
+const wchar_t * PairDistribution_getString1 (PairDistribution me, long pairNumber);
+const wchar_t * PairDistribution_getString2 (PairDistribution me, long pairNumber);
 double PairDistribution_getWeight (PairDistribution me, long pairNumber);
 
-void PairDistribution_add (PairDistribution me, const wchar *string1, const wchar *string2, double weight);
+void PairDistribution_add (PairDistribution me, const wchar_t *string1, const wchar_t *string2, double weight);
 void PairDistribution_removeZeroWeights (PairDistribution me);
 void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *strings1, Strings *strings2);
-void PairDistribution_peekPair (PairDistribution me, wchar **string1, wchar **string2);
+void PairDistribution_peekPair (PairDistribution me, wchar_t **string1, wchar_t **string2);
 
 
 double PairDistribution_getFractionCorrect_maximumLikelihood (PairDistribution me);

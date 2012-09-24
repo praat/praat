@@ -3,7 +3,7 @@
 
 include ../../makefile.defs
 
-CFLAGS = -I ../../sys -I ../../dwsys
+CPPFLAGS = -I ../../sys -I ../../dwsys
 
 OBJECTS = gsl_blas__blas.o gsl_block__block.o gsl_block__file.o \
    gsl_block__init.o gsl_bspline__bspline.o gsl_cblas__caxpy.o \

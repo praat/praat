@@ -2,7 +2,7 @@
 #define _ParamCurve_h_
 /* ParamCurve.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,9 @@
 #include "ParamCurve_def.h"
 oo_CLASS_CREATE (ParamCurve, Function);
 
-void ParamCurve_init (I, Any x, Any y);
+void ParamCurve_init (ParamCurve me, Sound x, Sound y);
 
-ParamCurve ParamCurve_create (Any x, Any y);
+ParamCurve ParamCurve_create (Sound x, Sound y);
 /*
 	Return value:
 		a newly created ParamCurve object,
@@ -50,7 +50,7 @@ ParamCurve ParamCurve_create (Any x, Any y);
 		result -> xmax = min (x -> xmax, y -> xmax);
 */
 
-void ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
+void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt,
 	double x1, double x2, double y1, double y2, int garnish);
 /*
 	Function:
@@ -66,7 +66,7 @@ void ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
 		1 if OK, 0 if out of memory.
 */
 
-void ParamCurve_swapXY (I);
+void ParamCurve_swapXY (ParamCurve me);
 /*
 	Reflect around y = x.
 	Postconditions:

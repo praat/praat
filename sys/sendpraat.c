@@ -34,7 +34,7 @@
 	#define gtk 0
 	#define win 1
 	#define mac 0
-#elif defined (macintosh) || defined (__MACH__)
+#elif (defined (macintosh) || defined (__MACH__)) && useCarbon
 	#include <signal.h>
 	#include <stdio.h>
 	#include <stdlib.h>
@@ -61,6 +61,11 @@
 	#include <wchar.h>
 	#include <gtk/gtk.h>
 	#define gtk 1
+	#define win 0
+	#define mac 0
+#else
+	#include <wchar.h>
+	#define gtk 0
 	#define win 0
 	#define mac 0
 #endif

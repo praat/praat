@@ -78,7 +78,7 @@ static void menu_cb_writeAllToHtmlDir (EDITOR_ARGS) {
 		Melder_getDefaultDir (& currentDirectory);
 		SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
 	EDITOR_DO
-		wchar *directory = GET_STRING (L"directory");
+		wchar_t *directory = GET_STRING (L"directory");
 		ManPages_writeAllToHtmlDir ((ManPages) my data, directory);
 	EDITOR_END
 }
@@ -107,7 +107,7 @@ void structManual :: v_draw () {
 		HyperPage_pageTitle (this, L"Best matches");
 		HyperPage_intro (this, L"The best matches to your query seem to be:");
 		for (int i = 1; i <= numberOfMatches; i ++) {
-			wchar link [300];
+			wchar_t link [300];
 			page = (ManPage) manPages -> pages -> item [matches [i]];
 			swprintf (link, 300, L"\\bu @@%ls", page -> title);
 			HyperPage_listItem (this, link);
@@ -154,7 +154,7 @@ void structManual :: v_draw () {
 		int goAhead = TRUE;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
-			const wchar *text = page -> paragraphs [lastParagraph - 1]. text;
+			const wchar_t *text = page -> paragraphs [lastParagraph - 1]. text;
 			if (text == NULL || text [0] == '\0' || text [wcslen (text) - 1] != ':') {
 				if (printing && suppressLinksHither)
 					goAhead = FALSE;
@@ -169,15 +169,15 @@ void structManual :: v_draw () {
 				if (page -> linksThither [jlink] == link)
 					alreadyShown = TRUE;
 			if (! alreadyShown) {
-				const wchar *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
-				wchar linkText [304];
+				const wchar_t *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
+				wchar_t linkText [304];
 				swprintf (linkText, 304, L"@@%ls@", title);
 				HyperPage_listItem (this, linkText);
 			}
 		}
 	}
 	if (! printing && page -> date) {
-		wchar signature [100];
+		wchar_t signature [100];
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
@@ -314,22 +314,22 @@ static double searchToken (ManPages me, long ipage, wchar_t *token) {
 	return goodness;
 }
 
-static void search (Manual me, const wchar *query) {
+static void search (Manual me, const wchar_t *query) {
 	ManPages manPages = (ManPages) my data;
 	long numberOfPages = manPages -> pages -> size;
 	static MelderString searchText = { 0 };
 	MelderString_copy (& searchText, query);
-	for (wchar *p = & searchText.string [0]; *p != '\0'; p ++) {
+	for (wchar_t *p = & searchText.string [0]; *p != '\0'; p ++) {
 		if (*p == '\n') *p = ' ';
 		*p = tolower (*p);
 	}
 	if (! goodnessOfMatch)
 		goodnessOfMatch = NUMvector <double> (1, numberOfPages);
 	for (long ipage = 1; ipage <= numberOfPages; ipage ++) {
-		wchar *token = searchText.string;
+		wchar_t *token = searchText.string;
 		goodnessOfMatch [ipage] = 1.0;
 		for (;;) {
-			wchar *space = wcschr (token, ' ');
+			wchar_t *space = wcschr (token, ' ');
 			if (space) *space = '\0';
 			goodnessOfMatch [ipage] *= searchToken (manPages, ipage, token);
 			if (! space) break;
@@ -357,8 +357,8 @@ static void search (Manual me, const wchar *query) {
 	HyperPage_goToPage_i (me, SEARCH_PAGE);
 }
 
-void Manual_search (Manual me, const wchar *query) {
-	GuiText_setString (my searchText, query);
+void Manual_search (Manual me, const wchar_t *query) {
+	my searchText -> f_setString (query);
 	search (me, query);
 }
 
@@ -375,31 +375,31 @@ static void gui_button_cb_record (I, GuiButtonEvent event) {
 	iam (Manual);
 	ManPages manPages = (ManPages) my data;
 	ManPage manPage = (ManPage) (my path < 1 ? NULL : manPages -> pages -> item [my path]);
-	GuiObject_setSensitive (my recordButton, false);
-	GuiObject_setSensitive (my playButton, false);
-	GuiObject_setSensitive (my publishButton, false);
+	my recordButton  -> f_setSensitive (false);
+	my playButton    -> f_setSensitive (false);
+	my publishButton -> f_setSensitive (false);
 	#if motif
-		XmUpdateDisplay (my d_windowShell);
+		XmUpdateDisplay (my d_windowForm -> d_xmShell);
 	#endif
 	if (! Melder_record (manPage == NULL ? 1.0 : manPage -> recordingTime)) Melder_flushError (NULL);
-	GuiObject_setSensitive (my recordButton, true);
-	GuiObject_setSensitive (my playButton, true);
-	GuiObject_setSensitive (my publishButton, true);
+	my recordButton  -> f_setSensitive (true);
+	my playButton    -> f_setSensitive (true);
+	my publishButton -> f_setSensitive (true);
 }
 
 static void gui_button_cb_play (I, GuiButtonEvent event) {
 	(void) event;
 	iam (Manual);
-	GuiObject_setSensitive (my recordButton, false);
-	GuiObject_setSensitive (my playButton, false);
-	GuiObject_setSensitive (my publishButton, false);
+	my recordButton  -> f_setSensitive (false);
+	my playButton    -> f_setSensitive (false);
+	my publishButton -> f_setSensitive (false);
 	#if motif
-		XmUpdateDisplay (my d_windowShell);
+		XmUpdateDisplay (my d_windowForm -> d_xmShell);
 	#endif
 	Melder_play ();
-	GuiObject_setSensitive (my recordButton, true);
-	GuiObject_setSensitive (my playButton, true);
-	GuiObject_setSensitive (my publishButton, true);
+	my recordButton  -> f_setSensitive (true);
+	my playButton    -> f_setSensitive (true);
+	my publishButton -> f_setSensitive (true);
 }
 
 static void gui_button_cb_publish (I, GuiButtonEvent event) {
@@ -410,7 +410,7 @@ static void gui_button_cb_publish (I, GuiButtonEvent event) {
 }
 
 static void do_search (Manual me) {
-	wchar_t *query = GuiText_getString (my searchText);
+	wchar_t *query = my searchText -> f_getString ();
 	search (me, query);
 	Melder_free (query);
 }
@@ -435,12 +435,12 @@ void structManual :: v_createChildren () {
 		#define STRING_SPACING 2
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	homeButton = GuiButton_createShown (holder, 104, 168, y, y + height,
+	homeButton = GuiButton_createShown (d_windowForm, 104, 168, y, y + height,
 		L"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
 		#if motif
-			XtVaSetValues (drawingArea, XmNtopOffset, y + height * 2 + 16, NULL);
-			XtVaSetValues (verticalScrollBar, XmNtopOffset, y + height * 2 + 16, NULL);
+			XtVaSetValues (drawingArea -> d_widget, XmNtopOffset, y + height * 2 + 16, NULL);
+			XtVaSetValues (verticalScrollBar -> d_widget, XmNtopOffset, y + height * 2 + 16, NULL);
 		#endif
 		recordButton = GuiButton_createShown (d_windowForm, 4, 79, y+height+8, y+height+8 + height,
 			L"Record", gui_button_cb_record, this, 0);
@@ -449,13 +449,9 @@ void structManual :: v_createChildren () {
 		publishButton = GuiButton_createShown (d_windowForm, 166, 166 + 175, y+height+8, y+height+8 + height, 
 			L"Copy last played to list", gui_button_cb_publish, this, 0);
 	}
-	GuiButton_createShown (holder, 274, 274 + 69, y, y + height,
+	GuiButton_createShown (d_windowForm, 274, 274 + 69, y, y + height,
 		L"Search:", gui_button_cb_search, this, GuiButton_DEFAULT);
-	searchText = GuiText_createShown (holder, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, Gui_AUTOMATIC, 0);
-	#if motif
-		/* TODO */
-		XtAddCallback (searchText, XmNactivateCallback, gui_cb_search, (XtPointer) this);
-	#endif
+	searchText = GuiText_createShown (d_windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
 static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); HyperPage_goToPage (me, L"Manual"); }
@@ -547,9 +543,9 @@ int structManual :: v_goToPage (const wchar_t *title) {
 	}
 }
 
-void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data, bool ownData) {
+void Manual_init (Manual me, const wchar_t *title, Data data, bool ownData) {
 	ManPages manPages = (ManPages) data;
-	wchar windowTitle [101];
+	wchar_t windowTitle [101];
 	long i;
 	ManPage page;
 	ManPage_Paragraph par;
@@ -569,15 +565,15 @@ void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data, bo
 		wcscpy (windowTitle, L"Manual");
 	}
 	my d_ownData = ownData;
-	HyperPage_init (me, parent, windowTitle, data);
+	HyperPage_init (me, windowTitle, data);
 	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_wcsdup_f (title);   /* BAD */
 }
 
-Manual Manual_create (GuiObject parent, const wchar *title, Data data, bool ownData) {
+Manual Manual_create (const wchar_t *title, Data data, bool ownData) {
 	try {
 		autoManual me = Thing_new (Manual);
-		Manual_init (me.peek(), parent, title, data, ownData);
+		Manual_init (me.peek(), title, data, ownData);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Manual window not created.");

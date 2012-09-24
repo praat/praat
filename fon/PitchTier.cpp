@@ -1,6 +1,6 @@
 /* PitchTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ PitchTier PitchTier_create (double tmin, double tmax) {
 }
 
 void PitchTier_draw (PitchTier me, Graphics g, double tmin, double tmax,
-	double fmin, double fmax, int garnish, const wchar *method)
+	double fmin, double fmax, int garnish, const wchar_t *method)
 {
 	RealTier_draw (me, g, tmin, tmax, fmin, fmax, garnish, method, L"Frequency (Hz)");
 }

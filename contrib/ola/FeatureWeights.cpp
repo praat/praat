@@ -1,6 +1,6 @@
 /* FeatureWeights.cpp
  *
- * Copyright (C) 2007-2008 Ola So"der, 2010-2011 Paul Boersma
+ * Copyright (C) 2007-2008 Ola So"der, 2010-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@
 void structFeatureWeights :: v_info ()
 {
     this -> structData :: v_info ();
-    MelderInfo_writeLine2 (L"Number of weights: ", Melder_integer (fweights -> numberOfColumns));
+    MelderInfo_writeLine (L"Number of weights: ", Melder_integer (fweights -> numberOfColumns));
 }
 
 Thing_implement (FeatureWeights, Data, 0);

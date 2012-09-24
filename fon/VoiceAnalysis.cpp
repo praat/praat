@@ -1,6 +1,6 @@
 /* VoiceAnalysis.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,26 +264,26 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 		/*
 		 * Time domain. Should be preceded by something like "Time range of SELECTION:" or so.
 		 */
-		MelderInfo_write5 (L"   From ", Melder_fixed (tmin, 6), L" to ", Melder_fixed (tmax, 6), L" seconds");
-		MelderInfo_writeLine3 (L" (duration: ", Melder_fixed (tmax - tmin, 6), L" seconds)");
+		MelderInfo_write (L"   From ", Melder_fixed (tmin, 6), L" to ", Melder_fixed (tmax, 6), L" seconds");
+		MelderInfo_writeLine (L" (duration: ", Melder_fixed (tmax - tmin, 6), L" seconds)");
 		/*
 		 * Pitch statistics.
 		 */
-		MelderInfo_writeLine1 (L"Pitch:");
-		MelderInfo_writeLine3 (L"   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, kPitch_unit_HERTZ), 3), L" Hz");
-		MelderInfo_writeLine3 (L"   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, kPitch_unit_HERTZ), 3), L" Hz");
-		MelderInfo_writeLine3 (L"   Standard deviation: ", Melder_fixed (Pitch_getStandardDeviation (pitch, tmin, tmax, kPitch_unit_HERTZ), 3), L" Hz");
-		MelderInfo_writeLine3 (L"   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), L" Hz");
-		MelderInfo_writeLine3 (L"   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), L" Hz");
+		MelderInfo_writeLine (L"Pitch:");
+		MelderInfo_writeLine (L"   Median pitch: ", Melder_fixed (Pitch_getQuantile (pitch, tmin, tmax, 0.50, kPitch_unit_HERTZ), 3), L" Hz");
+		MelderInfo_writeLine (L"   Mean pitch: ", Melder_fixed (Pitch_getMean (pitch, tmin, tmax, kPitch_unit_HERTZ), 3), L" Hz");
+		MelderInfo_writeLine (L"   Standard deviation: ", Melder_fixed (Pitch_getStandardDeviation (pitch, tmin, tmax, kPitch_unit_HERTZ), 3), L" Hz");
+		MelderInfo_writeLine (L"   Minimum pitch: ", Melder_fixed (Pitch_getMinimum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), L" Hz");
+		MelderInfo_writeLine (L"   Maximum pitch: ", Melder_fixed (Pitch_getMaximum (pitch, tmin, tmax, kPitch_unit_HERTZ, 1), 3), L" Hz");
 		/*
 		 * Pulses statistics.
 		 */
 		double pmin = 0.8 / ceiling, pmax = 1.25 / floor;
-		MelderInfo_writeLine1 (L"Pulses:");
-		MelderInfo_writeLine2 (L"   Number of pulses: ", Melder_integer (PointProcess_getWindowPoints (pulses, tmin, tmax, NULL, NULL)));
-		MelderInfo_writeLine2 (L"   Number of periods: ", Melder_integer (PointProcess_getNumberOfPeriods (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor)));
-		MelderInfo_writeLine3 (L"   Mean period: ", Melder_fixedExponent (PointProcess_getMeanPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), L" seconds");
-		MelderInfo_writeLine3 (L"   Standard deviation of period: ", Melder_fixedExponent (PointProcess_getStdevPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), L" seconds");
+		MelderInfo_writeLine (L"Pulses:");
+		MelderInfo_writeLine (L"   Number of pulses: ", Melder_integer (PointProcess_getWindowPoints (pulses, tmin, tmax, NULL, NULL)));
+		MelderInfo_writeLine (L"   Number of periods: ", Melder_integer (PointProcess_getNumberOfPeriods (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor)));
+		MelderInfo_writeLine (L"   Mean period: ", Melder_fixedExponent (PointProcess_getMeanPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), L" seconds");
+		MelderInfo_writeLine (L"   Standard deviation of period: ", Melder_fixedExponent (PointProcess_getStdevPeriod (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -3, 6), L" seconds");
 		/*
 		 * Voicing.
 		 */
@@ -300,9 +300,9 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 				}
 			}
 		}
-		MelderInfo_writeLine1 (L"Voicing:");
-		MelderInfo_write2 (L"   Fraction of locally unvoiced frames: ", Melder_percent (n <= 0 ? NUMundefined : (double) nunvoiced / n, 3));
-		MelderInfo_writeLine5 (L"   (", Melder_integer (nunvoiced), L" / ", Melder_integer (n), L")");
+		MelderInfo_writeLine (L"Voicing:");
+		MelderInfo_write (L"   Fraction of locally unvoiced frames: ", Melder_percent (n <= 0 ? NUMundefined : (double) nunvoiced / n, 3));
+		MelderInfo_writeLine (L"   (", Melder_integer (nunvoiced), L" / ", Melder_integer (n), L")");
 		n = PointProcess_getWindowPoints (pulses, tmin, tmax, & imin, & imax);
 		long numberOfVoiceBreaks = 0;
 		double durationOfVoiceBreaks = 0.0;
@@ -321,38 +321,38 @@ void Sound_Pitch_PointProcess_voiceReport (Sound sound, Pitch pitch, PointProces
 				}
 			}
 		}
-		MelderInfo_writeLine2 (L"   Number of voice breaks: ", Melder_integer (numberOfVoiceBreaks));
-		MelderInfo_write2 (L"   Degree of voice breaks: ", Melder_percent (durationOfVoiceBreaks / (tmax - tmin), 3));
-		MelderInfo_writeLine5 (L"   (", Melder_fixed (durationOfVoiceBreaks, 6), L" seconds / ", Melder_fixed (tmax - tmin, 6), L" seconds)");
+		MelderInfo_writeLine (L"   Number of voice breaks: ", Melder_integer (numberOfVoiceBreaks));
+		MelderInfo_write (L"   Degree of voice breaks: ", Melder_percent (durationOfVoiceBreaks / (tmax - tmin), 3));
+		MelderInfo_writeLine (L"   (", Melder_fixed (durationOfVoiceBreaks, 6), L" seconds / ", Melder_fixed (tmax - tmin, 6), L" seconds)");
 		/*
 		 * Jitter.
 		 */
 		double shimmerLocal, shimmerLocal_dB, apq3, apq5, apq11, dda;
-		MelderInfo_writeLine1 (L"Jitter:");
-		MelderInfo_writeLine2 (L"   Jitter (local): ", Melder_percent (PointProcess_getJitter_local (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
-		MelderInfo_writeLine3 (L"   Jitter (local, absolute): ", Melder_fixedExponent (PointProcess_getJitter_local_absolute (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -6, 3), L" seconds");
-		MelderInfo_writeLine2 (L"   Jitter (rap): ", Melder_percent (PointProcess_getJitter_rap (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
-		MelderInfo_writeLine2 (L"   Jitter (ppq5): ", Melder_percent (PointProcess_getJitter_ppq5 (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
-		MelderInfo_writeLine2 (L"   Jitter (ddp): ", Melder_percent (PointProcess_getJitter_ddp (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
+		MelderInfo_writeLine (L"Jitter:");
+		MelderInfo_writeLine (L"   Jitter (local): ", Melder_percent (PointProcess_getJitter_local (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
+		MelderInfo_writeLine (L"   Jitter (local, absolute): ", Melder_fixedExponent (PointProcess_getJitter_local_absolute (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), -6, 3), L" seconds");
+		MelderInfo_writeLine (L"   Jitter (rap): ", Melder_percent (PointProcess_getJitter_rap (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
+		MelderInfo_writeLine (L"   Jitter (ppq5): ", Melder_percent (PointProcess_getJitter_ppq5 (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
+		MelderInfo_writeLine (L"   Jitter (ddp): ", Melder_percent (PointProcess_getJitter_ddp (pulses, tmin, tmax, pmin, pmax, maximumPeriodFactor), 3));
 		/*
 		 * Shimmer.
 		 */
 		PointProcess_Sound_getShimmer_multi (pulses, sound, tmin, tmax, pmin, pmax, maximumPeriodFactor, maximumAmplitudeFactor,
 			& shimmerLocal, & shimmerLocal_dB, & apq3, & apq5, & apq11, & dda);
-		MelderInfo_writeLine1 (L"Shimmer:");
-		MelderInfo_writeLine2 (L"   Shimmer (local): ", Melder_percent (shimmerLocal, 3));
-		MelderInfo_writeLine3 (L"   Shimmer (local, dB): ", Melder_fixed (shimmerLocal_dB, 3), L" dB");
-		MelderInfo_writeLine2 (L"   Shimmer (apq3): ", Melder_percent (apq3, 3));
-		MelderInfo_writeLine2 (L"   Shimmer (apq5): ", Melder_percent (apq5, 3));
-		MelderInfo_writeLine2 (L"   Shimmer (apq11): ", Melder_percent (apq11, 3));
-		MelderInfo_writeLine2 (L"   Shimmer (dda): ", Melder_percent (dda, 3));
+		MelderInfo_writeLine (L"Shimmer:");
+		MelderInfo_writeLine (L"   Shimmer (local): ", Melder_percent (shimmerLocal, 3));
+		MelderInfo_writeLine (L"   Shimmer (local, dB): ", Melder_fixed (shimmerLocal_dB, 3), L" dB");
+		MelderInfo_writeLine (L"   Shimmer (apq3): ", Melder_percent (apq3, 3));
+		MelderInfo_writeLine (L"   Shimmer (apq5): ", Melder_percent (apq5, 3));
+		MelderInfo_writeLine (L"   Shimmer (apq11): ", Melder_percent (apq11, 3));
+		MelderInfo_writeLine (L"   Shimmer (dda): ", Melder_percent (dda, 3));
 		/*
 		 * Harmonicity.
 		 */
-		MelderInfo_writeLine1 (L"Harmonicity of the voiced parts only:");
-		MelderInfo_writeLine2 (L"   Mean autocorrelation: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_AUTOCORRELATION), 6));
-		MelderInfo_writeLine2 (L"   Mean noise-to-harmonics ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO), 6));
-		MelderInfo_writeLine3 (L"   Mean harmonics-to-noise ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB), 3), L" dB");
+		MelderInfo_writeLine (L"Harmonicity of the voiced parts only:");
+		MelderInfo_writeLine (L"   Mean autocorrelation: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_AUTOCORRELATION), 6));
+		MelderInfo_writeLine (L"   Mean noise-to-harmonics ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_NOISE_HARMONICS_RATIO), 6));
+		MelderInfo_writeLine (L"   Mean harmonics-to-noise ratio: ", Melder_fixed (Pitch_getMeanStrength (pitch, tmin, tmax, Pitch_STRENGTH_UNIT_HARMONICS_NOISE_DB), 3), L" dB");
 	} catch (MelderError) {
 		Melder_throw (sound, " & ", pitch, " & ", pulses, ": voice report not computed.");
 	}

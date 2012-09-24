@@ -1,6 +1,6 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,8 @@ Thing_implement (Distributions, TableOfReal, 0);
 
 void structDistributions :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of distributions: ", Melder_integer (numberOfColumns));
-	MelderInfo_writeLine2 (L"Number of values: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine (L"Number of distributions: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (L"Number of values: ", Melder_integer (numberOfRows));
 }
 
 Distributions Distributions_create (long numberOfRows, long numberOfColumns) {
@@ -44,7 +44,7 @@ void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long
 		Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at most my number of columns (", my numberOfColumns, ").");
 }
 
-int Distributions_peek (Distributions me, long column, wchar **string) {
+int Distributions_peek (Distributions me, long column, wchar_t **string) {
 	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
 	if (my numberOfRows < 1)
 		Melder_throw (me, ": I have no candidates.");
@@ -92,7 +92,7 @@ int Distributions_peek_opt (Distributions me, long column, long *number) {
 	return 1;
 }
 
-double Distributions_getProbability (Distributions me, const wchar *string, long column) {
+double Distributions_getProbability (Distributions me, const wchar_t *string, long column) {
 	long row, rowOfString = 0;
 	double total = 0.0;
 	if (column < 1 || column > my numberOfColumns) return NUMundefined;

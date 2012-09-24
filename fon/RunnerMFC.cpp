@@ -57,7 +57,7 @@ static int RunnerMFC_startExperiment (RunnerMFC me) {
 	return 1;
 }
 
-static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const wchar *visibleText) {
+static void drawControlButton (RunnerMFC me, double left, double right, double bottom, double top, const wchar_t *visibleText) {
 	Graphics_setColour (my graphics, Graphics_MAROON);
 	Graphics_setLineWidth (my graphics, 3.0);
 	Graphics_fillRectangle (my graphics, left, right, bottom, top);
@@ -68,7 +68,7 @@ static void drawControlButton (RunnerMFC me, double left, double right, double b
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (RunnerMFC);
-	Melder_assert (event -> widget == my drawingArea);
+	Melder_assert (event -> widget == my d_drawingArea);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	long iresponse;
@@ -391,23 +391,20 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 }
 
 void structRunnerMFC :: v_createChildren () {
-	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
+	d_drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 }
 
-RunnerMFC RunnerMFC_create (GuiObject parent, const wchar_t *title, Ordered experiments) {
+RunnerMFC RunnerMFC_create (const wchar_t *title, Ordered experiments) {
 	try {
 		autoRunnerMFC me = Thing_new (RunnerMFC);
-		Editor_init (me.peek(), parent, 0, 0, 2000, 2000, title, NULL);
+		Editor_init (me.peek(), 0, 0, 2000, 2000, title, NULL);
 		my experiments = experiments;
-		my graphics = Graphics_create_xmdrawingarea (my drawingArea);
-		#if gtk
-			gtk_widget_set_double_buffered (GTK_WIDGET (my drawingArea), FALSE);
-		#endif
+		my graphics = Graphics_create_xmdrawingarea (my d_drawingArea);
 
-struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-event. width = GuiObject_getWidth (my drawingArea);
-event. height = GuiObject_getHeight (my drawingArea);
+struct structGuiDrawingAreaResizeEvent event = { my d_drawingArea, 0 };
+event. width  = my d_drawingArea -> f_getWidth  ();
+event. height = my d_drawingArea -> f_getHeight ();
 gui_drawingarea_cb_resize (me.peek(), & event);
 
 		my iexperiment = 1;

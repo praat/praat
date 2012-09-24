@@ -54,7 +54,7 @@
 
 typedef struct structPicture *Picture;
 
-Picture Picture_create (GuiObject drawingArea, Boolean sensitive);
+Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive);
 /*
 	Function:
 		create an empty self-recording picture inside 'drawingArea'.
@@ -92,9 +92,9 @@ void Picture_highlight (Picture me);
 */
 
 void Picture_setSelectionChangedCallback (Picture me,
-	void (*selectionChangedCallback) (Picture, XtPointer closure,
+	void (*selectionChangedCallback) (Picture, void *closure,
 			double x1NDC, double x2NDC, double y1NDC, double y2NDC),
-	XtPointer selectionChangedClosure);
+	void *selectionChangedClosure);
 
 void Picture_setMouseSelectsInnerViewport (Picture me, int mouseSelectsInnerViewport);
 
@@ -127,7 +127,7 @@ void Picture_printToPostScriptPrinter (Picture me, int spots, int paperSize, int
 #endif
 
 void Picture_setSelection
-	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, Boolean notify);
+	(Picture me, double x1NDC, double x2NDC, double y1NDC, double y2NDC, bool notify);
 /*
 	Preconditions:
 		0.0 <= x1NDC < x2NDC <= 1.0;

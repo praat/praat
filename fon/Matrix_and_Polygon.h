@@ -20,7 +20,7 @@
 #include "Matrix.h"
 #include "Polygon.h"
 
-Polygon Matrix_to_Polygon (I);
+Polygon Matrix_to_Polygon (Matrix me);
 /*
 	Function:
 		create a Polygon from a Matrix; return NULL in case of failure.
@@ -38,7 +38,7 @@ Polygon Matrix_to_Polygon (I);
 		}
 */
 
-Matrix Polygon_to_Matrix (I);
+Matrix Polygon_to_Matrix (Polygon me);
 /*
 	Function:
 		create a Matrix from a Polygon; return NULL if out of memory.

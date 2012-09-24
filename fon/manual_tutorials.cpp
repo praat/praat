@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120807)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120924)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.24# (24 September 2012)")
+LIST_ITEM (L"\\bu More kinds of vertical scaling in e.g. Sound and EEG windows.")
 NORMAL (L"##5.3.23# (7 August 2012)")
 LIST_ITEM (L"\\bu Mac: removed a bug introduced in September 2011 that could cause incorrect behaviour of regular expressions since July 2012.")
 NORMAL (L"##5.3.22# (21 July 2012)")
@@ -3258,6 +3260,10 @@ MAN_END
 MAN_BEGIN (L"Spectrogram settings...", L"ppgb", 20030316)
 INTRO (L"A command in the Spectrogram menu of the @SoundEditor and @TextGridEditor windows. "
 	"See @@Intro 3.2. Configuring the spectrogram@.")
+MAN_END
+
+MAN_BEGIN (L"Technical", L"ppgb", 20120915)
+INTRO (L"The title of a submenu of the @@Praat menu@.")
 MAN_END
 
 MAN_BEGIN (L"Types of objects", L"ppgb", 20101230)

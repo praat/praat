@@ -1,6 +1,6 @@
 /* Transition.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,33 +42,32 @@ Thing_implement (Transition, Data, 0);
 
 void structTransition :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (numberOfStates));
+	MelderInfo_writeLine (L"Number of states: ", Melder_integer (numberOfStates));
 }
 
 void structTransition :: v_writeText (MelderFile file) {
 	texputi4 (file, numberOfStates, L"numberOfStates", 0,0,0,0,0);
-	MelderFile_write1 (file, L"\nstateLabels []: ");
-	if (numberOfStates < 1) MelderFile_write1 (file, L"(empty)");
-	MelderFile_write1 (file, L"\n");
+	MelderFile_write (file, L"\nstateLabels []: ");
+	if (numberOfStates < 1) MelderFile_write (file, L"(empty)");
+	MelderFile_write (file, L"\n");
 	for (long i = 1; i <= numberOfStates; i ++) {
-		MelderFile_write1 (file, L"\"");
-		if (stateLabels [i] != NULL) MelderFile_write1 (file, stateLabels [i]);
-		MelderFile_write1 (file, L"\"\t");
+		MelderFile_write (file, L"\"");
+		if (stateLabels [i] != NULL) MelderFile_write (file, stateLabels [i]);
+		MelderFile_write (file, L"\"\t");
 	}
 	for (long i = 1; i <= numberOfStates; i ++) {
-		MelderFile_write3 (file, L"\nstate [", Melder_integer (i), L"]:");
+		MelderFile_write (file, L"\nstate [", Melder_integer (i), L"]:");
 		for (long j = 1; j <= numberOfStates; j ++) {
-			MelderFile_write2 (file, L"\t", Melder_double (data [i] [j]));
+			MelderFile_write (file, L"\t", Melder_double (data [i] [j]));
 		}
 	}
 }
 
-void Transition_init (I, long numberOfStates) {
-	iam (Transition);
+void Transition_init (Transition me, long numberOfStates) {
 	if (numberOfStates < 1)
 		Melder_throw ("Cannot create empty matrix.");
 	my numberOfStates = numberOfStates;
-	my stateLabels = NUMvector <wchar *> (1, numberOfStates);
+	my stateLabels = NUMvector <wchar_t *> (1, numberOfStates);
 	my data = NUMmatrix <double> (1, my numberOfStates, 1, my numberOfStates);
 }
 
@@ -95,8 +94,8 @@ static void NUMrationalize (double x, long *numerator, long *denominator) {
 	*denominator = 0;   // failure
 }
 
-static void print4 (wchar *buffer, double value, int iformat, int width, int precision) {
-	wchar formatString [40];
+static void print4 (wchar_t *buffer, double value, int iformat, int width, int precision) {
+	wchar_t formatString [40];
 	if (iformat == 4) {
 		long numerator, denominator;
 		NUMrationalize (value, & numerator, & denominator);
@@ -112,8 +111,7 @@ static void print4 (wchar *buffer, double value, int iformat, int width, int pre
 	}
 }
 
-void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision) {
-	iam (Transition);
+void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int precision) {
 	double maxTextWidth = 0, maxTextHeight = 0;
 	Graphics_setInner (g);
 	Graphics_setWindow (g, 0.5, my numberOfStates + 0.5, 0, 1);
@@ -136,7 +134,7 @@ void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision) {
 		}
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		for (long col = 1; col <= my numberOfStates; col ++) {
-			wchar text [40];
+			wchar_t text [40];
 			print4 (text, my data [row] [col], iformat, 0, precision);
 			Graphics_text (g, col, y, text);
 		}

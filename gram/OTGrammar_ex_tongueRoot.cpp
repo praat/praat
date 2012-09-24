@@ -19,7 +19,7 @@
 
 #include "OTGrammar.h"
 
-static const wchar *vowels [] = { L"i", L"e", L"\\sw", L"\\ic", L"\\ep", L"a" };
+static const wchar_t *vowels [] = { L"i", L"e", L"\\sw", L"\\ic", L"\\ep", L"a" };
 #define i  0
 #define e  1
 #define schwa  2
@@ -43,7 +43,7 @@ static void countVowelViolations (int *marks, int ncons, int v) {
 }
 
 static void OTGrammarCandidate_init (OTGrammarCandidate me, int ncons, int v1, int v2) {
-	wchar buffer [100];
+	wchar_t buffer [100];
 	swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
 	my output = Melder_wcsdup (buffer);
 	my marks = NUMvector <int> (1, my numberOfConstraints = ncons);
@@ -109,7 +109,7 @@ OTGrammar OTGrammar_create_tongueRoot_grammar (int small_large, int equal_random
 		itab = 1;
 		for (v1 = 0; v1 < 6; v1 ++) for (v2 = 0; v2 < 6; v2 ++) {
 			OTGrammarTableau tableau = & my tableaus [itab];
-			wchar buffer [100];
+			wchar_t buffer [100];
 			swprintf (buffer, 100, L"%lst%ls", vowels [v1], vowels [v2]);
 			tableau -> input = Melder_wcsdup (buffer);
 			tableau -> candidates = NUMvector <structOTGrammarCandidate> (1, tableau -> numberOfCandidates = 4);

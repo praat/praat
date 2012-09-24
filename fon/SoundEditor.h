@@ -2,7 +2,7 @@
 #define _SoundEditor_h_
 /* SoundEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,11 @@
 Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 	// new data:
 		private:
-			GuiObject cutButton, copyButton, pasteButton, zeroButton, reverseButton;
+			GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 			double maxBuffer;
 	// functions:
 		public:
-			void f_init (GuiObject parent, const wchar *title, Sampled data);
+			void f_init (const wchar_t *title, Sampled data);
 	// overridden methods:
 		private:
 			virtual void v_createMenus ();
@@ -43,8 +43,7 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 };
 
 SoundEditor SoundEditor_create (
-	GuiObject parent,
-	const wchar *title,
+	const wchar_t *title,
 	Sampled data   // either a Sound or a LongSound
 );
 

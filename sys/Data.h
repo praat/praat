@@ -24,15 +24,15 @@
 #include "Thing.h"
 
 typedef struct structData_Description {
-	const wchar *name;   /* The name of this field. */
+	const wchar_t *name;   /* The name of this field. */
 	int type;   /* bytewa..inheritwa, see below */
 	int offset;   /* The offset of this field in the enveloping struct. */
 	int size;   /* The size of this field if it is in an array. */
-	const wchar *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
+	const wchar_t *tagName;   /* For structs: tag; for classes: class name; for enums: type name. */
 	void *tagType;   /* For structs: offset table; for classes: class pointer; for enums: enum pointer. */
 	int rank;   /* 0 = single, 1 = vector, 2 = matrix, 3 = set, -1 = array. */
-	const wchar *min1, *max1;   /* For vectors and matrices. */
-	const wchar *min2, *max2;   /* For matrices. */
+	const wchar_t *min1, *max1;   /* For vectors and matrices. */
+	const wchar_t *min2, *max2;   /* For matrices. */
 } *Data_Description;
 
 Thing_define (Data, Thing) {
@@ -60,19 +60,19 @@ Thing_define (Data, Thing) {
 		virtual bool v_hasGetDy        () { return false; }   virtual double        v_getDy        ()                      { return NUMundefined; }
 		virtual bool v_hasGetX         () { return false; }   virtual double        v_getX         (long ix)               { return NUMundefined; (void) ix;   }
 		virtual bool v_hasGetY         () { return false; }   virtual double        v_getY         (long iy)               { return NUMundefined; (void) iy;   }
-		virtual bool v_hasGetRowStr    () { return false; }   virtual const wchar * v_getRowStr    (long irow)             { return NULL;         (void) irow; }
-		virtual bool v_hasGetColStr    () { return false; }   virtual const wchar * v_getColStr    (long icol)             { return NULL;         (void) icol; }
+		virtual bool v_hasGetRowStr    () { return false; }   virtual const wchar_t * v_getRowStr    (long irow)             { return NULL;         (void) irow; }
+		virtual bool v_hasGetColStr    () { return false; }   virtual const wchar_t * v_getColStr    (long icol)             { return NULL;         (void) icol; }
 		virtual bool v_hasGetCell      () { return false; }   virtual double        v_getCell      ()                      { return NUMundefined; }
-		virtual bool v_hasGetCellStr   () { return false; }   virtual const wchar * v_getCellStr   ()                      { return NULL; }
+		virtual bool v_hasGetCellStr   () { return false; }   virtual const wchar_t * v_getCellStr   ()                      { return NULL; }
 		virtual bool v_hasGetVector    () { return false; }   virtual double        v_getVector    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
-		virtual bool v_hasGetVectorStr () { return false; }   virtual const wchar * v_getVectorStr (long icol)             { return NULL;         (void) icol; }
+		virtual bool v_hasGetVectorStr () { return false; }   virtual const wchar_t * v_getVectorStr (long icol)             { return NULL;         (void) icol; }
 		virtual bool v_hasGetMatrix    () { return false; }   virtual double        v_getMatrix    (long irow, long icol)  { return NUMundefined; (void) irow; (void) icol; }
-		virtual bool v_hasGetMatrixStr () { return false; }   virtual const wchar * v_getMatrixStr (long irow, long icol)  { return NULL;         (void) irow; (void) icol; }
+		virtual bool v_hasGetMatrixStr () { return false; }   virtual const wchar_t * v_getMatrixStr (long irow, long icol)  { return NULL;         (void) irow; (void) icol; }
 		virtual bool v_hasGetFunction0 () { return false; }   virtual double        v_getFunction0 ()                      { return NUMundefined; }
 		virtual bool v_hasGetFunction1 () { return false; }   virtual double        v_getFunction1 (long irow, double x)   { return NUMundefined; (void) irow; (void) x; }
 		virtual bool v_hasGetFunction2 () { return false; }   virtual double        v_getFunction2 (double x, double y)    { return NUMundefined; (void) x; (void) y; }
-		virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (const wchar *rowLabel) { return NUMundefined; (void) rowLabel; }
-		virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const wchar *colLabel) { return NUMundefined; (void) colLabel; }
+		virtual bool v_hasGetRowIndex  () { return false; }   virtual double        v_getRowIndex  (const wchar_t *rowLabel) { return NUMundefined; (void) rowLabel; }
+		virtual bool v_hasGetColIndex  () { return false; }   virtual double        v_getColIndex  (const wchar_t *colLabel) { return NUMundefined; (void) colLabel; }
 };
 
 template <class T> T* Data_copy (T* data) {

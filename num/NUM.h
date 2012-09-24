@@ -356,13 +356,13 @@ void NUMautoscale (double x [], long n, double scale);
 
 /* The following ANSI-C power trick generates the declarations of 156 functions. */
 #define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar *name); \
+	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar_t *name); \
 	void NUMvector_writeBinary_##storage (const type *v, long lo, long hi, FILE *f); \
 	void NUMvector_writeCache_##storage (const type *v, long lo, long hi, CACHE *f); \
 	type * NUMvector_readText_##storage (long lo, long hi, MelderReadText text, const char *name); \
 	type * NUMvector_readBinary_##storage (long lo, long hi, FILE *f); \
 	type * NUMvector_readCache_##storage (long lo, long hi, CACHE *f); \
-	void NUMmatrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name); \
+	void NUMmatrix_writeText_##storage (type **v, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name); \
 	void NUMmatrix_writeBinary_##storage (type **v, long r1, long r2, long c1, long c2, FILE *f); \
 	void NUMmatrix_writeCache_##storage (type **v, long r1, long r2, long c1, long c2, CACHE *f); \
 	type ** NUMmatrix_readText_##storage (long r1, long r2, long c1, long c2, MelderReadText text, const char *name); \
@@ -393,12 +393,12 @@ double * NUMvector_readText_r8 (long lo, long hi, MelderReadString *text, const 
 double * NUMvector_readBinary_r8 (long lo, long hi, FILE *f);   // etc
 	create and read a vector as machine-independent binary data from the stream f.
 	Throw an error message if anything went wrong.
-void NUMvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const wchar *name);   // etc
+void NUMvector_writeText_r8 (const double *v, long lo, long hi, MelderFile file, const wchar_t *name);   // etc
 	write the vector elements v [lo..hi] as text to the open file,
 	each element on its own line, preceded by "name [index]: ".
 	Throw an error message if anything went wrong.
 	The vectors need not have been created by NUMvector.
-void NUMmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const wchar *name);   // etc
+void NUMmatrix_writeText_r8 (double **m, long r1, long r2, long c1, long c2, MelderFile file, const wchar_t *name);   // etc
 	write the matrix elements m [r1..r2] [c1..c2] as text to the open file.
 	Throw an error message if anything went wrong.
 	The matrices need not have been created by NUMmatrix.
@@ -604,7 +604,7 @@ public:
 	}
 };
 
-typedef autodatavector <wchar *> autostringvector;
+typedef autodatavector <wchar_t *> autostringvector;
 typedef autodatavector <char *> autostring8vector;
 
 /* End of file NUM.h */

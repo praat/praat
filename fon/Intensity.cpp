@@ -1,6 +1,6 @@
 /* Intensity.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,14 +23,14 @@ Thing_implement (Intensity, Vector, 2);
 
 void structIntensity :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Time sampling:");
+	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"   Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 }
 
 double structIntensity :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {

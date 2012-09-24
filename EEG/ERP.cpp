@@ -42,7 +42,7 @@
 
 Thing_implement (ERP, Sound, 2);
 
-long structERP :: f_getChannelNumber (const wchar *channelName) {
+long structERP :: f_getChannelNumber (const wchar_t *channelName) {
 	for (long ichan = 1; ichan <= ny; ichan ++) {
 		if (Melder_wcsequ (d_channelNames [ichan], channelName)) {
 			return ichan;
@@ -99,7 +99,7 @@ void structERP :: f_draw (Graphics graphics, long channelNumber, double tmin, do
 
 }
 
-void structERP :: f_draw (Graphics graphics, const wchar *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
+void structERP :: f_draw (Graphics graphics, const wchar_t *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
 	f_draw (graphics, f_getChannelNumber (channelName), tmin, tmax, vmin, vmax, garnish);
 }
 

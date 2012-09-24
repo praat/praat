@@ -69,7 +69,7 @@ void Vector_multiplyByScalar (Vector me, double scalar);
 void Vector_scale (Vector me, double scale);
 
 void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *pymin, double *pymax,
-	double defaultDy, const wchar *method);
+	double defaultDy, const wchar_t *method);
 /*
 	If *pxmin equals *pxmax, then autowindowing from my xmin to my xmax.
 	If *pymin equals *pymax, then autoscaling from minimum to maximum;

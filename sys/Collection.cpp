@@ -1,6 +1,6 @@
 /* Collection.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ void structCollection :: v_destroy () {
 
 void structCollection :: v_info ()
 {
-	MelderInfo_writeLine2 (Melder_integer (size), L" items");
+	MelderInfo_writeLine (Melder_integer (size), L" items");
 }
 
 void structCollection :: v_copy (thou) {
@@ -529,13 +529,13 @@ long SortedSetOfString_lookUp (SortedSetOfString me, const wchar_t *string) {
 	return 0;
 }
 
-void structSortedSetOfString :: addString (const wchar *string) {
+void structSortedSetOfString :: addString (const wchar_t *string) {
 	static SimpleString simp;
 	if (simp == NULL) {
 		simp = SimpleString_create (L"");
 		Melder_free (simp -> string);
 	}
-	simp -> string = (wchar *) string;   // reference copy
+	simp -> string = (wchar_t *) string;   // reference copy
 	long index = v_position (simp);
 	if (index == 0) return;   // OK: already there: do not add
 	autoSimpleString newSimp = SimpleString_create (string);

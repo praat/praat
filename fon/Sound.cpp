@@ -40,16 +40,16 @@ void structSound :: v_info () {
 	structData :: v_info ();
 	const double rho_c = 400;   /* rho = 1.14 kg m-3; c = 353 m s-1; [rho c] = kg m-2 s-1 */
 	double minimum = z [1] [1], maximum = minimum;
-	MelderInfo_writeLine3 (L"Number of channels: ", Melder_integer (ny), ny == 1 ? L" (mono)" : ny == 2 ? L" (stereo)" : L"");
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine2 (L"   Number of samples: ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"   Sampling period: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"   Sampling frequency: ", Melder_single (1.0 / dx), L" Hz");
-	MelderInfo_writeLine3 (L"   First sample centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Number of channels: ", Melder_integer (ny), ny == 1 ? L" (mono)" : ny == 2 ? L" (stereo)" : L"");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Time sampling:");
+	MelderInfo_writeLine (L"   Number of samples: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"   Sampling period: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"   Sampling frequency: ", Melder_single (1.0 / dx), L" Hz");
+	MelderInfo_writeLine (L"   First sample centred at: ", Melder_double (x1), L" seconds");
 	{// scope
 		double sum = 0.0, sumOfSquares = 0.0;
 		for (long channel = 1; channel <= ny; channel ++) {
@@ -62,22 +62,22 @@ void structSound :: v_info () {
 				if (value > maximum) maximum = value;
 			}
 		}
-		MelderInfo_writeLine1 (L"Amplitude:");
-		MelderInfo_writeLine3 (L"   Minimum: ", Melder_single (minimum), L" Pascal");
-		MelderInfo_writeLine3 (L"   Maximum: ", Melder_single (maximum), L" Pascal");
+		MelderInfo_writeLine (L"Amplitude:");
+		MelderInfo_writeLine (L"   Minimum: ", Melder_single (minimum), L" Pascal");
+		MelderInfo_writeLine (L"   Maximum: ", Melder_single (maximum), L" Pascal");
 		double mean = sum / (nx * ny);
-		MelderInfo_writeLine3 (L"   Mean: ", Melder_single (mean), L" Pascal");
-		MelderInfo_writeLine3 (L"   Root-mean-square: ", Melder_single (sqrt (sumOfSquares / (nx * ny))), L" Pascal");
+		MelderInfo_writeLine (L"   Mean: ", Melder_single (mean), L" Pascal");
+		MelderInfo_writeLine (L"   Root-mean-square: ", Melder_single (sqrt (sumOfSquares / (nx * ny))), L" Pascal");
 		double penergy = sumOfSquares * dx / ny;   /* Pa2 s = kg2 m-2 s-3 */
-		MelderInfo_write3 (L"Total energy: ", Melder_single (penergy), L" Pascal\u00B2 sec");
+		MelderInfo_write (L"Total energy: ", Melder_single (penergy), L" Pascal\u00B2 sec");
 		double energy = penergy / rho_c;   /* kg s-2 = Joule m-2 */
-		MelderInfo_writeLine3 (L" (energy in air: ", Melder_single (energy), L" Joule/m\u00B2)");
+		MelderInfo_writeLine (L" (energy in air: ", Melder_single (energy), L" Joule/m\u00B2)");
 		double power = energy / (dx * nx);   /* kg s-3 = Watt/m2 */
-		MelderInfo_write3 (L"Mean power (intensity) in air: ", Melder_single (power), L" Watt/m\u00B2");
+		MelderInfo_write (L"Mean power (intensity) in air: ", Melder_single (power), L" Watt/m\u00B2");
 		if (power != 0.0) {
-			MelderInfo_writeLine3 (L" = ", Melder_half (10 * log10 (power / 1e-12)), L" dB");
+			MelderInfo_writeLine (L" = ", Melder_half (10 * log10 (power / 1e-12)), L" dB");
 		} else {
-			MelderInfo_writeLine1 (L"");
+			MelderInfo_writeLine (L"");
 		}
 	}
 	if (nx > 1) {
@@ -94,7 +94,7 @@ void structSound :: v_info () {
 				stdev += value * value;
 			}
 			stdev = sqrt (stdev / (nx - 1));
-			MelderInfo_writeLine5 (L"Standard deviation in channel ", Melder_integer (channel), L": ", Melder_single (stdev), L" Pascal");
+			MelderInfo_writeLine (L"Standard deviation in channel ", Melder_integer (channel), L": ", Melder_single (stdev), L" Pascal");
 		}
 	}
 }
@@ -713,7 +713,7 @@ Sound Sound_autoCorrelate (Sound me, enum kSounds_convolve_scaling scaling, enum
 }
 
 void Sound_draw (Sound me, Graphics g,
-	double tmin, double tmax, double minimum, double maximum, bool garnish, const wchar *method)
+	double tmin, double tmax, double minimum, double maximum, bool garnish, const wchar_t *method)
 {
 	long ixmin, ixmax;
 	bool treversed = tmin > tmax;

@@ -27,15 +27,17 @@ Thing_define (ArtwordEditor, Editor) {
 	public:
 		Graphics graphics;
 		int feature;
-		GuiObject list, drawingArea, radio, time, value;
-		GuiObject button [1 + kArt_muscle_MAX];
+		GuiList list;
+		GuiDrawingArea drawingArea;
+		GuiText time, value;
+		GuiRadioButton button [1 + kArt_muscle_MAX];
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual void v_createChildren ();
 		virtual void v_dataChanged ();
 };
 
-ArtwordEditor ArtwordEditor_create (GuiObject parent, const wchar *title, Artword data);
+ArtwordEditor ArtwordEditor_create (const wchar_t *title, Artword data);
 
 /* End of file ArtwordEditor.h */
 #endif

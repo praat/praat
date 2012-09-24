@@ -1,6 +1,6 @@
 /* Strings.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,29 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/07/16 GPL
- * pb 2003/07/02 corrected Strings_randomize so that the first element can sometimes go to the first place
- * pb 2004/03/21 Strings_createAsFileList now accepts spaces in directory names on Unix and Mac
- * pb 2004/04/20 the previous thing now done with backslashes rather than double quotes,
- *               because double quotes prevent the expansion of the wildcard asterisk
- * pb 2006/02/14 Strings_createAsDirectoryList for Windows
- * pb 2006/03/08 allow 1,000,000 file names in Strings_createAsFileList
- * pb 2006/09/19 Strings_createAsDirectoryList for Mac and Unix
- * pb 2006/10/04 return fewer errors in Strings_createAsFileList and Strings_createAsDirectoryList
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2006/12/10 MelderInfo
- * pb 2007/01/24 Strings_createAsFileList: removed gigantic memory leak
- * pb 2007/01/24 Strings_createAsFileList: used stat instead of platform-specific struct dirent. entry
- * pb 2007/08/10 wchar_t
- * pb 2007/10/01 can write as encoding
- * pb 2007/10/01 corrected nativization
- * pb 2007/11/17 getVectorStr
- * pb 2007/12/10 Strings_createAsFileList precomposes characters
- * pb 2011/05/03 Windows: ignore file or directory names starting with '.'
- * pb 2011/05/15 C++
  */
 
 //#define USE_STAT  1
@@ -61,7 +38,7 @@
 	#include "winport_off.h"
 #endif
 
-#include "Strings.h"
+#include "Strings_.h"
 #include "longchar.h"
 
 #include "oo_DESTROY.h"
@@ -106,20 +83,20 @@ static long Strings_maximumLength (Strings me) {
 
 void structStrings :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (numberOfStrings));
-	MelderInfo_writeLine3 (L"Total length: ", Melder_integer (Strings_totalLength (this)), L" characters");
-	MelderInfo_writeLine3 (L"Longest string: ", Melder_integer (Strings_maximumLength (this)), L" characters");
+	MelderInfo_writeLine (L"Number of strings: ", Melder_integer (numberOfStrings));
+	MelderInfo_writeLine (L"Total length: ", Melder_integer (Strings_totalLength (this)), L" characters");
+	MelderInfo_writeLine (L"Longest string: ", Melder_integer (Strings_maximumLength (this)), L" characters");
 }
 
-const wchar * structStrings :: v_getVectorStr (long icol) {
+const wchar_t * structStrings :: v_getVectorStr (long icol) {
 	if (icol < 1 || icol > numberOfStrings) return L"";
-	wchar *stringValue = strings [icol];
+	wchar_t *stringValue = strings [icol];
 	return stringValue == NULL ? L"" : stringValue;
 }
 
 #define Strings_createAsFileOrDirectoryList_TYPE_FILE  0
 #define Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY  1
-static Strings Strings_createAsFileOrDirectoryList (const wchar *path, int type) {
+static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int type) {
 	#if USE_STAT
 		/*
 		 * Initialize.
@@ -134,11 +111,11 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar *path, int type)
 			 * the left environment is "h", and the right environment is ".wav".
 			 */
 			MelderString_copy (& searchDirectory, path);
-			wchar *asterisk = wcsrchr (searchDirectory. string, '*');
+			wchar_t *asterisk = wcsrchr (searchDirectory. string, '*');
 			if (asterisk != NULL) {
 				*asterisk = '\0';
 				searchDirectory. length = asterisk - searchDirectory. string;   // probably superfluous, but correct
-				wchar *lastSlash = wcsrchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
+				wchar_t *lastSlash = wcsrchr (searchDirectory. string, Melder_DIRECTORY_SEPARATOR);
 				if (lastSlash != NULL) {
 					*lastSlash = '\0';   // This fixes searchDirectory.
 					searchDirectory. length = lastSlash - searchDirectory. string;   // probably superfluous, but correct
@@ -156,7 +133,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar *path, int type)
 				Melder_throw ("Cannot open directory ", searchDirectory. string, ".");
 			//Melder_casual ("opened");
 			autoStrings me = Thing_new (Strings);
-			my strings = NUMvector <wchar *> (1, 1000000);
+			my strings = NUMvector <wchar_t *> (1, 1000000);
 			struct dirent *entry;
 			while ((entry = readdir (d)) != NULL) {
 				MelderString_copy (& filePath, searchDirectory. string [0] ? searchDirectory. string : L".");
@@ -195,10 +172,10 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar *path, int type)
 		}
 	#elif defined (_WIN32)
 		try {
-			wchar searchPath [1+kMelder_MAXPATH];
+			wchar_t searchPath [1+kMelder_MAXPATH];
 			int len = wcslen (path), hasAsterisk = wcschr (path, '*') != NULL, endsInSeparator = len != 0 && path [len - 1] == '\\';
 			autoStrings me = Thing_new (Strings);
-			my strings = NUMvector <wchar *> (1, 1000000);
+			my strings = NUMvector <wchar_t *> (1, 1000000);
 			swprintf (searchPath, 1+kMelder_MAXPATH, L"%ls%ls%ls", path, hasAsterisk || endsInSeparator ? L"" : L"\\", hasAsterisk ? L"" : L"*");
 			WIN32_FIND_DATAW findData;
 			HANDLE searchHandle = FindFirstFileW (searchPath, & findData);
@@ -224,7 +201,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar *path, int type)
 	#endif
 }
 
-Strings Strings_createAsFileList (const wchar *path) {
+Strings Strings_createAsFileList (const wchar_t *path) {
 	try {
 		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_FILE);
 	} catch (MelderError) {
@@ -232,7 +209,7 @@ Strings Strings_createAsFileList (const wchar *path) {
 	}
 }
 
-Strings Strings_createAsDirectoryList (const wchar *path) {
+Strings Strings_createAsDirectoryList (const wchar_t *path) {
 	try {
 		return Strings_createAsFileOrDirectoryList (path, Strings_createAsFileOrDirectoryList_TYPE_DIRECTORY);
 	} catch (MelderError) {
@@ -253,7 +230,7 @@ Strings Strings_readFromRawTextFile (MelderFile file) {
 		 * Create.
 		 */
 		autoStrings me = Thing_new (Strings);
-		if (n > 0) my strings = NUMvector <wchar *> (1, n);
+		if (n > 0) my strings = NUMvector <wchar_t *> (1, n);
 		my numberOfStrings = n;
 
 		/*
@@ -287,9 +264,9 @@ void Strings_randomize (Strings me) {
 }
 
 void Strings_genericize (Strings me) {
-	autostring buffer = Melder_calloc (wchar, Strings_maximumLength (me) * 3 + 1);
+	autostring buffer = Melder_calloc (wchar_t, Strings_maximumLength (me) * 3 + 1);
 	for (long i = 1; i <= my numberOfStrings; i ++) {
-		const wchar *p = (const wchar *) my strings [i];
+		const wchar_t *p = (const wchar_t *) my strings [i];
 		while (*p) {
 			if (*p > 126) {   // backslashes are not converted, i.e. genericize^2 == genericize
 				Longchar_genericizeW (my strings [i], buffer.peek());
@@ -307,7 +284,7 @@ void Strings_genericize (Strings me) {
 }
 
 void Strings_nativize (Strings me) {
-	autostring buffer = Melder_calloc (wchar, Strings_maximumLength (me) + 1);
+	autostring buffer = Melder_calloc (wchar_t, Strings_maximumLength (me) + 1);
 	for (long i = 1; i <= my numberOfStrings; i ++) {
 		Longchar_nativizeW (my strings [i], buffer.peek(), false);
 		autostring newString = Melder_wcsdup (buffer.peek());
@@ -324,8 +301,9 @@ void Strings_sort (Strings me) {
 }
 
 void Strings_remove (Strings me, long position) {
-	Melder_assert (position >= 1);
-	Melder_assert (position <= my numberOfStrings);
+	if (position < 1 || position > my numberOfStrings) {
+		Melder_throw ("You supplied a position of ", position, ", but for this string it has to be in the range [1, ", my numberOfStrings, "].");
+	}
 	Melder_free (my strings [position]);
 	for (long i = position; i < my numberOfStrings; i ++) {
 		my strings [i] = my strings [i + 1];
@@ -333,9 +311,10 @@ void Strings_remove (Strings me, long position) {
 	my numberOfStrings --;
 }
 
-void Strings_replace (Strings me, long position, const wchar *text) {
-	Melder_assert (position >= 1);
-	Melder_assert (position <= my numberOfStrings);
+void Strings_replace (Strings me, long position, const wchar_t *text) {
+	if (position < 1 || position > my numberOfStrings) {
+		Melder_throw ("You supplied a position of ", position, ", but for this string it has to be in the range [1, ", my numberOfStrings, "].");
+	}
 	if (Melder_wcsequ (my strings [position], text))
 		return;   // nothing to change
 	/*
@@ -349,10 +328,12 @@ void Strings_replace (Strings me, long position, const wchar *text) {
 	my strings [position] = newString.transfer();
 }
 
-void Strings_insert (Strings me, long position, const wchar *text) {
-	if (position == 0) position = my numberOfStrings + 1;
-	Melder_assert (position >= 1);
-	Melder_assert (position <= my numberOfStrings + 1);
+void Strings_insert (Strings me, long position, const wchar_t *text) {
+	if (position == 0) {
+		position = my numberOfStrings + 1;
+	} else if (position < 1 || position > my numberOfStrings + 1) {
+		Melder_throw ("You supplied a position of ", position, ", but for this string it has to be in the range [1, ", my numberOfStrings, "].");
+	}
 	/*
 	 * Create without change.
 	 */

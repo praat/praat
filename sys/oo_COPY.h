@@ -61,7 +61,7 @@
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	if (x) { \
-		thy x = NUMvector <wchar*> (min, max); \
+		thy x = NUMvector <wchar_t*> (min, max); \
 		for (long i = min; i <= max; i ++) \
 			if (x [i]) thy x [i] = Melder_wcsdup (x [i]); \
 	}

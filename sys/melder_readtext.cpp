@@ -29,7 +29,7 @@
 #include "abcio.h"
 #define my  me ->
 
-wchar MelderReadText_getChar (MelderReadText me) {
+wchar_t MelderReadText_getChar (MelderReadText me) {
 	if (my stringW != NULL) {
 		if (* my readPointerW == '\0') return 0;
 		return * my readPointerW ++;
@@ -61,15 +61,15 @@ wchar MelderReadText_getChar (MelderReadText me) {
 	}
 }
 
-wchar * MelderReadText_readLine (MelderReadText me) {
+wchar_t * MelderReadText_readLine (MelderReadText me) {
 	if (my stringW != NULL) {
 		Melder_assert (my readPointerW != NULL);
 		Melder_assert (my readPointer8 == NULL);
 		if (*my readPointerW == '\0') {   // tried to read past end of file
 			return NULL;
 		}
-		wchar *result = my readPointerW;
-		wchar *newline = wcschr (result, '\n');
+		wchar_t *result = my readPointerW;
+		wchar_t *newline = wcschr (result, '\n');
 		if (newline != NULL) {
 			*newline = '\0';
 			my readPointerW = newline + 1;
@@ -92,12 +92,12 @@ wchar * MelderReadText_readLine (MelderReadText me) {
 		} else {
 			my readPointer8 += strlen (result8);
 		}
-		static wchar *textW = NULL;
+		static wchar_t *textW = NULL;
 		static size_t size = 0;
 		size_t sizeNeeded = strlen (result8) + 1;
 		if (sizeNeeded > size) {
 			Melder_free (textW);
-			textW = Melder_malloc_f (wchar, sizeNeeded + 100);
+			textW = Melder_malloc_f (wchar_t, sizeNeeded + 100);
 			size = sizeNeeded + 100;
 		}
 		Melder_8bitToWcs_inline (result8, textW, my input8Encoding);
@@ -122,7 +122,7 @@ long MelderReadText_getNumberOfLines (MelderReadText me) {
 const wchar_t * MelderReadText_getLineNumber (MelderReadText me) {
 	long result = 1;
 	if (my stringW != NULL) {
-		wchar *p = my stringW;
+		wchar_t *p = my stringW;
 		while (my readPointerW - p > 0) {
 			if (*p == '\0' || *p == '\n') result ++;
 			p ++;
@@ -138,7 +138,7 @@ const wchar_t * MelderReadText_getLineNumber (MelderReadText me) {
 	return Melder_integer (result);
 }
 
-static wchar * _MelderFile_readText (MelderFile file, char **string8) {
+static wchar_t * _MelderFile_readText (MelderFile file, char **string8) {
 	try {
 		int type = 0;   // 8-bit
 		autostring text;
@@ -188,11 +188,11 @@ static wchar * _MelderFile_readText (MelderFile file, char **string8) {
 			}
 		} else {
 			length = length / 2 - 1;   // Byte Order Mark subtracted. Length = number of UTF-16 codes
-			text.reset (Melder_malloc (wchar, length + 1));
+			text.reset (Melder_malloc (wchar_t, length + 1));
 			if (type == 1) {
 				for (unsigned long i = 0; i < length; i ++) {
 					unsigned short kar = bingetu2 (f);
-					if (sizeof (wchar_t) == 2) {   // wchar is UTF-16?
+					if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 						text [i] = kar;
 					} else {   // wchar_t is UTF-32.
 						unsigned long kar1 = kar;
@@ -218,9 +218,9 @@ static wchar * _MelderFile_readText (MelderFile file, char **string8) {
 			} else {
 				for (unsigned long i = 0; i < length; i ++) {
 					unsigned short kar = bingetu2LE (f);
-					if (sizeof (wchar) == 2) {   // wchar is UTF-16?
+					if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 						text [i] = kar;
-					} else {   // wchar is UTF-32
+					} else {   // wchar_t is UTF-32
 						unsigned long kar1 = kar;
 						if (kar1 < 0xD800) {
 							text [i] = kar1;

@@ -37,11 +37,11 @@ bool structAutosegment :: v_equal (thou) {
 
 static struct structData_Description theAutosegment_description [] = {
 	{ L"Autosegment", inheritwa, 0, sizeof (struct structAutosegment), L"Autosegment", & theClassInfo_Function },
-	{ L"name", stringwa, Melder_offsetof (Autosegment, name), sizeof (wchar *) },
+	{ L"name", stringwa, Melder_offsetof (Autosegment, name), sizeof (wchar_t *) },
 	{ 0 } };
 Data_Description structAutosegment :: s_description = & theAutosegment_description [0];
 
-Autosegment Autosegment_create (double tmin, double tmax, const wchar *label) {
+Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label) {
 	try {
 		autoAutosegment me = Thing_new (Autosegment);
 		Function_init (me.peek(), tmin, tmax);

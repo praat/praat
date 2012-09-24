@@ -38,7 +38,7 @@ oo_DEFINE_CLASS (Function, Data)
 			virtual int v_domainQuantity () { return 0; }
 			virtual int v_getMinimumUnit (long ilevel) { (void) ilevel; return 0; }
 			virtual int v_getMaximumUnit (long ilevel) { (void) ilevel; return 0; }
-			virtual const wchar * v_getUnitText (long ilevel, int unit, unsigned long flags)
+			virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags)
 				{ (void) ilevel; (void) unit; (void) flags; return L""; }
 			virtual bool v_isUnitLogarithmic (long ilevel, int unit)
 				{ (void) ilevel; (void) unit; return false; }

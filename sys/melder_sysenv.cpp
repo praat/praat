@@ -52,7 +52,7 @@ wchar_t * Melder_getenv (const wchar_t *variableName) {
 	#endif
 }
 
-void Melder_system (const wchar *command) {
+void Melder_system (const wchar_t *command) {
 	#if defined (macintosh) || defined (UNIX)
 		if (system (Melder_peekWcsToUtf8 (command)) != 0)
 			Melder_throw ("System command failed.");

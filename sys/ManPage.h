@@ -33,7 +33,7 @@ typedef struct structManPage_Paragraph {
 Thing_define (ManPage, Thing) {
 	// new data:
 	public:
-		const wchar *title, *author;
+		const wchar_t *title, *author;
 		long date;
 		struct structManPage_Paragraph *paragraphs;
 		long nlinksHither, nlinksThither;

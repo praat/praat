@@ -66,10 +66,10 @@ Thing_define (VowelEditor, Editor) {
 		structVowelEditor_F0 f0;
 		double maximumDuration, extendDuration;
 		Sound source, target;
-		GuiObject drawingArea, playButton, reverseButton, publishButton;
-		GuiObject f0Label, f0TextField, f0SlopeLabel, f0SlopeTextField;
-		GuiObject durationLabel, durationTextField, extendLabel, extendTextField;
-		GuiObject startInfo, endInfo;
+		GuiDrawingArea drawingArea;
+		GuiButton playButton, reverseButton, publishButton;
+		GuiText f0TextField, f0SlopeTextField, durationTextField, extendTextField;
+		GuiLabel startInfo, endInfo;
 		structVowelEditor_F1F2Grid grid;
 	// overridden methods:
 		void v_destroy ();
@@ -78,7 +78,7 @@ Thing_define (VowelEditor, Editor) {
 		void v_createHelpMenuItems (EditorMenu menu);
 };
 
-VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data);
+VowelEditor VowelEditor_create (const wchar_t *title, Data data);
 
 void VowelEditor_prefs ();
 

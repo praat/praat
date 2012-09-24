@@ -175,7 +175,7 @@ DIRECT (LongSound_view)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a LongSound from batch.");
 	LOOP {
 		iam (LongSound);
-		autoSoundEditor editor = SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -694,7 +694,7 @@ static void cb_SoundEditor_publication (Editor editor, void *closure, Data publi
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
-				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 				praat_installEditor (editor2.transfer(), IOBJECT);
 			}
 		}
@@ -706,7 +706,7 @@ DIRECT (Sound_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Sound from batch.");
 	LOOP {
 		iam (Sound);
-		autoSoundEditor editor = SoundEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoSoundEditor editor = SoundEditor_create (ID_AND_FULL_NAME, me);
 		editor -> setPublicationCallback (cb_SoundEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
@@ -1332,9 +1332,9 @@ END
 
 FORM_READ (Sound_readSeparateChannelsFromSoundFile, L"Read separate channels from sound file", 0, true)
 	autoSound sound = Sound_readFromSoundFile (file);
-	wchar name [300];
+	wchar_t name [300];
 	wcscpy (name, MelderFile_name (file));
-	wchar *lastPeriod = wcsrchr (name, '.');
+	wchar_t *lastPeriod = wcsrchr (name, '.');
 	if (lastPeriod != NULL) {
 		*lastPeriod = '\0';
 	}
@@ -1377,7 +1377,7 @@ static void do_Sound_record (int numberOfChannels) {
 		}
 	}
 	if (! theSoundRecorder) {
-		theSoundRecorder = SoundRecorder_create (theCurrentPraatApplication -> topShell, numberOfChannels);
+		theSoundRecorder = SoundRecorder_create (numberOfChannels);
 		theSoundRecorder -> setDestructionCallback (cb_SoundRecorder_destruction, NULL);
 		theSoundRecorder -> setPublicationCallback (cb_SoundRecorder_publication, NULL);
 	}
@@ -2223,7 +2223,7 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 }
 
 static Any movieFileRecognizer (int nread, const char *header, MelderFile file) {
-	const wchar *fileName = MelderFile_name (file);
+	const wchar_t *fileName = MelderFile_name (file);
 	(void) header;
 	/*Melder_casual ("%d %d %d %d %d %d %d %d %d %d", header [0],
 		header [1], header [2], header [3],
@@ -2236,7 +2236,7 @@ static Any movieFileRecognizer (int nread, const char *header, MelderFile file) 
 }
 
 static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
-	const wchar *fileName = MelderFile_name (file);
+	const wchar_t *fileName = MelderFile_name (file);
 	(void) header;
 	if (nread < 512 || (! wcsstr (fileName, L".sdf") && ! wcsstr (fileName, L".SDF"))) return NULL;
 	return Sound_readFromSesamFile (file);
@@ -2302,11 +2302,11 @@ void praat_uvafon_Sound_init (void) {
 	Data_recognizeFileType (bellLabsFileRecognizer);
 	Data_recognizeFileType (kayFileRecognizer);
 
-	SoundRecorder_prefs ();
-	FunctionEditor_prefs ();
-	LongSound_prefs ();
-	TimeSoundEditor_prefs ();
-	TimeSoundAnalysisEditor_prefs ();
+	SoundRecorder_preferences ();
+	structFunctionEditor          :: f_preferences ();
+	LongSound_preferences ();
+	structTimeSoundEditor         :: f_preferences ();
+	structTimeSoundAnalysisEditor :: f_preferences ();
 
 	Melder_setRecordProc (recordProc);
 	Melder_setRecordFromFileProc (recordFromFileProc);

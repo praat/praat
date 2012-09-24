@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2007/07/23 constraint plasticity
- * pb 2007/08/12 wchar
+ * pb 2007/08/12 wchar_t
  * pb 2011/03/29 C++
  * pb 2011/07/12 C++
  */

@@ -37,10 +37,10 @@ void structDurationTierEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-DurationTierEditor DurationTierEditor_create (GuiObject parent, const wchar *title, DurationTier duration, Sound sound, bool ownSound) {
+DurationTierEditor DurationTierEditor_create (const wchar_t *title, DurationTier duration, Sound sound, bool ownSound) {
 	try {
 		autoDurationTierEditor me = Thing_new (DurationTierEditor);
-		RealTierEditor_init (me.peek(), parent, title, (RealTier) duration, sound, ownSound);
+		RealTierEditor_init (me.peek(), title, (RealTier) duration, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("DurationTier window not created.");

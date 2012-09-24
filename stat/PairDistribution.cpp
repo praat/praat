@@ -1,6 +1,6 @@
 /* PairDistribution.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ Thing_implement (PairProbability, Data, 0);
 
 void structPairDistribution :: v_info () {
 	PairDistribution_Parent :: v_info ();
-	MelderInfo_writeLine2 (L"Number of pairs: ", Melder_integer (pairs -> size));
+	MelderInfo_writeLine (L"Number of pairs: ", Melder_integer (pairs -> size));
 }
 
 Thing_implement (PairDistribution, Data, 0);
@@ -72,7 +72,7 @@ static void PairDistribution_checkSpecifiedPairNumber (PairDistribution me, long
 		Melder_throw (me, ": the specified pair number is ", pairNumber, ", but should be at most my number of pairs (", my pairs -> size, ").");	
 }
 
-const wchar * PairDistribution_getString1 (PairDistribution me, long pairNumber) {
+const wchar_t * PairDistribution_getString1 (PairDistribution me, long pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
@@ -82,7 +82,7 @@ const wchar * PairDistribution_getString1 (PairDistribution me, long pairNumber)
 	}
 }
 
-const wchar * PairDistribution_getString2 (PairDistribution me, long pairNumber) {
+const wchar_t * PairDistribution_getString2 (PairDistribution me, long pairNumber) {
 	try {
 		PairDistribution_checkSpecifiedPairNumber (me, pairNumber);
 		PairProbability prob = static_cast <PairProbability> (my pairs -> item [pairNumber]);
@@ -102,7 +102,7 @@ double PairDistribution_getWeight (PairDistribution me, long pairNumber) {
 	}
 }
 
-void PairDistribution_add (PairDistribution me, const wchar *string1, const wchar *string2, double weight) {
+void PairDistribution_add (PairDistribution me, const wchar_t *string1, const wchar_t *string2, double weight) {
 	PairProbability pair = PairProbability_create (string1, string2, weight);
 	Collection_addItem (my pairs, pair);
 }
@@ -139,10 +139,10 @@ void PairDistribution_to_Stringses (PairDistribution me, long nout, Strings *str
 		double total = PairDistributions_getTotalWeight_checkPositive (me);
 		autoStrings strings1 = Thing_new (Strings);
 		strings1 -> numberOfStrings = nout;
-		strings1 -> strings = NUMvector <wchar*> (1, nout);
+		strings1 -> strings = NUMvector <wchar_t*> (1, nout);
 		autoStrings strings2 = Thing_new (Strings);
 		strings2 -> numberOfStrings = nout;
-		strings2 -> strings = NUMvector <wchar*> (1, nout);
+		strings2 -> strings = NUMvector <wchar_t*> (1, nout);
 		for (long iout = 1; iout <= nout; iout ++) {
 			do {
 				double rand = NUMrandomUniform (0, total), sum = 0.0;

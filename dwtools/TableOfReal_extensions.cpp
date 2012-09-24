@@ -1007,7 +1007,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, dou
 	for (long i = 1; i <= n; i++) {
 		long xcol, ycol = colb + i - 1;
 		wchar_t const  *mark;
-		wchar label[20];
+		wchar_t label[20];
 		Graphics_line (g, 0, n - i, n, n - i);
 		Graphics_line (g, i, n, i, 0);
 		for (long j = 1; j <= n; j++) {

@@ -1,6 +1,6 @@
 /* FormantGridEditor.cpp
  *
- * Copyright (C) 2008-2011 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,10 +66,10 @@ static void menu_cb_removePoints (EDITOR_ARGS) {
 	FormantGrid grid = (FormantGrid) my data;
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
-	if (my startSelection == my endSelection)
-		AnyTier_removePointNear (tier, my startSelection);
+	if (my d_startSelection == my d_endSelection)
+		AnyTier_removePointNear (tier, my d_startSelection);
 	else
-		AnyTier_removePointsBetween (tier, my startSelection, my endSelection);
+		AnyTier_removePointsBetween (tier, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -80,7 +80,7 @@ static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	FormantGrid grid = (FormantGrid) my data;
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
-	RealTier_addPoint (tier, 0.5 * (my startSelection + my endSelection), my ycursor);
+	RealTier_addPoint (tier, 0.5 * (my d_startSelection + my d_endSelection), my ycursor);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -91,7 +91,7 @@ static void menu_cb_addPointAt (EDITOR_ARGS) {
 		REAL (L"Time (s)", L"0.0")
 		POSITIVE (L"Frequency (Hz)", L"200.0")
 	EDITOR_OK
-		SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (L"Time", 0.5 * (my d_startSelection + my d_endSelection))
 		SET_REAL (L"Frequency", my ycursor)
 	EDITOR_DO
 		Editor_save (me, L"Add point");
@@ -235,86 +235,86 @@ void structFormantGridEditor :: v_draw () {
 	RealTier selectedTier = (RealTier) tiers -> item [selectedFormant];
 	double ymin = editingBandwidths ? bandwidthFloor : formantFloor;
 	double ymax = editingBandwidths ? bandwidthCeiling : formantCeiling;
-	Graphics_setColour (graphics, Graphics_WHITE);
-	Graphics_setWindow (graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
-	Graphics_setWindow (graphics, startWindow, endWindow, ymin, ymax);
-	Graphics_setColour (graphics, Graphics_RED);
-	Graphics_line (graphics, startWindow, ycursor, endWindow, ycursor);
-	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text1 (graphics, startWindow, ycursor, Melder_float (Melder_half (ycursor)));
-	Graphics_setColour (graphics, Graphics_BLUE);
-	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_text2 (graphics, endWindow, ymax, Melder_float (Melder_half (ymax)), L" Hz");
-	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text2 (graphics, endWindow, ymin, Melder_float (Melder_half (ymin)), L" Hz");
-	Graphics_setLineWidth (graphics, 1);
-	Graphics_setColour (graphics, Graphics_GREY);
+	Graphics_setColour (d_graphics, Graphics_WHITE);
+	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
+	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
+	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, ymin, ymax);
+	Graphics_setColour (d_graphics, Graphics_RED);
+	Graphics_line (d_graphics, d_startWindow, ycursor, d_endWindow, ycursor);
+	Graphics_setTextAlignment (d_graphics, Graphics_RIGHT, Graphics_HALF);
+	Graphics_text1 (d_graphics, d_startWindow, ycursor, Melder_float (Melder_half (ycursor)));
+	Graphics_setColour (d_graphics, Graphics_BLUE);
+	Graphics_setTextAlignment (d_graphics, Graphics_LEFT, Graphics_TOP);
+	Graphics_text2 (d_graphics, d_endWindow, ymax, Melder_float (Melder_half (ymax)), L" Hz");
+	Graphics_setTextAlignment (d_graphics, Graphics_LEFT, Graphics_HALF);
+	Graphics_text2 (d_graphics, d_endWindow, ymin, Melder_float (Melder_half (ymin)), L" Hz");
+	Graphics_setLineWidth (d_graphics, 1);
+	Graphics_setColour (d_graphics, Graphics_GREY);
 	for (long iformant = 1; iformant <= grid -> formants -> size; iformant ++) if (iformant != selectedFormant) {
 		RealTier tier = (RealTier) tiers -> item [iformant];
-		long imin = AnyTier_timeToHighIndex (tier, startWindow);
-		long imax = AnyTier_timeToLowIndex (tier, endWindow);
+		long imin = AnyTier_timeToHighIndex (tier, d_startWindow);
+		long imax = AnyTier_timeToLowIndex (tier, d_endWindow);
 		long n = tier -> points -> size;
 		if (n == 0) {
 		} else if (imax < imin) {
-			double yleft = RealTier_getValueAtTime (tier, startWindow);
-			double yright = RealTier_getValueAtTime (tier, endWindow);
-			Graphics_line (graphics, startWindow, yleft, endWindow, yright);
+			double yleft = RealTier_getValueAtTime (tier, d_startWindow);
+			double yright = RealTier_getValueAtTime (tier, d_endWindow);
+			Graphics_line (d_graphics, d_startWindow, yleft, d_endWindow, yright);
 		} else for (long i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) tier -> points -> item [i];
 			double t = point -> number, y = point -> value;
-			Graphics_fillCircle_mm (graphics, t, y, 2);
+			Graphics_fillCircle_mm (d_graphics, t, y, 2);
 			if (i == 1)
-				Graphics_line (graphics, startWindow, y, t, y);
+				Graphics_line (d_graphics, d_startWindow, y, t, y);
 			else if (i == imin)
-				Graphics_line (graphics, t, y, startWindow, RealTier_getValueAtTime (tier, startWindow));
+				Graphics_line (d_graphics, t, y, d_startWindow, RealTier_getValueAtTime (tier, d_startWindow));
 			if (i == n)
-				Graphics_line (graphics, t, y, endWindow, y);
+				Graphics_line (d_graphics, t, y, d_endWindow, y);
 			else if (i == imax)
-				Graphics_line (graphics, t, y, endWindow, RealTier_getValueAtTime (tier, endWindow));
+				Graphics_line (d_graphics, t, y, d_endWindow, RealTier_getValueAtTime (tier, d_endWindow));
 			else {
 				RealPoint pointRight = (RealPoint) tier -> points -> item [i + 1];
-				Graphics_line (graphics, t, y, pointRight -> number, pointRight -> value);
+				Graphics_line (d_graphics, t, y, pointRight -> number, pointRight -> value);
 			}
 		}
 	}
-	Graphics_setColour (graphics, Graphics_BLUE);
-	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier, startSelection);
-	long ilastSelected = AnyTier_timeToLowIndex (selectedTier, endSelection);
+	Graphics_setColour (d_graphics, Graphics_BLUE);
+	long ifirstSelected = AnyTier_timeToHighIndex (selectedTier, d_startSelection);
+	long ilastSelected = AnyTier_timeToLowIndex (selectedTier, d_endSelection);
 	long n = selectedTier -> points -> size;
-	long imin = AnyTier_timeToHighIndex (selectedTier, startWindow);
-	long imax = AnyTier_timeToLowIndex (selectedTier, endWindow);
-	Graphics_setLineWidth (graphics, 2);
+	long imin = AnyTier_timeToHighIndex (selectedTier, d_startWindow);
+	long imax = AnyTier_timeToLowIndex (selectedTier, d_endWindow);
+	Graphics_setLineWidth (d_graphics, 2);
 	if (n == 0) {
-		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (graphics, 0.5 * (startWindow + endWindow),
+		Graphics_setTextAlignment (d_graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (d_graphics, 0.5 * (d_startWindow + d_endWindow),
 			0.5 * (ymin + ymax), L"(no points in selected formant tier)");
 	} else if (imax < imin) {
-		double yleft = RealTier_getValueAtTime (selectedTier, startWindow);
-		double yright = RealTier_getValueAtTime (selectedTier, endWindow);
-		Graphics_line (graphics, startWindow, yleft, endWindow, yright);
+		double yleft = RealTier_getValueAtTime (selectedTier, d_startWindow);
+		double yright = RealTier_getValueAtTime (selectedTier, d_endWindow);
+		Graphics_line (d_graphics, d_startWindow, yleft, d_endWindow, yright);
 	} else for (long i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) selectedTier -> points -> item [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
-			Graphics_setColour (graphics, Graphics_RED);	
-		Graphics_fillCircle_mm (graphics, t, y, 3);
-		Graphics_setColour (graphics, Graphics_BLUE);
+			Graphics_setColour (d_graphics, Graphics_RED);	
+		Graphics_fillCircle_mm (d_graphics, t, y, 3);
+		Graphics_setColour (d_graphics, Graphics_BLUE);
 		if (i == 1)
-			Graphics_line (graphics, startWindow, y, t, y);
+			Graphics_line (d_graphics, d_startWindow, y, t, y);
 		else if (i == imin)
-			Graphics_line (graphics, t, y, startWindow, RealTier_getValueAtTime (selectedTier, startWindow));
+			Graphics_line (d_graphics, t, y, d_startWindow, RealTier_getValueAtTime (selectedTier, d_startWindow));
 		if (i == n)
-			Graphics_line (graphics, t, y, endWindow, y);
+			Graphics_line (d_graphics, t, y, d_endWindow, y);
 		else if (i == imax)
-			Graphics_line (graphics, t, y, endWindow, RealTier_getValueAtTime (selectedTier, endWindow));
+			Graphics_line (d_graphics, t, y, d_endWindow, RealTier_getValueAtTime (selectedTier, d_endWindow));
 		else {
 			RealPoint pointRight = (RealPoint) selectedTier -> points -> item [i + 1];
-			Graphics_line (graphics, t, y, pointRight -> number, pointRight -> value);
+			Graphics_line (d_graphics, t, y, pointRight -> number, pointRight -> value);
 		}
 	}
-	Graphics_setLineWidth (graphics, 1);
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setLineWidth (d_graphics, 1);
+	Graphics_setColour (d_graphics, Graphics_BLACK);
 }
 
 static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, long first, long last, double dt, double dy) {
@@ -332,8 +332,8 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 	for (long i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) tier -> points -> item [i];
 		double t = point -> number + dt, y = point -> value + dy;
-		if (t >= my startWindow && t <= my endWindow)
-			Graphics_circle_mm (my graphics, t, y, 3);
+		if (t >= my d_startWindow && t <= my d_endWindow)
+			Graphics_circle_mm (my d_graphics, t, y, 3);
 	}
 
 	if (last == first) {
@@ -342,12 +342,12 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 		 */
 		RealPoint point = (RealPoint) tier -> points -> item [first];
 		double t = point -> number + dt, y = point -> value + dy;
-		Graphics_line (my graphics, t, ymin, t, ymax - Graphics_dyMMtoWC (my graphics, 4.0));
-		Graphics_setTextAlignment (my graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
-		Graphics_text1 (my graphics, t, ymax, Melder_fixed (t, 6));
-		Graphics_line (my graphics, my startWindow, y, my endWindow, y);
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text1 (my graphics, my startWindow, y, Melder_fixed (y, 6));
+		Graphics_line (my d_graphics, t, ymin, t, ymax - Graphics_dyMMtoWC (my d_graphics, 4.0));
+		Graphics_setTextAlignment (my d_graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
+		Graphics_text1 (my d_graphics, t, ymax, Melder_fixed (t, 6));
+		Graphics_line (my d_graphics, my d_startWindow, y, my d_endWindow, y);
+		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text1 (my d_graphics, my d_startWindow, y, Melder_fixed (y, 6));
 	}
 }
 
@@ -365,9 +365,9 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	/*
 	 * Perform the default action: move cursor.
 	 */
-	startSelection = endSelection = xWC;
+	d_startSelection = d_endSelection = xWC;
 	ycursor = (1.0 - yWC) * ymin + yWC * ymax;
-	Graphics_setWindow (graphics, startWindow, endWindow, ymin, ymax);
+	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, ymin, ymax);
 	yWC = ycursor;
 
 	/*
@@ -378,7 +378,7 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 		return FormantGridEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) tier -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
+	if (Graphics_distanceWCtoMM (d_graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
 		return FormantGridEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -386,10 +386,10 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	 * Clicked on a selected point?
 	 */
 	draggingSelection = shiftKeyPressed &&
-		nearestPoint -> number > startSelection && nearestPoint -> number < endSelection;
+		nearestPoint -> number > d_startSelection && nearestPoint -> number < d_endSelection;
 	if (draggingSelection) {
-		ifirstSelected = AnyTier_timeToHighIndex (tier, startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (tier, endSelection);
+		ifirstSelected = AnyTier_timeToHighIndex (tier, d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (tier, d_endSelection);
 		Editor_save (this, L"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
@@ -399,11 +399,11 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (graphics, Graphics_MAROON);
+	Graphics_xorOn (d_graphics, Graphics_MAROON);
 	drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
-	while (Graphics_mouseStillDown (graphics)) {
+	while (Graphics_mouseStillDown (d_graphics)) {
 		double xWC_new, yWC_new;
-		Graphics_getMouseLocation (graphics, & xWC_new, & yWC_new);
+		Graphics_getMouseLocation (d_graphics, & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 			dt += xWC_new - xWC, df += yWC_new - yWC;
@@ -411,23 +411,23 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 			drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		}
 	}
-	Graphics_xorOff (graphics);
+	Graphics_xorOff (d_graphics);
 
 	/*
 	 * Dragged inside window?
 	 */
-	if (xWC < startWindow || xWC > endWindow) return 1;
+	if (xWC < d_startWindow || xWC > d_endWindow) return 1;
 
 	/*
 	 * Points not dragged past neighbours?
 	 */
 	RealPoint *points = (RealPoint *) tier -> points -> item;
 	double newTime = points [ifirstSelected] -> number + dt;
-	if (newTime < tmin) return 1;   // outside domain
+	if (newTime < d_tmin) return 1;   // outside domain
 	if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
 		return 1;   // past left neighbour
 	newTime = points [ilastSelected] -> number + dt;
-	if (newTime > tmax) return 1;   // outside domain
+	if (newTime > d_tmax) return 1;   // outside domain
 	if (ilastSelected < tier -> points -> size && newTime >= points [ilastSelected + 1] -> number)
 		return 1;   // past right neighbour
 
@@ -444,13 +444,13 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	 * Make sure that the same points are still selected (a problem with Undo...).
 	 */
 
-	if (draggingSelection) startSelection += dt, endSelection += dt;
+	if (draggingSelection) d_startSelection += dt, d_endSelection += dt;
 	if (ifirstSelected == ilastSelected) {
 		/*
 		 * Move crosshair to only selected formant point.
 		 */
 		RealPoint point = (RealPoint) tier -> points -> item [ifirstSelected];
-		startSelection = endSelection = point -> number;
+		d_startSelection = d_endSelection = point -> number;
 		ycursor = point -> value;
 	} else {
 		/*
@@ -475,10 +475,10 @@ void structFormantGridEditor :: v_play (double tmin, double tmax) {
 		theFunctionEditor_playCallback, this);
 }
 
-void FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar *title, FormantGrid data) {
+void FormantGridEditor_init (FormantGridEditor me, const wchar_t *title, FormantGrid data) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classFormantGrid));
-	FunctionEditor_init (me, parent, title, data);
+	FunctionEditor_init (me, title, data);
 	my formantFloor = preferences.formantFloor;
 	my formantCeiling = preferences.formantCeiling;
 	my bandwidthFloor = preferences.bandwidthFloor;
@@ -489,10 +489,10 @@ void FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar
 	my selectedFormant = 1;
 }
 
-FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar *title, FormantGrid data) {
+FormantGridEditor FormantGridEditor_create (const wchar_t *title, FormantGrid data) {
 	try {
 		autoFormantGridEditor me = Thing_new (FormantGridEditor);
-		FormantGridEditor_init (me.peek(), parent, title, data);
+		FormantGridEditor_init (me.peek(), title, data);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("FormantGrid window not created.");

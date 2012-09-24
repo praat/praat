@@ -69,10 +69,10 @@ oo_DEFINE_CLASS (Table, Data)
 			virtual void v_info ();
 			virtual bool v_hasGetNrow      () { return true; }   virtual double        v_getNrow      () { return rows -> size; }
 			virtual bool v_hasGetNcol      () { return true; }   virtual double        v_getNcol      () { return numberOfColumns; }
-			virtual bool v_hasGetColStr    () { return true; }   virtual const wchar * v_getColStr    (long columnNumber);
+			virtual bool v_hasGetColStr    () { return true; }   virtual const wchar_t * v_getColStr    (long columnNumber);
 			virtual bool v_hasGetMatrix    () { return true; }   virtual double        v_getMatrix    (long rowNumber, long columnNumber);
-			virtual bool v_hasGetMatrixStr () { return true; }   virtual const wchar * v_getMatrixStr (long rowNumber, long columnNumber);
-			virtual bool v_hasGetColIndex  () { return true; }   virtual double        v_getColIndex  (const wchar *columnLabel);
+			virtual bool v_hasGetMatrixStr () { return true; }   virtual const wchar_t * v_getMatrixStr (long rowNumber, long columnNumber);
+			virtual bool v_hasGetColIndex  () { return true; }   virtual double        v_getColIndex  (const wchar_t *columnLabel);
 	#endif
 
 oo_END_CLASS (Table)

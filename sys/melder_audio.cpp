@@ -353,7 +353,7 @@ static bool workProc (void *closure) {
 	return false;
 }
 #if motif
-static Boolean workProc_motif (XtPointer closure) {
+static bool workProc_motif (XtPointer closure) {
 	return workProc ((void *) closure);
 }
 #elif gtk

@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,35 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/13 Mach
- * pb 2002/12/11 MelderInfo
- * pb 2003/12/29 Melder_warning: added XMapRaised because delete response is UNMAP
- * pb 2004/04/06 motif_information drains text window only, i.e. no longer updates all windows
-                 (which used to cause up to seven seconds of delay in a 1-second sound window)
- * pb 2004/10/24 info buffer can grow
- * pb 2004/11/28 author notification in Melder_fatal
- * pb 2005/03/04 number and string comparisons, including regular expressions
- * pb 2005/06/16 removed enums from number and string comparisons (ints give no compiler warnings)
- * pb 2005/07/19 Melder_stringMatchesCriterion: regard NULL criterion as empty string
- * pb 2007/05/24 more wchar
- * pb 2007/05/26 Melder_stringMatchesCriterionW
- * pb 2007/06/19 removed some
- * pb 2007/08/12 wchar in helpProc
- * pb 2007/12/02 enums
- * pb 2007/12/13 Melder_writeToConsole
- * pb 2007/12/18 Gui
- * sdk 2008/01/22 GTK
- * pb 2009/01/20 removed pause
- * fb 2010/02/26 GTK
- * pb 2010/06/22 GTK: correct hiding and showing again
- * pb 2010/07/29 removed GuiDialog_show
- * pb 2010/11/26 even Unix now has a GUI fatal window
- * pb 2010/12/30 messageFund
- * pb 2011/04/03 C++
  */
 
 #include <math.h>
@@ -87,10 +58,10 @@ char Melder_buffer1 [30001], Melder_buffer2 [30001];
 unsigned long Melder_systemVersion;
 
 #ifndef CONSOLE_APPLICATION
-	void *Melder_topShell;   // GuiObject
+	GuiWindow Melder_topShell;
 #endif
 
-static void defaultHelp (const wchar *query) {
+static void defaultHelp (const wchar_t *query) {
 	Melder_error_ ("Don't know how to find help on \"", query, "\".");
 	Melder_flushError (NULL);
 }
@@ -99,13 +70,13 @@ static void defaultSearch (void) {
 	Melder_flushError ("Do not know how to search.");
 }
 
-static void defaultWarning (const wchar *message) {
+static void defaultWarning (const wchar_t *message) {
 	Melder_writeToConsole (L"Warning: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (L"\n", true);
 }
 
-static void defaultFatal (const wchar *message) {
+static void defaultFatal (const wchar_t *message) {
 	Melder_writeToConsole (L"Fatal error: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (L"\n", true);
@@ -137,10 +108,10 @@ static int defaultPublishPlayed (void) {
 /********** Current message methods: initialize to default (batch) behaviour. **********/
 
 static struct {
-	void (*help) (const wchar *query);
+	void (*help) (const wchar_t *query);
 	void (*search) (void);
-	void (*warning) (const wchar *message);
-	void (*fatal) (const wchar *message);
+	void (*warning) (const wchar_t *message);
+	void (*fatal) (const wchar_t *message);
 	int (*publish) (void *anything);
 	int (*record) (double duration);
 	int (*recordFromFile) (MelderFile fs);
@@ -172,14 +143,16 @@ void Melder_progressOff (void) { theProgressDepth --; }
 void Melder_progressOn (void) { theProgressDepth ++; }
 
 #ifndef CONSOLE_APPLICATION
-static bool waitWhileProgress (double progress, const wchar *message, GuiObject dia, GuiObject scale, GuiObject label1, GuiObject label2, GuiObject cancelButton) {
+static bool waitWhileProgress (double progress, const wchar_t *message, GuiDialog dia, GuiProgressBar scale, GuiLabel label1, GuiLabel label2, GuiButton cancelButton) {
 	#if gtk
 		// Wait for all pending events to be processed. If anybody knows how to inspect GTK's
 		// event queue for specific events, dump the code here, please.
 		// Until then, the button click attaches a g_object data key named "pressed" to the cancelButton
 		// which this function reads out in order to tell whether interruption has occurred
-		while (gtk_events_pending ())
+		while (gtk_events_pending ()) {
+			trace ("event pending");
 			gtk_main_iteration ();
+		}
 	#elif defined (macintosh)
 		#if useCarbon
 			EventRecord event;
@@ -194,9 +167,9 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 						ControlHandle macControl = FindControlUnderMouse (event. where, macWindow, & controlPart);
 						if (macControl) {
 							GuiObject control = (GuiObject) GetControlReference (macControl);
-							if (control == cancelButton) {
+							if (control == cancelButton -> d_widget) {
 								FlushEvents (everyEvent, 0);
-								XtUnmanageChild (dia);
+								XtUnmanageChild (dia -> d_widget);
 								return false;   // don't continue
 							} else {
 								break;
@@ -223,7 +196,7 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 				 * Ignore all key-down messages, except Escape.
 				 */
 				if (LOWORD (event. wParam) == VK_ESCAPE) {
-					XtUnmanageChild (dia);
+					XtUnmanageChild (dia -> d_widget);
 					return false;   // don't continue
 				}
 			} else if (event. message == WM_LBUTTONDOWN) {
@@ -231,8 +204,8 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 				 * Ignore all mouse-down messages, except click in Interrupt button.
 				 */
 				GuiObject me = (GuiObject) GetWindowLongPtr (event. hwnd, GWLP_USERDATA);
-				if (me == cancelButton) {
-					XtUnmanageChild (dia);
+				if (me == cancelButton -> d_widget) {
+					XtUnmanageChild (dia -> d_widget);
 					return false;   // don't continue
 				}
 			} else if (event. message != WM_SYSKEYDOWN) {
@@ -242,58 +215,58 @@ static bool waitWhileProgress (double progress, const wchar *message, GuiObject 
 				DispatchMessage (& event);
 			}
 		}
-	#else
-		XEvent event;
-		if (XCheckTypedWindowEvent (XtDisplay (cancelButton), XtWindow (cancelButton), ButtonPress, & event)) {
-			XtUnmanageChild (dia);
-			return false;   // don't continue
-		}
 	#endif
 	if (progress >= 1.0) {
-		GuiObject_hide (dia);
+		dia -> f_hide ();
 	} else {
 		if (progress <= 0.0) progress = 0.0;
-		GuiObject_show (dia);   // TODO: prevent raising to the front
-		const wchar *newline = wcschr (message, '\n');
+		dia -> f_show ();   // TODO: prevent raising to the front
+		const wchar_t *newline = wcschr (message, '\n');
 		if (newline != NULL) {
 			static MelderString buffer = { 0 };
 			MelderString_copy (& buffer, message);
 			buffer.string [newline - message] = '\0';
-			GuiLabel_setString (label1, buffer.string);
+			label1 -> f_setString (buffer.string);
 			buffer.string [newline - message] = '\n';
-			GuiLabel_setString (label2, buffer.string + (newline - message) + 1);
+			label2 -> f_setString (buffer.string + (newline - message) + 1);
 		} else {
-			GuiLabel_setString (label1, message);
-			GuiLabel_setString (label2, L"");
+			label1 -> f_setString (message);
+			label2 -> f_setString (L"");
 		}
 		#if gtk
-			// update progress bar
-			gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (scale), progress);
-			while (gtk_events_pending ())
+			trace ("update the progress bar");
+			scale -> f_setValue (progress);
+			while (gtk_events_pending ()) {
+				trace ("event pending");
 				gtk_main_iteration ();
-			// check whether cancelButton has the "pressed" key set
-			if (g_object_steal_data (G_OBJECT (cancelButton), "pressed"))
+			}
+			trace ("check whether the cancel button has the \"pressed\" key set");
+			if (g_object_steal_data (G_OBJECT (cancelButton -> d_widget), "pressed")) {
+				trace ("the cancel button has been pressed");
 				return false;   // don't continue
+			}
 		#elif motif
-			XmScaleSetValue (scale, floor (progress * 1000.0));
-			XmUpdateDisplay (dia);
+			scale -> f_setValue (progress);
+			XmUpdateDisplay (dia -> d_widget);
 		#endif
 	}
-	return true;   // continue
+	trace ("continue");
+	return true;
 }
 
 #if gtk
-static void progress_dia_close (void *wid) {
-	g_object_set_data (G_OBJECT (* (GuiObject *) wid), "pressed", (gpointer) 1);
+static void progress_dia_close (void *cancelButton) {
+	g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
 }
-static void progress_cancel_btn_press (void *wid, GuiButtonEvent event) {
+static void progress_cancel_btn_press (void *cancelButton, GuiButtonEvent event) {
 	(void) event;
-	g_object_set_data (G_OBJECT (* (GuiObject *) wid), "pressed", (gpointer) 1);
+	g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
 }
 #endif
 
-static void _Melder_dia_init (GuiObject *dia, GuiObject *scale, GuiObject *label1, GuiObject *label2, GuiObject *cancelButton) {
-	*dia = GuiDialog_create ((GuiObject) Melder_topShell, 200, 100, Gui_AUTOMATIC, Gui_AUTOMATIC, L"Work in progress",
+static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *label1, GuiLabel *label2, GuiButton *cancelButton, bool hasMonitor) {
+	trace ("creating the dialog");
+	*dia = GuiDialog_create (Melder_topShell, 200, 100, 400, hasMonitor ? 430 : 200, L"Work in progress",
 		#if gtk
 			progress_dia_close, cancelButton,
 		#else
@@ -301,52 +274,41 @@ static void _Melder_dia_init (GuiObject *dia, GuiObject *scale, GuiObject *label
 		#endif
 		0);
 
-	GuiObject form = *dia;
-	GuiObject buttons = GuiDialog_getButtonArea (*dia);
+	trace ("creating the labels");
+	*label1 = GuiLabel_createShown (*dia, 3, 403, 0, Gui_LABEL_HEIGHT, L"label1", 0);
+	*label2 = GuiLabel_createShown (*dia, 3, 403, 30, 30 + Gui_LABEL_HEIGHT, L"label2", 0);
 
-	*label1 = GuiLabel_createShown (form, 3, 403, 0, Gui_AUTOMATIC, L"label1", 0);
-	*label2 = GuiLabel_createShown (form, 3, 403, 30, Gui_AUTOMATIC, L"label2", 0);
+	trace ("creating the scale");
+	*scale = GuiProgressBar_createShown (*dia, 3, 403, 70, 110, 0);
 
-	#if gtk
-		*scale = gtk_progress_bar_new ();
-		gtk_container_add (GTK_CONTAINER (form), GTK_WIDGET (*scale));
-		GuiObject_show (*scale);
-	#elif motif
-		*scale = XmCreateScale (*dia, "scale", NULL, 0);
-		XtVaSetValues (*scale, XmNy, 70, XmNwidth, 400, XmNminimum, 0, XmNmaximum, 1000,
-			XmNorientation, XmHORIZONTAL,
-			#if ! defined (macintosh)
-				XmNscaleHeight, 20,
-			#endif
-			NULL);
-		GuiObject_show (*scale);
-	#endif
-
-	#if ! defined (macintoshXXX)
-		*cancelButton = GuiButton_createShown (buttons, 0, 400, 170, Gui_AUTOMATIC,
-			L"Interrupt",
-			#if gtk
-				progress_cancel_btn_press, cancelButton,
-			#else
-				NULL, NULL,
-			#endif
-			0);
-	#endif
+	trace ("creating the cancel button");
+	*cancelButton = GuiButton_createShown (*dia, 0, 400, 170, 170 + Gui_PUSHBUTTON_HEIGHT,
+		L"Interrupt",
+		#if gtk
+			progress_cancel_btn_press, cancelButton,
+		#else
+			NULL, NULL,
+		#endif
+		0);
+	trace ("end");
 }
 #endif
 
-static void _Melder_progress (double progress, const wchar *message) {
+static void _Melder_progress (double progress, const wchar_t *message) {
 	(void) progress;
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0 && Melder_debug != 14) {
 		static clock_t lastTime;
-		static GuiObject dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL;
+		static GuiDialog dia = NULL;
+		static GuiProgressBar scale = NULL;
+		static GuiButton cancelButton = NULL;
+		static GuiLabel label1 = NULL, label2 = NULL;
 		clock_t now = clock ();
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
 			if (dia == NULL)
-				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton);
+				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, false);
 			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
 				Melder_throw ("Interrupted!");
 			lastTime = now;
@@ -357,67 +319,71 @@ static void _Melder_progress (double progress, const wchar *message) {
 
 static MelderString theProgressBuffer = { 0 };
 
-void Melder_progress (double progress, const wchar *s1) {
+void Melder_progress (double progress, const wchar_t *s1) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
-void Melder_progress (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
+void Melder_progress (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	_Melder_progress (progress, theProgressBuffer.string);
 }
 
-static void * _Melder_monitor (double progress, const wchar *message) {
+static void * _Melder_monitor (double progress, const wchar_t *message) {
 	(void) progress;
 	#ifndef CONSOLE_APPLICATION
 	if (! Melder_batch && theProgressDepth >= 0) {
 		static clock_t lastTime;
-		static GuiObject dia = NULL, scale = NULL, label1 = NULL, label2 = NULL, cancelButton = NULL, drawingArea = NULL;
+		static GuiDialog dia = NULL;
+		static GuiProgressBar scale = NULL;
+		static GuiDrawingArea drawingArea = NULL;
+		static GuiButton cancelButton = NULL;
+		static GuiLabel label1 = NULL, label2 = NULL;
 		clock_t now = clock ();
 		static Any graphics = NULL;
 		if (progress <= 0.0 || progress >= 1.0 ||
 			now - lastTime > CLOCKS_PER_SEC / 4)   // this time step must be much longer than the null-event waiting time
 		{
 			if (dia == NULL) {
-				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton);
+				_Melder_dia_init (& dia, & scale, & label1, & label2, & cancelButton, true);
 				drawingArea = GuiDrawingArea_createShown (dia, 0, 400, 230, 430, NULL, NULL, NULL, NULL, NULL, 0);
-				GuiObject_show (dia);
+				dia -> f_show ();
 				graphics = Graphics_create_xmdrawingarea (drawingArea);
 			}
 			if (! waitWhileProgress (progress, message, dia, scale, label1, label2, cancelButton))
@@ -431,47 +397,47 @@ static void * _Melder_monitor (double progress, const wchar *message) {
 	return progress <= 0.0 ? NULL /* no Graphics */ : & progress /* any non-NULL pointer */;
 }
 
-void * Melder_monitor (double progress, const wchar *s1) {
+void * Melder_monitor (double progress, const wchar_t *s1) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8);
 	return _Melder_monitor (progress, theProgressBuffer.string);
 }
-void * Melder_monitor (double progress, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
+void * Melder_monitor (double progress, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_empty (& theProgressBuffer);
 	MelderString_append (& theProgressBuffer, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	return _Melder_monitor (progress, theProgressBuffer.string);
@@ -489,7 +455,7 @@ int Melder_numberMatchesCriterion (double value, int which_kMelder_number, doubl
 		(which_kMelder_number == kMelder_number_GREATER_THAN_OR_EQUAL_TO && value >= criterion);
 }
 
-int Melder_stringMatchesCriterion (const wchar *value, int which_kMelder_string, const wchar *criterion) {
+int Melder_stringMatchesCriterion (const wchar_t *value, int which_kMelder_string, const wchar_t *criterion) {
 	if (value == NULL) {
 		value = L"";   /* Regard null strings as empty strings, as is usual in Praat. */
 	}
@@ -514,19 +480,19 @@ int Melder_stringMatchesCriterion (const wchar *value, int which_kMelder_string,
 		return (which_kMelder_string == kMelder_string_ENDS_WITH) == matchPositiveCriterion;
 	}
 	if (which_kMelder_string == kMelder_string_MATCH_REGEXP) {
-		wchar *place = NULL;
-		const wchar *errorMessage;
+		wchar_t *place = NULL;
+		const wchar_t *errorMessage;
 		regexp *compiled_regexp = CompileRE ((regularExp_CHAR *) criterion, & errorMessage, 0);
 		if (compiled_regexp == NULL) return FALSE;   // BUG: what about removing errorMessage?
 		if (ExecRE (compiled_regexp, NULL, (regularExp_CHAR *) value, NULL, 0, '\0', '\0', NULL, NULL, NULL))
-			place = (wchar *) compiled_regexp -> startp [0];
+			place = (wchar_t *) compiled_regexp -> startp [0];
 		free (compiled_regexp);
 		return place != NULL;
 	}
 	return 0;   /* Should not occur. */
 }
 
-void Melder_help (const wchar *query) {
+void Melder_help (const wchar_t *query) {
 	theMelder. help (query);
 }
 
@@ -797,7 +763,7 @@ int Melder_fatal (const char *format, ...) {
 	return 0;   /* Make some compilers happy, some unhappy. */
 }
 
-int _Melder_assert (const char *condition, const char *fileName, int lineNumber) {
+int Melder_assert_ (const char *condition, const char *fileName, int lineNumber) {
 	return Melder_fatal ("Assertion failed in file \"%s\" at line %d:\n   %s\n",
 		fileName, lineNumber, condition);
 }
@@ -805,7 +771,7 @@ int _Melder_assert (const char *condition, const char *fileName, int lineNumber)
 #ifndef CONSOLE_APPLICATION
 
 #if defined (macintosh)
-static void mac_message (int macAlertType, const wchar *messageW) {
+static void mac_message (int macAlertType, const wchar_t *messageW) {
 	DialogRef dialog;
 	static UniChar messageU [4000];
 	int messageLength = wcslen (messageW);
@@ -837,10 +803,10 @@ static void mac_message (int macAlertType, const wchar *messageW) {
 #define theMessageFund_SIZE  100000
 static char * theMessageFund = NULL;
 
-static void gui_fatal (const wchar *message) {
+static void gui_fatal (const wchar_t *message) {
 	free (theMessageFund);
 	#if gtk
-		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -857,15 +823,18 @@ static void gui_fatal (const wchar *message) {
 	#endif
 }
 
-static void gui_error (const wchar *message) {
+static void gui_error (const wchar_t *message) {
 	bool memoryIsLow = wcsstr (message, L"Out of memory");
 	if (memoryIsLow) {
 		free (theMessageFund);
 	}
 	#if gtk
-		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+		trace ("create dialog");
+		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
+		trace ("run dialog");
 		gtk_dialog_run (GTK_DIALOG (dialog));
+		trace ("destroy dialog");
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
 		#if useCarbon
@@ -882,7 +851,7 @@ static void gui_error (const wchar *message) {
 		theMessageFund = (char *) malloc (theMessageFund_SIZE);
 		if (theMessageFund == NULL) {
 			#if gtk
-				GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+				GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_widget), GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				gtk_dialog_run (GTK_DIALOG (dialog));
 				gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -901,9 +870,9 @@ static void gui_error (const wchar *message) {
 	}
 }
 
-static void gui_warning (const wchar *message) {
+static void gui_warning (const wchar_t *message) {
 	#if gtk
-		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell), GTK_DIALOG_DESTROY_WITH_PARENT,
+		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 			GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
@@ -920,11 +889,11 @@ static void gui_warning (const wchar *message) {
 	#endif
 }
 
-void gui_information (const wchar *);   // BUG: no prototype
+void gui_information (const wchar_t *);   // BUG: no prototype
 void MelderGui_create (void *parent) {
 	theMessageFund = (char *) malloc (theMessageFund_SIZE);
 	assert (theMessageFund != NULL);
-	Melder_topShell = (GuiObject) parent;
+	Melder_topShell = (GuiWindow) parent;
 	Melder_setInformationProc (gui_information);
 	Melder_setFatalProc (gui_fatal);
 	Melder_setErrorProc (gui_error);
@@ -958,16 +927,16 @@ int Melder_publishPlayed (void) {
 
 /********** Procedures to override message methods (e.g., to enforce interactive behaviour). **********/
 
-void Melder_setHelpProc (void (*help) (const wchar *query))
+void Melder_setHelpProc (void (*help) (const wchar_t *query))
 	{ theMelder. help = help ? help : defaultHelp; }
 
 void Melder_setSearchProc (void (*search) (void))
 	{ theMelder. search = search ? search : defaultSearch; }
 
-void Melder_setWarningProc (void (*warning) (const wchar *))
+void Melder_setWarningProc (void (*warning) (const wchar_t *))
 	{ theMelder. warning = warning ? warning : defaultWarning; }
 
-void Melder_setFatalProc (void (*fatal) (const wchar *))
+void Melder_setFatalProc (void (*fatal) (const wchar_t *))
 	{ theMelder. fatal = fatal ? fatal : defaultFatal; }
 
 void Melder_setPublishProc (int (*publish) (void *))

@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ Thing_implement (ManipulationEditor, FunctionEditor, 0);
  * 5. create the button in createMenus and update updateMenus;
  */
 
-static const wchar *units_strings [] = { 0, L"Hz", L"st" };
+static const wchar_t *units_strings [] = { 0, L"Hz", L"st" };
 
 static struct {
 	struct {
@@ -76,23 +76,23 @@ void ManipulationEditor_prefs (void) {
 
 static void updateMenus (ManipulationEditor me) {
 	Melder_assert (my synthPulsesButton != NULL);
-	GuiMenuItem_check (my synthPulsesButton, my synthesisMethod == Manipulation_PULSES);
+	my synthPulsesButton -> f_check (my synthesisMethod == Manipulation_PULSES);
 	Melder_assert (my synthPulsesHumButton != NULL);
-	GuiMenuItem_check (my synthPulsesHumButton, my synthesisMethod == Manipulation_PULSES_HUM);
+	my synthPulsesHumButton -> f_check (my synthesisMethod == Manipulation_PULSES_HUM);
 	Melder_assert (my synthPulsesLpcButton != NULL);
-	GuiMenuItem_check (my synthPulsesLpcButton, my synthesisMethod == Manipulation_PULSES_LPC);
+	my synthPulsesLpcButton -> f_check (my synthesisMethod == Manipulation_PULSES_LPC);
 	Melder_assert (my synthPitchButton != NULL);
-	GuiMenuItem_check (my synthPitchButton, my synthesisMethod == Manipulation_PITCH);
+	my synthPitchButton -> f_check (my synthesisMethod == Manipulation_PITCH);
 	Melder_assert (my synthPitchHumButton != NULL);
-	GuiMenuItem_check (my synthPitchHumButton, my synthesisMethod == Manipulation_PITCH_HUM);
+	my synthPitchHumButton -> f_check (my synthesisMethod == Manipulation_PITCH_HUM);
 	Melder_assert (my synthPulsesPitchButton != NULL);
-	GuiMenuItem_check (my synthPulsesPitchButton, my synthesisMethod == Manipulation_PULSES_PITCH);
+	my synthPulsesPitchButton -> f_check (my synthesisMethod == Manipulation_PULSES_PITCH);
 	Melder_assert (my synthPulsesPitchHumButton != NULL);
-	GuiMenuItem_check (my synthPulsesPitchHumButton, my synthesisMethod == Manipulation_PULSES_PITCH_HUM);
+	my synthPulsesPitchHumButton -> f_check (my synthesisMethod == Manipulation_PULSES_PITCH_HUM);
 	Melder_assert (my synthOverlapAddButton != NULL);
-	GuiMenuItem_check (my synthOverlapAddButton, my synthesisMethod == Manipulation_OVERLAPADD);
+	my synthOverlapAddButton -> f_check (my synthesisMethod == Manipulation_OVERLAPADD);
 	Melder_assert (my synthPitchLpcButton != NULL);
-	GuiMenuItem_check (my synthPitchLpcButton, my synthesisMethod == Manipulation_PITCH_LPC);
+	my synthPitchLpcButton -> f_check (my synthesisMethod == Manipulation_PITCH_LPC);
 }
 
 /*
@@ -200,10 +200,10 @@ static void menu_cb_removePulses (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pulses) return;
 	Editor_save (me, L"Remove pulse(s)");
-	if (my startSelection == my endSelection)
-		PointProcess_removePointNear (ana -> pulses, my startSelection);
+	if (my d_startSelection == my d_endSelection)
+		PointProcess_removePointNear (ana -> pulses, my d_startSelection);
 	else
-		PointProcess_removePointsBetween (ana -> pulses, my startSelection, my endSelection);
+		PointProcess_removePointsBetween (ana -> pulses, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -213,7 +213,7 @@ static void menu_cb_addPulseAtCursor (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pulses) return;
 	Editor_save (me, L"Add pulse");
-	PointProcess_addPoint (ana -> pulses, 0.5 * (my startSelection + my endSelection));
+	PointProcess_addPoint (ana -> pulses, 0.5 * (my d_startSelection + my d_endSelection));
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -223,7 +223,7 @@ static void menu_cb_addPulseAt (EDITOR_ARGS) {
 	EDITOR_FORM (L"Add pulse", 0)
 		REAL (L"Position (s)", L"0.0")
 	EDITOR_OK
-		SET_REAL (L"Position", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (L"Position", 0.5 * (my d_startSelection + my d_endSelection))
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pulses) return;
@@ -241,10 +241,10 @@ static void menu_cb_removePitchPoints (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, L"Remove pitch point(s)");
-	if (my startSelection == my endSelection)
-		AnyTier_removePointNear (ana -> pitch, my startSelection);
+	if (my d_startSelection == my d_endSelection)
+		AnyTier_removePointNear (ana -> pitch, my d_startSelection);
 	else
-		AnyTier_removePointsBetween (ana -> pitch, my startSelection, my endSelection);
+		AnyTier_removePointsBetween (ana -> pitch, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -254,7 +254,7 @@ static void menu_cb_addPitchPointAtCursor (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, L"Add pitch point");
-	RealTier_addPoint (ana -> pitch, 0.5 * (my startSelection + my endSelection), YLININV (my pitchTier.cursor));
+	RealTier_addPoint (ana -> pitch, 0.5 * (my d_startSelection + my d_endSelection), YLININV (my pitchTier.cursor));
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -265,7 +265,7 @@ static void menu_cb_addPitchPointAtSlice (EDITOR_ARGS) {
 	PointProcess pulses = ana -> pulses;
 	if (! pulses) Melder_throw ("There are no pulses.");
 	if (! ana -> pitch) return;
-	long ileft = PointProcess_getLowIndex (pulses, 0.5 * (my startSelection + my endSelection)), iright = ileft + 1, nt = pulses -> nt;
+	long ileft = PointProcess_getLowIndex (pulses, 0.5 * (my d_startSelection + my d_endSelection)), iright = ileft + 1, nt = pulses -> nt;
 	double *t = pulses -> t;
 	double f = my pitchTier.cursor;   // default
 	Editor_save (me, L"Add pitch point");
@@ -288,11 +288,11 @@ static void menu_cb_addPitchPointAtSlice (EDITOR_ARGS) {
 		if (tmid < tleft) { double dum = tmid; tmid = tleft; tleft = dum; }
 		if (tright < tleft)  { double dum = tright; tright = tleft; tleft = dum; }
 		if (tright < tmid)  { double dum = tright; tright = tmid; tmid = dum; }
-		if (tleft != 0.0) f = YLIN (1 / tmid);   /* Median of 3. */
-		else if (tmid != 0.0) f = YLIN (2 / (tmid + tright));   /* Median of 2. */
-		else if (tright != 0.0) f = YLIN (1 / tright);   /* Median of 1. */
+		if (tleft != 0.0) f = YLIN (1 / tmid);   // median of 3
+		else if (tmid != 0.0) f = YLIN (2 / (tmid + tright));   // median of 2
+		else if (tright != 0.0) f = YLIN (1 / tright);   // median of 1
 	}
-	RealTier_addPoint (ana -> pitch, 0.5 * (my startSelection + my endSelection), YLININV (f));
+	RealTier_addPoint (ana -> pitch, 0.5 * (my d_startSelection + my d_endSelection), YLININV (f));
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }	
@@ -303,7 +303,7 @@ static void menu_cb_addPitchPointAt (EDITOR_ARGS) {
 		REAL (L"Time (s)", L"0.0")
 		REAL (L"Frequency (Hz or st)", L"100.0")
 	EDITOR_OK
-		SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (L"Time", 0.5 * (my d_startSelection + my d_endSelection))
 		SET_REAL (L"Frequency", my pitchTier.cursor)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
@@ -397,7 +397,7 @@ static void menu_cb_shiftPitchFrequencies (EDITOR_ARGS) {
 		if (! ana -> pitch) return;
 		Editor_save (me, L"Shift pitch frequencies");
 		try {
-			PitchTier_shiftFrequencies (ana -> pitch, my startSelection, my endSelection, GET_REAL (L"Frequency shift"), unit);
+			PitchTier_shiftFrequencies (ana -> pitch, my d_startSelection, my d_endSelection, GET_REAL (L"Frequency shift"), unit);
 			FunctionEditor_redraw (me);
 			my broadcastDataChanged ();
 		} catch (MelderError) {
@@ -419,7 +419,7 @@ static void menu_cb_multiplyPitchFrequencies (EDITOR_ARGS) {
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, L"Multiply pitch frequencies");
-		PitchTier_multiplyFrequencies (ana -> pitch, my startSelection, my endSelection, GET_REAL (L"Factor"));
+		PitchTier_multiplyFrequencies (ana -> pitch, my d_startSelection, my d_endSelection, GET_REAL (L"Factor"));
 		FunctionEditor_redraw (me);
 		my broadcastDataChanged ();
 	EDITOR_END
@@ -512,10 +512,10 @@ static void menu_cb_removeDurationPoints (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> duration) return;
 	Editor_save (me, L"Remove duration point(s)");
-	if (my startSelection == my endSelection)
-		AnyTier_removePointNear (ana -> duration, 0.5 * (my startSelection + my endSelection));
+	if (my d_startSelection == my d_endSelection)
+		AnyTier_removePointNear (ana -> duration, 0.5 * (my d_startSelection + my d_endSelection));
 	else
-		AnyTier_removePointsBetween (ana -> duration, my startSelection, my endSelection);
+		AnyTier_removePointsBetween (ana -> duration, my d_startSelection, my d_endSelection);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -525,7 +525,7 @@ static void menu_cb_addDurationPointAtCursor (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> duration) return;
 	Editor_save (me, L"Add duration point");
-	RealTier_addPoint (ana -> duration, 0.5 * (my startSelection + my endSelection), my duration.cursor);
+	RealTier_addPoint (ana -> duration, 0.5 * (my d_startSelection + my d_endSelection), my duration.cursor);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -536,7 +536,7 @@ static void menu_cb_addDurationPointAt (EDITOR_ARGS) {
 		REAL (L"Time (s)", L"0.0");
 		REAL (L"Relative duration", L"1.0");
 	EDITOR_OK
-		SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (L"Time", 0.5 * (my d_startSelection + my d_endSelection))
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> duration) return;
@@ -659,36 +659,36 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 	Sound sound = ana -> sound;
 	PointProcess pulses = ana -> pulses;
 	long first, last, i;
-	Graphics_Viewport viewport = Graphics_insetViewport (my graphics, 0, 1, ymin, ymax);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_rectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_setFont (my graphics, kGraphics_font_TIMES);
-	Graphics_text (my graphics, 1, 1, L"%%Sound");
-	Graphics_setColour (my graphics, Graphics_BLUE);
-	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), L"%%Pulses");
-	Graphics_setFont (my graphics, kGraphics_font_HELVETICA);
+	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
+	Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_BLACK);
+	Graphics_rectangle (my d_graphics, 0, 1, 0, 1);
+	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
+	Graphics_setFont (my d_graphics, kGraphics_font_TIMES);
+	Graphics_text (my d_graphics, 1, 1, L"%%Sound");
+	Graphics_setColour (my d_graphics, Graphics_BLUE);
+	Graphics_text (my d_graphics, 1, 1 - Graphics_dyMMtoWC (my d_graphics, 3), L"%%Pulses");
+	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
 
 	/*
 	 * Draw blue pulses.
 	 */
 	if (pulses) {
-		Graphics_setWindow (my graphics, my startWindow, my endWindow, 0.0, 1.0);
-		Graphics_setColour (my graphics, Graphics_BLUE);
+		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, 0.0, 1.0);
+		Graphics_setColour (my d_graphics, Graphics_BLUE);
 		for (i = 1; i <= pulses -> nt; i ++) {
 			double t = pulses -> t [i];
-			if (t >= my startWindow && t <= my endWindow)
-				Graphics_line (my graphics, t, 0.05, t, 0.95);
+			if (t >= my d_startWindow && t <= my d_endWindow)
+				Graphics_line (my d_graphics, t, 0.05, t, 0.95);
 		}
 	}
 
 	/*
 	 * Draw sound.
 	 */
-	if (sound && Sampled_getWindowSamples (sound, my startWindow, my endWindow, & first, & last) > 1) {
+	if (sound && Sampled_getWindowSamples (sound, my d_startWindow, my d_endWindow, & first, & last) > 1) {
 		double minimum, maximum, scaleMin, scaleMax;
 		Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);
 		if (minimum == maximum) minimum = -0.5, maximum = +0.5;
@@ -698,7 +698,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 */
 		scaleMin = 0.83 * minimum + 0.17 * my soundmin;
 		scaleMax = 0.83 * maximum + 0.17 * my soundmax;
-		Graphics_setWindow (my graphics, my startWindow, my endWindow, scaleMin, scaleMax);
+		Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, scaleMin, scaleMax);
 		FunctionEditor_drawRangeMark (me, scaleMin, Melder_float (Melder_half (scaleMin)), L"", Graphics_BOTTOM);
 		FunctionEditor_drawRangeMark (me, scaleMax, Melder_float (Melder_half (scaleMax)), L"", Graphics_TOP);
 
@@ -706,21 +706,21 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 * Draw dotted zero line.
 		 */
 		if (minimum < 0.0 && maximum > 0.0) {
-			Graphics_setColour (my graphics, Graphics_CYAN);
-			Graphics_setLineType (my graphics, Graphics_DOTTED);
-			Graphics_line (my graphics, my startWindow, 0.0, my endWindow, 0.0);
-			Graphics_setLineType (my graphics, Graphics_DRAWN);
+			Graphics_setColour (my d_graphics, Graphics_CYAN);
+			Graphics_setLineType (my d_graphics, Graphics_DOTTED);
+			Graphics_line (my d_graphics, my d_startWindow, 0.0, my d_endWindow, 0.0);
+			Graphics_setLineType (my d_graphics, Graphics_DRAWN);
 		} 
 
 		/*
 		 * Draw samples.
 		 */    
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_function (my graphics, sound -> z [1], first, last,
+		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_function (my d_graphics, sound -> z [1], first, last,
 			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
-	Graphics_resetViewport (my graphics, viewport);
+	Graphics_resetViewport (my d_graphics, viewport);
 }
 
 static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
@@ -728,140 +728,140 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	PointProcess pulses = ana -> pulses;
 	PitchTier pitch = ana -> pitch;
 	long ifirstSelected, ilastSelected, n = pitch ? pitch -> points -> size : 0, imin, imax, i;
-	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
+	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 	double minimumFrequency = YLIN (50);
 	int rangePrecisions [] = { 0, 1, 2 };
-	const wchar *rangeUnits [] = { L"", L" Hz", L" st" };
+	const wchar_t *rangeUnits [] = { L"", L" Hz", L" st" };
 
 	/*
 	 * Pitch contours.
 	 */
-	Graphics_Viewport viewport = Graphics_insetViewport (my graphics, 0, 1, ymin, ymax);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_rectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_GREEN);
-	Graphics_setFont (my graphics, kGraphics_font_TIMES);
-	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my graphics, 1, 1, L"%%Pitch manip");
-	Graphics_setGrey (my graphics, 0.7);
-	Graphics_text (my graphics, 1, 1 - Graphics_dyMMtoWC (my graphics, 3), L"%%Pitch from pulses");
-	Graphics_setFont (my graphics, kGraphics_font_HELVETICA);
+	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
+	Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_BLACK);
+	Graphics_rectangle (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_GREEN);
+	Graphics_setFont (my d_graphics, kGraphics_font_TIMES);
+	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
+	Graphics_text (my d_graphics, 1, 1, L"%%Pitch manip");
+	Graphics_setGrey (my d_graphics, 0.7);
+	Graphics_text (my d_graphics, 1, 1 - Graphics_dyMMtoWC (my d_graphics, 3), L"%%Pitch from pulses");
+	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
 
-	Graphics_setWindow (my graphics, my startWindow, my endWindow, my pitchTier.minimum, my pitchTier.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my pitchTier.minimum, my pitchTier.maximum);
 
 	/*
 	 * Draw pitch contour based on pulses.
 	 */
-	Graphics_setGrey (my graphics, 0.7);
+	Graphics_setGrey (my d_graphics, 0.7);
 	if (pulses) for (i = 1; i < pulses -> nt; i ++) {
 		double tleft = pulses -> t [i], tright = pulses -> t [i + 1], t = 0.5 * (tleft + tright);
-		if (t >= my startWindow && t <= my endWindow) {
+		if (t >= my d_startWindow && t <= my d_endWindow) {
 			if (tleft != tright) {
 				double f = YLIN (1 / (tright - tleft));
 				if (f >= my pitchTier.minPeriodic && f <= my pitchTier.maximum) {
-					Graphics_fillCircle_mm (my graphics, t, f, 1);
+					Graphics_fillCircle_mm (my d_graphics, t, f, 1);
 				}
 			}
 		}
 	}
-	Graphics_setGrey (my graphics, 0.0);
+	Graphics_setGrey (my d_graphics, 0.0);
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
 	FunctionEditor_drawRangeMark (me, my pitchTier.maximum,
 		Melder_fixed (my pitchTier.maximum, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units], Graphics_TOP);
 	FunctionEditor_drawRangeMark (me, my pitchTier.minimum,
 		Melder_fixed (my pitchTier.minimum, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units], Graphics_BOTTOM);
-	if (my startSelection == my endSelection && my pitchTier.cursor >= my pitchTier.minimum && my pitchTier.cursor <= my pitchTier.maximum)
+	if (my d_startSelection == my d_endSelection && my pitchTier.cursor >= my pitchTier.minimum && my pitchTier.cursor <= my pitchTier.maximum)
 		FunctionEditor_drawHorizontalHair (me, my pitchTier.cursor,
 			Melder_fixed (my pitchTier.cursor, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units]);
 	if (cursorVisible && n > 0) {
-		double y = YLIN (RealTier_getValueAtTime (pitch, my startSelection));
+		double y = YLIN (RealTier_getValueAtTime (pitch, my d_startSelection));
 		FunctionEditor_insertCursorFunctionValue (me, y,
 			Melder_fixed (y, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units],
 			my pitchTier.minimum, my pitchTier.maximum);
 	}
 	if (pitch) {
-		ifirstSelected = AnyTier_timeToHighIndex (pitch, my startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (pitch, my endSelection);
-		imin = AnyTier_timeToHighIndex (pitch, my startWindow);
-		imax = AnyTier_timeToLowIndex (pitch, my endWindow);
+		ifirstSelected = AnyTier_timeToHighIndex (pitch, my d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (pitch, my d_endSelection);
+		imin = AnyTier_timeToHighIndex (pitch, my d_startWindow);
+		imax = AnyTier_timeToLowIndex (pitch, my d_endWindow);
 	}
-	Graphics_setLineWidth (my graphics, 2);
+	Graphics_setLineWidth (my d_graphics, 2);
 	if (n == 0) {
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow), 0.5 * (my pitchTier.minimum + my pitchTier.maximum), L"(no pitch points)");
+		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow), 0.5 * (my pitchTier.minimum + my pitchTier.maximum), L"(no pitch points)");
 	} else if (imax < imin) {
-		double fleft = YLIN (RealTier_getValueAtTime (pitch, my startWindow));
-		double fright = YLIN (RealTier_getValueAtTime (pitch, my endWindow));
-		Graphics_setColour (my graphics, Graphics_GREEN);
-		Graphics_line (my graphics, my startWindow, fleft, my endWindow, fright);
+		double fleft = YLIN (RealTier_getValueAtTime (pitch, my d_startWindow));
+		double fright = YLIN (RealTier_getValueAtTime (pitch, my d_endWindow));
+		Graphics_setColour (my d_graphics, Graphics_GREEN);
+		Graphics_line (my d_graphics, my d_startWindow, fleft, my d_endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) pitch -> points -> item [i];
 			double t = point -> number, f = YLIN (point -> value);
-			Graphics_setColour (my graphics, Graphics_GREEN);
+			Graphics_setColour (my d_graphics, Graphics_GREEN);
 			if (i == 1)
-				Graphics_line (my graphics, my startWindow, f, t, f);
+				Graphics_line (my d_graphics, my d_startWindow, f, t, f);
 			else if (i == imin)
-				Graphics_line (my graphics, t, f, my startWindow, YLIN (RealTier_getValueAtTime (pitch, my startWindow)));
+				Graphics_line (my d_graphics, t, f, my d_startWindow, YLIN (RealTier_getValueAtTime (pitch, my d_startWindow)));
 			if (i == n)
-				Graphics_line (my graphics, t, f, my endWindow, f);
+				Graphics_line (my d_graphics, t, f, my d_endWindow, f);
 			else if (i == imax)
-				Graphics_line (my graphics, t, f, my endWindow, YLIN (RealTier_getValueAtTime (pitch, my endWindow)));
+				Graphics_line (my d_graphics, t, f, my d_endWindow, YLIN (RealTier_getValueAtTime (pitch, my d_endWindow)));
 			else {
 				RealPoint pointRight = (RealPoint) pitch -> points -> item [i + 1];
-				Graphics_line (my graphics, t, f, pointRight -> number, YLIN (pointRight -> value));
+				Graphics_line (my d_graphics, t, f, pointRight -> number, YLIN (pointRight -> value));
 			}
 		}
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) pitch -> points -> item [i];
 			double t = point -> number, f = YLIN (point -> value);
 			if (i >= ifirstSelected && i <= ilastSelected)
-				Graphics_setColour (my graphics, Graphics_RED);	
+				Graphics_setColour (my d_graphics, Graphics_RED);	
 			else
-				Graphics_setColour (my graphics, Graphics_GREEN);
-			Graphics_fillCircle_mm (my graphics, t, f, 3);
+				Graphics_setColour (my d_graphics, Graphics_GREEN);
+			Graphics_fillCircle_mm (my d_graphics, t, f, 3);
 		}
 	}
-	Graphics_setLineWidth (my graphics, 1);
+	Graphics_setLineWidth (my d_graphics, 1);
 
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_resetViewport (my graphics, viewport);
+	Graphics_setColour (my d_graphics, Graphics_BLACK);
+	Graphics_resetViewport (my d_graphics, viewport);
 }
 
 static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Manipulation ana = (Manipulation) my data;
 	DurationTier duration = ana -> duration;
 	long ifirstSelected, ilastSelected, n = duration ? duration -> points -> size : 0, imin, imax, i;
-	int cursorVisible = my startSelection == my endSelection && my startSelection >= my startWindow && my startSelection <= my endWindow;
+	int cursorVisible = my d_startSelection == my d_endSelection && my d_startSelection >= my d_startWindow && my d_startSelection <= my d_endWindow;
 
 	/*
 	 * Duration contours.
 	 */
-	Graphics_Viewport viewport = Graphics_insetViewport (my graphics, 0, 1, ymin, ymax);
-	Graphics_setWindow (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_WHITE);
-	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_rectangle (my graphics, 0, 1, 0, 1);
-	Graphics_setColour (my graphics, Graphics_GREEN);
-	Graphics_setFont (my graphics, kGraphics_font_TIMES);
-	Graphics_setTextAlignment (my graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text (my graphics, 1, 1, L"%%Duration manip");
-	Graphics_setFont (my graphics, kGraphics_font_HELVETICA);
+	Graphics_Viewport viewport = Graphics_insetViewport (my d_graphics, 0, 1, ymin, ymax);
+	Graphics_setWindow (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_WHITE);
+	Graphics_fillRectangle (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_BLACK);
+	Graphics_rectangle (my d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (my d_graphics, Graphics_GREEN);
+	Graphics_setFont (my d_graphics, kGraphics_font_TIMES);
+	Graphics_setTextAlignment (my d_graphics, Graphics_RIGHT, Graphics_TOP);
+	Graphics_text (my d_graphics, 1, 1, L"%%Duration manip");
+	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
 
-	Graphics_setWindow (my graphics, my startWindow, my endWindow, my duration.minimum, my duration.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my duration.minimum, my duration.maximum);
 	FunctionEditor_drawGridLine (me, 1.0);
 	FunctionEditor_drawRangeMark (me, my duration.maximum, Melder_fixed (my duration.maximum, 3), L"", Graphics_TOP);
 	FunctionEditor_drawRangeMark (me, my duration.minimum, Melder_fixed (my duration.minimum, 3), L"", Graphics_BOTTOM);
-	if (my startSelection == my endSelection && my duration.cursor >= my duration.minimum && my duration.cursor <= my duration.maximum)
+	if (my d_startSelection == my d_endSelection && my duration.cursor >= my duration.minimum && my duration.cursor <= my duration.maximum)
 		FunctionEditor_drawHorizontalHair (me, my duration.cursor, Melder_fixed (my duration.cursor, 3), L"");
 	if (cursorVisible && n > 0) {
-		double y = RealTier_getValueAtTime (duration, my startSelection);
+		double y = RealTier_getValueAtTime (duration, my d_startSelection);
 		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), L"", my duration.minimum, my duration.maximum);
 	}
 
@@ -869,54 +869,54 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	 * Draw duration tier.
 	 */
 	if (duration) {
-		ifirstSelected = AnyTier_timeToHighIndex (duration, my startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (duration, my endSelection);
-		imin = AnyTier_timeToHighIndex (duration, my startWindow);
-		imax = AnyTier_timeToLowIndex (duration, my endWindow);
+		ifirstSelected = AnyTier_timeToHighIndex (duration, my d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (duration, my d_endSelection);
+		imin = AnyTier_timeToHighIndex (duration, my d_startWindow);
+		imax = AnyTier_timeToLowIndex (duration, my d_endWindow);
 	}
-	Graphics_setLineWidth (my graphics, 2);
+	Graphics_setLineWidth (my d_graphics, 2);
 	if (n == 0) {
-		Graphics_setColour (my graphics, Graphics_BLACK);
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (my graphics, 0.5 * (my startWindow + my endWindow),
+		Graphics_setColour (my d_graphics, Graphics_BLACK);
+		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow),
 			0.5 * (my duration.minimum + my duration.maximum), L"(no duration points)");
 	} else if (imax < imin) {
-		double fleft = RealTier_getValueAtTime (duration, my startWindow);
-		double fright = RealTier_getValueAtTime (duration, my endWindow);
-		Graphics_setColour (my graphics, Graphics_GREEN);
-		Graphics_line (my graphics, my startWindow, fleft, my endWindow, fright);
+		double fleft = RealTier_getValueAtTime (duration, my d_startWindow);
+		double fright = RealTier_getValueAtTime (duration, my d_endWindow);
+		Graphics_setColour (my d_graphics, Graphics_GREEN);
+		Graphics_line (my d_graphics, my d_startWindow, fleft, my d_endWindow, fright);
 	} else {
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) duration -> points -> item [i];
 			double t = point -> number, dur = point -> value;
-			Graphics_setColour (my graphics, Graphics_GREEN);
+			Graphics_setColour (my d_graphics, Graphics_GREEN);
 			if (i == 1)
-				Graphics_line (my graphics, my startWindow, dur, t, dur);
+				Graphics_line (my d_graphics, my d_startWindow, dur, t, dur);
 			else if (i == imin)
-				Graphics_line (my graphics, t, dur, my startWindow, RealTier_getValueAtTime (duration, my startWindow));
+				Graphics_line (my d_graphics, t, dur, my d_startWindow, RealTier_getValueAtTime (duration, my d_startWindow));
 			if (i == n)
-				Graphics_line (my graphics, t, dur, my endWindow, dur);
+				Graphics_line (my d_graphics, t, dur, my d_endWindow, dur);
 			else if (i == imax)
-				Graphics_line (my graphics, t, dur, my endWindow, RealTier_getValueAtTime (duration, my endWindow));
+				Graphics_line (my d_graphics, t, dur, my d_endWindow, RealTier_getValueAtTime (duration, my d_endWindow));
 			else {
 				RealPoint pointRight = (RealPoint) duration -> points -> item [i + 1];
-				Graphics_line (my graphics, t, dur, pointRight -> number, pointRight -> value);
+				Graphics_line (my d_graphics, t, dur, pointRight -> number, pointRight -> value);
 			}
 		}
 		for (i = imin; i <= imax; i ++) {
 			RealPoint point = (RealPoint) duration -> points -> item [i];
 			double t = point -> number, dur = point -> value;
 			if (i >= ifirstSelected && i <= ilastSelected)
-				Graphics_setColour (my graphics, Graphics_RED);	
+				Graphics_setColour (my d_graphics, Graphics_RED);	
 			else
-				Graphics_setColour (my graphics, Graphics_GREEN);	
-			Graphics_fillCircle_mm (my graphics, t, dur, 3);
+				Graphics_setColour (my d_graphics, Graphics_GREEN);	
+			Graphics_fillCircle_mm (my d_graphics, t, dur, 3);
 		}
 	}
 
-	Graphics_setLineWidth (my graphics, 1);
-	Graphics_setColour (my graphics, Graphics_BLACK);
-	Graphics_resetViewport (my graphics, viewport);
+	Graphics_setLineWidth (my d_graphics, 1);
+	Graphics_setColour (my d_graphics, Graphics_BLACK);
+	Graphics_resetViewport (my d_graphics, viewport);
 }
 
 void structManipulationEditor :: v_draw () {
@@ -930,18 +930,18 @@ void structManipulationEditor :: v_draw () {
 	if (hasPitchArea) drawPitchArea (this, ypitchmin, ypitchmax);
 	if (hasDurationArea) drawDurationArea (this, ydurationmin, ydurationmax);
 
-	Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setGrey (graphics, 0.85);
-	Graphics_fillRectangle (graphics, -0.001, 1.001, ypitchmax, ysoundmin);
-	Graphics_setGrey (graphics, 0.00);
-	Graphics_line (graphics, 0, ysoundmin, 1, ysoundmin);
-	Graphics_line (graphics, 0, ypitchmax, 1, ypitchmax);
+	Graphics_setWindow (d_graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setGrey (d_graphics, 0.85);
+	Graphics_fillRectangle (d_graphics, -0.001, 1.001, ypitchmax, ysoundmin);
+	Graphics_setGrey (d_graphics, 0.00);
+	Graphics_line (d_graphics, 0, ysoundmin, 1, ysoundmin);
+	Graphics_line (d_graphics, 0, ypitchmax, 1, ypitchmax);
 	if (hasDurationArea) {
-		Graphics_setGrey (graphics, 0.85);
-		Graphics_fillRectangle (graphics, -0.001, 1.001, ydurationmax, ypitchmin);
-		Graphics_setGrey (graphics, 0.00);
-		Graphics_line (graphics, 0, ypitchmin, 1, ypitchmin);
-		Graphics_line (graphics, 0, ydurationmax, 1, ydurationmax);
+		Graphics_setGrey (d_graphics, 0.85);
+		Graphics_fillRectangle (d_graphics, -0.001, 1.001, ydurationmax, ypitchmin);
+		Graphics_setGrey (d_graphics, 0.00);
+		Graphics_line (d_graphics, 0, ypitchmin, 1, ypitchmin);
+		Graphics_line (d_graphics, 0, ydurationmax, 1, ydurationmax);
 	}
 	updateMenus (this);
 }
@@ -959,8 +959,8 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 	for (i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) pitch -> points -> item [i];
 		double t = point -> number + dt, f = YLIN (point -> value) + df;
-		if (t >= my startWindow && t <= my endWindow)
-			Graphics_circle_mm (my graphics, t,
+		if (t >= my d_startWindow && t <= my d_endWindow)
+			Graphics_circle_mm (my d_graphics, t,
 				f < my pitchTier.minPeriodic ? my pitchTier.minPeriodic : f > my pitchTier.maximum ? my pitchTier.maximum : f, 3);
 	}
 
@@ -970,12 +970,12 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		 */
 		RealPoint point = (RealPoint) pitch -> points -> item [first];
 		double t = point -> number + dt, fWC = YLIN (point -> value) + df;
-		Graphics_line (my graphics, t, my pitchTier.minimum, t, my pitchTier.maximum - Graphics_dyMMtoWC (my graphics, 4.0));
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text1 (my graphics, t, my pitchTier.maximum, Melder_fixed (t, 6));
-		Graphics_line (my graphics, my startWindow, fWC, my endWindow, fWC);
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text1 (my graphics, my startWindow, fWC, Melder_fixed (fWC, 5));
+		Graphics_line (my d_graphics, t, my pitchTier.minimum, t, my pitchTier.maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
+		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_TOP);
+		Graphics_text1 (my d_graphics, t, my pitchTier.maximum, Melder_fixed (t, 6));
+		Graphics_line (my d_graphics, my d_startWindow, fWC, my d_endWindow, fWC);
+		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text1 (my d_graphics, my d_startWindow, fWC, Melder_fixed (fWC, 5));
 	}
 }
 
@@ -989,10 +989,10 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 
 	my pitchTier.cursor = my pitchTier.minimum + yWC * (my pitchTier.maximum - my pitchTier.minimum);
 	if (! pitch) {
-		Graphics_resetViewport (my graphics, my inset);
+		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	Graphics_setWindow (my graphics, my startWindow, my endWindow, my pitchTier.minimum, my pitchTier.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my pitchTier.minimum, my pitchTier.maximum);
 	yWC = my pitchTier.cursor;
 
 	/*
@@ -1000,12 +1000,12 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	 */
 	inearestPoint = AnyTier_timeToNearestIndex (pitch, xWC);
 	if (inearestPoint == 0) {
-		Graphics_resetViewport (my graphics, my inset);
+		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) pitch -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> number, YLIN (nearestPoint -> value)) > 1.5) {
-		Graphics_resetViewport (my graphics, my inset);
+	if (Graphics_distanceWCtoMM (my d_graphics, xWC, yWC, nearestPoint -> number, YLIN (nearestPoint -> value)) > 1.5) {
+		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -1013,10 +1013,10 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	 * Clicked on a selected pitch point?
 	 */
 	draggingSelection = shiftKeyPressed &&
-		nearestPoint -> number > my startSelection && nearestPoint -> number < my endSelection;
+		nearestPoint -> number > my d_startSelection && nearestPoint -> number < my d_endSelection;
 	if (draggingSelection) {
-		ifirstSelected = AnyTier_timeToHighIndex (pitch, my startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (pitch, my endSelection);
+		ifirstSelected = AnyTier_timeToHighIndex (pitch, my d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (pitch, my d_endSelection);
 		Editor_save (me, L"Drag pitch points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
@@ -1031,14 +1031,14 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	  * Since some systems do double buffering,
 	  * the undrawing at the old position and redrawing at the new have to be bracketed by Graphics_mouseStillDown ().
 	  */
-	Graphics_xorOn (my graphics, Graphics_MAROON);
+	Graphics_xorOn (my d_graphics, Graphics_MAROON);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 	dragHorizontal = my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_VERTICAL &&
 		(! shiftKeyPressed || my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_HYBRID);
 	dragVertical = my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_HORIZONTAL;
-	while (Graphics_mouseStillDown (my graphics)) {
+	while (Graphics_mouseStillDown (my d_graphics)) {
 		double xWC_new, yWC_new;
-		Graphics_getMouseLocation (my graphics, & xWC_new, & yWC_new);
+		Graphics_getMouseLocation (my d_graphics, & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 			if (dragHorizontal) dt += xWC_new - xWC;
@@ -1047,12 +1047,12 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 			drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 		}
 	}
-	Graphics_xorOff (my graphics);
+	Graphics_xorOff (my d_graphics);
 
 	/*
 	 * Dragged inside window?
 	 */
-	if (xWC < my startWindow || xWC > my endWindow) return 1;
+	if (xWC < my d_startWindow || xWC > my d_endWindow) return 1;
 
 	/*
 	 * Points not dragged past neighbours?
@@ -1060,11 +1060,11 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	{
 		RealPoint *points = (RealPoint *) pitch -> points -> item;
 		double newTime = points [ifirstSelected] -> number + dt;
-		if (newTime < my tmin) return 1;   // outside domain
+		if (newTime < my d_tmin) return 1;   // outside domain
 		if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
 			return 1;   /* Past left neighbour. */
 		newTime = points [ilastSelected] -> number + dt;
-		if (newTime > my tmax) return 1;   // outside domain
+		if (newTime > my d_tmax) return 1;   // outside domain
 		if (ilastSelected < pitch -> points -> size && newTime >= points [ilastSelected + 1] -> number)
 			return 1;   // past right neighbour
 	}
@@ -1084,10 +1084,10 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	 * Make sure that the same pitch points are still selected (a problem with Undo...).
 	 */
 
-	if (draggingSelection) my startSelection += dt, my endSelection += dt;
-	if (my startSelection == my endSelection) {
+	if (draggingSelection) my d_startSelection += dt, my d_endSelection += dt;
+	if (my d_startSelection == my d_endSelection) {
 		RealPoint point = (RealPoint) pitch -> points -> item [ifirstSelected];
-		my startSelection = my endSelection = point -> number;
+		my d_startSelection = my d_endSelection = point -> number;
 		my pitchTier.cursor = YLIN (point -> value);
 	}
 
@@ -1108,8 +1108,8 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 	for (i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) duration -> points -> item [i];
 		double t = point -> number + dt, dur = point -> value + df;
-		if (t >= my startWindow && t <= my endWindow)
-			Graphics_circle_mm (my graphics, t, dur < my duration.minimum ? my duration.minimum :
+		if (t >= my d_startWindow && t <= my d_endWindow)
+			Graphics_circle_mm (my d_graphics, t, dur < my duration.minimum ? my duration.minimum :
 				dur > my duration.maximum ? my duration.maximum : dur, 3);
 	}
 
@@ -1119,12 +1119,12 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 		 */
 		RealPoint point = (RealPoint) duration -> points -> item [first];
 		double t = point -> number + dt, durWC = point -> value + df;
-		Graphics_line (my graphics, t, my duration.minimum, t, my duration.maximum - Graphics_dyMMtoWC (my graphics, 4.0));
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text1 (my graphics, t, my duration.maximum, Melder_fixed (t, 6));
-		Graphics_line (my graphics, my startWindow, durWC, my endWindow, durWC);
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text1 (my graphics, my startWindow, durWC, Melder_fixed (durWC, 2));
+		Graphics_line (my d_graphics, t, my duration.minimum, t, my duration.maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
+		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_TOP);
+		Graphics_text1 (my d_graphics, t, my duration.maximum, Melder_fixed (t, 6));
+		Graphics_line (my d_graphics, my d_startWindow, durWC, my d_endWindow, durWC);
+		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text1 (my d_graphics, my d_startWindow, durWC, Melder_fixed (durWC, 2));
 	}
 }
 
@@ -1147,22 +1147,22 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	my duration.cursor = yWC;
 
 	if (! duration) {
-		Graphics_resetViewport (my graphics, my inset);
+		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	Graphics_setWindow (my graphics, my startWindow, my endWindow, my duration.minimum, my duration.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my duration.minimum, my duration.maximum);
 
 	/*
 	 * Clicked on a duration point?
 	 */
 	inearestPoint = AnyTier_timeToNearestIndex (duration, xWC);
 	if (inearestPoint == 0) {
-		Graphics_resetViewport (my graphics, my inset);
+		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 	nearestPoint = (RealPoint) duration -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (my graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
-		Graphics_resetViewport (my graphics, my inset);
+	if (Graphics_distanceWCtoMM (my d_graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
+		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -1170,10 +1170,10 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	 * Clicked on a selected duration point?
 	 */
 	draggingSelection = shiftKeyPressed &&
-		nearestPoint -> number > my startSelection && nearestPoint -> number < my endSelection;
+		nearestPoint -> number > my d_startSelection && nearestPoint -> number < my d_endSelection;
 	if (draggingSelection) {
-		ifirstSelected = AnyTier_timeToHighIndex (duration, my startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (duration, my endSelection);
+		ifirstSelected = AnyTier_timeToHighIndex (duration, my d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (duration, my d_endSelection);
 		Editor_save (me, L"Drag duration points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
@@ -1183,11 +1183,11 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (my graphics, Graphics_MAROON);
+	Graphics_xorOn (my d_graphics, Graphics_MAROON);
 	drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
-	while (Graphics_mouseStillDown (my graphics)) {
+	while (Graphics_mouseStillDown (my d_graphics)) {
 		double xWC_new, yWC_new;
-		Graphics_getMouseLocation (my graphics, & xWC_new, & yWC_new);
+		Graphics_getMouseLocation (my d_graphics, & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawDurationWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
 			dt += xWC_new - xWC, xWC = xWC_new;
@@ -1195,12 +1195,12 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 			drawDurationWhileDragging (me, xWC_new, yWC_new, ifirstSelected, ilastSelected, dt, df);
 		}
 	}
-	Graphics_xorOff (my graphics);
+	Graphics_xorOff (my d_graphics);
 
 	/*
 	 * Dragged inside window?
 	 */
-	if (xWC < my startWindow || xWC > my endWindow) return 1;
+	if (xWC < my d_startWindow || xWC > my d_endWindow) return 1;
 
 	/*
 	 * Points not dragged past neighbours?
@@ -1208,11 +1208,11 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	{
 		RealPoint *points = (RealPoint *) duration -> points -> item;
 		double newTime = points [ifirstSelected] -> number + dt;
-		if (newTime < my tmin) return 1;   // outside domain
+		if (newTime < my d_tmin) return 1;   // outside domain
 		if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
 			return 1;   /* Past left neighbour. */
 		newTime = points [ilastSelected] -> number + dt;
-		if (newTime > my tmax) return 1;   // outside domain
+		if (newTime > my d_tmax) return 1;   // outside domain
 		if (ilastSelected < duration -> points -> size && newTime >= points [ilastSelected + 1] -> number)
 			return 1;   // past right neighbour
 	}
@@ -1232,10 +1232,10 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	 * Make sure that the same duration points are still selected (a problem with Undo...).
 	 */
 
-	if (draggingSelection) my startSelection += dt, my endSelection += dt;
-	if (my startSelection == my endSelection) {
+	if (draggingSelection) my d_startSelection += dt, my d_endSelection += dt;
+	if (my d_startSelection == my d_endSelection) {
 		RealPoint point = (RealPoint) duration -> points -> item [ifirstSelected];
-		my startSelection = my endSelection = point -> number;
+		my d_startSelection = my d_endSelection = point -> number;
 		my duration.cursor = point -> value;
 	}
 
@@ -1252,10 +1252,10 @@ int structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	 * Dispatch click to clicked area.
 	 */
 	if (hasPitchArea && yWC > ypitchmin && yWC < ypitchmax) {   // clicked in pitch area?
-		inset = Graphics_insetViewport (graphics, 0, 1, ypitchmin, ypitchmax);
+		inset = Graphics_insetViewport (d_graphics, 0, 1, ypitchmin, ypitchmax);
 		return clickPitch (this, xWC, (yWC - ypitchmin) / (ypitchmax - ypitchmin), shiftKeyPressed);
 	} else if (hasDurationArea && yWC > ydurationmin && yWC < ydurationmax) {   // clicked in duration area?
-		inset = Graphics_insetViewport (graphics, 0, 1, ydurationmin, ydurationmax);
+		inset = Graphics_insetViewport (d_graphics, 0, 1, ydurationmin, ydurationmax);
 		return clickDuration (this, xWC, (yWC - ydurationmin) / (ydurationmax - ydurationmin), shiftKeyPressed);
 	}
 	/*
@@ -1274,10 +1274,10 @@ void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar *title, Manipulation ana) {
+ManipulationEditor ManipulationEditor_create (const wchar_t *title, Manipulation ana) {
 	try {
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
-		FunctionEditor_init (me.peek(), parent, title, ana);
+		FunctionEditor_init (me.peek(), title, ana);
 
 		my pitchTier.draggingStrategy = preferences.pitchTier.draggingStrategy;
 		my pitchTier.units = preferences.pitchTier.units;

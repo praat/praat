@@ -69,10 +69,10 @@ Thing_implement (ExperimentMFC, Data, 5);
 #include "enums_getValue.h"
 #include "Experiment_enums.h"
 
-static void readSound (ExperimentMFC me, const wchar *fileNameHead, const wchar *fileNameTail,
-	double medialSilenceDuration, wchar **name, Sound *sound)
+static void readSound (ExperimentMFC me, const wchar_t *fileNameHead, const wchar_t *fileNameTail,
+	double medialSilenceDuration, wchar_t **name, Sound *sound)
 {
-	wchar fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
+	wchar_t fileNameBuffer [256], pathName [256], *fileNames = & fileNameBuffer [0];
 	structMelderFile file = { 0 };
 	wcscpy (fileNameBuffer, *name);
 	/*
@@ -81,7 +81,7 @@ static void readSound (ExperimentMFC me, const wchar *fileNameHead, const wchar 
 	 * An ugly case, but allowed.
 	 */
 	#if defined (_WIN32)
-		for (;;) { wchar *slash = wcschr (fileNames, '/'); if (! slash) break; *slash = '\\'; }
+		for (;;) { wchar_t *slash = wcschr (fileNames, '/'); if (! slash) break; *slash = '\\'; }
 	#endif
 	forget (*sound);
 	/*
@@ -92,7 +92,7 @@ static void readSound (ExperimentMFC me, const wchar *fileNameHead, const wchar 
 		/*
 		 * Determine partial file name.
 		 */
-		wchar *comma = wcschr (fileNames, ',');
+		wchar_t *comma = wcschr (fileNames, ',');
 		if (comma) *comma = '\0';
 		/*
 		 * Determine complete (relative) file name.
@@ -113,9 +113,9 @@ static void readSound (ExperimentMFC me, const wchar *fileNameHead, const wchar 
 			MelderDir_relativePathToFile (& my rootDirectory, pathName, & file);
 			if (Melder_debug == 32) {
 				MelderInfo_open ();
-				MelderInfo_writeLine3 (L"Path name <", pathName, L">");
-				MelderInfo_writeLine3 (L"Root directory <", my rootDirectory.path, L">");
-				MelderInfo_writeLine3 (L"Full path name <", file.path, L">");
+				MelderInfo_writeLine (L"Path name <", pathName, L">");
+				MelderInfo_writeLine (L"Root directory <", my rootDirectory.path, L">");
+				MelderInfo_writeLine (L"Full path name <", file.path, L">");
 				MelderInfo_close ();
 			}
 		}

@@ -1,6 +1,6 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,18 +45,18 @@ void structMatrix :: v_info () {
 	structData :: v_info ();
 	double minimum = 0.0, maximum = 0.0;
 	Matrix_getWindowExtrema (this, 1, nx, 1, ny, & minimum, & maximum);
-	MelderInfo_writeLine2 (L"xmin: ", Melder_double (xmin));
-	MelderInfo_writeLine2 (L"xmax: ", Melder_double (xmax));
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (nx));
-	MelderInfo_writeLine5 (L"dx: ", Melder_double (dx), L" (-> sampling rate ", Melder_double (1.0 / dx), L" )");
-	MelderInfo_writeLine2 (L"x1: ", Melder_double (x1));
-	MelderInfo_writeLine2 (L"ymin: ", Melder_double (ymin));
-	MelderInfo_writeLine2 (L"ymax: ", Melder_double (ymax));
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (ny));
-	MelderInfo_writeLine5 (L"dy: ", Melder_double (dy), L" (-> sampling rate ", Melder_double (1.0 / dy), L" )");
-	MelderInfo_writeLine2 (L"y1: ", Melder_double (y1));
-	MelderInfo_writeLine2 (L"Minimum value: ", Melder_single (minimum));
-	MelderInfo_writeLine2 (L"Maximum value: ", Melder_single (maximum));
+	MelderInfo_writeLine (L"xmin: ", Melder_double (xmin));
+	MelderInfo_writeLine (L"xmax: ", Melder_double (xmax));
+	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"dx: ", Melder_double (dx), L" (-> sampling rate ", Melder_double (1.0 / dx), L" )");
+	MelderInfo_writeLine (L"x1: ", Melder_double (x1));
+	MelderInfo_writeLine (L"ymin: ", Melder_double (ymin));
+	MelderInfo_writeLine (L"ymax: ", Melder_double (ymax));
+	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (ny));
+	MelderInfo_writeLine (L"dy: ", Melder_double (dy), L" (-> sampling rate ", Melder_double (1.0 / dy), L" )");
+	MelderInfo_writeLine (L"y1: ", Melder_double (y1));
+	MelderInfo_writeLine (L"Minimum value: ", Melder_single (minimum));
+	MelderInfo_writeLine (L"Maximum value: ", Melder_single (maximum));
 }
 
 void structMatrix :: v_readText (MelderReadText text) {
@@ -647,7 +647,7 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 	}
 }
 
-void Matrix_formula (Matrix me, const wchar *expression, Interpreter interpreter, Matrix target) {
+void Matrix_formula (Matrix me, const wchar_t *expression, Interpreter interpreter, Matrix target) {
 	try {
 		struct Formula_Result result;
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
@@ -664,7 +664,7 @@ void Matrix_formula (Matrix me, const wchar *expression, Interpreter interpreter
 }
 
 void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, double ymax,
-	const wchar *expression, Interpreter interpreter, Matrix target)
+	const wchar_t *expression, Interpreter interpreter, Matrix target)
 {
 	try {
 		if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }

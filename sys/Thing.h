@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 
 typedef struct structClassInfo *ClassInfo;
 struct structClassInfo {
-	const wchar *className;
+	const wchar_t *className;
 	ClassInfo parent;
 	long size;
 	Thing (* _new) ();
@@ -89,7 +89,7 @@ extern struct structClassInfo theClassInfo_Thing;
 class structThing {
 	public:
 		ClassInfo classInfo;
-		wchar *name;
+		wchar_t *name;
 		void * operator new (size_t size) { return Melder_calloc (char, size); }
 		void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
 	// new methods:
@@ -130,7 +130,7 @@ class structThing {
 
 /* All functions with 'Thing me' as the first argument assume that it is not NULL. */
 
-const wchar * Thing_className (Thing me);
+const wchar_t * Thing_className (Thing me);
 /* Return your class name. */
 
 bool Thing_member (Thing me, ClassInfo klas);
@@ -186,11 +186,11 @@ void Thing_recognizeClassesByName (ClassInfo readableClass, ...);
 		or with Data_readText () or Data_readBinary () if the object is a Collection.
 		Calls to this routine should preferably be put in the beginning of main ().
 */
-void Thing_recognizeClassByOtherName (ClassInfo readableClass, const wchar *otherName);
+void Thing_recognizeClassByOtherName (ClassInfo readableClass, const wchar_t *otherName);
 long Thing_listReadableClasses (void);
 
 Any Thing_newFromClassNameA (const char *className);
-Any Thing_newFromClassName (const wchar *className);
+Any Thing_newFromClassName (const wchar_t *className);
 /*
 	Function:
 		return a new object of class 'className', or NULL if the class name is not recognized.
@@ -217,9 +217,9 @@ ClassInfo Thing_classFromClassName (const wchar_t *className);
 	((klas) _Thing_dummyObject (class##klas))
 Thing _Thing_dummyObject (ClassInfo classInfo);
 
-wchar * Thing_getName (Thing me);
+wchar_t * Thing_getName (Thing me);
 /* Return a pointer to your internal name (which can be NULL). */
-wchar * Thing_messageName (Thing me);
+wchar_t * Thing_messageName (Thing me);
 
 void Thing_setName (Thing me, const wchar_t *name);
 /*
@@ -228,6 +228,11 @@ void Thing_setName (Thing me, const wchar_t *name);
 	Postconditions:
 		my name *and* my name are copies of 'name'.
 */
+
+#define Thing_cast(Klas,var,expr) \
+	Klas var = static_cast <Klas> (expr);   /* The compiler checks this. */ \
+	Melder_assert (var != NULL); \
+	Melder_assert (Thing_member (var, class##Klas));
 
 void Thing_swap (Thing me, Thing thee);
 /*

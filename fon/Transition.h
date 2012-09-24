@@ -2,7 +2,7 @@
 #define _Transition_h_
 /* Transition.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +26,11 @@
 #include "Transition_def.h"
 oo_CLASS_CREATE (Transition, Data);
 
-void Transition_init (I, long numberOfStates);
+void Transition_init (Transition me, long numberOfStates);
 Transition Transition_create (long numberOfStates);
 
-void Transition_formula (I, const wchar *formula);
-void Transition_drawAsNumbers (I, Graphics g, int iformat, int precision);
+void Transition_formula (Transition me, const wchar_t *formula);
+void Transition_drawAsNumbers (Transition me, Graphics g, int iformat, int precision);
 
 void Transition_eigen (Transition me, Matrix *eigenvectors, Matrix *eigenvalues);
 Transition Transition_power (Transition me, long power);

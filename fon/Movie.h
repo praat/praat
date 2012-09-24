@@ -22,7 +22,7 @@
 #include "Sampled.h"
 #include "Graphics.h"
 #include "Sound.h"
-#include "Strings.h"
+#include "Strings_.h"
 
 #include "Movie_def.h"
 oo_CLASS_CREATE (Movie, Sampled);

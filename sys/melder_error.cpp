@@ -20,19 +20,19 @@
 #include "melder.h"
 #include "longchar.h"
 
-static void defaultError (const wchar *message) {
+static void defaultError (const wchar_t *message) {
 	Melder_writeToConsole (wcsstr (message, L"You interrupted ") ? L"User interrupt: " : L"Error: ", true);
 	Melder_writeToConsole (message, true);
 	Melder_writeToConsole (L"\n", true);
 }
 
-static void (*theError) (const wchar *) = defaultError;   // initial setting after start-up; will stay if program is run from batch
+static void (*theError) (const wchar_t *) = defaultError;   // initial setting after start-up; will stay if program is run from batch
 
-void Melder_setErrorProc (void (*error) (const wchar *)) {
+void Melder_setErrorProc (void (*error) (const wchar_t *)) {
 	theError = error ? error : defaultError;
 }
 
-static wchar errors [2000+1];   // safe in low-memory situations
+static wchar_t errors [2000+1];   // safe in low-memory situations
 
 static void appendErrorA (const char *message) {
 	int length = wcslen (errors), messageLength = strlen (message);
@@ -53,7 +53,7 @@ static void appendErrorALine (const char *message) {
 	errors [length + messageLength + 1] = L'\0';
 }
 
-static void appendErrorW (const wchar *message) {
+static void appendErrorW (const wchar_t *message) {
 	int length = wcslen (errors), messageLength = wcslen (message);
 	if (length + messageLength > 2000) return;
 	wcscpy (errors + length, message);
@@ -65,7 +65,7 @@ bool Melder_hasError (const wchar_t *partialError) { return wcsstr (errors, part
 
 void Melder_clearError (void) { errors [0] = L'\0'; }
 
-wchar * Melder_getError (void) { return & errors [0]; }
+wchar_t * Melder_getError (void) { return & errors [0]; }
 
 void Melder_flushError (const char *format, ...) {
 	va_list arg;
@@ -81,7 +81,7 @@ void Melder_flushError (const char *format, ...) {
 		and some operating systems may force an immediate redraw event as soon as
 		the message dialog is closed. We want "errors" to be empty when redrawing!
 	*/
-	static wchar temp [2000+1];
+	static wchar_t temp [2000+1];
 	wcscpy (temp, errors);
 	Melder_clearError ();
 	theError (temp);

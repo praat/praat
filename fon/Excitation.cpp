@@ -63,15 +63,15 @@ void structExcitation :: v_info () {
 	double *y = z [1];
 	long numberOfMaxima = 0;
 	structData :: v_info ();
-	MelderInfo_writeLine3 (L"Loudness: ", Melder_half (Excitation_getLoudness (this)), L" sones");
+	MelderInfo_writeLine (L"Loudness: ", Melder_half (Excitation_getLoudness (this)), L" sones");
 	for (long i = 2; i < nx; i ++) if (y [i] > y [i - 1] && y [i] >= y [i + 1]) {
 		double i_real, formant_bark, strength;
 		if (++ numberOfMaxima > 15) break;
 		strength = NUMimproveMaximum (z [1], nx, i, NUM_PEAK_INTERPOLATE_SINC70, & i_real);
 		formant_bark = x1 + (i_real - 1) * dx;
-		MelderInfo_write3 (L"Peak at ", Melder_single (formant_bark), L" Bark");
-		MelderInfo_write3 (L", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), L" Hz");
-		MelderInfo_writeLine3 (L", ", Melder_half (strength), L" phon.");
+		MelderInfo_write (L"Peak at ", Melder_single (formant_bark), L" Bark");
+		MelderInfo_write (L", ", Melder_integer ((long) NUMbarkToHertz (formant_bark)), L" Hz");
+		MelderInfo_writeLine (L", ", Melder_half (strength), L" phon.");
 	}
 }
 

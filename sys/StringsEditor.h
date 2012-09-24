@@ -20,12 +20,13 @@
  */
 
 #include "Editor.h"
-#include "Strings.h"
+#include "Strings_.h"
 
 Thing_define (StringsEditor, Editor) {
 	// new data:
 	public:
-		GuiObject list, text;
+		GuiList list;
+		GuiText text;
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual void v_createChildren ();
@@ -33,7 +34,7 @@ Thing_define (StringsEditor, Editor) {
 		virtual void v_dataChanged ();
 };
 
-StringsEditor StringsEditor_create (GuiObject parent, const wchar *title, Strings data);
+StringsEditor StringsEditor_create (const wchar_t *title, Strings data);
 
 /* End of file StringsEditor.h */
 #endif

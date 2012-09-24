@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "Preferences.h"
+#include "GuiP.h"
 #if defined (macintosh)
 	#include "pa_mac_core.h"
 	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
@@ -47,7 +48,7 @@ static struct {
 	int bufferSize_MB;
 } preferences;
 
-void SoundRecorder_prefs (void) {
+void SoundRecorder_preferences (void) {
 	Preferences_addInt (L"SoundRecorder.bufferSize_MB", & preferences.bufferSize_MB, 20);
 }
 
@@ -95,7 +96,7 @@ static void win_fillHeader (SoundRecorder me, int which) {
 	my waveHeader [which]. reserved = 0;
 }
 static void win_waveInCheck (SoundRecorder me) {
-	wchar messageText [MAXERRORLENGTH];
+	wchar_t messageText [MAXERRORLENGTH];
 	MMRESULT err;
 	if (my err == MMSYSERR_NOERROR) return;
 	err = waveInGetErrorText (my err, messageText, MAXERRORLENGTH);
@@ -351,7 +352,11 @@ static long getMyNsamp (SoundRecorder me) {
 	return nsamp;
 }
 
-static Boolean workProc (XtPointer void_me) {
+#if gtk
+static gboolean workProc (void *void_me) {
+#else
+static bool workProc (void *void_me) {
+#endif
 	iam (SoundRecorder);
 	try {
 		short buffertje [step*2];
@@ -372,27 +377,27 @@ static Boolean workProc (XtPointer void_me) {
 
 		/* Set the buttons according to the audio parameters. */
 
-		if (my recordButton) GuiObject_setSensitive (my recordButton, ! my recording);
-		if (my stopButton) GuiObject_setSensitive (my stopButton, my recording);
-		if (my playButton) GuiObject_setSensitive (my playButton, ! my recording && my nsamp > 0);
-		if (my applyButton) GuiObject_setSensitive (my applyButton, ! my recording && my nsamp > 0);
-		if (my okButton) GuiObject_setSensitive (my okButton, ! my recording && my nsamp > 0);
-		if (my monoButton) GuiRadioButton_setValue (my monoButton, my numberOfChannels == 1);
-		if (my stereoButton) GuiRadioButton_setValue (my stereoButton, my numberOfChannels == 2);
+		if (my recordButton) my recordButton -> f_setSensitive (! my recording);
+		if (my stopButton)   my stopButton   -> f_setSensitive (  my recording);
+		if (my playButton)   my playButton   -> f_setSensitive (! my recording && my nsamp > 0);
+		if (my applyButton)  my applyButton  -> f_setSensitive (! my recording && my nsamp > 0);
+		if (my okButton)     my okButton     -> f_setSensitive (! my recording && my nsamp > 0);
+		if (my monoButton   && my numberOfChannels == 1) my monoButton   -> f_set ();
+		if (my stereoButton && my numberOfChannels == 2) my stereoButton -> f_set ();
 		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
-			if (my fsamp_ [i]. button)
-				GuiRadioButton_setValue (my fsamp_ [i]. button, theControlPanel. sampleRate == my fsamp_ [i]. fsamp);
+			if (my fsamp_ [i]. button && theControlPanel. sampleRate == my fsamp_ [i]. fsamp)
+				my fsamp_ [i]. button -> f_set ();
+		if (my device_ [theControlPanel. inputSource]. button)
+			my device_ [theControlPanel. inputSource]. button -> f_set ();
+		if (my monoButton)   my monoButton   -> f_setSensitive (! my recording);
+		if (my stereoButton) my stereoButton -> f_setSensitive (! my recording);
+		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
+			if (my fsamp_ [i]. button) {
+				my fsamp_ [i]. button -> f_setSensitive (! my recording);
+			}
 		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
 			if (my device_ [i]. button)
-				GuiRadioButton_setValue (my device_ [i]. button, theControlPanel. inputSource == i);
-		if (my monoButton) GuiObject_setSensitive (my monoButton, ! my recording);
-		if (my stereoButton) GuiObject_setSensitive (my stereoButton, ! my recording);
-		for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
-			if (my fsamp_ [i]. button)
-				GuiObject_setSensitive (my fsamp_ [i]. button, ! my recording);
-		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
-			if (my device_ [i]. button)
-				GuiObject_setSensitive (my device_ [i]. button, ! my recording);
+				my device_ [i]. button -> f_setSensitive (! my recording);
 
 		/*Graphics_setGrey (my graphics, 0.9);
 		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 32768.0);
@@ -427,11 +432,7 @@ static Boolean workProc (XtPointer void_me) {
 				if (my recording) {
 					my nsamp += stepje;
 					if (my nsamp > my nmax - step) my recording = false;
-					#if gtk
-						gtk_range_set_value (GTK_RANGE (my progressScale), (1000.0 * ((double) my nsamp / (double) my nmax)));
-					#elif motif
-						XmScaleSetValue (my progressScale, (int) (1000.0f * ((float) my nsamp / (float) my nmax)));
-					#endif
+					my progressScale -> f_setValue (1000.0 * ((double) my nsamp / (double) my nmax));
 				}
 			} while (my recording && tooManySamplesInBufferToReturnToGui (me));
 		} else {
@@ -463,19 +464,15 @@ static Boolean workProc (XtPointer void_me) {
 				long firstSample = lastSample - 1000;
 				if (firstSample < 0) firstSample = 0;
 				showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
-				#if gtk
-					gtk_range_set_value (GTK_RANGE (my progressScale), (1000.0 * ((double) lastSample / (double) my nmax)));
-				#elif motif
-					XmScaleSetValue (my progressScale, (int) (1000.0f * ((float) lastSample / (float) my nmax)));
-				#endif
+				my progressScale -> f_setValue (1000.0 * ((double) lastSample / (double) my nmax));
 			} else {
 				showMeter (me, NULL, 0);
 			}
 		}
 		#if gtk
-		 return TRUE;
+			return true;
 		#else
-		 return False;
+			return false;
 		#endif
 	} catch (MelderError) {
 		Melder_flushError (NULL);
@@ -614,7 +611,7 @@ static void publish (SoundRecorder me) {
 		}
 	}
 	if (my soundName) {
-		autostring name = GuiText_getString (my soundName);
+		autostring name = my soundName -> f_getString ();
 		Thing_setName (sound.peek(), name.peek());
 	}
 	my broadcastPublication (sound.transfer());
@@ -629,13 +626,6 @@ static void gui_button_cb_cancel (I, GuiButtonEvent event) {
 
 static void gui_button_cb_apply (I, GuiButtonEvent event) {
 	(void) event;
-	iam (SoundRecorder);
-	stopRecording (me);
-	publish (me);
-}
-static void gui_cb_apply (GuiObject widget, XtPointer void_me, XtPointer call) {
-	(void) widget;
-	(void) call;
 	iam (SoundRecorder);
 	stopRecording (me);
 	publish (me);
@@ -716,13 +706,8 @@ static void initialize (SoundRecorder me) {
 
 static void gui_radiobutton_cb_input (I, GuiRadioButtonEvent event) {
 	iam (SoundRecorder);
-	theControlPanel. inputSource = 1;   // default
-	Melder_assert (event -> toggle != NULL);
-	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
-		if (event -> toggle == my device_ [i]. button) {
-			theControlPanel. inputSource = i;
-		}
-	}
+	Melder_casual ("SoundRecorder: setting the input source from %ld to %ld.", (long) theControlPanel. inputSource, (long) event -> position);
+	theControlPanel. inputSource = event -> position;
 
 	/* Set system's input source. */
 	if (my inputUsesPortAudio) {
@@ -765,6 +750,7 @@ static void gui_radiobutton_cb_fsamp (I, GuiRadioButtonEvent event) {
 		 * and then we get a message that the 48000 button has changed.
 		 * So the following will work (it used to be different with old Motif versions on Linux):
 		 */
+		Melder_casual ("SoundRecorder: setting the sample rate from %ld to %ld Hz.", (long) theControlPanel. sampleRate, (long) fsamp);
 		if (fsamp == theControlPanel. sampleRate) return;
 		/*
 		 * Now we know, hopefully, that the message is from the button that was clicked,
@@ -803,215 +789,98 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	Graphics_updateWs (my graphics);
 }
 
-void structSoundRecorder :: v_createChildren () {
-	GuiObject form, channels, inputSources, meterBox, recstopplayBox, nameBox, fsampBox, dlgCtrlBox;
-	
-	#if gtk
-		form = d_windowForm;
-		GuiObject hbox1 = gtk_hbox_new (FALSE, 3);		// contains {Channels, Input source}, Meter, Sampling freq
-		GuiObject hbox2 = gtk_hbox_new (TRUE, 3); 		// contains {slider, {Record, Stop}}, {Name, label}
-		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (hbox1), TRUE, TRUE, 3);
-		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (hbox2), FALSE, FALSE, 3);
-	#elif motif
-		/* TODO */
-		form = XmCreateForm (d_windowForm, "form", NULL, 0);
-		XtVaSetValues (form,
-			XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-			XmNbottomAttachment, XmATTACH_FORM,
-			XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
-			NULL);
-		
-		meterBox = form;
-	#endif
-	
-	#if gtk
-		GuiObject h1vbox = gtk_vbox_new (FALSE, 3);
-		gtk_box_pack_start (GTK_BOX (hbox1), GTK_WIDGET (h1vbox), FALSE, FALSE, 3);
-		GuiObject channels_frame = gtk_frame_new ("Channels");
-		gtk_box_pack_start (GTK_BOX (h1vbox), GTK_WIDGET (channels_frame), FALSE, FALSE, 3);
-		channels = gtk_vbox_new (TRUE, 3);
-		gtk_container_add (GTK_CONTAINER (channels_frame), GTK_WIDGET (channels));
-	#elif motif
-		GuiLabel_createShown (form, 10, 160, 20, Gui_AUTOMATIC, L"Channels:", 0);
-		channels = XmCreateRadioBox (form, "channels", NULL, 0);
-		XtVaSetValues (channels,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
-			XmNwidth, 150,
-			NULL);
-		inputSources = form;
-	#endif
-	
-	monoButton = GuiRadioButton_createShown (channels, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
+void structSoundRecorder :: v_createChildren ()
+{
+	/* Channels */
+
+	long y = 20 + Machine_getMenuBarHeight ();
+	GuiLabel_createShown (d_windowForm, 10, 160, y, y + Gui_LABEL_HEIGHT, L"Channels:", 0);
+
+	GuiRadioGroup_begin ();
+	y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
+	monoButton = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
 		L"Mono", NULL, NULL, 0);
-	stereoButton = GuiRadioButton_createShown (channels, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
+	y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
+	stereoButton = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
 		L"Stereo", NULL, NULL, 0);
-	GuiObject_show (channels);
+	GuiRadioGroup_end ();
+
+	/* Input source */
 	
-	#if gtk
-		GuiRadioButton_setGroup (stereoButton, GuiRadioButton_getGroup (monoButton));
-		
-		GuiObject input_sources_frame = gtk_frame_new ("Input source");
-		gtk_box_pack_start (GTK_BOX (h1vbox), GTK_WIDGET (input_sources_frame), FALSE, FALSE, 3);
-		inputSources = gtk_vbox_new (TRUE, 3);
-		gtk_container_add (GTK_CONTAINER (input_sources_frame), GTK_WIDGET (inputSources));
-	#endif
-	
-	long y = 110, dy = 25;
+	y = 140 + Machine_getMenuBarHeight ();
 	#if defined (_WIN32)
-		GuiLabel_createShown (inputSources, 10, 160, y, Gui_AUTOMATIC, L"(use Windows mixer", 0);
-		GuiLabel_createShown (inputSources, 10, 160, y + dy, Gui_AUTOMATIC, L"   without meters)", 0);
+		GuiLabel_createShown (d_windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, L"(use Windows mixer", 0);
+		y += Gui_LABEL_HEIGHT + 10;
+		GuiLabel_createShown (d_windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, L"   without meters)", 0);
 	#else
-		#if gtk
-		GSList *input_radio_list = NULL;
-		#else
-		GuiLabel_createShown (inputSources, 10, 160, y, Gui_AUTOMATIC, L"Input source:", 0);
-		#endif
+		GuiLabel_createShown (d_windowForm, 10, 170, y, y + Gui_LABEL_HEIGHT, L"Input source:", 0);
+		GuiRadioGroup_begin ();
 		for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
 			if (device_ [i]. canDo) {
-				y += dy;
-				device_ [i]. button = GuiRadioButton_createShown (inputSources, 10, 160, y, Gui_AUTOMATIC,
+				y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
+				device_ [i]. button = GuiRadioButton_createShown (d_windowForm, 20, 170, y, y + Gui_RADIOBUTTON_HEIGHT,
 					device_ [i]. name, gui_radiobutton_cb_input, this, 0);
-				#if gtk
-				if (input_radio_list)
-					GuiRadioButton_setGroup (device_ [i]. button, input_radio_list);
-				input_radio_list = (GSList *) GuiRadioButton_getGroup (device_ [i]. button);
-				#endif
 			}
 		}
+		GuiRadioGroup_end ();
 	#endif
 	
-	#if gtk
-		meterBox = gtk_vbox_new (FALSE, 3);
-		gtk_box_pack_start (GTK_BOX (hbox1), GTK_WIDGET (meterBox), TRUE, TRUE, 3);
-	#endif
+	/* Meter box */
 	
-	GuiLabel_createShown (meterBox, 170, -170, 20, Gui_AUTOMATIC, L"Meter", GuiLabel_CENTRE);
-	meter = GuiDrawingArea_createShown (meterBox, 170, -170, 45, -150,
+	y = 20 + Machine_getMenuBarHeight ();
+	GuiLabel_createShown (d_windowForm, 170, -170, y, y + Gui_LABEL_HEIGHT, L"Meter", GuiLabel_CENTRE);
+	y += Gui_LABEL_HEIGHT;
+	meter = GuiDrawingArea_createShown (d_windowForm, 170, -170, y, -150,
 		NULL, NULL, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 
-	#if gtk
-		gtk_widget_set_double_buffered (GTK_WIDGET (meter), FALSE);
-		
-		GuiObject h1vbox2 = gtk_vbox_new (FALSE, 3);
-		GuiObject fsampBox_frame = gtk_frame_new ("Sampling frequency");
-		fsampBox = gtk_vbox_new (TRUE, 3);
-		GSList *fsamp_radio_list = NULL;
-		
-		gtk_box_pack_start (GTK_BOX (hbox1), GTK_WIDGET (h1vbox2), FALSE, FALSE, 3);
-		gtk_box_pack_start (GTK_BOX (h1vbox2), GTK_WIDGET (fsampBox_frame), FALSE, FALSE, 3);
-		gtk_container_add (GTK_CONTAINER (fsampBox_frame), GTK_WIDGET (fsampBox));
-	#elif motif
-		GuiLabel_createShown (form, -160, -10, 20, Gui_AUTOMATIC, L"Sampling frequency:", 0);
-		fsampBox = XmCreateRadioBox (form, "fsamp", NULL, 0);
-		XtVaSetValues (fsampBox,
-			XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 10,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
-			XmNwidth, 150,
-			NULL);
-	#endif
+	/* Sampling frequency */
+
+	y = 20 + Machine_getMenuBarHeight ();
+	GuiLabel_createShown (d_windowForm, -160, -10, y, y + Gui_LABEL_HEIGHT, L"Sampling frequency:", 0);
+	GuiRadioGroup_begin ();
 	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
 		if (fsamp_ [i]. canDo) {
 			double fsamp = fsamp_ [i]. fsamp;
-			wchar title [40];
+			wchar_t title [40];
 			swprintf (title, 40, L"%ls Hz", fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5));
-			fsamp_ [i]. button = GuiRadioButton_createShown (fsampBox,
-				Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC, Gui_AUTOMATIC,
-				title, gui_radiobutton_cb_fsamp, this, 0);
-			#if gtk
-			if (fsamp_radio_list)
-				GuiRadioButton_setGroup (fsamp_ [i]. button, fsamp_radio_list);
-			fsamp_radio_list = (GSList *) GuiRadioButton_getGroup (fsamp_ [i]. button);
-			#endif
+			y += Gui_RADIOBUTTON_HEIGHT + Gui_RADIOBUTTON_SPACING;
+			fsamp_ [i]. button = GuiRadioButton_createShown (d_windowForm,
+				-150, -10, y, y + Gui_RADIOBUTTON_HEIGHT,
+				title, gui_radiobutton_cb_fsamp, this, fsamp == theControlPanel. sampleRate ? GuiRadioButton_SET : 0);
 		}
 	}
-	GuiObject_show (fsampBox);
-	
-	#if gtk
-		GuiObject h2vbox = gtk_vbox_new (FALSE, 3);
-		gtk_box_pack_start (GTK_BOX (hbox2), GTK_WIDGET (h2vbox), TRUE, TRUE, 3);
-		
-		progressScale = gtk_hscrollbar_new (NULL);
-		gtk_range_set_range (GTK_RANGE (progressScale), 0, 1000);
-		
-		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (progressScale));
-		adj -> page_size = 150;
-		gtk_adjustment_changed (adj);
-		gtk_box_pack_start (GTK_BOX (h2vbox), GTK_WIDGET (progressScale), TRUE, TRUE, 3);
-	#elif motif
-		progressScale = XmCreateScale (form, "scale", NULL, 0);
-		XtVaSetValues (progressScale, XmNorientation, XmHORIZONTAL,
-			XmNminimum, 0, XmNmaximum, 1000,
-			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
-			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 90,
-			XmNwidth, 250,
-			#ifdef macintosh
-				XmNscaleWidth, 340,
-			#endif
-			NULL);
-	#endif
-	GuiObject_show (progressScale);
+	GuiRadioGroup_end ();
 
-	#if gtk
-		recstopplayBox = gtk_hbutton_box_new ();
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (recstopplayBox), GTK_BUTTONBOX_START);
-		gtk_box_set_spacing (GTK_BOX (recstopplayBox), 3);
-		gtk_container_add (GTK_CONTAINER (h2vbox), GTK_WIDGET (recstopplayBox));
-	#else
-		recstopplayBox = form;
-	#endif
+	progressScale = GuiScale_createShown (d_windowForm,
+		10, 350, -130, -90,
+		0, 1000, 0, 0);
+
 	y = 60;
-	recordButton = GuiButton_createShown (recstopplayBox, 20, 90, Gui_AUTOMATIC, -y,
+	recordButton = GuiButton_createShown (d_windowForm, 20, 90, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		L"Record", gui_button_cb_record, this, 0);
-	stopButton = GuiButton_createShown (recstopplayBox, 100, 170, Gui_AUTOMATIC, -y,
+	stopButton = GuiButton_createShown (d_windowForm, 100, 170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		L"Stop", gui_button_cb_stop, this, 0);
 	if (inputUsesPortAudio) {
-		playButton = GuiButton_createShown (recstopplayBox, 180, 250, Gui_AUTOMATIC, -y,
+		playButton = GuiButton_createShown (d_windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 			L"Play", gui_button_cb_play, this, 0);
 	} else {
 		#if defined (_WIN32) || defined (macintosh)
-			playButton = GuiButton_createShown (recstopplayBox, 180, 250, Gui_AUTOMATIC, -y,
+			playButton = GuiButton_createShown (d_windowForm, 180, 250, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 				L"Play", gui_button_cb_play, this, 0);
 		#endif
 	}
 	
-	#if gtk
-		nameBox = gtk_hbox_new (FALSE, 3);
-		gtk_container_add (GTK_CONTAINER (hbox2), GTK_WIDGET (nameBox));
-	#else
-		nameBox = form;
-	#endif
-	
-	GuiLabel_createShown (nameBox, -200, -130, Gui_AUTOMATIC, -y - 2, L"Name:", GuiLabel_RIGHT);
-	soundName = GuiText_createShown (nameBox, -120, -20, Gui_AUTOMATIC, -y, 0);
-	#if motif	
-	XtAddCallback (soundName, XmNactivateCallback, gui_cb_apply, (XtPointer) this);
-	#endif
-	GuiText_setString (soundName, L"untitled");
+	GuiLabel_createShown (d_windowForm, -200, -130, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, L"Name:", GuiLabel_RIGHT);
+	soundName = GuiText_createShown (d_windowForm, -120, -20, -y - 2 - Gui_TEXTFIELD_HEIGHT, -y - 2, 0);
+	soundName -> f_setString (L"untitled");
 
-	#if gtk
-		dlgCtrlBox = gtk_hbutton_box_new ();		// contains buttons
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (dlgCtrlBox), GTK_BUTTONBOX_END);
-		gtk_box_set_spacing (GTK_BOX (dlgCtrlBox), 3);
-		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (dlgCtrlBox), FALSE, FALSE, 3);
-	#else
-		dlgCtrlBox = form;
-	#endif
-	
 	y = 20;
-	cancelButton = GuiButton_createShown (dlgCtrlBox, -350, -280, Gui_AUTOMATIC, -y,
+	cancelButton = GuiButton_createShown (d_windowForm, -350, -280, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		L"Close", gui_button_cb_cancel, this, 0);
-	applyButton = GuiButton_createShown (dlgCtrlBox, -270, -170, Gui_AUTOMATIC, -y,
-		L"Save to list", gui_button_cb_apply, this, 0);
-	okButton = GuiButton_createShown (dlgCtrlBox, -160, -20, Gui_AUTOMATIC, -y,
+	applyButton = GuiButton_createShown (d_windowForm, -270, -170, -y - Gui_PUSHBUTTON_HEIGHT, -y,
+		L"Save to list", gui_button_cb_apply, this, GuiButton_DEFAULT);
+	okButton = GuiButton_createShown (d_windowForm, -160, -20, -y - Gui_PUSHBUTTON_HEIGHT, -y,
 		L"Save to list & Close", gui_button_cb_ok, this, 0);
-
-	#if gtk
-		gtk_widget_show_all (GTK_WIDGET (form));
-	#else
-		GuiObject_show (form);
-	#endif
 }
 
 static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
@@ -1044,7 +913,7 @@ static void writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType
 static void menu_cb_writeWav (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as WAV file", 0)
-		wchar *name = GuiText_getString (my soundName);
+		wchar_t *name = my soundName -> f_getString ();
 		swprintf (defaultName, 300, L"%ls.wav", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -1055,7 +924,7 @@ static void menu_cb_writeWav (EDITOR_ARGS) {
 static void menu_cb_writeAifc (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as AIFC file", 0)
-		wchar *name = GuiText_getString (my soundName);
+		wchar_t *name = my soundName -> f_getString ();
 		swprintf (defaultName, 300, L"%ls.aifc", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -1066,7 +935,7 @@ static void menu_cb_writeAifc (EDITOR_ARGS) {
 static void menu_cb_writeNextSun (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as NeXT/Sun file", 0)
-		wchar *name = GuiText_getString (my soundName);
+		wchar_t *name = my soundName -> f_getString ();
 		swprintf (defaultName, 300, L"%ls.au", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -1077,7 +946,7 @@ static void menu_cb_writeNextSun (EDITOR_ARGS) {
 static void menu_cb_writeNist (EDITOR_ARGS) {
 	EDITOR_IAM (SoundRecorder);
 	EDITOR_FORM_WRITE (L"Save as NIST file", 0)
-		wchar *name = GuiText_getString (my soundName);
+		wchar_t *name = my soundName -> f_getString ();
 		swprintf (defaultName, 300, L"%ls.nist", name);
 		Melder_free (name);
 	EDITOR_DO_WRITE
@@ -1101,7 +970,7 @@ void structSoundRecorder :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"SoundRecorder help", '?', menu_cb_SoundRecorder_help);
 }
 
-SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels) {
+SoundRecorder SoundRecorder_create (int numberOfChannels) {
 	try {
 		autoSoundRecorder me = Thing_new (SoundRecorder);
 		my inputUsesPortAudio = MelderAudio_getInputUsesPortAudio ();
@@ -1260,10 +1129,7 @@ SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels) {
 		 */
 		initialize (me.peek());
 
-		Editor_init (me.peek(), parent, 100, 100, 600, 500, L"SoundRecorder", NULL);
-		#if motif
-		Melder_assert (XtWindow (my meter));
-		#endif
+		Editor_init (me.peek(), 100, 100, 600, 500, L"SoundRecorder", NULL);
 		my graphics = Graphics_create_xmdrawingarea (my meter);
 		Melder_assert (my graphics);
 		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
@@ -1271,14 +1137,14 @@ SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels) {
 		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
 
 struct structGuiDrawingAreaResizeEvent event = { my meter, 0 };
-event. width = GuiObject_getWidth (my meter);
-event. height = GuiObject_getHeight (my meter);
+event. width  = my meter -> f_getWidth  ();
+event. height = my meter -> f_getHeight ();
 gui_drawingarea_cb_resize (me.peek(), & event);
 
 		#if gtk
 			g_idle_add (workProc, me.peek());
 		#elif motif
-			my workProcId = GuiAddWorkProc (workProc, (XtPointer) me.peek());
+			my workProcId = GuiAddWorkProc (workProc, me.peek());
 		#endif
 		return me.transfer();
 	} catch (MelderError) {

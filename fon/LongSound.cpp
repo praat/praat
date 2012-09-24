@@ -53,7 +53,7 @@ Thing_implement (LongSound, Sampled, 0);
 
 static long prefs_bufferLength;
 
-void LongSound_prefs (void) {
+void LongSound_preferences (void) {
 	Preferences_addLong (L"LongSound.bufferLength", & prefs_bufferLength, 60);   // seconds
 }
 
@@ -78,7 +78,7 @@ void structLongSound :: v_destroy () {
 }
 
 void structLongSound :: v_info () {
-	static const wchar *encodingStrings [1+20] = { L"none",
+	static const wchar_t *encodingStrings [1+20] = { L"none",
 		L"linear 8 bit signed", L"linear 8 bit unsigned",
 		L"linear 16 bit big-endian", L"linear 16 bit little-endian",
 		L"linear 24 bit big-endian", L"linear 24 bit little-endian",
@@ -87,14 +87,14 @@ void structLongSound :: v_info () {
 		L"IEEE float 32 bit big-endian", L"IEEE float 32 bit little-endian",
 		L"FLAC", L"FLAC", L"FLAC", L"MP3", L"MP3", L"MP3" };
 	structData :: v_info ();
-	MelderInfo_writeLine3 (L"Duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine2 (L"File name: ", Melder_fileToPath (& file));
-	MelderInfo_writeLine2 (L"File type: ", audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : Melder_audioFileTypeString (audioFileType));
-	MelderInfo_writeLine2 (L"Number of channels: ", Melder_integer (numberOfChannels));
-	MelderInfo_writeLine2 (L"Encoding: ", encoding > 20 ? L"unknown" : encodingStrings [encoding]);
-	MelderInfo_writeLine3 (L"Sampling frequency: ", Melder_double (sampleRate), L" Hz");
-	MelderInfo_writeLine3 (L"Size: ", Melder_integer (nx), L" samples");
-	MelderInfo_writeLine3 (L"Start of sample data: ", Melder_integer (startOfData), L" bytes from the start of the file");
+	MelderInfo_writeLine (L"Duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"File name: ", Melder_fileToPath (& file));
+	MelderInfo_writeLine (L"File type: ", audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : Melder_audioFileTypeString (audioFileType));
+	MelderInfo_writeLine (L"Number of channels: ", Melder_integer (numberOfChannels));
+	MelderInfo_writeLine (L"Encoding: ", encoding > 20 ? L"unknown" : encodingStrings [encoding]);
+	MelderInfo_writeLine (L"Sampling frequency: ", Melder_double (sampleRate), L" Hz");
+	MelderInfo_writeLine (L"Size: ", Melder_integer (nx), L" samples");
+	MelderInfo_writeLine (L"Start of sample data: ", Melder_integer (startOfData), L" bytes from the start of the file");
 }
 
 static void _LongSound_FLAC_convertFloats (LongSound me, const FLAC__int32 * const samples[], long bitsPerSample, long numberOfSamples) {

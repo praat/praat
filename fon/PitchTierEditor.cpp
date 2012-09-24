@@ -40,10 +40,10 @@ void structPitchTierEditor :: v_play (double a_tmin, double a_tmax) {
 	}
 }
 
-PitchTierEditor PitchTierEditor_create (GuiObject parent, const wchar *title, PitchTier pitch, Sound sound, bool ownSound) {
+PitchTierEditor PitchTierEditor_create (const wchar_t *title, PitchTier pitch, Sound sound, bool ownSound) {
 	try {
 		autoPitchTierEditor me = Thing_new (PitchTierEditor);
-		RealTierEditor_init (me.peek(), parent, title, (RealTier) pitch, sound, ownSound);
+		RealTierEditor_init (me.peek(), title, (RealTier) pitch, sound, ownSound);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("PitchTier window not created.");

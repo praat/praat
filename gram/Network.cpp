@@ -57,17 +57,17 @@
 void structNetwork :: v_info ()
 {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Spreading rate: ", Melder_double (d_spreadingRate));
-	MelderInfo_writeLine2 (L"Activity clipping rule: ", kNetwork_activityClippingRule_getText (d_activityClippingRule));
-	MelderInfo_writeLine2 (L"Minimum activity: ", Melder_double (d_minimumActivity));
-	MelderInfo_writeLine2 (L"Maximum activity: ", Melder_double (d_maximumActivity));
-	MelderInfo_writeLine2 (L"Activity leak: ", Melder_double (d_activityLeak));
-	MelderInfo_writeLine2 (L"Learning rate: ", Melder_double (d_learningRate));
-	MelderInfo_writeLine2 (L"Minimum weight: ", Melder_double (d_minimumWeight));
-	MelderInfo_writeLine2 (L"Maximum weight: ", Melder_double (d_maximumWeight));
-	MelderInfo_writeLine2 (L"Weight leak: ", Melder_double (d_weightLeak));
-	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (d_numberOfNodes));
-	MelderInfo_writeLine2 (L"Number of connections: ", Melder_integer (d_numberOfConnections));
+	MelderInfo_writeLine (L"Spreading rate: ", Melder_double (d_spreadingRate));
+	MelderInfo_writeLine (L"Activity clipping rule: ", kNetwork_activityClippingRule_getText (d_activityClippingRule));
+	MelderInfo_writeLine (L"Minimum activity: ", Melder_double (d_minimumActivity));
+	MelderInfo_writeLine (L"Maximum activity: ", Melder_double (d_maximumActivity));
+	MelderInfo_writeLine (L"Activity leak: ", Melder_double (d_activityLeak));
+	MelderInfo_writeLine (L"Learning rate: ", Melder_double (d_learningRate));
+	MelderInfo_writeLine (L"Minimum weight: ", Melder_double (d_minimumWeight));
+	MelderInfo_writeLine (L"Maximum weight: ", Melder_double (d_maximumWeight));
+	MelderInfo_writeLine (L"Weight leak: ", Melder_double (d_weightLeak));
+	MelderInfo_writeLine (L"Number of nodes: ", Melder_integer (d_numberOfNodes));
+	MelderInfo_writeLine (L"Number of connections: ", Melder_integer (d_numberOfConnections));
 }
 
 Thing_implement (Network, Data, 6);
@@ -203,7 +203,8 @@ void structNetwork :: f_spreadActivities (long numberOfSteps) {
 							node -> activity = d_minimumActivity;
 						} else {
 							node -> activity = d_minimumActivity +
-								(d_maximumActivity - d_minimumActivity) * (2.0 * NUMsigmoid (2.0 * (node -> excitation - d_minimumActivity)) - 1.0);
+								(d_maximumActivity - d_minimumActivity) * (2.0 * NUMsigmoid (2.0 * (node -> excitation - d_minimumActivity) / (d_maximumActivity - d_minimumActivity)) - 1.0);
+							trace ("excitation %f, activity %f", node -> excitation, node -> activity);
 						}
 					break;
 				}
@@ -388,7 +389,9 @@ void structNetwork :: f_draw (Graphics graphics, bool colour) {
 	 */
 	for (long inode = 1; inode <= d_numberOfNodes; inode ++) {
 		NetworkNode node = & d_nodes [inode];
-		double diameter = fabs (node -> activity) * 5.0;
+		double activity = fabs (node -> activity);
+		if (activity >= 1.0) activity = sqrt (activity);
+		double diameter = activity * 5.0;
 		if (diameter != 0.0) {
 			Graphics_setColour (graphics,
 				colour ? ( node -> activity < 0.0 ? Graphics_BLUE : Graphics_RED )

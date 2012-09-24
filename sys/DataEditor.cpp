@@ -46,17 +46,17 @@ static int stringLengths [] = { 0,
 	15, 27, 35, 59,
 	33, 33, 8, 6, 60, 60 };
 
-static VectorEditor VectorEditor_create (DataEditor root, const wchar *title, void *address,
+static VectorEditor VectorEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long minimum, long maximum);
 
-static MatrixEditor MatrixEditor_create (DataEditor root, const wchar *title, void *address,
+static MatrixEditor MatrixEditor_create (DataEditor root, const wchar_t *title, void *address,
 	Data_Description description, long min1, long max1, long min2, long max2);
 
-static StructEditor StructEditor_create (DataEditor root, const wchar *title, void *address, Data_Description description);
+static StructEditor StructEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
 
-static ClassEditor ClassEditor_create (DataEditor root, const wchar *title, void *address, Data_Description description);
+static ClassEditor ClassEditor_create (DataEditor root, const wchar_t *title, void *address, Data_Description description);
 
-static inline const wchar * strip_d (const wchar *s) {
+static inline const wchar_t * strip_d (const wchar_t *s) {
 	return s && s [0] == 'd' && s [1] == '_' ? & s [2] : & s [0];
 }
 
@@ -81,9 +81,9 @@ static void update (DataSubEditor me) {
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
 		my d_fieldData [i]. address = NULL;
 		my d_fieldData [i]. description = NULL;
-		GuiObject_hide (my d_fieldData [i]. label);
-		GuiObject_hide (my d_fieldData [i]. button);
-		GuiObject_hide (my d_fieldData [i]. text);
+		my d_fieldData [i]. label  -> f_hide ();
+		my d_fieldData [i]. button -> f_hide ();
+		my d_fieldData [i]. text   -> f_hide ();
 	}
 
 	my d_irow = 0;
@@ -110,100 +110,100 @@ static Data_Description DataSubEditor_findNumberUse (DataSubEditor me, const wch
 static void gui_button_cb_change (I, GuiButtonEvent event) {
 	(void) event;
 	iam (DataSubEditor);
-	int i = 1;
-	for (; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
+	int irow = 1;
+	for (; irow <= kDataSubEditor_MAXNUM_ROWS; irow ++) {
 		#if motif
-			bool visible = XtIsManaged (my d_fieldData [i]. text);
+			bool visible = XtIsManaged (my d_fieldData [irow]. text -> d_widget);
 		#elif gtk
 			gboolean visible;
-			g_object_get (G_OBJECT (my d_fieldData [i]. text), "visible", & visible, NULL);
+			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, NULL);
 		#elif ! useCarbon
 			bool visible = false;   // TODO
 		#endif
 		if (visible) {
-			int type = my d_fieldData [i]. description -> type;
+			int type = my d_fieldData [irow]. description -> type;
 			wchar_t *text;
 			if (type > maxsingletypewa) continue;
-			text = GuiText_getString (my d_fieldData [i]. text);
+			text = my d_fieldData [irow]. text -> f_getString ();
 			switch (type) {
 				case bytewa: {
-					signed char oldValue = * (signed char *) my d_fieldData [i]. address, newValue = wcstol (text, NULL, 10);
+					signed char oldValue = * (signed char *) my d_fieldData [irow]. address, newValue = wcstol (text, NULL, 10);
 					if (newValue != oldValue) {
-						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [i]. description -> name);
+						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
-							Melder_error_ ("Changing field \"", strip_d (my d_fieldData [i]. description -> name),
+							Melder_error_ ("Changing field \"", strip_d (my d_fieldData [irow]. description -> name),
 								"\" would damage the array \"", strip_d (numberUse -> name), "\".");
 							Melder_flushError (NULL);
 						} else {
-							* (signed char *) my d_fieldData [i]. address = newValue;
+							* (signed char *) my d_fieldData [irow]. address = newValue;
 						}
 					}
 				} break;
 				case intwa: {
-					int oldValue = * (int *) my d_fieldData [i]. address, newValue = wcstol (text, NULL, 10);
+					int oldValue = * (int *) my d_fieldData [irow]. address, newValue = wcstol (text, NULL, 10);
 					if (newValue != oldValue) {
-						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [i]. description -> name);
+						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
-							Melder_error_ ("Changing field \"", strip_d (my d_fieldData [i]. description -> name),
+							Melder_error_ ("Changing field \"", strip_d (my d_fieldData [irow]. description -> name),
 								"\" would damage the array \"", strip_d (numberUse -> name), "\".");
 							Melder_flushError (NULL);
 						} else {
-							* (int *) my d_fieldData [i]. address = newValue;
+							* (int *) my d_fieldData [irow]. address = newValue;
 						}
 					}
 				} break;
 				case longwa: {
-					long oldValue = * (long *) my d_fieldData [i]. address, newValue = wcstol (text, NULL, 10);
+					long oldValue = * (long *) my d_fieldData [irow]. address, newValue = wcstol (text, NULL, 10);
 					if (newValue != oldValue) {
-						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [i]. description -> name);
+						Data_Description numberUse = DataSubEditor_findNumberUse (me, my d_fieldData [irow]. description -> name);
 						if (numberUse) {
-							Melder_error_ ("Changing field \"", strip_d (my d_fieldData [i]. description -> name),
+							Melder_error_ ("Changing field \"", strip_d (my d_fieldData [irow]. description -> name),
 								"\" would damage the array \"", strip_d (numberUse -> name), "\".");
 							Melder_flushError (NULL);
 						} else {
-							* (long *) my d_fieldData [i]. address = newValue;
+							* (long *) my d_fieldData [irow]. address = newValue;
 						}
 					}
 				} break;
-				case ubytewa: { * (unsigned char *) my d_fieldData [i]. address = wcstoul (text, NULL, 10); } break;
-				case uintwa: { * (unsigned int *) my d_fieldData [i]. address = wcstoul (text, NULL, 10); } break;
-				case ulongwa: { * (unsigned long *) my d_fieldData [i]. address = wcstoul (text, NULL, 10); } break;
-				case boolwa: { * (bool *) my d_fieldData [i]. address = wcstol (text, NULL, 10); } break;
-				case floatwa: { * (double *) my d_fieldData [i]. address = Melder_atof (text); } break;
-				case doublewa: { * (double *) my d_fieldData [i]. address = Melder_atof (text); } break;
-				case fcomplexwa: { fcomplex *x = (fcomplex *) my d_fieldData [i]. address;
+				case ubytewa: { * (unsigned char *) my d_fieldData [irow]. address = wcstoul (text, NULL, 10); } break;
+				case uintwa: { * (unsigned int *) my d_fieldData [irow]. address = wcstoul (text, NULL, 10); } break;
+				case ulongwa: { * (unsigned long *) my d_fieldData [irow]. address = wcstoul (text, NULL, 10); } break;
+				case boolwa: { * (bool *) my d_fieldData [irow]. address = wcstol (text, NULL, 10); } break;
+				case floatwa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
+				case doublewa: { * (double *) my d_fieldData [irow]. address = Melder_atof (text); } break;
+				case fcomplexwa: { fcomplex *x = (fcomplex *) my d_fieldData [irow]. address;
 					swscanf (text, L"%f + %f i", & x -> re, & x -> im); } break;
-				case dcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [i]. address;
+				case dcomplexwa: { dcomplex *x = (dcomplex *) my d_fieldData [irow]. address;
 					swscanf (text, L"%lf + %lf i", & x -> re, & x -> im); } break;
 				case enumwa: {
 					if (wcslen (text) < 3) goto error;
 					text [wcslen (text) - 1] = '\0';   // remove trailing ">"
-					int value = ((int (*) (const wchar_t *)) (my d_fieldData [i]. description -> tagType)) (text + 1);   // skip leading "<"
+					int value = ((int (*) (const wchar_t *)) (my d_fieldData [irow]. description -> tagType)) (text + 1);   // skip leading "<"
 					if (value < 0) goto error;
-					* (signed char *) my d_fieldData [i]. address = value;
+					* (signed char *) my d_fieldData [irow]. address = value;
 				} break;
 				case lenumwa: {
 					if (wcslen (text) < 3) goto error;
 					text [wcslen (text) - 1] = '\0';   // remove trailing ">"
-					int value = ((int (*) (const wchar_t *)) (my d_fieldData [i]. description -> tagType)) (text + 1);   // skip leading "<"
+					int value = ((int (*) (const wchar_t *)) (my d_fieldData [irow]. description -> tagType)) (text + 1);   // skip leading "<"
 					if (value < 0) goto error;
-					* (signed short *) my d_fieldData [i]. address = value;
+					* (signed short *) my d_fieldData [irow]. address = value;
 				} break;
 				case booleanwa: {
 					int value = wcsnequ (text, L"<true>", 6) ? 1 : wcsnequ (text, L"<false>", 7) ? 0 : -1;
 					if (value < 0) goto error;
-					* (signed char *) my d_fieldData [i]. address = value;
+					* (signed char *) my d_fieldData [irow]. address = value;
 				} break;
 				case questionwa: {
 					int value = wcsnequ (text, L"<yes>", 5) ? 1 : wcsnequ (text, L"<no>", 4) ? 0 : -1;
 					if (value < 0) goto error;
-					* (signed char *) my d_fieldData [i]. address = value;
+					* (signed char *) my d_fieldData [irow]. address = value;
 				} break;
 				case stringwa:
 				case lstringwa: {
-					wchar *old = * (wchar_t **) my d_fieldData [i]. address;
+					wchar_t *old = * (wchar_t **) my d_fieldData [irow]. address;
 					Melder_free (old);
-					* (wchar **) my d_fieldData [i]. address = Melder_wcsdup_f (text);
+					* (wchar_t **) my d_fieldData [irow]. address = Melder_wcsdup_f (text);
 				} break;
 				default: break;
 			}
@@ -216,13 +216,13 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 	 */
 	my d_root -> broadcastDataChanged ();
 	update (me);
-	for (int i = 1; i <= my d_root -> d_children -> size; i ++) {
-		DataSubEditor subeditor = (DataSubEditor) my d_root -> d_children -> item [i];
+	for (int isub = 1; isub <= my d_root -> d_children -> size; isub ++) {
+		DataSubEditor subeditor = (DataSubEditor) my d_root -> d_children -> item [isub];
 		if (subeditor != me) update (subeditor);
 	}
 	return;
 error:
-	Melder_error_ ("Edit field \"", strip_d (my d_fieldData [i]. description -> name), "\" or click \"Cancel\".");
+	Melder_error_ ("Edit field \"", strip_d (my d_fieldData [irow]. description -> name), "\" or click \"Cancel\".");
 	Melder_flushError (NULL);
 }
 
@@ -232,13 +232,9 @@ static void gui_button_cb_cancel (I, GuiButtonEvent event) {
 	update (me);
 }
 
-static void gui_cb_scroll (GUI_ARGS) {
-	GUI_IAM (DataSubEditor);
-	int value, slider, incr, pincr;
-	#if motif
-		XmScrollBarGetValues (w, & value, & slider, & incr, & pincr);
-	#endif
-	my d_topField = value + 1;
+static void gui_cb_scroll (I, GuiScrollBarEvent event) {
+	iam (DataSubEditor);
+	my d_topField = event -> scrollBar -> f_getValue () + 1;
 	update (me);
 }
 
@@ -250,7 +246,8 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 
 	/* Identify the pressed button; it must be one of those created in the list. */
 
-	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) if (my d_fieldData [i]. button == event -> button) { ifield = i; break; }
+	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++)
+		if (my d_fieldData [i]. button == event -> button) { ifield = i; break; }
 	Melder_assert (ifield != 0);
 
 	/* Launch the appropriate subeditor. */
@@ -294,70 +291,27 @@ static void gui_button_cb_open (I, GuiButtonEvent event) {
 void structDataSubEditor :: v_createChildren () {
 	int x = Gui_LEFT_DIALOG_SPACING, y = Gui_TOP_DIALOG_SPACING + Machine_getMenuBarHeight (), buttonWidth = 120;
 
-	#if motif
-		GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, Gui_AUTOMATIC,
-			L"Change", gui_button_cb_change, this, 0);
-		x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
-		GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, Gui_AUTOMATIC,
-			L"Cancel", gui_button_cb_cancel, this, 0);
-		
-		GuiObject scrolledWindow = XmCreateScrolledWindow (d_windowForm, "list", NULL, 0);
-		XtVaSetValues (scrolledWindow, 
-			XmNrightAttachment, XmATTACH_FORM,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, LIST_Y + Machine_getMenuBarHeight (),
-			XmNbottomAttachment, XmATTACH_FORM,
-			XmNleftAttachment, XmATTACH_FORM, NULL);
+	GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
+		L"Change", gui_button_cb_change, this, 0);
+	x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
+	GuiButton_createShown (d_windowForm, x, x + buttonWidth, y, y + Gui_PUSHBUTTON_HEIGHT,
+		L"Cancel", gui_button_cb_cancel, this, 0);
 
-		d_scrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
-			xmScrollBarWidgetClass, scrolledWindow,
-			XmNheight, SCROLL_BAR_WIDTH,
-			XmNminimum, 0,
-			XmNmaximum, d_numberOfFields,
-			XmNvalue, 0,
-			XmNsliderSize, d_numberOfFields < kDataSubEditor_MAXNUM_ROWS ? d_numberOfFields : kDataSubEditor_MAXNUM_ROWS,
-			XmNincrement, 1, XmNpageIncrement, kDataSubEditor_MAXNUM_ROWS - 1,
-			NULL);
-		XtVaSetValues (scrolledWindow, XmNverticalScrollBar, d_scrollBar, NULL);
-		GuiObject_show (scrolledWindow);
-		XtAddCallback (d_scrollBar, XmNvalueChangedCallback, gui_cb_scroll, (XtPointer) this);
-		XtAddCallback (d_scrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) this);
-		GuiObject form = XmCreateForm (scrolledWindow, "list", NULL, 0);
-	#elif gtk
-		GuiObject outerBox = gtk_vbox_new (0, 0);
-		GuiObject buttonBox = gtk_hbutton_box_new ();
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttonBox), GTK_BUTTONBOX_START);
-		gtk_box_pack_start (GTK_BOX (outerBox), GTK_WIDGET (buttonBox), 0, 0, 3);
-		
-		GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
-			L"Change", gui_button_cb_change, this, 0);
-		x += buttonWidth + Gui_HORIZONTAL_DIALOG_SPACING;
-		GuiButton_createShown (buttonBox, x, x + buttonWidth, y, Gui_AUTOMATIC,
-			L"Cancel", gui_button_cb_cancel, this, 0);
-		
-		GuiObject scrolledWindow = gtk_scrolled_window_new (NULL, NULL);
-		
-		GuiObject form = gtk_vbox_new (0, 3);
-		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrolledWindow), GTK_WIDGET (form));
-		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledWindow), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-		gtk_box_pack_start (GTK_BOX (outerBox), GTK_WIDGET (scrolledWindow), 1, 1, 3);
-		gtk_container_add (GTK_CONTAINER (d_windowForm), GTK_WIDGET (outerBox));
-		
-		GuiObject_show (outerBox);
-		GuiObject_show (buttonBox);
-		GuiObject_show (scrolledWindow);
-	#elif ! useCarbon
-		GuiObject form = NULL;   // TODO
-	#endif
-	
+	y = LIST_Y + Machine_getMenuBarHeight ();
+	d_scrollBar = GuiScrollBar_createShown (d_windowForm,
+		- SCROLL_BAR_WIDTH, 0, y, 0,
+		0, d_numberOfFields, 0, d_numberOfFields < kDataSubEditor_MAXNUM_ROWS ? d_numberOfFields : kDataSubEditor_MAXNUM_ROWS, 1, kDataSubEditor_MAXNUM_ROWS - 1,
+		gui_cb_scroll, this, 0);
+
+	y += 10;
 	for (int i = 1; i <= kDataSubEditor_MAXNUM_ROWS; i ++) {
-		y = Gui_TOP_DIALOG_SPACING + (i - 1) * ROW_HEIGHT;
-		d_fieldData [i]. label = GuiLabel_create (form, 0, 200, y, Gui_AUTOMATIC, L"label", 0);   // no fixed x value: sometimes indent
-		d_fieldData [i]. button = GuiButton_create (form, BUTTON_X, BUTTON_X + buttonWidth, y, Gui_AUTOMATIC,
+		d_fieldData [i]. label = GuiLabel_create (d_windowForm, 0, 200, y, y + Gui_TEXTFIELD_HEIGHT, L"label", 0);   // no fixed x value: sometimes indent
+		d_fieldData [i]. button = GuiButton_create (d_windowForm, BUTTON_X, BUTTON_X + buttonWidth, y, y + Gui_TEXTFIELD_HEIGHT,
 			L"Open", gui_button_cb_open, this, 0);
-		d_fieldData [i]. text = GuiText_create (form, TEXT_X, 0, y, Gui_AUTOMATIC, 0);
+		d_fieldData [i]. text = GuiText_create (d_windowForm, TEXT_X, -30, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+		d_fieldData [i]. y = y;
+		y += ROW_HEIGHT;
 	}
-	
-	GuiObject_show (form);
 }
 
 static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (DataSubEditor); Melder_help (L"Inspect"); }
@@ -376,7 +330,7 @@ static void DataSubEditor_init (DataSubEditor me, DataEditor root, const wchar_t
 	my d_description = description;
 	my d_topField = 1;
 	my d_numberOfFields = my v_countFields ();
-	Editor_init (me, root -> d_windowParent, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL);
+	Editor_init (me, 0, 0, EDITOR_WIDTH, EDITOR_HEIGHT, title, NULL);
 	update (me);
 }
 
@@ -388,7 +342,7 @@ long structStructEditor :: v_countFields () {
 	return Data_Description_countMembers (d_description);
 }
 
-static const wchar * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
+static const wchar_t * singleTypeToText (void *address, int type, void *tagType, MelderString *buffer) {
 	switch (type) {
 		case bytewa:   MelderString_append (buffer, Melder_integer (* (signed char *)    address)); break;
 		case intwa:    MelderString_append (buffer, Melder_integer (* (int *)            address)); break;
@@ -423,7 +377,7 @@ static void showStructMember (
 	Data_Description structDescription,   /* The description of (the first member of) the struct. */
 	Data_Description memberDescription,   /* The description of the current member. */
 	DataSubEditor_FieldData fieldData,   /* The widgets in which to show the info about the current member. */
-	wchar *history)
+	wchar_t *history)
 {
 	int type = memberDescription -> type, rank = memberDescription -> rank, isSingleType = type <= maxsingletypewa && rank == 0;
 	unsigned char *memberAddress = (unsigned char *) structAddress + memberDescription -> offset;
@@ -435,19 +389,19 @@ static void showStructMember (
 		MelderString_append (& buffer, strip_d (memberDescription -> name),
 			rank == 0 ? L"" : rank == 1 || rank == 3 || rank < 0 ? L" [ ]" : L" [ ] [ ]");
 	}
-	GuiLabel_setString (fieldData -> label, buffer.string);
-	GuiObject_move (fieldData -> label, type == inheritwa ? 0 : NAME_X, Gui_AUTOMATIC);
-	GuiObject_show (fieldData -> label);
+	fieldData -> label -> f_setString (buffer.string);
+	fieldData -> label -> f_move (type == inheritwa ? 0 : NAME_X, fieldData -> y);
+	fieldData -> label -> f_show ();
 
 	/* Show the value (for a single type) or a button (for a composite type). */
 	if (isSingleType) {
 		#if motif
-			XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+			XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 		#endif
 		MelderString_empty (& buffer);
 		const wchar_t *text = singleTypeToText (memberAddress, type, memberDescription -> tagType, & buffer);
-		GuiText_setString (fieldData -> text, text);
-		GuiObject_show (fieldData -> text);
+		fieldData -> text -> f_setString (text);
+		fieldData -> text -> f_show ();
 		fieldData -> address = memberAddress;
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
@@ -466,7 +420,7 @@ static void showStructMember (
 		fieldData -> maximum = maximum;
 		fieldData -> rank = 1;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
-		GuiObject_show (fieldData -> button);
+		fieldData -> button -> f_show ();
 	} else if (rank < 0) {
 		/*
 		 * This represents an in-line array.
@@ -481,7 +435,7 @@ static void showStructMember (
 		fieldData -> maximum = maximum;   /* Probably between -1 and capacity - 1. */
 		fieldData -> rank = rank;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
-		GuiObject_show (fieldData -> button);
+		fieldData -> button -> f_show ();
 	} else if (rank == 3) {
 		/*
 		 * This represents an in-line set.
@@ -492,7 +446,7 @@ static void showStructMember (
 		fieldData -> maximum = ((int (*) (const wchar_t *)) memberDescription -> max1) (L"\n");
 		fieldData -> rank = rank;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
-		GuiObject_show (fieldData -> button);
+		fieldData -> button -> f_show ();
 	} else if (rank == 2) {
 		void *arrayAddress = * (void **) memberAddress;
 		long min1, max1, min2, max2;
@@ -514,24 +468,24 @@ static void showStructMember (
 		fieldData -> max2 = max2;
 		fieldData -> rank = 2;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
-		GuiObject_show (fieldData -> button);
+		fieldData -> button -> f_show ();
 	} else if (type == structwa) {   /* In-line struct. */
 		fieldData -> address = memberAddress;   /* Direct. */
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
-		GuiObject_show (fieldData -> button);
+		fieldData -> button -> f_show ();
 	} else if (type == objectwa || type == collectionwa) {
 		fieldData -> address = * (Data *) memberAddress;   /* Indirect. */
 		if (! fieldData -> address) return;   /* No button if no object. */
 		fieldData -> description = memberDescription;
 		fieldData -> rank = 0;
 		Melder_free (fieldData -> history); fieldData -> history = Melder_wcsdup_f (history);
-		GuiObject_show (fieldData -> button);
+		fieldData -> button -> f_show ();
 	}
 }
 
-static void showStructMembers (DataSubEditor me, void *structAddress, Data_Description structDescription, int fromMember, wchar *history) {
+static void showStructMembers (DataSubEditor me, void *structAddress, Data_Description structDescription, int fromMember, wchar_t *history) {
 	int i = 1;
 	Data_Description memberDescription = structDescription;
 	for (; i < fromMember && memberDescription -> name != NULL; i ++, memberDescription ++)
@@ -590,17 +544,17 @@ void structVectorEditor :: v_showMembers () {
 		if (isSingleType) {
 			MelderString_append (& buffer, strip_d (d_description -> name), L" [",
 				d_description -> rank == 3 ? ((const wchar_t * (*) (int)) d_description -> min1) (ielement) : Melder_integer (ielement), L"]");
-			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-			GuiLabel_setString (fieldData -> label, buffer.string);
-			GuiObject_show (fieldData -> label);
+			fieldData -> label -> f_move (0, fieldData -> y);
+			fieldData -> label -> f_setString (buffer.string);
+			fieldData -> label -> f_show ();
 
 			MelderString_empty (& buffer);
 			const wchar_t *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 			#endif
-			GuiText_setString (fieldData -> text, text);
-			GuiObject_show (fieldData -> text);
+			fieldData -> text -> f_setString (text);
+			fieldData -> text -> f_show ();
 			fieldData -> address = elementAddress;
 			fieldData -> description = d_description;
 		} else if (type == structwa) {
@@ -621,9 +575,9 @@ void structVectorEditor :: v_showMembers () {
 				d_irow --;
 			} else {
 				MelderString_append (& buffer, strip_d (d_description -> name), L" [", Melder_integer (ielement), L"]: ---------------------------");
-				GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-				GuiLabel_setString (fieldData -> label, buffer.string);
-				GuiObject_show (fieldData -> label);
+				fieldData -> label -> f_move (0, fieldData -> y);
+				fieldData -> label -> f_setString (buffer.string);
+				fieldData -> label -> f_show ();
 			}
 			showStructMembers (this, elementAddress, * (Data_Description *) d_description -> tagType, skip, history.string);
 		} else if (type == objectwa) {
@@ -638,9 +592,9 @@ void structVectorEditor :: v_showMembers () {
 			MelderString_append (& history, L"[", Melder_integer (ielement), L"]");
 
 			MelderString_append (& buffer, strip_d (d_description -> name), L" [", Melder_integer (ielement), L"]");
-			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-			GuiLabel_setString (fieldData -> label, buffer.string);
-			GuiObject_show (fieldData -> label);
+			fieldData -> label -> f_move (0, fieldData -> y);
+			fieldData -> label -> f_setString (buffer.string);
+			fieldData -> label -> f_show ();
 
 			Data object = * (Data *) elementAddress;
 			if (object == NULL) return;   // no button if no object
@@ -650,7 +604,7 @@ void structVectorEditor :: v_showMembers () {
 			fieldData -> rank = 0;
 			if (fieldData -> history) Melder_free (fieldData -> history);
 			fieldData -> history = Melder_wcsdup_f (history.string);
-			GuiObject_show (fieldData -> button);			
+			fieldData -> button -> f_show ();
 		}
 	}
 }
@@ -700,17 +654,17 @@ void structMatrixEditor :: v_showMembers () {
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);
 			MelderString_append (& buffer, strip_d (d_description -> name), L" [", Melder_integer (irow), L"] [", Melder_integer (icolumn), L"]");
-			GuiObject_move (fieldData -> label, 0, Gui_AUTOMATIC);
-			GuiLabel_setString (fieldData -> label, buffer.string);
-			GuiObject_show (fieldData -> label);
+			fieldData -> label -> f_move (0, fieldData -> y);
+			fieldData -> label -> f_setString (buffer.string);
+			fieldData -> label -> f_show ();
 
 			MelderString_empty (& buffer);
 			const wchar_t *text = singleTypeToText (elementAddress, type, d_description -> tagType, & buffer);
 			#if motif
-				XtVaSetValues (fieldData -> text, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
+				XtVaSetValues (fieldData -> text -> d_widget, XmNcolumns, stringLengths [type], NULL);   // TODO: change to GuiObject_size
 			#endif
-			GuiText_setString (fieldData -> text, text);
-			GuiObject_show (fieldData -> text);
+			fieldData -> text -> f_setString (text);
+			fieldData -> text -> f_show ();
 			fieldData -> address = elementAddress;
 			fieldData -> description = d_description;
 		}
@@ -746,7 +700,7 @@ static void ClassEditor_showMembers_recursive (ClassEditor me, ClassInfo klas) {
 	if (parentClass != classData) {
 		ClassEditor_showMembers_recursive (me, parentClass);
 		classFieldsTraversed = Data_Description_countMembers (Class_getDescription (parentClass));
-		Melder_casual ("ClassEditor_showMembers_recursive: classFieldsTraversed = %d", classFieldsTraversed);
+		//Melder_casual ("ClassEditor_showMembers_recursive: classFieldsTraversed = %d", classFieldsTraversed);
 	}
 	showStructMembers (me, my d_address, description, my d_irow ? 1 : my d_topField - classFieldsTraversed, my name);
 }
@@ -805,14 +759,13 @@ void structDataEditor :: v_dataChanged () {
 	}
 }
 
-DataEditor DataEditor_create (GuiObject parent, const wchar *title, Any data) {
+DataEditor DataEditor_create (const wchar_t *title, Data data) {
 	try {
-		ClassInfo klas = ((Thing) data) -> classInfo;
+		ClassInfo klas = data -> classInfo;
 		if (Class_getDescription (klas) == NULL)
 			Melder_throw ("Class ", klas -> className, " cannot be inspected.");
 		autoDataEditor me = Thing_new (DataEditor);
 		my d_children = Collection_create (classDataSubEditor, 10);
-		my d_windowParent = parent;
 		ClassEditor_init (me.peek(), me.peek(), title, data, Class_getDescription (klas));
 		return me.transfer();
 	} catch (MelderError) {

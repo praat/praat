@@ -38,7 +38,7 @@ static void draw_SpectrumHann (Graphics g, double f1, double f2, int stop, int g
 			my z [1] [i] = 1.0 - my z [1] [i];
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textLeft (g, TRUE, L"Intensity filter %H (%f)");
+		Graphics_textLeft (g, TRUE, L"Amplitude filter %H (%f)");
 		Graphics_markLeft (g, 0, TRUE, TRUE, FALSE, NULL);
 		Graphics_markLeft (g, 1, TRUE, TRUE, FALSE, NULL);
 	}

@@ -61,10 +61,10 @@ Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, do
 		result -> z [1..nf] [1..nt] = 0.0;
 */
 
-void Spectrogram_paintInside (I, Graphics g,
+void Spectrogram_paintInside (Spectrogram me, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, double maximum, int autoscaling,
 	double dynamicRange, double preemphasis, double dynamicCompression);
-void Spectrogram_paint (I, Graphics g,
+void Spectrogram_paint (Spectrogram me, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, double maximum, int autoscaling,
 	double dynamicRange, double preemphasis, double dynamicCompression,
 	int garnish);
@@ -83,14 +83,14 @@ void Spectrogram_paint (I, Graphics g,
 			a boolean that determines if a box, ticks, numbers, and text are written in the margins.
 */
 
-Spectrogram Matrix_to_Spectrogram (I);
+Spectrogram Matrix_to_Spectrogram (Matrix me);
 /*
 	Create a Spectrogram from a Matrix,
 	with deep copy of all its attributes, except class information and methods.
 	Return NULL if out of memory.  
 */
 
-Matrix Spectrogram_to_Matrix (I);
+Matrix Spectrogram_to_Matrix (Spectrogram me);
 /*
 	Create a Matrix from a Spectrogram,
 	with deep copy of all its attributes, except class information and methods.

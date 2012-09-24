@@ -19,7 +19,6 @@
 
 #undef Polygon
 #undef Pattern
-#undef Boolean
 #undef Collection
 #undef Picture
 #undef Movie

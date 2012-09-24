@@ -79,7 +79,7 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 }
 
 void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
-	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish, const wchar *method)
+	double tmin, double tmax, double fmin, double fmax, int nonPeriodicLineType, int garnish, const wchar_t *method)
 {
 	long n = my points -> size, imin, imax, i;
 	if (nonPeriodicLineType == 0) {

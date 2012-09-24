@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -195,7 +195,7 @@ void structOTGrammarEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 static OTGrammar drawTableau_ot;
-static const wchar *drawTableau_input;
+static const wchar_t *drawTableau_input;
 static bool drawTableau_constraintsAreDrawnVertically;
 static void drawTableau (Graphics g) {
 	OTGrammar_drawTableau (drawTableau_ot, g, drawTableau_constraintsAreDrawnVertically, drawTableau_input);
@@ -203,7 +203,7 @@ static void drawTableau (Graphics g) {
 
 void structOTGrammarEditor :: v_draw () {
 	OTGrammar ot = (OTGrammar) data;
-	static wchar text [1000];
+	static wchar_t text [1000];
 	Graphics_clearWs (g);
 	if (ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG ||
 		ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
@@ -241,17 +241,17 @@ void structOTGrammarEditor :: v_draw () {
 	Graphics_setAtSignIsLink (g, TRUE);
 }
 
-int structOTGrammarEditor :: v_goToPage (const wchar *title) {
+int structOTGrammarEditor :: v_goToPage (const wchar_t *title) {
 	if (title == NULL) return 1;
 	selected = wcstol (title, NULL, 10);
 	return 1;
 }
 
-OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar *title, OTGrammar ot) {
+OTGrammarEditor OTGrammarEditor_create (const wchar_t *title, OTGrammar ot) {
 	try {
 		autoOTGrammarEditor me = Thing_new (OTGrammarEditor);
 		my data = ot;
-		HyperPage_init (me.peek(), parent, title, ot);
+		HyperPage_init (me.peek(), title, ot);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("OTGrammar window not created.");

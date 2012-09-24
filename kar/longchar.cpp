@@ -27,7 +27,7 @@
  * pb 2005/03/08 ps encoding; SILIPA93 encoding for Windows and Mac
  * pb 2005/09/18 SILIPA93 widths for fontless EPS files, including bold
  * pb 2006/11/17 Unicode
- * pb 2006/12/05 first wchar support
+ * pb 2006/12/05 first wchar_t support
  * pb 2006/12/15 stress marks
  * pb 2007/08/08 Longchar_genericizeW
  * pb 2008/02/27 \d- and \D-

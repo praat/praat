@@ -34,11 +34,11 @@ void praat_dia_timeRange (Any dia);
 void praat_get_timeRange (Any dia, double *tmin, double *tmax);
 int praat_get_frequencyRange (Any dia, double *fmin, double *fmax);
 
-static const wchar *STRING_FROM_FREQUENCY_HZ = L"left Frequency range (Hz)";
-static const wchar *STRING_TO_FREQUENCY_HZ = L"right Frequency range (Hz)";
-static const wchar *STRING_TIER_NUMBER = L"Tier number";
-static const wchar *STRING_INTERVAL_NUMBER = L"Interval number";
-static const wchar *STRING_POINT_NUMBER = L"Point number";
+static const wchar_t *STRING_FROM_FREQUENCY_HZ = L"left Frequency range (Hz)";
+static const wchar_t *STRING_TO_FREQUENCY_HZ = L"right Frequency range (Hz)";
+static const wchar_t *STRING_TIER_NUMBER = L"Tier number";
+static const wchar_t *STRING_INTERVAL_NUMBER = L"Interval number";
+static const wchar_t *STRING_POINT_NUMBER = L"Point number";
 
 void praat_TimeFunction_modify_init (ClassInfo klas);   // Modify buttons for time-based subclasses of Function.
 
@@ -703,11 +703,11 @@ FORM (SpellingChecker_nextNotAllowedWord, L"Next not allowed word?", L"SpellingC
 DO
 	LOOP {
 		iam (SpellingChecker);
-		wchar *sentence = GET_STRING (L"sentence");
+		wchar_t *sentence = GET_STRING (L"sentence");
 		long startingCharacter = GET_INTEGER (L"Starting character");
 		if (startingCharacter < 0) Melder_throw ("Starting character should be 0 or positive.");
 		if (startingCharacter > (int) wcslen (sentence)) Melder_throw ("Starting character should not exceed end of sentence.");
-		wchar *nextNotAllowedWord = SpellingChecker_nextNotAllowedWord (me, sentence, & startingCharacter);
+		wchar_t *nextNotAllowedWord = SpellingChecker_nextNotAllowedWord (me, sentence, & startingCharacter);
 		Melder_information (nextNotAllowedWord);
 	}
 END
@@ -794,7 +794,7 @@ DO
 		iam (TextGrid);
 		int itier = GET_INTEGER (STRING_TIER_NUMBER);
 		int position = GET_INTEGER (L"Position");
-		const wchar *name = GET_STRING (L"Name");
+		const wchar_t *name = GET_STRING (L"Name");
 		if (itier > my tiers -> size) itier = my tiers -> size;
 		autoAnyTier newTier = Data_copy ((AnyTier) my tiers -> item [itier]);
 		Thing_setName (newTier.peek(), name);
@@ -816,7 +816,7 @@ static void cb_TextGridEditor_publication (Editor editor, void *closure, Data pu
 			int IOBJECT;
 			LOOP {
 				iam (Spectrum);
-				autoSpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+				autoSpectrumEditor editor2 = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 				praat_installEditor (editor2.transfer(), IOBJECT);
 			}
 		}
@@ -832,7 +832,7 @@ DIRECT (TextGrid_edit)
 	}
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, true, NULL);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, NULL);
 		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
@@ -848,7 +848,7 @@ DIRECT (TextGrid_LongSound_edit)
 	Melder_assert (ilongSound != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, false, NULL);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, NULL);
 		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
 		praat_installEditor2 (editor.transfer(), IOBJECT, ilongSound);
 	}
@@ -866,7 +866,7 @@ DIRECT (TextGrid_SpellingChecker_edit)
 	Melder_assert (ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, true, spellingChecker);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, spellingChecker);
 		praat_installEditor2 (editor.transfer(), IOBJECT, ispellingChecker);
 	}
 END
@@ -883,7 +883,7 @@ DIRECT (TextGrid_LongSound_SpellingChecker_edit)
 	Melder_assert (ilongSound != 0 && ispellingChecker != 0);
 	LOOP if (CLASS == classTextGrid) {
 		iam (TextGrid);
-		autoTextGridEditor editor = TextGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, longSound, false, spellingChecker);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, longSound, false, spellingChecker);
 		praat_installEditor3 (editor.transfer(), IOBJECT, ilongSound, ispellingChecker);
 	}
 END
@@ -1059,7 +1059,7 @@ FORM (TextGrid_getLabelOfInterval, L"TextGrid: Get label of interval", 0)
 DO
 	TextInterval interval = pr_TextGrid_peekInterval (dia);
 	MelderInfo_open ();
-	MelderInfo_write1 (interval -> text);
+	MelderInfo_write (interval -> text);
 	MelderInfo_close ();
 END
 	
@@ -1120,7 +1120,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		int position = GET_INTEGER (L"Position");
-		wchar *name = GET_STRING (L"Name");
+		wchar_t *name = GET_STRING (L"Name");
 		autoIntervalTier tier = IntervalTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
 		Thing_setName (tier.peek(), name);
@@ -1151,7 +1151,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		int position = GET_INTEGER (L"Position");
-		wchar *name = GET_STRING (L"Name");
+		wchar_t *name = GET_STRING (L"Name");
 		autoTextTier tier = TextTier_create (my xmin, my xmax);
 		if (position > my tiers -> size) position = my tiers -> size + 1;
 		Thing_setName (tier.peek(), name);
@@ -1220,7 +1220,7 @@ FORM (TextGrid_getCentrePoints, L"TextGrid: Get centre points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar *text = GET_STRING (L"...the text");
+	wchar_t *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getCentrePoints (me, GET_INTEGER (STRING_TIER_NUMBER),
@@ -1235,7 +1235,7 @@ FORM (TextGrid_getEndPoints, L"TextGrid: Get end points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar *text = GET_STRING (L"...the text");
+	wchar_t *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getEndPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
@@ -1250,7 +1250,7 @@ FORM (TextGrid_getStartingPoints, L"TextGrid: Get starting points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar *text = GET_STRING (L"...the text");
+	wchar_t *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getStartingPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
@@ -1265,7 +1265,7 @@ FORM (TextGrid_getPoints, L"Get points", 0)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
-	wchar *text = GET_STRING (L"...the text");
+	wchar_t *text = GET_STRING (L"...the text");
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
@@ -1548,7 +1548,7 @@ void praat_uvafon_TextGrid_init (void);
 void praat_uvafon_TextGrid_init (void) {
 	Thing_recognizeClassByOtherName (classTextTier, L"MarkTier");
 
-	TextGridEditor_prefs ();
+	structTextGridEditor :: f_preferences ();
 
 	praat_addAction1 (classIntervalTier, 0, L"IntervalTier help", 0, 0, DO_IntervalTier_help);
 	praat_addAction1 (classIntervalTier, 1, L"Save as Xwaves label file...", 0, 0, DO_IntervalTier_writeToXwaves);

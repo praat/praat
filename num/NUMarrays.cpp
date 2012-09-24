@@ -208,7 +208,7 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 /*** Typed I/O routines for vectors and matrices. ***/
 
 #define FUNCTION(type,storage)  \
-	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar *name) { \
+	void NUMvector_writeText_##storage (const type *v, long lo, long hi, MelderFile file, const wchar_t *name) { \
 		texputintro (file, name, L" []: ", hi >= lo ? NULL : L"(empty)", 0,0,0); \
 		for (long i = lo; i <= hi; i ++) \
 			texput##storage (file, v [i], name, L" [", Melder_integer (i), L"]", 0,0); \

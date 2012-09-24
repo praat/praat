@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,15 +41,15 @@
 #endif
 
 struct SoundRecorder_Device {
-	wchar name [1+40];
+	wchar_t name [1+40];
 	bool canDo;
-	GuiObject button;
+	GuiRadioButton button;
 };
 
 struct SoundRecorder_Fsamp {
 	double fsamp;
 	bool canDo;
-	GuiObject button;
+	GuiRadioButton button;
 };
 
 #define SoundRecorder_IDEVICE_MAX  8
@@ -81,9 +81,12 @@ Thing_define (SoundRecorder, Editor) {
 		struct SoundRecorder_Device device_ [1+SoundRecorder_IDEVICE_MAX];
 		struct SoundRecorder_Fsamp fsamp_ [1+SoundRecorder_IFSAMP_MAX];
 		short *buffer;
-		GuiObject monoButton, stereoButton, meter;
-		GuiObject progressScale, recordButton, stopButton, playButton;
-		GuiObject soundName, cancelButton, applyButton, okButton;
+		GuiRadioButton monoButton, stereoButton;
+		GuiDrawingArea meter;
+		GuiScale progressScale;
+		GuiButton recordButton, stopButton, playButton;
+		GuiText soundName;
+		GuiButton cancelButton, applyButton, okButton;
 		Graphics graphics;
 		bool inputUsesPortAudio;
 		const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX];
@@ -116,14 +119,14 @@ Thing_define (SoundRecorder, Editor) {
 		virtual void v_createHelpMenuItems (EditorMenu menu);
 };
 
-SoundRecorder SoundRecorder_create (GuiObject parent, int numberOfChannels);
+SoundRecorder SoundRecorder_create (int numberOfChannels);
 /*
 	Function:
 		create a SoundRecorder, which is an interactive window
 		for recording in 16-bit mono or stereo.
 */
 
-void SoundRecorder_prefs (void);
+void SoundRecorder_preferences (void);
 int SoundRecorder_getBufferSizePref_MB (void);
 void SoundRecorder_setBufferSizePref_MB (int size);
 

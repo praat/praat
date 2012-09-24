@@ -1,6 +1,6 @@
 /* Ltas.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,16 @@ Thing_implement (Ltas, Vector, 2);
 void structLtas :: v_info () {
 	double meanPowerDensity;
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Frequency domain:");
-	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
-	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total frequency domain: ", Melder_double (xmax - xmin), L" Hz");
-	MelderInfo_writeLine1 (L"Frequency sampling:");
-	MelderInfo_writeLine2 (L"   Number of frequency bands: ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"   Width of each band: ", Melder_double (dx), L" Hz");
-	MelderInfo_writeLine3 (L"   First band centred at: ", Melder_double (x1), L" Hz");
+	MelderInfo_writeLine (L"Frequency domain:");
+	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
+	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
+	MelderInfo_writeLine (L"   Total frequency domain: ", Melder_double (xmax - xmin), L" Hz");
+	MelderInfo_writeLine (L"Frequency sampling:");
+	MelderInfo_writeLine (L"   Number of frequency bands: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"   Width of each band: ", Melder_double (dx), L" Hz");
+	MelderInfo_writeLine (L"   First band centred at: ", Melder_double (x1), L" Hz");
 	meanPowerDensity = Sampled_getMean (this, xmin, xmax, 0, 1, FALSE);
-	MelderInfo_writeLine3 (L"Total SPL: ", Melder_single (10.0 * log10 (meanPowerDensity * (xmax - xmin))), L" dB");
+	MelderInfo_writeLine (L"Total SPL: ", Melder_single (10.0 * log10 (meanPowerDensity * (xmax - xmin))), L" dB");
 }
 
 double structLtas :: v_convertStandardToSpecialUnit (double value, long ilevel, int unit) {
@@ -73,7 +73,7 @@ Ltas Ltas_create (long nx, double dx) {
 	}
 }
 
-void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish, const wchar *method) {
+void Ltas_draw (Ltas me, Graphics g, double fmin, double fmax, double minimum, double maximum, int garnish, const wchar_t *method) {
 	Vector_draw (me, g, & fmin, & fmax, & minimum, & maximum, 1.0, method);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

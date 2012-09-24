@@ -2,7 +2,7 @@
 #define _PitchEditor_h_
 /* PitchEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ Thing_define (PitchEditor, FunctionEditor) {
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
 
-PitchEditor PitchEditor_create (GuiObject parent, const wchar *title, Pitch pitch);
+PitchEditor PitchEditor_create (const wchar_t *title, Pitch pitch);
 
 /* End of file PitchEditor.h */
 #endif

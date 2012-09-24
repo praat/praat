@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,15 +50,15 @@ Thing_implement (Spectrum, Matrix, 2);
 
 void structSpectrum :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Frequency domain:");
-	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
-	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
-	MelderInfo_writeLine1 (L"Frequency sampling:");
-	MelderInfo_writeLine2 (L"   Number of frequency bands (bins): ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"   Frequency step (bin width): ", Melder_double (dx), L" Hz");
-	MelderInfo_writeLine3 (L"   First frequency band around (bin centre at): ", Melder_double (x1), L" Hz");
-	MelderInfo_writeLine3 (L"Total energy: ", Melder_single (Spectrum_getBandEnergy (this, 0.0, 0.0)), L" Pa2 sec");
+	MelderInfo_writeLine (L"Frequency domain:");
+	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
+	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
+	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
+	MelderInfo_writeLine (L"Frequency sampling:");
+	MelderInfo_writeLine (L"   Number of frequency bands (bins): ", Melder_integer (nx));
+	MelderInfo_writeLine (L"   Frequency step (bin width): ", Melder_double (dx), L" Hz");
+	MelderInfo_writeLine (L"   First frequency band around (bin centre at): ", Melder_double (x1), L" Hz");
+	MelderInfo_writeLine (L"Total energy: ", Melder_single (Spectrum_getBandEnergy (this, 0.0, 0.0)), L" Pa2 sec");
 }
 
 double structSpectrum :: v_getValueAtSample (long isamp, long which, int units) {

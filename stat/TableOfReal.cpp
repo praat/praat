@@ -1,6 +1,6 @@
 /* TableOfReal.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,20 +46,20 @@ static void fprintquotedstring (MelderFile file, const wchar_t *s) {
 
 void structTableOfReal :: v_writeText (MelderFile file) {
 	texputi4 (file, numberOfColumns, L"numberOfColumns", 0,0,0,0,0);
-	MelderFile_write1 (file, L"\ncolumnLabels []: ");
-	if (numberOfColumns < 1) MelderFile_write1 (file, L"(empty)");
-	MelderFile_write1 (file, L"\n");
+	MelderFile_write (file, L"\ncolumnLabels []: ");
+	if (numberOfColumns < 1) MelderFile_write (file, L"(empty)");
+	MelderFile_write (file, L"\n");
 	for (long i = 1; i <= numberOfColumns; i ++) {
 		fprintquotedstring (file, columnLabels [i]);
 		MelderFile_writeCharacter (file, '\t');
 	}
 	texputi4 (file, numberOfRows, L"numberOfRows", 0,0,0,0,0);
 	for (long i = 1; i <= numberOfRows; i ++) {
-		MelderFile_write3 (file, L"\nrow [", Melder_integer (i), L"]: ");
+		MelderFile_write (file, L"\nrow [", Melder_integer (i), L"]: ");
 		fprintquotedstring (file, rowLabels [i]);
 		for (long j = 1; j <= numberOfColumns; j ++) {
 			double x = data [i] [j];
-			MelderFile_write2 (file, L"\t", Melder_double (x));
+			MelderFile_write (file, L"\t", Melder_double (x));
 		}
 	}
 }
@@ -67,13 +67,13 @@ void structTableOfReal :: v_writeText (MelderFile file) {
 void structTableOfReal :: v_readText (MelderReadText a_text) {
 	numberOfColumns = texgeti4 (a_text);
 	if (numberOfColumns >= 1) {
-		columnLabels = NUMvector <wchar*> (1, numberOfColumns);
+		columnLabels = NUMvector <wchar_t*> (1, numberOfColumns);
 		for (long i = 1; i <= numberOfColumns; i ++)
 			columnLabels [i] = texgetw2 (a_text);
 	}
 	numberOfRows = texgeti4 (a_text);
 	if (numberOfRows >= 1) {
-		rowLabels = NUMvector <wchar*> (1, numberOfRows);
+		rowLabels = NUMvector <wchar_t*> (1, numberOfRows);
 	}
 	if (numberOfRows >= 1 && numberOfColumns >= 1) {
 		data = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
@@ -87,15 +87,15 @@ void structTableOfReal :: v_readText (MelderReadText a_text) {
 
 void structTableOfReal :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
-const wchar * structTableOfReal :: v_getRowStr (long irow) {
+const wchar_t * structTableOfReal :: v_getRowStr (long irow) {
 	if (irow < 1 || irow > numberOfRows) return NULL;
 	return rowLabels [irow] ? rowLabels [irow] : L"";
 }
-const wchar * structTableOfReal :: v_getColStr (long icol) {
+const wchar_t * structTableOfReal :: v_getColStr (long icol) {
 	if (icol < 1 || icol > numberOfColumns) return NULL;
 	return columnLabels [icol] ? columnLabels [icol] : L"";
 }
@@ -118,8 +118,8 @@ void TableOfReal_init (TableOfReal me, long numberOfRows, long numberOfColumns) 
 		Melder_throw ("Cannot create cell-less table.");
 	my numberOfRows = numberOfRows;
 	my numberOfColumns = numberOfColumns;
-	my rowLabels = NUMvector <wchar*> (1, numberOfRows);
-	my columnLabels = NUMvector <wchar*> (1, numberOfColumns);
+	my rowLabels = NUMvector <wchar_t*> (1, numberOfRows);
+	my columnLabels = NUMvector <wchar_t*> (1, numberOfColumns);
 	my data = NUMmatrix <double> (1, my numberOfRows, 1, my numberOfColumns);
 }
 
@@ -201,7 +201,7 @@ void TableOfReal_insertRow (TableOfReal me, long rowNumber) {
 		if (rowNumber < 1 || rowNumber > my numberOfRows + 1)
 			Melder_throw ("Cannot create row ", rowNumber, ".");
 		autoNUMmatrix <double> data (1, my numberOfRows + 1, 1, my numberOfColumns);
-		autoNUMvector <wchar *> rowLabels (1, my numberOfRows + 1);   // not autostringvector...
+		autoNUMvector <wchar_t *> rowLabels (1, my numberOfRows + 1);   // not autostringvector...
 		for (long irow = 1; irow < rowNumber; irow ++)	{
 			rowLabels [irow] = my rowLabels [irow];   // ...because this is a dangling copy
 			for (long icol = 1; icol <= my numberOfColumns; icol ++)
@@ -257,7 +257,7 @@ void TableOfReal_insertColumn (TableOfReal me, long columnNumber) {
 		if (columnNumber < 1 || columnNumber > my numberOfColumns + 1)
 			Melder_throw ("Cannot create column ", columnNumber, ".");
 		autoNUMmatrix <double> data (1, my numberOfRows, 1, my numberOfColumns + 1);
-		autoNUMvector <wchar*> columnLabels (1, my numberOfColumns + 1);   // not autostringvector...
+		autoNUMvector <wchar_t*> columnLabels (1, my numberOfColumns + 1);   // not autostringvector...
 		for (long j = 1; j < columnNumber; j ++) {
 			columnLabels [j] = my columnLabels [j];   // ...because this is a dangling copy
 			for (long i = 1; i <= my numberOfRows; i ++) data [i] [j] = my data [i] [j];
@@ -307,7 +307,7 @@ void TableOfReal_setColumnLabel (TableOfReal me, long columnNumber, const wchar_
 	}
 }
 
-void TableOfReal_formula (TableOfReal me, const wchar *expression, Interpreter interpreter, TableOfReal thee) {
+void TableOfReal_formula (TableOfReal me, const wchar_t *expression, Interpreter interpreter, TableOfReal thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
@@ -457,13 +457,13 @@ TableOfReal TableOfReal_extractColumnsWhereLabel (TableOfReal me, int which_Meld
  * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
  * Overlap is allowed. Ranges can go up and down.
  */
-static long *getElementsOfRanges (const wchar *ranges, long maximumElement, long *numberOfElements, const wchar *elementType) {
+static long *getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, const wchar_t *elementType) {
 	/*
 	 * Count the elements.
 	 */
 	long previousElement = 0;
 	*numberOfElements = 0;
-	const wchar *p = & ranges [0];
+	const wchar_t *p = & ranges [0];
 	for (;;) {
 		while (*p == ' ' || *p == '\t') p ++;
 		if (*p == '\0') break;
@@ -537,7 +537,7 @@ static long *getElementsOfRanges (const wchar *ranges, long maximumElement, long
 	return elements.transfer();
 }
 
-TableOfReal TableOfReal_extractRowRanges (TableOfReal me, const wchar *ranges) {
+TableOfReal TableOfReal_extractRowRanges (TableOfReal me, const wchar_t *ranges) {
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfRows, & numberOfElements, L"row"), 1);
@@ -551,7 +551,7 @@ TableOfReal TableOfReal_extractRowRanges (TableOfReal me, const wchar *ranges) {
 	}
 }
 
-TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const wchar *ranges) {
+TableOfReal TableOfReal_extractColumnRanges (TableOfReal me, const wchar_t *ranges) {
 	try {
 		long numberOfElements;
 		autoNUMvector <long> elements (getElementsOfRanges (ranges, my numberOfColumns, & numberOfElements, L"column"), 1);
@@ -658,7 +658,7 @@ TableOfReal TableOfReal_extractColumnsWhere (TableOfReal me, const wchar_t *cond
 Strings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <wchar *> (1, my numberOfRows);
+		thy strings = NUMvector <wchar_t *> (1, my numberOfRows);
 		thy numberOfStrings = my numberOfRows;
 		for (long irow = 1; irow <= my numberOfRows; irow ++) {
 			thy strings [irow] = Melder_wcsdup (my rowLabels [irow] ? my rowLabels [irow] : L"");
@@ -672,7 +672,7 @@ Strings TableOfReal_extractRowLabelsAsStrings (TableOfReal me) {
 Strings TableOfReal_extractColumnLabelsAsStrings (TableOfReal me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <wchar *> (1, my numberOfColumns);
+		thy strings = NUMvector <wchar_t *> (1, my numberOfColumns);
 		thy numberOfStrings = my numberOfColumns;
 		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 			thy strings [icol] = Melder_wcsdup (my columnLabels [icol] ? my columnLabels [icol] : L"");

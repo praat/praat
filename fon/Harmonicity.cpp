@@ -80,41 +80,41 @@ double Harmonicity_getQuantile (Harmonicity me, double quantile) {
 
 void structHarmonicity :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
 	autoNUMvector <double> strengths (1, nx);
 	long nSounding = 0;
 	for (long ix = 1; ix <= nx; ix ++)
 		if (z [1] [ix] != -200)
 			strengths [++ nSounding] = z [1] [ix];
-	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine5 (L"   Number of frames: ", Melder_integer (nx), L" (", Melder_integer (nSounding), L" sounding)");
-	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Time sampling:");
+	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx), L" (", Melder_integer (nSounding), L" sounding)");
+	MelderInfo_writeLine (L"   Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 	if (nSounding) {
 		double sum = 0, sumOfSquares = 0;
-		MelderInfo_writeLine1 (L"Periodicity-to-noise ratios of sounding frames:");
+		MelderInfo_writeLine (L"Periodicity-to-noise ratios of sounding frames:");
 		NUMsort_d (nSounding, strengths.peek());
-		MelderInfo_writeLine3 (L"   Median ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.50)), L" dB");
-		MelderInfo_writeLine5 (L"   10 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.10)), L" dB   90 %% = ",
+		MelderInfo_writeLine (L"   Median ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.50)), L" dB");
+		MelderInfo_writeLine (L"   10 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.10)), L" dB   90 %% = ",
 			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.90)), L" dB");
-		MelderInfo_writeLine5 (L"   16 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.16)), L" dB   84 %% = ",
+		MelderInfo_writeLine (L"   16 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.16)), L" dB   84 %% = ",
 			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.84)), L" dB");
-		MelderInfo_writeLine5 (L"   25 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.25)), L" dB   75 %% = ",
+		MelderInfo_writeLine (L"   25 % = ", Melder_single (NUMquantile (nSounding, strengths.peek(), 0.25)), L" dB   75 %% = ",
 			Melder_single (NUMquantile (nSounding, strengths.peek(), 0.75)), L" dB");
-		MelderInfo_writeLine3 (L"Minimum: ", Melder_single (strengths [1]), L" dB");
-		MelderInfo_writeLine3 (L"Maximum: ", Melder_single (strengths [nSounding]), L" dB");
+		MelderInfo_writeLine (L"Minimum: ", Melder_single (strengths [1]), L" dB");
+		MelderInfo_writeLine (L"Maximum: ", Melder_single (strengths [nSounding]), L" dB");
 		for (long i = 1; i <= nSounding; i ++) {
 			double f = strengths [i];
 			sum += f;
 			sumOfSquares += f * f;
 		}
-		MelderInfo_writeLine3 (L"Average: ", Melder_single (sum / nSounding), L" dB");
+		MelderInfo_writeLine (L"Average: ", Melder_single (sum / nSounding), L" dB");
 		if (nSounding > 1) {
 			double var = (sumOfSquares - sum * sum / nSounding) / (nSounding - 1);
-			MelderInfo_writeLine3 (L"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt (var)), L" dB");
+			MelderInfo_writeLine (L"Standard deviation: ", Melder_single (var < 0.0 ? 0.0 : sqrt (var)), L" dB");
 		}
 	}
 }

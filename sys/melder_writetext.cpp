@@ -63,7 +63,7 @@ static void Melder_fwriteUnicodeAsUtf8 (unsigned long unicode, FILE *f) {
 	}
 }
 
-void Melder_fwriteWcsAsUtf8 (const wchar *ptr, size_t n, FILE *f) {
+void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
 	/*
 	 * Precondition:
 	 *    the string's encoding is either UTF-32 or UTF-16.
@@ -119,7 +119,7 @@ void Melder_fwriteWcsAsUtf8 (const wchar *ptr, size_t n, FILE *f) {
 	}
 }
 
-void MelderFile_writeText (MelderFile file, const wchar *text) {
+void MelderFile_writeText (MelderFile file, const wchar_t *text) {
 	autofile f = Melder_fopen (file, "wb");
 	int outputEncoding = Melder_getOutputEncoding ();
 	if (outputEncoding == kMelder_textOutputEncoding_UTF8) {
@@ -173,7 +173,7 @@ void MelderFile_writeText (MelderFile file, const wchar *text) {
 	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 }
 
-void MelderFile_appendText (MelderFile file, const wchar *text) {
+void MelderFile_appendText (MelderFile file, const wchar_t *text) {
 	autofile f;
 	try {
 		f.reset (Melder_fopen (file, "rb"));
@@ -277,13 +277,13 @@ void MelderFile_appendText (MelderFile file, const wchar *text) {
 		unsigned long n = wcslen (text);
 		for (unsigned long i = 0; i < n; i ++) {
 			if (type == 1) {
-				if (sizeof (wchar) == 2) {   // wchar is UTF-16?
+				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 					unsigned short kar = text [i];
 					#ifdef _WIN32
 						if (kar == '\n') binputu2 (13, f);
 					#endif
 					binputu2 (kar, f);
-				} else {   // wchar is UTF-32
+				} else {   // wchar_t is UTF-32
 					unsigned long kar = text [i];
 					#ifdef _WIN32
 						if (kar == '\n') binputu2 (13, f);
@@ -299,13 +299,13 @@ void MelderFile_appendText (MelderFile file, const wchar *text) {
 					}
 				}
 			} else {
-				if (sizeof (wchar) == 2) {   // wchar is UTF-16?
+				if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 					unsigned short kar = text [i];
 					#ifdef _WIN32
 						if (kar == '\n') binputu2LE (13, f);
 					#endif
 					binputu2LE (kar, f);
-				} else {   // wchar is UTF-32
+				} else {   // wchar_t is UTF-32
 					unsigned long kar = text [i];
 					#ifdef _WIN32
 						if (kar == '\n') binputu2LE (13, f);
@@ -457,29 +457,29 @@ void MelderFile_writeCharacter (MelderFile file, wchar_t character) {
 	}
 }
 
-void MelderFile_write1 (MelderFile file, const wchar_t *s1) {
+void MelderFile_write (MelderFile file, const wchar_t *s1) {
 	if (file -> filePointer == NULL) return;
 	_MelderFile_write (file, s1);
 }
-void MelderFile_write2 (MelderFile file, const wchar_t *s1, const wchar_t *s2) {
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2) {
 	if (file -> filePointer == NULL) return;
 	_MelderFile_write (file, s1);
 	_MelderFile_write (file, s2);
 }
-void MelderFile_write3 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	if (file -> filePointer == NULL) return;
 	_MelderFile_write (file, s1);
 	_MelderFile_write (file, s2);
 	_MelderFile_write (file, s3);
 }
-void MelderFile_write4 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	if (file -> filePointer == NULL) return;
 	_MelderFile_write (file, s1);
 	_MelderFile_write (file, s2);
 	_MelderFile_write (file, s3);
 	_MelderFile_write (file, s4);
 }
-void MelderFile_write5 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5)
 {
 	if (file -> filePointer == NULL) return;
@@ -489,7 +489,7 @@ void MelderFile_write5 (MelderFile file, const wchar_t *s1, const wchar_t *s2, c
 	_MelderFile_write (file, s4);
 	_MelderFile_write (file, s5);
 }
-void MelderFile_write6 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6)
 {
 	if (file -> filePointer == NULL) return;
@@ -500,7 +500,7 @@ void MelderFile_write6 (MelderFile file, const wchar_t *s1, const wchar_t *s2, c
 	_MelderFile_write (file, s5);
 	_MelderFile_write (file, s6);
 }
-void MelderFile_write7 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7)
 {
 	if (file -> filePointer == NULL) return;
@@ -512,7 +512,7 @@ void MelderFile_write7 (MelderFile file, const wchar_t *s1, const wchar_t *s2, c
 	_MelderFile_write (file, s6);
 	_MelderFile_write (file, s7);
 }
-void MelderFile_write8 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8)
 {
 	if (file -> filePointer == NULL) return;
@@ -525,7 +525,7 @@ void MelderFile_write8 (MelderFile file, const wchar_t *s1, const wchar_t *s2, c
 	_MelderFile_write (file, s7);
 	_MelderFile_write (file, s8);
 }
-void MelderFile_write9 (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+void MelderFile_write (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
 	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
 {
 	if (file -> filePointer == NULL) return;

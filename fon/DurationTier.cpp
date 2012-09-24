@@ -1,6 +1,6 @@
 /* DurationTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ Thing_implement (DurationTier, RealTier, 0);
 
 void structDurationTier :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total original duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
-	MelderInfo_writeLine2 (L"Minimum relative duration value: ", Melder_double (RealTier_getMinimumValue (this)));
-	MelderInfo_writeLine2 (L"Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (this)));
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total original duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine (L"Minimum relative duration value: ", Melder_double (RealTier_getMinimumValue (this)));
+	MelderInfo_writeLine (L"Maximum relative duration value: ", Melder_double (RealTier_getMaximumValue (this)));
 }
 
 DurationTier DurationTier_create (double tmin, double tmax) {
@@ -43,7 +43,7 @@ DurationTier DurationTier_create (double tmin, double tmax) {
 }
 
 void DurationTier_draw (DurationTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar *method, int garnish)
+	double ymin, double ymax, const wchar_t *method, int garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Relative duration");
 }

@@ -256,13 +256,13 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 #define nieuwlees (lexan [++ ilexan]. symbol)
 #define oudlees  (-- ilexan)
 
-static void formulefout (const wchar *message, int position) {
+static void formulefout (const wchar_t *message, int position) {
 	static MelderString truncatedExpression = { 0 };
 	MelderString_ncopy (& truncatedExpression, theExpression, position + 1);
 	Melder_throw (message, L":\n" L_LEFT_GUILLEMET L" ", truncatedExpression.string);
 }
 
-static const wchar *languageNameCompare_searchString;
+static const wchar_t *languageNameCompare_searchString;
 
 static int languageNameCompare (const void *first, const void *second) {
 	int i = * (int *) first, j = * (int *) second;
@@ -270,7 +270,7 @@ static int languageNameCompare (const void *first, const void *second) {
 		j == 0 ? languageNameCompare_searchString : Formula_instructionNames [j]);
 }
 
-static int Formula_hasLanguageName (const wchar *f) {
+static int Formula_hasLanguageName (const wchar_t *f) {
 	static int *index;
 	if (index == NULL) {
 		index = NUMvector <int> (1, hoogsteInvoersymbool);
@@ -708,8 +708,8 @@ static void pas (int symbol) {
 	} else {
 		static MelderString melding = { 0 };
 		MelderString_empty (& melding);
-		const wchar *symbolName1 = Formula_instructionNames [symbol];
-		const wchar *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
+		const wchar_t *symbolName1 = Formula_instructionNames [symbol];
+		const wchar_t *symbolName2 = Formula_instructionNames [lexan [ilexan]. symbol];
 		bool needQuotes1 = wcschr (symbolName1, ' ') == NULL;
 		bool needQuotes2 = wcschr (symbolName2, ' ') == NULL;
 		MelderString_append (& melding,
@@ -1213,7 +1213,7 @@ static void parsePowerFactor (void) {
 	}
 
 	if (symbol == CALL_) {
-		wchar *procedureName = lexan [ilexan]. content.string;   // reference copy!
+		wchar_t *procedureName = lexan [ilexan]. content.string;   // reference copy!
 		int n = 0;
 		pas (HAAKJEOPENEN_);
 		if (nieuwlees != HAAKJESLUITEN_) {
@@ -1762,7 +1762,7 @@ static void Formula_removeLabels (void) {
 static void Formula_print (FormulaInstruction f) {
 	int i = 0, symbol;
 	do {
-		const wchar *instructionName;
+		const wchar_t *instructionName;
 		symbol = f [++ i]. symbol;
 		instructionName = Formula_instructionNames [symbol];
 		if (symbol == NUMBER_)
@@ -1794,7 +1794,7 @@ static void Formula_print (FormulaInstruction f) {
 	} while (symbol != END_);
 }
 
-void Formula_compile (Any interpreter, Any data, const wchar *expression, int expressionType, int optimize) {
+void Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize) {
 	theInterpreter = (Interpreter) interpreter;
 	if (theInterpreter == NULL) {
 		if (theLocalInterpreter == NULL) {
@@ -1912,7 +1912,7 @@ static void pushVariable (InterpreterVariable var) {
 	stackel -> which = Stackel_VARIABLE;
 	stackel -> content.variable = var;
 }
-static const wchar *Stackel_whichText (Stackel me) {
+static const wchar_t *Stackel_whichText (Stackel me) {
 	return
 		my which == Stackel_NUMBER ? L"a number" :
 		my which == Stackel_STRING ? L"a string" :
@@ -2690,7 +2690,7 @@ static void do_leftStr (void) {
 				autostring s2 = s1;   // copy constructor disabled
 				s1 = s2;
 			#endif
-			autostring result = Melder_malloc (wchar, newlength + 1);
+			autostring result = Melder_malloc (wchar_t, newlength + 1);
 			wcsncpy (result.peek(), s->content.string, newlength);
 			result [newlength] = '\0';
 			pushString (result.transfer());
@@ -2732,7 +2732,7 @@ static void do_midStr (void) {
 			if (finish > length) finish = length;
 			newlength = finish - start + 1;
 			if (newlength > 0) {
-				result.reset (Melder_malloc (wchar, newlength + 1));
+				result.reset (Melder_malloc (wchar_t, newlength + 1));
 				wcsncpy (result.peek(), s->content.string + start - 1, newlength);
 				result [newlength] = '\0';
 			} else {
@@ -2807,7 +2807,7 @@ static void do_index_regex (int backward) {
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);
 		} else if (ExecRE (compiled_regexp, NULL, (const regularExp_CHAR *) s->content.string, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
-			wchar_t *place = (wchar *) compiled_regexp -> startp [0];
+			wchar_t *place = (wchar_t *) compiled_regexp -> startp [0];
 			pushNumber (place - s->content.string + 1);
 			free (compiled_regexp);
 		} else {
@@ -2903,7 +2903,7 @@ static void do_extractTextStr (int singleWord) {
 				/* Skip white space. */
 				while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
 			}
-			wchar *p = substring;
+			wchar_t *p = substring;
 			if (singleWord) {
 				/* Proceed until next white space. */
 				while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '\n' && *p != '\r') p ++;
@@ -2912,7 +2912,7 @@ static void do_extractTextStr (int singleWord) {
 				while (*p != '\0' && *p != '\n' && *p != '\r') p ++;
 			}
 			length = p - substring;
-			result.reset (Melder_malloc (wchar, length + 1));
+			result.reset (Melder_malloc (wchar_t, length + 1));
 			wcsncpy (result.peek(), substring, length);
 			result [length] = '\0';
 		}
@@ -3078,7 +3078,7 @@ static void do_pauseFormAddReal (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar *defaultString = NULL;
+		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3103,7 +3103,7 @@ static void do_pauseFormAddPositive (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar *defaultString = NULL;
+		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3128,7 +3128,7 @@ static void do_pauseFormAddInteger (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar *defaultString = NULL;
+		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3153,7 +3153,7 @@ static void do_pauseFormAddNatural (void) {
 	Stackel n = pop;
 	if (n->content.number == 2) {
 		Stackel defaultValue = pop;
-		const wchar *defaultString = NULL;
+		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
 			defaultString = defaultValue->content.string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
@@ -3504,7 +3504,7 @@ static void do_demoKey (void) {
 	Stackel n = pop;
 	if (n->content.number != 0)
 		Melder_throw ("The function \"demoKey\" requires 0 arguments, not ", n->content.number, ".");
-	autostring key = Melder_malloc (wchar, 2);
+	autostring key = Melder_malloc (wchar_t, 2);
 	key [0] = Demo_key ();
 	key [1] = '\0';
 	pushString (key.transfer());

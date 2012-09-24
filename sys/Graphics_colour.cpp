@@ -172,6 +172,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			//cairo_fill (my d_cairoGraphicsContext);
 			//cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 0.0);
 			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
+		#elif cocoa
 		#elif win
 			static HBRUSH highlightBrush;
 			RECT rect;
@@ -187,7 +188,7 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
 		#elif mac
 			Rect rect;
-			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea);
+			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
 			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
 			SetPort (my d_macPort);
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);   /* see IM V-61 */
@@ -225,6 +226,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
 			cairo_fill (my d_cairoGraphicsContext);
 			cairo_restore (my d_cairoGraphicsContext);
+		#elif cocoa
 		#elif win
 			static HBRUSH highlightBrush;
 			if (! highlightBrush)
@@ -241,7 +243,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 			SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));   /* Superfluous? */
 		#elif mac
 			Rect rect;
-			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea);
+			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
 			SetPort (my d_macPort);
 			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
 			SetRect (& rect, x1DC, y2DC, x2DC, y2DC_inner);

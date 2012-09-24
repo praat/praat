@@ -40,7 +40,7 @@
 	#define mac 1
 #endif
 
-void _GuiObject_position (GuiObject me, int left, int right, int top, int bottom);
+void _GuiObject_position (GuiObject me, int left, int right, int top, int bottom, GuiForm parent);
 void * _GuiObject_getUserData (GuiObject me);
 void _GuiObject_setUserData (GuiObject me, void *userData);
 
@@ -53,13 +53,6 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 
 	#if win || mac
 
-		/*
-		#define MEMBER(widget,klas)  (widget -> widgetClass == xm##klas##WidgetClass)
-		#define MEMBER2(widget,klas1,klas2)  (MEMBER (widget, klas1) || MEMBER (widget, klas2))
-		#define MEMBER3(widget,klas1,klas2,klas3)  (MEMBER2 (widget, klas1, klas2) || MEMBER (widget, klas3))
-		#define MEMBER4(widget,klas1,klas2,klas3,klas4)  (MEMBER3 (widget, klas1, klas2, klas3) || MEMBER (widget, klas4))
-		#define MEMBER5(widget,klas1,klas2,klas3,klas4,klas5)  (MEMBER4 (widget, klas1, klas2, klas3, klas4) || MEMBER (widget, klas5))
-		*/
 		#define MEMBER(widget,klas)  ((widget -> widgetClass & xm##klas##WidgetClass) != 0)
 		#define MEMBER2(widget,klas1,klas2)  ((widget -> widgetClass & (xm##klas1##WidgetClass | xm##klas2##WidgetClass)) != 0)
 		#define MEMBER3(widget,klas1,klas2,klas3)  ((widget -> widgetClass & (xm##klas1##WidgetClass | xm##klas2##WidgetClass | xm##klas3##WidgetClass)) != 0)
@@ -251,6 +244,27 @@ void _GuiObject_setUserData (GuiObject me, void *userData);
 		#elif mac
 			void _GuiMacRadioButton_destroy (GuiObject widget);
 			void _GuiMacRadioButton_handleClick (GuiObject widget, EventRecord *macEvent);
+		#endif
+
+		/********** GuiScale.cpp **********/
+		#if win
+			void _GuiWinScale_destroy (GuiObject widget);
+		#elif mac
+			void _GuiMacScale_destroy (GuiObject widget);
+		#endif
+
+		/********** GuiScrollBar.cpp **********/
+		#if win
+			void _GuiWinScrollBar_destroy (GuiObject widget);
+		#elif mac
+			void _GuiMacScrollBar_destroy (GuiObject widget);
+		#endif
+
+		/********** GuiScrolledWindow.cpp **********/
+		#if win
+			void _GuiWinScrolledWindow_destroy (GuiObject widget);
+		#elif mac
+			void _GuiMacScrolledWindow_destroy (GuiObject widget);
 		#endif
 
 		/********** GuiText.cpp **********/

@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2011/05/01
  */
 
 #include "praat.h"
@@ -158,7 +154,7 @@ FORM (PairDistribution_getString1, L"Get string1", 0)
 DO
 	LOOP {
 		iam (PairDistribution);
-		const wchar *string1 = PairDistribution_getString1 (me, GET_INTEGER (L"Pair number"));
+		const wchar_t *string1 = PairDistribution_getString1 (me, GET_INTEGER (L"Pair number"));
 		Melder_information (string1);
 	}
 END
@@ -169,7 +165,7 @@ FORM (PairDistribution_getString2, L"Get string2", 0)
 DO
 	LOOP {
 		iam (PairDistribution);
-		const wchar *string2 = PairDistribution_getString2 (me, GET_INTEGER (L"Pair number"));
+		const wchar_t *string2 = PairDistribution_getString2 (me, GET_INTEGER (L"Pair number"));
 		Melder_information (string2);
 	}
 END
@@ -413,7 +409,7 @@ DIRECT (Table_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit a Table from batch.");
 	LOOP {
 		iam (Table);
-		autoTableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -698,14 +694,14 @@ DO
 		correlation = Table_getCorrelation_kendallTau (me, column1, column2, unconfidence,
 			& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
+		MelderInfo_writeLine (L"Correlation between column ", Table_messageColumn (me, column1),
 			L" and column ", Table_messageColumn (me, column2), L":");
-		MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Kendall's tau-b)");
-		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		MelderInfo_writeLine (L"Correlation = ", Melder_double (correlation), L" (Kendall's tau-b)");
+		MelderInfo_writeLine (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+		MelderInfo_writeLine (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine (L"   Lower limit = ", Melder_double (lowerLimit),
 			L" (lowest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		MelderInfo_writeLine (L"   Upper limit = ", Melder_double (upperLimit),
 			L" (highest tau that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 		MelderInfo_close ();
 	}
@@ -726,15 +722,15 @@ DO
 		correlation = Table_getCorrelation_pearsonR (me, column1, column2, unconfidence,
 			& significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine5 (L"Correlation between column ", Table_messageColumn (me, column1),
+		MelderInfo_writeLine (L"Correlation between column ", Table_messageColumn (me, column1),
 			L" and column ", Table_messageColumn (me, column2), L":");
-		MelderInfo_writeLine3 (L"Correlation = ", Melder_double (correlation), L" (Pearson's r)");
-		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_integer (my rows -> size - 2));
-		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		MelderInfo_writeLine (L"Correlation = ", Melder_double (correlation), L" (Pearson's r)");
+		MelderInfo_writeLine (L"Number of degrees of freedom = ", Melder_integer (my rows -> size - 2));
+		MelderInfo_writeLine (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+		MelderInfo_writeLine (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine (L"   Lower limit = ", Melder_double (lowerLimit),
 			L" (lowest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		MelderInfo_writeLine (L"   Upper limit = ", Melder_double (upperLimit),
 			L" (highest r that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 		MelderInfo_close ();
 	}
@@ -755,16 +751,16 @@ DO
 		difference = Table_getDifference_studentT (me, column1, column2, unconfidence,
 			& t, & numberOfDegreesOfFreedom, & significance, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine5 (L"Difference between column ", Table_messageColumn (me, column1),
+		MelderInfo_writeLine (L"Difference between column ", Table_messageColumn (me, column1),
 			L" and column ", Table_messageColumn (me, column2), L":");
-		MelderInfo_writeLine2 (L"Difference = ", Melder_double (difference));
-		MelderInfo_writeLine2 (L"Student's t = ", Melder_double (t));
-		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
-		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		MelderInfo_writeLine (L"Difference = ", Melder_double (difference));
+		MelderInfo_writeLine (L"Student's t = ", Melder_double (t));
+		MelderInfo_writeLine (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine (L"Significance from zero = ", Melder_double (significance), L" (one-tailed)");
+		MelderInfo_writeLine (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine (L"   Lower limit = ", Melder_double (lowerLimit),
 			L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		MelderInfo_writeLine (L"   Upper limit = ", Melder_double (upperLimit),
 			L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 		MelderInfo_close ();
 	}
@@ -788,16 +784,16 @@ DO
 		mean = Table_getGroupDifference_studentT (me, column, groupColumn, group1, group2, unconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
-		MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
-		MelderInfo_writeLine2 (L"Difference = ", Melder_double (mean));
-		MelderInfo_writeLine2 (L"Student's t = ", Melder_double (tFromZero));
-		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		MelderInfo_write (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
+		MelderInfo_writeLine (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
+		MelderInfo_writeLine (L"Difference = ", Melder_double (mean));
+		MelderInfo_writeLine (L"Student's t = ", Melder_double (tFromZero));
+		MelderInfo_writeLine (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_writeLine (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine (L"   Lower limit = ", Melder_double (lowerLimit),
 			L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		MelderInfo_writeLine (L"   Upper limit = ", Melder_double (upperLimit),
 			L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 		MelderInfo_close ();
 	}
@@ -819,12 +815,12 @@ DO
 		areaUnderCurve = Table_getGroupDifference_wilcoxonRankSum (me, column, groupColumn, group1, group2,
 			& rankSum, & significanceFromZero);
 		MelderInfo_open ();
-		MelderInfo_write4 (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
-		MelderInfo_writeLine5 (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
-		MelderInfo_writeLine2 (L"Larger: ", areaUnderCurve < 0.5 ? group1 : areaUnderCurve > 0.5 ? group2 : L"(both equal)");
-		MelderInfo_writeLine2 (L"Area under curve: ", Melder_double (areaUnderCurve));
-		MelderInfo_writeLine2 (L"Rank sum: ", Melder_double (rankSum));
-		MelderInfo_writeLine3 (L"Significance from zero: ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_write (L"Difference in column ", Table_messageColumn (me, column), L" between groups ", group1);
+		MelderInfo_writeLine (L" and ", group2, L" of column ", Table_messageColumn (me, groupColumn), L":");
+		MelderInfo_writeLine (L"Larger: ", areaUnderCurve < 0.5 ? group1 : areaUnderCurve > 0.5 ? group2 : L"(both equal)");
+		MelderInfo_writeLine (L"Area under curve: ", Melder_double (areaUnderCurve));
+		MelderInfo_writeLine (L"Rank sum: ", Melder_double (rankSum));
+		MelderInfo_writeLine (L"Significance from zero: ", Melder_double (significanceFromZero), L" (one-tailed)");
 		MelderInfo_close ();
 	}
 END
@@ -846,16 +842,16 @@ DO
 		mean = Table_getGroupMean_studentT (me, column, groupColumn, group, unconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_write4 (L"Mean in column ", Table_messageColumn (me, column), L" of group ", group);
-		MelderInfo_writeLine3 (L" of column ", Table_messageColumn (me, groupColumn), L":");
-		MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
-		MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
-		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		MelderInfo_write (L"Mean in column ", Table_messageColumn (me, column), L" of group ", group);
+		MelderInfo_writeLine (L" of column ", Table_messageColumn (me, groupColumn), L":");
+		MelderInfo_writeLine (L"Mean = ", Melder_double (mean));
+		MelderInfo_writeLine (L"Student's t from zero = ", Melder_double (tFromZero));
+		MelderInfo_writeLine (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_writeLine (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine (L"   Lower limit = ", Melder_double (lowerLimit),
 			L" (lowest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		MelderInfo_writeLine (L"   Upper limit = ", Melder_double (upperLimit),
 			L" (highest difference that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 		MelderInfo_close ();
 	}
@@ -874,15 +870,15 @@ DO
 		mean = Table_getMean_studentT (me, column, unconfidence,
 			& tFromZero, & numberOfDegreesOfFreedom, & significanceFromZero, & lowerLimit, & upperLimit);
 		MelderInfo_open ();
-		MelderInfo_writeLine3 (L"Mean of column ", Table_messageColumn (me, column), L":");
-		MelderInfo_writeLine2 (L"Mean = ", Melder_double (mean));
-		MelderInfo_writeLine2 (L"Student's t from zero = ", Melder_double (tFromZero));
-		MelderInfo_writeLine2 (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
-		MelderInfo_writeLine3 (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
-		MelderInfo_writeLine3 (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
-		MelderInfo_writeLine5 (L"   Lower limit = ", Melder_double (lowerLimit),
+		MelderInfo_writeLine (L"Mean of column ", Table_messageColumn (me, column), L":");
+		MelderInfo_writeLine (L"Mean = ", Melder_double (mean));
+		MelderInfo_writeLine (L"Student's t from zero = ", Melder_double (tFromZero));
+		MelderInfo_writeLine (L"Number of degrees of freedom = ", Melder_double (numberOfDegreesOfFreedom));
+		MelderInfo_writeLine (L"Significance from zero = ", Melder_double (significanceFromZero), L" (one-tailed)");
+		MelderInfo_writeLine (L"Confidence interval (", Melder_double (100 * (1.0 - 2.0 * unconfidence)), L"%):");
+		MelderInfo_writeLine (L"   Lower limit = ", Melder_double (lowerLimit),
 			L" (lowest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
-		MelderInfo_writeLine5 (L"   Upper limit = ", Melder_double (upperLimit),
+		MelderInfo_writeLine (L"   Upper limit = ", Melder_double (upperLimit),
 			L" (highest value that cannot be rejected with " UNITEXT_GREEK_SMALL_LETTER_ALPHA " = ", Melder_double (unconfidence), L")");
 		MelderInfo_close ();
 	}
@@ -1027,6 +1023,14 @@ DIRECT (Table_randomizeRows)
 	}
 END
 
+DIRECT (Table_reflectRows)
+	LOOP {
+		iam (Table);
+		Table_reflectRows (me);
+		praat_dataChanged (me);
+	}
+END
+
 FORM (Table_sortRows, L"Table: Sort rows", 0)
 	LABEL (L"", L"One or more column labels for sorting:")
 	TEXTFIELD (L"columnLabels", L"dialect gender name")
@@ -1070,6 +1074,14 @@ DO
 		long icol = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Column for row labels"));
 		autoTableOfReal thee = Table_to_TableOfReal (me, icol);
 		praat_new (thee.transfer(), NAME);
+	}
+END
+
+DIRECT (Table_transpose)
+	LOOP {
+		iam (Table);
+		autoTable thee = Table_transpose (me);
+		praat_new (thee.transfer(), NAME, L"_transposed");
 	}
 END
 
@@ -1848,6 +1860,7 @@ void praat_uvafon_stat_init () {
 		praat_addAction1 (classTable, 0, L"Formula (column range)...", 0, 1, DO_Table_formula_columnRange);
 		praat_addAction1 (classTable, 0, L"Sort rows...", 0, 1, DO_Table_sortRows);
 		praat_addAction1 (classTable, 0, L"Randomize rows", 0, 1, DO_Table_randomizeRows);
+		praat_addAction1 (classTable, 0, L"Reflect rows", 0, 1, DO_Table_reflectRows);
 		praat_addAction1 (classTable, 0, L"-- structure --", 0, 1, 0);
 		praat_addAction1 (classTable, 0, L"Append row", 0, 1, DO_Table_appendRow);
 		praat_addAction1 (classTable, 0, L"Append column...", 0, 1, DO_Table_appendColumn);
@@ -1874,6 +1887,7 @@ void praat_uvafon_stat_init () {
 		praat_addAction1 (classTable, 0, L"Extract rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, L"Select rows where column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_Table_extractRowsWhereColumn_number);
 		praat_addAction1 (classTable, 0, L"Extract rows where column (text)...", 0, 1, DO_Table_extractRowsWhereColumn_text);
+		praat_addAction1 (classTable, 0, L"Transpose", 0, 1, DO_Table_transpose);
 		praat_addAction1 (classTable, 0, L"Collapse rows...", 0, 1, DO_Table_collapseRows);
 		praat_addAction1 (classTable, 0, L"Rows to columns...", 0, 1, DO_Table_rowsToColumns);
 	praat_addAction1 (classTable, 0, L"Down to TableOfReal...", 0, 0, DO_Table_to_TableOfReal);

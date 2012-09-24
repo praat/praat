@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2011,2012 Paul Boersma
+ * Copyright (C) 1996-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,12 +59,12 @@ void structManPages :: v_destroy () {
 			Melder_free (titles [ipage]);
 		}
 	forget (pages);
-	NUMvector_free <const wchar *> (titles, 1);
+	NUMvector_free <const wchar_t *> (titles, 1);
 	ManPages_Parent :: v_destroy ();
 }
 
-static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link) {
-	wchar *to = link, *max = link + 300;
+static const wchar_t *extractLink (const wchar_t *text, const wchar_t *p, wchar_t *link) {
+	wchar_t *to = link, *max = link + 300;
 	if (p == NULL) p = text;
 	/*
 	 * Search for next '@' that is not in a backslash sequence.
@@ -77,7 +77,7 @@ static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link)
 	}
 	Melder_assert (*p == '@');
 	if (p [1] == '@') {
-		const wchar *from = p + 2;
+		const wchar_t *from = p + 2;
 		while (*from != '@' && *from != '|' && *from != '\0') {
 			if (to >= max) {
 				Melder_throw ("(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
@@ -87,7 +87,7 @@ static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link)
 		if (*from == '|') { from ++; while (*from != '@' && *from != '\0') from ++; }
 		if (*from) p = from + 1; else p = from;   /* Skip '@' but not '\0'. */
 	} else {
-		const wchar *from = p + 1;
+		const wchar_t *from = p + 1;
 		while (isSingleWordCharacter (*from)) {
 			if (to >= max) {
 				Melder_throw ("(ManPages::grind:) Link starting with \"@@\" is too long:\n", text);
@@ -101,7 +101,7 @@ static const wchar *extractLink (const wchar *text, const wchar *p, wchar *link)
 }
 
 static void readOnePage (ManPages me, MelderReadText text) {
-	wchar *title;
+	wchar_t *title;
 	try {
 		title = texgetw2 (text);
 	} catch (MelderError) {
@@ -143,7 +143,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 
 	ManPage_Paragraph par = & page -> paragraphs [0];
 	for (;; par ++) {
-		wchar link [501], fileName [256];
+		wchar_t link [501], fileName [256];
 		try {
 			par -> type = texgete1 (text, kManPage_type_getValue);
 		} catch (MelderError) {
@@ -163,7 +163,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		} catch (MelderError) {
 			Melder_throw ("Cannot find text.");
 		}
-		for (const wchar *p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
+		for (const wchar_t *p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
 			/*
 			 * Now, `link' contains the link text, with spaces and all.
 			 * Transform it into a file name.
@@ -341,7 +341,7 @@ static void grind (ManPages me) {
 					((ManPage) my pages -> item [jpage]) -> nlinksHither ++;
 					grandNlinks ++;
 				} else {
-					MelderInfo_writeLine5 (L"Page \"", page -> title, L"\" contains a dangling link to \"", link, L"\".");
+					MelderInfo_writeLine (L"Page \"", page -> title, L"\" contains a dangling link to \"", link, L"\".");
 					ndangle ++;
 				}
 			}
@@ -436,7 +436,7 @@ static long ManPages_lookUp_caseSensitive (ManPages me, const wchar_t *title) {
 const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles) {
 	if (! my ground) grind (me);
 	if (! my titles) {
-		my titles = NUMvector <const wchar *> (1, my pages -> size);   // TODO
+		my titles = NUMvector <const wchar_t *> (1, my pages -> size);   // TODO
 		for (long i = 1; i <= my pages -> size; i ++) {
 			ManPage page = (ManPage) my pages -> item [i];
 			my titles [i] = Melder_wcsdup_f (page -> title);
@@ -767,7 +767,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 	if (inList) { MelderString_append (buffer, ul ? L"</ul>\n" : L"</dl>\n"); inList = FALSE; }
 }
 
-static const wchar *month [] =
+static const wchar_t *month [] =
 	{ L"", L"January", L"February", L"March", L"April", L"May", L"June",
 	  L"July", L"August", L"September", L"October", L"November", L"December" };
 
@@ -828,14 +828,14 @@ void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
 	MelderFile_writeText (file, buffer.string);
 }
 
-void ManPages_writeAllToHtmlDir (ManPages me, const wchar *dirPath) {
+void ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
 	structMelderDir dir;
 	Melder_pathToDir (dirPath, & dir);
 	for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
 		ManPage page = (ManPage) my pages -> item [ipage];
-		wchar fileName [256];
+		wchar_t fileName [256];
 		wcscpy (fileName, page -> title);
-		for (wchar *p = fileName; *p; p ++)
+		for (wchar_t *p = fileName; *p; p ++)
 			if (! isAllowedFileNameCharacter (*p))
 				*p = '_';
 		if (fileName [0] == '\0')

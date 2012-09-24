@@ -29,7 +29,7 @@
 */
 
 #include "Collection.h"
-#include "Strings.h"
+#include "Strings_.h"
 #include "Permutation.h"
 #include "Index.h"
 

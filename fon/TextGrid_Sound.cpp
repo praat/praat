@@ -154,7 +154,7 @@ Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, lo
 }
 
 Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long tierNumber,
-	int comparison_Melder_STRING, const wchar *text, int preserveTimes)
+	int comparison_Melder_STRING, const wchar_t *text, int preserveTimes)
 {
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
@@ -164,7 +164,7 @@ Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound, long 
 			TextInterval segment = (TextInterval) tier -> intervals -> item [iseg];
 			if (Melder_stringMatchesCriterion (segment -> text, comparison_Melder_STRING, text)) {
 				autoSound interval = Sound_extractPart (sound, segment -> xmin, segment -> xmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
-				wchar name [1000];
+				wchar_t name [1000];
 				swprintf (name, 1000, L"%ls_%ls_%ld", sound -> name ? sound -> name : L"", text, ++ count);
 				Thing_setName (interval.peek(), name);
 				Collection_addItem (collection.peek(), interval.transfer());

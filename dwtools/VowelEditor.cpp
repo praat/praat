@@ -180,7 +180,7 @@ static struct structVowelEditor_F1F2Grid griddefault = { 200, 500, 0, 1, 0, 1, 0
 struct markInfo {
 	double f1, f2;
 	int size;
-	wchar vowel [Preferences_STRING_BUFFER_SIZE];
+	wchar_t vowel [Preferences_STRING_BUFFER_SIZE];
 };
 
 static struct {
@@ -192,7 +192,7 @@ static struct {
 	int frequencyScale;
 	int axisOrientation;
 	int speakerType, marksDataset, numberOfMarks, marksFontSize;
-	wchar mark[VowelEditor_MAXIMUM_MARKERS][Preferences_STRING_BUFFER_SIZE];
+	wchar_t mark[VowelEditor_MAXIMUM_MARKERS][Preferences_STRING_BUFFER_SIZE];
 } prefs;
 
 
@@ -283,9 +283,9 @@ static void appendF1F2F0 (MelderString *statusInfo, const wchar_t *intro, double
 	MelderString_append (statusInfo, intro, REPRESENTNUMBER (f1, 1), komma, REPRESENTNUMBER (f2, 2), komma, REPRESENTNUMBER (f0, 3), ending);
 }
 
-static double getRealFromTextWidget (GuiObject me) {
+static double getRealFromTextWidget (GuiText me) {
 	double value = NUMundefined;
-	wchar_t *dirty = GuiText_getString (me);
+	wchar_t *dirty = my f_getString ();
 	try {
 		Interpreter_numericExpression (NULL, dirty, & value);
 	} catch (MelderError) {
@@ -298,14 +298,14 @@ static double getRealFromTextWidget (GuiObject me) {
 static void VowelEditor_updateF0Info (VowelEditor me) {
 	double f0 = getRealFromTextWidget (my f0TextField);
 	checkF0 (&my f0, &f0);
-	GuiText_setString (my f0TextField, Melder_double (f0));
+	my f0TextField -> f_setString (Melder_double (f0));
 	my f0.start = f0;
 	double slopeOctPerSec = getRealFromTextWidget (my f0SlopeTextField);
 	if (slopeOctPerSec == NUMundefined) {
 		slopeOctPerSec = f0default.slopeOctPerSec;
 	}
 	my f0.slopeOctPerSec = slopeOctPerSec;
-	GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
+	my f0SlopeTextField -> f_setString (Melder_double (my f0.slopeOctPerSec));
 }
 
 static void VowelEditor_updateExtendDuration (VowelEditor me) {
@@ -313,7 +313,7 @@ static void VowelEditor_updateExtendDuration (VowelEditor me) {
 	if (extend == NUMundefined || extend <= MINIMUM_SOUND_DURATION || extend > my maximumDuration) {
 		extend = MINIMUM_SOUND_DURATION;
 	}
-	GuiText_setString (my extendTextField, Melder_double (extend));
+	my extendTextField -> f_setString (Melder_double (extend));
 	my extendDuration = prefs.extendDuration = extend;
 }
 
@@ -322,7 +322,7 @@ static double VowelEditor_updateDurationInfo (VowelEditor me) {
 	if (duration == NUMundefined || duration < MINIMUM_SOUND_DURATION) {
 		duration = MINIMUM_SOUND_DURATION;
 	}
-	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
+	my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (duration)));
 	return duration;
 }
 
@@ -1074,8 +1074,8 @@ static void menu_cb_setF0 (EDITOR_ARGS) {
 		my f0.start = f0;
 		my f0.slopeOctPerSec = GET_REAL (L"Slope");
 		VowelEditor_setSource (me); therror
-		GuiText_setString (my f0TextField, Melder_double (my f0.start));
-		GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
+		my f0TextField -> f_setString (Melder_double (my f0.start));
+		my f0SlopeTextField -> f_setString (Melder_double (my f0.slopeOctPerSec));
 	EDITOR_END
 }
 
@@ -1185,7 +1185,7 @@ static void menu_cb_newTrajectory (EDITOR_ARGS) {
 		checkF1F2 (me, &f1, &f2);
 		VowelEditor_Vowel_addData (me, vowel.peek(), time, f1, f2, f0);
 
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (duration)));
+		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (duration)));
 		forget (my vowel);
 		my vowel = vowel.transfer();
 
@@ -1210,7 +1210,7 @@ static void menu_cb_extendTrajectory (EDITOR_ARGS) {
 		checkF1F2 (me, &f1, &f2);
 		VowelEditor_Vowel_addData (me, thee, newDuration, f1, f2, f0);
 
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (newDuration)));
+		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (newDuration)));
 		Graphics_updateWs (my g);
 	EDITOR_END
 }
@@ -1221,7 +1221,7 @@ static void menu_cb_modifyTrajectoryDuration (EDITOR_ARGS) {
 		POSITIVE (L"New duration (s)", L"0.5")
 	EDITOR_OK
 	EDITOR_DO
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (GET_REAL (L"New duration"))));
+		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (GET_REAL (L"New duration"))));
 	EDITOR_END
 }
 
@@ -1275,7 +1275,6 @@ static void gui_button_cb_reverse (I, GuiButtonEvent event) {
 
 	VowelEditor_Vowel_reverseFormantTier (me);
 	struct structGuiButtonEvent play_event = { 0 };
-	play_event.button = my playButton;
 	gui_button_cb_play (me, &play_event);
 }
 
@@ -1293,12 +1292,12 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 
 	appendF1F2F0 (&statusInfo, STATUSINFO_STARTINTR0, FormantTier_getValueAtTime (ft, 1, ts),
 	              FormantTier_getValueAtTime (ft, 2, ts), getF0 (&my f0, ts), STATUSINFO_ENDING);
-	GuiLabel_setString (my startInfo, statusInfo.string);
+	my startInfo -> f_setString (statusInfo.string);
 	MelderString_empty (&statusInfo);
 
 	appendF1F2F0 (&statusInfo, STATUSINFO_ENDINTR0, FormantTier_getValueAtTime (ft, 1, te),
 	              FormantTier_getValueAtTime (ft, 2, te), getF0 (&my f0, te), STATUSINFO_ENDING);
-	GuiLabel_setString (my endInfo, statusInfo.string);
+	my endInfo -> f_setString (statusInfo.string);
 	MelderString_empty (&statusInfo);
 
 	Graphics_setGrey (my g, 0.9);
@@ -1321,8 +1320,8 @@ static void gui_drawingarea_cb_resize__ (I, GuiDrawingAreaResizeEvent event) {
 	if (me == NULL || my g == NULL) {
 		return;
 	}
-	my height = GuiObject_getHeight (my drawingArea);
-	my width = GuiObject_getWidth (my drawingArea);
+	my height = my drawingArea -> f_getHeight ();
+	my width = my drawingArea -> f_getWidth ();
 	Graphics_setWsViewport (my g, 0, my width , 0, my height);
 	Graphics_setWsWindow (my g, 0, my width, 0, my height);
 	Graphics_setViewport (my g, 0, my width, 0, my height);
@@ -1339,15 +1338,12 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	my height = event -> height;
 	Graphics_setWsWindow (my g, 0, my width, 0, my height);
 	Graphics_setViewport (my g, 0, my width, 0, my height);
-#if gtk
-	// updateWs() also resizes the cairo clipping context to the new window size
-#endif
 	Graphics_updateWs (my g);
 
 	/* Save the current shell size as the user's preference for a new FunctionEditor. */
 
-	prefs.shellWidth = GuiObject_getWidth (my d_windowShell);
-	prefs.shellHeight = GuiObject_getHeight (my d_windowShell);
+	prefs.shellWidth = my d_windowForm -> f_getShellWidth ();
+	prefs.shellHeight = my d_windowForm -> f_getShellHeight ();
 }
 
 static void VowelEditor_Vowel_updateTiers (VowelEditor me, Vowel thee, double time, double x, double y) {
@@ -1398,7 +1394,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		dt = thy xmax + my extendDuration;
 		t = 0 + dt;
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
-		GuiText_setString (my durationTextField, Melder_double (t));
+		my durationTextField -> f_setString (Melder_double (t));
 		if (! my soundFollowsMouse) {
 			goto end;
 		}
@@ -1408,7 +1404,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		athee.reset (Vowel_create (MINIMUM_SOUND_DURATION));
 		thee = athee.peek();
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
-		GuiText_setString (my durationTextField, Melder_double (t));
+		my durationTextField -> f_setString (Melder_double (t));
 		if (! my soundFollowsMouse) {
 			VowelEditor_Vowel_updateTiers (me, thee, MINIMUM_SOUND_DURATION, x, y);
 			goto end;
@@ -1434,7 +1430,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		Graphics_line (my g, xb, yb, x, y);
 
 		VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
-		GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
+		my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (t)));
 	}
 	t = Melder_clock () - t0;
 	// To prevent ultra short clicks we set a minimum of 0.01 s duration
@@ -1442,7 +1438,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		t = MINIMUM_SOUND_DURATION;
 	}
 	t += dt;
-	GuiText_setString (my durationTextField, Melder_double (MICROSECPRECISION (t)));
+	my durationTextField -> f_setString (Melder_double (MICROSECPRECISION (t)));
 	VowelEditor_Vowel_updateTiers (me, thee, t, x, y);
 
 	Graphics_xorOff (my g);
@@ -1454,7 +1450,6 @@ end:
 		forget (my vowel);
 		my vowel = athee.transfer();
 	}
-	gb_event.button = my drawingArea;
 	gui_button_cb_play (me, & gb_event);
 }
 
@@ -1528,138 +1523,58 @@ void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"VowelEditor help", '?', menu_cb_help);
 }
 
-void structVowelEditor :: v_createChildren () {
-	GuiObject form;
-
-	// Origin is top left!
-
-#if gtk
-	guint nrows = 25, ncols = 7, ileft, iright = 0, itop, ibottom;
-	form = d_windowForm;
-	GuiObject table = gtk_table_new (nrows, ncols, false);
-	gtk_table_set_row_spacings (GTK_TABLE (table), 4);
-	gtk_table_set_col_spacings (GTK_TABLE (table), 4);
-	gtk_container_set_border_width (GTK_CONTAINER (table), 4);
-	gtk_container_add (GTK_CONTAINER (form), GTK_WIDGET (table));
-
-	itop = nrows - 3; ibottom = itop + 2;
-
-	ileft = iright; iright = ileft + 1;
-	playButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Play", gui_button_cb_play, this, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (playButton), ileft, iright, itop, ibottom);
-
-	ileft = iright; iright = ileft + 1;
-	reverseButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Reverse", gui_button_cb_reverse, this, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (reverseButton), ileft, iright, itop, ibottom);
-
-	ileft = iright; iright = ileft + 1;
-	publishButton = GuiButton_create (NULL, 0, 0, 0, 0, L"Publish", gui_button_cb_publish, this, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (publishButton), ileft, iright, itop, ibottom);
-
-	ileft = iright; iright = ileft + 1;
-	durationLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Duration (s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (durationLabel), ileft, iright, itop, itop + 1);
-	durationTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (durationTextField), ileft, iright, itop + 1, ibottom);
-
-	ileft = iright; iright = ileft + 1;
-	extendLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"Extend (s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (extendLabel), ileft, iright, itop, itop + 1);
-	extendTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (extendTextField), ileft, iright, itop + 1, ibottom);
-
-	ileft = iright; iright = ileft + 1;
-	f0Label = GuiLabel_create (NULL, 0, 0, 0, 0, L"Start F0 (Hz):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0Label), ileft, iright, itop, itop + 1);
-	f0TextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0TextField), ileft, iright, itop + 1, ibottom);
-
-	ileft = iright; iright = ileft + 1;
-	f0SlopeLabel = GuiLabel_create (NULL, 0, 0, 0, 0, L"F0 slope (oct/s):", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0SlopeLabel), ileft, iright, itop, itop + 1);
-	f0SlopeTextField = GuiText_create (NULL, 0, 0, 0, 0, 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (f0SlopeTextField), ileft, iright, itop + 1, ibottom);
-
-	itop = nrows - 1; ibottom = itop + 1;
-	ileft = 0; iright = ileft + 3;
-	startInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (startInfo), ileft, iright, itop, ibottom);
-
-	ileft = iright + 1; iright = ileft + 3;
-	endInfo = GuiLabel_create (NULL, 0, 0, 0, 0, L"", 0);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (endInfo), ileft, iright, itop, ibottom);
-
-	drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0, gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
-
-	gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
-	gtk_table_attach_defaults (GTK_TABLE (table), GTK_WIDGET (drawingArea), 0, ncols, 0, nrows - 3);
-
-	gtk_widget_show_all (GTK_WIDGET (form));
-
-#elif motif
-
+void structVowelEditor :: v_createChildren ()
+{
 	double button_width = 60, text_width = 95, status_info_width = 290;
 	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
-
-	form = XmCreateForm (d_windowForm, "buttons", NULL, 0);
-	XtVaSetValues (form,
-	               XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-	               XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-	               XmNbottomAttachment, XmATTACH_FORM,
-	               XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget?? */
-	               NULL);
 
 	// Three buttons on a row: Play, Reverse, Publish
 	left = 10; right = left + button_width;
 	bottom_widgets_top = top = -MARGIN_BOTTOM + 10; bottom_widgets_bottom = bottom = -STATUS_INFO;
-	playButton = GuiButton_createShown (form, left, right, top, bottom, L"Play", gui_button_cb_play, this, 0);
+	playButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Play", gui_button_cb_play, this, 0);
 	left = right + 10; right = left + button_width;
-	reverseButton = GuiButton_createShown (form, left, right, top, bottom, L"Reverse", gui_button_cb_reverse, this, 0);
+	reverseButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Reverse", gui_button_cb_reverse, this, 0);
 	left = right + 10; right = left + button_width;
-	publishButton = GuiButton_createShown (form, left, right, top, bottom, L"Publish", gui_button_cb_publish, this, 0);
+	publishButton = GuiButton_createShown (d_windowForm, left, right, top, bottom, L"Publish", gui_button_cb_publish, this, 0);
 	// Four Text widgets with the label on top: Duration, Extend, F0, Slope
 	// Make the F0 slope button 10 wider to accomodate the text
 	// We wil not use a callback from a Text widget. It will get called multiple times during the editing
 	// of the text. Better to have all editing done and then query the widget for its value!
 	left = right + 10; right = left + text_width; bottom_widgets_halfway = bottom = (top + bottom) / 2; top = bottom_widgets_top;
-	durationLabel = GuiLabel_createShown (form, left, right, top , bottom, L"Duration (s):", 0);
+	GuiLabel_createShown (d_windowForm, left, right, top , bottom, L"Duration (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	durationTextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	durationTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	extendLabel = GuiLabel_createShown (form, left, right, top, bottom, L"Extend (s):", 0);
+	GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"Extend (s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	extendTextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	extendTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	f0Label = GuiLabel_createShown (form, left, right, top, bottom, L"Start F0 (Hz):", 0);
+	GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"Start F0 (Hz):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	f0TextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	f0TextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
 
 	left = right + 10; right = left + text_width + 10; top = bottom_widgets_top; bottom = bottom_widgets_halfway;
-	f0SlopeLabel = GuiLabel_createShown (form, left, right, top, bottom, L"F0 slope (oct/s):", 0);
+	GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"F0 slope (oct/s):", 0);
 	top = bottom; bottom = bottom_widgets_bottom;
-	f0SlopeTextField = GuiText_createShown (form, left, right, top, bottom, 0);
+	f0SlopeTextField = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
 
 	// The status startInfo and endInfo widget at the bottom:
 
 	bottom = - (STATUS_INFO - Gui_LABEL_HEIGHT) / 2; top = bottom - Gui_LABEL_HEIGHT; left = MARGIN_LEFT; right = left + status_info_width;
-	startInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
+	startInfo = GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"", 0);
 
 	left = right; right = left + status_info_width;
-	endInfo = GuiLabel_createShown (form, left, right, top, bottom, L"", 0);
+	endInfo = GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"", 0);
 
 	/***** Create drawing area. *****/
 	// Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 	// log distances are equal (log (1000/200) == log (2500/500) ).
-	drawingArea = GuiDrawingArea_createShown (form, 0, 0, 0, -MARGIN_BOTTOM,
+	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
-	height = GuiObject_getHeight (drawingArea);
-	width = GuiObject_getWidth (drawingArea);
-
-	GuiObject_show (form);
-
-#endif
+	height = drawingArea -> f_getHeight ();
+	width = drawingArea -> f_getWidth ();
 }
 
 static void VowelEditor_setSource (VowelEditor me) {
@@ -1684,12 +1599,12 @@ static Sound VowelEditor_createTarget (VowelEditor me) {
 	}
 }
 
-VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data) {
+VowelEditor VowelEditor_create (const wchar_t *title, Data data) {
 	try {
 		autoVowelEditor me = Thing_new (VowelEditor);
-		Editor_init (me.peek(), parent, 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
+		Editor_init (me.peek(), 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
 #if motif
-		Melder_assert (XtWindow (my drawingArea));
+		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
 		my g = Graphics_create_xmdrawingarea (my drawingArea);
 		Graphics_setFontSize (my g, 12);
@@ -1722,16 +1637,16 @@ VowelEditor VowelEditor_create (GuiObject parent, const wchar *title, Data data)
 		my f0 = f0default;
 		VowelEditor_setSource (me.peek());
 		my target = Sound_createSimple (1, my maximumDuration, my f0.samplingFrequency);
-		GuiText_setString (my f0TextField, Melder_double (my f0.start));
-		GuiText_setString (my f0SlopeTextField, Melder_double (my f0.slopeOctPerSec));
-		GuiText_setString (my durationTextField, L"0.2"); // Source has been created
-		GuiText_setString (my extendTextField, Melder_double (my extendDuration));
+		my f0TextField -> f_setString (Melder_double (my f0.start));
+		my f0SlopeTextField -> f_setString (Melder_double (my f0.slopeOctPerSec));
+		my durationTextField -> f_setString (L"0.2"); // Source has been created
+		my extendTextField -> f_setString (Melder_double (my extendDuration));
 		my grid = griddefault;
 		{
 			// This exdents because it's a hack:
 			struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-			event. width = GuiObject_getWidth (my drawingArea);
-			event. height = GuiObject_getHeight (my drawingArea);
+			event. width = my drawingArea -> f_getWidth ();
+			event. height = my drawingArea -> f_getHeight ();
 			gui_drawingarea_cb_resize (me.peek(), & event);
 		}
 		//struct structGuiDrawingAreaResizeEvent event = { 0 };

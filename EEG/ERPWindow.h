@@ -22,21 +22,24 @@
 #include "SoundEditor.h"
 #include "ERP.h"
 
-Thing_define (ERPWindow, SoundEditor) {
-	public:
+Thing_define (ERPWindow, SoundEditor) { public:
 	// overridden methods:
-		virtual const wchar * v_getChannelName (long channelNumber) {
+		virtual const wchar_t * v_getChannelName (long channelNumber) {
 			ERP erp = (ERP) this -> data;
 			return erp -> d_channelNames [channelNumber];
 		}
-		static bool s_showSelectionViewer;
-		virtual bool * vs_showSelectionViewer () { return & s_showSelectionViewer; }
 		virtual void v_drawSelectionViewer ();
+	// overridden preferences:
+		public:
+			static void f_preferences ();
+			static bool s_showSelectionViewer; virtual bool & pref_showSelectionViewer () { return s_showSelectionViewer; }
+			static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
+			static double s_sound_scaling_height;  virtual double & pref_sound_scaling_height  () { return s_sound_scaling_height;  }
+			static double s_sound_scaling_minimum; virtual double & pref_sound_scaling_minimum () { return s_sound_scaling_minimum; }
+			static double s_sound_scaling_maximum; virtual double & pref_sound_scaling_maximum () { return s_sound_scaling_maximum; }
 };
 
-ERPWindow ERPWindow_create (GuiObject parent, const wchar *title, ERP data);
-
-void ERPWindow_preferences (void);
+ERPWindow ERPWindow_create (const wchar_t *title, ERP data);
 
 /* End of file ERPWindow.h */
 #endif

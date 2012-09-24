@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,40 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2003/03/12 preferences in home directory on shared Windows machines
- * pb 2003/06/19 NUMmachar
- * pb 2003/07/10 GSL initialization
- * pb 2003/10/03 praat-executeFromFile without arguments
- * pb 2004/06/17 made Objects label visible on Unix
- * pb 2004/12/29 removed .praat-user-startUp for Windows (empty file name error)
- * pb 2005/06/28 TextEditor_prefs
- * pb 2005/08/22 renamed Control menu to "Praat"
- * pb 2005/11/18 URL support
- * pb 2006/02/23 corrected callbacks in praat_installEditorN
- * pb 2006/08/07 removed quotes from around file paths in openDocument message
- * pb 2006/09/30 praat_selection () can take NULL as an argument
- * pb 2006/10/28 removed MacOS 9 stuff
- * pb 2006/12/26 theCurrentPraat
- * pb 2007/01/25 width of object list is 50 procent
- * pb 2007/06/10 wchar_t
- * pb 2007/06/16 text encoding prefs
- * pb 2007/08/31 praat_new1-9
- * pb 2007/09/02 include Editor prefs
- * sdk 2008/01/14 GTK
- * pb 2008/02/01 made sure that praat_dataChanged can be called at error time
- * pb 2008/03/13 Windows: better file dropping
- * pb 2008/04/09 removed explicit GSL
- * pb 2008/11/01 praatcon -a
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2009/03/17 split up theCurrentPraat into Application, Objects and Picture
- * pb 2009/12/22 invokingButtonTitle
- * pb 2010/05/24 sendpraat for GTK
- * pb 2010/07/29 removed GuiWindow_show
- * pb 2010/12/08 can read Collections created from multiple objects read from one file (e.g. a labelled sound file)
- * pb 2011/07/05 C++
  */
 
 #include "melder.h"
@@ -76,7 +42,7 @@
 #include "machine.h"
 #include "Printer.h"
 #include "ScriptEditor.h"
-#include "Strings.h"
+#include "Strings_.h"
 
 #if gtk
 	#include <gdk/gdkx.h>
@@ -100,8 +66,8 @@ static structMelderDir homeDir = { { 0 } };
 /*
  * praatDirectory: preferences and buttons files.
  *    Unix:   /u/miep/.myProg-dir   (without slash)
- *    Windows 2000/XP/Vista:   \\myserver\myshare\Miep\MyProg
- *                       or:   C:\Documents and settings\Miep\MyProg
+ *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg
+ *                    or:   C:\Documents and settings\Miep\MyProg
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs
  */
 extern structMelderDir praatDir;
@@ -117,8 +83,8 @@ static structMelderFile prefs4File = { 0 }, prefs5File = { 0 };
 /*
  * buttons5File: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
- *    Windows 2000/XP/Vista:   \\myserver\myshare\Miep\MyProg\Buttons5.ini
- *                       or:   C:\Documents and settings\Miep\MyProg\Buttons5.ini
+ *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Buttons5.ini
+ *                    or:   C:\Documents and settings\Miep\MyProg\Buttons5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
  */
 static structMelderFile buttons4File = { 0 }, buttons5File = { 0 };
@@ -128,8 +94,16 @@ static structMelderFile buttons4File = { 0 }, buttons5File = { 0 };
 #elif defined (_WIN32)
 	static structMelderFile messageFile = { 0 };   /* Like C:\Windows\myProg\Message.txt */
 #endif
+/*
+ * tracingFile: tracing file.
+ *    Unix:   /u/miep/.myProg-dir/tracing
+ *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Tracing.txt
+ *                    or:   C:\Documents and settings\Miep\MyProg\Tracing.txt
+ *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Tracing.txt
+ */
+static structMelderFile tracingFile = { 0 };
 
-static GuiObject praatList_objects;
+static GuiList praatList_objects;
 
 /***** selection *****/
 
@@ -155,7 +129,7 @@ long praat_getIdOfSelected (ClassInfo klas, int inplace) {
 	return 0;
 }
 
-wchar * praat_getNameOfSelected (ClassInfo klas, int inplace) {
+wchar_t * praat_getNameOfSelected (ClassInfo klas, int inplace) {
 	int place = inplace, IOBJECT;
 	if (place == 0) place = 1;
 	if (place > 0) {
@@ -192,7 +166,7 @@ void praat_deselect (int IOBJECT) {
 	Melder_assert (readableClassId != 0);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] -= 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
-		GuiList_deselectItem (praatList_objects, IOBJECT);
+		praatList_objects -> f_deselectItem (IOBJECT);
 	}
 }
 
@@ -208,7 +182,7 @@ void praat_select (int IOBJECT) {
 	if (readableClassId == 0) Melder_fatal ("No sequential unique ID for class %ls.", object -> classInfo -> className);
 	theCurrentPraatObjects -> numberOfSelected [readableClassId] += 1;
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
-		GuiList_selectItem (praatList_objects, IOBJECT);
+		praatList_objects -> f_selectItem (IOBJECT);
 	}
 }
 
@@ -216,12 +190,12 @@ void praat_selectAll (void) { int IOBJECT; WHERE (1) praat_select (IOBJECT); }
 
 void praat_list_background (void) {
 	int IOBJECT;
-	WHERE (SELECTED) GuiList_deselectItem (praatList_objects, IOBJECT);
+	WHERE (SELECTED) praatList_objects -> f_deselectItem (IOBJECT);
 }
 void praat_list_foreground (void) {
 	int IOBJECT;
 	WHERE (SELECTED) {
-		GuiList_selectItem (praatList_objects, IOBJECT);
+		praatList_objects -> f_selectItem (IOBJECT);
 	}
 }
 
@@ -356,7 +330,7 @@ void praat_cleanUpName (wchar_t *name) {
 
 /***** objects + commands *****/
 
-void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
+void praat_newWithFile1 (Data me, const wchar_t *myName, MelderFile file) {
 	int IOBJECT, ieditor;   // must be local: praat_new can be called from within a loop!!!
 	if (me == NULL)
 		Melder_throw ("No object was put into the list.");
@@ -368,7 +342,7 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 		try {
 			for (long idata = 1; idata <= list -> size; idata ++) {
 				Data object = (Data) list -> item [idata];
-				const wchar *name = object -> name ? object -> name : myName;
+				const wchar_t *name = object -> name ? object -> name : myName;
 				Melder_assert (name != NULL);
 				praat_new1 (object, name);   // recurse
 			}
@@ -388,7 +362,7 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 		/*
 		 * Remove extension.
 		 */
-		wchar *p = wcsrchr (givenName.string, '.');
+		wchar_t *p = wcsrchr (givenName.string, '.');
 		if (p) *p = '\0';
 		praat_cleanUpName (givenName.string);
 	} else {
@@ -407,14 +381,9 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 	++ theCurrentPraatObjects -> uniqueId;
 
 	if (! theCurrentPraatApplication -> batch) {   // put a new object on the screen, at the bottom of the list
-		#ifdef UNIX
-			#if motif
-				XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraatObjects -> n + 2, NULL);
-			#endif
-		#endif
 		MelderString listName = { 0 };
 		MelderString_append (& listName, Melder_integer (theCurrentPraatObjects -> uniqueId), L". ", name.string);
-		GuiList_insertItem (praatList_objects, listName.string, theCurrentPraatObjects -> n);
+		praatList_objects -> f_insertItem (listName.string, theCurrentPraatObjects -> n);
 		MelderString_free (& listName);
 	}
 	OBJECT = me;
@@ -436,65 +405,65 @@ void praat_newWithFile1 (Data me, const wchar *myName, MelderFile file) {
 }
 
 static MelderString thePraatNewName = { 0 };
-void praat_newWithFile2 (Data me, const wchar *s1, const wchar *s2, MelderFile file) {
+void praat_newWithFile2 (Data me, const wchar_t *s1, const wchar_t *s2, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-void praat_newWithFile3 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, MelderFile file) {
+void praat_newWithFile3 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-void praat_newWithFile4 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, MelderFile file) {
+void praat_newWithFile4 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-void praat_newWithFile5 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, MelderFile file) {
+void praat_newWithFile5 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5);
 	praat_newWithFile1 (me, thePraatNewName.string, file);
 }
-void praat_new1 (Data me, const wchar *s1) {
+void praat_new1 (Data me, const wchar_t *s1) {
 	praat_newWithFile1 (me, s1, NULL);
 }
-void praat_new2 (Data me, const wchar *s1, const wchar *s2) {
+void praat_new2 (Data me, const wchar_t *s1, const wchar_t *s2) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2);
 	praat_new1 (me, thePraatNewName.string);
 }
-void praat_new3 (Data me, const wchar *s1, const wchar *s2, const wchar *s3) {
+void praat_new3 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3);
 	praat_new1 (me, thePraatNewName.string);
 }
-void praat_new4 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+void praat_new4 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4);
 	return praat_new1 (me, thePraatNewName.string);
 }
-void praat_new5 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
+void praat_new5 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5);
 	praat_new1 (me, thePraatNewName.string);
 }
-void praat_new6 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
+void praat_new6 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6);
 	praat_new1 (me, thePraatNewName.string);
 }
-void praat_new7 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
+void praat_new7 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
 	praat_new1 (me, thePraatNewName.string);
 }
-void praat_new8 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
+void praat_new8 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
 	praat_new1 (me, thePraatNewName.string);
 }
-void praat_new9 (Data me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
+void praat_new9 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	praat_new1 (me, thePraatNewName.string);
@@ -523,7 +492,7 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 		Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] >= 0);
 	}
 	theCurrentPraatObjects -> totalSelection = 0;
-	long numberOfSelected, *selected = GuiList_getSelectedPositions (praatList_objects, & numberOfSelected);
+	long numberOfSelected, *selected = praatList_objects -> f_getSelectedPositions (& numberOfSelected);
 	if (selected != NULL) {
 		for (long iselected = 1; iselected <= numberOfSelected; iselected ++) {
 			IOBJECT = selected [iselected];
@@ -543,15 +512,15 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 
 void praat_list_renameAndSelect (int position, const wchar_t *name) {
 	if (! theCurrentPraatApplication -> batch) {
-		GuiList_replaceItem (praatList_objects, name, position);   /* Void if name equal. */
+		praatList_objects -> f_replaceItem (name, position);   // void if name equal
 		if (! Melder_backgrounding)
-			GuiList_selectItem (praatList_objects, position);
+			praatList_objects -> f_selectItem (position);
 	}
 }
 
 /***** objects *****/
 
-void praat_name2 (wchar *name, ClassInfo klas1, ClassInfo klas2) {
+void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2) {
 	int i1 = 1, i2;
 	wchar_t *name1, *name2;
 	while (theCurrentPraatObjects -> list [i1]. selected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1) i1 ++;
@@ -578,10 +547,7 @@ void praat_removeObject (int i) {
 	MelderFile_setToNull (& theCurrentPraatObjects -> list [theCurrentPraatObjects -> n]. file);   /* Undangle or remove second reference. */
 	-- theCurrentPraatObjects -> n;
 	if (! theCurrentPraatApplication -> batch) {
-		GuiList_deleteItem (praatList_objects, i);
-		#ifdef UNIX
-			//XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraatObjects -> n + 1, NULL);
-		#endif
+		praatList_objects -> f_deleteItem (i);
 	}
 }
 
@@ -589,7 +555,7 @@ static void praat_exit (int exit_code) {
 	int IOBJECT;
 	#ifdef _WIN32
 		if (! theCurrentPraatApplication -> batch)
-			XtDestroyWidget (theCurrentPraatApplication -> topShell);
+			XtDestroyWidget (theCurrentPraatApplication -> topShell -> d_xmShell);
 	#endif
 	praat_picture_exit ();
 	praat_statistics_exit ();   /* Record total memory use across sessions. */
@@ -653,6 +619,11 @@ static void praat_exit (int exit_code) {
 	 */
 	WHERE_DOWN (! MelderFile_isNull (& theCurrentPraatObjects -> list [IOBJECT]. file)) praat_remove (IOBJECT);
 	Melder_files_cleanUp ();   /* If a URL is open. */
+
+	/*
+	 * Delete the tracing file?
+	 */
+	//MelderFile_delete (& tracingFile);
 
 	/*
 	 * Finally, leave the program.
@@ -825,7 +796,7 @@ void praat_dataChanged (Any object) {
 	/*
 	 * This function can be called at error time, which is weird.
 	 */
-	wchar *saveError = NULL;
+	wchar_t *saveError = NULL;
 	bool duringError = Melder_hasError ();
 	if (duringError) {
 		saveError = Melder_wcsdup_f (Melder_getError ());
@@ -852,7 +823,7 @@ static void helpProc (const wchar_t *query) {
 		return;
 	}
 	try {
-		Manual_create (theCurrentPraatApplication -> topShell, query, theCurrentPraatApplication -> manPages, false);
+		Manual_create (query, theCurrentPraatApplication -> manPages, false);
 	} catch (MelderError) {
 		Melder_flushError ("help: no help on \"%ls\".", query);
 	}
@@ -892,16 +863,9 @@ DO
 	praat_exit (0);
 END
 
-static void gui_cb_quit (GUI_ARGS) {
-	(void) w; (void) void_me; (void) call;
+static void gui_cb_quit (void *p) {
 	DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
 }
-
-#if gtk
-static void gui_cb_quit_gtk (void *p) {
-  DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
-}
-#endif
 
 void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 
@@ -945,10 +909,10 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		return 0;
 	}
 	extern "C" char *sendpraat (void *display, const char *programName, long timeOut, const char *text);
-	extern "C" wchar *sendpraatW (void *display, const wchar *programName, long timeOut, const wchar *text);
+	extern "C" wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 	static void cb_openDocument (MelderFile file) {
-		wchar text [500];
-		wchar *s = file -> path;
+		wchar_t text [500];
+		wchar_t *s = file -> path;
 		swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
 		long l = wcslen (text);
 		if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
@@ -966,7 +930,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		}
 		return 0;
 	}
-	static int cb_userMessageW (wchar *message) {
+	static int cb_userMessageW (wchar_t *message) {
 		autoPraatBackground background;
 		try {
 			praat_executeScriptFromText (message);
@@ -982,9 +946,9 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 #endif
 
-static wchar * thePraatStandAloneScriptText = NULL;
+static wchar_t * thePraatStandAloneScriptText = NULL;
 
-void praat_setStandAloneScriptText (wchar *text) {
+void praat_setStandAloneScriptText (wchar_t *text) {
 	thePraatStandAloneScriptText = text;
 }
 
@@ -1106,18 +1070,18 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	Melder_getHomeDir (& homeDir);
 	/*
 	 * Get the program's private directory:
-	 *    "/u/miep/myProg-dir" (Unix)
+	 *    "/u/miep/.myProg-dir" (Unix)
 	 *    "/Users/miep/Library/Preferences/MyProg Prefs" (Macintosh)
 	 *    "C:\Documents and Settings\Miep\MyProg" (Windows)
 	 * and construct a preferences-file name and a script-buttons-file name like
-	 *    /u/miep/.myProg-dir/prefs   (Unix)
-	 *    /u/miep/.myProg-dir/script_buttons
+	 *    /u/miep/.myProg-dir/prefs5
+	 *    /u/miep/.myProg-dir/buttons5
 	 * or
-	 *    /Users/miep/Library/Preferences/MyProg Prefs/Prefs
-	 *    /Users/miep/Library/Preferences/MyProg Prefs/Buttons
+	 *    /Users/miep/Library/Preferences/MyProg Prefs/Prefs5
+	 *    /Users/miep/Library/Preferences/MyProg Prefs/Buttons5
 	 * or
-	 *    C:\Documents and Settings\Miep\MyProg\Preferences.ini
-	 *    C:\Documents and Settings\Miep\MyProg\Buttons.ini
+	 *    C:\Documents and Settings\Miep\MyProg\Preferences5.ini
+	 *    C:\Documents and Settings\Miep\MyProg\Buttons5.ini
 	 * On Unix, also create names for process-id and message files.
 	 */
 	{
@@ -1147,18 +1111,22 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			MelderDir_getFile (& praatDir, L"buttons5", & buttons5File);
 			MelderDir_getFile (& praatDir, L"pid", & pidFile);
 			MelderDir_getFile (& praatDir, L"message", & messageFile);
+			MelderDir_getFile (& praatDir, L"tracing", & tracingFile);
 		#elif defined (_WIN32)
 			MelderDir_getFile (& praatDir, L"Preferences.ini", & prefs4File);
 			MelderDir_getFile (& praatDir, L"Preferences5.ini", & prefs5File);
 			MelderDir_getFile (& praatDir, L"Buttons.ini", & buttons4File);
 			MelderDir_getFile (& praatDir, L"Buttons5.ini", & buttons5File);
 			MelderDir_getFile (& praatDir, L"Message.txt", & messageFile);
+			MelderDir_getFile (& praatDir, L"Tracing.txt", & tracingFile);
 		#elif defined (macintosh)
 			MelderDir_getFile (& praatDir, L"Prefs", & prefs4File);   /* We invite trouble if we call it Preferences! */
 			MelderDir_getFile (& praatDir, L"Prefs5", & prefs5File);
 			MelderDir_getFile (& praatDir, L"Buttons", & buttons4File);
 			MelderDir_getFile (& praatDir, L"Buttons5", & buttons5File);
+			MelderDir_getFile (& praatDir, L"Tracing.txt", & tracingFile);
 		#endif
+		Melder_tracingToFile (& tracingFile);
 	}
 	#if defined (UNIX)
 		if (! Melder_batch) {
@@ -1172,9 +1140,6 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 				autofile f = Melder_fopen (& pidFile, "w");
 				fprintf (f, "%ld", (long) getpid ());
 				f.close (& pidFile);
-				#if motif
-					signal (SIGUSR1, handleMessage);
-				#endif
 			} catch (MelderError) {
 				Melder_clearError ();
 			}
@@ -1199,10 +1164,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	/*
 	 * Make room for commands.
 	 */
+	trace ("initing actions");
 	praat_actions_init ();
+	trace ("initing menu commands");
 	praat_menuCommands_init ();
 
-	GuiObject raam = NULL;
+	GuiWindow raam = NULL;
 	if (Melder_batch) {
 		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 			MelderString_empty (& theCurrentPraatApplication -> batchName);
@@ -1217,42 +1184,34 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			MelderString_copy (& theCurrentPraatApplication -> batchName, Melder_peekUtf8ToWcs (argv [3]));
 		#endif
 	} else {
-		char objectWindowTitle [100];
+		trace ("starting the application");
 		Machine_initLookAndFeel (argc, argv);
-		sprintf (objectWindowTitle, "%s Objects", praatP.title);
+		/*
+		 * Start the application.
+		 */
 		#if gtk
 			g_set_application_name (title);
-			raam = GuiWindow_create (NULL, -1, Gui_AUTOMATIC, -1, 600, Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit_gtk, NULL, 0);
-			theCurrentPraatApplication -> topShell = gtk_widget_get_parent (GTK_WIDGET (raam));
-			GuiObject_show (theCurrentPraatApplication -> topShell);
+		#elif cocoa
+			[NSApplication sharedApplication];
 		#elif defined (_WIN32)
 			argv [0] = & praatP. title [0];   /* argc == 4 */
 			Gui_setOpenDocumentCallback (cb_openDocument);
-			theCurrentPraatApplication -> topShell = GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
-			double x, y;
-			Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
-			XtVaSetValues (theCurrentPraatApplication -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle,
-				XmNx, (int) x + 10,
-				XmNy, (int) y + 0,
-				NULL);
-			XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
-			/* Catch Window Manager "Close" and "Quit". */
-			XmAddWMProtocolCallback (theCurrentPraatApplication -> topShell, 'delw', gui_cb_quit, 0);
+			GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
 		#elif defined (macintosh)
-			#if useCarbon
-				theCurrentPraatApplication -> topShell = GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
-				double x, y;
-				Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
-				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle,
-					XmNx, (int) x + 10,
-					XmNy, (int) y + 0,
-					NULL);
-				XtVaSetValues (theCurrentPraatApplication -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
-				/* Catch Window Manager "Close" and "Quit". */
-				XmAddWMProtocolCallback (theCurrentPraatApplication -> topShell, 'delw', gui_cb_quit, 0);
-			#else
-			#endif
+			GuiAppInitialize ("Praatwulg", NULL, 0, & argc, argv, NULL, NULL);
 		#endif
+
+		trace ("creating and installing the Objects window");
+		char objectWindowTitle [100];
+		sprintf (objectWindowTitle, "%s Objects", praatP.title);
+		double x, y;
+		Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
+		theCurrentPraatApplication -> topShell = raam = GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT,
+			Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit, NULL, 0);
+		#if motif
+			GuiApp_setApplicationShell (theCurrentPraatApplication -> topShell -> d_xmShell);
+		#endif
+		raam -> f_show ();
 	}
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
 	if (Melder_batch) {
@@ -1260,61 +1219,34 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addMenus (NULL);
 		praat_addFixedButtons (NULL);
 	} else {
-		GuiObject Raam = NULL;
-		#if gtk
-			GuiObject raHoriz, raLeft; /* I want to have more possibilities for GTK widgets */
-		#else
-			#define raHoriz Raam 
-			#define raLeft Raam 
-		#endif
 
 		#ifdef macintosh
-			MelderGui_create (theCurrentPraatApplication -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
+			MelderGui_create (raam);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
-		#if gtk
-			Raam = raam;
-		#elif motif
-			Raam = XmCreateForm (theCurrentPraatApplication -> topShell, "raam", NULL, 0);
+		#if defined (macintosh) && useCarbon
+			trace ("creating the menu bar along the top of the screen (Mac only)");
+			raam -> f_addMenuBar ();   // yes, on the Mac we create a menu bar twice: once at the top of the screen, once in the Objects window
 		#endif
-		#ifdef macintosh
-			GuiObject_size (Raam, WINDOW_WIDTH, Gui_AUTOMATIC);
-			praatP.topBar = Gui_addMenuBar (Raam);
-			GuiObject_show (praatP.topBar);
-		#endif
-		praatP.menuBar = Gui_addMenuBar (Raam);
+		trace ("creating the menu bar in the Objects window");
+		raam -> f_addMenuBar ();
+		praatP.menuBar = raam;
 		praat_addMenus (praatP.menuBar);
-		GuiObject_show (praatP.menuBar);
 
-		#ifndef UNIX
-			GuiObject_size (Raam, WINDOW_WIDTH, Gui_AUTOMATIC);
-		#endif
-		#if gtk
-			raHoriz = gtk_hpaned_new ();
-			gtk_container_add (GTK_CONTAINER (Raam), GTK_WIDGET (raHoriz));
-			raLeft = gtk_vbox_new (FALSE, 0);
-			gtk_container_add (GTK_CONTAINER (raHoriz), GTK_WIDGET (raLeft));
-		#else
-			GuiLabel_createShown (raLeft, 3, -250, Machine_getMainWindowMenuBarHeight () + 5, Gui_AUTOMATIC, L"Objects:", 0);
-		#endif
-		praatList_objects = GuiList_create (raLeft, 0, -250, Machine_getMainWindowMenuBarHeight () + 26, -100, true, L" Objects ");
-		GuiList_setSelectionChangedCallback (praatList_objects, gui_cb_list, 0);
-		//XtVaSetValues (praatList_objects, XmNvisibleItemCount, 20, NULL);
-		GuiObject_show (praatList_objects);
-		praat_addFixedButtons (raLeft);
-		praat_actions_createDynamicMenu (raHoriz, 250);
-		#if gtk
-			GuiObject_show (raLeft);
-			GuiObject_show (raHoriz);
-		#endif
-		GuiObject_show (Raam);
+		trace ("creating the object list in the Objects window");
+		GuiLabel_createShown (raam, 3, -250, Machine_getMainWindowMenuBarHeight () + 5, Machine_getMainWindowMenuBarHeight () + 5 + Gui_LABEL_HEIGHT, L"Objects:", 0);
+		praatList_objects = GuiList_create (raam, 0, -250, Machine_getMainWindowMenuBarHeight () + 26, -100, true, L" Objects ");
+		praatList_objects -> f_setSelectionChangedCallback (gui_cb_list, 0);
+		praatList_objects -> f_show ();
+		praat_addFixedButtons (raam);
+
+		trace ("creating the dynamic menu in the Objects window");
+		praat_actions_createDynamicMenu (raam, 250);
+		trace ("showing the Objects window");
+		raam -> f_show ();
 		#ifdef UNIX
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
-				#if gtk
-					fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell) -> window)));
-				#else
-					fprintf (f, " %ld", (long) XtWindow (theCurrentPraatApplication -> topShell));
-				#endif
+				fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_widget) -> window)));
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();
@@ -1324,6 +1256,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
+			trace ("initializing the Gui late");
 			MelderGui_create (theCurrentPraatApplication -> topShell);   /* Mac: done this earlier. */
 		#endif
 		Melder_setHelpProc (helpProc);
@@ -1331,11 +1264,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	Melder_setPublishProc (publishProc);
 	theCurrentPraatApplication -> manPages = ManPages_create ();
 
+	trace ("creating the Picture window");
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileNameTemplate) {
-	wchar name [256];
+	wchar_t name [256];
 	swprintf (name, 256, fileNameTemplate, Melder_peekUtf8ToWcs (programName));
 	if (! MelderDir_isNull (startUpDirectory)) {   // Should not occur on modern systems.
 		structMelderFile startUp = { 0 };
@@ -1354,52 +1288,54 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 #if gtk
 	#include <gdk/gdkkeysyms.h>
 	static gint theKeySnooper (GtkWidget *widget, GdkEventKey *event, gpointer data) {
-		//Melder_casual ("keyval %ld, type %ld", (long) event -> keyval, (long) event -> type);
+		trace ("keyval %ld, type %ld", (long) event -> keyval, (long) event -> type);
 		if ((event -> keyval == GDK_Tab || event -> keyval == GDK_KEY_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
-			//Melder_casual ("tab key pressed in window %ld", widget);
+			trace ("tab key pressed in window %p", widget);
 			if (event -> state == 0) {
 				if (GTK_IS_WINDOW (widget)) {
 					GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
-					//Melder_casual ("tab pressed in window %ld", shell);
-					void (*tabCallback) (GuiObject, XtPointer, XtPointer) = (void (*) (GuiObject, XtPointer, XtPointer)) g_object_get_data (G_OBJECT (widget), "tabCallback");
+					trace ("tab pressed in GTK window %p", shell);
+					void (*tabCallback) (GuiObject, gpointer) = (void (*) (GuiObject, gpointer)) g_object_get_data (G_OBJECT (widget), "tabCallback");
 					if (tabCallback) {
-						//Melder_casual ("a tab callback exists");
+						trace ("a tab callback exists");
 						void *tabClosure = g_object_get_data (G_OBJECT (widget), "tabClosure");
-						tabCallback (widget, tabClosure, tabClosure);
+						tabCallback (widget, tabClosure);
 						return TRUE;
 					}
 				}
 			} else if (event -> state == GDK_SHIFT_MASK) {   // BUG: 
 				if (GTK_IS_WINDOW (widget)) {
 					GtkWidget *shell = gtk_widget_get_toplevel (GTK_WIDGET (widget));
-					//Melder_casual ("shift-tab pressed in window %ld", shell);
-					void (*tabCallback) (GuiObject, XtPointer, XtPointer) = (void (*) (GuiObject, XtPointer, XtPointer)) g_object_get_data (G_OBJECT (widget), "shiftTabCallback");
+					trace ("shift-tab pressed in GTK window %p", shell);
+					void (*tabCallback) (GuiObject, gpointer) = (void (*) (GuiObject, gpointer)) g_object_get_data (G_OBJECT (widget), "shiftTabCallback");
 					if (tabCallback) {
-						//Melder_casual ("a shift tab callback exists");
+						trace ("a shift tab callback exists");
 						void *tabClosure = g_object_get_data (G_OBJECT (widget), "shiftTabClosure");
-						tabCallback (widget, tabClosure, tabClosure);
+						tabCallback (widget, tabClosure);
 						return TRUE;
 					}
 				}
 			}
 		}
+		trace ("end");
 		return FALSE;   // pass event on
 	}
 #endif
 
 void praat_run (void) {
-	FILE *f;
-
+	trace ("adding menus, second round");
 	praat_addMenus2 ();
-	#ifdef macintosh
+
+	trace ("adding the Quit command");
+	#if defined (macintosh) && useCarbon
 		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_HIDDEN, DO_Quit);   // the Quit command is needed for scripts, not for the GUI
 	#else
 		praat_addMenuCommand (L"Objects", L"Praat", L"-- quit --", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"Praat", L"Quit", 0, praat_UNHIDABLE + 'Q', DO_Quit);
 	#endif
-	/*
-	 * Read the preferences file, and notify those who want to be notified of this,
-	 * namely, those who already have a window (namely, the Picture window),
+
+	trace ("read the preferences file, and notify those who want to be notified of this");
+	/* ...namely, those who already have a window (namely, the Picture window),
 	 * and those that regard the start of a new session as a meaningful event
 	 * (namely, the session counter and the cross-session memory counter).
 	 */
@@ -1411,6 +1347,7 @@ void praat_run (void) {
 
 	praatP.phase = praat_STARTING_UP;
 
+	trace ("execute start-up file(s)");
 	#if defined (UNIX) || defined (macintosh)
 		structMelderDir usrLocal = { { 0 } };
 		Melder_pathToDir (L"/usr/local", & usrLocal);
@@ -1422,9 +1359,9 @@ void praat_run (void) {
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32)
 		executeStartUpFile (& homeDir, L"%ls-user-startUp");
 	#endif
-	/*
-	 * Plugins.
-	 * The Praat phase should remain praat_STARTING_UP,
+
+	trace ("install plug-ins");
+	/* The Praat phase should remain praat_STARTING_UP,
 	 * because any added commands must not be included in the buttons file.
 	 */
 	structMelderFile searchPattern = { 0 };
@@ -1497,10 +1434,10 @@ void praat_run (void) {
 			}
 		}
 	} else /* GUI */ {
-		praatP.phase = praat_READING_BUTTONS;
-		/*
-		 * Read the added script buttons. Each line separately: every error should be ignored.
+		trace ("reading the added script buttons");
+		/* Each line separately: every error should be ignored.
 		 */
+		praatP.phase = praat_READING_BUTTONS;
 		{ // scope
 			autostring buttons;
 			try {
@@ -1513,7 +1450,7 @@ void praat_run (void) {
 				}
 			}
 			if (buttons.peek()) {
-				wchar *line = buttons.peek();
+				wchar_t *line = buttons.peek();
 				for (;;) {
 					wchar_t *newline = wcschr (line, '\n');
 					if (newline) *newline = '\0';
@@ -1528,9 +1465,7 @@ void praat_run (void) {
 			}
 		}
 
-		/*
-		 * Sort the commands.
-		 */
+		trace ("sorting the commands");
 		praat_sortMenuCommands ();
 		praat_sortActions ();
 
@@ -1538,10 +1473,14 @@ void praat_run (void) {
 
 		#if gtk
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
-			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell), "client-event", G_CALLBACK (cb_userMessage), NULL);
+			trace ("install GTK key snooper");
+			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_widget), "client-event", G_CALLBACK (cb_userMessage), NULL);
 			gtk_key_snooper_install (theKeySnooper, 0);
+			trace ("start the GTK event loop");
 			gtk_main ();
-		#else
+		#elif cocoa
+			[NSApp run];
+		#elif motif
 			#if defined (_WIN32)
 				if (theCurrentPraatApplication -> batchName.string [0] != '\0') {
 					wchar_t text [500];
@@ -1551,6 +1490,8 @@ void praat_run (void) {
 					 * this is especially likely to happen if the path contains spaces (which is usual).
 					 * And sometimes, Windows prepends a space before the quote.
 					 * Peel all that off.
+					 *
+					 * BUG: this only works now with single files; it should work with multiple files as well.
 					 */
 					wchar_t *s = theCurrentPraatApplication -> batchName.string;
 					swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);

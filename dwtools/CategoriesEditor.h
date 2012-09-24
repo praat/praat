@@ -28,8 +28,11 @@ Thing_define (CategoriesEditor, Editor) {
 	public:
 		CommandHistory history;
 		int position;
-		GuiObject list, text, outOfView, undo, redo;
-		GuiObject remove, insert, insertAtEnd, replace, moveUp, moveDown;
+		GuiList list;
+		GuiText text;
+		GuiButton undo, redo;
+		GuiLabel outOfView;
+		GuiButton remove, insert, insertAtEnd, replace, moveUp, moveDown;
 	// overridden methods:
 		void v_destroy ();
 		void v_createChildren ();
@@ -37,6 +40,6 @@ Thing_define (CategoriesEditor, Editor) {
 		void v_dataChanged ();
 };
 
-CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, Categories data);
+CategoriesEditor CategoriesEditor_create (const wchar_t *title, Categories data);
 
 #endif /* _CategoriesEditor_h_ */

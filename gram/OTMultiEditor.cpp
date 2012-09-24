@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2011 Paul Boersma
+ * Copyright (C) 2005-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,8 +101,8 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 		Editor_save (me, L"Learn one");
 		Melder_free (my form1);
 		Melder_free (my form2);
-		my form1 = GuiText_getString (my form1Text);
-		my form2 = GuiText_getString (my form2Text);
+		my form1 = my form1Text -> f_getString ();
+		my form2 = my form2Text -> f_getString ();
 		OTMulti_learnOne ((OTMulti) my data, my form1, my form2,
 			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"), GET_INTEGER (L"Direction"),
 			GET_REAL (L"Plasticity"), GET_REAL (L"Rel. plasticity spreading"));
@@ -145,8 +145,8 @@ static void menu_cb_OTLearningTutorial (EDITOR_ARGS) {
 static void do_limit (OTMultiEditor me) {
 	Melder_free (my form1);
 	Melder_free (my form2);
-	my form1 = GuiText_getString (my form1Text);
-	my form2 = GuiText_getString (my form2Text);
+	my form1 = my form1Text -> f_getString ();
+	my form2 = my form2Text -> f_getString ();
 	Graphics_updateWs (my g);
 }
 
@@ -170,23 +170,11 @@ void structOTMultiEditor :: v_createChildren () {
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
 	GuiButton_createShown (d_windowForm, 4, 124, y, y + height,
-		L"Partial forms:", gui_button_cb_limit, this,
-		#ifdef _WIN32
-			GuiButton_DEFAULT   // BUG: clickedCallback should work for texts
-		#else
-			0
-		#endif
-		);
-	form1Text = GuiText_createShown (d_windowForm, 124 + STRING_SPACING, 274 + STRING_SPACING, y, Gui_AUTOMATIC, 0);
-	#if motif
-	/* TODO */
-	XtAddCallback (form1Text, XmNactivateCallback, gui_cb_limit, (XtPointer) this);
-	#endif
-	form2Text = GuiText_createShown (d_windowForm, 274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, Gui_AUTOMATIC, 0);
-	#if motif
-	/* TODO */
-	XtAddCallback (form2Text, XmNactivateCallback, gui_cb_limit, (XtPointer) this);
-	#endif
+		L"Partial forms:", gui_button_cb_limit, this, GuiButton_DEFAULT);
+	form1Text = GuiText_createShown (d_windowForm,
+		124 + STRING_SPACING, 274 + STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+	form2Text = GuiText_createShown (d_windowForm,
+		274 + 2 * STRING_SPACING, 424 + 2 * STRING_SPACING, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
 void structOTMultiEditor :: v_createMenus () {
@@ -208,7 +196,7 @@ void structOTMultiEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 static OTMulti drawTableau_grammar;
-static const wchar *drawTableau_form1, *drawTableau_form2;
+static const wchar_t *drawTableau_form1, *drawTableau_form2;
 static bool drawTableau_constraintsAreDrawnVertically;
 static void drawTableau (Graphics g) {
 	OTMulti_drawTableau (drawTableau_grammar, g, drawTableau_form1, drawTableau_form2, drawTableau_constraintsAreDrawnVertically, true);
@@ -243,19 +231,19 @@ void structOTMultiEditor :: v_draw () {
 	Graphics_setAtSignIsLink (g, TRUE);
 }
 
-int structOTMultiEditor :: v_goToPage (const wchar *title) {
+int structOTMultiEditor :: v_goToPage (const wchar_t *title) {
 	if (title == NULL) return 1;
 	selectedConstraint = wcstol (title, NULL, 10);
 	return 1;
 }
 
-OTMultiEditor OTMultiEditor_create (GuiObject parent, const wchar *title, OTMulti grammar) {
+OTMultiEditor OTMultiEditor_create (const wchar_t *title, OTMulti grammar) {
 	try {
 		autoOTMultiEditor me = Thing_new (OTMultiEditor);
 		my data = grammar;
 		my form1 = Melder_wcsdup (L"");
 		my form2 = Melder_wcsdup (L"");
-		HyperPage_init (me.peek(), parent, title, grammar);
+		HyperPage_init (me.peek(), title, grammar);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("OTMulti window not created.");

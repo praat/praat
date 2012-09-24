@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (Movie, Sampled)
 
 	#if oo_DECLARING
 		// functions:
-			void f_init (Sound sound, const wchar *folderName, Strings fileNames);
+			void f_init (Sound sound, const wchar_t *folderName, Strings fileNames);
 			void f_paintOneImageInside (Graphics graphics, long frameNumber, double a_xmin, double a_xmax, double a_ymin, double a_ymax);
 			void f_paintOneImage (Graphics graphics, long frameNumber, double a_xmin, double a_xmax, double a_ymin, double a_ymax);
 			void f_play (Graphics graphics, double tmin, double tmax, int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure);

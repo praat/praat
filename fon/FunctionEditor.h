@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,24 +35,27 @@ Thing_define (FunctionEditor, Editor) {
 		/* but has to respect the invariants, */
 		/* and has to call FunctionEditor_marksChanged () */
 		/* immediately after making the changes. */
-		double tmin, tmax, startWindow, endWindow;
-		double startSelection, endSelection;   // markers
+		double d_tmin, d_tmax, d_startWindow, d_endWindow;
+		double d_startSelection, d_endSelection;   // markers
 			/* These attributes are all expressed in seconds. Invariants: */
 			/*    tmin <= startWindow < endWindow <= tmax; */
 			/*    tmin <= (startSelection, endSelection) <= tmax; */
 		double arrowScrollStep;
 
-		Graphics graphics;   // used in the 'draw' method
+		Graphics d_graphics;   // used in the 'draw' method
 		short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
 		short selectionViewerLeft, selectionViewerRight;   // size of drawing areas in pixels
 		short height;   // size of drawing areas in pixels
-		GuiObject text;   // optional text at top
+		GuiText text;   // optional text at top
 		int shiftKeyPressed;   // information for the 'play' method
 		bool playingCursor, playingSelection;   // information for end of play
 		struct FunctionEditor_picture picture;
 
 		/* Private: */
-		GuiObject drawingArea, scrollBar, groupButton, bottomArea;
+		GuiDrawingArea drawingArea;
+		GuiScrollBar scrollBar;
+		GuiCheckButton groupButton;
+		GuiObject bottomArea;
 		bool group, enableUpdates, d_hasSelectionViewer;
 		int nrect;
 		struct { double left, right, bottom, top; } rect [8];
@@ -72,17 +75,15 @@ Thing_define (FunctionEditor, Editor) {
 			/*
 			 * Message: "draw your part of the data between startWindow and endWindow."
 			 */
-		static bool s_showSelectionViewer;
-		virtual bool * vs_showSelectionViewer () { return & s_showSelectionViewer; }
 		virtual void v_drawSelectionViewer () { }
 		virtual void v_prepareDraw () { }   // for less flashing
-		virtual const wchar * v_format_domain () { return L"Time domain:"; }
-		virtual const wchar * v_format_short () { return L"%.3f"; }
-		virtual const wchar * v_format_long () { return L"%f"; }
-		virtual const wchar * v_format_units () { return L"seconds"; }
-		virtual const wchar * v_format_totalDuration () { return L"Total duration %f seconds"; }
-		virtual const wchar * v_format_window () { return L"Visible part %f seconds"; }
-		virtual const wchar * v_format_selection () { return L"%f (%.3f / s)"; }
+		virtual const wchar_t * v_format_domain () { return L"Time domain:"; }
+		virtual const wchar_t * v_format_short () { return L"%.3f"; }
+		virtual const wchar_t * v_format_long () { return L"%f"; }
+		virtual const wchar_t * v_format_units () { return L"seconds"; }
+		virtual const wchar_t * v_format_totalDuration () { return L"Total duration %f seconds"; }
+		virtual const wchar_t * v_format_window () { return L"Visible part %f seconds"; }
+		virtual const wchar_t * v_format_selection () { return L"%f (%.3f / s)"; }
 		virtual int v_fixedPrecision_long () { return 6; }
 		virtual bool v_hasText () { return false; }
 		virtual void v_play (double a_tmin, double a_tmax) { (void) a_tmin; (void) a_tmax; }
@@ -126,6 +127,15 @@ Thing_define (FunctionEditor, Editor) {
 		virtual void v_form_pictureSelection (EditorCommand cmd);
 		virtual void v_ok_pictureSelection (EditorCommand cmd);
 		virtual void v_do_pictureSelection (EditorCommand cmd);
+	// new preferences:
+		static void f_preferences ();
+		static int    s_shellWidth;                 virtual int    & pref_shellWidth                 () { return s_shellWidth;                 }
+		static int    s_shellHeight;                virtual int    & pref_shellHeight                () { return s_shellHeight;                }
+		static bool   s_synchronizedZoomAndScroll;  virtual bool   & pref_synchronizedZoomAndScroll  () { return s_synchronizedZoomAndScroll;  }
+		static bool   s_showSelectionViewer;        virtual bool   & pref_showSelectionViewer        () { return s_showSelectionViewer;        }
+		static double s_arrowScrollStep;            virtual double & pref_arrowScrollStep            () { return s_arrowScrollStep;            }
+		static bool   s_picture_drawSelectionTimes; virtual bool   & pref_picture_drawSelectionTimes () { return s_picture_drawSelectionTimes; }
+		static bool   s_picture_drawSelectionHairs; virtual bool   & pref_picture_drawSelectionHairs () { return s_picture_drawSelectionHairs; }
 };
 
 int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, double tmax, double t);
@@ -157,12 +167,10 @@ int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, doubl
 #define FunctionEditor_UPDATE_NEEDED  1
 #define FunctionEditor_NO_UPDATE_NEEDED  0
 
-void FunctionEditor_init (FunctionEditor me, GuiObject parent, const wchar *title, Function data);
+void FunctionEditor_init (FunctionEditor me, const wchar_t *title, Function data);
 /*
 	Function:
 		creates an Editor with a drawing area, a scroll bar and some buttons.
-	Preconditions:
-		parent != NULL;
 	Postconditions:
 		my drawingArea is attached to the form at all sides,
 		my scrollBar only to the bottom, left and right sides.
@@ -232,8 +240,6 @@ void FunctionEditor_ungroup (FunctionEditor me);
 		after either of those actions. Worse, the selection
 		may get outside the common interval of the editors.
 */
-
-void FunctionEditor_prefs (void);
 
 /* Some routines to enforce common look to all function editors. */
 /* The x axis of the window is supposed to have been set to [my startWindow, my endWindow]. */

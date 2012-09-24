@@ -1,6 +1,6 @@
 /* OTGrammar.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +51,7 @@
  * pb 2007/06/21 made spreadsheet file readable as Table
  * pb 2007/07/24 leak and constraint plasticity
  * pb 2007/07/27 leak and constraint plasticity also written...
- * pb 2007/08/08 wchar
+ * pb 2007/08/08 wchar_t
  * pb 2007/10/01 can write as encoding
  * pb 2008/03/03 EDCD with vacation
  * pb 2008/03/07 Demote one with vacation
@@ -104,56 +104,56 @@ void structOTGrammar :: v_info ()
 			for (long icons = 1; icons <= numberOfConstraints; icons ++)
 				numberOfViolations += tableaus [itab]. candidates [icand]. marks [icons];
 	}
-	MelderInfo_writeLine2 (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
-	MelderInfo_writeLine2 (L"Number of constraints: ", Melder_integer (numberOfConstraints));
-	MelderInfo_writeLine2 (L"Number of tableaus: ", Melder_integer (numberOfTableaus));
-	MelderInfo_writeLine2 (L"Number of candidates: ", Melder_integer (numberOfCandidates));
-	MelderInfo_writeLine2 (L"Number of violation marks: ", Melder_integer (numberOfViolations));
+	MelderInfo_writeLine (L"Decision strategy: ", kOTGrammar_decisionStrategy_getText (decisionStrategy));
+	MelderInfo_writeLine (L"Number of constraints: ", Melder_integer (numberOfConstraints));
+	MelderInfo_writeLine (L"Number of tableaus: ", Melder_integer (numberOfTableaus));
+	MelderInfo_writeLine (L"Number of candidates: ", Melder_integer (numberOfCandidates));
+	MelderInfo_writeLine (L"Number of violation marks: ", Melder_integer (numberOfViolations));
 }
 
 void structOTGrammar :: v_writeText (MelderFile file) {
-	MelderFile_write7 (file, L"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
+	MelderFile_write (file, L"\n<", kOTGrammar_decisionStrategy_getText (decisionStrategy),
 		L">\n", Melder_double (leak), L" ! leak\n", Melder_integer (numberOfConstraints), L" constraints");
 	for (long icons = 1; icons <= numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & constraints [icons];
-		MelderFile_write3 (file, L"\nconstraint [", Melder_integer (icons), L"]: \"");
-		for (const wchar *p = & constraint -> name [0]; *p; p ++) {
+		MelderFile_write (file, L"\nconstraint [", Melder_integer (icons), L"]: \"");
+		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write7 (file, L"\" ", Melder_double (constraint -> ranking),
+		MelderFile_write (file, L"\" ", Melder_double (constraint -> ranking),
 			L" ", Melder_double (constraint -> disharmony), L" ", Melder_double (constraint -> plasticity), L" ! ");
-		for (const wchar *p = & constraint -> name [0]; *p; p ++) {
+		for (const wchar_t *p = & constraint -> name [0]; *p; p ++) {
 			if (*p == '\n') MelderFile_writeCharacter (file, ' ');
 			else if (*p == '\\' && p [1] == 's' && p [2] == '{') p += 2;
 			else if (*p == '}') { }
 			else MelderFile_writeCharacter (file, *p);
 		}
 	}
-	MelderFile_write3 (file, L"\n\n", Melder_integer (numberOfFixedRankings), L" fixed rankings");
+	MelderFile_write (file, L"\n\n", Melder_integer (numberOfFixedRankings), L" fixed rankings");
 	for (long irank = 1; irank <= numberOfFixedRankings; irank ++) {
 		OTGrammarFixedRanking fixedRanking = & fixedRankings [irank];
-		MelderFile_write4 (file, L"\n   ", Melder_integer (fixedRanking -> higher), L" ", Melder_integer (fixedRanking -> lower));
+		MelderFile_write (file, L"\n   ", Melder_integer (fixedRanking -> higher), L" ", Melder_integer (fixedRanking -> lower));
 	}
-	MelderFile_write3 (file, L"\n\n", Melder_integer (numberOfTableaus), L" tableaus");
+	MelderFile_write (file, L"\n\n", Melder_integer (numberOfTableaus), L" tableaus");
 	for (long itab = 1; itab <= numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & tableaus [itab];
-		MelderFile_write3 (file, L"\ninput [", Melder_integer (itab), L"]: \"");
-		for (const wchar *p = & tableau -> input [0]; *p; p ++) {
+		MelderFile_write (file, L"\ninput [", Melder_integer (itab), L"]: \"");
+		for (const wchar_t *p = & tableau -> input [0]; *p; p ++) {
 			if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 			MelderFile_writeCharacter (file, *p);
 		}
-		MelderFile_write2 (file, L"\" ", Melder_integer (tableau -> numberOfCandidates));
+		MelderFile_write (file, L"\" ", Melder_integer (tableau -> numberOfCandidates));
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
 			OTGrammarCandidate candidate = & tableau -> candidates [icand];
-			MelderFile_write3 (file, L"\n   candidate [", Melder_integer (icand), L"]: \"");
-			for (const wchar *p = & candidate -> output [0]; *p; p ++) {
+			MelderFile_write (file, L"\n   candidate [", Melder_integer (icand), L"]: \"");
+			for (const wchar_t *p = & candidate -> output [0]; *p; p ++) {
 				if (*p =='\"') MelderFile_writeCharacter (file, '\"');   // Double any quotes within quotes.
 				MelderFile_writeCharacter (file, *p);
 			}
 			MelderFile_writeCharacter (file, '\"');
 			for (long icons = 1; icons <= candidate -> numberOfConstraints; icons ++) {
-				MelderFile_write2 (file, L" ", Melder_integer (candidate -> marks [icons]));
+				MelderFile_write (file, L" ", Melder_integer (candidate -> marks [icons]));
 			}
 		}
 	}
@@ -337,7 +337,7 @@ void OTGrammar_newDisharmonies (OTGrammar me, double spreading) {
 	OTGrammar_sort (me);
 }
 
-long OTGrammar_getTableau (OTGrammar me, const wchar *input) {
+long OTGrammar_getTableau (OTGrammar me, const wchar_t *input) {
 	long n = my numberOfTableaus;
 	for (long i = 1; i <= n; i ++)
 		if (wcsequ (my tableaus [i]. input, input))
@@ -544,7 +544,7 @@ bool OTGrammar_isCandidateSinglyGrammatical (OTGrammar me, long itab, long icand
 	return true;
 }
 
-void OTGrammar_getInterpretiveParse (OTGrammar me, const wchar *partialOutput, long *bestTableau, long *bestCandidate) {
+void OTGrammar_getInterpretiveParse (OTGrammar me, const wchar_t *partialOutput, long *bestTableau, long *bestCandidate) {
 	try {
 		long itab_best = 0, icand_best = 0, numberOfBestCandidates = 0;
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
@@ -637,7 +637,7 @@ static void OTGrammar_getInterpretiveParse_opt (OTGrammar me, long ipartialOutpu
 	}
 }
 
-bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar *partialOutput) {
+bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialOutput) {
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
 		for (long icand = 1; icand <= tableau -> numberOfCandidates; icand ++) {
@@ -651,7 +651,7 @@ bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar *partialOut
 	return false;
 }
 
-bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar *partialOutput) {
+bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput) {
 	bool found = false;
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 		OTGrammarTableau tableau = & my tableaus [itab];
@@ -717,8 +717,8 @@ static int OTGrammar_crucialCell (OTGrammar me, long itab, long icand, long iwin
 	return my numberOfConstraints;   /* Nothing grey. */
 }
 
-static double OTGrammar_constraintWidth (Graphics g, const wchar *name) {
-	wchar text [100], *newLine;
+static double OTGrammar_constraintWidth (Graphics g, const wchar_t *name) {
+	wchar_t text [100], *newLine;
 	wcscpy (text, name);
 	newLine = wcschr (text, '\n');
 	if (newLine) {
@@ -731,11 +731,11 @@ static double OTGrammar_constraintWidth (Graphics g, const wchar *name) {
 	return Graphics_textWidth (g, text);
 }
 
-void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar *input) {
+void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar_t *input) {
 	try {
 		double x, y, fontSize = Graphics_inqFontSize (g);
 		Graphics_Colour colour = Graphics_inqColour (g);
-		wchar text [200];
+		wchar_t text [200];
 		const long itab = OTGrammar_getTableau (me, input);
 		_OTGrammar_fillInHarmonies (me, itab);
 		const long winner = OTGrammar_getWinner (me, itab);
@@ -824,7 +824,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
 			double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
 			if (wcschr (constraint -> name, '\n') && ! vertical) {
-				wchar *newLine;
+				wchar_t *newLine;
 				wcscpy (text, constraint -> name);
 				newLine = wcschr (text, '\n');
 				*newLine = '\0';
@@ -893,7 +893,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar
 				int index = my index [icons];
 				OTGrammarConstraint constraint = & my constraints [index];
 				double width = vertical ? rowHeight / worldAspectRatio : OTGrammar_constraintWidth (g, constraint -> name) + margin * 2;
-				wchar markString [40];
+				wchar_t markString [40];
 				markString [0] = '\0';
 				if (my decisionStrategy == kOTGrammar_decisionStrategy_OPTIMALITY_THEORY) {
 					/*
@@ -968,7 +968,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar
 Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <wchar*> (1, thy numberOfStrings = numberOfTrials);
+		thy strings = NUMvector <wchar_t*> (1, thy numberOfStrings = numberOfTrials);
 		for (long i = 1; i <= numberOfTrials; i ++) {
 			long itab = NUMrandomInteger (1, my numberOfTableaus);
 			thy strings [i] = Melder_wcsdup (my tableaus [itab]. input);
@@ -982,7 +982,7 @@ Strings OTGrammar_generateInputs (OTGrammar me, long numberOfTrials) {
 Strings OTGrammar_getInputs (OTGrammar me) {
 	try {
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <wchar *> (1, thy numberOfStrings = my numberOfTableaus);
+		thy strings = NUMvector <wchar_t *> (1, thy numberOfStrings = my numberOfTableaus);
 		for (long i = 1; i <= my numberOfTableaus; i ++) {
 			thy strings [i] = Melder_wcsdup (my tableaus [i]. input);
 		}
@@ -992,7 +992,7 @@ Strings OTGrammar_getInputs (OTGrammar me) {
 	}
 }
 
-void OTGrammar_inputToOutput (OTGrammar me, const wchar *input, wchar *output, double evaluationNoise) {
+void OTGrammar_inputToOutput (OTGrammar me, const wchar_t *input, wchar_t *output, double evaluationNoise) {
 	try {
 		OTGrammar_newDisharmonies (me, evaluationNoise);
 		long itab = OTGrammar_getTableau (me, input);
@@ -1010,9 +1010,9 @@ Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluati
 		autoStrings him = Thing_new (Strings);
 		long n = inputs -> numberOfStrings;
 		his numberOfStrings = n;
-		his strings = NUMvector <wchar*> (1, n);
+		his strings = NUMvector <wchar_t*> (1, n);
 		for (long i = 1; i <= n; i ++) {
-			wchar output [100];
+			wchar_t output [100];
 			OTGrammar_inputToOutput (me, inputs -> strings [i], output, evaluationNoise);
 			his strings [i] = Melder_wcsdup (output);
 		}
@@ -1022,13 +1022,13 @@ Strings OTGrammar_inputsToOutputs (OTGrammar me, Strings inputs, double evaluati
 	}
 }
 
-Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar *input, long n, double evaluationNoise) {
+Strings OTGrammar_inputToOutputs (OTGrammar me, const wchar_t *input, long n, double evaluationNoise) {
 	try {
 		autoStrings thee = Thing_new (Strings);
 		thy numberOfStrings = n;
-		thy strings = NUMvector <wchar*> (1, n);
+		thy strings = NUMvector <wchar_t*> (1, n);
 		for (long i = 1; i <= n; i ++) {
-			wchar output [100];
+			wchar_t output [100];
 			OTGrammar_inputToOutput (me, input, output, evaluationNoise);
 			thy strings [i] = Melder_wcsdup (output);
 		}
@@ -1492,7 +1492,7 @@ static void OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, lon
 	}
 }
 
-void OTGrammar_learnOne (OTGrammar me, const wchar *underlyingForm, const wchar *adultOutput,
+void OTGrammar_learnOne (OTGrammar me, const wchar_t *underlyingForm, const wchar_t *adultOutput,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double plasticity, double relativePlasticityNoise, int newDisharmonies, int warnIfStalled, int *grammarHasChanged)
 {
@@ -1576,7 +1576,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 		}
 		for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 			for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
-				wchar *input, *output;
+				wchar_t *input, *output;
 				PairDistribution_peekPair (thee, & input, & output);
 				++ idatum;
 				if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
@@ -1606,7 +1606,7 @@ void OTGrammar_PairDistribution_learn (OTGrammar me, PairDistribution thee,
 	}
 }
 
-static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, const wchar *input, wchar **attestedOutput) {
+static long PairDistribution_getNumberOfAttestedOutputs (PairDistribution me, const wchar_t *input, wchar_t **attestedOutput) {
 	long result = 0;
 	for (long ipair = 1; ipair <= my pairs -> size; ipair ++) {
 		PairProbability pair = (PairProbability) my pairs -> item [ipair];
@@ -1635,7 +1635,7 @@ bool OTGrammar_PairDistribution_findPositiveWeights_e (OTGrammar me, PairDistrib
 		 */
 		for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 			OTGrammarTableau tab = & my tableaus [itab];
-			wchar *attestedOutput = NULL;
+			wchar_t *attestedOutput = NULL;
 			long numberOfAttestedOutputs = PairDistribution_getNumberOfAttestedOutputs (thee, tab -> input, & attestedOutput);
 			if (numberOfAttestedOutputs == 0) {
 				Melder_throw ("Input \"", my tableaus [itab]. input, "\" has no attested output.");
@@ -1766,7 +1766,7 @@ static void OTGrammar_restore (OTGrammar me) {
 	}
 }
 
-void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar *partialAdultOutput,
+void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar_t *partialAdultOutput,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double plasticity, double relativePlasticityNoise, long numberOfChews, int warnIfStalled)
 {
@@ -1870,7 +1870,7 @@ static OTHistory OTGrammar_createHistory (OTGrammar me, long storeHistoryEvery, 
 	}
 }
 
-static void OTGrammar_updateHistory (OTGrammar me, OTHistory thee, long storeHistoryEvery, long idatum, const wchar *input) {
+static void OTGrammar_updateHistory (OTGrammar me, OTHistory thee, long storeHistoryEvery, long idatum, const wchar_t *input) {
 	try {
 		if (idatum % storeHistoryEvery == 0) {
 			long irow = 2 * idatum / storeHistoryEvery;
@@ -1966,7 +1966,7 @@ static void OTGrammar_Distributions_opt_createOutputMatching (OTGrammar me, Dist
 		}
 		for (long ipartialOutput = 1; ipartialOutput <= thy numberOfRows; ipartialOutput ++) {
 			if (thy data [ipartialOutput] [columnNumber] > 0.0) {
-				wchar *partialOutput = thy rowLabels [ipartialOutput];
+				wchar_t *partialOutput = thy rowLabels [ipartialOutput];
 				bool foundPartialOutput = false;
 				for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
 					OTGrammarTableau tab = & my tableaus [itab];
@@ -2066,7 +2066,7 @@ double OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribu
 	try {
 		long numberOfCorrect = 0;
 		for (long ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
-			wchar *input, *adultOutput;
+			wchar_t *input, *adultOutput;
 			PairDistribution_peekPair (thee, & input, & adultOutput);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
 			long inputTableau = OTGrammar_getTableau (me, input);
@@ -2089,7 +2089,7 @@ long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistr
 			PairProbability prob = (PairProbability) thy pairs -> item [ipair];
 			if (prob -> weight > 0.0) {
 				long numberOfCorrect = 0;
-				wchar *input = prob -> string1, *adultOutput = prob -> string2;
+				wchar_t *input = prob -> string1, *adultOutput = prob -> string2;
 				long inputTableau = OTGrammar_getTableau (me, input);
 				for (long ireplication = 1; ireplication <= numberOfReplications; ireplication ++) {
 					OTGrammar_newDisharmonies (me, evaluationNoise);
@@ -2130,7 +2130,7 @@ double OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions t
 	}
 }
 
-void OTGrammar_removeConstraint (OTGrammar me, const wchar *constraintName) {
+void OTGrammar_removeConstraint (OTGrammar me, const wchar_t *constraintName) {
 	try {
 		long removed = 0;
 
@@ -2607,12 +2607,12 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 }
 
 static void printConstraintNames (OTGrammar me, MelderString *buffer) {
-	wchar text [200];
+	wchar_t text [200];
 	bool secondLine = false;
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
 		if (wcschr (constraint -> name, '\n')) {
-			wchar *newLine;
+			wchar_t *newLine;
 			wcscpy (text, constraint -> name);
 			newLine = wcschr (text, '\n');
 			*newLine = '\0';
@@ -2627,7 +2627,7 @@ static void printConstraintNames (OTGrammar me, MelderString *buffer) {
 		MelderString_appendCharacter (buffer, '\t');
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 			OTGrammarConstraint constraint = & my constraints [my index [icons]];
-			wchar *newLine = wcschr (constraint -> name, '\n');
+			wchar_t *newLine = wcschr (constraint -> name, '\n');
 			MelderString_append (buffer, L"\t", newLine ? newLine + 1 : L"");
 		}
 		MelderString_appendCharacter (buffer, '\n');
@@ -2674,7 +2674,7 @@ void OTGrammar_writeToHeaderlessSpreadsheetFile (OTGrammar me, MelderFile file) 
 				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 					int index = my index [icons];
 					OTGrammarConstraint constraint = & my constraints [index];
-					wchar markString [40];
+					wchar_t markString [40];
 					markString [0] = '\0';
 					/*
 					 * An exclamation mark can be drawn in this cell only if all of the following conditions are met:

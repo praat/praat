@@ -31,7 +31,7 @@
 #include "VocalTract_to_Spectrum.h"
 #include "praat.h"
 
-extern "C" Graphics Movie_create (const wchar *title, int width, int height);
+extern "C" Graphics Movie_create (const wchar_t *title, int width, int height);
 
 #undef iam
 #define iam iam_LOOP
@@ -91,7 +91,7 @@ DIRECT (Artword_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit an Artword from batch.");
 	WHERE (SELECTED) {
 		iam_LOOP (Artword);
-		autoArtwordEditor editor = ArtwordEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoArtwordEditor editor = ArtwordEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END

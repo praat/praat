@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2007/08/12 wchar
+ * pb 2007/08/12 wchar_t
  * pb 2009/01/18 Interpreter argument to formula
  * pb 2009/04/04 corrected voiceless frames in Pitch_to_Matrix
  * pb 2011/06/04 C++
@@ -64,7 +64,7 @@ Pitch Matrix_to_Pitch (Matrix me) {
 	}
 }
 
-void Pitch_formula (Pitch me, const wchar *formula, Interpreter interpreter) {
+void Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter) {
 	try {
 		autoMatrix m = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, my maxnCandidates, my maxnCandidates, 1, 1);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {

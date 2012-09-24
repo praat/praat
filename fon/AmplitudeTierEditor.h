@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2011 Paul Boersma
+ * Copyright (C) 2003-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,23 +27,23 @@ Thing_define (AmplitudeTierEditor, RealTierEditor) {
 	// overridden methods:
 		virtual void v_createHelpMenuItems (EditorMenu menu);
 		virtual void v_play (double tmin, double tmax);
-		virtual const wchar *
+		virtual const wchar_t *
 			v_quantityText ()
 				{ return L"Sound pressure (Pa)"; }
-		virtual const wchar * v_quantityKey () { return L"Sound pressure"; }
-		virtual const wchar * v_rightTickUnits () { return L" Pa"; }
+		virtual const wchar_t * v_quantityKey () { return L"Sound pressure"; }
+		virtual const wchar_t * v_rightTickUnits () { return L" Pa"; }
 		virtual double v_defaultYmin () { return -1.0; }
 		virtual double v_defaultYmax () { return +1.0; }
-		virtual const wchar * v_setRangeTitle () { return L"Set amplitude range..."; }
-		virtual const wchar * v_defaultYminText () { return L"-1.0"; }
-		virtual const wchar * v_defaultYmaxText () { return L"+1.0"; }
-		virtual const wchar * v_yminText () { return L"Minimum amplitude (Pa)"; }
-		virtual const wchar * v_ymaxText () { return L"Maximum amplitude (Pa)"; }
-		virtual const wchar * v_yminKey () { return L"Minimum amplitude"; }
-		virtual const wchar * v_ymaxKey () { return L"Maximum amplitude"; }
+		virtual const wchar_t * v_setRangeTitle () { return L"Set amplitude range..."; }
+		virtual const wchar_t * v_defaultYminText () { return L"-1.0"; }
+		virtual const wchar_t * v_defaultYmaxText () { return L"+1.0"; }
+		virtual const wchar_t * v_yminText () { return L"Minimum amplitude (Pa)"; }
+		virtual const wchar_t * v_ymaxText () { return L"Maximum amplitude (Pa)"; }
+		virtual const wchar_t * v_yminKey () { return L"Minimum amplitude"; }
+		virtual const wchar_t * v_ymaxKey () { return L"Maximum amplitude"; }
 };
 
-AmplitudeTierEditor AmplitudeTierEditor_create (GuiObject parent, const wchar *title,
+AmplitudeTierEditor AmplitudeTierEditor_create (const wchar_t *title,
 	AmplitudeTier amplitude,
 	Sound sound,   // may be NULL
 	bool ownSound);

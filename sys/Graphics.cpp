@@ -1,6 +1,6 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
 #include "enums_getValue.h"
 #include "Graphics_enums.h"
 
+#include "GuiP.h"
+
 /***** Methods *****/
 
 Thing_implement (Graphics, Thing, 0);
@@ -40,18 +42,18 @@ void structGraphics :: v_destroy () {
  * Graphics_setWsViewport ().
  */
 static void widgetToWindowCoordinates (I) {
-	#if mac
+	#if motif && mac
 		iam (Graphics);
 		if (my screen) {
 			iam (GraphicsScreen);
 			if (my d_drawingArea) {
-				GuiObject widget = my d_drawingArea;
+				GuiObject widget = my d_drawingArea -> d_widget;
 				int shellX = 0, shellY = 0;
 				do {
-					int x = GuiObject_getX (widget), y = GuiObject_getY (widget);
+					int x = widget -> x, y = widget -> y;
 					shellX += x;
 					shellY += y;
-					widget = GuiObject_parent (widget);
+					widget = widget -> parent;
 				} while (! XtIsShell (widget));
 				my d_x1DC += shellX;
 				my d_x2DC += shellX;

@@ -2,7 +2,7 @@
 #define _ScriptEditor_h_
 /* ScriptEditor.h
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,12 +26,12 @@
 Thing_define (ScriptEditor, TextEditor) {
 	// new data:
 	public:
-		wchar *environmentName;
+		wchar_t *environmentName;
 		ClassInfo editorClass;
 		Interpreter interpreter;
 		UiForm argsDialog;
 	// functions:
-		void init (GuiObject parent, Editor editor, const wchar_t *initialText);
+		void init (Editor editor, const wchar_t *initialText);
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual void v_nameChanged ();
@@ -42,13 +42,11 @@ Thing_define (ScriptEditor, TextEditor) {
 };
 
 ScriptEditor ScriptEditor_createFromText (
-	GuiObject parent,
 	Editor editor,   // the scripting environment; if NULL, the scripting environment consists of the global windows
-	const wchar *initialText   // may be NULL
+	const wchar_t *initialText   // may be NULL
 );
 
 ScriptEditor ScriptEditor_createFromScript (
-	GuiObject parent,
 	Editor editor,
 	Script script
 );

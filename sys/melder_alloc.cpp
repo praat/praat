@@ -219,7 +219,7 @@ char * Melder_strdup_f (const char *string) {
 wchar_t * Melder_wcsdup (const wchar_t *string) {
 	if (! string) return NULL;
 	long size = wcslen (string) + 1;
-	wchar *result = (wchar *) malloc (size * sizeof (wchar));
+	wchar_t *result = (wchar_t *) malloc (size * sizeof (wchar_t));
 	if (result == NULL)
 		Melder_throw ("Out of memory: there is not enough room to duplicate a text of ", size - 1, " characters.");
 	wcscpy (result, string);
@@ -232,10 +232,10 @@ wchar_t * Melder_wcsdup (const wchar_t *string) {
 wchar_t * Melder_wcsdup_f (const wchar_t *string) {
 	if (! string) return NULL;
 	long size = wcslen (string) + 1;
-	wchar *result = (wchar *) malloc (size * sizeof (wchar_t));
+	wchar_t *result = (wchar_t *) malloc (size * sizeof (wchar_t));
 	if (result == NULL) {
 		if (theRainyDayFund != NULL) free (theRainyDayFund);
-		result = (wchar *) malloc (size * sizeof (wchar_t));
+		result = (wchar_t *) malloc (size * sizeof (wchar_t));
 		if (result != NULL) {
 			Melder_flushError ("Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 		} else {

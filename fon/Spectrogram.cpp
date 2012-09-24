@@ -1,6 +1,6 @@
 /* Spectrogram.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,29 +17,28 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <time.h>
 #include "Spectrogram.h"
 
 Thing_implement (Spectrogram, Matrix, 2);
 
 void structSpectrogram :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine2 (L"   Number of time slices (frames): ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"   Time step (frame distance): ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"   First time slice (frame centre) at: ", Melder_double (x1), L" seconds");
-	MelderInfo_writeLine1 (L"Frequency domain:");
-	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (ymin), L" Hz");
-	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (ymax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (ymax - ymin), L" Hz");
-	MelderInfo_writeLine1 (L"Frequency sampling:");
-	MelderInfo_writeLine2 (L"   Number of frequency bands (bins): ", Melder_integer (ny));
-	MelderInfo_writeLine3 (L"   Frequency step (bin width): ", Melder_double (dy), L" Hz");
-	MelderInfo_writeLine3 (L"   First frequency band around (bin centre at): ", Melder_double (y1), L" Hz");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Time sampling:");
+	MelderInfo_writeLine (L"   Number of time slices (frames): ", Melder_integer (nx));
+	MelderInfo_writeLine (L"   Time step (frame distance): ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"   First time slice (frame centre) at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Frequency domain:");
+	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (ymin), L" Hz");
+	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (ymax), L" Hz");
+	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (ymax - ymin), L" Hz");
+	MelderInfo_writeLine (L"Frequency sampling:");
+	MelderInfo_writeLine (L"   Number of frequency bands (bins): ", Melder_integer (ny));
+	MelderInfo_writeLine (L"   Frequency step (bin width): ", Melder_double (dy), L" Hz");
+	MelderInfo_writeLine (L"   First frequency band around (bin centre at): ", Melder_double (y1), L" Hz");
 }
 
 Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -54,10 +53,9 @@ Spectrogram Spectrogram_create (double tmin, double tmax, long nt, double dt, do
 	}
 }
 
-void Spectrogram_paintInside (I, Graphics g, double tmin, double tmax, double fmin, double fmax,
+void Spectrogram_paintInside (Spectrogram me, Graphics g, double tmin, double tmax, double fmin, double fmax,
 	double maximum, int autoscaling, double dynamic, double preemphasis, double dynamicCompression)
 {
-	iam (Spectrogram);
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (fmax <= fmin) { fmin = my ymin; fmax = my ymax; }
 	long itmin, itmax, ifmin, ifmax;
@@ -105,12 +103,11 @@ void Spectrogram_paintInside (I, Graphics g, double tmin, double tmax, double fm
 		}
 }
 
-void Spectrogram_paint (I, Graphics g,
+void Spectrogram_paint (Spectrogram me, Graphics g,
 	double tmin, double tmax, double fmin, double fmax, double maximum, int autoscaling,
 	double dynamic, double preemphasis, double dynamicCompression,
 	int garnish)
 {
-	iam (Spectrogram);
 	Graphics_setInner (g);
 	Spectrogram_paintInside (me, g, tmin, tmax, fmin, fmax, maximum, autoscaling, dynamic, preemphasis, dynamicCompression);
 	Graphics_unsetInner (g);
@@ -123,8 +120,7 @@ void Spectrogram_paint (I, Graphics g,
 	}
 }
 
-Spectrogram Matrix_to_Spectrogram (I) {
-	iam (Matrix);
+Spectrogram Matrix_to_Spectrogram (Matrix me) {
 	try {
 		autoSpectrogram thee = Spectrogram_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);
@@ -134,8 +130,7 @@ Spectrogram Matrix_to_Spectrogram (I) {
 	}
 }
 
-Matrix Spectrogram_to_Matrix (I) {
-	iam (Spectrogram);
+Matrix Spectrogram_to_Matrix (Spectrogram me) {
 	try {
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, my ymin, my ymax, my ny, my dy, my y1);
 		NUMmatrix_copyElements (my z, thy z, 1, my ny, 1, my nx);

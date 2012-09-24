@@ -32,7 +32,7 @@ AmplitudeTier AmplitudeTier_create (double tmin, double tmax) {
 }
 
 void AmplitudeTier_draw (AmplitudeTier me, Graphics g, double tmin, double tmax,
-	double ymin, double ymax, const wchar *method, int garnish)
+	double ymin, double ymax, const wchar_t *method, int garnish)
 {
 	RealTier_draw (me, g, tmin, tmax, ymin, ymax, garnish, method, L"Sound pressure (Pa)");
 }

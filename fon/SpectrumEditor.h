@@ -2,7 +2,7 @@
 #define _SpectrumEditor_h_
 /* SpectrumEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 	public:
 		double minimum, maximum, cursorHeight;
 		double bandSmoothing, dynamicRange;
-		GuiObject publishBandButton, publishSoundButton;
+		GuiMenuItem publishBandButton, publishSoundButton;
 	// overridden methods:
 		virtual void v_createMenus ();
 		virtual void v_createHelpMenuItems (EditorMenu menu);
@@ -36,19 +36,24 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 		virtual void v_play (double tmin, double tmax);
 		virtual void v_createMenuItems_view (EditorMenu menu);
-		virtual const wchar * v_format_domain () { return L"Frequency domain:"; }
-		virtual const wchar * v_format_short () { return L"%.0f"; }
-		virtual const wchar * v_format_long () { return L"%.2f"; }
+		virtual const wchar_t * v_format_domain () { return L"Frequency domain:"; }
+		virtual const wchar_t * v_format_short () { return L"%.0f"; }
+		virtual const wchar_t * v_format_long () { return L"%.2f"; }
 		virtual int v_fixedPrecision_long () { return 2; }
-		virtual const wchar * v_format_units () { return L"hertz"; }
-		virtual const wchar * v_format_totalDuration () { return L"Total bandwidth %.2f hertz"; }
-		virtual const wchar * v_format_window () { return L"Visible part %.2f hertz"; }
-		virtual const wchar * v_format_selection () { return L"%.2f Hz"; }
+		virtual const wchar_t * v_format_units () { return L"hertz"; }
+		virtual const wchar_t * v_format_totalDuration () { return L"Total bandwidth %.2f hertz"; }
+		virtual const wchar_t * v_format_window () { return L"Visible part %.2f hertz"; }
+		virtual const wchar_t * v_format_selection () { return L"%.2f Hz"; }
+	// overridden preferences:
+		static void f_preferences ();
+		static int    s_shellWidth;    virtual int    & pref_shellWidth    () { return s_shellWidth;    }
+		static int    s_shellHeight;   virtual int    & pref_shellHeight   () { return s_shellHeight;   }
+	// new preferences:
+		static double s_bandSmoothing; virtual double & pref_bandSmoothing () { return s_bandSmoothing; }
+		static double s_dynamicRange;  virtual double & pref_dynamicRange  () { return s_dynamicRange;  }
 };
 
-SpectrumEditor SpectrumEditor_create (GuiObject parent, const wchar *title, Spectrum data);
-
-void SpectrumEditor_prefs (void);
+SpectrumEditor SpectrumEditor_create (const wchar_t *title, Spectrum data);
 
 /* End of file SpectrumEditor.h */
 #endif

@@ -43,22 +43,22 @@ Thing_implement (RegressionParameter, Data, 0);
 
 void structRegression :: v_info () {
 	Regression_Parent :: v_info ();
-	MelderInfo_writeLine1 (L"Factors:");
-	MelderInfo_writeLine2 (L"   Number of factors: ", Melder_integer (parameters -> size));
+	MelderInfo_writeLine (L"Factors:");
+	MelderInfo_writeLine (L"   Number of factors: ", Melder_integer (parameters -> size));
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine4 (L"   Factor ", Melder_integer (ivar), L": ", parm -> label);
+		MelderInfo_writeLine (L"   Factor ", Melder_integer (ivar), L": ", parm -> label);
 	}
-	MelderInfo_writeLine1 (L"Fitted coefficients:");
-	MelderInfo_writeLine2 (L"   Intercept: ", Melder_double (intercept));
+	MelderInfo_writeLine (L"Fitted coefficients:");
+	MelderInfo_writeLine (L"   Intercept: ", Melder_double (intercept));
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine4 (L"   Coefficient of factor ", parm -> label, L": ", Melder_double (parm -> value));
+		MelderInfo_writeLine (L"   Coefficient of factor ", parm -> label, L": ", Melder_double (parm -> value));
 	}
 	MelderInfo_writeLine1 (L"Ranges of values:");
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine6 (L"   Range of factor ", parm -> label, L": minimum ",
+		MelderInfo_writeLine (L"   Range of factor ", parm -> label, L": minimum ",
 			Melder_double (parm -> minimum), L", maximum ", Melder_double (parm -> maximum));
 	}
 }
@@ -70,7 +70,7 @@ void Regression_init (I) {
 	my parameters = Ordered_create ();
 }
 
-void Regression_addParameter (I, const wchar *label, double minimum, double maximum, double value) {
+void Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value) {
 	iam (Regression);
 	try {
 		autoRegressionParameter thee = Thing_new (RegressionParameter);
@@ -84,7 +84,7 @@ void Regression_addParameter (I, const wchar *label, double minimum, double maxi
 	}
 }
 
-long Regression_getFactorIndexFromFactorName_e (I, const wchar *factorName) {
+long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName) {
 	iam (Regression);
 	for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [iparm]);

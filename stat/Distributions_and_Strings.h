@@ -18,7 +18,7 @@
  */
 
 #include "Distributions.h"
-#include "Strings.h"
+#include "Strings_.h"
 
 Strings Distributions_to_Strings (Distributions me, long column, long numberOfStrings);
 Strings Distributions_to_Strings_exact (Distributions me, long column);

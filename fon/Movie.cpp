@@ -1,6 +1,6 @@
 /* Movie.cpp
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,17 +43,17 @@ Thing_implement (Movie, Sampled, 0);
 void structMovie :: v_info ()
 {
 	structData :: v_info ();
-	MelderInfo_writeLine3 (L"Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine2 (L"   Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"   Frame duration: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"   Frame rate: ", Melder_single (1.0 / dx), L" frames per second");
-	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Time sampling:");
+	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"   Frame duration: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"   Frame rate: ", Melder_single (1.0 / dx), L" frames per second");
+	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 }
 
-void structMovie :: f_init (Sound sound, const wchar *folderName, Strings fileNames)
+void structMovie :: f_init (Sound sound, const wchar_t *folderName, Strings fileNames)
 {
 	Sampled_init (this, sound -> xmin, sound -> xmax, fileNames ? fileNames -> numberOfStrings : 0, 0.04, 0.0);
 	d_sound = sound;
@@ -68,7 +68,7 @@ Movie Movie_openFromSoundFile (MelderFile file)
 		autoSound sound = Sound_readFromSoundFile (file);
 		autoMelderString fileNameHead;
 		MelderString_copy (& fileNameHead, Melder_fileToPath (file));
-		wchar *extensionLocation = wcsrchr (fileNameHead.string, '.');
+		wchar_t *extensionLocation = wcsrchr (fileNameHead.string, '.');
 		if (extensionLocation == NULL)
 			extensionLocation = & fileNameHead.string [fileNameHead.length];
 		*extensionLocation = '\0';

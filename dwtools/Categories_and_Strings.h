@@ -25,7 +25,7 @@
  */
 
 #include "Categories.h"
-#include "Strings.h"
+#include "Strings_.h"
 
 #ifdef __cplusplus
 	extern "C" {

@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma
+ * Copyright (C) 1993-2012 Paul Boersma, 2007 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,123 +17,126 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb & sdk 2007/12/28 gtk
- * pb 2010/11/28 removed Motif
- * pb 2011/04/06 C++
- */
-
 #include "GuiP.h"
+
+Thing_implement (GuiLabel, GuiControl, 0);
+
 #undef iam
 #define iam(x)  x me = (x) void_me
-#if win || mac
-	#define iam_label \
-		Melder_assert (widget -> widgetClass == xmLabelWidgetClass); \
-		GuiLabel me = (GuiLabel) widget -> userData
-#else
-	#define iam_label \
-		GuiLabel me = (GuiLabel) _GuiObject_getUserData (widget)
+#if gtk
+	#define iam_label  GuiLabel me = (GuiLabel) _GuiObject_getUserData (widget)
+#elif cocoa
+	#define iam_label  GuiLabel me = (GuiLabel) [(GuiCocoaLabel *) widget userData];
+#elif motif
+	#define iam_label  GuiLabel me = (GuiLabel) widget -> userData
 #endif
-
-typedef struct structGuiLabel {
-	GuiObject widget;
-} *GuiLabel;
 
 #if gtk
 	static void _GuiGtkLabel_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiLabel);
-		Melder_free (me);
+		forget (me);
 	}
+#elif cocoa
+	@interface GuiCocoaLabel : NSTextField
+	@end
+	@implementation GuiCocoaLabel {
+		GuiLabel d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiLabel me = d_userData;
+		forget (me);
+		Melder_casual ("deleting a label");
+		[super dealloc];
+	}
+	- (GuiLabel) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiLabel) userData {
+		d_userData = userData;
+	}
+	@end
 #elif win
 	void _GuiWinLabel_destroy (GuiObject widget) {
 		iam_label;
 		_GuiNativeControl_destroy (widget);
-		Melder_free (me);   // NOTE: my widget is not destroyed here
+		forget (me);   // NOTE: my widget is not destroyed here
 	}
 #elif mac
-	#if useCarbon
-		void _GuiMacLabel_destroy (GuiObject widget) {
-			iam_label;
-			_GuiNativeControl_destroy (widget);
-			Melder_free (me);   // NOTE: my widget is not destroyed here
-		}
-	#else
-	#endif
+	void _GuiMacLabel_destroy (GuiObject widget) {
+		iam_label;
+		_GuiNativeControl_destroy (widget);
+		forget (me);   // NOTE: my widget is not destroyed here
+	}
 #endif
 
-GuiObject GuiLabel_create (GuiObject parent, int left, int right, int top, int bottom,
+GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bottom,
 	const wchar_t *labelText, unsigned long flags)
 {
-	GuiLabel me = Melder_calloc_f (struct structGuiLabel, 1);
+	GuiLabel me = Thing_new (GuiLabel);
+	my d_shell = parent -> d_shell;
+	my d_parent = parent;
 	#if gtk
-		my widget = gtk_label_new (Melder_peekWcsToUtf8 (labelText));
-		_GuiObject_setUserData (my widget, me);
-		_GuiObject_position (my widget, left, right, top, bottom);
-		if (GTK_IS_BOX (parent)) {
-			gtk_box_pack_start (GTK_BOX (parent), GTK_WIDGET (my widget), FALSE, FALSE, 0);
-		}
-		g_signal_connect (G_OBJECT (my widget), "destroy",
-				  G_CALLBACK (_GuiGtkLabel_destroyCallback), me);
-		//gtk_label_set_justify (GTK_LABEL (my widget),
-		//	flags & GuiLabel_RIGHT ? GTK_JUSTIFY_RIGHT : flags & GuiLabel_CENTRE ? GTK_JUSTIFY_CENTER : GTK_JUSTIFY_LEFT);
-		gtk_misc_set_alignment (GTK_MISC (my widget),
-			flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
+		my d_widget = gtk_label_new (Melder_peekWcsToUtf8 (labelText));
+		_GuiObject_setUserData (my d_widget, me);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkLabel_destroyCallback), me);
+		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
+	#elif cocoa
+		my d_widget = (GuiObject) [GuiCocoaLabel alloc];
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[(GuiCocoaLabel *) my d_widget setUserData: me];
+		[(NSTextField *) my d_widget setBezelStyle: NSRoundedBezelStyle];
+		[(NSTextField *) my d_widget setBordered: NO];
+		[(NSTextField *) my d_widget setSelectable: NO];
+		[(NSTextField *) my d_widget setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (labelText)];
 	#elif win
-		my widget = _Gui_initializeWidget (xmLabelWidgetClass, parent, labelText);
-		_GuiObject_setUserData (my widget, me);
-		my widget -> window = CreateWindow (L"static", _GuiWin_expandAmpersands (my widget -> name),
+		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
+		_GuiObject_setUserData (my d_widget, me);
+		my d_widget -> window = CreateWindow (L"static", _GuiWin_expandAmpersands (my d_widget -> name),
 			WS_CHILD
 			| ( flags & GuiLabel_RIGHT ? SS_RIGHT : flags & GuiLabel_CENTRE ? SS_CENTER : SS_LEFT )
 			| SS_CENTERIMAGE,
-			my widget -> x, my widget -> y, my widget -> width, my widget -> height,
-			my widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
-		SetWindowLongPtr (my widget -> window, GWLP_USERDATA, (LONG_PTR) my widget);
-		SetWindowFont (my widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
-		_GuiObject_position (my widget, left, right, top, bottom);
+			my d_widget -> x, my d_widget -> y, my d_widget -> width, my d_widget -> height,
+			my d_widget -> parent -> window, (HMENU) 1, theGui.instance, NULL);
+		SetWindowLongPtr (my d_widget -> window, GWLP_USERDATA, (LONG_PTR) my d_widget);
+		SetWindowFont (my d_widget -> window, GetStockFont (ANSI_VAR_FONT), FALSE);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif mac
-		#if useCarbon
-			my widget = _Gui_initializeWidget (xmLabelWidgetClass, parent, labelText);
-			_GuiObject_setUserData (my widget, me);
-			ControlFontStyleRec macFontStyleRecord = { 0 };   // BUG: _GuiNativeControl_setFont will reset alignment (should do inheritance)
-			macFontStyleRecord. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
-			macFontStyleRecord. font = systemFont;
-			macFontStyleRecord. size = 13;
-			macFontStyleRecord. just = ( flags & GuiLabel_RIGHT ? teFlushRight : flags & GuiLabel_CENTRE ? teCenter : teFlushLeft );
-			CreateStaticTextControl (my widget -> macWindow, & my widget -> rect, NULL, & macFontStyleRecord, & my widget -> nat.control.handle);
-			Melder_assert (my widget -> nat.control.handle != NULL);
-			SetControlReference (my widget -> nat.control.handle, (long) my widget);
-			my widget -> isControl = true;
-			_GuiNativeControl_setTitle (my widget);
-			_GuiObject_position (my widget, left, right, top, bottom);
-		#else
-		#endif
+		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
+		_GuiObject_setUserData (my d_widget, me);
+		ControlFontStyleRec macFontStyleRecord = { 0 };   // BUG: _GuiNativeControl_setFont will reset alignment (should do inheritance)
+		macFontStyleRecord. flags = kControlUseFontMask | kControlUseSizeMask | kControlUseJustMask;
+		macFontStyleRecord. font = systemFont;
+		macFontStyleRecord. size = 13;
+		macFontStyleRecord. just = ( flags & GuiLabel_RIGHT ? teFlushRight : flags & GuiLabel_CENTRE ? teCenter : teFlushLeft );
+		CreateStaticTextControl (my d_widget -> macWindow, & my d_widget -> rect, NULL, & macFontStyleRecord, & my d_widget -> nat.control.handle);
+		Melder_assert (my d_widget -> nat.control.handle != NULL);
+		SetControlReference (my d_widget -> nat.control.handle, (long) my d_widget);
+		my d_widget -> isControl = true;
+		_GuiNativeControl_setTitle (my d_widget);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#endif
-	return my widget;
-}
-
-GuiObject GuiLabel_createShown (GuiObject parent, int left, int right, int top, int bottom,
-	const wchar_t *labelText, unsigned long flags)
-{
-	GuiObject me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
-	GuiObject_show (me);
 	return me;
 }
 
-void GuiLabel_setString (GuiObject widget, const wchar_t *text) {
+GuiLabel GuiLabel_createShown (GuiForm parent, int left, int right, int top, int bottom,
+	const wchar_t *labelText, unsigned long flags)
+{
+	GuiLabel me = GuiLabel_create (parent, left, right, top, bottom, labelText, flags);
+	my f_show ();
+	return me;
+}
+
+void structGuiLabel :: f_setString (const wchar_t *text) {
 	#if gtk
-		gtk_label_set_text (GTK_LABEL (widget), Melder_peekWcsToUtf8 (text));
-	#elif win
-		Melder_free (widget -> name);
-		widget -> name = Melder_wcsdup_f (text);
-		_GuiNativeControl_setTitle (widget);
-	#elif mac
-		#if useCarbon
-			Melder_free (widget -> name);
-			widget -> name = Melder_wcsdup_f (text);
-			_GuiNativeControl_setTitle (widget);
-		#else
-		#endif
+		gtk_label_set_text (GTK_LABEL (d_widget), Melder_peekWcsToUtf8 (text));
+	#elif cocoa
+		[(NSTextField *) d_widget setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (text)];
+	#elif motif
+		Melder_free (d_widget -> name);
+		d_widget -> name = Melder_wcsdup_f (text);
+		_GuiNativeControl_setTitle (d_widget);
 	#endif
 }
 

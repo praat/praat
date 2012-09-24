@@ -1,6 +1,6 @@
 /* RealTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,9 +54,9 @@ RealPoint RealPoint_create (double time, double value) {
 
 void structRealTier :: v_info () {
 	structFunction :: v_info ();
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
-	MelderInfo_writeLine2 (L"Minimum value: ", Melder_double (RealTier_getMinimumValue (this)));
-	MelderInfo_writeLine2 (L"Maximum value: ", Melder_double (RealTier_getMaximumValue (this)));
+	MelderInfo_writeLine (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine (L"Minimum value: ", Melder_double (RealTier_getMinimumValue (this)));
+	MelderInfo_writeLine (L"Maximum value: ", Melder_double (RealTier_getMaximumValue (this)));
 }
 
 double structRealTier :: v_getVector (long irow, long icol) {
@@ -282,7 +282,7 @@ void RealTier_multiplyPart (RealTier me, double tmin, double tmax, double factor
 }
 
 void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	int garnish, const wchar *method, const wchar *quantity)
+	int garnish, const wchar_t *method, const wchar_t *quantity)
 {
 	bool drawLines = wcsstr (method, L"lines") || wcsstr (method, L"Lines");
 	bool drawSpeckles = wcsstr (method, L"speckles") || wcsstr (method, L"Speckles");
@@ -326,7 +326,7 @@ void RealTier_draw (RealTier me, Graphics g, double tmin, double tmax, double fm
 	}
 }
 
-TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar *timeLabel, const wchar *valueLabel) {
+TableOfReal RealTier_downto_TableOfReal (RealTier me, const wchar_t *timeLabel, const wchar_t *valueLabel) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my points -> size, 2);
 		TableOfReal_setColumnLabel (thee.peek(), 1, timeLabel);
@@ -383,7 +383,7 @@ void RealTier_interpolateQuadratically (RealTier me, long numberOfPointsPerParab
 	}
 }
 
-Table RealTier_downto_Table (RealTier me, const wchar *indexText, const wchar *timeText, const wchar *valueText) {
+Table RealTier_downto_Table (RealTier me, const wchar_t *indexText, const wchar_t *timeText, const wchar_t *valueText) {
 	try {
 		autoTable thee = Table_createWithoutColumnNames (my points -> size,
 			(indexText != NULL) + (timeText != NULL) + (valueText != NULL));
@@ -464,7 +464,7 @@ RealTier PointProcess_upto_RealTier (PointProcess me, double value, ClassInfo kl
 	}
 }
 
-void RealTier_formula (RealTier me, const wchar *expression, Interpreter interpreter, RealTier thee) {
+void RealTier_formula (RealTier me, const wchar_t *expression, Interpreter interpreter, RealTier thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;

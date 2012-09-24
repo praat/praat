@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2012 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
  * pb 2006/01/11 local variables
  * pb 2006/12/28 theCurrentPraat
  * pb 2007/02/17 corrected the messages about trailing spaces
- * pb 2007/06/11 wchar
+ * pb 2007/06/11 wchar_t
  * pb 2007/10/04 removed swscanf
  * pb 2009/01/04 allow proc(args) syntax
  * pb 2009/01/17 arguments to UiForm callbacks
@@ -47,7 +47,7 @@
 #include "UiPause.h"
 #include "DemoEditor.h"
 
-static int praat_findObjectFromString (Interpreter interpreter, const wchar *string) {
+static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *string) {
 	try {
 		int IOBJECT;
 		while (*string == ' ') string ++;
@@ -57,11 +57,11 @@ static int praat_findObjectFromString (Interpreter interpreter, const wchar *str
 			 */
 			static MelderString buffer = { 0 };
 			MelderString_copy (& buffer, string);
-			wchar *space = wcschr (buffer.string, ' ');
+			wchar_t *space = wcschr (buffer.string, ' ');
 			if (space == NULL)
 				Melder_throw ("Missing space in name.");
 			*space = '\0';
-			wchar *className = & buffer.string [0], *givenName = space + 1;
+			wchar_t *className = & buffer.string [0], *givenName = space + 1;
 			WHERE_DOWN (1) {
 				Data object = (Data) OBJECT;
 				if (wcsequ (className, Thing_className ((Thing) OBJECT)) && wcsequ (givenName, object -> name))
@@ -138,7 +138,7 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 			praat_show ();
 		} else if (wcsnequ (command, L"echo ", 5)) {
 			MelderInfo_open ();
-			MelderInfo_write1 (command + 5);
+			MelderInfo_write (command + 5);
 			MelderInfo_close ();
 		} else if (wcsnequ (command, L"clearinfo", 9)) {
 			Melder_clearInfo ();
@@ -229,13 +229,13 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		} else if (wcsnequ (command, L"sendpraat ", 10)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw ("The script command \"sendpraat\" is not available inside manuals.");
-			wchar programName [41], *q = & programName [0];
+			wchar_t programName [41], *q = & programName [0];
 			#ifdef macintosh
 				#define SENDPRAAT_TIMEOUT  10
 			#else
 				#define SENDPRAAT_TIMEOUT  0
 			#endif
-			const wchar *p = command + 10;
+			const wchar_t *p = command + 10;
 			while (*p == ' ' || *p == '\t') p ++;
 			while (*p != '\0' && *p != ' ' && *p != '\t' && q < programName + 39) *q ++ = *p ++;
 			*q = '\0';
@@ -253,7 +253,7 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		} else if (wcsnequ (command, L"sendsocket ", 11)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw ("The script command \"sendsocket\" is not available inside manuals.");
-			wchar hostName [61], *q = & hostName [0];
+			wchar_t hostName [61], *q = & hostName [0];
 			const wchar_t *p = command + 11;
 			while (*p == ' ' || *p == '\t') p ++;
 			while (*p != '\0' && *p != ' ' && *p != '\t' && q < hostName + 59) *q ++ = *p ++;
@@ -279,7 +279,7 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		} else if (wcsnequ (command, L"fileappend ", 11)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw ("The script command \"fileappend\" is not available inside manuals.");
-			const wchar *p = command + 11;
+			const wchar_t *p = command + 11;
 			wchar_t path [256], *q = & path [0];
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
@@ -313,13 +313,13 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 			Interpreter_voidExpression (interpreter, command);
 		}
 	} else {   /* Simulate menu choice. */
-		wchar *arguments;
+		wchar_t *arguments;
 
  		/* Parse command line into command and arguments. */
 		/* The separation is formed by the three dots. */
 
 		if ((arguments = wcsstr (command, L"...")) == NULL || wcslen (arguments) < 4) {
-			static wchar dummy = { 0 };
+			static wchar_t dummy = { 0 };
 			arguments = & dummy;
 		} else {
 			arguments += 4;
@@ -411,7 +411,7 @@ void praat_executeCommandFromStandardInput (const char *programName) {
 	}
 }
 
-void praat_executeScriptFromFile (MelderFile file, const wchar *arguments) {
+void praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments) {
 	try {
 		autostring text = MelderFile_readText (file);
 		autoMelderFileSetDefaultDir dir (file);   // so that relative file names can be used inside the script
@@ -427,7 +427,7 @@ void praat_executeScriptFromFile (MelderFile file, const wchar *arguments) {
 	}
 }
 
-void praat_executeScriptFromFileNameWithArguments (const wchar *nameAndArguments) {
+void praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments) {
 	wchar_t path [256];
 	const wchar_t *p, *arguments;
 	structMelderFile file = { 0 };
@@ -455,7 +455,7 @@ void praat_executeScriptFromFileNameWithArguments (const wchar *nameAndArguments
 	praat_executeScriptFromFile (& file, arguments);
 }
 
-void praat_executeScriptFromText (wchar *text) {
+void praat_executeScriptFromText (wchar_t *text) {
 	try {
 		autoInterpreter interpreter = Interpreter_create (NULL, NULL);
 		Interpreter_run (interpreter.peek(), text);
@@ -465,7 +465,7 @@ void praat_executeScriptFromText (wchar *text) {
 }
 
 void praat_executeScriptFromDialog (Any dia) {
-	wchar *path = UiForm_getString (dia, L"$file");
+	wchar_t *path = UiForm_getString (dia, L"$file");
 	structMelderFile file = { 0 };
 	Melder_pathToFile (path, & file);
 	autostring text = MelderFile_readText (& file);
@@ -510,7 +510,7 @@ static void firstPassThroughScript (MelderFile file) {
 	}
 }
 
-static void fileSelectorOkCallback (UiForm dia, const wchar *sendingString_dummy, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy) {
+static void fileSelectorOkCallback (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
@@ -543,7 +543,7 @@ void DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Inter
 	}
 }
 
-void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar *scriptPath, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *dummy) {
+void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar_t *scriptPath, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	structMelderFile file = { 0 };
 	(void) sendingForm_dummy;
 	(void) interpreter;
@@ -554,7 +554,7 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wch
 	firstPassThroughScript (& file);
 }
 
-void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const wchar *script) {
+void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const wchar_t *script) {
 	praatP.editor = editor;
 	DO_RunTheScriptFromAnyAddedMenuCommand (NULL, script, NULL, NULL, false, NULL);
 	/*praatP.editor = NULL;*/

@@ -2,7 +2,7 @@
 #define _TimeSoundAnalysisEditor_h_
 /* TimeSoundAnalysisEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@
  * pb 2005/01/11 getBottomOfSoundAndAnalysisArea
  * pb 2005/06/16 units
  * pb 2005/12/07 arrowScrollStep
- * pb 2007/06/10 wchar
+ * pb 2007/06/10 wchar_t
  * pb 2007/09/02 direct drawing to picture window
  * pb 2007/09/08 inherit from TimeSoundEditor
  * pb 2007/11/01 direct intensity, formants, and pulses drawing
@@ -126,7 +126,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		struct FunctionEditor_intensity intensity;
 		struct FunctionEditor_formant formant;
 		struct FunctionEditor_pulses pulses;
-		GuiObject spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+		GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual void v_info ();
@@ -149,17 +149,17 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		virtual void v_createMenuItems_query_log (EditorMenu menu);
 		virtual void v_createMenus_analysis ();
 		virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
+	// preferences:
+		static void f_preferences ();
 };
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, GuiObject parent, const wchar *title, Function data, Sampled sound, bool ownSound);
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, const wchar_t *title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computeIntensity (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computeFormants (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePulses (TimeSoundAnalysisEditor me);
-
-void TimeSoundAnalysisEditor_prefs (void);
 
 /* End of file TimeSoundAnalysisEditor.h */
 #endif

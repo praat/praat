@@ -114,10 +114,10 @@ static void _Data_writeToTextFile (Data me, MelderFile file, bool verbose) {
 		#ifndef _WIN32
 			flockfile (file -> filePointer);   // BUG
 		#endif
-		MelderFile_write2 (file, L"File type = \"ooTextFile\"\nObject class = \"", my classInfo -> className);
+		MelderFile_write (file, L"File type = \"ooTextFile\"\nObject class = \"", my classInfo -> className);
 		if (my classInfo -> version > 0)
-			MelderFile_write2 (file, L" ", Melder_integer (my classInfo -> version));
-		MelderFile_write1 (file, L"\"\n");
+			MelderFile_write (file, L" ", Melder_integer (my classInfo -> version));
+		MelderFile_write (file, L"\"\n");
 		Data_writeText (me, file);
 		MelderFile_writeCharacter (file, '\n');
 		#ifndef _WIN32
@@ -194,10 +194,10 @@ void Data_readText (Data me, MelderReadText text) {
 Any Data_readFromTextFile (MelderFile file) {
 	try {
 		autoMelderReadText text = MelderReadText_createFromFile (file);
-		wchar *line = MelderReadText_readLine (text.peek());
+		wchar_t *line = MelderReadText_readLine (text.peek());
 		if (line == NULL)
 			Melder_throw ("No lines.");
-		wchar *end = wcsstr (line, L"ooTextFile");   // oo format?
+		wchar_t *end = wcsstr (line, L"ooTextFile");   // oo format?
 		autoData me = NULL;
 		if (end) {
 			autostring klas = texgetw2 (text.peek());
@@ -382,14 +382,14 @@ long Data_Description_integer (void *address, Data_Description description) {
 }
 
 int Data_Description_evaluateInteger (void *structAddress, Data_Description structDescription,
-	const wchar *formula, long *result)
+	const wchar_t *formula, long *result)
 {
 	if (formula == NULL) {   // this was a VECTOR_FROM array
 		*result = 1;
 		return 1;
 	}
 	if (formula [0] >= 'a' && formula [0] <= 'z') {
-		wchar buffer [100], *minus1, *psize;
+		wchar_t buffer [100], *minus1, *psize;
 		Data_Description sizeDescription;
 		wcscpy (buffer, formula);
 		if ((minus1 = wcsstr (buffer, L" - 1")) != NULL)

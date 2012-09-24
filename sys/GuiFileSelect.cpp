@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2011,2012 Paul Boersma
+ * Copyright (C) 2010-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,20 +17,12 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2010/07/26 split off from UiFile.c
- * pb 2010/11/27 GuiFileSelect_getDirectoryName ()
- * pb 2011/04/06 C++
- * pb 2011/07/05 C++
- * pb 2012/07/08 GTK's file opener shows working directory (on first time) or last-used directory (later)
- */
-
 #include "Gui.h"
 #ifdef _WIN32
 	#include <Shlobj.h>
 #endif
 
-SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *title, bool allowMultipleFiles) {
+SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t *title, bool allowMultipleFiles) {
 	autoSortedSetOfString me = SortedSetOfString_create ();
 	#if gtk
 		(void) parent;
@@ -57,6 +49,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 			g_slist_free (infileNames_list);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+	#elif cocoa
 	#elif defined (macintosh)
 		(void) parent;
 		OSStatus err;
@@ -94,7 +87,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 		static wchar_t fullFileName [3000+2];
 		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
-		openFileName. hwndOwner = parent ? (HWND) XtWindow (parent) : NULL;
+		openFileName. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : NULL;
 		openFileName. hInstance = NULL;
 		openFileName. lpstrFilter = L"All Files\0*.*\0";
 		ZeroMemory (fullFileName, (3000+2) * sizeof (wchar_t));
@@ -143,8 +136,8 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiObject parent, const wchar *t
 	return me.transfer();
 }
 
-wchar * GuiFileSelect_getOutfileName (GuiObject parent, const wchar *title, const wchar *defaultName) {
-	wchar *outfileName = NULL;
+wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, const wchar_t *defaultName) {
+	wchar_t *outfileName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
@@ -162,9 +155,10 @@ wchar * GuiFileSelect_getOutfileName (GuiObject parent, const wchar *title, cons
 			Melder_pathToFile (outfileName, & file);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+	#elif cocoa
 	#elif defined (macintosh)
 		(void) parent;
-		const wchar *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
+		const wchar_t *lastSlash = wcsrchr (defaultName, Melder_DIRECTORY_SEPARATOR);
 		OSStatus err;
 		NavDialogRef dialogRef;
 		NavDialogCreationOptions dialogOptions;
@@ -218,7 +212,7 @@ wchar * GuiFileSelect_getOutfileName (GuiObject parent, const wchar *title, cons
 			fullFileName [i] = defaultName [i];
 		}
 		openFileName. lStructSize = sizeof (OPENFILENAMEW);
-		openFileName. hwndOwner = parent ? (HWND) XtWindow (parent) : NULL;
+		openFileName. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : NULL;
 		openFileName. lpstrFilter = NULL;   /* like *.txt */
 		openFileName. lpstrCustomFilter = customFilter;
 		openFileName. nMaxCustFilter = 100;
@@ -236,8 +230,8 @@ wchar * GuiFileSelect_getOutfileName (GuiObject parent, const wchar *title, cons
 	return outfileName;
 }
 
-wchar * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar *title) {
-	wchar *directoryName = NULL;
+wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title) {
+	wchar_t *directoryName = NULL;
 	#if gtk
 		(void) parent;
 		static structMelderFile file;
@@ -253,6 +247,7 @@ wchar * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar *title) {
 			Melder_pathToFile (directoryName, & file);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+	#elif cocoa
 	#elif defined (macintosh)
 		(void) parent;
 		OSStatus err;
@@ -285,14 +280,14 @@ wchar * GuiFileSelect_getDirectoryName (GuiObject parent, const wchar *title) {
 			NavDialogDispose (dialogRef);
 		}
 	#elif defined (_WIN32)
-		static wchar fullFileName [3000+2];
+		static wchar_t fullFileName [3000+2];
 		static bool comInited = false;
 		if (! comInited) {
 			CoInitializeEx (NULL, COINIT_APARTMENTTHREADED);
 			comInited = true;
 		}
 		static BROWSEINFO info;
-		info. hwndOwner = parent ? (HWND) XtWindow (parent) : NULL;
+		info. hwndOwner = parent && parent -> d_xmShell ? (HWND) XtWindow (parent -> d_xmShell) : NULL;
 		info. ulFlags = BIF_USENEWUI;
 		info. pidlRoot = NULL;   // everything on the computer should be browsable
 		info. pszDisplayName = NULL;   // this would only give the bare directory name, not the full path

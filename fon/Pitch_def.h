@@ -88,7 +88,7 @@ oo_DEFINE_CLASS (Pitch, Sampled)
 			virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 			virtual int v_getMinimumUnit (long ilevel);
 			virtual int v_getMaximumUnit (long ilevel);
-			virtual const wchar * v_getUnitText (long ilevel, int unit, unsigned long flags);
+			virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags);
 			virtual bool v_isUnitLogarithmic (long ilevel, int unit);
 			virtual double v_convertStandardToSpecialUnit (double value, long ilevel, int unit);
 			virtual double v_convertSpecialToStandardUnit (double value, long ilevel, int unit);

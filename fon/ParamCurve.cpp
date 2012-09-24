@@ -1,6 +1,6 @@
 /* ParamCurve.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,23 +45,23 @@ void structParamCurve :: v_info () {
 		if (value > ymax) ymax = value;
 	}
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Domain:");
-	MelderInfo_writeLine2 (L"   tmin: ", Melder_double (xmin));
-	MelderInfo_writeLine2 (L"   tmax: ", Melder_double (xmax));
-	MelderInfo_writeLine1 (L"x sampling:");
-	MelderInfo_writeLine2 (L"   Number of values of t in x: ", Melder_double (x -> nx));
-	MelderInfo_writeLine5 (L"   t step in x: ", Melder_double (x -> dx), L" (sampling rate ", Melder_double (1.0 / x -> dx), L")");
-	MelderInfo_writeLine2 (L"   First t in x: ", Melder_double (x -> x1));
-	MelderInfo_writeLine1 (L"x values:");
-	MelderInfo_writeLine2 (L"   Minimum x: ", Melder_double (xmin));
-	MelderInfo_writeLine2 (L"   Maximum x: ", Melder_double (xmax));
-	MelderInfo_writeLine1 (L"y sampling:");
-	MelderInfo_writeLine2 (L"   Number of values of t in y: ", Melder_double (y -> nx));
-	MelderInfo_writeLine5 (L"   t step in y: ", Melder_double (y -> dx), L" (sampling rate ", Melder_double (1.0 / y -> dx), L")");
-	MelderInfo_writeLine2 (L"   First t in y: ", Melder_double (y -> x1));
-	MelderInfo_writeLine1 (L"y values:");
-	MelderInfo_writeLine2 (L"   Minimum y: ", Melder_double (ymin));
-	MelderInfo_writeLine2 (L"   Maximum y: ", Melder_double (ymax));
+	MelderInfo_writeLine (L"Domain:");
+	MelderInfo_writeLine (L"   tmin: ", Melder_double (xmin));
+	MelderInfo_writeLine (L"   tmax: ", Melder_double (xmax));
+	MelderInfo_writeLine (L"x sampling:");
+	MelderInfo_writeLine (L"   Number of values of t in x: ", Melder_double (x -> nx));
+	MelderInfo_writeLine (L"   t step in x: ", Melder_double (x -> dx), L" (sampling rate ", Melder_double (1.0 / x -> dx), L")");
+	MelderInfo_writeLine (L"   First t in x: ", Melder_double (x -> x1));
+	MelderInfo_writeLine (L"x values:");
+	MelderInfo_writeLine (L"   Minimum x: ", Melder_double (xmin));
+	MelderInfo_writeLine (L"   Maximum x: ", Melder_double (xmax));
+	MelderInfo_writeLine (L"y sampling:");
+	MelderInfo_writeLine (L"   Number of values of t in y: ", Melder_double (y -> nx));
+	MelderInfo_writeLine (L"   t step in y: ", Melder_double (y -> dx), L" (sampling rate ", Melder_double (1.0 / y -> dx), L")");
+	MelderInfo_writeLine (L"   First t in y: ", Melder_double (y -> x1));
+	MelderInfo_writeLine (L"y values:");
+	MelderInfo_writeLine (L"   Minimum y: ", Melder_double (ymin));
+	MelderInfo_writeLine (L"   Maximum y: ", Melder_double (ymax));
 }
 
 void structParamCurve :: v_writeText (MelderFile file) {
@@ -95,9 +95,7 @@ void structParamCurve :: v_readBinary (FILE *f) {
 	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax; 
 }
 
-void ParamCurve_init (I, Any void_x, Any void_y) {
-	iam (ParamCurve);
-	Sound x = (Sound) void_x, y = (Sound) void_y;
+void ParamCurve_init (ParamCurve me, Sound x, Sound y) {
 	if (x -> xmax <= y -> xmin || x -> xmin >= y -> xmax)
 		Melder_throw ("Domains do not overlap.");
 	my x = Data_copy (x);
@@ -106,7 +104,7 @@ void ParamCurve_init (I, Any void_x, Any void_y) {
 	my xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax; 
 }
 
-ParamCurve ParamCurve_create (Any x, Any y) {
+ParamCurve ParamCurve_create (Sound x, Sound y) {
 	try {
 		autoParamCurve me = Thing_new (ParamCurve);
 		ParamCurve_init (me.peek(), x, y);
@@ -116,10 +114,9 @@ ParamCurve ParamCurve_create (Any x, Any y) {
 	}
 }
 
-void ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
+void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt,
 	double x1, double x2, double y1, double y2, int garnish)
 {
-	iam (ParamCurve);
 	if (t2 <= t1) {
 		double tx1 = my x -> x1;
 		double ty1 = my y -> x1;
@@ -157,8 +154,7 @@ void ParamCurve_draw (I, Graphics g, double t1, double t2, double dt,
 	}
 }
 
-void ParamCurve_swapXY (I) {
-	iam (ParamCurve);
+void ParamCurve_swapXY (ParamCurve me) {
 	Sound help = my x;
 	my x = my y;
 	my y = help;

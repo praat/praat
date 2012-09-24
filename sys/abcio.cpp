@@ -46,7 +46,7 @@
 #define WCHAR_MINUS_1  (sizeof (wchar_t) == 2 ? 0xFFFF : 0xFFFFFFFF)
 
 static long getInteger (MelderReadText me) {
-	wchar buffer [41], c;
+	wchar_t buffer [41], c;
 	/*
 	 * Look for the first numeric character.
 	 */
@@ -83,7 +83,7 @@ static long getInteger (MelderReadText me) {
 }
 
 static unsigned long getUnsigned (MelderReadText me) {
-	wchar buffer [41], c;
+	wchar_t buffer [41], c;
 	for (c = MelderReadText_getChar (me); ! isdigit (c) && c != '+'; c = MelderReadText_getChar (me)) {
 		if (c == 0)
 			Melder_throw ("Early end of text detected while looking for an unsigned integer (line ", MelderReadText_getLineNumber (me), ").");
@@ -163,8 +163,8 @@ static double getReal (MelderReadText me) {
 	return Melder_atof (buffer);
 }
 
-static short getEnum (MelderReadText me, int (*getValue) (const wchar *)) {
-	wchar buffer [41], c;
+static short getEnum (MelderReadText me, int (*getValue) (const wchar_t *)) {
+	wchar_t buffer [41], c;
 	for (c = MelderReadText_getChar (me); c != '<'; c = MelderReadText_getChar (me)) {
 		if (c == 0)
 			Melder_throw ("Early end of text detected while looking for an enumerated value (line ", MelderReadText_getLineNumber (me), ").");
@@ -204,10 +204,10 @@ static short getEnum (MelderReadText me, int (*getValue) (const wchar *)) {
 	return value;
 }
 
-static wchar * getString (MelderReadText me) {
+static wchar_t * getString (MelderReadText me) {
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
-	for (wchar c = MelderReadText_getChar (me); c != '\"'; c = MelderReadText_getChar (me)) {
+	for (wchar_t c = MelderReadText_getChar (me); c != '\"'; c = MelderReadText_getChar (me)) {
 		if (c == 0)
 			Melder_throw ("Early end of text detected while looking for a string (line ", MelderReadText_getLineNumber (me), ").");
 		if (c == '!') {   // end-of-line comment?
@@ -227,7 +227,7 @@ static wchar * getString (MelderReadText me) {
 		}
 	}
 	for (int i = 0; 1; i ++) {
-		wchar c = MelderReadText_getChar (me);   // read past first '"'
+		wchar_t c = MelderReadText_getChar (me);   // read past first '"'
 		if (c == 0)
 			Melder_throw ("Early end of text detected while reading a string (line ", MelderReadText_getLineNumber (me), ").");
 		if (c == '\"') {
@@ -340,11 +340,11 @@ void texresetindent (MelderFile file) { file -> indent = 0; }
 
 void texputintro (MelderFile file, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	if (file -> verbose) {
-		MelderFile_write1 (file, L"\n");
+		MelderFile_write (file, L"\n");
 		for (int iindent = 1; iindent <= file -> indent; iindent ++) {
-			MelderFile_write1 (file, L" ");
+			MelderFile_write (file, L" ");
 		}
-		MelderFile_write6 (file,
+		MelderFile_write (file,
 			s1 && s1 [0] == 'd' && s1 [1] == '_' ? & s1 [2] : & s1 [0],
 			s2 && s2 [0] == 'd' && s2 [1] == '_' ? & s2 [2] : & s2 [0],
 			s3 && s3 [0] == 'd' && s3 [1] == '_' ? & s3 [2] : & s3 [0],
@@ -356,12 +356,12 @@ void texputintro (MelderFile file, const wchar_t *s1, const wchar_t *s2, const w
 }
 
 #define PUTLEADER  \
-	MelderFile_write1 (file, L"\n"); \
+	MelderFile_write (file, L"\n"); \
 	if (file -> verbose) { \
 		for (int iindent = 1; iindent <= file -> indent; iindent ++) { \
-			MelderFile_write1 (file, L" "); \
+			MelderFile_write (file, L" "); \
 		} \
-		MelderFile_write6 (file, \
+		MelderFile_write (file, \
 			s1 && s1 [0] == 'd' && s1 [1] == '_' ? & s1 [2] : & s1 [0], \
 			s2 && s2 [0] == 'd' && s2 [1] == '_' ? & s2 [2] : & s2 [0], \
 			s3 && s3 [0] == 'd' && s3 [1] == '_' ? & s3 [2] : & s3 [0], \
@@ -372,69 +372,69 @@ void texputintro (MelderFile file, const wchar_t *s1, const wchar_t *s2, const w
 
 void texputi1 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texputi2 (MelderFile file, int i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texputi4 (MelderFile file, long i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_integer (i), file -> verbose ? L" " : NULL);
 }
 void texputu1 (MelderFile file, unsigned int u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
 }
 void texputu2 (MelderFile file, unsigned int u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
 }
 void texputu4 (MelderFile file, unsigned long u, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_integer (u), file -> verbose ? L" " : NULL);
 }
 void texputr4 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_single (x), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_single (x), file -> verbose ? L" " : NULL);
 }
 void texputr8 (MelderFile file, double x, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, Melder_double (x), file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_double (x), file -> verbose ? L" " : NULL);
 }
 void texputc8 (MelderFile file, fcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write5 (file, file -> verbose ? L" = " : NULL, Melder_single (z.re),
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_single (z.re),
 		file -> verbose ? L" + " : L" ", Melder_single (z.im), file -> verbose ? L" i " : NULL);
 }
 void texputc16 (MelderFile file, dcomplex z, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write5 (file, file -> verbose ? L" = " : NULL, Melder_double (z.re),
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, Melder_double (z.re),
 		file -> verbose ? L" + " : L" ", Melder_double (z.im), file -> verbose ? L" i " : NULL);
 }
 void texpute1 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", getText (i), file -> verbose ? L"> " : L">");
+	MelderFile_write (file, file -> verbose ? L" = <" : L"<", getText (i), file -> verbose ? L"> " : L">");
 }
 void texpute2 (MelderFile file, int i, const wchar_t * (*getText) (int), const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = <" : L"<", getText (i), file -> verbose ? L"> " : L">");
+	MelderFile_write (file, file -> verbose ? L" = <" : L"<", getText (i), file -> verbose ? L"> " : L">");
 }
 void texputeb (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L" = " : NULL, i ? L"<true>" : L"<false>", file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L" = " : NULL, i ? L"<true>" : L"<false>", file -> verbose ? L" " : NULL);
 }
 void texputeq (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L"? " : NULL, i ? L"<yes>" : L"<no>", file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L"? " : NULL, i ? L"<yes>" : L"<no>", file -> verbose ? L" " : NULL);
 }
 void texputex (MelderFile file, bool i, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write3 (file, file -> verbose ? L"? " : NULL, i ? L"<exists>" : L"<absent>", file -> verbose ? L" " : NULL);
+	MelderFile_write (file, file -> verbose ? L"? " : NULL, i ? L"<exists>" : L"<absent>", file -> verbose ? L" " : NULL);
 }
 void texputs1 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write1 (file, file -> verbose ? L" = \"" : L"\"");
+	MelderFile_write (file, file -> verbose ? L" = \"" : L"\"");
 	if (s != NULL) {
 		char c;
 		while ((c = *s ++) != '\0') {
@@ -442,11 +442,11 @@ void texputs1 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t 
 			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
-	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
+	MelderFile_write (file, file -> verbose ? L"\" " : L"\"");
 }
 void texputs2 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write1 (file, file -> verbose ? L" = \"" : L"\"");
+	MelderFile_write (file, file -> verbose ? L" = \"" : L"\"");
 	if (s != NULL) {
 		char c;
 		while ((c = *s ++) != '\0') {
@@ -454,11 +454,11 @@ void texputs2 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t 
 			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
-	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
+	MelderFile_write (file, file -> verbose ? L"\" " : L"\"");
 }
 void texputs4 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write1 (file, file -> verbose ? L" = \"" : L"\"");
+	MelderFile_write (file, file -> verbose ? L" = \"" : L"\"");
 	if (s != NULL) {
 		char c;
 		while ((c = *s ++) != '\0') {
@@ -466,11 +466,11 @@ void texputs4 (MelderFile file, const char *s, const wchar_t *s1, const wchar_t 
 			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
-	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
+	MelderFile_write (file, file -> verbose ? L"\" " : L"\"");
 }
 void texputw2 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write1 (file, file -> verbose ? L" = \"" : L"\"");
+	MelderFile_write (file, file -> verbose ? L" = \"" : L"\"");
 	if (s != NULL) {
 		wchar_t c;
 		while ((c = *s ++) != '\0') {
@@ -478,11 +478,11 @@ void texputw2 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
-	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
+	MelderFile_write (file, file -> verbose ? L"\" " : L"\"");
 }
 void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	PUTLEADER
-	MelderFile_write1 (file, file -> verbose ? L" = \"" : L"\"");
+	MelderFile_write (file, file -> verbose ? L" = \"" : L"\"");
 	if (s != NULL) {
 		wchar_t c;
 		while ((c = *s ++) != '\0') {
@@ -490,7 +490,7 @@ void texputw4 (MelderFile file, const wchar_t *s, const wchar_t *s1, const wchar
 			if (c == '\"') MelderFile_writeCharacter (file, c);   // double any internal quotes
 		}
 	}
-	MelderFile_write1 (file, file -> verbose ? L"\" " : L"\"");
+	MelderFile_write (file, file -> verbose ? L"\" " : L"\"");
 }
 
 /********** machine-independent binary I/O **********/
@@ -664,7 +664,7 @@ void binputi1 (int u, FILE *f) {
 	}
 }
 
-int bingete1 (FILE *f, int min, int max, const wchar *type) {
+int bingete1 (FILE *f, int min, int max, const wchar_t *type) {
 	try {
 		int externalValue = getc (f);
 		if (externalValue < 0) readError (f, "a byte.");
@@ -1451,7 +1451,7 @@ char * bingets4 (FILE *f) {
 	}
 }
 
-wchar * bingetw1 (FILE *f) {
+wchar_t * bingetw1 (FILE *f) {
 	try {
 		autostring result = NULL;
 		unsigned short length = bingetu1 (f);
@@ -1460,7 +1460,7 @@ wchar * bingetw1 (FILE *f) {
 			 * UTF-16
 			 */
 			length = bingetu1 (f);
-			result.reset (Melder_malloc (wchar, length + 1));
+			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
 					result [i] = bingetu2 (f);
@@ -1482,7 +1482,7 @@ wchar * bingetw1 (FILE *f) {
 			/*
 			 * ASCII
 			 */
-			result.reset (Melder_malloc (wchar, length + 1));
+			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				result [i] = bingetu1 (f);
 			}
@@ -1494,7 +1494,7 @@ wchar * bingetw1 (FILE *f) {
 	}
 }
 
-wchar * bingetw2 (FILE *f) {
+wchar_t * bingetw2 (FILE *f) {
 	try {
 		autostring result = NULL;
 		unsigned short length = bingetu2 (f);
@@ -1503,7 +1503,7 @@ wchar * bingetw2 (FILE *f) {
 			 * UTF-16
 			 */
 			length = bingetu2 (f);
-			result.reset (Melder_malloc (wchar, length + 1));
+			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
 					result [i] = bingetu2 (f);
@@ -1525,7 +1525,7 @@ wchar * bingetw2 (FILE *f) {
 			/*
 			 * ASCII
 			 */
-			result.reset (Melder_malloc (wchar, length + 1));
+			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned short i = 0; i < length; i ++) {
 				result [i] = bingetu1 (f);
 			}
@@ -1537,7 +1537,7 @@ wchar * bingetw2 (FILE *f) {
 	}
 }
 
-wchar * bingetw4 (FILE *f) {
+wchar_t * bingetw4 (FILE *f) {
 	try {
 		autostring result = NULL;
 		unsigned long length = bingetu4 (f);
@@ -1546,7 +1546,7 @@ wchar * bingetw4 (FILE *f) {
 			 * UTF-16
 			 */
 			length = bingetu4 (f);
-			result.reset (Melder_malloc (wchar, length + 1));
+			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned long i = 0; i < length; i ++) {
 				if (sizeof (wchar_t) == 2) {
 					result [i] = bingetu2 (f);
@@ -1568,7 +1568,7 @@ wchar * bingetw4 (FILE *f) {
 			/*
 			 * ASCII
 			 */
-			result.reset (Melder_malloc (wchar, length + 1));
+			result.reset (Melder_malloc (wchar_t, length + 1));
 			for (unsigned long i = 0; i < length; i ++) {
 				result [i] = bingetu1 (f);
 			}

@@ -197,7 +197,7 @@ void Pitch_step (Pitch me, double step, double precision, double tmin, double tm
 	as long as that candidate is in between 0 and my ceiling.
 */
 
-void Pitch_formula (Pitch me, const wchar *formula, Interpreter interpreter);
+void Pitch_formula (Pitch me, const wchar_t *formula, Interpreter interpreter);
 
 /* End of file Pitch.h */
 #endif

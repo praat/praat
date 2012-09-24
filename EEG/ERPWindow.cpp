@@ -22,10 +22,18 @@
 
 Thing_implement (ERPWindow, SoundEditor, 0);
 
-bool structERPWindow :: s_showSelectionViewer;
+bool                             structERPWindow :: s_showSelectionViewer;     // overridden
+kTimeSoundEditor_scalingStrategy structERPWindow :: s_sound_scalingStrategy;   // overridden
+double                           structERPWindow :: s_sound_scaling_height;    // overridden
+double                           structERPWindow :: s_sound_scaling_minimum;   // overridden
+double                           structERPWindow :: s_sound_scaling_maximum;   // overridden
 
-void ERPWindow_preferences (void) {
-	Preferences_addBool (L"ERPWindow.showSelectionViewer", Thing_dummyObject (ERPWindow) -> vs_showSelectionViewer (), true);
+void structERPWindow :: f_preferences (void) {
+	Preferences_addBool   (L"ERPWindow.showSelectionViewer",   & s_showSelectionViewer,                     true);    // overridden
+	Preferences_addEnum   (L"ERPWindow.sound.scalingStrategy", & s_sound_scalingStrategy, kTimeSoundEditor_scalingStrategy, DEFAULT);   // overridden
+	Preferences_addDouble (L"ERPWindow.sound.scaling.height",  & s_sound_scaling_height,                     20e-6);   // overridden
+	Preferences_addDouble (L"ERPWindow.sound.scaling.minimum", & s_sound_scaling_minimum,                   -10e-6);   // overridden
+	Preferences_addDouble (L"ERPWindow.sound.scaling.maximum", & s_sound_scaling_maximum,                   +10e-6);   // overridden
 }
 
 typedef struct { int inclination, azimuth; double topX, topY; } BiosemiLocationData;
@@ -130,7 +138,7 @@ static BiosemiLocationData biosemiCapCoordinates32 [1+32] =
 	{ -74,  65 },   // 14 PO3
 	{ -92,  72 },   // 15 O1
 	{  92, -90 },   // 16 Oz
-	{  92, -72 },    // 17 O2
+	{  92, -72 },   // 17 O2
 	{  74, -65 },   // 18 PO4
 	{  60, -51 },   // 19 P4
 	{  92, -36 },   // 20 P8
@@ -150,10 +158,10 @@ static BiosemiLocationData biosemiCapCoordinates32 [1+32] =
 
 void structERPWindow :: v_drawSelectionViewer () {
 	ERP erp = (ERP) data;
-	Graphics_setWindow (graphics, -1.1, 1.1, -1.01, 1.19);
-	Graphics_setGrey (graphics, 0.85);
-	Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setWindow (d_graphics, -1.1, 1.1, -1.01, 1.19);
+	Graphics_setGrey (d_graphics, 0.85);
+	Graphics_fillRectangle (d_graphics, -1.1, 1.1, -1.01, 1.19);
+	Graphics_setColour (d_graphics, Graphics_BLACK);
 	long numberOfDrawableChannels =
 			erp -> ny >= 64 && Melder_wcsequ (erp -> d_channelNames [64], L"O2") ? 64 :
 			erp -> ny >= 32 && Melder_wcsequ (erp -> d_channelNames [32], L"Cz") ? 32 :
@@ -173,9 +181,9 @@ void structERPWindow :: v_drawSelectionViewer () {
 	autoNUMvector <double> mean (1, numberOfDrawableChannels);
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		mean [ichan] =
-			startSelection == endSelection ?
-				Sampled_getValueAtX (erp, startSelection, ichan, 0, true) :
-				Vector_getMean (erp, startSelection, endSelection, ichan);
+			d_startSelection == d_endSelection ?
+				Sampled_getValueAtX (erp, d_startSelection, ichan, 0, true) :
+				Vector_getMean (erp, d_startSelection, d_endSelection, ichan);
 	}
 	autoNUMmatrix <double> image (1, n, 1, n);
 	for (long irow = 1; irow <= n; irow ++) {
@@ -219,44 +227,44 @@ void structERPWindow :: v_drawSelectionViewer () {
 			}
 		}
 	}
-	Graphics_image (graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, - absoluteExtremum, absoluteExtremum);
-	Graphics_setLineWidth (graphics, 2.0);
+	Graphics_image (d_graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, - absoluteExtremum, absoluteExtremum);
+	Graphics_setLineWidth (d_graphics, 2.0);
 	/*
 	 * Nose.
 	 */
-	Graphics_setGrey (graphics, 0.5);
+	Graphics_setGrey (d_graphics, 0.5);
 	{// scope
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
-		Graphics_fillArea (graphics, 3, x, y);
+		Graphics_fillArea (d_graphics, 3, x, y);
 	}
-	Graphics_setColour (graphics, Graphics_BLACK);
-	Graphics_line (graphics, -0.08, 0.99, 0.0, 1.18);
-	Graphics_line (graphics, 0.08, 0.99, 0.0, 1.18);
+	Graphics_setColour (d_graphics, Graphics_BLACK);
+	Graphics_line (d_graphics, -0.08, 0.99, 0.0, 1.18);
+	Graphics_line (d_graphics, 0.08, 0.99, 0.0, 1.18);
 	/*
 	 * Ears.
 	 */
-	Graphics_setGrey (graphics, 0.5);
-	Graphics_fillRectangle (graphics, -1.09, -1.00, -0.08, 0.08);
-	Graphics_fillRectangle (graphics, 1.09, 1.00, -0.08, 0.08);
-	Graphics_setColour (graphics, Graphics_BLACK);
-	Graphics_line (graphics, -0.99, 0.08, -1.09, 0.08);
-	Graphics_line (graphics, -1.09, 0.08, -1.09, -0.08);
-	Graphics_line (graphics, -1.09, -0.08, -0.99, -0.08);
-	Graphics_line (graphics, 0.99, 0.08, 1.09, 0.08);
-	Graphics_line (graphics, 1.09, 0.08, 1.09, -0.08);
-	Graphics_line (graphics, 1.09, -0.08, 0.99, -0.08);
+	Graphics_setGrey (d_graphics, 0.5);
+	Graphics_fillRectangle (d_graphics, -1.09, -1.00, -0.08, 0.08);
+	Graphics_fillRectangle (d_graphics, 1.09, 1.00, -0.08, 0.08);
+	Graphics_setColour (d_graphics, Graphics_BLACK);
+	Graphics_line (d_graphics, -0.99, 0.08, -1.09, 0.08);
+	Graphics_line (d_graphics, -1.09, 0.08, -1.09, -0.08);
+	Graphics_line (d_graphics, -1.09, -0.08, -0.99, -0.08);
+	Graphics_line (d_graphics, 0.99, 0.08, 1.09, 0.08);
+	Graphics_line (d_graphics, 1.09, 0.08, 1.09, -0.08);
+	Graphics_line (d_graphics, 1.09, -0.08, 0.99, -0.08);
 	/*
 	 * Scalp.
 	 */
-	Graphics_ellipse (graphics, -1.0, 1.0, -1.0, 1.0);
-	Graphics_setLineWidth (graphics, 1.0);
+	Graphics_ellipse (d_graphics, -1.0, 1.0, -1.0, 1.0);
+	Graphics_setLineWidth (d_graphics, 1.0);
 }
 
-ERPWindow ERPWindow_create (GuiObject parent, const wchar *title, ERP data) {
+ERPWindow ERPWindow_create (const wchar_t *title, ERP data) {
 	Melder_assert (data != NULL);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		me -> structSoundEditor :: f_init (parent, title, data);
+		me -> structSoundEditor :: f_init (title, data);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("ERP window not created.");

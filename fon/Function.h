@@ -56,7 +56,7 @@ int Function_getMaximumUnit (Function me, long ilevel);
 #define Function_UNIT_TEXT_SHORT            0x00000001
 #define Function_UNIT_TEXT_GRAPHICAL        0x00000002
 #define Function_UNIT_TEXT_MENU             0x00000004
-const wchar * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags);
+const wchar_t * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags);
 
 bool Function_isUnitLogarithmic (Function me, long ilevel, int unit);
 

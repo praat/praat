@@ -401,7 +401,7 @@ DIRECT (OTGrammar_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit from batch.");
 	LOOP {
 		iam (OTGrammar);
-		autoOTGrammarEditor editor = OTGrammarEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoOTGrammarEditor editor = OTGrammarEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -594,7 +594,7 @@ FORM (OTGrammar_inputToOutput, L"OTGrammar: Input to output", L"OTGrammar: Input
 	OK
 DO
 	iam_ONLY (OTGrammar);
-	wchar output [100];
+	wchar_t output [100];
 	OTGrammar_inputToOutput (me, GET_STRING (L"Input form"), output, GET_REAL (L"Evaluation noise"));
 	Melder_information (output);
 	praat_dataChanged (me);
@@ -1087,7 +1087,7 @@ DIRECT (OTMulti_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit an OTMulti from batch.");
 	LOOP {
 		iam (OTMulti);
-		autoOTMultiEditor editor = OTMultiEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoOTMultiEditor editor = OTMultiEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -1208,7 +1208,7 @@ FORM (OTMulti_generateOptimalForm, L"OTMulti: Generate optimal form", 0)
 	OK
 DO
 	iam_ONLY (OTMulti);
-	wchar output [100];
+	wchar_t output [100];
 	OTMulti_generateOptimalForm (me, GET_STRING (L"Partial form 1"), GET_STRING (L"Partial form 2"),
 		output, GET_REAL (L"Evaluation noise"));
 	Melder_information (output);

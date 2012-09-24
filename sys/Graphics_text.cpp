@@ -208,6 +208,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> font.integer = font;
 				lc -> size = size;
 			}
+		#elif cocoa
 		#elif win
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font, size, style;
@@ -571,6 +572,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			}
 			int font = lc -> font.integer;
 			int needBitmappedIPA = 0;
+		#elif cocoa
+			int needBitmappedIPA = 0;
 		#elif win
 			int font = lc -> font.integer;
 			int needBitmappedIPA = font == kGraphics_font_IPATIMES && ! ipaAvailable;
@@ -721,14 +724,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						SelectFont (dc, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
 							screenFonts [font] [lc -> size] [lc -> style]);
 						SetTextColor (dc, my d_winForegroundColour);
-						TextOutW (dc, 0, baseline, (const wchar *) codes16, nchars);
+						TextOutW (dc, 0, baseline, (const wchar_t *) codes16, nchars);
 						BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
 					} else {
 						SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255)); else SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 						SelectFont (my d_gdiGraphicsContext, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
 							screenFonts [font] [lc -> size] [lc -> style]);
-						TextOutW (my d_gdiGraphicsContext, xDC, yDC, (const wchar *) codes16, nchars);
+						TextOutW (my d_gdiGraphicsContext, xDC, yDC, (const wchar_t *) codes16, nchars);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 						SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 					}
@@ -864,7 +867,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						ModifyWorldTransform (my d_gdiGraphicsContext, & rotate, MWT_RIGHTMULTIPLY);
 						XFORM translate = { 1, 0, 0, 1, xDC, yDC };
 						ModifyWorldTransform (my d_gdiGraphicsContext, & translate, MWT_RIGHTMULTIPLY);
-						TextOutW (my d_gdiGraphicsContext, 0 /*xDC*/, 0 /*yDC*/, (const wchar *) codes16, nchars);
+						TextOutW (my d_gdiGraphicsContext, 0 /*xDC*/, 0 /*yDC*/, (const wchar_t *) codes16, nchars);
 						RestoreDC (my d_gdiGraphicsContext, restore);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 						SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
@@ -899,7 +902,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					SelectBrush (dc, GetStockBrush (NULL_BRUSH));
 					SelectFont (dc, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
 							screenFonts [font] [lc -> size] [lc -> style]);
-					TextOutW (dc, 0, baseline, (const wchar *) codes16, nchars);
+					TextOutW (dc, 0, baseline, (const wchar_t *) codes16, nchars);
 				#endif
 				if (my textRotation == 90.0) { cosa = 0.0; sina = 1.0; }
 				else if (my textRotation == 270.0) { cosa = 0.0; sina = -1.0; }
@@ -1461,7 +1464,7 @@ void Graphics_text (Graphics me, double xWC, double yWC, const wchar_t *txt) {
 			my verticalTextAlignment == Graphics_HALF ? 0.5 * (numberOfLines - 1) * lineSpacingWC:
 			(numberOfLines - 1) * lineSpacingWC;
 		autostring linesToDraw = Melder_wcsdup_f (txt);
-		wchar *p = & linesToDraw [0];
+		wchar_t *p = & linesToDraw [0];
 		for (;;) {
 			wchar_t *newline = wcschr (p, '\n');
 			if (newline != NULL) *newline = '\0';
@@ -1569,7 +1572,7 @@ double Graphics_textWidth_ps (Graphics me, const wchar_t *txt, bool useSilipaPS)
 	return Graphics_dxMMtoWC (me, Graphics_textWidth_ps_mm (me, txt, useSilipaPS));
 }
 
-#if mac
+#if mac && useCarbon
 static ATSFontRef findFont (CFStringRef name) {
 	ATSFontRef fontRef = ATSFontFindFromPostScriptName (name, kATSOptionFlagsDefault);
 	if (fontRef == 0 || fontRef == kATSUInvalidFontID) {
@@ -1649,10 +1652,8 @@ bool _GraphicsMac_tryToInitializeAtsuiFonts (void) {
 #endif
 
 void _GraphicsScreen_text_init (GraphicsScreen me) {   /* BUG: should be done as late as possible. */
-	#if mac
-		if (theTimesAtsuiFont == 0) {
-			Melder_assert (_GraphicsMac_tryToInitializeAtsuiFonts ());   // should have been handled when setting my useQuartz to true
-		}
+	#if gtk
+	#elif cocoa
 	#elif win
 		int font, size, style;
 		if (my printer || my metafile)
@@ -1663,6 +1664,10 @@ void _GraphicsScreen_text_init (GraphicsScreen me) {   /* BUG: should be done as
 							DeleteObject (printerFonts [font] [size] [style]);
 							printerFonts [font] [size] [style] = 0;
 						}
+	#elif mac
+		if (theTimesAtsuiFont == 0) {
+			Melder_assert (_GraphicsMac_tryToInitializeAtsuiFonts ());   // should have been handled when setting my useQuartz to true
+		}
 	#endif
 }
 

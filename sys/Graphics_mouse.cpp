@@ -34,6 +34,8 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 	#if cairo
 		if (theMouseDown) return true;
 		else { theMouseDown = true; return false; }
+	#elif cocoa
+		return false;
 	#elif win
 		return motif_win_mouseStillDown ();
 	#elif mac
@@ -57,6 +59,7 @@ void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
 		gint xDC, yDC;
 		gdk_window_get_pointer (d_window, & xDC, & yDC, NULL);
 		Graphics_DCtoWC (this, xDC, yDC, xWC, yWC);
+	#elif cocoa
 	#elif win
 		POINT pos;
 		if (! GetCursorPos (& pos)) { Melder_warning (L"Cannot get cursor position."); return; }

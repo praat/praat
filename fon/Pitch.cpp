@@ -60,7 +60,7 @@ int structPitch :: v_getMaximumUnit (long ilevel) {
 	return ilevel == Pitch_LEVEL_FREQUENCY ? kPitch_unit_MAX : Pitch_STRENGTH_UNIT_max;
 }
 
-const wchar * structPitch :: v_getUnitText (long ilevel, int unit, unsigned long flags) {
+const wchar_t * structPitch :: v_getUnitText (long ilevel, int unit, unsigned long flags) {
 	if (ilevel == Pitch_LEVEL_FREQUENCY) {
 		return
 			unit == kPitch_unit_HERTZ ?
@@ -306,15 +306,15 @@ void structPitch :: v_info () {
 	long nVoiced;
 	double *frequencies = Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, & nVoiced);
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine1 (L"Time sampling:");
-	MelderInfo_writeLine5 (L"   Number of frames: ", Melder_integer (nx), L" (", Melder_integer (nVoiced), L" voiced)");
-	MelderInfo_writeLine3 (L"   Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"   First frame centred at: ", Melder_double (x1), L" seconds");
-	MelderInfo_writeLine3 (L"Ceiling at: ", Melder_double (ceiling), L" Hz");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Time sampling:");
+	MelderInfo_writeLine (L"   Number of frames: ", Melder_integer (nx), L" (", Melder_integer (nVoiced), L" voiced)");
+	MelderInfo_writeLine (L"   Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Ceiling at: ", Melder_double (ceiling), L" Hz");
 
 	if (nVoiced >= 1) {   /* Quantiles. */
 		double quantile10, quantile16, quantile50, quantile84, quantile90;
@@ -323,60 +323,60 @@ void structPitch :: v_info () {
 		quantile50 = NUMquantile (nVoiced, frequencies, 0.50);   /* Median. */
 		quantile84 = NUMquantile (nVoiced, frequencies, 0.84);
 		quantile90 = NUMquantile (nVoiced, frequencies, 0.90);
-		MelderInfo_writeLine1 (L"\nEstimated quantiles:");
-		MelderInfo_write5 (L"   10% = ", Melder_single (quantile10), L" Hz = ", Melder_single (MEL (quantile10)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (SEMITONES (quantile10)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile10)), L" ERB");
-		MelderInfo_write5 (L"   16% = ", Melder_single (quantile16), L" Hz = ", Melder_single (MEL (quantile16)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (SEMITONES (quantile16)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile16)), L" ERB");
-		MelderInfo_write5 (L"   50% = ", Melder_single (quantile50), L" Hz = ", Melder_single (MEL (quantile50)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (SEMITONES (quantile50)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile50)), L" ERB");
-		MelderInfo_write5 (L"   84% = ", Melder_single (quantile84), L" Hz = ", Melder_single (MEL (quantile84)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (SEMITONES (quantile84)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile84)), L" ERB");
-		MelderInfo_write5 (L"   90% = ", Melder_single (quantile90), L" Hz = ", Melder_single (MEL (quantile90)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (SEMITONES (quantile90)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile90)), L" ERB");
+		MelderInfo_writeLine (L"\nEstimated quantiles:");
+		MelderInfo_write (L"   10% = ", Melder_single (quantile10), L" Hz = ", Melder_single (MEL (quantile10)), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (SEMITONES (quantile10)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile10)), L" ERB");
+		MelderInfo_write (L"   16% = ", Melder_single (quantile16), L" Hz = ", Melder_single (MEL (quantile16)), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (SEMITONES (quantile16)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile16)), L" ERB");
+		MelderInfo_write (L"   50% = ", Melder_single (quantile50), L" Hz = ", Melder_single (MEL (quantile50)), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (SEMITONES (quantile50)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile50)), L" ERB");
+		MelderInfo_write (L"   84% = ", Melder_single (quantile84), L" Hz = ", Melder_single (MEL (quantile84)), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (SEMITONES (quantile84)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile84)), L" ERB");
+		MelderInfo_write (L"   90% = ", Melder_single (quantile90), L" Hz = ", Melder_single (MEL (quantile90)), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (SEMITONES (quantile90)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile90)), L" ERB");
 		if (nVoiced > 1) {
 			double corr = sqrt (nVoiced / (nVoiced - 1.0));
-			MelderInfo_writeLine1 (L"\nEstimated spreading:");
-			MelderInfo_write5 (L"   84%-median = ", Melder_half ((quantile84 - quantile50) * corr), L" Hz = ", Melder_half ((MEL (quantile84) - MEL (quantile50)) * corr), L" Mel = ");
-			MelderInfo_writeLine4 (Melder_half ((SEMITONES (quantile84) - SEMITONES (quantile50)) * corr), L" semitones = ", Melder_half ((ERB (quantile84) - ERB (quantile50)) * corr), L" ERB");
-			MelderInfo_write5 (L"   median-16% = ", Melder_half ((quantile50 - quantile16) * corr), L" Hz = ", Melder_half ((MEL (quantile50) - MEL (quantile16)) * corr), L" Mel = ");
-			MelderInfo_writeLine4 (Melder_half ((SEMITONES (quantile50) - SEMITONES (quantile16)) * corr), L" semitones = ", Melder_half ((ERB (quantile50) - ERB (quantile16)) * corr), L" ERB");
-			MelderInfo_write5 (L"   90%-10% = ", Melder_half ((quantile90 - quantile10) * corr), L" Hz = ", Melder_half ((MEL (quantile90) - MEL (quantile10)) * corr), L" Mel = ");
-			MelderInfo_writeLine4 (Melder_half ((SEMITONES (quantile90) - SEMITONES (quantile10)) * corr), L" semitones = ", Melder_half ((ERB (quantile90) - ERB (quantile10)) * corr), L" ERB");
+			MelderInfo_writeLine (L"\nEstimated spreading:");
+			MelderInfo_write (L"   84%-median = ", Melder_half ((quantile84 - quantile50) * corr), L" Hz = ", Melder_half ((MEL (quantile84) - MEL (quantile50)) * corr), L" Mel = ");
+			MelderInfo_writeLine (Melder_half ((SEMITONES (quantile84) - SEMITONES (quantile50)) * corr), L" semitones = ", Melder_half ((ERB (quantile84) - ERB (quantile50)) * corr), L" ERB");
+			MelderInfo_write (L"   median-16% = ", Melder_half ((quantile50 - quantile16) * corr), L" Hz = ", Melder_half ((MEL (quantile50) - MEL (quantile16)) * corr), L" Mel = ");
+			MelderInfo_writeLine (Melder_half ((SEMITONES (quantile50) - SEMITONES (quantile16)) * corr), L" semitones = ", Melder_half ((ERB (quantile50) - ERB (quantile16)) * corr), L" ERB");
+			MelderInfo_write (L"   90%-10% = ", Melder_half ((quantile90 - quantile10) * corr), L" Hz = ", Melder_half ((MEL (quantile90) - MEL (quantile10)) * corr), L" Mel = ");
+			MelderInfo_writeLine (Melder_half ((SEMITONES (quantile90) - SEMITONES (quantile10)) * corr), L" semitones = ", Melder_half ((ERB (quantile90) - ERB (quantile10)) * corr), L" ERB");
 		}
 	}
 	if (nVoiced >= 1) {   /* Extrema, range, mean and standard deviation. */
 		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit_HERTZ, FALSE);
 		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit_HERTZ, FALSE);
 		double meanHertz, meanMel, meanSemitones, meanErb;
-		MelderInfo_write5 (L"\nMinimum ", Melder_single (minimum), L" Hz = ", Melder_single (MEL (minimum)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (SEMITONES (minimum)), L" semitones above 100 Hz = ", Melder_single (ERB (minimum)), L" ERB");
-		MelderInfo_write5 (L"Maximum ", Melder_single (maximum), L" Hz = ", Melder_single (MEL (maximum)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (SEMITONES (maximum)), L" semitones above 100 Hz = ", Melder_single (ERB (maximum)), L" ERB");
-		MelderInfo_write5 (L"Range ", Melder_half (maximum - minimum), L" Hz = ", Melder_single (MEL (maximum) - MEL (minimum)), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_half (SEMITONES (maximum) - SEMITONES (minimum)), L" semitones = ", Melder_half (ERB (maximum) - ERB (minimum)), L" ERB");
+		MelderInfo_write (L"\nMinimum ", Melder_single (minimum), L" Hz = ", Melder_single (MEL (minimum)), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (SEMITONES (minimum)), L" semitones above 100 Hz = ", Melder_single (ERB (minimum)), L" ERB");
+		MelderInfo_write (L"Maximum ", Melder_single (maximum), L" Hz = ", Melder_single (MEL (maximum)), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (SEMITONES (maximum)), L" semitones above 100 Hz = ", Melder_single (ERB (maximum)), L" ERB");
+		MelderInfo_write (L"Range ", Melder_half (maximum - minimum), L" Hz = ", Melder_single (MEL (maximum) - MEL (minimum)), L" Mel = ");
+		MelderInfo_writeLine (Melder_half (SEMITONES (maximum) - SEMITONES (minimum)), L" semitones = ", Melder_half (ERB (maximum) - ERB (minimum)), L" ERB");
 		meanHertz = Pitch_getMean (this, 0, 0, kPitch_unit_HERTZ);
 		meanMel = Pitch_getMean (this, 0, 0, kPitch_unit_MEL);
 		meanSemitones = Pitch_getMean (this, 0, 0, kPitch_unit_SEMITONES_100);
 		meanErb = Pitch_getMean (this, 0, 0, kPitch_unit_ERB);
-		MelderInfo_write5 (L"Average: ", Melder_single (meanHertz), L" Hz = ", Melder_single (meanMel), L" Mel = ");
-		MelderInfo_writeLine4 (Melder_single (meanSemitones), L" semitones above 100 Hz = ", Melder_single (meanErb), L" ERB");
+		MelderInfo_write (L"Average: ", Melder_single (meanHertz), L" Hz = ", Melder_single (meanMel), L" Mel = ");
+		MelderInfo_writeLine (Melder_single (meanSemitones), L" semitones above 100 Hz = ", Melder_single (meanErb), L" ERB");
 		if (nVoiced >= 2) {
 			double stdevHertz = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_HERTZ);
 			double stdevMel = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_MEL);
 			double stdevSemitones = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_SEMITONES_100);
 			double stdevErb = Pitch_getStandardDeviation (this, 0, 0, kPitch_unit_ERB);
-			MelderInfo_write5 (L"Standard deviation: ", Melder_half (stdevHertz), L" Hz = ", Melder_half (stdevMel), L" Mel = ");
-			MelderInfo_writeLine4 (Melder_half (stdevSemitones), L" semitones = ", Melder_half (stdevErb), L" ERB");
+			MelderInfo_write (L"Standard deviation: ", Melder_half (stdevHertz), L" Hz = ", Melder_half (stdevMel), L" Mel = ");
+			MelderInfo_writeLine (Melder_half (stdevSemitones), L" semitones = ", Melder_half (stdevErb), L" ERB");
 		}
 	}
 	NUMvector_free (frequencies, 1);
 	if (nVoiced > 1) {   /* Variability: mean absolute slope. */
 		double slopeHertz, slopeMel, slopeSemitones, slopeErb, slopeWithoutOctaveJumps;
 		Pitch_getMeanAbsoluteSlope (this, & slopeHertz, & slopeMel, & slopeSemitones, & slopeErb, & slopeWithoutOctaveJumps);
-		MelderInfo_write5 (L"\nMean absolute slope: ", Melder_half (slopeHertz), L" Hz/s = ", Melder_half (slopeMel), L" Mel/s = ");
-		MelderInfo_writeLine4 (Melder_half (slopeSemitones), L" semitones/s = ", Melder_half (slopeErb), L" ERB/s");
-		MelderInfo_writeLine3 (L"Mean absolute slope without octave jumps: ", Melder_half (slopeWithoutOctaveJumps), L" semitones/s");
+		MelderInfo_write (L"\nMean absolute slope: ", Melder_half (slopeHertz), L" Hz/s = ", Melder_half (slopeMel), L" Mel/s = ");
+		MelderInfo_writeLine (Melder_half (slopeSemitones), L" semitones/s = ", Melder_half (slopeErb), L" ERB/s");
+		MelderInfo_writeLine (L"Mean absolute slope without octave jumps: ", Melder_half (slopeWithoutOctaveJumps), L" semitones/s");
 	}
 }
 

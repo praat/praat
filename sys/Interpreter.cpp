@@ -85,7 +85,7 @@ void structInterpreterVariable :: v_destroy () {
 	InterpreterVariable_Parent :: v_destroy ();
 }
 
-static InterpreterVariable InterpreterVariable_create (const wchar *key) {
+static InterpreterVariable InterpreterVariable_create (const wchar_t *key) {
 	try {
 		if (key [0] == 'e' && key [1] == '\0')
 			Melder_throw ("You cannot use 'e' as the name of a variable (e is the constant 2.71...).");
@@ -129,14 +129,14 @@ Interpreter Interpreter_createFromEnvironment (Editor editor) {
 	return Interpreter_create (editor -> name, editor -> classInfo);
 }
 
-void Melder_includeIncludeFiles (wchar **text) {
+void Melder_includeIncludeFiles (wchar_t **text) {
 	for (int depth = 0; ; depth ++) {
-		wchar *head = *text;
+		wchar_t *head = *text;
 		long numberOfIncludes = 0;
 		if (depth > 10)
 			Melder_throw ("Include files nested too deep. Probably cyclic.");
 		for (;;) {
-			wchar *includeLocation, *includeFileName, *tail, *newText;
+			wchar_t *includeLocation, *includeFileName, *tail, *newText;
 			long headLength, includeTextLength, newLength;
 			/*
 				Look for an include statement. If not found, we have finished.
@@ -177,7 +177,7 @@ void Melder_includeIncludeFiles (wchar **text) {
 			headLength = (head - *text) + wcslen (head);
 			includeTextLength = wcslen (includeText.peek());
 			newLength = headLength + includeTextLength + 1 + wcslen (tail);
-			newText = Melder_malloc (wchar, newLength + 1);
+			newText = Melder_malloc (wchar_t, newLength + 1);
 			wcscpy (newText, *text);
 			wcscpy (newText + headLength, includeText.peek());
 			wcscpy (newText + headLength + includeTextLength, L"\n");
@@ -196,15 +196,15 @@ void Melder_includeIncludeFiles (wchar **text) {
 	}
 }
 
-long Interpreter_readParameters (Interpreter me, wchar *text) {
-	wchar *formLocation = NULL;
+long Interpreter_readParameters (Interpreter me, wchar_t *text) {
+	wchar_t *formLocation = NULL;
 	long npar = 0;
 	my dialogTitle [0] = '\0';
 	/*
 	 * Look for a "form" line.
 	 */
 	{// scope
-		wchar *p = text;
+		wchar_t *p = text;
 		for (;;) {
 			while (*p == ' ' || *p == '\t') p ++;
 			if (wcsnequ (p, L"form ", 5)) {
@@ -220,7 +220,7 @@ long Interpreter_readParameters (Interpreter me, wchar *text) {
 	 * If there is no "form" line, there are no parameters.
 	 */
 	if (formLocation) {
-		wchar *dialogTitle = formLocation + 5, *newLine;
+		wchar_t *dialogTitle = formLocation + 5, *newLine;
 		while (*dialogTitle == ' ' || *dialogTitle == '\t') dialogTitle ++;
 		newLine = wcschr (dialogTitle, '\n');
 		if (newLine) *newLine = '\0';
@@ -305,8 +305,8 @@ long Interpreter_readParameters (Interpreter me, wchar *text) {
 	return npar;
 }
 
-UiForm Interpreter_createForm (Interpreter me, GuiObject parent, const wchar *path,
-	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure)
+UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const wchar_t *path,
+	void (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure)
 {
 	UiForm form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
 	Any radio = NULL;
@@ -366,7 +366,7 @@ UiForm Interpreter_createForm (Interpreter me, GuiObject parent, const wchar *pa
 
 void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
-		wchar parameter [100], *p;
+		wchar_t parameter [100], *p;
 		/*
 		 * Strip parentheses and colon off parameter name.
 		 */
@@ -406,7 +406,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 				integerValue = UiForm_getInteger (dialog, parameter);
 				stringValue = UiForm_getString (dialog, parameter);
 				Melder_free (my arguments [ipar]);
-				my arguments [ipar] = Melder_calloc_f (wchar, 40);
+				my arguments [ipar] = Melder_calloc_f (wchar_t, 40);
 				swprintf (my arguments [ipar], 40, L"%ld", integerValue);
 				wcscpy (my choiceArguments [ipar], stringValue);
 				break;
@@ -416,7 +416,7 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 			case Interpreter_COMMENT:
 				break;
 			default: {
-				wchar *value = UiForm_getString (dialog, parameter);
+				wchar_t *value = UiForm_getString (dialog, parameter);
 				Melder_free (my arguments [ipar]);
 				my arguments [ipar] = Melder_wcsdup_f (value);
 				break;
@@ -425,13 +425,13 @@ void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog) {
 	}
 }
 
-void Interpreter_getArgumentsFromString (Interpreter me, const wchar *arguments) {
+void Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments) {
 	int size = my numberOfParameters;
 	long length = wcslen (arguments);
 	while (size >= 1 && my parameters [size] [0] == '\0')
 		size --;   /* Ignore fields without a variable name (button, comment). */
 	for (int ipar = 1; ipar <= size; ipar ++) {
-		wchar *p = my parameters [ipar];
+		wchar_t *p = my parameters [ipar];
 		/*
 		 * Ignore buttons and comments again.
 		 */
@@ -538,21 +538,21 @@ void Interpreter_getArgumentsFromString (Interpreter me, const wchar *arguments)
 	}
 }
 
-static int Interpreter_addNumericVariable (Interpreter me, const wchar *key, double value) {
+static int Interpreter_addNumericVariable (Interpreter me, const wchar_t *key, double value) {
 	InterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> numericValue = value;
 	Collection_addItem (my variables, variable);
 	return 1;
 }
 
-static InterpreterVariable Interpreter_addStringVariable (Interpreter me, const wchar *key, const wchar *value) {
+static InterpreterVariable Interpreter_addStringVariable (Interpreter me, const wchar_t *key, const wchar_t *value) {
 	InterpreterVariable variable = InterpreterVariable_create (key);
 	variable -> stringValue = Melder_wcsdup (value);
 	Collection_addItem (my variables, variable);
 	return variable;
 }
 
-InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar *key) {
+InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key) {
 	long ivar = 0;
 	wchar_t variableNameIncludingProcedureName [1+200];
 	Melder_assert (key != NULL);
@@ -566,9 +566,9 @@ InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar *key) {
 	return ivar ? (InterpreterVariable) my variables -> item [ivar] : NULL;
 }
 
-InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar *key) {
+InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar_t *key) {
 	InterpreterVariable var = NULL;
-	wchar variableNameIncludingProcedureName [1+200];
+	wchar_t variableNameIncludingProcedureName [1+200];
 	Melder_assert (key != NULL);
 	if (key [0] == '.') {
 		wcscpy (variableNameIncludingProcedureName, my procedureNames [my callDepth]);
@@ -583,14 +583,14 @@ InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar *key
 	return Interpreter_hasVariable (me, variableNameIncludingProcedureName);
 }
 
-static long lookupLabel (Interpreter me, const wchar *labelName) {
+static long lookupLabel (Interpreter me, const wchar_t *labelName) {
 	for (long ilabel = 1; ilabel <= my numberOfLabels; ilabel ++)
 		if (wcsequ (labelName, my labelNames [ilabel]))
 			return ilabel;
 	Melder_throw ("Unknown label \"", labelName, "\".");
 }
 
-static bool isCommand (const wchar *p) {
+static bool isCommand (const wchar_t *p) {
 	/*
 	 * Things that start with "nowarn", "noprogress", or "nocheck" are commands.
 	 */
@@ -628,8 +628,8 @@ static void parameterToVariable (Interpreter me, int type, const wchar_t *in_par
 	}
 }
 
-void Interpreter_run (Interpreter me, wchar *text) {
-	autoNUMvector <wchar *> lines;   // not autostringvector, because the elements are reference copies
+void Interpreter_run (Interpreter me, wchar_t *text) {
+	autoNUMvector <wchar_t *> lines;   // not autostringvector, because the elements are reference copies
 	long lineNumber = 0;
 	bool assertionFailed = false;
 	try {
@@ -698,7 +698,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 				wchar_t *previous = lines [lineNumber - 1];
 				MelderString_copy (& command2, line + 3);
 				MelderString_get (& command2, previous + wcslen (previous));
-				static wchar emptyLine [] = { '\0' };
+				static wchar_t emptyLine [] = { '\0' };
 				lines [lineNumber] = emptyLine;
 			}
 		}
@@ -1520,7 +1520,7 @@ void Interpreter_run (Interpreter me, wchar *text) {
 						Melder_clearError ();
 						assertErrorLineNumber = 0;
 					} else {
-						wchar *errorCopy_nothrow = Melder_wcsdup_f (Melder_getError ());   // UGLY but necessary (1)
+						wchar_t *errorCopy_nothrow = Melder_wcsdup_f (Melder_getError ());   // UGLY but necessary (1)
 						Melder_clearError ();
 						autostring errorCopy = errorCopy_nothrow;   // UGLY but necessary (2)
 						Melder_throw ("Script assertion fails in line ", assertErrorLineNumber,
@@ -1554,13 +1554,13 @@ void Interpreter_stop (Interpreter me) {
 //Melder_casual ("Interpreter_stop out: %ld", me);
 }
 
-void Interpreter_voidExpression (Interpreter me, const wchar *expression) {
+void Interpreter_voidExpression (Interpreter me, const wchar_t *expression) {
 	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC, FALSE);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 }
 
-void Interpreter_numericExpression (Interpreter me, const wchar *expression, double *value) {
+void Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *value) {
 	Melder_assert (value != NULL);
 	if (wcsstr (expression, L"(=")) {
 		*value = Melder_atof (expression);
@@ -1572,14 +1572,14 @@ void Interpreter_numericExpression (Interpreter me, const wchar *expression, dou
 	}
 }
 
-void Interpreter_stringExpression (Interpreter me, const wchar *expression, wchar **value) {
+void Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **value) {
 	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_STRING, FALSE);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);
 	*value = result. result.stringResult;
 }
 
-void Interpreter_numericArrayExpression (Interpreter me, const wchar *expression, struct Formula_NumericArray *value) {
+void Interpreter_numericArrayExpression (Interpreter me, const wchar_t *expression, struct Formula_NumericArray *value) {
 	Formula_compile (me, NULL, expression, kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY, FALSE);
 	struct Formula_Result result;
 	Formula_run (0, 0, & result);

@@ -30,10 +30,10 @@ Thing_implement (RealTierEditor, TimeSoundEditor, 0);
 static void menu_cb_removePoints (EDITOR_ARGS) {
 	EDITOR_IAM (RealTierEditor);
 	Editor_save (me, L"Remove point(s)");
-	if (my startSelection == my endSelection)
-		AnyTier_removePointNear (my data, my startSelection);
+	if (my d_startSelection == my d_endSelection)
+		AnyTier_removePointNear (my data, my d_startSelection);
 	else
-		AnyTier_removePointsBetween (my data, my startSelection, my endSelection);
+		AnyTier_removePointsBetween (my data, my d_startSelection, my d_endSelection);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
@@ -46,7 +46,7 @@ static void menu_cb_addPointAtCursor (EDITOR_ARGS) {
 	if (NUMdefined (my v_maximumLegalValue ()) && my ycursor > my v_maximumLegalValue ())
 		Melder_throw ("Cannot add a point above ", my v_maximumLegalValue (), my v_rightTickUnits (), ".");
 	Editor_save (me, L"Add point");
-	RealTier_addPoint ((RealTier) my data, 0.5 * (my startSelection + my endSelection), my ycursor);
+	RealTier_addPoint ((RealTier) my data, 0.5 * (my d_startSelection + my d_endSelection), my ycursor);
 	RealTierEditor_updateScaling (me);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
@@ -58,7 +58,7 @@ static void menu_cb_addPointAt (EDITOR_ARGS) {
 		REAL (L"Time (s)", L"0.0")
 		REAL (my v_quantityText (), L"0.0")
 	EDITOR_OK
-		SET_REAL (L"Time", 0.5 * (my startSelection + my endSelection))
+		SET_REAL (L"Time", 0.5 * (my d_startSelection + my d_endSelection))
 		SET_REAL (my v_quantityKey (), my ycursor)
 	EDITOR_DO
 		double desiredValue = GET_REAL (my v_quantityKey ());
@@ -156,62 +156,62 @@ void structRealTierEditor :: v_draw () {
 	long ifirstSelected, ilastSelected, n = data -> points -> size, imin, imax, i;
 	Graphics_Viewport viewport;
 	if (d_sound.data) {
-		viewport = Graphics_insetViewport (graphics, 0, 1, 1 - SOUND_HEIGHT, 1.0);
-		Graphics_setColour (graphics, Graphics_WHITE);
-		Graphics_setWindow (graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (graphics, 0, 1, 0, 1);
-		TimeSoundEditor_draw_sound (this, -1.0, 1.0);
-		Graphics_resetViewport (graphics, viewport);
-		Graphics_insetViewport (graphics, 0, 1, 0.0, 1 - SOUND_HEIGHT);
+		viewport = Graphics_insetViewport (d_graphics, 0, 1, 1 - SOUND_HEIGHT, 1.0);
+		Graphics_setColour (d_graphics, Graphics_WHITE);
+		Graphics_setWindow (d_graphics, 0, 1, 0, 1);
+		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
+		f_drawSound (-1.0, 1.0);
+		Graphics_resetViewport (d_graphics, viewport);
+		Graphics_insetViewport (d_graphics, 0, 1, 0.0, 1 - SOUND_HEIGHT);
 	}
-	Graphics_setColour (graphics, Graphics_WHITE);
-	Graphics_setWindow (graphics, 0, 1, 0, 1);
-	Graphics_fillRectangle (graphics, 0, 1, 0, 1);
-	Graphics_setWindow (graphics, startWindow, endWindow, ymin, ymax);
-	Graphics_setColour (graphics, Graphics_RED);
-	Graphics_line (graphics, startWindow, ycursor, endWindow, ycursor);
-	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_text1 (graphics, startWindow, ycursor, Melder_float (Melder_half (ycursor)));
-	Graphics_setColour (graphics, Graphics_BLUE);
-	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_TOP);
-	Graphics_text2 (graphics, endWindow, ymax, Melder_float (Melder_half (ymax)), v_rightTickUnits ());
-	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
-	Graphics_text2 (graphics, endWindow, ymin, Melder_float (Melder_half (ymin)), v_rightTickUnits ());
-	ifirstSelected = AnyTier_timeToHighIndex (data, startSelection);
-	ilastSelected = AnyTier_timeToLowIndex (data, endSelection);
-	imin = AnyTier_timeToHighIndex (data, startWindow);
-	imax = AnyTier_timeToLowIndex (data, endWindow);
-	Graphics_setLineWidth (graphics, 2);
+	Graphics_setColour (d_graphics, Graphics_WHITE);
+	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
+	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
+	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, ymin, ymax);
+	Graphics_setColour (d_graphics, Graphics_RED);
+	Graphics_line (d_graphics, d_startWindow, ycursor, d_endWindow, ycursor);
+	Graphics_setTextAlignment (d_graphics, Graphics_RIGHT, Graphics_HALF);
+	Graphics_text1 (d_graphics, d_startWindow, ycursor, Melder_float (Melder_half (ycursor)));
+	Graphics_setColour (d_graphics, Graphics_BLUE);
+	Graphics_setTextAlignment (d_graphics, Graphics_LEFT, Graphics_TOP);
+	Graphics_text2 (d_graphics, d_endWindow, ymax, Melder_float (Melder_half (ymax)), v_rightTickUnits ());
+	Graphics_setTextAlignment (d_graphics, Graphics_LEFT, Graphics_HALF);
+	Graphics_text2 (d_graphics, d_endWindow, ymin, Melder_float (Melder_half (ymin)), v_rightTickUnits ());
+	ifirstSelected = AnyTier_timeToHighIndex (data, d_startSelection);
+	ilastSelected = AnyTier_timeToLowIndex (data, d_endSelection);
+	imin = AnyTier_timeToHighIndex (data, d_startWindow);
+	imax = AnyTier_timeToLowIndex (data, d_endWindow);
+	Graphics_setLineWidth (d_graphics, 2);
 	if (n == 0) {
-		Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_HALF);
-		Graphics_text (graphics, 0.5 * (startWindow + endWindow),
+		Graphics_setTextAlignment (d_graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (d_graphics, 0.5 * (d_startWindow + d_endWindow),
 			0.5 * (ymin + ymax), L"(no points)");
 	} else if (imax < imin) {
-		double yleft = RealTier_getValueAtTime (data, startWindow);
-		double yright = RealTier_getValueAtTime (data, endWindow);
-		Graphics_line (graphics, startWindow, yleft, endWindow, yright);
+		double yleft = RealTier_getValueAtTime (data, d_startWindow);
+		double yright = RealTier_getValueAtTime (data, d_endWindow);
+		Graphics_line (d_graphics, d_startWindow, yleft, d_endWindow, yright);
 	} else for (i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) data -> points -> item [i];
 		double t = point -> number, y = point -> value;
 		if (i >= ifirstSelected && i <= ilastSelected)
-			Graphics_setColour (graphics, Graphics_RED);	
-		Graphics_fillCircle_mm (graphics, t, y, 3);
-		Graphics_setColour (graphics, Graphics_BLUE);
+			Graphics_setColour (d_graphics, Graphics_RED);	
+		Graphics_fillCircle_mm (d_graphics, t, y, 3);
+		Graphics_setColour (d_graphics, Graphics_BLUE);
 		if (i == 1)
-			Graphics_line (graphics, startWindow, y, t, y);
+			Graphics_line (d_graphics, d_startWindow, y, t, y);
 		else if (i == imin)
-			Graphics_line (graphics, t, y, startWindow, RealTier_getValueAtTime (data, startWindow));
+			Graphics_line (d_graphics, t, y, d_startWindow, RealTier_getValueAtTime (data, d_startWindow));
 		if (i == n)
-			Graphics_line (graphics, t, y, endWindow, y);
+			Graphics_line (d_graphics, t, y, d_endWindow, y);
 		else if (i == imax)
-			Graphics_line (graphics, t, y, endWindow, RealTier_getValueAtTime (data, endWindow));
+			Graphics_line (d_graphics, t, y, d_endWindow, RealTier_getValueAtTime (data, d_endWindow));
 		else {
 			RealPoint pointRight = (RealPoint) data -> points -> item [i + 1];
-			Graphics_line (graphics, t, y, pointRight -> number, pointRight -> value);
+			Graphics_line (d_graphics, t, y, pointRight -> number, pointRight -> value);
 		}
 	}
-	Graphics_setLineWidth (graphics, 1);
-	Graphics_setColour (graphics, Graphics_BLACK);
+	Graphics_setLineWidth (d_graphics, 1);
+	Graphics_setColour (d_graphics, Graphics_BLACK);
 	v_updateMenuItems_file ();
 }
 
@@ -226,8 +226,8 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 	for (long i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) data -> points -> item [i];
 		double t = point -> number + dt, y = point -> value + dy;
-		if (t >= my startWindow && t <= my endWindow)
-			Graphics_circle_mm (my graphics, t, y, 3);
+		if (t >= my d_startWindow && t <= my d_endWindow)
+			Graphics_circle_mm (my d_graphics, t, y, 3);
 	}
 
 	if (last == first) {
@@ -236,12 +236,12 @@ static void drawWhileDragging (RealTierEditor me, double xWC, double yWC, long f
 		 */
 		RealPoint point = (RealPoint) data -> points -> item [first];
 		double t = point -> number + dt, y = point -> value + dy;
-		Graphics_line (my graphics, t, my ymin, t, my ymax - Graphics_dyMMtoWC (my graphics, 4.0));
-		Graphics_setTextAlignment (my graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
-		Graphics_text1 (my graphics, t, my ymax, Melder_fixed (t, 6));
-		Graphics_line (my graphics, my startWindow, y, my endWindow, y);
-		Graphics_setTextAlignment (my graphics, Graphics_LEFT, Graphics_BOTTOM);
-		Graphics_text1 (my graphics, my startWindow, y, Melder_fixed (y, 6));
+		Graphics_line (my d_graphics, t, my ymin, t, my ymax - Graphics_dyMMtoWC (my d_graphics, 4.0));
+		Graphics_setTextAlignment (my d_graphics, kGraphics_horizontalAlignment_CENTRE, Graphics_TOP);
+		Graphics_text1 (my d_graphics, t, my ymax, Melder_fixed (t, 6));
+		Graphics_line (my d_graphics, my d_startWindow, y, my d_endWindow, y);
+		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
+		Graphics_text1 (my d_graphics, my d_startWindow, y, Melder_fixed (y, 6));
 	}
 }
 
@@ -261,14 +261,14 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 		if (yWC < 1 - SOUND_HEIGHT) {   /* Clicked in tier area? */
 			yWC /= 1 - SOUND_HEIGHT;
 			ycursor = (1.0 - yWC) * ymin + yWC * ymax;
-			viewport = Graphics_insetViewport (graphics, 0, 1, 0, 1 - SOUND_HEIGHT);
+			viewport = Graphics_insetViewport (d_graphics, 0, 1, 0, 1 - SOUND_HEIGHT);
 		} else {
 			return RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 		}
 	} else {
 		ycursor = (1.0 - yWC) * ymin + yWC * ymax;
 	}
-	Graphics_setWindow (graphics, startWindow, endWindow, ymin, ymax);
+	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, ymin, ymax);
 	yWC = ycursor;
 
 	/*
@@ -277,8 +277,8 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	inearestPoint = AnyTier_timeToNearestIndex (pitch, xWC);
 	if (inearestPoint == 0) return RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	nearestPoint = (RealPoint) pitch -> points -> item [inearestPoint];
-	if (Graphics_distanceWCtoMM (graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
-		if (d_sound.data) Graphics_resetViewport (graphics, viewport);
+	if (Graphics_distanceWCtoMM (d_graphics, xWC, yWC, nearestPoint -> number, nearestPoint -> value) > 1.5) {
+		if (d_sound.data) Graphics_resetViewport (d_graphics, viewport);
 		return RealTierEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
 
@@ -286,10 +286,10 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	 * Clicked on a selected point?
 	 */
 	draggingSelection = shiftKeyPressed &&
-		nearestPoint -> number > startSelection && nearestPoint -> number < endSelection;
+		nearestPoint -> number > d_startSelection && nearestPoint -> number < d_endSelection;
 	if (draggingSelection) {
-		ifirstSelected = AnyTier_timeToHighIndex (pitch, startSelection);
-		ilastSelected = AnyTier_timeToLowIndex (pitch, endSelection);
+		ifirstSelected = AnyTier_timeToHighIndex (pitch, d_startSelection);
+		ilastSelected = AnyTier_timeToLowIndex (pitch, d_endSelection);
 		Editor_save (this, L"Drag points");
 	} else {
 		ifirstSelected = ilastSelected = inearestPoint;
@@ -299,11 +299,11 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	/*
 	 * Drag.
 	 */
-	Graphics_xorOn (graphics, Graphics_MAROON);
+	Graphics_xorOn (d_graphics, Graphics_MAROON);
 	drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);   // draw at old position
-	while (Graphics_mouseStillDown (graphics)) {
+	while (Graphics_mouseStillDown (d_graphics)) {
 		double xWC_new, yWC_new;
-		Graphics_getMouseLocation (graphics, & xWC_new, & yWC_new);
+		Graphics_getMouseLocation (d_graphics, & xWC_new, & yWC_new);
 		if (xWC_new != xWC || yWC_new != yWC) {
 			drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);   // undraw at old position
 			dt += xWC_new - xWC, df += yWC_new - yWC;
@@ -311,12 +311,12 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 			drawWhileDragging (this, xWC, yWC, ifirstSelected, ilastSelected, dt, df);   // draw at new position
 		}
 	}
-	Graphics_xorOff (graphics);
+	Graphics_xorOff (d_graphics);
 
 	/*
 	 * Dragged inside window?
 	 */
-	if (xWC < startWindow || xWC > endWindow) return 1;
+	if (xWC < d_startWindow || xWC > d_endWindow) return 1;
 
 	/*
 	 * Points not dragged past neighbours?
@@ -324,11 +324,11 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	{
 		RealPoint *points = (RealPoint *) pitch -> points -> item;
 		double newTime = points [ifirstSelected] -> number + dt;
-		if (newTime < tmin) return 1;   // outside domain
+		if (newTime < d_tmin) return 1;   // outside domain
 		if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
 			return 1;   // past left neighbour
 		newTime = points [ilastSelected] -> number + dt;
-		if (newTime > tmax) return 1;   // outside domain
+		if (newTime > d_tmax) return 1;   // outside domain
 		if (ilastSelected < pitch -> points -> size && newTime >= points [ilastSelected + 1] -> number)
 			return 1;   // past right neighbour
 	}
@@ -350,13 +350,13 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	 * Make sure that the same points are still selected (a problem with Undo...).
 	 */
 
-	if (draggingSelection) startSelection += dt, endSelection += dt;
+	if (draggingSelection) d_startSelection += dt, d_endSelection += dt;
 	if (ifirstSelected == ilastSelected) {
 		/*
 		 * Move crosshair to only selected pitch point.
 		 */
 		RealPoint point = (RealPoint) pitch -> points -> item [ifirstSelected];
-		startSelection = endSelection = point -> number;
+		d_startSelection = d_endSelection = point -> number;
 		ycursor = point -> value;
 	} else {
 		/*
@@ -380,10 +380,10 @@ void structRealTierEditor :: v_play (double a_tmin, double a_tmax) {
 		Sound_playPart (d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
-void RealTierEditor_init (RealTierEditor me, GuiObject parent, const wchar *title, RealTier data, Sound sound, bool ownSound) {
+void RealTierEditor_init (RealTierEditor me, const wchar_t *title, RealTier data, Sound sound, bool ownSound) {
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classRealTier));
-	TimeSoundEditor_init (me, parent, title, data, sound, ownSound);
+	my structTimeSoundEditor :: f_init (title, data, sound, ownSound);
 	my ymin = -1.0;
 	RealTierEditor_updateScaling (me);
 	my ycursor = 0.382 * my ymin + 0.618 * my ymax;

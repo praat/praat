@@ -24,8 +24,8 @@
 #include "Strings_def.h"
 oo_CLASS_CREATE (Strings, Data);
 
-Strings Strings_createAsFileList (const wchar *path);
-Strings Strings_createAsDirectoryList (const wchar *path);
+Strings Strings_createAsFileList (const wchar_t *path);
+Strings Strings_createAsDirectoryList (const wchar_t *path);
 Strings Strings_readFromRawTextFile (MelderFile file);
 void Strings_writeToRawTextFile (Strings me, MelderFile file);
 
@@ -35,8 +35,8 @@ void Strings_nativize (Strings me);
 void Strings_sort (Strings me);
 
 void Strings_remove (Strings me, long position);
-void Strings_replace (Strings me, long position, const wchar *text);
-void Strings_insert (Strings me, long position, const wchar *text);
+void Strings_replace (Strings me, long position, const wchar_t *text);
+void Strings_insert (Strings me, long position, const wchar_t *text);
 
 /* End of file Strings.h */
 #endif

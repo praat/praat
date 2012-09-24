@@ -43,7 +43,7 @@
 
 Thing_implement (TextPoint, AnyPoint, 0);
 
-TextPoint TextPoint_create (double time, const wchar *mark) {
+TextPoint TextPoint_create (double time, const wchar_t *mark) {
 	try {
 		autoTextPoint me = Thing_new (TextPoint);
 		my number = time;
@@ -54,7 +54,7 @@ TextPoint TextPoint_create (double time, const wchar *mark) {
 	}
 }
 
-void TextPoint_setText (TextPoint me, const wchar *text) {
+void TextPoint_setText (TextPoint me, const wchar_t *text) {
 	try {
 		/*
 		 * Be fast if the string pointers are equal.
@@ -234,10 +234,10 @@ void structTextGrid :: v_info () {
 			numberOfPoints += tier -> points -> size;
 		}
 	}
-	MelderInfo_writeLine2 (L"Number of interval tiers: ", Melder_integer (numberOfIntervalTiers));
-	MelderInfo_writeLine2 (L"Number of point tiers: ", Melder_integer (numberOfPointTiers));
-	MelderInfo_writeLine2 (L"Number of intervals: ", Melder_integer (numberOfIntervals));
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (numberOfPoints));
+	MelderInfo_writeLine (L"Number of interval tiers: ", Melder_integer (numberOfIntervalTiers));
+	MelderInfo_writeLine (L"Number of point tiers: ", Melder_integer (numberOfPointTiers));
+	MelderInfo_writeLine (L"Number of intervals: ", Melder_integer (numberOfIntervals));
+	MelderInfo_writeLine (L"Number of points: ", Melder_integer (numberOfPoints));
 }
 
 void structTextGrid :: v_shiftX (double xfrom, double xto) {
@@ -280,7 +280,7 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 		 */
 		if (tierNames && tierNames [0]) {
 			wcscpy (nameBuffer, tierNames);
-			for (wchar *tierName = Melder_wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = Melder_wcstok (NULL, L" ", & last)) {
+			for (wchar_t *tierName = Melder_wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = Melder_wcstok (NULL, L" ", & last)) {
 				autoIntervalTier tier = IntervalTier_create (tmin, tmax);
 				Thing_setName (tier.peek(), tierName);
 				Collection_addItem (my tiers, tier.transfer());
@@ -292,7 +292,7 @@ TextGrid TextGrid_create (double tmin, double tmax, const wchar_t *tierNames, co
 		 */
 		if (pointTiers && pointTiers [0]) {
 			wcscpy (nameBuffer, pointTiers);
-			for (wchar *tierName = Melder_wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = Melder_wcstok (NULL, L" ", & last)) {
+			for (wchar_t *tierName = Melder_wcstok (nameBuffer, L" ", & last); tierName != NULL; tierName = Melder_wcstok (NULL, L" ", & last)) {
 				for (long itier = 1; itier <= my tiers -> size; itier ++) {
 					if (wcsequ (tierName, Thing_getName ((Thing) my tiers -> item [itier]))) {
 						autoTextTier tier = TextTier_create (tmin, tmax);
@@ -713,7 +713,8 @@ TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const wchar_t *lab
 		TableOfReal_setColumnLabel (thee.peek(), 1, L"Start");
 		TableOfReal_setColumnLabel (thee.peek(), 2, L"End");
 		TableOfReal_setColumnLabel (thee.peek(), 3, L"Duration");
-		for (long i = 1, n = 0; i <= my intervals -> size; i ++) {
+		n = 0;
+		for (long i = 1; i <= my intervals -> size; i ++) {
 			TextInterval interval = (TextInterval) my intervals -> item [i];
 			if (label == NULL || (label [0] == '\0' && ! interval -> text) || (interval -> text && wcsequ (interval -> text, label))) {
 				n ++;
@@ -743,7 +744,8 @@ TableOfReal TextTier_downto_TableOfReal (TextTier me, const wchar_t *label) {
 		}
 		autoTableOfReal thee = TableOfReal_create (n, 1);
 		TableOfReal_setColumnLabel (thee.peek(), 1, L"Time");
-		for (long i = 1, n = 0; i <= my points -> size; i ++) {
+		n = 0;
+		for (long i = 1; i <= my points -> size; i ++) {
 			TextPoint point = (TextPoint) my points -> item [i];
 			if (label == NULL || (label [0] == '\0' && ! point -> mark) || (point -> mark && wcsequ (point -> mark, label))) {
 				n ++;
@@ -935,7 +937,7 @@ static void genericize (wchar_t **pstring, wchar_t *buffer) {
 void TextGrid_genericize (TextGrid me) {
 	try {
 		long ntier = my tiers -> size;
-		autostring buffer = Melder_calloc (wchar, TextGrid_maximumLabelLength (me) * 3 + 1);
+		autostring buffer = Melder_calloc (wchar_t, TextGrid_maximumLabelLength (me) * 3 + 1);
 		for (long itier = 1; itier <= ntier; itier ++) {
 			Function anyTier = (Function) my tiers -> item [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
@@ -962,7 +964,7 @@ void TextGrid_genericize (TextGrid me) {
 void TextGrid_nativize (TextGrid me) {
 	try {
 		long ntier = my tiers -> size;
-		autostring buffer = Melder_calloc (wchar, TextGrid_maximumLabelLength (me) + 1);
+		autostring buffer = Melder_calloc (wchar_t, TextGrid_maximumLabelLength (me) + 1);
 		for (long itier = 1; itier <= ntier; itier ++) {
 			Function anyTier = (Function) my tiers -> item [itier];
 			if (anyTier -> classInfo == classIntervalTier) {
@@ -1265,15 +1267,15 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 		long sortingTier = 0;
 		file -> verbose = false;
 		texindent (file);
-		MelderFile_write7 (file, L"\"Praat chronological TextGrid text file\"\n", Melder_double (my xmin), L" ", Melder_double (my xmax),
+		MelderFile_write (file, L"\"Praat chronological TextGrid text file\"\n", Melder_double (my xmin), L" ", Melder_double (my xmax),
 			L"   ! Time domain.\n", Melder_integer (my tiers -> size), L"   ! Number of tiers.");
 		for (long itier = 1; itier <= my tiers -> size; itier ++) {
 			Function anyTier = (Function) my tiers -> item [itier];
-			MelderFile_write1 (file, L"\n");
+			MelderFile_write (file, L"\n");
 			writeQuotedString (file, Thing_className (anyTier));
-			MelderFile_write1 (file, L" ");
+			MelderFile_write (file, L" ");
 			writeQuotedString (file, anyTier -> name);
-			MelderFile_write4 (file, L" ", Melder_double (anyTier -> xmin), L" ", Melder_double (anyTier -> xmax));
+			MelderFile_write (file, L" ", Melder_double (anyTier -> xmin), L" ", Melder_double (anyTier -> xmax));
 		}
 		for (;;) {
 			double firstRemainingTime = +1e308;
@@ -1317,15 +1319,15 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 				if (anyTier -> classInfo == classIntervalTier) {
 					IntervalTier tier = (IntervalTier) anyTier;
 					TextInterval interval = (TextInterval) tier -> intervals -> item [firstRemainingElement];
-					if (tier -> name) MelderFile_write3 (file, L"\n\n! ", tier -> name, L":");
-					MelderFile_write6 (file, L"\n", Melder_integer (firstRemainingTier), L" ", Melder_double (interval -> xmin), L" ",
+					if (tier -> name) MelderFile_write (file, L"\n\n! ", tier -> name, L":");
+					MelderFile_write (file, L"\n", Melder_integer (firstRemainingTier), L" ", Melder_double (interval -> xmin), L" ",
 						Melder_double (interval -> xmax));
 					texputw4 (file, interval -> text, L"", 0,0,0,0,0);
 				} else {
 					TextTier tier = (TextTier) anyTier;
 					TextPoint point = (TextPoint) tier -> points -> item [firstRemainingElement];
-					if (tier -> name) MelderFile_write3 (file, L"\n\n! ", tier -> name, L":");
-					MelderFile_write5 (file, L"\n", Melder_integer (firstRemainingTier), L" ", Melder_double (point -> number), L" ");
+					if (tier -> name) MelderFile_write (file, L"\n\n! ", tier -> name, L":");
+					MelderFile_write (file, L"\n", Melder_integer (firstRemainingTier), L" ", Melder_double (point -> number), L" ");
 					texputw4 (file, point -> mark, L"", 0,0,0,0,0);
 				}
 				sortingTime = firstRemainingTime;

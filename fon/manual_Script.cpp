@@ -108,7 +108,7 @@ NORMAL (L"To add a dynamic button from a script (perhaps your @@initialization s
 	"use the hidden shell command @@Add action command...@ instead.")
 MAN_END
 
-MAN_BEGIN (L"Add to fixed menu...", L"ppgb", 20060920)
+MAN_BEGIN (L"Add to fixed menu...", L"ppgb", 20120915)
 INTRO (L"A command in the #File menu of the @ScriptEditor.")
 NORMAL (L"With this command, you add a button to any fixed menu in the @@Object window@ or in the @@Picture window@. "
 	"Clicking the added button will invoke the specified @@Praat script@.")
@@ -117,7 +117,7 @@ TAG (L"%Window")
 DEFINITION (L"the name of the window (\"Objects\" or \"Picture\") that contains the menu that you want to change.")
 TAG (L"%Menu")
 DEFINITION (L"the title of the menu that you want to change. If %window is \"Objects\", you can specify "
-	"the #Praat, #New, #Open, #Help, #Goodies, or #Preferences menu (for the #Save menu, which depends on the objects selected, "
+	"the #Praat, #New, #Open, #Help, #Goodies, #Preferences, or #Technical menu (for the #Save menu, which depends on the objects selected, "
 	"you would use @@Add to dynamic menu...@ instead). If %window is \"Picture\", you can specify "
 	"the #File, #Edit, #Margins, #World, #Select, #Pen, #Font, or #Help menu.")
 TAG (L"%Command")
@@ -275,9 +275,9 @@ ENTRY (L"Formula")
 FORMULA (L"differenceLimensToPhon (%ndli) = ln (1 + %ndli / 30) / ln (61 / 60)")
 MAN_END
 
-MAN_BEGIN (L"Fixed menu commands", L"ppgb", 20050822)
+MAN_BEGIN (L"Fixed menu commands", L"ppgb", 20120915)
 INTRO (L"The commands in the fixed menus of the @@Object window@ (#Praat, #New, #Open, #Help, #Goodies, "
-	"and #Preferences) and the @@Picture window@ (#File, #Edit, #Margins, #World, #Select, #Pen, #Font, #Help).")
+	"#Preferences, and #Technical) and the @@Picture window@ (#File, #Edit, #Margins, #World, #Select, #Pen, #Font, #Help).")
 NORMAL (L"These commands are always clickable (if not hidden) and scriptable (if not added).")
 MAN_END
 
@@ -3424,7 +3424,7 @@ NORMAL (L"These stand-alone programs do not show the Objects window and the Pict
 	"therefore, you will usually want to use @@Demo window@ commands in your script. Here is an example:")
 CODE (L"\\# include \"praat.h\"")
 CODE (L"")
-CODE (L"const wchar myScript [ ] = L\"\"")
+CODE (L"const wchar_t myScript [ ] = L\"\"")
 	CODE1 (L"\"demo Text... 0.5 centre 0.5 half Hello world\\bsn\"")
 	CODE1 (L"\"demoWaitForInput ( )\\bsn\"")
 CODE (L";")

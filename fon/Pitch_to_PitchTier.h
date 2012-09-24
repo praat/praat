@@ -29,7 +29,7 @@ PitchTier Pitch_to_PitchTier (Pitch me);
 
 void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	double tmin, double tmax, double fmin, double fmax,
-	int nonPeriodicLineType, int garnish, const wchar *method);
+	int nonPeriodicLineType, int garnish, const wchar_t *method);
 
 Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier);
 

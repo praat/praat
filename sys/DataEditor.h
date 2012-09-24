@@ -2,7 +2,7 @@
 #define _DataEditor_h
 /* DataEditor.h
  *
- * Copyright (C) 1995-2011 Paul Boersma
+ * Copyright (C) 1995-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,12 +29,15 @@ Thing_declare (ClassEditor);
 Thing_declare (DataEditor);
 
 typedef struct structDataSubEditor_FieldData {
-	GuiObject label, button, text;
+	GuiLabel label;
+	GuiButton button;
+	GuiText text;
 	void *address;
 	Data_Description description;
 	long minimum, maximum, min2, max2;
-	wchar *history;   // the full prefix of the members
+	wchar_t *history;   // the full prefix of the members
 	int rank;   // should the button open a StructEditor (0) or VectorEditor (1) or MatrixEditor (2) ?
+	int y;
 } *DataSubEditor_FieldData;
 
 #define kDataSubEditor_MAXNUM_ROWS  12
@@ -45,7 +48,7 @@ Thing_define (DataSubEditor, Editor) {
 		DataEditor d_root;
 		void *d_address;
 		Data_Description d_description;
-		GuiObject d_scrollBar;
+		GuiScrollBar d_scrollBar;
 		int d_irow, d_topField, d_numberOfFields;
 		struct structDataSubEditor_FieldData d_fieldData [1 + kDataSubEditor_MAXNUM_ROWS];
 	// overridden methods:
@@ -96,7 +99,7 @@ Thing_define (DataEditor, ClassEditor) {
 		void v_dataChanged ();
 };
 
-DataEditor DataEditor_create (GuiObject parent, const wchar *title, Any data);
+DataEditor DataEditor_create (const wchar_t *title, Data data);
 
 /* End of file DataEditor.h */
 #endif

@@ -27,7 +27,7 @@ oo_DEFINE_CLASS (Strings, Data)
 	#if oo_DECLARING
 		// overridden methods:
 			virtual void v_info ();
-			virtual bool v_hasGetVectorStr () { return true; }   virtual const wchar * v_getVectorStr (long icol);
+			virtual bool v_hasGetVectorStr () { return true; }   virtual const wchar_t * v_getVectorStr (long icol);
 	#endif
 
 oo_END_CLASS (Strings)

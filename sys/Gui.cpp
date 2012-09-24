@@ -23,43 +23,22 @@
  * pb 2004/10/21 on Unix, Ctrl becomes the command key
  * pb 2007/06/09 wchar_t
  * pb 2007/12/13 Gui
- * pb 2007/12/30 Gui
  * sdk 2008/02/08 GTK
  * sdk 2008/03/24 GDK
- * pb 2010/05/14 resolution always 72 pixels/inch
  * pb 2010/11/29 removed explicit Motif
  * pb 2011/04/06 C++
  */
 
-#include "Gui.h"
+#include "GuiP.h"
+#include "machine.h"
 #include <math.h>   // floor
 
-GuiObject Gui_addMenuBar (GuiObject form) {
-	GuiObject menuBar;
-	#if gtk
-		menuBar = gtk_menu_bar_new ();
-		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (menuBar), FALSE, FALSE, 0);
-		
-		// we need an accelerator group for each window we're creating accelerated menus on
-		GuiObject topwin = gtk_widget_get_toplevel (GTK_WIDGET (form));
-		GtkAccelGroup *ag = gtk_accel_group_new ();
-		gtk_window_add_accel_group (GTK_WINDOW (topwin), ag);
-		// unfortunately, menu-bars don't fiddle with accel-groups, so we need a way
-		// to pass it to the sub-menus created upon this bar for their items to have
-		// access to the accel-group
-		g_object_set_data (G_OBJECT (menuBar), "accel-group", ag);
-	#elif defined (_WIN32) || defined (macintosh) && useCarbon
-		menuBar = XmCreateMenuBar (form, "menuBar", NULL, 0);
-		XtVaSetValues (menuBar, XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM, NULL);
-	#else
-		menuBar = NULL;   // TODO
-	#endif
-	return menuBar;
-}
+Thing_implement (GuiThing, Thing, 0);
+Thing_implement (GuiControl, GuiThing, 0);
 
 int Gui_getResolution (GuiObject widget) {
 	static int resolution = 0;
-	if (resolution == 0) {
+	if (0) {
 		#if defined (macintosh)
 			(void) widget;
 			CGDirectDisplayID display = CGMainDisplayID ();

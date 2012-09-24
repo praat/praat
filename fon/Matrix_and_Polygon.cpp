@@ -26,8 +26,7 @@
 
 #include "Matrix_and_Polygon.h"
 
-Polygon Matrix_to_Polygon (I) {
-	iam (Matrix);
+Polygon Matrix_to_Polygon (Matrix me) {
 	try {
 		if (my nx != 2 && my ny != 2)
 			Melder_throw ("Matrix must have exactly 2 rows or columns.");
@@ -49,8 +48,7 @@ Polygon Matrix_to_Polygon (I) {
 	}
 }
 
-Matrix Polygon_to_Matrix (I) {
-	iam (Polygon);
+Matrix Polygon_to_Matrix (Polygon me) {
 	try {
 		autoMatrix thee = Matrix_create (1, my numberOfPoints, my numberOfPoints, 1, 1, 1, 2, 2, 1, 1);
 		NUMvector_copyElements (my x, thy z [1], 1, my numberOfPoints);

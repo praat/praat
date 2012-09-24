@@ -43,20 +43,20 @@ Thing_implement (EEG, Function, 0);
 
 void structEEG :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
 	if (d_sound != NULL) {
-		MelderInfo_writeLine1 (L"Time sampling of the signal:");
-		MelderInfo_writeLine2 (L"   Number of samples: ", Melder_integer (d_sound -> nx));
-		MelderInfo_writeLine3 (L"   Sampling period: ", Melder_double (d_sound -> dx), L" seconds");
-		MelderInfo_writeLine3 (L"   Sampling frequency: ", Melder_single (1.0 / d_sound -> dx), L" Hz");
-		MelderInfo_writeLine3 (L"   First sample centred at: ", Melder_double (d_sound -> x1), L" seconds");
+		MelderInfo_writeLine (L"Time sampling of the signal:");
+		MelderInfo_writeLine (L"   Number of samples: ", Melder_integer (d_sound -> nx));
+		MelderInfo_writeLine (L"   Sampling period: ", Melder_double (d_sound -> dx), L" seconds");
+		MelderInfo_writeLine (L"   Sampling frequency: ", Melder_single (1.0 / d_sound -> dx), L" Hz");
+		MelderInfo_writeLine (L"   First sample centred at: ", Melder_double (d_sound -> x1), L" seconds");
 	}
-	MelderInfo_writeLine2 (L"Number of cap electrodes: ", Melder_integer (f_getNumberOfCapElectrodes ()));
-	MelderInfo_writeLine2 (L"Number of external electrodes: ", Melder_integer (f_getNumberOfExternalElectrodes ()));
-	MelderInfo_writeLine2 (L"Number of extra sensors: ", Melder_integer (f_getNumberOfExtraSensors ()));
+	MelderInfo_writeLine (L"Number of cap electrodes: ", Melder_integer (f_getNumberOfCapElectrodes ()));
+	MelderInfo_writeLine (L"Number of external electrodes: ", Melder_integer (f_getNumberOfExternalElectrodes ()));
+	MelderInfo_writeLine (L"Number of extra sensors: ", Melder_integer (f_getNumberOfExtraSensors ()));
 }
 
 void structEEG :: v_shiftX (double xfrom, double xto) {
@@ -82,7 +82,7 @@ EEG EEG_create (double tmin, double tmax) {
 	}
 }
 
-long structEEG :: f_getChannelNumber (const wchar *channelName) {
+long structEEG :: f_getChannelNumber (const wchar_t *channelName) {
 	for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
 		if (Melder_wcsequ (d_channelNames [ichan], channelName)) {
 			return ichan;
@@ -361,14 +361,14 @@ void structEEG :: f_filter (double lowFrequency, double lowWidth, double highFre
 	}
 }
 
-void structEEG :: f_setChannelName (long channelNumber, const wchar *a_name) {
+void structEEG :: f_setChannelName (long channelNumber, const wchar_t *a_name) {
 	autostring l_name = Melder_wcsdup (a_name);
 	Melder_free (d_channelNames [channelNumber]);
 	d_channelNames [channelNumber] = l_name.transfer();
 }
 
-void structEEG :: f_setExternalElectrodeNames (const wchar *nameExg1, const wchar *nameExg2, const wchar *nameExg3, const wchar *nameExg4,
-	const wchar *nameExg5, const wchar *nameExg6, const wchar *nameExg7, const wchar *nameExg8)
+void structEEG :: f_setExternalElectrodeNames (const wchar_t *nameExg1, const wchar_t *nameExg2, const wchar_t *nameExg3, const wchar_t *nameExg4,
+	const wchar_t *nameExg5, const wchar_t *nameExg6, const wchar_t *nameExg7, const wchar_t *nameExg8)
 {
 	if (f_getNumberOfExternalElectrodes () != 8)
 		Melder_throw (L"There aren't 8 external electrodes.");
@@ -383,7 +383,7 @@ void structEEG :: f_setExternalElectrodeNames (const wchar *nameExg1, const wcha
 	f_setChannelName (firstExternalElectrode + 7, nameExg8);
 }
 
-void structEEG :: f_subtractReference (const wchar *channelNumber1_text, const wchar *channelNumber2_text) {
+void structEEG :: f_subtractReference (const wchar_t *channelNumber1_text, const wchar_t *channelNumber2_text) {
 	long channelNumber1 = f_getChannelNumber (channelNumber1_text);
 	if (channelNumber1 == 0)
 		Melder_throw (this, ": no channel named \"", channelNumber1_text, "\".");
@@ -434,7 +434,7 @@ void structEEG :: f_setChannelToZero (long channelNumber) {
 	}
 }
 
-void structEEG :: f_setChannelToZero (const wchar *channelName) {
+void structEEG :: f_setChannelToZero (const wchar_t *channelName) {
 	try {
 		long channelNumber = f_getChannelNumber (channelName);
 		if (channelNumber == 0)
@@ -451,7 +451,7 @@ EEG structEEG :: f_extractChannel (long channelNumber) {
 			Melder_throw ("No channel ", channelNumber, ".");
 		autoEEG thee = EEG_create (xmin, xmax);
 		thee -> d_numberOfChannels = 1;
-		thee -> d_channelNames = NUMvector <wchar *> (1, 1);
+		thee -> d_channelNames = NUMvector <wchar_t *> (1, 1);
 		thee -> d_channelNames [1] = Melder_wcsdup (d_channelNames [1]);
 		thee -> d_sound = Sound_extractChannel (d_sound, channelNumber);
 		thee -> d_textgrid = Data_copy (d_textgrid);
@@ -461,7 +461,7 @@ EEG structEEG :: f_extractChannel (long channelNumber) {
 	}
 }
 
-EEG structEEG :: f_extractChannel (const wchar *channelName) {
+EEG structEEG :: f_extractChannel (const wchar_t *channelName) {
 	try {
 		long channelNumber = f_getChannelNumber (channelName);
 		if (channelNumber == 0)
@@ -478,7 +478,7 @@ EEG EEGs_concatenate (Collection me) {
 			Melder_throw ("Cannot concatenate zero EEG objects.");
 		EEG first = (EEG) my item [1];
 		long numberOfChannels = first -> d_numberOfChannels;
-		wchar **channelNames = first -> d_channelNames;
+		wchar_t **channelNames = first -> d_channelNames;
 		for (long ieeg = 2; ieeg <= my size; ieeg ++) {
 			EEG other = (EEG) my item [ieeg];
 			if (other -> d_numberOfChannels != numberOfChannels)
@@ -499,7 +499,7 @@ EEG EEGs_concatenate (Collection me) {
 		}
 		autoEEG thee = Thing_new (EEG);
 		thy d_numberOfChannels = numberOfChannels;
-		thy d_channelNames = NUMvector <wchar *> (1, numberOfChannels);
+		thy d_channelNames = NUMvector <wchar_t *> (1, numberOfChannels);
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (channelNames [ichan]);
 		}
@@ -517,7 +517,7 @@ EEG structEEG :: f_extractPart (double tmin, double tmax, bool preserveTimes) {
 	try {
 		autoEEG thee = Thing_new (EEG);
 		thy d_numberOfChannels = d_numberOfChannels;
-		thy d_channelNames = NUMvector <wchar *> (1, d_numberOfChannels);
+		thy d_channelNames = NUMvector <wchar_t *> (1, d_numberOfChannels);
 		for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (d_channelNames [ichan]);
 		}

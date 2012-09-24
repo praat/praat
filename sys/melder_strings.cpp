@@ -27,9 +27,9 @@ static double totalNumberOfAllocations = 0, totalNumberOfDeallocations = 0, tota
 void MelderString_free (MelderString *me) {
 	if (my string == NULL) return;
 	Melder_free (my string);
-	if (Melder_debug == 34) fprintf (stderr, "from MelderString_free\t%p\t%ld\t%ld\n", my string, my bufferSize, sizeof (wchar));
+	if (Melder_debug == 34) fprintf (stderr, "from MelderString_free\t%p\t%ld\t%ld\n", my string, my bufferSize, sizeof (wchar_t));
 	totalNumberOfDeallocations += 1;
-	totalDeallocationSize += my bufferSize * sizeof (wchar);
+	totalDeallocationSize += my bufferSize * sizeof (wchar_t);
 	my bufferSize = 0;
 	my length = 0;
 }
@@ -70,17 +70,17 @@ void MelderString16_free (MelderString16 *me) {
 	}
 
 void MelderString_empty (MelderString *me) {
-	if (my bufferSize * sizeof (wchar) >= FREE_THRESHOLD_BYTES) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
 		MelderString_free (me);
 	}
 	unsigned long sizeNeeded = 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	my string [0] = '\0';
 	my length = 0;
 }
 
 void MelderString16_empty (MelderString16 *me) {
-	if (my bufferSize * sizeof (wchar) >= FREE_THRESHOLD_BYTES) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES) {
 		MelderString16_free (me);
 	}
 	unsigned long sizeNeeded = 1;
@@ -89,53 +89,53 @@ void MelderString16_empty (MelderString16 *me) {
 	my length = 0;
 }
 
-void MelderString_copy (MelderString *me, const wchar *source) {
-	if (my bufferSize * sizeof (wchar) >= FREE_THRESHOLD_BYTES)
+void MelderString_copy (MelderString *me, const wchar_t *source) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string, source);
 	my length = length;
 }
 
-void MelderString_ncopy (MelderString *me, const wchar *source, unsigned long n) {
-	if (my bufferSize * sizeof (wchar) >= FREE_THRESHOLD_BYTES)
+void MelderString_ncopy (MelderString *me, const wchar_t *source, unsigned long n) {
+	if (my bufferSize * sizeof (wchar_t) >= FREE_THRESHOLD_BYTES)
 		MelderString_free (me);
 	if (source == NULL) source = L"";
 	unsigned long length = wcslen (source);
 	if (length > n) length = n;
 	unsigned long sizeNeeded = length + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcsncpy (my string, source, length);
 	my string [length] = '\0';
 	my length = length;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1) {
+void MelderString_append (MelderString *me, const wchar_t *s1) {
 	if (s1 == NULL) s1 = L"";
 	unsigned long length1 = wcslen (s1);
 	unsigned long sizeNeeded = my length + length1 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2) {
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	unsigned long length1 = wcslen (s1);
 	unsigned long length2 = wcslen (s2);
 	unsigned long sizeNeeded = my length + length1 + length2 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
 	my length += length2;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3) {
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
@@ -143,7 +143,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	unsigned long length2 = wcslen (s2);
 	unsigned long length3 = wcslen (s3);
 	unsigned long sizeNeeded = my length + length1 + length2 + length3 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -152,7 +152,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	my length += length3;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
 	if (s3 == NULL) s3 = L"";
@@ -162,7 +162,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	unsigned long length3 = wcslen (s3);
 	unsigned long length4 = wcslen (s4);
 	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -173,8 +173,8 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	my length += length4;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
-	const wchar *s5)
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5)
 {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
@@ -187,7 +187,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	unsigned long length4 = wcslen (s4);
 	unsigned long length5 = wcslen (s5);
 	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -200,8 +200,8 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	my length += length5;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
-	const wchar *s5, const wchar *s6)
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6)
 {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
@@ -216,7 +216,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	unsigned long length5 = wcslen (s5);
 	unsigned long length6 = wcslen (s6);
 	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -231,8 +231,8 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	my length += length6;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
-	const wchar *s5, const wchar *s6, const wchar *s7)
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7)
 {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
@@ -249,7 +249,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	unsigned long length6 = wcslen (s6);
 	unsigned long length7 = wcslen (s7);
 	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -266,8 +266,8 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	my length += length7;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
-	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8)
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8)
 {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
@@ -286,7 +286,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	unsigned long length7 = wcslen (s7);
 	unsigned long length8 = wcslen (s8);
 	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -305,8 +305,8 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	my length += length8;
 }
 
-void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4,
-	const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9)
+void MelderString_append (MelderString *me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4,
+	const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9)
 {
 	if (s1 == NULL) s1 = L"";
 	if (s2 == NULL) s2 = L"";
@@ -327,7 +327,7 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	unsigned long length8 = wcslen (s8);
 	unsigned long length9 = wcslen (s9);
 	unsigned long sizeNeeded = my length + length1 + length2 + length3 + length4 + length5 + length6 + length7 + length8 + length9 + 1;
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	wcscpy (my string + my length, s1);
 	my length += length1;
 	wcscpy (my string + my length, s2);
@@ -348,21 +348,21 @@ void MelderString_append (MelderString *me, const wchar *s1, const wchar *s2, co
 	my length += length9;
 }
 
-void MelderString_appendCharacter (MelderString *me, wchar character) {
+void MelderString_appendCharacter (MelderString *me, wchar_t character) {
 	unsigned long sizeNeeded = my length + 2;   // make room for character and null byte
-	expandIfNecessary (wchar)
+	expandIfNecessary (wchar_t)
 	my string [my length] = character;
 	my length ++;
 	my string [my length] = L'\0';
 }
 
-void MelderString16_appendCharacter (MelderString16 *me, wchar character) {
+void MelderString16_appendCharacter (MelderString16 *me, wchar_t character) {
 	unsigned long sizeNeeded = my length + 3;   // make room for character, potential surrogate character, and null byte
 	expandIfNecessary (MelderUtf16)
-	if (sizeof (wchar) == 2) {   // wchar is UTF-16?
+	if (sizeof (wchar_t) == 2) {   // wchar_t is UTF-16?
 		my string [my length] = character;
 		my length ++;
-	} else {   // wchar is UTF-32.
+	} else {   // wchar_t is UTF-32.
 		MelderUtf32 kar = character;
 		if (kar <= 0xFFFF) {
 			my string [my length] = character;
@@ -381,7 +381,7 @@ void MelderString16_appendCharacter (MelderString16 *me, wchar character) {
 	my string [my length] = '\0';
 }
 
-void MelderString_get (MelderString *me, wchar *destination) {
+void MelderString_get (MelderString *me, wchar_t *destination) {
 	if (my string) {
 		wcscpy (destination, my string);
 	} else {
@@ -409,56 +409,56 @@ double MelderString_deallocationSize (void) {
 static MelderString buffer [NUMBER_OF_BUFFERS] = { { 0 } };
 static int ibuffer = 0;
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2, s3);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8);
 	return buffer [ibuffer].string;
 }
 
-const wchar * Melder_wcscat (const wchar *s1, const wchar *s2, const wchar *s3, const wchar *s4, const wchar *s5, const wchar *s6, const wchar *s7, const wchar *s8, const wchar *s9) {
+const wchar_t * Melder_wcscat (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	MelderString_empty (& buffer [ibuffer]);
 	MelderString_append (& buffer [ibuffer], s1, s2, s3, s4, s5, s6, s7, s8, s9);

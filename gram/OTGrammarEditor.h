@@ -2,7 +2,7 @@
 #define _OTGrammarEditor_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,10 +32,10 @@ Thing_define (OTGrammarEditor, HyperPage) {
 		virtual void v_createMenus ();
 		virtual void v_createHelpMenuItems (EditorMenu menu);
 		virtual void v_draw ();
-		virtual int v_goToPage (const wchar *title);
+		virtual int v_goToPage (const wchar_t *title);
 };
 
-OTGrammarEditor OTGrammarEditor_create (GuiObject parent, const wchar *title, OTGrammar ot);
+OTGrammarEditor OTGrammarEditor_create (const wchar_t *title, OTGrammar ot);
 
 /* End of file OTGrammarEditor.h */
 #endif

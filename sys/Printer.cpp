@@ -90,7 +90,8 @@ void Printer_prefs (void) {
 		va_list args;
 		va_start (args, format);
 		(void) stream;
-		#if defined (_WIN32)
+		#if cocoa
+		#elif defined (_WIN32)
 			vsprintf (theLine.chars + 2, format, args);
 			length = strlen (theLine.chars + 2);
 			theLine.shorts [0] = length;
@@ -145,7 +146,11 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 	}
 #endif
 
-#if defined (macintosh)
+#if cocoa
+#elif defined (_WIN32)
+	static void initPrinter (void) {
+	}
+#elif defined (macintosh)
 	static void initPrinter (void) {
 		Boolean result;
 		PMResolution res300 = { 300, 300 }, res600 = { 600, 600 };
@@ -168,18 +173,9 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 		PMSetResolution (theMacPageFormat, & res600);   /* ... but this is preferred. */
 	}
 #endif
-#if defined (_WIN32)
-	static void initPrinter (void) {
-	}
-#endif
 
 void Printer_nextPage (void) {
-	#if defined (macintosh)
-		PMSessionEndPage (theMacPrintSession);
-		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
-		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
-		SetPort (theMacPort);
-		SetOrigin (- paperSize. left, - paperSize. top);
+	#if cocoa
 	#elif defined (_WIN32)
 		if (thePrinter. postScript) {
 			exitPostScriptPage ();
@@ -195,11 +191,19 @@ void Printer_nextPage (void) {
 			SetBkMode (theWinDC, TRANSPARENT);
 			SetTextAlign (theWinDC, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);
 		}
+	#elif defined (macintosh)
+		PMSessionEndPage (theMacPrintSession);
+		PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
+		PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
+		SetPort (theMacPort);
+		SetOrigin (- paperSize. left, - paperSize. top);
 	#endif
 }
 
 int Printer_pageSetup (void) {
-	#if defined (macintosh)
+	#if cocoa
+	#elif defined (_WIN32)
+	#elif defined (macintosh)
 		Boolean accepted;
 		initPrinter ();
 		PMSessionPageSetupDialog (theMacPrintSession, theMacPageFormat, & accepted);
@@ -207,7 +211,7 @@ int Printer_pageSetup (void) {
 	return 1;
 }
 
-static void DO_Printer_postScriptSettings (UiForm dia, const wchar *sendingString_dummy, Interpreter interpreter_dummy, const wchar *invokingButtonTitle, bool modified, void *dummy) {
+static void DO_Printer_postScriptSettings (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
@@ -311,6 +315,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			sprintf (command, Melder_peekWcsToUtf8 (Site_getPrintCommand ()), tempPath_utf8);
 			system (command);
 			MelderFile_delete (& tempFile);
+		#elif cocoa
 		#elif defined (_WIN32)
 			int postScriptCode = POSTSCRIPT_PASSTHROUGH;
 			DOCINFO docInfo;
@@ -369,7 +374,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				thePrinter. paperWidth = 1000;
 				thePrinter. paperHeight = 1000;
 			}
-			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), FALSE);
+			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), FALSE);
 			SetAbortProc (theWinDC, AbortFunc);
 			memset (& docInfo, 0, sizeof (DOCINFO));
 			docInfo. cbSize = sizeof (DOCINFO);
@@ -397,7 +402,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 					EndDoc (theWinDC);
 				}
 			}
-			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell), TRUE);
+			EnableWindow ((HWND) XtWindow (theCurrentPraatApplication -> topShell -> d_xmShell), TRUE);
 			DeleteDC (theWinDC), theWinDC = NULL;
 		#elif defined (macintosh)
 			Boolean result;
@@ -450,7 +455,8 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 		#endif
 		return 1;
 	} catch (MelderError) {
-		#if defined (macintosh)
+		#if cocoa
+		#elif defined (macintosh)
 			if (theMacPort) {
 				PMSessionEndPage (theMacPrintSession);
 				PMSessionEndDocument (theMacPrintSession);

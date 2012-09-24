@@ -27,12 +27,12 @@ Thing_define (Manual, HyperPage) {
 	public:
 		long path, numberOfParagraphs;
 		struct structManPage_Paragraph *paragraphs;
-		GuiObject searchText;
-		GuiObject homeButton, recordButton, playButton, publishButton;
+		GuiText searchText;
+		GuiButton homeButton, recordButton, playButton, publishButton;
 		int numberOfMatches;
 		long matches [1 + 20], fromPage, toPage;
 		int suppressLinksHither;
-		wchar *printPagesStartingWith;
+		wchar_t *printPagesStartingWith;
 	// overridden methods:
 		virtual bool v_scriptable () { return false; }
 		virtual void v_createChildren ();
@@ -43,16 +43,16 @@ Thing_define (Manual, HyperPage) {
 		virtual void v_defaultHeaders (EditorCommand cmd);
 		virtual long v_getNumberOfPages ();
 		virtual long v_getCurrentPageNumber ();
-		virtual int v_goToPage (const wchar *title);
+		virtual int v_goToPage (const wchar_t *title);
 		virtual void v_goToPage_i (long pageNumber);
 		virtual bool v_hasHistory () { return true; }
 		virtual bool v_isOrdered () { return true; }
 };
 
-void Manual_init (Manual me, GuiObject parent, const wchar *title, Data data, bool ownData);
-Manual Manual_create (GuiObject parent, const wchar *title, Data data, bool ownData);
+void Manual_init (Manual me, const wchar_t *title, Data data, bool ownData);
+Manual Manual_create (const wchar_t *title, Data data, bool ownData);
 
-void Manual_search (Manual me, const wchar *query);
+void Manual_search (Manual me, const wchar_t *query);
 
 /* End of file Manual.h */
 #endif

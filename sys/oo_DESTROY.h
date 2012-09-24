@@ -56,7 +56,7 @@
 	if (x) { \
 		for (long i = min; i <= max; i ++) \
 			Melder_free (x [i]); \
-		NUMvector_free <wchar*> (x, min); \
+		NUMvector_free <wchar_t*> (x, min); \
 	}
 
 #define oo_STRUCT(Type,x)  \

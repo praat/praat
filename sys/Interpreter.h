@@ -26,7 +26,7 @@
 Thing_define (InterpreterVariable, SimpleString) {
 	// new data:
 	public:
-		wchar *stringValue;
+		wchar_t *stringValue;
 		double numericValue;
 		struct Formula_NumericArray numericArrayValue;
 	// overridden methods:
@@ -44,16 +44,16 @@ Thing_declare (Editor);
 Thing_define (Interpreter, Thing) {
 	// new data:
 	public:
-		wchar *environmentName;
+		wchar_t *environmentName;
 		ClassInfo editorClass;
 		int numberOfParameters, numberOfLabels, callDepth;
-		wchar parameters [1+Interpreter_MAXNUM_PARAMETERS] [100];
+		wchar_t parameters [1+Interpreter_MAXNUM_PARAMETERS] [100];
 		unsigned char types [1+Interpreter_MAXNUM_PARAMETERS];
-		wchar *arguments [1+Interpreter_MAXNUM_PARAMETERS];
-		wchar choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
-		wchar labelNames [1+Interpreter_MAXNUM_LABELS] [100];
+		wchar_t *arguments [1+Interpreter_MAXNUM_PARAMETERS];
+		wchar_t choiceArguments [1+Interpreter_MAXNUM_PARAMETERS] [100];
+		wchar_t labelNames [1+Interpreter_MAXNUM_LABELS] [100];
 		long labelLines [1+Interpreter_MAXNUM_LABELS];
-		wchar dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
+		wchar_t dialogTitle [1+100], procedureNames [1+Interpreter_MAX_CALL_DEPTH] [100];
 		SortedSetOfString variables;
 		bool running, stopped;
 	// overridden methods:
@@ -61,26 +61,26 @@ Thing_define (Interpreter, Thing) {
 		virtual void v_destroy ();
 };
 
-Interpreter Interpreter_create (wchar *environmentName, ClassInfo editorClass);
+Interpreter Interpreter_create (wchar_t *environmentName, ClassInfo editorClass);
 Interpreter Interpreter_createFromEnvironment (Editor editor);
 
-void Melder_includeIncludeFiles (wchar **text);
-long Interpreter_readParameters (Interpreter me, wchar *text);
+void Melder_includeIncludeFiles (wchar_t **text);
+long Interpreter_readParameters (Interpreter me, wchar_t *text);
 Thing_declare (UiForm);
-UiForm Interpreter_createForm (Interpreter me, GuiObject parent, const wchar_t *fileName,
-	void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure), void *okClosure);
+UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const wchar_t *fileName,
+	void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure);
 void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
-void Interpreter_getArgumentsFromString (Interpreter me, const wchar *arguments);
-void Interpreter_run (Interpreter me, wchar *text);   // destroys 'text'
+void Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments);
+void Interpreter_run (Interpreter me, wchar_t *text);   // destroys 'text'
 void Interpreter_stop (Interpreter me);   // can be called from any procedure called deep-down by the interpreter; will stop before next line
-void Interpreter_voidExpression (Interpreter me, const wchar *expression);
-void Interpreter_numericExpression (Interpreter me, const wchar *expression, double *value);
-void Interpreter_stringExpression (Interpreter me, const wchar *expression, wchar **value);
-void Interpreter_numericArrayExpression (Interpreter me, const wchar *expression, struct Formula_NumericArray *value);
-void Interpreter_anyExpression (Interpreter me, const wchar *expression, struct Formula_Result *result);
+void Interpreter_voidExpression (Interpreter me, const wchar_t *expression);
+void Interpreter_numericExpression (Interpreter me, const wchar_t *expression, double *value);
+void Interpreter_stringExpression (Interpreter me, const wchar_t *expression, wchar_t **value);
+void Interpreter_numericArrayExpression (Interpreter me, const wchar_t *expression, struct Formula_NumericArray *value);
+void Interpreter_anyExpression (Interpreter me, const wchar_t *expression, struct Formula_Result *result);
 
-InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar *key);
-InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar *key);
+InterpreterVariable Interpreter_hasVariable (Interpreter me, const wchar_t *key);
+InterpreterVariable Interpreter_lookUpVariable (Interpreter me, const wchar_t *key);
 
 /* End of file Interpreter.h */
 #endif

@@ -60,7 +60,7 @@ DIRECT (ExperimentMFC_run)
 	Melder_assert (experimentsCopy -> size == experiments -> size);
 	Melder_assert (experimentsCopy -> item [1] == experiments -> item [1]);
 	Melder_assert (experimentsCopy -> item [experimentsCopy -> size] == experiments -> item [experiments -> size]);
-	autoRunnerMFC runner = RunnerMFC_create (theCurrentPraatApplication -> topShell, L"listening experiments", experimentsCopy.transfer());
+	autoRunnerMFC runner = RunnerMFC_create (L"listening experiments", experimentsCopy.transfer());
 	praat_installEditorN (runner.transfer(), experiments.peek());
 END
 

@@ -36,12 +36,12 @@ struct Formula_Result {
 	int expressionType;
 	union {
 		double numericResult;
-		wchar *stringResult;
+		wchar_t *stringResult;
 		struct Formula_NumericArray numericArrayResult;
 	} result;
 };
 
-void Formula_compile (Any interpreter, Any data, const wchar *expression, int expressionType, int optimize);
+void Formula_compile (Any interpreter, Any data, const wchar_t *expression, int expressionType, int optimize);
 
 void Formula_run (long row, long col, struct Formula_Result *result);
 

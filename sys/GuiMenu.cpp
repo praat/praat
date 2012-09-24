@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,66 +17,269 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2002/03/07 GPL
- * pb 2002/03/11 Mach
- * pb 2004/10/21 on Unix, Ctrl becomes the command key
- * pb 2007/06/09 wchar_t
- * pb 2007/12/13 Gui
- * sdk 2008/02/08 GTK
- * sdk 2008/03/24 GTK
- * pb 2010/11/28 removed explicit Motif
- * pb 2011/04/06 C++
- */
-
 #include "GuiP.h"
 
-#define _motif_SHIFT_MASK  1
-#define _motif_COMMAND_MASK  2
-#define _motif_OPTION_MASK  4
+Thing_implement (GuiMenu, GuiThing, 0);
 
-GuiObject GuiMenuBar_addMenu (GuiObject bar, const wchar_t *title, long flags) {
-	GuiObject menu = NULL, menuTitle;
-	menu = GuiMenuBar_addMenu2 (bar, title, flags, & menuTitle);
-	return menu;
+void structGuiMenu :: v_destroy () {
+	forget (d_cascadeButton);
+	forget (d_menuItem);
+	GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, NULL); XtDestroyWidget (d_widget); }
 }
 
-GuiObject GuiMenuBar_addMenu2 (GuiObject bar, const wchar_t *title, long flags, GuiObject *menuTitle) {
-	GuiObject menu;
+#if gtk
+	static void _guiGtkMenu_destroyCallback (GuiObject widget, gpointer void_me) {
+		(void) void_me;
+		GuiMenu me = (GuiMenu) _GuiObject_getUserData (widget);
+		trace ("destroying GuiMenu %p", me);
+		if (! me) return;   // we could be destroying me
+		my d_widget = NULL;   // undangle
+		if (my d_cascadeButton) my d_cascadeButton -> d_widget = NULL;   // undangle
+		if (my d_menuItem) my d_menuItem -> d_widget = NULL;   // undangle
+		forget (me);
+	}
+	static void _guiGtkMenuCascadeButton_destroyCallback (GuiObject widget, gpointer void_me) {
+		(void) void_me;
+		GuiMenu me = (GuiMenu) _GuiObject_getUserData (widget);
+		if (! me) return;
+		trace ("destroying GuiButton %p", my d_cascadeButton);
+		gtk_widget_destroy (GTK_WIDGET (my d_widget));
+	}
+#elif cocoa
+	static NSMenu *theMenuBar;
+	static int theNumberOfMenuBarItems = 0;
+	static NSMenuItem *theMenuBarItems [30];
+	@interface GuiCocoaApplicationDelegate : NSObject { }
+	@end
+	@implementation GuiCocoaApplicationDelegate
+	- (void) applicationWillFinishLaunching: (NSNotification *) note
+	{
+		(void) note;
+		for (int imenu = 1; imenu <= theNumberOfMenuBarItems; imenu ++) {
+			[[NSApp mainMenu] addItem: theMenuBarItems [imenu]];   // the menu will retain the item...
+			[theMenuBarItems [imenu] release];   // ... so we can release the item
+		}
+	}
+	@end
+	static id theGuiCocoaApplicationDelegate;
+#elif motif
+	static void _guiMotifMenu_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
+		(void) void_me;
+		(void) call;
+		GuiMenu me = (GuiMenu) _GuiObject_getUserData (widget);
+		trace ("destroying GuiMenu %p", me);
+		if (! me) return;   // we could be destroying me
+		my d_widget = NULL;   // undangle
+		if (my d_cascadeButton) my d_cascadeButton -> d_widget = NULL;   // undangle
+		if (my d_menuItem) my d_menuItem -> d_widget = NULL;   // undangle
+		forget (me);
+	}
+#endif
+
+void structGuiMenu :: v_hide () {
 	#if gtk
-		*menuTitle = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
-		menu = gtk_menu_new ();
-		GtkAccelGroup *ag = GTK_IS_MENU_BAR (bar) ? (GtkAccelGroup *) g_object_get_data (G_OBJECT (bar), "accel-group") : (GtkAccelGroup *) gtk_menu_get_accel_group (GTK_MENU (bar));
-		gtk_menu_set_accel_group (GTK_MENU (menu), ag);
-		if (flags & GuiMenu_INSENSITIVE)
-			gtk_widget_set_sensitive (GTK_WIDGET (menu), FALSE);
-		gtk_menu_item_set_submenu (GTK_MENU_ITEM (*menuTitle), GTK_WIDGET (menu));
-		gtk_menu_shell_append (GTK_MENU_SHELL (bar), GTK_WIDGET (*menuTitle));
-		gtk_widget_show (GTK_WIDGET (menu));
-		gtk_widget_show (GTK_WIDGET (*menuTitle));
-	#elif win
-		*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-		if (wcsequ (title, L"Help"))
-			XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
-		menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-		if (flags & GuiMenu_INSENSITIVE)
-			XtSetSensitive (menu, False);
-		XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
-		XtManageChild (*menuTitle);
-	#elif mac
-		#if useCarbon
-			*menuTitle = XmCreateCascadeButton (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-			if (wcsequ (title, L"Help"))
-				XtVaSetValues (bar, XmNmenuHelpWidget, *menuTitle, NULL);
-			menu = XmCreatePulldownMenu (bar, Melder_peekWcsToUtf8 (title), NULL, 0);
-			if (flags & GuiMenu_INSENSITIVE)
-				XtSetSensitive (menu, False);
-			XtVaSetValues (*menuTitle, XmNsubMenuId, menu, NULL);
-			XtManageChild (*menuTitle);
-		#else
-		#endif
+		gtk_widget_hide (GTK_WIDGET (d_gtkMenuTitle));
+	#elif cocoa
+	#elif motif
+		XtUnmanageChild (d_xmMenuTitle);
 	#endif
-	return menu;
+}
+
+void structGuiMenu :: v_setSensitive (bool sensitive) {
+	#if gtk
+		gtk_widget_set_sensitive (GTK_WIDGET (d_gtkMenuTitle), sensitive);
+	#elif cocoa
+	#elif motif
+		XtSetSensitive (d_xmMenuTitle, sensitive);
+	#endif
+}
+
+void structGuiMenu :: v_show () {
+	trace ("begin");
+	#if gtk
+		gtk_widget_show (GTK_WIDGET (d_gtkMenuTitle));
+	#elif cocoa
+	#elif motif
+		XtManageChild (d_xmMenuTitle);
+	#endif
+	trace ("end");
+}
+
+void structGuiMenu :: f_empty () {
+	#if gtk
+		trace ("begin");
+		Melder_assert (d_widget);
+		/*
+		 * Destroy my widget, but prevent forgetting me.
+		 */
+		_GuiObject_setUserData (d_widget, NULL);
+		gtk_widget_destroy (GTK_WIDGET (d_widget));
+
+		d_widget = gtk_menu_new ();
+		trace ("shell %p", d_shell);
+		Melder_assert (d_shell);
+		trace ("shell class name %ls", Thing_className (d_shell));
+		Melder_assert (d_shell -> classInfo == classGuiWindow);
+		Melder_assert (((GuiWindow) d_shell) -> d_gtkMenuBar);
+		GtkAccelGroup *ag = (GtkAccelGroup *) g_object_get_data (G_OBJECT (((GuiWindow) d_shell) -> d_gtkMenuBar), "accel-group");
+		gtk_menu_set_accel_group (GTK_MENU (d_widget), ag);
+		Melder_assert (ag);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (d_gtkMenuTitle), GTK_WIDGET (d_widget));
+		//gtk_widget_show (GTK_WIDGET (d_widget));
+		_GuiObject_setUserData (d_widget, this);
+	#elif cocoa
+	#elif motif
+	#endif
+}
+
+GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long flags) {
+	GuiMenu me = Thing_new (GuiMenu);
+	my d_shell = window;
+	my d_parent = window;
+	#if gtk
+		trace ("create and show the menu title");
+		my d_gtkMenuTitle = (GtkMenuItem *) gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		gtk_menu_shell_append (GTK_MENU_SHELL (window -> d_gtkMenuBar), GTK_WIDGET (my d_gtkMenuTitle));
+		if (flags & GuiMenu_INSENSITIVE)
+			gtk_widget_set_sensitive (GTK_WIDGET (my d_gtkMenuTitle), FALSE);
+		gtk_widget_show (GTK_WIDGET (my d_gtkMenuTitle));
+		trace ("create the menu");
+		my d_widget = gtk_menu_new ();
+		GtkAccelGroup *ag = (GtkAccelGroup *) g_object_get_data (G_OBJECT (window -> d_gtkMenuBar), "accel-group");
+		gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_gtkMenuTitle), GTK_WIDGET (my d_widget));
+		_GuiObject_setUserData (my d_widget, me);
+	#elif cocoa
+		if (! theGuiCocoaApplicationDelegate) {
+			int numberOfMenus = [[[NSApp mainMenu] itemArray] count];
+			Melder_casual ("Number of menus: %d.", numberOfMenus);
+			theGuiCocoaApplicationDelegate = [[GuiCocoaApplicationDelegate alloc] init];
+			[NSApp   setDelegate: theGuiCocoaApplicationDelegate];
+			theMenuBar = [[NSMenu alloc] init];
+			[NSApp   setMainMenu: theMenuBar];
+		}
+		my d_widget = (GuiObject) [[NSMenu alloc]
+			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		[(NSMenu *) my d_widget   setAutoenablesItems: NO];
+		if (window == NULL) {
+			my d_nsMenuItem = [[NSMenuItem alloc]
+				initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)   action: NULL   keyEquivalent: @""];
+			[my d_nsMenuItem   setSubmenu: (NSMenu *) my d_widget];   // the item will retain the menu...
+			[(NSMenu *) my d_widget release];   // ... so we can release the menu already (before even returning it!)
+			theMenuBarItems [++ theNumberOfMenuBarItems] = my d_nsMenuItem;
+		} else if ([(NSView *) window -> d_widget   isKindOfClass: [NSView class]]) {
+			NSRect parentRect = [(NSView *) window -> d_widget   frame];   // this is the window's top form
+			int parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
+			if (window -> d_menuBarWidth == 0)
+				window -> d_menuBarWidth = -1;
+			int width = 18 + 7 * wcslen (title), height = 25;
+			int x = window -> d_menuBarWidth, y = parentHeight + 1 - height;
+			if (Melder_wcsequ (title, L"Help")) {
+				x = parentWidth + 1 - width;
+			} else {
+				window -> d_menuBarWidth += width - 1;
+			}
+			NSRect rect = { { x, y }, { width, height } };
+			my d_nsMenuButton = [[NSPopUpButton alloc]
+				initWithFrame: rect   pullsDown: YES];
+			[my d_nsMenuButton   setAutoenablesItems: NO];
+			[my d_nsMenuButton   setBezelStyle: NSShadowlessSquareBezelStyle];
+			[my d_nsMenuButton   setImagePosition: NSImageAbove];   // this centers the text
+			//[nsPopupButton setBordered: NO];
+			[[my d_nsMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
+			/*
+			 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
+			 */
+			NSMenuItem *item = [[NSMenuItem alloc] initWithTitle: @"-you should never get to see this-" action: NULL keyEquivalent: @""];
+			[(NSMenu *) my d_widget   addItem: item];   // the menu will retain the item...
+			[item release];   // ... so we can release the item already
+			/*
+			 * Install the menu button in the form.
+			 */
+			[(NSView *) window -> d_widget   addSubview: my d_nsMenuButton];   // parent will retain the button...
+			[my d_nsMenuButton   release];   // ... so we can release the button already
+			/*
+			 * Attach the menu to the button.
+			 */
+			[my d_nsMenuButton   setMenu: (NSMenu *) my d_widget];   // the button will retain the menu...
+			[(NSMenu *) my d_widget   release];   // ... so we can release the menu already (before even returning it!)
+			[my d_nsMenuButton   setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		}
+	#elif motif
+		if (window == NULL) {
+			my d_xmMenuTitle = XmCreateCascadeButton (theGuiTopMenuBar, Melder_peekWcsToUtf8 (title), NULL, 0);
+			if (wcsequ (title, L"Help"))
+				XtVaSetValues (theGuiTopMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, NULL);
+			my d_widget = XmCreatePulldownMenu (theGuiTopMenuBar, Melder_peekWcsToUtf8 (title), NULL, 0);
+			if (flags & GuiMenu_INSENSITIVE)
+				XtSetSensitive (my d_xmMenuTitle, False);
+			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, NULL);
+			XtManageChild (my d_xmMenuTitle);
+		} else {
+			my d_xmMenuTitle = XmCreateCascadeButton (window -> d_xmMenuBar, Melder_peekWcsToUtf8 (title), NULL, 0);
+			if (wcsequ (title, L"Help"))
+				XtVaSetValues (window -> d_xmMenuBar, XmNmenuHelpWidget, my d_xmMenuTitle, NULL);
+			my d_widget = XmCreatePulldownMenu (window -> d_xmMenuBar, Melder_peekWcsToUtf8 (title), NULL, 0);
+			if (flags & GuiMenu_INSENSITIVE)
+				XtSetSensitive (my d_xmMenuTitle, False);
+			XtVaSetValues (my d_xmMenuTitle, XmNsubMenuId, my d_widget, NULL);
+			XtManageChild (my d_xmMenuTitle);
+		}
+		_GuiObject_setUserData (my d_widget, me);
+	#endif
+
+	#if gtk
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me);
+	#elif cocoa
+	#elif motif
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me);
+	#endif
+	return me;
+}
+
+GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const wchar_t *title, long flags) {
+	GuiMenu me = Thing_new (GuiMenu);
+	my d_shell = supermenu -> d_shell;
+	my d_parent = supermenu;
+	my d_menuItem = Thing_new (GuiMenuItem);
+	my d_menuItem -> d_shell = my d_shell;
+	my d_menuItem -> d_parent = supermenu;
+	my d_menuItem -> d_menu = me;
+	#if gtk
+		my d_menuItem -> d_widget = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
+		my d_widget = gtk_menu_new ();
+		GtkAccelGroup *ag = (GtkAccelGroup *) gtk_menu_get_accel_group (GTK_MENU (supermenu -> d_widget));
+		gtk_menu_set_accel_group (GTK_MENU (my d_widget), ag);
+		if (flags & GuiMenu_INSENSITIVE)
+			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), FALSE);
+		gtk_menu_item_set_submenu (GTK_MENU_ITEM (my d_menuItem -> d_widget), GTK_WIDGET (my d_widget));
+		gtk_menu_shell_append (GTK_MENU_SHELL (supermenu -> d_widget), GTK_WIDGET (my d_menuItem -> d_widget));
+		gtk_widget_show (GTK_WIDGET (my d_widget));
+		gtk_widget_show (GTK_WIDGET (my d_menuItem -> d_widget));
+		_GuiObject_setUserData (my d_widget, me);
+	#elif cocoa
+		NSMenu *nsMenu = [[NSMenu alloc]
+			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		[nsMenu setAutoenablesItems: NO];
+		[nsMenu install: supermenu -> d_widget];
+		[nsMenu release];
+	#elif motif
+		my d_menuItem -> d_widget = XmCreateCascadeButton (supermenu -> d_widget, Melder_peekWcsToUtf8 (title), NULL, 0);
+		my d_widget = XmCreatePulldownMenu (supermenu -> d_widget, Melder_peekWcsToUtf8 (title), NULL, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_menuItem -> d_widget, False);
+		XtVaSetValues (my d_menuItem -> d_widget, XmNsubMenuId, my d_widget, NULL);
+		XtManageChild (my d_menuItem -> d_widget);
+		_GuiObject_setUserData (my d_widget, me);
+	#endif
+
+	#if gtk
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me);
+	#elif cocoa
+	#elif motif
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me);
+	#endif
+	return me;
 }
 
 #if gtk
@@ -93,7 +296,6 @@ static void set_position (GtkMenu *menu, gint *px, gint *py, gpointer data)
 	*py += button->allocation.y + button->allocation.height; /* Dit is vreemd */
 
 }
-
 static gint button_press (GtkWidget *widget, GdkEvent *event)
 {
 	gint w, h;
@@ -109,283 +311,55 @@ static gint button_press (GtkWidget *widget, GdkEvent *event)
 	}
 	return FALSE;
 }
-
-GuiObject GuiMenuBar_addMenu3 (GuiObject parent, const wchar_t *title, long flags, GuiObject *button) {
-	GuiObject menu;
-	menu = gtk_menu_new ();
-	*button = gtk_button_new_with_label (Melder_peekWcsToUtf8 (title));
-	g_signal_connect_object (G_OBJECT (*button), "event",
-		GTK_SIGNAL_FUNC (button_press), G_OBJECT (menu), G_CONNECT_SWAPPED);
-	g_object_set_data (G_OBJECT (menu), "button", *button);
-	if (flags & GuiMenu_INSENSITIVE)
-		gtk_widget_set_sensitive (GTK_WIDGET (menu), FALSE);
-	gtk_menu_attach_to_widget (GTK_MENU (menu), GTK_WIDGET (*button), NULL);
-	/* TODO: Free button? */
-	gtk_container_add (GTK_CONTAINER (parent), GTK_WIDGET (*button));
-	gtk_widget_show (GTK_WIDGET (menu));
-	gtk_widget_show (GTK_WIDGET (*button));
-	return menu;
-}
 #endif
 
-#if gtk
-	#include <gdk/gdkkeysyms.h>
-	static GSList *group = NULL;
-#endif
-
-void GuiMenuItem_check (GuiObject menuItem, bool check) {
-	Melder_assert (menuItem != NULL);
+GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bottom, const wchar_t *title, long flags) {
+	GuiMenu me = Thing_new (GuiMenu);
+	my d_shell = form -> d_shell;
+	my d_parent = form;
+	my d_cascadeButton = Thing_new (GuiButton);
+	my d_cascadeButton -> d_shell = my d_shell;
+	my d_cascadeButton -> d_parent = form;
+	my d_cascadeButton -> d_menu = me;
 	#if gtk
-		gulong handlerId = (gulong) g_object_get_data (G_OBJECT (menuItem), "handlerId");
-		void (*commandCallback) (GuiObject, XtPointer, XtPointer) = (void (*) (GuiObject, XtPointer, XtPointer)) g_object_get_data (G_OBJECT (menuItem), "commandCallback");
-		void *commandClosure = g_object_get_data (G_OBJECT (menuItem), "commandClosure");
-		//Melder_casual ("GuiMenuItem_check %ld %ld %ld", handlerId, commandCallback, commandClosure);
-		g_signal_handler_disconnect (G_OBJECT (menuItem), handlerId);
-		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (menuItem), check);
-		handlerId = g_signal_connect (G_OBJECT (menuItem), "toggled", G_CALLBACK (commandCallback), (gpointer) commandClosure);
-		g_object_set_data (G_OBJECT (menuItem), "handlerId", (gpointer) handlerId);
-	#elif win
-		XmToggleButtonGadgetSetState (menuItem, check, False);
-	#elif mac
-		#if useCarbon
-			XmToggleButtonGadgetSetState (menuItem, check, False);
-		#else
-		#endif
-	#endif
-}
+		my d_cascadeButton -> d_widget = gtk_button_new_with_label (Melder_peekWcsToUtf8 (title));
+		my d_cascadeButton -> v_positionInForm (my d_cascadeButton -> d_widget, left, right, top, bottom, form);
+		gtk_widget_show (GTK_WIDGET (my d_cascadeButton -> d_widget));
 
-#if win || mac && useCarbon
-static void NativeMenuItem_setText (GuiObject me) {
-	int acc = my motiff.pushButton.acceleratorChar, modifiers = my motiff.pushButton.acceleratorModifiers;
-	#if win
-		static MelderString title = { 0 };
-		if (acc == 0) {
-			MelderString_copy (& title, _GuiWin_expandAmpersands (my name));
-		} else {
-			static const wchar_t *keyStrings [256] = {
-				0, L"<-", L"->", L"Up", L"Down", L"PAUSE", L"Del", L"Ins", L"Backspace", L"Tab", L"LineFeed", L"Home", L"End", L"Enter", L"PageUp", L"PageDown",
-				L"Esc", L"F1", L"F2", L"F3", L"F4", L"F5", L"F6", L"F7", L"F8", L"F9", L"F10", L"F11", L"F12", 0, 0, 0,
-				L"Space", L"!", L"\"", L"#", L"$", L"%", L"&", L"\'", L"(", L")", L"*", L"+", L",", L"-", L".", L"/",
-				L"0", L"1", L"2", L"3", L"4", L"5", L"6", L"7", L"8", L"9", L":", L";", L"<", L"=", L">", L"?",
-				L"@", L"A", L"B", L"C", L"D", L"E", L"F", L"G", L"H", L"I", L"J", L"K", L"L", L"M", L"N", L"O",
-				L"P", L"Q", L"R", L"S", L"T", L"U", L"V", L"W", L"X", L"Y", L"Z", L"[", L"\\", L"]", L"^", L"_",
-				L"`", L"a", L"b", L"c", L"d", L"e", L"f", L"g", L"h", L"i", L"j", L"k", L"l", L"m", L"n", L"o",
-				L"p", L"q", L"r", L"s", L"t", L"u", L"v", L"w", L"x", L"y", L"z", L"{", L"|", L"}", L"~", L"Del",
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L"[", L"]", L",", L"?", L".", L"\\",
-				L";", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, L"-", L"`", L"=", L"\'", 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-			const wchar_t *keyString = keyStrings [acc] ? keyStrings [acc] : L"???";
-			MelderString_empty (& title);
-			MelderString_append (&title, _GuiWin_expandAmpersands (my name), L"\t",
-				modifiers & _motif_COMMAND_MASK ? L"Ctrl-" : NULL,
-				modifiers & _motif_OPTION_MASK ? L"Alt-" : NULL,
-				modifiers & _motif_SHIFT_MASK ? L"Shift-" : NULL, keyString);
-		}
-		ModifyMenu (my nat.entry.handle, my nat.entry.id, MF_BYCOMMAND | MF_STRING, my nat.entry.id, title.string);
-	#elif mac
-		static int theGlyphs [1+31] = { 0,
-			kMenuLeftArrowDashedGlyph, kMenuRightArrowDashedGlyph, kMenuUpArrowDashedGlyph, kMenuDownwardArrowDashedGlyph, 0,
-			kMenuDeleteRightGlyph, 0, kMenuDeleteLeftGlyph, kMenuTabRightGlyph, 0,
-			0, 0, kMenuReturnGlyph, kMenuPageUpGlyph, kMenuPageDownGlyph,
-			kMenuEscapeGlyph, kMenuF1Glyph, kMenuF2Glyph, kMenuF3Glyph, kMenuF4Glyph,
-			kMenuF5Glyph, kMenuF6Glyph, kMenuF7Glyph, kMenuF8Glyph, kMenuF9Glyph,
-			kMenuF10Glyph, kMenuF11Glyph, kMenuF12Glyph, 0, 0,
-			0 };
-		SetMenuItemTextWithCFString (my nat.entry.handle, my nat.entry.item, (CFStringRef) Melder_peekWcsToCfstring (my name));
-		if (acc > 32) {
-			SetItemCmd (my nat.entry.handle, my nat.entry.item, acc);
-		} else {
-			Melder_assert (acc > 0 && acc < 32);
-			SetItemCmd (my nat.entry.handle, my nat.entry.item, ' ');   /* Funny that this should be needed. */
-			SetMenuItemKeyGlyph (my nat.entry.handle, my nat.entry.item, theGlyphs [acc]);
-		}
-		SetMenuItemModifiers (my nat.entry.handle, my nat.entry.item,
-			( modifiers & _motif_OPTION_MASK ? kMenuOptionModifier : 0 ) +
-			( modifiers & _motif_SHIFT_MASK ? kMenuShiftModifier : 0 ) +
-			( modifiers & _motif_COMMAND_MASK ? 0 : kMenuNoCommandModifier ));
-	#endif
-}
-#endif
+		my d_widget = gtk_menu_new ();
+		if (flags & GuiMenu_INSENSITIVE)
+			gtk_widget_set_sensitive (GTK_WIDGET (my d_widget), FALSE);
 
-GuiObject GuiMenu_addItem (GuiObject menu, const wchar_t *title, long flags,
-	void (*commandCallback) (GuiObject, XtPointer, XtPointer), const void *closure)
-{
-	Boolean toggle = flags & (GuiMenu_CHECKBUTTON | GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON) ? True : False;
-	GuiObject button;
-	int accelerator = flags & 127;
-	Melder_assert (title != NULL);
+		g_signal_connect_object (G_OBJECT (my d_cascadeButton -> d_widget), "event",
+			GTK_SIGNAL_FUNC (button_press), G_OBJECT (my d_widget), G_CONNECT_SWAPPED);
+		g_object_set_data (G_OBJECT (my d_widget), "button", my d_cascadeButton -> d_widget);
+		gtk_menu_attach_to_widget (GTK_MENU (my d_widget), GTK_WIDGET (my d_cascadeButton -> d_widget), NULL);
+		gtk_button_set_alignment (GTK_BUTTON (my d_cascadeButton -> d_widget), 0.0f, 0.5f);
+		_GuiObject_setUserData (my d_widget, me);
+		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me);
+	#elif cocoa
+	#elif motif
+		my d_xmMenuBar = XmCreateMenuBar (form -> d_widget, "dynamicSubmenuBar", 0, 0);
+		form -> v_positionInForm (my d_xmMenuBar, left, right, top, bottom, form);
+		my d_cascadeButton -> d_widget = XmCreateCascadeButton (my d_xmMenuBar, Melder_peekWcsToUtf8 (title), NULL, 0);
+		form -> v_positionInForm (my d_cascadeButton -> d_widget, 0, right - left - 4, 0, bottom - top, form);
+		my d_widget = XmCreatePulldownMenu (my d_xmMenuBar, Melder_peekWcsToUtf8 (title), NULL, 0);
+		if (flags & GuiMenu_INSENSITIVE)
+			XtSetSensitive (my d_cascadeButton -> d_widget, False);
+		XtVaSetValues (my d_cascadeButton -> d_widget, XmNsubMenuId, my d_widget, NULL);
+		XtManageChild (my d_cascadeButton -> d_widget);
+		XtManageChild (my d_xmMenuBar);
+		_GuiObject_setUserData (my d_widget, me);
+	#endif
+
 	#if gtk
-		if (toggle) {
-			if (flags & (GuiMenu_RADIO_FIRST)) group = NULL;
-			if (flags & (GuiMenu_RADIO_FIRST | GuiMenu_RADIO_NEXT)) {
-				button = gtk_radio_menu_item_new_with_label (group, Melder_peekWcsToUtf8 (title));
-				group = gtk_radio_menu_item_get_group (GTK_RADIO_MENU_ITEM (button));
-				//Melder_casual ("Created a radio menu item with title %ls, group %ld", title, group);
-			} else {
-				button = gtk_check_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
-			}
-		} else {
-			button = gtk_menu_item_new_with_label (Melder_peekWcsToUtf8 (title));
-		}
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), GTK_WIDGET (button));
-	#elif win
-		button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
-			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
-	#elif mac
-		#if useCarbon
-			button = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
-				toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu, NULL);
-		#else
-		#endif
+		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_guiGtkMenu_destroyCallback), me);
+		g_signal_connect (G_OBJECT (my d_cascadeButton -> d_widget), "destroy", G_CALLBACK (_guiGtkMenuCascadeButton_destroyCallback), me);
+	#elif cocoa
+	#elif motif
+		XtAddCallback (my d_widget, XmNdestroyCallback, _guiMotifMenu_destroyCallback, me);
 	#endif
-	Melder_assert (button != NULL);
-	if (flags & GuiMenu_INSENSITIVE)
-		GuiObject_setSensitive (button, false);
-	if (flags & GuiMenu_TOGGLE_ON)
-		#if gtk
-			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (button), TRUE);
-		#elif win
-			XmToggleButtonGadgetSetState (button, True, False);
-		#elif mac
-			#if useCarbon
-				XmToggleButtonGadgetSetState (button, True, False);
-			#else
-			#endif
-		#endif
-	if (accelerator) {
-		/*
-		 * For printable characters, the Command key is assumed.
-		 */
-		if (accelerator >= 32)
-			flags |= GuiMenu_COMMAND;
-		
-		#if gtk
-			static const guint acceleratorKeys [] = { 0,
-				GDK_Left, GDK_Right, GDK_Up, GDK_Down, GDK_Pause, GDK_Delete, GDK_Insert, GDK_BackSpace,
-				GDK_Tab, GDK_Return, GDK_Home, GDK_End, GDK_Return, GDK_Page_Up, GDK_Page_Down, GDK_Escape,
-				GDK_F1, GDK_F2, GDK_F3, GDK_F4, GDK_F5, GDK_F6, GDK_F7, GDK_F8, GDK_F9, GDK_F10, GDK_F11, GDK_F12,
-				0, 0, 0 };
-
-			GdkModifierType modifiers = (GdkModifierType) 0;
-			if (flags & GuiMenu_COMMAND) modifiers = (GdkModifierType) (modifiers | GDK_CONTROL_MASK);
-			if (flags & GuiMenu_SHIFT)   modifiers = (GdkModifierType) (modifiers | GDK_SHIFT_MASK);
-			if (flags & GuiMenu_OPTION)  modifiers = (GdkModifierType) (modifiers | GDK_MOD1_MASK);
-
-			guint key;
-			if (accelerator < 32) {
-				key = acceleratorKeys [accelerator];
-			} else {
-				// gdk key symbols in the ASCII range are equal to ASCII
-				key = accelerator;
-			}
-
-			GtkAccelGroup *ag = gtk_menu_get_accel_group (GTK_MENU (menu));
-
-			if (key != 0)
-				gtk_widget_add_accelerator (GTK_WIDGET (button), toggle ? "toggled" : "activate",
-					ag, key, modifiers, GTK_ACCEL_VISIBLE);
-
-		#elif win
-			int modifiers = 0;
-			if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;
-			if (flags & GuiMenu_SHIFT) modifiers |= _motif_SHIFT_MASK;
-			if (flags & GuiMenu_OPTION) modifiers |= _motif_OPTION_MASK;
-			if (accelerator > 0 && accelerator < 32) {
-				button -> shell -> motiff.shell.lowAccelerators [modifiers] |= 1 << accelerator;
-			} else if (accelerator == '?' || accelerator == '{' || accelerator == '}' || accelerator == '\"' ||
-				accelerator == '<' || accelerator == '>' || accelerator == '|' || accelerator == '_' || accelerator == '+' || accelerator == '~')
-			{
-				modifiers |= _motif_SHIFT_MASK;
-			}
-			button -> motiff.pushButton.acceleratorChar = accelerator;
-			button -> motiff.pushButton.acceleratorModifiers = modifiers;
-			NativeMenuItem_setText (button);
-		#elif mac
-			#if useCarbon
-				int modifiers = 0;
-				if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;
-				if (flags & GuiMenu_SHIFT) modifiers |= _motif_SHIFT_MASK;
-				if (flags & GuiMenu_OPTION) modifiers |= _motif_OPTION_MASK;
-				if (accelerator > 0 && accelerator < 32) {
-					button -> shell -> motiff.shell.lowAccelerators [modifiers] |= 1 << accelerator;
-				} else if (accelerator == '?' || accelerator == '{' || accelerator == '}' || accelerator == '\"' ||
-					accelerator == '<' || accelerator == '>' || accelerator == '|' || accelerator == '_' || accelerator == '+' || accelerator == '~')
-				{
-					modifiers |= _motif_SHIFT_MASK;
-				}
-				button -> motiff.pushButton.acceleratorChar = accelerator;
-				button -> motiff.pushButton.acceleratorModifiers = modifiers;
-				NativeMenuItem_setText (button);
-			#else
-			#endif
-		#endif
-	}
-	#if mac && useCarbon
-		if (flags & GuiMenu_ATTRACTIVE) {
-			//Melder_casual ("attractive!");
-			SetItemStyle (button -> nat.entry.handle, button -> nat.entry.item, bold);
-		}
-	#endif
-	#if gtk
-		if (commandCallback != NULL) {
-			if (flags == GuiMenu_TAB) {
-				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu)));
-				//Melder_casual ("tab set in window %ld", shell);
-				g_object_set_data (G_OBJECT (shell), "tabCallback", (gpointer) commandCallback);
-				g_object_set_data (G_OBJECT (shell), "tabClosure", (gpointer) closure);
-			} else if (flags == (GuiMenu_TAB | GuiMenu_SHIFT)) {
-				GtkWidget *shell = gtk_widget_get_toplevel (gtk_menu_get_attach_widget (GTK_MENU (menu)));
-				//Melder_casual ("shift-tab set in window %ld", shell);
-				g_object_set_data (G_OBJECT (shell), "shiftTabCallback", (gpointer) commandCallback);
-				g_object_set_data (G_OBJECT (shell), "shiftTabClosure", (gpointer) closure);
-			} else {
-				gulong handlerId = g_signal_connect (G_OBJECT (button),
-					toggle ? "toggled" : "activate",
-					G_CALLBACK (commandCallback), (gpointer) closure);
-				g_object_set_data (G_OBJECT (button), "handlerId", (gpointer) handlerId);
-				g_object_set_data (G_OBJECT (button), "commandCallback", (gpointer) commandCallback);
-				g_object_set_data (G_OBJECT (button), "commandClosure", (gpointer) closure);
-			}
-		} else {
-			gtk_widget_set_sensitive (GTK_WIDGET (button), FALSE);
-		}
-		gtk_widget_show (GTK_WIDGET (button));
-	#elif win
-		XtAddCallback (button,
-			toggle ? XmNvalueChangedCallback : XmNactivateCallback,
-			commandCallback, (XtPointer) closure);
-	#elif mac
-		#if useCarbon
-			XtAddCallback (button,
-				toggle ? XmNvalueChangedCallback : XmNactivateCallback,
-				commandCallback, (XtPointer) closure);
-		#else
-		#endif
-	#endif
-
-	return button;
-}
-
-GuiObject GuiMenu_addSeparator (GuiObject menu) {
-	#if gtk
-		GuiObject separator = gtk_separator_menu_item_new ();
-		gtk_menu_shell_append (GTK_MENU_SHELL (menu), GTK_WIDGET (separator));
-		gtk_widget_show (GTK_WIDGET (separator));
-		return separator;
-	#elif win
-		return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
-	#elif mac
-		#if useCarbon
-			return XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu, NULL);
-		#else
-			return NULL;   // TODO
-		#endif
-	#endif
-}
+	return me;
+};
 
 /* End of file GuiMenu.cpp */

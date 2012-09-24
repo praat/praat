@@ -2,7 +2,7 @@
 #define _DemoEditor_h_
 /* DemoEditor.h
  *
- * Copyright (C) 2009-2011 Paul Boersma
+ * Copyright (C) 2009-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@
 Thing_define (DemoEditor, Editor) {
 	// new data:
 	public:
-		GuiObject drawingArea;
+		GuiDrawingArea drawingArea;
 		Graphics graphics;
 		void *praatPicture;
 		bool clicked, keyPressed, shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 		long x, y;
-		wchar key;
+		wchar_t key;
 		bool waitingForInput, userWantsToClose, fullScreen;
 	// overridden methods:
 		virtual void v_destroy ();
@@ -42,8 +42,8 @@ Thing_define (DemoEditor, Editor) {
 		virtual void v_createMenus ();
 };
 
-void DemoEditor_init (DemoEditor me, GuiObject parent);
-DemoEditor DemoEditor_create (GuiObject parent);
+void DemoEditor_init (DemoEditor me);
+DemoEditor DemoEditor_create ();
 
 void Demo_open (void);
 void Demo_close (void);

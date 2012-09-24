@@ -38,7 +38,7 @@ static void updateVerticalScrollBar (TableEditor me) {
 	/*int value, slider, incr, pincr;
 	XmScrollBarGetValues (my verticalScrollBar, & value, & slider, & incr, & pincr);
 	XmScrollBarSetValues (my verticalScrollBar, my topRow, slider, incr, pincr, False);*/
-	XtVaSetValues (my verticalScrollBar,
+	XtVaSetValues (my verticalScrollBar -> d_widget,
 		XmNvalue, my topRow, XmNmaximum, table -> rows -> size + 1, NULL);
 	#endif
 }
@@ -49,7 +49,7 @@ static void updateHorizontalScrollBar (TableEditor me) {
 	/*int value, slider, incr, pincr;
 	XmScrollBarGetValues (my horizontalScrollBar, & value, & slider, & incr, & pincr);
 	XmScrollBarSetValues (my horizontalScrollBar, my topRow, slider, incr, pincr, False);*/
-	XtVaSetValues (my horizontalScrollBar,
+	XtVaSetValues (my horizontalScrollBar -> d_widget,
 		XmNvalue, my leftColumn, XmNmaximum, table -> numberOfColumns + 1, NULL);
 	#endif
 }
@@ -71,19 +71,19 @@ void structTableEditor :: v_dataChanged () {
 #ifndef macintosh
 static void menu_cb_Cut (EDITOR_ARGS) {   // BUG: why only on Mac?
 	EDITOR_IAM (TableEditor);
-	GuiText_cut (my text);
+	my text -> f_cut ();
 }
 static void menu_cb_Copy (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	GuiText_copy (my text);
+	my text -> f_copy ();
 }
 static void menu_cb_Paste (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	GuiText_paste (my text);
+	my text -> f_paste ();
 }
 static void menu_cb_Erase (EDITOR_ARGS) {
 	EDITOR_IAM (TableEditor);
-	GuiText_remove (my text);
+	my text -> f_remove ();
 }
 #endif
 
@@ -214,107 +214,40 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	Graphics_updateWs (my graphics);
 }
 
+static void gui_cb_scrollHorizontal (I, GuiScrollBarEvent event) {
+	iam (TableEditor);
+	int value = event -> scrollBar -> f_getValue ();
+	if (value != my leftColumn) {
+		my leftColumn = value;
+		my v_draw ();
+	}
+}
+
+static void gui_cb_scrollVertical (I, GuiScrollBarEvent event) {
+	iam (TableEditor);
+	int value = event -> scrollBar -> f_getValue ();
+	if (value != my topRow) {
+		my topRow = value;
+		my v_draw ();
+	}
+}
+
 void structTableEditor :: v_createChildren () {
 	Table table = static_cast<Table> (data);
-	GuiObject form;   // a form inside a form; needed to keep key presses away from the drawing area
+	int y = Machine_getMenuBarHeight () + 4, scrollWidth = Machine_getScrollBarWidth ();
 
-	#if gtk
-		form = d_windowForm;
-	#elif motif
-		form = XmCreateForm (d_windowForm, "buttons", NULL, 0);
-		XtVaSetValues (form,
-			XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
-			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
-			XmNbottomAttachment, XmATTACH_FORM,
-			XmNtraversalOn, False,   // needed in order to redirect all keyboard input to the text widget
-			NULL);
-	#endif
+	text = GuiText_createShown (d_windowForm, 0, 0, y, y + Machine_getTextHeight (), 0);
+	text -> f_setChangeCallback (gui_text_cb_change, this);
+	y += Machine_getTextHeight () + 4;
 
-	/***** Create text field. *****/
+	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - scrollWidth, y, - scrollWidth,
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 
-	#if gtk
-		text = GuiText_create (NULL, 0, 0, 0, Machine_getTextHeight (), 0);
-		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (text), FALSE, FALSE, 3);
-		GuiObject_show (text);
-	#else
-		text = GuiText_createShown (form, 0, 0, 0, Machine_getTextHeight (), 0);
-	#endif
-	GuiText_setChangeCallback (text, gui_text_cb_change, this);
+	verticalScrollBar = GuiScrollBar_createShown (d_windowForm, - scrollWidth, 0, y, - scrollWidth,
+		1, table -> rows -> size + 1, 1, 1, 1, 10, gui_cb_scrollVertical, this, 0);
 
-	/***** Create drawing area. *****/
-	
-	#if gtk
-		GuiObject table_container = gtk_table_new (2, 2, FALSE);
-		gtk_box_pack_start (GTK_BOX (form), GTK_WIDGET (table_container), TRUE, TRUE, 3);
-		GuiObject_show (table_container);
-		
-		drawingArea = GuiDrawingArea_create (NULL, 0, 0, 0, 0,
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
-		
-		// need to turn off double buffering, otherwise we receive the expose events
-		// delayed by one event, see also FunctionEditor.c
-		gtk_widget_set_double_buffered (GTK_WIDGET (drawingArea), FALSE);
-		
-		gtk_table_attach (GTK_TABLE (table_container), GTK_WIDGET (drawingArea), 0, 1, 0, 1,
-			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-		GuiObject_show (drawingArea);
-	#else
-		drawingArea = GuiDrawingArea_createShown (form, 0, - Machine_getScrollBarWidth (),
-			Machine_getTextHeight (), - Machine_getScrollBarWidth (),
-			gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, this, 0);
-	#endif
-
-	/***** Create horizontal scroll bar. *****/
-
-	#if gtk
-		GtkAdjustment *hadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table -> numberOfColumns + 1, 1, 3, 1));
-		horizontalScrollBar = gtk_hscrollbar_new (hadj);
-		gtk_table_attach (GTK_TABLE (table_container), GTK_WIDGET (horizontalScrollBar), 0, 1, 1, 2,
-			(GtkAttachOptions) (GTK_EXPAND | GTK_FILL), (GtkAttachOptions) 0, 0, 0);
-		GuiObject_show (horizontalScrollBar);
-	#elif motif
-	horizontalScrollBar = XtVaCreateManagedWidget ("horizontalScrollBar",
-		xmScrollBarWidgetClass, form,
-		XmNorientation, XmHORIZONTAL,
-		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 0,
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, Machine_getScrollBarWidth (),
-		XmNbottomAttachment, XmATTACH_FORM,
-		XmNheight, Machine_getScrollBarWidth (),
-		XmNminimum, 1,
-		XmNmaximum, table -> numberOfColumns + 1,
-		XmNvalue, 1,
-		XmNsliderSize, 1,
-		XmNincrement, 1,
-		XmNpageIncrement, 3,
-		NULL);
-	#endif
-
-	/***** Create vertical scroll bar. *****/
-
-	#if gtk
-		GtkAdjustment *vadj = GTK_ADJUSTMENT (gtk_adjustment_new (1, 1, table -> rows -> size + 1, 1, 10, 1));
-		verticalScrollBar = gtk_vscrollbar_new (vadj);
-		gtk_table_attach (GTK_TABLE (table_container), GTK_WIDGET (verticalScrollBar), 1, 2, 0, 1,
-			(GtkAttachOptions) 0, (GtkAttachOptions) (GTK_EXPAND | GTK_FILL), 0, 0);
-		GuiObject_show (verticalScrollBar);
-	#elif motif
-	verticalScrollBar = XtVaCreateManagedWidget ("verticalScrollBar",
-		xmScrollBarWidgetClass, form,
-		XmNorientation, XmVERTICAL,
-		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getTextHeight (),
-		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, Machine_getScrollBarWidth (),
-		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 0,
-		XmNwidth, Machine_getScrollBarWidth (),
-		XmNminimum, 1,
-		XmNmaximum, table -> rows -> size + 1,
-		XmNvalue, 1,
-		XmNsliderSize, 1,
-		XmNincrement, 1,
-		XmNpageIncrement, 10,
-		NULL);
-	#endif
-
-	GuiObject_show (form);
+	horizontalScrollBar = GuiScrollBar_createShown (d_windowForm, 0, - scrollWidth, - scrollWidth, 0,
+		1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);
 }
 
 void structTableEditor :: v_createMenus () {
@@ -339,73 +272,36 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 #if gtk
-	#define gui_cb_scroll(name, var) \
-		void gui_cb_ ## name ## Scroll(GtkRange *rng, gpointer void_me) { \
-			iam(TableEditor); \
-			double var = gtk_range_get_value(rng); \
-			do
-#elif motif
-	#define gui_cb_scroll(name, var) \
-		void gui_cb_ ## name ## Scroll(GUI_ARGS) { \
-			GUI_IAM(TableEditor); \
-			int var; \
-			{ int slider, incr, pincr; \
-			  XmScrollBarGetValues(w, &var, &slider, &incr, &pincr); } \
-			do
-#elif ! useCarbon
-	#define gui_cb_scroll(name, var) \
-		void gui_cb_ ## name ## Scroll(GUI_ARGS) { \
-			GUI_IAM(TableEditor); \
-			int var; \
-			do
-#endif
-#define gui_cb_scroll_end while (0); }
-
-static gui_cb_scroll(horizontal, value) {
-	if ((int)value != my leftColumn) {
-		my leftColumn = value;
-		my v_draw ();
-	}
-} gui_cb_scroll_end
-
-static gui_cb_scroll(vertical, value) {
-	if ((int)value != my topRow) {
-		my topRow = value;
-		my v_draw ();
-	}
-} gui_cb_scroll_end
-
-#if gtk
-static gboolean gui_cb_drawing_area_scroll(GuiObject w, GdkEventScroll *event, gpointer void_me) {
-	iam(TableEditor);
-	double hv = gtk_range_get_value(GTK_RANGE(my horizontalScrollBar));
-	double hi = gtk_range_get_adjustment(GTK_RANGE(my horizontalScrollBar))->step_increment;
-	double vv = gtk_range_get_value(GTK_RANGE(my verticalScrollBar));
-	double vi = gtk_range_get_adjustment(GTK_RANGE(my verticalScrollBar))->step_increment;
+static gboolean gui_cb_drawing_area_scroll (GuiObject w, GdkEventScroll *event, gpointer void_me) {
+	iam (TableEditor);
+	double hv = gtk_range_get_value (GTK_RANGE (my horizontalScrollBar -> d_widget));
+	double hi = gtk_range_get_adjustment (GTK_RANGE (my horizontalScrollBar -> d_widget)) -> step_increment;
+	double vv = gtk_range_get_value (GTK_RANGE (my verticalScrollBar -> d_widget));
+	double vi = gtk_range_get_adjustment (GTK_RANGE (my verticalScrollBar -> d_widget)) -> step_increment;
 	switch (event->direction) {
 		case GDK_SCROLL_UP:
-			gtk_range_set_value(GTK_RANGE(my verticalScrollBar), vv - vi);
+			gtk_range_set_value (GTK_RANGE (my verticalScrollBar -> d_widget), vv - vi);
 			break;
 		case GDK_SCROLL_DOWN:
-			gtk_range_set_value(GTK_RANGE(my verticalScrollBar), vv + vi);
+			gtk_range_set_value (GTK_RANGE (my verticalScrollBar -> d_widget), vv + vi);
 			break;
 		case GDK_SCROLL_LEFT:
-			gtk_range_set_value(GTK_RANGE(my horizontalScrollBar), hv - hi);
+			gtk_range_set_value (GTK_RANGE (my horizontalScrollBar -> d_widget), hv - hi);
 			break;
 		case GDK_SCROLL_RIGHT:
-			gtk_range_set_value(GTK_RANGE(my horizontalScrollBar), hv + hi);
+			gtk_range_set_value (GTK_RANGE (my horizontalScrollBar -> d_widget), hv + hi);
 			break;
 	}
 	return TRUE;
 }
 #endif
 
-TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table table) {
+TableEditor TableEditor_create (const wchar_t *title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
-		Editor_init (me.peek(), parent, 0, 0, 700, 500, title, table);
+		Editor_init (me.peek(), 0, 0, 700, 500, title, table);
 		#if motif
-		Melder_assert (XtWindow (my drawingArea));
+		Melder_assert (XtWindow (my drawingArea -> d_widget));
 		#endif
 		my topRow = 1;
 		my leftColumn = 1;
@@ -422,14 +318,7 @@ TableEditor TableEditor_create (GuiObject parent, const wchar_t *title, Table ta
 		Graphics_setAtSignIsLink (my graphics, TRUE);
 
 		#if gtk
-		g_signal_connect(G_OBJECT(my drawingArea), "scroll-event", G_CALLBACK(gui_cb_drawing_area_scroll), me.peek());
-		g_signal_connect(G_OBJECT(my horizontalScrollBar), "value-changed", G_CALLBACK(gui_cb_horizontalScroll), me.peek());
-		g_signal_connect(G_OBJECT(my verticalScrollBar), "value-changed", G_CALLBACK(gui_cb_verticalScroll), me.peek());
-		#elif motif
-		XtAddCallback (my horizontalScrollBar, XmNvalueChangedCallback, gui_cb_horizontalScroll, (XtPointer) me.peek());
-		XtAddCallback (my horizontalScrollBar, XmNdragCallback, gui_cb_horizontalScroll, (XtPointer) me.peek());
-		XtAddCallback (my verticalScrollBar, XmNvalueChangedCallback, gui_cb_verticalScroll, (XtPointer) me.peek());
-		XtAddCallback (my verticalScrollBar, XmNdragCallback, gui_cb_verticalScroll, (XtPointer) me.peek());
+			g_signal_connect(G_OBJECT(my drawingArea), "scroll-event", G_CALLBACK(gui_cb_drawing_area_scroll), me.peek());
 		#endif
 		return me.transfer();
 	} catch (MelderError) {

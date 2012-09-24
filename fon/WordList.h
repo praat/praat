@@ -19,7 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Strings.h"
+#include "Strings_.h"
 
 #include "WordList_def.h"
 oo_CLASS_CREATE (WordList, Data);
@@ -27,7 +27,7 @@ oo_CLASS_CREATE (WordList, Data);
 WordList Strings_to_WordList (Strings me);
 Strings WordList_to_Strings (WordList me);
 
-bool WordList_hasWord (WordList me, const wchar *word);
+bool WordList_hasWord (WordList me, const wchar_t *word);
 
 /* End of file WordList.h */
 #endif

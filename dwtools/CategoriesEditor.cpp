@@ -47,7 +47,7 @@ Thing_implement (CategoriesEditor, Editor, 0);
 static void update (I, long from, long to, const long *select, long nSelect);
 static void update_dos (I);
 
-const wchar *CategoriesEditor_EMPTYLABEL = L"(empty)";
+const wchar_t *CategoriesEditor_EMPTYLABEL = L"(empty)";
 
 static void menu_cb_help (EDITOR_ARGS) {
 	EDITOR_IAM (CategoriesEditor);
@@ -409,9 +409,9 @@ static void notifyOutOfView (I) {
 	autoMelderString tmp;
 	long posCount;
 	MelderString_append (&tmp, L"");
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	autoNUMvector<long> posList (my list -> f_getSelectedPositions (& posCount), 1);
 	if (posList.peek() != 0) {
-		long outOfView = 0, top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
+		long outOfView = 0, top = my list -> f_getTopPosition (), bottom = my list -> f_getBottomPosition ();
 
 		for (long i = posCount; i > 0; i--) {
 			if (posList[i] < top || posList[i] > bottom) {
@@ -422,13 +422,13 @@ static void notifyOutOfView (I) {
 			MelderString_append (&tmp, Melder_integer (outOfView), L" selection(s) out of view");
 		}
 	}
-	GuiLabel_setString (my outOfView, tmp.string);
+	my outOfView -> f_setString (tmp.string);
 }
 
 static void update_dos (I) {
 	iam (CategoriesEditor);
 	autoMelderString tmp;
-	Boolean undoSense = true, redoSense = true;
+	bool undoSense = true, redoSense = true;
 
 	// undo
 
@@ -438,18 +438,18 @@ static void update_dos (I) {
 	}
 
 	MelderString_append (&tmp, L"Undo ", L"\"", name, L"\"");
-	GuiButton_setString (my undo, tmp.string);
-	GuiObject_setSensitive (my undo, undoSense);
+	my undo -> f_setString (tmp.string);
+	my undo -> f_setSensitive (undoSense);
 
 	// redo
 
 	if (! (name = CommandHistory_commandName (my history, 1))) {
-		name = L"nothing"; redoSense = False;
+		name = L"nothing"; redoSense = false;
 	}
 	MelderString_empty (&tmp);
 	MelderString_append (&tmp, L"Redo ", L"\"", name, L"\"");
-	GuiButton_setString (my redo, tmp.string);
-	GuiObject_setSensitive (my redo, redoSense);
+	my redo -> f_setString (tmp.string);
+	my redo -> f_setSensitive (redoSense);
 }
 
 static void updateWidgets (I) { /*all buttons except undo & redo */
@@ -458,7 +458,7 @@ static void updateWidgets (I) { /*all buttons except undo & redo */
 	bool insert = false, insertAtEnd = true, replace = false, remove = false;
 	bool moveUp = false, moveDown = false;
 	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	autoNUMvector<long> posList (my list -> f_getSelectedPositions (& posCount), 1);
 	if (posList.peek() != 0) {
 		long firstPos = posList[1], lastPos = posList[posCount];
 		bool contiguous = lastPos - firstPos + 1 == posCount;
@@ -475,9 +475,12 @@ static void updateWidgets (I) { /*all buttons except undo & redo */
 			}
 		}
 	}
-	GuiObject_setSensitive (my insert, insert); GuiObject_setSensitive (my insertAtEnd, insertAtEnd);
-	GuiObject_setSensitive (my replace, replace); GuiObject_setSensitive (my remove, remove);
-	GuiObject_setSensitive (my moveUp, moveUp); GuiObject_setSensitive (my moveDown, moveDown);
+	my insert      -> f_setSensitive (insert);
+	my insertAtEnd -> f_setSensitive (insertAtEnd);
+	my replace     -> f_setSensitive (replace);
+	my remove      -> f_setSensitive (remove);
+	my moveUp      -> f_setSensitive (moveUp);
+	my moveDown    -> f_setSensitive (moveDown);
 	if (my history) {
 		update_dos (me);
 	}
@@ -511,7 +514,7 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 	try {
 		autostringvector table (from, to);
 		autoMelderString itemText;
-		long itemCount = GuiList_getNumberOfItems (my list);
+		long itemCount = my list -> f_getNumberOfItems ();
 		for (long i = from; i <= to; i++) {
 			wchar_t wcindex[20];
 			MelderString_empty (&itemText);
@@ -521,19 +524,19 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 		}
 		if (itemCount > size) { /* some items have been removed from Categories? */
 			for (long j = itemCount; j > size; j --) {
-				GuiList_deleteItem (my list, j);
+				my list -> f_deleteItem (j);
 			}
 			itemCount = size;
 		}
 		if (to > itemCount) {
 			for (long j = 1; j <= to - itemCount; j ++) {
-				GuiList_insertItem (my list, table [itemCount + j], 0);
+				my list -> f_insertItem (table [itemCount + j], 0);
 			}
 		}
 		if (from <= itemCount) {
 			long n = (to < itemCount ? to : itemCount);
 			for (long j = from; j <= n; j++) {
-				GuiList_replaceItem (my list, table[j], j);
+				my list -> f_replaceItem (table[j], j);
 			}
 		}
 	} catch (MelderError) {
@@ -544,24 +547,24 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 
 	// HIGHLIGHT
 
-	GuiList_deselectAllItems (my list);
+	my list -> f_deselectAllItems ();
 	if (size == 1) { /* the only item is always selected */
 		const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, 1);
-		GuiList_selectItem (my list, 1);
+		my list -> f_selectItem (1);
 		updateWidgets (me);   // instead of "notify". BUG?
-		GuiText_setString (my text, catg);
+		my text -> f_setString (catg);
 	} else if (nSelect > 0) {
 		// Select but postpone highlighting
 
 		for (long i = 1; i <= nSelect; i++) {
-			GuiList_selectItem (my list, select[i] > size ? size : select[i]);
+			my list -> f_selectItem (select[i] > size ? size : select[i]);
 		}
 	}
 
 	// VIEWPORT
 
 	{
-		long top = GuiList_getTopPosition (my list), bottom = GuiList_getBottomPosition (my list);
+		long top = my list -> f_getTopPosition (), bottom = my list -> f_getBottomPosition ();
 		long visible = bottom - top + 1;
 		if (nSelect == 0) {
 			top = my position - visible / 2;
@@ -587,7 +590,7 @@ static void update (I, long from, long to, const long *select, long nSelect) {
 		if (top < 1) {
 			top = 1;
 		}
-		GuiList_setTopPosition (my list, top);
+		my list -> f_setTopPosition (top);
 	}
 }
 
@@ -595,7 +598,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent event) {
 	(void) event;
 	iam (CategoriesEditor);
 	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	autoNUMvector<long> posList (my list -> f_getSelectedPositions (& posCount), 1);
 	if (posList.peek() != 0) {
 		autoCategoriesEditorRemove command = CategoriesEditorRemove_create (me, posList.peek(), posCount);
 		if (! Command_do (command.peek())) {
@@ -610,7 +613,7 @@ static void gui_button_cb_remove (I, GuiButtonEvent event) {
 
 static void insert (I, int position) {
 	iam (CategoriesEditor);
-	autostring text = GuiText_getString (my text);
+	autostring text = my text -> f_getString ();
 	if (wcslen (text.peek()) != 0) {
 		autoSimpleString str = SimpleString_create (text.peek());
 		autoCategoriesEditorInsert command = CategoriesEditorInsert_create (me, str.transfer(), position);
@@ -640,9 +643,9 @@ static void gui_button_cb_replace (I, GuiButtonEvent event) {
 	(void) event;
 	iam (CategoriesEditor);
 	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	autoNUMvector<long> posList (my list -> f_getSelectedPositions (& posCount), 1);
 	if (posCount > 0) {
-		autostring text = GuiText_getString (my text);
+		autostring text = my text -> f_getString ();
 		if (wcslen (text.peek()) != 0) {
 			autoSimpleString str = SimpleString_create (text.peek());
 			autoCategoriesEditorReplace command = CategoriesEditorReplace_create (me, str.transfer(),
@@ -661,7 +664,7 @@ static void gui_button_cb_moveUp (I, GuiButtonEvent event) {
 	(void) event;
 	iam (CategoriesEditor);
 	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	autoNUMvector<long> posList (my list -> f_getSelectedPositions (& posCount), 1);
 	if (posCount > 0) {
 		autoCategoriesEditorMoveUp command = CategoriesEditorMoveUp_create
 		                                     (me, posList.peek(), posCount, posList[1] - 1);
@@ -678,7 +681,7 @@ static void gui_button_cb_moveDown (I, GuiButtonEvent event) {
 	(void) event;
 	iam (CategoriesEditor);
 	long posCount;
-	autoNUMvector<long> posList (GuiList_getSelectedPositions (my list, & posCount), 1);
+	autoNUMvector<long> posList (my list -> f_getSelectedPositions (& posCount), 1);
 	if (posCount > 0) {
 		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create
 		                                       (me, posList.peek(), posCount, posList[posCount] + 1);
@@ -700,7 +703,7 @@ static void gui_list_cb_double_click (void *void_me, GuiListEvent event) {
 	(void) event;
 	iam (CategoriesEditor);
 	const wchar_t *catg = OrderedOfString_itemAtIndex_c (my data, my position);
-	GuiText_setString (my text, catg);
+	my text -> f_setString (catg);
 }
 
 static void gui_list_cb_extended (void *void_me, GuiListEvent event) {
@@ -755,38 +758,15 @@ void structCategoriesEditor :: v_createChildren () {
 
 	left = 0; right = left + list_width; buttons_top = (top = bottom + delta_y); list_bottom = bottom = top + list_height;
 	list = GuiList_create (d_windowForm, left, right, top, bottom, true, 0);
-	GuiList_setSelectionChangedCallback (list, gui_list_cb_extended, this);
-	GuiList_setDoubleClickCallback (list, gui_list_cb_double_click, this);
-	GuiObject_show (list);
-
-	/*
-		The valueChangedCallback does not get any notification in case of:
-			drag, decrement, increment, pageIncrement & pageDecrement
-	*/
-
-#ifndef _WIN32
-#if motif
-	GuiObject vertScrollBar;
-	XtVaGetValues (GuiObject_parent (list), XmNverticalScrollBar, & vertScrollBar, 0);
-	XtAddCallback (vertScrollBar, XmNvalueChangedCallback, gui_cb_scroll,
-	               (XtPointer) this);
-	XtAddCallback (vertScrollBar, XmNdragCallback, gui_cb_scroll, (XtPointer) this);
-	XtAddCallback (vertScrollBar, XmNdecrementCallback, gui_cb_scroll,
-	               (XtPointer) this);
-	XtAddCallback (vertScrollBar, XmNincrementCallback, gui_cb_scroll,
-	               (XtPointer) this);
-	XtAddCallback (vertScrollBar, XmNpageIncrementCallback, gui_cb_scroll,
-	               (XtPointer) this);
-	XtAddCallback (vertScrollBar, XmNpageDecrementCallback, gui_cb_scroll,
-	               (XtPointer) this);
-#endif
-#endif
+	list -> f_setSelectionChangedCallback (gui_list_cb_extended, this);
+	list -> f_setDoubleClickCallback (gui_list_cb_double_click, this);
+	list -> f_show ();
 
 	buttons_left = left = right + 2 * delta_x; right = left + button_width; bottom = top + button_height;
 	GuiLabel_createShown (d_windowForm, left, right, top, bottom, L"Value:", 0);
 	left = right + delta_x; right = left + button_width;
 	text = GuiText_createShown (d_windowForm, left, right, top, bottom, 0);
-	GuiText_setString (text, CategoriesEditor_EMPTYLABEL);
+	text -> f_setString (CategoriesEditor_EMPTYLABEL);
 
 	left = buttons_left; right = left + button_width; top = bottom + delta_y; bottom = top + button_height;
 	insert = GuiButton_createShown (d_windowForm, left, right, top, bottom,	L"Insert", gui_button_cb_insert, this, GuiButton_DEFAULT);
@@ -814,10 +794,10 @@ void structCategoriesEditor :: v_dataChanged () {
 	updateWidgets (this);
 }
 
-CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, Categories data) {
+CategoriesEditor CategoriesEditor_create (const wchar_t *title, Categories data) {
 	try {
 		autoCategoriesEditor me = Thing_new (CategoriesEditor);
-		Editor_init (me.peek(), parent, 20, 40, 600, 600, title, data);
+		Editor_init (me.peek(), 20, 40, 600, 600, title, data);
 		my history = CommandHistory_create (100);
 		update (me.peek(), 0, 0, 0, 0);
 		updateWidgets (me.peek());
@@ -827,4 +807,4 @@ CategoriesEditor CategoriesEditor_create (GuiObject parent, const wchar *title, 
 	}
 }
 
-/* End of file CategoriesEditor.c 950*/
+/* End of file CategoriesEditor.cpp */

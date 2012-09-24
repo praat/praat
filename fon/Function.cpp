@@ -1,6 +1,6 @@
 /* Function.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +42,9 @@ Thing_implement (Function, Data, 0);
 
 void structFunction :: v_info () {
 	Function_Parent :: v_info ();
-	MelderInfo_writeLine1 (L"Domain:");
-	MelderInfo_writeLine2 (L"   xmin: ", Melder_double (xmin));
-	MelderInfo_writeLine2 (L"   xmax: ", Melder_double (xmax));
+	MelderInfo_writeLine (L"Domain:");
+	MelderInfo_writeLine (L"   xmin: ", Melder_double (xmin));
+	MelderInfo_writeLine (L"   xmax: ", Melder_double (xmax));
 }
 
 void structFunction :: v_shiftX (double xfrom, double xto) {
@@ -74,7 +74,7 @@ int Function_getDomainQuantity (Function me) {
 	return my v_domainQuantity ();
 }
 
-const wchar * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags) {
+const wchar_t * Function_getUnitText (Function me, long ilevel, int unit, unsigned long flags) {
 	Melder_assert (unit >= my v_getMinimumUnit (ilevel) && unit <= my v_getMaximumUnit (ilevel));
 	return my v_getUnitText (ilevel, unit, flags);
 }

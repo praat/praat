@@ -41,7 +41,7 @@ SpectrumTier SpectrumTier_create (double fmin, double fmax);
 */
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish, const wchar *method);
+	double pmin, double pmax, int garnish, const wchar_t *method);
 
 void SpectrumTier_list (SpectrumTier me, bool includeIndexes, bool includeFrequency, bool includePowerDensity);
 

@@ -61,6 +61,7 @@
 #include "Spectrum_to_Formant.h"
 #include "SpectrumEditor.h"
 #include "SpellingChecker.h"
+#include "Strings_extensions.h"
 #include "StringsEditor.h"
 #include "TableEditor.h"
 #include "TextGrid.h"
@@ -152,17 +153,18 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter) {
 extern "C" Graphics Movie_create (const wchar_t *title, int width, int height);
 extern "C" Graphics Movie_create (const wchar_t *title, int width, int height) {
 	static Graphics graphics;
-	static GuiObject dialog, drawingArea;
+	static GuiDialog dialog;
+	static GuiDrawingArea drawingArea;
 	if (! graphics) {
 		dialog = GuiDialog_create (theCurrentPraatApplication -> topShell, 100, 100, width + 2, height + 2, title, NULL, NULL, 0);
 		drawingArea = GuiDrawingArea_createShown (dialog, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-		GuiObject_show (dialog);
+		dialog -> f_show ();
 		graphics = Graphics_create_xmdrawingarea (drawingArea);
 	}
-	GuiWindow_setTitle (GuiObject_parent (dialog), title);
-	GuiObject_size (GuiObject_parent (dialog), width + 2, height + 2);
-	GuiObject_size (drawingArea, width, height);
-	GuiObject_show (dialog);
+	dialog -> f_setTitle (title);
+	dialog -> f_setSize (width + 2, height + 2);
+	drawingArea -> f_setSize (width, height);
+	dialog -> f_show ();
 	return graphics;
 }
 
@@ -216,7 +218,7 @@ DIRECT (AmplitudeTier_edit)
 	}
 	LOOP if (CLASS == classAmplitudeTier) {
 		iam (AmplitudeTier);
-		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, TRUE);
+		autoAmplitudeTierEditor editor = AmplitudeTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -466,7 +468,7 @@ DIRECT (Corpus_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot edit a Corpus from batch.");
 	LOOP {
 		iam (Corpus);
-		autoTableEditor editor = TableEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoTableEditor editor = TableEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -581,7 +583,7 @@ DIRECT (DurationTier_edit)
 	}
 	LOOP if (CLASS == classDurationTier) {
 		iam (DurationTier);
-		autoDurationTierEditor editor = DurationTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, TRUE);
+		autoDurationTierEditor editor = DurationTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -1233,7 +1235,7 @@ DIRECT (FormantGrid_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a FormantGrid from batch.");
 	LOOP {
 		iam (FormantGrid);
-		autoFormantGridEditor editor = FormantGridEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoFormantGridEditor editor = FormantGridEditor_create (ID_AND_FULL_NAME, me);
 		editor -> setPublicationCallback (cb_FormantGridEditor_publish, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
@@ -1899,7 +1901,7 @@ DIRECT (IntensityTier_edit)
 	}
 	LOOP if (CLASS == classIntensityTier) {
 		iam (IntensityTier);
-		autoIntensityTierEditor editor = IntensityTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, TRUE);
+		autoIntensityTierEditor editor = IntensityTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -2006,7 +2008,7 @@ DO
 	praat_new (thee.transfer(), sound -> name, L"_int");
 END
 
-/***** INTERVALTIER, rest in praat_TextGrid_init.c *****/
+/***** INTERVALTIER, rest in praat_TextGrid_init.cpp *****/
 
 FORM_READ (IntervalTier_readFromXwaves, L"Read IntervalTier from Xwaves", 0, true)
 	autoIntervalTier me = IntervalTier_readFromXwaves (file);
@@ -2342,7 +2344,7 @@ DIRECT (Manipulation_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Manipulation from batch.");
 	LOOP {
 		iam (Manipulation);
-		autoManipulationEditor editor = ManipulationEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoManipulationEditor editor = ManipulationEditor_create (ID_AND_FULL_NAME, me);
 		editor -> setPublicationCallback (cb_ManipulationEditor_publication, NULL);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
@@ -2915,7 +2917,8 @@ END
 DIRECT (Matrix_to_ParamCurve)
 	Matrix m1 = NULL, m2 = NULL;
 	LOOP (m1 ? m2 : m1) = (Matrix) OBJECT;
-	autoParamCurve thee = ParamCurve_create (m1, m2);
+	autoSound sound1 = Matrix_to_Sound (m1), sound2 = Matrix_to_Sound (m2);
+	autoParamCurve thee = ParamCurve_create (sound1.peek(), sound2.peek());
 	praat_new (thee.transfer(), m1 -> name, L"_", m2 -> name);
 END
 
@@ -3016,7 +3019,7 @@ DIRECT (Movie_viewAndEdit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Movie from batch.");
 	LOOP {
 		iam (Movie);
-		autoMovieWindow editor = MovieWindow_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoMovieWindow editor = MovieWindow_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -3126,7 +3129,7 @@ DO
 	}
 END
 
-FORM (Pitch_drawSemitones, L"Pitch: Draw semitones", L"Pitch: Draw...")
+FORM (Pitch_drawSemitones100, L"Pitch: Draw semitones (re 100 Hz)", L"Pitch: Draw...")
 	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
 	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
 	LABEL (L"", L"Range in semitones re 100 Hz:")
@@ -3144,11 +3147,47 @@ DO
 	}
 END
 
+FORM (Pitch_drawSemitones200, L"Pitch: Draw semitones (re 200 Hz)", L"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
+	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
+	LABEL (L"", L"Range in semitones re 200 Hz:")
+	REAL (L"left Frequency range (st)", L"-24.0")
+	REAL (L"right Frequency range (st)", L"18.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	GET_TMIN_TMAX_FMIN_FMAX
+	LOOP {
+		iam (Pitch);
+		autoPraatPicture picture;
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
+			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_200);
+	}
+END
+
+FORM (Pitch_drawSemitones440, L"Pitch: Draw semitones (re 440 Hz)", L"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
+	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
+	LABEL (L"", L"Range in semitones re 440 Hz:")
+	REAL (L"left Frequency range (st)", L"-36.0")
+	REAL (L"right Frequency range (st)", L"6.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	GET_TMIN_TMAX_FMIN_FMAX
+	LOOP {
+		iam (Pitch);
+		autoPraatPicture picture;
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax,
+			GET_INTEGER (L"Garnish"), Pitch_speckle_NO, kPitch_unit_SEMITONES_440);
+	}
+END
+
 DIRECT (Pitch_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Pitch from batch.");
 	LOOP {
 		iam (Pitch);
-		autoPitchEditor editor = PitchEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoPitchEditor editor = PitchEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -3273,7 +3312,7 @@ DO
 		kPitch_unit_ERB;
 	Pitch me = FIRST (Pitch);
 	double value = Pitch_getStandardDeviation (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), unit);
-	const wchar *unitText =
+	const wchar_t *unitText =
 		unit == kPitch_unit_HERTZ ? L"Hz" :
 		unit == kPitch_unit_MEL ? L"mel" :
 		unit == kPitch_unit_LOG_HERTZ ? L"logHz" :
@@ -3446,7 +3485,7 @@ DO
 	}
 END
 
-FORM (Pitch_speckleSemitones, L"Pitch: Speckle semitones", L"Pitch: Draw...")
+FORM (Pitch_speckleSemitones100, L"Pitch: Speckle semitones (re 100 Hz)", L"Pitch: Draw...")
 	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
 	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
 	LABEL (L"", L"Range in semitones re 100 hertz:")
@@ -3460,6 +3499,40 @@ DO
 		iam (Pitch);
 		autoPraatPicture picture;
 		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_100);
+	}
+END
+
+FORM (Pitch_speckleSemitones200, L"Pitch: Speckle semitones (re 200 Hz)", L"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
+	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
+	LABEL (L"", L"Range in semitones re 200 hertz:")
+	REAL (L"left Frequency range (st)", L"-24.0")
+	REAL (L"right Frequency range (st)", L"18.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	GET_TMIN_TMAX_FMIN_FMAX
+	LOOP {
+		iam (Pitch);
+		autoPraatPicture picture;
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_200);
+	}
+END
+
+FORM (Pitch_speckleSemitones440, L"Pitch: Speckle semitones (re 440 Hz)", L"Pitch: Draw...")
+	REAL (STRING_FROM_TIME_SECONDS, L"0.0")
+	REAL (STRING_TO_TIME_SECONDS, L"0.0 (= all)")
+	LABEL (L"", L"Range in semitones re 440 hertz:")
+	REAL (L"left Frequency range (st)", L"-36.0")
+	REAL (L"right Frequency range (st)", L"6.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	GET_TMIN_TMAX_FMIN_FMAX
+	LOOP {
+		iam (Pitch);
+		autoPraatPicture picture;
+		Pitch_draw (me, GRAPHICS, tmin, tmax, fmin, fmax, GET_INTEGER (L"Garnish"), Pitch_speckle_YES, kPitch_unit_SEMITONES_440);
 	}
 END
 
@@ -3748,7 +3821,7 @@ DIRECT (PitchTier_edit)
 	Sound sound = FIRST (Sound);
 	LOOP if (CLASS == classPitchTier) {
 		iam (PitchTier);
-		autoPitchTierEditor editor = PitchTierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound, TRUE);
+		autoPitchTierEditor editor = PitchTierEditor_create (ID_AND_FULL_NAME, me, sound, TRUE);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -4060,7 +4133,7 @@ DIRECT (PointProcess_edit)
 	Sound sound = FIRST (Sound);
 	LOOP if (CLASS == classPointProcess) {
 		iam (PointProcess);
-		autoPointEditor editor = PointEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me, sound);
+		autoPointEditor editor = PointEditor_create (ID_AND_FULL_NAME, me, sound);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -4808,8 +4881,8 @@ DO
 	Spectrogram me = FIRST_ANY (Spectrogram);
 	double time = GET_REAL (L"Time"), frequency = GET_REAL (L"Frequency");
 	MelderInfo_open ();
-	MelderInfo_write1 (Melder_double (Matrix_getValueAtXY (me, time, frequency)));
-	MelderInfo_write5 (L" Pa2/Hz (at time = ", Melder_double (time), L" seconds and frequency = ", Melder_double (frequency), L" Hz)");
+	MelderInfo_write (Melder_double (Matrix_getValueAtXY (me, time, frequency)));
+	MelderInfo_write (L" Pa2/Hz (at time = ", Melder_double (time), L" seconds and frequency = ", Melder_double (frequency), L" Hz)");
 	MelderInfo_close ();
 END
 
@@ -4857,7 +4930,7 @@ DIRECT (Spectrogram_view)
 	if (theCurrentPraatApplication -> batch) Melder_throw (L"Cannot view or edit a Spectrogram from batch.");
 	LOOP {
 		iam (Spectrogram);
-		autoSpectrogramEditor editor = SpectrogramEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoSpectrogramEditor editor = SpectrogramEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -4913,7 +4986,7 @@ DIRECT (Spectrum_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Spectrum from batch.");
 	LOOP {
 		iam (Spectrum);
-		autoSpectrumEditor editor = SpectrumEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoSpectrumEditor editor = SpectrumEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -5393,7 +5466,7 @@ DIRECT (Strings_edit)
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a Strings from batch.");
 	LOOP {
 		iam (Strings);
-		autoStringsEditor editor = StringsEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me);
+		autoStringsEditor editor = StringsEditor_create (ID_AND_FULL_NAME, me);
 		praat_installEditor (editor.transfer(), IOBJECT);
 	}
 END
@@ -5426,17 +5499,30 @@ DIRECT (Strings_getNumberOfStrings)
 END
 
 FORM (Strings_getString, L"Get string", 0)
-	NATURAL (L"Index", L"1")
+	NATURAL (L"Position", L"1")
 	OK
 DO
 	LOOP {
 		iam (Strings);
-		long index = GET_INTEGER (L"Index");
+		long index = GET_INTEGER (L"Position");
 		Melder_information (index > my numberOfStrings ? L"" : my strings [index]);   // TODO
 	}
 END
 
 DIRECT (Strings_help) Melder_help (L"Strings"); END
+
+FORM (Strings_insertString, L"Strings: Insert string", 0)
+	NATURAL (L"At position", L"1")
+	LABEL (L"", L"String:")
+	TEXTFIELD (L"string", L"")
+	OK
+DO
+	LOOP {
+		iam (Strings);
+		Strings_insert (me, GET_INTEGER (L"At position"), GET_STRING (L"string"));
+		praat_dataChanged (me);
+	}
+END
 
 DIRECT (Strings_nativize)
 	LOOP {
@@ -5462,6 +5548,47 @@ END
 FORM_READ (Strings_readFromRawTextFile, L"Read Strings from raw text file", 0, true)
 	autoStrings me = Strings_readFromRawTextFile (file);
 	praat_new (me.transfer(), MelderFile_name (file));
+END
+
+FORM (Strings_removeString, L"Strings: Remove string", 0)
+	NATURAL (L"Position", L"1")
+	OK
+DO
+	LOOP {
+		iam (Strings);
+		Strings_remove (me, GET_INTEGER (L"Position"));
+		praat_dataChanged (me);
+	}
+END
+
+FORM (Strings_replaceAll, L"Strings: Replace all", 0)
+	SENTENCE (L"Find", L"a")
+	SENTENCE (L"Replace with", L"b")
+	INTEGER (L"Replace limit per string", L"0 (=unlimited)")
+	RADIO (L"Find and replace strings are", 1)
+	RADIOBUTTON (L"literals")
+	RADIOBUTTON (L"regular expressions")
+	OK
+DO
+	long numberOfMatches, numberOfStringMatches;
+	LOOP {
+		iam (Strings);
+		praat_new (Strings_change (me, GET_STRING (L"Find"), GET_STRING (L"Replace with"),
+			GET_INTEGER (L"Replace limit per string"), & numberOfMatches, & numberOfStringMatches, GET_INTEGER (L"Find and replace strings are") - 1), 0);
+	}
+END
+
+FORM (Strings_setString, L"Strings: Set string", 0)
+	NATURAL (L"Position", L"1")
+	LABEL (L"", L"New string:")
+	TEXTFIELD (L"newString", L"")
+	OK
+DO
+	LOOP {
+		iam (Strings);
+		Strings_replace (me, GET_INTEGER (L"Position"), GET_STRING (L"newString"));
+		praat_dataChanged (me);
+	}
 END
 
 DIRECT (Strings_sort)
@@ -5495,7 +5622,7 @@ FORM_WRITE (Strings_writeToRawTextFile, L"Save Strings as text file", 0, L"txt")
 	}
 END
 
-/***** TABLE, rest in praat_Stat.c *****/
+/***** TABLE, rest in praat_Stat.cpp *****/
 
 DIRECT (Table_to_Matrix)
 	LOOP {
@@ -5505,7 +5632,7 @@ DIRECT (Table_to_Matrix)
 	}
 END
 
-/***** TEXTGRID, rest in praat_TextGrid_init.c *****/
+/***** TEXTGRID, rest in praat_TextGrid_init.cpp *****/
 
 FORM (TextGrid_create, L"Create TextGrid", L"Create TextGrid...")
 	LABEL (L"", L"Hint: to label or segment an existing Sound,")
@@ -5522,7 +5649,7 @@ DO
 	praat_new (thee.transfer(), GET_STRING (L"All tier names"));
 END
 
-/***** TEXTTIER, rest in praat_TextGrid_init.c *****/
+/***** TEXTTIER, rest in praat_TextGrid_init.cpp *****/
 
 FORM_READ (TextTier_readFromXwaves, L"Read TextTier from Xwaves", 0, true)
 	autoTextTier me = TextTier_readFromXwaves (file);
@@ -5936,13 +6063,13 @@ void praat_uvafon_init () {
 	Data_recognizeFileType (chronologicalTextGridTextFileRecognizer);
 
 	ManipulationEditor_prefs ();
-	SpectrumEditor_prefs ();
+	structSpectrumEditor :: f_preferences ();
 	FormantGridEditor_prefs ();
 
 	INCLUDE_LIBRARY (praat_uvafon_Sound_init)
 	INCLUDE_LIBRARY (praat_uvafon_TextGrid_init)
 
-	praat_addMenuCommand (L"Objects", L"Praat", L"Praat test...", 0, praat_HIDDEN, DO_Praat_test);
+	praat_addMenuCommand (L"Objects", L"Technical", L"Praat test...", 0, 0, DO_Praat_test);
 
 	praat_addMenuCommand (L"Objects", L"New", L"-- new numerics --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"Matrix", 0, 0, 0);
@@ -6172,9 +6299,9 @@ praat_addAction1 (classFormantTier, 0, L"Down", 0, 0, 0);
 		praat_addAction1 (classIntensity, 1, L"Get quantile...", 0, 1, DO_Intensity_getQuantile);
 		praat_addAction1 (classIntensity, 1, L"Get mean...", 0, 1, DO_Intensity_getMean);
 		praat_addAction1 (classIntensity, 1, L"Get standard deviation...", 0, 1, DO_Intensity_getStandardDeviation);
-	praat_addAction1 (classIntensity, 0, L"Modify", 0, 0, 0);
+	praat_addAction1 (classIntensity, 0, L"Modify -", 0, 0, 0);
 		praat_TimeFunction_modify_init (classIntensity);
-		praat_addAction1 (classIntensity, 0, L"Formula...", 0, 0, DO_Intensity_formula);
+		praat_addAction1 (classIntensity, 0, L"Formula...", 0, 1, DO_Intensity_formula);
 	praat_addAction1 (classIntensity, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classIntensity, 0, L"To IntensityTier (peaks)", 0, 0, DO_Intensity_to_IntensityTier_peaks);
 		praat_addAction1 (classIntensity, 0, L"To IntensityTier (valleys)", 0, 0, DO_Intensity_to_IntensityTier_valleys);
@@ -6339,12 +6466,18 @@ praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classPitch, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (classPitch, 0, L"Draw...", 0, 1, DO_Pitch_draw);
 		praat_addAction1 (classPitch, 0, L"Draw logarithmic...", 0, 1, DO_Pitch_drawLogarithmic);
-		praat_addAction1 (classPitch, 0, L"Draw semitones...", 0, 1, DO_Pitch_drawSemitones);
+		praat_addAction1 (classPitch, 0, L"Draw semitones (re 100 Hz)...", 0, 1, DO_Pitch_drawSemitones100);
+		praat_addAction1 (classPitch, 0, L"Draw semitones...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_drawSemitones100);
+		praat_addAction1 (classPitch, 0, L"Draw semitones (re 200 Hz)...", 0, 1, DO_Pitch_drawSemitones200);
+		praat_addAction1 (classPitch, 0, L"Draw semitones (re 440 Hz)...", 0, 1, DO_Pitch_drawSemitones440);
 		praat_addAction1 (classPitch, 0, L"Draw mel...", 0, 1, DO_Pitch_drawMel);
 		praat_addAction1 (classPitch, 0, L"Draw erb...", 0, 1, DO_Pitch_drawErb);
 		praat_addAction1 (classPitch, 0, L"Speckle...", 0, 1, DO_Pitch_speckle);
 		praat_addAction1 (classPitch, 0, L"Speckle logarithmic...", 0, 1, DO_Pitch_speckleLogarithmic);
-		praat_addAction1 (classPitch, 0, L"Speckle semitones...", 0, 1, DO_Pitch_speckleSemitones);
+		praat_addAction1 (classPitch, 0, L"Speckle semitones (re 100 Hz)...", 0, 1, DO_Pitch_speckleSemitones100);
+		praat_addAction1 (classPitch, 0, L"Speckle semitones...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Pitch_speckleSemitones100);
+		praat_addAction1 (classPitch, 0, L"Speckle semitones (re 200 Hz)...", 0, 1, DO_Pitch_speckleSemitones200);
+		praat_addAction1 (classPitch, 0, L"Speckle semitones (re 440 Hz)...", 0, 1, DO_Pitch_speckleSemitones440);
 		praat_addAction1 (classPitch, 0, L"Speckle mel...", 0, 1, DO_Pitch_speckleMel);
 		praat_addAction1 (classPitch, 0, L"Speckle erb...", 0, 1, DO_Pitch_speckleErb);
 	praat_addAction1 (classPitch, 0, L"Query -", 0, 0, 0);
@@ -6585,15 +6718,21 @@ praat_addAction1 (classPolygon, 0, L"Hack -", 0, 0, 0);
 	praat_addAction1 (classStrings, 1, L"Write to raw text file...", 0, praat_HIDDEN, DO_Strings_writeToRawTextFile);
 	praat_addAction1 (classStrings, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Strings_edit);
 	praat_addAction1 (classStrings, 1, L"Edit", 0, praat_HIDDEN, DO_Strings_edit);
-	praat_addAction1 (classStrings, 0, L"Query", 0, 0, 0);
-		praat_addAction1 (classStrings, 2, L"Equal?", 0, 0, DO_Strings_equal);
-		praat_addAction1 (classStrings, 1, L"Get number of strings", 0, 0, DO_Strings_getNumberOfStrings);
-		praat_addAction1 (classStrings, 1, L"Get string...", 0, 0, DO_Strings_getString);
-	praat_addAction1 (classStrings, 0, L"Modify", 0, 0, 0);
-		praat_addAction1 (classStrings, 0, L"Randomize", 0, 0, DO_Strings_randomize);
-		praat_addAction1 (classStrings, 0, L"Sort", 0, 0, DO_Strings_sort);
-		praat_addAction1 (classStrings, 0, L"Genericize", 0, 0, DO_Strings_genericize);
-		praat_addAction1 (classStrings, 0, L"Nativize", 0, 0, DO_Strings_nativize);
+	praat_addAction1 (classStrings, 0, L"Query -", 0, 0, 0);
+		praat_addAction1 (classStrings, 2, L"Equal?", 0, 1, DO_Strings_equal);
+		praat_addAction1 (classStrings, 1, L"Get number of strings", 0, 1, DO_Strings_getNumberOfStrings);
+		praat_addAction1 (classStrings, 1, L"Get string...", 0, 1, DO_Strings_getString);
+	praat_addAction1 (classStrings, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classStrings, 0, L"Set string...", 0, 1, DO_Strings_setString);
+		praat_addAction1 (classStrings, 0, L"Insert string...", 0, 1, DO_Strings_insertString);
+		praat_addAction1 (classStrings, 0, L"Remove string...", 0, 1, DO_Strings_removeString);
+		praat_addAction1 (classStrings, 0, L"-- modify order --", 0, 1, 0);
+		praat_addAction1 (classStrings, 0, L"Randomize", 0, 1, DO_Strings_randomize);
+		praat_addAction1 (classStrings, 0, L"Sort", 0, 1, DO_Strings_sort);
+		praat_addAction1 (classStrings, 0, L"-- convert --", 0, 1, 0);
+		praat_addAction1 (classStrings, 0, L"Replace all...", 0, 1, DO_Strings_replaceAll);
+		praat_addAction1 (classStrings, 0, L"Genericize", 0, 1, DO_Strings_genericize);
+		praat_addAction1 (classStrings, 0, L"Nativize", 0, 1, DO_Strings_nativize);
 	praat_addAction1 (classStrings, 0, L"Analyze", 0, 0, 0);
 		praat_addAction1 (classStrings, 0, L"To Distributions", 0, 0, DO_Strings_to_Distributions);
 	praat_addAction1 (classStrings, 0, L"Synthesize", 0, 0, 0);

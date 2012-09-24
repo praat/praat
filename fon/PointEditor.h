@@ -2,7 +2,7 @@
 #define _PointEditor_h_
 /* PointEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ Thing_define (PointEditor, TimeSoundEditor) {
 		virtual void v_play (double tmin, double tmax);
 };
 
-PointEditor PointEditor_create (GuiObject parent, const wchar *title,
+PointEditor PointEditor_create (const wchar_t *title,
 	PointProcess point,
 	Sound sound   // may be NULL
 );

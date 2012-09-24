@@ -1,6 +1,6 @@
 /* LogisticRegression.cpp
  *
- * Copyright (C) 2005-2011 Paul Boersma
+ * Copyright (C) 2005-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  * pb 2005/05/01 created
  * pb 2006/12/10 MelderInfo
- * pb 2007/08/12 wchar
+ * pb 2007/08/12 wchar_t
  * pb 2007/10/01 can write as encoding
  * pb 2007/11/18 split off from Regression.c
  * pb 2011/03/20 C++
@@ -52,28 +52,28 @@ Thing_implement (LogisticRegression, Regression, 0);
 
 void structLogisticRegression :: v_info () {
 	LogisticRegression_Parent :: v_info ();
-	MelderInfo_writeLine2 (L"Dependent 1: ", dependent1);
-	MelderInfo_writeLine2 (L"Dependent 2: ", dependent2);
-	MelderInfo_writeLine1 (L"Interpretation:");
+	MelderInfo_writeLine (L"Dependent 1: ", dependent1);
+	MelderInfo_writeLine (L"Dependent 2: ", dependent2);
+	MelderInfo_writeLine (L"Interpretation:");
 	MelderInfo_write6 (L"   ln (P(", dependent2, L")/P(", dependent1, L")) " UNITEXT_ALMOST_EQUAL_TO L" ", Melder_fixed (intercept, 6));
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_write4 (parm -> value < 0.0 ? L" - " : L" + ", Melder_fixed (fabs (parm -> value), 6), L" * ", parm -> label);
+		MelderInfo_write (parm -> value < 0.0 ? L" - " : L" + ", Melder_fixed (fabs (parm -> value), 6), L" * ", parm -> label);
 	}
-	MelderInfo_writeLine1 (NULL);
-	MelderInfo_writeLine1 (L"Log odds ratios:");
+	MelderInfo_writeLine (NULL);
+	MelderInfo_writeLine (L"Log odds ratios:");
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine4 (L"   Log odds ratio of factor ", parm -> label, L": ", Melder_fixed ((parm -> maximum - parm -> minimum) * parm -> value, 6));
+		MelderInfo_writeLine (L"   Log odds ratio of factor ", parm -> label, L": ", Melder_fixed ((parm -> maximum - parm -> minimum) * parm -> value, 6));
 	}
-	MelderInfo_writeLine1 (L"Odds ratios:");
+	MelderInfo_writeLine (L"Odds ratios:");
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
-		MelderInfo_writeLine4 (L"   Odds ratio of factor ", parm -> label, L": ", Melder_double (exp ((parm -> maximum - parm -> minimum) * parm -> value)));
+		MelderInfo_writeLine (L"   Odds ratio of factor ", parm -> label, L": ", Melder_double (exp ((parm -> maximum - parm -> minimum) * parm -> value)));
 	}
 }
 
-LogisticRegression LogisticRegression_create (const wchar *dependent1, const wchar *dependent2) {
+LogisticRegression LogisticRegression_create (const wchar_t *dependent1, const wchar_t *dependent2) {
 	try {
 		autoLogisticRegression me = Thing_new (LogisticRegression);
 		Regression_init (me.peek());
@@ -272,8 +272,8 @@ static LogisticRegression _Table_to_LogisticRegression (Table me, long *factors,
 	return thee.transfer();
 }
 
-LogisticRegression Table_to_LogisticRegression (Table me, const wchar *factors_columnLabelString,
-	const wchar *dependent1_columnLabel, const wchar *dependent2_columnLabel)
+LogisticRegression Table_to_LogisticRegression (Table me, const wchar_t *factors_columnLabelString,
+	const wchar_t *dependent1_columnLabel, const wchar_t *dependent2_columnLabel)
 {
 	try {
 		long numberOfFactors;

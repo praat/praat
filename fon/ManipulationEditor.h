@@ -2,7 +2,7 @@
 #define _ManipulationEditor_h_
 /* ManipulationEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,12 +32,12 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		DurationTier previousDuration;
 		double soundmin, soundmax;
 		int synthesisMethod;
-		GuiObject synthPulsesButton, synthPulsesHumButton;
-		GuiObject synthPulsesLpcButton;
-		GuiObject synthPitchButton, synthPitchHumButton;
-		GuiObject synthPulsesPitchButton, synthPulsesPitchHumButton;
-		GuiObject synthOverlapAddNodurButton, synthOverlapAddButton;
-		GuiObject synthPitchLpcButton;
+		GuiMenuItem synthPulsesButton, synthPulsesHumButton;
+		GuiMenuItem synthPulsesLpcButton;
+		GuiMenuItem synthPitchButton, synthPitchHumButton;
+		GuiMenuItem synthPulsesPitchButton, synthPulsesPitchHumButton;
+		GuiMenuItem synthOverlapAddNodurButton, synthOverlapAddButton;
+		GuiMenuItem synthPitchLpcButton;
 		struct { enum kManipulationEditor_pitchUnits units; enum kManipulationEditor_draggingStrategy draggingStrategy; double minimum, minPeriodic, maximum, cursor; } pitchTier;
 		struct { double minimum, maximum, cursor;  } duration;
 		Graphics_Viewport inset;
@@ -52,7 +52,7 @@ Thing_define (ManipulationEditor, FunctionEditor) {
 		virtual void v_play (double tmin, double tmax);
 };
 
-ManipulationEditor ManipulationEditor_create (GuiObject parent, const wchar *title, Manipulation ana);
+ManipulationEditor ManipulationEditor_create (const wchar_t *title, Manipulation ana);
 
 void ManipulationEditor_prefs (void);
 

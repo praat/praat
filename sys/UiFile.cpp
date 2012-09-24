@@ -24,10 +24,10 @@ Thing_define (UiFile, Thing) {
 	// new data:
 	public:
 		EditorCommand command;
-		GuiObject parent;
+		GuiWindow parent;
 		structMelderFile file;
-		const wchar *invokingButtonTitle, *helpTitle;
-		void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure);
+		const wchar_t *invokingButtonTitle, *helpTitle;
+		void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
 		void *okClosure;
 		int shiftKeyPressed;
 	// overridden methods:
@@ -41,7 +41,7 @@ void structUiFile :: v_destroy () {
 
 Thing_implement (UiFile, Thing, 0);
 
-static void UiFile_init (I, GuiObject parent, const wchar_t *title) {
+static void UiFile_init (I, GuiWindow parent, const wchar_t *title) {
 	iam (UiFile);
 	my parent = parent;
 	Thing_setName (me, title);
@@ -62,9 +62,9 @@ Thing_define (UiInfile, UiFile) {
 
 Thing_implement (UiInfile, UiFile, 0);
 
-UiForm UiInfile_create (GuiObject parent, const wchar *title,
-	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure,
-	const wchar *invokingButtonTitle, const wchar *helpTitle, bool allowMultipleFiles)
+UiForm UiInfile_create (GuiWindow parent, const wchar_t *title,
+	void (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure,
+	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles)
 {
 	UiInfile me = Thing_new (UiInfile);
 	my okCallback = okCallback;
@@ -111,8 +111,8 @@ Thing_define (UiOutfile, UiFile) {
 
 Thing_implement (UiOutfile, UiFile, 0);
 
-UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
-	void (*okCallback) (UiForm, const wchar *, Interpreter, const wchar *, bool, void *), void *okClosure, const wchar *invokingButtonTitle, const wchar_t *helpTitle)
+UiForm UiOutfile_create (GuiWindow parent, const wchar_t *title,
+	void (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
 	UiOutfile me = Thing_new (UiOutfile);
 	my okCallback = okCallback;
@@ -125,7 +125,7 @@ UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
 	return (UiForm) me;
 }
 
-static void commonOutfileCallback (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure) {
+static void commonOutfileCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
 	EditorCommand command = (EditorCommand) closure;
 	(void) invokingButtonTitle;
 	(void) modified;

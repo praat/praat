@@ -287,7 +287,7 @@ double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *sourceS
 	return my data[my numberOfRows][icol];
 }
 
-double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar *replacement) {
+double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar_t *replacement) {
 	long irow = EditCostsTable_getTargetIndex (me, symbol);
 	long icol = EditCostsTable_getSourceIndex (me, replacement);
 	if (irow == 0 && icol == 0) { // nomatch

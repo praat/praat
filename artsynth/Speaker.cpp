@@ -40,7 +40,7 @@
 
 Thing_implement (Speaker, Data, 0);
 
-Speaker Speaker_create (wchar *kindOfSpeaker, int numberOfVocalCordMasses) {
+Speaker Speaker_create (wchar_t *kindOfSpeaker, int numberOfVocalCordMasses) {
 	Speaker me = Thing_new (Speaker);
 
 	/* Supralaryngeal dimensions are taken from P. Mermelstein (1973):		*/

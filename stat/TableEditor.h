@@ -2,7 +2,7 @@
 #define _TableEditor_h_
 /* TableEditor.h
  *
- * Copyright (C) 2006-2011 Paul Boersma
+ * Copyright (C) 2006-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,9 @@ Thing_define (TableEditor, Editor) {
 	// new data:
 	public:
 		long topRow, leftColumn, selectedRow, selectedColumn;
-		GuiObject text, drawingArea, horizontalScrollBar, verticalScrollBar;
+		GuiText text;
+		GuiDrawingArea drawingArea;
+		GuiScrollBar horizontalScrollBar, verticalScrollBar;
 		double columnLeft [kTableEditor_MAXNUM_VISIBLE_COLUMNS], columnRight [kTableEditor_MAXNUM_VISIBLE_COLUMNS];
 		Graphics graphics;
 	// overridden methods:
@@ -42,7 +44,7 @@ Thing_define (TableEditor, Editor) {
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 };
 
-TableEditor TableEditor_create (GuiObject parent, const wchar *title, Table table);
+TableEditor TableEditor_create (const wchar_t *title, Table table);
 
 /* End of file TableEditor.h */
 #endif

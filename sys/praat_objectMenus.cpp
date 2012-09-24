@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,26 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2002/12/01 allow string expressions in calculator
- * pb 2003/03/09 simplified calculator
- * pb 2004/11/16 Win: more room for fixed buttons
- * pb 2004/12/05 renamed script running procedures
- * pb 2005/07/06 repaired a memory leak in creating a script editor from a double click
- * pb 2005/08/22 renamed the Control menu to "Praat" on all systems (like on the Mac)
- * pb 2005/11/18 HTML files are considered scripts (this is just for testing)
- * pb 2006/08/12 allowed renaming with European characters
- * pb 2006/10/20 embedded scripts
- * pb 2006/12/26 theCurrentPraat
- * pb 2007/01/26 layout objects window
- * pb 2007/06/10 wchar_t
- * pb 2007/08/12 wchar_t
- * pb 2008/04/30 new Formula API
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2011/05/03 C++
  */
 
 #include <ctype.h>
@@ -117,16 +97,16 @@ DIRECT (Inspect)
 		Melder_throw ("Cannot inspect data from batch.");
 	} else {
 		WHERE (SELECTED) {
-			praat_installEditor (DataEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, OBJECT), IOBJECT);
+			praat_installEditor (DataEditor_create (ID_AND_FULL_NAME, OBJECT), IOBJECT);
 		}
 	}
 END
 
 /********** The fixed menus. **********/
 
-static GuiObject praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, applicationHelpMenu, helpMenu;
+static GuiMenu praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, technicalMenu, applicationHelpMenu, helpMenu;
 
-GuiObject praat_objects_resolveMenu (const wchar_t *menu) {
+GuiMenu praat_objects_resolveMenu (const wchar_t *menu) {
 	return
 		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? praatMenu :
 		wcsequ (menu, L"New") || wcsequ (menu, L"Create") ? newMenu :
@@ -134,6 +114,7 @@ GuiObject praat_objects_resolveMenu (const wchar_t *menu) {
 		wcsequ (menu, L"Help") ? helpMenu :
 		wcsequ (menu, L"Goodies") ? goodiesMenu :
 		wcsequ (menu, L"Preferences") ? preferencesMenu :
+		wcsequ (menu, L"Technical") ? technicalMenu :
 		#ifdef macintosh
 			wcsequ (menu, L"ApplicationHelp") ? applicationHelpMenu :
 		#else
@@ -148,17 +129,13 @@ DIRECT (About)
 	praat_showLogo (FALSE);
 END
 
-DIRECT (Memory_info)
-	praat_memoryInfo ();
-END
-
 DIRECT (praat_newScript)
-	autoScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
+	autoScriptEditor editor = ScriptEditor_createFromText (NULL, NULL);
 	editor.transfer();   // the user becomes the owner
 END
 
 DIRECT (praat_openScript)
-	autoScriptEditor editor = ScriptEditor_createFromText (theCurrentPraatApplication -> topShell, NULL, NULL);
+	autoScriptEditor editor = ScriptEditor_createFromText (NULL, NULL);
 	TextEditor_showOpen (editor.peek());
 	editor.transfer();   // the user becomes the owner
 END
@@ -171,22 +148,11 @@ static void cb_ButtonEditor_destruction (Editor editor, void *closure) {
 	theButtonEditor = NULL;
 }
 
-FORM (praat_debug, L"Set debugging options", 0)
-	LABEL (L"", L"Setting the following to anything other than zero")
-	LABEL (L"", L"will alter the behaviour of this program")
-	LABEL (L"", L"in inpredictable ways.")
-	INTEGER (L"Debug option", L"0")
-	OK
-SET_INTEGER (L"Debug option", Melder_debug)
-DO
-	Melder_debug = GET_INTEGER (L"Debug option");
-END
-
 DIRECT (praat_editButtons)
 	if (theButtonEditor) {
 		theButtonEditor -> raise ();
 	} else {
-		theButtonEditor = ButtonEditor_create (theCurrentPraatApplication -> topShell);
+		theButtonEditor = ButtonEditor_create ();
 		theButtonEditor -> setDestructionCallback (cb_ButtonEditor_destruction, NULL);
 	}
 END
@@ -306,10 +272,6 @@ DO
 	}
 END
 
-DIRECT (praat_listReadableTypesOfObjects)
-	Thing_listReadableClasses ();
-END
-
 FORM (praat_reportDifferenceOfTwoProportions, L"Report difference of two proportions", L"Difference of two proportions")
 	INTEGER (L"left Row 1", L"71")
 	INTEGER (L"right Row 1", L"39")
@@ -325,15 +287,15 @@ DO
 	REQUIRE ((a > 0 || b > 0) && (c > 0 || d > 0), L"Row totals must be positive.")
 	REQUIRE ((a > 0 || c > 0) && (b > 0 || d > 0), L"Column totals must be positive.")
 	MelderInfo_open ();
-	MelderInfo_writeLine4 (L"Observed row 1 =    ", Melder_integer (a), L"    ", Melder_integer (b));
-	MelderInfo_writeLine4 (L"Observed row 2 =    ", Melder_integer (c), L"    ", Melder_integer (d));
+	MelderInfo_writeLine (L"Observed row 1 =    ", Melder_integer (a), L"    ", Melder_integer (b));
+	MelderInfo_writeLine (L"Observed row 2 =    ", Melder_integer (c), L"    ", Melder_integer (d));
 	aexp = (a + b) * (a + c) / n;
 	bexp = (a + b) * (b + d) / n;
 	cexp = (a + c) * (c + d) / n;
 	dexp = (b + d) * (c + d) / n;
-	MelderInfo_writeLine1 (L"");
-	MelderInfo_writeLine4 (L"Expected row 1 =    ", Melder_double (aexp), L"    ", Melder_double (bexp));
-	MelderInfo_writeLine4 (L"Expected row 2 =    ", Melder_double (cexp), L"    ", Melder_double (dexp));
+	MelderInfo_writeLine (L"");
+	MelderInfo_writeLine (L"Expected row 1 =    ", Melder_double (aexp), L"    ", Melder_double (bexp));
+	MelderInfo_writeLine (L"Expected row 2 =    ", Melder_double (cexp), L"    ", Melder_double (dexp));
 	/*
 	 * Continuity correction:
 	 * bring the observed numbers closer to the expected numbers by 0.5 (if possible).
@@ -346,17 +308,60 @@ DO
 	else if (c > cexp) { c -= 0.5; if (c < cexp) c = cexp; }
 	if (d < dexp) { d += 0.5; if (d > dexp) d = dexp; }
 	else if (d > dexp) { d -= 0.5; if (d < dexp) d = dexp; }
-	MelderInfo_writeLine1 (L"");
-	MelderInfo_writeLine4 (L"Corrected observed row 1 =    ", Melder_double (a), L"    ", Melder_double (b));
-	MelderInfo_writeLine4 (L"Corrected observed row 2 =    ", Melder_double (c), L"    ", Melder_double (d));
+	MelderInfo_writeLine (L"");
+	MelderInfo_writeLine (L"Corrected observed row 1 =    ", Melder_double (a), L"    ", Melder_double (b));
+	MelderInfo_writeLine (L"Corrected observed row 2 =    ", Melder_double (c), L"    ", Melder_double (d));
 	
 	n = a + b + c + d;
 	crossDifference = a * d - b * c;
 	x2 = n * crossDifference * crossDifference / (a + b) / (c + d) / (a + c) / (b + d);
-	MelderInfo_writeLine1 (L"");
-	MelderInfo_writeLine2 (L"Chi-square =    ", Melder_double (x2));
-	MelderInfo_writeLine2 (L"Two-tailed p =    ", Melder_double (NUMchiSquareQ (x2, 1)));
+	MelderInfo_writeLine (L"");
+	MelderInfo_writeLine (L"Chi-square =    ", Melder_double (x2));
+	MelderInfo_writeLine (L"Two-tailed p =    ", Melder_double (NUMchiSquareQ (x2, 1)));
 	MelderInfo_close ();
+END
+
+/********** Callbacks of the Technical menu. **********/
+
+FORM (praat_debug, L"Set debugging options", 0)
+	LABEL (L"", L"If you switch Tracing on, Praat will write lots of detailed ")
+	LABEL (L"", L"information about what goes on in Praat")
+	structMelderDir dir;
+	Melder_getPrefDir (& dir);
+	structMelderFile file;
+	#ifdef UNIX
+		MelderDir_getFile (& dir, L"tracing", & file);
+	#else
+		MelderDir_getFile (& dir, L"Tracing.txt", & file);
+	#endif
+	LABEL (L"", Melder_wcscat (L"to ", Melder_fileToPath (& file), L"."))
+	BOOLEAN (L"Tracing", 0)
+	LABEL (L"", L"Setting the following to anything other than zero")
+	LABEL (L"", L"will alter the behaviour of Praat")
+	LABEL (L"", L"in unpredictable ways.")
+	INTEGER (L"Debug option", L"0")
+	OK
+SET_INTEGER (L"Tracing", Melder_getTracing ())
+SET_INTEGER (L"Debug option", Melder_debug)
+DO
+	Melder_setTracing (GET_INTEGER (L"Tracing"));
+	Melder_debug = GET_INTEGER (L"Debug option");
+END
+
+DIRECT (praat_listReadableTypesOfObjects)
+	Thing_listReadableClasses ();
+END
+
+DIRECT (praat_reportGraphicalProperties)
+	praat_reportGraphicalProperties ();
+END
+
+DIRECT (praat_reportIntegerProperties)
+	praat_reportIntegerProperties ();
+END
+
+DIRECT (praat_reportMemoryUse)
+	praat_reportMemoryUse ();
 END
 
 /********** Callbacks of the Open menu. **********/
@@ -366,14 +371,14 @@ static void readFromFile (MelderFile file) {
 	if (object.peek() && Thing_member (object.peek(), classManPages) && ! Melder_batch) {
 		ManPages pages = (ManPages) object.peek();
 		ManPage firstPage = static_cast<ManPage> (pages -> pages -> item [1]);
-		Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, object.transfer(), true);
+		Manual_create (firstPage -> title, object.transfer(), true);
 		if (pages -> executable)
 			Melder_warning (L"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
 		return;
 	}
 	if (object.peek() && Thing_member (object.peek(), classScript) && ! Melder_batch) {
-		ScriptEditor_createFromScript (theCurrentPraatApplication -> topShell, NULL, (Script) object.peek());
+		ScriptEditor_createFromScript (NULL, (Script) object.peek());
 		return;
 	}
 	praat_new1 (object.transfer(), MelderFile_name (file));
@@ -430,7 +435,7 @@ structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
 DO
-	wchar *directory = GET_STRING (L"directory");
+	wchar_t *directory = GET_STRING (L"directory");
 	LOOP {
 		iam (ManPages);
 		ManPages_writeAllToHtmlDir (me, directory);
@@ -441,7 +446,7 @@ DIRECT (ManPages_view)
 	LOOP {
 		iam (ManPages);
 		ManPage firstPage = static_cast<ManPage> (my pages -> item [1]);
-		autoManual manual = Manual_create (theCurrentPraatApplication -> topShell, firstPage -> title, me, false);
+		autoManual manual = Manual_create (firstPage -> title, me, false);
 		if (my executable)
 			Melder_warning (L"These manual pages contain links to executable scripts.\n"
 				"Only navigate these pages if you trust their author!");
@@ -458,7 +463,7 @@ FORM (SearchManual, L"Search manual", L"Manual")
 DO
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (L"Cannot view a manual from batch.");
-	Manual manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages, false);
+	Manual manPage = Manual_create (L"Intro", theCurrentPraatApplication -> manPages, false);
 	Manual_search (manPage, GET_STRING (L"query"));
 END
 
@@ -470,7 +475,7 @@ FORM (GoToManualPage, L"Go to manual page", 0)
 DO
 	if (theCurrentPraatApplication -> batch)
 		Melder_throw (L"Cannot view a manual from batch.");
-	Manual manPage = Manual_create (theCurrentPraatApplication -> topShell, L"Intro", theCurrentPraatApplication -> manPages, false);
+	Manual manPage = Manual_create (L"Intro", theCurrentPraatApplication -> manPages, false);
 	HyperPage_goToPage_i (manPage, GET_INTEGER (L"Page"));
 END
 
@@ -482,7 +487,7 @@ structMelderDir currentDirectory = { { 0 } };
 Melder_getDefaultDir (& currentDirectory);
 SET_STRING (L"directory", Melder_dirToPath (& currentDirectory))
 DO
-	wchar *directory = GET_STRING (L"directory");
+	wchar_t *directory = GET_STRING (L"directory");
 	ManPages_writeAllToHtmlDir (theCurrentPraatApplication -> manPages, directory);
 END
 
@@ -503,36 +508,12 @@ void praat_show (void) {
 
 /********** Menu descriptions. **********/
 
-void praat_addFixedButtons (GuiObject form) {
-// Het is bagger, ik weet het, maar kom maar met een betere oplossing... bijvoorkeur zonder #defines
-#if gtk
-	GuiObject buttons1 = NULL, buttons2 = NULL, buttons3 = NULL;
-	if (form) {
-		buttons1 = gtk_hbutton_box_new ();
-		buttons2 = gtk_hbutton_box_new ();
-		buttons3 = gtk_hbutton_box_new ();
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons1), GTK_BUTTONBOX_START);
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons2), GTK_BUTTONBOX_START);
-		gtk_button_box_set_layout (GTK_BUTTON_BOX (buttons3), GTK_BUTTONBOX_START);
-		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (buttons3), FALSE, FALSE, 0);
-		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (buttons2), FALSE, FALSE, 0);
-		gtk_box_pack_end (GTK_BOX (form), GTK_WIDGET (buttons1), FALSE, FALSE, 0);
-		gtk_widget_show (GTK_WIDGET (buttons1));
-		gtk_widget_show (GTK_WIDGET (buttons2));
-		gtk_widget_show (GTK_WIDGET (buttons3));
-	}
-	praat_addFixedButtonCommand (buttons1, L"Rename...", DO_Rename, 8, 70);
-	praat_addFixedButtonCommand (buttons1, L"Copy...", DO_Copy, 98, 70);
-	praat_addFixedButtonCommand (buttons2, L"Inspect", DO_Inspect, 8, 40);
-	praat_addFixedButtonCommand (buttons2, L"Info", DO_Info, 98, 40);
-	praat_addFixedButtonCommand (buttons3, L"Remove", DO_Remove, 8, 10);
-#else
+void praat_addFixedButtons (GuiForm form) {
 	praat_addFixedButtonCommand (form, L"Rename...", DO_Rename, 8, 70);
 	praat_addFixedButtonCommand (form, L"Copy...", DO_Copy, 98, 70);
 	praat_addFixedButtonCommand (form, L"Inspect", DO_Inspect, 8, 40);
 	praat_addFixedButtonCommand (form, L"Info", DO_Info, 98, 40);
 	praat_addFixedButtonCommand (form, L"Remove", DO_Remove, 8, 10);
-#endif
 }
 
 static void searchProc (void) {
@@ -560,9 +541,7 @@ static void cb_openDocument (MelderFile file) {
 	}
 }
 
-void praat_addMenus (GuiObject bar) {
-	GuiObject button;
-
+void praat_addMenus (GuiWindow window) {
 	Melder_setSearchProc (searchProc);
 
 	Data_recognizeFileType (scriptRecognizer);
@@ -572,29 +551,26 @@ void praat_addMenus (GuiObject bar) {
 	 */
 	if (! theCurrentPraatApplication -> batch) {
 		#ifdef macintosh
-			praatMenu = GuiMenuBar_addMenu (bar ? praatP.topBar : NULL, L"\024", 0); /* Apple icon. */
+			praatMenu = GuiMenu_createInWindow (NULL, L"\024", 0);
 		#else
-			praatMenu = GuiMenuBar_addMenu (bar, L"Praat", 0);
+			praatMenu = GuiMenu_createInWindow (window, L"Praat", 0);
 		#endif
-		newMenu = GuiMenuBar_addMenu (bar, L"New", 0);
-		readMenu = GuiMenuBar_addMenu (bar, L"Open", 0);
-		praat_actions_createWriteMenu (bar);
+		newMenu = GuiMenu_createInWindow (window, L"New", 0);
+		readMenu = GuiMenu_createInWindow (window, L"Open", 0);
+		praat_actions_createWriteMenu (window);
 		#ifdef macintosh
-			applicationHelpMenu = GuiMenuBar_addMenu (bar ? praatP.topBar : NULL, L"Help", 0);
+			applicationHelpMenu = GuiMenu_createInWindow (NULL, L"Help", 0);
 		#endif
-		helpMenu = GuiMenuBar_addMenu (bar, L"Help", 0);
+		helpMenu = GuiMenu_createInWindow (window, L"Help", 0);
 	}
-
+	
 	MelderString_append (& itemTitle_about, L"About ", Melder_peekUtf8ToWcs (praatP.title), L"...");
 	#ifdef macintosh
 		praat_addMenuCommand (L"Objects", L"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
 	#endif
 	#ifdef UNIX
 		praat_addMenuCommand (L"Objects", L"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
-		praat_addMenuCommand (L"Objects", L"Praat", L"-- script --", 0, 0, 0);
 	#endif
-	praat_addMenuCommand (L"Objects", L"Praat", L"Debug...", 0, praat_HIDDEN, DO_praat_debug);
-	praat_addMenuCommand (L"Objects", L"Praat", L"Statistics...", 0, 0, DO_Memory_info);
 	praat_addMenuCommand (L"Objects", L"Praat", L"-- script --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Praat", L"Run script...", 0, praat_HIDDEN, DO_praat_runScript);
 	praat_addMenuCommand (L"Objects", L"Praat", L"New Praat script", 0, 0, DO_praat_newScript);
@@ -606,26 +582,26 @@ void praat_addMenus (GuiObject bar) {
 	praat_addMenuCommand (L"Objects", L"Praat", L"Add action command...", 0, praat_HIDDEN, DO_praat_addAction);
 	praat_addMenuCommand (L"Objects", L"Praat", L"Hide action command...", 0, praat_HIDDEN, DO_praat_hideAction);
 	praat_addMenuCommand (L"Objects", L"Praat", L"Show action command...", 0, praat_HIDDEN, DO_praat_showAction);
-	button = praat_addMenuCommand (L"Objects", L"Praat", L"Goodies", 0, praat_UNHIDABLE, 0);
 
-	#if gtk
-		if (button) goodiesMenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (button));
-	#elif motif
-		if (button) XtVaGetValues (button, XmNsubMenuId, & goodiesMenu, NULL);
-	#endif
+	GuiMenuItem menuItem = praat_addMenuCommand (L"Objects", L"Praat", L"Goodies", 0, praat_UNHIDABLE, 0);
+	goodiesMenu = menuItem -> d_menu;
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Calculator...", 0, 'U', DO_praat_calculator);
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Report difference of two proportions...", 0, 0, DO_praat_reportDifferenceOfTwoProportions);
-	praat_addMenuCommand (L"Objects", L"Goodies", L"List readable types of objects...", 0, 0, DO_praat_listReadableTypesOfObjects);
-	button = praat_addMenuCommand (L"Objects", L"Praat", L"Preferences", 0, praat_UNHIDABLE, 0);
-	#if gtk
-		if (button) preferencesMenu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (button));
-	#elif motif
-		if (button) XtVaGetValues (button, XmNsubMenuId, & preferencesMenu, NULL);
-	#endif
+
+	menuItem = praat_addMenuCommand (L"Objects", L"Praat", L"Preferences", 0, praat_UNHIDABLE, 0);
+	preferencesMenu = menuItem -> d_menu;
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Buttons...", 0, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */
 	praat_addMenuCommand (L"Objects", L"Preferences", L"-- encoding prefs --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text writing preferences...", 0, 0, DO_TextOutputEncodingSettings);
+
+	menuItem = praat_addMenuCommand (L"Objects", L"Praat", L"Technical", 0, praat_UNHIDABLE, 0);
+	technicalMenu = menuItem -> d_menu;
+	praat_addMenuCommand (L"Objects", L"Technical", L"List readable types of objects", 0, 0, DO_praat_listReadableTypesOfObjects);
+	praat_addMenuCommand (L"Objects", L"Technical", L"Report memory use", 0, 0, DO_praat_reportMemoryUse);
+	praat_addMenuCommand (L"Objects", L"Technical", L"Report integer properties", 0, 0, DO_praat_reportIntegerProperties);
+	praat_addMenuCommand (L"Objects", L"Technical", L"Report graphical properties", 0, 0, DO_praat_reportGraphicalProperties);
+	praat_addMenuCommand (L"Objects", L"Technical", L"Debug...", 0, 0, DO_praat_debug);
 
 	praat_addMenuCommand (L"Objects", L"Open", L"Read from file...", 0, praat_ATTRACTIVE + 'O', DO_Data_readFromFile);
 

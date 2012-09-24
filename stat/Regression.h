@@ -26,8 +26,8 @@ oo_CLASS_CREATE (RegressionParameter, Data);
 oo_CLASS_CREATE (Regression, Data);
 
 void Regression_init (I);
-void Regression_addParameter (I, const wchar *label, double minimum, double maximum, double value);
-long Regression_getFactorIndexFromFactorName_e (I, const wchar *factorName);
+void Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value);
+long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName);
 
 Thing_define (LinearRegression, Regression) {
 };

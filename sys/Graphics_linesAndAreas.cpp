@@ -601,6 +601,7 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 			}
 		}
 		cairo_restore (d_cairoGraphicsContext);
+	#elif cocoa
 	#elif win
 		RECT rect;
 		rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
@@ -616,7 +617,7 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 		RGBColor rgb;
 		width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0 || height <= 0) return;
-		if (d_drawingArea) GuiMac_clipOn (d_drawingArea);
+		if (d_drawingArea) GuiMac_clipOn (d_drawingArea -> d_widget);
 		SetPort (d_macPort);
 		/* Dark grey. */
 		rgb. red = rgb. green = rgb. blue = (int) (unsigned int) (0.1 * 65535.0); RGBForeColor (& rgb);

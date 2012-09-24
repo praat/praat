@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,9 @@ static void logo (Graphics g) {
 }
 
 int main (int argc, char *argv []) {
+	#if cocoa
+		Melder_setTracing (true);
+	#endif
 	praat_setLogo (130, 80, logo);
 	praat_init ("Praat", argc, argv);
 	INCLUDE_LIBRARY (praat_uvafon_init)

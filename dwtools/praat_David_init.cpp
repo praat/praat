@@ -237,7 +237,7 @@ DIRECT (Categories_edit)
 	} else {
 		LOOP {
 			iam (Categories);
-			praat_installEditor (CategoriesEditor_create (theCurrentPraatApplication -> topShell,
+			praat_installEditor (CategoriesEditor_create (
 				my name, me), IOBJECT);
 		}
 	}
@@ -5763,18 +5763,6 @@ DIRECT (Strings_to_Categories)
 	}
 END
 
-FORM (Strings_setString, L"Strings: Set string", L"Strings: Set string...")
-	NATURAL (L"Index", L"1")
-	SENTENCE (L"String", L"")
-	OK
-DO
-	LOOP {
-		iam (Strings);
-		Strings_setString (me, GET_STRING (L"String"), GET_INTEGER (L"Index"));
-		praat_dataChanged (me);
-	}
-END
-
 FORM (Strings_change, L"Strings: Change", L"Strings: Change")
 	SENTENCE (L"Search", L"a")
 	SENTENCE (L"Replace", L"a")
@@ -6496,7 +6484,7 @@ DIRECT (VowelEditor_create)
 	if (theCurrentPraatApplication -> batch) {
 		Melder_throw ("Cannot edit from batch.");
 	}
-	autoVowelEditor vowelEditor = VowelEditor_create (theCurrentPraatApplication -> topShell, L"VowelEditor", NULL);
+	autoVowelEditor vowelEditor = VowelEditor_create (L"VowelEditor", NULL);
 	vowelEditor.transfer(); // user becomes the owner
 END
 
@@ -6710,7 +6698,7 @@ void praat_uvafon_David_init () {
 
 	espeakdata_praat_init ();
 
-	praat_addMenuCommand (L"Objects", L"Goodies", L"Report floating point properties", 0, 0, DO_Praat_ReportFloatingPointProperties);
+	praat_addMenuCommand (L"Objects", L"Technical", L"Report floating point properties", L"Report integer properties", 0, DO_Praat_ReportFloatingPointProperties);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Strings from espeak voices", L"Create Strings as directory list...", 1 + praat_HIDDEN, DO_Strings_createFromEspeakVoices);
 	praat_addMenuCommand (L"Objects", L"New", L"Create iris data set", L"Create TableOfReal...", 1, DO_New_CreateIrisDataset);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
@@ -7308,8 +7296,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classStrings, 0, L"To Categories", 0, 0, DO_Strings_to_Categories);
 	praat_addAction1 (classStrings, 0, L"Append", 0, 0, DO_Strings_append);
-	praat_addAction1 (classStrings, 1, L"Set string...", L"Genericize", 0, DO_Strings_setString);
-	praat_addAction1 (classStrings, 0, L"Change...", L"Set string...", 0, DO_Strings_change);
+	praat_addAction1 (classStrings, 0, L"Change...", 0, praat_HIDDEN, DO_Strings_change);
 	praat_addAction1 (classStrings, 0, L"Extract part...", L"Change...", 0, DO_Strings_extractPart);
 	praat_addAction1 (classStrings, 0, L"To Permutation...", L"To Distributions", 0, DO_Strings_to_Permutation);
 	praat_addAction1 (classStrings, 2, L"To EditDistanceTable", L"To Distributions", 0, DO_Strings_to_EditDistanceTable);

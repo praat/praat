@@ -1,6 +1,6 @@
 /* InfoEditor.cpp
  *
- * Copyright (C) 2004-2011 Paul Boersma
+ * Copyright (C) 2004-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,16 +32,16 @@ void structInfoEditor :: v_clear () {
 	Melder_clearInfo ();
 }
 
-void gui_information (const wchar *message);   // BUG
-void gui_information (const wchar *message) {
+void gui_information (const wchar_t *message);   // BUG
+void gui_information (const wchar_t *message) {
 	if (! theInfoEditor) {
 		theInfoEditor = Thing_new (InfoEditor);
-		theInfoEditor -> structTextEditor :: init ((GuiObject) Melder_topShell, L"");
+		theInfoEditor -> structTextEditor :: init (L"");
 		Thing_setName (theInfoEditor, L"Praat Info");
 	}
-	GuiText_setString (theInfoEditor -> textWidget, message);
-	GuiObject_show (theInfoEditor -> d_windowForm);
-	GuiWindow_drain (theInfoEditor -> d_windowShell);
+	theInfoEditor -> textWidget -> f_setString (message);
+	theInfoEditor -> d_windowForm -> f_show ();
+	theInfoEditor -> d_windowForm -> f_drain ();
 }
 
 /* End of file InfoEditor.cpp */

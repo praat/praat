@@ -52,28 +52,40 @@ const wchar_t * Melder_integer (long value) {
 	return buffers [ibuffer];
 }
 
-const wchar_t * Melder_bigInteger (double value) {
+const wchar_t * Melder_bigInteger (long long value) {
 	wchar_t *text;
-	int trillions, billions, millions, thousands, units, firstDigitPrinted = FALSE;
-	if (fabs (value) > 1e15) return Melder_double (value);
+	int quintillions, quadrillions, trillions, billions, millions, thousands, units;
+	bool firstDigitPrinted = false;
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	text = buffers [ibuffer];
 	text [0] = L'\0';
-	if (value < 0.0) {
+	if (value < 0) {
 		swprintf (text, MAXIMUM_NUMERIC_STRING_LENGTH, L"-");
 		value = - value;
 	}
-	trillions = floor (value / 1e12);
-	value -= trillions * 1e12;
-	billions = floor (value / 1e9);
-	value -= billions * 1e9;
-	millions = floor (value / 1e6);
-	value -= millions * 1e6;
-	thousands = floor (value / 1e3);
-	value -= thousands * 1e3;
+	quintillions =  value / 1000000000000000000LL;
+	value -= quintillions * 1000000000000000000LL;
+	quadrillions =  value / 1000000000000000LL;
+	value -= quadrillions * 1000000000000000LL;
+	trillions =     value / 1000000000000LL;
+	value -=    trillions * 1000000000000LL;
+	billions =      value / 1000000000LL;
+	value -=     billions * 1000000000LL;
+	millions =      value / 1000000LL;
+	value -=     millions * 1000000LL;
+	thousands =     value / 1000LL;
+	value -=    thousands * 1000LL;
 	units = value;
-	if (trillions) {
-		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, L"%d,", trillions);
+	if (quintillions) {
+		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", quintillions);
+		firstDigitPrinted = TRUE;
+	}
+	if (quadrillions || firstDigitPrinted) {
+		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", quadrillions);
+		firstDigitPrinted = TRUE;
+	}
+	if (trillions || firstDigitPrinted) {
+		swprintf (text + wcslen (text), MAXIMUM_NUMERIC_STRING_LENGTH, firstDigitPrinted ? L"%03d," : L"%d,", trillions);
 		firstDigitPrinted = TRUE;
 	}
 	if (billions || firstDigitPrinted) {
@@ -96,7 +108,7 @@ const wchar_t * Melder_boolean (bool value) {
 	return value ? L"yes" : L"no";
 }
 
-const wchar * Melder_double (double value) {
+const wchar_t * Melder_double (double value) {
 	if (value == NUMundefined) return L"--undefined--";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	#if defined (macintosh)

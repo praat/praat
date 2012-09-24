@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 #include "machine.h"
 #include "Formula.h"
 
+#include "GuiP.h"
+
 static bool praat_mouseSelectsInnerViewport;
 
 void praat_picture_prefs (void) {
@@ -39,17 +41,14 @@ static Picture praat_picture;
 
 /***** "Font" MENU: font part *****/
 
-#if 0
-static GuiObject praatButton_times, praatButton_helvetica, praatButton_palatino, praatButton_courier;
-#endif
-static GuiObject praatButton_fonts [1 + kGraphics_font_MAX];
+static GuiMenuItem praatButton_fonts [1 + kGraphics_font_MAX];
 
 static void updateFontMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		if (theCurrentPraatPicture -> font < kGraphics_font_MIN) theCurrentPraatPicture -> font = kGraphics_font_MIN;
 		if (theCurrentPraatPicture -> font > kGraphics_font_MAX) theCurrentPraatPicture -> font = kGraphics_font_MAX;   // we no longer have New Century Schoolbook
 		for (int i = kGraphics_font_MIN; i <= kGraphics_font_MAX; i ++) {
-			GuiMenuItem_check (praatButton_fonts [i], theCurrentPraatPicture -> font == i);
+			praatButton_fonts [i] -> f_check (theCurrentPraatPicture -> font == i);
 		}
 	}
 }
@@ -70,14 +69,14 @@ DIRECT (Courier) setFont (kGraphics_font_COURIER); END
 
 /***** "Font" MENU: size part *****/
 
-static GuiObject praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
+static GuiMenuItem praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
-		GuiMenuItem_check (praatButton_10, theCurrentPraatPicture -> fontSize == 10);
-		GuiMenuItem_check (praatButton_12, theCurrentPraatPicture -> fontSize == 12);
-		GuiMenuItem_check (praatButton_14, theCurrentPraatPicture -> fontSize == 14);
-		GuiMenuItem_check (praatButton_18, theCurrentPraatPicture -> fontSize == 18);
-		GuiMenuItem_check (praatButton_24, theCurrentPraatPicture -> fontSize == 24);
+		praatButton_10 -> f_check (theCurrentPraatPicture -> fontSize == 10);
+		praatButton_12 -> f_check (theCurrentPraatPicture -> fontSize == 12);
+		praatButton_14 -> f_check (theCurrentPraatPicture -> fontSize == 14);
+		praatButton_18 -> f_check (theCurrentPraatPicture -> fontSize == 18);
+		praatButton_24 -> f_check (theCurrentPraatPicture -> fontSize == 24);
 	}
 }
 static void setFontSize (int fontSize) {
@@ -130,11 +129,11 @@ END
 
 /***** "Select" MENU *****/
 
-static GuiObject praatButton_innerViewport, praatButton_outerViewport;
+static GuiMenuItem praatButton_innerViewport, praatButton_outerViewport;
 static void updateViewportMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
-		GuiMenuItem_check (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0);
-		GuiMenuItem_check (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1);
+		praatButton_innerViewport -> f_check (praat_mouseSelectsInnerViewport ? 1 : 0);
+		praatButton_outerViewport -> f_check (praat_mouseSelectsInnerViewport ? 0 : 1);
 	}
 }
 
@@ -205,7 +204,7 @@ DO
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
-		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
@@ -251,7 +250,7 @@ DO
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
-		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, False);
+		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
@@ -295,8 +294,8 @@ END
 
 /***** "Pen" MENU *****/
 
-static GuiObject praatButton_lines [3];
-static GuiObject praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
+static GuiMenuItem praatButton_lines [3];
+static GuiMenuItem praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime, praatButton_navy,
 	praatButton_teal, praatButton_purple, praatButton_olive, praatButton_pink, praatButton_silver, praatButton_grey;
 
@@ -304,25 +303,25 @@ static GuiObject praatButton_black, praatButton_white, praatButton_red, praatBut
 static void updatePenMenu (void) {
 	if (! theCurrentPraatApplication -> batch) {
 		for (int i = Graphics_DRAWN; i <= Graphics_DASHED; i ++) {
-			GuiMenuItem_check (praatButton_lines [i], theCurrentPraatPicture -> lineType == i);
+			praatButton_lines [i] -> f_check (theCurrentPraatPicture -> lineType == i);
 		}
-		GuiMenuItem_check (praatButton_black, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK));
-		GuiMenuItem_check (praatButton_white, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE));
-		GuiMenuItem_check (praatButton_red, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED));
-		GuiMenuItem_check (praatButton_green, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN));
-		GuiMenuItem_check (praatButton_blue, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE));
-		GuiMenuItem_check (praatButton_yellow, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW));
-		GuiMenuItem_check (praatButton_cyan, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN));
-		GuiMenuItem_check (praatButton_magenta, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA));
-		GuiMenuItem_check (praatButton_maroon, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON));
-		GuiMenuItem_check (praatButton_lime, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME));
-		GuiMenuItem_check (praatButton_navy, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY));
-		GuiMenuItem_check (praatButton_teal, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL));
-		GuiMenuItem_check (praatButton_purple, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE));
-		GuiMenuItem_check (praatButton_olive, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE));
-		GuiMenuItem_check (praatButton_pink, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK));
-		GuiMenuItem_check (praatButton_silver, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER));
-		GuiMenuItem_check (praatButton_grey, Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY));
+		praatButton_black   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLACK));
+		praatButton_white   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_WHITE));
+		praatButton_red     -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_RED));
+		praatButton_green   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREEN));
+		praatButton_blue    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_BLUE));
+		praatButton_yellow  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_YELLOW));
+		praatButton_cyan    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_CYAN));
+		praatButton_magenta -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAGENTA));
+		praatButton_maroon  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_MAROON));
+		praatButton_lime    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_LIME));
+		praatButton_navy    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_NAVY));
+		praatButton_teal    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_TEAL));
+		praatButton_purple  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PURPLE));
+		praatButton_olive   -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_OLIVE));
+		praatButton_pink    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_PINK));
+		praatButton_silver  -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_SILVER));
+		praatButton_grey    -> f_check (Graphics_Colour_equal (theCurrentPraatPicture -> colour, Graphics_GREY));
 	}
 }
 static void setLineType (int lineType) {
@@ -684,7 +683,7 @@ DO
 	double x1WC, x2WC, y1WC, y2WC;
 	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
 	long n = GET_INTEGER (L"Number of horizontal steps");
-	wchar *formula = GET_STRING (L"formula");
+	wchar_t *formula = GET_STRING (L"formula");
 	if (n < 2) return;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
 	if (fromX == toX) fromX = x1WC, toX = x2WC;
@@ -1288,44 +1287,44 @@ DIRECT (AboutTextStyles) Melder_help (L"Text styles"); END
 DIRECT (PhoneticSymbols) Melder_help (L"Phonetic symbols"); END
 DIRECT (Picture_settings_report)
 	MelderInfo_open ();
-	MelderInfo_writeLine3 (L"Outer viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC), L" inches");
-	MelderInfo_writeLine3 (L"Outer viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC), L" inches");
-	MelderInfo_writeLine3 (L"Outer viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC), L" inches");
-	MelderInfo_writeLine3 (L"Outer viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC), L" inches");
-	MelderInfo_writeLine3 (L"Font size: ", Melder_double (theCurrentPraatPicture -> fontSize), L" points");
+	MelderInfo_writeLine (L"Outer viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC), L" inches");
+	MelderInfo_writeLine (L"Outer viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC), L" inches");
+	MelderInfo_writeLine (L"Outer viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC), L" inches");
+	MelderInfo_writeLine (L"Outer viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC), L" inches");
+	MelderInfo_writeLine (L"Font size: ", Melder_double (theCurrentPraatPicture -> fontSize), L" points");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
 	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-	MelderInfo_writeLine3 (L"Inner viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC + xmargin), L" inches");
-	MelderInfo_writeLine3 (L"Inner viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC - xmargin), L" inches");
-	MelderInfo_writeLine3 (L"Inner viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC + ymargin), L" inches");
-	MelderInfo_writeLine3 (L"Inner viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC - ymargin), L" inches");
-	MelderInfo_writeLine2 (L"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
-	MelderInfo_writeLine2 (L"Line type: ",
+	MelderInfo_writeLine (L"Inner viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC + xmargin), L" inches");
+	MelderInfo_writeLine (L"Inner viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC - xmargin), L" inches");
+	MelderInfo_writeLine (L"Inner viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC + ymargin), L" inches");
+	MelderInfo_writeLine (L"Inner viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC - ymargin), L" inches");
+	MelderInfo_writeLine (L"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
+	MelderInfo_writeLine (L"Line type: ",
 		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? L"Solid" :
 		theCurrentPraatPicture -> lineType == Graphics_DOTTED ? L"Dotted" :
 		theCurrentPraatPicture -> lineType == Graphics_DASHED ? L"Dashed" :
 		theCurrentPraatPicture -> lineType == Graphics_DASHED_DOTTED ? L"Dashed-dotted" :
 		L"(unknown)");
-	MelderInfo_writeLine2 (L"Line width: ", Melder_double (theCurrentPraatPicture -> lineWidth));
-	MelderInfo_writeLine2 (L"Arrow size: ", Melder_double (theCurrentPraatPicture -> arrowSize));
-	MelderInfo_writeLine2 (L"Colour: ", Graphics_Colour_name (theCurrentPraatPicture -> colour));
-	MelderInfo_writeLine2 (L"Red: ", Melder_double (theCurrentPraatPicture -> colour. red));
-	MelderInfo_writeLine2 (L"Green: ", Melder_double (theCurrentPraatPicture -> colour. green));
-	MelderInfo_writeLine2 (L"Blue: ", Melder_double (theCurrentPraatPicture -> colour. blue));
+	MelderInfo_writeLine (L"Line width: ", Melder_double (theCurrentPraatPicture -> lineWidth));
+	MelderInfo_writeLine (L"Arrow size: ", Melder_double (theCurrentPraatPicture -> arrowSize));
+	MelderInfo_writeLine (L"Colour: ", Graphics_Colour_name (theCurrentPraatPicture -> colour));
+	MelderInfo_writeLine (L"Red: ", Melder_double (theCurrentPraatPicture -> colour. red));
+	MelderInfo_writeLine (L"Green: ", Melder_double (theCurrentPraatPicture -> colour. green));
+	MelderInfo_writeLine (L"Blue: ", Melder_double (theCurrentPraatPicture -> colour. blue));
 	double x1WC, x2WC, y1WC, y2WC;
 	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-	MelderInfo_writeLine2 (L"Axis left: ", Melder_double (x1WC));
-	MelderInfo_writeLine2 (L"Axis right: ", Melder_double (x2WC));
-	MelderInfo_writeLine2 (L"Axis bottom: ", Melder_double (y1WC));
-	MelderInfo_writeLine2 (L"Axis top: ", Melder_double (y2WC));
+	MelderInfo_writeLine (L"Axis left: ", Melder_double (x1WC));
+	MelderInfo_writeLine (L"Axis right: ", Melder_double (x2WC));
+	MelderInfo_writeLine (L"Axis bottom: ", Melder_double (y1WC));
+	MelderInfo_writeLine (L"Axis top: ", Melder_double (y2WC));
 	MelderInfo_close ();
 END
 
 
 /**********   **********/
 
-static void cb_selectionChanged (Picture p, XtPointer closure,
+static void cb_selectionChanged (Picture p, void *closure,
 	double selx1, double selx2, double sely1, double sely2)
 	/* The user selected a new viewport in the picture window. */
 {
@@ -1362,9 +1361,11 @@ static void cb_selectionChanged (Picture p, XtPointer closure,
 
 /***** Public functions. *****/
 
-static GuiObject shell, fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
+static GuiWindow dialog;
 
-GuiObject praat_picture_resolveMenu (const wchar_t *menu) {
+static GuiMenu fileMenu, editMenu, marginsMenu, worldMenu, selectMenu, fontMenu, penMenu, helpMenu;
+
+GuiMenu praat_picture_resolveMenu (const wchar_t *menu) {
 	return
 		wcsequ (menu, L"File") ? fileMenu :
 		wcsequ (menu, L"Edit") ? editMenu :
@@ -1385,10 +1386,10 @@ void praat_picture_open (void) {
 	Graphics_markGroup (GRAPHICS);   // we start a group of graphics output here
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if gtk
-			gtk_window_present (GTK_WINDOW (shell));
+			gtk_window_present (GTK_WINDOW (dialog -> d_gtkWindow));
 		#elif motif
-			XtMapWidget (shell);
-			XMapRaised (XtDisplay (shell), XtWindow (shell));
+			XtMapWidget (dialog -> d_xmShell);
+			XMapRaised (XtDisplay (dialog -> d_xmShell), XtWindow (dialog -> d_xmShell));
 		#endif
 		Picture_unhighlight (praat_picture);
 	}
@@ -1420,7 +1421,7 @@ void praat_picture_close (void) {
 			// TODO: Tijdelijke fix; dit exposed de selectie, maar voor bijvoorbeeld 'text' die buiten
 			// de selectie valt is dit geen optie. Het mooiste zou zijn als na praat_picture_close
 			// bekend zou zijn wat de 'dirty' regio is van het scherm. Om vervolgens alleen dat te exposen
-			Picture_selfExpose (praat_picture);
+			//Picture_selfExpose (praat_picture);
 		#endif
 	}
 }
@@ -1436,7 +1437,8 @@ void praat_picture_editor_close (void) {
 }
 
 void praat_picture_init (void) {
-	GuiObject dialog, scrollWindow, menuBar, drawingArea = NULL;
+	GuiScrolledWindow scrollWindow;
+	GuiDrawingArea drawingArea = NULL;
 	int margin, width, height, resolution, x, y;
 	static MelderString itemTitle_search = { 0 };
 	theCurrentPraatPicture -> lineType = Graphics_DRAWN;
@@ -1453,7 +1455,7 @@ void praat_picture_init (void) {
 		// Ook al eerder gezien... Migreren naar UI?
 		double screenX, screenY, screenWidth, screenHeight;
 		Gui_getWindowPositioningBounds (& screenX, & screenY, & screenWidth, & screenHeight);
-		resolution = Gui_getResolution (theCurrentPraatApplication -> topShell);
+		resolution = Gui_getResolution (NULL);
 		#if defined (macintosh)
 			margin = 2, width = 6 * resolution + 20;
 			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
@@ -1473,24 +1475,18 @@ void praat_picture_init (void) {
 			width += margin * 2;
 		#endif
 		sprintf (pictureWindowTitle, "%s Picture", praatP.title);
-		dialog = GuiWindow_create (theCurrentPraatApplication -> topShell, x, y, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
-		shell = GuiObject_parent (dialog);
-		#ifdef UNIX
-			#if motif
-			XtVaSetValues (dialog, XmNhighlightThickness, 1, NULL);
-			#endif
-		#endif
-		menuBar = Gui_addMenuBar (dialog);
+		dialog = GuiWindow_create (x, y, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
+		dialog -> f_addMenuBar ();
 	}
 	if (! theCurrentPraatApplication -> batch) {
-		fileMenu = GuiMenuBar_addMenu (menuBar, L"File", 0);
-		editMenu = GuiMenuBar_addMenu (menuBar, L"Edit", 0);
-		marginsMenu = GuiMenuBar_addMenu (menuBar, L"Margins", 0);
-		worldMenu = GuiMenuBar_addMenu (menuBar, L"World", 0);
-		selectMenu = GuiMenuBar_addMenu (menuBar, L"Select", 0);
-		penMenu = GuiMenuBar_addMenu (menuBar, L"Pen", 0);
-		fontMenu = GuiMenuBar_addMenu (menuBar, L"Font", 0);
-		helpMenu = GuiMenuBar_addMenu (menuBar, L"Help", 0);
+		fileMenu =    GuiMenu_createInWindow (dialog, L"File", 0);
+		editMenu =    GuiMenu_createInWindow (dialog, L"Edit", 0);
+		marginsMenu = GuiMenu_createInWindow (dialog, L"Margins", 0);
+		worldMenu =   GuiMenu_createInWindow (dialog, L"World", 0);
+		selectMenu =  GuiMenu_createInWindow (dialog, L"Select", 0);
+		penMenu =     GuiMenu_createInWindow (dialog, L"Pen", 0);
+		fontMenu =    GuiMenu_createInWindow (dialog, L"Font", 0);
+		helpMenu =    GuiMenu_createInWindow (dialog, L"Help", 0);
 	}
 
 	praat_addMenuCommand (L"Picture", L"File", L"Picture info", 0, 0, DO_Picture_settings_report);
@@ -1671,39 +1667,9 @@ void praat_picture_init (void) {
 
 	if (! theCurrentPraatApplication -> batch) {
 		width = height = resolution * 12;
-		#if gtk
-			// TODO: GuiScrollWindow
-			scrollWindow = gtk_scrolled_window_new (NULL, NULL);
-			gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrollWindow), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-		#elif motif
-			XtManageChild (menuBar);
-			#if defined (macintosh) || defined (_WIN32)
-				scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
-				XtVaSetValues (scrollWindow,
-					XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, margin,
-					XmNrightAttachment, XmATTACH_FORM,
-					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight () + margin,
-					XmNbottomAttachment, XmATTACH_FORM, NULL);
-			#else
-				scrollWindow = XtVaCreateWidget (
-					"scrolledWindow", xmScrolledWindowWidgetClass, dialog,
-					XmNscrollingPolicy, XmAUTOMATIC, XmNrightAttachment, XmATTACH_FORM,
-					XmNbottomAttachment, XmATTACH_FORM, XmNleftAttachment, XmATTACH_FORM,
-					XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (), NULL);
-			#endif
-		#endif
-		#if gtk
-			drawingArea = GuiDrawingArea_create (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-			gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (scrollWindow), GTK_WIDGET (drawingArea));
-			gtk_container_add (GTK_CONTAINER (dialog), GTK_WIDGET (scrollWindow));
-
-			GuiObject_show (menuBar);
-			GuiObject_show (drawingArea);
-		#elif motif
-			drawingArea = GuiDrawingArea_createShown (scrollWindow, 0, width, 0, height, NULL, NULL, NULL, NULL, NULL, 0);
-		#endif
-		GuiObject_show (scrollWindow);
-		GuiObject_show (dialog);
+		scrollWindow = GuiScrolledWindow_createShown (dialog, margin, 0, Machine_getMenuBarHeight () + margin, 0, 1, 1, 0);
+		drawingArea = GuiDrawingArea_createShown (scrollWindow, width, height, NULL, NULL, NULL, NULL, NULL, 0);
+		dialog -> f_show ();
 	}
 
 	// TODO: Paul: deze moet VOOR de update functies anders krijgen die void_me 0x0
@@ -1736,4 +1702,4 @@ void praat_picture_foreground (void) {
 	Picture_foreground (praat_picture);*/
 }
 
-/* End of file praat_picture.c */
+/* End of file praat_picture.cpp */

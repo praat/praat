@@ -584,7 +584,7 @@ void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
 { cellArrayOrImage (me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
 
-static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar *relativeFileName, double x1, double x2, double y1, double y2) {
+static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
 	#if win
@@ -647,7 +647,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar *relat
 	#endif
 }
 
-void Graphics_imageFromFile (Graphics me, const wchar *relativeFileName, double x1, double x2, double y1, double y2) {
+void Graphics_imageFromFile (Graphics me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
 	if (my screen) {
 		_GraphicsScreen_imageFromFile (static_cast <GraphicsScreen> (me), relativeFileName, x1, x2, y1, y2);
 	}

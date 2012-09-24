@@ -2,7 +2,7 @@
 #define _TextGridEditor_h_
 /* TextGridEditor.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,13 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		bool useTextStyles, shiftDragMultiple, suppressRedraw;
 		int fontSize;
 		enum kGraphics_horizontalAlignment alignment;
-		wchar *findString, greenString [Preferences_STRING_BUFFER_SIZE];
+		wchar_t *findString, greenString [Preferences_STRING_BUFFER_SIZE];
 		enum kTextGridEditor_showNumberOf showNumberOf;
 		enum kMelder_string greenMethod;
-		GuiObject extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
+		GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	// functions:
 	public:
-		void f_init (GuiObject parent, const wchar *title, TextGrid grid,
+		void f_init (const wchar_t *title, TextGrid grid,
 			Sampled sound,   // either a Sound or a LongSound, or null
 			bool ownSound,
 			SpellingChecker spellingChecker);
@@ -72,14 +72,16 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		virtual double v_getBottomOfSoundAndAnalysisArea ();
 		virtual void v_updateMenuItems_file ();
 		virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
+	// overridden preferences:
+		static void f_preferences ();
+		static int s_shellWidth;  virtual int & pref_shellWidth  () { return s_shellWidth;  }
+		static int s_shellHeight; virtual int & pref_shellHeight () { return s_shellHeight; }
 };
 
-TextGridEditor TextGridEditor_create (GuiObject parent, const wchar *title, TextGrid grid,
+TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid,
 	Sampled sound,   // either a Sound or a LongSound, or null
 	bool ownSound,
 	SpellingChecker spellingChecker);
-
-void TextGridEditor_prefs (void);
 
 /* End of file TextGridEditor.h */
 #endif

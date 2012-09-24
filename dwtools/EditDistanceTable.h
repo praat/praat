@@ -59,7 +59,7 @@ void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCosts, do
 double EditCostsTable_getOthersCost (EditCostsTable me, int type);
 double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *symbol);
 void EditCostsTable_setDeletionCosts (EditCostsTable me, wchar_t *sources, double cost);
-double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar *replacement);
+double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar_t *replacement);
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, wchar_t *sources, double cost);
 TableOfReal EditCostsTable_to_TableOfReal (EditCostsTable me);
 

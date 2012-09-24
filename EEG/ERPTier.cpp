@@ -58,7 +58,7 @@ void structERPTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 	//if (d_textgrid != NULL)  d_textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
 }
 
-long structERPTier :: f_getChannelNumber (const wchar *channelName) {
+long structERPTier :: f_getChannelNumber (const wchar_t *channelName) {
 	for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
 		if (Melder_wcsequ (d_channelNames [ichan], channelName)) {
 			return ichan;
@@ -74,7 +74,7 @@ double structERPTier :: f_getMean (long pointNumber, long channelNumber, double 
 	return Vector_getMean (point -> d_erp, tmin, tmax, channelNumber);
 }
 
-double structERPTier :: f_getMean (long pointNumber, const wchar *channelName, double tmin, double tmax) {
+double structERPTier :: f_getMean (long pointNumber, const wchar_t *channelName, double tmin, double tmax) {
 	return f_getMean (pointNumber, f_getChannelNumber (channelName), tmin, tmax);
 }
 
@@ -83,7 +83,7 @@ ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit) {
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), fromTime, toTime);
 		thy d_numberOfChannels = my d_numberOfChannels - my f_getNumberOfExtraSensors ();
-		thy d_channelNames = NUMvector <wchar *> (1, thy d_numberOfChannels);
+		thy d_channelNames = NUMvector <wchar_t *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (my d_channelNames [ichan]);
 		}
@@ -185,7 +185,7 @@ ERP structERPTier :: f_extractERP (long eventNumber) {
 				newChannel [isample] = oldChannel [isample];
 			}
 		}
-		thy d_channelNames = NUMvector <wchar *> (1, thy ny);
+		thy d_channelNames = NUMvector <wchar_t *> (1, thy ny);
 		for (long ichan = 1; ichan <= thy ny; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (d_channelNames [ichan]);
 		}
@@ -222,7 +222,7 @@ ERP structERPTier :: f_toERP_mean () {
 				meanChannel [isample] *= factor;
 			}
 		}
-		mean -> d_channelNames = NUMvector <wchar *> (1, mean -> ny);
+		mean -> d_channelNames = NUMvector <wchar_t *> (1, mean -> ny);
 		for (long ichan = 1; ichan <= mean -> ny; ichan ++) {
 			mean -> d_channelNames [ichan] = Melder_wcsdup (d_channelNames [ichan]);
 		}
@@ -241,7 +241,7 @@ ERPTier structERPTier :: f_extractEventsWhereColumn_number (Table table, long co
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), this -> xmin, this -> xmax);
 		thy d_numberOfChannels = this -> d_numberOfChannels;
-		thy d_channelNames = NUMvector <wchar *> (1, thy d_numberOfChannels);
+		thy d_channelNames = NUMvector <wchar_t *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (this -> d_channelNames [ichan]);
 		}
@@ -263,7 +263,7 @@ ERPTier structERPTier :: f_extractEventsWhereColumn_number (Table table, long co
 	}
 }
 
-ERPTier structERPTier :: f_extractEventsWhereColumn_string (Table table, long columnNumber, int which_Melder_STRING, const wchar *criterion) {
+ERPTier structERPTier :: f_extractEventsWhereColumn_string (Table table, long columnNumber, int which_Melder_STRING, const wchar_t *criterion) {
 	try {
 		Table_checkSpecifiedColumnNumberWithinRange (table, columnNumber);
 		if (d_events -> size != table -> rows -> size)
@@ -271,7 +271,7 @@ ERPTier structERPTier :: f_extractEventsWhereColumn_string (Table table, long co
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), this -> xmin, this -> xmax);
 		thy d_numberOfChannels = this -> d_numberOfChannels;
-		thy d_channelNames = NUMvector <wchar *> (1, thy d_numberOfChannels);
+		thy d_channelNames = NUMvector <wchar_t *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (this -> d_channelNames [ichan]);
 		}

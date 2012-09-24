@@ -294,7 +294,7 @@ class SortedSetOfDouble_vector : public structSortedSetOfDouble {
 Thing_define (SortedSetOfString, SortedSet) {
 	// functions:
 	public:
-		void addString (const wchar *string);
+		void addString (const wchar_t *string);
 	// overridden methods:
 	protected:
 		static int s_compare (Any data1, Any data2);

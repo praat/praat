@@ -2,7 +2,7 @@
 #define _FormantGridEditor_h_
 /* FormantGridEditor.h
  *
- * Copyright (C) 2008-2011 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,9 +47,9 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 		virtual bool v_hasSourceMenu () { return true; }
 };
 
-void FormantGridEditor_init (FormantGridEditor me, GuiObject parent, const wchar *title, FormantGrid data);
+void FormantGridEditor_init (FormantGridEditor me, const wchar_t *title, FormantGrid data);
 
-FormantGridEditor FormantGridEditor_create (GuiObject parent, const wchar *title, FormantGrid data);
+FormantGridEditor FormantGridEditor_create (const wchar_t *title, FormantGrid data);
 
 void FormantGridEditor_prefs (void);
 

@@ -27,11 +27,7 @@ typedef struct { double red, green, blue; } Graphics_Colour;
 
 typedef struct { double x1NDC, x2NDC, y1NDC, y2NDC; } Graphics_Viewport;
 
-#if defined (UNIX) || defined (macintosh) && ! useCarbon
-	typedef void *GuiObject;
-#else
-	Thing_declare (GuiObject);
-#endif
+Thing_declare (GuiDrawingArea);
 
 typedef struct {
 	unsigned char link, rightToLeft;
@@ -57,7 +53,7 @@ Thing_define (Graphics, Thing) {
 			/* A boolean for whether we are a high-resolution metafile or clipboard. */
 		bool yIsZeroAtTheTop;
 			/* A boolean for whether vertical cooordinates increase from top to bottom (as on most screens, but not PostScript). */
-		GuiObject d_drawingArea;
+		GuiDrawingArea d_drawingArea;
 			/* Also used as a boolean. */
 		int resolution;
 			/* Dots per inch. */
@@ -153,7 +149,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 Graphics Graphics_create_postscriptprinter (void);
 Graphics Graphics_create_screenPrinter (void *display, void *window);
 Graphics Graphics_create_screen (void *display, void *window, int resolution);
-Graphics Graphics_create_xmdrawingarea (/* GuiObject */ void *drawingArea);
+Graphics Graphics_create_xmdrawingarea (GuiDrawingArea drawingArea);
 
 int Graphics_getResolution (Graphics me);
 

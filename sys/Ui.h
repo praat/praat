@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ Thing_declare (EditorCommand);
 	if (dia == NULL) {
 		Any radio;
 		dia = UiForm_create
-		  (topShell,   // The parent GuiObject of the dialog window.
+		  (topShell,   // The parent GuiWindow of the dialog window.
 			L"Create a new person",   // The window title.
 			DO_Person_create,   // The routine to call when the user clicks OK.
 			NULL,   // The last argument to the OK routine (also for the other buttons). Could be a ScriptEditor, or an EditorCommand, or an Interpreter, or NULL.
@@ -75,16 +75,21 @@ Thing_define (UiField, Thing) {
 	// new data:
 	public:
 		int type;
-		const wchar *formLabel;
+		const wchar_t *formLabel;
 		double realValue, realDefaultValue;
 		long integerValue, integerDefaultValue;
-		wchar *stringValue; const wchar *stringDefaultValue;
+		wchar_t *stringValue; const wchar_t *stringDefaultValue;
 		Graphics_Colour colourValue;
 		char *stringValueA;
 		Ordered options;
 		long numberOfStrings;
-		const wchar **strings;
-		GuiObject text, toggle, list, cascadeButton;
+		const wchar_t **strings;
+		GuiLabel label;
+		GuiText text;
+		GuiCheckButton checkButton;
+		GuiRadioButton radioButton;
+		GuiList list;
+		GuiOptionMenu optionMenu;
 		int y;
 	// overridden methods:
 		virtual void v_destroy ();
@@ -97,7 +102,8 @@ Thing_define (UiForm, Thing) {
 	// new data:
 	public:
 		EditorCommand command;
-		GuiObject d_dialogParent, d_dialogShell, d_dialogForm;
+		GuiWindow d_dialogParent;
+		GuiDialog d_dialogForm;
 		void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
 		void (*applyCallback) (Any dia, void *closure);
 		void (*cancelCallback) (Any dia, void *closure);
@@ -107,7 +113,7 @@ Thing_define (UiForm, Thing) {
 		const wchar_t *continueTexts [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 		int numberOfFields;
 		UiField field [1 + MAXIMUM_NUMBER_OF_FIELDS];
-		GuiObject okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
+		GuiButton okButton, cancelButton, revertButton, helpButton, applyButton, continueButtons [1 + MAXIMUM_NUMBER_OF_CONTINUE_BUTTONS];
 		bool destroyWhenUnmanaged, isPauseForm;
 		bool (*allowExecutionHook) (void *closure);
 		void *allowExecutionClosure;
@@ -116,45 +122,45 @@ Thing_define (UiForm, Thing) {
 };
 
 /* The following routines work on the screen and from batch. */
-UiForm UiForm_create (GuiObject parent, const wchar *title,
-	void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
-	const wchar *invokingButtonTitle, const wchar *helpTitle);
-Any UiForm_addReal (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addRealOrUndefined (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addPositive (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addInteger (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addNatural (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addWord (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addSentence (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addLabel (I, const wchar *name, const wchar *label);
-Any UiForm_addBoolean (I, const wchar *label, int defaultValue);
-Any UiForm_addText (I, const wchar *name, const wchar *defaultValue);
-Any UiForm_addRadio (I, const wchar *label, int defaultValue);
-	Any UiRadio_addButton (I, const wchar *label);
-Any UiForm_addOptionMenu (I, const wchar *label, int defaultValue);
-	Any UiOptionMenu_addButton (I, const wchar *label);
-Any UiForm_addList (I, const wchar *label, long numberOfStrings, const wchar **strings, long defaultValue);
-Any UiForm_addColour (I, const wchar *label, const wchar *defaultValue);
-Any UiForm_addChannel (I, const wchar *label, const wchar *defaultValue);
+UiForm UiForm_create (GuiWindow parent, const wchar_t *title,
+	void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
+Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addRealOrUndefined (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addPositive (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addInteger (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addNatural (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addWord (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addSentence (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addLabel (I, const wchar_t *name, const wchar_t *label);
+Any UiForm_addBoolean (I, const wchar_t *label, int defaultValue);
+Any UiForm_addText (I, const wchar_t *name, const wchar_t *defaultValue);
+Any UiForm_addRadio (I, const wchar_t *label, int defaultValue);
+	Any UiRadio_addButton (I, const wchar_t *label);
+Any UiForm_addOptionMenu (I, const wchar_t *label, int defaultValue);
+	Any UiOptionMenu_addButton (I, const wchar_t *label);
+Any UiForm_addList (I, const wchar_t *label, long numberOfStrings, const wchar_t **strings, long defaultValue);
+Any UiForm_addColour (I, const wchar_t *label, const wchar_t *defaultValue);
+Any UiForm_addChannel (I, const wchar_t *label, const wchar_t *defaultValue);
 void UiForm_finish (I);
 void UiForm_destroyWhenUnmanaged (I);
 void UiForm_setPauseForm (I,
 	int numberOfContinueButtons, int defaultContinueButton, int cancelContinueButton,
-	const wchar *continue1, const wchar *continue2, const wchar *continue3,
-	const wchar *continue4, const wchar *continue5, const wchar *continue6,
-	const wchar *continue7, const wchar *continue8, const wchar *continue9,
-	const wchar *continue10,
+	const wchar_t *continue1, const wchar_t *continue2, const wchar_t *continue3,
+	const wchar_t *continue4, const wchar_t *continue5, const wchar_t *continue6,
+	const wchar_t *continue7, const wchar_t *continue8, const wchar_t *continue9,
+	const wchar_t *continue10,
 	void (*cancelCallback) (Any dia, void *closure));
 
 /* The following three routines set values in widgets. */
 /* Do not call from batch. */
 /* 'fieldName' is name from UiForm_addXXXXXX (), */
 /* without anything from and including the first " (" or ":". */
-void UiForm_setString (I, const wchar *fieldName, const wchar *text);
+void UiForm_setString (I, const wchar_t *fieldName, const wchar_t *text);
 	/* Real, Positive, Integer, Natural, Word, Sentence, Label, Text, Radio, List. */
-void UiForm_setReal (I, const wchar *fieldName, double value);
+void UiForm_setReal (I, const wchar_t *fieldName, double value);
 	/* Real, Positive. */
-void UiForm_setInteger (I, const wchar *fieldName, long value);
+void UiForm_setInteger (I, const wchar_t *fieldName, long value);
 	/* Integer, Natural, Boolean, Radio, List. */
 
 void UiForm_do (I, bool modified);
@@ -190,30 +196,30 @@ void UiForm_do (I, bool modified);
 /* The field names are the 'label' or 'name' arguments to UiForm_addXXXXXX (), */
 /* without anything from parentheses or from a colon. */
 /* These routines work from the screen and from batch. */
-double UiForm_getReal (I, const wchar *fieldName);	// Real, Positive
-long UiForm_getInteger (I, const wchar *fieldName);	// Integer, Natural, Boolean, Radio, List
-wchar * UiForm_getString (I, const wchar *fieldName);	// Word, Sentence, Text, Radio, List
-Graphics_Colour UiForm_getColour (I, const wchar *fieldName);   // Colour
-MelderFile UiForm_getFile (I, const wchar *fieldName); // FileIn, FileOut
+double UiForm_getReal (I, const wchar_t *fieldName);	// Real, Positive
+long UiForm_getInteger (I, const wchar_t *fieldName);	// Integer, Natural, Boolean, Radio, List
+wchar_t * UiForm_getString (I, const wchar_t *fieldName);	// Word, Sentence, Text, Radio, List
+Graphics_Colour UiForm_getColour (I, const wchar_t *fieldName);   // Colour
+MelderFile UiForm_getFile (I, const wchar_t *fieldName); // FileIn, FileOut
 
-double UiForm_getReal_check (I, const wchar *fieldName);
-long UiForm_getInteger_check (I, const wchar *fieldName);
-wchar * UiForm_getString_check (I, const wchar *fieldName);
-Graphics_Colour UiForm_getColour_check (I, const wchar *fieldName);
+double UiForm_getReal_check (I, const wchar_t *fieldName);
+long UiForm_getInteger_check (I, const wchar_t *fieldName);
+wchar_t * UiForm_getString_check (I, const wchar_t *fieldName);
+Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName);
 
-void UiForm_parseString (I, const wchar *arguments, Interpreter interpreter);
+void UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter);
 
-UiForm UiInfile_create (GuiObject parent, const wchar *title,
-  void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure), void *okClosure,
-  const wchar *invokingButtonTitle, const wchar *helpTitle, bool allowMultipleFiles);
+UiForm UiInfile_create (GuiWindow parent, const wchar_t *title,
+  void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles);
 
-UiForm UiOutfile_create (GuiObject parent, const wchar_t *title,
-  void (*okCallback) (UiForm sendingForm, const wchar *sendingString, Interpreter interpreter, const wchar *invokingButtonTitle, bool modified, void *closure), void *okClosure,
-  const wchar *invokingButtonTitle, const wchar *helpTitle);
+UiForm UiOutfile_create (GuiWindow parent, const wchar_t *title,
+  void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 
 void UiInfile_do (Any dia);
 
-void UiOutfile_do (Any dia, const wchar *defaultName);
+void UiOutfile_do (Any dia, const wchar_t *defaultName);
 
 MelderFile UiFile_getFile (Any dia);
 
@@ -229,7 +235,7 @@ void UiFile_hide (void);
 */
 
 void UiHistory_write (const wchar_t *string);
-wchar *UiHistory_get (void);
+wchar_t *UiHistory_get (void);
 void UiHistory_clear (void);
 
 void Ui_setAllowExecutionHook (bool (*allowExecutionHook) (void *closure), void *allowExecutionClosure);

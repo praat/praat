@@ -237,7 +237,7 @@ wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp) {
 	}
 
 	if (ExecRE (compiled_regexp, NULL, (regularExp_CHAR *) string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
-		charp = (wchar *) compiled_regexp -> startp[0];
+		charp = (wchar_t *) compiled_regexp -> startp[0];
 	}
 
 	free (compiled_regexp);

@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,47 +51,47 @@ void structMovieWindow :: v_draw () {
 	bool showAnalysis = (spectrogram.show || pitch.show || intensity.show || formant.show) && movie -> d_sound;
 	double soundY = h_getSoundBottomPosition ();
 	if (movie -> d_sound) {
-		Graphics_Viewport viewport = Graphics_insetViewport (graphics, 0, 1, soundY, 1.0);
-		Graphics_setColour (graphics, Graphics_WHITE);
-		Graphics_setWindow (graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (graphics, 0, 1, 0, 1);
-		TimeSoundEditor_draw_sound (this, -1.0, 1.0);
-		Graphics_flushWs (graphics);
-		Graphics_resetViewport (graphics, viewport);
+		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics, 0, 1, soundY, 1.0);
+		Graphics_setColour (d_graphics, Graphics_WHITE);
+		Graphics_setWindow (d_graphics, 0, 1, 0, 1);
+		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
+		f_drawSound (-1.0, 1.0);
+		Graphics_flushWs (d_graphics);
+		Graphics_resetViewport (d_graphics, viewport);
 	}
 	if (true) {
-		Graphics_Viewport viewport = Graphics_insetViewport (graphics, 0.0, 1.0, 0.0, 0.3);
-		Graphics_setColour (graphics, Graphics_WHITE);
-		Graphics_setWindow (graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (graphics, 0, 1, 0, 1);
-		Graphics_setColour (graphics, Graphics_BLACK);
-		Graphics_setWindow (graphics, startWindow, endWindow, 0.0, 1.0);
-		long firstFrame = round (Sampled_xToIndex (movie, startWindow));
-		long lastFrame = round (Sampled_xToIndex (movie, endWindow));
+		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics, 0.0, 1.0, 0.0, 0.3);
+		Graphics_setColour (d_graphics, Graphics_WHITE);
+		Graphics_setWindow (d_graphics, 0, 1, 0, 1);
+		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
+		Graphics_setColour (d_graphics, Graphics_BLACK);
+		Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0.0, 1.0);
+		long firstFrame = round (Sampled_xToIndex (movie, d_startWindow));
+		long lastFrame = round (Sampled_xToIndex (movie, d_endWindow));
 		if (firstFrame < 1) firstFrame = 1;
 		if (lastFrame > movie -> nx) lastFrame = movie -> nx;
 		for (long iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 			double time = Sampled_indexToX (movie, iframe);
 			double timeLeft = time - 0.5 * movie -> dx, timeRight = time + 0.5 * movie -> dx;
-			if (timeLeft < startWindow) timeLeft = startWindow;
-			if (timeRight > endWindow) timeRight = endWindow;
-			movie -> f_paintOneImageInside (graphics, iframe, timeLeft, timeRight, 0.0, 1.0);
+			if (timeLeft < d_startWindow) timeLeft = d_startWindow;
+			if (timeRight > d_endWindow) timeRight = d_endWindow;
+			movie -> f_paintOneImageInside (d_graphics, iframe, timeLeft, timeRight, 0.0, 1.0);
 		}
-		Graphics_flushWs (graphics);
-		Graphics_resetViewport (graphics, viewport);
+		Graphics_flushWs (d_graphics);
+		Graphics_resetViewport (d_graphics, viewport);
 	}
 	if (showAnalysis) {
-		Graphics_Viewport viewport = Graphics_insetViewport (graphics, 0.0, 1.0, 0.3, soundY);
+		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics, 0.0, 1.0, 0.3, soundY);
 		v_draw_analysis ();
-		Graphics_flushWs (graphics);
-		Graphics_resetViewport (graphics, viewport);
+		Graphics_flushWs (d_graphics);
+		Graphics_resetViewport (d_graphics, viewport);
 		/* Draw pulses. */
 		if (pulses.show) {
-			viewport = Graphics_insetViewport (graphics, 0.0, 1.0, soundY, 1.0);
+			viewport = Graphics_insetViewport (d_graphics, 0.0, 1.0, soundY, 1.0);
 			v_draw_analysis_pulses ();
-			TimeSoundEditor_draw_sound (this, -1.0, 1.0);   // second time, partially across the pulses
-			Graphics_flushWs (graphics);
-			Graphics_resetViewport (graphics, viewport);
+			f_drawSound (-1.0, 1.0);   // second time, partially across the pulses
+			Graphics_flushWs (d_graphics);
+			Graphics_resetViewport (d_graphics, viewport);
 		}
 	}
 	v_updateMenuItems_file ();
@@ -99,16 +99,16 @@ void structMovieWindow :: v_draw () {
 
 void structMovieWindow :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (spectrogram.show)
-		Graphics_highlight (graphics, left, right, 0.3 * bottom + 0.7 * top, top);
+		Graphics_highlight (d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
 	else
-		Graphics_highlight (graphics, left, right, 0.7 * bottom + 0.3 * top, top);
+		Graphics_highlight (d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
 void structMovieWindow :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (spectrogram.show)
-		Graphics_highlight (graphics, left, right, 0.3 * bottom + 0.7 * top, top);
+		Graphics_highlight (d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
 	else
-		Graphics_highlight (graphics, left, right, 0.7 * bottom + 0.3 * top, top);
+		Graphics_highlight (d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
 int structMovieWindow :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
@@ -117,18 +117,18 @@ int structMovieWindow :: v_click (double xWC, double yWC, bool shiftKeyPressed) 
 
 void structMovieWindow :: v_play (double a_tmin, double a_tmax) {
 	Movie movie = (Movie) data;
-	movie -> f_play (graphics, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+	movie -> f_play (d_graphics, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 }
 
-void structMovieWindow :: f_init (GuiObject parent, const wchar *title, Movie movie) {
+void structMovieWindow :: f_init (const wchar_t *title, Movie movie) {
 	Melder_assert (movie != NULL);
-	TimeSoundAnalysisEditor_init (this, parent, title, movie, movie -> d_sound, false);
+	TimeSoundAnalysisEditor_init (this, title, movie, movie -> d_sound, false);
 }
 
-MovieWindow MovieWindow_create (GuiObject parent, const wchar *title, Movie movie) {
+MovieWindow MovieWindow_create (const wchar_t *title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
-		my f_init (parent, title, movie);
+		my f_init (title, movie);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Movie window not created.");

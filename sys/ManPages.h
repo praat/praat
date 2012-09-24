@@ -26,7 +26,7 @@ Thing_define (ManPages, Data) {
 	// new data:
 	public:
 		Ordered pages;
-		const wchar **titles;
+		const wchar_t **titles;
 		int ground, dynamic, executable;
 		structMelderDir rootDirectory;
 	// overridden methods:
@@ -37,7 +37,7 @@ Thing_define (ManPages, Data) {
 
 ManPages ManPages_create (void);
 
-void ManPages_addPage (ManPages me, const wchar *title, const wchar *author, long date,
+void ManPages_addPage (ManPages me, const wchar_t *title, const wchar_t *author, long date,
 	struct structManPage_Paragraph paragraphs []);
 /*
 	All string and struct arguments must be statically allocated
@@ -47,10 +47,10 @@ void ManPages_addPage (ManPages me, const wchar *title, const wchar *author, lon
 long ManPages_lookUp (ManPages me, const wchar_t *title);
 
 void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file);
-void ManPages_writeAllToHtmlDir (ManPages me, const wchar *dirPath);
+void ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath);
 
 long ManPages_uniqueLinksHither (ManPages me, long ipage);
-const wchar **ManPages_getTitles (ManPages me, long *numberOfTitles);
+const wchar_t **ManPages_getTitles (ManPages me, long *numberOfTitles);
 
 /* End of file ManPages.h */
 #endif

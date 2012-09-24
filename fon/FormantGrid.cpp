@@ -252,7 +252,7 @@ void FormantGrid_playPart (FormantGrid me, double tmin, double tmax, double samp
 	}
 }
 
-void FormantGrid_formula_bandwidths (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee) {
+void FormantGrid_formula_bandwidths (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;
@@ -271,7 +271,7 @@ void FormantGrid_formula_bandwidths (FormantGrid me, const wchar *expression, In
 	}
 }
 
-void FormantGrid_formula_frequencies (FormantGrid me, const wchar *expression, Interpreter interpreter, FormantGrid thee) {
+void FormantGrid_formula_frequencies (FormantGrid me, const wchar_t *expression, Interpreter interpreter, FormantGrid thee) {
 	try {
 		Formula_compile (interpreter, me, expression, kFormula_EXPRESSION_TYPE_NUMERIC, TRUE);
 		if (thee == NULL) thee = me;

@@ -1,4 +1,4 @@
-/* praat_KlattGrid_init.c
+/* praat_KlattGrid_init.cpp
  *
  * Copyright (C) 2009-2011 David Weenink
  *
@@ -209,7 +209,7 @@ DIRECT (KlattGrid_edit##Name##Tier) \
 	if (theCurrentPraatApplication -> batch) { Melder_throw ("Cannot edit a KlattGrid from batch."); } \
 	LOOP {\
 		iam (KlattGrid); \
-		auto##KlattGrid_##name##TierEditor editor = KlattGrid_##name##TierEditor_create (theCurrentPraatApplication -> topShell, ID_AND_FULL_NAME, me); \
+		auto##KlattGrid_##name##TierEditor editor = KlattGrid_##name##TierEditor_create (ID_AND_FULL_NAME, me); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 	}\
 END
@@ -237,7 +237,7 @@ DIRECT (KlattGrid_edit##Name##FormantGrid) \
 	LOOP {\
 		iam (KlattGrid); \
 		const wchar_t *id_and_name = Melder_wcscat (Melder_integer (ID), L". ", formant_names[formantType], L"formant grid"); \
-		autoKlattGrid_formantGridEditor editor = KlattGrid_formantGridEditor_create (theCurrentPraatApplication -> topShell, id_and_name, me, formantType); \
+		autoKlattGrid_formantGridEditor editor = KlattGrid_formantGridEditor_create (id_and_name, me, formantType); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 		Melder_free (id_and_name); \
 	} \
@@ -266,7 +266,7 @@ DO \
 		if (amp == NULL) Melder_throw ("Unknown formant type"); \
 		if (formantNumber > (*amp) -> size) Melder_throw ("Formant number does not exist."); \
 		const wchar_t *id_and_name = Melder_wcscat (Melder_integer (ID), L". ", formant_names[formantType], L"formant amplitude tier"); \
-		autoKlattGrid_decibelTierEditor editor = KlattGrid_decibelTierEditor_create (theCurrentPraatApplication -> topShell, id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
+		autoKlattGrid_decibelTierEditor editor = KlattGrid_decibelTierEditor_create (id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
 		Melder_free (id_and_name); \
 	} \
@@ -1233,4 +1233,4 @@ void praat_KlattGrid_init () {
 }
 
 
-/* End of file praat_KlattGrid_init.c */
+/* End of file praat_KlattGrid_init.cpp */

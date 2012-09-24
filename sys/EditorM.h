@@ -89,7 +89,7 @@
 
 #define DIALOG  cmd -> d_uiform
 
-#define EDITOR_ARGS  Editor void_me, EditorCommand cmd, UiForm sendingForm, const wchar *sendingString, Interpreter interpreter
+#define EDITOR_ARGS  Editor void_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter
 #define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sendingForm; (void) sendingString; (void) interpreter
 #define EDITOR_FORM(title,helpTitle)  if (cmd -> d_uiform == NULL) { Any radio = 0; (void) radio; \
 	cmd -> d_uiform = UiForm_createE (cmd, title, cmd -> itemTitle, helpTitle);
@@ -101,7 +101,7 @@
 #define EDITOR_FORM_WRITE(title,helpTitle) \
 	if (cmd -> d_uiform == NULL) { \
 		cmd -> d_uiform = UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle); \
-		} if (sendingForm == NULL && sendingString == NULL) { wchar defaultName [300]; defaultName [0] = '\0';
+		} if (sendingForm == NULL && sendingString == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
 #define EDITOR_DO_WRITE \
 	UiOutfile_do (cmd -> d_uiform, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
 		if (sendingString == NULL) file = UiFile_getFile (sendingForm); \

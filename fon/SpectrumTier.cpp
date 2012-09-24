@@ -1,6 +1,6 @@
 /* SpectrumTier.cpp
  *
- * Copyright (C) 2007-2011 Paul Boersma
+ * Copyright (C) 2007-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,13 @@ Thing_implement (SpectrumTier, RealTier, 0);
 
 void structSpectrumTier :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Frequency domain:");
-	MelderInfo_writeLine3 (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
-	MelderInfo_writeLine3 (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
-	MelderInfo_writeLine3 (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
-	MelderInfo_writeLine3 (L"Minimum power value: ", Melder_double (RealTier_getMinimumValue (this)), L" dB/Hz");
-	MelderInfo_writeLine3 (L"Maximum power value: ", Melder_double (RealTier_getMaximumValue (this)), L" dB/Hz");
+	MelderInfo_writeLine (L"Frequency domain:");
+	MelderInfo_writeLine (L"   Lowest frequency: ", Melder_double (xmin), L" Hz");
+	MelderInfo_writeLine (L"   Highest frequency: ", Melder_double (xmax), L" Hz");
+	MelderInfo_writeLine (L"   Total bandwidth: ", Melder_double (xmax - xmin), L" Hz");
+	MelderInfo_writeLine (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine (L"Minimum power value: ", Melder_double (RealTier_getMinimumValue (this)), L" dB/Hz");
+	MelderInfo_writeLine (L"Maximum power value: ", Melder_double (RealTier_getMaximumValue (this)), L" dB/Hz");
 }
 
 SpectrumTier SpectrumTier_create (double fmin, double fmax) {
@@ -43,7 +43,7 @@ SpectrumTier SpectrumTier_create (double fmin, double fmax) {
 }
 
 void SpectrumTier_draw (SpectrumTier me, Graphics g, double fmin, double fmax,
-	double pmin, double pmax, int garnish, const wchar *method)
+	double pmin, double pmax, int garnish, const wchar_t *method)
 {
 	RealTier_draw (me, g, fmin, fmax, pmin, pmax, garnish, method, L"Power spectral density (dB)");
 }

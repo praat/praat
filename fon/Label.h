@@ -31,7 +31,7 @@ Thing_define (Autosegment, Function) {
 		virtual Data_Description v_description () { return s_description; }
 };
 
-Autosegment Autosegment_create (double tmin, double tmax, const wchar *label);
+Autosegment Autosegment_create (double tmin, double tmax, const wchar_t *label);
 /*
 	Function:
 		create a new instance of Autosegment.

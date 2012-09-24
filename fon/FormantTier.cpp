@@ -230,7 +230,7 @@ TableOfReal FormantTier_downto_TableOfReal (FormantTier me, int includeFormants,
 			( includeBandwidths ? maximumNumberOfFormants : 0 ));
 		TableOfReal_setColumnLabel (thee.peek(), 1, L"Time");
 		for (long icol = 1, iformant = 1; iformant <= maximumNumberOfFormants; iformant ++) {
-			wchar label [4];
+			wchar_t label [4];
 			if (includeFormants) {
 				swprintf (label, 4, L"F%d", iformant);
 				TableOfReal_setColumnLabel (thee.peek(), ++ icol, label);
