@@ -793,6 +793,7 @@ void _GuiText_exit (void) {
 #if gtk
 	static void _GuiGtkEntry_history_delete_cb (GtkEditable *ed, gint from, gint to, gpointer void_me) {
 		iam (GuiText);
+		trace ("begin");
 		if (my d_history_change) return;
 		history_add (me, gtk_editable_get_chars (GTK_EDITABLE (ed), from, to), from, to, 1);
 	}
@@ -800,6 +801,7 @@ void _GuiText_exit (void) {
 	static void _GuiGtkEntry_history_insert_cb (GtkEditable *ed, gchar *utf8_text, gint len, gint *from, gpointer void_me) {
 		(void) ed;
 		iam (GuiText);
+		trace ("begin");
 		if (my d_history_change) return;
 		gchar *text = (gchar *) malloc (sizeof (gchar) * (len + 1));
 		strcpy (text, utf8_text);
@@ -808,6 +810,7 @@ void _GuiText_exit (void) {
 	
 	static void _GuiGtkTextBuf_history_delete_cb (GtkTextBuffer *buffer, GtkTextIter *from, GtkTextIter *to, gpointer void_me) {
 		iam (GuiText);
+		trace ("begin");
 		if (my d_history_change) return;
 		int from_pos = gtk_text_iter_get_offset (from);
 		int to_pos = gtk_text_iter_get_offset (to);
@@ -817,6 +820,7 @@ void _GuiText_exit (void) {
 	static void _GuiGtkTextBuf_history_insert_cb (GtkTextBuffer *buffer, GtkTextIter *from, gchar *utf8_text, gint len, gpointer void_me) {
 		(void) buffer;
 		iam (GuiText);
+		trace ("begin");
 		if (my d_history_change) return;
 		int from_pos = gtk_text_iter_get_offset (from);
 		gchar *text = (gchar *) malloc (sizeof (gchar) * (len + 1));
@@ -826,6 +830,7 @@ void _GuiText_exit (void) {
 	
 	static void _GuiGtkText_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiText);
+		trace ("begin");
 		Melder_assert (me != NULL);
 		if (my d_changeCallback != NULL) {
 			struct structGuiTextEvent event = { me };
@@ -836,6 +841,7 @@ void _GuiText_exit (void) {
 	static void _GuiGtkText_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiText);
+		trace ("begin");
 		if (my d_undo_item) g_object_unref (my d_undo_item -> d_widget);
 		if (my d_redo_item) g_object_unref (my d_redo_item -> d_widget);
 		my d_undo_item = NULL;

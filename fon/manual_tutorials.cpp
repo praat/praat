@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120924)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120926)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.25# (26 September 2012)")
+LIST_ITEM (L"\\bu EEG: view of scalp distribution takes scaling options into account.")
+LIST_ITEM (L"\\bu Linux: swipable Sound window and manual.")
+LIST_ITEM (L"\\bu Linux: corrected a bug introduced in 5.3.24 whereby TextGrids could not be edited.")
 NORMAL (L"##5.3.24# (24 September 2012)")
 LIST_ITEM (L"\\bu More kinds of vertical scaling in e.g. Sound and EEG windows.")
 NORMAL (L"##5.3.23# (7 August 2012)")

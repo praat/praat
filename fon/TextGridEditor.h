@@ -59,7 +59,6 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 		virtual int v_clickB (double xWC, double yWC);
 		virtual int v_clickE (double xWC, double yWC);
-		//virtual void v_key (unsigned char key);   // the key method will never be called, because the text widget receives the key presses
 		virtual void v_play (double tmin, double tmax);
 		virtual void v_updateText ();
 		virtual void v_prefs_addFields (EditorCommand cmd);

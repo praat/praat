@@ -1104,12 +1104,6 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 	}
 }
 
-static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
-	iam (FunctionEditor);
-	if (my d_graphics == NULL) return;   // Could be the case in the very beginning.
-	my v_key (event -> key);
-}
-
 void structFunctionEditor :: v_createChildren () {
 	int x = BUTTON_X;
 
@@ -1159,7 +1153,8 @@ void structFunctionEditor :: v_createChildren () {
 	drawingArea = GuiDrawingArea_createShown (d_windowForm,
 		0, 0,
 		Machine_getMenuBarHeight () + ( v_hasText () ? TEXT_HEIGHT : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
-		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
+		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
+	drawingArea -> f_setSwipable (scrollBar, NULL);
 }
 
 void structFunctionEditor :: v_dataChanged () {

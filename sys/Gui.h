@@ -458,6 +458,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 /********** GuiDrawingArea **********/
 
 Thing_declare (GuiDrawingArea);
+Thing_declare (GuiScrollBar);
 
 enum mouse_events { MOTION_NOTIFY = 1, BUTTON_PRESS, BUTTON_RELEASE };
 typedef struct structGuiDrawingAreaExposeEvent {
@@ -482,6 +483,7 @@ typedef struct structGuiDrawingAreaResizeEvent {
 } *GuiDrawingAreaResizeEvent;
 
 Thing_define (GuiDrawingArea, GuiControl) { public:
+	GuiScrollBar d_horizontalScrollBar, d_verticalScrollBar;   // for swiping
 	void (*d_exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event);
 	void *d_exposeBoss;
 	void (*d_clickCallback) (void *boss, GuiDrawingAreaClickEvent event);
@@ -493,6 +495,7 @@ Thing_define (GuiDrawingArea, GuiControl) { public:
 	/*
 	 * Messages:
 	 */
+	void f_setSwipable (GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar);
 	void f_setExposeCallback (void (*callback) (void *boss, GuiDrawingAreaExposeEvent event), void *boss);
 	void f_setClickCallback  (void (*callback) (void *boss, GuiDrawingAreaClickEvent  event), void *boss);
 	void f_setResizeCallback (void (*callback) (void *boss, GuiDrawingAreaResizeEvent event), void *boss);

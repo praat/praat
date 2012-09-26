@@ -306,6 +306,45 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 	}
 #endif
 
+#if gtk
+static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *event, gpointer void_me) {
+	iam (GuiDrawingArea);
+	if (my d_horizontalScrollBar) {
+		double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
+		double hi = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget)) -> step_increment;
+		switch (event -> direction) {
+			case GDK_SCROLL_LEFT:
+				gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv - hi);
+				break;
+			case GDK_SCROLL_RIGHT:
+				gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv + hi);
+				break;
+		}
+	}
+	if (my d_verticalScrollBar) {
+		double vv = gtk_range_get_value (GTK_RANGE (my d_verticalScrollBar -> d_widget));
+		double vi = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget)) -> step_increment;
+		switch (event -> direction) {
+			case GDK_SCROLL_UP:
+				gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv - vi);
+				break;
+			case GDK_SCROLL_DOWN:
+				gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv + vi);
+				break;
+		}
+	}
+	return TRUE;
+}
+#endif
+
+void structGuiDrawingArea :: f_setSwipable (GuiScrollBar horizontalScrollBar, GuiScrollBar verticalScrollBar) {
+	d_horizontalScrollBar = horizontalScrollBar;
+	d_verticalScrollBar = verticalScrollBar;
+	#if gtk
+		g_signal_connect (G_OBJECT (d_widget), "scroll-event", G_CALLBACK (_guiGtkDrawingArea_swipeCallback), this);
+	#endif
+}
+
 GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int top, int bottom,
 	void (*exposeCallback) (void *boss, GuiDrawingAreaExposeEvent event),
 	void (*clickCallback)  (void *boss, GuiDrawingAreaClickEvent  event),

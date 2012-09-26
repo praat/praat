@@ -960,8 +960,10 @@ void structHyperPage :: v_createChildren () {
 	createVerticalScrollBar (this, d_windowForm);
 
 	/***** Create drawing area. *****/
+
 	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
+	drawingArea -> f_setSwipable (NULL, verticalScrollBar);
 }
 
 void HyperPage_init (HyperPage me, const wchar_t *title, Data data) {

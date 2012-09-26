@@ -204,7 +204,8 @@ void structERPWindow :: v_drawSelectionViewer () {
 					sum += mean [ichan] / distance;
 					weight += 1.0 / distance;
 				}
-				if (value == NUMundefined) value = sum == 0.0 ? 0.0 : sum / weight;
+				if (value == NUMundefined)
+					value = ( sum == 0.0 ? 0.0 : sum / weight );
 				image [irow] [icol] = value;
 			}
 		}
@@ -218,16 +219,27 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	double absoluteExtremum = - minimum > maximum ? - minimum : maximum;
+	if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
+		minimum = d_sound.scaling_minimum;
+		maximum = d_sound.scaling_maximum;
+	} else if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
+		double mean = 0.5 * (minimum + maximum);
+		minimum = mean - 0.5 * d_sound.scaling_height;
+		maximum = mean + 0.5 * d_sound.scaling_height;
+	} else {
+		minimum = - absoluteExtremum;
+		maximum = absoluteExtremum;
+	}
 	for (long irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
 		for (long icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y > 1.0) {
-				image [irow] [icol] = -0.625 * absoluteExtremum;
+				image [irow] [icol] = minimum + 0.1875 * (maximum - minimum);   // -0.625 * absoluteExtremum;
 			}
 		}
 	}
-	Graphics_image (d_graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, - absoluteExtremum, absoluteExtremum);
+	Graphics_image (d_graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
 	Graphics_setLineWidth (d_graphics, 2.0);
 	/*
 	 * Nose.

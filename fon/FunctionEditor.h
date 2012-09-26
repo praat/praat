@@ -108,7 +108,6 @@ Thing_define (FunctionEditor, Editor) {
 			 */
 		virtual int v_clickB (double xWC, double yWC);
 		virtual int v_clickE (double xWC, double yWC);
-		virtual void v_key (unsigned char key) { (void) key; }
 		virtual int v_playCallback (int phase, double tmin, double tmax, double t);
 		virtual void v_updateText () { }
 		virtual void v_prefs_addFields (EditorCommand cmd) { (void) cmd; }

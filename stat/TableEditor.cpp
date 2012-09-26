@@ -248,6 +248,8 @@ void structTableEditor :: v_createChildren () {
 
 	horizontalScrollBar = GuiScrollBar_createShown (d_windowForm, 0, - scrollWidth, - scrollWidth, 0,
 		1, table -> numberOfColumns + 1, 1, 1, 1, 3, gui_cb_scrollHorizontal, this, GuiScrollBar_HORIZONTAL);
+
+	drawingArea -> f_setSwipable (horizontalScrollBar, verticalScrollBar);
 }
 
 void structTableEditor :: v_createMenus () {
@@ -271,31 +273,6 @@ void structTableEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"TableEditor help", '?', menu_cb_TableEditorHelp);
 }
 
-#if gtk
-static gboolean gui_cb_drawing_area_scroll (GuiObject w, GdkEventScroll *event, gpointer void_me) {
-	iam (TableEditor);
-	double hv = gtk_range_get_value (GTK_RANGE (my horizontalScrollBar -> d_widget));
-	double hi = gtk_range_get_adjustment (GTK_RANGE (my horizontalScrollBar -> d_widget)) -> step_increment;
-	double vv = gtk_range_get_value (GTK_RANGE (my verticalScrollBar -> d_widget));
-	double vi = gtk_range_get_adjustment (GTK_RANGE (my verticalScrollBar -> d_widget)) -> step_increment;
-	switch (event->direction) {
-		case GDK_SCROLL_UP:
-			gtk_range_set_value (GTK_RANGE (my verticalScrollBar -> d_widget), vv - vi);
-			break;
-		case GDK_SCROLL_DOWN:
-			gtk_range_set_value (GTK_RANGE (my verticalScrollBar -> d_widget), vv + vi);
-			break;
-		case GDK_SCROLL_LEFT:
-			gtk_range_set_value (GTK_RANGE (my horizontalScrollBar -> d_widget), hv - hi);
-			break;
-		case GDK_SCROLL_RIGHT:
-			gtk_range_set_value (GTK_RANGE (my horizontalScrollBar -> d_widget), hv + hi);
-			break;
-	}
-	return TRUE;
-}
-#endif
-
 TableEditor TableEditor_create (const wchar_t *title, Table table) {
 	try {
 		autoTableEditor me = Thing_new (TableEditor);
@@ -316,10 +293,6 @@ TableEditor TableEditor_create (const wchar_t *title, Table table) {
 		Graphics_setFontSize (my graphics, 12);
 		Graphics_setUnderscoreIsSubscript (my graphics, FALSE);
 		Graphics_setAtSignIsLink (my graphics, TRUE);
-
-		#if gtk
-			g_signal_connect(G_OBJECT(my drawingArea), "scroll-event", G_CALLBACK(gui_cb_drawing_area_scroll), me.peek());
-		#endif
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("TableEditor not created.");
