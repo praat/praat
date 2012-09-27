@@ -23,15 +23,20 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120926)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120927)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.27# (27 September 2012)")
+LIST_ITEM (L"\\bu Corrected a couple of small bugs.")
+NORMAL (L"##5.3.26# (26 September 2012)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 5.3.24 that prevented Praat from running in batch mode.")
 NORMAL (L"##5.3.25# (26 September 2012)")
 LIST_ITEM (L"\\bu EEG: view of scalp distribution takes scaling options into account.")
 LIST_ITEM (L"\\bu Linux: swipable Sound window and manual.")
 LIST_ITEM (L"\\bu Linux: corrected a bug introduced in 5.3.24 whereby TextGrids could not be edited.")
 NORMAL (L"##5.3.24# (24 September 2012)")
 LIST_ITEM (L"\\bu More kinds of vertical scaling in e.g. Sound and EEG windows.")
+LIST_ITEM (L"\\bu Rewritten user interface (may contain some bugs).")
 NORMAL (L"##5.3.23# (7 August 2012)")
 LIST_ITEM (L"\\bu Mac: removed a bug introduced in September 2011 that could cause incorrect behaviour of regular expressions since July 2012.")
 NORMAL (L"##5.3.22# (21 July 2012)")

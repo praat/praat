@@ -584,19 +584,19 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (L"Objects", L"Praat", L"Show action command...", 0, praat_HIDDEN, DO_praat_showAction);
 
 	GuiMenuItem menuItem = praat_addMenuCommand (L"Objects", L"Praat", L"Goodies", 0, praat_UNHIDABLE, 0);
-	goodiesMenu = menuItem -> d_menu;
+	goodiesMenu = menuItem ? menuItem -> d_menu : NULL;
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Calculator...", 0, 'U', DO_praat_calculator);
 	praat_addMenuCommand (L"Objects", L"Goodies", L"Report difference of two proportions...", 0, 0, DO_praat_reportDifferenceOfTwoProportions);
 
 	menuItem = praat_addMenuCommand (L"Objects", L"Praat", L"Preferences", 0, praat_UNHIDABLE, 0);
-	preferencesMenu = menuItem -> d_menu;
+	preferencesMenu = menuItem ? menuItem -> d_menu : NULL;
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Buttons...", 0, praat_UNHIDABLE, DO_praat_editButtons);   /* Cannot be hidden. */
 	praat_addMenuCommand (L"Objects", L"Preferences", L"-- encoding prefs --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text writing preferences...", 0, 0, DO_TextOutputEncodingSettings);
 
 	menuItem = praat_addMenuCommand (L"Objects", L"Praat", L"Technical", 0, praat_UNHIDABLE, 0);
-	technicalMenu = menuItem -> d_menu;
+	technicalMenu = menuItem ? menuItem -> d_menu : NULL;
 	praat_addMenuCommand (L"Objects", L"Technical", L"List readable types of objects", 0, 0, DO_praat_listReadableTypesOfObjects);
 	praat_addMenuCommand (L"Objects", L"Technical", L"Report memory use", 0, 0, DO_praat_reportMemoryUse);
 	praat_addMenuCommand (L"Objects", L"Technical", L"Report integer properties", 0, 0, DO_praat_reportIntegerProperties);

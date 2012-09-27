@@ -6829,6 +6829,7 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
 	INCLUDE_MANPAGES (manual_Exp_init)
 	INCLUDE_MANPAGES (manual_EEG_init)
 
+	INCLUDE_LIBRARY (praat_EEG_init)
 	praat_addMenuCommand (L"Objects", L"New", L"-- new synthesis --", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_Artsynth_init)
 	INCLUDE_LIBRARY (praat_uvafon_David_init)
@@ -6837,7 +6838,6 @@ praat_addAction2 (classPointProcess, 1, classSound, 1, L"Synthesize", 0, 0, 0);
 	INCLUDE_LIBRARY (praat_uvafon_FFNet_init)
 	INCLUDE_LIBRARY (praat_uvafon_LPC_init)
 	INCLUDE_LIBRARY (praat_uvafon_Exp_init)
-	INCLUDE_LIBRARY (praat_EEG_init)
 }
 
 /* End of file praat_Fon.cpp */

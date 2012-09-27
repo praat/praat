@@ -1216,7 +1216,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
 	if (Melder_batch) {
 		Melder_backgrounding = true;
+		trace ("adding menus without GUI");
 		praat_addMenus (NULL);
+		trace ("adding fixed buttons without GUI");
 		praat_addFixedButtons (NULL);
 	} else {
 

@@ -231,8 +231,7 @@ void Thing_setName (Thing me, const wchar_t *name);
 
 #define Thing_cast(Klas,var,expr) \
 	Klas var = static_cast <Klas> (expr);   /* The compiler checks this. */ \
-	Melder_assert (var != NULL); \
-	Melder_assert (Thing_member (var, class##Klas));
+	Melder_assert (var == NULL || Thing_member (var, class##Klas));
 
 void Thing_swap (Thing me, Thing thee);
 /*

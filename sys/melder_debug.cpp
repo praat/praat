@@ -93,13 +93,16 @@ static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags lo
 void Melder_setTracing (bool tracing) {
 	theTracing = tracing;
 	#if gtk
-		static guint handler_id;
+		static guint handler_id1, handler_id2, handler_id3;
 		if (tracing) {
-			handler_id = g_log_set_handler ("Gtk", (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGtkLogHandler, NULL);
-			handler_id = g_log_set_handler ("GLib", (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibLogHandler, NULL);
-			handler_id = g_log_set_handler ("GLib-GObject", (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibGobjectLogHandler, NULL);
+			handler_id1 = g_log_set_handler ("Gtk",          (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGtkLogHandler,         NULL);
+			handler_id2 = g_log_set_handler ("GLib",         (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibLogHandler,        NULL);
+			handler_id3 = g_log_set_handler ("GLib-GObject", (GLogLevelFlags) (G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL | G_LOG_FLAG_RECURSION), theGlibGobjectLogHandler, NULL);
 		} else {
-			if (handler_id) g_log_remove_handler (NULL, handler_id);
+			if (handler_id1) g_log_remove_handler ("Gtk",          handler_id1);
+			if (handler_id2) g_log_remove_handler ("GLib",         handler_id2);
+			if (handler_id3) g_log_remove_handler ("GLib-GObject", handler_id3);
+			handler_id1 = handler_id2 = handler_id3 = 0;
 		}
 	#endif
 }
