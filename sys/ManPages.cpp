@@ -540,6 +540,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			static structPraatPicture praatPicture;
 			theCurrentPraatApplication = & praatApplication;
 			theCurrentPraatApplication -> batch = true;
+			theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 			theCurrentPraatObjects = (PraatObjects) & praatObjects;
 			theCurrentPraatPicture = (PraatPicture) & praatPicture;
 			theCurrentPraatPicture -> graphics = graphics;
@@ -576,6 +577,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 					autostring text = Melder_wcsdup (p);
 					Interpreter_run (interpreter.peek(), text.peek());
 				} catch (MelderError) {
+					trace ("interpreter fails on %ls", pdfFile. path);
 					Melder_flushError (NULL);
 				}
 			}
@@ -834,6 +836,8 @@ void ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
 	for (long ipage = 1; ipage <= my pages -> size; ipage ++) {
 		ManPage page = (ManPage) my pages -> item [ipage];
 		wchar_t fileName [256];
+		Melder_assert (wcslen (page -> title) < 256 - 100);
+		trace ("page %ld: %ls", ipage, page -> title);
 		wcscpy (fileName, page -> title);
 		for (wchar_t *p = fileName; *p; p ++)
 			if (! isAllowedFileNameCharacter (*p))

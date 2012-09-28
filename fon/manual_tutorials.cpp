@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120927)
+MAN_BEGIN (L"What's new?", L"ppgb", 20120928)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.28# (28 September 2012)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 5.3.24 that made Praat crash on OSX 10.5.")
 NORMAL (L"##5.3.27# (27 September 2012)")
 LIST_ITEM (L"\\bu Corrected a couple of small bugs.")
 NORMAL (L"##5.3.26# (26 September 2012)")

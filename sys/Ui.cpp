@@ -187,7 +187,7 @@ static void UiField_widgetToValue (UiField me) {
 			Interpreter_numericExpression (NULL, dirty.peek(), & my realValue);
 			/*
 			 * Put a clean version of the new value in the form.
-			 * If the value is equal to the default, make sure that any default comments are included.
+			 * If the value is equal to the default value, make sure that any default comments are included.
 			 */
 			if (my realValue == Melder_atof (my stringDefaultValue)) {
 				my text -> f_setString (my stringDefaultValue);
@@ -195,7 +195,7 @@ static void UiField_widgetToValue (UiField me) {
 				wchar_t clean [40];
 				wcscpy (clean, Melder_double (my realValue));
 				/*
-				 * If the default is overtly real, the shown value must be as well.
+				 * If the default value is overtly real (rather than integer), the shown value must be overtly real as well.
 				 */
 				if ((wcschr (my stringDefaultValue, '.') || wcschr (my stringDefaultValue, 'e')) &&
 					! (wcschr (clean, '.') || wcschr (clean, 'e')))
@@ -969,6 +969,7 @@ void UiForm_do (I, bool modified) {
 	iam (UiForm);
 	my allowExecutionHook = theAllowExecutionHookHint;
 	my allowExecutionClosure = theAllowExecutionClosureHint;
+	Melder_assert (my d_dialogForm);
 	my d_dialogForm -> f_show ();
 	if (modified)
 		UiForm_okOrApply (me, NULL, true);

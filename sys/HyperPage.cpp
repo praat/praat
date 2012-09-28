@@ -537,6 +537,7 @@ if (! my printing) {
 		if (my praatPicture == NULL) my praatPicture = Melder_calloc_f (structPraatPicture, 1);
 		theCurrentPraatApplication = (PraatApplication) my praatApplication;
 		theCurrentPraatApplication -> batch = true;
+		theCurrentPraatApplication -> topShell = theForegroundPraatApplication. topShell;   // needed for UiForm_create () in dialogs
 		theCurrentPraatObjects = (PraatObjects) my praatObjects;
 		theCurrentPraatPicture = (PraatPicture) my praatPicture;
 		theCurrentPraatPicture -> graphics = my ps;

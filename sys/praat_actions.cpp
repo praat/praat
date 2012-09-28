@@ -176,8 +176,8 @@ void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, Class
 
 static void deleteDynamicMenu (void) {
 	if (praatP.phase != praat_HANDLING_EVENTS) return;
-//static int deletions;
-//Melder_information(Melder_integer(++deletions));
+	static long numberOfDeletions;
+	trace ("deletion #%ld", ++ numberOfDeletions);
 	if (praat_dynamicMenu) {
 		GuiObject_destroy (praat_dynamicMenu -> d_widget);
 		praat_dynamicMenu = NULL;
@@ -185,12 +185,10 @@ static void deleteDynamicMenu (void) {
 			theActions [i]. button = NULL;
 		if (praat_writeMenu) {
 			#if gtk
-				//GuiObject_destroy (praat_writeMenu -> d_widget);
-				//GuiObject_destroy (praat_writeMenu -> d_gtkMenuTitle);
 				praat_writeMenu -> f_empty ();
 			#elif motif
-				GuiObject_destroy (praat_writeMenu -> d_widget);
 				GuiObject_destroy (praat_writeMenu -> d_xmMenuTitle);
+				GuiObject_destroy (praat_writeMenu -> d_widget);
 				praat_writeMenu = GuiMenu_createInWindow (praatP.menuBar, L"Save", 0);
 			#endif
 			praat_writeMenuSeparator = NULL;
