@@ -65,9 +65,15 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 		public:
 			static void f_preferences ();
 			static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
-			static double s_sound_scaling_height;  virtual double & pref_sound_scaling_height  () { return s_sound_scaling_height;  }
-			static double s_sound_scaling_minimum; virtual double & pref_sound_scaling_minimum () { return s_sound_scaling_minimum; }
-			static double s_sound_scaling_maximum; virtual double & pref_sound_scaling_maximum () { return s_sound_scaling_maximum; }
+			#define declare_preference(type,name) \
+				static type s_##name; virtual type & pref_##name () { return s_##name; } \
+				static const wchar_t * sdefault_##name; virtual const wchar_t * default_##name () { return sdefault_##name; }
+			#define define_preference(Klas,type,name,default) \
+				type struct##Klas :: s_##name; \
+				const wchar_t * struct##Klas :: sdefault_##name = default;
+			declare_preference (double, sound_scaling_height)
+			declare_preference (double, sound_scaling_minimum)
+			declare_preference (double, sound_scaling_maximum)
 			static bool   s_picture_preserveTimes; virtual bool   & pref_picture_preserveTimes () { return s_picture_preserveTimes; }
 			static double s_picture_bottom;        virtual double & pref_picture_bottom        () { return s_picture_bottom;        }
 			static double s_picture_top;           virtual double & pref_picture_top           () { return s_picture_top;           }

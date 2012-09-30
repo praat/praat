@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011,2012 Paul Boersma
+ * Copyright (C) 2011-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ void structMovieWindow :: v_play (double a_tmin, double a_tmax) {
 
 void structMovieWindow :: f_init (const wchar_t *title, Movie movie) {
 	Melder_assert (movie != NULL);
-	TimeSoundAnalysisEditor_init (this, title, movie, movie -> d_sound, false);
+	structTimeSoundAnalysisEditor :: f_init (title, movie, movie -> d_sound, false);
 }
 
 MovieWindow MovieWindow_create (const wchar_t *title, Movie movie) {

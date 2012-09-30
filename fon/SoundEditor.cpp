@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2012 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -437,7 +437,7 @@ void structSoundEditor :: f_init (const wchar_t *title, Sampled data) {
 	 * my longSound.data or my sound.data have to be set before we call FunctionEditor_init,
 	 * because createMenus expect that one of them is not NULL.
 	 */
-	TimeSoundAnalysisEditor_init (this, title, data, data, false);
+	structTimeSoundAnalysisEditor :: f_init (title, data, data, false);
 	if (d_longSound.data && d_endWindow - d_startWindow > 30.0) {
 		d_endWindow = d_startWindow + 30.0;
 		if (d_startWindow == d_tmin)

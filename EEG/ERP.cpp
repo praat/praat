@@ -69,7 +69,7 @@ void structERP :: f_draw (Graphics graphics, long channelNumber, double tmin, do
 	 * Automatic vertical range.
 	 */
 	if (vmin == vmax) {
-		Matrix_getWindowExtrema (this, ixmin, ixmax, 1, this -> ny, & vmin, & vmax);
+		Matrix_getWindowExtrema (this, ixmin, ixmax, channelNumber, channelNumber, & vmin, & vmax);
 		if (vmin == vmax) {
 			vmin -= 1.0;
 			vmax += 1.0;

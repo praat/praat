@@ -2183,7 +2183,7 @@ void structTextGridEditor :: f_init (const wchar_t *title, TextGrid grid, Sample
 {
 	this -> spellingChecker = a_spellingChecker;   // set in time
 
-	TimeSoundAnalysisEditor_init (this, title, grid, a_sound, a_ownSound);
+	structTimeSoundAnalysisEditor :: f_init (title, grid, a_sound, a_ownSound);
 
 	this -> useTextStyles = preferences.useTextStyles;
 	this -> fontSize = preferences.fontSize;

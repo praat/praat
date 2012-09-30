@@ -67,16 +67,19 @@ struct logInfo {
 	wchar_t fileName [Preferences_STRING_BUFFER_SIZE], format [Preferences_STRING_BUFFER_SIZE];
 };
 
+/********** PREFERENCES **********/
+
+FunctionEditor_spectrogram structTimeSoundAnalysisEditor :: s_spectrogram;
+FunctionEditor_pitch       structTimeSoundAnalysisEditor :: s_pitch;
+FunctionEditor_intensity   structTimeSoundAnalysisEditor :: s_intensity;
+FunctionEditor_formant     structTimeSoundAnalysisEditor :: s_formant;
+FunctionEditor_pulses      structTimeSoundAnalysisEditor :: s_pulses;
+
 static struct {
 	double longestAnalysis;
 	enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
 	double fixedTimeStep;
 	long numberOfTimeStepsPerView;
-	struct FunctionEditor_spectrogram spectrogram;
-	struct FunctionEditor_pitch pitch;
-	struct FunctionEditor_intensity intensity;
-	struct FunctionEditor_formant formant;
-	struct FunctionEditor_pulses pulses;
 	struct logInfo log [2];
 	wchar_t logScript3 [Preferences_STRING_BUFFER_SIZE], logScript4 [Preferences_STRING_BUFFER_SIZE];
 } preferences;
@@ -86,55 +89,55 @@ void structTimeSoundAnalysisEditor :: f_preferences () {
 	Preferences_addEnum (L"FunctionEditor.timeStepStrategy", & preferences.timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.fixedTimeStep", & preferences.fixedTimeStep, 0.01);   // seconds
 	Preferences_addLong (L"FunctionEditor.numberOfTimeStepsPerView", & preferences.numberOfTimeStepsPerView, 100);
-	Preferences_addBool (L"FunctionEditor.spectrogram.show", & preferences.spectrogram.show, true);
-	Preferences_addDouble (L"FunctionEditor.spectrogram.viewFrom2", & preferences.spectrogram.viewFrom, 0.0);   // Hz
-	Preferences_addDouble (L"FunctionEditor.spectrogram.viewTo2", & preferences.spectrogram.viewTo, 5000.0);   // Hz
-	Preferences_addDouble (L"FunctionEditor.spectrogram.windowLength2", & preferences.spectrogram.windowLength, 0.005);   // Hz
-	Preferences_addDouble (L"FunctionEditor.spectrogram.dynamicRange2", & preferences.spectrogram.dynamicRange, 70.0);   // dB
-	Preferences_addLong (L"FunctionEditor.spectrogram.timeSteps2", & preferences.spectrogram.timeSteps, 1000);
-	Preferences_addLong (L"FunctionEditor.spectrogram.frequencySteps2", & preferences.spectrogram.frequencySteps, 250);
-	Preferences_addEnum (L"FunctionEditor.spectrogram.method2", & preferences.spectrogram.method, kSound_to_Spectrogram_method, DEFAULT);
-	Preferences_addEnum (L"FunctionEditor.spectrogram.windowShape2", & preferences.spectrogram.windowShape, kSound_to_Spectrogram_windowShape, DEFAULT);
-	Preferences_addBool (L"FunctionEditor.spectrogram.autoscaling2", & preferences.spectrogram.autoscaling, true);
-	Preferences_addDouble (L"FunctionEditor.spectrogram.maximum2", & preferences.spectrogram.maximum, 100.0);   // dB/Hz
-	Preferences_addDouble (L"FunctionEditor.spectrogram.preemphasis2", & preferences.spectrogram.preemphasis, 6.0);   // dB/octave
-	Preferences_addDouble (L"FunctionEditor.spectrogram.dynamicCompression2", & preferences.spectrogram.dynamicCompression, 0.0);
-	Preferences_addBool (L"FunctionEditor.spectrogram.picture.garnish", & preferences.spectrogram.picture.garnish, true);
-	Preferences_addBool (L"FunctionEditor.pitch.show", & preferences.pitch.show, true);
-	Preferences_addDouble (L"FunctionEditor.pitch.floor", & preferences.pitch.floor, 75.0);
-	Preferences_addDouble (L"FunctionEditor.pitch.ceiling", & preferences.pitch.ceiling, 500.0);
-	Preferences_addEnum (L"FunctionEditor.pitch.unit", & preferences.pitch.unit, kPitch_unit, DEFAULT);
-	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & preferences.pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
-	Preferences_addDouble (L"FunctionEditor.pitch.viewFrom", & preferences.pitch.viewFrom, 0.0);   // auto
-	Preferences_addDouble (L"FunctionEditor.pitch.viewTo", & preferences.pitch.viewTo, 0.0);   // auto
-	Preferences_addEnum (L"FunctionEditor.pitch.method", & preferences.pitch.method, kTimeSoundAnalysisEditor_pitch_analysisMethod, DEFAULT);
-	Preferences_addBool (L"FunctionEditor.pitch.veryAccurate", & preferences.pitch.veryAccurate, false);
-	Preferences_addLong (L"FunctionEditor.pitch.maximumNumberOfCandidates", & preferences.pitch.maximumNumberOfCandidates, 15);
-	Preferences_addDouble (L"FunctionEditor.pitch.silenceThreshold", & preferences.pitch.silenceThreshold, 0.03);
-	Preferences_addDouble (L"FunctionEditor.pitch.voicingThreshold", & preferences.pitch.voicingThreshold, 0.45);
-	Preferences_addDouble (L"FunctionEditor.pitch.octaveCost", & preferences.pitch.octaveCost, 0.01);
-	Preferences_addDouble (L"FunctionEditor.pitch.octaveJumpCost", & preferences.pitch.octaveJumpCost, 0.35);
-	Preferences_addDouble (L"FunctionEditor.pitch.voicedUnvoicedCost", & preferences.pitch.voicedUnvoicedCost, 0.14);
-	Preferences_addBool (L"FunctionEditor.pitch.picture.garnish", & preferences.pitch.picture.garnish, true);
-	Preferences_addBool (L"FunctionEditor.intensity.show", & preferences.intensity.show, false);
-	Preferences_addDouble (L"FunctionEditor.intensity.viewFrom", & preferences.intensity.viewFrom, 50.0);   // dB
-	Preferences_addDouble (L"FunctionEditor.intensity.viewTo", & preferences.intensity.viewTo, 100.0);   // dB
-	Preferences_addEnum (L"FunctionEditor.intensity.averagingMethod", & preferences.intensity.averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, DEFAULT);
-	Preferences_addBool (L"FunctionEditor.intensity.subtractMeanPressure", & preferences.intensity.subtractMeanPressure, true);
-	Preferences_addBool (L"FunctionEditor.intensity.picture.garnish", & preferences.intensity.picture.garnish, true);
-	Preferences_addBool (L"FunctionEditor.formant.show", & preferences.formant.show, false);
-	Preferences_addDouble (L"FunctionEditor.formant.maximumFormant", & preferences.formant.maximumFormant, 5500.0);   // Hz
-	Preferences_addLong (L"FunctionEditor.formant.numberOfPoles", & preferences.formant.numberOfPoles, 10);
-	Preferences_addDouble (L"FunctionEditor.formant.windowLength", & preferences.formant.windowLength, 0.025);   // seconds
-	Preferences_addDouble (L"FunctionEditor.formant.dynamicRange", & preferences.formant.dynamicRange, 30.0);   // dB
-	Preferences_addDouble (L"FunctionEditor.formant.dotSize", & preferences.formant.dotSize, 1.0);   // mm
-	Preferences_addEnum (L"FunctionEditor.formant.method", & preferences.formant.method, kTimeSoundAnalysisEditor_formant_analysisMethod, DEFAULT);
-	Preferences_addDouble (L"FunctionEditor.formant.preemphasisFrom", & preferences.formant.preemphasisFrom, 50.0);   // Hz
-	Preferences_addBool (L"FunctionEditor.formant.picture.garnish", & preferences.formant.picture.garnish, true);
-	Preferences_addBool (L"FunctionEditor.pulses.show", & preferences.pulses.show, false);
-	Preferences_addDouble (L"FunctionEditor.pulses.maximumPeriodFactor", & preferences.pulses.maximumPeriodFactor, 1.3);
-	Preferences_addDouble (L"FunctionEditor.pulses.maximumAmplitudeFactor", & preferences.pulses.maximumAmplitudeFactor, 1.6);
-	Preferences_addBool (L"FunctionEditor.pulses.picture.garnish", & preferences.pulses.picture.garnish, true);
+	Preferences_addBool (L"FunctionEditor.spectrogram.show", & s_spectrogram.show, true);
+	Preferences_addDouble (L"FunctionEditor.spectrogram.viewFrom2", & s_spectrogram.viewFrom, 0.0);   // Hz
+	Preferences_addDouble (L"FunctionEditor.spectrogram.viewTo2", & s_spectrogram.viewTo, 5000.0);   // Hz
+	Preferences_addDouble (L"FunctionEditor.spectrogram.windowLength2", & s_spectrogram.windowLength, 0.005);   // seconds
+	Preferences_addDouble (L"FunctionEditor.spectrogram.dynamicRange2", & s_spectrogram.dynamicRange, 70.0);   // dB
+	Preferences_addLong (L"FunctionEditor.spectrogram.timeSteps2", & s_spectrogram.timeSteps, 1000);
+	Preferences_addLong (L"FunctionEditor.spectrogram.frequencySteps2", & s_spectrogram.frequencySteps, 250);
+	Preferences_addEnum (L"FunctionEditor.spectrogram.method2", & s_spectrogram.method, kSound_to_Spectrogram_method, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.spectrogram.windowShape2", & s_spectrogram.windowShape, kSound_to_Spectrogram_windowShape, DEFAULT);
+	Preferences_addBool (L"FunctionEditor.spectrogram.autoscaling2", & s_spectrogram.autoscaling, true);
+	Preferences_addDouble (L"FunctionEditor.spectrogram.maximum2", & s_spectrogram.maximum, 100.0);   // dB/Hz
+	Preferences_addDouble (L"FunctionEditor.spectrogram.preemphasis2", & s_spectrogram.preemphasis, 6.0);   // dB/octave
+	Preferences_addDouble (L"FunctionEditor.spectrogram.dynamicCompression2", & s_spectrogram.dynamicCompression, 0.0);
+	Preferences_addBool (L"FunctionEditor.spectrogram.picture.garnish", & s_spectrogram.picture.garnish, true);
+	Preferences_addBool (L"FunctionEditor.pitch.show", & s_pitch.show, true);
+	Preferences_addDouble (L"FunctionEditor.pitch.floor", & s_pitch.floor, 75.0);
+	Preferences_addDouble (L"FunctionEditor.pitch.ceiling", & s_pitch.ceiling, 500.0);
+	Preferences_addEnum (L"FunctionEditor.pitch.unit", & s_pitch.unit, kPitch_unit, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & s_pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
+	Preferences_addDouble (L"FunctionEditor.pitch.viewFrom", & s_pitch.viewFrom, 0.0);   // auto
+	Preferences_addDouble (L"FunctionEditor.pitch.viewTo", & s_pitch.viewTo, 0.0);   // auto
+	Preferences_addEnum (L"FunctionEditor.pitch.method", & s_pitch.method, kTimeSoundAnalysisEditor_pitch_analysisMethod, DEFAULT);
+	Preferences_addBool (L"FunctionEditor.pitch.veryAccurate", & s_pitch.veryAccurate, false);
+	Preferences_addLong (L"FunctionEditor.pitch.maximumNumberOfCandidates", & s_pitch.maximumNumberOfCandidates, 15);
+	Preferences_addDouble (L"FunctionEditor.pitch.silenceThreshold", & s_pitch.silenceThreshold, 0.03);
+	Preferences_addDouble (L"FunctionEditor.pitch.voicingThreshold", & s_pitch.voicingThreshold, 0.45);
+	Preferences_addDouble (L"FunctionEditor.pitch.octaveCost", & s_pitch.octaveCost, 0.01);
+	Preferences_addDouble (L"FunctionEditor.pitch.octaveJumpCost", & s_pitch.octaveJumpCost, 0.35);
+	Preferences_addDouble (L"FunctionEditor.pitch.voicedUnvoicedCost", & s_pitch.voicedUnvoicedCost, 0.14);
+	Preferences_addBool (L"FunctionEditor.pitch.picture.garnish", & s_pitch.picture.garnish, true);
+	Preferences_addBool (L"FunctionEditor.intensity.show", & s_intensity.show, false);
+	Preferences_addDouble (L"FunctionEditor.intensity.viewFrom", & s_intensity.viewFrom, 50.0);   // dB
+	Preferences_addDouble (L"FunctionEditor.intensity.viewTo", & s_intensity.viewTo, 100.0);   // dB
+	Preferences_addEnum (L"FunctionEditor.intensity.averagingMethod", & s_intensity.averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, DEFAULT);
+	Preferences_addBool (L"FunctionEditor.intensity.subtractMeanPressure", & s_intensity.subtractMeanPressure, true);
+	Preferences_addBool (L"FunctionEditor.intensity.picture.garnish", & s_intensity.picture.garnish, true);
+	Preferences_addBool (L"FunctionEditor.formant.show", & s_formant.show, false);
+	Preferences_addDouble (L"FunctionEditor.formant.maximumFormant", & s_formant.maximumFormant, 5500.0);   // Hz
+	Preferences_addLong (L"FunctionEditor.formant.numberOfPoles", & s_formant.numberOfPoles, 10);
+	Preferences_addDouble (L"FunctionEditor.formant.windowLength", & s_formant.windowLength, 0.025);   // seconds
+	Preferences_addDouble (L"FunctionEditor.formant.dynamicRange", & s_formant.dynamicRange, 30.0);   // dB
+	Preferences_addDouble (L"FunctionEditor.formant.dotSize", & s_formant.dotSize, 1.0);   // mm
+	Preferences_addEnum (L"FunctionEditor.formant.method", & s_formant.method, kTimeSoundAnalysisEditor_formant_analysisMethod, DEFAULT);
+	Preferences_addDouble (L"FunctionEditor.formant.preemphasisFrom", & s_formant.preemphasisFrom, 50.0);   // Hz
+	Preferences_addBool (L"FunctionEditor.formant.picture.garnish", & s_formant.picture.garnish, true);
+	Preferences_addBool (L"FunctionEditor.pulses.show", & s_pulses.show, false);
+	Preferences_addDouble (L"FunctionEditor.pulses.maximumPeriodFactor", & s_pulses.maximumPeriodFactor, 1.3);
+	Preferences_addDouble (L"FunctionEditor.pulses.maximumAmplitudeFactor", & s_pulses.maximumAmplitudeFactor, 1.6);
+	Preferences_addBool (L"FunctionEditor.pulses.picture.garnish", & s_pulses.picture.garnish, true);
 	Preferences_addBool (L"FunctionEditor.log1.toInfoWindow", & preferences.log[0].toInfoWindow, true);
 	Preferences_addBool (L"FunctionEditor.log1.toLogFile", & preferences.log[0].toLogFile, true);
 	Preferences_addString (L"FunctionEditor.log1.fileName", & preferences.log[0].fileName [0], LOG_1_FILE_NAME);
@@ -154,64 +157,74 @@ void structTimeSoundAnalysisEditor :: v_destroy () {
 
 void structTimeSoundAnalysisEditor :: v_info () {
 	TimeSoundAnalysisEditor_Parent :: v_info ();
-	/* Spectrogram flag: */
-	MelderInfo_writeLine (L"Spectrogram show: ", Melder_boolean (spectrogram.show));
-	/* Spectrogram settings: */
-	MelderInfo_writeLine (L"Spectrogram view from: ", Melder_double (spectrogram.viewFrom), L" Hz");
-	MelderInfo_writeLine (L"Spectrogram view to: ", Melder_double (spectrogram.viewTo), L" Hz");
-	MelderInfo_writeLine (L"Spectrogram window length: ", Melder_double (spectrogram.windowLength), L" seconds");
-	MelderInfo_writeLine (L"Spectrogram dynamic range: ", Melder_double (spectrogram.dynamicRange), L" dB");
-	/* Advanced spectrogram settings: */
-	MelderInfo_writeLine (L"Spectrogram number of time steps: ", Melder_integer (spectrogram.timeSteps));
-	MelderInfo_writeLine (L"Spectrogram number of frequency steps: ", Melder_integer (spectrogram.frequencySteps));
-	MelderInfo_writeLine (L"Spectrogram method: ", L"Fourier");
-	MelderInfo_writeLine (L"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (spectrogram.windowShape));
-	MelderInfo_writeLine (L"Spectrogram autoscaling: ", Melder_boolean (spectrogram.autoscaling));
-	MelderInfo_writeLine (L"Spectrogram maximum: ", Melder_double (spectrogram.maximum), L" dB/Hz");
-	MelderInfo_writeLine (L"Spectrogram pre-emphasis: ", Melder_integer (spectrogram.preemphasis), L" dB/octave");
-	MelderInfo_writeLine (L"Spectrogram dynamicCompression: ", Melder_integer (spectrogram.dynamicCompression));
-	/* Dynamic information: */
-	MelderInfo_writeLine (L"Spectrogram cursor frequency: ", Melder_double (spectrogram.cursor), L" Hz");
-	/* Pitch flag: */
-	MelderInfo_writeLine (L"Pitch show: ", Melder_boolean (pitch.show));
-	/* Pitch settings: */
-	MelderInfo_writeLine (L"Pitch floor: ", Melder_double (pitch.floor), L" Hz");
-	MelderInfo_writeLine (L"Pitch ceiling: ", Melder_double (pitch.ceiling), L" Hz");
-	MelderInfo_writeLine (L"Pitch unit: ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine (L"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (pitch.drawingMethod));
-	/* Advanced pitch settings: */
-	MelderInfo_writeLine (L"Pitch view from: ", Melder_double (pitch.viewFrom), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine (L"Pitch view to: ", Melder_double (pitch.viewTo), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
-	MelderInfo_writeLine (L"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (pitch.method));
-	MelderInfo_writeLine (L"Pitch very accurate: ", Melder_boolean (pitch.veryAccurate));
-	MelderInfo_writeLine (L"Pitch max. number of candidates: ", Melder_integer (pitch.maximumNumberOfCandidates));
-	MelderInfo_writeLine (L"Pitch silence threshold: ", Melder_double (pitch.silenceThreshold), L" of global peak");
-	MelderInfo_writeLine (L"Pitch voicing threshold: ", Melder_double (pitch.voicingThreshold), L" (periodic power / total power)");
-	MelderInfo_writeLine (L"Pitch octave cost: ", Melder_double (pitch.octaveCost), L" per octave");
-	MelderInfo_writeLine (L"Pitch octave jump cost: ", Melder_double (pitch.octaveJumpCost), L" per octave");
-	MelderInfo_writeLine (L"Pitch voiced/unvoiced cost: ", Melder_double (pitch.voicedUnvoicedCost));
-	/* Intensity flag: */
-	MelderInfo_writeLine (L"Intensity show: ", Melder_boolean (intensity.show));
-	/* Intensity settings: */
-	MelderInfo_writeLine (L"Intensity view from: ", Melder_double (intensity.viewFrom), L" dB");
-	MelderInfo_writeLine (L"Intensity view to: ", Melder_double (intensity.viewTo), L" dB");
-	MelderInfo_writeLine (L"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (intensity.averagingMethod));
-	MelderInfo_writeLine (L"Intensity subtract mean pressure: ", Melder_boolean (intensity.subtractMeanPressure));
-	/* Formant flag: */
-	MelderInfo_writeLine (L"Formant show: ", Melder_boolean (formant.show));
-	/* Formant settings: */
-	MelderInfo_writeLine (L"Formant maximum formant: ", Melder_double (formant.maximumFormant), L" Hz");
-	MelderInfo_writeLine (L"Formant number of poles: ", Melder_integer (formant.numberOfPoles));
-	MelderInfo_writeLine (L"Formant window length: ", Melder_double (formant.windowLength), L" seconds");
-	MelderInfo_writeLine (L"Formant dynamic range: ", Melder_double (formant.dynamicRange), L" dB");
-	MelderInfo_writeLine (L"Formant dot size: ", Melder_double (formant.dotSize), L" mm");
-	/* Advanced formant settings: */
-	MelderInfo_writeLine (L"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (formant.method));
-	MelderInfo_writeLine (L"Formant pre-emphasis from: ", Melder_double (formant.preemphasisFrom), L" Hz");
-	/* Pulses flag: */
-	MelderInfo_writeLine (L"Pulses show: ", Melder_boolean (pulses.show));
-	MelderInfo_writeLine (L"Pulses maximum period factor: ", Melder_double (pulses.maximumPeriodFactor));
-	MelderInfo_writeLine (L"Pulses maximum amplitude factor: ", Melder_double (pulses.maximumAmplitudeFactor));
+	if (v_hasSpectrogram ()) {
+		/* Spectrogram flag: */
+		MelderInfo_writeLine (L"Spectrogram show: ", Melder_boolean (spectrogram.show));
+		/* Spectrogram settings: */
+		MelderInfo_writeLine (L"Spectrogram view from: ", Melder_double (spectrogram.viewFrom), L" Hz");
+		MelderInfo_writeLine (L"Spectrogram view to: ", Melder_double (spectrogram.viewTo), L" Hz");
+		MelderInfo_writeLine (L"Spectrogram window length: ", Melder_double (spectrogram.windowLength), L" seconds");
+		MelderInfo_writeLine (L"Spectrogram dynamic range: ", Melder_double (spectrogram.dynamicRange), L" dB");
+		/* Advanced spectrogram settings: */
+		MelderInfo_writeLine (L"Spectrogram number of time steps: ", Melder_integer (spectrogram.timeSteps));
+		MelderInfo_writeLine (L"Spectrogram number of frequency steps: ", Melder_integer (spectrogram.frequencySteps));
+		MelderInfo_writeLine (L"Spectrogram method: ", L"Fourier");
+		MelderInfo_writeLine (L"Spectrogram window shape: ", kSound_to_Spectrogram_windowShape_getText (spectrogram.windowShape));
+		MelderInfo_writeLine (L"Spectrogram autoscaling: ", Melder_boolean (spectrogram.autoscaling));
+		MelderInfo_writeLine (L"Spectrogram maximum: ", Melder_double (spectrogram.maximum), L" dB/Hz");
+		MelderInfo_writeLine (L"Spectrogram pre-emphasis: ", Melder_integer (spectrogram.preemphasis), L" dB/octave");
+		MelderInfo_writeLine (L"Spectrogram dynamicCompression: ", Melder_integer (spectrogram.dynamicCompression));
+		/* Dynamic information: */
+		MelderInfo_writeLine (L"Spectrogram cursor frequency: ", Melder_double (spectrogram.cursor), L" Hz");
+	}
+	if (v_hasPitch ()) {
+		/* Pitch flag: */
+		MelderInfo_writeLine (L"Pitch show: ", Melder_boolean (pitch.show));
+		/* Pitch settings: */
+		MelderInfo_writeLine (L"Pitch floor: ", Melder_double (pitch.floor), L" Hz");
+		MelderInfo_writeLine (L"Pitch ceiling: ", Melder_double (pitch.ceiling), L" Hz");
+		MelderInfo_writeLine (L"Pitch unit: ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
+		MelderInfo_writeLine (L"Pitch drawing method: ", kTimeSoundAnalysisEditor_pitch_drawingMethod_getText (pitch.drawingMethod));
+		/* Advanced pitch settings: */
+		MelderInfo_writeLine (L"Pitch view from: ", Melder_double (pitch.viewFrom), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
+		MelderInfo_writeLine (L"Pitch view to: ", Melder_double (pitch.viewTo), L" ", Function_getUnitText (Thing_dummyObject (Pitch), Pitch_LEVEL_FREQUENCY, pitch.unit, Function_UNIT_TEXT_MENU));
+		MelderInfo_writeLine (L"Pitch method: ", kTimeSoundAnalysisEditor_pitch_analysisMethod_getText (pitch.method));
+		MelderInfo_writeLine (L"Pitch very accurate: ", Melder_boolean (pitch.veryAccurate));
+		MelderInfo_writeLine (L"Pitch max. number of candidates: ", Melder_integer (pitch.maximumNumberOfCandidates));
+		MelderInfo_writeLine (L"Pitch silence threshold: ", Melder_double (pitch.silenceThreshold), L" of global peak");
+		MelderInfo_writeLine (L"Pitch voicing threshold: ", Melder_double (pitch.voicingThreshold), L" (periodic power / total power)");
+		MelderInfo_writeLine (L"Pitch octave cost: ", Melder_double (pitch.octaveCost), L" per octave");
+		MelderInfo_writeLine (L"Pitch octave jump cost: ", Melder_double (pitch.octaveJumpCost), L" per octave");
+		MelderInfo_writeLine (L"Pitch voiced/unvoiced cost: ", Melder_double (pitch.voicedUnvoicedCost));
+	}
+	if (v_hasIntensity ()) {
+		/* Intensity flag: */
+		MelderInfo_writeLine (L"Intensity show: ", Melder_boolean (intensity.show));
+		/* Intensity settings: */
+		MelderInfo_writeLine (L"Intensity view from: ", Melder_double (intensity.viewFrom), L" dB");
+		MelderInfo_writeLine (L"Intensity view to: ", Melder_double (intensity.viewTo), L" dB");
+		MelderInfo_writeLine (L"Intensity averaging method: ", kTimeSoundAnalysisEditor_intensity_averagingMethod_getText (intensity.averagingMethod));
+		MelderInfo_writeLine (L"Intensity subtract mean pressure: ", Melder_boolean (intensity.subtractMeanPressure));
+	}
+	if (v_hasFormants ()) {
+		/* Formant flag: */
+		MelderInfo_writeLine (L"Formant show: ", Melder_boolean (formant.show));
+		/* Formant settings: */
+		MelderInfo_writeLine (L"Formant maximum formant: ", Melder_double (formant.maximumFormant), L" Hz");
+		MelderInfo_writeLine (L"Formant number of poles: ", Melder_integer (formant.numberOfPoles));
+		MelderInfo_writeLine (L"Formant window length: ", Melder_double (formant.windowLength), L" seconds");
+		MelderInfo_writeLine (L"Formant dynamic range: ", Melder_double (formant.dynamicRange), L" dB");
+		MelderInfo_writeLine (L"Formant dot size: ", Melder_double (formant.dotSize), L" mm");
+		/* Advanced formant settings: */
+		MelderInfo_writeLine (L"Formant method: ", kTimeSoundAnalysisEditor_formant_analysisMethod_getText (formant.method));
+		MelderInfo_writeLine (L"Formant pre-emphasis from: ", Melder_double (formant.preemphasisFrom), L" Hz");
+	}
+	if (v_hasPulses ()) {
+		/* Pulses flag: */
+		MelderInfo_writeLine (L"Pulses show: ", Melder_boolean (pulses.show));
+		MelderInfo_writeLine (L"Pulses maximum period factor: ", Melder_double (pulses.maximumPeriodFactor));
+		MelderInfo_writeLine (L"Pulses maximum amplitude factor: ", Melder_double (pulses.maximumAmplitudeFactor));
+	}
 }
 
 void structTimeSoundAnalysisEditor :: v_destroy_analysis () {
@@ -467,11 +480,11 @@ static void menu_cb_showAnalyses (EDITOR_ARGS) {
 		SET_INTEGER (L"Show pulses", my pulses.show)
 		SET_REAL (L"Longest analysis", my longestAnalysis)
 	EDITOR_DO
-		my spectrogramToggle -> f_check (preferences.spectrogram.show = my spectrogram.show = GET_INTEGER (L"Show spectrogram"));
-		my pitchToggle       -> f_check (preferences.pitch.show       = my pitch.show       = GET_INTEGER (L"Show pitch"));
-		my intensityToggle   -> f_check (preferences.intensity.show   = my intensity.show   = GET_INTEGER (L"Show intensity"));
-		my formantToggle     -> f_check (preferences.formant.show     = my formant.show     = GET_INTEGER (L"Show formants"));
-		my pulsesToggle      -> f_check (preferences.pulses.show      = my pulses.show      = GET_INTEGER (L"Show pulses"));
+		my spectrogramToggle -> f_check (my pref_spectrogram().show = my spectrogram.show = GET_INTEGER (L"Show spectrogram"));
+		my pitchToggle       -> f_check (my pref_pitch().show       = my pitch.show       = GET_INTEGER (L"Show pitch"));
+		my intensityToggle   -> f_check (my pref_intensity().show   = my intensity.show   = GET_INTEGER (L"Show intensity"));
+		my formantToggle     -> f_check (my pref_formant().show     = my formant.show     = GET_INTEGER (L"Show formants"));
+		my pulsesToggle      -> f_check (my pref_pulses().show      = my pulses.show      = GET_INTEGER (L"Show pulses"));
 		preferences.longestAnalysis = my longestAnalysis = GET_REAL (L"Longest analysis");
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -507,7 +520,7 @@ static void menu_cb_timeStepSettings (EDITOR_ARGS) {
 
 static void menu_cb_showSpectrogram (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	preferences.spectrogram.show = my spectrogram.show = ! my spectrogram.show;
+	my pref_spectrogram().show = my spectrogram.show = ! my spectrogram.show;
 	my spectrogramToggle -> f_check (my spectrogram.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
@@ -540,10 +553,10 @@ static void menu_cb_spectrogramSettings (EDITOR_ARGS) {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.spectrogram.viewFrom = my spectrogram.viewFrom = GET_REAL (L"left View range");
-		preferences.spectrogram.viewTo = my spectrogram.viewTo = GET_REAL (L"right View range");
-		preferences.spectrogram.windowLength = my spectrogram.windowLength = GET_REAL (L"Window length");
-		preferences.spectrogram.dynamicRange = my spectrogram.dynamicRange = GET_REAL (L"Dynamic range");
+		my pref_spectrogram().viewFrom = my spectrogram.viewFrom = GET_REAL (L"left View range");
+		my pref_spectrogram().viewTo = my spectrogram.viewTo = GET_REAL (L"right View range");
+		my pref_spectrogram().windowLength = my spectrogram.windowLength = GET_REAL (L"Window length");
+		my pref_spectrogram().dynamicRange = my spectrogram.dynamicRange = GET_REAL (L"Dynamic range");
 		forget (my spectrogram.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -573,14 +586,14 @@ static void menu_cb_advancedSpectrogramSettings (EDITOR_ARGS) {
 		SET_REAL (L"Pre-emphasis", my spectrogram.preemphasis)
 		SET_REAL (L"Dynamic compression", my spectrogram.dynamicCompression)
 	EDITOR_DO
-		preferences.spectrogram.timeSteps = my spectrogram.timeSteps = GET_INTEGER (L"Number of time steps");
-		preferences.spectrogram.frequencySteps = my spectrogram.frequencySteps = GET_INTEGER (L"Number of frequency steps");
-		preferences.spectrogram.method = my spectrogram.method = GET_ENUM (kSound_to_Spectrogram_method, L"Method");
-		preferences.spectrogram.windowShape = my spectrogram.windowShape = GET_ENUM (kSound_to_Spectrogram_windowShape, L"Window shape");
-		preferences.spectrogram.maximum = my spectrogram.maximum = GET_REAL (L"Maximum");
-		preferences.spectrogram.autoscaling = my spectrogram.autoscaling = GET_INTEGER (L"Autoscaling");
-		preferences.spectrogram.preemphasis = my spectrogram.preemphasis = GET_REAL (L"Pre-emphasis");
-		preferences.spectrogram.dynamicCompression = my spectrogram.dynamicCompression = GET_REAL (L"Dynamic compression");
+		my pref_spectrogram().timeSteps = my spectrogram.timeSteps = GET_INTEGER (L"Number of time steps");
+		my pref_spectrogram().frequencySteps = my spectrogram.frequencySteps = GET_INTEGER (L"Number of frequency steps");
+		my pref_spectrogram().method = my spectrogram.method = GET_ENUM (kSound_to_Spectrogram_method, L"Method");
+		my pref_spectrogram().windowShape = my spectrogram.windowShape = GET_ENUM (kSound_to_Spectrogram_windowShape, L"Window shape");
+		my pref_spectrogram().maximum = my spectrogram.maximum = GET_REAL (L"Maximum");
+		my pref_spectrogram().autoscaling = my spectrogram.autoscaling = GET_INTEGER (L"Autoscaling");
+		my pref_spectrogram().preemphasis = my spectrogram.preemphasis = GET_REAL (L"Pre-emphasis");
+		my pref_spectrogram().dynamicCompression = my spectrogram.dynamicCompression = GET_REAL (L"Dynamic compression");
 		forget (my spectrogram.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -691,7 +704,7 @@ static void menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.spectrogram.picture.garnish = my spectrogram.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_spectrogram().picture.garnish = my spectrogram.picture.garnish = GET_INTEGER (L"Garnish");
 		if (! my spectrogram.show)
 			Melder_throw ("No spectrogram is visible.\nFirst choose \"Show spectrogram\" from the Spectrum menu.");
 		if (! my spectrogram.data) {
@@ -711,7 +724,7 @@ static void menu_cb_paintVisibleSpectrogram (EDITOR_ARGS) {
 
 static void menu_cb_showPitch (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	preferences.pitch.show = my pitch.show = ! my pitch.show;
+	my pref_pitch().show = my pitch.show = ! my pitch.show;
 	my pitchToggle -> f_check (my pitch.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
@@ -749,11 +762,11 @@ static void menu_cb_pitchSettings (EDITOR_ARGS) {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.pitch.floor = my pitch.floor = GET_REAL (L"left Pitch range");
-		preferences.pitch.ceiling = my pitch.ceiling = GET_REAL (L"right Pitch range");
-		preferences.pitch.unit = my pitch.unit = GET_ENUM (kPitch_unit, L"Unit");
-		preferences.pitch.method = my pitch.method = GET_ENUM (kTimeSoundAnalysisEditor_pitch_analysisMethod, L"Analysis method");
-		preferences.pitch.drawingMethod = my pitch.drawingMethod = GET_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, L"Drawing method");
+		my pref_pitch().floor = my pitch.floor = GET_REAL (L"left Pitch range");
+		my pref_pitch().ceiling = my pitch.ceiling = GET_REAL (L"right Pitch range");
+		my pref_pitch().unit = my pitch.unit = GET_ENUM (kPitch_unit, L"Unit");
+		my pref_pitch().method = my pitch.method = GET_ENUM (kTimeSoundAnalysisEditor_pitch_analysisMethod, L"Analysis method");
+		my pref_pitch().drawingMethod = my pitch.drawingMethod = GET_ENUM (kTimeSoundAnalysisEditor_pitch_drawingMethod, L"Drawing method");
 		forget (my pitch.data);
 		forget (my intensity.data);
 		forget (my pulses.data);
@@ -788,15 +801,15 @@ static void menu_cb_advancedPitchSettings (EDITOR_ARGS) {
 	EDITOR_DO
 		long maxnCandidates = GET_INTEGER (L"Max. number of candidates");
 		if (maxnCandidates < 2) Melder_throw ("Maximum number of candidates must be greater than 1.");
-		preferences.pitch.viewFrom = my pitch.viewFrom = GET_REAL (L"left View range");
-		preferences.pitch.viewTo = my pitch.viewTo = GET_REAL (L"right View range");
-		preferences.pitch.veryAccurate = my pitch.veryAccurate = GET_INTEGER (L"Very accurate");
-		preferences.pitch.maximumNumberOfCandidates = my pitch.maximumNumberOfCandidates = GET_INTEGER (L"Max. number of candidates");
-		preferences.pitch.silenceThreshold = my pitch.silenceThreshold = GET_REAL (L"Silence threshold");
-		preferences.pitch.voicingThreshold = my pitch.voicingThreshold = GET_REAL (L"Voicing threshold");
-		preferences.pitch.octaveCost = my pitch.octaveCost = GET_REAL (L"Octave cost");
-		preferences.pitch.octaveJumpCost = my pitch.octaveJumpCost = GET_REAL (L"Octave-jump cost");
-		preferences.pitch.voicedUnvoicedCost = my pitch.voicedUnvoicedCost = GET_REAL (L"Voiced / unvoiced cost");
+		my pref_pitch().viewFrom = my pitch.viewFrom = GET_REAL (L"left View range");
+		my pref_pitch().viewTo = my pitch.viewTo = GET_REAL (L"right View range");
+		my pref_pitch().veryAccurate = my pitch.veryAccurate = GET_INTEGER (L"Very accurate");
+		my pref_pitch().maximumNumberOfCandidates = my pitch.maximumNumberOfCandidates = GET_INTEGER (L"Max. number of candidates");
+		my pref_pitch().silenceThreshold = my pitch.silenceThreshold = GET_REAL (L"Silence threshold");
+		my pref_pitch().voicingThreshold = my pitch.voicingThreshold = GET_REAL (L"Voicing threshold");
+		my pref_pitch().octaveCost = my pitch.octaveCost = GET_REAL (L"Octave cost");
+		my pref_pitch().octaveJumpCost = my pitch.octaveJumpCost = GET_REAL (L"Octave-jump cost");
+		my pref_pitch().voicedUnvoicedCost = my pitch.voicedUnvoicedCost = GET_REAL (L"Voiced / unvoiced cost");
 		forget (my pitch.data);
 		forget (my intensity.data);
 		forget (my pulses.data);
@@ -959,10 +972,10 @@ static void menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 		SET_INTEGER (L"Garnish", my pitch.picture.garnish);
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		preferences.pitch.picture.speckle = my pitch.picture.speckle = GET_INTEGER (L"Speckle");
+		my pref_pitch().picture.speckle = my pitch.picture.speckle = GET_INTEGER (L"Speckle");
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.pitch.picture.garnish = my pitch.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_pitch().picture.garnish = my pitch.picture.garnish = GET_INTEGER (L"Garnish");
 		if (! my pitch.show)
 			Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
@@ -987,7 +1000,7 @@ static void menu_cb_drawVisiblePitchContour (EDITOR_ARGS) {
 
 static void menu_cb_showIntensity (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	preferences.intensity.show = my intensity.show = ! my intensity.show;
+	my pref_intensity().show = my intensity.show = ! my intensity.show;
 	my intensityToggle -> f_check (my intensity.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
@@ -1012,10 +1025,10 @@ static void menu_cb_intensitySettings (EDITOR_ARGS) {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.intensity.viewFrom = my intensity.viewFrom = GET_REAL (L"left View range");
-		preferences.intensity.viewTo = my intensity.viewTo = GET_REAL (L"right View range");
-		preferences.intensity.averagingMethod = my intensity.averagingMethod = GET_ENUM (kTimeSoundAnalysisEditor_intensity_averagingMethod, L"Averaging method");
-		preferences.intensity.subtractMeanPressure = my intensity.subtractMeanPressure = GET_INTEGER (L"Subtract mean pressure");
+		my pref_intensity().viewFrom = my intensity.viewFrom = GET_REAL (L"left View range");
+		my pref_intensity().viewTo = my intensity.viewTo = GET_REAL (L"right View range");
+		my pref_intensity().averagingMethod = my intensity.averagingMethod = GET_ENUM (kTimeSoundAnalysisEditor_intensity_averagingMethod, L"Averaging method");
+		my pref_intensity().subtractMeanPressure = my intensity.subtractMeanPressure = GET_INTEGER (L"Subtract mean pressure");
 		forget (my intensity.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1049,7 +1062,7 @@ static void menu_cb_drawVisibleIntensityContour (EDITOR_ARGS) {
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.intensity.picture.garnish = my intensity.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_intensity().picture.garnish = my intensity.picture.garnish = GET_INTEGER (L"Garnish");
 		if (! my intensity.show)
 			Melder_throw ("No intensity contour is visible.\nFirst choose \"Show intensity\" from the Intensity menu.");
 		if (! my intensity.data) {
@@ -1142,7 +1155,7 @@ static void menu_cb_getMaximumIntensity (EDITOR_ARGS) {
 
 static void menu_cb_showFormants (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	preferences.formant.show = my formant.show = ! my formant.show;
+	my pref_formant().show = my formant.show = ! my formant.show;
 	my formantToggle -> f_check (my formant.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
@@ -1174,11 +1187,11 @@ static void menu_cb_formantSettings (EDITOR_ARGS) {
 			SET_STRING (L"note2", L"(your \"time step strategy\" has its standard value: automatic)")
 		}
 	EDITOR_DO
-		preferences.formant.maximumFormant = my formant.maximumFormant = GET_REAL (L"Maximum formant");
-		preferences.formant.numberOfPoles = my formant.numberOfPoles = 2.0 * GET_REAL (L"Number of formants");
-		preferences.formant.windowLength = my formant.windowLength = GET_REAL (L"Window length");
-		preferences.formant.dynamicRange = my formant.dynamicRange = GET_REAL (L"Dynamic range");
-		preferences.formant.dotSize = my formant.dotSize = GET_REAL (L"Dot size");
+		my pref_formant().maximumFormant = my formant.maximumFormant = GET_REAL (L"Maximum formant");
+		my pref_formant().numberOfPoles = my formant.numberOfPoles = 2.0 * GET_REAL (L"Number of formants");
+		my pref_formant().windowLength = my formant.windowLength = GET_REAL (L"Window length");
+		my pref_formant().dynamicRange = my formant.dynamicRange = GET_REAL (L"Dynamic range");
+		my pref_formant().dotSize = my formant.dotSize = GET_REAL (L"Dot size");
 		forget (my formant.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1193,8 +1206,8 @@ static void menu_cb_advancedFormantSettings (EDITOR_ARGS) {
 		SET_ENUM (L"Method", kTimeSoundAnalysisEditor_formant_analysisMethod, my formant.method)
 		SET_REAL (L"Pre-emphasis from", my formant.preemphasisFrom)
 	EDITOR_DO
-		preferences.formant.method = my formant.method = GET_ENUM (kTimeSoundAnalysisEditor_formant_analysisMethod, L"Method");
-		preferences.formant.preemphasisFrom = my formant.preemphasisFrom = GET_REAL (L"Pre-emphasis from");
+		my pref_formant().method = my formant.method = GET_ENUM (kTimeSoundAnalysisEditor_formant_analysisMethod, L"Method");
+		my pref_formant().preemphasisFrom = my formant.preemphasisFrom = GET_REAL (L"Pre-emphasis from");
 		forget (my formant.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1228,7 +1241,7 @@ static void menu_cb_drawVisibleFormantContour (EDITOR_ARGS) {
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.formant.picture.garnish = my formant.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_formant().picture.garnish = my formant.picture.garnish = GET_INTEGER (L"Garnish");
 		if (! my formant.show)
 			Melder_throw ("No formant contour is visible.\nFirst choose \"Show formant\" from the Formant menu.");
 		if (! my formant.data) {
@@ -1352,7 +1365,7 @@ static void menu_cb_getBandwidth (EDITOR_ARGS) {
 
 static void menu_cb_showPulses (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
-	preferences.pulses.show = my pulses.show = ! my pulses.show;
+	my pref_pulses().show = my pulses.show = ! my pulses.show;
 	my pulsesToggle -> f_check (my pulses.show);   // in case we're called from a script
 	FunctionEditor_redraw (me);
 }
@@ -1366,8 +1379,8 @@ static void menu_cb_advancedPulsesSettings (EDITOR_ARGS) {
 		SET_REAL (L"Maximum period factor", my pulses.maximumPeriodFactor)
 		SET_REAL (L"Maximum amplitude factor", my pulses.maximumAmplitudeFactor)
 	EDITOR_DO
-		preferences.pulses.maximumPeriodFactor = my pulses.maximumPeriodFactor = GET_REAL (L"Maximum period factor");
-		preferences.pulses.maximumAmplitudeFactor = my pulses.maximumAmplitudeFactor = GET_REAL (L"Maximum amplitude factor");
+		my pref_pulses().maximumPeriodFactor = my pulses.maximumPeriodFactor = GET_REAL (L"Maximum period factor");
+		my pref_pulses().maximumAmplitudeFactor = my pulses.maximumAmplitudeFactor = GET_REAL (L"Maximum amplitude factor");
 		forget (my pulses.data);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -1401,7 +1414,7 @@ static void menu_cb_drawVisiblePulses (EDITOR_ARGS) {
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.pulses.picture.garnish = my pulses.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_pulses().picture.garnish = my pulses.picture.garnish = GET_INTEGER (L"Garnish");
 		if (! my pulses.show)
 			Melder_throw (L"No pulses are visible.\nFirst choose \"Show pulses\" from the Pulses menu.");
 		if (! my pulses.data) {
@@ -1538,107 +1551,117 @@ void structTimeSoundAnalysisEditor :: v_createMenuItems_query_log (EditorMenu me
 void structTimeSoundAnalysisEditor :: v_createMenus_analysis () {
 	EditorMenu menu;
 
-	menu = Editor_addMenu (this, L"Spectrum", 0);
-	spectrogramToggle = EditorMenu_addCommand (menu, L"Show spectrogram",
-		GuiMenu_CHECKBUTTON | (preferences.spectrogram.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showSpectrogram);
-	EditorMenu_addCommand (menu, L"Spectrogram settings...", 0, menu_cb_spectrogramSettings);
-	EditorMenu_addCommand (menu, L"Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
-	EditorMenu_addCommand (menu, L"-- spectrum query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, L"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
-	EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", GuiMenu_F7, menu_cb_getSpectralPowerAtCursorCross);
-	EditorMenu_addCommand (menu, L"-- spectrum select --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Select:", GuiMenu_INSENSITIVE, menu_cb_moveFrequencyCursorTo/* dummy */);
-	EditorMenu_addCommand (menu, L"Move frequency cursor to...", 0, menu_cb_moveFrequencyCursorTo);
-	v_createMenuItems_spectrum_picture (menu);
-	EditorMenu_addCommand (menu, L"-- spectrum extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
-	EditorMenu_addCommand (menu, L"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
-	EditorMenu_addCommand (menu, L"View spectral slice", 'L', menu_cb_viewSpectralSlice);
+	if (v_hasSpectrogram ()) {
+		menu = Editor_addMenu (this, L"Spectrum", 0);
+		spectrogramToggle = EditorMenu_addCommand (menu, L"Show spectrogram",
+			GuiMenu_CHECKBUTTON | (pref_spectrogram().show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showSpectrogram);
+		EditorMenu_addCommand (menu, L"Spectrogram settings...", 0, menu_cb_spectrogramSettings);
+		EditorMenu_addCommand (menu, L"Advanced spectrogram settings...", 0, menu_cb_advancedSpectrogramSettings);
+		EditorMenu_addCommand (menu, L"-- spectrum query --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+		EditorMenu_addCommand (menu, L"Get frequency at frequency cursor", 0, menu_cb_getFrequency);
+		EditorMenu_addCommand (menu, L"Get spectral power at cursor cross", GuiMenu_F7, menu_cb_getSpectralPowerAtCursorCross);
+		EditorMenu_addCommand (menu, L"-- spectrum select --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Select:", GuiMenu_INSENSITIVE, menu_cb_moveFrequencyCursorTo/* dummy */);
+		EditorMenu_addCommand (menu, L"Move frequency cursor to...", 0, menu_cb_moveFrequencyCursorTo);
+		v_createMenuItems_spectrum_picture (menu);
+		EditorMenu_addCommand (menu, L"-- spectrum extract --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleSpectrogram /* dummy */);
+		EditorMenu_addCommand (menu, L"Extract visible spectrogram", 0, menu_cb_extractVisibleSpectrogram);
+		EditorMenu_addCommand (menu, L"View spectral slice", 'L', menu_cb_viewSpectralSlice);
+	}
 
-	menu = Editor_addMenu (this, L"Pitch", 0);
-	pitchToggle = EditorMenu_addCommand (menu, L"Show pitch",
-		GuiMenu_CHECKBUTTON | (preferences.pitch.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPitch);
-	EditorMenu_addCommand (menu, L"Pitch settings...", 0, menu_cb_pitchSettings);
-	EditorMenu_addCommand (menu, L"Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
-	EditorMenu_addCommand (menu, L"-- pitch query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, L"Pitch listing", 0, menu_cb_pitchListing);
-	EditorMenu_addCommand (menu, L"Get pitch", GuiMenu_F5, menu_cb_getPitch);
-	EditorMenu_addCommand (menu, L"Get minimum pitch", GuiMenu_F5 + GuiMenu_COMMAND, menu_cb_getMinimumPitch);
-	EditorMenu_addCommand (menu, L"Get maximum pitch", GuiMenu_F5 + GuiMenu_SHIFT, menu_cb_getMaximumPitch);
-	EditorMenu_addCommand (menu, L"-- pitch select --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Select:", GuiMenu_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
-	EditorMenu_addCommand (menu, L"Move cursor to minimum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
-	EditorMenu_addCommand (menu, L"Move cursor to maximum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
-	v_createMenuItems_pitch_picture (menu);
-	EditorMenu_addCommand (menu, L"-- pitch extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
-	EditorMenu_addCommand (menu, L"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
+	if (v_hasPitch ()) {
+		menu = Editor_addMenu (this, L"Pitch", 0);
+		pitchToggle = EditorMenu_addCommand (menu, L"Show pitch",
+			GuiMenu_CHECKBUTTON | (pref_pitch().show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPitch);
+		EditorMenu_addCommand (menu, L"Pitch settings...", 0, menu_cb_pitchSettings);
+		EditorMenu_addCommand (menu, L"Advanced pitch settings...", 0, menu_cb_advancedPitchSettings);
+		EditorMenu_addCommand (menu, L"-- pitch query --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+		EditorMenu_addCommand (menu, L"Pitch listing", 0, menu_cb_pitchListing);
+		EditorMenu_addCommand (menu, L"Get pitch", GuiMenu_F5, menu_cb_getPitch);
+		EditorMenu_addCommand (menu, L"Get minimum pitch", GuiMenu_F5 + GuiMenu_COMMAND, menu_cb_getMinimumPitch);
+		EditorMenu_addCommand (menu, L"Get maximum pitch", GuiMenu_F5 + GuiMenu_SHIFT, menu_cb_getMaximumPitch);
+		EditorMenu_addCommand (menu, L"-- pitch select --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Select:", GuiMenu_INSENSITIVE, menu_cb_moveCursorToMinimumPitch /* dummy */);
+		EditorMenu_addCommand (menu, L"Move cursor to minimum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'L', menu_cb_moveCursorToMinimumPitch);
+		EditorMenu_addCommand (menu, L"Move cursor to maximum pitch", GuiMenu_COMMAND + GuiMenu_SHIFT + 'H', menu_cb_moveCursorToMaximumPitch);
+		v_createMenuItems_pitch_picture (menu);
+		EditorMenu_addCommand (menu, L"-- pitch extract --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePitchContour /* dummy */);
+		EditorMenu_addCommand (menu, L"Extract visible pitch contour", 0, menu_cb_extractVisiblePitchContour);
+	}
 
-	menu = Editor_addMenu (this, L"Intensity", 0);
-	intensityToggle = EditorMenu_addCommand (menu, L"Show intensity",
-		GuiMenu_CHECKBUTTON | (preferences.intensity.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showIntensity);
-	EditorMenu_addCommand (menu, L"Intensity settings...", 0, menu_cb_intensitySettings);
-	EditorMenu_addCommand (menu, L"-- intensity query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, L"Intensity listing", 0, menu_cb_intensityListing);
-	EditorMenu_addCommand (menu, L"Get intensity", GuiMenu_F8, menu_cb_getIntensity);
-	EditorMenu_addCommand (menu, L"Get minimum intensity", GuiMenu_F8 + GuiMenu_COMMAND, menu_cb_getMinimumIntensity);
-	EditorMenu_addCommand (menu, L"Get maximum intensity", GuiMenu_F8 + GuiMenu_SHIFT, menu_cb_getMaximumIntensity);
-	v_createMenuItems_intensity_picture (menu);
-	EditorMenu_addCommand (menu, L"-- intensity extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
-	EditorMenu_addCommand (menu, L"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
+	if (v_hasIntensity ()) {
+		menu = Editor_addMenu (this, L"Intensity", 0);
+		intensityToggle = EditorMenu_addCommand (menu, L"Show intensity",
+			GuiMenu_CHECKBUTTON | (pref_intensity().show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showIntensity);
+		EditorMenu_addCommand (menu, L"Intensity settings...", 0, menu_cb_intensitySettings);
+		EditorMenu_addCommand (menu, L"-- intensity query --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+		EditorMenu_addCommand (menu, L"Intensity listing", 0, menu_cb_intensityListing);
+		EditorMenu_addCommand (menu, L"Get intensity", GuiMenu_F8, menu_cb_getIntensity);
+		EditorMenu_addCommand (menu, L"Get minimum intensity", GuiMenu_F8 + GuiMenu_COMMAND, menu_cb_getMinimumIntensity);
+		EditorMenu_addCommand (menu, L"Get maximum intensity", GuiMenu_F8 + GuiMenu_SHIFT, menu_cb_getMaximumIntensity);
+		v_createMenuItems_intensity_picture (menu);
+		EditorMenu_addCommand (menu, L"-- intensity extract --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleIntensityContour /* dummy */);
+		EditorMenu_addCommand (menu, L"Extract visible intensity contour", 0, menu_cb_extractVisibleIntensityContour);
+	}
 
-	menu = Editor_addMenu (this, L"Formant", 0);
-	formantToggle = EditorMenu_addCommand (menu, L"Show formants",
-		GuiMenu_CHECKBUTTON | (preferences.formant.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
-	EditorMenu_addCommand (menu, L"Formant settings...", 0, menu_cb_formantSettings);
-	EditorMenu_addCommand (menu, L"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
-	EditorMenu_addCommand (menu, L"-- formant query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, L"Formant listing", 0, menu_cb_formantListing);
-	EditorMenu_addCommand (menu, L"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
-	EditorMenu_addCommand (menu, L"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
-	EditorMenu_addCommand (menu, L"Get second formant", GuiMenu_F2, menu_cb_getSecondFormant);
-	EditorMenu_addCommand (menu, L"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
-	EditorMenu_addCommand (menu, L"Get third formant", GuiMenu_F3, menu_cb_getThirdFormant);
-	EditorMenu_addCommand (menu, L"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
-	EditorMenu_addCommand (menu, L"Get fourth formant", GuiMenu_F4, menu_cb_getFourthFormant);
-	EditorMenu_addCommand (menu, L"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
-	EditorMenu_addCommand (menu, L"Get formant...", 0, menu_cb_getFormant);
-	EditorMenu_addCommand (menu, L"Get bandwidth...", 0, menu_cb_getBandwidth);
-	v_createMenuItems_formant_picture (menu);
-	EditorMenu_addCommand (menu, L"-- formant extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
-	EditorMenu_addCommand (menu, L"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
+	if (v_hasFormants ()) {
+		menu = Editor_addMenu (this, L"Formant", 0);
+		formantToggle = EditorMenu_addCommand (menu, L"Show formants",
+			GuiMenu_CHECKBUTTON | (pref_formant().show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showFormants);
+		EditorMenu_addCommand (menu, L"Formant settings...", 0, menu_cb_formantSettings);
+		EditorMenu_addCommand (menu, L"Advanced formant settings...", 0, menu_cb_advancedFormantSettings);
+		EditorMenu_addCommand (menu, L"-- formant query --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+		EditorMenu_addCommand (menu, L"Formant listing", 0, menu_cb_formantListing);
+		EditorMenu_addCommand (menu, L"Get first formant", GuiMenu_F1, menu_cb_getFirstFormant);
+		EditorMenu_addCommand (menu, L"Get first bandwidth", 0, menu_cb_getFirstBandwidth);
+		EditorMenu_addCommand (menu, L"Get second formant", GuiMenu_F2, menu_cb_getSecondFormant);
+		EditorMenu_addCommand (menu, L"Get second bandwidth", 0, menu_cb_getSecondBandwidth);
+		EditorMenu_addCommand (menu, L"Get third formant", GuiMenu_F3, menu_cb_getThirdFormant);
+		EditorMenu_addCommand (menu, L"Get third bandwidth", 0, menu_cb_getThirdBandwidth);
+		EditorMenu_addCommand (menu, L"Get fourth formant", GuiMenu_F4, menu_cb_getFourthFormant);
+		EditorMenu_addCommand (menu, L"Get fourth bandwidth", 0, menu_cb_getFourthBandwidth);
+		EditorMenu_addCommand (menu, L"Get formant...", 0, menu_cb_getFormant);
+		EditorMenu_addCommand (menu, L"Get bandwidth...", 0, menu_cb_getBandwidth);
+		v_createMenuItems_formant_picture (menu);
+		EditorMenu_addCommand (menu, L"-- formant extract --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisibleFormantContour /* dummy */);
+		EditorMenu_addCommand (menu, L"Extract visible formant contour", 0, menu_cb_extractVisibleFormantContour);
+	}
 
-	menu = Editor_addMenu (this, L"Pulses", 0);
-	pulsesToggle = EditorMenu_addCommand (menu, L"Show pulses",
-		GuiMenu_CHECKBUTTON | (preferences.pulses.show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPulses);
-	EditorMenu_addCommand (menu, L"Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
-	EditorMenu_addCommand (menu, L"-- pulses query --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
-	EditorMenu_addCommand (menu, L"Voice report", 0, menu_cb_voiceReport);
-	EditorMenu_addCommand (menu, L"Pulse listing", 0, menu_cb_pulseListing);
-	/*
-	EditorMenu_addCommand (menu, L"Get jitter (local)", 0, cb_getJitter_local);
-	EditorMenu_addCommand (menu, L"Get jitter (local, absolute)", 0, cb_getJitter_local_absolute);
-	EditorMenu_addCommand (menu, L"Get jitter (rap)", 0, cb_getJitter_rap);
-	EditorMenu_addCommand (menu, L"Get jitter (ppq5)", 0, cb_getJitter_ppq5);
-	EditorMenu_addCommand (menu, L"Get jitter (ddp)", 0, cb_getJitter_ddp);
-	EditorMenu_addCommand (menu, L"Get shimmer (local)", 0, cb_getShimmer_local);
-	EditorMenu_addCommand (menu, L"Get shimmer (local_dB)", 0, cb_getShimmer_local_dB);
-	EditorMenu_addCommand (menu, L"Get shimmer (apq3)", 0, cb_getShimmer_apq3);
-	EditorMenu_addCommand (menu, L"Get shimmer (apq5)", 0, cb_getShimmer_apq5);
-	EditorMenu_addCommand (menu, L"Get shimmer (apq11)", 0, cb_getShimmer_apq11);
-	EditorMenu_addCommand (menu, L"Get shimmer (dda)", 0, cb_getShimmer_dda);
-	*/
-	v_createMenuItems_pulses_picture (menu);
-	EditorMenu_addCommand (menu, L"-- pulses extract --", 0, NULL);
-	EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
-	EditorMenu_addCommand (menu, L"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
+	if (v_hasPulses ()) {
+		menu = Editor_addMenu (this, L"Pulses", 0);
+		pulsesToggle = EditorMenu_addCommand (menu, L"Show pulses",
+			GuiMenu_CHECKBUTTON | (pref_pulses().show ? GuiMenu_TOGGLE_ON : 0), menu_cb_showPulses);
+		EditorMenu_addCommand (menu, L"Advanced pulses settings...", 0, menu_cb_advancedPulsesSettings);
+		EditorMenu_addCommand (menu, L"-- pulses query --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Query:", GuiMenu_INSENSITIVE, menu_cb_getFrequency /* dummy */);
+		EditorMenu_addCommand (menu, L"Voice report", 0, menu_cb_voiceReport);
+		EditorMenu_addCommand (menu, L"Pulse listing", 0, menu_cb_pulseListing);
+		/*
+		EditorMenu_addCommand (menu, L"Get jitter (local)", 0, cb_getJitter_local);
+		EditorMenu_addCommand (menu, L"Get jitter (local, absolute)", 0, cb_getJitter_local_absolute);
+		EditorMenu_addCommand (menu, L"Get jitter (rap)", 0, cb_getJitter_rap);
+		EditorMenu_addCommand (menu, L"Get jitter (ppq5)", 0, cb_getJitter_ppq5);
+		EditorMenu_addCommand (menu, L"Get jitter (ddp)", 0, cb_getJitter_ddp);
+		EditorMenu_addCommand (menu, L"Get shimmer (local)", 0, cb_getShimmer_local);
+		EditorMenu_addCommand (menu, L"Get shimmer (local_dB)", 0, cb_getShimmer_local_dB);
+		EditorMenu_addCommand (menu, L"Get shimmer (apq3)", 0, cb_getShimmer_apq3);
+		EditorMenu_addCommand (menu, L"Get shimmer (apq5)", 0, cb_getShimmer_apq5);
+		EditorMenu_addCommand (menu, L"Get shimmer (apq11)", 0, cb_getShimmer_apq11);
+		EditorMenu_addCommand (menu, L"Get shimmer (dda)", 0, cb_getShimmer_dda);
+		*/
+		v_createMenuItems_pulses_picture (menu);
+		EditorMenu_addCommand (menu, L"-- pulses extract --", 0, NULL);
+		EditorMenu_addCommand (menu, L"Extract to objects window:", GuiMenu_INSENSITIVE, menu_cb_extractVisiblePulses /* dummy */);
+		EditorMenu_addCommand (menu, L"Extract visible pulses", 0, menu_cb_extractVisiblePulses);
+	}
 }
 
 void structTimeSoundAnalysisEditor :: v_createMenuItems_spectrum_picture (EditorMenu menu) {
@@ -2039,22 +2062,27 @@ int structTimeSoundAnalysisEditor :: v_click (double xbegin, double ybegin, bool
 	return TimeSoundAnalysisEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
 }
 
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, const wchar_t *title, Function data, Sampled sound, bool ownSound) {
-	my structTimeSoundEditor :: f_init (title, data, sound, ownSound);
-	if (my v_hasAnalysis ()) {
-		my longestAnalysis = preferences.longestAnalysis;
+void structTimeSoundAnalysisEditor :: f_init (const wchar_t *title, Function data, Sampled sound, bool ownSound) {
+	structTimeSoundEditor :: f_init (title, data, sound, ownSound);
+	if (v_hasAnalysis ()) {
+		longestAnalysis = preferences.longestAnalysis;
 		if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)
 			preferences.log[0].toLogFile = TRUE, preferences.log[0].toInfoWindow = TRUE;
 		if (preferences.log[1].toLogFile == FALSE && preferences.log[1].toInfoWindow == FALSE)
 			preferences.log[1].toLogFile = TRUE, preferences.log[1].toInfoWindow = TRUE;
-		my timeStepStrategy = preferences.timeStepStrategy;
-		my fixedTimeStep = preferences.fixedTimeStep;
-		my numberOfTimeStepsPerView = preferences.numberOfTimeStepsPerView;
-		my spectrogram = preferences.spectrogram;
-		my pitch = preferences.pitch;
-		my intensity = preferences.intensity;
-		my formant = preferences.formant;
-		my pulses = preferences.pulses;
+		timeStepStrategy = preferences.timeStepStrategy;
+		fixedTimeStep = preferences.fixedTimeStep;
+		numberOfTimeStepsPerView = preferences.numberOfTimeStepsPerView;
+		if (v_hasSpectrogram ())
+			spectrogram = pref_spectrogram();
+		if (v_hasPitch	())
+			pitch = pref_pitch();
+		if (v_hasIntensity ())
+			intensity = pref_intensity();
+		if (v_hasFormants ())
+			formant = pref_formant();
+		if (v_hasPulses ())
+			pulses = pref_pulses();
 	}
 }
 

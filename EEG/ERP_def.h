@@ -1,6 +1,6 @@
 /* ERP_def.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@ oo_DEFINE_CLASS (ERP, Sound)
 			long f_getChannelNumber (const wchar_t *channelName);
 			void f_draw (Graphics graphics, long channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish);
 			void f_draw (Graphics graphics, const wchar_t *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish);
+			void f_drawScalp (Graphics graphics, double tmin, double tmax, double vmin, double vmax, bool garnish);
 	#endif
 
 oo_END_CLASS (ERP)

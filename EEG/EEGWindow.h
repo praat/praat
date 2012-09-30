@@ -22,29 +22,30 @@
 #include "TextGridEditor.h"
 #include "EEG.h"
 
-Thing_define (EEGWindow, TextGridEditor) {
+Thing_define (EEGWindow, TextGridEditor) { public:
 	// new data:
-		public:
-			EEG d_eeg;
-			GuiMenuItem d_extractSelectedEEGPreserveTimesButton, d_extractSelectedEEGTimeFromZeroButton;
+		EEG d_eeg;
+		GuiMenuItem d_extractSelectedEEGPreserveTimesButton, d_extractSelectedEEGTimeFromZeroButton;
 	// functions:
-		public:
-			void f_init (const wchar_t *title, EEG eeg);
+		void f_init (const wchar_t *title, EEG eeg);
 	// overridden methods:
-			virtual bool v_hasAnalysis () { return false; }
-			virtual void v_createMenus ();
-			virtual void v_createHelpMenuItems (EditorMenu menu);
-			virtual const wchar_t * v_getChannelName (long channelNumber);
-			virtual void v_createMenuItems_file_extract (EditorMenu menu);
-			virtual void v_updateMenuItems_file ();
+		virtual bool v_hasPitch     () { return false; }
+		virtual bool v_hasIntensity () { return false; }
+		virtual bool v_hasFormants  () { return false; }
+		virtual bool v_hasPulses    () { return false; }
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
+		virtual const wchar_t * v_getChannelName (long channelNumber);
+		virtual void v_createMenuItems_file_extract (EditorMenu menu);
+		virtual void v_updateMenuItems_file ();
 	// overridden preferences:
-		public:
-			static void f_preferences ();
-			static bool s_showSelectionViewer; virtual bool & pref_showSelectionViewer () { return s_showSelectionViewer; }
-			static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
-			static double s_sound_scaling_height;  virtual double & pref_sound_scaling_height  () { return s_sound_scaling_height;  }
-			static double s_sound_scaling_minimum; virtual double & pref_sound_scaling_minimum () { return s_sound_scaling_minimum; }
-			static double s_sound_scaling_maximum; virtual double & pref_sound_scaling_maximum () { return s_sound_scaling_maximum; }
+		static void f_preferences ();
+		static bool s_showSelectionViewer; virtual bool & pref_showSelectionViewer () { return s_showSelectionViewer; }
+		static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
+		declare_preference (double, sound_scaling_height)
+		declare_preference (double, sound_scaling_minimum)
+		declare_preference (double, sound_scaling_maximum)
+		static FunctionEditor_spectrogram s_spectrogram; virtual FunctionEditor_spectrogram & pref_spectrogram () { return s_spectrogram; }
 };
 
 EEGWindow EEGWindow_create (const wchar_t *title, EEG eeg);

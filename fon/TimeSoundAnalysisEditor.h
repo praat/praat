@@ -114,9 +114,8 @@ struct FunctionEditor_pulses {
 	struct { bool garnish; } picture;
 };
 
-Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
+Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) { public:
 	// new data:
-	public:
 		double longestAnalysis;
 		enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
 		double fixedTimeStep;
@@ -127,6 +126,8 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		struct FunctionEditor_formant formant;
 		struct FunctionEditor_pulses pulses;
 		GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
+	// functions:
+		void f_init (const wchar_t *title, Function data, Sampled sound, bool ownSound);
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual void v_info ();
@@ -137,7 +138,12 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 			return spectrogram.show || pitch.show || intensity.show || formant.show ? 0.5 : 0.0;
 		}
 	// new methods:
-		virtual bool v_hasAnalysis () { return true; }
+		virtual bool v_hasAnalysis    () { return true; }
+		virtual bool v_hasSpectrogram () { return true; }
+		virtual bool v_hasPitch       () { return true; }
+		virtual bool v_hasIntensity   () { return true; }
+		virtual bool v_hasFormants    () { return true; }
+		virtual bool v_hasPulses      () { return true; }
 		virtual void v_destroy_analysis ();
 		virtual void v_createMenuItems_spectrum_picture (EditorMenu menu);
 		virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
@@ -151,9 +157,12 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) {
 		virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
 	// preferences:
 		static void f_preferences ();
+		static FunctionEditor_spectrogram s_spectrogram; virtual FunctionEditor_spectrogram & pref_spectrogram () { return s_spectrogram; }
+		static FunctionEditor_pitch       s_pitch;       virtual FunctionEditor_pitch       & pref_pitch       () { return s_pitch;       }
+		static FunctionEditor_intensity   s_intensity;   virtual FunctionEditor_intensity   & pref_intensity   () { return s_intensity;   }
+		static FunctionEditor_formant     s_formant;     virtual FunctionEditor_formant     & pref_formant     () { return s_formant;     }
+		static FunctionEditor_pulses      s_pulses;      virtual FunctionEditor_pulses      & pref_pulses      () { return s_pulses;      }
 };
-
-void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me, const wchar_t *title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);

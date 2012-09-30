@@ -276,6 +276,22 @@ DO
 	}
 END
 
+FORM (ERP_drawScalp, L"ERP: Draw scalp", 0)
+	REAL (L"left Time range (s)", L"0.1")
+	REAL (L"right Time range", L"0.2")
+	REAL (L"left Voltage range (V)", L"10e-6")
+	REAL (L"right Voltage range", L"-10e-6")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (ERP);
+		me -> f_drawScalp (GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_REAL (L"left Voltage range"), GET_REAL (L"right Voltage range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
 FORM (ERP_formula, L"ERP: Formula", L"ERP: Formula...")
 	LABEL (L"label1", L"! `x' is the time in seconds, `col' is the sample number.")
 	LABEL (L"label2", L"x = x1   ! time associated with first sample")
@@ -656,6 +672,7 @@ void praat_EEG_init (void) {
 
 	praat_addAction1 (classERP, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_ERP_viewAndEdit);
 	praat_addAction1 (classERP, 0, L"Draw...", 0, 0, DO_ERP_draw);
+	praat_addAction1 (classERP, 0, L"Draw scalp...", 0, 0, DO_ERP_drawScalp);
 	praat_addAction1 (classERP, 0, L"Query -", 0, 0, 0);
 		praat_addAction1 (classERP, 0, L"Get channel name...", 0, 1, DO_ERP_getChannelName);
 		praat_addAction1 (classERP, 0, L"Get channel number...", 0, 1, DO_ERP_getChannelNumber);
