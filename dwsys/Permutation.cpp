@@ -74,7 +74,7 @@ void Permutation_checkInvariant (Permutation me) {
 
 void structPermutation :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (numberOfElements));
+	MelderInfo_writeLine (L"Number of elements: ", Melder_integer (numberOfElements));
 }
 
 void structPermutation :: v_readText (MelderReadText text) {

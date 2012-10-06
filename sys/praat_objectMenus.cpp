@@ -78,7 +78,7 @@ DO
 		Melder_throw ("Selection changed!\nCannot copy more than one object at a time.");
 	WHERE (SELECTED) {
 		wchar_t *name = GET_STRING (L"newName");
-		praat_new1 (Data_copy ((Data) OBJECT), name);
+		praat_new (Data_copy ((Data) OBJECT), name);
 	}
 END
 
@@ -364,6 +364,10 @@ DIRECT (praat_reportMemoryUse)
 	praat_reportMemoryUse ();
 END
 
+DIRECT (praat_reportTextProperties)
+	praat_reportTextProperties ();
+END
+
 /********** Callbacks of the Open menu. **********/
 
 static void readFromFile (MelderFile file) {
@@ -381,7 +385,7 @@ static void readFromFile (MelderFile file) {
 		ScriptEditor_createFromScript (NULL, (Script) object.peek());
 		return;
 	}
-	praat_new1 (object.transfer(), MelderFile_name (file));
+	praat_new (object.transfer(), MelderFile_name (file));
 	praat_updateSelection ();
 }
 
@@ -600,6 +604,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (L"Objects", L"Technical", L"List readable types of objects", 0, 0, DO_praat_listReadableTypesOfObjects);
 	praat_addMenuCommand (L"Objects", L"Technical", L"Report memory use", 0, 0, DO_praat_reportMemoryUse);
 	praat_addMenuCommand (L"Objects", L"Technical", L"Report integer properties", 0, 0, DO_praat_reportIntegerProperties);
+	praat_addMenuCommand (L"Objects", L"Technical", L"Report text properties", 0, 0, DO_praat_reportTextProperties);
 	praat_addMenuCommand (L"Objects", L"Technical", L"Report graphical properties", 0, 0, DO_praat_reportGraphicalProperties);
 	praat_addMenuCommand (L"Objects", L"Technical", L"Debug...", 0, 0, DO_praat_debug);
 

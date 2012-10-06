@@ -41,7 +41,7 @@ int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t
 			NUMvector_free (array, 1);
 		} break;
 	}
-	MelderInfo_writeLine2 (Melder_single (Melder_stopwatch () / n * 1e9), L" nanoseconds");
+	MelderInfo_writeLine (Melder_single (Melder_stopwatch () / n * 1e9), L" nanoseconds");
 	MelderInfo_close ();
 	return 1;
 }

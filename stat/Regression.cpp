@@ -55,7 +55,7 @@ void structRegression :: v_info () {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_writeLine (L"   Coefficient of factor ", parm -> label, L": ", Melder_double (parm -> value));
 	}
-	MelderInfo_writeLine1 (L"Ranges of values:");
+	MelderInfo_writeLine (L"Ranges of values:");
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_writeLine (L"   Range of factor ", parm -> label, L": minimum ",

@@ -25,8 +25,8 @@
 	#include <sys/types.h>
 	#include <sys/stat.h>
 	#include <signal.h>
-	#include <locale.h>
 #endif
+#include <locale.h>
 #ifdef macintosh
 	#include "macport_on.h"
 	#include <Gestalt.h>
@@ -330,7 +330,7 @@ void praat_cleanUpName (wchar_t *name) {
 
 /***** objects + commands *****/
 
-void praat_newWithFile1 (Data me, const wchar_t *myName, MelderFile file) {
+void praat_newWithFile (Data me, const wchar_t *myName, MelderFile file) {
 	int IOBJECT, ieditor;   // must be local: praat_new can be called from within a loop!!!
 	if (me == NULL)
 		Melder_throw ("No object was put into the list.");
@@ -344,7 +344,7 @@ void praat_newWithFile1 (Data me, const wchar_t *myName, MelderFile file) {
 				Data object = (Data) list -> item [idata];
 				const wchar_t *name = object -> name ? object -> name : myName;
 				Melder_assert (name != NULL);
-				praat_new1 (object, name);   // recurse
+				praat_new (object, name);   // recurse
 			}
 		} catch (MelderError) {
 			list -> size = 0;   // disown
@@ -405,68 +405,68 @@ void praat_newWithFile1 (Data me, const wchar_t *myName, MelderFile file) {
 }
 
 static MelderString thePraatNewName = { 0 };
-void praat_newWithFile2 (Data me, const wchar_t *s1, const wchar_t *s2, MelderFile file) {
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2);
-	praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile (me, thePraatNewName.string, file);
 }
-void praat_newWithFile3 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file) {
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3);
-	praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile (me, thePraatNewName.string, file);
 }
-void praat_newWithFile4 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file) {
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4);
-	praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile (me, thePraatNewName.string, file);
 }
-void praat_newWithFile5 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file) {
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5);
-	praat_newWithFile1 (me, thePraatNewName.string, file);
+	praat_newWithFile (me, thePraatNewName.string, file);
 }
-void praat_new1 (Data me, const wchar_t *s1) {
-	praat_newWithFile1 (me, s1, NULL);
+void praat_new (Data me, const wchar_t *s1) {
+	praat_newWithFile (me, s1, NULL);
 }
-void praat_new2 (Data me, const wchar_t *s1, const wchar_t *s2) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2);
-	praat_new1 (me, thePraatNewName.string);
+	praat_new (me, thePraatNewName.string);
 }
-void praat_new3 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3);
-	praat_new1 (me, thePraatNewName.string);
+	praat_new (me, thePraatNewName.string);
 }
-void praat_new4 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4);
-	return praat_new1 (me, thePraatNewName.string);
+	return praat_new (me, thePraatNewName.string);
 }
-void praat_new5 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5);
-	praat_new1 (me, thePraatNewName.string);
+	praat_new (me, thePraatNewName.string);
 }
-void praat_new6 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6);
-	praat_new1 (me, thePraatNewName.string);
+	praat_new (me, thePraatNewName.string);
 }
-void praat_new7 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7);
-	praat_new1 (me, thePraatNewName.string);
+	praat_new (me, thePraatNewName.string);
 }
-void praat_new8 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8);
-	praat_new1 (me, thePraatNewName.string);
+	praat_new (me, thePraatNewName.string);
 }
-void praat_new9 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_empty (& thePraatNewName);
 	MelderString_append (& thePraatNewName, s1, s2, s3, s4, s5, s6, s7, s8, s9);
-	praat_new1 (me, thePraatNewName.string);
+	praat_new (me, thePraatNewName.string);
 }
 
 void praat_updateSelection (void) {
@@ -521,13 +521,12 @@ void praat_list_renameAndSelect (int position, const wchar_t *name) {
 /***** objects *****/
 
 void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2) {
-	int i1 = 1, i2;
-	wchar_t *name1, *name2;
+	int i1 = 1;
 	while (theCurrentPraatObjects -> list [i1]. selected == 0 || theCurrentPraatObjects -> list [i1]. klas != klas1) i1 ++;
-	i2 = 1;   /* This late initialization works around a Think C BUG. */
+	int i2 = 1;
 	while (theCurrentPraatObjects -> list [i2]. selected == 0 || theCurrentPraatObjects -> list [i2]. klas != klas2) i2 ++;
-	name1 = wcschr (theCurrentPraatObjects -> list [i1]. name, ' ') + 1;
-	name2 = wcschr (theCurrentPraatObjects -> list [i2]. name, ' ') + 1;
+	wchar_t *name1 = wcschr (theCurrentPraatObjects -> list [i1]. name, ' ') + 1;
+	wchar_t *name2 = wcschr (theCurrentPraatObjects -> list [i2]. name, ' ') + 1;
 	if (wcsequ (name1, name2))
 		wcscpy (name, name1);
 	else
@@ -554,15 +553,19 @@ void praat_removeObject (int i) {
 static void praat_exit (int exit_code) {
 	int IOBJECT;
 	#ifdef _WIN32
-		if (! theCurrentPraatApplication -> batch)
+		if (! theCurrentPraatApplication -> batch) {
+			Melder_assert (theCurrentPraatApplication);
+			Melder_assert (theCurrentPraatApplication -> topShell);
+			Melder_assert (theCurrentPraatApplication -> topShell -> d_xmShell);
+			trace ("destroy the object window");
 			XtDestroyWidget (theCurrentPraatApplication -> topShell -> d_xmShell);
+		}
 	#endif
+	trace ("destroy the picture window");
 	praat_picture_exit ();
 	praat_statistics_exit ();   /* Record total memory use across sessions. */
 
-	/*
-	 * Stop receiving messages.
-	 */
+	trace ("stop receiving messages");
 	#if defined (UNIX)
 		/*
 		 * We are going to delete the process id ("pid") file, if it's ours.
@@ -589,15 +592,11 @@ static void praat_exit (int exit_code) {
 		}
 	#endif
 
-	/*
-	 * Save the preferences.
-	 */
+	trace ("save the preferences");
 	Preferences_write (& prefs5File);
 	MelderFile_setMacTypeAndCreator (& prefs5File, 'pref', 'PpgB');
 
-	/*
-	 * Save the script buttons.
-	 */
+	trace ("save the script buttons");
 	if (! theCurrentPraatApplication -> batch) {
 		try {
 			autofile f = Melder_fopen (& buttons5File, "wb");
@@ -614,20 +613,11 @@ static void praat_exit (int exit_code) {
 		}
 	}
 
-	/*
-	 * Flush the file-based objects.
-	 */
+	trace ("flush the file-based objects");
 	WHERE_DOWN (! MelderFile_isNull (& theCurrentPraatObjects -> list [IOBJECT]. file)) praat_remove (IOBJECT);
 	Melder_files_cleanUp ();   /* If a URL is open. */
 
-	/*
-	 * Delete the tracing file?
-	 */
-	//MelderFile_delete (& tracingFile);
-
-	/*
-	 * Finally, leave the program.
-	 */
+	trace ("leave the program");
 	exit (exit_code);
 }
 
@@ -670,7 +660,7 @@ static void cb_Editor_publication (Editor me, void *closure, Data publication) {
 	(void) me;
 	(void) closure;
 	try {
-		praat_new1 (publication, NULL);
+		praat_new (publication, NULL);
 	} catch (MelderError) {
 		Melder_flushError (NULL);
 	}
@@ -831,7 +821,7 @@ static void helpProc (const wchar_t *query) {
 
 static int publishProc (void *anything) {
 	try {
-		praat_new1 ((Data) anything, NULL);
+		praat_new ((Data) anything, NULL);
 		praat_updateSelection ();
 		return 1;
 	} catch (MelderError) {
@@ -956,6 +946,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
+	#elif defined _WIN32
+		//setlocale (LC_ALL, "C");   // said to be superfluous
 	#elif defined (macintosh)
 		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
 	#endif
@@ -1245,6 +1237,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_actions_createDynamicMenu (raam, 250);
 		trace ("showing the Objects window");
 		raam -> f_show ();
+	//Melder_fatal ("stop");
 		#ifdef UNIX
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");

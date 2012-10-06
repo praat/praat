@@ -68,20 +68,20 @@ Thing_implement (DTW, Matrix, 2);
 
 void structDTW :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine5 (L"Domain prototype:", Melder_double (ymin), L" to ",
+	MelderInfo_writeLine (L"Domain prototype:", Melder_double (ymin), L" to ",
 	                       Melder_double (ymax), L" (s).");
-	MelderInfo_writeLine5 (L"Domain candidate:", Melder_double (xmin), L" to ",
+	MelderInfo_writeLine (L"Domain candidate:", Melder_double (xmin), L" to ",
 	                       Melder_double (xmax), L" (s).");
-	MelderInfo_writeLine2 (L"Number of frames prototype: ", Melder_integer (ny));
-	MelderInfo_writeLine2 (L"Number of frames candidate: ", Melder_integer (nx));
-	MelderInfo_writeLine2 (L"Path length (frames): ", Melder_integer (pathLength));
-	MelderInfo_writeLine2 (L"Global warped distance: ", Melder_double (weightedDistance));
+	MelderInfo_writeLine (L"Number of frames prototype: ", Melder_integer (ny));
+	MelderInfo_writeLine (L"Number of frames candidate: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"Path length (frames): ", Melder_integer (pathLength));
+	MelderInfo_writeLine (L"Global warped distance: ", Melder_double (weightedDistance));
 	if (nx == ny) {
 		double dd = 0;
 		for (long i = 1; i <= nx; i++) {
 			dd += z[i][i];
 		}
-		MelderInfo_writeLine2 (L"Distance along diagonal: ", Melder_double (dd / nx));
+		MelderInfo_writeLine (L"Distance along diagonal: ", Melder_double (dd / nx));
 	}
 }
 

@@ -64,9 +64,9 @@ Thing_implement (PCA, Eigen, 0);
 
 void structPCA :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of components: ", Melder_integer (numberOfEigenvalues));
-	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (dimension));
-	MelderInfo_writeLine2 (L"Number of observations: ", Melder_integer (numberOfObservations));
+	MelderInfo_writeLine (L"Number of components: ", Melder_integer (numberOfEigenvalues));
+	MelderInfo_writeLine (L"Number of dimensions: ", Melder_integer (dimension));
+	MelderInfo_writeLine (L"Number of observations: ", Melder_integer (numberOfObservations));
 }
 
 PCA PCA_create (long numberOfComponents, long dimension) {

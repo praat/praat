@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,20 +174,20 @@ Data praat_onlyObject_generic (ClassInfo klas);
 praat_Object praat_onlyScreenObject (void);
 wchar_t *praat_name (int iobject);
 void praat_write_do (Any dia, const wchar_t *extension);
-void praat_new1 (Data me, const wchar_t *s1);
-void praat_new2 (Data me, const wchar_t *s1, const wchar_t *s2);
-void praat_new3 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
-void praat_new4 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
-void praat_new5 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
-void praat_new6 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
-void praat_new7 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
-void praat_new8 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
-void praat_new9 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
-void praat_newWithFile1 (Data me, const wchar_t *s1, MelderFile file);
-void praat_newWithFile2 (Data me, const wchar_t *s1, const wchar_t *s2, MelderFile file);
-void praat_newWithFile3 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file);
-void praat_newWithFile4 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file);
-void praat_newWithFile5 (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file);
+void praat_new (Data me, const wchar_t *s1);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
+void praat_new (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
+void praat_newWithFile (Data me, const wchar_t *s1, MelderFile file);
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, MelderFile file);
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file);
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file);
+void praat_newWithFile (Data me, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, MelderFile file);
 void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 
 /* Macros for description of forms (dialog boxes).
@@ -512,29 +512,5 @@ struct autoPraatPicture {
 	autoPraatPicture () { praat_picture_open (); }
 	~autoPraatPicture () { praat_picture_close (); }
 };
-static inline void praat_new (Data newData, const wchar_t *s1) { praat_new1 (newData, s1); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2) { praat_new2 (newData, s1, s2); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) { praat_new3 (newData, s1, s2, s3); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4)
-	{ praat_new4 (newData, s1, s2, s3, s4); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5)
-	{ praat_new5 (newData, s1, s2, s3, s4, s5); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	const wchar_t *s6) { praat_new6 (newData, s1, s2, s3, s4, s5, s6); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	const wchar_t *s6, const wchar_t *s7) { praat_new7 (newData, s1, s2, s3, s4, s5, s6, s7); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) { praat_new8 (newData, s1, s2, s3, s4, s5, s6, s7, s8); }
-static inline void praat_new (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) { praat_new9 (newData, s1, s2, s3, s4, s5, s6, s7, s8, s9); }
-static inline void praat_newWithFile (Data newData, const wchar_t *s1, MelderFile file) { praat_newWithFile1 (newData, s1, file); }
-static inline void praat_newWithFile (Data newData, const wchar_t *s1, const wchar_t *s2, MelderFile file)
-	{ praat_newWithFile2 (newData, s1, s2, file); }
-static inline void praat_newWithFile (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, MelderFile file)
-	{ praat_newWithFile3 (newData, s1, s2, s3, file); }
-static inline void praat_newWithFile (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, MelderFile file)
-	{ praat_newWithFile4 (newData, s1, s2, s3, s4, file); }
-static inline void praat_newWithFile (Data newData, const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5,
-	MelderFile file) { praat_newWithFile5 (newData, s1, s2, s3, s4, s5, file); }
 
 /* End of file praat.h */

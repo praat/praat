@@ -25,7 +25,7 @@
 
 #define BUTTON_WIDTH  240
 
-#define praat_MAXNUM_LOOSE_COMMANDS  5000
+#define praat_MAXNUM_LOOSE_COMMANDS  10000
 static long theNumberOfActions = 0;
 static struct structPraat_Command *theActions;
 static GuiMenu praat_writeMenu;

@@ -1,6 +1,6 @@
 /* Art_Speaker.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,14 +101,7 @@ void Art_Speaker_toVocalTract (Art _art, Speaker speaker,
 	HC = sqrt (HBody_x * HBody_x + HBody_y * HBody_y);
 	if (HC <= body.radius) {
 		HC = body.radius;
-		Sp = 0.0;   /* 19980228 PowerPC processor BUG...  Needed with the 603e at least:
-			00000344: CBC100B0  lfd      fp30,176(SP)          HC := body.radius
-			00000348: C94100B0  lfd      fp10,176(SP)          fp10 := body.radius
-			0000034C: C96100B0  lfd      fp11,176(SP)          fp11 := body.radius
-			00000350: FD4A02F2  fmul     fp10,fp10,fp11          fp10 := body.radius ^ 2
-			00000354: FC3E57B8  fmsub    fp1,fp30,fp30,fp10          fp1 := HC * HC - fp10   (should be zero)
-			00000358: 48000001  bl       .sqrt          gives NAN(001) !!!
-		*/
+		Sp = 0.0;   // prevent rounding errors in sqrt (can occur on processors with e.g. 80-bit registers)
 	} else {
 		Sp = sqrt (HC * HC - body.radius * body.radius);
 	}

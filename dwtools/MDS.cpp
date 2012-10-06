@@ -2644,17 +2644,17 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 
 		if (showProgress) {
 			MelderInfo_open ();
-			MelderInfo_writeLine4 (L"**************** INDSCAL results on Distances "
+			MelderInfo_writeLine (L"**************** INDSCAL results on Distances "
 			                       "*******************\n\n", Thing_className (sp),
 			                       L"number of objects: ",  Melder_integer (nSources));
 			for (long i = 1; i <= nSources; i++) {
-				MelderInfo_writeLine2 (L"  ", Thing_getName ( (Thing) sp -> item[i]));
+				MelderInfo_writeLine (L"  ", Thing_getName ( (Thing) sp -> item[i]));
 			}
 			if (nZeros > 0) {
-				MelderInfo_writeLine5 (L"WARNING: ", Melder_integer (nZeros),  L" zero weight",
+				MelderInfo_writeLine (L"WARNING: ", Melder_integer (nZeros),  L" zero weight",
 				                       (nZeros > 1 ? L"s" : L""), L"!");
 			}
-			MelderInfo_writeLine5 (L"\n\nVariance Accounted For = ", Melder_double (*vaf),
+			MelderInfo_writeLine (L"\n\nVariance Accounted For = ", Melder_double (*vaf),
 			                       L"\nThe optimal configuration was reached in ",
 			                       Melder_integer ( (iter > numberOfIterations ? numberOfIterations : iter)), L" iterations.");
 			MelderInfo_close ();
@@ -2733,18 +2733,18 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 
 		if (showProgress) {
 			MelderInfo_open ();
-			MelderInfo_writeLine1 (L"**************** INDSCAL with monotone regression *******************");
-			MelderInfo_writeLine1 (Thing_className (dissims));
-			MelderInfo_writeLine2 (L"Number of objects: ", Melder_integer (nSources));
+			MelderInfo_writeLine (L"**************** INDSCAL with monotone regression *******************");
+			MelderInfo_writeLine (Thing_className (dissims));
+			MelderInfo_writeLine (L"Number of objects: ", Melder_integer (nSources));
 			for (long i = 1; i <= nSources; i++) {
-				MelderInfo_writeLine2 (L"  ", Thing_getName ( (Thing) dissims -> item[i]));
+				MelderInfo_writeLine (L"  ", Thing_getName ( (Thing) dissims -> item[i]));
 			}
 			if (nZeros > 0) {
-				MelderInfo_writeLine4 (L"WARNING: ", Melder_integer (nZeros), L" zero weight", (nZeros > 1 ? L"s" : L""));
+				MelderInfo_writeLine (L"WARNING: ", Melder_integer (nZeros), L" zero weight", (nZeros > 1 ? L"s" : L""));
 			}
-			MelderInfo_writeLine2 (L"Variance Accounted For: ", Melder_double (*vaf));
-			MelderInfo_writeLine1 (L"Based on MONOTONE REGRESSION");
-			MelderInfo_writeLine2 (L"number of iterations: ", Melder_integer ( (iter > numberOfIterations ?	numberOfIterations : iter)));
+			MelderInfo_writeLine (L"Variance Accounted For: ", Melder_double (*vaf));
+			MelderInfo_writeLine (L"Based on MONOTONE REGRESSION");
+			MelderInfo_writeLine (L"number of iterations: ", Melder_integer ( (iter > numberOfIterations ?	numberOfIterations : iter)));
 			MelderInfo_close ();
 		}
 		if (showProgress) {

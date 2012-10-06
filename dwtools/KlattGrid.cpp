@@ -536,22 +536,22 @@ Thing_implement (PhonationGrid, Function, 0);
 void structPhonationGrid :: v_info () {
 	structData :: v_info ();
 	const wchar_t *in1 = L"  ", *in2 = L"    ";
-	MelderInfo_writeLine2 (in1, L"Time domain:");
-	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the PHONATION tiers:");
-	MelderInfo_writeLine3 (in2, L"pitch:               ", Melder_integer (pitch -> points -> size));
-	MelderInfo_writeLine3 (in2, L"voicingAmplitude:    ", Melder_integer (voicingAmplitude -> points -> size));
-	MelderInfo_writeLine3 (in2, L"openPhase:           ", Melder_integer (openPhase -> points -> size));
-	MelderInfo_writeLine3 (in2, L"collisionPhase:      ", Melder_integer (collisionPhase -> points -> size));
-	MelderInfo_writeLine3 (in2, L"power1:              ", Melder_integer (power1 -> points -> size));
-	MelderInfo_writeLine3 (in2, L"power2:              ", Melder_integer (power2 -> points -> size));
-	MelderInfo_writeLine3 (in2, L"flutter:             ", Melder_integer (flutter -> points -> size));
-	MelderInfo_writeLine3 (in2, L"doublePulsing:       ", Melder_integer (doublePulsing -> points -> size));
-	MelderInfo_writeLine3 (in2, L"spectralTilt:        ", Melder_integer (spectralTilt -> points -> size));
-	MelderInfo_writeLine3 (in2, L"aspirationAmplitude: ", Melder_integer (aspirationAmplitude -> points -> size));
-	MelderInfo_writeLine3 (in2, L"breathinessAmplitude:", Melder_integer (breathinessAmplitude -> points -> size));
+	MelderInfo_writeLine (in1, L"Time domain:");
+	MelderInfo_writeLine (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (in2, L"End time:       ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the PHONATION tiers:");
+	MelderInfo_writeLine (in2, L"pitch:               ", Melder_integer (pitch -> points -> size));
+	MelderInfo_writeLine (in2, L"voicingAmplitude:    ", Melder_integer (voicingAmplitude -> points -> size));
+	MelderInfo_writeLine (in2, L"openPhase:           ", Melder_integer (openPhase -> points -> size));
+	MelderInfo_writeLine (in2, L"collisionPhase:      ", Melder_integer (collisionPhase -> points -> size));
+	MelderInfo_writeLine (in2, L"power1:              ", Melder_integer (power1 -> points -> size));
+	MelderInfo_writeLine (in2, L"power2:              ", Melder_integer (power2 -> points -> size));
+	MelderInfo_writeLine (in2, L"flutter:             ", Melder_integer (flutter -> points -> size));
+	MelderInfo_writeLine (in2, L"doublePulsing:       ", Melder_integer (doublePulsing -> points -> size));
+	MelderInfo_writeLine (in2, L"spectralTilt:        ", Melder_integer (spectralTilt -> points -> size));
+	MelderInfo_writeLine (in2, L"aspirationAmplitude: ", Melder_integer (aspirationAmplitude -> points -> size));
+	MelderInfo_writeLine (in2, L"breathinessAmplitude:", Melder_integer (breathinessAmplitude -> points -> size));
 }
 
 void PhonationGrid_setNames (PhonationGrid me) {
@@ -1164,16 +1164,16 @@ static void FormantGrid_info (FormantGrid me, Ordered amplitudes, const wchar_t 
 	long nmax = MAX (nformants, namplitudes);
 
 	for (long iformant = 1; iformant <= nmax; iformant++) {
-		MelderInfo_writeLine4 (in1, L"Formant ", Melder_integer (iformant), L":");
+		MelderInfo_writeLine (in1, L"Formant ", Melder_integer (iformant), L":");
 		if (iformant <= my formants -> size) {
 			long nfp = FormantGrid_getNumberOfFormantPoints (me, iformant);
 			long nbp = FormantGrid_getNumberOfBandwidthPoints (me, iformant);
-			MelderInfo_writeLine3 (in2, L"formants:   ", (nfp >= 0 ? Melder_integer (nfp) : L"-- undefined --"));
-			MelderInfo_writeLine3 (in2, L"bandwidths: ", (nbp >= 0 ? Melder_integer (nbp) : L"-- undefined --"));
+			MelderInfo_writeLine (in2, L"formants:   ", (nfp >= 0 ? Melder_integer (nfp) : L"-- undefined --"));
+			MelderInfo_writeLine (in2, L"bandwidths: ", (nbp >= 0 ? Melder_integer (nbp) : L"-- undefined --"));
 		}
 		if (amplitudes != NULL) {
 			long nap = Ordered_getNumberOfAmplitudePoints (amplitudes, iformant);
-			MelderInfo_writeLine3 (in2, L"amplitudes: ", (nap >= 0 ? Melder_integer (nap) : L"-- undefined --"));
+			MelderInfo_writeLine (in2, L"amplitudes: ", (nap >= 0 ? Melder_integer (nap) : L"-- undefined --"));
 		}
 	}
 }
@@ -1181,15 +1181,15 @@ static void FormantGrid_info (FormantGrid me, Ordered amplitudes, const wchar_t 
 void structVocalTractGrid :: v_info () {
 	structData :: v_info ();
 	const wchar_t *in1 = L"  ", *in2 = L"    ", *in3 = L"      ";
-	MelderInfo_writeLine2 (in1, L"Time domain:");
-	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the ORAL FORMANT tiers:");
+	MelderInfo_writeLine (in1, L"Time domain:");
+	MelderInfo_writeLine (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (in2, L"End time:       ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the ORAL FORMANT tiers:");
 	FormantGrid_info (oral_formants, oral_formants_amplitudes, in2, in3);
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the NASAL FORMANT tiers:");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the NASAL FORMANT tiers:");
 	FormantGrid_info (nasal_formants, nasal_formants_amplitudes, in2, in3);
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the NASAL ANTIFORMANT tiers:");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the NASAL ANTIFORMANT tiers:");
 	FormantGrid_info (nasal_antiformants, NULL, in2, in3);
 }
 
@@ -1526,8 +1526,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 				MelderString_append (&warning, L"\tOral formants: one or more are missing.\n");
 			}
 			MelderInfo_open();
-            MelderInfo_writeLine1 (L"Warning:");
-			MelderInfo_writeLine1 (warning.string);
+            MelderInfo_writeLine (L"Warning:");
+			MelderInfo_writeLine (warning.string);
             MelderInfo_close();
 		}
 		return him.transfer();
@@ -1660,15 +1660,15 @@ Thing_implement (CouplingGrid, Function, 0);
 void structCouplingGrid :: v_info () {
 	structData :: v_info ();
 	const wchar_t *in1 = L"  ", *in2 = L"    ", *in3 = L"      ";
-	MelderInfo_writeLine2 (in1, L"Time domain:");
-	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the TRACHEAL FORMANT tiers:");
+	MelderInfo_writeLine (in1, L"Time domain:");
+	MelderInfo_writeLine (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (in2, L"End time:       ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the TRACHEAL FORMANT tiers:");
 	FormantGrid_info (tracheal_formants, tracheal_formants_amplitudes, in2, in3);
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the TRACHEAL ANTIFORMANT tiers:");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the TRACHEAL ANTIFORMANT tiers:");
 	FormantGrid_info (tracheal_antiformants, NULL, in2, in3);
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the DELTA FORMANT tiers:");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the DELTA FORMANT tiers:");
 	FormantGrid_info (delta_formants, NULL, in2, in3);
 }
 
@@ -1862,14 +1862,14 @@ FricationGridPlayOptions FricationGridPlayOptions_create () {
 void structFricationGrid :: v_info () {
 	structData :: v_info ();
 	const static wchar_t *in1 = L"  ", *in2 = L"    ", *in3 = L"      ";
-	MelderInfo_writeLine2 (in1, L"Time domain:");
-	MelderInfo_writeLine4 (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine4 (in2, L"End time:       ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine4 (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the FRICATION tiers:");
-	MelderInfo_writeLine3 (in2, L"fricationAmplitude:  ", Melder_integer (fricationAmplitude -> points -> size));
-	MelderInfo_writeLine3 (in2, L"bypass:              ", Melder_integer (bypass -> points -> size));
-	MelderInfo_writeLine2 (in1, L"\nNumber of points in the FRICATION FORMANT tiers:");
+	MelderInfo_writeLine (in1, L"Time domain:");
+	MelderInfo_writeLine (in2, L"Start time:     ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (in2, L"End time:       ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (in2, L"Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (in1, L"\nNumber of points in the FRICATION tiers:");
+	MelderInfo_writeLine (in2, L"fricationAmplitude:  ", Melder_integer (fricationAmplitude -> points -> size));
+	MelderInfo_writeLine (in2, L"bypass:              ", Melder_integer (bypass -> points -> size));
+	MelderInfo_writeLine (in1, L"\nNumber of points in the FRICATION FORMANT tiers:");
 	FormantGrid_info (frication_formants, frication_formants_amplitudes, in2, in3);
 }
 
@@ -2070,17 +2070,17 @@ Thing_implement (KlattGrid, Function, 0);
 
 void structKlattGrid :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time:     ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time:       ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine1 (L"\n--- PhonationGrid ---\n");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time:     ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time:       ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"\n--- PhonationGrid ---\n");
 	phonation -> v_info ();
-	MelderInfo_writeLine1 (L"\n--- VocalTractGrid ---\n");
+	MelderInfo_writeLine (L"\n--- VocalTractGrid ---\n");
 	vocalTract -> v_info ();
-	MelderInfo_writeLine1 (L"\n--- CouplingGrid ---\n");
+	MelderInfo_writeLine (L"\n--- CouplingGrid ---\n");
 	coupling -> v_info ();
-	MelderInfo_writeLine1 (L"\n--- FricationgGrid ---\n");
+	MelderInfo_writeLine (L"\n--- FricationgGrid ---\n");
 	frication -> v_info ();
 }
 

@@ -511,19 +511,19 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *na
 	ldiv_t n = ldiv (nc, npc);
 
 	MelderInfo_open ();
-	MelderInfo_write2 (name, L"=[");
+	MelderInfo_write (name, L"=[");
 	for (i = 1; i <= nr; i++) {
 		for (j = 1; j <= n.quot; j++) {
 			for (k = 1; k <= npc; k++) {
-				MelderInfo_write2 (Melder_double (m[i][ (j - 1) *npc + k]), (k < npc ? L", " : L""));
+				MelderInfo_write (Melder_double (m[i][ (j - 1) *npc + k]), (k < npc ? L", " : L""));
 			}
-			MelderInfo_write1 (j < n.quot ? L",\n" : L"");
+			MelderInfo_write (j < n.quot ? L",\n" : L"");
 		}
 
 		for (k = 1; k <= n.rem; k++) {
-			MelderInfo_write2 (Melder_double (m[i][n.quot * npc + k]), (k < n.rem ? L", " : L""));
+			MelderInfo_write (Melder_double (m[i][n.quot * npc + k]), (k < n.rem ? L", " : L""));
 		}
-		MelderInfo_write1 (i < nr ? L";\n" : L"];\n");
+		MelderInfo_write (i < nr ? L";\n" : L"];\n");
 	}
 	MelderInfo_close ();
 }

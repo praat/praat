@@ -49,11 +49,11 @@ Thing_implement (Tube, Sampled, 0);
 
 void structTube :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine5 (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine2 (L"Maximum number of segments: ", Melder_integer (maxnSegments));
-	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"Maximum number of segments: ", Melder_integer (maxnSegments));
+	MelderInfo_writeLine (L"Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"First frame at: ", Melder_double (x1), L" seconds");
 }
 
 void Tube_Frame_init (Tube_Frame me, long nSegments, double length) {

@@ -58,7 +58,7 @@ Thing_implement (KNN, Data, 0);
 void structKNN :: v_info ()
 {
     structData :: v_info ();
-    MelderInfo_writeLine2 (L"Size of instancebase: ", Melder_integer (nInstances));
+    MelderInfo_writeLine (L"Size of instancebase: ", Melder_integer (nInstances));
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////

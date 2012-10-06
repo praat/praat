@@ -790,7 +790,7 @@ void Vertices_print (Vertices me, Vertices thee) {
 	long ns = 0, nc = 0, nt, nt2;
 	//	MelderInfo_open();
 	DLLNode n = my front;
-	MelderInfo_writeLine1 (L"");
+	MelderInfo_writeLine (L"");
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
 		const wchar_t *type = 0, *itype;
@@ -800,11 +800,11 @@ void Vertices_print (Vertices me, Vertices thee) {
 			type = L"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
 			itype = Melder_integer (VERTEX (n) -> intersect);
 		}
-		MelderInfo_write9 (type, Melder_integer (nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
-		MelderInfo_write6 (Melder_double (alpha), L", E", Melder_integer (VERTEX (n) -> entry), L"(", Melder_integer (nt2), L")\n");
+		MelderInfo_write (type, Melder_integer (nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
+		MelderInfo_write (Melder_double (alpha), L", E", Melder_integer (VERTEX (n) -> entry), L"(", Melder_integer (nt2), L")\n");
 		n = n -> next;
 	}
-	MelderInfo_writeLine1 (L"");
+	MelderInfo_writeLine (L"");
 	n = thy front;
 	while (n != 0) {
 		double x = VERTEX (n) -> x, y = VERTEX (n) -> y, alpha = VERTEX (n) -> alpha;
@@ -815,8 +815,8 @@ void Vertices_print (Vertices me, Vertices thee) {
 			type = L"I"; nt = VERTEX (n) -> id; nt2 = VERTEX (VERTEX (n) -> neighbour) -> id;
 			itype = Melder_integer (VERTEX (n) -> intersect);
 		}
-		MelderInfo_write9 (type, Melder_integer (nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
-		MelderInfo_write6 (Melder_double (alpha), L", E", Melder_integer (VERTEX (n) -> entry), L"(", Melder_integer (nt2), L")\n");
+		MelderInfo_write (type, Melder_integer (nt), L" I", itype, L", (", Melder_double (x), L", ", Melder_double (y), L"), ");
+		MelderInfo_write (Melder_double (alpha), L", E", Melder_integer (VERTEX (n) -> entry), L"(", Melder_integer (nt2), L")\n");
 		n = n -> next;
 	}
 	//	MelderInfo_close();

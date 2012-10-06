@@ -444,7 +444,7 @@ DIRECT (Sound_convertToStereo)
 	LOOP {
 		iam (Sound);
 		autoSound thee = Sound_convertToStereo (me);
-		praat_new2 (thee.transfer(), my name, L"_stereo");
+		praat_new (thee.transfer(), my name, L"_stereo");
 	}
 END
 
@@ -1360,7 +1360,7 @@ static void cb_SoundRecorder_publication (Editor editor, void *closure, Data pub
 	(void) editor;
 	(void) closure;
 	try {
-		praat_new1 (publication, NULL);
+		praat_new (publication, NULL);
 	} catch (MelderError) {
 		Melder_flushError (NULL);
 	}

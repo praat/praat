@@ -486,24 +486,6 @@ void MelderInfo_writeLine  (const wchar_t *s1, const wchar_t *s2, const wchar_t 
 void MelderInfo_writeLine  (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
 void MelderInfo_writeLine  (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
 void MelderInfo_close (void);   /* Flush the background info to the Info window. */
-#define MelderInfo_write1  MelderInfo_write
-#define MelderInfo_write2  MelderInfo_write
-#define MelderInfo_write3  MelderInfo_write
-#define MelderInfo_write4  MelderInfo_write
-#define MelderInfo_write5  MelderInfo_write
-#define MelderInfo_write6  MelderInfo_write
-#define MelderInfo_write7  MelderInfo_write
-#define MelderInfo_write8  MelderInfo_write
-#define MelderInfo_write9  MelderInfo_write
-#define MelderInfo_writeLine1  MelderInfo_writeLine
-#define MelderInfo_writeLine2  MelderInfo_writeLine
-#define MelderInfo_writeLine3  MelderInfo_writeLine
-#define MelderInfo_writeLine4  MelderInfo_writeLine
-#define MelderInfo_writeLine5  MelderInfo_writeLine
-#define MelderInfo_writeLine6  MelderInfo_writeLine
-#define MelderInfo_writeLine7  MelderInfo_writeLine
-#define MelderInfo_writeLine8  MelderInfo_writeLine
-#define MelderInfo_writeLine9  MelderInfo_writeLine
 
 void Melder_information (const wchar_t *s1);
 void Melder_information (const wchar_t *s1, const wchar_t *s2);

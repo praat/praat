@@ -199,19 +199,19 @@ void bookkeeping (FFNet me) {
 
 void structFFNet :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of layers: ", Melder_integer (nLayers));
-	MelderInfo_writeLine2 (L"Total number of units: ", Melder_integer (FFNet_getNumberOfUnits (this)));
-	MelderInfo_writeLine4 (L"   Number of units in layer ", Melder_integer (nLayers), L" (output): ",
+	MelderInfo_writeLine (L"Number of layers: ", Melder_integer (nLayers));
+	MelderInfo_writeLine (L"Total number of units: ", Melder_integer (FFNet_getNumberOfUnits (this)));
+	MelderInfo_writeLine (L"   Number of units in layer ", Melder_integer (nLayers), L" (output): ",
 	                       Melder_integer (nUnitsInLayer[nLayers]));
 	for (long i = nLayers - 1; i >= 1; i--) {
-		MelderInfo_writeLine4 (L"   Number of units in layer ", Melder_integer (i), L" (hidden): ",
+		MelderInfo_writeLine (L"   Number of units in layer ", Melder_integer (i), L" (hidden): ",
 		                       Melder_integer (nUnitsInLayer[i]));
 	}
-	MelderInfo_writeLine2 (L"   Number of units in layer 0 (input): ", Melder_integer (nUnitsInLayer[0]));
-	MelderInfo_writeLine2 (L"Outputs are linear: ", Melder_boolean (outputsAreLinear));
-	MelderInfo_writeLine5 (L"Number of weights: ", Melder_integer (nWeights), L" (",
+	MelderInfo_writeLine (L"   Number of units in layer 0 (input): ", Melder_integer (nUnitsInLayer[0]));
+	MelderInfo_writeLine (L"Outputs are linear: ", Melder_boolean (outputsAreLinear));
+	MelderInfo_writeLine (L"Number of weights: ", Melder_integer (nWeights), L" (",
 	                       Melder_integer (FFNet_dimensionOfSearchSpace (this)), L" selected)");
-	MelderInfo_writeLine2 (L"Number of nodes: ", Melder_integer (nNodes));
+	MelderInfo_writeLine (L"Number of nodes: ", Melder_integer (nNodes));
 }
 
 void FFNet_init (FFNet me, long numberOfInputs, long nodesInLayer1, long nodesInLayer2,

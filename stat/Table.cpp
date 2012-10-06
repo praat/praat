@@ -1876,7 +1876,7 @@ void Table_list (Table me, bool includeRowNumbers) {
 	MelderInfo_open ();
 	if (includeRowNumbers) {
 		MelderInfo_write (L"row");
-		if (my numberOfColumns > 0) MelderInfo_write1 (L"\t");
+		if (my numberOfColumns > 0) MelderInfo_write (L"\t");
 	}
 	for (long icol = 1; icol <= my numberOfColumns; icol ++) {
 		if (icol > 1) MelderInfo_write (L"\t");

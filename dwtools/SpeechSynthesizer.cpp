@@ -46,17 +46,17 @@ void structSpeechSynthesizer :: v_destroy () {
 
 void structSpeechSynthesizer :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Voice name: ", d_voiceName);
-	MelderInfo_writeLine2 (L"Voice variant: ", d_voiceVariantName);
-	MelderInfo_writeLine2 (L"Input text format: ", (d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? L"text only" :
+	MelderInfo_writeLine (L"Voice name: ", d_voiceName);
+	MelderInfo_writeLine (L"Voice variant: ", d_voiceVariantName);
+	MelderInfo_writeLine (L"Input text format: ", (d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? L"text only" :
 		d_inputTextFormat == SpeechSynthesizer_INPUT_PHONEMESONLY ? L"phonemes only" : L"tagged text"));
-	MelderInfo_writeLine2 (L"Input phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? L"Kirshenbaum" : L"???"));
-	MelderInfo_writeLine3 (L"Sampling frequency: ", Melder_double (d_samplingFrequency), L" Hz");
-	MelderInfo_writeLine3 (L"Word gap: ", Melder_double (d_wordgap), L" s");
-	MelderInfo_writeLine3 (L"Pitch adjustment value: ", Melder_integer (d_pitchAdjustment), L" (0-100)");
-	MelderInfo_writeLine4 (L"Speeking rate: ", Melder_integer (d_wordsPerMinute), L" words per minute", (d_estimateWordsPerMinute ? L" (but estimated from data if possible)" : L" (fixed)"));
+	MelderInfo_writeLine (L"Input phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? L"Kirshenbaum" : L"???"));
+	MelderInfo_writeLine (L"Sampling frequency: ", Melder_double (d_samplingFrequency), L" Hz");
+	MelderInfo_writeLine (L"Word gap: ", Melder_double (d_wordgap), L" s");
+	MelderInfo_writeLine (L"Pitch adjustment value: ", Melder_integer (d_pitchAdjustment), L" (0-100)");
+	MelderInfo_writeLine (L"Speeking rate: ", Melder_integer (d_wordsPerMinute), L" words per minute", (d_estimateWordsPerMinute ? L" (but estimated from data if possible)" : L" (fixed)"));
 
-	MelderInfo_writeLine2 (L"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? L"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? L"IPA" : L"???"));
+	MelderInfo_writeLine (L"Output phoneme coding: ", (d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM ? L"Kirshenbaum" : d_inputPhonemeCoding == SpeechSynthesizer_PHONEMECODINGS_IPA ? L"IPA" : L"???"));
 }
 
 static void NUMvector_extendNumberOfElements (long elementSize, void **v, long lo, long *hi, long extraDemand)

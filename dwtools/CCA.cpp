@@ -58,9 +58,9 @@
 
 void structCCA :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (numberOfCoefficients));
-	MelderInfo_writeLine2 (L"ny: ", Melder_integer (y -> dimension));
-	MelderInfo_writeLine2 (L"nx: ", Melder_integer (x -> dimension));
+	MelderInfo_writeLine (L"Number of coefficients: ", Melder_integer (numberOfCoefficients));
+	MelderInfo_writeLine (L"ny: ", Melder_integer (y -> dimension));
+	MelderInfo_writeLine (L"nx: ", Melder_integer (x -> dimension));
 }
 
 Thing_implement (CCA, Data, 0);

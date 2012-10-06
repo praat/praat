@@ -72,11 +72,11 @@ Thing_implement (Discriminant, Eigen, 0);
 
 void structDiscriminant :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of groups: ", Melder_integer (numberOfGroups));
-	MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (dimension));
-	MelderInfo_writeLine2 (L"Number of discriminant functions: ",
+	MelderInfo_writeLine (L"Number of groups: ", Melder_integer (numberOfGroups));
+	MelderInfo_writeLine (L"Number of variables: ", Melder_integer (dimension));
+	MelderInfo_writeLine (L"Number of discriminant functions: ",
 	                       Melder_integer (Discriminant_getNumberOfFunctions (this)));
-	MelderInfo_writeLine2 (L"Number of observations (total): ",
+	MelderInfo_writeLine (L"Number of observations (total): ",
 	                       Melder_integer (Discriminant_getNumberOfObservations (this, 0)));
 }
 

@@ -41,9 +41,9 @@ void structFileInMemory :: v_destroy () {
 
 void structFileInMemory :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"File name: ", d_path);
-	MelderInfo_writeLine2 (L"Id: ", d_id);
-	MelderInfo_writeLine2 (L"Number of bytes: ", Melder_integer (d_numberOfBytes));
+	MelderInfo_writeLine (L"File name: ", d_path);
+	MelderInfo_writeLine (L"Id: ", d_id);
+	MelderInfo_writeLine (L"Number of bytes: ", Melder_integer (d_numberOfBytes));
 }
 
 FileInMemory FileInMemory_create (MelderFile file) {
@@ -95,15 +95,15 @@ void FileInMemory_showAsCode (FileInMemory me, const wchar_t *name, long numberO
 {
 	if (numberOfBytesPerLine <= 0) numberOfBytesPerLine = 20;
 	// autoNUMvector<unsigned char> data (0, my d_numberOfBytes); ????
-	MelderInfo_writeLine5 (L"\t\tstatic unsigned char ", name, L"_data[", Melder_integer (my d_numberOfBytes+1), L"] = {");
+	MelderInfo_writeLine (L"\t\tstatic unsigned char ", name, L"_data[", Melder_integer (my d_numberOfBytes+1), L"] = {");
 	for (long i = 0; i < my d_numberOfBytes; i++) {
 		unsigned char number = my d_data[i];
-		MelderInfo_write4 ((i % numberOfBytesPerLine == 0 ? L"\t\t\t" : L""), Melder_integer (number), L",",
+		MelderInfo_write ((i % numberOfBytesPerLine == 0 ? L"\t\t\t" : L""), Melder_integer (number), L",",
 			((i % numberOfBytesPerLine  == (numberOfBytesPerLine - 1)) ? L"\n" : L" "));
 	}
-	MelderInfo_writeLine1 ((my d_numberOfBytes - 1) % numberOfBytesPerLine == (numberOfBytesPerLine - 1) ? L"\t\t\t0};" : L"0};");
-	MelderInfo_write3 (L"\t\tautoFileInMemory ", name, L" = FileInMemory_createWithData (");
-	MelderInfo_writeLine8 (Melder_integer (my d_numberOfBytes), L", reinterpret_cast<const char *> (&", name, L"_data), \n\t\t\tL\"", my d_path, L"\", \n\t\t\tL\"", my d_id, L"\");");
+	MelderInfo_writeLine ((my d_numberOfBytes - 1) % numberOfBytesPerLine == (numberOfBytesPerLine - 1) ? L"\t\t\t0};" : L"0};");
+	MelderInfo_write (L"\t\tautoFileInMemory ", name, L" = FileInMemory_createWithData (");
+	MelderInfo_writeLine (Melder_integer (my d_numberOfBytes), L", reinterpret_cast<const char *> (&", name, L"_data), \n\t\t\tL\"", my d_path, L"\", \n\t\t\tL\"", my d_id, L"\");");
 }
 
 Thing_implement (FilesInMemory, SortedSet, 0);
@@ -155,43 +155,43 @@ FilesInMemory FilesInMemory_createFromDirectoryContents (const wchar_t *dirpath,
 void FilesInMemory_showAsCode (FilesInMemory me, const wchar_t *name, long numberOfBytesPerLine) {
 	autoMelderString one_fim;
 	autoMelderString all_fims;
-	MelderInfo_writeLine1 (L"#include \"Collection.h\"");
-	MelderInfo_writeLine1 (L"#include \"FileInMemory.h\"");
-	MelderInfo_writeLine1 (L"#include \"melder.h\"\n");
-	MelderInfo_writeLine3 (L"FilesInMemory create_", name, L" () {");
-	MelderInfo_writeLine1 (L"\ttry {");
-	MelderInfo_writeLine1 (L"\t\tautoFilesInMemory me = FilesInMemory_create ();");
+	MelderInfo_writeLine (L"#include \"Collection.h\"");
+	MelderInfo_writeLine (L"#include \"FileInMemory.h\"");
+	MelderInfo_writeLine (L"#include \"melder.h\"\n");
+	MelderInfo_writeLine (L"FilesInMemory create_", name, L" () {");
+	MelderInfo_writeLine (L"\ttry {");
+	MelderInfo_writeLine (L"\t\tautoFilesInMemory me = FilesInMemory_create ();");
 	for (long ifile = 1; ifile <= my size; ifile++) {
 		FileInMemory fim = (FileInMemory) my item[ifile];
 		MelderString_append (&one_fim, name, Melder_integer (ifile));
 		FileInMemory_showAsCode (fim, one_fim.string, numberOfBytesPerLine);
-		MelderInfo_writeLine3 (L"\t\tCollection_addItem (me.peek(), ", one_fim.string, L".transfer());\n");
+		MelderInfo_writeLine (L"\t\tCollection_addItem (me.peek(), ", one_fim.string, L".transfer());\n");
 		MelderString_empty (&one_fim);
 	}
-	MelderInfo_writeLine1 (L"\t\treturn me.transfer();");
-	MelderInfo_writeLine1 (L"\t} catch (MelderError) {");
-	MelderInfo_writeLine1 (L"\t\tMelder_throw (L\"FilesInMemory not created.\");");
-	MelderInfo_writeLine1 (L"\t}");
-	MelderInfo_writeLine1 (L"}\n\n");
+	MelderInfo_writeLine (L"\t\treturn me.transfer();");
+	MelderInfo_writeLine (L"\t} catch (MelderError) {");
+	MelderInfo_writeLine (L"\t\tMelder_throw (L\"FilesInMemory not created.\");");
+	MelderInfo_writeLine (L"\t}");
+	MelderInfo_writeLine (L"}\n\n");
 }
 
 void FilesInMemory_showOneFileAsCode (FilesInMemory me, long index, const wchar_t *name, long numberOfBytesPerLine)
 {
 	if (index < 1 || index > my size) return;
-	MelderInfo_writeLine1 (L"#include \"FileInMemory.h\"");
-	MelderInfo_writeLine1 (L"#include \"melder.h\"\n");
-	MelderInfo_writeLine1 (L"static FileInMemory create_new_object () {");
-	MelderInfo_writeLine1 (L"\ttry {");
+	MelderInfo_writeLine (L"#include \"FileInMemory.h\"");
+	MelderInfo_writeLine (L"#include \"melder.h\"\n");
+	MelderInfo_writeLine (L"static FileInMemory create_new_object () {");
+	MelderInfo_writeLine (L"\ttry {");
 	autoMelderString one_fim;
 	FileInMemory fim = (FileInMemory) my item[index];
 	MelderString_append (&one_fim, name, Melder_integer (index));
 	FileInMemory_showAsCode (fim, L"me", numberOfBytesPerLine);
-	MelderInfo_writeLine1 (L"\t\treturn me.transfer();");
-	MelderInfo_writeLine1 (L"\t} catch (MelderError) {");
-	MelderInfo_writeLine1 (L"\t\tMelder_throw (L\"FileInMemory not created.\");");
-	MelderInfo_writeLine1 (L"\t}");
-	MelderInfo_writeLine1 (L"}\n\n");
-	MelderInfo_writeLine3 (L"FileInMemory ", name, L" = create_new_object ();");
+	MelderInfo_writeLine (L"\t\treturn me.transfer();");
+	MelderInfo_writeLine (L"\t} catch (MelderError) {");
+	MelderInfo_writeLine (L"\t\tMelder_throw (L\"FileInMemory not created.\");");
+	MelderInfo_writeLine (L"\t}");
+	MelderInfo_writeLine (L"}\n\n");
+	MelderInfo_writeLine (L"FileInMemory ", name, L" = create_new_object ();");
 }
 
 long FilesInMemory_getIndexFromId (FilesInMemory me, const wchar_t *id) {

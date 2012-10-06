@@ -1111,20 +1111,20 @@ static int KlattTable_checkLimits (KlattTable me) {
 	}
 	if (nv > 0) {
 		MelderInfo_open ();
-		MelderInfo_writeLine3 (L"Diagnostics for KlattTable \"", Thing_getName (me), L"\":");
-		MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (my rows -> size));
+		MelderInfo_writeLine (L"Diagnostics for KlattTable \"", Thing_getName (me), L"\":");
+		MelderInfo_writeLine (L"Number of frames: ", Melder_integer (my rows -> size));
 		for (long j = 1; j <= KlattTable_NPAR; j++) {
 			if (nviolations_lower[j] > 0) {
 				if (nviolations_upper[j] > 0) {
-					MelderInfo_writeLine9 (columnNamesA[j], L": ",
+					MelderInfo_writeLine (columnNamesA[j], L": ",
 					                       Melder_integer (nviolations_lower[j]), L" frame(s) < min = ", Melder_integer (nviolations_lower[j]), L"; ",
 					                       Melder_integer (nviolations_upper[j]), L" frame(s) > max = ", Melder_integer (upper[j]));
 				} else {
-					MelderInfo_writeLine5 (columnNamesA[j], L": ",
+					MelderInfo_writeLine (columnNamesA[j], L": ",
 					                       Melder_integer (nviolations_lower[j]), L" frame(s) < min = ", Melder_integer (lower[j]));
 				}
 			} else if (nviolations_upper[j] > 0) {
-				MelderInfo_writeLine5 (columnNamesA[j], L": ",
+				MelderInfo_writeLine (columnNamesA[j], L": ",
 				                       Melder_integer (nviolations_upper[j]), L" frame(s) > max = ", Melder_integer (upper[j]));
 			}
 		}

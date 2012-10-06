@@ -31,8 +31,10 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 #elif motif
 	static void _guiMotifProgressBar_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
+		trace ("destroying a progress bar");
 		iam (GuiProgressBar);
-		forget (me);
+		//forget (me);   // because I am already forgotten in the scale::destroy callback
+		trace ("destroyed a progress bar");
 	}
 #endif
 
@@ -53,7 +55,7 @@ GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int t
 		XtVaSetValues (my d_widget, XmNorientation, XmHORIZONTAL,
 			XmNminimum, 0, XmNmaximum, 10000, XmNvalue, 0,
 			#if ! defined (macintosh)
-				XmNscaleHeight, 20,
+				//XmNscaleHeight, 20,
 			#endif
 			#ifdef macintosh
 				//XmNscaleWidth, 340,

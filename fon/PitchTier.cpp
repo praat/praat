@@ -24,13 +24,13 @@ Thing_implement (PitchTier, RealTier, 0);
 
 void structPitchTier :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine1 (L"Time domain:");
-	MelderInfo_writeLine3 (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine3 (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine3 (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (points -> size));
-	MelderInfo_writeLine3 (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (this)), L" Hz");
-	MelderInfo_writeLine3 (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (this)), L" Hz");
+	MelderInfo_writeLine (L"Time domain:");
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
+	MelderInfo_writeLine (L"Number of points: ", Melder_integer (points -> size));
+	MelderInfo_writeLine (L"Minimum pitch value: ", Melder_double (RealTier_getMinimumValue (this)), L" Hz");
+	MelderInfo_writeLine (L"Maximum pitch value: ", Melder_double (RealTier_getMaximumValue (this)), L" Hz");
 }
 
 PitchTier PitchTier_create (double tmin, double tmax) {

@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20120930)
+MAN_BEGIN (L"What's new?", L"ppgb", 20121006)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.30# (6 October 2012)")
+LIST_ITEM (L"\\bu Circumvented a rare Windows bug that could cause Praat to start to write 1.5 as 1,5 in some countries "
+	"after opening a strange directory.")
+LIST_ITEM (L"\\bu Windows: corrected a bug introduced in 5.3.24 that could cause Praat to crash when quitting.")
+LIST_ITEM (L"\\bu Windows: corrected a bug introduced in 5.3.24 that could cause the Objects window to look weird after resizing.")
 NORMAL (L"##5.3.29# (30 September 2012)")
 LIST_ITEM (L"\\bu @EEG: Draw scalp..., including gray legend.")
 LIST_ITEM (L"\\bu Made the new Sound scaling options available for LongSounds.")

@@ -147,11 +147,11 @@ static void GaussianMixture_addCovarianceFraction (GaussianMixture me, long im, 
 
 void structGaussianMixture :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of components: ", Melder_integer (numberOfComponents));
-	MelderInfo_writeLine2 (L"Dimension of component: ", Melder_integer (dimension));
-	MelderInfo_writeLine1 (L"Mixing probabilities:");
+	MelderInfo_writeLine (L"Number of components: ", Melder_integer (numberOfComponents));
+	MelderInfo_writeLine (L"Dimension of component: ", Melder_integer (dimension));
+	MelderInfo_writeLine (L"Mixing probabilities:");
 	for (long im = 1; im <= numberOfComponents; im++) {
-		MelderInfo_writeLine7 (L"  ", Melder_integer (im), L": p = ", Melder_double (mixingProbabilities[im]),
+		MelderInfo_writeLine (L"  ", Melder_integer (im), L": p = ", Melder_double (mixingProbabilities[im]),
 		                       L"  Name =  \"", Thing_getName ( (Thing) covariances -> item[im]), L"\"");
 	}
 }
@@ -921,12 +921,12 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou
 		autoNUMmatrix<double> pp (1, thy numberOfRows + 1, 1, my numberOfComponents + 1);
 		double *nk = pp[thy numberOfRows + 1]; // last row has the column marginals n(k)
 		if (! GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
-			MelderInfo_writeLine1 (L"Iteration not started, may be too much components?");
+			MelderInfo_writeLine (L"Iteration not started, may be too much components?");
 			Melder_throw ("Iteration not started.");
 		}
 		double lnp = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
 		long iter = 0;
-		MelderInfo_writeLine6 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (lnp / thy numberOfRows), L" (=  ", criterionText);
+		MelderInfo_writeLine (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (lnp / thy numberOfRows), L" (=  ", criterionText);
 		MelderInfo_open ();
 		double lnp_prev;
 		do {
@@ -951,7 +951,7 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou
 				break;
 			}
 			lnp = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
-			MelderInfo_writeLine6 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (lnp / thy numberOfRows), L" (=  ", criterionText);
+			MelderInfo_writeLine (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (lnp / thy numberOfRows), L" (=  ", criterionText);
 		} while (fabs ( (lnp - lnp_prev) / lnp_prev) > delta_lnp && iter < maxNumberOfIterations);
 
 		// During EM, covariances were underestimated by a factor of (n-1)/n. Correction now.
@@ -1111,7 +1111,7 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 
 		MelderInfo_open ();
 		long iter = 0, component;
-		MelderInfo_writeLine6 (L"iter: ", Melder_integer (iter), criterionText,
+		MelderInfo_writeLine (L"iter: ", Melder_integer (iter), criterionText,
 		                       Melder_double (lnew / thy numberOfRows), L", Components: ", Melder_integer (my numberOfComponents));
 
 		autoGaussianMixture best = 0;
@@ -1153,7 +1153,7 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 
 						// Now numberOfComponents is one less!
 
-						MelderInfo_writeLine2 (L"Removed component ", Melder_integer (component));
+						MelderInfo_writeLine (L"Removed component ", Melder_integer (component));
 					}
 				}
 
@@ -1162,7 +1162,7 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 
 				lnew = GaussianMixture_getLikelihoodValue (me.peek(), p.peek(), thy numberOfRows, criterion);
 
-				MelderInfo_writeLine8 (L"iter: ", Melder_integer (iter), L", ", criterionText, L"= ",
+				MelderInfo_writeLine (L"iter: ", Melder_integer (iter), L", ", criterionText, L"= ",
 				                       Melder_double (lnew / thy numberOfRows), L", Components: ", Melder_integer (my numberOfComponents));
 
 			} while (lnew > lprev && fabs ( (lprev - lnew) / lnew) > delta_l && iter < maxNumberOfIterations);

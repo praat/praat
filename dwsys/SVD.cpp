@@ -79,8 +79,8 @@ static void SVD_transpose (SVD me) {
 }
 
 void structSVD :: v_info () {
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
 /*
@@ -368,7 +368,7 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m) {
 Thing_implement (GSVD, Data, 0);
 
 void structGSVD :: v_info () {
-	MelderInfo_writeLine2 (L"Number of columns: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
 GSVD GSVD_create (long numberOfColumns) {

@@ -544,7 +544,7 @@ FORM (CCA_and_TableOfReal_scores, L"CCA & TableOfReal: To TableOfReal (scores)",
 DO
 	CCA cca = FIRST (CCA);
 	TableOfReal tr = FIRST (TableOfReal);
-	praat_new2 (CCA_and_TableOfReal_scores (cca, tr, GET_INTEGER (L"Number of canonical correlations")),
+	praat_new (CCA_and_TableOfReal_scores (cca, tr, GET_INTEGER (L"Number of canonical correlations")),
 		Thing_getName (cca), L"_scores");
 END
 
@@ -964,14 +964,14 @@ DO
 	int equalCovariances = GET_INTEGER (L"Covariances are equal");
 	MelderInfo_open ();
 	difference = Covariances_getMultivariateCentroidDifference (c1, c2, equalCovariances, &prob, &fisher, &df1, &df2);
-	MelderInfo_writeLine3 (L"Under the assumption that the two covariances are", (equalCovariances ? L" " : L" not "), L"equal:");
-	MelderInfo_writeLine2 (L"Difference between multivariate means = ", Melder_double (difference));
-	MelderInfo_writeLine2 (L"Fisher's F = ", Melder_double (fisher));
-	MelderInfo_writeLine2 (L"Significance from zero = ", Melder_double (prob));
-	MelderInfo_writeLine4 (L"Degrees of freedom = ", Melder_double (df1), L", ", Melder_double (df2));
-	MelderInfo_writeLine4 (L"(Number of observations = ", Melder_integer (c1->numberOfObservations), L", ",
+	MelderInfo_writeLine (L"Under the assumption that the two covariances are", (equalCovariances ? L" " : L" not "), L"equal:");
+	MelderInfo_writeLine (L"Difference between multivariate means = ", Melder_double (difference));
+	MelderInfo_writeLine (L"Fisher's F = ", Melder_double (fisher));
+	MelderInfo_writeLine (L"Significance from zero = ", Melder_double (prob));
+	MelderInfo_writeLine (L"Degrees of freedom = ", Melder_double (df1), L", ", Melder_double (df2));
+	MelderInfo_writeLine (L"(Number of observations = ", Melder_integer (c1->numberOfObservations), L", ",
 						Melder_integer (c2->numberOfObservations));
-	MelderInfo_writeLine3 (L"Dimension of covariance matrices = ", Melder_integer (c1-> numberOfRows), L")");
+	MelderInfo_writeLine (L"Dimension of covariance matrices = ", Melder_integer (c1-> numberOfRows), L")");
 	MelderInfo_close ();
 END
 
@@ -991,14 +991,14 @@ DIRECT (Covariances_reportEquality)
 	{
 		double chisq, p, df;
 		Covariances_equality (set.peek(), 1, &p, &chisq, &df);
-		MelderInfo_writeLine1 (L"Difference between covariance matrices:");
-		MelderInfo_writeLine2 (L"Significance of difference (bartlett) = ", Melder_double (p));
-		MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
-		MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
+		MelderInfo_writeLine (L"Difference between covariance matrices:");
+		MelderInfo_writeLine (L"Significance of difference (bartlett) = ", Melder_double (p));
+		MelderInfo_writeLine (L"Chi-squared = ", Melder_double (chisq));
+		MelderInfo_writeLine (L"Degrees of freedom = ", Melder_double (df));
 		Covariances_equality (set.peek(), 2, &p, &chisq, &df);
-		MelderInfo_writeLine2 (L"Significance of difference (wald) = ", Melder_double (p));
-		MelderInfo_writeLine2 (L"Chi-squared = ", Melder_double (chisq));
-		MelderInfo_writeLine2 (L"Degrees of freedom = ", Melder_double (df));
+		MelderInfo_writeLine (L"Significance of difference (wald) = ", Melder_double (p));
+		MelderInfo_writeLine (L"Chi-squared = ", Melder_double (chisq));
+		MelderInfo_writeLine (L"Degrees of freedom = ", Melder_double (df));
 	}
 	MelderInfo_close ();
 END
@@ -1145,11 +1145,11 @@ DIRECT (Discriminant_reportEqualityOfCovariances_wald)
 		iam (Discriminant);
 		double chisq, prob, df;
 		Covariances_equality ( (Collection) my groups, 2, &prob, &chisq, &df);
-		MelderInfo_writeLine1 (L"Wald test for equality of covariance matrices:");
-		MelderInfo_writeLine2 (L"Chi squared: ", Melder_double (chisq));
-		MelderInfo_writeLine2 (L"Significance: ", Melder_double (prob));
-		MelderInfo_writeLine2 (L"Degrees of freedom: ", Melder_double (df));
-		MelderInfo_writeLine2 (L"Number of matrices: ", Melder_integer (my groups -> size));
+		MelderInfo_writeLine (L"Wald test for equality of covariance matrices:");
+		MelderInfo_writeLine (L"Chi squared: ", Melder_double (chisq));
+		MelderInfo_writeLine (L"Significance: ", Melder_double (prob));
+		MelderInfo_writeLine (L"Degrees of freedom: ", Melder_double (df));
+		MelderInfo_writeLine (L"Number of matrices: ", Melder_integer (my groups -> size));
 	}
 	MelderInfo_close ();
 END
@@ -4625,18 +4625,18 @@ DIRECT (Praat_ReportFloatingPointProperties)
 		NUMmachar ();
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine1 (L"Double precision floating point properties of this machine,");
-	MelderInfo_writeLine1 (L"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
-	MelderInfo_writeLine2 (L"Radix: ", Melder_double (NUMfpp -> base));
-	MelderInfo_writeLine2 (L"Number of digits in mantissa: ", Melder_double (NUMfpp -> t));
-	MelderInfo_writeLine2 (L"Smallest exponent before (gradual) underflow (expmin): ", Melder_integer (NUMfpp -> emin));
-	MelderInfo_writeLine2 (L"Largest exponent before overflow (expmax): ", Melder_integer (NUMfpp -> emax));
-	MelderInfo_writeLine2 (L"Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? L"yes" : L"no"));
-	MelderInfo_writeLine2 (L"Quantization step (d): ", Melder_double (NUMfpp -> prec));
-	MelderInfo_writeLine2 (L"Quantization error (eps = d/2): ", Melder_double (NUMfpp -> eps));
-	MelderInfo_writeLine2 (L"Underflow threshold (= radix ^ (expmin - 1)): ", Melder_double (NUMfpp -> rmin));
-	MelderInfo_writeLine2 (L"Safe minimum (such that its inverse does not overflow): ", Melder_double (NUMfpp -> sfmin));
-	MelderInfo_writeLine2 (L"Overflow threshold (= (1 - eps) * radix ^ expmax): ", Melder_double (NUMfpp -> rmax));
+	MelderInfo_writeLine (L"Double precision floating point properties of this machine,");
+	MelderInfo_writeLine (L"as calculated by algorithms from the Binary Linear Algebra System (BLAS)");
+	MelderInfo_writeLine (L"Radix: ", Melder_double (NUMfpp -> base));
+	MelderInfo_writeLine (L"Number of digits in mantissa: ", Melder_double (NUMfpp -> t));
+	MelderInfo_writeLine (L"Smallest exponent before (gradual) underflow (expmin): ", Melder_integer (NUMfpp -> emin));
+	MelderInfo_writeLine (L"Largest exponent before overflow (expmax): ", Melder_integer (NUMfpp -> emax));
+	MelderInfo_writeLine (L"Does rounding occur in addition: ", (NUMfpp -> rnd == 1 ? L"yes" : L"no"));
+	MelderInfo_writeLine (L"Quantization step (d): ", Melder_double (NUMfpp -> prec));
+	MelderInfo_writeLine (L"Quantization error (eps = d/2): ", Melder_double (NUMfpp -> eps));
+	MelderInfo_writeLine (L"Underflow threshold (= radix ^ (expmin - 1)): ", Melder_double (NUMfpp -> rmin));
+	MelderInfo_writeLine (L"Safe minimum (such that its inverse does not overflow): ", Melder_double (NUMfpp -> sfmin));
+	MelderInfo_writeLine (L"Overflow threshold (= (1 - eps) * radix ^ expmax): ", Melder_double (NUMfpp -> rmax));
 	MelderInfo_close ();
 END
 
@@ -5909,14 +5909,14 @@ DO
 		double tnb, lnmu, lnvar;
 		double prob = TableOfReal_normalityTest_BHEP (me, &h, &tnb, &lnmu, &lnvar);
 		MelderInfo_open ();
-		MelderInfo_writeLine1 (L"Baringhaus–Henze–Epps–Pulley normality test:");
-		MelderInfo_writeLine2 (L"Significance of normality: ", Melder_double (prob));
-		MelderInfo_writeLine2 (L"BHEP statistic: ", Melder_double (tnb));
-		MelderInfo_writeLine2 (L"Lognormal mean: ", Melder_double (lnmu));
-		MelderInfo_writeLine2 (L"Lognormal variance: ", Melder_double (lnvar));
-		MelderInfo_writeLine2 (L"Smoothing: ", Melder_double (h));
-		MelderInfo_writeLine2 (L"Sample size: ", Melder_integer (my numberOfRows));
-		MelderInfo_writeLine2 (L"Number of variables: ", Melder_integer (my numberOfColumns));
+		MelderInfo_writeLine (L"Baringhaus–Henze–Epps–Pulley normality test:");
+		MelderInfo_writeLine (L"Significance of normality: ", Melder_double (prob));
+		MelderInfo_writeLine (L"BHEP statistic: ", Melder_double (tnb));
+		MelderInfo_writeLine (L"Lognormal mean: ", Melder_double (lnmu));
+		MelderInfo_writeLine (L"Lognormal variance: ", Melder_double (lnvar));
+		MelderInfo_writeLine (L"Smoothing: ", Melder_double (h));
+		MelderInfo_writeLine (L"Sample size: ", Melder_integer (my numberOfRows));
+		MelderInfo_writeLine (L"Number of variables: ", Melder_integer (my numberOfColumns));
 	}
 	MelderInfo_close ();
 END
@@ -5951,7 +5951,7 @@ FORM (TableOfReal_createFromVanNieropData_25females, L"Create TableOfReal (Van N
 	BOOLEAN (L"Include formant levels", 0)
 	OK
 DO
-	praat_new1 (TableOfReal_createFromVanNieropData_25females (GET_INTEGER (L"Include formant levels")), L"vannierop_25females");
+	praat_new (TableOfReal_createFromVanNieropData_25females (GET_INTEGER (L"Include formant levels")), L"vannierop_25females");
 END
 
 FORM (TableOfReal_createFromWeeninkData, L"Create TableOfReal (Weenink 1985)...", L"Create TableOfReal (Weenink 1985)...")

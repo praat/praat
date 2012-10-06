@@ -1633,7 +1633,7 @@ void TextGrid_correctRoundingErrors (TextGrid me) {
 			last -> xmax = my xmax;
 			Melder_assert (last -> xmax > last -> xmin);
 		}
-		anyTier -> xmin = my xmax;
+		anyTier -> xmin = my xmin;
 		anyTier -> xmax = my xmax;
 	}
 }

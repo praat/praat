@@ -1172,7 +1172,7 @@ static void _GuiNativizeWidget (GuiObject me) {
 				my window = CreateWindow (PROGRESS_CLASS, _GuiWin_expandAmpersands (my name), WS_CHILD | WS_CLIPSIBLINGS,
 					my x, my y, my width, my height, my parent -> window, (HMENU) 1, theGui.instance, NULL);
 				SetWindowLongPtr (my window, GWLP_USERDATA, (LONG_PTR) me);
-				SendMessage (my window, PBM_SETRANGE, (WPARAM) 0, (LPARAM) MAKELONG (0, 1000));
+				SendMessage (my window, PBM_SETRANGE, (WPARAM) 0, (LPARAM) MAKELONG (0, 10000));
 			#endif
 		} break;
 		case xmScrollBarWidgetClass: {
@@ -1984,7 +1984,7 @@ void _Gui_manageScrolledWindow (GuiObject me) {
 static void _motif_manage (GuiObject me) {
 	GuiObject child;
 	int x = 2, y = 2;
-	int width = 0, height = 0, dw, dh;
+	int width = 0, height = 0, dw = 0, dh = 0;
 	#if mac
 		GuiObject helpMenu = NULL;
 	#endif
@@ -2103,8 +2103,8 @@ static void _motif_manage (GuiObject me) {
 	/* If I have grown, I have to notify my parent. */
 
 	if (! MEMBER (me, Shell)) {
-		if (MEMBER4 (my parent, RowColumn, Form, BulletinBoard, Shell)) _motif_manage (my parent);
-		else if (MEMBER (my parent, ScrolledWindow)) _Gui_manageScrolledWindow (my parent);
+		//if (MEMBER4 (my parent, RowColumn, Form, BulletinBoard, Shell)) _motif_manage (my parent);
+		if (MEMBER (my parent, ScrolledWindow)) _Gui_manageScrolledWindow (my parent);
 	}
 }
 

@@ -851,7 +851,7 @@ static void gui_error (const wchar_t *message) {
 		theMessageFund = (char *) malloc (theMessageFund_SIZE);
 		if (theMessageFund == NULL) {
 			#if gtk
-				GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_widget), GTK_DIALOG_DESTROY_WITH_PARENT,
+				GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
 					GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				gtk_dialog_run (GTK_DIALOG (dialog));
 				gtk_widget_destroy (GTK_WIDGET (dialog));

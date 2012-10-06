@@ -653,6 +653,7 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
 // Postcondition: my xmin preserved
 void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes) {
 	try {
+		trace ("xmin before %lf", my xmin);
         double xmax_previous = my xmax, time_shift = my xmax - thy xmin;
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, L"");
@@ -668,6 +669,7 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 			Collection_addItem (my intervals, ti.transfer());
 		}
 		my xmax = preserveTimes ? thy xmax : xmax_previous;
+		trace ("xmin after %lf", my xmin);
 	} catch (MelderError) {
 		Melder_throw ("IntervalTiers not appended.");
 	}
@@ -715,6 +717,7 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 				TextTiers_append_inline (ti, (TextTier) thy tiers -> item [itier], preserveTimes);
                 ti -> xmax = xmax;
 			}
+			trace ("tier %ld, xmin %lf", itier, anyTier -> xmin);
 		}
 		my xmax = xmax;
 	} catch (MelderError) {

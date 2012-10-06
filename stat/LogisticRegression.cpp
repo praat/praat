@@ -55,7 +55,7 @@ void structLogisticRegression :: v_info () {
 	MelderInfo_writeLine (L"Dependent 1: ", dependent1);
 	MelderInfo_writeLine (L"Dependent 2: ", dependent2);
 	MelderInfo_writeLine (L"Interpretation:");
-	MelderInfo_write6 (L"   ln (P(", dependent2, L")/P(", dependent1, L")) " UNITEXT_ALMOST_EQUAL_TO L" ", Melder_fixed (intercept, 6));
+	MelderInfo_write (L"   ln (P(", dependent2, L")/P(", dependent1, L")) " UNITEXT_ALMOST_EQUAL_TO L" ", Melder_fixed (intercept, 6));
 	for (long ivar = 1; ivar <= parameters -> size; ivar ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (parameters -> item [ivar]);
 		MelderInfo_write (parm -> value < 0.0 ? L" - " : L" + ", Melder_fixed (fabs (parm -> value), 6), L" * ", parm -> label);

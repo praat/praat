@@ -1,6 +1,6 @@
 /* praat_Exp.cpp
  *
- * Copyright (C) 2001-2011 Paul Boersma
+ * Copyright (C) 2001-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2011/03/23
  */
 
 #include "praat.h"
@@ -105,7 +101,7 @@ DIRECT (ResultsMFC_removeUnsharedStimuli)
 	ResultsMFC res1 = NULL, res2 = NULL;
 	WHERE (SELECTED) { if (res1) res2 = (ResultsMFC) OBJECT; else res1 = (ResultsMFC) OBJECT; }
 	Melder_assert (res1 && res2);
-	praat_new2 (ResultsMFC_removeUnsharedStimuli (res1, res2), res2 -> name, L"_shared");
+	praat_new (ResultsMFC_removeUnsharedStimuli (res1, res2), res2 -> name, L"_shared");
 END
 
 DIRECT (ResultsMFC_to_Categories_stimuli)

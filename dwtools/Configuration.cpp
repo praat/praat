@@ -64,9 +64,9 @@ Thing_implement (Configuration, TableOfReal, 0);
 
 void structConfiguration :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of points: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine2 (L"Number of dimensions: ", Melder_integer (numberOfColumns));
-	MelderInfo_writeLine2 (L"Metric: ", Melder_integer (metric));
+	MelderInfo_writeLine (L"Number of points: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine (L"Number of dimensions: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (L"Metric: ", Melder_integer (metric));
 }
 
 Configuration Configuration_create (long numberOfPoints,

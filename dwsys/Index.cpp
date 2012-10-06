@@ -53,7 +53,7 @@ Thing_implement (Index, Data, 0);
 
 void structIndex :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of elements: ", Melder_integer (numberOfElements));
+	MelderInfo_writeLine (L"Number of elements: ", Melder_integer (numberOfElements));
 }
 
 void Index_init (I, long numberOfElements) {

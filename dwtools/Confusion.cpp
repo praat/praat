@@ -44,20 +44,20 @@ void structConfusion :: v_info () {
 	Confusion_getEntropies (this, & h, & hx, & hy, & hygx, & hxgy, & uygx,
 	                        & uxgy, & uxy);
 	Confusion_getFractionCorrect (this, & frac, & nCorrect);
-	MelderInfo_writeLine2 (L"Number of rows: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine2 (L"Number of colums: ", Melder_integer (numberOfColumns));
-	MelderInfo_writeLine1 (L"Entropies (y is row variable):");
-	MelderInfo_writeLine2 (L"  Total: ", Melder_double (h));
-	MelderInfo_writeLine2 (L"  Y: ", Melder_double (hy));
-	MelderInfo_writeLine2 (L"  X: ", Melder_double (hx));
-	MelderInfo_writeLine2 (L"  Y given x: ", Melder_double (hygx));
-	MelderInfo_writeLine2 (L"  X given y: ", Melder_double (hxgy));
-	MelderInfo_writeLine2 (L"  Dependency of y on x; ", Melder_double (uygx));
-	MelderInfo_writeLine2 (L"  Dependency of x on y: ", Melder_double (uxgy));
-	MelderInfo_writeLine2 (L"  Symmetrical dependency: ", Melder_double (uxy));
-	MelderInfo_writeLine2 (L"  Total number of entries: ",
+	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine (L"Number of colums: ", Melder_integer (numberOfColumns));
+	MelderInfo_writeLine (L"Entropies (y is row variable):");
+	MelderInfo_writeLine (L"  Total: ", Melder_double (h));
+	MelderInfo_writeLine (L"  Y: ", Melder_double (hy));
+	MelderInfo_writeLine (L"  X: ", Melder_double (hx));
+	MelderInfo_writeLine (L"  Y given x: ", Melder_double (hygx));
+	MelderInfo_writeLine (L"  X given y: ", Melder_double (hxgy));
+	MelderInfo_writeLine (L"  Dependency of y on x; ", Melder_double (uygx));
+	MelderInfo_writeLine (L"  Dependency of x on y: ", Melder_double (uxgy));
+	MelderInfo_writeLine (L"  Symmetrical dependency: ", Melder_double (uxy));
+	MelderInfo_writeLine (L"  Total number of entries: ",
 	                       Melder_integer (Confusion_getNumberOfEntries (this)));
-	MelderInfo_writeLine2 (L" Fraction correct: ", Melder_double (frac));
+	MelderInfo_writeLine (L" Fraction correct: ", Melder_double (frac));
 }
 
 Confusion Confusion_create (long numberOfStimuli, long numberOfResponses) {

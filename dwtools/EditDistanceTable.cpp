@@ -146,8 +146,8 @@ Thing_implement (EditCostsTable, TableOfReal, 0);
 
 void structEditCostsTable :: v_info () {
 	EditDistanceTable_Parent :: v_info ();
-	MelderInfo_writeLine3 (L"Target:", Melder_integer (numberOfRows - 2), L" symbols.");
-	MelderInfo_writeLine3 (L"Source:", Melder_integer (numberOfColumns - 2), L" symbols.");
+	MelderInfo_writeLine (L"Target:", Melder_integer (numberOfRows - 2), L" symbols.");
+	MelderInfo_writeLine (L"Source:", Melder_integer (numberOfColumns - 2), L" symbols.");
 }
 
 bool structEditCostsTable :: v_matchTargetSymbol (const wchar_t *targetSymbol, const wchar_t *symbol) {
@@ -325,8 +325,8 @@ Thing_implement (EditDistanceTable, TableOfReal, 0);
 
 void structEditDistanceTable :: v_info () {
 	EditDistanceTable_Parent :: v_info ();
-	MelderInfo_writeLine3 (L"Target:", Melder_integer (numberOfRows), L" symbols.");
-	MelderInfo_writeLine3 (L"Source:", Melder_integer (numberOfColumns), L" symbols.");
+	MelderInfo_writeLine (L"Target:", Melder_integer (numberOfRows), L" symbols.");
+	MelderInfo_writeLine (L"Source:", Melder_integer (numberOfColumns), L" symbols.");
 }
 
 EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {

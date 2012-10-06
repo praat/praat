@@ -17,7 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <time.h>
 #include "GuiP.h"
+#include "praat_version.h"
 
 int Melder_debug = 0;
 
@@ -91,6 +93,11 @@ static void theGlibGobjectLogHandler (const gchar *log_domain, GLogLevelFlags lo
 #endif
 
 void Melder_setTracing (bool tracing) {
+	time_t today = time (NULL);	
+	#define xstr(s) str(s)
+	#define str(s) #s
+	if (! tracing)
+		trace ("switch tracing off in Praat version %s at %s", xstr (PRAAT_VERSION_STR), ctime (& today));
 	theTracing = tracing;
 	#if gtk
 		static guint handler_id1, handler_id2, handler_id3;
@@ -105,6 +112,8 @@ void Melder_setTracing (bool tracing) {
 			handler_id1 = handler_id2 = handler_id3 = 0;
 		}
 	#endif
+	if (tracing)
+		trace ("switch tracing on in Praat version %s at %s", xstr (PRAAT_VERSION_STR), ctime (& today));
 }
 
 bool Melder_getTracing () {

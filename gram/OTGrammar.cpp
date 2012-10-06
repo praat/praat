@@ -2363,7 +2363,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 			if (! grammarHasChangedDuringCycle) break;
 		}
 		if (itrial > 40) {
-			MelderInfo_writeLine1 (L"There are no total rankings that generate these input-output pairs.");
+			MelderInfo_writeLine (L"There are no total rankings that generate these input-output pairs.");
 			throw MelderError ();
 		}
 		/*
@@ -2402,7 +2402,7 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 				}
 				if (itrial > 40) {
 					obligatory [jcons] [icons] = TRUE;
-					MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
+					MelderInfo_writeLine (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
 					MelderInfo_close ();
 				}
 			}
@@ -2504,8 +2504,8 @@ void OTGrammar_PairDistribution_listObligatoryRankings (OTGrammar me, PairDistri
 		}
 		for (ilist = 1; ilist <= list -> size; ilist ++) {
 			OTGrammar_List4 el = (OTGrammar_List4) list -> item [ilist];
-			MelderInfo_write4 (my constraints [el -> hi1]. name, L" >> ", my constraints [el -> lo1]. name, L" OR ");
-			MelderInfo_writeLine3 (my constraints [el -> hi2]. name, L" >> ", my constraints [el -> lo2]. name);
+			MelderInfo_write (my constraints [el -> hi1]. name, L" >> ", my constraints [el -> lo1]. name, L" OR ");
+			MelderInfo_writeLine (my constraints [el -> hi2]. name, L" >> ", my constraints [el -> lo2]. name);
 			MelderInfo_close ();
 		}
 		MelderInfo_close ();
@@ -2573,7 +2573,7 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 				Melder_progressOn ();
 				for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
 					if (my constraints [kcons]. ranking < 0.0) {
-						MelderInfo_writeLine3 (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
+						MelderInfo_writeLine (my constraints [jcons]. name, L" >> ", my constraints [icons]. name);
 						break;
 					}
 				}

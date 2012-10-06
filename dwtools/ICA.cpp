@@ -195,7 +195,7 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 
 		MelderInfo_open ();
 		double dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), NULL, 0, 0);
-		MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new),
+		MelderInfo_writeLine (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new),
 		                       L" (= diagonality measurement)");
 
 		double dm_old, theta = 1 ;
@@ -258,7 +258,7 @@ static void Diagonalizer_and_CrossCorrelationTables_ffdiag (Diagonalizer me, Cro
 			}
 			dm_new = CrossCorrelationTables_getDiagonalityMeasure (ccts.peek(), 0, 0, 0);
 			iter++;
-			MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new), L" (= diagonality measurement)");
+			MelderInfo_writeLine (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (dm_new), L" (= diagonality measurement)");
 		} while (fabs ( (dm_old - dm_new) / dm_new) > delta && iter < maxNumberOfIterations);
 		MelderInfo_close ();
 	} catch (MelderError) {
@@ -404,7 +404,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 				delta_w = normp > delta_w ? normp : delta_w;
 			}
 			iter++;
-			MelderInfo_writeLine5 (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (delta_w), L" (= vector norm difference)");
+			MelderInfo_writeLine (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (delta_w), L" (= vector norm difference)");
 		} while (delta_w > delta && iter < maxNumberOfIterations);
 
 		// Revert the sphering W = P'*W;
@@ -415,7 +415,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		NUMdmatrices_multiply_VpC (w, wc.peek(), dimension, dimension, p.peek(), dimension); // W = W'*P: final result
 
 		double dm = CrossCorrelationTables_and_Diagonalizer_getDiagonalityMeasure (thee, me, cweights, 1, thy size);
-		MelderInfo_writeLine5 (L"\nDiagonality measure: ", Melder_double (dm), L" after ", Melder_integer (iter),
+		MelderInfo_writeLine (L"\nDiagonality measure: ", Melder_double (dm), L" after ", Melder_integer (iter),
 		                       L" iterations.");
 		MelderInfo_close ();
 	} catch (MelderError) {
@@ -779,7 +779,7 @@ Thing_implement (CrossCorrelationTable, SSCP, 0);
 void structCrossCorrelationTable :: v_info () {
 	structSSCP :: v_info ();
 	double dm = CrossCorrelationTable_getDiagonalityMeasure (this);
-	MelderInfo_writeLine2 (L"Diagonality measure: ", Melder_double (dm));
+	MelderInfo_writeLine (L"Diagonality measure: ", Melder_double (dm));
 }
 
 CrossCorrelationTable CrossCorrelationTable_create (long dimension) {
@@ -840,10 +840,10 @@ double CrossCorrelationTable_getDiagonalityMeasure (CrossCorrelationTable me) {
 void structCrossCorrelationTables :: v_info () {
 	structOrdered :: v_info ();
 	CrossCorrelationTable thee = (CrossCorrelationTable) item[1];
-	MelderInfo_writeLine2 (L"  Number of rows and columns: ", Melder_integer (thy numberOfRows));
+	MelderInfo_writeLine (L"  Number of rows and columns: ", Melder_integer (thy numberOfRows));
 	for (long i = 1; i <= size; i++) {
 		double dm = CrossCorrelationTable_getDiagonalityMeasure ( (CrossCorrelationTable) item[i]);
-		MelderInfo_writeLine4 (L"Diagonality measure for item ", Melder_integer (i), L": ", Melder_double (dm));
+		MelderInfo_writeLine (L"Diagonality measure for item ", Melder_integer (i), L": ", Melder_double (dm));
 	}
 }
 

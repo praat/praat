@@ -18,6 +18,7 @@
  */
 
 #include <time.h>
+#include <locale.h>
 #include "praatP.h"
 
 static struct {
@@ -62,28 +63,35 @@ void praat_reportIntegerProperties () {
 	MelderInfo_close ();
 }
 
+void praat_reportTextProperties () {
+	MelderInfo_open ();
+	MelderInfo_writeLine (L"Text properties of this edition of Praat on this computer:\n");
+	MelderInfo_writeLine (L"Locale: ", Melder_peekUtf8ToWcs (setlocale (LC_ALL, NULL)));
+	MelderInfo_close ();
+}
+
 void praat_reportGraphicalProperties () {
 	MelderInfo_open ();
-	MelderInfo_writeLine1 (L"Graphical properties of this edition of Praat on this computer:\n");
+	MelderInfo_writeLine (L"Graphical properties of this edition of Praat on this computer:\n");
 	double x, y, width, height;
 	Gui_getWindowPositioningBounds (& x, & y, & width, & height);
-	MelderInfo_writeLine8 (L"Window positioning area: x = ", Melder_double (x), L", y = ", Melder_double (y),
+	MelderInfo_writeLine (L"Window positioning area: x = ", Melder_double (x), L", y = ", Melder_double (y),
 		L", width = ", Melder_double (width), L", height = ", Melder_double (height));
 	#if defined (macintosh)
 		CGDirectDisplayID screen = CGMainDisplayID ();
 		CGSize screenSize_mm = CGDisplayScreenSize (screen);
 		double diagonal_mm = sqrt (screenSize_mm. width * screenSize_mm. width + screenSize_mm. height * screenSize_mm. height);
 		double diagonal_inch = diagonal_mm / 25.4;
-		MelderInfo_writeLine9 (L"\nScreen size: ", Melder_double (screenSize_mm. width), L" x ", Melder_double (screenSize_mm. height),
+		MelderInfo_writeLine (L"\nScreen size: ", Melder_double (screenSize_mm. width), L" x ", Melder_double (screenSize_mm. height),
 			L" mm (diagonal ", Melder_fixed (diagonal_mm, 1), L" mm = ", Melder_fixed (diagonal_inch, 1), L" inch)");
 		size_t screenWidth_pixels = CGDisplayPixelsWide (screen);
 		size_t screenHeight_pixels = CGDisplayPixelsHigh (screen);
-		MelderInfo_writeLine5 (L"Screen \"resolution\": ", Melder_integer (screenWidth_pixels), L" x ", Melder_integer (screenHeight_pixels), L" pixels");
+		MelderInfo_writeLine (L"Screen \"resolution\": ", Melder_integer (screenWidth_pixels), L" x ", Melder_integer (screenHeight_pixels), L" pixels");
 		double resolution = 25.4 * screenWidth_pixels / screenSize_mm. width;
-		MelderInfo_writeLine3 (L"Screen resolution: ", Melder_fixed (resolution, 1), L" pixels/inch");
+		MelderInfo_writeLine (L"Screen resolution: ", Melder_fixed (resolution, 1), L" pixels/inch");
 	#elif defined (_WIN32)
 		/*for (int i = 0; i <= 88; i ++)
-			MelderInfo_writeLine4 (L"System metric ", Melder_integer (i), L": ", Melder_integer (GetSystemMetrics (i)));*/
+			MelderInfo_writeLine (L"System metric ", Melder_integer (i), L": ", Melder_integer (GetSystemMetrics (i)));*/
 	#endif
 	MelderInfo_close ();
 }
@@ -124,7 +132,8 @@ void praat_reportMemoryUse () {
 	MelderInfo_writeLine (L"   Sessions: ", Melder_integer (statistics.interactiveSessions), L" interactive, ",
 		Melder_integer (statistics.batchSessions), L" batch");
 	MelderInfo_writeLine (L"   Total memory use: ", Melder_bigInteger (statistics.memory + Melder_allocationSize ()), L" bytes");
-	MelderInfo_writeLine (L"\nNumber of actions: ", Melder_integer (praat_getNumberOfActions ()));
+	MelderInfo_writeLine (L"\nNumber of fixed menu commands: ", Melder_integer (praat_getNumberOfMenuCommands ()));
+	MelderInfo_writeLine (L"Number of dynamic menu commands: ", Melder_integer (praat_getNumberOfActions ()));
 	MelderInfo_close ();
 }
 

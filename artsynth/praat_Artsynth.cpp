@@ -1,6 +1,6 @@
 /* praat_Artsynth.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2011/07/12
  */
 
 #include "Art_Speaker.h"
@@ -42,7 +38,7 @@ FORM (Art_create, L"Create a default Articulation", L"Articulatory synthesis")
 	WORD (L"Name", L"articulation")
 	OK
 DO
-	praat_new1 (Art_create (), GET_STRING (L"Name"));
+	praat_new (Art_create (), GET_STRING (L"Name"));
 END
 
 FORM (Art_edit, L"View & Edit Articulation", 0)
@@ -69,7 +65,7 @@ FORM (Artword_create, L"Create an empty Artword", L"Create Artword...")
 	POSITIVE (L"Duration (seconds)", L"1.0")
 	OK
 DO
-	praat_new1 (Artword_create (GET_REAL (L"Duration")), GET_STRING (L"Name"));
+	praat_new (Artword_create (GET_REAL (L"Duration")), GET_STRING (L"Name"));
 END
 
 FORM (Artword_draw, L"Draw one Artword tier", NULL)
@@ -252,7 +248,7 @@ FORM (Speaker_create, L"Create a Speaker", L"Create Speaker...")
 	OK
 DO
 	autoSpeaker me = Speaker_create (GET_STRING (L"Kind of speaker"), wcstol (GET_STRING (L"Number of tubes in glottis"), NULL, 10));
-	praat_new1 (me.transfer(), GET_STRING (L"Name"));
+	praat_new (me.transfer(), GET_STRING (L"Name"));
 END
 
 DIRECT (Speaker_help) Melder_help (L"Speaker"); END
@@ -286,7 +282,7 @@ FORM (VocalTract_createFromPhone, L"Create Vocal Tract from phone", L"Create Voc
 	OK
 DO
 	autoVocalTract me = VocalTract_createFromPhone (GET_STRING (L"Phone"));
-	praat_new1 (me.transfer(), GET_STRING (L"Phone"));
+	praat_new (me.transfer(), GET_STRING (L"Phone"));
 END
 
 DIRECT (VocalTract_draw)

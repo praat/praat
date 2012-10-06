@@ -148,6 +148,7 @@ void praat_statistics_exit ();   // at exit time
 void praat_reportMemoryUse ();
 void praat_reportGraphicalProperties ();
 void praat_reportIntegerProperties ();
+void praat_reportTextProperties ();
 
 /* Communication with praat_objectMenus.cpp: */
 GuiMenu praat_objects_resolveMenu (const wchar_t *menu);

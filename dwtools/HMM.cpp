@@ -413,15 +413,15 @@ Thing_implement (HMM, Data, 0);
 
 void structHMM :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of states: ", Melder_integer (numberOfStates));
+	MelderInfo_writeLine (L"Number of states: ", Melder_integer (numberOfStates));
 	for (long i = 1; i <= numberOfStates; i++) {
 		HMM_State hmms = (HMM_State) states -> item[i];
-		MelderInfo_writeLine2 (L"  ", hmms -> label);
+		MelderInfo_writeLine (L"  ", hmms -> label);
 	}
-	MelderInfo_writeLine2 (L"Number of symbols: ", Melder_integer (numberOfObservationSymbols));
+	MelderInfo_writeLine (L"Number of symbols: ", Melder_integer (numberOfObservationSymbols));
 	for (long i = 1; i <= numberOfObservationSymbols; i++) {
 		HMM_Observation hmms = (HMM_Observation) observationSymbols -> item[i];
-		MelderInfo_writeLine2 (L"  ", hmms -> label);
+		MelderInfo_writeLine (L"  ", hmms -> label);
 	}
 }
 
@@ -917,7 +917,7 @@ void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences th
 			lnp = bw -> lnProb;
 			HMM_BaumWelch_reInit (bw.peek());
 			for (long ios = 1; ios <= thy size; ios++) {
-				MelderInfo_writeLine2 (L"Observation sequence: ", Melder_integer (ios));
+				MelderInfo_writeLine (L"Observation sequence: ", Melder_integer (ios));
 				HMM_ObservationSequence hmm_os = (HMM_ObservationSequence) thy item[ios];
 				autoStringsIndex si = HMM_and_HMM_ObservationSequence_to_StringsIndex (me, hmm_os);
 				long *obs = si -> classIndex, nobs = si -> numberOfElements; // convenience
@@ -939,7 +939,7 @@ void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences th
 					iend --;
 					bw -> numberOfTimes = iend - istart + 1;
 					(bw -> totalNumberOfSequences) ++;
-					MelderInfo_writeLine2 (L"  sub observation: ", Melder_integer (bw -> totalNumberOfSequences));
+					MelderInfo_writeLine (L"  sub observation: ", Melder_integer (bw -> totalNumberOfSequences));
 					HMM_and_HMM_BaumWelch_forward (me, bw.peek(), obs + istart - 1); // get new alphas
 					HMM_and_HMM_BaumWelch_backward (me, bw.peek(), obs + istart - 1); // get new betas
 					HMM_BaumWelch_getGamma (bw.peek());
@@ -951,13 +951,13 @@ void HMM_and_HMM_ObservationSequences_learn (HMM me, HMM_ObservationSequences th
 			// we have processed all observation sequences, now it time to estimate new probabilities.
 			iter++;
 			HMM_and_HMM_BaumWelch_reestimate (me, bw.peek());
-			MelderInfo_writeLine4 (L"Iteration: ", Melder_integer (iter), L" ln(prob): ", Melder_double (bw -> lnProb));
+			MelderInfo_writeLine (L"Iteration: ", Melder_integer (iter), L" ln(prob): ", Melder_double (bw -> lnProb));
 		} while (fabs ( (lnp - bw -> lnProb) / bw -> lnProb) > delta_lnp);
 
-		MelderInfo_writeLine1 (L"******** Learning summary *********");
-		MelderInfo_writeLine3 (L"  Processed ", Melder_integer (thy size), L" sequences,");
-		MelderInfo_writeLine3 (L"  consisting of ", Melder_integer (bw -> totalNumberOfSequences), L" observation sequences.");
-		MelderInfo_writeLine3 (L"  Longest observation sequence had ", Melder_integer (capacity), L" items");
+		MelderInfo_writeLine (L"******** Learning summary *********");
+		MelderInfo_writeLine (L"  Processed ", Melder_integer (thy size), L" sequences,");
+		MelderInfo_writeLine (L"  consisting of ", Melder_integer (bw -> totalNumberOfSequences), L" observation sequences.");
+		MelderInfo_writeLine (L"  Longest observation sequence had ", Melder_integer (capacity), L" items");
 	} catch (MelderError) {
 		Melder_throw (me, " & ", thee, ": not learned.");
 	}

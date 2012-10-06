@@ -51,12 +51,12 @@ Thing_implement (Cepstrumc, Sampled, 1);
 
 void structCepstrumc :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"  Start time: ", Melder_double (xmin));
-	MelderInfo_writeLine2 (L"  End time: ", Melder_double (xmax));
-	MelderInfo_writeLine2 (L"  Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine2 (L"  Time step: ", Melder_double (dx));
-	MelderInfo_writeLine2 (L"  First frame at: ", Melder_double (x1));
-	MelderInfo_writeLine2 (L"  Number of coefficients: ", Melder_integer (maxnCoefficients));
+	MelderInfo_writeLine (L"  Start time: ", Melder_double (xmin));
+	MelderInfo_writeLine (L"  End time: ", Melder_double (xmax));
+	MelderInfo_writeLine (L"  Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"  Time step: ", Melder_double (dx));
+	MelderInfo_writeLine (L"  First frame at: ", Melder_double (x1));
+	MelderInfo_writeLine (L"  Number of coefficients: ", Melder_integer (maxnCoefficients));
 }
 
 void Cepstrumc_Frame_init (Cepstrumc_Frame me, int nCoefficients) {

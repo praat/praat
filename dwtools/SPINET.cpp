@@ -57,10 +57,10 @@ void structSPINET :: v_info () {
 	        ! Sampled2_getWindowExtrema_d (this, s, 1, nx, 1, ny, & mins, & maxs)) {
 		return;
 	}
-	MelderInfo_writeLine2 (L"Minimum power: ", Melder_double (miny));
-	MelderInfo_writeLine2 (L"Maximum power: ", Melder_double (maxy));
-	MelderInfo_writeLine2 (L"Minimum power rectified: ", Melder_double (mins));
-	MelderInfo_writeLine2 (L"Maximum powerrectified: ", Melder_double (maxs));
+	MelderInfo_writeLine (L"Minimum power: ", Melder_double (miny));
+	MelderInfo_writeLine (L"Maximum power: ", Melder_double (maxy));
+	MelderInfo_writeLine (L"Minimum power rectified: ", Melder_double (mins));
+	MelderInfo_writeLine (L"Maximum powerrectified: ", Melder_double (maxs));
 }
 
 SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,

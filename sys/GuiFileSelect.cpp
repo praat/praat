@@ -20,6 +20,7 @@
 #include "Gui.h"
 #ifdef _WIN32
 	#include <Shlobj.h>
+	#include <locale.h>
 #endif
 
 SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t *title, bool allowMultipleFiles) {
@@ -132,6 +133,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 				}
 			}
 		}
+		setlocale (LC_ALL, "C");
 	#endif
 	return me.transfer();
 }
@@ -226,6 +228,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 		if (GetSaveFileNameW (& openFileName)) {
 			outfileName = Melder_wcsdup_f (fullFileName);
 		}
+		setlocale (LC_ALL, "C");
 	#endif
 	return outfileName;
 }
@@ -296,6 +299,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 		SHGetPathFromIDList (idList, fullFileName);
 		CoTaskMemFree (idList);
 		directoryName = Melder_wcsdup_f (fullFileName);
+		setlocale (LC_ALL, "C");
 	#endif
 	return directoryName;
 }

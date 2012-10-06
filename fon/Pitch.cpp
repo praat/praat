@@ -620,11 +620,11 @@ void Pitch_difference (Pitch me, Pitch thee) {
 		}
 	}
 	MelderInfo_open ();
-	MelderInfo_writeLine1 (L"Difference between two Pitches:");
-	MelderInfo_writeLine3 (L"Unvoiced to voiced: ", Melder_integer (nuvtov), L" frames.");
-	MelderInfo_writeLine3 (L"Voiced to unvoiced: ", Melder_integer (nvtouv), L" frames.");
-	MelderInfo_writeLine3 (L"Downward frequency jump: ", Melder_integer (ndfdown), L" frames.");
-	MelderInfo_writeLine3 (L"Upward frequency jump: ", Melder_integer (ndfup), L" frames.");
+	MelderInfo_writeLine (L"Difference between two Pitches:");
+	MelderInfo_writeLine (L"Unvoiced to voiced: ", Melder_integer (nuvtov), L" frames.");
+	MelderInfo_writeLine (L"Voiced to unvoiced: ", Melder_integer (nvtouv), L" frames.");
+	MelderInfo_writeLine (L"Downward frequency jump: ", Melder_integer (ndfdown), L" frames.");
+	MelderInfo_writeLine (L"Upward frequency jump: ", Melder_integer (ndfup), L" frames.");
 	MelderInfo_close ();
 }
 

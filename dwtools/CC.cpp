@@ -52,13 +52,13 @@ Thing_implement (CC, Sampled, 1);
 
 void structCC :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine5 (L"Time domain:", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"Time step: ", Melder_double (dx), L" seconds");
-	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (x1), L" seconds");
-	MelderInfo_writeLine2 (L"Number of coefficients: ", Melder_integer (maximumNumberOfCoefficients));
-	MelderInfo_writeLine3 (L"Minimum frequency: ", Melder_double (fmin), L" Hz");
-	MelderInfo_writeLine3 (L"Maximum frequency: ", Melder_double (fmax), L" Hz");
+	MelderInfo_writeLine (L"Time domain:", Melder_double (xmin), L" to ", Melder_double (xmax), L" seconds");
+	MelderInfo_writeLine (L"Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"Time step: ", Melder_double (dx), L" seconds");
+	MelderInfo_writeLine (L"First frame at: ", Melder_double (x1), L" seconds");
+	MelderInfo_writeLine (L"Number of coefficients: ", Melder_integer (maximumNumberOfCoefficients));
+	MelderInfo_writeLine (L"Minimum frequency: ", Melder_double (fmin), L" Hz");
+	MelderInfo_writeLine (L"Maximum frequency: ", Melder_double (fmax), L" Hz");
 }
 
 void CC_Frame_init (CC_Frame me, long numberOfCoefficients) {

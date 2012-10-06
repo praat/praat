@@ -79,9 +79,9 @@ Collection Collection_permuteItems (Collection me) {
 
 void structOrderedOfString :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine2 (L"Number of strings: ", Melder_integer (size));
+	MelderInfo_writeLine (L"Number of strings: ", Melder_integer (size));
 	autoOrderedOfString uStrings = OrderedOfString_selectUniqueItems (this, 1);
-	MelderInfo_writeLine2 (L"Number of unique categories: ", Melder_integer (uStrings -> size));
+	MelderInfo_writeLine (L"Number of unique categories: ", Melder_integer (uStrings -> size));
 }
 
 Thing_implement (OrderedOfString, Ordered, 0);

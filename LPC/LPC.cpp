@@ -54,12 +54,12 @@ Thing_implement (LPC, Sampled, 1);
 
 void structLPC :: v_info () {
 	structData :: v_info ();
-	MelderInfo_writeLine5 (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax),
+	MelderInfo_writeLine (L"Time domain: ", Melder_double (xmin), L" to ", Melder_double (xmax),
 	                       L" (s).");
-	MelderInfo_writeLine2 (L"Prediction order: ", Melder_integer (maxnCoefficients));
-	MelderInfo_writeLine2 (L"Number of frames: ", Melder_integer (nx));
-	MelderInfo_writeLine3 (L"Time step: ", Melder_double (dx), L" (s).");
-	MelderInfo_writeLine3 (L"First frame at: ", Melder_double (x1), L" (s).");
+	MelderInfo_writeLine (L"Prediction order: ", Melder_integer (maxnCoefficients));
+	MelderInfo_writeLine (L"Number of frames: ", Melder_integer (nx));
+	MelderInfo_writeLine (L"Time step: ", Melder_double (dx), L" (s).");
+	MelderInfo_writeLine (L"First frame at: ", Melder_double (x1), L" (s).");
 }
 
 void LPC_Frame_init (LPC_Frame me, int nCoefficients) {
