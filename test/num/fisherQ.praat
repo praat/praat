@@ -86,10 +86,10 @@ assert fisherQ (1, 1e19, 1e19) = undefined
 #
 # Check that we invert better than GSL does.
 #
-Debug... 29   ; set invFisherQ to GSL
+Debug... no 29   ; set invFisherQ to GSL
 f = invFisherQ (0.01, 1, 10000)   ; not such an unusual case
 assert "'f'" = "nan" or "'f'" = "NaN"
-Debug... 0   ; use our corrected NUMridders again
+Debug... no 0   ; use our corrected NUMridders again
 f = invFisherQ (0.01, 1, 10000)   ; same case
 assert "'f:5'" = "6.63743"
 #

@@ -199,7 +199,6 @@
 	#define xmTextWidgetClass  0x00010000
 	#define xmToggleButtonWidgetClass  0x00020000
 	#define xmCascadeButtonWidgetClass  0x00040000
-	#define topLevelShellWidgetClass  xmShellWidgetClass
 	#define xmPushButtonGadgetClass  xmPushButtonWidgetClass
 	#define xmCascadeButtonGadgetClass  xmCascadeButtonWidgetClass
 	#define xmSeparatorGadgetClass  xmSeparatorWidgetClass
@@ -274,48 +273,6 @@
 		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 	#endif
 #endif
-
-/* Button layout and state: */
-#define GuiMenu_INSENSITIVE  (1 << 8)
-#define GuiMenu_CHECKBUTTON  (1 << 9)
-#define GuiMenu_TOGGLE_ON  (1 << 10)
-#define GuiMenu_ATTRACTIVE  (1 << 11)
-#define GuiMenu_RADIO_FIRST  (1 << 12)
-#define GuiMenu_RADIO_NEXT  (1 << 13)
-#define GuiMenu_BUTTON_STATE_MASK  (GuiMenu_INSENSITIVE|GuiMenu_CHECKBUTTON|GuiMenu_TOGGLE_ON|GuiMenu_ATTRACTIVE|GuiMenu_RADIO_FIRST|GuiMenu_RADIO_NEXT)
-
-/* Accelerators: */
-#define GuiMenu_OPTION  (1 << 21)
-#define GuiMenu_SHIFT  (1 << 22)
-#define GuiMenu_COMMAND  (1 << 23)
-#define GuiMenu_LEFT_ARROW  1
-#define GuiMenu_RIGHT_ARROW  2
-#define GuiMenu_UP_ARROW  3
-#define GuiMenu_DOWN_ARROW  4
-#define GuiMenu_PAUSE  5
-#define GuiMenu_DELETE  6
-#define GuiMenu_INSERT  7
-#define GuiMenu_BACKSPACE  8
-#define GuiMenu_TAB  9
-#define GuiMenu_LINEFEED  10
-#define GuiMenu_HOME  11
-#define GuiMenu_END  12
-#define GuiMenu_ENTER  13
-#define GuiMenu_PAGE_UP  14
-#define GuiMenu_PAGE_DOWN  15
-#define GuiMenu_ESCAPE  16
-#define GuiMenu_F1  17
-#define GuiMenu_F2  18
-#define GuiMenu_F3  19
-#define GuiMenu_F4  20
-#define GuiMenu_F5  21
-#define GuiMenu_F6  22
-#define GuiMenu_F7  23
-#define GuiMenu_F8  24
-#define GuiMenu_F9  25
-#define GuiMenu_F10  26
-#define GuiMenu_F11  27
-#define GuiMenu_F12  28
 
 int Gui_getResolution (GuiObject widget);
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height);
@@ -650,6 +607,49 @@ Thing_define (GuiMenuItem, GuiThing) { public:
 	 */
 	void f_check (bool check);
 };
+
+/* Button layout and state: */
+#define GuiMenu_INSENSITIVE  (1 << 8)
+#define GuiMenu_CHECKBUTTON  (1 << 9)
+#define GuiMenu_TOGGLE_ON  (1 << 10)
+#define GuiMenu_ATTRACTIVE  (1 << 11)
+#define GuiMenu_RADIO_FIRST  (1 << 12)
+#define GuiMenu_RADIO_NEXT  (1 << 13)
+#define GuiMenu_BUTTON_STATE_MASK  (GuiMenu_INSENSITIVE|GuiMenu_CHECKBUTTON|GuiMenu_TOGGLE_ON|GuiMenu_ATTRACTIVE|GuiMenu_RADIO_FIRST|GuiMenu_RADIO_NEXT)
+
+/* Accelerators: */
+#define GuiMenu_OPTION  (1 << 21)
+#define GuiMenu_SHIFT  (1 << 22)
+#define GuiMenu_COMMAND  (1 << 23)
+#define GuiMenu_LEFT_ARROW  1
+#define GuiMenu_RIGHT_ARROW  2
+#define GuiMenu_UP_ARROW  3
+#define GuiMenu_DOWN_ARROW  4
+#define GuiMenu_PAUSE  5
+#define GuiMenu_DELETE  6
+#define GuiMenu_INSERT  7
+#define GuiMenu_BACKSPACE  8
+#define GuiMenu_TAB  9
+#define GuiMenu_LINEFEED  10
+#define GuiMenu_HOME  11
+#define GuiMenu_END  12
+#define GuiMenu_ENTER  13
+#define GuiMenu_PAGE_UP  14
+#define GuiMenu_PAGE_DOWN  15
+#define GuiMenu_ESCAPE  16
+#define GuiMenu_F1  17
+#define GuiMenu_F2  18
+#define GuiMenu_F3  19
+#define GuiMenu_F4  20
+#define GuiMenu_F5  21
+#define GuiMenu_F6  22
+#define GuiMenu_F7  23
+#define GuiMenu_F8  24
+#define GuiMenu_F9  25
+#define GuiMenu_F10  26
+#define GuiMenu_F11  27
+#define GuiMenu_F12  28
+// or any ASCII character (preferably a letter or digit) between 32 and 126
 
 GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 	void (*commandCallback) (void *boss, GuiMenuItemEvent event), void *boss);

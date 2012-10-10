@@ -20,6 +20,7 @@
 #include "GuiP.h"
 #if gtk
 	#include "gdk/gdkkeysyms.h"
+	#include <locale.h>
 #endif
 
 Thing_implement (GuiDrawingArea, GuiControl, 0);
@@ -41,15 +42,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		iam (GuiDrawingArea);
 		forget (me);
 	}
-//	static void _GuiGtkDrawingArea_activateCallback (GtkAction *action, gpointer void_me) {
-		//iam (GuiDrawingArea);
-		// TODO: compliled niet
-		/*
-		struct structGuiDrawingAreaEvent event = { widget, 0 };
-		if (my activateCallback != NULL) {
-			my activateCallback (my activateBoss, & event);
-		}*/
-//	}
 	static gboolean _GuiGtkDrawingArea_exposeCallback (GuiObject widget, GdkEventExpose *expose, gpointer void_me) {
 		trace ("begin");
 		iam (GuiDrawingArea);
@@ -68,8 +60,10 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				//GdkRectangle rect = { event. x, event. y, event. width, event. height };
 				//gdk_window_begin_paint_rect ((GTK_WIDGET (widget)) -> window, & rect);
 				trace ("send the expose callback");
+				trace ("locale is %s", setlocale (LC_ALL, NULL));
 				my d_exposeCallback (my d_exposeBoss, & event);
 				trace ("the expose callback finished");
+				trace ("locale is %s", setlocale (LC_ALL, NULL));
 				//gdk_window_end_paint ((GTK_WIDGET (widget)) -> window);
 			} catch (MelderError) {
 				Melder_flushError ("Redrawing not completed");
@@ -383,8 +377,6 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me);
 
-//		g_signal_connect (GTK_WIDGET (my d_widget), "activate", G_CALLBACK (_GuiGtkDrawingArea_activateCallback), me);
-
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), FALSE);
@@ -453,8 +445,6 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 				G_CALLBACK (_GuiGtkDrawingArea_keyCallback), me);
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiGtkDrawingArea_resizeCallback), me);
-
-//		g_signal_connect (GTK_WIDGET (my d_widget), "activate", G_CALLBACK (_GuiGtkDrawingArea_activateCallback), me);
 
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);

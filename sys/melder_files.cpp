@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@
  * pb 2008/11/01 warn after finding final tabs (not just spaces) in file names
  * pb 2010/12/14 more high Unicode compatibility
  * pb 2011/04/05 C++
+ * pb 2012/10/07 
  */
 
 #include <cstdio>
@@ -578,6 +579,8 @@ static size_t read_URL_data_from_file (void *buffer, size_t size, size_t nmemb, 
 #endif
 
 FILE * Melder_fopen (MelderFile file, const char *type) {
+	if (! Melder_getTracing())
+		Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // check locale settings; because of the required file portability Praat cannot stand "1,5"
 	/*
 	 * On the Unix-like systems (including MacOS), the path has to be converted to 8-bit characters in UTF-8 encoding.
 	 * On MacOS, the characters also have to be decomposed.

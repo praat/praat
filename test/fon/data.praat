@@ -1,6 +1,7 @@
 # data.praat
 # Paul Boersma, 22 January 2009
 # Checks Copy, Equal, Read, Write.
+# 10 October 2012
 
 echo Data test
 stopwatch
@@ -235,16 +236,16 @@ procedure test .object1
 	# Test binary writing.
 	select .object1
 	Write to binary file... kanweg.Object
-	Debug... 18
+	Debug... no 18
 	.object2 = Read from file... kanweg.Object
-	Debug... 0
+	Debug... no 0
 	assert objectsAreIdentical (.object1, .object2)   ; binary write and read
 	Remove
 	# Test binary writing.
 	select .object1
-	Debug... 18
+	Debug... no 18
 	Write to binary file... kanweg.Object
-	Debug... 0
+	Debug... no 0
 	.object2 = Read from file... kanweg.Object
 	assert objectsAreIdentical (.object1, .object2)   ; binary write and read
 	Remove

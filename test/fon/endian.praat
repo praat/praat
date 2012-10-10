@@ -110,11 +110,11 @@ procedure do
 	deleteFile ("kanweg.TableOfReal")
 endproc
 printline Optimized:
-Debug... 0
+Debug... no 0
 call do
 printline Portable:
-Debug... 18
+Debug... no 18
 call do
-Debug... 0
+Debug... no 0
 
 printline OK

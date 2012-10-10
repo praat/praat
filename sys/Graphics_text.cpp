@@ -684,6 +684,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						}
 						gdk_draw_text_wc (my d_window, font, my d_gdkGraphicsContext, xDC, yDC, (const GdkWChar *) codes, nchars);
 					} else {
+						Melder_assert (my d_cairoGraphicsContext);
 						enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
 						enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
 						cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);
@@ -752,6 +753,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						for (icol = 0; icol < ncol; icol ++) {
 							if (row [icol] == '#')
 								#if cairo
+									Melder_assert (my d_cairoGraphicsContext);
 									if (my duringXor) {
 									} else {
 										cairo_move_to (my d_cairoGraphicsContext, xDC, jrow);
@@ -806,6 +808,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 								int xp = xDC + (int) (cosa * dx1 + sina * dy1);
 								int yp = yDC - (int) (sina * dx1 - cosa * dy1);
 								#if cairo
+									Melder_assert (my d_cairoGraphicsContext);
 									if (my duringXor) {
 									} else {
 										cairo_move_to (my d_cairoGraphicsContext, xp, yp);
@@ -833,6 +836,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				 * Rotated native font.
 				 */
 				#if cairo
+					Melder_assert (my d_cairoGraphicsContext);
 					enum _cairo_font_slant  slant  = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);
 					enum _cairo_font_weight weight = (lc -> style & Graphics_BOLD   ? CAIRO_FONT_WEIGHT_BOLD  : CAIRO_FONT_WEIGHT_NORMAL);
 					cairo_set_font_size (my d_cairoGraphicsContext, lc -> size);

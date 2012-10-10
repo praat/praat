@@ -593,6 +593,7 @@ static void praat_exit (int exit_code) {
 	#endif
 
 	trace ("save the preferences");
+	Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
 	Preferences_write (& prefs5File);
 	MelderFile_setMacTypeAndCreator (& prefs5File, 'pref', 'PpgB');
 
@@ -946,8 +947,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
-	#elif defined _WIN32
-		//setlocale (LC_ALL, "C");   // said to be superfluous
+	#elif defined (_WIN32)
+		setlocale (LC_ALL, "C");   // said to be superfluous
 	#elif defined (macintosh)
 		setlocale (LC_ALL, "en_US");   // required to make swprintf work correctly; the default "C" locale does not do that!
 	#endif
@@ -1182,7 +1183,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * Start the application.
 		 */
 		#if gtk
+			trace ("locale %s", setlocale (LC_ALL, NULL));
 			g_set_application_name (title);
+			trace ("locale %s", setlocale (LC_ALL, NULL));
 		#elif cocoa
 			[NSApplication sharedApplication];
 		#elif defined (_WIN32)
@@ -1197,13 +1200,18 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		char objectWindowTitle [100];
 		sprintf (objectWindowTitle, "%s Objects", praatP.title);
 		double x, y;
+		trace ("locale %s", setlocale (LC_ALL, NULL));
 		Gui_getWindowPositioningBounds (& x, & y, NULL, NULL);
+		trace ("locale %s", setlocale (LC_ALL, NULL));
 		theCurrentPraatApplication -> topShell = raam = GuiWindow_create (x + 10, y, WINDOW_WIDTH, WINDOW_HEIGHT,
 			Melder_peekUtf8ToWcs (objectWindowTitle), gui_cb_quit, NULL, 0);
+		trace ("locale %s", setlocale (LC_ALL, NULL));
 		#if motif
 			GuiApp_setApplicationShell (theCurrentPraatApplication -> topShell -> d_xmShell);
 		#endif
+		trace ("before objects window shows locale %s", setlocale (LC_ALL, NULL));
 		raam -> f_show ();
+		trace ("after objects window shows locale %s", setlocale (LC_ALL, NULL));
 	}
 	Thing_recognizeClassesByName (classCollection, classStrings, classManPages, classSortedSetOfString, NULL);
 	if (Melder_batch) {
@@ -1260,7 +1268,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	theCurrentPraatApplication -> manPages = ManPages_create ();
 
 	trace ("creating the Picture window");
+	trace ("before picture window shows: locale is %s", setlocale (LC_ALL, NULL));
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
+	trace ("after picture window shows: locale is %s", setlocale (LC_ALL, NULL));
 }
 
 static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileNameTemplate) {
@@ -1320,6 +1330,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 void praat_run (void) {
 	trace ("adding menus, second round");
 	praat_addMenus2 ();
+	trace ("locale is %s", setlocale (LC_ALL, NULL));
 
 	trace ("adding the Quit command");
 	#if defined (macintosh) && useCarbon
@@ -1356,6 +1367,7 @@ void praat_run (void) {
 	#endif
 
 	trace ("install plug-ins");
+	trace ("locale is %s", setlocale (LC_ALL, NULL));
 	/* The Praat phase should remain praat_STARTING_UP,
 	 * because any added commands must not be included in the buttons file.
 	 */
@@ -1461,6 +1473,7 @@ void praat_run (void) {
 		}
 
 		trace ("sorting the commands");
+		trace ("locale is %s", setlocale (LC_ALL, NULL));
 		praat_sortMenuCommands ();
 		praat_sortActions ();
 
@@ -1469,9 +1482,11 @@ void praat_run (void) {
 		#if gtk
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
 			trace ("install GTK key snooper");
+			trace ("locale is %s", setlocale (LC_ALL, NULL));
 			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_widget), "client-event", G_CALLBACK (cb_userMessage), NULL);
 			gtk_key_snooper_install (theKeySnooper, 0);
 			trace ("start the GTK event loop");
+			trace ("locale is %s", setlocale (LC_ALL, NULL));
 			gtk_main ();
 		#elif cocoa
 			[NSApp run];

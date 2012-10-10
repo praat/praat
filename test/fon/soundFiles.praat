@@ -79,11 +79,11 @@ procedure do
 	assert "'wavEnergy:12'" = "'flacEnergy:12'"
 endproc
 printline Optimized:
-Debug... 0
+Debug... no 0
 call do
 printline Portable:
-Debug... 18
+Debug... no 18
 call do
-Debug... 0
+Debug... no 0
 
 printline OK

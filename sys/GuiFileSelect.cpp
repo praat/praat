@@ -18,9 +18,9 @@
  */
 
 #include "Gui.h"
+#include <locale.h>
 #ifdef _WIN32
 	#include <Shlobj.h>
-	#include <locale.h>
 #endif
 
 SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t *title, bool allowMultipleFiles) {
@@ -50,6 +50,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 			g_slist_free (infileNames_list);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		setlocale (LC_ALL, "C");
 	#elif cocoa
 	#elif defined (macintosh)
 		(void) parent;
@@ -83,6 +84,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 			}
 			NavDialogDispose (dialogRef);
 		}
+		setlocale (LC_ALL, "en_US");
 	#elif defined (_WIN32)
 		static OPENFILENAMEW openFileName, dummy;
 		static wchar_t fullFileName [3000+2];
@@ -152,11 +154,12 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 		gtk_file_chooser_set_current_name (GTK_FILE_CHOOSER (dialog), Melder_peekWcsToUtf8 (defaultName));
 		if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 			char *outfileName_utf8 = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-			outfileName = Melder_peekUtf8ToWcs (outfileName_utf8);
+			outfileName = Melder_utf8ToWcs (outfileName_utf8);
 			g_free (outfileName_utf8);
 			Melder_pathToFile (outfileName, & file);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		setlocale (LC_ALL, "C");
 	#elif cocoa
 	#elif defined (macintosh)
 		(void) parent;
@@ -205,6 +208,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 			}
 			NavDialogDispose (dialogRef);
 		}
+		setlocale (LC_ALL, "en_US");
 	#elif defined (_WIN32)
 		OPENFILENAMEW openFileName;
 		static wchar_t customFilter [100+2];
@@ -250,6 +254,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 			Melder_pathToFile (directoryName, & file);
 		}
 		gtk_widget_destroy (GTK_WIDGET (dialog));
+		setlocale (LC_ALL, "C");
 	#elif cocoa
 	#elif defined (macintosh)
 		(void) parent;
@@ -282,6 +287,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 			}
 			NavDialogDispose (dialogRef);
 		}
+		setlocale (LC_ALL, "en_US");
 	#elif defined (_WIN32)
 		static wchar_t fullFileName [3000+2];
 		static bool comInited = false;

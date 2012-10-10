@@ -32,6 +32,7 @@
 #include "GuiP.h"
 #include "UnicodeData.h"
 #include "machine.h"
+#include <locale.h>
 
 Thing_implement (GuiWindow, GuiShell, 0);
 
@@ -140,8 +141,11 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 	#if gtk
 		static bool gtkHasBeenInitialized = false;
 		if (! gtkHasBeenInitialized) {
+			trace ("before initing GTK: locale is %s", setlocale (LC_ALL, NULL));
 			gtk_disable_setlocale ();   // otherwise 1.5 will be written "1,5" on computers with a French or German locale
+			trace ("during initing GTK: locale is %s", setlocale (LC_ALL, NULL));
 			gtk_init_check (NULL, NULL);
+			trace ("after initing GTK: locale is %s", setlocale (LC_ALL, NULL));
 			gtkHasBeenInitialized = true;
 		}
 		my d_gtkWindow = (GtkWindow *) gtk_window_new (GTK_WINDOW_TOPLEVEL);

@@ -103,4 +103,35 @@ void structERP :: f_draw (Graphics graphics, const wchar_t *channelName, double 
 	f_draw (graphics, f_getChannelNumber (channelName), tmin, tmax, vmin, vmax, garnish);
 }
 
+Table structERP :: f_tabulate (bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units)
+{
+	double voltageScaling = 1.0;
+	const wchar_t *unitText = L"(V)";
+	if (units == 2) {
+		voltageDecimals -= 6;
+		voltageScaling = 1000000.0;
+		unitText = L"(uV)";
+	}
+	try {
+		autoTable thee = Table_createWithoutColumnNames (nx, includeSampleNumbers + includeTime + ny);
+		long icol = 0;
+		if (includeSampleNumbers) Table_setColumnLabel (thee.peek(), ++ icol, L"sample");
+		if (includeTime) Table_setColumnLabel (thee.peek(), ++ icol, L"time(s)");
+		for (long ichan = 1; ichan <= ny; ichan ++) {
+			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (d_channelNames [ichan], unitText));
+		}
+		for (long isamp = 1; isamp <= nx; isamp ++) {
+			icol = 0;
+			if (includeSampleNumbers) Table_setNumericValue (thee.peek(), isamp, ++ icol, isamp);
+			if (includeTime) Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (x1 + (isamp - 1) * dx, timeDecimals));
+			for (long ichan = 1; ichan <= ny; ichan ++) {
+				Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (voltageScaling * z [ichan] [isamp], voltageDecimals));
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": not converted to Table.");
+	}
+}
+
 /* End of file ERP.cpp */

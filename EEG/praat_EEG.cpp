@@ -259,6 +259,24 @@ END
 
 #pragma mark ERP
 
+FORM (ERP_downto_Table, L"ERP: Down to Table", 0)
+	BOOLEAN (L"Include sample number", false)
+	BOOLEAN (L"Include time", true)
+	NATURAL (L"Time decimals", L"6")
+	NATURAL (L"Voltage decimals", L"12")
+	RADIO (L"Voltage units", 1)
+		OPTION (L"volt")
+		OPTION (L"microvolt")
+	OK
+DO
+	LOOP {
+		iam (ERP);
+		autoTable thee = my f_tabulate (GET_INTEGER (L"Include sample number"),
+			GET_INTEGER (L"Include time"), GET_INTEGER (L"Time decimals"), GET_INTEGER (L"Voltage decimals"), GET_INTEGER (L"Voltage units"));
+		praat_new (thee.transfer(), my name);
+	}
+END
+
 FORM (ERP_draw, L"ERP: Draw", 0)
 	SENTENCE (L"Channel name", L"Cz")
 	REAL (L"left Time range (s)", L"0.0")
@@ -671,8 +689,11 @@ void praat_EEG_init (void) {
 		praat_addAction1 (classEEG, 0, L"Extract marks as TextGrid", 0, 1, DO_EEG_extractTextGrid);
 
 	praat_addAction1 (classERP, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_ERP_viewAndEdit);
-	praat_addAction1 (classERP, 0, L"Draw...", 0, 0, DO_ERP_draw);
-	praat_addAction1 (classERP, 0, L"Draw scalp...", 0, 0, DO_ERP_drawScalp);
+	praat_addAction1 (classERP, 0, L"Draw -", 0, 0, 0);
+		praat_addAction1 (classERP, 0, L"Draw...", 0, 1, DO_ERP_draw);
+		praat_addAction1 (classERP, 0, L"Draw scalp...", 0, 1, DO_ERP_drawScalp);
+	praat_addAction1 (classERP, 0, L"Tabulate -", 0, 0, 0);
+		praat_addAction1 (classERP, 0, L"Down to Table...", 0, 1, DO_ERP_downto_Table);
 	praat_addAction1 (classERP, 0, L"Query -", 0, 0, 0);
 		praat_addAction1 (classERP, 0, L"Get channel name...", 0, 1, DO_ERP_getChannelName);
 		praat_addAction1 (classERP, 0, L"Get channel number...", 0, 1, DO_ERP_getChannelNumber);
