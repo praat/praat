@@ -112,7 +112,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event);
 static void gui_button_cb_reverse (I, GuiButtonEvent event);
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event);
 //  prototypes: helpers
-static double getRealFromTextWidget (GuiObject me);
+static double getRealFromTextWidget (GuiText me);
 static double getCoordinate (double fmin, double fmax, double f);
 static double getF0 (structVowelEditor_F0 *f0p, double time);
 static void checkF1F2 (VowelEditor me, double *f1, double *f2);
@@ -1453,6 +1453,12 @@ end:
 	gui_button_cb_play (me, & gb_event);
 }
 
+static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
+	iam (VowelEditor);
+	(void) me;
+	(void) event;
+}
+
 static void cb_publish (Editor editor, void *closure, Data publish) {
 	(void) editor;
 	(void) closure;
@@ -1565,6 +1571,8 @@ void structVowelEditor :: v_createChildren ()
 	/***** Create drawing area. *****/
 	// Approximately square because for our defaults: f1min=200, f1max=1000 and f2min = 500, f2mx = 2500,
 	// log distances are equal (log (1000/200) == log (2500/500) ).
+	//drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
+	//	gui_drawingarea_cb_expose, gui_drawingarea_cb_click, gui_drawingarea_cb_key, gui_drawingarea_cb_resize, this, 0);
 	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), -MARGIN_BOTTOM,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 	height = drawingArea -> f_getHeight ();

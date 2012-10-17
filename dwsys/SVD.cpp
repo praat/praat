@@ -242,6 +242,32 @@ void SVD_compute (SVD me) {
 	}
 }
 
+// V D^2 V'or V D^-2 V
+void SVD_getSquared (SVD me, double **m, bool inverse) {
+	if (inverse) {
+		for (long i = 1; i <= my numberOfColumns; i++) {
+			for (long j = 1; j <= my numberOfColumns; j++) {
+				double val = 0;
+				for (long k = 1; k <= my numberOfColumns; k++) {
+					if (my d[k] > 0) {
+						val += my v[i][k] * my v[j][k] / (my d[k] * my d[k]);
+					}
+				}
+				m[i][j] = val;
+			}
+		}
+	} else {
+		for (long i = 1; i <= my numberOfColumns; i++) {
+			for (long j = 1; j <= my numberOfColumns; j++) {
+				double val = 0;
+				for (long k = 1; k <= my numberOfColumns; k++) {
+					val += my d[k] * my d[k] * my v[i][k] * my v[j][k];
+				}
+				m[i][j] = val;
+			}
+		}
+	}
+}
 
 void SVD_solve (SVD me, double b[], double x[]) {
 	try {

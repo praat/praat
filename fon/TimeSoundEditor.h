@@ -64,13 +64,14 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 	// new preferences:
 		public:
 			static void f_preferences ();
-			static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
+			//static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
 			#define declare_preference(type,name) \
 				static type s_##name; virtual type & pref_##name () { return s_##name; } \
 				static const wchar_t * sdefault_##name; virtual const wchar_t * default_##name () { return sdefault_##name; }
 			#define define_preference(Klas,type,name,default) \
 				type struct##Klas :: s_##name; \
 				const wchar_t * struct##Klas :: sdefault_##name = default;
+			declare_preference (kTimeSoundEditor_scalingStrategy, sound_scalingStrategy)
 			declare_preference (double, sound_scaling_height)
 			declare_preference (double, sound_scaling_minimum)
 			declare_preference (double, sound_scaling_maximum)

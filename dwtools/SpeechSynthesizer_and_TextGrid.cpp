@@ -21,6 +21,7 @@
 	djmw 20111214
 */
 
+//TODO: SpeechSynthesizer crashes on long input strings
 #include "DTW.h"
 #include "Sounds_to_DTW.h"
 #include "Sound_extensions.h"
@@ -481,9 +482,11 @@ TextGrid SpeechSynthesizer_and_Sound_and_TextInterval_align (SpeechSynthesizer m
 		bool hasSilence_thee = fabs (t1_thee - thy xmin) > precision || fabs (t2_thee - thy xmax) > precision;
 
 		if (my d_estimateWordsPerMinute) {
-			double wordsPerMinute_raw = 60.0 * numberOfTokens / (his xmax - his xmin);
-			double wordsPerMinute = 60.0 * numberOfTokens / s_thee_duration;
-			my d_wordsPerMinute =  0.5 * (wordsPerMinute_raw + wordsPerMinute);
+			// estimate speaking rate with the number of words per minute from the text
+			double wordsPerMinute_rawTokens = 60.0 * numberOfTokens / s_thee_duration;
+			// compensation for long words: 5 characters / word
+			double wordsPerMinute_rawText = 60.0 * (wcslen (his text) / 5.0) / s_thee_duration;
+			my d_wordsPerMinute =  0.5 * (wordsPerMinute_rawTokens + wordsPerMinute_rawText);
 		}
 		TextGrid tg2 = 0;
 		autoSound s2 = SpeechSynthesizer_and_TextInterval_to_Sound (me, him, &tg2);

@@ -1,6 +1,8 @@
-/* MFCC_def.h
+#ifndef _Sound_and_PCA_h_
+#define _Sound_and_PCA_h_
+/* Sound_and_PCA.h
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 2012 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,18 +20,20 @@
  */
 
 /*
- djmw 20020813 GPL header
+ djmw 20121001
 */
 
-#define ooSTRUCT MFCC
-oo_DEFINE_CLASS (MFCC, Sampled)
+#include "PCA.h"
+#include "Sound.h"
 
-	oo_DOUBLE (maximumFrequency_mel) /* from Sound */
-	oo_INT (nCoefficients)
-	oo_FLOAT_MATRIX (z, my nCoefficients, my nx)
-	
-oo_END_CLASS (MFCC)	
-#undef ooSTRUCT
+PCA Sound_to_PCA_channels (Sound me, double startTime, double endTime);
 
-/* End of file MFCC_def.h */	
+Sound Sound_and_PCA_to_Sound_pc_selectedChannels (Sound me, PCA thee, long numberOfComponents, long *channels, long numberOfChannels);
 
+Sound Sound_and_PCA_principalComponents (Sound me, PCA thee, long numberOfComponents);
+
+Sound Sound_and_PCA_whitenSelectedChannels (Sound me, PCA thee, long numberOfComponents, long *channels, long numberOfChannels);
+
+Sound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents);
+
+#endif /* _Sound_and_PCA_h_ */

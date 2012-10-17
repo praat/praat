@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20120221 Latest modification
+# djmw 20121001 Latest modification
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak
+CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG
 
 OBJECTS = Activation.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
@@ -16,18 +16,19 @@ OBJECTS = Activation.o AffineTransform.o \
 	Configuration_and_Procrustes.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_Pattern_Categories.o \
-	EditDistanceTable.o \
+	EditDistanceTable.o EEG_extensions.o \
 	Eigen_and_Matrix.o Eigen_and_Procrustes.o \
 	Eigen_and_TableOfReal.o\
 	Eigen_and_SSCP.o Excitations.o \
 	FilterBank.o FormantGrid_extensions.o \
-	GaussianMixture.o \
+	GaussianMixture.o  \
 	HMM.o \
 	ICA.o Intensity_extensions.o \
 	LFCC.o LongSound_extensions.o \
 	KlattGrid.o KlattGridEditors.o KlattTable.o \
 	MelFilter_and_MFCC.o MFCC.o \
-	manual_dwtools.o manual_BSS.o manual_HMM.o manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
+	manual_dwtools.o manual_BSS.o manual_HMM.o \
+	manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o \
 	Matrix_extensions.o \
 	Matrix_Categories.o MDS.o \
@@ -37,7 +38,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	Proximity.o \
 	Resonator.o \
 	Sampled2.o \
-	Sound_and_FilterBank.o Sound_extensions.o \
+	Sound_and_FilterBank.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
 	Spectrum_extensions.o SSCP.o Strings_extensions.o \

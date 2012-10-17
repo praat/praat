@@ -25,13 +25,14 @@
  djmw 20040629 Strings_append now accepts an Ordered of Strings.
  djmw 20050714 Permutations
  djmw 20050724 Index
- djmw 20120407 Latest modification
+ djmw 20120813 Latest modification
 */
 
 #include "Collection.h"
 #include "Strings_.h"
 #include "Permutation.h"
 #include "Index.h"
+#include "Table.h"
 
 
 Strings Strings_createFixedLength (long numberOfStrings);
@@ -45,21 +46,22 @@ Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replac
 	int maximumNumberOfReplaces, long *nmatches, long *nstringmatches,
 	int use_regexp);
 
-void Strings_setString (Strings me, const wchar_t *newstr, long index);
-
 Strings strings_to_Strings (wchar_t **strings, long from, long to);
+
+// If the Strings is only an intermediate object to achieve other goals, use the following two routines to avoid copying.
+Strings strings_to_Strings_link (wchar_t** strings, long n);
+// for (i=1; i<= n; i++) my strings[i] = strings[i];
+void Strings_unlink (Strings me);
+// for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL;
 
 Strings Strings_extractPart (Strings me, long start, long end);
 
-Strings strings_to_Strings_link (wchar_t** strings, long n);
-/* for (i=1; i<= n; i++) my strings[i] = strings[i]; */
-void _Strings_unlink (Strings me);
-/* for (i=1; i<= my numberOfStrings; i++) my strings[i] = NULL; */
 
 StringsIndex Strings_to_StringsIndex (Strings me);
 StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes);
 /* Construct the index with strings in classes, index[i]=0 when my strings[i] doesn't occur in classes */
 
+StringsIndex Table_to_StringsIndex_column (Table me, long column);
 
 Strings StringsIndex_to_Strings (StringsIndex me);
 

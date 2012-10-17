@@ -126,7 +126,7 @@ void Melder_tracingToFile (MelderFile file) {
 }
 
 void Melder_trace_ (const char *fileName, int lineNumber, const char *functionName, const char *format, ...) {
-	if (! theTracing) return;
+	if (! theTracing || MelderFile_isNull (& theTracingFile)) return;
 	try {
 		FILE *f = Melder_fopen (& theTracingFile, "a");
 		if (fileName) {

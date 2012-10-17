@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# djmw 20080323, 20120511, 20120515
+# djmw 20080323, 20120511, 20120515, 20120809
 #
 #  Makes the directory structure of gsl flat by renaming all files and references by #include
 #  E.g. the file 'd/a.c' will be renamed as: gsl_d__a.c
@@ -156,7 +156,7 @@ def gen_makefile (dict):
 
 include ../makefile.defs
 
-CFLAGS = -I ../sys -I ../dwsys
+CPPFLAGS = -I ../sys -I ../dwsys
 
 OBJECTS = """ + make_objects + """
 

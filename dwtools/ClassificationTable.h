@@ -22,7 +22,7 @@
 #include "TableOfReal.h"
 #include "SSCP.h"
 #include "Confusion.h"
-#include "Strings_.h"
+#include "Strings.h"
 
 Thing_define (ClassificationTable, TableOfReal) {
 };

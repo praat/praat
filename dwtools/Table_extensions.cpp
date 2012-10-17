@@ -30,9 +30,13 @@
 	F0, F1, F2, F3
 */
 
-#include "Table_extensions.h"
+
 #include "GraphicsP.h"
+#include "Graphics_extensions.h"
+#include "Index.h"
 #include "NUM2.h"
+#include "Strings_extensions.h"
+#include "Table_extensions.h"
 
 /*
 The Peterson & Barney data were once (1991) obtained by me (djmw) as a compressed tar-file
@@ -3105,7 +3109,7 @@ Table Table_createFromWeeninkData () {
 	}
 }
 
-void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
+void Table_scatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
         double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
         long yci_min, long yci_max, double bar_mm, int garnish) {
 	long nrows = my rows -> size;
@@ -3220,5 +3224,724 @@ double Table_getMedianAbsoluteDeviation (Table me, long columnNumber)
 	} catch (MelderError) {
 		Melder_throw (me, ": cannot compute median absolute deviation of column ", columnNumber, ".");
 	}
+
+Table Table_getOneWayKruskalWallis (Table me, long column, long factorColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability) {
+	try {
+		if (column < 1 || column > my numberOfColumns) {
+			Melder_throw ("Invalid column number.");
+		}
+		if (factorColumn < 1 || factorColumn > my numberOfColumns || factorColumn == column) {
+			Melder_throw ("Invalid group column number.");
+		}
+		long numberOfData = my rows -> size;
+		Table_numericize_Assert (me, column);
+		autoNUMvector<double> data (1, numberOfData);
+		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
+		long numberOfLevels = levels -> classes -> size;
+		if (numberOfLevels < 2) {
+			Melder_throw ("There must be at least two levels.");
+		}
+
+		for (long irow = 1; irow <= numberOfData; irow++) {
+			data[irow] = ((TableRow) my rows -> item [irow]) -> cells [column] .number;
+		}
+		NUMsort2<double, long> (numberOfData, data.peek(), levels -> classIndex);
+		NUMrank<double> (numberOfData, data.peek());
+
+		// Get correctionfactor for ties
+		// Hayes pg. 831
+		double c = 0;
+		long jt, j = 1;
+		while (j < numberOfData) {
+        	for (jt = j + 1; jt <= numberOfData && data[jt] == data[j]; jt++) {}
+        	double multiplicity = jt - j;
+			if (multiplicity > 1) {
+				c += multiplicity * (multiplicity *multiplicity - 1.0);
+			}
+        	j = jt;
+		}
+		double tiesCorrection = 1.0 - c / (numberOfData * (numberOfData * numberOfData - 1.0));
+
+		autoNUMvector<long> factorLevelSizes (1, numberOfLevels);
+		autoNUMvector<double> factorLevelSums (1, numberOfLevels);
+		autoNUMvector<long> ties (1, numberOfLevels);
+		for (long i = 1; i <= numberOfData; i++) {
+			long index = levels -> classIndex[i];
+			factorLevelSizes[index] ++;
+			factorLevelSums[index] += data[i];
+		}
+
+		double h = 0;
+		for (long j = 1; j <= numberOfLevels; j++) {
+			if (factorLevelSizes[j] < 2) {
+				SimpleString ss = (SimpleString) levels -> classes -> item[j];
+				Melder_throw ("Group ", ss -> string, " has less then two cases.");
+			}
+			h += factorLevelSums[j] * factorLevelSums[j] / factorLevelSizes[j]; // = factorLevelMeans * groupMean * factorLevelSizes
+		}
+		h = (12.0 / (numberOfData * (numberOfData + 1))) * h - 3 * (numberOfData + 1);
+		h /= tiesCorrection;
+		double dof = numberOfLevels - 1;
+		if (degreesOfFreedom) {
+			*degreesOfFreedom = dof;
+		}
+		if (kruskalWallis) {
+			*kruskalWallis = h;
+		}
+		double p = NUMchiSquareQ (h, dof);
+		if (probability) {
+			*probability = p;
+		}
+		autoTable him = Table_createWithColumnNames (numberOfLevels, L"Group(R) Sums(R) Cases");
+		for (long irow = 1; irow <= numberOfLevels; irow++) {
+			SimpleString ss = (SimpleString) levels -> classes -> item[irow];
+			Table_setStringValue (him.peek(), irow, 1, ss -> string);
+			Table_setNumericValue (him.peek(), irow, 2, factorLevelSums[irow]);
+			Table_setNumericValue (him.peek(), irow, 3, factorLevelSizes[irow]);
+		}
+		Table_numericize_Assert (him.peek(), 2);
+		Table_numericize_Assert (him.peek(), 3);
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no one-way Kruskal-Wallis performed.");
+	}
+}
+
+// Table with Group Means Cases
+static void _Table_postHocTukeyHSD (Table me, double sumOfSquaresWithin, double degreesOfFreedomWithin, Table *meansDiff, Table *meansDiffProbabilities) {
+	try {
+		Table_numericize_Assert (me, 2);
+		Table_numericize_Assert (me, 3);
+		long numberOfMeans = my rows -> size;
+		autoNUMvector<double> means (1, numberOfMeans);
+		autoNUMvector<double> cases (1, numberOfMeans);
+		autoTable meansD = Table_create (numberOfMeans - 1, numberOfMeans);
+		for (long i = 1; i <= numberOfMeans; i++) {
+			TableRow row = (TableRow) my rows -> item [i];
+			means[i] = row -> cells [2].number;
+			cases[i] = row -> cells [3].number;
+		}
+		for (long i = 1; i <= numberOfMeans - 1; i++) {
+			Table_setStringValue (meansD.peek(), i, 1, ((TableRow) my rows -> item [i]) -> cells [1].string);
+			Table_setColumnLabel (meansD.peek(), i + 1, ((TableRow) my rows -> item [i + 1]) -> cells [1].string);
+		}
+
+		for (long irow = 1; irow <= numberOfMeans - 1; irow++) {
+			for (long icol = irow + 1; icol <= numberOfMeans; icol++) {
+				double dif = fabs (means[irow] - means[icol]);
+				Table_setNumericValue (meansD.peek(), irow, icol, dif);
+			}
+		}
+		autoTable meansP = (Table) Data_copy (meansD.peek());
+		for (long irow = 1; irow <= numberOfMeans - 1; irow++) {
+			for (long icol = irow + 1; icol <= numberOfMeans; icol++) {
+				// Tukey-Kramer correction for unequal sample sizes
+				double oneOverNstar =  0.5 * (1 / cases[icol] + 1 / cases[irow]);
+				double s = sqrt (sumOfSquaresWithin * oneOverNstar);
+				double q = fabs (means[irow] - means[icol]) / s;
+				double p = NUMtukeyQ (q, numberOfMeans, degreesOfFreedomWithin, 1);
+				Table_setNumericValue (meansP.peek(), irow, icol, p);
+			}
+		}
+		if (meansDiff != NULL) {
+			*meansDiff = meansD.transfer();
+		}
+		if (meansDiffProbabilities != NULL) {
+			*meansDiffProbabilities = meansP.transfer();
+		}
+	} catch (MelderError) {
+		Melder_throw (me, ": no post-hoc performed.");
+	}
+}
+
+// expect 6 columns, first text others numeric
+void Table_printAsAnovaTable (Table me) {
+	autoMelderString s;
+	wchar_t stmp[200];
+	int width[7] = { 0, 25, 15, 10, 15, 10, 10 };
+	if (my numberOfColumns < 6) return;
+	swprintf (stmp, 199, L"%25ls\t%15ls\t%10ls\t%15ls\t%10ls\t%10ls", L"Source", L"SS", L"Df", L"MS", L"F", L"P");
+	MelderInfo_writeLine (stmp);
+	for (long icol = 2; icol <= 6; icol++) {
+		Table_numericize_Assert (me, icol);
+	}
+
+	for (long i = 1; i <= my rows -> size; i++) {
+		TableRow row = (TableRow) my rows -> item[i];
+		swprintf (stmp, 99, L"%*ls\t", width[1], row -> cells[1].string);
+		MelderString_append (&s, stmp);
+		for (long j = 2; j <= 6; j++) {
+			double value = row -> cells[j].number;
+			if (value != NUMundefined) {
+				swprintf (stmp, 99, L"%*g\t", width[j], value);
+			} else {
+				swprintf (stmp, 99, L"%*ls\t", width[j], L"                  ");
+			}
+			MelderString_append (&s, stmp);
+		}
+		MelderInfo_writeLine (s.string);
+		MelderString_empty (&s);
+	}
+}
+
+void Table_printAsMeansTable (Table me) {
+	autoMelderString s;
+	wchar_t stmp[200];
+	for (long icol = 2; icol <= my numberOfColumns; icol++) {
+		Table_numericize_Assert (me, icol);
+	}
+	for (long j = 1; j <= my numberOfColumns; j++) {
+		swprintf (stmp, 99, L"%10ls\t", (my columnHeaders[j].label == NULL ? L"          " : my columnHeaders[j].label));
+		MelderString_append (&s, stmp);
+	}
+	MelderInfo_writeLine (s.string);
+	MelderString_empty (&s);
+	for (long i = 1; i <= my rows -> size; i++) {
+		TableRow row = (TableRow) my rows -> item[i];
+		swprintf (stmp, 99, L"%10ls\t", row -> cells[1].string);
+		MelderString_append (&s, stmp);
+		for (long j = 2; j <= my numberOfColumns; j++) {
+			double value = row -> cells[j].number;
+			if (value != NUMundefined) {
+				swprintf (stmp, 99, L"%10.3g\t", value);
+			} else {
+				swprintf (stmp, 99, L"%10ls\t", L"                  ");
+			}
+			MelderString_append (&s, stmp);
+		}
+		MelderInfo_writeLine (s.string);
+		MelderString_empty (&s);
+	}
+}
+
+Table Table_getOneWayAnalysisOfVarianceF (Table me, long column, long factorColumn, Table *means, Table *meansDiff, Table *meansDiffProbabilities) {
+	try {
+		if (column < 1 || column > my numberOfColumns) {
+			Melder_throw ("Invalid column number.");
+		}
+		if (factorColumn < 1 || factorColumn > my numberOfColumns || factorColumn == column) {
+			Melder_throw ("Invalid group column number.");
+		}
+		long numberOfData = my rows -> size;
+		Table_numericize_Assert (me, column);
+		autoNUMvector<double> data (1, numberOfData);
+		autoStringsIndex levels = Table_to_StringsIndex_column (me, factorColumn);
+		// copy data from Table
+		for (long irow = 1; irow <= numberOfData; irow++) {
+			data[irow] = ((TableRow) my rows -> item[irow]) -> cells[column].number;
+		}
+		long numberOfLevels = levels -> classes -> size;
+		if (numberOfLevels < 2) {
+			Melder_throw ("There must be at least two levels.");
+		}
+		autoNUMvector<long> factorLevelSizes (1, numberOfLevels);
+		autoNUMvector<double> factorLevelMeans (1, numberOfLevels);
+
+		// a, ty, c according to schem of Hayes, 10.14 pg 363
+
+		double a = 0, ty = 0;
+		for (long i = 1; i <= numberOfData; i++) {
+			long index = levels -> classIndex[i];
+			factorLevelSizes[index] ++;
+			factorLevelMeans[index] += data[i];
+			a += data[i] * data[i];
+			ty += data[i];
+		}
+
+		double c = 0;
+		for (long j = 1; j <= numberOfLevels; j++) {
+			if (factorLevelSizes[j] < 2) {
+				SimpleString ss = (SimpleString) levels -> classes -> item[j];
+				Melder_throw ("Level \"", ss -> string, "\" has less then two members.");
+			}
+			c += factorLevelMeans[j] * factorLevelMeans[j] / factorLevelSizes[j]; // order of these two is important!
+			factorLevelMeans[j] /= factorLevelSizes[j];
+		}
+
+		double ss_t = a - ty * ty / numberOfData;
+		double ss_b = c - ty * ty / numberOfData;
+		double ss_w = a - c;
+		double dof_w = numberOfData - numberOfLevels;
+		double dof_b = numberOfLevels - 1;
+
+		autoTable anova = Table_createWithColumnNames (3, L"Source SS Df MS F P");
+		long col_s = 1, col_ss = 2, col_df = 3, col_ms = 4, col_f = 5, col_p = 6;
+		long row_b = 1, row_w = 2, row_t = 3;
+		Table_setStringValue (anova.peek(), row_b, col_s, L"Between");
+		Table_setStringValue (anova.peek(), row_w, col_s, L"Within");
+		Table_setStringValue (anova.peek(), row_t, col_s, L"Total");
+
+		Table_setNumericValue (anova.peek(), row_b, col_ss, ss_b);
+		Table_setNumericValue (anova.peek(), row_b, col_df, dof_b);
+		double ms_b = ss_b / dof_b;
+		Table_setNumericValue (anova.peek(), row_b, col_ms, ms_b);
+
+		Table_setNumericValue (anova.peek(), row_w, col_ss, ss_w);
+		Table_setNumericValue (anova.peek(), row_w, col_df, dof_w);
+		double ms_w = ss_w / dof_w;
+		Table_setNumericValue (anova.peek(), row_w, col_ms, ms_w);
+		double fisherF = ms_b / ms_w;
+		double probability = NUMfisherQ (fisherF, dof_b, dof_w);
+
+		Table_setNumericValue (anova.peek(), row_b, col_f, fisherF);
+		Table_setNumericValue (anova.peek(), row_b, col_p, probability);
+
+		Table_setNumericValue (anova.peek(), row_t, col_ss, ss_t);
+		Table_setNumericValue (anova.peek(), row_t, col_df, dof_w + dof_b);
+
+		autoTable ameans = Table_createWithColumnNames (numberOfLevels, L"Group Mean Cases");
+		for (long irow = 1; irow <= numberOfLevels; irow++) {
+			SimpleString name = (SimpleString) levels -> classes -> item[irow];
+			Table_setStringValue (ameans.peek(), irow, 1, name -> string);
+			Table_setNumericValue (ameans.peek(), irow, 2, factorLevelMeans[irow]);
+			Table_setNumericValue (ameans.peek(), irow, 3, factorLevelSizes[irow]);
+		}
+		long columns [1+1] = { 0, 2 };   // sort by column 2
+		Table_sortRows_Assert (ameans.peek(), columns, 1);
+		_Table_postHocTukeyHSD (ameans.peek(), ms_w, dof_w, meansDiff, meansDiffProbabilities);
+		if (means) {
+			*means = ameans.transfer();
+		}
+		return anova.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no one-way anova performed.");
+	}
+}
+
+Table Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factorColumnA, long factorColumnB, Table *means, Table *levelSizes) {
+	try {
+		if (column < 1 || column > my numberOfColumns) {
+			Melder_throw ("Invalid column number.");
+		}
+		if (factorColumnA < 1 || factorColumnA > my numberOfColumns || factorColumnA == column) {
+			Melder_throw ("Invalid A group column number.");
+		}
+		if (factorColumnB < 1 || factorColumnB > my numberOfColumns || factorColumnB == column || factorColumnA == factorColumnB) {
+			Melder_throw ("Invalid B group column number.");
+		}
+		wchar_t *label_A = my columnHeaders[factorColumnA].label;
+		wchar_t *label_B = my columnHeaders[factorColumnB].label;
+
+		long numberOfData = my rows -> size;
+		Table_numericize_Assert (me, column);
+		autoNUMvector<double> data (1, numberOfData);
+		autoStringsIndex levelsA = Table_to_StringsIndex_column (me, factorColumnA);
+		autoStringsIndex levelsB = Table_to_StringsIndex_column (me, factorColumnB);
+		// copy data from Table
+		for (long irow = 1; irow <= numberOfData; irow++) {
+			data[irow] = ((TableRow) my rows -> item [irow]) -> cells [column] .number;
+		}
+		long numberOfLevelsA = levelsA -> classes -> size;
+		long numberOfLevelsB = levelsB -> classes -> size;
+		if (numberOfLevelsA < 2) {
+			Melder_throw ("There must be at least two levels in \"", label_A, "\".");
+		}
+		if (numberOfLevelsB < 2) {
+			Melder_throw ("There must be at least two levels in \"", label_B, "\".");
+		}
+
+		/* Formula's according to A. Khuri (1998), Unweighted sums of squares
+		 *   in unbalanced analysis of variance, Journal of Statistical Planning
+		 *   and Inference (74): 135--147.
+		 *
+		 *  Model:
+		 *
+		 * y[i,j,k] = mu + alpha[i] + beta[j] + gamma[i,j] + eps[i,j,k]
+		 *    i=1..r, j = 1..s, k=1..n[i,j]
+		 *
+		 * ss(alpha) = nh * s * sum(i=1..r, (ystar[i.]-ystar[..])^2)
+		 * ss(beta)  = nh * r * sum(j=1..s, (ystar[.j]-ystar[..])^2)
+		 * ss(alpha,beta) = nh * sum (i=1..r, sum (j=1..s, (ymean[ij.]-ystar[i.] - ystar[.j] + ystar[..])^2)),
+		 *
+		 * where
+		 *
+		 * nh = r * s / sum (i=1..r, sum (j=1..s, 1/n[ij])),
+		 * ymean[ij.] = sum (k=1..n[ij], y[ijk]/n[ij])
+		 * ystar[i.] = sum (j=1..s, ymean[ij.]) / s,
+		 * ystar[.j] = sum (i=1..r, ymean[ij.]) / r,
+		 * ystar[..] = sum (i=1..r, sum (j=1..s, ymean[ij.])) / (r * s)
+		 *
+		 */
+
+		autoNUMmatrix<long> factorLevelSizes (1, numberOfLevelsA + 1, 1, numberOfLevelsB + 1); // sum + weighted sum
+		// extra column for ystar[i.], extra row for ystar[.j]
+		autoNUMmatrix<double> factorLevelMeans (1, numberOfLevelsA + 1, 1, numberOfLevelsB + 1); // weighted mean + mean
+
+		for (long k = 1; k <= numberOfData; k++) {
+			long indexA = levelsA -> classIndex[k];
+			long indexB = levelsB -> classIndex[k];
+			factorLevelSizes[indexA][indexB] ++;
+			factorLevelMeans[indexA][indexB] += data[k];
+		}
+
+		// check for unfilled cells and calculate cell means
+
+		double nh = 0;
+		for (long i = 1; i <= numberOfLevelsA; i++) {
+			for (long j = 1; j <= numberOfLevelsB; j++) {
+				if (factorLevelSizes[i][j] < 1) {
+					SimpleString li = (SimpleString) levelsA -> classes -> item[i];
+					SimpleString lj = (SimpleString) levelsA -> classes -> item[j];
+					Melder_throw ("Level ", li, " of ", lj, " has no data.");
+				}
+				factorLevelMeans[i][j] /= factorLevelSizes[i][j];
+				nh += 1.0 / factorLevelSizes[i][j];
+			}
+		}
+		nh = numberOfLevelsA * numberOfLevelsB / nh;
+
+		// row marginals (ystar[i.])
+
+		double mean = 0; // ystar[..]
+		for (long i = 1; i <= numberOfLevelsA; i++) {
+			for (long j = 1; j <= numberOfLevelsB; j++) {
+				factorLevelMeans[i][numberOfLevelsB + 1] += factorLevelMeans[i][j];
+				mean += factorLevelMeans[i][j];
+				factorLevelSizes[i][numberOfLevelsB + 1] += factorLevelSizes[i][j];
+			}
+			factorLevelMeans[i][numberOfLevelsB + 1] /= numberOfLevelsB;
+		}
+		mean /= numberOfLevelsA * numberOfLevelsB;
+		factorLevelMeans[numberOfLevelsA + 1][numberOfLevelsB + 1] = mean;
+		factorLevelSizes[numberOfLevelsA + 1][numberOfLevelsB + 1] = numberOfData;
+
+		// column marginals (ystar[.j])
+
+		for (long j = 1; j <= numberOfLevelsB; j++) {
+			for (long i = 1; i <= numberOfLevelsA; i++) {
+				factorLevelMeans[numberOfLevelsA + 1][j] += factorLevelMeans[i][j];
+				factorLevelSizes[numberOfLevelsA + 1][j] += factorLevelSizes[i][j];
+			}
+			factorLevelMeans[numberOfLevelsA + 1][j] /= numberOfLevelsA;
+		}
+
+		// the sums of squares
+
+		double ss_T = 0;
+		for (long k = 1; k <= numberOfData; k++) {
+			double dif = data[k] - mean;
+			ss_T += dif * dif;
+		}
+
+		double ss_A = 0;
+		for (long i = 1; i <= numberOfLevelsA; i++) {
+			double dif = factorLevelMeans[i][numberOfLevelsB + 1] - mean;
+			ss_A += dif * dif;
+		}
+		ss_A *= nh * numberOfLevelsB;
+
+		double ss_B = 0;
+		for (long j = 1; j <= numberOfLevelsB; j++) {
+			double dif = factorLevelMeans[numberOfLevelsA + 1][j] - mean;
+			ss_B += dif * dif;
+		}
+		ss_B *= nh * numberOfLevelsA;
+
+		double ss_AB = 0;
+		for (long i = 1; i <= numberOfLevelsA; i++) {
+			for (long j = 1; j <= numberOfLevelsB; j++) {
+				double dif = factorLevelMeans[i][j] - factorLevelMeans[i][numberOfLevelsB + 1] - factorLevelMeans[numberOfLevelsA + 1][j] + mean;
+				ss_AB += dif * dif;
+			}
+		}
+		ss_AB *= nh;
+
+		double ss_E = ss_T - ss_A - ss_B - ss_AB;
+
+		// are there any replications? if not then the error term is the AB interaction.
+
+		bool replications = true;
+		if (factorLevelSizes[numberOfLevelsA + 1][1] == numberOfLevelsA) {
+			replications = false;
+		}
+
+		// Construct the means Table (numberOfLevelsA+1)x(numberOfLevelsB + 1 + 1)
+
+		autoTable ameans = Table_createWithoutColumnNames (numberOfLevelsA + 1, numberOfLevelsB + 1 + 1);
+		for (long k = 2; k <= numberOfLevelsB + 1; k++) {
+			SimpleString name = (SimpleString) levelsB -> classes -> item[k - 1];
+			Table_setColumnLabel (ameans.peek(), k, name -> string);
+		}
+		Table_setColumnLabel (ameans.peek(), numberOfLevelsB + 1 + 1, L"Mean");
+		for (long j = 1; j <= numberOfLevelsA; j++) {
+			SimpleString name = (SimpleString) levelsA -> classes -> item[j];
+			Table_setStringValue (ameans.peek(), j, 1, name -> string);
+		}
+		Table_setStringValue (ameans.peek(), numberOfLevelsA + 1, 1, L"Mean");
+
+		for (long i = 1; i <= numberOfLevelsA + 1; i++) {
+			for (long j = 1; j <= numberOfLevelsB + 1; j++) {
+				Table_setNumericValue (ameans.peek(), i, j + 1, factorLevelMeans[i][j]);
+			}
+		}
+
+		if (levelSizes) {
+			autoTable asizes = (Table) Data_copy (ameans.peek());
+			Table_setColumnLabel (asizes.peek(), numberOfLevelsB + 1 + 1, L"Total");
+			Table_setStringValue (asizes.peek(), numberOfLevelsA + 1, 1, L"Total");
+			for (long i = 1; i <= numberOfLevelsA + 1; i++) {
+				for (long j = 1; j <= numberOfLevelsB + 1; j++) {
+					Table_setNumericValue (asizes.peek(), i, j + 1, factorLevelSizes[i][j]);
+				}
+			}
+			*levelSizes = asizes.transfer();
+		}
+
+		autoTable anova = Table_createWithColumnNames (replications ? 5 : 4, L"Source SS Df MS F P");
+		long col_s = 1, col_ss = 2, col_df = 3, col_ms = 4, col_f = 5, col_p = 6;
+		long row_A = 1, row_B = 2, row_AB = 3, row_E = replications ? 4 : 3, row_t = replications ? 5 : 4;
+		Table_setStringValue (anova.peek(), row_A, col_s, label_A);
+		Table_setStringValue (anova.peek(), row_B, col_s, label_B);
+		autoMelderString s;
+		MelderString_append (&s, label_A, L" x ", label_B);
+		Table_setStringValue (anova.peek(), row_AB, col_s, s.string);
+		if (replications) {
+			Table_setStringValue (anova.peek(), row_E, col_s, L"Error");
+		}
+		Table_setStringValue (anova.peek(), row_t, col_s, L"Total");
+
+		double dof_A = numberOfLevelsA - 1, ms_A = ss_A / dof_A;
+		Table_setNumericValue (anova.peek(), row_A, col_ss, ss_A);
+		Table_setNumericValue (anova.peek(), row_A, col_df, dof_A);
+		Table_setNumericValue (anova.peek(), row_A, col_ms, ms_A);
+
+		double dof_B = numberOfLevelsB - 1, ms_B = ss_B / dof_B;
+		Table_setNumericValue (anova.peek(), row_B, col_ss, ss_B);
+		Table_setNumericValue (anova.peek(), row_B, col_df, dof_B);
+		Table_setNumericValue (anova.peek(), row_B, col_ms, ms_B);
+
+		double dof_AB = dof_A * dof_B , ms_AB, dof_E, ms_E;
+		if (replications) {
+			ms_AB = ss_AB / dof_AB;
+			dof_E = numberOfData - dof_A - dof_B - dof_AB - 1;
+			ms_E = ss_E / dof_E;
+			Table_setNumericValue (anova.peek(), row_AB, col_ss, ss_AB);
+			Table_setNumericValue (anova.peek(), row_AB, col_df, dof_AB);
+			Table_setNumericValue (anova.peek(), row_AB, col_ms, ms_AB);
+		} else {
+			ss_E = ss_AB;
+			dof_E = numberOfData - dof_A - dof_B - 1;
+			ms_E = ss_AB / dof_E;
+		}
+		Table_setNumericValue (anova.peek(), row_E, col_ss, ss_E);
+		Table_setNumericValue (anova.peek(), row_E, col_df, dof_E);
+		Table_setNumericValue (anova.peek(), row_E, col_ms, ms_E);
+		Table_setNumericValue (anova.peek(), row_t, col_ss, ss_T);
+		Table_setNumericValue (anova.peek(), row_t, col_df, numberOfData - 1);
+		// get f and p values wrt ms_E
+		double f_A = ms_A / ms_E;
+		double f_B = ms_B / ms_E;
+		double p_A = NUMfisherQ (f_A, dof_A, dof_E);
+		double p_B = NUMfisherQ (f_B, dof_B, dof_E);
+		Table_setNumericValue (anova.peek(), row_A, col_f, f_A);
+		Table_setNumericValue (anova.peek(), row_B, col_f, f_B);
+		Table_setNumericValue (anova.peek(), row_A, col_p, p_A);
+		Table_setNumericValue (anova.peek(), row_B, col_p, p_B);
+		if (replications) {
+			double f_AB = ms_AB / ms_E;
+			double p_AB = NUMfisherQ (f_AB, dof_AB, dof_E);
+			Table_setNumericValue (anova.peek(), row_AB, col_f, f_AB);
+			Table_setNumericValue (anova.peek(), row_AB, col_p, p_AB);
+		}
+		if (means) {
+			*means = ameans.transfer();
+		}
+		return anova.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": two-way anova not created.");
+	}
+}
+
+void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas,  int labelSize, const wchar_t *label, int garnish)
+{
+	try {
+		if (column < 1 || column > my numberOfColumns) return;
+		double xymin, xymax;
+		if (numberOfSigmas == 0) {
+			xymin = 100; xymax = -100;
+		} else {
+			xymin = -numberOfSigmas; xymax = numberOfSigmas;
+		}
+		Table_numericize_Assert (me, column);
+		long numberOfData = my rows -> size;
+		autoNUMvector<double> data (1, numberOfData);
+		for (long irow = 1; irow <= numberOfData; irow++) {
+			data[irow] = ((TableRow) my rows -> item [irow]) -> cells [column] . number;
+		}
+		double mean, var;
+		NUMvector_avevar (data.peek(), numberOfData, &mean, &var);
+		double stdev = sqrt (var);
+		NUMsort_d (numberOfData, data.peek());
+		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
+		autoTableOfReal thee = TableOfReal_create (numberOfQuantiles, 2);
+		TableOfReal_setColumnLabel (thee.peek(), 1, L"Normal distribution");
+		autoMelderString columnLabel;
+		MelderString_append (&columnLabel, my columnHeaders [column].label, L" (z-scores)");
+		TableOfReal_setColumnLabel (thee.peek(), 2, columnLabel.string);
+		double un = pow (0.5, 1.0 / numberOfQuantiles);
+		for (long irow = 1; irow <= numberOfQuantiles; irow++) {
+			double ui = irow == 1 ? 1 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
+			double q = NUMquantile (numberOfData, data.peek(), ui);
+			double z = (q - mean) / stdev;
+			double zq = - NUMinvGaussQ (ui);
+			thy data[irow][1] = z;
+			thy data[irow][2] = zq;
+			if (numberOfSigmas == 0) {
+				xymin = zq < xymin ? zq : xymin;
+				xymax = zq > xymax ? zq : xymax;
+				xymin = z < xymin ? z : xymin;
+				xymax = z > xymax ? z : xymax;
+			}
+		}
+
+		TableOfReal_drawScatterPlot (thee.peek(), g, 1, 2, 1, numberOfQuantiles, xymin, xymax, xymin, xymax, labelSize, 0, label, garnish);
+
+		Graphics_setInner (g);
+		Graphics_setLineType (g, Graphics_DOTTED);
+		Graphics_line (g, xymin, xymin, xymax, xymax);
+		Graphics_setLineType (g, Graphics_DRAWN);
+		Graphics_unsetInner (g);
+
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
+
+void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, wchar_t *xlevel, wchar_t *ylevel, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *plotLabel, int garnish) {
+	try {
+		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
+		Table_numericize_Assert (me, dataColumn);
+		long numberOfData = my rows -> size;
+		autoNUMvector<double> xdata (1, numberOfData);
+		autoNUMvector<double> ydata (1, numberOfData);
+		long xnumberOfData = 0, ynumberOfData = 0;
+		for (long irow = 1; irow <= numberOfData; irow++) {
+			wchar_t *label = ((TableRow) my rows -> item [irow]) -> cells [factorColumn] . string;
+			double val = ((TableRow) my rows -> item [irow]) -> cells [dataColumn] . number;
+			if (Melder_wcsequ (label, xlevel)) {
+				xdata[++xnumberOfData] = val;
+			} else if (Melder_wcsequ (label, ylevel)) {
+				ydata[++ynumberOfData] = val;
+			}
+		}
+		if (xmin == xmax) {
+			NUMvector_extrema<double> (xdata.peek(), 1, xnumberOfData, &xmin, &xmax);
+			if (xmin == xmax) {
+				xmin -= 1; xmax += 1;
+			}
+		}
+		if (ymin == ymax) {
+			NUMvector_extrema<double> (ydata.peek(), 1, ynumberOfData, &ymin, &ymax);
+			if (ymin == ymax) {
+				ymin -= 1; ymax += 1;
+			}
+		}
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setInner (g);
+		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.peek(), xnumberOfData, ydata.peek(), ynumberOfData,
+			xmin, xmax, ymin, ymax, labelSize, plotLabel);
+		Graphics_unsetInner (g);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+
+			autoMelderString marginText;
+			MelderString_append (&marginText, my columnHeaders [dataColumn].label, L" (", xlevel, L")");
+			Graphics_textBottom (g, 1, marginText.string);
+			Graphics_marksBottom (g, 2, 1, 1, 0);
+
+			MelderString_empty (&marginText);
+			MelderString_append (&marginText, my columnHeaders [dataColumn].label, L" (", ylevel, L")");
+			Graphics_textLeft (g, 1, marginText.string);
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
+
+void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolumn, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *plotLabel, int garnish) {
+	try {
+		if (xcolumn < 1 || xcolumn > my numberOfColumns || ycolumn < 1 || ycolumn > my numberOfColumns) return;
+		Table_numericize_Assert (me, xcolumn);
+		Table_numericize_Assert (me, ycolumn);
+		long numberOfData = my rows -> size;
+		autoNUMvector<double> xdata (1, numberOfData);
+		autoNUMvector<double> ydata (1, numberOfData);
+		for (long irow = 1; irow <= numberOfData; irow++) {
+			xdata[irow] = ((TableRow) my rows -> item [irow]) -> cells [xcolumn] . number;
+			ydata[irow] = ((TableRow) my rows -> item [irow]) -> cells [ycolumn] . number;
+		}
+		if (xmin == xmax) {
+			NUMvector_extrema<double> (xdata.peek(), 1, numberOfData, &xmin, &xmax);
+			if (xmin == xmax) {
+				xmin -= 1; xmax += 1;
+			}
+		}
+		if (ymin == ymax) {
+			NUMvector_extrema<double> (ydata.peek(), 1, numberOfData, &ymin, &ymax);
+			if (ymin == ymax) {
+				ymin -= 1; ymax += 1;
+			}
+		}
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setInner (g);
+		Graphics_quantileQuantilePlot (g, numberOfQuantiles, xdata.peek(), numberOfData, ydata.peek(), numberOfData,
+			xmin, xmax, ymin, ymax, labelSize, plotLabel);
+		Graphics_unsetInner (g);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			if (my columnHeaders [xcolumn].label != NULL) {
+				Graphics_textBottom (g, 1, my columnHeaders [xcolumn].label);
+			}
+			Graphics_marksBottom (g, 2, 1, 1, 0);
+			if (my columnHeaders [ycolumn].label != NULL) {
+				Graphics_textLeft (g, 1, my columnHeaders [ycolumn].label);
+			}
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
+
+void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, int garnish) {
+	try {
+		if (dataColumn < 1 || dataColumn > my numberOfColumns || factorColumn < 1 || factorColumn > my numberOfColumns) return;
+		Table_numericize_Assert (me, dataColumn);
+		long numberOfData = my rows -> size;
+		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
+		long numberOfLevels = si -> classes -> size;
+		if (ymin == ymax) {
+			ymax = Table_getMaximum (me, dataColumn);
+			ymin = Table_getMinimum (me, dataColumn);
+			if (ymax == ymin) {
+				ymax += 1; ymin -= 1;
+			}
+		}
+		Graphics_setWindow (g, 1 - 0.5, numberOfLevels + 0.5, ymin, ymax);
+		Graphics_setInner (g);
+		autoNUMvector<double> data (1, numberOfData);
+		for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
+			long numberOfDataInLevel = 0;
+			for (long k = 1; k <= numberOfData; k++) {
+				if (si -> classIndex[k] == ilevel) {
+					data[++numberOfDataInLevel] = Table_getNumericValue_Assert (me, k, dataColumn);
+				}
+			}
+			Graphics_boxAndWhiskerPlot (g, data.peek(), numberOfDataInLevel, ilevel, 0.2, 0.35, ymin, ymax);
+		}
+		Graphics_unsetInner (g);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
+				SimpleString ss = (SimpleString) si -> classes -> item[ilevel];
+				Graphics_markBottom (g, ilevel, 0, 1, 0, ss -> string);
+			}
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
 
 /* End of file Table_extensions.cpp */

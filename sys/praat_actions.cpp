@@ -23,7 +23,8 @@
 #include "machine.h"
 #include "GuiP.h"
 
-#define BUTTON_WIDTH  240
+#define BUTTON_LEFT  -240
+#define BUTTON_RIGHT -5
 
 #define praat_MAXNUM_LOOSE_COMMANDS  10000
 static long theNumberOfActions = 0;
@@ -31,7 +32,7 @@ static struct structPraat_Command *theActions;
 static GuiMenu praat_writeMenu;
 static GuiMenuItem praat_writeMenuSeparator;
 static GuiScrolledWindow praat_dynamicMenuWindow;
-static GuiForm praat_dynamicMenu;
+static GuiForm praat_dynamicMenu, praat_form;
 
 static void fixSelectionSpecification (ClassInfo *class1, int *n1, ClassInfo *class2, int *n2, ClassInfo *class3, int *n3) {
 /*
@@ -178,11 +179,27 @@ static void deleteDynamicMenu (void) {
 	if (praatP.phase != praat_HANDLING_EVENTS) return;
 	static long numberOfDeletions;
 	trace ("deletion #%ld", ++ numberOfDeletions);
-	if (praat_dynamicMenu) {
-		GuiObject_destroy (praat_dynamicMenu -> d_widget);
+	if (1 || praat_dynamicMenu) {
+		//GuiObject_destroy (praat_dynamicMenu -> d_widget);
 		praat_dynamicMenu = NULL;
-		for (int i = 1; i <= theNumberOfActions; i ++)
-			theActions [i]. button = NULL;
+		for (int i = 1; i <= theNumberOfActions; i ++) {
+			if (theActions [i]. button) {
+				#if gtk
+					if (theActions [i]. button -> d_parent == praat_form) {
+						GuiObject_destroy (theActions [i]. button -> d_widget);   // a label or a push button or a cascade button
+					}
+				#elif motif
+					if (theActions [i]. button -> classInfo == classGuiButton && theActions [i]. button -> d_widget -> subMenuId) {   // a cascade button (not a direct child of the form)?
+						trace ("destroy the xm menu bar; this also destroys the xm button and the xm menu");
+						GuiObject_destroy (theActions [i]. button -> d_widget -> parent);   // the Motif parent, i.e. not d_parent -> d_widget !
+					} else if (theActions [i]. button -> d_parent == praat_form) {
+						trace ("destroy a label or a push button");
+						GuiObject_destroy (theActions [i]. button -> d_widget);
+					}
+				#endif
+				theActions [i]. button = NULL;
+			}
+		}
 		if (praat_writeMenu) {
 			#if gtk
 				praat_writeMenu -> f_empty ();
@@ -544,10 +561,8 @@ static void gui_button_cb_menu (I, GuiButtonEvent event) {
 
 void praat_actions_show (void) {
 	#if defined (macintosh)
-		const int BUTTON_X = 9;   // keep 5 pixels distance on both sides for shadow
 		const int BUTTON_VSPACING = 8;
 	#else
-		const int BUTTON_X = 4;
 		const int BUTTON_VSPACING = 5;
 	#endif
 	/*
@@ -559,17 +574,19 @@ void praat_actions_show (void) {
 		if (! Melder_backgrounding) {
 			praat_writeMenu -> f_setSensitive (false);
 			if (praat_writeMenuSeparator) praat_writeMenuSeparator -> f_hide ();
-			if (praat_dynamicMenu) praat_dynamicMenu -> f_hide ();
+			//if (praat_dynamicMenu) praat_dynamicMenu -> f_hide ();
+			#if 0
 			for (long i = theNumberOfActions; i >= 1; i --) {
 				praat_Command me = & theActions [i];
 				if (! my visible) continue;
 				if (my button) {
-					if (my button -> d_parent == praat_dynamicMenu)   /* Unmanage only level-1 visible buttons. */
+					if (my button -> d_parent == praat_form)   /* Unmanage only level-1 visible buttons. */
 						my button -> f_hide ();
 					else if (my title && (wcsnequ (my title, L"Save ", 5) || wcsnequ (my title, L"Write ", 6) || wcsnequ (my title, L"Append to ", 10)))
 						my button -> f_hide ();
 				}
 			}
+			#endif
 			/*
 			 * BUG: Despite all these precautions,
 			 * creating and removing a lot of objects from a script
@@ -614,10 +631,12 @@ void praat_actions_show (void) {
 	if (! theCurrentPraatApplication -> batch && ! Melder_backgrounding) {
 		GuiMenu currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
+		#if 0
 		if (! praat_dynamicMenu) {
 			praat_dynamicMenu = GuiForm_createInScrolledWindow (praat_dynamicMenuWindow);
 		}
-		int y = 10;
+		#endif
+		int y = Machine_getMenuBarHeight () + 10;
 		for (long i = 1; i <= theNumberOfActions; i ++) {   /* Add buttons or make existing buttons sensitive (executable). */
 			praat_Command me = & theActions [i];
 			if (my depth == 0) currentSubmenu1 = NULL, currentSubmenu2 = NULL;   /* Prevent attachment of later deep actions to earlier submenus after removal of label. */
@@ -646,8 +665,8 @@ void praat_actions_show (void) {
 							cb_menu,
 							my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback);
 					} else {
-						my button = GuiButton_createShown (praat_dynamicMenu,
-							BUTTON_X, BUTTON_WIDTH - 16, y, y + Gui_PUSHBUTTON_HEIGHT,
+						my button = GuiButton_createShown (praat_form,
+							BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
 							my title, gui_button_cb_menu,
 							my callback == DO_RunTheScriptFromAnyAddedMenuCommand ? (void *) my script : (void *) my callback,
 								( my executable ? 0 : GuiButton_INSENSITIVE ) | ( my attractive ? GuiButton_ATTRACTIVE : 0 ));
@@ -669,7 +688,7 @@ void praat_actions_show (void) {
 					my button -> f_setSensitive (my executable);
 				} else {
 					my button -> f_setSensitive (my executable);
-					if (my button -> d_parent == praat_dynamicMenu)
+					if (my button -> d_parent == praat_form)
 						my button -> f_show ();
 				}
 			} else if (i == theNumberOfActions || theActions [i + 1]. depth == 0) {
@@ -677,10 +696,10 @@ void praat_actions_show (void) {
 				 * Apparently a labelled separator.
 				 */
 				if (! my button) {
-					my button = GuiLabel_createShown (praat_dynamicMenu, BUTTON_X, BUTTON_WIDTH - 20, y, y + Gui_LABEL_HEIGHT, my title, 0);
+					my button = GuiLabel_createShown (praat_form, BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_LABEL_HEIGHT, my title, 0);
 					y += Gui_LABEL_HEIGHT + BUTTON_VSPACING;
 				} else {
-					if (my button -> d_parent == praat_dynamicMenu)
+					if (my button -> d_parent == praat_form)
 						my button -> f_show ();
 				}
 			} else if (my title == NULL || my title [0] == '-') {
@@ -699,8 +718,8 @@ void praat_actions_show (void) {
 				 */
 				if (! my button) {
 					if (my depth == 0 || ! currentSubmenu1) {
-						currentSubmenu1 = GuiMenu_createInForm (praat_dynamicMenu,
-							BUTTON_X, BUTTON_WIDTH - 16, y, y + Gui_PUSHBUTTON_HEIGHT,
+						currentSubmenu1 = GuiMenu_createInForm (praat_form,
+							BUTTON_LEFT, BUTTON_RIGHT, y, y + Gui_PUSHBUTTON_HEIGHT,
 							my title, 0);
 						y += Gui_PUSHBUTTON_HEIGHT + BUTTON_VSPACING;
 						my button = currentSubmenu1 -> d_cascadeButton;
@@ -710,12 +729,12 @@ void praat_actions_show (void) {
 					}
 					my button -> f_show ();
 				} else {
-					if (my button -> d_parent == praat_dynamicMenu)
+					if (my button -> d_parent == praat_form)
 						my button -> f_show ();
 				}
 			}
 		}
-		praat_dynamicMenu -> f_show ();
+		//praat_dynamicMenu -> f_show ();
 	}
 }
 
@@ -730,6 +749,8 @@ void praat_actions_init (void) {
 
 void praat_actions_createDynamicMenu (GuiForm form, int width) {
 	if (theCurrentPraatApplication -> batch) return;
+	praat_form = form;
+	#if 0
 	trace ("begin");
 	praat_dynamicMenuWindow = GuiScrolledWindow_createShown (form,
 		-width, 0, Machine_getMenuBarHeight (), 0,
@@ -743,6 +764,7 @@ void praat_actions_createDynamicMenu (GuiForm form, int width) {
 	trace ("created form %p.", praat_dynamicMenu);
 	praat_dynamicMenuWindow -> f_show ();
 	trace ("end.");
+	#endif
 }
 
 void praat_saveAddedActions (FILE *f) {

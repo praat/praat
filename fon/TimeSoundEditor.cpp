@@ -31,7 +31,8 @@ Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 
 /********** PREFERENCES **********/
 
-kTimeSoundEditor_scalingStrategy structTimeSoundEditor :: s_sound_scalingStrategy;
+//kTimeSoundEditor_scalingStrategy structTimeSoundEditor :: s_sound_scalingStrategy;
+define_preference (TimeSoundEditor, kTimeSoundEditor_scalingStrategy, sound_scalingStrategy, 0)
 define_preference (TimeSoundEditor, double, sound_scaling_height, L"2.0")
 define_preference (TimeSoundEditor, double, sound_scaling_minimum, L"-1.0")
 define_preference (TimeSoundEditor, double, sound_scaling_maximum, L"1.0")
@@ -481,7 +482,7 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 	int lastVisibleChannel = d_sound.channelOffset + numberOfVisibleChannels;
 	if (lastVisibleChannel > nchan) lastVisibleChannel = nchan;
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
-	if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW && nchan > 2) {
+	if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
 		if (longSound)
 			LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, firstVisibleChannel, & visibleMinimum, & visibleMaximum);
 		else

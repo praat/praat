@@ -21,14 +21,14 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20110105 Latest modification.
+ djmw 20120724 Latest modification.
 */
 
 #include "TableOfReal.h"
 #include "Collection.h"
 #include "Pattern.h"
 #include "Categories.h"
-#include "Strings_.h"
+#include "Strings.h"
 #include "SSCP.h"
 #include "Table.h"
 
@@ -38,8 +38,24 @@ Table Table_createFromWeeninkData ();
 
 double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
 
-void Table_drawScatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
+// Two one-way tests for normal and non-normally distributed data, respectively.
+Table Table_getOneWayAnalysisOfVarianceF (Table me, long column, long groupColumn, Table *means, Table *meansDiff, Table *meansDiffProbabilities);
+Table Table_getOneWayKruskalWallis (Table me, long column, long groupColumn, double *degreesOfFreedom, double *kruskalWallis, double *probability);
+
+Table Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, Table *means, Table *factorLevelSizes);
+
+void Table_scatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
 	double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
 	long yci_min, long yci_max, double bar_mm, int garnish);
 
+void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const wchar_t *label, int garnish);
+
+void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolumn, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *label, int garnish);
+
+void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, wchar_t *xlevel, wchar_t *ylevel, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *label, int garnish);
+
+void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, int garnish);
+
+void Table_printAsAnovaTable (Table me);
+void Table_printAsMeansTable (Table me);
 #endif // _Table_extensions_h_

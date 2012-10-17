@@ -21,14 +21,14 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20110105 Latest modification.
+ djmw 20120914 Latest modification.
 */
 
 #include "TableOfReal.h"
 #include "Collection.h"
 #include "Pattern.h"
 #include "Categories.h"
-#include "Strings_.h"
+#include "Strings.h"
 #include "SSCP.h"
 
 int TableOfReal_to_Pattern_and_Categories(I, long fromrow, long torow, long fromcol, long tocol,
@@ -69,6 +69,8 @@ void TableOfReal_drawRowsAsHistogram (I, Graphics g, const wchar_t *rows, long c
 void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb,
 	long rowe, double xmin, double xmax, double ymin, double ymax,
 	int labelSize, int useRowLabels, const wchar_t *label, int garnish);
+
+void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, int garnish);
 
 void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, double fractionWhite);
 

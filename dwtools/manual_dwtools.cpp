@@ -1878,45 +1878,135 @@ MAN_BEGIN (L"DTW & Sounds: Draw warp (x)...", L"djmw", 20071204)
 INTRO (L"Draws the warp given a time on the \"x-direction\" for the selected @DTW and the two selected @@Sound|Sounds@.")
 MAN_END
 
-MAN_BEGIN (L"EditCostsTable", L"djmw", 20120522)
+MAN_BEGIN (L"Create empty EditCostsTable...", L"djmw", 20120524)
+INTRO (L"Creates an empty @@EditCostsTable@.")
+ENTRY (L"Settings")
+TAG (L"##Name#")
+DEFINITION (L"the name of the resulting EditCostsTable object.")
+TAG (L"##Number of target symbols#")
+DEFINITION (L"the number of different symbols in the target symbol set that you want to give special edit cost values in the EditCostTable. "
+	"The number you specify may be smaller than the actual target symbol set size because the EditCostTable has an entry for target symbols "
+	"that fall in a %%rest% category. If you don't want to treat any target symbol is a special way you may set this value to 0.")
+TAG (L"##Number of source symbols#")
+DEFINITION (L"the number of different symbols in the source symbol set that you want to give special edit cost values in the EditCostTable. "
+	"The number you specify may be smaller than the actual source symbol set size because the EditCostTable has an entry for source symbols "
+	"that fall in a %rest% category. If you don't want to treat any source symbol is a special way you may set this value 0.")
+MAN_END
+
+MAN_BEGIN (L"EditCostsTable", L"djmw", 20120524)
 INTRO (L"One of the @@types of objects@ in Praat.")
-NORMAL (L"The EditCostsTable shows the costs involved in changing one string of symbols into another one, the so called %%string edit costs%. These costs are generally divided into %%insertion%, %%deletion% and %%substitution% costs. An EditCostsTable is used to calculated the @@EditDistanceTable@. ")
-NORMAL (L"The most simple EditCostsTable has two rows and two columns only, and the cells in this table have the following interpretation:\n")
-TAG (L"Cell [1][1]:")
-DEFINITION (L"defines the cost of the substitution of a source symbol with a target symbol that doesn't match it. A good default value for the substitution cost is 2.0.")
+NORMAL (L"The EditCostsTable determines the %%string edit costs%, i.e. the costs involved in changing one string of "
+	"symbols (the %%source%) into another one (the %%target%). "
+	"String edit costs are generally divided into %%insertion%, %%deletion% and %%substitution% costs. "
+	"The latter terms refer to the operations that may be performed on a source string to transform it to a target "
+	"string. For example, to change the source string \"execution\" to the target string \"intention\" we would need "
+	"one insertion (i), one deletion (d) and three substitutions (s) as the following figure shows.")
+SCRIPT (4, 1.0,  L"target = Create Strings as characters... intention\n"
+	"source = Create Strings as characters... execution\n"
+	"plus target\n"
+	"edt = To EditDistanceTable\n"
+	"Draw edit operations\n"
+	"plus target\n"
+	"plus source\n"
+	"Remove\n")
+NORMAL (L"The figure above was produced with default values for the costs, i.e. the insertion and deletion costs were 1.0 while the "
+	"substitution cost was 2.0. The actual edit distance between the target and source strings is calculated by the @@EditDistanceTable@ "
+	"which uses an EditCostsTable to access the specific string edit costs. The figure above was produced by the following commands:")
+CODE (L"target = Create Strings as characters... intention")
+CODE (L"source = Create Strings as characters... execution")
+CODE (L"plus target")
+CODE (L"edt = To EditDistanceTable")
+CODE (L"Draw edit operations")
+NORMAL (L"The default EditCostsTable which is in every new EditDistanceTable object has only two rows and two columns, "
+	"where the cells in this EditCostsTable have the following interpretation:\n")
 TAG (L"Cell [1][2]:")
-DEFINITION (L"defines the cost of the insertion of a target symbol in the source string. A good default value is 1.0.")
+DEFINITION (L"defines the cost for the insertion of a target symbol in the source string. The default insertion cost is 1.0.")
 TAG (L"Cell [2][1]:")
-DEFINITION (L"defines the cost of the deletion of a source symbol. A good default value is 1.0.")
+DEFINITION (L"defines the cost of the deletion of a source symbol. The default value is 1.0.")
+TAG (L"Cell [1][1]:")
+DEFINITION (L"defines the cost of substituting a target symbol for a source symbol where the target and source symbols don't match. The default substitution cost is 2.0.")
 TAG (L"Cell [2][2]:")
-DEFINITION (L"defines the cost of substitution a source symbol with a target symbol that matches it. A good default is 0.0.")
-NORMAL (L"In general we can define a table for %%numberOfTargets% target symbols and %%numberOfSources% source symbols. The EditCostTable will need one extra dimensions to accommodate target symbol insertion costs and source symbol deletion costs and another extra dimension to represent other target and source symbols that don't have separate entries and can therefore be treated as one group. The dimension of the table will then be (%%numberOfTargets% + 2) \\xx (%%numberOfSources% + 2). The %%numberOfTargets% \\xx %%numberOfSources% part will show at cell [%i][%j] the costs of substitution of the %j-th source symbol by the %i-th target symbol. The values in row (%%numberOfTargets% + 1) represent the costs of substitution of the %j-th source symbol with one of the target from the rest category (this is the group of targets that do not belong to the %%numberOfTargets% targets represented in the upper part of the matrix). The first %%numberOfSources% cells in the last row represent the deletion cost of these symbols. The first %%numberOfTargets% cells in the last column represent the insertion costs of the corresponding target symbols. ")
-NORMAL (L"We can extend this minimal table with more rows and columns. Let us assume that we extend it by one target and one source symbol, \"t1\" and \"s1\", respectively. The EditCostTable will then be a 3 by 3 table:")
-CODE (L"    s1         ")
-CODE (L"t1 1.1 1.2 1.3")
-CODE (L"   1.4 1.5 1.6")
-CODE (L"   1.7 1.8 0.0")
-NORMAL (L"The table has one labeled column: the first column is labeled with source symbol \"s1\". The first row is also labeled with the target symbol \"t1\". The numbers in the table have been to be distinctive and do probably not correspond to any practical situation. The table says that substitution of source symbol \"s1\" with target symbol \"t1\" costs 1.1, while the substitution of \"s1\" with any other target symbol costs 1.4. The substitution of any other source symbol by target \"t1\" costs 1.2 while the substitution with any othe target symbol costs 1.5 if they don't match and 0.0 if they match. The deletion costs of \"s1\" are 1.7 while the deletion cost of all other source symbols is 1.8. The insertion cost of \"t1\" is 1.3 while the other target symbols can be inserted with a cost of 1.6.")
+DEFINITION (L"defines the cost of substituting a target symbol for a source symbol where the target and source symbols do match. The deault value is 0.0.")
+ENTRY (L"How to create a non-default EditCostsTable")
+NORMAL (L"In general we can define a table for %%numberOfTargets% target symbols and %%numberOfSources% source symbols. These numbers "
+	"do not necessarily have to be equal to the number of different symbols that may occur in the target and source strings. They only represent the number of symbols that you like to give special edit costs. "
+	"The EditCostTable will provide one extra dimension to accommodate target symbol insertion costs and source symbol deletion costs and another extra dimension to represent other target and source symbols that don't have separate entries and can therefore be treated as one group. "
+	"The actual dimension of the table will therefore be (%%numberOfTargets% + 2) \\xx (%%numberOfSources% + 2). This is what the cells in the non-default table mean: ")
+LIST_ITEM (L"\\bu The upper matrix part of dimension %%numberOfTargets% \\xx %%numberOfSources% will show at cell [%i][%j] the costs "
+	"of substituting the %i-th target symbol for the %j-th source symbol.")
+LIST_ITEM (L"\\bu The first %%numberOfSources% values in row (%%numberOfTargets% + 1) represent the costs of substituting one of the target "
+	"symbols from the target %%rest% category for the source symbol in the corresponding column.  The target rest category is the group of "
+	"targets that do not belong to the %%numberOfTargets% targets represented in the upper part of the matrix.")
+LIST_ITEM (L"\\bu The first %%numberOfTargets% values in the column (%%numberOfSources% + 1) represent the costs of substituting the target "
+	"symbol in the corresponding row for one of the source symbols from the source %%rest% category.  The source rest category is the group "
+	"of source symbols that do not belong to the %%numberOfSources% source symbols represented in the upper part of the matrix.")
+LIST_ITEM (L"\\bu The first %%numberOfSources% cells in the last row represent the deletion cost of the corresponding source symbols.")
+LIST_ITEM (L"\\bu The first %%numberOfTargets% cells in the last column represent the insertion costs of the corresponding target symbols.")
+LIST_ITEM (L"\\bu Finally the four numbers in the cells at the bottom-right corner have an interpretation analogous to the four numbers in "
+	"the basic EditCostTable we discussed above (but now for the %%rest% symbols).")
+ENTRY (L"Example")
+NORMAL (L"If we extend the basic table with one extra target and one extra source symbol, then the EditCostTable will "
+	"be a 3 by 3 table. The numbers in the following table have been chosen to be distinctive and therefore probably "
+	"will not correspond to any practical situation.")
+CODE (L"   s         ")
+CODE (L"t 1.1 1.2 1.3")
+CODE (L"  1.4 1.5 1.6")
+CODE (L"  1.7 1.8 0.0")
+NORMAL (L"By issuing the following series of commands this particular table can be created:")
+CODE (L"Create empty EditCostsTable... editCosts 1 1")
+CODE (L"Set target symbol (index)... 1 t")
+CODE (L"Set source symbol (index)... 1 s")
+CODE (L"Set insertion costs... t 1.3")
+CODE (L"Set deletion costs... s 1.7")
+CODE (L"Set substitution costs... t s 1.1")
+CODE (L"Set substitution costs... \"\" s 1.4")
+CODE (L"Set substitution costs... t \"\" 1.2")
+CODE (L"Set costs (others)... 1.6 1.8 0 1.5")
+NORMAL (L"In the first line we create the (empty) table, we name it %%editCosts% and it creates space for one target "
+	"and one source symbol. The next line defines the target symbol which becomes the label of the first row of the table. "
+	"Line 3 defines the source symbol which will become the label of the first column of the table. "
+	"We next define the insertion and deletion costs, they fill cells [1][3] and [3][1], respectively. "
+	"Cell [1][1] is filled by the command in line 6.  The command in line 7 fills cell [2][1] which defines the cost "
+	"of substituting any target symbol unequal to \"t\" for \"s\". The next line fills cell [1][2] which defines "
+	"the substitution costs of \"t\" for any source symbol unequal to \"s\". "
+	"Finally, the command in the last line defines the little 2\\xx2 matrix at the bottom-right that "
+	"is analogous to the default cost matrix explained above. Therefore cell [2][2] defines the cost of substituting a "
+	"target symbol unequal to \"t\" for a source symbol unequal to \"s\" where the target and source symbols don't match, while cell [3][3] "
+	"defines the costs when they do match. "
+	"Cell [3][2] defines the cost of the deletion of a source symbol unequal \"s\", while cell [2][3] defines the cost "
+	"for  the insertion of a target symbol unequal \"t\" in the source string. ")
+ENTRY (L"How to use a special EditCostsTable")
+NORMAL (L"After creating the special EditCostsTable you select it together with the EditDistanceTable and issue the command @@EditDistanceTable & EditCostsTable: Set new edit costs|Set new edit costs@. The EditDistanceTable will then find the minimum edit distance based on the new cost values.")
 MAN_END
 
 MAN_BEGIN (L"EditDistanceTable", L"djmw", 20120523)
 INTRO (L"One of the @@types of objects@ in Praat.")
-NORMAL (L"An EditDistanceTable shows the accumulated distances between a target string and a sources string. "
+NORMAL (L"An EditDistanceTable shows the accumulated distances between a target string and a source string. "
 	"For example, the accumulated distances between the target string \"intention\" and the source string "
 	"\"execution\" can be expressed by the following EditDistanceTable:")
-SCRIPT (4, 4, L"target = Create Strings as characters... intention\n"
+SCRIPT (5, 3.5, L"target = Create Strings as characters... intention\n"
 	"source = Create Strings as characters... execution\n"
 	"plus target\n"
 	"edt = To EditDistanceTable\n"
-	"Draw... rational 1 0\n"
+	"Draw... decimal 1 0\n"
 	"plus target\n"
 	"plus source\n"
 	"Remove\n")
-NORMAL (L"The target string is always displayed vertically while the source string is displayed horizontally and the origin is at the bottom-left corner of the table. Each cell of this table, dist[%i, %j], contains the accumulated distance between the first %i characters "
-	"of the target and the first %j characters of the source. The cells on the path through this table which have the "
+NORMAL (L"This figure was created by issuing the following commands:")
+CODE (L"target = Create Strings as characters... intention")
+CODE (L"source = Create Strings as characters... execution")
+CODE (L"plus target")
+CODE (L"edt = To EditDistanceTable")
+CODE (L"Draw... decimal 1 0")
+NORMAL (L"The target string is always displayed vertically while the source string is displayed horizontally and the origin is at the bottom-left corner of the table. "
+	"Each cell of this table, dist[%i, %j], contains the accumulated distance between the first %i characters of the target and the first %j characters of the source. The cells on the path through this table which have the "
 	"minimum accumulated cost are shown with boxes around them. Below we will explain how this path is calculated.")
-NORMAL (L"The local directional steps in this path show which %%edit operations% we have to perform on the source string symbols to obtain the target string symbols. Three edit operations exist: (1) %%insertion% of a target symbol in the source string. This happens each time we take a step in the vertical direction along the path. (2) %%deletion% of a symbol in the source string. This happens each time we take a step in horizontal direction along the path. (3) %%substitution% of a source symbol by a target symbol happens at each diagonal step along the path.")
-NORMAL (L"If we trace the path from its start at the origin to its end, we see that it first moves up, indicating the insertion of an \"i\" symbol in the source string. In the next step which is in the diagonal direction, the \"n\" target is substituted for the \"e\" source symbol. Next follows another substitution, \"t\" for \"x\". The next diagonal step substitutes \"e\" for an identical \"e\". This step is followed by a horizontal step in which the source symbol \"c\" is deleted. The next diagonal step substitutes an \"n\" for a \"u\". The path now continues in the diagonal direction until the end point and only identical substitutions occur in the last part. The following figure shows these operations more explicitly.")
+NORMAL (L"The local directional steps in this path show which %%edit operations% we have to perform on the source string symbols to obtain the target string symbols. "
+	"Three edit operations exist: (1) %%insertion% of a target symbol in the source string. This happens each time we take a step in the vertical direction along the path. (2) %%deletion% of a symbol in the source string. This happens each time we take a step in horizontal direction along the path. (3) %%substitution% of a source symbol by a target symbol happens at each diagonal step along the path.")
+NORMAL (L"If we trace the path from its start at the origin to its end, we see that it first moves up, indicating the insertion of an \"i\" symbol in the source string. "
+	"In the next step which is in the diagonal direction, the \"n\" target is substituted for the \"e\" source symbol. Next follows another substitution, \"t\" for \"x\". "
+	"The next diagonal step substitutes \"e\" for an identical \"e\". This step is followed by a horizontal step in which the source symbol \"c\" is deleted. "
+	"The next diagonal step substitutes an \"n\" for a \"u\". The path now continues in the diagonal direction until the end point and only identical substitutions occur in the last part. The following figure shows these operations more explicitly.")
 SCRIPT (4, 1.5,  L"target = Create Strings as characters... intention\n"
 	"source = Create Strings as characters... execution\n"
 	"plus target\n"
@@ -1931,7 +2021,9 @@ NORMAL (L"where ")
 CODE (L" d__left _ = dist[i-1,j]   + insertionCost(target[i])")
 CODE (L" d__diag _ = dist[i-1,j-1] + substitutionCost(source[j],target[i])")
 CODE (L" d__below_ = dist[i,j-1]   + deletionCost(source[j])")
-NORMAL (L"Since the calculation is recursive we start at the origin. After calculating the accumulative distances for each cell in the table as based on the algorithm above, the cell at the top-right position will contain the accumulated edit distance. This distance happens to be 8 for the given example. The value 8 results from using the target-indepent value of 1.0 for the insertion cost, the source-independent value of 1.0 for the deletion costs and a constant value of 2.0 for the substitution costs. If target and source symbol happen to be equal no costs are assigned, or, equivalently the substitution costs are zero if target and source symbol match. If you want more control over these costs you can create an @@EditCostsTable@ and specify your special costs and then @@EditDistanceTable & EditCostsTable: Set new edit costs|set the new edit costs@.")
+NORMAL (L"Since the calculation is recursive we start at the origin. After calculating the accumulative distances for each cell in the table as based on the algorithm above, the cell at the top-right position will contain the accumulated edit distance. "
+	"This distance happens to be 8 for the given example. The value 8 results from using the target-indepent value of 1.0 for the insertion cost, the source-independent value of 1.0 for the deletion costs and a constant value of 2.0 for the substitution costs. "
+	"If target and source symbol happen to be equal no costs are assigned, or, equivalently the substitution costs are zero if target and source symbol match. If you want more control over these costs you can create an @@EditCostsTable@ and specify your special costs and then @@EditDistanceTable & EditCostsTable: Set new edit costs|set the new edit costs@.")
 NORMAL (L"If during the calculations we also keep track of which of the three cells resulted in the local minimum accumulated distance, we can use this directional "
 	"information to backtrack from the cell at the top-right position to the cell at the bottom-right position and obtain the minimum path.")
 MAN_END
@@ -2289,13 +2381,17 @@ NORMAL (L"Singular value decomposition with backsubstitution. "
 NORMAL (L"See for more details: @@Golub & van Loan (1996)@ chapters 2 and 3.")
 MAN_END
 
-MAN_BEGIN (L"MelFilter", L"djmw", 20010404)
+MAN_BEGIN (L"MelFilter", L"djmw", 20120724)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (L"An object of type MelFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t), "
 	"expressed in dB's. "
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
 	"and frequencies %f__%j_ (on a Mel frequency scale).")
+NORMAL (L"The frequency in mels is:")
+FORMULA (L"mels = 2595 * log10 (1 + hertz / 700),")
+NORMAL (L"and its inverse is:")
+FORMULA (L"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
 ENTRY (L"Inside a MelFilter")
 NORMAL (L"With @Inspect you will see that this type contains the same "
 	"attributes a @Matrix.")
@@ -3845,6 +3941,26 @@ NORMAL (L"@@Tenreiro (2009)@ recommends  %h__%%s% _= 0.448 + 0.026\\.c%d for sho
 " %h__%%l%_ = 0.928 + 0.049\\.c%d for long tailed alternatives.")
 MAN_END
 
+MAN_BEGIN (L"Table: Normal probability plot...", L"djmw", 20120810)
+NORMAL (L"In a normal probability plot, the data in the selected column of the @Table are plotted "
+	"against a normal distribution in such a way that the points should form approximately a straight line. "
+	"Departures from a straight line indicate departures from normality.")
+ENTRY (L"Settings")
+TAG (L"##Number of quantiles#")
+DEFINITION (L"the number of quantile points, %n, in the plot. From this number %n, the quantile points are "
+	"determined as follows: the last quantile point %q__%n_ = 0.5^^1/%n^ and the first quantile point "
+	"%q__1_=1\\--%q(%n). The intermediate quantile points %q__%i_ are determined according to "
+	"%q__%i_=(%i \\-- 0.3175)/(%n + 0.365), where %i runs from 2 to %n\\--1.")
+TAG (L"##Number of sigmas#")
+DEFINITION (L"determines the horizontal and vertical drawing range between \\--%%numberOfSigmas% and + %%numberOfSigmas%.")
+MAN_END
+
+MAN_BEGIN (L"Table: Quantile-quantile plot...", L"djmw", 20120810)
+NORMAL (L"In a quantile-quantile plot the quantiles of the data in the first selected column of the @Table is plotted against "
+	"the quantiles of the data in the second selected column.  If the two sets come from a population with the "
+	"same distribution, the points should fall approximately along the reference line.")
+MAN_END
+
 MAN_BEGIN (L"Table: Get median absolute deviation...", L"djmw", 20120405)
 INTRO (L"Get the median absolute deviation (MAD) of the column in the selected @@Table@ (adjusted by a scale factor).")
 ENTRY (L"Algorithm")
@@ -3854,6 +3970,86 @@ NORMAL (L"From the %n numbers %x__1_, %x__2_, ..., %x__%n_ in the selected colum
 	"Then we calculate the MAD value, which is the median of the %n values %d__1_, %d__2_, ..., %d__%n_. Finally we multiply the MAD "
 	"value by the scale factor 1.4826. This last multiplication makes the result comparable with the value of the standard deviation if "
 	"the %x values are normally distributed.")
+MAN_END
+
+MAN_BEGIN (L"Table: Report one-way anova...", L"djmw", 20120617)
+INTRO (L"Performs a one-way analysis of variance on the data in one column of a selected @@Table@ and reports the fixed-effects anova table results in the info window.")
+ENTRY (L"Settings")
+TAG (L"##Column with data#")
+DEFINITION (L"the label of the column who's data will be analyzed.")
+TAG (L"##Factor")
+DEFINITION (L"the label of the column with the names of the levels.")
+TAG (L"##Table with means")
+DEFINITION (L"if checked, a Table with the mean values of the levels will be created.")
+TAG (L"##Table with differences between means")
+DEFINITION (L"if checked, a Table with the differences between the mean values of the levels will be created.")
+TAG (L"##Table with Tukey's post-hoc test")
+DEFINITION (L"if checked, a Table with Tukey's HSD tests will be created. Each value in this Table measures the probability that the corresponding difference between the level means happened by chance. The test compares all possible level means and is based on the studentized range distribution.")
+MAN_END
+
+MAN_BEGIN (L"Table: Report two-way anova...", L"djmw", 20120702)
+INTRO (L"Performs a two-way analysis of variance on the data in one column of a selected %%fully factorial% @@Table@ and reports the fixed-effects anova table in the info window. ")
+ENTRY (L"Settings")
+TAG (L"##Column with data#")
+DEFINITION (L"the label of the column who's data will be analyzed.")
+TAG (L"##First factor")
+DEFINITION (L"the label of the column with the names of the levels for the first factor.")
+TAG (L"##Second factor")
+DEFINITION (L"the label of the column with the names of the levels for the second factor.")
+TAG (L"##Table with means")
+DEFINITION (L"if checked, a Table with the mean values of all the levels will be created.")
+ENTRY (L"Example")
+NORMAL (L"Suppose you want to check if fundamental frequency depends on the type of vowel and speaker type. We will use the "
+	"@@Create formant table (Peterson & Barney 1952)|Peterson & Barney@ vowel data set to illustrate this. "
+	"The following script will first create the data set and then produce the two-way anova report." )
+CODE (L"Create formant table (Peterson & Barney 1952)")
+CODE (L"Report two-way anova... F0 Vowel Type")
+NORMAL (L"This will produce the following anova table in the info window:")
+CODE (L"Two-way analysis of \"F0\" by \"Vowel\" and \"Type\".")
+CODE (L"")
+CODE (L"      Source             SS        Df             MS         F         P")
+CODE (L"       Vowel        73719.4         9        8191.05    7.62537    5.25258e-11")
+CODE (L"        Type    4.18943e+06         2    2.09471e+06    1950.05              0")
+CODE (L"Vowel x Type        6714.34        18        373.019   0.347258       0.994969")
+CODE (L"       Error    1.60053e+06      1490        1074.18")
+CODE (L"       Total    5.87039e+06      1519")
+NORMAL (L"The analysis shows that F0 strongly depends on the vowel and also on the speaker type and, luckily, we do not have any "
+	"interaction between the vowel and the speaker type. Besides the anova table there is also shown a table with the mean F0 "
+	"values for each Vowel-Type combination which looks like:")
+CODE (L"                   c         m         w      Mean")
+CODE (L"        aa       258       124       212       198")
+CODE (L"        ae       248       125       208       194")
+CODE (L"        ah       263       129       223       205")
+CODE (L"        ao       259       127       217       201")
+CODE (L"        eh       259       128       220       202")
+CODE (L"        er       264       133       219       205")
+CODE (L"        ih       270       136       232       213")
+CODE (L"        iy       270       136       231       212")
+CODE (L"        uh       273       136       234       214")
+CODE (L"        uw       278       139       235       218")
+CODE (L"      Mean       264       131       223       206")
+NORMAL (L"The first column of this table shows the vowel codes while the first row shows the speaker types (child, man, women). "
+	"The last row and the last column of the table shows the averages for the factors Type and Vowel, respectively. The actual "
+	"data are unbalanced because we have 300, 660 and 560 replications per column respectively (for each speaker we have two replcations of the data).")
+ENTRY (L"Algorithm")
+NORMAL (L"The formula's to handle unbalanced designs come from @@Khuri (1998)@.")
+MAN_END
+
+MAN_BEGIN (L"Table: Report one-way Kruskal-Wallis...", L"djmw", 20120617)
+INTRO (L"Performs a one-way Kruskal-Wallis analysis on the data in one column of a selected @@Table@ and reports the results in the info window. This test is sometimes refered to as a one-way analysis of variance for %%non-normally distributed% data.")
+ENTRY (L"Settings")
+TAG (L"##Column with data#")
+DEFINITION (L"the label of the column who's data will be analyzed.")
+TAG (L"##Factor")
+DEFINITION (L"the label of the column with the names of the levels.")
+ENTRY (L"Algorithm")
+NORMAL (L"The analysis is done on the ranked data and consists of the following steps:")
+LIST_ITEM (L"1. Rank all the %N data points together, i.e. rank the data from 1 to %N.")
+LIST_ITEM (L"2. The test statistic is:")
+FORMULA (L"%K = (12 / (%N(%N+1)) \\Si__%i=1_^^%g^ %n__%i_ (meanRank__%i_)^^2^ - 3(%N+1),")
+DEFINITION (L"where %g is the number of levels, %n__%i_ the number of data in %i-th level and meanRank__%i_ "
+	"the average rank of the %i-th level.")
+LIST_ITEM (L"3. The %p value is %%approximated by the \\ci^^2^ (%K, %g - 1) distribution.")
 MAN_END
 
 MAN_BEGIN (L"TableOfReal: Report multivariate normality (BHEP)...", L"djmw", 20090701)
@@ -4407,6 +4603,11 @@ MAN_END
 
 MAN_BEGIN (L"Johnson (1998)", L"djmw", 20000525)
 NORMAL (L"D.E. Johnson (1998): %%Applied Multivariate methods%.")
+MAN_END
+
+MAN_BEGIN (L"Khuri (1998)", L"djmw", 20120702)
+NORMAL (L"A. Khuri (1998): \"Unweighted sums of squares in unbalanced analysis of variance.\", %%Journal of Statistical Planning "
+	"and Inference% #74: 135\\--147.")
 MAN_END
 
 MAN_BEGIN (L"Kim & Kim (2006)", L"djmw", 20110617)

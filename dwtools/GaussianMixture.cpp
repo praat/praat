@@ -921,38 +921,40 @@ void GaussianMixture_and_TableOfReal_improveLikelihood (GaussianMixture me, thou
 		autoNUMmatrix<double> pp (1, thy numberOfRows + 1, 1, my numberOfComponents + 1);
 		double *nk = pp[thy numberOfRows + 1]; // last row has the column marginals n(k)
 		if (! GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
-			MelderInfo_writeLine (L"Iteration not started, may be too much components?");
-			Melder_throw ("Iteration not started.");
+			Melder_throw ("Iteration not started. Too many components?");
 		}
 		double lnp = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
 		long iter = 0;
-		MelderInfo_writeLine (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (lnp / thy numberOfRows), L" (=  ", criterionText);
-		MelderInfo_open ();
-		double lnp_prev;
-		do {
+		autoMelderProgress progress (L"Improve likelihood...");
+		try {
+			double lnp_prev, lnp_start = lnp / thy numberOfRows;
+			do {
 
-			// E-step: get responsabilities (gamma) with current parameters
-			// See C. Bishop (2006), Pattern reconition and machine learning, Springer, page 439...
+				// E-step: get responsabilities (gamma) with current parameters
+				// See C. Bishop (2006), Pattern reconition and machine learning, Springer, page 439...
 
-			lnp_prev = lnp; iter++;
-			// M-step: 1. new means & covariances
+				lnp_prev = lnp; iter++;
+				// M-step: 1. new means & covariances
 
-			for (long im = 1; im <= my numberOfComponents; im++) {
-				GaussianMixture_updateCovariance (me, im, thy data, thy numberOfRows, pp.peek());
-				GaussianMixture_addCovarianceFraction (me, im, covg.peek(), lambda);
-			}
+				for (long im = 1; im <= my numberOfComponents; im++) {
+					GaussianMixture_updateCovariance (me, im, thy data, thy numberOfRows, pp.peek());
+					GaussianMixture_addCovarianceFraction (me, im, covg.peek(), lambda);
+				}
 
-			// M-step: 2. new mixingProbabilities
+				// M-step: 2. new mixingProbabilities
 
-			for (long im = 1; im <= my numberOfComponents; im++) {
-				my mixingProbabilities[im] = nk[im] / thy numberOfRows;
-			}
-			if (! GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
-				break;
-			}
-			lnp = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
-			MelderInfo_writeLine (L"\nIteration ", Melder_integer (iter), L":  ", Melder_double (lnp / thy numberOfRows), L" (=  ", criterionText);
-		} while (fabs ( (lnp - lnp_prev) / lnp_prev) > delta_lnp && iter < maxNumberOfIterations);
+				for (long im = 1; im <= my numberOfComponents; im++) {
+					my mixingProbabilities[im] = nk[im] / thy numberOfRows;
+				}
+				if (! GaussianMixture_and_TableOfReal_getProbabilities (me, thee, 0, pp.peek())) {
+					break;
+				}
+				lnp = GaussianMixture_getLikelihoodValue (me, pp.peek(), thy numberOfRows, criterion);
+				Melder_progress ((double) iter / double (maxNumberOfIterations), criterionText, L": ", Melder_double (lnp / thy numberOfRows), L", L0: ", Melder_double (lnp_start));
+			} while (fabs ( (lnp - lnp_prev) / lnp_prev) > delta_lnp && iter < maxNumberOfIterations);
+		} catch (MelderError) {
+			Melder_clearError ();
+		}
 
 		// During EM, covariances were underestimated by a factor of (n-1)/n. Correction now.
 
@@ -1109,89 +1111,88 @@ GaussianMixture GaussianMixture_and_TableOfReal_to_GaussianMixture_CEMM (Gaussia
 
 		double lnew = GaussianMixture_getLikelihoodValue (me.peek(), p.peek(), thy numberOfRows, criterion);
 
-		MelderInfo_open ();
-		long iter = 0, component;
-		MelderInfo_writeLine (L"iter: ", Melder_integer (iter), criterionText,
-		                       Melder_double (lnew / thy numberOfRows), L", Components: ", Melder_integer (my numberOfComponents));
-
+		autoMelderProgress progress (L"Gaussian mixture...");
 		autoGaussianMixture best = 0;
-		double lmax = -INFINITY, lprev;
-		while (my numberOfComponents >= minNumberOfComponents) {
-			do {
-				iter++; component = 1; lprev = lnew;
-				while (component <= my numberOfComponents) {
-					// M-step for means and covariances
-					GaussianMixture_updateProbabilityMarginals (me.peek(), p.peek(), thy numberOfRows);
-					GaussianMixture_updateCovariance (me.peek(), component, thy data, thy numberOfRows, p.peek());
-					if (lambda > 0) {
-						GaussianMixture_addCovarianceFraction (me.peek(), component, covg.peek(), lambda);
-					}
+		try {
+			double lstart = lnew / thy numberOfRows;
+			long iter = 0, component;
+			double lmax = -INFINITY, lprev;
+			while (my numberOfComponents >= minNumberOfComponents) {
+				do {
+					iter++; component = 1; lprev = lnew;
+					while (component <= my numberOfComponents) {
+						// M-step for means and covariances
+						GaussianMixture_updateProbabilityMarginals (me.peek(), p.peek(), thy numberOfRows);
+						GaussianMixture_updateCovariance (me.peek(), component, thy data, thy numberOfRows, p.peek());
+						if (lambda > 0) {
+							GaussianMixture_addCovarianceFraction (me.peek(), component, covg.peek(), lambda);
+						}
 
-					// Now check if enough support for a component exists
+						// Now check if enough support for a component exists
 
-					double support_im = gsum[component] - nparsd2, support = 0;
-					for (long ic = 1; ic <= my numberOfComponents; ic++) {
-						double support_ic = gsum[ic] - nparsd2;
-						if (support_ic > 0) {
-							support += support_ic;
+						double support_im = gsum[component] - nparsd2, support = 0;
+						for (long ic = 1; ic <= my numberOfComponents; ic++) {
+							double support_ic = gsum[ic] - nparsd2;
+							if (support_ic > 0) {
+								support += support_ic;
+							}
+						}
+						my mixingProbabilities[component] = support_im > 0 ? support_im : 0;
+						if (support > 0) {
+							my mixingProbabilities[component] /= support;
+						}
+
+						NUMdvector_scaleAsProbabilities (my mixingProbabilities, my numberOfComponents);
+
+						if (my mixingProbabilities[component] > 0) { // update p for component
+							GaussianMixture_and_TableOfReal_getProbabilities (me.peek(), thee, component, p.peek());
+							component++;
+						} else {
+							// "Remove" the component column from p by shifting row values
+
+							GaussianMixture_removeComponent_bookkeeping (me.peek(), component, p.peek(), thy numberOfRows);
+
+							// Now numberOfComponents is one less!
+							// MelderInfo_writeLine2 (L"Removed component ", Melder_integer (component));
 						}
 					}
-					my mixingProbabilities[component] = support_im > 0 ? support_im : 0;
-					if (support > 0) {
-						my mixingProbabilities[component] /= support;
-					}
 
-					NUMdvector_scaleAsProbabilities (my mixingProbabilities, my numberOfComponents);
+					// L(theta,Y)=N/2 sum(m=1..k, log(n*mixingP[m]/12))+k/2log(n/12)+k/2(N+1)-loglikelihood reduces to:
+					// k/2 (N+1){log(n/12)+1}+N/2sum(m=1..k,mixingP[m]) - loglikelihood
 
-					if (my mixingProbabilities[component] > 0) { // update p for component
-						GaussianMixture_and_TableOfReal_getProbabilities (me.peek(), thee, component, p.peek());
-						component++;
-					} else {
-						// "Remove" the component column from p by shifting row values
+					lnew = GaussianMixture_getLikelihoodValue (me.peek(), p.peek(), thy numberOfRows, criterion);
 
-						GaussianMixture_removeComponent_bookkeeping (me.peek(), component, p.peek(), thy numberOfRows);
-
-						// Now numberOfComponents is one less!
-
-						MelderInfo_writeLine (L"Removed component ", Melder_integer (component));
+					Melder_progress ((double) iter / (double) maxNumberOfIterations, L", ", criterionText, L": ",
+						Melder_double (lnew / thy numberOfRows), L"\nComponents: ", Melder_integer (my numberOfComponents),
+						L"\nL0: ", Melder_double (lstart));
+				} while (lnew > lprev && fabs ( (lprev - lnew) / lnew) > delta_l && iter < maxNumberOfIterations);
+				if (lnew > lmax) {
+					best.reset (Data_copy (me.peek()));
+					lmax = lnew;
+					if (! deleteWeakComponents) {
+						break;    // TODO was got end; is dat hetzelfde?
 					}
 				}
+				if (my numberOfComponents > 1) { // remove smallest component
+					component = 1;
+					double mpmin = my mixingProbabilities[component];
+					for (long ic = 2; ic <= my numberOfComponents; ic++) {
+						if (my mixingProbabilities[ic] < mpmin) {
+							mpmin = my mixingProbabilities[ic];
+							component = ic;
+						}
+					}
 
-				// L(theta,Y)=N/2 sum(m=1..k, log(n*mixingP[m]/12))+k/2log(n/12)+k/2(N+1)-loglikelihood reduces to:
-				// k/2 (N+1){log(n/12)+1}+N/2sum(m=1..k,mixingP[m]) - loglikelihood
-
-				lnew = GaussianMixture_getLikelihoodValue (me.peek(), p.peek(), thy numberOfRows, criterion);
-
-				MelderInfo_writeLine (L"iter: ", Melder_integer (iter), L", ", criterionText, L"= ",
-				                       Melder_double (lnew / thy numberOfRows), L", Components: ", Melder_integer (my numberOfComponents));
-
-			} while (lnew > lprev && fabs ( (lprev - lnew) / lnew) > delta_l && iter < maxNumberOfIterations);
-			if (lnew > lmax) {
-				best.reset (Data_copy (me.peek()));
-				lmax = lnew;
-				if (! deleteWeakComponents) {
-					break;    // TODO was got end; is dat hetzelfde?
+					GaussianMixture_removeComponent_bookkeeping (me.peek(), component, p.peek(), thy numberOfRows);
+				} else {
+					break;
 				}
 			}
-			if (my numberOfComponents > 1) { // remove smallest component
-				component = 1;
-				double mpmin = my mixingProbabilities[component];
-				for (long ic = 2; ic <= my numberOfComponents; ic++) {
-					if (my mixingProbabilities[ic] < mpmin) {
-						mpmin = my mixingProbabilities[ic];
-						component = ic;
-					}
-				}
-
-				GaussianMixture_removeComponent_bookkeeping (me.peek(), component, p.peek(), thy numberOfRows);
-			} else {
-				break;
-			}
+		} catch (MelderError) {
+			Melder_clearError ();
 		}
-		MelderInfo_close ();
 		return best.transfer();
 	} catch (MelderError) {
-		MelderInfo_close ();
 		Melder_throw ("GaussianMixture not improved.");
 	}
 }

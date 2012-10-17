@@ -19,7 +19,7 @@
 
 /*
  djmw 20020423 GPL header
- djmw 20110306 Latest modification.
+ djmw 20120808 Latest modification.
 */
 #ifndef _SVD_h_
 #define _SVD_h_
@@ -82,6 +82,9 @@ void SVD_synthesize (SVD me, long sv_from, long sv_to, double **m);
 	Matrix m is [numberOfRows x numberOfColumns] and must be allocated
 	by caller!
 */
+
+void SVD_getSquared (SVD me, double **m, bool inverse);
+// compute V D^2 V' or V D^-2 V'
 
 long SVD_getRank (SVD me);
 

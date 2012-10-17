@@ -45,6 +45,7 @@
  */
 
 #include "GuiP.h"
+#include <locale.h>
 
 Thing_implement (GuiText, GuiControl, 0);
 
@@ -859,6 +860,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 	my d_shell = parent -> d_shell;
 	my d_parent = parent;
 	#if gtk
+		trace ("before creating a GTK text widget: locale is %s", setlocale (LC_ALL, NULL));
 		if (flags & GuiText_SCROLLED) {
 			GtkWrapMode ww;
 			GuiObject scrolled = gtk_scrolled_window_new (NULL, NULL);
@@ -890,6 +892,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 			gtk_entry_set_activates_default (GTK_ENTRY (my d_widget), true);
 		}
+		trace ("after creating a GTK text widget: locale is %s", setlocale (LC_ALL, NULL));
 		my d_prev = NULL;
 		my d_next = NULL;
 		my d_history_change = 0;
@@ -1337,8 +1340,11 @@ void structGuiText :: f_setChangeCallback (void (*changeCallback) (void *boss, G
 void structGuiText :: f_setFontSize (int size) {
 	#if gtk
 		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (GTK_WIDGET (d_widget));
+		trace ("before initializing Pango: locale is %s", setlocale (LC_ALL, NULL));
 		PangoFontDescription *fontDesc = modStyle -> font_desc != NULL ? modStyle->font_desc : pango_font_description_copy (GTK_WIDGET (d_widget) -> style -> font_desc);
+		trace ("during initializing Pango: locale is %s", setlocale (LC_ALL, NULL));
 		pango_font_description_set_absolute_size (fontDesc, size * PANGO_SCALE);
+		trace ("after initializing Pango: locale is %s", setlocale (LC_ALL, NULL));
 		modStyle -> font_desc = fontDesc;
 		gtk_widget_modify_style (GTK_WIDGET (d_widget), modStyle);
 	#elif cocoa

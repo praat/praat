@@ -229,44 +229,44 @@ void EditCostsTable_setDeletionCosts (EditCostsTable me, wchar_t *sources, doubl
 void EditCostsTable_setOthersCosts (EditCostsTable me, double insertionCost, double deletionCost, double substitutionCost_equal, double substitutionCost_unequal) {
 	my data[my numberOfRows - 1][my numberOfColumns] = insertionCost;
 	my data[my numberOfRows][my numberOfColumns - 1] = deletionCost;
-	my data[my numberOfRows - 1][my numberOfColumns - 1] = substitutionCost_equal;
-	my data[my numberOfRows][my numberOfColumns] = substitutionCost_unequal;
+	my data[my numberOfRows - 1][my numberOfColumns - 1] = substitutionCost_unequal;
+	my data[my numberOfRows][my numberOfColumns] = substitutionCost_equal;
 }
 
 double EditCostsTable_getOthersCost (EditCostsTable me, int costType) {
 	return costType == 1 ? my data[my numberOfRows - 1][my numberOfColumns] : //insertion
 		costType == 2 ? my data[my numberOfRows][my numberOfColumns - 1] : // deletion
-		costType == 3 ? my data[my numberOfRows - 1][my numberOfColumns - 1] : // equality
-		 my data[my numberOfRows][my numberOfColumns]; // inequality
+		costType == 3 ? my data[my numberOfRows][my numberOfColumns] : // equality
+		 my data[my numberOfRows - 1][my numberOfColumns -1]; // inequality
 }
 
 void EditCostsTable_setSubstitutionCosts (EditCostsTable me, wchar_t *targets, wchar_t *sources, double cost) {
 	try {
 		autoNUMvector<long> targetIndex (1, my numberOfRows);
 		autoNUMvector<long> sourceIndex (1, my numberOfRows);
-		long ntargets = 0;
+		long numberOfTargetSymbols = 0;
 		for (wchar_t *token = Melder_firstToken (targets); token != 0; token = Melder_nextToken ()) {
 			long index = EditCostsTable_getTargetIndex (me, token);
 			if (index > 0) {
-				targetIndex[++ntargets] = index;
+				targetIndex[++numberOfTargetSymbols] = index;
 			}
 		}
-		if (ntargets == 0 && targets != 0 && targets[1] != '\0') {
-			ntargets = 1; targetIndex[1] = my numberOfRows - 1;
+		if (numberOfTargetSymbols == 0) {
+			targetIndex[++numberOfTargetSymbols] = my numberOfRows - 1;
 		}
-		long nsources = 0;
+		long numberOfSourceSymbols = 0;
 		for (wchar_t *token = Melder_firstToken (sources); token != 0; token = Melder_nextToken ()) {
 			long index = EditCostsTable_getSourceIndex (me, token);
 			if (index > 0) {
-				sourceIndex[++nsources] = index;
+				sourceIndex[++numberOfSourceSymbols] = index;
 			}
 		}
-		if (nsources == 0 && sources != 0 && sources[1] != '\0') {
-			nsources = 1; sourceIndex[1] = my numberOfColumns - 1;
+		if (numberOfSourceSymbols == 0) {
+			sourceIndex[++numberOfSourceSymbols] = my numberOfColumns - 1;
 		}
-		for (long i = 1; i <= ntargets; i++) {
+		for (long i = 1; i <= numberOfTargetSymbols; i++) {
 			long irow = targetIndex[i];
-			for (long j = 1; j <= nsources; j++) {
+			for (long j = 1; j <= numberOfSourceSymbols; j++) {
 				my data [irow][sourceIndex[j]] = cost;
 			}
 		}
@@ -287,7 +287,7 @@ double EditCostsTable_getDeletionCost (EditCostsTable me, const wchar_t *sourceS
 	return my data[my numberOfRows][icol];
 }
 
-double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar_t *replacement) {
+double EditCostsTable_getSubstitutionCost (EditCostsTable me, const wchar_t *symbol, const wchar *replacement) {
 	long irow = EditCostsTable_getTargetIndex (me, symbol);
 	long icol = EditCostsTable_getSourceIndex (me, replacement);
 	if (irow == 0 && icol == 0) { // nomatch
@@ -332,17 +332,17 @@ void structEditDistanceTable :: v_info () {
 EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
 	try {
 		autoEditDistanceTable me = Thing_new (EditDistanceTable);
-		long nsources = source -> numberOfStrings, ntargets = target -> numberOfStrings;
-		TableOfReal_init (me.peek(), ntargets + 1, nsources + 1);
+		long numberOfSourceSymbols = source -> numberOfStrings, numberOfTargetSymbols = target -> numberOfStrings;
+		TableOfReal_init (me.peek(), numberOfTargetSymbols + 1, numberOfSourceSymbols + 1);
 		TableOfReal_setColumnLabel (me.peek(), 1, L"");
-		for (long j = 1; j <= nsources; j++) {
+		for (long j = 1; j <= numberOfSourceSymbols; j++) {
 			my columnLabels[j + 1] = Melder_wcsdup (source -> strings[j]);
 		}
 		TableOfReal_setRowLabel (me.peek(), 1, L"");
-		for (long i = 1; i <= ntargets; i++) {
+		for (long i = 1; i <= numberOfTargetSymbols; i++) {
 			my rowLabels[i + 1] = Melder_wcsdup (target -> strings[i]);
 		}
-		my d_warpingPath = WarpingPath_create (ntargets + nsources + 1);
+		my d_warpingPath = WarpingPath_create (numberOfTargetSymbols + numberOfSourceSymbols + 1);
 		my d_editCostsTable = EditCostsTable_createDefault ();
 		EditDistanceTable_findPath (me.peek(), 0);
 		return me.transfer();

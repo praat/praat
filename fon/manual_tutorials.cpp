@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20121010)
+MAN_BEGIN (L"What's new?", L"ppgb", 20121017)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.32# (17 October 2012)")
+LIST_ITEM (L"\\bu Sound window: corrected the working of the \"by window\" scaling option.")
 NORMAL (L"##5.3.31# (10 October 2012)")
 LIST_ITEM (L"\\bu ERP: Down to Table...")
 LIST_ITEM (L"\\bu Linux: corrected a bug that could cause Praat to crash after closing a file selector window for saving.")

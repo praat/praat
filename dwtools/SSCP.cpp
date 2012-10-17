@@ -92,6 +92,14 @@
 
 Thing_implement (SSCP, TableOfReal, 0);
 
+void structSSCP :: v_info () {
+	structTableOfReal :: v_info ();
+	double zmin, zmax;
+	NUMmatrix_extrema<double> (data, 1, numberOfRows, 1, numberOfColumns, &zmin, &zmax);
+	MelderInfo_writeLine (L"Minimum value: ", Melder_double (zmin));
+	MelderInfo_writeLine (L"Maximum value: ", Melder_double (zmax));
+}
+
 /*
 	Calculate scale factor by which sqrt(eigenvalue) has to
 	be multiplied to obtain the length of an ellipse axis.
@@ -487,8 +495,8 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole) {
 		long n = cole - colb + 1; /* # columns */
 
 		if (m < n) Melder_warning (L"The SSCP will not have \n"
-			                           "full dimensionality. This may be a problem in following analysis steps. \n"
-			                           "(The number of data points was less than the number of variables.)");
+			"full dimensionality. This may be a problem in following analysis steps. \n"
+			"(The number of data points was less than the number of variables.)");
 
 		autoSSCP thee = SSCP_create (n);
 		autoNUMmatrix<double> v (1, m, 1, n);

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20120323 Latest modification
+ djmw 20120912 Latest modification
 */
 
 
@@ -204,4 +204,7 @@ Sound Sound_trimSilencesAtStartAndEnd (Sound me, double trimDuration, double min
 	double silenceThreshold, double minSilenceDuration, double minSoundingDuration, double *t1, double *t2);
 Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd, double minPitch, double timeStep,
     double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const wchar_t *trimLabel);
+
+Sound Sound_copyChannelRanges (Sound me, const wchar_t *ranges);
+
 #endif /* _Sound_extensions_h_ */

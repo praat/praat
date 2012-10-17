@@ -51,6 +51,7 @@
 */
 
 #include <ctype.h>
+#include "Graphics_extensions.h"
 #include "SSCP.h"
 #include "Matrix_extensions.h"
 #include "NUMclapack.h"
@@ -499,154 +500,6 @@ void TableOfReal_drawBiplot (I, Graphics g, double xmin, double xmax, double ymi
 	}
 }
 
-/*
-	Draw a box plot of data[1..ndata]. The vertical center line of the plot
-	is at position 'x'. The rectangle box is 2*w wide, the whisker 2*r.
-	All drawing outside [ymin, ymax] is clipped.
-*/
-static void Graphics_drawBoxPlot (Graphics g, double data[], long ndata, double x, double r, double w, double ymin, double ymax) {
-	int lineType = Graphics_inqLineType (g);
-
-	Melder_assert (r > 0 && w > 0);
-	if (ndata < 3) {
-		return;
-	}
-	/*
-		Sort the data (increasing: data[1] <= ... <= data[ndata]).
-		Get the median (q50) and the upper and lower quartile points
-		(q25 and q75).
-		Now q25 and q75 are the lower and upper hinges, respectively.
-		The fances can be calcultaed from q25 and q75.
-		The spread is defined as the interquartile range or midrange
-		|q75 - q25|.
-		The fences are defined as:
-		(lower/upper) innerfence = (lower/upper) hinge +/- 1.5 hspread
-		(lower/upper) outerfence = (lower/upper) hinge +/- 3.0 hspread
-	*/
-
-	NUMsort_d (ndata, data);
-
-	if (ymax <= ymin) {
-		ymin = data[1]; ymax = data[ndata];
-	}
-	if (data[1] > ymax || data[ndata] < ymin) {
-		return;
-	}
-
-	double mean = 0;
-	for (long i = 1; i <= ndata; i++) {
-		mean += data[i];
-	}
-	mean /= ndata;
-
-	double q25 = NUMquantile (ndata, data, 0.25);
-	double q50 = NUMquantile (ndata, data, 0.5);
-	double q75 = NUMquantile (ndata, data, 0.75);
-
-	double hspread = fabs (q75 - q25);
-	double lowerOuterFence = q25 - 3.0 * hspread;
-	double lowerInnerFence = q25 - 1.5 * hspread;
-	double upperInnerFence = q75 + 1.5 * hspread;
-	double upperOuterFence = q75 + 3.0 * hspread;
-
-	/*
-		Decide whether there are outliers that have to be drawn.
-		First process data from below (data are sorted).
-	*/
-
-	long i = 1, ie = ndata;
-	while (i <= ie && data[i] < ymin) {
-		i++;
-	}
-	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
-	while (i <= ie && data[i] < lowerOuterFence) {
-		Graphics_text (g, x, data[i], L"o"); i++;
-	}
-	while (i <= ie && data[i] < lowerInnerFence) {
-		Graphics_text (g, x, data[i], L"*"); i++;
-	}
-	double lowerWhisker = data[i] < q25 ? data[i] : lowerInnerFence;
-	if (lowerWhisker > ymax) {
-		return;
-	}
-
-	// Next process data from above.
-
-	i = ndata; ie = i;
-	while (i >= ie && data[i] > ymax) {
-		i--;
-	}
-	while (i >= ie && data[i] > upperOuterFence) {
-		Graphics_text (g, x, data[i], L"o"); i--;
-	}
-	while (i >= ie && data[i] > upperInnerFence) {
-		Graphics_text (g, x, data[i], L"*"); i--;
-	}
-	double upperWhisker = data[i] > q75 ? data[i] : upperInnerFence;
-	if (upperWhisker < ymin) {
-		return;
-	}
-
-	/*
-		Determine what parts of the "box" have to be drawn within the
-		range [ymin, ymax].
-		Horizontal lines first.
-	*/
-
-	double y1 = lowerWhisker;
-	if (ymax > y1 && ymin < y1) {
-		Graphics_line (g, x - r, y1, x + r, y1);
-	}
-	y1 = q25;
-	if (ymax > y1 && ymin < y1) {
-		Graphics_line (g, x - w, y1, x + w, y1);
-	}
-	y1 = q50;
-	if (ymax > y1 && ymin < y1) {
-		Graphics_line (g, x - w, y1, x + w, y1);
-	}
-	y1 = q75;
-	if (ymax > y1 && ymin < y1) {
-		Graphics_line (g, x - w, y1, x + w, y1);
-	}
-	y1 = upperWhisker;
-	if (ymax > y1 && ymin < y1) {
-		Graphics_line (g, x - r, y1, x + r, y1);
-	}
-
-	// Extension: draw the mean too.
-
-	y1 = mean;
-	if (ymax > y1 && ymin < y1) {
-		Graphics_setLineType (g, Graphics_DOTTED);
-		Graphics_line (g, x - w, y1, x + w, y1);
-		Graphics_setLineType (g, lineType);
-	}
-
-	// Now process the vertical lines.
-
-	y1 = lowerWhisker;
-	double y2 = q25;
-	if (ymax > y1 && ymin < y2) {
-		y1 = MAX (y1, ymin);
-		y2 = MIN (y2, ymax);
-		Graphics_line (g, x, y1, x, y2);
-	}
-	y1 = q25; y2 = q75;
-	if (ymax > y1 && ymin < y2) {
-		y1 = MAX (y1, ymin);
-		y2 = MIN (y2, ymax);
-		Graphics_line (g, x - w, y1, x - w, y2);
-		Graphics_line (g, x + w, y1, x + w, y2);
-	}
-	y1 = q75; y2 = upperWhisker;
-	if (ymax > y1 && ymin < y2) {
-		y1 = MAX (y1, ymin);
-		y2 = MIN (y2, ymax);
-		Graphics_line (g, x, y1, x, y2);
-	}
-}
-
 void TableOfReal_drawBoxPlots (I, Graphics g, long rowmin, long rowmax, long colmin, long colmax, double ymin, double ymax, int garnish) {
 	iam (TableOfReal);
 
@@ -686,7 +539,7 @@ void TableOfReal_drawBoxPlots (I, Graphics g, long rowmin, long rowmax, long col
 				data[++ndata] = t;
 			}
 		}
-		Graphics_drawBoxPlot (g, data.peek(), ndata, x, r, w, ymin, ymax);
+		Graphics_boxAndWhiskerPlot (g, data.peek(), ndata, x, r, w, ymin, ymax);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {
@@ -1007,7 +860,7 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, dou
 	for (long i = 1; i <= n; i++) {
 		long xcol, ycol = colb + i - 1;
 		wchar_t const  *mark;
-		wchar_t label[20];
+		wchar label[20];
 		Graphics_line (g, 0, n - i, n, n - i);
 		Graphics_line (g, i, n, i, 0);
 		for (long j = 1; j <= n; j++) {
@@ -1031,8 +884,28 @@ void TableOfReal_drawScatterPlotMatrix (I, Graphics g, long colb, long cole, dou
 	Graphics_unsetInner (g);
 }
 
-void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb, long rowe, double xmin, double xmax, double ymin, double ymax,
-                                  int labelSize, int useRowLabels, const wchar_t *label, int garnish) {
+void TableOfReal_drawAsSquares_area (TableOfReal me, Graphics g, double zmin, double zmax, double cellSizeFactor, int randomFillOrder, int garnish) {
+	try {
+		cellSizeFactor = cellSizeFactor <= 0 ? 1 : cellSizeFactor;
+		if (zmin == 0 && zmax == 0) {
+			NUMmatrix_extrema<double> (my data, 1, my numberOfRows, 1, my numberOfColumns, &zmin, &zmax);
+		}
+		double xmin = 0, xmax = my numberOfColumns + 1, ymin = 0, ymax = my numberOfRows + 1;
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setInner (g);
+		Graphics_matrixAsSquares (g, my data, my numberOfRows, my numberOfColumns, zmin, zmax, cellSizeFactor, randomFillOrder);
+		Graphics_unsetInner (g);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksBottomEvery (g, 1, 1, false, true, false);
+			Graphics_marksLeftEvery (g, 1, 1, false, true, false);
+		}
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
+
+void TableOfReal_drawScatterPlot (I, Graphics g, long icx, long icy, long rowb, long rowe, double xmin, double xmax, double ymin, double ymax, int labelSize, int useRowLabels, const wchar_t *label, int garnish) {
 	iam (TableOfReal);
 	double m = my numberOfRows, n = my numberOfColumns;
 	int fontSize = Graphics_inqFontSize (g);
@@ -1630,7 +1503,7 @@ void TableOfReal_setSequentialColumnLabels (I, long from, long to, const wchar_t
 	if (from < 1 || from > my numberOfColumns || to < from || to > my numberOfColumns) {
 		Melder_throw ("Wrong column indices.");
 	}
-	NUMstrings_setSequentialNumbering (my columnLabels, from, to, precursor, number, increment);
+	NUMstrings_setSequentialNumbering (my columnLabels, from, to, precursor, number, increment, (int) 0);
 }
 
 void TableOfReal_setSequentialRowLabels (I, long from, long to, const wchar_t *precursor, long number, long increment) {
@@ -1644,7 +1517,7 @@ void TableOfReal_setSequentialRowLabels (I, long from, long to, const wchar_t *p
 	if (from < 1 || from > my numberOfRows || to < from || to > my numberOfRows) {
 		Melder_throw ("Wrong row indices.");
 	}
-	NUMstrings_setSequentialNumbering (my rowLabels, from, to, precursor, number, increment);
+	NUMstrings_setSequentialNumbering (my rowLabels, from, to, precursor, number, increment, (int) 0);
 }
 
 /* For the inheritors */

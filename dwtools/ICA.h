@@ -82,9 +82,6 @@ MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, 
 
 Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double delta_w, int method);
 
-Sound Sound_and_PCA_whitenChannels (Sound me, PCA thee, long numberOfComponents);
-Sound Sound_and_PCA_projectChannels (Sound me, PCA thee, long numberOfComponents);
-PCA Sound_to_PCA_channels (Sound me, double startTime, double endTime);
 Sound Sound_whitenChannels (Sound me, double varianceFraction);
 Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
 

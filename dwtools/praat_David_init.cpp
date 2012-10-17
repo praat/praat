@@ -61,7 +61,7 @@
  djmw 20091230 Covariance_and_TableOfReal_mahalanobis
  djmw 20100212 Standardize on Window length
  djmw 20100511 Categories_getNumberOfCategories
- djmw 20111224 Latest modification.
+ djmw 20120813 Latest modification.
 */
 
 #include "praat.h"
@@ -970,7 +970,7 @@ DO
 	MelderInfo_writeLine (L"Significance from zero = ", Melder_double (prob));
 	MelderInfo_writeLine (L"Degrees of freedom = ", Melder_double (df1), L", ", Melder_double (df2));
 	MelderInfo_writeLine (L"(Number of observations = ", Melder_integer (c1->numberOfObservations), L", ",
-						Melder_integer (c2->numberOfObservations));
+		Melder_integer (c2->numberOfObservations));
 	MelderInfo_writeLine (L"Dimension of covariance matrices = ", Melder_integer (c1-> numberOfRows), L")");
 	MelderInfo_close ();
 END
@@ -2152,17 +2152,17 @@ DIRECT (EditCostsTable_to_TableOfReal)
 	}
 END
 
-FORM (EditCostsTable_createEmpty, L"Create empty EditCostsTable", 0)
+FORM (EditCostsTable_createEmpty, L"Create empty EditCostsTable", L"Create empty EditCostsTable...")
 	SENTENCE (L"Name", L"editCosts")
-	INTEGER (L"Target alphabet size", L"0")
-	INTEGER (L"Source alphabet size", L"0")
+	INTEGER (L"Number of target symbols", L"0")
+	INTEGER (L"Number of source symbols", L"0")
 	OK
 DO
-	long targetAlphabetSize = GET_INTEGER (L"Target alphabet size");
-	targetAlphabetSize = targetAlphabetSize < 0 ? 0 : targetAlphabetSize;
-	long sourceAlphabetSize = GET_INTEGER (L"Source alphabet size");
-	sourceAlphabetSize = sourceAlphabetSize < 0 ? 0 : sourceAlphabetSize;
-	praat_new (EditCostsTable_create (targetAlphabetSize, sourceAlphabetSize), GET_STRING (L"Name"));
+	long numberOfTargetSymbols = GET_INTEGER (L"Number of target symbols");
+	numberOfTargetSymbols = numberOfTargetSymbols < 0 ? 0 : numberOfTargetSymbols;
+	long numberOfSourceSymbols = GET_INTEGER (L"Number of source symbols");
+	numberOfSourceSymbols = numberOfSourceSymbols < 0 ? 0 : numberOfSourceSymbols;
+	praat_new (EditCostsTable_create (numberOfTargetSymbols, numberOfSourceSymbols), GET_STRING (L"Name"));
 END
 
 /******************** Eigen ********************************************/
@@ -3238,6 +3238,134 @@ DO
 		long icol = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column label"));
 		double mad = Table_getMedianAbsoluteDeviation (me, icol);
 		Melder_information (Melder_double (mad));
+	}
+END
+
+static void print_means (Table me);
+static void print_means (Table me) {
+	wchar_t s[200];
+	Table_numericize_Assert (me, 2);
+	Table_numericize_Assert (me, 3);
+	if (my numberOfColumns < 3) {
+		MelderInfo_writeLine (L"Table has not the right format.");
+		return;
+	}
+	swprintf (s, 199, L"%15ls\t%15ls\t%15ls", my columnHeaders[1].label, my columnHeaders[2].label, my columnHeaders[3].label);
+	MelderInfo_writeLine (s);
+	for (long irow = 1; irow <= my rows -> size; irow++) {
+		TableRow row = (TableRow) my rows -> item [irow];
+		swprintf (s, 199, L"%15ls\t%15g\t%15g", row -> cells[1].string, row -> cells[2].number, row -> cells[3].number);
+		MelderInfo_writeLine (s);
+	}
+}
+
+FORM (Table_reportOneWayAnova, L"Table: Report one-way anova",  L"Table: Report one-way anova...")
+	SENTENCE (L"Column with data", L"F0")
+	SENTENCE (L"Factor", L"Vowel")
+	BOOLEAN (L"Table with means", 0);
+	BOOLEAN (L"Table with differences between means", 0)
+	BOOLEAN (L"Table with Tukey's post-hoc HSD test", 0)
+	OK
+DO
+	wchar_t *factor = GET_STRING (L"Factor");
+	wchar_t *dataLabel = GET_STRING (L"Column with data");
+	bool getMeans = GET_INTEGER (L"Table with means");
+	bool getMeansDiff = GET_INTEGER (L"Table with differences between means");
+	bool getMeansDiffProbabilities = GET_INTEGER (L"Table with Tukey's post-hoc HSD test");
+	LOOP {
+		iam (Table);
+		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factor);
+		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataLabel);
+		Table tmeans = 0, tmeansDiff = 0, tmeansDiffProbabilities = 0;
+		autoTable anova = Table_getOneWayAnalysisOfVarianceF (me, dataColumn, factorColumn, &tmeans,
+			&tmeansDiff, & tmeansDiffProbabilities);
+		autoTable means = tmeans, meansDiff = tmeansDiff, meansDiffProbabilities = tmeansDiffProbabilities;
+		MelderInfo_open ();
+		MelderInfo_writeLine (L"One-way analysis of \"", dataLabel, L"\" by \"", factor, L"\".\n");
+		Table_printAsAnovaTable (anova.peek());
+		MelderInfo_writeLine (L"\nMeans:\n");
+		print_means (means.peek());
+		MelderInfo_close ();
+		if (getMeans) {
+			praat_new (means.transfer(), my name, L"_groupMeans");
+		}
+		if (getMeansDiff) {
+			praat_new (meansDiff.transfer(), my name, L"_meansDiff");
+		}
+		if (getMeansDiffProbabilities) {
+			praat_new (meansDiffProbabilities.transfer(), my name, L"_meansDiffP");
+		}
+	}
+END
+
+FORM (Table_reportTwoWayAnova, L"Table: Report two-way anova", L"Table: Report two-way anova...")
+	SENTENCE (L"Column with data", L"Data")
+	SENTENCE (L"First factor", L"A")
+	SENTENCE (L"Second factor", L"B")
+	BOOLEAN (L"Table with means", 0);
+	OK
+DO
+	wchar_t *factorA = GET_STRING (L"First factor");
+	wchar_t *factorB = GET_STRING (L"Second factor");
+	wchar_t *dataLabel = GET_STRING (L"Column with data");
+	bool getMeans = GET_INTEGER (L"Table with means");
+	LOOP {
+		iam (Table);
+		long factorColumnA = Table_getColumnIndexFromColumnLabel (me, factorA);
+		long factorColumnB = Table_getColumnIndexFromColumnLabel (me, factorB);
+		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataLabel);
+		Table tmeans = 0, tsizes = 0;
+		autoTable anova = Table_getTwoWayAnalysisOfVarianceF (me, dataColumn, factorColumnA, factorColumnB, &tmeans, &tsizes);
+		autoTable means = tmeans, sizes = tsizes;
+		MelderInfo_open ();
+		MelderInfo_writeLine (L"Two-way analysis of \"", dataLabel, L"\" by \"", factorA, L"\" and \"", factorB, L".\n");
+		Table_printAsAnovaTable (anova.peek());
+		MelderInfo_writeLine (L"\nMeans:\n");
+		Table_printAsMeansTable (means.peek());
+		MelderInfo_writeLine (L"\nCell sizes:\n");
+		Table_printAsMeansTable (sizes.peek());
+		MelderInfo_close ();
+		if (getMeans) {
+			praat_new (means.transfer(), my name, L"_groupMeans");
+		}
+	}
+END
+
+FORM (Table_reportOneWayKruskalWallis, L"Table: Report one-way Kruskal-Wallis", L"Table: Report one-way Kruskal-Wallis...")
+	SENTENCE (L"Column with data", L"Data")
+	SENTENCE (L"Factor", L"Group")
+	OK
+DO
+	wchar_t *factor = GET_STRING (L"Factor");
+	wchar_t *dataLabel = GET_STRING (L"Column with data");
+	LOOP {
+		iam (Table);
+		long factorColumn = Table_getColumnIndexFromColumnLabel (me, factor);
+		long dataColumn = Table_getColumnIndexFromColumnLabel (me, dataLabel);
+		double degreesOfFreedom, kruskalWallis, probability;
+		autoTable thee = Table_getOneWayKruskalWallis (me, dataColumn, factorColumn, &degreesOfFreedom, &kruskalWallis, &probability);
+		MelderInfo_open ();
+		MelderInfo_writeLine (L"One-way Kruskal-Wallis of \"", dataLabel, L"\" by \"", factor, L"\".\n");
+		MelderInfo_writeLine (L"Chi squared: ", Melder_double (kruskalWallis));
+		MelderInfo_writeLine (L"Degrees of freedom: ", Melder_double (degreesOfFreedom));
+		MelderInfo_writeLine (L"Probability: ", Melder_double (probability));
+		MelderInfo_writeLine (L"\nMeans:\n");
+		print_means (thee.peek());
+		MelderInfo_close ();
+		//praat_new (thee.transfer(), my name, L"_groupMeans");
+	}
+END
+
+FORM (Table_to_StringsIndex_column, L"Table: To StringsIndex (column)", 0)
+	SENTENCE (L"Column label", L"")
+	OK
+DO
+	wchar *columnLabel = GET_STRING (L"Column label");
+	LOOP {
+		iam (Table);
+		long icol = Table_getColumnIndexFromColumnLabel (me, columnLabel);
+		autoStringsIndex thee = Table_to_StringsIndex_column (me, icol);
+		praat_new (thee.transfer(), my name, L"_", columnLabel);
 	}
 END
 
@@ -4640,6 +4768,32 @@ DIRECT (Praat_ReportFloatingPointProperties)
 	MelderInfo_close ();
 END
 
+FORM (Praat_getTukeyQ, L"Get TukeyQ", 0)
+	REAL (L"Critical value", L"2.0")
+	NATURAL (L"Number of means", L"3")
+	POSITIVE (L"Degrees of freedom", L"10.0")
+	NATURAL (L"Number of rows", L"1")
+	OK
+DO
+	double q = GET_REAL (L"Critical value");
+	REQUIRE (q > 0 , L"Critical value must be > 0.")
+	double val = NUMtukeyQ (q, GET_INTEGER (L"Number of means"), GET_REAL (L"Degrees of freedom"), GET_INTEGER (L"Number of rows") );
+	Melder_informationReal (val, NULL);
+END
+
+FORM (Praat_getInvTukeyQ, L"Get invTukeyQ", 0)
+	REAL (L"Probability", L"0.05")
+	NATURAL (L"Number of means", L"3")
+	POSITIVE (L"Degrees of freedom", L"10.0")
+	NATURAL (L"Number of rows", L"1")
+	OK
+DO
+	double p = GET_REAL (L"Probability");
+	REQUIRE (p >= 0 && p <= 1, L"Probability must be in (0,1).")
+	double val = NUMinvTukeyQ (p, GET_INTEGER (L"Number of means"), GET_REAL (L"Degrees of freedom"), GET_INTEGER (L"Number of rows"));
+	Melder_informationReal (val, NULL);
+END
+
 /******************** Sound ****************************************/
 
 static void Sound_create_addCommonFields (void *dia) {
@@ -4885,6 +5039,19 @@ DO
 		GET_REAL (L"Silence threshold"), GET_REAL (L"Minimum silent interval duration"),
 		GET_REAL (L"Minimum sounding interval duration"), GET_STRING (L"Silent interval label"),
 		GET_STRING (L"Sounding interval label")), my name);
+	}
+END
+
+FORM (Sound_copyChannelRanges, L"Sound: Copy channel ranges", 0)
+	LABEL (L"", L"Create a new Sound from the following channels:")
+	TEXTFIELD (L"Ranges", L"1:64")
+	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		autoSound thee = Sound_copyChannelRanges (me, GET_STRING (L"Ranges"));
+		praat_new (thee.transfer(), my name, L"_channels");
 	}
 END
 
@@ -5340,7 +5507,7 @@ FORM (SpeechSynthesizer_create, L"Create SpeechSynthesizer", L"Create SpeechSynt
 	}
 	LIST (L"Language", espeakdata_voices_names -> numberOfStrings, (const wchar_t **) espeakdata_voices_names -> strings, prefVoice)
 	long prefVariant = Strings_findString (espeakdata_variants_names, L"default");
-	LABEL (L"", L"The voice variants will only work in a future version o Praat")
+	LABEL (L"", L"The voice variants will only work in a future version of Praat")
 	LIST (L"Voice variant", espeakdata_variants_names -> numberOfStrings,
 		(const wchar_t **) espeakdata_variants_names -> strings, prefVariant)
 	OK
@@ -5864,7 +6031,101 @@ DIRECT (Table_createFromWeeninkData)
 	praat_new (Table_createFromWeeninkData (), L"m10w10c10");
 END
 
-FORM (Table_drawScatterPlotWithConfidenceIntervals, L"Table: Scatter plot (confidence intervals)", L"")
+FORM (Table_boxPlots, L"Table: Box plots", 0)
+	WORD (L"Data column", L"")
+	WORD (L"Factor column", L"")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	BOOLEAN (L"Garnish", 1);
+	OK
+DO
+	autoPraatPicture picture;
+	double ymin = GET_REAL (L"left Vertical range");
+	double ymax = GET_REAL (L"right Vertical range");
+	int garnish = GET_INTEGER (L"Garnish");
+	LOOP {
+		iam (Table);
+		long dataColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Data column"));
+		long factorColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Factor column"));
+		Table_boxPlots (me, GRAPHICS, dataColumn, factorColumn, ymin, ymax, garnish);
+	}
+END
+
+FORM (Table_normalProbabilityPlot, L"Table: Normal probability plot", L"Table: Normal probability plot...")
+	WORD (L"Column", L"")
+	NATURAL (L"Number of quantiles", L"100")
+	REAL (L"Number of sigmas", L"0.0")
+	NATURAL (L"Label size", L"12")
+	WORD (L"Label", L"+")
+	BOOLEAN (L"Garnish", 1);
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long column = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Column"));
+		Table_normalProbabilityPlot (me, GRAPHICS, column,
+			GET_INTEGER (L"Number of quantiles"), GET_REAL (L"Number of sigmas"),
+			GET_INTEGER (L"Label size"), GET_STRING (L"Label"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (Table_quantileQuantilePlot, L"Table: Quantile-quantile plot", L"Table: Quantile-quantile plot...")
+	WORD (L"Horizontal axis column", L"")
+	WORD (L"Vertical axis column", L"")
+	NATURAL (L"Number of quantiles", L"100")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	NATURAL (L"Label size", L"12")
+	WORD (L"Label", L"+")
+	BOOLEAN (L"Garnish", 1);
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal axis column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical axis column"));
+		Table_quantileQuantilePlot (me, GRAPHICS, xcolumn, ycolumn, GET_INTEGER (L"Number of quantiles"),
+		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+		GET_INTEGER (L"Label size"), GET_STRING (L"Label"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (Table_quantileQuantilePlot_betweenLevels, L"Table: Quantile-quantile plot (between levels)", L"Table: Quantile-quantile plot...")
+	WORD (L"Data column", L"")
+	WORD (L"Factor column", L"")
+	WORD (L"Horizontal factor level", L"")
+	WORD (L"Vertical factor level", L"")
+	NATURAL (L"Number of quantiles", L"100")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	NATURAL (L"Label size", L"12")
+	WORD (L"Label", L"+")
+	BOOLEAN (L"Garnish", 1);
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long dataColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Data column"));
+		long factorColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Factor column"));
+		wchar_t *xLevel = GET_STRING (L"Horizontal factor level");
+		wchar_t *yLevel = GET_STRING (L"Vertical factor level");
+		Table_quantileQuantilePlot_betweenLevels (me, GRAPHICS, dataColumn, factorColumn, xLevel, yLevel,
+			GET_INTEGER (L"Number of quantiles"), GET_REAL (L"left Horizontal range"),
+			GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"),
+			GET_REAL (L"right Vertical range"), GET_INTEGER (L"Label size"), GET_STRING (L"Label"),
+			GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (Table_scatterPlotWithConfidenceIntervals, L"Table: Scatter plot (confidence intervals)", L"")
 	NATURAL (L"Horizontal axis column", L"1")
 	REAL (L"left Horizontal range", L"0.0")
 	REAL (L"right Horizontal range", L"0.0")
@@ -5882,7 +6143,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Table);
-		Table_drawScatterPlotWithConfidenceIntervals (me, GRAPHICS,
+		Table_scatterPlotWithConfidenceIntervals (me, GRAPHICS,
 		GET_INTEGER (L"Horizontal axis column"), GET_INTEGER (L"Vertical axis column"),
 		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
 		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
@@ -6699,7 +6960,9 @@ void praat_uvafon_David_init () {
 	espeakdata_praat_init ();
 
 	praat_addMenuCommand (L"Objects", L"Technical", L"Report floating point properties", L"Report integer properties", 0, DO_Praat_ReportFloatingPointProperties);
-	praat_addMenuCommand (L"Objects", L"New", L"Create Strings from espeak voices", L"Create Strings as directory list...", 1 + praat_HIDDEN, DO_Strings_createFromEspeakVoices);
+	praat_addMenuCommand (L"Objects", L"Goodies", L"Get TukeyQ...", 0, praat_HIDDEN, DO_Praat_getTukeyQ);
+	praat_addMenuCommand (L"Objects", L"Goodies", L"Get invTukeyQ...", 0, praat_HIDDEN, DO_Praat_getInvTukeyQ);
+	praat_addMenuCommand (L"Objects", L"New", L"Create Strings from espeak voices", L"Create Strings as directory list...", praat_DEPTH_1 + praat_HIDDEN, DO_Strings_createFromEspeakVoices);
 	praat_addMenuCommand (L"Objects", L"New", L"Create iris data set", L"Create TableOfReal...", 1, DO_New_CreateIrisDataset);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Permutation...", 0, 0, DO_Permutation_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Polynomial", 0, 0, 0);
@@ -7051,6 +7314,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classFormantFilter, 0, L"Draw filter functions...", L"Draw filters...", 1, DO_FormantFilter_drawFilterFunctions);
 	praat_addAction1 (classFormantGrid, 0, L"Draw...", L"Edit", 1, DO_FormantGrid_draw);
 
+
 	praat_addAction1 (classIntensity, 0, L"To TextGrid (silences)...", L"To IntensityTier (valleys)", 0, DO_Intensity_to_TextGrid_detectSilences);
 
 	praat_addAction1 (classISpline, 0, L"ISpline help", 0, 0, DO_ISpline_help);
@@ -7249,6 +7513,7 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, L"Change gender...", L"Deepen band modulation...", 1, DO_Sound_changeGender);
 
 	praat_addAction1 (classSound, 0, L"Change speaker...", L"Deepen band modulation...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_changeSpeaker);
+	praat_addAction1 (classSound, 0, L"Copy channel ranges...", L"Extract all channels", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_copyChannelRanges);
 	praat_addAction1 (classSound, 0, L"Trim silences...", L"Resample...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_trimSilences);
 	praat_addAction1 (classSound, 0, L"To KlattGrid (simple)...", L"To Manipulation...", 1, DO_Sound_to_KlattGrid_simple);
 	praat_addAction2 (classSound, 1, classPitch, 1, L"To FormantFilter...", 0, 0, DO_Sound_and_Pitch_to_FormantFilter);
@@ -7296,8 +7561,8 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classStrings, 0, L"To Categories", 0, 0, DO_Strings_to_Categories);
 	praat_addAction1 (classStrings, 0, L"Append", 0, 0, DO_Strings_append);
-	praat_addAction1 (classStrings, 0, L"Change...", 0, praat_HIDDEN, DO_Strings_change);
-	praat_addAction1 (classStrings, 0, L"Extract part...", L"Change...", 0, DO_Strings_extractPart);
+	praat_addAction1 (classStrings, 0, L"Change...", L"Replace all...", praat_HIDDEN, DO_Strings_change);
+	praat_addAction1 (classStrings, 0, L"Extract part...", L"Replace all...", 0, DO_Strings_extractPart);
 	praat_addAction1 (classStrings, 0, L"To Permutation...", L"To Distributions", 0, DO_Strings_to_Permutation);
 	praat_addAction1 (classStrings, 2, L"To EditDistanceTable", L"To Distributions", 0, DO_Strings_to_EditDistanceTable);
 
@@ -7306,12 +7571,21 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSVD, 0, L"Extract right singular vectors", 0, 0, DO_SVD_extractRightSingularVectors);
 	praat_addAction1 (classSVD, 0, L"Extract singular values", 0, 0, DO_SVD_extractSingularValues);
 
-	praat_addAction1 (classTable, 0, L"Scatter plot (ci)...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_Table_drawScatterPlotWithConfidenceIntervals);
+	praat_addAction1 (classTable, 0, L"Box plots...", L"Draw ellipse (standard deviation)...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_boxPlots);
+	praat_addAction1 (classTable, 0, L"Normal probability plot...", L"Box plots...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_normalProbabilityPlot);
+	praat_addAction1 (classTable, 0, L"Quantile-quantile plot...", L"Normal probability plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot);
+	praat_addAction1 (classTable, 0, L"Quantile-quantile plot (between levels)...", L"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot_betweenLevels);
+	praat_addAction1 (classTable, 0, L"Scatter plot (ci)...", 0, praat_DEPTH_1 | praat_HIDDEN, DO_Table_scatterPlotWithConfidenceIntervals);
+	praat_addAction1 (classTable, 1, L"Report one-way anova...", L"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_reportOneWayAnova);
+	praat_addAction1 (classTable, 1, L"Report one-way Kruskal-Wallis...", L"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_reportOneWayKruskalWallis);
+	praat_addAction1 (classTable, 1, L"Report two-way anova...", L"Report one-way Kruskal-Wallis...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_reportTwoWayAnova);
+
 	praat_addAction1 (classTable, 0, L"To KlattTable", 0, praat_HIDDEN, DO_Table_to_KlattTable);
 	praat_addAction1 (classTable, 1, L"Get median absolute deviation...", L"Get standard deviation...", 1, DO_Table_getMedianAbsoluteDeviation);
+	praat_addAction1 (classTable, 0, L"To StringsIndex (column)...", 0, praat_HIDDEN, DO_Table_to_StringsIndex_column);
 
 	praat_addAction1 (classTableOfReal, 1, L"Report multivariate normality...", L"Get column stdev (label)...",
-	                  praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_reportMultivariateNormality);
+		praat_DEPTH_1 | praat_HIDDEN, DO_TableOfReal_reportMultivariateNormality);
 	praat_addAction1 (classTableOfReal, 0, L"Append columns", L"Append", 1, DO_TableOfReal_appendColumns);
 	praat_addAction1 (classTableOfReal, 0, L"Multivariate statistics -", 0, 0, 0);
 	praat_addAction1 (classTableOfReal, 0, L"To Discriminant", 0, 1, DO_TableOfReal_to_Discriminant);

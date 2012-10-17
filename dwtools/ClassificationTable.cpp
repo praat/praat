@@ -67,7 +67,7 @@ Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable m
 				}
 			}
 			if (my columnLabels[col] != 0) {
-				Strings_setString (thee.peek(), my columnLabels[col], i);
+				Strings_replace (thee.peek(), i, my columnLabels[col]);
 			}
 		}
 		return thee.transfer();

@@ -28,8 +28,8 @@ oo_DEFINE_CLASS (Eigen, Data)
 	oo_LONG (dimension)
 	oo_DOUBLE_VECTOR (eigenvalues, numberOfEigenvalues)
 	oo_DOUBLE_MATRIX (eigenvectors, numberOfEigenvalues, dimension)
-	
+
 oo_END_CLASS (Eigen)
 #undef ooSTRUCT
 
-/* End of file Eigen_def.h */	
+/* End of file Eigen_def.h */

@@ -23,9 +23,10 @@
 */
 
 #include "praat.h"
+
+#include "EEG_extensions.h"
 #include "ICA.h"
-#include "PCA.h"
-#include "Sound.h"
+#include "Sound_and_PCA.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -33,6 +34,83 @@
 void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
 void praat_TableOfReal_init (ClassInfo klas);
 void praat_TableOfReal_init3 (ClassInfo klas);
+
+
+/******************** EEG ********************************************/
+
+FORM (EEG_to_CrossCorrelationTable, L"EEG: To CrossCorrelationTable", L"EEG: To CrossCorrelationTable...")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"10.0")
+	REAL (L"Lag time (s)", L"0.05")
+	TEXTFIELD (L"Channel ranges", L"1:64")
+	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	OK
+DO
+	double startTime = GET_REAL (L"left Time range"), endTime = GET_REAL (L"right Time range");
+	double lagTime = GET_REAL (L"Lag time");
+	const wchar_t *channelRanges = GET_STRING (L"Channel ranges");
+	LOOP {
+		iam (EEG);
+		autoCrossCorrelationTable cct = EEG_to_CrossCorrelationTable (me, startTime, endTime, lagTime, channelRanges);
+		praat_new (cct.transfer(), my name, L"_", Melder_integer (lagTime*1000)); // lagTime to ms
+	}
+END
+
+FORM (EEG_to_Covariance, L"EEG: To Covariance", L"EEG: To Covariance...")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"10.0")
+	TEXTFIELD (L"Channel ranges", L"1:64")
+	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	OK
+DO
+	double startTime = GET_REAL (L"left Time range"), endTime = GET_REAL (L"right Time range");
+	const wchar_t *channelRanges = GET_STRING (L"Channel ranges");
+	LOOP {
+		iam (EEG);
+		autoCovariance cov = EEG_to_Covariance (me, startTime, endTime, channelRanges);
+		praat_new (cov.transfer(), my name);
+	}
+END
+
+FORM (EEG_to_PCA, L"EEG: To PCA", L"EEG: To PCA...")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"10.0")
+	TEXTFIELD (L"Channel ranges", L"1:64")
+	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
+	OPTIONMENU (L"Use", 1)
+		OPTION (L"Covariance")
+		OPTION (L"Correlation")
+	OK
+DO
+	double startTime = GET_REAL (L"left Time range"), endTime = GET_REAL (L"right Time range");
+	const wchar_t *channelRanges = GET_STRING (L"Channel ranges");
+	bool useCorrelation = GET_INTEGER (L"Use") == 2;
+	LOOP {
+		iam (EEG);
+		autoPCA pca = EEG_to_PCA (me, startTime, endTime, channelRanges, useCorrelation);
+		praat_new (pca.transfer(), my name);
+	}
+END
+
+FORM (EEG_and_PCA_to_EEG_principalComponents, L"EEG & PCA: To EEG (principal components)", L"EEG & PCA: To EEG (principal components)...")
+	INTEGER (L"Number of components", L"0 (=all)")
+	OK
+DO
+	EEG me = FIRST (EEG);
+	PCA thee = FIRST (PCA);
+	autoEEG him = EEG_and_PCA_to_EEG_principalComponents (me, thee, GET_INTEGER (L"Number of components"));
+	praat_new (him.transfer(), my name, L"_pc");
+END
+
+FORM (EEG_and_PCA_to_EEG_whiten, L"EEG & PCA: To EEG (whiten)", L"EEG & PCA: To EEG (whiten)...")
+	INTEGER (L"Number of components", L"0 (=all)")
+	OK
+DO
+	EEG me = FIRST (EEG);
+	PCA thee = FIRST (PCA);
+	autoEEG him = EEG_and_PCA_to_EEG_whiten (me, thee, GET_INTEGER (L"Number of components"));
+	praat_new (him.transfer(), my name, L"_white");
+END
 
 /********************** CrossCorrelationTable(s) ******************/
 
@@ -74,23 +152,16 @@ DIRECT (CrossCorrelationTable_help)
 	Melder_help (L"CrossCorrelationTable");
 END
 
-DIRECT (CrossCorrelationTable_to_PCA)
-	LOOP {
-		iam (CrossCorrelationTable);
-		praat_new (SSCP_to_PCA (me), my name);
-	}
-END
-
-FORM (Sound_and_PCA_projectChannels, L"Sound & PCA: To Sound (project channels)", 0)
+FORM (Sound_and_PCA_principalComponents, L"Sound & PCA: To Sound (principal components)", 0)
 	NATURAL (L"Number of components", L"10")
 	OK
 DO
 	Sound me = FIRST (Sound);
 	PCA thee = FIRST (PCA);
-	praat_new (Sound_and_PCA_projectChannels (me, thee, GET_INTEGER (L"Number of components")), Thing_getName (me), L"_projected");
+	praat_new (Sound_and_PCA_principalComponents (me, thee, GET_INTEGER (L"Number of components")), Thing_getName (me), L"_pc");
 END
 
-FORM (Sound_and_PCA_whitenChannels, L"Sound & PCA: To Sound (whiten channels)", 0)
+FORM (Sound_and_PCA_whitenChannels, L"Sound & PCA: To Sound (white channels)", 0)
 	NATURAL (L"Number of components", L"10")
 	OK
 DO
@@ -322,7 +393,7 @@ DO
 	}
 END
 
-FORM (Sound_to_Sound_whitenChannels, L"Sound: To Sound (whiten channels)", L"Sound: To Sound (whiten channels)...")
+FORM (Sound_to_Sound_whiteChannels, L"Sound: To Sound (white channels)", L"Sound: To Sound (white channels)...")
     POSITIVE (L"Variance fraction to keep", L"0.99")
     OK
 DO
@@ -389,7 +460,7 @@ void praat_BSS_init (void) {
 
 	praat_addAction1 (classCrossCorrelationTable, 0, L"CrossCorrelationTable help", 0, 0, DO_CrossCorrelationTable_help);
 	praat_SSCP_as_TableOfReal_init (classCrossCorrelationTable);
-	praat_addAction1 (classCrossCorrelationTable, 0, L"To PCA", 0, 0, DO_CrossCorrelationTable_to_PCA);
+
 	praat_addAction1 (classCrossCorrelationTable, 0, L"To CrossCorrelationTables", 0, 0, DO_CrossCorrelationTable_to_CrossCorrelationTables);
 
 	praat_addAction1 (classCrossCorrelationTables, 0, L"CrossCorrelationTables help", 0, 0, DO_CrossCorrelationTables_help);
@@ -400,6 +471,14 @@ void praat_BSS_init (void) {
 	praat_TableOfReal_init3 (classDiagonalizer);
 	praat_addAction1 (classDiagonalizer, 0, L"To MixingMatrix", 0, 0, DO_Diagonalizer_to_MixingMatrix);
 
+	praat_addAction1 (classEEG, 0, L"To PCA...", L"To ERPTier...", 0, DO_EEG_to_PCA);
+	praat_addAction1 (classEEG, 0, L"To CrossCorrelationTable...", L"To PCA...", praat_HIDDEN, DO_EEG_to_CrossCorrelationTable);
+	praat_addAction1 (classEEG, 0, L"To Covariance...", L"To CrossCorrelationTable...", praat_HIDDEN, DO_EEG_to_Covariance);
+
+	praat_addAction2 (classEEG, 1, classPCA, 1, L"To EEG (principal components)...", 0, 0, DO_EEG_and_PCA_to_EEG_principalComponents);
+	praat_addAction2 (classEEG, 1, classPCA, 1, L"To EEG (whiten)...", 0, 0, DO_EEG_and_PCA_to_EEG_whiten);
+
+
 	praat_TableOfReal_init3 (classMixingMatrix);
 
 	praat_addAction1 (classSound, 0, L"To MixingMatrix...",  L"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_MixingMatrix);
@@ -408,16 +487,16 @@ void praat_BSS_init (void) {
 	praat_addAction1 (classSound, 0, L"To CrossCorrelationTables...",  L"Resample...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_CrossCorrelationTables);
 
 	praat_addAction1 (classSound, 0, L"To Sound (blind source separation)...", L"Resample...", 1, DO_Sound_to_Sound_bss);
-    praat_addAction1 (classSound, 0, L"To Sound (whiten channels)...", L"Resample...", 1, DO_Sound_to_Sound_whitenChannels);
-    praat_addAction1 (classSound, 0, L"To CrossCorrelationTable (combined)...",  L"Cross-correlate...", 1, DO_Sounds_to_CrossCorrelationTable_combined);
+    praat_addAction1 (classSound, 0, L"To Sound (white channels)...", L"Resample...", 1, DO_Sound_to_Sound_whiteChannels);
+    praat_addAction1 (classSound, 2, L"To CrossCorrelationTable (combined)...",  L"Cross-correlate...", 1, DO_Sounds_to_CrossCorrelationTable_combined);
 
 	praat_addAction1 (classTableOfReal, 0, L"To MixingMatrix", L"To Configuration", praat_HIDDEN, DO_TableOfReal_to_MixingMatrix);
 
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, L"Mix", 0, 0, DO_Sound_and_MixingMatrix_mix);
 	praat_addAction2 (classSound, 1, classMixingMatrix, 1, L"Unmix", 0, 0, DO_Sound_and_MixingMatrix_unmix);
 
-	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (whiten channels)...", 0 , 0, DO_Sound_and_PCA_whitenChannels);
-	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (project channels)...", 0 , 0, DO_Sound_and_PCA_projectChannels);
+	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (white channels)...", 0 , 0, DO_Sound_and_PCA_whitenChannels);
+	praat_addAction2 (classSound, 1, classPCA, 1, L"To Sound (principal components)...", 0 , 0, DO_Sound_and_PCA_principalComponents);
 
 	praat_addAction2 (classCrossCorrelationTable, 1, classDiagonalizer, 1, L"Diagonalize", 0 , 0, DO_CrossCorrelationTable_and_Diagonalizer_diagonalize);
 

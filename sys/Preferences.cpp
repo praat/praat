@@ -20,11 +20,6 @@
 #include "Preferences.h"
 #include "Collection.h"
 
-/*
- * Though Preference inherits from Data,
- * we will use SimpleString routines with it.
- */
-
 Thing_define (Preference, SimpleString) {
 	// new data:
 	public:
@@ -35,10 +30,9 @@ Thing_define (Preference, SimpleString) {
 		int (*getValue) (const wchar_t *text);
 	// overridden methods:
 		void v_destroy ();
+		/* Warning: copy methods etc. not implemented. */
 };
 Thing_implement (Preference, SimpleString, 0);
-
-/* Warning: copy methods etc. not implemented. */
 
 void structPreference :: v_destroy () {
 	Melder_free (string);

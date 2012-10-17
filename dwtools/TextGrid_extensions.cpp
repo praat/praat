@@ -653,7 +653,6 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
 // Postcondition: my xmin preserved
 void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes) {
 	try {
-		trace ("xmin before %lf", my xmin);
         double xmax_previous = my xmax, time_shift = my xmax - thy xmin;
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, L"");
@@ -669,7 +668,6 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 			Collection_addItem (my intervals, ti.transfer());
 		}
 		my xmax = preserveTimes ? thy xmax : xmax_previous;
-		trace ("xmin after %lf", my xmin);
 	} catch (MelderError) {
 		Melder_throw ("IntervalTiers not appended.");
 	}
@@ -704,20 +702,21 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 		// last intervals must have the same end time
 		double xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 		for (long itier = 1; itier <= my tiers -> size; itier++) {
-			Function anyTier = (Function) my tiers -> item[itier];
-			if (anyTier -> classInfo == classIntervalTier) {
-                IntervalTier ti = (IntervalTier) anyTier;
+			Function myTier = (Function) my tiers -> item[itier], thyTier = (Function) thy tiers -> item[itier];
+			if (myTier -> classInfo == classIntervalTier && thyTier -> classInfo == classIntervalTier) {
+                IntervalTier ti = (IntervalTier) myTier;
 				IntervalTiers_append_inline (ti, (IntervalTier) thy tiers -> item[itier], preserveTimes);
                 // make sure last interval has correct end tTime
                 TextInterval last = (TextInterval) ti -> intervals -> item [ti -> intervals -> size];
                 last -> xmax = xmax;
                 Melder_assert (last -> xmax > last -> xmin);
-			} else { // TextTier
-                TextTier ti = (TextTier) anyTier;
+			} else if (myTier -> classInfo == classTextTier && thyTier -> classInfo == classTextTier) {
+                TextTier ti = (TextTier) myTier;
 				TextTiers_append_inline (ti, (TextTier) thy tiers -> item [itier], preserveTimes);
                 ti -> xmax = xmax;
+			} else {
+				Melder_throw ("Tier number ", Melder_integer (itier), " in the second TextGrid is of different type as the corresponding tier in the first TextGrid.");
 			}
-			trace ("tier %ld, xmin %lf", itier, anyTier -> xmin);
 		}
 		my xmax = xmax;
 	} catch (MelderError) {

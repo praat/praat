@@ -64,9 +64,9 @@ static Strings Strings_insertAndExpand (Strings me, long position, const wchar_t
 		Melder_assert (position >= 1);
 		Melder_assert (position <= my numberOfStrings + 1);
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector<wchar_t *> (1, my numberOfStrings + 1);
+		thy strings = NUMvector<wchar *> (1, my numberOfStrings + 1);
 		for (long i = 1, from = 1; i <= my numberOfStrings + 1; i++, from++) {
-			const wchar_t *to_copy = my strings[from];
+			const wchar *to_copy = my strings[from];
 			if (i == position) {
 				to_copy = newstring; from--;
 			}
@@ -154,7 +154,7 @@ Strings espeakdata_voices_getNames (Table me, long column) {
 			Melder_throw ("Illegal columnn.");
 		}
 		autoStrings thee = Thing_new (Strings);
-		thy strings = NUMvector <wchar_t *> (1, my rows -> size);
+		thy strings = NUMvector <wchar *> (1, my rows -> size);
 		thy numberOfStrings = 0;
 		for (long irow = 1; irow <= my rows -> size; irow++) {
 			thy strings[irow] = Melder_wcsdup (Table_getStringValue_Assert (me, irow, column));

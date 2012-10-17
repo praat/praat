@@ -64,7 +64,6 @@
 */
 
 #include <vector>
-#include "Interpreter.h"
 #include "SVD.h"
 #include "Eigen.h"
 #include "NUMclapack.h"
@@ -74,7 +73,6 @@
 #include "NUM2.h"
 #include "NUMmachar.h"
 #include "melder.h"
-#include <ctype.h>
 
 #include "gsl_errno.h"
 #include "gsl_sf_bessel.h"
@@ -122,405 +120,21 @@ int NUMdmatrix_hasInfinities (double **m, long rb, long re, long cb, long ce) {
 	return max >= NUMfpp -> rmax || min <= - NUMfpp -> rmax;
 }
 
-int NUMstring_containsPrintableCharacter (const wchar_t *s) {
-	long len;
-	if (s == NULL || ( (len = wcslen (s)) == 0)) {
-		return 0;
-	}
-	for (long i = 0; i < len; i++) {
-		int c = s[i];
-		if (isgraph (c)) {
-			return 1;
-		}
-	}
-	return 0;
-}
-
-double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found) {
-	*numbers_found = Melder_countTokens (s);
-	if (*numbers_found < 1) {
-		Melder_throw ("Empty string.");
-	}
-	autoNUMvector<double> numbers (1, *numbers_found);
-	long inum = 1;
-	for (wchar_t *token = Melder_firstToken (s); token != 0; token = Melder_nextToken (), inum++) {
-		Interpreter_numericExpression (0, token, &numbers[inum]);
-	}
-	return numbers.transfer();
-}
-#if 0
-int NUMstrings_equal (wchar_t **s1, wchar_t **s2, long lo, long hi) {
-	for (long i = lo; i <= hi; i++) {
-		if (Melder_wcscmp (s1[i], s2[i])) {
-			return 0;
-		}
-	}
-	return 1;
-}
-#endif
-void NUMstrings_copyElements (wchar_t **from, wchar_t **to, long lo, long hi) {
-	for (long i = lo; i <= hi; i++) {
-		Melder_free (to[i]);
-		if (from[i]) {
-			to[i] = Melder_wcsdup (from[i]);
-		}
-	}
-}
-
-void NUMstrings_free (wchar_t **s, long lo, long hi) {
-	if (s == NULL) {
-		return;
-	}
-	for (long i = lo; i <= hi; i++) {
-		Melder_free (s[i]);
-	}
-	NUMvector_free<wchar_t *> (s, lo);
-}
-
-wchar_t **NUMstrings_copy (wchar_t **from, long lo, long hi) {
-	autoNUMvector<wchar_t *> to (lo, hi);
-	NUMstrings_copyElements (from, to.peek(), lo, hi);
-	return to.transfer();
-}
-
-static wchar_t *appendNumberToString (const wchar_t *s, long number) {
-	wchar_t buf[12];
-	long ncharb, nchars = 0;
-
-	ncharb = swprintf (buf, 12, L"%ld", number);
-	if (s != NULL) {
-		nchars = wcslen (s);
-	}
-	wchar_t *newc = Melder_calloc (wchar_t, nchars + ncharb + 1);
-	if (nchars > 0) {
-		wcsncpy (newc, s, nchars);
-	}
-	wcsncpy (newc + nchars, buf, ncharb + 1);
-	return newc;
-}
-
-int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
-                                       const wchar_t *pre, long number, long increment) {
-	for (long i = lo; i <= hi; i++, number += increment) {
-		wchar_t *newc = appendNumberToString (pre, number);
-		if (newc == NULL) {
-			return 0;
-		}
-		Melder_free (s[i]);
-		s[i] = newc;
-	}
-	return 1;
-}
-
-#define HIGHBYTE(x) ((unsigned char) ((x) & 0xFF))
-#define LOWBYTE(x)  ((unsigned char) ((x) >> 8 & 0xFF))
-
-/* a+b=c in radix 256 */
-void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n);
-void NUMstring_add (unsigned char *a, unsigned char *b, unsigned char *c, long n) {
-	int j;
-	unsigned short reg = 0;
-
-	for (j = n; j > 1; j--) {
-		reg = a[j] + b[j] + HIGHBYTE (reg);
-		c[j + 1] = LOWBYTE (reg);
-	}
-}
-
-wchar_t *strstr_regexp (const wchar_t *string, const wchar_t *search_regexp) {
-	wchar_t *charp = 0;
-	const wchar_t *compileMsg;
-	regexp *compiled_regexp = CompileRE ( (regularExp_CHAR *) search_regexp, &compileMsg, 0);
-
-	if (compiled_regexp == 0) {
-		Melder_throw ("No regexp");
-	}
-
-	if (ExecRE (compiled_regexp, NULL, (regularExp_CHAR *) string, NULL, 0, '\0', '\0', NULL, NULL, NULL)) {
-		charp = (wchar_t *) compiled_regexp -> startp[0];
-	}
-
-	free (compiled_regexp);
-	return charp;
-}
-
-wchar_t *str_replace_literal (const wchar_t *string, const wchar_t *search, const wchar_t *replace,
-                              long maximumNumberOfReplaces, long *nmatches) {
-	if (string == 0 || search == 0 || replace == 0) {
-		return NULL;
-	}
-
-
-	int len_string = wcslen (string);
-	if (len_string == 0) {
-		maximumNumberOfReplaces = 1;
-	}
-	int len_search = wcslen (search);
-	if (len_search == 0) {
-		maximumNumberOfReplaces = 1;
-	}
-
-	/*
-		To allocate memory for 'result' only once, we have to know how many
-		matches will occur.
-	*/
-
-	const wchar_t *pos = string; //current position / start of current match
-	*nmatches = 0;
-	if (maximumNumberOfReplaces <= 0) {
-		maximumNumberOfReplaces = LONG_MAX;
-	}
-
-	if (len_search == 0) { /* Search is empty string... */
-		if (len_string == 0) {
-			*nmatches = 1;    /* ...only matches empty string */
-		}
-	} else {
-		if (len_string != 0) { /* Because empty string always matches */
-			while ( (pos = wcsstr (pos, search)) && *nmatches < maximumNumberOfReplaces) {
-				pos += len_search;
-				(*nmatches) ++;
-			}
-		}
-	}
-
-	int len_replace = wcslen (replace);
-	int len_result = len_string + *nmatches * (len_replace - len_search);
-	wchar_t *result = Melder_malloc (wchar_t, (len_result + 1) * sizeof (wchar_t));
-	result[len_result] = '\0';
-
-	const wchar_t *posp = pos = string;
-	int nchar = 0, result_nchar = 0;
-	for (long i = 1; i <= *nmatches; i++) {
-		pos = wcsstr (pos, search);
-
-		/*
-			Copy gap between end of previous match and start of current.
-		*/
-
-		nchar = (pos - posp);
-		if (nchar > 0) {
-			wcsncpy (result + result_nchar, posp, nchar);
-			result_nchar += nchar;
-		}
-
-		/*
-			Insert the replace string in result.
-		*/
-
-		wcsncpy (result + result_nchar, replace, len_replace);
-		result_nchar += len_replace;
-
-		/*
-			Next search starts after the match.
-		*/
-
-		pos += len_search;
-		posp = pos;
-	}
-
-	/*
-		Copy gap between end of match and end of string.
-	*/
-
-	pos = string + len_string;
-	nchar = pos - posp;
-	if (nchar > 0) {
-		wcsncpy (result + result_nchar, posp, nchar);
-	}
-	return result;
-}
-
-wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
-                             const wchar_t *replaceRE, long maximumNumberOfReplaces, long *nmatches) {
-	int buf_nchar = 0;				/* # characters in 'buf' */
-	int gap_copied = 0;
-	int nchar, reverse = 0;
-	int errorType;
-	wchar_t prev_char = '\0';
-	const wchar_t *pos; 	/* current position in 'string' / start of current match */
-	const wchar_t *posp; /* end of previous match */
-	autostring buf;
-
-	*nmatches = 0;
-	if (string == 0 || compiledSearchRE == 0 || replaceRE == 0) {
-		return 0;
-	}
-
-	int string_length = wcslen (string);
-	//int replace_length = wcslen (replaceRE);
-	if (string_length == 0) {
-		maximumNumberOfReplaces = 1;
-	}
-
-	long i = maximumNumberOfReplaces > 0 ? 0 : - string_length;
-
-	/*
-		We do not know the size of the replaced string in advance,
-		therefor, we allocate a replace buffer twice the size of the
-		original string. After all replaces have taken place we do a
-		final realloc to the then exactly known size.
-		If during the replace, the size of the buffer happens to be too
-		small (this is signalled by the replaceRE function),
-		we double its size and restart the replace.
-	*/
-
-	int buf_size = MAX (2 * string_length, 100);
-	buf.resize (buf_size);
-
-	pos = posp = string;
-	while (ExecRE (compiledSearchRE, 0, (regularExp_CHAR *) pos, 0, reverse, prev_char, '\0', 0, 0, 0) && i++ < maximumNumberOfReplaces) {
-		/*
-			Copy gap between the end of the previous match and the start
-			of the current match.
-			Check buffer overflow. pos == posp ? '\0' : pos[-1],
-		*/
-
-		pos = (wchar_t *) compiledSearchRE -> startp[0];
-		nchar = pos - posp;
-		if (nchar > 0 && ! gap_copied) {
-			if (buf_nchar + nchar + 1 > buf_size) {
-				buf_size *= 2;
-				buf.resize (buf_size);
-			}
-			wcsncpy (buf.peek() + buf_nchar, posp, nchar);
-			buf_nchar += nchar;
-		}
-
-		gap_copied = 1;
-
-		/*
-			Do the substitution. We can only check afterwards for buffer
-			overflow. SubstituteRE puts null byte at last replaced position and signals when overflow.
-		*/
-
-		if ( (SubstituteRE (compiledSearchRE, (regularExp_CHAR *) replaceRE, (regularExp_CHAR *) buf.peek() + buf_nchar, buf_size - buf_nchar, &errorType)) == false) {
-			if (errorType == 1) { // not enough memory
-				buf_size *= 2;
-				buf.resize (buf_size);
-				Melder_clearError ();
-				i--; // retry
-				continue;
-			}
-			Melder_throw ("Error during substitution.");
-		}
-
-		// Buffer is not full, get number of characters added;
-
-		nchar = wcslen (buf.peek() + buf_nchar);
-		buf_nchar += nchar;
-
-		// Update next start position in search string.
-
-		posp = pos;
-		pos = (wchar_t *) compiledSearchRE -> endp[0];
-		if (pos != posp) {
-			prev_char = pos[-1];
-		}
-		gap_copied = 0;
-		posp = pos; //pb 20080121
-		(*nmatches) ++;
-		// at end of string?
-		// we need this because .* matches at end of a string
-		if (pos - string == string_length) {
-			break;
-		}
-	}
-
-	// Copy last part of string to destination string
-
-	nchar = (string + string_length) - pos;
-	buf_size = buf_nchar + nchar + 1;
-	buf.resize (buf_size);
-
-	wcsncpy (buf.peek() + buf_nchar, pos, nchar);
-	buf[buf_size - 1] = '\0';
-	return buf.transfer();
-}
-
-static wchar_t **strs_replace_literal (wchar_t **from, long lo, long hi, const wchar_t *search,
-	const wchar_t *replace, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
-	if (search == NULL || replace == NULL) {
-		return NULL;
-	}
-	autostringvector result (lo, hi);
-	try {
-		long nmatches_sub = 0;
-		*nmatches = 0; *nstringmatches = 0;
-		for (long i = lo; i <= hi; i++) {
-			/* Treat a NULL as an empty string */
-			const wchar_t *string = from[i] == NULL ? L"" : from[i];
-
-			result[i] = str_replace_literal (string, search, replace, maximumNumberOfReplaces, &nmatches_sub);
-			if (nmatches_sub > 0) {
-				*nmatches += nmatches_sub;
-				(*nstringmatches) ++;
-			}
-		}
-		return result.transfer();
-	} catch (MelderError) {
-		return 0;
-	}
-}
-
-static wchar_t **strs_replace_regexp (wchar_t **from, long lo, long hi, const wchar_t *searchRE,
-	const wchar_t *replaceRE, int maximumNumberOfReplaces, long *nmatches, long *nstringmatches) {
-	if (searchRE == NULL || replaceRE == NULL) {
-		return NULL;
-	}
-	autostringvector result;
-	try {
-		regexp *compiledRE;
-		const wchar_t *compileMsg;
-		long nmatches_sub = 0;
-
-		compiledRE = CompileRE ( (regularExp_CHAR *) searchRE, &compileMsg, 0);
-		if (compiledRE == NULL) {
-			Melder_throw ("No regexp ");
-		}
-
-		result.reset (lo, hi);
-
-		*nmatches = 0; *nstringmatches = 0;
-		for (long i = lo; i <= hi; i++) {
-			/* Treat a NULL as an empty string */
-			const wchar_t *string = from[i] == NULL ? L"" : from[i];
-			result [i] = str_replace_regexp (string, compiledRE, replaceRE,
-			                                 maximumNumberOfReplaces, &nmatches_sub);
-			if (nmatches_sub > 0) {
-				*nmatches += nmatches_sub;
-				(*nstringmatches) ++;
-			}
-		}
-		return result.transfer();
-	} catch (MelderError) {
-		return 0;
-	}
-}
-
-wchar_t **strs_replace (wchar_t **from, long lo, long hi, const wchar_t *search, const wchar_t *replace,
-                        int maximumNumberOfReplaces, long *nmatches, long *nstringmatches, int use_regexp) {
-	if (use_regexp) return strs_replace_regexp (from, lo, hi, search,
-		                       replace, maximumNumberOfReplaces, nmatches, nstringmatches);
-	else return strs_replace_literal (from, lo, hi, search, replace,
-		                                  maximumNumberOfReplaces, nmatches, nstringmatches);
-}
-
 void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *name) {
-	long i, j, k, npc = 5;
+	long npc = 5;
 	ldiv_t n = ldiv (nc, npc);
 
 	MelderInfo_open ();
 	MelderInfo_write (name, L"=[");
-	for (i = 1; i <= nr; i++) {
-		for (j = 1; j <= n.quot; j++) {
-			for (k = 1; k <= npc; k++) {
+	for (long i = 1; i <= nr; i++) {
+		for (long j = 1; j <= n.quot; j++) {
+			for (long k = 1; k <= npc; k++) {
 				MelderInfo_write (Melder_double (m[i][ (j - 1) *npc + k]), (k < npc ? L", " : L""));
 			}
 			MelderInfo_write (j < n.quot ? L",\n" : L"");
 		}
 
-		for (k = 1; k <= n.rem; k++) {
+		for (long k = 1; k <= n.rem; k++) {
 			MelderInfo_write (Melder_double (m[i][n.quot * npc + k]), (k < n.rem ? L", " : L""));
 		}
 		MelderInfo_write (i < nr ? L";\n" : L"];\n");
@@ -529,14 +143,13 @@ void NUMdmatrix_printMatlabForm (double **m, long nr, long nc, const wchar_t *na
 }
 
 void NUMcentreRows (double **a, long rb, long re, long cb, long ce) {
-	long i, j;
-	for (i = rb; i <= re; i++) {
+	for (long i = rb; i <= re; i++) {
 		double rowmean = 0;
-		for (j = cb; j <= ce; j++) {
+		for (long j = cb; j <= ce; j++) {
 			rowmean += a[i][j];
 		}
 		rowmean /= (ce - cb + 1);
-		for (j = cb; j <= ce; j++) {
+		for (long j = cb; j <= ce; j++) {
 			a[i][j] -= rowmean;
 		}
 	}
@@ -564,44 +177,44 @@ void NUMdoubleCentre (double **a, long rb, long re, long cb, long ce) {
 }
 
 void NUMnormalizeColumns (double **a, long nr, long nc, double norm) {
-	long i, j; double s;
 	Melder_assert (norm > 0);
-	for (j = 1; j <= nc; j++) {
-		for (s = 0, i = 1; i <= nr; i++) {
+	for (long j = 1; j <= nc; j++) {
+		double s = 0;
+		for (long i = 1; i <= nr; i++) {
 			s += a[i][j] * a[i][j];
 		}
 		if (s <= 0) {
 			continue;
 		}
 		s = sqrt (norm / s);
-		for (i = 1; i <= nr; i++) {
+		for (long i = 1; i <= nr; i++) {
 			a[i][j] *= s;
 		}
 	}
 }
 
 void NUMnormalizeRows (double **a, long nr, long nc, double norm) {
-	long i, j; double s;
 	Melder_assert (norm > 0);
-	for (i = 1; i <= nr; i++) {
-		for (s = 0, j = 1; j <= nc; j++) {
+	for (long i = 1; i <= nr; i++) {
+		double s = 0;
+		for (long j = 1; j <= nc; j++) {
 			s += a[i][j] * a[i][j];
 		}
 		if (s <= 0) {
 			continue;
 		}
 		s = sqrt (norm / s);
-		for (j = 1; j <= nc; j++) {
+		for (long j = 1; j <= nc; j++) {
 			a[i][j] *= s;
 		}
 	}
 }
 
 void NUMnormalize (double **a, long nr, long nc, double norm) {
-	double sq; long i, j;
 	Melder_assert (norm > 0);
-	for (sq = 0, i = 1; i <= nr; i++) {
-		for (j = 1; j <= nc; j++) {
+	double sq = 0;
+	for (long i = 1; i <= nr; i++) {
+		for (long j = 1; j <= nc; j++) {
 			sq += a[i][j] * a[i][j];
 		}
 	}
@@ -609,36 +222,38 @@ void NUMnormalize (double **a, long nr, long nc, double norm) {
 		return;
 	}
 	norm = sqrt (norm / sq);
-	for (i = 1; i <= nr; i++) {
-		for (j = 1; j <= nc; j++) {
+	for (long i = 1; i <= nr; i++) {
+		for (long j = 1; j <= nc; j++) {
 			a[i][j] *= norm;
 		}
 	}
 }
 
 void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce) {
-	long i, j, n = re - rb + 1;
+	long n = re - rb + 1;
 	if (n < 2) {
 		return;
 	}
-	for (j = cb; j <= ce; j++) {
-		double ep = 0, s = 0, ave, sdev, var = 0;
-		for (i = rb; i <= re; i++) {
+	for (long j = cb; j <= ce; j++) {
+		double ep = 0, s = 0, sdev, var = 0;
+		for (long i = rb; i <= re; i++) {
 			s += a[i][j];
 		}
-		ave = s / n;
-		for (i = rb; i <= re; i++) {
+		double ave = s / n;
+		for (long i = rb; i <= re; i++) {
 			s = a[i][j] - ave;
 			ep += s;
 			var += s * s;
 		}
-		if (ave != 0) for (i = rb; i <= re; i++) {
+		if (ave != 0) {
+			for (long i = rb; i <= re; i++) {
 				a[i][j] -= ave;
 			}
+		}
 		if (var > 0) {
 			var = (var - ep * ep / n) / (n - 1);
 			sdev = sqrt (var);
-			for (i = rb; i <= re; i++) {
+			for (long i = rb; i <= re; i++) {
 				a[i][j] /= sdev;
 			}
 		}
@@ -646,28 +261,30 @@ void NUMstandardizeColumns (double **a, long rb, long re, long cb, long ce) {
 }
 
 void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce) {
-	long i, j, n = ce - cb + 1;
+	long n = ce - cb + 1;
 	if (n < 2) {
 		return;
 	}
-	for (i = rb; i <= re; i++) {
-		double ep = 0, s = 0, ave, sdev, var = 0;
-		for (j = cb; j <= ce; j++) {
+	for (long i = rb; i <= re; i++) {
+		double ep = 0, s = 0, sdev, var = 0;
+		for (long j = cb; j <= ce; j++) {
 			s += a[i][j];
 		}
-		ave = s / n;
-		for (j = cb; j <= ce; j++) {
+		double ave = s / n;
+		for (long j = cb; j <= ce; j++) {
 			s = a[i][j] - ave;
 			ep += s;
 			var += s * s;
 		}
-		if (ave != 0) for (j = cb; j <= ce; j++) {
+		if (ave != 0) {
+			for (long j = cb; j <= ce; j++) {
 				a[i][j] -= ave;
 			}
+		}
 		if (var > 0) {
 			var = (var - ep * ep / n) / (n - 1);
 			sdev = sqrt (var);
-			for (j = cb; j <= ce; j++) {
+			for (long j = cb; j <= ce; j++) {
 				a[i][j] /= sdev;
 			}
 		}
@@ -675,31 +292,62 @@ void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce) {
 }
 
 void NUMaverageColumns (double **a, long rb, long re, long cb, long ce) {
-	long i, j, n = re - rb + 1;
+	long n = re - rb + 1;
 	if (n < 2) {
 		return;
 	}
-	for (j = cb; j <= ce; j++) {
+	for (long j = cb; j <= ce; j++) {
 		double ave = 0;
-		for (i = rb; i <= re; i++) {
+		for (long i = rb; i <= re; i++) {
 			ave += a[i][j];
 		}
 		ave /= n;
-		for (i = rb; i <= re; i++) {
+		for (long i = rb; i <= re; i++) {
 			a[i][j] = ave;
 		}
 	}
 
 }
 
-void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
-                       double *average, double *variance) {
-	long i;
+void NUMvector_avevar (double *a, long n, double *average, double *variance) {
+
+	double eps = 0, mean = 0, var = 0;
+
+	for (long i = 1; i <= n; i++) {
+		mean += a[i];
+	}
+
+	mean /= n;
+
+	if (average != NULL) {
+		*average = mean;
+	}
+
+	if (variance == NULL) {
+		return;
+	}
+
+	if (n > 1) {
+		for (long i = 1; i <= n; i++) {
+			double s = a[i] - mean;
+			eps += s;
+			var += s * s;
+		}
+
+		var = (var - eps * eps / n) / (n - 1);
+	} else {
+		var = NUMundefined;
+	}
+	*variance = var;
+}
+
+void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average, double *variance) {
+
 	double eps = 0, mean = 0, var = 0;
 
 	Melder_assert (nr > 0 && nc > 0 && icol > 0 && icol <= nc);
 
-	for (i = 1; i <= nr; i++) {
+	for (long i = 1; i <= nr; i++) {
 		mean += a[i][icol];
 	}
 
@@ -714,7 +362,7 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
 	}
 
 	if (nr > 1) {
-		for (i = 1; i <= nr; i++) {
+		for (long i = 1; i <= nr; i++) {
 			double s = a[i][icol] - mean;
 			eps += s;
 			var += s * s;
@@ -731,13 +379,13 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
 void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
                         double *average1, double *variance1, double *average2, double *variance2,
                         double *covariance) {
-	long i, ndf = nr - 1;
+	long ndf = nr - 1;
 	double eps1 = 0, eps2 = 0, mean1 = 0, mean2 = 0;
 	double var1 = 0, var2 = 0, covar = 0;
 
 	Melder_assert (icol1 > 0 && icol1 <= nc && icol2 > 0 && icol2 <= nc);
 
-	for (i = 1; i <= nr; i++) {
+	for (long i = 1; i <= nr; i++) {
 		mean1 += a[i][icol1];
 		mean2 += a[i][icol2];
 	}
@@ -757,7 +405,7 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	}
 
 	if (nr > 1) {
-		for (i = 1; i <= nr; i++) {
+		for (long i = 1; i <= nr; i++) {
 			double s1 = a[i][icol1] - mean1;
 			double s2 = a[i][icol2] - mean2;
 			eps1 += s1;
@@ -833,20 +481,20 @@ double NUMmultivariateKurtosis (double **x, long nrows, long ncols, int method) 
 }
 
 void eigenSort (double d[], double **v, long n, int sort) {
-	long i, j, k;
 	if (sort == 0) {
 		return;
 	}
-	for (i = 1; i < n; i++) {
+	for (long i = 1; i < n; i++) {
+		long k;
 		double temp = d[k = i];
 		if (sort > 0) {
-			for (j = i + 1; j <= n; j++) {
+			for (long j = i + 1; j <= n; j++) {
 				if (d[j] > temp) {
 					temp = d[k = j];
 				}
 			}
 		} else {
-			for (j = i + 1; j <= n; j++) {
+			for (long j = i + 1; j <= n; j++) {
 				if (d[j] < temp) {
 					temp = d[k = j];
 				}
@@ -856,7 +504,7 @@ void eigenSort (double d[], double **v, long n, int sort) {
 			d[k] = d[i];
 			d[i] = temp;
 			if (v) {
-				for (j = 1; j <= n; j++) {
+				for (long j = 1; j <= n; j++) {
 					temp = v[j][i];
 					v[j][i] = v[j][k];
 					v[j][k] = temp;
@@ -1008,17 +656,16 @@ double NUMvector_normalize2 (double v[], long n) {
 #undef TINY
 
 void NUMcholeskySolve (double **a, long n, double d[], double b[], double x[]) {
-	long i, k;
-	double sum;
-
-	for (i = 1; i <= n; i++) { /* Solve L.y=b */
-		for (sum = b[i], k = i - 1; k >= 1; k--) {
+	for (long i = 1; i <= n; i++) { /* Solve L.y=b */
+		double sum = b[i];
+		for (long k = i - 1; k >= 1; k--) {
 			sum -= a[i][k] * x[k];
 		}
 		x[i] = sum / d[i];
 	}
-	for (i = n; i >= 1; i--) { /* Solve L^T.x=y */
-		for (sum = x[i], k = i + 1; k <= n; k++) {
+	for (long i = n; i >= 1; i--) { /* Solve L^T.x=y */
+		double sum = x[i];
+		for (long k = i + 1; k <= n; k++) {
 			sum -= a[k][i] * x[k];
 		}
 		x[i] = sum / d[i];
@@ -1132,9 +779,11 @@ double NUMtrace (double **a, long n) {
 
 double NUMtrace2 (double **a1, double **a2, long n) {
 	double trace = 0;
-	for (long i = 1; i <= n; i++) for (long k = 1; k <= n; k++) {
+	for (long i = 1; i <= n; i++) {
+		for (long k = 1; k <= n; k++) {
 			trace += a1[i][k] * a2[k][i];
 		}
+	}
 	return trace;
 }
 
@@ -3084,6 +2733,7 @@ void NUMlpc_lpc_to_area (double *lpc, long m, double *area) {
 	NUMlpc_rc_to_area (rc.peek(), m, area);
 
 }
+
 
 #undef MAX
 #undef MIN

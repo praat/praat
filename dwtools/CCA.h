@@ -27,7 +27,7 @@
 
 #include "Eigen.h"
 #include "TableOfReal.h"
-#include "Strings_.h"
+#include "Strings.h"
 
 #include "CCA_def.h"
 oo_CLASS_CREATE (CCA, Data);

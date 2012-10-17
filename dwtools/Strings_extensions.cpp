@@ -30,6 +30,7 @@
  djmw 20050721 Extra argument in Strings_to_Permutation.
  djmw 20101007 StringsIndex Stringses_to_StringsIndex (Strings me, Strings classes)
  djmw 20120407 + Strings_createFromCharacters
+ djmw 20120813 -Strings_setString
 */
 
 #include "Strings_extensions.h"
@@ -130,19 +131,6 @@ Strings Strings_change (Strings me, const wchar_t *search, const wchar_t *replac
 	}
 }
 
-void Strings_setString (Strings me, const wchar_t *newstr, long index) {
-	try {
-		if (index < 1 || index > my numberOfStrings) {
-			Melder_throw ("Index must be in range [1, ", my numberOfStrings, L"].");
-		}
-		autostring s = Melder_wcsdup (newstr);
-		Melder_free (my strings[index]);
-		my strings[index] = s.transfer();
-	} catch (MelderError) {
-		Melder_throw (me, ": no string set at index ", index);
-	}
-}
-
 Strings strings_to_Strings (wchar_t **strings, long from, long to) {
 	try {
 		autoStrings thee = Strings_createFixedLength (to - from + 1);
@@ -177,8 +165,10 @@ Strings strings_to_Strings_link (wchar_t **strings, long n) {
 	}
 }
 
-void _Strings_unlink (Strings me) {
-	my numberOfStrings = 0;
+void Strings_unlink (Strings me) {
+	for (long i = 1; i <= my numberOfStrings; i++) {
+		my strings[i] = 0;
+	}
 }
 
 Permutation Strings_to_Permutation (Strings me, int sort) {
@@ -270,6 +260,25 @@ Strings StringsIndex_to_Strings (StringsIndex me) {
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no Strings created.");
+	}
+}
+
+StringsIndex Table_to_StringsIndex_column (Table me, long column) {
+	try {
+		if (column < 1 || column > my numberOfColumns) {
+			Melder_throw ("Invalid column number.");
+		}
+		long numberOfRows = my rows -> size;
+		Table_numericize_Assert (me, column);
+		autoNUMvector<wchar_t *> groupLabels (1, numberOfRows);
+		for (long irow = 1; irow <= numberOfRows; irow++) {
+			groupLabels[irow] = ((TableRow) my rows -> item [irow]) -> cells [column] .string;
+		}
+		autoStrings thee = strings_to_Strings (groupLabels.peek(), 1, numberOfRows);
+		autoStringsIndex him = Strings_to_StringsIndex (thee.peek());
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, "no StringsIndex created from column ", Melder_integer (column));
 	}
 }
 

@@ -1,0 +1,30 @@
+Gender	Education	Salary
+Female	Degree	24
+Female	Degree	26
+Female	Degree	25
+Female	Degree	24
+Female	Degree	27
+Female	Degree	24
+Female	Degree	27
+Female	Degree	23
+Female	No degree	15
+Female	No degree	17
+Female	No degree	20
+Female	No degree	16
+Male	Degree	25
+Male	Degree	29
+Male	Degree	27
+Male	No degree	19
+Male	No degree	18
+Male	No degree	21
+Male	No degree	20
+Male	No degree	21
+Male	No degree	22
+Male	No degree	19
+
+
+
+
+
+
+

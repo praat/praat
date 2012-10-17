@@ -36,6 +36,11 @@ oo_DEFINE_CLASS (SSCP, TableOfReal)
 		oo_DOUBLE_MATRIX (lowerCholesky, numberOfColumns, numberOfColumns)
 		oo_OBJECT (PCA, 0, pca)
 	#endif
+	#if oo_DECLARING
+		// overridden methods:
+			virtual void v_info ();
+	#endif
+
 oo_END_CLASS (SSCP)
 #undef ooSTRUCT
 

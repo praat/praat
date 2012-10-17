@@ -47,8 +47,10 @@
  djmw 20100318 Cross-correlation, convolution and autocorrelation
  djmw 20100325 -Cross-correlation, convolution and autocorrelation
  djmw 20111227 Sound_trimSilencesAtStartAndEnd and Sound_getStartAndEndTimesOfSounding
+ djmw 20120616 Change 0.8 to 1.25 in Sound_Point_Pitch_Duration_to_Sound
 */
 
+#include <ctype.h>
 #include "Formula.h"
 #include "Intensity_extensions.h"
 #include "Sound_extensions.h"
@@ -360,7 +362,6 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 	}
 }
 
-#if 0
 void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int littleEndian, int nBitsCoding, int unSigned) {
 	try {
 		long nClip = 0;
@@ -403,7 +404,6 @@ void Sound_writeToRawFile (Sound me, MelderFile file, const char *format, int li
 		Melder_throw (me, ": saving as raw file not performed.");
 	}
 }
-#endif
 
 struct dialogic_adpcm {
 	char code;
@@ -1376,7 +1376,9 @@ Sound Sound_and_IntervalTier_cutPartsMatchingLabel (Sound me, IntervalTier thee,
                 numberOfSamples += Sampled_getWindowSamples (me, ti -> xmin, ti -> xmax, &ixmin, &ixmax);
                 // if two contiguous intervals have to be copied then the last sample of previous interval
                 // and first sample of current interval might sometimes be equal
-                numberOfSamples = ixmin == previous_ixmax ? --numberOfSamples : numberOfSamples;
+				if (ixmin == previous_ixmax) {
+					 --numberOfSamples;
+				}
 				previous_ixmax = ixmax;
 			} else { // matches label
 				if (iint == 1) { // Start time of output sound is end time of first interval
@@ -1522,8 +1524,7 @@ static Pitch Pitch_scaleTime_old (Pitch me, double scaleFactor) {
 	}
 }
 
-Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio,
-                                        double new_pitch, double pitchRangeFactor, double durationFactor) {
+Sound Sound_and_Pitch_changeGender_old (Sound me, Pitch him, double formantRatio, double new_pitch, double pitchRangeFactor, double durationFactor) {
 	try {
 		double samplingFrequency_old = 1 / my dx;
 
@@ -2138,6 +2139,21 @@ void Sounds_paintEnclosed (Sound me, Sound thee, Graphics g, Graphics_Colour col
 		}
 	} catch (MelderError) {
 		Melder_clearError ();
+	}
+}
+
+Sound Sound_copyChannelRanges (Sound me, const wchar_t *ranges) {
+	try {
+		long numberOfChannels;
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (ranges, my ny, & numberOfChannels, NULL, L"channel", true), 1);
+		autoSound thee = Sound_create (numberOfChannels, my xmin, my xmax, my nx, my dx, my x1);
+		for (long i = 1; i <= numberOfChannels; i++) {
+			double *from = my z[channels[i]], *to = thy z[i];
+			NUMvector_copyElements<double> (from, to, 1, my nx);
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": could not extract channels.");
 	}
 }
 

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20110428 Latest modification.
+ djmw 20120807 Latest modification.
 */
 
 #include <limits.h>
@@ -39,15 +39,23 @@ int NUMstrcmp (const char *s1, const char *s2);
 */
 
 int NUMstring_containsPrintableCharacter (const wchar_t *s);
-
+void NUMstring_chopWhiteSpaceAtExtremes_inline (wchar_t *string);
 double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
 /* return array with the number of numbers found */
+
+/*
+ * Acceptable ranges e.g. "1 4 2 3:7 4:3 3:5:2" -->
+ * 1, 4, 2, 3, 4, 5, 6, 7, 4, 3, 3, 4, 5, 4, 3, 2
+ * Overlap is allowed. Ranges can go up and down.
+ */
+long *NUMstring_getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const wchar_t *elementType, bool sortedUniques);
+
 
 int NUMstrings_equal (const wchar_t **s1, const wchar_t **s2, long lo, long hi);
 void NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
 void NUMstrings_free (wchar_t **s, long lo, long hi);
 int NUMstrings_setSequentialNumbering (wchar_t **s, long lo, long hi,
-	const wchar_t *precursor, long number, long increment);
+	const wchar_t *precursor, long number, long increment, int asArray);
 /*
 	Set s[lo]   = precursor<number>
 	    s[lo+1] = precursor<number+1>
@@ -226,6 +234,8 @@ void NUMstandardizeRows (double **a, long rb, long re, long cb, long ce);
 
 void NUMaverageColumns (double **a, long rb, long re, long cb, long ce);
 /* a[i][j] = average[j]) */
+
+void NUMvector_avevar (double *a, long n, double *average, double *variance);
 
 void NUMcolumn_avevar (double **a, long nr, long nc, long icol,
 	double *average, double *variance);
@@ -801,6 +811,23 @@ double NUMinvFisherQ (double p, double df1, double df2);
 	Solves NUMfisherQ (f, df1, df2) == p for f, given p, df1, df2
 	Precondition: 0 < p < 1
 */
+
+double NUMtukeyQ (double q, double cc, double df, double rr);
+/*    Computes the probability that the maximum of rr studentized
+ *    ranges, each based on cc means and with df degrees of freedom
+ *    for the standard error, is larger than q.
+ */
+
+double NUMinvTukeyQ (double p, double cc, double df, double rr);
+/* Solves NUMtukeyQ (q, rr, cc, df) == p for q given p, rr, cc and df.
+ * Computes the quantiles of the maximum of rr studentized
+ * ranges, each based on cc means and with df degrees of freedom
+ * for the standard error, is larger than q.
+ *   p = probability (alpha)
+ *  rr = no. of rows or groups
+ *  cc = no. of columns or treatments
+ *  df = degrees of freedom of error term
+ */
 
 double NUMnormalityTest_HenzeZirkler (double **data, long n, long p, double *beta, double *tnb, double *lnmu, double *lnvar);
 /*
