@@ -203,8 +203,9 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)
 			action: NULL
 			keyEquivalent: @""];
-		trace ("install item in menu %p", menu);
-		[(NSMenu *) menu -> d_widget addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
+		trace ("installing item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		[menu -> d_nsMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
+		trace ("installed item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
 		trace ("release the item");
 		[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
 		trace ("set user data");
@@ -347,7 +348,15 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
 		gtk_widget_show (GTK_WIDGET (my d_widget));
 	#elif cocoa
-		return NULL;   // TODO
+		my d_widget = (GuiObject) [GuiCocoaMenuItem separatorItem];
+		trace ("install separator in menu %p", menu);
+		trace ("installing separator in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		[menu -> d_nsMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
+		trace ("installed separator in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		trace ("release the item");
+		//[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
+		trace ("set user data");
+		[(GuiCocoaMenuItem *) my d_widget setUserData: me];
 	#elif motif
 		my d_widget = XtVaCreateManagedWidget ("menuSeparator", xmSeparatorGadgetClass, menu -> d_widget, NULL);
 	#endif

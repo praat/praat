@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20120912 Latest modification
+ djmw 20121023 Latest modification
 */
 
 
@@ -206,5 +206,9 @@ Sound Sound_trimSilences (Sound me, double trimDuration, bool onlyAtStartAndEnd,
     double silenceThreshold, double minSilenceDuration, double minSoundingDuration, TextGrid *tg, const wchar_t *trimLabel);
 
 Sound Sound_copyChannelRanges (Sound me, const wchar_t *ranges);
+
+Sound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
+
+void Sound_playAsFrequencyShifted (Sound me, double shiftBy, bool extendMaximumFrequency);
 
 #endif /* _Sound_extensions_h_ */

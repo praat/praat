@@ -372,7 +372,7 @@ int IsAlpha(unsigned int c)
 {//========================
 // Replacement for iswalph() which also checks for some in-word symbols
 
-	const unsigned short extra_indic_alphas[] = {
+	static const unsigned short extra_indic_alphas[] = {
 	0xa70,0xa71,	// Gurmukhi: tippi, addak
 	0 };
 
@@ -392,6 +392,9 @@ int IsAlpha(unsigned int c)
 		return(0);
 	}
 
+	if(c == 0x0605)
+		return(1);
+
 	if((c >= 0x64b)  && (c <= 0x65e))
 		return(1);   // arabic vowel marks
 
@@ -406,6 +409,9 @@ int IsAlpha(unsigned int c)
 
 	if((c >= 0x1100) && (c <= 0x11ff))
 		return(1);  //Korean jamo
+
+	if((c >= 0x2800) && (c <= 0x28ff))
+		return(1);  // braille
 
 	if((c > 0x3040) && (c <= 0xa700))
 		return(1); // Chinese/Japanese.  Should never get here, but Mac OS 10.4's iswalpha seems to be broken, so just make sure
@@ -447,7 +453,6 @@ void DeleteTranslator(Translator *tr)
 {//==================================
 	if(tr->data_dictlist != NULL)
 		Free(tr->data_dictlist);
-		tr->data_dictlist = 0;
 	Free(tr);
 }
 
@@ -464,6 +469,22 @@ int lookupwchar(const unsigned short *list,int c)
 	}
 	return(0);
 }
+
+
+int lookupwchar2(const unsigned short *list,int c)
+{//==============================================
+// Replace character c by another character.
+// Returns 0 = not found, 1 = delete character
+	int ix;
+
+	for(ix=0; list[ix] != 0; ix+=2)
+	{
+		if(list[ix] == c)
+			return(list[ix+1]);
+	}
+	return(0);
+}
+
 
 int IsBracket(int c)
 {//=================
@@ -527,7 +548,7 @@ int utf8_nbytes(const char *buf)
 
 int utf8_in2(int *c, const char *buf, int backwards)
 {//=================================================
-// Read a unicode characater from a UTF8 string
+// Read a unicode characater from a UTF8 string 
 // Returns the number of UTF8 bytes used.
 // backwards: set if we are moving backwards through the UTF8 string
 	int c1;
@@ -571,7 +592,7 @@ int utf8_in2(int *c, const char *buf, int backwards)
 
 int utf8_in(int *c, const char *buf)
 {//=================================
-// Read a unicode characater from a UTF8 string
+// Read a unicode characater from a UTF8 string 
 // Returns the number of UTF8 bytes used.
 	return(utf8_in2(c,buf,0));
 }
@@ -808,7 +829,7 @@ int TranslateWord(Translator *tr, char *word_start, int next_pause, WORD_TAB *wt
 	char word_copy[N_WORD_BYTES];
 	char word_copy2[N_WORD_BYTES];
 	int word_copy_length;
-	char prefix_chars[0x3f + 2];
+	char prefix_chars[0x3f + 2];  
 	int found=0;
    int end_flags;
 	char c_temp;   // save a character byte while we temporarily replace it with space
@@ -975,17 +996,24 @@ if((wmark > 0) && (wmark < 8))
 			// the word has $abbrev flag, but no pronunciation specified.  Speak as individual letters
 			spell_word = 1;
 		}
-
+ 
 		if(!found && iswdigit(first_char))
 		{
 			Lookup(tr,"_0lang",word_phonemes);
 			if(word_phonemes[0] == phonSWITCH)
 				return(0);
 
+			if((tr->langopts.numbers2 & NUM2_ENGLISH_NUMERALS) && !(wtab->flags & FLAG_CHAR_REPLACED))
+			{
+				// for this language, speak English numerals (0-9) with the English voice
+				sprintf(word_phonemes,"%c",phonSWITCH);
+				return(0);
+			}
+
 			found = TranslateNumber(tr, word1, phonemes, dictionary_flags, wtab, 0);
 		}
 
-		if(!found & ((wflags & FLAG_UPPERS) != FLAG_FIRST_UPPER))
+		if(!found && ((wflags & FLAG_UPPERS) != FLAG_FIRST_UPPER))
 		{
 			// either all upper or all lower case
 
@@ -1184,7 +1212,7 @@ if((wmark > 0) && (wmark < 8))
 					for(ix=0; ix < n_chars; ix++)    // num. of bytes to remove
 					{
 						prefix_chars[pfix++] = *wordx++;
-
+	
 						if((prefix_type & SUFX_B) && (ix == (n_chars-1)))
 						{
 							prefix_chars[pfix-1] = 0;  // discard the last character of the prefix, this is the separator character
@@ -1831,7 +1859,7 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int pre_pa
 						ok = 0;
 					}
 				}
-
+	
 				if((sylimit & 0x200) && ((wtab+1)->flags & FLAG_LAST_WORD))
 				{
 					// not if the next word is end-of-sentence
@@ -2051,7 +2079,7 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int pre_pa
 		else
 		if(ph_code == phonX1)
 		{
-			// a language specific action
+			// a language specific action 
 			if(tr->langopts.param[LOPT_IT_DOUBLING])
 			{
 				flags |= FLAG_DOUBLING;
@@ -2097,7 +2125,7 @@ static int TranslateWord2(Translator *tr, char *word, WORD_TAB *wtab, int pre_pa
 			{
 				if(first_phoneme && tr->langopts.param[LOPT_IT_DOUBLING])
 				{
-					if(((tr->prev_dict_flags & FLAG_DOUBLING) && (tr->langopts.param[LOPT_IT_DOUBLING] & 1)) ||
+					if(((tr->prev_dict_flags & FLAG_DOUBLING) && (tr->langopts.param[LOPT_IT_DOUBLING] & 1)) || 
 						(tr->end_stressed_vowel && (tr->langopts.param[LOPT_IT_DOUBLING] & 2)))
 					{
 						// italian, double the initial consonant if the previous word ends with a
@@ -2224,7 +2252,7 @@ static int EmbeddedCommand(unsigned int &source_index)
 
 
 
-static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, int *insert)
+static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, int *insert, int *wordflags)
 {//=========================================================================================
 	int ix;
 	unsigned int word;
@@ -2286,12 +2314,14 @@ static int SubstituteChar(Translator *tr, unsigned int c, unsigned int next_in, 
 
 	if(upper_case)
 		new_c = towupper(new_c);
+
+	*wordflags |= FLAG_CHAR_REPLACED;
 	return(new_c);
 
 }
 
 
-static int TranslateChar(Translator *tr, char *ptr, int prev_in, unsigned int c, unsigned int next_in, int *insert)
+static int TranslateChar(Translator *tr, char *ptr, int prev_in, unsigned int c, unsigned int next_in, int *insert, int *wordflags)
 {//================================================================================================================
 	// To allow language specific examination and replacement of characters
 
@@ -2369,7 +2399,7 @@ static int TranslateChar(Translator *tr, char *ptr, int prev_in, unsigned int c,
 		}
 		break;
 	}
-	return(SubstituteChar(tr,c,next_in,insert));
+	return(SubstituteChar(tr, c, next_in, insert, wordflags));
 }
 
 
@@ -2660,7 +2690,7 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 }
 #endif
 			if((c == 0x92) || (c == 0xb4) || (c == 0x2019) || (c == 0x2032))
-				c = '\'';    // 'microsoft' quote or sexed closing single quote, or prime - possibly used as apostrophe
+				c = '\'';    // 'microsoft' quote or sexed closing single quote, or prime - possibly used as apostrophe 
 
 			if(((c == 0x2018) || (c == '?')) && IsAlpha(prev_out) && IsAlpha(next_in))
 			{
@@ -2681,7 +2711,7 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 				word_flags |= FLAG_COMMA_AFTER;
 			}
 
-			c = TranslateChar(tr, &source[source_index], prev_in,c, next_in, &char_inserted);  // optional language specific function
+			c = TranslateChar(tr, &source[source_index], prev_in,c, next_in, &char_inserted, &word_flags);  // optional language specific function
 			if(c == 8)
 				continue;  // ignore this character
 
@@ -2725,7 +2755,7 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 			{
 				if((next_in == '\002') || ((next_in == '[') && option_phoneme_input))
 				{
-					//  "[\002" is used internally to start phoneme mode
+					//  "[\002" is used internally to start phoneme mode  
 					phoneme_mode = FLAG_PHONEMES;
 					source_index++;
 					continue;
@@ -2766,6 +2796,20 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 				}
 
 				letter_count++;
+
+				if(tr->letter_bits_offset > 0)
+				{
+					if(((c < 0x250) && (prev_out >= tr->letter_bits_offset)) ||
+						((c >= tr->letter_bits_offset) && (letter_count > 1) && (prev_out < 0x250)))
+					{
+						// Don't mix native and Latin characters in the same word
+						// Break into separate words
+						c = ' ';
+						space_inserted = 1;
+						word_flags |= FLAG_HYPHEN_AFTER;
+						next_word_flags |= FLAG_HYPHEN;
+					}
+				}
 
 				if(iswupper(c))
 				{
@@ -2830,7 +2874,7 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 				if(!IsSpace(prev_in) && IsAlpha(next_in))
 				{
 					if(prev_out != ' ')
-					{
+					{	
 						// previous 'word' not yet ended (not alpha or numeric), start new word now.
 						c = ' ';
 						space_inserted = 1;
@@ -3066,7 +3110,7 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 	if((word_count==0) && (embedded_count > 0))
 	{
 		// add a null 'word' to carry the embedded command flag
-		embedded_list[embedded_ix-1] |= 0x80;
+		embedded_list[embedded_ix-1] |= 0x80; 
 		words[word_count].flags |= FLAG_EMBEDDED;
 		word_count = 1;
 	}
@@ -3082,7 +3126,7 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 			ix--;  // the last word is a bracket, mark the previous word as last
 		words[ix].flags |= FLAG_LAST_WORD;
 
-		// FLAG_NOSPACE check to avoid recognizing  .mr  -mr
+		// FLAG_NOSPACE check to avoid recognizing  .mr  -mr 
 		if((terminator & CLAUSE_DOT) && !(words[word_count-1].flags & FLAG_NOSPACE))
 			words[word_count-1].flags |= FLAG_HAS_DOT;
 	}
@@ -3162,7 +3206,8 @@ if((c == '/') && (tr->langopts.testing & 2) && IsDigit09(next_in) && IsAlpha(pre
 					break;
 
 				*pn++ = c;
-				if((--nx > 0) && (tr->langopts.break_numbers & (1 << nx)))
+				nx--;
+				if((nx > 0) && (tr->langopts.break_numbers & (1 << nx)))
 				{
 					memcpy(&num_wtab[nw++], &words[ix], sizeof(WORD_TAB));   // copy the 'words' entry for each word of numbers
 

@@ -193,7 +193,7 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 //			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 //		}
 	#elif cocoa
-		my d_widget = (GuiObject) [GuiCocoaButton alloc];
+		my d_widget = (GuiObject) [[GuiCocoaButton alloc] init];
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		[(GuiCocoaButton *) my d_widget setUserData: me];
 		[(NSButton *) my d_widget setButtonType: NSMomentaryPushInButton];

@@ -21,7 +21,7 @@
 
 /*
  djmw 20020815 GPL header
- djmw 20120807 Latest modification.
+ djmw 20121024 Latest modification.
 */
 
 #include <limits.h>
@@ -1253,6 +1253,10 @@ void NUMrealft_f (float *data, long n, int direction);    /* Please stop using. 
 void NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
+
+// Fit the line y= ax+b
+void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept);
+void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept);
 
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 

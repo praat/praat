@@ -1242,7 +1242,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addFixedButtons (raam);
 
 		trace ("creating the dynamic menu in the Objects window");
-		praat_actions_createDynamicMenu (raam, 250);
+		praat_actions_createDynamicMenu (raam);
 		trace ("showing the Objects window");
 		raam -> f_show ();
 	//Melder_fatal ("stop");

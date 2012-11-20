@@ -563,6 +563,7 @@ Thing_define (GuiMenu, GuiThing) { public:
 	#if gtk
 		GtkMenuItem *d_gtkMenuTitle;
 	#elif cocoa
+		NSMenu *d_nsMenu;
 		NSMenuItem *d_nsMenuItem;
 		NSPopUpButton *d_nsMenuButton;
 	#elif motif

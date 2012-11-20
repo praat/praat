@@ -158,16 +158,26 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			theMenuBar = [[NSMenu alloc] init];
 			[NSApp   setMainMenu: theMenuBar];
 		}
-		my d_widget = (GuiObject) [[NSMenu alloc]
+		my d_nsMenu = [[NSMenu alloc]
 			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
-		[(NSMenu *) my d_widget   setAutoenablesItems: NO];
+		my d_widget = (GuiObject) my d_nsMenu;
+		[my d_nsMenu   setAutoenablesItems: NO];
 		if (window == NULL) {
+			/*
+			 * Install the menu in the main OS X menu bar along the top of the screen.
+			 * This is done by creating a menu item for the main menu bar,
+			 * and during applicationWillFinishLaunching installing that item.
+			 */
 			my d_nsMenuItem = [[NSMenuItem alloc]
 				initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)   action: NULL   keyEquivalent: @""];
 			[my d_nsMenuItem   setSubmenu: (NSMenu *) my d_widget];   // the item will retain the menu...
-			[(NSMenu *) my d_widget release];   // ... so we can release the menu already (before even returning it!)
+			[my d_nsMenu release];   // ... so we can release the menu already (before even returning it!)
 			theMenuBarItems [++ theNumberOfMenuBarItems] = my d_nsMenuItem;
 		} else if ([(NSView *) window -> d_widget   isKindOfClass: [NSView class]]) {
+			/*
+			 * Install the menu at the top of a window.
+			 * Menu title positioning information is maintained in that GuiWindow.
+			 */
 			NSRect parentRect = [(NSView *) window -> d_widget   frame];   // this is the window's top form
 			int parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
 			if (window -> d_menuBarWidth == 0)
@@ -191,7 +201,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
 			 */
 			NSMenuItem *item = [[NSMenuItem alloc] initWithTitle: @"-you should never get to see this-" action: NULL keyEquivalent: @""];
-			[(NSMenu *) my d_widget   addItem: item];   // the menu will retain the item...
+			[my d_nsMenu   addItem: item];   // the menu will retain the item...
 			[item release];   // ... so we can release the item already
 			/*
 			 * Install the menu button in the form.
@@ -201,8 +211,8 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			/*
 			 * Attach the menu to the button.
 			 */
-			[my d_nsMenuButton   setMenu: (NSMenu *) my d_widget];   // the button will retain the menu...
-			[(NSMenu *) my d_widget   release];   // ... so we can release the menu already (before even returning it!)
+			[my d_nsMenuButton   setMenu: my d_nsMenu];   // the button will retain the menu...
+			[my d_nsMenu   release];   // ... so we can release the menu already (before even returning it!)
 			[my d_nsMenuButton   setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
 		}
 	#elif motif
@@ -258,11 +268,24 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const wchar_t *title, long flag
 		gtk_widget_show (GTK_WIDGET (my d_menuItem -> d_widget));
 		_GuiObject_setUserData (my d_widget, me);
 	#elif cocoa
-		NSMenu *nsMenu = [[NSMenu alloc]
+		trace ("creating menu item %ls", title);
+		NSMenuItem *item = [[NSMenuItem alloc]
+			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)
+			action: NULL
+			keyEquivalent: @""];
+		trace ("adding the item to its supermenu %p", supermenu);
+		[supermenu -> d_nsMenu  addItem: item];   // the menu will retain the item...
+		trace ("release the item");
+		[item release];   // ... so we can release the item already
+		trace ("creating menu %ls", title);
+		my d_nsMenu = [[NSMenu alloc]
 			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
-		[nsMenu setAutoenablesItems: NO];
-		[nsMenu install: supermenu -> d_widget];
-		[nsMenu release];
+		[my d_nsMenu setAutoenablesItems: NO];
+		trace ("adding the new menu %p to its supermenu %p", me, supermenu);
+		[supermenu -> d_nsMenu   setSubmenu: my d_nsMenu   forItem: item];   // the supermenu will retain the menu...
+		Melder_assert ([my d_nsMenu retainCount] == 2);
+		[my d_nsMenu release];   // ... so we can release the menu already, even before returning it
+		my d_widget = (GuiObject) my d_nsMenu;
 	#elif motif
 		my d_menuItem -> d_widget = XmCreateCascadeButton (supermenu -> d_widget, Melder_peekWcsToUtf8 (title), NULL, 0);
 		my d_widget = XmCreatePulldownMenu (supermenu -> d_widget, Melder_peekWcsToUtf8 (title), NULL, 0);

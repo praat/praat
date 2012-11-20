@@ -134,4 +134,14 @@ Table structERP :: f_tabulate (bool includeSampleNumbers, bool includeTime, int 
 	}
 }
 
+Sound structERP :: f_downToSound () {
+	try {
+		autoSound thee = Thing_new (Sound);
+		structSound :: v_copy (thee.peek());
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": not converted to Sound.");
+	}
+}
+
 /* End of file ERP.cpp */

@@ -24,6 +24,8 @@ Use the (private) script "espeakdata_to_code.praat to
   - espeakdata_dicts.cpp // all **_dict files
   - espeakdata_voices.cpp // all voices in voices/ and subdirs except voices/mb and voices/!v
   - espeakdata_variants.cpp // all files in voices/!v
+4. remove the __cdecl from compiledict.cpp and voices.cpp
+
 
 ***** Step 2 Modify some espeak files
 

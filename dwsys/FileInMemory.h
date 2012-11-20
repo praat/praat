@@ -23,8 +23,8 @@
 	djmw 20120125
 */
 #include "Collection.h"
-#include "Strings_.h"
 #include "melder.h"
+#include "Strings_.h"
 
 Thing_define (FileInMemory, Data) {
 	public:

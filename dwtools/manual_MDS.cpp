@@ -1632,14 +1632,14 @@ LIST_ITEM (L"10. Set #Z = #X^^[%k]^, and go to 2.")
 NORMAL (L"This algorithm goes back to @@De Leeuw (1977)@.")
 MAN_END
 
-MAN_BEGIN (L"spline", L"djmw", 20070108)
+MAN_BEGIN (L"spline", L"djmw", 20121101)
 INTRO (L"A spline function %f is a piecewise polynomial function defined on "
 	"an interval [%x__%min_, %x__%max_] "
 	"with specified continuity constraints, i.e., when the interval [%x__%min_,"
 	" %x__%max_] is subdivided by points %\\xi__%i_ such that %x__%min_ = "
 	"%\\xi__%1_ < ... < %\\xi__%q_ = %%x__%max_, then within each subinterval "
 	"[%\\xi__%j_, %\\xi__%j+1_) the function is a polynomial %P__%j_ of "
-	"specified order %k.")
+	"specified degree %k.")
 NORMAL (L"A %%knot sequence% %t = {%t__1_, ..., %t__%n+%k_}, where %n is the "
 	"number of free parameters that specify the spline function, is derived "
 	"from the %\\xi__%i_ by placing knots at the boundary values %\\xi__%i_ "

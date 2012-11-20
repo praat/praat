@@ -178,33 +178,43 @@ Sound Sound_convertToStereo (Sound me) {
 	}
 }
 
-Sound Sounds_combineToStereo (Sound me, Sound thee) {
+Sound Sounds_combineToStereo (Collection me) {
 	try {
-		if (my ny != 1 || thy ny != 1)
-			Melder_throw ("Can only combine mono sounds.");
-		if (my dx != thy dx)
-			Melder_throw ("Sampling frequencies are not equal.");
-		double dx = my dx;   // or thy dx, which is the same
-		double xmin = my xmin < thy xmin ? my xmin : thy xmin;
-		double xmax = my xmax > thy xmax ? my xmax : thy xmax;
-		long myInitialZeroes = floor ((my xmin - xmin) / dx);
-		long thyInitialZeroes = floor ((thy xmin - xmin) / dx);
-		double myx1 = my x1 - my dx * myInitialZeroes;
-		double thyx1 = thy x1 - thy dx * thyInitialZeroes;
-		double x1 = 0.5 * (myx1 + thyx1);
-		long mynx = my nx + myInitialZeroes;
-		long thynx = thy nx + thyInitialZeroes;
-		long nx = mynx > thynx ? mynx : thynx;
-		autoSound him = Sound_create (2, xmin, xmax, nx, dx, x1);
-		for (long i = 1; i <= my nx; i ++) {
-			his z [1] [i + myInitialZeroes] = my z [1] [i];
+		long totalNumberOfChannels = 0, sharedNumberOfSamples = 0;
+		double sharedSamplingPeriod = 0.0, sharedTimeOfFirstSample = 0.0, sharedMinimumTime = 0.0, sharedMaximumTime = 0.0;
+		for (long isound = 1; isound <= my size; isound ++) {
+			Sound sound = (Sound) my item [isound];
+			totalNumberOfChannels += sound -> ny;
+			if (sharedNumberOfSamples == 0) {
+				sharedNumberOfSamples = sound -> nx;
+			} else if (sound -> nx != sharedNumberOfSamples) {
+				Melder_throw ("To combine sounds, their numbers of samples must be equal.");
+			}
+			if (sharedSamplingPeriod == 0.0) {
+				sharedSamplingPeriod = sound -> dx;
+				sharedTimeOfFirstSample = sound -> x1;
+				sharedMinimumTime = sound -> xmin;
+				sharedMaximumTime = sound -> xmax;
+			} else if (sound -> dx != sharedSamplingPeriod) {
+				Melder_throw ("To combine sounds, their sampling frequencies must be equal.\n"
+						"You could resample one or more of the sounds before combining.");
+			}
 		}
-		for (long i = 1; i <= thy nx; i ++) {
-			his z [2] [i + thyInitialZeroes] = thy z [1] [i];
+		autoSound thee = Sound_create (totalNumberOfChannels, sharedMinimumTime, sharedMaximumTime,
+			sharedNumberOfSamples, sharedSamplingPeriod, sharedTimeOfFirstSample);
+		long channelNumber = 0;
+		for (long isound = 1; isound <= my size; isound ++) {
+			Sound sound = (Sound) my item [isound];
+			for (long ichan = 1; ichan <= sound -> ny; ichan ++) {
+				channelNumber ++;
+				for (long isamp = 1; isamp <= sound -> nx; isamp ++) {
+					thy z [channelNumber] [isamp] = sound -> z [ichan] [isamp];
+				}
+			}
 		}
-		return him.transfer();
+		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, " & ", thee, ": not combined to stereo.");
+		Melder_throw ("Sounds not combined to stereo.");
 	}
 }
 

@@ -114,7 +114,7 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 			gtk_container_add (GTK_CONTAINER (parent -> d_widget), GTK_WIDGET (widget));
 		}
 	#elif cocoa
-		NSRect parentRect = [(NSView *) parent frame];
+		NSRect parentRect = [(NSView *) parent -> d_widget   frame];
 		int parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
 		if (left   <  0) left   += parentWidth;
 		if (right  <= 0) right  += parentWidth;
@@ -125,7 +125,7 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		NSRect rect = { { left, bottom }, { right - left, top - bottom } };
 		[(NSView *) widget initWithFrame: rect];
 		[(NSView *) widget setBounds: rect];
-		[(NSView *) parent -> d_widget addSubview: (NSView *) widget];   // parent will retain the subview...
+		[(NSView *) parent -> d_widget   addSubview: (NSView *) widget];   // parent will retain the subview...
 		[(NSButton *) widget release];   // ... so we can release the item already
 	#elif motif
 		(void) parent;

@@ -39,4 +39,9 @@ EEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, long numberOfComponents);
 
 EEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfComponents);
 
+EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagTime, const wchar_t *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol);
+
+Sound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyShift, double samplingFrequency, double maxAmp);
+Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandWidth, const wchar_t *channelRanges);
+
 #endif /* _EEG_extensions_h_ */

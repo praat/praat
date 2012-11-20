@@ -23,6 +23,8 @@
 #include "NUM2.h"
 #include "Sound_and_PCA.h"
 #include "Sound_extensions.h"
+#include "Spectrum_extensions.h"
+#include "Sound_and_Spectrum.h"
 
 static EEG EEG_copyWithoutSound (EEG me) {
 	try {
@@ -208,7 +210,7 @@ EEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfCompo
 	}
 }
 
-EEG EEG_to_EEG_ICA (EEG me, double startTime, double endTime, long ncovars, double lagTime, const wchar_t *channelRanges, long maxNumberOfIterations, double tol, int whitenFirst, int fromCorrelation, long numberOfComponents,  int method) {
+EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagTime, const wchar_t *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol) {
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -221,17 +223,73 @@ EEG EEG_to_EEG_ICA (EEG me, double startTime, double endTime, long ncovars, doub
 		if (endTime > my xmax) {
 			endTime = my xmax;
 		}
+		long numberOfChannels;
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my d_numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
 		autoEEG thee = my f_extractPart (startTime, endTime, true);
-		if (whitenFirst) {
-			autoPCA pca = EEG_to_PCA (thee.peek(), thy xmin, thy xmax, channelRanges, false);
-			autoEEG white = EEG_and_PCA_to_EEG_whiten (thee.peek(), pca.peek(), numberOfComponents);
+		if (whiteningMethod != 0) {
+			bool fromCorrelation = whiteningMethod == 2;
+			autoPCA pca = EEG_to_PCA (thee.peek(), thy xmin, thy xmax, channelRanges, fromCorrelation);
+			autoEEG white = EEG_and_PCA_to_EEG_whiten (thee.peek(), pca.peek(), 0);
 			thee.reset (white.transfer());
 		}
+		autoMixingMatrix mm = Sound_to_MixingMatrix (thy d_sound, startTime, endTime, ncovars, lagTime, maxNumberOfIterations, tol, diagonalizerMethod);
 
+		autoEEG him = EEG_copyWithoutSound (me);
+		his d_sound = Sound_and_MixingMatrix_unmix (my d_sound, mm.peek());
+		EEG_setChannelNames_selected (him.peek(), L"ic", channelNumbers.peek(), numberOfChannels);
+
+		// Calculate the cross-correlations between eye-channels and the ic's
+
+
+		return him.transfer();
 
 	} catch (MelderError) {
 		Melder_throw (me, ": no independent components determined.");
 	}
 }
 
+Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, const wchar_t *channelRanges) {
+	try {
+		long numberOfChannels;
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my d_numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		double maxFreq = baseFrequency + my d_numberOfChannels * channelBandwidth;
+		double samplingFrequency = 2 * maxFreq;
+		samplingFrequency = samplingFrequency < 44100 ? 44100 : samplingFrequency;
+		autoSound thee = Sound_createSimple (1, my xmax - my xmin, samplingFrequency);
+		for (long i = 1; i <= numberOfChannels; i++) {
+			long ichannel = channelNumbers[i];
+			double fbase = baseFrequency;// + (ichannel - 1) * channelBandwidth;
+			autoSound si = Sound_extractChannel (my d_sound, ichannel);
+			autoSpectrum spi = Sound_to_Spectrum (si.peek(), 1);
+			Spectrum_passHannBand (spi.peek(), 0.5, channelBandwidth-0.5, 0.5);
+			autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), fbase, true);
+			autoSound shifted = Spectrum_to_Sound (spi_shifted.peek());
+			autoSound resampled = Sound_resample (shifted.peek(), samplingFrequency, 30);
+			long nx = resampled -> nx < thy nx ? resampled -> nx : thy nx;
+			for (long j = 1; j <= nx; j++) {
+				thy z[1][j] += resampled -> z[1][j];
+			}
+		}
+		Vector_scale (thee.peek(), 0.99);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no playable sound created.");
+	}
+}
+
+Sound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyShift, double samplingFrequency, double maxAmp) {
+	try {
+		autoSound si = Sound_extractChannel (my d_sound, channel);
+		autoSpectrum spi = Sound_to_Spectrum (si.peek(), 1);
+		autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), frequencyShift, true);
+		autoSound shifted = Spectrum_to_Sound (spi_shifted.peek());
+		autoSound thee = Sound_resample (shifted.peek(), samplingFrequency, 30);
+		if (maxAmp > 0) {
+			Vector_scale (thee.peek(), maxAmp);
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": channel not converted to sound.");
+	}
+}
 /* End of file EEG_extensions.cpp */

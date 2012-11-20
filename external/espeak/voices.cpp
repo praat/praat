@@ -571,22 +571,6 @@ voice_t *LoadVoice(const char *vname, int control)
 	if(voicename[0]==0)
 		strcpy(voicename,"default");
 
-#ifdef DATA_FROM_SOURCECODE_FILES
-	long numberOfBytes;
-	const char * data;
-	if (tone_only) {
-		data = espeakdata_get_voiceVariant (vname, &numberOfBytes);
-	} else {
-		language_type = "en";
-		data = espeakdata_get_voice (vname, &numberOfBytes);
-		language_type = vname;
-	}
-	if (data == 0) {
-		language_type = "en";    // default
-		data = espeakdata_get_voice ("en/en", &numberOfBytes);
-	}
-	language_type = "en";
-#else
 	if(control & 0x10)
 	{
 		strcpy(buf,vname);
@@ -631,7 +615,6 @@ voice_t *LoadVoice(const char *vname, int control)
 		if(SelectPhonemeTableName(voicename) >= 0)
 			language_type = voicename;
 	}
-#endif
 
 	if(!tone_only && (translator != NULL))
 	{
@@ -660,7 +643,7 @@ voice_t *LoadVoice(const char *vname, int control)
 		// append the variant file name to the voice identifier
 		if((p = strchr(voice_identifier,'+')) != NULL)
 			*p = 0;    // remove previous variant name
-		sprintf(buf,"+%s",&vname[0]);    // djmw was vname[3] omit  !v/  from the variant filename
+		sprintf(buf,"+%s",&vname[3]);    // omit  !v/  from the variant filename
 		strcat(voice_identifier,buf);
 		langopts = &translator->langopts;
 	}
@@ -669,13 +652,9 @@ voice_t *LoadVoice(const char *vname, int control)
 	if(!tone_only)
 		SelectPhonemeTableName(phonemes_name);  // set up phoneme_tab
 
-#ifdef DATA_FROM_SOURCECODE_FILES
-	long index = 0;
-	const char *start = data;
-	while (start = espeakdata_get_voicedata (start, numberOfBytes, buf, sizeof(buf), &index)) {
-#else
-	while((f_voice != NULL) && (fgets_strip(buf,sizeof(buf),f_voice) != NULL)) {
-#endif
+
+	while((f_voice != NULL) && (fgets_strip(buf,sizeof(buf),f_voice) != NULL))
+	{
 		// isolate the attribute name
 		for(p=buf; (*p != 0) && !isspace(*p); p++);
 		*p++ = 0;
@@ -1002,7 +981,7 @@ voice_t *LoadVoice(const char *vname, int control)
 	{
 		if((ix = SelectPhonemeTableName(phonemes_name)) < 0)
 		{
-			Melder_throw ("Unknown phoneme table: ", phonemes_name);
+			fprintf(stderr,"Unknown phoneme table: '%s'\n",phonemes_name);
 		}
 		voice->phoneme_tab_ix = ix;
 		new_translator->phoneme_tab_ix = ix;

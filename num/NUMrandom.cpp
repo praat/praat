@@ -1,4 +1,4 @@
-/* NUMrandom.c
+/* NUMrandom.cpp
  *
  * Copyright (C) 1992-2011 Paul Boersma
  *

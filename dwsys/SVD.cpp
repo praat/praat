@@ -60,10 +60,15 @@
 #include "oo_DESCRIPTION.h"
 #include "SVD_def.h"
 
-Thing_implement (SVD, Data, 0);
-
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
+
+void structSVD :: v_info () {
+	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (numberOfRows));
+	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
+}
+
+Thing_implement (SVD, Data, 0);
 
 static void NUMtranspose_d (double **m, long n);
 
@@ -76,11 +81,6 @@ static void SVD_transpose (SVD me) {
 	my v = tmpd;
 	my numberOfRows = my numberOfColumns;
 	my numberOfColumns = tmpl;
-}
-
-void structSVD :: v_info () {
-	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (numberOfRows));
-	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (numberOfColumns));
 }
 
 /*

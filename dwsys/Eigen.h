@@ -26,7 +26,6 @@
 
 #include "Collection.h"
 #include "Graphics.h"
-#include "Strings.h"
 
 #include "Eigen_def.h"
 oo_CLASS_CREATE (Eigen, Data);

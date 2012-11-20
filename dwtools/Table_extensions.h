@@ -28,7 +28,7 @@
 #include "Collection.h"
 #include "Pattern.h"
 #include "Categories.h"
-#include "Strings.h"
+#include "Strings_.h"
 #include "SSCP.h"
 #include "Table.h"
 

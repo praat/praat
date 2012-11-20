@@ -22,16 +22,18 @@
 /*
  djmw 20010114
  djmw 20020813 GPL header
- djmw 20110307 Latest modification
+ djmw 20121022 Latest modification
 */
 
 #include "Spectrum.h"
 #include "Sound.h"
 #include "Graphics.h"
 
-#ifdef __cplusplus
-	extern "C" {
-#endif
+Spectrum Spectrum_resample (Spectrum me, long numberOfFrequencies);
+
+Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method);
+Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, bool changeMaximumFrequency);
+// Shift will be plusminus dx/2
 
 Matrix Spectrum_unwrap (Spectrum me);
 /*
@@ -52,9 +54,5 @@ void Spectrum_drawPhases (Spectrum me, Graphics g, double fmin, double fmax,
 
 Spectrum Spectra_multiply (Spectrum me, Spectrum thee);
 void Spectrum_conjugate (Spectrum me);
-
-#ifdef __cplusplus
-	}
-#endif
 
 #endif /* _Spectrum_extensions_h_ */

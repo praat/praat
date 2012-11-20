@@ -259,6 +259,14 @@ END
 
 #pragma mark ERP
 
+DIRECT (ERP_downto_Sound)
+	LOOP {
+		iam (ERP);
+		autoSound thee = my f_downToSound ();
+		praat_new (thee.transfer(), NULL);
+	}
+END
+
 FORM (ERP_downto_Table, L"ERP: Down to Table", 0)
 	BOOLEAN (L"Include sample number", false)
 	BOOLEAN (L"Include time", true)
@@ -307,6 +315,20 @@ DO
 		iam (ERP);
 		me -> f_drawScalp (GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 			GET_REAL (L"left Voltage range"), GET_REAL (L"right Voltage range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (ERP_extractOneChannelAsSound, L"ERP: Extract one channel as Sound", 0)
+	WORD (L"Channel name", L"Cz")
+	OK
+DO
+	LOOP {
+		iam (ERP);
+		const wchar_t *channelName = GET_STRING (L"Channel name");
+		long channelNumber = my f_getChannelNumber (channelName);
+		if (channelNumber == 0) Melder_throw (me, ": no channel named \"", channelName, "\".");
+		autoSound thee = Sound_extractChannel (me, channelNumber);
+		praat_new (thee.transfer(), my name, L"_", channelName);
 	}
 END
 
@@ -710,6 +732,9 @@ void praat_EEG_init (void) {
 	// praat_addAction1 (classERP, 0, L"Analyse -", 0, 0, 0);
 		// praat_addAction1 (classERP, 0, L"To ERP (difference)", 0, 1, DO_ERP_to_ERP_difference);
 		// praat_addAction1 (classERP, 0, L"To ERP (mean)", 0, 1, DO_ERP_to_ERP_mean);
+	praat_addAction1 (classERP, 0, L"Hack -", 0, 0, 0);
+		praat_addAction1 (classERP, 0, L"Down to Sound", 0, 1, DO_ERP_downto_Sound);
+		praat_addAction1 (classERP, 0, L"Extract one channel as Sound...", 0, 1, DO_ERP_extractOneChannelAsSound);
 
 	praat_addAction1 (classERPTier, 0, L"ERPTier help", 0, 0, DO_ERPTier_help);
 	// praat_addAction1 (classERPTier, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_ERPTier_viewAndEdit);

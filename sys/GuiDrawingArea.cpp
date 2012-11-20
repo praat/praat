@@ -191,6 +191,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			event. x = x;
 			event. y = y;
 			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;
+			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
+			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
 			try {
 				my d_clickCallback (my d_clickBoss, & event);
 			} catch (MelderError) {
@@ -203,11 +205,14 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		if (my d_keyCallback) {
 			struct structGuiDrawingAreaKeyEvent event = { me, 0 };
 			event. key = kar;
+			if (event. key == VK_RETURN) event. key = 10;
 			if (event. key == VK_LEFT)  event. key = 0x2190;
 			if (event. key == VK_RIGHT) event. key = 0x2192;
 			if (event. key == VK_UP)    event. key = 0x2191;
 			if (event. key == VK_DOWN)  event. key = 0x2193;
 			event. shiftKeyPressed = GetKeyState (VK_SHIFT) < 0;   // TODO: event -> key?
+			event. optionKeyPressed = GetKeyState (VK_MENU) < 0;
+			event. commandKeyPressed = GetKeyState (VK_CONTROL) < 0;
 			try {
 				my d_keyCallback (my d_keyBoss, & event);
 			} catch (MelderError) {
@@ -268,6 +273,9 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		if (my d_keyCallback) {
 			struct structGuiDrawingAreaKeyEvent event = { me, 0 };
 			event. key = macEvent -> message & charCodeMask;
+			//if (event. key == 9) event. key = 0x2324;   // tab
+			if (event. key == 13) event. key = 10;   // return -> newline
+			if (event. key == 27) event. key = 0x238B;
 			if (event. key == 28) event. key = 0x2190;
 			if (event. key == 29) event. key = 0x2192;
 			if (event. key == 30) event. key = 0x2191;
@@ -381,6 +389,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), FALSE);
 	#elif cocoa
+		my d_widget = (GuiObject) [[NSView alloc] init];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, L"drawingArea");
 		_GuiObject_setUserData (my d_widget, me);
@@ -450,6 +459,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		my v_positionInScrolledWindow (my d_widget, width, height, parent);
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), FALSE);
 	#elif cocoa
+		my d_widget = (GuiObject) [[NSView alloc] init];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmDrawingAreaWidgetClass, parent -> d_widget, L"drawingArea");
 		_GuiObject_setUserData (my d_widget, me);

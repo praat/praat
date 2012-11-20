@@ -368,14 +368,10 @@ DO
 END
 
 DIRECT (Sounds_combineToStereo)
-	Sound s1 = NULL, s2 = NULL;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	Melder_assert (s1 != NULL && s2 != NULL);
-	autoSound thee = Sounds_combineToStereo (s1, s2);
-	praat_new (thee.transfer(), s1 -> name, L"_", s2 -> name);
+	autoCollection set = praat_getSelectedObjects ();
+	autoSound result = Sounds_combineToStereo (set.peek());
+	long numberOfChannels = result -> ny;   // dereference before transferring
+	praat_new (result.transfer(), L"combined_", Melder_integer (numberOfChannels));
 END
 
 DIRECT (Sounds_concatenate)
@@ -2113,68 +2109,38 @@ FORM_WRITE (Sound_writeToSesamFile, L"Save as Sesam file", 0, L"sdf")
 END
 
 FORM_WRITE (Sound_writeToStereoAifcFile, L"Save as stereo AIFC file", 0, L"aifc")
-	Sound s1 = NULL, s2 = NULL;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	Melder_assert (s1 && s2);
-	autoSound stereo = Sounds_combineToStereo (s1, s2);
+	autoCollection set = praat_getSelectedObjects ();
+	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_AIFC, 16);
 END
 
 FORM_WRITE (Sound_writeToStereoAiffFile, L"Save as stereo AIFF file", 0, L"aiff")
-	Sound s1 = NULL, s2 = NULL;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	Melder_assert (s1 && s2);
-	autoSound stereo = Sounds_combineToStereo (s1, s2);
+	autoCollection set = praat_getSelectedObjects ();
+	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_AIFF, 16);
 END
 
 FORM_WRITE (Sound_writeToStereoNextSunFile, L"Save as stereo NeXT/Sun file", 0, L"au")
-	Sound s1 = NULL, s2 = NULL;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	Melder_assert (s1 && s2);
-	autoSound stereo = Sounds_combineToStereo (s1, s2);
+	autoCollection set = praat_getSelectedObjects ();
+	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_NEXT_SUN, 16);
 END
 
 FORM_WRITE (Sound_writeToStereoNistFile, L"Save as stereo NIST file", 0, L"nist")
-	Sound s1 = NULL, s2 = NULL;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	Melder_assert (s1 && s2);
-	autoSound stereo = Sounds_combineToStereo (s1, s2);
+	autoCollection set = praat_getSelectedObjects ();
+	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_NIST, 16);
 END
 
 FORM_WRITE (Sound_writeToStereoFlacFile, L"Save as stereo FLAC file", 0, L"flac")
-	Sound s1 = NULL, s2 = NULL;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	Melder_assert (s1 && s2);
-	autoSound stereo = Sounds_combineToStereo (s1, s2);
+	autoCollection set = praat_getSelectedObjects ();
+	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_FLAC, 16);
 END
 
 FORM_WRITE (Sound_writeToStereoWavFile, L"Save as stereo WAV file", 0, L"wav")
-	Sound s1 = NULL, s2 = NULL;
-	LOOP {
-		iam (Sound);
-		( s1 ? s2 : s1 ) = me;
-	}
-	Melder_assert (s1 && s2);
-	autoSound stereo = Sounds_combineToStereo (s1, s2);
+	autoCollection set = praat_getSelectedObjects ();
+	autoSound stereo = Sounds_combineToStereo (set.peek());
 	Sound_writeToAudioFile (stereo.peek(), file, Melder_WAV, 16);
 END
 
@@ -2573,7 +2539,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Filter (pre-emphasis)...", 0, 1, DO_Sound_filter_preemphasis);
 		praat_addAction1 (classSound, 0, L"Filter (de-emphasis)...", 0, 1, DO_Sound_filter_deemphasis);
 	praat_addAction1 (classSound, 0, L"Combine -", 0, 0, 0);
-		praat_addAction1 (classSound, 2, L"Combine to stereo", 0, 1, DO_Sounds_combineToStereo);
+		praat_addAction1 (classSound, 0, L"Combine to stereo", 0, 1, DO_Sounds_combineToStereo);
 		praat_addAction1 (classSound, 0, L"Concatenate", 0, 1, DO_Sounds_concatenate);
 		praat_addAction1 (classSound, 0, L"Concatenate recoverably", 0, 1, DO_Sounds_concatenateRecoverably);
 		praat_addAction1 (classSound, 0, L"Concatenate with overlap...", 0, 1, DO_Sounds_concatenateWithOverlap);

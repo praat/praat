@@ -31,6 +31,7 @@ oo_DEFINE_CLASS (ERP, Sound)
 			void f_draw (Graphics graphics, const wchar_t *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish);
 			void f_drawScalp (Graphics graphics, double tmin, double tmax, double vmin, double vmax, bool garnish);
 			Table f_tabulate (bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units);
+			Sound f_downToSound ();
 	#endif
 
 oo_END_CLASS (ERP)

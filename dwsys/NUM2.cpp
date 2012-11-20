@@ -2625,6 +2625,54 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p) {
 	return index;
 }
 
+// straight line fitting
+
+void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept) {
+	try {
+		/* Theil's incomplete method:
+		 * Split (x[i],y[i]) as
+		 * (x[i],y[i]), (x[N+i],y[N=i], i=1..numberOfPoints/2
+		 * m[i] = (y[N+i]-y[i])/(x[N+i]-x[i])
+		 * m = median (m[i])
+		 * b = median(y[i]-m*x[i])
+		 */
+		autoNUMvector<double> mbs (1, numberOfPoints);
+		long n2 = numberOfPoints / 2;
+		long n = numberOfPoints % 2 == 1 ? n2 + 1 : n2;
+		for (long i = 1; i <= n2; i++) {
+			mbs[i] = (y[n + i] - y[i]) / (x[n + i] - x[i]);
+		}
+		NUMsort_d (n2, mbs.peek());
+		*m = NUMquantile (n2, mbs.peek(), 0.5);
+		for (long i = 1; i <= numberOfPoints; i++) {
+			mbs[i] = y[i] - *m * x[i];
+		}
+		NUMsort_d (numberOfPoints, mbs.peek());
+		*intercept = NUMquantile (numberOfPoints, mbs.peek(), 0.5);
+	} catch (MelderError) {
+		Melder_throw ("No line fit (Theil's method)");
+	}
+}
+
+void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept) {
+	double sx = 0, sy = 0;
+	for (long i = 1; i <= numberOfPoints; i++) {
+		sx += x[i];
+		sy += y[i];
+	}
+	double xmean = sx / numberOfPoints;
+	double st2 = 0, a = 0;
+	for (long i = 1; i <= numberOfPoints; i++) {
+		double t = x[i] - xmean;
+		st2 += t * t;
+		a += t * y[i];
+	}
+	// y = a*x + b
+	a /= st2;
+	*intercept = (sy - a * sx) / numberOfPoints;
+	*m = a;
+}
+
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
 // lpc[1..n] to rc[1..n]
 void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc) {

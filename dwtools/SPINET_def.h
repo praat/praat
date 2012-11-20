@@ -16,7 +16,7 @@ oo_DEFINE_CLASS (SPINET, Sampled2)
 			virtual void v_info ();
 	#endif
 
-oo_END_CLASS (SPINET)	
+oo_END_CLASS (SPINET)
 #undef ooSTRUCT
 
-/* End of file SPINET_def.h */	
+/* End of file SPINET_def.h */

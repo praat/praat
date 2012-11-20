@@ -169,8 +169,7 @@ GuiMenuItem praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, co
 	for (long i = theNumberOfCommands; i > position; i --) theCommands [i] = theCommands [i - 1];
 	memset (& theCommands [position], 0, sizeof (struct structPraat_Command));
 
-	/* Insert new command.
-	 */
+	trace ("insert new command \"%ls\"", title);
 	theCommands [position]. window = Melder_wcsdup_f (window);
 	theCommands [position]. menu = Melder_wcsdup_f (menu);
 	theCommands [position]. title = Melder_wcsdup_f (title);
@@ -216,7 +215,7 @@ GuiMenuItem praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, co
 			if (! parentMenu) parentMenu = windowMenuToWidget (window, menu);   // fallback: put the command in the window's top menu
 		}
 		if (! parentMenu) {
-			Melder_casual ("No parent menu for %ls/%ls/%ls.", window, menu, title);
+			trace ("WARNING: no parent menu for %ls/%ls/%ls.", window, menu, title);
 			return NULL;
 		}
 
@@ -224,12 +223,15 @@ GuiMenuItem praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, co
 		 */
 
 		if (title == NULL || title [0] == '-') {
+			trace ("insert the command as a separator");
 			theCommands [position]. button = GuiMenu_addSeparator (parentMenu);
 			Melder_assert (theCommands [position]. button != NULL);
 		} else if (callback == NULL) {
+			trace ("insert the command as a submenu");
 			theCommands [position]. button = GuiMenu_createInMenu (parentMenu, title, 0) -> d_menuItem;
 			Melder_assert (theCommands [position]. button != NULL);
 		} else {
+			trace ("insert the command as a normal menu item");
 			theCommands [position]. button = GuiMenu_addItem (parentMenu, title, guiFlags, gui_cb_menu, (void *) callback);
 			Melder_assert (theCommands [position]. button != NULL);
 		}

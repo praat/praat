@@ -328,7 +328,7 @@ static void Diagonalizer_and_CrossCorrelationTable_qdiag (Diagonalizer me, Cross
 		Eigen_initFromSymmetricMatrix (eigen.peek(), c0 -> data, dimension);
 		for (long i = 1; i <= dimension; i++) {
 			if (eigen -> eigenvalues[i] < 0) {
-				Melder_throw ("Covariance matrix not positive definite.");
+				Melder_throw ("Covariance matrix not positive definite, eigenvalue[", Melder_integer(i), "] is negative.");
 			}
 			double scalef = 1 / sqrt (eigen -> eigenvalues[i]);
 			for (long j = 1; j <= dimension; j++) {
@@ -439,12 +439,12 @@ void MixingMatrix_and_CrossCorrelationTables_improveUnmixing (MixingMatrix me, C
  * 	no array boundary checks!
  * 	lag >= 0
  */
-static void NUMcrossCorrelate_rows (double **x, long nrows, long i1, long i2, long lag, double **cc, double *centroid, double scale) {
+static void NUMcrossCorrelate_rows (double **x, long nrows, long icol1, long icol2, long lag, double **cc, double *centroid, double scale) {
 	lag = abs (lag);
-	long nsamples = i2 - i1 + 1 + lag;
+	long nsamples = icol2 - icol1 + 1 + lag;
 	for (long i = 1; i <= nrows; i++) {
 		double sum = 0;
-		for (long k = i1; k <= i2 + lag; k++) {
+		for (long k = icol1; k <= icol2 + lag; k++) {
 			sum += x[i][k];
 		}
 		centroid[i] = sum / nsamples;
@@ -452,7 +452,7 @@ static void NUMcrossCorrelate_rows (double **x, long nrows, long i1, long i2, lo
 	for (long i = 1; i <= nrows; i++) {
 		for (long j = i; j <= nrows; j++) {
 			double ccor = 0;
-			for (long k = i1; k <= i2; k++) {
+			for (long k = icol1; k <= icol2; k++) {
 				ccor += (x[i][k] - centroid[i]) * (x[j][k + lag] - centroid[j]);
 			}
 			cc[j][i] = cc[i][j] = ccor * scale;
@@ -483,7 +483,7 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 		i2 -= lag;
 		long nsamples = i2 - i1 + 1;
 		if (nsamples <= my ny) {
-			Melder_throw ("Not enough samples");
+			Melder_throw ("Not enough samples, choose a longer interval.");
 		}
 		autoCrossCorrelationTable thee = CrossCorrelationTable_create (my ny);
 
@@ -499,9 +499,7 @@ CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime
 
 /* Calculate the CrossCorrelationTable between the channels of two multichannel sounds irrespective of the domains.
  * Both sounds are treated as if their domain runs from 0 to duration.
- * Outside the chose interval the sounds are assumed yo be zero
- *
- *
+ * Outside the chosen interval the sounds are assumed to be zero
  */
 CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagTime) {
 	try {
@@ -562,7 +560,7 @@ CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTi
 		if (lagTime < my dx) {
 			lagTime = my dx;
 		}
-		if (startTime + ncovars * lagTime > endTime) {
+		if (startTime + ncovars * lagTime >= endTime) {
 			Melder_throw ("Lag time too large.");
 		}
 		if (endTime <= startTime) {

@@ -4996,6 +4996,18 @@ DO
     }
 END
 
+FORM (Sound_playAsFrequencyShifted, L"Sound: Play as frequency shifted", L"Sound: Play as frequency shifted...")
+	REAL (L"Shift by (Hz)", L"1000.0")
+	BOOLEAN (L"Increase maximum frequency", 0)
+	OK
+DO
+	double shiftBy = GET_REAL (L"Shift by");
+	LOOP {
+		iam (Sound);
+		Sound_playAsFrequencyShifted (me, shiftBy, GET_INTEGER (L"Increase maximum frequency"));
+	}
+END
+
 FORM (Sounds_to_DTW, L"Sounds: To DTW", 0)
     POSITIVE (L"Window length (s)", L"0.015")
     POSITIVE (L"Time step (s)", L"0.005")
@@ -5181,16 +5193,13 @@ DO
 END
 
 FORM (Sound_fadeIn, L"Sound: Fade in", L"Sound: Fade in...")
-	CHANNEL (L"Channel (number, Left, or Right)", L"1")
-	OPTION (L"All")
-	OPTION (L"Left")
-	OPTION (L"Right")
+	CHANNEL (L"Channel (number, 0 = (all))", L"1")
 	REAL (L"Time (s)", L"-10000.0")
 	REAL (L"Fade time (s)", L"0.005")
 	BOOLEAN (L"Silent from start", 0)
 	OK
 DO
-	long channel = GET_INTEGER (L"Channel") - 1;
+	long channel = GET_INTEGER (L"Channel");
 	LOOP {
 		iam (Sound);
 		Sound_fade (me, channel, GET_REAL (L"Time"), GET_REAL (L"Fade time"), -1, GET_INTEGER (L"Silent from start"));
@@ -5199,16 +5208,13 @@ DO
 END
 
 FORM (Sound_fadeOut, L"Sound: Fade out", L"Sound: Fade out...")
-	CHANNEL (L"Channel (number, Left, or Right)", L"1")
-	OPTION (L"All")
-	OPTION (L"Left")
-	OPTION (L"Right")
+	CHANNEL (L"Channel (number, 0 = (all))", L"1")
 	REAL (L"Time (s)", L"10000.0")
 	REAL (L"Fade time (s)", L"-0.005")
 	BOOLEAN (L"Silent to end", 0)
 	OK
 DO
-	long channel = GET_INTEGER (L"Channel") - 1;
+	long channel = GET_INTEGER (L"Channel");
 	LOOP {
 		iam (Sound);
 		Sound_fade (me, channel, GET_REAL (L"Time"), GET_REAL (L"Fade time"), 1, GET_INTEGER (L"Silent to end"));
@@ -5314,6 +5320,27 @@ DO
 	LOOP {
 		iam (Sound);
 		praat_new (Sound_filterByGammaToneFilter4 (me, GET_REAL (L"Centre frequency"), GET_REAL (L"Bandwidth")), my name, L"_filtered");
+	}
+END
+
+FORM (Sound_removeNoise, L"Sound: Remove noise", L"Sound: Remove noise...")
+	REAL (L"left Noise time range (s)", L"0.0")
+	REAL (L"right Noise time range (s)", L"0.0")
+	POSITIVE (L"Window length (s)", L"0.025")
+	LABEL (L"", L"Filter")
+	REAL (L"left Filter frequency range (Hz)", L"80.0")
+	REAL (L"right Filter frequency range (Hz)", L"10000.0")
+	POSITIVE (L"Smoothing (Hz)", L"40.0")
+	OPTIONMENU (L"Noise reduction method", 1)
+	OPTION (L"Spectral subtraction")
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		autoSound thee = Sound_removeNoise (me, GET_REAL (L"left Noise time range"), GET_REAL (L"right Noise time range"),
+			GET_REAL (L"Window length"), GET_REAL (L"left Filter frequency range"),
+			GET_REAL (L"right Filter frequency range"), GET_REAL (L"Smoothing"), GET_INTEGER (L"Noise reduction method"));
+		praat_new (thee.transfer(), my name, L"_denoised");
 	}
 END
 
@@ -5470,6 +5497,19 @@ DIRECT (Spectrum_conjugate)
 	}
 END
 
+FORM (Spectrum_shiftFrequencies, L"Spectrum: Shift frequencies", L"Spectrum: Shift frequencies...")
+	REAL (L"Shift by (Hz)", L"1000.0")
+	BOOLEAN (L"Change maximum frequency", 0)
+	OK
+DO
+	double shiftBy = GET_REAL (L"Shift by");
+	LOOP {
+		iam (Spectrum);
+		autoSpectrum thee = Spectrum_shiftFrequencies (me, shiftBy, GET_INTEGER (L"Change maximum frequency"));
+		praat_new (thee.transfer(), my name, (shiftBy < 0 ? L"_m" : L"_"), Melder_integer (shiftBy));
+	}
+END
+
 DIRECT (Spectra_multiply)
 	Spectrum s1 = 0, s2 = 0;
 	LOOP {
@@ -5478,6 +5518,36 @@ DIRECT (Spectra_multiply)
 	}
 	Melder_assert (s1 && s2);
 	praat_new (Spectra_multiply (s1, s2), Thing_getName (s1), L"_x_", Thing_getName (s2));
+END
+
+FORM (Spectrum_resample, L"Spectrum: Resample", 0)
+	NATURAL (L"New number of frequencies", L"256")
+	OK
+DO
+	long numberOfFrequencies = GET_INTEGER (L"New number of frequencies");
+	LOOP {
+		iam (Spectrum);
+		autoSpectrum thee = Spectrum_resample (me, numberOfFrequencies);
+		praat_new (thee.transfer(), my name, L"_", Melder_integer (numberOfFrequencies));
+	}
+END
+
+FORM (Spectrum_compressFrequencyDomain, L"Spectrum: Compress frequency domain", 0)
+	POSITIVE (L"Maximum frequency (Hz)", L"5000.0")
+	INTEGER (L"Interpolation depth", L"50")
+	RADIO (L"Interpolation scale", 1)
+	RADIOBUTTON (L"Linear")
+	RADIOBUTTON (L"Logarithmic")
+	OK
+DO
+	double maximumFrequency = GET_REAL (L"Maximum frequency");
+	long interpolationDepth = GET_INTEGER (L"Interpolation depth");
+	int freqScale = GET_INTEGER (L"Interpolation scale");
+	LOOP {
+		iam (Spectrum);
+		autoSpectrum thee = Spectrum_compressFrequencyDomain (me, maximumFrequency, interpolationDepth, freqScale, 1);
+		praat_new (thee.transfer(), my name, L"_", Melder_integer (maximumFrequency));
+	}
 END
 
 DIRECT (Spectrum_unwrap)
@@ -7487,6 +7557,7 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classSound, 0, L"To TextGrid (silences)...", L"To IntervalTier", 1, DO_Sound_to_TextGrid_detectSilences);
     praat_addAction1 (classSound, 0, L"Play one channel...", L"Play", praat_HIDDEN, DO_Sound_playOneChannel);
+    praat_addAction1 (classSound, 0, L"Play as frequency shifted...", L"Play", praat_HIDDEN, DO_Sound_playAsFrequencyShifted);
 	praat_addAction1 (classSound, 0, L"Draw where...", L"Draw...", 1, DO_Sound_drawWhere);
 	//	praat_addAction1 (classSound, 0, L"Paint where...", L"Draw where...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_paintWhere);
 	praat_addAction1 (classSound, 0, L"Paint where...", L"Draw where...", 1, DO_Sound_paintWhere);
@@ -7508,7 +7579,8 @@ void praat_uvafon_David_init () {
     praat_addAction1 (classSound, 2, L"To Polygon (enclosed)...", L"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_to_Polygon_enclosed);
     praat_addAction1 (classSound, 2, L"To DTW...", L"Cross-correlate...", praat_DEPTH_1, DO_Sounds_to_DTW);
 
-	praat_addAction1 (classSound, 0, L"Filter (gammatone)...", L"Filter (formula)...", 1, DO_Sound_filterByGammaToneFilter4);
+	praat_addAction1 (classSound, 1, L"Filter (gammatone)...", L"Filter (de-emphasis)...", 1, DO_Sound_filterByGammaToneFilter4);
+	praat_addAction1 (classSound, 0, L"Remove noise...", L"Filter (formula)...", 1, DO_Sound_removeNoise);
 
 	praat_addAction1 (classSound, 0, L"Change gender...", L"Deepen band modulation...", 1, DO_Sound_changeGender);
 
@@ -7522,11 +7594,13 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classSound, 1, classPitch, 1, L"Change speaker...", 0, praat_HIDDEN, DO_Sound_and_Pitch_changeSpeaker);
 	praat_addAction2 (classSound, 1, classIntervalTier, 1, L"Cut parts matching label...", 0, 0, DO_Sound_and_IntervalTier_cutPartsMatchingLabel);
 	praat_addAction1 (classSpectrogram, 2, L"To DTW...", L"To Spectrum (slice)...", 0, DO_Spectrograms_to_DTW);
-
-	praat_addAction1 (classSpectrum, 0, L"Draw phases...", L"Draw (log freq)...", 1, DO_Spectrum_drawPhases);
+	praat_addAction1 (classSpectrum, 0, L"Draw phases...", L"Draw (log freq)...", praat_DEPTH_1 | praat_HIDDEN, DO_Spectrum_drawPhases);
 	praat_addAction1 (classSpectrum, 0, L"Conjugate", L"Formula...", praat_HIDDEN | praat_DEPTH_1, DO_Spectrum_conjugate);
 	praat_addAction1 (classSpectrum, 2, L"Multiply", L"To Sound (fft)", praat_HIDDEN, DO_Spectra_multiply);
-	praat_addAction1 (classSpectrum, 0, L"To Matrix (unwrap)", L"To Matrix", 0, DO_Spectrum_unwrap);
+	praat_addAction1 (classSpectrum, 0, L"To Matrix (unwrap)", L"To Matrix", praat_HIDDEN, DO_Spectrum_unwrap);
+	praat_addAction1 (classSpectrum, 0, L"Shift frequencies...", L"To Matrix", praat_HIDDEN, DO_Spectrum_shiftFrequencies);
+	praat_addAction1 (classSpectrum, 0, L"Compress frequency domain...", L"Shift frequencies...", praat_HIDDEN, DO_Spectrum_compressFrequencyDomain);
+	praat_addAction1 (classSpectrum, 0, L"Resample...", L"Compress frequency domain...", praat_HIDDEN, DO_Spectrum_resample);
 	praat_addAction1 (classSpectrum, 0, L"To Cepstrum", L"To Spectrogram", 0, DO_Spectrum_to_Cepstrum);
 
 	praat_addAction1 (classSpeechSynthesizer, 0, L"SpeechSynthesizer help", 0, 0, DO_SpeechSynthesizer_help);

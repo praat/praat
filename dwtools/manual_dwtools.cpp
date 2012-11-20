@@ -3288,6 +3288,31 @@ NORMAL (L"The shifting of formant frequencies is done via manipulation of the sa
 	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
 MAN_END
 
+MAN_BEGIN (L"Sound: Remove noise...", L"djmw", 201211108)
+INTRO (L"A command to suppress noise in the selected @Sound.")
+ENTRY (L"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Sound: Remove noise...", 5)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE(L"Noise time range (s)", L"0.0", L"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD(L"Window length (s)", L"0.025")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE(L"Filter frequency range (Hz)", L"80.0", L"10000.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD(L"Smoothing (Hz)", L"40.0")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(L"Noise reduction method", L"Spectral subtraction")
+)
+TAG (L"##Noise time range (s)")
+DEFINITION (L"the start and end time of a noise part in the sound whose characteristics will be used in the denoising. "
+	"If the end time is chosen before the start time, the noise fragment will be chosen automatically around a position "
+	"where the intensity is minimal. For good noise suppression it is important that the noise fragment's duration is chosen "
+	"several times the length of the window.")
+TAG (L"##Window length (s)")
+DEFINITION (L"denoising takes place in (overlapping) windows of this length.")
+TAG (L"##Filter frequency range (Hz)")
+DEFINITION (L"before denoising the sound will be @@Sound: Filter (pass Hann band)...|band-pass filtered@. ")
+TAG (L"##Noise reduction method")
+DEFINITION (L"The method of %%spectral subtraction% was defined in @@Boll (1979)@. The variant implemented is modeled "
+	"after a script by Ton Wempe.")
+MAN_END
+
 MAN_BEGIN (L"Sound: Draw where...", L"djmw", 20110213)
 INTRO (L"A command to draw only those parts of a @Sound where a condition holds.")
 ENTRY (L"Settings")
@@ -3340,11 +3365,11 @@ CODE (L"Black")
 CODE (L"Draw where... 0 0 -1 1 yes Curve not (Object_'pt'(x) > 300)")
 MAN_END
 
-MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20080314)
+MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20121010)
 INTRO (L"A command to gradually increase the amplitude of a selected @Sound.")
 ENTRY (L"Settings")
 TAG (L"##Channel")
-DEFINITION (L"determines whether you want to fade all channels or only the left of the right channel.")
+DEFINITION (L"determines whether you want to fade all channels or only a selected channel.")
 TAG (L"##Time (s)")
 DEFINITION (L"determines where the fade-in will take place. If %time is earlier than the start time of the sound, the start time of the sound wil be used.")
 TAG (L"##Fade time (s)")
@@ -3359,17 +3384,17 @@ NORMAL (L"The following script cross-fades two sounds s1 and s2 at time 1 second
 CODE1 (L"crossFTime = 0.5")
 CODE1 (L"t = 1")
 CODE1 (L"Create Sound from formula... s1 Mono 0 2 44100 sin(2*pi*500*x)")
-CODE1 (L"Fade out... All t-crossFTime/2 crossFTime y")
+CODE1 (L"Fade out... 0 t-crossFTime/2 crossFTime y")
 CODE1 (L"Create Sound from formula... s2 Mono 0 2 44100 sin(2*pi*1000*x)")
-CODE1 (L"Fade in... All t-crossFTime/2 crossFTime y")
+CODE1 (L"Fade in... 0 t-crossFTime/2 crossFTime y")
 CODE1 (L"Formula... self+Sound_s1[]")
 MAN_END
 
-MAN_BEGIN (L"Sound: Fade out...", L"djmw", 20080314)
+MAN_BEGIN (L"Sound: Fade out...", L"djmw", 20121010)
 INTRO (L"A command to gradually decrease the amplitude of a selected @Sound.")
 ENTRY (L"Settings")
 TAG (L"##Channel")
-DEFINITION (L"determines whether you want to fade all channels or only the left of the right channel.")
+DEFINITION (L"determines whether you want to fade all channels or only a selected channel.")
 TAG (L"##Time (s)")
 DEFINITION (L"determines where the fade-out will take place. If %time is later than the end time of the sound, the end time of the sound wil be used.")
 TAG (L"##Fade time (s)")
@@ -3395,6 +3420,20 @@ FORMULA (L"%#H (%z) = (1 + \\su__%i=1..4_ %a__%i_%z^^%\\--i^) / "
 NORMAL (L"The derivation of the filter coefficients %a__%i_ and %b__%j_ is "
 	"according to @@Slaney (1993)@. "
 	"The gain of the filter is scaled to unity at the centre frequency.")
+MAN_END
+
+MAN_BEGIN (L"Sound: Play as frequency shifted...", L"djmw", 20121025)
+INTRO (L"Plays the selected @Sound with all frequencies shifted by the same amount. This command can be used to make "
+	"audible those sounds that are normally not audible by human beings, like ultrasound or infrasound.")
+ENTRY (L"Settings")
+TAG (L"##Shift by (Hz)")
+DEFINITION (L"the amount by which frequencies are shifted. A positive number shifts frequencies up, a negative number "
+	"shifts frequencies down. ")
+ENTRY (L"##Example")
+NORMAL (L"Rodents produce sounds with frequencies far outside the human audible range. Some meaningfull sqeeks "
+	"are present in the frequency range from 54 kHz up to sometimes 100kHz. By choosing a shift value of -54000 all " "frequencies will be shifted down by 54000 Hz. This means that now the rodents frequencies from 54000 Hz and up fall "
+	"in your audible domain. If the highest frequency you can hear is, say, 14000 Hz than you can now hear rodent's "
+	"frequencies between 54000 and 68000 Hz (=54000+14000).")
 MAN_END
 
 MAN_BEGIN (L"Sound: To BarkFilter...", L"djmw", 20010404)
@@ -3691,6 +3730,16 @@ MAN_END
 MAN_BEGIN (L"Spectrum: Conjugate", L"djmw", 20031023)
 INTRO (L"Reverses the sign of the complex part of the selected @Spectrum object(s).")
 NORMAL (L"For real signals, conjugation in the spectral domain amounts to time-inversion in the time domain.")
+MAN_END
+
+MAN_BEGIN (L"Spectrum: Shift frequencies...", L"djmw", 20121028)
+INTRO (L"Creates a new @Spectrum by shifting all frequencies of the selected Spectrum upwards or downwards.")
+ENTRY (L"Settings")
+TAG (L"##Shift by (Hz)")
+DEFINITION (L"a positive value shifts the spectrum towards higher frequencies, a negative value shifts the spectrum "
+	"towards lower frequencies.")
+TAG (L"##Change maximum frequency")
+DEFINITION (L"if on, the maximum frequency of the domain is shifted by the same amount.")
 MAN_END
 
 MAN_BEGIN (L"SpeechSynthesizer", L"djmw", 20120413)
@@ -4526,6 +4575,11 @@ MAN_BEGIN (L"Bartlett (1954)", L"djmw", 20011111)
 NORMAL (L"M.S. Bartlett (1954): \"A note on multiplying factors for various "
 	"chi-squared approximations.\", %%Joural of the Royal Statistical Society, "
 	"Series B% #16: 296\\--298")
+MAN_END
+
+MAN_BEGIN (L"Boll (1979)", L"djmw", 20121021)
+NORMAL (L"S.F. Boll (1979): \"Suppression of acoustic noise in speech using spectral subtraction.\""
+	"%%IEEE Transactions on ASSP% #27: 113\\--120.")
 MAN_END
 
 MAN_BEGIN (L"Boomsma (1977)", L"djmw", 20020524)

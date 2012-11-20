@@ -94,7 +94,7 @@ Sound Sound_createSimple (long numberOfChannels, double duration, double samplin
 Sound Sound_convertToMono (Sound me);
 Sound Sound_convertToStereo (Sound me);
 Sound Sound_extractChannel (Sound me, long ichannel);
-Sound Sounds_combineToStereo (Sound me, Sound thee);
+Sound Sounds_combineToStereo (Collection me);
 
 /* Levels for Sampled_getValueAtSample (me, index, level, unit) */
 #define Sound_LEVEL_MONO  0

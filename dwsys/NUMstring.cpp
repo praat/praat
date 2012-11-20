@@ -273,7 +273,8 @@ wchar_t *str_replace_regexp (const wchar_t *string, regexp *compiledSearchRE,
 		we double its size and restart the replace.
 	*/
 
-	int buf_size = MAX (2 * string_length, 100);
+	int buf_size = 2 * string_length;
+	buf_size = buf_size < 100 ? 100 : buf_size;
 	buf.resize (buf_size);
 
 	pos = posp = string;

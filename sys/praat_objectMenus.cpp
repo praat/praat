@@ -512,12 +512,12 @@ void praat_show (void) {
 
 /********** Menu descriptions. **********/
 
-void praat_addFixedButtons (GuiForm form) {
-	praat_addFixedButtonCommand (form, L"Rename...", DO_Rename, 8, 70);
-	praat_addFixedButtonCommand (form, L"Copy...", DO_Copy, 98, 70);
-	praat_addFixedButtonCommand (form, L"Inspect", DO_Inspect, 8, 40);
-	praat_addFixedButtonCommand (form, L"Info", DO_Info, 98, 40);
-	praat_addFixedButtonCommand (form, L"Remove", DO_Remove, 8, 10);
+void praat_addFixedButtons (GuiWindow window) {
+	praat_addFixedButtonCommand (window, L"Rename...", DO_Rename, 8, 70);
+	praat_addFixedButtonCommand (window, L"Copy...", DO_Copy, 98, 70);
+	praat_addFixedButtonCommand (window, L"Inspect", DO_Inspect, 8, 40);
+	praat_addFixedButtonCommand (window, L"Info", DO_Info, 98, 40);
+	praat_addFixedButtonCommand (window, L"Remove", DO_Remove, 8, 10);
 }
 
 static void searchProc (void) {

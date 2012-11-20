@@ -38,7 +38,7 @@ SPINET SPINET_create (double tmin, double tmax, long nt, double dt, double t1,
 void SPINET_spectralRepresentation (SPINET me, Graphics g, double fromTime, double toTime,
 	double fromErb, double toErb, double minimum, double maximum, int enhanced,
 	int garnish);
-	
+
 void SPINET_drawSpectrum (SPINET me, Graphics g, double time, double fromErb, double toErb,
 	double minimum, double maximum, int enhanced, int garnish);
 

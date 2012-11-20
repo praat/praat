@@ -28,7 +28,7 @@
 #include "Collection.h"
 #include "Pattern.h"
 #include "Categories.h"
-#include "Strings.h"
+#include "Strings_.h"
 #include "SSCP.h"
 
 int TableOfReal_to_Pattern_and_Categories(I, long fromrow, long torow, long fromcol, long tocol,

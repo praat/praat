@@ -1332,7 +1332,7 @@ static char *compile_rule(char *input)
 }  //  end of compile_rule
 
 
-int string_sorter(char **a, char **b)
+int  string_sorter(char **a, char **b)
 {//===========================================
 	char *pa, *pb;
 	int ix;

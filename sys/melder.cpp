@@ -757,6 +757,7 @@ int Melder_fatal (const char *format, ...) {
 	va_start (arg, format);
 	strcpy (Melder_buffer1, lead);
 	vsprintf (Melder_buffer1 + strlen (lead), format, arg);
+	trace ("FATAL: %s", Melder_buffer1);
 	theMelder. fatal (Melder_peekUtf8ToWcs (Melder_buffer1));
 	va_end (arg);
 	abort ();

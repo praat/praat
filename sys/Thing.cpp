@@ -49,6 +49,7 @@ const wchar_t * Thing_className (Thing me) { return my classInfo -> className; }
 
 Any _Thing_new (ClassInfo classInfo_) {
 	Thing me = (Thing) classInfo_ -> _new ();
+	trace ("created %ls", classInfo_ -> className);
 	theTotalNumberOfThings += 1;
 	my classInfo = classInfo_;
 	Melder_assert (my name == NULL);   // check that _new called calloc
@@ -170,6 +171,7 @@ void _Thing_forget (Thing me) {
 	if (! me) return;
 	if (Melder_debug == 40) Melder_casual ("destroying %ls", my classInfo -> className);
 	my v_destroy ();
+	trace ("destroying %ls", my classInfo -> className);
 	//Melder_free (me);
 	delete me;
 	theTotalNumberOfThings -= 1;

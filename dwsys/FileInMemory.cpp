@@ -18,7 +18,7 @@
  */
 
 #include "FileInMemory.h"
-#include "Strings.h"
+#include "Strings_.h"
 
 Thing_implement (FileInMemory, Data, 0);
 

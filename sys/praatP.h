@@ -135,7 +135,7 @@ praat_Command praat_getMenuCommand (long i);
 void praat_actions_show ();
 void praat_actions_createWriteMenu (GuiWindow window);
 void praat_actions_init ();   // creates space for action commands
-void praat_actions_createDynamicMenu (GuiForm form, int leftOffset);
+void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (FILE *f);
 int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfActions ();   // for ButtonEditor
@@ -152,7 +152,7 @@ void praat_reportTextProperties ();
 
 /* Communication with praat_objectMenus.cpp: */
 GuiMenu praat_objects_resolveMenu (const wchar_t *menu);
-void praat_addFixedButtons (GuiForm form);
+void praat_addFixedButtons (GuiWindow window);
 void praat_addMenus (GuiWindow window);
 void praat_addMenus2 ();
 
