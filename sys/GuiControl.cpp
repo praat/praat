@@ -137,7 +137,9 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 			}
 		} else {
 			Melder_assert (right <= 0);
+			trace ("parent width %d", parent -> d_widget -> width);
 			XtVaSetValues (widget, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, - right, XmNwidth, right - left, NULL);
+			trace ("parent width %d", parent -> d_widget -> width);
 		}
 		if (top >= 0) {
 			if (bottom > 0) {

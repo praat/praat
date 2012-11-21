@@ -2261,10 +2261,10 @@ Sound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double wi
 	}
 }
 
-void Sound_playAsFrequencyShifted (Sound me, double shiftBy, bool increaseMaximumFrequency) {
+void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, long precision) {
 	try {
 		autoSpectrum spectrum = Sound_to_Spectrum (me, 1);
-		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.peek(), shiftBy, increaseMaximumFrequency);
+		autoSpectrum shifted = Spectrum_shiftFrequencies (spectrum.peek(), shiftBy, newSamplingFrequency / 2, precision);
 		autoSound thee = Spectrum_to_Sound (shifted.peek());
 		Sound_playPart (thee.peek(), my xmin, my xmax, NULL, NULL);
 	} catch (MelderError) {

@@ -161,7 +161,8 @@ static void InitGroups(Translator *tr)
 
 		if(p[0] == RULE_REPLACEMENTS)
 		{
-			pw = (unsigned int *)(((long64)p+4) & ~3);  // advance to next word boundary
+//			pw = (unsigned int *)(((long64)p+4) & ~3);  // advance to next word boundary
+			pw = (unsigned int *) align_address <4, char> (p+4);  // advance to next word boundary
 			tr->langopts.replace_chars = pw;
 			while(pw[0] != 0)
 			{
@@ -235,8 +236,60 @@ static void InitGroups(Translator *tr)
 
 }  //  end of InitGroups
 
+#ifdef DATA_FROM_SOURCECODE_FILES
+int LoadDictionary(Translator *tr, const char *name, int no_error)
+{
+	strcpy (dictionary_name, name);   // currently loaded dictionary name
+	strcpy (tr -> dictionary_name, name);
 
+	// Load a pronunciation data file into memory
+	// bytes 0-3:  offset to rules data
+	// bytes 4-7:  number of hash table entries
 
+	if(tr -> data_dictlist != NULL) {
+		Free (tr -> data_dictlist);
+		tr -> data_dictlist = NULL;
+	}
+	unsigned int size;
+	tr -> data_dictlist = (char *) espeakdata_get_dict_data (name, &size);
+	if (tr -> data_dictlist == 0) {
+		return 1;
+	}
+	int *pw = reinterpret_cast<int *> (tr -> data_dictlist);
+	int length = Reverse4Bytes (pw[1]); // was int really written with 4 bytes?
+
+	if (size <= (N_HASH_DICT + sizeof(int)*2)) {
+		Melder_error_ (L"Empty _dict: ", Melder_utf8ToWcs(name), L"_dict.");
+		return(2);
+	}
+
+	if((Reverse4Bytes(pw[0]) != N_HASH_DICT) || (length <= 0) || (length > 0x8000000)) {
+		Melder_error_ (L"Bad data in dict: ", Melder_utf8ToWcs(name), L" ", Melder_integer (Reverse4Bytes(pw[0])), L" ", Melder_integer (length));
+		return (2);
+	}
+	tr -> data_dictrules = &(tr->data_dictlist[length]);
+
+	// set up indices into data_dictrules
+	InitGroups(tr);
+	if (tr -> groups1[0] == NULL) {
+		Melder_error_ (L"Error in ", Melder_peekUtf8ToWcs (name), L"_rules, no default rule group.");
+	}
+
+	// set up hash table for data_dictlist
+	char *p = &(tr -> data_dictlist[8]);
+
+	for (int hash = 0; hash < N_HASH_DICT; hash++) {
+		tr -> dict_hashtab[hash] = p;
+		while ((length = *p) != 0) {
+			p += length;
+		}
+		p++;   // skip over the zero which terminates the list for this hash value
+	}
+
+	return (0);
+}  //  end of LoadDictionary
+
+#else
 int LoadDictionary(Translator *tr, const char *name, int no_error)
 {//===============================================================
 	int hash;
@@ -317,6 +370,7 @@ int LoadDictionary(Translator *tr, const char *name, int no_error)
 	return(0);
 }  //  end of LoadDictionary
 
+#endif
 
 int HashDictionary(const char *string)
 //====================================

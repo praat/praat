@@ -26,7 +26,17 @@
 
 #include "Cepstrum.h"
 #include "NUM2.h"
+#include "Vector.h"
 
+static double getValueAtSample (Cepstrum me, long isamp, long which, int units) {
+	(void) units;
+	if (which == 0) {
+		return my z[1][isamp] * my z[1][isamp];
+	} else {
+		// dB's reference is 1.
+		return 20 * log10 (my z[1][isamp]);
+	}
+}
 
 Thing_implement (Cepstrum, Matrix, 2);
 
@@ -42,8 +52,7 @@ Cepstrum Cepstrum_create (double qmin, double qmax, long nq) {
 	}
 }
 
-void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
-                    double minimum, double maximum, int garnish) {
+void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int power, int garnish) {
 	int autoscaling = minimum >= maximum;
 
 	Graphics_setInner (g);
@@ -58,10 +67,8 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 	}
 	autoNUMvector<double> y (imin, imax);
 
-	double *z = my z[1];
-
 	for (long i = imin; i <= imax; i++) {
-		y[i] = z[i];
+		y[i] = getValueAtSample (me, i, (power ? 1 : 0), 0);
 	}
 
 	if (autoscaling) {
@@ -83,10 +90,96 @@ void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax,
 
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, 1, L"Quefrency");
+		Graphics_textBottom (g, 1, L"Quefrency (s)");
 		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
-		Graphics_textLeft (g, 1, L"Amplitude");
+		Graphics_textLeft (g, 1, power ? L"Amplitude (dB)" : L"Amplitude");
+		Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
 	}
+}
+
+void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int garnish) {
+	_Cepstrum_draw (me, g, qmin, qmax, minimum, maximum, 0, garnish);
+}
+
+void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish) {
+	_Cepstrum_draw (me, g, qmin, qmax, dBminimum, dBmaximum, 1, garnish);
+}
+
+void Cepstrum_drawTiltLine (Cepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, int method) {
+
+	Graphics_setInner (g);
+
+	if (qmax <= qmin) {
+		qmin = my xmin; qmax = my xmax;
+	}
+
+	if (dBminimum >= dBmaximum) { // autoscaling
+		long imin, imax;
+		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
+			return;
+		}
+		long numberOfPoints = imax - imin + 1;
+		dBminimum = dBmaximum = getValueAtSample (me, imin, 1, 0);
+		for (long i = 2; i <= numberOfPoints; i++) {
+			long isamp = imin + i - 1;
+			double y = getValueAtSample (me, isamp, 1, 0);
+			dBmaximum = y > dBmaximum ? y : dBmaximum;
+			dBminimum = y < dBminimum ? y : dBminimum;
+		}
+	}
+
+	Graphics_setWindow (g, qmin, qmax, dBminimum, dBmaximum);
+	qend = qend == 0 ? qmax : qend;
+	qstart = qstart < qmin ? qmin : qstart;
+	qend = qend > qmax ? qmax : qend;
+
+	double a, intercept;
+	Cepstrum_fitTiltLine (me, qstart, qend, &a, &intercept, method);
+
+	double y1 = a * qstart + intercept, y2 = a * qend + intercept;
+	double lineWidth =  Graphics_inqLineWidth (g);
+	Graphics_setLineWidth (g, 2);
+	Graphics_line (g, qstart, y1, qend, y2);
+	Graphics_setLineWidth (g, lineWidth);
+	Graphics_unsetInner (g);
+}
+
+/* Fit line y = ax+b in [qmin,qmax] interval */
+void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, double *intercept, int method) {
+	if (qmax <= qmin) {
+		qmin = my xmin; qmax = my xmax;
+	}
+
+	long imin, imax;
+	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
+		return;
+	}
+	long numberOfPoints = imax - imin + 1;
+	autoNUMvector<double> y (1, numberOfPoints);
+	autoNUMvector<double> x (1, numberOfPoints);
+	for (long i = 1; i <= numberOfPoints; i++) {
+		long isamp = imin + i - 1;
+		x[i] = my x1 + (isamp - 1) * my dx;
+		y[i] = getValueAtSample (me, isamp, 1, 0);
+	}
+	// fit a line through (x,y)'s
+	if (method == 1) {
+		NUMlineFit_LS (x.peek(), y.peek(), numberOfPoints, a, intercept);
+	} else {
+		NUMlineFit_theil (x.peek(), y.peek(), numberOfPoints, a, intercept);
+	}
+}
+
+
+double Cepstrum_getPeakProminence (Cepstrum me, double search_lowestQuefrency, double search_highestQuefrency, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak) {
+	double a, intercept, qpeakpos, peak;
+	Cepstrum_fitTiltLine (me, fit_lowestFrequency, fit_highestFrequency, &a, &intercept, fitmethod);
+	Vector_getMaximumAndX ((Vector) me, search_lowestQuefrency, search_highestQuefrency, 1, interpolation, &peak, &qpeakpos);
+	double dBPeak = 20 * log10 (peak);
+	if (qpeak != NULL) {
+		*qpeak = qpeakpos;
+	}
+	return dBPeak - qpeakpos * a - intercept;
 }
 
 Matrix Cepstrum_to_Matrix (Cepstrum me) {
@@ -117,6 +210,5 @@ Cepstrum Matrix_to_Cepstrum (Matrix me, long row) {
 		Melder_throw (me, ": no Cepstrum created.");
 	}
 }
-
 
 /* End of file Cepstrum.cpp */

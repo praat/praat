@@ -112,8 +112,8 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 
 Cepstrum Sound_to_Cepstrum (Sound me) {
 	try {
-		autoSpectrum sx = Sound_to_Spectrum (me, TRUE);
-		autoCepstrum thee = Spectrum_to_Cepstrum (sx.peek());
+		autoSpectrum spectrum = Sound_to_Spectrum (me, TRUE);
+		autoCepstrum thee = Spectrum_to_Cepstrum (spectrum.peek());
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no Cepstrum calculated.");

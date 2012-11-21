@@ -65,10 +65,67 @@ NORMAL (L"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum", L"djmw", 20010219)
+MAN_BEGIN (L"Cepstrogram", L"djmw", 20121118)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 ENTRY (L"Description")
-NORMAL (L"An object of type Cepstrum represents the complex cepstrum.")
+NORMAL (L"The Cepstrogram shows @@Cepstrum|cepstral slices@ as a function of time.")
+MAN_END
+
+MAN_BEGIN (L"Cepstrogram: To Table (peak prominence...", L"djmw", 20121118)
+INTRO (L"A command to create a table with @@Cepstrum: Get peak prominence...|cepstral peak prominence@ values.")
+ENTRY (L"Settings")
+SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Cepstrogram: To Table (peak prominence)", 7)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search quefrency range (s)", L"0.003 (=333 Hz)", L"0.0125 (=80 Hz)")
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"Interpolation", L"None", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Parabolic", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Cubic", 1)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Sinc70", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)",L"0.001", L"0.0 (=end)")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(L"Fit method", L"Robust")
+)
+NORMAL (L"The meaning of these settings is explained @@Cepstrum: Get peak prominence...|here@.")
+MAN_END
+
+MAN_BEGIN (L"Cepstrum", L"djmw", 20121116)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+ENTRY (L"Description")
+NORMAL (L"A Cepstrum is a the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB's scale with a reference of 1.0. The horizontal scale shows %%quefrency% in units of seconds.")
+MAN_END
+
+MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20121116)
+INTRO (L"Calculates the cepstral peak prominence measure (CPP) as defined by @@Hillenbrand et al. (1994)@")
+NORMAL (L"The CPP measure is the difference in amplitude between the cepstral peak and the corresponding value on the regression "
+	"line that is directly below the peak (i.e., the predicted magnitude for the quefrency at the cepstral peak). "
+	"The CPP measure represents how far the cepstral peak emerges from the cepstrum background.")
+ENTRY (L"Settings")
+SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
+	Manual_DRAW_SETTINGS_WINDOW (L"Cepstrum: Get peak prominence", 7)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search quefrency range (s)",L"0.003 (=333 Hz)", L"0.0125 (=80 Hz)")
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"Interpolation", L"None", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Parabolic", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Cubic", 1)
+	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Sinc70", 0)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (L"Tilt line quefrency range (s)", L"0.001", L"0.0 (=end)")
+	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (L"Fit method", L"Robust")
+)
+TAG (L"##Peak search quefrency range")
+DEFINITION (L"limits the quefrency range where a peak is searched for. The value of the lower limit is in general more critical than "
+	"the value of the upper quefrency. The lower peak search quefrency should be chosen at least 0.001 s as we don't want to find the peaks at the very start of the quefrency range. This lower quefrency corresponds to the inverse of the %%highest% fundamental frequency value "
+	"that we are interested in. I.e. a value of 0.003 s corresponds to an inverse frequecy value of 1/0.003\\~~333 Hz.")
+TAG (L"##Interpolation")
+DEFINITION (L"determines how the @@vector peak interpolation|amplitude of a peak is determined@.")
+TAG (L"##Tilt line quefrency range")
+DEFINITION (L"the quefrency range for which the amplitudes (in dB) will be modelled by a straight line. "
+	"The lower value for this range in the Hillenbrand article was chosen as 0.001 s "
+	"in order to reduce the effect of the low quefrency data on the straight line fit. In our analysis this value is not so critical "
+	"as we use a more robust straight line fit.")
+TAG (L"##Fit method")
+DEFINITION (L"the default method is @@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares line fit has also  been implemented.")
+MAN_END
+
+MAN_BEGIN (L"Cepstrum: Draw tilt line...", L"djmw", 20121116)
+INTRO (L"Draws the straight line that models the backgound of the power cepstrum.")
 MAN_END
 
 MAN_BEGIN (L"LFCC", L"djmw", 20040421)
@@ -453,14 +510,28 @@ MAN_BEGIN (L"VocalTractTier", L"djmw", 20120423)
 INTRO (L"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%time, %VocalTract) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
 
+MAN_BEGIN (L"theil regression", L"djmw", 20121118)
+NORMAL (L"a robust linear regression method, first proposed by @@Theil (1950)@. The slope of the regression line is estimated as "
+	"the median of all pairwise slopes between each pair of points in the data set. Because this number of pairs increases quadratically "
+	"with the number of data points, we have implemented a somewhat less computationally intensive procedure, the %%incomplete% theil regression. In the incomplete method we first split the data set of %N data points (%x__%i_, %y__%i_), %i = 1..%N, in two equal sets "
+	"of size %N/2 and then calculate %N/2 slopes as ")
+FORMULA (L"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
+NORMAL (L"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
+NORMAL (L"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
+MAN_END
+
 MAN_BEGIN (L"Anderson (1978)", L"djmw", 20030701)
 NORMAL (L"N. Anderson (1978): \"On the calculation of filter coefficients for "
 	"maximum entropy spectral analysis.\" In Childers: %%Modern Spectrum Analysis%, "
 	"IEEE Press: 252\\--255.")
 MAN_END
 
+MAN_BEGIN (L"Hillenbrand et al. (1994)", L"djmw", 20121017)
+NORMAL (L"J. Hillenbrand, R.A. Cleveland & R.L. Erickson (1994): \"Acoustic correlates of breathy vocal quality\", %%Journal of speech and hearing research% #37: 769\\--778.")
+MAN_END
+
 MAN_BEGIN (L"Lee (1988)", L"djmw", 20111027)
-NORMAL (L"C.-H. Lee (1988): \"On Robust Linear Prediction of Speech.\", %%IEEE Trans. on ASSP #36: 642\\--649.")
+NORMAL (L"C.-H. Lee (1988): \"On Robust Linear Prediction of Speech.\", %%IEEE Trans. on ASSP% #36: 642\\--649.")
 MAN_END
 
 MAN_BEGIN (L"Markel & Gray (1976)", L"djmw", 19980114)
@@ -468,9 +539,15 @@ NORMAL (L"J.D. Markel & A.H. Gray, Jr. (1976): %%Linear Prediction of Speech.% "
 	"Springer Verlag, Berlin.")
 MAN_END
 
+
 MAN_BEGIN (L"Marple (1980)", L"djmw", 19980114)
 NORMAL (L"L. Marple (1980): \"A new autoregressive spectrum analysis algorithm.\" "
 	"%%IEEE Trans. on ASSP% #28, 441\\--454.")
+MAN_END
+
+MAN_BEGIN (L"Theil (1950)", L"djmw", 20121118)
+NORMAL (L"H. Theil (1950): \"A rank-invariant method of linear and polynomial regression analysis\", "
+	"%%Proceedings of Koninklijke Nederlandse Akademie van Wetenschappen% ##A.53#: 1397\\--1412.")
 MAN_END
 
 MAN_BEGIN (L"Wakita (1977)", L"djmw", 19980114)

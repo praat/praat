@@ -1,7 +1,7 @@
-# File: makefile.defs.linux
+# File: makefile.defs.linux.silent
 
-# System: Linux
-# Paul Boersma, 9 October 2012
+# System: Linux without sound
+# Paul Boersma, 20 November 2012
 
 CC = gcc -std=gnu99
 
@@ -15,7 +15,7 @@ LINK = g++
 
 EXECUTABLE = praat
 
-LIBS = `pkg-config --libs gtk+-2.0` -lm -lasound
+LIBS = `pkg-config --libs gtk+-2.0` -lm
 
 RANLIB = ls
 ICON =

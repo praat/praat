@@ -32,7 +32,7 @@
 Spectrum Spectrum_resample (Spectrum me, long numberOfFrequencies);
 
 Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interpolationDepth, int freqscale, int method);
-Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, bool changeMaximumFrequency);
+Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth);
 // Shift will be plusminus dx/2
 
 Matrix Spectrum_unwrap (Spectrum me);

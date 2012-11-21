@@ -1,4 +1,4 @@
-#ifdef UNIX
+#if defined (UNIX) && defined (ALSA)
 /*
  * $Id: pa_linux_alsa.c 1278 2007-09-12 17:39:48Z aknudsen $
  * PortAudio Portable Real-Time Audio Library

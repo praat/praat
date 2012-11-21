@@ -117,7 +117,15 @@ int LoadPhData()
 	int length;
 	unsigned char *p;
 	int *pw;
-Melder_fatal ("LoadPhData: cannot arrive here.");
+
+#ifdef DATA_FROM_SOURCECODE_FILES
+	long llength;
+	phoneme_tab_data = (unsigned char *) FilesInMemory_getData (espeakdata_phons, L"phontab", &llength);
+	phoneme_index = (USHORT *) FilesInMemory_getData (espeakdata_phons, L"phonindex", &llength);
+	phondata_ptr = (char *) FilesInMemory_getData (espeakdata_phons, L"phondata", &llength);
+	tunes = (TUNE *) FilesInMemory_getData (espeakdata_phons, L"intonations", &llength);
+	length = llength;
+#else
 	if((phoneme_tab_data = (unsigned char *)ReadPhFile((void *)(phoneme_tab_data),"phontab",NULL)) == NULL)
 		return(-1);
 	if((phoneme_index = (USHORT *)ReadPhFile((void *)(phoneme_index),"phonindex",NULL)) == NULL)
@@ -126,6 +134,8 @@ Melder_fatal ("LoadPhData: cannot arrive here.");
 		return(-1);
 	if((tunes = (TUNE *)ReadPhFile((void *)(tunes),"intonations",&length)) == NULL)
 		return(-1);
+#endif
+
    wavefile_data = (unsigned char *)phondata_ptr;
 	n_tunes = length / sizeof(TUNE);
 
@@ -169,10 +179,12 @@ Melder_fatal ("LoadPhData: cannot arrive here.");
 
 void FreePhData(void)
 {//==================
+#ifndef DATA_FROM_SOURCECODE_FILES
 	Free(phoneme_tab_data);
 	Free(phoneme_index);
 	Free(phondata_ptr);
 	Free(tunes);
+#endif
 	phoneme_tab_data=NULL;
 	phoneme_index=NULL;
 	phondata_ptr=NULL;

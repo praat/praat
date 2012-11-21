@@ -3510,6 +3510,32 @@ DO
 	}
 END
 
+FORM (Matrix_getMean, L"Matrix: Get mean", 0)
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	OK
+DO
+	Matrix me = FIRST_ANY (Matrix);
+	double mean = Matrix_getMean (me, GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"));
+	Melder_informationReal (mean, NULL);
+END
+
+FORM (Matrix_getStandardDeviation, L"Matrix: Get standard deviation", 0)
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	OK
+DO
+	Matrix me = FIRST_ANY (Matrix);
+	double stdev = Matrix_getStandardDeviation (me, GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"));
+	Melder_informationReal (stdev, NULL);
+END
+
 FORM (Matrix_scale, L"Matrix: Scale", 0)
 	LABEL (L"", L"self[row, col] := self[row, col] / `Scale factor'")
 	RADIO (L"Scale factor", 1)
@@ -4998,13 +5024,16 @@ END
 
 FORM (Sound_playAsFrequencyShifted, L"Sound: Play as frequency shifted", L"Sound: Play as frequency shifted...")
 	REAL (L"Shift by (Hz)", L"1000.0")
-	BOOLEAN (L"Increase maximum frequency", 0)
+	POSITIVE (L"New sampling frequency (Hz)", L"44100.0")
+	NATURAL (L"Precision (samples)", L"50")
 	OK
 DO
 	double shiftBy = GET_REAL (L"Shift by");
+	double newSamplingFrequency = GET_REAL (L"New sampling frequency");
+	long precision = GET_INTEGER (L"Precision");
 	LOOP {
 		iam (Sound);
-		Sound_playAsFrequencyShifted (me, shiftBy, GET_INTEGER (L"Increase maximum frequency"));
+		Sound_playAsFrequencyShifted (me, shiftBy, newSamplingFrequency, precision);
 	}
 END
 
@@ -5499,13 +5528,16 @@ END
 
 FORM (Spectrum_shiftFrequencies, L"Spectrum: Shift frequencies", L"Spectrum: Shift frequencies...")
 	REAL (L"Shift by (Hz)", L"1000.0")
-	BOOLEAN (L"Change maximum frequency", 0)
+	POSITIVE (L"New maximum frequency (Hz)", L"22050")
+	NATURAL (L"Precision", L"50")
 	OK
 DO
 	double shiftBy = GET_REAL (L"Shift by");
+	double newMaximumFrequency = GET_REAL (L"New maximum frequency");
+	long precision = GET_INTEGER (L"Precision");
 	LOOP {
 		iam (Spectrum);
-		autoSpectrum thee = Spectrum_shiftFrequencies (me, shiftBy, GET_INTEGER (L"Change maximum frequency"));
+		autoSpectrum thee = Spectrum_shiftFrequencies (me, shiftBy, newMaximumFrequency, precision);
 		praat_new (thee.transfer(), my name, (shiftBy < 0 ? L"_m" : L"_"), Melder_integer (shiftBy));
 	}
 END
@@ -7418,6 +7450,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classMatrix, 0, L"Draw as squares...", L"Scatter plot...", 1, DO_Matrix_drawAsSquares);
 	praat_addAction1 (classMatrix, 0, L"Draw distribution...", L"Draw as squares...", 1, DO_Matrix_drawDistribution);
 	praat_addAction1 (classMatrix, 0, L"Draw cumulative distribution...", L"Draw distribution...", 1, DO_Matrix_drawCumulativeDistribution);
+	praat_addAction1 (classMatrix, 0, L"Get mean...", L"Get sum", 1, DO_Matrix_getMean);
+	praat_addAction1 (classMatrix, 0, L"Get standard deviation...", L"Get mean...", 1, DO_Matrix_getStandardDeviation);
 	praat_addAction1 (classMatrix, 0, L"Transpose", L"Synthesize", 0, DO_Matrix_transpose);
 	praat_addAction1 (classMatrix, 0, L"Solve equation...", L"Analyse", 0, DO_Matrix_solveEquation);
 	praat_addAction1 (classMatrix, 0, L"To Pattern...", L"To VocalTract", 1, DO_Matrix_to_Pattern);

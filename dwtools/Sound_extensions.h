@@ -209,6 +209,6 @@ Sound Sound_copyChannelRanges (Sound me, const wchar_t *ranges);
 
 Sound Sound_removeNoise (Sound me, double noiseStart, double noiseEnd, double windowLength, double minBandFilterFrequency, double maxBandFilterFrequency, double smoothing, int method);
 
-void Sound_playAsFrequencyShifted (Sound me, double shiftBy, bool extendMaximumFrequency);
+void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingFrequency, long precision);
 
 #endif /* _Sound_extensions_h_ */

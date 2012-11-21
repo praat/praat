@@ -349,4 +349,53 @@ Matrix Matrix_solveEquation (I, double tolerance) {
 	}
 }
 
+double Matrix_getMean (I, double xmin, double xmax, double ymin, double ymax) {
+	iam (Matrix);
+	if (xmax <= xmin) {
+		xmin = my xmin; xmax = my xmax;
+	}
+	if (ymax <= ymin) {
+		ymin = my ymin; ymax = my ymax;
+	}
+	long ixmin, ixmax, iymin, iymax;
+	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0 ||
+	        Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0) {
+		return NUMundefined;
+	}
+	double sum = 0.0;
+	for (long row = iymin; row <= iymax; row++) {
+		for (long col = ixmin; col <= ixmax; col++) {
+			sum += my z[row][col];
+		}
+	}
+	return sum / ((iymax - iymin + 1) * (ixmax - ixmin + 1));
+}
+
+double Matrix_getStandardDeviation (I, double xmin, double xmax, double ymin, double ymax) {
+	iam (Matrix);
+	if (xmax <= xmin) {
+		xmin = my xmin; xmax = my xmax;
+	}
+	if (ymax <= ymin) {
+		ymin = my ymin; ymax = my ymax;
+	}
+	long ixmin, ixmax, iymin, iymax;
+	if (Matrix_getWindowSamplesX (me, xmin, xmax, & ixmin, & ixmax) == 0 ||
+	        Matrix_getWindowSamplesY (me, ymin, ymax, & iymin, & iymax) == 0) {
+		return NUMundefined;
+	}
+	long nx = ixmax - ixmin + 1, ny = iymax - iymin + 1;
+	if (nx == 1 && ny == 1) {
+		return NUMundefined;
+	}
+	double mean = Matrix_getMean (me, xmin, xmax, ymin, ymax), sum = 0;
+	for (long row = iymin; row <= iymax; row++) {
+		for (long col = ixmin; col <= ixmax; col++) {
+			double val = my z[row][col] - mean;
+			sum += val * val;
+		}
+	}
+	return sqrt (sum / (nx * ny - 1));
+}
+
 /* End of file Matrix_extensions.cpp */

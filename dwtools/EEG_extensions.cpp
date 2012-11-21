@@ -261,10 +261,9 @@ Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwi
 			double fbase = baseFrequency;// + (ichannel - 1) * channelBandwidth;
 			autoSound si = Sound_extractChannel (my d_sound, ichannel);
 			autoSpectrum spi = Sound_to_Spectrum (si.peek(), 1);
-			Spectrum_passHannBand (spi.peek(), 0.5, channelBandwidth-0.5, 0.5);
-			autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), fbase, true);
-			autoSound shifted = Spectrum_to_Sound (spi_shifted.peek());
-			autoSound resampled = Sound_resample (shifted.peek(), samplingFrequency, 30);
+			Spectrum_passHannBand (spi.peek(), 0.5, channelBandwidth - 0.5, 0.5);
+			autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), fbase, samplingFrequency / 2, 30);
+			autoSound resampled = Spectrum_to_Sound (spi_shifted.peek());
 			long nx = resampled -> nx < thy nx ? resampled -> nx : thy nx;
 			for (long j = 1; j <= nx; j++) {
 				thy z[1][j] += resampled -> z[1][j];
@@ -281,9 +280,8 @@ Sound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyShift
 	try {
 		autoSound si = Sound_extractChannel (my d_sound, channel);
 		autoSpectrum spi = Sound_to_Spectrum (si.peek(), 1);
-		autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), frequencyShift, true);
-		autoSound shifted = Spectrum_to_Sound (spi_shifted.peek());
-		autoSound thee = Sound_resample (shifted.peek(), samplingFrequency, 30);
+		autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), frequencyShift, samplingFrequency / 2, 30);
+		autoSound thee = Spectrum_to_Sound (spi_shifted.peek());
 		if (maxAmp > 0) {
 			Vector_scale (thee.peek(), maxAmp);
 		}

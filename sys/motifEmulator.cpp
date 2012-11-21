@@ -1999,7 +1999,7 @@ static void _motif_manage (GuiObject me) {
 	 */
 
 	for (child = my firstChild; child; child = child -> nextSibling) {
-		if (child -> managed) {
+		if (child -> managed && ! MEMBER (child, Shell)) {
 			int dx = 0, dy = 0;   /* By default, the child does not move. */
 			if (MEMBER (me, RowColumn)) {
 				#if mac
@@ -2032,6 +2032,7 @@ static void _motif_manage (GuiObject me) {
 			if (MEMBER3 (me, Shell, Form, BulletinBoard)) {
 				/* These widgets grow with their children. */
 				dw = width - my width, dh = height - my height;
+				//dw = 0, dh = 0;   // ppgb 20121121
 				if (dw < 0) dw = 0;
 				if (dh < 0) dh = 0;
 			} else if (MEMBER (me, RowColumn)) {

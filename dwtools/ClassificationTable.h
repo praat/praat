@@ -23,6 +23,9 @@
 #include "SSCP.h"
 #include "Confusion.h"
 
+#include "Strings_.h"
+
+
 Thing_define (ClassificationTable, TableOfReal) {
 };
 

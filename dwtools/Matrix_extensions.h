@@ -21,7 +21,7 @@
 
 /*
  djmw 20020813 GPL header
- djmw 20110307 Latest modification
+ djmw 20121110 Latest modification
 */
 
 #include "Matrix.h"
@@ -57,5 +57,9 @@ void Matrix_drawSliceY (I, Graphics g, double x, double ymin, double ymax,
 int Matrix_fitPolynomial (I, long maxDegree);
 
 Matrix Matrix_solveEquation (I, double tolerance);
+
+double Matrix_getMean (I, double xmin, double xmax, double ymin, double ymax);
+double Matrix_getStandardDeviation (I, double xmin, double xmax, double ymin, double ymax);
+
 
 #endif /* _Matrix_extensions_h_ */

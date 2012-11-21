@@ -54,12 +54,12 @@ PaError PaAsiHpi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInd
 
 PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
-		#if defined (linux)
+		#if defined (linux) && defined (ALSA)
 			PaAlsa_Initialize,
 		#elif defined (sgi)
 			PaSGI_Initialize,
 		#else
-			PaOSS_Initialize,
+			//PaOSS_Initialize,
 		#endif
         0   /* NULL terminated array */
     };

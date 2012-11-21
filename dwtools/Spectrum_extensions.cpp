@@ -333,7 +333,7 @@ Spectrum Spectrum_resample (Spectrum me, long numberOfFrequencies) {
 	}
 }
 
-Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
+Spectrum Spectrum_shiftFrequencies2 (Spectrum me, double shiftBy, bool changeMaximumFrequency) {
 	try {
 		double xmax = my xmax;
 		long numberOfFrequencies = my nx, interpolationDepth = 50;
@@ -352,6 +352,37 @@ Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, bool changeMaxi
 				thy z[2][i] = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
 			}
 		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": not shifted.");
+	}
+}
+
+Spectrum Spectrum_shiftFrequencies (Spectrum me, double shiftBy, double newMaximumFrequency, long interpolationDepth) {
+	try {
+		double xmax = my xmax;
+		long numberOfFrequencies = my nx;
+		if (newMaximumFrequency != 0) {
+			numberOfFrequencies = newMaximumFrequency / my dx + 1;
+			xmax = newMaximumFrequency;
+		}
+		autoSpectrum thee = Spectrum_create (xmax, numberOfFrequencies);
+		// shiftBy >= 0
+		for (long i = 1; i <= thy nx; i++) {
+			double thyf = thy x1 + (i - 1) * thy dx;
+			double myf = thyf - shiftBy;
+			if (myf >= my xmin && myf <= my xmax) {
+				double index = Sampled_xToIndex (me, myf);
+				thy z[1][i] = NUM_interpolate_sinc (my z[1], my nx, index, interpolationDepth);
+				thy z[2][i] = NUM_interpolate_sinc (my z[2], my nx, index, interpolationDepth);
+			}
+		}
+		// Make imaginary part of first and last sample zero
+		// so Spectrum_to_Sound uses FFT if numberOfSamples was power of 2!
+		double amp = sqrt (thy z[1][1] * thy z[1][1] + thy z[2][1] * thy z[2][1]);
+		thy z[1][1] = amp; thy z[2][1] = 0;
+		amp = sqrt (thy z[1][thy nx] * thy z[1][thy nx] + thy z[2][thy nx] * thy z[2][thy nx]);
+		thy z[1][thy nx] = amp; thy z[2][thy nx] = 0;
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not shifted.");

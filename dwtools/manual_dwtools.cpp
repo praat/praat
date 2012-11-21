@@ -3738,8 +3738,11 @@ ENTRY (L"Settings")
 TAG (L"##Shift by (Hz)")
 DEFINITION (L"a positive value shifts the spectrum towards higher frequencies, a negative value shifts the spectrum "
 	"towards lower frequencies.")
-TAG (L"##Change maximum frequency")
-DEFINITION (L"if on, the maximum frequency of the domain is shifted by the same amount.")
+TAG (L"##New maximum frequency (Hz)")
+DEFINITION (L"the maximum frequency in the new Spectrum.")
+TAG (L"##Precision")
+DEFINITION (L"the number of neighbouring frequency points that are used in the calculation of the new frequency points. "
+	"The precision relates linearly to the amount of computing time needed to get the new shifted spectrum.")
 MAN_END
 
 MAN_BEGIN (L"SpeechSynthesizer", L"djmw", 20120413)

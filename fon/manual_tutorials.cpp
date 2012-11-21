@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20121120)
+MAN_BEGIN (L"What's new?", L"ppgb", 20121121)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.34# (21 November 2012)")
+LIST_ITEM (L"\\bu Windows: corrected a bug that caused incorrect alignment of the buttons in the Objects window.")
+LIST_ITEM (L"\\bu The new ##Sound: Combine to stereo# can now work with Sounds of different durations, as the old could.")
+LIST_ITEM (L"\\bu Corrected a bug that caused Praat to crash when creating a SpeechSynthesizer.")
 NORMAL (L"##5.3.33# (20 November 2012)")
 LIST_ITEM (L"\\bu ##Sound: Combine to stereo# can now combine any number of Sounds into a new Sound whose number of channels "
 	"is the sum of the numbers of channels of the original Sounds.")

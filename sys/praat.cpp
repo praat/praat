@@ -1294,7 +1294,7 @@ static void executeStartUpFile (MelderDir startUpDirectory, const wchar_t *fileN
 	#include <gdk/gdkkeysyms.h>
 	static gint theKeySnooper (GtkWidget *widget, GdkEventKey *event, gpointer data) {
 		trace ("keyval %ld, type %ld", (long) event -> keyval, (long) event -> type);
-		if ((event -> keyval == GDK_Tab || event -> keyval == GDK_KEY_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
+		if ((event -> keyval == GDK_Tab || event -> keyval == GDK_ISO_Left_Tab) && event -> type == GDK_KEY_PRESS) {
 			trace ("tab key pressed in window %p", widget);
 			if (event -> state == 0) {
 				if (GTK_IS_WINDOW (widget)) {

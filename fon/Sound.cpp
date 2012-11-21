@@ -180,35 +180,51 @@ Sound Sound_convertToStereo (Sound me) {
 
 Sound Sounds_combineToStereo (Collection me) {
 	try {
-		long totalNumberOfChannels = 0, sharedNumberOfSamples = 0;
-		double sharedSamplingPeriod = 0.0, sharedTimeOfFirstSample = 0.0, sharedMinimumTime = 0.0, sharedMaximumTime = 0.0;
+		long totalNumberOfChannels = 0;
+		double sharedSamplingPeriod = 0.0;
 		for (long isound = 1; isound <= my size; isound ++) {
 			Sound sound = (Sound) my item [isound];
 			totalNumberOfChannels += sound -> ny;
-			if (sharedNumberOfSamples == 0) {
-				sharedNumberOfSamples = sound -> nx;
-			} else if (sound -> nx != sharedNumberOfSamples) {
-				Melder_throw ("To combine sounds, their numbers of samples must be equal.");
-			}
 			if (sharedSamplingPeriod == 0.0) {
 				sharedSamplingPeriod = sound -> dx;
-				sharedTimeOfFirstSample = sound -> x1;
-				sharedMinimumTime = sound -> xmin;
-				sharedMaximumTime = sound -> xmax;
 			} else if (sound -> dx != sharedSamplingPeriod) {
 				Melder_throw ("To combine sounds, their sampling frequencies must be equal.\n"
 						"You could resample one or more of the sounds before combining.");
 			}
 		}
+		double sharedMinimumTime = NUMundefined, sharedMaximumTime = NUMundefined;
+		for (long isound = 1; isound <= my size; isound ++) {
+			Sound sound = (Sound) my item [isound];
+			if (isound == 1) {
+				sharedMinimumTime = sound -> xmin;
+				sharedMaximumTime = sound -> xmax;
+			} else {
+				if (sound -> xmin < sharedMinimumTime) sharedMinimumTime = sound -> xmin;
+				if (sound -> xmax > sharedMaximumTime) sharedMaximumTime = sound -> xmax;
+			}
+		}
+		autoNUMvector <double> numberOfInitialZeroes (1, my size);
+		long sharedNumberOfSamples = 0;
+		double sumOfFirstTimes = 0.0;
+		for (long isound = 1; isound <= my size; isound ++) {
+			Sound sound = (Sound) my item [isound];
+			numberOfInitialZeroes [isound] = floor ((sound -> xmin - sharedMinimumTime) / sharedSamplingPeriod);
+			double newFirstTime = sound -> x1 - sound -> dx * numberOfInitialZeroes [isound];
+			sumOfFirstTimes += newFirstTime;
+			long newNumberOfSamplesThroughLastNonzero = sound -> nx + numberOfInitialZeroes [isound];
+			if (newNumberOfSamplesThroughLastNonzero > sharedNumberOfSamples) sharedNumberOfSamples = newNumberOfSamplesThroughLastNonzero;
+		}
+		double sharedTimeOfFirstSample = sumOfFirstTimes / my size;   // this is an approximation
 		autoSound thee = Sound_create (totalNumberOfChannels, sharedMinimumTime, sharedMaximumTime,
 			sharedNumberOfSamples, sharedSamplingPeriod, sharedTimeOfFirstSample);
 		long channelNumber = 0;
 		for (long isound = 1; isound <= my size; isound ++) {
 			Sound sound = (Sound) my item [isound];
+			long offset = numberOfInitialZeroes [isound];
 			for (long ichan = 1; ichan <= sound -> ny; ichan ++) {
 				channelNumber ++;
 				for (long isamp = 1; isamp <= sound -> nx; isamp ++) {
-					thy z [channelNumber] [isamp] = sound -> z [ichan] [isamp];
+					thy z [channelNumber] [isamp + offset] = sound -> z [ichan] [isamp];
 				}
 			}
 		}
