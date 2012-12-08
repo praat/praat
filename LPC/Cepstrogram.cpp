@@ -107,6 +107,72 @@ Table Cepstrogram_to_Table_cpp (Cepstrogram me, double lowestQuefrency, double h
 	}
 }
 
+static void NUMvector_smooth (double *xin, long n, long nwindow, double *xout) {
+	for (long i = 1; i <= n; i++) {
+		long ifrom = i - nwindow / 2;
+		long ito = i + nwindow / 2;
+		// at start and end: always equal number at left and right!
+		if (ifrom < 1) {
+			ifrom = 1;
+			ito = i + i - ifrom;
+		}
+		if (ito > n) {
+			ito = n;
+			ifrom = i - (ito - i);
+		}
+		xout[i] = 0;
+		for (long j = ifrom; j <= ito; j++) {
+			xout[i] += xin[j];
+		}
+		xout[i] /= ito - ifrom + 1;
+	}
+}
+
+Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+	try {
+		autoCepstrogram thee = (Cepstrogram) Data_copy (me);
+		long numberOfFrames = timeAveragingWindow / my dx;
+		if (numberOfFrames > 1) {
+			// 1. average across time
+			if (numberOfFrames % 2 == 0) { // make symmetric
+				numberOfFrames++;
+			}
+			autoNUMvector<double> qin (1, my nx);
+			autoNUMvector<double> qout (1, my nx);
+			for (long iq = 1; iq <= my ny; iq++) {
+				for (long iframe = 1; iframe <= my nx; iframe++) {
+					qin[iframe] = my z[iq][iframe] * my z[iq][iframe];
+				}
+				NUMvector_smooth (qin.peek(), my nx, numberOfFrames, qout.peek());
+				for (long iframe = 1; iframe <= my nx; iframe++) {
+					thy z[iq][iframe] = sqrt (qout[iframe]);
+				}
+			}
+		}
+		// 2. average across quefrencies
+		long numberOfQuefrencyBins = quefrencyAveragingWindow / my dy;
+		if (numberOfQuefrencyBins > 0) {
+			if (numberOfQuefrencyBins % 2 == 0) {
+				numberOfQuefrencyBins++;
+			}
+			autoNUMvector<double> qin (1, thy ny);
+			autoNUMvector<double> qout (1, thy ny);
+			for (long iframe = 1; iframe <= my nx; iframe++) {
+				for (long iq = 1; iq <= thy ny; iq++) {
+					qin[iq] = thy z[iq][iframe] * thy z[iq][iframe];//fabs (thy z[iq][iframe]);
+				}
+				NUMvector_smooth (qin.peek(), thy ny, numberOfQuefrencyBins, qout.peek());
+				for (long iq = 1; iq <= thy ny; iq++) {
+					thy z[iq][iframe] = sqrt (qout[iq]);
+				}
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": not smoothed.");
+	}
+}
+
 Matrix Cepstrogram_to_Matrix (Cepstrogram me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);

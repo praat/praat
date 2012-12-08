@@ -93,26 +93,19 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		/*
 		 */
 		if (! parent) return;
+		Melder_assert (parent -> d_widget);
+		Melder_assert (GTK_IS_FIXED (parent -> d_widget));
 		gint parentWidth, parentHeight;
 		gtk_widget_get_size_request (GTK_WIDGET (parent -> d_widget), & parentWidth, & parentHeight);
+		//parentWidth  = GTK_WIDGET (parent -> d_widget) -> allocation.width;
+		//parentHeight = GTK_WIDGET (parent -> d_widget) -> allocation.height;
 		if (left   <  0) left   += parentWidth;
 		if (right  <= 0) right  += parentWidth;
 		if (top    <  0) top    += parentHeight;
 		if (bottom <= 0) bottom += parentHeight;
-		Melder_assert (parent -> d_widget);
-		Melder_assert (GTK_IS_FIXED (parent -> d_widget));
-		if (GTK_IS_FIXED (parent -> d_widget)) {
-			trace ("fixed: parent width %d height %d", parentWidth, parentHeight);
-			gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
-			gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
-		} else if (GTK_IS_BOX (parent -> d_widget)) {
-			trace ("box: parent width %d height %d", parentWidth, parentHeight);
-			gtk_box_pack_start (GTK_BOX (parent -> d_widget), GTK_WIDGET (widget), TRUE, TRUE, 0);
-		} else {
-			trace ("container: parent width %d height %d", parentWidth, parentHeight);
-			gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
-			gtk_container_add (GTK_CONTAINER (parent -> d_widget), GTK_WIDGET (widget));
-		}
+		trace ("fixed: parent width %d height %d", parentWidth, parentHeight);
+		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
+		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
 	#elif cocoa
 		NSRect parentRect = [(NSView *) parent -> d_widget   frame];
 		int parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;

@@ -31,6 +31,7 @@
  djmw 20080411 Removed define NUM2pi
 */
 
+#include "Ltas.h"
 #include "Spectrum_extensions.h"
 #include "Sound_and_Spectrum.h"
 #include "NUM2.h"
@@ -414,6 +415,13 @@ Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interp
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not compressed.");
+	}
+}
+
+void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool logf, double bandwidth, double *a, double *intercept, int method) {
+	try {
+	} catch (MelderError) {
+		Melder_throw ("Tilt line not fitted.");
 	}
 }
 

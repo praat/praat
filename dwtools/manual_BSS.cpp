@@ -101,7 +101,7 @@ INTRO (L"Detemines the @@Covariance|covariances@ between the channels of a selec
 NORMAL (L"The covariance of a sound is determined by calculating the @@CrossCorrelationTable@ of a multichannel sound for a lag time equal to zero.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20120428)
+MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20121121)
 INTRO (L"Analyze the selected multi-channel sound into its independent components by an iterative method.")
 NORMAL (L"The @@blind source separation@ method to find the independent components tries to simultaneously diagonalize a number of "
 	"@@CrossCorrelationTable@s that are calculated from the multi-channel sound at different lag times.")

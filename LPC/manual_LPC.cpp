@@ -87,17 +87,41 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 NORMAL (L"The meaning of these settings is explained @@Cepstrum: Get peak prominence...|here@.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum", L"djmw", 20121116)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
-ENTRY (L"Description")
-NORMAL (L"A Cepstrum is a the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB's scale with a reference of 1.0. The horizontal scale shows %%quefrency% in units of seconds.")
+MAN_BEGIN (L"Cepstrogram: Smooth...", L"djmw", 20121203)
+INTRO (L"Smoothes the selected @Cepstrogram by averaging cepstra. The smoothed Cepstrogram is the result of two separate steps. "
+	"In the first step, cepsta are averaged across time. In the second step, cepstra are averaged across quefrency.")
+ENTRY (L"Settings")
+TAG (L"##Time averaging window (s)")
+DEFINITION (L"determines how many frames will used in the first step, averaging across time. The user-supplied value will be divided "
+	"by the Cepstrograms's time step value (its %dx). If %%numberOfFramesToAverage%, the result of the division, turns out to be one or less, no averaging across time is performed. "
+	"If %%numberOfFramesToAverage% is larger than one and is even, one will be added. "
+	"Each new cepstral frame will be the average of %numberOfFramesToAverage frames of the input Cepstrogram. "
+	"For example, if %numberOfFramesToAverage turns out to be 5, then the %j-th new cepstral frame is the result of averaging the 5 frames with indices %j\\--2 , %j\\--1, %j, %j+1 and %j+2 for all frames %j=3..%%numberOfFrames%\\--2, i.e. besides frame %j, the 2 frames on either side are used in the averaging. The %numberOfFramesToAverage has to be uneven to allow for this symmetric behaviour. ")
+TAG (L"##Quefrency averaging window (s)")
+DEFINITION (L"determines how many quefrency bins will be used for the averaging across quefrency step. The number of bins used in this step "
+	"is the result of the division of the user-supplied value by the quefrency step value (the Cepstrogram's %dy). "
+	"If the result turns out to be one or less, no averaging across quefrencies is performed. If the resulting value is even, one will be added. "
+	"If, for example, the result happens to be 3 then the value in quefrency bin %k will be the average value of the values in quefrency bins "
+	"%k\\--1, %k and %k+1. ")
+ENTRY (L"Note")
+NORMAL (L"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
+	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
+CODE (L"select Sound xxx")
+CODE (L"To Cepstrogram... 0.041 0.002 5000.0")
+CODE (L"Smooth... 0.02 0.001")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20121116)
+MAN_BEGIN (L"Cepstrum", L"djmw", 20121205)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+ENTRY (L"Description")
+NORMAL (L"A Cepstrum is a the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB's scale with a reference value of 1.0 (the reference value can be taken arbitrarily). The horizontal scale shows %%quefrency% in units of seconds.")
+MAN_END
+
+MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20121203)
 INTRO (L"Calculates the cepstral peak prominence measure (CPP) as defined by @@Hillenbrand et al. (1994)@")
 NORMAL (L"The CPP measure is the difference in amplitude between the cepstral peak and the corresponding value on the regression "
 	"line that is directly below the peak (i.e., the predicted magnitude for the quefrency at the cepstral peak). "
-	"The CPP measure represents how far the cepstral peak emerges from the cepstrum background.")
+	"The CPP measure represents how far the cepstral peak emerges from the cepstrum background. ")
 ENTRY (L"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 	Manual_DRAW_SETTINGS_WINDOW (L"Cepstrum: Get peak prominence", 7)
@@ -122,6 +146,8 @@ DEFINITION (L"the quefrency range for which the amplitudes (in dB) will be model
 	"as we use a more robust straight line fit.")
 TAG (L"##Fit method")
 DEFINITION (L"the default method is @@theil regression|Theil's robust line fit@. However, to be compatible with the past, a standard least squares line fit has also  been implemented.")
+ENTRY (L"Note")
+NORMAL (L"The CPP value does not depend on the reference value used in the dB calculation of the power cepstrum.")
 MAN_END
 
 MAN_BEGIN (L"Cepstrum: Draw tilt line...", L"djmw", 20121116)
@@ -528,6 +554,11 @@ MAN_END
 
 MAN_BEGIN (L"Hillenbrand et al. (1994)", L"djmw", 20121017)
 NORMAL (L"J. Hillenbrand, R.A. Cleveland & R.L. Erickson (1994): \"Acoustic correlates of breathy vocal quality\", %%Journal of speech and hearing research% #37: 769\\--778.")
+MAN_END
+
+MAN_BEGIN (L"Hillenbrand & Houde (1996)", L"djmw", 20121203)
+NORMAL (L"J. Hillenbrand & R.A. Houde (1996): \"Acoustic correlates of breathy vocal quality: Dysphonic voices and continuous speech\", %%Journal of speech and hearing research% #39: 311\\--321.")
+
 MAN_END
 
 MAN_BEGIN (L"Lee (1988)", L"djmw", 20111027)

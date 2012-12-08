@@ -30,11 +30,12 @@
 
 static double getValueAtSample (Cepstrum me, long isamp, long which, int units) {
 	(void) units;
+	double valsq = my z[1][isamp] * my z[1][isamp];
 	if (which == 0) {
-		return my z[1][isamp] * my z[1][isamp];
+		return valsq;
 	} else {
 		// dB's reference is 1.
-		return 20 * log10 (my z[1][isamp]);
+		return valsq == 0.0 ? -300.0 : 10.0 * log10 (valsq);
 	}
 }
 
@@ -163,11 +164,7 @@ void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, dou
 		y[i] = getValueAtSample (me, isamp, 1, 0);
 	}
 	// fit a line through (x,y)'s
-	if (method == 1) {
-		NUMlineFit_LS (x.peek(), y.peek(), numberOfPoints, a, intercept);
-	} else {
-		NUMlineFit_theil (x.peek(), y.peek(), numberOfPoints, a, intercept);
-	}
+	NUMlineFit(x.peek(), y.peek(), numberOfPoints, a, intercept, method);
 }
 
 

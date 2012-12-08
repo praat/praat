@@ -1254,7 +1254,17 @@ void NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 
+
+/*  Model y = C * exp(a * x) + yOffset
+	y - yOffset = C * exp (a * x) => log (y - yOffset) = a * x + log (C)
+	Line fit of log() versus x:
+		C = exp (intercept)
+*/
+void NUMfitExponentialDecayWithKnownVerticalOffset (double *x, double *y, long numberOfPoints, double yOffset, double *a, double *y0, int method);
+
 // Fit the line y= ax+b
+// method == 0 then theil, else LS
+void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept,int method);
 void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept);
 void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept);
 

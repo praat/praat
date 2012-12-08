@@ -22,31 +22,107 @@
 */
 
 #include "SpeechSynthesizer.h"
-#include "speech.h"
-#include "speak_lib.h"
-#include "phoneme.h"
-#include "synthesize.h"
-#include "voice.h"
+#include "Strings_extensions.h"
 #include "translate.h"
+
+#include "oo_DESTROY.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_COPY.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_EQUAL.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_CAN_WRITE_AS_ENCODING.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_WRITE_TEXT.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_WRITE_BINARY.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_READ_TEXT.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_READ_BINARY.h"
+#include "SpeechSynthesizer_def.h"
+#include "oo_DESCRIPTION.h"
+#include "SpeechSynthesizer_def.h"
+
 
 #define espeak_SAMPLINGFREQUENCY 22050
 
 extern structMelderDir praatDir;
 extern int option_phoneme_events;
 
-Thing_implement (SpeechSynthesizer, Data, 0);
+Thing_implement (SpeechSynthesizerVoice, Data, 0);
 
-void structSpeechSynthesizer :: v_destroy () {
-	Melder_free (d_voiceName);
-	Melder_free (d_voiceVariantName);
-	NUMvector_free<short>  (d_wav, 1);
-	Melder_free (d_punctuations);
-	SpeechSynthesizer_Parent :: v_destroy ();
+SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants) {
+	try {
+		autoSpeechSynthesizerVoice me = Thing_new (SpeechSynthesizerVoice);
+		my d_numberOfFormants = numberOfFormants;
+		my d_freq = NUMvector<int> (0, numberOfFormants);
+		my d_height = NUMvector<int> (0, my d_numberOfFormants);	// 100% = 256
+		my d_width = NUMvector<int> (0, my d_numberOfFormants);		// 100% = 256
+		my d_freqadd = NUMvector<int> (0, my d_numberOfFormants);	// Hz
+
+		// copies without temporary adjustments from embedded commands
+		my d_freq2 = NUMvector<int> (0, my d_numberOfFormants);		// 100% = 256
+		my d_height2 = NUMvector<int> (0, my d_numberOfFormants);	// 100% = 256
+		my d_width2 = NUMvector<int> (0, my d_numberOfFormants);	// 100% = 256
+
+		my d_breath = NUMvector<int> (0, my d_numberOfFormants);	// amount of breath for each formant. breath[0] indicates whether any are set.
+		my d_breathw = NUMvector<int> (0, my d_numberOfFormants);	// width of each breath formant
+		SpeechSynthesizerVoice_setDefaults (me.peek());
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("SpeechSynthesizerVoice not created.");
+	}
 }
 
+void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me) {
+
+}
+
+void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *voice) {
+	my d_v_name = Melder_wcsdup (Melder_peekUtf8ToWcs (voice -> v_name));
+
+	my d_phoneme_tab_ix = voice -> phoneme_tab_ix;
+	my d_pitch_base = voice -> pitch_base;
+	my d_pitch_range = voice -> pitch_range;
+
+	my d_speedf1 = voice -> speedf1;
+	my d_speedf2 = voice -> speedf2;
+	my d_speedf3 = voice -> speedf3;
+
+	my d_speed_percent = voice -> speed_percent;
+	my d_flutter = voice -> flutter;
+	my d_roughness = voice -> roughness;
+	my d_echo_delay = voice -> echo_delay;
+	my d_echo_amp = voice -> echo_amp;
+	my d_n_harmonic_peaks = voice -> n_harmonic_peaks;
+	my d_peak_shape = voice -> peak_shape;
+	my d_voicing = voice -> voicing;
+	my d_formant_factor = voice -> formant_factor;
+	my d_consonant_amp = voice -> consonant_amp;
+	my d_consonant_ampv = voice -> consonant_ampv;
+	my d_samplingFrequency = voice -> samplerate;
+	for (long i = 0; i < 7; i++) {
+		my d_klattv[i] = voice -> klattv[i];
+	}
+	for (long i = 0; i <= my d_numberOfFormants; i++) {
+		my d_freq[i] = voice -> freq[i];
+		my d_height[i] = voice -> height[i];
+		my d_width[i] = voice -> width[i];
+		my d_freqadd[i] = voice -> freqadd[i];
+		my d_freq2[i] = voice -> freq2[i];
+		my d_height2[i] = voice -> height2[i];
+		my d_width2[i] = voice -> width2[i];
+		my d_breath[i] = voice -> breath[i];
+		my d_breathw[i] = voice -> breathw[i];
+	}
+}
+
+Thing_implement (SpeechSynthesizer, Data, 0);
+
 void structSpeechSynthesizer :: v_info () {
-	structData :: v_info ();
-	MelderInfo_writeLine (L"Voice name: ", d_voiceName);
+	SpeechSynthesizer_Parent :: v_info ();
+	MelderInfo_writeLine (L"Voice language: ", d_voiceLanguageName);
 	MelderInfo_writeLine (L"Voice variant: ", d_voiceVariantName);
 	MelderInfo_writeLine (L"Input text format: ", (d_inputTextFormat == SpeechSynthesizer_INPUT_TEXTONLY ? L"text only" :
 		d_inputTextFormat == SpeechSynthesizer_INPUT_PHONEMESONLY ? L"phonemes only" : L"tagged text"));
@@ -133,7 +209,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 		events++;
 	}
 	if (me != 0) {
-		NUMvector_supplyStorage<short> (&my d_wav, 1, &my d_wavCapacity, my d_numberOfSamples, numsamples);
+		NUMvector_supplyStorage<int> (&my d_wav, 1, &my d_wavCapacity, my d_numberOfSamples, numsamples);
 		for (long i = 1; i <= numsamples; i++) {
 			my d_wav[my d_numberOfSamples + i] = wav[i - 1];
 		}
@@ -142,30 +218,62 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 	return 0;
 }
 
-static void SpeechSynthesizer_setDefaults (SpeechSynthesizer me)
-{
-	SpeechSynthesizer_setTextInputSettings (me, SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
-	SpeechSynthesizer_setSpeechOutputSettings (me, 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
+const wchar_t *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer me, const wchar_t *voiceLanguageName) {
+	try {
+		(void) me;
+		long voiceLanguageNameIndex = Strings_findString (espeakdata_voices_names, voiceLanguageName);
+		if (voiceLanguageNameIndex == 0) {
+			Melder_throw ("Cannot find language \"", voiceLanguageName, "\".");
+		}
+		FileInMemory fim = (FileInMemory) espeakdata_voices -> item[voiceLanguageNameIndex];
+		return fim -> d_id;
+	} catch (MelderError) {
+		Melder_throw ("Cannot find language code.");
+	}
 }
 
-SpeechSynthesizer SpeechSynthesizer_create (long voiceIndex, long voiceVariantIndex) {
+const wchar_t *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer me, const wchar_t *voiceVariantName) {
+	try {
+		(void) me;
+		static const wchar_t * defaultVariantCode = L"default";
+		// Strings espeakdata_variants_names is one longer than the actual list of variants
+		long voiceVariantIndex = Strings_findString (espeakdata_variants_names, voiceVariantName);
+		if (voiceVariantIndex == 0) {
+			Melder_throw ("Cannot find voice variant \"", voiceVariantName, "\".");
+		}
+		// ... we have to decrease the index
+		if (voiceVariantIndex != 1) { // 1 is default, i.e. no variant
+			voiceVariantIndex--; // !!!
+			FileInMemory vfim = (FileInMemory) espeakdata_variants -> item[voiceVariantIndex];
+			return vfim -> d_id;
+		} else {
+			return defaultVariantCode; // TODO what is the default?
+		}
+	} catch (MelderError) {
+		Melder_throw ("Cannot find voice variant code.");
+	}
+}
+
+void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me) {
+	my d_wavCapacity = 2 * 22050; // 2 seconds
+	my d_wav = NUMvector<int> (1, my d_wavCapacity);
+	int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, NULL, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
+	if (fsamp == -1) {
+		Melder_throw ("Internal espeak error.");
+	}
+}
+
+SpeechSynthesizer SpeechSynthesizer_create (const wchar_t *voiceLanguageName, const wchar_t *voiceVariantName) {
 	try {
 		autoSpeechSynthesizer me = Thing_new (SpeechSynthesizer);
-		my d_voice = voiceIndex; my d_voiceVariant = voiceVariantIndex;
-		FileInMemory fim = (FileInMemory) espeakdata_voices -> item[voiceIndex];
-		my d_voiceName = Melder_wcsdup (fim -> d_id);
-		if (voiceVariantIndex != 1) { // 1 is default, i.e. no variant
-            voiceVariantIndex--; // !!!
-			FileInMemory vfim = (FileInMemory) espeakdata_variants -> item[voiceVariantIndex];
-			my d_voiceVariantName = Melder_wcsdup (vfim -> d_id);
-		} else {
-			my d_voiceVariantName = Melder_wcsdup (L"default"); // TODO what is the default?
-		}
-		my d_wavCapacity = 2 * 22050; // 2 seconds
-		my d_wav = NUMvector<short> (1, my d_wavCapacity);
-		SpeechSynthesizer_setDefaults (me.peek());
-		int fsamp = espeak_Initialize (AUDIO_OUTPUT_SYNCHRONOUS, 0, NULL, espeakINITIALIZE_PHONEME_EVENTS); // 4000 ms
-		if (fsamp == -1) Melder_throw ("Internal espeak error.");
+		// check the languange and voice variant
+		(void) SpeechSynthesizer_getVoiceLanguageCodeFromName (me.peek(), voiceLanguageName);
+		(void) SpeechSynthesizer_getVoiceVariantCodeFromName (me.peek(), voiceVariantName);
+		my d_voiceLanguageName = Melder_wcsdup (voiceLanguageName);
+		my d_voiceVariantName = Melder_wcsdup (voiceVariantName);
+		SpeechSynthesizer_setTextInputSettings (me.peek(), SpeechSynthesizer_INPUT_TEXTONLY, SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM);
+		SpeechSynthesizer_setSpeechOutputSettings (me.peek(), 44100, 0.01, 50, 50, 175, true, SpeechSynthesizer_PHONEMECODINGS_IPA);
+		SpeechSynthesizer_initSoundBuffer (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("SpeechSynthesizer not created.");
@@ -196,7 +304,7 @@ void SpeechSynthesizer_playText (SpeechSynthesizer me, const wchar_t *text) {
 	Sound_playPart (thee.peek(), thy xmin, thy xmax, 0, 0);
 }
 
-static Sound buffer_to_Sound (short *wav, long numberOfSamples, double samplingFrequency)
+static Sound buffer_to_Sound (int *wav, long numberOfSamples, double samplingFrequency)
 {
 	try {
 		double dx = 1.0 / samplingFrequency;
@@ -355,15 +463,12 @@ static TextGrid Table_to_TextGrid (Table me, const wchar_t *text, double xmin, d
 static void espeakdata_SetVoiceByName (const char *name, const char *variantName)
 {
 	espeak_VOICE voice_selector;
-//	autoMelderString voice;
-//	MelderString_append (&voice, Melder_peekUtf8ToWcs (name), L"+", Melder_peekUtf8ToWcs (variantName));
 
 	memset(&voice_selector, 0, sizeof(voice_selector));
 	MelderString npv = { 0 };
 	MelderString_append (&npv, Melder_peekUtf8ToWcs (name), L"+", Melder_peekUtf8ToWcs (variantName));
 
 	voice_selector.name = (char *) Melder_peekWcsToUtf8 (npv.string);  // include variant name in voice stack ??
-//	voice_selector.name = (char *) name;  // include variant name in voice stack ??
 
 	if (LoadVoice (name,1) != NULL)
 	{
@@ -386,17 +491,19 @@ Sound SpeechSynthesizer_to_Sound (SpeechSynthesizer me, const wchar_t *text, Tex
 			option_phoneme_events |= espeakINITIALIZE_PHONEME_IPA;
 		}
 
-		espeak_SetSynthCallback (synthCallback);
-
 		espeak_SetParameter (espeakRATE, my d_wordsPerMinute, 0);
 		espeak_SetParameter (espeakPITCH, my d_pitchAdjustment, 0);
 		espeak_SetParameter (espeakRANGE, my d_pitchRange, 0);
-		espeakdata_SetVoiceByName ((const char *) Melder_peekWcsToUtf8 (my d_voiceName),
-			(const char *) Melder_peekWcsToUtf8 (my d_voiceVariantName));
+		const wchar_t *voiceLanguageCode = SpeechSynthesizer_getVoiceLanguageCodeFromName (me, my d_voiceLanguageName);
+		const wchar_t *voiceVariantCode = SpeechSynthesizer_getVoiceVariantCodeFromName (me, my d_voiceVariantName);
+		espeakdata_SetVoiceByName ((const char *) Melder_peekWcsToUtf8 (voiceLanguageCode),
+			(const char *) Melder_peekWcsToUtf8 (voiceVariantCode));
 
 		espeak_SetParameter (espeakWORDGAP, my d_wordgap * 100, 0); // espeak wordgap is in units of 10 ms
 		espeak_SetParameter (espeakCAPITALS, 0, 0);
 		espeak_SetParameter (espeakPUNCTUATION, espeakPUNCT_NONE, 0);
+
+		espeak_SetSynthCallback (synthCallback);
 
 		my d_events = Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 

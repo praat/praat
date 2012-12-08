@@ -96,6 +96,7 @@
 #include "LongSound_extensions.h"
 #include "KlattGridEditors.h"
 #include "KlattTable.h"
+#include "Ltas_extensions.h"
 #include "Minimizers.h"
 #include "Pattern.h"
 #include "PCA.h"
@@ -3786,6 +3787,32 @@ DO
 	}
 END
 
+/**************** Ltas *******************************************/
+
+FORM (Ltas_reportSpectralTilt, L"Ltas: Report spectral tilt", 0)
+	POSITIVE (L"left Frequency range (Hz)", L"100.0")
+	POSITIVE (L"right Frequency range (Hz)", L"5000.0")
+	BOOLEAN (L"Logarithmic frequecy scale", 0)
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	bool logScale = GET_INTEGER (L"Logarithmic frequecy scale");
+	LOOP {
+		iam (Ltas);
+		double a, b;
+		Ltas_fitTiltLine (me, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+			logScale, GET_INTEGER (L"Fit method"), &a, &b);
+		MelderInfo_open ();
+		MelderInfo_writeLine (L"Spectral background decay model: ", (logScale ? L"a * ln (frequency) + b." : L"a * frequency + b."));
+		MelderInfo_writeLine (Melder_double (a), L" (=a: decay rate)");
+		MelderInfo_writeLine (Melder_double (b), L" (=b: offset at zero frequency)");
+		MelderInfo_close ();
+	}
+END
+
+
 /**************** MFCC *******************************************/
 
 DIRECT (MFCC_help)
@@ -5609,14 +5636,14 @@ FORM (SpeechSynthesizer_create, L"Create SpeechSynthesizer", L"Create SpeechSynt
 	}
 	LIST (L"Language", espeakdata_voices_names -> numberOfStrings, (const wchar_t **) espeakdata_voices_names -> strings, prefVoice)
 	long prefVariant = Strings_findString (espeakdata_variants_names, L"default");
-	LABEL (L"", L"The voice variants will only work in a future version of Praat")
 	LIST (L"Voice variant", espeakdata_variants_names -> numberOfStrings,
 		(const wchar_t **) espeakdata_variants_names -> strings, prefVariant)
 	OK
 DO
 	long voiceIndex = GET_INTEGER (L"Language");
 	long variantIndex = GET_INTEGER (L"Voice variant"); // default is not in the list!
-	autoSpeechSynthesizer me = SpeechSynthesizer_create (voiceIndex, variantIndex);
+	autoSpeechSynthesizer me = SpeechSynthesizer_create (espeakdata_voices_names -> strings[voiceIndex],
+		espeakdata_variants_names -> strings[variantIndex]);
     praat_new (me.transfer(),  espeakdata_voices_names -> strings[voiceIndex], L"_",
         espeakdata_variants_names -> strings[variantIndex]);
 END
@@ -5657,14 +5684,14 @@ END
 DIRECT (SpeechSynthesizer_getVoiceName)
 	LOOP {
 		iam (SpeechSynthesizer);
-		Melder_information (espeakdata_voices_names -> strings [my d_voice]);
+		Melder_information (my d_voiceLanguageName);
 	}
 END
 
 DIRECT (SpeechSynthesizer_getVoiceVariant)
 	LOOP {
 		iam (SpeechSynthesizer);
-		Melder_information (espeakdata_variants_names -> strings[my d_voiceVariant]);
+		Melder_information (my d_voiceVariantName);
 	}
 END
 
@@ -5691,7 +5718,7 @@ FORM (SpeechSynthesizer_setSpeechOutputSettings, L"SpeechSynthesizer: Set speech
 	INTEGER (L"Pitch adjustment (0-99)", L"50")
 	INTEGER (L"Pitch range (0-99)", L"50");
 	NATURAL (L"Words per minute (80-450)", L"175");
-	BOOLEAN (L"Estimate words per minute from data", 1);
+	BOOLEAN (L"Estimate rate from data", 1);
 	OPTIONMENU (L"Output phoneme codes are", 2)
 	OPTION (L"Kirshenbaum_espeak")
 	OPTION (L"IPA")
@@ -5707,7 +5734,7 @@ DO
 	if (pitchRange < 0) pitchRange = 0;
 	if (pitchRange > 99) pitchRange = 99;
 	double wordsPerMinute = GET_INTEGER (L"Words per minute");
-	bool estimateWordsPerMinute = GET_INTEGER (L"Estimate words per minute from data");
+	bool estimateWordsPerMinute = GET_INTEGER (L"Estimate rate from data");
 	int outputPhonemeCodes = GET_INTEGER (L"Output phoneme codes are");
 
 	LOOP {
@@ -7445,6 +7472,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classLongSound, 2, L"Write to stereo NeXt/Sun file...", L"Write to stereo WAV file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoNextSunFile);
 	praat_addAction1 (classLongSound, 2, L"Save as stereo NIST file...", L"Save as stereo NeXt/Sun file...", 1, DO_LongSounds_writeToStereoNistFile);
 	praat_addAction1 (classLongSound, 2, L"Write to stereo NIST file...", L"Write to stereo NeXt/Sun file...", praat_HIDDEN + praat_DEPTH_1, DO_LongSounds_writeToStereoNistFile);
+
+	praat_addAction1 (classLtas, 0, L"Report spectral tilt...", L"Get slope...", 1, DO_Ltas_reportSpectralTilt);
 
 	praat_addAction1 (classMatrix, 0, L"Scatter plot...", L"Paint cells...", 1, DO_Matrix_scatterPlot);
 	praat_addAction1 (classMatrix, 0, L"Draw as squares...", L"Scatter plot...", 1, DO_Matrix_drawAsSquares);

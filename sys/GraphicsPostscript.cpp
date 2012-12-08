@@ -133,7 +133,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 {
 	autoGraphicsPostscript me = Thing_new (GraphicsPostscript);
 	time_t today;
-	my postScript = true, my yIsZeroAtTheTop = true, my languageLevel = 2;
+	my postScript = true, my yIsZeroAtTheTop = false, my languageLevel = 2;
 	my job = TRUE, my eps = FALSE, my printer = FALSE;
 	my d_printf = (int (*)(void *, const char*, ...)) fprintf;
 	Graphics_init (me.peek());

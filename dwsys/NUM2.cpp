@@ -2673,6 +2673,34 @@ void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double
 	*m = a;
 }
 
+// y
+void NUMfitExponentialDecayWithKnownVerticalOffset (double *x, double *y, long numberOfPoints, double yOffset, double *a, double *y0, int method) {
+	try {
+		autoNUMvector<double> logy (1, numberOfPoints);
+		for (long i = 1; i <= numberOfPoints; i++) {
+			logy[i] = y[i] - yOffset;
+			logy[i] = logy[i] <= 0 ? -30 : log (logy[i]);
+		}
+		double intercept;
+		if (method == 1) {
+			NUMlineFit_LS (x, logy.peek(), numberOfPoints, a, &intercept);
+		} else {
+			NUMlineFit_theil (x, logy.peek(), numberOfPoints, a, &intercept);
+		}
+		*y0 = exp (intercept);
+	} catch (MelderError) {
+		Melder_throw ("Exponential could not be fitted.");
+	}
+ }
+
+void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method) {
+	if (method == 1) {
+		NUMlineFit_LS (x, y, numberOfPoints, m, intercept);
+	} else {
+		NUMlineFit_theil (x, y, numberOfPoints, m, intercept);
+	}
+}
+
 // IEEE: Programs for digital signal processing section 4.3 LPTRN
 // lpc[1..n] to rc[1..n]
 void NUMlpc_lpc_to_rc (double *lpc, long p, double *rc) {

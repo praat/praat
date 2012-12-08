@@ -65,16 +65,17 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 		autoCepstrum thee = Cepstrum_create (0, 0.5 / my dx, my nx);
 		NUMfft_Table_init (&fftTable, numberOfSamples);
 		autoNUMvector<double> amp (1, numberOfSamples);
+		double *x = my z[1], *y = my z[2];
 		amp[1] = my v_getValueAtSample (1, 0, 2);
 		for (long i = 2; i < my nx; i ++) {
-			double pow_dB = my v_getValueAtSample (i, 0, 2);
-			amp [i + i - 2] = pow_dB / 10;
+			double logpow = my v_getValueAtSample (i, 0, 2);
+			amp [i + i - 2] = logpow;
 			amp [i + i - 1] = 0;
 		}
 		amp [numberOfSamples] = my v_getValueAtSample (my nx, 0, 2);
 		NUMfft_backward (&fftTable, amp.peek());
 		for (long i = 1; i <= my nx; i++) {
-			thy z[1][i] = fabs (amp[i]);
+			thy z[1][i] = amp[i] / numberOfSamples; // scaling 1/n because ifft(fft(1))= n;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -89,13 +90,17 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me) {
 		autoSpectrum thee = Sound_to_Spectrum (tmp.peek(), TRUE);
 
 		double *x = thy z[1], *y = thy z[2];
-		double scaling = tmp -> dx;
+		double scaling = tmp -> dx, forwardbackwardfactor = sqrt (my nx) * (2e-5 / sqrt (4 * thy dx)); // my nx because of ifft
 		for (long i = 1; i <= thy nx; i++) {
-			double amp = sqrt (x[i] * x[i] + y [i] * y[i]) / scaling;
-			//amp = pow (10, amp / 10); //
-			// we have lost phase
-			thy z[1][i] = amp * 2.0e-5 ;
-			thy z[2][i] = 0;
+			x[i] = sqrt (x[i] * x[i] + y [i] * y[i]) / scaling;
+			y[i] = 0;
+			// 10*log10(2*p*dx/r) = X; sqrt(x^2), r = 4e-10
+			// p = 10^(X/10)  * r/ (2*dx) * numberOfSamples
+			// amp= sqrt (10^(X/10) * sqrt (r / (2 *dx)) = 10 ^(X/20) * 2e-5 / sqrt (2 * dx)
+			double logval = x[i] / 20;
+			double amp = pow (10, logval) * forwardbackwardfactor;
+			x[i] = amp;
+			y[i] = 0;
 		}
 		return thee.transfer();
 	} catch (MelderError) {

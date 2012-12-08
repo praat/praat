@@ -234,6 +234,19 @@ DO
 	}
 END
 
+FORM (Cepstrogram_smooth, L"Cepstrogram: Smooth", L"Cepstrogram: Smooth...")
+	REAL (L"Time averaging window (s)", L"0.01")
+	REAL (L"Quefrency averaging window (s)", L"0.0005")
+	OK
+DO
+	LOOP {
+		iam (Cepstrogram);
+		autoCepstrogram thee = Cepstrogram_smooth (me, GET_REAL (L"Time averaging window"), GET_REAL (L"Quefrency averaging window"));
+		praat_new (thee.transfer(), my name, L"_smoothed");
+	}
+END
+
+
 FORM (Cepstrogram_to_Cepstrum_slice, L"", 0)
 	REAL (L"Time (s)", L"0.1")
 	OK
@@ -517,7 +530,7 @@ END
 
 FORM (Sound_to_Cepstrogram, L"Sound: To Cepstrogram", L"Sound: To Cepstrogram...")
 	POSITIVE (L"Window length (s)", L"0.025")
-	POSITIVE (L"Time step (s)", L"0.005")
+	POSITIVE (L"Time step (s)", L"0.002")
 	POSITIVE (L"Maximum frequency (Hz)", L"5000.0")
 	OK
 DO
@@ -824,6 +837,7 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classCepstrogram, 0, L"Cepstrogram help", 0, 0, DO_Cepstrogram_help);
 	praat_addAction1 (classCepstrogram, 0, L"Paint...", 0, 0, DO_Cepstrogram_paint);
 	praat_addAction1 (classCepstrogram, 0, L"To Cepstrum (slice)...", 0, 0, DO_Cepstrogram_to_Cepstrum_slice);
+	praat_addAction1 (classCepstrogram, 0, L"Smooth...", 0, 0, DO_Cepstrogram_smooth);
 	praat_addAction1 (classCepstrogram, 0, L"To Table (peak prominence)...", 0, 0, DO_Cepstrogram_to_Table_cpp);
 
 	praat_addAction1 (classCepstrumc, 0, L"Analyse", 0, 0, 0);

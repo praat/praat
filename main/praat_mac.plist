@@ -431,6 +431,8 @@
 	<string>PpgB</string>
 	<key>CFBundleVersion</key>
 	<string>PRAAT_VERSION_STR</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.education</string>
 	<key>LSRequiresCarbon</key>
 	<true/>
 	<key>NSHumanReadableCopyright</key>

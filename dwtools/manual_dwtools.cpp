@@ -3288,7 +3288,7 @@ NORMAL (L"The shifting of formant frequencies is done via manipulation of the sa
 	"Pitch and duration changes are generated with @@overlap-add@ synthesis.")
 MAN_END
 
-MAN_BEGIN (L"Sound: Remove noise...", L"djmw", 201211108)
+MAN_BEGIN (L"Sound: Remove noise...", L"djmw", 20121122)
 INTRO (L"A command to suppress noise in the selected @Sound.")
 ENTRY (L"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), L""

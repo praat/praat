@@ -73,23 +73,35 @@ Thing_implement (GuiWindow, GuiShell, 0);
 				GtkFixedChild *listElement = (GtkFixedChild *) l -> data;
 				GtkWidget *childWidget = listElement -> widget;
 				Melder_assert (childWidget);
-				GuiControl child = (GuiControl) _GuiObject_getUserData (childWidget);   // it's probably not a GuiLabel, but it will have the members in the same location
+				Thing_cast (GuiThing, child, _GuiObject_getUserData (childWidget));
 				if (child) {
-					/*
-					 * Move and resize.
-					 */
-					int left = child -> d_left, right = child -> d_right, top = child -> d_top, bottom = child -> d_bottom;
-					if (left   <  0) left   += allocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
-					if (right  <= 0) right  += allocation -> width;
-					if (top    <  0) top    += allocation -> height;
-					if (bottom <= 0) bottom += allocation -> height;
-					//Melder_casual ("moving %s to (%d,%d)", child -> type, left, top);
-					gtk_fixed_move (GTK_FIXED (widget), GTK_WIDGET (childWidget), left, top);
-					gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
+					GuiControl control = NULL;
+					if (Thing_member (child, classGuiControl)) {
+						control = static_cast <GuiControl> (child);
+					} else if (Thing_member (child, classGuiMenu)) {
+						Thing_cast (GuiMenu, menu, child);
+						control = menu -> d_cascadeButton;
+					}
+					if (control) {
+						/*
+						 * Move and resize.
+						 */
+						trace ("moving child of class %ls", Thing_className (control));
+						int left = control -> d_left, right = control -> d_right, top = control -> d_top, bottom = control -> d_bottom;
+						if (left   <  0) left   += allocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
+						if (right  <= 0) right  += allocation -> width;
+						if (top    <  0) top    += allocation -> height;
+						if (bottom <= 0) bottom += allocation -> height;
+						trace ("moving child to (%d,%d)", left, top);
+						gtk_fixed_move (GTK_FIXED (widget), GTK_WIDGET (childWidget), left, top);
+						gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
+						trace ("moved child of class %ls", Thing_className (control));
+					}
 				}
 			}
 			my d_width = allocation -> width;
 			my d_height = allocation -> height;
+			gtk_widget_set_size_request (GTK_WIDGET (widget), allocation -> width, allocation -> height);
 		}
 		trace ("end");
 		return FALSE;

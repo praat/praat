@@ -25,6 +25,11 @@
 
 #include "Sound.h"
 #include "TextGrid.h"
+#include "speech.h"
+#include "speak_lib.h"
+#include "phoneme.h"
+#include "synthesize.h"
+#include "voice.h"
 
 #define SpeechSynthesizer_PHONEMECODINGS_IPA 2
 #define SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM 1
@@ -32,34 +37,20 @@
 #define SpeechSynthesizer_INPUT_PHONEMESONLY 2
 #define SpeechSynthesizer_INPUT_TAGGEDTEXT 3
 
-Thing_define (SpeechSynthesizer, Data) {
-	public:
-		// sythesizers language /voice
-		long d_voice, d_voiceVariant;
-		wchar_t *d_voiceName, *d_voiceVariantName;
-		wchar_t *d_punctuations;
-		// text input
-		int d_inputTextFormat; // text-only, phonemes-only, mixed
-		int d_inputPhonemeCoding; // 1/: output phonemes in espeak/ notation
-		// speech output
-		long d_numberOfSamples, d_wavCapacity;
-		short *d_wav;
-		double d_samplingFrequency;
-		double d_internalSamplingFrequency;
-		double d_wordgap;
-		long d_pitchAdjustment, d_pitchRange;
-		long d_wordsPerMinute;
-		bool d_estimateWordsPerMinute;
-		// TextGrid
-		bool d_createEventPerPhoneme;
-		int d_outputPhonemeCoding; // 1/2: output phonemes in espeak/IPA notation
-		Table d_events; // Filled by the call back
-	// overridden methods:
-		void v_destroy ();
-		void v_info ();
-};
+#include "SpeechSynthesizer_def.h"
+oo_CLASS_CREATE (SpeechSynthesizerVoice, Data);
+oo_CLASS_CREATE (SpeechSynthesizer, Data);
 
-SpeechSynthesizer SpeechSynthesizer_create (long voice, long voiceVariant);
+SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants);
+void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me);
+void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *voice);
+
+
+void SpeechSynthesizer_initSoundBuffer (SpeechSynthesizer me);
+SpeechSynthesizer SpeechSynthesizer_create (const wchar_t *voiceLanguageName, const wchar_t *voiceVariantName);
+
+const wchar_t *SpeechSynthesizer_getVoiceLanguageCodeFromName (SpeechSynthesizer me, const wchar_t *voiceLanguageName);
+const wchar_t *SpeechSynthesizer_getVoiceVariantCodeFromName (SpeechSynthesizer me, const wchar_t *voiceVariantName);
 
 void SpeechSynthesizer_setTextInputSettings (SpeechSynthesizer me, int inputTextFormat, int inputPhonemeCoding);
 void SpeechSynthesizer_setSpeechOutputSettings (SpeechSynthesizer me, double samplingFrequency, double wordgap, long pitchAdjustment, long pitchRange, long wordsPerMinute, bool estimateWordsPerMinute, int outputPhonemeCodes);

@@ -179,7 +179,9 @@ const char * espeakdata_get_voice (const char *vname, long *numberOfBytes) {
 }
 
 const char * espeakdata_get_voiceVariant (const char *vname, long *numberOfBytes) {
-	return FilesInMemory_getData (espeakdata_variants, Melder_peekUtf8ToWcs (vname), numberOfBytes);
+	char *plus = strstr ((char *) vname, "+"); // prototype says: strstr (const char *, const char *)
+	const char *name = plus != NULL ? ++plus : vname;
+	return FilesInMemory_getData (espeakdata_variants, Melder_peekUtf8ToWcs (name), numberOfBytes);;
 }
 
 
