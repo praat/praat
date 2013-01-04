@@ -45,6 +45,7 @@ void * _GuiObject_getUserData (GuiObject me);
 void _GuiObject_setUserData (GuiObject me, void *userData);
 
 #if gtk
+	void GuiGtk_initialize ();
 #elif motif
 	#if win
 		#include <windows.h>

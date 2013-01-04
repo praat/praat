@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20121208)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130104)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.38# (4 January 2013)")
+LIST_ITEM (L"\\bu ExperimentMFC: repaired a bug introduced in 5.3.36 that caused sound to fail to play completely if the screen did not blank.")
+NORMAL (L"##5.3.37# (2 January 2013)")
+LIST_ITEM (L"\\bu ExperimentMFC: after screen blanking, reaction times count from when the response buttons appear.")
+NORMAL (L"##5.3.36# (1 January 2013)")
+LIST_ITEM (L"\\bu ExperimentMFC: made it possible to blank the screen while the sound is playing.")
 NORMAL (L"##5.3.35# (8 December 2012)")
 LIST_ITEM (L"\\bu SpeechSynthesizer: made it possible to have more than one at a time.")
 LIST_ITEM (L"\\bu Linux: corrected a bug that caused incorrect alignment of the buttons in the Objects window.")

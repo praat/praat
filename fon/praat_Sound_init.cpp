@@ -2008,6 +2008,7 @@ SET_ENUM (L"Maximum asynchronicity", kMelder_asynchronicityLevel, MelderAudio_ge
 SET_REAL (L"Silence before", MelderAudio_getOutputSilenceBefore ())
 SET_REAL (L"Silence after", MelderAudio_getOutputSilenceAfter ())
 DO
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	MelderAudio_setOutputMaximumAsynchronicity (GET_ENUM (kMelder_asynchronicityLevel, L"Maximum asynchronicity"));
 	MelderAudio_setOutputSilenceBefore (GET_REAL (L"Silence before"));
 	MelderAudio_setOutputSilenceAfter (GET_REAL (L"Silence after"));

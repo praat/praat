@@ -1138,7 +1138,7 @@ void TableOfReal_writeToHeaderlessSpreadsheetFile (TableOfReal me, MelderFile fi
 			}
 			MelderString_appendCharacter (& buffer, '\n');
 		}
-		MelderFile_writeText (file, buffer.string);
+		MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
 	} catch (MelderError) {
 		Melder_throw (me, ": not saved to tab-separated file.");
 	}

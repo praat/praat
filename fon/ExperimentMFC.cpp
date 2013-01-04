@@ -1,6 +1,6 @@
 /* ExperimentMFC.cpp
  *
- * Copyright (C) 2001-2011 Paul Boersma
+ * Copyright (C) 2001-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
  * pb 2011/03/15 allowed result extraction from incomplete experiments
  * pb 2011/03/23 C++
  * pb 2011/07/06 C++
+ * pb 2013/01/01 added blank while playing; version 6
  */
 
 #include "ExperimentMFC.h"
@@ -62,7 +63,7 @@
 #include "oo_DESCRIPTION.h"
 #include "ExperimentMFC_def.h"
 
-Thing_implement (ExperimentMFC, Data, 5);
+Thing_implement (ExperimentMFC, Data, 6);
 
 #include "enums_getText.h"
 #include "Experiment_enums.h"
@@ -231,10 +232,14 @@ void ExperimentMFC_start (ExperimentMFC me) {
 		/*
 		 * Create the play buffer.
 		 */
-		maximumStimulusPlaySamples = floor (my stimulusInitialSilenceDuration / my samplePeriod + 0.5)
-			+ stimulusCarrierBeforeSamples + maximumStimulusSamples + stimulusCarrierAfterSamples + 1;
-		maximumResponsePlaySamples = floor (my responseInitialSilenceDuration / my samplePeriod + 0.5)
-			+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 1;
+		maximumStimulusPlaySamples =
+			floor (my stimulusInitialSilenceDuration / my samplePeriod + 0.5)
+			+ floor (my stimulusFinalSilenceDuration / my samplePeriod + 0.5)
+			+ stimulusCarrierBeforeSamples + maximumStimulusSamples + stimulusCarrierAfterSamples + 2;
+		maximumResponsePlaySamples =
+			floor (my responseInitialSilenceDuration / my samplePeriod + 0.5)
+			+ floor (my responseFinalSilenceDuration / my samplePeriod + 0.5)
+			+ responseCarrierBeforeSamples + maximumResponseSamples + responseCarrierAfterSamples + 2;
 		maximumPlaySamples = maximumStimulusPlaySamples > maximumResponsePlaySamples ? maximumStimulusPlaySamples : maximumResponsePlaySamples;
 		my playBuffer = Sound_create (my numberOfChannels, 0.0, maximumPlaySamples * my samplePeriod,
 			maximumPlaySamples, my samplePeriod, 0.5 * my samplePeriod);
@@ -277,48 +282,66 @@ void ExperimentMFC_start (ExperimentMFC me) {
 	}
 }
 
-static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound carrierAfter, double initialSilenceDuration) {
+static void playSound (ExperimentMFC me, Sound sound, Sound carrierBefore, Sound carrierAfter,
+	double initialSilenceDuration, double finalSilenceDuration)
+{
+	long numberOfSamplesWritten = 0;
+
 	long initialSilenceSamples = floor (initialSilenceDuration / my samplePeriod + 0.5);
-	long carrierBeforeSamples = carrierBefore ? carrierBefore -> nx : 0;
-	long soundSamples = sound ? sound -> nx : 0;
-	long carrierAfterSamples = carrierAfter ? carrierAfter -> nx : 0;
 	for (long channel = 1; channel <= my numberOfChannels; channel ++) {
 		for (long i = 1; i <= initialSilenceSamples; i ++) {
 			my playBuffer -> z [channel] [i] = 0.0;
 		}
 	}
+	numberOfSamplesWritten += initialSilenceSamples;
+
 	if (carrierBefore) {
 		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
 			NUMvector_copyElements <double> (carrierBefore -> z [channel],
-				my playBuffer -> z [channel] + initialSilenceSamples, 1, carrierBeforeSamples);
+				my playBuffer -> z [channel] + numberOfSamplesWritten, 1, carrierBefore -> nx);
 		}
+		numberOfSamplesWritten += carrierBefore -> nx;
 	}
+
 	if (sound) {
 		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
 			NUMvector_copyElements <double> (sound -> z [channel],
-				my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples, 1, soundSamples);
+				my playBuffer -> z [channel] + numberOfSamplesWritten, 1, sound -> nx);
 		}
+		numberOfSamplesWritten += sound -> nx;
 	}
+
 	if (carrierAfter) {
 		for (long channel = 1; channel <= my numberOfChannels; channel ++) {
 			NUMvector_copyElements <double> (carrierAfter -> z [channel],
-				my playBuffer -> z [channel] + initialSilenceSamples + carrierBeforeSamples + soundSamples, 1, carrierAfterSamples);
+				my playBuffer -> z [channel] + numberOfSamplesWritten, 1, carrierAfter -> nx);
+		}
+		numberOfSamplesWritten += carrierAfter -> nx;
+	}
+
+	long finalSilenceSamples = floor (finalSilenceDuration / my samplePeriod + 0.5);
+	for (long channel = 1; channel <= my numberOfChannels; channel ++) {
+		for (long i = 1; i <= finalSilenceSamples; i ++) {
+			my playBuffer -> z [channel] [i + numberOfSamplesWritten] = 0.0;
 		}
 	}
-	my startingTime = Melder_clock ();
-	Sound_playPart (my playBuffer, 0.0,
-		(initialSilenceSamples + carrierBeforeSamples + soundSamples + carrierAfterSamples) * my samplePeriod,
-		0, NULL);
+	numberOfSamplesWritten += finalSilenceSamples;
+
+	if (! my blankWhilePlaying)
+		my startingTime = Melder_clock ();
+	Sound_playPart (my playBuffer, 0.0, numberOfSamplesWritten * my samplePeriod, 0, NULL);
+	if (my blankWhilePlaying)
+		my startingTime = Melder_clock ();
 }
 
 void ExperimentMFC_playStimulus (ExperimentMFC me, long istim) {
 	playSound (me, my stimulus [istim]. sound,
-		my stimulusCarrierBefore. sound, my stimulusCarrierAfter. sound, my stimulusInitialSilenceDuration);
+		my stimulusCarrierBefore. sound, my stimulusCarrierAfter. sound, my stimulusInitialSilenceDuration, my stimulusFinalSilenceDuration);
 }
 
 void ExperimentMFC_playResponse (ExperimentMFC me, long iresp) {
 	playSound (me, my response [iresp]. sound,
-		my responseCarrierBefore. sound, my responseCarrierAfter. sound, my responseInitialSilenceDuration);
+		my responseCarrierBefore. sound, my responseCarrierAfter. sound, my responseInitialSilenceDuration, my responseFinalSilenceDuration);
 }
 
 Thing_implement (ResultsMFC, Data, 2);
@@ -337,7 +360,7 @@ ResultsMFC ResultsMFC_create (long numberOfTrials) {
 ResultsMFC ExperimentMFC_extractResults (ExperimentMFC me) {
 	try {
 		if (my trial == 0 || my trial <= my numberOfTrials)
-			Melder_warning ("The experiment was not finished. Only the first ", my trial - 1, " responses are valid.");
+			Melder_warning ("The experiment was not finished. Only the first ", my trial - 1 + my pausing, " responses are valid.");
 		autoResultsMFC thee = ResultsMFC_create (my numberOfTrials);
 		for (long trial = 1; trial <= my numberOfTrials; trial ++) {
 			wchar_t *pipe = my stimulus [my stimuli [trial]]. visibleText ?

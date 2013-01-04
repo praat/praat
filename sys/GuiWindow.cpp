@@ -151,15 +151,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 	my d_goAwayCallback = goAwayCallback;
 	my d_goAwayBoss = goAwayBoss;
 	#if gtk
-		static bool gtkHasBeenInitialized = false;
-		if (! gtkHasBeenInitialized) {
-			trace ("before initing GTK: locale is %s", setlocale (LC_ALL, NULL));
-			gtk_disable_setlocale ();   // otherwise 1.5 will be written "1,5" on computers with a French or German locale
-			trace ("during initing GTK: locale is %s", setlocale (LC_ALL, NULL));
-			gtk_init_check (NULL, NULL);
-			trace ("after initing GTK: locale is %s", setlocale (LC_ALL, NULL));
-			gtkHasBeenInitialized = true;
-		}
+		GuiGtk_initialize ();
 		my d_gtkWindow = (GtkWindow *) gtk_window_new (GTK_WINDOW_TOPLEVEL);
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "delete-event", goAwayCallback ? G_CALLBACK (_GuiWindow_goAwayCallback) : G_CALLBACK (gtk_widget_hide), me);
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me);

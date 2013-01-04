@@ -52,7 +52,7 @@ void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding) { prefere
 int Melder_getInputEncoding (void) { return preferences. inputEncoding; }
 
 void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding) { preferences. outputEncoding = encoding; }
-int Melder_getOutputEncoding (void) { return preferences. outputEncoding; }
+enum kMelder_textOutputEncoding Melder_getOutputEncoding (void) { return preferences. outputEncoding; }
 
 void Melder_textEncoding_prefs (void) {
 	Preferences_addEnum (L"TextEncoding.inputEncoding", & preferences. inputEncoding, kMelder_textInputEncoding, DEFAULT);

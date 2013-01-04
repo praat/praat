@@ -119,9 +119,8 @@ void Melder_fwriteWcsAsUtf8 (const wchar_t *ptr, size_t n, FILE *f) {
 	}
 }
 
-void MelderFile_writeText (MelderFile file, const wchar_t *text) {
+void MelderFile_writeText (MelderFile file, const wchar_t *text, enum kMelder_textOutputEncoding outputEncoding) {
 	autofile f = Melder_fopen (file, "wb");
-	int outputEncoding = Melder_getOutputEncoding ();
 	if (outputEncoding == kMelder_textOutputEncoding_UTF8) {
 		Melder_fwriteWcsAsUtf8 (text, wcslen (text), f);
 	} else if ((outputEncoding == kMelder_textOutputEncoding_ASCII_THEN_UTF16 && Melder_isValidAscii (text)) ||
@@ -179,7 +178,7 @@ void MelderFile_appendText (MelderFile file, const wchar_t *text) {
 		f.reset (Melder_fopen (file, "rb"));
 	} catch (MelderError) {
 		Melder_clearError ();   // it's OK if the file didn't exist yet...
-		MelderFile_writeText (file, text);   // because then we just "write"
+		MelderFile_writeText (file, text, Melder_getOutputEncoding ());   // because then we just "write"
 		return;
 	}
 	/*

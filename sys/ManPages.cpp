@@ -776,7 +776,8 @@ static const wchar_t *month [] =
 static void writePageAsHtml (ManPages me, MelderFile file, long ipage, MelderString *buffer) {
 	ManPage page = (ManPage) my pages -> item [ipage];
 	ManPage_Paragraph paragraphs = page -> paragraphs;
-	MelderString_append (buffer, L"<html><head><meta name=\"robots\" content=\"index,follow\">\n"
+	MelderString_append (buffer, L"<html><head><meta name=\"robots\" content=\"index,follow\">"
+		L"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n"
 		L"<title>", page -> title, L"</title></head><body bgcolor=\"#FFFFFF\">\n\n");
 	MelderString_append (buffer, L"<table border=0 cellpadding=0 cellspacing=0><tr><td bgcolor=\"#CCCC00\">"
 		L"<table border=4 cellpadding=9><tr><td align=middle bgcolor=\"#000000\">"
@@ -827,7 +828,7 @@ void ManPages_writeOneToHtmlFile (ManPages me, long ipage, MelderFile file) {
 	static MelderString buffer = { 0 };
 	MelderString_empty (& buffer);
 	writePageAsHtml (me, file, ipage, & buffer);
-	MelderFile_writeText (file, buffer.string);
+	MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding_UTF8);
 }
 
 void ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
@@ -864,7 +865,7 @@ void ManPages_writeAllToHtmlDir (ManPages me, const wchar_t *dirPath) {
 		if (oldText.peek() == NULL   // doesn't the file exist yet?
 			|| wcscmp (buffer.string, oldText.peek()))   // isn't the old file identical to the new text?
 		{
-			MelderFile_writeText (& file, buffer.string);   // then write the new text
+			MelderFile_writeText (& file, buffer.string, kMelder_textOutputEncoding_UTF8);   // then write the new text
 		}
 	}
 }

@@ -1915,7 +1915,7 @@ static void _Table_writeToCharacterSeparatedFile (Table me, MelderFile file, wch
 		}
 		MelderString_appendCharacter (& buffer, '\n');
 	}
-	MelderFile_writeText (file, buffer.string);
+	MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
 }
 
 void Table_writeToTabSeparatedFile (Table me, MelderFile file) {

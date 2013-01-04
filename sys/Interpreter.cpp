@@ -1323,7 +1323,7 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 								if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw ("Commands that write to a file are not available inside pictures.");
 								InterpreterVariable var = Interpreter_hasVariable (me, variableName);
 								if (! var) Melder_throw ("Variable ", variableName, " undefined.");
-								MelderFile_writeText (& file, var -> stringValue);
+								MelderFile_writeText (& file, var -> stringValue, Melder_getOutputEncoding ());
 							}
 						} else if (isCommand (p)) {
 							/*

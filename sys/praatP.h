@@ -45,7 +45,7 @@ void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, con
 */
 void praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
-void praat_saveMenuCommands (FILE *f);
+void praat_saveMenuCommands (MelderString *buffer);
 void praat_addFixedButtonCommand (GuiForm parent, const wchar_t *title, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
 void praat_sortMenuCommands ();
@@ -136,7 +136,7 @@ void praat_actions_show ();
 void praat_actions_createWriteMenu (GuiWindow window);
 void praat_actions_init ();   // creates space for action commands
 void praat_actions_createDynamicMenu (GuiWindow window);
-void praat_saveAddedActions (FILE *f);
+void praat_saveAddedActions (MelderString *buffer);
 int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfActions ();   // for ButtonEditor
 praat_Command praat_getAction (long i);   // for ButtonEditor

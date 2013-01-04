@@ -140,7 +140,7 @@ void Melder_textEncoding_prefs (void);
 void Melder_setInputEncoding (enum kMelder_textInputEncoding encoding);
 int Melder_getInputEncoding (void);
 void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding);
-int Melder_getOutputEncoding (void);
+enum kMelder_textOutputEncoding Melder_getOutputEncoding (void);
 
 /*
  * Some other encodings. Although not used in the above set/get functions,
@@ -329,7 +329,7 @@ void MelderFile_close_nothrow (MelderFile file);
 
 /* Read and write whole text files. */
 wchar_t * MelderFile_readText (MelderFile file);
-void MelderFile_writeText (MelderFile file, const wchar_t *text);
+void MelderFile_writeText (MelderFile file, const wchar_t *text, enum kMelder_textOutputEncoding outputEncoding);
 void MelderFile_appendText (MelderFile file, const wchar_t *text);
 
 void Melder_createDirectory (MelderDir parent, const wchar_t *subdirName, int mode);
@@ -533,10 +533,10 @@ struct MelderArg {
 	int type;
 	union {
 		const wchar_t *argW;
-		const char *arg8;
+		const  char   *arg8;
 	};
-	MelderArg (const wchar_t *        arg) : type (1), argW (arg) { }
-	MelderArg (const  char *        arg) : type (2), arg8 (arg) { }
+	MelderArg (const wchar_t *      arg) : type (1), argW (arg) { }
+	MelderArg (const  char   *      arg) : type (2), arg8 (arg) { }
 	MelderArg (const double         arg) : type (1), argW (Melder_double          (arg)) { }
 	MelderArg (const          long  arg) : type (1), argW (Melder_integer         (arg)) { }
 	MelderArg (const unsigned long  arg) : type (1), argW (Melder_integer         (arg)) { }
@@ -1212,6 +1212,19 @@ private:
 
 typedef _autostring <wchar_t> autostring;
 typedef _autostring <char> autostring8;
+
+class autoMelderAudioSaveMaximumAsynchronicity {
+	enum kMelder_asynchronicityLevel d_saveAsynchronicity;
+public:
+	autoMelderAudioSaveMaximumAsynchronicity () {
+		d_saveAsynchronicity = MelderAudio_getOutputMaximumAsynchronicity ();
+		trace ("value was %d", (int) d_saveAsynchronicity);
+	}
+	~autoMelderAudioSaveMaximumAsynchronicity () {
+		MelderAudio_setOutputMaximumAsynchronicity (d_saveAsynchronicity);
+		trace ("value set to %d", (int) d_saveAsynchronicity);
+	}
+};
 
 /* End of file melder.h */
 #endif

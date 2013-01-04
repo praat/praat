@@ -158,7 +158,7 @@ Thing_define (Editor, Thing) {
 			/*
 			 * Message to boss: "I have a piece of data for you to publish."
 			 *
-			 * The editor has to calls this every time the user wants to "publish" ("Extract") some data from the editor.
+			 * The editor has to call this every time the user wants to "publish" ("Extract") some data from the editor.
 			 *
 			 * Constraint: "publication" has to be new data, either "extracted" or "copied" from data in the editor.
 			 * The boss becomes the owner of this published data,

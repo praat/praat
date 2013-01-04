@@ -1,6 +1,6 @@
 /* manual_Exp.c
  *
- * Copyright (C) 2001-2011 Paul Boersma
+ * Copyright (C) 2001-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 void manual_Exp_init (ManPages me);
 void manual_Exp_init (ManPages me) {
 
-MAN_BEGIN (L"ExperimentMFC", L"ppgb", 20051205)
+MAN_BEGIN (L"ExperimentMFC", L"ppgb", 20130101)
 INTRO (L"One of the @@types of objects@ in Praat, "
 	"for running a Multiple Forced Choice listening experiment.")
 LIST_ITEM (L"@@ExperimentMFC 1. When to use Praat")
@@ -49,17 +49,18 @@ LIST_ITEM (L"@@ExperimentMFC 5. Stimulus-dependent texts")
 LIST_ITEM (L"@@ExperimentMFC 5.1. The stimulus-dependent run text")
 LIST_ITEM (L"@@ExperimentMFC 5.2. Stimulus-dependent response buttons")
 LIST_ITEM (L"@@ExperimentMFC 6. Responses are sounds")
-LIST_ITEM (L"@@ExperimentMFC 7. Running multiple experiments")
+LIST_ITEM (L"@@ExperimentMFC 7. Blanking the screen")
+LIST_ITEM (L"@@ExperimentMFC 8. Running multiple experiments")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 1. When to use Praat", L"ppgb", 20110303)
+MAN_BEGIN (L"ExperimentMFC 1. When to use Praat", L"ppgb", 20130101)
 NORMAL (L"With Praat's ExperimentMFC, you can do simple experiments on identification and discrimination. "
 	"`Simple' means that for identification, the subject hears a sound and has to click on one of a set of "
 	"labelled rectangles (optionally, you can have the subject give a goodness-of-fit judgment). "
 	"For discrimination, you can have simple same-different choices, or more intricate things like AXB, 4I-oddity, and so on.")
 NORMAL (L"The advantage of using Praat's ExperimentMFC for this is that it is free, it works on Windows, Unix, and Macintosh, "
 	"and the whole experiment (experiment file plus sound files) is portable across computers "
-	"(you can run it from a CD, for instance). Because of the limited possibilities, "
+	"(you can run it from a USB stick, for instance). Because of the limited possibilities, "
 	"it is also quite easy to set up the experiment. Just read the description below.")
 NORMAL (L"If you require more from your experiment design, you can use Praat's @@Demo window@; "
 	"with that less simple method you could for instance let the stimulus depend on the subject's previous responses. "
@@ -81,14 +82,15 @@ LIST_ITEM (L"@@ExperimentMFC 2.8. Goodness judgments")
 LIST_ITEM (L"@@ExperimentMFC 2.9. How an experiment proceeds")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.1. The experiment file", L"ppgb", 20081123)
+MAN_BEGIN (L"ExperimentMFC 2.1. The experiment file", L"ppgb", 20130101)
 INTRO (L"An experiment is defined in a simple text file, which we call an %%experiment file%. "
 	"The following is an example of such an experiment file. The first two lines have to be typed "
 	"exactly as in this example, the rest depends on your stimuli, on your response categories, "
 	"and on the way the experiment is to be presented to the listener. "
 	"The order of the elements in this file cannot be changed, and nothing can be skipped.")
 CODE (L"\"ooTextFile\"")
-CODE (L"\"ExperimentMFC 5\"")
+CODE (L"\"ExperimentMFC 6\"")
+CODE (L"blankWhilePlaying? <no>")
 CODE (L"stimuliAreSounds? <yes>")
 CODE (L"stimulusFileNameHead = \"Sounds/\"")
 CODE (L"stimulusFileNameTail = \".wav\"")
@@ -96,6 +98,7 @@ CODE (L"stimulusCarrierBefore = \"weSayTheWord\"")
 CODE (L"stimulusCarrierAfter = \"again\"")
 CODE (L"stimulusInitialSilenceDuration = 0.5 seconds")
 CODE (L"stimulusMedialSilenceDuration = 0")
+CODE (L"stimulusFinalSilenceDuration = 0.5 seconds")
 CODE (L"numberOfDifferentStimuli = 4")
 CODE1 (L"\"heed\"  \"\"")
 CODE1 (L"\"hid\"   \"\"")
@@ -115,7 +118,7 @@ CODE (L"maximumNumberOfReplays = 0")
 CODE (L"replayButton = 0 0 0 0 \"\" \"\"")
 CODE (L"okButton = 0 0 0 0 \"\" \"\"")
 CODE (L"oopsButton = 0 0 0 0 \"\" \"\"")
-CODE (L"responsesAreSounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE (L"responsesAreSounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (L"numberOfDifferentResponses = 5")
 CODE1 (L"0.2 0.3 0.7 0.8 \"h I d\" 40 \"\" \"i\"")
 CODE1 (L"0.3 0.4 0.5 0.6 \"h E d\" 40 \"\" \"e\"")
@@ -132,7 +135,7 @@ NORMAL (L"This experiment will play 4 different stimuli to the listener, each 3 
 	"Thus, the listener is confronted with 12 trials.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 2.2. The stimuli", L"ppgb", 20080330)
+MAN_BEGIN (L"ExperimentMFC 2.2. The stimuli", L"ppgb", 20130101)
 INTRO (L"You can see that the @@ExperimentMFC 2.1. The experiment file|example experiment@ "
 	"contains four different stimuli: %heed, %hid, %hood, and %hud. "
 	"These are the %names of the four stimuli.")
@@ -163,7 +166,7 @@ NORMAL (L"But relative file paths will usually be preferred: they are more %port
 	"The advantage of using relative file paths is that you can move your whole experiment (experiment file plus sounds) "
 	"from one computer to another without changing the experiment file, "
 	"as long as you put the experiment file in the same directory as where you put the directory #Sounds. "
-	"Or you can put the whole experiment on a CD and run the experiment directly from the CD. "
+	"Or you can put the whole experiment on a USB stick and run the experiment directly from the stick. "
 	"Since Praat supports the forward slash \"/\" as a directory separator on all computers, "
 	"you can run the exact same experiment on Macintosh, Windows and Unix computers, "
 	"independent of the type of computer where you have created your experiment.")
@@ -303,7 +306,7 @@ LIST_ITEM (L"@@ExperimentMFC 3.3. A 4I-oddity experiment")
 LIST_ITEM (L"@@ExperimentMFC 3.4. Variable inter-stimulus intervals")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 3.1. A simple discrimination experiment", L"ppgb", 20070926)
+MAN_BEGIN (L"ExperimentMFC 3.1. A simple discrimination experiment", L"ppgb", 20130101)
 NORMAL (L"The @@ExperimentMFC 2.1. The experiment file|example experiment@ was an %identification experiment: "
 	"the subject had identify a single sound as one element of a set of categories. "
 	"Phoneticians will often do %discrimination experiments, which are experiments in which "
@@ -318,12 +321,14 @@ NORMAL (L"The simplest discrimination task has only two sub-stimuli, and the sub
 	"will always be heard as different, you do not include pairs in which the distance is larger than 60 Hz. "
 	"The experiment file will look like this:")
 CODE (L"\"ooTextFile\"")
-CODE (L"\"ExperimentMFC 5\"")
+CODE (L"\"ExperimentMFC 6\"")
+CODE (L"blank while playing? <no>")
 CODE (L"stimuli are sounds? <yes>")
 CODE (L"\"stimuli/\"  \".wav\"")
 CODE (L"carrier phrase \"\"  \"\"")
 CODE (L"initial silence duration 0.5 seconds")
 CODE (L"medial silence duration 0.8 seconds  ! inter-stimulus interval")
+CODE (L"final silence duration 0 seconds")
 CODE (L"37 different stimuli")
 CODE1 (L"\"300,300\"  \"\"  \"300,320\"  \"\"  \"300,340\"  \"\"  \"300,360\"  \"\"")
 CODE1 (L"\"320,300\"  \"\"  \"320,320\"  \"\"  \"320,340\"  \"\"  \"320,360\"  \"\"  \"320,380\"  \"\"")
@@ -343,7 +348,7 @@ CODE (L"0 replays")
 CODE (L"replay button 0 0 0 0 \"\" \"\"")
 CODE (L"ok button 0 0 0 0 \"\" \"\"")
 CODE (L"oops button 0 0 0 0 \"\" \"\"")
-CODE (L"responses are sounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE (L"responses are sounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (L"2 response categories")
 CODE1 (L"0.1 0.4 0.35 0.65 \"same\" 24 \"\" \"same\"")
 CODE1 (L"0.6 0.9 0.35 0.65 \"different\" 24 \"\" \"different\"")
@@ -353,24 +358,26 @@ NORMAL (L"In this example, the subject will have to click 370 times. After every
 	"will not hear the stimulus immediately after her mouse click.")
 NORMAL (L"The experimenter does not have to create the stimulus pairs as sound files. "
 	"You can specify multiple sound files by separating them with commas. Thus, \"320,300\" means that "
-	"Praat will play the files ##320.wav# and ##300.wav#. These two substimili will be separated here by a silence "
+	"Praat will play the files ##320.wav# and ##300.wav#. These two substimuli will be separated here by a silence "
 	"of 0.8 seconds, called the %%inter-stimulus interval% (or %stimulusMedialSilenceDuration).")
 NORMAL (L"Note that the text in this file is rather different from the previous example. "
 	"It does not matter whether you write \"numberOfDifferentStimuli\", or \"different stimuli\", or anything else; "
 	"Praat ignores these texts as long as they do not contain numbers, quoted strings, or things between <>.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 3.2. An AXB discrimination experiment", L"ppgb", 20070926)
+MAN_BEGIN (L"ExperimentMFC 3.2. An AXB discrimination experiment", L"ppgb", 20130101)
 INTRO (L"In the AXB task, the subject will hear three stimuli in sequence, and has to say "
 	"whether the second (X) is more similar to the first (A) or to the second (B). "
 	"An experiment file could look like follows:")
 CODE (L"\"ooTextFile\"")
-CODE (L"\"ExperimentMFC 5\"")
+CODE (L"\"ExperimentMFC 6\"")
+CODE (L"blankWhilePlaying? <no>")
 CODE (L"stimuliAreSounds? <yes>")
 CODE (L"\"stimuli/\"  \".wav\"")
 CODE (L"carrier \"\"  \"\"")
 CODE (L"initial silence 0.5")
 CODE (L"inter-stimulus interval 0.3")
+CODE (L"final silence 0")
 CODE (L"100 stimuli")
 CODE1 (L"\"300,300,320\"  \"\"  \"300,320,340\"  \"\"  \"300,340,340\"  \"\"  \"300,340,360\"  \"\"")
 CODE1 (L"...")
@@ -387,7 +394,7 @@ CODE (L"0 replays")
 CODE (L"replay button 0 0 0 0 \"\" \"\"")
 CODE (L"ok button 0 0 0 0 \"\" \"\"")
 CODE (L"oops button 0 0 0 0 \"\" \"\"")
-CODE (L"responses are sounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE (L"responses are sounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (L"3 response categories")
 CODE1 (L"0.1 0.3 0.4 0.6 \"first\" 30 \"\" \"A\"")
 CODE1 (L"0.4 0.6 0.4 0.6 \"second\" 30 \"\" \"\"")
@@ -399,12 +406,13 @@ NORMAL (L"In this example, the subject has to click 400 times. She sees three bu
 	"In your ResultsMFC object, you will only see %A and %B responses.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 3.3. A 4I-oddity experiment", L"ppgb", 20070926)
+MAN_BEGIN (L"ExperimentMFC 3.3. A 4I-oddity experiment", L"ppgb", 20130101)
 NORMAL (L"In the four-items-oddity task, the subject will hear four stimuli in sequence, and has to say "
 	"whether the second or the third is the odd one out. The other three substimuli are identical. "
 	"An experiment file could look as follows:")
 CODE (L"\"ooTextFile\"")
-CODE (L"\"ExperimentMFC 5\"")
+CODE (L"\"ExperimentMFC 6\"")
+CODE (L"blankWhilePlaying? <no>")
 CODE (L"stimuliAreSounds? <yes>")
 CODE (L"stimulusFileNameHead = \"stimuli/\"")
 CODE (L"stimulusFileNameTail = \".wav\"")
@@ -461,6 +469,7 @@ CODE (L"responseCarrierBefore = \"\"")
 CODE (L"responseCarrierAfter = \"\"")
 CODE (L"responseInitialSilenceDuration = 0")
 CODE (L"responseMedialSilenceDuration = 0")
+CODE (L"responseFinalSilenceDuration = 0")
 CODE (L"numberOfResponseCategories = 4")
 CODE1 (L"0.04 0.24 0.4 0.6 \"first\" 30 \"\" \"\"")
 CODE1 (L"0.28 0.48 0.4 0.6 \"second\" 30 \"\" \"2\"")
@@ -472,10 +481,10 @@ NORMAL (L"In this example, the subject has to click 300 times. She sees four but
 	"In your ResultsMFC object, you will only see the responses %2 and %3.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 3.4. Variable inter-stimulus intervals", L"ppgb", 20070225)
+MAN_BEGIN (L"ExperimentMFC 3.4. Variable inter-stimulus intervals", L"ppgb", 20130101)
 NORMAL (L"Praat only supports a fixed inter-stimulus interval, but sometimes you may want to test "
 	"discrimination as a function of the inter-stimulus interval itself. You can achieve this by "
-	"supplying an %interStimulusInterval of 0 and using sound files with various silences:")
+	"supplying an %stimulusMedialSilenceDuration of 0 and using sound files with various silences:")
 CODE1 (L"\"300,silence0.5,320\"  \"300,silence1.5,320\"  \"300,silence4.5,320\"")
 NORMAL (L"In this example, you have to supply the sound files ##silence0.5.wav# and so on. You can "
 	"create them with the help of @@Create Sound from formula...@ (supply a %formula of 0).")
@@ -630,7 +639,7 @@ CODE1 (L"0.2 0.4 0.7 0.8 \"\" 40 \"\" \"left\"")
 CODE1 (L"0.6 0.8 0.7 0.8 \"\" 40 \"\" \"right\"")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 6. Responses are sounds", L"ppgb", 20070926)
+MAN_BEGIN (L"ExperimentMFC 6. Responses are sounds", L"ppgb", 20130101)
 INTRO (L"In the @@ExperimentMFC 2.1. The experiment file|example experiment@, "
 	"the stimuli were sounds, and the responses were categories whose labels appeared on buttons. "
 	"Sometimes you want it the other way around.")
@@ -643,8 +652,9 @@ NORMAL (L"Such a task can be regarded as reversing the task of the example exper
 	"In the /i/ prototype task, the stimulus is a phonological category, and the response is a sound.")
 NORMAL (L"This is what the experiment file could look like:")
 CODE (L"\"ooTextFile\"")
-CODE (L"\"ExperimentMFC 5\"")
-CODE (L"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE (L"\"ExperimentMFC 6\"")
+CODE (L"blankWhilePlaying? <no>")
+CODE (L"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (L"numberOfDifferentStimuli = 2")
 CODE1 (L"\"i\"  \"Choose the best \\% \\% ee\\% .\"")
 CODE1 (L"\"I\"  \"Choose the best \\% \\% i\\% .\"")
@@ -666,6 +676,7 @@ CODE (L"responseCarrierBefore = \"\"")
 CODE (L"responseCarrierAfter = \"\"")
 CODE (L"responseInitialSilenceDuration = 0.3")
 CODE (L"responseMedialSilenceDuration = 0")
+CODE (L"responseFinalSilenceDuration = 0")
 CODE (L"numberOfDifferentResponses = 16")
 CODE1 (L"0.2 0.3 0.7 0.8 \"\" 10 \"\" \"i11\"")
 CODE1 (L"0.3 0.4 0.7 0.8 \"\" 10 \"\" \"i12\"")
@@ -694,7 +705,19 @@ NORMAL (L"The participant will see 16 squares on the screen. First she will have
 	"A silence of 0.3 seconds is played just before each response sound.")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 7. Running multiple experiments", L"ppgb", 20100518)
+MAN_BEGIN (L"ExperimentMFC 7. Blanking the screen", L"ppgb", 20130102)
+INTRO (L"In all the earlier examples, the flag %blankWhilePlaying was set to <no>. This means that in all those cases "
+	"the participant will immediately see the response categories when the sound starts playing "
+	"(or even earlier, if there is an initial silence).")
+NORMAL (L"This can be changed by setting %blankWhilePlaying to <yes>. When you do that, the participant will see a blank screen "
+	"while the stimulus is playing, and the response buttons will come up only after the sound has finished. "
+	"This is useful if you want to prevent the participant from clicking before the sound has finished, "
+	"or for priming experiments. Reaction times are measured from when the response buttons appear.")
+NORMAL (L"If you want the response buttons to come up 0.5 seconds after the sound finishes playing, "
+	"you set the %stimulusFinalSilenceDuration to 0.5.")
+MAN_END
+
+MAN_BEGIN (L"ExperimentMFC 8. Running multiple experiments", L"ppgb", 20130101)
 INTRO (L"In all the earlier examples, either the set of stimulus sounds or the set of response sounds stayed "
 	"the same throughout the experiment. If you want more than one set of stimuli, or more than one set of responses, "
 	"you can run several experiments after each other, simply by selecting more than one experiment, then clicking #Run.")
@@ -703,8 +726,9 @@ NORMAL (L"You can put all these ExperimentMFC objects in one text file. The foll
 CODE (L"\"ooTextFile\"")
 CODE (L"\"Collection\" 2")
 CODE (L"")
-CODE (L"\"ExperimentMFC 5\" \"i\"")
-CODE (L"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE (L"\"ExperimentMFC 6\" \"i\"")
+CODE (L"blankWhilePlaying? <no>")
+CODE (L"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (L"numberOfDifferentStimuli = 1")
 CODE1 (L"\"i\"  \"Choose the best \\% \\% ee\\% .\"")
 CODE (L"numberOfReplicationsPerStimulus = 1")
@@ -725,6 +749,7 @@ CODE (L"responseCarrierBefore = \"\"")
 CODE (L"responseCarrierAfter = \"\"")
 CODE (L"responseInitialSilenceDuration = 0.3")
 CODE (L"responseMedialSilenceDuration = 0")
+CODE (L"responseFinalSilenceDuration = 0")
 CODE (L"numberOfDifferentResponses = 6")
 CODE1 (L"0.2 0.3 0.7 0.8 \"\" 10 \"\" \"i1\"")
 CODE1 (L"0.3 0.4 0.7 0.8 \"\" 10 \"\" \"i2\"")
@@ -734,8 +759,9 @@ CODE1 (L"0.6 0.7 0.7 0.8 \"\" 10 \"\" \"i5\"")
 CODE1 (L"0.7 0.8 0.7 0.8 \"\" 10 \"\" \"i6\"")
 CODE (L"numberOfGoodnessCategories = 0")
 CODE (L"")
-CODE (L"\"ExperimentMFC 5\" \"u\"")
-CODE (L"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0")
+CODE (L"\"ExperimentMFC 6\" \"u\"")
+CODE (L"blankWhilePlaying? <no>")
+CODE (L"stimuliAreSounds? <no> \"\" \"\" \"\" \"\" 0 0 0")
 CODE (L"numberOfDifferentStimuli = 1")
 CODE1 (L"\"u\"  \"Choose the best \\% \\% oo\\% .\"")
 CODE (L"numberOfReplicationsPerStimulus = 1")
@@ -756,6 +782,7 @@ CODE (L"responseCarrierBefore = \"\"")
 CODE (L"responseCarrierAfter = \"\"")
 CODE (L"responseInitialSilenceDuration = 0.3")
 CODE (L"responseMedialSilenceDuration = 0")
+CODE (L"responseFinalSilenceDuration = 0")
 CODE (L"numberOfDifferentResponses = 6")
 CODE1 (L"0.2 0.3 0.7 0.8 \"\" 10 \"\" \"u1\"")
 CODE1 (L"0.3 0.4 0.7 0.8 \"\" 10 \"\" \"u2\"")
@@ -775,4 +802,4 @@ NORMAL (L"If you read this file with ##Read from file...#, you will see two Expe
 MAN_END
 }
 
-/* End of file manual_Exp.c */
+/* End of file manual_Exp.cpp */

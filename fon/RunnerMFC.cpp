@@ -1,6 +1,6 @@
 /* RunnerMFC.cpp
  *
- * Copyright (C) 2001-2011 Paul Boersma
+ * Copyright (C) 2001-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,8 +205,17 @@ static void do_ok (RunnerMFC me) {
 	} else {
 		experiment -> trial ++;
 		my broadcastDataChanged ();
+		if (experiment -> blankWhilePlaying) {
+			Graphics_setGrey (my graphics, 0.8);
+			Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+			Graphics_setGrey (my graphics, 0.0);
+			Graphics_flushWs (my graphics);
+		}
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
+			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
+			if (experiment -> blankWhilePlaying)
+				 MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 		}
 	}
@@ -225,8 +234,17 @@ static void do_oops (RunnerMFC me) {
 	experiment -> pausing = FALSE;
 	my numberOfReplays = 0;
 	my broadcastDataChanged ();
+	if (experiment -> blankWhilePlaying) {
+		Graphics_setGrey (my graphics, 0.8);
+		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+		Graphics_setGrey (my graphics, 0.0);
+		Graphics_flushWs (my graphics);
+	}
 	Graphics_updateWs (my graphics);
 	if (experiment -> stimuliAreSounds) {
+		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
+		if (experiment -> blankWhilePlaying)
+			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
 }
@@ -236,8 +254,17 @@ static void do_replay (RunnerMFC me) {
 	Melder_assert (experiment -> trial >= 1 && experiment -> trial <= experiment -> numberOfTrials);
 	my numberOfReplays ++;
 	my broadcastDataChanged ();
+	if (experiment -> blankWhilePlaying) {
+		Graphics_setGrey (my graphics, 0.8);
+		Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+		Graphics_setGrey (my graphics, 0.0);
+		Graphics_flushWs (my graphics);
+	}
 	Graphics_updateWs (my graphics);
 	if (experiment -> stimuliAreSounds) {
+		autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
+		if (experiment -> blankWhilePlaying)
+			MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 		ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 	}
 }
@@ -248,12 +275,20 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 if (gtk && event -> type != BUTTON_PRESS) return;
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (my data == NULL) return;
-	double reactionTime = Melder_clock () - experiment -> startingTime - experiment -> stimulusInitialSilenceDuration;
+	double reactionTime = Melder_clock () - experiment -> startingTime;
+	if (! experiment -> blankWhilePlaying)
+		reactionTime -= experiment -> stimulusInitialSilenceDuration;
 	double x, y;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & x, & y);
 	if (experiment -> trial == 0) {   // the first click of the experiment
 		experiment -> trial ++;
 		my broadcastDataChanged ();
+		if (experiment -> blankWhilePlaying) {
+			Graphics_setGrey (my graphics, 0.8);
+			Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+			Graphics_setGrey (my graphics, 0.0);
+			Graphics_flushWs (my graphics);
+		}
 		Graphics_updateWs (my graphics);
 		if (experiment -> stimuliAreSounds) {
 			if (experiment -> numberOfTrials < 1) {
@@ -261,6 +296,9 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 				forget (me);
 				return;
 			}
+			autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
+			if (experiment -> blankWhilePlaying)
+				MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 			ExperimentMFC_playStimulus (experiment, experiment -> stimuli [1]);   // works only if there is at least one trial
 		}
 	} else if (experiment -> pausing) {   // a click to leave the break
@@ -272,8 +310,17 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 			experiment -> pausing = FALSE;
 			experiment -> trial ++;
 			my broadcastDataChanged ();
+			if (experiment -> blankWhilePlaying) {
+				Graphics_setGrey (my graphics, 0.8);
+				Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
+				Graphics_setGrey (my graphics, 0.0);
+				Graphics_flushWs (my graphics);
+			}
 			Graphics_updateWs (my graphics);
 			if (experiment -> stimuliAreSounds) {
+				autoMelderAudioSaveMaximumAsynchronicity saveMaximumAsynchronicity;
+				if (experiment -> blankWhilePlaying)
+					MelderAudio_setOutputMaximumAsynchronicity (kMelder_asynchronicityLevel_SYNCHRONOUS);
 				ExperimentMFC_playStimulus (experiment, experiment -> stimuli [experiment -> trial]);
 			}
 		}
@@ -353,7 +400,9 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (my data == NULL) return;
-	double reactionTime = Melder_clock () - experiment -> startingTime - experiment -> stimulusInitialSilenceDuration;
+	double reactionTime = Melder_clock () - experiment -> startingTime;
+	if (! experiment -> blankWhilePlaying)
+		reactionTime -= experiment -> stimulusInitialSilenceDuration;
 	if (experiment -> trial == 0) {
 	} else if (experiment -> pausing) {
 	} else if (experiment -> trial <= experiment -> numberOfTrials) {

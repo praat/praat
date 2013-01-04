@@ -694,7 +694,7 @@ void praat_actions_createDynamicMenu (GuiWindow window) {
 	praat_form = window;
 }
 
-void praat_saveAddedActions (FILE *f) {
+void praat_saveAddedActions (MelderString *buffer) {
 	long maxID = 0;
 	for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
 		if (theActions [iaction]. uniqueID > maxID)
@@ -704,23 +704,24 @@ void praat_saveAddedActions (FILE *f) {
 		for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
 			praat_Command me = & theActions [iaction];
 			if (my uniqueID == ident && ! my hidden && my title) {
-				fwprintf (f, L"Add action command... %ls %d %ls %d %ls %d \"%ls\" \"%ls\" %d %ls\n",
-					my class1 -> className, my n1,
-					my class2 ? my class2 -> className : L"\"\"", my n2,
-					my class3 ? my class3 -> className : L"\"\"", my n3,
-					my title, my after ? my after : L"", my depth, my script ? my script : L"");
+				MelderString_append (buffer, L"Add action command...");
+				MelderString_append (buffer, L" ", my class1 -> className, L" ", Melder_integer (my n1));
+				MelderString_append (buffer, L" ", my class2 ? my class2 -> className : L"\"\"", L" ", Melder_integer (my n2));
+				MelderString_append (buffer, L" ", my class3 ? my class3 -> className : L"\"\"", L" ", Melder_integer (my n3));
+				MelderString_append (buffer, L" \"", my title, L"\" \"", my after ? my after : L"", L"\" ", Melder_integer (my depth));
+				MelderString_append (buffer, L" ", my script ? my script : L"", L"\n");
 				break;
 			}
 		}
 	for (long iaction = 1; iaction <= theNumberOfActions; iaction ++) {
 		praat_Command me = & theActions [iaction];
-		if (my toggled && my title && ! my uniqueID && ! my script)
-			fwprintf (f, L"%ls action command... %ls %ls %ls %ls\n",
-				my hidden ? L"Hide" : L"Show",
-				my class1 -> className,
-				my class2 ? my class2 -> className : L"\"\"",
-				my class3 ? my class3 -> className : L"\"\"",
-				my title);
+		if (my toggled && my title && ! my uniqueID && ! my script) {
+			MelderString_append (buffer, my hidden ? L"Hide" : L"Show", L" action command...");
+			MelderString_append (buffer, L" ", my class1 -> className);
+			MelderString_append (buffer, L" ", my class2 ? my class2 -> className : L"\"\"");
+			MelderString_append (buffer, L" ", my class3 ? my class3 -> className : L"\"\"");
+			MelderString_append (buffer, L" ", my title, L"\n");
+		}
 	}
 }
 

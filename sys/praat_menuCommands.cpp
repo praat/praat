@@ -369,23 +369,23 @@ void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wc
 	}
 }
 
-void praat_saveMenuCommands (FILE *f) {
+void praat_saveMenuCommands (MelderString *buffer) {
 	long maxID = 0;
 	for (long i = 1; i <= theNumberOfCommands; i ++) if (theCommands [i]. uniqueID > maxID) maxID = theCommands [i]. uniqueID;
 	for (long id = 1; id <= maxID; id ++)   /* Sorted. */
 		for (long i = 1; i <= theNumberOfCommands; i ++) {
 			praat_Command me = & theCommands [i];
 			if (my uniqueID == id && ! my hidden && my window && my menu && my title) {
-				fwprintf (f, L"Add menu command... \"%ls\" \"%ls\" \"%ls\" \"%ls\" %d %ls\n",
-					my window, my menu, my title, my after ? my after : L"", my depth, my script ? my script : L"");
+				MelderString_append (buffer, L"Add menu command... \"", my window, L"\" \"", my menu, L"\" \"", my title, L"\" \"");
+				MelderString_append (buffer, my after ? my after : L"", L"\" ", Melder_integer (my depth), L" ", my script ? my script : L"", L"\n");
 				break;
 			}
 		}
 	for (long i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
 		if (my toggled && my window && my menu && my title && ! my uniqueID && ! my script)
-			fwprintf (f, L"%ls menu command... \"%ls\" \"%ls\" %ls\n",
-				my hidden ? L"Hide" : L"Show", my window, my menu, my title);
+			MelderString_append (buffer, my hidden ? L"Hide" : L"Show", L" menu command... \"",
+				my window, L"\" \"", my menu, L"\" ", my title, L"\n");
 	}
 }
 

@@ -32,6 +32,7 @@
 #include "GuiP.h"
 #include "machine.h"
 #include <math.h>   // floor
+#include <locale.h>
 
 Thing_implement (GuiThing, Thing, 0);
 Thing_implement (GuiControl, GuiThing, 0);
@@ -57,6 +58,20 @@ int Gui_getResolution (GuiObject widget) {
 	return 100;   // in conformance with most other applications; and so that fonts always look the same size in the Demo window
 	return resolution;
 }
+
+#if gtk
+void GuiGtk_initialize () {
+	static bool gtkHasBeenInitialized = false;
+	if (! gtkHasBeenInitialized) {
+		trace ("before initing GTK: locale is %s", setlocale (LC_ALL, NULL));
+		gtk_disable_setlocale ();   // otherwise 1.5 will be written "1,5" on computers with a French or German locale
+		trace ("during initing GTK: locale is %s", setlocale (LC_ALL, NULL));
+		gtk_init_check (NULL, NULL);
+		trace ("after initing GTK: locale is %s", setlocale (LC_ALL, NULL));
+		gtkHasBeenInitialized = true;
+	}
+	}
+#endif
 
 void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double *height) {
 	#if defined (macintosh)
@@ -88,6 +103,7 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 		if (height) *height = monitorInfo. rcWork.bottom - monitorInfo. rcWork.top /*- GetSystemMetrics (SM_CYMINTRACK)*/;   // SM_CXSIZEFRAME  SM_CYCAPTION
 		#endif
 	#elif gtk
+		GuiGtk_initialize ();
 		GdkScreen *screen = gdk_screen_get_default ();
 		/*
 		if (parent != NULL) {

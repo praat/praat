@@ -251,7 +251,7 @@ void Strings_writeToRawTextFile (Strings me, MelderFile file) {
 	for (long i = 1; i <= my numberOfStrings; i ++) {
 		MelderString_append (& buffer, my strings [i], L"\n");
 	}
-	MelderFile_writeText (file, buffer.string);
+	MelderFile_writeText (file, buffer.string, Melder_getOutputEncoding ());
 }
 
 void Strings_randomize (Strings me) {

@@ -102,7 +102,7 @@ static void newDocument (TextEditor me) {
 
 static void saveDocument (TextEditor me, MelderFile file) {
 	autostring text = my textWidget -> f_getString ();
-	MelderFile_writeText (file, text.peek());
+	MelderFile_writeText (file, text.peek(), Melder_getOutputEncoding ());
 	my dirty = FALSE;
 	MelderFile_copy (file, & my file);
 	if (my v_fileBased ()) Thing_setName (me, Melder_fileToPath (file));

@@ -89,7 +89,7 @@ void _Preferences_addEnum (const wchar_t *string, enum kPreferences_dummy *value
 
 void Preferences_read (MelderFile file) {
 	/*
-	 * It is possible (see praat.c) that this routine is called
+	 * It is possible (see praat.cpp) that this routine is called
 	 * before any preferences have been registered.
 	 * In that case, do nothing.
 	 */
@@ -157,7 +157,7 @@ void Preferences_write (MelderFile file) {
 		MelderString_appendCharacter (& buffer, '\n');
 	}
 	try {
-		MelderFile_writeText (file, buffer.string);
+		MelderFile_writeText (file, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
 	} catch (MelderError) {
 		Melder_clearError ();
 	}

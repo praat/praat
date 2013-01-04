@@ -600,15 +600,14 @@ static void praat_exit (int exit_code) {
 	trace ("save the script buttons");
 	if (! theCurrentPraatApplication -> batch) {
 		try {
-			autofile f = Melder_fopen (& buttons5File, "wb");
-			fwprintf (f, L"\ufeff# Buttons (1).\n");
-			fwprintf (f, L"# This file is generated automatically when you quit the %ls program.\n", Melder_peekUtf8ToWcs (praatP.title));
-			fwprintf (f, L"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
-			fwprintf (f, L"# and the buttons that you hid or showed.\n\n");
-			praat_saveMenuCommands (f);
-			praat_saveAddedActions (f);
-			f.close (& buttons5File);
-			MelderFile_setMacTypeAndCreator (& buttons5File, 'pref', 'PpgB');
+			autoMelderString buffer;
+			MelderString_append (& buffer, L"# Buttons (1).\n");
+			MelderString_append (& buffer, L"# This file is generated automatically when you quit the ", Melder_peekUtf8ToWcs (praatP.title), L" program.\n");
+			MelderString_append (& buffer, L"# It contains the buttons that you added interactively to the fixed or dynamic menus,\n");
+			MelderString_append (& buffer, L"# and the buttons that you hid or showed.\n\n");
+			praat_saveMenuCommands (& buffer);
+			praat_saveAddedActions (& buffer);
+			MelderFile_writeText (& buttons5File, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}

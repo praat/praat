@@ -1,6 +1,6 @@
 /* ExperimentMFC_def.h
  *
- * Copyright (C) 2001-2011 Paul Boersma
+ * Copyright (C) 2001-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2003/02/07 added rootDirectory
- * pb 2003/03/08 added interStimulusInterval and initialSilenceDuration (version 2)
+ * pb 2003/03/08 added stimulusMedialSilenceDuration and stimulusInitialSilenceDuration (version 2)
  * pb 2004/06/22 added response key (version 3)
  * pb 2005/11/21 added replayButton (version 4)
  * pb 2005/12/04 added okButton and oopsButton (version 4)
@@ -28,6 +28,7 @@
  * pb 2007/08/12 wchar_t
  * pb 2007/09/26 added font size (version 5)
  * pb 2011/03/03 added reaction time (version 2 of ResultsMFC)
+ * pb 2013/01/01 added finalSilenceDuration and blankWhilePlaying (version 6)
  */
 
 /********* class ExperimentMFC **********/
@@ -98,6 +99,9 @@ oo_END_STRUCT (GoodnessMFC)
 #define ooSTRUCT ExperimentMFC
 oo_DEFINE_CLASS (ExperimentMFC, Data)
 
+	oo_FROM (6)
+		oo_QUESTION (blankWhilePlaying)
+	oo_ENDFROM
 	oo_FROM (4)
 		oo_QUESTION (stimuliAreSounds)
 	oo_ENDFROM
@@ -108,6 +112,9 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 	oo_FROM (2)
 		oo_DOUBLE (stimulusInitialSilenceDuration)
 		oo_DOUBLE (stimulusMedialSilenceDuration)
+	oo_ENDFROM
+	oo_FROM (6)
+		oo_DOUBLE (stimulusFinalSilenceDuration)
 	oo_ENDFROM
 	oo_LONG (numberOfDifferentStimuli)
 	oo_STRUCT_VECTOR (StimulusMFC, stimulus, numberOfDifferentStimuli)
@@ -147,6 +154,9 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_STRUCT (SoundMFC, responseCarrierAfter)
 		oo_DOUBLE (responseInitialSilenceDuration)
 		oo_DOUBLE (responseMedialSilenceDuration)
+	oo_ENDFROM
+	oo_FROM (6)
+		oo_DOUBLE (responseFinalSilenceDuration)
 	oo_ENDFROM
 	oo_LONG (numberOfDifferentResponses)
 	oo_STRUCT_VECTOR (ResponseMFC, response, numberOfDifferentResponses)

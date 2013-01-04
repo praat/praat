@@ -90,7 +90,7 @@ void Melder_audio_prefs (void) {
 }
 
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity) {
-	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
+	//MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // BUG
 	preferences. maximumAsynchronicity = maximumAsynchronicity;
 }
 enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity (void) { return preferences. maximumAsynchronicity; }
