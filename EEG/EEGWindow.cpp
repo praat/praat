@@ -1,6 +1,6 @@
 /* EEGWindow.cpp
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,9 @@
 
 Thing_implement (EEGWindow, TextGridEditor, 0);
 
-bool                             structEEGWindow :: s_showSelectionViewer;     // overridden
-kTimeSoundEditor_scalingStrategy structEEGWindow :: s_sound_scalingStrategy;   // overridden
-define_preference (EEGWindow, double, sound_scaling_height, L"20e-6")
-define_preference (EEGWindow, double, sound_scaling_minimum, L"-10e-6")
-define_preference (EEGWindow, double, sound_scaling_maximum, L"10e-6")
+#include "prefs_define.h"
+#include "EEGWindow_prefs.h"
+
 FunctionEditor_spectrogram       structEEGWindow :: s_spectrogram;             // overridden
 
 void structEEGWindow :: f_preferences (void) {

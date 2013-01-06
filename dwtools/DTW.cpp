@@ -935,7 +935,7 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 			}
 			if ( (i % 10) == 1) {
 				Melder_progress (0.999 * i / my nx, L"Calculate distances: column ",
-				                  Melder_integer (i), L" from ", Melder_integer (my nx), L"."); therror
+				                  Melder_integer (i), L" from ", Melder_integer (my nx), L"."); 
 			}
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
@@ -1467,7 +1467,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matri
             }
             if ((j % 10) == 2) {
                 Melder_progress (0.999 * j / my nx, L"Calculate time warp: frame ",
-                    Melder_integer (j), L" from ", Melder_integer (my nx), L"."); therror
+                    Melder_integer (j), L" from ", Melder_integer (my nx), L"."); 
             }
         }
 

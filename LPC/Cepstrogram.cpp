@@ -107,19 +107,12 @@ Table Cepstrogram_to_Table_cpp (Cepstrogram me, double lowestQuefrency, double h
 	}
 }
 
-static void NUMvector_smooth (double *xin, long n, long nwindow, double *xout) {
+static void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout) {
+// simple averaging, out of bound values are zero
 	for (long i = 1; i <= n; i++) {
-		long ifrom = i - nwindow / 2;
-		long ito = i + nwindow / 2;
-		// at start and end: always equal number at left and right!
-		if (ifrom < 1) {
-			ifrom = 1;
-			ito = i + i - ifrom;
-		}
-		if (ito > n) {
-			ito = n;
-			ifrom = i - (ito - i);
-		}
+		long ifrom = i - nwindow / 2, ito = i + nwindow / 2;
+		ifrom = ifrom < 1 ? 1 : ifrom;
+		ito = ito > n ? n : ito;
 		xout[i] = 0;
 		for (long j = ifrom; j <= ito; j++) {
 			xout[i] += xin[j];
@@ -143,7 +136,7 @@ Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, doub
 				for (long iframe = 1; iframe <= my nx; iframe++) {
 					qin[iframe] = my z[iq][iframe] * my z[iq][iframe];
 				}
-				NUMvector_smooth (qin.peek(), my nx, numberOfFrames, qout.peek());
+				NUMvector_smoothByMovingAverage (qin.peek(), my nx, numberOfFrames, qout.peek());
 				for (long iframe = 1; iframe <= my nx; iframe++) {
 					thy z[iq][iframe] = sqrt (qout[iframe]);
 				}
@@ -159,9 +152,9 @@ Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, doub
 			autoNUMvector<double> qout (1, thy ny);
 			for (long iframe = 1; iframe <= my nx; iframe++) {
 				for (long iq = 1; iq <= thy ny; iq++) {
-					qin[iq] = thy z[iq][iframe] * thy z[iq][iframe];//fabs (thy z[iq][iframe]);
+					qin[iq] = thy z[iq][iframe] * thy z[iq][iframe]; //fabs (thy z[iq][iframe]);
 				}
-				NUMvector_smooth (qin.peek(), thy ny, numberOfQuefrencyBins, qout.peek());
+				NUMvector_smoothByMovingAverage (qin.peek(), thy ny, numberOfQuefrencyBins, qout.peek());
 				for (long iq = 1; iq <= thy ny; iq++) {
 					thy z[iq][iframe] = sqrt (qout[iq]);
 				}

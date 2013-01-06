@@ -1,6 +1,6 @@
 /* Sound_and_Spectrogram_enums.h
  *
- * Copyright (C) 1992-2007 Paul Boersma
+ * Copyright (C) 1992-2007,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/12/06
- */
-
 enums_begin (kSound_to_Spectrogram_method, 1)
 	enums_add (kSound_to_Spectrogram_method, 1, FOURIER, L"Fourier")
 enums_end (kSound_to_Spectrogram_method, 1, FOURIER)
@@ -32,13 +28,6 @@ enums_begin (kSound_to_Spectrogram_windowShape, 0)
 	enums_add (kSound_to_Spectrogram_windowShape, 3, WELCH, L"Welch (parabolic)")
 	enums_add (kSound_to_Spectrogram_windowShape, 4, HANNING, L"Hanning (sine-squared)")
 	enums_add (kSound_to_Spectrogram_windowShape, 5, GAUSSIAN, L"Gaussian")
-	/* For reading old preferences files: */
-	enums_alt (kSound_to_Spectrogram_windowShape, SQUARE, L"0")
-	enums_alt (kSound_to_Spectrogram_windowShape, HAMMING, L"1")
-	enums_alt (kSound_to_Spectrogram_windowShape, BARTLETT, L"2")
-	enums_alt (kSound_to_Spectrogram_windowShape, WELCH, L"3")
-	enums_alt (kSound_to_Spectrogram_windowShape, HANNING, L"4")
-	enums_alt (kSound_to_Spectrogram_windowShape, GAUSSIAN, L"5")
 enums_end (kSound_to_Spectrogram_windowShape, 5, GAUSSIAN)
 
 /* End of Sound_and_Spectrogram_enums.h */

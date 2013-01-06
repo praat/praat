@@ -1,6 +1,6 @@
 /* SpectrumEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,26 +19,18 @@
 
 #include "SpectrumEditor.h"
 #include "Sound_and_Spectrum.h"
-#include "Preferences.h"
 #include "EditorM.h"
 
 Thing_implement (SpectrumEditor, FunctionEditor, 0);
 
-int    structSpectrumEditor :: s_shellWidth;
-int    structSpectrumEditor :: s_shellHeight;
-double structSpectrumEditor :: s_bandSmoothing;
-double structSpectrumEditor :: s_dynamicRange;
-
-void structSpectrumEditor :: f_preferences () {
-	Preferences_addInt    (L"SpectrumEditor.shellWidth",    & s_shellWidth,    700);   // overridden
-	Preferences_addInt    (L"SpectrumEditor.shellHeight",   & s_shellHeight,   440);   // overridden
-	Preferences_addDouble (L"SpectrumEditor.bandSmoothing", & s_bandSmoothing, 100.0);
-	Preferences_addDouble (L"SpectrumEditor.dynamicRange",  & s_dynamicRange,  60.0);
-}
+#include "prefs_define.h"
+#include "SpectrumEditor_prefs.h"
+#include "prefs_install.h"
+#include "SpectrumEditor_prefs.h"
 
 static void updateRange (SpectrumEditor me) {
 	if (Spectrum_getPowerDensityRange ((Spectrum) my data, & my minimum, & my maximum)) {
-		my minimum = my maximum - my dynamicRange;
+		my minimum = my maximum - my d_dynamicRange;
 	} else {
 		my minimum = -1000, my maximum = 1000;
 	}
@@ -112,14 +104,14 @@ static void menu_cb_publishSound (EDITOR_ARGS) {
 static void menu_cb_passBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	EDITOR_FORM (L"Filter (pass Hann band)", L"Spectrum: Filter (pass Hann band)...");
-		REAL (L"Band smoothing (Hz)", L"100.0")
+		REAL (L"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
-		SET_REAL (L"Band smoothing", my bandSmoothing)
+		SET_REAL (L"Band smoothing", my d_bandSmoothing)
 	EDITOR_DO
-		my pref_bandSmoothing () = my bandSmoothing = GET_REAL (L"Band smoothing");
+		my pref_bandSmoothing() = my d_bandSmoothing = GET_REAL (L"Band smoothing");
 		if (my d_endSelection <= my d_startSelection) Melder_throw (L"To apply a band-pass filter, first make a selection.");
 		Editor_save (me, L"Pass band");
-		Spectrum_passHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my bandSmoothing);
+		Spectrum_passHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my d_bandSmoothing);
 		FunctionEditor_redraw (me);
 		my broadcastDataChanged ();
 	EDITOR_END
@@ -128,14 +120,14 @@ static void menu_cb_passBand (EDITOR_ARGS) {
 static void menu_cb_stopBand (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	EDITOR_FORM (L"Filter (stop Hann band)", 0)
-		REAL (L"Band smoothing (Hz)", L"100.0")
+		REAL (L"Band smoothing (Hz)", my default_bandSmoothing ())
 	EDITOR_OK
-		SET_REAL (L"Band smoothing", my bandSmoothing)
+		SET_REAL (L"Band smoothing", my d_bandSmoothing)
 	EDITOR_DO
-		my pref_bandSmoothing () = my bandSmoothing = GET_REAL (L"Band smoothing");
+		my pref_bandSmoothing () = my d_bandSmoothing = GET_REAL (L"Band smoothing");
 		if (my d_endSelection <= my d_startSelection) Melder_throw (L"To apply a band-stop filter, first make a selection.");
 		Editor_save (me, L"Stop band");
-		Spectrum_stopHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my bandSmoothing);
+		Spectrum_stopHannBand ((Spectrum) my data, my d_startSelection, my d_endSelection, my d_bandSmoothing);
 		FunctionEditor_redraw (me);
 		my broadcastDataChanged ();
 	EDITOR_END
@@ -153,11 +145,11 @@ static void menu_cb_moveCursorToPeak (EDITOR_ARGS) {
 static void menu_cb_setDynamicRange (EDITOR_ARGS) {
 	EDITOR_IAM (SpectrumEditor);
 	EDITOR_FORM (L"Set dynamic range", 0)
-		POSITIVE (L"Dynamic range (dB)", L"60.0")
+		POSITIVE (L"Dynamic range (dB)", my default_dynamicRange ())
 	EDITOR_OK
-		SET_REAL (L"Dynamic range", my dynamicRange)
+		SET_REAL (L"Dynamic range", my d_dynamicRange)
 	EDITOR_DO
-		my pref_dynamicRange () = my dynamicRange = GET_REAL (L"Dynamic range");
+		my pref_dynamicRange () = my d_dynamicRange = GET_REAL (L"Dynamic range");
 		updateRange (me);
 		FunctionEditor_redraw (me);
 	EDITOR_END
@@ -195,8 +187,8 @@ SpectrumEditor SpectrumEditor_create (const wchar_t *title, Spectrum data) {
 		autoSpectrumEditor me = Thing_new (SpectrumEditor);
 		FunctionEditor_init (me.peek(), title, data);
 		my cursorHeight = -1000;
-		my bandSmoothing = my pref_bandSmoothing ();
-		my dynamicRange = my pref_dynamicRange ();
+		my d_bandSmoothing = my pref_bandSmoothing ();
+		my d_dynamicRange = my pref_dynamicRange ();
 		updateRange (me.peek());
 		return me.transfer();
 	} catch (MelderError) {

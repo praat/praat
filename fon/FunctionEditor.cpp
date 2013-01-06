@@ -19,7 +19,6 @@
 
 #include "FunctionEditor.h"
 #include "machine.h"
-#include "Preferences.h"
 #include "EditorM.h"
 #include "GuiP.h"
 
@@ -37,23 +36,10 @@ Thing_implement (FunctionEditor, Editor, 0);
 #define BUTTON_WIDTH  40
 #define BUTTON_SPACING  8
 
-int    structFunctionEditor :: s_shellWidth;
-int    structFunctionEditor :: s_shellHeight;
-bool   structFunctionEditor :: s_synchronizedZoomAndScroll;
-bool   structFunctionEditor :: s_showSelectionViewer;
-double structFunctionEditor :: s_arrowScrollStep;
-bool   structFunctionEditor :: s_picture_drawSelectionTimes;
-bool   structFunctionEditor :: s_picture_drawSelectionHairs;
-
-void structFunctionEditor :: f_preferences () {
-	Preferences_addInt    (L"FunctionEditor.shellWidth",                 & s_shellWidth,                 700);
-	Preferences_addInt    (L"FunctionEditor.shellHeight",                & s_shellHeight,                440);
-	Preferences_addBool   (L"FunctionEditor.synchronizedZoomAndScroll",  & s_synchronizedZoomAndScroll,  true);
-	Preferences_addBool   (L"FunctionEditor.showSelectionViewer",        & s_showSelectionViewer,        false);
-	Preferences_addDouble (L"FunctionEditor.arrowScrollStep",            & s_arrowScrollStep,            0.05);   // BUG: seconds?
-	Preferences_addBool   (L"FunctionEditor.picture.drawSelectionTimes", & s_picture_drawSelectionTimes, true);
-	Preferences_addBool   (L"FunctionEditor.picture.drawSelectionHairs", & s_picture_drawSelectionHairs, true);
-}
+#include "prefs_define.h"
+#include "FunctionEditor_prefs.h"
+#include "prefs_install.h"
+#include "FunctionEditor_prefs.h"
 
 #define maxGroup 100
 static int nGroup = 0;
@@ -369,7 +355,7 @@ void structFunctionEditor :: v_info () {
 	MelderInfo_writeLine (L"Window end: ", Melder_double (d_endWindow), L" ", v_format_units ());
 	MelderInfo_writeLine (L"Selection start: ", Melder_double (d_startSelection), L" ", v_format_units ());
 	MelderInfo_writeLine (L"Selection end: ", Melder_double (d_endSelection), L" ", v_format_units ());
-	MelderInfo_writeLine (L"Arrow scroll step: ", Melder_double (arrowScrollStep), L" ", v_format_units ());
+	MelderInfo_writeLine (L"Arrow scroll step: ", Melder_double (d_arrowScrollStep), L" ", v_format_units ());
 	MelderInfo_writeLine (L"Group: ", group ? L"yes" : L"no");
 }
 
@@ -401,21 +387,21 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 static void menu_cb_preferences (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
 	EDITOR_FORM (L"Preferences", 0)
-		BOOLEAN (L"Synchronize zoom and scroll", 1)
-		BOOLEAN (L"Show selection viewer", 0)
-		POSITIVE (L"Arrow scroll step (s)", L"0.05")
+		BOOLEAN (L"Synchronize zoom and scroll", my default_synchronizedZoomAndScroll ())
+		BOOLEAN (L"Show selection viewer", my default_showSelectionViewer ())
+		POSITIVE (Melder_wcscat (L"Arrow scroll step (", my v_format_units (), L")"), my default_arrowScrollStep ())
 		my v_prefs_addFields (cmd);
 	EDITOR_OK
 		SET_INTEGER (L"Synchronize zoom and scroll", my pref_synchronizedZoomAndScroll ())
 		SET_INTEGER (L"Show selection viewer", my pref_showSelectionViewer())
-		SET_REAL (L"Arrow scroll step", my arrowScrollStep)
+		SET_REAL (L"Arrow scroll step", my d_arrowScrollStep)
 		my v_prefs_setValues (cmd);
 	EDITOR_DO
 		bool oldSynchronizedZoomAndScroll = my pref_synchronizedZoomAndScroll ();
 		bool oldShowSelectionViewer = my d_hasSelectionViewer;
 		my pref_synchronizedZoomAndScroll () = GET_INTEGER (L"Synchronize zoom and scroll");
 		my pref_showSelectionViewer () = my d_hasSelectionViewer = GET_INTEGER (L"Show selection viewer");
-		my pref_arrowScrollStep () = my arrowScrollStep = GET_REAL (L"Arrow scroll step");
+		my pref_arrowScrollStep () = my d_arrowScrollStep = GET_REAL (L"Arrow scroll step");
 		if (my d_hasSelectionViewer != oldShowSelectionViewer) {
 			struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 			event. width = my drawingArea -> f_getWidth ();
@@ -818,10 +804,10 @@ static void scrollToView (FunctionEditor me, double t) {
 
 static void menu_cb_selectEarlier (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	my d_startSelection -= my arrowScrollStep;
+	my d_startSelection -= my d_arrowScrollStep;
 	if (my d_startSelection < my d_tmin + 1e-12)
 		my d_startSelection = my d_tmin;
-	my d_endSelection -= my arrowScrollStep;
+	my d_endSelection -= my d_arrowScrollStep;
 	if (my d_endSelection < my d_tmin + 1e-12)
 		my d_endSelection = my d_tmin;
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
@@ -829,10 +815,10 @@ static void menu_cb_selectEarlier (EDITOR_ARGS) {
 
 static void menu_cb_selectLater (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	my d_startSelection += my arrowScrollStep;
+	my d_startSelection += my d_arrowScrollStep;
 	if (my d_startSelection > my d_tmax - 1e-12)
 		my d_startSelection = my d_tmax;
-	my d_endSelection += my arrowScrollStep;
+	my d_endSelection += my d_arrowScrollStep;
 	if (my d_endSelection > my d_tmax - 1e-12)
 		my d_endSelection = my d_tmax;
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
@@ -840,7 +826,7 @@ static void menu_cb_selectLater (EDITOR_ARGS) {
 
 static void menu_cb_moveBleft (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	my d_startSelection -= my arrowScrollStep;
+	my d_startSelection -= my d_arrowScrollStep;
 	if (my d_startSelection < my d_tmin + 1e-12)
 		my d_startSelection = my d_tmin;
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
@@ -848,7 +834,7 @@ static void menu_cb_moveBleft (EDITOR_ARGS) {
 
 static void menu_cb_moveBright (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	my d_startSelection += my arrowScrollStep;
+	my d_startSelection += my d_arrowScrollStep;
 	if (my d_startSelection > my d_tmax - 1e-12)
 		my d_startSelection = my d_tmax;
 	if (my d_startSelection > my d_endSelection) {
@@ -861,7 +847,7 @@ static void menu_cb_moveBright (EDITOR_ARGS) {
 
 static void menu_cb_moveEleft (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	my d_endSelection -= my arrowScrollStep;
+	my d_endSelection -= my d_arrowScrollStep;
 	if (my d_endSelection < my d_tmin + 1e-12)
 		my d_endSelection = my d_tmin;
 	if (my d_startSelection > my d_endSelection) {
@@ -874,7 +860,7 @@ static void menu_cb_moveEleft (EDITOR_ARGS) {
 
 static void menu_cb_moveEright (EDITOR_ARGS) {
 	EDITOR_IAM (FunctionEditor);
-	my d_endSelection += my arrowScrollStep;
+	my d_endSelection += my d_arrowScrollStep;
 	if (my d_endSelection > my d_tmax - 1e-12)
 		my d_endSelection = my d_tmax;
 	scrollToView (me, 0.5 * (my d_startSelection + my d_endSelection));
@@ -1492,7 +1478,7 @@ gui_drawingarea_cb_resize (me, & event);
 	if (group_equalDomain (my d_tmin, my d_tmax))
 		gui_checkbutton_cb_group (me, NULL);   // BUG: NULL
 	my enableUpdates = true;
-	my arrowScrollStep = my pref_arrowScrollStep ();
+	my d_arrowScrollStep = my pref_arrowScrollStep ();
 }
 
 void FunctionEditor_marksChanged (FunctionEditor me) {

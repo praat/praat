@@ -28,21 +28,21 @@ int Melder_debug = 0;
 If Melder_debug is set to the following values in Praat,
 the behaviour of that program changes in the following way:
 
-1: Windows: use C-clock instead of multimedia-clock in melder_audio.c.
-2: Windows: always reset waveOut, even when played to end, in melder_audio.c.
-3: Windows: reset waveOut if unprepareHeader fails, and retry, in melder_audio.c. STAY: 20010214
-4: Windows: fewer callbacks during sound play, in melder_audio.c. STAY: 20010214
-6: Windows: info on metafile properties in Picture.c.
-8: Windows: don't reset waveIn, in SoundRecorder.c.
+1: Windows: use C-clock instead of multimedia-clock in melder_audio.cpp.
+2: Windows: always reset waveOut, even when played to end, in melder_audio.cpp.
+3: Windows: reset waveOut if unprepareHeader fails, and retry, in melder_audio.cpp. STAY: 20010214
+4: Windows: fewer callbacks during sound play, in melder_audio.cpp. STAY: 20010214
+6: Windows: info on metafile properties in Picture.cpp.
+8: Windows: don't reset waveIn, in SoundRecorder.cpp.
 9: flush Error in FunctionEditor_Sound_draw
 10: geometric pens
-11: clicked item in option menu in Ui.c.
+11: clicked item in option menu in Ui.cpp.
 12: no forced update event in XmUpdateDisplay on Mac
-14: switches off the progress window in melder.c
+14: switches off the progress window in melder.cpp
 15: don't use TrueType IPA fonts, but always bitmaps instead
 16: Linux: open /dev/dsp without O_NDELAY
-17: debugging on in Formula.c
-18: no endian assumptions in abcio.c
+17: debugging on in Formula.cpp
+18: no endian assumptions in abcio.cpp
 19: show path name in UiOutfile_do
 20: trace PortAudio
 21: Mac: list supported document formats when printing
@@ -60,7 +60,6 @@ the behaviour of that program changes in the following way:
 33: trace the Pitch path finder
 34: trace memory allocation and deallocation
 35: debugging on for QuickTime movie file opening
-36: debugging on for images
 37: debug autoThing
 38: debug autoNUMvector
 39: debug autostring

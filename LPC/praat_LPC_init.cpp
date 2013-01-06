@@ -34,6 +34,7 @@
 #include "Cepstrogram.h"
 #include "Cepstrum_and_Spectrum.h"
 #include "DTW.h"
+#include "Formant_extensions.h"
 #include "LPC.h"
 #include "MFCC.h"
 #include "LFCC.h"
@@ -342,6 +343,38 @@ DO
 	}
 END
 
+FORM (Formant_formula, L"Formant: Formula", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	NATURAL (L"left Formant range", L"1")
+	NATURAL (L"right Formant range", L"5")
+	LABEL (L"", L"Formant frequencies in odd numbered rows")
+	LABEL (L"", L"Formant bandwidths in even numbered rows")
+	SENTENCE (L"Formula", L"if row mod 2 = 1 and self[row,col]/self[row+1,col] < 5 then 0 else self fi")
+	OK
+DO
+	wchar_t *expression = GET_STRING (L"Formula");
+	LOOP {
+		iam (Formant);
+		Formant_formula (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_INTEGER (L"left Formant range"), GET_INTEGER (L"right Formant range"), interpreter, expression);
+	}
+END
+
+/******************** Formant & Spectrogram ********************************************/
+
+FORM (Formant_and_Spectrogram_to_IntensityTier, L"Formant & Spectrogram: To IntensityTier", L"Formant & Spectrogram: To IntensityTier...")
+	NATURAL (L"Formant number", L"1")
+	OK
+DO
+	Formant me = FIRST (Formant);
+	long iformant = GET_INTEGER (L"Formant number");
+	Spectrogram thee = FIRST (Spectrogram);
+	autoIntensityTier him = Formant_and_Spectrogram_to_IntensityTier (me, thee, iformant);
+	praat_new (him.transfer(), my name, L"_", Melder_integer (GET_INTEGER (L"Formant number")));
+END
+
+
 /********************LFCC ********************************************/
 
 DIRECT (LFCC_help)
@@ -374,6 +407,7 @@ FORM (LPC_drawGain, L"LPC: Draw gain", L"LPC: Draw gain...")
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
+	autoPraatPicture picture;
 	LOOP {
 		iam (LPC);
 		LPC_drawGain (me, GRAPHICS, GET_REAL (L"From time"), GET_REAL (L"To time"),
@@ -407,6 +441,7 @@ FORM (LPC_drawPoles, L"LPC: Draw poles", L"LPC: Draw poles...")
 	BOOLEAN (L"Garnish", 1)
 	OK
 DO
+	autoPraatPicture picture;
 	LOOP {
 		iam (LPC);
 		LPC_drawPoles (me, GRAPHICS, GET_REAL (L"Time"), GET_INTEGER (L"Garnish"));
@@ -848,6 +883,8 @@ void praat_uvafon_LPC_init (void) {
 
 	praat_addAction1 (classFormant, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classFormant, 0, L"To LPC...", 0, 0, DO_Formant_to_LPC);
+	praat_addAction1 (classFormant, 0, L"Formula...", L"Formula (bandwidths)...", 1, DO_Formant_formula);
+	praat_addAction2 (classFormant, 1, classSpectrogram, 1, L"To IntensityTier...", 0, 0, DO_Formant_and_Spectrogram_to_IntensityTier);
 
 	praat_addAction1 (classLFCC, 0, L"LFCC help", 0, 0, DO_LFCC_help);
 	praat_CC_init (classLFCC);

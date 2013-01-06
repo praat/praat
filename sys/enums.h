@@ -2,7 +2,7 @@
 #define _enums_h_
 /* enums.h
  *
- * Copyright (C) 2007 Paul Boersma
+ * Copyright (C) 2007,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +19,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2007/12/06
- */
-
 #define enums_begin(type,minimum)  enum type { type##_MIN = minimum,
 #define enums_add(type,value,which,text)  type##_##which = value,
 #define enums_alt(type,which,text)
@@ -33,4 +29,3 @@
 
 /* End of file enums.h */
 #endif
-

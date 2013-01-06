@@ -65,7 +65,7 @@ Any structAffineTransform :: v_invert () {
 	autoAffineTransform thee = Data_copy (this);
 	double tolerance = 0.000001;
 
-	NUMpseudoInverse (r, n, n, thy r, tolerance); therror
+	NUMpseudoInverse (r, n, n, thy r, tolerance); 
 	for (long i = 1; i <= n; i++) {
 		thy t[i] = 0;
 		for (long j = 1; j <= thy n; j++) {

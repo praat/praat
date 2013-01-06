@@ -18,7 +18,6 @@
  */
 
 #include "TimeSoundEditor.h"
-#include "Preferences.h"
 #include "EditorM.h"
 #include "UnicodeData.h"
 
@@ -29,34 +28,10 @@
 
 Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 
-/********** PREFERENCES **********/
-
-//kTimeSoundEditor_scalingStrategy structTimeSoundEditor :: s_sound_scalingStrategy;
-define_preference (TimeSoundEditor, kTimeSoundEditor_scalingStrategy, sound_scalingStrategy, 0)
-define_preference (TimeSoundEditor, double, sound_scaling_height, L"2.0")
-define_preference (TimeSoundEditor, double, sound_scaling_minimum, L"-1.0")
-define_preference (TimeSoundEditor, double, sound_scaling_maximum, L"1.0")
-bool                             structTimeSoundEditor :: s_picture_preserveTimes;
-double                           structTimeSoundEditor :: s_picture_bottom;
-double                           structTimeSoundEditor :: s_picture_top;
-bool                             structTimeSoundEditor :: s_picture_garnish;
-kSound_windowShape               structTimeSoundEditor :: s_extract_windowShape;
-double                           structTimeSoundEditor :: s_extract_relativeWidth;
-bool                             structTimeSoundEditor :: s_extract_preserveTimes;
-
-void structTimeSoundEditor :: f_preferences () {
-	Preferences_addEnum   (L"TimeSoundEditor.sound.scalingStrategy", & s_sound_scalingStrategy, kTimeSoundEditor_scalingStrategy, DEFAULT);
-	Preferences_addDouble (L"TimeSoundEditor.sound.scaling.height",  & s_sound_scaling_height,                    Melder_atof (sdefault_sound_scaling_height));
-	Preferences_addDouble (L"TimeSoundEditor.sound.scaling.minimum", & s_sound_scaling_minimum,                   Melder_atof (sdefault_sound_scaling_minimum));
-	Preferences_addDouble (L"TimeSoundEditor.sound.scaling.maximum", & s_sound_scaling_maximum,                   Melder_atof (sdefault_sound_scaling_maximum));
-	Preferences_addBool   (L"TimeSoundEditor.picture.preserveTimes", & s_picture_preserveTimes,                   true);
-	Preferences_addDouble (L"TimeSoundEditor.picture.bottom",        & s_picture_bottom,                          0.0);
-	Preferences_addDouble (L"TimeSoundEditor.picture.top",           & s_picture_top,                             0.0);
-	Preferences_addBool   (L"TimeSoundEditor.picture.garnish",       & s_picture_garnish,                         true);
-	Preferences_addEnum   (L"TimeSoundEditor.extract.windowShape",   & s_extract_windowShape, kSound_windowShape, DEFAULT);
-	Preferences_addDouble (L"TimeSoundEditor.extract.relativeWidth", & s_extract_relativeWidth,                   1.0);
-	Preferences_addBool   (L"TimeSoundEditor.extract.preserveTimes", & s_extract_preserveTimes,                   true);
-}
+#include "prefs_define.h"
+#include "TimeSoundEditor_prefs.h"
+#include "prefs_install.h"
+#include "TimeSoundEditor_prefs.h"
 
 /********** Thing methods **********/
 
@@ -69,7 +44,7 @@ void structTimeSoundEditor :: v_destroy () {
 void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flags: */
-	MelderInfo_writeLine (L"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (d_sound.scalingStrategy));
+	MelderInfo_writeLine (L"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (d_sound_scalingStrategy));
 }
 
 /***** FILE MENU *****/
@@ -400,15 +375,15 @@ static void menu_cb_soundScaling (EDITOR_ARGS) {
 		REAL (L"Minimum", my default_sound_scaling_minimum ())
 		REAL (L"Maximum", my default_sound_scaling_maximum ())
 	EDITOR_OK
-		SET_ENUM (L"Scaling strategy", kTimeSoundEditor_scalingStrategy, my d_sound.scalingStrategy)
-		SET_REAL (L"Height", my d_sound.scaling_height)
-		SET_REAL (L"Minimum", my d_sound.scaling_minimum)
-		SET_REAL (L"Maximum", my d_sound.scaling_maximum)
+		SET_ENUM (L"Scaling strategy", kTimeSoundEditor_scalingStrategy, my d_sound_scalingStrategy)
+		SET_REAL (L"Height", my d_sound_scaling_height)
+		SET_REAL (L"Minimum", my d_sound_scaling_minimum)
+		SET_REAL (L"Maximum", my d_sound_scaling_maximum)
 	EDITOR_DO
-		my pref_sound_scalingStrategy () = my d_sound.scalingStrategy = GET_ENUM (kTimeSoundEditor_scalingStrategy, L"Scaling strategy");
-		my pref_sound_scaling_height  () = my d_sound.scaling_height  = GET_REAL (L"Height");
-		my pref_sound_scaling_minimum () = my d_sound.scaling_minimum = GET_REAL (L"Minimum");
-		my pref_sound_scaling_maximum () = my d_sound.scaling_maximum = GET_REAL (L"Maximum");
+		my pref_sound_scalingStrategy () = my d_sound_scalingStrategy = GET_ENUM (kTimeSoundEditor_scalingStrategy, L"Scaling strategy");
+		my pref_sound_scaling_height  () = my d_sound_scaling_height  = GET_REAL (L"Height");
+		my pref_sound_scaling_minimum () = my d_sound_scaling_minimum = GET_REAL (L"Minimum");
+		my pref_sound_scaling_maximum () = my d_sound_scaling_maximum = GET_REAL (L"Maximum");
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -482,7 +457,7 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 	int lastVisibleChannel = d_sound.channelOffset + numberOfVisibleChannels;
 	if (lastVisibleChannel > nchan) lastVisibleChannel = nchan;
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
-	if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
+	if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
 		if (longSound)
 			LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, firstVisibleChannel, & visibleMinimum, & visibleMaximum);
 		else
@@ -511,7 +486,7 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 		Graphics_Viewport vp = Graphics_insetViewport (d_graphics, 0, 1, ymin, ymax);
 		bool horizontal = false;
 		double minimum = sound ? globalMinimum : -1.0, maximum = sound ? globalMaximum : 1.0;
-		if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
+		if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
 			if (nchan > 2) {
 				if (longSound) {
 					LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, ichan, & minimum, & maximum);
@@ -527,25 +502,25 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 				minimum = visibleMinimum;
 				maximum = visibleMaximum;
 			}
-		} else if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL) {
+		} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL) {
 			if (longSound) {
 				LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, ichan, & minimum, & maximum);
 			} else {
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
 			}
-		} else if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
+		} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
 			if (longSound) {
 				LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, ichan, & minimum, & maximum);
 			} else {
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
 			}
-			double channelExtent = d_sound.scaling_height;
+			double channelExtent = d_sound_scaling_height;
 			double middle = 0.5 * (minimum + maximum);
 			minimum = middle - 0.5 * channelExtent;
 			maximum = middle + 0.5 * channelExtent;
-		} else if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
-			minimum = d_sound.scaling_minimum;
-			maximum = d_sound.scaling_maximum;
+		} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
+			minimum = d_sound_scaling_minimum;
+			maximum = d_sound_scaling_maximum;
 		}
 		if (minimum == maximum) { horizontal = true; minimum -= 1; maximum += 1;}
 		Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, minimum, maximum);
@@ -665,10 +640,10 @@ void structTimeSoundEditor :: f_init (const wchar_t *title, Function data, Sampl
 		}
 	}
 	FunctionEditor_init (this, title, data);
-	d_sound.scalingStrategy = pref_sound_scalingStrategy ();
-	d_sound.scaling_height  = pref_sound_scaling_height  ();
-	d_sound.scaling_minimum = pref_sound_scaling_minimum ();
-	d_sound.scaling_maximum = pref_sound_scaling_maximum ();
+	d_sound_scalingStrategy = pref_sound_scalingStrategy ();
+	d_sound_scaling_height  = pref_sound_scaling_height  ();
+	d_sound_scaling_minimum = pref_sound_scaling_minimum ();
+	d_sound_scaling_maximum = pref_sound_scaling_maximum ();
 }
 
 /* End of file TimeSoundEditor.cpp */

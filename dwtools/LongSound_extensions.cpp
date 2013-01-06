@@ -55,7 +55,7 @@ static void _LongSound_to_multichannel_buffer (LongSound me, short *buffer, long
 	if (ibuf <= numberOfReads) {
 		n_to_read = ibuf == numberOfReads ? (my nx - 1) % nbuf + 1 : nbuf;
 		long imin = (ibuf - 1) * nbuf + 1;
-		LongSound_readAudioToShort (me, my buffer, imin, n_to_read); therror
+		LongSound_readAudioToShort (me, my buffer, imin, n_to_read);
 
 		for (long i = 1; i <= n_to_read; i++) {
 			buffer[nchannels * (i - 1) + ichannel] = my buffer[i];
@@ -94,7 +94,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 
 		autoMelderFile f  = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB",
 	        Melder_winAudioFileExtension (audioFileType));
-		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, nx, nchannels, numberOfBitsPerSamplePoint); therror
+		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, nx, nchannels, numberOfBitsPerSamplePoint); 
 
 		for (long i = 1; i <= numberOfReads; i++) {
 			long n_to_write = i == numberOfReads ? (nx - 1) % nbuf + 1 : nbuf;
@@ -103,7 +103,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 			MelderFile_writeShortToAudio (file, nchannels, Melder_defaultAudioFileEncoding (audioFileType,
                 numberOfBitsPerSamplePoint), buffer.peek(), n_to_write);
 		}
-		MelderFile_writeAudioFileTrailer (file, audioFileType, my sampleRate, nx, nchannels, numberOfBitsPerSamplePoint); therror
+		MelderFile_writeAudioFileTrailer (file, audioFileType, my sampleRate, nx, nchannels, numberOfBitsPerSamplePoint);
 		f.close ();
 	} catch (MelderError) {
 		Melder_throw (me, ": no stereo audio file created.");
@@ -235,9 +235,9 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 
 		// Search the end of the file, count the number of bytes and append.
 
-		MelderFile_seek (file, 0, SEEK_END); therror
+		MelderFile_seek (file, 0, SEEK_END); 
 
-		pre_append_endpos = MelderFile_tell (file); therror
+		pre_append_endpos = MelderFile_tell (file); 
 
 		errno = 0;
 		for (long i = 1; i <= my size; i++) {
@@ -258,7 +258,7 @@ void LongSounds_appendToExistingSoundFile (Collection me, MelderFile file) {
 		// Update header
 
 		MelderFile_rewind (file);
-		MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint); therror
+		MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint); 
 		MelderFile_writeAudioFileTrailer (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint);
 		f.close (file);
 		return;

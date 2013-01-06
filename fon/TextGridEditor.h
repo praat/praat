@@ -31,12 +31,8 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 	public:
 		SpellingChecker spellingChecker;
 		long selectedTier;
-		bool useTextStyles, shiftDragMultiple, suppressRedraw;
-		int fontSize;
-		enum kGraphics_horizontalAlignment alignment;
-		wchar_t *findString, greenString [Preferences_STRING_BUFFER_SIZE];
-		enum kTextGridEditor_showNumberOf showNumberOf;
-		enum kMelder_string greenMethod;
+		bool suppressRedraw;
+		wchar_t *findString;
 		GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
 	// functions:
 	public:
@@ -71,10 +67,7 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		virtual double v_getBottomOfSoundAndAnalysisArea ();
 		virtual void v_updateMenuItems_file ();
 		virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
-	// overridden preferences:
-		static void f_preferences ();
-		static int s_shellWidth;  virtual int & pref_shellWidth  () { return s_shellWidth;  }
-		static int s_shellHeight; virtual int & pref_shellHeight () { return s_shellHeight; }
+	#include "TextGridEditor_prefs.h"
 };
 
 TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid,

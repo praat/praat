@@ -17,13 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2009/03/21
- */
-
 /* See enums.h */
 
-/* For C files. */
+/* For C++ files. */
 
 #undef enums_begin
 #undef enums_add

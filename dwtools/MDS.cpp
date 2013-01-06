@@ -2007,7 +2007,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_smacof (Dissimila
 			stressp = *stress;
 			if (showProgress) {
 				Melder_progress ( (double) iter / (numberOfIterations + 1), L"kruskal: stress ",
-				                   Melder_double (*stress)); therror
+				                   Melder_double (*stress));
 			}
 		}
 		if (showProgress) {
@@ -2048,7 +2048,7 @@ Configuration Dissimilarity_Configuration_Weight_Transformator_multiSmacof (Diss
 
 			if (showMulti) {
 				Melder_progress ( (double) i / (numberOfRepetitions + 1), Melder_integer (i),
-				                   L" from ", Melder_integer (numberOfRepetitions)); therror
+				                   L" from ", Melder_integer (numberOfRepetitions));
 			}
 		}
 		if (showMulti) {
@@ -2626,7 +2626,7 @@ void ScalarProducts_Configuration_Salience_indscal (ScalarProducts sp, Configura
 			vafp = *vaf;
 			if (showProgress) {
 				Melder_progress ( (double) iter / (numberOfIterations + 1),
-				                   L"indscal: vaf ", Melder_double (*vaf)); therror
+				                   L"indscal: vaf ", Melder_double (*vaf));
 			}
 		}
 
@@ -2716,7 +2716,7 @@ void Dissimilarities_Configuration_Salience_indscal (Dissimilarities dissims, Co
 			vafp = *vaf;
 			if (showProgress) {
 				Melder_progress ( (double) iter / (numberOfIterations + 1), L"indscal: vaf ", Melder_double (*vaf));
-				therror
+				
 			}
 		}
 
@@ -2876,7 +2876,7 @@ void Dissimilarities_indscal (Dissimilarities me, long numberOfDimensions, int t
 
 			if (showMulti) {
 				Melder_progress ( (double) iter / (numberOfRepetitions + 1),
-				                   Melder_integer (iter), L" from ", Melder_integer (numberOfRepetitions)); therror
+				                   Melder_integer (iter), L" from ", Melder_integer (numberOfRepetitions)); 
 			}
 		}
 
@@ -2929,7 +2929,7 @@ void Distances_indscal (Distances distances, long numberOfDimensions, int normal
 
 			if (showMulti) {
 				Melder_progress ( (double) i / (numberOfRepetitions + 1),
-				                   Melder_integer (i), L" from ", Melder_integer (numberOfRepetitions)); therror
+				                   Melder_integer (i), L" from ", Melder_integer (numberOfRepetitions)); 
 			}
 		}
 

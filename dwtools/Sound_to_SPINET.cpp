@@ -89,7 +89,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 				thy y[i][j] = Sound_power (frame.peek()) * bb / gammaMaxAmplitude;
 			}
 			Melder_progress ( (double) i / nFilters, L"SPINET: filter ", Melder_integer (i), L" from ",
-			                   Melder_integer (nFilters), L"."); therror
+			                   Melder_integer (nFilters), L"."); 
 		}
 
 		// Excitatory and inhibitory area functions

@@ -27,8 +27,6 @@
 
 struct TimeSoundEditor_sound {
 	Sound data;
-	enum kTimeSoundEditor_scalingStrategy scalingStrategy;
-	double scaling_height, scaling_minimum, scaling_maximum;
 	double minimum, maximum;
 	long channelOffset;
 };
@@ -61,27 +59,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 			virtual void v_createMenuItems_view_sound (EditorMenu menu);
 			virtual void v_updateMenuItems_file ();
 			virtual const wchar_t * v_getChannelName (long channelNumber) { (void) channelNumber; return NULL; }
-	// new preferences:
-		public:
-			static void f_preferences ();
-			//static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
-			#define declare_preference(type,name) \
-				static type s_##name; virtual type & pref_##name () { return s_##name; } \
-				static const wchar_t * sdefault_##name; virtual const wchar_t * default_##name () { return sdefault_##name; }
-			#define define_preference(Klas,type,name,default) \
-				type struct##Klas :: s_##name; \
-				const wchar_t * struct##Klas :: sdefault_##name = default;
-			declare_preference (kTimeSoundEditor_scalingStrategy, sound_scalingStrategy)
-			declare_preference (double, sound_scaling_height)
-			declare_preference (double, sound_scaling_minimum)
-			declare_preference (double, sound_scaling_maximum)
-			static bool   s_picture_preserveTimes; virtual bool   & pref_picture_preserveTimes () { return s_picture_preserveTimes; }
-			static double s_picture_bottom;        virtual double & pref_picture_bottom        () { return s_picture_bottom;        }
-			static double s_picture_top;           virtual double & pref_picture_top           () { return s_picture_top;           }
-			static bool   s_picture_garnish;       virtual bool   & pref_picture_garnish       () { return s_picture_garnish;       }
-			static kSound_windowShape s_extract_windowShape; virtual kSound_windowShape & pref_extract_windowShape () { return s_extract_windowShape; }
-			static double s_extract_relativeWidth; virtual double & pref_extract_relativeWidth () { return s_extract_relativeWidth; }
-			static bool   s_extract_preserveTimes; virtual bool   & pref_extract_preserveTimes () { return s_extract_preserveTimes; }
+	#include "TimeSoundEditor_prefs.h"
 };
 
 /* End of file TimeSoundEditor.h */

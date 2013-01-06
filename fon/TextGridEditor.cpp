@@ -1,6 +1,6 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,58 +31,17 @@
 
 Thing_implement (TextGridEditor, TimeSoundAnalysisEditor, 0);
 
-/********** PREFERENCES **********/
-
-int structTextGridEditor :: s_shellWidth;    // overridden
-int structTextGridEditor :: s_shellHeight;   // overridden
-
-/*
- * If you change any of the following, you may want to raise a version number in structTextGridEditor :: f_preferences ().
- */
-#define TextGridEditor_DEFAULT_USE_TEXT_STYLES  false
-#define TextGridEditor_DEFAULT_FONT_SIZE  18
-	#define TextGridEditor_DEFAULT_FONT_SIZE_STRING  L"18"
-#define TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE  true
-#define TextGridEditor_DEFAULT_GREEN_STRING  L"some text here for green paint"
-
-static struct {
-	bool useTextStyles, shiftDragMultiple;
-	int fontSize;
-	enum kGraphics_horizontalAlignment alignment;
-	enum kTextGridEditor_showNumberOf showNumberOf;
-	enum kMelder_string greenMethod;
-	wchar_t greenString [Preferences_STRING_BUFFER_SIZE];
-	struct {
-		bool showBoundaries;
-		bool garnish;
-		struct {
-			bool speckle;
-		} pitch;
-	} picture;
-}
-	preferences;
-
-void structTextGridEditor :: f_preferences () {
-	Preferences_addInt    (L"TextGridEditor.shellWidth",  & s_shellWidth,      800);     // overridden
-	Preferences_addInt    (L"TextGridEditor.shellHeight", & s_shellHeight,     600);     // overridden
-	Preferences_addBool (L"TextGridEditor.useTextStyles", & preferences.useTextStyles, TextGridEditor_DEFAULT_USE_TEXT_STYLES);
-	Preferences_addInt (L"TextGridEditor.fontSize2", & preferences.fontSize, TextGridEditor_DEFAULT_FONT_SIZE);
-	Preferences_addEnum (L"TextGridEditor.alignment", & preferences.alignment, kGraphics_horizontalAlignment, DEFAULT);
-	Preferences_addBool (L"TextGridEditor.shiftDragMultiple2", & preferences.shiftDragMultiple, TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE);
-	Preferences_addEnum (L"TextGridEditor.showNumberOf2", & preferences.showNumberOf, kTextGridEditor_showNumberOf, DEFAULT);
-	Preferences_addEnum (L"TextGridEditor.greenMethod", & preferences.greenMethod, kMelder_string, DEFAULT);
-	Preferences_addString (L"TextGridEditor.greenString", & preferences.greenString [0], TextGridEditor_DEFAULT_GREEN_STRING);
-	Preferences_addBool (L"TextGridEditor.picture.showBoundaries", & preferences.picture.showBoundaries, true);
-	Preferences_addBool (L"TextGridEditor.picture.garnish", & preferences.picture.garnish, true);
-	Preferences_addBool (L"TextGridEditor.picture.pitch.speckle", & preferences.picture.pitch.speckle, false);
-}
+#include "prefs_define.h"
+#include "TextGridEditor_prefs.h"
+#include "prefs_install.h"
+#include "TextGridEditor_prefs.h"
 
 void structTextGridEditor :: v_info () {
 	TextGridEditor_Parent :: v_info ();
 	MelderInfo_writeLine (L"Selected tier: ", Melder_integer (selectedTier));
-	MelderInfo_writeLine (L"TextGrid uses text styles: ", Melder_boolean (useTextStyles));
-	MelderInfo_writeLine (L"TextGrid font size: ", Melder_integer (fontSize));
-	MelderInfo_writeLine (L"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (alignment));
+	MelderInfo_writeLine (L"TextGrid uses text styles: ", Melder_boolean (d_useTextStyles));
+	MelderInfo_writeLine (L"TextGrid font size: ", Melder_integer (d_fontSize));
+	MelderInfo_writeLine (L"TextGrid alignment: ", kGraphics_horizontalAlignment_getText (d_alignment));
 }
 
 /********** UTILITIES **********/
@@ -240,20 +199,20 @@ static void menu_cb_DrawVisibleTextGrid (EDITOR_ARGS) {
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (L"Garnish", 1);
+		BOOLEAN (L"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (L"Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", my pref_picture_garnish ());
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_picture_garnish () = GET_INTEGER (L"Garnish");
 		Editor_openPraatPicture (me);
-		TextGrid_Sound_draw ((TextGrid) my data, NULL, my pictureGraphics, my d_startWindow, my d_endWindow, true, my useTextStyles,
-			preferences.picture.garnish);
+		TextGrid_Sound_draw ((TextGrid) my data, NULL, my pictureGraphics, my d_startWindow, my d_endWindow, true, my d_useTextStyles,
+			my pref_picture_garnish ());
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
 	EDITOR_END
@@ -265,22 +224,22 @@ static void menu_cb_DrawVisibleSoundAndTextGrid (EDITOR_ARGS) {
 		my v_form_pictureWindow (cmd);
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (L"Garnish", 1);
+		BOOLEAN (L"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (L"Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", my pref_picture_garnish ());
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_picture_garnish () = GET_INTEGER (L"Garnish");
 		Editor_openPraatPicture (me);
 		Sound publish = my d_longSound.data ?
 			LongSound_extractPart (my d_longSound.data, my d_startWindow, my d_endWindow, true) :
 			Sound_extractPart (my d_sound.data, my d_startWindow, my d_endWindow, kSound_windowShape_RECTANGULAR, 1.0, true);
-		TextGrid_Sound_draw ((TextGrid) my data, publish, my pictureGraphics, my d_startWindow, my d_endWindow, true, my useTextStyles, preferences.picture.garnish);
+		TextGrid_Sound_draw ((TextGrid) my data, publish, my pictureGraphics, my d_startWindow, my d_endWindow, true, my d_useTextStyles, my pref_picture_garnish ());
 		forget (publish);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -536,26 +495,26 @@ static void menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 	EDITOR_FORM (L"Draw TextGrid and Pitch separately", 0)
 		my v_form_pictureWindow (cmd);
 		LABEL (L"", L"TextGrid:")
-		BOOLEAN (L"Show boundaries and points", 1);
+		BOOLEAN (L"Show boundaries and points", my default_picture_showBoundaries ());
 		LABEL (L"", L"Pitch:")
-		BOOLEAN (L"Speckle", 0);
+		BOOLEAN (L"Speckle", my default_picture_pitch_speckle ());
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (L"Garnish", 1);
+		BOOLEAN (L"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
-		SET_INTEGER (L"Show boundaries and points", preferences.picture.showBoundaries);
-		SET_INTEGER (L"Speckle", preferences.picture.pitch.speckle);
+		SET_INTEGER (L"Show boundaries and points", my pref_picture_showBoundaries ());
+		SET_INTEGER (L"Speckle", my pref_picture_pitch_speckle ());
 		my v_ok_pictureMargins (cmd);
 		my v_ok_pictureSelection (cmd);
-		SET_INTEGER (L"Garnish", preferences.picture.garnish);
+		SET_INTEGER (L"Garnish", my pref_picture_garnish ());
 	EDITOR_DO
 		my v_do_pictureWindow (cmd);
-		preferences.picture.showBoundaries = GET_INTEGER (L"Show boundaries and points");
-		preferences.picture.pitch.speckle = GET_INTEGER (L"Speckle");
+		my pref_picture_showBoundaries () = GET_INTEGER (L"Show boundaries and points");
+		my pref_picture_pitch_speckle () = GET_INTEGER (L"Speckle");
 		my v_do_pictureMargins (cmd);
 		my v_do_pictureSelection (cmd);
-		preferences.picture.garnish = GET_INTEGER (L"Garnish");
+		my pref_picture_garnish () = GET_INTEGER (L"Garnish");
 		if (! my pitch.show)
 			Melder_throw ("No pitch contour is visible.\nFirst choose \"Show pitch\" from the Pitch menu.");
 		if (! my pitch.data) {
@@ -570,7 +529,7 @@ static void menu_cb_DrawTextGridAndPitch (EDITOR_ARGS) {
 		double pitchViewFrom_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewFrom : pitchFloor_overt;
 		double pitchViewTo_overt = my pitch.viewFrom < my pitch.viewTo ? my pitch.viewTo : pitchCeiling_overt;
 		TextGrid_Pitch_drawSeparately ((TextGrid) my data, my pitch.data, my pictureGraphics, my d_startWindow, my d_endWindow,
-			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER (L"Show boundaries and points"), my useTextStyles, GET_INTEGER (L"Garnish"),
+			pitchViewFrom_overt, pitchViewTo_overt, GET_INTEGER (L"Show boundaries and points"), my d_useTextStyles, GET_INTEGER (L"Garnish"),
 			GET_INTEGER (L"Speckle"), my pitch.unit);
 		FunctionEditor_garnish (me);
 		Editor_closePraatPicture (me);
@@ -1359,10 +1318,10 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	int selectedInterval = itier == my selectedTier ? getSelectedInterval (me) : 0, iinterval, ninterval = tier -> intervals -> size;
 	Graphics_WCtoDC (my d_graphics, my d_startWindow, 0.0, & x1DC, & yDC);
 	Graphics_WCtoDC (my d_graphics, my d_endWindow, 0.0, & x2DC, & yDC);
-	Graphics_setPercentSignIsItalic (my d_graphics, my useTextStyles);
-	Graphics_setNumberSignIsBold (my d_graphics, my useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my d_graphics, my useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my d_graphics, my useTextStyles);
+	Graphics_setPercentSignIsItalic (my d_graphics, my d_useTextStyles);
+	Graphics_setNumberSignIsBold (my d_graphics, my d_useTextStyles);
+	Graphics_setCircumflexIsSuperscript (my d_graphics, my d_useTextStyles);
+	Graphics_setUnderscoreIsSubscript (my d_graphics, my d_useTextStyles);
 
 	/*
 	 * Highlight interval: yellow (selected) or green (matching label).
@@ -1373,7 +1332,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		double tmin = interval -> xmin, tmax = interval -> xmax;
 		if (tmax > my d_startWindow && tmin < my d_endWindow) {   // interval visible?
 			int intervalIsSelected = iinterval == selectedInterval;
-			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my greenMethod, my greenString);
+			int labelMatches = Melder_stringMatchesCriterion (interval -> text, my d_greenMethod, my d_greenString);
 			if (tmin < my d_startWindow) tmin = my d_startWindow;
 			if (tmax > my d_endWindow) tmax = my d_endWindow;
 			if (labelMatches) {
@@ -1413,7 +1372,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 		}
 	}
 
-	Graphics_setTextAlignment (my d_graphics, my alignment, Graphics_HALF);
+	Graphics_setTextAlignment (my d_graphics, my d_alignment, Graphics_HALF);
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
@@ -1466,10 +1425,10 @@ static void do_drawTextTier (TextGridEditor me, TextTier tier, int itier) {
 		bool platformUsesAntiAliasing = false;
 	#endif
 	int ipoint, npoint = tier -> points -> size;
-	Graphics_setPercentSignIsItalic (my d_graphics, my useTextStyles);
-	Graphics_setNumberSignIsBold (my d_graphics, my useTextStyles);
-	Graphics_setCircumflexIsSuperscript (my d_graphics, my useTextStyles);
-	Graphics_setUnderscoreIsSubscript (my d_graphics, my useTextStyles);
+	Graphics_setPercentSignIsItalic (my d_graphics, my d_useTextStyles);
+	Graphics_setNumberSignIsBold (my d_graphics, my d_useTextStyles);
+	Graphics_setCircumflexIsSuperscript (my d_graphics, my d_useTextStyles);
+	Graphics_setUnderscoreIsSubscript (my d_graphics, my d_useTextStyles);
 
 	/*
 	 * Draw a grey bar and a selection button at the cursor position.
@@ -1581,12 +1540,12 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setFontSize (d_graphics, oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (d_graphics, Graphics_LEFT,
-				showNumberOf == kTextGridEditor_showNumberOf_NOTHING ? Graphics_HALF : Graphics_BOTTOM);
+				d_showNumberOf == kTextGridEditor_showNumberOf_NOTHING ? Graphics_HALF : Graphics_BOTTOM);
 			Graphics_text (d_graphics, d_endWindow, 0.5, anyTier -> name);
 		}
-		if (showNumberOf != kTextGridEditor_showNumberOf_NOTHING) {
+		if (d_showNumberOf != kTextGridEditor_showNumberOf_NOTHING) {
 			Graphics_setTextAlignment (d_graphics, Graphics_LEFT, Graphics_TOP);
-			if (showNumberOf == kTextGridEditor_showNumberOf_INTERVALS_OR_POINTS) {
+			if (d_showNumberOf == kTextGridEditor_showNumberOf_INTERVALS_OR_POINTS) {
 				long count = isIntervalTier ? ((IntervalTier) anyTier) -> intervals -> size : ((TextTier) anyTier) -> points -> size;
 				long position = itier == selectedTier ? ( isIntervalTier ? getSelectedInterval (this) : getSelectedPoint (this) ) : 0;
 				if (position) {
@@ -1622,7 +1581,7 @@ void structTextGridEditor :: v_draw () {
 
 		Graphics_setColour (d_graphics, Graphics_BLACK);
 		Graphics_setFont (d_graphics, kGraphics_font_TIMES);
-		Graphics_setFontSize (d_graphics, fontSize);
+		Graphics_setFontSize (d_graphics, d_fontSize);
 		if (isIntervalTier)
 			do_drawIntervalTier (this, (IntervalTier) anyTier, itier);
 		else
@@ -1695,7 +1654,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 		 * If she has pressed the shift key, let her drag all the boundaries and points at this time.
 		 * Otherwise, let her only drag the boundary or point on the clicked tier.
 		 */
-		if (itier == iClickedTier || shiftKeyPressed == my shiftDragMultiple) {
+		if (itier == iClickedTier || shiftKeyPressed == my d_shiftDragMultiple) {
 			IntervalTier intervalTier;
 			TextTier textTier;
 			_AnyTier_identifyClass ((Function) grid -> tiers -> item [itier], & intervalTier, & textTier);
@@ -2092,37 +2051,37 @@ void structTextGridEditor :: v_updateText () {
 
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
 	Any radio;
-	NATURAL (L"Font size (points)", TextGridEditor_DEFAULT_FONT_SIZE_STRING)
+	NATURAL (L"Font size (points)", default_fontSize ())
 	OPTIONMENU_ENUM (L"Text alignment in intervals", kGraphics_horizontalAlignment, DEFAULT)
-	OPTIONMENU (L"The symbols %#_^ in labels", TextGridEditor_DEFAULT_USE_TEXT_STYLES + 1)
+	OPTIONMENU (L"The symbols %#_^ in labels", default_useTextStyles () + 1)
 		OPTION (L"are shown as typed")
 		OPTION (L"mean italic/bold/sub/super")
-	OPTIONMENU (L"With the shift key, you drag", TextGridEditor_DEFAULT_SHIFT_DRAG_MULTIPLE + 1)
+	OPTIONMENU (L"With the shift key, you drag", default_shiftDragMultiple () + 1)
 		OPTION (L"a single boundary")
 		OPTION (L"multiple boundaries")
 	OPTIONMENU_ENUM (L"Show number of", kTextGridEditor_showNumberOf, DEFAULT)
 	OPTIONMENU_ENUM (L"Paint intervals green whose label...", kMelder_string, DEFAULT)
-	SENTENCE (L"...the text", TextGridEditor_DEFAULT_GREEN_STRING)
+	SENTENCE (L"...the text", default_greenString ())
 }
 void structTextGridEditor :: v_prefs_setValues (EditorCommand cmd) {
-	SET_INTEGER (L"The symbols %#_^ in labels", useTextStyles + 1)
-	SET_INTEGER (L"Font size", fontSize)
-	SET_ENUM (L"Text alignment in intervals", kGraphics_horizontalAlignment, alignment)
-	SET_INTEGER (L"With the shift key, you drag", shiftDragMultiple + 1)
-	SET_ENUM (L"Show number of", kTextGridEditor_showNumberOf, showNumberOf)
-	SET_ENUM (L"Paint intervals green whose label...", kMelder_string, greenMethod)
-	SET_STRING (L"...the text", greenString)
+	SET_INTEGER (L"The symbols %#_^ in labels", d_useTextStyles + 1)
+	SET_INTEGER (L"Font size", d_fontSize)
+	SET_ENUM (L"Text alignment in intervals", kGraphics_horizontalAlignment, d_alignment)
+	SET_INTEGER (L"With the shift key, you drag", d_shiftDragMultiple + 1)
+	SET_ENUM (L"Show number of", kTextGridEditor_showNumberOf, d_showNumberOf)
+	SET_ENUM (L"Paint intervals green whose label...", kMelder_string, d_greenMethod)
+	SET_STRING (L"...the text", d_greenString)
 }
 void structTextGridEditor :: v_prefs_getValues (EditorCommand cmd) {
-	preferences.useTextStyles = useTextStyles = GET_INTEGER (L"The symbols %#_^ in labels") - 1;
-	preferences.fontSize = fontSize = GET_INTEGER (L"Font size");
-	preferences.alignment = alignment = GET_ENUM (kGraphics_horizontalAlignment, L"Text alignment in intervals");
-	preferences.shiftDragMultiple = shiftDragMultiple = GET_INTEGER (L"With the shift key, you drag") - 1;
-	preferences.showNumberOf = showNumberOf = GET_ENUM (kTextGridEditor_showNumberOf, L"Show number of");
-	preferences.greenMethod = greenMethod = GET_ENUM (kMelder_string, L"Paint intervals green whose label...");
-	wcsncpy (greenString, GET_STRING (L"...the text"), Preferences_STRING_BUFFER_SIZE);
-	greenString [Preferences_STRING_BUFFER_SIZE - 1] = '\0';
-	wcscpy (preferences.greenString, greenString);
+	pref_useTextStyles () = d_useTextStyles = GET_INTEGER (L"The symbols %#_^ in labels") - 1;
+	pref_fontSize () = d_fontSize = GET_INTEGER (L"Font size");
+	pref_alignment () = d_alignment = GET_ENUM (kGraphics_horizontalAlignment, L"Text alignment in intervals");
+	pref_shiftDragMultiple () = d_shiftDragMultiple = GET_INTEGER (L"With the shift key, you drag") - 1;
+	pref_showNumberOf () = d_showNumberOf = GET_ENUM (kTextGridEditor_showNumberOf, L"Show number of");
+	pref_greenMethod () = d_greenMethod = GET_ENUM (kMelder_string, L"Paint intervals green whose label...");
+	wcsncpy (d_greenString, GET_STRING (L"...the text"), Preferences_STRING_BUFFER_SIZE);
+	d_greenString [Preferences_STRING_BUFFER_SIZE - 1] = '\0';
+	wcscpy (pref_greenString (), d_greenString);
 	FunctionEditor_redraw (this);
 }
 
@@ -2185,13 +2144,13 @@ void structTextGridEditor :: f_init (const wchar_t *title, TextGrid grid, Sample
 
 	structTimeSoundAnalysisEditor :: f_init (title, grid, a_sound, a_ownSound);
 
-	this -> useTextStyles = preferences.useTextStyles;
-	this -> fontSize = preferences.fontSize;
-	this -> alignment = preferences.alignment;
-	this -> shiftDragMultiple = preferences.shiftDragMultiple;
-	this -> showNumberOf = preferences.showNumberOf;
-	this -> greenMethod = preferences.greenMethod;
-	wcscpy (this -> greenString, preferences.greenString);
+	d_useTextStyles = pref_useTextStyles ();
+	d_fontSize = pref_fontSize ();
+	d_alignment = pref_alignment ();
+	d_shiftDragMultiple = pref_shiftDragMultiple ();
+	d_showNumberOf = pref_showNumberOf ();
+	d_greenMethod = pref_greenMethod ();
+	wcscpy (d_greenString, pref_greenString ());
 	this -> selectedTier = 1;
 	if (d_endWindow - d_startWindow > 30.0) {
 		d_endWindow = d_startWindow + 30.0;

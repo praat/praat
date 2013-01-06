@@ -40,7 +40,6 @@ Thing_define (FunctionEditor, Editor) {
 			/* These attributes are all expressed in seconds. Invariants: */
 			/*    tmin <= startWindow < endWindow <= tmax; */
 			/*    tmin <= (startSelection, endSelection) <= tmax; */
-		double arrowScrollStep;
 
 		Graphics d_graphics;   // used in the 'draw' method
 		short functionViewerLeft, functionViewerRight;   // size of drawing areas in pixels
@@ -127,14 +126,7 @@ Thing_define (FunctionEditor, Editor) {
 		virtual void v_ok_pictureSelection (EditorCommand cmd);
 		virtual void v_do_pictureSelection (EditorCommand cmd);
 	// new preferences:
-		static void f_preferences ();
-		static int    s_shellWidth;                 virtual int    & pref_shellWidth                 () { return s_shellWidth;                 }
-		static int    s_shellHeight;                virtual int    & pref_shellHeight                () { return s_shellHeight;                }
-		static bool   s_synchronizedZoomAndScroll;  virtual bool   & pref_synchronizedZoomAndScroll  () { return s_synchronizedZoomAndScroll;  }
-		static bool   s_showSelectionViewer;        virtual bool   & pref_showSelectionViewer        () { return s_showSelectionViewer;        }
-		static double s_arrowScrollStep;            virtual double & pref_arrowScrollStep            () { return s_arrowScrollStep;            }
-		static bool   s_picture_drawSelectionTimes; virtual bool   & pref_picture_drawSelectionTimes () { return s_picture_drawSelectionTimes; }
-		static bool   s_picture_drawSelectionHairs; virtual bool   & pref_picture_drawSelectionHairs () { return s_picture_drawSelectionHairs; }
+		#include "FunctionEditor_prefs.h"
 };
 
 int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, double tmax, double t);

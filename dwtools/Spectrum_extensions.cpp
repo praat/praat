@@ -258,7 +258,7 @@ Matrix Spectrum_unwrap (Spectrum me) {
 			ppdvt = pdvt;
 			thy z[2][i] = pphase = phase;
 			Melder_progress ( (double) i / my nx, Melder_integer (i),
-			                   L" unwrapped phases from ", Melder_integer (my nx), L"."); therror
+			                   L" unwrapped phases from ", Melder_integer (my nx), L"."); 
 		}
 
 		long iphase = (phase / NUMpi + 0.1);

@@ -26,11 +26,8 @@
 
 #include "Sound.h"
 #include "Intensity.h"
+#include "IntensityTier.h"
 #include "TextGrid.h"
-
-#ifdef __cplusplus
-	extern "C" {
-#endif
 
 TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThreshold_dB, double minSilenceDuration,
 	double minSoundingDuration, const wchar_t *silenceLabel, const wchar_t *soundingLabel);
@@ -45,8 +42,9 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	as silences in the IntervalTier.
 */
 
-#ifdef __cplusplus
-	}
-#endif
+Intensity IntensityTier_to_Intensity (IntensityTier me, double dt);
+
+TextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration,
+	double minSoundingDuration, const wchar_t *silenceLabel, const wchar_t *soundingLabel);
 
 #endif /* _Intensity_extensions_h_ */

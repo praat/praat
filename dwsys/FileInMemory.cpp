@@ -24,7 +24,7 @@ Thing_implement (FileInMemory, Data, 0);
 
 void structFileInMemory :: v_copy (thou) {
 	thouart (FileInMemory);
-	FileInMemory_Parent :: v_copy (thee); therror
+	FileInMemory_Parent :: v_copy (thee); 
 	thy d_path = Melder_wcsdup (d_path);
 	thy d_id = Melder_wcsdup (d_id);
 	thy d_numberOfBytes = d_numberOfBytes;

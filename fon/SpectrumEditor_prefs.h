@@ -1,6 +1,6 @@
-/* Pitch_enums.h
+/* SpectrumEditor_prefs.h
  *
- * Copyright (C) 1992-2007,2013 Paul Boersma
+ * Copyright (C) 2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-enums_begin (kPitch_unit, 0)
-	enums_add (kPitch_unit, 0, HERTZ, L"Hertz")
-	enums_add (kPitch_unit, 1, HERTZ_LOGARITHMIC, L"Hertz (logarithmic)")
-	enums_add (kPitch_unit, 2, MEL, L"mel")
-	enums_add (kPitch_unit, 3, LOG_HERTZ, L"logHertz")
-	enums_add (kPitch_unit, 4, SEMITONES_1, L"semitones re 1 Hz")
-	enums_add (kPitch_unit, 5, SEMITONES_100, L"semitones re 100 Hz")
-	enums_add (kPitch_unit, 6, SEMITONES_200, L"semitones re 200 Hz")
-	enums_add (kPitch_unit, 7, SEMITONES_440, L"semitones re 440 Hz")
-	enums_add (kPitch_unit, 8, ERB, L"ERB")
-enums_end (kPitch_unit, 8, HERTZ)
+prefs_begin (SpectrumEditor)
+	// overridden:
+		prefs_add_int  (SpectrumEditor, shellWidth,                 1, L"700")
+		prefs_add_int  (SpectrumEditor, shellHeight,                1, L"440")
+		prefs_add_double (SpectrumEditor, arrowScrollStep,          1, L"100.0")
+	// new:
+		prefs_add_double_with_data (SpectrumEditor, bandSmoothing,  1, L"100.0");
+		prefs_add_double_with_data (SpectrumEditor, dynamicRange,   1, L"60.0");
+prefs_end (SpectrumEditor)
 
-/* End of file Pitch_enums.h */
+/* End of file SpectrumEditorEditor_prefs.h */

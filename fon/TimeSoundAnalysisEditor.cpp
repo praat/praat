@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ static struct {
 	enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
 	double fixedTimeStep;
 	long numberOfTimeStepsPerView;
-	struct logInfo log [2];
+	struct logInfo log1, log2;
 	wchar_t logScript3 [Preferences_STRING_BUFFER_SIZE], logScript4 [Preferences_STRING_BUFFER_SIZE];
 } preferences;
 
@@ -138,14 +138,14 @@ void structTimeSoundAnalysisEditor :: f_preferences () {
 	Preferences_addDouble (L"FunctionEditor.pulses.maximumPeriodFactor", & s_pulses.maximumPeriodFactor, 1.3);
 	Preferences_addDouble (L"FunctionEditor.pulses.maximumAmplitudeFactor", & s_pulses.maximumAmplitudeFactor, 1.6);
 	Preferences_addBool (L"FunctionEditor.pulses.picture.garnish", & s_pulses.picture.garnish, true);
-	Preferences_addBool (L"FunctionEditor.log1.toInfoWindow", & preferences.log[0].toInfoWindow, true);
-	Preferences_addBool (L"FunctionEditor.log1.toLogFile", & preferences.log[0].toLogFile, true);
-	Preferences_addString (L"FunctionEditor.log1.fileName", & preferences.log[0].fileName [0], LOG_1_FILE_NAME);
-	Preferences_addString (L"FunctionEditor.log1.format", & preferences.log[0].format [0], LOG_1_FORMAT);
-	Preferences_addBool (L"FunctionEditor.log2.toInfoWindow", & preferences.log[1].toInfoWindow, true);
-	Preferences_addBool (L"FunctionEditor.log2.toLogFile", & preferences.log[1].toLogFile, true);
-	Preferences_addString (L"FunctionEditor.log2.fileName", & preferences.log[1].fileName [0], LOG_2_FILE_NAME);
-	Preferences_addString (L"FunctionEditor.log2.format", & preferences.log[1].format [0], LOG_2_FORMAT);
+	Preferences_addBool (L"FunctionEditor.log1.toInfoWindow", & preferences.log1.toInfoWindow, true);
+	Preferences_addBool (L"FunctionEditor.log1.toLogFile", & preferences.log1.toLogFile, true);
+	Preferences_addString (L"FunctionEditor.log1.fileName", & preferences.log1.fileName [0], LOG_1_FILE_NAME);
+	Preferences_addString (L"FunctionEditor.log1.format", & preferences.log1.format [0], LOG_1_FORMAT);
+	Preferences_addBool (L"FunctionEditor.log2.toInfoWindow", & preferences.log2.toInfoWindow, true);
+	Preferences_addBool (L"FunctionEditor.log2.toLogFile", & preferences.log2.toLogFile, true);
+	Preferences_addString (L"FunctionEditor.log2.fileName", & preferences.log2.fileName [0], LOG_2_FILE_NAME);
+	Preferences_addString (L"FunctionEditor.log2.format", & preferences.log2.format [0], LOG_2_FORMAT);
 	Preferences_addString (L"FunctionEditor.logScript3", & preferences.logScript3 [0], LOG_3_FILE_NAME);
 	Preferences_addString (L"FunctionEditor.logScript4", & preferences.logScript4 [0], LOG_4_FILE_NAME);
 }
@@ -294,42 +294,47 @@ static void menu_cb_logSettings (EDITOR_ARGS) {
 		LABEL (L"", L"Log script 4:")
 		TEXTFIELD (L"Log script 4", LOG_4_FILE_NAME)
 	EDITOR_OK
-		SET_INTEGER (L"Write log 1 to", preferences.log[0].toLogFile + 2 * preferences.log[0].toInfoWindow)
-		SET_STRING (L"Log file 1", preferences.log[0].fileName)
-		SET_STRING (L"Log 1 format", preferences.log[0].format)
-		SET_INTEGER (L"Write log 2 to", preferences.log[1].toLogFile + 2 * preferences.log[1].toInfoWindow)
-		SET_STRING (L"Log file 2", preferences.log[1].fileName)
-		SET_STRING (L"Log 2 format", preferences.log[1].format)
+		SET_INTEGER (L"Write log 1 to", preferences.log1.toLogFile + 2 * preferences.log1.toInfoWindow)
+		SET_STRING (L"Log file 1", preferences.log1.fileName)
+		SET_STRING (L"Log 1 format", preferences.log1.format)
+		SET_INTEGER (L"Write log 2 to", preferences.log2.toLogFile + 2 * preferences.log2.toInfoWindow)
+		SET_STRING (L"Log file 2", preferences.log2.fileName)
+		SET_STRING (L"Log 2 format", preferences.log2.format)
 		SET_STRING (L"Log script 3", preferences.logScript3)
 		SET_STRING (L"Log script 4", preferences.logScript4)
 	EDITOR_DO
-		preferences.log[0].toLogFile = (GET_INTEGER (L"Write log 1 to") & 1) != 0;
-		preferences.log[0].toInfoWindow = (GET_INTEGER (L"Write log 1 to") & 2) != 0;
-		wcscpy (preferences.log[0].fileName, GET_STRING (L"Log file 1"));
-		wcscpy (preferences.log[0].format, GET_STRING (L"Log 1 format"));
-		preferences.log[1].toLogFile = (GET_INTEGER (L"Write log 2 to") & 1) != 0;
-		preferences.log[1].toInfoWindow = (GET_INTEGER (L"Write log 2 to") & 2) != 0;
-		wcscpy (preferences.log[1].fileName, GET_STRING (L"Log file 2"));
-		wcscpy (preferences.log[1].format, GET_STRING (L"Log 2 format"));
+		preferences.log1.toLogFile = (GET_INTEGER (L"Write log 1 to") & 1) != 0;
+		preferences.log1.toInfoWindow = (GET_INTEGER (L"Write log 1 to") & 2) != 0;
+		wcscpy (preferences.log1.fileName, GET_STRING (L"Log file 1"));
+		wcscpy (preferences.log1.format, GET_STRING (L"Log 1 format"));
+		preferences.log2.toLogFile = (GET_INTEGER (L"Write log 2 to") & 1) != 0;
+		preferences.log2.toInfoWindow = (GET_INTEGER (L"Write log 2 to") & 2) != 0;
+		wcscpy (preferences.log2.fileName, GET_STRING (L"Log file 2"));
+		wcscpy (preferences.log2.format, GET_STRING (L"Log 2 format"));
 		wcscpy (preferences.logScript3, GET_STRING (L"Log script 3"));
 		wcscpy (preferences.logScript4, GET_STRING (L"Log script 4"));
 	EDITOR_END
 }
 
-static void do_deleteLogFile (TimeSoundAnalysisEditor me, int which) {
+static void menu_cb_deleteLogFile1 (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
 	structMelderFile file = { 0 };
-	(void) me;
-	Melder_pathToFile (preferences.log[which].fileName, & file);
+	Melder_pathToFile (preferences.log1.fileName, & file);
 	MelderFile_delete (& file);
 }
-static void menu_cb_deleteLogFile1 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_deleteLogFile (me, 0); }
-static void menu_cb_deleteLogFile2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_deleteLogFile (me, 1); }
+
+static void menu_cb_deleteLogFile2 (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundAnalysisEditor);
+	structMelderFile file = { 0 };
+	Melder_pathToFile (preferences.log2.fileName, & file);
+	MelderFile_delete (& file);
+}
 
 static void do_log (TimeSoundAnalysisEditor me, int which) {
 	wchar_t format [1000], *p;
 	double tmin, tmax;
 	int part = makeQueriable (me, TRUE, & tmin, & tmax);
-	wcscpy (format, preferences.log[which].format);
+	wcscpy (format, which == 1 ? preferences.log1.format : preferences.log2.format);
 	for (p = format; *p !='\0'; p ++) if (*p == '\'') {
 		/*
 		 * Found a left quote. Search for a matching right quote.
@@ -439,20 +444,20 @@ static void do_log (TimeSoundAnalysisEditor me, int which) {
 			p = q - 1;   /* Go to before next quote. */
 		}
 	}
-	if (preferences.log[which].toInfoWindow) {
+	if ((which == 1 && preferences.log1.toInfoWindow) || (which == 2 && preferences.log2.toInfoWindow)) {
 		MelderInfo_write (format);
 		MelderInfo_close ();
 	}
-	if (preferences.log[which].toLogFile) {
+	if ((which == 1 && preferences.log1.toLogFile) || (which == 2 && preferences.log2.toLogFile)) {
 		structMelderFile file = { 0 };
 		wcscat (format, L"\n");
-		Melder_relativePathToFile (preferences.log[which].fileName, & file);
+		Melder_relativePathToFile (which == 1 ? preferences.log1.fileName : preferences.log2.fileName, & file);
 		MelderFile_appendText (& file, format);
 	}
 }
 
-static void menu_cb_log1 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_log (me, 0); }
-static void menu_cb_log2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_log (me, 1); }
+static void menu_cb_log1 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_log (me, 1); }
+static void menu_cb_log2 (EDITOR_ARGS) { EDITOR_IAM (TimeSoundAnalysisEditor); do_log (me, 2); }
 
 static void menu_cb_logScript3 (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundAnalysisEditor);
@@ -2066,10 +2071,10 @@ void structTimeSoundAnalysisEditor :: f_init (const wchar_t *title, Function dat
 	structTimeSoundEditor :: f_init (title, data, sound, ownSound);
 	if (v_hasAnalysis ()) {
 		longestAnalysis = preferences.longestAnalysis;
-		if (preferences.log[0].toLogFile == FALSE && preferences.log[0].toInfoWindow == FALSE)
-			preferences.log[0].toLogFile = TRUE, preferences.log[0].toInfoWindow = TRUE;
-		if (preferences.log[1].toLogFile == FALSE && preferences.log[1].toInfoWindow == FALSE)
-			preferences.log[1].toLogFile = TRUE, preferences.log[1].toInfoWindow = TRUE;
+		if (preferences.log1.toLogFile == FALSE && preferences.log1.toInfoWindow == FALSE)
+			preferences.log1.toLogFile = TRUE, preferences.log1.toInfoWindow = TRUE;
+		if (preferences.log2.toLogFile == FALSE && preferences.log2.toInfoWindow == FALSE)
+			preferences.log2.toLogFile = TRUE, preferences.log2.toInfoWindow = TRUE;
 		timeStepStrategy = preferences.timeStepStrategy;
 		fixedTimeStep = preferences.fixedTimeStep;
 		numberOfTimeStepsPerView = preferences.numberOfTimeStepsPerView;

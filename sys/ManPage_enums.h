@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2009/03/18
- */
-
 enums_begin (kManPage_type, 1)
 	enums_add (kManPage_type, 1, INTRO, L"intro")
 	enums_add (kManPage_type, 2, ENTRY, L"entry")

@@ -28,7 +28,7 @@ void structDLLNode :: v_destroy () {
 
 void structDLLNode :: v_copy (thou) {
 	thouart (DLLNode);
-	thy data = Data_copy (data); therror
+	thy data = Data_copy (data); 
 }
 
 Thing_implement (DLL, Thing, 0);

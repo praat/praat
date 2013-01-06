@@ -17,12 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 1996/06/11
- * pb 2002/07/16 GPL
- * pb 2009/03/21 modern enums
- */
-
 enums_begin (kArt_muscle, 0)
 	enums_add (kArt_muscle, 0, _, L"_")
 	enums_add (kArt_muscle, 1, LUNGS, L"Lungs")

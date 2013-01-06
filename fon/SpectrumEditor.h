@@ -2,7 +2,7 @@
 #define _SpectrumEditor_h_
 /* SpectrumEditor.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,6 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 	// new data:
 	public:
 		double minimum, maximum, cursorHeight;
-		double bandSmoothing, dynamicRange;
 		GuiMenuItem publishBandButton, publishSoundButton;
 	// overridden methods:
 		virtual void v_createMenus ();
@@ -44,13 +43,7 @@ Thing_define (SpectrumEditor, FunctionEditor) {
 		virtual const wchar_t * v_format_totalDuration () { return L"Total bandwidth %.2f hertz"; }
 		virtual const wchar_t * v_format_window () { return L"Visible part %.2f hertz"; }
 		virtual const wchar_t * v_format_selection () { return L"%.2f Hz"; }
-	// overridden preferences:
-		static void f_preferences ();
-		static int    s_shellWidth;    virtual int    & pref_shellWidth    () { return s_shellWidth;    }
-		static int    s_shellHeight;   virtual int    & pref_shellHeight   () { return s_shellHeight;   }
-	// new preferences:
-		static double s_bandSmoothing; virtual double & pref_bandSmoothing () { return s_bandSmoothing; }
-		static double s_dynamicRange;  virtual double & pref_dynamicRange  () { return s_dynamicRange;  }
+	#include "SpectrumEditor_prefs.h"
 };
 
 SpectrumEditor SpectrumEditor_create (const wchar_t *title, Spectrum data);

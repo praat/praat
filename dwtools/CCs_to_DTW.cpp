@@ -134,7 +134,7 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 			}
 
 			if ( (i % 10) == 1) {
-				Melder_progress (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L"."); therror
+				Melder_progress (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L"."); 
 			}
 		}
 		return him.transfer();

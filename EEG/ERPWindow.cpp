@@ -22,11 +22,9 @@
 
 Thing_implement (ERPWindow, SoundEditor, 0);
 
-bool                             structERPWindow :: s_showSelectionViewer;     // overridden
-kTimeSoundEditor_scalingStrategy structERPWindow :: s_sound_scalingStrategy;   // overridden
-define_preference (ERPWindow, double, sound_scaling_height,   L"20e-6")
-define_preference (ERPWindow, double, sound_scaling_minimum, L"-10e-6")
-define_preference (ERPWindow, double, sound_scaling_maximum,  L"10e-6")
+#include "prefs_define.h"
+#include "ERPWindow_prefs.h"
+
 FunctionEditor_spectrogram       structERPWindow :: s_spectrogram;             // overridden
 
 void structERPWindow :: f_preferences (void) {
@@ -344,13 +342,13 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	double absoluteExtremum = - minimum > maximum ? - minimum : maximum;
-	if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
-		minimum = d_sound.scaling_minimum;
-		maximum = d_sound.scaling_maximum;
-	} else if (d_sound.scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
+	if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
+		minimum = d_sound_scaling_minimum;
+		maximum = d_sound_scaling_maximum;
+	} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
 		double mean = 0.5 * (minimum + maximum);
-		minimum = mean - 0.5 * d_sound.scaling_height;
-		maximum = mean + 0.5 * d_sound.scaling_height;
+		minimum = mean - 0.5 * d_sound_scaling_height;
+		maximum = mean + 0.5 * d_sound_scaling_height;
 	} else {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;

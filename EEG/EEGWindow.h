@@ -2,7 +2,7 @@
 #define _EEGWindow_h_
 /* EEGWindow.h
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,13 +38,7 @@ Thing_define (EEGWindow, TextGridEditor) { public:
 		virtual const wchar_t * v_getChannelName (long channelNumber);
 		virtual void v_createMenuItems_file_extract (EditorMenu menu);
 		virtual void v_updateMenuItems_file ();
-	// overridden preferences:
-		static void f_preferences ();
-		static bool s_showSelectionViewer; virtual bool & pref_showSelectionViewer () { return s_showSelectionViewer; }
-		static kTimeSoundEditor_scalingStrategy s_sound_scalingStrategy; virtual kTimeSoundEditor_scalingStrategy & pref_sound_scalingStrategy () { return s_sound_scalingStrategy; }
-		declare_preference (double, sound_scaling_height)
-		declare_preference (double, sound_scaling_minimum)
-		declare_preference (double, sound_scaling_maximum)
+	#include "EEGWindow_prefs.h"
 		static FunctionEditor_spectrogram s_spectrogram; virtual FunctionEditor_spectrogram & pref_spectrogram () { return s_spectrogram; }
 };
 

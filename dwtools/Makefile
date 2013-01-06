@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20121201 Latest modification
+# djmw 20121214 Latest modification
 
 include ../makefile.defs
 

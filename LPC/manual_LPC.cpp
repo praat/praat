@@ -111,10 +111,10 @@ CODE (L"To Cepstrogram... 0.041 0.002 5000.0")
 CODE (L"Smooth... 0.02 0.001")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum", L"djmw", 20121205)
+MAN_BEGIN (L"Cepstrum", L"djmw", 20130101)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 ENTRY (L"Description")
-NORMAL (L"A Cepstrum is a the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB's scale with a reference value of 1.0 (the reference value can be taken arbitrarily). The horizontal scale shows %%quefrency% in units of seconds.")
+NORMAL (L"A Cepstrum is the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB's scale with a reference value of 1.0 (the reference value can be taken arbitrarily). The horizontal scale shows %%quefrency% in units of seconds.")
 MAN_END
 
 MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20121203)
@@ -152,6 +152,11 @@ MAN_END
 
 MAN_BEGIN (L"Cepstrum: Draw tilt line...", L"djmw", 20121116)
 INTRO (L"Draws the straight line that models the backgound of the power cepstrum.")
+MAN_END
+
+MAN_BEGIN (L"Formant & Spectrogram: To IntensityTier...", L"djmw", 20121231)
+INTRO (L"Determines the formant intensities from the selected Spectrogram.")
+NORMAL (L"The intensities at the frequencies of the selected formant are copied from the corresponding positions in the spectrogram. If the selected formant doesn't exist in a particular frame, then a large negative value (< -200 dB) is substituted instead.")
 MAN_END
 
 MAN_BEGIN (L"LFCC", L"djmw", 20040421)

@@ -1268,6 +1268,46 @@ void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *i
 void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept);
 void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept);
 
+/* The binomial distribution has the form,
+
+   f(x) =  n!/(x!(n-x)!) * p^x (1-p)^(n-x) for integer 0 <= x <= n
+        =  0                               otherwise
+
+   This implementation follows the public domain ranlib function
+   "ignbin", the bulk of which is the BTPE (Binomial Triangle
+   Parallelogram Exponential) algorithm introduced in
+   Kachitvichyanukul and Schmeiser[1].  It has been translated to use
+   modern C coding standards.
+
+   If n is small and/or p is near 0 or near 1 (specifically, if
+   n*min(p,1-p) < SMALL_MEAN), then a different algorithm, called
+   BINV, is used which has an average runtime that scales linearly
+   with n*min(p,1-p).
+
+   But for larger problems, the BTPE algorithm takes the form of two
+   functions b(x) and t(x) -- "bottom" and "top" -- for which b(x) <
+   f(x)/f(M) < t(x), with M = floor(n*p+p).  b(x) defines a triangular
+   region, and t(x) includes a parallelogram and two tails.  Details
+   (including a nice drawing) are in the paper.
+
+   [1] Kachitvichyanukul, V. and Schmeiser, B. W.  Binomial Random
+   Variate Generation.  Communications of the ACM, 31, 2 (February,
+   1988) 216.
+
+   Note, Bruce Schmeiser (personal communication) points out that if
+   you want very fast binomial deviates, and you are happy with
+   approximate results, and/or n and n*p are both large, then you can
+   just use gaussian estimates: mean=n*p, variance=n*p*(1-p).
+
+   This implementation by James Theiler, April 2003, after obtaining
+   permission -- and some good advice -- from Drs. Kachitvichyanukul
+   and Schmeiser to use their code as a starting point, and then doing
+   a little bit of tweaking.
+
+   Additional polishing for GSL coding standards by Brian Gough.  */
+
+long NUMrandomBinomial (double p, long n);
+
 // IEEE: Programs for digital signal processing section 4.3 LPTRN (modfied)
 
 // lpc[1..n] to rc[1..n]

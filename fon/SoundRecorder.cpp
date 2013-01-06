@@ -35,7 +35,6 @@
 #include "Editor.h"
 #include "machine.h"
 #include "EditorM.h"
-#include "Preferences.h"
 #include "GuiP.h"
 #if defined (macintosh)
 	#include "pa_mac_core.h"
@@ -45,15 +44,15 @@
 Thing_implement (SoundRecorder, Editor, 0);
 
 static struct {
-	int bufferSize_MB;
+	int bufferSizeInMegabytes;
 } preferences;
 
 void SoundRecorder_preferences (void) {
-	Preferences_addInt (L"SoundRecorder.bufferSize_MB", & preferences.bufferSize_MB, 20);
+	Preferences_addInt (L"SoundRecorder.bufferSizeInMegabytes", & preferences.bufferSizeInMegabytes, 60);
 }
 
-int SoundRecorder_getBufferSizePref_MB (void) { return preferences.bufferSize_MB; }
-void SoundRecorder_setBufferSizePref_MB (int size) { preferences.bufferSize_MB = size < 1 ? 1 : size > 1000 ? 1000: size; }
+int SoundRecorder_getBufferSizePref_MB (void) { return preferences.bufferSizeInMegabytes; }
+void SoundRecorder_setBufferSizePref_MB (int size) { preferences.bufferSizeInMegabytes = size < 1 ? 1 : size > 1000 ? 1000: size; }
 
 #define step 1000
 
@@ -1019,10 +1018,10 @@ SoundRecorder SoundRecorder_create (int numberOfChannels) {
 		/*
 		 * Allocate the maximum buffer.
 		 */
-		if (preferences.bufferSize_MB < 1) preferences.bufferSize_MB = 1;   /* Validate preferences. */
-		if (preferences.bufferSize_MB > 1000) preferences.bufferSize_MB = 1000;
+		if (preferences.bufferSizeInMegabytes < 1) preferences.bufferSizeInMegabytes = 1;   /* Validate preferences. */
+		if (preferences.bufferSizeInMegabytes > 1000) preferences.bufferSizeInMegabytes = 1000;
 		if (my buffer == NULL) {
-			long nmax_bytes_pref = preferences.bufferSize_MB * 1000000;
+			long nmax_bytes_pref = preferences.bufferSizeInMegabytes * 1000000;
 			long nmax_bytes = my inputUsesPortAudio ? nmax_bytes_pref :
 				#if defined (_WIN32)
 					66150000;   /* The maximum physical buffer on Windows XP; shorter than in Windows 98, alas. */

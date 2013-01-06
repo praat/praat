@@ -124,4 +124,30 @@ TextGrid Intensity_to_TextGrid_detectSilences (Intensity me, double silenceThres
 	}
 }
 
+Intensity IntensityTier_to_Intensity (IntensityTier me, double dt) {
+	try {
+		long nt = (my xmax - my xmin) / dt;
+		double t1 = 0.5 * dt;
+		autoIntensity thee = Intensity_create (my xmin, my xmax, nt, dt, t1);
+		for (long i = 1; i <= nt; i++) {
+			double time = t1 + (i - 1) * dt;
+			thy z[1][i] = RealTier_getValueAtTime (me, time);
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, " no Intensity created.");
+	}
+}
+
+TextGrid IntensityTier_to_TextGrid_detectSilences (IntensityTier me, double dt, double silenceThreshold_dB, double minSilenceDuration,
+	double minSoundingDuration, const wchar_t *silenceLabel, const wchar_t *soundingLabel) {
+	try {
+		autoIntensity intensity = IntensityTier_to_Intensity (me, dt);
+		autoTextGrid thee = Intensity_to_TextGrid_detectSilences (intensity.peek(), silenceThreshold_dB, minSilenceDuration, minSoundingDuration, silenceLabel, soundingLabel);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, " no TextGrid created.");
+	}
+}
+
 /* End of file Intensity_extensions.cpp */

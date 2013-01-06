@@ -158,7 +158,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nt,  L"BarkFilter analysis: frame ",
-				                   Melder_integer (i), L" from ", Melder_integer (nt), L"."); therror
+				                   Melder_integer (i), L" from ", Melder_integer (nt), L"."); 
 			}
 		}
 
@@ -249,7 +249,7 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 			}
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nt, L"Frame ", Melder_integer (i), L" out of ",
-				                   Melder_integer (nt), L"."); therror
+				                   Melder_integer (nt), L".");
 			}
 		}
 
@@ -378,7 +378,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nt, L"Frame ", Melder_integer (i), L" out of ",
-				                   Melder_integer (nt), L"."); therror
+				                   Melder_integer (nt), L"."); 
 			}
 		}
 

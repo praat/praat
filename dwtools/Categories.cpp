@@ -35,7 +35,7 @@ void structCategories :: v_readText (MelderReadText a_text) {
 	}
 	for (long i = 1; i <= l_size; i ++) {
 		autoSimpleString itemi = Thing_new (SimpleString);
-		itemi -> v_readText (a_text); therror
+		itemi -> v_readText (a_text); 
 		Ordered_addItemPos (this, itemi.transfer(), i);
 	}
 }

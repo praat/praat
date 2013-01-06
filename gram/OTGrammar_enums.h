@@ -17,10 +17,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/*
- * pb 2011/04/13
- */
-
 enums_begin (kOTGrammar_decisionStrategy, 0)
 	enums_add (kOTGrammar_decisionStrategy, 0, OPTIMALITY_THEORY, L"OptimalityTheory")
 	enums_add (kOTGrammar_decisionStrategy, 1, HARMONIC_GRAMMAR, L"HarmonicGrammar")

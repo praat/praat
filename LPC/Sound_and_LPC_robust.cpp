@@ -229,7 +229,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nFrames, L"LPC analysis of frame ",
-				                   Melder_integer (i), L" out of ", Melder_integer (nFrames), L"."); therror
+				                   Melder_integer (i), L" out of ", Melder_integer (nFrames), L"."); 
 			}
 		}
 

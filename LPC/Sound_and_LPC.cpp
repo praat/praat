@@ -420,7 +420,7 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 		}
 		if ( (i % 10) == 1) {
 			Melder_progress ( (double) i / nFrames, L"LPC analysis of frame ",
-			                   Melder_integer (i), L" out of ", Melder_integer (nFrames), L"."); therror
+			                   Melder_integer (i), L" out of ", Melder_integer (nFrames), L"."); 
 		}
 	}
 	return thee.transfer();

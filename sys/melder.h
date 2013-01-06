@@ -607,8 +607,6 @@ void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, const MelderAr
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
 	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
 	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
-//#define therror  if (Melder_hasError ()) { Melder_error_ ("PLEASE SEND THIS ENTIRE ERROR MESSAGE TO PAUL.BOERSMA@UVA.NL (file ", __FILE__, ", line ", __LINE__, ")."); throw MelderError (); }
-#define therror
 #define Melder_throw(...)  do { Melder_error_ (__VA_ARGS__); throw MelderError (); } while (false)
 
 void Melder_flushError (const char *format, ...);

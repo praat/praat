@@ -3137,6 +3137,36 @@ DO
 	}
 END
 
+/***************** IntensityTier ***************************************************/
+
+FORM (IntensityTier_to_TextGrid_detectSilences, L"IntensityTier: To TextGrid (silences)", L"Intensity: To TextGrid (silences)...")
+	REAL (L"Silence threshold (dB)", L"-25.0")
+	POSITIVE (L"Minimum silent interval duration (s)", L"0.1")
+	POSITIVE (L"Minimum sounding interval duration (s)", L"0.05")
+	WORD (L"Silent interval label", L"silent")
+	WORD (L"Sounding interval label", L"sounding")
+	POSITIVE (L"Time step (s)", L"0.001")
+	OK
+DO
+	LOOP {
+		iam (IntensityTier);
+		praat_new (IntensityTier_to_TextGrid_detectSilences (me, GET_REAL (L"Time step"), GET_REAL (L"Silence threshold"),
+			GET_REAL (L"Minimum silent interval duration"), GET_REAL (L"Minimum sounding interval duration"),
+			GET_STRING (L"Silent interval label"), GET_STRING (L"Sounding interval label")), my name);
+	}
+END
+
+FORM (IntensityTier_to_Intensity, L"", 0)
+	POSITIVE (L"Time step (s)", L"0.001")
+	OK
+DO
+	LOOP {
+		iam (IntensityTier);
+		autoIntensity thee = IntensityTier_to_Intensity (me, GET_REAL (L"Time step"));
+		praat_new (thee.transfer(), my name);
+	}
+END
+
 /***************** ISpline ***************************************************/
 
 DIRECT (ISpline_help) Melder_help (L"ISpline"); END
@@ -7445,6 +7475,8 @@ void praat_uvafon_David_init () {
 
 
 	praat_addAction1 (classIntensity, 0, L"To TextGrid (silences)...", L"To IntensityTier (valleys)", 0, DO_Intensity_to_TextGrid_detectSilences);
+	praat_addAction1 (classIntensityTier, 0, L"To TextGrid (silences)...", 0, 0, DO_IntensityTier_to_TextGrid_detectSilences);
+	praat_addAction1 (classIntensityTier, 0, L"To Intensity...", 0, praat_HIDDEN, DO_IntensityTier_to_Intensity);
 
 	praat_addAction1 (classISpline, 0, L"ISpline help", 0, 0, DO_ISpline_help);
 	praat_Spline_init (classISpline);

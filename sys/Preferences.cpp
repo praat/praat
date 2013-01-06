@@ -1,6 +1,6 @@
 /* Preferences.cpp
  *
- * Copyright (C) 1996-2012 Paul Boersma
+ * Copyright (C) 1996-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,10 @@ void structPreference :: v_destroy () {
 
 static SortedSetOfString thePreferences;
 
-static void Preferences_add (const wchar_t *string, int type, void *value, int min, int max, const wchar_t *(*getText) (int value), int (*getValue) (const wchar_t *text)) {
+static void Preferences_add (const wchar_t *string, int type, void *value, int min, int max, const wchar_t * (*getText) (int value), int (*getValue) (const wchar_t *text)) {
 	Preference me = Thing_new (Preference);
 	my string = Melder_wcsdup_f (string);
+	for (wchar_t *p = & my string [0]; *p != '\0'; p ++) if (*p == '_') *p = '.';
 	my type = type;
 	my value = value;
 	my min = min;

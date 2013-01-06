@@ -116,7 +116,7 @@ Formant LPC_to_Formant (LPC me, double margin) {
 
 			if ( (interval == 1 || (i % interval) == 1)) {
 				Melder_progress ( (double) i / my nx, L"LPC to Formant: frame ", Melder_integer (i),
-				                   L" out of ", Melder_integer (my nx), L"."); therror
+				                   L" out of ", Melder_integer (my nx), L"."); 
 			}
 		}
 

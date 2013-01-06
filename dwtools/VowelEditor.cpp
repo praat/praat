@@ -967,9 +967,9 @@ static void menu_cb_extract_KlattGrid (EDITOR_ARGS) {
 	VowelEditor_updateVowel (me);
 	autoFormantGrid fg = FormantTier_to_FormantGrid (my vowel -> ft);
 	autoKlattGrid publish = KlattGrid_create (fg -> xmin, fg -> xmax, fg -> formants -> size, 0, 0, 0, 0, 0, 0);
-	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90); therror
-	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt); therror
-	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek()); therror
+	KlattGrid_addVoicingAmplitudePoint (publish.peek(), fg -> xmin, 90); 
+	KlattGrid_replacePitchTier (publish.peek(), my vowel -> pt); 
+	KlattGrid_replaceFormantGrid (publish.peek(), KlattGrid_ORAL_FORMANTS, fg.peek()); 
 	my broadcastPublication (publish.transfer());
 }
 
@@ -1073,7 +1073,7 @@ static void menu_cb_setF0 (EDITOR_ARGS) {
 		checkF0 (&my f0, &f0);
 		my f0.start = f0;
 		my f0.slopeOctPerSec = GET_REAL (L"Slope");
-		VowelEditor_setSource (me); therror
+		VowelEditor_setSource (me); 
 		my f0TextField -> f_setString (Melder_double (my f0.start));
 		my f0SlopeTextField -> f_setString (Melder_double (my f0.slopeOctPerSec));
 	EDITOR_END
@@ -1093,7 +1093,7 @@ static void menu_cb_setF3F4 (EDITOR_ARGS) {
 		if (f3 >= f4) {
 			Melder_throw ("F4 must be larger than F3.");
 		}
-		VowelEditor_setF3F4 (me, f3, b3, f4, b4); therror
+		VowelEditor_setF3F4 (me, f3, b3, f4, b4); 
 	EDITOR_END
 }
 static void menu_cb_reverseTrajectory (EDITOR_ARGS) {

@@ -156,7 +156,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 		if (! monitorSingle) {
 			try {
 				Melder_progress ( (double) i / numberOfTimes, Melder_integer (i), L" from ",
-				                   Melder_integer (numberOfTimes)); therror
+				                   Melder_integer (numberOfTimes)); 
 			} catch (MelderError) {
 				Melder_clearError ();   // interrurpt, no error
 				break;
