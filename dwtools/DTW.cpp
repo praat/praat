@@ -1,6 +1,6 @@
 /* DTW.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -935,7 +935,7 @@ DTW Matrices_to_DTW (I, thou, int matchStart, int matchEnd, int slope, int metri
 			}
 			if ( (i % 10) == 1) {
 				Melder_progress (0.999 * i / my nx, L"Calculate distances: column ",
-				                  Melder_integer (i), L" from ", Melder_integer (my nx), L"."); 
+				                  Melder_integer (i), L" from ", Melder_integer (my nx), L".");
 			}
 		}
 		DTW_findPath (him.peek(), matchStart, matchEnd, slope);
@@ -1467,7 +1467,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matri
             }
             if ((j % 10) == 2) {
                 Melder_progress (0.999 * j / my nx, L"Calculate time warp: frame ",
-                    Melder_integer (j), L" from ", Melder_integer (my nx), L"."); 
+                    Melder_integer (j), L" from ", Melder_integer (my nx), L".");
             }
         }
 

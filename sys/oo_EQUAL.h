@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,18 +94,6 @@
 			for (long j = col1; j <= col2; j ++) \
 				if (! x [i] [j]. equal (& thy x [i] [j])) return false; \
 	}
-
-#define oo_WIDGET(x)  \
-	!!!! Can never compare Widgets... !!!!
-
-#define oo_WIDGET_ARRAY(x,cap,n)  \
-	!!!! Can never compare Widgets... !!!!
-
-#define oo_WIDGET_SET(x,setType)  \
-	!!!! Can never compare Widgets... !!!!
-
-#define oo_WIDGET_VECTOR_FROM(x,cap,min,max)  \
-	!!!! Can never compare Widgets... !!!!
 
 #define oo_OBJECT(Class,version,x)  \
 	if (! x != ! thy x || (x && ! Data_equal (x, thy x))) return false;

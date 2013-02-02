@@ -1,6 +1,6 @@
 /* LPC_and_Formant.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ Formant LPC_to_Formant (LPC me, double margin) {
 
 			if ( (interval == 1 || (i % interval) == 1)) {
 				Melder_progress ( (double) i / my nx, L"LPC to Formant: frame ", Melder_integer (i),
-				                   L" out of ", Melder_integer (my nx), L"."); 
+				                   L" out of ", Melder_integer (my nx), L".");
 			}
 		}
 

@@ -1,6 +1,6 @@
 /* Sound_and_FilterBank.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -158,7 +158,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nt,  L"BarkFilter analysis: frame ",
-				                   Melder_integer (i), L" from ", Melder_integer (nt), L"."); 
+				                   Melder_integer (i), L" from ", Melder_integer (nt), L".");
 			}
 		}
 
@@ -378,7 +378,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee, double ana
 
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nt, L"Frame ", Melder_integer (i), L" out of ",
-				                   Melder_integer (nt), L"."); 
+				                   Melder_integer (nt), L".");
 			}
 		}
 

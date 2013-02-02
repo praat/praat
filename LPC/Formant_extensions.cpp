@@ -105,14 +105,13 @@ IntensityTier Formant_and_Spectrogram_to_IntensityTier (Formant me, Spectrogram 
 			Formant_Frame frame = & my d_frames [iframe];
 			long numberOfFormants = frame -> nFormants;
 			double time = Sampled_indexToX (me, iframe);
-			long itime = Sampled_xToIndex (thee, time); // the spectrogram frame
 			double value = 0;
 			if (iformant <= numberOfFormants) {
 				double f = frame -> formant[iformant].frequency;
-				long ifreq = Matrix_yToNearestRow (thee, f);
-				value = ifreq >= 1 && ifreq <= thy ny && f > 0 ? thy z[ifreq][itime] : 0.0;  /* Power. */
+				value = Matrix_getValueAtXY (thee, time, f);
+				value = value == NUMundefined ? 0.0 : value;
 			}
-			value = 10.0 * log10 ((value + 1e-30) / 4.0e-10); /* dB's */
+			value = 10.0 * log10 ((value + 1e-30) / 4.0e-10); /* dB / Hz */
 			if (value != previousValue) {
 				if (iframe > 1 && previousTime < time - 1.5 * my dx) { // mark the end of the same interval
 					RealTier_addPoint (him.peek(), time - my dx, previousValue);

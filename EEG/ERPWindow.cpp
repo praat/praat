@@ -1,6 +1,6 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012 Paul Boersma
+ * Copyright (C) 2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ FunctionEditor_spectrogram       structERPWindow :: s_spectrogram;             /
 
 void structERPWindow :: f_preferences (void) {
 	Preferences_addBool   (L"ERPWindow.showSelectionViewer",   & s_showSelectionViewer,   true);    // overridden
-	Preferences_addEnum   (L"ERPWindow.sound.scalingStrategy", & s_sound_scalingStrategy, kTimeSoundEditor_scalingStrategy, DEFAULT);   // overridden
+	Preferences_addEnum   (L"ERPWindow.sound.scalingStrategy", & s_sound_scalingStrategy, kTimeSoundEditor_scalingStrategy, kTimeSoundEditor_scalingStrategy_DEFAULT);   // overridden
 	Preferences_addDouble (L"ERPWindow.sound.scaling.height",  & s_sound_scaling_height,  Melder_atof (sdefault_sound_scaling_height));   // overridden
 	Preferences_addDouble (L"ERPWindow.sound.scaling.minimum", & s_sound_scaling_minimum, Melder_atof (sdefault_sound_scaling_minimum));   // overridden
 	Preferences_addDouble (L"ERPWindow.sound.scaling.maximum", & s_sound_scaling_maximum, Melder_atof (sdefault_sound_scaling_maximum));   // overridden
@@ -40,8 +40,8 @@ void structERPWindow :: f_preferences (void) {
 	Preferences_addDouble (L"ERPWindow.spectrogram.dynamicRange",       & s_spectrogram.dynamicRange, 40.0);   // dB
 	Preferences_addLong   (L"ERPWindow.spectrogram.timeSteps",          & s_spectrogram.timeSteps, 1000);
 	Preferences_addLong   (L"ERPWindow.spectrogram.frequencySteps",     & s_spectrogram.frequencySteps, 250);
-	Preferences_addEnum   (L"ERPWindow.spectrogram.method",             & s_spectrogram.method, kSound_to_Spectrogram_method, DEFAULT);
-	Preferences_addEnum   (L"ERPWindow.spectrogram.windowShape",        & s_spectrogram.windowShape, kSound_to_Spectrogram_windowShape, DEFAULT);
+	Preferences_addEnum   (L"ERPWindow.spectrogram.method",             & s_spectrogram.method, kSound_to_Spectrogram_method, kSound_to_Spectrogram_method_DEFAULT);
+	Preferences_addEnum   (L"ERPWindow.spectrogram.windowShape",        & s_spectrogram.windowShape, kSound_to_Spectrogram_windowShape, kSound_to_Spectrogram_windowShape_DEFAULT);
 	Preferences_addBool   (L"ERPWindow.spectrogram.autoscaling",        & s_spectrogram.autoscaling, true);
 	Preferences_addDouble (L"ERPWindow.spectrogram.maximum",            & s_spectrogram.maximum, 100.0);   // dB/Hz
 	Preferences_addDouble (L"ERPWindow.spectrogram.preemphasis",        & s_spectrogram.preemphasis, 0.0);   // dB/octave

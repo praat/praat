@@ -1,6 +1,6 @@
 /* melder_audio.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,7 @@ static struct {
 } preferences;
 
 void Melder_audio_prefs (void) {
-	Preferences_addEnum (L"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, DEFAULT);
+	Preferences_addEnum (L"Audio.maximumAsynchronicity", & preferences. maximumAsynchronicity, kMelder_asynchronicityLevel, kMelder_asynchronicityLevel_DEFAULT);
 	Preferences_addBool (L"Audio.useInternalSpeaker", & preferences. useInternalSpeaker, true);
 	Preferences_addBool (L"Audio.outputUsesPortAudio2", & preferences. outputUsesPortAudio, kMelderAudio_outputUsesPortAudio_DEFAULT);
 	Preferences_addBool (L"Audio.outputUsesBlocking2", & preferences. outputUsesBlocking, false);

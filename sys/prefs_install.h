@@ -54,7 +54,7 @@
 #define prefs_add_double_with_data(Klas,name,version,default)  prefs_add_double (Klas, name, version, default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
-	Preferences_addEnum (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name, enumerated, default);
+	Preferences_addEnum (Melder_wcscat (L"" #Klas "." #name, version >= 2 ? L"." #version : L""), & s_##name, enumerated, enumerated##_##default);
 #define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  prefs_add_enum (Klas, name, version, enumerated, default)
 
 #define prefs_add_string(Klas,name,version,default) \

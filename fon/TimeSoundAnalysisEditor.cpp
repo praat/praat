@@ -86,7 +86,7 @@ static struct {
 
 void structTimeSoundAnalysisEditor :: f_preferences () {
 	Preferences_addDouble (L"FunctionEditor.longestAnalysis", & preferences.longestAnalysis, 10.0);   // seconds
-	Preferences_addEnum (L"FunctionEditor.timeStepStrategy", & preferences.timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.timeStepStrategy", & preferences.timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy, kTimeSoundAnalysisEditor_timeStepStrategy_DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.fixedTimeStep", & preferences.fixedTimeStep, 0.01);   // seconds
 	Preferences_addLong (L"FunctionEditor.numberOfTimeStepsPerView", & preferences.numberOfTimeStepsPerView, 100);
 	Preferences_addBool (L"FunctionEditor.spectrogram.show", & s_spectrogram.show, true);
@@ -96,8 +96,8 @@ void structTimeSoundAnalysisEditor :: f_preferences () {
 	Preferences_addDouble (L"FunctionEditor.spectrogram.dynamicRange2", & s_spectrogram.dynamicRange, 70.0);   // dB
 	Preferences_addLong (L"FunctionEditor.spectrogram.timeSteps2", & s_spectrogram.timeSteps, 1000);
 	Preferences_addLong (L"FunctionEditor.spectrogram.frequencySteps2", & s_spectrogram.frequencySteps, 250);
-	Preferences_addEnum (L"FunctionEditor.spectrogram.method2", & s_spectrogram.method, kSound_to_Spectrogram_method, DEFAULT);
-	Preferences_addEnum (L"FunctionEditor.spectrogram.windowShape2", & s_spectrogram.windowShape, kSound_to_Spectrogram_windowShape, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.spectrogram.method2", & s_spectrogram.method, kSound_to_Spectrogram_method, kSound_to_Spectrogram_method_DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.spectrogram.windowShape2", & s_spectrogram.windowShape, kSound_to_Spectrogram_windowShape, kSound_to_Spectrogram_windowShape_DEFAULT);
 	Preferences_addBool (L"FunctionEditor.spectrogram.autoscaling2", & s_spectrogram.autoscaling, true);
 	Preferences_addDouble (L"FunctionEditor.spectrogram.maximum2", & s_spectrogram.maximum, 100.0);   // dB/Hz
 	Preferences_addDouble (L"FunctionEditor.spectrogram.preemphasis2", & s_spectrogram.preemphasis, 6.0);   // dB/octave
@@ -106,11 +106,11 @@ void structTimeSoundAnalysisEditor :: f_preferences () {
 	Preferences_addBool (L"FunctionEditor.pitch.show", & s_pitch.show, true);
 	Preferences_addDouble (L"FunctionEditor.pitch.floor", & s_pitch.floor, 75.0);
 	Preferences_addDouble (L"FunctionEditor.pitch.ceiling", & s_pitch.ceiling, 500.0);
-	Preferences_addEnum (L"FunctionEditor.pitch.unit", & s_pitch.unit, kPitch_unit, DEFAULT);
-	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & s_pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.pitch.unit", & s_pitch.unit, kPitch_unit, kPitch_unit_DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.pitch.drawingMethod", & s_pitch.drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod, kTimeSoundAnalysisEditor_pitch_drawingMethod_DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.pitch.viewFrom", & s_pitch.viewFrom, 0.0);   // auto
 	Preferences_addDouble (L"FunctionEditor.pitch.viewTo", & s_pitch.viewTo, 0.0);   // auto
-	Preferences_addEnum (L"FunctionEditor.pitch.method", & s_pitch.method, kTimeSoundAnalysisEditor_pitch_analysisMethod, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.pitch.method", & s_pitch.method, kTimeSoundAnalysisEditor_pitch_analysisMethod, kTimeSoundAnalysisEditor_pitch_analysisMethod_DEFAULT);
 	Preferences_addBool (L"FunctionEditor.pitch.veryAccurate", & s_pitch.veryAccurate, false);
 	Preferences_addLong (L"FunctionEditor.pitch.maximumNumberOfCandidates", & s_pitch.maximumNumberOfCandidates, 15);
 	Preferences_addDouble (L"FunctionEditor.pitch.silenceThreshold", & s_pitch.silenceThreshold, 0.03);
@@ -122,7 +122,7 @@ void structTimeSoundAnalysisEditor :: f_preferences () {
 	Preferences_addBool (L"FunctionEditor.intensity.show", & s_intensity.show, false);
 	Preferences_addDouble (L"FunctionEditor.intensity.viewFrom", & s_intensity.viewFrom, 50.0);   // dB
 	Preferences_addDouble (L"FunctionEditor.intensity.viewTo", & s_intensity.viewTo, 100.0);   // dB
-	Preferences_addEnum (L"FunctionEditor.intensity.averagingMethod", & s_intensity.averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.intensity.averagingMethod", & s_intensity.averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod, kTimeSoundAnalysisEditor_intensity_averagingMethod_DEFAULT);
 	Preferences_addBool (L"FunctionEditor.intensity.subtractMeanPressure", & s_intensity.subtractMeanPressure, true);
 	Preferences_addBool (L"FunctionEditor.intensity.picture.garnish", & s_intensity.picture.garnish, true);
 	Preferences_addBool (L"FunctionEditor.formant.show", & s_formant.show, false);
@@ -131,7 +131,7 @@ void structTimeSoundAnalysisEditor :: f_preferences () {
 	Preferences_addDouble (L"FunctionEditor.formant.windowLength", & s_formant.windowLength, 0.025);   // seconds
 	Preferences_addDouble (L"FunctionEditor.formant.dynamicRange", & s_formant.dynamicRange, 30.0);   // dB
 	Preferences_addDouble (L"FunctionEditor.formant.dotSize", & s_formant.dotSize, 1.0);   // mm
-	Preferences_addEnum (L"FunctionEditor.formant.method", & s_formant.method, kTimeSoundAnalysisEditor_formant_analysisMethod, DEFAULT);
+	Preferences_addEnum (L"FunctionEditor.formant.method", & s_formant.method, kTimeSoundAnalysisEditor_formant_analysisMethod, kTimeSoundAnalysisEditor_formant_analysisMethod_DEFAULT);
 	Preferences_addDouble (L"FunctionEditor.formant.preemphasisFrom", & s_formant.preemphasisFrom, 50.0);   // Hz
 	Preferences_addBool (L"FunctionEditor.formant.picture.garnish", & s_formant.picture.garnish, true);
 	Preferences_addBool (L"FunctionEditor.pulses.show", & s_pulses.show, false);

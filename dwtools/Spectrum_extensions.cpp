@@ -1,6 +1,6 @@
 /* Spectrum_extensions.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -258,7 +258,7 @@ Matrix Spectrum_unwrap (Spectrum me) {
 			ppdvt = pdvt;
 			thy z[2][i] = pphase = phase;
 			Melder_progress ( (double) i / my nx, Melder_integer (i),
-			                   L" unwrapped phases from ", Melder_integer (my nx), L"."); 
+			                   L" unwrapped phases from ", Melder_integer (my nx), L".");
 		}
 
 		long iphase = (phase / NUMpi + 0.1);
@@ -419,6 +419,7 @@ Spectrum Spectrum_compressFrequencyDomain (Spectrum me, double fmax, long interp
 }
 
 void Spectrum_fitTiltLine (Spectrum me, double fmin, double fmax, bool logf, double bandwidth, double *a, double *intercept, int method) {
+	(void) me; (void) fmin; (void) fmax; (void) logf; (void) bandwidth; (void) a; (void) intercept; (void) method;
 	try {
 	} catch (MelderError) {
 		Melder_throw ("Tilt line not fitted.");

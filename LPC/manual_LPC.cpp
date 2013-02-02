@@ -154,9 +154,11 @@ MAN_BEGIN (L"Cepstrum: Draw tilt line...", L"djmw", 20121116)
 INTRO (L"Draws the straight line that models the backgound of the power cepstrum.")
 MAN_END
 
-MAN_BEGIN (L"Formant & Spectrogram: To IntensityTier...", L"djmw", 20121231)
+MAN_BEGIN (L"Formant & Spectrogram: To IntensityTier...", L"djmw", 20130109)
 INTRO (L"Determines the formant intensities from the selected Spectrogram.")
-NORMAL (L"The intensities at the frequencies of the selected formant are copied from the corresponding positions in the spectrogram. If the selected formant doesn't exist in a particular frame, then a large negative value (< -200 dB) is substituted instead.")
+NORMAL (L"The intensities at the frequencies of the selected formant are copied from the corresponding positions in the spectrogram. "
+	"If the selected formant doesn't exist in a particular frame, then a large negative value (< -200 dB) is substituted instead. "
+	"Because the values in the spectrogram are expressed in Pa^^2^/Hz, the units in the intensity tier are in dB/Hz. ")
 MAN_END
 
 MAN_BEGIN (L"LFCC", L"djmw", 20040421)

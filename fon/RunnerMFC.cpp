@@ -417,7 +417,9 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 		{
 			do_replay (me);
 		} else if (experiment -> oops_key != NULL && experiment -> oops_key [0] == event -> key) {
-			do_oops (me);
+			if (experiment -> trial > 1) {
+				do_oops (me);
+			}
 		} else if (experiment -> responses [experiment -> trial] == 0) {
 			for (iresponse = 1; iresponse <= experiment -> numberOfDifferentResponses; iresponse ++) {
 				ResponseMFC response = & experiment -> response [iresponse];

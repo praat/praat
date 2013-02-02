@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@
 static bool praat_mouseSelectsInnerViewport;
 
 void praat_picture_prefs (void) {
-	Preferences_addEnum (L"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, DEFAULT);
+	Preferences_addEnum (L"Picture.font", & theCurrentPraatPicture -> font, kGraphics_font, kGraphics_font_DEFAULT);
 	Preferences_addInt (L"Picture.fontSize", & theCurrentPraatPicture -> fontSize, 10);
 	Preferences_addBool (L"Picture.mouseSelectsInnerViewport", & praat_mouseSelectsInnerViewport, false);
 }
@@ -98,8 +98,8 @@ DIRECT (18) setFontSize (18); END
 DIRECT (24) setFontSize (24); END
 FORM (Font_size, L"Praat picture: Font size", L"Font menu")
 	NATURAL (L"Font size (points)", L"10")
-	OK
-SET_INTEGER (L"Font size", (long) theCurrentPraatPicture -> fontSize);
+OK
+	SET_INTEGER (L"Font size", (long) theCurrentPraatPicture -> fontSize);
 DO
 	setFontSize (GET_INTEGER (L"Font size"));
 END
@@ -166,14 +166,14 @@ FORM (SelectInnerViewport, L"Praat picture: Select inner viewport", L"Select inn
 	REAL (L"right Horizontal range (inches)", L"6.0")
 	REAL (L"left Vertical range (inches)", L"0.0")
 	REAL (L"right Vertical range (inches)", L"6.0")
-	OK
-double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
-if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-SET_REAL (L"left Horizontal range", theCurrentPraatPicture -> x1NDC + xmargin);
-SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin);
-SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin);
-SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin);
+OK
+	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
+	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
+	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+	SET_REAL (L"left Horizontal range", theCurrentPraatPicture -> x1NDC + xmargin);
+	SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin);
+	SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin);
+	SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC - ymargin);
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw ("Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
@@ -228,11 +228,11 @@ FORM (SelectOuterViewport, L"Praat picture: Select outer viewport", L"Select out
 	REAL (L"right Horizontal range (inches)", L"6.0")
 	REAL (L"left Vertical range (inches)", L"0.0")
 	REAL (L"right Vertical range (inches)", L"6.0")
-	OK
-SET_REAL (L"left Horizontal range", theCurrentPraatPicture -> x1NDC);
-SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC);
-SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
-SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
+OK
+	SET_REAL (L"left Horizontal range", theCurrentPraatPicture -> x1NDC);
+	SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC);
+	SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC);
+	SET_REAL (L"right Vertical range", 12 - theCurrentPraatPicture -> y1NDC);
 DO
 	//if (theCurrentPraatObjects != & theForegroundPraatObjects) Melder_throw ("Viewport commands are not available inside manuals.");
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
@@ -276,7 +276,7 @@ FORM (ViewportText, L"Praat picture: Viewport text", L"Viewport text...")
 		RADIOBUTTON (L"Top")
 	REAL (L"Rotation (degrees)", L"0")
 	TEXTFIELD (L"text", L"")
-	OK
+OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	int hor = GET_INTEGER (L"Horizontal alignment") - 1;
@@ -294,7 +294,7 @@ END
 
 /***** "Pen" MENU *****/
 
-static GuiMenuItem praatButton_lines [3];
+static GuiMenuItem praatButton_lines [4];
 static GuiMenuItem praatButton_black, praatButton_white, praatButton_red, praatButton_green, praatButton_blue,
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime, praatButton_navy,
 	praatButton_teal, praatButton_purple, praatButton_olive, praatButton_pink, praatButton_silver, praatButton_grey;
@@ -341,8 +341,8 @@ DIRECT (Dashed_dotted_line) setLineType (Graphics_DASHED_DOTTED); END
 
 FORM (Line_width, L"Praat picture: Line width", 0)
 	POSITIVE (L"Line width", L"1.0")
-	OK
-SET_REAL (L"Line width", theCurrentPraatPicture -> lineWidth);
+OK
+	SET_REAL (L"Line width", theCurrentPraatPicture -> lineWidth);
 DO
 	double lineWidth = GET_REAL (L"Line width");
 	{
@@ -354,8 +354,8 @@ END
 
 FORM (Arrow_size, L"Praat picture: Arrow size", 0)
 	POSITIVE (L"Arrow size", L"1.0")
-	OK
-SET_REAL (L"Arrow size", theCurrentPraatPicture -> arrowSize);
+OK
+	SET_REAL (L"Arrow size", theCurrentPraatPicture -> arrowSize);
 DO
 	double arrowSize = GET_REAL (L"Arrow size");
 	{
@@ -395,7 +395,7 @@ DIRECT (Grey) setColour (Graphics_GREY); END
 
 FORM (Colour, L"Praat picture: Colour", 0)
 	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.0")
-	OK
+OK
 DO
 	Graphics_Colour colour = GET_COLOUR (L"Colour");
 	{
@@ -569,7 +569,7 @@ FORM (Text, L"Praat picture: Text", L"Text...")
 		OPTION (L"Top")
 	LABEL (L"", L"Text:")
 	TEXTFIELD (L"text", L"")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setTextAlignment (GRAPHICS,
@@ -596,7 +596,7 @@ FORM (Text_special, L"Praat picture: Text special", 0)
 	SENTENCE (L"Rotation (degrees or dx;dy)", L"0")
 	LABEL (L"", L"Text:")
 	TEXTFIELD (L"text", L"")
-	OK
+OK
 DO
 	kGraphics_font currentFont = Graphics_inqFont (GRAPHICS);
 	int currentSize = Graphics_inqFontSize (GRAPHICS);
@@ -625,7 +625,7 @@ static void dia_line (Any dia) {
 }
 FORM (DrawLine, L"Praat picture: Draw line", 0)
 	dia_line (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -636,7 +636,7 @@ END
 
 FORM (DrawArrow, L"Praat picture: Draw arrow", 0)
 	dia_line (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -647,7 +647,7 @@ END
 
 FORM (DrawDoubleArrow, L"Praat picture: Draw double arrow", 0)
 	dia_line (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -678,7 +678,7 @@ FORM (DrawFunction, L"Praat picture: Draw function", 0)
 	NATURAL (L"Number of horizontal steps", L"1000")
 	LABEL (L"", L"Formula:")
 	TEXTFIELD (L"formula", L"x^2 - x^4")
-	OK
+OK
 DO
 	double x1WC, x2WC, y1WC, y2WC;
 	double fromX = GET_REAL (L"From x"), toX = GET_REAL (L"To x");
@@ -714,7 +714,7 @@ static void dia_rectangle (Any dia) {
 }
 FORM (DrawRectangle, L"Praat picture: Draw rectangle", 0)
 	dia_rectangle (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -726,7 +726,7 @@ END
 FORM (PaintRectangle, L"Praat picture: Paint rectangle", 0)
 	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	dia_rectangle (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -738,7 +738,7 @@ END
 FORM (DrawRoundedRectangle, L"Praat picture: Draw rounded rectangle", 0)
 	dia_rectangle (dia);
 	POSITIVE (L"Radius (mm)", L"3.0")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -751,7 +751,7 @@ FORM (PaintRoundedRectangle, L"Praat picture: Paint rounded rectangle", 0)
 	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	dia_rectangle (dia);
 	POSITIVE (L"Radius (mm)", L"3.0")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -766,7 +766,7 @@ FORM (DrawArc, L"Praat picture: Draw arc", 0)
 	POSITIVE (L"Radius (along x)", L"1.0")
 	REAL (L"From angle (degrees)", L"0.0")
 	REAL (L"To angle (degrees)", L"90.0")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -777,7 +777,7 @@ END
 
 FORM (DrawEllipse, L"Praat picture: Draw ellipse", 0)
 	dia_rectangle (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -789,7 +789,7 @@ END
 FORM (PaintEllipse, L"Praat picture: Paint ellipse", 0)
 	COLOUR (L"Colour (0-1, name, or {r,g,b})", L"0.5")
 	dia_rectangle (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -802,7 +802,7 @@ FORM (DrawCircle, L"Praat picture: Draw circle", 0)
 	REAL (L"Centre x", L"0.0")
 	REAL (L"Centre y", L"0.0")
 	POSITIVE (L"Radius (along x)", L"1.0")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -815,7 +815,7 @@ FORM (PaintCircle, L"Praat picture: Paint circle", 0)
 	REAL (L"Centre x", L"0")
 	REAL (L"Centre y", L"0")
 	POSITIVE (L"Radius (along x)", L"1.0")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -828,7 +828,7 @@ FORM (DrawCircle_mm, L"Praat picture: Draw circle (mm)", 0)
 	REAL (L"Centre x", L"0.0")
 	REAL (L"Centre y", L"0.0")
 	POSITIVE (L"Diameter (mm)", L"5.0")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -841,7 +841,7 @@ FORM (PaintCircle_mm, L"Praat picture: Paint circle (mm)", 0)
 	REAL (L"Centre x", L"0.0")
 	REAL (L"Centre y", L"0.0")
 	POSITIVE (L"Diameter (mm)", L"5.0")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -854,7 +854,7 @@ FORM (InsertPictureFromFile, L"Praat picture: Insert picture from file", L"Inser
 	LABEL (L"", L"File name:")
 	TEXTFIELD (L"fileName", L"~/Desktop/paul.jpg")
 	dia_rectangle (dia);
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_setInner (GRAPHICS);
@@ -868,13 +868,13 @@ FORM (Axes, L"Praat picture: Axes", L"Axes...")
 	REAL (L"right Left and right", L"1.0")
 	REAL (L"left Bottom and top", L"0.0")
 	REAL (L"right Bottom and top", L"1.0")
-	OK
-double x1WC, x2WC, y1WC, y2WC;
-Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
-SET_REAL (L"left Left and right", x1WC);
-SET_REAL (L"right Left and right", x2WC);
-SET_REAL (L"left Bottom and top", y1WC);
-SET_REAL (L"right Bottom and top", y2WC);
+OK
+	double x1WC, x2WC, y1WC, y2WC;
+	Graphics_inqWindow (GRAPHICS, & x1WC, & x2WC, & y1WC, & y2WC);
+	SET_REAL (L"left Left and right", x1WC);
+	SET_REAL (L"right Left and right", x2WC);
+	SET_REAL (L"left Bottom and top", y1WC);
+	SET_REAL (L"right Bottom and top", y2WC);
 DO
 	double left = GET_REAL (L"left Left and right"), right = GET_REAL (L"right Left and right");
 	double top = GET_REAL (L"right Bottom and top"), bottom = GET_REAL (L"left Bottom and top");
@@ -894,7 +894,7 @@ END
 FORM (Text_left, L"Praat picture: Text left", L"Text left/right/top/bottom...")
 	BOOLEAN (L"Far", 1)
 	TEXTFIELD (L"text", L"")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_textLeft (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
@@ -903,7 +903,7 @@ END
 FORM (Text_right, L"Praat picture: Text right", L"Text left/right/top/bottom...")
 	BOOLEAN (L"Far", 1)
 	TEXTFIELD (L"text", L"")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_textRight (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
@@ -912,7 +912,7 @@ END
 FORM (Text_top, L"Praat picture: Text top", L"Text left/right/top/bottom...")
 	BOOLEAN (L"Far", 0)
 	TEXTFIELD (L"text", L"")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_textTop (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
@@ -921,7 +921,7 @@ END
 FORM (Text_bottom, L"Praat picture: Text bottom", L"Text left/right/top/bottom...")
 	BOOLEAN (L"Far", 1)
 	TEXTFIELD (L"text", L"")
-	OK
+OK
 DO
 	autoPraatPicture picture;
 	Graphics_textBottom (GRAPHICS, GET_INTEGER (L"Far"), GET_STRING (L"text"));
@@ -1008,7 +1008,7 @@ static void dia_oneMark (Any dia) {
 }
 FORM (Mark_left, L"Praat picture: One mark left", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1028,7 +1028,7 @@ END
 
 FORM (Mark_right, L"Praat picture: One mark right", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1048,7 +1048,7 @@ END
 
 FORM (Mark_top, L"Praat picture: One mark top", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1068,7 +1068,7 @@ END
 
 FORM (Mark_bottom, L"Praat picture: One mark bottom", L"One mark left/right/top/bottom...")
 	dia_oneMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1096,7 +1096,7 @@ static void dia_oneLogarithmicMark (Any dia) {
 }
 FORM (LogarithmicMark_left, L"Praat picture: One logarithmic mark left", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1116,7 +1116,7 @@ END
 
 FORM (LogarithmicMark_right, L"Praat picture: One logarithmic mark right", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dy;
@@ -1136,7 +1136,7 @@ END
 
 FORM (LogarithmicMark_top, L"Praat picture: One logarithmic mark top", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1156,7 +1156,7 @@ END
 
 FORM (LogarithmicMark_bottom, L"Praat picture: One logarithmic mark bottom", L"One logarithmic mark left/right/top/bottom...")
 	dia_oneLogarithmicMark (dia);
-	OK
+OK
 DO
 	double position = GET_REAL (L"Position");
 	double x1WC, x2WC, y1WC, y2WC, dx;
@@ -1176,7 +1176,7 @@ END
 
 FORM (dxMMtoWC, L"Compute horizontal distance in world coordinates", 0)
 	REAL (L"Distance (mm)", L"10.0")
-	OK
+OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
@@ -1188,7 +1188,7 @@ END
 
 FORM (dxWCtoMM, L"Compute horizontal distance in millimetres", 0)
 	REAL (L"Distance (wc)", L"0.1")
-	OK
+OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
@@ -1200,7 +1200,7 @@ END
 
 FORM (dyMMtoWC, L"Compute vertical distance in world coordinates", 0)
 	REAL (L"Distance (mm)", L"10.0")
-	OK
+OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
@@ -1212,7 +1212,7 @@ END
 
 FORM (dyWCtoMM, L"Compute vertical distance in millimetres", 0)
 	REAL (L"Distance (wc)", L"1.0")
-	OK
+OK
 DO
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
@@ -1224,7 +1224,7 @@ END
 
 FORM (textWidth_wc, L"Text width in world coordinates", 0)
 	TEXTFIELD (L"text", L"Hello world")
-	OK
+OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1237,7 +1237,7 @@ END
 
 FORM (textWidth_mm, L"Text width in millimetres", 0)
 	TEXTFIELD (L"text", L"Hello world")
-	OK
+OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1253,7 +1253,7 @@ FORM (textWidth_ps_wc, L"PostScript text width in world coordinates", 0)
 		RADIOBUTTON (L"XIPA")
 		RADIOBUTTON (L"SILIPA")
 	TEXTFIELD (L"text", L"Hello world")
-	OK
+OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1269,7 +1269,7 @@ FORM (textWidth_ps_mm, L"PostScript text width in millimetres", 0)
 		RADIOBUTTON (L"XIPA")
 		RADIOBUTTON (L"SILIPA")
 	TEXTFIELD (L"text", L"Hello world")
-	OK
+OK
 DO
 	Graphics_setFont (GRAPHICS, static_cast<kGraphics_font> (theCurrentPraatPicture -> font));
 	Graphics_setFontSize (GRAPHICS, theCurrentPraatPicture -> fontSize);
@@ -1436,6 +1436,15 @@ void praat_picture_editor_close (void) {
 	praat_picture_close ();
 }
 
+static Any pictureRecognizer (int nread, const char *header, MelderFile file) {
+	if (nread < 2) return NULL;
+	if (strnequ (header, "PraatPictureFile", 16))
+	{
+		Picture_readFromPraatPictureFile (praat_picture, file); return (Any) 1;
+	}
+	return NULL;
+}
+
 void praat_picture_init (void) {
 	GuiScrolledWindow scrollWindow;
 	GuiDrawingArea drawingArea = NULL;
@@ -1449,6 +1458,8 @@ void praat_picture_init (void) {
 	theCurrentPraatPicture -> x2NDC = 6.0;
 	theCurrentPraatPicture -> y1NDC = 8.0;
 	theCurrentPraatPicture -> y2NDC = 12.0;
+
+	Data_recognizeFileType (pictureRecognizer);
 
 	if (! theCurrentPraatApplication -> batch) {
 		char pictureWindowTitle [100];

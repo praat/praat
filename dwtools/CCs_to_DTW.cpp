@@ -2,7 +2,7 @@
  *
  *	Dynamic Time Warp of two CCs.
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -134,7 +134,7 @@ DTW CCs_to_DTW (I, thou, double wc, double wle, double wr, double wer, double dt
 			}
 
 			if ( (i % 10) == 1) {
-				Melder_progress (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L"."); 
+				Melder_progress (0.999 * i / my nx, L"Calculate distances: frame ", Melder_integer (i), L" from ", Melder_integer (my nx), L".");
 			}
 		}
 		return him.transfer();

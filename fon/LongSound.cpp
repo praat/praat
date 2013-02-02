@@ -536,12 +536,12 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 {
 	struct LongSoundPlay *thee = (struct LongSoundPlay *) & thePlayingLongSound;
 	Melder_free (thy resampledBuffer);   // just in case
+	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 	try {
 		int fits = LongSound_haveWindow (me, tmin, tmax);
 		long bestSampleRate = MelderAudio_getOutputBestSampleRate (my sampleRate), n, i1, i2;
 		if (! fits)
 			Melder_throw ("Sound too long (", tmax - tmin, " seconds).");
-		MelderAudio_stopPlaying (MelderAudio_IMPLICIT);
 		/*
 		 * Assign to *thee only after stopping the playing sound.
 		 */
@@ -609,7 +609,7 @@ void LongSound_playPart (LongSound me, double tmin, double tmax,
 		//Melder_free (thy resampledBuffer);   // cannot do that, because MelderAudio_play16 isn't necessarily synchronous
 	} catch (MelderError) {
 		Melder_free (thy resampledBuffer);
-		Melder_throw (me, ": not played");
+		Melder_throw (me, ": not played.");
 	}
 }
 

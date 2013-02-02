@@ -1,6 +1,6 @@
 /* Sound_to_SPINET.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 				thy y[i][j] = Sound_power (frame.peek()) * bb / gammaMaxAmplitude;
 			}
 			Melder_progress ( (double) i / nFilters, L"SPINET: filter ", Melder_integer (i), L" from ",
-			                   Melder_integer (nFilters), L"."); 
+			                   Melder_integer (nFilters), L".");
 		}
 
 		// Excitatory and inhibitory area functions

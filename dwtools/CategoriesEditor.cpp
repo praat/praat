@@ -1,6 +1,6 @@
 /* CategoriesEditor.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -668,7 +668,7 @@ static void gui_button_cb_moveUp (I, GuiButtonEvent event) {
 	if (posCount > 0) {
 		autoCategoriesEditorMoveUp command = CategoriesEditorMoveUp_create
 		                                     (me, posList.peek(), posCount, posList[1] - 1);
-		Command_do (command.peek()); 
+		Command_do (command.peek());
 		if (my history) {
 			CommandHistory_insertItem (my history, command.transfer());
 		}
@@ -685,7 +685,7 @@ static void gui_button_cb_moveDown (I, GuiButtonEvent event) {
 	if (posCount > 0) {
 		autoCategoriesEditorMoveDown command = CategoriesEditorMoveDown_create
 		                                       (me, posList.peek(), posCount, posList[posCount] + 1);
-		Command_do (command.peek()); 
+		Command_do (command.peek());
 		if (my history) {
 			CommandHistory_insertItem (my history, command.transfer());
 		}

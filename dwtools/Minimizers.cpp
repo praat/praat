@@ -1,6 +1,6 @@
 /* Minimizers.cpp
  *
- * Copyright (C) 2001-2011 David Weenink
+ * Copyright (C) 2001-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -156,7 +156,7 @@ void Minimizer_minimizeManyTimes (Minimizer me, long numberOfTimes, long maxIter
 		if (! monitorSingle) {
 			try {
 				Melder_progress ( (double) i / numberOfTimes, Melder_integer (i), L" from ",
-				                   Melder_integer (numberOfTimes)); 
+				                   Melder_integer (numberOfTimes));
 			} catch (MelderError) {
 				Melder_clearError ();   // interrurpt, no error
 				break;

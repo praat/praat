@@ -1,6 +1,6 @@
 /* oo_undef.h
  *
- * Copyright (C) 1994-2011 Paul Boersma
+ * Copyright (C) 1994-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,10 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2011/03/03
  */
 
 #undef oo_SIMPLE
@@ -42,11 +38,6 @@
 #undef oo_STRUCT_SET
 #undef oo_STRUCT_VECTOR_FROM
 #undef oo_STRUCT_MATRIX_FROM
-
-#undef oo_WIDGET
-#undef oo_WIDGET_ARRAY
-#undef oo_WIDGET_SET
-#undef oo_WIDGET_VECTOR_FROM
 
 #undef oo_OBJECT
 #undef oo_COLLECTION

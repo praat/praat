@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +64,8 @@ static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered acro
 void ManipulationEditor_prefs (void) {
 	Preferences_addDouble (L"ManipulationEditor.pitch.minimum", & preferences.pitchTier.minimum, 50.0);
 	Preferences_addDouble (L"ManipulationEditor.pitch.maximum", & preferences.pitchTier.maximum, 300.0);
-	Preferences_addEnum (L"ManipulationEditor.pitch.units", & preferences.pitchTier.units, kManipulationEditor_pitchUnits, DEFAULT);
-	Preferences_addEnum (L"ManipulationEditor.pitch.draggingStrategy", & preferences.pitchTier.draggingStrategy, kManipulationEditor_draggingStrategy, DEFAULT);
+	Preferences_addEnum (L"ManipulationEditor.pitch.units", & preferences.pitchTier.units, kManipulationEditor_pitchUnits, kManipulationEditor_pitchUnits_DEFAULT);
+	Preferences_addEnum (L"ManipulationEditor.pitch.draggingStrategy", & preferences.pitchTier.draggingStrategy, kManipulationEditor_draggingStrategy, kManipulationEditor_draggingStrategy_DEFAULT);
 	Preferences_addDouble (L"ManipulationEditor.pitch.stylize.frequencyResolution", & preferences.pitchTier.stylize.frequencyResolution, 2.0);
 	Preferences_addBool (L"ManipulationEditor.pitch.stylize.useSemitones", & preferences.pitchTier.stylize.useSemitones, true);
 	Preferences_addLong (L"ManipulationEditor.pitch.interpolateQuadratically.numberOfPointsPerParabola", & preferences.pitchTier.interpolateQuadratically.numberOfPointsPerParabola, 4);

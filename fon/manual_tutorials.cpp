@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130106)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130202)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.40# (2 February 2013)")
+LIST_ITEM (L"\\bu Windows: better handling (in the LongSound window) of sounds that are too long to play.")
+LIST_ITEM (L"\\bu Mac: corrected a bug that caused Praat to crash when closing the Strings window.")
+LIST_ITEM (L"\\bu Linux: made audio output work again on 32-bit Linux.")
 NORMAL (L"##5.3.39# (6 January 2013)")
 LIST_ITEM (L"\\bu Formant & Spectrogram: To IntensityTier...")
 NORMAL (L"##5.3.38# (4 January 2013)")

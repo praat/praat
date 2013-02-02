@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2011,2012 Paul Boersma
+ * Copyright (C) 1998-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,10 +61,10 @@
 };
 
 void Printer_prefs (void) {
-	Preferences_addEnum (L"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, DEFAULT);
-	Preferences_addEnum (L"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, DEFAULT);
+	Preferences_addEnum (L"Printer.spots", & thePrinter. spots, kGraphicsPostscript_spots, kGraphicsPostscript_spots_DEFAULT);
+	Preferences_addEnum (L"Printer.paperSize", & thePrinter. paperSize, kGraphicsPostscript_paperSize, kGraphicsPostscript_paperSize_DEFAULT);
 	Preferences_addBool (L"Printer.allowDirectPostScript", & thePrinter. allowDirectPostScript, true);
-	Preferences_addEnum (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, DEFAULT);
+	Preferences_addEnum (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy_DEFAULT);
 }
 
 #if defined (macintosh)

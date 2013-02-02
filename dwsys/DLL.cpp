@@ -1,6 +1,6 @@
 /* DLL.cpp
  *
- * Copyright (C) 2011 David Weenink
+ * Copyright (C) 2011-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ void structDLLNode :: v_destroy () {
 
 void structDLLNode :: v_copy (thou) {
 	thouart (DLLNode);
-	thy data = Data_copy (data); 
+	thy data = Data_copy (data);
 }
 
 Thing_implement (DLL, Thing, 0);

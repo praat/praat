@@ -268,8 +268,8 @@ Any Data_readFromBinaryFile (MelderFile file) {
 /* Generic reading. */
 
 static int numFileTypeRecognizers = 0;
-static Any (*fileTypeRecognizers [100]) (int nread, const char *header, MelderFile fs);
-void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile fs)) {
+static Any (*fileTypeRecognizers [100]) (int nread, const char *header, MelderFile file);
+void Data_recognizeFileType (Any (*recognizer) (int nread, const char *header, MelderFile file)) {
 	Melder_assert (numFileTypeRecognizers < 100);
 	fileTypeRecognizers [++ numFileTypeRecognizers] = recognizer;
 }
@@ -313,6 +313,7 @@ Any Data_readFromFile (MelderFile file) {
 	MelderFile_getParentDir (file, & Data_directoryBeingRead);
 	for (i = 1; i <= numFileTypeRecognizers; i ++) {
 		Data object = (Data) fileTypeRecognizers [i] (nread, header, file);
+		if (object == (Data) 1) return NULL;
 		if (object) return object;
 	}
 

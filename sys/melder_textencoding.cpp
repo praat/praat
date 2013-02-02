@@ -55,8 +55,8 @@ void Melder_setOutputEncoding (enum kMelder_textOutputEncoding encoding) { prefe
 enum kMelder_textOutputEncoding Melder_getOutputEncoding (void) { return preferences. outputEncoding; }
 
 void Melder_textEncoding_prefs (void) {
-	Preferences_addEnum (L"TextEncoding.inputEncoding", & preferences. inputEncoding, kMelder_textInputEncoding, DEFAULT);
-	Preferences_addEnum (L"TextEncoding.outputEncoding", & preferences. outputEncoding, kMelder_textOutputEncoding, DEFAULT);
+	Preferences_addEnum (L"TextEncoding.inputEncoding", & preferences. inputEncoding, kMelder_textInputEncoding, kMelder_textInputEncoding_DEFAULT);
+	Preferences_addEnum (L"TextEncoding.outputEncoding", & preferences. outputEncoding, kMelder_textOutputEncoding, kMelder_textOutputEncoding_DEFAULT);
 }
 
 bool Melder_isValidAscii (const wchar_t *text) {

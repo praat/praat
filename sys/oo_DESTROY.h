@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,24 +83,6 @@
 			for (long j = col1; j <= col2; j ++) \
 				x [i] [j] -> destroy (); \
 		NUMmatrix_free <struct##Type> (x, row1, col1); \
-	}
-
-#define oo_WIDGET(x)  \
-	if (x) XtDestroyWidget (x);
-
-#define oo_WIDGET_ARRAY(x,cap,n)  \
-	for (int i = 0; i < n; i ++) \
-		if (x [i]) XtDestroyWidget (x [i]);
-
-#define oo_WIDGET_SET(x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (x [i]) XtDestroyWidget (x [i]);
-
-#define oo_WIDGET_VECTOR_FROM(x,min,max)  \
-	if (x) { \
-		for (long i = min; i <= max; i ++) \
-			XtDestroyWidget (x [i]); \
-		NUMvector_free (sizeof (GuiObject), x, min, 0); \
 	}
 
 #define oo_OBJECT(Class,version,x)  \

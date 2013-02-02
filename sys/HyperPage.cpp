@@ -1,6 +1,6 @@
 /* HyperPage.cpp
  *
- * Copyright (C) 1996-2011,2012 Paul Boersma
+ * Copyright (C) 1996-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ static enum kGraphics_font prefs_font;
 static int prefs_fontSize;
 
 void HyperPage_prefs (void) {
-	Preferences_addEnum (L"HyperPage.font", & prefs_font, kGraphics_font, DEFAULT);
+	Preferences_addEnum (L"HyperPage.font", & prefs_font, kGraphics_font, kGraphics_font_DEFAULT);
 	Preferences_addInt (L"HyperPage.fontSize", & prefs_fontSize, 12);
 }
 

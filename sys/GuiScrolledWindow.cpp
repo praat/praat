@@ -48,7 +48,12 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 #elif mac
 	void _GuiMacScrolledWindow_destroy (GuiObject widget) {
 		iam_scrolledwindow;
-		forget (me);   // NOTE: my widget is not destroyed here
+		/*
+		 * One can get here either via GuiScrolledWindow_create or via GuiList_create,
+		 * so we cannot be certain that we have a GuiScrolledWindow!!!
+		 * So we purposely have a memory leak here:
+		 */
+		//forget (me);   // NOTE: my widget is not destroyed here
 	}
 #endif
 
@@ -69,7 +74,10 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 	#elif cocoa
 	#elif motif
 		my d_widget = XmCreateScrolledWindow (parent -> d_widget, "scrolledWindow", NULL, 0);
+		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		Melder_assert (my classInfo == classGuiScrolledWindow);
+		trace ("me = %p, user data = %p", me, my d_widget -> userData);
 	#endif
 	return me;
 }

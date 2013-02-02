@@ -1,6 +1,6 @@
 /* oo_DESCRIPTION.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -252,13 +252,6 @@
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 1, L"" #min, L"" #max },
 #undef oo_STRUCT_VECTOR
 #define oo_STRUCT_VECTOR(Type,x,n)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 1, (const wchar_t *) 0, L"" #n },
-
-#define oo_WIDGET(x)  { L"" #x, widgetwa, Melder_offsetof (ooSTRUCT, x), sizeof (GuiObject) },
-#define oo_WIDGET_ARRAY(x,cap,n)  { L"" #x, widgetwa, Melder_offsetof (ooSTRUCT, x), sizeof (GuiObject), 0, 0, - cap, (const wchar_t *) 0, L"" #n },
-#define oo_WIDGET_SET(x,setType)  { L"" #x, widgetwa, Melder_offsetof (ooSTRUCT, x), sizeof (GuiObject), 0, 0, 3, (const wchar_t *) setType##_getText, (const wchar_t *) setType##_getValue },
-#define oo_WIDGET_VECTOR_FROM(x,min,max)  { L"" #x, widgetwa, Melder_offsetof (ooSTRUCT, x), sizeof (GuiObject), 0, 0, 1, L"" #min, L"" #max },
-#undef oo_WIDGET_VECTOR
-#define oo_WIDGET_VECTOR(Type,x,n)  { L"" #x, widgetwa, Melder_offsetof (ooSTRUCT, x), sizeof (GuiObject), 0, 0, 1, 0, #n },
 
 #define oo_OBJECT(Type,version,x)  { L"" #x, objectwa, Melder_offsetof (ooSTRUCT, x), sizeof (Type), L"" #Type, & theClassInfo_##Type },
 #define oo_COLLECTION(Type,x,ItemType,version)  { L"" #x, collectionwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), L"" #Type, & theClassInfo_##Type, 0, (const wchar_t *) & theClassInfo_##ItemType },

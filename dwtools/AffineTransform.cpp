@@ -1,6 +1,6 @@
 /* AffineTransform.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,7 @@ Any structAffineTransform :: v_invert () {
 	autoAffineTransform thee = Data_copy (this);
 	double tolerance = 0.000001;
 
-	NUMpseudoInverse (r, n, n, thy r, tolerance); 
+	NUMpseudoInverse (r, n, n, thy r, tolerance);
 	for (long i = 1; i <= n; i++) {
 		thy t[i] = 0;
 		for (long j = 1; j <= thy n; j++) {

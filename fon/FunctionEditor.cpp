@@ -1073,19 +1073,23 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 	}
 	else   /* Clicked outside signal region? Let us hear it. */
 	{
-		for (int i = 0; i < 8; i ++) {
-			if (xWC > my rect [i]. left && xWC < my rect [i]. right &&
-				 yWC > my rect [i]. bottom && yWC < my rect [i]. top)
-				switch (i) {
-					case 0: my v_play (my d_tmin, my d_tmax); break;
-					case 1: my v_play (my d_startWindow, my d_endWindow); break;
-					case 2: my v_play (my d_tmin, my d_startWindow); break;
-					case 3: my v_play (my d_endWindow, my d_tmax); break;
-					case 4: my v_play (my d_startWindow, my marker [1]); break;
-					case 5: my v_play (my marker [1], my marker [2]); break;
-					case 6: my v_play (my marker [2], my marker [3]); break;
-					case 7: my v_play (my d_startSelection, my d_endSelection); break;
-				}
+		try {
+			for (int i = 0; i < 8; i ++) {
+				if (xWC > my rect [i]. left && xWC < my rect [i]. right &&
+					 yWC > my rect [i]. bottom && yWC < my rect [i]. top)
+					switch (i) {
+						case 0: my v_play (my d_tmin, my d_tmax); break;
+						case 1: my v_play (my d_startWindow, my d_endWindow); break;
+						case 2: my v_play (my d_tmin, my d_startWindow); break;
+						case 3: my v_play (my d_endWindow, my d_tmax); break;
+						case 4: my v_play (my d_startWindow, my marker [1]); break;
+						case 5: my v_play (my marker [1], my marker [2]); break;
+						case 6: my v_play (my marker [2], my marker [3]); break;
+						case 7: my v_play (my d_startSelection, my d_endSelection); break;
+					}
+			}
+		} catch (MelderError) {
+			Melder_flushError (NULL);
 		}
 	}
 }

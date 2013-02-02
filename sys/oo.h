@@ -2,7 +2,7 @@
 #define _oo_h_
 /* oo.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,10 +205,6 @@
 #define oo_STRUCT_VECTOR(Type,x,n)  oo_STRUCT_VECTOR_FROM (Type, x, 1, n)
 #define oo_STRUCT_MATRIX(Type,x,nrow,ncol)  oo_STRUCT_MATRIX_FROM (Type, x, 1, nrow, 1, ncol)
 
-/*** Widgets. */
-
-#define oo_WIDGET_VECTOR(Type,x,n)  oo_WIDGET_VECTOR_FROM (Type, x, 1, n)
-
 /*** Class declaration in header file. ***/
 
 #define oo_CLASS_CREATE(klas,parent) \
@@ -245,11 +241,6 @@
 #define oo_STRUCT_SET(Type,x,setType)  struct struct##Type x [1 + setType##_MAX];
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  Type x;
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  struct struct##Type **x;
-
-#define oo_WIDGET(x)  GuiObject x;
-#define oo_WIDGET_ARRAY(x,cap,n)  GuiObject x [cap];
-#define oo_WIDGET_SET(x,setType)  GuiObject x [1 + setType##_MAX];
-#define oo_WIDGET_VECTOR_FROM(x,min,max)  GuiObject *x;
 
 #define oo_OBJECT(Class,version,x)  Class x;
 #define oo_COLLECTION(Class,x,ItemClass,version)  Class x;

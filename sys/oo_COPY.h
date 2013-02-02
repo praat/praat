@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -91,18 +91,6 @@
 			for (long j = col1; j <= col2; j ++) \
 				x [i] [j]. copy (& thy x [i] [j]); \
 	}
-
-#define oo_WIDGET(x)  \
-	!!!! Can never copy Widgets... !!!!
-
-#define oo_WIDGET_ARRAY(x,cap,n)  \
-	!!!! Can never copy Widgets... !!!!
-
-#define oo_WIDGET_SET(x,setType)  \
-	!!!! Can never copy Widgets... !!!!
-
-#define oo_WIDGET_VECTOR_FROM(x,cap,min,max)  \
-	!!!! Can never copy Widgets... !!!!
 
 #define oo_OBJECT(Class,version,x)  \
 	if (x) thy x = Data_copy (x);
