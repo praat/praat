@@ -3752,16 +3752,10 @@ Table Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long factorColu
 	}
 }
 
-void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas,  int labelSize, const wchar_t *label, int garnish)
+void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const wchar_t *label, int garnish)
 {
 	try {
 		if (column < 1 || column > my numberOfColumns) return;
-		double xymin, xymax;
-		if (numberOfSigmas == 0) {
-			xymin = 100; xymax = -100;
-		} else {
-			xymin = -numberOfSigmas; xymax = numberOfSigmas;
-		}
 		Table_numericize_Assert (me, column);
 		long numberOfData = my rows -> size;
 		autoNUMvector<double> data (1, numberOfData);
@@ -3770,35 +3764,38 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 		}
 		double mean, var;
 		NUMvector_avevar (data.peek(), numberOfData, &mean, &var);
-		double stdev = sqrt (var);
+		double xmin = 100, xmax = -xmin, ymin = 1e38, ymax = -ymin, stdev = sqrt (var);
+		if (numberOfSigmas != 0) {
+			xmin = -numberOfSigmas; 
+			xmax =  numberOfSigmas;
+			ymin = mean - numberOfSigmas * stdev;
+			ymax = mean + numberOfSigmas * stdev;
+		}
 		NUMsort_d (numberOfData, data.peek());
 		numberOfQuantiles = numberOfData < numberOfQuantiles ? numberOfData : numberOfQuantiles;
 		autoTableOfReal thee = TableOfReal_create (numberOfQuantiles, 2);
-		TableOfReal_setColumnLabel (thee.peek(), 1, L"Normal distribution");
-		autoMelderString columnLabel;
-		MelderString_append (&columnLabel, my columnHeaders [column].label, L" (z-scores)");
-		TableOfReal_setColumnLabel (thee.peek(), 2, columnLabel.string);
+		TableOfReal_setColumnLabel (thee.peek(), 1, L"Normal distribution quantiles");
+		TableOfReal_setColumnLabel (thee.peek(), 2, my columnHeaders[column].label);
 		double un = pow (0.5, 1.0 / numberOfQuantiles);
 		for (long irow = 1; irow <= numberOfQuantiles; irow++) {
 			double ui = irow == 1 ? 1 - un : (irow == numberOfQuantiles ? un : (irow - 0.3175) / (numberOfQuantiles + 0.365));
 			double q = NUMquantile (numberOfData, data.peek(), ui);
-			double z = (q - mean) / stdev;
 			double zq = - NUMinvGaussQ (ui);
-			thy data[irow][1] = z;
-			thy data[irow][2] = zq;
+			thy data[irow][1] = zq; // along x
+			thy data[irow][2] = q;  // along y
 			if (numberOfSigmas == 0) {
-				xymin = zq < xymin ? zq : xymin;
-				xymax = zq > xymax ? zq : xymax;
-				xymin = z < xymin ? z : xymin;
-				xymax = z > xymax ? z : xymax;
+				xmin = zq < xmin ? zq : xmin;
+				xmax = zq > xmax ? zq : xmax;
+				ymin = q < ymin ? q : ymin;
+				ymax = q > ymax ? q : ymax;
 			}
 		}
 
-		TableOfReal_drawScatterPlot (thee.peek(), g, 1, 2, 1, numberOfQuantiles, xymin, xymax, xymin, xymax, labelSize, 0, label, garnish);
+		TableOfReal_drawScatterPlot (thee.peek(), g, 1, 2, 1, numberOfQuantiles, xmin, xmax, ymin, ymax, labelSize, 0, label, garnish);
 
 		Graphics_setInner (g);
 		Graphics_setLineType (g, Graphics_DOTTED);
-		Graphics_line (g, xymin, xymin, xymax, xymax);
+		Graphics_line (g, xmin, ymin, xmax, ymax);
 		Graphics_setLineType (g, Graphics_DRAWN);
 		Graphics_unsetInner (g);
 

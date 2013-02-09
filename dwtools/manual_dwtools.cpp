@@ -3993,7 +3993,7 @@ NORMAL (L"@@Tenreiro (2009)@ recommends  %h__%%s% _= 0.448 + 0.026\\.c%d for sho
 " %h__%%l%_ = 0.928 + 0.049\\.c%d for long tailed alternatives.")
 MAN_END
 
-MAN_BEGIN (L"Table: Normal probability plot...", L"djmw", 20120810)
+MAN_BEGIN (L"Table: Normal probability plot...", L"djmw", 20130207)
 NORMAL (L"In a normal probability plot, the data in the selected column of the @Table are plotted "
 	"against a normal distribution in such a way that the points should form approximately a straight line. "
 	"Departures from a straight line indicate departures from normality.")
@@ -4001,10 +4001,10 @@ ENTRY (L"Settings")
 TAG (L"##Number of quantiles#")
 DEFINITION (L"the number of quantile points, %n, in the plot. From this number %n, the quantile points are "
 	"determined as follows: the last quantile point %q__%n_ = 0.5^^1/%n^ and the first quantile point "
-	"%q__1_=1\\--%q(%n). The intermediate quantile points %q__%i_ are determined according to "
+	"%q__1_=1\\--%q__%n_. The intermediate quantile points %q__%i_ are determined according to "
 	"%q__%i_=(%i \\-- 0.3175)/(%n + 0.365), where %i runs from 2 to %n\\--1.")
 TAG (L"##Number of sigmas#")
-DEFINITION (L"determines the horizontal and vertical drawing range between \\--%%numberOfSigmas% and + %%numberOfSigmas%.")
+DEFINITION (L"determines the horizontal and vertical drawing ranges in units of standard deviations. ")
 MAN_END
 
 MAN_BEGIN (L"Table: Quantile-quantile plot...", L"djmw", 20120810)

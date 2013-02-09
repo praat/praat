@@ -842,11 +842,20 @@ void _GuiText_exit (void) {
 	static void _GuiGtkText_destroyCallback (GuiObject widget, gpointer void_me) {
 		(void) widget;
 		iam (GuiText);
+		Melder_assert (me != NULL);
+		Melder_assert (my classInfo == classGuiText);
 		trace ("begin");
-		if (my d_undo_item) g_object_unref (my d_undo_item -> d_widget);
-		if (my d_redo_item) g_object_unref (my d_redo_item -> d_widget);
+		if (my d_undo_item) {
+			trace ("undo");
+			//g_object_unref (my d_undo_item -> d_widget);
+		}
+		if (my d_redo_item) {
+			trace ("redo");
+			//g_object_unref (my d_redo_item -> d_widget);
+		}
 		my d_undo_item = NULL;
 		my d_redo_item = NULL;
+		trace ("history");
 		history_clear (me);
 		forget (me);
 	}
@@ -1383,10 +1392,10 @@ void structGuiText :: f_setFontSize (int size) {
 void structGuiText :: f_setRedoItem (GuiMenuItem item) {
 	#if gtk
 		if (d_redo_item)
-			g_object_unref (d_redo_item -> d_widget);
+			//g_object_unref (d_redo_item -> d_widget);
 		d_redo_item = item;
 		if (d_redo_item) {
-			g_object_ref (d_redo_item -> d_widget);
+			//g_object_ref (d_redo_item -> d_widget);
 			d_redo_item -> f_setSensitive (history_has_redo (this));
 		}
 	#elif cocoa
@@ -1525,11 +1534,12 @@ void structGuiText :: f_setString (const wchar_t *text) {
 
 void structGuiText :: f_setUndoItem (GuiMenuItem item) {
 	#if gtk
-		if (d_undo_item)
-			g_object_unref (d_undo_item -> d_widget);
+		if (d_undo_item) {
+			//g_object_unref (d_undo_item -> d_widget);
+		}
 		d_undo_item = item;
 		if (d_undo_item) {
-			g_object_ref (d_undo_item -> d_widget);
+			//g_object_ref (d_undo_item -> d_widget);
 			d_undo_item -> f_setSensitive (history_has_undo (this));
 		}
 	#elif cocoa

@@ -1,6 +1,6 @@
 /* MelFilter_and_MFCC.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  djmw 2001
  djmw 20020813 GPL header
- djmw 20110207 Latest modification
+ djmw 20130207 Latest modification
 */
 
 #include "MelFilter_and_MFCC.h"
@@ -33,7 +33,7 @@ MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients) {
 	try {
 		long nf = my ny;
 		double fmax_mel = my y1 + (nf - 1) * my dy;
-
+		numberOfCoefficients = numberOfCoefficients > nf - 1 ? nf - 1 : numberOfCoefficients;
 		Melder_assert (numberOfCoefficients > 0);
 
 		autoNUMmatrix<double> dct (NUMcosinesTable (1, numberOfCoefficients, nf), 1, 1);

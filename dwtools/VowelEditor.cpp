@@ -1525,7 +1525,7 @@ void structVowelEditor :: v_createHelpMenuItems (EditorMenu menu) {
 
 void structVowelEditor :: v_createChildren ()
 {
-	double button_width = 60, text_width = 95, status_info_width = 290;
+	double button_width = 90, text_width = 95, status_info_width = 290;
 	double left, right, top, bottom, bottom_widgets_top, bottom_widgets_bottom, bottom_widgets_halfway;
 
 	// Three buttons on a row: Play, Reverse, Publish

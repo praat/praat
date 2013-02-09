@@ -5679,7 +5679,7 @@ DO
 END
 
 FORM (SpeechSynthesizer_playText, L"SpeechSynthesizer: Play text", L"SpeechSynthesizer: Play text...")
-	SENTENCE (L"Text", L"This is some text.")
+	TEXTFIELD (L"Text", L"This is some text.")
 	OK
 DO
 	const wchar_t *text = GET_STRING (L"Text");
@@ -5690,7 +5690,7 @@ DO
 END
 
 FORM (SpeechSynthesizer_to_Sound, L"SpeechSynthesizer: To Sound", L"SpeechSynthesizer: To Sound...")
-	SENTENCE (L"Text", L"This is some text.")
+	TEXTFIELD (L"Text", L"This is some text.")
 	BOOLEAN (L"Create TextGrid with annotations", 0);
 	OK
 DO

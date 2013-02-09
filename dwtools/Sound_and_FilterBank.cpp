@@ -66,7 +66,7 @@ static Matrix Sound_to_spectralpower (Sound me) {
 		double scale = 2.0 * s -> dx / (my xmax - my xmin);
 
 		// factor '2' because of positive and negative frequencies
-		// s -> dx : width of frequncy bin
+		// s -> dx : width of frequency bin
 		// my xmax - my xmin : duration of sound
 
 		double *z = thy z[1], *re = s -> z[1], *im = s -> z[2];
