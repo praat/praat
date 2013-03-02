@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2012,2013 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,7 +147,7 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 			Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 			my v_destroy_analysis ();
 			FunctionEditor_ungroup (me);
-			FunctionEditor_marksChanged (me);
+			FunctionEditor_marksChanged (me, false);
 			my broadcastDataChanged ();
 		} else {
 			Melder_warning (L"No samples selected.");
@@ -217,7 +217,7 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 	Matrix_getWindowExtrema (sound, 1, sound -> nx, 1, sound -> ny, & my d_sound.minimum, & my d_sound.maximum);
 	my v_destroy_analysis ();
 	FunctionEditor_ungroup (me);
-	FunctionEditor_marksChanged (me);
+	FunctionEditor_marksChanged (me, false);
 	my broadcastDataChanged ();
 }
 
@@ -253,7 +253,7 @@ static void menu_cb_MoveCursorToZero (EDITOR_ARGS) {
 	double zero = Sound_getNearestZeroCrossing ((Sound) my data, 0.5 * (my d_startSelection + my d_endSelection), 1);   // STEREO BUG
 	if (NUMdefined (zero)) {
 		my d_startSelection = my d_endSelection = zero;
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (me, true);
 	}
 }
 
@@ -267,7 +267,7 @@ static void menu_cb_MoveBtoZero (EDITOR_ARGS) {
 			my d_startSelection = my d_endSelection;
 			my d_endSelection = dummy;
 		}
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (me, true);
 	}
 }
 
@@ -281,7 +281,7 @@ static void menu_cb_MoveEtoZero (EDITOR_ARGS) {
 			my d_startSelection = my d_endSelection;
 			my d_endSelection = dummy;
 		}
-		FunctionEditor_marksChanged (me);
+		FunctionEditor_marksChanged (me, true);
 	}
 }
 
@@ -337,7 +337,7 @@ void structSoundEditor :: v_prepareDraw () {
 void structSoundEditor :: v_draw () {
 	Sampled data = (Sampled) this -> data;
 	Graphics_Viewport viewport;
-	bool showAnalysis = spectrogram.show || pitch.show || intensity.show || formant.show;
+	bool showAnalysis = p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show;
 	Melder_assert (data != NULL);
 	Melder_assert (d_sound.data != NULL || d_longSound.data != NULL);
 
@@ -380,7 +380,7 @@ void structSoundEditor :: v_draw () {
 
 	/* Draw pulses. */
 
-	if (pulses.show) {
+	if (p_pulses_show) {
 		if (showAnalysis)
 			viewport = Graphics_insetViewport (d_graphics, 0, 1, 0.5, 1);
 		v_draw_analysis_pulses ();
@@ -411,22 +411,22 @@ void structSoundEditor :: v_play (double a_tmin, double a_tmax) {
 }
 
 int structSoundEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
-	if ((spectrogram.show || formant.show) && yWC < 0.5 && xWC > d_startWindow && xWC < d_endWindow) {
-		spectrogram.cursor = spectrogram.viewFrom +
-			2 * yWC * (spectrogram.viewTo - spectrogram.viewFrom);
+	if ((p_spectrogram_show || p_formant_show) && yWC < 0.5 && xWC > d_startWindow && xWC < d_endWindow) {
+		d_spectrogram_cursor = p_spectrogram_viewFrom +
+			2 * yWC * (p_spectrogram_viewTo - p_spectrogram_viewFrom);
 	}
 	return SoundEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // drag & update
 }
 
 void structSoundEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (spectrogram.show)
+	if (p_spectrogram_show)
 		Graphics_highlight (d_graphics, left, right, 0.5 * (bottom + top), top);
 	else
 		Graphics_highlight (d_graphics, left, right, bottom, top);
 }
 
 void structSoundEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (spectrogram.show)
+	if (p_spectrogram_show)
 		Graphics_unhighlight (d_graphics, left, right, 0.5 * (bottom + top), top);
 	else
 		Graphics_unhighlight (d_graphics, left, right, bottom, top);
@@ -442,7 +442,7 @@ void structSoundEditor :: f_init (const wchar_t *title, Sampled data) {
 		d_endWindow = d_startWindow + 30.0;
 		if (d_startWindow == d_tmin)
 			d_startSelection = d_endSelection = 0.5 * (d_startWindow + d_endWindow);
-		FunctionEditor_marksChanged (this);
+		FunctionEditor_marksChanged (this, false);
 	}
 }
 

@@ -1,6 +1,6 @@
 /* OTGrammarEditor.cpp
  *
- * Copyright (C) 1997-2011,2012 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -103,7 +103,7 @@ static void menu_cb_learnOne (EDITOR_ARGS) {
 		LABEL (L"", L"Adult surface form:")
 		SENTENCE (L"Output string", L"")
 		REAL (L"Evaluation noise", L"2.0")
-		OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy_SYMMETRIC_ALL)
 		REAL (L"Plasticity", L"0.1")
 		REAL (L"Rel. plasticity spreading", L"0.1")
 		BOOLEAN (L"Honour local rankings", 1)
@@ -125,7 +125,7 @@ static void menu_cb_learnOneFromPartialOutput (EDITOR_ARGS) {
 		LABEL (L"", L"Partial adult surface form (e.g. overt form):")
 		SENTENCE (L"Partial output", L"")
 		REAL (L"Evaluation noise", L"2.0")
-		OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+		OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, kOTGrammar_rerankingStrategy_SYMMETRIC_ALL)
 		REAL (L"Plasticity", L"0.1")
 		REAL (L"Rel. plasticity spreading", L"0.1")
 		BOOLEAN (L"Honour local rankings", 1)

@@ -21,6 +21,7 @@ prefs_begin (TextGridEditor)
 	// overridden:
 		prefs_add_int    (TextGridEditor, shellWidth,                 1, L"800")
 		prefs_add_int    (TextGridEditor, shellHeight,                1, L"600")
+		prefs_add_bool   (TextGridEditor, picture_garnish,            1, true)
 	// new:
 		prefs_add_bool_with_data   (TextGridEditor, useTextStyles,      1, false)
 		prefs_add_int_with_data    (TextGridEditor, fontSize,           1, L"18")
@@ -30,7 +31,6 @@ prefs_begin (TextGridEditor)
 		prefs_add_enum_with_data   (TextGridEditor, greenMethod,        1, kMelder_string, DEFAULT)
 		prefs_add_string_with_data (TextGridEditor, greenString,        1, L"some text here for green paint")
 		prefs_add_bool   (TextGridEditor, picture_showBoundaries,     1, true)
-		prefs_add_bool   (TextGridEditor, picture_garnish,            1, true)
 		prefs_add_bool   (TextGridEditor, picture_pitch_speckle,      1, false)
 prefs_end (TextGridEditor)
 

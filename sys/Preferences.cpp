@@ -106,6 +106,14 @@ void Preferences_read (MelderFile file) {
 				return;   // OK: we have read past the last key-value pair
 			*value = '\0', value += 2;
 			long ipref = SortedSetOfString_lookUp (thePreferences, line);
+			if (! ipref) {
+				/*
+				 * Recognize some preference names that went obsolete in February 2013.
+				 */
+				if (Melder_wcsnequ (line, L"FunctionEditor.", 15))
+					ipref = SortedSetOfString_lookUp (thePreferences,
+						Melder_wcscat (L"TimeSoundAnalysisEditor.", line + 15));
+			}
 			if (! ipref) continue;   // skip unrecognized keys
 			Preference pref = (Preference) thePreferences -> item [ipref];
 			switch (pref -> type) {

@@ -39,7 +39,6 @@ Thing_define (EEGWindow, TextGridEditor) { public:
 		virtual void v_createMenuItems_file_extract (EditorMenu menu);
 		virtual void v_updateMenuItems_file ();
 	#include "EEGWindow_prefs.h"
-		static FunctionEditor_spectrogram s_spectrogram; virtual FunctionEditor_spectrogram & pref_spectrogram () { return s_spectrogram; }
 };
 
 EEGWindow EEGWindow_create (const wchar_t *title, EEG eeg);

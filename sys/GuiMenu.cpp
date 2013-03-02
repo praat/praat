@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ Thing_implement (GuiMenu, GuiThing, 0);
 void structGuiMenu :: v_destroy () {
 	forget (d_cascadeButton);
 	forget (d_menuItem);
-	GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, NULL); XtDestroyWidget (d_widget); }
+	GuiMenu_Parent :: v_destroy ();   // if (d_widget) { _GuiObject_setUserData (d_widget, NULL); GuiObject_destroy (d_widget); }
 }
 
 #if gtk
@@ -132,6 +132,43 @@ void structGuiMenu :: f_empty () {
 	#endif
 }
 
+#if cocoa
+	@implementation GuiCocoaMenuButton {
+		GuiMenu d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiMenu me = d_userData;
+		forget (me);
+		trace ("deleting a button");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenu));
+		d_userData = static_cast <GuiMenu> (userData);
+	}
+	@end
+	@implementation GuiCocoaMenu {
+		GuiMenu d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiMenu me = d_userData;
+		forget (me);
+		trace ("deleting a menu item");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenu));
+		d_userData = static_cast <GuiMenu> (userData);
+	}
+	@end
+#endif
+
 GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long flags) {
 	GuiMenu me = Thing_new (GuiMenu);
 	my d_shell = window;
@@ -152,27 +189,27 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 	#elif cocoa
 		if (! theGuiCocoaApplicationDelegate) {
 			int numberOfMenus = [[[NSApp mainMenu] itemArray] count];
-			Melder_casual ("Number of menus: %d.", numberOfMenus);
+			trace ("Number of menus: %d.", numberOfMenus);
 			theGuiCocoaApplicationDelegate = [[GuiCocoaApplicationDelegate alloc] init];
 			[NSApp   setDelegate: theGuiCocoaApplicationDelegate];
 			theMenuBar = [[NSMenu alloc] init];
 			[NSApp   setMainMenu: theMenuBar];
 		}
-		my d_nsMenu = [[NSMenu alloc]
+		my d_cocoaMenu = [[GuiCocoaMenu alloc]
 			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
-		my d_widget = (GuiObject) my d_nsMenu;
-		[my d_nsMenu   setAutoenablesItems: NO];
+		my d_widget = my d_cocoaMenu;
+		[my d_cocoaMenu   setAutoenablesItems: NO];
 		if (window == NULL) {
 			/*
 			 * Install the menu in the main OS X menu bar along the top of the screen.
 			 * This is done by creating a menu item for the main menu bar,
 			 * and during applicationWillFinishLaunching installing that item.
 			 */
-			my d_nsMenuItem = [[NSMenuItem alloc]
+			my d_cocoaMenuItem = [[GuiCocoaMenuItem alloc]
 				initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)   action: NULL   keyEquivalent: @""];
-			[my d_nsMenuItem   setSubmenu: (NSMenu *) my d_widget];   // the item will retain the menu...
-			[my d_nsMenu release];   // ... so we can release the menu already (before even returning it!)
-			theMenuBarItems [++ theNumberOfMenuBarItems] = my d_nsMenuItem;
+			[my d_cocoaMenuItem   setSubmenu: my d_cocoaMenu];   // the item will retain the menu...
+			[my d_cocoaMenu release];   // ... so we can release the menu already (before even returning it!)
+			theMenuBarItems [++ theNumberOfMenuBarItems] = my d_cocoaMenuItem;
 		} else if ([(NSView *) window -> d_widget   isKindOfClass: [NSView class]]) {
 			/*
 			 * Install the menu at the top of a window.
@@ -190,30 +227,30 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 				window -> d_menuBarWidth += width - 1;
 			}
 			NSRect rect = { { x, y }, { width, height } };
-			my d_nsMenuButton = [[NSPopUpButton alloc]
+			my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc]
 				initWithFrame: rect   pullsDown: YES];
-			[my d_nsMenuButton   setAutoenablesItems: NO];
-			[my d_nsMenuButton   setBezelStyle: NSShadowlessSquareBezelStyle];
-			[my d_nsMenuButton   setImagePosition: NSImageAbove];   // this centers the text
+			[my d_cocoaMenuButton   setAutoenablesItems: NO];
+			[my d_cocoaMenuButton   setBezelStyle: NSShadowlessSquareBezelStyle];
+			[my d_cocoaMenuButton   setImagePosition: NSImageAbove];   // this centers the text
 			//[nsPopupButton setBordered: NO];
-			[[my d_nsMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
+			[[my d_cocoaMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
 			/*
 			 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
 			 */
-			NSMenuItem *item = [[NSMenuItem alloc] initWithTitle: @"-you should never get to see this-" action: NULL keyEquivalent: @""];
-			[my d_nsMenu   addItem: item];   // the menu will retain the item...
+			GuiCocoaMenuItem *item = [[GuiCocoaMenuItem alloc] initWithTitle: @"-you should never get to see this-" action: NULL keyEquivalent: @""];
+			[my d_cocoaMenu   addItem: item];   // the menu will retain the item...
 			[item release];   // ... so we can release the item already
 			/*
 			 * Install the menu button in the form.
 			 */
-			[(NSView *) window -> d_widget   addSubview: my d_nsMenuButton];   // parent will retain the button...
-			[my d_nsMenuButton   release];   // ... so we can release the button already
+			[(NSView *) window -> d_widget   addSubview: my d_cocoaMenuButton];   // parent will retain the button...
+			[my d_cocoaMenuButton   release];   // ... so we can release the button already
 			/*
 			 * Attach the menu to the button.
 			 */
-			[my d_nsMenuButton   setMenu: my d_nsMenu];   // the button will retain the menu...
-			[my d_nsMenu   release];   // ... so we can release the menu already (before even returning it!)
-			[my d_nsMenuButton   setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+			[my d_cocoaMenuButton   setMenu: my d_cocoaMenu];   // the button will retain the menu...
+			[my d_cocoaMenu   release];   // ... so we can release the menu already (before even returning it!)
+			[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
 		}
 	#elif motif
 		if (window == NULL) {
@@ -274,18 +311,18 @@ GuiMenu GuiMenu_createInMenu (GuiMenu supermenu, const wchar_t *title, long flag
 			action: NULL
 			keyEquivalent: @""];
 		trace ("adding the item to its supermenu %p", supermenu);
-		[supermenu -> d_nsMenu  addItem: item];   // the menu will retain the item...
+		[supermenu -> d_cocoaMenu  addItem: item];   // the menu will retain the item...
 		trace ("release the item");
 		[item release];   // ... so we can release the item already
 		trace ("creating menu %ls", title);
-		my d_nsMenu = [[NSMenu alloc]
+		my d_cocoaMenu = [[GuiCocoaMenu alloc]
 			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
-		[my d_nsMenu setAutoenablesItems: NO];
+		[my d_cocoaMenu setAutoenablesItems: NO];
 		trace ("adding the new menu %p to its supermenu %p", me, supermenu);
-		[supermenu -> d_nsMenu   setSubmenu: my d_nsMenu   forItem: item];   // the supermenu will retain the menu...
-		Melder_assert ([my d_nsMenu retainCount] == 2);
-		[my d_nsMenu release];   // ... so we can release the menu already, even before returning it
-		my d_widget = (GuiObject) my d_nsMenu;
+		[supermenu -> d_cocoaMenu   setSubmenu: my d_cocoaMenu   forItem: item];   // the supermenu will retain the menu...
+		Melder_assert ([my d_cocoaMenu retainCount] == 2);
+		[my d_cocoaMenu release];   // ... so we can release the menu already, even before returning it
+		my d_widget = my d_cocoaMenu;
 	#elif motif
 		my d_menuItem -> d_widget = XmCreateCascadeButton (supermenu -> d_widget, Melder_peekWcsToUtf8 (title), NULL, 0);
 		my d_widget = XmCreatePulldownMenu (supermenu -> d_widget, Melder_peekWcsToUtf8 (title), NULL, 0);
@@ -361,6 +398,30 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		_GuiObject_setUserData (my d_widget, me);
 		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me);
 	#elif cocoa
+		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc] init];
+		my d_cascadeButton -> v_positionInForm (my d_cocoaMenuButton, left, right, top, bottom, form);
+		[my d_cocoaMenuButton   setUserData: me];
+		[my d_cocoaMenuButton   setPullsDown: YES];
+		[my d_cocoaMenuButton   setAutoenablesItems: NO];
+		[my d_cocoaMenuButton   setBezelStyle: NSShadowlessSquareBezelStyle];
+		[my d_cocoaMenuButton   setImagePosition: NSImageAbove];   // this centers the text
+		[[my d_cocoaMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
+
+		my d_widget = my d_cocoaMenu = [[NSMenu alloc]
+			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		[my d_cocoaMenu   setAutoenablesItems: NO];
+		/*
+		 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
+		 */
+		NSMenuItem *item = [[NSMenuItem alloc] initWithTitle: @"-you should never get to see this-" action: NULL keyEquivalent: @""];
+		[my d_cocoaMenu   addItem: item];   // the menu will retain the item...
+		[item release];   // ... so we can release the item already
+		/*
+		 * Attach the menu to the button.
+		 */
+		[my d_cocoaMenuButton   setMenu: my d_cocoaMenu];   // the button will retain the menu...
+		[my d_cocoaMenu   release];   // ... so we can release the menu already (before even returning it!)
+		[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
 	#elif motif
 		my d_xmMenuBar = XmCreateMenuBar (form -> d_widget, "dynamicSubmenuBar", 0, 0);
 		form -> v_positionInForm (my d_xmMenuBar, left, right, top, bottom, form);

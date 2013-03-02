@@ -107,22 +107,21 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		return FALSE;
 	}
 #elif cocoa
-	@interface GuiCocoaWindow : NSWindow
-	@end
 	@implementation GuiCocoaWindow {
 		GuiWindow d_userData;
 	}
 	- (void) dealloc {   // override
 		GuiWindow me = d_userData;
 		forget (me);
-		Melder_casual ("deleting a window");
+		trace ("deleting a window");
 		[super dealloc];
 	}
-	- (GuiWindow) userData {
+	- (GuiThing) userData {
 		return d_userData;
 	}
-	- (void) setUserData: (GuiWindow) userData {
-		d_userData = userData;
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiWindow));
+		d_userData = static_cast <GuiWindow> (userData);
 	}
 	@end
 #elif motif
@@ -167,15 +166,15 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me);
 	#elif cocoa
 		NSRect rect = { { x, y }, { width, height } };
-		my d_nsWindow = [[GuiCocoaWindow alloc]
+		my d_cocoaWindow = [[GuiCocoaWindow alloc]
 			initWithContentRect: rect
 			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
 			backing: NSBackingStoreBuffered
 			defer: false];
 		my f_setTitle (title);
-		[my d_nsWindow makeKeyAndOrderFront: nil];
-		my d_widget = (GuiObject) [my d_nsWindow contentView];
-		[(GuiCocoaWindow *) my d_nsWindow setUserData: me];
+		[my d_cocoaWindow makeKeyAndOrderFront: nil];
+		my d_widget = [my d_cocoaWindow contentView];
+		_GuiObject_setUserData (my d_cocoaWindow, me);
 	#elif motif
 		my d_xmShell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);

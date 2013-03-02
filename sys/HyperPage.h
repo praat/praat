@@ -43,8 +43,6 @@ Thing_define (HyperPage, Editor) {
 		int printing, top, mirror;
 		wchar_t *insideHeader, *middleHeader, *outsideHeader;
 		wchar_t *insideFooter, *middleFooter, *outsideFooter;
-		enum kGraphics_font font;
-		int fontSize;
 		wchar_t *entryHint; double entryPosition;
 		struct { wchar_t *page; int top; } history [20];
 		int historyPointer;
@@ -70,6 +68,8 @@ Thing_define (HyperPage, Editor) {
 		virtual void v_defaultHeaders (EditorCommand cmd) { (void) cmd; }
 		virtual bool v_hasHistory () { return false; }
 		virtual bool v_isOrdered () { return false; }
+	// preferences:
+		#include "HyperPage_prefs.h"
 };
 
 void HyperPage_clear (HyperPage me);
@@ -112,7 +112,6 @@ void HyperPage_goToPage_i (I, long i);
 
 void HyperPage_init (HyperPage me, const wchar_t *title, Data data);
 
-void HyperPage_prefs (void);
 void HyperPage_setEntryHint (I, const wchar_t *entry);
 void HyperPage_initSheetOfPaper (HyperPage me);
 

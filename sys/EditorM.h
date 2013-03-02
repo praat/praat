@@ -2,7 +2,7 @@
 #define _EditorM_h_
 /* EditorM.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,11 +74,11 @@
 #define RADIOBUTTONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) RADIOBUTTON (labelProc) }
 #define OPTIONS_ENUM(labelProc,min,max) { for (int itext = min; itext <= max; itext ++) OPTION (labelProc) }
 #define RADIO_ENUM(label,enum,def) \
-	RADIO (label, enum##_##def - enum##_MIN + 1) \
+	RADIO (label, def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define OPTIONMENU_ENUM(label,enum,def) \
-	OPTIONMENU (label, enum##_##def - enum##_MIN + 1) \
+	OPTIONMENU (label, def - enum##_MIN + 1) \
 	for (int ienum = enum##_MIN; ienum <= enum##_MAX; ienum ++) \
 		OPTION (enum##_getText (ienum))
 #define LIST(label,n,str,def)	UiForm_addList (cmd -> d_uiform, label, n, str, def);

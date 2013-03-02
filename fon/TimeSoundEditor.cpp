@@ -1,6 +1,6 @@
 /* TimeSoundEditor.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,8 @@ Thing_implement (TimeSoundEditor, FunctionEditor, 0);
 #include "TimeSoundEditor_prefs.h"
 #include "prefs_install.h"
 #include "TimeSoundEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "TimeSoundEditor_prefs.h"
 
 /********** Thing methods **********/
 
@@ -44,7 +46,7 @@ void structTimeSoundEditor :: v_destroy () {
 void structTimeSoundEditor :: v_info () {
 	TimeSoundEditor_Parent :: v_info ();
 	/* Sound flags: */
-	MelderInfo_writeLine (L"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (d_sound_scalingStrategy));
+	MelderInfo_writeLine (L"Sound scaling strategy: ", kTimeSoundEditor_scalingStrategy_getText (p_sound_scalingStrategy));
 }
 
 /***** FILE MENU *****/
@@ -54,12 +56,12 @@ static void menu_cb_DrawVisibleSound (EDITOR_ARGS) {
 	EDITOR_FORM (L"Draw visible sound", 0)
 		my v_form_pictureWindow (cmd);
 		LABEL (L"", L"Sound:")
-		BOOLEAN (L"Preserve times", 1);
-		REAL (L"left Vertical range", L"0.0")
-		REAL (L"right Vertical range", L"0.0 (= auto)")
+		BOOLEAN (L"Preserve times", my default_picture_preserveTimes ());
+		REAL (L"left Vertical range", my default_picture_bottom ())
+		REAL (L"right Vertical range", my default_picture_top ())
 		my v_form_pictureMargins (cmd);
 		my v_form_pictureSelection (cmd);
-		BOOLEAN (L"Garnish", 1);
+		BOOLEAN (L"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		SET_INTEGER (L"Preserve times", my pref_picture_preserveTimes ());
@@ -94,11 +96,11 @@ static void menu_cb_DrawSelectedSound (EDITOR_ARGS) {
 	EDITOR_FORM (L"Draw selected sound", 0)
 		my v_form_pictureWindow (cmd);
 		LABEL (L"", L"Sound:")
-		BOOLEAN (L"Preserve times", 1);
-		REAL (L"left Vertical range", L"0.0")
-		REAL (L"right Vertical range", L"0.0 (= auto)")
+		BOOLEAN (L"Preserve times", my default_picture_preserveTimes ());
+		REAL (L"left Vertical range", my default_picture_bottom ());
+		REAL (L"right Vertical range", my default_picture_top ());
 		my v_form_pictureMargins (cmd);
-		BOOLEAN (L"Garnish", 1);
+		BOOLEAN (L"Garnish", my default_picture_garnish ());
 	EDITOR_OK
 		my v_ok_pictureWindow (cmd);
 		SET_INTEGER (L"Preserve times", my pref_picture_preserveTimes ());
@@ -151,9 +153,9 @@ static void menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Extract selected sound (windowed)", 0)
 		WORD (L"Name", L"slice")
-		OPTIONMENU_ENUM (L"Window shape", kSound_windowShape, HANNING)
-		POSITIVE (L"Relative width", L"1.0")
-		BOOLEAN (L"Preserve times", 1)
+		OPTIONMENU_ENUM (L"Window shape", kSound_windowShape, my default_extract_windowShape ())
+		POSITIVE (L"Relative width", my default_extract_relativeWidth ())
+		BOOLEAN (L"Preserve times", my default_extract_preserveTimes ())
 	EDITOR_OK
 		SET_ENUM (L"Window shape", kSound_windowShape, my pref_extract_windowShape ())
 		SET_REAL (L"Relative width", my pref_extract_relativeWidth ())
@@ -368,22 +370,22 @@ void structTimeSoundEditor :: v_createMenuItems_query_info (EditorMenu menu) {
 static void menu_cb_soundScaling (EDITOR_ARGS) {
 	EDITOR_IAM (TimeSoundEditor);
 	EDITOR_FORM (L"Sound scaling", 0)
-		OPTIONMENU_ENUM (L"Scaling strategy", kTimeSoundEditor_scalingStrategy, DEFAULT)
+		OPTIONMENU_ENUM (L"Scaling strategy", kTimeSoundEditor_scalingStrategy, my default_sound_scalingStrategy ())
 		LABEL (L"", L"For \"fixed height\":");
 		POSITIVE (L"Height", my default_sound_scaling_height ())
 		LABEL (L"", L"For \"fixed range\":");
 		REAL (L"Minimum", my default_sound_scaling_minimum ())
 		REAL (L"Maximum", my default_sound_scaling_maximum ())
 	EDITOR_OK
-		SET_ENUM (L"Scaling strategy", kTimeSoundEditor_scalingStrategy, my d_sound_scalingStrategy)
-		SET_REAL (L"Height", my d_sound_scaling_height)
-		SET_REAL (L"Minimum", my d_sound_scaling_minimum)
-		SET_REAL (L"Maximum", my d_sound_scaling_maximum)
+		SET_ENUM (L"Scaling strategy", kTimeSoundEditor_scalingStrategy, my p_sound_scalingStrategy)
+		SET_REAL (L"Height", my p_sound_scaling_height)
+		SET_REAL (L"Minimum", my p_sound_scaling_minimum)
+		SET_REAL (L"Maximum", my p_sound_scaling_maximum)
 	EDITOR_DO
-		my pref_sound_scalingStrategy () = my d_sound_scalingStrategy = GET_ENUM (kTimeSoundEditor_scalingStrategy, L"Scaling strategy");
-		my pref_sound_scaling_height  () = my d_sound_scaling_height  = GET_REAL (L"Height");
-		my pref_sound_scaling_minimum () = my d_sound_scaling_minimum = GET_REAL (L"Minimum");
-		my pref_sound_scaling_maximum () = my d_sound_scaling_maximum = GET_REAL (L"Maximum");
+		my pref_sound_scalingStrategy () = my p_sound_scalingStrategy = GET_ENUM (kTimeSoundEditor_scalingStrategy, L"Scaling strategy");
+		my pref_sound_scaling_height  () = my p_sound_scaling_height  = GET_REAL (L"Height");
+		my pref_sound_scaling_minimum () = my p_sound_scaling_minimum = GET_REAL (L"Minimum");
+		my pref_sound_scaling_maximum () = my p_sound_scaling_maximum = GET_REAL (L"Maximum");
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -457,7 +459,7 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 	int lastVisibleChannel = d_sound.channelOffset + numberOfVisibleChannels;
 	if (lastVisibleChannel > nchan) lastVisibleChannel = nchan;
 	double maximumExtent = 0.0, visibleMinimum = 0.0, visibleMaximum = 0.0;
-	if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
+	if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
 		if (longSound)
 			LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, firstVisibleChannel, & visibleMinimum, & visibleMaximum);
 		else
@@ -486,7 +488,7 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 		Graphics_Viewport vp = Graphics_insetViewport (d_graphics, 0, 1, ymin, ymax);
 		bool horizontal = false;
 		double minimum = sound ? globalMinimum : -1.0, maximum = sound ? globalMaximum : 1.0;
-		if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
+		if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW) {
 			if (nchan > 2) {
 				if (longSound) {
 					LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, ichan, & minimum, & maximum);
@@ -502,25 +504,25 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 				minimum = visibleMinimum;
 				maximum = visibleMaximum;
 			}
-		} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL) {
+		} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL) {
 			if (longSound) {
 				LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, ichan, & minimum, & maximum);
 			} else {
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
 			}
-		} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
+		} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
 			if (longSound) {
 				LongSound_getWindowExtrema (longSound, d_startWindow, d_endWindow, ichan, & minimum, & maximum);
 			} else {
 				Matrix_getWindowExtrema (sound, first, last, ichan, ichan, & minimum, & maximum);
 			}
-			double channelExtent = d_sound_scaling_height;
+			double channelExtent = p_sound_scaling_height;
 			double middle = 0.5 * (minimum + maximum);
 			minimum = middle - 0.5 * channelExtent;
 			maximum = middle + 0.5 * channelExtent;
-		} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
-			minimum = d_sound_scaling_minimum;
-			maximum = d_sound_scaling_maximum;
+		} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
+			minimum = p_sound_scaling_minimum;
+			maximum = p_sound_scaling_maximum;
 		}
 		if (minimum == maximum) { horizontal = true; minimum -= 1; maximum += 1;}
 		Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, minimum, maximum);
@@ -636,14 +638,10 @@ void structTimeSoundEditor :: f_init (const wchar_t *title, Function data, Sampl
 			d_longSound.data = (LongSound) sound;
 			d_sound.minimum = -1.0, d_sound.maximum = 1.0;
 		} else {
-			Melder_fatal ("Invalid sound class in TimeSoundEditor_init.");
+			Melder_fatal ("Invalid sound class in TimeSoundEditor::init.");
 		}
 	}
 	FunctionEditor_init (this, title, data);
-	d_sound_scalingStrategy = pref_sound_scalingStrategy ();
-	d_sound_scaling_height  = pref_sound_scaling_height  ();
-	d_sound_scaling_minimum = pref_sound_scaling_minimum ();
-	d_sound_scaling_maximum = pref_sound_scaling_maximum ();
 }
 
 /* End of file TimeSoundEditor.cpp */

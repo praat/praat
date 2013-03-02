@@ -6062,9 +6062,9 @@ void praat_uvafon_init () {
 	Data_recognizeFileType (cgnSyntaxFileRecognizer);
 	Data_recognizeFileType (chronologicalTextGridTextFileRecognizer);
 
-	ManipulationEditor_prefs ();
-	structSpectrumEditor :: f_preferences ();
-	FormantGridEditor_prefs ();
+	structManipulationEditor :: f_preferences ();
+	structSpectrumEditor     :: f_preferences ();
+	structFormantGridEditor  :: f_preferences ();
 
 	INCLUDE_LIBRARY (praat_uvafon_Sound_init)
 	INCLUDE_LIBRARY (praat_uvafon_TextGrid_init)

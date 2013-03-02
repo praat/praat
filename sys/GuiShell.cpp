@@ -48,7 +48,7 @@ void structGuiShell :: f_setTitle (const wchar_t *title) {
 	#if gtk
 		gtk_window_set_title (d_gtkWindow, Melder_peekWcsToUtf8 (title));
 	#elif cocoa
-		[d_nsWindow setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+		[d_cocoaWindow setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
 	#elif win
 		SetWindowText (d_xmShell -> window, title);
 	#elif mac

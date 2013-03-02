@@ -118,8 +118,6 @@ static void NativeMenuItem_setText (GuiObject me) {
 		}
 	}
 #elif cocoa
-	@interface GuiCocoaMenuItem : NSMenuItem
-	@end
 	@implementation GuiCocoaMenuItem {
 		GuiMenuItem d_userData;
 	}
@@ -129,11 +127,12 @@ static void NativeMenuItem_setText (GuiObject me) {
 		trace ("deleting a menu item");
 		[super dealloc];
 	}
-	- (GuiMenuItem) userData {
+	- (GuiThing) userData {
 		return d_userData;
 	}
-	- (void) setUserData: (GuiMenuItem) userData {
-		d_userData = userData;
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiMenuItem));
+		d_userData = static_cast <GuiMenuItem> (userData);
 	}
 	- (void) _guiCocoaMenuItem_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
@@ -203,9 +202,9 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)
 			action: NULL
 			keyEquivalent: @""];
-		trace ("installing item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
-		[menu -> d_nsMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
-		trace ("installed item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		trace ("installing item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		[menu -> d_cocoaMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
+		trace ("installed item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [((NSMenuItem *) my d_widget) retainCount]);
 		trace ("release the item");
 		[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
 		trace ("set user data");
@@ -350,9 +349,9 @@ GuiMenuItem GuiMenu_addSeparator (GuiMenu menu) {
 	#elif cocoa
 		my d_widget = (GuiObject) [GuiCocoaMenuItem separatorItem];
 		trace ("install separator in menu %p", menu);
-		trace ("installing separator in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
-		[menu -> d_nsMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
-		trace ("installed separator in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_nsMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		trace ("installing separator in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		[menu -> d_cocoaMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
+		trace ("installed separator in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [((NSMenuItem *) my d_widget) retainCount]);
 		trace ("release the item");
 		//[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
 		trace ("set user data");

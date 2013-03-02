@@ -2270,6 +2270,7 @@ void praat_uvafon_Sound_init (void) {
 	Data_recognizeFileType (kayFileRecognizer);
 
 	SoundRecorder_preferences ();
+	structSoundRecorder           :: f_preferences ();
 	structFunctionEditor          :: f_preferences ();
 	LongSound_preferences ();
 	structTimeSoundEditor         :: f_preferences ();

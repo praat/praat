@@ -22,7 +22,6 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "praat_script.h"
-#include "Preferences.h"
 
 #include "enums_getText.h"
 #include "Editor_enums.h"
@@ -31,19 +30,12 @@
 
 Thing_implement (Editor, Thing, 0);
 
-/********** PREFERENCES **********/
-
-static struct {
-	struct {
-		bool eraseFirst;
-		enum kEditor_writeNameAtTop writeNameAtTop;
-	} picture;
-} preferences;
-
-void Editor_prefs (void) {
-	Preferences_addBool (L"Editor.picture.eraseFirst", & preferences.picture.eraseFirst, true);
-	Preferences_addEnum (L"Editor.picture.writeNameAtTop", & preferences.picture.writeNameAtTop, kEditor_writeNameAtTop, kEditor_writeNameAtTop_DEFAULT);
-}
+#include "prefs_define.h"
+#include "Editor_prefs.h"
+#include "prefs_install.h"
+#include "Editor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "Editor_prefs.h"
 
 /********** class EditorCommand **********/
 
@@ -363,22 +355,22 @@ void structEditor :: v_form_pictureWindow (EditorCommand cmd) {
 	BOOLEAN (L"Erase first", 1);
 }
 void structEditor :: v_ok_pictureWindow (EditorCommand cmd) {
-	SET_INTEGER (L"Erase first", preferences.picture.eraseFirst);
+	SET_INTEGER (L"Erase first", pref_picture_eraseFirst ());
 }
 void structEditor :: v_do_pictureWindow (EditorCommand cmd) {
-	preferences.picture.eraseFirst = GET_INTEGER (L"Erase first");
+	pref_picture_eraseFirst () = GET_INTEGER (L"Erase first");
 }
 
 void structEditor :: v_form_pictureMargins (EditorCommand cmd) {
 	Any radio = 0;
 	LABEL (L"", L"Margins:")
-	OPTIONMENU_ENUM (L"Write name at top", kEditor_writeNameAtTop, DEFAULT);
+	OPTIONMENU_ENUM (L"Write name at top", kEditor_writeNameAtTop, kEditor_writeNameAtTop_DEFAULT);
 }
 void structEditor :: v_ok_pictureMargins (EditorCommand cmd) {
-	SET_ENUM (L"Write name at top", kEditor_writeNameAtTop, preferences.picture.writeNameAtTop);
+	SET_ENUM (L"Write name at top", kEditor_writeNameAtTop, pref_picture_writeNameAtTop ());
 }
 void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
-	preferences.picture.writeNameAtTop = GET_ENUM (kEditor_writeNameAtTop, L"Write name at top");
+	pref_picture_writeNameAtTop () = GET_ENUM (kEditor_writeNameAtTop, L"Write name at top");
 }
 
 static void gui_window_cb_goAway (I) {
@@ -457,6 +449,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 	my d_windowForm = GuiWindow_create (left, top, width, height, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
 	my data = data;
+	my v_copyPreferencesToInstance ();
 
 	/* Create menus. */
 
@@ -498,16 +491,16 @@ void Editor_save (Editor me, const wchar_t *text) {
 }
 
 void Editor_openPraatPicture (Editor me) {
-	my pictureGraphics = praat_picture_editor_open (preferences.picture.eraseFirst);
+	my pictureGraphics = praat_picture_editor_open (my pref_picture_eraseFirst ());
 }
 void Editor_closePraatPicture (Editor me) {
-	if (my data != NULL && preferences.picture.writeNameAtTop != kEditor_writeNameAtTop_NO) {
+	if (my data != NULL && my pref_picture_writeNameAtTop () != kEditor_writeNameAtTop_NO) {
 		Graphics_setNumberSignIsBold (my pictureGraphics, false);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, false);
 		Graphics_setCircumflexIsSuperscript (my pictureGraphics, false);
 		Graphics_setUnderscoreIsSubscript (my pictureGraphics, false);
 		Graphics_textTop (my pictureGraphics,
-			preferences.picture.writeNameAtTop == kEditor_writeNameAtTop_FAR,
+			my pref_picture_writeNameAtTop () == kEditor_writeNameAtTop_FAR,
 			my data -> name);
 		Graphics_setNumberSignIsBold (my pictureGraphics, true);
 		Graphics_setPercentSignIsItalic (my pictureGraphics, true);

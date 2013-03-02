@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,7 +55,7 @@ Thing_define (FunctionEditor, Editor) {
 		GuiScrollBar scrollBar;
 		GuiCheckButton groupButton;
 		GuiObject bottomArea;
-		bool group, enableUpdates, d_hasSelectionViewer;
+		bool group, enableUpdates;
 		int nrect;
 		struct { double left, right, bottom, top; } rect [8];
 		double marker [1 + 3], playCursor, startZoomHistory, endZoomHistory;
@@ -167,17 +167,18 @@ void FunctionEditor_init (FunctionEditor me, const wchar_t *title, Function data
 		my scrollBar only to the bottom, left and right sides.
 */ 
 
-void FunctionEditor_marksChanged (FunctionEditor me);
+void FunctionEditor_marksChanged (FunctionEditor me, bool needsUpdateGroup);
 /*
 	Function:
 		update optional text field, the scroll bar, the drawing area and the buttons,
 		from the current total time, window, cursor, and selection,
-		and redraw the contents. This will be done for all the editors in the group.
+		and redraw the contents.
+		If needsUpdateGroup is true, this will be done for all the editors in the group.
 	Usage:
 		call this after a change in any of the markers or in the duration of the data.
 */
 
-void FunctionEditor_shift (FunctionEditor me, double shift);
+void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGroup);
 /*
 	Function:
 		shift (scroll) the window through time, keeping the window length constant.

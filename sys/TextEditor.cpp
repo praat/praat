@@ -1,6 +1,6 @@
 /* TextEditor.cpp
  *
- * Copyright (C) 1997-2012 Paul Boersma, 2010 Franz Brausse
+ * Copyright (C) 1997-2012,2013 Paul Boersma, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +21,16 @@
 #include "machine.h"
 #include "longchar.h"
 #include "EditorM.h"
-#include "Preferences.h"
 #include "UnicodeData.h"
 
 Thing_implement (TextEditor, Editor, 0);
 
-static int theTextEditorFontSize;
-
-void TextEditor_prefs (void) {
-	Preferences_addInt (L"TextEditor.fontSize", & theTextEditorFontSize, 12);
-}
+#include "prefs_define.h"
+#include "TextEditor_prefs.h"
+#include "prefs_install.h"
+#include "TextEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "TextEditor_prefs.h"
 
 static Collection theOpenTextEditors = NULL;
 
@@ -613,15 +613,15 @@ static void menu_cb_convertToCString (EDITOR_ARGS) {
 /***** 'Font' menu *****/
 
 static void updateSizeMenu (TextEditor me) {
-	if (my fontSizeButton_10) my fontSizeButton_10 -> f_check (my fontSize == 10);
-	if (my fontSizeButton_12) my fontSizeButton_12 -> f_check (my fontSize == 12);
-	if (my fontSizeButton_14) my fontSizeButton_14 -> f_check (my fontSize == 14);
-	if (my fontSizeButton_18) my fontSizeButton_18 -> f_check (my fontSize == 18);
-	if (my fontSizeButton_24) my fontSizeButton_24 -> f_check (my fontSize == 24);
+	if (my fontSizeButton_10) my fontSizeButton_10 -> f_check (my p_fontSize == 10);
+	if (my fontSizeButton_12) my fontSizeButton_12 -> f_check (my p_fontSize == 12);
+	if (my fontSizeButton_14) my fontSizeButton_14 -> f_check (my p_fontSize == 14);
+	if (my fontSizeButton_18) my fontSizeButton_18 -> f_check (my p_fontSize == 18);
+	if (my fontSizeButton_24) my fontSizeButton_24 -> f_check (my p_fontSize == 24);
 }
 static void setFontSize (TextEditor me, int fontSize) {
 	my textWidget -> f_setFontSize (fontSize);
-	theTextEditorFontSize = my fontSize = fontSize;
+	my pref_fontSize () = my p_fontSize = fontSize;
 	updateSizeMenu (me);
 }
 
@@ -635,7 +635,7 @@ static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_FORM (L"Text window: Font size", 0)
 		NATURAL (L"Font size (points)", L"12")
 	EDITOR_OK
-		SET_INTEGER (L"Font size", (long) my fontSize);
+		SET_INTEGER (L"Font size", (long) my p_fontSize);
 	EDITOR_DO
 		setFontSize (me, GET_INTEGER (L"Font size"));
 	EDITOR_END
@@ -703,8 +703,8 @@ void structTextEditor :: v_createChildren () {
 }
 
 void structTextEditor :: init (const wchar_t *initialText) {
-	Editor_init (this, 0, 0, 600, 400, NULL, NULL);
-	setFontSize (this, theTextEditorFontSize);
+	Editor_init (this, 0, 0, 600, 400, L"", NULL);
+	setFontSize (this, p_fontSize);
 	if (initialText) {
 		textWidget -> f_setString (initialText);
 		dirty = FALSE;   // was set to TRUE in valueChanged callback
@@ -722,7 +722,7 @@ void structTextEditor :: init (const wchar_t *initialText) {
 TextEditor TextEditor_create (const wchar_t *initialText) {
 	try {
 		autoTextEditor me = Thing_new (TextEditor);
-		me.peek() -> init (initialText);
+		my init (initialText);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Text window not created.");

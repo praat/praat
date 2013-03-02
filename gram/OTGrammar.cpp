@@ -1438,7 +1438,7 @@ static void OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, lon
 			double constraintStep = step * offendingConstraint -> plasticity;
 			offendingConstraint -> ranking -= constraintStep;
 			if (grammarHasChanged != NULL) *grammarHasChanged = true;
-		} else { Melder_assert (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN);
+		} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN) {
 			bool changed = false;
 			long numberOfUp = 0;
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -1457,6 +1457,51 @@ static void OTGrammar_modifyRankings (OTGrammar me, long itab, long iwinner, lon
 					if (winnerMarks > loserMarks) {
 						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
 						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / numberOfUp;
+					}
+				}
+				long crucialLoserMark, winnerMarks = 0, loserMarks = 0;
+				OTGrammarConstraint offendingConstraint;
+				long icons = 1;
+				for (; icons <= my numberOfConstraints; icons ++) {
+					winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+					loserMarks = loser -> marks [my index [icons]];
+					if (my constraints [my index [icons]]. tiedToTheRight)
+						Melder_throw ("Demotion-only learning cannot handle tied constraints.");
+					if (loserMarks < winnerMarks)
+						Melder_throw ("Demotion-only learning step: Loser wins! Should never happen.");
+					if (loserMarks > winnerMarks) break;
+				}
+				if (icons > my numberOfConstraints)   // completed the loop?
+					Melder_throw ("Loser equals correct candidate.");
+				crucialLoserMark = icons;
+				/*
+				 * Demote the highest uniquely violated constraint in the loser.
+				 */
+				offendingConstraint = & my constraints [my index [crucialLoserMark]];
+				double constraintStep = step * offendingConstraint -> plasticity;
+				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+				offendingConstraint -> ranking -= /*numberOfUp **/ constraintStep * (1.0 - offendingConstraint -> ranking * my leak);
+			}
+			if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+		} else { Melder_assert (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN_2012);
+			bool changed = false;
+			long numberOfUp = 0;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				int winnerMarks = winner -> marks [icons];
+				int loserMarks = loser -> marks [icons];
+				if (winnerMarks > loserMarks) {
+					numberOfUp ++;
+				}
+			}
+			if (true || numberOfUp > 0) {
+				for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+					OTGrammarConstraint constraint = & my constraints [icons];
+					double constraintStep = step * constraint -> plasticity;
+					int winnerMarks = winner -> marks [icons];
+					int loserMarks = loser -> marks [icons];
+					if (winnerMarks > loserMarks) {
+						if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+						constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) / (numberOfUp + 1);
 					}
 				}
 				long crucialLoserMark, winnerMarks = 0, loserMarks = 0;

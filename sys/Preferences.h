@@ -28,6 +28,15 @@
  */
 #define Preferences_STRING_BUFFER_SIZE 1+kMelder_MAXPATH
 
+#define pref_wcscpy(to,from) \
+	wcsncpy (to, from, Preferences_STRING_BUFFER_SIZE); \
+	to [Preferences_STRING_BUFFER_SIZE - 1] = '\0';
+
+#define pref_wcscpy2(to2,to1,from) \
+	wcsncpy (to1, from, Preferences_STRING_BUFFER_SIZE); \
+	to1 [Preferences_STRING_BUFFER_SIZE - 1] = '\0'; \
+	wcscpy (to2, to1);
+
 enum kPreferences_dummy { dummy1 = 1, dummy2 = 2 };
 
 void Preferences_addByte (const wchar_t *string, signed char *value, signed char defaultValue);

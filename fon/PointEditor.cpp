@@ -174,7 +174,7 @@ void structPointEditor :: v_draw () {
 	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
 	double minimum = -1.0, maximum = +1.0;
-	if (sound != NULL && (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW || d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL)) {
+	if (sound != NULL && (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW || p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_BY_WINDOW_AND_CHANNEL)) {
 		long first, last;
 		if (Sampled_getWindowSamples (sound, d_startWindow, d_endWindow, & first, & last) >= 1) {
 			Matrix_getWindowExtrema (sound, first, last, 1, 1, & minimum, & maximum);

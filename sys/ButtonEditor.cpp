@@ -65,7 +65,7 @@ static void drawMenuCommand (ButtonEditor me, praat_Command cmd, long i) {
 	if (cmd -> script) {
 		MelderString_append (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
-	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
+	HyperPage_any (me, text.string, my p_font, my p_fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 
@@ -123,7 +123,7 @@ static void drawAction (ButtonEditor me, praat_Command cmd, long i) {
 	if (cmd -> script) {
 		MelderString_append (& text, L", script \"", Melder_peekExpandBackslashes (cmd -> script), L"\"");
 	}
-	HyperPage_any (me, text.string, my font, my fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
+	HyperPage_any (me, text.string, my p_font, my p_fontSize, cmd -> callback ? 0 : Graphics_ITALIC, 0.0,
 		cmd -> depth * 0.3, 0.4, 0.0, 0.0, 0);
 }
 

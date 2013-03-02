@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,10 +46,8 @@
 #include <cstdio>
 using namespace std;
 
-#if defined (UNIX) || defined __MWERKS__
-	#include <unistd.h>
-#endif
 #if defined (UNIX)
+	#include <unistd.h>
 	#include <sys/stat.h>
 #endif
 #if defined (CURLPRESENT)

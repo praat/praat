@@ -38,8 +38,6 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		forget (me);
 	}
 #elif cocoa
-	@interface GuiCocoaLabel : NSTextField
-	@end
 	@implementation GuiCocoaLabel {
 		GuiLabel d_userData;
 	}
@@ -49,11 +47,12 @@ Thing_implement (GuiLabel, GuiControl, 0);
 		Melder_casual ("deleting a label");
 		[super dealloc];
 	}
-	- (GuiLabel) userData {
+	- (GuiThing) userData {
 		return d_userData;
 	}
-	- (void) setUserData: (GuiLabel) userData {
-		d_userData = userData;
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiLabel));
+		d_userData = static_cast <GuiLabel> (userData);
 	}
 	@end
 #elif win
@@ -84,7 +83,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
 	#elif cocoa
 		trace ("create");
-		my d_widget = (GuiObject) [[GuiCocoaLabel alloc] init];
+		my d_widget = [[GuiCocoaLabel alloc] init];
 		trace ("position");
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		trace ("set user data");

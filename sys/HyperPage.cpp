@@ -20,7 +20,6 @@
 #include <ctype.h>
 #include "HyperPage.h"
 #include "Printer.h"
-#include "Preferences.h"
 #include "machine.h"
 #include "GuiP.h"
 
@@ -29,6 +28,13 @@
 
 Thing_implement (HyperPage, Editor, 0);
 
+#include "prefs_define.h"
+#include "HyperPage_prefs.h"
+#include "prefs_install.h"
+#include "HyperPage_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "HyperPage_prefs.h"
+
 #define PAGE_HEIGHT  320.0
 #define SCREEN_HEIGHT  15.0
 #define PAPER_TOP  12.0
@@ -36,14 +42,6 @@ Thing_implement (HyperPage, Editor, 0);
 #define PAPER_BOTTOM  (13.0 - (double) thePrinter. paperHeight / thePrinter. resolution)
 #define BOTTOM_MARGIN  0.5
 static double resolution;
-
-static enum kGraphics_font prefs_font;
-static int prefs_fontSize;
-
-void HyperPage_prefs (void) {
-	Preferences_addEnum (L"HyperPage.font", & prefs_font, kGraphics_font, kGraphics_font_DEFAULT);
-	Preferences_addInt (L"HyperPage.fontSize", & prefs_fontSize, 12);
-}
 
 /********** class HyperLink **********/
 
@@ -229,102 +227,102 @@ if (! my printing) {
 
 int HyperPage_pageTitle (I, const wchar_t *title) {
 	iam (HyperPage);
-	return HyperPage_any (me, title, my font, my fontSize * 2, 0,
+	return HyperPage_any (me, title, my p_font, my p_fontSize * 2, 0,
 		2.0, 0.0, 0.0, my printing ? 0.4/2 : 0.2/2, 0.3/2, HyperPage_ADD_BORDER);
 }
 int HyperPage_intro (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
 }
 int HyperPage_entry (I, const wchar_t *title) {
 	iam (HyperPage);
-	return HyperPage_any (me, title, my font, my fontSize * 1.4, Graphics_BOLD, 0.5, 0.0, 0.0, 0.25/1.4, 0.1/1.4, HyperPage_USE_ENTRY_HINT);
+	return HyperPage_any (me, title, my p_font, my p_fontSize * 1.4, Graphics_BOLD, 0.5, 0.0, 0.0, 0.25/1.4, 0.1/1.4, HyperPage_USE_ENTRY_HINT);
 }
 int HyperPage_paragraph (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.03, 0.0, 0.1, 0.1, 0);
 }
 int HyperPage_listItem (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.30, 0.2, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.30, 0.2, 0.0, 0.0, 0);
 }
 int HyperPage_listItem1 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.57, 0.2, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.57, 0.2, 0.0, 0.0, 0);
 }
 int HyperPage_listItem2 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.84, 0.2, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.84, 0.2, 0.0, 0.0, 0);
 }
 int HyperPage_listItem3 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 1.11, 0.2, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 1.11, 0.2, 0.0, 0.0, 0);
 }
 int HyperPage_listTag (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.2, 0.03, 0.0, 0.1, 0.03, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 0.03, 0.0, 0.1, 0.03, 0);
 }
 int HyperPage_listTag1 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.2, 0.50, 0.0, 0.05, 0.03, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 0.50, 0.0, 0.05, 0.03, 0);
 }
 int HyperPage_listTag2 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.2, 0.97, 0.0, 0.03, 0.03, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 0.97, 0.0, 0.03, 0.03, 0);
 }
 int HyperPage_listTag3 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.2, 1.44, 0.0, 0.03, 0.03, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.2, 1.44, 0.0, 0.03, 0.03, 0);
 }
 int HyperPage_definition (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.5, 0.0, 0.03, 0.1, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.5, 0.0, 0.03, 0.1, 0);
 }
 int HyperPage_definition1 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.97, 0.0, 0.03, 0.05, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.97, 0.0, 0.03, 0.05, 0);
 }
 int HyperPage_definition2 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 1.44, 0.0, 0.03, 0.03, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 1.44, 0.0, 0.03, 0.03, 0);
 }
 int HyperPage_definition3 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 1.93, 0.0, 0.03, 0.03, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 1.93, 0.0, 0.03, 0.03, 0);
 }
 int HyperPage_code (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 0.3, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code1 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 0.6, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code2 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 0.9, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code3 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 1.2, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code4 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 1.5, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_code5 (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, kGraphics_font_COURIER, my fontSize * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, kGraphics_font_COURIER, my p_fontSize * 0.86, 0, 0.0, 1.8, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_prototype (I, const wchar_t *text) {
 	iam (HyperPage);
-	return HyperPage_any (me, text, my font, my fontSize, 0, 0.0, 0.03, 0.5, 0.0, 0.0, 0);
+	return HyperPage_any (me, text, my p_font, my p_fontSize, 0, 0.0, 0.03, 0.5, 0.0, 0.0, 0);
 }
 int HyperPage_formula (I, const wchar_t *formula) {
 	iam (HyperPage);
 	double topSpacing = 0.2, bottomSpacing = 0.2, minFooterDistance = 0.0;
-	kGraphics_font font = my font;
-	int size = my fontSize;
+	kGraphics_font font = my p_font;
+	int size = my p_fontSize;
 if (! my printing) {
 	my d_y -= ( my previousBottomSpacing > topSpacing ? my previousBottomSpacing : topSpacing ) * size / 12.0;
 	my d_y -= size * (1.2/72);
@@ -364,8 +362,8 @@ if (! my printing) {
 int HyperPage_picture (I, double width_inches, double height_inches, void (*draw) (Graphics g)) {
 	iam (HyperPage);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
-	kGraphics_font font = my font;
-	int size = my fontSize;
+	kGraphics_font font = my p_font;
+	int size = my p_fontSize;
 	width_inches *= width_inches < 0.0 ? -1.0 : size / 12.0;
 	height_inches *= height_inches < 0.0 ? -1.0 : size / 12.0;
 if (! my printing) {
@@ -417,8 +415,8 @@ int HyperPage_script (I, double width_inches, double height_inches, const wchar_
 	wchar_t *text = Melder_wcsdup_f (script);
 	Interpreter interpreter = Interpreter_createFromEnvironment (NULL);
 	double topSpacing = 0.1, bottomSpacing = 0.1, minFooterDistance = 0.0;
-	kGraphics_font font = my font;
-	int size = my fontSize;
+	kGraphics_font font = my p_font;
+	int size = my p_fontSize;
 	double true_width_inches = width_inches * ( width_inches < 0.0 ? -1.0 : size / 12.0 );
 	double true_height_inches = height_inches * ( height_inches < 0.0 ? -1.0 : size / 12.0 );
 if (! my printing) {
@@ -714,24 +712,24 @@ static void menu_cb_font (EDITOR_ARGS) {
 			RADIOBUTTON (L"Times")
 			RADIOBUTTON (L"Helvetica")
 	EDITOR_OK
-		SET_INTEGER (L"Font", my font == kGraphics_font_TIMES ? 1 :
-				my font == kGraphics_font_HELVETICA ? 2 : my font == kGraphics_font_PALATINO ? 3 : 1);
+		SET_INTEGER (L"Font", my p_font == kGraphics_font_TIMES ? 1 :
+				my p_font == kGraphics_font_HELVETICA ? 2 : my p_font == kGraphics_font_PALATINO ? 3 : 1);
 	EDITOR_DO
 		int font = GET_INTEGER (L"Font");
-		prefs_font = my font = font == 1 ? kGraphics_font_TIMES : kGraphics_font_HELVETICA;
+		my pref_font () = my p_font = font == 1 ? kGraphics_font_TIMES : kGraphics_font_HELVETICA;
 		if (my g) Graphics_updateWs (my g);
 	EDITOR_END
 }
 
 static void updateSizeMenu (HyperPage me) {
-	my fontSizeButton_10 -> f_check (my fontSize == 10);
-	my fontSizeButton_12 -> f_check (my fontSize == 12);
-	my fontSizeButton_14 -> f_check (my fontSize == 14);
-	my fontSizeButton_18 -> f_check (my fontSize == 18);
-	my fontSizeButton_24 -> f_check (my fontSize == 24);
+	my fontSizeButton_10 -> f_check (my p_fontSize == 10);
+	my fontSizeButton_12 -> f_check (my p_fontSize == 12);
+	my fontSizeButton_14 -> f_check (my p_fontSize == 14);
+	my fontSizeButton_18 -> f_check (my p_fontSize == 18);
+	my fontSizeButton_24 -> f_check (my p_fontSize == 24);
 }
 static void setFontSize (HyperPage me, int fontSize) {
-	prefs_fontSize = my fontSize = fontSize;
+	my pref_fontSize () = my p_fontSize = fontSize;
 	if (my g) Graphics_updateWs (my g);
 	updateSizeMenu (me);
 }
@@ -745,9 +743,9 @@ static void menu_cb_24 (EDITOR_ARGS) { EDITOR_IAM (HyperPage); setFontSize (me, 
 static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_IAM (HyperPage);
 	EDITOR_FORM (L"Font size", 0)
-		NATURAL (L"Font size (points)", L"12")
+		NATURAL (L"Font size (points)", my default_fontSize ())
 	EDITOR_OK
-		SET_INTEGER (L"Font size", my fontSize)
+		SET_INTEGER (L"Font size", my p_fontSize)
 	EDITOR_DO
 		setFontSize (me, GET_INTEGER (L"Font size"));
 	EDITOR_END
@@ -977,10 +975,9 @@ void HyperPage_init (HyperPage me, const wchar_t *title, Data data) {
 	Graphics_setAtSignIsLink (my g, TRUE);
 	Graphics_setDollarSignIsCode (my g, TRUE);
 	Graphics_setFont (my g, kGraphics_font_TIMES);
-	if (prefs_font != kGraphics_font_TIMES && prefs_font != kGraphics_font_HELVETICA)
-		prefs_font = kGraphics_font_TIMES;   // ensure Unicode compatibility
-	my font = prefs_font;
-	setFontSize (me, prefs_fontSize);	
+	if (my p_font != kGraphics_font_TIMES && my p_font != kGraphics_font_HELVETICA)
+		my pref_font () = my p_font = kGraphics_font_TIMES;   // ensure Unicode compatibility
+	setFontSize (me, my p_fontSize);
 
 struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
 event. width  = my drawingArea -> f_getWidth  ();

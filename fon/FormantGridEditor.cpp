@@ -1,6 +1,6 @@
 /* FormantGridEditor.cpp
  *
- * Copyright (C) 2008-2011,2012 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2012,2013 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,44 +18,17 @@
  */
 
 #include "FormantGridEditor.h"
-#include "Preferences.h"
 #include "EditorM.h"
 #include "PointProcess_and_Sound.h"
 
 Thing_implement (FormantGridEditor, FunctionEditor, 0);
 
-/********** PREFERENCES **********/
-
-static struct {
-	double formantFloor, formantCeiling, bandwidthFloor, bandwidthCeiling;
-	struct FormantGridEditor_Play play;
-	struct FormantGridEditor_Source source;
-} preferences;
-
-#define DEFAULT_F0_START  150.0
-#define DEFAULT_T_MID  0.25
-#define DEFAULT_F0_MID  180.0
-#define DEFAULT_F0_END  120.0
-
-void FormantGridEditor_prefs (void) {
-	Preferences_addDouble (L"FormantGridEditor.formantFloor", & preferences.formantFloor, 0.0);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.formantCeiling", & preferences.formantCeiling, 11000.0);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.bandwidthFloor", & preferences.bandwidthFloor, 0.0);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.bandwidthCeiling", & preferences.bandwidthCeiling, 1000.0);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.play.samplingFrequency", & preferences.play.samplingFrequency, 44100.0);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.tStart", & preferences.source.pitch.tStart, 0.0);   // relative time
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0Start", & preferences.source.pitch.f0Start, DEFAULT_F0_START);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.tMid", & preferences.source.pitch.tMid, DEFAULT_T_MID);   // relative time
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0Mid", & preferences.source.pitch.f0Mid, DEFAULT_F0_MID);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.tEnd", & preferences.source.pitch.tEnd, 1.0);   // relative time
-	Preferences_addDouble (L"FormantGridEditor.source.pitch.f0End", & preferences.source.pitch.f0End, DEFAULT_F0_END);   // Hz
-	Preferences_addDouble (L"FormantGridEditor.source.phonation.adaptFactor", & preferences.source.phonation.adaptFactor, PointProcess_to_Sound_phonation_DEFAULT_ADAPT_FACTOR);
-	Preferences_addDouble (L"FormantGridEditor.source.phonation.maximumPeriod", & preferences.source.phonation.maximumPeriod, PointProcess_to_Sound_phonation_DEFAULT_MAXIMUM_PERIOD);
-	Preferences_addDouble (L"FormantGridEditor.source.phonation.openPhase", & preferences.source.phonation.openPhase, PointProcess_to_Sound_phonation_DEFAULT_OPEN_PHASE);
-	Preferences_addDouble (L"FormantGridEditor.source.phonation.collisionPhase", & preferences.source.phonation.collisionPhase, PointProcess_to_Sound_phonation_DEFAULT_COLLISION_PHASE);
-	Preferences_addDouble (L"FormantGridEditor.source.phonation.power1", & preferences.source.phonation.power1, PointProcess_to_Sound_phonation_DEFAULT_POWER_1);
-	Preferences_addDouble (L"FormantGridEditor.source.phonation.power2", & preferences.source.phonation.power2, PointProcess_to_Sound_phonation_DEFAULT_POWER_2);
-}
+#include "prefs_define.h"
+#include "FormantGridEditor_prefs.h"
+#include "prefs_install.h"
+#include "FormantGridEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "FormantGridEditor_prefs.h"
 
 /********** MENU COMMANDS **********/
 
@@ -106,14 +79,14 @@ static void menu_cb_addPointAt (EDITOR_ARGS) {
 static void menu_cb_setFormantRange (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
 	EDITOR_FORM (L"Set formant range", 0)
-		REAL (L"Minimum formant (Hz)", L"0.0")
-		REAL (L"Maximum formant (Hz)", L"11000.0")
+		REAL (L"Minimum formant (Hz)", my default_formantFloor   ())
+		REAL (L"Maximum formant (Hz)", my default_formantCeiling ())
 	EDITOR_OK
-		SET_REAL (L"Minimum formant", my formantFloor)
-		SET_REAL (L"Maximum formant", my formantCeiling)
+		SET_REAL (L"Minimum formant", my p_formantFloor)
+		SET_REAL (L"Maximum formant", my p_formantCeiling)
 	EDITOR_DO
-		preferences.formantFloor = my formantFloor = GET_REAL (L"Minimum formant");
-		preferences.formantCeiling = my formantCeiling = GET_REAL (L"Maximum formant");
+		my pref_formantFloor   () = my p_formantFloor   = GET_REAL (L"Minimum formant");
+		my pref_formantCeiling () = my p_formantCeiling = GET_REAL (L"Maximum formant");
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -121,14 +94,14 @@ static void menu_cb_setFormantRange (EDITOR_ARGS) {
 static void menu_cb_setBandwidthRange (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
 	EDITOR_FORM (L"Set bandwidth range", 0)
-		REAL (L"Minimum bandwidth (Hz)", L"0.0")
-		REAL (L"Maximum bandwidth (Hz)", L"1000.0")
+		REAL (L"Minimum bandwidth (Hz)", my default_bandwidthFloor   ())
+		REAL (L"Maximum bandwidth (Hz)", my default_bandwidthCeiling ())
 	EDITOR_OK
-		SET_REAL (L"Minimum bandwidth", my bandwidthFloor)
-		SET_REAL (L"Maximum bandwidth", my bandwidthCeiling)
+		SET_REAL (L"Minimum bandwidth", my p_bandwidthFloor)
+		SET_REAL (L"Maximum bandwidth", my p_bandwidthCeiling)
 	EDITOR_DO
-		preferences.bandwidthFloor = my bandwidthFloor = GET_REAL (L"Minimum bandwidth");
-		preferences.bandwidthCeiling = my bandwidthCeiling = GET_REAL (L"Maximum bandwidth");
+		my pref_bandwidthFloor   () = my p_bandwidthFloor   = GET_REAL (L"Minimum bandwidth");
+		my pref_bandwidthCeiling () = my p_bandwidthCeiling = GET_REAL (L"Maximum bandwidth");
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -148,15 +121,15 @@ static void selectFormantOrBandwidth (FormantGridEditor me, long iformant) {
 	FunctionEditor_redraw (me);
 }
 
-static void menu_cb_selectFirst (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 1); }
-static void menu_cb_selectSecond (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 2); }
-static void menu_cb_selectThird (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 3); }
-static void menu_cb_selectFourth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 4); }
-static void menu_cb_selectFifth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 5); }
-static void menu_cb_selectSixth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 6); }
+static void menu_cb_selectFirst   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 1); }
+static void menu_cb_selectSecond  (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 2); }
+static void menu_cb_selectThird   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 3); }
+static void menu_cb_selectFourth  (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 4); }
+static void menu_cb_selectFifth   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 5); }
+static void menu_cb_selectSixth   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 6); }
 static void menu_cb_selectSeventh (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 7); }
-static void menu_cb_selectEighth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 8); }
-static void menu_cb_selectNinth (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 9); }
+static void menu_cb_selectEighth  (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 8); }
+static void menu_cb_selectNinth   (EDITOR_ARGS) { EDITOR_IAM (FormantGridEditor); selectFormantOrBandwidth (me, 9); }
 static void menu_cb_selectFormantOrBandwidth (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
 	EDITOR_FORM (L"Select formant or bandwidth", 0)
@@ -174,26 +147,26 @@ static void menu_cb_pitchSettings (EDITOR_ARGS) {
 	EDITOR_FORM (L"Source pitch settings", 0)
 		LABEL (L"", L"These settings apply to the pitch curve")
 		LABEL (L"", L"that you hear when playing the FormantGrid.")
-		REAL (L"Starting time", L"0.0%")
-		POSITIVE (L"Starting pitch (Hz)", L"150.0")
-		REAL (L"Mid time", L"25.0%")
-		POSITIVE (L"Mid pitch (Hz)", L"180.0")
-		REAL (L"End time", L"100.0%")
-		POSITIVE (L"End pitch (Hz)", L"120")
+		REAL     (L"Starting time",       my default_source_pitch_tStart  ())
+		POSITIVE (L"Starting pitch (Hz)", my default_source_pitch_f0Start ())
+		REAL     (L"Mid time",            my default_source_pitch_tMid    ())
+		POSITIVE (L"Mid pitch (Hz)",      my default_source_pitch_f0Mid   ())
+		REAL     (L"End time",            my default_source_pitch_tEnd    ())
+		POSITIVE (L"End pitch (Hz)",      my default_source_pitch_f0End   ())
 	EDITOR_OK
-		SET_REAL (L"Starting time", my source.pitch.tStart)
-		SET_REAL (L"Starting pitch", my source.pitch.f0Start)
-		SET_REAL (L"Mid time", my source.pitch.tMid)
-		SET_REAL (L"Mid pitch", my source.pitch.f0Mid)
-		SET_REAL (L"End time", my source.pitch.tEnd)
-		SET_REAL (L"End pitch", my source.pitch.f0End)
+		SET_REAL (L"Starting time",  my p_source_pitch_tStart)
+		SET_REAL (L"Starting pitch", my p_source_pitch_f0Start)
+		SET_REAL (L"Mid time",       my p_source_pitch_tMid)
+		SET_REAL (L"Mid pitch",      my p_source_pitch_f0Mid)
+		SET_REAL (L"End time",       my p_source_pitch_tEnd)
+		SET_REAL (L"End pitch",      my p_source_pitch_f0End)
 	EDITOR_DO
-		preferences.source.pitch.tStart = my source.pitch.tStart = GET_REAL (L"Starting time");
-		preferences.source.pitch.f0Start = my source.pitch.f0Start = GET_REAL (L"Starting pitch");
-		preferences.source.pitch.tMid = my source.pitch.tMid = GET_REAL (L"Mid time");
-		preferences.source.pitch.f0Mid = my source.pitch.f0Mid = GET_REAL (L"Mid pitch");
-		preferences.source.pitch.tEnd = my source.pitch.tEnd = GET_REAL (L"End time");
-		preferences.source.pitch.f0End = my source.pitch.f0End = GET_REAL (L"End pitch");
+		my pref_source_pitch_tStart  () = my p_source_pitch_tStart  = GET_REAL (L"Starting time");
+		my pref_source_pitch_f0Start () = my p_source_pitch_f0Start = GET_REAL (L"Starting pitch");
+		my pref_source_pitch_tMid    () = my p_source_pitch_tMid    = GET_REAL (L"Mid time");
+		my pref_source_pitch_f0Mid   () = my p_source_pitch_f0Mid   = GET_REAL (L"Mid pitch");
+		my pref_source_pitch_tEnd    () = my p_source_pitch_tEnd    = GET_REAL (L"End time");
+		my pref_source_pitch_f0End   () = my p_source_pitch_f0End   = GET_REAL (L"End pitch");
 	EDITOR_END
 }
 
@@ -232,8 +205,8 @@ void structFormantGridEditor :: v_draw () {
 	FormantGrid grid = (FormantGrid) data;
 	Ordered tiers = editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier selectedTier = (RealTier) tiers -> item [selectedFormant];
-	double ymin = editingBandwidths ? bandwidthFloor : formantFloor;
-	double ymax = editingBandwidths ? bandwidthCeiling : formantCeiling;
+	double ymin = editingBandwidths ? p_bandwidthFloor   : p_formantFloor;
+	double ymax = editingBandwidths ? p_bandwidthCeiling : p_formantCeiling;
 	Graphics_setColour (d_graphics, Graphics_WHITE);
 	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
@@ -320,8 +293,8 @@ static void drawWhileDragging (FormantGridEditor me, double xWC, double yWC, lon
 	FormantGrid grid = (FormantGrid) my data;
 	Ordered tiers = my editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier tier = (RealTier) tiers -> item [my selectedFormant];
-	double ymin = my editingBandwidths ? my bandwidthFloor : my formantFloor;
-	double ymax = my editingBandwidths ? my bandwidthCeiling : my formantCeiling;
+	double ymin = my editingBandwidths ? my p_bandwidthFloor   : my p_formantFloor;
+	double ymax = my editingBandwidths ? my p_bandwidthCeiling : my p_formantCeiling;
 	(void) xWC;
 	(void) yWC;
 
@@ -354,8 +327,8 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	FormantGrid grid = (FormantGrid) data;
 	Ordered tiers = editingBandwidths ? grid -> bandwidths : grid -> formants;
 	RealTier tier = (RealTier) tiers -> item [selectedFormant];
-	double ymin = editingBandwidths ? bandwidthFloor : formantFloor;
-	double ymax = editingBandwidths ? bandwidthCeiling : formantCeiling;
+	double ymin = editingBandwidths ? p_bandwidthFloor   : p_formantFloor;
+	double ymax = editingBandwidths ? p_bandwidthCeiling : p_formantCeiling;
 	long inearestPoint, ifirstSelected, ilastSelected;
 	RealPoint nearestPoint;
 	double dt = 0, df = 0;
@@ -464,13 +437,13 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 }
 
 void structFormantGridEditor :: v_play (double tmin, double tmax) {
-	FormantGrid_playPart ((FormantGrid) data, tmin, tmax, play.samplingFrequency,
-		source.pitch.tStart, source.pitch.f0Start,
-		source.pitch.tMid, source.pitch.f0Mid,
-		source.pitch.tEnd, source.pitch.f0End,
-		source.phonation.adaptFactor, source.phonation.maximumPeriod,
-		source.phonation.openPhase, source.phonation.collisionPhase,
-		source.phonation.power1, source.phonation.power2,
+	FormantGrid_playPart ((FormantGrid) data, tmin, tmax, p_play_samplingFrequency,
+		p_source_pitch_tStart, p_source_pitch_f0Start,
+		p_source_pitch_tMid,   p_source_pitch_f0Mid,
+		p_source_pitch_tEnd,   p_source_pitch_f0End,
+		p_source_phonation_adaptFactor, p_source_phonation_maximumPeriod,
+		p_source_phonation_openPhase,   p_source_phonation_collisionPhase,
+		p_source_phonation_power1,      p_source_phonation_power2,
 		theFunctionEditor_playCallback, this);
 }
 
@@ -478,13 +451,7 @@ void FormantGridEditor_init (FormantGridEditor me, const wchar_t *title, Formant
 	Melder_assert (data != NULL);
 	Melder_assert (Thing_member (data, classFormantGrid));
 	FunctionEditor_init (me, title, data);
-	my formantFloor = preferences.formantFloor;
-	my formantCeiling = preferences.formantCeiling;
-	my bandwidthFloor = preferences.bandwidthFloor;
-	my bandwidthCeiling = preferences.bandwidthCeiling;
-	my play = preferences.play;
-	my source = preferences.source;
-	my ycursor = 0.382 * my formantFloor + 0.618 * my formantCeiling;
+	my ycursor = 0.382 * my p_formantFloor + 0.618 * my p_formantCeiling;
 	my selectedFormant = 1;
 }
 

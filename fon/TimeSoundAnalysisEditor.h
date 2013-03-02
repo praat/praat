@@ -2,7 +2,7 @@
 #define _TimeSoundAnalysisEditor_h_
 /* TimeSoundAnalysisEditor.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,76 +55,14 @@
 
 #include "TimeSoundAnalysisEditor_enums.h"
 
-struct FunctionEditor_spectrogram {
-	Spectrogram data; bool show;
-	/* Spectrogram settings: */
-	double viewFrom, viewTo;   // Hz
-	double windowLength;   // seconds
-	double dynamicRange;   // dB
-	/* Advanced spectrogram settings: */
-	long timeSteps, frequencySteps;
-	enum kSound_to_Spectrogram_method method;
-	enum kSound_to_Spectrogram_windowShape windowShape;
-	bool autoscaling;
-	double maximum;   // dB/Hz
-	double preemphasis;   // dB/octave
-	double dynamicCompression;   // 0..1
-	/* Dynamic information: */
-	double cursor;
-	struct { bool garnish; } picture;
-};
-
-struct FunctionEditor_pitch {
-	Pitch data; bool show;
-	/* Pitch settings: */
-	double floor, ceiling;
-	enum kPitch_unit unit;
-	enum kTimeSoundAnalysisEditor_pitch_drawingMethod drawingMethod;
-	/* Advanced pitch settings: */
-	double viewFrom, viewTo;
-	enum kTimeSoundAnalysisEditor_pitch_analysisMethod method;
-	bool veryAccurate;
-	long maximumNumberOfCandidates; double silenceThreshold, voicingThreshold;
-	double octaveCost, octaveJumpCost, voicedUnvoicedCost;
-	struct { bool speckle, garnish; } picture;
-};
-struct FunctionEditor_intensity {
-	Intensity data; bool show;
-	/* Intensity settings: */
-	double viewFrom, viewTo;
-	enum kTimeSoundAnalysisEditor_intensity_averagingMethod averagingMethod;
-	bool subtractMeanPressure;
-	struct { bool garnish; } picture;
-};
-struct FunctionEditor_formant {
-	Formant data; bool show;
-	/* Formant settings: */
-	double maximumFormant; long numberOfPoles;
-	double windowLength;
-	double dynamicRange, dotSize;
-	/* Advanced formant settings: */
-	enum kTimeSoundAnalysisEditor_formant_analysisMethod method;
-	double preemphasisFrom;
-	struct { bool garnish; } picture;
-};
-struct FunctionEditor_pulses {
-	PointProcess data; bool show;
-	/* Pulses settings: */
-	double maximumPeriodFactor, maximumAmplitudeFactor;
-	struct { bool garnish; } picture;
-};
-
 Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) { public:
 	// new data:
-		double longestAnalysis;
-		enum kTimeSoundAnalysisEditor_timeStepStrategy timeStepStrategy;
-		double fixedTimeStep;
-		long numberOfTimeStepsPerView;
-		struct FunctionEditor_spectrogram spectrogram;
-		struct FunctionEditor_pitch pitch;
-		struct FunctionEditor_intensity intensity;
-		struct FunctionEditor_formant formant;
-		struct FunctionEditor_pulses pulses;
+		Spectrogram d_spectrogram;
+		double d_spectrogram_cursor;
+		Pitch d_pitch;
+		Intensity d_intensity;
+		Formant d_formant;
+		PointProcess d_pulses;
 		GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
 	// functions:
 		void f_init (const wchar_t *title, Function data, Sampled sound, bool ownSound);
@@ -135,7 +73,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) { public:
 		virtual int v_click (double xWC, double yWC, bool shiftKeyPressed);
 		virtual void v_createMenuItems_view_sound (EditorMenu menu);
 		virtual double v_getBottomOfSoundArea () {
-			return spectrogram.show || pitch.show || intensity.show || formant.show ? 0.5 : 0.0;
+			return p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show ? 0.5 : 0.0;
 		}
 	// new methods:
 		virtual bool v_hasAnalysis    () { return true; }
@@ -156,12 +94,7 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) { public:
 		virtual void v_createMenus_analysis ();
 		virtual void v_createMenuItems_view_sound_analysis (EditorMenu menu);
 	// preferences:
-		static void f_preferences ();
-		static FunctionEditor_spectrogram s_spectrogram; virtual FunctionEditor_spectrogram & pref_spectrogram () { return s_spectrogram; }
-		static FunctionEditor_pitch       s_pitch;       virtual FunctionEditor_pitch       & pref_pitch       () { return s_pitch;       }
-		static FunctionEditor_intensity   s_intensity;   virtual FunctionEditor_intensity   & pref_intensity   () { return s_intensity;   }
-		static FunctionEditor_formant     s_formant;     virtual FunctionEditor_formant     & pref_formant     () { return s_formant;     }
-		static FunctionEditor_pulses      s_pulses;      virtual FunctionEditor_pulses      & pref_pulses      () { return s_pulses;      }
+		#include "TimeSoundAnalysisEditor_prefs.h"
 };
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);

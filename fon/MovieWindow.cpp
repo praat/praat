@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 
 #include "MovieWindow.h"
-#include "Preferences.h"
 #include "EditorM.h"
 
 Thing_implement (MovieWindow, TimeSoundAnalysisEditor, 0);
@@ -42,13 +41,13 @@ void structMovieWindow :: v_createMenus () {
 
 double structMovieWindow :: h_getSoundBottomPosition () {
 	Movie movie = (Movie) data;
-	bool showAnalysis = (spectrogram.show || pitch.show || intensity.show || formant.show) && movie -> d_sound;
+	bool showAnalysis = (p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) && movie -> d_sound;
 	return movie -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
 }
 
 void structMovieWindow :: v_draw () {
 	Movie movie = (Movie) data;
-	bool showAnalysis = (spectrogram.show || pitch.show || intensity.show || formant.show) && movie -> d_sound;
+	bool showAnalysis = (p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) && movie -> d_sound;
 	double soundY = h_getSoundBottomPosition ();
 	if (movie -> d_sound) {
 		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics, 0, 1, soundY, 1.0);
@@ -86,7 +85,7 @@ void structMovieWindow :: v_draw () {
 		Graphics_flushWs (d_graphics);
 		Graphics_resetViewport (d_graphics, viewport);
 		/* Draw pulses. */
-		if (pulses.show) {
+		if (p_pulses_show) {
 			viewport = Graphics_insetViewport (d_graphics, 0.0, 1.0, soundY, 1.0);
 			v_draw_analysis_pulses ();
 			f_drawSound (-1.0, 1.0);   // second time, partially across the pulses
@@ -98,14 +97,14 @@ void structMovieWindow :: v_draw () {
 }
 
 void structMovieWindow :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (spectrogram.show)
+	if (p_spectrogram_show)
 		Graphics_highlight (d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
 	else
 		Graphics_highlight (d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
 void structMovieWindow :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (spectrogram.show)
+	if (p_spectrogram_show)
 		Graphics_highlight (d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
 	else
 		Graphics_highlight (d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);

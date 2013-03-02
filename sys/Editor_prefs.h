@@ -1,4 +1,4 @@
-/* FunctionEditor_prefs.h
+/* Editor_prefs.h
  *
  * Copyright (C) 2013 Paul Boersma
  *
@@ -17,15 +17,10 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-prefs_begin (FunctionEditor)
+prefs_begin (Editor)
 	// new:
-		prefs_add_int  (FunctionEditor, shellWidth,                 1, L"700")
-		prefs_add_int  (FunctionEditor, shellHeight,                1, L"440")
-		prefs_add_bool (FunctionEditor, synchronizedZoomAndScroll,  1, true)
-		prefs_add_bool_with_data   (FunctionEditor, showSelectionViewer, 1, false)
-		prefs_add_double_with_data (FunctionEditor, arrowScrollStep,     1, L"0.05")
-		prefs_add_bool (FunctionEditor, picture_drawSelectionTimes, 1, true)
-		prefs_add_bool (FunctionEditor, picture_drawSelectionHairs, 1, true)
-prefs_end (FunctionEditor)
+		prefs_add_bool   (Editor, picture_eraseFirst,     1, true)
+		prefs_add_enum   (Editor, picture_writeNameAtTop, 1, kEditor_writeNameAtTop, DEFAULT)
+prefs_end (Editor)
 
-/* End of file FunctionEditor_prefs.h */
+/* End of file Editor_prefs.h */

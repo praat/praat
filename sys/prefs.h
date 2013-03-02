@@ -22,37 +22,38 @@
 #include "Preferences.h"
 
 #define prefs_begin(Klas) \
-	public: static void f_preferences ();
+	public: static void f_preferences (); \
+	virtual void v_copyPreferencesToInstance ();
 
 #define prefs_add_int(Klas,name,version,default) \
 	private: static int s_##name; public: virtual int & pref_##name () { return s_##name; } \
 	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
-#define prefs_add_int_with_data(Klas,name,version,default)  public: int d_##name; prefs_add_int (Klas, name, version, default)
+#define prefs_add_int_with_data(Klas,name,version,default)  public: int p_##name; prefs_add_int (Klas, name, version, default)
 
 #define prefs_add_long(Klas,name,version,default) \
 	private: static long s_##name; public: virtual long & pref_##name () { return s_##name; } \
 	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
-#define prefs_add_long_with_data(Klas,name,version,default)  public: long d_##name; prefs_add_long (Klas, name, version, default)
+#define prefs_add_long_with_data(Klas,name,version,default)  public: long p_##name; prefs_add_long (Klas, name, version, default)
 
 #define prefs_add_bool(Klas,name,version,default) \
 	private: static bool s_##name; public: virtual bool & pref_##name () { return s_##name; } \
 	private: static bool sdefault_##name; public: virtual bool default_##name () { return sdefault_##name; }
-#define prefs_add_bool_with_data(Klas,name,version,default)  public: bool d_##name; prefs_add_bool (Klas, name, version, default)
+#define prefs_add_bool_with_data(Klas,name,version,default)  public: bool p_##name; prefs_add_bool (Klas, name, version, default)
 
 #define prefs_add_double(Klas,name,version,default) \
 	private: static double s_##name; public: virtual double & pref_##name () { return s_##name; } \
 	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
-#define prefs_add_double_with_data(Klas,name,version,default)  public: double d_##name; prefs_add_double (Klas, name, version, default)
+#define prefs_add_double_with_data(Klas,name,version,default)  public: double p_##name; prefs_add_double (Klas, name, version, default)
 
 #define prefs_add_enum(Klas,name,version,enumerated,default) \
 	private: static enum enumerated s_##name; public: virtual enum enumerated & pref_##name () { return s_##name; } \
 	private: static enum enumerated sdefault_##name; public: virtual enum enumerated default_##name () { return sdefault_##name; }
-#define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  public: enumerated d_##name; prefs_add_enum (Klas, name, version, enumerated, default)
+#define prefs_add_enum_with_data(Klas,name,version,enumerated,default)  public: enumerated p_##name; prefs_add_enum (Klas, name, version, enumerated, default)
 
 #define prefs_add_string(Klas,name,version,default) \
 	private: static wchar_t s_##name [Preferences_STRING_BUFFER_SIZE]; public: virtual wchar_t * pref_##name () { return & s_##name [0]; } \
 	private: static const wchar_t * sdefault_##name; public: virtual const wchar_t * default_##name () { return sdefault_##name; }
-#define prefs_add_string_with_data(Klas,name,version,default)  public: wchar_t d_##name [Preferences_STRING_BUFFER_SIZE]; prefs_add_string (Klas, name, version, default)
+#define prefs_add_string_with_data(Klas,name,version,default)  public: wchar_t p_##name [Preferences_STRING_BUFFER_SIZE]; prefs_add_string (Klas, name, version, default)
 
 #define prefs_end(Klas)
 

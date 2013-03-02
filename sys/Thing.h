@@ -113,6 +113,10 @@ class structThing {
 			/*
 			 * derived::v_nameChanged may call base::_nameChanged at start, middle or end
 			 */
+		virtual void v_copyPreferencesToInstance () { };
+			/*
+			 * derived::v_copyPreferencesToInstance calls base::v_copyPreferencesToInstance at start
+			 */
 };
 
 #define forget(thing)  do { _Thing_forget (thing); thing = NULL; } while (0)

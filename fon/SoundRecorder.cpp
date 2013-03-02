@@ -1,6 +1,6 @@
 /* SoundRecorder.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 /* Linux code originally by Darryl Purnell, Pretoria */
-/* GTK conversion includes work by fb */
+/* GTK conversion includes work by Franz Brauße */
 
 /* This source file describes interactive sound recorders for the following systems:
  *     MacOS
@@ -32,26 +32,36 @@
 
 #include <errno.h>
 #include "SoundRecorder.h"
-#include "Editor.h"
+#include "Sound_and_Spectrum.h"
 #include "machine.h"
 #include "EditorM.h"
-#include "GuiP.h"
 #if defined (macintosh)
 	#include "pa_mac_core.h"
-	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
 #endif
 
+#include "enums_getText.h"
+#include "SoundRecorder_enums.h"
+#include "enums_getValue.h"
+#include "SoundRecorder_enums.h"
+
 Thing_implement (SoundRecorder, Editor, 0);
+
+#include "prefs_define.h"
+#include "SoundRecorder_prefs.h"
+#include "prefs_install.h"
+#include "SoundRecorder_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "SoundRecorder_prefs.h"
 
 static struct {
 	int bufferSizeInMegabytes;
 } preferences;
 
-void SoundRecorder_preferences (void) {
+void SoundRecorder_preferences () {
 	Preferences_addInt (L"SoundRecorder.bufferSizeInMegabytes", & preferences.bufferSizeInMegabytes, 60);
 }
 
-int SoundRecorder_getBufferSizePref_MB (void) { return preferences.bufferSizeInMegabytes; }
+int SoundRecorder_getBufferSizePref_MB () { return preferences.bufferSizeInMegabytes; }
 void SoundRecorder_setBufferSizePref_MB (int size) { preferences.bufferSizeInMegabytes = size < 1 ? 1 : size > 1000 ? 1000: size; }
 
 #define step 1000
@@ -173,33 +183,6 @@ static void win_waveInClose (SoundRecorder me) {
 }
 #endif
 
-#if defined (macintosh)
-static const char *errString (long err) {
-	switch (err) {
-		/* -54 */ case permErr: return "Attempt to open locked file for writing.";
-		/* -128 */ case userCanceledErr: return "User cancelled the operation.";
-		/* -200 */ case noHardwareErr: return "No such sound hardware.";
-		/* -220 */ case siNoSoundInHardware: return "No sound input hardware available.";
-		/* -221 */ case siBadSoundInDevice: return "Invalid sound input device.";
-		/* -222 */ case siNoBufferSpecified: return "No buffer specified for synchronous recording.";
-		/* -223 */ case siInvalidCompression: return "Invalid compression type.";
-		/* -224 */ case siHardDriveTooSlow: return "Hard drive too slow to record.";
-		/* -227 */ case siDeviceBusyErr: return "Sound input device is busy.";
-		/* -228 */ case siBadDeviceName: return "Invalid device name.";
-		/* -229 */ case siBadRefNum: return "Invalid reference number.";
-		/* -231 */ case siUnknownInfoType: return "Unknown type of information.";
-		/* -232 */ case siUnknownQuality: return "Unknown quality.";
-		default: return NULL; break;
-	}
-	return NULL;
-}
-static void onceError (const char *routine, long err) {
-	const char *string = errString (err);
-	if (string) Melder_throw ("(", routine, ":) ", string);
-	else Melder_throw ("(", routine, ":) Error ", err);
-}
-#endif
-
 static void stopRecording (SoundRecorder me) {	
 	if (! my recording) return;
 	try {
@@ -297,48 +280,69 @@ static void showMaximum (SoundRecorder me, int channel, double maximum) {
 
 static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 	Melder_assert (my graphics != NULL);
-	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
-	//#ifndef _WIN32
-	//	Graphics_setColour (my graphics, Graphics_WHITE);
-	//	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
-	//#endif
-	Graphics_setColour (my graphics, Graphics_BLACK);
 	if (nsamp < 1) {
-		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
 		#if defined (macintosh)
 			Graphics_setColour (my graphics, Graphics_WHITE);
 			Graphics_fillRectangle (my graphics, 0.2, 0.8, 0.3, 0.7);
-			Graphics_setColour (my graphics, Graphics_BLACK);
 		#endif
+		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_setColour (my graphics, Graphics_BLACK);
 		Graphics_text (my graphics, 0.5, 0.5, L"Not recording.");
 		return;
 	}
-	short leftMaximum = 0, rightMaximum = 0;
-	if (my numberOfChannels == 1) {
-		for (long i = 0; i < nsamp; i ++) {
-			short value = buffer [i];
-			if (abs (value) > leftMaximum) leftMaximum = abs (value);
+	if (my p_meter_which == kSoundRecorder_meter_INTENSITY) {
+		short leftMaximum = 0, rightMaximum = 0;
+		if (my numberOfChannels == 1) {
+			for (long i = 0; i < nsamp; i ++) {
+				short value = buffer [i];
+				if (abs (value) > leftMaximum) leftMaximum = abs (value);
+			}
+		} else {
+			for (long i = 0; i < nsamp; i ++) {
+				long left = buffer [i+i], right = buffer [i+i+1];
+				if (abs (left) > leftMaximum) leftMaximum = abs (left);
+				if (abs (right) > rightMaximum) rightMaximum = abs (right);
+			}
 		}
-	} else {
-		for (long i = 0; i < nsamp; i ++) {
-			long left = buffer [i+i], right = buffer [i+i+1];
-			if (abs (left) > leftMaximum) leftMaximum = abs (left);
-			if (abs (right) > rightMaximum) rightMaximum = abs (right);
+		if (my lastLeftMaximum > 30000) {
+			int leak = my lastLeftMaximum - 2000000 / theControlPanel. sampleRate;
+			if (leftMaximum < leak) leftMaximum = leak;
 		}
-	}
-	if (my lastLeftMaximum > 30000) {
-		int leak = my lastLeftMaximum - 2000000 / theControlPanel. sampleRate;
-		if (leftMaximum < leak) leftMaximum = leak;
-	}
-	showMaximum (me, 1, leftMaximum);
-	my lastLeftMaximum = leftMaximum;
-	if (my numberOfChannels == 2) {
-		if (my lastRightMaximum > 30000) {
-			int leak = my lastRightMaximum - 2000000 / theControlPanel. sampleRate;
-			if (rightMaximum < leak) rightMaximum = leak;
+		showMaximum (me, 1, leftMaximum);
+		my lastLeftMaximum = leftMaximum;
+		if (my numberOfChannels == 2) {
+			if (my lastRightMaximum > 30000) {
+				int leak = my lastRightMaximum - 2000000 / theControlPanel. sampleRate;
+				if (rightMaximum < leak) rightMaximum = leak;
+			}
+			showMaximum (me, 2, rightMaximum);
+			my lastRightMaximum = rightMaximum;
 		}
-		showMaximum (me, 2, rightMaximum);
-		my lastRightMaximum = rightMaximum;
+	} else if (my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY) {
+		autoSound sound = Sound_create (my numberOfChannels,
+			0.0, nsamp / theControlPanel. sampleRate,
+			nsamp, 1.0 / theControlPanel. sampleRate, 0.5 / theControlPanel. sampleRate);
+		short *p = & buffer [0];
+		for (long isamp = 1; isamp <= nsamp; isamp ++) {
+			for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
+				sound -> z [ichan] [isamp] = * (p ++) / 32768.0;
+			}
+		}
+		Sound_multiplyByWindow (sound.peek(), kSound_windowShape_KAISER_2);
+		double intensity = Sound_getIntensity_dB (sound.peek());
+		autoSpectrum spectrum = Sound_to_Spectrum (sound.peek(), true);
+		double centreOfGravity = Spectrum_getCentreOfGravity (spectrum.peek(), 1.0);
+		trace ("%ld samples, intensity %f dB, centre of gravity %f Hz", nsamp, intensity, centreOfGravity);
+		Graphics_setWindow (my graphics,
+			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
+			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
+		Graphics_setColour (my graphics, Graphics_WHITE);
+		Graphics_fillRectangle (my graphics,
+			my p_meter_centreOfGravity_minimum, my p_meter_centreOfGravity_maximum,
+			my p_meter_intensity_minimum, my p_meter_intensity_maximum);
+		Graphics_setColour (my graphics, Graphics_BLACK);
+		Graphics_fillCircle_mm (my graphics, centreOfGravity, intensity, 3.0);
 	}
 }
 
@@ -460,7 +464,7 @@ static bool workProc (void *void_me) {
 					#elif defined (macintosh)
 					#endif
 				}
-				long firstSample = lastSample - 1000;
+				long firstSample = lastSample - 3000;
 				if (firstSample < 0) firstSample = 0;
 				showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
 				my progressScale -> f_setValue (1000.0 * ((double) lastSample / (double) my nmax));
@@ -953,6 +957,22 @@ static void menu_cb_writeNist (EDITOR_ARGS) {
 	EDITOR_END
 }
 
+static void updateMenus (SoundRecorder me) {
+	my d_meterIntensityButton -> f_check (my p_meter_which == kSoundRecorder_meter_INTENSITY);
+	my d_meterCentreOfGravityVersusIntensityButton -> f_check (my p_meter_which == kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY);
+}
+
+static void menu_cb_intensity (EDITOR_ARGS) {
+	EDITOR_IAM (SoundRecorder);
+	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter_INTENSITY;
+	updateMenus (me);
+}
+static void menu_cb_centreOfGravityVersusIntensity (EDITOR_ARGS) {
+	EDITOR_IAM (SoundRecorder);
+	my pref_meter_which () = my p_meter_which = kSoundRecorder_meter_CENTRE_OF_GRAVITY_VERSUS_INTENSITY;
+	updateMenus (me);
+}
+
 static void menu_cb_SoundRecorder_help (EDITOR_ARGS) { EDITOR_IAM (SoundRecorder); Melder_help (L"SoundRecorder"); }
 
 void structSoundRecorder :: v_createMenus () {
@@ -962,6 +982,11 @@ void structSoundRecorder :: v_createMenus () {
 	Editor_addCommand (this, L"File", L"Save as NeXT/Sun file...", 0, menu_cb_writeNextSun);
 	Editor_addCommand (this, L"File", L"Save as NIST file...", 0, menu_cb_writeNist);
 	Editor_addCommand (this, L"File", L"-- write --", 0, 0);
+	Editor_addMenu (this, L"Meter", 0);
+	d_meterIntensityButton =
+		Editor_addCommand (this, L"Meter", L"Intensity", GuiMenu_RADIO_FIRST, menu_cb_intensity);
+	d_meterCentreOfGravityVersusIntensityButton =
+		Editor_addCommand (this, L"Meter", L"Centre of gravity ~ intensity", GuiMenu_RADIO_NEXT, menu_cb_centreOfGravityVersusIntensity);
 }
 
 void structSoundRecorder :: v_createHelpMenuItems (EditorMenu menu) {
@@ -1145,6 +1170,7 @@ gui_drawingarea_cb_resize (me.peek(), & event);
 		#elif motif
 			my workProcId = GuiAddWorkProc (workProc, me.peek());
 		#endif
+		updateMenus (me.peek());
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("SoundRecorder not created.");

@@ -97,7 +97,19 @@
 	#define False 0
 	typedef void *GuiObject;
 #elif cocoa
-	typedef class structGuiObject *GuiObject;   // Opaque
+	Thing_declare (GuiThing);
+	@protocol GuiCocoaAny
+		- (GuiThing) userData;
+		- (void) setUserData: (GuiThing) userData;
+	@end
+	typedef NSObject <GuiCocoaAny> *GuiObject;
+	@interface GuiCocoaButton      : NSButton      <GuiCocoaAny> @end
+	@interface GuiCocoaLabel       : NSTextField   <GuiCocoaAny> @end
+	@interface GuiCocoaMenu        : NSMenu        <GuiCocoaAny> @end
+	@interface GuiCocoaMenuButton  : NSPopUpButton <GuiCocoaAny> @end
+	@interface GuiCocoaMenuItem    : NSMenuItem    <GuiCocoaAny> @end
+	@interface GuiCocoaText        : NSTextField   <GuiCocoaAny> @end
+	@interface GuiCocoaWindow      : NSWindow      <GuiCocoaAny> @end
 #elif motif
 	typedef class structGuiObject *GuiObject;   // Opaque
 
@@ -327,7 +339,7 @@ Thing_define (GuiShell, GuiForm) { public:
 	#if gtk
 		GtkWindow *d_gtkWindow;
 	#elif cocoa
-		NSWindow *d_nsWindow;
+		GuiCocoaWindow *d_cocoaWindow;
 	#elif motif
 		GuiObject d_xmShell;
 	#endif
@@ -563,9 +575,9 @@ Thing_define (GuiMenu, GuiThing) { public:
 	#if gtk
 		GtkMenuItem *d_gtkMenuTitle;
 	#elif cocoa
-		NSMenu *d_nsMenu;
-		NSMenuItem *d_nsMenuItem;
-		NSPopUpButton *d_nsMenuButton;
+		GuiCocoaMenu *d_cocoaMenu;
+		GuiCocoaMenuItem *d_cocoaMenuItem;
+		GuiCocoaMenuButton *d_cocoaMenuButton;
 	#elif motif
 		GuiObject d_xmMenuTitle;   // in case the menu is in a menu bar
 		GuiObject d_xmMenuBar;   // in case the menu is in a form

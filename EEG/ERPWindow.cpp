@@ -24,30 +24,10 @@ Thing_implement (ERPWindow, SoundEditor, 0);
 
 #include "prefs_define.h"
 #include "ERPWindow_prefs.h"
-
-FunctionEditor_spectrogram       structERPWindow :: s_spectrogram;             // overridden
-
-void structERPWindow :: f_preferences (void) {
-	Preferences_addBool   (L"ERPWindow.showSelectionViewer",   & s_showSelectionViewer,   true);    // overridden
-	Preferences_addEnum   (L"ERPWindow.sound.scalingStrategy", & s_sound_scalingStrategy, kTimeSoundEditor_scalingStrategy, kTimeSoundEditor_scalingStrategy_DEFAULT);   // overridden
-	Preferences_addDouble (L"ERPWindow.sound.scaling.height",  & s_sound_scaling_height,  Melder_atof (sdefault_sound_scaling_height));   // overridden
-	Preferences_addDouble (L"ERPWindow.sound.scaling.minimum", & s_sound_scaling_minimum, Melder_atof (sdefault_sound_scaling_minimum));   // overridden
-	Preferences_addDouble (L"ERPWindow.sound.scaling.maximum", & s_sound_scaling_maximum, Melder_atof (sdefault_sound_scaling_maximum));   // overridden
-	Preferences_addBool   (L"ERPWindow.spectrogram.show",               & s_spectrogram.show, false);
-	Preferences_addDouble (L"ERPWindow.spectrogram.viewFrom",           & s_spectrogram.viewFrom, 0.0);   // Hz
-	Preferences_addDouble (L"ERPWindow.spectrogram.viewTo",             & s_spectrogram.viewTo, 60.0);   // Hz
-	Preferences_addDouble (L"ERPWindow.spectrogram.windowLength",       & s_spectrogram.windowLength, 0.5);   // seconds
-	Preferences_addDouble (L"ERPWindow.spectrogram.dynamicRange",       & s_spectrogram.dynamicRange, 40.0);   // dB
-	Preferences_addLong   (L"ERPWindow.spectrogram.timeSteps",          & s_spectrogram.timeSteps, 1000);
-	Preferences_addLong   (L"ERPWindow.spectrogram.frequencySteps",     & s_spectrogram.frequencySteps, 250);
-	Preferences_addEnum   (L"ERPWindow.spectrogram.method",             & s_spectrogram.method, kSound_to_Spectrogram_method, kSound_to_Spectrogram_method_DEFAULT);
-	Preferences_addEnum   (L"ERPWindow.spectrogram.windowShape",        & s_spectrogram.windowShape, kSound_to_Spectrogram_windowShape, kSound_to_Spectrogram_windowShape_DEFAULT);
-	Preferences_addBool   (L"ERPWindow.spectrogram.autoscaling",        & s_spectrogram.autoscaling, true);
-	Preferences_addDouble (L"ERPWindow.spectrogram.maximum",            & s_spectrogram.maximum, 100.0);   // dB/Hz
-	Preferences_addDouble (L"ERPWindow.spectrogram.preemphasis",        & s_spectrogram.preemphasis, 0.0);   // dB/octave
-	Preferences_addDouble (L"ERPWindow.spectrogram.dynamicCompression", & s_spectrogram.dynamicCompression, 0.0);
-	Preferences_addBool   (L"ERPWindow.spectrogram.picture.garnish",    & s_spectrogram.picture.garnish, true);
-}
+#include "prefs_install.h"
+#include "ERPWindow_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "ERPWindow_prefs.h"
 
 typedef struct { int inclination, azimuth; double topX, topY; } BiosemiLocationData;
 
@@ -342,13 +322,13 @@ void structERPWindow :: v_drawSelectionViewer () {
 		}
 	}
 	double absoluteExtremum = - minimum > maximum ? - minimum : maximum;
-	if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
-		minimum = d_sound_scaling_minimum;
-		maximum = d_sound_scaling_maximum;
-	} else if (d_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
+	if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_RANGE) {
+		minimum = p_sound_scaling_minimum;
+		maximum = p_sound_scaling_maximum;
+	} else if (p_sound_scalingStrategy == kTimeSoundEditor_scalingStrategy_FIXED_HEIGHT) {
 		double mean = 0.5 * (minimum + maximum);
-		minimum = mean - 0.5 * d_sound_scaling_height;
-		maximum = mean + 0.5 * d_sound_scaling_height;
+		minimum = mean - 0.5 * p_sound_scaling_height;
+		maximum = mean + 0.5 * p_sound_scaling_height;
 	} else {
 		minimum = - absoluteExtremum;
 		maximum = absoluteExtremum;

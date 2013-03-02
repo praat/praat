@@ -23,8 +23,8 @@ prefs_begin (SpectrumEditor)
 		prefs_add_int  (SpectrumEditor, shellHeight,                1, L"440")
 		prefs_add_double (SpectrumEditor, arrowScrollStep,          1, L"100.0")
 	// new:
-		prefs_add_double_with_data (SpectrumEditor, bandSmoothing,  1, L"100.0");
-		prefs_add_double_with_data (SpectrumEditor, dynamicRange,   1, L"60.0");
+		prefs_add_double_with_data (SpectrumEditor, bandSmoothing,  1, L"100.0")
+		prefs_add_double_with_data (SpectrumEditor, dynamicRange,   1, L"60.0")
 prefs_end (SpectrumEditor)
 
-/* End of file SpectrumEditorEditor_prefs.h */
+/* End of file SpectrumEditor_prefs.h */

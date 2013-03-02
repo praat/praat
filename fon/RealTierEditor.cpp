@@ -1,6 +1,6 @@
 /* RealTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  */
 
 #include "RealTierEditor.h"
-#include "Preferences.h"
 #include "EditorM.h"
 
 Thing_implement (RealTierEditor, TimeSoundEditor, 0);

@@ -199,6 +199,7 @@ Thing_define (Editor, Thing) {
 		virtual void v_form_pictureMargins (EditorCommand cmd);
 		virtual void v_ok_pictureMargins (EditorCommand cmd);
 		virtual void v_do_pictureMargins (EditorCommand cmd);
+	#include "Editor_prefs.h"
 };
 
 GuiMenuItem EditorMenu_addCommand (EditorMenu me, const wchar_t *itemTitle, long flags,
@@ -257,8 +258,6 @@ Graphics praat_picture_editor_open (bool eraseFirst);
 void praat_picture_editor_close (void);
 void Editor_openPraatPicture (Editor me);
 void Editor_closePraatPicture (Editor me);
-
-void Editor_prefs (void);
 
 #endif
 /* End of file Editor.h */

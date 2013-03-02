@@ -1,6 +1,6 @@
 /* GuiObject.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,32 +20,42 @@
 #include "GuiP.h"
 #include "machine.h"
 
-void * _GuiObject_getUserData (GuiObject me) {
+#if cocoa
+	@interface GuiCocoaView : NSView
+		- (GuiThing) userData;
+		- (void) setUserData: (GuiThing) userData;
+	@end
+#endif
+
+void * _GuiObject_getUserData (GuiObject widget) {
 	void *userData = NULL;
 	#if gtk
-		userData = (void *) g_object_get_data (G_OBJECT (me), "praat");
+		userData = (void *) g_object_get_data (G_OBJECT (widget), "praat");
 	#elif cocoa
+		userData = [(GuiCocoaView *) widget   userData];
 	#elif motif
-		XtVaGetValues (me, XmNuserData, & userData, NULL);
+		XtVaGetValues (widget, XmNuserData, & userData, NULL);
 	#endif
 	return userData;
 }
 
-void _GuiObject_setUserData (GuiObject me, void *userData) {
+void _GuiObject_setUserData (GuiObject widget, void *userData) {
 	#if gtk
-		g_object_set_data (G_OBJECT (me), "praat", userData);
+		g_object_set_data (G_OBJECT (widget), "praat", userData);
 	#elif cocoa
+		[(GuiCocoaView *) widget   setUserData: (GuiThing) userData];
 	#elif motif
-		XtVaSetValues (me, XmNuserData, userData, NULL);
+		XtVaSetValues (widget, XmNuserData, userData, NULL);
 	#endif
 }
 
-void GuiObject_destroy (GuiObject me) {
+void GuiObject_destroy (GuiObject widget) {
 	#if gtk
-		gtk_widget_destroy (GTK_WIDGET (me));
+		gtk_widget_destroy (GTK_WIDGET (widget));
 	#elif cocoa
+		[(GuiCocoaView *) widget   release];
 	#elif motif
-		XtDestroyWidget (me);
+		XtDestroyWidget (widget);
 	#endif
 }
 

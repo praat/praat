@@ -51,22 +51,21 @@ Thing_implement (GuiButton, GuiControl, 0);
 		}
 	}
 #elif cocoa
-	@interface GuiCocoaButton : NSButton
-	@end
 	@implementation GuiCocoaButton {
 		GuiButton d_userData;
 	}
 	- (void) dealloc {   // override
 		GuiButton me = d_userData;
 		forget (me);
-		Melder_casual ("deleting a button");
+		trace ("deleting a button");
 		[super dealloc];
 	}
-	- (GuiButton) userData {
+	- (GuiThing) userData {
 		return d_userData;
 	}
-	- (void) setUserData: (GuiButton) userData {
-		d_userData = userData;
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiButton));
+		d_userData = static_cast <GuiButton> (userData);
 	}
 	- (void) _guiCocoaButton_activateCallback: (id) widget {
 		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object

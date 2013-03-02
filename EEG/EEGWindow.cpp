@@ -24,30 +24,10 @@ Thing_implement (EEGWindow, TextGridEditor, 0);
 
 #include "prefs_define.h"
 #include "EEGWindow_prefs.h"
-
-FunctionEditor_spectrogram       structEEGWindow :: s_spectrogram;             // overridden
-
-void structEEGWindow :: f_preferences (void) {
-	Preferences_addBool   (L"EEGWindow.showSelectionViewer",   & s_showSelectionViewer,                      false);   // overridden
-	Preferences_addEnum   (L"EEGWindow.sound.scalingStrategy", & s_sound_scalingStrategy, kTimeSoundEditor_scalingStrategy,  kTimeSoundEditor_scalingStrategy_DEFAULT);   // overridden
-	Preferences_addDouble (L"EEGWindow.sound.scaling.height",  & s_sound_scaling_height,                     20e-6);   // overridden
-	Preferences_addDouble (L"EEGWindow.sound.scaling.minimum", & s_sound_scaling_minimum,                   -10e-6);   // overridden
-	Preferences_addDouble (L"EEGWindow.sound.scaling.maximum", & s_sound_scaling_maximum,                   +10e-6);   // overridden
-	Preferences_addBool   (L"EEGWindow.spectrogram.show",               & s_spectrogram.show, false);
-	Preferences_addDouble (L"EEGWindow.spectrogram.viewFrom",           & s_spectrogram.viewFrom, 0.0);   // Hz
-	Preferences_addDouble (L"EEGWindow.spectrogram.viewTo",             & s_spectrogram.viewTo, 60.0);   // Hz
-	Preferences_addDouble (L"EEGWindow.spectrogram.windowLength",       & s_spectrogram.windowLength, 0.5);   // seconds
-	Preferences_addDouble (L"EEGWindow.spectrogram.dynamicRange",       & s_spectrogram.dynamicRange, 40.0);   // dB
-	Preferences_addLong   (L"EEGWindow.spectrogram.timeSteps",          & s_spectrogram.timeSteps, 1000);
-	Preferences_addLong   (L"EEGWindow.spectrogram.frequencySteps",     & s_spectrogram.frequencySteps, 250);
-	Preferences_addEnum   (L"EEGWindow.spectrogram.method",             & s_spectrogram.method, kSound_to_Spectrogram_method, kSound_to_Spectrogram_method_DEFAULT);
-	Preferences_addEnum   (L"EEGWindow.spectrogram.windowShape",        & s_spectrogram.windowShape, kSound_to_Spectrogram_windowShape, kSound_to_Spectrogram_windowShape_DEFAULT);
-	Preferences_addBool   (L"EEGWindow.spectrogram.autoscaling",        & s_spectrogram.autoscaling, true);
-	Preferences_addDouble (L"EEGWindow.spectrogram.maximum",            & s_spectrogram.maximum, 100.0);   // dB/Hz
-	Preferences_addDouble (L"EEGWindow.spectrogram.preemphasis",        & s_spectrogram.preemphasis, 0.0);   // dB/octave
-	Preferences_addDouble (L"EEGWindow.spectrogram.dynamicCompression", & s_spectrogram.dynamicCompression, 0.0);
-	Preferences_addBool   (L"EEGWindow.spectrogram.picture.garnish",    & s_spectrogram.picture.garnish, true);
-}
+#include "prefs_install.h"
+#include "EEGWindow_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "EEGWindow_prefs.h"
 
 static void menu_cb_EEGWindowHelp (EDITOR_ARGS) { EDITOR_IAM (EEGWindow); Melder_help (L"EEG window"); }
 

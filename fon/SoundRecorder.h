@@ -2,7 +2,7 @@
 #define _SoundRecorder_h_
 /* SoundRecorder.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,8 @@
 
 #include "Editor.h"
 #include "Sound.h"
+
+#include "SoundRecorder_enums.h"
 
 #include "../external/portaudio/portaudio.h"
 #if defined (_WIN32)
@@ -87,6 +89,7 @@ Thing_define (SoundRecorder, Editor) {
 		GuiButton recordButton, stopButton, playButton;
 		GuiText soundName;
 		GuiButton cancelButton, applyButton, okButton;
+		GuiMenuItem d_meterIntensityButton, d_meterCentreOfGravityVersusIntensityButton;
 		Graphics graphics;
 		bool inputUsesPortAudio;
 		const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX];
@@ -117,6 +120,8 @@ Thing_define (SoundRecorder, Editor) {
 		virtual void v_createChildren ();
 		virtual void v_createMenus ();
 		virtual void v_createHelpMenuItems (EditorMenu menu);
+	// preferences:
+		#include "SoundRecorder_prefs.h"
 };
 
 SoundRecorder SoundRecorder_create (int numberOfChannels);
@@ -126,8 +131,8 @@ SoundRecorder SoundRecorder_create (int numberOfChannels);
 		for recording in 16-bit mono or stereo.
 */
 
-void SoundRecorder_preferences (void);
-int SoundRecorder_getBufferSizePref_MB (void);
+void SoundRecorder_preferences ();
+int SoundRecorder_getBufferSizePref_MB ();
 void SoundRecorder_setBufferSizePref_MB (int size);
 
 /* End of file SoundRecorder.h */

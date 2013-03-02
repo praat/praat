@@ -34,7 +34,6 @@ Thing_define (ERPWindow, SoundEditor) { public:
 		virtual bool v_hasFormants  () { return false; }
 		virtual bool v_hasPulses    () { return false; }
 	#include "ERPWindow_prefs.h"
-		static FunctionEditor_spectrogram s_spectrogram; virtual FunctionEditor_spectrogram & pref_spectrogram () { return s_spectrogram; }
 };
 
 ERPWindow ERPWindow_create (const wchar_t *title, ERP data);

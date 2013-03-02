@@ -18,7 +18,6 @@
  */
 
 #include "ManipulationEditor.h"
-#include "Preferences.h"
 #include "PitchTier_to_PointProcess.h"
 #include "Sound_to_PointProcess.h"
 #include "Sound_to_Pitch.h"
@@ -33,10 +32,17 @@
 
 Thing_implement (ManipulationEditor, FunctionEditor, 0);
 
+#include "prefs_define.h"
+#include "ManipulationEditor_prefs.h"
+#include "prefs_install.h"
+#include "ManipulationEditor_prefs.h"
+#include "prefs_copyToInstance.h"
+#include "ManipulationEditor_prefs.h"
+
 /*
  * How to add a synthesis method (in an interruptable order):
  * 1. add an Manipulation_ #define in Manipulation.h;
- * 2. add a synthesize_ routine in Manipulation.c, and a reference to it in Manipulation_to_Sound;
+ * 2. add a synthesize_ routine in Manipulation.cpp, and a reference to it in Manipulation_to_Sound;
  * 3. add a button in ManipulationEditor.h;
  * 4. add a cb_Synth_ callback.
  * 5. create the button in createMenus and update updateMenus;
@@ -44,35 +50,11 @@ Thing_implement (ManipulationEditor, FunctionEditor, 0);
 
 static const wchar_t *units_strings [] = { 0, L"Hz", L"st" };
 
-static struct {
-	struct {
-		double minimum, maximum;
-		enum kManipulationEditor_pitchUnits units;
-		enum kManipulationEditor_draggingStrategy draggingStrategy;
-		struct { double frequencyResolution; bool useSemitones; } stylize;
-		struct { long numberOfPointsPerParabola; } interpolateQuadratically;
-	} pitchTier;
-	struct { double minimum, maximum; } duration;
-} preferences;
-
 static int prefs_synthesisMethod = Manipulation_OVERLAPADD;   /* Remembered across editor creations, not across Praat sessions. */
 
 /* BUG: 25 should be fmin */
-#define YLIN(freq)  (my pitchTier.units == kManipulationEditor_pitchUnits_HERTZ ? ((freq) < 25 ? 25 : (freq)) : NUMhertzToSemitones ((freq) < 25 ? 25 : (freq)))
-#define YLININV(freq)  (my pitchTier.units == kManipulationEditor_pitchUnits_HERTZ ? (freq) : NUMsemitonesToHertz (freq))
-
-void ManipulationEditor_prefs (void) {
-	Preferences_addDouble (L"ManipulationEditor.pitch.minimum", & preferences.pitchTier.minimum, 50.0);
-	Preferences_addDouble (L"ManipulationEditor.pitch.maximum", & preferences.pitchTier.maximum, 300.0);
-	Preferences_addEnum (L"ManipulationEditor.pitch.units", & preferences.pitchTier.units, kManipulationEditor_pitchUnits, kManipulationEditor_pitchUnits_DEFAULT);
-	Preferences_addEnum (L"ManipulationEditor.pitch.draggingStrategy", & preferences.pitchTier.draggingStrategy, kManipulationEditor_draggingStrategy, kManipulationEditor_draggingStrategy_DEFAULT);
-	Preferences_addDouble (L"ManipulationEditor.pitch.stylize.frequencyResolution", & preferences.pitchTier.stylize.frequencyResolution, 2.0);
-	Preferences_addBool (L"ManipulationEditor.pitch.stylize.useSemitones", & preferences.pitchTier.stylize.useSemitones, true);
-	Preferences_addLong (L"ManipulationEditor.pitch.interpolateQuadratically.numberOfPointsPerParabola", & preferences.pitchTier.interpolateQuadratically.numberOfPointsPerParabola, 4);
-	Preferences_addDouble (L"ManipulationEditor.duration.minimum", & preferences.duration.minimum, 0.25);
-	Preferences_addDouble (L"ManipulationEditor.duration.maximum", & preferences.duration.maximum, 3.0);
-	/*Preferences_addInt (L"ManipulationEditor.synthesis.method.1", & prefs_synthesisMethod, Manipulation_OVERLAPADD);*/
-}
+#define YLIN(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ ? ((freq) < 25 ? 25 : (freq)) : NUMhertzToSemitones ((freq) < 25 ? 25 : (freq)))
+#define YLININV(freq)  (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ ? (freq) : NUMsemitonesToHertz (freq))
 
 static void updateMenus (ManipulationEditor me) {
 	Melder_assert (my synthPulsesButton != NULL);
@@ -188,8 +170,8 @@ void structManipulationEditor :: v_saveData () {
 void structManipulationEditor :: v_restoreData () {
 	Manipulation ana = (Manipulation) data;
 	Any dummy;
-	dummy = ana -> pulses; ana -> pulses = previousPulses; previousPulses = (PointProcess) dummy;
-	dummy = ana -> pitch; ana -> pitch = previousPitch; previousPitch = (PitchTier) dummy;
+	dummy = ana -> pulses;   ana -> pulses   = previousPulses;   previousPulses   = (PointProcess) dummy;
+	dummy = ana -> pitch;    ana -> pitch    = previousPitch;    previousPitch    = (PitchTier)    dummy;
 	dummy = ana -> duration; ana -> duration = previousDuration; previousDuration = (DurationTier) dummy;
 }
 
@@ -318,19 +300,20 @@ static void menu_cb_addPitchPointAt (EDITOR_ARGS) {
 static void menu_cb_stylizePitch (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	EDITOR_FORM (L"Stylize pitch", L"PitchTier: Stylize...")
-		REAL (L"Frequency resolution", L"2.0")
-		RADIO (L"Units", 2)
+		REAL (L"Frequency resolution", my default_pitch_stylize_frequencyResolution ())
+		RADIO (L"Units", my default_pitch_stylize_useSemitones () + 1)
 			RADIOBUTTON (L"Hertz")
 			RADIOBUTTON (L"semitones")
 	EDITOR_OK
-		SET_REAL (L"Frequency resolution", preferences.pitchTier.stylize.frequencyResolution)   /* Once. */
-		SET_INTEGER (L"Units", preferences.pitchTier.stylize.useSemitones + 1)   /* Once. */
+		SET_REAL    (L"Frequency resolution", my p_pitch_stylize_frequencyResolution)
+		SET_INTEGER (L"Units",                my p_pitch_stylize_useSemitones + 1)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, L"Stylize pitch");
-		PitchTier_stylize (ana -> pitch, preferences.pitchTier.stylize.frequencyResolution = GET_REAL (L"Frequency resolution"),
-			preferences.pitchTier.stylize.useSemitones = GET_INTEGER (L"Units") - 1);
+		PitchTier_stylize (ana -> pitch,
+			my pref_pitch_stylize_frequencyResolution () = my p_pitch_stylize_frequencyResolution = GET_REAL (L"Frequency resolution"),
+			my pref_pitch_stylize_useSemitones        () = my p_pitch_stylize_useSemitones        = GET_INTEGER (L"Units") - 1);
 		FunctionEditor_redraw (me);
 		my broadcastDataChanged ();
 	EDITOR_END
@@ -349,16 +332,16 @@ static void menu_cb_stylizePitch_2st (EDITOR_ARGS) {
 static void menu_cb_interpolateQuadratically (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	EDITOR_FORM (L"Interpolate quadratically", 0)
-		NATURAL (L"Number of points per parabola", L"4")
+		NATURAL (L"Number of points per parabola", my default_pitch_interpolateQuadratically_numberOfPointsPerParabola ())
 	EDITOR_OK
-		SET_INTEGER (L"Number of points per parabola", preferences.pitchTier.interpolateQuadratically.numberOfPointsPerParabola)   /* Once. */
+		SET_INTEGER (L"Number of points per parabola", my p_pitch_interpolateQuadratically_numberOfPointsPerParabola)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		if (! ana -> pitch) return;
 		Editor_save (me, L"Interpolate quadratically");
 		RealTier_interpolateQuadratically (ana -> pitch,
-			preferences.pitchTier.interpolateQuadratically.numberOfPointsPerParabola = GET_INTEGER (L"Number of points per parabola"),
-			my pitchTier.units == kManipulationEditor_pitchUnits_SEMITONES);
+			my pref_pitch_interpolateQuadratically_numberOfPointsPerParabola () = my p_pitch_interpolateQuadratically_numberOfPointsPerParabola = GET_INTEGER (L"Number of points per parabola"),
+			my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
 		FunctionEditor_redraw (me);
 		my broadcastDataChanged ();
 	EDITOR_END
@@ -369,7 +352,7 @@ static void menu_cb_interpolateQuadratically_4pts (EDITOR_ARGS) {
 	Manipulation ana = (Manipulation) my data;
 	if (! ana -> pitch) return;
 	Editor_save (me, L"Interpolate quadratically");
-	RealTier_interpolateQuadratically (ana -> pitch, 4, my pitchTier.units == kManipulationEditor_pitchUnits_SEMITONES);
+	RealTier_interpolateQuadratically (ana -> pitch, 4, my p_pitch_units == kManipulationEditor_pitchUnits_SEMITONES);
 	FunctionEditor_redraw (me);
 	my broadcastDataChanged ();
 }
@@ -429,14 +412,14 @@ static void menu_cb_setPitchRange (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	EDITOR_FORM (L"Set pitch range", 0)
 		/* BUG: should include Minimum */
-		REAL (L"Maximum (Hz or st)", L"300.0")
+		REAL (L"Maximum (Hz or st)", my default_pitch_maximum ())
 	EDITOR_OK
-		SET_REAL (L"Maximum", my pitchTier.maximum)
+		SET_REAL (L"Maximum", my p_pitch_maximum)
 	EDITOR_DO
 		double maximum = GET_REAL (L"Maximum");
 		if (maximum <= my pitchTier.minPeriodic)
-			Melder_throw ("Maximum pitch must be greater than ", Melder_half (my pitchTier.minPeriodic), " ", units_strings [my pitchTier.units], ".");
-		preferences.pitchTier.maximum = my pitchTier.maximum = maximum;
+			Melder_throw ("Maximum pitch must be greater than ", Melder_half (my pitchTier.minPeriodic), " ", units_strings [my p_pitch_units], ".");
+		my pref_pitch_maximum () = my p_pitch_maximum = maximum;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -444,22 +427,22 @@ static void menu_cb_setPitchRange (EDITOR_ARGS) {
 static void menu_cb_setPitchUnits (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	EDITOR_FORM (L"Set pitch units", 0)
-		RADIO_ENUM (L"Pitch units", kManipulationEditor_pitchUnits, DEFAULT)
+		RADIO_ENUM (L"Pitch units", kManipulationEditor_pitchUnits, my default_pitch_units ())
 	EDITOR_OK
-		SET_ENUM (L"Pitch units", kManipulationEditor_pitchUnits, my pitchTier.units)
+		SET_ENUM (L"Pitch units", kManipulationEditor_pitchUnits, my p_pitch_units)
 	EDITOR_DO
-		enum kManipulationEditor_pitchUnits newPitchUnits = GET_ENUM (kManipulationEditor_pitchUnits, L"Pitch units");
-		if (my pitchTier.units == newPitchUnits) return;
-		preferences.pitchTier.units = my pitchTier.units = newPitchUnits;
-		if (my pitchTier.units == kManipulationEditor_pitchUnits_HERTZ) {
-			my pitchTier.minimum = 25.0;
+		enum kManipulationEditor_pitchUnits oldPitchUnits = my p_pitch_units;
+		my pref_pitch_units () = my p_pitch_units = GET_ENUM (kManipulationEditor_pitchUnits, L"Pitch units");
+		if (my p_pitch_units == oldPitchUnits) return;
+		if (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ) {
+			my p_pitch_minimum = 25.0;
 			my pitchTier.minPeriodic = 50.0;
-			preferences.pitchTier.maximum = my pitchTier.maximum = NUMsemitonesToHertz (my pitchTier.maximum);
+			my pref_pitch_maximum () = my p_pitch_maximum = NUMsemitonesToHertz (my p_pitch_maximum);
 			my pitchTier.cursor = NUMsemitonesToHertz (my pitchTier.cursor);
 		} else {
-			my pitchTier.minimum = -24.0;
+			my p_pitch_minimum = -24.0;
 			my pitchTier.minPeriodic = -12.0;
-			preferences.pitchTier.maximum = my pitchTier.maximum = NUMhertzToSemitones (my pitchTier.maximum);
+			my pref_pitch_maximum () = my p_pitch_maximum = NUMhertzToSemitones (my p_pitch_maximum);
 			my pitchTier.cursor = NUMhertzToSemitones (my pitchTier.cursor);
 		}
 		FunctionEditor_redraw (me);
@@ -471,11 +454,11 @@ static void menu_cb_setPitchUnits (EDITOR_ARGS) {
 static void menu_cb_setDurationRange (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	EDITOR_FORM (L"Set duration range", 0)
-		REAL (L"Minimum", L"0.25")
-		REAL (L"Maximum", L"3.0")
+		REAL (L"Minimum", my default_duration_minimum ())
+		REAL (L"Maximum", my default_duration_maximum ())
 	EDITOR_OK
-		SET_REAL (L"Minimum", my duration.minimum)
-		SET_REAL (L"Maximum", my duration.maximum)
+		SET_REAL (L"Minimum", my p_duration_minimum)
+		SET_REAL (L"Maximum", my p_duration_maximum)
 	EDITOR_DO
 		Manipulation ana = (Manipulation) my data;
 		double minimum = GET_REAL (L"Minimum"), maximum = GET_REAL (L"Maximum");
@@ -490,8 +473,8 @@ static void menu_cb_setDurationRange (EDITOR_ARGS) {
 		if (NUMdefined (maximumValue) && maximum < maximumValue)
 			Melder_throw ("Maximum relative duration must not be less than the maximum value present, "
 				"which is ", Melder_half (maximumValue), ".");
-		preferences.duration.minimum = my duration.minimum = minimum;
-		preferences.duration.maximum = my duration.maximum = maximum;
+		my pref_duration_minimum () = my p_duration_minimum = minimum;
+		my pref_duration_maximum () = my p_duration_maximum = maximum;
 		FunctionEditor_redraw (me);
 	EDITOR_END
 }
@@ -499,11 +482,11 @@ static void menu_cb_setDurationRange (EDITOR_ARGS) {
 static void menu_cb_setDraggingStrategy (EDITOR_ARGS) {
 	EDITOR_IAM (ManipulationEditor);
 	EDITOR_FORM (L"Set dragging strategy", L"ManipulationEditor")
-		RADIO_ENUM (L"Dragging strategy", kManipulationEditor_draggingStrategy, DEFAULT)
+		RADIO_ENUM (L"Dragging strategy", kManipulationEditor_draggingStrategy, my default_pitch_draggingStrategy ())
 	EDITOR_OK
-		SET_INTEGER (L"Dragging strategy", my pitchTier.draggingStrategy)
+		SET_INTEGER (L"Dragging strategy", my p_pitch_draggingStrategy)
 	EDITOR_DO
-		preferences.pitchTier.draggingStrategy = my pitchTier.draggingStrategy = GET_ENUM (kManipulationEditor_draggingStrategy, L"Dragging strategy");
+		my pref_pitch_draggingStrategy () = my p_pitch_draggingStrategy = GET_ENUM (kManipulationEditor_draggingStrategy, L"Dragging strategy");
 	EDITOR_END
 }
 
@@ -750,7 +733,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_text (my d_graphics, 1, 1 - Graphics_dyMMtoWC (my d_graphics, 3), L"%%Pitch from pulses");
 	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
 
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my pitchTier.minimum, my pitchTier.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_pitch_minimum, my p_pitch_maximum);
 
 	/*
 	 * Draw pitch contour based on pulses.
@@ -761,7 +744,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 		if (t >= my d_startWindow && t <= my d_endWindow) {
 			if (tleft != tright) {
 				double f = YLIN (1 / (tright - tleft));
-				if (f >= my pitchTier.minPeriodic && f <= my pitchTier.maximum) {
+				if (f >= my pitchTier.minPeriodic && f <= my p_pitch_maximum) {
 					Graphics_fillCircle_mm (my d_graphics, t, f, 1);
 				}
 			}
@@ -770,18 +753,18 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_setGrey (my d_graphics, 0.0);
 
 	FunctionEditor_drawGridLine (me, minimumFrequency);
-	FunctionEditor_drawRangeMark (me, my pitchTier.maximum,
-		Melder_fixed (my pitchTier.maximum, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units], Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, my pitchTier.minimum,
-		Melder_fixed (my pitchTier.minimum, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units], Graphics_BOTTOM);
-	if (my d_startSelection == my d_endSelection && my pitchTier.cursor >= my pitchTier.minimum && my pitchTier.cursor <= my pitchTier.maximum)
+	FunctionEditor_drawRangeMark (me, my p_pitch_maximum,
+		Melder_fixed (my p_pitch_maximum, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units], Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, my p_pitch_minimum,
+		Melder_fixed (my p_pitch_minimum, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units], Graphics_BOTTOM);
+	if (my d_startSelection == my d_endSelection && my pitchTier.cursor >= my p_pitch_minimum && my pitchTier.cursor <= my p_pitch_maximum)
 		FunctionEditor_drawHorizontalHair (me, my pitchTier.cursor,
-			Melder_fixed (my pitchTier.cursor, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units]);
+			Melder_fixed (my pitchTier.cursor, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units]);
 	if (cursorVisible && n > 0) {
 		double y = YLIN (RealTier_getValueAtTime (pitch, my d_startSelection));
 		FunctionEditor_insertCursorFunctionValue (me, y,
-			Melder_fixed (y, rangePrecisions [my pitchTier.units]), rangeUnits [my pitchTier.units],
-			my pitchTier.minimum, my pitchTier.maximum);
+			Melder_fixed (y, rangePrecisions [my p_pitch_units]), rangeUnits [my p_pitch_units],
+			my p_pitch_minimum, my p_pitch_maximum);
 	}
 	if (pitch) {
 		ifirstSelected = AnyTier_timeToHighIndex (pitch, my d_startSelection);
@@ -793,7 +776,7 @@ static void drawPitchArea (ManipulationEditor me, double ymin, double ymax) {
 	if (n == 0) {
 		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_setColour (my d_graphics, Graphics_BLACK);
-		Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow), 0.5 * (my pitchTier.minimum + my pitchTier.maximum), L"(no pitch points)");
+		Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow), 0.5 * (my p_pitch_minimum + my p_pitch_maximum), L"(no pitch points)");
 	} else if (imax < imin) {
 		double fleft = YLIN (RealTier_getValueAtTime (pitch, my d_startWindow));
 		double fright = YLIN (RealTier_getValueAtTime (pitch, my d_endWindow));
@@ -854,15 +837,15 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 	Graphics_text (my d_graphics, 1, 1, L"%%Duration manip");
 	Graphics_setFont (my d_graphics, kGraphics_font_HELVETICA);
 
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my duration.minimum, my duration.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_duration_minimum, my p_duration_maximum);
 	FunctionEditor_drawGridLine (me, 1.0);
-	FunctionEditor_drawRangeMark (me, my duration.maximum, Melder_fixed (my duration.maximum, 3), L"", Graphics_TOP);
-	FunctionEditor_drawRangeMark (me, my duration.minimum, Melder_fixed (my duration.minimum, 3), L"", Graphics_BOTTOM);
-	if (my d_startSelection == my d_endSelection && my duration.cursor >= my duration.minimum && my duration.cursor <= my duration.maximum)
+	FunctionEditor_drawRangeMark (me, my p_duration_maximum, Melder_fixed (my p_duration_maximum, 3), L"", Graphics_TOP);
+	FunctionEditor_drawRangeMark (me, my p_duration_minimum, Melder_fixed (my p_duration_minimum, 3), L"", Graphics_BOTTOM);
+	if (my d_startSelection == my d_endSelection && my duration.cursor >= my p_duration_minimum && my duration.cursor <= my p_duration_maximum)
 		FunctionEditor_drawHorizontalHair (me, my duration.cursor, Melder_fixed (my duration.cursor, 3), L"");
 	if (cursorVisible && n > 0) {
 		double y = RealTier_getValueAtTime (duration, my d_startSelection);
-		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), L"", my duration.minimum, my duration.maximum);
+		FunctionEditor_insertCursorFunctionValue (me, y, Melder_fixed (y, 3), L"", my p_duration_minimum, my p_duration_maximum);
 	}
 
 	/*
@@ -879,7 +862,7 @@ static void drawDurationArea (ManipulationEditor me, double ymin, double ymax) {
 		Graphics_setColour (my d_graphics, Graphics_BLACK);
 		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_HALF);
 		Graphics_text (my d_graphics, 0.5 * (my d_startWindow + my d_endWindow),
-			0.5 * (my duration.minimum + my duration.maximum), L"(no duration points)");
+			0.5 * (my p_duration_minimum + my p_duration_maximum), L"(no duration points)");
 	} else if (imax < imin) {
 		double fleft = RealTier_getValueAtTime (duration, my d_startWindow);
 		double fright = RealTier_getValueAtTime (duration, my d_endWindow);
@@ -961,7 +944,7 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		double t = point -> number + dt, f = YLIN (point -> value) + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)
 			Graphics_circle_mm (my d_graphics, t,
-				f < my pitchTier.minPeriodic ? my pitchTier.minPeriodic : f > my pitchTier.maximum ? my pitchTier.maximum : f, 3);
+				f < my pitchTier.minPeriodic ? my pitchTier.minPeriodic : f > my p_pitch_maximum ? my p_pitch_maximum : f, 3);
 	}
 
 	if (last == first) {
@@ -970,9 +953,9 @@ static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, lo
 		 */
 		RealPoint point = (RealPoint) pitch -> points -> item [first];
 		double t = point -> number + dt, fWC = YLIN (point -> value) + df;
-		Graphics_line (my d_graphics, t, my pitchTier.minimum, t, my pitchTier.maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
+		Graphics_line (my d_graphics, t, my p_pitch_minimum, t, my p_pitch_maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
 		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text1 (my d_graphics, t, my pitchTier.maximum, Melder_fixed (t, 6));
+		Graphics_text1 (my d_graphics, t, my p_pitch_maximum, Melder_fixed (t, 6));
 		Graphics_line (my d_graphics, my d_startWindow, fWC, my d_endWindow, fWC);
 		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
 		Graphics_text1 (my d_graphics, my d_startWindow, fWC, Melder_fixed (fWC, 5));
@@ -987,12 +970,12 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	double dt = 0, df = 0;
 	int draggingSelection, dragHorizontal, dragVertical;
 
-	my pitchTier.cursor = my pitchTier.minimum + yWC * (my pitchTier.maximum - my pitchTier.minimum);
+	my pitchTier.cursor = my p_pitch_minimum + yWC * (my p_pitch_maximum - my p_pitch_minimum);
 	if (! pitch) {
 		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my pitchTier.minimum, my pitchTier.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_pitch_minimum, my p_pitch_maximum);
 	yWC = my pitchTier.cursor;
 
 	/*
@@ -1033,9 +1016,9 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	  */
 	Graphics_xorOn (my d_graphics, Graphics_MAROON);
 	drawWhileDragging (me, xWC, yWC, ifirstSelected, ilastSelected, dt, df);
-	dragHorizontal = my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_VERTICAL &&
-		(! shiftKeyPressed || my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_HYBRID);
-	dragVertical = my pitchTier.draggingStrategy != kManipulationEditor_draggingStrategy_HORIZONTAL;
+	dragHorizontal = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_VERTICAL &&
+		(! shiftKeyPressed || my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_HYBRID);
+	dragVertical = my p_pitch_draggingStrategy != kManipulationEditor_draggingStrategy_HORIZONTAL;
 	while (Graphics_mouseStillDown (my d_graphics)) {
 		double xWC_new, yWC_new;
 		Graphics_getMouseLocation (my d_graphics, & xWC_new, & yWC_new);
@@ -1077,7 +1060,7 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 		point -> number += dt;
 		point -> value = YLININV (YLIN (point -> value) + df);
 		if (point -> value < 50.0) point -> value = 50.0;
-		if (point -> value > YLININV (my pitchTier.maximum)) point -> value = YLININV (my pitchTier.maximum);
+		if (point -> value > YLININV (my p_pitch_maximum)) point -> value = YLININV (my p_pitch_maximum);
 	}
 
 	/*
@@ -1109,8 +1092,8 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 		RealPoint point = (RealPoint) duration -> points -> item [i];
 		double t = point -> number + dt, dur = point -> value + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)
-			Graphics_circle_mm (my d_graphics, t, dur < my duration.minimum ? my duration.minimum :
-				dur > my duration.maximum ? my duration.maximum : dur, 3);
+			Graphics_circle_mm (my d_graphics, t, dur < my p_duration_minimum ? my p_duration_minimum :
+				dur > my p_duration_maximum ? my p_duration_maximum : dur, 3);
 	}
 
 	if (last == first) {
@@ -1119,9 +1102,9 @@ static void drawDurationWhileDragging (ManipulationEditor me, double xWC, double
 		 */
 		RealPoint point = (RealPoint) duration -> points -> item [first];
 		double t = point -> number + dt, durWC = point -> value + df;
-		Graphics_line (my d_graphics, t, my duration.minimum, t, my duration.maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
+		Graphics_line (my d_graphics, t, my p_duration_minimum, t, my p_duration_maximum - Graphics_dyMMtoWC (my d_graphics, 4.0));
 		Graphics_setTextAlignment (my d_graphics, Graphics_CENTRE, Graphics_TOP);
-		Graphics_text1 (my d_graphics, t, my duration.maximum, Melder_fixed (t, 6));
+		Graphics_text1 (my d_graphics, t, my p_duration_maximum, Melder_fixed (t, 6));
 		Graphics_line (my d_graphics, my d_startWindow, durWC, my d_endWindow, durWC);
 		Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
 		Graphics_text1 (my d_graphics, my d_startWindow, durWC, Melder_fixed (durWC, 2));
@@ -1139,7 +1122,7 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	/*
 	 * Convert from FunctionEditor's [0, 1] coordinates to world coordinates.
 	 */
-	yWC = my duration.minimum + yWC * (my duration.maximum - my duration.minimum);
+	yWC = my p_duration_minimum + yWC * (my p_duration_maximum - my p_duration_minimum);
 
 	/*
 	 * Move horizontal hair to clicked position.
@@ -1150,7 +1133,7 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 		Graphics_resetViewport (my d_graphics, my inset);
 		return my ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 	}
-	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my duration.minimum, my duration.maximum);
+	Graphics_setWindow (my d_graphics, my d_startWindow, my d_endWindow, my p_duration_minimum, my p_duration_maximum);
 
 	/*
 	 * Clicked on a duration point?
@@ -1224,8 +1207,8 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 		RealPoint point = (RealPoint) duration -> points -> item [i];
 		point -> number += dt;
 		point -> value += df;
-		if (point -> value < my duration.minimum) point -> value = my duration.minimum;
-		if (point -> value > my duration.maximum) point -> value = my duration.maximum;
+		if (point -> value < my p_duration_minimum) point -> value = my p_duration_minimum;
+		if (point -> value > my p_duration_maximum) point -> value = my p_duration_maximum;
 	}
 
 	/*
@@ -1279,33 +1262,39 @@ ManipulationEditor ManipulationEditor_create (const wchar_t *title, Manipulation
 		autoManipulationEditor me = Thing_new (ManipulationEditor);
 		FunctionEditor_init (me.peek(), title, ana);
 
-		my pitchTier.draggingStrategy = preferences.pitchTier.draggingStrategy;
-		my pitchTier.units = preferences.pitchTier.units;
 		double maximumPitchValue = RealTier_getMaximumValue (ana -> pitch);
-		if (my pitchTier.units == kManipulationEditor_pitchUnits_HERTZ) {
-			my pitchTier.minimum = 25.0;
+		if (my p_pitch_units == kManipulationEditor_pitchUnits_HERTZ) {
+			my p_pitch_minimum = 25.0;
 			my pitchTier.minPeriodic = 50.0;
-			my pitchTier.maximum = maximumPitchValue;
-			my pitchTier.cursor = my pitchTier.maximum * 0.8;
-			my pitchTier.maximum *= 1.2;
+			my p_pitch_maximum = maximumPitchValue;
+			my pitchTier.cursor = my p_pitch_maximum * 0.8;
+			my p_pitch_maximum *= 1.2;
 		} else {
-			my pitchTier.minimum = -24.0;
+			my p_pitch_minimum = -24.0;
 			my pitchTier.minPeriodic = -12.0;
-			my pitchTier.maximum = NUMdefined (maximumPitchValue) ? NUMhertzToSemitones (maximumPitchValue) : NUMundefined;
-			my pitchTier.cursor = my pitchTier.maximum - 4.0;
-			my pitchTier.maximum += 3.0;
+			my p_pitch_maximum = NUMdefined (maximumPitchValue) ? NUMhertzToSemitones (maximumPitchValue) : NUMundefined;
+			my pitchTier.cursor = my p_pitch_maximum - 4.0;
+			my p_pitch_maximum += 3.0;
 		}
-		if (my pitchTier.maximum == NUMundefined || my pitchTier.maximum < preferences.pitchTier.maximum) my pitchTier.maximum = preferences.pitchTier.maximum;
+		if (my p_pitch_maximum == NUMundefined || my p_pitch_maximum < my pref_pitch_maximum ())
+			my p_pitch_maximum = my pref_pitch_maximum ();
 
 		double minimumDurationValue = ana -> duration ? RealTier_getMinimumValue (ana -> duration) : NUMundefined;
-		my duration.minimum = NUMdefined (minimumDurationValue) ? minimumDurationValue : 1.0;
-		if (preferences.duration.minimum > 1) preferences.duration.minimum = 0.25;
-		if (my duration.minimum > preferences.duration.minimum) my duration.minimum = preferences.duration.minimum;
+		my p_duration_minimum = NUMdefined (minimumDurationValue) ? minimumDurationValue : 1.0;
+		if (my pref_duration_minimum () > 1)
+			my pref_duration_minimum () = Melder_atof (my default_duration_minimum ());
+		if (my p_duration_minimum > my pref_duration_minimum ())
+			my p_duration_minimum = my pref_duration_minimum ();
 		double maximumDurationValue = ana -> duration ? RealTier_getMaximumValue (ana -> duration) : NUMundefined;
-		my duration.maximum = NUMdefined (maximumDurationValue) ? maximumDurationValue : 1.0;
-		if (preferences.duration.maximum < 1) preferences.duration.maximum = 3.0;
-		if (preferences.duration.maximum <= preferences.duration.minimum) preferences.duration.minimum = 0.25, preferences.duration.maximum = 3.0;
-		if (my duration.maximum < preferences.duration.maximum) my duration.maximum = preferences.duration.maximum;
+		my p_duration_maximum = NUMdefined (maximumDurationValue) ? maximumDurationValue : 1.0;
+		if (my pref_duration_maximum () < 1)
+			my pref_duration_maximum () = Melder_atof (my default_duration_maximum ());
+		if (my pref_duration_maximum () <= my pref_duration_minimum ()) {
+			my pref_duration_minimum () = Melder_atof (my default_duration_minimum ());
+			my pref_duration_maximum () = Melder_atof (my default_duration_maximum ());
+		}
+		if (my p_duration_maximum < my pref_duration_maximum ())
+			my p_duration_maximum = my pref_duration_maximum ();
 		my duration.cursor = 1.0;
 
 		my synthesisMethod = prefs_synthesisMethod;

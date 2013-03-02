@@ -1,4 +1,4 @@
-/* FunctionEditor_prefs.h
+/* SoundRecorder_enums.h
  *
  * Copyright (C) 2013 Paul Boersma
  *
@@ -17,15 +17,9 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-prefs_begin (FunctionEditor)
-	// new:
-		prefs_add_int  (FunctionEditor, shellWidth,                 1, L"700")
-		prefs_add_int  (FunctionEditor, shellHeight,                1, L"440")
-		prefs_add_bool (FunctionEditor, synchronizedZoomAndScroll,  1, true)
-		prefs_add_bool_with_data   (FunctionEditor, showSelectionViewer, 1, false)
-		prefs_add_double_with_data (FunctionEditor, arrowScrollStep,     1, L"0.05")
-		prefs_add_bool (FunctionEditor, picture_drawSelectionTimes, 1, true)
-		prefs_add_bool (FunctionEditor, picture_drawSelectionHairs, 1, true)
-prefs_end (FunctionEditor)
+enums_begin (kSoundRecorder_meter, 1)
+	enums_add (kSoundRecorder_meter, 1, INTENSITY, L"intensity")
+	enums_add (kSoundRecorder_meter, 2, CENTRE_OF_GRAVITY_VERSUS_INTENSITY, L"centre of gravity ~ intensity")
+enums_end (kSoundRecorder_meter, 2, INTENSITY)
 
-/* End of file FunctionEditor_prefs.h */
+/* End of file SoundRecorder_enums.h */

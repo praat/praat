@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -860,6 +860,23 @@ void _GuiText_exit (void) {
 		forget (me);
 	}
 #elif cocoa
+	@implementation GuiCocoaText {
+		GuiText d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiText me = d_userData;
+		forget (me);
+		Melder_casual ("deleting a label");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiText));
+		d_userData = static_cast <GuiText> (userData);
+	}
+	@end
 #elif win
 #elif mac
 #endif
@@ -909,6 +926,22 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		my d_redo_item = NULL;
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me);
 	#elif cocoa
+		trace ("create");
+		my d_widget = [[GuiCocoaText alloc] init];
+		trace ("position");
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		trace ("set user data");
+		[(GuiCocoaText *) my d_widget   setUserData: me];
+		trace ("set bezeled");
+		//[(NSTextField *) my d_widget   setBezeled: YES];
+		trace ("set bezel style");
+		//[(NSTextField *) my d_widget   setBezelStyle: NSRoundedBezelStyle];
+		trace ("set bordered");
+		//[(NSTextField *) my d_widget   setBordered: YES];
+		trace ("set editable");
+		[(NSTextField *) my d_widget   setEditable: YES];
+		//NSColor *white = [NSColor whiteColor];
+		//[(NSTextField *) my d_widget   setBackgroundColor: white];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmTextWidgetClass, parent -> d_widget, flags & GuiText_SCROLLED ? L"scrolledText" : L"text");
 		_GuiObject_setUserData (my d_widget, me);
@@ -1141,7 +1174,10 @@ wchar_t * structGuiText :: f_getStringAndSelectionPosition (long *first, long *l
 		}
 		return NULL;
 	#elif cocoa
-		return NULL;   // TODO
+		NSString *nsString = [(NSTextField *) d_widget   stringValue];
+		wchar_t *result = Melder_utf8ToWcs ([nsString UTF8String]);
+		trace ("string %ls", result);
+		return result;   // TODO
 	#elif win
 		long length = NativeText_getLength (d_widget);
 		wchar_t *result = Melder_malloc_f (wchar_t, length + 1);
@@ -1472,6 +1508,8 @@ void structGuiText :: f_setString (const wchar_t *text) {
 			gtk_text_buffer_insert_interactive (textBuffer, & start, textUtf8, strlen (textUtf8), gtk_text_view_get_editable (GTK_TEXT_VIEW (d_widget)));
 		}
 	#elif cocoa
+		trace ("title");
+		[(NSTextField *) d_widget   setStringValue: (NSString *) Melder_peekWcsToCfstring (text)];
 	#elif win
 		const wchar_t *from;
 		wchar_t *winText = Melder_malloc_f (wchar_t, 2 * wcslen (text) + 1), *to;   /* All new lines plus one null byte. */

@@ -2,7 +2,7 @@
 #define _TextEditor_h_
 /* TextEditor.h
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ Thing_define (TextEditor, Editor) {
 		structMelderFile file;
 		GuiText textWidget;
 		UiForm openDialog, saveDialog, printDialog, findDialog;
-		int dirty, fontSize;
+		int dirty;
 		GuiDialog dirtyNewDialog, dirtyOpenDialog, dirtyCloseDialog;
 		GuiMenuItem fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
 	// functions:
@@ -42,6 +42,8 @@ Thing_define (TextEditor, Editor) {
 	// new methods:
 		virtual bool v_fileBased () { return true; };   // if true, have New, Open..., Save; if false, have Clear
 		virtual void v_clear () { }
+	// preferences:
+		#include "TextEditor_prefs.h"
 };
 
 TextEditor TextEditor_create (
@@ -49,8 +51,6 @@ TextEditor TextEditor_create (
 );
 
 void TextEditor_showOpen (TextEditor me);
-
-void TextEditor_prefs (void);
 
 /* End of file TextEditor.h */
 #endif

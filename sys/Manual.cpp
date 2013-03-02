@@ -185,9 +185,9 @@ void structManual :: v_draw () {
 			wcsequ (page -> author, L"ppgb") ? L"Paul Boersma" :
 			wcsequ (page -> author, L"djmw") ? L"David Weenink" : page -> author,
 			date % 100, month [imonth], date / 10000);
-		HyperPage_any (this, L"", font, fontSize, 0, 0.0,
+		HyperPage_any (this, L"", p_font, p_fontSize, 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (this, signature, font, fontSize, Graphics_ITALIC, 0.0,
+		HyperPage_any (this, signature, p_font, p_fontSize, Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }

@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 	#include <Gestalt.h>
 	#include "macport_off.h"
 #endif
-#if defined (UNIX) || defined __MWERKS__
+#if defined (UNIX)
 	#include <unistd.h>
 #endif
 
@@ -73,21 +73,21 @@ static structMelderDir homeDir = { { 0 } };
 extern structMelderDir praatDir;
 structMelderDir praatDir = { { 0 } };
 /*
- * prefs5File: preferences file.
+ * prefsFile: preferences file.
  *    Unix:   /u/miep/.myProg-dir/prefs5
- *    Windows 2000/XP/Vista:   \\myserver\myshare\Miep\MyProg\Preferences5.ini
+ *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Preferences5.ini
  *                       or:   C:\Documents and settings\Miep\MyProg\Preferences5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Prefs5
  */
-static structMelderFile prefs4File = { 0 }, prefs5File = { 0 };
+static structMelderFile prefsFile = { 0 };
 /*
- * buttons5File: buttons file.
+ * buttonsFile: buttons file.
  *    Unix:   /u/miep/.myProg-dir/buttons
  *    Windows XP/Vista/7:   \\myserver\myshare\Miep\MyProg\Buttons5.ini
  *                    or:   C:\Documents and settings\Miep\MyProg\Buttons5.ini
  *    Mac X:   /Users/Miep/Library/Preferences/MyProg Prefs/Buttons5
  */
-static structMelderFile buttons4File = { 0 }, buttons5File = { 0 };
+static structMelderFile buttonsFile = { 0 };
 #if defined (UNIX)
 	static structMelderFile pidFile = { 0 };   /* Like /u/miep/.myProg-dir/pid */
 	static structMelderFile messageFile = { 0 };   /* Like /u/miep/.myProg-dir/message */
@@ -594,8 +594,8 @@ static void praat_exit (int exit_code) {
 
 	trace ("save the preferences");
 	Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
-	Preferences_write (& prefs5File);
-	MelderFile_setMacTypeAndCreator (& prefs5File, 'pref', 'PpgB');
+	Preferences_write (& prefsFile);
+	MelderFile_setMacTypeAndCreator (& prefsFile, 'pref', 'PpgB');
 
 	trace ("save the script buttons");
 	if (! theCurrentPraatApplication -> batch) {
@@ -607,7 +607,7 @@ static void praat_exit (int exit_code) {
 			MelderString_append (& buffer, L"# and the buttons that you hid or showed.\n\n");
 			praat_saveMenuCommands (& buffer);
 			praat_saveAddedActions (& buffer);
-			MelderFile_writeText (& buttons5File, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
+			MelderFile_writeText (& buttonsFile, buffer.string, kMelder_textOutputEncoding_ASCII_THEN_UTF16);
 		} catch (MelderError) {
 			Melder_clearError ();
 		}
@@ -973,13 +973,13 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	 */
 	praat_statistics_prefs ();   // Number of sessions, memory used...
 	praat_picture_prefs ();   // Font...
-	Editor_prefs ();   // Erase picture first...
-	HyperPage_prefs ();   // Font...
+	structEditor     :: f_preferences ();   // Erase picture first...
+	structHyperPage  :: f_preferences ();   // Font...
 	Site_prefs ();   // Print command...
 	Melder_audio_prefs ();   // Use speaker (Sun & HP), output gain (HP)...
 	Melder_textEncoding_prefs ();
 	Printer_prefs ();   // Paper size, printer command...
-	TextEditor_prefs ();   // Font size...
+	structTextEditor :: f_preferences ();   // Font size...
 
 	unsigned int iarg_batchName = 1;
 	#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
@@ -1097,25 +1097,19 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		MelderDir_getSubdir (& prefParentDir, name, & praatDir);
 		#if defined (UNIX)
-			MelderDir_getFile (& praatDir, L"prefs", & prefs4File);
-			MelderDir_getFile (& praatDir, L"prefs5", & prefs5File);
-			MelderDir_getFile (& praatDir, L"buttons", & buttons4File);
-			MelderDir_getFile (& praatDir, L"buttons5", & buttons5File);
+			MelderDir_getFile (& praatDir, L"prefs5", & prefsFile);
+			MelderDir_getFile (& praatDir, L"buttons5", & buttonsFile);
 			MelderDir_getFile (& praatDir, L"pid", & pidFile);
 			MelderDir_getFile (& praatDir, L"message", & messageFile);
 			MelderDir_getFile (& praatDir, L"tracing", & tracingFile);
 		#elif defined (_WIN32)
-			MelderDir_getFile (& praatDir, L"Preferences.ini", & prefs4File);
-			MelderDir_getFile (& praatDir, L"Preferences5.ini", & prefs5File);
-			MelderDir_getFile (& praatDir, L"Buttons.ini", & buttons4File);
-			MelderDir_getFile (& praatDir, L"Buttons5.ini", & buttons5File);
+			MelderDir_getFile (& praatDir, L"Preferences5.ini", & prefsFile);
+			MelderDir_getFile (& praatDir, L"Buttons5.ini", & buttonsFile);
 			MelderDir_getFile (& praatDir, L"Message.txt", & messageFile);
 			MelderDir_getFile (& praatDir, L"Tracing.txt", & tracingFile);
 		#elif defined (macintosh)
-			MelderDir_getFile (& praatDir, L"Prefs", & prefs4File);   /* We invite trouble if we call it Preferences! */
-			MelderDir_getFile (& praatDir, L"Prefs5", & prefs5File);
-			MelderDir_getFile (& praatDir, L"Buttons", & buttons4File);
-			MelderDir_getFile (& praatDir, L"Buttons5", & buttons5File);
+			MelderDir_getFile (& praatDir, L"Prefs5", & prefsFile);
+			MelderDir_getFile (& praatDir, L"Buttons5", & buttonsFile);
 			MelderDir_getFile (& praatDir, L"Tracing.txt", & tracingFile);
 		#endif
 		Melder_tracingToFile (& tracingFile);
@@ -1255,7 +1249,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			}
 		#endif
 		#ifdef UNIX
-			Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
+			Preferences_read (& prefsFile);
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
 			trace ("initializing the Gui late");
@@ -1344,7 +1338,7 @@ void praat_run (void) {
 	 * and those that regard the start of a new session as a meaningful event
 	 * (namely, the session counter and the cross-session memory counter).
 	 */
-	Preferences_read (MelderFile_readable (& prefs5File) ? & prefs5File : & prefs4File);
+	Preferences_read (& prefsFile);
 	if (! praatP.dontUsePictureWindow) praat_picture_prefsChanged ();
 	praat_statistics_prefsChanged ();
 			//Melder_error3 (L"batch name <<", theCurrentPraatApplication -> batchName.string, L">>");
@@ -1447,13 +1441,9 @@ void praat_run (void) {
 		{ // scope
 			autostring buttons;
 			try {
-				buttons.reset (MelderFile_readText (& buttons5File));
+				buttons.reset (MelderFile_readText (& buttonsFile));
 			} catch (MelderError) {
-				try {
-					buttons.reset (MelderFile_readText (& buttons4File));
-				} catch (MelderError) {
-					Melder_clearError ();
-				}
+				Melder_clearError ();
 			}
 			if (buttons.peek()) {
 				wchar_t *line = buttons.peek();
