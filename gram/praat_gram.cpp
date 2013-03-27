@@ -141,6 +141,30 @@ DO
 	}
 END
 
+FORM (Network_nodes_downto_Table, L"Network: Nodes down to Table", 0)
+	INTEGER (L"From node number", L"1")
+	INTEGER (L"To node number", L"1000")
+	BOOLEAN (L"Include node numbers", true)
+	BOOLEAN (L"Include x", false)
+	BOOLEAN (L"Include y", false)
+	INTEGER (L"Position decimals", L"6")
+	BOOLEAN (L"Include clamped", false)
+	BOOLEAN (L"Include activity", true)
+	BOOLEAN (L"Include excitation", false)
+	INTEGER (L"Activity decimals", L"6")
+	OK
+DO
+	LOOP {
+		iam (Network);
+		autoTable thee = my f_nodes_downto_Table (GET_INTEGER (L"From node number"), GET_INTEGER (L"To node number"),
+			GET_INTEGER (L"Include node numbers"),
+			GET_INTEGER (L"Include x"), GET_INTEGER (L"Include y"), GET_INTEGER (L"Position decimals"),
+			GET_INTEGER (L"Include clamped"),
+			GET_INTEGER (L"Include activity"), GET_INTEGER (L"Include excitation"), GET_INTEGER (L"Activity decimals"));
+		praat_new (thee.transfer(), my name);
+	}
+END
+
 FORM (Network_draw, L"Draw Network", 0)
 	BOOLEAN (L"Colour", 1)
 	OK
@@ -170,6 +194,29 @@ DO
 	Melder_information (Melder_double (weight));
 END
 
+FORM (Network_listNodes, L"Network: List nodes", 0)
+	INTEGER (L"From node number", L"1")
+	INTEGER (L"To node number", L"1000")
+	BOOLEAN (L"Include node numbers", true)
+	BOOLEAN (L"Include x", false)
+	BOOLEAN (L"Include y", false)
+	INTEGER (L"Position decimals", L"6")
+	BOOLEAN (L"Include clamped", false)
+	BOOLEAN (L"Include activity", true)
+	BOOLEAN (L"Include excitation", false)
+	INTEGER (L"Activity decimals", L"6")
+	OK
+DO
+	LOOP {
+		iam (Network);
+		my f_listNodes (GET_INTEGER (L"From node number"), GET_INTEGER (L"To node number"),
+			GET_INTEGER (L"Include node numbers"),
+			GET_INTEGER (L"Include x"), GET_INTEGER (L"Include y"), GET_INTEGER (L"Position decimals"),
+			GET_INTEGER (L"Include clamped"),
+			GET_INTEGER (L"Include activity"), GET_INTEGER (L"Include excitation"), GET_INTEGER (L"Activity decimals"));
+	}
+END
+
 FORM (Network_normalizeActivities, L"Network: Normalize activities", 0)
 	INTEGER (L"From node", L"1")
 	INTEGER (L"To node", L"0 (= all)")
@@ -178,6 +225,22 @@ DO
 	LOOP {
 		iam_LOOP (Network);
 		me -> f_normalizeActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"));
+		praat_dataChanged (me);
+	}
+END
+
+FORM (Network_normalizeWeights, L"Network: Normalize weights", 0)
+	INTEGER (L"From node", L"1")
+	INTEGER (L"To node", L"0 (= all)")
+	INTEGER (L"From incoming node", L"1")
+	INTEGER (L"To incoming node", L"10")
+	REAL (L"New sum", L"1.0")
+	OK
+DO
+	LOOP {
+		iam_LOOP (Network);
+		me -> f_normalizeWeights (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"),
+			GET_INTEGER (L"From incoming node"), GET_INTEGER (L"To incoming node"), GET_REAL (L"New sum"));
 		praat_dataChanged (me);
 	}
 END
@@ -1497,27 +1560,31 @@ void praat_uvafon_gram_init (void) {
 		praat_addMenuCommand (L"Objects", L"New", L"Create rectangular Network (vertical)...", 0, 1, DO_Create_rectangular_Network_vertical);
 
 	praat_addAction1 (classNetwork, 0, L"Draw...", 0, 0, DO_Network_draw);
+	praat_addAction1 (classNetwork, 1, L"Tabulate -", 0, 0, 0);
+		praat_addAction1 (classNetwork, 1, L"List nodes...", 0, 1, DO_Network_listNodes);
+		praat_addAction1 (classNetwork, 1, L"Nodes down to table...", 0, 1, DO_Network_nodes_downto_Table);
 	praat_addAction1 (classNetwork, 0, L"Query -", 0, 0, 0);
-	praat_addAction1 (classNetwork, 1, L"Get activity...", 0, 1, DO_Network_getActivity);
-	praat_addAction1 (classNetwork, 1, L"Get weight...", 0, 1, DO_Network_getWeight);
+		praat_addAction1 (classNetwork, 1, L"Get activity...", 0, 1, DO_Network_getActivity);
+		praat_addAction1 (classNetwork, 1, L"Get weight...", 0, 1, DO_Network_getWeight);
 	praat_addAction1 (classNetwork, 0, L"Modify -", 0, 0, 0);
-	praat_addAction1 (classNetwork, 0, L"Add node...", 0, 1, DO_Network_addNode);
-	praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 1, DO_Network_addConnection);
-	praat_addAction1 (classNetwork, 1, L"-- activity --", 0, 1, 0);
-	praat_addAction1 (classNetwork, 0, L"Set activity...", 0, 1, DO_Network_setActivity);
-	praat_addAction1 (classNetwork, 0, L"Set clamping...", 0, 1, DO_Network_setClamping);
-	praat_addAction1 (classNetwork, 0, L"Zero activities...", 0, 1, DO_Network_zeroActivities);
-	praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 1, DO_Network_normalizeActivities);
-	praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 1, DO_Network_spreadActivities);
-	praat_addAction1 (classNetwork, 1, L"Set activity clipping rule...", 0, 1, DO_Network_setActivityClippingRule);
-	praat_addAction1 (classNetwork, 1, L"Set activity leak...", 0, 1, DO_Network_setActivityLeak);
-	praat_addAction1 (classNetwork, 1, L"Set shunting...", 0, 1, DO_Network_setShunting);
-	praat_addAction1 (classNetwork, 1, L"-- weight --", 0, 1, 0);
-	praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 1, DO_Network_setWeight);
-	praat_addAction1 (classNetwork, 0, L"Update weights", 0, 1, DO_Network_updateWeights);
-	praat_addAction1 (classNetwork, 1, L"Set instar...", 0, 1, DO_Network_setInstar);
-	praat_addAction1 (classNetwork, 1, L"Set outstar...", 0, 1, DO_Network_setOutstar);
-	praat_addAction1 (classNetwork, 1, L"Set weight leak...", 0, 1, DO_Network_setWeightLeak);
+		praat_addAction1 (classNetwork, 0, L"Add node...", 0, 1, DO_Network_addNode);
+		praat_addAction1 (classNetwork, 0, L"Add connection...", 0, 1, DO_Network_addConnection);
+		praat_addAction1 (classNetwork, 1, L"-- activity --", 0, 1, 0);
+		praat_addAction1 (classNetwork, 0, L"Set activity...", 0, 1, DO_Network_setActivity);
+		praat_addAction1 (classNetwork, 0, L"Set clamping...", 0, 1, DO_Network_setClamping);
+		praat_addAction1 (classNetwork, 0, L"Zero activities...", 0, 1, DO_Network_zeroActivities);
+		praat_addAction1 (classNetwork, 0, L"Normalize activities...", 0, 1, DO_Network_normalizeActivities);
+		praat_addAction1 (classNetwork, 0, L"Spread activities...", 0, 1, DO_Network_spreadActivities);
+		praat_addAction1 (classNetwork, 1, L"Set activity clipping rule...", 0, 1, DO_Network_setActivityClippingRule);
+		praat_addAction1 (classNetwork, 1, L"Set activity leak...", 0, 1, DO_Network_setActivityLeak);
+		praat_addAction1 (classNetwork, 1, L"Set shunting...", 0, 1, DO_Network_setShunting);
+		praat_addAction1 (classNetwork, 1, L"-- weight --", 0, 1, 0);
+		praat_addAction1 (classNetwork, 0, L"Set weight...", 0, 1, DO_Network_setWeight);
+		praat_addAction1 (classNetwork, 0, L"Update weights", 0, 1, DO_Network_updateWeights);
+		praat_addAction1 (classNetwork, 0, L"Normalize weights...", 0, 1, DO_Network_normalizeWeights);
+		praat_addAction1 (classNetwork, 1, L"Set instar...", 0, 1, DO_Network_setInstar);
+		praat_addAction1 (classNetwork, 1, L"Set outstar...", 0, 1, DO_Network_setOutstar);
+		praat_addAction1 (classNetwork, 1, L"Set weight leak...", 0, 1, DO_Network_setWeightLeak);
 }
 
 /* End of file praat_gram.cpp */

@@ -313,7 +313,7 @@ NORMAL (L"For most of the codes, the first letter tells you the most similar let
 	"The code for \\fh is an abbreviation for %fishhook.")
 MAN_END
 
-MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20111018)
+MAN_BEGIN (L"Phonetic symbols: diacritics", L"ppgb", 20130327)
 NORMAL (L"To draw phonetic diacritical symbols in the @@Picture window@ or in the @TextGridEditor, "
 	"make sure that you have installed the Charis SIL and/or Doulos SIL font, for instance from www.sil.org or from www.praat.org. "
 	"You can either type the symbols directly (if your computer has an input method for them), or use the backslash sequences in the following list.")
@@ -367,6 +367,9 @@ LIST_ITEM (L"t\\^n t\\bs\\^ n, p\\^m p\\bs\\^ m, k\\^N k\\bs\\^ N nasal release"
 LIST_ITEM (L"t\\^s t\\bs\\^ s, k\\^x k\\bs\\^ x, p\\^f p\\bs\\^ f affrication")
 LIST_ITEM (L"\\^y \\bs\\^ y (palatalization in a deprecated American notation)")
 LIST_ITEM (L"a\\_ub a\\bs\\_ ub undertie (liaison, if spaces don't mean breaks in your transcription)")
+LIST_ITEM (L"\\ts \\bsts t\\--s ligature")
+LIST_ITEM (L"\\tS \\bstS tesh ligature")
+LIST_ITEM (L"p\\ap p\\bsap apostrophe (for ejectives)")
 MAN_END
 
 MAN_BEGIN (L"Phonetic symbols: vowels", L"ppgb", 20090804)

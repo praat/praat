@@ -598,6 +598,10 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'i', 'r', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_SQUAT_REVERSED_ESH },
 { '_', 'u', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_UNDERTIE },
 
+{ 't', 's', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TS_DIGRAPH },
+{ 't', 'S', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_LATIN_SMALL_LETTER_TESH_DIGRAPH },
+{ 'a', 'p', 2, { "",                444, 500, 500, 500,  556, 611,  444, 444, 500, 444 }, '?', '?', '?', '?', UNICODE_MODIFIER_LETTER_APOSTROPHE },
+
 /* Dingbats. */
 /*fir  sec  al    ps                tim  b    i    bi    hel  b     pal  b    i    bi     xwin win  mac   ps  unicode decomp  */
 { 'p', 'f', 3, { "/fingerright",   1000, 0,   0,   0,   1000, 0,   1000, 0,   0,   0   },  43,  70,  43,  43, UNICODE_WHITE_RIGHT_POINTING_INDEX }, /* pointing finger */

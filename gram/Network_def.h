@@ -1,6 +1,6 @@
 /* Network_def.h
  *
- * Copyright (C) 2009-2011,2012 Paul Boersma
+ * Copyright (C) 2009-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,12 +116,23 @@ oo_DEFINE_CLASS (Network, Data)
 			void f_normalizeActivities (long nodeMin, long nodeMax);
 			void f_spreadActivities (long numberOfSteps);
 			void f_updateWeights ();
+			void f_normalizeWeights (long nodeMin, long nodeMax, long nodeFromMin, long nodeFromMax, double newSum);
 			void f_setInstar (double instar);
 			void f_setOutstar (double outstar);
 			void f_setWeightLeak (double weightLeak);
 			void f_setActivityLeak (double activityLeak);
 			void f_setShunting (double shunting);
 			void f_setActivityClippingRule (enum kNetwork_activityClippingRule activityClippingRule);
+			Table f_nodes_downto_Table (long fromNodeNumber, long toNodeNumber,
+				bool includeNodeNumbers,
+				bool includeX, bool includeY, int positionDecimals,
+				bool includeClamped,
+				bool includeActivity, bool includeExcitation, int activityDecimals);
+			void f_listNodes (long fromNodeNumber, long toNodeNumber,
+				bool includeNodeNumbers,
+				bool includeX, bool includeY, int positionDecimals,
+				bool includeClamped,
+				bool includeActivity, bool includeExcitation, int activityDecimals);
 
 		// overridden methods:
 			virtual void v_info ();

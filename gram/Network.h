@@ -2,7 +2,7 @@
 #define _Network_h_
 /* Network.h
  *
- * Copyright (C) 2009-2012 Paul Boersma
+ * Copyright (C) 2009-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +19,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Data.h"
-#include "Graphics.h"
+#include "Table.h"
 
 #include "Network_enums.h"
 

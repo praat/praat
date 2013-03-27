@@ -1,6 +1,6 @@
 /* Network.cpp
  *
- * Copyright (C) 2009-2012 Paul Boersma
+ * Copyright (C) 2009-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,6 +251,32 @@ void structNetwork :: f_updateWeights () {
 	}
 }
 
+void structNetwork :: f_normalizeWeights (long nodeMin, long nodeMax, long nodeFromMin, long nodeFromMax, double newSum) {
+	if (d_numberOfNodes < 1) return;
+	if (nodeMax == 0) { nodeMin = 1; nodeMax = d_numberOfNodes; }
+	if (nodeMin < 1) nodeMin = 1;
+	if (nodeMax > d_numberOfNodes) nodeMax = d_numberOfNodes;
+	if (nodeMax < nodeMin) return;
+	for (long inode = nodeMin; inode <= nodeMax; inode ++) {
+		double sum = 0.0;
+		for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
+			NetworkConnection connection = & d_connections [iconn];
+			if (connection -> nodeTo == inode && connection -> nodeFrom >= nodeFromMin && connection -> nodeFrom <= nodeFromMax) {
+				sum += connection -> weight;
+			}
+		}
+		if (sum != 0.0) {
+			double factor = newSum / sum;
+			for (long iconn = 1; iconn <= d_numberOfConnections; iconn ++) {
+				NetworkConnection connection = & d_connections [iconn];
+				if (connection -> nodeTo == inode && connection -> nodeFrom >= nodeFromMin && connection -> nodeFrom <= nodeFromMax) {
+					connection -> weight *= factor;
+				}
+			}
+		}
+	}
+}
+
 Network Network_create_rectangle (double spreadingRate, enum kNetwork_activityClippingRule activityClippingRule,
 	double minimumActivity, double maximumActivity, double activityLeak,
 	double learningRate, double minimumWeight, double maximumWeight, double weightLeak,
@@ -454,6 +480,59 @@ void structNetwork :: f_setShunting (double shunting) {
 void structNetwork :: f_setActivityClippingRule (enum kNetwork_activityClippingRule activityClippingRule) {
 	d_activityClippingRule = activityClippingRule;
 	f_zeroActivities (0, 0);
+}
+
+Table structNetwork :: f_nodes_downto_Table (long fromNodeNumber, long toNodeNumber,
+	bool includeNodeNumbers,
+	bool includeX, bool includeY, int positionDecimals,
+	bool includeClamped,
+	bool includeActivity, bool includeExcitation, int activityDecimals)
+{
+	try {
+		if (fromNodeNumber < 1) fromNodeNumber = 1;
+		if (toNodeNumber > d_numberOfNodes) toNodeNumber = d_numberOfNodes;
+		if (fromNodeNumber > toNodeNumber)
+			fromNodeNumber = 1, toNodeNumber = d_numberOfNodes;
+		long numberOfNodes = toNodeNumber - fromNodeNumber + 1;
+		Melder_assert (numberOfNodes >= 1);
+		autoTable thee = Table_createWithoutColumnNames (numberOfNodes,
+			includeNodeNumbers + includeX + includeY + includeClamped + includeActivity + includeExcitation);
+		long icol = 0;
+		if (includeNodeNumbers) Table_setColumnLabel (thee.peek(), ++ icol, L"node");
+		if (includeX)           Table_setColumnLabel (thee.peek(), ++ icol, L"x");
+		if (includeY)           Table_setColumnLabel (thee.peek(), ++ icol, L"y");
+		if (includeClamped)     Table_setColumnLabel (thee.peek(), ++ icol, L"clamped");
+		if (includeActivity)    Table_setColumnLabel (thee.peek(), ++ icol, L"activity");
+		if (includeExcitation)  Table_setColumnLabel (thee.peek(), ++ icol, L"excitation");
+		for (long inode = fromNodeNumber; inode <= toNodeNumber; inode ++) {
+			NetworkNode node = & d_nodes [inode];
+			icol = 0;
+			if (includeNodeNumbers) Table_setNumericValue (thee.peek(), inode, ++ icol, inode);
+			if (includeX)           Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> x, positionDecimals));
+			if (includeY)           Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> y, positionDecimals));
+			if (includeClamped)     Table_setNumericValue (thee.peek(), inode, ++ icol, node -> clamped);
+			if (includeActivity)    Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> activity,   activityDecimals));
+			if (includeExcitation)  Table_setStringValue  (thee.peek(), inode, ++ icol, Melder_fixed (node -> excitation, activityDecimals));
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": not converted to Table.");
+	}
+}
+
+void structNetwork :: f_listNodes (long fromNodeNumber, long toNodeNumber,
+	bool includeNodeNumbers,
+	bool includeX, bool includeY, int positionDecimals,
+	bool includeClamped,
+	bool includeActivity, bool includeExcitation, int activityDecimals)
+{
+	try {
+		autoTable table = f_nodes_downto_Table (fromNodeNumber, toNodeNumber, includeNodeNumbers,
+			includeX, includeY, positionDecimals, includeClamped, includeActivity, includeExcitation, activityDecimals);
+		Table_list (table.peek(), false);
+	} catch (MelderError) {
+		Melder_throw (this, ": not listed.");
+	}
 }
 
 /* End of file Network.cpp */

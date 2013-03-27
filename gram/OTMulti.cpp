@@ -1,6 +1,6 @@
 /* OTMulti.cpp
  *
- * Copyright (C) 2005-2012 Paul Boersma
+ * Copyright (C) 2005-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -669,7 +669,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 				numberOfUp ++;
 			}
 		}
-		if (true || numberOfUp > 0) {
+		if (/*true ||*/ numberOfUp > 0) {
 			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 				OTConstraint constraint = & my constraints [icons];
 				double constraintStep = step * constraint -> plasticity;

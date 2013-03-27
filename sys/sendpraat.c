@@ -1,16 +1,16 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 6 September 2011 */
+/* 19 March 2013 */
 
 /*
- * The sendpraat subroutine (Unix with X11 or GTK; Windows; Macintosh) sends a message
+ * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
  * to a running program that uses the Praat shell.
  * The sendpraat program does the same from a Unix command shell,
- * from a Windows or DOS console, or from a MacOS X terminal window.
+ * from a Windows console, or from a MacOS X terminal window.
  *
  * Newer versions of sendpraat may be found at http://www.praat.org or http://www.fon.hum.uva.nl/praat/sendpraat.html
  *
- * On Windows NT, 2000, and XP, this version works only with Praat version 4.3.28 (November 2005) or newer.
+ * On Windows, this version works only with Praat version 4.3.28 (November 2005) or newer.
  * On Macintosh, this version works only with Praat version 3.8.75 (October 2000) or newer.
  * On Unix with GTK, this version works only with Praat version 5.1.33 (May 2010) or newer.
  * Newer versions of Praat may respond faster or more reliably.
@@ -548,9 +548,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 #if 0
 /*
  * To compile on MacOS X:
-cc -o sendpraat -framework CoreServices -framework ApplicationServices -I/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c
- * or else
-cc -o sendpraat -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c
+cc -o sendpraat -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c -Dmacintosh -DuseCarbon=1
  *
  * To compile on Linux:
 cc -std=gnu99 -o sendpraat -DUNIX `pkg-config --cflags --libs gtk+-2.0` sendpraat.c

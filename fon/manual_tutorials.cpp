@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130302)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130327)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.43# (27 March 2013)")
+LIST_ITEM (L"\\bu Read and write stereo Kay sound files.")
+LIST_ITEM (L"\\bu Phonetic symbols \\ts, \\tS and \\ap.")
+LIST_ITEM (L"\\bu Network: ##Normalize weights...#, ##List weights...#, ##Weights down to Table...#.")
 NORMAL (L"##5.3.42# (2 March 2013)")
 LIST_ITEM (L"\\bu Repaired some minor bugs regarding synchronization between multiple windows.")
 NORMAL (L"##5.3.41# (9 February 2013)")
