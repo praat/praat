@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +37,11 @@
 	#include "machine.h"
 	#ifdef macintosh
 		#include "macport_on.h"
-		//#include <Events.h>
-		#include <Dialogs.h>
-		#include <MacErrors.h>
+        #if useCarbon
+            #include <Carbon/Carbon.h>
+        #else
+            #include <AudioToolbox/AudioToolbox.h>
+        #endif
 		#include "macport_off.h"
 	#endif
 	#include "Gui.h"
@@ -741,7 +743,7 @@ void Melder_beep (void) {
 		#if useCarbon
 			SysBeep (0);
 		#else
-			//AudioServicesPlayAlertSound (kUserPreferredAlert);
+            AudioServicesPlayAlertSound (kSystemSoundID_UserPreferredAlert);
 		#endif
 	#else
 		fprintf (stderr, "\a");
@@ -773,7 +775,6 @@ int Melder_assert_ (const char *condition, const char *fileName, int lineNumber)
 
 #if defined (macintosh)
 static void mac_message (int macAlertType, const wchar_t *messageW) {
-	DialogRef dialog;
 	static UniChar messageU [4000];
 	int messageLength = wcslen (messageW);
 	int j = 0;
@@ -788,15 +789,17 @@ static void mac_message (int macAlertType, const wchar_t *messageW) {
 		}
 	}
 	#if useCarbon
+        DialogRef dialog;
 		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
 		CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
 		CFRelease (messageCF);
 		RunStandardAlert (dialog, NULL, NULL);
 	#else
 		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
-		//CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
-		CFRelease (messageCF);
-		//RunStandardAlert (dialog, NULL, NULL);
+        CFOptionFlags cfRes;
+        CFUserNotificationDisplayAlert(0, macAlertType, NULL, NULL, NULL,
+                                       CFSTR("Error"), messageCF,  CFSTR("OK"),  NULL,  NULL, &cfRes);
+        CFRelease (messageCF);
 	#endif
 }
 #endif
@@ -816,7 +819,7 @@ static void gui_fatal (const wchar_t *message) {
 			mac_message (kAlertStopAlert, message);
 			SysError (11);
 		#else
-			mac_message (kAlertStopAlert, message);
+			mac_message (kCFUserNotificationStopAlertLevel, message);
 			SysError (11);
 		#endif
 	#elif defined (_WIN32)
@@ -842,8 +845,7 @@ static void gui_error (const wchar_t *message) {
 			mac_message (kAlertStopAlert, message);
 			XmUpdateDisplay (0);
 		#else
-			mac_message (kAlertStopAlert, message);
-			// TODO
+			mac_message (kCFUserNotificationStopAlertLevel, message);
 		#endif
 	#elif defined (_WIN32)
 		MessageBox (NULL, message, L"Message", MB_OK | MB_TOPMOST | MB_ICONEXCLAMATION);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
@@ -861,8 +863,7 @@ static void gui_error (const wchar_t *message) {
 					mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 					XmUpdateDisplay (0);
 				#else
-					mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
-					// TODO
+					mac_message (kCFUserNotificationStopAlertLevel, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				#endif
 			#elif defined (_WIN32)
 				MessageBox (NULL, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
@@ -882,8 +883,7 @@ static void gui_warning (const wchar_t *message) {
 			mac_message (kAlertNoteAlert, message);
 			XmUpdateDisplay (0);
 		#else
-			mac_message (kAlertNoteAlert, message);
-			// TODO
+			mac_message (kCFUserNotificationStopAlertLevel, message);
 		#endif
 	#elif defined (_WIN32)
 		MessageBox (NULL, message, L"Warning", MB_OK | MB_TOPMOST);

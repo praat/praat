@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,23 +82,23 @@ static long lookUpMatchingAction (ClassInfo class1, ClassInfo class2, ClassInfo 
 }
 
 void praat_addAction (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction1 (ClassInfo class1, int n1,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, NULL, 0, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction2 (ClassInfo class1, int n1, ClassInfo class2, int n2,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, NULL, 0, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction3 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 { praat_addAction4 (class1, n1, class2, n2, class3, n3, NULL, 0, title, after, flags, callback); }
 
 void praat_addAction4 (ClassInfo class1, int n1, ClassInfo class2, int n2, ClassInfo class3, int n3, ClassInfo class4, int n4,
-	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar_t *title, const wchar_t *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 {
 	try {
 		int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0, attractive = 0;
@@ -467,7 +467,7 @@ static const wchar_t *objectString (int number) {
 	return number == 1 ? L"object" : L"objects";
 }
 static bool allowExecutionHook (void *closure) {
-	void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (void (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) closure;
+	void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (void (*) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) closure;
 	Melder_assert (sizeof (callback) == sizeof (void *));
 	long numberOfMatchingCallbacks = 0, firstMatchingCallback = 0;
 	for (long i = 1; i <= theNumberOfActions; i ++) {
@@ -507,17 +507,18 @@ static void do_menu (I, bool modified) {
  *	Call that callback!
  *	Catch the error queue for menu commands without dots (...).
  */
-	void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (void (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) void_me;
+	void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (void (*) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) void_me;
 	for (long i = 1; i <= theNumberOfActions; i ++) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
 			if (my title != NULL && ! wcsstr (my title, L"...")) {
-				UiHistory_write (L"\n");
-				UiHistory_write (my title);
+				UiHistory_write (L"\ndo (\"");
+				UiHistory_write_expandQuotes (my title);
+				UiHistory_write (L"\")");
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 			try {
-				callback (NULL, NULL, NULL, my title, modified, NULL);
+				callback (NULL, 0, NULL, NULL, NULL, my title, modified, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -535,7 +536,7 @@ static void do_menu (I, bool modified) {
 				UiHistory_write (L"\"");
 			}
 			try {
-				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL);
+				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, my script, NULL, NULL, false, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -729,7 +730,15 @@ int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interprete
 	long i = 1;
 	while (i <= theNumberOfActions && (! theActions [i]. executable || wcscmp (theActions [i]. title, command))) i ++;
 	if (i > theNumberOfActions) return 0;   /* Not found. */
-	theActions [i]. callback (NULL, arguments, interpreter, command, false, NULL);
+	theActions [i]. callback (NULL, 0, NULL, arguments, interpreter, command, false, NULL);
+	return 1;
+}
+
+int praat_doAction (const wchar_t *command, int narg, Stackel args, Interpreter interpreter) {
+	long i = 1;
+	while (i <= theNumberOfActions && (! theActions [i]. executable || wcscmp (theActions [i]. title, command))) i ++;
+	if (i > theNumberOfActions) return 0;   /* Not found. */
+	theActions [i]. callback (NULL, narg, args, NULL, interpreter, command, false, NULL);
 	return 1;
 }
 

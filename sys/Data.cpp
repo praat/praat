@@ -90,7 +90,7 @@ void Data_writeText (Data me, MelderFile openFile) {
 }
 
 MelderFile Data_createTextFile (Data me, MelderFile file, bool verbose) {
-	autoMelderFile mfile = MelderFile_create (file, L"TEXT", 0, L"txt");
+	autoMelderFile mfile = MelderFile_create (file);
 	#if defined (_WIN32)
 		file -> requiresCRLF = true;
 	#endif
@@ -124,7 +124,6 @@ static void _Data_writeToTextFile (Data me, MelderFile file, bool verbose) {
 			if (file -> filePointer) funlockfile (file -> filePointer);
 		#endif
 		mfile.close ();
-		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
 		#ifndef _WIN32
 			if (file -> filePointer) funlockfile (file -> filePointer);   // the file pointer is NULL before Data_createTextFile() and after mfile.close()
@@ -163,7 +162,7 @@ void Data_writeToBinaryFile (Data me, MelderFile file) {
 	try {
 		if (! Data_canWriteBinary (me))
 			Melder_throw ("Objects of class ", my classInfo -> className, L" cannot be written to a generic binary file.");
-		autoMelderFile mfile = MelderFile_create (file, 0, 0, 0);
+		autoMelderFile mfile = MelderFile_create (file);
 		if (fprintf (file -> filePointer, "ooBinaryFile") < 0)
 			Melder_throw ("Cannot write first bytes of file.");
 		binputw1 (
@@ -173,7 +172,6 @@ void Data_writeToBinaryFile (Data me, MelderFile file) {
 			file -> filePointer);
 		Data_writeBinary (me, file -> filePointer);
 		mfile.close ();
-		MelderFile_setMacTypeAndCreator (file, 'BINA', 0);
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to binary file ", file, ".");
 	}

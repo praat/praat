@@ -47,9 +47,12 @@ struct structPicture {
 	void (*selectionChangedCallback) (struct structPicture *, void *, double, double, double, double);
 	void *selectionChangedClosure;
 	int backgrounding, mouseSelectsInnerViewport;
-	#if gtk
-		bool selectionInProgress;
-		double ixstart, iystart;
+    #if gtk
+        bool selectionInProgress;
+        double ixstart, iystart;
+    #elif cocoa
+        bool selectionInProgress;
+        double ixstart, iystart;
 	#endif
 };
 
@@ -153,6 +156,9 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 // TODO: Paul, deze code is bagger :) En dient door event-model-extremisten te worden veroordeeld.
 // Stefan, zoals gezegd, er zijn goede redenen waarom sommige platforms dit synchroon oplossen;
 // misschien maar splitsen tussen die platforms en platforms die met events kunnen werken.
+
+// On Cocoa this leads to flashing, it definitely needs to be event based..
+
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (Picture);
 	int xstart = event -> x;
@@ -199,6 +205,48 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 			}
 		}
 	}
+#elif cocoa
+    int ix, iy;
+    
+	Graphics_DCtoWC (my selectionGraphics, xstart, ystart, & xWC, & yWC);
+	ix = 1 + floor (xWC * SQUARES / SIDE);
+	iy = SQUARES - floor (yWC * SQUARES / SIDE);
+    //	if (my ixstart < 1 || my ixstart > SQUARES || my iystart < 1 || my iystart > SQUARES) return;
+    
+	if (my selectionInProgress == 0) {
+		if (event->type == BUTTON_PRESS) {
+			my selectionInProgress = 1;
+			my ixstart = ix;
+			my iystart = iy;
+		}
+	} else {
+		int ix1, ix2, iy1, iy2;
+		if (ix < my ixstart) { ix1 = ix; ix2 = my ixstart; }
+		else              { ix1 = my ixstart; ix2 = ix; }
+		if (iy < my iystart) { iy1 = iy; iy2 = my iystart; }
+		else              { iy1 = my iystart; iy2 = iy; }
+		if (my mouseSelectsInnerViewport) {
+			int fontSize = Graphics_inqFontSize (my graphics);
+			double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
+			if (xmargin > ix2 - ix1 + 1) xmargin = ix2 - ix1 + 1;
+			if (ymargin > iy2 - iy1 + 1) ymargin = iy2 - iy1 + 1;
+			Picture_setSelection (me, 0.5 * (ix1 - 1) - xmargin, 0.5 * ix2 + xmargin,
+                                  0.5 * (SQUARES - iy2) - ymargin, 0.5 * (SQUARES + 1 - iy1) + ymargin, NO);
+		} else {
+			Picture_setSelection (me, 0.5 * (ix1 - 1), 0.5 * ix2,
+                                  0.5 * (SQUARES - iy2), 0.5 * (SQUARES + 1 - iy1), NO);
+		}
+        
+		if (event->type == BUTTON_RELEASE) {
+			my selectionInProgress = 0;
+			if (my selectionChangedCallback) {
+				//Melder_casual ("selectionChangedCallback from gui_drawingarea_cb_click");
+				my selectionChangedCallback (me, my selectionChangedClosure,
+                                             my selx1, my selx2, my sely1, my sely2);
+			}
+		}
+	}
+
 #else
 	int ixstart, iystart, ix, iy, oldix = 0, oldiy = 0;
 
@@ -491,7 +539,6 @@ void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int 
 				my selx1, my selx2, my sely1, my sely2, includeFonts, useSilipaPS);
 			Graphics_play ((Graphics) my graphics, ps.peek());
 		}
-		MelderFile_setMacTypeAndCreator (file, 'EPSF', 'vgrd');
 	} catch (MelderError) {
 		Melder_throw ("Picture not written to EPS file ", file);
 	}
@@ -524,12 +571,22 @@ void Picture_setSelection
 {
 	if (my drawingArea) {
 		Melder_assert (my drawingArea -> d_widget);
-		#if gtk
-			long x1, x2, y1, y2;
-			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
-			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
-		#else
+#if gtk
+        long x1, x2, y1, y2;
+        Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+        Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+        gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
+#elif cocoa
+        long x1, x2, y1, y2;
+        Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+        Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+        GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*)my drawingArea -> d_widget;
+//        long height = [drawingArea frame].size.height;
+//        NSRect changedRect = NSMakeRect(x1, height - y2, abs (x2 - x1), abs (y2 - y1));
+//        [drawingArea setNeedsDisplayInRect:changedRect];
+        [drawingArea setNeedsDisplay:YES];
+
+#else
 			drawSelection (me, 0);   // unselect
 		#endif
 	}
@@ -538,12 +595,22 @@ void Picture_setSelection
 	my sely1 = y1NDC;
 	my sely2 = y2NDC;
 	if (my drawingArea) {
-		#if gtk
-			long x1, x2, y1, y2;
-			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
-			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
-		#else
+#if gtk
+        long x1, x2, y1, y2;
+        Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+        Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+        gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
+#elif cocoa
+        long x1, x2, y1, y2;
+        Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
+        Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
+        GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*)my drawingArea -> d_widget;
+//        long height = [drawingArea frame].size.height;
+//        NSRect changedRect = NSMakeRect(x1, height-  y2, abs (x2 - x1), abs (y2 - y1));
+//        [drawingArea setNeedsDisplayInRect:changedRect];
+        [drawingArea setNeedsDisplay:YES];
+
+#else
 			drawSelection (me, 1);   // select
 		#endif
 	}

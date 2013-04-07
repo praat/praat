@@ -1,6 +1,6 @@
 /* melder_audiofiles.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
+ * Copyright (C) 1992-2011,2013 Paul Boersma & David Weenink, 2007 Erez Volk (for FLAC)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,12 @@
 #include "flac_FLAC_stream_encoder.h"
 #include "mp3.h"
 #if defined (macintosh)
-	#include <Resources.h>
+
+    #if useCarbon
+        #include <Carbon/Carbon.h>
+    #else
+    #endif
+
 #endif
 
 /***** WRITING *****/
@@ -186,9 +191,6 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 					Melder_throw ("NIST header not written.");
 				}
 			} break;
-			case Melder_SOUND_DESIGNER_TWO: {
-				Melder_throw ("Cannot yet write Sound Designer II files.");
-			} break;
 			case Melder_FLAC: {
 				try {
 					FLAC__StreamEncoder *encoder = NULL;
@@ -229,25 +231,23 @@ void MelderFile_writeAudioFileTrailer (MelderFile file, int audioFileType, long 
 		binputi1 (0, file -> filePointer);
 }
 
-static const wchar_t *audioFileTypeString [] = { L"none", L"AIFF", L"AIFC", L"WAV", L"NeXT/Sun", L"NIST", L"Sound Designer II", L"FLAC", L"MP3" };
+static const wchar_t *audioFileTypeString [] = { L"none", L"AIFF", L"AIFC", L"WAV", L"NeXT/Sun", L"NIST", L"FLAC", L"MP3" };
 const wchar_t * Melder_audioFileTypeString (int audioFileType) { return audioFileType > Melder_NUMBER_OF_AUDIO_FILE_TYPES ? L"unknown" : audioFileTypeString [audioFileType]; }
 static const wchar_t *macAudioFileType [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
-	= { L"", L"AIFF", L"AIFC", L"WAVE", L"ULAW", L"NIST", L"Sd2f", L"FLAC", L"MP3" };
-const wchar_t * Melder_macAudioFileType (int audioFileType) { return macAudioFileType [audioFileType]; }
+	= { L"", L"AIFF", L"AIFC", L"WAVE", L"ULAW", L"NIST", L"FLAC", L"MP3" };
 static const wchar_t *winAudioFileExtension [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
-	= { L"", L".aiff", L".aifc", L".wav", L".au", L".nist", L".sd2", L".flac", L".mp3" };
-const wchar_t * Melder_winAudioFileExtension (int audioFileType) { return winAudioFileExtension [audioFileType]; }
+	= { L"", L".aiff", L".aifc", L".wav", L".au", L".nist", L".flac", L".mp3" };
 static int defaultAudioFileEncoding16 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { 0, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN,
-	     Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN, Melder_LINEAR_16_BIG_ENDIAN,
+	     Melder_LINEAR_16_BIG_ENDIAN, Melder_LINEAR_16_LITTLE_ENDIAN,
 	     Melder_FLAC_COMPRESSION_16, Melder_MPEG_COMPRESSION_16 };
 static int defaultAudioFileEncoding24 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { 0, Melder_LINEAR_24_BIG_ENDIAN, Melder_LINEAR_24_BIG_ENDIAN, Melder_LINEAR_24_LITTLE_ENDIAN,
-	     Melder_LINEAR_24_BIG_ENDIAN, Melder_LINEAR_24_LITTLE_ENDIAN, Melder_LINEAR_24_BIG_ENDIAN,
+	     Melder_LINEAR_24_BIG_ENDIAN, Melder_LINEAR_24_LITTLE_ENDIAN,
 	     Melder_FLAC_COMPRESSION_24, Melder_MPEG_COMPRESSION_24 };
 static int defaultAudioFileEncoding32 [1+Melder_NUMBER_OF_AUDIO_FILE_TYPES]
 	= { 0, Melder_LINEAR_32_BIG_ENDIAN, Melder_LINEAR_32_BIG_ENDIAN, Melder_LINEAR_32_LITTLE_ENDIAN,
-	     Melder_LINEAR_32_BIG_ENDIAN, Melder_LINEAR_32_LITTLE_ENDIAN, Melder_LINEAR_32_BIG_ENDIAN,
+	     Melder_LINEAR_32_BIG_ENDIAN, Melder_LINEAR_32_LITTLE_ENDIAN,
 	     Melder_FLAC_COMPRESSION_32, Melder_MPEG_COMPRESSION_32 };
 int Melder_defaultAudioFileEncoding (int audioFileType, int numberOfBitsPerSamplePoint) {
 	return
@@ -258,7 +258,7 @@ int Melder_defaultAudioFileEncoding (int audioFileType, int numberOfBitsPerSampl
 
 void MelderFile_writeAudioFile (MelderFile file, int audioFileType, const short *buffer, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
-		autoMelderFile mfile = MelderFile_create (file, macAudioFileType [audioFileType], L"PpgB", winAudioFileExtension [audioFileType]);
+		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint);
 		MelderFile_writeShortToAudio (file, numberOfChannels, defaultAudioFileEncoding16 [audioFileType], buffer, numberOfSamples);
 		MelderFile_writeAudioFileTrailer (file, audioFileType, sampleRate, numberOfSamples, numberOfChannels, numberOfBitsPerSamplePoint);
@@ -626,67 +626,6 @@ static void Melder_checkNistFile (FILE *f, int *numberOfChannels, int *encoding,
 			*encoding = Melder_ALAW;
 	}
 }
-#ifdef macintosh
-static double Melder_getNumberFromStrResource (int resourceID) {
-	Handle han = Get1Resource ('STR ', resourceID);
-	if (! han)
-		Melder_throw ("Resource ", resourceID, " not found.");
-	char *pstring = (char *) (*han);
-	int length = (unsigned char) pstring [0];
-	char string [256];
-	strncpy (string, & pstring [1], length);
-	string [length] = 0;
-	ReleaseResource (han);
-	return atof (string);
-}
-static void MelderFile_checkSoundDesignerTwoFile (MelderFile file, int *numberOfChannels, int *encoding,
-	double *sampleRate, long *startOfData, long *numberOfSamples)
-{
-	int path = -1;
-	try {
-		FSRef fsRef;
-		Melder_fileToMach (file, & fsRef);
-		path = FSOpenResFile (& fsRef, fsRdPerm);   // open resource fork; that's where the header info is
-		if (path == -1)
-			Melder_throw ("Cannot open resource fork.");
-		int sampleSize = 0;
-		try {
-			sampleSize = Melder_getNumberFromStrResource (1000);
-		} catch (MelderError) {
-			Melder_throw ("Sample size not read.");
-		}
-		if (sampleSize < 1 || sampleSize > 4)
-			Melder_throw ("Wrong sample size (", sampleSize, "; should be between 1 and 4).");
-		*encoding =
-			sampleSize == 1 ? Melder_LINEAR_8_SIGNED :
-			sampleSize == 2 ? Melder_LINEAR_16_BIG_ENDIAN :
-			sampleSize == 3 ? Melder_LINEAR_24_BIG_ENDIAN :
-			Melder_LINEAR_32_BIG_ENDIAN;
-		try {
-			*sampleRate = Melder_getNumberFromStrResource (1001);
-		} catch (MelderError) {
-			Melder_throw (L"Sampling frequency not read.");
-		}
-		if (*sampleRate <= 0.0)
-			Melder_throw ("Wrong sampling frequency (", *sampleRate, " Hz).");
-		try {
-			*numberOfChannels = Melder_getNumberFromStrResource (1002);
-		} catch (MelderError) {
-			Melder_throw ("Channel number not read.");
-		}
-		if (*numberOfChannels != 1 && *numberOfChannels != 2)
-			Melder_throw ("Wrong number of channels: ", *numberOfChannels);
-		*numberOfSamples = MelderFile_length (file) / sampleSize / *numberOfChannels;
-		if (*numberOfSamples <= 0)
-			Melder_throw ("No samples in file.");
-		*startOfData = 0;
-		if (path != -1) CloseResFile (path);
-	} catch (MelderError) {
-		if (path != -1) CloseResFile (path);
-		Melder_throw (L"Sound Designer II file not read.");
-	}
-}
-#endif
 
 static void Melder_checkFlacFile (MelderFile file, int *numberOfChannels, int *encoding,
 	double *sampleRate, long *startOfData, long *numberOfSamples)
@@ -759,12 +698,6 @@ int MelderFile_checkSoundFile (MelderFile file, int *numberOfChannels, int *enco
 		Melder_checkMp3File (f, numberOfChannels, encoding, sampleRate, startOfData, numberOfSamples);
 		return Melder_MP3;
 	}
-	#ifdef macintosh
-		if (MelderFile_getMacType (file) == 'Sd2f') {
-			MelderFile_checkSoundDesignerTwoFile (file, numberOfChannels, encoding, sampleRate, startOfData, numberOfSamples);
-			return Melder_SOUND_DESIGNER_TWO;
-		}
-	#endif
 	return 0;   // not a recognized sound file
 }
 

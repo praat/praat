@@ -1,6 +1,6 @@
 /* UiPause.cpp
  *
- * Copyright (C) 2009-2011 Paul Boersma
+ * Copyright (C) 2009-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ static int thePauseForm_clicked = 0;
 static int theCancelContinueButton = 0;
 static int theEventLoopDepth = 0;
 
-static void thePauseFormOkCallback (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
+static void thePauseFormOkCallback (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
 	(void) sendingForm;
 	(void) sendingString;
 	(void) interpreter;

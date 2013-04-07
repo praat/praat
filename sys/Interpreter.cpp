@@ -1,6 +1,6 @@
 /* Interpreter.cpp
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -306,7 +306,7 @@ long Interpreter_readParameters (Interpreter me, wchar_t *text) {
 }
 
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const wchar_t *path,
-	void (*okCallback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure)
+	void (*okCallback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure)
 {
 	UiForm form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
 	Any radio = NULL;

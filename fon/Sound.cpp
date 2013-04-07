@@ -887,6 +887,31 @@ void Sound_setZero (Sound me, double tmin_in, double tmax_in, int roundTimesToNe
 	}
 }
 
+Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
+	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration)
+{
+	try {
+		autoSound me = Sound_create (numberOfChannels, startingTime, endTime, round ((endTime - startingTime) * sampleRate),
+			1 / sampleRate, startingTime + 0.5 / sampleRate);
+		for (long isamp = 1; isamp <= my nx; isamp ++) {
+			double time = my x1 + (isamp - 1) * my dx;
+			double value = amplitude * sin (NUM2pi * frequency * time);
+			double timeFromStart = time - startingTime;
+			if (timeFromStart < fadeInDuration)
+				value *= 0.5 - 0.5 * cos (NUMpi * timeFromStart / fadeInDuration);
+			double timeFromEnd = endTime - time;
+			if (timeFromEnd < fadeOutDuration)
+				value *= 0.5 - 0.5 * cos (NUMpi * timeFromEnd / fadeOutDuration);
+			for (long ichan = 1; ichan <= my ny; ichan ++) {
+				my z [ichan] [isamp] = value;
+			}
+		}
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Sound not created from tone complex.");
+	}
+}
+
 Sound Sound_createFromToneComplex (double startingTime, double endTime, double sampleRate,
 	int phase, double frequencyStep, double firstFrequency, double ceiling, long numberOfComponents)
 {

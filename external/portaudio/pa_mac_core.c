@@ -66,7 +66,7 @@
 
 #include <string.h> /* strlen(), memcmp() etc. */
 #include <libkern/OSAtomic.h>
-#include <Components.h>
+#include <CoreServices/CoreServices.h>
 
 #include "pa_mac_core.h"
 #include "pa_mac_core_utilities.h"

@@ -35,18 +35,8 @@
 	#define win 1
 	#define mac 0
 #elif (defined (macintosh) || defined (__MACH__)) && useCarbon
-	#include <signal.h>
-	#include <stdio.h>
-	#include <stdlib.h>
-	#include <string.h>
-	#include <unistd.h>
-	#include <ctype.h>
-	#include <wchar.h>
-	#include <AppleEvents.h>
-	#ifdef __MACH__
-		#include <AEMach.h>
-	#endif
-	#include <MacErrors.h>
+    #include <Carbon/Carbon.h>
+    #include <wchar.h>
 	#define gtk 0
 	#define win 0
 	#define mac 1

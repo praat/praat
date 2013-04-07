@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -927,7 +927,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me);
 	#elif cocoa
 		trace ("create");
-		my d_widget = [[GuiCocoaText alloc] init];
+		my d_widget = [GuiCocoaText alloc];
 		trace ("position");
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		trace ("set user data");

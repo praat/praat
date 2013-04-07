@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,11 @@ using namespace std;
 #endif
 #if defined (macintosh)
 	#include "macport_on.h"
-	#include <Folders.h>
+    #if useCarbon
+        #include <Carbon/Carbon.h>
+    #else
+        #include <CoreFoundation/CoreFoundation.h>
+    #endif
 	#include "macport_off.h"
 #endif
 #include <errno.h>
@@ -152,33 +156,13 @@ void Melder_8bitFileRepresentationToWcs_inline (const char *path, wchar_t *wpath
 }
 #endif
 
-#if defined (macintosh)
-void Melder_machToFile (void *void_fsref, MelderFile file) {
-	FSRef *fsref = (FSRef *) void_fsref;
-	char path [kMelder_MAXPATH+1];
-	FSRefMakePath (fsref, (unsigned char *) path, kMelder_MAXPATH);   // Decomposed UTF-8.
-	Melder_8bitFileRepresentationToWcs_inline (path, file -> path);
-}
-void Melder_machToDir (void *void_fsref, MelderDir dir) {
-	FSRef *fsref = (FSRef *) void_fsref;
-	char path [kMelder_MAXPATH+1];
-	FSRefMakePath (fsref, (unsigned char *) path, kMelder_MAXPATH);   // Decomposed UTF-8.
-	Melder_8bitFileRepresentationToWcs_inline (path, dir -> path);
-}
-void Melder_fileToMach (MelderFile file, void *void_fsref) {
-	char path [kMelder_MAXPATH+1];
-	Melder_wcsTo8bitFileRepresentation_inline (file -> path, path);
-	OSStatus err = FSPathMakeRef ((unsigned char *) path, (FSRef *) void_fsref, NULL);
-	if (err != noErr && err != fnfErr)
-		Melder_throw ("Error #", err, " translating file name ", file -> path, ".");
-}
-void Melder_dirToMach (MelderDir dir, void *void_fsref) {
-	char path [kMelder_MAXPATH+1];
-	Melder_wcsTo8bitFileRepresentation_inline (dir -> path, path);
-	OSStatus err = FSPathMakeRef ((unsigned char *) path, (FSRef *) void_fsref, NULL);
-	if (err != noErr && err != fnfErr)
-		Melder_throw ("Error #", err, " translating dir name ", dir -> path, ".");
-}
+#if defined (macintosh) && useCarbon
+	void Melder_machToFile (void *void_fsref, MelderFile file) {
+		FSRef *fsref = (FSRef *) void_fsref;
+		char path [kMelder_MAXPATH+1];
+		FSRefMakePath (fsref, (unsigned char *) path, kMelder_MAXPATH);   // Decomposed UTF-8.
+		Melder_8bitFileRepresentationToWcs_inline (path, file -> path);
+	}
 #endif
 
 const wchar_t * MelderFile_name (MelderFile file) {
@@ -506,9 +490,8 @@ void Melder_getHomeDir (MelderDir homeDir) {
 
 void Melder_getPrefDir (MelderDir prefDir) {
 	#if defined (macintosh)
-		FSRef macFileReference;
-		FSFindFolder (kOnSystemDisk, kPreferencesFolderType, kCreateFolder, & macFileReference);
-		Melder_machToDir (& macFileReference, prefDir);
+		Melder_getHomeDir (prefDir);
+		wcscat (prefDir -> path, L"/Library/Preferences");
 	#elif defined (UNIX)
 		/*
 		 * Preferences files go into the home directory.
@@ -517,54 +500,19 @@ void Melder_getPrefDir (MelderDir prefDir) {
 	#elif defined (_WIN32)
 		/*
 		 * On shared systems (NT, 2000, XP), preferences files go into the home directory.
-		 * Otherwise (Windows 95 and 98), they go into the Windows directory.
 		 */
 		Melder_getHomeDir (prefDir);
-		if (MelderDir_isNull (prefDir)) {
-			GetWindowsDirectoryW (prefDir -> path, kMelder_MAXPATH);
-		}
 	#endif
 }
 
 void Melder_getTempDir (MelderDir tempDir) {
 	#if defined (macintosh)
-		FSRef macFileReference;
-		FSFindFolder (kOnSystemDisk, kTemporaryFolderType, kCreateFolder, & macFileReference);
-		Melder_machToDir (& macFileReference, tempDir);
+		wcscpy (tempDir -> path, Melder_peekUtf8ToWcs (getenv ("TMPDIR")));   // or append /TemporaryItems
+		// confstr with _CS_DARWIN_USER_TEMP_DIR
 	#else
 		(void) tempDir;
 	#endif
 }
-
-#if defined (macintosh)
-
-static long textCreator = 'PpgB';
-
-void MelderFile_setMacTypeAndCreator (MelderFile file, long fileType, long creator) {
-	if (wcsequ (file -> path, L"<stdout>")) return;
-	OSStatus err;
-	FSRef fsref;
-	FSCatalogInfo info;
-	Melder_fileToMach (file, & fsref);
-	err = FSGetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info, NULL, NULL, NULL);
-	if (err == noErr) {
-		((FInfo *) & info. finderInfo) -> fdType = fileType;
-		((FInfo *) & info. finderInfo) -> fdCreator = creator ? creator : textCreator;
-		FSSetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info);
-	}
-}
-unsigned long MelderFile_getMacType (MelderFile file) {
-	OSStatus err;
-	FSRef fsref;
-	FSCatalogInfo info;
-	Melder_fileToMach (file, & fsref);
-	err = FSGetCatalogInfo (& fsref, kFSCatInfoFinderInfo, & info, NULL, NULL, NULL);
-	if (err == noErr) {
-		return ((FInfo *) & info. finderInfo) -> fdType;
-	}
-	return 0;
-}
-#endif
 
 #ifdef CURLPRESENT
 static int curl_initialized = 0;
@@ -905,30 +853,9 @@ char * MelderFile_readLine (MelderFile me) {
 	return buffer;
 }
 
-MelderFile MelderFile_create (MelderFile me, const wchar_t *macType, const wchar_t *macCreator, const wchar_t *winExtension) {
+MelderFile MelderFile_create (MelderFile me) {
 	my filePointer = Melder_fopen (me, "wb");
 	my openForWriting = true;   // A bit superfluous (will have been set by Melder_fopen).
-	if (my filePointer == stdout) return me;
-	#if defined (macintosh)
-		(void) winExtension;
-	{
-		unsigned long macType_int = macType == NULL || macType [0] == '\0' ? 0 :
-			((unsigned int) macType [0] << 24) | ((unsigned int) macType [1] << 16) |
-			((unsigned int) macType [2] << 8) | (unsigned int) macType [3];
-		unsigned long macCreator_int = macCreator == NULL || macCreator [0] == '\0' ? 0 :
-			((unsigned int) macCreator [0] << 24) | ((unsigned int) macCreator [1] << 16) |
-			((unsigned int) macCreator [2] << 8) | (unsigned int) macCreator [3];
-		MelderFile_setMacTypeAndCreator (me, macType_int, macCreator_int);
-	}
-	#elif defined (_WIN32)
-		(void) macType;
-		(void) macCreator;
-		(void) winExtension;   /* BUG */
-	#else
-		(void) macType;
-		(void) macCreator;
-		(void) winExtension;
-	#endif
 	return me;
 }
 

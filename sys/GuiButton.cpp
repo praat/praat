@@ -1,6 +1,6 @@
 /* GuiButton.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1993-2012 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -192,16 +192,17 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 //			parent -> shell -> cancelButton = parent -> cancelButton = my widget;
 //		}
 	#elif cocoa
-		my d_widget = (GuiObject) [[GuiCocoaButton alloc] init];
+        GuiCocoaButton *button = [GuiCocoaButton alloc];
+		my d_widget = (GuiObject) button;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-		[(GuiCocoaButton *) my d_widget setUserData: me];
-		[(NSButton *) my d_widget setButtonType: NSMomentaryPushInButton];
-		[(NSButton *) my d_widget setBezelStyle: NSRoundedBezelStyle];
-		[(NSButton *) my d_widget setImagePosition: NSNoImage];
-		[(NSButton *) my d_widget setBordered: YES];
-		[(NSButton *) my d_widget setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
-		[(NSButton *) my d_widget setTarget: (id) my d_widget];
-		[(NSButton *) my d_widget setAction: @selector (_guiCocoaButton_activateCallback:)];
+		[button setUserData: me];
+		[button setButtonType: NSMomentaryPushInButton];
+		[button setBezelStyle: NSRoundedBezelStyle];
+		[button setImagePosition: NSNoImage];
+		[button setBordered: YES];
+		[button setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[button setTarget: (id) my d_widget];
+		[button setAction: @selector (_guiCocoaButton_activateCallback:)];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);

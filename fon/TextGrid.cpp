@@ -838,7 +838,6 @@ void IntervalTier_writeToXwaves (IntervalTier me, MelderFile file) {
 			fprintf (f, "\t%.6f 26\t%s\n", interval -> xmax, Melder_peekWcsToUtf8 (interval -> text));
 		}
 		f.close (file);
-		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to Xwaves file ", file, ".");
 	}
@@ -1336,7 +1335,6 @@ void TextGrid_writeToChronologicalTextFile (TextGrid me, MelderFile file) {
 		}
 		texexdent (file);
 		mfile.close ();
-		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to chronological text file ", file, ".");
 	}

@@ -54,7 +54,9 @@
 
 #if defined (macintosh)
 	#include "macport_on.h"
-	#include <Carbon/Carbon.h>
+    #if useCarbon
+        #include <Carbon/Carbon.h>
+    #endif
 	#include "pa_mac_core.h"
 	#include "macport_off.h"
 #elif defined (_WIN32)

@@ -1,6 +1,6 @@
 /* GuiScrollBar.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma
+ * Copyright (C) 1993-2011,2012 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,39 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		}
 	}
 #elif cocoa
+@implementation GuiCocoaScrollBar {
+    GuiScrollBar d_userData;
+}
+- (void) dealloc {   // override
+    GuiScrollBar me = d_userData;
+    forget (me);
+    trace ("deleting a scroll bar");
+    [super dealloc];
+}
+- (GuiThing) userData {
+    return d_userData;
+}
+- (void) setUserData: (GuiThing) userData {
+    Melder_assert (userData == NULL || Thing_member (userData, classGuiScrollBar));
+    d_userData = static_cast <GuiScrollBar> (userData);
+}
+
+-(void)valueChanged {
+    
+    GuiScrollBar me = (GuiScrollBar) d_userData;
+
+    if (my d_valueChangedCallback) {
+        struct structGuiScrollBarEvent event = { me };
+        try {
+            my d_valueChangedCallback (my d_valueChangedBoss, & event);
+        } catch (MelderError) {
+            Melder_flushError ("Scroll not completely handled.");
+        }
+    }
+
+}
+
+@end
 #elif win
 	void _GuiWinScrollBar_destroy (GuiObject widget) {
 		_GuiNativeControl_destroy (widget);
@@ -94,6 +127,13 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "value-changed", G_CALLBACK (_GuiGtkScrollBar_valueChangedCallback), me);
 	#elif cocoa
+        NSScroller *scroller = [GuiCocoaScrollBar alloc];
+        my d_widget = (GuiObject) scroller;
+        my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+        [scroller setScrollerStyle:NSScrollerStyleLegacy];
+        [scroller setTarget:scroller];
+        [scroller setAction:@selector(valueChanged)];
+
 	#elif win
 		my d_widget = XtVaCreateWidget (flags & GuiScrollBar_HORIZONTAL ? "horizontalScrollBar" : "verticalScrollBar",   // the name is checked for deciding the orientation...
 			xmScrollBarWidgetClass, parent -> d_widget,

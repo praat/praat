@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ void praat_addMenuCommandScript (const wchar_t *window, const wchar_t *menu, con
 void praat_hideMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 void praat_showMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title);
 void praat_saveMenuCommands (MelderString *buffer);
-void praat_addFixedButtonCommand (GuiForm parent, const wchar_t *title, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
+void praat_addFixedButtonCommand (GuiForm parent, const wchar_t *title, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y);
 void praat_sensitivizeFixedButtonCommand (const wchar_t *title, int sensitive);
 void praat_sortMenuCommands ();
 
@@ -57,7 +57,7 @@ typedef struct structPraat_Command {
 	ClassInfo class1, class2, class3, class4;   // selected classes
 	short n1, n2, n3, n4;   // number of selected objects of each class; 0 means "any number"
 	const wchar_t *title;   // button text = command text
-	void (*callback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);   // multi-purpose
+	void (*callback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);   // multi-purpose
 		/* If both sendingForm and sendingString are NULL, this routine is an activate callback;
 			you should directly execute the command, or call UiForm_do(dialog) if you need arguments;
 			UiForm_do will call this routine again with sendingForm = dialog. */
@@ -128,6 +128,7 @@ void praat_showLogo (int autoPopDown);
 void praat_menuCommands_init ();
 void praat_menuCommands_exit ();
 int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   // 0 = not found
+int praat_doMenuCommand (const wchar_t *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfMenuCommands ();
 praat_Command praat_getMenuCommand (long i);
 
@@ -138,6 +139,7 @@ void praat_actions_init ();   // creates space for action commands
 void praat_actions_createDynamicMenu (GuiWindow window);
 void praat_saveAddedActions (MelderString *buffer);
 int praat_doAction (const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);   // 0 = not found
+int praat_doAction (const wchar_t *command, int narg, Stackel args, Interpreter interpreter);   // 0 = not found
 long praat_getNumberOfActions ();   // for ButtonEditor
 praat_Command praat_getAction (long i);   // for ButtonEditor
 

@@ -1,6 +1,6 @@
 /* GuiMenu.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1992-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,8 +205,10 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			 * This is done by creating a menu item for the main menu bar,
 			 * and during applicationWillFinishLaunching installing that item.
 			 */
+            NSString *itemTitle = (NSString *) Melder_peekWcsToCfstring (title);
 			my d_cocoaMenuItem = [[GuiCocoaMenuItem alloc]
-				initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)   action: NULL   keyEquivalent: @""];
+				initWithTitle: itemTitle  action: NULL   keyEquivalent: @""];
+
 			[my d_cocoaMenuItem   setSubmenu: my d_cocoaMenu];   // the item will retain the menu...
 			[my d_cocoaMenu release];   // ... so we can release the menu already (before even returning it!)
 			theMenuBarItems [++ theNumberOfMenuBarItems] = my d_cocoaMenuItem;
@@ -221,8 +223,10 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 				window -> d_menuBarWidth = -1;
 			int width = 18 + 7 * wcslen (title), height = 25;
 			int x = window -> d_menuBarWidth, y = parentHeight + 1 - height;
+            NSUInteger resizingMask = NSViewMinYMargin;
 			if (Melder_wcsequ (title, L"Help")) {
 				x = parentWidth + 1 - width;
+                resizingMask |= NSViewMinXMargin;
 			} else {
 				window -> d_menuBarWidth += width - 1;
 			}
@@ -233,6 +237,8 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			[my d_cocoaMenuButton   setBezelStyle: NSShadowlessSquareBezelStyle];
 			[my d_cocoaMenuButton   setImagePosition: NSImageAbove];   // this centers the text
 			//[nsPopupButton setBordered: NO];
+            [my d_cocoaMenuButton setAutoresizingMask:resizingMask]; // stick to top
+
 			[[my d_cocoaMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
 			/*
 			 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
@@ -244,6 +250,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			 * Install the menu button in the form.
 			 */
 			[(NSView *) window -> d_widget   addSubview: my d_cocoaMenuButton];   // parent will retain the button...
+
 			[my d_cocoaMenuButton   release];   // ... so we can release the button already
 			/*
 			 * Attach the menu to the button.
@@ -251,6 +258,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			[my d_cocoaMenuButton   setMenu: my d_cocoaMenu];   // the button will retain the menu...
 			[my d_cocoaMenu   release];   // ... so we can release the menu already (before even returning it!)
 			[my d_cocoaMenuButton   setTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+
 		}
 	#elif motif
 		if (window == NULL) {
@@ -398,7 +406,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		_GuiObject_setUserData (my d_widget, me);
 		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me);
 	#elif cocoa
-		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc] init];
+		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [GuiCocoaMenuButton alloc];
 		my d_cascadeButton -> v_positionInForm (my d_cocoaMenuButton, left, right, top, bottom, form);
 		[my d_cocoaMenuButton   setUserData: me];
 		[my d_cocoaMenuButton   setPullsDown: YES];
@@ -407,8 +415,8 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		[my d_cocoaMenuButton   setImagePosition: NSImageAbove];   // this centers the text
 		[[my d_cocoaMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
 
-		my d_widget = my d_cocoaMenu = [[NSMenu alloc]
-			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)];
+        NSString *menuTitle = (NSString*)Melder_peekWcsToCfstring (title);
+        my d_widget = my d_cocoaMenu = [[GuiCocoaMenu alloc] initWithTitle:menuTitle];
 		[my d_cocoaMenu   setAutoenablesItems: NO];
 		/*
 		 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.

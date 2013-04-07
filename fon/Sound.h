@@ -158,6 +158,8 @@ double Sound_getIntensity_dB (Sound me);
 double Sound_getNearestZeroCrossing (Sound me, double position, long ichannel);
 void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing);
 
+Sound Sound_createAsPureTone (long numberOfChannels, double startingTime, double endTime,
+	double sampleRate, double frequency, double amplitude, double fadeInDuration, double fadeOutDuration);
 Sound Sound_createFromToneComplex (double startingTime, double endTime,
 	double sampleRate, int phase, double frequencyStep,
 	double firstFrequency, double ceiling, long numberOfComponents);

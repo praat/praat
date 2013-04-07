@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,10 +88,18 @@ void structGraphicsScreen :: v_destroy () {
 		 * not even with GetDC.
 		 */
 	#elif mac
-		if (d_macPort == NULL) {
-			CGContextEndPage (d_macGraphicsContext);
-			CGContextRelease (d_macGraphicsContext);
-		}
+        #if useCarbon
+            if (d_macPort == NULL) {
+                CGContextEndPage (d_macGraphicsContext);
+                CGContextRelease (d_macGraphicsContext);
+            }
+
+        #else
+            if (d_macView == NULL) {
+                CGContextEndPage (d_macGraphicsContext);
+                CGContextRelease (d_macGraphicsContext);
+            }
+        #endif
 	#endif
 	GraphicsScreen_Parent :: v_destroy ();
 }
@@ -147,6 +155,35 @@ void structGraphicsScreen :: v_clearWs () {
 			cairo_set_source_rgb (d_cairoGraphicsContext, 0.0, 0.0, 0.0);
 		}
 	#elif cocoa
+
+        GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea*) d_drawingArea -> d_widget;
+        if (cocoaDrawingArea) {
+            NSRect rect;
+            if (this -> d_x1DC < this -> d_x2DC) {
+                rect.origin.x = this -> d_x1DC;
+                rect.size.width = this -> d_x2DC - this -> d_x1DC;
+            } else {
+                rect.origin.x = this -> d_x2DC;
+                rect.size.width = this -> d_x1DC - this -> d_x2DC;
+            }
+            if (this -> d_y1DC < this -> d_y2DC) {
+                rect.origin.y = this -> d_y1DC;
+                rect.size.height = this -> d_y2DC - this -> d_y1DC;
+            } else {
+                rect.origin.y = this -> d_y2DC;
+                rect.size.height = this -> d_y1DC - this -> d_y2DC;
+            }
+            
+            CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+            CGContextSaveGState(context);
+            CGContextSetAlpha (context, 1.0);
+            CGContextSetBlendMode (context, kCGBlendModeNormal);
+            CGContextSetRGBFillColor (context, 1.0, 1.0, 1.0, 1.0);
+            CGContextFillRect (context, rect);
+            CGContextSynchronize ( context);
+            CGContextRestoreGState(context);
+        }
+
 	#elif win
 		RECT rect;
 		rect. left = rect. top = 0;
@@ -207,6 +244,27 @@ void structGraphicsScreen :: v_updateWs () {
 		gdk_window_invalidate_rect (d_window, & rect, true);
 		//gdk_window_process_updates (d_window, true);
 	#elif cocoa
+        NSView *view =  d_macView;
+        NSRect rect;
+    
+        if (this -> d_x1DC < this -> d_x2DC) {
+            rect.origin.x = this -> d_x1DC;
+            rect.size.width = this -> d_x2DC - this -> d_x1DC;
+        } else {
+            rect.origin.x = this -> d_x2DC;
+            rect.size.width = this -> d_x1DC - this -> d_x2DC;
+        }
+        
+        if (this -> d_y1DC < this -> d_y2DC) {
+            rect.origin.y = this -> d_y1DC;
+            rect.size.height = this -> d_y2DC - this -> d_y1DC;
+        } else {
+            rect.origin.y = this -> d_y2DC;
+            rect.size.height = this -> d_y1DC - this -> d_y2DC;
+        }
+    
+        [view setNeedsDisplayInRect:rect];
+    
 	#elif win
 		//clear (this); // lll
 		if (d_winWindow) InvalidateRect (d_winWindow, NULL, TRUE);
@@ -262,7 +320,11 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		_GraphicsScreen_text_init (me);
 	#elif mac
 		(void) voidDisplay;
-		my d_macPort = (GrafPtr) voidWindow;
+        #if useCarbon
+            my d_macPort = (GrafPtr) voidWindow;
+        #else
+            my d_macView = (NSView*) voidWindow;
+        #endif
 		my d_macColour = theBlackColour;
 		my resolution = resolution;
 		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
@@ -358,11 +420,19 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
 	Graphics_init (me);
-	#if mac && useCarbon
-		GraphicsScreen_init (me,
-			XtDisplay (my d_drawingArea -> d_widget),
-			GetWindowPort ((WindowRef) XtWindow (my d_drawingArea -> d_widget)),
-			Gui_getResolution (NULL));
+	#if mac 
+    #if useCarbon
+            GraphicsScreen_init (me,
+                XtDisplay (my d_drawingArea -> d_widget),
+                GetWindowPort ((WindowRef) XtWindow (my d_drawingArea -> d_widget)),
+                Gui_getResolution (NULL));
+    #else
+            GraphicsScreen_init (me,
+                                 my d_drawingArea -> d_widget,
+                                 my d_drawingArea -> d_widget,
+                                 Gui_getResolution (NULL));
+    #endif
+    
 	#else
 		#if gtk
 			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget), Gui_getResolution (my d_drawingArea -> d_widget));
@@ -381,6 +451,10 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#elif motif
 		XtVaGetValues (my d_drawingArea -> d_widget, XmNwidth, & width, XmNheight, & height, NULL);
 		Graphics_setWsViewport ((Graphics) me, 0, width, 0, height);
+    #elif cocoa
+        NSView *view = (NSView *)my d_drawingArea -> d_widget;
+        NSRect bounds = [view bounds];
+        Graphics_setWsViewport ((Graphics) me, 0, bounds.size.width, 0, bounds.size.height);
 	#endif
 	#if mac && useCarbon
 		XtAddCallback (my d_drawingArea -> d_widget, XmNmoveCallback, cb_move, (XtPointer) me);
@@ -473,6 +547,16 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 				}
 				CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 			}
+        #else
+            if (my d_macView) {            
+                NSView *view = my d_macView;
+                [view lockFocus];
+                CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+                my d_macGraphicsContext = context;
+                GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea*)my d_drawingArea -> d_widget;
+                CGContextTranslateCTM (my d_macGraphicsContext, 0, cocoaDrawingArea.bounds.size.height);
+                CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+        }
 		#endif
 	}
 	void GraphicsQuartz_exitDraw (GraphicsScreen me) {
@@ -481,6 +565,12 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 				CGContextSynchronize (my d_macGraphicsContext);
 				QDEndCGContext (my d_macPort, & my d_macGraphicsContext);
 			}
+        #else
+                NSView *view = my d_macView;
+                if (view) {
+                    CGContextSynchronize (my d_macGraphicsContext);
+                    [my d_macView unlockFocus];
+                }
 		#endif
 	}
 #endif

@@ -2,7 +2,7 @@
 #define _Interpreter_h_
 /* Interpreter.h
  *
- * Copyright (C) 1993-2011 Paul Boersma
+ * Copyright (C) 1993-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,7 +68,7 @@ void Melder_includeIncludeFiles (wchar_t **text);
 long Interpreter_readParameters (Interpreter me, wchar_t *text);
 Thing_declare (UiForm);
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const wchar_t *fileName,
-	void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure);
+	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure);
 void Interpreter_getArgumentsFromDialog (Interpreter me, Any dialog);
 void Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *arguments);
 void Interpreter_run (Interpreter me, wchar_t *text);   // destroys 'text'

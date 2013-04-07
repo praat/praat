@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -522,7 +522,7 @@ void praat_addFixedButtons (GuiWindow window) {
 }
 
 static void searchProc (void) {
-	DO_SearchManual (NULL, NULL, NULL, NULL, false, NULL);
+	DO_SearchManual (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 }
 
 static MelderString itemTitle_about = { 0 };

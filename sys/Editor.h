@@ -47,7 +47,7 @@ Thing_define (EditorCommand, Thing) {
 		EditorMenu menu;
 		const wchar_t *itemTitle;
 		GuiMenuItem itemWidget;
-		void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter);
+		void (*commandCallback) (Editor editor_me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter);
 		const wchar_t *script;
 		UiForm d_uiform;
 	// overridden methods:
@@ -203,7 +203,7 @@ Thing_define (Editor, Thing) {
 };
 
 GuiMenuItem EditorMenu_addCommand (EditorMenu me, const wchar_t *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand, UiForm, const wchar_t *, Interpreter));
+	void (*commandCallback) (Editor me, EditorCommand, UiForm, int, Stackel, const wchar_t *, Interpreter));
 GuiMenuItem EditorCommand_getItemWidget (EditorCommand me);
 
 EditorMenu Editor_addMenu (Editor me, const wchar_t *menuTitle, long flags);
@@ -211,7 +211,7 @@ GuiObject EditorMenu_getMenuWidget (EditorMenu me);
 
 #define Editor_HIDDEN  (1 << 14)
 GuiMenuItem Editor_addCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
-	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter));
+	void (*commandCallback) (Editor me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter));
 GuiMenuItem Editor_addCommandScript (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	const wchar_t *script);
 void Editor_setMenuSensitive (Editor me, const wchar_t *menu, int sensitive);
@@ -243,12 +243,12 @@ void Editor_init (Editor me, int x, int y , int width, int height,
 void Editor_save (Editor me, const wchar_t *text);   // for Undo
 
 UiForm UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
-void UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments, Interpreter interpreter);
+void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const wchar_t *arguments, Interpreter interpreter);
 UiForm UiOutfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 UiForm UiInfile_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 
 EditorCommand Editor_getMenuCommand (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle);
-void Editor_doMenuCommand (Editor me, const wchar_t *command, const wchar_t *arguments, Interpreter interpreter);
+void Editor_doMenuCommand (Editor me, const wchar_t *command, int narg, Stackel args, const wchar_t *arguments, Interpreter interpreter);
 
 /*
  * The following two procedures are in praat_picture.cpp.

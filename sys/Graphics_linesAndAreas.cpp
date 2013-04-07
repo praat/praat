@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -602,15 +602,67 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 		}
 		cairo_restore (d_cairoGraphicsContext);
 	#elif cocoa
-	#elif win
-		RECT rect;
-		rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
-		DrawEdge (d_gdiGraphicsContext, & rect, EDGE_RAISED, BF_RECT);
-		SelectPen (d_gdiGraphicsContext, GetStockPen (NULL_PEN));
-		SelectBrush (d_gdiGraphicsContext, GetStockBrush (LTGRAY_BRUSH));
-		Rectangle (d_gdiGraphicsContext, x1DC + 1, y2DC + 1, x2DC - 1, y1DC - 1);
-		SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
-		SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+        NSView *view = d_macView;
+
+        [view lockFocus];
+        CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+        d_macGraphicsContext = context;
+        GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea*) d_drawingArea -> d_widget;
+        CGContextSaveGState (context);
+        CGContextTranslateCTM (context, 0, cocoaDrawingArea.bounds.size.height);
+        CGContextScaleCTM (context, 1.0, -1.0);
+
+        int width, height;
+        width = x2DC - x1DC, height = y1DC - y2DC;
+        if (width <= 0 || height <= 0) return;
+        
+        CGContextSetRGBStrokeColor(context, 0.1 * 65535.0, 0.1 * 65535.0, 0.1 * 65535.0, 1.0);
+        CGRect rect = CGRectMake(x1DC - 1, y2DC - 1, x2DC - x1DC - 1, y1DC - y2DC - 1);
+        
+
+        
+        if (width > 2 && height > 2) {
+            
+            CGContextSetRGBStrokeColor(context, 0.3 * 65535.0, 0.3 * 65535.0, 0.3 * 65535.0, 1.0);
+
+            CGContextMoveToPoint(context, x1DC, y1DC - 2);
+            CGContextAddLineToPoint(context, x2DC - 2, y1DC - 2);
+
+            CGContextMoveToPoint(context, x2DC - 2, y1DC - 2);
+            CGContextAddLineToPoint(context, x2DC - 2, y2DC);
+
+
+            CGContextSetRGBStrokeColor(context, 1.0 * 65535.0, 1.0 * 65535.0, 1.0 * 65535.0, 1.0);
+
+            CGContextMoveToPoint(context, x1DC, y1DC - 2);
+            CGContextAddLineToPoint(context, x1DC, y2DC);
+
+
+            CGContextMoveToPoint(context, x1DC, y2DC);
+            CGContextAddLineToPoint(context, x2DC - 2, y2DC);
+
+            if (width > 4 && height > 4) {
+                
+                CGContextSetRGBStrokeColor(context, 0.65 * 65535.0, 0.65 * 65535.0, 0.65 * 65535.0, 1.0);
+
+                
+                rect = CGRectMake(x1DC + 1, y2DC + 1, x2DC - 2 - (x1DC + 1), y1DC - 2 - (x1DC + 1));
+                CGContextAddRect(context, rect);
+
+                CGContextSetLineWidth(context, 2.0);
+                CGContextStrokePath(context);
+
+            }
+        }
+        
+        CGContextSetRGBStrokeColor(context, 0.65 * 65535.0, 0.65 * 65535.0, 0.65 * 65535.0, 1.0);
+        CGContextSynchronize ( context);
+    
+        CGContextRestoreGState (context);
+
+        [ d_macView unlockFocus];
+
+
 	#elif mac
 		int width, height;
 		Rect rect;
@@ -638,6 +690,16 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 		}
 		RGBForeColor (& theBlackColour);
 		if (d_drawingArea) GuiMac_clipOff ();
+    #elif win
+        RECT rect;
+        rect. left = x1DC, rect. right = x2DC, rect. top = y2DC, rect. bottom = y1DC;
+        DrawEdge (d_gdiGraphicsContext, & rect, EDGE_RAISED, BF_RECT);
+        SelectPen (d_gdiGraphicsContext, GetStockPen (NULL_PEN));
+        SelectBrush (d_gdiGraphicsContext, GetStockBrush (LTGRAY_BRUSH));
+        Rectangle (d_gdiGraphicsContext, x1DC + 1, y2DC + 1, x2DC - 1, y1DC - 1);
+        SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+        SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+
 	#endif
 }
 

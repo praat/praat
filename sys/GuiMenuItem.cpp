@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -198,17 +198,19 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
 		_GuiObject_setUserData (my d_widget, me);
 	#elif cocoa
-		my d_widget = (GuiObject) [[GuiCocoaMenuItem alloc]
-			initWithTitle: (NSString *) Melder_peekWcsToCfstring (title)
+        NSString *string = (NSString *) Melder_peekWcsToCfstring (title);
+		GuiCocoaMenuItem *menuItem = [[GuiCocoaMenuItem alloc]
+			initWithTitle:string
 			action: NULL
 			keyEquivalent: @""];
-		trace ("installing item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [((NSMenuItem *) my d_widget) retainCount]);
+        my d_widget = menuItem;
+		trace ("installing item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [menuItem retainCount]);
 		[menu -> d_cocoaMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
-		trace ("installed item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [((NSMenuItem *) my d_widget) retainCount]);
+		trace ("installed item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [menuItem retainCount]);
 		trace ("release the item");
-		[(NSMenuItem *) my d_widget release];   // ... so we can release the item already
+		[menuItem release];   // ... so we can release the item already
 		trace ("set user data");
-		[(GuiCocoaMenuItem *) my d_widget setUserData: me];
+		[menuItem setUserData:me];
 	#elif motif
 		my d_widget = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (title),
 			toggle ? xmToggleButtonGadgetClass : xmPushButtonGadgetClass, menu -> d_widget, NULL);
@@ -225,6 +227,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 		#if gtk
 			gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (my d_widget), TRUE);
 		#elif cocoa
+            [menuItem setState:NSOnState];
 		#elif motif
 			XmToggleButtonGadgetSetState (my d_widget, True, False);
 		#endif
@@ -264,6 +267,14 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 					ag, key, modifiers, GTK_ACCEL_VISIBLE);
 
 		#elif cocoa
+        
+            NSUInteger mask = 0;
+            if (flags & GuiMenu_COMMAND) mask |= NSCommandKeyMask;
+            if (flags & GuiMenu_SHIFT) mask |= NSShiftKeyMask;
+            if (flags & GuiMenu_OPTION) mask |= NSAlternateKeyMask;
+            [menuItem setKeyEquivalentModifierMask:mask];
+            [menuItem setKeyEquivalent:[NSString stringWithFormat:@"%c", accelerator]];
+
 		#elif motif
 			int modifiers = 0;
 			if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;

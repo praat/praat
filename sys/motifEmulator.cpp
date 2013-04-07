@@ -75,7 +75,7 @@ static int (*theQuitApplicationCallback) (void);
 
 #if mac
 	#include "macport_on.h"
-	#include <Movies.h>
+	#include <Carbon/Carbon.h>
 #endif
 
 /*

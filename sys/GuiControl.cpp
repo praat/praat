@@ -1,6 +1,6 @@
 /* GuiControl.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2008 Stefan de Koninck, 2010 Franz Brausse
+ * Copyright (C) 1993-2012 Paul Boersma, 2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,8 +107,29 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
 	#elif cocoa
-		NSRect parentRect = [(NSView *) parent -> d_widget   frame];
-		int parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
+        NSView *superView = (NSView*)parent -> d_widget;
+        NSView *widgetView = (NSView*) d_widget;
+		NSRect parentRect = [superView frame];
+        int parentWidth = parentRect.size.width;
+        int parentHeight = parentRect.size.height;
+    
+        NSUInteger horizMask = 0;
+        if (left >= 0) {
+            if (right <= 0) {
+                horizMask = NSViewWidthSizable;
+            }
+        } else {
+            horizMask = NSViewMinXMargin;
+        }
+        
+        NSUInteger vertMask = 0;
+        if (top >= 0) {
+            vertMask = NSViewMinYMargin;
+            if (bottom <= 0) {
+                vertMask = NSViewHeightSizable;
+            }
+        }
+
 		if (left   <  0) left   += parentWidth;
 		if (right  <= 0) right  += parentWidth;
 		if (top    <  0) top    += parentHeight;
@@ -116,10 +137,12 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		top = parentHeight - top;         // flip
 		bottom = parentHeight - bottom;   // flip
 		NSRect rect = { { left, bottom }, { right - left, top - bottom } };
-		[(NSView *) widget initWithFrame: rect];
-		[(NSView *) widget setBounds: rect];
-		[(NSView *) parent -> d_widget   addSubview: (NSView *) widget];   // parent will retain the subview...
-		[(NSButton *) widget release];   // ... so we can release the item already
+		[widgetView initWithFrame: rect];
+
+        [widgetView setAutoresizingMask:horizMask | vertMask];
+        [superView addSubview:widgetView];   // parent will retain the subview...
+        [widgetView setBounds: rect];
+		[widgetView release];   // ... so we can release the item already
 	#elif motif
 		(void) parent;
 		if (left >= 0) {
@@ -154,6 +177,13 @@ void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width
 		gtk_widget_set_size_request (GTK_WIDGET (widget), width, height);
 		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (parent -> d_widget), GTK_WIDGET (widget));
 	#elif cocoa
+        GuiCocoaScrolledWindow *scrolledWindow = (GuiCocoaScrolledWindow*)parent->d_widget;
+        NSView *widgetView = (NSView*)widget;
+        NSRect rect = NSMakeRect(0, 0, width, height);
+        [widgetView initWithFrame:rect];
+        [widgetView setBounds:rect];
+        [scrolledWindow setDocumentView:widgetView];
+        [widgetView release];   // ... so we can release the item already
 	#elif motif
 		(void) parent;
 		XtVaSetValues (widget, XmNwidth, width, XmNheight, height, NULL);

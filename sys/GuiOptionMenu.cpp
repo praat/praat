@@ -1,6 +1,6 @@
 /* GuiOptionMenu.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2012 Paul Boersma, 2007 Stefan de Konink, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,22 +39,24 @@ Thing_implement (GuiOptionMenu, GuiControl, 0);
 		forget (me);
 	}
 #elif cocoa
-	@interface GuiCocoaOptionMenu : NSTextField
-	@end
 	@implementation GuiCocoaOptionMenu {
 		GuiOptionMenu d_userData;
 	}
 	- (void) dealloc {   // override
 		GuiOptionMenu me = d_userData;
-		forget (me);   // BUG remove options
+        [self removeAllItems];
+        [self setMenu:nil];
+        
+        forget (my d_options);
+		forget (me);   
 		Melder_casual ("deleting an option menu");
 		[super dealloc];
 	}
-	- (GuiOptionMenu) userData {
+	- (GuiThing) userData {
 		return d_userData;
 	}
-	- (void) setUserData: (GuiOptionMenu) userData {
-		d_userData = userData;
+	- (void) setUserData: (GuiThing) userData {
+		d_userData = (GuiOptionMenu)userData;
 	}
 	@end
 #elif motif
@@ -71,6 +73,8 @@ void structGuiOptionMenu :: v_show () {
 		GuiOptionMenu_Parent :: v_show ();
 	#elif motif
 		XtManageChild (d_xmMenuBar);
+    #elif cocoa
+    NSLog(@"cocoa v_show"); // ?
 	#endif
 }
 
@@ -86,12 +90,17 @@ void structGuiOptionMenu :: f_init (GuiForm parent, int left, int right, int top
 		gtk_combo_box_set_focus_on_click (GTK_COMBO_BOX (d_widget), false);
 		GTK_WIDGET_UNSET_FLAGS (d_widget, GTK_CAN_DEFAULT);
 	#elif cocoa
-		d_widget = (GuiObject) [GuiCocoaOptionMenu alloc];
+    
+        GuiCocoaOptionMenu *optionMenu = [GuiCocoaOptionMenu alloc];
+
+        d_widget = (GuiObject) optionMenu;
 		v_positionInForm (d_widget, left, right, top, bottom, parent);
-		[(GuiCocoaOptionMenu *) d_widget setUserData: this];
-		[(NSTextField *) d_widget setBezelStyle: NSRoundedBezelStyle];
-		[(NSTextField *) d_widget setBordered: NO];
-		[(NSTextField *) d_widget setSelectable: NO];
+    
+        [optionMenu setUserData: this];
+//        [optionMenu setBezelStyle: NSRoundedBezelStyle];
+//        [optionMenu setBordered: NO];
+
+
 	#elif motif
 		d_xmMenuBar = XmCreateMenuBar (parent -> d_widget, "UiOptionMenu", NULL, 0);
 		XtVaSetValues (d_xmMenuBar, XmNx, left - 4, XmNy, top - 4
@@ -156,6 +165,11 @@ void structGuiOptionMenu:: f_addOption (const wchar_t *text) {
 		menuItem -> d_widget = XtVaCreateManagedWidget (Melder_peekWcsToUtf8 (text), xmToggleButtonWidgetClass, d_widget, NULL);
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) this);
 		Collection_addItem (d_options, menuItem);
+    #elif cocoa
+    
+        GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu*)d_widget;
+        [menu addItemWithTitle:[NSString stringWithUTF8String:Melder_peekWcsToUtf8 (text)]];
+    
 	#endif
 }
 
@@ -170,6 +184,9 @@ int structGuiOptionMenu :: f_getValue () {
 			if (XmToggleButtonGetState (menuItem -> d_widget))
 				d_value = i;
 		}
+    #elif cocoa
+    GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu*)d_widget;
+    d_value = [menu indexOfSelectedItem] + 1;
 	#endif
 	return d_value;
 }
@@ -178,6 +195,8 @@ void structGuiOptionMenu :: f_setValue (int value) {
 	#if gtk
 		gtk_combo_box_set_active (GTK_COMBO_BOX (d_widget), value - 1);
 	#elif cocoa
+        GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu*)d_widget;
+        [menu selectItemAtIndex:value - 1];
 	#elif motif
 		for (int i = 1; i <= d_options -> size; i ++) {
 			GuiMenuItem menuItem = static_cast <GuiMenuItem> (d_options -> item [i]);

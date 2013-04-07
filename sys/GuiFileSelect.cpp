@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2012 Paul Boersma
+ * Copyright (C) 2010-2012 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,6 +52,24 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		setlocale (LC_ALL, "C");
 	#elif cocoa
+    
+        (void) parent;
+        static structMelderDir dir;
+        if (MelderDir_isNull (& dir))   // first time?
+            Melder_getDefaultDir (& dir);
+        
+        NSOpenPanel	*openPanel = [NSOpenPanel openPanel];
+        [openPanel setTitle:[NSString stringWithUTF8String:Melder_peekWcsToUtf8(title)]];
+        [openPanel setAllowsMultipleSelection:allowMultipleFiles];
+        [openPanel setCanChooseDirectories:NO];
+        [openPanel setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:Melder_peekWcsToUtf8 (Melder_dirToPath (& dir))]]];
+        
+        if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
+            for (NSURL *url in [openPanel URLs]) {
+                my addString (Melder_peekUtf8ToWcs ([[url path] UTF8String]));
+            }
+        }
+
 	#elif defined (macintosh)
 		(void) parent;
 		OSStatus err;

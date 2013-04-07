@@ -1,6 +1,6 @@
 /* Formula.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,7 +119,10 @@ enum { GEENSYMBOOL_,
 	#define HIGH_FUNCTION_3  INV_BINOMIAL_Q_
 
 	/* Functions of a variable number of variables; if you add, update the #defines. */
-	#define LOW_FUNCTION_N  MIN_
+	#define LOW_FUNCTION_N  DO_
+		DO_, DOSTR_,
+		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
+		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
 		MIN_, MAX_, IMIN_, IMAX_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
@@ -144,7 +147,7 @@ enum { GEENSYMBOOL_,
 		ENVIRONMENTSTR_, INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
-		FIXEDSTR_, PERCENTSTR_,
+		STRINGSTR_, FIXEDSTR_, PERCENTSTR_,
 	#define HIGH_STRING_FUNCTION  PERCENTSTR_
 
 	/* Range functions. */
@@ -211,6 +214,9 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"fisherP", L"fisherQ", L"invFisherQ",
 	L"binomialP", L"binomialQ", L"incompleteBeta", L"invBinomialP", L"invBinomialQ",
 
+	L"do", L"do$",
+	L"writeInfo", L"writeInfoLine", L"appendInfo", L"appendInfoLine",
+	L"writeFile", L"writeFileLine", L"appendFile", L"appendFileLine",
 	L"min", L"max", L"imin", L"imax",
 	L"left$", L"right$", L"mid$",
 	L"selected", L"selected$", L"numberOfSelected",
@@ -230,7 +236,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"environment$", L"index", L"rindex",
 	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
 	L"extractNumber", L"extractWord$", L"extractLine$",
-	L"fixed$", L"percent$",
+	L"string$", L"fixed$", L"percent$",
 	L"sum",
 	L".",
 	L"_true", L"_false",
@@ -1848,27 +1854,12 @@ void Formula_compile (Any interpreter, Any data, const wchar_t *expression, int 
 
 static int programPointer;
 
-typedef struct structStackel {
-	#define Stackel_NUMBER  0
-	#define Stackel_STRING  1
-	#define Stackel_NUMERIC_ARRAY  2
-	#define Stackel_STRING_ARRAY  3
-	#define Stackel_VARIABLE  -1
-	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
-	union {
-		double number;
-		wchar_t *string;
-		struct Formula_NumericArray numericArray;
-		InterpreterVariable variable;
-	} content;
-} *Stackel;
-
 static void Stackel_cleanUp (Stackel me) {
 	if (my which == Stackel_STRING) {
-		Melder_free (my content.string);
+		Melder_free (my string);
 	} else if (my which == Stackel_NUMERIC_ARRAY) {
-		NUMmatrix_free (my content.numericArray.data, 1, 1);
-		my content.numericArray = theZeroNumericArray;
+		NUMmatrix_free (my numericArray.data, 1, 1);
+		my numericArray = theZeroNumericArray;
 	}
 }
 static Stackel theStack;
@@ -1887,32 +1878,32 @@ static inline void pushNumber (double x) {
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMBER;
-	stackel -> content.number = x;
+	stackel -> number = x;
 }
 static void pushString (wchar_t *x) {
 	Stackel stackel = & theStack [++ w];
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_STRING;
-	stackel -> content.string = x;
+	stackel -> string = x;
 }
 static void pushNumericArray (long numberOfRows, long numberOfColumns, double **x) {
 	Stackel stackel = & theStack [++ w];
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_NUMERIC_ARRAY;
-	stackel -> content.numericArray.numberOfRows = numberOfRows;
-	stackel -> content.numericArray.numberOfColumns = numberOfColumns;
-	stackel -> content.numericArray.data = x;
+	stackel -> numericArray.numberOfRows = numberOfRows;
+	stackel -> numericArray.numberOfColumns = numberOfColumns;
+	stackel -> numericArray.data = x;
 }
 static void pushVariable (InterpreterVariable var) {
 	Stackel stackel = & theStack [++ w];
 	if (stackel -> which > Stackel_NUMBER) Stackel_cleanUp (stackel);
 	if (w > wmax) wmax ++;
 	stackel -> which = Stackel_VARIABLE;
-	stackel -> content.variable = var;
+	stackel -> variable = var;
 }
-static const wchar_t *Stackel_whichText (Stackel me) {
+const wchar_t *Stackel_whichText (Stackel me) {
 	return
 		my which == Stackel_NUMBER ? L"a number" :
 		my which == Stackel_STRING ? L"a string" :
@@ -1924,7 +1915,7 @@ static const wchar_t *Stackel_whichText (Stackel me) {
 static void do_not (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : x->content.number == 0.0 ? 1.0 : 0.0);
+		pushNumber (x->number == NUMundefined ? NUMundefined : x->number == 0.0 ? 1.0 : 0.0);
 	} else {
 		Melder_throw ("Cannot negate (\"not\") ", Stackel_whichText (x), ".");
 	}
@@ -1932,9 +1923,9 @@ static void do_not (void) {
 static void do_eq (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == y->content.number ? 1.0 : 0.0);   /* Even if undefined. */
+		pushNumber (x->number == y->number ? 1.0 : 0.0);   /* Even if undefined. */
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = wcsequ (x->content.string, y->content.string) ? 1.0 : 0.0;
+		double result = wcsequ (x->string, y->string) ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw ("Cannot compare (=) ", Stackel_whichText (x), " to ", Stackel_whichText (y), ".");
@@ -1943,9 +1934,9 @@ static void do_eq (void) {
 static void do_ne (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number != y->content.number ? 1.0 : 0.0);   /* Even if undefined. */
+		pushNumber (x->number != y->number ? 1.0 : 0.0);   /* Even if undefined. */
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = wcsequ (x->content.string, y->content.string) ? 0.0 : 1.0;
+		double result = wcsequ (x->string, y->string) ? 0.0 : 1.0;
 		pushNumber (result);
 	} else {
 		Melder_throw ("Cannot compare (<>) ", Stackel_whichText (x), " to ", Stackel_whichText (y), ".");
@@ -1954,10 +1945,10 @@ static void do_ne (void) {
 static void do_le (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			x->content.number <= y->content.number ? 1.0 : 0.0);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			x->number <= y->number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = wcscmp (x->content.string, y->content.string) <= 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->string, y->string) <= 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw ("Cannot compare (<=) ", Stackel_whichText (x), " to ", Stackel_whichText (y), ".");
@@ -1966,10 +1957,10 @@ static void do_le (void) {
 static void do_lt (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			x->content.number < y->content.number ? 1.0 : 0.0);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			x->number < y->number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = wcscmp (x->content.string, y->content.string) < 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->string, y->string) < 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw ("Cannot compare (<) ", Stackel_whichText (x), " to ", Stackel_whichText (y), ".");
@@ -1978,10 +1969,10 @@ static void do_lt (void) {
 static void do_ge (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			x->content.number >= y->content.number ? 1.0 : 0.0);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			x->number >= y->number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = wcscmp (x->content.string, y->content.string) >= 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->string, y->string) >= 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw ("Cannot compare (>=) ", Stackel_whichText (x), " to ", Stackel_whichText (y), ".");
@@ -1990,10 +1981,10 @@ static void do_ge (void) {
 static void do_gt (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			x->content.number > y->content.number ? 1.0 : 0.0);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			x->number > y->number ? 1.0 : 0.0);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		double result = wcscmp (x->content.string, y->content.string) > 0 ? 1.0 : 0.0;
+		double result = wcscmp (x->string, y->string) > 0 ? 1.0 : 0.0;
 		pushNumber (result);
 	} else {
 		Melder_throw ("Cannot compare (>) ", Stackel_whichText (x), " to ", Stackel_whichText (y), ".");
@@ -2002,13 +1993,13 @@ static void do_gt (void) {
 static void do_add (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			x->content.number + y->content.number);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			x->number + y->number);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		long length1 = wcslen (x->content.string), length2 = wcslen (y->content.string);
+		long length1 = wcslen (x->string), length2 = wcslen (y->string);
 		wchar_t *result = Melder_malloc (wchar_t, length1 + length2 + 1);
-		wcscpy (result, x->content.string);
-		wcscpy (result + length1, y->content.string);
+		wcscpy (result, x->string);
+		wcscpy (result + length1, y->string);
 		pushString (result);
 	} else {
 		Melder_throw ("Cannot add ", Stackel_whichText (y), " to ", Stackel_whichText (x), ".");
@@ -2017,17 +2008,17 @@ static void do_add (void) {
 static void do_sub (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			x->content.number - y->content.number);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			x->number - y->number);
 	} else if (x->which == Stackel_STRING && y->which == Stackel_STRING) {
-		long length1 = wcslen (x->content.string), length2 = wcslen (y->content.string), newlength = length1 - length2;
+		long length1 = wcslen (x->string), length2 = wcslen (y->string), newlength = length1 - length2;
 		wchar_t *result;
-		if (newlength >= 0 && wcsnequ (x->content.string + newlength, y->content.string, length2)) {
+		if (newlength >= 0 && wcsnequ (x->string + newlength, y->string, length2)) {
 			result = Melder_malloc (wchar_t, newlength + 1);
-			wcsncpy (result, x->content.string, newlength);
+			wcsncpy (result, x->string, newlength);
 			result [newlength] = '\0';
 		} else {
-			result = Melder_wcsdup (x->content.string);
+			result = Melder_wcsdup (x->string);
 		}
 		pushString (result);
 	} else {
@@ -2037,8 +2028,8 @@ static void do_sub (void) {
 static void do_mul (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			x->content.number * y->content.number);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			x->number * y->number);
 	} else {
 		Melder_throw ("Cannot multiply (*) ", Stackel_whichText (x), " by ", Stackel_whichText (y), ".");
 	}
@@ -2046,9 +2037,9 @@ static void do_mul (void) {
 static void do_rdiv (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			y->content.number == 0.0 ? NUMundefined :
-			x->content.number / y->content.number);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			y->number == 0.0 ? NUMundefined :
+			x->number / y->number);
 	} else {
 		Melder_throw ("Cannot divide (/) ", Stackel_whichText (x), " by ", Stackel_whichText (y), ".");
 	}
@@ -2056,9 +2047,9 @@ static void do_rdiv (void) {
 static void do_idiv (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			y->content.number == 0.0 ? NUMundefined :
-			floor (x->content.number / y->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			y->number == 0.0 ? NUMundefined :
+			floor (x->number / y->number));
 	} else {
 		Melder_throw ("Cannot divide (\"div\") ", Stackel_whichText (x), " by ", Stackel_whichText (y), ".");
 	}
@@ -2066,9 +2057,9 @@ static void do_idiv (void) {
 static void do_mod (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			y->content.number == 0.0 ? NUMundefined :
-			x->content.number - floor (x->content.number / y->content.number) * y->content.number);
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			y->number == 0.0 ? NUMundefined :
+			x->number - floor (x->number / y->number) * y->number);
 	} else {
 		Melder_throw ("Cannot divide (\"mod\") ", Stackel_whichText (x), " by ", Stackel_whichText (y), ".");
 	}
@@ -2076,7 +2067,7 @@ static void do_mod (void) {
 static void do_minus (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : - x->content.number);
+		pushNumber (x->number == NUMundefined ? NUMundefined : - x->number);
 	} else {
 		Melder_throw ("Cannot take the opposite (-) of ", Stackel_whichText (x), ".");
 	}
@@ -2084,8 +2075,8 @@ static void do_minus (void) {
 static void do_power (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			pow (x->content.number, y->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			pow (x->number, y->number));
 	} else {
 		Melder_throw ("Cannot exponentiate (^) ", Stackel_whichText (x), " to ", Stackel_whichText (y), ".");
 	}
@@ -2093,7 +2084,7 @@ static void do_power (void) {
 static void do_sqr (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : x->content.number * x->content.number);
+		pushNumber (x->number == NUMundefined ? NUMundefined : x->number * x->number);
 	} else {
 		Melder_throw ("Cannot take the square (^ 2) of ", Stackel_whichText (x), ".");
 	}
@@ -2101,7 +2092,7 @@ static void do_sqr (void) {
 static void do_function_n_n (double (*f) (double)) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : f (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : f (x->number));
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires a numeric argument, not ", Stackel_whichText (x), ".");
@@ -2110,7 +2101,7 @@ static void do_function_n_n (double (*f) (double)) {
 static void do_abs (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : fabs (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : fabs (x->number));
 	} else {
 		Melder_throw ("Cannot take the absolute value (abs) of ", Stackel_whichText (x), ".");
 	}
@@ -2118,7 +2109,7 @@ static void do_abs (void) {
 static void do_round (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : floor (x->content.number + 0.5));
+		pushNumber (x->number == NUMundefined ? NUMundefined : floor (x->number + 0.5));
 	} else {
 		Melder_throw ("Cannot round ", Stackel_whichText (x), ".");
 	}
@@ -2126,7 +2117,7 @@ static void do_round (void) {
 static void do_floor (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : floor (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : floor (x->number));
 	} else {
 		Melder_throw ("Cannot round down (floor) ", Stackel_whichText (x), ".");
 	}
@@ -2134,7 +2125,7 @@ static void do_floor (void) {
 static void do_ceiling (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : ceil (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : ceil (x->number));
 	} else {
 		Melder_throw ("Cannot round up (ceiling) ", Stackel_whichText (x), ".");
 	}
@@ -2142,8 +2133,8 @@ static void do_ceiling (void) {
 static void do_sqrt (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined :
-			x->content.number < 0.0 ? NUMundefined : sqrt (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined :
+			x->number < 0.0 ? NUMundefined : sqrt (x->number));
 	} else {
 		Melder_throw ("Cannot take the square root (sqrt) of ", Stackel_whichText (x), ".");
 	}
@@ -2151,7 +2142,7 @@ static void do_sqrt (void) {
 static void do_sin (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : sin (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : sin (x->number));
 	} else {
 		Melder_throw ("Cannot take the sine (sin) of ", Stackel_whichText (x), ".");
 	}
@@ -2159,7 +2150,7 @@ static void do_sin (void) {
 static void do_cos (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : cos (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : cos (x->number));
 	} else {
 		Melder_throw ("Cannot take the cosine (cos) of ", Stackel_whichText (x), ".");
 	}
@@ -2167,7 +2158,7 @@ static void do_cos (void) {
 static void do_tan (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : tan (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : tan (x->number));
 	} else {
 		Melder_throw ("Cannot take the tangent (tan) of ", Stackel_whichText (x), ".");
 	}
@@ -2175,8 +2166,8 @@ static void do_tan (void) {
 static void do_arcsin (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined :
-			fabs (x->content.number) > 1.0 ? NUMundefined : asin (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined :
+			fabs (x->number) > 1.0 ? NUMundefined : asin (x->number));
 	} else {
 		Melder_throw ("Cannot take the arcsine (arcsin) of ", Stackel_whichText (x), ".");
 	}
@@ -2184,8 +2175,8 @@ static void do_arcsin (void) {
 static void do_arccos (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined :
-			fabs (x->content.number) > 1.0 ? NUMundefined : acos (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined :
+			fabs (x->number) > 1.0 ? NUMundefined : acos (x->number));
 	} else {
 		Melder_throw ("Cannot take the arccosine (arccos) of ", Stackel_whichText (x), ".");
 	}
@@ -2193,7 +2184,7 @@ static void do_arccos (void) {
 static void do_arctan (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : atan (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : atan (x->number));
 	} else {
 		Melder_throw ("Cannot take the arctangent (arctan) of ", Stackel_whichText (x), ".");
 	}
@@ -2201,7 +2192,7 @@ static void do_arctan (void) {
 static void do_exp (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : exp (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : exp (x->number));
 	} else {
 		Melder_throw ("Cannot exponentiate (exp) ", Stackel_whichText (x), ".");
 	}
@@ -2209,7 +2200,7 @@ static void do_exp (void) {
 static void do_sinh (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : sinh (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : sinh (x->number));
 	} else {
 		Melder_throw ("Cannot take the hyperbolic sine (sinh) of ", Stackel_whichText (x), ".");
 	}
@@ -2217,7 +2208,7 @@ static void do_sinh (void) {
 static void do_cosh (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : cosh (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : cosh (x->number));
 	} else {
 		Melder_throw ("Cannot take the hyperbolic cosine (cosh) of ", Stackel_whichText (x), ".");
 	}
@@ -2225,7 +2216,7 @@ static void do_cosh (void) {
 static void do_tanh (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined : tanh (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined : tanh (x->number));
 	} else {
 		Melder_throw ("Cannot take the hyperbolic tangent (tanh) of ", Stackel_whichText (x), ".");
 	}
@@ -2233,8 +2224,8 @@ static void do_tanh (void) {
 static void do_log2 (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined :
-			x->content.number <= 0.0 ? NUMundefined : log (x->content.number) * NUMlog2e);
+		pushNumber (x->number == NUMundefined ? NUMundefined :
+			x->number <= 0.0 ? NUMundefined : log (x->number) * NUMlog2e);
 	} else {
 		Melder_throw ("Cannot take the base-2 logarithm (log2) of ", Stackel_whichText (x), ".");
 	}
@@ -2242,8 +2233,8 @@ static void do_log2 (void) {
 static void do_ln (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined :
-			x->content.number <= 0.0 ? NUMundefined : log (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined :
+			x->number <= 0.0 ? NUMundefined : log (x->number));
 	} else {
 		Melder_throw ("Cannot take the natural logarithm (ln) of ", Stackel_whichText (x), ".");
 	}
@@ -2251,8 +2242,8 @@ static void do_ln (void) {
 static void do_log10 (void) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined ? NUMundefined :
-			x->content.number <= 0.0 ? NUMundefined : log10 (x->content.number));
+		pushNumber (x->number == NUMundefined ? NUMundefined :
+			x->number <= 0.0 ? NUMundefined : log10 (x->number));
 	} else {
 		Melder_throw ("Cannot take the base-10 logarithm (log10) of ", Stackel_whichText (x), ".");
 	}
@@ -2260,8 +2251,8 @@ static void do_log10 (void) {
 static void do_function_dd_d (double (*f) (double, double)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			f (x->content.number, y->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			f (x->number, y->number));
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires two numeric arguments, not ",
@@ -2271,16 +2262,16 @@ static void do_function_dd_d (double (*f) (double, double)) {
 static void do_function_dd_d_numar (double (*f) (double, double)) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	if (n -> content.number != 3)
+	if (n -> number != 3)
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol], " requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_ARRAY && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfRows = a->content.numericArray.numberOfRows;
-		long numberOfColumns = a->content.numericArray.numberOfColumns;
+		long numberOfRows = a->numericArray.numberOfRows;
+		long numberOfColumns = a->numericArray.numberOfColumns;
 		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
-				newData [irow] [icol] = f (x->content.number, y->content.number);
+				newData [irow] [icol] = f (x->number, y->number);
 			}
 		}
 		pushNumericArray (numberOfRows, numberOfColumns, newData);
@@ -2293,16 +2284,16 @@ static void do_function_dd_d_numar (double (*f) (double, double)) {
 static void do_function_ll_l_numar (long (*f) (long, long)) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	if (n -> content.number != 3)
+	if (n -> number != 3)
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol], " requires three arguments.");
 	Stackel y = pop, x = pop, a = pop;
 	if (a->which == Stackel_NUMERIC_ARRAY && x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		long numberOfRows = a->content.numericArray.numberOfRows;
-		long numberOfColumns = a->content.numericArray.numberOfColumns;
+		long numberOfRows = a->numericArray.numberOfRows;
+		long numberOfColumns = a->numericArray.numberOfColumns;
 		double **newData = NUMmatrix <double> (1, numberOfRows, 1, numberOfColumns);
 		for (long irow = 1; irow <= numberOfRows; irow ++) {
 			for (long icol = 1; icol <= numberOfColumns; icol ++) {
-				newData [irow] [icol] = f (x->content.number, y->content.number);
+				newData [irow] [icol] = f (x->number, y->number);
 			}
 		}
 		pushNumericArray (numberOfRows, numberOfColumns, newData);
@@ -2315,8 +2306,8 @@ static void do_function_ll_l_numar (long (*f) (long, long)) {
 static void do_function_dl_d (double (*f) (double, long)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			f (x->content.number, y->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			f (x->number, y->number));
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires two numeric arguments, not ",
@@ -2326,8 +2317,8 @@ static void do_function_dl_d (double (*f) (double, long)) {
 static void do_function_ld_d (double (*f) (long, double)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			f (x->content.number, y->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			f (x->number, y->number));
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires two numeric arguments, not ",
@@ -2337,8 +2328,8 @@ static void do_function_ld_d (double (*f) (long, double)) {
 static void do_function_ll_l (long (*f) (long, long)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined :
-			f (x->content.number, y->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			f (x->number, y->number));
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires two numeric arguments, not ",
@@ -2348,7 +2339,7 @@ static void do_function_ll_l (long (*f) (long, long)) {
 static void do_objects_are_identical (void) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
-		int id1 = x->content.number, id2 = y->content.number;
+		int id1 = x->number, id2 = y->number;
 		int i = theCurrentPraatObjects -> n;
 		while (i > 0 && id1 != theCurrentPraatObjects -> list [i]. id) i --;
 		if (i == 0) Melder_throw ("Object #", id1, " does not exist in function objectsAreIdentical.");
@@ -2357,7 +2348,7 @@ static void do_objects_are_identical (void) {
 		while (i > 0 && id2 != theCurrentPraatObjects -> list [i]. id) i --;
 		if (i == 0) Melder_throw ("Object #", id2, " does not exist in function objectsAreIdentical.");
 		Data object2 = (Data) theCurrentPraatObjects -> list [i]. object;
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined ? NUMundefined : Data_equal (object1, object2));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined : Data_equal (object1, object2));
 	} else {
 		Melder_throw ("The function objectsAreIdentical requires two numeric arguments (object IDs), not ",
 			Stackel_whichText (x), " and ", Stackel_whichText (y), ".");
@@ -2366,8 +2357,8 @@ static void do_objects_are_identical (void) {
 static void do_function_ddd_d (double (*f) (double, double, double)) {
 	Stackel z = pop, y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER && z->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined || z->content.number == NUMundefined ? NUMundefined :
-			f (x->content.number, y->content.number, z->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined || z->number == NUMundefined ? NUMundefined :
+			f (x->number, y->number, z->number));
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires three numeric arguments, not ", Stackel_whichText (x), ", ",
@@ -2377,30 +2368,179 @@ static void do_function_ddd_d (double (*f) (double, double, double)) {
 static void do_function_dll_d (double (*f) (double, long, long)) {
 	Stackel z = pop, y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER && z->which == Stackel_NUMBER) {
-		pushNumber (x->content.number == NUMundefined || y->content.number == NUMundefined || z->content.number == NUMundefined ? NUMundefined :
-			f (x->content.number, y->content.number, z->content.number));
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined || z->number == NUMundefined ? NUMundefined :
+			f (x->number, y->number, z->number));
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires three numeric arguments, not ", Stackel_whichText (x), ", ",
 			Stackel_whichText (y), ", and ", Stackel_whichText (z), ".");
 	}
 }
+static void do_do (void) {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	if (narg->number < 1)
+		Melder_throw ("The function \"do\" requires at least one argument, namely a menu command.");
+	int numberOfArguments = narg->number - 1;
+	#define MAXNUM_FIELDS  40
+	structStackel stack [1+MAXNUM_FIELDS];
+	for (int iarg = numberOfArguments; iarg >= 0; iarg --) {
+		Stackel arg = pop;
+		stack [iarg] = * arg;
+	}
+	if (stack [0]. which != Stackel_STRING)
+		Melder_throw ("The first argument of the function \"do\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), ".");
+	const wchar_t *command = stack [0]. string;
+	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
+		Editor_doMenuCommand ((Editor) praatP. editor, command, numberOfArguments, & stack [0], NULL, theInterpreter);
+	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
+		(wcsnequ (command, L"Save ", 5) || wcsnequ (command, L"Write ", 6) || wcsnequ (command, L"Append ", 7) || wcsequ (command, L"Quit")))
+	{
+		Melder_throw ("Commands that write files (including Quit) are not available inside manuals.");
+	} else {
+		autoMelderString valueString;
+		MelderString_empty (& valueString);
+		autoMelderDivertInfo divert (& valueString);
+		MelderString_appendCharacter (& valueString, 1);
+		if (! praat_doAction (command, numberOfArguments, & stack [0], theInterpreter) &&
+		    ! praat_doMenuCommand (command, numberOfArguments, & stack [0], theInterpreter))
+		{
+			Melder_throw ("Command \"", command, "\" not available for current selection.");
+		}
+		//praat_updateSelection ();
+		double value = NUMundefined;
+		if (valueString.string [0] == 1) {
+			int IOBJECT, result = 0, found = 0;
+			WHERE (SELECTED) { result = IOBJECT; found += 1; }
+			if (found == 1) {
+				value = theCurrentPraatObjects -> list [result]. id;
+			}
+		} else {
+			value = Melder_atof (valueString.string);   // including --undefined--
+		}
+		pushNumber (value);
+		return;
+	}
+	praat_updateSelection ();   // BUG: superfluous? flickering?
+	pushNumber (1);
+}
+static void do_doStr (void) {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	if (narg->number < 1)
+		Melder_throw ("The function \"do$\" requires at least one argument, namely a menu command.");
+	int numberOfArguments = narg->number - 1;
+	#define MAXNUM_FIELDS  40
+	structStackel stack [1+MAXNUM_FIELDS];
+	for (int iarg = numberOfArguments; iarg >= 0; iarg --) {
+		Stackel arg = pop;
+		stack [iarg] = * arg;
+	}
+	if (stack [0]. which != Stackel_STRING)
+		Melder_throw ("The first argument of the function \"do$\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), ".");
+	const wchar_t *command = stack [0]. string;
+	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
+		Editor_doMenuCommand ((Editor) praatP. editor, command, numberOfArguments, & stack [0], NULL, theInterpreter);
+	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
+		(wcsnequ (command, L"Save ", 5) || wcsnequ (command, L"Write ", 6) || wcsnequ (command, L"Append ", 7) || wcsequ (command, L"Quit")))
+	{
+		Melder_throw ("Commands that write files (including Quit) are not available inside manuals.");
+	} else {
+		static MelderString info;
+		MelderString_empty (& info);
+		autoMelderDivertInfo divert (& info);
+		if (! praat_doAction (command, numberOfArguments, & stack [0], theInterpreter) &&
+		    ! praat_doMenuCommand (command, numberOfArguments, & stack [0], theInterpreter))
+		{
+			Melder_throw ("Command \"", command, "\" not available for current selection.");
+		}
+		praat_updateSelection ();
+		pushString (Melder_wcsdup (info.string));
+		return;
+	}
+	praat_updateSelection ();   // BUG: superfluous? flickering?
+	pushString (Melder_wcsdup (L""));
+}
+static void do_writeInfo () {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	MelderInfo_open ();
+	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderInfo_write (Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderInfo_write (arg->string);
+	}
+	MelderInfo_close ();
+	pushNumber (1);
+}
+static void do_writeInfoLine () {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	MelderInfo_open ();
+	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderInfo_write (Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderInfo_write (arg->string);
+	}
+	MelderInfo_write (L"\n");
+	MelderInfo_close ();
+	pushNumber (1);
+}
+static void do_appendInfo () {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderInfo_write (Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderInfo_write (arg->string);
+	}
+	MelderInfo_close ();
+	pushNumber (1);
+}
+static void do_appendInfoLine () {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderInfo_write (Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderInfo_write (arg->string);
+	}
+	MelderInfo_write (L"\n");
+	MelderInfo_close ();
+	pushNumber (1);
+}
 static void do_min (void) {
 	Stackel n = pop, last;
 	double result;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->content.number < 1)
+	if (n->number < 1)
 		Melder_throw ("The function \"min\" requires at least one argument.");
 	last = pop;
 	if (last->which != Stackel_NUMBER)
 		Melder_throw ("The function \"min\" can only have numeric arguments, not ", Stackel_whichText (last), ".");
-	result = last->content.number;
-	for (int j = n->content.number - 1; j > 0; j --) {
+	result = last->number;
+	for (int j = n->number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw ("The function \"min\" can only have numeric arguments, not ", Stackel_whichText (previous), ".");
-		result = result == NUMundefined || previous->content.number == NUMundefined ? NUMundefined :
-			result < previous->content.number ? result : previous->content.number;
+		result = result == NUMundefined || previous->number == NUMundefined ? NUMundefined :
+			result < previous->number ? result : previous->number;
 	}
 	pushNumber (result);
 }
@@ -2408,18 +2548,18 @@ static void do_max (void) {
 	Stackel n = pop, last;
 	double result;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->content.number < 1)
+	if (n->number < 1)
 		Melder_throw ("The function \"max\" requires at least one argument.");
 	last = pop;
 	if (last->which != Stackel_NUMBER)
 		Melder_throw ("The function \"max\" can only have numeric arguments, not ", Stackel_whichText (last), ".");
-	result = last->content.number;
-	for (int j = n->content.number - 1; j > 0; j --) {
+	result = last->number;
+	for (int j = n->number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw ("The function \"max\" can only have numeric arguments, not ", Stackel_whichText (previous), ".");
-		result = result == NUMundefined || previous->content.number == NUMundefined ? NUMundefined :
-			result > previous->content.number ? result : previous->content.number;
+		result = result == NUMundefined || previous->number == NUMundefined ? NUMundefined :
+			result > previous->number ? result : previous->number;
 	}
 	pushNumber (result);
 }
@@ -2427,22 +2567,22 @@ static void do_imin (void) {
 	Stackel n = pop, last;
 	double minimum, result;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->content.number < 1)
+	if (n->number < 1)
 		Melder_throw ("The function \"imin\" requires at least one argument.");
 	last = pop;
 	if (last->which != Stackel_NUMBER)
 		Melder_throw ("The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (last), ".");
-	minimum = last->content.number;
-	result = n->content.number;
-	for (int j = n->content.number - 1; j > 0; j --) {
+	minimum = last->number;
+	result = n->number;
+	for (int j = n->number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw ("The function \"imin\" can only have numeric arguments, not ", Stackel_whichText (previous), ".");
-		if (minimum == NUMundefined || previous->content.number == NUMundefined) {
+		if (minimum == NUMundefined || previous->number == NUMundefined) {
 			minimum = NUMundefined;
 			result = NUMundefined;
-		} else if (previous->content.number < minimum) {
-			minimum = previous->content.number;
+		} else if (previous->number < minimum) {
+			minimum = previous->number;
 			result = j;
 		}
 	}
@@ -2452,22 +2592,22 @@ static void do_imax (void) {
 	Stackel n = pop, last;
 	double maximum, result;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->content.number < 1)
+	if (n->number < 1)
 		Melder_throw ("The function \"imax\" requires at least one argument.");
 	last = pop;
 	if (last->which != Stackel_NUMBER)
 		Melder_throw ("The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (last), ".");
-	maximum = last->content.number;
-	result = n->content.number;
-	for (int j = n->content.number - 1; j > 0; j --) {
+	maximum = last->number;
+	result = n->number;
+	for (int j = n->number - 1; j > 0; j --) {
 		Stackel previous = pop;
 		if (previous->which != Stackel_NUMBER)
 			Melder_throw ("The function \"imax\" can only have numeric arguments, not ", Stackel_whichText (previous), ".");
-		if (maximum == NUMundefined || previous->content.number == NUMundefined) {
+		if (maximum == NUMundefined || previous->number == NUMundefined) {
 			maximum = NUMundefined;
 			result = NUMundefined;
-		} else if (previous->content.number > maximum) {
-			maximum = previous->content.number;
+		} else if (previous->number > maximum) {
+			maximum = previous->number;
 			result = j;
 		}
 	}
@@ -2476,7 +2616,7 @@ static void do_imax (void) {
 static void do_zeroNumar (void) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int rank = n -> content.number;
+	int rank = n -> number;
 	if (rank < 1)
 		Melder_throw ("The function \"zero#\" requires arguments.");
 	long numberOfRows = 1, numberOfColumns = 1;
@@ -2486,12 +2626,12 @@ static void do_zeroNumar (void) {
 		Stackel ncol = pop;
 		if (ncol -> which != Stackel_NUMBER)
 			Melder_throw ("In the function \"zero#\", the number of columns has to be a number, not ", Stackel_whichText (ncol), ".");
-		numberOfColumns = ncol -> content.number;
+		numberOfColumns = ncol -> number;
 	}
 	Stackel nrow = pop;
 	if (nrow -> which != Stackel_NUMBER)
 		Melder_throw ("In the function \"zero#\", the number of rows has to be a number, not ", Stackel_whichText (nrow), ".");
-	numberOfRows = nrow -> content.number;
+	numberOfRows = nrow -> number;
 	if (numberOfRows == NUMundefined)
 		Melder_throw ("In the function \"zero#\", the number of rows is undefined.");
 	if (numberOfColumns == NUMundefined)
@@ -2506,7 +2646,7 @@ static void do_zeroNumar (void) {
 static void do_linearNumar (void) {
 	Stackel stackel_narg = pop;
 	Melder_assert (stackel_narg -> which == Stackel_NUMBER);
-	int narg = stackel_narg -> content.number;
+	int narg = stackel_narg -> number;
 	if (narg < 3 || narg > 4)
 		Melder_throw ("The function \"linear#\" requires three or four arguments.");
 	bool excludeEdges = false;   // default
@@ -2514,26 +2654,26 @@ static void do_linearNumar (void) {
 		Stackel stack_excludeEdges = pop;
 		if (stack_excludeEdges -> which != Stackel_NUMBER)
 			Melder_throw ("In the function \"linear#\", the edge exclusion flag (fourth argument) has to be a number, not ", Stackel_whichText (stack_excludeEdges), ".");
-		excludeEdges = stack_excludeEdges -> content.number;
+		excludeEdges = stack_excludeEdges -> number;
 	}
 	Stackel stack_numberOfSteps = pop, stack_maximum = pop, stack_minimum = pop;
 	if (stack_minimum -> which != Stackel_NUMBER)
 		Melder_throw ("In the function \"linear#\", the minimum (first argument) has to be a number, not ", Stackel_whichText (stack_minimum), ".");
-	double minimum = stack_minimum -> content.number;
+	double minimum = stack_minimum -> number;
 	if (minimum == NUMundefined)
 		Melder_throw ("Undefined minimum in the function \"linear#\" (first argument).");
 	if (stack_maximum -> which != Stackel_NUMBER)
 		Melder_throw ("In the function \"linear#\", the maximum (second argument) has to be a number, not ", Stackel_whichText (stack_maximum), ".");
-	double maximum = stack_maximum -> content.number;
+	double maximum = stack_maximum -> number;
 	if (maximum == NUMundefined)
 		Melder_throw ("Undefined maximum in the function \"linear#\" (second argument).");
 	if (maximum < minimum)
 		Melder_throw ("Maximum (", maximum, L") smaller than minimum (", minimum, ") in function \"linear#\".");
 	if (stack_numberOfSteps -> which != Stackel_NUMBER)
 		Melder_throw ("In the function \"linear#\", the number of steps (third argument) has to be a number, not ", Stackel_whichText (stack_numberOfSteps), ".");
-	if (stack_numberOfSteps -> content.number == NUMundefined)
+	if (stack_numberOfSteps -> number == NUMundefined)
 		Melder_throw ("Undefined number of steps in the function \"linear#\" (third argument).");
-	long numberOfSteps = floor (stack_numberOfSteps -> content.number + 0.5);
+	long numberOfSteps = floor (stack_numberOfSteps -> number + 0.5);
 	if (numberOfSteps <= 0)
 		Melder_throw ("In the function \"linear#\", the number of steps (third argument) has to be positive, not ", numberOfSteps, ".");
 	autoNUMmatrix <double> data (1, numberOfSteps, 1, 1);
@@ -2548,11 +2688,11 @@ static void do_linearNumar (void) {
 static void do_numberOfRows (void) {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->content.number != 1)
+	if (n->number != 1)
 		Melder_throw ("The function \"numberOfRows\" requires one argument.");
 	Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_ARRAY) {
-		pushNumber (array->content.numericArray.numberOfRows);
+		pushNumber (array->numericArray.numberOfRows);
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires a numeric argument, not ", Stackel_whichText (array), ".");
@@ -2561,11 +2701,11 @@ static void do_numberOfRows (void) {
 static void do_numberOfColumns (void) {
 	Stackel n = pop;
 	Melder_assert (n->which == Stackel_NUMBER);
-	if (n->content.number != 1)
+	if (n->number != 1)
 		Melder_throw ("The function \"numberOfColumns\" requires one argument.");
 	Stackel array = pop;
 	if (array->which == Stackel_NUMERIC_ARRAY) {
-		pushNumber (array->content.numericArray.numberOfColumns);
+		pushNumber (array->numericArray.numberOfColumns);
 	} else {
 		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
 			" requires a numeric argument, not ", Stackel_whichText (array), ".");
@@ -2574,7 +2714,7 @@ static void do_numberOfColumns (void) {
 static void do_numericArrayElement (void) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int narg = n -> content.number;
+	int narg = n -> number;
 	if (narg < 1 || narg > 2)
 		Melder_throw ("Array indexing requires one or two arguments.");
 	InterpreterVariable array = parse [programPointer]. content.variable;
@@ -2583,9 +2723,9 @@ static void do_numericArrayElement (void) {
 		Stackel c = pop;
 		if (c -> which != Stackel_NUMBER)
 			Melder_throw ("In array indexing, the column index has to be a number, not ", Stackel_whichText (c), ".");
-		if (c -> content.number == NUMundefined)
+		if (c -> number == NUMundefined)
 			Melder_throw ("The column index is undefined.");
-		column = floor (c -> content.number + 0.5);
+		column = floor (c -> number + 0.5);
 		if (column <= 0)
 			Melder_throw ("In array indexing, the column index has to be positive.");
 		if (column > array -> numericArrayValue. numberOfColumns)
@@ -2594,9 +2734,9 @@ static void do_numericArrayElement (void) {
 	Stackel r = pop;
 	if (r -> which != Stackel_NUMBER)
 		Melder_throw ("In array indexing, the row index has to be a number, not ", Stackel_whichText (r), ".");
-	if (r -> content.number == NUMundefined)
+	if (r -> number == NUMundefined)
 		Melder_throw ("The row index is undefined.");
-	row = floor (r -> content.number + 0.5);
+	row = floor (r -> number + 0.5);
 	if (row <= 0)
 		Melder_throw ("In array indexing, the row index has to be positive.");
 	if (row > array -> numericArrayValue. numberOfRows)
@@ -2606,7 +2746,7 @@ static void do_numericArrayElement (void) {
 static void do_indexedNumericVariable (void) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int nindex = n -> content.number;
+	int nindex = n -> number;
 	if (nindex < 1)
 		Melder_throw ("Indexed variables require at least one index.");
 	wchar_t *indexedVariableName = parse [programPointer]. content.string;
@@ -2618,7 +2758,7 @@ static void do_indexedNumericVariable (void) {
 		Stackel index = & theStack [w + iindex];
 		if (index -> which != Stackel_NUMBER)
 			Melder_throw ("In indexed variables, the index has to be a number, not ", Stackel_whichText (index), ".");
-		MelderString_append (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
+		MelderString_append (& totalVariableName, Melder_double (index -> number), iindex == nindex ? L"]" : L",");
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (var == NULL)
@@ -2628,7 +2768,7 @@ static void do_indexedNumericVariable (void) {
 static void do_indexedStringVariable (void) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);
-	int nindex = n -> content.number;
+	int nindex = n -> number;
 	if (nindex < 1)
 		Melder_throw ("Indexed variables require at least one index.");
 	wchar_t *indexedVariableName = parse [programPointer]. content.string;
@@ -2640,7 +2780,7 @@ static void do_indexedStringVariable (void) {
 		Stackel index = & theStack [w + iindex];
 		if (index -> which != Stackel_NUMBER)
 			Melder_throw ("In indexed variables, the index has to be a number, not ", Stackel_whichText (index), ".");
-		MelderString_append (& totalVariableName, Melder_double (index -> content.number), iindex == nindex ? L"]" : L",");
+		MelderString_append (& totalVariableName, Melder_double (index -> number), iindex == nindex ? L"]" : L",");
 	}
 	InterpreterVariable var = Interpreter_hasVariable (theInterpreter, totalVariableName.string);
 	if (var == NULL)
@@ -2651,7 +2791,7 @@ static void do_indexedStringVariable (void) {
 static void do_length (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		double result = wcslen (s->content.string);
+		double result = wcslen (s->string);
 		pushNumber (result);
 	} else {
 		Melder_throw ("The function \"length\" requires a string, not ", Stackel_whichText (s), ".");
@@ -2661,7 +2801,7 @@ static void do_fileReadable (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
 		structMelderFile file = { 0 };
-		Melder_relativePathToFile (s->content.string, & file);
+		Melder_relativePathToFile (s->string, & file);
 		pushNumber (MelderFile_readable (& file));
 	} else {
 		Melder_throw ("The function \"fileReadable\" requires a string, not ", Stackel_whichText (s), ".");
@@ -2678,11 +2818,11 @@ static void do_dateStr (void) {
 static void do_leftStr (void) {
 //Melder_casual ("entering left$");
 	Stackel narg = pop;
-	if (narg->content.number == 1 || narg->content.number == 2) {
-		Stackel x = ( narg->content.number == 2 ? pop : NULL ), s = pop;
+	if (narg->number == 1 || narg->number == 2) {
+		Stackel x = ( narg->number == 2 ? pop : NULL ), s = pop;
 		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
-			long newlength = x ? x->content.number : 1;
-			long length = wcslen (s->content.string);
+			long newlength = x ? x->number : 1;
+			long length = wcslen (s->string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
 			#if 0
@@ -2691,7 +2831,7 @@ static void do_leftStr (void) {
 				s1 = s2;
 			#endif
 			autostring result = Melder_malloc (wchar_t, newlength + 1);
-			wcsncpy (result.peek(), s->content.string, newlength);
+			wcsncpy (result.peek(), s->string, newlength);
 			result [newlength] = '\0';
 			pushString (result.transfer());
 		} else {
@@ -2704,14 +2844,14 @@ static void do_leftStr (void) {
 }
 static void do_rightStr (void) {
 	Stackel narg = pop;
-	if (narg->content.number == 1 || narg->content.number == 2) {
-		Stackel x = ( narg->content.number == 2 ? pop : NULL ), s = pop;
+	if (narg->number == 1 || narg->number == 2) {
+		Stackel x = ( narg->number == 2 ? pop : NULL ), s = pop;
 		if (s->which == Stackel_STRING && (x == NULL || x->which == Stackel_NUMBER)) {
-			long newlength = x ? x->content.number : 1;
-			long length = wcslen (s->content.string);
+			long newlength = x ? x->number : 1;
+			long length = wcslen (s->string);
 			if (newlength < 0) newlength = 0;
 			if (newlength > length) newlength = length;
-			pushString (Melder_wcsdup (s->content.string + length - newlength));
+			pushString (Melder_wcsdup (s->string + length - newlength));
 		} else {
 			Melder_throw ("The function \"right$\" requires a string, or a string and a number.");
 		}
@@ -2721,19 +2861,19 @@ static void do_rightStr (void) {
 }
 static void do_midStr (void) {
 	Stackel narg = pop;
-	if (narg->content.number == 2 || narg->content.number == 3) {
-		Stackel y = ( narg->content.number == 3 ? pop : NULL ), x = pop, s = pop;
+	if (narg->number == 2 || narg->number == 3) {
+		Stackel y = ( narg->number == 3 ? pop : NULL ), x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER && (y == NULL || y->which == Stackel_NUMBER)) {
-			long newlength = y ? y->content.number : 1;
-			long start = x->content.number;
-			long length = wcslen (s->content.string), finish = start + newlength - 1;
+			long newlength = y ? y->number : 1;
+			long start = x->number;
+			long length = wcslen (s->string), finish = start + newlength - 1;
 			autostring result;
 			if (start < 1) start = 1;
 			if (finish > length) finish = length;
 			newlength = finish - start + 1;
 			if (newlength > 0) {
 				result.reset (Melder_malloc (wchar_t, newlength + 1));
-				wcsncpy (result.peek(), s->content.string + start - 1, newlength);
+				wcsncpy (result.peek(), s->string + start - 1, newlength);
 				result [newlength] = '\0';
 			} else {
 				result.reset (Melder_wcsdup (L""));
@@ -2749,7 +2889,7 @@ static void do_midStr (void) {
 static void do_environmentStr (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
-		wchar_t *value = Melder_getenv (s->content.string);
+		wchar_t *value = Melder_getenv (s->string);
 		autostring result = Melder_wcsdup (value != NULL ? value : L"");
 		pushString (result.transfer());
 	} else {
@@ -2759,8 +2899,8 @@ static void do_environmentStr (void) {
 static void do_index (void) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		wchar_t *substring = wcsstr (s->content.string, t->content.string);
-		long result = substring ? substring - s->content.string + 1 : 0;
+		wchar_t *substring = wcsstr (s->string, t->string);
+		long result = substring ? substring - s->string + 1 : 0;
 		pushNumber (result);
 	} else {
 		Melder_throw ("The function \"index\" requires two strings, not ",
@@ -2770,17 +2910,17 @@ static void do_index (void) {
 static void do_rindex (void) {
 	Stackel part = pop, whole = pop;
 	if (whole->which == Stackel_STRING && part->which == Stackel_STRING) {
-		wchar_t *lastSubstring = wcsstr (whole->content.string, part->content.string);
-		if (part->content.string [0] == '\0') {
-			long result = wcslen (whole->content.string);
+		wchar_t *lastSubstring = wcsstr (whole->string, part->string);
+		if (part->string [0] == '\0') {
+			long result = wcslen (whole->string);
 			pushNumber (result);
 		} else if (lastSubstring) {
 			for (;;) {
-				wchar_t *substring = wcsstr (lastSubstring + 1, part->content.string);
+				wchar_t *substring = wcsstr (lastSubstring + 1, part->string);
 				if (substring == NULL) break;
 				lastSubstring = substring;
 			}
-			pushNumber (lastSubstring - whole->content.string + 1);
+			pushNumber (lastSubstring - whole->string + 1);
 		} else {
 			pushNumber (0);
 		}
@@ -2792,7 +2932,7 @@ static void do_rindex (void) {
 static void do_stringMatchesCriterion (int criterion) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		int result = Melder_stringMatchesCriterion (s->content.string, criterion, t->content.string);
+		int result = Melder_stringMatchesCriterion (s->string, criterion, t->string);
 		pushNumber (result);
 	} else {
 		Melder_throw ("The function \"", Formula_instructionNames [parse [programPointer]. symbol],
@@ -2803,12 +2943,12 @@ static void do_index_regex (int backward) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
 		const wchar_t *errorMessage;
-		regexp *compiled_regexp = CompileRE ((const regularExp_CHAR *) t->content.string, & errorMessage, 0);
+		regexp *compiled_regexp = CompileRE ((const regularExp_CHAR *) t->string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			pushNumber (NUMundefined);
-		} else if (ExecRE (compiled_regexp, NULL, (const regularExp_CHAR *) s->content.string, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
+		} else if (ExecRE (compiled_regexp, NULL, (const regularExp_CHAR *) s->string, NULL, backward, '\0', '\0', NULL, NULL, NULL)) {
 			wchar_t *place = (wchar_t *) compiled_regexp -> startp [0];
-			pushNumber (place - s->content.string + 1);
+			pushNumber (place - s->string + 1);
 			free (compiled_regexp);
 		} else {
 			pushNumber (FALSE);
@@ -2822,7 +2962,7 @@ static void do_replaceStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		long numberOfMatches;
-		autostring result = str_replace_literal (s->content.string, t->content.string, u->content.string, x->content.number, & numberOfMatches);
+		autostring result = str_replace_literal (s->string, t->string, u->string, x->number, & numberOfMatches);
 		pushString (result.transfer());
 	} else {
 		Melder_throw ("The function \"replace$\" requires three strings and a number.");
@@ -2832,13 +2972,13 @@ static void do_replace_regexStr (void) {
 	Stackel x = pop, u = pop, t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING && u->which == Stackel_STRING && x->which == Stackel_NUMBER) {
 		const wchar_t *errorMessage;
-		regexp *compiled_regexp = CompileRE ((const regularExp_CHAR *) t->content.string, & errorMessage, 0);
+		regexp *compiled_regexp = CompileRE ((const regularExp_CHAR *) t->string, & errorMessage, 0);
 		if (compiled_regexp == NULL) {
 			autostring result = Melder_wcsdup (L"");
 			pushString (result.transfer());
 		} else {
 			long numberOfMatches;
-			autostring result = str_replace_regexp (s->content.string, compiled_regexp, u->content.string, x->content.number, & numberOfMatches);
+			autostring result = str_replace_regexp (s->string, compiled_regexp, u->string, x->number, & numberOfMatches);
 			pushString (result.transfer());
 		}
 	} else {
@@ -2848,12 +2988,12 @@ static void do_replace_regexStr (void) {
 static void do_extractNumber (void) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		wchar_t *substring = wcsstr (s->content.string, t->content.string);
+		wchar_t *substring = wcsstr (s->string, t->string);
 		if (substring == NULL) {
 			pushNumber (NUMundefined);
 		} else {
 			/* Skip the prompt. */
-			substring += wcslen (t->content.string);
+			substring += wcslen (t->string);
 			/* Skip white space. */
 			while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
 			if (substring [0] == '\0' || wcsnequ (substring, L"--undefined--", 13)) {
@@ -2891,14 +3031,14 @@ static void do_extractNumber (void) {
 static void do_extractTextStr (int singleWord) {
 	Stackel t = pop, s = pop;
 	if (s->which == Stackel_STRING && t->which == Stackel_STRING) {
-		wchar_t *substring = wcsstr (s->content.string, t->content.string);
+		wchar_t *substring = wcsstr (s->string, t->string);
 		autostring result;
 		if (substring == NULL) {
 			result.reset (Melder_wcsdup (L""));
 		} else {
 			long length;
 			/* Skip the prompt. */
-			substring += wcslen (t->content.string);
+			substring += wcslen (t->string);
 			if (singleWord) {
 				/* Skip white space. */
 				while (*substring == ' ' || *substring == '\t' || *substring == '\n' || *substring == '\r') substring ++;
@@ -2925,28 +3065,28 @@ static void do_extractTextStr (int singleWord) {
 static void do_selected (void) {
 	Stackel n = pop;
 	long result = 0;
-	if (n->content.number == 0) {
+	if (n->number == 0) {
 		result = praat_getIdOfSelected (NULL, 0);
-	} else if (n->content.number == 1) {
+	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->content.string);
+			ClassInfo klas = Thing_classFromClassName (a->string);
 			result = praat_getIdOfSelected (klas, 0);
 		} else if (a->which == Stackel_NUMBER) {
-			result = praat_getIdOfSelected (NULL, a->content.number);
+			result = praat_getIdOfSelected (NULL, a->number);
 		} else {
 			Melder_throw ("The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
-	} else if (n->content.number == 2) {
+	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->content.string);
-			result = praat_getIdOfSelected (klas, x->content.number);
+			ClassInfo klas = Thing_classFromClassName (s->string);
+			result = praat_getIdOfSelected (klas, x->number);
 		} else {
 			Melder_throw ("The function \"selected\" requires a string (an object type name) and/or a number.");
 		}
 	} else {
-		Melder_throw ("The function \"selected\" requires 0, 1, or 2 arguments, not ", n->content.number, ".");
+		Melder_throw ("The function \"selected\" requires 0, 1, or 2 arguments, not ", n->number, ".");
 	}
 	pushNumber (result);
 }
@@ -2954,29 +3094,29 @@ static void do_selectedStr (void) {
 	Stackel n = pop;
 	wchar_t *name;
 	autostring result;
-	if (n->content.number == 0) {
+	if (n->number == 0) {
 		name = praat_getNameOfSelected (NULL, 0);
 		result.reset (Melder_wcsdup (name));
-	} else if (n->content.number == 1) {
+	} else if (n->number == 1) {
 		Stackel a = pop;
 		if (a->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (a->content.string);
+			ClassInfo klas = Thing_classFromClassName (a->string);
 			name = praat_getNameOfSelected (klas, 0);
 			result.reset (Melder_wcsdup (name));
 		} else if (a->which == Stackel_NUMBER) {
-			name = praat_getNameOfSelected (NULL, a->content.number);
+			name = praat_getNameOfSelected (NULL, a->number);
 			result.reset (Melder_wcsdup (name));
 		} else {
 			Melder_throw ("The function \"selected$\" requires a string (an object type name) and/or a number.");
 		}
-	} else if (n->content.number == 2) {
+	} else if (n->number == 2) {
 		Stackel x = pop, s = pop;
 		if (s->which == Stackel_STRING && x->which == Stackel_NUMBER) {
-			ClassInfo klas = Thing_classFromClassName (s->content.string);
-			name = praat_getNameOfSelected (klas, x->content.number);
+			ClassInfo klas = Thing_classFromClassName (s->string);
+			name = praat_getNameOfSelected (klas, x->number);
 			result.reset (Melder_wcsdup (name));
 		} else {
-			Melder_throw ("The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->content.number, ".");
+			Melder_throw ("The function \"selected$\" requires 0, 1, or 2 arguments, not ", n->number, ".");
 		}
 	}
 	pushString (result.transfer());
@@ -2984,25 +3124,34 @@ static void do_selectedStr (void) {
 static void do_numberOfSelected (void) {
 	Stackel n = pop;
 	long result = 0;
-	if (n->content.number == 0) {
+	if (n->number == 0) {
 		result = praat_selection (NULL);
-	} else if (n->content.number == 1) {
+	} else if (n->number == 1) {
 		Stackel s = pop;
 		if (s->which == Stackel_STRING) {
-			ClassInfo klas = Thing_classFromClassName (s->content.string);
+			ClassInfo klas = Thing_classFromClassName (s->string);
 			result = praat_selection (klas);
 		} else {
 			Melder_throw ("The function \"numberOfSelected\" requires a string (an object type name), not ", Stackel_whichText (s), ".");
 		}
 	} else {
-		Melder_throw ("The function \"numberOfSelected\" requires 0 or 1 arguments, not ", n->content.number, ".");
+		Melder_throw ("The function \"numberOfSelected\" requires 0 or 1 arguments, not ", n->number, ".");
 	}
 	pushNumber (result);
+}
+static void do_stringStr (void) {
+	Stackel value = pop;
+	if (value->which == Stackel_NUMBER) {
+		autostring result = Melder_wcsdup (Melder_double (value->number));
+		pushString (result.transfer());
+	} else {
+		Melder_throw ("The function \"string$\" requires a number, not ", Stackel_whichText (value), ".");
+	}
 }
 static void do_fixedStr (void) {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		autostring result = Melder_wcsdup (Melder_fixed (value->content.number, precision->content.number));
+		autostring result = Melder_wcsdup (Melder_fixed (value->number, precision->number));
 		pushString (result.transfer());
 	} else {
 		Melder_throw ("The function \"fixed$\" requires two numbers (value and precision), not ", Stackel_whichText (value), " and ", Stackel_whichText (precision), ".");
@@ -3011,7 +3160,7 @@ static void do_fixedStr (void) {
 static void do_percentStr (void) {
 	Stackel precision = pop, value = pop;
 	if (value->which == Stackel_NUMBER && precision->which == Stackel_NUMBER) {
-		autostring result = Melder_wcsdup (Melder_percent (value->content.number, precision->content.number));
+		autostring result = Melder_wcsdup (Melder_percent (value->number, precision->number));
 		pushString (result.transfer());
 	} else {
 		Melder_throw ("The function \"percent$\" requires two numbers (value and precision), not ", Stackel_whichText (value), " and ", Stackel_whichText (precision), ".");
@@ -3023,7 +3172,7 @@ static void do_deleteFile (void) {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
 		structMelderFile file = { 0 };
-		Melder_relativePathToFile (f->content.string, & file);
+		Melder_relativePathToFile (f->string, & file);
 		MelderFile_delete (& file);
 		pushNumber (1);
 	} else {
@@ -3038,9 +3187,9 @@ static void do_createDirectory (void) {
 		structMelderDir currentDirectory = { { 0 } };
 		Melder_getDefaultDir (& currentDirectory);
 		#if defined (UNIX) || defined (macintosh)
-			Melder_createDirectory (& currentDirectory, f->content.string, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+			Melder_createDirectory (& currentDirectory, f->string, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 		#else
-			Melder_createDirectory (& currentDirectory, f->content.string, 0);
+			Melder_createDirectory (& currentDirectory, f->string, 0);
 		#endif
 		pushNumber (1);
 	} else {
@@ -3050,7 +3199,7 @@ static void do_createDirectory (void) {
 static void do_variableExists (void) {
 	Stackel f = pop;
 	if (f->which == Stackel_STRING) {
-		bool result = Interpreter_hasVariable (theInterpreter, f->content.string) != NULL;
+		bool result = Interpreter_hasVariable (theInterpreter, f->string) != NULL;
 		pushNumber (result);
 	} else {
 		Melder_throw ("The function \"variableExists\" requires a string, not ", Stackel_whichText (f), ".");
@@ -3060,15 +3209,15 @@ static void do_beginPauseForm (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"beginPauseForm\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 1) {
+	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			UiPause_begin (theCurrentPraatApplication -> topShell, title->content.string, theInterpreter);
+			UiPause_begin (theCurrentPraatApplication -> topShell, title->string, theInterpreter);
 		} else {
 			Melder_throw ("The function \"beginPauseForm\" requires a string (the title), not ", Stackel_whichText (title), ".");
 		}
 	} else {
-		Melder_throw ("The function \"beginPauseForm\" requires 1 argument (a title), not ", n->content.number, ".");
+		Melder_throw ("The function \"beginPauseForm\" requires 1 argument (a title), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3076,24 +3225,24 @@ static void do_pauseFormAddReal (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"real\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->content.string;
+			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->content.number);
+			defaultString = Melder_double (defaultValue->number);
 		} else {
 			Melder_throw ("The second argument of \"real\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_real (label->content.string, defaultString);
+			UiPause_real (label->string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"real\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"real\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"real\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3101,24 +3250,24 @@ static void do_pauseFormAddPositive (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"positive\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->content.string;
+			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->content.number);
+			defaultString = Melder_double (defaultValue->number);
 		} else {
 			Melder_throw ("The second argument of \"positive\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_positive (label->content.string, defaultString);
+			UiPause_positive (label->string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"positive\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"positive\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"positive\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3126,24 +3275,24 @@ static void do_pauseFormAddInteger (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"integer\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->content.string;
+			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->content.number);
+			defaultString = Melder_double (defaultValue->number);
 		} else {
 			Melder_throw ("The second argument of \"integer\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_integer (label->content.string, defaultString);
+			UiPause_integer (label->string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"integer\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"integer\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"integer\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3151,24 +3300,24 @@ static void do_pauseFormAddNatural (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"natural\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		const wchar_t *defaultString = NULL;
 		if (defaultValue->which == Stackel_STRING) {
-			defaultString = defaultValue->content.string;
+			defaultString = defaultValue->string;
 		} else if (defaultValue->which == Stackel_NUMBER) {
-			defaultString = Melder_double (defaultValue->content.number);
+			defaultString = Melder_double (defaultValue->number);
 		} else {
 			Melder_throw ("The second argument of \"natural\" (the default value) must be a string or a number, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_natural (label->content.string, defaultString);
+			UiPause_natural (label->string, defaultString);
 		} else {
 			Melder_throw ("The first argument of \"natural\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"natural\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"natural\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3176,19 +3325,19 @@ static void do_pauseFormAddWord (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"word\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
 			Melder_throw ("The second argument of \"word\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_word (label->content.string, defaultValue->content.string);
+			UiPause_word (label->string, defaultValue->string);
 		} else {
 			Melder_throw ("The first argument of \"word\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"word\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"word\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3196,19 +3345,19 @@ static void do_pauseFormAddSentence (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"sentence\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
 			Melder_throw ("The second argument of \"sentence\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_sentence (label->content.string, defaultValue->content.string);
+			UiPause_sentence (label->string, defaultValue->string);
 		} else {
 			Melder_throw ("The first argument of \"sentence\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"sentence\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"sentence\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3216,19 +3365,19 @@ static void do_pauseFormAddText (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"text\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_STRING) {
 			Melder_throw ("The second argument of \"text\" (the default value) must be a string, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_text (label->content.string, defaultValue->content.string);
+			UiPause_text (label->string, defaultValue->string);
 		} else {
 			Melder_throw ("The first argument of \"text\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"text\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"text\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3236,19 +3385,19 @@ static void do_pauseFormAddBoolean (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"boolean\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
 			Melder_throw ("The second argument of \"boolean\" (the default value) must be a number (0 or 1), not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_boolean (label->content.string, defaultValue->content.number);
+			UiPause_boolean (label->string, defaultValue->number);
 		} else {
 			Melder_throw ("The first argument of \"boolean\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"boolean\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"boolean\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3256,19 +3405,19 @@ static void do_pauseFormAddChoice (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"choice\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
 			Melder_throw ("The second argument of \"choice\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_choice (label->content.string, defaultValue->content.number);
+			UiPause_choice (label->string, defaultValue->number);
 		} else {
 			Melder_throw ("The first argument of \"choice\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"choice\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"choice\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3276,19 +3425,19 @@ static void do_pauseFormAddOptionMenu (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"optionMenu\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultValue = pop;
 		if (defaultValue->which != Stackel_NUMBER) {
 			Melder_throw ("The second argument of \"optionMenu\" (the default value) must be a whole number, not ", Stackel_whichText (defaultValue), ".");
 		}
 		Stackel label = pop;
 		if (label->which == Stackel_STRING) {
-			UiPause_optionMenu (label->content.string, defaultValue->content.number);
+			UiPause_optionMenu (label->string, defaultValue->number);
 		} else {
 			Melder_throw ("The first argument of \"optionMenu\" (the label) must be a string, not ", Stackel_whichText (label), ".");
 		}
 	} else {
-		Melder_throw ("The function \"optionMenu\" requires 2 arguments (a label and a default value), not ", n->content.number, ".");
+		Melder_throw ("The function \"optionMenu\" requires 2 arguments (a label and a default value), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3296,15 +3445,15 @@ static void do_pauseFormAddOption (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"option\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 1) {
+	if (n->number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiPause_option (text->content.string);
+			UiPause_option (text->string);
 		} else {
 			Melder_throw ("The argument of \"option\" must be a string (the text), not ", Stackel_whichText (text), ".");
 		}
 	} else {
-		Melder_throw ("The function \"option\" requires 1 argument (a text), not ", n->content.number, ".");
+		Melder_throw ("The function \"option\" requires 1 argument (a text), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3312,15 +3461,15 @@ static void do_pauseFormAddComment (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"comment\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number == 1) {
+	if (n->number == 1) {
 		Stackel text = pop;
 		if (text->which == Stackel_STRING) {
-			UiPause_comment (text->content.string);
+			UiPause_comment (text->string);
 		} else {
 			Melder_throw ("The argument of \"comment\" must be a string (the text), not ", Stackel_whichText (text), ".");
 		}
 	} else {
-		Melder_throw ("The function \"comment\" requires 1 argument (a text), not ", n->content.number, ".");
+		Melder_throw ("The function \"comment\" requires 1 argument (a text), not ", n->number, ".");
 	}
 	pushNumber (1);
 }
@@ -3328,17 +3477,17 @@ static void do_endPauseForm (void) {
 	if (theCurrentPraatObjects != & theForegroundPraatObjects)
 		Melder_throw ("The function \"endPause\" is not available inside manuals.");
 	Stackel n = pop;
-	if (n->content.number < 2 || n->content.number > 12)
-		Melder_throw ("The function \"endPause\" requires 2 to 12 arguments, not ", n->content.number, ".");
+	if (n->number < 2 || n->number > 12)
+		Melder_throw ("The function \"endPause\" requires 2 to 12 arguments, not ", n->number, ".");
 	Stackel d = pop;
 	if (d->which != Stackel_NUMBER)
 		Melder_throw ("The last argument of \"endPause\" has to be a number (the default or cancel continue button), not ", Stackel_whichText (d), ".");
-	int numberOfContinueButtons = n->content.number - 1;
-	int cancelContinueButton = 0, defaultContinueButton = d->content.number;
+	int numberOfContinueButtons = n->number - 1;
+	int cancelContinueButton = 0, defaultContinueButton = d->number;
 	Stackel ca = pop;
 	if (ca->which == Stackel_NUMBER) {
 		cancelContinueButton = defaultContinueButton;
-		defaultContinueButton = ca->content.number;
+		defaultContinueButton = ca->number;
 		numberOfContinueButtons --;
 		if (cancelContinueButton < 1 || cancelContinueButton > numberOfContinueButtons)
 			Melder_throw ("Your last argument of \"endPause\" is the number of the cancel button; it cannot be ", cancelContinueButton,
@@ -3352,21 +3501,21 @@ static void do_endPauseForm (void) {
 				" argument(s) of \"endPause\" has to be a string (a button text), not ", Stackel_whichText (co[i]), ".");
 	}
 	int buttonClicked = UiPause_end (numberOfContinueButtons, defaultContinueButton, cancelContinueButton,
-		co [1] == NULL ? NULL : co[1]->content.string, co [2] == NULL ? NULL : co[2]->content.string,
-		co [3] == NULL ? NULL : co[3]->content.string, co [4] == NULL ? NULL : co[4]->content.string,
-		co [5] == NULL ? NULL : co[5]->content.string, co [6] == NULL ? NULL : co[6]->content.string,
-		co [7] == NULL ? NULL : co[7]->content.string, co [8] == NULL ? NULL : co[8]->content.string,
-		co [9] == NULL ? NULL : co[9]->content.string, co [10] == NULL ? NULL : co[10]->content.string,
+		co [1] == NULL ? NULL : co[1]->string, co [2] == NULL ? NULL : co[2]->string,
+		co [3] == NULL ? NULL : co[3]->string, co [4] == NULL ? NULL : co[4]->string,
+		co [5] == NULL ? NULL : co[5]->string, co [6] == NULL ? NULL : co[6]->string,
+		co [7] == NULL ? NULL : co[7]->string, co [8] == NULL ? NULL : co[8]->string,
+		co [9] == NULL ? NULL : co[9]->string, co [10] == NULL ? NULL : co[10]->string,
 		theInterpreter);
 	//Melder_casual ("Button %d", buttonClicked);
 	pushNumber (buttonClicked);
 }
 static void do_chooseReadFileStr (void) {
 	Stackel n = pop;
-	if (n->content.number == 1) {
+	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autoSortedSetOfString fileNames = GuiFileSelect_getInfileNames (NULL, title->content.string, false);
+			autoSortedSetOfString fileNames = GuiFileSelect_getInfileNames (NULL, title->string, false);
 			if (fileNames -> size == 0) {
 				autostring result = Melder_wcsdup (L"");
 				pushString (result.transfer());
@@ -3379,15 +3528,15 @@ static void do_chooseReadFileStr (void) {
 			Melder_throw ("The argument of \"chooseReadFile$\" must be a string (the title), not ", Stackel_whichText (title), ".");
 		}
 	} else {
-		Melder_throw ("The function \"chooseReadFile$\" requires 1 argument (a title), not ", n->content.number, ".");
+		Melder_throw ("The function \"chooseReadFile$\" requires 1 argument (a title), not ", n->number, ".");
 	}
 }
 static void do_chooseWriteFileStr (void) {
 	Stackel n = pop;
-	if (n->content.number == 2) {
+	if (n->number == 2) {
 		Stackel defaultName = pop, title = pop;
 		if (title->which == Stackel_STRING && defaultName->which == Stackel_STRING) {
-			autostring result = GuiFileSelect_getOutfileName (NULL, title->content.string, defaultName->content.string);
+			autostring result = GuiFileSelect_getOutfileName (NULL, title->string, defaultName->string);
 			if (result.peek() == NULL) {
 				result.reset (Melder_wcsdup (L""));
 			}
@@ -3396,15 +3545,15 @@ static void do_chooseWriteFileStr (void) {
 			Melder_throw ("The arguments of \"chooseWriteFile$\" must be two strings (the title and the default name).");
 		}
 	} else {
-		Melder_throw ("The function \"chooseWriteFile$\" requires 2 arguments (a title and a default name), not ", n->content.number, ".");
+		Melder_throw ("The function \"chooseWriteFile$\" requires 2 arguments (a title and a default name), not ", n->number, ".");
 	}
 }
 static void do_chooseDirectoryStr (void) {
 	Stackel n = pop;
-	if (n->content.number == 1) {
+	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			autostring result = GuiFileSelect_getDirectoryName (NULL, title->content.string);
+			autostring result = GuiFileSelect_getDirectoryName (NULL, title->string);
 			if (result.peek() == NULL) {
 				result.reset (Melder_wcsdup (L""));
 			}
@@ -3413,97 +3562,97 @@ static void do_chooseDirectoryStr (void) {
 			Melder_throw ("The argument of \"chooseDirectory$\" must be a string (the title).");
 		}
 	} else {
-		Melder_throw ("The function \"chooseDirectory$\" requires 1 argument (a title), not ", n->content.number, ".");
+		Melder_throw ("The function \"chooseDirectory$\" requires 1 argument (a title), not ", n->number, ".");
 	}
 }
 static void do_demoWindowTitle (void) {
 	Stackel n = pop;
-	if (n->content.number == 1) {
+	if (n->number == 1) {
 		Stackel title = pop;
 		if (title->which == Stackel_STRING) {
-			Demo_windowTitle (title->content.string);
+			Demo_windowTitle (title->string);
 		} else {
 			Melder_throw ("The argument of \"demoWindowTitle\" must be a string (the title), not ", Stackel_whichText (title), ".");
 		}
 	} else {
-		Melder_throw ("The function \"demoWindowTitle\" requires 1 argument (a title), not ", Melder_integer (n->content.number), ".");
+		Melder_throw ("The function \"demoWindowTitle\" requires 1 argument (a title), not ", Melder_integer (n->number), ".");
 	}
 	pushNumber (1);
 }
 static void do_demoShow (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoShow\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoShow\" requires 0 arguments, not ", n->number, ".");
 	Demo_show ();
 	pushNumber (1);
 }
 static void do_demoWaitForInput (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoWaitForInput\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoWaitForInput\" requires 0 arguments, not ", n->number, ".");
 	Demo_waitForInput (theInterpreter);
 	pushNumber (1);
 }
 static void do_demoInput (void) {
 	Stackel n = pop;
-	if (n->content.number == 1) {
+	if (n->number == 1) {
 		Stackel keys = pop;
 		if (keys->which == Stackel_STRING) {
-			bool result = Demo_input (keys->content.string);
+			bool result = Demo_input (keys->string);
 			pushNumber (result);
 		} else {
 			Melder_throw ("The argument of \"demoInput\" must be a string (the keys), not ", Stackel_whichText (keys), ".");
 		}
 	} else {
-		Melder_throw ("The function \"demoInput\" requires 1 argument (keys), not ", n->content.number, ".");
+		Melder_throw ("The function \"demoInput\" requires 1 argument (keys), not ", n->number, ".");
 	}
 }
 static void do_demoClickedIn (void) {
 	Stackel n = pop;
-	if (n->content.number == 4) {
+	if (n->number == 4) {
 		Stackel top = pop, bottom = pop, right = pop, left = pop;
 		if (left->which == Stackel_NUMBER && right->which == Stackel_NUMBER && bottom->which == Stackel_NUMBER && top->which == Stackel_NUMBER) {
-			bool result = Demo_clickedIn (left->content.number, right->content.number, bottom->content.number, top->content.number);
+			bool result = Demo_clickedIn (left->number, right->number, bottom->number, top->number);
 			pushNumber (result);
 		} else {
 			Melder_throw ("All arguments of \"demoClickedIn\" must be numbers (the x and y ranges).");
 		}
 	} else {
-		Melder_throw ("The function \"demoClickedIn\" requires 4 arguments (x and y ranges), not ", n->content.number, ".");
+		Melder_throw ("The function \"demoClickedIn\" requires 4 arguments (x and y ranges), not ", n->number, ".");
 	}
 }
 static void do_demoClicked (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoClicked\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoClicked\" requires 0 arguments, not ", n->number, ".");
 	bool result = Demo_clicked ();
 	pushNumber (result);
 }
 static void do_demoX (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoX\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoX\" requires 0 arguments, not ", n->number, ".");
 	double result = Demo_x ();
 	pushNumber (result);
 }
 static void do_demoY (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoY\" requires 0 arguments, not ", n->content.number, L".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoY\" requires 0 arguments, not ", n->number, L".");
 	double result = Demo_y ();
 	pushNumber (result);
 }
 static void do_demoKeyPressed (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoKeyPressed\" requires 0 arguments, not ", n->number, ".");
 	bool result = Demo_keyPressed ();
 	pushNumber (result);
 }
 static void do_demoKey (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoKey\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoKey\" requires 0 arguments, not ", n->number, ".");
 	autostring key = Melder_malloc (wchar_t, 2);
 	key [0] = Demo_key ();
 	key [1] = '\0';
@@ -3511,42 +3660,42 @@ static void do_demoKey (void) {
 }
 static void do_demoShiftKeyPressed (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoShiftKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoShiftKeyPressed\" requires 0 arguments, not ", n->number, ".");
 	bool result = Demo_shiftKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoCommandKeyPressed (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoCommandKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoCommandKeyPressed\" requires 0 arguments, not ", n->number, ".");
 	bool result = Demo_commandKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoOptionKeyPressed (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoOptionKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoOptionKeyPressed\" requires 0 arguments, not ", n->number, ".");
 	bool result = Demo_optionKeyPressed ();
 	pushNumber (result);
 }
 static void do_demoExtraControlKeyPressed (void) {
 	Stackel n = pop;
-	if (n->content.number != 0)
-		Melder_throw ("The function \"demoControlKeyPressed\" requires 0 arguments, not ", n->content.number, ".");
+	if (n->number != 0)
+		Melder_throw ("The function \"demoControlKeyPressed\" requires 0 arguments, not ", n->number, ".");
 	bool result = Demo_extraControlKeyPressed ();
 	pushNumber (result);
 }
 static long Stackel_getRowNumber (Stackel row, Data thee) {
 	long result = 0;
 	if (row->which == Stackel_NUMBER) {
-		result = floor (row->content.number + 0.5);   // round
+		result = floor (row->number + 0.5);   // round
 	} else if (row->which == Stackel_STRING) {
 		if (! thy v_hasGetRowIndex ())
 			Melder_throw ("Objects of type ", Thing_className (thee), " do not have row labels, so row indexes have to be numbers.");
-		result = thy v_getRowIndex (row->content.string);
+		result = thy v_getRowIndex (row->string);
 		if (result == 0)
-			Melder_throw ("Object \"", thy name, "\" has no row labelled \"", row->content.string, "\".");
+			Melder_throw ("Object \"", thy name, "\" has no row labelled \"", row->string, "\".");
 	} else {
 		Melder_throw ("A row index should be a number or a string, not ", Stackel_whichText (row), ".");
 	}
@@ -3555,13 +3704,13 @@ static long Stackel_getRowNumber (Stackel row, Data thee) {
 static long Stackel_getColumnNumber (Stackel column, Data thee) {
 	long result = 0;
 	if (column->which == Stackel_NUMBER) {
-		result = floor (column->content.number + 0.5);   // round
+		result = floor (column->number + 0.5);   // round
 	} else if (column->which == Stackel_STRING) {
 		if (! thy v_hasGetColIndex ())
 			Melder_throw ("Objects of type ", Thing_className (thee), " do not have column labels, so column indexes have to be numbers.");
-		result = thy v_getColIndex (column->content.string);
+		result = thy v_getColIndex (column->string);
 		if (result == 0)
-			Melder_throw ("Object \"", thy name, "\" has no column labelled \"", column->content.string, "\".");
+			Melder_throw ("Object \"", thy name, "\" has no column labelled \"", column->string, "\".");
 	} else {
 		Melder_throw ("A column index should be a number or a string, not ", Stackel_whichText (column), ".");
 	}
@@ -3638,18 +3787,18 @@ static Data getObjectFromUniqueID (Stackel object) {
 	Data thee = NULL;
 	if (object->which == Stackel_NUMBER) {
 		int i = theCurrentPraatObjects -> n;
-		while (i > 0 && object->content.number != theCurrentPraatObjects -> list [i]. id)
+		while (i > 0 && object->number != theCurrentPraatObjects -> list [i]. id)
 			i --;
 		if (i == 0) {
-			Melder_throw ("No such object: ", object->content.number);
+			Melder_throw ("No such object: ", object->number);
 		}
 		thee = (Data) theCurrentPraatObjects -> list [i]. object;
 	} else if (object->which == Stackel_STRING) {
 		int i = theCurrentPraatObjects -> n;
-		while (i > 0 && ! Melder_wcsequ (object->content.string, theCurrentPraatObjects -> list [i]. name))
+		while (i > 0 && ! Melder_wcsequ (object->string, theCurrentPraatObjects -> list [i]. name))
 			i --;
 		if (i == 0) {
-			Melder_throw ("No such object: ", object->content.string);
+			Melder_throw ("No such object: ", object->string);
 		}
 		thee = (Data) theCurrentPraatObjects -> list [i]. object;
 	} else {
@@ -3974,13 +4123,13 @@ static void do_selfFunktie1 (long irow) {
 	if (x->which == Stackel_NUMBER) {
 		if (me == NULL) Melder_throw ("The name \"self\" is restricted to formulas for objects.");
 		if (my v_hasGetFunction1 ()) {
-			pushNumber (my v_getFunction1 (irow, x->content.number));
+			pushNumber (my v_getFunction1 (irow, x->number));
 		} else if (my v_hasGetFunction2 ()) {
 			if (! my v_hasGetY ())
 				Melder_throw ("The current ", Thing_className (me), " object (self) accepts no implicit y values.\n"
 					"Try using both (x, y) arguments instead.");
 			double y = my v_getY (irow);
-			pushNumber (my v_getFunction2 (x->content.number, y));
+			pushNumber (my v_getFunction2 (x->number, y));
 		} else {
 			Melder_throw (Thing_className (me), " objects like \"self\" accept no (x) values.");
 		}
@@ -3993,7 +4142,7 @@ static void do_objectLocation1 (long irow) {
 	Data thee = getObjectFromUniqueID (pop);
 	if (x->which == Stackel_NUMBER) {
 		if (thy v_hasGetFunction1 ()) {
-			pushNumber (thy v_getFunction1 (irow, x->content.number));
+			pushNumber (thy v_getFunction1 (irow, x->number));
 		} else if (thy v_hasGetFunction2 ()) {
 			Data me = theSource;
 			if (me == NULL)
@@ -4005,7 +4154,7 @@ static void do_objectLocation1 (long irow) {
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using: object (id, x, y).");
 			double y = my v_getY (irow);
-			pushNumber (thy v_getFunction2 (x->content.number, y));
+			pushNumber (thy v_getFunction2 (x->number, y));
 		} else {
 			Melder_throw (Thing_className (thee), " objects accept no (x) values.");
 		}
@@ -4018,7 +4167,7 @@ static void do_funktie1 (long irow) {
 	Stackel x = pop;
 	if (x->which == Stackel_NUMBER) {
 		if (thy v_hasGetFunction1 ()) {
-			pushNumber (thy v_getFunction1 (irow, x->content.number));
+			pushNumber (thy v_getFunction1 (irow, x->number));
 		} else if (thy v_hasGetFunction2 ()) {
 			Data me = theSource;
 			if (me == NULL)
@@ -4030,7 +4179,7 @@ static void do_funktie1 (long irow) {
 					"hence no implicit y value for this ", Thing_className (thee), " object.\n"
 					"Try using both (x, y) arguments instead.");
 			double y = my v_getY (irow);
-			pushNumber (thy v_getFunction2 (x->content.number, y));
+			pushNumber (thy v_getFunction2 (x->number, y));
 		} else {
 			Melder_throw (Thing_className (thee), " objects accept no (x) values.");
 		}
@@ -4045,7 +4194,7 @@ static void do_selfFunktie2 (void) {
 		if (me == NULL) Melder_throw ("The name \"self\" is restricted to formulas for objects.");
 		if (! my v_hasGetFunction2 ())
 			Melder_throw (Thing_className (me), " objects like \"self\" accept no (x, y) values.");
-		pushNumber (my v_getFunction2 (x->content.number, y->content.number));
+		pushNumber (my v_getFunction2 (x->number, y->number));
 	} else {
 		Melder_throw (Thing_className (me), " objects accept only numeric x values.");
 	}
@@ -4056,7 +4205,7 @@ static void do_objectLocation2 (void) {
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (! thy v_hasGetFunction2 ())
 			Melder_throw (Thing_className (thee), " objects accept no (x, y) values.");
-		pushNumber (thy v_getFunction2 (x->content.number, y->content.number));
+		pushNumber (thy v_getFunction2 (x->number, y->number));
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept only numeric x values.");
 	}
@@ -4067,7 +4216,7 @@ static void do_funktie2 (void) {
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		if (! thy v_hasGetFunction2 ())
 			Melder_throw (Thing_className (thee), " objects accept no (x, y) values.");
-		pushNumber (thy v_getFunction2 (x->content.number, y->content.number));
+		pushNumber (thy v_getFunction2 (x->number, y->number));
 	} else {
 		Melder_throw (Thing_className (thee), " objects accept only numeric x values.");
 	}
@@ -4216,6 +4365,16 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case INV_BINOMIAL_P_: { do_function_ddd_d (NUMinvBinomialP);
 } break; case INV_BINOMIAL_Q_: { do_function_ddd_d (NUMinvBinomialQ);
 /********** Functions of a variable number of variables: **********/
+} break; case DO_   : { do_do    ();
+} break; case DOSTR_: { do_doStr ();
+} break; case WRITE_INFO_      : { do_writeInfo      ();
+} break; case WRITE_INFO_LINE_ : { do_writeInfoLine  ();
+} break; case APPEND_INFO_     : { do_appendInfo     ();
+} break; case APPEND_INFO_LINE_: { do_appendInfoLine ();
+//} break; case WRITE_FILE_      : { do_writeFile      ();
+//} break; case WRITE_FILE_LINE_ : { do_writeFileLine  ();
+//} break; case APPEND_FILE_     : { do_appendFile     ();
+//} break; case APPEND_FILE_LINE_: { do_appendFileLine ();
 } break; case MIN_: { do_min ();
 } break; case MAX_: { do_max ();
 } break; case IMIN_: { do_imin ();
@@ -4249,6 +4408,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SELECTED_: { do_selected ();
 } break; case SELECTEDSTR_: { do_selectedStr ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();
+} break; case STRINGSTR_: { do_stringStr ();
 } break; case FIXEDSTR_: { do_fixedStr ();
 } break; case PERCENTSTR_: { do_percentStr ();
 } break; case DELETE_FILE_: { do_deleteFile ();
@@ -4297,7 +4457,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case IFTRUE_: {
 	Stackel condition = pop;
 	if (condition->which == Stackel_NUMBER) {
-		if (condition->content.number != 0.0) {
+		if (condition->number != 0.0) {
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
@@ -4306,7 +4466,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case IFFALSE_: {
 	Stackel condition = pop;
 	if (condition->which == Stackel_NUMBER) {
-		if (condition->content.number == 0.0) {
+		if (condition->number == 0.0) {
 			programPointer = f [programPointer]. content.label - theOptimize;
 		}
 	} else {
@@ -4318,8 +4478,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	;
 } break; case DECREMENT_AND_ASSIGN_: {
 	Stackel x = pop, v = pop;
-	InterpreterVariable var = v->content.variable;
-	var -> numericValue = x->content.number - 1.0;
+	InterpreterVariable var = v->variable;
+	var -> numericValue = x->number - 1.0;
 	//Melder_casual ("starting value %f", var -> numericValue);
 	pushVariable (var);
 } break; case INCREMENT_GREATER_GOTO_: {
@@ -4327,24 +4487,24 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 	Stackel e = & theStack [w], v = & theStack [w - 1];
 	Melder_assert (e->which == Stackel_NUMBER);
 	Melder_assert (v->which == Stackel_VARIABLE);
-	InterpreterVariable var = v->content.variable;
+	InterpreterVariable var = v->variable;
 	//Melder_casual ("loop variable %f", var -> numericValue);
 	var -> numericValue += 1.0;
 	//Melder_casual ("loop variable %f", var -> numericValue);
-	//Melder_casual ("end value %f", e->content.number);
-	if (var -> numericValue > e->content.number) {
+	//Melder_casual ("end value %f", e->number);
+	if (var -> numericValue > e->number) {
 		programPointer = f [programPointer]. content.label - theOptimize;
 	}
 } break; case ADD_3DOWN_: {
 	Stackel x = pop, s = & theStack [w - 2];
 	Melder_assert (x->which == Stackel_NUMBER);
 	Melder_assert (s->which == Stackel_NUMBER);
-	//Melder_casual ("to add %f", x->content.number);
-	s->content.number += x->content.number;
-	//Melder_casual ("sum %f", s->content.number);
+	//Melder_casual ("to add %f", x->number);
+	s->number += x->number;
+	//Melder_casual ("sum %f", s->number);
 } break; case POP_2_: {
 	w -= 2;
-	//Melder_casual ("total %f", theStack[w].content.number);
+	//Melder_casual ("total %f", theStack[w].number);
 } break; case NUMERIC_ARRAY_ELEMENT_: { do_numericArrayElement ();
 } break; case INDEXED_NUMERIC_VARIABLE_: { do_indexedNumericVariable ();
 } break; case INDEXED_STRING_VARIABLE_: { do_indexedStringVariable ();
@@ -4403,44 +4563,44 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			if (theStack [1]. which == Stackel_NUMERIC_ARRAY) Melder_throw ("Found a numeric array expression instead of a numeric expression.");
 			if (result) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
-				result -> result.numericResult = theStack [1]. content.number;
+				result -> result.numericResult = theStack [1]. number;
 			} else {
-				Melder_information (Melder_double (theStack [1]. content.number));
+				Melder_information (Melder_double (theStack [1]. number));
 			}
 		} else if (theExpressionType == kFormula_EXPRESSION_TYPE_STRING) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw ("Found a numeric expression instead of a string expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_ARRAY) Melder_throw ("Found a numeric array expression instead of a string expression.");
 			if (result) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
-				result -> result.stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL;   /* Undangle. */
+				result -> result.stringResult = theStack [1]. string; theStack [1]. string = NULL;   /* Undangle. */
 			} else {
-				Melder_information (theStack [1]. content.string);
+				Melder_information (theStack [1]. string);
 			}
 		} else if (theExpressionType == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw ("Found a numeric expression instead of a numeric array expression.");
 			if (theStack [1]. which == Stackel_STRING) Melder_throw ("Found a string expression instead of a numeric array expression.");
 			if (result) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY;
-				result -> result.numericArrayResult = theStack [1]. content.numericArray; theStack [1]. content.numericArray = theZeroNumericArray;   /* Undangle. */
+				result -> result.numericArrayResult = theStack [1]. numericArray; theStack [1]. numericArray = theZeroNumericArray;   /* Undangle. */
 			} else {
-				//Melder_information (theStack [1]. content.string);  // TODO: implement
+				//Melder_information (theStack [1]. string);  // TODO: implement
 			}
 		} else {
 			Melder_assert (theExpressionType == kFormula_EXPRESSION_TYPE_UNKNOWN);
 			if (theStack [1]. which == Stackel_NUMBER) {
 				if (result) {
 					result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
-					result -> result.numericResult = theStack [1]. content.number;
+					result -> result.numericResult = theStack [1]. number;
 				} else {
-					Melder_information (Melder_double (theStack [1]. content.number));
+					Melder_information (Melder_double (theStack [1]. number));
 				}
 			} else {
 				Melder_assert (theStack [1]. which == Stackel_STRING);
 				if (result) {
 					result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
-					result -> result.stringResult = theStack [1]. content.string; theStack [1]. content.string = NULL;   /* Undangle. */
+					result -> result.stringResult = theStack [1]. string; theStack [1]. string = NULL;   /* Undangle. */
 				} else {
-					Melder_information (theStack [1]. content.string);
+					Melder_information (theStack [1]. string);
 				}
 			}
 		}

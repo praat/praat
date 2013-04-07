@@ -1,6 +1,6 @@
 /* ButtonEditor.cpp
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,18 +197,19 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 			praat_Command action = praat_getAction (i);
 			if (! action || ! action -> callback) return 0;
 			if (action -> title) {
-				UiHistory_write (L"\n");
-				UiHistory_write (action -> title);
+				UiHistory_write (L"\ndo (\"");
+				UiHistory_write_expandQuotes (action -> title);
+				UiHistory_write (L"\")");
 			}
 			if (action -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, action -> script, NULL, NULL, false, NULL);
+					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, action -> script, NULL, NULL, false, NULL);
 				} catch (MelderError) {
 					Melder_flushError ("Command not executed.");
 				}
 			} else {
 				try {
-					action -> callback (NULL, NULL, NULL, NULL, false, NULL);
+					action -> callback (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 				} catch (MelderError) {
 					Melder_flushError ("Command not executed.");
 				}
@@ -220,18 +221,19 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 			praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand || ! menuCommand -> callback) return 0;
 			if (menuCommand -> title) {
-				UiHistory_write (L"\n");
-				UiHistory_write (menuCommand -> title);
+				UiHistory_write (L"\ndo (\"");
+				UiHistory_write_expandQuotes (menuCommand -> title);
+				UiHistory_write (L"\")");
 			}
 			if (menuCommand -> script) {
 				try {
-					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, menuCommand -> script, NULL, NULL, false, NULL);
+					DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, menuCommand -> script, NULL, NULL, false, NULL);
 				} catch (MelderError) {
 					Melder_flushError ("Command not executed.");
 				}
 			} else {
 				try {
-					menuCommand -> callback (NULL, NULL, NULL, NULL, false, NULL);
+					menuCommand -> callback (NULL, 0, NULL, NULL, NULL, NULL, false, NULL);
 				} catch (MelderError) {
 					Melder_flushError ("Command not executed.");
 				}

@@ -1,6 +1,6 @@
 /* GuiCheckButton.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1993-2012 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,32 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 		}
 	}
 #elif cocoa
+@implementation GuiCocoaCheckButton {
+    GuiCheckButton d_userData;
+}
+- (void) dealloc {   // override
+    GuiCheckButton me = d_userData;
+    forget (me);
+    trace ("deleting a check button");
+    [super dealloc];
+}
+- (GuiThing) userData {
+    return d_userData;
+}
+- (void) setUserData: (GuiThing) userData {
+    Melder_assert (userData == NULL || Thing_member (userData, classGuiCheckButton));
+    d_userData = static_cast <GuiCheckButton> (userData);
+}
+- (void) _guiCocoaButton_activateCallback: (id) widget {
+    Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
+    GuiCheckButton me = d_userData;
+    if (my d_valueChangedCallback != NULL) {
+        struct structGuiCheckButtonEvent event = { me };
+        my d_valueChangedCallback (my d_valueChangedBoss, & event);
+    }
+}
+@end
+
 #elif win
 	void _GuiWinCheckButton_destroy (GuiObject widget) {
 		iam_checkbutton;
@@ -98,6 +124,21 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me);
 		my d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
 	#elif cocoa
+    
+        GuiCocoaCheckButton *checkButton = [GuiCocoaCheckButton alloc];
+        my d_widget = (GuiObject) checkButton;
+        my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+        [checkButton setUserData:me];
+        [checkButton setButtonType:NSSwitchButton];
+        [checkButton setTitle:(NSString *) Melder_peekWcsToCfstring (buttonText)];
+        [checkButton setTarget:checkButton];
+        [checkButton setAction:@selector (_guiCocoaButton_activateCallback:)];
+    
+        if (flags & GuiCheckButton_SET) {
+            [checkButton setState:NSOnState];
+        }
+
+
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
@@ -147,6 +188,8 @@ bool structGuiCheckButton :: f_getValue () {
 	#if gtk
 		value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (d_widget));   // gtk_check_button inherits from gtk_toggle_button
 	#elif cocoa
+        GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton*)d_widget;
+        value = [checkButton state] == NSOnState;
 	#elif win
 		value = (Button_GetState (d_widget -> window) & 0x0003) == BST_CHECKED;
 	#elif mac
@@ -164,6 +207,8 @@ void structGuiCheckButton :: f_setValue (bool value) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), value);
 		d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), this);
 	#elif cocoa
+        GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton*)d_widget;
+        [checkButton setState: value ? NSOnState: NSOffState];
 	#elif win
 		Button_SetCheck (d_widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
 	#elif mac

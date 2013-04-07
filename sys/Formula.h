@@ -2,7 +2,7 @@
 #define _Formula_h_
 /* Formula.h
  *
- * Copyright (C) 1990-2011 Paul Boersma
+ * Copyright (C) 1990-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,24 @@ struct Formula_NumericArray {
 	long numberOfRows, numberOfColumns;
 	double **data;
 };
+
+typedef struct structInterpreterVariable *InterpreterVariable;
+
+typedef struct structStackel {
+	#define Stackel_NUMBER  0
+	#define Stackel_STRING  1
+	#define Stackel_NUMERIC_ARRAY  2
+	#define Stackel_STRING_ARRAY  3
+	#define Stackel_VARIABLE  -1
+	int which;   /* 0 or negative = no clean-up required, positive = requires clean-up */
+	union {
+		double number;
+		wchar_t *string;
+		struct Formula_NumericArray numericArray;
+		InterpreterVariable variable;
+	};
+} *Stackel;
+const wchar_t *Stackel_whichText (Stackel me);
 
 struct Formula_Result {
 	int expressionType;

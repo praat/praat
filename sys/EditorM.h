@@ -89,32 +89,32 @@
 
 #define DIALOG  cmd -> d_uiform
 
-#define EDITOR_ARGS  Editor void_me, EditorCommand cmd, UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter
-#define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sendingForm; (void) sendingString; (void) interpreter
+#define EDITOR_ARGS  Editor void_me, EditorCommand cmd, UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter
+#define EDITOR_IAM(klas)  iam (klas); (void) me; (void) cmd; (void) sendingForm; (void) narg; (void) args; (void) sendingString; (void) interpreter
 #define EDITOR_FORM(title,helpTitle)  if (cmd -> d_uiform == NULL) { Any radio = 0; (void) radio; \
 	cmd -> d_uiform = UiForm_createE (cmd, title, cmd -> itemTitle, helpTitle);
-#define EDITOR_OK  UiForm_finish (cmd -> d_uiform); } if (sendingForm == NULL && sendingString == NULL) {
+#define EDITOR_OK  UiForm_finish (cmd -> d_uiform); } if (sendingForm == NULL && args == NULL && sendingString == NULL) {
 #define EDITOR_DO  UiForm_do (cmd -> d_uiform, false); } else if (sendingForm == NULL) { \
-	UiForm_parseStringE (cmd, sendingString, interpreter); } else {
+	UiForm_parseStringE (cmd, narg, args, sendingString, interpreter); } else {
 #define EDITOR_END  }
 
 #define EDITOR_FORM_WRITE(title,helpTitle) \
 	if (cmd -> d_uiform == NULL) { \
 		cmd -> d_uiform = UiOutfile_createE (cmd, title, cmd -> itemTitle, helpTitle); \
-		} if (sendingForm == NULL && sendingString == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
+		} if (sendingForm == NULL && args == NULL && sendingString == NULL) { wchar_t defaultName [300]; defaultName [0] = '\0';
 #define EDITOR_DO_WRITE \
 	UiOutfile_do (cmd -> d_uiform, defaultName); } else { MelderFile file; structMelderFile file2 = { 0 }; \
-		if (sendingString == NULL) file = UiFile_getFile (sendingForm); \
-		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+		if (args == NULL && sendingString == NULL) file = UiFile_getFile (sendingForm); \
+		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 
 #define EDITOR_FORM_READ(title,helpTitle) \
 	if (cmd -> d_uiform == NULL) { \
 		cmd -> d_uiform = UiInfile_createE (cmd, title, cmd -> itemTitle, helpTitle); \
-		} if (sendingForm == NULL && sendingString == NULL) {
+		} if (sendingForm == NULL && args == NULL && sendingString == NULL) {
 #define EDITOR_DO_READ \
 	UiInfile_do (cmd -> d_uiform); } else { MelderFile file; structMelderFile file2 = { 0 }; \
-		if (sendingString == NULL) file = UiFile_getFile (sendingForm); \
-		else { Melder_relativePathToFile (sendingString, & file2); file = & file2; }
+		if (args == NULL && sendingString == NULL) file = UiFile_getFile (sendingForm); \
+		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
 
 #define GET_REAL(name)  UiForm_getReal (cmd -> d_uiform, name)
 #define GET_INTEGER(name)  UiForm_getInteger (cmd -> d_uiform, name)

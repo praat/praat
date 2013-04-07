@@ -1,6 +1,6 @@
 /* ScriptEditor.cpp
  *
- * Copyright (C) 1997-2012 Paul Boersma
+ * Copyright (C) 1997-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,10 +46,10 @@ void structScriptEditor :: v_destroy () {
 void structScriptEditor :: v_nameChanged () {
 	bool dirtinessAlreadyShown = d_windowForm -> f_setDirty (dirty);
 	static MelderString buffer = { 0 };
-	MelderString_copy (& buffer, name ? L"Script" : L"untitled script");
+	MelderString_copy (& buffer, name [0] ? L"Script" : L"untitled script");
 	if (editorClass)
 		MelderString_append (& buffer, L" [", environmentName, L"]");
-	if (name)
+	if (name [0])
 		MelderString_append (& buffer, L" ", MelderFile_messageName (& file));
 	if (dirty && ! dirtinessAlreadyShown)
 		MelderString_append (& buffer, L" (modified)");
@@ -65,7 +65,7 @@ void structScriptEditor :: v_goAway () {
 	}
 }
 
-static void args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified_dummy, I) {
+static void args_ok (UiForm sendingForm, int narg_dummy, Stackel args_dummy, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified_dummy, I) {
 	iam (ScriptEditor);
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
@@ -73,7 +73,7 @@ static void args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Int
 	(void) modified_dummy;
 	structMelderFile file = { 0 };
 	wchar_t *text = my textWidget -> f_getString ();   // BUG: auto
-	if (my name) {
+	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
@@ -82,14 +82,14 @@ static void args_ok (UiForm sendingForm, const wchar_t *sendingString_dummy, Int
 	Interpreter_getArgumentsFromDialog (my interpreter, sendingForm);
 
 	autoPraatBackground background;
-	if (my name) MelderFile_setDefaultDir (& file);
+	if (my name [0]) MelderFile_setDefaultDir (& file);
 	Interpreter_run (my interpreter, text);
 	Melder_free (text);
 }
 
 static void run (ScriptEditor me, wchar_t **text) {
 	structMelderFile file = { 0 };
-	if (my name) {
+	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
@@ -104,7 +104,7 @@ static void run (ScriptEditor me, wchar_t **text) {
 		UiForm_do (my argsDialog, false);
 	} else {
 		autoPraatBackground background;
-		if (my name) MelderFile_setDefaultDir (& file);
+		if (my name [0]) MelderFile_setDefaultDir (& file);
 		Interpreter_run (my interpreter, *text);
 	}
 }
@@ -139,7 +139,7 @@ static void menu_cb_addToMenu (EDITOR_ARGS) {
 		TEXTFIELD (L"Script", L"")
 	EDITOR_OK
 		if (my editorClass) SET_STRING (L"Window", my editorClass -> className)
-		if (my name)
+		if (my name [0])
 			SET_STRING (L"Script", my name)
 		else
 			SET_STRING (L"Script", L"(please save your script first)")
@@ -164,7 +164,7 @@ static void menu_cb_addToFixedMenu (EDITOR_ARGS) {
 		LABEL (L"", L"Script file:")
 		TEXTFIELD (L"Script", L"")
 	EDITOR_OK
-		if (my name)
+		if (my name [0])
 			SET_STRING (L"Script", my name)
 		else
 			SET_STRING (L"Script", L"(please save your script first)")
@@ -191,7 +191,7 @@ static void menu_cb_addToDynamicMenu (EDITOR_ARGS) {
 		LABEL (L"", L"Script file:")
 		TEXTFIELD (L"Script", L"")
 	EDITOR_OK
-		if (my name)
+		if (my name [0])
 			SET_STRING (L"Script", my name)
 		else
 			SET_STRING (L"Script", L"(please save your script first)")
@@ -236,7 +236,7 @@ static void menu_cb_expandIncludeFiles (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	structMelderFile file = { 0 };
 	autostring text = my textWidget -> f_getString ();
-	if (my name) {
+	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}

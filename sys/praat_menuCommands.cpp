@@ -1,6 +1,6 @@
 /* praat_menuCommands.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,17 +68,18 @@ static long lookUpMatchingMenuCommand (const wchar_t *window, const wchar_t *men
 }
 
 static void do_menu (I, unsigned long modified) {
-	void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (void (*) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) void_me;
+	void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *) = (void (*) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *)) void_me;
 	Melder_assert (callback != NULL);
 	for (long i = 1; i <= theNumberOfCommands; i ++) {
 		praat_Command me = & theCommands [i];
 		if (my callback == callback) {
 			if (my title != NULL && ! wcsstr (my title, L"...")) {
-				UiHistory_write (L"\n");
-				UiHistory_write (my title);
+				UiHistory_write (L"\ndo (\"");
+				UiHistory_write_expandQuotes (my title);
+				UiHistory_write (L"\")");
 			}
 			try {
-				callback (NULL, NULL, NULL, my title, modified, NULL);
+				callback (NULL, 0, NULL, NULL, NULL, my title, modified, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -95,7 +96,7 @@ static void do_menu (I, unsigned long modified) {
 				UiHistory_write (L"\"");
 			}
 			try {
-				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, my script, NULL, NULL, false, NULL);
+				DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, my script, NULL, NULL, false, NULL);
 			} catch (MelderError) {
 				Melder_error_ ("Command \"", my title, "\" not executed.");
 				Melder_flushError (NULL);
@@ -121,7 +122,7 @@ static GuiMenu windowMenuToWidget (const wchar_t *window, const wchar_t *menu) {
 }
 
 GuiMenuItem praat_addMenuCommand (const wchar_t *window, const wchar_t *menu, const wchar_t *title,
-	const wchar_t *after, unsigned long flags, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
+	const wchar_t *after, unsigned long flags, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *))
 {
 	long position;
 	int depth = flags, unhidable = FALSE, hidden = FALSE, key = 0;
@@ -391,7 +392,7 @@ void praat_saveMenuCommands (MelderString *buffer) {
 
 /***** FIXED BUTTONS *****/
 
-void praat_addFixedButtonCommand (GuiForm parent, const wchar_t *title, void (*callback) (UiForm, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y) {
+void praat_addFixedButtonCommand (GuiForm parent, const wchar_t *title, void (*callback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *), int x, int y) {
 	praat_Command me = & theCommands [++ theNumberOfCommands];
 	my window = Melder_wcsdup_f (L"Objects");
 	my title = title;
@@ -421,7 +422,16 @@ int praat_doMenuCommand (const wchar_t *command, const wchar_t *arguments, Inter
 	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! wcsequ (theCommands [i]. title, command) ||
 		(! wcsequ (theCommands [i]. window, L"Objects") && ! wcsequ (theCommands [i]. window, L"Picture")))) i ++;
 	if (i > theNumberOfCommands) return 0;
-	theCommands [i]. callback (NULL, arguments, interpreter, command, false, NULL);
+	theCommands [i]. callback (NULL, 0, NULL, arguments, interpreter, command, false, NULL);
+	return 1;
+}
+
+int praat_doMenuCommand (const wchar_t *command, int narg, Stackel args, Interpreter interpreter) {
+	long i = 1;
+	while (i <= theNumberOfCommands && (! theCommands [i]. executable || ! wcsequ (theCommands [i]. title, command) ||
+		(! wcsequ (theCommands [i]. window, L"Objects") && ! wcsequ (theCommands [i]. window, L"Picture")))) i ++;
+	if (i > theNumberOfCommands) return 0;
+	theCommands [i]. callback (NULL, narg, args, NULL, interpreter, command, false, NULL);
 	return 1;
 }
 

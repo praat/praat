@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130327)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130407)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.44# (7 April 2013)")
+LIST_ITEM (L"\\bu ##Create Sound as pure tone...#.")
+LIST_ITEM (L"\\bu First steps towards variable-substitution-free scripting: the #do, ##do\\$ #, #writeInfo and #appendInfo functions.")
 NORMAL (L"##5.3.43# (27 March 2013)")
 LIST_ITEM (L"\\bu Read and write stereo Kay sound files.")
 LIST_ITEM (L"\\bu Phonetic symbols \\ts, \\tS and \\ap.")
@@ -284,7 +287,7 @@ NORMAL (L"##5.1.44# (4 October 2010)")
 LIST_ITEM (L"\\bu Linux/GTK: visibility of ExperimentMFC window.")
 LIST_ITEM (L"\\bu Linux/GTK: keyboard shortcuts.")
 NORMAL (L"##5.1.43# (4 August 2010)")
-LIST_ITEM (L"\\bu Scripting: support for stand-alone programs; see @@Scripting 9. Turning a script into a stand-alone program@.")
+LIST_ITEM (L"\\bu Scripting: support for stand-alone programs; see @@Scripting 9.1. Turning a script into a stand-alone program@.")
 LIST_ITEM (L"\\bu Table: allow drawing of ellipses even if irrelevant columns contain undefined data.")
 LIST_ITEM (L"\\bu Linux/GTK: correct resizing of Table window.")
 LIST_ITEM (L"\\bu Linux/GTK: prevented multiple storing of Picture window selection in scripting history.")
@@ -1458,7 +1461,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN (L"Acknowledgments", L"ppgb", 20120219)
+MAN_BEGIN (L"Acknowledgments", L"ppgb", 20130406)
 NORMAL (L"The following people contributed source code to Praat:")
 LIST_ITEM (L"Paul Boersma: user interface, graphics, @printing, @@Intro|sound@, "
 	"@@Intro 3. Spectral analysis|spectral analysis@, @@Intro 4. Pitch analysis|pitch analysis@, "
@@ -1472,6 +1475,7 @@ LIST_ITEM (L"David Weenink: "
 	"@VowelEditor, "
 	"and adaptation of GSL, LAPACK, fftpack, regular expressions, and Espeak.")
 LIST_ITEM (L"Stefan de Konink and Franz Brau\\sse: major help in port to GTK.")
+LIST_ITEM (L"Tom Naughton: major help in port to Cocoa.")
 LIST_ITEM (L"Erez Volk: adaptation of FLAC and MAD.")
 LIST_ITEM (L"Ola S\\o\"der: @@kNN classifiers@, @@k-means clustering@.")
 LIST_ITEM (L"Rafael Laboissi\\e`re: adaptation of XIPA.")

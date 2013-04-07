@@ -373,7 +373,7 @@ void LongSound_writePartToAudioFile (LongSound me, int audioFileType, double tmi
 		long imin, imax;
 		long n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 		if (n < 1) Melder_throw (L"Less than 1 sample selected.");
-		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
+		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, n, my numberOfChannels, 8 * my numberOfBytesPerSamplePoint);
 		writePartToOpenFile (me, audioFileType, imin, n, file, 0, 8 * my numberOfBytesPerSamplePoint);
 		MelderFile_writeAudioFileTrailer (file, audioFileType, my sampleRate, n, my numberOfChannels, 8 * my numberOfBytesPerSamplePoint);
@@ -387,7 +387,7 @@ void LongSound_writeChannelToAudioFile (LongSound me, int audioFileType, int cha
 	try {
 		if (my numberOfChannels != 2)
 			Melder_throw ("This audio file is not a stereo file. It does not have a ", channel == 0 ? L"left" : L"right", L" channel.");
-		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
+		autoMelderFile mfile = MelderFile_create (file);
 		if (file -> filePointer) {
 			MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, my nx, 1, 8 * my numberOfBytesPerSamplePoint);
 		}
@@ -658,7 +658,7 @@ void LongSound_concatenate (Collection me, MelderFile file, int audioFileType, i
 		/*
 		 * Create output file and write header.
 		 */
-		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
+		autoMelderFile mfile = MelderFile_create (file);
 		if (file -> filePointer) {
 			MelderFile_writeAudioFileHeader (file, audioFileType, sampleRate, n, numberOfChannels, numberOfBitsPerSamplePoint);
 		}

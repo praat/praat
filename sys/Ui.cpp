@@ -1,6 +1,6 @@
 /* Ui.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -360,6 +360,12 @@ static void UiField_stringToValue (UiField me, const wchar_t *string, Interprete
 
 static MelderString theHistory = { 0 };
 void UiHistory_write (const wchar_t *string) { MelderString_append (& theHistory, string); }
+void UiHistory_write_expandQuotes (const wchar_t *string) {
+	if (string == NULL) return;
+	for (const wchar_t *p = & string [0]; *p != '\0'; p ++) {
+		if (*p == '\"') MelderString_append (& theHistory, L"\"\""); else MelderString_appendCharacter (& theHistory, *p);
+	}
+}
 wchar_t *UiHistory_get (void) { return theHistory.string; }
 void UiHistory_clear (void) { MelderString_empty (& theHistory); }
 
@@ -450,13 +456,14 @@ static void UiForm_okOrApply (I, GuiButton button, int hide) {
 	 * Keep the gate for error handling.
 	 */
 	try {
-		my okCallback (me, NULL, NULL, NULL, false, my buttonClosure);
+		my okCallback (me, 0, NULL, NULL, NULL, NULL, false, my buttonClosure);
 		/*
 		 * Write everything to history. Before destruction!
 		 */
 		if (! my isPauseForm) {
-			UiHistory_write (L"\n");
-			UiHistory_write (my invokingButtonTitle);
+			UiHistory_write (L"\ndo (\"");
+			UiHistory_write_expandQuotes (my invokingButtonTitle);
+			UiHistory_write (L"\"");
 			int size = my numberOfFields;
 			while (size >= 1 && my field [size] -> type == UI_LABEL)
 				size --;   // ignore trailing fields without a value
@@ -464,47 +471,33 @@ static void UiForm_okOrApply (I, GuiButton button, int hide) {
 				UiField field = my field [ifield];
 				switch (field -> type) {
 					case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-						UiHistory_write (L" ");
+						UiHistory_write (L", ");
 						UiHistory_write (Melder_double (field -> realValue));
 					} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
-						UiHistory_write (L" ");
+						UiHistory_write (L", ");
 						UiHistory_write (Melder_integer (field -> integerValue));
 					} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
-						if (ifield < size && (field -> stringValue [0] == '\0' || wcschr (field -> stringValue, ' '))) {
-							UiHistory_write (L" \"");
-							UiHistory_write (field -> stringValue);   // BUG: should double any double quotes
-							UiHistory_write (L"\"");
-						} else {
-							UiHistory_write (L" ");
-							UiHistory_write (field -> stringValue);
-						}
+						UiHistory_write (L", \"");
+						UiHistory_write_expandQuotes (field -> stringValue);
+						UiHistory_write (L"\"");
 					} break; case UI_BOOLEAN: {
-						UiHistory_write (field -> integerValue ? L" yes" : L" no");
+						UiHistory_write (field -> integerValue ? L", \"yes\"" : L", \"no\"");
 					} break; case UI_RADIO: case UI_OPTIONMENU: {
 						UiOption b = static_cast <UiOption> (field -> options -> item [field -> integerValue]);
-						if (ifield < size && (b -> name [0] == '\0' || wcschr (b -> name, ' '))) {
-							UiHistory_write (L" \"");
-							UiHistory_write (b -> name);
-							UiHistory_write (L"\"");
-						} else {
-							UiHistory_write (L" ");
-							UiHistory_write (b -> name);
-						}
+						UiHistory_write (L", \"");
+						UiHistory_write_expandQuotes (b -> name);
+						UiHistory_write (L"\"");
 					} break; case UI_LIST: {
-						if (ifield < size && (field -> strings [field -> integerValue] [0] == '\0' || wcschr (field -> strings [field -> integerValue], ' '))) {
-							UiHistory_write (L" \"");
-							UiHistory_write (field -> strings [field -> integerValue]);
-							UiHistory_write (L"\"");
-						} else {
-							UiHistory_write (L" ");
-							UiHistory_write (field -> strings [field -> integerValue]);
-						}
+						UiHistory_write (L", \"");
+						UiHistory_write_expandQuotes (field -> strings [field -> integerValue]);
+						UiHistory_write (L"\"");
 					} break; case UI_COLOUR: {
-						UiHistory_write (L" ");
+						UiHistory_write (L", ");
 						UiHistory_write (Graphics_Colour_name (field -> colourValue));
 					}
 				}
 			}
+			UiHistory_write (L")");
 		}
 		if (hide) {
 			my d_dialogForm -> f_hide ();
@@ -560,7 +553,7 @@ static void gui_button_cb_help (I, GuiButtonEvent event) {
 }
 
 UiForm UiForm_create (GuiWindow parent, const wchar_t *title,
-	void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle)
 {
 	autoUiForm me = Thing_new (UiForm);
@@ -599,13 +592,13 @@ void UiForm_setPauseForm (I,
 	my cancelCallback = cancelCallback;
 }
 
-static void commonOkCallback (UiForm dia, const wchar_t *dummy, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
+static void commonOkCallback (UiForm dia, int narg, Stackel args, const wchar_t *dummy, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure) {
 	EditorCommand cmd = (EditorCommand) closure;
 	(void) dia;
 	(void) dummy;
 	(void) invokingButtonTitle;
 	(void) modified;
-	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform, NULL, interpreter);
+	cmd -> commandCallback (cmd -> d_editor, cmd, cmd -> d_uiform, 0, NULL, NULL, interpreter);
 }
 
 UiForm UiForm_createE (EditorCommand cmd, const wchar_t *title, const wchar_t *invokingButtonTitle, const wchar_t *helpTitle) {
@@ -975,6 +968,129 @@ void UiForm_do (I, bool modified) {
 		UiForm_okOrApply (me, NULL, true);
 }
 
+static void UiField_argToValue (UiField me, Stackel arg, Interpreter interpreter) {
+	switch (my type) {
+		case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
+			if (arg -> which != Stackel_NUMBER)
+				Melder_throw ("Argument \"", my name, "\" should be a number, not ", Stackel_whichText(arg), ".");
+			my realValue = arg -> number;
+			if (my realValue == NUMundefined && my type != UI_REAL_OR_UNDEFINED)
+				Melder_throw ("Argument \"", my name, "\" has the value \"undefined\".");
+			if (my type == UI_POSITIVE && my realValue <= 0.0)
+				Melder_throw ("Argument \"", my name, "\" must be greater than 0.");
+		} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
+			if (arg -> which == Stackel_STRING) {
+				if (my type == UI_CHANNEL) {
+					if (wcsequ (arg -> string, L"All") || wcsequ (arg -> string, L"Average")) {
+						my integerValue = 0;
+					} else if (wcsequ (arg -> string, L"Left") || wcsequ (arg -> string, L"Mono")) {
+						my integerValue = 1;
+					} else if (wcsequ (arg -> string, L"Right") || wcsequ (arg -> string, L"Stereo")) {
+						my integerValue = 2;
+					} else {
+						Melder_throw ("Channel argument \"", my name,
+							"\" can only be a number or one of the strings \"All\", \"Average\", \"Left\", \"Right\", \"Mono\" or \"Stereo\".");
+					}
+				} else {
+					Melder_throw ("Argument \"", my name, "\" should be a number, not ", Stackel_whichText (arg), ".");
+				}
+			} else if (arg -> which == Stackel_NUMBER) {
+				my integerValue = round (arg -> number);
+				if (my type == UI_NATURAL && my integerValue < 1)
+					Melder_throw ("Argument \"", my name, "\" must be a positive whole number.");
+			} else {
+				Melder_throw ("Argument \"", my name, "\" should be a number, not ", Stackel_whichText (arg), ".");
+			}
+		} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
+			if (arg -> which != Stackel_STRING)
+				Melder_throw ("Argument \"", my name, "\" should be a string, not ", Stackel_whichText(arg), ".");
+			Melder_free (my stringValue);
+			my stringValue = Melder_wcsdup_f (arg -> string);
+		} break; case UI_BOOLEAN: {
+			if (arg -> which == Stackel_STRING) {
+				if (wcsequ (arg -> string, L"no") || wcsequ (arg -> string, L"off")) {
+					my integerValue = 0;
+				} else if (wcsequ (arg -> string, L"yes") || wcsequ (arg -> string, L"on")) {
+					my integerValue = 1;
+				} else {
+					Melder_throw ("Boolean argument \"", my name,
+						"\" can only be a number or one of the strings \"yes\" or \"no\".");
+				}
+			} else if (arg -> which == Stackel_NUMBER) {
+				my integerValue = arg -> number == 0.0 ? 0.0 : 1.0;
+			} else {
+				Melder_throw ("Boolean argument \"", my name, "\" should be a number (0 or 1), not ", Stackel_whichText (arg), ".");
+			}
+		} break; case UI_RADIO: case UI_OPTIONMENU: {
+			if (arg -> which != Stackel_STRING)
+				Melder_throw ("Option argument \"", my name, "\" should be a string, not ", Stackel_whichText (arg), ".");
+			my integerValue = 0;
+			for (int i = 1; i <= my options -> size; i ++) {
+				UiOption b = static_cast <UiOption> (my options -> item [i]);
+				if (wcsequ (arg -> string, b -> name))
+					my integerValue = i;
+			}
+			if (my integerValue == 0) {
+				/*
+				 * Retry with different case.
+				 */
+				for (int i = 1; i <= my options -> size; i ++) {
+					UiOption b = static_cast <UiOption> (my options -> item [i]);
+					wchar_t name2 [100];
+					wcscpy (name2, b -> name);
+					if (islower (name2 [0])) name2 [0] = toupper (name2 [0]);
+					else if (isupper (name2 [0])) name2 [0] = tolower (name2 [0]);
+					if (wcsequ (arg -> string, name2))
+						my integerValue = i;
+				}
+			}
+			if (my integerValue == 0) {
+				Melder_throw ("Option argument \"", my name, "\" cannot have the value \"", arg -> string, "\".");
+			}
+		} break; case UI_LIST: {
+			if (arg -> which != Stackel_STRING)
+				Melder_throw ("List argument \"", my name, "\" should be a string, not ", Stackel_whichText(arg), ".");
+			long i = 1;
+			for (; i <= my numberOfStrings; i ++)
+				if (wcsequ (arg -> string, my strings [i])) break;
+			if (i > my numberOfStrings)
+				Melder_throw ("List argument \"", my name, "\" cannot have the value \"", arg -> string, "\".");
+			my integerValue = i;
+		} break; case UI_COLOUR: {
+			if (arg -> which == Stackel_NUMBER) {
+				if (arg -> number < 0.0 || arg -> number > 1.0)
+					Melder_throw ("Grey colour argument \"", my name, "\" has to lie between 0.0 and 1.0.");
+				my colourValue. red = my colourValue. green = my colourValue. blue = arg -> number;
+			} else if (arg -> which == Stackel_STRING) {
+				autostring string2 = Melder_wcsdup_f (arg -> string);
+				if (! colourToValue (me, string2.peek())) {
+					Melder_throw ("Cannot compute a colour from \"", string2.peek(), "\".");
+				}
+			}
+		} break; default: {
+			Melder_throw ("Unknown field type ", my type, ".");
+		}
+	}
+}
+
+void UiForm_call (I, int narg, Stackel args, Interpreter interpreter) {
+	iam (UiForm);
+	int size = my numberOfFields, iarg = 0;
+	while (size >= 1 && my field [size] -> type == UI_LABEL)
+		size --;   // ignore trailing fields without a value
+	for (int i = 1; i <= size; i ++) {
+		if (my field [i] -> type == UI_LABEL)
+			continue;   // ignore non-trailing fields without a value
+		iarg ++;
+		if (iarg > narg)
+			Melder_throw ("Command requires more than the given ", narg, " arguments: no value for argument \"", my field [i] -> name, "\".");
+		UiField_argToValue (my field [i], & args [iarg], interpreter);
+	}
+	if (iarg < narg)
+		Melder_throw ("Command requires only ", iarg, " arguments, not the ", narg, " given.");
+	my okCallback (me, 0, NULL, NULL, interpreter, NULL, false, my buttonClosure);
+}
+
 void UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter) {
 	iam (UiForm);
 	int size = my numberOfFields;
@@ -1029,11 +1145,14 @@ void UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter) {
 			Melder_throw ("Don't understand contents of field \"", my field [size] -> name, "\".");
 		}
 	}
-	my okCallback (me, NULL, interpreter, NULL, false, my buttonClosure);
+	my okCallback (me, 0, NULL, NULL, interpreter, NULL, false, my buttonClosure);
 }
 
-void UiForm_parseStringE (EditorCommand cmd, const wchar_t *arguments, Interpreter interpreter) {
-	UiForm_parseString (cmd -> d_uiform, arguments, interpreter);
+void UiForm_parseStringE (EditorCommand cmd, int narg, Stackel args, const wchar_t *arguments, Interpreter interpreter) {
+	if (args)
+		UiForm_call(cmd -> d_uiform, narg, args, interpreter);
+	else
+		UiForm_parseString (cmd -> d_uiform, arguments, interpreter);
 }
 
 static UiField findField (UiForm me, const wchar_t *fieldName) {

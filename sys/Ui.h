@@ -2,7 +2,7 @@
 #define _Ui_h_
 /* Ui.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ Thing_define (UiForm, Thing) {
 		EditorCommand command;
 		GuiWindow d_dialogParent;
 		GuiDialog d_dialogForm;
-		void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
+		void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure);
 		void (*applyCallback) (Any dia, void *closure);
 		void (*cancelCallback) (Any dia, void *closure);
 		void *buttonClosure;
@@ -123,7 +123,7 @@ Thing_define (UiForm, Thing) {
 
 /* The following routines work on the screen and from batch. */
 UiForm UiForm_create (GuiWindow parent, const wchar_t *title,
-	void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
+	void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *buttonClosure,
 	const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 Any UiForm_addReal (I, const wchar_t *label, const wchar_t *defaultValue);
 Any UiForm_addRealOrUndefined (I, const wchar_t *label, const wchar_t *defaultValue);
@@ -207,14 +207,15 @@ long UiForm_getInteger_check (I, const wchar_t *fieldName);
 wchar_t * UiForm_getString_check (I, const wchar_t *fieldName);
 Graphics_Colour UiForm_getColour_check (I, const wchar_t *fieldName);
 
+void UiForm_call (I, int narg, Stackel args, Interpreter interpreter);
 void UiForm_parseString (I, const wchar_t *arguments, Interpreter interpreter);
 
 UiForm UiInfile_create (GuiWindow parent, const wchar_t *title,
-  void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
   const wchar_t *invokingButtonTitle, const wchar_t *helpTitle, bool allowMultipleFiles);
 
 UiForm UiOutfile_create (GuiWindow parent, const wchar_t *title,
-  void (*okCallback) (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
+  void (*okCallback) (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *closure), void *okClosure,
   const wchar_t *invokingButtonTitle, const wchar_t *helpTitle);
 
 void UiInfile_do (Any dia);
@@ -235,6 +236,7 @@ void UiFile_hide (void);
 */
 
 void UiHistory_write (const wchar_t *string);
+void UiHistory_write_expandQuotes (const wchar_t *string);
 wchar_t *UiHistory_get (void);
 void UiHistory_clear (void);
 

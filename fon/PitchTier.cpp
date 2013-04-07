@@ -90,7 +90,6 @@ static void PitchTier_writeToSpreadsheetFile (PitchTier me, MelderFile file, int
 		fprintf (f, "%.17g\t%.17g\n", point -> number, point -> value);
 	}
 	f.close (file);
-	MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 }
 
 void PitchTier_writeToPitchTierSpreadsheetFile (PitchTier me, MelderFile file) {

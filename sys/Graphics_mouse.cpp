@@ -1,6 +1,6 @@
 /* Graphics_mouse.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,8 @@ bool structGraphicsScreen :: v_mouseStillDown () {
 		if (theMouseDown) return true;
 		else { theMouseDown = true; return false; }
 	#elif cocoa
-		return false;
+        NSUInteger buttons = [NSEvent pressedMouseButtons];
+		return buttons;
 	#elif win
 		return motif_win_mouseStillDown ();
 	#elif mac
@@ -60,6 +61,13 @@ void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
 		gdk_window_get_pointer (d_window, & xDC, & yDC, NULL);
 		Graphics_DCtoWC (this, xDC, yDC, xWC, yWC);
 	#elif cocoa
+    
+        // get mouse position in Window
+        NSPoint mouseLoc = [[d_macView window] mouseLocationOutsideOfEventStream];
+        mouseLoc = [d_macView convertPoint:mouseLoc fromView:nil];
+        mouseLoc.y = d_macView.bounds.size.height - mouseLoc.y;
+        Graphics_DCtoWC (this, mouseLoc.x, mouseLoc.y, xWC, yWC);
+
 	#elif win
 		POINT pos;
 		if (! GetCursorPos (& pos)) { Melder_warning (L"Cannot get cursor position."); return; }

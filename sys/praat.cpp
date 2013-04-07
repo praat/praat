@@ -29,7 +29,9 @@
 #include <locale.h>
 #ifdef macintosh
 	#include "macport_on.h"
-	#include <Gestalt.h>
+    #if useCarbon
+        #include <Carbon/Carbon.h>
+    #endif
 	#include "macport_off.h"
 #endif
 #if defined (UNIX)
@@ -595,7 +597,6 @@ static void praat_exit (int exit_code) {
 	trace ("save the preferences");
 	Melder_assert (wcsequ (Melder_double (1.5), L"1.5"));   // refuse to write the preferences if the locale is wrong (even if tracing is on)
 	Preferences_write (& prefsFile);
-	MelderFile_setMacTypeAndCreator (& prefsFile, 'pref', 'PpgB');
 
 	trace ("save the script buttons");
 	if (! theCurrentPraatApplication -> batch) {
@@ -854,7 +855,7 @@ DO
 END
 
 static void gui_cb_quit (void *p) {
-	DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
+	DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
 }
 
 void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
@@ -931,7 +932,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		return 0;
 	}
 	static int cb_quitApplication (void) {
-		DO_Quit (NULL, NULL, NULL, NULL, NULL, NULL);
+		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
 		return 0;
 	}
 #endif
@@ -1347,6 +1348,9 @@ void praat_run (void) {
 	praatP.phase = praat_STARTING_UP;
 
 	trace ("execute start-up file(s)");
+	/*
+	 * On Unix and the Mac, we try no less than three start-up file names.
+	 */
 	#if defined (UNIX) || defined (macintosh)
 		structMelderDir usrLocal = { { 0 } };
 		Melder_pathToDir (L"/usr/local", & usrLocal);

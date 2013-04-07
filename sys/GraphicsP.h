@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,9 @@
 	#include <windowsx.h>
 #elif defined (macintosh)
 	#include "macport_on.h"
-	#include <Quickdraw.h>
-	#include <MacWindows.h>
+    #if useCarbon
+        #include <Carbon/Carbon.h>
+    #endif
 	#include "macport_off.h"
 #endif
 
@@ -60,7 +61,11 @@ Thing_define (GraphicsScreen, Graphics) {
 			bool d_fatNonSolid;
 			bool d_useGdiplus;
 		#elif defined (macintosh)
-			GrafPtr d_macPort;
+            #if useCarbon
+                GrafPtr d_macPort;
+            #else
+                NSView *d_macView;
+            #endif
 			int d_macFont, d_macStyle;
 			int d_depth;
 			RGBColor d_macColour;

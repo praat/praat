@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma
+ * Copyright (C) 1993-2012,2013 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -333,7 +333,7 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		/* First try loose commands, then fixed commands. */
 
 		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
-			Editor_doMenuCommand ((Editor) praatP. editor, command, arguments, interpreter);
+			Editor_doMenuCommand ((Editor) praatP. editor, command, 0, NULL, arguments, interpreter);
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (wcsnequ (command, L"Save ", 5) ||
 			 wcsnequ (command, L"Write ", 6) ||
@@ -478,7 +478,7 @@ void praat_executeScriptFromDialog (Any dia) {
 	Interpreter_run (interpreter.peek(), text.peek());
 }
 
-static void secondPassThroughScript (UiForm sendingForm, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void secondPassThroughScript (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
@@ -510,7 +510,7 @@ static void firstPassThroughScript (MelderFile file) {
 	}
 }
 
-static void fileSelectorOkCallback (UiForm dia, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+static void fileSelectorOkCallback (UiForm dia, int narg, Stackel args, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
@@ -523,7 +523,7 @@ static void fileSelectorOkCallback (UiForm dia, const wchar_t *sendingString_dum
  * DO_praat_runScript () is the command callback for "Run script...", which is a bit obsolete command,
  * hidden in the Praat menu, and otherwise replaced by "execute".
  */
-void DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+void DO_praat_runScript (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	(void) interpreter_dummy;
 	(void) modified;
 	(void) dummy;
@@ -543,7 +543,7 @@ void DO_praat_runScript (UiForm sendingForm, const wchar_t *sendingString, Inter
 	}
 }
 
-void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wchar_t *scriptPath, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, int narg, Stackel args, const wchar_t *scriptPath, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	structMelderFile file = { 0 };
 	(void) sendingForm_dummy;
 	(void) interpreter;
@@ -556,7 +556,7 @@ void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, const wch
 
 void DO_RunTheScriptFromAnyAddedEditorCommand (Editor editor, const wchar_t *script) {
 	praatP.editor = editor;
-	DO_RunTheScriptFromAnyAddedMenuCommand (NULL, script, NULL, NULL, false, NULL);
+	DO_RunTheScriptFromAnyAddedMenuCommand (NULL, 0, NULL, script, NULL, NULL, false, NULL);
 	/*praatP.editor = NULL;*/
 }
 

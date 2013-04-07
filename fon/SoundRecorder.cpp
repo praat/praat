@@ -888,7 +888,7 @@ void structSoundRecorder :: v_createChildren ()
 
 static void writeFakeMonoFile (SoundRecorder me, MelderFile file, int audioFileType) {
 	long nsamp = my nsamp / 2;
-	autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
+	autoMelderFile mfile = MelderFile_create (file);
 	MelderFile_writeAudioFileHeader (file, audioFileType, theControlPanel. sampleRate, nsamp, 1, 16);
 	if (Melder_defaultAudioFileEncoding (audioFileType, 16) == Melder_LINEAR_16_BIG_ENDIAN) {
 		for (long i = 0; i < nsamp; i ++)

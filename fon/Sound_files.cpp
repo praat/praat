@@ -261,7 +261,7 @@ Sound Sound_readFromRawAlawFile (MelderFile file) {
 
 void Sound_writeToAudioFile (Sound me, MelderFile file, int audioFileType, int numberOfBitsPerSamplePoint) {
 	try {
-		autoMelderFile mfile = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB", Melder_winAudioFileExtension (audioFileType));
+		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint);
 		MelderFile_writeFloatToAudio (file, my ny, Melder_defaultAudioFileEncoding (audioFileType, numberOfBitsPerSamplePoint), my z, my nx, TRUE);
 		MelderFile_writeAudioFileTrailer (file, audioFileType, floor (1.0 / my dx + 0.5), my nx, my ny, numberOfBitsPerSamplePoint);
@@ -275,7 +275,6 @@ void Sound_writeToSesamFile (Sound me, MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "wb");
 		long header [1 + 128], tail;
-		MelderFile_setMacTypeAndCreator (file, 'BINA', 'PpgB');
 		for (long i = 1; i <= 128; i ++) header [i] = 0;
 		/* ILS header. */
 			header [6] = ((my nx - 1) >> 8) + 1;   /* Number of disk blocks. */
@@ -303,7 +302,7 @@ void Sound_writeToSesamFile (Sound me, MelderFile file) {
 
 void Sound_writeToKayFile (Sound me, MelderFile file) {
 	try {
-		autoMelderFile mfile = MelderFile_create (file, L"BINA", L"PpgB", L"KaySound");
+		autoMelderFile mfile = MelderFile_create (file);
 
 		/* Form Chunk: contains all other chunks. */
 		fwrite ("FORMDS16", 1, 8, file -> filePointer);
@@ -350,7 +349,7 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 
 void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding) {
 	try {
-		autoMelderFile mfile = MelderFile_create (file, L"BINA", L"PpgB", L"rawSound");
+		autoMelderFile mfile = MelderFile_create (file);
 		MelderFile_writeFloatToAudio (file, my ny, encoding, my z, my nx, TRUE);
 		mfile.close ();
 	} catch (MelderError) {

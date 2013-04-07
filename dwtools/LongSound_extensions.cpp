@@ -92,8 +92,7 @@ void LongSounds_writeToStereoAudioFile16 (LongSound me, LongSound thee, int audi
 		long nchannels = 2;
 		autoNUMvector<short> buffer (1, nchannels * nbuf);
 
-		autoMelderFile f  = MelderFile_create (file, Melder_macAudioFileType (audioFileType), L"PpgB",
-	        Melder_winAudioFileExtension (audioFileType));
+		autoMelderFile f  = MelderFile_create (file);
 		MelderFile_writeAudioFileHeader (file, audioFileType, my sampleRate, nx, nchannels, numberOfBitsPerSamplePoint);
 
 		for (long i = 1; i <= numberOfReads; i++) {

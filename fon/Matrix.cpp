@@ -624,7 +624,6 @@ void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file) {
 			fprintf (f, "\n");
 		}
 		f.close (file);
-		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
 		Melder_throw (me, ": not written to Matrix text file.");
 	}
@@ -641,7 +640,6 @@ void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file) {
 			fprintf (f, "\n");
 		}
 		f.close (file);
-		MelderFile_setMacTypeAndCreator (file, 'TEXT', 0);
 	} catch (MelderError) {
 		Melder_throw (me, ": not saved as tab-separated file ", file);
 	}
