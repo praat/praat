@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -3852,15 +3852,11 @@ END
 FORM (MFCC_to_MelFilter, L"MFCC: To MelFilter", L"MFCC: To MelFilter...")
 	INTEGER (L"From coefficient", L"0")
 	INTEGER (L"To coefficient", L"0")
-	POSITIVE (L"Position of first filter (mel)", L"100.0")
-	POSITIVE (L"Distance between filters (mel)", L"100.0")
 	OK
 DO
 	LOOP {
 		iam (MFCC);
-		praat_new (MFCC_to_MelFilter (me, GET_INTEGER (L"From coefficient"),
-			GET_INTEGER (L"To coefficient"), GET_REAL (L"Position of first filter"),
-			GET_REAL (L"Distance between filters")), my name);
+		praat_new (MFCC_to_MelFilter (me, GET_INTEGER (L"From coefficient"), GET_INTEGER (L"To coefficient")), my name);
 	}
 END
 
@@ -5642,14 +5638,14 @@ END
 DIRECT (Spectrum_unwrap)
 	LOOP {
 		iam (Spectrum);
-		praat_new (Spectrum_unwrap (me), 0);
+		praat_new (Spectrum_unwrap (me), my name);
 	}
 END
 
 DIRECT (Spectrum_to_Cepstrum)
 	LOOP {
 		iam (Spectrum);
-		praat_new (Spectrum_to_Cepstrum (me), 0);
+		praat_new (Spectrum_to_Cepstrum (me), my name);
 	}
 END
 

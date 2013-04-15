@@ -1,6 +1,6 @@
 /* Cepstrum.cpp
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,25 +28,26 @@
 #include "NUM2.h"
 #include "Vector.h"
 
-static double getValueAtSample (Cepstrum me, long isamp, long which, int units) {
+Thing_implement (Cepstrum, Matrix, 2);
+
+double structCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
 	(void) units;
-	double valsq = my z[1][isamp] * my z[1][isamp];
+	double valsq = z[1][isamp] * z[1][isamp];
 	if (which == 0) {
 		return valsq;
 	} else {
 		// dB's reference is 1.
 		return valsq == 0.0 ? -300.0 : 10.0 * log10 (valsq);
 	}
+	return NUMundefined;
 }
-
-Thing_implement (Cepstrum, Matrix, 2);
 
 Cepstrum Cepstrum_create (double qmin, double qmax, long nq) {
 	try {
 		autoCepstrum me = Thing_new (Cepstrum);
-		double dx = (qmax - qmin) / nq;
+		double dq = (qmax - qmin) / (nq - 1);
 
-		Matrix_init (me.peek(), qmin, qmax, nq, dx, qmin + dx / 2, 1, 1, 1, 1, 1);
+		Matrix_init (me.peek(), qmin, qmax, nq, dq, qmin, 1, 1, 1, 1, 1);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Cepstrum not created.");
@@ -69,7 +70,7 @@ void _Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double m
 	autoNUMvector<double> y (imin, imax);
 
 	for (long i = imin; i <= imax; i++) {
-		y[i] = getValueAtSample (me, i, (power ? 1 : 0), 0);
+		y[i] = my v_getValueAtSample (i, (power ? 1 : 0), 0);
 	}
 
 	if (autoscaling) {
@@ -120,10 +121,10 @@ void Cepstrum_drawTiltLine (Cepstrum me, Graphics g, double qmin, double qmax, d
 			return;
 		}
 		long numberOfPoints = imax - imin + 1;
-		dBminimum = dBmaximum = getValueAtSample (me, imin, 1, 0);
+		dBminimum = dBmaximum = my v_getValueAtSample (imin, 1, 0);
 		for (long i = 2; i <= numberOfPoints; i++) {
 			long isamp = imin + i - 1;
-			double y = getValueAtSample (me, isamp, 1, 0);
+			double y = my v_getValueAtSample (isamp, 1, 0);
 			dBmaximum = y > dBmaximum ? y : dBmaximum;
 			dBminimum = y < dBminimum ? y : dBminimum;
 		}
@@ -161,22 +162,30 @@ void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, dou
 	for (long i = 1; i <= numberOfPoints; i++) {
 		long isamp = imin + i - 1;
 		x[i] = my x1 + (isamp - 1) * my dx;
-		y[i] = getValueAtSample (me, isamp, 1, 0);
+		y[i] = my v_getValueAtSample (isamp, 1, 0);
 	}
 	// fit a line through (x,y)'s
 	NUMlineFit(x.peek(), y.peek(), numberOfPoints, a, intercept, method);
 }
 
 
-double Cepstrum_getPeakProminence (Cepstrum me, double search_lowestQuefrency, double search_highestQuefrency, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak) {
-	double a, intercept, qpeakpos, peak;
-	Cepstrum_fitTiltLine (me, fit_lowestFrequency, fit_highestFrequency, &a, &intercept, fitmethod);
-	Vector_getMaximumAndX ((Vector) me, search_lowestQuefrency, search_highestQuefrency, 1, interpolation, &peak, &qpeakpos);
-	double dBPeak = 20 * log10 (peak);
-	if (qpeak != NULL) {
-		*qpeak = qpeakpos;
+void Cepstrum_getMaximumAndQuefrency (Cepstrum me, double lowestQuefrency, double highestQuefrency, int interpolation, double *peakdB, double *quefrency) {
+	*peakdB = *quefrency = NUMundefined;
+	autoCepstrum thee = Data_copy (me);
+	for (long i = 1; i <= my nx; i++) {
+		thy z[1][i] = my v_getValueAtSample (i, 1, 0); // 10 log val^2
 	}
-	return dBPeak - qpeakpos * a - intercept;
+	Vector_getMaximumAndX ((Vector) thee.peek(), lowestQuefrency, highestQuefrency, 1, interpolation, peakdB, quefrency);
+}
+
+double Cepstrum_getPeakProminence (Cepstrum me, double search_lowestQuefrency, double search_highestQuefrency, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak) {
+	double slope, intercept, quefrency, peakdB;
+	Cepstrum_fitTiltLine (me, fit_lowestFrequency, fit_highestFrequency, &slope, &intercept, fitmethod);
+	Cepstrum_getMaximumAndQuefrency (me, search_lowestQuefrency, search_highestQuefrency, interpolation, &peakdB, &quefrency);
+	if (qpeak != NULL) {
+		*qpeak = quefrency;
+	}
+	return peakdB - slope * quefrency - intercept;
 }
 
 Matrix Cepstrum_to_Matrix (Cepstrum me) {

@@ -1,6 +1,6 @@
 /* Cepstrogram.cpp
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,14 +110,14 @@ Table Cepstrogram_to_Table_cpp (Cepstrogram me, double lowestQuefrency, double h
 static void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout) {
 // simple averaging, out of bound values are zero
 	for (long i = 1; i <= n; i++) {
-		long ifrom = i - nwindow / 2, ito = i + nwindow / 2;
-		ifrom = ifrom < 1 ? 1 : ifrom;
-		ito = ito > n ? n : ito;
+		long jfrom = i - nwindow / 2, jto = i + nwindow / 2;
+		jfrom = jfrom < 1 ? 1 : jfrom;
+		jto = jto > n ? n : jto;
 		xout[i] = 0;
-		for (long j = ifrom; j <= ito; j++) {
+		for (long j = jfrom; j <= jto; j++) {
 			xout[i] += xin[j];
 		}
-		xout[i] /= ito - ifrom + 1;
+		xout[i] /= jto - jfrom + 1;
 	}
 }
 
@@ -200,7 +200,7 @@ Cepstrogram Matrix_to_Cepstrogram (Matrix me) {
 	}
 }
 
-Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency) {
+Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
 		long nFrames;
@@ -211,6 +211,7 @@ Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, dou
 		}
 		double t1, samplingFrequency = 2 * maximumFrequency;
 		autoSound sound = Sound_resample (me, samplingFrequency, 50);
+		Sound_preEmphasis (sound.peek(), preEmphasisFrequency);
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
@@ -232,7 +233,7 @@ Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, dou
 			Vector_subtractMean (sframe.peek());
 			Sounds_multiply (sframe.peek(), window.peek());
 			autoSpectrum spec = Sound_to_Spectrum (sframe.peek(), 1);
-			autoCepstrum cepstrum = Spectrum_to_Cepstrum (spec.peek());
+			autoCepstrum cepstrum = Spectrum_to_Cepstrum (spec.peek());   
 			for (long i = 1; i <= nq; i++) {
 				thy z[i][iframe] = cepstrum -> z[1][i];
 			}

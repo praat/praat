@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2012 David Weenink
+ * Copyright (C) 2011-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -355,8 +355,8 @@ Covariance GaussianMixture_to_Covariance_within (GaussianMixture me) {
 		}
 
 		// Leave centroid at 0 so we can add the within and between covariance nicely
-
-		TableOfReal_copyLabels (my covariances -> item[1], thee.peek(), 1, 1);
+		// Copy row labels from columns, because covar might be diagonal
+		TableOfReal_copyLabels (my covariances -> item[1], thee.peek(), -1, 1);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no Covariance (within) created.");

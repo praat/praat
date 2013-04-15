@@ -125,7 +125,7 @@ void structGuiMenu :: f_empty () {
 		gtk_menu_set_accel_group (GTK_MENU (d_widget), ag);
 		Melder_assert (ag);
 		gtk_menu_item_set_submenu (GTK_MENU_ITEM (d_gtkMenuTitle), GTK_WIDGET (d_widget));
-		//gtk_widget_show (GTK_WIDGET (d_widget));
+		gtk_widget_show (GTK_WIDGET (d_widget));
 		_GuiObject_setUserData (d_widget, this);
 	#elif cocoa
 	#elif motif

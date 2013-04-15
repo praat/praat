@@ -1,6 +1,6 @@
 /* manual_HMM.cpp
  *
- * Copyright (C) 2011 David Weenink
+ * Copyright (C) 2011-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -265,15 +265,15 @@ MAN_BEGIN (L"HMM_StateSequence", L"djmw", 20101010)
 INTRO (L"An HMM_StateSequence models the sequence of states that an @HMM has traversed.")
 MAN_END
 
-MAN_BEGIN (L"HMM", L"djmw", 20101225)
+MAN_BEGIN (L"HMM", L"djmw", 20130410)
 INTRO (L"A HMM is a Hidden Markov Model. Markov models are often used to model observation sequences. "
 	"The fundamental assumption in a markov model is that the probability of an observation (event) can only "
 	"depend on the previous observation. "
 	"A HMM can be visualised as a graph with a number of %%states%. If states are connected they have line connecting them. The following picture shows a HMM with two states, labeled \"Rainy\" and \"Sunny\". Each state can emit three symbols (these are not visible in the graph).   ")
-	SCRIPT (5, 5,
-	L"Create simple HMM... wheather n \"Rainy Sunny\" Walk Shop Clean\n"
-	"Draw... no\n"
-	"Remove\n")
+SCRIPT (5, 5,
+	L"do (\"Create simple HMM...\", \"wheather\", \"no\", \"Rainy Sunny\", \"Walk Shop Clean\")\n"
+	"do (\"Draw...\", \"no\")\n"
+	"do (\"Remove\")\n")
 INTRO (L"For an introduction into HMM's see @@Rabiner (1989)@.")
 MAN_END
 

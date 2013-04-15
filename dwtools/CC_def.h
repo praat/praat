@@ -1,6 +1,6 @@
 /* CC_def.h
  * 
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ oo_DEFINE_CLASS (CC, Sampled)
 
 	oo_DOUBLE (fmin)
 	oo_DOUBLE (fmax)
+	// c[0]..c[maximumNumberOfCoefficients] ; needed for inverse transform
 	oo_LONG (maximumNumberOfCoefficients)
 	oo_STRUCT_VECTOR (CC_Frame, frame, nx)
 

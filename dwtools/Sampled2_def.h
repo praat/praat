@@ -1,6 +1,6 @@
 /* Sampled2_def.h
  *
- * Copyright (C) 1993-2008 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 */
 
 #define ooSTRUCT Sampled2
-oo_DEFINE_CLASS (Sampled2, Sampled)   // David, dit was Data i.p.v. Sampled!
+oo_DEFINE_CLASS (Sampled2, Sampled)
 
 	oo_DOUBLE (ymin)
 	oo_DOUBLE (ymax)

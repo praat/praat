@@ -1,6 +1,6 @@
 /* manual_LPC.c
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 NORMAL (L"The meaning of these settings is explained @@Cepstrum: Get peak prominence...|here@.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrogram: Smooth...", L"djmw", 20121203)
+MAN_BEGIN (L"Cepstrogram: Smooth...", L"djmw", 20130410)
 INTRO (L"Smoothes the selected @Cepstrogram by averaging cepstra. The smoothed Cepstrogram is the result of two separate steps. "
 	"In the first step, cepsta are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (L"Settings")
@@ -107,14 +107,14 @@ ENTRY (L"Note")
 NORMAL (L"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
 	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
 CODE (L"select Sound xxx")
-CODE (L"To Cepstrogram... 0.041 0.002 5000.0")
-CODE (L"Smooth... 0.02 0.001")
+CODE (L"do (\"To Cepstrogram...\", 0.041, 0.002, 5000.0)")
+CODE (L"do (\"Smooth...\", 0.02, 0.001)")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum", L"djmw", 20130101)
+MAN_BEGIN (L"Cepstrum", L"djmw", 20130227)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 ENTRY (L"Description")
-NORMAL (L"A Cepstrum is the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB's scale with a reference value of 1.0 (the reference value can be taken arbitrarily). The horizontal scale shows %%quefrency% in units of seconds.")
+NORMAL (L"A Cepstrum is the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds.")
 MAN_END
 
 MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20121203)
@@ -421,7 +421,7 @@ LIST_ITEM (L"\\bu @@Sound: To MFCC...@")
 LIST_ITEM (L"\\bu @@MelFilter: To MFCC...@")
 MAN_END
 
-MAN_BEGIN (L"MFCC: To MelFilter...", L"djmw", 20040407)
+MAN_BEGIN (L"MFCC: To MelFilter...", L"djmw", 20130221)
 INTRO (L"A command to reconstruct @MelFilter objects  from the selected @MFCC "
 	"objects .")
 ENTRY (L"Settings")
@@ -429,11 +429,19 @@ TAG (L"##From coefficient#, ##To coefficient#")
 DEFINITION (L"the range of coefficients that will be used in the reconstruction.")
 ENTRY (L"Details")
 NORMAL (L"The output of the triangular filters in a mel filter bank will be "
-	"synthezised by applying the inverse cosine transform:")
-FORMULA (L"%P__%j_ = 2/N (%c__0_/2 + \\Si__%j=%from_^^%to^ %c__%i_ cos "
-	"(%j\\pi/%N (%i-0.5)))),")
-NORMAL (L"where %N represents the number of filters and %c__%i_ the %i-th "
-	"cepstral coefficient.")
+	"reconstructed by applying the inverse cosine transform:")
+FORMULA (L"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
+NORMAL (L"where %N represents the number of filters, %j runs from 1 to %N, and coefficients %c__%k_ with %k less than "
+	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
+MAN_END
+
+MAN_BEGIN (L"Sound: To Cepstrogram...", L"djmw", 20130227)
+INTRO (L"A command that creates a @@Cepstrogram@ from every selected @@Sound@.")
+ENTRY (L"Settings")
+TAG (L"##Window length (s)")
+TAG (L"##Time step (s)")
+TAG (L"##Maximum frequency (Hz)")
+TAG (L"##Pre-emphasis from (Hz)")
 MAN_END
 
 MAN_BEGIN (L"Sound: To Formant (robust)...", L"djmw", 20111027)

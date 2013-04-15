@@ -1039,7 +1039,7 @@ NORMAL (L"causes the sound to decay exponentially in such a way that it has only
 NORMAL (L"More examples of the use of attributes are on the next page.")
 MAN_END
 
-MAN_BEGIN (L"Formulas 8. Data in objects", L"ppgb", 20070822)
+MAN_BEGIN (L"Formulas 8. Data in objects", L"ppgb", 20130415)
 NORMAL (L"With square brackets, you can get the values inside some objects.")
 ENTRY (L"Object contents in the calculator")
 NORMAL (L"The outcomes of the following examples can be checked with the @calculator.")
@@ -1111,16 +1111,16 @@ CODE (L"sumDiagonal = 0")
 CODE (L"for i to Matrix_hello.ncol")
 	CODE1 (L"sumDiagonal += Matrix_hello [i, i]")
 CODE (L"endfor")
-CODE (L"echo The sum of cells along the diagonal is 'sumDiagonal'.")
+CODE (L"writeInfoLine (\"The sum of cells along the diagonal is \", sumDiagonal, \".\")")
 NORMAL (L"This example could have been written completely with commands from the dynamic menu:")
 CODE (L"select Matrix hello")
 CODE (L"sumDiagonal = 0")
-CODE (L"ncol = Get number of columns")
+CODE (L"ncol = do (\"Get number of columns\")")
 CODE (L"for i to ncol")
-	CODE1 (L"value = Get value in cell... i i")
+	CODE1 (L"value = do (\"Get value in cell...\", i, i)")
 	CODE1 (L"sumDiagonal += value")
 CODE (L"endfor")
-CODE (L"echo The sum of cells along the diagonal is 'sumDiagonal'.")
+CODE (L"writeInfoLine (\"The sum of cells along the diagonal is \", sumDiagonal, \".\")")
 NORMAL (L"The first version, which accesses the contents directly, is not only three lines shorter, but also three times faster.")
 MAN_END
 
@@ -2201,14 +2201,14 @@ LIST_ITEM (L"@@Scripting 5.7. Including other scripts@")
 LIST_ITEM (L"@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20130407)
+MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20130415)
 INTRO (L"In a Praat script, you can use numeric variables as well as string variables.")
 ENTRY (L"Numeric variables")
 NORMAL (L"Numeric variables contain integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
 	"or real numbers between -10^^308^ and +10^^308^. The smallest numbers lie near -10^^-308^ and +10^^-308^.")
 NORMAL (L"You can use %%numeric variables% in your script:")
-TAG (L"%variable = %formula")
-DEFINITION (L"evaluates a numeric formula and assign the result to a variable.")
+TAG (L"%variable = %expression")
+DEFINITION (L"evaluates a numeric expression and assign the result to a variable.")
 NORMAL (L"Example:")
 CODE (L"length = 10")
 CODE (L"do (\"Draw line...\", 0, length, 1, 1)")
@@ -2218,18 +2218,19 @@ ENTRY (L"String variables")
 NORMAL (L"You can also use %%string variables%, which contain text:")
 CODE (L"title\\$  = \"Dutch nasal place assimilation\"")
 NORMAL (L"As in the programming language Basic, the names of string variables end in a dollar sign.")
-ENTRY (L"Variable substitution")
-NORMAL (L"Existing variables are substituted when put between quotes:")
-CODE (L"x = 99")
-CODE (L"x2 = x * x")
-CODE (L"#writeInfoLine (\"The square of \", x, \" is \", x2, \".\")")
+ENTRY (L"Making numeric variables visible")
+NORMAL (L"You can write the content of numeric variables directly to the info window:")
+CODE (L"x = 2.0")
+CODE (L"root = sqrt (x)")
+CODE (L"#writeInfoLine (\"The square root of \", x, \" is \", root, \".\")")
 NORMAL (L"This will write the following text to the Info window:")
-CODE (L"The square of 99 is 9801.")
-NORMAL (L"You can reduce the number of digits after the decimal point by use of the ##fixed\\$ # function:")
-CODE (L"root = sqrt (2)")
-CODE (L"#writeInfoLine (\"The square root of 2 is approximately \", fixed\\$  (root, 3), \".\")")
+CODE (L"The square root of 2 is 1.4142135623730951.")
+NORMAL (L"You can fix the number of digits after the decimal point by use of the ##fixed\\$ # function:")
+CODE (L"x = 2.0")
+CODE (L"root = sqrt (x)")
+CODE (L"#writeInfoLine (\"The square root of \", fixed\\$  (x, 3), \" is approximately \", fixed\\$  (root, 3), \".\")")
 NORMAL (L"This will write the following text to the Info window:")
-CODE (L"The square root of 2 is approximately 1.414.")
+CODE (L"The square root of 2.000 is approximately 1.414.")
 NORMAL (L"By using 0 decimal digits, you round to whole values:")
 CODE (L"root = sqrt (2)")
 CODE (L"#writeInfoLine (\"The square root of 2 is very approximately \", fixed\\$  (root, 0), \".\")")
@@ -2246,9 +2247,12 @@ CODE (L"jitter = 0.000000156789")
 CODE (L"#writeInfoLine (\"The jitter is \", percent\\$  (jitter, 3), \".\")")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The jitter is 0.00002\\% .")
+ENTRY (L"Predefined variables")
+NORMAL (L"All of the variables you saw earlier in this tutorial were defined at the first moment a value was assigned to them. "
+	"Some variables, however, are already defined implicitly at the start of your script.")
 #define xstr(s) str(s)
 #define str(s) #s
-NORMAL (L"Some ##predefined numeric variables# are $macintosh, $windows, and $unix, which are 1 if the script "
+NORMAL (L"Some predefined ##numeric variables# are $macintosh, $windows, and $unix, which are 1 if the script "
 	"is running on a Macintosh, Windows, or Unix platform (respectively), and which are otherwise zero. "
 	"Another one is $praatVersion, which is e.g. " xstr(PRAAT_VERSION_NUM) " for the current version of Praat.")
 NORMAL (L"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, and $$shellDirectory\\$ $. "
@@ -2260,8 +2264,9 @@ NORMAL (L"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, a
 	"if you want to know what they are on your computer, try to #echo them in a script window. "
 	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the directory that contains the script file. "
 	"Finally, we have $$praatVersion\\$ $, which is \"" xstr(PRAAT_VERSION_STR) "\" for the current version of Praat.")
+ENTRY (L"Functions that handle variables")
 NORMAL (L"To check whether a variable exists, you can use the function")
-CODE (L"%variableExists (%variableName\\$ )")
+CODE (L"%variableExists (%%variableName\\$ %)")
 MAN_END
 /*
 form Convert from WAV to AIFF

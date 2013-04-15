@@ -2,7 +2,7 @@
 #define _MelFilter_and_MFCC_h_
 /* MelFilter_and_MFCC.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,18 +51,12 @@ MelFilter).
 
 MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
 /*
-Calculates the Cosine Transform of the filterbank values (See Numerical
-Recipes in C, Chapter 12.3):
-    F[k] =  SUM (j=1..N, f[j] * cos (pi * k * (j - 1/2) / N)).
-    The zeroth cepstral coefficient (F[0]) has been modified to represent the
-    average filterbank output instead of the sum of these outputs.
+Calculates the Cosine Transform of the filterbank values.
 */
 
-MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient,
-	long lastCoefficient, double f1_mel, double df_mel);
+MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient, long lastCoefficient);
 /*
-Calculates the Inverse CT of cepstral coefficients:
-    f[j] = c0+1/N * SUM (k=1..N, F[k] * cos (pi * k * (j - 1/2) / N)),
+Calculates the Inverse CT of cepstral coefficients.
 */
 
 #endif /* MelFilter_and_MFCC.h */

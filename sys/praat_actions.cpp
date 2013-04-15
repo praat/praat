@@ -199,6 +199,14 @@ static void deleteDynamicMenu (void) {
 	if (praat_writeMenu) {
 		#if gtk
 			praat_writeMenu -> f_empty ();
+			/*
+			for (int i = 1; i <= theNumberOfActions; i ++) {
+				if (theActions [i]. button) {
+					if (theActions [i]. button -> d_parent == praat_writeMenu) {
+						GuiObject_destroy (theActions [i]. button -> d_widget);   // a label or a push button or a cascade button
+					}
+				}
+			}*/
 		#elif motif
 			GuiObject_destroy (praat_writeMenu -> d_xmMenuTitle);
 			GuiObject_destroy (praat_writeMenu -> d_widget);

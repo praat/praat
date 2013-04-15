@@ -2,7 +2,7 @@
 #define _Cepstrum_h_
 /* Cepstrum.h
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,9 @@
 #include "Matrix.h"
 
 Thing_define (Cepstrum, Matrix) {
+	// overridden methods:
+	public:
+		virtual double v_getValueAtSample (long isamp, long which, int units);
 };
 /*
 	xmin		// Lowest quefrency.
@@ -73,6 +76,7 @@ void Cepstrum_drawTiltLine (Cepstrum me, Graphics g, double qmin, double qmax, d
 		[minimum, maximum]: amplitude; y range of drawing.
 */
 
+void Cepstrum_getMaximumAndQuefrency (Cepstrum me, double lowestQuefrency, double highestQuefrency, int interpolation, double *maximum, double *quefrency);
 double Cepstrum_getPeakProminence (Cepstrum me, double search_lowestQuefrency, double search_highestQuefrency, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak);
 void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, double *intercept, int method);
 

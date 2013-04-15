@@ -2,7 +2,7 @@
 #define _Cepstrogram_h_
 /* Cepstrogram.h
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,7 +54,7 @@ void Cepstrogram_paint (Cepstrogram me, Graphics g, double tmin, double tmax, do
 
 	Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow);
 
-Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency);
+	Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency);
 Table Cepstrogram_to_Table_cpp (Cepstrogram me, double lowestQuefrency, double highestQuefrency, int interpolation, double qstartFit, double qendFit, int method);
 Cepstrum Cepstrogram_to_Cepstrum_slice (Cepstrogram me, double time);
 

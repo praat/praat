@@ -39,7 +39,7 @@ Sound FilterBank_as_Sound (FilterBank me);
 
 /*
 	The gaussian(x) = (exp(-48*((i-(n+1)/2)/(n+1))^2)-exp(-12))/(1-exp(-12));
-	For power we need thearea under the square of this window:
+	For power we need the area under the square of this window:
 		Integrate (gaussian(i)^2,i=1..n) =
 
 	(sqrt(Pi)*sqrt(3)*sqrt(2)*erf(2*(n-1)*sqrt(3)*sqrt(2)/(n+1))*(n+1)+
@@ -110,8 +110,7 @@ static int Sound_into_BarkFilter_frame (Sound me, BarkFilter thee, long frame) {
 	return 1;
 }
 
-BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
-                                double f1_bark, double fmax_bark, double df_bark) {
+BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt, double f1_bark, double fmax_bark, double df_bark) {
 	try {
 		double t1, nyquist = 0.5 / my dx, samplingFrequency = 2 * nyquist;
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
@@ -158,13 +157,13 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 
 			if ( (i % 10) == 1) {
 				Melder_progress ( (double) i / nt,  L"BarkFilter analysis: frame ",
-				                   Melder_integer (i), L" from ", Melder_integer (nt), L".");
+					Melder_integer (i), L" from ", Melder_integer (nt), L".");
 			}
 		}
 
 		if (frameErrorCount > 0) {
 			Melder_warning (L"Analysis results of ", Melder_integer (frameErrorCount), L" frame(s) out of ",
-			                Melder_integer (nt), L" will be suspect.");
+				Melder_integer (nt), L" will be suspect.");
 		}
 
 		double ref = FilterBank_DBREF * gaussian_window_squared_correction (window -> nx);
@@ -175,7 +174,6 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 		Melder_throw (me, ": no BarkFilter created.");
 	}
 }
-
 
 static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame) {
 	autoMatrix pv = Sound_to_spectralpower (me);
@@ -192,19 +190,18 @@ static int Sound_into_MelFilter_frame (Sound me, MelFilter thee, long frame) {
 		double fh_hz =  MELTOHZ (fc_mel + df);
 		double *pow = pv -> z[1];
 		for (long j = 1; j <= nf; j++) {
-			// Filter with a triangular filter the power (=amplitude-squared)
+			// Bin with a triangular filter the power (=amplitude-squared)
 
 			double f = z1 + (j - 1) * dz;
 			double a = NUMtriangularfilter_amplitude (fl_hz, fc_hz, fh_hz, f);
-			p += a * pow[j] ;
+			p += a * pow[j];
 		}
 		thy z[i][frame] = p;
 	}
 	return 1;
 }
 
-MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
-                              double f1_mel, double fmax_mel, double df_mel) {
+MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt, double f1_mel, double fmax_mel, double df_mel) {
 	try {
 		double t1, samplingFrequency = 1 / my dx, nyquist = 0.5 * samplingFrequency;
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
@@ -229,14 +226,13 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 
 		// Determine the number of filters.
 
-		long nf = floor ( (fmax_mel - f1_mel) / df_mel + 0.5);
+		long nf = floor ((fmax_mel - f1_mel) / df_mel + 0.5);
 		fmax_mel = f1_mel + nf * df_mel;
 
 		Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
-		autoMelFilter thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel,
-		                                       fmax_mel, nf, df_mel, f1_mel);
+		autoMelFilter thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel, fmax_mel, nf, df_mel, f1_mel);
 
 		autoMelderProgress progress (L"MelFilters analysis");
 
@@ -248,13 +244,14 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 				frameErrorCount++;
 			}
 			if ( (i % 10) == 1) {
-				Melder_progress ( (double) i / nt, L"Frame ", Melder_integer (i), L" out of ",
-				                   Melder_integer (nt), L".");
+				Melder_progress ((double) i / nt, L"Frame ", Melder_integer (i), L" out of ", Melder_integer (nt), L".");
 			}
 		}
 
-		if (frameErrorCount) Melder_warning (L"Analysis results of ", Melder_integer (frameErrorCount),
-			                                     L" frame(s) out of ", Melder_integer (nt), L" will be suspect.");
+		if (frameErrorCount) {
+			Melder_warning (L"Analysis results of ", Melder_integer (frameErrorCount),
+			L" frame(s) out of ", Melder_integer (nt), L" will be suspect.");
+		}
 
 		// Window correction.
 

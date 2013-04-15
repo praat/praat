@@ -65,11 +65,10 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 		autoCepstrum thee = Cepstrum_create (0, 0.5 / my dx, my nx);
 		NUMfft_Table_init (&fftTable, numberOfSamples);
 		autoNUMvector<double> amp (1, numberOfSamples);
-		double *x = my z[1], *y = my z[2];
+
 		amp[1] = my v_getValueAtSample (1, 0, 2);
-		for (long i = 2; i < my nx; i ++) {
-			double logpow = my v_getValueAtSample (i, 0, 2);
-			amp [i + i - 2] = logpow;
+		for (long i = 2; i < my nx; i++) {
+			amp [i + i - 2] = my v_getValueAtSample (i, 0, 2);
 			amp [i + i - 1] = 0;
 		}
 		amp [numberOfSamples] = my v_getValueAtSample (my nx, 0, 2);
@@ -86,7 +85,7 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 Spectrum Cepstrum_to_Spectrum (Cepstrum me) {
 	try {
 		autoSound tmp = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		NUMvector_copyElements	(my z[1], tmp -> z[1], 1, my nx);
+		NUMvector_copyElements	(my z[1], tmp -> z[1], 1, my nx); // v_getValueAtSample ???
 		autoSpectrum thee = Sound_to_Spectrum (tmp.peek(), TRUE);
 
 		double *x = thy z[1], *y = thy z[2];

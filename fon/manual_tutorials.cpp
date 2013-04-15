@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130407)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130415)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.45# (15 April 2013)")
+LIST_ITEM (L"\\bu More parts of the manual reflect variable-substitution-free scripting.")
 NORMAL (L"##5.3.44# (7 April 2013)")
 LIST_ITEM (L"\\bu ##Create Sound as pure tone...#.")
 LIST_ITEM (L"\\bu First steps towards variable-substitution-free scripting: the #do, ##do\\$ #, #writeInfo and #appendInfo functions.")

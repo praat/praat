@@ -101,7 +101,8 @@ enum { GEENSYMBOOL_,
 		HERTZ_TO_BARK_, BARK_TO_HERTZ_, PHON_TO_DIFFERENCE_LIMENS_, DIFFERENCE_LIMENS_TO_PHON_,
 		HERTZ_TO_MEL_, MEL_TO_HERTZ_, HERTZ_TO_SEMITONES_, SEMITONES_TO_HERTZ_,
 		ERB_, HERTZ_TO_ERB_, ERB_TO_HERTZ_,
-	#define HIGH_FUNCTION_1  ERB_TO_HERTZ_
+		STRINGSTR_,
+	#define HIGH_FUNCTION_1  STRINGSTR_
 
 	/* Functions of 2 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_2  ARCTAN2_
@@ -147,7 +148,7 @@ enum { GEENSYMBOOL_,
 		ENVIRONMENTSTR_, INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
-		STRINGSTR_, FIXEDSTR_, PERCENTSTR_,
+		FIXEDSTR_, PERCENTSTR_,
 	#define HIGH_STRING_FUNCTION  PERCENTSTR_
 
 	/* Range functions. */
@@ -207,6 +208,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"hertzToBark", L"barkToHertz", L"phonToDifferenceLimens", L"differenceLimensToPhon",
 	L"hertzToMel", L"melToHertz", L"hertzToSemitones", L"semitonesToHertz",
 	L"erb", L"hertzToErb", L"erbToHertz",
+	L"string$",
 	L"arctan2", L"randomUniform", L"randomInteger", L"randomGauss",
 	L"chiSquareP", L"chiSquareQ", L"incompleteGammaP", L"invChiSquareQ", L"studentP", L"studentQ", L"invStudentQ",
 	L"beta", L"beta2", L"besselI", L"besselK", L"lnBeta",
@@ -236,7 +238,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"environment$", L"index", L"rindex",
 	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
 	L"extractNumber", L"extractWord$", L"extractLine$",
-	L"string$", L"fixed$", L"percent$",
+	L"fixed$", L"percent$",
 	L"sum",
 	L".",
 	L"_true", L"_false",

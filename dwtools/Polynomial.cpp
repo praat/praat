@@ -1,6 +1,6 @@
 /* Polynomial.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -536,9 +536,9 @@ void structPolynomial :: v_evaluate_z (dcomplex *z, dcomplex *p) {
 	long double pr = coefficients [numberOfCoefficients];
 	long double pi = 0;
 	for (long i = numberOfCoefficients - 1; i > 0; i--) {
-		long double p_r = pr;
+		long double prtmp = pr;
 		pr =  pr * x - pi * y + coefficients[i];
-		pi = p_r * y + pi * x;
+		pi = prtmp * y + pi * x;
 	}
 	p -> re = pr; p -> im = pi;
 }
