@@ -142,7 +142,7 @@ enum { GEENSYMBOOL_,
 	/* String functions. */
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STRNUM
 	#define LOW_FUNCTION_STRNUM  LENGTH_
-		LENGTH_, FILE_READABLE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
+		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
 	#define HIGH_FUNCTION_STRNUM  VARIABLE_EXISTS_
 		DATESTR_,
 		ENVIRONMENTSTR_, INDEX_, RINDEX_,
@@ -233,7 +233,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"zero#", L"linear#", L"randomUniform#", L"randomInteger#", L"randomGauss#",
 	L"numberOfRows", L"numberOfColumns",
 
-	L"length", L"fileReadable",	L"deleteFile", L"createDirectory", L"variableExists",
+	L"length", L"number", L"fileReadable",	L"deleteFile", L"createDirectory", L"variableExists",
 	L"date$",
 	L"environment$", L"index", L"rindex",
 	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
@@ -2476,7 +2476,7 @@ static void do_writeInfo () {
 		else if (arg->which == Stackel_STRING)
 			MelderInfo_write (arg->string);
 	}
-	MelderInfo_close ();
+	MelderInfo_drain ();
 	pushNumber (1);
 }
 static void do_writeInfoLine () {
@@ -2493,7 +2493,7 @@ static void do_writeInfoLine () {
 			MelderInfo_write (arg->string);
 	}
 	MelderInfo_write (L"\n");
-	MelderInfo_close ();
+	MelderInfo_drain ();
 	pushNumber (1);
 }
 static void do_appendInfo () {
@@ -2508,7 +2508,7 @@ static void do_appendInfo () {
 		else if (arg->which == Stackel_STRING)
 			MelderInfo_write (arg->string);
 	}
-	MelderInfo_close ();
+	MelderInfo_drain ();
 	pushNumber (1);
 }
 static void do_appendInfoLine () {
@@ -2524,7 +2524,7 @@ static void do_appendInfoLine () {
 			MelderInfo_write (arg->string);
 	}
 	MelderInfo_write (L"\n");
-	MelderInfo_close ();
+	MelderInfo_drain ();
 	pushNumber (1);
 }
 static void do_min (void) {
@@ -2797,6 +2797,15 @@ static void do_length (void) {
 		pushNumber (result);
 	} else {
 		Melder_throw ("The function \"length\" requires a string, not ", Stackel_whichText (s), ".");
+	}
+}
+static void do_number (void) {
+	Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		double result = Melder_atof (s->string);
+		pushNumber (result);
+	} else {
+		Melder_throw ("The function \"number\" requires a string, not ", Stackel_whichText (s), ".");
 	}
 }
 static void do_fileReadable (void) {
@@ -4390,6 +4399,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case NUMBER_OF_COLUMNS_: { do_numberOfColumns ();
 /********** String functions: **********/
 } break; case LENGTH_: { do_length ();
+} break; case STRING_TO_NUMBER_: { do_number ();
 } break; case FILE_READABLE_: { do_fileReadable ();
 } break; case DATESTR_: { do_dateStr ();
 } break; case LEFTSTR_: { do_leftStr ();

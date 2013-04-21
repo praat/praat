@@ -306,7 +306,7 @@ LIST_ITEM (L"@@ExperimentMFC 3.3. A 4I-oddity experiment")
 LIST_ITEM (L"@@ExperimentMFC 3.4. Variable inter-stimulus intervals")
 MAN_END
 
-MAN_BEGIN (L"ExperimentMFC 3.1. A simple discrimination experiment", L"ppgb", 20130101)
+MAN_BEGIN (L"ExperimentMFC 3.1. A simple discrimination experiment", L"ppgb", 20130416)
 NORMAL (L"The @@ExperimentMFC 2.1. The experiment file|example experiment@ was an %identification experiment: "
 	"the subject had identify a single sound as one element of a set of categories. "
 	"Phoneticians will often do %discrimination experiments, which are experiments in which "
@@ -336,7 +336,7 @@ CODE1 (L"\"340,300\"  \"\"  \"340,320\"  \"\"  \"340,340\"  \"\"  \"340,360\"  \
 CODE1 (L"\"360,300\"  \"\"  \"360,320\"  \"\"  \"360,340\"  \"\"  \"360,360\"  \"\"  \"360,380\"  \"\"  \"360,400\"  \"\"  \"360,420\"  \"\"")
 CODE1 (L"\"380,320\"  \"\"  \"380,340\"  \"\"  \"380,360\"  \"\"  \"380,380\"  \"\"  \"380,400\"  \"\"  \"380,420\"  \"\"")
 CODE1 (L"\"400,340\"  \"\"  \"400,360\"  \"\"  \"400,380\"  \"\"  \"400,400\"  \"\"  \"400,420\"  \"\"")
-CODE1 (L"\"420,360\"  \"\"  \"420,380\"  \"\"  \"420,400\"  \"\"  \"420,420\"")
+CODE1 (L"\"420,360\"  \"\"  \"420,380\"  \"\"  \"420,400\"  \"\"  \"420,420\"  \"\"")
 CODE (L"10 replications per stimulus")
 CODE (L"break after every 50 stimuli")
 CODE (L"<PermuteBalancedNoDoublets>")

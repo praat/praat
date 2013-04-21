@@ -116,6 +116,12 @@ void MelderInfo_close (void) {
 	}
 }
 
+void MelderInfo_drain (void) {
+	if (theInfos == & theForegroundBuffer) {
+		theInformation (theInfos -> string ? theInfos -> string : L"");
+	}
+}
+
 void Melder_informationReal (double value, const wchar_t *units) {
 	MelderInfo_open ();
 	if (value == NUMundefined)

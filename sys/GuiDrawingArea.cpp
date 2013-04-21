@@ -239,9 +239,22 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
     
 }
 
+- (void)flush {
+    [self lockFocus];
+    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    NSCAssert(context, @"nil context");
+    CGContextFlush(context);
+    [self unlockFocus];
+}
+
 - (void)setFrame:(NSRect)rect {
     [self resizeCallback:rect];
     [super setFrame:rect];
+}
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent{
@@ -256,6 +269,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 }    
 
 - (void)mouseDown:(NSEvent *)theEvent {
+ //   [self becomeFirstResponder];
     GuiDrawingArea me = (GuiDrawingArea) d_userData;
     if (my d_clickCallback) {
         
@@ -315,6 +329,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
         event. shiftKeyPressed = NSShiftKeyMask & modifiers;
         event. optionKeyPressed = NSAlternateKeyMask & modifiers;
         event. commandKeyPressed = NSCommandKeyMask & modifiers;
+        event. type = MOTION_NOTIFY;
         try {
             my d_clickCallback (my d_clickBoss, & event);
         } catch (MelderError) {
@@ -327,19 +342,23 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
     GuiDrawingArea me = (GuiDrawingArea) d_userData;
     NSUInteger modifiers = [theEvent modifierFlags];
     unsigned short keyCode = [theEvent keyCode];
+    struct structGuiDrawingAreaKeyEvent event = { me, 0 };
+    event.key = keyCode;
+    
+    NSLog(@"keyCode %d", keyCode);
+    
+    // FIXME: Map these keys
+    //        if (event. key == VK_RETURN) event. key = 10;
+    //        if (event. key == VK_LEFT)  event. key = 0x2190;
+    //        if (event. key == VK_RIGHT) event. key = 0x2192;
+    //        if (event. key == VK_UP)    event. key = 0x2191;
+    //        if (event. key == VK_DOWN)  event. key = 0x2193;
+    
+    event.shiftKeyPressed = NSShiftKeyMask & modifiers;
+    event.optionKeyPressed = NSAlternateKeyMask & modifiers;
+    event.commandKeyPressed = NSCommandKeyMask & modifiers;
 
     if (my d_keyCallback) {
-        struct structGuiDrawingAreaKeyEvent event = { me, 0 };
-        event. key = keyCode;
-        // FIXME: Map these keys
-//        if (event. key == VK_RETURN) event. key = 10;
-//        if (event. key == VK_LEFT)  event. key = 0x2190;
-//        if (event. key == VK_RIGHT) event. key = 0x2192;
-//        if (event. key == VK_UP)    event. key = 0x2191;
-//        if (event. key == VK_DOWN)  event. key = 0x2193;
-        event. shiftKeyPressed = NSShiftKeyMask & modifiers;
-        event. optionKeyPressed = NSAlternateKeyMask & modifiers;
-        event. commandKeyPressed = NSCommandKeyMask & modifiers;
         try {
             my d_keyCallback (my d_keyBoss, & event);
         } catch (MelderError) {

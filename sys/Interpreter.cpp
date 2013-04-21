@@ -814,7 +814,7 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 					}
 				}
 				c0 = command2.string [0];   /* Resume in order to allow things like 'c$' = 5 */
-				if ((c0 < 'a' || c0 > 'z') && ! (c0 == '.' && command2.string [1] >= 'a' && command2.string [1] <= 'z')) {
+				if ((c0 < 'a' || c0 > 'z') && c0 != '@' && ! (c0 == '.' && command2.string [1] >= 'a' && command2.string [1] <= 'z')) {
 					praat_executeCommand (me, command2.string);
 				/*
 				 * Interpret control flow and variables.
@@ -823,6 +823,128 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 					case '.':
 						fail = TRUE;
 						break;
+					case '@':
+					{
+						/*
+						 * This is a function call.
+						 * Look for a function name.
+						 */
+						wchar_t *p = command2.string + 1;
+						while (*p == ' ' || *p == '\t') p ++;   // skip whitespace
+						wchar_t *callName = p;
+						while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '(') p ++;
+						if (p == callName) Melder_throw ("Missing procedure name after \"@\".");
+						if (*p == '\0') Melder_throw ("Missing parenthesis after procedure name.");
+						bool parenthesisFound = *p == '(';
+						*p = '\0';   // close procedure name
+						if (! parenthesisFound) {
+							p ++;   // step over first white space
+							while (*p != '\0' && (*p == ' ' || *p == '\t') && *p != '(') p ++;   // skip more whitespace
+							if (*p != '(') Melder_throw ("Missing parenthesis after procedure name \"", callName, "\".");
+						}
+						p ++;   // step over parenthesis
+						int callLength = wcslen (callName);
+						long iline = 1;
+						for (; iline <= numberOfLines; iline ++) {
+							wchar_t *linei = lines [iline], *q;
+							if (linei [0] != 'p' || linei [1] != 'r' || linei [2] != 'o' || linei [3] != 'c' ||
+								linei [4] != 'e' || linei [5] != 'd' || linei [6] != 'u' || linei [7] != 'r' ||
+								linei [8] != 'e' || linei [9] != ' ') continue;
+							q = lines [iline] + 10;
+							while (*q == ' ' || *q == '\t') q ++;   // skip whitespace before procedure name
+							wchar_t *procName = q;
+							while (*q != '\0' && *q != ' ' && *q != '\t' && *q != '(') q ++;
+							if (q == procName) Melder_throw ("Missing procedure name after 'procedure'.");
+							if (q - procName == callLength && wcsnequ (procName, callName, callLength)) {
+								/*
+								 * We found the procedure definition.
+								 */
+								if (++ my callDepth > Interpreter_MAX_CALL_DEPTH)
+									Melder_throw ("Call depth greater than ", Interpreter_MAX_CALL_DEPTH, ".");
+								wcscpy (my procedureNames [my callDepth], callName);
+								parenthesisFound = *q == '(';
+								if (! parenthesisFound) {
+									q ++;   // step over first white space
+									while (*q != '\0' && (*q == ' ' || *q == '\t') && *q != '(') q ++;   // skip more whitespace
+									if (*q != '(') Melder_throw ("Missing parenthesis after procedure name \"", callName, "\".");
+								}
+								++ q;   // step over parenthesis
+								while (*q && *q != ')') {
+									static MelderString argument = { 0 };
+									MelderString_empty (& argument);
+									while (*p == ' ' || *p == '\t') p ++;
+									while (*q == ' ' || *q == '\t') q ++;
+									wchar_t *parameterName = q;
+									while (*q != '\0' && *q != ' ' && *q != '\t' && *q != ',' && *q != ')') q ++;   // collect parameter name
+									int expressionDepth = 0;
+									for (; *p; p ++) {
+										if (*p == ',') {
+											if (expressionDepth == 0) break;   // depth-0 comma ends expression
+											MelderString_appendCharacter (& argument, ',');
+										} else if (*p == ')') {
+											if (expressionDepth == 0) break;   // depth-0 closing parenthesis ends expression
+											expressionDepth --;
+											MelderString_appendCharacter (& argument, ')');
+										} else if (*p == '(') {
+											expressionDepth ++;
+											MelderString_appendCharacter (& argument, '(');
+										} else if (*p == '\"') {
+											/*
+											 * Enter a string literal.
+											 */
+											MelderString_appendCharacter (& argument, '\"');
+											p ++;
+											for (;; p ++) {
+												if (*p == '\0') {
+													Melder_throw (L"Incomplete string literal: the quotes don't match.");
+												} else if (*p == '\"') {
+													MelderString_appendCharacter (& argument, '\"');
+													if (p [1] == '\"') {
+														p ++;   // stay in the string literal
+														MelderString_appendCharacter (& argument, '\"');
+													} else {
+														break;
+													}
+												} else {
+													MelderString_appendCharacter (& argument, *p);
+												}
+											}
+										} else {
+											MelderString_appendCharacter (& argument, *p);
+										}
+									}
+									if (q == parameterName) break;
+									if (*p) { *p = '\0'; p ++; }
+									if (q [-1] == '$') {
+										wchar_t *value;
+										my callDepth --;
+										Interpreter_stringExpression (me, argument.string, & value);
+										my callDepth ++;
+										wchar_t save = *q; *q = '\0';
+										InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+										Melder_free (var -> stringValue);
+										var -> stringValue = value;
+									} else {
+										double value;
+										my callDepth --;
+										Interpreter_numericExpression (me, argument.string, & value);
+										my callDepth ++;
+										wchar_t save = *q; *q = '\0';
+										InterpreterVariable var = Interpreter_lookUpVariable (me, parameterName); *q = save;
+										var -> numericValue = value;
+									}
+									if (*q) q ++;   // skip comma
+								}
+								if (callDepth == Interpreter_MAX_CALL_DEPTH)
+									Melder_throw ("Call depth greater than ", Interpreter_MAX_CALL_DEPTH, ".");
+								callStack [++ callDepth] = lineNumber;
+								lineNumber = iline;
+								break;
+							}
+						}
+						if (iline > numberOfLines) Melder_throw ("Procedure \"", callName, "\" not found.");
+						break;
+					}
 					case 'a':
 						if (wcsnequ (command2.string, L"assert ", 7)) {
 							double value;

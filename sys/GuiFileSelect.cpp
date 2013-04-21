@@ -62,7 +62,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
         [openPanel setTitle:[NSString stringWithUTF8String:Melder_peekWcsToUtf8(title)]];
         [openPanel setAllowsMultipleSelection:allowMultipleFiles];
         [openPanel setCanChooseDirectories:NO];
-        [openPanel setDirectoryURL:[NSURL URLWithString:[NSString stringWithUTF8String:Melder_peekWcsToUtf8 (Melder_dirToPath (& dir))]]];
+        [openPanel setDirectoryURL:[NSURL fileURLWithPath:[NSString stringWithUTF8String:Melder_peekWcsToUtf8 (Melder_dirToPath (& dir))]]];
         
         if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
             for (NSURL *url in [openPanel URLs]) {

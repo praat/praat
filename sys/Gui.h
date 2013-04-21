@@ -2,7 +2,7 @@
 #define _Gui_h_
 /* Gui.h
  *
- * Copyright (C) 1993-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +115,9 @@
     @interface GuiCocoaWindow : NSWindow <GuiCocoaAny> @end
     @interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
     @interface GuiCocoaCheckButton : NSButton <GuiCocoaAny> @end
-    @interface GuiCocoaDrawingArea : NSView <GuiCocoaAny> @end
+    @interface GuiCocoaDrawingArea : NSView <GuiCocoaAny>
+    - (void)flush;
+    @end
     @interface GuiCocoaOptionMenu : NSPopUpButton <GuiCocoaAny> @end
     @interface GuiCocoaList : NSView <GuiCocoaAny, NSTableViewDataSource, NSTableViewDelegate>
         @property (nonatomic, retain) NSMutableArray *contents;

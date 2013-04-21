@@ -1243,7 +1243,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#ifdef UNIX
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
-				fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_widget) -> window)));
+				fprintf (f, " %ld", (long) GDK_WINDOW_XID (GDK_DRAWABLE (GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window)));
 				f.close (& pidFile);
 			} catch (MelderError) {
 				Melder_clearError ();
@@ -1476,7 +1476,7 @@ void praat_run (void) {
 			//gtk_widget_add_events (G_OBJECT (theCurrentPraatApplication -> topShell), GDK_ALL_EVENTS_MASK);
 			trace ("install GTK key snooper");
 			trace ("locale is %s", setlocale (LC_ALL, NULL));
-			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_widget), "client-event", G_CALLBACK (cb_userMessage), NULL);
+			g_signal_connect (G_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "client-event", G_CALLBACK (cb_userMessage), NULL);
 			gtk_key_snooper_install (theKeySnooper, 0);
 			trace ("start the GTK event loop");
 			trace ("locale is %s", setlocale (LC_ALL, NULL));

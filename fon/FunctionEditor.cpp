@@ -1048,6 +1048,9 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 			Melder_casual ("FunctionEditor::gui_drawingarea_cb_click: button %d shift %d option %d command %d control %d",
 				event -> button, my shiftKeyPressed, event -> optionKeyPressed, event -> commandKeyPressed, event -> extraControlKeyPressed);
 		}
+#if cocoa
+        my clickEvent = event;
+#endif
 #if defined (macintosh)
 		needsUpdate =
 			event -> optionKeyPressed || event -> extraControlKeyPressed ? my v_clickB (xWC, yWC) :
@@ -1069,6 +1072,11 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 		Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 		if (needsUpdate) /*Graphics_updateWs (my d_graphics);*/ drawNow (me);
 		if (needsUpdate) updateGroup (me);
+#if cocoa
+        if (needsUpdate) {
+            [(GuiCocoaDrawingArea*)my drawingArea -> d_widget flush];
+        }
+#endif
 	}
 	else   /* Clicked outside signal region? Let us hear it. */
 	{
@@ -1179,11 +1187,21 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
 	Graphics_text1 (my d_graphics, xright, 0.0, Melder_fixed (xright, 6));
 	Graphics_xorOff (my d_graphics);
+#if cocoa
+    [(GuiCocoaDrawingArea*)my drawingArea -> d_widget flush];
+#endif
 }
 
 int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
 	bool drag = false;
 	double x = xbegin, y = ybegin;
+    
+#if cocoa
+    // Need to rewrite this to handle moved events
+    if (clickEvent->type == BUTTON_RELEASE || clickEvent->type == MOTION_NOTIFY)
+        return FunctionEditor_NO_UPDATE_NEEDED;
+#endif
+    
 	/*
 	 * The 'anchor' is the point that will stay fixed during dragging.
 	 * For instance, if she clicks and drags to the right,

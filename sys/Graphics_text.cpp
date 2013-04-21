@@ -1,6 +1,6 @@
 /* Graphics_text.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -278,6 +278,8 @@ static void charSize (I, _Graphics_widechar *lc) {
             
             NSString *s =[[NSString alloc] initWithBytes: &lc -> kar length:4 encoding:NSUTF16LittleEndianStringEncoding];
             CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+            NSCAssert(context, @"nil context");
+
             CGContextSaveGState(context);
             CGContextSetTextMatrix(context, CGAffineTransformIdentity);
             Boolean boldStyle = (lc -> style & Graphics_BOLD) != 0;
@@ -644,6 +646,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 		#elif cocoa
 			int needBitmappedIPA = 0;
             CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+            NSCAssert(context, @"nil context");
             CGContextSaveGState(context);
             CGContextSetTextMatrix(context, CGAffineTransformIdentity);
             NSString *s = [[NSString alloc] initWithBytes:Melder_peekWcsToUtf16 (codes) length:nchars * 2 encoding:NSUTF16LittleEndianStringEncoding];
@@ -711,6 +714,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
             NSRect drawRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
             CGPathAddRect(path, NULL, drawRect );
             frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, [s length]), path, NULL);
+
+        NSCAssert(my d_macGraphicsContext, @"nil context");
 
             CGContextSaveGState (my d_macGraphicsContext);
             CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC + descent);
@@ -803,6 +808,9 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			 * Draw.
 			 */
 			CGContextSaveGState (my d_macGraphicsContext);
+        
+        NSCAssert(my d_macGraphicsContext, @"nil context");
+
 			CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
 
 			if (my yIsZeroAtTheTop) CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);

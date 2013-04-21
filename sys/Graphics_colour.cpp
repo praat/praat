@@ -178,14 +178,28 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
             int width = x2DC - x1DC, height = y1DC - y2DC;
             if (width <= 0 || height <= 0) return;
 
-            NSRect rect = NSMakeRect(x1DC, y2DC, width, height);
-            CGContextRef context = (CGContextRef)[[NSGraphicsContext
-                                                   currentContext] graphicsPort];
+        GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*) my d_drawingArea -> d_widget;
+        
+        if (drawingArea) {
+            [drawingArea lockFocus];
+
+            CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             CGContextSaveGState (context);
+            NSCAssert(context, @"nil context");
+            CGContextTranslateCTM (context, 0, drawingArea.bounds.size.height);
+            CGContextScaleCTM (context, 1.0, -1.0);
+
+            NSRect rect = NSMakeRect(x1DC,  y2DC, width, height);
             CGContextSetBlendMode(context, kCGBlendModeDifference);
-            CGContextSetRGBFillColor (context, 1.0, 1.0, 1.0, 1.0);
+        
+            // FIXME: Need user selection color
+            CGContextSetRGBFillColor (context, .2, .0, .0, 1.0);
             CGContextFillRect (context, rect);
             CGContextRestoreGState (context);
+            
+            [drawingArea unlockFocus];
+        }
+
         #elif mac
                 Rect rect;
                 if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
@@ -245,15 +259,19 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
             if (view) {
                [view lockFocus];
 
-                CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-                CGContextSaveGState (context);
+                my d_macGraphicsContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+                CGContextSaveGState (my d_macGraphicsContext);
+                
+                NSCAssert(my d_macGraphicsContext, @"nil context");
                 CGContextTranslateCTM (my d_macGraphicsContext, 0, view.bounds.size.height);
                 CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 
-                CGContextSetBlendMode(context, kCGBlendModeDifference);
+                CGContextSetBlendMode(my d_macGraphicsContext, kCGBlendModeDifference);
 
-                CGContextSetRGBFillColor (context, 2.0, 2.0, 2.0, 2.0);
-                
+              //  CGContextSetRGBFillColor (context, 2.0, 2.0, 2.0, 2.0);
+                // FIXME: Need user selection color
+                CGContextSetRGBFillColor (my d_macGraphicsContext, .2, .0, .0, 1.0);
+
                 NSRect upperRect = NSMakeRect(x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
                 NSRect leftRect = NSMakeRect(x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);
                 NSRect rightRect = NSMakeRect(x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner);
@@ -262,18 +280,18 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
                 unionRect = NSUnionRect(unionRect, rightRect);
                 unionRect = NSUnionRect(unionRect, lowerRect);
                 
-                CGContextFillRect (context, upperRect);
-                CGContextFillRect (context, leftRect);
-                CGContextFillRect (context, rightRect);
-                CGContextFillRect (context, lowerRect);
+                CGContextFillRect (my d_macGraphicsContext, upperRect);
+                CGContextFillRect (my d_macGraphicsContext, leftRect);
+                CGContextFillRect (my d_macGraphicsContext, rightRect);
+                CGContextFillRect (my d_macGraphicsContext, lowerRect);
 
-                CGContextRestoreGState (context);
-                CGContextSynchronize ( context);
+                CGContextRestoreGState (my d_macGraphicsContext);
+                CGContextSynchronize ( my d_macGraphicsContext);
                 [view unlockFocus];
-                
+        
                 // See comments in gui_drawingarea_cb_click
                // [view setNeedsDisplayInRect:unionRect];
-                [[view window] flushWindow];
+//                [[view window] flushWindow];
 
             }
 

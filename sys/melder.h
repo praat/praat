@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -477,7 +477,8 @@ void MelderInfo_writeLine  (const wchar_t *s1, const wchar_t *s2, const wchar_t 
 void MelderInfo_writeLine  (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7);
 void MelderInfo_writeLine  (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8);
 void MelderInfo_writeLine  (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9);
-void MelderInfo_close (void);   /* Flush the background info to the Info window. */
+void MelderInfo_close (void);   // drain the background info to the Info window, making sure there is a line break
+void MelderInfo_drain (void);   // drain the background info to the Info window, without adding any extra line break
 
 void Melder_information (const wchar_t *s1);
 void Melder_information (const wchar_t *s1, const wchar_t *s2);

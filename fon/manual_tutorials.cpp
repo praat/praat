@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130415)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130421)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.46# (21 April 2013)")
+LIST_ITEM (L"\\bu Scripting: variable-substitution-free procedure calls.")
+LIST_ITEM (L"\\bu Linux: made the Save menu compatible with Ubuntu 12.04.")
 NORMAL (L"##5.3.45# (15 April 2013)")
 LIST_ITEM (L"\\bu More parts of the manual reflect variable-substitution-free scripting.")
 NORMAL (L"##5.3.44# (7 April 2013)")
@@ -1674,32 +1677,32 @@ NORMAL (L"If you choose ##Move cursor to maximum pitch#, then choose ##Get pitch
 	"lower values.")
 MAN_END
 
-MAN_BEGIN (L"FAQ: Scripts", L"ppgb", 20110128)
+MAN_BEGIN (L"FAQ: Scripts", L"ppgb", 20130421)
 NORMAL (L"#Question: how do I do something to all the files in a directory?")
 NORMAL (L"Answer: look at @@Create Strings as file list...@.")
 NORMAL (L"")
 NORMAL (L"#Question: why doesn't the editor window react to my commands?")
 NORMAL (L"Your commands are probably something like:")
-CODE (L"Read from file... hello.wav")
-CODE (L"View & Edit")
-CODE (L"Zoom... 0.3 0.5")
+CODE (L"do (\"Read from file...\", \"hello.wav\")")
+CODE (L"do (\"View & Edit\")")
+CODE (L"do (\"Zoom...\", 0.3, 0.5)")
 NORMAL (L"Answer: Praat doesn't know it has to send the #Zoom command to the editor "
 	"window called ##Sound hello#. There could be several Sound editor windows on your "
 	"screen. According to @@Scripting 7.1. Scripting an editor from a shell script@, "
 	"you will have to say this explicitly:")
-CODE (L"Read from file... hello.wav")
-CODE (L"View & Edit")
+CODE (L"do (\"Read from file...\", \"hello.wav\")")
+CODE (L"do (\"View & Edit\")")
 CODE (L"editor Sound hello")
-CODE (L"Zoom... 0.3 0.5")
+CODE (L"do (\"Zoom...\", 0.3, 0.5)")
 NORMAL (L"")
 NORMAL (L"#Problem: a line like \"Number = 1\" does not work.")
 NORMAL (L"Solution: names of variables should start with a lower-case letter.")
 NORMAL (L"")
 NORMAL (L"#Question: why do names of variables have to start with a lower-case letter? "
 	"I would like to do things like \"F0 = Get mean pitch\".")
-NORMAL (L"Answer: Praat scripts combine button commands with things that only occur "
+NORMAL (L"Answer (using the shorthand script syntax): Praat scripts combine button commands with things that only occur "
 	"in scripts. Button commands always start with a capital letter, e.g. \"Play\". "
-	"Script command always start with lower case, e.g. \"echo Hello\". "
+	"Script commands always start with lower case, e.g. \"echo Hello\". "
 	"A minimal pair is \"select\", which simulates a mouse click in the object list, "
 	"versus \"Select...\", which sets the selection in editor windows. Variable names "
 	"that start with a capital letter would be rather ambiguous in assignments, "
@@ -1708,9 +1711,9 @@ NORMAL (L"Answer: Praat scripts combine button commands with things that only oc
 	"a rigorous lower-case/upper-case distinction.")
 NORMAL (L"")
 NORMAL (L"#Question: how do I convert a number into a string?")
-NORMAL (L"Answer: a\\$  = \"'a'\"")
+NORMAL (L"Answer: a\\$  = string\\$  (a)")
 NORMAL (L"#Question: how do I convert a string into a number?")
-NORMAL (L"Answer: a = 'a\\$ '")
+NORMAL (L"Answer: a = number (a\\$ )")
 MAN_END
 
 MAN_BEGIN (L"FAQ: Spectrograms", L"ppgb", 20030916)

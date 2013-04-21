@@ -203,6 +203,11 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		[button setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
 		[button setTarget: (id) my d_widget];
 		[button setAction: @selector (_guiCocoaButton_activateCallback:)];
+    
+        if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
+            [button setKeyEquivalent:@"\r"];
+        }
+
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmPushButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);

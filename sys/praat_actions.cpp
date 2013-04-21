@@ -183,6 +183,8 @@ static void deleteDynamicMenu (void) {
 			#if gtk
 				if (theActions [i]. button -> d_parent == praat_form) {
 					GuiObject_destroy (theActions [i]. button -> d_widget);   // a label or a push button or a cascade button
+				} else if (praat_writeMenu && theActions [i]. button -> d_parent == praat_writeMenu) {
+					GuiObject_destroy (theActions [i]. button -> d_widget);   // a Save menu item
 				}
 			#elif motif
 				if (theActions [i]. button -> classInfo == classGuiButton && theActions [i]. button -> d_widget -> subMenuId) {   // a cascade button (not a direct child of the form)?
@@ -198,15 +200,10 @@ static void deleteDynamicMenu (void) {
 	}
 	if (praat_writeMenu) {
 		#if gtk
-			praat_writeMenu -> f_empty ();
-			/*
-			for (int i = 1; i <= theNumberOfActions; i ++) {
-				if (theActions [i]. button) {
-					if (theActions [i]. button -> d_parent == praat_writeMenu) {
-						GuiObject_destroy (theActions [i]. button -> d_widget);   // a label or a push button or a cascade button
-					}
-				}
-			}*/
+			if (praat_writeMenuSeparator) {
+				GuiObject_destroy (praat_writeMenuSeparator -> d_widget);
+			}
+			//praat_writeMenu -> f_empty ();
 		#elif motif
 			GuiObject_destroy (praat_writeMenu -> d_xmMenuTitle);
 			GuiObject_destroy (praat_writeMenu -> d_widget);
@@ -692,6 +689,9 @@ void praat_actions_show (void) {
 void praat_actions_createWriteMenu (GuiWindow window) {
 	if (theCurrentPraatApplication -> batch) return;
 	praat_writeMenu = GuiMenu_createInWindow (window, L"Save", GuiMenu_INSENSITIVE);
+	#if gtk
+		GuiMenu_addSeparator (praat_writeMenu);
+	#endif
 }
 
 void praat_actions_init (void) {
