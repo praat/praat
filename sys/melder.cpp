@@ -788,7 +788,7 @@ static void mac_message (int macAlertType, const wchar_t *messageW) {
 			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
 		}
 	}
-	#if useCarbon
+	#if useCarbonXXX
         DialogRef dialog;
 		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
 		CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
@@ -798,7 +798,7 @@ static void mac_message (int macAlertType, const wchar_t *messageW) {
 		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
         CFOptionFlags cfRes;
         CFUserNotificationDisplayAlert(0, macAlertType, NULL, NULL, NULL,
-                                       CFSTR("Error"), messageCF,  CFSTR("OK"),  NULL,  NULL, &cfRes);
+                                       /*CFSTR("Error"),*/ messageCF,  NULL, CFSTR("OK"),  NULL,  NULL, &cfRes);
         CFRelease (messageCF);
 	#endif
 }
@@ -815,7 +815,7 @@ static void gui_fatal (const wchar_t *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbon
+		#if useCarbonXXX
 			mac_message (kAlertStopAlert, message);
 			SysError (11);
 		#else
@@ -841,11 +841,11 @@ static void gui_error (const wchar_t *message) {
 		trace ("destroy dialog");
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbon
+		#if useCarbonXXX
 			mac_message (kAlertStopAlert, message);
 			XmUpdateDisplay (0);
 		#else
-			mac_message (kCFUserNotificationStopAlertLevel, message);
+			mac_message (kCFUserNotificationPlainAlertLevel, message);
 		#endif
 	#elif defined (_WIN32)
 		MessageBox (NULL, message, L"Message", MB_OK | MB_TOPMOST | MB_ICONEXCLAMATION);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
@@ -863,7 +863,7 @@ static void gui_error (const wchar_t *message) {
 					mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 					XmUpdateDisplay (0);
 				#else
-					mac_message (kCFUserNotificationStopAlertLevel, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+					mac_message (kCFUserNotificationPlainAlertLevel, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				#endif
 			#elif defined (_WIN32)
 				MessageBox (NULL, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
@@ -879,7 +879,7 @@ static void gui_warning (const wchar_t *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbon
+		#if useCarbonXXX
 			mac_message (kAlertNoteAlert, message);
 			XmUpdateDisplay (0);
 		#else

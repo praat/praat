@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130421)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130423)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.47# (23 April 2013)")
+LIST_ITEM (L"\\bu OTGrammar: included Giorgio Magri's (2012) update rule (weighted all up, high down).")
 NORMAL (L"##5.3.46# (21 April 2013)")
 LIST_ITEM (L"\\bu Scripting: variable-substitution-free procedure calls.")
 LIST_ITEM (L"\\bu Linux: made the Save menu compatible with Ubuntu 12.04.")

@@ -659,7 +659,7 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 		}
 		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
-	} else { Melder_assert (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN_2012);
+	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGHEST_DOWN_2012) {
 		bool changed = false;
 		long numberOfUp = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
@@ -715,6 +715,76 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 		}
 		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGH_DOWN) {
+		long numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+			int loserMarks = loser -> marks [my index [icons]];
+			if (loserMarks < winnerMarks) {
+				numberOfUp ++;
+			} else if (loserMarks > winnerMarks) {
+				if (numberOfUp == 0) {
+					numberOfDown ++;
+					lowestDemotableConstraint = icons;
+				}
+			}
+		}
+		if (numberOfUp > 0) {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				long constraintIndex = my index [icons];
+				OTConstraint constraint = & my constraints [constraintIndex];
+				double constraintStep = step * constraint -> plasticity;
+				int winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
+				int loserMarks = loser -> marks [constraintIndex];
+				if (my constraints [constraintIndex]. tiedToTheRight)
+					Melder_throw ("Demotion-only learning cannot handle tied constraints.");
+				if (loserMarks < winnerMarks) {
+					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * numberOfDown / (numberOfUp + 0.0);
+				} else if (loserMarks > winnerMarks) {
+					if (icons <= lowestDemotableConstraint) {
+						if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
+						constraint -> ranking -= constraintStep * (1.0 - constraint -> ranking * my leak);
+					}
+				}
+			}
+			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+		}
+	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_ALL_UP_HIGH_DOWN_2012) {
+		long numberOfDown = 0, numberOfUp = 0, lowestDemotableConstraint = 0;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [my index [icons]];   // the order is important, therefore indirect
+			int loserMarks = loser -> marks [my index [icons]];
+			if (loserMarks < winnerMarks) {
+				numberOfUp ++;
+			} else if (loserMarks > winnerMarks) {
+				if (numberOfUp == 0) {
+					numberOfDown ++;
+					lowestDemotableConstraint = icons;
+				}
+			}
+		}
+		if (numberOfUp > 0) {
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				long constraintIndex = my index [icons];
+				OTConstraint constraint = & my constraints [constraintIndex];
+				double constraintStep = step * constraint -> plasticity;
+				int winnerMarks = winner -> marks [constraintIndex];   // the order is important, therefore indirect
+				int loserMarks = loser -> marks [constraintIndex];
+				if (my constraints [constraintIndex]. tiedToTheRight)
+					Melder_throw ("Demotion-only learning cannot handle tied constraints.");
+				if (loserMarks < winnerMarks) {
+					if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+					constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak) * numberOfDown / (numberOfUp + 1.0);
+				} else if (loserMarks > winnerMarks) {
+					if (icons <= lowestDemotableConstraint) {
+						if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
+						constraint -> ranking -= constraintStep * (1.0 - constraint -> ranking * my leak);
+					}
+				}
+			}
+			if (grammarHasChanged != NULL) *grammarHasChanged = true;
+		}
 	}
 }
 
