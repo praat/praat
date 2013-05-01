@@ -277,7 +277,7 @@ static void charSize (I, _Graphics_widechar *lc) {
             
             
             NSString *s =[[NSString alloc] initWithBytes: &lc -> kar length:4 encoding:NSUTF16LittleEndianStringEncoding];
-            CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+			CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             NSCAssert(context, @"nil context");
 
             CGContextSaveGState(context);
@@ -326,7 +326,7 @@ static void charSize (I, _Graphics_widechar *lc) {
             // Create a path to render text in
             CGMutablePathRef path = CGPathCreateMutable();
             NSRect measureRect = NSMakeRect(0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
-            CGPathAddRect(path, NULL, measureRect );
+            CGPathAddRect(path, NULL, * (CGRect *) & measureRect );
             
             CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString(( CFAttributedStringRef)string);
             CFRange fitRange;
@@ -645,7 +645,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			int needBitmappedIPA = 0;
 		#elif cocoa
 			int needBitmappedIPA = 0;
-            CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+			CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
             NSCAssert(context, @"nil context");
             CGContextSaveGState(context);
             CGContextSetTextMatrix(context, CGAffineTransformIdentity);
@@ -697,7 +697,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
             // Create a path to render text in
             CGMutablePathRef path = CGPathCreateMutable();
             NSRect measureRect = NSMakeRect(0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
-            CGPathAddRect(path, NULL, measureRect );
+            CGPathAddRect(path, NULL, * (CGRect *) & measureRect );
 
             // create the framesetter and render text
             CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString((CFAttributedStringRef)string);
@@ -712,7 +712,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
             CFRelease(frame);
             path = CGPathCreateMutable();
             NSRect drawRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
-            CGPathAddRect(path, NULL, drawRect );
+            CGPathAddRect(path, NULL, * (CGRect *) & drawRect );
             frame = CTFramesetterCreateFrame(framesetter, CFRangeMake(0, [s length]), path, NULL);
 
         NSCAssert(my d_macGraphicsContext, @"nil context");

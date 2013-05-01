@@ -1372,7 +1372,7 @@ NORMAL (L"In scripts, the command ##%%Run script...#% is automatically replaced 
 	"by the script directive #execute.")
 MAN_END
 
-MAN_BEGIN (L"Scripting", L"ppgb", 20130421)
+MAN_BEGIN (L"Scripting", L"ppgb", 20130428)
 INTRO (L"This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.")
 NORMAL (L"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
@@ -1388,7 +1388,10 @@ LIST_ITEM1 (L"@@Scripting 3.4. String variables@ (assignments)")
 LIST_ITEM1 (L"@@Scripting 3.5. String queries")
 LIST_ITEM1 (L"@@Scripting 3.6. \"For\" loops@ (for, endfor)")
 LIST_ITEM1 (L"@@Scripting 3.7. Layout@ (white space, comments, continuation lines)")
-LIST_ITEM (L"@@Scripting 4. Object selection@ (selecting and querying)")
+LIST_ITEM (L"@@Scripting 4. Object selection@")
+LIST_ITEM1 (L"@@Scripting 4.1. Selecting objects")
+LIST_ITEM1 (L"@@Scripting 4.2. Removing objects")
+LIST_ITEM1 (L"@@Scripting 4.3. Querying objects")
 LIST_ITEM (L"@@Scripting 5. Language elements reference@")
 LIST_ITEM1 (L"@@Scripting 5.1. Variables@ (numeric, string)")
 LIST_ITEM1 (L"@@Scripting 5.2. Expressions@ (numeric, string)")
@@ -1402,7 +1405,7 @@ LIST_ITEM (L"@@Scripting 6. Communication outside the script")
 LIST_ITEM1 (L"@@Scripting 6.1. Arguments to the script@ (form/endform, execute)")
 LIST_ITEM1 (L"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
 LIST_ITEM1 (L"@@Scripting 6.3. Query commands@ (Get, Count)")
-LIST_ITEM1 (L"@@Scripting 6.4. Files@ (fileReadable, <, >, >>, filedelete, fileappend)")
+LIST_ITEM1 (L"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createDirectory)")
 LIST_ITEM1 (L"@@Scripting 6.5. Calling system commands@ (system, environment\\$ , stopwatch)")
 LIST_ITEM1 (L"@@Scripting 6.6. Controlling the user@ (pause, beginPause/endPause, chooseReadFile\\$ )")
 LIST_ITEM1 (L"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
@@ -2088,41 +2091,104 @@ CODE (L"...gogerychwyrndrobwllllantysiliogogogoch,")
 CODE (L"... unless you start from Tyddyn-y-felin.\")")
 MAN_END
 
-MAN_BEGIN (L"Scripting 4. Object selection", L"ppgb", 20130407)
+MAN_BEGIN (L"Scripting 4. Object selection", L"ppgb", 20130501)
 INTRO (L"This chapter is about how to select objects from your script, "
 	"and how to find out what objects are currently selected.")
-ENTRY (L"Selecting objects")
+LIST_ITEM (L"@@Scripting 4.1. Selecting objects")
+LIST_ITEM (L"@@Scripting 4.2. Removing objects")
+LIST_ITEM (L"@@Scripting 4.3. Querying objects")
+MAN_END
+
+MAN_BEGIN (L"Scripting 4.1. Selecting objects", L"ppgb", 20130501)
 NORMAL (L"To simulate the mouse-clicked and dragged selection in the list of objects, "
-	"you have the following commands:")
-TAG (L"#select %object")
-DEFINITION (L"selects one object, and deselects all others. If there are more "
-	"objects with the same name, the most recently created one "
-	"(i.e., the one nearest to the bottom of the list of objects) is selected:")
-CODE1 (L"#select Sound hallo")
-CODE1 (L"Play")
-TAG (L"#plus %object")
-DEFINITION (L"adds one object to the current selection.")
-TAG (L"#minus %object")
-DEFINITION (L"removes one object from the current selection.")
-TAG (L"##select all")
-DEFINITION (L"selects all objects (please try not to use this, because it will remove even the objects that your script did not create!):")
-CODE1 (L"##select all")
-CODE1 (L"Remove")
-NORMAL (L"In the Praat shell, newly created objects are automatically selected. "
-	"This is also true in scripts:")
-CODE (L"! Generate a sine wave, play it, and draw its spectrum.")
-CODE (L"do (\"Create Sound as pure tone...\", \"sine377\", 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01)")
+	"you have the commands #selectObject, #plusObject and #minusObject.")
+NORMAL (L"Suppose you start Praat and use ##Create Sound as tone...# to create a Sound called %tone. "
+	"In the object list it looks like \"1. Sound tone\". "
+	"Suppose you then do ##To Spectrum...# from the ##Analyse Spectrum# menu. "
+	"A second object, called \"2. Spectrum tone\" appears in the list and is selected. "
+	"To select and play the Sound, you can do either")
+CODE (L"#selectObject (1)")
 CODE (L"do (\"Play\")")
+NORMAL (L"or")
+CODE (L"#selectObject (\"Sound tone\")")
+CODE (L"do (\"Play\")")
+NORMAL (L"So you can select an object either by its unique ID (identifier: the unique number by which it appears in the list) "
+	"or by name.")
+NORMAL (L"The function #selectObject works by first deselecting all objects, and then selecting the one you mention. "
+	"If you don't want to deselect the existing selection, you can use #plusObject or #minusObject. "
+	"When the Sound is selected, you can select the Spectrum as well by doing")
+CODE (L"#plusObject (2)")
+NORMAL (L"or")
+CODE (L"#plusObject (\"Spectrum tone\")")
+NORMAL (L"If you then want to deselect the Sound, and keep the Spectrum selected, you can do")
+CODE (L"#minusObject (1)")
+NORMAL (L"or")
+CODE (L"#minusObject (\"Sound tone\")")
+NORMAL (L"All these functions can take more than one argument. To select the Sound and the Spectrum together, you can do")
+CODE (L"#selectObject (1, 2)")
+NORMAL (L"or")
+CODE (L"#selectObject (\"Sound tone\", \"Spectrum tone\")")
+NORMAL (L"or even")
+CODE (L"#selectObject (1, \"Spectrum tone\")")
+ENTRY (L"How to refer to objects created in your script")
+NORMAL (L"In a script, you typically don't know whether the IDs of the objects are 1 and 2, or much higher numbers. "
+	"Fortunately, the #do function gives you the ID of the object that is created, "
+	"so that you can refer to the object later on. For instance, suppose you want to generate a sine wave, play it, "
+	"draw its spectrum, and then throw away both the Sound and the Spectrum. Here is how you do it:")
+CODE (L"sound = do (\"Create Sound as pure tone...\", \"sine377\",")
+CODE (L"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01)   ; remember the ID of the Sound")
+CODE (L"do (\"Play\")   ; the Sound is selected, so it plays")
 CODE (L"do (\"To Spectrum...\", \"yes\")")
-CODE (L"! Draw the Spectrum:")
-CODE (L"do (\"Draw...\", 0, 5000, 20, 80, \"yes\")")
-CODE (L"! Remove the created Spectrum and Sound:")
-CODE (L"#plus Sound sine377")
-CODE (L"Remove")
-NORMAL (L"Instead of by name, you can also select objects by their sequential ID:")
-CODE (L"#select 43")
-NORMAL (L"This selects the 43rd object that you created since you started the program (see below).")
-ENTRY (L"Querying selected objects")
+CODE (L"do (\"Draw...\", 0, 5000, 20, 80, \"yes\")   ; the Spectrum is selected, so it is drawn")
+CODE (L"\\#  Remove the created Spectrum and Sound:")
+CODE (L"#plusObject (sound)   ; the Spectrum was already selected")
+CODE (L"do (\"Remove\")")
+NORMAL (L"You could also select the objects by name:")
+CODE (L"do (\"Create Sound as pure tone...\", \"sine377\",")
+CODE (L"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01)   ; no need to remember the ID of the Sound")
+CODE (L"do (\"Play\")   ; the Sound is selected, so it plays")
+CODE (L"do (\"To Spectrum...\", \"yes\")")
+CODE (L"do (\"Draw...\", 0, 5000, 20, 80, \"yes\")   ; the Spectrum is selected, so it is drawn")
+CODE (L"\\#  Remove the created Spectrum and Sound:")
+CODE (L"#plusObject (\"Sound sine377\")   ; the Spectrum was already selected")
+CODE (L"do (\"Remove\")")
+NORMAL (L"This works even if there are multiple objects called \"Sound sine377\", "
+	"because if there are more objects with the same name, #selectedObject and #plusObject select the most recently created one, "
+	"i.e., the one nearest to the bottom of the list of objects.")
+MAN_END
+
+MAN_BEGIN (L"Scripting 4.2. Removing objects", L"ppgb", 20130501)
+NORMAL (L"In @@Scripting 4.1. Selecting objects|\\SS4.1@ we saw that objects could be removed by selecting them first and then calling the #Remove command. "
+	"A faster way is the #removeObject function, which can also remove unselected objects:")
+CODE (L"sound = do (\"Create Sound as pure tone...\", \"sine377\",")
+CODE (L"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01)   ; remember the ID of the Sound")
+CODE (L"do (\"Play\")   ; the Sound is selected, so it plays")
+CODE (L"spectrum = do (\"To Spectrum...\", \"yes\")   ; remember the ID of the Spectrum")
+CODE (L"do (\"Draw...\", 0, 5000, 20, 80, \"yes\")   ; the Spectrum is selected, so it is drawn")
+CODE (L"\\#  Remove the created Spectrum and Sound:")
+CODE (L"#removeObject (sound, spectrum)   ; remove one selected and one unselected object")
+NORMAL (L"The #removeObject function keeps the objects selected that were selected before "
+	"(except of course the ones it throws away). "
+	"This allows you to easily throw away objects as soon as you no longer need them:")
+CODE (L"sound = do (\"Create Sound as pure tone...\", \"sine377\",")
+CODE (L"... 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01)   ; remember the ID of the Sound")
+CODE (L"do (\"Play\")   ; the Sound is selected, so it plays")
+CODE (L"spectrum = do (\"To Spectrum...\", \"yes\")")
+CODE (L"#removeObject (sound)   ; we no longer need the Sound, so we remove it")
+CODE (L"do (\"Draw...\", 0, 5000, 20, 80, \"yes\")   ; the Spectrum is still selected, so it is drawn")
+CODE (L"#removeObject (spectrum)   ; remove the last object created by the script")
+ENTRY (L"Selecting and removing all objects from the list (don't)")
+NORMAL (L"A very strange command, which you should not normally use, is ##select all#:")
+CODE1 (L"##select all")
+CODE1 (L"do (\"Remove\")")
+NORMAL (L"This selects all objects in the list and then removes them. "
+	"Please try not to use this, because it will remove even the objects that your script did not create! "
+	"After all, you don't want the users of your script to lose the objects they created! "
+	"So please try to remove in your script only the objects that your script created, "
+	"even if the script is for your own use (because if it is a nice script, others will want to use it).")
+MAN_END
+
+MAN_BEGIN (L"Scripting 4.3. Querying objects", L"ppgb", 20130501)
 NORMAL (L"You can get the name of a selected object into a string variable. "
 	"For instance, the following reads the name of the second selected Sound "
 	"(as counted from the top of the list of objects) into the variable %name\\$ :")
@@ -2151,13 +2217,13 @@ CODE (L"soundName\\$  = ##selected\\$ # (\"Sound\", -1)")
 CODE (L"pitchName\\$  = ##selected\\$ # (\"Pitch\")")
 CODE (L"\\#  But the following line is questionable, since it doesn't")
 CODE (L"\\#  necessarily select the previously selected Pitch again:")
-CODE (L"#select Pitch 'pitchName\\$ '")
+CODE (L"#selectObject (\"Pitch \" + pitchName\\$ )")
 NORMAL (L"Instead of this error-prone approach, you should get the object's unique ID. "
 	"The correct version of our example becomes:")
 CODE (L"sound = #selected (\"Sound\", -1)")
 CODE (L"pitch = #selected (\"Pitch\")")
 CODE (L"\\#  Correct:")
-CODE (L"#select pitch")
+CODE (L"#selectObject (pitch)")
 NORMAL (L"To get the number of selected Sound objects into a variable, use")
 CODE (L"numberOfSelectedSounds = #numberOfSelected (\"Sound\")")
 NORMAL (L"To get the number of selected objects into a variable, use")
@@ -2165,34 +2231,21 @@ CODE (L"numberOfSelectedObjects = #numberOfSelected ()")
 ENTRY (L"Example: doing something to every selected Sound")
 CODE (L"n = #numberOfSelected (\"Sound\")")
 CODE (L"#for i to n")
-	CODE1 (L"sound'i' = #selected (\"Sound\", i)")
+	CODE1 (L"sound [i] = #selected (\"Sound\", i)")
 CODE (L"#endfor")
 CODE (L"\\#  Median pitches of all selected sounds:")
 CODE (L"#for i to n")
-	CODE1 (L"#select sound'i'")
+	CODE1 (L"#selectObject (sound [i])")
 	CODE1 (L"do (\"To Pitch...\", 0.0, 75, 600)")
 	CODE1 (L"f0 = do (\"Get quantile...\", 0, 0, 0.50, \"Hertz\")")
+	CODE1 (L"appendInfoLine (f0)")
 	CODE1 (L"do (\"Remove\")")
 CODE (L"#endfor")
 CODE (L"\\#  Restore selection:")
-CODE (L"#if n >= 1")
-	CODE1 (L"#select sound1")
-	CODE1 (L"#for i from 2 to n")
-		CODE2 (L"#plus sound'i'")
-	CODE1 (L"#endfor")
-CODE (L"#endif")
-ENTRY (L"A shortcut")
-NORMAL (L"Instead of")
-CODE (L"do (\"Create Sound as pure tone...\", \"sine377\", 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01)")
-CODE (L"sound = #selected (\"Sound\")")
-NORMAL (L"you can just write")
-CODE (L"sound = do (\"Create Sound as pure tone...\", \"sine377\", 1, 0, 1, 44100, 377, 0.2, 0.01, 0.01)")
-NORMAL (L"and instead of")
-CODE (L"do (\"To Pitch...\", 0.0, 75, 600)")
-CODE (L"pitch = #selected (\"Pitch\")")
-NORMAL (L"you can write")
-CODE (L"pitch = do (\"To Pitch...\", 0.0, 75, 600)")
-NORMAL (L"This only works if the command creates a single object.")
+CODE (L"#selectObject ()   ; deselect all objects")
+CODE (L"#for i from 1 to n")
+	CODE1 (L"#plusObject (sound [i])")
+CODE (L"#endfor")
 MAN_END
 
 MAN_BEGIN (L"Scripting 5. Language elements reference", L"ppgb", 20130421)
@@ -2209,22 +2262,26 @@ LIST_ITEM (L"@@Scripting 5.7. Including other scripts@")
 LIST_ITEM (L"@@Scripting 5.8. Quitting@ (exit)")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20130415)
-INTRO (L"In a Praat script, you can use numeric variables as well as string variables.")
+MAN_BEGIN (L"Scripting 5.1. Variables", L"ppgb", 20130501)
+INTRO (L"A %variable is a location in your computer's memory that has a name and where you can store something, "
+	"as explained in @@Scripting 3.2. Numeric variables|\\SS3.2@ and @@Scripting 3.4. String variables|\\SS3.4@. "
+	"In a Praat script, you can store numbers and texts, i.e. you can use %%numeric variables% and %%string variables%.")
 ENTRY (L"Numeric variables")
-NORMAL (L"Numeric variables contain integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
+NORMAL (L"Numeric variables can hold integer numbers between -1,000,000,000,000,000 and +1,000,000,000,000,000 "
 	"or real numbers between -10^^308^ and +10^^308^. The smallest numbers lie near -10^^-308^ and +10^^-308^.")
-NORMAL (L"You can use %%numeric variables% in your script:")
-TAG (L"%variable = %expression")
-DEFINITION (L"evaluates a numeric expression and assign the result to a variable.")
-NORMAL (L"Example:")
-CODE (L"length = 10")
-CODE (L"do (\"Draw line...\", 0, length, 1, 1)")
+NORMAL (L"You use numeric variables in your script like this:")
+CODE (L"#length = 10")
+CODE (L"do (\"Draw line...\", 0, #length, 1, 1)")
+NORMAL (L"This draws a line in the Picture window from position (0, 10) to position (1, 1). "
+	"In the first line, you assign the value 10 to the variable called %length, "
+	"and in the second line you use the value of %length as the second argument to the command \"Draw line...\".")
 NORMAL (L"Names of numeric variables must start with a lower-case letter, optionally followed by a sequence "
 	"of letters, digits, and underscores.")
 ENTRY (L"String variables")
-NORMAL (L"You can also use %%string variables%, which contain text:")
-CODE (L"title\\$  = \"Dutch nasal place assimilation\"")
+NORMAL (L"You use string variables, which contain text, as follows:")
+CODE (L"##title\\$ # = \"Dutch nasal place assimilation\"")
+CODE (L"do (\"Text top...\", \"yes\", ##title\\$ #)")
+NORMAL (L"This writes the text \"Dutch nasal place assimilation\"")
 NORMAL (L"As in the programming language Basic, the names of string variables end in a dollar sign.")
 ENTRY (L"Making numeric variables visible")
 NORMAL (L"You can write the content of numeric variables directly to the info window:")
@@ -2236,23 +2293,23 @@ CODE (L"The square root of 2 is 1.4142135623730951.")
 NORMAL (L"You can fix the number of digits after the decimal point by use of the ##fixed\\$ # function:")
 CODE (L"x = 2.0")
 CODE (L"root = sqrt (x)")
-CODE (L"#writeInfoLine (\"The square root of \", fixed\\$  (x, 3), \" is approximately \", fixed\\$  (root, 3), \".\")")
+CODE (L"writeInfoLine (\"The square root of \", ##fixed\\$ # (x, 3), \" is approximately \", ##fixed\\$ # (root, 3), \".\")")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The square root of 2.000 is approximately 1.414.")
 NORMAL (L"By using 0 decimal digits, you round to whole values:")
 CODE (L"root = sqrt (2)")
-CODE (L"#writeInfoLine (\"The square root of 2 is very approximately \", fixed\\$  (root, 0), \".\")")
+CODE (L"writeInfoLine (\"The square root of 2 is very approximately \", ##fixed\\$ # (root, #0), \".\")")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The square root of 2 is very approximately 1.")
 NORMAL (L"By using the ##percent\\$ # function, you give the result in a percent format:")
 CODE (L"jitter = 0.0156789")
-CODE (L"#writeInfoLine (\"The jitter is \", percent\\$  (jitter, 3), \".\")")
+CODE (L"writeInfoLine (\"The jitter is \", ##percent\\$ # (jitter, 3), \".\")")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The jitter is 1.568\\% .")
 NORMAL (L"The number 0, however, will always be written as 0, and for small numbers the number of "
 	"significant digits will never be less than 1:")
 CODE (L"jitter = 0.000000156789")
-CODE (L"#writeInfoLine (\"The jitter is \", percent\\$  (jitter, 3), \".\")")
+CODE (L"writeInfoLine (\"The jitter is \", percent\\$  (jitter, 3), \".\")")
 NORMAL (L"This will write the following text to the Info window:")
 CODE (L"The jitter is 0.00002\\% .")
 ENTRY (L"Predefined variables")
@@ -2269,7 +2326,7 @@ NORMAL (L"Some ##predefined string variables# are $$newline\\$ $,  $$tab\\$ $, a
 	"Likewise, there exist the predefined string variables $$homeDirectory\\$ $, "
 	"$$preferencesDirectory\\$ $, and $$temporaryDirectory\\$ $. These three refer to your home directory "
 	"(which is where you log in), the Praat @@preferences directory@, and a directory for saving temporary files; "
-	"if you want to know what they are on your computer, try to #echo them in a script window. "
+	"if you want to know what they are on your computer, try to write them into a script window. "
 	"The variable $$defaultDirectory\\$ $ is available for formulas in scripts; it is the directory that contains the script file. "
 	"Finally, we have $$praatVersion\\$ $, which is \"" xstr(PRAAT_VERSION_STR) "\" for the current version of Praat.")
 ENTRY (L"Functions that handle variables")
@@ -2678,11 +2735,11 @@ DEFINITION (L"stops the execution of the script while sending an error message t
 NORMAL (L"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20130421)
+MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20130428)
 LIST_ITEM (L"@@Scripting 6.1. Arguments to the script@ (form/endform, execute)")
 LIST_ITEM (L"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
 LIST_ITEM (L"@@Scripting 6.3. Query commands@ (Get, Count)")
-LIST_ITEM (L"@@Scripting 6.4. Files@ (fileReadable, <, >, >>, filedelete, fileappend)")
+LIST_ITEM (L"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createDirectory)")
 LIST_ITEM (L"@@Scripting 6.5. Calling system commands@ (system, environment\\$ , stopwatch)")
 LIST_ITEM (L"@@Scripting 6.6. Controlling the user@ (pause, beginPause/endPause, chooseReadFile\\$ )")
 LIST_ITEM (L"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
@@ -2807,27 +2864,17 @@ CODE (L"#execute \"fill attributes.praat\" \"Navy blue\" With holes")
 NORMAL (L"You can pass values for #boolean either as \"yes\" and \"no\" or 1 and 0.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20130407)
+MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20130501)
 NORMAL (L"With the @Info button and several commands in the #Query menus, "
 	"you write to the @@Info window@ (if your program is run from the command line, "
 	"the text goes to the console window or to %stdout instead; see @@Scripting 6.9. Calling from the command line|\\SS6.9).")
-NORMAL (L"The following commands allow you to write to the Info window from a script:")
-TAG (L"#writeInfoLine (%text)")
-DEFINITION (L"clears the Info window and writes some text to it:")
-	CODE1 (L"#writeInfoLine (\"Starting simulation...\")")
-TAG (L"#clearinfo")
-DEFINITION (L"clears the Info window.")
-TAG (L"#appendInfo (%text)")
-DEFINITION (L"appends some text to the Info window, without clearing it and "
-	"without going to a new line.")
-TAG (L"#appendInfo (tab\\$ )")
-DEFINITION (L"appends a %tab character to the Info window. This allows you to create "
-	"table files that can be read by some spreadsheet programs.")
-TAG (L"#appendInfoLine (%text)")
-DEFINITION (L"appends some text to the Info window, without clearing it. The next text will begin at a new line.")
-NORMAL (L"The following script builds a table with statistics about a pitch contour:")
-CODE (L"#clearinfo")
-CODE (L"#appendInfoLine (\"  Minimum   Maximum\")")
+NORMAL (L"The commands #writeInfo, #writeInfoLine, #appendInfo and #appendInfoLine "
+	"allow you to write to the Info window from a script. Those with #write in their name clear the Info window "
+	"before they write to it, those with #append in their name do not. Those with #Line in their name make sure "
+	"that a following #appendInfo or #appendInfoLine will write on the next line.")
+NORMAL (L"These four functions take a variable number of numeric and/or string arguments, separated by commas. "
+	"The following script builds a table with statistics about a pitch contour:")
+CODE (L"#writeInfoLine (\"  Minimum   Maximum\")")
 CODE (L"do (\"Create Sound as pure tone...\", \"sine\", 1, 0, 0.1, 44100, 377, 0.2, 0.01, 0.01)")
 CODE (L"do (\"To Pitch...\", 0.01, 75, 600)")
 CODE (L"minimum = do (\"Get minimum...\", 0, 0, \"Hertz\", \"Parabolic\")")
@@ -2840,6 +2887,13 @@ NORMAL (L"You could combine the last four print statements into:")
 CODE (L"#appendInfoLine (minimum, tab\\$ , maximum)")
 NORMAL (L"which is the same as:")
 CODE (L"#appendInfo (minimum, tab\\$ , maximum, newline\\$ )")
+NORMAL (L"The little string ##tab\\$ # is a %tab character; it allows you to create "
+	"table files that can be read by some spreadsheet programs. The little string ##newline\\$ # is a %newline character; "
+	"it moves the following text to the next line.")
+NORMAL (L"To clear the Info window, you can do")
+CODE (L"#writeInfo ()")
+NORMAL (L"or")
+CODE (L"#clearinfo")
 MAN_END
 
 MAN_BEGIN (L"Scripting 6.3. Query commands", L"ppgb", 20130407)
@@ -2855,7 +2909,7 @@ NORMAL (L"The string variable \"mean\\$ \" now contains the entire string \"150 
 NORMAL (L"This works for every command that would otherwise write into the Info window.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20100314)
+MAN_BEGIN (L"Scripting 6.4. Files", L"ppgb", 20130501)
 INTRO (L"You can read from and write to text files from a Praat script.")
 ENTRY (L"Reading a file")
 NORMAL (L"You can check the availability of a file for reading with the function")
@@ -2865,36 +2919,36 @@ NORMAL (L"which returns 1 (true) if the file exists and can be read, and 0 (fals
 	"for instance, if your script is in the directory ##Paolo/project1#, then the file name "
 	"\"hello.wav\" refers to ##Paolo/project1/hello.wav#, the file name \"yesterday/hello.wav\" "
 	"refers to ##Paolo/project1/yesterday/hello.wav#, and the file name \"../project2/hello.wav\" "
-	"refers to ##Paola/project2/hello.wav# (\"..\" goes one directory up). "
+	"refers to ##Paolo/project2/hello.wav# (\"..\" goes one directory up). "
 	"You can also use full path names such as \"C:/Documents and Settings/Paolo/project1/hello.wav\" "
 	"on Windows and \"/Users/Paolo/project1/hello.wav\" on the Mac.")
-NORMAL (L"To read the contents of an existing text file into a string variable, you use")
-CODE (L"text\\$  ##<# %fileName")
-NORMAL (L"where $$text\\$ $ is any string variable and $$%fileName$ is an unquoted string. "
-	"If the file does not exist, the script terminates with an error message.")
+NORMAL (L"To read the contents of an existing text file into a string variable or into a numeric variable, you use")
+CODE (L"text\\$  = readFile\\$  (\"myFile.txt\")")
+NORMAL (L"or")
+CODE (L"number = readFile (\"myFile.txt\")")
+NORMAL (L"If the file does not exist, the script terminates with an error message.")
 ENTRY (L"Example: reading a settings file")
 NORMAL (L"Suppose that the file ##height.inf# may contain an appropriate value for a numeric variable "
 	"called $height, which we need to use in our script. We would like to read it with")
-CODE (L"height\\$  < height.inf")
-CODE (L"height = 'height\\$ '")
+CODE (L"height = readFile (\"height.inf\")")
 NORMAL (L"However, this script will fail if the file ##height.inf# does not exist. To guard "
 	"against this situation, we could check the existence of the file, and supply a default "
 	"value in case the file does not exist:")
 CODE (L"fileName\\$  = \"height.inf\"")
 CODE (L"if fileReadable (fileName\\$ )")
-	CODE1 (L"height\\$  < 'fileName\\$ '")
-	CODE1 (L"height = number (height\\$ )")
+	CODE1 (L"height = readFile (fileName\\$ )")
 CODE (L"else")
 	CODE1 (L"height = 180")
 CODE (L"endif")
 ENTRY (L"Writing a file")
-NORMAL (L"To write the contents of an existing string into a new text file, you use")
-CODE (L"text\\$  ##># %fileName")
-NORMAL (L"where $$text\\$ $ is any string variable and $$%fileName$ is an unquoted string. "
+NORMAL (L"You write into a new text file just as you write into the Info window:")
+CODE (L"writeFileLine (\"myFile.txt\", \"The present year is \", 2000 + 13, \".\")")
+NORMAL (L"and likewise you use %writeFile if you don't want a newline symbol at the end of the file. "
 	"If the file cannot be created, the script terminates with an error message.")
-NORMAL (L"To append the contents of an existing string at the end of an existing text file, you use")
-CODE (L"text\\$  ##>># %fileName")
-NORMAL (L"If the file does not yet exist, it is created first.")
+NORMAL (L"To append text at the end of an existing file, you use")
+CODE (L"appendFileLine (\"myFile.txt\", \"Next year it will be \", 2000 + 14, \".\")")
+NORMAL (L"With %appendFileLine (and %appendFile, which does not add the newline), "
+	"we follow the rule that if the file does not yet exist, it is created first.")
 NORMAL (L"You can create a directory with")
 CODE (L"#createDirectory (%%directoryName\\$ %)")
 NORMAL (L"where, as with file names, %%directoryName\\$ % can be relative to the directory of the script "
@@ -2904,11 +2958,7 @@ NORMAL (L"where, as with file names, %%directoryName\\$ % can be relative to the
 	"If the directory already exists, this command does nothing.")
 NORMAL (L"You can delete an existing file with the function")
 CODE (L"#deleteFile (%%fileName\\$ %)")
-NORMAL (L"or with the directive")
-CODE (L"#filedelete %fileName")
-NORMAL (L"If the file does not exist, these commands do nothing.")
-NORMAL (L"The simplest way to append text to a file is by using #fileappend:")
-CODE (L"#fileappend out.txt Hello world!")
+NORMAL (L"If the file does not exist, this command does nothing.")
 ENTRY (L"Example: writing a table of squares")
 NORMAL (L"Suppose that we want to create a file with the following text:")
 CODE (L"The square of 1 is 1")
@@ -2916,25 +2966,15 @@ CODE (L"The square of 2 is 4")
 CODE (L"The square of 3 is 9")
 CODE (L"...")
 CODE (L"The square of 100 is 10000")
-NORMAL (L"We can do this by collecting each line in a variable:")
+NORMAL (L"We can do this by appending 100 lines:")
 CODE (L"deleteFile (\"squares.txt\")")
 CODE (L"for i to 100")
-	CODE1 (L"square = i * i")
-	CODE1 (L"fileappend squares.txt The square of 'i' is 'square''newline\\$ '")
+	CODE1 (L"appendFileLine (\"squares.txt\", \"The square of \", i, \" is \", i * i)")
 CODE (L"endfor")
 NORMAL (L"Note that we delete the file before appending to it, "
 	"in order that we do not append to an already existing file.")
-NORMAL (L"If you put the name of the file into a variable, make sure to surround it "
-	"with double quotes when using #fileappend, since the file name may contain spaces "
-	"and is not at the end of the line:")
-CODE (L"name\\$  = \"C:/Documents and Settings/Paul Boersma/Desktop/squares.text\"")
-CODE (L"filedelete 'name\\$ '")
-CODE (L"for i to 100")
-	CODE1 (L"square = i * i")
-	CODE1 (L"fileappend \"'name\\$ '\" The square of 'i' is 'square''newline\\$ '")
-CODE (L"endfor")
-NORMAL (L"Finally, you can append the contents of the Info window to a file with")
-CODE (L"#fappendinfo %fileName")
+NORMAL (L"You can append the contents of the Info window to a file with")
+CODE (L"appendFile (\"out.txt\", info\\$  ())")
 ENTRY (L"Directory listings")
 NORMAL (L"To get the names of the files if a certain type in a certain directory, "
 	"use @@Create Strings as file list...@.")
@@ -3377,6 +3417,13 @@ NORMAL (L"This causes the program #Praat to execute the script ##doAll.praat# wi
 ENTRY (L"How to download")
 NORMAL (L"You can download the source code of the sendpraat subroutine and program "
 	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
+ENTRY (L"Instead")
+NORMAL (L"Instead of using sendpraat, you can also just take the following simple steps in your program:")
+LIST_ITEM (L"1. on Linux, write the script that you want to execute, and save it as ##~/.praat-dir/message#;")
+LIST_ITEM (L"2. get Praat's process id from ##~/.praat-dir/pid#;")
+LIST_ITEM (L"3. if Praat's process id is eg. 1178, send it a SIGUSR1 signal: $$kill -USR1 1178")
+NORMAL (L"If the first line of your script is the comment \"\\#  999\", where 999 stands for the process id of your program, "
+	"Praat will send your program a SIGUSR2 signal back when it finishes handling the script.")
 ENTRY (L"See also")
 NORMAL (L"To start a program from the command line instead and sending it a message, "
 	"you would not use #sendpraat, but instead run the program with a script file as an argument. "

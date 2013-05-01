@@ -126,7 +126,7 @@ enum { GEENSYMBOOL_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
 		MIN_, MAX_, IMIN_, IMAX_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
-		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_,
+		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
 		BEGIN_PAUSE_FORM_, PAUSE_FORM_ADD_REAL_, PAUSE_FORM_ADD_POSITIVE_, PAUSE_FORM_ADD_INTEGER_, PAUSE_FORM_ADD_NATURAL_,
 		PAUSE_FORM_ADD_WORD_, PAUSE_FORM_ADD_SENTENCE_, PAUSE_FORM_ADD_TEXT_, PAUSE_FORM_ADD_BOOLEAN_,
 		PAUSE_FORM_ADD_CHOICE_, PAUSE_FORM_ADD_OPTION_MENU_, PAUSE_FORM_ADD_OPTION_,
@@ -140,11 +140,12 @@ enum { GEENSYMBOOL_,
 	#define HIGH_FUNCTION_N  NUMBER_OF_COLUMNS_
 
 	/* String functions. */
-	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STRNUM
-	#define LOW_FUNCTION_STRNUM  LENGTH_
+	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
+	#define LOW_FUNCTION_STR1  LENGTH_
 		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
-	#define HIGH_FUNCTION_STRNUM  VARIABLE_EXISTS_
-		DATESTR_,
+		READ_FILE_, READ_FILESTR_,
+	#define HIGH_FUNCTION_STR1  READ_FILESTR_
+		DATESTR_, INFOSTR_,
 		ENVIRONMENTSTR_, INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
@@ -221,7 +222,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"writeFile", L"writeFileLine", L"appendFile", L"appendFileLine",
 	L"min", L"max", L"imin", L"imax",
 	L"left$", L"right$", L"mid$",
-	L"selected", L"selected$", L"numberOfSelected",
+	L"selected", L"selected$", L"numberOfSelected", L"selectObject", L"plusObject", L"minusObject", L"removeObject",
 	L"beginPause", L"real", L"positive", L"integer", L"natural",
 	L"word", L"sentence", L"text", L"boolean",
 	L"choice", L"optionMenu", L"option",
@@ -234,7 +235,8 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"numberOfRows", L"numberOfColumns",
 
 	L"length", L"number", L"fileReadable",	L"deleteFile", L"createDirectory", L"variableExists",
-	L"date$",
+	L"readFile", L"readFile$",
+	L"date$", L"info$",
 	L"environment$", L"index", L"rindex",
 	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
 	L"extractNumber", L"extractWord$", L"extractLine$",
@@ -1242,7 +1244,7 @@ static void parsePowerFactor (void) {
 	}
 
 	if (symbol >= LOW_STRING_FUNCTION && symbol <= HIGH_STRING_FUNCTION) {
-		if (symbol >= LOW_FUNCTION_STRNUM && symbol <= HIGH_FUNCTION_STRNUM) {
+		if (symbol >= LOW_FUNCTION_STR1 && symbol <= HIGH_FUNCTION_STR1) {
 			pas (HAAKJEOPENEN_);
 			parseExpression ();
 			pas (HAAKJESLUITEN_);
@@ -1255,7 +1257,7 @@ static void parsePowerFactor (void) {
 			pas (KOMMA_);
 			parseExpression ();
 			pas (HAAKJESLUITEN_);
-		} else if (symbol == DATESTR_) {
+		} else if (symbol == DATESTR_ || symbol == INFOSTR_) {
 			pas (HAAKJEOPENEN_);
 			pas (HAAKJESLUITEN_);
 		} else if (symbol == EXTRACT_WORDSTR_ || symbol == EXTRACT_LINESTR_) {
@@ -2527,6 +2529,104 @@ static void do_appendInfoLine () {
 	MelderInfo_drain ();
 	pushNumber (1);
 }
+static void do_writeFile () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw ("The function \"writeFile\" is not available inside manuals.");
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	Stackel fileName = & theStack [1];
+	if (fileName -> which != Stackel_STRING) {
+		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
+	}
+	autoMelderString text;
+	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& text, Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& text, arg->string);
+	}
+	structMelderFile file = { 0 };
+	Melder_relativePathToFile (fileName -> string, & file);
+	MelderFile_writeText (& file, text.transfer(), Melder_getOutputEncoding ());
+	pushNumber (1);
+}
+static void do_writeFileLine () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw ("The function \"writeFile\" is not available inside manuals.");
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	Stackel fileName = & theStack [1];
+	if (fileName -> which != Stackel_STRING) {
+		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
+	}
+	autoMelderString text;
+	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& text, Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& text, arg->string);
+	}
+	MelderString_appendCharacter (& text, '\n');
+	structMelderFile file = { 0 };
+	Melder_relativePathToFile (fileName -> string, & file);
+	MelderFile_writeText (& file, text.transfer(), Melder_getOutputEncoding ());
+	pushNumber (1);
+}
+static void do_appendFile () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw ("The function \"writeFile\" is not available inside manuals.");
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	Stackel fileName = & theStack [1];
+	if (fileName -> which != Stackel_STRING) {
+		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
+	}
+	autoMelderString text;
+	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& text, Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& text, arg->string);
+	}
+	structMelderFile file = { 0 };
+	Melder_relativePathToFile (fileName -> string, & file);
+	MelderFile_appendText (& file, text.transfer());
+	pushNumber (1);
+}
+static void do_appendFileLine () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw ("The function \"writeFile\" is not available inside manuals.");
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	Stackel fileName = & theStack [1];
+	if (fileName -> which != Stackel_STRING) {
+		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
+	}
+	autoMelderString text;
+	for (int iarg = 2; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& text, Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& text, arg->string);
+	}
+	MelderString_appendCharacter (& text, '\n');
+	structMelderFile file = { 0 };
+	Melder_relativePathToFile (fileName -> string, & file);
+	MelderFile_appendText (& file, text.transfer());
+	pushNumber (1);
+}
 static void do_min (void) {
 	Stackel n = pop, last;
 	double result;
@@ -2825,6 +2925,10 @@ static void do_dateStr (void) {
 	newline = wcschr (date, '\n');
 	if (newline) *newline = '\0';
 	pushString (date);
+}
+static void do_infoStr (void) {
+	wchar_t *info = Melder_wcsdup (Melder_getInfo ());
+	pushString (info);
 }
 static void do_leftStr (void) {
 //Melder_casual ("entering left$");
@@ -3150,6 +3254,102 @@ static void do_numberOfSelected (void) {
 	}
 	pushNumber (result);
 }
+static int praat_findObjectById (int id) {
+	int IOBJECT;
+	WHERE_DOWN (ID == id)
+		return IOBJECT;
+	Melder_throw ("No object with number ", id, ".");
+}
+static int praat_findObjectFromString (const wchar_t *name) {
+	int IOBJECT;
+	if (*name >= 'A' && *name <= 'Z') {
+		/*
+		 * Find the object by its name.
+		 */
+		static MelderString buffer = { 0 };
+		MelderString_copy (& buffer, name);
+		wchar_t *space = wcschr (buffer.string, ' ');
+		if (space == NULL)
+			Melder_throw ("Missing space in object name \"", name, "\".");
+		*space = '\0';
+		wchar_t *className = & buffer.string [0], *givenName = space + 1;
+		WHERE_DOWN (1) {
+			Data object = (Data) OBJECT;
+			if (wcsequ (className, Thing_className ((Thing) OBJECT)) && wcsequ (givenName, object -> name))
+				return IOBJECT;
+		}
+	}
+	Melder_throw ("No object with name \"", name, "\".");
+}
+static void do_selectObject (void) {
+	Stackel n = pop;
+	praat_deselectAll ();
+	for (int iobject = 1; iobject <= n -> number; iobject ++) {
+		Stackel object = pop;
+		if (object -> which == Stackel_NUMBER) {
+			int IOBJECT = praat_findObjectById (object -> number);
+			praat_select (IOBJECT);
+		} else if (object -> which == Stackel_STRING) {
+			int IOBJECT = praat_findObjectFromString (object -> string);
+			praat_select (IOBJECT);
+		} else {
+			Melder_throw ("The function \"selectObject\" takes numbers and strings, not ", Stackel_whichText (object));
+		}
+	}
+	praat_show ();
+	pushNumber (1);
+}
+static void do_plusObject (void) {
+	Stackel n = pop;
+	for (int iobject = 1; iobject <= n -> number; iobject ++) {
+		Stackel object = pop;
+		if (object -> which == Stackel_NUMBER) {
+			int IOBJECT = praat_findObjectById (object -> number);
+			praat_select (IOBJECT);
+		} else if (object -> which == Stackel_STRING) {
+			int IOBJECT = praat_findObjectFromString (object -> string);
+			praat_select (IOBJECT);
+		} else {
+			Melder_throw ("The function \"plusObject\" takes numbers and strings, not ", Stackel_whichText (object));
+		}
+	}
+	praat_show ();
+	pushNumber (1);
+}
+static void do_minusObject (void) {
+	Stackel n = pop;
+	for (int iobject = 1; iobject <= n -> number; iobject ++) {
+		Stackel object = pop;
+		if (object -> which == Stackel_NUMBER) {
+			int IOBJECT = praat_findObjectById (object -> number);
+			praat_deselect (IOBJECT);
+		} else if (object -> which == Stackel_STRING) {
+			int IOBJECT = praat_findObjectFromString (object -> string);
+			praat_deselect (IOBJECT);
+		} else {
+			Melder_throw ("The function \"minusObject\" takes numbers and strings, not ", Stackel_whichText (object));
+		}
+	}
+	praat_show ();
+	pushNumber (1);
+}
+static void do_removeObject (void) {
+	Stackel n = pop;
+	for (int iobject = 1; iobject <= n -> number; iobject ++) {
+		Stackel object = pop;
+		if (object -> which == Stackel_NUMBER) {
+			int IOBJECT = praat_findObjectById (object -> number);
+			praat_removeObject (IOBJECT);
+		} else if (object -> which == Stackel_STRING) {
+			int IOBJECT = praat_findObjectFromString (object -> string);
+			praat_removeObject (IOBJECT);
+		} else {
+			Melder_throw ("The function \"removeObject\" takes numbers and strings, not ", Stackel_whichText (object));
+		}
+	}
+	praat_show ();
+	pushNumber (1);
+}
 static void do_stringStr (void) {
 	Stackel value = pop;
 	if (value->which == Stackel_NUMBER) {
@@ -3204,7 +3404,7 @@ static void do_createDirectory (void) {
 		#endif
 		pushNumber (1);
 	} else {
-		Melder_throw ("The function \"deleteFile\" requires a string, not ", Stackel_whichText (f), ".");
+		Melder_throw ("The function \"createDirectory\" requires a string, not ", Stackel_whichText (f), ".");
 	}
 }
 static void do_variableExists (void) {
@@ -3214,6 +3414,28 @@ static void do_variableExists (void) {
 		pushNumber (result);
 	} else {
 		Melder_throw ("The function \"variableExists\" requires a string, not ", Stackel_whichText (f), ".");
+	}
+}
+static void do_readFile (void) {
+	Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderFile file = { 0 };
+		Melder_relativePathToFile (f->string, & file);
+		autostring text = MelderFile_readText (& file);
+		pushNumber (Melder_atof (text.peek()));
+	} else {
+		Melder_throw ("The function \"readFile\" requires a string (a file name), not ", Stackel_whichText (f), ".");
+	}
+}
+static void do_readFileStr (void) {
+	Stackel f = pop;
+	if (f->which == Stackel_STRING) {
+		structMelderFile file = { 0 };
+		Melder_relativePathToFile (f->string, & file);
+		autostring text = MelderFile_readText (& file);
+		pushString (text.transfer());
+	} else {
+		Melder_throw ("The function \"readFile$\" requires a string (a file name), not ", Stackel_whichText (f), ".");
 	}
 }
 static void do_beginPauseForm (void) {
@@ -4382,10 +4604,10 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case WRITE_INFO_LINE_ : { do_writeInfoLine  ();
 } break; case APPEND_INFO_     : { do_appendInfo     ();
 } break; case APPEND_INFO_LINE_: { do_appendInfoLine ();
-//} break; case WRITE_FILE_      : { do_writeFile      ();
-//} break; case WRITE_FILE_LINE_ : { do_writeFileLine  ();
-//} break; case APPEND_FILE_     : { do_appendFile     ();
-//} break; case APPEND_FILE_LINE_: { do_appendFileLine ();
+} break; case WRITE_FILE_      : { do_writeFile      ();
+} break; case WRITE_FILE_LINE_ : { do_writeFileLine  ();
+} break; case APPEND_FILE_     : { do_appendFile     ();
+} break; case APPEND_FILE_LINE_: { do_appendFileLine ();
 } break; case MIN_: { do_min ();
 } break; case MAX_: { do_max ();
 } break; case IMIN_: { do_imin ();
@@ -4402,6 +4624,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case STRING_TO_NUMBER_: { do_number ();
 } break; case FILE_READABLE_: { do_fileReadable ();
 } break; case DATESTR_: { do_dateStr ();
+} break; case INFOSTR_: { do_infoStr ();
 } break; case LEFTSTR_: { do_leftStr ();
 } break; case RIGHTSTR_: { do_rightStr ();
 } break; case MIDSTR_: { do_midStr ();
@@ -4420,12 +4643,18 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case SELECTED_: { do_selected ();
 } break; case SELECTEDSTR_: { do_selectedStr ();
 } break; case NUMBER_OF_SELECTED_: { do_numberOfSelected ();
+} break; case SELECT_OBJECT_: { do_selectObject ();
+} break; case PLUS_OBJECT_  : { do_plusObject   ();
+} break; case MINUS_OBJECT_ : { do_minusObject  ();
+} break; case REMOVE_OBJECT_: { do_removeObject ();
 } break; case STRINGSTR_: { do_stringStr ();
 } break; case FIXEDSTR_: { do_fixedStr ();
 } break; case PERCENTSTR_: { do_percentStr ();
 } break; case DELETE_FILE_: { do_deleteFile ();
 } break; case CREATE_DIRECTORY_: { do_createDirectory ();
 } break; case VARIABLE_EXISTS_: { do_variableExists ();
+} break; case READ_FILE_: { do_readFile ();
+} break; case READ_FILESTR_: { do_readFileStr ();
 /********** Pause window functions: **********/
 } break; case BEGIN_PAUSE_FORM_: { do_beginPauseForm ();
 } break; case PAUSE_FORM_ADD_REAL_: { do_pauseFormAddReal ();

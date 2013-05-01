@@ -22,7 +22,7 @@
 void manual_programming_init (ManPages me);
 void manual_programming_init (ManPages me) {
 
-MAN_BEGIN (L"Programming with Praat", L"ppgb", 20110831)
+MAN_BEGIN (L"Programming with Praat", L"ppgb", 20130429)
 INTRO (L"You can extend the functionality of the Praat program "
 	"by adding modules written in C or C++ to it. All of Praat's source code "
 	"is available under the General Public Licence.")
@@ -34,17 +34,15 @@ NORMAL (L"Before trying the task of learning how to write Praat extensions in C 
 	"If you have a set of scripts, you can distribute them as a @@plug-ins|plug-in@.")
 ENTRY (L"2. Getting the existing source code")
 NORMAL (L"You obtain the Praat source code via ##www.praat.org#, in a file with a name like "
-	"##praat5218_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking "
-	"(on old computers, use #gunzip and ##tar xvf# if Unix, or ##StuffIt^\\re Expander^\\tm# if Macintosh, "
-	"or ##Aladdin^\\re Expander^\\tm# if Windows). The result will be a set of directories "
-	"called #kar, #GSL, #num, #audio (with #FLAC and #mp3 in it), #sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #contrib, #main, #makefiles, and #test, "
-	"plus a makefile, a Codewarrior project for Windows, and an Xcode project for Macintosh.")
+	"##praat5347_sources.zip# or ##praat5347_sources.tar.gz# (depending on the Praat version), and unpack this by double-clicking. "
+	"The result will be a set of directories "
+	"called #kar, #num, #external (with #GSL, #glpk, #FLAC, #mp3, #portaudio and #espeak in it), "
+	"#sys, #dwsys, #stat, #fon, #dwtools, #LPC, #FFNet, #gram, #artsynth, #EEG, #contrib, #main, #makefiles, and #test, "
+	"plus a makefile and an Xcode project for Macintosh.")
 ENTRY (L"3. Building Praat on Macintosh")
-NORMAL (L"Open ##praat.xcodeproj# in Xcode and choose #Build and #Run.")
+NORMAL (L"Open ##praat.xcodeproj# in Xcode and choose #Build and #Run. For more details see the download page.")
 ENTRY (L"4. Building Praat on Windows")
-NORMAL (L"Open ##praat.mcp# in CodeWarrior (version 9.0 or higher), choose the target "
-	"##praat_win#, and choose #Make or #Run.")
-NORMAL (L"Praat may compile under MinGW as well.")
+NORMAL (L"Praat for Windows is compiled with MinGW. See the download page for instructions.")
 ENTRY (L"5. Building Praat on Linux")
 NORMAL (L"To compile and link Praat on Linux, you go to the directory that "
 	"contains the source directories and the makefile, and copy a ##makefile.defs# "
@@ -56,7 +54,7 @@ NORMAL (L"On other Unixes, you do the same, but the file ##makefile.defs# may re
 ENTRY (L"6. Extending Praat")
 NORMAL (L"You can edit ##main/main_Praat.cpp#. "
 	"This example shows you how to create a very simple program with all the functionality "
-	"of the Praat program, and a single bit more:")
+	"of the Praat program, and a single bit more (namely an additional command in the New menu):")
 CODE (L"\\# include \"praat.h\"")
 CODE (L"")
 CODE (L"DIRECT (HelloFromJane)")
@@ -73,12 +71,12 @@ CODE (L"}")
 ENTRY (L"7. Learning how to program")
 NORMAL (L"To see how objects are defined, take a look at ##sys/Thing.h#, ##sys/Data.h#, "
 	"##sys/oo.h#, the ##XXX_def.h# files in the #fon directory, and the corresponding "
-	"##XXX.c# and ##XXX.cpp# files in the #fon directory. To see how commands show up on the buttons "
+	"##XXX.cpp# files in the #fon directory. To see how commands show up on the buttons "
 	"in the fixed and dynamic menus, take a look at the large interface description file "
 	"##fon/praat_Fon.cpp#.")
 ENTRY (L"8. Using the Praat shell only")
-NORMAL (L"For building the Praat shell (the Objects and Picture windows) only, you need only the code in the six directories "
-	"#kar, #GSL, #num, #audio, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
+NORMAL (L"For building the Praat shell (the Objects and Picture windows) only, you need only the code in the eight directories "
+	"#kar, #GSL, #num, ##external/{FLAC,MP3,portaudio}#, #sys, and #dwsys. You delete the inclusion of praat_uvafon_init from #main. "
 	"You will be able to build a Praat shell, i.e. an Objects and a Picture window, "
 	"which has no knowledge of the world, i.e., which does not know any objects "
 	"that can be included in the list of objects. You could use this Praat shell "

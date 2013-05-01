@@ -1018,6 +1018,13 @@ struct autoMelderProgressOff {
 struct autoMelderString : MelderString {
 	autoMelderString () { length = 0; bufferSize = 0; string = NULL; }
 	~autoMelderString () { Melder_free (string); }
+	wchar_t * transfer () {
+		wchar_t *tmp = string;
+		string = NULL;
+		length = 0;
+		bufferSize = 0;
+		return tmp;
+	}
 };
 
 struct autoMelderReadText {

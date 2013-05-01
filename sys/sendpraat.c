@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 19 March 2013 */
+/* 25 April 2013 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
@@ -180,7 +180,7 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 		 */
 		sprintf (pidFileName, "%s/.%s-dir/pid", home, programName);
 		if ((pidFile = fopen (pidFileName, "r")) == NULL) {
-			sprintf (errorMessage, "Program %s not running (or a version older than 3.6).", programName);
+			sprintf (errorMessage, "Program %s not running.", programName);
 			return errorMessage;
 		}
 		if (fscanf (pidFile, "%ld%ld", & pid, & wid) < 1) {
@@ -233,9 +233,9 @@ char *sendpraat (void *display, const char *programName, long timeOut, const cha
 			g_type_init ();
 			int displaySupplied = display != NULL;
 			if (! displaySupplied) {
-				display = gdk_display_open (":0.0");   /* GdkDisplay* */
+				display = gdk_display_open (getenv ("DISPLAY"));   /* GdkDisplay* */
 				if (display == NULL) {
-					sprintf (errorMessage, "Cannot open display :0.0.");
+					sprintf (errorMessage, "Cannot open display %s", getenv ("DISPLAY"));
 					return errorMessage;
 				}
 			}
@@ -402,7 +402,7 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 		 */
 		sprintf (pidFileName, "%s/.%ls-dir/pid", home, programName);
 		if ((pidFile = fopen (pidFileName, "r")) == NULL) {
-			swprintf (errorMessageW, 1000, L"Program %ls not running (or a version older than 3.6).", programName);
+			swprintf (errorMessageW, 1000, L"Program %ls not running.", programName);
 			return errorMessageW;
 		}
 		if (fscanf (pidFile, "%ld%ld", & pid, & wid) < 1) {
@@ -455,9 +455,9 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 			int displaySupplied = display != NULL;
 			g_type_init ();
 			if (! displaySupplied) {
-				display = gdk_display_open (":0.0");   /* GdkDisplay* */
+				display = gdk_display_open (getenv ("DISPLAY"));   /* GdkDisplay* */
 				if (display == NULL) {
-					swprintf (errorMessageW, 1000, L"Cannot open display :0.0.");
+					swprintf (errorMessageW, 1000, L"Cannot open display %s", getenv ("DISPLAY"));
 					return errorMessageW;
 				}
 			}
@@ -532,16 +532,15 @@ wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, co
 }
 
 /*
- * To compile sendpraat as a stand-alone program:
- * temporarily change the following line to "#if 1" instead of "#if 0":
+ * To compile sendpraat as a stand-alone program, use the -DSTAND_ALONE option to the C compiler:
  */
-#if 0
+#ifdef STAND_ALONE
 /*
  * To compile on MacOS X:
-cc -o sendpraat -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c -Dmacintosh -DuseCarbon=1
+cc -o sendpraat -DSTAND_ALONE -framework CoreServices -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers -I/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/Headers sendpraat.c -Dmacintosh -DuseCarbon=1
  *
  * To compile on Linux:
-cc -std=gnu99 -o sendpraat -DUNIX `pkg-config --cflags --libs gtk+-2.0` sendpraat.c
+cc -std=gnu99 -o sendpraat -DSTAND_ALONE -DUNIX `pkg-config --cflags --libs gtk+-2.0` sendpraat.c
 */
 int main (int argc, char **argv) {
 	int iarg, line, length = 0;
@@ -597,7 +596,7 @@ int main (int argc, char **argv) {
 		printf ("\n");
 		#if win
 			printf ("   sendpraat praat \"execute C:\\MyDocuments\\MyScript.praat\"\n");
-		#elif mac
+		#else
 			printf ("   sendpraat praat \"execute ~/MyResearch/MyProject/MyScript.praat\"\n");
 		#endif
 		printf ("      Causes the program \"praat\" to execute a script.\n");

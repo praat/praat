@@ -774,8 +774,8 @@ int Melder_assert_ (const char *condition, const char *fileName, int lineNumber)
 #ifndef CONSOLE_APPLICATION
 
 #if defined (macintosh)
-static void mac_message (int macAlertType, const wchar_t *messageW) {
-	static UniChar messageU [4000];
+static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
+	static unichar messageU [4000];
 	int messageLength = wcslen (messageW);
 	int j = 0;
 	for (int i = 0; i < messageLength && j <= 4000 - 2; i ++) {
@@ -788,19 +788,57 @@ static void mac_message (int macAlertType, const wchar_t *messageW) {
 			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
 		}
 	}
-	#if useCarbonXXX
-        DialogRef dialog;
-		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
-		CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
-		CFRelease (messageCF);
-		RunStandardAlert (dialog, NULL, NULL);
+
+	/*
+	 * Split up the message between header (will appear in bold) and rest.
+	 * The split is done at the first line break, except if the first line ends in a colon,
+	 * in which case the split is done at the second line break.
+	 */
+	UniChar *lineBreak = & messageU [0];
+	for (; *lineBreak != '\0'; lineBreak ++) {
+		if (*lineBreak == '\n') {
+			break;
+		}
+	}
+	if (*lineBreak == '\n' && lineBreak - messageU > 0 && lineBreak [-1] == ':') {
+		for (lineBreak ++; *lineBreak != '\0'; lineBreak ++) {
+			if (*lineBreak == '\n') {
+				break;
+			}
+		}
+	}
+
+	/*
+	 * Create an alert dialog with an icon that is appropriate for the level.
+	 */
+	NSAlert *alert = [[NSAlert alloc] init];
+	[alert   setAlertStyle: macAlertType];
+	/*
+	 * Add the header in bold.
+	 */
+	#if 1
+	//long length = lineBreak - messageU;
+	NSString *header = [NSString alloc];
+	header = [header   initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
+	[alert   setMessageText: header];
+	[header  release];
 	#else
-		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
-        CFOptionFlags cfRes;
-        CFUserNotificationDisplayAlert(0, macAlertType, NULL, NULL, NULL,
-                                       /*CFSTR("Error"),*/ messageCF,  NULL, CFSTR("OK"),  NULL,  NULL, &cfRes);
-        CFRelease (messageCF);
+	CFStringRef headerCF = CFStringCreateWithCharacters (NULL, messageU, lineBreak - messageU);
+	[alert   setMessageText: (NSString *) headerCF];
+	CFRelease (headerCF);
 	#endif
+	/*
+	 * Add the rest of the message in small type.
+	 */
+	if (lineBreak - messageU != j) {
+		CFStringRef restCF = CFStringCreateWithCharacters (NULL, lineBreak + 1, j - 1 - (lineBreak - messageU));
+		[alert   setInformativeText: (NSString *) restCF];
+		CFRelease (restCF);
+	}
+	/*
+	 * Display the alert dialog and synchronously wait for the user to click OK.
+	 */
+	[alert   runModal];
 }
 #endif
 
@@ -815,15 +853,15 @@ static void gui_fatal (const wchar_t *message) {
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbonXXX
-			mac_message (kAlertStopAlert, message);
+		#if useCarbon
+			mac_message (NSCriticalAlertStyle, message);
 			SysError (11);
 		#else
-			mac_message (kCFUserNotificationStopAlertLevel, message);
+			mac_message (NSCriticalAlertStyle, message);
 			SysError (11);
 		#endif
 	#elif defined (_WIN32)
-		MessageBox (NULL, message, L"Fatal error", MB_OK | MB_TOPMOST);
+		MessageBox (NULL, message, L"Fatal error", MB_OK | MB_TOPMOST | MB_ICONSTOP);
 	#endif
 }
 
@@ -835,20 +873,20 @@ static void gui_error (const wchar_t *message) {
 	#if gtk
 		trace ("create dialog");
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
+			GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		trace ("run dialog");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		trace ("destroy dialog");
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbonXXX
-			mac_message (kAlertStopAlert, message);
+		#if useCarbon
+			mac_message (NSWarningAlertStyle, message);
 			XmUpdateDisplay (0);
 		#else
-			mac_message (kCFUserNotificationPlainAlertLevel, message);
+			mac_message (NSWarningAlertStyle, message);
 		#endif
 	#elif defined (_WIN32)
-		MessageBox (NULL, message, L"Message", MB_OK | MB_TOPMOST | MB_ICONEXCLAMATION);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
+		MessageBox (NULL, message, L"Message", MB_OK | MB_TOPMOST | MB_ICONWARNING);   // or (HWND) XtWindow ((GuiObject) Melder_topShell)
 	#endif
 	if (memoryIsLow) {
 		theMessageFund = (char *) malloc (theMessageFund_SIZE);
@@ -860,10 +898,10 @@ static void gui_error (const wchar_t *message) {
 				gtk_widget_destroy (GTK_WIDGET (dialog));
 			#elif defined (macintosh)
 				#if useCarbon
-					mac_message (kAlertStopAlert, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+					mac_message (NSCriticalAlertStyle, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 					XmUpdateDisplay (0);
 				#else
-					mac_message (kCFUserNotificationPlainAlertLevel, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
+					mac_message (NSCriticalAlertStyle, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.");
 				#endif
 			#elif defined (_WIN32)
 				MessageBox (NULL, L"Praat is very low on memory.\nSave your work and quit Praat.\nIf you don't do that, Praat may crash.", L"Message", MB_OK);
@@ -875,18 +913,18 @@ static void gui_error (const wchar_t *message) {
 static void gui_warning (const wchar_t *message) {
 	#if gtk
 		GuiObject dialog = gtk_message_dialog_new (GTK_WINDOW (Melder_topShell -> d_gtkWindow), GTK_DIALOG_DESTROY_WITH_PARENT,
-			GTK_MESSAGE_WARNING, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
+			GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "%s", Melder_peekWcsToUtf8 (message));
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 	#elif defined (macintosh)
-		#if useCarbonXXX
-			mac_message (kAlertNoteAlert, message);
+		#if useCarbon
+			mac_message (NSInformationalAlertStyle, message);
 			XmUpdateDisplay (0);
 		#else
-			mac_message (kCFUserNotificationStopAlertLevel, message);
+			mac_message (NSInformationalAlertStyle, message);
 		#endif
 	#elif defined (_WIN32)
-		MessageBox (NULL, message, L"Warning", MB_OK | MB_TOPMOST);
+		MessageBox (NULL, message, L"Warning", MB_OK | MB_TOPMOST | MB_ICONINFORMATION);
 	#endif
 }
 
