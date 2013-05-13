@@ -74,7 +74,8 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 		amp [numberOfSamples] = my v_getValueAtSample (my nx, 0, 2);
 		NUMfft_backward (&fftTable, amp.peek());
 		for (long i = 1; i <= my nx; i++) {
-			thy z[1][i] = amp[i] / numberOfSamples; // scaling 1/n because ifft(fft(1))= n;
+			double val = amp[i] / numberOfSamples; // scaling 1/n because ifft(fft(1))= n;
+			thy z[1][i] = val * val; // power cepstrum
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -82,7 +83,8 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 	}
 }
 
-Spectrum Cepstrum_to_Spectrum (Cepstrum me) {
+
+Spectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
 	try {
 		autoSound tmp = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 		NUMvector_copyElements	(my z[1], tmp -> z[1], 1, my nx); // v_getValueAtSample ???

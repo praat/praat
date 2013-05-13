@@ -133,8 +133,8 @@ DO
 END
 
 FORM (Cepstrum_getPeak, L"Cepstrum: Get peak", 0)
-	REAL (L"left Peak search quefrency range (s)", L"0.003 (=330 Hz)")
-	REAL (L"right Peak search quefrency range (s)", L"0.0167 (=60 Hz)")
+	REAL (L"left Search peak in pitch range (Hz)", L"60.0")
+	REAL (L"right Search peak in pitch range (Hz)", L"333.3")
 	RADIO (L"Interpolation", 3)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
@@ -145,14 +145,14 @@ DO
 	LOOP {
 		iam (Cepstrum);
 		double peakdB, quefrency;
-		Cepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Peak search quefrency range"), GET_REAL (L"right Peak search quefrency range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
+		Cepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
 		Melder_informationReal (peakdB, NULL);
 	}
 END
 
 FORM (Cepstrum_getQuefrencyOfPeak, L"Cepstrum: Get quefrency of peak", 0)
-	REAL (L"left Peak search quefrency range (s)", L"0.003 (=330 Hz)")
-	REAL (L"right Peak search quefrency range (s)", L"0.0167 (=60 Hz)")
+	REAL (L"left Search peak in pitch range (Hz)", L"60.0")
+	REAL (L"right Search peak in pitch range (Hz)", L"333.3")
 	RADIO (L"Interpolation", 3)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
@@ -163,15 +163,15 @@ DO
 	LOOP {
 		iam (Cepstrum);
 		double peakdB, quefrency;
-		Cepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Peak search quefrency range"), GET_REAL (L"right Peak search quefrency range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
+		Cepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
 		double f = 1 / quefrency;
 		Melder_information (Melder_double (quefrency), L" s (f =", Melder_double (f), L" Hz)");
 	}
 END
 
 FORM (Cepstrum_getPeakProminence, L"Cepstrum: Get peak prominence", L"Cepstrum: Get peak prominence...")
-	REAL (L"left Peak search quefrency range (s)", L"0.003 (=330 Hz)")
-	REAL (L"right Peak search quefrency range (s)", L"0.0167 (=60 Hz)")
+REAL (L"left Search peak in pitch range (Hz)", L"60.0")
+REAL (L"right Search peak in pitch range (Hz)", L"333.3")
 	RADIO (L"Interpolation", 3)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
@@ -187,7 +187,7 @@ DO
 	LOOP {
 		iam (Cepstrum);
 		double qpeak, cpp = Cepstrum_getPeakProminence (me,
-			GET_REAL (L"left Peak search quefrency range"), GET_REAL (L"right Peak search quefrency range"),
+			GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"),
 			GET_INTEGER (L"Interpolation") - 1,
 			GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
 			GET_INTEGER (L"Fit method"), &qpeak);
@@ -249,8 +249,38 @@ DO
 	}
 END
 
+FORM (Cepstrogram_getCPPS, L"Cepstrogram: Get CPPS", 0)
+	LABEL (L"", L"Smoothing:")
+	REAL (L"Time averaging window (s)", L"0.01")
+	REAL (L"Quefrency averaging window (s)", L"0.0005")
+	LABEL (L"", L"Peak search:")
+	REAL (L"left Peak search pitch range (Hz)", L"60.0")
+	REAL (L"right Peak search pitch range (Hz)", L"330.0")
+	RADIO (L"Interpolation", 3)
+	RADIOBUTTON (L"None")
+	RADIOBUTTON (L"Parabolic")
+	RADIOBUTTON (L"Cubic")
+	RADIOBUTTON (L"Sinc70")
+	LABEL (L"", L"Tilt line:")
+	REAL (L"left Tilt line quefrency range (s)", L"0.001")
+	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	LOOP {
+		iam (Cepstrogram);
+		double cpps = Cepstrogram_getCPPS (me, GET_REAL (L"Time averaging window"), GET_REAL (L"Quefrency averaging window"),
+			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"),
+			GET_INTEGER (L"Interpolation"), GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
+			GET_INTEGER (L"Fit method"));
+		Melder_informationReal (cpps, NULL);
+	}
+END
+	
 
-FORM (Cepstrogram_to_Cepstrum_slice, L"", 0)
+FORM (Cepstrogram_to_Cepstrum_slice, L"Cepstrogram: To Cepstrum (slice)", 0)
 	REAL (L"Time (s)", L"0.1")
 	OK
 DO
@@ -262,8 +292,8 @@ DO
 END
 
 FORM (Cepstrogram_to_Table_cpp, L"Cepstrogram: To Table (peak prominence)", L"Cepstrogram: To Table (peak prominence...")
-	REAL (L"left Peak search quefrency range (s)", L"0.003 (=330 Hz)")
-	REAL (L"right Peak search quefrency range (s)", L"0.0167 (=60 Hz)")
+	REAL (L"left Peak search pitch range (Hz)", L"60.0")
+	REAL (L"right Peak search pitch range (Hz)", L"330.0")
 	RADIO (L"Interpolation", 3)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
@@ -279,7 +309,7 @@ DO
 	LOOP {
 		iam (Cepstrogram);
 		autoTable thee = Cepstrogram_to_Table_cpp (me,
-			GET_REAL (L"left Peak search quefrency range"), GET_REAL (L"right Peak search quefrency range"),
+			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"),
 			GET_INTEGER (L"Interpolation"),
 			GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
 			GET_INTEGER (L"Fit method"));
@@ -574,7 +604,7 @@ END
 /********************** Sound *******************************************/
 
 FORM (Sound_to_Cepstrogram, L"Sound: To Cepstrogram", L"Sound: To Cepstrogram...")
-	POSITIVE (L"Window length (s)", L"0.025")
+	POSITIVE (L"Pitch floor (Hz)", L"60.0")
 	POSITIVE (L"Time step (s)", L"0.002")
 	POSITIVE (L"Maximum frequency (Hz)", L"5000.0")
 	POSITIVE (L"Pre-emphasis from (Hz)", L"50")
@@ -582,12 +612,25 @@ FORM (Sound_to_Cepstrogram, L"Sound: To Cepstrogram", L"Sound: To Cepstrogram...
 DO
 	LOOP {
 		iam (Sound);
-		autoCepstrogram thee = Sound_to_Cepstrogram (me, GET_REAL (L"Window length"), GET_REAL (L"Time step"), GET_REAL(L"Maximum frequency"),
+		autoCepstrogram thee = Sound_to_Cepstrogram (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"), GET_REAL(L"Maximum frequency"),
 			 GET_REAL (L"Pre-emphasis from"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
+
+FORM (Sound_to_Cepstrogram_hillenbrand, L"Sound: To Cepstrogram (hillenbrand)", L"Sound: To Cepstrogram...")
+	POSITIVE (L"Pitch floor (Hz)", L"60.0")
+	POSITIVE (L"Time step (s)", L"0.002")
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		autoCepstrogram thee = Sound_to_Cepstrogram_hillenbrandw (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"));
+		praat_new (thee.transfer(), my name);
+	}
+END
+	
 FORM (Sound_to_Formant_robust, L"Sound: To Formant (robust)", L"Sound: To Formant (robust)...")
 	REAL (L"Time step (s)", L"0.0 (= auto)")
 	POSITIVE (L"Max. number of formants", L"5")
@@ -883,6 +926,7 @@ void praat_uvafon_LPC_init (void) {
 
 	praat_addAction1 (classCepstrogram, 0, L"Cepstrogram help", 0, 0, DO_Cepstrogram_help);
 	praat_addAction1 (classCepstrogram, 0, L"Paint...", 0, 0, DO_Cepstrogram_paint);
+	praat_addAction1 (classCepstrogram, 0, L"Get CPPS...", 0, 0, DO_Cepstrogram_getCPPS);
 	praat_addAction1 (classCepstrogram, 0, L"To Cepstrum (slice)...", 0, 0, DO_Cepstrogram_to_Cepstrum_slice);
 	praat_addAction1 (classCepstrogram, 0, L"Smooth...", 0, 0, DO_Cepstrogram_smooth);
 	praat_addAction1 (classCepstrogram, 0, L"To Table (peak prominence)...", 0, 0, DO_Cepstrogram_to_Table_cpp);
@@ -941,7 +985,8 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classSound, 0, L"To MFCC...", L"To LPC (marple)...", 1, DO_Sound_to_MFCC);
 	praat_addAction1 (classSound, 0, L"To Formant (robust)...", L"To Formant (sl)...", 2, DO_Sound_to_Formant_robust);
 	praat_addAction1 (classSound, 0, L"To Cepstrogram...", L"To Harmonicity (gne)...", 1, DO_Sound_to_Cepstrogram);
-
+	praat_addAction1 (classSound, 0, L"To Cepstrogram (hillenbrand)...", L"To Harmonicity (gne)...", 1, DO_Sound_to_Cepstrogram_hillenbrand);
+	
 	praat_addAction1 (classVocalTract, 0, L"Draw segments...", L"Draw", 0, DO_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, L"Get length", L"Draw segments...", 0, DO_VocalTract_getLength);
 	praat_addAction1 (classVocalTract, 1, L"Set length", L"Formula...", 0, DO_VocalTract_getLength);

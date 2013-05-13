@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130501)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130513)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.49# (13 May 2013)")
+LIST_ITEM (L"\\bu TextGrid window: alignment of the sound and the annotation in an interval, via Espeak.")
+LIST_ITEM (L"\\bu Scripting: repaired a bug introduced in 5.3.32 that could cause very slow running of scripts.")
 NORMAL (L"##5.3.48# (1 May 2013)")
 LIST_ITEM (L"\\bu Scripting: variable-substitution-free object selection and file writing.")
 LIST_ITEM (L"\\bu Scripting: #selectObject and #removeObject can select or remove multiple objects at a time.")

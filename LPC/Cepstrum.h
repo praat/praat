@@ -76,8 +76,8 @@ void Cepstrum_drawTiltLine (Cepstrum me, Graphics g, double qmin, double qmax, d
 		[minimum, maximum]: amplitude; y range of drawing.
 */
 
-void Cepstrum_getMaximumAndQuefrency (Cepstrum me, double lowestQuefrency, double highestQuefrency, int interpolation, double *maximum, double *quefrency);
-double Cepstrum_getPeakProminence (Cepstrum me, double search_lowestQuefrency, double search_highestQuefrency, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak);
+void Cepstrum_getMaximumAndQuefrency (Cepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *maximum, double *quefrency);
+double Cepstrum_getPeakProminence (Cepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak);
 void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, double *intercept, int method);
 
 Matrix Cepstrum_to_Matrix (Cepstrum me);

@@ -71,12 +71,12 @@ ENTRY (L"Description")
 NORMAL (L"The Cepstrogram shows @@Cepstrum|cepstral slices@ as a function of time.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrogram: To Table (peak prominence...", L"djmw", 20121118)
+MAN_BEGIN (L"Cepstrogram: To Table (peak prominence...", L"djmw", 20130425)
 INTRO (L"A command to create a table with @@Cepstrum: Get peak prominence...|cepstral peak prominence@ values.")
 ENTRY (L"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 	Manual_DRAW_SETTINGS_WINDOW ("Cepstrogram: To Table (peak prominence)", 7)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search quefrency range (s)", L"0.003 (=333 Hz)", L"0.0125 (=80 Hz)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search pitch range (Hz)", L"60.0", L"300.0")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"Interpolation", L"None", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Cubic", 1)
@@ -106,7 +106,7 @@ DEFINITION (L"determines how many quefrency bins will be used for the averaging 
 ENTRY (L"Note")
 NORMAL (L"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
 	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
-CODE (L"select Sound xxx")
+CODE (L"selectObject (\"Sound xxx\")")
 CODE (L"do (\"To Cepstrogram...\", 0.041, 0.002, 5000.0)")
 CODE (L"do (\"Smooth...\", 0.02, 0.001)")
 MAN_END
@@ -117,7 +117,7 @@ ENTRY (L"Description")
 NORMAL (L"A Cepstrum is the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20121203)
+MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20130425)
 INTRO (L"Calculates the cepstral peak prominence measure (CPP) as defined by @@Hillenbrand et al. (1994)@")
 NORMAL (L"The CPP measure is the difference in amplitude between the cepstral peak and the corresponding value on the regression "
 	"line that is directly below the peak (i.e., the predicted magnitude for the quefrency at the cepstral peak). "
@@ -125,7 +125,7 @@ NORMAL (L"The CPP measure is the difference in amplitude between the cepstral pe
 ENTRY (L"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 	Manual_DRAW_SETTINGS_WINDOW (L"Cepstrum: Get peak prominence", 7)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search quefrency range (s)",L"0.003 (=333 Hz)", L"0.0125 (=80 Hz)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Search peak in pitch range (s)", L"60.0", L"333.3")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"Interpolation", L"None", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Cubic", 1)
@@ -133,10 +133,10 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 	Manual_DRAW_SETTINGS_WINDOW_RANGE (L"Tilt line quefrency range (s)", L"0.001", L"0.0 (=end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU (L"Fit method", L"Robust")
 )
-TAG (L"##Peak search quefrency range")
-DEFINITION (L"limits the quefrency range where a peak is searched for. The value of the lower limit is in general more critical than "
-	"the value of the upper quefrency. The lower peak search quefrency should be chosen at least 0.001 s as we don't want to find the peaks at the very start of the quefrency range. This lower quefrency corresponds to the inverse of the %%highest% fundamental frequency value "
-	"that we are interested in. I.e. a value of 0.003 s corresponds to an inverse frequecy value of 1/0.003\\~~333 Hz.")
+TAG (L"##Search peak in pitch range")
+DEFINITION (L"determine the limits of the quefrency range where a peak is searched for. The lower quefrency is determined as "
+	"1 / %%pitchCeiling% and this value is in general more critical than "
+	"the value of the upper quefrency which equals 1 / %%pitchFloor%. A %%pitchCeiling% of 300 Hz will correspond to a lower quefrency of 1/300\\~~0.0033 seconds.")
 TAG (L"##Interpolation")
 DEFINITION (L"determines how the @@vector peak interpolation|amplitude of a peak is determined@.")
 TAG (L"##Tilt line quefrency range")
@@ -435,10 +435,11 @@ NORMAL (L"where %N represents the number of filters, %j runs from 1 to %N, and c
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Cepstrogram...", L"djmw", 20130227)
+MAN_BEGIN (L"Sound: To Cepstrogram...", L"djmw", 20130425)
 INTRO (L"A command that creates a @@Cepstrogram@ from every selected @@Sound@.")
 ENTRY (L"Settings")
-TAG (L"##Window length (s)")
+TAG (L"##Pitch floor (Hz)")
+DEFINITION (L"determines the effective length of the analysis window: it will be 3 longest periods long, i.e. if the pitch floor is 60 Hz, the window will be 3/60 = 0.05 seconds long.")
 TAG (L"##Time step (s)")
 TAG (L"##Maximum frequency (Hz)")
 TAG (L"##Pre-emphasis from (Hz)")

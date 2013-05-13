@@ -5807,7 +5807,7 @@ DO
 	autoTextGrid thee = SpeechSynthesizer_and_Sound_and_TextGrid_align (synth, s, tg,
 		GET_INTEGER (L"Tier number"), GET_INTEGER (L"From interval number"),
 		GET_INTEGER (L"To interval number"), silenceThreshold, minSilenceDuration, minSoundingDuration);
-	praat_new (thee.transfer(), thy name, L"_aligned");
+	praat_new (thee.transfer(), s -> name, L"_aligned");
 END
 
 FORM (SpeechSynthesizer_and_Sound_and_TextGrid_align2, L"SpeechSynthesizer & Sound & TextGrid: To TextGrid (align, trim)", 0)
@@ -5833,7 +5833,7 @@ DO
     autoTextGrid thee = SpeechSynthesizer_and_Sound_and_TextGrid_align2 (synth, s, tg,
         GET_INTEGER (L"Tier number"), GET_INTEGER (L"From interval number"),
         GET_INTEGER (L"To interval number"), silenceThreshold, minSilenceDuration, minSoundingDuration, trimDuration);
-    praat_new (thee.transfer(), thy name, L"_aligned");
+    praat_new (thee.transfer(), s -> name, L"_aligned");
 END
 
 /************* Spline *************************************************/

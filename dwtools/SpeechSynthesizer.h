@@ -2,7 +2,7 @@
 #define _SpeechSynthesizer_h_
 /* SpeechSynthesizer.h
  *
- * Copyright (C) 2011-2012 David Weenink
+ * Copyright (C) 2011-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,11 +25,11 @@
 
 #include "Sound.h"
 #include "TextGrid.h"
-#include "speech.h"
-#include "speak_lib.h"
-#include "phoneme.h"
-#include "synthesize.h"
-#include "voice.h"
+#include "../external/espeak/speech.h"
+#include "../external/espeak/speak_lib.h"
+#include "../external/espeak/phoneme.h"
+#include "../external/espeak/synthesize.h"
+#include "../external/espeak/voice.h"
 
 #define SpeechSynthesizer_PHONEMECODINGS_IPA 2
 #define SpeechSynthesizer_PHONEMECODINGS_KIRSHENBAUM 1

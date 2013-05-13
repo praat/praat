@@ -369,7 +369,7 @@ IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNu
 	TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 	Function tier = (Function) my tiers -> item [tierNumber];
 	if (tier -> classInfo != classIntervalTier)
-		Melder_throw ("Tier ", tierNumber, " should be an interval tier.");
+		Melder_throw ("Tier ", tierNumber, " is not an interval tier.");
 	return (IntervalTier) tier;
 }
 
@@ -377,7 +377,7 @@ TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber) {
 	TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 	Function tier = (Function) my tiers -> item [tierNumber];
 	if (tier -> classInfo != classTextTier)
-		Melder_throw ("Tier ", tierNumber, " should be a point tier.");
+		Melder_throw ("Tier ", tierNumber, " is not a point tier.");
 	return (TextTier) tier;
 }
 
@@ -1625,6 +1625,7 @@ void TextGrid_correctRoundingErrors (TextGrid me) {
 				TextInterval left = (TextInterval) tier -> intervals -> item [iinterval];
 				TextInterval right = (TextInterval) tier -> intervals -> item [iinterval + 1];
 				right -> xmin = left -> xmax;
+				trace ("tier %ld, interval %ld, %17g %17g", itier, iinterval, right -> xmin, right -> xmax);
 				Melder_assert (right -> xmin < right -> xmax);
 			}
 			TextInterval last = (TextInterval) tier -> intervals -> item [tier -> intervals -> size];

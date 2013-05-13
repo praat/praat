@@ -807,38 +807,47 @@ static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
 			}
 		}
 	}
-
-	/*
-	 * Create an alert dialog with an icon that is appropriate for the level.
-	 */
-	NSAlert *alert = [[NSAlert alloc] init];
-	[alert   setAlertStyle: macAlertType];
-	/*
-	 * Add the header in bold.
-	 */
-	#if 1
-	//long length = lineBreak - messageU;
-	NSString *header = [NSString alloc];
-	header = [header   initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
-	[alert   setMessageText: header];
-	[header  release];
+	#if useCarbon
+        DialogRef dialog;
+		CFStringRef messageCF = CFStringCreateWithCharacters (NULL, messageU, j);
+		CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
+		CFRelease (messageCF);
+		RunStandardAlert (dialog, NULL, NULL);
+	#elif fhgfdghdggfkdsgfXXX
+		NSString *header = NULL, *rest = NULL;
+		header = [[NSString alloc] initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
+		if (lineBreak - messageU != j) {
+			rest = [[NSString alloc] initWithCharacters: lineBreak + 1   length: j - 1 - (lineBreak - messageU)];
+		}
+		NSRunAlertPanel (header, rest, NULL, NULL, NULL);
+		[header release];
+		if (rest) [rest release];
 	#else
-	CFStringRef headerCF = CFStringCreateWithCharacters (NULL, messageU, lineBreak - messageU);
-	[alert   setMessageText: (NSString *) headerCF];
-	CFRelease (headerCF);
+		/*
+		 * Create an alert dialog with an icon that is appropriate for the level.
+		 */
+		NSAlert *alert = [[NSAlert alloc] init];
+		[alert setAlertStyle: macAlertType];
+		/*
+		 * Add the header in bold.
+		 */
+		NSString *header = [[NSString alloc] initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
+		[alert setMessageText: header];
+		[header release];
+		/*
+		 * Add the rest of the message in small type.
+		 */
+		if (lineBreak - messageU != j) {
+			NSString *rest = [[NSString alloc] initWithCharacters: lineBreak + 1   length: j - 1 - (lineBreak - messageU)];
+			[alert setInformativeText: rest];
+			[rest release];
+		}
+		/*
+		 * Display the alert dialog and synchronously wait for the user to click OK.
+		 */
+		[alert runModal];
+		[alert release];
 	#endif
-	/*
-	 * Add the rest of the message in small type.
-	 */
-	if (lineBreak - messageU != j) {
-		CFStringRef restCF = CFStringCreateWithCharacters (NULL, lineBreak + 1, j - 1 - (lineBreak - messageU));
-		[alert   setInformativeText: (NSString *) restCF];
-		CFRelease (restCF);
-	}
-	/*
-	 * Display the alert dialog and synchronously wait for the user to click OK.
-	 */
-	[alert   runModal];
 }
 #endif
 

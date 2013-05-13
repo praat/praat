@@ -1,6 +1,6 @@
 /* TextGrid_Sound.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,5 +33,8 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	double fontSize, int useTextStyles, int horizontalAlignment, int garnish, int speckle, int yscale);
 void TextGrid_Pitch_drawSeparately (TextGrid grid, Pitch pitch, Graphics g, double tmin, double tmax,
 	double fmin, double fmax, int showBoundaries, int useTextStyles, int garnish, int speckle, int yscale);
+
+void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierNumber, long intervalNumber,
+	const wchar_t *languageName, bool includeWords, bool includePhonemes);
 
 /* End of file TextGrid_Sound.h */

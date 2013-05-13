@@ -32,6 +32,10 @@ prefs_begin (TextGridEditor)
 		prefs_add_string_with_data (TextGridEditor, greenString,        1, L"some text here for green paint")
 		prefs_add_bool   (TextGridEditor, picture_showBoundaries,     1, true)
 		prefs_add_bool   (TextGridEditor, picture_pitch_speckle,      1, false)
+		prefs_add_string_with_data (TextGridEditor, align_language,        1, L"English")
+		prefs_add_bool_with_data   (TextGridEditor, align_includeWords,    1, true)
+		prefs_add_bool_with_data   (TextGridEditor, align_includePhonemes, 1, false)
+		prefs_add_bool_with_data   (TextGridEditor, align_allowSilences,   1, false)
 prefs_end (TextGridEditor)
 
 /* End of file TextGridEditor_prefs.h */

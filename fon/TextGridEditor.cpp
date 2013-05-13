@@ -23,6 +23,7 @@
 #include "SoundEditor.h"
 #include "Sound_and_Spectrogram.h"
 #include "TextGrid_Sound.h"
+#include "SpeechSynthesizer_and_TextGrid.h"
 
 #include "enums_getText.h"
 #include "TextGridEditor_enums.h"
@@ -673,6 +674,56 @@ static void menu_cb_InsertIntervalOnTier6 (EDITOR_ARGS) { EDITOR_IAM (TextGridEd
 static void menu_cb_InsertIntervalOnTier7 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 7); }
 static void menu_cb_InsertIntervalOnTier8 (EDITOR_ARGS) { EDITOR_IAM (TextGridEditor); do_insertIntervalOnTier (me, 8); }
 
+static void menu_cb_AlignInterval (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	TextGrid grid = (TextGrid) my data;
+	checkTierSelection (me, L"align words");
+	AnyTier tier = static_cast <AnyTier> (grid -> tiers -> item [my selectedTier]);
+	if (tier -> classInfo != classIntervalTier)
+		Melder_throw ("Alignment works only for interval tiers, whereas tier ", my selectedTier, " is a point tier.\nSelect an interval tier instead.");
+	long intervalNumber = getSelectedInterval (me);
+	if (! intervalNumber)
+		Melder_throw ("Select an interval first");
+	if (! my p_align_includeWords && ! my p_align_includePhonemes)
+		Melder_throw ("Nothing to be done.\nPlease switch on \"Include words\" and/or \"Include phonemes\" in the \"Alignment settings\".");
+	{ // scope
+		autoMelderProgressOff noprogress;
+		Function anySound = my d_sound.data;
+		if (my d_longSound.data) anySound = my d_longSound.data;
+		Editor_save (me, L"Align interval");
+		TextGrid_anySound_alignInterval (grid, anySound, my selectedTier, intervalNumber,
+			my p_align_language, my p_align_includeWords, my p_align_includePhonemes);
+	}
+	FunctionEditor_redraw (me);
+	my broadcastDataChanged ();
+}
+
+static void menu_cb_AlignmentSettings (EDITOR_ARGS) {
+	EDITOR_IAM (TextGridEditor);
+	EDITOR_FORM (L"Alignment settings", 0)
+		OPTIONMENU (L"Language", Strings_findString (espeakdata_voices_names, L"English"))
+		for (long i = 1; i <= espeakdata_voices_names -> numberOfStrings; i ++) {
+			OPTION ((const wchar_t *) espeakdata_voices_names -> strings [i]);
+		}
+		BOOLEAN (L"Include words", my default_align_includeWords ())
+		BOOLEAN (L"Include phonemes", my default_align_includePhonemes ())
+		BOOLEAN (L"Allow silences", my default_align_allowSilences ())
+	EDITOR_OK
+		long prefVoice = Strings_findString (espeakdata_voices_names, my p_align_language);
+		if (prefVoice == 0) prefVoice = Strings_findString (espeakdata_voices_names, L"English");
+		SET_INTEGER (L"Language", prefVoice);
+		SET_INTEGER (L"Include words", my p_align_includeWords)
+		SET_INTEGER (L"Include phonemes", my p_align_includePhonemes)
+		SET_INTEGER (L"Allow silences", my p_align_allowSilences)
+	EDITOR_DO
+		//my pref_align_language () = my p_align_language = GET_ENUM (kTextGrid_language, L"Language");
+		pref_wcscpy2 (my pref_align_language (), my p_align_language, GET_STRING (L"Language"));
+		my pref_align_includeWords    () = my p_align_includeWords    = GET_INTEGER (L"Include words");
+		my pref_align_includePhonemes () = my p_align_includePhonemes = GET_INTEGER (L"Include phonemes");
+		my pref_align_allowSilences   () = my p_align_allowSilences   = GET_INTEGER (L"Allow silences");
+	EDITOR_END
+}
+
 /***** BOUNDARY/POINT MENU *****/
 
 static void menu_cb_RemovePointOrBoundary (EDITOR_ARGS) {
@@ -1176,6 +1227,11 @@ void structTextGridEditor :: v_createMenus () {
 	Editor_addCommand (this, L"Query", L"Get label of interval", 0, menu_cb_GetLabelOfInterval);
 
 	menu = Editor_addMenu (this, L"Interval", 0);
+	if (d_sound.data || d_longSound.data) {
+		EditorMenu_addCommand (menu, L"Align interval", 'D', menu_cb_AlignInterval);
+		EditorMenu_addCommand (menu, L"Alignment settings...", 0, menu_cb_AlignmentSettings);
+		EditorMenu_addCommand (menu, L"-- add interval --", 0, NULL);
+	}
 	EditorMenu_addCommand (menu, L"Add interval on tier 1", GuiMenu_COMMAND | '1', menu_cb_InsertIntervalOnTier1);
 	EditorMenu_addCommand (menu, L"Add interval on tier 2", GuiMenu_COMMAND | '2', menu_cb_InsertIntervalOnTier2);
 	EditorMenu_addCommand (menu, L"Add interval on tier 3", GuiMenu_COMMAND | '3', menu_cb_InsertIntervalOnTier3);
@@ -1188,9 +1244,10 @@ void structTextGridEditor :: v_createMenus () {
 	menu = Editor_addMenu (this, L"Boundary", 0);
 	/*EditorMenu_addCommand (menu, L"Move to B", 0, menu_cb_MoveToB);
 	EditorMenu_addCommand (menu, L"Move to E", 0, menu_cb_MoveToE);*/
-	if (d_sound.data)
+	if (d_sound.data) {
 		EditorMenu_addCommand (menu, L"Move to nearest zero crossing", 0, menu_cb_MoveToZero);
-	EditorMenu_addCommand (menu, L"-- insert boundary --", 0, NULL);
+		EditorMenu_addCommand (menu, L"-- insert boundary --", 0, NULL);
+	}
 	EditorMenu_addCommand (menu, L"Add on selected tier", GuiMenu_ENTER, menu_cb_InsertOnSelectedTier);
 	EditorMenu_addCommand (menu, L"Add on tier 1", GuiMenu_COMMAND | GuiMenu_F1, menu_cb_InsertOnTier1);
 	EditorMenu_addCommand (menu, L"Add on tier 2", GuiMenu_COMMAND | GuiMenu_F2, menu_cb_InsertOnTier2);

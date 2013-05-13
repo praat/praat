@@ -1,7 +1,7 @@
 # Praat script runAlltests.praat
-# Paul Boersma, 16 March 2011
+# Paul Boersma, 6 May 2013
 #
-# This script runs all Praat scripts in its subdirectories, except itself.
+# This script runs all Praat scripts in its subdirectories.
 
 directories = Create Strings as directory list... directories .
 numberOfDirectories = Get number of strings

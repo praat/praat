@@ -1,6 +1,6 @@
 /* SpeechSynthesizer.cpp
  *
- * Copyright (C) 2011-2012 David Weenink
+//  * Copyright (C) 2011-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ SpeechSynthesizerVoice SpeechSynthesizerVoice_create (long numberOfFormants) {
 }
 
 void SpeechSynthesizerVoice_setDefaults (SpeechSynthesizerVoice me) {
-
+	(void) me;
 }
 
 void SpeechSynthesizerVoice_initFromEspeakVoice (SpeechSynthesizerVoice me, voice_t *voice) {
@@ -199,7 +199,7 @@ static int synthCallback (short *wav, int numsamples, espeak_EVENT *events)
 			if (events -> type == espeakEVENT_MARK || events -> type == espeakEVENT_PLAY) {
 				Table_setStringValue (my d_events, irow, 8, Melder_peekUtf8ToWcs (events -> id.name));
 			} else {
-				// Ugly hack because id.string in not 0-terminated if 8 chars long!
+				// Ugly hack because id.string is not 0-terminated if 8 chars long!
 				memcpy (phoneme_name, events -> id.string, 8);
 				phoneme_name[8] = 0;
 				Table_setStringValue (my d_events, irow, 8, Melder_peekUtf8ToWcs (phoneme_name));
@@ -365,6 +365,13 @@ static void Table_setEventTypeString (Table me) {
 	}
 }
 
+static void MelderString_trimWhiteSpaceAtEnd (MelderString *me) {
+	while (my length > 1 && (my string[my length - 1] == ' ' or my string[my length - 1] == '\t' 
+		or my string[my length - 1] == '\r' or my string[my length - 1] == '\n')) {
+		my string[my length - 1] = '\0'; my length--;
+	}
+}
+
 static TextGrid Table_to_TextGrid (Table me, const wchar_t *text, double xmin, double xmax) {
 	//Table_createWithColumnNames (0, L"time type type-t t-pos length a-pos sample id uniq");
 	try {
@@ -402,6 +409,7 @@ static TextGrid Table_to_TextGrid (Table me, const wchar_t *text, double xmin, d
 				// End of clause: insert new boundary, and fill left interval with text
 				length = pos - p1c + 1;
 				MelderString_ncopy (&mark, text + p1c - 1, length);
+				MelderString_trimWhiteSpaceAtEnd (&mark);
 				if (time > xmin and time < xmax) {
 					IntervalTier_addBoundaryUnsorted (itc, itc -> intervals -> size, time, mark.string, true);
 				} else {
@@ -415,6 +423,7 @@ static TextGrid Table_to_TextGrid (Table me, const wchar_t *text, double xmin, d
 				if (pos <= textLength) {
 					length = pos - p1w + 1;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
+					MelderString_trimWhiteSpaceAtEnd (&mark);
 					if (time > xmin and time < xmax) {
 						IntervalTier_addBoundaryUnsorted (itw, itw -> intervals -> size, time, mark.string, true);
 					} else {
@@ -430,6 +439,7 @@ static TextGrid Table_to_TextGrid (Table me, const wchar_t *text, double xmin, d
 					length = pos - p1w;
 					if (pos == textLength) length++;
 					MelderString_ncopy (&mark, text + p1w - 1, length);
+					MelderString_trimWhiteSpaceAtEnd (&mark);
 					IntervalTier_addBoundaryUnsorted (itw, itw -> intervals -> size, time, (wordEnd ? mark.string : L""), true);
 					MelderString_empty (&mark);
 				}

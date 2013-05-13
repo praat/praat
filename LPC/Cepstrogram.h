@@ -21,7 +21,7 @@
 
 /*
  djmw 20121017
- djmw 20121117 Latest modification.
+ djmw 20130502 Latest modification.
 */
 
 /*
@@ -52,11 +52,18 @@ Cepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, do
 
 void Cepstrogram_paint (Cepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
 
-	Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow);
+Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow);
 
-	Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency);
-Table Cepstrogram_to_Table_cpp (Cepstrogram me, double lowestQuefrency, double highestQuefrency, int interpolation, double qstartFit, double qendFit, int method);
+Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency);
+
+Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double analysisWidth, double dt);
+Cepstrogram Sound_to_Cepstrogram_hillenbrandw (Sound me, double analysisWidth, double dt);
+
+Table Cepstrogram_to_Table_cpp (Cepstrogram me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int method);
 Cepstrum Cepstrogram_to_Cepstrum_slice (Cepstrogram me, double time);
+
+double Cepstrogram_getCPPS (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int fitMethod);
+
 
 Matrix Cepstrogram_to_Matrix (Cepstrogram me);
 Cepstrogram Matrix_to_Cepstrogram (Matrix me);

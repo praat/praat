@@ -32,12 +32,11 @@ Thing_implement (Cepstrum, Matrix, 2);
 
 double structCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
 	(void) units;
-	double valsq = z[1][isamp] * z[1][isamp];
 	if (which == 0) {
-		return valsq;
+		return z[1][isamp];
 	} else {
-		// dB's reference is 1.
-		return valsq == 0.0 ? -300.0 : 10.0 * log10 (valsq);
+		// dB's
+		return 10.0 * log10 (z[1][isamp] + 1e-30);
 	}
 	return NUMundefined;
 }
@@ -169,19 +168,20 @@ void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, dou
 }
 
 
-void Cepstrum_getMaximumAndQuefrency (Cepstrum me, double lowestQuefrency, double highestQuefrency, int interpolation, double *peakdB, double *quefrency) {
+void Cepstrum_getMaximumAndQuefrency (Cepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *peakdB, double *quefrency) {
 	*peakdB = *quefrency = NUMundefined;
 	autoCepstrum thee = Data_copy (me);
+	double lowestQuefrency = 1 / pitchCeiling, highestQuefrency = 1 / pitchFloor;
 	for (long i = 1; i <= my nx; i++) {
 		thy z[1][i] = my v_getValueAtSample (i, 1, 0); // 10 log val^2
 	}
 	Vector_getMaximumAndX ((Vector) thee.peek(), lowestQuefrency, highestQuefrency, 1, interpolation, peakdB, quefrency);
 }
 
-double Cepstrum_getPeakProminence (Cepstrum me, double search_lowestQuefrency, double search_highestQuefrency, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak) {
+double Cepstrum_getPeakProminence (Cepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak) {
 	double slope, intercept, quefrency, peakdB;
 	Cepstrum_fitTiltLine (me, fit_lowestFrequency, fit_highestFrequency, &slope, &intercept, fitmethod);
-	Cepstrum_getMaximumAndQuefrency (me, search_lowestQuefrency, search_highestQuefrency, interpolation, &peakdB, &quefrency);
+	Cepstrum_getMaximumAndQuefrency (me, pitchFloor, pitchCeiling, interpolation, &peakdB, &quefrency);
 	if (qpeak != NULL) {
 		*qpeak = quefrency;
 	}

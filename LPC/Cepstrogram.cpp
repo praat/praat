@@ -30,6 +30,10 @@
 #include "Sound_and_Spectrum.h"
 #include "Sound_extensions.h"
 
+#define TOLOG(x) ((1 / NUMln10) * log ((x) + 1e-30))
+#define TO10LOG(x) ((10 / NUMln10) * log ((x) + 1e-30))
+#define FROMLOG(x) (exp ((x) * (NUMln10 / 10.0)) - 1e-30)
+
 Thing_implement (Cepstrogram, Matrix, 2);
 
 Cepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
@@ -56,9 +60,10 @@ void Cepstrogram_paint (Cepstrogram me, Graphics g, double tmin, double tmax, do
 	double min = 1e38, max = -min;
 	for (long i = 1; i <= my ny; i++) {
 		for (long j = 1; j <= my nx; j++) {
-			double val = thy z[i][j] = 20 * log10 (fabs (my z[i][j]));
+			double val = TO10LOG (my z[i][j]);
 			min = val < min ? val : min;
 			max = val > max ? val : max;
+			thy z[i][j] = val;
 		}
 	}
 	if (dBmaximum <= dBminimum) {
@@ -85,7 +90,7 @@ void Cepstrogram_paint (Cepstrogram me, Graphics g, double tmin, double tmax, do
 	}
 }
 
-Table Cepstrogram_to_Table_cpp (Cepstrogram me, double lowestQuefrency, double highestQuefrency, int interpolation, double qstartFit, double qendFit, int method) {
+Table Cepstrogram_to_Table_cpp (Cepstrogram me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int method) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my nx, L"time quefrency cpp f0");
 		autoCepstrum him = Cepstrum_create (my ymin, my ymax, my ny);
@@ -93,12 +98,12 @@ Table Cepstrogram_to_Table_cpp (Cepstrogram me, double lowestQuefrency, double h
 			for (long j = 1; j <= my ny; j++) {
 				his z[1][j] = my z[j][i];
 			}
-			double qpeak, cpp = Cepstrum_getPeakProminence (him.peek(), lowestQuefrency, highestQuefrency, interpolation,
+			double qpeak, cpp = Cepstrum_getPeakProminence (him.peek(), pitchFloor, pitchCeiling, interpolation,
 				qstartFit, qendFit, method, &qpeak);
 			double time = Sampled_indexToX (me, i);
 			Table_setNumericValue (thee.peek(), i, 1, time);
 			Table_setNumericValue (thee.peek(), i, 2, qpeak);
-			Table_setNumericValue (thee.peek(), i, 3, cpp);
+			Table_setNumericValue (thee.peek(), i, 3, cpp); // Cepstrogram_getCPPS depends on this number!!
 			Table_setNumericValue (thee.peek(), i, 4, 1.0 / qpeak);
 		}
 		return thee.transfer();
@@ -124,9 +129,9 @@ static void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, 
 Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
 	try {
 		autoCepstrogram thee = (Cepstrogram) Data_copy (me);
+		// 1. average across time
 		long numberOfFrames = timeAveragingWindow / my dx;
 		if (numberOfFrames > 1) {
-			// 1. average across time
 			if (numberOfFrames % 2 == 0) { // make symmetric
 				numberOfFrames++;
 			}
@@ -134,11 +139,11 @@ Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, doub
 			autoNUMvector<double> qout (1, my nx);
 			for (long iq = 1; iq <= my ny; iq++) {
 				for (long iframe = 1; iframe <= my nx; iframe++) {
-					qin[iframe] = my z[iq][iframe] * my z[iq][iframe];
+					qin[iframe] = TO10LOG (my z[iq][iframe]);
 				}
 				NUMvector_smoothByMovingAverage (qin.peek(), my nx, numberOfFrames, qout.peek());
 				for (long iframe = 1; iframe <= my nx; iframe++) {
-					thy z[iq][iframe] = sqrt (qout[iframe]);
+					thy z[iq][iframe] = FROMLOG (qout[iframe]); // inverse 
 				}
 			}
 		}
@@ -152,11 +157,11 @@ Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, doub
 			autoNUMvector<double> qout (1, thy ny);
 			for (long iframe = 1; iframe <= my nx; iframe++) {
 				for (long iq = 1; iq <= thy ny; iq++) {
-					qin[iq] = thy z[iq][iframe] * thy z[iq][iframe]; //fabs (thy z[iq][iframe]);
+					qin[iq] = TO10LOG (my z[iq][iframe]);
 				}
 				NUMvector_smoothByMovingAverage (qin.peek(), thy ny, numberOfQuefrencyBins, qout.peek());
 				for (long iq = 1; iq <= thy ny; iq++) {
-					thy z[iq][iframe] = sqrt (qout[iq]);
+					thy z[iq][iframe] = FROMLOG (qout[iq]);
 				}
 			}
 		}
@@ -200,8 +205,10 @@ Cepstrogram Matrix_to_Cepstrogram (Matrix me) {
 	}
 }
 
-Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency) {
+Cepstrogram Sound_to_Cepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
+		// minimum analysis window has 3 periods of lowest pitch
+		double analysisWidth = 3  / pitchFloor;
 		double windowDuration = 2 * analysisWidth; /* gaussian window */
 		long nFrames;
 
@@ -248,4 +255,255 @@ Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, dou
 	}
 }
 
+Cepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
+	try {
+		autoNUMfft_Table fftTable;
+		// originalNumberOfSamplesProbablyOdd irrelevant
+		if (my x1 != 0.0) {
+			Melder_throw ("A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, L" Hz.");
+		}
+		long numberOfSamples = my nx - 1;
+		autoCepstrum thee = Cepstrum_create (0, 0.5 / my dx, my nx);
+		NUMfft_Table_init (&fftTable, my nx);
+		autoNUMvector<double> amp (1, my nx);
+		
+		for (long i = 1; i <= my nx; i++) {
+			amp [i] = my v_getValueAtSample (i, 0, 2);
+		}
+		NUMfft_forward (&fftTable, amp.peek());
+		
+		for (long i = 1; i <= my nx; i++) {
+			double val = amp[i] / numberOfSamples;// scaling 1/n because ifft(fft(1))= n;
+			thy z[1][i] = val * val; // power cepstrum
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": not converted to Sound.");
+	}
+}
+
+//       1           2                          nfftdiv2
+//    re   im    re     im                   re      im
+// ((fft[1],0) (fft[2],fft[3]), (,), (,), (fft[nfft], 0))  nfft even
+// ((fft[1],0) (fft[2],fft[3]), (,), (,), (fft[nfft-1], fft[nfft]))  nfft uneven
+static void complexfftoutput_to_power (double *fft, long nfft, double *dbs, bool to_db) {
+	double valsq = fft[1] * fft[1];
+	dbs[1] = to_db ? TOLOG (valsq) : valsq;
+	long nfftdiv2p1 = (nfft + 2) / 2;
+	long nend = nfft % 2 == 0 ? nfftdiv2p1 : nfftdiv2p1 + 1;
+	for (long i = 2; i < nend; i++) {
+		double re = fft[i + i - 2], im = fft[i + i - 1];
+		valsq = re * re + im * im;
+		dbs[i] = to_db ? TOLOG (valsq) : valsq;
+	}
+	if (nfft % 2 == 0) {
+		valsq = fft[nfft] * fft[nfft];
+		dbs[nfftdiv2p1] = to_db ? TOLOG (valsq) : valsq;
+	}
+}
+
+
+Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double minimumPitch, double dt) {
+	try {
+		// minimum analysis window has 3 periods of lowest pitch
+		double analysisWidth = 3  / minimumPitch;
+		if (analysisWidth > my dx * my nx) {
+			analysisWidth = my dx * my nx;
+		}
+		double t1, samplingFrequency = 1 / my dx;
+		autoSound thee;
+		if (samplingFrequency > 30000) {
+			samplingFrequency = samplingFrequency / 2;
+			thee.reset (Sound_resample (me, samplingFrequency, 1));
+		} else {
+			thee.reset (Data_copy (me));
+		}
+		// pre-emphasis with fixed coefficient 0.9
+		for (long i = thy nx; i > 1; i--) {
+			thy z[1][i] -= 0.9 * thy z[1][i - 1];
+		}
+		long nosInWindow = analysisWidth * samplingFrequency, nFrames;
+		if (nosInWindow < 8) {
+			Melder_throw ("Analysis window too short.");
+		}
+		Sampled_shortTermAnalysis (thee.peek(), analysisWidth, dt, & nFrames, & t1);
+		autoNUMvector<double> hamming (1, nosInWindow);
+		for (long i = 1; i <= nosInWindow; i++) {
+			hamming[i] = 0.54 -0.46 * cos(2 * NUMpi * (i - 1) / (nosInWindow - 1));
+		}
+		long nfft = 8; // minimum possible
+		while (nfft < nosInWindow) { nfft *= 2; }
+		long nfftdiv2 = nfft / 2, nfftdiv4 = nfft / 4;
+		autoNUMvector<double> fftbuf (1, nfft); // "complex" array
+		autoNUMvector<double> spectrum (1, nfftdiv2 + 1); // +1 needed 
+		autoNUMvector<double> cepstrum (1, nfftdiv4 + 1); //
+		autoNUMfft_Table fftTable1, fftTable2;
+		NUMfft_Table_init (&fftTable1, nfft); // sound to spectrum
+		NUMfft_Table_init (&fftTable2, nfftdiv2); // spectrum to cepstrum
+		
+		double qmin = 0, qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv4 + 1), q1 = 0;
+		autoCepstrogram him = Cepstrogram_create (my xmin, my xmax, nFrames, dt, t1, qmin, qmax, nfftdiv4, dq, q1);
+		
+		autoMelderProgress progress (L"Cepstrogram analysis");
+		
+		for (long iframe = 1; iframe <= nFrames; iframe++) {
+			double tbegin = t1 + (iframe - 1) * dt - analysisWidth / 2;
+			tbegin = tbegin < thy xmin ? thy xmin : tbegin;
+			long istart = Sampled_xToIndex (thee.peek(), tbegin);
+			istart = istart < 1 ? 1 : istart;
+			long iend = istart + nosInWindow - 1;
+			iend = iend > thy nx ? thy nx : iend;
+			for (long i = 1; i <= nosInWindow; i++) {
+				fftbuf[i] = thy z[1][istart + i - 1] * hamming[i];
+			}
+			for (long i = nosInWindow + 1; i <= nfft; i++) { 
+				fftbuf[i] = 0;
+			}
+			NUMfft_forward (&fftTable1, fftbuf.peek());
+			complexfftoutput_to_power (fftbuf.peek(), nfft, spectrum.peek(), true); // 10log10(|fft|^2)
+			// subtract average
+			double specmean = spectrum[1];
+			for (long i = 2; i <= nfftdiv2 + 1; i++) {
+				specmean += spectrum[i];
+			}
+			specmean /= nfftdiv2 + 1;
+			for (long i = 1; i <= nfftdiv2 + 1; i++) {
+				spectrum[i] -= specmean;
+			}
+			
+			/* In fact the spectrum has nfft/2 + 1 components but we, just as Hillenbrand, forget about the extra
+			 * element and just proceed as if the power spectrum has a power of 2 elements
+			 * 
+			 fftbuf[1] = spectrum[1]
+			 for (long i = 2; i < nfftdiv2 + 1; i++) {
+				 fftbuf[i+i-2] = spectrum[i];
+				 fftbuf[i+i-1] = 0;
+				}
+			fftbuf[nfft] = spectrum[nfftdiv2 + 1];
+			NUMfft_backward (&fftTable1, fftbuf.peek());
+			for (long i = 1; i <= nfftdiv2 + 1; i++) {
+				his z[i][iframe] = fftbuf[i];
+			}
+
+			 */
+			NUMfft_forward (&fftTable2, spectrum.peek());
+			complexfftoutput_to_power (spectrum.peek(), nfftdiv2, cepstrum.peek(), false); // |fft|^2
+			for (long i = 1; i <= nfftdiv4; i++) {
+				his z[i][iframe] = cepstrum[i];
+			}
+			if ((iframe % 10) == 1) {
+				Melder_progress ((double) iframe / nFrames, L"Cepstrogram analysis of frame ",
+					 Melder_integer (iframe), L" out of ", Melder_integer (nFrames), L".");
+			}
+		}
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Cepstrogram created.");
+	}
+}
+
+
+Cepstrogram Sound_to_Cepstrogram_hillenbrandw (Sound me, double minimumPitch, double dt) {
+	try {
+		// minimum analysis window has 3 periods of lowest pitch
+		double analysisWidth = 3  / minimumPitch;
+		if (analysisWidth > my dx * my nx) {
+			analysisWidth = my dx * my nx;
+		}
+		double t1, samplingFrequency = 1 / my dx;
+		autoSound thee;
+		if (samplingFrequency > 30000) {
+			samplingFrequency = samplingFrequency / 2;
+			thee.reset (Sound_resample (me, samplingFrequency, 1));
+		} else {
+			thee.reset (Data_copy (me));
+		}
+		// pre-emphasis with fixed coefficient 0.9
+		for (long i = thy nx; i > 1; i--) {
+			thy z[1][i] -= 0.9 * thy z[1][i - 1];
+		}
+		long nosInWindow = analysisWidth * samplingFrequency, nFrames;
+		if (nosInWindow < 8) {
+			Melder_throw ("Analysis window too short.");
+		}
+		Sampled_shortTermAnalysis (thee.peek(), analysisWidth, dt, & nFrames, & t1);
+		autoNUMvector<double> hamming (1, nosInWindow);
+		for (long i = 1; i <= nosInWindow; i++) {
+			hamming[i] = 0.54 -0.46 * cos(2 * NUMpi * (i - 1) / (nosInWindow - 1));
+		}
+		long nfft = 8; // minimum possible
+		while (nfft < nosInWindow) { nfft *= 2; }
+		long nfftdiv2 = nfft / 2;
+		autoNUMvector<double> fftbuf (1, nfft); // "complex" array
+		autoNUMvector<double> spectrum (1, nfftdiv2 + 1); // +1 needed 
+		autoNUMfft_Table fftTable;
+		NUMfft_Table_init (&fftTable, nfft); // sound to spectrum
+		
+		double qmin = 0, qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1), q1 = 0;
+		autoCepstrogram him = Cepstrogram_create (my xmin, my xmax, nFrames, dt, t1, qmin, qmax, nfftdiv2+1, dq, q1);
+		
+		autoMelderProgress progress (L"Cepstrogram analysis");
+		
+		for (long iframe = 1; iframe <= nFrames; iframe++) {
+			double tbegin = t1 + (iframe - 1) * dt - analysisWidth / 2;
+			tbegin = tbegin < thy xmin ? thy xmin : tbegin;
+			long istart = Sampled_xToIndex (thee.peek(), tbegin);
+			istart = istart < 1 ? 1 : istart;
+			long iend = istart + nosInWindow - 1;
+			iend = iend > thy nx ? thy nx : iend;
+			for (long i = 1; i <= nosInWindow; i++) {
+				fftbuf[i] = thy z[1][istart + i - 1] * hamming[i];
+			}
+			for (long i = nosInWindow + 1; i <= nfft; i++) { 
+				fftbuf[i] = 0;
+			}
+			NUMfft_forward (&fftTable, fftbuf.peek());
+			complexfftoutput_to_power (fftbuf.peek(), nfft, spectrum.peek(), true); // log10(|fft|^2)
+			// subtract average
+			double specmean = spectrum[1];
+			for (long i = 2; i <= nfftdiv2 + 1; i++) {
+				specmean += spectrum[i];
+			}
+			specmean /= nfftdiv2 + 1;
+			for (long i = 1; i <= nfftdiv2 + 1; i++) {
+				spectrum[i] -= specmean;
+			}
+			/*
+			 * Here we diverge from Hillenbrand as he takes the fft of half of the spectral values.
+			 * H. forgets that the actual spectrum has nfft/2+1 values. Thefore, we take the inverse
+			 * transform because this keeps the number of samples a power of 2.
+			 * At the same time this results in twice as much numbers in the quefrency domain, i.e. we end with nfft/2+1
+			 * numbers while H. has only nfft/4!
+			 */
+			fftbuf[1] = spectrum[1];
+			for (long i = 2; i < nfftdiv2 + 1; i++) {
+				fftbuf[i+i-2] = spectrum[i];
+				fftbuf[i+i-1] = 0;
+			}
+			fftbuf[nfft] = spectrum[nfftdiv2 + 1];
+			NUMfft_backward (&fftTable, fftbuf.peek());
+			for (long i = 1; i <= nfftdiv2 + 1; i++) {
+				his z[i][iframe] = fftbuf[i] * fftbuf[i];
+			}
+			if ((iframe % 10) == 1) {
+				Melder_progress ((double) iframe / nFrames, L"Cepstrogram analysis of frame ",
+					 Melder_integer (iframe), L" out of ", Melder_integer (nFrames), L".");
+			}
+		}
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Cepstrogram created.");
+	}
+}
+
+double Cepstrogram_getCPPS (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int fitMethod) {
+	try {
+		autoCepstrogram smooth = Cepstrogram_smooth (me, timeAveragingWindow, quefrencyAveragingWindow);
+		autoTable table = Cepstrogram_to_Table_cpp (smooth.peek(), pitchFloor, pitchCeiling, interpolation, qstartFit, qendFit, fitMethod);
+		double cpps = Table_getMean (table.peek(), 3);
+		return cpps;
+	} catch (MelderError) {
+		Melder_throw (me, ": no CPPS value calculated.");
+	}
+}
 /* End of file Cepstrogram.cpp */
