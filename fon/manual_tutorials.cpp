@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130513)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130530)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.51# (30 May 2013)")
+LIST_ITEM (L"\\bu Sound window: ##Extract selected sound for overlap...#.")
 NORMAL (L"##5.3.49# (13 May 2013)")
 LIST_ITEM (L"\\bu TextGrid window: alignment of the sound and the annotation in an interval, via Espeak.")
 LIST_ITEM (L"\\bu Scripting: repaired a bug introduced in 5.3.32 that could cause very slow running of scripts.")

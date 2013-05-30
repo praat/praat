@@ -173,6 +173,24 @@ static void menu_cb_ExtractSelectedSound_windowed (EDITOR_ARGS) {
 	EDITOR_END
 }
 
+static void menu_cb_ExtractSelectedSoundForOverlap (EDITOR_ARGS) {
+	EDITOR_IAM (TimeSoundEditor);
+	EDITOR_FORM (L"Extract selected sound for overlap)", 0)
+		WORD (L"Name", L"slice")
+		POSITIVE (L"Overlap (s)", my default_extract_overlap ())
+	EDITOR_OK
+		SET_REAL (L"Overlap", my pref_extract_overlap ())
+	EDITOR_DO
+		Sound sound = my d_sound.data;
+		Melder_assert (sound != NULL);
+		my pref_extract_overlap () = GET_REAL (L"Overlap");
+		autoSound extract = Sound_extractPartForOverlap (sound, my d_startSelection, my d_endSelection,
+			my pref_extract_overlap ());
+		Thing_setName (extract.peek(), GET_STRING (L"Name"));
+		my broadcastPublication (extract.transfer());
+	EDITOR_END
+}
+
 static void do_write (TimeSoundEditor me, MelderFile file, int format, int numberOfBitsPersamplePoint) {
 	if (my d_startSelection >= my d_endSelection)
 		Melder_throw ("No samples selected.");
@@ -297,6 +315,7 @@ void structTimeSoundEditor :: v_createMenuItems_file_extract (EditorMenu menu) {
 			publishWindowButton = EditorMenu_addCommand (menu, L"Extract selected sound (windowed)...", 0, menu_cb_ExtractSelectedSound_windowed);
 				EditorMenu_addCommand (menu, L"Extract windowed sound selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
 				EditorMenu_addCommand (menu, L"Extract windowed selection...", Editor_HIDDEN, menu_cb_ExtractSelectedSound_windowed);
+			publishOverlapButton = EditorMenu_addCommand (menu, L"Extract selected sound for overlap...", 0, menu_cb_ExtractSelectedSoundForOverlap);
 		}
 	}
 }
@@ -410,6 +429,7 @@ void structTimeSoundEditor :: v_updateMenuItems_file () {
 		publishButton -> f_setSensitive (selectedSamples != 0);
 		publishPreserveButton -> f_setSensitive (selectedSamples != 0);
 		if (publishWindowButton) publishWindowButton -> f_setSensitive (selectedSamples != 0);
+		if (publishOverlapButton) publishOverlapButton -> f_setSensitive (selectedSamples != 0);
 	}
 	writeWavButton -> f_setSensitive (selectedSamples != 0);
 	if (d_saveAs24BitWavButton)

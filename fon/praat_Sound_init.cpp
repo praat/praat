@@ -774,6 +774,21 @@ DO
 	}
 END
 
+FORM (Sound_extractPartForOverlap, L"Sound: Extract part for overlap", 0)
+	REAL (L"left Time range (s)", L"0")
+	REAL (L"right Time range (s)", L"0.1")
+	POSITIVE (L"Overlap (s)", L"0.01")
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		autoSound thee = Sound_extractPartForOverlap (me,
+			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_REAL (L"Overlap"));
+		praat_new (thee.transfer(), my name, L"_part");
+	}
+END
+
 DIRECT (Sound_extractRightChannel)
 	LOOP {
 		iam (Sound);
@@ -2541,6 +2556,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, L"Extract right channel", 0, praat_HIDDEN + praat_DEPTH_1, DO_Sound_extractRightChannel);   // deprecated 2010
 		praat_addAction1 (classSound, 0, L"Extract one channel...", 0, 1, DO_Sound_extractChannel);
 		praat_addAction1 (classSound, 0, L"Extract part...", 0, 1, DO_Sound_extractPart);
+		praat_addAction1 (classSound, 0, L"Extract part for overlap...", 0, 1, DO_Sound_extractPartForOverlap);
 		praat_addAction1 (classSound, 0, L"Resample...", 0, 1, DO_Sound_resample);
 		praat_addAction1 (classSound, 0, L"-- enhance --", 0, 1, 0);
 		praat_addAction1 (classSound, 0, L"Lengthen (overlap-add)...", 0, 1, DO_Sound_lengthen_overlapAdd);

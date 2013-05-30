@@ -844,7 +844,7 @@ TAG (L"##besselI (%n, %x)")
 TAG (L"##besselK (%n, %x)")
 MAN_END
 
-MAN_BEGIN (L"Formulas 5. String functions", L"ppgb", 20130421)
+MAN_BEGIN (L"Formulas 5. String functions", L"ppgb", 20130522)
 INTRO (L"String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
@@ -902,7 +902,8 @@ TAG (L"##replace_regex\\$  (a\\$ , b\\$ , c\\$ , n)")
 DEFINITION (L"gives a string that is like %%a\\$ %, but where (at most %n) substrings that match the @@regular expressions|regular expression@ %%b\\$ % "
 	"are replaced with the expression %%c\\$ %. After")
 		CODE2 (L"s\\$  = replace_regex\\$  (\"hello\", \".\", \"&&\", 0)")
-DEFINITION (L"the variable %%s\\$ % contains the string \"hheelllloo\". If there is no match, the outcome is the empty string \"\". After")
+DEFINITION (L"the variable %%s\\$ % contains the string \"hheelllloo\". If there is no match, "
+	"the outcome is the original string a\\$ . After")
 		CODE2 (L"s\\$  = replace_regex\\$  (\"hello\", \".\", \"&&\", 1)")
 DEFINITION (L"the variable %%s\\$ % contains the string \"hhello\". The number %n determines the maximum number of text pieces "
 	"that can be replaced. If %n is 0, all matching text pieces are replaced.")

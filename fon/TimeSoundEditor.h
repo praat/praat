@@ -2,7 +2,7 @@
 #define _TimeSoundEditor_h_
 /* TimeSoundEditor.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012, 2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 			bool d_ownSound;
 			struct TimeSoundEditor_sound d_sound;
 			struct { LongSound data; } d_longSound;
-			GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton;
+			GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 			GuiMenuItem writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 	// messages:
 		public:

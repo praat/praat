@@ -502,8 +502,9 @@ static void gui_cb_list (void *void_me, GuiListEvent event) {
 			long readableClassId = ((Thing) theCurrentPraatObjects -> list [IOBJECT]. object) -> classInfo -> sequentialUniqueIdOfReadableClass;
 			theCurrentPraatObjects -> numberOfSelected [readableClassId] ++;
 			Melder_assert (theCurrentPraatObjects -> numberOfSelected [readableClassId] > 0);
-			UiHistory_write (first ? L"\nselect " : L"\nplus ");
-			UiHistory_write (FULL_NAME);
+			UiHistory_write (first ? L"\nselectObject (\"" : L"\nplusObject (\"");
+			UiHistory_write_expandQuotes (FULL_NAME);
+			UiHistory_write (L"\")");
 			first = FALSE;
 			theCurrentPraatObjects -> totalSelection += 1;
 		}

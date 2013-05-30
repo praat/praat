@@ -30,6 +30,7 @@ prefs_begin (TimeSoundEditor)
 		prefs_add_enum             (TimeSoundEditor, extract_windowShape,    1, kSound_windowShape, DEFAULT)
 		prefs_add_double           (TimeSoundEditor, extract_relativeWidth,  1, L"1.0")
 		prefs_add_bool             (TimeSoundEditor, extract_preserveTimes,  1, true)
+		prefs_add_double           (TimeSoundEditor, extract_overlap,        1, L"0.01")
 prefs_end (TimeSoundEditor)
 
 /* End of file TimeSoundEditor_prefs.h */

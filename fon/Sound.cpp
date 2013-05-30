@@ -1095,6 +1095,43 @@ Sound Sound_extractPart (Sound me, double t1, double t2, enum kSound_windowShape
 	}
 }
 
+Sound Sound_extractPartForOverlap (Sound me, double t1, double t2, double overlap) {
+	try {
+		if (t1 == t2) { t1 = my xmin; t2 = my xmax; };   // autowindow
+		if (overlap > 0.0) {
+			double margin = 0.5 * overlap;
+			t1 -= margin;
+			t2 += margin;
+		}
+		if (t1 < my xmin) t1 = my xmin;   // clip to my time domain
+		if (t2 > my xmax) t2 = my xmax;
+		/*
+		 * Determine index range. We use all the real or virtual samples that fit within [t1..t2].
+		 */
+		long ix1 = 1 + (long) ceil ((t1 - my x1) / my dx);
+		long ix2 = 1 + (long) floor ((t2 - my x1) / my dx);
+		if (ix2 < ix1) Melder_throw ("Extracted Sound would contain no samples.");
+		/*
+		 * Create sound.
+		 */
+		autoSound thee = Sound_create (my ny, t1, t2, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx);
+		thy xmin = 0.0;
+		thy xmax -= t1;
+		thy x1 -= t1;
+		/*
+		 * Copy only *real* samples into the new sound.
+		 * The *virtual* samples will remain at zero.
+		 */
+		for (long channel = 1; channel <= my ny; channel ++) {
+			NUMvector_copyElements (my z [channel], thy z [channel] + 1 - ix1,
+					( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": part not extracted.");
+	}
+}
+
 void Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, double formant [], double bandwidth [])
 {
