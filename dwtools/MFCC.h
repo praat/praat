@@ -4,7 +4,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,5 +54,7 @@ TableOfReal MFCC_to_TableOfReal (MFCC me, bool includeC0);
 Sound MFCC_to_Sound (MFCC me);
 Sound MFCCs_crossCorrelate (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 Sound MFCCs_convolve (MFCC me, MFCC thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+
+Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy);
 
 #endif /* _MFCC_h_ */

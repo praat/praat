@@ -57,7 +57,6 @@ Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, doub
 Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency);
 
 Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double analysisWidth, double dt);
-Cepstrogram Sound_to_Cepstrogram_hillenbrandw (Sound me, double analysisWidth, double dt);
 
 Table Cepstrogram_to_Table_cpp (Cepstrogram me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int method);
 Cepstrum Cepstrogram_to_Cepstrum_slice (Cepstrogram me, double time);

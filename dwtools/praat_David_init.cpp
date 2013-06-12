@@ -3870,6 +3870,17 @@ DO
 	}
 END
 
+FORM (MFCC_to_Matrix_features, L"MFCC: To Matrix (features)", L"")
+	POSITIVE (L"Window length (s)", L"0.025")
+	BOOLEAN (L"Include energy", 0)
+	OK
+DO
+	LOOP {
+		iam (MFCC);
+		praat_new (MFCC_to_Matrix_features (me, GET_REAL (L"Window length"), GET_INTEGER (L"Include energy")), my name);
+	}
+END
+
 FORM (MFCCs_crossCorrelate, L"MFCC & MFCC: Cross-correlate", 0)
 	RADIO_ENUM (L"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
 	RADIO_ENUM (L"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
@@ -7527,6 +7538,7 @@ void praat_uvafon_David_init () {
 	praat_CC_init (classMFCC);
 	praat_addAction1 (classMFCC, 0, L"To MelFilter...", 0, 0, DO_MFCC_to_MelFilter);
 	praat_addAction1 (classMFCC, 0, L"To TableOfReal...", 0, 0, DO_MFCC_to_TableOfReal);
+	praat_addAction1 (classMFCC, 0, L"To Matrix (features)...", 0, praat_HIDDEN, DO_MFCC_to_Matrix_features);
 	praat_addAction1 (classMFCC, 0, L"To Sound", 0, praat_HIDDEN, DO_MFCC_to_Sound);
 	praat_addAction1 (classMFCC, 2, L"Cross-correlate...", 0, 0, DO_MFCCs_crossCorrelate);
 	praat_addAction1 (classMFCC, 2, L"Convolve...", 0, 0, DO_MFCCs_convolve);

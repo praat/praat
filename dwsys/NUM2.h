@@ -1263,9 +1263,33 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 void NUMfitExponentialDecayWithKnownVerticalOffset (double *x, double *y, long numberOfPoints, double yOffset, double *a, double *y0, int method);
 
 // Fit the line y= ax+b
-// method == 0 then theil, else LS
-void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept,int method);
-void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept);
+void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method);
+/* method
+ * 1 least squares
+ * 2 rubust incomplete Theil
+ * 3 robust complete Theil (slow O(numberOfPoints^2))
+ */
+
+void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept, bool incompleteMethod);
+/*
+ * Preconditions:
+ *		all x[i] must be different, i.e. x[i] != x[j] for all i = 1..(numberOfPoints - 1), j = (i+1) ..numberOfPoints
+ * Algorithm:
+ * Theils robust line fit method:
+ * 1. Use all combination of pairs (x[i],y[i]), (x[j],y[j]) to calculate an intercept m[k] as
+ *    m[k] = (y[j] - y[i]) / (x[j] - x[i]).
+ *    There will be (numberOfPoints - 1) * numberOfPoints / 2 numbers m[k].
+ * 2. Take the median value m of all the m[k].
+ * 3. Calculate the numberOfPoints intercepts b[i] as b[i] = y[i] - m * x[i]
+ * 4. Take the median value b of all the b[i] values
+ * 
+ * If incompleteMethod we use Theil's incomplete method to reduce the number of combinations.
+ * I.e. split the data in two equal parts at n2 = numberOfPoints / 2  and then calculate the numberOfPoints/2 intercepts m[i] as
+ *   m[i] = (y[n2+i] - y[i]) / (x[n2 + i] - x[i]).
+ * The rest proceeds as outlined above
+ */
+
+
 void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double *intercept);
 
 /* The binomial distribution has the form,

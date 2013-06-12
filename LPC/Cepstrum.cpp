@@ -136,35 +136,70 @@ void Cepstrum_drawTiltLine (Cepstrum me, Graphics g, double qmin, double qmax, d
 
 	double a, intercept;
 	Cepstrum_fitTiltLine (me, qstart, qend, &a, &intercept, method);
-
+	/*
+	 * Don't draw part outside window
+	 */
+	
 	double y1 = a * qstart + intercept, y2 = a * qend + intercept;
 	double lineWidth =  Graphics_inqLineWidth (g);
 	Graphics_setLineWidth (g, 2);
-	Graphics_line (g, qstart, y1, qend, y2);
+	if (y1 >= dBminimum && y2 >= dBminimum) {
+		Graphics_line (g, qstart, y1, qend, y2);
+	} else if (y1 < dBminimum) {
+		qstart = (dBminimum - intercept) / a;
+		Graphics_line (g, qstart, dBminimum, qend, y2);
+	} else if (y2 < dBminimum) {
+		qend = (dBminimum - intercept) / a;
+		Graphics_line (g, qstart, y1, qend, dBminimum);
+	} else {
+		// don't draw anything below lower limit?
+	}
 	Graphics_setLineWidth (g, lineWidth);
 	Graphics_unsetInner (g);
 }
 
 /* Fit line y = ax+b in [qmin,qmax] interval */
 void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, double *intercept, int method) {
-	if (qmax <= qmin) {
-		qmin = my xmin; qmax = my xmax;
-	}
+	try {
+		if (qmax <= qmin) {
+			qmin = my xmin; qmax = my xmax;
+		}
 
-	long imin, imax;
-	if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
-		return;
+		long imin, imax;
+		if (! Matrix_getWindowSamplesX (me, qmin, qmax, & imin, & imax)) {
+			return;
+		}
+		long numberOfPoints = imax - imin + 1;
+		autoNUMvector<double> y (1, numberOfPoints);
+		autoNUMvector<double> x (1, numberOfPoints);
+		for (long i = 1; i <= numberOfPoints; i++) {
+			long isamp = imin + i - 1;
+			x[i] = my x1 + (isamp - 1) * my dx;
+			y[i] = my v_getValueAtSample (isamp, 1, 0);
+		}
+		if (method == 2) { // try local maxima first
+			autoNUMvector<double> ym (1, numberOfPoints / 2 + 1);
+			autoNUMvector<double> xm (1, numberOfPoints / 2 + 1);
+			long numberOfLocalPeaks = 0;
+			// forget y[1] if y[2]<y[1] and y[n] if y[n-1]<y[n] !
+			for (long i = 2; i <= numberOfPoints; i++) {
+				if (y[i - 1] <= y[i] && y[i] > y[i + 1]) {
+					ym[++numberOfLocalPeaks] = y[i];
+					xm[numberOfLocalPeaks] = x[i];
+				}
+			}
+			if (numberOfLocalPeaks > numberOfPoints / 10) {
+				for (long i = 1; i <= numberOfLocalPeaks; i++) {
+					x[i] = xm[i]; y[i] = ym[i];
+				}
+				numberOfPoints = numberOfLocalPeaks;
+			}
+		}
+		// fit a line through (x,y)'s
+		NUMlineFit (x.peek(), y.peek(), numberOfPoints, a, intercept, method);
+	} catch (MelderError) {
+		Melder_throw (me, ": couldn't fit a line.");
 	}
-	long numberOfPoints = imax - imin + 1;
-	autoNUMvector<double> y (1, numberOfPoints);
-	autoNUMvector<double> x (1, numberOfPoints);
-	for (long i = 1; i <= numberOfPoints; i++) {
-		long isamp = imin + i - 1;
-		x[i] = my x1 + (isamp - 1) * my dx;
-		y[i] = my v_getValueAtSample (isamp, 1, 0);
-	}
-	// fit a line through (x,y)'s
-	NUMlineFit(x.peek(), y.peek(), numberOfPoints, a, intercept, method);
 }
 
 

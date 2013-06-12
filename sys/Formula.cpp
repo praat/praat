@@ -2396,7 +2396,13 @@ static void do_do (void) {
 		Melder_throw ("The first argument of the function \"do\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), ".");
 	const wchar_t *command = stack [0]. string;
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
+		autoMelderString valueString;
+		MelderString_empty (& valueString);
+		autoMelderDivertInfo divert (& valueString);
+		MelderString_appendCharacter (& valueString, 1);
 		Editor_doMenuCommand ((Editor) praatP. editor, command, numberOfArguments, & stack [0], NULL, theInterpreter);
+		pushNumber (Melder_atof (valueString.string));
+		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		(wcsnequ (command, L"Save ", 5) || wcsnequ (command, L"Write ", 6) || wcsnequ (command, L"Append ", 7) || wcsequ (command, L"Quit")))
 	{
@@ -2444,7 +2450,12 @@ static void do_doStr (void) {
 		Melder_throw ("The first argument of the function \"do$\" has to be a string, namely a menu command, and not ", Stackel_whichText (& stack [0]), ".");
 	const wchar_t *command = stack [0]. string;
 	if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
+		static MelderString info;
+		MelderString_empty (& info);
+		autoMelderDivertInfo divert (& info);
 		Editor_doMenuCommand ((Editor) praatP. editor, command, numberOfArguments, & stack [0], NULL, theInterpreter);
+		pushString (Melder_wcsdup (info.string));
+		return;
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		(wcsnequ (command, L"Save ", 5) || wcsnequ (command, L"Write ", 6) || wcsnequ (command, L"Append ", 7) || wcsequ (command, L"Quit")))
 	{

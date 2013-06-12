@@ -2629,7 +2629,7 @@ long NUMgetIndexFromProbability (double *probs, long nprobs, double p) {
 
 // straight line fitting
 
-void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept) {
+void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept, bool incompleteMethod) {
 	try {
 		/* Theil's incomplete method:
 		 * Split (x[i],y[i]) as
@@ -2638,19 +2638,42 @@ void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, dou
 		 * m = median (m[i])
 		 * b = median(y[i]-m*x[i])
 		 */
-		autoNUMvector<double> mbs (1, numberOfPoints);
-		long n2 = numberOfPoints / 2;
-		long n = numberOfPoints % 2 == 1 ? n2 + 1 : n2;
-		for (long i = 1; i <= n2; i++) {
-			mbs[i] = (y[n + i] - y[i]) / (x[n + i] - x[i]);
+		if (numberOfPoints <= 0) {
+			*m = *intercept = NUMundefined;
+		} else if (numberOfPoints == 1) {
+			*intercept = y[1];
+			*m = 0;
+		} else if (numberOfPoints == 2) {
+			*m = (y[2] - y[1]) / (x[2] - x[1]);
+			*intercept = y[1] - *m * x[1];
+		} else {
+			long numberOfCombinations;
+			autoNUMvector<double> mbs;
+			if (incompleteMethod) { // incomplete method
+				numberOfCombinations = numberOfPoints / 2;
+				mbs.reset (1, numberOfPoints); //
+				long n2 = numberOfPoints % 2 == 1 ? numberOfCombinations + 1 : numberOfCombinations;
+				for (long i = 1; i <= numberOfCombinations; i++) {
+					mbs[i] = (y[n2 + i] - y[i]) / (x[n2 + i] - x[i]);
+				}
+			} else { // use all combinations
+				numberOfCombinations = (numberOfPoints - 1) * numberOfPoints / 2;
+				mbs.reset (1, numberOfCombinations);
+				long index = 0;
+				for (long i = 1; i < numberOfPoints; i++) {
+					for (long j = i + 1; j <= numberOfPoints; j++) {
+						mbs[++index] = (y[j] - y[i]) / (x[j] - x[i]);
+					}
+				}
+			}
+			NUMsort_d (numberOfCombinations, mbs.peek());
+			*m = NUMquantile (numberOfCombinations, mbs.peek(), 0.5);
+			for (long i = 1; i <= numberOfPoints; i++) {
+				mbs[i] = y[i] - *m * x[i];
+			}
+			NUMsort_d (numberOfPoints, mbs.peek());
+			*intercept = NUMquantile (numberOfPoints, mbs.peek(), 0.5);
 		}
-		NUMsort_d (n2, mbs.peek());
-		*m = NUMquantile (n2, mbs.peek(), 0.5);
-		for (long i = 1; i <= numberOfPoints; i++) {
-			mbs[i] = y[i] - *m * x[i];
-		}
-		NUMsort_d (numberOfPoints, mbs.peek());
-		*intercept = NUMquantile (numberOfPoints, mbs.peek(), 0.5);
 	} catch (MelderError) {
 		Melder_throw ("No line fit (Theil's method)");
 	}
@@ -2686,8 +2709,10 @@ void NUMfitExponentialDecayWithKnownVerticalOffset (double *x, double *y, long n
 		double intercept;
 		if (method == 1) {
 			NUMlineFit_LS (x, logy.peek(), numberOfPoints, a, &intercept);
+		} else if (method == 3) {
+			NUMlineFit_theil (x, logy.peek(), numberOfPoints, a, &intercept, false);
 		} else {
-			NUMlineFit_theil (x, logy.peek(), numberOfPoints, a, &intercept);
+			NUMlineFit_theil (x, logy.peek(), numberOfPoints, a, &intercept, true);
 		}
 		*y0 = exp (intercept);
 	} catch (MelderError) {
@@ -2698,8 +2723,10 @@ void NUMfitExponentialDecayWithKnownVerticalOffset (double *x, double *y, long n
 void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method) {
 	if (method == 1) {
 		NUMlineFit_LS (x, y, numberOfPoints, m, intercept);
+	} else if (method == 3) {
+		NUMlineFit_theil (x, y, numberOfPoints, m, intercept, false);
 	} else {
-		NUMlineFit_theil (x, y, numberOfPoints, m, intercept);
+		NUMlineFit_theil (x, y, numberOfPoints, m, intercept, true);
 	}
 }
 

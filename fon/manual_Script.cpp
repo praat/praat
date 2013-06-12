@@ -936,7 +936,7 @@ TAG (L"##extractNumber (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + 
 DEFINITION (L"looks for a number after the first occurrence of \"Size:\" in the long string. Outcome: 44007. "
 	"This is useful in scripts that try to get information from long reports, as the following script that "
 	"runs in the Sound editor window:")
-		CODE2 (L"report\\$  = do (\"Editor info\")")
+		CODE2 (L"report\\$  = do\\$  (\"Editor info\")")
 		CODE2 (L"maximumFrequency = extractNumber (report\\$ , \"Spectrogram window length:\")")
 TAG (L"##extractWord\\$  (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + newline\\$  + \"Size: 44007\", \"Type:\")")
 DEFINITION (L"looks for a word without spaces after the first occurrence of \"Type:\" in the long string. Outcome: Sound.")

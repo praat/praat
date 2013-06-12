@@ -1,6 +1,6 @@
 /* main_Praat.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,14 +45,18 @@ static void logo (Graphics g) {
 }
 
 int main (int argc, char *argv []) {
-	#if cocoa
-		Melder_setTracing (true);
-	#endif
-	praat_setLogo (130, 80, logo);
-	praat_init ("Praat", argc, argv);
-	INCLUDE_LIBRARY (praat_uvafon_init)
-	INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
-	praat_run ();
+	try {
+		#if cocoa
+			Melder_setTracing (true);
+		#endif
+		praat_setLogo (130, 80, logo);
+		praat_init ("Praat", argc, argv);
+		INCLUDE_LIBRARY (praat_uvafon_init)
+		INCLUDE_LIBRARY (praat_contrib_Ola_KNN_init)
+		praat_run ();
+	} catch (MelderError) {
+		Melder_flushError ("This error message percolated all the way to the top.");   // an attempt to catch Apache errors
+	}
 	return 0;
 }
 

@@ -240,7 +240,7 @@ Cepstrogram Sound_to_Cepstrogram (Sound me, double pitchFloor, double dt, double
 			Vector_subtractMean (sframe.peek());
 			Sounds_multiply (sframe.peek(), window.peek());
 			autoSpectrum spec = Sound_to_Spectrum (sframe.peek(), 1);
-			autoCepstrum cepstrum = Spectrum_to_Cepstrum (spec.peek());   
+			autoCepstrum cepstrum = Spectrum_to_Cepstrum (spec.peek());
 			for (long i = 1; i <= nq; i++) {
 				thy z[i][iframe] = cepstrum -> z[1][i];
 			}
@@ -304,106 +304,6 @@ static void complexfftoutput_to_power (double *fft, long nfft, double *dbs, bool
 
 
 Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double minimumPitch, double dt) {
-	try {
-		// minimum analysis window has 3 periods of lowest pitch
-		double analysisWidth = 3  / minimumPitch;
-		if (analysisWidth > my dx * my nx) {
-			analysisWidth = my dx * my nx;
-		}
-		double t1, samplingFrequency = 1 / my dx;
-		autoSound thee;
-		if (samplingFrequency > 30000) {
-			samplingFrequency = samplingFrequency / 2;
-			thee.reset (Sound_resample (me, samplingFrequency, 1));
-		} else {
-			thee.reset (Data_copy (me));
-		}
-		// pre-emphasis with fixed coefficient 0.9
-		for (long i = thy nx; i > 1; i--) {
-			thy z[1][i] -= 0.9 * thy z[1][i - 1];
-		}
-		long nosInWindow = analysisWidth * samplingFrequency, nFrames;
-		if (nosInWindow < 8) {
-			Melder_throw ("Analysis window too short.");
-		}
-		Sampled_shortTermAnalysis (thee.peek(), analysisWidth, dt, & nFrames, & t1);
-		autoNUMvector<double> hamming (1, nosInWindow);
-		for (long i = 1; i <= nosInWindow; i++) {
-			hamming[i] = 0.54 -0.46 * cos(2 * NUMpi * (i - 1) / (nosInWindow - 1));
-		}
-		long nfft = 8; // minimum possible
-		while (nfft < nosInWindow) { nfft *= 2; }
-		long nfftdiv2 = nfft / 2, nfftdiv4 = nfft / 4;
-		autoNUMvector<double> fftbuf (1, nfft); // "complex" array
-		autoNUMvector<double> spectrum (1, nfftdiv2 + 1); // +1 needed 
-		autoNUMvector<double> cepstrum (1, nfftdiv4 + 1); //
-		autoNUMfft_Table fftTable1, fftTable2;
-		NUMfft_Table_init (&fftTable1, nfft); // sound to spectrum
-		NUMfft_Table_init (&fftTable2, nfftdiv2); // spectrum to cepstrum
-		
-		double qmin = 0, qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv4 + 1), q1 = 0;
-		autoCepstrogram him = Cepstrogram_create (my xmin, my xmax, nFrames, dt, t1, qmin, qmax, nfftdiv4, dq, q1);
-		
-		autoMelderProgress progress (L"Cepstrogram analysis");
-		
-		for (long iframe = 1; iframe <= nFrames; iframe++) {
-			double tbegin = t1 + (iframe - 1) * dt - analysisWidth / 2;
-			tbegin = tbegin < thy xmin ? thy xmin : tbegin;
-			long istart = Sampled_xToIndex (thee.peek(), tbegin);
-			istart = istart < 1 ? 1 : istart;
-			long iend = istart + nosInWindow - 1;
-			iend = iend > thy nx ? thy nx : iend;
-			for (long i = 1; i <= nosInWindow; i++) {
-				fftbuf[i] = thy z[1][istart + i - 1] * hamming[i];
-			}
-			for (long i = nosInWindow + 1; i <= nfft; i++) { 
-				fftbuf[i] = 0;
-			}
-			NUMfft_forward (&fftTable1, fftbuf.peek());
-			complexfftoutput_to_power (fftbuf.peek(), nfft, spectrum.peek(), true); // 10log10(|fft|^2)
-			// subtract average
-			double specmean = spectrum[1];
-			for (long i = 2; i <= nfftdiv2 + 1; i++) {
-				specmean += spectrum[i];
-			}
-			specmean /= nfftdiv2 + 1;
-			for (long i = 1; i <= nfftdiv2 + 1; i++) {
-				spectrum[i] -= specmean;
-			}
-			
-			/* In fact the spectrum has nfft/2 + 1 components but we, just as Hillenbrand, forget about the extra
-			 * element and just proceed as if the power spectrum has a power of 2 elements
-			 * 
-			 fftbuf[1] = spectrum[1]
-			 for (long i = 2; i < nfftdiv2 + 1; i++) {
-				 fftbuf[i+i-2] = spectrum[i];
-				 fftbuf[i+i-1] = 0;
-				}
-			fftbuf[nfft] = spectrum[nfftdiv2 + 1];
-			NUMfft_backward (&fftTable1, fftbuf.peek());
-			for (long i = 1; i <= nfftdiv2 + 1; i++) {
-				his z[i][iframe] = fftbuf[i];
-			}
-
-			 */
-			NUMfft_forward (&fftTable2, spectrum.peek());
-			complexfftoutput_to_power (spectrum.peek(), nfftdiv2, cepstrum.peek(), false); // |fft|^2
-			for (long i = 1; i <= nfftdiv4; i++) {
-				his z[i][iframe] = cepstrum[i];
-			}
-			if ((iframe % 10) == 1) {
-				Melder_progress ((double) iframe / nFrames, L"Cepstrogram analysis of frame ",
-					 Melder_integer (iframe), L" out of ", Melder_integer (nFrames), L".");
-			}
-		}
-		return him.transfer();
-	} catch (MelderError) {
-		Melder_throw (me, ": no Cepstrogram created.");
-	}
-}
-
-
-Cepstrogram Sound_to_Cepstrogram_hillenbrandw (Sound me, double minimumPitch, double dt) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
 		double analysisWidth = 3  / minimumPitch;

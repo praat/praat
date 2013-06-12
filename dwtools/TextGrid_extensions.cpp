@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -661,11 +661,24 @@ void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool prese
 		}
 		for (long iint = 1; iint <= thy intervals -> size; iint++) {
 			autoTextInterval ti = (TextInterval) Data_copy ((Data) thy intervals -> item[iint]);
-			if (not preserveTimes) {
-				ti -> xmin = xmax_previous;
-				xmax_previous = ti -> xmax += time_shift;
+			if (preserveTimes) {
+				Collection_addItem (my intervals, ti.transfer());
+			} else {
+				/* the interval could be so short that if we test ti -> xmin < ti->xmax it might be true
+				 * but after assigning ti->xmin = xmax_previous and ti->xmax += time_shift the test
+				 * ti -> xmin < ti->xmax might be false!
+				 * We want to make sure xmin and xmax are not register variables and therefore force double64 
+				 * by using volatile variables.
+		 		 */
+				volatile double xmin = xmax_previous;
+				volatile double xmax = ti -> xmax + time_shift;
+				if (xmin < xmax) {
+					ti -> xmin = xmin; ti -> xmax = xmax;
+					Collection_addItem (my intervals, ti.transfer());
+					xmax_previous = xmax;
+				}
+				// else don't include interval
             }
-			Collection_addItem (my intervals, ti.transfer());
 		}
 		my xmax = preserveTimes ? thy xmax : xmax_previous;
 	} catch (MelderError) {

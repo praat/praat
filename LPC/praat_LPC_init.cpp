@@ -60,6 +60,7 @@ static const wchar_t *QUERY_BUTTON   = L"Query -";
 
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
+void praat_TimeFunction_modify_init (ClassInfo klas);
 int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 /********************** Cepstrum  ****************************************/
@@ -119,7 +120,8 @@ DO
 		iam (Cepstrum);
 		Cepstrum_drawTiltLine (me, GRAPHICS, GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
 			GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"),
-			GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"), GET_INTEGER (L"Fit method"));
+			GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"), 
+			GET_INTEGER (L"Fit method"));
 	}
 END
 
@@ -146,7 +148,7 @@ DO
 		iam (Cepstrum);
 		double peakdB, quefrency;
 		Cepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
-		Melder_informationReal (peakdB, NULL);
+		Melder_informationReal (peakdB, L" dB");
 	}
 END
 
@@ -249,10 +251,38 @@ DO
 	}
 END
 
+DIRECT (Cepstrogram_getStartQuefrency)
+	LOOP {
+		iam (Cepstrogram);
+		Melder_informationReal (my ymin, L" (s)");
+	}
+END
+
+DIRECT (Cepstrogram_getEndQuefrency)
+	LOOP {
+		iam (Cepstrogram);
+		Melder_informationReal (my ymax, L" (s)");
+	}
+END
+
+DIRECT (Cepstrogram_getNumberOfQuefrencyBins)
+	LOOP {
+		iam (Cepstrogram);
+		Melder_informationReal (my ny, L" quefrency bins");
+	}
+END
+
+DIRECT (Cepstrogram_getQuefrencyStep)
+	LOOP {
+		iam (Cepstrogram);
+		Melder_informationReal (my dy, L" quefrency step (s)");
+	}
+END
+
 FORM (Cepstrogram_getCPPS, L"Cepstrogram: Get CPPS", 0)
 	LABEL (L"", L"Smoothing:")
-	REAL (L"Time averaging window (s)", L"0.01")
-	REAL (L"Quefrency averaging window (s)", L"0.0005")
+	REAL (L"Time averaging window (s)", L"0.001")
+	REAL (L"Quefrency averaging window (s)", L"0.00005")
 	LABEL (L"", L"Peak search:")
 	REAL (L"left Peak search pitch range (Hz)", L"60.0")
 	REAL (L"right Peak search pitch range (Hz)", L"330.0")
@@ -275,10 +305,30 @@ DO
 			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"),
 			GET_INTEGER (L"Interpolation"), GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
 			GET_INTEGER (L"Fit method"));
-		Melder_informationReal (cpps, NULL);
+		Melder_informationReal (cpps, L" dB");
 	}
 END
-	
+
+FORM (Cepstrogram_formula, L"Cepstrogram: Formula", L"")
+	LABEL (L"label", L"Do for all times and quefrencies:")
+	LABEL (L"label", L"   `x' is the time in seconds")
+	LABEL (L"label", L"   `y' is the quefrency in seconds")
+	LABEL (L"label", L"   `self' is the current value")
+	LABEL (L"label", L"   Replace all values with:")
+	TEXTFIELD (L"formula", L"sqrt(self)")
+	OK
+DO
+	LOOP {
+		iam (Cepstrogram);
+		try {
+			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the Cepstrogram may have partially changed
+			throw;
+		}
+	}
+END
 
 FORM (Cepstrogram_to_Cepstrum_slice, L"Cepstrogram: To Cepstrum (slice)", 0)
 	REAL (L"Time (s)", L"0.1")
@@ -626,7 +676,7 @@ FORM (Sound_to_Cepstrogram_hillenbrand, L"Sound: To Cepstrogram (hillenbrand)", 
 DO
 	LOOP {
 		iam (Sound);
-		autoCepstrogram thee = Sound_to_Cepstrogram_hillenbrandw (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"));
+		autoCepstrogram thee = Sound_to_Cepstrogram_hillenbrand (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -926,7 +976,18 @@ void praat_uvafon_LPC_init (void) {
 
 	praat_addAction1 (classCepstrogram, 0, L"Cepstrogram help", 0, 0, DO_Cepstrogram_help);
 	praat_addAction1 (classCepstrogram, 0, L"Paint...", 0, 0, DO_Cepstrogram_paint);
-	praat_addAction1 (classCepstrogram, 0, L"Get CPPS...", 0, 0, DO_Cepstrogram_getCPPS);
+	praat_addAction1 (classCepstrogram, 1, L"Query -", 0, 0, 0);
+		praat_TimeFrameSampled_query_init (classCepstrogram);
+		praat_addAction1 (classCepstrogram, 1, L"Query quefrency domain", 0, 1, 0);
+			praat_addAction1 (classCepstrogram, 1, L"Get start quefrency", 0, 2, DO_Cepstrogram_getStartQuefrency);
+			praat_addAction1 (classCepstrogram, 1, L"Get end quefrency", 0, 2, DO_Cepstrogram_getEndQuefrency);
+		praat_addAction1 (classCepstrogram, 1, L"Query quefrency sampling", 0, 1, 0);
+			praat_addAction1 (classCepstrogram, 1, L"Get number of quefrency bins", 0, 2, DO_Cepstrogram_getNumberOfQuefrencyBins);
+			praat_addAction1 (classCepstrogram, 1, L"Get quefrency step", 0, 2, DO_Cepstrogram_getQuefrencyStep);
+		praat_addAction1 (classCepstrogram, 0, L"Get CPPS...", 0, 1, DO_Cepstrogram_getCPPS);
+	praat_addAction1 (classCepstrogram, 0, L"Modify -", 0, 0, 0);
+		praat_TimeFunction_modify_init (classCepstrogram);
+		praat_addAction1 (classCepstrogram, 0, L"Formula...", 0, 1, DO_Cepstrogram_formula);
 	praat_addAction1 (classCepstrogram, 0, L"To Cepstrum (slice)...", 0, 0, DO_Cepstrogram_to_Cepstrum_slice);
 	praat_addAction1 (classCepstrogram, 0, L"Smooth...", 0, 0, DO_Cepstrogram_smooth);
 	praat_addAction1 (classCepstrogram, 0, L"To Table (peak prominence)...", 0, 0, DO_Cepstrogram_to_Table_cpp);
