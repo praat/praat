@@ -46,7 +46,7 @@ Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 		// Compute complex cepstrum x.
 
 		autoSound x = Spectrum_to_Sound (sx.peek());
-		autoCepstrum thee = Cepstrum_create (0, x -> xmax - x -> xmin, x -> nx);
+		autoCepstrum thee = Cepstrum_create (x -> xmax - x -> xmin, x -> nx);
 		NUMvector_copyElements (x -> z[1], thy z[1], 1, x -> nx);
 		return thee.transfer();
 	} catch (MelderError) {
@@ -54,7 +54,67 @@ Cepstrum Spectrum_to_Cepstrum_cmplx (Spectrum me) {
 	}
 }
 
+PowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me) {
+	try {
+		autoSpectrum dBspectrum = Data_copy (me);
+		double *re = dBspectrum -> z[1], *im = dBspectrum -> z[2];
+		for (long i = 1; i <= dBspectrum -> nx; i ++) {
+			re[i] = log (re[i] * re[i] + im[i] * im[i] + 1e-300);
+			im[i] = 0.0;
+		}
+		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.peek());
+		autoPowerCepstrum thee = PowerCepstrum_create (0.5 / my dx, my nx);
+		for (long i = 1; i <= thy nx; i++) {
+			double val = cepstrum -> z[1][i];
+			thy z[1][i] = val * val;
+		}
+		return thee.transfer ();
+	} catch (MelderError) {
+		Melder_throw (me, ": not converted to Sound.");
+	}
+}
+
 Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
+	try {
+		autoSpectrum dBspectrum = Data_copy (me);
+		double *re = dBspectrum -> z[1], *im = dBspectrum -> z[2];
+		for (long i = 1; i <= dBspectrum -> nx; i++) {
+			re[i] = log (re[i] * re[i] + im[i] * im[i] + 1e-300);
+			im[i] = 0.0;
+		}
+		autoSound cepstrum = Spectrum_to_Sound (dBspectrum.peek());
+		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
+		for (long i = 1; i <= thy nx; i++) {
+			double val = cepstrum -> z[1][i];
+			thy z[1][i] = val;
+		}
+		return thee.transfer ();
+	} catch (MelderError) {
+		Melder_throw (me, ": not converted to Sound.");
+	}
+}
+
+Spectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
+	try {
+		autoCepstrum cepstrum = Data_copy (me);
+		cepstrum ->  z[1][1] = my z[1][1];
+		for (long i = 2; i <= cepstrum -> nx; i++) {
+			cepstrum -> z[1][i] = 2 * my z[1][i];
+		}
+		autoSpectrum thee = Sound_to_Spectrum ((Sound) cepstrum.peek(), 1);
+
+		double *re = thy z[1], *im = thy z[2];
+		for (long i = 1; i <= thy nx; i ++) {
+			re[i] =  exp (0.5 * re[i]);   // i.e., sqrt (exp(re [i]))
+			im[i] = 0.0;
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Spectrum created.");
+	}
+}
+
+Cepstrum Spectrum_to_Cepstrum2 (Spectrum me) {
 	try {
 		autoNUMfft_Table fftTable;
 		// originalNumberOfSamplesProbablyOdd irrelevant
@@ -62,46 +122,54 @@ Cepstrum Spectrum_to_Cepstrum (Spectrum me) {
 			Melder_throw ("A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, L" Hz.");
 		}
 		long numberOfSamples = 2 * my nx - 2;
-		autoCepstrum thee = Cepstrum_create (0, 0.5 / my dx, my nx);
+		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
+		// my dx = 1 / (dT * N) = 1 / (duration of sound)
+		thy dx = 1 / (my dx * numberOfSamples); // Cepstrum is on [-T/2, T/2] !
 		NUMfft_Table_init (&fftTable, numberOfSamples);
-		autoNUMvector<double> amp (1, numberOfSamples);
+		autoNUMvector<double> fftbuf (1, numberOfSamples);
 
-		amp[1] = my v_getValueAtSample (1, 0, 2);
+		fftbuf[1] = my v_getValueAtSample (1, 0, 2);
 		for (long i = 2; i < my nx; i++) {
-			amp [i + i - 2] = my v_getValueAtSample (i, 0, 2);
-			amp [i + i - 1] = 0;
+			fftbuf [i + i - 2] = my v_getValueAtSample (i, 0, 2);
+			fftbuf [i + i - 1] = 0;
 		}
-		amp [numberOfSamples] = my v_getValueAtSample (my nx, 0, 2);
-		NUMfft_backward (&fftTable, amp.peek());
+		fftbuf [numberOfSamples] = my v_getValueAtSample (my nx, 0, 2);
+		NUMfft_backward (&fftTable, fftbuf.peek());
 		for (long i = 1; i <= my nx; i++) {
-			double val = amp[i] / numberOfSamples; // scaling 1/n because ifft(fft(1))= n;
+			double val = fftbuf[i] / numberOfSamples; // scaling 1/n because ifft(fft(1))= n;
 			thy z[1][i] = val * val; // power cepstrum
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": not converted to Sound.");
+		Melder_throw (me, ": not converted to Cepstrum.");
 	}
 }
 
 
-Spectrum Cepstrum_to_Spectrum (Cepstrum me) { //TODO power cepstrum
+Spectrum Cepstrum_to_Spectrum2 (Cepstrum me) { //TODO power cepstrum
 	try {
-		autoSound tmp = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
-		NUMvector_copyElements	(my z[1], tmp -> z[1], 1, my nx); // v_getValueAtSample ???
-		autoSpectrum thee = Sound_to_Spectrum (tmp.peek(), TRUE);
+		autoNUMfft_Table fftTable;
+		long numberOfSamples = 2 * my nx - 2;
 
-		double *x = thy z[1], *y = thy z[2];
-		double scaling = tmp -> dx, forwardbackwardfactor = sqrt (my nx) * (2e-5 / sqrt (4 * thy dx)); // my nx because of ifft
-		for (long i = 1; i <= thy nx; i++) {
-			x[i] = sqrt (x[i] * x[i] + y [i] * y[i]) / scaling;
-			y[i] = 0;
-			// 10*log10(2*p*dx/r) = X; sqrt(x^2), r = 4e-10
-			// p = 10^(X/10)  * r/ (2*dx) * numberOfSamples
-			// amp= sqrt (10^(X/10) * sqrt (r / (2 *dx)) = 10 ^(X/20) * 2e-5 / sqrt (2 * dx)
-			double logval = x[i] / 20;
-			double amp = pow (10, logval) * forwardbackwardfactor;
-			x[i] = amp;
-			y[i] = 0;
+		autoNUMvector<double> fftbuf (1, numberOfSamples);
+		autoSpectrum thee = Spectrum_create (0.5 / my dx, my nx);
+		fftbuf[1] = sqrt (my z[1][1]);
+		for (long i = 2; i <= my nx; i++) {
+			fftbuf[i] = 2 * sqrt (my z[1][i]);
+		}
+		// fftbuf[my nx+1 ... numberOfSamples] = 0
+		NUMfft_Table_init (&fftTable, numberOfSamples);
+		NUMfft_forward (&fftTable, fftbuf.peek());
+		
+		thy z[1][1] = fabs (fftbuf[1]);
+		for (long i = 2; i < my nx; i++) {
+			double br = fftbuf[i + i - 2], bi = fftbuf[i + i - 1];
+			thy z[1][i] = sqrt (br * br + bi * bi);
+		}
+		thy z[1][my nx] = fabs (fftbuf[numberOfSamples]);
+		for (long i = 1; i <= my nx; i++) {
+			thy z[1][i] = exp (NUMln10 * thy z[1][i] / 20) * 2e-5 / sqrt (2 * thy dx);
+			thy z[2][i] = 0;
 		}
 		return thee.transfer();
 	} catch (MelderError) {

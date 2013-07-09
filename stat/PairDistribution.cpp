@@ -1,6 +1,6 @@
 /* PairDistribution.cpp
  *
- * Copyright (C) 1997-2012 Paul Boersma
+ * Copyright (C) 1997-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,12 +40,12 @@
 
 Thing_implement (PairProbability, Data, 0);
 
+Thing_implement (PairDistribution, Data, 0);
+
 void structPairDistribution :: v_info () {
 	PairDistribution_Parent :: v_info ();
 	MelderInfo_writeLine (L"Number of pairs: ", Melder_integer (pairs -> size));
 }
-
-Thing_implement (PairDistribution, Data, 0);
 
 PairProbability PairProbability_create (const wchar_t *string1, const wchar_t *string2, double weight) {
 	autoPairProbability me = Thing_new (PairProbability);
@@ -113,6 +113,15 @@ void PairDistribution_removeZeroWeights (PairDistribution me) {
 		if (prob -> weight <= 0.0) {
 			Collection_removeItem (my pairs, ipair);
 		}
+	}
+}
+
+void structPairDistribution :: f_swapInputsAndOutputs () {
+	for (long ipair = pairs -> size; ipair > 0; ipair --) {
+		PairProbability prob = static_cast <PairProbability> (pairs -> item [ipair]);
+		wchar_t *tmp = prob -> string1;
+		prob -> string1 = prob -> string2;
+		prob -> string2 = tmp;
 	}
 }
 

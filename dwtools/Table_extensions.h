@@ -2,7 +2,7 @@
 #define _Table_extensions_h_
 /* Table_extensions.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20120724 Latest modification.
+ djmw 20130602 Latest modification.
 */
 
 #include "TableOfReal.h"
@@ -35,6 +35,8 @@
 Table Table_createFromPetersonBarneyData ();
 Table Table_createFromPolsVanNieropData ();
 Table Table_createFromWeeninkData ();
+Table Table_createFromEspositoData ();
+Table Table_createFromGanongData ();
 
 double Table_getMedianAbsoluteDeviation (Table me, long columnNumber);
 
@@ -55,7 +57,13 @@ void Table_quantileQuantilePlot (Table me, Graphics g, long xcolumn, long ycolum
 void Table_quantileQuantilePlot_betweenLevels (Table me, Graphics g, long dataColumn, long factorColumn, wchar_t *xlevel, wchar_t *ylevel, long numberOfQuantiles, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *label, int garnish);
 
 void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, double ymin, double ymax, int garnish);
+Table Table_extractRowsWhere (Table me, const wchar_t *formula, Interpreter interpreter);
+void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, int garnish, const wchar_t *formula, Interpreter interpreter);
 
+void Table_barPlotWhere (Table me, Graphics g, const wchar_t *columnLabels, double ymin, double ymax, const wchar_t *labelColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const wchar_t *colours, double angle, int garnish, const wchar_t *formula, Interpreter interpreter);
+
+void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax, const wchar_t *symbol, double angle, int garnish, const wchar_t *formula, Interpreter interpreter);
 void Table_printAsAnovaTable (Table me);
 void Table_printAsMeansTable (Table me);
+
 #endif // _Table_extensions_h_

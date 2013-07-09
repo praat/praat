@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130612)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130709)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.53# (9 July 2013)")
+LIST_ITEM (L"\\bu Table: more drawing commands.")
 NORMAL (L"##5.3.52# (12 June 2013)")
 LIST_ITEM (L"\\bu Scripting: editor windows understand #do and ##do\\$ #.")
 NORMAL (L"##5.3.51# (30 May 2013)")

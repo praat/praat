@@ -27,7 +27,7 @@
 
 /*
 	The Cepstrum is a sequence of REAL numbers.
-	It is the power spectrum of the power spectrum of a (sound) signal.
+	It is the spectrum of the power spectrum of a (sound) signal.
 */
 
 #include "Matrix.h"
@@ -37,6 +37,18 @@ Thing_define (Cepstrum, Matrix) {
 	public:
 		virtual double v_getValueAtSample (long isamp, long which, int units);
 };
+
+/*
+	The Cepstrum is a sequence of REAL numbers.
+	It is the power spectrum of the power spectrum of a (sound) signal.
+*/
+
+Thing_define (PowerCepstrum, Cepstrum) {
+	// overridden methods:
+	public:
+		virtual double v_getValueAtSample (long isamp, long which, int units);
+};
+
 /*
 	xmin		// Lowest quefrency.
 	xmax		// Highest quefrency.
@@ -48,22 +60,22 @@ Thing_define (Cepstrum, Matrix) {
 	ny = 1
 */
 
-Cepstrum Cepstrum_create (double qmin, double qmax, long nq);
+Cepstrum Cepstrum_create (double qmax, long nq);
+PowerCepstrum PowerCepstrum_create (double qmax, long nq);
 /* Preconditions:
-		qmin < qmax;
 		nq >= 2;
 	Postconditions:
-		my xmin = qmin;				my ymin = 1;
+		my xmin = 0;				my ymin = 1;
 		my xmax = qmax;				my ymax = 1;
 		my nx = nq;					my ny = 1;
-		my dx = qmax / nx;			my dy = 1;
-		my x1 = my dx / 2;			my y1 = 1;
+		my dx = qmax / (nq -1);			my dy = 1;
+		my x1 = 0;			my y1 = 1;
 		my z [1..ny] [1..nx] = 0.0;
 */
 
-void Cepstrum_draw (Cepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
+void PowerCepstrum_draw (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
 void Cepstrum_drawLinear (Cepstrum me, Graphics g, double qmin, double qmax, double minimum, double maximum, int garnish);
-void Cepstrum_drawTiltLine (Cepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, int method);
+void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, double qmax, double dBminimum, double dBmaximum, double qstart, double qend, int lineType, int method);
 /*
 	Function:
 		Draw a Cepstrum
@@ -76,11 +88,24 @@ void Cepstrum_drawTiltLine (Cepstrum me, Graphics g, double qmin, double qmax, d
 		[minimum, maximum]: amplitude; y range of drawing.
 */
 
-void Cepstrum_getMaximumAndQuefrency (Cepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *maximum, double *quefrency);
-double Cepstrum_getPeakProminence (Cepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double fit_lowestFrequency, double fit_highestFrequency, int fitmethod, double *qpeak);
-void Cepstrum_fitTiltLine (Cepstrum me, double qmin, double qmax, double *a, double *intercept, int method);
+void PowerCepstrum_getMaximumAndQuefrency (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double *maximum, double *quefrency);
 
-Matrix Cepstrum_to_Matrix (Cepstrum me);
-Cepstrum Matrix_to_Cepstrum (Matrix me, long row);
+// The standard of Hillenbrand with fitting options
+double PowerCepstrum_getPeakProminence_hillenbrand (PowerCepstrum me, double pitchFloor, double pitchCeiling, double *qpeak);
+
+double PowerCepstrum_getRNR (PowerCepstrum me, double pitchFloor, double pitchCeiling, double f0fractionalWidth);
+double PowerCepstrum_getPeakProminence (PowerCepstrum me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod, double *qpeak);
+void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, double *slope, double *intercept, int lineType, int method);
+PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
+void PowerCepstrum_subtractTilt_inline (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
+PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
+void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow);
+PowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow);
+
+Matrix PowerCepstrum_to_Matrix (PowerCepstrum me);
+PowerCepstrum Matrix_to_PowerCepstrum (Matrix me);
+PowerCepstrum Matrix_to_PowerCepstrum_row (Matrix me, long row);
+PowerCepstrum Matrix_to_PowerCepstrum_column (Matrix me, long col);
+PowerCepstrum Cepstrum_downto_PowerCepstrum (Cepstrum me);
 
 #endif /* _Cepstrum_h_ */

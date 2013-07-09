@@ -50,7 +50,7 @@ double *NUMstring_to_numbers (const wchar_t *s, long *numbers_found);
  */
 long *NUMstring_getElementsOfRanges (const wchar_t *ranges, long maximumElement, long *numberOfElements, long *numberOfMultiples, const wchar_t *elementType, bool sortedUniques);
 
-
+wchar_t * NUMstring_timeNoDot (double time);
 int NUMstrings_equal (const wchar_t **s1, const wchar_t **s2, long lo, long hi);
 void NUMstrings_copyElements (wchar_t **from, wchar_t**to, long lo, long hi);
 void NUMstrings_free (wchar_t **s, long lo, long hi);
@@ -253,6 +253,9 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	When average and/or variance are NULL, the corresponding output is
 	NOT given.
  */
+
+void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout);
+
 
 void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar);
 /*
@@ -1254,20 +1257,12 @@ void NUMrealft (double *data, long n, int direction);
 
 long NUMgetIndexFromProbability (double *probs, long nprobs, double p);
 
-
-/*  Model y = C * exp(a * x) + yOffset
-	y - yOffset = C * exp (a * x) => log (y - yOffset) = a * x + log (C)
-	Line fit of log() versus x:
-		C = exp (intercept)
-*/
-void NUMfitExponentialDecayWithKnownVerticalOffset (double *x, double *y, long numberOfPoints, double yOffset, double *a, double *y0, int method);
-
 // Fit the line y= ax+b
 void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method);
 /* method
  * 1 least squares
- * 2 rubust incomplete Theil
- * 3 robust complete Theil (slow O(numberOfPoints^2))
+ * 2 rubust incomplete Theil O(N/2)
+ * 3 robust complete Theil (very slow for large N, O(N^2))
  */
 
 void NUMlineFit_theil (double *x, double *y, long numberOfPoints, double *m, double *intercept, bool incompleteMethod);

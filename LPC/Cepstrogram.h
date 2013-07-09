@@ -36,6 +36,8 @@
 
 Thing_define (Cepstrogram, Matrix) {
 };
+Thing_define (PowerCepstrogram, Cepstrogram) {
+};
 /*
 	xmin, xmax : time domain
 	nx, dx, x1	: sampling in the time domain
@@ -49,21 +51,28 @@ Thing_define (Cepstrogram, Matrix) {
 
 Cepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double qmin, double qmax, long nq, double dq, double q1);
+PowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
+	double qmin, double qmax, long nq, double dq, double q1);
 
-void Cepstrogram_paint (Cepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
+void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
 
-Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow);
+PowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow);
 
-Cepstrogram Sound_to_Cepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency);
+PowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double analysisWidth, double dt, double maximumFrequency, double preEmphasisFrequency);
 
-Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double analysisWidth, double dt);
+PowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double analysisWidth, double dt);
 
-Table Cepstrogram_to_Table_cpp (Cepstrogram me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int method);
-Cepstrum Cepstrogram_to_Cepstrum_slice (Cepstrogram me, double time);
+Table PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pitchFloor, double pitchCeiling);
+Table PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int method);
+PowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, double time);
 
-double Cepstrogram_getCPPS (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int fitMethod);
+PowerCepstrogram PowerCepstrogram_subtractTilt (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod);
+void PowerCepstrogram_subtractTilt_inline (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod);
 
+double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling);
+double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow,
+	double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod);
 
-Matrix Cepstrogram_to_Matrix (Cepstrogram me);
-Cepstrogram Matrix_to_Cepstrogram (Matrix me);
+Matrix PowerCepstrogram_to_Matrix (PowerCepstrogram me);
+PowerCepstrogram Matrix_to_Cepstrogram (Matrix me);
 #endif /* _Cepstrogram_h_ */

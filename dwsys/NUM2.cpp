@@ -440,6 +440,23 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 	}
 }
 
+void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout) {
+// simple averaging, out of bound values are zero
+	for (long i = 1; i <= n; i++) {
+		long jfrom = i - nwindow / 2, jto = i + nwindow / 2;
+		if ((nwindow % 2) == 0) {
+			jto--;
+		}
+		jfrom = jfrom < 1 ? 1 : jfrom;
+		jto = jto > n ? n : jto;
+		xout[i] = 0;
+		for (long j = jfrom; j <= jto; j++) {
+			xout[i] += xin[j];
+		}
+		xout[i] /= jto - jfrom + 1;
+	}
+}
+
 void NUMcovarianceFromColumnCentredMatrix (double **x, long nrows, long ncols, long ndf, double **covar) {
 	if (ndf < 0 || nrows - ndf < 1 || covar == 0) {
 		Melder_throw ("Invalid arguments.");
@@ -2276,7 +2293,7 @@ int NUMgetOrientationOfPoints (double x1, double y1, double x2, double y2, doubl
 
 int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2,
                                       double xmin, double ymin, double xmax, double ymax, double *xi, double *yi) {
-	double x[6], y[6], t;
+	double x[6], y[6];
 	long ni = 0;
 
 	x[1] = x[4] = x[5] = xmin;
@@ -2313,21 +2330,33 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 
 	for (long i = 1; i <= 4; i++) {
 		double denom = (x[i + 1] - x[i]) * (y2 - y1) - (y[i + 1] - y[i]) * (x2 - x1);
+		double s, t, x3, y3;
 		if (denom == 0) {
 			continue;
 		}
 		/* We have an intersection. */
-		t = ( (y[i] - y1) * (x2 - x1) - (x[i] - x1) * (y2 - y1)) / denom;
+		t = ((y[i] - y1) * (x2 - x1) - (x[i] - x1) * (y2 - y1)) / denom;
 		if (t < 0 || t >= 1) {
 			continue;
 		}
 		/* Intersection is within rectangle side. */
+		x3 = x[i] + t * (x[i + 1] - x[i]);
+		y3 = y[i] + t * (y[i + 1] - y[i]);
+		/* s must also be valid */
+		if (x1 != x2) {
+			s = (x3 - x1) / (x2 - x1);
+		} else {
+			s = (y3 - y1) / (y2 - y1);
+		}
+		if (s < 0 || s >= 1) {
+			continue;
+		}
 		ni++;
 		if (ni > 2) {
 			Melder_throw ("Too many intersections.");
 		}
-		xi[ni] = x[i] + t * (x[i + 1] - x[i]);
-		yi[ni] = y[i] + t * (y[i + 1] - y[i]);
+		xi[ni] = x3;
+		yi[ni] = y3;
 	}
 	return ni;
 }
@@ -2697,28 +2726,6 @@ void NUMlineFit_LS (double *x, double *y, long numberOfPoints, double *m, double
 	*intercept = (sy - a * sx) / numberOfPoints;
 	*m = a;
 }
-
-// y
-void NUMfitExponentialDecayWithKnownVerticalOffset (double *x, double *y, long numberOfPoints, double yOffset, double *a, double *y0, int method) {
-	try {
-		autoNUMvector<double> logy (1, numberOfPoints);
-		for (long i = 1; i <= numberOfPoints; i++) {
-			logy[i] = y[i] - yOffset;
-			logy[i] = logy[i] <= 0 ? -30 : log (logy[i]);
-		}
-		double intercept;
-		if (method == 1) {
-			NUMlineFit_LS (x, logy.peek(), numberOfPoints, a, &intercept);
-		} else if (method == 3) {
-			NUMlineFit_theil (x, logy.peek(), numberOfPoints, a, &intercept, false);
-		} else {
-			NUMlineFit_theil (x, logy.peek(), numberOfPoints, a, &intercept, true);
-		}
-		*y0 = exp (intercept);
-	} catch (MelderError) {
-		Melder_throw ("Exponential could not be fitted.");
-	}
- }
 
 void NUMlineFit (double *x, double *y, long numberOfPoints, double *m, double *intercept, int method) {
 	if (method == 1) {

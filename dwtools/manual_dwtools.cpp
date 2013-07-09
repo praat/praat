@@ -19,18 +19,16 @@
 
 /*
  djmw 20020313 GPL
- djmw 20101101 Latest modification
+ djmw 20130620 Latest modification
 */
 
 #include "ManPagesM.h"
 #include "Sound_extensions.h"
 #include "TableOfReal_extensions.h"
-#ifndef _Configuration_h_
-	#include "Configuration.h"
-#endif
-#ifndef _Discriminant_h_
-	#include "Discriminant.h"
-#endif
+#include "Table_extensions.h"
+#include "Configuration.h"
+#include "Discriminant.h"
+
 
 static TableOfReal getStandardizedLogFrequencyPolsData (int includeLevels) {
 	autoTableOfReal me = TableOfReal_createFromPolsData_50males (includeLevels);
@@ -3979,25 +3977,192 @@ NORMAL (L"@@Tenreiro (2009)@ recommends  %h__%%s% _= 0.448 + 0.026\\.c%d for sho
 " %h__%%l%_ = 0.928 + 0.049\\.c%d for long tailed alternatives.")
 MAN_END
 
-MAN_BEGIN (L"Table: Normal probability plot...", L"djmw", 20130207)
+MAN_BEGIN (L"Table: Normal probability plot...", L"djmw", 20130619)
 NORMAL (L"In a normal probability plot, the data in the selected column of the @Table are plotted "
 	"against a normal distribution in such a way that the points should form approximately a straight line. "
 	"Departures from a straight line indicate departures from normality.")
 ENTRY (L"Settings")
 TAG (L"##Number of quantiles#")
 DEFINITION (L"the number of quantile points, %n, in the plot. From this number %n, the quantile points are "
-	"determined as follows: the last quantile point %q__%n_ = 0.5^^1/%n^ and the first quantile point "
+	"determined as follows: the last quantile point is %q__%n_ = 0.5^^1/%n^ and the first quantile point is "
 	"%q__1_=1\\--%q__%n_. The intermediate quantile points %q__%i_ are determined according to "
 	"%q__%i_=(%i \\-- 0.3175)/(%n + 0.365), where %i runs from 2 to %n\\--1.")
 TAG (L"##Number of sigmas#")
 DEFINITION (L"determines the horizontal and vertical drawing ranges in units of standard deviations. ")
 MAN_END
 
-MAN_BEGIN (L"Table: Quantile-quantile plot...", L"djmw", 20120810)
-NORMAL (L"In a quantile-quantile plot the quantiles of the data in the first selected column of the @Table is plotted against "
+MAN_BEGIN (L"Table: Quantile-quantile plot...", L"djmw", 20130619)
+NORMAL (L"In a quantile-quantile plot the quantiles of the data in the first selected column of the @Table are plotted against "
 	"the quantiles of the data in the second selected column.  If the two sets come from a population with the "
 	"same distribution, the points should fall approximately along the reference line.")
 MAN_END
+
+MAN_BEGIN (L"Table: Bar plot where...", L"djmw", 20130624)
+INTRO (L"Draws a bar plot from data in one or more columns of the selected @Table. In a bar plot the horizontal axis has nominal values (labels). ")
+ENTRY (L"Settings")
+SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (10), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Bar plot where", 10)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column(s)", "")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Vertical range", "0.0", "0.0 (=autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Column with labels", "")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance of first bar from border", "1.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance between bar groups", "1.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Distance between bars within group", "0.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Colours (0-1, name, {r,g,b})", "Grey")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula:", "row>1 and row < 10")
+)
+TAG (L"##Vertical column(s)")
+DEFINITION (L"you list the table columns that you want to represent in the bar plot. The number of selected columns is the group size.")
+TAG (L"##Vertical range")
+DEFINITION (L"determine the lower and upper limit of the display.")
+TAG (L"##Column with labels")
+DEFINITION (L"determines the column whose labels will be put at the bottom of the plot.")
+TAG (L"##Distance of first bar from border")
+DEFINITION (L"determines how far the first (and last) bar wil be positioned from the borders (in units of the width of one bar).")
+TAG (L"##Distance between bar groups")
+DEFINITION (L"determines how far groups of bars are from each other. ")
+TAG (L"##Distance between bars within group")
+DEFINITION (L"determines the distance between the bars within each group.")
+TAG (L"##Colours")
+DEFINITION (L"determines the colours of the bars in a group.")
+TAG (L"##Label text angle (degrees)")
+DEFINITION (L"determines the angle of the labels written below the plot. If you have very long label texts you can prevent the label texts from overlapping.")
+TAG (L"##Formula:")
+DEFINITION (L"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
+ENTRY (L"Examples")
+NORMAL (L"@@Keating & Esposito (2006)@ present a bar plot in their fig. 3 from which we estimate the following data table")
+CODE (L"Language        Modal  Breathy")
+CODE (L"Chong            -1.5    5")
+CODE (L"Fuzhou            2     10")
+CODE (L"Green Hmong       3     12")
+CODE (L"White Hmong       2     11")
+CODE (L"Mon              -1.5    0")
+CODE (L"SADV Zapotec     -6     -4")
+CODE (L"SLQ Zapotec       3.5   14")
+CODE (L"Tlacolula Zapotec 3     13")
+CODE (L"Tamang            1      1")
+CODE (L"!Xoo              1     14")
+NORMAL (L"Given that we have these data in a Table with the three columns labeled \"Language\", \"Modal\" and \"Breathy\", "
+	"respectively, we can first try to reproduce their figure 3 (a bar plot with both Modal and Breathy columns displayed) ")
+NORMAL (L"As you can see the labels in the first column are very long texts and they will surely overlap if "
+	"plotted at the bottom of a plot. We therefore use a value of 15 degrees for the \"Label text angle\" " "parameter. This "
+	"will make the label texts nonoverlapping. We cannot make this angle much larger because then the label texts will run out of "
+	"the viewport. ")
+NORMAL (L"Sometimes you need to plot only a part of the Table and for the selection of this part, the \"Formula\" field can be "
+	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. In effect, all the rows will be selected. The following script line will produce the picture below.")
+CODE (L"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\")")
+SCRIPT (5, 3,  L"h1h2 = do (\"Create H1H2 table (Esposito 2006)\")\n"
+	"do (\"Font size...\", 10)\n"
+	"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\")\n"
+	"removeObject (h1h2)\n")
+NORMAL (L"The essentials of the bart plot in their paper are perfectly reproduced in the figure above. If you want the bars within a group to be placed somewhat more apart say 0.2 (times the bar width) you can set the \"Distance between bars in a group\" to a value of 0.2:")
+CODE (L"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\")")
+SCRIPT (5, 3,  L"h1h2 = do (\"Create H1H2 table (Esposito 2006)\")\n"
+	"do (\"Font size...\", 10)\n"
+	"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\")\n"
+	"removeObject (h1h2)\n")
+NORMAL (L"Of course we can also work with colours and we can add vertical marks as the following sriptlet shows")
+CODE (L"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\")")
+CODE (L"do (\"Marks left every...\", 1, 5, 1, 1, 1)")
+CODE (L"do (\"Text left...\", 1, \"H__1_-H__2_ (dB)\")")
+SCRIPT (5, 3,  L"h1h2 = do (\"Create H1H2 table (Esposito 2006)\")\n"
+	"do (\"Font size...\", 10)\n"
+	"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\")\n"
+	"do (\"Marks left every...\", 1, 5, 1, 1, 1)\n"
+	"do (\"Text left...\", 1, \"H__1_-H__2_ (dB)\")\n"
+	"removeObject (h1h2)\n")
+MAN_END
+
+MAN_BEGIN (L"Table: Line graph where...", L"djmw", 20130624)
+INTRO (L"Draws a line graph from the data in a column of the selected @Table. In a line plot the horizontal axis can have a nominal scale or a numeric scale. The data point are connected by line segments.")
+ENTRY (L"Settings")
+SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (8), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph where", 8)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column", "")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (=autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Horizontal column", "")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (=autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Text", "+")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Label text angle (degrees)", "0.0")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula:", "1; (=everything)")
+)
+TAG (L"##Vertical column")
+DEFINITION (L"The column whose data points you want to plot.")
+TAG (L"##Vertical range")
+DEFINITION (L"determine the lower and upper limit of the plot.")
+TAG (L"##Horizontal column")
+DEFINITION (L"determines the horizontal scale. If you leave it empty, or, if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal "
+	"distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at the bottom of the horizontal axis. "
+	"On the other hand, if this column contains only numerical values, the horizontal position of the data points will be determined by the values in this column.")
+TAG (L"##Horizontal range")
+DEFINITION (L"determines the left and right limit of the plot.")
+TAG (L"##Text")
+DEFINITION (L"The text to put at the position of the data point in the plot.")
+TAG (L"##Label text angle (degrees)")
+DEFINITION (L"determines the angle of the labels written %%below% the plot. If you have very long label texts in the \"Horizontal column\", you can prevent the label texts from overlapping. This only has effect for a horizontal column with nominal values.")
+TAG (L"##Formula")
+DEFINITION (L"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
+ENTRY (L"Examples")
+NORMAL (L"The following table was estimated from fig. 3 in @@Ganong (1980)@ and represents the fraction /d/ responses as a function of a "
+	"voice onset time (VOT) continuum. The second column shows the responses in a word - nonword continuum, while the third column shows "
+	"the responses to a nonword - word continuum.")
+CODE (L"VOT dash-tash dask-task")
+CODE (L"-17.5   0.98      0.92")
+CODE (L" -7.5   0.95      0.83")
+CODE (L" -2.5   0.71      0.33")
+CODE (L"  2.5   0.29      0.10")
+CODE (L"  7.5   0.12      0.02")
+CODE (L" 17.5   0.10      0.02")
+NORMAL (L"We can reproduce fig. 3 from Ganong (1980) with the following script, where we labeled the word - nonword curve with \"wn\" and the nonword - word curve with \"nw\". We deselect \"Garnish\" because we want to put special marks at the bottom.")
+CODE (L"do (\"Dotted line\")\n")
+CODE (L"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, \"1\")")
+CODE (L"do (\"Dashed line\")\n")
+CODE (L"do (\"Line graph where...\", \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, \"1\")")
+CODE (L"do (\"Draw inner box\")")
+CODE (L"do (\"One mark bottom...\", 2.5, 0, 1, 0, \"+2.5\")")
+CODE (L"do (\"One mark bottom...\", -2.5, 1, 1, 0, \"\")")
+CODE (L"do (\"One mark bottom...\", -7.5,1, 1, 0, \"\")")
+CODE (L"do (\"One mark bottom...\", 7.5, 0, 1, 0, \"+7.5\")")
+CODE (L"do (\"One mark bottom...\", 2.5, 0, 0, 0, \"+2.5\")")
+CODE (L"do (\"One mark bottom...\", -20, 0, 0, 0, \"Short VOT\")")
+CODE (L"do (\"One mark bottom...\", 20, 0, 0, 0, \"Long VOT\")")
+CODE (L"do (\"Text bottom...\", 1, \"VOT (ms)\")")
+CODE (L"do (\"Marks left every...\", 1, 0.2, 1, 1, 0)")
+CODE (L"do (\"Text left...\", 1, \"Prop. of voiced responses\")")
+
+SCRIPT (5,3, L"ganong = do (\"Create Table (Ganong 1980)\")\n"
+	"do (\"Dotted line\")\n"
+	"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, \"1\")\n"
+	"do (\"Dashed line\")\n"
+	"do (\"Line graph where...\", \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, \"1\")\n"
+	"do (\"Draw inner box\")\n"
+	"do (\"One mark bottom...\", 2.5, 0, 1, 0, \"+2.5\")\n"
+	"do (\"One mark bottom...\", -2.5, 1, 1, 0, \"\")\n"
+	"do (\"One mark bottom...\", -7.5,1, 1, 0, \"\")\n"
+	"do (\"One mark bottom...\", 7.5, 0, 1, 0, \"+7.5\")\n"
+	"do (\"One mark bottom...\", 2.5, 0, 0, 0, \"+2.5\")\n"
+	"do (\"One mark bottom...\", -20, 0, 0, 0, \"Short VOT\")\n"
+	"do (\"One mark bottom...\", 20, 0, 0, 0, \"Long VOT\")\n"
+	"do (\"Text bottom...\", 1, \"VOT (ms)\")\n"
+	"do (\"Marks left every...\", 1, 0.2, 1, 1, 0)\n"
+	"do (\"Text left...\", 1, \"Prop. of voiced responses\")\n"
+	"removeObject (ganong)\n"
+)
+NORMAL (L"As an example of what happens if you don't supply an argument for the \"Horizontal column\" we will use the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the horizontal nominal scale makes all points equidistant in the horizontal direction.)")
+CODE (L"do (\"Dotted line\")\n")
+CODE (L"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\")")
+CODE (L"do (\"One mark bottom...\", 1, 0, 1, 0, \"Short VOT\")")
+SCRIPT (5,3, L"ganong = do (\"Create Table (Ganong 1980)\")\n"
+	"do (\"Dotted line\")\n"
+	"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\")\n"
+	"do (\"One mark bottom...\", 1, 0, 1, 0, \"Short VOT\")\n"
+	"removeObject (ganong)\n"
+)
+MAN_END
+
 
 MAN_BEGIN (L"Table: Get median absolute deviation...", L"djmw", 20120405)
 INTRO (L"Get the median absolute deviation (MAD) of the column in the selected @@Table@ (adjusted by a scale factor).")
@@ -4608,6 +4773,10 @@ NORMAL (L"J.E.F. Friedl (1997): %%Mastering Regular Expressions%. "
 	"O'Reilly & Associates.")
 MAN_END
 
+MAN_BEGIN (L"Ganong (1980)", L"djmw", 20130622)
+NORMAL (L"W.F. Ganong III (1980): \"Phonetic categorization in auditory word perception.\" %%Journal of Experimental Psychology: Human Perception and Performance% #6: 110\\--125.") 
+MAN_END
+
 MAN_BEGIN (L"Greiner & Hormann (1998)", L"djmw", 20110617)
 NORMAL (L"G. Greiner & K. Hormann (1998): \"Efficient clipping of arbitrary polygons.\" %%ACM Transactions on Graphics% #17: 71\\--83.")
 MAN_END
@@ -4646,6 +4815,10 @@ MAN_END
 
 MAN_BEGIN (L"Johnson (1998)", L"djmw", 20000525)
 NORMAL (L"D.E. Johnson (1998): %%Applied Multivariate methods%.")
+MAN_END
+
+MAN_BEGIN (L"Keating & Esposito (2006)", L"djmw", 20130620)
+NORMAL (L"P.A. Keating & C. Esposito (2006): \"Linguistic voice quality.\" %%UCLA Working Papers in Phonetics% #105: 85\\--91.")
 MAN_END
 
 MAN_BEGIN (L"Khuri (1998)", L"djmw", 20120702)

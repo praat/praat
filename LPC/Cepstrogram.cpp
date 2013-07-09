@@ -35,6 +35,7 @@
 #define FROMLOG(x) (exp ((x) * (NUMln10 / 10.0)) - 1e-30)
 
 Thing_implement (Cepstrogram, Matrix, 2);
+Thing_implement (PowerCepstrogram, Cepstrogram, 0);
 
 Cepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double qmin, double qmax, long nq, double dq, double q1) {
@@ -48,7 +49,19 @@ Cepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, do
 	}
 }
 
-void Cepstrogram_paint (Cepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish) {
+PowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
+	double qmin, double qmax, long nq, double dq, double q1) {
+	try {
+		autoPowerCepstrogram me = Thing_new (PowerCepstrogram);
+
+		Matrix_init (me.peek(), tmin, tmax, nt, dt, t1, qmin, qmax, nq, dq, q1);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("PowerCepstrogram not created.");
+	}
+}
+
+void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (qmax <= qmin) { qmin = my ymin; qmax = my ymax; }
 	long itmin, itmax, ifmin, ifmax;
@@ -90,20 +103,47 @@ void Cepstrogram_paint (Cepstrogram me, Graphics g, double tmin, double tmax, do
 	}
 }
 
-Table Cepstrogram_to_Table_cpp (Cepstrogram me, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int method) {
+void PowerCepstrogram_subtractTilt_inline (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+	try {
+		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
+		for (long i = 1; i <= my nx; i++) {
+			for (long j = 1; j <= my ny; j++) {
+				thy z[1][j] = my z[j][i];
+			}
+			PowerCepstrum_subtractTilt_inline (thee.peek(), qstartFit, qendFit, lineType, fitMethod);
+			for (long j = 1; j <= my ny; j++) {
+				my z[j][i] = thy z[1][j];
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, ": no tilt subtracted (inline).");
+	}
+}
+
+PowerCepstrogram PowerCepstrogram_subtractTilt (PowerCepstrogram me, double qstartFit, double qendFit, int lineType, int fitMethod) {
+	try {
+		autoPowerCepstrogram thee = Data_copy (me);
+		PowerCepstrogram_subtractTilt_inline (thee.peek(), qstartFit, qendFit, lineType, fitMethod);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no tilt subtracted.");
+	}
+	
+}
+
+Table PowerCepstrogram_to_Table_hillenbrand (PowerCepstrogram me, double pitchFloor, double pitchCeiling) {
 	try {
 		autoTable thee = Table_createWithColumnNames (my nx, L"time quefrency cpp f0");
-		autoCepstrum him = Cepstrum_create (my ymin, my ymax, my ny);
+		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
 		for (long i = 1; i <= my nx; i++) {
 			for (long j = 1; j <= my ny; j++) {
 				his z[1][j] = my z[j][i];
 			}
-			double qpeak, cpp = Cepstrum_getPeakProminence (him.peek(), pitchFloor, pitchCeiling, interpolation,
-				qstartFit, qendFit, method, &qpeak);
+			double qpeak, cpp = PowerCepstrum_getPeakProminence_hillenbrand (him.peek(), pitchFloor, pitchCeiling, &qpeak);
 			double time = Sampled_indexToX (me, i);
 			Table_setNumericValue (thee.peek(), i, 1, time);
 			Table_setNumericValue (thee.peek(), i, 2, qpeak);
-			Table_setNumericValue (thee.peek(), i, 3, cpp); // Cepstrogram_getCPPS depends on this number!!
+			Table_setNumericValue (thee.peek(), i, 3, cpp); // Cepstrogram_getCPPS depends on this index 3!!
 			Table_setNumericValue (thee.peek(), i, 4, 1.0 / qpeak);
 		}
 		return thee.transfer();
@@ -112,56 +152,64 @@ Table Cepstrogram_to_Table_cpp (Cepstrogram me, double pitchFloor, double pitchC
 	}
 }
 
-static void NUMvector_smoothByMovingAverage (double *xin, long n, long nwindow, double *xout) {
-// simple averaging, out of bound values are zero
-	for (long i = 1; i <= n; i++) {
-		long jfrom = i - nwindow / 2, jto = i + nwindow / 2;
-		jfrom = jfrom < 1 ? 1 : jfrom;
-		jto = jto > n ? n : jto;
-		xout[i] = 0;
-		for (long j = jfrom; j <= jto; j++) {
-			xout[i] += xin[j];
+Table PowerCepstrogram_to_Table_cpp (PowerCepstrogram me, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod) {
+	try {
+		autoTable thee = Table_createWithColumnNames (my nx, L"time quefrency cpp f0 rnr");
+		autoPowerCepstrum him = PowerCepstrum_create (my ymax, my ny);
+		for (long i = 1; i <= my nx; i++) {
+			for (long j = 1; j <= my ny; j++) {
+				his z[1][j] = my z[j][i];
+			}
+			double qpeak, z, cpp = PowerCepstrum_getPeakProminence (him.peek(), pitchFloor, pitchCeiling, interpolation,
+				qstartFit, qendFit, lineType, fitMethod, &qpeak);
+			double rnr = PowerCepstrum_getRNR (him.peek(), pitchFloor, pitchCeiling, deltaF0);
+			double time = Sampled_indexToX (me, i);
+			Table_setNumericValue (thee.peek(), i, 1, time);
+			Table_setNumericValue (thee.peek(), i, 2, qpeak);
+			Table_setNumericValue (thee.peek(), i, 3, cpp); // Cepstrogram_getCPPS depends on this index!!
+			Table_setNumericValue (thee.peek(), i, 4, 1.0 / qpeak);
+			Table_setNumericValue (thee.peek(), i, 5, rnr);
 		}
-		xout[i] /= jto - jfrom + 1;
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Table with cepstral peak prominence values created.");
 	}
 }
 
-Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
+PowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow) {
 	try {
-		autoCepstrogram thee = (Cepstrogram) Data_copy (me);
+		autoPowerCepstrogram thee = (PowerCepstrogram) Data_copy (me);
 		// 1. average across time
 		long numberOfFrames = timeAveragingWindow / my dx;
 		if (numberOfFrames > 1) {
-			if (numberOfFrames % 2 == 0) { // make symmetric
-				numberOfFrames++;
-			}
 			autoNUMvector<double> qin (1, my nx);
 			autoNUMvector<double> qout (1, my nx);
 			for (long iq = 1; iq <= my ny; iq++) {
 				for (long iframe = 1; iframe <= my nx; iframe++) {
-					qin[iframe] = TO10LOG (my z[iq][iframe]);
+					//qin[iframe] = TO10LOG (my z[iq][iframe]);
+					qin[iframe] = thy z[iq][iframe];
 				}
 				NUMvector_smoothByMovingAverage (qin.peek(), my nx, numberOfFrames, qout.peek());
 				for (long iframe = 1; iframe <= my nx; iframe++) {
-					thy z[iq][iframe] = FROMLOG (qout[iframe]); // inverse 
+					//thy z[iq][iframe] = FROMLOG (qout[iframe]); // inverse 
+					thy z[iq][iframe] = qout[iframe]; // inverse 
 				}
 			}
 		}
 		// 2. average across quefrencies
 		long numberOfQuefrencyBins = quefrencyAveragingWindow / my dy;
-		if (numberOfQuefrencyBins > 0) {
-			if (numberOfQuefrencyBins % 2 == 0) {
-				numberOfQuefrencyBins++;
-			}
+		if (numberOfQuefrencyBins > 1) {
 			autoNUMvector<double> qin (1, thy ny);
 			autoNUMvector<double> qout (1, thy ny);
 			for (long iframe = 1; iframe <= my nx; iframe++) {
 				for (long iq = 1; iq <= thy ny; iq++) {
-					qin[iq] = TO10LOG (my z[iq][iframe]);
+					//qin[iq] = TO10LOG (my z[iq][iframe]);
+					qin[iq] = thy z[iq][iframe];
 				}
 				NUMvector_smoothByMovingAverage (qin.peek(), thy ny, numberOfQuefrencyBins, qout.peek());
 				for (long iq = 1; iq <= thy ny; iq++) {
-					thy z[iq][iframe] = FROMLOG (qout[iq]);
+					//thy z[iq][iframe] = FROMLOG (qout[iq]);
+					thy z[iq][iframe] = qout[iq];
 				}
 			}
 		}
@@ -171,7 +219,7 @@ Cepstrogram Cepstrogram_smooth (Cepstrogram me, double timeAveragingWindow, doub
 	}
 }
 
-Matrix Cepstrogram_to_Matrix (Cepstrogram me) {
+Matrix PowerCepstrogram_to_Matrix (PowerCepstrogram me) {
 	try {
 		autoMatrix thee = Thing_new (Matrix);
 		my structMatrix :: v_copy (thee.peek());
@@ -181,11 +229,11 @@ Matrix Cepstrogram_to_Matrix (Cepstrogram me) {
 	}
 }
 
-Cepstrum Cepstrogram_to_Cepstrum_slice (Cepstrogram me, double time) {
+PowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, double time) {
 	try {
 		long iframe = Sampled_xToNearestIndex (me, time);
 		iframe = iframe < 1 ? 1 : iframe > my nx ? my nx : iframe;
-		autoCepstrum thee = Cepstrum_create (my ymin, my ymax, my ny);
+		autoPowerCepstrum thee = PowerCepstrum_create (my ymax, my ny);
 		for (long i = 1; i <= my ny; i++) {
 			thy z[1][i] = my z[i][iframe];
 		}
@@ -195,17 +243,17 @@ Cepstrum Cepstrogram_to_Cepstrum_slice (Cepstrogram me, double time) {
 	}
 }
 
-Cepstrogram Matrix_to_Cepstrogram (Matrix me) {
+PowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 	try {
-		autoCepstrogram thee = Thing_new (Cepstrogram);
+		autoPowerCepstrogram thee = Thing_new (PowerCepstrogram);
 		my structMatrix :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Cepstrogram created.");
+		Melder_throw (me, ": no PowerCepstrogram created.");
 	}
 }
 
-Cepstrogram Sound_to_Cepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
+PowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double dt, double maximumFrequency, double preEmphasisFrequency) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
 		double analysisWidth = 3  / pitchFloor;
@@ -222,15 +270,12 @@ Cepstrogram Sound_to_Cepstrogram (Sound me, double pitchFloor, double dt, double
 		Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1);
 		autoSound sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 		autoSound window = Sound_createGaussian (windowDuration, samplingFrequency);
-		double qmin, qmax, dq, q1;
-		long nq;
-		{ // laziness: find out the proper dimensions
-			autoSpectrum spec = Sound_to_Spectrum (sframe.peek(), 1);
-			autoCepstrum cepstrum = Spectrum_to_Cepstrum (spec.peek());
-			qmin = cepstrum -> xmin; qmax = cepstrum -> xmax; dq = cepstrum -> dx;
-			q1 = cepstrum -> x1; nq = cepstrum -> nx;
-		}
-		autoCepstrogram thee = Cepstrogram_create (my xmin, my xmax, nFrames, dt, t1, qmin, qmax, nq, dq, q1);
+		// find out the size of the FFT
+		long nfft = 2;
+		while (nfft < sframe -> nx) nfft *= 2;
+		long nq = nfft / 2 + 1;
+		double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nq - 1);
+		autoPowerCepstrogram thee = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nq, dq, 0);
 
 		autoMelderProgress progress (L"Cepstrogram analysis");
 
@@ -239,19 +284,19 @@ Cepstrogram Sound_to_Cepstrogram (Sound me, double pitchFloor, double dt, double
 			Sound_into_Sound (sound.peek(), sframe.peek(), t - windowDuration / 2);
 			Vector_subtractMean (sframe.peek());
 			Sounds_multiply (sframe.peek(), window.peek());
-			autoSpectrum spec = Sound_to_Spectrum (sframe.peek(), 1);
-			autoCepstrum cepstrum = Spectrum_to_Cepstrum (spec.peek());
+			autoSpectrum spec = Sound_to_Spectrum (sframe.peek(), 1); // FFT yes
+			autoPowerCepstrum cepstrum = Spectrum_to_PowerCepstrum (spec.peek());
 			for (long i = 1; i <= nq; i++) {
 				thy z[i][iframe] = cepstrum -> z[1][i];
 			}
 			if ((iframe % 10) == 1) {
-				Melder_progress ((double) iframe / nFrames, L"Cepstrogram analysis of frame ",
+				Melder_progress ((double) iframe / nFrames, L"PowerCepstrogram analysis of frame ",
 					Melder_integer (iframe), L" out of ", Melder_integer (nFrames), L".");
 			}
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (me, ": no Cepstrogram created.");
+		Melder_throw (me, ": no PowerCepstrogram created.");
 	}
 }
 
@@ -263,7 +308,7 @@ Cepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 			Melder_throw ("A Fourier-transformable Spectrum must have a first frequency of 0 Hz, not ", my x1, L" Hz.");
 		}
 		long numberOfSamples = my nx - 1;
-		autoCepstrum thee = Cepstrum_create (0, 0.5 / my dx, my nx);
+		autoCepstrum thee = Cepstrum_create (0.5 / my dx, my nx);
 		NUMfft_Table_init (&fftTable, my nx);
 		autoNUMvector<double> amp (1, my nx);
 		
@@ -303,7 +348,7 @@ static void complexfftoutput_to_power (double *fft, long nfft, double *dbs, bool
 }
 
 
-Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double minimumPitch, double dt) {
+PowerCepstrogram Sound_to_PowerCepstrogram_hillenbrand (Sound me, double minimumPitch, double dt) {
 	try {
 		// minimum analysis window has 3 periods of lowest pitch
 		double analysisWidth = 3  / minimumPitch;
@@ -339,8 +384,8 @@ Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double minimumPitch, dou
 		autoNUMfft_Table fftTable;
 		NUMfft_Table_init (&fftTable, nfft); // sound to spectrum
 		
-		double qmin = 0, qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1), q1 = 0;
-		autoCepstrogram him = Cepstrogram_create (my xmin, my xmax, nFrames, dt, t1, qmin, qmax, nfftdiv2+1, dq, q1);
+		double qmax = 0.5 * nfft / samplingFrequency, dq = qmax / (nfftdiv2 + 1);
+		autoPowerCepstrogram him = PowerCepstrogram_create (my xmin, my xmax, nFrames, dt, t1, 0, qmax, nfftdiv2+1, dq, 0);
 		
 		autoMelderProgress progress (L"Cepstrogram analysis");
 		
@@ -396,14 +441,34 @@ Cepstrogram Sound_to_Cepstrogram_hillenbrand (Sound me, double minimumPitch, dou
 	}
 }
 
-double Cepstrogram_getCPPS (Cepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, int interpolation, double qstartFit, double qendFit, int fitMethod) {
+double PowerCepstrogram_getCPPS (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling, double deltaF0, int interpolation, double qstartFit, double qendFit, int lineType, int fitMethod) {
 	try {
-		autoCepstrogram smooth = Cepstrogram_smooth (me, timeAveragingWindow, quefrencyAveragingWindow);
-		autoTable table = Cepstrogram_to_Table_cpp (smooth.peek(), pitchFloor, pitchCeiling, interpolation, qstartFit, qendFit, fitMethod);
+		autoPowerCepstrogram him;
+		if (subtractTiltBeforeSmoothing) {
+			him.reset(PowerCepstrogram_subtractTilt (me, qstartFit, qendFit, lineType, fitMethod));
+		}
+		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTiltBeforeSmoothing ? him.peek() : me, timeAveragingWindow, quefrencyAveragingWindow);
+		autoTable table = PowerCepstrogram_to_Table_cpp (smooth.peek(), pitchFloor, pitchCeiling, deltaF0, interpolation, qstartFit, qendFit, lineType, fitMethod);
 		double cpps = Table_getMean (table.peek(), 3);
 		return cpps;
 	} catch (MelderError) {
 		Melder_throw (me, ": no CPPS value calculated.");
 	}
 }
+
+double PowerCepstrogram_getCPPS_hillenbrand (PowerCepstrogram me, bool subtractTiltBeforeSmoothing, double timeAveragingWindow, double quefrencyAveragingWindow, double pitchFloor, double pitchCeiling) {
+	try {
+		autoPowerCepstrogram him;
+		if (subtractTiltBeforeSmoothing) {
+			him.reset(PowerCepstrogram_subtractTilt (me, 0.001, 0, 1, 1));
+		}
+		autoPowerCepstrogram smooth = PowerCepstrogram_smooth (subtractTiltBeforeSmoothing ? him.peek() : me, timeAveragingWindow, quefrencyAveragingWindow);
+		autoTable table = PowerCepstrogram_to_Table_hillenbrand (smooth.peek(), pitchFloor, pitchCeiling);
+		double cpps = Table_getMean (table.peek(), 3);
+		return cpps;
+	} catch (MelderError) {
+		Melder_throw (me, ": no CPPS value calculated.");
+	}
+}
+
 /* End of file Cepstrogram.cpp */

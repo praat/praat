@@ -1,6 +1,6 @@
 /* praat_Stat.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,6 +187,14 @@ DIRECT (PairDistribution_removeZeroWeights)
 	LOOP {
 		iam (PairDistribution);
 		PairDistribution_removeZeroWeights (me);
+		praat_dataChanged (me);
+	}
+END
+
+DIRECT (PairDistribution_swapInputsAndOutputs)
+	LOOP {
+		iam (PairDistribution);
+		my f_swapInputsAndOutputs ();
 		praat_dataChanged (me);
 	}
 END
@@ -1812,7 +1820,8 @@ void praat_uvafon_stat_init () {
 		praat_addAction1 (classPairDistribution, 1, L"Get fraction correct (maximum likelihood)", 0, 1, DO_PairDistribution_getFractionCorrect_maximumLikelihood);
 		praat_addAction1 (classPairDistribution, 1, L"Get fraction correct (probability matching)", 0, 1, DO_PairDistribution_getFractionCorrect_probabilityMatching);
 	praat_addAction1 (classPairDistribution, 0, L"Modify -", 0, 0, 0);
-	praat_addAction1 (classPairDistribution, 1, L"Remove zero weights", 0, 0, DO_PairDistribution_removeZeroWeights);
+	praat_addAction1 (classPairDistribution, 0, L"Remove zero weights", 0, 1, DO_PairDistribution_removeZeroWeights);
+	praat_addAction1 (classPairDistribution, 0, L"Swap inputs and outputs", 0, 1, DO_PairDistribution_swapInputsAndOutputs);
 
 	praat_addAction1 (classTable, 0, L"Table help", 0, 0, DO_Table_help);
 	praat_addAction1 (classTable, 1, L"Save as tab-separated file...", 0, 0, DO_Table_writeToTabSeparatedFile);

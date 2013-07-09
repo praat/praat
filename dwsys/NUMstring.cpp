@@ -533,4 +533,12 @@ long *NUMstring_getElementsOfRanges (const wchar_t *ranges, long maximumElement,
 	return elements.transfer();
 }
 
+wchar_t * NUMstring_timeNoDot (double time) {
+	static wchar_t string[100];
+	long seconds = time;
+	long ms = round((double)((time - seconds) * 1000.0));
+	swprintf (string, 99, L"_%ld_%ld", seconds, ms);
+	return string;
+}
+
 /* End of file NUMstring.cpp */

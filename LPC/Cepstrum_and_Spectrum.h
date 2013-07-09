@@ -7,5 +7,5 @@
 
 Cepstrum Spectrum_to_Cepstrum (Spectrum me);
 Spectrum Cepstrum_to_Spectrum (Cepstrum me);
-
+PowerCepstrum Spectrum_to_PowerCepstrum (Spectrum me);
 #endif /* _Cepstrum_and_Spectrum_h_ */

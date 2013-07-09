@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2012 David Weenink
+ * Copyright (C) 1997-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,13 @@
 	F0, F1, F2, F3
 */
 
-
+#include "Formula.h"
 #include "GraphicsP.h"
 #include "Graphics_extensions.h"
 #include "Index.h"
+#include "Matrix_extensions.h"
 #include "NUM2.h"
+#include <ctype.h>
 #include "Strings_extensions.h"
 #include "Table_extensions.h"
 
@@ -3109,6 +3111,41 @@ Table Table_createFromWeeninkData () {
 	}
 }
 
+// Keating&Esposito (2006), 
+Table Table_createFromEspositoData () {
+	try {
+		autoTable me = Table_createWithColumnNames (10, L"Language Modal Breathy");
+		Table_setStringValue (me.peek(), 1, 1, L"Chong");Table_setNumericValue (me.peek(), 1, 2, -1.5);Table_setNumericValue (me.peek(), 1, 3, 5);
+		Table_setStringValue (me.peek(), 2, 1, L"Fuzhou");Table_setNumericValue (me.peek(), 2, 2, -1.5);Table_setNumericValue (me.peek(), 2, 3, 5);
+		Table_setStringValue (me.peek(), 3, 1, L"Green Hmong");Table_setNumericValue (me.peek(), 3, 2, 3);Table_setNumericValue (me.peek(), 3, 3, 12);
+		Table_setStringValue (me.peek(), 4, 1, L"White Hmong");Table_setNumericValue (me.peek(), 4, 2, 2);Table_setNumericValue (me.peek(), 4, 3, 11);
+		Table_setStringValue (me.peek(), 5, 1, L"Mon");Table_setNumericValue (me.peek(), 5, 2, -1.5);Table_setNumericValue (me.peek(), 5, 3, 0);
+		Table_setStringValue (me.peek(), 6, 1, L"SADV Zapotec");Table_setNumericValue (me.peek(), 6, 2, -6);Table_setNumericValue (me.peek(), 6, 3, -4);
+		Table_setStringValue (me.peek(), 7, 1, L"SLQ Zapotec");Table_setNumericValue (me.peek(), 7, 2, 3.5);Table_setNumericValue (me.peek(), 7, 3, 14);
+		Table_setStringValue (me.peek(), 8, 1, L"Tlacolula Zapotec");Table_setNumericValue (me.peek(), 8, 2, 3);Table_setNumericValue (me.peek(), 8, 3, 13);
+		Table_setStringValue (me.peek(), 9, 1, L"Tamang");Table_setNumericValue (me.peek(), 9, 2, 1);Table_setNumericValue (me.peek(), 9, 3, 1);
+		Table_setStringValue (me.peek(), 10, 1, L"!Xoo");Table_setNumericValue (me.peek(), 10, 2, 1);Table_setNumericValue (me.peek(), 10, 3, 14);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Keating-Esposito table not created.");
+	}
+}
+
+Table Table_createFromGanongData () {
+	try {
+		autoTable me = Table_createWithColumnNames (6, L"VOT dash-tash dask-task");
+		Table_setNumericValue (me.peek(), 1, 1, -17.5);Table_setNumericValue (me.peek(), 1, 2, 0.98);Table_setNumericValue (me.peek(), 1, 3, 0.92);
+		Table_setNumericValue (me.peek(), 2, 1, -7.5);Table_setNumericValue (me.peek(), 2, 2, 0.95);Table_setNumericValue (me.peek(), 2, 3, 0.83);
+		Table_setNumericValue (me.peek(), 3, 1, -2.5);Table_setNumericValue (me.peek(), 3, 2, 0.71);Table_setNumericValue (me.peek(), 3, 3, 0.33);
+		Table_setNumericValue (me.peek(), 4, 1, 2.5);Table_setNumericValue (me.peek(), 4, 2, 0.29);Table_setNumericValue (me.peek(), 4, 3, 0.10);
+		Table_setNumericValue (me.peek(), 5, 1, 7.5);Table_setNumericValue (me.peek(), 5, 2, 0.12);Table_setNumericValue (me.peek(), 5, 3, 0.02);
+		Table_setNumericValue (me.peek(), 6, 1, 17.5);Table_setNumericValue (me.peek(), 6, 2, 0.10);Table_setNumericValue (me.peek(), 6, 3, 0.02);
+		return me.transfer();
+	} catch (MelderError) {
+		Melder_throw ("Ganong table not created.");
+	}
+}
+
 void Table_scatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
         double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
         long yci_min, long yci_max, double bar_mm, int garnish) {
@@ -3940,5 +3977,356 @@ void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, d
 		Melder_clearError ();   // drawing errors shall be ignored
 	}
 }
+
+void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		if (dataColumn < 1 || dataColumn > my numberOfColumns) return;
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		Table_numericize_Assert (me, dataColumn);
+		long n = my rows -> size, mrow = 0;
+		autoMatrix thee = Matrix_create (1, 1, 1, 1, 1, 0, n + 1, n, 1, 1);
+		for (long irow = 1; irow <= n; irow++) {
+			struct Formula_Result result;
+			Formula_run (irow, dataColumn, & result);
+			if (result.result.numericResult) {
+				thy z[1][++mrow] = Table_getNumericValue_Assert (me, irow, dataColumn);
+			}
+		}
+		Matrix_drawDistribution (thee.peek(), g, 0, 1, 0.5, mrow+0.5, minimum, maximum, nBins, freqMin, freqMax, 0, garnish);
+	} catch (MelderError) {
+		//
+	}
+}
+
+static Strings itemizeColourString (const wchar_t *colourString) {
+	// remove all spaces within { } so each {1,2,3} can be itemized
+	const wchar_t *compileMsg;
+	long nmatches_sub = 0;
+	const wchar_t *searchRE = L"\\{\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*,\\s*([0-9.]+)\\s*\\}";
+	regexp *compiledRE = CompileRE ((regularExp_CHAR *) searchRE, &compileMsg, 0);
+	if (compiledRE == NULL) {
+			Melder_throw ("No valid regexp");
+	}
+	autoMelderString colour;
+	MelderString_append (&colour, str_replace_regexp (colourString, compiledRE, L"{\\1,\\2,\\3}", 0, &nmatches_sub));
+	autoStrings thee = Strings_createAsTokens (colour.string);
+	return thee.transfer();
+}
+
+Graphics_Colour Strings_colourToValue  (Strings me, long index) {
+	if (index < 0 || index > my numberOfStrings) {
+		return Graphics_GREY;
+	}
+	Graphics_Colour colourValue;
+	wchar_t *p = my strings[index];
+	while (*p == ' ' || *p == '\t') p ++;
+	*p = tolower (*p);
+	int first = *p;
+	if (first == '{') {
+		colourValue.red = Melder_atof (++ p);
+		p = (wchar_t *) wcschr (p, ',');
+		if (p == NULL) return Graphics_GREY;
+		colourValue.green = Melder_atof (++ p);
+		p = (wchar_t *) wcschr (p, ',');
+		if (p == NULL) return Graphics_GREY;
+		colourValue.blue = Melder_atof (++ p);
+	} else {
+		*p = tolower (*p);
+		if (wcsequ (p, L"black")) colourValue = Graphics_BLACK;
+		else if (wcsequ (p, L"white")) colourValue = Graphics_WHITE;
+		else if (wcsequ (p, L"red")) colourValue = Graphics_RED;
+		else if (wcsequ (p, L"green")) colourValue = Graphics_GREEN;
+		else if (wcsequ (p, L"blue")) colourValue = Graphics_BLUE;
+		else if (wcsequ (p, L"yellow")) colourValue = Graphics_YELLOW;
+		else if (wcsequ (p, L"cyan")) colourValue = Graphics_CYAN;
+		else if (wcsequ (p, L"magenta")) colourValue = Graphics_MAGENTA;
+		else if (wcsequ (p, L"maroon")) colourValue = Graphics_MAROON;
+		else if (wcsequ (p, L"lime")) colourValue = Graphics_LIME;
+		else if (wcsequ (p, L"navy")) colourValue = Graphics_NAVY;
+		else if (wcsequ (p, L"teal")) colourValue = Graphics_TEAL;
+		else if (wcsequ (p, L"purple")) colourValue = Graphics_PURPLE;
+		else if (wcsequ (p, L"olive")) colourValue = Graphics_OLIVE;
+		else if (wcsequ (p, L"pink")) colourValue = Graphics_PINK;
+		else if (wcsequ (p, L"silver")) colourValue = Graphics_SILVER;
+		else if (wcsequ (p, L"grey")) colourValue = Graphics_GREY;
+		else { 
+			double grey = Melder_atof (p);
+			grey = grey < 0 ? 0 : (grey > 1 ? 1 : grey);
+			colourValue.red = colourValue.green = colourValue.blue = grey;
+		}
+	}
+	return colourValue;
+}
+
+long *Table_findRowsMatchingCriterion (Table me, const wchar_t *formula, Interpreter interpreter, long *numberOfMatches) {
+	try {
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		autoNUMvector<long> selectedRows (1, my rows -> size);
+		long n = 0;
+		for (long irow =1; irow <= my rows -> size; irow++) {
+			struct Formula_Result result;
+			Formula_run (irow, 1, & result);
+			if (result.result.numericResult) {
+				selectedRows[++n] = irow;
+			}
+		}
+		if (n < 1) {
+			Melder_throw ("No rows selected.");
+		}
+		*numberOfMatches = n;
+		return selectedRows.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": cannot find matches.");
+	}
+}
+
+static bool Table_selectedColumnPartIsNumeric (Table me, long column, long *selectedRows, long numberOfSelectedRows) {
+	if (column < 1 || column > my numberOfColumns) return false;
+	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
+		if (! Table_isCellNumeric_ErrorFalse (me, selectedRows[irow], column)) return false;
+	}
+	return true;
+}
+
+// column and selectedRows are valid; *min & *max must be intialized
+static void Table_columnExtremesFromSelectedRows (Table me, long column, long *selectedRows, long numberOfSelectedRows, double *min, double *max) {
+	double cmin = 1e38, cmax = - cmin;
+	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
+		double val = Table_getNumericValue_Assert (me, selectedRows[irow], column);
+		if (val < cmin) { cmin = val; }
+		if (val > cmax) { cmax = val; }
+	}
+	*min = cmin;
+	*max = cmax;
+}
+
+void Table_barPlotWhere (Table me, Graphics g, const wchar_t *columnLabels, double ymin, double ymax,const wchar_t *labelColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const wchar_t *colours, double angle, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long numberOfColumns, numberOfRowMatches = 0;
+		autoNUMvector<long> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, &numberOfColumns), 1);
+		long labelIndex = Table_findColumnIndexFromColumnLabel (me, labelColumn);
+		autoStrings colour = itemizeColourString (colours);// removes all spaces within { } so each {} can be parsed as 1 item
+		
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfRowMatches), 1);
+
+		if (ymax <= ymin) { // autoscaling
+			ymin = 1e38; ymax= - ymin;
+			for (long icol = 1; icol <= numberOfColumns; icol++) {
+				double cmin, cmax;
+				Table_columnExtremesFromSelectedRows (me, columnIndex[icol], selectedRows.peek(), numberOfRowMatches, &cmin, &cmax);
+				if (cmin < ymin) { ymin = cmin; }
+				if (cmax > ymax) { ymax = cmax; }
+			}
+			ymin = ymin > 0 ? 0 : ymin;
+			ymax = ymax < 0 ? 0 : ymax;
+		}
+		Graphics_setInner (g);
+		Graphics_setWindow (g, 0, 1, ymin, ymax);
+
+		long numberOfGroups = numberOfRowMatches;
+		long groupSize = numberOfColumns;
+		double bar_width = 1 / (numberOfGroups * groupSize + 2 * xoffsetFraction + (numberOfGroups - 1) * interbarsFraction + numberOfGroups * (groupSize - 1) * interbarFraction);
+		double dx = (interbarsFraction + groupSize + (groupSize - 1) * interbarFraction) * bar_width;
+
+		for (long icol = 1; icol <= groupSize; icol++) {
+			double xb = xoffsetFraction * bar_width + (icol - 1) * (1 + interbarFraction) * bar_width;
+			double x1 = xb;
+			Graphics_Colour color = Strings_colourToValue  (colour.peek(), icol);
+			for (long irow = 1; irow <= numberOfRowMatches; irow++) {
+				double x2 = x1 + bar_width;
+				double y2 = Table_getNumericValue_Assert (me, selectedRows[irow], columnIndex[icol]);
+				y2 = y2 > ymax ? ymax : (y2 < ymin ? ymin : y2);
+				double y1 = ymin < 0 ? 0 : ymin;
+				
+				Graphics_setColour (g, color);
+				Graphics_fillRectangle (g, x1, x2, y1, y2);
+				Graphics_setGrey (g, 0); /* Black */
+				Graphics_rectangle (g, x1, x2, y1, y2);
+
+				x1 += dx;
+			}
+		}
+
+		//Graphics_unsetInner (g);
+
+		if (garnish) {
+			if (labelIndex > 0) {
+				double y = ymin, xb = (xoffsetFraction + 0.5 * (groupSize + (groupSize - 1) * interbarFraction)) * bar_width;
+				double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72);
+				int currentFontSize = Graphics_inqFontSize (g);
+				Graphics_setTextRotation (g, angle);
+				if (angle < 0) {
+					y -= 0.3*lineSpacing;
+					xb -= 0.5 * bar_width;
+					Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
+					Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_TOP);
+				} else if (angle > 0) {
+					y -= 0.3*lineSpacing;
+					xb += 0.5 * bar_width;
+					Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
+					Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_TOP);
+				} else {
+					Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+				}
+				for (long irow = 1; irow <= numberOfGroups; irow++) {
+					const wchar_t *label = Table_getStringValue_Assert (me, selectedRows[irow], labelIndex);
+					if (label) {
+						//Graphics_markBottom (g, xb, 0, 0, 0, label);
+						Graphics_text (g, xb, ymin - g -> vertTick, label); // was y
+					}
+					xb += dx;
+				}
+				Graphics_setFontSize (g, currentFontSize);
+				Graphics_setTextRotation (g, 0);
+			}
+		}
+		Graphics_unsetInner (g);
+		if (garnish) {
+			if (ymin * ymax < 0) {
+				Graphics_markLeft (g, 0, TRUE,TRUE, TRUE, NULL);
+			}
+
+			Graphics_drawInnerBox (g);
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) {
+		//
+	}
+}
+
+static int Graphics_getConnectingLine (Graphics g, const wchar_t *text1, double x1, double y1, const wchar_t *text2, double x2, double y2, double *x3, double *y3, double *x4, double *y4) {
+	int drawLine = 0;
+	double width1 = Graphics_textWidth (g, text1), width2 = Graphics_textWidth (g, text2);
+	double h = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72) / 1.5;
+	double xi[3], yi[3], xleft = x1 < x2 ? x1 : x2, xright = x2 > x1 ? x2 : x1;
+	int numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xleft - width1 / 2, y1 - h/2, xleft +width1 / 2, y1 + h/2, xi, yi);
+	if (numberOfIntersections == 1) {
+		*x3 = xi[1]; *y3 = yi[1];
+		numberOfIntersections = NUMgetIntersectionsWithRectangle (x1, y1, x2, y2, xright - width2 / 2, y2 - h/2, xright + width2 / 2, y2 + h/2, xi, yi);
+		if (numberOfIntersections == 1) {
+			*x4 = xi[1]; *y4 = yi[1];
+			drawLine = 1;
+		}
+	}
+	return drawLine;
+}
+
+// take the xcolumn as labels if non-numeric column elsee as numbers and arrange distances accordingly.
+void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax, const wchar_t *symbol, double angle, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		if (ycolumn < 1 || ycolumn > my rows -> size) return;
+		long numberOfSelectedRows = 0;
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	
+		if (ymax <= ymin) { // autoscaling
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
+		}
+		// the following also catches xcolumn = 0 !
+		bool xIsNumeric = Table_selectedColumnPartIsNumeric (me, xcolumn, selectedRows.peek(), numberOfSelectedRows);
+		if (xmin >= xmax) {
+			if (xIsNumeric) {
+				Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.peek(), numberOfSelectedRows, &xmin, &xmax);
+			} else {
+				xmin = 0; xmax = numberOfSelectedRows + 1;
+			}
+		}
+		Graphics_setInner (g);
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+		double x1, y1;
+		double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72);
+		double symbolHeight = lineSpacing / 1.5;
+		for (long i = 1; i <= numberOfSelectedRows; i++) {
+			double y2 = Table_getNumericValue_Assert (me, selectedRows[i], ycolumn);
+			double x2 = xIsNumeric ? Table_getNumericValue_Assert (me, selectedRows[i], xcolumn) : i;
+			double symbolWidth = 0;
+			if (x2 >= xmin && (x2 <= xmax || x1 < xmax)) {
+				if (symbol && y2 >= ymin && y2 <= ymax && x2 <= xmax) {
+					Graphics_text (g, x2, y2, symbol);
+					symbolWidth = Graphics_textWidth (g, symbol);
+				}
+				if (i > 1) {
+					double x3, y3, x4, y4, xo1, yo1, xo2, yo2;
+					if (Graphics_getConnectingLine (g, symbol, x1, y1, symbol, x2, y2, &x3, &y3, &x4, &y4) &&
+						NUMclipLineWithinRectangle (x3, y3, x4, y4, xmin, ymin, xmax, ymax, &xo1, &yo1, &xo2, &yo2)) {
+						Graphics_line (g, xo1, yo1, xo2, yo2);
+					}
+				}
+			} else {
+				x2 = x2 < xmin ? xmin : xmax;
+			}
+			x1 = x2; y1 = y2;
+		}
+		
+		if (garnish && ! xIsNumeric && xcolumn > 0) {
+			double y = ymin, dx = 0;
+			
+			int currentFontSize = Graphics_inqFontSize (g);
+			Graphics_setTextRotation (g, angle);
+			if (angle < 0) {
+				y -= 0.3*lineSpacing;
+				dx = -0.5;
+				Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
+				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_TOP);
+			} else if (angle > 0) {
+				y -= 0.3*lineSpacing;
+				dx = 0.5;
+				Graphics_setFontSize (g, currentFontSize - (currentFontSize > 12 ? 2 : 1));
+				Graphics_setTextAlignment (g, Graphics_RIGHT, Graphics_TOP);
+			} else {
+				Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_TOP);
+			}
+			for (long i = 1; i <= numberOfSelectedRows; i++) {
+				double x2 = i;
+				if (x2 >= xmin && x2 <= xmax) {
+					const wchar_t *label = Table_getStringValue_Assert (me, selectedRows[i], xcolumn);
+					if (label) {
+						//Graphics_markBottom (g, xb, 0, 0, 0, label);
+						Graphics_text (g, x2 + dx, ymin - g -> vertTick, label); // was y
+					}
+				}
+			}
+			Graphics_setFontSize (g, currentFontSize);
+			Graphics_setTextRotation (g, 0);
+		}
+		Graphics_unsetInner (g);
+
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+			if (xIsNumeric) {
+				Graphics_marksBottom (g, 2, 1, 1, 0);
+			}
+		}
+	} catch (MelderError) {
+		//
+	}
+}
+
+Table Table_extractRowsWhere (Table me, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		autoTable thee = Table_create (0, my numberOfColumns);
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+			autostring newLabel = Melder_wcsdup (my columnHeaders [icol]. label);
+			thy columnHeaders [icol]. label = newLabel.transfer();
+		}
+		for (long irow = 1; irow <= my rows -> size; irow ++) {
+			struct Formula_Result result;
+			Formula_run (irow, 1, & result);
+			if (result.result.numericResult) {
+				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
+				autoTableRow newRow = Data_copy (row);
+				Collection_addItem (thy rows, newRow.transfer());
+			}
+		}
+		if (thy rows -> size == 0) {
+			Melder_warning (L"No row matches criterion.");
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": no Table could be extracted.");
+	}
+}
+
 
 /* End of file Table_extensions.cpp */

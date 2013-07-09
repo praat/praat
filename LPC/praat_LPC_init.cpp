@@ -45,6 +45,7 @@
 #include "LPC_and_Tube.h"
 #include "LPC_to_Spectrogram.h"
 #include "LPC_to_Spectrum.h"
+#include "NUM2.h"
 #include "MelFilter_and_MFCC.h"
 #include "Sound_and_LPC.h"
 #include "Sound_and_LPC_robust.h"
@@ -65,9 +66,16 @@ int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 
 /********************** Cepstrum  ****************************************/
 
+DIRECT (Cepstrum_downto_PowerCepstrum)
+	LOOP {
+		iam (Cepstrum);
+		autoPowerCepstrum thee = Cepstrum_downto_PowerCepstrum (me);
+		praat_new (thee.transfer(), my name);
+	}
+END
 
-DIRECT (Cepstrum_help)
-	Melder_help (L"Cepstrum");
+DIRECT (PowerCepstrum_help)
+	Melder_help (L"PowerCepstrum");
 END
 
 FORM (Cepstrum_drawLinear, L"Cepstrum: Draw linear", L"Cepstrum: Draw (linear)...")
@@ -75,7 +83,7 @@ FORM (Cepstrum_drawLinear, L"Cepstrum: Draw linear", L"Cepstrum: Draw (linear)..
 	REAL (L"right Quefrency range (s)", L"0.0")
 	REAL (L"Minimum", L"0.0")
 	REAL (L"Maximum", L"0.0")
-	BOOLEAN (L"Garnish", 0)
+	BOOLEAN (L"Garnish", 1)
 	OK
 DO
 	autoPraatPicture picture;
@@ -86,7 +94,7 @@ DO
 	}
 END
 
-FORM (Cepstrum_draw, L"Cepstrum: Draw", L"Cepstrum: Draw...")
+FORM (PowerCepstrum_draw, L"PowerCepstrum: Draw", L"PowerCepstrum: Draw...")
 	REAL (L"left Quefrency range (s)", L"0.0")
 	REAL (L"right Quefrency range (s)", L"0.0")
 	REAL (L"Minimum (dB)", L"0.0")
@@ -96,13 +104,13 @@ FORM (Cepstrum_draw, L"Cepstrum: Draw", L"Cepstrum: Draw...")
 DO
 	autoPraatPicture picture;
 	LOOP {
-		iam (Cepstrum);
-		Cepstrum_draw (me, GRAPHICS, GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
+		iam (PowerCepstrum);
+		PowerCepstrum_draw (me, GRAPHICS, GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
 			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
 	}
 END
 
-FORM (Cepstrum_drawTiltLine, L"Cepstrum: Draw tilt line", L"Cepstrum: Draw tilt line...")
+FORM (PowerCepstrum_drawTiltLine, L"PowerCepstrum: Draw tilt line", L"PowerCepstrum: Draw tilt line...")
 	REAL (L"left Quefrency range (s)", L"0.0")
 	REAL (L"right Quefrency range (s)", L"0.0")
 	REAL (L"left Amplitude range (dB)", L"0.0")
@@ -110,6 +118,9 @@ FORM (Cepstrum_drawTiltLine, L"Cepstrum: Draw tilt line", L"Cepstrum: Draw tilt 
 	LABEL (L"", L"Parameters for the tilt line fit")
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
 	OPTION (L"Least squares")
 	OPTION (L"Robust")
@@ -117,15 +128,15 @@ FORM (Cepstrum_drawTiltLine, L"Cepstrum: Draw tilt line", L"Cepstrum: Draw tilt 
 DO
 	autoPraatPicture picture;
 	LOOP {
-		iam (Cepstrum);
-		Cepstrum_drawTiltLine (me, GRAPHICS, GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
+		iam (PowerCepstrum);
+		PowerCepstrum_drawTiltLine (me, GRAPHICS, GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
 			GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"),
 			GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"), 
-			GET_INTEGER (L"Fit method"));
+			GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"));
 	}
 END
 
-FORM (Cepstrum_formula, L"Cepstrum: Formula...", L"Cepstrum: Formula...")
+FORM (PowerCepstrum_formula, L"PowerCepstrum: Formula...", L"PowerCepstrum: Formula...")
 	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
 		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
 	TEXTFIELD (L"formula", L"self")
@@ -134,10 +145,10 @@ DO
 	praat_Fon_formula (dia, interpreter);
 END
 
-FORM (Cepstrum_getPeak, L"Cepstrum: Get peak", 0)
+FORM (PowerCepstrum_getPeak, L"PowerCepstrum: Get peak", 0)
 	REAL (L"left Search peak in pitch range (Hz)", L"60.0")
 	REAL (L"right Search peak in pitch range (Hz)", L"333.3")
-	RADIO (L"Interpolation", 3)
+	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
 	RADIOBUTTON (L"Cubic")
@@ -145,17 +156,17 @@ FORM (Cepstrum_getPeak, L"Cepstrum: Get peak", 0)
 	OK
 DO
 	LOOP {
-		iam (Cepstrum);
+		iam (PowerCepstrum);
 		double peakdB, quefrency;
-		Cepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
+		PowerCepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
 		Melder_informationReal (peakdB, L" dB");
 	}
 END
 
-FORM (Cepstrum_getQuefrencyOfPeak, L"Cepstrum: Get quefrency of peak", 0)
+FORM (PowerCepstrum_getQuefrencyOfPeak, L"PowerCepstrum: Get quefrency of peak", 0)
 	REAL (L"left Search peak in pitch range (Hz)", L"60.0")
 	REAL (L"right Search peak in pitch range (Hz)", L"333.3")
-	RADIO (L"Interpolation", 3)
+	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
 	RADIOBUTTON (L"Cubic")
@@ -163,39 +174,169 @@ FORM (Cepstrum_getQuefrencyOfPeak, L"Cepstrum: Get quefrency of peak", 0)
 	OK
 DO
 	LOOP {
-		iam (Cepstrum);
+		iam (PowerCepstrum);
 		double peakdB, quefrency;
-		Cepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
+		PowerCepstrum_getMaximumAndQuefrency (me, GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), GET_INTEGER (L"Interpolation") - 1, &peakdB, &quefrency);
 		double f = 1 / quefrency;
 		Melder_information (Melder_double (quefrency), L" s (f =", Melder_double (f), L" Hz)");
 	}
 END
 
-FORM (Cepstrum_getPeakProminence, L"Cepstrum: Get peak prominence", L"Cepstrum: Get peak prominence...")
-REAL (L"left Search peak in pitch range (Hz)", L"60.0")
-REAL (L"right Search peak in pitch range (Hz)", L"333.3")
-	RADIO (L"Interpolation", 3)
-	RADIOBUTTON (L"None")
-	RADIOBUTTON (L"Parabolic")
-	RADIOBUTTON (L"Cubic")
-	RADIOBUTTON (L"Sinc70")
+FORM (PowerCepstrum_getRNR, L"PowerCepstrum: Get rhamonics to noise ration", 0)
+	REAL (L"left Pitch range (Hz)", L"60.0")
+	REAL (L"right Pitch range (Hz)", L"333.3")
+	POSITIVE (L"Fractional width (0-1)", L"0.05")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		double rnr = PowerCepstrum_getRNR (me, GET_REAL (L"left Pitch range"), GET_REAL (L"right Pitch range"), GET_REAL (L"Fractional width"));
+		Melder_information (Melder_double (rnr), L" (rnr)");
+	}
+END
+
+FORM (PowerCepstrum_getPeakProminence_hillenbrand, L"PowerCepstrum: Get peak prominence (hillenbrand)", L"PowerCepstrum: Get peak prominence (hillenbrand)...")
+	REAL (L"left Search peak in pitch range (Hz)", L"60.0")
+	REAL (L"right Search peak in pitch range (Hz)", L"333.3")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		double qpeak, cpp = PowerCepstrum_getPeakProminence_hillenbrand (me,
+			GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"), &qpeak);
+		Melder_information (Melder_double (cpp), L" dB; quefrency=", Melder_double (qpeak), L" s (f=",
+			Melder_double (1 / qpeak), L" Hz).");
+	}
+END
+
+FORM (PowerCepstrum_getTiltLineSlope, L"PowerCepstrum: Get tilt line slope", 0)
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
 	OPTION (L"Least squares")
 	OPTION (L"Robust")
 	OK
 DO
 	LOOP {
-		iam (Cepstrum);
-		double qpeak, cpp = Cepstrum_getPeakProminence (me,
+		iam (PowerCepstrum);
+		double a, intercept;
+		int lineType = GET_INTEGER (L"Line type");
+		PowerCepstrum_fitTiltLine (me, GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"), 
+			  &a, &intercept, lineType, GET_INTEGER (L"Fit method"));
+		Melder_information (Melder_double (a), L" dB / ", lineType == 1 ? L"s" : L"ln (s)");
+	}
+END
+
+
+FORM (PowerCepstrum_getTiltLineIntercept, L"PowerCepstrum: Get tilt line intercept", 0)
+	REAL (L"left Tilt line quefrency range (s)", L"0.001")
+	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		double a, intercept;
+		int lineType = GET_INTEGER (L"Line type");
+		PowerCepstrum_fitTiltLine (me, GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"), 
+			  &a, &intercept, lineType, GET_INTEGER (L"Fit method"));
+		Melder_information (Melder_double (intercept), L" dB");
+	}
+END
+
+FORM (PowerCepstrum_getPeakProminence, L"PowerCepstrum: Get peak prominence", L"PowerCepstrum: Get peak prominence...")
+	REAL (L"left Search peak in pitch range (Hz)", L"60.0")
+	REAL (L"right Search peak in pitch range (Hz)", L"333.3")
+	RADIO (L"Interpolation", 2)
+	RADIOBUTTON (L"None")
+	RADIOBUTTON (L"Parabolic")
+	RADIOBUTTON (L"Cubic")
+	RADIOBUTTON (L"Sinc70")
+	REAL (L"left Tilt line quefrency range (s)", L"0.001")
+	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		double qpeak, cpp = PowerCepstrum_getPeakProminence (me,
 			GET_REAL (L"left Search peak in pitch range"), GET_REAL (L"right Search peak in pitch range"),
 			GET_INTEGER (L"Interpolation") - 1,
 			GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
-			GET_INTEGER (L"Fit method"), &qpeak);
-		double f = 1 / qpeak;
-		Melder_information (Melder_double (cpp), L" dB, at position ", Melder_double (qpeak), L" s (f =",
-			Melder_double (f), L" Hz)");
+			GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"), &qpeak);
+		Melder_information (Melder_double (cpp), L" dB; quefrency=", Melder_double (qpeak), L" s (f=",
+			Melder_double (1 / qpeak), L" Hz).");
+	}
+END
+
+FORM (PowerCepstrum_subtractTilt_inline, L"PowerCepstrum: Subtract tilt (in-line)", 0)
+	REAL (L"left Tilt line quefrency range (s)", L"0.001")
+	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		PowerCepstrum_subtractTilt_inline (me, GET_REAL (L"left Tilt line quefrency range"), 
+			GET_REAL (L"right Tilt line quefrency range"), GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"));
+	}
+END
+
+FORM (PowerCepstrum_smooth_inline, L"PowerCepstrum: Smooth (in-line)", 0)
+	REAL (L"Quefrency averaging window (s)", L"0.0005")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		PowerCepstrum_smooth_inline (me, GET_REAL (L"Quefrency averaging window"));
+	}
+END
+
+FORM (PowerCepstrum_smooth, L"PowerCepstrum: Smooth", 0)
+	REAL (L"Quefrency averaging window (s)", L"0.0005")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		autoPowerCepstrum thee = PowerCepstrum_smooth (me, GET_REAL (L"Quefrency averaging window"));
+		praat_new (thee.transfer(), my name, L"_smooth");
+	}
+END
+
+FORM (PowerCepstrum_subtractTilt, L"PowerCepstrum: Subtract tilt", 0)
+	REAL (L"left Tilt line quefrency range (s)", L"0.001")
+	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrum);
+		autoPowerCepstrum thee = PowerCepstrum_subtractTilt (me, GET_REAL (L"left Tilt line quefrency range"), 
+			GET_REAL (L"right Tilt line quefrency range"), GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"));
+		praat_new (thee.transfer(), my name, L"minusTilt");
 	}
 END
 
@@ -206,21 +347,21 @@ DIRECT (Cepstrum_to_Spectrum)
 	}
 END
 
-DIRECT (Cepstrum_to_Matrix)
+DIRECT (PowerCepstrum_to_Matrix)
 	LOOP {
-		iam (Cepstrum);
-		praat_new (Cepstrum_to_Matrix (me), my name);
+		iam (PowerCepstrum);
+		praat_new (PowerCepstrum_to_Matrix (me), my name);
 	}
 END
 
 /********************** Cepstrogram  ****************************************/
 
-DIRECT (Cepstrogram_help)
-	Melder_help (L"Cepstrogram");
+DIRECT (PowerCepstrogram_help)
+	Melder_help (L"PowerCepstrogram");
 END
 
 
-FORM (Cepstrogram_paint, L"Cepstrogram: Paint", 0)
+FORM (PowerCepstrogram_paint, L"PowerCepstrogram: Paint", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0")
 	REAL (L"left Quefrency range (s)", L"0.0")
@@ -232,61 +373,119 @@ FORM (Cepstrogram_paint, L"Cepstrogram: Paint", 0)
 DO
 	autoPraatPicture picture;
 	LOOP {
-		iam (Cepstrogram);
-		Cepstrogram_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		iam (PowerCepstrogram);
+		PowerCepstrogram_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 			GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
   			GET_REAL (L"Minimum"), GET_REAL (L"Maximum"), GET_INTEGER (L"Garnish"));
 	}
 END
 
-FORM (Cepstrogram_smooth, L"Cepstrogram: Smooth", L"Cepstrogram: Smooth...")
-	REAL (L"Time averaging window (s)", L"0.01")
+FORM (PowerCepstrogram_smooth, L"PowerCepstrogram: Smooth", L"PowerCepstrogram: Smooth...")
+	REAL (L"Time averaging window (s)", L"0.02")
 	REAL (L"Quefrency averaging window (s)", L"0.0005")
 	OK
 DO
 	LOOP {
-		iam (Cepstrogram);
-		autoCepstrogram thee = Cepstrogram_smooth (me, GET_REAL (L"Time averaging window"), GET_REAL (L"Quefrency averaging window"));
+		iam (PowerCepstrogram);
+		autoPowerCepstrogram thee = PowerCepstrogram_smooth (me, GET_REAL (L"Time averaging window"), GET_REAL (L"Quefrency averaging window"));
 		praat_new (thee.transfer(), my name, L"_smoothed");
 	}
 END
 
-DIRECT (Cepstrogram_getStartQuefrency)
+DIRECT (PowerCepstrogram_getStartQuefrency)
 	LOOP {
-		iam (Cepstrogram);
+		iam (PowerCepstrogram);
 		Melder_informationReal (my ymin, L" (s)");
 	}
 END
 
-DIRECT (Cepstrogram_getEndQuefrency)
+DIRECT (PowerCepstrogram_getEndQuefrency)
 	LOOP {
-		iam (Cepstrogram);
+		iam (PowerCepstrogram);
 		Melder_informationReal (my ymax, L" (s)");
 	}
 END
 
-DIRECT (Cepstrogram_getNumberOfQuefrencyBins)
+DIRECT (PowerCepstrogram_getNumberOfQuefrencyBins)
 	LOOP {
-		iam (Cepstrogram);
+		iam (PowerCepstrogram);
 		Melder_informationReal (my ny, L" quefrency bins");
 	}
 END
 
-DIRECT (Cepstrogram_getQuefrencyStep)
+DIRECT (PowerCepstrogram_getQuefrencyStep)
 	LOOP {
-		iam (Cepstrogram);
+		iam (PowerCepstrogram);
 		Melder_informationReal (my dy, L" quefrency step (s)");
 	}
 END
 
-FORM (Cepstrogram_getCPPS, L"Cepstrogram: Get CPPS", 0)
+FORM (PowerCepstrogram_subtractTilt, L"PowerCepstrogram: Subtract tilt", 0)
+	REAL (L"left Tilt line quefrency range (s)", L"0.001")
+	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrogram);
+		autoPowerCepstrogram thee = PowerCepstrogram_subtractTilt (me, GET_REAL (L"left Tilt line quefrency range"), 
+			GET_REAL (L"right Tilt line quefrency range"), GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"));
+		praat_new (thee.transfer(), my name, L"_minusTilt");
+	}
+END
+
+FORM (PowerCepstrogram_subtractTilt_inline, L"PowerCepstrogram: Subtract tilt (in-line)", 0)
+	REAL (L"left Tilt line quefrency range (s)", L"0.001")
+	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
+	OPTIONMENU (L"Fit method", 2)
+	OPTION (L"Least squares")
+	OPTION (L"Robust")
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrogram);
+		PowerCepstrogram_subtractTilt_inline (me, GET_REAL (L"left Tilt line quefrency range"), 
+			GET_REAL (L"right Tilt line quefrency range"), GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"));
+	}
+END
+
+FORM (PowerCepstrogram_getCPPS_hillenbrand, L"PowerCepstrogram: Get CPPS", 0)
 	LABEL (L"", L"Smoothing:")
+	BOOLEAN (L"Subtract tilt before smoothing", 1)
 	REAL (L"Time averaging window (s)", L"0.001")
 	REAL (L"Quefrency averaging window (s)", L"0.00005")
 	LABEL (L"", L"Peak search:")
 	REAL (L"left Peak search pitch range (Hz)", L"60.0")
 	REAL (L"right Peak search pitch range (Hz)", L"330.0")
-	RADIO (L"Interpolation", 3)
+	OK
+DO
+	LOOP {
+		iam (PowerCepstrogram);
+		double cpps = PowerCepstrogram_getCPPS_hillenbrand (me, GET_INTEGER (L"Subtract tilt before smoothing"), GET_REAL (L"Time averaging window"), GET_REAL (L"Quefrency averaging window"),
+			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"));
+		Melder_informationReal (cpps, L" dB");
+	}
+END
+
+
+FORM (PowerCepstrogram_getCPPS, L"PowerCepstrogram: Get CPPS", 0)
+	LABEL (L"", L"Smoothing:")
+	BOOLEAN (L"Subtract tilt before smoothing", 1)
+	REAL (L"Time averaging window (s)", L"0.001")
+	REAL (L"Quefrency averaging window (s)", L"0.00005")
+	LABEL (L"", L"Peak search:")
+	REAL (L"left Peak search pitch range (Hz)", L"60.0")
+	REAL (L"right Peak search pitch range (Hz)", L"330.0")
+	POSITIVE (L"Tolerance (0-1)", L"0.05")
+	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
 	RADIOBUTTON (L"Cubic")
@@ -294,22 +493,26 @@ FORM (Cepstrogram_getCPPS, L"Cepstrogram: Get CPPS", 0)
 	LABEL (L"", L"Tilt line:")
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
 	OPTION (L"Least squares")
 	OPTION (L"Robust")
 	OK
 DO
 	LOOP {
-		iam (Cepstrogram);
-		double cpps = Cepstrogram_getCPPS (me, GET_REAL (L"Time averaging window"), GET_REAL (L"Quefrency averaging window"),
-			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"),
-			GET_INTEGER (L"Interpolation"), GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
-			GET_INTEGER (L"Fit method"));
+		iam (PowerCepstrogram);
+		double cpps = PowerCepstrogram_getCPPS (me, GET_INTEGER (L"Subtract tilt before smoothing"), GET_REAL (L"Time averaging window"), 
+			GET_REAL (L"Quefrency averaging window"),
+			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"), GET_REAL (L"Tolerance"),
+			GET_INTEGER (L"Interpolation") - 1, GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
+			GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"));
 		Melder_informationReal (cpps, L" dB");
 	}
 END
 
-FORM (Cepstrogram_formula, L"Cepstrogram: Formula", L"")
+FORM (PowerCepstrogram_formula, L"PowerCepstrogram: Formula", L"")
 	LABEL (L"label", L"Do for all times and quefrencies:")
 	LABEL (L"label", L"   `x' is the time in seconds")
 	LABEL (L"label", L"   `y' is the quefrency in seconds")
@@ -319,58 +522,76 @@ FORM (Cepstrogram_formula, L"Cepstrogram: Formula", L"")
 	OK
 DO
 	LOOP {
-		iam (Cepstrogram);
+		iam (PowerCepstrogram);
 		try {
 			Matrix_formula ((Matrix) me, GET_STRING (L"formula"), interpreter, NULL);
 			praat_dataChanged (me);
 		} catch (MelderError) {
-			praat_dataChanged (me);   // in case of error, the Cepstrogram may have partially changed
+			praat_dataChanged (me);   // in case of error, the PowerCepstrogram may have partially changed
 			throw;
 		}
 	}
 END
 
-FORM (Cepstrogram_to_Cepstrum_slice, L"Cepstrogram: To Cepstrum (slice)", 0)
+FORM (PowerCepstrogram_to_PowerCepstrum_slice, L"PowerCepstrogram: To PowerCepstrum (slice)", 0)
 	REAL (L"Time (s)", L"0.1")
 	OK
 DO
 	LOOP {
-		iam (Cepstrogram);
-		autoCepstrum thee = Cepstrogram_to_Cepstrum_slice (me, GET_REAL (L"Time"));
-		praat_new (thee.transfer(), my name, L"_slice");
+		iam (PowerCepstrogram);
+		double time = GET_REAL (L"Time");
+		autoPowerCepstrum thee = PowerCepstrogram_to_PowerCepstrum_slice (me, time);
+		praat_new (thee.transfer(), my name, NUMstring_timeNoDot (time));
 	}
 END
 
-FORM (Cepstrogram_to_Table_cpp, L"Cepstrogram: To Table (peak prominence)", L"Cepstrogram: To Table (peak prominence...")
+FORM (PowerCepstrogram_to_Table_cpp, L"PowerCepstrogram: To Table (peak prominence)", L"PowerCepstrogram: To Table (peak prominence...")
 	REAL (L"left Peak search pitch range (Hz)", L"60.0")
 	REAL (L"right Peak search pitch range (Hz)", L"330.0")
-	RADIO (L"Interpolation", 3)
+	POSITIVE (L"Tolerance (0-1)", L"0.05")
+	RADIO (L"Interpolation", 2)
 	RADIOBUTTON (L"None")
 	RADIOBUTTON (L"Parabolic")
 	RADIOBUTTON (L"Cubic")
 	RADIOBUTTON (L"Sinc70")
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
+	OPTIONMENU (L"Line type", 2)
+	OPTION (L"Straight")
+	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
 	OPTION (L"Least squares")
 	OPTION (L"Robust")
 	OK
 DO
 	LOOP {
-		iam (Cepstrogram);
-		autoTable thee = Cepstrogram_to_Table_cpp (me,
-			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"),
-			GET_INTEGER (L"Interpolation"),
+		iam (PowerCepstrogram);
+		autoTable thee = PowerCepstrogram_to_Table_cpp (me,
+			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"), GET_REAL (L"Tolerance"),
+			GET_INTEGER (L"Interpolation") - 1,
 			GET_REAL (L"left Tilt line quefrency range"), GET_REAL (L"right Tilt line quefrency range"),
-			GET_INTEGER (L"Fit method"));
+			GET_INTEGER (L"Line type"), GET_INTEGER (L"Fit method"));
 		praat_new (thee.transfer(), my name, L"_cpp");
 	}
 END
 
-DIRECT (Cepstrogram_to_Matrix)
+FORM (PowerCepstrogram_to_Table_hillenbrand, L"PowerCepstrogram: To Table (hillenbrand)", L"PowerCepstrogram: To Table (peak prominence...")
+	REAL (L"left Peak search pitch range (Hz)", L"60.0")
+	REAL (L"right Peak search pitch range (Hz)", L"330.0")
+	OK
+DO
 	LOOP {
-		iam (Cepstrogram);
-		autoMatrix thee = Cepstrogram_to_Matrix (me);
+		iam (PowerCepstrogram);
+		autoTable thee = PowerCepstrogram_to_Table_hillenbrand (me,
+			GET_REAL (L"left Peak search pitch range"), GET_REAL (L"right Peak search pitch range"));
+		praat_new (thee.transfer(), my name, L"_cpp");
+	}
+END
+
+DIRECT (PowerCepstrogram_to_Matrix)
+	LOOP {
+		iam (PowerCepstrogram);
+		autoMatrix thee = PowerCepstrogram_to_Matrix (me);
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -572,7 +793,8 @@ FORM (LPC_to_Polynomial, L"LPC: To Polynomial", L"LPC: To Polynomial (slice)..."
 	DO
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_Polynomial (me, GET_REAL (L"Time")), my name);
+		double time = GET_REAL (L"Time");
+		praat_new (LPC_to_Polynomial (me, time), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -585,8 +807,9 @@ FORM (LPC_to_Spectrum, L"LPC: To Spectrum", L"LPC: To Spectrum (slice)...")
 DO
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_Spectrum (me, GET_REAL (L"Time"), GET_REAL (L"Minimum frequency resolution"),
-		GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name);
+		double time = GET_REAL (L"Time");
+		praat_new (LPC_to_Spectrum (me, time, GET_REAL (L"Minimum frequency resolution"),
+		GET_REAL (L"Bandwidth reduction"), GET_REAL (L"De-emphasis frequency")), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -615,7 +838,8 @@ DO
 	bool internalDamping = GET_INTEGER (L"Internal damping");
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), glottalDamping, radiationDamping, internalDamping), my name);
+		double time = GET_REAL (L"Time");
+		praat_new (LPC_to_VocalTract (me, time, glottalDamping, radiationDamping, internalDamping), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -626,7 +850,8 @@ FORM (LPC_to_VocalTract, L"LPC: To VocalTract", L"LPC: To VocalTract (slice)..."
 DO
 	LOOP {
 		iam (LPC);
-		praat_new (LPC_to_VocalTract (me, GET_REAL (L"Time"), GET_REAL (L"Length")), my name);
+		double time = GET_REAL (L"Time");
+		praat_new (LPC_to_VocalTract (me, time, GET_REAL (L"Length")), my name, NUMstring_timeNoDot (time));
 	}
 END
 
@@ -653,7 +878,7 @@ END
 
 /********************** Sound *******************************************/
 
-FORM (Sound_to_Cepstrogram, L"Sound: To Cepstrogram", L"Sound: To Cepstrogram...")
+FORM (Sound_to_PowerCepstrogram, L"Sound: To PowerCepstrogram", L"Sound: To PowerCepstrogram...")
 	POSITIVE (L"Pitch floor (Hz)", L"60.0")
 	POSITIVE (L"Time step (s)", L"0.002")
 	POSITIVE (L"Maximum frequency (Hz)", L"5000.0")
@@ -662,21 +887,21 @@ FORM (Sound_to_Cepstrogram, L"Sound: To Cepstrogram", L"Sound: To Cepstrogram...
 DO
 	LOOP {
 		iam (Sound);
-		autoCepstrogram thee = Sound_to_Cepstrogram (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"), GET_REAL(L"Maximum frequency"),
+		autoPowerCepstrogram thee = Sound_to_PowerCepstrogram (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"), GET_REAL(L"Maximum frequency"),
 			 GET_REAL (L"Pre-emphasis from"));
 		praat_new (thee.transfer(), my name);
 	}
 END
 
 
-FORM (Sound_to_Cepstrogram_hillenbrand, L"Sound: To Cepstrogram (hillenbrand)", L"Sound: To Cepstrogram...")
+FORM (Sound_to_PowerCepstrogram_hillenbrand, L"Sound: To PowerCepstrogram (hillenbrand)", L"Sound: To PowerCepstrogram...")
 	POSITIVE (L"Pitch floor (Hz)", L"60.0")
 	POSITIVE (L"Time step (s)", L"0.002")
 	OK
 DO
 	LOOP {
 		iam (Sound);
-		autoCepstrogram thee = Sound_to_Cepstrogram_hillenbrand (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"));
+		autoPowerCepstrogram thee = Sound_to_PowerCepstrogram_hillenbrand (me, GET_REAL (L"Pitch floor"), GET_REAL (L"Time step"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -958,40 +1183,54 @@ extern void praat_TimeTier_query_init (ClassInfo klas);
 extern void praat_TimeTier_modify_init (ClassInfo klas);
 void praat_uvafon_LPC_init (void);
 void praat_uvafon_LPC_init (void) {
-	Thing_recognizeClassesByName (classCepstrumc, classCepstrogram, classLPC, classLFCC, classMFCC, classVocalTractTier, NULL);
+	Thing_recognizeClassesByName (classCepstrumc, classPowerCepstrum, classCepstrogram, classPowerCepstrogram, classLPC, classLFCC, classMFCC, classVocalTractTier, NULL);
 
-	praat_addAction1 (classCepstrum, 0, L"Cepstrum help", 0, 0, DO_Cepstrum_help);
-	praat_addAction1 (classCepstrum, 0, L"Draw...", 0, 0, DO_Cepstrum_draw);
-	praat_addAction1 (classCepstrum, 0, L"Draw tilt line...", 0, 0, DO_Cepstrum_drawTiltLine);
+	praat_addAction1 (classPowerCepstrum, 0, L"PowerCepstrum help", 0, 0, DO_PowerCepstrum_help);
+	praat_addAction1 (classPowerCepstrum, 0, L"Draw...", 0, 0, DO_PowerCepstrum_draw);
+	praat_addAction1 (classPowerCepstrum, 0, L"Draw tilt line...", 0, 0, DO_PowerCepstrum_drawTiltLine);
 	praat_addAction1 (classCepstrum, 0, L"Draw (linear)...", 0, praat_HIDDEN, DO_Cepstrum_drawLinear);
-	praat_addAction1 (classCepstrum, 1, L"Query -", 0, 0, 0);
-	praat_addAction1 (classCepstrum, 0, L"Get peak...", 0, 1, DO_Cepstrum_getPeak);
-	praat_addAction1 (classCepstrum, 0, L"Get quefrency of peak...", 0, 1, DO_Cepstrum_getQuefrencyOfPeak);
-	praat_addAction1 (classCepstrum, 0, L"Get peak prominence...", 0, 1, DO_Cepstrum_getPeakProminence);
-	praat_addAction1 (classCepstrum, 1, L"Modify -", 0, 0, 0);
-	praat_addAction1 (classCepstrum, 0, L"Formula...", 0, 1, DO_Cepstrum_formula);
+	praat_addAction1 (classCepstrum, 0, L"Down to PowerCepstrum", 0, 0, DO_Cepstrum_downto_PowerCepstrum);
+	
+	praat_addAction1 (classPowerCepstrum, 1, L"Query -", 0, 0, 0);
+		praat_addAction1 (classPowerCepstrum, 0, L"Get peak...", 0, 1, DO_PowerCepstrum_getPeak);
+		praat_addAction1 (classPowerCepstrum, 0, L"Get quefrency of peak...", 0, 1, DO_PowerCepstrum_getQuefrencyOfPeak);
+		praat_addAction1 (classPowerCepstrum, 0, L"Get peak prominence (hillenbrand)...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_PowerCepstrum_getPeakProminence_hillenbrand);
+		praat_addAction1 (classPowerCepstrum, 0, L"Get peak prominence...", 0, 1, DO_PowerCepstrum_getPeakProminence);
+		praat_addAction1 (classPowerCepstrum, 0, L"Get tilt line slope...", 0, 1, DO_PowerCepstrum_getTiltLineSlope);
+		praat_addAction1 (classPowerCepstrum, 0, L"Get tilt line intercept...", 0, 1, DO_PowerCepstrum_getTiltLineIntercept);
+		praat_addAction1 (classPowerCepstrum, 0, L"Get rhamonics to noise ratio...", 0, 1, DO_PowerCepstrum_getRNR);
+	praat_addAction1 (classPowerCepstrum, 1, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classPowerCepstrum, 0, L"Formula...", 0, 1, DO_PowerCepstrum_formula);
+		praat_addAction1 (classPowerCepstrum, 0, L"Subtract tilt (in-line)...", 0, 1, DO_PowerCepstrum_subtractTilt_inline);
+		praat_addAction1 (classPowerCepstrum, 0, L"Smooth (in-line)...", 0, 1, DO_PowerCepstrum_smooth_inline);
 
+	praat_addAction1 (classPowerCepstrum, 0, L"Subtract tilt...", 0, 0, DO_PowerCepstrum_subtractTilt);
+	praat_addAction1 (classPowerCepstrum, 0, L"Smooth...", 0, 0, DO_PowerCepstrum_smooth);
 	praat_addAction1 (classCepstrum, 0, L"To Spectrum", 0, praat_HIDDEN, DO_Cepstrum_to_Spectrum);
-	praat_addAction1 (classCepstrum, 0, L"To Matrix", 0, 0, DO_Cepstrum_to_Matrix);
+	praat_addAction1 (classPowerCepstrum, 0, L"To Matrix", 0, 0, DO_PowerCepstrum_to_Matrix);
 
-	praat_addAction1 (classCepstrogram, 0, L"Cepstrogram help", 0, 0, DO_Cepstrogram_help);
-	praat_addAction1 (classCepstrogram, 0, L"Paint...", 0, 0, DO_Cepstrogram_paint);
-	praat_addAction1 (classCepstrogram, 1, L"Query -", 0, 0, 0);
-		praat_TimeFrameSampled_query_init (classCepstrogram);
-		praat_addAction1 (classCepstrogram, 1, L"Query quefrency domain", 0, 1, 0);
-			praat_addAction1 (classCepstrogram, 1, L"Get start quefrency", 0, 2, DO_Cepstrogram_getStartQuefrency);
-			praat_addAction1 (classCepstrogram, 1, L"Get end quefrency", 0, 2, DO_Cepstrogram_getEndQuefrency);
-		praat_addAction1 (classCepstrogram, 1, L"Query quefrency sampling", 0, 1, 0);
-			praat_addAction1 (classCepstrogram, 1, L"Get number of quefrency bins", 0, 2, DO_Cepstrogram_getNumberOfQuefrencyBins);
-			praat_addAction1 (classCepstrogram, 1, L"Get quefrency step", 0, 2, DO_Cepstrogram_getQuefrencyStep);
-		praat_addAction1 (classCepstrogram, 0, L"Get CPPS...", 0, 1, DO_Cepstrogram_getCPPS);
-	praat_addAction1 (classCepstrogram, 0, L"Modify -", 0, 0, 0);
-		praat_TimeFunction_modify_init (classCepstrogram);
-		praat_addAction1 (classCepstrogram, 0, L"Formula...", 0, 1, DO_Cepstrogram_formula);
-	praat_addAction1 (classCepstrogram, 0, L"To Cepstrum (slice)...", 0, 0, DO_Cepstrogram_to_Cepstrum_slice);
-	praat_addAction1 (classCepstrogram, 0, L"Smooth...", 0, 0, DO_Cepstrogram_smooth);
-	praat_addAction1 (classCepstrogram, 0, L"To Table (peak prominence)...", 0, 0, DO_Cepstrogram_to_Table_cpp);
-	praat_addAction1 (classCepstrogram, 0, L"To Matrix", 0, 0, DO_Cepstrogram_to_Matrix);
+	praat_addAction1 (classPowerCepstrogram, 0, L"PowerCepstrogram help", 0, 0, DO_PowerCepstrogram_help);
+	praat_addAction1 (classPowerCepstrogram, 0, L"Paint...", 0, 0, DO_PowerCepstrogram_paint);
+	praat_addAction1 (classPowerCepstrogram, 1, L"Query -", 0, 0, 0);
+		praat_TimeFrameSampled_query_init (classPowerCepstrogram);
+		praat_addAction1 (classPowerCepstrogram, 1, L"Query quefrency domain", 0, 1, 0);
+			praat_addAction1 (classPowerCepstrogram, 1, L"Get start quefrency", 0, 2, DO_PowerCepstrogram_getStartQuefrency);
+			praat_addAction1 (classPowerCepstrogram, 1, L"Get end quefrency", 0, 2, DO_PowerCepstrogram_getEndQuefrency);
+		praat_addAction1 (classPowerCepstrogram, 1, L"Query quefrency sampling", 0, 1, 0);
+			praat_addAction1 (classPowerCepstrogram, 1, L"Get number of quefrency bins", 0, 2, DO_PowerCepstrogram_getNumberOfQuefrencyBins);
+			praat_addAction1 (classPowerCepstrogram, 1, L"Get quefrency step", 0, 2, DO_PowerCepstrogram_getQuefrencyStep);
+		praat_addAction1 (classPowerCepstrogram, 0, L"Get CPPS (hillenbrand)...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_PowerCepstrogram_getCPPS_hillenbrand);
+		praat_addAction1 (classPowerCepstrogram, 0, L"Get CPPS...", 0, 1, DO_PowerCepstrogram_getCPPS);
+	praat_addAction1 (classPowerCepstrogram, 0, L"Modify -", 0, 0, 0);
+		praat_TimeFunction_modify_init (classPowerCepstrogram);
+		praat_addAction1 (classPowerCepstrogram, 0, L"Formula...", 0, 1, DO_PowerCepstrogram_formula);
+		praat_addAction1 (classPowerCepstrogram, 0, L"Subtract tilt (in-line)...", 0, 1, DO_PowerCepstrogram_subtractTilt_inline);
+	praat_addAction1 (classPowerCepstrogram, 0, L"To PowerCepstrum (slice)...", 0, 0, DO_PowerCepstrogram_to_PowerCepstrum_slice);
+	praat_addAction1 (classPowerCepstrogram, 0, L"Smooth...", 0, 0, DO_PowerCepstrogram_smooth);
+	praat_addAction1 (classPowerCepstrogram, 0, L"Subtract tilt...", 0, 0, DO_PowerCepstrogram_subtractTilt);
+	praat_addAction1 (classPowerCepstrogram, 0, L"To Table (hillenbrand)...", 0, praat_HIDDEN, DO_PowerCepstrogram_to_Table_hillenbrand);
+	praat_addAction1 (classPowerCepstrogram, 0, L"To Table (peak prominence)...", 0, praat_HIDDEN, DO_PowerCepstrogram_to_Table_cpp);
+	praat_addAction1 (classPowerCepstrogram, 0, L"To Matrix", 0, 0, DO_PowerCepstrogram_to_Matrix);
 
 	praat_addAction1 (classCepstrumc, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classCepstrumc, 0, L"To LPC", 0, 0, DO_Cepstrumc_to_LPC);
@@ -1045,8 +1284,8 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classSound, 0, L"To LPC (marple)...", L"To LPC (burg)...", 1, DO_Sound_to_LPC_marple);
 	praat_addAction1 (classSound, 0, L"To MFCC...", L"To LPC (marple)...", 1, DO_Sound_to_MFCC);
 	praat_addAction1 (classSound, 0, L"To Formant (robust)...", L"To Formant (sl)...", 2, DO_Sound_to_Formant_robust);
-	praat_addAction1 (classSound, 0, L"To Cepstrogram...", L"To Harmonicity (gne)...", 1, DO_Sound_to_Cepstrogram);
-	praat_addAction1 (classSound, 0, L"To Cepstrogram (hillenbrand)...", L"To Harmonicity (gne)...", 1, DO_Sound_to_Cepstrogram_hillenbrand);
+	praat_addAction1 (classSound, 0, L"To PowerCepstrogram...", L"To Harmonicity (gne)...", 1, DO_Sound_to_PowerCepstrogram);
+	praat_addAction1 (classSound, 0, L"To PowerCepstrogram (hillenbrand)...", L"To Harmonicity (gne)...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_PowerCepstrogram_hillenbrand);
 	
 	praat_addAction1 (classVocalTract, 0, L"Draw segments...", L"Draw", 0, DO_VocalTract_drawSegments);
 	praat_addAction1 (classVocalTract, 1, L"Get length", L"Draw segments...", 0, DO_VocalTract_getLength);

@@ -42,7 +42,7 @@ Cepstrum Sound_to_Cepstrum_bw (Sound me) {
 		}
 
 		double qmax = (my xmax - my xmin) * nfft / my nx;
-		autoCepstrum thee = Cepstrum_create (0, qmax, nfft);
+		autoCepstrum thee = Cepstrum_create (qmax, nfft);
 
 		autoNUMvector<double> x (1, nfft);
 		autoNUMvector<double> nx (1, nfft);

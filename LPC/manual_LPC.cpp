@@ -65,17 +65,17 @@ NORMAL (L"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrogram", L"djmw", 20121118)
+MAN_BEGIN (L"PowerCepstrogram", L"djmw", 20130616)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 ENTRY (L"Description")
-NORMAL (L"The Cepstrogram shows @@Cepstrum|cepstral slices@ as a function of time.")
+NORMAL (L"The PowerCepstrogram shows @@PowerCepstrum|cepstral slices@ as a function of time.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrogram: To Table (peak prominence...", L"djmw", 20130425)
-INTRO (L"A command to create a table with @@Cepstrum: Get peak prominence...|cepstral peak prominence@ values.")
+MAN_BEGIN (L"PowerCepstrogram: To Table (peak prominence)...", L"djmw", 20130616)
+INTRO (L"A command to create a table with @@PowerCepstrum: Get peak prominence...|cepstral peak prominence@ values.")
 ENTRY (L"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
-	Manual_DRAW_SETTINGS_WINDOW ("Cepstrogram: To Table (peak prominence)", 7)
+	Manual_DRAW_SETTINGS_WINDOW ("PowerCepstrogram: To Table (peak prominence)", 7)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search pitch range (Hz)", L"60.0", L"300.0")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"Interpolation", L"None", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Parabolic", 0)
@@ -84,11 +84,11 @@ SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)",L"0.001", L"0.0 (=end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(L"Fit method", L"Robust")
 )
-NORMAL (L"The meaning of these settings is explained @@Cepstrum: Get peak prominence...|here@.")
+NORMAL (L"The meaning of these settings is explained @@PowerCepstrum: Get peak prominence...|here@.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrogram: Smooth...", L"djmw", 20130410)
-INTRO (L"Smoothes the selected @Cepstrogram by averaging cepstra. The smoothed Cepstrogram is the result of two separate steps. "
+MAN_BEGIN (L"PowerCepstrogram: Smooth...", L"djmw", 20130410)
+INTRO (L"Smoothes the selected @PowerCepstrogram by averaging cepstra. The smoothed PowerCepstrogram is the result of two separate steps. "
 	"In the first step, cepsta are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (L"Settings")
 TAG (L"##Time averaging window (s)")
@@ -107,24 +107,30 @@ ENTRY (L"Note")
 NORMAL (L"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
 	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
 CODE (L"selectObject (\"Sound xxx\")")
-CODE (L"do (\"To Cepstrogram...\", 0.041, 0.002, 5000.0)")
+CODE (L"do (\"To PowerCepstrogram...\", 0.041, 0.002, 5000.0)")
 CODE (L"do (\"Smooth...\", 0.02, 0.001)")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum", L"djmw", 20130227)
+MAN_BEGIN (L"Cepstrum", L"djmw", 20130616)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 ENTRY (L"Description")
-NORMAL (L"A Cepstrum is the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds.")
+NORMAL (L"A Cepstrum is the log spectrum of the log power spectrum.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum: Get peak prominence...", L"djmw", 20130425)
+MAN_BEGIN (L"PowerCepstrum", L"djmw", 20130616)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+ENTRY (L"Description")
+NORMAL (L"A PowerCepstrum is the log power spectrum of the log power spectrum. The vertical scale will show the amplitude expressed in dB. The horizontal scale shows %%quefrency% in units of seconds.")
+MAN_END
+
+MAN_BEGIN (L"PowerCepstrum: Get peak prominence...", L"djmw", 20130616)
 INTRO (L"Calculates the cepstral peak prominence measure (CPP) as defined by @@Hillenbrand et al. (1994)@")
 NORMAL (L"The CPP measure is the difference in amplitude between the cepstral peak and the corresponding value on the regression "
 	"line that is directly below the peak (i.e., the predicted magnitude for the quefrency at the cepstral peak). "
 	"The CPP measure represents how far the cepstral peak emerges from the cepstrum background. ")
 ENTRY (L"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
-	Manual_DRAW_SETTINGS_WINDOW (L"Cepstrum: Get peak prominence", 7)
+	Manual_DRAW_SETTINGS_WINDOW (L"PowerCepstrum: Get peak prominence", 7)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Search peak in pitch range (s)", L"60.0", L"333.3")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"Interpolation", L"None", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Parabolic", 0)
@@ -150,8 +156,8 @@ ENTRY (L"Note")
 NORMAL (L"The CPP value does not depend on the reference value used in the dB calculation of the power cepstrum.")
 MAN_END
 
-MAN_BEGIN (L"Cepstrum: Draw tilt line...", L"djmw", 20121116)
-INTRO (L"Draws the straight line that models the backgound of the power cepstrum.")
+MAN_BEGIN (L"PowerCepstrum: Draw tilt line...", L"djmw", 20130616)
+INTRO (L"Draws the line that models the backgound of the power cepstrum.")
 MAN_END
 
 MAN_BEGIN (L"Formant & Spectrogram: To IntensityTier...", L"djmw", 20130109)
@@ -435,8 +441,8 @@ NORMAL (L"where %N represents the number of filters, %j runs from 1 to %N, and c
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Cepstrogram...", L"djmw", 20130425)
-INTRO (L"A command that creates a @@Cepstrogram@ from every selected @@Sound@.")
+MAN_BEGIN (L"Sound: To PowerCepstrogram...", L"djmw", 20130616)
+INTRO (L"A command that creates a @@PowerCepstrogram@ from every selected @@Sound@.")
 ENTRY (L"Settings")
 TAG (L"##Pitch floor (Hz)")
 DEFINITION (L"determines the effective length of the analysis window: it will be 3 longest periods long, i.e. if the pitch floor is 60 Hz, the window will be 3/60 = 0.05 seconds long.")

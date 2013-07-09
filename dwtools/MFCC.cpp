@@ -151,7 +151,7 @@ static double CC_Frames_distance (CC_Frame me, CC_Frame thee, bool includeEnergy
 
 /* 1: cepstral difference function (d)
  * 2: spectral stability (dstab)
- * 3: spectral centere of gravity (gs)
+ * 3: spectral center of gravity (gs)
  * 4: stable internal duration
  */
 Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy) {
