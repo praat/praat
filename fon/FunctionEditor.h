@@ -126,13 +126,6 @@ Thing_define (FunctionEditor, Editor) {
 		virtual void v_ok_pictureSelection (EditorCommand cmd);
 		virtual void v_do_pictureSelection (EditorCommand cmd);
     
-#if cocoa
-        // mouse events
-        GuiDrawingAreaClickEvent clickEvent;
-        double anchorForDragging;
-        double xForDragging;
-#endif
-    
     // new preferences:
     #include "FunctionEditor_prefs.h"
 

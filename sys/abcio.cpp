@@ -786,9 +786,10 @@ long bingeti4 (FILE *f) {
 		} else {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
-			return
-				((unsigned long) bytes [0] << 24) | ((unsigned long) bytes [1] << 16) |
-				((unsigned long) bytes [2] << 8) | (unsigned long) bytes [3];   // 32 or 64 bits
+			uint32_t externalValue = 
+				((uint32_t) bytes [0] << 24) | ((uint32_t) bytes [1] << 16) |
+				((uint32_t) bytes [2] << 8) | (uint32_t) bytes [3];
+			return (long) (int32_t) externalValue;   // first add signedness, then extend
 		}
 	} catch (MelderError) {
 		Melder_throw ("Signed long integer not read from 4 bytes in binary file.");
@@ -804,9 +805,10 @@ unsigned long bingetu4 (FILE *f) {
 		} else {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
-			return
-				((unsigned long) bytes [0] << 24) | ((unsigned long) bytes [1] << 16) |
-				((unsigned long) bytes [2] << 8) | (unsigned long) bytes [3];   // 32 or 64 bits
+			uint32_t externalValue = 
+				((uint32_t) bytes [0] << 24) | ((uint32_t) bytes [1] << 16) |
+				((uint32_t) bytes [2] << 8) | (uint32_t) bytes [3];
+			return (unsigned long) externalValue;
 		}
 	} catch (MelderError) {
 		Melder_throw ("Unsigned long integer not read from 4 bytes in binary file.");
@@ -869,9 +871,9 @@ long bingeti4LE (FILE *f) {
 		} else {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
-			return
-				((unsigned long) bytes [3] << 24) | ((unsigned long) bytes [2] << 16) |
-				((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];   // 32 or 64 bits
+			uint32_t externalValue = ((uint32_t) bytes [3] << 24) | ((uint32_t) bytes [2] << 16) |
+				((uint32_t) bytes [1] << 8) | (uint32_t) bytes [0];
+			return (long) (int32_t) externalValue;   // first add signedness, then extend
 		}
 	} catch (MelderError) {
 		Melder_throw ("Signed long integer not read from 4 bytes in binary file.");
@@ -887,9 +889,9 @@ unsigned long bingetu4LE (FILE *f) {
 		} else {
 			unsigned char bytes [4];
 			if (fread (bytes, sizeof (unsigned char), 4, f) != 4) readError (f, "four bytes.");
-			return
-				((unsigned long) bytes [3] << 24) | ((unsigned long) bytes [2] << 16) |
-				((unsigned long) bytes [1] << 8) | (unsigned long) bytes [0];   // 32 or 64 bits
+			uint32_t externalValue = ((uint32_t) bytes [3] << 24) | ((uint32_t) bytes [2] << 16) |
+				((uint32_t) bytes [1] << 8) | (uint32_t) bytes [0];
+			return (unsigned long) externalValue;
 		}
 	} catch (MelderError) {
 		Melder_throw ("Unsigned long integer not read from 4 bytes in binary file.");

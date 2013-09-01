@@ -1,6 +1,6 @@
 /* Graphics_mouse.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,6 @@
 #include "GraphicsP.h"
 #include "Gui.h"
 
-#if cairo
-	static bool theMouseDown = true;
-#endif
-
 /*
  * Graphics_mouseStillDown () can only be used in a loop
  * if Graphics_getMouseLocation () is called in that same loop.
@@ -32,11 +28,23 @@
 
 bool structGraphicsScreen :: v_mouseStillDown () {
 	#if cairo
-		if (theMouseDown) return true;
-		else { theMouseDown = true; return false; }
+		Graphics_flushWs (this);
+		GdkEvent *gevent = gdk_display_get_event (d_display);
+		if (! gevent) return true;
+		int gdkEventType = gevent -> type;
+		gdk_event_free (gevent);
+		return gdkEventType != GDK_BUTTON_RELEASE;
 	#elif cocoa
-        NSUInteger buttons = [NSEvent pressedMouseButtons];
-		return buttons;
+		Graphics_flushWs (this);
+		NSEvent *nsEvent = [[d_macView window]
+			nextEventMatchingMask: NSLeftMouseUpMask | NSLeftMouseDraggedMask | NSKeyDownMask
+			untilDate: [NSDate distantFuture]
+			inMode: NSEventTrackingRunLoopMode
+			dequeue: YES
+			];
+		NSUInteger nsEventType = [nsEvent type];
+		if (nsEventType == NSKeyDown) NSBeep ();
+		return nsEventType != NSLeftMouseUp;
 	#elif win
 		return motif_win_mouseStillDown ();
 	#elif mac
@@ -50,40 +58,23 @@ bool Graphics_mouseStillDown (Graphics me) {
 
 void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
 	#if cairo
-		GdkEvent *gevent = gdk_display_get_event (d_display);
-		if (gevent != NULL) {
-			if (gevent -> type == GDK_BUTTON_RELEASE) {
-				theMouseDown = false;
-			}
-			gdk_event_free (gevent);
-		}
 		gint xDC, yDC;
 		gdk_window_get_pointer (d_window, & xDC, & yDC, NULL);
 		Graphics_DCtoWC (this, xDC, yDC, xWC, yWC);
 	#elif cocoa
-    
-        // get mouse position in Window
-        NSPoint mouseLoc = [[d_macView window] mouseLocationOutsideOfEventStream];
-        mouseLoc = [d_macView convertPoint:mouseLoc fromView:nil];
-        mouseLoc.y = d_macView.bounds.size.height - mouseLoc.y;
-        Graphics_DCtoWC (this, mouseLoc.x, mouseLoc.y, xWC, yWC);
-
+        NSPoint mouseLoc = [[d_macView window]  mouseLocationOutsideOfEventStream];
+        mouseLoc = [d_macView   convertPoint: mouseLoc   fromView: nil];
+        mouseLoc. y = d_macView. bounds. size. height - mouseLoc. y;
+        Graphics_DCtoWC (this, mouseLoc. x, mouseLoc. y, xWC, yWC);
 	#elif win
 		POINT pos;
-		if (! GetCursorPos (& pos)) { Melder_warning (L"Cannot get cursor position."); return; }
+		if (! GetCursorPos (& pos)) { Melder_warning (L"Cannot find the location of the mouse."); return; }
 		ScreenToClient (d_winWindow, & pos);
 		Graphics_DCtoWC (this, pos. x, pos. y, xWC, yWC);
 	#elif mac
-		if (HIGetMousePosition != NULL && false) {   // AVAILABLE_MAC_OS_X_VERSION_10_5_AND_LATER
-			//Melder_casual ("HIGetMousePosition exists");
-			HIPoint mouseLoc;
-			HIGetMousePosition (kHICoordSpaceWindow, GetWindowFromPort (d_macPort), & mouseLoc);
-			Graphics_DCtoWC (this, mouseLoc. x, mouseLoc. y, xWC, yWC);
-		} else {
-			Point mouseLoc;
-			GetMouse (& mouseLoc);   // AVAILABLE_MAC_OS_X_VERSION_10_0_AND_LATER_BUT_DEPRECATED_IN_MAC_OS_X_VERSION_10_5
-			Graphics_DCtoWC (this, mouseLoc. h, mouseLoc. v, xWC, yWC);
-		}
+		Point mouseLoc;
+		GetMouse (& mouseLoc);
+		Graphics_DCtoWC (this, mouseLoc. h, mouseLoc. v, xWC, yWC);
 	#endif
 }
 

@@ -199,14 +199,16 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		if (! strnequ (data, "FORMDS16", 8))
 			Melder_throw ("Not a KAY DS-16 file.");
 
-		/* HEDR chunk */
+		/* HEDR or HDR8 chunk */
 
 		if (fread (data, 1, 4, f) < 4) readError ();
-		if (! strnequ (data, "HEDR", 4))
-			Melder_throw ("Missing HEDR chunk.");
+		if (! strnequ (data, "HEDR", 4) && ! strnequ (data, "HDR8", 4))
+			Melder_throw ("Missing HEDR or HDR8 chunk. Please report to paul.boersma@uva.nl.");
 		unsigned long chunkSize = bingetu4LE (f);
 		if (chunkSize & 1) ++ chunkSize;
-		if (fread (data, 1, chunkSize - 12, f) < chunkSize - 12) readError ();
+		if (chunkSize != 32 && chunkSize != 44)
+			Melder_throw ("Unknown chunk size %ld. Please report to paul.boersma@uva.nl.", chunkSize);
+		if (fread (data, 1, 20, f) < 20) readError ();
 		double samplingFrequency = bingetu4LE (f);
 		unsigned long numberOfSamples = bingetu4LE (f);
 		if (samplingFrequency <= 0 || samplingFrequency > 1e7 || numberOfSamples >= 1000000000)
@@ -214,13 +216,15 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		signed int tmp1 = bingeti2LE (f);
 		signed int tmp2 = bingeti2LE (f);
 		long numberOfChannels = tmp1 == -1 || tmp2 == -1 ? 1 : 2;
+		if (chunkSize == 44)
+			if (fread (data, 1, 12, f) < 12) readError ();
 
 		/* SD chunk */
 
 		if (fread (data, 1, 4, f) < 4) readError ();
 		while (! strnequ (data, "SDA_", 4) && ! strnequ (data, "SD_B", 4)) {
 			if (feof (f))
-				Melder_throw ("Missing or unreadable SD chunk.");
+				Melder_throw ("Missing or unreadable SD chunk. Please report to paul.boersma@uva.nl.");
 			chunkSize = bingetu4LE (f);
 			if (chunkSize & 1) ++ chunkSize;
 			if (fread (data, 1, chunkSize, f) < chunkSize) readError ();
@@ -228,7 +232,7 @@ Sound Sound_readFromKayFile (MelderFile file) {
 		}
 		chunkSize = bingetu4LE (f);
 		if (chunkSize != numberOfSamples * 2)
-			Melder_throw ("Incomplete SD chunk.");
+			Melder_throw ("Incomplete SD chunk. Please report to paul.boersma@uva.nl.");
 
 		autoSound me = Sound_createSimple (numberOfChannels, numberOfSamples / samplingFrequency, samplingFrequency);
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {

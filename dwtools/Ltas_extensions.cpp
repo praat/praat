@@ -22,7 +22,7 @@
 
 void Ltas_fitTiltLine (Ltas me, double fmin, double fmax, bool lnf, int method, double *a, double *b) {
 	try {
-		if (fmax >= fmin) {
+		if (fmax <= fmin) {
 			fmin = my xmin; fmax = my xmax;
 		}
 		long ifmin, ifmax, numberOfSamples = Sampled_getWindowSamples (me, fmin, fmax, &ifmin, &ifmax);

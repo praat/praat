@@ -1,5 +1,5 @@
 # Makefile of the library "EEG"
-# Paul Boersma, 20 February 2012
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -19,7 +19,7 @@ clean:
 libEEG.a: $(OBJECTS)
 	touch libEEG.a
 	rm libEEG.a
-	ar cq libEEG.a $(OBJECTS)
+	$(AR) cq libEEG.a $(OBJECTS)
 	$(RANLIB) libEEG.a
 
 $(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h

@@ -1,6 +1,6 @@
-# Makefile of the library "audio/mp3"
+# Makefile of the library "external/mp3"
 # Erez Volk, 24 May 2007
-# Paul Boersma, 6 September 2011
+# Paul Boersma, 24 August 2013
 
 include ../../makefile.defs
 
@@ -30,7 +30,7 @@ clean:
 libmp3.a: $(OBJECTS)
 	touch libmp3.a
 	rm libmp3.a
-	ar cq libmp3.a $(OBJECTS)
+	$(AR) cq libmp3.a $(OBJECTS)
 	$(RANLIB) libmp3.a
 
 $(OBJECTS): *.h ../../sys/*.h

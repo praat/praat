@@ -1,6 +1,6 @@
 /* GuiThing.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,10 @@
 
 #include "GuiP.h"
 #include "machine.h"
+
+void structGuiThing :: v_destroy () {
+	GuiThing_Parent :: v_destroy ();
+}
 
 void structGuiThing :: f_hide () {
 	v_hide ();
@@ -99,9 +103,11 @@ void structGuiThing :: v_show () {
 		}
 	#elif cocoa
 		if ([(NSObject *) d_widget isKindOfClass: [NSWindow class]]) {
+			trace ("trying to show a window");
 			[(NSWindow *) d_widget makeKeyAndOrderFront: nil];
 		} else if ([(NSObject *) d_widget isKindOfClass: [NSView class]]) {
 			if ((NSView *) d_widget == [[(NSView *) d_widget window] contentView]) {
+				trace ("trying to show a window through its content view");
 				[[(NSView *) d_widget window] makeKeyAndOrderFront: nil];
 			} else {
 				[(NSView *) d_widget setHidden: NO];

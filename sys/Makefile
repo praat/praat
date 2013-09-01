@@ -1,5 +1,5 @@
 # Makefile of the library "sys"
-# Paul Boersma, 11 September 2012
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -39,7 +39,7 @@ clean:
 libsys.a: $(OBJECTS)
 	touch libsys.a
 	rm libsys.a
-	ar cq libsys.a $(OBJECTS)
+	$(AR) cq libsys.a $(OBJECTS)
 	$(RANLIB) libsys.a
 
 $(OBJECTS): *.h ../num/NUM.h ../dwsys/*.h ../kar/*.h ../external/portaudio/*.h ../external/flac/*.h ../external/mp3/mp3.h

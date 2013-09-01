@@ -897,7 +897,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		long pid = 0;
 		int narg = fscanf (f, "#%ld", & pid);
 		f.close (& messageFile);
-		{ // scope
+		{// scope
 			autoPraatBackground background;
 			try {
 				praat_executeScriptFromFile (& messageFile, NULL);
@@ -1463,7 +1463,7 @@ void praat_run (void) {
 		/* Each line separately: every error should be ignored.
 		 */
 		praatP.phase = praat_READING_BUTTONS;
-		{ // scope
+		{// scope
 			autostring buttons;
 			try {
 				buttons.reset (MelderFile_readText (& buttonsFile));

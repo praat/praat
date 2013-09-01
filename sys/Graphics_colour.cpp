@@ -1,6 +1,6 @@
 /* Graphics_colour.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +154,7 @@ void Graphics_setGrey (Graphics me, double grey) {
 	if (my recording) { op (SET_GREY, 1); put (grey); }
 }
 
-static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long y2DC) {
+static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long y2DC, int direction) {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
@@ -167,47 +167,42 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, width, height);
 			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
 			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
-			gdk_flush ();   //tryout 20110207
-			//cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
-			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_BITXOR);   // this blend mode doesn't exist
-			//cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC, width, height);
-			//cairo_fill (my d_cairoGraphicsContext);
-			//cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 0.0);
-			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
+			gdk_flush ();
 		#elif cocoa
-            int width = x2DC - x1DC, height = y1DC - y2DC;
-            if (width <= 0 || height <= 0) return;
-
-        GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*) my d_drawingArea -> d_widget;
-        
-        if (drawingArea) {
-            [drawingArea lockFocus];
-
-            CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-            CGContextSaveGState (context);
-            NSCAssert(context, @"nil context");
-            CGContextTranslateCTM (context, 0, drawingArea.bounds.size.height);
-            CGContextScaleCTM (context, 1.0, -1.0);
-
-            NSRect rect = NSMakeRect(x1DC,  y2DC, width, height);
-            CGContextSetBlendMode(context, kCGBlendModeDifference);
-        
-            // FIXME: Need user selection color
-            CGContextSetRGBFillColor (context, .2, .0, .0, 1.0);
-            CGContextFillRect (context, rect);
-            CGContextRestoreGState (context);
-            
-            [drawingArea unlockFocus];
-        }
-
+			int width = x2DC - x1DC, height = y1DC - y2DC;
+			if (width <= 0 || height <= 0) return;
+			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
+			if (drawingArea) {
+				[drawingArea lockFocus];
+				CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+				CGContextSaveGState (context);
+				NSCAssert (context, @"nil context");
+				CGContextTranslateCTM (context, 0, drawingArea. bounds. size. height);
+				CGContextScaleCTM (context, 1.0, -1.0);
+				NSRect rect = NSMakeRect (x1DC,  y2DC, width, height);
+				CGContextSetBlendMode (context, kCGBlendModeDifference);
+				CGContextSetShouldAntialias (context, false);
+				if (direction == 1) {   // forward
+					CGContextSetRGBFillColor (context, 0.2, 0.0, 0.0, 1.0);   // FIXME: Need user selection color instead
+					CGContextFillRect (context, rect);
+				} else {   // backward
+					CGContextSetRGBFillColor (context, 0.8, 1.0, 1.0, 1.0);   // FIXME: Need user selection color instead
+					CGContextFillRect (context, rect);
+					CGContextSetRGBFillColor (context, 1.0, 1.0, 1.0, 1.0);
+					CGContextFillRect (context, rect);
+				}
+				CGContextRestoreGState (context);
+				//CGContextSynchronize (context);
+				[drawingArea unlockFocus];
+			}
         #elif mac
-                Rect rect;
-                if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
-                SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
-                SetPort (my d_macPort);
-                LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);   /* see IM V-61 */
-                InvertRect (& rect);
-                if (my d_drawingArea) GuiMac_clipOff ();
+			Rect rect;
+			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
+			SetRect (& rect, x1DC, y2DC, x2DC, y1DC);
+			SetPort (my d_macPort);
+			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);   // see IM V-61
+			InvertRect (& rect);
+			if (my d_drawingArea) GuiMac_clipOff ();
 		#elif win
 			static HBRUSH highlightBrush;
 			RECT rect;
@@ -226,92 +221,93 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 }
 
 void Graphics_highlight (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
+	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), 1);
 	if (my recording)
 		{ op (HIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
 void Graphics_unhighlight (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
-	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC));
+	highlight (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), 2);
 	if (my recording)
 		{ op (UNHIGHLIGHT, 4); put (x1WC); put (x2WC); put (y1WC); put (y2WC); }
 }
 
 static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long y2DC,
-	long x1DC_inner, long x2DC_inner, long y1DC_inner, long y2DC_inner)
+	long x1DC_inner, long x2DC_inner, long y1DC_inner, long y2DC_inner, int direction)
 {
 	if (graphics -> screen) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
 			if (my d_cairoGraphicsContext == NULL) return;
-			cairo_save (my d_cairoGraphicsContext);
-			cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
-			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_XOR);
-			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
-			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
-			cairo_rectangle (my d_cairoGraphicsContext, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
-			cairo_rectangle (my d_cairoGraphicsContext, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
-			cairo_fill (my d_cairoGraphicsContext);
-			cairo_restore (my d_cairoGraphicsContext);
+			int width = x2DC - x1DC, height = y1DC - y2DC;
+			if (width <= 0 || height <= 0) return;
+			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
+			GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
+			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
+			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
+			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
+			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
+			gdk_flush ();
 		#elif cocoa
-        
-            NSView *view = (NSView*)my d_drawingArea -> d_widget;
-            if (view) {
-               [view lockFocus];
+			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*) my d_drawingArea -> d_widget;
+			if (drawingArea) {
+				[drawingArea lockFocus];
 
-                my d_macGraphicsContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-                CGContextSaveGState (my d_macGraphicsContext);
-                
-                NSCAssert(my d_macGraphicsContext, @"nil context");
-                CGContextTranslateCTM (my d_macGraphicsContext, 0, view.bounds.size.height);
-                CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+				my d_macGraphicsContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+				CGContextSaveGState (my d_macGraphicsContext);
 
-                CGContextSetBlendMode(my d_macGraphicsContext, kCGBlendModeDifference);
+				NSCAssert (my d_macGraphicsContext, @"nil context");
+				CGContextTranslateCTM (my d_macGraphicsContext, 0, drawingArea. bounds. size. height);
+				CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 
-              //  CGContextSetRGBFillColor (context, 2.0, 2.0, 2.0, 2.0);
-                // FIXME: Need user selection color
-                CGContextSetRGBFillColor (my d_macGraphicsContext, .2, .0, .0, 1.0);
+				NSRect upperRect = NSMakeRect (x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
+				NSRect leftRect  = NSMakeRect (x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);
+				NSRect rightRect = NSMakeRect (x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner);
+				NSRect lowerRect = NSMakeRect (x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner);
+				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
+				if (direction == 1) {
+					CGContextSetRGBFillColor (my d_macGraphicsContext, 0.2, 0.0, 0.0, 1.0);   // FIXME: Need user selection color
+					CGContextFillRect (my d_macGraphicsContext, upperRect);
+					CGContextFillRect (my d_macGraphicsContext, leftRect);
+					CGContextFillRect (my d_macGraphicsContext, rightRect);
+					CGContextFillRect (my d_macGraphicsContext, lowerRect);
+				} else {
+					CGContextSetRGBFillColor (my d_macGraphicsContext, 0.8, 1.0, 1.0, 1.0);   // FIXME: Need user selection color
+					CGContextFillRect (my d_macGraphicsContext, upperRect);
+					CGContextFillRect (my d_macGraphicsContext, leftRect);
+					CGContextFillRect (my d_macGraphicsContext, rightRect);
+					CGContextFillRect (my d_macGraphicsContext, lowerRect);
+					CGContextSetRGBFillColor (my d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+					CGContextFillRect (my d_macGraphicsContext, upperRect);
+					CGContextFillRect (my d_macGraphicsContext, leftRect);
+					CGContextFillRect (my d_macGraphicsContext, rightRect);
+					CGContextFillRect (my d_macGraphicsContext, lowerRect);
+				}
 
-                NSRect upperRect = NSMakeRect(x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
-                NSRect leftRect = NSMakeRect(x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);
-                NSRect rightRect = NSMakeRect(x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner);
-                NSRect lowerRect = NSMakeRect(x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner);
-                NSRect unionRect = NSUnionRect(upperRect, leftRect);
-                unionRect = NSUnionRect(unionRect, rightRect);
-                unionRect = NSUnionRect(unionRect, lowerRect);
-                
-                CGContextFillRect (my d_macGraphicsContext, upperRect);
-                CGContextFillRect (my d_macGraphicsContext, leftRect);
-                CGContextFillRect (my d_macGraphicsContext, rightRect);
-                CGContextFillRect (my d_macGraphicsContext, lowerRect);
-
-                CGContextRestoreGState (my d_macGraphicsContext);
-                CGContextSynchronize ( my d_macGraphicsContext);
-                [view unlockFocus];
-        
-                // See comments in gui_drawingarea_cb_click
-               // [view setNeedsDisplayInRect:unionRect];
-//                [[view window] flushWindow];
-
-            }
-
+				CGContextRestoreGState (my d_macGraphicsContext);
+				//CGContextSynchronize ( my d_macGraphicsContext);   // needed?
+				[drawingArea unlockFocus];
+			}
         #elif mac
-                Rect rect;
-                if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
-                SetPort (my d_macPort);
-                LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-                SetRect (& rect, x1DC, y2DC, x2DC, y2DC_inner);
-                InvertRect (& rect);
-                LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-                SetRect (& rect, x1DC, y2DC_inner, x1DC_inner, y1DC_inner);
-                InvertRect (& rect);
-                LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-                SetRect (& rect, x2DC_inner, y2DC_inner, x2DC, y1DC_inner);
-                InvertRect (& rect);
-                LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
-                SetRect (& rect, x1DC, y1DC_inner, x2DC, y1DC);
-                InvertRect (& rect);
-                if (my d_drawingArea) GuiMac_clipOff ();
+			Rect rect;
+			if (my d_drawingArea) GuiMac_clipOn (my d_drawingArea -> d_widget);
+			SetPort (my d_macPort);
+			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
+			SetRect (& rect, x1DC, y2DC, x2DC, y2DC_inner);
+			InvertRect (& rect);
+			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
+			SetRect (& rect, x1DC, y2DC_inner, x1DC_inner, y1DC_inner);
+			InvertRect (& rect);
+			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
+			SetRect (& rect, x2DC_inner, y2DC_inner, x2DC, y1DC_inner);
+			InvertRect (& rect);
+			LMSetHiliteMode (LMGetHiliteMode () & ~ 128L);
+			SetRect (& rect, x1DC, y1DC_inner, x2DC, y1DC);
+			InvertRect (& rect);
+			if (my d_drawingArea) GuiMac_clipOff ();
 		#elif win
 			static HBRUSH highlightBrush;
 			if (! highlightBrush)
@@ -333,7 +329,7 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC,
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
-	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
+	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner), 1);
 	if (my recording)
 		{ op (HIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
@@ -341,9 +337,7 @@ void Graphics_highlight2 (Graphics me, double x1WC, double x2WC, double y1WC, do
 void Graphics_unhighlight2 (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC,
 	double x1WC_inner, double x2WC_inner, double y1WC_inner, double y2WC_inner)
 {
-	#if ! cairo
-		highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner));
-	#endif
+	highlight2 (me, wdx (x1WC), wdx (x2WC), wdy (y1WC), wdy (y2WC), wdx (x1WC_inner), wdx (x2WC_inner), wdy (y1WC_inner), wdy (y2WC_inner), 2);
 	if (my recording)
 		{ op (UNHIGHLIGHT2, 8); put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (x1WC_inner); put (x2WC_inner); put (y1WC_inner); put (y2WC_inner); }
 }
@@ -367,6 +361,7 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 			colour. green = ((uint16_t) (colour. green * 65535.0) ^ 0xFFFF) / 65535.0;
 			colour. blue = ((uint16_t) (colour. blue * 65535.0) ^ 0xFFFF) / 65535.0;
 			_Graphics_setColour (me, colour);
+		#elif cocoa
 		#elif mac
 			//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeDifference);
 		#endif
@@ -384,10 +379,12 @@ void Graphics_xorOff (Graphics graphics) {
 			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
 			//cairo_set_source_rgba (my d_cairoGraphicsContext, 0.0, 0.0, 0.0, 1.0);
 			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
-			gdk_flush ();
+			gdk_flush ();   // to undraw the last drawing
 		#elif win
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			_Graphics_setColour (me, my colour);
+		#elif cocoa
+			Graphics_flushWs (graphics);   // to undraw the last drawing
 		#elif mac
 			//CGContextSetBlendMode (my macGraphicsContext, kCGBlendModeNormal);
 		#endif

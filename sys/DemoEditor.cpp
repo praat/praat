@@ -73,7 +73,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (DemoEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-if (gtk && event -> type != BUTTON_PRESS) return;
+if ((gtk || cocoa) && event -> type != BUTTON_PRESS) return;
 	my clicked = true;
 	my keyPressed = false;
 	my x = event -> x;
@@ -204,7 +204,7 @@ void Demo_waitForInput (Interpreter interpreter) {
 	theDemoEditor -> keyPressed = false;
 	theDemoEditor -> waitingForInput = true;
 	#if ! defined (CONSOLE_APPLICATION)
-	{ // scope
+	{// scope
 		autoMelderSaveDefaultDir saveDir;
 		bool wasBackgrounding = Melder_backgrounding;
 		if (wasBackgrounding) praat_foreground ();

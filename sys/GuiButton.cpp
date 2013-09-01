@@ -200,9 +200,15 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		[button setBezelStyle: NSRoundedBezelStyle];
 		[button setImagePosition: NSNoImage];
 		[button setBordered: YES];
+		static NSFont *theButtonFont;
+		if (! theButtonFont) {
+			theButtonFont = [NSFont systemFontOfSize: 13.0];
+		}
+		[button setFont: theButtonFont];
 		[button setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
 		[button setTarget: (id) my d_widget];
 		[button setAction: @selector (_guiCocoaButton_activateCallback:)];
+		//[button setAutoresizingMask: NSViewNotSizable];
     
         if (flags & GuiButton_DEFAULT || flags & GuiButton_ATTRACTIVE) {
             [button setKeyEquivalent:@"\r"];

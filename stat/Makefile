@@ -1,5 +1,5 @@
 # Makefile of the library "stat"
-# Paul Boersma, 14 January 2012
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -16,7 +16,7 @@ all: libstat.a
 libstat.a: $(OBJECTS)
 	touch libstat.a
 	rm libstat.a
-	ar cq libstat.a $(OBJECTS)
+	$(AR) cq libstat.a $(OBJECTS)
 	$(RANLIB) libstat.a
 
 clean:

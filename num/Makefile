@@ -1,5 +1,5 @@
 # Makefile of the library "num"
-# Paul Boersma, 14 January 2012
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -18,7 +18,7 @@ clean:
 libnum.a: $(OBJECTS)
 	touch libnum.a
 	rm libnum.a
-	ar cq libnum.a $(OBJECTS)
+	$(AR) cq libnum.a $(OBJECTS)
 	$(RANLIB) libnum.a
 
 $(OBJECTS): *.h ../external/gsl/*.h ../external/glpk/*.h ../sys/*.h ../dwsys/*.h

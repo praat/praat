@@ -1,6 +1,6 @@
 /* GuiControl.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Koninck, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,12 +136,24 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		if (bottom <= 0) bottom += parentHeight;
 		top = parentHeight - top;         // flip
 		bottom = parentHeight - bottom;   // flip
-		NSRect rect = { { left, bottom }, { right - left, top - bottom } };
-		[widgetView setFrame: rect];
-
+        int width = right - left;
+        int height = top - bottom;
+		if ([widgetView isKindOfClass: [NSButton class]]) {
+			if (! [widgetView isKindOfClass: [NSPopUpButton class]]) {
+				/*
+				 * On Cocoa, NSButton views show up 12 pixels less wide and 5 pixels less high than their frame.
+				 * Compensate for this (undocumented?) Cocoa phenomenon.
+				 */
+				left -= 6;
+				width += 12;
+				bottom -= 5;
+				height += 5;
+			}
+		}
+        NSRect rect = NSMakeRect (left, bottom, width, height);
         [widgetView setAutoresizingMask:horizMask | vertMask];
         [superView addSubview:widgetView];   // parent will retain the subview...
-        [widgetView setBounds: rect];
+        [widgetView setFrame: rect];
 		[widgetView release];   // ... so we can release the item already
 	#elif motif
 		(void) parent;

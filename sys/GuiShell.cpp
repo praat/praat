@@ -22,6 +22,20 @@
 
 Thing_implement (GuiShell, GuiForm, 0);
 
+void structGuiShell :: v_destroy () {
+	#if cocoa
+		if (d_cocoaWindow) {
+			[d_cocoaWindow setUserData: NULL];   // undangle reference to this
+			Melder_fatal ("ordering out?");
+			[d_cocoaWindow orderOut: nil];
+			[d_cocoaWindow close];
+			[d_cocoaWindow release];
+			d_cocoaWindow = NULL;   // undangle
+		}
+	#endif
+	GuiShell_Parent :: v_destroy ();
+}
+
 int structGuiShell :: f_getShellWidth () {
 	int width = 0;
 	#if gtk
@@ -63,8 +77,8 @@ void structGuiShell :: f_drain () {
 		//gdk_window_flush (gtk_widget_get_window (me));
 		gdk_flush ();
 	#elif cocoa
-        // Probably never needed, unless we diabled flushing
-        [d_cocoaWindow flushWindowIfNeeded];
+        //[d_cocoaWindow displayIfNeeded];
+        [d_cocoaWindow flushWindow];
 	#elif win
 	#elif mac
 		Melder_assert (d_xmShell != NULL);

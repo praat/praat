@@ -53,7 +53,20 @@ void GuiObject_destroy (GuiObject widget) {
 	#if gtk
 		gtk_widget_destroy (GTK_WIDGET (widget));
 	#elif cocoa
-		[(GuiCocoaView *) widget   release];
+		if ([widget isKindOfClass: [NSMenuItem class]]) {
+			NSMenuItem *cocoaMenuItem = (NSMenuItem *) widget;
+			[[cocoaMenuItem menu] removeItem: cocoaMenuItem];   // this also releases the item
+		} else {
+			Melder_assert ([widget isKindOfClass: [NSView class]]);
+			NSView *cocoaView = (NSView *) widget;
+			if (cocoaView == [[cocoaView window] contentView]) {
+				[[cocoaView window] orderOut: nil];
+				[[cocoaView window] close];
+				[[cocoaView window] release];
+			} else {
+				[cocoaView removeFromSuperview];   // this also releases the view
+			}
+		}
 	#elif motif
 		XtDestroyWidget (widget);
 	#endif

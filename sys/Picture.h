@@ -2,7 +2,7 @@
 #define _Picture_h_
 /* Picture.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,8 +136,6 @@ void Picture_setSelection
 
 void Picture_background (Picture me);
 void Picture_foreground (Picture me);
-
-void Picture_selfExpose (Picture me);
 
 /* End of file Picture.h */
 #endif

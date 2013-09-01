@@ -139,7 +139,7 @@ void structGuiMenu :: f_empty () {
 	- (void) dealloc {   // override
 		GuiMenu me = d_userData;
 		forget (me);
-		trace ("deleting a button");
+		trace ("deleting a menu button");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -156,7 +156,7 @@ void structGuiMenu :: f_empty () {
 	- (void) dealloc {   // override
 		GuiMenu me = d_userData;
 		forget (me);
-		trace ("deleting a menu item");
+		trace ("deleting a menu");
 		[super dealloc];
 	}
 	- (GuiThing) userData {

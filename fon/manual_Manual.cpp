@@ -1,6 +1,6 @@
 /* manual_Manual.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ ENTRY (L"Your own manual pages")
 NORMAL (L"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (L"ManPages", L"ppgb", 20110129)
+MAN_BEGIN (L"ManPages", L"ppgb", 20130814)
 INTRO (L"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -203,7 +203,7 @@ NORMAL (L"For obvious safety reasons, embedded scripts cannot contain commands t
 NORMAL (L"The commands ##Set outer viewport...# and ##Set inner viewport...# are available; "
 	"they count in inches (if the font size of the manual is 12). The (0, 0) point is in the upper left corner, "
 	"as in the Picture window, so that you can test your picture with a normal Praat script; "
-	"for instance, the following script draw a cross in the bottom half of the picture and a rectangle in the upper half:")
+	"for instance, the following script draws a cross in the upper half of the picture and a rectangle in the lower half:")
 CODE (L"<script> 4.5 4 \"")
 CODE1 (L"Axes... 0 100 0 100")
 CODE1 (L"Select inner viewport... 0 4.5 0 2")

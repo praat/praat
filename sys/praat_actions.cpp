@@ -182,11 +182,14 @@ static void deleteDynamicMenu (void) {
 	trace ("deletion #%ld", ++ numberOfDeletions);
 	for (int i = 1; i <= theNumberOfActions; i ++) {
 		if (theActions [i]. button) {
-			#if gtk
+			trace ("trying to destroy action %d of %d: %ls", i, (int) theNumberOfActions, theActions [i]. title);
+			#if gtk || cocoa
 				if (theActions [i]. button -> d_parent == praat_form) {
-					GuiObject_destroy (theActions [i]. button -> d_widget);   // a label or a push button or a cascade button
+					trace ("destroy a label or a push button or a cascade button");
+					GuiObject_destroy (theActions [i]. button -> d_widget);
 				} else if (praat_writeMenu && theActions [i]. button -> d_parent == praat_writeMenu) {
-					GuiObject_destroy (theActions [i]. button -> d_widget);   // a Save menu item
+					trace ("destroying Save menu item");
+					GuiObject_destroy (theActions [i]. button -> d_widget);
 				}
 			#elif motif
 				if (theActions [i]. button -> classInfo == classGuiButton && theActions [i]. button -> d_widget -> subMenuId) {   // a cascade button (not a direct child of the form)?
@@ -201,8 +204,9 @@ static void deleteDynamicMenu (void) {
 		}
 	}
 	if (praat_writeMenu) {
-		#if gtk
+		#if gtk || cocoa
 			if (praat_writeMenuSeparator) {
+				trace ("destroy the Save menu separator");
 				GuiObject_destroy (praat_writeMenuSeparator -> d_widget);
 			}
 			//praat_writeMenu -> f_empty ();

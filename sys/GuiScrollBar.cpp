@@ -1,6 +1,6 @@
 /* GuiScrollBar.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,13 +52,12 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	}
 #elif cocoa
 @interface GuiCocoaScrollBar ()
-@property (nonatomic, assign) float knobPosition;
-@property (nonatomic, assign) float m_minimum;
-@property (nonatomic, assign) float m_maximum;
-@property (nonatomic, assign) float m_value;
-@property (nonatomic, assign) float m_sliderSize;
-@property (nonatomic, assign) float m_increment;
-@property (nonatomic, assign) float m_pageIncrement;
+@property (nonatomic, assign) double m_minimum;
+@property (nonatomic, assign) double m_maximum;
+@property (nonatomic, assign) double m_value;
+@property (nonatomic, assign) double m_sliderSize;
+@property (nonatomic, assign) double m_increment;
+@property (nonatomic, assign) double m_pageIncrement;
 @end
 
 // http://www.lucernesys.com/blog/2010/02/11/nsscroller/
@@ -76,77 +75,65 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
     return d_userData;
 }
 - (void) setUserData: (GuiThing) userData {
-    Melder_assert (userData == NULL || Thing_member (userData, classGuiScrollBar));
-    d_userData = static_cast <GuiScrollBar> (userData);
-    
-    // Proportion is the amount of the scroller that
-    // the knob takes up,
-    // the width of the knob for a horizontal scroller,
-    //  or the height for a vertical scroller.
-    [self setKnobProportion:0.05];
-    // the scroller double value is the position of
-    // the knob on the slider, with a range of
-    // 0.0 to 1.0
-    [self setDoubleValue:0.5];
-    [self setEnabled:YES];
-
+	Melder_assert (userData == NULL || Thing_member (userData, classGuiScrollBar));
+	d_userData = static_cast <GuiScrollBar> (userData);
 }
-
-- (void)setFrame:(NSRect)frameRect  {
-    NSLog(@"GuiScrollBar setFrame %@", NSStringFromRect(frameRect));
+- (void) setMinimum:(double)minimum maximum:(double)maximum value:(double)value sliderSize:(double)sliderSize increment:(double)increment pageIncrement:(double)pageIncrement {
+	Melder_assert (NUMdefined (minimum));
+	_m_minimum = minimum;
+	_m_maximum = maximum;
+	_m_value = value;
+	_m_sliderSize = sliderSize;
+	_m_increment = increment;
+	_m_pageIncrement = pageIncrement;
+	double spaceLeft = (maximum - minimum) - sliderSize;
+	if (spaceLeft <= 0.0) {
+		[self setKnobProportion: 1.0];
+		[self setDoubleValue: 0.5];
+	} else {
+		[self setKnobProportion: sliderSize / (maximum - minimum)];
+		[self setDoubleValue: (value - minimum) / spaceLeft];
+	}
 }
-
--(void)setMinimum:(double)minimum maximum:(double)maximum value:(double)value sliderSize:(double)sliderSize increment:(double)increment pageIncrement:(double)pageIncrement {
-    
-    if (minimum == NUMundefined) {
-        minimum = 0.0;
-    }
-    _m_minimum = minimum;
-    _m_maximum = maximum;
-    _m_value = value;
-    _m_sliderSize = sliderSize;
-    _m_increment = increment;
-    _m_pageIncrement = pageIncrement;
-    
-    value -= minimum;
-    maximum -= minimum;
-    
-    
-    double floatValue = value / maximum;
-    double knobProportion = sliderSize / maximum;
-
-    NSLog(@"floatValue %f knobProportion %f sliderSize %f", floatValue, knobProportion, sliderSize);
-    
-    [self setKnobProportion:knobProportion];
-    [self setDoubleValue:floatValue];
-}
-
--(void)valueChanged {
-    
-    GuiScrollBar me = (GuiScrollBar) d_userData;
-    
-    switch ([self hitPart]) {
-        case NSScrollerIncrementLine:
+- (void) valueChanged {
+	GuiScrollBar me = (GuiScrollBar) d_userData;
+	switch ([self hitPart]) {
+        case NSScrollerIncrementLine: {
             // Include code here for the case where the down arrow is pressed
-            break;
-        case NSScrollerIncrementPage:
+			_m_value += _m_increment;
+			if (_m_value > _m_maximum - _m_sliderSize)
+				_m_value = _m_maximum - _m_sliderSize;
+			[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+		} break;
+        case NSScrollerIncrementPage: {
             // Include code here for the case where CTRL + down arrow is pressed, or the space the scroll knob moves in is pressed
-            break;
-        case NSScrollerDecrementLine:
+			_m_value += _m_pageIncrement;
+			if (_m_value > _m_maximum - _m_sliderSize)
+				_m_value = _m_maximum - _m_sliderSize;
+			[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+		} break;
+        case NSScrollerDecrementLine: {
             // Include code here for the case where the up arrow is pressed
-            break;
-        case NSScrollerDecrementPage:
+			_m_value -= _m_increment;
+			if (_m_value < _m_minimum)
+				_m_value = _m_minimum;
+			[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+		} break;
+        case NSScrollerDecrementPage: {
             // Include code here for the case where CTRL + up arrow is pressed, or the space the scroll knob moves in is pressed
-            break;
-        case NSScrollerKnob:
+			_m_value -= _m_pageIncrement;
+			if (_m_value < _m_minimum)
+				_m_value = _m_minimum;
+			[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+		} break;
+        case NSScrollerKnob: {
             // This case is when the knob itself is pressed
-            _knobPosition = [self floatValue];
-            // Do something with the view
-        default:
-            break;
+			double spaceLeft = (_m_maximum - _m_minimum) - _m_sliderSize;
+    		_m_value = _m_minimum + [self doubleValue] * (spaceLeft <= 0.0 ? 0.0 : spaceLeft);
+		} break;
+        default: {
+		} break;
     }
-
-
     if (my d_valueChangedCallback) {
         struct structGuiScrollBarEvent event = { me };
         try {
@@ -155,15 +142,7 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
             Melder_flushError ("Scroll not completely handled.");
         }
     }
-
 }
-
-- (int)getScrollerValue {
-    double diff = abs(_m_maximum - _m_minimum);
-    double result = [self doubleValue] * diff + _m_minimum;
-    return result;
-}
-
 @end
 #elif win
 	void _GuiWinScrollBar_destroy (GuiObject widget) {
@@ -208,26 +187,16 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "value-changed", G_CALLBACK (_GuiGtkScrollBar_valueChangedCallback), me);
 	#elif cocoa
-        GuiCocoaScrollBar *scroller = [[GuiCocoaScrollBar alloc] init];
-        my d_widget = (GuiObject) scroller;
-        my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-        [scroller setUserData:me];
-    
-        NSLog(@"[scroller frame] %@", NSStringFromRect([scroller frame]));
-    
-        [scroller setMinimum:minimum maximum:maximum value:value sliderSize:sliderSize increment:increment pageIncrement:pageIncrement];
-    
-
-    [scroller setKnobProportion:1.0];
-        // the scroller double value is the position of
-        // the knob on the slider, with a range of
-        // 0.0 to 1.0
-        [scroller setDoubleValue:0.5];
-        [scroller setEnabled:YES];
-        [scroller setScrollerStyle:NSScrollerStyleLegacy];
-        [scroller setTarget:scroller];
-        [scroller setAction:@selector(valueChanged)];
-
+		NSRect dummyFrame = flags & GuiScrollBar_HORIZONTAL ? NSMakeRect (20, 20, 100, [NSScroller scrollerWidth]) : NSMakeRect (20, 20, [NSScroller scrollerWidth], 100);
+		GuiCocoaScrollBar *scroller = [[GuiCocoaScrollBar alloc] initWithFrame: dummyFrame];
+		my d_widget = scroller;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[scroller setUserData: me];
+		[scroller setEnabled: YES];
+		[scroller   setMinimum: minimum   maximum: maximum   value: value   sliderSize: sliderSize   increment: increment   pageIncrement: pageIncrement];
+        //[scroller setScrollerStyle: NSScrollerStyleOverlay];
+        [scroller setTarget: scroller];
+        [scroller setAction: @selector (valueChanged)];
 	#elif win
 		my d_widget = XtVaCreateWidget (flags & GuiScrollBar_HORIZONTAL ? "horizontalScrollBar" : "verticalScrollBar",   // the name is checked for deciding the orientation...
 			xmScrollBarWidgetClass, parent -> d_widget,
@@ -277,36 +246,33 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 	#if gtk
 		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (d_widget));
 		gtk_adjustment_configure (GTK_ADJUSTMENT (adj),
-			NUMdefined (value) ? value : gtk_adjustment_get_value (GTK_ADJUSTMENT (adj)),
-			NUMdefined (minimum) ? minimum : gtk_adjustment_get_lower (GTK_ADJUSTMENT (adj)),
-			NUMdefined (maximum) ? maximum : gtk_adjustment_get_upper (GTK_ADJUSTMENT (adj)),
-			NUMdefined (increment) ? increment : gtk_adjustment_get_step_increment (GTK_ADJUSTMENT (adj)),
+			NUMdefined (value)         ? value         : gtk_adjustment_get_value          (GTK_ADJUSTMENT (adj)),
+			NUMdefined (minimum)       ? minimum       : gtk_adjustment_get_lower          (GTK_ADJUSTMENT (adj)),
+			NUMdefined (maximum)       ? maximum       : gtk_adjustment_get_upper          (GTK_ADJUSTMENT (adj)),
+			NUMdefined (increment)     ? increment     : gtk_adjustment_get_step_increment (GTK_ADJUSTMENT (adj)),
 			NUMdefined (pageIncrement) ? pageIncrement : gtk_adjustment_get_page_increment (GTK_ADJUSTMENT (adj)),
-			NUMdefined (sliderSize) ? sliderSize : gtk_adjustment_get_page_size (GTK_ADJUSTMENT (adj)));
+			NUMdefined (sliderSize)    ? sliderSize    : gtk_adjustment_get_page_size      (GTK_ADJUSTMENT (adj)));
 	#elif cocoa
-    
-        if (minimum == NUMundefined)
-            minimum = 0.0;
-    
-        NSLog(@"f_set %f minimum, %f maximum, %f value, %f sliderSize, %f increment, %f pageIncrement",
-              minimum, maximum, value, sliderSize, increment, pageIncrement);
-
-        GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar*)d_widget;
-        [scroller setMinimum:minimum maximum:maximum value:value sliderSize:sliderSize increment:increment pageIncrement:pageIncrement];
-    
-    
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) d_widget;
+		[scroller
+			setMinimum:    NUMdefined (minimum)       ? minimum       : [scroller m_minimum]
+			maximum:       NUMdefined (maximum)       ? maximum       : [scroller m_maximum]
+			value:         NUMdefined (value)         ? value         : [scroller m_value]
+			sliderSize:    NUMdefined (sliderSize)    ? sliderSize    : [scroller m_sliderSize]
+			increment:     NUMdefined (increment)     ? increment     : [scroller m_increment]
+			pageIncrement: NUMdefined (pageIncrement) ? pageIncrement : [scroller m_pageIncrement]];
 	#elif motif
-		if (minimum != NUMundefined)
+		if (NUMdefined (minimum))
 			XtVaSetValues (d_widget, XmNminimum, (int) minimum, NULL);
-		if (maximum != NUMundefined)
+		if (NUMdefined (maximum))
 			XtVaSetValues (d_widget, XmNmaximum, (int) maximum, NULL);
 		int oldValue, oldSliderSize, oldIncrement, oldPageIncrement;
 		XmScrollBarGetValues (d_widget, & oldValue, & oldSliderSize, & oldIncrement, & oldPageIncrement);
 		XmScrollBarSetValues (d_widget,
-			NUMdefined (value) ? value : oldValue,
-			NUMdefined (sliderSize) ? sliderSize : oldSliderSize,
-			NUMdefined (increment) ? increment : oldIncrement,
-			NUMdefined (pageIncrement) ? pageIncrement : pageIncrement,
+			NUMdefined (value)         ? value         : oldValue,
+			NUMdefined (sliderSize)    ? sliderSize    : oldSliderSize,
+			NUMdefined (increment)     ? increment     : oldIncrement,
+			NUMdefined (pageIncrement) ? pageIncrement : oldPageIncrement,
 			False);
 	#endif
 }
@@ -315,12 +281,8 @@ int structGuiScrollBar :: f_getValue () {
 	#if gtk
 		return gtk_range_get_value (GTK_RANGE (d_widget));
 	#elif cocoa
-    
-        GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar*)d_widget;
-        NSLog(@"f_getValue %d ", [scroller getScrollerValue]);
-
-    return [scroller getScrollerValue];
-
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) d_widget;
+		return [scroller m_value];
 	#elif motif
 		int value, slider, incr, pincr;
 		XmScrollBarGetValues (d_widget, & value, & slider, & incr, & pincr);

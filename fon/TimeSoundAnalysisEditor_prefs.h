@@ -62,7 +62,7 @@ prefs_begin (TimeSoundAnalysisEditor)
 		prefs_add_bool_with_data   (TimeSoundAnalysisEditor, intensity_picture_garnish,       1, true)
 		prefs_add_bool_with_data   (TimeSoundAnalysisEditor, formant_show,                    1, false)
 		prefs_add_double_with_data (TimeSoundAnalysisEditor, formant_maximumFormant,          1, L"5500.0")   // Hz
-		prefs_add_long_with_data   (TimeSoundAnalysisEditor, formant_numberOfFormants,        1, L"5.0")
+		prefs_add_double_with_data (TimeSoundAnalysisEditor, formant_numberOfFormants,        1, L"5.0")
 		prefs_add_double_with_data (TimeSoundAnalysisEditor, formant_windowLength,            1, L"0.025")   // seconds
 		prefs_add_double_with_data (TimeSoundAnalysisEditor, formant_dynamicRange,            1, L"30.0")   // dB
 		prefs_add_double_with_data (TimeSoundAnalysisEditor, formant_dotSize,                 1, L"1.0")   // mm

@@ -156,7 +156,7 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 	 * Wait for the user to click Stop or Continue.
 	 */
 	#ifndef CONSOLE_APPLICATION
-		{ // scope
+		{// scope
 			autoMelderSaveDefaultDir saveDir;
 			thePauseForm_clicked = 0;
 			Melder_assert (theEventLoopDepth == 0);

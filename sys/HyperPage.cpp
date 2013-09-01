@@ -468,7 +468,7 @@ if (! my printing) {
 			theCurrentPraatPicture -> y2NDC = height_inches;
 			Graphics_setViewport (my g, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
 
-			{ // scope
+			{// scope
 				autoMelderProgressOff progress;
 				autoMelderWarningOff warning;
 				autoMelderSaveDefaultDir saveDir;
@@ -564,7 +564,7 @@ if (! my printing) {
 		theCurrentPraatPicture -> y2NDC = height_inches;
 		Graphics_setViewport (my ps, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 
-		{ // scope
+		{// scope
 			autoMelderProgressOff progress;
 			autoMelderWarningOff warning;
 			autoMelderSaveDefaultDir saveDir;
@@ -634,6 +634,7 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	if (my g == NULL) return;   // Could be the case in the very beginning.
 	Graphics_clearWs (my g);
 	initScreen (me);
+	trace ("going to draw");
 	my v_draw ();
 	if (my entryHint && my entryPosition) {
 		Melder_free (my entryHint);
@@ -649,10 +650,12 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (HyperPage);
 	if (my g == NULL) return;   // Could be the case in the very beginning.
-if (gtk && event -> type != BUTTON_PRESS) return;
+if ((gtk || cocoa) && event -> type != BUTTON_PRESS) return;
 	if (! my links) return;
 	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
-		HyperLink link = (HyperLink) my links -> item [ilink];
+		HyperLink link = (HyperLink) my links -> item [ilink];		
+		if (link == NULL)
+			Melder_fatal ("gui_drawingarea_cb_click: empty link %ld/%ld.", ilink, my links -> size);
 		if (event -> y > link -> y2DC && event -> y < link -> y1DC && event -> x > link -> x1DC && event -> x < link -> x2DC) {
 			saveHistory (me, my currentPageTitle);
 			try {
@@ -779,10 +782,15 @@ static void gui_cb_verticalScroll (I, GuiScrollBarEvent	event) {
 	iam (HyperPage);
 	double value = event -> scrollBar -> f_getValue ();
 	if (value != my top) {
+		trace ("scroll from %f to %f", (double) my top, value);
 		my top = value;
-		Graphics_clearWs (my g);
-		initScreen (me);
-		my v_draw ();   // do not wait for expose event
+		#if cocoa || gtk || win
+			Graphics_updateWs (my g);   // wait for expose event
+		#else
+			initScreen (me);
+			Graphics_clearWs (my g);
+			my v_draw ();   // do not wait for expose event
+		#endif
 		updateVerticalScrollBar (me);
 	}
 }
@@ -960,7 +968,7 @@ void structHyperPage :: v_createChildren () {
 
 	/***** Create drawing area. *****/
 
-	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - Machine_getScrollBarWidth (), y + height + 8, - Machine_getScrollBarWidth (),
+	drawingArea = GuiDrawingArea_createShown (d_windowForm, 0, - Machine_getScrollBarWidth (), y + height + 9, - Machine_getScrollBarWidth (),
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
 	drawingArea -> f_setSwipable (NULL, verticalScrollBar);
 }

@@ -140,7 +140,7 @@ static void updateViewportMenu (void) {
 DIRECT (MouseSelectsInnerViewport)
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw ("Mouse commands are not available inside pictures.");
-	{ // scope
+	{// scope
 		autoPraatPicture picture;
 		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = true);
 	}
@@ -150,7 +150,7 @@ END
 DIRECT (MouseSelectsOuterViewport)
 	if (theCurrentPraatPicture != & theForegroundPraatPicture)
 		Melder_throw ("Mouse commands are not available inside pictures.");
-	{ // scope
+	{// scope
 		autoPraatPicture picture;
 		Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = false);
 	}
@@ -1395,6 +1395,8 @@ void praat_picture_open (void) {
 	if (theCurrentPraatPicture == & theForegroundPraatPicture && ! theCurrentPraatApplication -> batch) {
 		#if gtk
 			gtk_window_present (GTK_WINDOW (dialog -> d_gtkWindow));
+		#elif cocoa
+			dialog -> f_show ();
 		#elif motif
 			XtMapWidget (dialog -> d_xmShell);
 			XMapRaised (XtDisplay (dialog -> d_xmShell), XtWindow (dialog -> d_xmShell));
@@ -1425,12 +1427,6 @@ void praat_picture_close (void) {
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) return;
 	if (! theCurrentPraatApplication -> batch) {
 		Picture_highlight (praat_picture);
-		#if gtk
-			// TODO: Tijdelijke fix; dit exposed de selectie, maar voor bijvoorbeeld 'text' die buiten
-			// de selectie valt is dit geen optie. Het mooiste zou zijn als na praat_picture_close
-			// bekend zou zijn wat de 'dirty' regio is van het scherm. Om vervolgens alleen dat te exposen
-			//Picture_selfExpose (praat_picture);
-		#endif
 	}
 }
 

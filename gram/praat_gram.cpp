@@ -1,6 +1,6 @@
 /* praat_gram.cpp
  *
- * Copyright (C) 1997-2012 Paul Boersma
+ * Copyright (C) 1997-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -941,7 +941,7 @@ DO
 	Melder_informationReal (result, NULL);
 END
 
-FORM (OTGrammar_Distributions_learnFromPartialOutputs, L"OTGrammar & Distributions: Learn from partial outputs", L"OT learning 6. Shortcut to OT learning")
+FORM (OTGrammar_Distributions_learnFromPartialOutputs, L"OTGrammar & Distributions: Learn from partial outputs", L"OT learning 6. Shortcut to grammar learning")
 	NATURAL (L"Column number", L"1")
 	REAL (L"Evaluation noise", L"2.0")
 	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
@@ -1034,7 +1034,7 @@ DO
 	Melder_information (Melder_integer (result));
 END
 
-FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", L"OT learning 6. Shortcut to OT learning")
+FORM (OTGrammar_PairDistribution_learn, L"OTGrammar & PairDistribution: Learn", L"OT learning 6. Shortcut to grammar learning")
 	REAL (L"Evaluation noise", L"2.0")
 	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
 	POSITIVE (L"Initial plasticity", L"1.0")

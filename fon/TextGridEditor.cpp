@@ -686,7 +686,7 @@ static void menu_cb_AlignInterval (EDITOR_ARGS) {
 		Melder_throw ("Select an interval first");
 	if (! my p_align_includeWords && ! my p_align_includePhonemes)
 		Melder_throw ("Nothing to be done.\nPlease switch on \"Include words\" and/or \"Include phonemes\" in the \"Alignment settings\".");
-	{ // scope
+	{// scope
 		autoMelderProgressOff noprogress;
 		Function anySound = my d_sound.data;
 		if (my d_longSound.data) anySound = my d_longSound.data;
@@ -2078,6 +2078,7 @@ void structTextGridEditor :: v_play (double tmin, double tmax) {
 void structTextGridEditor :: v_updateText () {
 	TextGrid grid = (TextGrid) data;
 	const wchar_t *newText = L"";
+	trace ("selected tier %ld", selectedTier);
 	if (selectedTier) {
 		IntervalTier intervalTier;
 		TextTier textTier;
@@ -2102,6 +2103,7 @@ void structTextGridEditor :: v_updateText () {
 	}
 	//Melder_casual ("v_updateText in editor %ld %ls %d", this, name, (int) suppressRedraw);
 	suppressRedraw = TRUE;   // prevent valueChangedCallback from redrawing
+	trace ("setting new text %ls", newText);
 	text -> f_setString (newText);
 	long cursor = wcslen (newText);   // at end
 	text -> f_setSelection (cursor, cursor);
@@ -2202,6 +2204,7 @@ void structTextGridEditor :: f_init (const wchar_t *title, TextGrid grid, Sample
 	structTimeSoundAnalysisEditor :: f_init (title, grid, a_sound, a_ownSound);
 
 	this -> selectedTier = 1;
+	v_updateText ();   // to reflect changed tier selection
 	if (d_endWindow - d_startWindow > 30.0) {
 		d_endWindow = d_startWindow + 30.0;
 		if (d_startWindow == d_tmin)

@@ -1,6 +1,6 @@
 /* manual_Picture.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 
 #include "ManPagesM.h"
+#include "UnicodeData.h"
 
 static void drawOneIpaSymbol (Graphics g, double x, double y, const wchar_t *symbol) {
 	wchar_t buffer [30], *p = & buffer [0];
@@ -336,14 +337,14 @@ LIST_ITEM (L"e\\3v e\\bs3v (%%combining right half ring below%): slightly rounde
 LIST_ITEM (L"u\\cv u\\bscv (%%combining left half ring below%): slightly unrounded")
 NORMAL (L"Overstrikes:")
 LIST_ITEM (L"\\gf\\0^ \\bsgf\\bs0\\^  (%%combining ring above%): voiceless")
-LIST_ITEM (L"\\ep\\\'^ \\bsep\\bs\'\\^  (%%combining acute accent%): high tone")
-LIST_ITEM (L"\\ep\\`^ \\bsep\\bs`\\^  (%%combining grave accent%): low tone")
-LIST_ITEM (L"\\ep\\-^ \\bsep\\bs-\\^  (%%combining macron%): mid tone (or so)")
-LIST_ITEM (L"\\ep\\~^ \\bsep\\bs~\\^  (%%combining tilde%): nasalized")
-LIST_ITEM (L"\\ep\\v^ \\bsep\\bsv\\^  (%%combining caron%, %hac\\v^ek, %wedge): rising tone")
-LIST_ITEM (L"\\ep\\^^ \\bsep\\bs\\^ \\^  (%%combining circumflex accent%): falling tone")
+LIST_ITEM (L"\\ef\\\'^ \\bsef\\bs\'\\^  (%%combining acute accent%): high tone")
+LIST_ITEM (L"\\ef\\`^ \\bsef\\bs`\\^  (%%combining grave accent%): low tone")
+LIST_ITEM (L"\\ef\\-^ \\bsef\\bs-\\^  (%%combining macron%): mid tone (or so)")
+LIST_ITEM (L"\\ef\\~^ \\bsef\\bs~\\^  (%%combining tilde%): nasalized")
+LIST_ITEM (L"\\ef\\v^ \\bsef\\bsv\\^  (%%combining caron%, %%háček%, %wedge): rising tone")   // UNITEXT_LATIN_SMALL_LETTER_C_WITH_CARON
+LIST_ITEM (L"\\ef\\^^ \\bsef\\bs\\^ \\^  (%%combining circumflex accent%): falling tone")
 LIST_ITEM (L"o\\:^ o\\bs:\\^  (%%combining diaeresis%): centralized")
-LIST_ITEM (L"\\ep\\N^ \\ep\\bsN\\^  (%%combining breve%): short")
+LIST_ITEM (L"\\ef\\N^ \\bsef\\bsN\\^  (%%combining breve%): short")
 LIST_ITEM (L"k\\lip t\\lis k\\bslip (%%combining double inverted breve%, %ligature): simultaneous articulation, or single segment")
 NORMAL (L"In line:")
 LIST_ITEM (L"\\:f \\bs:f the phonetic length sign")

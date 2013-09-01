@@ -1,5 +1,5 @@
 # Makefile of the library "artsynth"
-# Paul Boersma, 6 September 2011
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -22,7 +22,7 @@ clean:
 libartsynth.a: $(OBJECTS)
 	touch libartsynth.a
 	rm libartsynth.a
-	ar cq libartsynth.a $(OBJECTS)
+	$(AR) cq libartsynth.a $(OBJECTS)
 	$(RANLIB) libartsynth.a
 
 $(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../stat/*.h

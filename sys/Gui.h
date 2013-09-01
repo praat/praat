@@ -80,7 +80,7 @@
 #define Gui_CHECKBUTTON_HEIGHT  20
 #define Gui_LABEL_SPACING  8
 #define Gui_OPTIONMENU_HEIGHT  20
-#if gtk || cocoa
+#if gtk
 	#define Gui_PUSHBUTTON_HEIGHT  25
 #else
 	#define Gui_PUSHBUTTON_HEIGHT  20
@@ -105,24 +105,24 @@
 		- (void) setUserData: (GuiThing) userData;
 	@end
 	typedef NSObject <GuiCocoaAny> *GuiObject;
-    @interface GuiCocoaButton : NSButton <GuiCocoaAny> @end
-    @interface GuiCocoaScrollBar : NSScroller <GuiCocoaAny> @end
+	@interface GuiCocoaButton : NSButton <GuiCocoaAny> @end
+	@interface GuiCocoaCheckButton : NSButton <GuiCocoaAny> @end
+	@interface GuiCocoaDrawingArea : NSView <GuiCocoaAny> @end
 	@interface GuiCocoaLabel : NSTextField <GuiCocoaAny> @end
+	@interface GuiCocoaList : NSView <GuiCocoaAny, NSTableViewDataSource, NSTableViewDelegate>
+		@property (nonatomic, retain) NSMutableArray *contents;
+		@property (nonatomic, retain) NSTableView *tableView;
+	@end
 	@interface GuiCocoaMenu : NSMenu <GuiCocoaAny> @end
 	@interface GuiCocoaMenuButton : NSPopUpButton <GuiCocoaAny> @end
 	@interface GuiCocoaMenuItem : NSMenuItem <GuiCocoaAny> @end
-	@interface GuiCocoaText : NSTextField <GuiCocoaAny> @end
-    @interface GuiCocoaWindow : NSWindow <GuiCocoaAny> @end
-    @interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
-    @interface GuiCocoaCheckButton : NSButton <GuiCocoaAny> @end
-    @interface GuiCocoaDrawingArea : NSView <GuiCocoaAny> @end
-    @interface GuiCocoaOptionMenu : NSPopUpButton <GuiCocoaAny> @end
-    @interface GuiCocoaList : NSView <GuiCocoaAny, NSTableViewDataSource, NSTableViewDelegate>
-        @property (nonatomic, retain) NSMutableArray *contents;
-        @property (nonatomic, retain) NSTableView *tableView;
-    @end
-
-
+	@interface GuiCocoaOptionMenu : NSPopUpButton <GuiCocoaAny> @end
+	@interface GuiCocoaRadioButton : NSButton <GuiCocoaAny> @end
+	@interface GuiCocoaScrollBar : NSScroller <GuiCocoaAny> @end
+	@interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
+	@interface GuiCocoaTextField : NSTextField <GuiCocoaAny> @end
+	@interface GuiCocoaTextView : NSTextView <GuiCocoaAny, NSTextViewDelegate> @end
+	@interface GuiCocoaWindow : NSWindow <GuiCocoaAny> @end
 #elif motif
 	typedef class structGuiObject *GuiObject;   // Opaque
 
@@ -321,6 +321,7 @@ Thing_define (GuiThing, Thing) { public:
 	/*
 	 * Methods:
 	 */
+	virtual void v_destroy ();
 	virtual void v_show ();
 	virtual void v_hide ();
 	virtual void v_setSensitive (bool sensitive);
@@ -365,6 +366,10 @@ Thing_define (GuiShell, GuiForm) { public:
 	int f_getShellHeight ();
 	void f_setTitle (const wchar_t *title);
 	void f_drain ();   // drain the double graphics buffer
+	/*
+	 * Overridden methods:
+	 */
+	virtual void v_destroy ();
 };
 
 /********** GuiButton **********/
@@ -742,6 +747,8 @@ Thing_define (GuiRadioButton, GuiControl) { public:
 	void *d_valueChangedBoss;
 	#if gtk
 		gulong d_valueChangedHandlerId;
+	#elif cocoa
+		GuiCocoaRadioButton *d_cocoaRadioButton;
 	#endif
 	/*
 	 * Messages:
@@ -842,7 +849,10 @@ struct _history_entry_s {
 Thing_define (GuiText, GuiControl) { public:
 	void (*d_changeCallback) (void *boss, GuiTextEvent event);
 	void *d_changeBoss;
-	#if useCarbon
+	#if cocoa
+		GuiCocoaScrolledWindow *d_cocoaScrollView;
+		GuiCocoaTextView *d_cocoaTextView;
+	#elif defined (macintosh)
 		TXNObject d_macMlteObject;
 		TXNFrameID d_macMlteFrameId;
 	#else

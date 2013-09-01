@@ -1,7 +1,7 @@
 # File: makefile.defs.linux.silent
 
 # System: Linux without sound
-# Paul Boersma, 20 November 2012
+# Paul Boersma, 24 August 2013
 
 CC = gcc -std=gnu99
 
@@ -17,6 +17,7 @@ EXECUTABLE = praat
 
 LIBS = `pkg-config --libs gtk+-2.0` -lm
 
+AR = ar
 RANLIB = ls
 ICON =
 MAIN_ICON =

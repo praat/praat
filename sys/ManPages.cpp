@@ -566,7 +566,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			theCurrentPraatPicture -> y1NDC = 0;
 			theCurrentPraatPicture -> y2NDC = paragraph -> height;
 			Graphics_setViewport (graphics, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);			
-			{ // scope
+			{// scope
 				autoMelderProgressOff progress;
 				autoMelderWarningOff warning;
 				autoMelderSaveDefaultDir saveDir;

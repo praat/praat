@@ -124,21 +124,17 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me);
 		my d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
 	#elif cocoa
-    
-        GuiCocoaCheckButton *checkButton = [[GuiCocoaCheckButton alloc] init];
-        my d_widget = (GuiObject) checkButton;
-        my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-        [checkButton setUserData:me];
-        [checkButton setButtonType:NSSwitchButton];
-        [checkButton setTitle:(NSString *) Melder_peekWcsToCfstring (buttonText)];
-        [checkButton setTarget:checkButton];
-        [checkButton setAction:@selector (_guiCocoaButton_activateCallback:)];
-    
-        if (flags & GuiCheckButton_SET) {
-            [checkButton setState:NSOnState];
-        }
-
-
+		GuiCocoaCheckButton *checkButton = [[GuiCocoaCheckButton alloc] init];
+		my d_widget = (GuiObject) checkButton;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[checkButton setUserData: me];
+		[checkButton setButtonType: NSSwitchButton];
+		[checkButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[checkButton setTarget: checkButton];
+		[checkButton setAction: @selector (_guiCocoaButton_activateCallback:)];
+		if (flags & GuiCheckButton_SET) {
+			[checkButton setState: NSOnState];
+		}
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
@@ -207,8 +203,8 @@ void structGuiCheckButton :: f_setValue (bool value) {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), value);
 		d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), this);
 	#elif cocoa
-        GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton*)d_widget;
-        [checkButton setState: value ? NSOnState: NSOffState];
+		GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton *) d_widget;
+		[checkButton setState: value ? NSOnState: NSOffState];
 	#elif win
 		Button_SetCheck (d_widget -> window, value ? BST_CHECKED : BST_UNCHECKED);
 	#elif mac

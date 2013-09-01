@@ -76,12 +76,12 @@ static void draw_Wolof_ItI (Graphics g) {
 }
 static void draw_Wolof_itE (Graphics g) {
 	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, false, L"it\\ep");
+	OTGrammar_drawTableau (ot, g, false, L"it\\ef");
 	forget (ot);
 }
 static void draw_Wolof_etE (Graphics g) {
 	OTGrammar ot = OTGrammar_create_tongueRoot_grammar (1, 4);
-	OTGrammar_drawTableau (ot, g, false, L"et\\ep");
+	OTGrammar_drawTableau (ot, g, false, L"et\\ef");
 	forget (ot);
 }
 static void draw_Wolof_schwatschwa (Graphics g) {
@@ -114,13 +114,13 @@ MAN_END
 MAN_BEGIN (L"Create tongue-root grammar...", L"ppgb", 20021204)
 INTRO (L"A command in the @@New menu@ for creating an @OTGrammar object with a tongue-root-harmony grammar.")
 NORMAL (L"These OTGrammar grammars only accept inputs of the form V__1_tV__2_, where V__1_ and V__2_ are "
-	"chosen from the six front vowels i, \\ic, e, \\ep, \\sw, and a. In a text field, these "
+	"chosen from the six front vowels i, \\ic, e, \\ef, \\sw, and a. In a text field, these "
 	"vowels should be typed as $$##i#$, $$##\\bsic#$, $$##e#$, $$##\\bsep#$, $$##\\bssw#$, "
 	"and $$##a#$, respectively (see @@Special symbols@).")
 NORMAL (L"The following phonological features are relevant:")
 LIST_ITEM (L"\t\tATR\tRTR")
 LIST_ITEM (L"\thigh\ti\t\\ic")
-LIST_ITEM (L"\tmid\te\t\\ep")
+LIST_ITEM (L"\tmid\te\t\\ef")
 LIST_ITEM (L"\tlow\t\\sw\ta")
 ENTRY (L"Constraints")
 NORMAL (L"The resulting OTGrammar will usually contain at least the following five constraints:")
@@ -662,11 +662,11 @@ NORMAL (L"With this way of generating candidates, we see that the five constrain
 	"First, the absolute prohibition on surface [\\ic] shows that *[rtr / hi] outranks RTR faithfulness "
 	"(otherwise, [\\ict\\ic] would have been the winner):")
 PICTURE (4.0, 1.5, draw_Wolof_ItI)
-NORMAL (L"Second, the faithful surfacing of the disharmonic /it\\ep/ shows that RTR faithfulness must outrank "
+NORMAL (L"Second, the faithful surfacing of the disharmonic /it\\ef/ shows that RTR faithfulness must outrank "
 	"the harmony (anti-contour) constraint (otherwise, [ite] would have been the winner):")
 PICTURE (4.0, 1.5, draw_Wolof_itE)
-NORMAL (L"Third, the RTR-dominant harmonicization of underlying disharmonic /et\\ep/ shows that harmony must outrank ATR faithfulness "
-	"(otherwise, [et\\ep] would have won):")
+NORMAL (L"Third, the RTR-dominant harmonicization of underlying disharmonic /et\\ef/ shows that harmony must outrank ATR faithfulness "
+	"(otherwise, [et\\ef] would have won):")
 PICTURE (4.0, 1.5, draw_Wolof_etE)
 NORMAL (L"Finally, the faithful surfacing of the low ATR vowel /\\sw/ even if not forced by harmony, shows that "
 	"ATR faithfulness outranks *[atr / lo] (otherwise, [ata] would have been the winning candidate):")
@@ -678,7 +678,7 @@ NORMAL (L"According to @@Prince & Smolensky (1993)@, the input to an OT grammar 
 	"When doing a practical investigation, however, we are only interested in the inputs "
 	"that will illustrate the properties of our partial grammars. "
 	"In the case of simplified Wolof, this means the 36 possible V__1_tV__2_ sequences "
-	"where V__1_ and V__2_ are any of the six front vowels i, \\ic, e, \\ep, \\sw, and a "
+	"where V__1_ and V__2_ are any of the six front vowels i, \\ic, e, \\ef, \\sw, and a "
 	"(see @@Create tongue-root grammar...@).")
 NORMAL (L"A set of inputs can be generated from an @OTGrammar object by inspecting the list of tableaus. "
 	"So select the Wolof tongue-root grammar and choose @@OTGrammar: Generate inputs...|Generate inputs...@. "
@@ -686,7 +686,7 @@ NORMAL (L"A set of inputs can be generated from an @OTGrammar object by inspecti
 	"will appear in the list. Click Inspect and examine the 100 input strings. "
 	"You will see that they have been randomly chosen from the 36 possible V__1_tV__2_ sequences "
 	"as described at @@Create tongue-root grammar...@:")
-FORMULA (L"\\epta, et\\ep, \\epti, it\\ep, \\ept\\ep, iti, \\ept\\ic, it\\ic, \\icti, et\\ep, ...")
+FORMULA (L"\\epta, et\\ef, \\epti, it\\ef, \\ept\\ef, iti, \\eft\\ic, it\\ic, \\icti, et\\ef, ...")
 NORMAL (L"Thus, when asked to generate a random input, these grammars produce any of the 36 possible V__1_tV__2_ "
 	"sequences, all with equal probability.")
 ENTRY (L"Generating outputs from the grammar")
@@ -695,7 +695,7 @@ NORMAL (L"To compute the outputs for the above set of input forms, select %both 
 	"perhaps specifying zero evaluation noise. "
 	"A new Strings objects called \"Wolof_out\" will appear in the list. "
 	"If you Inspect it, you will see that it contains a string sequence aligned with the original input strings:")
-FORMULA (L"\\epta, \\ept\\ep, \\epti, it\\ep, \\ept\\ep, iti, \\epti, iti, iti, \\ept\\ep, ...")
+FORMULA (L"\\epta, \\ept\\ef, \\efti, it\\ef, \\eft\\ef, iti, \\efti, iti, iti, \\eft\\ef, ...")
 NORMAL (L"In this way, we have created two Strings objects, which together form a series of input-output pairs "
 	"needed for learning a grammar that contains faithfulness constraints.")
 MAN_END
@@ -1073,8 +1073,8 @@ LIST_ITEM (L"##*G\\s{ESTURE} (contour)#  99.000  99.000")
 LIST_ITEM (L"##*[atr / lo]#  99.000  99.000")
 NORMAL (L"You will get a comparable result with @@OTAnyGrammar & Strings: Learn output (GLA)...@.")
 NORMAL (L"The resulting grammar represents the learner's state after the acquisition of "
-	"all the relevant gestures. The learner will now faithfully reproduce /et\\ep/ "
-	"if that were in her lexicon. Before being able to render such an underlying form as [\\ept\\ep], "
+	"all the relevant gestures. The learner will now faithfully reproduce /et\\ef/ "
+	"if that were in her lexicon. Before being able to render such an underlying form as [\\eft\\ef], "
 	"she must learn that faithfulness can be violated.")
 ENTRY (L"Example 2: When underlying forms are irrelevant")
 NORMAL (L"Underlying forms are relevant only if faithfulness constraints are involved. "

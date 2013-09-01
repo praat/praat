@@ -1,6 +1,6 @@
 # Makefile of the library "contrib/ola"
 # Ola So"der 19 January 2008
-# Paul Boersma, 14 January 2012
+# Paul Boersma, 24 August 2013
 
 include ../../makefile.defs
 
@@ -20,7 +20,7 @@ clean:
 libOla.a: $(OBJECTS)
 	touch libOla.a
 	rm libOla.a
-	ar cq libOla.a $(OBJECTS)
+	$(AR) cq libOla.a $(OBJECTS)
 	$(RANLIB) libOla.a
 
 $(OBJECTS): *.h ../../sys/*.h ../../dwtools/*.h ../../fon/*.h ../../dwsys/*.h ../../stat/*.h ../../num/*.h ../../external/gsl/*.h

@@ -3819,25 +3819,26 @@ END
 
 /**************** Ltas *******************************************/
 
+#include "../kar/UnicodeData.h"
 FORM (Ltas_reportSpectralTilt, L"Ltas: Report spectral tilt", 0)
 	POSITIVE (L"left Frequency range (Hz)", L"100.0")
 	POSITIVE (L"right Frequency range (Hz)", L"5000.0")
-	BOOLEAN (L"Logarithmic frequecy scale", 0)
+	BOOLEAN (L"Logarithmic frequency scale", 0)
 	OPTIONMENU (L"Fit method", 2)
 	OPTION (L"Least squares")
 	OPTION (L"Robust")
 	OK
 DO
-	bool logScale = GET_INTEGER (L"Logarithmic frequecy scale");
+	bool logScale = GET_INTEGER (L"Logarithmic frequency scale");
 	LOOP {
 		iam (Ltas);
 		double a, b;
 		Ltas_fitTiltLine (me, GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
 			logScale, GET_INTEGER (L"Fit method"), &a, &b);
 		MelderInfo_open ();
-		MelderInfo_writeLine (L"Spectral background decay model: ", (logScale ? L"a * ln (frequency) + b." : L"a * frequency + b."));
-		MelderInfo_writeLine (Melder_double (a), L" (=a: decay rate)");
-		MelderInfo_writeLine (Melder_double (b), L" (=b: offset at zero frequency)");
+		MelderInfo_writeLine (L"Spectral background decay model: amplitude_dB(frequency_Hz) " UNITEXT_ALMOST_EQUAL_TO " ", logScale ? L"offset + slope * ln (frequency_Hz)" : L"offset + slope * frequency_Hz");
+		MelderInfo_writeLine (L"Slope: ", Melder_double (a), logScale ? L" dB/decade" : L" dB/Hz");
+		MelderInfo_writeLine (L"Offset: ", Melder_double (b), L" dB");
 		MelderInfo_close ();
 	}
 END

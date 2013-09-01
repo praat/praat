@@ -1,6 +1,6 @@
 /* GuiLabel.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2007 Stefan de Konink
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2007 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ Thing_implement (GuiLabel, GuiControl, 0);
 	- (void) dealloc {   // override
 		GuiLabel me = d_userData;
 		forget (me);
-		Melder_casual ("deleting a label");
+		trace ("deleting a label");
 		[super dealloc];
 	}
 	- (GuiThing) userData {
@@ -98,7 +98,11 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		trace ("title");
 		[label setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (labelText)];
         [label setAlignment:( flags & GuiLabel_RIGHT ? NSRightTextAlignment : flags & GuiLabel_CENTRE ? NSCenterTextAlignment : NSLeftTextAlignment )];
-
+		static NSFont *theLabelFont;
+		if (! theLabelFont) {
+			theLabelFont = [NSFont systemFontOfSize: 13.0];
+		}
+		[label setFont: theLabelFont];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
 		_GuiObject_setUserData (my d_widget, me);

@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ typedef struct {
 	unsigned long code;
 	wchar_t kar;
 	double width;
-	union { long integer; const char *string; } font;
+	union { long integer; const char *string; void *pointer; } font;
 	int cell, line, run;
 } _Graphics_widechar;
 

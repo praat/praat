@@ -1,6 +1,6 @@
 /* GuiRadioButton.cpp
  *
- * Copyright (C) 1993-2011,2012 Paul Boersma
+ * Copyright (C) 1993-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +67,41 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		}
 	}
 #elif cocoa
+	@implementation GuiCocoaRadioButton {
+		GuiRadioButton d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiRadioButton me = d_userData;
+		forget (me);
+		trace ("deleting a radio button");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiRadioButton));
+		d_userData = static_cast <GuiRadioButton> (userData);
+	}
+	- (void) _guiCocoaRadioButton_activateCallback: (id) widget {
+		trace ("enter");
+		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
+		GuiRadioButton me = d_userData;
+		/*
+		 * Deselect the sister buttons.
+		 */
+		for (GuiRadioButton sibling = my d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+			[sibling -> d_cocoaRadioButton   setState: NSOffState];
+		}
+		for (GuiRadioButton sibling = my d_next; sibling != NULL; sibling = sibling -> d_next) {
+			[sibling -> d_cocoaRadioButton   setState: NSOffState];
+		}
+		if (my d_valueChangedCallback != NULL) {
+			struct structGuiRadioButtonEvent event = { me };
+			my d_valueChangedCallback (my d_valueChangedBoss, & event);
+		}
+	}
+	@end
 #elif win
 	void _GuiWinRadioButton_destroy (GuiObject widget) {
 		iam_radiobutton;
@@ -154,6 +189,17 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkRadioButton_destroyCallback), me);
 		my d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkRadioButton_handleToggle), me);
 	#elif cocoa
+		my d_cocoaRadioButton = [[GuiCocoaRadioButton alloc] init];
+		my d_widget = my d_cocoaRadioButton;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[my d_cocoaRadioButton   setUserData: me];
+		[my d_cocoaRadioButton setButtonType: NSRadioButton];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		[my d_cocoaRadioButton setTarget: my d_cocoaRadioButton];
+		[my d_cocoaRadioButton setAction: @selector (_guiCocoaRadioButton_activateCallback:)];
+		if (flags & GuiCheckButton_SET) {
+			[my d_cocoaRadioButton setState: NSOnState];
+		}
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
@@ -209,6 +255,7 @@ bool structGuiRadioButton :: f_getValue () {
 	#if gtk
 		value = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (d_widget));   // gtk_check_button inherits from gtk_toggle_button
 	#elif cocoa
+        value = [d_cocoaRadioButton state] == NSOnState;
 	#elif win
 		value = (Button_GetState (d_widget -> window) & 0x0003) == BST_CHECKED;
 	#elif mac
@@ -226,6 +273,16 @@ void structGuiRadioButton :: f_set () {
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), TRUE);
 		d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (d_widget), "toggled", G_CALLBACK (_GuiGtkRadioButton_handleToggle), this);
 	#elif cocoa
+		[d_cocoaRadioButton   setState: NSOnState];
+		/*
+		 * Deselect the sister buttons.
+		 */
+		for (GuiRadioButton sibling = d_previous; sibling != NULL; sibling = sibling -> d_previous) {
+			[sibling -> d_cocoaRadioButton   setState: NSOffState];
+		}
+		for (GuiRadioButton sibling = d_next; sibling != NULL; sibling = sibling -> d_next) {
+			[sibling -> d_cocoaRadioButton   setState: NSOffState];
+		}
 	#elif win
 		Button_SetCheck (d_widget -> window, BST_CHECKED);
 		/*

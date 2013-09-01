@@ -136,7 +136,7 @@ NORMAL (L"In this table we see 10 different stimuli, each characterized by a cer
 	"of the factors (independent variables) %F1 (first formant in Hertz) and %Dur (duration in milliseconds). "
 	"The first row of the table means that there was a stimulus with an F1 of 764 Hz and a duration of 87 ms, "
 	"and that the listener responded to this stimulus 2 times with the response category /\\ae/, "
-	"and the remaining 8 times with the category /\\ep/.")
+	"and the remaining 8 times with the category /\\ef/.")
 NORMAL (L"A table as above can be typed into a text file. The columns can be separated with spaces and/or tab stops. "
 	"The file can be read into Praat with ##Read Table from table file...#. "
 	"The command ##To logistic regression...# will become available in the #Statistics menu.")
@@ -156,15 +156,15 @@ ENTRY (L"What does it do?")
 	"Draw ellipse... mdur_ae-sdur mdur_ae+sdur mf1_ae-sf1 mf1_ae+sf1\n"
 	"Text... mdur_ae Centre mf1_ae Half /\\ae/\n"
 	"Draw ellipse... mdur_ep-sdur mdur_ep+sdur mf1_ep-sf1 mf1_ep+sf1\n"
-	"Text... mdur_ep Centre mf1_ep Half /\\ep/\n"
+	"Text... mdur_ep Centre mf1_ep Half /\\ef/\n"
 	"Draw inner box\n"
 )*/
 NORMAL (L"The logistic regression method will find values %\\al, %%\\be__F1_% and %%\\be__dur_% "
 	"that optimize")
-FORMULA (L"%\\al + %%\\be__F1_% %F1__%k_ + %%\\be__dur_% %Dur__%k_ = ln (%p__%k_(/\\ep/)/%p__%k_(/\\ae/))")
-NORMAL (L"where %k runs from 1 to 10, and %p__%k_(/\\ae/) + %p__%k_(/\\ep/) = 1.")
+FORMULA (L"%\\al + %%\\be__F1_% %F1__%k_ + %%\\be__dur_% %Dur__%k_ = ln (%p__%k_(/\\ef/)/%p__%k_(/\\ae/))")
+NORMAL (L"where %k runs from 1 to 10, and %p__%k_(/\\ae/) + %p__%k_(/\\ef/) = 1.")
 NORMAL (L"The optimization criterion is %%maximum likelihood%, i.e. those %\\al, %%\\be__F1_% and %%\\be__dur_% "
-	"will be chosen that lead to values for %p__%k_(/\\ae/) and %p__%k_(/\\ep/) that make the observations in the table "
+	"will be chosen that lead to values for %p__%k_(/\\ae/) and %p__%k_(/\\ef/) that make the observations in the table "
 	"most likely.")
 NORMAL (L"Praat will create an object of type #LogisticRegression in the list. "
 	"When you then click the #Info button, Praat will write the values of %\\al (the %intercept), "

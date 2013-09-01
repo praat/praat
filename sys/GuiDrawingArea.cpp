@@ -1,6 +1,6 @@
 /* GuiDrawingArea.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -190,7 +190,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
     forget (me);
     [self removeTrackingArea:_trackingArea];
 
-    Melder_casual ("deleting a drawing area");
+    trace ("deleting a drawing area");
     [super dealloc];
 }
 - (GuiThing) userData {
@@ -201,7 +201,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 }
 
 - (void)drawRect:(NSRect)dirtyRect {
-#pragma unused (dirtyRect)
+	trace ("dirtyRect: %f, %f, %f, %f", dirtyRect.origin.x, dirtyRect.origin.y, dirtyRect.size.width, dirtyRect.size.height);
     
     if (!_inited) {
         // Last chance to do this. Is there a better place?
@@ -244,9 +244,20 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
     [super setFrame:rect];
 }
 
-- (BOOL)acceptsFirstResponder
-{
-    return YES;
+- (BOOL) acceptsFirstResponder {
+	/*
+	 * This overridden method tells the event chain whether the drawing area can accept key events.
+	 * It is important that the Demo window and the RunnerMFC window accept key events.
+	 * A side effect of accepting key events is that the drawing area obtains the key focus when the user clicks in the drawing area.
+	 * It is important, however, that the drawing area of the TextGrid window cannot take away the key focus
+	 * from the text field at the top; therefore, that drawing area should not accept key events.
+	 * The implementation below is based on the fact that, naturally, the Demo window and the RunnerMFC window
+	 * have a key callback, and the drawing area of the TextGrid window has not
+	 * (a side effect of this implementation is that the drawing area of the Manual window does not take away
+	 * the key focus from the Search field, a situation that cannot hurt).
+	 */
+	GuiDrawingArea me = (GuiDrawingArea) d_userData;
+	return my d_keyCallback != NULL;
 }
 
 - (void)mouseEntered:(NSEvent *)theEvent{
@@ -302,7 +313,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
         try {
             my d_clickCallback (my d_clickBoss, & event);
         } catch (MelderError) {
-            Melder_flushError ("Mouse click not completely handled.");
+            Melder_flushError ("Mouse release not completely handled.");
         }
     }
 }
@@ -325,7 +336,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
         try {
             my d_clickCallback (my d_clickBoss, & event);
         } catch (MelderError) {
-            Melder_flushError ("Mouse click not completely handled.");
+            Melder_flushError ("Mouse drag not completely handled.");
         }
     }
 }

@@ -1,5 +1,5 @@
 # Makefile of the library "fon"
-# Paul Boersma, 14 January 2012
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -50,7 +50,7 @@ clean:
 libfon.a: $(OBJECTS)
 	touch libfon.a
 	rm libfon.a
-	ar cq libfon.a $(OBJECTS)
+	$(AR) cq libfon.a $(OBJECTS)
 	$(RANLIB) libfon.a
 
 $(OBJECTS): *.h ../num/NUM.h ../external/portaudio/*.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../LPC/*.h ../external/flac/*.h ../external/mp3/mp3.h

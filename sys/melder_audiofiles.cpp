@@ -933,7 +933,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					} else { // optimize
 						long numberOfBytes = numberOfChannels * numberOfSamples * numberOfBytesPerSamplePerChannel;
 						unsigned char *bytes = (unsigned char *) & buffer [numberOfChannels] [numberOfSamples] + sizeof (double) - numberOfBytes;
-						if (fread (bytes, 1, numberOfBytes, f) < numberOfBytes) throw MelderError ();   // read 24-bit data into last three-eigths of buffer
+						if (fread (bytes, 1, numberOfBytes, f) < numberOfBytes) throw MelderError ();   // read 24-bit data into last three-eighths of buffer
 						if (numberOfChannels == 1) {
 							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;
@@ -969,7 +969,7 @@ void Melder_readAudioToFloat (FILE *f, int numberOfChannels, int encoding, doubl
 					} else { // optimize
 						long numberOfBytes = numberOfChannels * numberOfSamples * numberOfBytesPerSamplePerChannel;
 						unsigned char *bytes = (unsigned char *) & buffer [numberOfChannels] [numberOfSamples] + sizeof (double) - numberOfBytes;
-						if (fread (bytes, 1, numberOfBytes, f) < numberOfBytes) throw MelderError ();   // read 24-bit data into last three-eights of buffer
+						if (fread (bytes, 1, numberOfBytes, f) < numberOfBytes) throw MelderError ();   // read 24-bit data into last three-eighths of buffer
 						if (numberOfChannels == 1) {
 							for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
 								unsigned char byte1 = * bytes ++, byte2 = * bytes ++, byte3 = * bytes ++;

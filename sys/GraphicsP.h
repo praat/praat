@@ -42,7 +42,8 @@ void Graphics_init (Graphics me);
 
 #define kGraphics_font_SYMBOL  (kGraphics_font_MAX + 1)
 #define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
-#define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 3)
+#define kGraphics_font_IPAPALATINO  (kGraphics_font_MAX + 3)
+#define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 4)
 
 Thing_define (GraphicsScreen, Graphics) {
 	// new data:

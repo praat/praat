@@ -1,5 +1,5 @@
 # Makefile of the library "kar"
-# Paul Boersma, 6 September 2011
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -16,7 +16,7 @@ clean:
 libkar.a: $(OBJECTS)
 	touch libkar.a
 	rm libkar.a
-	ar cq libkar.a $(OBJECTS)
+	$(AR) cq libkar.a $(OBJECTS)
 	$(RANLIB) libkar.a
 
 $(OBJECTS): *.h

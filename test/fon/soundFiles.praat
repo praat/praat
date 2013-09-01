@@ -49,7 +49,7 @@ procedure test32 .type$ .extension$ .duration
 		sound2 = Read from file... kanweg.'.extension$'
 		t = stopwatch
 		energy2 = Get energy in air
-		assert "'energy1:12'" = "'energy2:12'"
+		assert "'energy1:12'" = "'energy2:12'"   ; '.type$' '.extension$' '.duration'
 		plus sound
 		Remove
 		deleteFile ("kanweg." + .extension$)

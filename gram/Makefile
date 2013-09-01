@@ -1,5 +1,5 @@
 # Makefile of the library "gram"
-# Paul Boersma, 14 January 2012
+# Paul Boersma, 24 August 2013
 
 include ../makefile.defs
 
@@ -20,7 +20,7 @@ clean:
 libgram.a: $(OBJECTS)
 	touch libgram.a
 	rm libgram.a
-	ar cq libgram.a $(OBJECTS)
+	$(AR) cq libgram.a $(OBJECTS)
 	$(RANLIB) libgram.a
 
 $(OBJECTS): *.h ../num/NUM.h ../kar/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h ../dwtools/*.h ../fon/*.h

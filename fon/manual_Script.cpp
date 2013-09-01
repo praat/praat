@@ -1579,7 +1579,7 @@ SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (6.6), L""
 	Manual_DRAW_SETTINGS_WINDOW_TEXT ("Formula", "1/2 * sin(2*pi*377*x)")
 )
 NORMAL (L"In a script this would look like:")
-CODE (L"do (\"Create Sound from formula...\", \"sine\", 1, 0.0, 1.0, 44100, \"1/2 * sin(2*pi*377*x)\"")
+CODE (L"do (\"Create Sound from formula...\", \"sine\", 1, 0.0, 1.0, 44100, \"1/2 * sin(2*pi*377*x))\"")
 NORMAL (L"Both the first argument (#Name) and the sixth argument (#Formula) are %%text arguments%. "
 	"In a script they are written within quotes.")
 ENTRY (L"5. File arguments")
@@ -2981,7 +2981,7 @@ NORMAL (L"To get the names of the files if a certain type in a certain directory
 	"use @@Create Strings as file list...@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.5. Calling system commands", L"ppgb", 20130407)
+MAN_BEGIN (L"Scripting 6.5. Calling system commands", L"ppgb", 20130821)
 INTRO (L"From a Praat script you can call system commands. "
 	"These are the same commands that you would normally type into a terminal window or into the Window command line prompt.")
 TAG (L"#system %command")
@@ -3014,7 +3014,7 @@ CODE (L"for i to 1000000")
 	CODE1 (L"a = 1.23456789e123")
 CODE (L"endfor")
 CODE (L"time = stopwatch")
-CODE (L"writeInfoLine (a, \" \", fixed$ (time, 3))")
+CODE (L"writeInfoLine (a, \" \", fixed\\$  (time, 3))")
 MAN_END
 
 MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20130407)

@@ -1,5 +1,5 @@
-# Makefile for library "num/glpk"
-# Paul Boersma, 3 September 2011
+# Makefile for library "external/glpk"
+# Paul Boersma, 24 August 2013
 
 include ../../makefile.defs
 
@@ -37,7 +37,7 @@ clean:
 libglpk.a: $(OBJECTS)
 	touch libglpk.a
 	rm libglpk.a
-	ar cq libglpk.a $(OBJECTS)
+	$(AR) cq libglpk.a $(OBJECTS)
 	$(RANLIB) libglpk.a
 
 $(OBJECTS): *.h

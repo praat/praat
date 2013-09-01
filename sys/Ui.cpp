@@ -385,6 +385,7 @@ void structUiForm :: v_destroy () {
 	for (int ifield = 1; ifield <= numberOfFields; ifield ++)
 		forget (field [ifield]);
 	if (d_dialogForm) {
+		trace ("invoking button title %ls", invokingButtonTitle);
 		GuiObject_destroy (d_dialogForm -> d_widget);   // BUG: make sure this destroys the shell
 	}
 	Melder_free (invokingButtonTitle);

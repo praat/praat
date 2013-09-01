@@ -224,6 +224,13 @@ void structEditor :: v_destroy () {
 				gtk_widget_destroy (GTK_WIDGET (d_windowForm -> d_gtkWindow));
 			}
 		#elif cocoa
+			if (d_windowForm -> d_cocoaWindow) {
+				NSWindow *cocoaWindow = d_windowForm -> d_cocoaWindow;
+				//d_windowForm -> d_cocoaWindow = NULL;
+				trace ("releasing NSWindow");
+				[cocoaWindow close];
+				[cocoaWindow release];
+			}
 		#elif motif
 			if (d_windowForm -> d_xmShell) {
 				XtDestroyWidget (d_windowForm -> d_xmShell);
@@ -378,6 +385,8 @@ void structEditor :: v_do_pictureMargins (EditorCommand cmd) {
 
 static void gui_window_cb_goAway (I) {
 	iam (Editor);
+	Melder_assert (me != NULL);
+	Melder_assert (Thing_member (me, classEditor));
 	my v_goAway ();
 }
 

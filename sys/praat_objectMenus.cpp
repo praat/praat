@@ -104,11 +104,14 @@ END
 
 /********** The fixed menus. **********/
 
-static GuiMenu praatMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, technicalMenu, applicationHelpMenu, helpMenu;
+static GuiMenu praatMenu, editMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, technicalMenu, applicationHelpMenu, helpMenu;
 
 GuiMenu praat_objects_resolveMenu (const wchar_t *menu) {
 	return
 		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? praatMenu :
+		#if cocoa
+			wcsequ (menu, L"Edit") ? editMenu :
+		#endif
 		wcsequ (menu, L"New") || wcsequ (menu, L"Create") ? newMenu :
 		wcsequ (menu, L"Open") || wcsequ (menu, L"Read") ? readMenu :
 		wcsequ (menu, L"Help") ? helpMenu :
@@ -546,6 +549,18 @@ static void cb_openDocument (MelderFile file) {
 	}
 }
 
+#if cocoa
+DIRECT (praat_cut)
+	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] cut: nil];
+END
+DIRECT (praat_copy)
+	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] copy: nil];
+END
+DIRECT (praat_paste)
+	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] pasteAsPlainText: nil];
+END
+#endif
+
 void praat_addMenus (GuiWindow window) {
 	Melder_setSearchProc (searchProc);
 
@@ -557,6 +572,9 @@ void praat_addMenus (GuiWindow window) {
 	if (! theCurrentPraatApplication -> batch) {
 		#ifdef macintosh
 			praatMenu = GuiMenu_createInWindow (NULL, L"\024", 0);
+			#if cocoa
+				editMenu = GuiMenu_createInWindow (NULL, L"Edit", 0);
+			#endif
 		#else
 			praatMenu = GuiMenu_createInWindow (window, L"Praat", 0);
 		#endif
@@ -572,6 +590,11 @@ void praat_addMenus (GuiWindow window) {
 	MelderString_append (& itemTitle_about, L"About ", Melder_peekUtf8ToWcs (praatP.title), L"...");
 	#ifdef macintosh
 		praat_addMenuCommand (L"Objects", L"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
+		#if cocoa
+			praat_addMenuCommand (L"Objects", L"Edit", L"Cut", 0, 'X', DO_praat_cut);
+			praat_addMenuCommand (L"Objects", L"Edit", L"Copy", 0, 'C', DO_praat_copy);
+			praat_addMenuCommand (L"Objects", L"Edit", L"Paste", 0, 'V', DO_praat_paste);
+		#endif
 	#endif
 	#ifdef UNIX
 		praat_addMenuCommand (L"Objects", L"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);

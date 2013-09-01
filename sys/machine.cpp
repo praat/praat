@@ -1,6 +1,6 @@
 /* machine.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ int Machine_getTextHeight (void) {
 		22,   /* Mac */
 		20,   /* Win32 */
 		25,   /* Linux */
-		25    /* Cocoa */
+		23    /* Cocoa */
 	};
 	return heights [lookAndFeel];
 }

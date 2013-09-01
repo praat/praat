@@ -1,7 +1,7 @@
 # Makefile of the library "external/flac"
 # Erez Volk, March 2007
 # pb 20100108: include sys/melder.h
-# Paul Boersma, 14 January 2012
+# Paul Boersma, 24 August 2013
 
 include ../../makefile.defs
 
@@ -43,7 +43,7 @@ clean:
 libflac.a: $(OBJECTS)
 	touch libflac.a
 	rm libflac.a
-	ar cq libflac.a $(OBJECTS)
+	$(AR) cq libflac.a $(OBJECTS)
 	$(RANLIB) libflac.a
 
 $(OBJECTS): *.h ../../sys/melder.h

@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,6 +112,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 	}
 	- (void) dealloc {   // override
 		GuiWindow me = d_userData;
+		my d_cocoaWindow = NULL;   // this is already under destruction, so undangle
 		forget (me);
 		trace ("deleting a window");
 		[super dealloc];
@@ -124,6 +125,23 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		d_userData = static_cast <GuiWindow> (userData);
 	}
 	@end
+	@interface GuiCocoaWindowDelegate : NSObject <NSWindowDelegate> { } @end
+	@implementation GuiCocoaWindowDelegate {
+	}
+	- (BOOL) windowShouldClose: (id) sender {
+		GuiCocoaWindow *widget = (GuiCocoaWindow *) sender;
+		GuiWindow me = (GuiWindow) [widget userData];
+		if (my d_goAwayCallback != NULL) {
+			trace ("calling goAwayCallback)");
+			my d_goAwayCallback (my d_goAwayBoss);
+		} else {
+			trace ("hiding window");
+			[widget orderOut: nil];
+		}
+		return FALSE;
+	}
+	@end
+	static GuiCocoaWindowDelegate *theGuiCocoaWindowDelegate;
 #elif motif
 	static void _GuiMotifWindow_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -171,11 +189,16 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask
 			backing: NSBackingStoreBuffered
 			defer: false];
-        [my d_cocoaWindow setMinSize:NSMakeSize(500.0, 500.0)];
+        [my d_cocoaWindow setMinSize: NSMakeSize (150.0, 150.0)];
 		my f_setTitle (title);
 		[my d_cocoaWindow makeKeyAndOrderFront: nil];
 		my d_widget = [my d_cocoaWindow contentView];
 		_GuiObject_setUserData (my d_cocoaWindow, me);
+		if (! theGuiCocoaWindowDelegate) {
+			theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];
+		}
+		[my d_cocoaWindow setDelegate: theGuiCocoaWindowDelegate];
+		[my d_cocoaWindow setReleasedWhenClosed: NO];
 	#elif motif
 		my d_xmShell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);
@@ -232,8 +255,8 @@ bool structGuiWindow :: f_setDirty (bool dirty) {
 		(void) dirty;
 		return false;
 	#elif cocoa
-		(void) dirty;
-		return false;
+		[d_cocoaWindow setDocumentEdited: dirty];
+		return true;
 	#elif win
 		(void) dirty;
 		return false;

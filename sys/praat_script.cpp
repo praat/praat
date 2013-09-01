@@ -490,7 +490,7 @@ static void secondPassThroughScript (UiForm sendingForm, int narg, Stackel args,
 static void firstPassThroughScript (MelderFile file) {
 	try {
 		autostring text = MelderFile_readText (file);
-		{ // scope
+		{// scope
 			autoMelderFileSetDefaultDir dir (file);
 			Melder_includeIncludeFiles (& text);
 		}
