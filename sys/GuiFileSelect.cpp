@@ -17,7 +17,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Gui.h"
+#include "GuiP.h"
 #include <locale.h>
 #ifdef _WIN32
 	#include <Shlobj.h>
@@ -63,7 +63,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 			}
 		}
 		setlocale (LC_ALL, "en_US");
-	#elif defined (macintosh)
+	#elif mac
 		(void) parent;
 		OSStatus err;
 		NavDialogRef dialogRef;
@@ -96,7 +96,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 			NavDialogDispose (dialogRef);
 		}
 		setlocale (LC_ALL, "en_US");
-	#elif defined (_WIN32)
+	#elif win
 		static OPENFILENAMEW openFileName, dummy;
 		static wchar_t fullFileName [3000+2];
 		ZeroMemory (& openFileName, sizeof (OPENFILENAMEW));
@@ -290,7 +290,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 			}
 		}
 		setlocale (LC_ALL, "en_US");
-	#elif defined (macintosh)
+	#elif mac
 		(void) parent;
 		OSStatus err;
 		NavDialogRef dialogRef;
@@ -322,7 +322,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 			NavDialogDispose (dialogRef);
 		}
 		setlocale (LC_ALL, "en_US");
-	#elif defined (_WIN32)
+	#elif win
 		static wchar_t fullFileName [3000+2];
 		static bool comInited = false;
 		if (! comInited) {

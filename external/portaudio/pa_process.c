@@ -818,8 +818,8 @@ static unsigned long NonAdaptingProcess( PaUtilBufferProcessor *bp,
                     userOutput = bp->tempOutputBufferPtrs;
                 }
             }
-        
-            *streamCallbackResult = bp->streamCallback( userInput, userOutput,
+ 
+			           *streamCallbackResult = bp->streamCallback( userInput, userOutput,
                     frameCount, bp->timeInfo, bp->callbackStatusFlags, bp->userData );
 
             if( *streamCallbackResult == paAbort )

@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130901)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130902)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.55# (2 September 2013)")
+LIST_ITEM (L"\\bu Corrected a bug introduced in 5.3.54 by which you couldn't select a file for saving.")
 NORMAL (L"##5.3.54# (1 September 2013)")
 LIST_ITEM (L"\\bu Sound window: removed a bug introduced in 5.3.42 by which you couldn't ask for an odd number of poles in Formant Settings "
 	"(by e.g. specifying \"5.5\" for the number of formants).")

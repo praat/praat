@@ -336,7 +336,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				length: nchars * 2
 				encoding: NSUTF16LittleEndianStringEncoding   // BUG: should be NSUTF16NativeStringEncoding, except that that doesn't exist
 				];
-			CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+			CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
             NSCAssert (context, @"nil context");
 
             CGContextSaveGState (context);
@@ -740,11 +740,13 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				CTTextAlignment textAlignment = kCTLeftTextAlignment;
 				CTParagraphStyleSetting paragraphSettings [1] = { { kCTParagraphStyleSpecifierAlignment, sizeof (CTTextAlignment), & textAlignment } };
 				paragraphStyle = CTParagraphStyleCreate (paragraphSettings, 1);
+				Melder_assert (paragraphStyle != NULL);
 			}
             CFAttributedStringSetAttribute (string, textRange, kCTParagraphStyleAttributeName, paragraphStyle);
 
             RGBColor *macColor = lc -> link ? & theBlueColour : my duringXor ? & theWhiteColour : & my d_macColour;
             CGColorRef color = CGColorCreateGenericRGB (macColor->red / 65536.0, macColor->green / 65536.0, macColor->blue / 65536.0, 1.0);
+			Melder_assert (color != NULL);
             CFAttributedStringSetAttribute (string, textRange, kCTForegroundColorAttributeName, color);
 
             /*
@@ -758,7 +760,9 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 
             // create the framesetter and render text
             CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) string);
+			Melder_assert (framesetter != NULL);
             CTFrameRef frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, [s length]), path, NULL);
+			Melder_assert (frame != NULL);
         
             CFRange fitRange;
             CGSize targetSize = CGSizeMake (CGFLOAT_MAX, CGFLOAT_MAX);
@@ -767,11 +771,13 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
             CFRelease (color);
             CFRelease (frame);
             path = CGPathCreateMutable ();
-            NSRect drawRect = NSMakeRect(0, 0, frameSize.width, frameSize.height);
+            NSRect drawRect = NSMakeRect (0, 0, frameSize.width, frameSize.height);
+			trace ("frame %f %f", frameSize.width, frameSize.height);
             CGPathAddRect (path, NULL, * (CGRect *) & drawRect);
             frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, [s length]), path, NULL);
+			Melder_assert (frame != NULL);
 
-        NSCAssert(my d_macGraphicsContext, @"nil context");
+			NSCAssert (my d_macGraphicsContext, @"nil context");
 
             CGContextSaveGState (my d_macGraphicsContext);
             CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC + descent);
@@ -784,7 +790,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
                 CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
                 CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
             } else {
-                CTFrameDraw(frame, context);
+                CTFrameDraw (frame, context);
             }
             CGContextRestoreGState (my d_macGraphicsContext);
 

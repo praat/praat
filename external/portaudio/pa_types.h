@@ -51,43 +51,18 @@
 
  A PA_VALIDATE_SIZES macro is provided to assert that the values set in this
  file are correct.
+
+ Paul Boersma 2013: the sizes should not be handcoded if this header file is to be included in both 32-bit and 64-bit applications;
+ instead, we use int32_t and the like from <stdint.h>.
 */
 
-#ifndef SIZEOF_SHORT
-#define SIZEOF_SHORT 2
-#endif
+#include <stdint.h>
 
-#ifndef SIZEOF_INT
-#define SIZEOF_INT 4
-#endif
+typedef int16_t PaInt16;
+typedef uint16_t PaUint16;
 
-#ifndef SIZEOF_LONG
-#define SIZEOF_LONG 4
-#endif
-
-
-#if SIZEOF_SHORT == 2
-typedef signed short PaInt16;
-typedef unsigned short PaUint16;
-#elif SIZEOF_INT == 2
-typedef signed int PaInt16;
-typedef unsigned int PaUint16;
-#else
-#error pa_types.h was unable to determine which type to use for 16bit integers on the target platform
-#endif
-
-#if SIZEOF_SHORT == 4
-typedef signed short PaInt32;
-typedef unsigned short PaUint32;
-#elif SIZEOF_INT == 4
-typedef signed int PaInt32;
-typedef unsigned int PaUint32;
-#elif SIZEOF_LONG == 4
-typedef signed long PaInt32;
-typedef unsigned long PaUint32;
-#else
-#error pa_types.h was unable to determine which type to use for 32bit integers on the target platform
-#endif
+typedef int32_t PaInt32;
+typedef uint32_t PaUint32;
 
 
 /* PA_VALIDATE_TYPE_SIZES compares the size of the integer types at runtime to

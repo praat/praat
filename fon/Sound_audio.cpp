@@ -136,6 +136,8 @@ static int portaudioStreamCallback (
 		unsigned long dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
 		memcpy (info -> buffer + 1 + info -> numberOfSamplesRead, input, 2 * dsamples);
 		info -> numberOfSamplesRead += dsamples;
+		short *input2 = (short*) input;
+		trace ("read %d samples: %d, %d, %d...", (int) dsamples, (int) input2 [0], (int) input2 [1], (int) input2 [3]);
 		if (info -> numberOfSamplesRead >= info -> numberOfSamples) return paComplete;
 	} else /*if (info -> numberOfSamplesRead >= info -> numberOfSamples)*/ {
 		info -> numberOfSamplesRead = info -> numberOfSamples;
@@ -391,6 +393,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 					Melder_throw ("Error ", err, " while opening.");
 			#endif
 		}
+for (i = 1; i <= numberOfSamples; i ++) trace ("Started %d", (int) buffer [i]);
 
 		/* Read the sound into the buffer. */
 
@@ -400,6 +403,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 				//Pa_Sleep (1);
 				//Melder_casual ("filled %ld/%ld", getNumberOfSamplesRead (& info), numberOfSamples);
 			}
+for (i = 1; i <= numberOfSamples; i ++) trace ("Recorded %d", (int) buffer [i]);
 		} else {
 			#if defined (macintosh)
 			#elif defined (_WIN32)
