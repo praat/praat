@@ -117,6 +117,7 @@
 	@interface GuiCocoaMenuButton : NSPopUpButton <GuiCocoaAny> @end
 	@interface GuiCocoaMenuItem : NSMenuItem <GuiCocoaAny> @end
 	@interface GuiCocoaOptionMenu : NSPopUpButton <GuiCocoaAny> @end
+	@interface GuiCocoaProgressBar : NSProgressIndicator <GuiCocoaAny> @end
 	@interface GuiCocoaRadioButton : NSButton <GuiCocoaAny> @end
 	@interface GuiCocoaScrollBar : NSScroller <GuiCocoaAny> @end
 	@interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
@@ -329,6 +330,7 @@ Thing_define (GuiThing, Thing) { public:
 
 Thing_define (GuiControl, GuiThing) { public:
 	int d_left, d_right, d_top, d_bottom;
+	bool d_blockValueChangedCallbacks;
 	/*
 	 * Messages:
 	 */
@@ -412,9 +414,6 @@ typedef struct structGuiCheckButtonEvent {
 Thing_define (GuiCheckButton, GuiControl) { public:
 	void (*d_valueChangedCallback) (void *boss, GuiCheckButtonEvent event);
 	void *d_valueChangedBoss;
-	#if gtk
-		gulong d_valueChangedHandlerId;
-	#endif
 	/*
 	 * Messages:
 	 */
@@ -447,7 +446,6 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 Thing_declare (GuiDrawingArea);
 Thing_declare (GuiScrollBar);
 
-enum mouse_events { MOTION_NOTIFY = 1, BUTTON_PRESS, BUTTON_RELEASE };
 typedef struct structGuiDrawingAreaExposeEvent {
 	GuiDrawingArea widget;
 	int x, y, width, height;
@@ -457,7 +455,6 @@ typedef struct structGuiDrawingAreaClickEvent {
 	int x, y;
 	bool shiftKeyPressed, commandKeyPressed, optionKeyPressed, extraControlKeyPressed;
 	int button;
-	enum mouse_events type;
 } *GuiDrawingAreaClickEvent;
 typedef struct structGuiDrawingAreaKeyEvent {
 	GuiDrawingArea widget;
@@ -549,7 +546,7 @@ typedef struct structGuiListEvent {
 } *GuiListEvent;
 
 Thing_define (GuiList, GuiControl) { public:
-	bool d_allowMultipleSelection, d_blockSelectionChangedCallback;
+	bool d_allowMultipleSelection;
 	void (*d_selectionChangedCallback) (void *boss, GuiListEvent event);
 	void *d_selectionChangedBoss;
 	void (*d_doubleClickCallback) (void *boss, GuiListEvent event);
@@ -723,6 +720,9 @@ GuiOptionMenu GuiOptionMenu_createShown (GuiForm parent, int left, int right, in
 Thing_declare (GuiProgressBar);
 
 Thing_define (GuiProgressBar, GuiControl) { public:
+	#if cocoa
+		GuiCocoaProgressBar *d_cocoaProgressBar;
+	#endif
 	/*
 	 * Messages:
 	 */
@@ -745,9 +745,7 @@ Thing_define (GuiRadioButton, GuiControl) { public:
 	GuiRadioButton d_previous, d_next;   // there's a linked list of grouped radio buttons
 	void (*d_valueChangedCallback) (void *boss, GuiRadioButtonEvent event);
 	void *d_valueChangedBoss;
-	#if gtk
-		gulong d_valueChangedHandlerId;
-	#elif cocoa
+	#if cocoa
 		GuiCocoaRadioButton *d_cocoaRadioButton;
 	#endif
 	/*

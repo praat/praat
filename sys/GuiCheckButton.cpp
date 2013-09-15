@@ -1,6 +1,6 @@
 /* GuiCheckButton.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,36 +40,37 @@ Thing_implement (GuiCheckButton, GuiControl, 0);
 	}
 	static void _GuiGtkCheckButton_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiCheckButton);
-		struct structGuiCheckButtonEvent event = { me };
-		if (my d_valueChangedCallback != NULL) {
+		if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
+			struct structGuiCheckButtonEvent event = { me };
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
 	}
 #elif cocoa
-@implementation GuiCocoaCheckButton {
-    GuiCheckButton d_userData;
-}
-- (void) dealloc {   // override
-    GuiCheckButton me = d_userData;
-    forget (me);
-    trace ("deleting a check button");
-    [super dealloc];
-}
-- (GuiThing) userData {
-    return d_userData;
-}
-- (void) setUserData: (GuiThing) userData {
-    Melder_assert (userData == NULL || Thing_member (userData, classGuiCheckButton));
-    d_userData = static_cast <GuiCheckButton> (userData);
-}
-- (void) _guiCocoaButton_activateCallback: (id) widget {
-    Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
-    GuiCheckButton me = d_userData;
-    if (my d_valueChangedCallback != NULL) {
-        struct structGuiCheckButtonEvent event = { me };
-        my d_valueChangedCallback (my d_valueChangedBoss, & event);
-    }
-}
+	@implementation GuiCocoaCheckButton {
+		GuiCheckButton d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiCheckButton me = d_userData;
+		forget (me);
+		trace ("deleting a check button");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiCheckButton));
+		d_userData = static_cast <GuiCheckButton> (userData);
+	}
+	- (void) _guiCocoaButton_activateCallback: (id) widget {
+		Melder_assert (self == widget);   // sender (widget) and receiver (self) happen to be the same object
+		GuiCheckButton me = d_userData;
+		if (my d_valueChangedCallback != NULL) {
+			Melder_assert (! my d_blockValueChangedCallbacks);
+			struct structGuiCheckButtonEvent event = { me };
+			my d_valueChangedCallback (my d_valueChangedBoss, & event);
+		}
+	}
 @end
 
 #elif win
@@ -122,7 +123,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 			my f_setSensitive (false);
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkCheckButton_destroyCallback), me);
-		my d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
+		g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
 	#elif cocoa
 		GuiCocoaCheckButton *checkButton = [[GuiCocoaCheckButton alloc] init];
 		my d_widget = (GuiObject) checkButton;
@@ -199,9 +200,7 @@ void structGuiCheckButton :: f_setValue (bool value) {
 	 * The value should be set without calling the valueChanged callback.
 	 */
 	#if gtk
-		g_signal_handler_disconnect (GTK_TOGGLE_BUTTON (d_widget), d_valueChangedHandlerId);
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), value);
-		d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), this);
 	#elif cocoa
 		GuiCocoaCheckButton *checkButton = (GuiCocoaCheckButton *) d_widget;
 		[checkButton setState: value ? NSOnState: NSOffState];

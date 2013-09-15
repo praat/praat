@@ -59,9 +59,9 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 	static void _GuiGtkRadioButton_handleToggle (GuiObject widget, gpointer void_me) {
 		iam (GuiRadioButton);
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) {
-			struct structGuiRadioButtonEvent event = { me };
-			event. position = _GuiRadioButton_getPosition (me);
-			if (my d_valueChangedCallback != NULL) {
+			if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
+				struct structGuiRadioButtonEvent event = { me };
+				event. position = _GuiRadioButton_getPosition (me);
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			}
 		}
@@ -97,7 +97,9 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 			[sibling -> d_cocoaRadioButton   setState: NSOffState];
 		}
 		if (my d_valueChangedCallback != NULL) {
+			Melder_assert (! my d_blockValueChangedCallbacks);
 			struct structGuiRadioButtonEvent event = { me };
+			event. position = _GuiRadioButton_getPosition (me);
 			my d_valueChangedCallback (my d_valueChangedBoss, & event);
 		}
 	}
@@ -187,7 +189,7 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 			gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (my d_widget), FALSE);
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkRadioButton_destroyCallback), me);
-		my d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkRadioButton_handleToggle), me);
+		g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkRadioButton_handleToggle), me);
 	#elif cocoa
 		my d_cocoaRadioButton = [[GuiCocoaRadioButton alloc] init];
 		my d_widget = my d_cocoaRadioButton;
@@ -195,11 +197,11 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		[my d_cocoaRadioButton   setUserData: me];
 		[my d_cocoaRadioButton setButtonType: NSRadioButton];
 		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
-		[my d_cocoaRadioButton setTarget: my d_cocoaRadioButton];
-		[my d_cocoaRadioButton setAction: @selector (_guiCocoaRadioButton_activateCallback:)];
 		if (flags & GuiCheckButton_SET) {
 			[my d_cocoaRadioButton setState: NSOnState];
 		}
+		[my d_cocoaRadioButton setTarget: my d_cocoaRadioButton];
+		[my d_cocoaRadioButton setAction: @selector (_guiCocoaRadioButton_activateCallback:)];
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmToggleButtonWidgetClass, parent -> d_widget, buttonText);
 		_GuiObject_setUserData (my d_widget, me);
@@ -265,13 +267,9 @@ bool structGuiRadioButton :: f_getValue () {
 }
 
 void structGuiRadioButton :: f_set () {
-	/*
-	 * The value should be set without calling the valueChanged callback.
-	 */
+	GuiControlBlockValueChangedCallbacks block (this);   // the value should be set without calling the valueChanged callback (crucial on GTK)
 	#if gtk
-		g_signal_handler_disconnect (GTK_TOGGLE_BUTTON (d_widget), d_valueChangedHandlerId);
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), TRUE);
-		d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (d_widget), "toggled", G_CALLBACK (_GuiGtkRadioButton_handleToggle), this);
 	#elif cocoa
 		[d_cocoaRadioButton   setState: NSOnState];
 		/*

@@ -1,6 +1,6 @@
 /* GuiProgressBar.cpp
  *
- * Copyright (C) 1993-2012 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1993-2012,2013 Paul Boersma, 2008 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,23 @@ Thing_implement (GuiProgressBar, GuiControl, 0);
 		Melder_free (me);
 	}
 #elif cocoa
+	@implementation GuiCocoaProgressBar {
+		GuiProgressBar d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiProgressBar me = d_userData;
+		forget (me);
+		trace ("deleting a progress bar");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiProgressBar));
+		d_userData = static_cast <GuiProgressBar> (userData);
+	}
+	@end
 #elif motif
 	static void _guiMotifProgressBar_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -48,6 +65,12 @@ GuiProgressBar GuiProgressBar_create (GuiForm parent, int left, int right, int t
 		_GuiObject_setUserData (my d_widget, me);
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 	#elif cocoa
+		my d_cocoaProgressBar = [[GuiCocoaProgressBar alloc] init];
+		my d_widget = my d_cocoaProgressBar;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[my d_cocoaProgressBar   setUserData: me];
+		[my d_cocoaProgressBar   setIndeterminate: false];
+		[my d_cocoaProgressBar   setMaxValue: 1.0];
 	#elif motif
 		my d_widget = XmCreateScale (parent -> d_widget, "scale", NULL, 0);
 		_GuiObject_setUserData (my d_widget, me);
@@ -84,6 +107,7 @@ void structGuiProgressBar :: f_setValue (double value) {
 	#if gtk
 		gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (d_widget), value);
 	#elif cocoa
+		[d_cocoaProgressBar   setDoubleValue: value];
 	#elif motif
 		XmScaleSetValue (d_widget, round (value * 10000));
 	#endif

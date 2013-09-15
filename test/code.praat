@@ -12,4 +12,4 @@ assert not index (code$, "'0' }")   ; 2012-08-07
 code$ < ../external/espeak/speak_lib.cpp
 assert not index (code$, "setlocale")   ; 2012-10-01
 
-printline OK
+printline OK...

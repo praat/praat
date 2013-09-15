@@ -1,6 +1,6 @@
 /* DemoEditor.cpp
  *
- * Copyright (C) 2009-2011 Paul Boersma
+ * Copyright (C) 2009-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,6 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (DemoEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-if ((gtk || cocoa) && event -> type != BUTTON_PRESS) return;
 	my clicked = true;
 	my keyPressed = false;
 	my x = event -> x;
@@ -93,6 +92,7 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 	my x = 0;
 	my y = 0;
 	my key = event -> key;
+	trace ("%d", (int) my key);
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	my commandKeyPressed = event -> commandKeyPressed;
 	my optionKeyPressed = event -> optionKeyPressed;
@@ -103,6 +103,7 @@ static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (DemoEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
 	int marginWidth = 0, marginHeight = 0;
+	trace ("%d %d", event -> width, event -> height);
 	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
 	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
 	Graphics_setViewport (my graphics, 0, 100, 0, 100);
@@ -213,6 +214,21 @@ void Demo_waitForInput (Interpreter interpreter) {
 				do {
 					gtk_main_iteration ();
 				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
+			#elif cocoa
+				do {
+					NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+					[theDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
+					NSEvent *nsEvent = [NSApp
+						nextEventMatchingMask: NSAnyEventMask
+						untilDate: [NSDate distantFuture]   // wait
+						inMode: NSDefaultRunLoopMode
+						dequeue: YES
+					];
+					Melder_assert (nsEvent != NULL);
+					[NSApp  sendEvent: nsEvent];
+					[NSApp  updateWindows];   // called automatically?
+					[pool release];
+				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
 			#elif defined (_WIN32)
 				do {
 					XEvent event;
@@ -220,14 +236,11 @@ void Demo_waitForInput (Interpreter interpreter) {
 					XtDispatchEvent (& event);
 				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
 			#elif defined (macintosh)
-				#if useCarbon
-					do {
-						XEvent event;
-						GuiNextEvent (& event);
-						XtDispatchEvent (& event);
-					} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
-				#else
-				#endif
+				do {
+					XEvent event;
+					GuiNextEvent (& event);
+					XtDispatchEvent (& event);
+				} while (! theDemoEditor -> clicked && ! theDemoEditor -> keyPressed && ! theDemoEditor -> userWantsToClose);
 			#endif
 		} catch (MelderError) {
 			Melder_flushError ("An error made it to the outer level in the Demo window; should not occur! Please write to paul.boersma@uva.nl");

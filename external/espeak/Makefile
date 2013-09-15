@@ -22,7 +22,7 @@ clean:
 libespeak.a: $(OBJECTS)
 	touch libespeak.a
 	rm libespeak.a
-	ar cq libespeak.a $(OBJECTS)
+	$(AR) cq libespeak.a $(OBJECTS)
 	$(RANLIB) libespeak.a
 
 $(OBJECTS):  *.h ../../num/NUM.h ../../kar/*.h ../../sys/*.h ../../stat/*.h

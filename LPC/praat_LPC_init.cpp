@@ -118,7 +118,7 @@ FORM (PowerCepstrum_drawTiltLine, L"PowerCepstrum: Draw tilt line", L"PowerCepst
 	LABEL (L"", L"Parameters for the tilt line fit")
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
-	OPTIONMENU (L"Line type", 2)
+	OPTIONMENU (L"Line type", 1)
 	OPTION (L"Straight")
 	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
@@ -212,7 +212,7 @@ END
 FORM (PowerCepstrum_getTiltLineSlope, L"PowerCepstrum: Get tilt line slope", 0)
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
-	OPTIONMENU (L"Line type", 2)
+	OPTIONMENU (L"Line type", 1)
 	OPTION (L"Straight")
 	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
@@ -234,7 +234,7 @@ END
 FORM (PowerCepstrum_getTiltLineIntercept, L"PowerCepstrum: Get tilt line intercept", 0)
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
-	OPTIONMENU (L"Line type", 2)
+	OPTIONMENU (L"Line type", 1)
 	OPTION (L"Straight")
 	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
@@ -262,7 +262,7 @@ FORM (PowerCepstrum_getPeakProminence, L"PowerCepstrum: Get peak prominence", L"
 	RADIOBUTTON (L"Sinc70")
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
-	OPTIONMENU (L"Line type", 2)
+	OPTIONMENU (L"Line type", 1)
 	OPTION (L"Straight")
 	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
@@ -285,7 +285,7 @@ END
 FORM (PowerCepstrum_subtractTilt_inline, L"PowerCepstrum: Subtract tilt (in-line)", 0)
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
-	OPTIONMENU (L"Line type", 2)
+	OPTIONMENU (L"Line type", 1)
 	OPTION (L"Straight")
 	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)
@@ -302,21 +302,23 @@ END
 
 FORM (PowerCepstrum_smooth_inline, L"PowerCepstrum: Smooth (in-line)", 0)
 	REAL (L"Quefrency averaging window (s)", L"0.0005")
+	NATURAL (L"Number of iterations", L"1");
 	OK
 DO
 	LOOP {
 		iam (PowerCepstrum);
-		PowerCepstrum_smooth_inline (me, GET_REAL (L"Quefrency averaging window"));
+		PowerCepstrum_smooth_inline (me, GET_REAL (L"Quefrency averaging window"), GET_INTEGER (L"Number of iterations"));
 	}
 END
 
 FORM (PowerCepstrum_smooth, L"PowerCepstrum: Smooth", 0)
 	REAL (L"Quefrency averaging window (s)", L"0.0005")
+	NATURAL (L"Number of iterations", L"1");
 	OK
 DO
 	LOOP {
 		iam (PowerCepstrum);
-		autoPowerCepstrum thee = PowerCepstrum_smooth (me, GET_REAL (L"Quefrency averaging window"));
+		autoPowerCepstrum thee = PowerCepstrum_smooth (me, GET_REAL (L"Quefrency averaging window"), GET_INTEGER (L"Number of iterations"));
 		praat_new (thee.transfer(), my name, L"_smooth");
 	}
 END
@@ -324,7 +326,7 @@ END
 FORM (PowerCepstrum_subtractTilt, L"PowerCepstrum: Subtract tilt", 0)
 	REAL (L"left Tilt line quefrency range (s)", L"0.001")
 	REAL (L"right Tilt line quefrency range (s)", L"0.0 (=end)")
-	OPTIONMENU (L"Line type", 2)
+	OPTIONMENU (L"Line type", 1)
 	OPTION (L"Straight")
 	OPTION (L"Exponential decay")
 	OPTIONMENU (L"Fit method", 2)

@@ -1,6 +1,6 @@
 /* InfoEditor.cpp
  *
- * Copyright (C) 2004-2011,2012 Paul Boersma
+ * Copyright (C) 2004-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,17 @@ void gui_information (const wchar_t *message) {
 	}
 	theInfoEditor -> textWidget -> f_setString (message);
 	theInfoEditor -> d_windowForm -> f_show ();
-	theInfoEditor -> d_windowForm -> f_drain ();
+	/*
+	 * Try to make sure that the invalidated text widget and the elements of the fronted window are redrawn before the next event.
+	 */
+	#if cocoa
+		//[theInfoEditor -> d_windowForm -> d_cocoaWindow   displayIfNeeded];   // apparently, this does not suffice
+		[theInfoEditor -> d_windowForm -> d_cocoaWindow   display];   // this displays the menu as well as the text
+		//[theInfoEditor -> textWidget -> d_cocoaTextView   displayIfNeeded];   // this displays only the text
+		//[theInfoEditor -> textWidget -> d_cocoaTextView   display];
+	#elif defined (macintosh)
+		theInfoEditor -> d_windowForm -> f_drain ();
+	#endif
 }
 
 /* End of file InfoEditor.cpp */

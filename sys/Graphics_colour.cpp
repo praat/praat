@@ -32,6 +32,7 @@
  * pb 2010/06/05 set my colour in setColour
  * pb 2011/01/15 Windows: inverted the colour in XOR mode
  * pb 2011/03/17 C++
+ * pb 2013/08/27 Cocoa: trick: triple kCGBlendModeDifference approximates coloured XOR
  */
 
 #include "GraphicsP.h"
@@ -182,11 +183,13 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 				NSRect rect = NSMakeRect (x1DC,  y2DC, width, height);
 				CGContextSetBlendMode (context, kCGBlendModeDifference);
 				CGContextSetShouldAntialias (context, false);
+				NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+				double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
 				if (direction == 1) {   // forward
-					CGContextSetRGBFillColor (context, 0.2, 0.0, 0.0, 1.0);   // FIXME: Need user selection color instead
+					CGContextSetRGBFillColor (context, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
 					CGContextFillRect (context, rect);
 				} else {   // backward
-					CGContextSetRGBFillColor (context, 0.8, 1.0, 1.0, 1.0);   // FIXME: Need user selection color instead
+					CGContextSetRGBFillColor (context, red, green, blue, 1.0);
 					CGContextFillRect (context, rect);
 					CGContextSetRGBFillColor (context, 1.0, 1.0, 1.0, 1.0);
 					CGContextFillRect (context, rect);
@@ -268,14 +271,16 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 				NSRect rightRect = NSMakeRect (x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner);
 				NSRect lowerRect = NSMakeRect (x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner);
 				CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
+				NSColor *colour = [[NSColor selectedTextBackgroundColor] colorUsingColorSpaceName: NSCalibratedRGBColorSpace];
+				double red = 0.5 + 0.5 * colour.redComponent, green = 0.5 + 0.5 * colour.greenComponent, blue = 0.5 + 0.5 * colour.blueComponent;
 				if (direction == 1) {
-					CGContextSetRGBFillColor (my d_macGraphicsContext, 0.2, 0.0, 0.0, 1.0);   // FIXME: Need user selection color
+					CGContextSetRGBFillColor (my d_macGraphicsContext, 1.0 - red, 1.0 - green, 1.0 - blue, 1.0);
 					CGContextFillRect (my d_macGraphicsContext, upperRect);
 					CGContextFillRect (my d_macGraphicsContext, leftRect);
 					CGContextFillRect (my d_macGraphicsContext, rightRect);
 					CGContextFillRect (my d_macGraphicsContext, lowerRect);
 				} else {
-					CGContextSetRGBFillColor (my d_macGraphicsContext, 0.8, 1.0, 1.0, 1.0);   // FIXME: Need user selection color
+					CGContextSetRGBFillColor (my d_macGraphicsContext, red, green, blue, 1.0);
 					CGContextFillRect (my d_macGraphicsContext, upperRect);
 					CGContextFillRect (my d_macGraphicsContext, leftRect);
 					CGContextFillRect (my d_macGraphicsContext, rightRect);

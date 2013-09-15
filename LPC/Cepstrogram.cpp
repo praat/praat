@@ -35,7 +35,7 @@
 #define FROMLOG(x) (exp ((x) * (NUMln10 / 10.0)) - 1e-30)
 
 Thing_implement (Cepstrogram, Matrix, 2);
-Thing_implement (PowerCepstrogram, Cepstrogram, 0);
+Thing_implement (PowerCepstrogram, Cepstrogram, 2); // derives from Matrix -> also version 2
 
 Cepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double qmin, double qmax, long nq, double dq, double q1) {

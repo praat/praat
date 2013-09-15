@@ -1,6 +1,6 @@
 /* TableEditor.cpp
  *
- * Copyright (C) 2006-2011 Paul Boersma
+ * Copyright (C) 2006-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,24 +34,12 @@ void structTableEditor :: v_destroy () {
 
 static void updateVerticalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	#if motif
-	/*int value, slider, incr, pincr;
-	XmScrollBarGetValues (my verticalScrollBar, & value, & slider, & incr, & pincr);
-	XmScrollBarSetValues (my verticalScrollBar, my topRow, slider, incr, pincr, False);*/
-	XtVaSetValues (my verticalScrollBar -> d_widget,
-		XmNvalue, my topRow, XmNmaximum, table -> rows -> size + 1, NULL);
-	#endif
+	my verticalScrollBar -> f_set (NUMundefined, table -> rows -> size + 1, my topRow, NUMundefined, NUMundefined, NUMundefined);
 }
 
 static void updateHorizontalScrollBar (TableEditor me) {
 	Table table = static_cast<Table> (my data);
-	#if motif
-	/*int value, slider, incr, pincr;
-	XmScrollBarGetValues (my horizontalScrollBar, & value, & slider, & incr, & pincr);
-	XmScrollBarSetValues (my horizontalScrollBar, my topRow, slider, incr, pincr, False);*/
-	XtVaSetValues (my horizontalScrollBar -> d_widget,
-		XmNvalue, my leftColumn, XmNmaximum, table -> numberOfColumns + 1, NULL);
-	#endif
+	my horizontalScrollBar -> f_set (NUMundefined, table -> numberOfColumns + 1, my leftColumn, NUMundefined, NUMundefined, NUMundefined);
 }
 
 void structTableEditor :: v_dataChanged () {
@@ -202,7 +190,6 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (TableEditor);
 	if (my graphics == NULL) return;
-if ((gtk || cocoa) && event -> type != BUTTON_PRESS) return;
 	double xWC, yWC;
 	Graphics_DCtoWC (my graphics, event -> x, event -> y, & xWC, & yWC);
 	// TODO: implement selection
@@ -219,7 +206,12 @@ static void gui_cb_scrollHorizontal (I, GuiScrollBarEvent event) {
 	int value = event -> scrollBar -> f_getValue ();
 	if (value != my leftColumn) {
 		my leftColumn = value;
-		my v_draw ();
+		#if cocoa || gtk || win
+			Graphics_updateWs (my graphics);   // wait for expose event
+		#else
+			Graphics_clearWs (my graphics);
+			my v_draw ();   // do not wait for expose event
+		#endif
 	}
 }
 
@@ -228,7 +220,12 @@ static void gui_cb_scrollVertical (I, GuiScrollBarEvent event) {
 	int value = event -> scrollBar -> f_getValue ();
 	if (value != my topRow) {
 		my topRow = value;
-		my v_draw ();
+		#if cocoa || gtk || win
+			Graphics_updateWs (my graphics);   // wait for expose event
+		#else
+			Graphics_clearWs (my graphics);
+			my v_draw ();   // do not wait for expose event
+		#endif
 	}
 }
 

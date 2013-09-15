@@ -1,5 +1,5 @@
 # makefile for library "dwsys".
-# David Weenink 20121211
+# David Weenink 20130826
 
 include ../makefile.defs
 
@@ -27,7 +27,7 @@ clean:
 libdwsys.a: $(OBJECTS) NUMmachar.o
 	touch libdwsys.a
 	rm libdwsys.a
-	ar cq libdwsys.a $(OBJECTS)
+	$(AR) cq libdwsys.a $(OBJECTS)
 	$(RANLIB) libdwsys.a
 
 $(OBJECTS): *.h ../stat/*.h ../num/NUM.h ../sys/*.h ../external/gsl/*.h ../dwsys/*.h ../kar/*.h

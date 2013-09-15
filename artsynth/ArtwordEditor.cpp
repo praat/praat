@@ -1,6 +1,6 @@
 /* ArtwordEditor.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,6 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (ArtwordEditor);
 	if (my graphics == NULL) return;
-if ((gtk || cocoa) && event -> type != BUTTON_PRESS) return;
 	Artword artword = (Artword) my data;
 	Graphics_setWindow (my graphics, 0, artword -> totalTime, -1.0, 1.0);
 	Graphics_setInner (my graphics);

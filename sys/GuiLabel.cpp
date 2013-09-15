@@ -86,7 +86,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
         GuiCocoaLabel *label = [[GuiCocoaLabel alloc] init];
 		my d_widget = label;
 		trace ("position");
-		my v_positionInForm (label, left, right, top, bottom, parent);
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		trace ("set user data");
 		[label setUserData: me];
 		trace ("set bezel style");

@@ -1,5 +1,5 @@
 # Makefile of the library "LPC"
-# David Weenink, 20121214
+# David Weenink, 20130826
 
 include ../makefile.defs
 
@@ -28,7 +28,7 @@ clean:
 libLPC.a: $(OBJECTS)
 	touch libLPC.a
 	rm libLPC.a
-	ar cq libLPC.a $(OBJECTS)
+	$(AR) cq libLPC.a $(OBJECTS)
 	$(RANLIB) libLPC.a
 
 $(OBJECTS): *.h ../num/NUM.h ../dwtools/*.h ../fon/*.h ../sys/*.h ../dwsys/*.h ../stat/*.h

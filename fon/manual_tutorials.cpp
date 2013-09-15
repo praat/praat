@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130902)
+MAN_BEGIN (L"What's new?", L"ppgb", 20130915)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.56# (15 September 2013)")
+LIST_ITEM (L"\\bu Mac: 64-bit alpha version.")
+LIST_ITEM (L"\\bu Linux: improved selecting in the Picture window.")
 NORMAL (L"##5.3.55# (2 September 2013)")
 LIST_ITEM (L"\\bu Corrected a bug introduced in 5.3.54 by which you couldn't select a file for saving.")
 NORMAL (L"##5.3.54# (1 September 2013)")

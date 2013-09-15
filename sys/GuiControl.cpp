@@ -24,7 +24,7 @@ int structGuiControl :: f_getX () {
 	#if gtk
 		return GTK_WIDGET (d_widget) -> allocation.x;
 	#elif cocoa
-		return 100;//[(NSView *) d_widget x];
+		return [(NSView *) d_widget frame]. origin. x;
 	#elif motif
 		return d_widget -> x;
 	#endif
@@ -34,7 +34,7 @@ int structGuiControl :: f_getY () {
 	#if gtk
 		return GTK_WIDGET (d_widget) -> allocation.y;
 	#elif cocoa
-		return 100;//[(NSView *) d_widget y];
+		return [(NSView *) d_widget frame]. origin. y;
 	#elif motif
 		return d_widget -> y;
 	#endif
@@ -44,7 +44,7 @@ int structGuiControl :: f_getWidth () {
 	#if gtk
 		return GTK_WIDGET (d_widget) -> allocation.width;
 	#elif cocoa
-		return 100;//[(NSView *) d_widget width];
+		return [(NSView *) d_widget frame]. size. width;
 	#elif motif
 		return d_widget -> width;
 	#endif
@@ -54,7 +54,7 @@ int structGuiControl :: f_getHeight () {
 	#if gtk
 		return GTK_WIDGET (d_widget) -> allocation.height;
 	#elif cocoa
-		return 100;//[(NSView *) d_widget height];
+		return [(NSView *) d_widget frame]. size. height;
 	#elif motif
 		return d_widget -> height;
 	#endif
@@ -107,8 +107,8 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
 		gtk_fixed_put (GTK_FIXED (parent -> d_widget), GTK_WIDGET (widget), left, top);
 	#elif cocoa
-        NSView *superView = (NSView*)parent -> d_widget;
-        NSView *widgetView = (NSView*) d_widget;
+        NSView *superView = (NSView *) parent -> d_widget;
+        NSView *widgetView = (NSView *) widget;
 		NSRect parentRect = [superView frame];
         int parentWidth = parentRect.size.width;
         int parentHeight = parentRect.size.height;
@@ -151,8 +151,8 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 			}
 		}
         NSRect rect = NSMakeRect (left, bottom, width, height);
-        [widgetView setAutoresizingMask:horizMask | vertMask];
-        [superView addSubview:widgetView];   // parent will retain the subview...
+        [widgetView setAutoresizingMask: horizMask | vertMask];
+        [superView addSubview: widgetView];   // parent will retain the subview...
         [widgetView setFrame: rect];
 		[widgetView release];   // ... so we can release the item already
 	#elif motif
@@ -189,13 +189,13 @@ void structGuiControl :: v_positionInScrolledWindow (GuiObject widget, int width
 		gtk_widget_set_size_request (GTK_WIDGET (widget), width, height);
 		gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (parent -> d_widget), GTK_WIDGET (widget));
 	#elif cocoa
-        GuiCocoaScrolledWindow *scrolledWindow = (GuiCocoaScrolledWindow*)parent->d_widget;
-        NSView *widgetView = (NSView*)widget;
-        NSRect rect = NSMakeRect(0, 0, width, height);
-        [widgetView initWithFrame:rect];
-        [widgetView setBounds:rect];
-        [scrolledWindow setDocumentView:widgetView];
-        [widgetView release];   // ... so we can release the item already
+		GuiCocoaScrolledWindow *scrolledWindow = (GuiCocoaScrolledWindow *) parent -> d_widget;
+		NSView *widgetView = (NSView *) widget;
+		NSRect rect = NSMakeRect (0, 0, width, height);
+		[widgetView initWithFrame: rect];
+		[widgetView setBounds: rect];
+		[scrolledWindow setDocumentView: widgetView];
+		[widgetView release];   // ... so we can release the item already
 	#elif motif
 		(void) parent;
 		XtVaSetValues (widget, XmNwidth, width, XmNheight, height, NULL);

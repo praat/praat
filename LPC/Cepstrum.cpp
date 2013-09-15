@@ -28,8 +28,55 @@
 #include "NUM2.h"
 #include "Vector.h"
 
+static void NUMvector_gaussianBlur (double sigma, long filterLength, double *filter) {
+	if (filterLength <= 1) {
+		filter[1] = 1;
+		return;
+	}
+	double sum = 0, mid = (filterLength + 1) / 2;
+	for (long i = 1; i <= filterLength; i++) {
+		double val = (mid - i) / sigma;
+		filter[i] = exp (- 0.5 * val * val);
+		sum += filter[i];
+	}
+	for (long i = 1; i <= filterLength; i++) {
+		filter[i] /= sum;
+	}
+}
+
+// filter must be normalised: sum(i=1, nfilters, filter[i]) == 1
+static void NUMvector_filter (double *input, long numberOfDataPoints, double *filter, long numberOfFilterCoefficients, double *output, int edgeTreatment) {
+	long nleft = (numberOfFilterCoefficients - 1) / 2;
+	if (edgeTreatment == 0) { // outside values are zero
+		for (long i = 1; i <= numberOfDataPoints; i++) {
+			long ifrom = i - nleft, ito = i + nleft;
+			ito = numberOfFilterCoefficients % 2 == 0 ? ito - 1 : ito;
+			long jfrom = ifrom < 1 ? 1 : ifrom;
+			long jto = ito > numberOfDataPoints ? numberOfDataPoints : ito;
+			long index = ifrom < 1 ? 2 - ifrom : 1;
+			double out = 0, sum = 0;
+			for (long j = jfrom; j <= jto; j++, index++) {
+				out += filter[index] * input[j];
+				sum += filter[index];
+			}
+			output[i] = out / sum;
+		}
+	} else if (edgeTreatment == 1) { // wrap-around
+		for (long i = 1; i <= numberOfDataPoints; i++) {
+			double out = 0;
+			for (long j = 1; j <= numberOfFilterCoefficients; j++) {
+				long index = (i - nleft + j - 2) % numberOfDataPoints + 1;
+				out += filter[j] * input[index];
+			}
+			output[i] = out;
+		}
+	}
+	
+	
+}
+
 Thing_implement (Cepstrum, Matrix, 2);
-Thing_implement (PowerCepstrum, Cepstrum, 0);
+Thing_implement (PowerCepstrum, Cepstrum, 2); // derives from Matrix therefore also version 2
 
 double structCepstrum :: v_getValueAtSample (long isamp, long which, int units) {
 	(void) units;
@@ -165,9 +212,12 @@ void PowerCepstrum_drawTiltLine (PowerCepstrum me, Graphics g, double qmin, doub
 	}
 
 	Graphics_setWindow (g, qmin, qmax, dBminimum, dBmaximum);
-	qend = qend == 0 ? qmax : qend;
-	qstart = qstart < qmin ? qmin : qstart;
-	qend = qend > qmax ? qmax : qend;
+	qend = qend == 0 ? my xmax : qend;
+	if (qend <= qstart) {
+		qend = my xmax; qstart = my xmin;
+	}
+	qstart = qstart < my xmin ? my xmin : qstart;
+	qend = qend > my xmax ? my xmax : qend;
 
 	double a, intercept;
 	PowerCepstrum_fitTiltLine (me, qstart, qend, &a, &intercept, lineType, method);
@@ -294,7 +344,7 @@ PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, do
 	}
 }
 
-void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow) {
+void PowerCepstrum_smooth_inline2 (PowerCepstrum me, double quefrencyAveragingWindow) {
 	try {
 		long numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
 		if (numberOfQuefrencyBins > 1) {
@@ -313,9 +363,33 @@ void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWin
 	}
 }
 
-PowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow) {
+void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
+	try {
+		long numberOfQuefrencyBins = quefrencyAveragingWindow / my dx;
+		if (numberOfQuefrencyBins > 1) {
+			autoNUMvector<double> qin (1, my nx);
+			autoNUMvector<double> qout (1, my nx);
+			for (long iq = 1; iq <= my nx; iq++) {
+				qin[iq] = my z[1][iq];
+			}
+			double *xin, *xout;
+			for (long k = 1; k <= numberOfIterations; k++) {
+				xin  = k % 2 == 1 ? qin.peek() : qout.peek ();
+				xout = k % 2 == 1 ? qout.peek () : qin.peek();
+				NUMvector_smoothByMovingAverage (xin, my nx, numberOfQuefrencyBins, xout);
+			}
+			for (long iq = 1; iq <= my nx; iq++) {
+				my z[1][iq] = xout[iq];
+			}
+		}
+	} catch (MelderError) {
+		Melder_throw (me, ": not smoothed.");
+	}
+}
+
+PowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations) {
 	autoPowerCepstrum thee = Data_copy (me);
-	PowerCepstrum_smooth_inline (thee.peek(), quefrencyAveragingWindow);
+	PowerCepstrum_smooth_inline (thee.peek(), quefrencyAveragingWindow, numberOfIterations);
 	return thee.transfer();
 }
 

@@ -558,7 +558,7 @@ MAN_BEGIN (L"VocalTractTier", L"djmw", 20120423)
 INTRO (L"One of the @@types of objects@ in Praat. A VocalTractTier objects contains a number of (%time, %VocalTract) points, where a @@VocalTract@ represents the area function of the vocal tract expressed as m^^2^, running from the glottis to the lips.")
 MAN_END
 
-MAN_BEGIN (L"theil regression", L"djmw", 20121118)
+MAN_BEGIN (L"theil regression", L"djmw", 20130710)
 NORMAL (L"a robust linear regression method, first proposed by @@Theil (1950)@. The slope of the regression line is estimated as "
 	"the median of all pairwise slopes between each pair of points in the data set. Because this number of pairs increases quadratically "
 	"with the number of data points, we have implemented a somewhat less computationally intensive procedure, the %%incomplete% theil regression. In the incomplete method we first split the data set of %N data points (%x__%i_, %y__%i_), %i = 1..%N, in two equal sets "
@@ -566,6 +566,7 @@ NORMAL (L"a robust linear regression method, first proposed by @@Theil (1950)@. 
 FORMULA (L"%m__%i_ = (%y__%N/2+%i_ - %y__%i_) / (%x__%N/2+%i_ - %x__%i_), for %i = 1..%N/2.")
 NORMAL (L"The regression slope %m is calculated as the median of these %N/2 values %m__%i_.")
 NORMAL (L"Given the slope %m, the offset %b is calculated as the median of the %N values %b__%i_= %y__%i_ - %m\\.c%x__%i_.")
+NORMAL (L"The theil regression has a breakdown point of 29.3\\% , which means that it can tolerate arbitrary corruption of up to 29.3% of the input data-points without degradation of its accuracy")
 MAN_END
 
 MAN_BEGIN (L"Anderson (1978)", L"djmw", 20030701)

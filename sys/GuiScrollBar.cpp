@@ -40,8 +40,9 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	}
 	static void _GuiGtkScrollBar_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiScrollBar);
-		struct structGuiScrollBarEvent event = { me };
-		if (my d_valueChangedCallback != NULL) {
+		trace ("enter");
+		if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
+			struct structGuiScrollBarEvent event = { me };
 			try {
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
 			} catch (MelderError) {
@@ -243,6 +244,7 @@ GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int 
 }
 
 void structGuiScrollBar :: f_set (double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement) {
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
 		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (d_widget));
 		gtk_adjustment_configure (GTK_ADJUSTMENT (adj),

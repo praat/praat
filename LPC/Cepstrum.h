@@ -99,8 +99,8 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
 void PowerCepstrum_subtractTilt_inline (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
 PowerCepstrum PowerCepstrum_subtractTilt (PowerCepstrum me, double qstartFit, double qendFit, int lineType, int fitMethod);
-void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow);
-PowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow);
+void PowerCepstrum_smooth_inline (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
+PowerCepstrum PowerCepstrum_smooth (PowerCepstrum me, double quefrencyAveragingWindow, long numberOfIterations);
 
 Matrix PowerCepstrum_to_Matrix (PowerCepstrum me);
 PowerCepstrum Matrix_to_PowerCepstrum (Matrix me);

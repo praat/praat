@@ -46,6 +46,10 @@ void structGuiMenu :: v_destroy () {
 		gtk_widget_destroy (GTK_WIDGET (my d_widget));
 	}
 #elif cocoa
+	static void (*theOpenDocumentCallback) (MelderFile file);
+	void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)) {
+		theOpenDocumentCallback = openDocumentCallback;
+	}
 	static NSMenu *theMenuBar;
 	static int theNumberOfMenuBarItems = 0;
 	static NSMenuItem *theMenuBarItems [30];
@@ -58,6 +62,16 @@ void structGuiMenu :: v_destroy () {
 		for (int imenu = 1; imenu <= theNumberOfMenuBarItems; imenu ++) {
 			[[NSApp mainMenu] addItem: theMenuBarItems [imenu]];   // the menu will retain the item...
 			[theMenuBarItems [imenu] release];   // ... so we can release the item
+		}
+	}
+	- (void) application: (NSApplication *) sender openFiles: (NSArray *) fileNames
+	{
+		for (int i = 1; i <= [fileNames count]; i ++) {
+			NSString *cocoaFileName = [fileNames objectAtIndex: i - 1];
+			structMelderFile file = { 0 };
+			Melder_8bitFileRepresentationToWcs_inline ([cocoaFileName UTF8String], file. path);
+			if (theOpenDocumentCallback)
+				theOpenDocumentCallback (& file);
 		}
 	}
 	@end
@@ -221,7 +235,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			int parentWidth = parentRect.size.width, parentHeight = parentRect.size.height;
 			if (window -> d_menuBarWidth == 0)
 				window -> d_menuBarWidth = -1;
-			int width = 18 + 7 * wcslen (title), height = 25;
+			int width = 18 + 7 * wcslen (title), height = 35 /*25*/;
 			int x = window -> d_menuBarWidth, y = parentHeight + 1 - height;
             NSUInteger resizingMask = NSViewMinYMargin;
 			if (Melder_wcsequ (title, L"Help")) {
@@ -237,9 +251,10 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			[my d_cocoaMenuButton   setBezelStyle: NSShadowlessSquareBezelStyle];
 			[my d_cocoaMenuButton   setImagePosition: NSImageAbove];   // this centers the text
 			//[nsPopupButton setBordered: NO];
-            [my d_cocoaMenuButton setAutoresizingMask:resizingMask]; // stick to top
+            [my d_cocoaMenuButton   setAutoresizingMask: resizingMask]; // stick to top
 
 			[[my d_cocoaMenuButton cell]   setArrowPosition: NSPopUpNoArrow /*NSPopUpArrowAtBottom*/];
+			[[my d_cocoaMenuButton cell]   setPreferredEdge: NSMaxYEdge];
 			/*
 			 * Apparently, Cocoa swallows title setting only if there is already a menu with a dummy item.
 			 */

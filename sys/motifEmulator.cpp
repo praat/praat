@@ -4816,11 +4816,11 @@ void GuiMainLoop () {
 		theUserMessageCallbackW = userMessageCallback;
 	}
 #endif
-#endif
-
 void Gui_setOpenDocumentCallback (void (*openDocumentCallback) (MelderFile file)) {
 	theOpenDocumentCallback = openDocumentCallback;
 }
+#endif
+
 void Gui_setQuitApplicationCallback (int (*quitApplicationCallback) (void)) {
 	theQuitApplicationCallback = quitApplicationCallback;
 }

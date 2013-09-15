@@ -272,7 +272,6 @@ static void do_replay (RunnerMFC me) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (RunnerMFC);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-if ((gtk || cocoa) && event -> type != BUTTON_PRESS) return;
 	ExperimentMFC experiment = (ExperimentMFC) my data;
 	if (my data == NULL) return;
 	double reactionTime = Melder_clock () - experiment -> startingTime;

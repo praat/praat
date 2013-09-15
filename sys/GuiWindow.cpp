@@ -198,7 +198,6 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 			theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];
 		}
 		[my d_cocoaWindow setDelegate: theGuiCocoaWindowDelegate];
-		[my d_cocoaWindow setReleasedWhenClosed: NO];
 	#elif motif
 		my d_xmShell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);

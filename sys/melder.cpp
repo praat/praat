@@ -188,7 +188,17 @@ static bool waitWhileProgress (double progress, const wchar_t *message, GuiDialo
 			}
 			do { XtNextEvent ((XEvent *) & event); XtDispatchEvent ((XEvent *) & event); } while (event.what);
 		#else
-			// Cocoa
+			NSEvent *nsEvent = [NSApp
+				nextEventMatchingMask: NSAnyEventMask
+				untilDate: [NSDate distantPast]
+				inMode: NSDefaultRunLoopMode
+				dequeue: YES
+				];
+			if (nsEvent) {
+				NSUInteger nsEventType = [nsEvent type];
+				if (nsEventType == NSKeyDown) NSBeep ();
+				[[nsEvent window]  sendEvent: nsEvent];
+			}
 		#endif
 	#elif defined (_WIN32)
 		XEvent event;
@@ -247,6 +257,9 @@ static bool waitWhileProgress (double progress, const wchar_t *message, GuiDialo
 				trace ("the cancel button has been pressed");
 				return false;   // don't continue
 			}
+		#elif cocoa
+			scale -> f_setValue (progress);
+			//[scale -> d_cocoaProgressBar   displayIfNeeded];
 		#elif motif
 			scale -> f_setValue (progress);
 			XmUpdateDisplay (dia -> d_widget);
@@ -281,7 +294,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 	*label2 = GuiLabel_createShown (*dia, 3, 403, 30, 30 + Gui_LABEL_HEIGHT, L"label2", 0);
 
 	trace ("creating the scale");
-	*scale = GuiProgressBar_createShown (*dia, 3, 403, 70, 110, 0);
+	*scale = GuiProgressBar_createShown (*dia, 3, -3, 70, 110, 0);
 
 	trace ("creating the cancel button");
 	*cancelButton = GuiButton_createShown (*dia, 0, 400, 170, 170 + Gui_PUSHBUTTON_HEIGHT,

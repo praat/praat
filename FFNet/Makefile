@@ -22,7 +22,7 @@ clean:
 libFFNet.a: $(OBJECTS)
 	touch libFFNet.a
 	rm libFFNet.a
-	ar cq libFFNet.a $(OBJECTS)
+	$(AR) cq libFFNet.a $(OBJECTS)
 	$(RANLIB) libFFNet.a
 
 $(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../dwtools/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h

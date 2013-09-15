@@ -195,9 +195,6 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 			} else {
 				Picture_setSelection (me, 0.5 * (ix1 - 1), 0.5 * ix2,
 					0.5 * (SQUARES - iy2), 0.5 * (SQUARES + 1 - iy1), false);
-				#if gtk
-					//Graphics_flushWs (my graphics);
-				#endif
 			}
 			oldix = ix; oldiy = iy;
 		}
@@ -483,28 +480,14 @@ void Picture_setSelection
 {
 	if (my drawingArea) {
 		Melder_assert (my drawingArea -> d_widget);
-		#if gtkXXX
-			long x1, x2, y1, y2;
-			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
-			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
-		#else
-			drawSelection (me, 0);   // unselect
-		#endif
+		drawSelection (me, 0);   // unselect
 	}
 	my selx1 = x1NDC;
 	my selx2 = x2NDC;
 	my sely1 = y1NDC;
 	my sely2 = y2NDC;
 	if (my drawingArea) {
-		#if gtkXXX
-			long x1, x2, y1, y2;
-			Graphics_WCtoDC (my selectionGraphics, my selx1, my sely1, & x1, & y1);
-			Graphics_WCtoDC (my selectionGraphics, my selx2, my sely2, & x2, & y2);
-			gtk_widget_queue_draw_area (GTK_WIDGET (my drawingArea -> d_widget), x1, y2, abs (x2 - x1), abs (y2 - y1));
-		#else
-			drawSelection (me, 1);   // select
-		#endif
+		drawSelection (me, 1);   // select
 	}
 
 	if (notify && my selectionChangedCallback) {

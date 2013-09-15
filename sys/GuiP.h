@@ -44,6 +44,18 @@ void _GuiObject_position (GuiObject me, int left, int right, int top, int bottom
 void * _GuiObject_getUserData (GuiObject me);
 void _GuiObject_setUserData (GuiObject me, void *userData);
 
+class GuiControlBlockValueChangedCallbacks {
+	private:
+		GuiControl d_control;
+	public:
+		GuiControlBlockValueChangedCallbacks (GuiControl control) : d_control (control) {
+			d_control -> d_blockValueChangedCallbacks = true;
+		}
+		~GuiControlBlockValueChangedCallbacks () {
+			d_control -> d_blockValueChangedCallbacks = false;
+		}
+};
+
 #if gtk
 	void GuiGtk_initialize ();
 #elif motif

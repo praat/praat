@@ -198,14 +198,14 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 		gtk_menu_shell_append (GTK_MENU_SHELL (menu -> d_widget), GTK_WIDGET (my d_widget));
 		_GuiObject_setUserData (my d_widget, me);
 	#elif cocoa
-        NSString *string = (NSString *) Melder_peekWcsToCfstring (title);
+		NSString *string = (NSString *) Melder_peekWcsToCfstring (title);
 		GuiCocoaMenuItem *menuItem = [[GuiCocoaMenuItem alloc]
 			initWithTitle:string
 			action: NULL
 			keyEquivalent: @""];
 		//Melder_assert ([string retainCount] == 2 || [string retainCount] == -1);   // the menu item retains the string (assertion can fail on 10.6)
 		trace ("string retain count = %d", (int) [string retainCount]);
-        my d_widget = menuItem;
+		my d_widget = menuItem;
 		trace ("installing item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [menuItem retainCount]);
 		[menu -> d_cocoaMenu  addItem: (NSMenuItem *) my d_widget];   // the menu will retain the item...
 		trace ("installed item in GuiMenu %p (NSMenu %p); retain count = %d", menu, menu -> d_cocoaMenu, [menuItem retainCount]);
@@ -275,7 +275,17 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 			if (flags & GuiMenu_SHIFT)   mask |= NSShiftKeyMask;
 			if (flags & GuiMenu_OPTION)  mask |= NSAlternateKeyMask;
 			[menuItem setKeyEquivalentModifierMask: mask];
-			[menuItem setKeyEquivalent: [NSString stringWithFormat: @"%c", accelerator]];
+			if (accelerator > 0 && accelerator < 32) {
+				static unichar acceleratorKeys [] = { 0,
+					NSLeftArrowFunctionKey, NSRightArrowFunctionKey, NSUpArrowFunctionKey, NSDownArrowFunctionKey, NSPauseFunctionKey, NSDeleteFunctionKey, NSInsertFunctionKey, NSBackspaceCharacter,
+					NSTabCharacter, NSNewlineCharacter, NSHomeFunctionKey, NSEndFunctionKey, NSCarriageReturnCharacter, NSPageUpFunctionKey, NSPageDownFunctionKey, 27,
+					NSF1FunctionKey, NSF2FunctionKey, NSF3FunctionKey, NSF4FunctionKey, NSF5FunctionKey, NSF6FunctionKey,
+					NSF7FunctionKey, NSF8FunctionKey, NSF9FunctionKey, NSF10FunctionKey, NSF11FunctionKey, NSF12FunctionKey,
+					0, 0, 0 };
+				[menuItem   setKeyEquivalent: [NSString   stringWithCharacters: & acceleratorKeys [accelerator]   length: 1]];
+			} else {
+				[menuItem setKeyEquivalent: [NSString stringWithFormat: @"%c", accelerator]];
+			}
 		#elif motif
 			int modifiers = 0;
 			if (flags & GuiMenu_COMMAND) modifiers |= _motif_COMMAND_MASK;
@@ -389,8 +399,8 @@ void structGuiMenuItem :: f_check (bool check) {
 		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (d_widget), check);
 		d_callbackBlocked = false;
 	#elif cocoa
-        GuiCocoaMenuItem *item = (GuiCocoaMenuItem*)d_widget;
-        [item setState:check];
+		GuiCocoaMenuItem *item = (GuiCocoaMenuItem*)d_widget;
+		[item   setState: check];
 	#elif motif
 		XmToggleButtonGadgetSetState (d_widget, check, False);
 	#endif

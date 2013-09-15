@@ -539,15 +539,19 @@ static void do_zoomToSelection (FunctionEditor me) {
 	if (my d_endSelection > my d_startSelection) {
 		my startZoomHistory = my d_startWindow;   // remember for Zoom Back
 		my endZoomHistory = my d_endWindow;   // remember for Zoom Back
-		//Melder_casual ("Zoomed in to %f ~ %f seconds.", my startSelection, my endSelection);
+		trace ("Zooming in to %.17g ~ %.17g seconds.", my d_startSelection, my d_endSelection);
 		my d_startWindow = my d_startSelection;
 		my d_endWindow = my d_endSelection;
+		trace ("Zoomed in to %.17g ~ %.17g seconds (1).", my d_startWindow, my d_endWindow);
 		my v_updateText ();
+		trace ("Zoomed in to %.17g ~ %.17g seconds (2).", my d_startWindow, my d_endWindow);
 		updateScrollBar (me);
+		trace ("Zoomed in to %.17g ~ %.17g seconds (3).", my d_startWindow, my d_endWindow);
 		/*Graphics_updateWs (my d_graphics);*/ drawNow (me);
 		if (my pref_synchronizedZoomAndScroll ()) {
 			updateGroup (me);
 		}
+		trace ("Zoomed in to %.17g ~ %.17g seconds (4).", my d_startWindow, my d_endWindow);
 	}
 }
 
@@ -765,6 +769,7 @@ static void menu_cb_moveEby (EDITOR_ARGS) {
 void FunctionEditor_shift (FunctionEditor me, double shift, bool needsUpdateGroup) {
 	double windowLength = my d_endWindow - my d_startWindow;
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   /* Quickly, before window changes. */
+	trace ("shifting by %.17g", shift);
 	if (shift < 0.0) {
 		my d_startWindow += shift;
 		if (my d_startWindow < my d_tmin + 1e-12)
@@ -1032,7 +1037,6 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (FunctionEditor);
 	if (my d_graphics == NULL) return;   // Could be the case in the very beginning.
-if (gtk && event -> type != BUTTON_PRESS) return;
 	double xWC, yWC;
 	my shiftKeyPressed = event -> shiftKeyPressed;
 	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);

@@ -46,9 +46,6 @@ static void logo (Graphics g) {
 
 int main (int argc, char *argv []) {
 	try {
-		#if cocoa
-			Melder_setTracing (true);
-		#endif
 		praat_setLogo (130, 80, logo);
 		praat_init ("Praat", argc, argv);
 		INCLUDE_LIBRARY (praat_uvafon_init)

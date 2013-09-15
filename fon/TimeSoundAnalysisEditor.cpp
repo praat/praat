@@ -163,7 +163,9 @@ static int makeQueriable (TimeSoundAnalysisEditor me, int allowCursor, double *t
 			Melder_throw ("Make a selection first.");
 		}
 	} else if (my d_startSelection < my d_startWindow || my d_endSelection > my d_endWindow) {
-		Melder_throw ("Command ambiguous: a part of the selection is out of view. Either zoom or re-select.");
+		Melder_throw ("Command ambiguous: a part of the selection (", my d_startSelection, ", ", my d_endSelection, ") "
+			"is outside of the window (", my d_startWindow, ", ", my d_endWindow, "). "
+			"Either zoom or re-select.");
 	}
 	*tmin = my d_startSelection;
 	*tmax = my d_endSelection;

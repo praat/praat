@@ -1275,7 +1275,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
 			trace ("initializing the Gui late");
-			MelderGui_create (theCurrentPraatApplication -> topShell);   /* Mac: done this earlier. */
+			MelderGui_create (theCurrentPraatApplication -> topShell);   // Mac: done this earlier
 		#endif
 		Melder_setHelpProc (helpProc);
 	}

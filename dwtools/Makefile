@@ -1,10 +1,10 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20121214 Latest modification
+# djmw 20130826 Latest modification
 
 include ../makefile.defs
 
-CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG
+CPPFLAGS = -I ../num -I ../LPC -I ../fon -I ../sys -I ../stat -I ../dwsys -I ../external/portaudio -I ../external/espeak -I ../EEG -I ../kar
 
 OBJECTS = Activation.o AffineTransform.o \
 	Categories.o CategoriesEditor.o \
@@ -62,7 +62,7 @@ clean:
 libdwtools.a: $(OBJECTS)
 	touch libdwtools.a
 	rm libdwtools.a
-	ar cq libdwtools.a $(OBJECTS)
+	$(AR) cq libdwtools.a $(OBJECTS)
 	$(RANLIB) libdwtools.a
 
 $(OBJECTS): *.h ../num/NUM.h ../sys/*.h ../fon/*.h ../dwsys/*.h ../stat/*.h ../LPC/*.h ../external/espeak/*.h

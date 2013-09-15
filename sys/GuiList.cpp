@@ -56,7 +56,7 @@ Thing_implement (GuiList, GuiControl, 0);
 	}
 	static void _GuiGtkList_selectionChangedCallback (GtkTreeSelection *sel, gpointer void_me) {
 		iam (GuiList);
-		if (my d_selectionChangedCallback != NULL && ! my d_blockSelectionChangedCallback) {
+		if (my d_selectionChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
 			//Melder_casual ("Selection changed.");
 			struct structGuiListEvent event = { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
@@ -157,8 +157,9 @@ Thing_implement (GuiList, GuiControl, 0);
 	 */
 	- (void) tableViewSelectionDidChange: (NSNotification *) notification {
 		(void) notification;
+		trace ("enter");
 		GuiList me = d_userData;
-		if (me && my d_selectionChangedCallback) {
+		if (me && my d_selectionChangedCallback && ! my d_blockValueChangedCallbacks) {
 			struct structGuiListEvent event = { me };
 			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
@@ -482,17 +483,14 @@ GuiList GuiList_createShown (GuiForm parent, int left, int right, int top, int b
 }
 
 void structGuiList :: f_deleteAllItems () {
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
-		d_blockSelectionChangedCallback = true;
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (d_widget)));
 		gtk_list_store_clear (list_store);
-		d_blockSelectionChangedCallback = false;
 	#elif cocoa
-    
-        GuiCocoaList *list = (GuiCocoaList*)d_widget;
+        GuiCocoaList *list = (GuiCocoaList *) d_widget;
         [list.contents removeAllObjects];
         [list.tableView reloadData];
-
 	#elif win
 		ListBox_ResetContent (d_widget -> window);
 	#elif mac
@@ -503,20 +501,17 @@ void structGuiList :: f_deleteAllItems () {
 }
 
 void structGuiList :: f_deleteItem (long position) {
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
-		d_blockSelectionChangedCallback = true;
 		GtkTreeIter iter;
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (d_widget));
 		if (gtk_tree_model_iter_nth_child (tree_model, & iter, NULL, (gint) (position - 1))) {
 			gtk_list_store_remove (GTK_LIST_STORE (tree_model), & iter);
 		}
-		d_blockSelectionChangedCallback = false;
 	#elif cocoa
-    
-        GuiCocoaList *list = (GuiCocoaList*)d_widget;
-        [list.contents removeObjectAtIndex:position - 1];
-        [list.tableView reloadData];
-
+		GuiCocoaList *list = (GuiCocoaList *) d_widget;
+		[list. contents   removeObjectAtIndex: position - 1];
+		[list. tableView   reloadData];
 	#elif win
 		ListBox_DeleteString (d_widget -> window, position - 1);
 	#elif mac
@@ -529,16 +524,13 @@ void structGuiList :: f_deleteItem (long position) {
 }
 
 void structGuiList :: f_deselectAllItems () {
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
-		d_blockSelectionChangedCallback = true;
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (d_widget));
 		gtk_tree_selection_unselect_all (selection);
-		d_blockSelectionChangedCallback = false;
 	#elif cocoa
-    
-        GuiCocoaList *list = (GuiCocoaList*)d_widget;
-        [list.tableView deselectAll:nil];
-
+		GuiCocoaList *list = (GuiCocoaList *) d_widget;
+		[list.tableView deselectAll:nil];
 	#elif win
 		ListBox_SetSel (d_widget -> window, False, -1);
 	#elif mac
@@ -551,8 +543,8 @@ void structGuiList :: f_deselectAllItems () {
 }
 
 void structGuiList :: f_deselectItem (long position) {
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
-		d_blockSelectionChangedCallback = true;
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (d_widget));
 /*		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (d_widget)));
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);*/
@@ -563,12 +555,9 @@ void structGuiList :: f_deselectItem (long position) {
 		if (gtk_tree_model_iter_nth_child (tree_model, & iter, NULL, (gint) (position - 1))) {
 			gtk_tree_selection_unselect_iter (selection, & iter);
 		}
-		d_blockSelectionChangedCallback = false;
 	#elif cocoa
-    
-        GuiCocoaList *list = (GuiCocoaList*)d_widget;
-        [list.tableView deselectRow:position - 1];
-
+		GuiCocoaList *list = (GuiCocoaList *) d_widget;
+		[list. tableView   deselectRow: position - 1];
 	#elif win
 		ListBox_SetSel (d_widget -> window, False, position - 1);
 	#elif mac
@@ -604,17 +593,15 @@ long * structGuiList :: f_getSelectedPositions (long *numberOfSelectedPositions)
 		}
 		return selectedPositions;
 	#elif cocoa
-    
-        GuiCocoaList *list = (GuiCocoaList*)d_widget;
-        NSIndexSet *indexSet = [list.tableView selectedRowIndexes];
-        *numberOfSelectedPositions = 0;
-        selectedPositions = NUMvector <long> (1, [indexSet count]);   
-        NSUInteger currentIndex = [indexSet firstIndex];
-        while (currentIndex != NSNotFound) {
-            selectedPositions [++ *numberOfSelectedPositions] = currentIndex + 1;
-            currentIndex = [indexSet indexGreaterThanIndex:currentIndex];
-        }
-
+		GuiCocoaList *list = (GuiCocoaList *) d_widget;
+		NSIndexSet *indexSet = [list. tableView   selectedRowIndexes];
+		*numberOfSelectedPositions = 0;
+		selectedPositions = NUMvector <long> (1, [indexSet count]);   
+		NSUInteger currentIndex = [indexSet firstIndex];
+		while (currentIndex != NSNotFound) {
+			selectedPositions [++ *numberOfSelectedPositions] = currentIndex + 1;
+			currentIndex = [indexSet   indexGreaterThanIndex: currentIndex];
+		}
 	#elif win
 		int n = ListBox_GetSelCount (d_widget -> window), *indices;
 		if (n == 0) {
@@ -726,16 +713,15 @@ long structGuiList :: f_getTopPosition () {
 }
 
 void structGuiList :: f_insertItem (const wchar_t *itemText, long position) {
+	GuiControlBlockValueChangedCallbacks block (this);
 	/*
 	 * 'position' is the position of the new item in the list after insertion:
 	 * a value of 1 therefore puts the new item at the top of the list;
 	 * a value of 0 is special: the item is put at the bottom of the list.
 	 */
 	#if gtk
-		d_blockSelectionChangedCallback = true;
 		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (d_widget)));
 		gtk_list_store_insert_with_values (list_store, NULL, (gint) position - 1, COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
-		d_blockSelectionChangedCallback = false;
 		// TODO: Tekst opsplitsen
 		// does GTK know the '0' trick?
 		// it does know about NULL, to append in another function
@@ -771,14 +757,13 @@ void structGuiList :: f_insertItem (const wchar_t *itemText, long position) {
 }
 
 void structGuiList :: f_replaceItem (const wchar_t *itemText, long position) {
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
-		d_blockSelectionChangedCallback = true;
 		GtkTreeIter iter;
 		GtkTreeModel *tree_model = gtk_tree_view_get_model (GTK_TREE_VIEW (d_widget));
 		if (gtk_tree_model_iter_nth_child (tree_model, & iter, NULL, (gint) (position - 1))) {
 			gtk_list_store_set (GTK_LIST_STORE (tree_model), & iter, COLUMN_STRING, Melder_peekWcsToUtf8 (itemText), -1);
 		}
-		d_blockSelectionChangedCallback = false;
 /*
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position);
 		GtkTreeIter iter;
@@ -811,13 +796,12 @@ void structGuiList :: f_replaceItem (const wchar_t *itemText, long position) {
 }
 
 void structGuiList :: f_selectItem (long position) {
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
-		d_blockSelectionChangedCallback = true;
 		GtkTreeSelection *selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (d_widget));
 		GtkTreePath *path = gtk_tree_path_new_from_indices ((gint) position - 1, -1);
 		gtk_tree_selection_select_path (selection, path);
 		gtk_tree_path_free (path);
-		d_blockSelectionChangedCallback = false;
 
 // TODO: check of het bovenstaande werkt, dan kan dit weg
 //		GtkListStore *list_store = GTK_LIST_STORE (gtk_tree_view_get_model (GTK_TREE_VIEW (d_widget)));

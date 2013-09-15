@@ -1,6 +1,6 @@
 /* Ltas_extensions.cpp
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,13 @@ void Ltas_fitTiltLine (Ltas me, double fmin, double fmax, bool lnf, int method, 
 		autoNUMvector<double> x (1, numberOfSamples);
 		autoNUMvector<double> y (1, numberOfSamples);
 		for (long i = ifmin; i <= ifmax; i++) {
-			x[i] = my x1 + (i - 1) * my dx;
+			long ixy = i - ifmin + 1;
+			x[ixy] = my x1 + (i - 1) * my dx;
 			if (lnf) {
-				x[i] = log (x[i]);
+				// For Ltas always x1 > 0
+				x[ixy] = log10 (x[ixy]);
 			}
-			y[i] = my z[1][i];
+			y[ixy] = my z[1][i];
 		}
 		NUMlineFit (x.peek(), y.peek(), numberOfSamples, a, b, method);
 	} catch (MelderError) {

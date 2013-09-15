@@ -650,7 +650,6 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 	iam (HyperPage);
 	if (my g == NULL) return;   // Could be the case in the very beginning.
-if ((gtk || cocoa) && event -> type != BUTTON_PRESS) return;
 	if (! my links) return;
 	for (long ilink = 1; ilink <= my links -> size; ilink ++) {
 		HyperLink link = (HyperLink) my links -> item [ilink];		

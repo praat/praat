@@ -112,6 +112,12 @@ void structGraphicsScreen :: v_flushWs () {
 		//gdk_flush ();
 		// TODO: een aanroep die de eventuele grafische buffer ledigt,
 		// zodat de gebruiker de grafica ziet ook al blijft Praat in hetzelfde event zitten
+	#elif cocoa
+		if (d_drawingArea) {
+			GuiShell shell = d_drawingArea -> d_shell;
+			Melder_assert (shell != NULL);
+        	[shell -> d_cocoaWindow   flushWindow];
+		}
 	#elif win
 		/*GdiFlush ();*/
 	#elif mac
@@ -156,7 +162,7 @@ void structGraphicsScreen :: v_clearWs () {
 			cairo_set_source_rgb (d_cairoGraphicsContext, 0.0, 0.0, 0.0);
 		}
 	#elif cocoa
-        GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea*) d_drawingArea -> d_widget;
+        GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) d_drawingArea -> d_widget;
         if (cocoaDrawingArea) {
             NSRect rect;
             if (this -> d_x1DC < this -> d_x2DC) {
@@ -173,6 +179,7 @@ void structGraphicsScreen :: v_clearWs () {
                 rect.origin.y = this -> d_y2DC;
                 rect.size.height = this -> d_y1DC - this -> d_y2DC;
             }
+			[cocoaDrawingArea lockFocus];
             CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
             CGContextSaveGState (context);
             CGContextSetAlpha (context, 1.0);
@@ -188,6 +195,7 @@ void structGraphicsScreen :: v_clearWs () {
             CGContextFillRect (context, rect);
             //CGContextSynchronize (context);
             CGContextRestoreGState (context);
+			[cocoaDrawingArea unlockFocus];
         }
 	#elif win
 		RECT rect;
@@ -561,7 +569,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
             if (my d_macView) {            
                 [my d_macView lockFocus];
                 my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-                NSCAssert (my d_macGraphicsContext, @"nil context");
+                Melder_assert (my d_macGraphicsContext != NULL);
                 GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
                 CGContextTranslateCTM (my d_macGraphicsContext, 0, cocoaDrawingArea.bounds.size.height);
                 CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);

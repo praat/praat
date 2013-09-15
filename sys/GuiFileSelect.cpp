@@ -59,7 +59,9 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 		[openPanel setCanChooseDirectories: NO];
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
-				my addString (Melder_peekUtf8ToWcs ([[url path] UTF8String]));
+				structMelderFile file = { 0 };
+				Melder_8bitFileRepresentationToWcs_inline ([[url path] UTF8String], file. path);
+				my addString (file. path);
 			}
 		}
 		setlocale (LC_ALL, "en_US");
@@ -178,7 +180,9 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (defaultName)]];
 		if ([savePanel runModal] == NSFileHandlingPanelOKButton) {
 			const char *outfileName_utf8 = [[[savePanel URL] path] UTF8String];
-			outfileName = Melder_utf8ToWcs (outfileName_utf8);
+			structMelderFile file = { 0 };
+			Melder_8bitFileRepresentationToWcs_inline (outfileName_utf8, file. path);
+			outfileName = Melder_wcsdup (file. path);
 		}
 		setlocale (LC_ALL, "en_US");
 	#elif mac
@@ -286,7 +290,9 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
 				const char *directoryName_utf8 = [[url path] UTF8String];
-				directoryName = Melder_utf8ToWcs (directoryName_utf8);
+				structMelderDir dir = { 0 };
+				Melder_8bitFileRepresentationToWcs_inline (directoryName_utf8, dir. path);
+				directoryName = Melder_wcsdup (dir. path);
 			}
 		}
 		setlocale (LC_ALL, "en_US");
