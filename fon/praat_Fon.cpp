@@ -41,6 +41,7 @@
 #include "Matrix_and_Polygon.h"
 #include "MovieWindow.h"
 #include "ParamCurve.h"
+#include "Photo.h"
 #include "Pitch_Intensity.h"
 #include "Pitch_to_PitchTier.h"
 #include "Pitch_to_PointProcess.h"
@@ -3049,6 +3050,280 @@ END
 
 DIRECT (ParamCurve_help) Melder_help (L"ParamCurve"); END
 
+/***** PHOTO *****/
+
+FORM (Photo_create, L"Create Photo", L"Create Photo...")
+	WORD (L"Name", L"xy")
+	REAL (L"xmin", L"1.0")
+	REAL (L"xmax", L"1.0")
+	NATURAL (L"Number of columns", L"1")
+	POSITIVE (L"dx", L"1.0")
+	REAL (L"x1", L"1.0")
+	REAL (L"ymin", L"1.0")
+	REAL (L"ymax", L"1.0")
+	NATURAL (L"Number of rows", L"1")
+	POSITIVE (L"dy", L"1.0")
+	REAL (L"y1", L"1.0")
+	LABEL (L"", L"Red formula:")
+	TEXTFIELD (L"redFormula", L"x*y")
+	LABEL (L"", L"Green formula:")
+	TEXTFIELD (L"greenFormula", L"x*y")
+	LABEL (L"", L"Blue formula:")
+	TEXTFIELD (L"blueFormula", L"x*y")
+	OK
+DO
+	double xmin = GET_REAL (L"xmin"), xmax = GET_REAL (L"xmax");
+	double ymin = GET_REAL (L"ymin"), ymax = GET_REAL (L"ymax");
+	if (xmax < xmin) Melder_throw ("xmax (", Melder_single (xmax), ") should not be less than xmin (", Melder_single (xmin), ").");
+	if (ymax < ymin) Melder_throw ("ymax (", Melder_single (ymax), ") should not be less than ymin (", Melder_single (ymin), ").");
+	autoPhoto me = Photo_create (
+		xmin, xmax, GET_INTEGER (L"Number of columns"), GET_REAL (L"dx"), GET_REAL (L"x1"),
+		ymin, ymax, GET_INTEGER (L"Number of rows"), GET_REAL (L"dy"), GET_REAL (L"y1"));
+	Matrix_formula (my d_red,   GET_STRING (L"redFormula"),   interpreter, NULL);
+	Matrix_formula (my d_green, GET_STRING (L"greenFormula"), interpreter, NULL);
+	Matrix_formula (my d_blue,  GET_STRING (L"blueFormula"),  interpreter, NULL);
+	praat_new (me.transfer(), GET_STRING (L"Name"));
+END
+
+FORM (Photo_createSimple, L"Create simple Photo", L"Create simple Photo...")
+	WORD (L"Name", L"xy")
+	NATURAL (L"Number of rows", L"10")
+	NATURAL (L"Number of columns", L"10")
+	LABEL (L"", L"Red formula:")
+	TEXTFIELD (L"redFormula", L"x*y")
+	LABEL (L"", L"Green formula:")
+	TEXTFIELD (L"greenFormula", L"x*y")
+	LABEL (L"", L"Blue formula:")
+	TEXTFIELD (L"blueFormula", L"x*y")
+	OK
+DO
+	autoPhoto me = Photo_createSimple (GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"));
+	Matrix_formula (my d_red,   GET_STRING (L"redFormula"),   interpreter, NULL);
+	Matrix_formula (my d_green, GET_STRING (L"greenFormula"), interpreter, NULL);
+	Matrix_formula (my d_blue,  GET_STRING (L"blueFormula"),  interpreter, NULL);
+	praat_new (me.transfer(), GET_STRING (L"Name"));
+END
+
+DIRECT (Photo_extractBlue)
+	LOOP {
+		iam (Photo);
+		autoMatrix thee = Data_copy (my d_blue);
+		praat_new (thee.transfer(), my name, L"_blue");
+	}
+END
+
+DIRECT (Photo_extractGreen)
+	LOOP {
+		iam (Photo);
+		autoMatrix thee = Data_copy (my d_green);
+		praat_new (thee.transfer(), my name, L"_green");
+	}
+END
+
+DIRECT (Photo_extractRed)
+	LOOP {
+		iam (Photo);
+		autoMatrix thee = Data_copy (my d_red);
+		praat_new (thee.transfer(), my name, L"_red");
+	}
+END
+
+DIRECT (Photo_extractTransparency)
+	LOOP {
+		iam (Photo);
+		autoMatrix thee = Data_copy (my d_transparency);
+		praat_new (thee.transfer(), my name, L"_transparency");
+	}
+END
+
+FORM (Photo_formula_red, L"Photo Formula (red)", L"Formula (red)...")
+	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
+	TEXTFIELD (L"formula", L"self")
+	OK
+DO
+	LOOP {
+		iam (Photo);
+		try {
+			Matrix_formula (my d_red, GET_STRING (L"formula"), interpreter, NULL);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
+			throw;
+		}
+	}
+END
+
+FORM (Photo_formula_green, L"Photo Formula (green)", L"Formula (green)...")
+	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
+	TEXTFIELD (L"formula", L"self")
+	OK
+DO
+	LOOP {
+		iam (Photo);
+		try {
+			Matrix_formula (my d_green, GET_STRING (L"formula"), interpreter, NULL);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
+			throw;
+		}
+	}
+END
+
+FORM (Photo_formula_blue, L"Photo Formula (blue)", L"Formula (blue)...")
+	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
+	TEXTFIELD (L"formula", L"self")
+	OK
+DO
+	LOOP {
+		iam (Photo);
+		try {
+			Matrix_formula (my d_blue, GET_STRING (L"formula"), interpreter, NULL);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
+			throw;
+		}
+	}
+END
+
+FORM (Photo_formula_transparency, L"Photo Formula (transparency)", L"Formula (transparency)...")
+	LABEL (L"label", L"y := y1; for row := 1 to nrow do { x := x1; "
+		"for col := 1 to ncol do { self [row, col] := `formula' ; x := x + dx } y := y + dy }")
+	TEXTFIELD (L"formula", L"self")
+	OK
+DO
+	LOOP {
+		iam (Photo);
+		try {
+			Matrix_formula (my d_transparency, GET_STRING (L"formula"), interpreter, NULL);
+			praat_dataChanged (me);
+		} catch (MelderError) {
+			praat_dataChanged (me);   // in case of error, the Photo may have partially changed
+			throw;
+		}
+	}
+END
+
+FORM (Photo_paintCells, L"Photo: Paint cells with colour", L"Photo: Paint cells...")
+	REAL (L"From x =", L"0.0")
+	REAL (L"To x =", L"0.0")
+	REAL (L"From y =", L"0.0")
+	REAL (L"To y =", L"0.0")
+	OK
+DO
+	LOOP {
+		iam (Photo);
+		autoPraatPicture picture;
+		my f_paintCells (GRAPHICS,
+			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
+	}
+END
+
+FORM (Photo_paintImage, L"Photo: Paint colour image", 0)
+	REAL (L"From x =", L"0.0")
+	REAL (L"To x =", L"0.0")
+	REAL (L"From y =", L"0.0")
+	REAL (L"To y =", L"0.0")
+	OK
+DO
+	LOOP {
+		iam (Photo);
+		autoPraatPicture picture;
+		my f_paintImage (GRAPHICS,
+			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
+	}
+END
+
+FORM_WRITE (Photo_saveAsAppleIconFile, L"Save as Apple icon file", 0, L"icns")
+	LOOP {
+		iam (Photo);
+		my f_saveAsAppleIconFile (file);
+	}
+END
+
+FORM_WRITE (Photo_saveAsGIF, L"Save as GIF file", 0, L"gif")
+	LOOP {
+		iam (Photo);
+		my f_saveAsGIF (file);
+	}
+END
+
+FORM_WRITE (Photo_saveAsJPEG, L"Save as JPEG file", 0, L"jpg")
+	LOOP {
+		iam (Photo);
+		my f_saveAsJPEG (file);
+	}
+END
+
+FORM_WRITE (Photo_saveAsJPEG2000, L"Save as JPEG-2000 file", 0, L"jpg")
+	LOOP {
+		iam (Photo);
+		my f_saveAsJPEG2000 (file);
+	}
+END
+
+FORM_WRITE (Photo_saveAsPNG, L"Save as PNG file", 0, L"png")
+	LOOP {
+		iam (Photo);
+		my f_saveAsPNG (file);
+	}
+END
+
+FORM_WRITE (Photo_saveAsTIFF, L"Save as TIFF file", 0, L"tiff")
+	LOOP {
+		iam (Photo);
+		my f_saveAsTIFF (file);
+	}
+END
+
+FORM_WRITE (Photo_saveAsWindowsBitmapFile, L"Save as Windows bitmap file", 0, L"bmp")
+	LOOP {
+		iam (Photo);
+		my f_saveAsWindowsBitmapFile (file);
+	}
+END
+
+FORM_WRITE (Photo_saveAsWindowsIconFile, L"Save as Windows icon file", 0, L"ico")
+	LOOP {
+		iam (Photo);
+		my f_saveAsWindowsIconFile (file);
+	}
+END
+
+/***** PHOTO & MATRIX *****/
+
+DIRECT (Photo_Matrix_replaceBlue)
+	Photo me = FIRST (Photo);
+	Matrix thee = FIRST (Matrix);
+	my f_replaceBlue (thee);
+	praat_dataChanged (me);
+END
+
+DIRECT (Photo_Matrix_replaceGreen)
+	Photo me = FIRST (Photo);
+	Matrix thee = FIRST (Matrix);
+	my f_replaceGreen (thee);
+	praat_dataChanged (me);
+END
+
+DIRECT (Photo_Matrix_replaceRed)
+	Photo me = FIRST (Photo);
+	Matrix thee = FIRST (Matrix);
+	my f_replaceRed (thee);
+	praat_dataChanged (me);
+END
+
+DIRECT (Photo_Matrix_replaceTransparency)
+	Photo me = FIRST (Photo);
+	Matrix thee = FIRST (Matrix);
+	my f_replaceTransparency (thee);
+	praat_dataChanged (me);
+END
+
 /***** PITCH *****/
 
 DIRECT (Pitch_getNumberOfVoicedFrames)
@@ -5984,6 +6259,16 @@ static Any chronologicalTextGridTextFileRecognizer (int nread, const char *heade
 	return NULL;
 }
 
+static Any imageFileRecognizer (int nread, const char *header, MelderFile file) {
+	const wchar_t *fileName = MelderFile_name (file);
+	(void) header;
+	if (wcsstr (fileName, L".jpg") || wcsstr (fileName, L".JPG") || wcsstr (fileName, L".png") || wcsstr (fileName, L".PNG") ||
+	    wcsstr (fileName, L".tiff") || wcsstr (fileName, L".TIFF") || wcsstr (fileName, L".tif") || wcsstr (fileName, L".TIFF")) {
+		return Photo_readFromImageFile (file);
+	}
+	return NULL;
+}
+
 /***** buttons *****/
 
 void praat_TableOfReal_init (ClassInfo klas);   // Buttons for TableOfReal and for its subclasses.
@@ -6047,13 +6332,13 @@ void praat_uvafon_init () {
 	Thing_recognizeClassesByName (classSound, classMatrix, classPolygon, classPointProcess, classParamCurve,
 		classSpectrum, classLtas, classSpectrogram, classFormant,
 		classExcitation, classCochleagram, classVocalTract, classFormantPoint, classFormantTier, classFormantGrid,
-		classLabel, classTier, classAutosegment,   /* Three obsolete classes. */
+		classLabel, classTier, classAutosegment,   // three obsolete classes
 		classIntensity, classPitch, classHarmonicity,
 		classTransition,
 		classRealPoint, classRealTier, classPitchTier, classIntensityTier, classDurationTier, classAmplitudeTier, classSpectrumTier,
 		classManipulation, classTextPoint, classTextInterval, classTextTier,
 		classIntervalTier, classTextGrid, classLongSound, classWordList, classSpellingChecker,
-		classMovie, classCorpus,
+		classMovie, classCorpus, classPhoto,
 		NULL);
 	Thing_recognizeClassByOtherName (classManipulation, L"Psola");
 	Thing_recognizeClassByOtherName (classManipulation, L"Analysis");
@@ -6061,6 +6346,7 @@ void praat_uvafon_init () {
 
 	Data_recognizeFileType (cgnSyntaxFileRecognizer);
 	Data_recognizeFileType (chronologicalTextGridTextFileRecognizer);
+	Data_recognizeFileType (imageFileRecognizer);
 
 	structManipulationEditor :: f_preferences ();
 	structSpectrumEditor     :: f_preferences ();
@@ -6075,6 +6361,9 @@ void praat_uvafon_init () {
 	praat_addMenuCommand (L"Objects", L"New", L"Matrix", 0, 0, 0);
 		praat_addMenuCommand (L"Objects", L"New", L"Create Matrix...", 0, 1, DO_Matrix_create);
 		praat_addMenuCommand (L"Objects", L"New", L"Create simple Matrix...", 0, 1, DO_Matrix_createSimple);
+		praat_addMenuCommand (L"Objects", L"New", L"-- colour matrix --", 0, 1, 0);
+		praat_addMenuCommand (L"Objects", L"New", L"Create Photo...", 0, 1, DO_Photo_create);
+		praat_addMenuCommand (L"Objects", L"New", L"Create simple Photo...", 0, 1, DO_Photo_createSimple);
 	praat_addMenuCommand (L"Objects", L"Open", L"-- read movie --", 0, praat_HIDDEN, 0);
 	praat_addMenuCommand (L"Objects", L"Open", L"Open movie file...", 0, praat_HIDDEN, DO_Movie_openFromSoundFile);
 	praat_addMenuCommand (L"Objects", L"Open", L"-- read raw --", 0, 0, 0);
@@ -6458,6 +6747,28 @@ praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classParamCurve, 0, L"Draw", 0, 0, 0);
 	praat_addAction1 (classParamCurve, 0, L"Draw...", 0, 0, DO_ParamCurve_draw);
 
+	praat_addAction1 (classPhoto, 0, L"Draw -", 0, 0, 0);
+		praat_addAction1 (classPhoto, 0, L"Paint image...", 0, 1, DO_Photo_paintImage);
+		praat_addAction1 (classPhoto, 0, L"Paint cells...", 0, 1, DO_Photo_paintCells);
+	praat_addAction1 (classPhoto, 0, L"Modify -", 0, 0, 0);
+		praat_addAction1 (classPhoto, 0, L"Formula (red)...", 0, 1, DO_Photo_formula_red);
+		praat_addAction1 (classPhoto, 0, L"Formula (green)...", 0, 1, DO_Photo_formula_green);
+		praat_addAction1 (classPhoto, 0, L"Formula (blue)...", 0, 1, DO_Photo_formula_blue);
+		praat_addAction1 (classPhoto, 0, L"Formula (transparency)...", 0, 1, DO_Photo_formula_transparency);
+	praat_addAction1 (classPhoto, 0, L"Extract -", 0, 0, 0);
+		praat_addAction1 (classPhoto, 0, L"Extract red", 0, 1, DO_Photo_extractRed);
+		praat_addAction1 (classPhoto, 0, L"Extract green", 0, 1, DO_Photo_extractGreen);
+		praat_addAction1 (classPhoto, 0, L"Extract blue", 0, 1, DO_Photo_extractBlue);
+		praat_addAction1 (classPhoto, 0, L"Extract transparency", 0, 1, DO_Photo_extractTransparency);
+	praat_addAction1 (classPhoto, 1, L"Save as PNG file...", 0, 0, DO_Photo_saveAsPNG);
+	praat_addAction1 (classPhoto, 1, L"Save as TIFF file...", 0, 0, DO_Photo_saveAsTIFF);
+	praat_addAction1 (classPhoto, 1, L"Save as GIF file...", 0, 0, DO_Photo_saveAsGIF);
+	praat_addAction1 (classPhoto, 1, L"Save as Windows bitmap file...", 0, 0, DO_Photo_saveAsWindowsBitmapFile);
+	praat_addAction1 (classPhoto, 1, L"Save as JPEG file...", 0, 0, DO_Photo_saveAsJPEG);
+	praat_addAction1 (classPhoto, 1, L"Save as JPEG-2000 file...", 0, 0, DO_Photo_saveAsJPEG2000);
+	praat_addAction1 (classPhoto, 1, L"Save as Apple icon file...", 0, 0, DO_Photo_saveAsAppleIconFile);
+	praat_addAction1 (classPhoto, 1, L"Save as Windows icon file...", 0, 0, DO_Photo_saveAsWindowsIconFile);
+
 	praat_addAction1 (classPitch, 0, L"Pitch help", 0, 0, DO_Pitch_help);
 	praat_addAction1 (classPitch, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_Pitch_edit);
 	praat_addAction1 (classPitch, 1, L"Edit", 0, praat_HIDDEN, DO_Pitch_edit);
@@ -6787,6 +7098,10 @@ praat_addAction1 (classTransition, 0, L"Cast", 0, 0, 0);
 	praat_addAction2 (classManipulation, 1, classDurationTier, 1, L"Replace duration tier", 0, 0, DO_Manipulation_replaceDurationTier);
 	praat_addAction2 (classManipulation, 1, classTextTier, 1, L"To Manipulation", 0, 0, DO_Manipulation_TextTier_to_Manipulation);
 	praat_addAction2 (classMatrix, 1, classSound, 1, L"To ParamCurve", 0, 0, DO_Matrix_to_ParamCurve);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace red", 0, 0, DO_Photo_Matrix_replaceRed);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace green", 0, 0, DO_Photo_Matrix_replaceGreen);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace blue", 0, 0, DO_Photo_Matrix_replaceBlue);
+	praat_addAction2 (classPhoto, 1, classMatrix, 1, L"Replace transparency", 0, 0, DO_Photo_Matrix_replaceTransparency);
 	praat_addAction2 (classPitch, 1, classPitchTier, 1, L"Draw...", 0, 0, DO_PitchTier_Pitch_draw);
 	praat_addAction2 (classPitch, 1, classPitchTier, 1, L"To Pitch", 0, 0, DO_Pitch_PitchTier_to_Pitch);
 	praat_addAction2 (classPitch, 1, classPointProcess, 1, L"To PitchTier", 0, 0, DO_Pitch_PointProcess_to_PitchTier);

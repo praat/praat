@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,14 +19,14 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "Sampled.h"
+#include "SampledXY.h"
 #include "Graphics.h"
 #include "Table.h"
 #include "TableOfReal.h"
 #include "Interpreter_decl.h"
 
 #include "Matrix_def.h"
-oo_CLASS_CREATE (Matrix, Sampled);
+oo_CLASS_CREATE (Matrix, SampledXY);
 
 void Matrix_init
 	(Matrix me, double xmin, double xmax, long nx, double dx, double x1,

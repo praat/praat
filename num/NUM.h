@@ -2,7 +2,7 @@
 #define _NUM_h_
 /* NUM.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 #define NUMundefined  HUGE_VAL
 #define NUMdefined(x)  ((x) != NUMundefined)
 
-/********** Arrays with one index (NUMarrays.c) **********/
+/********** Arrays with one index (NUMarrays.cpp) **********/
 
 void * NUMvector (long elementSize, long lo, long hi);
 /*
@@ -173,7 +173,7 @@ void NUMvector_insert (long elementSize, void **v, long lo, long *hi, long posit
 	On failure, *v and *hi are not changed.
 */
 
-/********** Arrays with two indices (NUMarrays.c) **********/
+/********** Arrays with two indices (NUMarrays.cpp) **********/
 
 void * NUMmatrix (long elementSize, long row1, long row2, long col1, long col2);
 /*

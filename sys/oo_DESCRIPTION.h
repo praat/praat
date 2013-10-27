@@ -252,6 +252,9 @@
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 1, L"" #min, L"" #max },
 #undef oo_STRUCT_VECTOR
 #define oo_STRUCT_VECTOR(Type,x,n)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 1, (const wchar_t *) 0, L"" #n },
+#define oo_STRUCT_MATRIX_FROM(Type,x,r1,r2,c1,c2)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 2, L"" #r1, L"" #r2, L"" #c1, L"" #c2 },
+#undef oo_STRUCT_MATRIX
+#define oo_STRUCT_MATRIX(Type,x,nrow,ncol)  { L"" #x, structwa, Melder_offsetof (ooSTRUCT, x), sizeof (struct struct##Type), L"" #Type, & struct##Type :: s_description, 2, (const wchar_t *) 0, L"" #nrow, (const wchar_t *) 0, L"" #ncol },
 
 #define oo_OBJECT(Type,version,x)  { L"" #x, objectwa, Melder_offsetof (ooSTRUCT, x), sizeof (Type), L"" #Type, & theClassInfo_##Type },
 #define oo_COLLECTION(Type,x,ItemType,version)  { L"" #x, collectionwa, Melder_offsetof (ooSTRUCT, x), sizeof (class struct##ItemType), L"" #Type, & theClassInfo_##Type, 0, (const wchar_t *) & theClassInfo_##ItemType },

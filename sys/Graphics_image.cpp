@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@
  * pb 2011/03/17 C++
  * pb 2012/04/21 on PostScript, minimal image resolution raised from 106 to 300 dpi
  * pb 2012/05/08 erased all QuickDraw
+ * pb 2013/10/22 colour
  */
 
 #include "GraphicsP.h"
@@ -46,7 +47,7 @@
 #define wdx(x)  ((x) * my scaleX + my deltaX)
 #define wdy(y)  ((y) * my scaleY + my deltaY)
 
-static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_float, unsigned char **z_byte,
+static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
 	long ix1, long ix2, long x1DC, long x2DC,
 	long iy1, long iy2, long y1DC, long y2DC,
 	double minimum, double maximum,
@@ -107,22 +108,42 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				#endif
 				for (ix = ix1; ix <= ix2; ix ++) {
 					long left = lefts [ix], right = lefts [ix + 1];
-					long value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
 					if (right < clipx1 || left > clipx2) continue;
 					if (left < clipx1) left = clipx1;
 					if (right > clipx2) right = clipx2;
-					#if cairo
-						cairo_set_source (my d_cairoGraphicsContext, grey [value <= 0 ? 0 : value >= sizeof (grey) / sizeof (*grey) ? sizeof (grey) / sizeof (*grey) : value]);
-						cairo_rectangle (my d_cairoGraphicsContext, left, top, right - left, bottom - top);
-						cairo_fill (my d_cairoGraphicsContext);
-					#elif win
-						rect. left = left; rect. right = right;
-						FillRect (my d_gdiGraphicsContext, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
-					#elif mac
-						double igrey = ( value <= 0 ? 0 : value >= 255 ? 255 : value ) / 255.0;
-						CGContextSetRGBFillColor (my d_macGraphicsContext, igrey, igrey, igrey, 1.0);
-						CGContextFillRect (my d_macGraphicsContext, CGRectMake (left, top, right - left, bottom - top));
-					#endif
+					if (z_rgbt) {
+						#if cairo
+							// NYI
+						#elif win
+							// NYI
+						#elif mac
+							double red          = z_rgbt [iy] [ix]. red;
+							double green        = z_rgbt [iy] [ix]. green;
+							double blue         = z_rgbt [iy] [ix]. blue;
+							double transparency = z_rgbt [iy] [ix]. transparency;
+							red =   ( red   <= 0.0 ? 0.0 : red   >= 1.0 ? 1.0 : red   );
+							green = ( green <= 0.0 ? 0.0 : green >= 1.0 ? 1.0 : green );
+							blue =  ( blue  <= 0.0 ? 0.0 : blue  >= 1.0 ? 1.0 : blue  );
+							CGContextSetRGBFillColor (my d_macGraphicsContext, red, green, blue, 1.0 - transparency);
+							CGContextFillRect (my d_macGraphicsContext, CGRectMake (left, top, right - left, bottom - top));
+						#endif
+					} else {
+						#if cairo
+							long value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
+							cairo_set_source (my d_cairoGraphicsContext, grey [value <= 0 ? 0 : value >= sizeof (grey) / sizeof (*grey) ? sizeof (grey) / sizeof (*grey) : value]);
+							cairo_rectangle (my d_cairoGraphicsContext, left, top, right - left, bottom - top);
+							cairo_fill (my d_cairoGraphicsContext);
+						#elif win
+							long value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
+							rect. left = left; rect. right = right;
+							FillRect (my d_gdiGraphicsContext, & rect, greyBrush [value <= 0 ? 0 : value >= 255 ? 255 : value]);
+						#elif mac
+							double value = offset - scale * ( z_float ? z_float [iy] [ix] : z_byte [iy] [ix] );
+							double igrey = ( value <= 0 ? 0 : value >= 255 ? 255 : value ) / 255.0;
+							CGContextSetRGBFillColor (my d_macGraphicsContext, igrey, igrey, igrey, 1.0);
+							CGContextFillRect (my d_macGraphicsContext, CGRectMake (left, top, right - left, bottom - top));
+						#endif
+					}
 				}
 			}
 			
@@ -247,6 +268,30 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 							double value = offset - scale * interpol;
 							PUT_PIXEL
 						}
+					} else if (z_rgbt) {
+						double_rgbt *ztop = z_rgbt [itop], *zbottom = z_rgbt [ibottom];
+						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
+							double red =
+								rightWeight [xDC] * (topWeight * ztop [iright [xDC]]. red + bottomWeight * zbottom [iright [xDC]]. red) +
+								leftWeight  [xDC] * (topWeight * ztop [ileft  [xDC]]. red + bottomWeight * zbottom [ileft  [xDC]]. red);
+							double green =
+								rightWeight [xDC] * (topWeight * ztop [iright [xDC]]. green + bottomWeight * zbottom [iright [xDC]]. green) +
+								leftWeight  [xDC] * (topWeight * ztop [ileft  [xDC]]. green + bottomWeight * zbottom [ileft  [xDC]]. green);
+							double blue =
+								rightWeight [xDC] * (topWeight * ztop [iright [xDC]]. blue + bottomWeight * zbottom [iright [xDC]]. blue) +
+								leftWeight  [xDC] * (topWeight * ztop [ileft  [xDC]]. blue + bottomWeight * zbottom [ileft  [xDC]]. blue);
+							double transparency =
+								rightWeight [xDC] * (topWeight * ztop [iright [xDC]]. transparency + bottomWeight * zbottom [iright [xDC]]. transparency) +
+								leftWeight  [xDC] * (topWeight * ztop [ileft  [xDC]]. transparency + bottomWeight * zbottom [ileft  [xDC]]. transparency);
+							if (red          < 0.0) red          = 0.0; else if (red          > 1.0) red          = 1.0;
+							if (green        < 0.0) green        = 0.0; else if (green        > 1.0) green        = 1.0;
+							if (blue         < 0.0) blue         = 0.0; else if (blue         > 1.0) blue         = 1.0;
+							if (transparency < 0.0) transparency = 0.0; else if (transparency > 1.0) transparency = 1.0;
+							*pixelAddress ++ = red          * 255.0;
+							*pixelAddress ++ = green        * 255.0;
+							*pixelAddress ++ = blue         * 255.0;
+							*pixelAddress ++ = transparency * 255.0;
+						}
 					} else {
 						unsigned char *ztop = z_byte [itop], *zbottom = z_byte [ibottom];
 						for (xDC = clipx1; xDC < clipx2; xDC += undersampling) {
@@ -357,7 +402,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 	#endif
 }
 
-static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double **z_float, unsigned char **z_byte,
+static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
 	long ix1, long ix2, long x1DC, long x2DC,
 	long iy1, long iy2, long y1DC, long y2DC,
 	double minimum, double maximum,
@@ -526,60 +571,87 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 	my d_printf (my d_file, "grestore\n");
 }
 
-static void _cellArrayOrImage (Graphics me, double **z_float, unsigned char **z_byte,
+static void _cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
 	long ix1, long ix2, long x1DC, long x2DC,
 	long iy1, long iy2, long y1DC, long y2DC, double minimum, double maximum,
 	long clipx1, long clipx2, long clipy1, long clipy2, int interpolate)
 {
 	if (my screen) {
-		_GraphicsScreen_cellArrayOrImage (static_cast <GraphicsScreen> (me), z_float, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
+		_GraphicsScreen_cellArrayOrImage (static_cast <GraphicsScreen> (me), z_float, z_rgbt, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
 			minimum, maximum, clipx1, clipx2, clipy1, clipy2, interpolate);
 	} else if (my postScript) {
-		_GraphicsPostscript_cellArrayOrImage (static_cast <GraphicsPostscript> (me), z_float, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
+		_GraphicsPostscript_cellArrayOrImage (static_cast <GraphicsPostscript> (me), z_float, z_rgbt, z_byte, ix1, ix2, x1DC, x2DC, iy1, iy2, y1DC, y2DC,
 			minimum, maximum, clipx1, clipx2, clipy1, clipy2, interpolate);
 	}
 	_Graphics_setColour (me, my colour);
 }
 
-static void cellArrayOrImage (I, double **z_float, unsigned char **z_byte,
+static void cellArrayOrImage (I, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
 	double minimum, double maximum, int interpolate)
 {
 	iam (Graphics);
 	if (ix2 < ix1 || iy2 < iy1 || minimum == maximum) return;
-	_cellArrayOrImage (me, z_float, z_byte,
+	_cellArrayOrImage (me, z_float, z_rgbt, z_byte,
 		ix1, ix2, wdx (x1WC), wdx (x2WC),
 		iy1, iy2, wdy (y1WC), wdy (y2WC), minimum, maximum,
 		wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC), interpolate);
 	if (my recording) {
-		long nrow = iy2 - iy1 + 1, ncol = ix2 - ix1 + 1, ix, iy;
-		op (interpolate ? ( z_float ? IMAGE : IMAGE8 ) :
-			 (z_float ? CELL_ARRAY : CELL_ARRAY8 ), 8 + nrow * ncol);
-		put (x1WC); put (x2WC); put (y1WC); put (y2WC); put (minimum); put (maximum);
+		long nrow = iy2 - iy1 + 1, ncol = ix2 - ix1 + 1;
+		op (interpolate ? ( z_float ? IMAGE      : z_rgbt ? IMAGE_COLOUR      : IMAGE8 ) :
+		                  ( z_float ? CELL_ARRAY : z_rgbt ? CELL_ARRAY_COLOUR : CELL_ARRAY8 ),
+		    8 + nrow * ncol * ( z_rgbt ? 4 : 1 ));
+		put (x1WC); put (x2WC); put (y1WC); put (y2WC);
+		put (minimum); put (maximum);
 		put (nrow); put (ncol);
-		if (z_float) for (iy = iy1; iy <= iy2; iy ++)
-			{ double *row = z_float [iy]; for (ix = ix1; ix <= ix2; ix ++) put (row [ix]); }
-		else for (iy = iy1; iy <= iy2; iy ++)
-			{ unsigned char *row = z_byte [iy]; for (ix = ix1; ix <= ix2; ix ++) put (row [ix]); }
+		for (long iy = iy1; iy <= iy2; iy ++) {
+			if (z_float) {
+				double *row = z_float [iy];
+				for (long ix = ix1; ix <= ix2; ix ++) {
+					put (row [ix]);
+				}
+			} else if (z_rgbt) {
+				double_rgbt *row = z_rgbt [iy];
+				for (long ix = ix1; ix <= ix2; ix ++) {
+					put (row [ix]. red);
+					put (row [ix]. green);
+					put (row [ix]. blue);
+					put (row [ix]. transparency);
+				}
+			} else {
+				unsigned char *row = z_byte [iy];
+				for (long ix = ix1; ix <= ix2; ix ++) {
+					put (row [ix]);
+				}
+			}
+		}
 	}
 }
 
 void Graphics_cellArray (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+
+void Graphics_cellArray_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1WC, double x2WC,
+	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
+{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
 
 void Graphics_cellArray8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
+{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, FALSE); }
 
 void Graphics_image (Graphics me, double **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
-{ cellArrayOrImage (me, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+{ cellArrayOrImage (me, z, NULL, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+
+void Graphics_image_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1WC, double x2WC,
+	long iy1, long iy2, double y1WC, double y2WC, double minimum, double maximum)
+{ cellArrayOrImage (me, NULL, z, NULL, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
 
 void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC, unsigned char minimum, unsigned char maximum)
-{ cellArrayOrImage (me, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
+{ cellArrayOrImage (me, NULL, NULL, z, ix1, ix2, x1WC, x2WC, iy1, iy2, y1WC, y2WC, minimum, maximum, TRUE); }
 
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);

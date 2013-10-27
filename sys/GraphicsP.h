@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ enum opcode { SET_VIEWPORT = 101, SET_INNER, UNSET_INNER, SET_WINDOW,
 	/* 148 */ BUTTON, ROUNDED_RECTANGLE, FILL_ROUNDED_RECTANGLE, FILL_ARC,
 	/* 152 */ INNER_RECTANGLE, CELL_ARRAY8, IMAGE, HIGHLIGHT2, UNHIGHLIGHT2,
 	/* 157 */ SET_ARROW_SIZE, DOUBLE_ARROW, SET_RGB_COLOUR, IMAGE_FROM_FILE,
-	/* 161 */ POLYLINE_CLOSED
+	/* 161 */ POLYLINE_CLOSED, CELL_ARRAY_COLOUR, IMAGE_COLOUR, SET_COLOUR_SCALE
 };
 
 void _GraphicsScreen_text_init (GraphicsScreen me);

@@ -1,6 +1,6 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -359,6 +359,38 @@ void Graphics_play (Graphics me, Graphics thee) {
 			{  long n = get; double *x = mget (n), *y = mget (n);
 				Graphics_polyline_closed (thee, n, & x [1], & y [1]);
 			} break;
+			case CELL_ARRAY_COLOUR:
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				long nrow = get, ncol = get;
+				/*
+				 * We don't copy all the data into a new matrix.
+				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
+				 * This works because the data is a packed array of double_rgbt, just as Graphics_cellArray_colour expects.
+				 */
+				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
+				z [0] = (double_rgbt *) (p + 1);
+				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				p += nrow * ncol * 4;
+				Graphics_cellArray_colour (thee, z, 0, ncol - 1, x1, x2,
+								0, nrow - 1, y1, y2, minimum, maximum);
+				Melder_free (z);
+			}  break;
+			case IMAGE_COLOUR:
+			{  double x1 = get, x2 = get, y1 = get, y2 = get, minimum = get, maximum = get;
+				long nrow = get, ncol = get;
+				/*
+				 * We don't copy all the data into a new matrix.
+				 * Instead, we create row pointers z [1..nrow] that point directly into the recorded data.
+				 * This works because the data is a packed array of double_rgbt, just as Graphics_image_colour expects.
+				 */
+				double_rgbt **z = Melder_malloc_f (double_rgbt *, nrow);
+				z [0] = (double_rgbt *) (p + 1);
+				for (long irow = 1; irow < nrow; irow ++) z [irow] = z [irow - 1] + ncol;
+				p += nrow * ncol * 4;
+				Graphics_image_colour (thee, z, 0, ncol - 1, x1, x2,
+								0, nrow - 1, y1, y2, minimum, maximum);
+				Melder_free (z);
+			}  break;
 			default:
 				my recording = wasRecording;
 				Melder_flushError ("Graphics_play: unknown opcode (%d).\n%f %f", opcode, p [-1], p [1]);

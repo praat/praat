@@ -81,7 +81,7 @@
 	if (x) { \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				x [i] [j] -> destroy (); \
+				x [i] [j]. destroy (); \
 		NUMmatrix_free <struct##Type> (x, row1, col1); \
 	}
 

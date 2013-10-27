@@ -61,8 +61,6 @@ void Sampled_shortTermAnalysis (Sampled me, double windowDuration, double timeSt
 			at least 1 (if no failure); equals floor ((nx * dx - windowDuration) / timeStep) + 1.
 		firstTime:
 			the centre of the first frame, in seconds.
-	Return value:
-		1 = OK, 0 = failure.
 	Failures:
 		Window longer than signal.
 	Postconditions:

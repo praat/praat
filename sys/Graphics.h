@@ -188,9 +188,13 @@ double Graphics_textWidth_ps_mm (Graphics me, const wchar_t *text, bool useSilip
 void Graphics_fillArea (Graphics me, long numberOfPoints, double *x, double *y);
 void Graphics_cellArray (Graphics me, double **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
+void Graphics_cellArray_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1, double x2,
+	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
 void Graphics_cellArray8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);
 void Graphics_image (Graphics me, double **z, long ix1, long ix2, double x1, double x2,
+	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
+void Graphics_image_colour (Graphics me, double_rgbt **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, double minimum, double maximum);
 void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double x1, double x2,
 	long iy1, long iy2, double y1, double y2, unsigned char minimum, unsigned char maximum);

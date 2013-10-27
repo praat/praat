@@ -508,27 +508,26 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 					if (my callback && ! my callback (my closure, my samplesPlayed))
 						interrupted = true;
 					if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && ! interrupted) {
-						#if defined (macintosh)
-							#if useCarbon
-								EventRecord event;
-								if (EventAvail (keyDownMask, & event)) {
-									/*
-									* Remove the event, even if it was a different key.
-									* Otherwise, the key will block the future availability of the Escape key.
-									*/
-									FlushEvents (keyDownMask, 0);
-									/*
-									* Catch Escape and Command-period.
-									*/
-									if ((event. message & charCodeMask) == 27 ||
-										((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
-									{
-										my explicitStop = MelderAudio_EXPLICIT;
-										interrupted = true;
-									}
+						#if cocoa
+							
+						#elif defined (macintosh)
+							EventRecord event;
+							if (EventAvail (keyDownMask, & event)) {
+								/*
+								* Remove the event, even if it was a different key.
+								* Otherwise, the key will block the future availability of the Escape key.
+								*/
+								FlushEvents (keyDownMask, 0);
+								/*
+								* Catch Escape and Command-period.
+								*/
+								if ((event. message & charCodeMask) == 27 ||
+									((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
+								{
+									my explicitStop = MelderAudio_EXPLICIT;
+									interrupted = true;
 								}
-							#else
-							#endif
+							}
 						#elif defined (_WIN32)
 							MSG event;
 							if (PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN) {
@@ -574,27 +573,25 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 					 * Do this on the lowest level that will work.
 					 */
 					if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && ! interrupted) {
-						#if defined (macintosh)
-							#if useCarbon
-								EventRecord event;
-								if (EventAvail (keyDownMask, & event)) {
-									/*
-									* Remove the event, even if it was a different key.
-									* Otherwise, the key will block the future availability of the Escape key.
-									*/
-									FlushEvents (keyDownMask, 0);
-									/*
-									* Catch Escape and Command-period.
-									*/
-									if ((event. message & charCodeMask) == 27 ||
-										((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
-									{
-										my explicitStop = MelderAudio_EXPLICIT;
-										interrupted = true;
-									}
+						#if cocoa
+						#elif defined (macintosh)
+							EventRecord event;
+							if (EventAvail (keyDownMask, & event)) {
+								/*
+								* Remove the event, even if it was a different key.
+								* Otherwise, the key will block the future availability of the Escape key.
+								*/
+								FlushEvents (keyDownMask, 0);
+								/*
+								* Catch Escape and Command-period.
+								*/
+								if ((event. message & charCodeMask) == 27 ||
+									((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
+								{
+									my explicitStop = MelderAudio_EXPLICIT;
+									interrupted = true;
 								}
-							#else
-							#endif
+							}
 						#elif defined (_WIN32)
 							MSG event;
 							if (PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN) {

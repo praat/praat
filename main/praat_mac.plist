@@ -410,6 +410,42 @@
 			<key>NSPersistentStoreTypeKey</key>
 			<string>NSBinaryStoreType</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>jpg</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>JPEG image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>png</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>PNG image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>tiff</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>TIFF image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Praat</string>
@@ -434,7 +470,7 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.education</string>
 	<key>LSRequiresCarbon</key>
-	<true/>
+	<false/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 1992-PRAAT_YEAR by Paul Boersma and David Weenink</string>
 </dict>

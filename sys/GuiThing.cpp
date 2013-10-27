@@ -70,6 +70,11 @@ void structGuiThing :: v_setSensitive (bool sensitive) {
 	#if gtk
 		gtk_widget_set_sensitive (GTK_WIDGET (d_widget), sensitive);
 	#elif cocoa
+		if ([(NSObject *) d_widget isKindOfClass: [NSControl class]]) {
+			[(NSControl *) d_widget setEnabled: sensitive];
+		} else if ([(NSObject *) d_widget isKindOfClass: [NSMenuItem class]]) {
+			[(NSMenuItem *) d_widget setEnabled: sensitive];
+		}
 	#elif motif
 		XtSetSensitive (d_widget, sensitive);
 	#endif

@@ -65,6 +65,8 @@ bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const 
 	#define NULL  ((void *) 0)
 #endif
 
+typedef struct { double red, green, blue, transparency; } double_rgbt;
+
 /********** NUMBER TO STRING CONVERSION **********/
 
 /*

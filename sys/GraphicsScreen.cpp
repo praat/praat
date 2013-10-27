@@ -196,6 +196,7 @@ void structGraphicsScreen :: v_clearWs () {
             //CGContextSynchronize (context);
             CGContextRestoreGState (context);
 			[cocoaDrawingArea unlockFocus];
+			[cocoaDrawingArea setNeedsDisplay: YES];
         }
 	#elif win
 		RECT rect;

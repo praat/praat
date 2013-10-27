@@ -39,7 +39,7 @@
 #include "oo_DESCRIPTION.h"
 #include "Matrix_def.h"
 
-Thing_implement (Matrix, Sampled, 2);
+Thing_implement (Matrix, SampledXY, 2);
 
 void structMatrix :: v_info () {
 	structData :: v_info ();

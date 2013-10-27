@@ -33,11 +33,6 @@
 #include "UiPause.h"
 #include "DemoEditor.h"
 
-#undef our
-#define our ((Data_Table) my methods) ->
-#undef your
-#define your ((Data_Table) thy methods) ->
-
 static Interpreter theInterpreter, theLocalInterpreter;
 static Data theSource;
 static const wchar_t *theExpression;

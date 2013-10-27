@@ -1,12 +1,12 @@
 # Makefile of the library "fon"
-# Paul Boersma, 24 August 2013
+# Paul Boersma, 27 October 2013
 
 include ../makefile.defs
 
 CPPFLAGS = -I ../num -I ../kar -I ../sys -I ../dwsys -I ../stat -I ../dwtools -I ../LPC -I ../fon -I ../external/portaudio -I ../external/flac -I ../external/mp3
 
 OBJECTS = Transition.o Distributions_and_Transition.o \
-   Function.o Sampled.o Matrix.o Vector.o Polygon.o PointProcess.o \
+   Function.o Sampled.o SampledXY.o Matrix.o Vector.o Polygon.o PointProcess.o \
    Matrix_and_PointProcess.o Matrix_and_Polygon.o AnyTier.o RealTier.o \
    Sound.o LongSound.o Sound_files.o Sound_audio.o PointProcess_and_Sound.o Sound_PointProcess.o ParamCurve.o \
    Pitch.o Harmonicity.o Intensity.o Matrix_and_Pitch.o Sound_to_Pitch.o \
@@ -30,7 +30,7 @@ OBJECTS = Transition.o Distributions_and_Transition.o \
    WordList.o SpellingChecker.o \
    FujisakiPitch.o \
    ExperimentMFC.o RunnerMFC.o manual_Exp.o praat_Exp.o \
-   Movie.o MovieWindow.o \
+   Photo.o Movie.o MovieWindow.o \
    Corpus.o \
    manual_Picture.o manual_Manual.o manual_Script.o \
    manual_soundFiles.o manual_tutorials.o manual_references.o \

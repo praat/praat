@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,9 +65,8 @@
 		binput##storage (x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (max >= min) \
-		for (long i = min; i <= max; i ++) \
-			binput##storage (x [i], f);
+	for (long i = min; i <= max; i ++) \
+		binput##storage (x [i], f);
 
 #define oo_STRUCT(Type,x)  \
 	x. writeBinary (f);
@@ -81,10 +80,13 @@
 		x [i]. writeBinary (f);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (max >= min) \
-		for (long i = min; i <= max; i ++) \
-			x [i]. writeBinary (f);
+	for (long i = min; i <= max; i ++) \
+		x [i]. writeBinary (f);
 
+#define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
+	for (long i = row1; i <= row2; i ++) \
+		for (long j = col1; j <= col2; j ++) \
+			x [i] [j]. writeBinary (f);
 
 #define oo_OBJECT(Class,version,x)  \
 	binputex (x != NULL, f); \

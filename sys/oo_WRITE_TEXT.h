@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -112,6 +112,19 @@
 	for (long i = min; i <= max; i ++) { \
 		texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
 		x [i]. writeText (file); \
+		texexdent (file); \
+	} \
+	texexdent (file);
+
+#define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
+	texputintro (file, L"" #x " [] []: ", row2 >= row1 ? NULL : L"(empty)", 0,0,0,0); \
+	for (long i = row1; i <= row2; i ++) { \
+		texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
+		for (long j = col1; j <= col2; j ++) { \
+			texputintro (file, L"" #x " [", Melder_integer (i), L"] [", Melder_integer (j), L"]:", 0); \
+			x [i] [j]. writeText (file); \
+			texexdent (file); \
+		} \
 		texexdent (file); \
 	} \
 	texexdent (file);

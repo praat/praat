@@ -1,6 +1,6 @@
 /* oo_READ_TEXT.h
  *
- * Copyright (C) 1994-2012 Paul Boersma
+ * Copyright (C) 1994-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,6 +126,16 @@
 		x = NUMvector <struct##Type> (min, max); \
 		for (long i = min; i <= max; i ++) { \
 			x [i]. readText (a_text); \
+		} \
+	}
+
+#define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
+	if (row2 >= row1 && col2 >= col1) { \
+		x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
+		for (long i = row1; i <= row2; i ++) { \
+			for (long j = col1; j <= col2; j ++) { \
+				x [i] [j]. readText (a_text); \
+			} \
 		} \
 	}
 
