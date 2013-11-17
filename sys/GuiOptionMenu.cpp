@@ -166,10 +166,8 @@ void structGuiOptionMenu:: f_addOption (const wchar_t *text) {
 		XtAddCallback (menuItem -> d_widget, XmNvalueChangedCallback, cb_optionChanged, (XtPointer) this);
 		Collection_addItem (d_options, menuItem);
     #elif cocoa
-    
-        GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu*)d_widget;
-        [menu addItemWithTitle:[NSString stringWithUTF8String:Melder_peekWcsToUtf8 (text)]];
-    
+        GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu* ) d_widget;
+        [menu addItemWithTitle: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (text)]];
 	#endif
 }
 
@@ -185,8 +183,8 @@ int structGuiOptionMenu :: f_getValue () {
 				d_value = i;
 		}
     #elif cocoa
-    GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu*)d_widget;
-    d_value = [menu indexOfSelectedItem] + 1;
+		GuiCocoaOptionMenu *menu = (GuiCocoaOptionMenu *) d_widget;
+		d_value = [menu indexOfSelectedItem] + 1;
 	#endif
 	return d_value;
 }

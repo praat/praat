@@ -641,6 +641,20 @@ static void menu_cb_fontSize (EDITOR_ARGS) {
 	EDITOR_END
 }
 
+static void gui_text_cb_change (I, GuiTextEvent event) {
+	(void) event;
+	iam (TextEditor);
+	if (! my dirty) {
+		my dirty = TRUE;
+		my v_nameChanged ();
+	}
+}
+
+void structTextEditor :: v_createChildren () {
+	textWidget = GuiText_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
+	textWidget -> f_setChangeCallback (gui_text_cb_change, this);
+}
+
 void structTextEditor :: v_createMenus () {
 	TextEditor_Parent :: v_createMenus ();
 	if (v_fileBased ()) {
@@ -658,8 +672,8 @@ void structTextEditor :: v_createMenus () {
 		Editor_addCommand (this, L"File", L"Save as...", 'S', menu_cb_saveAs);
 	}
 	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
-	Editor_addCommand (this, L"Edit", L"Undo", 'Z', menu_cb_undo);
-	Editor_addCommand (this, L"Edit", L"Redo", 'Y', menu_cb_redo);
+	textWidget -> f_setUndoItem (Editor_addCommand (this, L"Edit", L"Undo", 'Z', menu_cb_undo));
+	textWidget -> f_setRedoItem (Editor_addCommand (this, L"Edit", L"Redo", 'Y', menu_cb_redo));
 	Editor_addCommand (this, L"Edit", L"-- cut copy paste --", 0, NULL);
 	Editor_addCommand (this, L"Edit", L"Cut", 'X', menu_cb_cut);
 	Editor_addCommand (this, L"Edit", L"Copy", 'C', menu_cb_copy);
@@ -684,22 +698,6 @@ void structTextEditor :: v_createMenus () {
 		fontSizeButton_18 = Editor_addCommand (this, L"Font", L"18", GuiMenu_CHECKBUTTON, menu_cb_18);
 		fontSizeButton_24 = Editor_addCommand (this, L"Font", L"24", GuiMenu_CHECKBUTTON, menu_cb_24);
 	#endif
-}
-
-static void gui_text_cb_change (I, GuiTextEvent event) {
-	(void) event;
-	iam (TextEditor);
-	if (! my dirty) {
-		my dirty = TRUE;
-		my v_nameChanged ();
-	}
-}
-
-void structTextEditor :: v_createChildren () {
-	textWidget = GuiText_createShown (d_windowForm, 0, 0, Machine_getMenuBarHeight (), 0, GuiText_SCROLLED);
-	textWidget -> f_setChangeCallback (gui_text_cb_change, this);
-	textWidget -> f_setUndoItem (Editor_getMenuCommand (this, L"Edit", L"Undo") -> itemWidget);
-	textWidget -> f_setRedoItem (Editor_getMenuCommand (this, L"Edit", L"Redo") -> itemWidget);
 }
 
 void structTextEditor :: init (const wchar_t *initialText) {

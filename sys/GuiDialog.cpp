@@ -62,6 +62,18 @@ Thing_implement (GuiDialog, GuiShell, 0);
 	- (void) setUserData: (GuiDialog) userData {
 		d_userData = userData;
 	}
+	- (BOOL) windowShouldClose: (id) sender {
+		GuiCocoaDialog *widget = (GuiCocoaDialog *) sender;
+		GuiDialog me = [widget userData];
+		if (my d_goAwayCallback != NULL) {
+			trace ("calling goAwayCallback)");
+			my d_goAwayCallback (my d_goAwayBoss);
+		} else {
+			trace ("hiding window");
+			[widget orderOut: nil];
+		}
+		return FALSE;
+	}
 	@end
 #elif motif
 	static void _GuiMotifDialog_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {

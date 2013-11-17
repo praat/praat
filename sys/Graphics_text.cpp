@@ -370,6 +370,7 @@ static void charSize (I, _Graphics_widechar *lc) {
             CFRelease (framesetter);
             CFRelease (string);
             [s release];
+			CFRelease (path);
             //CGContextRestoreGState (context);
 
 			bool isDiacritic = info -> ps.times == 0;
@@ -855,7 +856,9 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			#endif
 			CFRelease (ctFont);
 			if (my d_macView) {
-				CGContextSynchronize (my d_macGraphicsContext);
+				#if useCarbon
+					CGContextSynchronize (my d_macGraphicsContext);
+				#endif
 				[my d_macView   unlockFocus];
 			}
         

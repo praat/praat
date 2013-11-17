@@ -39,23 +39,23 @@ Thing_implement (GuiScrolledWindow, GuiControl, 0);
 		forget (me);
 	}
 #elif cocoa
-@implementation GuiCocoaScrolledWindow {
-    GuiScrolledWindow d_userData;
-}
-- (void) dealloc {   // override
-    GuiScrolledWindow me = d_userData;
-    forget (me);
-    trace ("deleting a scrolled window");
-    [super dealloc];
-}
-- (GuiThing) userData {
-    return d_userData;
-}
-- (void) setUserData: (GuiThing) userData {
-    Melder_assert (userData == NULL || Thing_member (userData, classGuiScrolledWindow));
-    d_userData = static_cast <GuiScrolledWindow> (userData);
-}
-@end
+	@implementation GuiCocoaScrolledWindow {
+		GuiScrolledWindow d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiScrolledWindow me = d_userData;
+		forget (me);
+		trace ("deleting a scrolled window");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiScrolledWindow));
+		d_userData = static_cast <GuiScrolledWindow> (userData);
+	}
+	@end
 #elif win
 	void _GuiWinScrolledWindow_destroy (GuiObject widget) {
 		DestroyWindow (widget -> window);
@@ -89,15 +89,13 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScrolledWindow_destroyCallback), me);
 	#elif cocoa
-    
         GuiCocoaScrolledWindow *scrollView = [[GuiCocoaScrolledWindow alloc] init];
         my d_widget = (GuiObject) scrollView;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
-        [scrollView setUserData:me];
-        [scrollView setHasVerticalScroller:YES];
-        [scrollView setHasHorizontalScroller:YES];
-        [scrollView setBackgroundColor:[NSColor lightGrayColor]];
-    
+        [scrollView setUserData: me];
+        [scrollView setHasVerticalScroller:   YES];
+        [scrollView setHasHorizontalScroller: YES];
+        [scrollView setBackgroundColor: [NSColor lightGrayColor]];
 	#elif motif
 		my d_widget = XmCreateScrolledWindow (parent -> d_widget, "scrolledWindow", NULL, 0);
 		_GuiObject_setUserData (my d_widget, me);

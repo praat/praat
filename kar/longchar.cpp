@@ -463,8 +463,8 @@ static struct structLongchar_Info Longchar_database [] = {
 
 { 'a', 't', 2, { "/aturn",          444, 0,   462, 520,  444, 0,    444, 0,   0,   0   }, 140, 140, 140, 140, UNICODE_LATIN_SMALL_LETTER_TURNED_A },
 { 'a', 's', 2, { "/ascript",        500, 0,   520, 578,  500, 0,    500, 0,   0,   0   },  65,  65,  65,  65, UNICODE_LATIN_SMALL_LETTER_ALPHA },
-{ 'a', 'b', 2, { "/ascriptturn",    500, 0,   520, 578,  500, 0,    500, 0,   0,   0   }, 129, 129, 129, 129, UNICODE_LATIN_SMALL_LETTER_TURNED_ALPHA }, // Am. pot
 { 'a', 'y', 2, { "/ascriptturn",    500, 0,   520, 578,  500, 0,    500, 0,   0,   0   }, 129, 129, 129, 129, UNICODE_LATIN_SMALL_LETTER_TURNED_ALPHA }, // Am. pot
+{ 'a', 'b', 2, { "/ascriptturn",    500, 0,   520, 578,  500, 0,    500, 0,   0,   0   }, 129, 129, 129, 129, UNICODE_LATIN_SMALL_LETTER_TURNED_ALPHA }, // Am. pot
 { 'b', '^', 2, { "/bhooktop",       475, 0,   510, 580,  475, 0,    475, 0,   0,   0   }, 186, 186, 186, 186, UNICODE_LATIN_SMALL_LETTER_B_WITH_HOOK },
 { '[', 'f', 2, { "/bracketleft",    333, 0,   346, 356,  333, 0,    333, 0,   0,   0   },  91,  91,  91,  91, UNICODE_LEFT_SQUARE_BRACKET }, // second version
 { ']', 'f', 2, { "/bracketright",   333, 0,   346, 356,  333, 0,    333, 0,   0,   0   },  93,  93,  93,  93, UNICODE_RIGHT_SQUARE_BRACKET }, // second version

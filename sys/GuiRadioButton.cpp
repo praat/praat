@@ -190,10 +190,45 @@ GuiRadioButton GuiRadioButton_create (GuiForm parent, int left, int right, int t
 		}
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkRadioButton_destroyCallback), me);
 		g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkRadioButton_handleToggle), me);
+	#elif cocoaXXX
+		my d_cocoaRadioButton = [[GuiCocoaRadioButton alloc] init];
+		my d_widget = my d_cocoaRadioButton;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[my d_cocoaRadioButton   setUserData: me];
+		[my d_cocoaRadioButton setButtonType: NSRadioButton];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		if (flags & GuiCheckButton_SET) {
+			[my d_cocoaRadioButton setState: NSOnState];
+		}
+		[my d_cocoaRadioButton setTarget: my d_cocoaRadioButton];
+		[my d_cocoaRadioButton setAction: @selector (_guiCocoaRadioButton_activateCallback:)];
 	#elif cocoa
 		my d_cocoaRadioButton = [[GuiCocoaRadioButton alloc] init];
 		my d_widget = my d_cocoaRadioButton;
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[my d_cocoaRadioButton   setUserData: me];
+		[my d_cocoaRadioButton setButtonType: NSRadioButton];
+		NSImage *image = [my d_cocoaRadioButton image], *alternateImage = [my d_cocoaRadioButton alternateImage];
+		[my d_cocoaRadioButton setButtonType: NSSwitchButton];
+		[my d_cocoaRadioButton setImage: image];
+		[my d_cocoaRadioButton setAlternateImage: alternateImage];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+		if (flags & GuiCheckButton_SET) {
+			[my d_cocoaRadioButton setState: NSOnState];
+		}
+		[my d_cocoaRadioButton setTarget: my d_cocoaRadioButton];
+		[my d_cocoaRadioButton setAction: @selector (_guiCocoaRadioButton_activateCallback:)];
+	#elif cocoa
+		NSRect matrixRect = NSMakeRect (20.0, 20.0, 125.0, 125.0);
+		my d_cocoaRadioButton = [[GuiCocoaRadioButton alloc] initWithFrame:matrixRect];
+		[my d_cocoaRadioButton   setUserData: me];
+		[my d_cocoaRadioButton setButtonType: NSRadioButton];
+		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];
+    	NSMatrix *radioMatrix = [[NSMatrix alloc] initWithFrame: matrixRect   mode: NSRadioModeMatrix
+			prototype: (NSCell *) [my d_cocoaRadioButton cell]   numberOfRows: 1   numberOfColumns: 1];
+		my d_widget = (GuiObject) radioMatrix; //my d_cocoaRadioButton;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[radioMatrix   addSubview: my d_cocoaRadioButton];
 		[my d_cocoaRadioButton   setUserData: me];
 		[my d_cocoaRadioButton setButtonType: NSRadioButton];
 		[my d_cocoaRadioButton setTitle: (NSString *) Melder_peekWcsToCfstring (buttonText)];

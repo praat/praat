@@ -238,7 +238,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			struct structGuiDrawingAreaClickEvent event = { me, 0 };
 			NSPoint local_point = [self   convertPoint: [nsEvent locationInWindow]   fromView: nil];
 			event. x = local_point. x;
-			event. y = [self frame]. size. height - local_point. y;
+			//event. y = [self frame]. size. height - local_point. y;
+			event. y = local_point. y;
 			NSUInteger modifiers = [nsEvent modifierFlags];
 			event. shiftKeyPressed = modifiers & NSShiftKeyMask;
 			event. optionKeyPressed = modifiers & NSAlternateKeyMask;
@@ -249,6 +250,9 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				Melder_flushError ("Mouse click not completely handled.");
 			}
 		}
+	}
+	- (BOOL) isFlipped {
+		return YES;
 	}
 	- (void) keyDown: (NSEvent *) nsEvent {
 		GuiDrawingArea me = (GuiDrawingArea) d_userData;

@@ -282,6 +282,8 @@ static void menu_cb_undo (EDITOR_ARGS) {
 	else wcscpy (my undoText, L"Undo?");
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peekWcsToUtf8 (my undoText));
+	#elif cocoa
+		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peekWcsToCfstring (my undoText)];
 	#elif motif
 		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, NULL);
@@ -467,6 +469,11 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 	if (my v_hasMenuBar ()) {
 		my menus = Ordered_create ();
 		my d_windowForm -> f_addMenuBar ();
+	}
+
+	my v_createChildren ();
+
+	if (my v_hasMenuBar ()) {
 		my v_createMenus ();
 		EditorMenu helpMenu = Editor_addMenu (me, L"Help", 0);
 		my v_createHelpMenuItems (helpMenu);
@@ -483,8 +490,6 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 		praat_addCommandsToEditor (me);
 		Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
 	}
-
-	my v_createChildren ();
 	my d_windowForm -> f_show ();
 }
 
@@ -495,6 +500,8 @@ void Editor_save (Editor me, const wchar_t *text) {
 	swprintf (my undoText, 100, L"Undo %ls", text);
 	#if gtk
 		gtk_label_set_label (GTK_LABEL (gtk_bin_get_child (GTK_BIN (my undoButton -> d_widget))), Melder_peekWcsToUtf8 (my undoText));
+	#elif cocoa
+		[(GuiCocoaMenuItem *) my undoButton -> d_widget   setTitle: (NSString *) Melder_peekWcsToCfstring (my undoText)];
 	#elif motif
 		char *text_utf8 = Melder_peekWcsToUtf8 (my undoText);
 		XtVaSetValues (my undoButton -> d_widget, XmNlabelString, text_utf8, NULL);

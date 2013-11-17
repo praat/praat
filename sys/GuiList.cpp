@@ -854,6 +854,7 @@ void structGuiList :: f_setTopPosition (long topPosition) {
 		gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (d_widget), path, NULL, FALSE, 0.0, 0.0);
 		gtk_tree_path_free (path);
 	#elif cocoa
+	 // TODO: implement
 	#elif win
 		ListBox_SetTopIndex (d_widget -> window, topPosition - 1);
 	#elif mac

@@ -118,7 +118,7 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 			gboolean visible;
 			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, NULL);
 		#elif ! useCarbon
-			bool visible = false;   // TODO
+			bool visible = ! [(GuiCocoaTextField *) my d_fieldData [irow]. text -> d_widget   isHidden];
 		#endif
 		if (visible) {
 			int type = my d_fieldData [irow]. description -> type;
@@ -386,11 +386,11 @@ static void showStructMember (
 	if (type == inheritwa) {
 		MelderString_append (& buffer, L"Class part \"", memberDescription -> name, L"\":");
 	} else {
-		MelderString_append (& buffer, strip_d (memberDescription -> name),
+		MelderString_append (& buffer, L"   ", strip_d (memberDescription -> name),
 			rank == 0 ? L"" : rank == 1 || rank == 3 || rank < 0 ? L" [ ]" : L" [ ] [ ]");
 	}
 	fieldData -> label -> f_setString (buffer.string);
-	fieldData -> label -> f_move (type == inheritwa ? 0 : NAME_X, fieldData -> y);
+	//fieldData -> label -> f_move (type == inheritwa ? 0 : NAME_X, fieldData -> y);
 	fieldData -> label -> f_show ();
 
 	/* Show the value (for a single type) or a button (for a composite type). */

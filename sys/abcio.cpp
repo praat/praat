@@ -820,7 +820,9 @@ int bingeti2LE (FILE *f) {
 		if (binario_shortLE2 && Melder_debug != 18) {
 			signed short s;
 			if (fread (& s, sizeof (signed short), 1, f) != 1) readError (f, "a signed short integer.");
-			return (int) s;   // with sign extension if an int is 4 bytes
+			int result = (int) s;   // with sign extension if an int is 4 bytes
+			Melder_assert (result >= -32768 && result <= 32767);
+			return result;   // with sign extension if an int is 4 bytes
 		} else {
 			unsigned char bytes [2];
 			if (fread (bytes, sizeof (unsigned char), 2, f) != 2) readError (f, "two bytes.");

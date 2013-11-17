@@ -228,7 +228,9 @@ static void stopRecording (SoundRecorder me) {
 void structSoundRecorder :: v_destroy () {
 	stopRecording (this);   // must occur before freeing my buffer
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing my buffer
-	#if gtk
+	#if cocoa
+		if (d_cocoaTimer) CFRunLoopTimerInvalidate (d_cocoaTimer);
+	#elif gtk
 		g_idle_remove_by_data (this);
 	#elif motif
 		if (workProcId) XtRemoveWorkProc (workProcId);
@@ -355,7 +357,9 @@ static long getMyNsamp (SoundRecorder me) {
 	return nsamp;
 }
 
-#if gtk
+#if cocoa
+static void workProc (CFRunLoopTimerRef timer, void *void_me) {
+#elif gtk
 static gboolean workProc (void *void_me) {
 #else
 static bool workProc (void *void_me) {
@@ -472,15 +476,16 @@ static bool workProc (void *void_me) {
 				showMeter (me, NULL, 0);
 			}
 		}
-		#if gtk
-			return true;
-		#else
-			return false;
-		#endif
 	} catch (MelderError) {
 		Melder_flushError (NULL);
-		return false;
 	}
+	#if cocoa
+		return;
+	#elif gtk
+		return true;
+	#else
+		return false;
+	#endif
 }
 
 static int portaudioStreamCallback (
@@ -1165,7 +1170,12 @@ event. width  = my meter -> f_getWidth  ();
 event. height = my meter -> f_getHeight ();
 gui_drawingarea_cb_resize (me.peek(), & event);
 
-		#if gtk
+		#if cocoa
+			CFRunLoopTimerContext context = { 0, me.peek(), NULL, NULL, NULL };
+			my d_cocoaTimer = CFRunLoopTimerCreate (NULL, CFAbsoluteTimeGetCurrent () + 0.02,
+				0.02, 0, 0, workProc, & context);
+			CFRunLoopAddTimer (CFRunLoopGetCurrent (), my d_cocoaTimer, kCFRunLoopCommonModes);
+		#elif gtk
 			g_idle_add (workProc, me.peek());
 		#elif motif
 			my workProcId = GuiAddWorkProc (workProc, me.peek());

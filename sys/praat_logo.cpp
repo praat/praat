@@ -1,6 +1,6 @@
 /* praat_logo.cpp
  *
- * Copyright (C) 1996-2012 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1996-2012,2013 Paul Boersma, 2008 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,19 +64,19 @@ void praat_setLogo (double width_mm, double height_mm, void (*draw) (Graphics g)
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	if (theLogo.graphics == NULL)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
-#if gtk
-	Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
-	cairo_rectangle ((cairo_t *) Graphics_x_getCR (theLogo.graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
-	cairo_clip ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
-	theLogo.draw (theLogo.graphics);
-	cairo_destroy ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
-#elif motif
-	(void) void_me;
-	(void) event;
-	if (theLogo.graphics == NULL)
-		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
-	theLogo.draw (theLogo.graphics);
-#endif
+	#if gtk
+		Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
+		cairo_rectangle ((cairo_t *) Graphics_x_getCR (theLogo.graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
+		cairo_clip ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
+		theLogo.draw (theLogo.graphics);
+		cairo_destroy ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
+	#elif motif || cocoa
+		(void) void_me;
+		(void) event;
+		if (theLogo.graphics == NULL)
+			theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
+		theLogo.draw (theLogo.graphics);
+	#endif
 }
 
 static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
@@ -117,10 +117,8 @@ void praat_showLogo (int autoPopDown) {
 			theLogo.drawingArea = GuiDrawingArea_createShown (theLogo.form, 0, width, 0, height,
 				gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, NULL, NULL, 0);
 		}
-
 		theLogo.form -> f_show ();
 		theLogo.dia -> f_show ();
-		
 		#if motif
 			if (autoPopDown)
 				GuiAddTimeOut (2000, logo_timeOut, (XtPointer) NULL);

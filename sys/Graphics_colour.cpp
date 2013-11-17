@@ -178,8 +178,8 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 				CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 				CGContextSaveGState (context);
 				NSCAssert (context, @"nil context");
-				CGContextTranslateCTM (context, 0, drawingArea. bounds. size. height);
-				CGContextScaleCTM (context, 1.0, -1.0);
+				//CGContextTranslateCTM (context, 0, drawingArea. bounds. size. height);
+				//CGContextScaleCTM (context, 1.0, -1.0);
 				NSRect rect = NSMakeRect (x1DC,  y2DC, width, height);
 				CGContextSetBlendMode (context, kCGBlendModeDifference);
 				CGContextSetShouldAntialias (context, false);
@@ -263,8 +263,8 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 				CGContextSaveGState (my d_macGraphicsContext);
 
 				NSCAssert (my d_macGraphicsContext, @"nil context");
-				CGContextTranslateCTM (my d_macGraphicsContext, 0, drawingArea. bounds. size. height);
-				CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+				//CGContextTranslateCTM (my d_macGraphicsContext, 0, drawingArea. bounds. size. height);
+				//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 
 				NSRect upperRect = NSMakeRect (x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC);
 				NSRect leftRect  = NSMakeRect (x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner);

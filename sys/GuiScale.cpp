@@ -45,6 +45,23 @@ Thing_implement (GuiScale, GuiControl, 0);
 		forget (me);
 	}
 #elif cocoa
+	@implementation GuiCocoaScale {
+		GuiScale d_userData;
+	}
+	- (void) dealloc {   // override
+		GuiScale me = d_userData;
+		forget (me);
+		trace ("deleting a progress bar");
+		[super dealloc];
+	}
+	- (GuiThing) userData {
+		return d_userData;
+	}
+	- (void) setUserData: (GuiThing) userData {
+		Melder_assert (userData == NULL || Thing_member (userData, classGuiScale));
+		d_userData = static_cast <GuiScale> (userData);
+	}
+	@end
 #elif win
 	void _GuiWinScale_destroy (GuiObject widget) {
 		iam_scale;
@@ -79,6 +96,14 @@ GuiScale GuiScale_create (GuiForm parent, int left, int right, int top, int bott
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScale_destroyCallback), me);
 	#elif cocoa
+		my d_cocoaScale = [[GuiCocoaScale alloc] init];
+		my d_widget = my d_cocoaScale;
+		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		[my d_cocoaScale   setUserData: me];
+		[my d_cocoaScale   setIndeterminate: false];
+		[my d_cocoaScale   setMinValue: minimum];
+		[my d_cocoaScale   setMaxValue: maximum];
+		[my d_cocoaScale   setDoubleValue: value];
 	#elif motif
 		my d_widget = XmCreateScale (parent -> d_widget, "scale", NULL, 0);
 		_GuiObject_setUserData (my d_widget, me);
@@ -105,6 +130,7 @@ void structGuiScale :: f_setValue (int value) {
 	#if gtk
 		gtk_range_set_value (GTK_RANGE (d_widget), value);
 	#elif cocoa
+		[d_cocoaScale   setDoubleValue: value];
 	#elif motif
 		XmScaleSetValue (d_widget, value);
 	#endif

@@ -911,6 +911,7 @@ void _GuiText_exit (void) {
 		(void) aTextView;
 		(void) affectedCharRange;
 		(void) replacementString;
+		trace ("changing text to: %s", [replacementString UTF8String]);
 		GuiText me = d_userData;
 		if (me && my d_changeCallback) {
 			struct structGuiTextEvent event = { me };
@@ -1364,6 +1365,9 @@ void structGuiText :: f_remove () {
 			gtk_text_buffer_delete_selection (buffer, TRUE, gtk_text_view_get_editable (GTK_TEXT_VIEW (d_widget)));
 		}
 	#elif cocoa
+		if (d_cocoaTextView) {
+			[d_cocoaTextView delete: nil];
+		}
 	#elif win
 		if (! d_editable || ! NativeText_getSelectionRange (d_widget, NULL, NULL)) return;
 		SendMessage (d_widget -> window, WM_CLEAR, 0, 0);   /* This will send the EN_CHANGE message, hence no need to call the valueChangedCallbacks. */
@@ -1492,6 +1496,8 @@ void structGuiText :: f_scrollToSelection () {
 		gtk_text_view_scroll_to_iter (GTK_TEXT_VIEW (d_widget), & start, 0.1, false, 0.0, 0.0); 
 		//gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (d_widget), mark, 0.1, false, 0.0, 0.0);
 	#elif cocoa
+		if (d_cocoaTextView)
+			[d_cocoaTextView scrollRangeToVisible: [d_cocoaTextView selectedRange]];
 	#elif win
 		Edit_ScrollCaret (d_widget -> window);
 	#elif mac

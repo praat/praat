@@ -582,10 +582,11 @@ static void insertBoundaryOrPoint (TextGridEditor me, int itier, double t1, doub
 			 */
 			long left, right;
 			wchar_t *text = my text -> f_getStringAndSelectionPosition (& left, & right);
+			bool wholeTextIsSelected = right - left == wcslen (text);
 			rightNewInterval = TextInterval_create (t2, interval -> xmax, text + right);
 			text [right] = '\0';
 			midNewInterval = TextInterval_create (t1, t2, text + left);
-			text [left] = '\0';
+			if (! wholeTextIsSelected || t1 != t2) text [left] = '\0';
 			TextInterval_setText (interval, text);
 			Melder_free (text);
 		} else {

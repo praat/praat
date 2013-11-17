@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20130927)
+MAN_BEGIN (L"What's new?", L"ppgb", 20131017)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.58# (17 November 2013)")
+LIST_ITEM (L"\\bu EEG: support for 16-bit (next to 24-bit) BDF files and for 16-bit (next to 8-bit) statuses.")
+LIST_ITEM (L"\\bu Mac 64-bit beta version.")
 NORMAL (L"##5.3.57# (27 October 2013)")
 LIST_ITEM (L"\\bu Mac: opening, modifying and saving image files (the Photo object).")
 LIST_ITEM (L"\\bu Mac 64-bit: some small improvements in the user interface.")

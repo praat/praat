@@ -95,7 +95,9 @@ Thing_define (SoundRecorder, Editor) {
 		const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX];
 		PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX];
 		PaStream *portaudioStream;
-		#if motif
+		#if cocoa
+			CFRunLoopTimerRef d_cocoaTimer;
+		#elif motif
 			XtWorkProcId workProcId;
 		#endif
 		#if defined (_WIN32)

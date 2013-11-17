@@ -9,6 +9,9 @@
 
 #include "enums_getText.h"
 #include "Praat_tests_enums.h"
+#include "enums_getValue.h"
+#include "Praat_tests_enums.h"
+
 
 int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t *arg4) {
 	long i, n = wcstol (arg1, NULL, 10);
@@ -39,6 +42,18 @@ int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t
 			for (i = 1; i <= n; i ++)
 				NUMsort_l (m, array);
 			NUMvector_free (array, 1);
+		} break;
+		case kPraatTests_TIME_INTEGER: {
+			double sum = 0;
+			for (i = 1; i <= n; i ++)
+				sum += i * (i - 1) * (i - 2);
+			MelderInfo_writeLine (Melder_double (sum));
+		} break;
+		case kPraatTests_TIME_FLOAT: {
+			double sum = 0.0, fn = n;
+			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
+				sum += fi * (fi - 1.0) * (fi - 2.0);
+			MelderInfo_writeLine (Melder_double (sum));
 		} break;
 	}
 	MelderInfo_writeLine (Melder_single (Melder_stopwatch () / n * 1e9), L" nanoseconds");

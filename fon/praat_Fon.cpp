@@ -6211,7 +6211,7 @@ FORM (Praat_test, L"Praat test", 0)
 	SENTENCE (L"arg4", L"")
 	OK
 DO
-	Praat_tests (GET_INTEGER (L"Test"), GET_STRING (L"arg1"),
+	Praat_tests (GET_ENUM (kPraatTests, L"Test"), GET_STRING (L"arg1"),
 		GET_STRING (L"arg2"), GET_STRING (L"arg3"), GET_STRING (L"arg4"));
 END
 

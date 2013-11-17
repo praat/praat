@@ -336,6 +336,7 @@ static void drawNow (FunctionEditor me) {
 	/*
 	 * End of inner drawing.
 	 */
+	Graphics_flushWs (my d_graphics);
 	Graphics_setViewport (my d_graphics, my functionViewerLeft, my selectionViewerRight, 0, my height);
 }
 
@@ -1074,11 +1075,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		if (needsUpdate) my v_updateText ();
 		Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 		if (needsUpdate) {
-			#if cocoa
-				Graphics_updateWs (my d_graphics);
-			#else
-				drawNow (me);
-			#endif
+			drawNow (me);
 		}
 		if (needsUpdate) updateGroup (me);
 	}

@@ -1,6 +1,6 @@
 /* GuiMenuItem.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,6 +283,24 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 					NSF7FunctionKey, NSF8FunctionKey, NSF9FunctionKey, NSF10FunctionKey, NSF11FunctionKey, NSF12FunctionKey,
 					0, 0, 0 };
 				[menuItem   setKeyEquivalent: [NSString   stringWithCharacters: & acceleratorKeys [accelerator]   length: 1]];
+				if (accelerator == GuiMenu_TAB) {
+					GuiWindow window = (GuiWindow) my d_shell;
+					Melder_assert (window -> classInfo == classGuiWindow);   // fairly safe, because dialogs have no menus
+					if (flags & GuiMenu_SHIFT) {
+						window -> d_shiftTabCallback = commandCallback;
+						window -> d_shiftTabBoss = boss;
+					} else {
+						window -> d_tabCallback = commandCallback;
+						window -> d_tabBoss = boss;
+					}
+				} else if (accelerator == GuiMenu_BACKSPACE) {
+					GuiWindow window = (GuiWindow) my d_shell;
+					Melder_assert (window -> classInfo == classGuiWindow);   // fairly safe, because dialogs have no menus
+					if (flags & GuiMenu_OPTION) {
+						window -> d_optionBackspaceCallback = commandCallback;
+						window -> d_optionBackspaceBoss = boss;
+					}
+				}
 			} else {
 				[menuItem setKeyEquivalent: [NSString stringWithFormat: @"%c", accelerator]];
 			}

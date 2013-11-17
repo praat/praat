@@ -167,6 +167,20 @@ int UiPause_end (int numberOfContinueButtons, int defaultContinueButton, int can
 						gtk_main_iteration ();
 					} while (! thePauseForm_clicked);
 				#elif cocoa
+					do {
+						NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+						//[theDemoEditor -> d_windowForm -> d_cocoaWindow   flushWindow];
+						NSEvent *nsEvent = [NSApp
+							nextEventMatchingMask: NSAnyEventMask
+							untilDate: [NSDate distantFuture]   // wait
+							inMode: NSDefaultRunLoopMode
+							dequeue: YES
+						];
+						Melder_assert (nsEvent != NULL);
+						[NSApp  sendEvent: nsEvent];
+						[NSApp  updateWindows];   // called automatically?
+						[pool release];
+					} while (! thePauseForm_clicked);
 				#elif motif
 					do {
 						XEvent event;

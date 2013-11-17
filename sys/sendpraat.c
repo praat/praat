@@ -34,7 +34,7 @@
 	#define gtk 0
 	#define win 1
 	#define mac 0
-#elif (defined (macintosh) || defined (__MACH__)) && useCarbon
+#elif (defined (macintosh) || defined (__MACH__))
     #include <Carbon/Carbon.h>
     #include <wchar.h>
 	#define gtk 0

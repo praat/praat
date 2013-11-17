@@ -124,10 +124,13 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		Melder_assert (userData == NULL || Thing_member (userData, classGuiWindow));
 		d_userData = static_cast <GuiWindow> (userData);
 	}
-	@end
-	@interface GuiCocoaWindowDelegate : NSObject <NSWindowDelegate> { } @end
-	@implementation GuiCocoaWindowDelegate {
+	- (void) keyDown: (NSEvent *) theEvent {
+		trace ("key down");
 	}
+	//@end
+	//@interface GuiCocoaWindowDelegate : NSObject <NSWindowDelegate> { } @end
+	//@implementation GuiCocoaWindowDelegate {
+	//}
 	- (BOOL) windowShouldClose: (id) sender {
 		GuiCocoaWindow *widget = (GuiCocoaWindow *) sender;
 		GuiWindow me = (GuiWindow) [widget userData];
@@ -141,7 +144,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		return FALSE;
 	}
 	@end
-	static GuiCocoaWindowDelegate *theGuiCocoaWindowDelegate;
+	//static GuiCocoaWindowDelegate *theGuiCocoaWindowDelegate;
 #elif motif
 	static void _GuiMotifWindow_destroyCallback (GuiObject widget, XtPointer void_me, XtPointer call) {
 		(void) widget; (void) call;
@@ -194,10 +197,10 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 		[my d_cocoaWindow makeKeyAndOrderFront: nil];
 		my d_widget = [my d_cocoaWindow contentView];
 		_GuiObject_setUserData (my d_cocoaWindow, me);
-		if (! theGuiCocoaWindowDelegate) {
-			theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];
-		}
-		[my d_cocoaWindow setDelegate: theGuiCocoaWindowDelegate];
+		//if (! theGuiCocoaWindowDelegate) {
+		//	theGuiCocoaWindowDelegate = [[GuiCocoaWindowDelegate alloc] init];
+		//}
+		//[my d_cocoaWindow setDelegate: theGuiCocoaWindowDelegate];
 	#elif motif
 		my d_xmShell = XmCreateShell (NULL, flags & GuiWindow_FULLSCREEN ? "Praatwulgfullscreen" : "Praatwulg", NULL, 0);
 		XtVaSetValues (my d_xmShell, XmNdeleteResponse, goAwayCallback ? XmDO_NOTHING : XmUNMAP, NULL);

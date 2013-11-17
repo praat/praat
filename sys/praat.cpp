@@ -930,6 +930,84 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
 		sendpraatW (NULL, Melder_peekUtf8ToWcs (praatP.title), 0, text);
 	}
+#elif cocoa
+	static int (*theUserMessageCallbackA) (char *message);
+	static int (*theUserMessageCallbackW) (wchar_t *message);
+	static void mac_setUserMessageCallbackA (int (*userMessageCallback) (char *message)) {
+		theUserMessageCallbackA = userMessageCallback;
+	}
+	static void mac_setUserMessageCallbackW (int (*userMessageCallback) (wchar_t *message)) {
+		theUserMessageCallbackW = userMessageCallback;
+	}
+	static pascal OSErr mac_processSignalA (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+		static int duringAppleEvent = FALSE;
+		(void) reply;
+		(void) handlerRefCon;
+		if (! duringAppleEvent) {
+			char *buffer;
+			long actualSize;
+			duringAppleEvent = TRUE;
+			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
+			ProcessSerialNumber psn;
+			GetCurrentProcess (& psn);
+			SetFrontProcess (& psn);
+			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, NULL, 0, & actualSize);
+			buffer = (char *) malloc (actualSize);
+			AEGetParamPtr (theAppleEvent, 1, typeChar, NULL, & buffer [0], actualSize, NULL);
+			if (theUserMessageCallbackA)
+				theUserMessageCallbackA (buffer);
+			free (buffer);
+			duringAppleEvent = FALSE;
+		}
+		return noErr;
+	}
+	static pascal OSErr mac_processSignalW (const AppleEvent *theAppleEvent, AppleEvent *reply, long handlerRefCon) {
+		static int duringAppleEvent = FALSE;
+		(void) reply;
+		(void) handlerRefCon;
+		if (! duringAppleEvent) {
+			wchar_t *buffer;
+			long actualSize;
+			duringAppleEvent = TRUE;
+			//AEInteractWithUser (kNoTimeOut, NULL, NULL);   // use time out of 0 to execute immediately (without bringing to foreground)
+			ProcessSerialNumber psn;
+			GetCurrentProcess (& psn);
+			SetFrontProcess (& psn);
+			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, NULL, 0, & actualSize);
+			buffer = (wchar_t *) malloc (actualSize);
+			AEGetParamPtr (theAppleEvent, 1, typeUnicodeText, NULL, & buffer [0], actualSize, NULL);
+			if (theUserMessageCallbackW)
+				theUserMessageCallbackW (buffer);
+			free (buffer);
+			duringAppleEvent = FALSE;
+		}
+		return noErr;
+	}
+	static int cb_userMessageA (char *messageA) {
+		autoPraatBackground background;
+		autostring message = Melder_8bitToWcs (messageA, 0);
+		try {
+			praat_executeScriptFromText (message.peek());
+		} catch (MelderError) {
+			Melder_error_ (praatP.title, ": message not completely handled.");
+			Melder_flushError (NULL);
+		}
+		return 0;
+	}
+	static int cb_userMessageW (wchar_t *message) {
+		autoPraatBackground background;
+		try {
+			praat_executeScriptFromText (message);
+		} catch (MelderError) {
+			Melder_error_ (praatP.title, ": message not completely handled.");
+			Melder_flushError (NULL);
+		}
+		return 0;
+	}
+	static int cb_quitApplication (void) {
+		DO_Quit (NULL, 0, NULL, NULL, NULL, NULL, NULL, NULL);
+		return 0;
+	}
 #elif defined (macintosh)
 	static int cb_userMessageA (char *messageA) {
 		autoPraatBackground background;
@@ -1164,6 +1242,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			}
 		#else
 			if (! Melder_batch) {
+				mac_setUserMessageCallbackA (cb_userMessageA);
+				mac_setUserMessageCallbackW (cb_userMessageW);
 				Gui_setQuitApplicationCallback (cb_quitApplication);
 			}
 		#endif
@@ -1202,7 +1282,8 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			g_set_application_name (title);
 			trace ("locale %s", setlocale (LC_ALL, NULL));
 		#elif cocoa
-			[NSApplication sharedApplication];
+			//[NSApplication sharedApplication];
+			[GuiCocoaApplication sharedApplication];
 		#elif defined (_WIN32)
 			argv [0] = & praatP. title [0];   /* argc == 4 */
 			Gui_setOpenDocumentCallback (cb_openDocument);
@@ -1238,6 +1319,10 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	} else {
 
 		#ifdef macintosh
+			#if ! useCarbon
+				AEInstallEventHandler (758934755, 0, (AEEventHandlerProcPtr) (mac_processSignalA), 0, false);
+				AEInstallEventHandler (758934756, 0, (AEEventHandlerProcPtr) (mac_processSignalW), 0, false);
+			#endif
 			MelderGui_create (raam);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
 		#if defined (macintosh) && useCarbon

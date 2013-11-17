@@ -64,7 +64,7 @@ void structGraphicsScreen :: v_getMouseLocation (double *xWC, double *yWC) {
 	#elif cocoa
         NSPoint mouseLoc = [[d_macView window]  mouseLocationOutsideOfEventStream];
         mouseLoc = [d_macView   convertPoint: mouseLoc   fromView: nil];
-        mouseLoc. y = d_macView. bounds. size. height - mouseLoc. y;
+        //mouseLoc. y = d_macView. bounds. size. height - mouseLoc. y;
         Graphics_DCtoWC (this, mouseLoc. x, mouseLoc. y, xWC, yWC);
 	#elif win
 		POINT pos;

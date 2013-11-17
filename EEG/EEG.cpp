@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -96,28 +96,29 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		autofile f = Melder_fopen (file, "rb");
 		char buffer [81];
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
+		bool is24bit = buffer [0] == (char) 255;
 		fread (buffer, 1, 80, f); buffer [80] = '\0';
-		//Melder_casual ("Local subject identification: \"%s\"", buffer);
+		trace ("Local subject identification: \"%s\"", buffer);
 		fread (buffer, 1, 80, f); buffer [80] = '\0';
-		//Melder_casual ("Local recording identification: \"%s\"", buffer);
+		trace ("Local recording identification: \"%s\"", buffer);
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
-		//Melder_casual ("Start date of recording: \"%s\"", buffer);
+		trace ("Start date of recording: \"%s\"", buffer);
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
-		//Melder_casual ("Start time of recording: \"%s\"", buffer);
+		trace ("Start time of recording: \"%s\"", buffer);
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		long numberOfBytesInHeaderRecord = atol (buffer);
-		//Melder_casual ("Number of bytes in header record: %ld", numberOfBytesInHeaderRecord);
+		trace ("Number of bytes in header record: %ld", numberOfBytesInHeaderRecord);
 		fread (buffer, 1, 44, f); buffer [44] = '\0';
-		//Melder_casual ("Version of data format: \"%s\"", buffer);
+		trace ("Version of data format: \"%s\"", buffer);
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		long numberOfDataRecords = strtol (buffer, NULL, 10);
-		//Melder_casual ("Number of data records: %ld", numberOfDataRecords);
+		trace ("Number of data records: %ld", numberOfDataRecords);
 		fread (buffer, 1, 8, f); buffer [8] = '\0';
 		double durationOfDataRecord = atof (buffer);
-		//Melder_casual ("Duration of a data record: \"%f\"", durationOfDataRecord);
+		trace ("Duration of a data record: \"%f\"", durationOfDataRecord);
 		fread (buffer, 1, 4, f); buffer [4] = '\0';
 		long numberOfChannels = atol (buffer);
-		//Melder_casual ("Number of channels in data record: %ld", numberOfChannels);
+		trace ("Number of channels in data record: %ld", numberOfChannels);
 		if (numberOfBytesInHeaderRecord != (numberOfChannels + 1) * 256)
 			Melder_throw ("Number of bytes in header record (", numberOfBytesInHeaderRecord,
 				") doesn't match number of channels (", numberOfChannels, ").");
@@ -186,6 +187,7 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		autoEEG him = EEG_create (0, duration);
 		his d_numberOfChannels = numberOfChannels;
 		autoSound me = Sound_createSimple (numberOfChannels, duration, samplingFrequency);
+		Melder_assert (my nx == numberOfSamplesPerDataRecord * numberOfDataRecords);
 		for (long record = 1; record <= numberOfDataRecords; record ++) {
 			for (long channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
@@ -193,12 +195,24 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 				for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
 					long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
 					Melder_assert (sample <= my nx);
-					my z [channel] [sample] = bingeti3LE (f) * factor;
+					if (is24bit) {
+						my z [channel] [sample] = bingeti3LE (f) * factor;
+					} else {
+						my z [channel] [sample] = bingeti2LE (f) * factor;
+					}
 				}
 			}
 		}
-		autoTextGrid thee = TextGrid_create (0, duration, L"S1 S2 S3 S4 S5 S6 S7 S8", L"");
-		for (int bit = 1; bit <= 8; bit ++) {
+		int numberOfStatusBits = 8;
+		for (long i = 1; i <= my nx; i ++) {
+			unsigned long value = (long) my z [numberOfChannels] [i];
+			if (value & 0x0000FF00) {
+				numberOfStatusBits = 16;
+			}
+		}
+		autoTextGrid thee = TextGrid_create (0, duration,
+			numberOfStatusBits == 8 ? L"S1 S2 S3 S4 S5 S6 S7 S8" : L"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", L"");
+		for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
 			unsigned long bitValue = 1 << (bit - 1);
 			IntervalTier tier = (IntervalTier) thy tiers -> item [bit];
 			for (long i = 1; i <= my nx; i ++) {

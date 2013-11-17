@@ -105,6 +105,7 @@
 		- (void) setUserData: (GuiThing) userData;
 	@end
 	typedef NSObject <GuiCocoaAny> *GuiObject;
+	@interface GuiCocoaApplication : NSApplication @end
 	@interface GuiCocoaButton : NSButton <GuiCocoaAny> @end
 	@interface GuiCocoaCheckButton : NSButton <GuiCocoaAny> @end
 	@interface GuiCocoaDrawingArea : NSView <GuiCocoaAny> @end
@@ -119,6 +120,7 @@
 	@interface GuiCocoaOptionMenu : NSPopUpButton <GuiCocoaAny> @end
 	@interface GuiCocoaProgressBar : NSProgressIndicator <GuiCocoaAny> @end
 	@interface GuiCocoaRadioButton : NSButton <GuiCocoaAny> @end
+	@interface GuiCocoaScale : NSProgressIndicator <GuiCocoaAny> @end
 	@interface GuiCocoaScrollBar : NSScroller <GuiCocoaAny> @end
 	@interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
 	@interface GuiCocoaTextField : NSTextField <GuiCocoaAny> @end
@@ -771,6 +773,9 @@ void GuiRadioGroup_end ();
 Thing_declare (GuiScale);
 
 Thing_define (GuiScale, GuiControl) { public:
+	#if cocoa
+		GuiCocoaScale *d_cocoaScale;
+	#endif
 	/*
 	 * Messages:
 	 */
@@ -899,6 +904,12 @@ Thing_define (GuiWindow, GuiShell) { public:
 		GtkMenuBar *d_gtkMenuBar;
 	#elif cocoa
 		int d_menuBarWidth;
+		void (*d_tabCallback) (void *boss, GuiMenuItemEvent event);
+		void *d_tabBoss;
+		void (*d_shiftTabCallback) (void *boss, GuiMenuItemEvent event);
+		void *d_shiftTabBoss;
+		void (*d_optionBackspaceCallback) (void *boss, GuiMenuItemEvent event);
+		void *d_optionBackspaceBoss;
 	#elif motif
 		GuiObject d_xmMenuBar;
 	#endif
