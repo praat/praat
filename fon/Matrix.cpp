@@ -1,6 +1,6 @@
 /* Matrix.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,11 +73,6 @@ void structMatrix :: v_readText (MelderReadText text) {
 		y1 = texgetr8 (text);
 	} else {
 		Matrix_Parent :: v_readText (text);
-		ymin = texgetr8 (text);
-		ymax = texgetr8 (text);
-		ny = texgeti4 (text);
-		dy = texgetr8 (text);
-		y1 = texgetr8 (text);
 	}
 	if (xmin > xmax)
 		Melder_throw ("xmin should be less than or equal to xmax.");

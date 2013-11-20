@@ -38,67 +38,202 @@ void MelderInfo_open (void) {
 
 void MelderInfo_write (const wchar_t *s1) {
 	MelderString_append (theInfos, s1);
+	if (Melder_batch && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2) {
 	MelderString_append (theInfos, s1, s2);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_append (theInfos, s1, s2, s3);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_append (theInfos, s1, s2, s3, s4);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7, s8);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+		Melder_writeToConsole (s8, false);
+	}
 }
 void MelderInfo_write (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+		Melder_writeToConsole (s8, false);
+		Melder_writeToConsole (s9, false);
+	}
 }
 
 void MelderInfo_writeLine (const wchar_t *s1) {
 	MelderString_append (theInfos, s1);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2) {
 	MelderString_append (theInfos, s1, s2);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_append (theInfos, s1, s2, s3);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_append (theInfos, s1, s2, s3, s4);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7, s8);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+		Melder_writeToConsole (s8, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 void MelderInfo_writeLine (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7, s8, s9);
 	MelderString_appendCharacter (theInfos, '\n');
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+		Melder_writeToConsole (s8, false);
+		Melder_writeToConsole (s9, false);
+		Melder_writeToConsole (L"\n", false);
+	}
 }
 
 void MelderInfo_close (void) {
@@ -111,14 +246,21 @@ void MelderInfo_close (void) {
 		*/
 		if (theInfos -> length == 0 || theInfos -> string [theInfos -> length - 1] != '\n') {   // Only if no newline there yet.
 			MelderString_appendCharacter (theInfos, '\n');
+			if (theInformation == defaultInformation) {
+				Melder_writeToConsole (L"\n", false);
+			}
 		}
-		theInformation (theInfos -> string ? theInfos -> string : L"");
+		if (theInformation != defaultInformation) {
+			theInformation (theInfos -> string ? theInfos -> string : L"");
+		}
 	}
 }
 
 void MelderInfo_drain (void) {
 	if (theInfos == & theForegroundBuffer) {
-		theInformation (theInfos -> string ? theInfos -> string : L"");
+		if (theInformation != defaultInformation) {
+			theInformation (theInfos -> string ? theInfos -> string : L"");
+		}
 	}
 }
 
@@ -140,7 +282,9 @@ void Melder_divertInfo (MelderString *buffer) {
 void Melder_clearInfo (void) {
 	if (theInfos == & theForegroundBuffer) {
 		MelderString_empty (theInfos);
-		theInformation (L"");
+		if (theInformation != defaultInformation) {
+			theInformation (L"");
+		}
 	}
 }
 
@@ -171,54 +315,117 @@ void Melder_print (const wchar_t *s) {
 void Melder_information (const wchar_t *s1) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2, s3);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2, s3, s4);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2, s3, s4, s5);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7, s8);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+		Melder_writeToConsole (s8, false);
+	}
 	MelderInfo_close ();
 }
 
 void Melder_information (const wchar_t *s1, const wchar_t *s2, const wchar_t *s3, const wchar_t *s4, const wchar_t *s5, const wchar_t *s6, const wchar_t *s7, const wchar_t *s8, const wchar_t *s9) {
 	MelderString_empty (theInfos);
 	MelderString_append (theInfos, s1, s2, s3, s4, s5, s6, s7, s8, s9);
+	if (theInformation == defaultInformation && theInfos == & theForegroundBuffer) {
+		Melder_writeToConsole (s1, false);
+		Melder_writeToConsole (s2, false);
+		Melder_writeToConsole (s3, false);
+		Melder_writeToConsole (s4, false);
+		Melder_writeToConsole (s5, false);
+		Melder_writeToConsole (s6, false);
+		Melder_writeToConsole (s7, false);
+		Melder_writeToConsole (s8, false);
+		Melder_writeToConsole (s9, false);
+	}
 	MelderInfo_close ();
 }
 

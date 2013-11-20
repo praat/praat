@@ -188,17 +188,32 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		his d_numberOfChannels = numberOfChannels;
 		autoSound me = Sound_createSimple (numberOfChannels, duration, samplingFrequency);
 		Melder_assert (my nx == numberOfSamplesPerDataRecord * numberOfDataRecords);
+		autoNUMvector <unsigned char> dataBuffer (0L, 3 * numberOfSamplesPerDataRecord - 1);
 		for (long record = 1; record <= numberOfDataRecords; record ++) {
 			for (long channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
 				if (channel < numberOfChannels - his f_getNumberOfExtraSensors ()) factor /= 1000000.0;
-				for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
-					long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
-					Melder_assert (sample <= my nx);
-					if (is24bit) {
-						my z [channel] [sample] = bingeti3LE (f) * factor;
-					} else {
-						my z [channel] [sample] = bingeti2LE (f) * factor;
+				if (is24bit) {
+					fread (& dataBuffer [0], 3, numberOfSamplesPerDataRecord, f);
+					unsigned char *p = & dataBuffer [0];
+					for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
+						long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
+						Melder_assert (sample <= my nx);
+						uint8_t lowByte = *p ++, midByte = *p ++, highByte = *p ++;
+						uint32_t externalValue = ((uint32_t) highByte << 16) | ((uint32_t) midByte << 8) | (uint32_t) lowByte;
+						if ((highByte & 128) != 0)   // is the 24-bit sign bit on?
+							externalValue |= 0xFF000000;   // extend negative sign to 32 bits
+						my z [channel] [sample] = (int32_t) externalValue * factor;
+					}
+				} else {
+					fread (& dataBuffer [0], 2, numberOfSamplesPerDataRecord, f);
+					unsigned char *p = & dataBuffer [0];
+					for (long i = 1; i <= numberOfSamplesPerDataRecord; i ++) {
+						long sample = i + (record - 1) * numberOfSamplesPerDataRecord;
+						Melder_assert (sample <= my nx);
+						uint8_t lowByte = *p ++, highByte = *p ++;
+						uint16_t externalValue = ((uint16_t) highByte << 8) | (uint16_t) lowByte;
+						my z [channel] [sample] = (int16_t) externalValue * factor;
 					}
 				}
 			}

@@ -1,6 +1,6 @@
 /* praat_EEG.cpp
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,18 +56,23 @@ FORM (EEG_editExternalElectrodeNames, L"Edit external electrode names", 0)
 int IOBJECT;
 LOOP {
 	iam (EEG);
-	SET_STRING (L"External electrode 1", my d_channelNames [my d_numberOfChannels - 15])
-	SET_STRING (L"External electrode 2", my d_channelNames [my d_numberOfChannels - 14])
-	SET_STRING (L"External electrode 3", my d_channelNames [my d_numberOfChannels - 13])
-	SET_STRING (L"External electrode 4", my d_channelNames [my d_numberOfChannels - 12])
-	SET_STRING (L"External electrode 5", my d_channelNames [my d_numberOfChannels - 11])
-	SET_STRING (L"External electrode 6", my d_channelNames [my d_numberOfChannels - 10])
-	SET_STRING (L"External electrode 7", my d_channelNames [my d_numberOfChannels -  9])
-	SET_STRING (L"External electrode 8", my d_channelNames [my d_numberOfChannels -  8])
+	if (my f_getNumberOfExternalElectrodes () == 8) {
+		const long offsetExternalElectrode = my f_getNumberOfCapElectrodes ();
+		SET_STRING (L"External electrode 1", my d_channelNames [offsetExternalElectrode + 1])
+		SET_STRING (L"External electrode 2", my d_channelNames [offsetExternalElectrode + 2])
+		SET_STRING (L"External electrode 3", my d_channelNames [offsetExternalElectrode + 3])
+		SET_STRING (L"External electrode 4", my d_channelNames [offsetExternalElectrode + 4])
+		SET_STRING (L"External electrode 5", my d_channelNames [offsetExternalElectrode + 5])
+		SET_STRING (L"External electrode 6", my d_channelNames [offsetExternalElectrode + 6])
+		SET_STRING (L"External electrode 7", my d_channelNames [offsetExternalElectrode + 7])
+		SET_STRING (L"External electrode 8", my d_channelNames [offsetExternalElectrode + 8])
+	}
 }
 DO
 	LOOP {
 		iam (EEG);
+		if (my f_getNumberOfExternalElectrodes () != 8)
+			Melder_throw ("You can do this only if there are 8 external electrodes.");
 		my f_setExternalElectrodeNames (GET_STRING (L"External electrode 1"), GET_STRING (L"External electrode 2"), GET_STRING (L"External electrode 3"),
 			GET_STRING (L"External electrode 4"), GET_STRING (L"External electrode 5"), GET_STRING (L"External electrode 6"),
 			GET_STRING (L"External electrode 7"), GET_STRING (L"External electrode 8"));
@@ -694,7 +699,7 @@ void praat_EEG_init (void) {
 	praat_addAction1 (classEEG, 0, L"Modify -", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Set channel name...", 0, 1, DO_EEG_setChannelName);
 		praat_addAction1 (classEEG, 1, L"Edit external electrode names...", 0, 1, DO_EEG_editExternalElectrodeNames);
-		praat_addAction1 (classEEG, 0, L"-- processing --", 0, 1, DO_EEG_detrend);
+		praat_addAction1 (classEEG, 0, L"-- processing --", 0, 1, 0);
 		praat_addAction1 (classEEG, 0, L"Subtract reference...", 0, 1, DO_EEG_subtractReference);
 		praat_addAction1 (classEEG, 0, L"Subtract mean channel...", 0, 1, DO_EEG_subtractMeanChannel);
 		praat_addAction1 (classEEG, 0, L"Detrend", 0, 1, DO_EEG_detrend);

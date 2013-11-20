@@ -23,12 +23,16 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20131017)
+MAN_BEGIN (L"What's new?", L"ppgb", 20131020)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.59# (20 November 2013)")
+LIST_ITEM (L"\\bu EEG: faster reading of BDF and EDF files.")
+LIST_ITEM (L"\\bu Batch scripting: made ##appendInfo()# write to the console in the same way as #print.")
+LIST_ITEM (L"\\bu Removed a bug introduced in 5.3.57 whereby some Praat text files could not be read.")
 NORMAL (L"##5.3.58# (17 November 2013)")
 LIST_ITEM (L"\\bu EEG: support for 16-bit (next to 24-bit) BDF files and for 16-bit (next to 8-bit) statuses.")
-LIST_ITEM (L"\\bu Mac 64-bit beta version.")
+LIST_ITEM (L"\\bu Mac: 64-bit beta version.")
 NORMAL (L"##5.3.57# (27 October 2013)")
 LIST_ITEM (L"\\bu Mac: opening, modifying and saving image files (the Photo object).")
 LIST_ITEM (L"\\bu Mac 64-bit: some small improvements in the user interface.")
@@ -40,7 +44,7 @@ LIST_ITEM (L"\\bu Corrected a bug introduced in 5.3.54 by which you couldn't sel
 NORMAL (L"##5.3.54# (1 September 2013)")
 LIST_ITEM (L"\\bu Sound window: removed a bug introduced in 5.3.42 by which you couldn't ask for an odd number of poles in Formant Settings "
 	"(by e.g. specifying \"5.5\" for the number of formants).")
-LIST_ITEM (L"Linux: improved dragging of selections in the Picture window and the Sound window.")
+LIST_ITEM (L" Linux: improved dragging of selections in the Picture window and the Sound window.")
 NORMAL (L"##5.3.53# (9 July 2013)")
 LIST_ITEM (L"\\bu Table: more drawing commands.")
 NORMAL (L"##5.3.52# (12 June 2013)")

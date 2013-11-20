@@ -446,6 +446,18 @@
 			<key>NSPersistentStoreTypeKey</key>
 			<string>NSBinaryStoreType</string>
 		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>edf</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>EDF electro-encephalogram</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSPersistentStoreTypeKey</key>
+			<string>NSBinaryStoreType</string>
+		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Praat</string>
