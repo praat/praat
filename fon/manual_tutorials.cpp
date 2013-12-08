@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20131020)
+MAN_BEGIN (L"What's new?", L"ppgb", 20131208)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.60# (8 December 2013)")
+LIST_ITEM (L"\\bu Mac 64-bit: implemented swiping (to scroll with the trackpad) and pinching (to zoom with the trackpad).")
+LIST_ITEM (L"\\bu Scripting: backslashTrigraphsToUnicode () and unicodeToBackslashTrigraphs ().")
 NORMAL (L"##5.3.59# (20 November 2013)")
 LIST_ITEM (L"\\bu EEG: faster reading of BDF and EDF files.")
 LIST_ITEM (L"\\bu Batch scripting: made ##appendInfo()# write to the console in the same way as #print.")

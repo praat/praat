@@ -61,7 +61,11 @@ void structGuiMenu :: v_destroy () {
 	- (void) sendEvent: (NSEvent *) nsEvent {
 		if ([nsEvent type] == NSKeyDown) {
 			NSString *characters = [nsEvent characters];
-			unichar character = [characters characterAtIndex: 0];
+			if ([characters length] == 0) {   // only modifiers?
+				[super sendEvent: nsEvent];   // the default action
+				return;
+			}
+			unichar character = [characters characterAtIndex: 0];   // there is now at least one character, so no range exception can be raised
 			if (Melder_getTracing ()) {
 				for (NSUInteger i = 0; i < [characters length]; i ++) {
 					unichar kar = [characters characterAtIndex: 0];

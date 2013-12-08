@@ -844,7 +844,7 @@ TAG (L"##besselI (%n, %x)")
 TAG (L"##besselK (%n, %x)")
 MAN_END
 
-MAN_BEGIN (L"Formulas 5. String functions", L"ppgb", 20130522)
+MAN_BEGIN (L"Formulas 5. String functions", L"ppgb", 20131208)
 INTRO (L"String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
@@ -943,6 +943,8 @@ DEFINITION (L"looks for a word without spaces after the first occurrence of \"Ty
 TAG (L"##extractLine\\$  (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + newline\\$  + \"Size: 44007\", \"Name: \")")
 DEFINITION (L"looks for the rest of the line (including spaces) after the first occurrence of \"Name: \" in the long string. "
 	"Outcome: hello there. Note how \"Name: \" includes a space, so that the `rest of the line' starts with the %h.")
+TAG (L"##backslashTrigraphsToUnicode\\$  (x\\$ ), unicodeToBackslashTrigraphs\\$  (x\\$ )")
+DEFINITION (L"converts e.g. \\bsct to \\ct or the reverse. See @@Special symbols@.")
 MAN_END
 
 MAN_BEGIN (L"Formulas 6. Control structures", L"ppgb", 20030519)

@@ -251,6 +251,36 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			}
 		}
 	}
+	- (void) scrollWheel: (NSEvent *) nsEvent {
+		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		if (my d_horizontalScrollBar || my d_verticalScrollBar) {
+			if (my d_horizontalScrollBar) {
+				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_horizontalScrollBar -> d_widget;
+				[cocoaScrollBar scrollBy: [nsEvent scrollingDeltaX]];
+			}
+			if (my d_verticalScrollBar) {
+				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_verticalScrollBar -> d_widget;
+				[cocoaScrollBar scrollBy: [nsEvent scrollingDeltaY]];
+			}
+		} else {
+			[super scrollWheel: nsEvent];
+		}
+	}
+	- (void) magnifyWithEvent: (NSEvent *) nsEvent {
+		GuiDrawingArea me = (GuiDrawingArea) d_userData;
+		if (my d_horizontalScrollBar || my d_verticalScrollBar) {
+			if (my d_horizontalScrollBar) {
+				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_horizontalScrollBar -> d_widget;
+				[cocoaScrollBar magnifyBy: [nsEvent magnification]];
+			}
+			if (my d_verticalScrollBar) {
+				GuiCocoaScrollBar *cocoaScrollBar = (GuiCocoaScrollBar *) my d_verticalScrollBar -> d_widget;
+				[cocoaScrollBar magnifyBy: [nsEvent magnification]];
+			}
+		} else {
+			[super magnifyWithEvent: nsEvent];
+		}
+	}
 	- (BOOL) isFlipped {
 		return YES;
 	}

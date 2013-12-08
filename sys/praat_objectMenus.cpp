@@ -104,13 +104,14 @@ END
 
 /********** The fixed menus. **********/
 
-static GuiMenu praatMenu, editMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, technicalMenu, applicationHelpMenu, helpMenu;
+static GuiMenu praatMenu, editMenu, windowMenu, newMenu, readMenu, goodiesMenu, preferencesMenu, technicalMenu, applicationHelpMenu, helpMenu;
 
 GuiMenu praat_objects_resolveMenu (const wchar_t *menu) {
 	return
 		wcsequ (menu, L"Praat") || wcsequ (menu, L"Control") ? praatMenu :
 		#if cocoa
 			wcsequ (menu, L"Edit") ? editMenu :
+			wcsequ (menu, L"Window") ? windowMenu :
 		#endif
 		wcsequ (menu, L"New") || wcsequ (menu, L"Create") ? newMenu :
 		wcsequ (menu, L"Open") || wcsequ (menu, L"Read") ? readMenu :
@@ -559,6 +560,15 @@ END
 DIRECT (praat_paste)
 	[[[NSApp keyWindow] fieldEditor: YES forObject: nil] pasteAsPlainText: nil];
 END
+DIRECT (praat_minimize)
+	[[NSApp keyWindow] performMiniaturize: nil];
+END
+DIRECT (praat_zoom)
+	[[NSApp keyWindow] performZoom: nil];
+END
+DIRECT (praat_close)
+	[[NSApp keyWindow] performClose: nil];
+END
 #endif
 
 void praat_addMenus (GuiWindow window) {
@@ -574,6 +584,7 @@ void praat_addMenus (GuiWindow window) {
 			praatMenu = GuiMenu_createInWindow (NULL, L"\024", 0);
 			#if cocoa
 				editMenu = GuiMenu_createInWindow (NULL, L"Edit", 0);
+				windowMenu = GuiMenu_createInWindow (NULL, L"Window", 0);
 			#endif
 		#else
 			praatMenu = GuiMenu_createInWindow (window, L"Praat", 0);
@@ -591,9 +602,12 @@ void praat_addMenus (GuiWindow window) {
 	#ifdef macintosh
 		praat_addMenuCommand (L"Objects", L"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
 		#if cocoa
-			praat_addMenuCommand (L"Objects", L"Edit", L"Cut", 0, 'X', DO_praat_cut);
-			praat_addMenuCommand (L"Objects", L"Edit", L"Copy", 0, 'C', DO_praat_copy);
-			praat_addMenuCommand (L"Objects", L"Edit", L"Paste", 0, 'V', DO_praat_paste);
+			praat_addMenuCommand (L"Objects", L"Edit", L"Cut", 0, praat_UNHIDABLE + 'X', DO_praat_cut);
+			praat_addMenuCommand (L"Objects", L"Edit", L"Copy", 0, praat_UNHIDABLE + 'C', DO_praat_copy);
+			praat_addMenuCommand (L"Objects", L"Edit", L"Paste", 0, praat_UNHIDABLE + 'V', DO_praat_paste);
+			praat_addMenuCommand (L"Objects", L"Window", L"Minimize", 0, praat_UNHIDABLE, DO_praat_minimize);
+			praat_addMenuCommand (L"Objects", L"Window", L"Zoom", 0, praat_UNHIDABLE, DO_praat_zoom);
+			praat_addMenuCommand (L"Objects", L"Window", L"Close", 0, 'W', DO_praat_close);
 		#endif
 	#endif
 	#ifdef UNIX

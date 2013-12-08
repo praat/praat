@@ -1453,10 +1453,10 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 							 */
 							MelderString_empty (& valueString);   // empty because command may print nothing; also makes sure that valueString.string exists
 							autoMelderDivertInfo divert (& valueString);
-							praat_executeCommand (me, p);
+							int status = praat_executeCommand (me, p);
 							InterpreterVariable var = Interpreter_lookUpVariable (me, variableName);
 							Melder_free (var -> stringValue);
-							var -> stringValue = Melder_wcsdup (valueString.string);
+							var -> stringValue = Melder_wcsdup (status ? valueString.string : L"");
 						} else {
 							/*
 							 * Evaluate a string expression and assign the result to the variable.
@@ -1571,8 +1571,10 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 							MelderString_empty (& valueString);
 							autoMelderDivertInfo divert (& valueString);
 							MelderString_appendCharacter (& valueString, 1);
-							praat_executeCommand (me, p);
-							if (valueString.string [0] == 1) {
+							int status = praat_executeCommand (me, p);
+							if (status == 0) {
+								value = NUMundefined;
+							} else if (valueString.string [0] == 1) {
 								int IOBJECT, result = 0, found = 0;
 								WHERE (SELECTED) { result = IOBJECT; found += 1; }
 								if (found > 1) {

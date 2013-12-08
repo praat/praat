@@ -96,6 +96,41 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 		[self setDoubleValue: (value - minimum) / spaceLeft];
 	}
 }
+- (void) _update {
+	GuiScrollBar me = (GuiScrollBar) d_userData;
+	[self setMinimum: _m_minimum maximum: _m_maximum value: _m_value sliderSize: _m_sliderSize increment: _m_increment pageIncrement: _m_pageIncrement];
+    if (my d_valueChangedCallback) {
+        struct structGuiScrollBarEvent event = { me };
+        try {
+            my d_valueChangedCallback (my d_valueChangedBoss, & event);
+        } catch (MelderError) {
+            Melder_flushError ("Scroll not completely handled.");
+        }
+    }
+}
+- (void) scrollBy: (double) step {
+	trace ("step %lf", step);
+	if (step == 0) return;
+	_m_value -= 0.3 * step * _m_increment;
+	if (_m_value < _m_minimum)
+		_m_value = _m_minimum;
+	if (_m_value > _m_maximum - _m_sliderSize)
+		_m_value = _m_maximum - _m_sliderSize;
+	[self _update];
+}
+- (void) magnifyBy: (double) step {
+	trace ("step %lf", step);
+	double increase = _m_sliderSize * (exp (- step) - 1.0);
+	_m_sliderSize += increase;
+	if (_m_sliderSize > _m_maximum - _m_minimum)
+		_m_sliderSize = _m_maximum - _m_minimum;
+	_m_value -= 0.5 * increase;
+	if (_m_value < _m_minimum)
+		_m_value = _m_minimum;
+	if (_m_value > _m_maximum - _m_sliderSize)
+		_m_value = _m_maximum - _m_sliderSize;
+	[self _update];
+}
 - (void) valueChanged {
 	GuiScrollBar me = (GuiScrollBar) d_userData;
 	switch ([self hitPart]) {
@@ -289,6 +324,19 @@ int structGuiScrollBar :: f_getValue () {
 		int value, slider, incr, pincr;
 		XmScrollBarGetValues (d_widget, & value, & slider, & incr, & pincr);
 		return value;
+	#endif
+}
+
+int structGuiScrollBar :: f_getSliderSize () {
+	#if gtk
+		return 1;   // NYI
+	#elif cocoa
+		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) d_widget;
+		return [scroller m_sliderSize];
+	#elif motif
+		int value, slider, incr, pincr;
+		XmScrollBarGetValues (d_widget, & value, & slider, & incr, & pincr);
+		return slider;
 	#endif
 }
 

@@ -94,7 +94,7 @@ void structGuiOptionMenu :: f_init (GuiForm parent, int left, int right, int top
         GuiCocoaOptionMenu *optionMenu = [[GuiCocoaOptionMenu alloc] init];
 
         d_widget = (GuiObject) optionMenu;
-		v_positionInForm (d_widget, left, right, top, bottom, parent);
+		v_positionInForm (d_widget, left, right, top - 1, bottom + 1, parent);
     
         [optionMenu setUserData: this];
 //        [optionMenu setBezelStyle: NSRoundedBezelStyle];

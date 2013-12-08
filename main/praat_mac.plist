@@ -482,7 +482,7 @@
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.education</string>
 	<key>LSRequiresCarbon</key>
-	<true/>
+	<false/>
 	<key>NSHumanReadableCopyright</key>
 	<string>Copyright © 1992-PRAAT_YEAR by Paul Boersma and David Weenink</string>
 </dict>

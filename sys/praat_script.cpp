@@ -108,7 +108,7 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 	Melder_throw ("Editor \"", string, "\" does not exist.");
 }
 
-void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
+int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 	//Melder_casual ("praat_executeCommand: %ld: %ls", interpreter, command);
 	if (command [0] == '\0' || command [0] == '#' || command [0] == '!' || command [0] == ';')
 		/* Skip empty lines and comments. */;
@@ -200,13 +200,14 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 				praat_executeCommand (interpreter, command + 8);
 			} catch (MelderError) {
 				Melder_clearError ();
+				return 0;
 			}
 		} else if (wcsnequ (command, L"demo ", 5)) {
 			autoDemoOpen demo;
 			praat_executeCommand (interpreter, command + 5);
 		} else if (wcsnequ (command, L"pause ", 6) || wcsequ (command, L"pause")) {
 			if (theCurrentPraatApplication -> batch)
-				return;   // in batch we ignore pause statements
+				return 1;   // in batch we ignore pause statements
 			UiPause_begin (theCurrentPraatApplication -> topShell, L"stop or continue", interpreter);
 			UiPause_comment (wcsequ (command, L"pause") ? L"..." : command + 6);
 			UiPause_end (1, 1, 0, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, interpreter);
@@ -390,6 +391,7 @@ void praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		}
 		praat_updateSelection ();
 	}
+	return 1;
 }
 
 void praat_executeCommandFromStandardInput (const char *programName) {

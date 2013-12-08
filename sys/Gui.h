@@ -121,7 +121,10 @@
 	@interface GuiCocoaProgressBar : NSProgressIndicator <GuiCocoaAny> @end
 	@interface GuiCocoaRadioButton : NSButton <GuiCocoaAny> @end
 	@interface GuiCocoaScale : NSProgressIndicator <GuiCocoaAny> @end
-	@interface GuiCocoaScrollBar : NSScroller <GuiCocoaAny> @end
+	@interface GuiCocoaScrollBar : NSScroller <GuiCocoaAny>
+		- (void) scrollBy: (double) step;
+		- (void) magnifyBy: (double) step;
+	@end
 	@interface GuiCocoaScrolledWindow : NSScrollView <GuiCocoaAny> @end
 	@interface GuiCocoaTextField : NSTextField <GuiCocoaAny> @end
 	@interface GuiCocoaTextView : NSTextView <GuiCocoaAny, NSTextViewDelegate> @end
@@ -803,6 +806,7 @@ Thing_define (GuiScrollBar, GuiControl) { public:
 	 * Messages:
 	 */
 	int f_getValue ();
+	int f_getSliderSize ();
 	void f_set (double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement);
 };
 

@@ -212,6 +212,9 @@ GuiButton GuiButton_create (GuiForm parent, int left, int right, int top, int bo
 		if (flags & GuiButton_DEFAULT) {
 			[button setKeyEquivalent: @"\r"];
 		}
+		if (flags & GuiButton_CANCEL) {
+			[button setKeyEquivalent: [NSString stringWithFormat: @"%c", 27]];   // Escape key
+		}
 		if (flags & GuiButton_ATTRACTIVE) {
 			//[button setKeyEquivalent: @"\r"];   // slow!
 			[button highlight: YES];   // lasts only till it's clicked!

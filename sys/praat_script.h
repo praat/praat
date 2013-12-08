@@ -21,7 +21,7 @@
 
 #include "Interpreter.h"
 
-void praat_executeCommand (Interpreter me, wchar_t *command);
+int praat_executeCommand (Interpreter me, wchar_t *command);
 void praat_executeCommandFromStandardInput (const char *programName);
 void praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments);
 void praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments);

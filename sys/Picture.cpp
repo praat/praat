@@ -39,6 +39,9 @@
 #include "Printer.h"
 #include "Picture.h"
 #include "site.h"
+#ifdef _WIN32
+	#include "GraphicsP.h"
+#endif
 
 struct structPicture {
 	GuiDrawingArea drawingArea;
@@ -414,7 +417,7 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 void Picture_copyToClipboard (Picture me) {
 	try {
 		HENHMETAFILE metafile = copyToMetafile (me);
-		OpenClipboard (NULL);
+		OpenClipboard (((GraphicsScreen) my graphics) -> d_winWindow);
 		EmptyClipboard ();
 		SetClipboardData (CF_ENHMETAFILE, metafile);
 		CloseClipboard ();

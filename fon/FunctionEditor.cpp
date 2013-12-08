@@ -880,17 +880,31 @@ static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 	if (my d_graphics == NULL) return;   // ignore events during creation
 	double value = event -> scrollBar -> f_getValue ();
 	double shift = my d_tmin + (value - 1) * (my d_tmax - my d_tmin) / maximumScrollBarValue - my d_startWindow;
-	if (shift != 0.0) {
-		int i;
+	bool shifted = shift != 0.0;
+	double oldSliderSize = (my d_endWindow - my d_startWindow) / (my d_tmax - my d_tmin) * maximumScrollBarValue - 1;
+	double newSliderSize = event -> scrollBar -> f_getSliderSize ();
+	bool zoomed = newSliderSize != oldSliderSize;
+	#if ! cocoa
+		zoomed = false;
+	#endif
+	if (shifted) {
 		my d_startWindow += shift;
 		if (my d_startWindow < my d_tmin + 1e-12) my d_startWindow = my d_tmin;
 		my d_endWindow += shift;
 		if (my d_endWindow > my d_tmax - 1e-12) my d_endWindow = my d_tmax;
+	}
+	if (zoomed) {
+		double zoom = (newSliderSize + 1) * (my d_tmax - my d_tmin) / maximumScrollBarValue;
+		my d_endWindow = my d_startWindow + zoom;
+		if (my d_endWindow > my d_tmax - 1e-12) my d_endWindow = my d_tmax;
+	}
+	if (shifted || zoomed) {
 		my v_updateText ();
+		updateScrollBar (me);
 		/*Graphics_clearWs (my d_graphics);*/
 		drawNow (me);   /* Do not wait for expose event. */
 		if (! my group || ! my pref_synchronizedZoomAndScroll ()) return;
-		for (i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
+		for (int i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
 			theGroup [i] -> d_startWindow = my d_startWindow;
 			theGroup [i] -> d_endWindow = my d_endWindow;
 			FunctionEditor_updateText (theGroup [i]);

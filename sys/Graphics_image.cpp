@@ -183,6 +183,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			 */
 			struct { BITMAPINFOHEADER header; RGBQUAD colours [256]; } bitmapInfo;
 			long scanLineLength = (bitmapWidth + 3) & ~3L;
+			//long scanLineLength = (bitmapWidth * 3 + 3) & ~3L;
 			HBITMAP bitmap;
 			unsigned char *bits;
 			bitmapInfo. header.biSize = sizeof (BITMAPINFOHEADER);
@@ -190,6 +191,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			bitmapInfo. header.biHeight = bitmapHeight;
 			bitmapInfo. header.biPlanes = 1;
 			bitmapInfo. header.biBitCount = 8;
+			//bitmapInfo. header.biBitCount = 24;
 			bitmapInfo. header.biCompression = 0;
 			bitmapInfo. header.biSizeImage = 0;
 			bitmapInfo. header.biXPelsPerMeter = 0;
@@ -226,6 +228,13 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 		#elif win
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
 			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
+			/*#define PUT_PIXEL \
+				if (1) { \
+					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = kar; \
+					*pixelAddress ++ = kar; \
+				}*/
 		#elif mac
 			#define ROW_START_ADDRESS  (imageData + (clipy1 - 1 - yDC) * bytesPerRow)
 			#define PUT_PIXEL \
@@ -354,6 +363,8 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 		#elif win
 			SetDIBitsToDevice (my d_gdiGraphicsContext, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
 				bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
+			//StretchDIBits (my d_gdiGraphicsContext, clipx1, clipy2, bitmapWidth, bitmapHeight, 0, 0, 0, bitmapHeight,
+			//	bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 		#elif mac
 			CGImageRef image;
 			CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB

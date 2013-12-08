@@ -30,6 +30,7 @@
 #include "Ui.h"
 #include "praatP.h"
 #include "UnicodeData.h"
+#include "longchar.h"
 #include "UiPause.h"
 #include "DemoEditor.h"
 
@@ -138,10 +139,10 @@ enum { GEENSYMBOOL_,
 	#define LOW_STRING_FUNCTION  LOW_FUNCTION_STR1
 	#define LOW_FUNCTION_STR1  LENGTH_
 		LENGTH_, STRING_TO_NUMBER_, FILE_READABLE_, DELETE_FILE_, CREATE_DIRECTORY_, VARIABLE_EXISTS_,
-		READ_FILE_, READ_FILESTR_,
-	#define HIGH_FUNCTION_STR1  READ_FILESTR_
+		READ_FILE_, READ_FILESTR_, UNICODE_TO_BACKSLASH_TRIGRAPHS_, BACKSLASH_TRIGRAPHS_TO_UNICODE_, ENVIRONMENTSTR_,
+	#define HIGH_FUNCTION_STR1  ENVIRONMENTSTR_
 		DATESTR_, INFOSTR_,
-		ENVIRONMENTSTR_, INDEX_, RINDEX_,
+		INDEX_, RINDEX_,
 		STARTS_WITH_, ENDS_WITH_, REPLACESTR_, INDEX_REGEX_, RINDEX_REGEX_, REPLACE_REGEXSTR_,
 		EXTRACT_NUMBER_, EXTRACT_WORDSTR_, EXTRACT_LINESTR_,
 		FIXEDSTR_, PERCENTSTR_,
@@ -230,9 +231,9 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"numberOfRows", L"numberOfColumns",
 
 	L"length", L"number", L"fileReadable",	L"deleteFile", L"createDirectory", L"variableExists",
-	L"readFile", L"readFile$",
+	L"readFile", L"readFile$", L"unicodeToBackslashTrigraphs$", L"backslashTrigraphsToUnicode$", L"environment$",
 	L"date$", L"info$",
-	L"environment$", L"index", L"rindex",
+	L"index", L"rindex",
 	L"startsWith", L"endsWith", L"replace$", L"index_regex", L"rindex_regex", L"replace_regex$",
 	L"extractNumber", L"extractWord$", L"extractLine$",
 	L"fixed$", L"percent$",
@@ -1259,10 +1260,6 @@ static void parsePowerFactor (void) {
 			pas (HAAKJEOPENEN_);
 			parseExpression ();
 			pas (KOMMA_);
-			parseExpression ();
-			pas (HAAKJESLUITEN_);
-		} else if (symbol == ENVIRONMENTSTR_) {
-			pas (HAAKJEOPENEN_);
 			parseExpression ();
 			pas (HAAKJESLUITEN_);
 		} else if (symbol == FIXEDSTR_ || symbol == PERCENTSTR_) {
@@ -3007,6 +3004,28 @@ static void do_midStr (void) {
 		Melder_throw ("The function \"mid$\" requires two or three arguments.");
 	}
 }
+static void do_unicodeToBackslashTrigraphsStr () {
+	Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		long length = wcslen (s->string);
+		autostring trigraphs = Melder_calloc (wchar_t, 3 * length + 1);
+		Longchar_genericizeW (s->string, trigraphs.peek());
+		pushString (trigraphs.transfer());
+	} else {
+		Melder_throw ("The function \"unicodeToBackslashTrigraphs$\" requires a string, not ", Stackel_whichText (s), ".");
+	}
+}
+static void do_backslashTrigraphsToUnicodeStr () {
+	Stackel s = pop;
+	if (s->which == Stackel_STRING) {
+		long length = wcslen (s->string);
+		autostring unicode = Melder_calloc (wchar_t, length + 1);
+		Longchar_nativizeW (s->string, unicode.peek(), false);
+		pushString (unicode.transfer());
+	} else {
+		Melder_throw ("The function \"unicodeToBackslashTrigraphs$\" requires a string, not ", Stackel_whichText (s), ".");
+	}
+}
 static void do_environmentStr (void) {
 	Stackel s = pop;
 	if (s->which == Stackel_STRING) {
@@ -4634,6 +4653,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case LEFTSTR_: { do_leftStr ();
 } break; case RIGHTSTR_: { do_rightStr ();
 } break; case MIDSTR_: { do_midStr ();
+} break; case UNICODE_TO_BACKSLASH_TRIGRAPHS_: { do_unicodeToBackslashTrigraphsStr ();
+} break; case BACKSLASH_TRIGRAPHS_TO_UNICODE_: { do_backslashTrigraphsToUnicodeStr ();
 } break; case ENVIRONMENTSTR_: { do_environmentStr ();
 } break; case INDEX_: { do_index ();
 } break; case RINDEX_: { do_rindex ();
