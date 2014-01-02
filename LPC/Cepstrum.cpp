@@ -315,7 +315,7 @@ void PowerCepstrum_fitTiltLine (PowerCepstrum me, double qmin, double qmax, doub
 }
 
 // Hillenbrand subtracts dB values and if the result is negative it is made zero
-void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slope, double intercept, int lineType) {
+void PowerCepstrum_subtractTiltLine_inline2 (PowerCepstrum me, double slope, double intercept, int lineType) {
 	for (long j = 1; j <= my nx; j++) {
 		double q = my x1 + (j - 1) * my dx;
 		q = j == 1 ? 0.5 * my dx : q; // approximation
@@ -324,6 +324,22 @@ void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slope, doub
 		double db_cepstrum = my v_getValueAtSample (j, 1, 0);
 		double diff = exp ((db_cepstrum - db_background) * NUMln10 / 10) - 1e-30;
 		my z[1][j] = diff;
+	}
+}
+
+// clip with tilt line
+void PowerCepstrum_subtractTiltLine_inline (PowerCepstrum me, double slope, double intercept, int lineType) {
+	for (long j = 1; j <= my nx; j++) {
+		double q = my x1 + (j - 1) * my dx;
+		q = j == 1 ? 0.5 * my dx : q; // approximation
+		double xq = lineType == 2 ? log(q) : q;
+		double db_background = slope * xq + intercept;
+		double db_cepstrum = my v_getValueAtSample (j, 1, 0);
+		double diff = db_cepstrum - db_background;
+		if (diff < 0) {
+			diff = 0;
+		}
+		my z[1][j] = exp (diff * NUMln10 / 10) - 1e-30;
 	}
 }
 

@@ -61,7 +61,7 @@ PowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, long nt, dou
 	}
 }
 
-void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish) {
+void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBmaximum, int autoscaling, double dynamicRangedB, double dynamicCompression, int garnish) {
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }
 	if (qmax <= qmin) { qmin = my ymin; qmax = my ymax; }
 	long itmin, itmax, ifmin, ifmax;
@@ -79,9 +79,24 @@ void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, doubl
 			thy z[i][j] = val;
 		}
 	}
-	if (dBmaximum <= dBminimum) {
+	double dBminimum = dBmaximum - dynamicRangedB;
+	if (autoscaling) {
 		dBminimum = min; dBmaximum = max;
 	}
+
+	for (long j = 1; j <= my nx; j++) {
+		double lmax = thy z[1][j];
+		for (long i = 2; i <= my ny; i++) {
+			if (thy z[i][j] > lmax) {
+				lmax = thy z[i][j];
+			}
+		}
+		double factor = dynamicCompression * (max - lmax);
+		for (long i = 1; i <= my ny; i++) {
+			thy z[i][j] += factor;
+		}
+	}
+	
 	Graphics_setInner (g);
 	Graphics_setWindow (g, tmin, tmax, qmin, qmax);
 	Graphics_image (g, thy z,

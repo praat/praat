@@ -265,7 +265,7 @@ GuiMenuItem GuiMenu_addItem (GuiMenu menu, const wchar_t *title, long flags,
 			GtkAccelGroup *ag = gtk_menu_get_accel_group (GTK_MENU (menu -> d_widget));
 
 			if (key != 0)
-				gtk_widget_add_accelerator (GTK_WIDGET (my d_widget), toggle ? "toggled" : "activate",
+				gtk_widget_add_accelerator (GTK_WIDGET (my d_widget), toggle ? "YouShouldNotGetHere" : "activate",
 					ag, key, modifiers, GTK_ACCEL_VISIBLE);
 
 		#elif cocoa

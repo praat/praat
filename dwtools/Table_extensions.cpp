@@ -25,6 +25,7 @@
   djmw 20080125 Corrected mislabeling of vowels in the Peterson&Barney dataset according to Watrous
   djmw 20080508 Labeling back to original PB article.
   djmw 20110329 Table_get(Numeric|String)Value is now Table_get(Numeric|String)Value_Assert
+  djmw 20131219 Improved Table_scatterPlotWithConfidenceIntervals
 */
 /*	speaker type (m|w|c), sex(m|f), id, vowel_number, vowel_label
 	F0, F1, F2, F3
@@ -39,6 +40,26 @@
 #include <ctype.h>
 #include "Strings_extensions.h"
 #include "Table_extensions.h"
+
+static bool Table_selectedColumnPartIsNumeric (Table me, long column, long *selectedRows, long numberOfSelectedRows) {
+	if (column < 1 || column > my numberOfColumns) return false;
+	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
+		if (! Table_isCellNumeric_ErrorFalse (me, selectedRows[irow], column)) return false;
+	}
+	return true;
+}
+
+// column and selectedRows are valid; *min & *max must be intialized
+static void Table_columnExtremesFromSelectedRows (Table me, long column, long *selectedRows, long numberOfSelectedRows, double *min, double *max) {
+	double cmin = 1e38, cmax = - cmin;
+	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
+		double val = Table_getNumericValue_Assert (me, selectedRows[irow], column);
+		if (val < cmin) { cmin = val; }
+		if (val > cmax) { cmax = val; }
+	}
+	*min = cmin;
+	*max = cmax;
+}
 
 /*
 The Peterson & Barney data were once (1991) obtained by me (djmw) as a compressed tar-file
@@ -3146,96 +3167,159 @@ Table Table_createFromGanongData () {
 	}
 }
 
-void Table_scatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
-        double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
-        long yci_min, long yci_max, double bar_mm, int garnish) {
-	long nrows = my rows -> size;
-	double x2min, x1max, y1max, y2min;
-	double bar = ceil (bar_mm * g -> resolution / 25.4);
-
-	// check validity of columns
-	if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows) {
-		return;
+static bool intervalsIntersect (double x1, double x2, double xmin, double xmax, double *xc1, double *xc2) {
+	if (x1 > x2) { 
+		double tmp = x1; x1 = x2; x2 = tmp;
 	}
-	if (labs (xci_min) > nrows || labs (xci_max) > nrows ||
-	        labs (yci_min) > nrows || labs (yci_max) > nrows) {
-		return;
+	if (xmin > xmax) {
+		double tmp = xmin; xmin = xmax; xmin = tmp;
 	}
-
-	if (xmin >= xmax &&
-	        Table_getExtrema (me, xci_min, &xmin, &x1max) &&
-	        Table_getExtrema (me, xci_max, &x2min, &xmax) &&
-	        xmin >= xmax) {
-		return;
+	*xc1 = x1; *xc2 = x2;
+	if (x2 <= xmin || x1 >= xmax) {
+		return false;
 	}
-
-	if (ymin >= ymax &&
-	        Table_getExtrema (me, yci_min, &ymin, &y1max) &&
-	        Table_getExtrema (me, yci_max, &y2min, &ymax) &&
-	        ymin >= ymax) {
-		return;
+	if (x1 < xmin) {
+		*xc1 = xmin;
 	}
+	if (x2 > xmax) {
+		*xc2 = xmax;
+	}
+	return true;
+}
 
-	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
-	Graphics_setInner (g);
-
-	for (long row = 1; row <= nrows; row++) {
-		double x  = Table_getNumericValue_Assert (me, row, xcolumn);
-		double y  = Table_getNumericValue_Assert (me, row, ycolumn);
-		double x1 = Table_getNumericValue_Assert (me, row, xci_min);
-		double x2 = Table_getNumericValue_Assert (me, row, xci_max);
-		double y1 = Table_getNumericValue_Assert (me, row, yci_min);
-		double y2 = Table_getNumericValue_Assert (me, row, yci_max);
-		double xo1, yo1, xo2, yo2;
-
-		if (xci_min > 0) {
-			if (NUMclipLineWithinRectangle (x1, y, x, y, xmin, ymin, xmax, ymax,
-			                                &xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
-			}
-			if (bar > 0 && NUMclipLineWithinRectangle (x1, y - bar / 2, x1, y + bar / 2,
-			        xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
+void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
+	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long nrows = my rows -> size;
+		if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows ||
+			(xci_min != 0 && xci_min > nrows) || (xci_max != 0 && xci_max > nrows)) {
+			return;
+		}
+		long numberOfSelectedRows = 0;
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	
+		if (ymin >= ymax) {
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
+			if (ymin >= ymax) {
+				ymin -= 1; ymax += 1;
 			}
 		}
-		if (xci_max > 0) {
-			if (NUMclipLineWithinRectangle (x, y, x2, y, xmin, ymin, xmax, ymax,
-			                                &xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
+		double x1min, x1max;
+		if (xmin >= xmax) {
+			Table_columnExtremesFromSelectedRows (me, xcolumn, selectedRows.peek(), numberOfSelectedRows, &xmin, &xmax);
+			if (xci_min > 0) {
+				Table_columnExtremesFromSelectedRows (me, xci_min, selectedRows.peek(), numberOfSelectedRows, &x1min, &x1max);
+				xmin -= x1max;
 			}
-			if (bar > 0 && NUMclipLineWithinRectangle (x2, y - bar / 2, x2, y + bar / 2,
-			        xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
+			if (xci_max > 0) {
+				Table_columnExtremesFromSelectedRows (me, xci_max, selectedRows.peek(), numberOfSelectedRows, &x1min, &x1max);
+				xmax += x1max;
 			}
-		}
-		if (yci_min > 0) {
-			if (NUMclipLineWithinRectangle (x, y1, x, y, xmin, ymin, xmax, ymax,
-			                                &xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
-			}
-			if (bar > 0 && NUMclipLineWithinRectangle (x - bar / 2, y1, x + bar / 2, y1,
-			        xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
+			if (xmin >= xmax) {
+				xmin -= 1; xmax += 1;
 			}
 		}
-		if (yci_max > 0) {
-			if (NUMclipLineWithinRectangle (x, y, x, y2, xmin, ymin, xmax, ymax,
-			                                &xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
-			}
-			if (bar > 0 && NUMclipLineWithinRectangle (x - bar / 2, y2, x + bar / 2, y2,
-			        xmin, ymin, xmax, ymax,	&xo1, &yo1, &xo2, &yo2)) {
-				Graphics_line (g, xo1, yo1, xo2, yo2);
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setInner (g);
+		double dy = Graphics_dyMMtoWC (g, bar_mm);
+		for (long row = 1; row <= numberOfSelectedRows; row++) {
+			double x  = Table_getNumericValue_Assert (me, selectedRows[row], xcolumn);
+			double y  = Table_getNumericValue_Assert (me, selectedRows[row], ycolumn);
+			double dx1 = xci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], xci_min) : 0;
+			double dx2 = xci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], xci_max) : 0;
+			double x1 = x - dx1, x2 = x + dx2, xc1, yc1, xc2, yc2;
+
+			if (x <= xmax && x >= xmin && y <= ymax && y >= ymin) {
+				// horizontal confidence interval
+				if (intervalsIntersect (x1, x2, xmin, xmax, &xc1, &xc2)) {
+					Graphics_line (g, xc1, y, xc2, y);
+					if (dy > 0 && intervalsIntersect (y - dy / 2, y + dy / 2, ymin, ymax, &yc1, &yc2)) {
+						if (xc1 >= xmin && dx1 > 0) {
+							Graphics_line (g, xc1, yc1, xc1, yc2);
+						}
+						if (xc2 <= xmax && dx2 > 0) {
+							Graphics_line (g, xc2, yc1, xc2, yc2);
+						}
+					}
+				}
 			}
 		}
+		Graphics_unsetInner (g);
+
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksBottom (g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) {
+		//
 	}
+}
 
-	Graphics_unsetInner (g);
+void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
+	double ymin, double ymax, long yci_min, long yci_max, double bar_mm, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long nrows = my rows -> size;
+		if (xcolumn < 1 || xcolumn > nrows || ycolumn < 1 || ycolumn > nrows ||
+			(yci_min != 0 && yci_min > nrows) || (yci_max != 0 && yci_max > nrows)) {
+			return;
+		}
+		long numberOfSelectedRows = 0;
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);
+		if (xmin >= xmax) {
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
+			if (xmin >= xmax) {
+				xmin -= 1; xmax += 1;
+			}
+		}
+		double y1min, y1max;
+		if (ymin >= ymax) {
+			Table_columnExtremesFromSelectedRows (me, ycolumn, selectedRows.peek(), numberOfSelectedRows, &ymin, &ymax);
+			if (yci_min > 0) {
+				Table_columnExtremesFromSelectedRows (me, yci_min, selectedRows.peek(), numberOfSelectedRows, &y1min, &y1max);
+				ymin -= y1max;
+			}
+			if (yci_max > 0) {
+				Table_columnExtremesFromSelectedRows (me, yci_max, selectedRows.peek(), numberOfSelectedRows, &y1min, &y1max);
+				ymax += y1max;
+			}
+			if (ymin >= ymax) {
+				ymin -= 1; ymax += 1;
+			}
+		}
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setInner (g);
+		double dx = Graphics_dxMMtoWC (g, bar_mm);
+		for (long row = 1; row <= numberOfSelectedRows; row++) {
+			double x  = Table_getNumericValue_Assert (me, selectedRows[row], xcolumn);
+			double y  = Table_getNumericValue_Assert (me, selectedRows[row], ycolumn);
+			double dy1 = yci_min > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_min) : 0;
+			double dy2 = yci_max > 0 ? Table_getNumericValue_Assert (me, selectedRows[row], yci_max) : 0;
+			double y1 = y - dy1, y2 = y + dy2, xc1, yc1, xc2, yc2;
 
-	if (garnish) {
-		Graphics_drawInnerBox (g);
-		Graphics_marksLeft (g, 2, 1, 1, 0);
-		Graphics_marksBottom (g, 2, 1, 1, 0);
+			if (x <= xmax && x >= xmin && y <= ymax && y >= ymin) {
+				// vertical confidence interval
+				if (intervalsIntersect (y1, y2, ymin, ymax, &yc1, &yc2)) {
+					Graphics_line (g, x, yc1, x, yc2);
+					if (dx > 0 && intervalsIntersect (x - dx / 2, x + dx / 2, xmin, xmax, &xc1, &xc2)) {
+						if (yc1 >= ymin && dy1 > 0) {
+							Graphics_line (g, xc1, yc1, xc2, yc1);
+						}
+						if (yc2 <= ymax && dy2 > 0) {
+							Graphics_line (g, xc1, yc2, xc2, yc2);
+						}
+					}
+				}
+			}
+		}
+		Graphics_unsetInner (g);
+
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+			Graphics_marksBottom (g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) {
+		//
 	}
 }
 
@@ -4080,25 +4164,6 @@ long *Table_findRowsMatchingCriterion (Table me, const wchar_t *formula, Interpr
 	}
 }
 
-static bool Table_selectedColumnPartIsNumeric (Table me, long column, long *selectedRows, long numberOfSelectedRows) {
-	if (column < 1 || column > my numberOfColumns) return false;
-	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
-		if (! Table_isCellNumeric_ErrorFalse (me, selectedRows[irow], column)) return false;
-	}
-	return true;
-}
-
-// column and selectedRows are valid; *min & *max must be intialized
-static void Table_columnExtremesFromSelectedRows (Table me, long column, long *selectedRows, long numberOfSelectedRows, double *min, double *max) {
-	double cmin = 1e38, cmax = - cmin;
-	for (long irow = 1; irow <= numberOfSelectedRows; irow++) {
-		double val = Table_getNumericValue_Assert (me, selectedRows[irow], column);
-		if (val < cmin) { cmin = val; }
-		if (val > cmax) { cmax = val; }
-	}
-	*min = cmin;
-	*max = cmax;
-}
 
 void Table_barPlotWhere (Table me, Graphics g, const wchar_t *columnLabels, double ymin, double ymax,const wchar_t *labelColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const wchar_t *colours, double angle, int garnish, const wchar_t *formula, Interpreter interpreter) {
 	try {
@@ -4234,15 +4299,15 @@ void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, doub
 		Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
 		double x1, y1;
 		double lineSpacing = Graphics_dyMMtoWC (g, 1.5 * Graphics_inqFontSize (g) * 25.4 / 72);
-		double symbolHeight = lineSpacing / 1.5;
+		//double symbolHeight = lineSpacing / 1.5;
 		for (long i = 1; i <= numberOfSelectedRows; i++) {
 			double y2 = Table_getNumericValue_Assert (me, selectedRows[i], ycolumn);
 			double x2 = xIsNumeric ? Table_getNumericValue_Assert (me, selectedRows[i], xcolumn) : i;
-			double symbolWidth = 0;
+			//double symbolWidth = 0;
 			if (x2 >= xmin && (x2 <= xmax || x1 < xmax)) {
 				if (symbol && y2 >= ymin && y2 <= ymax && x2 <= xmax) {
 					Graphics_text (g, x2, y2, symbol);
-					symbolWidth = Graphics_textWidth (g, symbol);
+					//symbolWidth = Graphics_textWidth (g, symbol);
 				}
 				if (i > 1) {
 					double x3, y3, x4, y4, xo1, yo1, xo2, yo2;
@@ -4327,6 +4392,5 @@ Table Table_extractRowsWhere (Table me, const wchar_t *formula, Interpreter inte
 		Melder_throw (me, ": no Table could be extracted.");
 	}
 }
-
 
 /* End of file Table_extensions.cpp */

@@ -4889,9 +4889,9 @@ END
 
 /******************** Sound ****************************************/
 
-static void Sound_create_addCommonFields (void *dia) {
+static void Sound_create_addCommonFields (void *dia, const wchar_t *endTime) {
 	REAL (L"Starting time (s)", L"0.0")
-	REAL (L"Finishing time (s)", L"0.1")
+	REAL (L"Finishing time (s)", endTime)
 	POSITIVE (L"Sampling frequency (Hz)", L"44100.0")
 }
 
@@ -4995,7 +4995,7 @@ END
 
 FORM (Sound_createFromGammaTone, L"Create a gammatone", L"Create Sound from gammatone...")
 	WORD (L"Name", L"gammatone")
-	Sound_create_addCommonFields (dia);
+	Sound_create_addCommonFields (dia, L"0.1");
 	INTEGER (L"Gamma", L"4")
 	POSITIVE (L"Frequency (Hz)", L"1000.0")
 	REAL (L"Bandwidth (Hz)", L"150.0")
@@ -5026,7 +5026,7 @@ END
 
 FORM (Sound_createFromShepardTone, L"Create a Shepard tone", L"Create Sound from Shepard tone...")
 	WORD (L"Name", L"shepardTone")
-	Sound_create_addCommonFields (dia);
+	Sound_create_addCommonFields (dia, L"1.0");
 	POSITIVE (L"Lowest frequency (Hz)", L"4.863")
 	NATURAL (L"Number of components", L"10")
 	REAL (L"Frequency change (semitones/s)", L"4.0")
@@ -6523,17 +6523,15 @@ DO
 	}
 END
 
-FORM (Table_scatterPlotWithConfidenceIntervals, L"Table: Scatter plot (confidence intervals)", L"")
-	NATURAL (L"Horizontal axis column", L"1")
+FORM (Table_horizontalErrorBarsPlot, L"Table: Horizontal error bars plot", L"Table: Horizontal error bars plot...")
+	WORD (L"Horizontal column", L"x")
 	REAL (L"left Horizontal range", L"0.0")
 	REAL (L"right Horizontal range", L"0.0")
-	INTEGER (L"left Horizontal confidence interval column", L"3")
-	INTEGER (L"right Horizontal confidence interval column", L"4")
-	NATURAL (L"Vertical axis column", L"2")
+	WORD (L"Vertical column", L"y")
 	REAL (L"left Vertical range", L"0.0")
 	REAL (L"right Vertical range", L"0.0")
-	INTEGER (L"left Vertical confidence interval column", L"5")
-	INTEGER (L"right Vertical confidence interval column", L"6")
+	WORD (L"Lower error value column", L"")
+	WORD (L"Upper error value column", L"")
 	REAL (L"Bar size (mm)", L"1.0")
 	BOOLEAN (L"Garnish", 1);
 	OK
@@ -6541,18 +6539,108 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (Table);
-		Table_scatterPlotWithConfidenceIntervals (me, GRAPHICS,
-		GET_INTEGER (L"Horizontal axis column"), GET_INTEGER (L"Vertical axis column"),
-		GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
-		GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
-		GET_INTEGER (L"left Horizontal confidence interval column"), GET_INTEGER (L"right Horizontal confidence interval column"),
-		GET_INTEGER (L"left Vertical confidence interval column"), GET_INTEGER (L"right Vertical confidence interval column"),
-		GET_REAL (L"Bar size"), GET_INTEGER (L"Garnish"));
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
+		long xl = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Lower error value column"));
+		long xu = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Upper error value column"));
+		
+		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn,
+			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+			xl, xu, GET_REAL (L"Bar size"), GET_INTEGER (L"Garnish"), L"1", interpreter);
+	}
+END
+
+FORM (Table_horizontalErrorBarsPlotWhere, L"Table: Horizontal error bars plot where", L"Table: Horizontal error bars plot where...")
+	WORD (L"Horizontal column", L"")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	WORD (L"Vertical column", L"")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	WORD (L"Lower error value column", L"")
+	WORD (L"Upper error value column", L"")
+	REAL (L"Bar size (mm)", L"1.0")
+	BOOLEAN (L"Garnish", 1);
+	LABEL (L"", L"Use only data in rows where the following condition holds:")
+	TEXTFIELD (L"Formula", L"1; self$[\"gender\"]=\"male\"")
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
+		long xl = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Lower error value column"));
+		long xu = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Upper error value column"));
+		
+		Table_horizontalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn,
+			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+			xl, xu, GET_REAL (L"Bar size"), GET_INTEGER (L"Garnish"), GET_STRING (L"Formula"), interpreter);
+	}
+END
+
+FORM (Table_verticalErrorBarsPlot, L"Table: Vertical error bars plot", L"Table: Vertical error bars plot...")
+	WORD (L"Horizontal column", L"")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	WORD (L"Vertical column", L"")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	WORD (L"Lower error value column", L"")
+	WORD (L"Upper error value column", L"")
+	REAL (L"Bar size (mm)", L"1.0")
+	BOOLEAN (L"Garnish", 1);
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
+		long yl = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Lower error value column"));
+		long yu = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Upper error value column"));
+		
+		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn,
+			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+			yl, yu, GET_REAL (L"Bar size"), GET_INTEGER (L"Garnish"), L"1", interpreter);
+	}
+END
+
+FORM (Table_verticalErrorBarsPlotWhere, L"Table: Vertical error bars plot where", L"Table: Vertical error bars plot where...")
+	WORD (L"Horizontal column", L"")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0")
+	WORD (L"Vertical column", L"")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0")
+	WORD (L"Lower error value column", L"")
+	WORD (L"Upper error value column", L"")
+	REAL (L"Bar size (mm)", L"1.0")
+	BOOLEAN (L"Garnish", 1);
+	LABEL (L"", L"Use only data in rows where the following condition holds:")
+	TEXTFIELD (L"Formula", L"1; self$[\"gender\"]=\"male\"")
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
+		long yl = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Lower error value column"));
+		long yu = Table_findColumnIndexFromColumnLabel (me, GET_STRING (L"Upper error value column"));
+		
+		Table_verticalErrorBarsPlotWhere (me, GRAPHICS, xcolumn, ycolumn,
+			GET_REAL (L"left Horizontal range"), GET_REAL (L"right Horizontal range"),
+			GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+			yl, yu, GET_REAL (L"Bar size"), GET_INTEGER (L"Garnish"), GET_STRING (L"Formula"), interpreter);
 	}
 END
 
 FORM (Table_extractRowsWhere, L"Table: Extract rows where", 0)
-	LABEL (L"", L"Extractm rows where the following condition holds:")
+	LABEL (L"", L"Extract rows where the following condition holds:")
 	TEXTFIELD (L"Formula", L"1; self$[\"gender\"]=\"male\"")
 	OK
 DO
@@ -8007,11 +8095,15 @@ void praat_uvafon_David_init () {
 		praat_addAction1 (classTable, 0, L"Normal probability plot...", L"Box plots...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_normalProbabilityPlot);
 		praat_addAction1 (classTable, 0, L"Quantile-quantile plot...", L"Normal probability plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot);
 		praat_addAction1 (classTable, 0, L"Quantile-quantile plot (between levels)...", L"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot_betweenLevels);
-		praat_addAction1 (classTable, 0, L"Scatter plot (ci)...", 0, praat_DEPTH_1, DO_Table_scatterPlotWithConfidenceIntervals);
+		praat_addAction1 (classTable, 0, L"Horizontal error bars plot...", L"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_horizontalErrorBarsPlot);
+		praat_addAction1 (classTable, 0, L"Vertical error bars plot...", L"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_verticalErrorBarsPlot);
 		praat_addAction1 (classTable, 0, L"Distribution plot...", L"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_distributionPlot);
 		praat_addAction1 (classTable, 1, L"Draw where -",  L"Quantile-quantile plot (between levels)...", 1 , 0);
 			praat_addAction1 (classTable, 0, L"Scatter plot where...", L"Draw where -", 2, DO_Table_scatterPlotWhere);
 			praat_addAction1 (classTable, 0, L"Scatter plot where (mark)...", L"Scatter plot where...", 2, DO_Table_scatterPlotMarkWhere);
+			praat_addAction1 (classTable, 0, L"Horizontal error bars plot where...", L"Scatter plot where (mark)...", praat_DEPTH_2, DO_Table_horizontalErrorBarsPlotWhere);
+			praat_addAction1 (classTable, 0, L"Vertical error bars plot where...", L"Scatter plot where (mark)...", praat_DEPTH_2, DO_Table_verticalErrorBarsPlotWhere);
+			
 			praat_addAction1 (classTable, 0, L"Distribution plot where...", L"Scatter plot where (mark)...", 2, DO_Table_distributionPlotWhere);
 			praat_addAction1 (classTable, 0, L"Draw ellipse where (standard deviation)...", L"Distribution plot where...", 2, DO_Table_drawEllipseWhere);
 			praat_addAction1 (classTable, 0, L"Box plots where...", L"Draw ellipse where (standard deviation)...", 2, DO_Table_boxPlotsWhere);

@@ -901,16 +901,24 @@ static void gui_cb_scroll (I, GuiScrollBarEvent event) {
 	if (shifted || zoomed) {
 		my v_updateText ();
 		updateScrollBar (me);
-		/*Graphics_clearWs (my d_graphics);*/
-		drawNow (me);   /* Do not wait for expose event. */
+		#if cocoa
+			Graphics_updateWs (my d_graphics);
+		#else
+			/*Graphics_clearWs (my d_graphics);*/
+			drawNow (me);   /* Do not wait for expose event. */
+		#endif
 		if (! my group || ! my pref_synchronizedZoomAndScroll ()) return;
 		for (int i = 1; i <= maxGroup; i ++) if (theGroup [i] && theGroup [i] != me) {
 			theGroup [i] -> d_startWindow = my d_startWindow;
 			theGroup [i] -> d_endWindow = my d_endWindow;
 			FunctionEditor_updateText (theGroup [i]);
 			updateScrollBar (theGroup [i]);
-			Graphics_clearWs (theGroup [i] -> d_graphics);
-			drawNow (theGroup [i]);
+			#if cocoa
+				Graphics_updateWs (theGroup [i] -> d_graphics);
+			#else
+				Graphics_clearWs (theGroup [i] -> d_graphics);
+				drawNow (theGroup [i]);
+			#endif
 		}
 	}
 }

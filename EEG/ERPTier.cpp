@@ -239,15 +239,15 @@ ERPTier structERPTier :: f_extractEventsWhereColumn_number (Table table, long co
 		if (d_events -> size != table -> rows -> size)
 			Melder_throw (this, " & ", table, ": the number of rows in the table (", table -> rows -> size, ") doesn't match the number of events (", d_events -> size, ").");
 		autoERPTier thee = Thing_new (ERPTier);
-		Function_init (thee.peek(), this -> xmin, this -> xmax);
-		thy d_numberOfChannels = this -> d_numberOfChannels;
+		Function_init (thee.peek(), our xmin, our xmax);
+		thy d_numberOfChannels = our d_numberOfChannels;
 		thy d_channelNames = NUMvector <wchar_t *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
-			thy d_channelNames [ichan] = Melder_wcsdup (this -> d_channelNames [ichan]);
+			thy d_channelNames [ichan] = Melder_wcsdup (our d_channelNames [ichan]);
 		}
 		thy d_events = SortedSetOfDouble_create ();
 		for (long ievent = 1; ievent <= d_events -> size; ievent ++) {
-			ERPPoint oldEvent = this -> f_peekEvent (ievent);
+			ERPPoint oldEvent = our f_peekEvent (ievent);
 			TableRow row = table -> f_peekRow (ievent);
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
@@ -269,7 +269,7 @@ ERPTier structERPTier :: f_extractEventsWhereColumn_string (Table table, long co
 		if (d_events -> size != table -> rows -> size)
 			Melder_throw (this, " & ", table, ": the number of rows in the table (", table -> rows -> size, ") doesn't match the number of events (", d_events -> size, ").");
 		autoERPTier thee = Thing_new (ERPTier);
-		Function_init (thee.peek(), this -> xmin, this -> xmax);
+		Function_init (thee.peek(), our xmin, this -> xmax);
 		thy d_numberOfChannels = this -> d_numberOfChannels;
 		thy d_channelNames = NUMvector <wchar_t *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {

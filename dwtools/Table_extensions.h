@@ -21,7 +21,7 @@
 
 /*
  djmw 20020411 initial GPL
- djmw 20130602 Latest modification.
+ djmw 20131220 Latest modification.
 */
 
 #include "TableOfReal.h"
@@ -32,6 +32,8 @@
 #include "SSCP.h"
 #include "Table.h"
 
+
+long *Table_findRowsMatchingCriterion (Table me, const wchar_t *formula, Interpreter interpreter, long *numberOfMatches);
 Table Table_createFromPetersonBarneyData ();
 Table Table_createFromPolsVanNieropData ();
 Table Table_createFromWeeninkData ();
@@ -46,9 +48,11 @@ Table Table_getOneWayKruskalWallis (Table me, long column, long groupColumn, dou
 
 Table Table_getTwoWayAnalysisOfVarianceF (Table me, long column, long groupColumnA, long groupColumnB, Table *means, Table *factorLevelSizes);
 
-void Table_scatterPlotWithConfidenceIntervals (Table me, Graphics g, long xcolumn, long ycolumn,
-	double xmin, double xmax, double ymin, double ymax, long xci_min, long xci_max,
-	long yci_min, long yci_max, double bar_mm, int garnish);
+void Table_verticalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
+	double ymin, double ymax, long yci_min, long yci_max, double bar_mm, int garnish, const wchar_t *formula, Interpreter interpreter);
+void Table_horizontalErrorBarsPlotWhere (Table me, Graphics g, long xcolumn, long ycolumn, double xmin, double xmax, 
+	double ymin, double ymax, long xci_min, long xci_max, double bar_mm, int garnish, const wchar_t *formula, Interpreter interpreter);
+
 
 void Table_normalProbabilityPlot (Table me, Graphics g, long column, long numberOfQuantiles, double numberOfSigmas, int labelSize, const wchar_t *label, int garnish);
 

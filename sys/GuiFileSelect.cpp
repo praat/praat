@@ -177,8 +177,11 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 		(void) parent;
 		NSSavePanel	*savePanel = [NSSavePanel savePanel];
 		[savePanel setTitle: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (title)]];
-		[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (defaultName)]];
-		if ([savePanel runModal] == NSFileHandlingPanelOKButton) {
+		//[savePanel setNameFieldStringValue: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (defaultName)]];   // from 10.6 on
+		if ([savePanel runModalForDirectory: nil
+			           file: [NSString stringWithUTF8String: Melder_peekWcsToUtf8 (defaultName)]   // deprecated 10.6 but needed 10.5
+			] == NSFileHandlingPanelOKButton)
+		{
 			const char *outfileName_utf8 = [[[savePanel URL] path] UTF8String];
 			structMelderFile file = { 0 };
 			Melder_8bitFileRepresentationToWcs_inline (outfileName_utf8, file. path);

@@ -1,6 +1,6 @@
 /* Table.cpp
  *
- * Copyright (C) 2002-2012 Paul Boersma
+ * Copyright (C) 2002-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -751,35 +751,35 @@ Table Table_collapseRows (Table me, const wchar_t *factors_string, const wchar_t
 			Melder_throw ("In order to pool table data, you must supply at least one independent variable.");
 		Table_columns_checkExist (me, factors.peek(), numberOfFactors);
 
-		long numberToSum;
+		long numberToSum = 0;
 		autoMelderTokens columnsToSum;
 		if (columnsToSum_string) {
 			columnsToSum.reset (columnsToSum_string, & numberToSum);
 			Table_columns_checkExist (me, columnsToSum.peek(), numberToSum);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToSum.peek(), numberToSum);
 		}
-		long numberToAverage;
+		long numberToAverage = 0;
 		autoMelderTokens columnsToAverage;
 		if (columnsToAverage_string) {
 			columnsToAverage.reset (columnsToAverage_string, & numberToAverage);
 			Table_columns_checkExist (me, columnsToAverage.peek(), numberToAverage);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToAverage.peek(), numberToAverage);
 		}
-		long numberToMedianize;
+		long numberToMedianize = 0;
 		autoMelderTokens columnsToMedianize;
 		if (columnsToMedianize_string) {
 			columnsToMedianize.reset (columnsToMedianize_string, & numberToMedianize);
 			Table_columns_checkExist (me, columnsToMedianize.peek(), numberToMedianize);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToMedianize.peek(), numberToMedianize);
 		}
-		long numberToAverageLogarithmically;
+		long numberToAverageLogarithmically = 0;
 		autoMelderTokens columnsToAverageLogarithmically;
 		if (columnsToAverageLogarithmically_string) {
 			columnsToAverageLogarithmically.reset (columnsToAverageLogarithmically_string, & numberToAverageLogarithmically);
 			Table_columns_checkExist (me, columnsToAverageLogarithmically.peek(), numberToAverageLogarithmically);
 			Table_columns_checkCrossSectionEmpty (factors.peek(), numberOfFactors, columnsToAverageLogarithmically.peek(), numberToAverageLogarithmically);
 		}
-		long numberToMedianizeLogarithmically;
+		long numberToMedianizeLogarithmically = 0;
 		autoMelderTokens columnsToMedianizeLogarithmically;
 		if (columnsToMedianizeLogarithmically_string) {
 			columnsToMedianizeLogarithmically.reset (columnsToMedianizeLogarithmically_string, & numberToMedianizeLogarithmically);

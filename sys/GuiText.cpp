@@ -1668,6 +1668,7 @@ void structGuiText :: f_setString (const wchar_t *text) {
 			[d_cocoaTextView shouldChangeTextInRange: nsRange replacementString: nsString];   // to make this action undoable
 			//[[d_cocoaTextView textStorage] replaceCharactersInRange: nsRange withString: nsString];
 			[d_cocoaTextView setString: nsString];
+			[d_cocoaTextView scrollRangeToVisible: NSMakeRange ([[d_cocoaTextView textStorage] length], 0)];   // to the end
 			//[[d_cocoaTextView window] setViewsNeedDisplay: YES];
 			//[[d_cocoaTextView window] display];
 		} else {

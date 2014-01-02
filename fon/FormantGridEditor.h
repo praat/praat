@@ -26,6 +26,7 @@ Thing_define (FormantGridEditor, FunctionEditor) {
 	// new data:
 	public:
 		bool editingBandwidths;
+		GuiMenuItem d_bandwidthsToggle;
 		long selectedFormant;
 		double ycursor;
 	// overridden methods:

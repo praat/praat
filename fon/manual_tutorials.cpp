@@ -1,6 +1,6 @@
 /* manual_tutorials.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20131208)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140102)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.62# (2 January 2014)")
+LIST_ITEM (L"\\bu 64-bit Mac: removed a bug introduced in 5.3.61 that could cause text containing \"ff\" to become invisible.")
+NORMAL (L"##5.3.61# (1 January 2014)")
+LIST_ITEM (L"\\bu EEG: understand status registers that contain text.")
+LIST_ITEM (L"\\bu KlattGrid: removed a bug introduced in May 2009 that could make Praat crash after editing an oral formant grid.")
 NORMAL (L"##5.3.60# (8 December 2013)")
 LIST_ITEM (L"\\bu Mac 64-bit: implemented swiping (to scroll with the trackpad) and pinching (to zoom with the trackpad).")
 LIST_ITEM (L"\\bu Scripting: backslashTrigraphsToUnicode () and unicodeToBackslashTrigraphs ().")

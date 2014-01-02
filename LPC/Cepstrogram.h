@@ -54,7 +54,7 @@ Cepstrogram Cepstrogram_create (double tmin, double tmax, long nt, double dt, do
 PowerCepstrogram PowerCepstrogram_create (double tmin, double tmax, long nt, double dt, double t1,
 	double qmin, double qmax, long nq, double dq, double q1);
 
-void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBminimum, double dBmaximum, int garnish);
+void PowerCepstrogram_paint (PowerCepstrogram me, Graphics g, double tmin, double tmax, double qmin, double qmax, double dBmaximum, int autoscaling, double dynamicRangedB, double dynamicCompression, int garnish);
 
 PowerCepstrogram PowerCepstrogram_smooth (PowerCepstrogram me, double timeAveragingWindow, double quefrencyAveragingWindow);
 

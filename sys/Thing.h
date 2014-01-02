@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,6 +51,7 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 #define my  me ->
 #define thy  thee ->
 #define his  him ->
+#define our  this ->
 
 typedef struct structClassInfo *ClassInfo;
 struct structClassInfo {

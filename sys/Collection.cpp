@@ -130,9 +130,9 @@ void structCollection :: v_readText (MelderReadText text) {
 					" while expecting ", i, ".");
 			if (stringsRead == 3 && ! strequ (nameTag, "name"))
 				Melder_throw ("Collection::readText: wrong header at object ", i, ".");
-			this -> item [i] = Thing_newFromClassNameA (klas);
+			our item [i] = Thing_newFromClassNameA (klas);
 			Thing_version = -1;   /* Override. */
-			this -> size ++;
+			our size ++;
 			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
 				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
 			Data_readText ((Data) item [i], text);
@@ -149,8 +149,8 @@ void structCollection :: v_readText (MelderReadText text) {
 		for (long i = 1; i <= l_size; i ++) {
 			long saveVersion = Thing_version;   /* The version of the Collection... */
 			autostring8 className = texgets2 (text);
-			this -> item [i] = Thing_newFromClassNameA (className.peek());
-			this -> size ++;
+			our item [i] = Thing_newFromClassNameA (className.peek());
+			our size ++;
 			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadText ((Data) item [i]))
 				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), " in collection.");
 			autostring objectName = texgetw2 (text);
@@ -187,7 +187,7 @@ void structCollection :: v_readBinary (FILE *f) {
 				Melder_throw ("Cannot read class and name.");
 			item [i] = Thing_newFromClassNameA (klas);
 			Thing_version = -1;   /* Override. */
-			this -> size ++;
+			our size ++;
 			if (! Thing_member ((Thing) item [i], classData))
 				Melder_throw ("Cannot read item of class ", Thing_className ((Thing) item [i]), ".");
 			if (fgetc (f) != ' ')
@@ -206,7 +206,7 @@ void structCollection :: v_readBinary (FILE *f) {
 			if (Melder_debug == 44)
 				Melder_casual ("structCollection :: v_readBinary: Reading object of type %s", klas.peek());
 			item [i] = Thing_newFromClassNameA (klas.peek());
-			this -> size ++;
+			our size ++;
 			if (! Thing_member ((Thing) item [i], classData) || ! Data_canReadBinary ((Data) item [i]))
 				Melder_throw ("Objects of class ", Thing_className ((Thing) item [i]), " cannot be read.");
 			autostring name = bingetw2 (f);

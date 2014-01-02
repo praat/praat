@@ -349,6 +349,7 @@ static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
 }
 
 static bool tooManySamplesInBufferToReturnToGui (SoundRecorder me) {
+	(void) me;
 	return false;
 }
 

@@ -91,7 +91,7 @@ long structEEG :: f_getChannelNumber (const wchar_t *channelName) {
 	return 0;
 }
 
-EEG EEG_readFromBdfFile (MelderFile file) {
+EEG EEG_readFromBdfFile (MelderFile file, bool hasLetters) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char buffer [81];
@@ -225,20 +225,43 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 				numberOfStatusBits = 16;
 			}
 		}
-		autoTextGrid thee = TextGrid_create (0, duration,
-			numberOfStatusBits == 8 ? L"S1 S2 S3 S4 S5 S6 S7 S8" : L"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", L"");
-		for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
-			unsigned long bitValue = 1 << (bit - 1);
-			IntervalTier tier = (IntervalTier) thy tiers -> item [bit];
-			for (long i = 1; i <= my nx; i ++) {
-				unsigned long previousValue = i == 1 ? 0 : (long) my z [numberOfChannels] [i - 1];
-				unsigned long thisValue = (long) my z [numberOfChannels] [i];
-				if ((thisValue & bitValue) != (previousValue & bitValue)) {
-					double time = i == 1 ? 0.0 : my x1 + (i - 1.5) * my dx;
-					if (time != 0.0)
-						TextGrid_insertBoundary (thee.peek(), bit, time);
-					if ((thisValue & bitValue) != 0)
-						TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals -> size, L"1");
+		autoTextGrid thee;
+		if (hasLetters) {
+			thee.reset (TextGrid_create (0, duration,
+				numberOfStatusBits == 8 ? L"S1" : L"S1 S2", L""));
+			for (int byte = 1; byte <= numberOfStatusBits / 8; byte ++) {
+				unsigned long mask = byte == 1 ? 0x000000ff : 0x0000ff00;
+				IntervalTier tier = (IntervalTier) thy tiers -> item [byte];
+				for (long i = 1; i <= my nx; i ++) {
+					unsigned long previousValue = i == 1 ? 0 : (long) my z [numberOfChannels] [i - 1];
+					unsigned long thisValue = (long) my z [numberOfChannels] [i];
+					if ((thisValue & mask) != (previousValue & mask)) {
+						double time = i == 1 ? 0.0 : my x1 + (i - 1.5) * my dx;
+						if (time != 0.0)
+							TextGrid_insertBoundary (thee.peek(), byte, time);
+						if ((thisValue & mask) != 0) {
+							wchar_t kar [2] = { byte == 1 ? (thisValue & mask) : (thisValue & mask) >> 8, '\0' };
+							TextGrid_setIntervalText (thee.peek(), byte, tier -> intervals -> size, & kar [0]);
+						}
+					}
+				}
+			}
+		} else {
+			thee.reset (TextGrid_create (0, duration,
+				numberOfStatusBits == 8 ? L"S1 S2 S3 S4 S5 S6 S7 S8" : L"S1 S2 S3 S4 S5 S6 S7 S8 S9 S10 S11 S12 S13 S14 S15 S16", L""));
+			for (int bit = 1; bit <= numberOfStatusBits; bit ++) {
+				unsigned long bitValue = 1 << (bit - 1);
+				IntervalTier tier = (IntervalTier) thy tiers -> item [bit];
+				for (long i = 1; i <= my nx; i ++) {
+					unsigned long previousValue = i == 1 ? 0 : (long) my z [numberOfChannels] [i - 1];
+					unsigned long thisValue = (long) my z [numberOfChannels] [i];
+					if ((thisValue & bitValue) != (previousValue & bitValue)) {
+						double time = i == 1 ? 0.0 : my x1 + (i - 1.5) * my dx;
+						if (time != 0.0)
+							TextGrid_insertBoundary (thee.peek(), bit, time);
+						if ((thisValue & bitValue) != 0)
+							TextGrid_setIntervalText (thee.peek(), bit, tier -> intervals -> size, L"1");
+					}
 				}
 			}
 		}

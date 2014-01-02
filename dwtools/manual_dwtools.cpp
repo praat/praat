@@ -4078,7 +4078,7 @@ MAN_END
 MAN_BEGIN (L"Table: Line graph where...", L"djmw", 20130624)
 INTRO (L"Draws a line graph from the data in a column of the selected @Table. In a line plot the horizontal axis can have a nominal scale or a numeric scale. The data point are connected by line segments.")
 ENTRY (L"Settings")
-SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (8), L""
+SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (8), L""
 	Manual_DRAW_SETTINGS_WINDOW ("Table: Line graph where", 8)
 	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column", "")
 	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (=autoscaling)")
@@ -4092,7 +4092,7 @@ SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (8), L""
 TAG (L"##Vertical column")
 DEFINITION (L"The column whose data points you want to plot.")
 TAG (L"##Vertical range")
-DEFINITION (L"determine the lower and upper limit of the plot.")
+DEFINITION (L"determine the lower and upper limits of the plot.")
 TAG (L"##Horizontal column")
 DEFINITION (L"determines the horizontal scale. If you leave it empty, or, if the (selected part of the) selected column contains nominal values, i.e. the values are not numeric but text, the horizontal "
 	"distance between the data points will be constant (i.e. 1) and the nominal values (texts) will be put as labels at the bottom of the horizontal axis. "
@@ -4163,6 +4163,57 @@ SCRIPT (5,3, L"ganong = do (\"Create Table (Ganong 1980)\")\n"
 )
 MAN_END
 
+MAN_BEGIN (L"Table: Horizontal error bars plot where...", L"djmw", 20131220)
+INTRO (L"Draws horizontal lines that represent the error intervals of a data column from the selected @@Table@.")
+NORMAL (L"This command behaves analogous to @@Table: Vertical error bars plot where...@.")
+MAN_END
+
+MAN_BEGIN (L"Table: Horizontal error bars plot...", L"djmw", 20131220)
+INTRO (L"Draws horizontal lines that represent the error intervals of a data column from the selected @@Table@.")
+NORMAL (L"This command behaves analogous to @@Table: Vertical error bars plot where...@.")
+MAN_END
+
+MAN_BEGIN (L"Table: Vertical error bars plot...", L"djmw", 20131223)
+INTRO (L"Draws vertical lines that represent the error intervals of a data column from the selected @@Table@.")
+NORMAL (L"For more info see @@Table: Vertical error bars plot where...@")
+MAN_END
+
+MAN_BEGIN (L"Table: Vertical error bars plot where...", L"djmw", 20131223)
+INTRO (L"Draws vertical lines that represent the error intervals of a data column from the selected @@Table@.")
+ENTRY (L"Settings")
+SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (9), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Table: Vertical confidence intervals plot where", 9)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Horizontal column", "")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Horizontal range", "0.0", "0.0 (=autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Vertical column", "")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE ("Vertical range", "0.0", "0.0 (=autoscaling)")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Lower error value column", "")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Upper error value column", "")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Bar size (mm)", "1.0")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish", 1)
+	Manual_DRAW_SETTINGS_WINDOW_TEXT("Formula", "1; (=everything)")
+)
+TAG (L"##Horizontal column")
+DEFINITION (L"determines the data along the horizontal axis.")
+TAG (L"##Horizontal range")
+DEFINITION (L"determines the lower and upper limits of the plot.")
+TAG (L"##Vertical column")
+DEFINITION (L"determines the data along the horizontal axis.")
+TAG (L"##Vertical range")
+DEFINITION (L"determines the lower and upper limits of the plot.")
+TAG (L"##Lower error value column, Upper error value column")
+DEFINITION (L"determine the size of the vertical lines that will be drawn. These lines are drawn between the points (%x,%y-%low) and (%x, %y+%up), "
+	"where %x and %y are the values from the %%horizontal column% and the %%vertical column%, respectively, and, %low and %up are the corresponding values "
+	"in the %%lower error value column% and the %%upper error value column%, respectively. If either of these column names is not given the corresponding values (%low and/or %up) will taken as zero. This makes it possible to draw one-sided and two-sided error bars. If your "
+	"errors are symmetric around the y-position, your table only needs one column and you can supply the name of this column in both fields.")
+TAG (L"##Bar size (mm)")
+DEFINITION (L"determines the width of the horizontal bars or whishers at the lower an postion of the drawn line. ")
+TAG (L"##Garnish")
+DEFINITION (L"determines whether or not some decoration is drawn.")
+TAG (L"##Formula")
+DEFINITION (L"can be used to supply an expression to select only those rows for plotting where the expression evaluates to %%true%. A 1 value always evaluates to %%true%.")
+
+MAN_END
 
 MAN_BEGIN (L"Table: Get median absolute deviation...", L"djmw", 20120405)
 INTRO (L"Get the median absolute deviation (MAD) of the column in the selected @@Table@ (adjusted by a scale factor).")
@@ -4628,10 +4679,10 @@ INTRO (L"An Editor for generating vowel-like @@sound|Sound@s from mouse movement
 ENTRY (L"How to get a sound")
 NORMAL (L"With the mouse button down, you can move the mouse cursor around in the plane "
 	"spanned by the first two formants. While you move the cursor around, the positions you trace will be "
-	"indicated by  blue dots. After you release the mouse button, the color of the trajectory will change "
-	"to black and you will hear the vowel-like sound whose "
-	"first two formants follow this trajectory. The small bars on the trajectory are time markers. With "
-	"default settings time markers are at 50 milliseconds apart and they may give you an indication of the speed you traversed the trajectory.")
+	"indicated by blue dots. After you release the mouse button, the color of the trajectory will change "
+	"to black. Next you will hear the vowel-like sound whose "
+	"first two formants follow this trajectory. (The small bars on the trajectory are time markers. With "
+	"default settings, time markers are at 50 milliseconds apart and they may give you an indication of the speed by which you traversed the trajectory.)")
 ENTRY (L"The interface")
 NORMAL (L"In the lower part of the editor a number of buttons and fields are displayed.")
 TAG (L"##Play")

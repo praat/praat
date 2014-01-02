@@ -109,6 +109,7 @@ static void menu_cb_setBandwidthRange (EDITOR_ARGS) {
 static void menu_cb_showBandwidths (EDITOR_ARGS) {
 	EDITOR_IAM (FormantGridEditor);
 	my editingBandwidths = ! my editingBandwidths;
+	my d_bandwidthsToggle -> f_check (my editingBandwidths);
 	FunctionEditor_redraw (me);
 }
 
@@ -173,7 +174,7 @@ static void menu_cb_pitchSettings (EDITOR_ARGS) {
 void structFormantGridEditor :: v_createMenus () {
 	FormantGridEditor_Parent :: v_createMenus ();
 	EditorMenu menu = Editor_addMenu (this, L"Formant", 0);
-	EditorMenu_addCommand (menu, L"Show bandwidths", GuiMenu_CHECKBUTTON + 'B', menu_cb_showBandwidths);
+	d_bandwidthsToggle = EditorMenu_addCommand (menu, L"Show bandwidths", GuiMenu_CHECKBUTTON, menu_cb_showBandwidths);
 	EditorMenu_addCommand (menu, L"Set formant range...", 0, menu_cb_setFormantRange);
 	EditorMenu_addCommand (menu, L"Set bandwidth range...", 0, menu_cb_setBandwidthRange);
 	EditorMenu_addCommand (menu, L"-- select formant --", 0, NULL);

@@ -27,6 +27,7 @@
 #include "melder.h"
 
 #if defined (macintosh) || defined (UNIX)
+	#include <time.h>
 	#include <sys/time.h>
 #elif defined (_WIN32)
 	#include <windows.h>

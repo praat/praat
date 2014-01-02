@@ -1,6 +1,6 @@
 /* Delta.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@
 Thing_implement (Delta, Thing, 0);
 
 void structDelta :: v_destroy () {
-	NUMvector_free (this -> tube, 1);
+	NUMvector_free (our tube, 1);
 	Delta_Parent :: v_destroy ();
 }
 
 void structDelta :: init (int a_numberOfTubes) {
 	Melder_assert (a_numberOfTubes >= 1);
-	this -> numberOfTubes = a_numberOfTubes;
-	this -> tube = NUMvector <struct structDelta_Tube> (1, a_numberOfTubes);
+	our numberOfTubes = a_numberOfTubes;
+	our tube = NUMvector <struct structDelta_Tube> (1, a_numberOfTubes);
 	for (int itube = 1; itube <= a_numberOfTubes; itube ++) {
-		Delta_Tube t = this -> tube + itube;
+		Delta_Tube t = our tube + itube;
 		t -> parallel = 1;
 	}
 }

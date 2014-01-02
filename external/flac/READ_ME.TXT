@@ -1,5 +1,5 @@
 Praats/external/flac/READ_ME.TXT
-Paul Boersma, May 13, 2008
+Paul Boersma, 26 December 2008
 This file describes the adaptations to the FLAC 1.2.1 sources
 that are needed to make them compatible with Praat.
 
@@ -14,7 +14,10 @@ compiler message).
 
 For MinGW we need to change in flac_share_alloc.h:
 
-#if !defined _MSC_VER && !defined __EMX__#include <stdint.h> /* for SIZE_MAX in case limits.h didn't get it */#endif
+#if !defined _MSC_VER && !defined __EMX__
+#include <stdint.h> /* for SIZE_MAX in case limits.h didn't get it */
+#endif
+
 
 For win32 on Metrowerks CodeWarrior we do a
 #if defined (_WIN32) && ! defined (off_t)
@@ -42,3 +45,19 @@ the following is added to flac_FLAC_formant.h:
 	#include "melder.h"
 	#define fopen(filename,mode)  _wfopen (Melder_peekWcsToUtf16 (Melder_peekUtf8ToWcs (filename)), L"" mode)
 #endif
+
+There were two mistakes in FLAC__MD%Final () in flac_md5.c:
+	memset(ctx, 0, sizeof(ctx));	/* In case it's sensitive */
+	if(0 != ctx->internal_buf) {
+		free(ctx->internal_buf);
+		ctx->internal_buf = 0;
+		ctx->capacity = 0;
+	}
+should be
+	if(0 != ctx->internal_buf) {   // test before clearing!
+		free(ctx->internal_buf);
+		ctx->internal_buf = 0;
+		ctx->capacity = 0;
+	}
+	memset(ctx, 0, sizeof(*ctx));	// clear the whole structure, not just the first four or eight bytes!
+

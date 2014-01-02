@@ -74,17 +74,53 @@ MAN_END
 MAN_BEGIN (L"PowerCepstrogram: To Table (peak prominence)...", L"djmw", 20130616)
 INTRO (L"A command to create a table with @@PowerCepstrum: Get peak prominence...|cepstral peak prominence@ values.")
 ENTRY (L"Settings")
-SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
+SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
 	Manual_DRAW_SETTINGS_WINDOW ("PowerCepstrogram: To Table (peak prominence)", 7)
 	Manual_DRAW_SETTINGS_WINDOW_RANGE("Peak search pitch range (Hz)", L"60.0", L"300.0")
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"Interpolation", L"None", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Parabolic", 0)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Cubic", 1)
 	Manual_DRAW_SETTINGS_WINDOW_RADIO (L"", L"Sinc70", 0)
-	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)",L"0.001", L"0.0 (=end)")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Tilt line quefrency range (s)", L"0.001", L"0.0 (=end)")
 	Manual_DRAW_SETTINGS_WINDOW_OPTIONMENU(L"Fit method", L"Robust")
 )
 NORMAL (L"The meaning of these settings is explained @@PowerCepstrum: Get peak prominence...|here@.")
+MAN_END
+
+MAN_BEGIN(L"PowerCepstrogram: Paint...", L"djmw", 20131001)
+INTRO (L"A command to draw the selected @@PowerCepstrogram@ object(s) in shades of grey.")
+ENTRY (L"Settings")
+SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (7), L""
+	Manual_DRAW_SETTINGS_WINDOW (L"PowerCepstrogram: Paint", 7)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Time range (s)", L"0.0", L"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE("Quefrency range (s)", L"0.0", L"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD("Maximum (dB)",L"80.0")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Autoscaling",0)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD("Dynamic range (dB)",L"30.0")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD("Dynamic compression (0-1)",L"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN("Garnish",1)
+)
+TAG (L"##Time range (s)")
+DEFINITION (L"the time domain along the %%x% axis.")
+TAG (L"##Quefrency range (s)")
+DEFINITION (L"the quefency domain along the %%y% axis.")
+TAG (L"##Maximum (dB)")
+DEFINITION (L"cells that have cepstral values greater or equal than this value are drawn in black.")
+TAG (L"##Autoscaling")
+DEFINITION (L"If %%on%, overrules the effects of the previous option and the following three options. I.e. the global maximum and the "
+	"global minimum cepstral values determine the maximum blackness and the minimal blackness. Values in-between have apropriate "
+	"values of grey.")
+TAG (L"##Dynamic range (dB)")
+DEFINITION (L"All values more than %%Dynamic range% below the maximum will be drawn in white. Values in-between have apropriate "
+	"values of grey.")
+TAG (L"##Dynamic compression (0-1)")
+DEFINITION (L"determines how much stronger weak frames should be made before drawing. Normally this parameter is between 0 and 1. "
+	"If it is 0, no dynamic compression will take place. If it is 1, all time frames (vertical bands) will contain cepstral values "
+	"that are drawn in black. If the global %%maximum% is set at 80 dB, %%autoscaling% is off, %%dynamic range% is 30 dB and "
+	"%%dynamic compression% is 0.4 then for a frame with a local maximum of 40 dB all values will be lifted by 0.4*(80-40)=16 dB, "
+	"so that its maximum will be seen at 56 dB (thus making the corresponding cell visible).")
+TAG (L"##Garnish")
+DEFINITION (L"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
 MAN_BEGIN (L"PowerCepstrogram: Smooth...", L"djmw", 20130410)

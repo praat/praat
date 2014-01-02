@@ -1,6 +1,6 @@
 /* ERP.cpp
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,13 +52,13 @@ long structERP :: f_getChannelNumber (const wchar_t *channelName) {
 }
 
 void structERP :: f_draw (Graphics graphics, long channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish) {
-	if (channelNumber < 1 || channelNumber > this -> ny) return;
+	if (channelNumber < 1 || channelNumber > our ny) return;
 	/*
 	 * Automatic domain.
 	 */
 	if (tmin == tmax) {
-		tmin = this -> xmin;
-		tmax = this -> xmax;
+		tmin = our xmin;
+		tmax = our xmax;
 	}
 	/*
 	 * Domain expressed in sample numbers.
@@ -80,7 +80,7 @@ void structERP :: f_draw (Graphics graphics, long channelNumber, double tmin, do
 	 */
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, tmin, tmax, vmin, vmax);
-	Graphics_function (graphics, this -> z [channelNumber], ixmin, ixmax, Matrix_columnToX (this, ixmin), Matrix_columnToX (this, ixmax));
+	Graphics_function (graphics, our z [channelNumber], ixmin, ixmax, Matrix_columnToX (this, ixmin), Matrix_columnToX (this, ixmax));
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		Graphics_drawInnerBox (graphics);

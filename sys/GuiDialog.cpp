@@ -53,7 +53,7 @@ Thing_implement (GuiDialog, GuiShell, 0);
 	- (void) dealloc {   // override
 		GuiDialog me = d_userData;
 		forget (me);
-		Melder_casual ("deleting a dialog");
+		trace ("deleting a dialog");
 		[super dealloc];
 	}
 	- (GuiDialog) userData {

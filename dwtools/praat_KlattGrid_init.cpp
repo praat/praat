@@ -239,7 +239,6 @@ DIRECT (KlattGrid_edit##Name##FormantGrid) \
 		const wchar_t *id_and_name = Melder_wcscat (Melder_integer (ID), L". ", formant_names[formantType], L"formant grid"); \
 		autoKlattGrid_formantGridEditor editor = KlattGrid_formantGridEditor_create (id_and_name, me, formantType); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
-		Melder_free (id_and_name); \
 	} \
 END
 
@@ -268,7 +267,6 @@ DO \
 		const wchar_t *id_and_name = Melder_wcscat (Melder_integer (ID), L". ", formant_names[formantType], L"formant amplitude tier"); \
 		autoKlattGrid_decibelTierEditor editor = KlattGrid_decibelTierEditor_create (id_and_name, me, (RealTier) (*amp)->item[formantNumber]); \
 		praat_installEditor (editor.transfer(), IOBJECT); \
-		Melder_free (id_and_name); \
 	} \
 END
 

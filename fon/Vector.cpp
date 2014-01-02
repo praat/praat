@@ -409,9 +409,11 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 			if (y > *pymax) y = *pymax;
 			if (left < *pxmin) left = *pxmin;
 			if (right > *pxmax) right = *pxmax;
-			Graphics_line (g, left, y, right, y);
-			Graphics_line (g, left, y, left, *pymin);
-			Graphics_line (g, right, y, right, *pymin);
+			if (y > *pymin) {
+				Graphics_line (g, left, y, right, y);
+				Graphics_line (g, left, y, left, *pymin);
+				Graphics_line (g, right, y, right, *pymin);
+			}
 		}
 	} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {

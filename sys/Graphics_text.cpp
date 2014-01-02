@@ -268,7 +268,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			lc -> font.integer = font;   // kGraphics_font_HELVETICA .. kGraphics_font_DINGBATS
 			lc -> size = size;   // 0..4 instead of 10..24
 			lc -> style = style;   // without Graphics_CODE
-        #elif cocoa
+		#elif cocoa
 			/*
 			 * Determine the font family.
 			 */
@@ -280,12 +280,12 @@ static void charSize (I, _Graphics_widechar *lc) {
 				lc -> kar == '/' ? kGraphics_font_PALATINO :   // override Courier
 				info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS :
 				lc -> font.integer == kGraphics_font_COURIER ? kGraphics_font_COURIER :
-				my font == kGraphics_font_TIMES ? ( lc -> style == 0 ? kGraphics_font_IPATIMES : kGraphics_font_TIMES ) :
+				my font == kGraphics_font_TIMES ? ( lc -> style == 0 ? kGraphics_font_IPATIMES : kGraphics_font_TIMES ) :   // needed for correct placement of diacritics
 				my font == kGraphics_font_HELVETICA ? kGraphics_font_HELVETICA :
 				my font == kGraphics_font_PALATINO ? kGraphics_font_IPAPALATINO :
 				my font;   // why not lc -> font.integer?
 			Melder_assert (font >= 0 && font <= kGraphics_font_DINGBATS);
-            lc -> font.string = NULL;   // this erases font.integer!
+			lc -> font.string = NULL;   // this erases font.integer!
 
 			/*
 			 * Determine the style.
@@ -321,8 +321,8 @@ static void charSize (I, _Graphics_widechar *lc) {
  				theScreenFonts [font] [style] = ctFont;
 			}
 
-            int normalSize = my fontSize * my resolution / 72.0;
-            lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : normalSize;
+			int normalSize = my fontSize * my resolution / 72.0;
+			lc -> size = lc -> size < 100 ? (3 * normalSize + 2) / 4 : normalSize;
         
 			uint16_t codes16 [2];
 			int nchars = 1;
@@ -340,44 +340,43 @@ static void charSize (I, _Graphics_widechar *lc) {
 				encoding: NSUTF16LittleEndianStringEncoding   // BUG: should be NSUTF16NativeStringEncoding, except that that doesn't exist
 				];
 			//CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-            //NSCAssert (context, @"nil context");
+			//NSCAssert (context, @"nil context");
 
 			//[NSGraphicsContext setCurrentContext: my d_macGraphicsContext];
 			//Melder_assert (my d_macGraphicsContext != NULL);
 			//Melder_assert (context == my d_macGraphicsContext);
-            //CGContextSaveGState (context);
-            //CGContextSetTextMatrix (context, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
+			//CGContextSaveGState (context);
+			//CGContextSetTextMatrix (context, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
 
-            CFRange textRange = CFRangeMake (0, [s length]);
-            
-            CFMutableAttributedStringRef string = CFAttributedStringCreateMutable (kCFAllocatorDefault, [s length]);
-            CFAttributedStringReplaceString (string, CFRangeMake (0, 0), (CFStringRef) s);
-            CFAttributedStringSetAttribute (string, textRange, kCTFontAttributeName, ctFont);
-        
-            /*
-             * Measure.
-             */
-        
+			CFRange textRange = CFRangeMake (0, [s length]);
+
+			CFMutableAttributedStringRef string = CFAttributedStringCreateMutable (kCFAllocatorDefault, [s length]);
+			CFAttributedStringReplaceString (string, CFRangeMake (0, 0), (CFStringRef) s);
+			CFAttributedStringSetAttribute (string, textRange, kCTFontAttributeName, ctFont);
+
+			/*
+			 * Measure.
+			 */
+
             // Create a path to render text in
-            CGMutablePathRef path = CGPathCreateMutable ();
-            NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
-            CGPathAddRect (path, NULL, (CGRect) measureRect);
-            
+			CGMutablePathRef path = CGPathCreateMutable ();
+			NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
+			CGPathAddRect (path, NULL, (CGRect) measureRect);
+        
 			CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) string);
 			CFRange fitRange;
 			CGSize targetSize = CGSizeMake (lc -> width, CGFLOAT_MAX);
 			CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, NULL, targetSize, & fitRange);
-            CFRelease (framesetter);
-            CFRelease (string);
-            [s release];
+			CFRelease (framesetter);
+			CFRelease (string);
+			[s release];
 			CFRelease (path);
             //CGContextRestoreGState (context);
 
 			bool isDiacritic = info -> ps.times == 0;
-            lc -> width = isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0;
-			if (font == kGraphics_font_IPATIMES || font == kGraphics_font_IPAPALATINO) lc -> baseline -= 6;   // BUG: not good enough
-            lc -> baseline *= my fontSize * 0.01;
-            lc -> code = lc -> kar;
+			lc -> width = isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0;
+			lc -> baseline *= my fontSize * 0.01;
+			lc -> code = lc -> kar;
 			lc -> font.integer = font;
 		#elif mac
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
@@ -795,37 +794,38 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
              */
     
             // Create a path to render text in
-            CGMutablePathRef path = CGPathCreateMutable ();
-            NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
-            CGPathAddRect (path, NULL, (CGRect) measureRect);
+            //CGMutablePathRef path = CGPathCreateMutable ();
+            //NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
+            //CGPathAddRect (path, NULL, (CGRect) measureRect);
 
             CGContextSetTextMatrix (my d_macGraphicsContext, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
 
             // create the framesetter and render text
-            CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) string);
-			Melder_assert (framesetter != NULL);
-            CTFrameRef frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, length), path, NULL);
-			Melder_assert (frame != NULL);
+            //CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) string);
+			//Melder_assert (framesetter != NULL);
+            //CTFrameRef frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, length), path, NULL);
+			//Melder_assert (frame != NULL);
         
-            CFRange fitRange;
-            CGSize targetSize = CGSizeMake (CGFLOAT_MAX, CGFLOAT_MAX);
-            CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, NULL, targetSize, & fitRange);
-            CFRelease (path);
+            //CFRange fitRange;
+            //CGSize targetSize = CGSizeMake (CGFLOAT_MAX, CGFLOAT_MAX);
+            //CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, NULL, targetSize, & fitRange);
+            //CFRelease (path);
             CFRelease (color);
-            CFRelease (frame);
-            path = CGPathCreateMutable ();
-            NSRect drawRect = NSMakeRect (0, 0, frameSize.width, frameSize.height);
-			trace ("frame %f %f", frameSize.width, frameSize.height);
-            CGPathAddRect (path, NULL, (CGRect) drawRect);
-            frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, length), path, NULL);
-			Melder_assert (frame != NULL);
+            //CFRelease (frame);
+            //path = CGPathCreateMutable ();
+            //NSRect drawRect = NSMakeRect (0, 0, frameSize.width, frameSize.height);
+			//trace ("frame %f %f", frameSize.width, frameSize.height);
+            //CGPathAddRect (path, NULL, (CGRect) drawRect);
+            //frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, length), path, NULL);
+		//CTRunGetTypographicBounds(run, glyphRange, &ascent, &descent, NULL);
+			//Melder_assert (frame != NULL);
 
 			if (my d_macView) {
 				[my d_macView   lockFocus];
 				my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 			}
             CGContextSaveGState (my d_macGraphicsContext);
-            CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC + descent);
+            CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC /*+ descent*/);
             if (my yIsZeroAtTheTop) CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
             CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
 
@@ -835,19 +835,28 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
             if (my duringXor) {
                 CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
                 CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
-                CTFrameDraw (frame, my d_macGraphicsContext);
+                //CTFrameDraw (frame, my d_macGraphicsContext);
                 CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
                 CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
             } else {
-                CTFrameDraw (frame, my d_macGraphicsContext);
+                //CTFrameDraw (frame, my d_macGraphicsContext);
+
+CTLineRef line = CTLineCreateWithAttributedString (string);
+//CFArrayRef runArray = CTLineGetGlyphRuns (line);
+CTLineDraw (line, my d_macGraphicsContext);
+//CTRunRef run = (CTRunRef) CFArrayGetValueAtIndex (runArray, 0);
+//CTRunGetTypographicBounds (run, glyphRange, &ascent, &descent, NULL);
+//CTRunDraw (run, my d_macGraphicsContext, CFRangeMake (0, length));
+CFRelease (line);
+
             }
             CGContextRestoreGState (my d_macGraphicsContext);
             //CGContextRestoreGState (my d_macGraphicsContext);
 
             // Clean up
-            CFRelease (frame);
-            CFRelease (path);
-            CFRelease (framesetter);
+            //CFRelease (frame);
+            //CFRelease (path);
+            //CFRelease (framesetter);
             CFRelease (string);
 			#if 1
 				CFRelease (s);
@@ -972,8 +981,13 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						static GdkFont *font = NULL;
 						if (font == NULL) {
 							font = gdk_font_load ("-*-courier-medium-r-normal--*-120-*-*-*-*-iso8859-1");
+							if (! font) {
+								font = gdk_font_load ("-*-courier 10 pitch-medium-r-normal--*-120-*-*-*-*-iso8859-1");
+							}
 						}
-						gdk_draw_text_wc (my d_window, font, my d_gdkGraphicsContext, xDC, yDC, (const GdkWChar *) codes, nchars);
+						if (font) {
+							gdk_draw_text_wc (my d_window, font, my d_gdkGraphicsContext, xDC, yDC, (const GdkWChar *) codes, nchars);
+						}
 					} else {
 						Melder_assert (my d_cairoGraphicsContext);
 						enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);

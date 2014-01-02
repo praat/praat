@@ -2,7 +2,7 @@
 #define _Ltas_extensions_h_
 /* Ltas_extensions.h
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012-2013 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -826,15 +826,6 @@ static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
 		CreateStandardAlert (macAlertType, messageCF, NULL, NULL, & dialog);
 		CFRelease (messageCF);
 		RunStandardAlert (dialog, NULL, NULL);
-	#elif fhgfdghdggfkdsgfXXX
-		NSString *header = NULL, *rest = NULL;
-		header = [[NSString alloc] initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
-		if (lineBreak - messageU != j) {
-			rest = [[NSString alloc] initWithCharacters: lineBreak + 1   length: j - 1 - (lineBreak - messageU)];
-		}
-		NSRunAlertPanel (header, rest, NULL, NULL, NULL);
-		[header release];
-		if (rest) [rest release];
 	#else
 		/*
 		 * Create an alert dialog with an icon that is appropriate for the level.
