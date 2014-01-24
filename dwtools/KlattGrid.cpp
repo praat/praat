@@ -1,6 +1,6 @@
 /* KlattGrid.cpp
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,27 @@
 #include "KlattGrid_def.h"
 #include "oo_DESCRIPTION.h"
 #include "KlattGrid_def.h"
+
+/*
+ * A KlattGrid consists of a great many tiers that can be independently modified.
+ * 
+ * For any particular formant, the formant frequency tier and the formant bandwidth tier can only be added or removed jointly
+ * because they are part of a FormantGrid object. There will always be an equal number of formant frequency tiers and
+ * formant bandwidth tiers.
+ * 
+ * For parallel synthesis we also need, besides the frequency and bandwidth tier, an additional amplitude tier for each formant.
+ * It is not necessary that there are an equal number of formant frequency tiers (nf) and amplitude tiers (na).
+ * During parallel synthesis we simply synthesize with min(nf,na) number of formants.
+ * These numbers nf and na can get out of sync because of the following (add, remove, replace) actions:
+ * 	- we replace a FormantGrid that has not the same number of tiers as the corresponding number of amplitude tiers
+ * 	- we remove/add a formant tier and a bandwidth tier together and not the corresponding amplitude tier
+ * 	- we remove/add an amplitude tier and not the corresponding formant&bandwidth tiers
+ * 
+ * As of 20130113 the KlattGrid_addFormant (/remove) which also added automatically an amplitude tier has been split into two explicit actions
+ *	KlattGrid_addFormantFrequencyAndBandwidth (/remove)
+ *	KlattGrid_addFormantAmplitudeTier (/remove)
+ * 
+ */
 
 // Prototypes
 
@@ -246,16 +267,21 @@ static RealTier RealTier_updateWithDelta (RealTier me, RealTier delta, Phonation
 }
 
 static bool FormantGrid_isFormantDefined (FormantGrid me, long iformant) {
+	// formant and bandwidth are always in sync
 	RealTier ftier = (RealTier) my formants -> item[iformant];
 	RealTier btier = (RealTier) my bandwidths -> item[iformant];
 	return ftier -> points -> size != 0 and btier -> points -> size != 0;
 }
 
 static bool FormantGrid_Intensities_isFormantDefined (FormantGrid me, Ordered thee, long iformant) {
-	RealTier ftier = (RealTier) my formants -> item[iformant];
-	RealTier btier = (RealTier) my bandwidths -> item[iformant];
-	RealTier atier = (RealTier) thy item[iformant];
-	return ftier -> points -> size != 0 and btier -> points -> size != 0 and atier -> points -> size != 0;
+	bool exists = false;
+	if (iformant <= my formants -> size && iformant <= my bandwidths -> size && iformant <= thy size) {
+		RealTier ftier = (RealTier) my formants -> item[iformant];
+		RealTier btier = (RealTier) my bandwidths -> item[iformant];
+		RealTier atier = (RealTier) thy item[iformant];
+		exists = ftier -> points -> size != 0 and btier -> points -> size != 0 and atier -> points -> size != 0;
+	}
+	return exists;
 }
 
 static void check_formants (long numberOfFormants, long *ifb, long *ife) {
@@ -1525,10 +1551,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			if (oral_formant_warning) {
 				MelderString_append (&warning, L"\tOral formants: one or more are missing.\n");
 			}
-			MelderInfo_open();
-            MelderInfo_writeLine (L"Warning:");
-			MelderInfo_writeLine (warning.string);
-            MelderInfo_close();
+            Melder_print (L"\nWarning:\n");
+			Melder_print (warning.string);
 		}
 		return him.transfer();
 	} catch (MelderError) {
@@ -2430,7 +2454,7 @@ double KlattGrid_getAmplitudeAtTime (KlattGrid me, int formantType, long iforman
 void KlattGrid_addAmplitudePoint (KlattGrid me, int formantType, long iformant, double t, double value) {
 	Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 	if (iformant < 0 || iformant > (*ordered) -> size) {
-		Melder_throw (L"Formant does not exist.");
+		Melder_throw (L"Formant amplitude tier ", Melder_integer (iformant), "does not exist.");
 	}
 	RealTier_addPoint ( (RealTier) (*ordered) -> item[iformant], t, value);
 }
@@ -2447,7 +2471,7 @@ IntensityTier KlattGrid_extractAmplitudeTier (KlattGrid me, int formantType, lon
 	try {
 		Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		if (iformant < 0 || iformant > (*ordered) ->size) {
-			Melder_throw ("Formant does not exist.");
+			Melder_throw ("Formant amplitude tier ", Melder_integer (iformant), " does not exist.");
 		}
 		autoIntensityTier thee = Data_copy ( (IntensityTier) (*ordered) -> item[iformant]);
 		return thee.transfer();
@@ -2463,7 +2487,7 @@ void KlattGrid_replaceAmplitudeTier (KlattGrid me, int formantType, long iforman
 		}
 		Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
 		if (iformant < 0 || iformant > (*ordered) -> size) {
-			Melder_throw ("Formant does not exist.");
+			Melder_throw ("Formant amplitude tier ", Melder_integer (iformant)," does not exist.");
 		}
 		autoIntensityTier any = Data_copy (thee);
 		forget ( ( (Thing *) (*ordered) -> item) [iformant]);
@@ -2497,6 +2521,39 @@ void KlattGrid_replaceFormantGrid (KlattGrid me, int formantType, FormantGrid th
 	}
 }
 
+void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, long position) {
+	try {
+		if (formantType == KlattGrid_NASAL_ANTIFORMANTS || formantType == KlattGrid_TRACHEAL_ANTIFORMANTS || formantType == KlattGrid_DELTA_FORMANTS) {
+			Melder_throw (L"Cannot add amplitude tier to this formant type.");
+		}
+		Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
+		long noa = (*ordered) -> size;
+		if (position > noa || position < 1) {
+			position = noa + 1;
+		}
+		autoIntensityTier it = IntensityTier_create (my xmin, my xmax);
+		Ordered_addItemPos ( (*ordered), it.transfer(), position);
+	} catch (MelderError) {
+		Melder_throw (me, ": no formant amplitude tier added.");
+	}
+}
+
+void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, int formantType, long position) {
+	try {
+		if (formantType == KlattGrid_NASAL_ANTIFORMANTS || formantType == KlattGrid_TRACHEAL_ANTIFORMANTS || formantType == KlattGrid_DELTA_FORMANTS) {
+			Melder_throw (L"Cannot remove amplitude tier from this formant type.");
+		}
+		Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
+		if (position > 0 && position <= (*ordered) -> size) {
+			Collection_removeItem (*ordered, position);
+		}
+	} catch (MelderError) {
+		Melder_throw (me, ": no formant amplitude tier removed.");
+	}
+}
+
+// The following two routines are deprecated.
+// We do this intwo separate steps now
 void KlattGrid_addFormant (KlattGrid me, int formantType, long position) {
 	try {
 		FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
@@ -2534,25 +2591,36 @@ void KlattGrid_addFormant (KlattGrid me, int formantType, long position) {
 
 void KlattGrid_removeFormant (KlattGrid me, int formantType, long position) {
 	FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
-
-	if (position < 1 || position > (*fg) -> formants -> size) {
-		return;
-	}
-	FormantGrid_removeFormantAndBandwidthTiers (*fg, position);
+	long nof = (*fg) -> formants -> size;
 	if (formantType == KlattGrid_NASAL_ANTIFORMANTS || formantType == KlattGrid_TRACHEAL_ANTIFORMANTS ||
-	        formantType == KlattGrid_DELTA_FORMANTS) {
-		return;    // Done, no amplitudes
+        formantType == KlattGrid_DELTA_FORMANTS) {
+		if (position < 1 || position > nof) {
+			return;
+		}
+		FormantGrid_removeFormantAndBandwidthTiers (*fg, position);
+	} else { 
+		// oral & nasal & tracheal formants can have amplitudes
+		// only remove a formant and its amplitude tier if number of formants and amplitudes are the same
+		Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
+		long noa = (*ordered) -> size;
+		if (position < 1 || position > nof || position > noa) {
+			if (nof != noa) {
+				Melder_warning ("The number of formant tiers (", Melder_integer (nof), ") and the number of amplitude tiers (", 
+					Melder_integer (noa), ") don't match. Nothing removed.");
+			}
+			return;
+		}
+		FormantGrid_removeFormantAndBandwidthTiers (*fg, position);
+		Collection_removeItem (*ordered, position);
 	}
-	Ordered *ordered = KlattGrid_getAddressOfAmplitudes (me, formantType);
-	Collection_removeItem (*ordered, position);
 }
 
-void KlattGrid_addFormantAndBandwidthTier (KlattGrid me, int formantType, long position) {
+void KlattGrid_addFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position) {
 	FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
 	FormantGrid_addFormantAndBandwidthTiers (*fg, position);
 }
 
-void KlattGrid_removeFormantAndBandwidthTier (KlattGrid me, int formantType, long position) {
+void KlattGrid_removeFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position) {
 	FormantGrid *fg =  KlattGrid_getAddressOfFormantGrid (me, formantType);
 	FormantGrid_removeFormantAndBandwidthTiers (*fg, position);
 }

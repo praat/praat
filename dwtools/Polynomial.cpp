@@ -54,9 +54,6 @@
 #include "oo_DESCRIPTION.h"
 #include "Polynomial_def.h"
 
-#undef our
-#define our ((Polynomial_Table) my methods) ->
-
 #define MAX(m,n) ((m) > (n) ? (m) : (n))
 #define MIN(m,n) ((m) < (n) ? (m) : (n))
 
@@ -1685,9 +1682,6 @@ void Spline_drawKnots (I, Graphics g, double xmin, double xmax, double ymin, dou
 		Graphics_markTop (g, my knots[my numberOfKnots], 0, 1, 1, ts);
 	}
 }
-
-#undef our
-#define our ((Spline_Table) my methods) ->
 
 long Spline_getOrder (I) {
 	iam (Spline);

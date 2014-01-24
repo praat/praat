@@ -1,6 +1,6 @@
 /* praat_actions.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -524,9 +524,8 @@ static void do_menu (I, bool modified) {
 		praat_Command me = & theActions [i];
 		if (my callback == callback) {
 			if (my title != NULL && ! wcsstr (my title, L"...")) {
-				UiHistory_write (L"\ndo (\"");
-				UiHistory_write_expandQuotes (my title);
-				UiHistory_write (L"\")");
+				UiHistory_write (L"\n");
+				UiHistory_write_colonize (my title);
 			}
 			Ui_setAllowExecutionHook (allowExecutionHook, (void *) callback);   // BUG: one shouldn't assign a function pointer to a void pointer
 			try {

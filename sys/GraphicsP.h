@@ -170,7 +170,7 @@ void _Graphics_fillRectangle (Graphics me, long x1DC, long x2DC, long y1DC, long
 void _Graphics_setColour (Graphics me, Graphics_Colour colour);
 void _Graphics_setGrey (Graphics me, double grey);
 void _Graphics_colour_init (Graphics me);
-bool _GraphicsMac_tryToInitializeAtsuiFonts (void);
+bool _GraphicsMac_tryToInitializeFonts (void);
 
 #ifdef macintosh
 	void GraphicsQuartz_initDraw (GraphicsScreen me);

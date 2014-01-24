@@ -1,6 +1,6 @@
 /* UiFile.cpp
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,11 +83,11 @@ void UiInfile_do (I) {
 		for (long ifile = 1; ifile <= infileNames -> size; ifile ++) {
 			SimpleString infileName = (SimpleString) infileNames -> item [ifile];
 			Melder_pathToFile (infileName -> string, & my file);
-			UiHistory_write (L"\ndo (\"");
-			UiHistory_write_expandQuotes (my invokingButtonTitle);
-			UiHistory_write (L"\", \"");
+			UiHistory_write (L"\n");
+			UiHistory_write_colonize (my invokingButtonTitle);
+			UiHistory_write (L" \"");
 			UiHistory_write_expandQuotes (infileName -> string);
-			UiHistory_write (L"\")");
+			UiHistory_write (L"\"");
 			structMelderFile file;
 			MelderFile_copy (& my file, & file);
 			try {
@@ -158,17 +158,17 @@ void UiOutfile_do (I, const wchar_t *defaultName) {
 	Melder_pathToFile (outfileName, & my file);
 	structMelderFile file;
 	MelderFile_copy (& my file, & file);   // save, because okCallback could destroy me
-	UiHistory_write (L"\ndo (\"");
-	UiHistory_write_expandQuotes (my invokingButtonTitle);
+	UiHistory_write (L"\n");
+	UiHistory_write_colonize (my invokingButtonTitle);
 	try {
 		my okCallback ((UiForm) me, 0, NULL, NULL, NULL, my invokingButtonTitle, false, my okClosure);
 	} catch (MelderError) {
 		Melder_error_ ("File ", & file, " not finished.");
 		Melder_flushError (NULL);
 	}
-	UiHistory_write (L"\", \"");
+	UiHistory_write (L" \"");
 	UiHistory_write (outfileName);
-	UiHistory_write (L"\")");
+	UiHistory_write (L"\"");
 	Melder_free (outfileName);
 }
 

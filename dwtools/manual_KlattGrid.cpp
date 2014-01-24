@@ -1,6 +1,6 @@
 /* manual_KlattGrid.cpp
  *
- * Copyright (C) 2009-2013 David Weenink
+ * Copyright (C) 2009-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,17 +23,17 @@ void manual_KlattGrid (ManPages me);
 void manual_KlattGrid (ManPages me)
 {
 
-MAN_BEGIN (L"KlattGrid", L"djmw", 20130410)
+MAN_BEGIN (L"KlattGrid", L"djmw", 20140117)
 INTRO (L"A KlattGrid represents the source-filter model as a function of time. It consists of a number of tiers that model aspects of the source and the filter, and the interaction between source and filter. The KlattGrid implements a superset of the speech synthesizer described in figure 14 in the @@Klatt & Klatt (1990)@ article.")
 NORMAL (L"The following drawing represents a cascade synthesizer with six oral formants, one nasal formant, "
 	"one nasal antiformant, one tracheal formant, one tracheal antiformant and six frication formants. ")
 SCRIPT (7.0, 6.5,
-	L"Create KlattGrid... kg 0 1 6 1 1 6 1 1 1\n"
-	"Draw synthesizer... Cascade\n"
+	L"Create KlattGrid: \"kg\", 0, 1, 6, 1, 1, 6, 1, 1, 1\n"
+	"Draw synthesizer: \"Cascade\"\n"
 	"Remove\n")
 NORMAL (L"In the next picture a parallel synthesizer branch is used instead of the cascade one.")
 SCRIPT (7.0, 6.5,
-	L"Create KlattGrid... kg 0 1 6 1 1 6 1 1 1\n"
+	L"Create KlattGrid: \"kg\", 0, 1, 6, 1, 1, 6, 1, 1, 1\n"
 	"Draw synthesizer... Parallel\n"
 	"Remove\n")
 NORMAL (L"All parameters in the synthesizer are represented by separate tiers.")
@@ -96,18 +96,18 @@ ENTRY (L"A minimal synthesizer")
 NORMAL (L"The following script produces a minimal voiced sound. The first line creates the standard KlattGrid."
 	"The next two lines define a pitch point, in Hz, and the voicing amplitude, in dB. The last line "
 	"creates the sound.")
-CODE (L"do (\"Create KlattGrid...\", \"kg\", 0, 1, 6, 1, 1, 6, 1, 1, 1)")
-CODE (L"do (\"Add pitch point...\", 0.5, 100)")
-CODE (L"do (\"Add voicing amplitude point...\", 0.5, 90)")
-CODE (L"do (\"To Sound\")")
+CODE (L"Create KlattGrid: \"kg\", 0, 1, 6, 1, 1, 6, 1, 1, 1")
+CODE (L"Add pitch point: 0.5, 100")
+CODE (L"Add voicing amplitude point: 0.5, 90")
+CODE (L"To Sound")
 NORMAL (L"The following script will produce raw frication noise. Because we do not specify formant amplitudes, "
 	"we turn off the formants in the parallel section.")
-CODE (L"do (\"Create KlattGrid...\", \"kg\", 0, 1, 6, 1, 1, 6, 1, 1, 1)")
-CODE (L"do (\"Add frication amplitude point...\", 0.5 ,80)")
-CODE (L"do (\"Add frication bypass point...\", 0.5, 0)")
-CODE (L"do (\"To Sound (special)...\", 0, 0, 44100, \"yes\", \"no\", \"yes\", \"yes\", \"yes\", \"yes\",")
+CODE (L"Create KlattGrid: \"kg\", 0, 1, 6, 1, 1, 6, 1, 1, 1")
+CODE (L"Add frication amplitude point: 0.5 ,80")
+CODE (L"Add frication bypass point: 0.5, 0")
+CODE (L"To Sound (special): 0, 0, 44100, \"yes\", \"no\", \"yes\", \"yes\", \"yes\", \"yes\",")
 CODE (L"... \"Powers in tiers\", \"yes\", \"yes\", \"yes\",")
-CODE (L"... \"Cascade\", 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, \"yes\")")
+CODE (L"... \"Cascade\", 1, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, \"yes\"")
 ENTRY (L"Changes")
 NORMAL (L"In praat versions before 5.1.05 the values for the %%oral / nasal / tracheal formant amplitudes% and"
 	" %%frication bypass amplitude% had to be given in dB SPL; "

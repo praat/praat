@@ -262,17 +262,29 @@ FORM (praat_calculator, L"Calculator", L"Calculator")
 	LABEL (L"", L"For details, click Help.")
 	OK
 DO
+	struct Formula_Result result;
 	if (interpreter == NULL) {
 		interpreter = Interpreter_create (NULL, NULL);
 		try {
-			Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), NULL);
+			Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), & result);
 			forget (interpreter);
 		} catch (MelderError) {
 			forget (interpreter);
 			throw;
 		}
 	} else {
-		Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), NULL);
+		Interpreter_anyExpression (interpreter, GET_STRING (L"expression"), & result);
+	}
+	switch (result. expressionType) {
+		case kFormula_EXPRESSION_TYPE_NUMERIC: {
+			Melder_information (Melder_double (result. result.numericResult));
+		} break;
+		case kFormula_EXPRESSION_TYPE_STRING: {
+			Melder_information (result. result.stringResult);
+			Melder_free (result. result.stringResult);
+		} break;
+		case kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY: {
+		}
 	}
 END
 

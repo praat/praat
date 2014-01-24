@@ -1,6 +1,6 @@
 /* praat_David_init.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5082,7 +5082,8 @@ DO
     LOOP {
         iam (Sound);
         if (ichannel > my ny) {
-            Melder_throw (me, " there is no channel 6. Sound in channel not played.");
+            Melder_throw (me, ": there is no channel ", Melder_integer(ichannel), ". Sound has only ", Melder_integer (my ny), " channel", 
+				  (my ny > 1 ? "s." : "."));
         }
         autoSound thee = Sound_extractChannel (me, ichannel);
         Sound_play (thee.peek(), 0, 0);
@@ -6334,7 +6335,7 @@ DO
 	}
 END
 
-FORM (Table_boxPlotsWhere, L"Table: Box plots where", 0)
+FORM (Table_boxPlotsWhere, L"Table: Box plots where", L"Table: Box plots where...")
 	WORD (L"Data column", L"")
 	WORD (L"Factor column", L"")
 	REAL (L"left Vertical range", L"0.0")
@@ -8098,8 +8099,8 @@ void praat_uvafon_David_init () {
 		praat_addAction1 (classTable, 0, L"Horizontal error bars plot...", L"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_horizontalErrorBarsPlot);
 		praat_addAction1 (classTable, 0, L"Vertical error bars plot...", L"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_verticalErrorBarsPlot);
 		praat_addAction1 (classTable, 0, L"Distribution plot...", L"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_distributionPlot);
-		praat_addAction1 (classTable, 1, L"Draw where -",  L"Quantile-quantile plot (between levels)...", 1 , 0);
-			praat_addAction1 (classTable, 0, L"Scatter plot where...", L"Draw where -", 2, DO_Table_scatterPlotWhere);
+		praat_addAction1 (classTable, 1, L"Draw where",  L"Quantile-quantile plot (between levels)...", 1 , 0);
+			praat_addAction1 (classTable, 0, L"Scatter plot where...", L"Draw where", 2, DO_Table_scatterPlotWhere);
 			praat_addAction1 (classTable, 0, L"Scatter plot where (mark)...", L"Scatter plot where...", 2, DO_Table_scatterPlotMarkWhere);
 			praat_addAction1 (classTable, 0, L"Horizontal error bars plot where...", L"Scatter plot where (mark)...", praat_DEPTH_2, DO_Table_horizontalErrorBarsPlotWhere);
 			praat_addAction1 (classTable, 0, L"Vertical error bars plot where...", L"Scatter plot where (mark)...", praat_DEPTH_2, DO_Table_verticalErrorBarsPlotWhere);

@@ -1,6 +1,6 @@
 /* manual_MDS.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1388,7 +1388,7 @@ INTRO (L"According to the measurement theory of @@Stevens (1951)@, there are fou
 	"two levels, Nominal and Ordinal, are often called %non-%metric. The last two are %metric.")
 MAN_END
 
-MAN_BEGIN (L"Multidimensional scaling", L"djmw", 20130502)
+MAN_BEGIN (L"Multidimensional scaling", L"djmw", 20140117)
 INTRO (L"This tutorial describes how you can use P\\s{RAAT} to "
 	"perform ##M#ulti##D#imensional ##S#caling (MDS) analysis.")
 NORMAL (L"MDS helps us to represent %dissimilarities between objects as "
@@ -1420,9 +1420,9 @@ NORMAL (L"Select the Configuration and choose @@Configuration: Draw...|Draw...@ 
 	"and the following picture will result")
 PICTURE (4.0, 4.0, drawLetterRConfigurationExample2)
 NORMAL (L"The following script summarizes:")
-CODE (L"dissimilarity = do (\"Create letter R example...\", 32.5)")
-CODE (L"configuration = do (\"To Configuration (monotone mds)...\", 2, \"Primary approach\", 0.00001, 50, 1)")
-CODE (L"do (\"Draw...\", 1, 2, -0.8, 1.2, -0.8, 0.7, \"yes\")")
+CODE (L"dissimilarity = Create letter R example: 32.5")
+CODE (L"configuration = To Configuration (monotone mds): 2, \"Primary approach\", 0.00001, 50, 1")
+CODE (L"Draw: 1, 2, -0.8, 1.2, -0.8, 0.7, \"yes\"")
 ENTRY (L"Obtaining the stress value")
 NORMAL (L"Select the Dissimilarity and the Configuration together and query for "
 	"the @stress value with: "
@@ -1430,8 +1430,8 @@ NORMAL (L"Select the Dissimilarity and the Configuration together and query for 
 	"Get stress (monotone mds)...@. ")
 NORMAL (L"The following script summarizes:")
 CODE (L"selectObject (dissimilarity, configuration)")
-CODE (L"do (\"Get stress (monotone mds)...\", \"Primary approach\", \"Kruskals's "
-	"stress-1\")")
+CODE (L"Get stress (monotone mds): \"Primary approach\", \"Kruskals's "
+	"stress-1\"")
 ENTRY (L"The Shepard diagram")
 NORMAL (L"Select the Dissimilarity and the Configuration together to "
 	"@@Dissimilarity & Configuration: Draw Shepard diagram...|"
@@ -1439,7 +1439,7 @@ NORMAL (L"Select the Dissimilarity and the Configuration together to "
 PICTURE (4.0, 4.0, drawLetterRShepard)
 NORMAL (L"The following script summarizes:")
 CODE (L"selectObject (dissimilarity, configuration)")
-CODE (L"do (\"Draw Shepard diagram...\", 0, 200, 0, 2.2, 1, \"+\", \"yes\")")
+CODE (L"Draw Shepard diagram: 0, 200, 0, 2.2, 1, \"+\", \"yes\"")
 ENTRY (L"The (monotone) regression")
 NORMAL (L"Select the Dissimilarity and the Configuration together to "
 	"@@Dissimilarity & Configuration: Draw regression (monotone mds)...|"
@@ -1447,7 +1447,7 @@ NORMAL (L"Select the Dissimilarity and the Configuration together to "
 PICTURE (4.0, 4.0, drawLetterRRegression)
 NORMAL (L"The following script summarizes:")
 CODE (L"selectObject (dissimilarity, configuration)")
-CODE (L"do (\"Draw monotone regresion...\", \"Primary approach\", 0, 200, 0, 2.2, 1, \"+\", \"yes\")")
+CODE (L"Draw monotone regresion: \"Primary approach\", 0, 200, 0, 2.2, 1, \"+\", \"yes\"")
 NORMAL (L"When you enter %noiseRange = 0 in the form for the letter #R, perfect "
 	"reconstruction is possible. The Shepard diagram then will show "
 	"a perfectly smooth monotonically increasing function.")
@@ -1461,19 +1461,19 @@ NORMAL (L"When you can't have equal confidence in all the number in the "
 	"value...| Set value...@ command (remember: make %w__%ij_ = %w__%ji_).")
 NORMAL (L"The following script summarizes:")
 CODE (L"selectObject (dissimilarity)")
-CODE (L"weight = do (\"To Weight\")")
+CODE (L"weight = To Weight")
 CODE (L"! Change [i][j] and [j][i] cells in the Weight object")
-CODE (L"do (\"Set value...\", i, j, val)")
-CODE (L"do (\"Set value...\", j, i, val)")
+CODE (L"Set value: i, j, val")
+CODE (L"Set value: j, i, val")
 CODE (L"...")
 CODE (L"! now we can do a weighed analysis.")
 CODE (L"selectObject (dissimilarity, weight)")
-CODE (L"do (\"To Configuration (monotone mds)...\", 2, \"Primary approach\", 0.00001, 50, 1)")
+CODE (L"To Configuration (monotone mds): 2, \"Primary approach\", 0.00001, 50, 1)")
 NORMAL (L"You can also query the @stress values with three objects selected. "
 	"The following script summarizes:")
 CODE (L"selectObject (dissimilarity, weight, configuration)")
-CODE (L"do (\"Get stress (monotone mds)...\", \"Primary approach\", \"Kruskals's "
-	"stress-1\")")
+CODE (L"Get stress (monotone mds): \"Primary approach\", \"Kruskals's "
+	"stress-1\"")
 ENTRY (L"Using a start Configuration")
 NORMAL (L"You could also use a Configuration object as a starting "
 	"configuration in the minimization process. "
@@ -1483,7 +1483,7 @@ NORMAL (L"You could also use a Configuration object as a starting "
 	"starting point for further analysis:")
 NORMAL (L"The following script summarizes:")
 CODE (L"selectObject (dissimilarity, configuration, weight)")
-CODE (L"do (\"To Configuration (monotone mds)...\", 2, \"Primary approach\", 0.00001, 50, 1)")
+CODE (L"To Configuration (monotone mds): 2, \"Primary approach\", 0.00001, 50, 1")
 ENTRY (L"Multiple Dissimilarity's (INDSCAL)")
 NORMAL (L"When you have multiple Dissimilarity objects you can also perform "
 	"@@individual difference scaling@ (often called @@INDSCAL analysis@). ")

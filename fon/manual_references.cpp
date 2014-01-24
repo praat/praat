@@ -70,7 +70,7 @@ NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma & Escudero (2008)", L"ppgb", 20100331)
-NORMAL (L"Paul Boersma & Paola Escudero (2009): \"Learning to perceive a smaller L2 vowel inventory: "
+NORMAL (L"Paul Boersma & Paola Escudero (2008): \"Learning to perceive a smaller L2 vowel inventory: "
 	"an Optimality Theory account.\" In Peter Avery, Elan Dresher & Keren Rice (eds.), "
 	"%%Contrast in phonology: theory, perception, acquisition%. Berlin: Mouton De Gruyter. 271\\--301.")
 NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")

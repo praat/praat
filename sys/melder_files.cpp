@@ -235,6 +235,17 @@ void Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 		 *    LPT1:
 		 *    \\host\path
 		 */
+		structMelderDir dir = { { 0 } };
+		if (path [0] == '~' && path [1] == '/') {
+			Melder_getHomeDir (& dir);
+			swprintf (file -> path, kMelder_MAXPATH+1, L"%ls%ls", dir. path, & path [1]);
+			for (;;) {
+				wchar_t *slash = wcschr (file -> path, '/');
+				if (slash == NULL) break;
+				*slash = '\\';
+			}
+			return;
+		}
 		if (wcschr (path, '/') && ! wcsstr (path, L"://")) {
 			wchar_t winPath [kMelder_MAXPATH+1];
 			wcscpy (winPath, path);
@@ -249,7 +260,6 @@ void Melder_relativePathToFile (const wchar_t *path, MelderFile file) {
 		if (wcschr (path, ':') || path [0] == '\\' && path [1] == '\\' || wcsequ (path, L"<stdout>")) {
 			wcscpy (file -> path, path);
 		} else {
-			structMelderDir dir = { { 0 } };
 			Melder_getDefaultDir (& dir);   /* BUG */
 			static MelderString buffer = { 0 };
 			MelderString_empty (& buffer);

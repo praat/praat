@@ -1,6 +1,6 @@
 /* GraphicsScreen.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,11 +49,7 @@
 	#include "macport_on.h"
 	static RGBColor theBlackColour = { 0, 0, 0 };
 	static bool _GraphicsMacintosh_tryToInitializeQuartz (void) {
-		#if cocoa
-			return true;
-		#else
-			return _GraphicsMac_tryToInitializeAtsuiFonts ();
-		#endif
+		return _GraphicsMac_tryToInitializeFonts ();
 	}
 #endif
 
@@ -337,13 +333,19 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		(void) voidDisplay;
         #if useCarbon
             my d_macPort = (GrafPtr) voidWindow;
+			(void) my d_macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
         #else
-            my d_macView = (NSView*) voidWindow;
+			if (my printer) {
+				my d_macView = (NSView *) voidWindow;   // in case we do view-based printing
+				//my d_macGraphicsContext = (CGContextRef) voidWindow;   // in case we do context-based printing
+			} else {
+				my d_macView = (NSView *) voidWindow;
+				(void) my d_macGraphicsContext;   // will be retreived from Core Graphics with every drawing command!
+			}
         #endif
 		my d_macColour = theBlackColour;
 		my resolution = resolution;
 		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
-		(void) my d_macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
 		_GraphicsScreen_text_init (me);
 	#endif
 	return 1;
@@ -374,6 +376,7 @@ Graphics Graphics_create_screenPrinter (void *display, void *window) {
 	Graphics_init (me);
 	my paperWidth = (double) thePrinter. paperWidth / thePrinter. resolution;
 	my paperHeight = (double) thePrinter. paperHeight / thePrinter. resolution;
+	//NSLog (@"Graphics_create_screenPrinter: %f %f", my paperWidth, my paperHeight);
 	my d_x1DC = my d_x1DCmin = thePrinter. resolution / 2;
 	my d_x2DC = my d_x2DCmax = (my paperWidth - 0.5) * thePrinter. resolution;
 	my d_y1DC = my d_y1DCmin = thePrinter. resolution / 2;
@@ -436,18 +439,17 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#endif
 	Graphics_init (me);
 	#if mac 
-    #if useCarbon
+		#if useCarbon
             GraphicsScreen_init (me,
                 XtDisplay (my d_drawingArea -> d_widget),
                 GetWindowPort ((WindowRef) XtWindow (my d_drawingArea -> d_widget)),
                 Gui_getResolution (NULL));
-    #else
+		#else
             GraphicsScreen_init (me,
                                  my d_drawingArea -> d_widget,
                                  my d_drawingArea -> d_widget,
                                  Gui_getResolution (NULL));
-    #endif
-    
+		#endif
 	#else
 		#if gtk
 			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget), Gui_getResolution (my d_drawingArea -> d_widget));
@@ -553,7 +555,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 	void GraphicsQuartz_initDraw (GraphicsScreen me) {
 		#if useCarbon
 			if (my d_macPort) {
-					QDBeginCGContext (my d_macPort, & my d_macGraphicsContext);
+				QDBeginCGContext (my d_macPort, & my d_macGraphicsContext);
 				//CGContextSetAlpha (my macGraphicsContext, 1.0);
 				//CGContextSetAllowsAntialiasing (my macGraphicsContext, false);
 				if (my d_drawingArea != NULL) {
@@ -567,11 +569,14 @@ Graphics Graphics_create_pdf (void *context, int resolution,
         #else
             if (my d_macView) {            
                 [my d_macView lockFocus];
-                my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+				//if (! my printer) {
+					my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
+				//}
                 Melder_assert (my d_macGraphicsContext != NULL);
-                GuiCocoaDrawingArea *cocoaDrawingArea = (GuiCocoaDrawingArea *) my d_drawingArea -> d_widget;
-                //CGContextTranslateCTM (my d_macGraphicsContext, 0, cocoaDrawingArea.bounds.size.height);
-                //CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+				if (my printer) {
+					//CGContextTranslateCTM (my d_macGraphicsContext, 0, [my d_macView bounds]. size. height);
+					//CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
+				}
 			}
 		#endif
 	}

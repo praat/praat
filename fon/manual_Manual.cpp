@@ -1,6 +1,6 @@
 /* manual_Manual.cpp
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ ENTRY (L"Your own manual pages")
 NORMAL (L"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (L"ManPages", L"ppgb", 20130814)
+MAN_BEGIN (L"ManPages", L"ppgb", 20140107)
 INTRO (L"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -173,8 +173,8 @@ NORMAL (L"Your text may contain Praat scripts. They typically draw a picture in 
 	"with the font and font size of the manual until you specify otherwise in the script. The format is:")
 CODE (L"<script> 4.5 4 \"")
 CODE1 (L"Draw inner box")
-CODE1 (L"Axes... 0 100 0 100")
-CODE1 (L"Text... 50 Centre 50 Half Hello!!")
+CODE1 (L"Axes: 0, 100, 0, 100")
+CODE1 (L"Text: 50, \"Centre\", 50, \"Half\", \"Hello!!\"")
 CODE (L"\\\"r")
 NORMAL (L"The two numbers after ##<script># are the width and the height of the picture "
 	"(the \"outer viewport\") in inches, if the font size of the manual is 12. "
@@ -184,10 +184,10 @@ NORMAL (L"Please note that the script is enclosed within double quotes. "
 NORMAL (L"If needed, a script like this can create objects in the object list of the manual. "
 	"However, you have to make sure that you remove them after use:")
 CODE (L"<script> 6 3 \"")
-CODE1 (L"Create Sound from formula... sineWithNoise Mono 0.0 1.0 44100 1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
-CODE1 (L"To Spectrogram... 0.005 5000 0.002 20 Gaussian")
-CODE1 (L"Paint... 0 0 0 0 100.0 yes 50.0 6.0 0.0 yes")
-CODE1 (L"plus Sound sineWithNoise")
+CODE1 (L"Create Sound from formula: \"sineWithNoise\", 1, 0.0, 1.0, 44100, \"1/2*sin(2*pi*377*x)+randomGauss(0,0.1)\"")
+CODE1 (L"To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
+CODE1 (L"Paint: 0, 0, 0, 0, 100.0, \"yes\", 50.0, 6.0, 0.0, \"yes\"")
+CODE1 (L"plusObject (\"Sound sineWithNoise\")")
 CODE1 (L"Remove")
 CODE (L"\\\"r")
 NORMAL (L"Note that unlike the previous script, this script does not set the font and font size. "
@@ -205,20 +205,20 @@ NORMAL (L"The commands ##Set outer viewport...# and ##Set inner viewport...# are
 	"as in the Picture window, so that you can test your picture with a normal Praat script; "
 	"for instance, the following script draws a cross in the upper half of the picture and a rectangle in the lower half:")
 CODE (L"<script> 4.5 4 \"")
-CODE1 (L"Axes... 0 100 0 100")
-CODE1 (L"Select inner viewport... 0 4.5 0 2")
-CODE1 (L"Draw line... 0 0 100 100")
-CODE1 (L"Draw line... 0 100 100 0")
-CODE1 (L"Select inner viewport... 0 4.5 2 4")
-CODE1 (L"Draw rectangle... 0 100 0 100")
+CODE1 (L"Axes: 0, 100, 0, 100")
+CODE1 (L"Select inner viewport: 0, 4.5, 0, 2")
+CODE1 (L"Draw line: 0, 0, 100, 100")
+CODE1 (L"Draw line: 0, 100, 100, 0")
+CODE1 (L"Select inner viewport: 0, 4.5, 2, 4")
+CODE1 (L"Draw rectangle: 0, 100, 0, 100")
 CODE (L"\\\"r")
 SCRIPT (4.5, 4, L""
-	"Axes... 0 100 0 100\n"
-	"Select inner viewport... 0 4.5 0 2\n"
-	"Draw line... 0 0 100 100\n"
-	"Draw line... 0 100 100 0\n"
-	"Select inner viewport... 0 4.5 2 4\n"
-	"Draw rectangle... 0 100 0 100\n"
+	"Axes: 0, 100, 0, 100\n"
+	"Select inner viewport: 0, 4.5, 0, 2\n"
+	"Draw line: 0, 0, 100, 100\n"
+	"Draw line: 0, 100, 100, 0\n"
+	"Select inner viewport: 0, 4.5, 2, 4\n"
+	"Draw rectangle: 0, 100, 0, 100\n"
 )
 ENTRY (L"Script links")
 NORMAL (L"Your text may contain links to Praat scripts. They are drawn in blue. "

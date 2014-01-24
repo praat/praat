@@ -1,6 +1,6 @@
 /* melder.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -791,7 +791,7 @@ static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
 	static unichar messageU [4000];
 	int messageLength = wcslen (messageW);
 	int j = 0;
-	for (int i = 0; i < messageLength && j <= 4000 - 2; i ++) {
+	for (int i = 0; i < messageLength && j <= 4000 - 3; i ++) {
 		uint32_t kar = messageW [i];
 		if (kar <= 0xFFFF) {
 			messageU [j ++] = kar;
@@ -801,6 +801,7 @@ static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
 			messageU [j ++] = 0xDC00 | (kar & 0x3FF);
 		}
 	}
+	messageU [j] = '\0';   // append null byte because we are going to search this string
 
 	/*
 	 * Split up the message between header (will appear in bold) and rest.
@@ -836,15 +837,19 @@ static void mac_message (NSAlertStyle macAlertType, const wchar_t *messageW) {
 		 * Add the header in bold.
 		 */
 		NSString *header = [[NSString alloc] initWithCharacters: messageU   length: lineBreak - messageU];   // note: init can change the object pointer!
-		[alert setMessageText: header];
-		[header release];
+		if (header) {   // make this very safe, because we can be at error time or at fatal time
+			[alert setMessageText: header];
+			[header release];
+		}
 		/*
 		 * Add the rest of the message in small type.
 		 */
-		if (lineBreak - messageU != j) {
+		if (lineBreak - messageU < j) {
 			NSString *rest = [[NSString alloc] initWithCharacters: lineBreak + 1   length: j - 1 - (lineBreak - messageU)];
-			[alert setInformativeText: rest];
-			[rest release];
+			if (rest) {   // make this very safe, because we can be at error time or at fatal time
+				[alert setInformativeText: rest];
+				[rest release];
+			}
 		}
 		/*
 		 * Display the alert dialog and synchronously wait for the user to click OK.

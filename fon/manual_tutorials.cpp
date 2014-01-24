@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140102)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140124)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.63# (24 January 2014)")
+LIST_ITEM (L"\\bu Scripting language: easier menu command invocation using the colon \":\".")
+LIST_ITEM (L"\\bu 64-bit Mac graphics: better handling of any absence of Doulos SIL or Charis SIL.")
+LIST_ITEM (L"\\bu Windows scripting: can now use \"~\" in file names to refer to home directory, as on Mac and Linux.")
 NORMAL (L"##5.3.62# (2 January 2014)")
 LIST_ITEM (L"\\bu 64-bit Mac: removed a bug introduced in 5.3.61 that could cause text containing \"ff\" to become invisible.")
 NORMAL (L"##5.3.61# (1 January 2014)")
@@ -1795,23 +1799,23 @@ NORMAL (L"If you choose ##Move cursor to maximum pitch#, then choose ##Get pitch
 	"lower values.")
 MAN_END
 
-MAN_BEGIN (L"FAQ: Scripts", L"ppgb", 20130421)
+MAN_BEGIN (L"FAQ: Scripts", L"ppgb", 20140120)
 NORMAL (L"#Question: how do I do something to all the files in a directory?")
 NORMAL (L"Answer: look at @@Create Strings as file list...@.")
 NORMAL (L"")
 NORMAL (L"#Question: why doesn't the editor window react to my commands?")
 NORMAL (L"Your commands are probably something like:")
-CODE (L"do (\"Read from file...\", \"hello.wav\")")
-CODE (L"do (\"View & Edit\")")
-CODE (L"do (\"Zoom...\", 0.3, 0.5)")
+CODE (L"Read from file: \"hello.wav\"")
+CODE (L"View & Edit")
+CODE (L"Zoom: 0.3, 0.5")
 NORMAL (L"Answer: Praat doesn't know it has to send the #Zoom command to the editor "
-	"window called ##Sound hello#. There could be several Sound editor windows on your "
+	"window called ##14. Sound hello#. There could be several Sound editor windows on your "
 	"screen. According to @@Scripting 7.1. Scripting an editor from a shell script@, "
 	"you will have to say this explicitly:")
-CODE (L"do (\"Read from file...\", \"hello.wav\")")
-CODE (L"do (\"View & Edit\")")
-CODE (L"editor Sound hello")
-CODE (L"do (\"Zoom...\", 0.3, 0.5)")
+CODE (L"Read from file: \"hello.wav\"")
+CODE (L"View & Edit")
+CODE (L"editor: \"Sound hello\"")
+CODE (L"Zoom: 0.3, 0.5")
 NORMAL (L"")
 NORMAL (L"#Problem: a line like \"Number = 1\" does not work.")
 NORMAL (L"Solution: names of variables should start with a lower-case letter.")

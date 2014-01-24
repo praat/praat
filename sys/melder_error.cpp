@@ -88,6 +88,11 @@ void Melder_flushError (const char *format, ...) {
 	va_end (arg);
 }
 
+void Melder_error_noLine (const MelderArg& arg1)
+{
+	if (arg1.argW) { if (arg1.type == 1) appendErrorW (arg1.argW); else appendErrorA (arg1.arg8); }
+}
+
 void Melder_error_ (const MelderArg& arg1)
 {
 	if (arg1.argW) { if (arg1.type == 1) appendErrorW (arg1.argW); else appendErrorA (arg1.arg8); }

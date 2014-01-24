@@ -237,6 +237,7 @@ void UiFile_hide (void);
 
 void UiHistory_write (const wchar_t *string);
 void UiHistory_write_expandQuotes (const wchar_t *string);
+void UiHistory_write_colonize (const wchar_t *string);
 wchar_t *UiHistory_get (void);
 void UiHistory_clear (void);
 

@@ -1500,7 +1500,7 @@ void DTW_and_Polygon_findPathInside (DTW me, Polygon thee, int localSlope, Matri
             } else if (psi[iy][ix] == DTW_START) {
                 break;
             }
-            if (pathIndex < 1 || iy < 1) break;
+            if (pathIndex < 2 || iy < 1) break;
             //Melder_assert (pathIndex > 1 && iy > 0);
             my path[--pathIndex].x = ix;
             my path[pathIndex].y = iy;

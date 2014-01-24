@@ -1,6 +1,6 @@
 /* manual_LPC.c
  *
- * Copyright (C) 1994-2013 David Weenink
+ * Copyright (C) 1994-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ TAG (L"##Garnish")
 DEFINITION (L"Draws a box around the cepstrogram and labels the axes.")
 MAN_END
 
-MAN_BEGIN (L"PowerCepstrogram: Smooth...", L"djmw", 20130410)
+MAN_BEGIN (L"PowerCepstrogram: Smooth...", L"djmw", 20140117)
 INTRO (L"Smoothes the selected @PowerCepstrogram by averaging cepstra. The smoothed PowerCepstrogram is the result of two separate steps. "
 	"In the first step, cepsta are averaged across time. In the second step, cepstra are averaged across quefrency.")
 ENTRY (L"Settings")
@@ -143,8 +143,8 @@ ENTRY (L"Note")
 NORMAL (L"The following commands should reproduce the smoothing described in the @@Hillenbrand & Houde (1996)@ article, where they use a 20 ms "
 	"(10 frame) time smoothing and a 1 ms (10 bin) quefrency smoothing. ")
 CODE (L"selectObject (\"Sound xxx\")")
-CODE (L"do (\"To PowerCepstrogram...\", 0.041, 0.002, 5000.0)")
-CODE (L"do (\"Smooth...\", 0.02, 0.001)")
+CODE (L"To PowerCepstrogram: 0.041, 0.002, 5000.0")
+CODE (L"Smooth: 0.02, 0.001")
 MAN_END
 
 MAN_BEGIN (L"Cepstrum", L"djmw", 20130616)

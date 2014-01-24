@@ -90,27 +90,27 @@ Thing_implement (GuiList, GuiControl, 0);
 			tc.width = frameRect. size. width;
 			[tc setEditable: NO];
 			[_tableView addTableColumn: tc];
-			
+
 			_tableView. delegate = self;
 			_tableView. dataSource = self;
 			_tableView. allowsEmptySelection = YES;
 			_tableView. headerView = nil;
 			_tableView. target = self;
 			_tableView. action = @selector (_GuiCocoaList_clicked:);
-			
+
 			NSScrollView *sv = [[NSScrollView alloc] initWithFrame: frameRect];
 			[sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 			[sv setBorderType: NSGrooveBorder];
 			[sv setDocumentView: _tableView];   // this retains the table view
 			[sv setHasVerticalScroller: YES];
 			//[sv setHasHorizontalScroller: YES];
-			
+
 			[self addSubview: sv];   // this retains the scroll view
 			//Melder_assert ([sv retainCount] == 2);   // not always true on 10.6
 			[sv release];
 			Melder_assert ([_tableView retainCount] == 2);
 			[_tableView release];
-			
+
 			_contents = [[NSMutableArray alloc] init];
 		}
 		return self;
@@ -128,14 +128,19 @@ Thing_implement (GuiList, GuiControl, 0);
 	}
 
 	/*
-	 * Implement GuiCocaList methods.
+	 * Implement GuiCocoaList methods.
 	 */
 	- (IBAction) _GuiCocoaList_clicked: (id) sender {
+		/*
+		 * This method probably shouldn't do anything,
+		 * because tableViewSelectionDidChange will already have been called at this point.
+		 */
 		(void) sender;
+		trace ("enter");
 		GuiList me = d_userData;
 		if (me && my d_selectionChangedCallback) {
 			struct structGuiListEvent event = { me };
-			my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
+			//my d_selectionChangedCallback (my d_selectionChangedBoss, & event);
 		}
 	}
 
@@ -156,6 +161,9 @@ Thing_implement (GuiList, GuiControl, 0);
 	 * Override TableViewDelegate methods.
 	 */
 	- (void) tableViewSelectionDidChange: (NSNotification *) notification {
+		/*
+		 * This is invoked when the user clicks in the table or uses the arrow keys.
+		 */
 		(void) notification;
 		trace ("enter");
 		GuiList me = d_userData;

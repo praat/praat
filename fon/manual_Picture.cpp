@@ -390,7 +390,7 @@ NORMAL (L"For most of the codes, the first letter tells you the most similar let
 	"The codes for \\sw, \\rh, \\hs and \\kb are abbreviations for %schwa, %%ram's horn%, %horseshoe, and %%kidney bean%.")
 MAN_END
 
-MAN_BEGIN (L"Axes...", L"ppgb", 19970330)
+MAN_BEGIN (L"Axes...", L"ppgb", 20140107)
 INTRO (L"One of the commands in the #Margins and #World menus of the @@Picture window@.")
 ENTRY (L"Purpose")
 NORMAL (L"To view and change the current world coordinates of the horizontal and vertical axes.")
@@ -403,23 +403,23 @@ ENTRY (L"Example")
 NORMAL (L"The following script would draw a person's vowel triangle:")
 CODE (L"\\#  Put F1 (between 300 and 800 Hz) along the horizontal axis,")
 CODE (L"\\#  and F2 (between 600 and 3600 Hz) along the vertical axis.")
-CODE (L"##Axes...# 300 800 600 3600")
+CODE (L"##Axes:# 300, 800, 600, 3600")
 CODE (L"\\#  Draw a rectangle inside the current viewport (selected area),")
 CODE (L"\\#  with text in the margins, and tick marks in steps of 100 Hz along the F1 axis,")
 CODE (L"\\#  and in steps of 200 Hz along the F2 axis.")
 CODE (L"Draw inner box")
-CODE (L"Text top... no Dani\\bse\\\" l's Dutch vowel triangle")
-CODE (L"Text bottom... yes \\% F_1 (Hz)")
-CODE (L"Text left... yes \\% F_2 (Hz)")
-CODE (L"Marks bottom every... 1 100 yes yes yes")
-CODE (L"Marks left every... 1 200 yes yes yes")
+CODE (L"Text top: \"no\", \"Daniël's Dutch vowel triangle\"")
+CODE (L"Text bottom: \"yes\", \"\\% F_1 (Hz)\"")
+CODE (L"Text left: \"yes\", \"\\% F_2 (Hz)\"")
+CODE (L"Marks bottom every: 1, 100, \"yes\", \"yes\", \"yes\", \"\"")
+CODE (L"Marks left every: 1, 200, \"yes\", \"yes\", \"yes\", \"\"")
 CODE (L"\\#  Draw large phonetic symbols at the vowel points.")
-CODE (L"Text special... 340 Centre 688 Half Times 24 0 u")
-CODE (L"Text special... 481 Centre 1195 Half Times 24 0 \\bso/")
+CODE (L"Text special: 340, \"Centre\", 688, \"Half\", \"Times\", 24, \"0\", \"u\"")
+CODE (L"Text special: 481, \"Centre\", 1195, \"Half\", \"Times\", 24, \"0\", \"ø\"")
 CODE (L"\\#  Etcetera")
-NORMAL (L"This example would draw the texts \"Dani\\e\"l's Dutch vowel triangle\", "
+NORMAL (L"This example would draw the texts \"Daniël's Dutch vowel triangle\", "
 	"\"%F__1_ (Hz)\", and \"%F__2_ (Hz)\" in the margins, "
-	"and the texts \"u\" and \"\\o/\" at the appropriate positions inside the drawing area.")
+	"and the texts \"u\" and \"ø\" at the appropriate positions inside the drawing area.")
 MAN_END
 
 MAN_BEGIN (L"Copy to clipboard", L"ppgb", 20120430)   /* Not Unix. */

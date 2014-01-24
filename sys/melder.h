@@ -2,7 +2,7 @@
 #define _melder_h_
 /* melder.h
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -572,6 +572,7 @@ void Melder_throw (const MelderArg& arg1, const MelderArg& arg2, const MelderArg
 	const MelderArg& arg9, const MelderArg& arg10, const MelderArg& arg11, const MelderArg& arg12,
 	const MelderArg& arg13, const MelderArg& arg14, const MelderArg& arg15, const MelderArg& arg16,
 	const MelderArg& arg17 = L"", const MelderArg& arg18 = L"", const MelderArg& arg19 = L"", const MelderArg& arg20 = L"");
+void Melder_error_noLine (const MelderArg& arg1);
 void Melder_error_ (const MelderArg& arg1);
 void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2);
 void Melder_error_ (const MelderArg& arg1, const MelderArg& arg2, const MelderArg& arg3);

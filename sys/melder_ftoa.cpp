@@ -1,6 +1,6 @@
 /* melder_ftoa.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  * pb 2008/01/06 Mac: use strtod instead of wcstod for speed
  * pb 2010/10/16 Melder_naturalLogarithm
  * pb 2011/04/05 C++
+ * pb 2014/01/09 use fabs in the calculating minimum precision
  */
 
 #include "melder.h"
@@ -163,7 +164,7 @@ const wchar_t * Melder_fixed (double value, int precision) {
 	if (value == 0.0) return L"0";
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
-	minimumPrecision = - (int) floor (log10 (value));
+	minimumPrecision = - (int) floor (log10 (fabs (value)));
 	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f",
 		minimumPrecision > precision ? minimumPrecision : precision, value);
 	return buffers [ibuffer];
@@ -177,7 +178,7 @@ const wchar_t * Melder_fixedExponent (double value, int exponent, int precision)
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	value /= factor;
-	minimumPrecision = - (int) floor (log10 (value));
+	minimumPrecision = - (int) floor (log10 (fabs (value)));
 	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*fE%d",
 		minimumPrecision > precision ? minimumPrecision : precision, value, exponent);
 	return buffers [ibuffer];
@@ -190,7 +191,7 @@ const wchar_t * Melder_percent (double value, int precision) {
 	if (++ ibuffer == NUMBER_OF_BUFFERS) ibuffer = 0;
 	if (precision > 60) precision = 60;
 	value *= 100.0;
-	minimumPrecision = - (int) floor (log10 (value));
+	minimumPrecision = - (int) floor (log10 (fabs (value)));
 	swprintf (buffers [ibuffer], MAXIMUM_NUMERIC_STRING_LENGTH, L"%.*f%%",
 		minimumPrecision > precision ? minimumPrecision : precision, value);
 	return buffers [ibuffer];

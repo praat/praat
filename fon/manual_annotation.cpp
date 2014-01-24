@@ -1,6 +1,6 @@
 /* manual_annotation.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,7 +169,7 @@ LIST_ITEM (L"##TextGrid & Pitch: Draw...")
 LIST_ITEM (L"##TextGrid & Pitch: Draw separately...")
 MAN_END
 
-MAN_BEGIN (L"TextGrid: Count labels...", L"ppgb", 19980630)
+MAN_BEGIN (L"TextGrid: Count labels...", L"ppgb", 20140107)
 INTRO (L"A command to ask the selected @TextGrid object how many of the specified labels "
 	"it contains in the specified tier.")
 ENTRY (L"Settings")
@@ -183,7 +183,7 @@ NORMAL (L"The number of intervals or points with label %%Label text% in tier %%T
 ENTRY (L"Scripting")
 NORMAL (L"You can use this command to put the number into a script variable:")
 CODE (L"select TextGrid hallo")
-CODE (L"number_of_a = Count labels... 1 a")
+CODE (L"number_of_a = Count labels: 1, \"a\"")
 NORMAL (L"In this case, the value will not be written into the Info window.")
 MAN_END
  

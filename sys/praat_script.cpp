@@ -108,7 +108,62 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 	Melder_throw ("Editor \"", string, "\" does not exist.");
 }
 
+static int parseCommaSeparatedArguments (Interpreter interpreter, wchar_t *arguments, structStackel args []) {
+	int narg = 0, depth = 0;
+	for (wchar_t *p = arguments; ; p ++) {
+		bool endOfArguments = *p == '\0';
+		if (endOfArguments || (*p == ',' && depth == 0)) {
+			if (narg == MAXIMUM_NUMBER_OF_FIELDS)
+				Melder_throw ("Cannot have more than ", MAXIMUM_NUMBER_OF_FIELDS, " arguments");
+			*p = '\0';
+			struct Formula_Result result;
+			Interpreter_anyExpression (interpreter, arguments, & result);
+			narg ++;
+			/*
+			 * First remove the old contents.
+			 */
+			switch (args [narg]. which) {
+				case Stackel_NUMBER: {
+					// do nothing
+				} break;
+				case Stackel_STRING: {
+					Melder_free (args [narg].string);
+				} break;
+			}
+			/*
+			 * Then copy in the new contents.
+			 */
+			switch (result. expressionType) {
+				case kFormula_EXPRESSION_TYPE_NUMERIC: {
+					args [narg]. which = Stackel_NUMBER;
+					args [narg]. number = result. result. numericResult;
+				} break;
+				case kFormula_EXPRESSION_TYPE_STRING: {
+					args [narg]. which = Stackel_STRING;
+					args [narg]. string = result. result. stringResult;
+				} break;
+			}
+			arguments = p + 1;
+		} else if (*p == '(' || *p == '[' || *p == '{') {
+			depth ++;
+		} else if (*p == ')' || *p == ']' || *p == '}') {
+			depth --;
+		} else if (*p == '\"') {
+			for (;;) {
+				p ++;
+				if (*p == '\"') {
+					if (p [1] == '\"') p ++;
+					else break;
+				}
+			}
+		}
+		if (endOfArguments) break;
+	}
+	return narg;
+}
+
 int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
+	static struct structStackel args [1 + MAXIMUM_NUMBER_OF_FIELDS];
 	//Melder_casual ("praat_executeCommand: %ld: %ls", interpreter, command);
 	if (command [0] == '\0' || command [0] == '#' || command [0] == '!' || command [0] == ';')
 		/* Skip empty lines and comments. */;
@@ -218,10 +273,14 @@ int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 				Melder_throw ("The script command \"editor\" is not available inside manuals.");
 			if (command [6] == ' ' && isalpha (command [7])) {
 				praatP. editor = praat_findEditorFromString (command + 7);
-			} else if (interpreter && interpreter -> editorClass) {
-				praatP. editor = praat_findEditorFromString (interpreter -> environmentName);
+			} else if (command [6] == '\0') {
+				if (interpreter && interpreter -> editorClass) {
+					praatP. editor = praat_findEditorFromString (interpreter -> environmentName);
+				} else {
+					Melder_throw ("The function \"editor\" requires an argument when called from outside an editor.");
+				}
 			} else {
-				Melder_throw ("No editor specified.");
+				Interpreter_voidExpression (interpreter, command);
 			}
 		} else if (wcsnequ (command, L"endeditor", 9)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
@@ -314,27 +373,60 @@ int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 			Interpreter_voidExpression (interpreter, command);
 		}
 	} else {   /* Simulate menu choice. */
-		wchar_t *arguments;
+		bool hasDots = false, hasColon = false;
 
  		/* Parse command line into command and arguments. */
-		/* The separation is formed by the three dots. */
+		/* The separation is formed by the three dots or a colon. */
 
-		if ((arguments = wcsstr (command, L"...")) == NULL || wcslen (arguments) < 4) {
-			static wchar_t dummy = { 0 };
-			arguments = & dummy;
-		} else {
-			arguments += 4;
-			if (arguments [-1] != ' ' && arguments [-1] != '0') {
-				Melder_throw ("There should be a space after the three dots.");
+		wchar_t *arguments = & command [0];
+		for (arguments = & command [0]; *arguments != '\0'; arguments ++) {
+			if (*arguments == ':') {
+				hasColon = true;
+				if (arguments [1] == '\0') {
+					arguments = & arguments [1];   // empty string
+				} else {
+					if (arguments [1] != ' ') {
+						Melder_throw ("There should be a space after the colon.");
+					}
+					arguments [1] = '\0';   // new end of "command"
+					arguments += 2;   // the arguments start after the space
+				}
+				break;
 			}
-			arguments [-1] = '\0'; // new end of "command"
+			if (*arguments == '.' && arguments [1] == '.' && arguments [2] == '.') {
+				hasDots = true;
+				arguments += 3;
+				if (*arguments == '\0') {
+					// empty string
+				} else {
+					if (*arguments != ' ') {
+						Melder_throw ("There should be a space after the three dots.");
+					}
+					*arguments = '\0';   // new end of "command"
+					arguments ++;   // the arguments start after the space
+				}
+				break;
+			}
 		}
 
 		/* See if command exists and is available; ignore separators. */
 		/* First try loose commands, then fixed commands. */
 
+		int narg;
+		wchar_t command2 [200];
+		if (hasColon) {
+			narg = parseCommaSeparatedArguments (interpreter, arguments, args);
+			wcscpy (command2, command);
+			wchar_t *colon = wcschr (command2, ':');
+			colon [0] = colon [1] = colon [2] = '.';
+			colon [3] = '\0';
+		}
 		if (theCurrentPraatObjects == & theForegroundPraatObjects && praatP. editor != NULL) {
-			Editor_doMenuCommand ((Editor) praatP. editor, command, 0, NULL, arguments, interpreter);
+			if (hasColon) {
+				Editor_doMenuCommand ((Editor) praatP. editor, command2, narg, args, NULL, interpreter);
+			} else {
+				Editor_doMenuCommand ((Editor) praatP. editor, command, 0, NULL, arguments, interpreter);
+			}
 		} else if (theCurrentPraatObjects != & theForegroundPraatObjects &&
 		    (wcsnequ (command, L"Save ", 5) ||
 			 wcsnequ (command, L"Write ", 6) ||
@@ -345,14 +437,18 @@ int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		} else {
 			bool theCommandIsAnExistingAction = false;
 			try {
-				theCommandIsAnExistingAction = praat_doAction (command, arguments, interpreter);
+				if (hasColon) {
+					theCommandIsAnExistingAction = praat_doAction (command2, narg, args, interpreter);
+				} else {
+					theCommandIsAnExistingAction = praat_doAction (command, arguments, interpreter);
+				}
 			} catch (MelderError) {
 				/*
 				 * We only get here if the command *was* an existing action.
 				 * Anything could have gone wrong in its execution,
 				 * but one invisible problem can be checked here.
 				 */
-				if (arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
+				if (hasDots && arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
 					Melder_throw ("It may be helpful to remove the trailing spaces in \"", arguments, "\".");
 				} else {
 					throw;
@@ -361,14 +457,18 @@ int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 			if (! theCommandIsAnExistingAction) {
 				bool theCommandIsAnExistingMenuCommand = false;
 				try {
-					theCommandIsAnExistingMenuCommand = praat_doMenuCommand (command, arguments, interpreter);
+					if (hasColon) {
+						theCommandIsAnExistingMenuCommand = praat_doMenuCommand (command2, narg, args, interpreter);
+					} else {
+						theCommandIsAnExistingMenuCommand = praat_doMenuCommand (command, arguments, interpreter);
+					}
 				} catch (MelderError) {
 					/*
 					 * We only get here if the command *was* an existing menu command.
 					 * Anything could have gone wrong in its execution,
 					 * but one invisible problem can be checked here.
 					 */
-					if (arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
+					if (hasDots && arguments [0] != '\0' && arguments [wcslen (arguments) - 1] == ' ') {
 						Melder_throw ("It may be helpful to remove the trailing spaces in \"", arguments, L"\".");
 					} else {
 						throw;

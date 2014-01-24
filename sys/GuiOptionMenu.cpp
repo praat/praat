@@ -1,6 +1,6 @@
 /* GuiOptionMenu.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2007 Stefan de Konink, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014 Paul Boersma, 2007 Stefan de Konink, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ void structGuiOptionMenu :: v_show () {
 	#elif motif
 		XtManageChild (d_xmMenuBar);
     #elif cocoa
-    NSLog(@"cocoa v_show"); // ?
+		//NSLog(@"cocoa structGuiOptionMenu :: v_show"); // ?
 	#endif
 }
 

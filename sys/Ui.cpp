@@ -366,6 +366,17 @@ void UiHistory_write_expandQuotes (const wchar_t *string) {
 		if (*p == '\"') MelderString_append (& theHistory, L"\"\""); else MelderString_appendCharacter (& theHistory, *p);
 	}
 }
+void UiHistory_write_colonize (const wchar_t *string) {
+	if (string == NULL) return;
+	for (const wchar_t *p = & string [0]; *p != '\0'; p ++) {
+		if (*p == '.' && p [1] == '.' && p [2] == '.') {
+			MelderString_append (& theHistory, L":");
+			p += 2;
+		} else {
+			MelderString_appendCharacter (& theHistory, *p);
+		}
+	}
+}
 wchar_t *UiHistory_get (void) { return theHistory.string; }
 void UiHistory_clear (void) { MelderString_empty (& theHistory); }
 
@@ -462,44 +473,43 @@ static void UiForm_okOrApply (I, GuiButton button, int hide) {
 		 * Write everything to history. Before destruction!
 		 */
 		if (! my isPauseForm) {
-			UiHistory_write (L"\ndo (\"");
-			UiHistory_write_expandQuotes (my invokingButtonTitle);
-			UiHistory_write (L"\"");
+			UiHistory_write (L"\n");
+			UiHistory_write_colonize (my invokingButtonTitle);
 			int size = my numberOfFields;
 			while (size >= 1 && my field [size] -> type == UI_LABEL)
 				size --;   // ignore trailing fields without a value
+			int next = 0;
 			for (int ifield = 1; ifield <= size; ifield ++) {
 				UiField field = my field [ifield];
 				switch (field -> type) {
 					case UI_REAL: case UI_REAL_OR_UNDEFINED: case UI_POSITIVE: {
-						UiHistory_write (L", ");
+						UiHistory_write (next -- ? L", " : L" ");
 						UiHistory_write (Melder_double (field -> realValue));
 					} break; case UI_INTEGER: case UI_NATURAL: case UI_CHANNEL: {
-						UiHistory_write (L", ");
+						UiHistory_write (next -- ? L", " : L" ");
 						UiHistory_write (Melder_integer (field -> integerValue));
 					} break; case UI_WORD: case UI_SENTENCE: case UI_TEXT: {
-						UiHistory_write (L", \"");
+						UiHistory_write (next -- ? L", \"" : L" \"");
 						UiHistory_write_expandQuotes (field -> stringValue);
 						UiHistory_write (L"\"");
 					} break; case UI_BOOLEAN: {
-						UiHistory_write (field -> integerValue ? L", \"yes\"" : L", \"no\"");
+						UiHistory_write (field -> integerValue ? (next -- ? L", \"yes\"" : L" \"yes\"") : (next -- ? L", \"no\"" : L" \"no\""));
 					} break; case UI_RADIO: case UI_OPTIONMENU: {
 						UiOption b = static_cast <UiOption> (field -> options -> item [field -> integerValue]);
-						UiHistory_write (L", \"");
+						UiHistory_write (next -- ? L", \"" : L" \"");
 						UiHistory_write_expandQuotes (b -> name);
 						UiHistory_write (L"\"");
 					} break; case UI_LIST: {
-						UiHistory_write (L", \"");
+						UiHistory_write (next -- ? L", \"" : L" \"");
 						UiHistory_write_expandQuotes (field -> strings [field -> integerValue]);
 						UiHistory_write (L"\"");
 					} break; case UI_COLOUR: {
-						UiHistory_write (L", \"");
+						UiHistory_write (next -- ? L", \"" : L" \"");
 						UiHistory_write (Graphics_Colour_name (field -> colourValue));
 						UiHistory_write (L"\"");
 					}
 				}
 			}
-			UiHistory_write (L")");
 		}
 		if (hide) {
 			my d_dialogForm -> f_hide ();

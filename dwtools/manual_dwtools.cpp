@@ -1,6 +1,6 @@
 /* manual_dwtools.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -471,7 +471,7 @@ NORMAL (L"The scores for the dependent data will be in the lower numbered column
 MAN_END
 
 
-MAN_BEGIN (L"Canonical correlation analysis", L"djmw", 20130502)
+MAN_BEGIN (L"Canonical correlation analysis", L"djmw", 20140117)
 INTRO (L"This tutorial will show you how to perform canonical correlation "
        "analysis with  P\\s{RAAT}.")
 ENTRY (L"1. Objective of canonical correlation analysis")
@@ -493,9 +493,9 @@ NORMAL (L"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"@@discriminant analysis@ tutorial you can find how to get these data, "
 	"how to take the logarithm of the formant frequency values and how to "
 	"standardize them. The following script summarizes:")
-CODE (L"pols50m = do (\"Create TableOfReal (Pols 1973)...\", \"yes\")")
-CODE (L"do (\"Formula...\", \"if col < 4 then log10 (self) else self endif\")")
-CODE (L"do (\"Standardize columns\")")
+CODE (L"pols50m = Create TableOfReal (Pols 1973): \"yes\"")
+CODE (L"Formula: \"if col < 4 then log10 (self) else self endif\"")
+CODE (L"Standardize columns")
 NORMAL (L"Before we start with the %canonical correlation analysis we will first have "
 	"a look at the %Pearson correlations of this table and  "
 	"calculate the @Correlation matrix. It is given by:")
@@ -508,8 +508,8 @@ CODE (L"L2  -0.505  0.526 -0.038 -0.038  1      0.128")
 CODE (L"L3  -0.014 -0.568  0.019  0.085  0.128  1")
 NORMAL (L"The following script summarizes:")
 CODE (L"selectObject (pols50m)")
-CODE (L"do (\"To Correlation\")")
-CODE (L"do (\"Draw as numbers...\", 1, 0, \"decimal\", 3)")
+CODE (L"To Correlation")
+CODE (L"Draw as numbers: 1, 0, \"decimal\", 3")
 NORMAL (L"The correlation matrix shows that high correlations exist between some "
 	"formant frequencies and some levels. For example, the correlation "
 	"coefficient between F2 and L2 equals 0.526.")
@@ -538,17 +538,17 @@ NORMAL (L"Select the TableOfReal and choose from the dynamic menu the option "
 	"3 for %%Dimension of dependent variate%. The resulting CCA object will bear "
 	"the same name as the TableOfReal object. The following script summarizes:")
 CODE (L"selectObject (pols50m)")
-CODE (L"cca = do (\"To CCA...\", 3)")
+CODE (L"cca = To CCA: 3")
 ENTRY (L"3. How to get the canonical correlation coefficients")
 NORMAL (L"You can get the canonical correlation coefficients by queries of the CCA "
 	"object. You will find that the three canonical correlation coefficients, "
 	"\\ro(%u__1_, %v__1_), \\ro(%u__2_, %v__2_) and \\ro(%u__3_, %v__3_) are "
 	" approximately 0.86, 0.53 and 0.07, respectively. "
 	"The following script summarizes:")
-CODE (L"cc1 = do (\"Get correlation...\", 1)")
-CODE (L"cc2 = do (\"Get correlation...\", 2)")
-CODE (L"cc3 = do (\"Get correlation...\", 3)")
-CODE (L"writeInfoLine (\"cc1 = \", cc1, \", cc2 = \", cc2, \", cc3 = \", cc3)")
+CODE (L"cc1 = Get correlation: 1")
+CODE (L"cc2 = Get correlation: 2")
+CODE (L"cc3 = Get correlation: 3")
+CODE (L"writeInfoLine: \"cc1 = \", cc1, \", cc2 = \", cc2, \", cc3 = \", cc3")
 ENTRY (L"4. How to obtain canonical scores")
 NORMAL (L"Canonical #scores, also named @@canonical variate@s, are the linear combinations:")
 FORMULA (L"%u__%i_ = %y__%i1_%F__1_+%y__%i2_%F__2_ + %y__%i3_%F__3_, and,")
@@ -570,9 +570,9 @@ NORMAL (L"The scores with a dot are zero to numerical precision. In this table t
 	"only correlations that differ from zero are the canonical correlations. "
 	"The following script summarizes:")
 CODE (L"selectObject (cca, pols50m)")
-CODE (L"do (\"To TableOfReal (scores)...\", 3)")
-CODE (L"do (\"To Correlation\")")
-CODE (L"do (\"Draw as numbers if...\", 1, 0, \"decimal\", 2, \"abs(self) > 1e-14\")")
+CODE (L"To TableOfReal (scores): 3)")
+CODE (L"To Correlation")
+CODE (L"Draw as numbers if: 1, 0, \"decimal\", 2, \"abs(self) > 1e-14")
 ENTRY (L"5. How to predict one dataset from the other")
 NORMAL (L"@@CCA & TableOfReal: Predict...@")
 NORMAL (L"Additional information can be found in @@Weenink (2003)@.")
@@ -713,17 +713,17 @@ TAG (L"columnLabels")
 DEFINITION (L"the names of the responses.")
 MAN_END
 
-MAN_BEGIN (L"Create simple Confusion...", L"djmw", 20130410)
+MAN_BEGIN (L"Create simple Confusion...", L"djmw", 20140117)
 INTRO (L"Creates a square @@Confusion|confusion matrix@ with equal stimulus labels and response labels.")
 ENTRY (L"Example")
-NORMAL (L"The command ##do (\"Create simple Confusion...\", \"simple\", \"u i a\")# results in the following Confusion:")
+NORMAL (L"The command ##Create simple Confusion: \"simple\", \"u i a\"# results in the following Confusion:")
 CODE (L"     u    i    a   ! The response labels")
 CODE (L"u    0    0    0   ! Responses on stimulus  u,")
 CODE (L"i    0    0    0   ! Responses on stimulus  i")
 CODE (L"a    0    0    0   ! Responses on stimulus  a")
 MAN_END
 
-MAN_BEGIN (L"Confusion: Increase...", L"djmw", 20130410)
+MAN_BEGIN (L"Confusion: Increase...", L"djmw", 20140117)
 INTRO (L"Increases the contents of the corresponding cell in the selected @@Confusion@ by one.")
 ENTRY (L"Settings")
 TAG (L"##Stimulus# and ##Response#")
@@ -734,14 +734,14 @@ CODE (L"       u    i    a   ! The response labels")
 CODE (L" u     6    2    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
-NORMAL (L"The command ##do (\"Increase...\", \"u\", \"i\")# results in:")
+NORMAL (L"The command ##Increase: \"u\", \"i\"# results in:")
 CODE (L"       u    i    a   ! The responses")
 CODE (L" u     6    3    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
 MAN_END
 
-MAN_BEGIN (L"Confusion: Group...", L"djmw", 20130410)
+MAN_BEGIN (L"Confusion: Group...", L"djmw", 20140117)
 INTRO (L"Groups a number of stimuli and responses into one new category.")
 ENTRY (L"Settings")
 TAG (L"##Stimuli & Responses")
@@ -756,17 +756,17 @@ CODE (L"       u    i    a   ! The response labels")
 CODE (L" u     6    2    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
-NORMAL (L"After the command ##do (\"Group stimuli...\", \"u i\", \"high\", 0)#, the new Confusion will be:")
+NORMAL (L"After the command ##Group stimuli: \"u i\", \"high\", 0#, the new Confusion will be:")
 CODE (L"         high   a   ! The new response labels")
 CODE (L" high     15    3   ! Responses on group %%high%")
 CODE (L" a         5    4   ! Responses on stimulus  a")
-NORMAL (L"Instead after the command ##do (\"Group stimuli...\", \"u i\", \"high\", 2)#, the new Confusion will be:")
+NORMAL (L"Instead after the command ##Group stimuli: \"u i\", \"high\", 2#, the new Confusion will be:")
 CODE (L"        a   high  ! The new response labels")
 CODE (L" a      4     5   ! Responses on stimulus  a")
 CODE (L" high   3    15   ! Responses on group %%high%")
 MAN_END
 
-MAN_BEGIN (L"Confusion: Group stimuli...", L"djmw", 20130410)
+MAN_BEGIN (L"Confusion: Group stimuli...", L"djmw", 20140117)
 INTRO (L"Groups a number of stimuli into one new category.")
 ENTRY (L"Settings")
 TAG (L"##Stimuli")
@@ -781,13 +781,13 @@ CODE (L"       u    i    a   ! The response labels")
 CODE (L" u     6    2    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
-NORMAL (L"After the command ##do (\"Group stimuli...\", \"u i\", \"high\", 1)#, the new Confusion will be:")
+NORMAL (L"After the command ##Group stimuli: \"u i\", \"high\", 1#, the new Confusion will be:")
 CODE (L"          u    i    a   ! The response labels")
 CODE (L" high     9    6    3   ! Responses on stimulus group %%high%,")
 CODE (L" a        1    4    4   ! Responses on stimulus  a")
 MAN_END
 
-MAN_BEGIN (L"Confusion: Group responses...", L"djmw", 20130410)
+MAN_BEGIN (L"Confusion: Group responses...", L"djmw", 20140117)
 INTRO (L"Groups a number of responses into one new category.")
 ENTRY (L"Settings")
 TAG (L"##Responses")
@@ -802,14 +802,14 @@ CODE (L"       u    i    a   ! The response labels")
 CODE (L" u     6    2    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
-NORMAL (L"After the command ##do (\"Group responses...\", \"a i\", \"front\", 1)#, the new Confusion will be:")
+NORMAL (L"After the command ##Group responses: \"a i\", \"front\", 1#, the new Confusion will be:")
 CODE (L"   front    i    ! The new response labels")
 CODE (L" u     7    2    ! Responses on stimulus  u,")
 CODE (L" i     5    4    ! Responses on stimulus  i")
 CODE (L" a     5    4    ! Responses on stimulus  a")
 MAN_END
 
-MAN_BEGIN (L"Confusion: Get stimulus sum...", L"djmw", 20130410)
+MAN_BEGIN (L"Confusion: Get stimulus sum...", L"djmw", 20140117)
 INTRO (L"Returns the number of responses for the chosen stimulus (the sum of all the numbers in the row with this stimulus label). ")
 ENTRY (L"Example")
 NORMAL (L"Given the following selected Confusion:")
@@ -817,10 +817,10 @@ CODE (L"       u    i    a   ! The response labels")
 CODE (L" u     6    2    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
-NORMAL (L"The command ##do (\"Get stimulus sum...\", \"a\")# will return the number 9.")
+NORMAL (L"The command ##Get stimulus sum: \"a\"# will return the number 9.")
 MAN_END
 
-MAN_BEGIN (L"Confusion: Get response sum...", L"djmw", 20130410)
+MAN_BEGIN (L"Confusion: Get response sum...", L"djmw", 20140117)
 INTRO (L"Returns the number of times the chosen response was given (the sum of all the numbers in the column with this response label).")
 ENTRY (L"Example")
 NORMAL (L"Given the following selected Confusion:")
@@ -828,7 +828,7 @@ CODE (L"       u    i    a   ! The response labelss")
 CODE (L" u     6    2    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
-NORMAL (L"The command ##do (\"Get response sum...\", \"a\")# will return the number 7.")
+NORMAL (L"The command ##Get response sum: \"a\"# will return the number 7.")
 MAN_END
 
 MAN_BEGIN (L"Confusion: Condense...", L"djmw", 20130410)
@@ -1142,7 +1142,7 @@ INTRO (L"Extract those rows from the selected @TableOfReal object whose Mahalano
 	"quantile range.")
 MAN_END
 
-MAN_BEGIN (L"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", L"djmw", 20130502)
+MAN_BEGIN (L"Covariance & TableOfReal: To TableOfReal (mahalanobis)...", L"djmw", 20140117)
 INTRO (L"Calculate Mahalanobis distance for the selected @TableOfReal with respect to the "
 	"selected @Covariance object.")
 ENTRY (L"Setting")
@@ -1159,19 +1159,19 @@ NORMAL (L"We first create a table with only one column and 10000 rows and fill i
 	"a normal distribution with mean zero and standard deviation one. Its covariance matrix, of course, is "
 	"one dimensional. We next create a table with Mahalanobis distances.")
 CODE (L"n = 100000")
-CODE (L"t0 = do (\"Create TableOfReal...\", \"table\", n, 1)")
-CODE (L"do (\"Formula...\",  randomGauss(0,1))")
-CODE (L"c = do (\"To Covariance\")")
+CODE (L"t0 = Create TableOfReal: \"table\", n, 1")
+CODE (L"Formula:  \"randomGauss(0,1)\"")
+CODE (L"c = To Covariance")
 CODE (L"selectObject (c, t0)")
-CODE (L"ts = do (\"To TableOfReal (mahalanobis)...\", \"no\")")
+CODE (L"ts = To TableOfReal (mahalanobis): \"no\"")
 CODE (L"")
 CODE (L"for nsigma to 5")
 CODE1 (L"  selectObject (ts)")
-CODE1 (L"  extraction = do (\"Extract rows where...\",  \"self < nsigma\")")
-CODE1 (L"  nr = do (\"Get number of rows\")")
+CODE1 (L"  extraction = Extract rows where:  \"self < nsigma\"")
+CODE1 (L"  nr = Get number of rows")
 CODE1 (L"  nrp = nr / n * 100")
 CODE1 (L"  expect = (1 - 2 * gaussQ (nsigma)) * 100")
-CODE1 (L"  writeInfoLine (nsigma, \"-sigma: \", nrp, \"%, \", expect, \"%\")")
+CODE1 (L"  writeInfoLine: nsigma, \"-sigma: \", nrp, \"%, \", expect, \"%\"")
 CODE1 (L"  removeObject (extraction)")
 CODE (L"endfor")
 MAN_END
@@ -1286,7 +1286,7 @@ NORMAL (L"To avoid @aliasing in the chirp sound, a sound is only generated durin
 	"instantaneous frequency is greater than zero and smaller than the @@Nyquist frequency@.")
 MAN_END
 
-MAN_BEGIN (L"Create Sound from Shepard tone...", L"djmw", 20130410)
+MAN_BEGIN (L"Create Sound from Shepard tone...", L"djmw", 20140117)
 INTRO (L"One of the commands that create a @Sound.")
 ENTRY (L"Settings")
 TAG (L"##Name")
@@ -1337,9 +1337,9 @@ NORMAL (L"The following script generates 12 static Shepard tone complexes, 1 sem
 CODE (L"fadeTime = 0.010")
 CODE (L"for i to 12")
 CODE1 (L"fraction = (i-1)/12")
-CODE1 (L"do (\"Create Sound from Shepard tone...\", \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction)")
-CODE1 (L"do (\"Fade in...\", 0, 0, fadeTime, \"no\")")
-CODE1 (L"do (\"Fade out...\", 0, 0.1, -fadeTime, \"no\")")
+CODE1 (L"Create Sound from Shepard tone: \"s\" + string\\$  (i), 0, 0.1, 22050, 4.863, 10, 0, 34, fraction")
+CODE1 (L"Fade in: 0, 0, fadeTime, \"no\"")
+CODE1 (L"Fade out: 0, 0.1, -fadeTime, \"no\"")
 CODE (L"endfor")
 MAN_END
 
@@ -1479,7 +1479,7 @@ LIST_ITEM (L"\\bu Draw eigenvector...")
 LIST_ITEM (L"\\bu @@Discriminant: Draw sigma ellipses...|Draw sigma ellipses...@")
 MAN_END
 
-MAN_BEGIN (L"Discriminant analysis", L"djmw", 20130502)
+MAN_BEGIN (L"Discriminant analysis", L"djmw", 20140117)
 INTRO (L"This tutorial will show you how to perform discriminant analysis with P\\s{RAAT}")
 NORMAL (L"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
@@ -1499,24 +1499,24 @@ NORMAL (L"Pols et al. use logarithms of frequency values, we will too. Because "
 	"the measurement units in the first three columns are in Hz and in the last "
 	"three columns in dB, it is probably better to standardize the columns. "
 	"The following script summarizes our achievements up till now:")
-CODE (L"table = do (\"Create TableOfReal (Pols 1973)...\", \"yes\"")
-CODE (L"do (\"Formula...\", \"if col < 4 then log10 (self) else self fi\"")
-CODE (L"do (\"Standardize columns\"")
+CODE (L"table = Create TableOfReal (Pols 1973): \"yes\"")
+CODE (L"Formula: \"if col < 4 then log10 (self) else self fi\"")
+CODE (L"Standardize columns\"")
 CODE (L"\\#  change the column labels too, for nice plot labels.")
-CODE (L"do (\"Set column label (index)...\", 1, \"standardized log (\\% F\\_ \\_ 1\\_ )\")")
-CODE (L"do (\"Set column label (index)...\", 2, \"standardized log (\\% F\\_ \\_ 2\\_ )\")")
-CODE (L"do (\"Set column label (index)...\", 3, \"standardized log (\\% F\\_ \\_ 3\\_ )\")")
-CODE (L"do (\"Set column label (index)...\", 4, \"standardized \\% L\\_ \\_ 1\\_ \")")
-CODE (L"do (\"Set column label (index)...\", 5, \"standardized \\% L\\_ \\_ 2\\_ \")")
-CODE (L"do (\"Set column label (index)...\", 6, \"standardized \\% L\\_ \\_ 3\\_ \")")
+CODE (L"Set column label (index): 1, \"standardized log (\\% F\\_ \\_ 1\\_ )\"")
+CODE (L"Set column label (index): 2, \"standardized log (\\% F\\_ \\_ 2\\_ )\"")
+CODE (L"Set column label (index): 3, \"standardized log (\\% F\\_ \\_ 3\\_ )\"")
+CODE (L"Set column label (index): 4, \"standardized \\% L\\_ \\_ 1\\_ \"")
+CODE (L"Set column label (index): 5, \"standardized \\% L\\_ \\_ 2\\_ \"")
+CODE (L"Set column label (index): 6, \"standardized \\% L\\_ \\_ 3\\_ \"")
 NORMAL (L"To get an indication of what these data look like, we make a scatter "
 	"plot of the "
 	"first standardized log-formant-frequency against the second standardized "
 	"log-formant-frequency. With the next script fragment you can reproduce the "
 	"following picture.")
-CODE (L"do (\"Viewport...\", 0, 5, 0, 5)")
+CODE (L"Viewport: 0, 5, 0, 5")
 CODE (L"selectObject (table)")
-CODE (L"do (\"Draw scatter plot...\", 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, \"yes\", \"+\", \"yes\")")
+CODE (L"Draw scatter plot: 1, 2, 0, 0, -2.9, 2.9, -2.9, 2.9, 10, \"yes\", \"+\", \"yes\"")
 PICTURE (5, 5, drawPolsF1F2_log)
 NORMAL (L"Apart from a difference in scale this plot is the same as fig. 3 in the "
 	"Pols et al. article.")
@@ -1527,7 +1527,7 @@ NORMAL (L"Select the TableOfReal and choose from the dynamic menu the option "
 	"object will bear the same name as the TableOfReal object. The following "
 	"script summarizes:")
 CODE (L"selectObject (table)")
-CODE (L"discrimimant = do (\"To Discriminant\")")
+CODE (L"discrimimant = To Discriminant\"")
 ENTRY (L"2. How to project data on the discriminant space")
 NORMAL (L"You select a TableOfReal and a Discriminant object together and choose: "
 	"@@Discriminant & TableOfReal: To Configuration...|To Configuration...@. "
@@ -1538,9 +1538,9 @@ NORMAL (L"You select a TableOfReal and a Discriminant object together and choose
 PICTURE (5, 5, drawPolsDiscriminantConfiguration)
 NORMAL (L"The following script summarizes:")
 CODE (L"selectObject (table, discriminant)")
-CODE (L"do (\"To Configuration...\", 0)")
-CODE (L"do (\"Viewport...\", 0, 5, 0, 5)")
-CODE (L"do (\"Draw...\", 1, 2, -2.9, 2.9, -2.9, 2.9, 12, \"yes\", \"+\", \"yes\")")
+CODE (L"To Configuration: 0")
+CODE (L"Viewport: 0, 5, 0, 5")
+CODE (L"Draw: 1, 2, -2.9, 2.9, -2.9, 2.9, 12, \"yes\", \"+\", \"yes\"")
 NORMAL (L"If you are only interested in this projection, there also is a short cut "
 	"without an intermediate Discriminant object:  "
 	"select the TableOfReal object and choose @@TableOfReal: To Configuration "
@@ -1555,7 +1555,7 @@ NORMAL (L"Select the Discriminant object and choose @@Discriminant: Draw sigma "
 	"a 1-%\\si ellipse will cover approximately 39.3\\%  of the data. "
 	"The following code summarizes:")
 CODE (L"selectObject (discriminant)")
-CODE (L"do (\"Draw sigma ellipses...\", 1.0, \"no\", 1, 2, -2.9, 2.9, -2.9, 2.9, 12, \"yes\")")
+CODE (L"Draw sigma ellipses: 1.0, \"no\", 1, 2, -2.9, 2.9, -2.9, 2.9, 12, \"yes\"")
 PICTURE (5, 5, drawPolsF1F2ConcentrationEllipses)
 ENTRY (L"4. How to classify")
 NORMAL (L"Select together the Discriminant object (the classifier), and "
@@ -1716,7 +1716,7 @@ NORMAL (L"The number of columns in the TableOfReal must equal the dimension of t
 NORMAL (L"See also @@Eigen & TableOfReal: Project...@.")
 MAN_END
 
-MAN_BEGIN (L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", L"djmw", 20130502)
+MAN_BEGIN (L"Discriminant & TableOfReal: To TableOfReal (mahalanobis)...", L"djmw", 20140117)
 INTRO (L"Calculate Mahalanobis distances for the selected @TableOfReal with respect to one group in the "
 	"selected @Discriminant object.")
 ENTRY (L"Settings")
@@ -1730,19 +1730,18 @@ ENTRY (L"Example")
 NORMAL (L"Calculate the number of datapoints that are within the one-sigma elipses of two different groups, i.e. "
 	"the number of data points that are in the overlapping area. ")
 NORMAL (L"Suppose the group labels are \\o/ and \\yc.")
-CODE (L"pols50m = do (\"Create TableOfReal (Pols 1973)...\", \"no\")")
-CODE (L"do (\"Formula...\", \"log10(self)\")")
-CODE (L"discriminant = do (\"To Discriminant\")")
+CODE (L"pols50m = Create TableOfReal (Pols 1973): \"no\"")
+CODE (L"Formula: \"log10(self)\"")
+CODE (L"discriminant = To Discriminant")
 CODE (L"selectObject (pols50m, discriminant)")
-CODE (L"t1 = do (\"To TableOfReal (mahalanobis)...\", \"\\bso/\", \"no\")")
+CODE (L"t1 = To TableOfReal (mahalanobis): \"\\bso/\", \"no\"")
 CODE (L"selectObject (pols50m, discriminant)")
-CODE (L"t2 = do (\"To TableOfReal (mahalanobis)...\", \"\\bsyc\", \"no\")")
+CODE (L"t2 = To TableOfReal (mahalanobis): \"\\bsyc\", \"no\"")
 NORMAL (L"Now we count when both the t1 and t2 values are smaller than 1 (sigma):")
-CODE (L"do (\"Copy...\", \"tr\")")
-CODE (L"do (\"Formula...\", \"Object_'t1'[] < 1 and Object_'t2'[] < 1\")")
-CODE (L"do (\"Extract rows where column...\", 1, \"equal to\", 1)")
-CODE (L"no = do (\"Get number of rows\")")
-
+CODE (L"Copy: \"tr\"")
+CODE (L"Formula: \"Object_'t1'[] < 1 and Object_'t2'[] < 1\"")
+CODE (L"Extract rows where column: 1, \"equal to\", 1")
+CODE (L"no = Get number of rows\"")
 MAN_END
 
 MAN_BEGIN (L"DTW", L"djmw", 20110603)
@@ -1886,7 +1885,7 @@ DEFINITION (L"the number of different symbols in the source symbol set that you 
 	"that fall in a %rest% category. If you don't want to treat any source symbol is a special way you may set this value 0.")
 MAN_END
 
-MAN_BEGIN (L"EditCostsTable", L"djmw", 20130502)
+MAN_BEGIN (L"EditCostsTable", L"djmw", 20140117)
 INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"The EditCostsTable determines the %%string edit costs%, i.e. the costs involved in changing one string of "
 	"symbols (the %%source%) into another one (the %%target%). "
@@ -1894,20 +1893,20 @@ NORMAL (L"The EditCostsTable determines the %%string edit costs%, i.e. the costs
 	"The latter terms refer to the operations that may be performed on a source string to transform it to a target "
 	"string. For example, to change the source string \"execution\" to the target string \"intention\" we would need "
 	"one insertion (i), one deletion (d) and three substitutions (s) as the following figure shows.")
-SCRIPT (4, 1.0,  L"target = do (\"Create Strings as characters...\", \"intention\")\n"
-"source = do (\"Create Strings as characters...\", \"execution\")\n"
+SCRIPT (4, 1.0,  L"target = Create Strings as characters: \"intention\"\n"
+"source = Create Strings as characters: \"execution\"\n"
 	"selectObject (source, target)\n"
-	"edt = do (\"To EditDistanceTable\")\n"
-	"do (\"Draw edit operations\")\n"
+	"edt = To EditDistanceTable\n"
+	"Draw edit operations\n"
 	"removeObject (edt, target, source)\n")
 NORMAL (L"The figure above was produced with default values for the costs, i.e. the insertion and deletion costs were 1.0 while the "
 	"substitution cost was 2.0. The actual edit distance between the target and source strings is calculated by the @@EditDistanceTable@ "
 	"which uses an EditCostsTable to access the specific string edit costs. The figure above was produced by the following commands:")
-CODE (L"target = do (\"Create Strings as characters...\", \"intention\")")
-CODE (L"source = do (\"Create Strings as characters...\", \"execution\")")
+CODE (L"target = Create Strings as characters: \"intention\"")
+CODE (L"source = Create Strings as characters: \"execution\"")
 CODE (L"plusObject (target)")
-CODE (L"edt = do (\"To EditDistanceTable\")")
-CODE (L"do (\"Draw edit operations\")")
+CODE (L"edt = To EditDistanceTable")
+CODE (L"Draw edit operations")
 NORMAL (L"The default EditCostsTable which is in every new EditDistanceTable object has only two rows and two columns, "
 	"where the cells in this EditCostsTable have the following interpretation:\n")
 TAG (L"Cell [1][2]:")
@@ -1944,15 +1943,15 @@ CODE (L"t 1.1 1.2 1.3")
 CODE (L"  1.4 1.5 1.6")
 CODE (L"  1.7 1.8 0.0")
 NORMAL (L"By issuing the following series of commands this particular table can be created:")
-CODE (L"do (\"Create empty EditCostsTable...\", \"editCosts\", 1, 1)")
-CODE (L"do (\"Set target symbol (index)...\", 1, \"t\")")
-CODE (L"do (\"Set source symbol (index)...\", 1, \"s\")")
-CODE (L"do (\"Set insertion costs...\", \"t\", 1.3)")
-CODE (L"do (\"Set deletion costs...\", \"s\", 1.7)")
-CODE (L"do (\"Set substitution costs...\", \"t\", \"s\", 1.1)")
-CODE (L"do (\"Set substitution costs...\", \"\", \"s\", 1.4)")
-CODE (L"do (\"Set substitution costs...\", \"t\", \"\", 1.2)")
-CODE (L"do (\"Set costs (others)...\", 1.6, 1.8, 0, 1.5)")
+CODE (L"Create empty EditCostsTable: \"editCosts\", 1, 1")
+CODE (L"Set target symbol (index): 1, \"t\"")
+CODE (L"Set source symbol (index): 1, \"s\"")
+CODE (L"Set insertion costs: \"t\", 1.3")
+CODE (L"Set deletion costs: \"s\", 1.7")
+CODE (L"Set substitution costs: \"t\", \"s\", 1.1")
+CODE (L"Set substitution costs: \"\", \"s\", 1.4")
+CODE (L"Set substitution costs: \"t\", \"\", 1.2")
+CODE (L"Set costs (others): 1.6, 1.8, 0, 1.5")
 NORMAL (L"In the first line we create the (empty) table, we name it %%editCosts% and it creates space for one target "
 	"and one source symbol. The next line defines the target symbol which becomes the label of the first row of the table. "
 	"Line 3 defines the source symbol which will become the label of the first column of the table. "
@@ -1970,23 +1969,23 @@ ENTRY (L"How to use a special EditCostsTable")
 NORMAL (L"After creating the special EditCostsTable you select it together with the EditDistanceTable and issue the command @@EditDistanceTable & EditCostsTable: Set new edit costs|Set new edit costs@. The EditDistanceTable will then find the minimum edit distance based on the new cost values.")
 MAN_END
 
-MAN_BEGIN (L"EditDistanceTable", L"djmw", 20130502)
+MAN_BEGIN (L"EditDistanceTable", L"djmw", 20140117)
 INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"An EditDistanceTable shows the accumulated distances between a target string and a source string. "
 	"For example, the accumulated distances between the target string \"intention\" and the source string "
 	"\"execution\" can be expressed by the following EditDistanceTable:")
-SCRIPT (5, 3.5, L"target = do (\"Create Strings as characters...\", \"intention\")\n"
-	"source = do (\"Create Strings as characters...\", \"execution\")\n"
+SCRIPT (5, 3.5, L"target = Create Strings as characters: \"intention\"\n"
+	"source = Create Strings as characters: \"execution\"\n"
 	"selectObject (source, target)\n"
-	"edt = do (\"To EditDistanceTable\")\n"
-	"do (\"Draw...\", \"decimal\", 1, 0)\n"
+	"edt = To EditDistanceTable\n"
+	"Draw: \"decimal\", 1, 0\n"
 	"removeObject (edt, target, source)\n")
 NORMAL (L"This figure was created by issuing the following commands:")
-CODE (L"target = do (\"Create Strings as characters...\", \"intention\")")
-CODE (L"source = do (\"Create Strings as characters...\", \"execution\")")
+CODE (L"target = Create Strings as characters: \"intention\"")
+CODE (L"source = Create Strings as characters: \"execution\"")
 CODE (L"plusObject (target)")
-CODE (L"edt = do (\"To EditDistanceTable\")")
-CODE (L"do (\"Draw...\", \"decimal\", 1, 0)")
+CODE (L"edt = To EditDistanceTable")
+CODE (L"Draw: \"decimal\", 1, 0")
 NORMAL (L"The target string is always displayed vertically while the source string is displayed horizontally and the origin is at the bottom-left corner of the table. "
 	"Each cell of this table, dist[%i, %j], contains the accumulated distance between the first %i characters of the target and the first %j characters of the source. The cells on the path through this table which have the "
 	"minimum accumulated cost are shown with boxes around them. Below we will explain how this path is calculated.")
@@ -1996,11 +1995,11 @@ NORMAL (L"If we trace the path from its start at the origin to its end, we see t
 	"In the next step which is in the diagonal direction, the \"n\" target is substituted for the \"e\" source symbol. Next follows another substitution, \"t\" for \"x\". "
 	"The next diagonal step substitutes \"e\" for an identical \"e\". This step is followed by a horizontal step in which the source symbol \"c\" is deleted. "
 	"The next diagonal step substitutes an \"n\" for a \"u\". The path now continues in the diagonal direction until the end point and only identical substitutions occur in the last part. The following figure shows these operations more explicitly.")
-SCRIPT (4, 1.5,  L"target = do (\"Create Strings as characters...\", \"intention\")\n"
-	"source = do (\"Create Strings as characters...\", \"execution\")\n"
+SCRIPT (4, 1.5,  L"target = Create Strings as characters: \"intention\"\n"
+	"source = Create Strings as characters: \"execution\"\n"
 	"plusObject (target)\n"
-	"edt = do (\"To EditDistanceTable\")\n"
-	"do (\"Draw edit operations\")\n"
+	"edt = To EditDistanceTable\n"
+	"Draw edit operations\n"
 	"removeObject (edt, target, source)\n")
 NORMAL (L"The value of the accumulated costs in a cell of the table is computed by taking the minimum of the accumulated distances from three possible paths that end in the current cell, i.e. the paths that come from the %%left%, from the %%diagonal% and from %%below%.")
 CODE (L"dist[i,j] = min (d__left_, d__diag_, d__below_), ")
@@ -2597,7 +2596,7 @@ MAN_BEGIN (L"Polygon: Rotate...", L"djmw", 20100418)
 INTRO (L"Rotates the selected @@Polygon@ counterclockwise with respect to the given coordinates.")
 MAN_END
 
-MAN_BEGIN (L"Create simple Polygon...", L"djmw", 20130409)
+MAN_BEGIN (L"Create simple Polygon...", L"djmw", 20140117)
 INTRO (L"Creates a @@Polygon@ from user  supplied x/y pairs.")
 ENTRY (L"Settings")
 TAG (L"##Name")
@@ -2605,11 +2604,11 @@ DEFINITION (L"defines the name of the resulting Polygon.")
 TAG (L"##Vertices as X-Y pairs#,")
 DEFINITION (L"defines the x-y values of the vertices of the Polygon. The Polygon will be automatically closed, i.e., the first and the last point will be connected.")
 ENTRY (L"Example")
-NORMAL (L"The command ##Create simple Polygon... p 0.0 0.0  0.0 1.0  1.0 0.0# defines  a Polygon with three points. In the figure the three points are indicated with open circles while the Polygon is drawn as a closed figure.")
-SCRIPT (4,4, L"do (\"Create simple Polygon...\", \"p\", \"0.0 0.0 0.0 1.0 1.0 0.0\")\n"
-	"do (\"Draw circles...\", 0, 1, 0, 1, 3)\n"
-	"do (\"Draw closed...\", 0, 1, 0, 1)\n"
-	"do (\"Remove\")\n")
+NORMAL (L"The command ##Create simple Polygon: \"p\", \"0.0 0.0 0.0 1.0 1.0 0.0\"# defines  a Polygon with three points. In the figure the three points are indicated with open circles while the Polygon is drawn as a closed figure.")
+SCRIPT (4,4, L"Create simple Polygon: \"p\", \"0.0 0.0 0.0 1.0 1.0 0.0\"\n"
+	"Draw circles: 0, 1, 0, 1, 3\n"
+	"Draw closed: 0, 1, 0, 1\n"
+	"Remove\n")
 MAN_END
 
 MAN_BEGIN (L"Polygon: Get location of point...", L"djmw", 20120220)
@@ -2618,17 +2617,17 @@ ENTRY (L"Algorithm")
 NORMAL (L"We determine how often a horizontal line extending from the point crosses the polygon. If the number of crossings is even, the point is on the outside, else on the inside. Special care is taken to be able to detect if a point is on the boundary of the polygon. The used algorithm is from @@Hormann & Agathos (2001)@")
 MAN_END
 
-MAN_BEGIN (L"Polygon: Simplify", L"djmw", 20130502)
+MAN_BEGIN (L"Polygon: Simplify", L"djmw", 20140117)
 INTRO (L"Removes collinear vertices from a @@Polygon@.")
 ENTRY (L"Example")
 SCRIPT (4, 4,
-	L"p1 = do (\"Create simple Polygon...\", \"p\", \"0.0 0.0 0.0 1.0 0.5 0.5 1.0 0.0 0.5 0 0 -0.5 0 -0.25\")\n"
-	"do (\"Draw closed...\", 0, 0, 0, 0)\n"
-	"do (\"Colour...\", \"Red\")\n"
-	"do (\"Draw circles...\", 0, 0, 0, 0, 3)\n"
-	"p2 = do (\"Simplify\")\n"
-	"do (\"Colour...\", \"Black\")\n"
-	"do (\"Paint circles...\", 0, 0, 0, 0, 1.5)\n"
+	L"p1 = Create simple Polygon: \"p\", \"0.0 0.0 0.0 1.0 0.5 0.5 1.0 0.0 0.5 0 0 -0.5 0 -0.25\"\n"
+	"Draw closed: 0, 0, 0, 0\n"
+	"Colour: \"Red\"\n"
+	"Draw circles: 0, 0, 0, 0, 3\n"
+	"p2 = Simplify\n"
+	"Colour: \"Black\"\n"
+	"Paint circles: 0, 0, 0, 0, 1.5\n"
 	"removeObject (p1, p2)\n"
 )
 NORMAL (L"Given the Polygon with the seven vertices indicated by the red open circles, the Simplify action results in the Polygon with four vertices indicated by the filled black circles.")
@@ -3299,7 +3298,7 @@ DEFINITION (L"The method of %%spectral subtraction% was defined in @@Boll (1979)
 	"after a script by Ton Wempe.")
 MAN_END
 
-MAN_BEGIN (L"Sound: Draw where...", L"djmw", 20130409)
+MAN_BEGIN (L"Sound: Draw where...", L"djmw", 20140117)
 INTRO (L"A command to draw only those parts of a @Sound where a condition holds.")
 ENTRY (L"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (5), L""
@@ -3320,38 +3319,38 @@ DEFINITION (L"determines the part of the sound that will be drawn. All parts whe
 	"This formula may ##not# contain references to the sampling of the sound, i.e. don't use 'col', 'x1', 'dx' and 'ncol' in it.")
 ENTRY (L"Example 1")
 NORMAL (L"The following script draws all amplitudes larger than one in red.")
-CODE (L"do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 2000, \"1.8*sin(2*pi*5*x)+randomGauss(0,0.1)\")")
-CODE (L"do (\"Colour...\", \"Red\")")
-CODE (L"do (\"Draw where...\", 0, 0, -2, 2, \"no\", \"Curve\", \"abs(self)>1\")")
-CODE (L"do (\"Colour...\", \"Black\")")
-CODE (L"do (\"Draw where...\", 0, 0, -2, 2, \"yes\", \"Curve\", \"not (abs(self)>1)\")")
+CODE (L"Create Sound from formula: \"s\", \"Mono\", 0, 1, 2000, \"1.8*sin(2*pi*5*x)+randomGauss(0,0.1)\"")
+CODE (L"Colour: \"Red\"")
+CODE (L"Draw where: 0, 0, -2, 2, \"no\", \"Curve\", \"abs(self)>1\"")
+CODE (L"Colour: \"Black\"")
+CODE (L"Draw where: 0, 0, -2, 2, \"yes\", \"Curve\", \"not (abs(self)>1)\"")
 SCRIPT (8, 3,
-	L"do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 2000, \"1.8*sin(2*pi*5*x)+randomGauss(0,0.1)\")\n"
-	"do (\"Colour...\", \"Red\")\n"
-	"do (\"Draw where...\", 0, 0, -2, 2, \"no\", \"Curve\", \"abs(self)>1\")\n"
-	"do (\"Colour...\", \"Black\")\n"
-	"do (\"Draw where...\",  0, 0, -2, 2, \"yes\", \"Curve\", \"not (abs(self)>1)\")\n"
-	"do (\"Remove\")\n"
+	L"Create Sound from formula: \"s\", \"Mono\", 0, 1, 2000, \"1.8*sin(2*pi*5*x)+randomGauss(0,0.1)\"\n"
+	"Colour: \"Red\"\n"
+	"Draw where: 0, 0, -2, 2, \"no\", \"Curve\", \"abs(self)>1\"\n"
+	"Colour: \"Black\"\n"
+	"Draw where:  0, 0, -2, 2, \"yes\", \"Curve\", \"not (abs(self)>1)\"\n"
+	"Remove\n"
 )
 ENTRY (L"Example 2")
 NORMAL (L"Draw the second half of a sound:")
-CODE (L"do (\"Draw where...\", 0, 0, -1, 1, \"no\", \"Curve\", \"x > xmin + (xmax - xmin) / 2\")")
+CODE (L"Draw where: 0, 0, -1, 1, \"no\", \"Curve\", \"x > xmin + (xmax - xmin) / 2\"")
 ENTRY (L"Example 3")
 NORMAL (L"Draw only positive amplitudes:")
-CODE (L"do (\"Draw where...\", 0, 0, -1, 1, \"no\", \"Curve\", \"self>0\")")
+CODE (L"Draw where: 0, 0, -1, 1, \"no\", \"Curve\", \"self>0\"")
 ENTRY (L"Example 4")
 NORMAL (L"Draw parts where pitch is larger than 300 Hz in red:")
 CODE (L"s = selected (\"Sound\")")
-CODE (L"p = do (\"To Pitch...\", 0, 75, 600)")
-CODE (L"pt = do (\"Down to PitchTier\")")
+CODE (L"p = To Pitch: 0, 75, 600")
+CODE (L"pt = Down to PitchTier\"")
 CODE (L"selectObject (s)")
-CODE (L"do (\"Colour...\", \"Red\")")
-CODE (L"do (\"Draw where...\", 0, 0, -1, 1, \"yes\", \"Curve\", \"Object_'pt'(x) > 300\")")
-CODE (L"do (\"Colour...\", \"Black\")")
-CODE (L"do (\"Draw where...\", 0, 0, -1, 1, \"yes\", \"Curve\", \"not (Object_'pt'(x) > 300)\")")
+CODE (L"Colour: \"Red\"")
+CODE (L"Draw where: 0, 0, -1, 1, \"yes\", \"Curve\", \"Object_'pt'(x) > 300\"")
+CODE (L"Colour: \"Black\"")
+CODE (L"Draw where: 0, 0, -1, 1, \"yes\", \"Curve\", \"not (Object_'pt'(x) > 300)\"")
 MAN_END
 
-MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20130410)
+MAN_BEGIN (L"Sound: Fade in...", L"djmw", 20140117)
 INTRO (L"A command to gradually increase the amplitude of a selected @Sound.")
 ENTRY (L"Settings")
 TAG (L"##Channel")
@@ -3369,11 +3368,11 @@ ENTRY (L"Cross-fading two sounds")
 NORMAL (L"The following script cross-fades two sounds s1 and s2 at time 1 second and leaves the result in s2.")
 CODE1 (L"crossFTime = 0.5")
 CODE1 (L"t = 1")
-CODE1 (L"do (\"Create Sound from formula...\", \"s1\", \"Mono\", 0, 2, 44100, \"sin(2*pi*500*x)\")")
-CODE1 (L"do (\"Fade out...\", 0, t-crossFTime/2, crossFTime, \"yes\")")
-CODE1 (L"do (\"Create Sound from formula...\", \"s2\", \"Mono\", 0, 2, 44100, \"sin(2*pi*1000*x)\")")
-CODE1 (L"do (\"Fade in...\", 0, t-crossFTime/2, crossFTime, \"yes\")")
-CODE1 (L"do (\"Formula...\", \"self+Sound_s1[]\")")
+CODE1 (L"Create Sound from formula: \"s1\", 1, 0, 2, 44100, \"sin(2*pi*500*x)\"")
+CODE1 (L"Fade out: 0, t-crossFTime/2, crossFTime, \"yes\"")
+CODE1 (L"Create Sound from formula: \"s2\", 1, 0, 2, 44100, \"sin(2*pi*1000*x)\"")
+CODE1 (L"Fade in.: 0, t-crossFTime/2, crossFTime, \"yes\"")
+CODE1 (L"Formula: \"self+Sound_s1[]\"")
 MAN_END
 
 MAN_BEGIN (L"Sound: Fade out...", L"djmw", 20121010)
@@ -3408,18 +3407,18 @@ NORMAL (L"The derivation of the filter coefficients %a__%i_ and %b__%j_ is "
 	"The gain of the filter is scaled to unity at the centre frequency.")
 MAN_END
 
-MAN_BEGIN (L"Sound: Play as frequency shifted...", L"djmw", 20121025)
-INTRO (L"Plays the selected @Sound with all frequencies shifted by the same amount. This command can be used to make "
-	"audible those sounds that are normally not audible by human beings, like ultrasound or infrasound.")
+MAN_BEGIN (L"Sound: Play as frequency shifted...", L"djmw", 20140106)
+INTRO (L"Plays the selected @Sound with all frequencies shifted by the same amount. This trick can be used to make "
+	"audible those sounds that are normally not audible at all by human beings, like for example ultrasounds or infrasounds.")
 ENTRY (L"Settings")
 TAG (L"##Shift by (Hz)")
 DEFINITION (L"the amount by which frequencies are shifted. A positive number shifts frequencies up, a negative number "
 	"shifts frequencies down. ")
 ENTRY (L"##Example")
-NORMAL (L"Rodents produce sounds with frequencies far outside the human audible range. Some meaningfull sqeeks "
-	"are present in the frequency range from 54 kHz up to sometimes 100kHz. By choosing a shift value of -54000 all " "frequencies will be shifted down by 54000 Hz. This means that now the rodents frequencies from 54000 Hz and up fall "
-	"in your audible domain. If the highest frequency you can hear is, say, 14000 Hz than you can now hear rodent's "
-	"frequencies between 54000 and 68000 Hz (=54000+14000).")
+NORMAL (L"Rodents produce sounds with frequencies far outside the human audible range. Some meaningfull sqeeks of these animals "
+	"are present in the frequency range from 54 kHz up to sometimes 100kHz. By choosing a shift value of -54000 Hz and a sampling "
+	"frequency of 44100 Hz, all frequencies between 54000 Hz and (54000+22050=) 76050 Hz  will be shifted down by 54000 Hz. The "
+	"rodents frequencies in the interval from 54000 Hz to 76050 Hz will theredore be mapped to the frequency interval between 0 and 22050 Hz. ")
 MAN_END
 
 MAN_BEGIN (L"Sound: To BarkFilter...", L"djmw", 20010404)
@@ -3445,7 +3444,7 @@ LIST_ITEM (L"2. We perform a filter bank analysis on a linear frequency scale. "
 	"Pitch: To FormantFilter...@ for details).")
 MAN_END
 
-MAN_BEGIN (L"Sound: Paint where...", L"djmw", 20130502)
+MAN_BEGIN (L"Sound: Paint where...", L"djmw", 20140117)
 INTRO (L"A command to paint only those parts of a @Sound where a condition holds. The painted area is the area "
 	"between the Sound and a horizontal line at a certain level.")
 ENTRY (L"Settings")
@@ -3474,47 +3473,47 @@ ENTRY (L"Example 1")
 NORMAL (L"The following script paints the area under a sine curve in red and the area above in green."
 	"For the first paint the horizontal line is at y=-1, for the second paint the line is at y=+1. "
 	"The formula always evaluates to true.")
-CODE (L"s = do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 10000, \"0.5*sin(2*pi*5*x)\")")
-CODE (L"do (\"Paint where...\", \"Red\", 0, 0, -1, 1, -1, \"yes\", \"1\")")
-CODE (L"do (\"Paint where...\", \"Green\", 0, 0, -1, 1, 1, \"no\", \"1\")")
+CODE (L"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"")
+CODE (L"Paint where: \"Red\", 0, 0, -1, 1, -1, \"yes\", \"1\"")
+CODE (L"Paint where: \"Green\", 0, 0, -1, 1, 1, \"no\", \"1\"")
 SCRIPT (8, 5,
-	L"s = do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 10000, \"0.5*sin(2*pi*5*x)\")\n"
-	"do (\"Paint where...\", \"Red\", 0, 0, -1, 1, -1, \"no\", \"1\")\n"
-	"do (\"Paint where...\", \"Green\", 0, 0, -1, 1, 1, \"yes\", \"1\")\n"
-	"do (\"Remove\")\n")
+	L"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"\n"
+	"Paint where: \"Red\", 0, 0, -1, 1, -1, \"no\", \"1\"\n"
+	"Paint where: \"Green\", 0, 0, -1, 1, 1, \"yes\", \"1\"\n"
+	"Remove\n")
 ENTRY (L"Example 2")
 NORMAL (L"The following script paints the area below zero in red and the area above in green."
 	"The horizontal line is now always at y=0 and we use the formula to differentiate the areas.")
-CODE (L"s = do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 10000, \"0.5*sin(2*pi*5*x)\")")
-CODE (L"do (\"Paint where...\", \"Red\", 0, 0, -1, 1, 0, \"no\", \"self>0\")")
-CODE (L"do (\"Paint where...\", \"Green\", 0, 0, -1, 1, 0, \"yes\", \"self<0\")")
+CODE (L"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"")
+CODE (L"Paint where: \"Red\", 0, 0, -1, 1, 0, \"no\", \"self>0\"")
+CODE (L"Paint where: \"Green\", 0, 0, -1, 1, 0, \"yes\", \"self<0\"")
 SCRIPT (8, 5,
-	L"s = do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 10000, \"0.5*sin(2*pi*5*x)\")\n"
-	"do (\"Paint where...\", \"Red\", 0, 0, -1, 1, 0, \"no\", \"self<0\")\n"
-	"do (\"Paint where...\", \"Green\", 0, 0, -1, 1, 0, \"yes\", \"self>0\")\n"
+	L"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"\n"
+	"Paint where: \"Red\", 0, 0, -1, 1, 0, \"no\", \"self<0\"\n"
+	"Paint where: \"Green\", 0, 0, -1, 1, 0, \"yes\", \"self>0\"\n"
 	"removeObject (s)\n")
 ENTRY (L"Example 3")
 NORMAL (L"To give an indication that the area under a 1/x curve between the points %a and %b and the area "
 	"between %c and %d are equal if %b/%a = %d/%c. For example, for %a=1, %b=2, %c=4 and %d=8: ")
-CODE (L"do (\"Create Sound from formula...\", \"1dx\", \"Mono\", 0, 20, 100, \"1/x\")")
-CODE (L"do (\"Draw...\", 0, 20, 0, 1.5, \"yes\", \"Curve\")")
-CODE (L"do (\"Paint where...\", \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", \"(x >= 1 and x <2) or (x>=4 and x<8)\")")
-CODE (L"do (\"One mark bottom...\", 1, \"yes\", \"yes\", \"no\", \"\")")
-CODE (L"do (\"One mark bottom...\", 2, \"yes\", \"yes\", \"no\", \"\")")
-CODE (L"do (\"One mark bottom...\", 4, \"yes\", \"yes\", \"no\", \"\")")
-CODE (L"do (\"One mark bottom...\", 8, \"yes\", \"yes\", \"no\", \"\")")
+CODE (L"Create Sound from formula: \"1dx\", \"Mono\", 0, 20, 100, \"1/x\"")
+CODE (L"Draw: 0, 20, 0, 1.5, \"yes\", \"Curve\"")
+CODE (L"Paint where: \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", \"(x >= 1 and x <2) or (x>=4 and x<8)\"")
+CODE (L"One mark bottom: 1, \"yes\", \"yes\", \"no\", \"\"")
+CODE (L"One mark bottom: 2, \"yes\", \"yes\", \"no\", \"\"")
+CODE (L"One mark bottom: 4, \"yes\", \"yes\", \"no\", \"\"")
+CODE (L"One mark bottom: 8, \"yes\", \"yes\", \"no\", \"\"")
 SCRIPT (8, 5,
-	L"s = do (\"Create Sound from formula...\", \"1dx\", \"Mono\", 0, 20, 100, \"1/x\")\n"
-	"do (\"Draw...\", 0, 20, 0, 1.5, \"yes\", \"Curve\")\n"
-	"do (\"Paint where...\", \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", \"(x >= 1 and x <2) or (x>=4 and x<8)\")\n"
-	"do (\"One mark bottom...\", 1, \"yes\", \"yes\", \"no\", \"\")\n"
-	"do (\"One mark bottom...\", 2, \"yes\", \"yes\", \"no\", \"\")\n"
-	"do (\"One mark bottom...\", 4, \"yes\", \"yes\", \"no\", \"\")\n"
-	"do (\"One mark bottom...\", 8, \"yes\", \"yes\", \"no\", \"\")\n"
+	L"s = Create Sound from formula: \"1dx\", \"Mono\", 0, 20, 100, \"1/x\"\n"
+	"Draw: 0, 20, 0, 1.5, \"yes\", \"Curve\"\n"
+	"Paint where: \"Grey\", 0, 20, 0, 1.5, 0, \"yes\", \"(x >= 1 and x <2) or (x>=4 and x<8)\"\n"
+	"One mark bottom: 1, \"yes\", \"yes\", \"no\", \"\"\n"
+	"One mark bottom: 2, \"yes\", \"yes\", \"no\", \"\"\n"
+	"One mark bottom: 4, \"yes\", \"yes\", \"no\", \"\"\n"
+	"One mark bottom: 8, \"yes\", \"yes\", \"no\", \"\"\n"
 	"removeObject (s)\n")
 MAN_END
 
-MAN_BEGIN (L"Sounds: Paint enclosed...", L"djmw", 20130502)
+MAN_BEGIN (L"Sounds: Paint enclosed...", L"djmw", 20140117)
 INTRO (L"Paints the area between the two selected @@Sound@s. ")
 ENTRY (L"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (4), L""
@@ -3532,19 +3531,19 @@ TAG (L"##Vertical range")
 DEFINITION (L"defines the vertical limits, larger amplitudes will be clipped.")
 ENTRY (L"Example")
 NORMAL (L"The following script paints the area enclosed between a sine tone of 5 Hz and the straight line %y = %x/2.")
-CODE (L"s1 = do (\"Create Sound from formula...\", \"sine\", \"Mono\", 0, 1, 10000, \"1/2 * sin(2*pi*5*x)\")")
-CODE (L"s2 = do (\"Create Sound from formula...\", \"line\", \"Mono\", 0, 1, 10000, \"x / 2\")")
+CODE (L"s1 = Create Sound from formula: \"sine\", \"Mono\", 0, 1, 10000, \"1/2 * sin(2*pi*5*x)\"")
+CODE (L"s2 = Create Sound from formula: \"line\", \"Mono\", 0, 1, 10000, \"x / 2\"")
 CODE (L"plusObject (s1)")
-CODE (L"do (\"Paint enclosed...\", \"Grey\", 0, 0, -1, 1, \"yes\")")
+CODE (L"Paint enclosed: \"Grey\", 0, 0, -1, 1, \"yes\"")
 SCRIPT ( 4, 2,
-	 L"s1 = do (\"Create Sound from formula...\", \"sine\", \"Mono\", 0, 1, 10000, \"1/2 * sin(2*pi*5*x)\")\n"
-	"s2 = do (\"Create Sound from formula...\", \"line\", \"Mono\", 0, 1, 10000, \"x / 2\")\n"
+	 L"s1 = Create Sound from formula: \"sine\", \"Mono\", 0, 1, 10000, \"1/2 * sin(2*pi*5*x)\"\n"
+	"s2 = Create Sound from formula: \"line\", \"Mono\", 0, 1, 10000, \"x / 2\"\n"
 	"selectObject (s1, s2)\n"
-	"do (\"Paint enclosed...\", \"Grey\", 0, 0, -1, 1, \"yes\")\n"
+	"Paint enclosed: \"Grey\", 0, 0, -1, 1, \"yes\"\n"
 	"removeObject (s1, s2)\n")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Polygon...", L"djmw", 20130502)
+MAN_BEGIN (L"Sound: To Polygon...", L"djmw", 20140117)
 INTRO (L"A command that creates a @@Polygon@ from a selected @@Sound@, where the Polygon's "
 	" points are defined by the (%time, %amplitude) pairs of the sound. ")
 ENTRY (L"Settings")
@@ -3559,21 +3558,21 @@ DEFINITION (L"defines the y-value of the first and last point of the Polygon. Th
 	" draw a closed Polygon with the horizontal connection line at any position you like. ")
 ENTRY (L"Example")
 NORMAL (L"The following script paints the area under a sound curve in red and the area above in green.")
-CODE (L"s = do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 10000, \"0.5*sin(2*pi*5*x)\")")
+CODE (L"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"")
 CODE (L"\\# Connection y-value is at amplitude -1: area under the curve.")
-CODE (L"p1 = do (\"To Polygon...\", 1, 0, 0, -1, 1, -1)")
-CODE (L"do (\"Paint...\", \"{1,0,0}\", 0, 0, -1, 1)")
+CODE (L"p1 = To Polygon: 1, 0, 0, -1, 1, -1")
+CODE (L"Paint: \"{1,0,0}\", 0, 0, -1, 1")
 CODE (L"selectObject (s)")
 CODE (L"\\# Connection y-value is now at amplitude 1: area above the curve.")
-CODE (L"p2 = do (\"To Polygon...\", 1, 0, 0, -1, 1, 1)")
-CODE (L"do (\"Paint...\", \"{0,1,0}\", 0, 0, -1, 1)")
+CODE (L"p2 = To Polygon: 1, 0, 0, -1, 1, 1")
+CODE (L"Paint: \"{0,1,0}\", 0, 0, -1, 1")
 SCRIPT (4.5, 2,
-	L"s = do (\"Create Sound from formula...\", \"s\", \"Mono\", 0, 1, 10000, \"0.5*sin(2*pi*5*x)\")\n"
-	"p1 = do (\"To Polygon...\", 1, 0, 0, -1, 1, -1)\n"
-	"do (\"Paint...\", \"{1,0,0}\", 0, 0, -1, 1)\n"
+	L"s = Create Sound from formula: \"s\", 1, 0, 1, 10000, \"0.5*sin(2*pi*5*x)\"\n"
+	"p1 = To Polygon: 1, 0, 0, -1, 1, -1\n"
+	"Paint: \"{1,0,0}\", 0, 0, -1, 1\n"
 	"selectObject (s)\n"
-	"p2 = do (\"To Polygon...\", 1, 0, 0, -1, 1, 1)\n"
-	"do (\"Paint...\", \"{0,1,0}\", 0, 0, -1, 1)\n"
+	"p2 = To Polygon: 1, 0, 0, -1, 1, 1\n"
+	"Paint: \"{0,1,0}\", 0, 0, -1, 1\n"
 	"removeObject (p2, p1, s)\n"
 )
 MAN_END
@@ -3997,7 +3996,7 @@ NORMAL (L"In a quantile-quantile plot the quantiles of the data in the first sel
 	"same distribution, the points should fall approximately along the reference line.")
 MAN_END
 
-MAN_BEGIN (L"Table: Bar plot where...", L"djmw", 20130624)
+MAN_BEGIN (L"Table: Bar plot where...", L"djmw", 20140117)
 INTRO (L"Draws a bar plot from data in one or more columns of the selected @Table. In a bar plot the horizontal axis has nominal values (labels). ")
 ENTRY (L"Settings")
 SCRIPT (6, Manual_SETTINGS_WINDOW_HEIGHT (10), L""
@@ -4052,30 +4051,44 @@ NORMAL (L"As you can see the labels in the first column are very long texts and 
 	"the viewport. ")
 NORMAL (L"Sometimes you need to plot only a part of the Table and for the selection of this part, the \"Formula\" field can be "
 	"used. Since we only have a small table we put a \"1\" in this field which always evaluates to true. In effect, all the rows will be selected. The following script line will produce the picture below.")
-CODE (L"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\")")
-SCRIPT (5, 3,  L"h1h2 = do (\"Create H1H2 table (Esposito 2006)\")\n"
-	"do (\"Font size...\", 10)\n"
-	"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\")\n"
+CODE (L"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
+SCRIPT (5, 3,  L"h1h2 = Create H1H2 table (Esposito 2006)\n"
+	"Font size: 10\n"
+	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject (h1h2)\n")
 NORMAL (L"The essentials of the bart plot in their paper are perfectly reproduced in the figure above. If you want the bars within a group to be placed somewhat more apart say 0.2 (times the bar width) you can set the \"Distance between bars in a group\" to a value of 0.2:")
-CODE (L"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\")")
-SCRIPT (5, 3,  L"h1h2 = do (\"Create H1H2 table (Esposito 2006)\")\n"
-	"do (\"Font size...\", 10)\n"
-	"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\")\n"
+CODE (L"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"")
+SCRIPT (5, 3,  L"h1h2 = Create H1H2 table (Esposito 2006)\n"
+	"Font size: 10\n"
+	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.2, \"0.9 0.5\", 15.0, \"yes\", \"1\"\n"
 	"removeObject (h1h2)\n")
 NORMAL (L"Of course we can also work with colours and we can add vertical marks as the following sriptlet shows")
-CODE (L"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\")")
-CODE (L"do (\"Marks left every...\", 1, 5, 1, 1, 1)")
-CODE (L"do (\"Text left...\", 1, \"H__1_-H__2_ (dB)\")")
-SCRIPT (5, 3,  L"h1h2 = do (\"Create H1H2 table (Esposito 2006)\")\n"
-	"do (\"Font size...\", 10)\n"
-	"do (\"Bar plot where...\", \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\")\n"
-	"do (\"Marks left every...\", 1, 5, 1, 1, 1)\n"
-	"do (\"Text left...\", 1, \"H__1_-H__2_ (dB)\")\n"
+CODE (L"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"")
+CODE (L"Marks left every: 1, 5, 1, 1, 1")
+CODE (L"Text left: 1, \"H__1_-H__2_ (dB)\"")
+SCRIPT (5, 3,  L"h1h2 = Create H1H2 table (Esposito 2006)\n"
+	"Font size: 10\n"
+	"Bar plot where: \"Modal Breathy\", -10, 20, \"Language\", 1.0, 1.0, 0.0, \"Green Red\", 15.0, \"yes\", \"1\"\n"
+	"Marks left every: 1, 5, 1, 1, 1\n"
+	"Text left: 1, \"H__1_-H__2_ (dB)\"\n"
 	"removeObject (h1h2)\n")
 MAN_END
 
-MAN_BEGIN (L"Table: Line graph where...", L"djmw", 20130624)
+MAN_BEGIN (L"Table: Box plots where...", L"djmw", 20140117)
+INTRO (L"A command to draw @@box plot@s from the data in a column of the selected @Table object.")
+ENTRY (L"Example")
+NORMAL (L"To draw separate box plots for the male, female and children F0 for the @@Peterson & Barney (1952)@ data: ")
+CODE (L"Create formant table (Peterson & Barney 1952)")
+CODE (L"Box plots where: \"F0\", \"Type\", 70, 400, \"1\"")
+CODE (L"Text left: \"yes\", \"F0 (Hz)\"")
+SCRIPT (5,3, L"pb = Create formant table (Peterson & Barney 1952)\n"
+	"Box plots where: \"F0\", \"Type\", 70, 400, \"yes\", \"1\"\n"
+	"Text left: \"yes\", \"F0 (Hz)\"\n"
+	"removeObject (pb)\n"
+)
+MAN_END
+
+MAN_BEGIN (L"Table: Line graph where...", L"djmw", 20140117)
 INTRO (L"Draws a line graph from the data in a column of the selected @Table. In a line plot the horizontal axis can have a nominal scale or a numeric scale. The data point are connected by line segments.")
 ENTRY (L"Settings")
 SCRIPT (7, Manual_SETTINGS_WINDOW_HEIGHT (8), L""
@@ -4117,48 +4130,48 @@ CODE (L"  2.5   0.29      0.10")
 CODE (L"  7.5   0.12      0.02")
 CODE (L" 17.5   0.10      0.02")
 NORMAL (L"We can reproduce fig. 3 from Ganong (1980) with the following script, where we labeled the word - nonword curve with \"wn\" and the nonword - word curve with \"nw\". We deselect \"Garnish\" because we want to put special marks at the bottom.")
-CODE (L"do (\"Dotted line\")\n")
-CODE (L"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, \"1\")")
-CODE (L"do (\"Dashed line\")\n")
-CODE (L"do (\"Line graph where...\", \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, \"1\")")
-CODE (L"do (\"Draw inner box\")")
-CODE (L"do (\"One mark bottom...\", 2.5, 0, 1, 0, \"+2.5\")")
-CODE (L"do (\"One mark bottom...\", -2.5, 1, 1, 0, \"\")")
-CODE (L"do (\"One mark bottom...\", -7.5,1, 1, 0, \"\")")
-CODE (L"do (\"One mark bottom...\", 7.5, 0, 1, 0, \"+7.5\")")
-CODE (L"do (\"One mark bottom...\", 2.5, 0, 0, 0, \"+2.5\")")
-CODE (L"do (\"One mark bottom...\", -20, 0, 0, 0, \"Short VOT\")")
-CODE (L"do (\"One mark bottom...\", 20, 0, 0, 0, \"Long VOT\")")
-CODE (L"do (\"Text bottom...\", 1, \"VOT (ms)\")")
-CODE (L"do (\"Marks left every...\", 1, 0.2, 1, 1, 0)")
-CODE (L"do (\"Text left...\", 1, \"Prop. of voiced responses\")")
+CODE (L"Dotted line\n")
+CODE (L"Line graph where: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, \"1\"")
+CODE (L"Dashed line\n")
+CODE (L"Line graph where: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, \"1\"")
+CODE (L"Draw inner box")
+CODE (L"One mark bottom: 2.5, 0, 1, 0, \"+2.5\"")
+CODE (L"One mark bottom: -2.5, 1, 1, 0, \"\"")
+CODE (L"One mark bottom: -7.5,1, 1, 0, \"\"")
+CODE (L"One mark bottom: 7.5, 0, 1, 0, \"+7.5\"")
+CODE (L"One mark bottom: 2.5, 0, 0, 0, \"+2.5\"")
+CODE (L"One mark bottom: -20, 0, 0, 0, \"Short VOT\"")
+CODE (L"One mark bottom: 20, 0, 0, 0, \"Long VOT\"")
+CODE (L"Text bottom: 1, \"VOT (ms)\"")
+CODE (L"Marks left every: 1, 0.2, 1, 1, 0")
+CODE (L"Text left: 1, \"Prop. of voiced responses\"")
 
-SCRIPT (5,3, L"ganong = do (\"Create Table (Ganong 1980)\")\n"
-	"do (\"Dotted line\")\n"
-	"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, \"1\")\n"
-	"do (\"Dashed line\")\n"
-	"do (\"Line graph where...\", \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, \"1\")\n"
-	"do (\"Draw inner box\")\n"
-	"do (\"One mark bottom...\", 2.5, 0, 1, 0, \"+2.5\")\n"
-	"do (\"One mark bottom...\", -2.5, 1, 1, 0, \"\")\n"
-	"do (\"One mark bottom...\", -7.5,1, 1, 0, \"\")\n"
-	"do (\"One mark bottom...\", 7.5, 0, 1, 0, \"+7.5\")\n"
-	"do (\"One mark bottom...\", 2.5, 0, 0, 0, \"+2.5\")\n"
-	"do (\"One mark bottom...\", -20, 0, 0, 0, \"Short VOT\")\n"
-	"do (\"One mark bottom...\", 20, 0, 0, 0, \"Long VOT\")\n"
-	"do (\"Text bottom...\", 1, \"VOT (ms)\")\n"
-	"do (\"Marks left every...\", 1, 0.2, 1, 1, 0)\n"
-	"do (\"Text left...\", 1, \"Prop. of voiced responses\")\n"
+SCRIPT (5,3, L"ganong = Create Table (Ganong 1980)\n"
+	"Dotted line\n"
+	"Line graph where: \"dash-tash\", 0, 1, \"VOT\", -20, 20, \"wn\", 0, 0, \"1\"\n"
+	"Dashed line\n"
+	"Line graph where: \"dask-task\", 0, 1, \"VOT\", -20, 20, \"nw\", 0, 0, \"1\"\n"
+	"Draw inner box\n"
+	"One mark bottom: 2.5, 0, 1, 0, \"+2.5\"\n"
+	"One mark bottom: -2.5, 1, 1, 0, \"\"\n"
+	"One mark bottom: -7.5,1, 1, 0, \"\"\n"
+	"One mark bottom: 7.5, 0, 1, 0, \"+7.5\"\n"
+	"One mark bottom: 2.5, 0, 0, 0, \"+2.5\"\n"
+	"One mark bottom: -20, 0, 0, 0, \"Short VOT\"\n"
+	"One mark bottom: 20, 0, 0, 0, \"Long VOT\"\n"
+	"Text bottom: 1, \"VOT (ms)\"\n"
+	"Marks left every: 1, 0.2, 1, 1, 0\n"
+	"Text left: 1, \"Prop. of voiced responses\"\n"
 	"removeObject (ganong)\n"
 )
 NORMAL (L"As an example of what happens if you don't supply an argument for the \"Horizontal column\" we will use the same table as for the previous plot. However the resulting plot may not be as meaningful (note that the horizontal nominal scale makes all points equidistant in the horizontal direction.)")
-CODE (L"do (\"Dotted line\")\n")
-CODE (L"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\")")
-CODE (L"do (\"One mark bottom...\", 1, 0, 1, 0, \"Short VOT\")")
-SCRIPT (5,3, L"ganong = do (\"Create Table (Ganong 1980)\")\n"
-	"do (\"Dotted line\")\n"
-	"do (\"Line graph where...\", \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\")\n"
-	"do (\"One mark bottom...\", 1, 0, 1, 0, \"Short VOT\")\n"
+CODE (L"Dotted line\")\n")
+CODE (L"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\"")
+CODE (L"One mark bottom: 1, 0, 1, 0, \"Short VOT\"")
+SCRIPT (5,3, L"ganong = Create Table (Ganong 1980)\n"
+	"Dotted line\n"
+	"Line graph where: \"dash-tash\", 0, 1, \"\", 0, 0, \"wn\", 0, 1, \"1\"\n"
+	"One mark bottom: 1, 0, 1, 0, \"Short VOT\"\n"
 	"removeObject (ganong)\n"
 )
 MAN_END
@@ -4241,7 +4254,7 @@ TAG (L"##Table with Tukey's post-hoc test")
 DEFINITION (L"if checked, a Table with Tukey's HSD tests will be created. Each value in this Table measures the probability that the corresponding difference between the level means happened by chance. The test compares all possible level means and is based on the studentized range distribution.")
 MAN_END
 
-MAN_BEGIN (L"Table: Report two-way anova...", L"djmw", 20130410)
+MAN_BEGIN (L"Table: Report two-way anova...", L"djmw", 20140117)
 INTRO (L"Performs a two-way analysis of variance on the data in one column of a selected %%fully factorial% @@Table@ and reports the fixed-effects anova table in the info window. ")
 ENTRY (L"Settings")
 TAG (L"##Column with data#")
@@ -4256,8 +4269,8 @@ ENTRY (L"Example")
 NORMAL (L"Suppose you want to check if fundamental frequency depends on the type of vowel and speaker type. We will use the "
 	"@@Create formant table (Peterson & Barney 1952)|Peterson & Barney@ vowel data set to illustrate this. "
 	"The following script will first create the data set and then produce the two-way anova report." )
-CODE (L"do (\"Create formant table (Peterson & Barney 1952)\")")
-CODE (L"do (\"Report two-way anova...\", \"F0\", \"Vowel\", \"Type\")")
+CODE (L"Create formant table (Peterson & Barney 1952)")
+CODE (L"Report two-way anova: \"F0\", \"Vowel\", \"Type\"")
 NORMAL (L"This will produce the following anova table in the info window:")
 CODE (L"Two-way analysis of \"F0\" by \"Vowel\" and \"Type\".")
 CODE (L"")
@@ -4408,7 +4421,7 @@ NORMAL (L"The first bar for the %k-th row starts at:")
 FORMULA (L"%x1 = %hoffset \\.c %width + (%k - 1) \\.c (1 + %interbar) \\.c %width")
 MAN_END
 
-MAN_BEGIN (L"TableOfReal: Select columns where row...", L"djmw", 20130410)
+MAN_BEGIN (L"TableOfReal: Select columns where row...", L"djmw", 20140117)
 INTRO (L"Copy columns from the selected @TableOfReal object to a new "
 	"TableOfReal object.")
 ENTRY (L"Settings")
@@ -4422,14 +4435,14 @@ DEFINITION (L"specifies a condition for the selection of rows. If the "
 	"in this row will be copied. See @@Matrix: Formula...@ for the kind of "
 	"expressions that can be used here.")
 ENTRY (L"Examples")
-CODE (L"do (\"Select columns where row...\", \"1 2 3\", \"1\")")
-CODE (L"do (\"Select columns where row...\", \"1 : 3\", \"1\")")
+CODE (L"Select columns where row: \"1 2 3\", \"1\"")
+CODE (L"Select columns where row: \"1 : 3\", \"1\"")
 NORMAL (L"Two alternative expressions to copy the first three columns to a new table "
 	"with the same number of rows.")
-CODE (L"do (\"Select columns where row...\", \"3 : 1\", \"1\")")
+CODE (L"Select columns where row: \"3 : 1\", \"1\"")
 NORMAL (L"Copy the first three columns to a new table with the same number of "
 	"rows. The new table will have the 3 columns reversed.")
-CODE (L"do (\"Select columns where row...\", \"1:6 9:11\", \"self[row,8]>0\")")
+CODE (L"Select columns where row: \"1:6 9:11\", \"self[row,8]>0\"")
 NORMAL (L"Copy the first six columns and columns 9, 10, and 11 to a new table. "
 	"Copy only elements from rows where the element in column 8 is greater "
 	"than zero.")
@@ -4626,7 +4639,7 @@ NORMAL (L"For example, when the vector #y equals the first column of #Y and "
 	"correlation coefficient.")
 MAN_END
 
-MAN_BEGIN (L"TableOfReal: To TableOfReal (means by row labels)...", L"djmw", 20130410)
+MAN_BEGIN (L"TableOfReal: To TableOfReal (means by row labels)...", L"djmw", 20140117)
 INTRO (L"A command that appears in the ##Multivariate statistics# menu if you select a @@TableOfReal@. "
 	"It calculates the multivariate means for the different row labels from the selected TableOfReal.")
 ENTRY (L"Setting")
@@ -4636,12 +4649,12 @@ DEFINITION (L"when %off, then for a table with %n rows and %m different labels (
 	"in each row.")
 ENTRY (L"Example")
 NORMAL (L"The following commands")
-CODE (L"do (\"@@Create TableOfReal (Pols 1973)...@\", \"no\")")
-CODE (L"do (\"To TableOfReal (means by row labels)...\", 0)")
+CODE (L"@@Create TableOfReal (Pols 1973)...|Create TableOfReal (Pols 1973)@: \"no\"")
+CODE (L"To TableOfReal (means by row labels): 0")
 NORMAL (L"will result in a new TableOfReal that has 12 rows. Each row will contain the mean F1, F2 and F3 values for a particular vowel. These means "
 	" were obtained from 50 representations of that vowel.")
 NORMAL (L"If we had chosen the %expansion:")
-CODE (L"do (\"To TableOfReal (means by row labels)...\", \"yes\")")
+CODE (L"To TableOfReal (means by row labels): \"yes\"")
 NORMAL (L"the resulting TableOfReal would have had 600 rows. This representation  comes in handy when, for example, you have to calculate deviations from the mean.")
 MAN_END
 

@@ -556,6 +556,9 @@ if (! my printing) {
 		Graphics_WCtoDC (my ps, 0.0, 0.0, & x1DC, & y2DC);
 		Graphics_WCtoDC (my ps, 1.0, 1.0, & x2DC, & y1DC);
 		long shift = (long) (Graphics_getResolution (my ps) * true_height_inches) + (y1DCold - y2DCold);
+		#if cocoa
+			shift = 0;   // this is a FIX
+		#endif
 		Graphics_resetWsViewport (my ps, x1DC, x2DC, y1DC + shift, y2DC + shift);
 		Graphics_setWsWindow (my ps, 0, width_inches, 0, height_inches);
 		theCurrentPraatPicture -> x1NDC = 0;

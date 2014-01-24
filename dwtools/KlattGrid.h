@@ -2,7 +2,7 @@
 #define _KlattGrid_h_
 /* KlattGrid.h
  *
- * Copyright (C) 2008-2011 David Weenink
+ * Copyright (C) 2008-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
 
 /*
  * djmw 20080917 Initial version
- * djmw 20110306 Latest modification
+ * djmw 20140113 Latest modification
  */
 
 #include "Collection.h"
@@ -212,9 +212,12 @@ void KlattGrid_addFormant (KlattGrid me,int formantType, long position);
 void KlattGrid_removeFormant (KlattGrid me,int formantType, long position);
 
 // add/remove frequency + bandwidth tiers
-void KlattGrid_addFormantAndBandwidthTier (KlattGrid me, int formantType, long position);
-void KlattGrid_removeFormantAndBandwidthTier (KlattGrid me, int formantType, long position);
+void KlattGrid_addFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position);
+void KlattGrid_removeFormantFrequencyAndBandwidthTiers (KlattGrid me, int formantType, long position);
 
+
+void KlattGrid_addFormantAmplitudeTier (KlattGrid me, int formantType, long position);
+void KlattGrid_removeFormantAmplitudeTier (KlattGrid me, int formantType, long position);
 /***************** KlattGrid & Sound *************************************/
 
 // reset PlayOptions to defaults

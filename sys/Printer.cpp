@@ -1,6 +1,6 @@
 /* Printer.cpp
  *
- * Copyright (C) 1998-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1998-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,6 +46,11 @@
 #include "praat.h"   // topShell
 #include "Ui.h"
 #include "site.h"
+#include "GraphicsP.h"
+
+#if cocoa
+	#include "Picture.h"
+#endif
 
 /*
  * Everything must look the same on every printer, including on PDF,
@@ -67,7 +72,9 @@ void Printer_prefs (void) {
 	Preferences_addEnum (L"Printer.fontChoiceStrategy", & thePrinter. fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy, kGraphicsPostscript_fontChoiceStrategy_DEFAULT);
 }
 
-#if defined (macintosh)
+#if cocoa
+	static NSView *theMacView;
+#elif defined (macintosh)
 	static PMPrintSession theMacPrintSession;
 	static PMPageFormat theMacPageFormat;
 	static PMPrintSettings theMacPrintSettings;
@@ -83,6 +90,7 @@ void Printer_prefs (void) {
 	int Printer_postScript_printf (void *stream, const char *format, ... ) {
 		#if defined (_WIN32)
 			static union { char chars [3002]; short shorts [1501]; } theLine;
+		#elif cocoa
 		#elif defined (macintosh)
 			static Handle theLine;
 		#endif
@@ -176,6 +184,8 @@ Printer_postScript_printf (NULL, "8 8 scale initclip\n");
 
 void Printer_nextPage (void) {
 	#if cocoa
+		[theMacView endPage];
+		[theMacView beginPageInRect: [theMacView bounds] atPlacement: NSMakePoint (0, 0)];
 	#elif defined (_WIN32)
 		if (thePrinter. postScript) {
 			exitPostScriptPage ();
@@ -202,6 +212,8 @@ void Printer_nextPage (void) {
 
 int Printer_pageSetup (void) {
 	#if cocoa
+		NSPageLayout *cocoaPageSetupDialog = [NSPageLayout pageLayout];
+		[cocoaPageSetupDialog runModal];
 	#elif defined (_WIN32)
 	#elif defined (macintosh)
 		Boolean accepted;
@@ -300,6 +312,40 @@ int Printer_postScriptSettings (void) {
 	}
 #endif
 
+#if cocoa
+	static void (*theDraw) (void *boss, Graphics g);
+	static void *theBoss;
+	@interface GuiCocoaPrintingArea : NSView @end
+	@implementation GuiCocoaPrintingArea {
+		//GuiButton d_userData;
+	}
+	- (void) drawRect: (NSRect) dirtyRect {
+		trace ("printing %f %f %f %f", dirtyRect. origin. x, dirtyRect. origin. y, dirtyRect. size. width, dirtyRect. size. height);
+		int currentPage = [[NSPrintOperation currentOperation] currentPage];
+		thePrinter. graphics = Graphics_create_screenPrinter (NULL, self);
+		theDraw (theBoss, thePrinter. graphics);
+		forget (thePrinter. graphics);
+	}
+	- (BOOL) isFlipped {
+		return YES;
+	}
+	- (NSPoint) locationOfPrintRect: (NSRect) aRect {
+		(void) aRect;
+		return NSMakePoint (0.0, 0.0);   // the origin of the rect's coordinate system is always the top left corner of the physical page
+	}
+	- (BOOL) knowsPageRange: (NSRangePointer) range {
+		range -> length = 1;
+		return YES;
+	}
+	- (NSRect) rectForPage: (NSInteger) pageNumber {
+		(void) pageNumber;   // every page has the same rectangle
+		return [self bounds];
+	}
+	- (void) printOperationDidRun: (NSPrintOperation *) printOperation  success: (BOOL) success  contextInfo: (void *) contextInfo {
+	}
+	@end
+#endif
+
 int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 	try {
 		#if defined (UNIX)
@@ -316,6 +362,48 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			system (command);
 			MelderFile_delete (& tempFile);
 		#elif cocoa
+			theDraw = draw;
+			theBoss = boss;
+			NSPrintInfo *info = [NSPrintInfo sharedPrintInfo];
+			NSSize paperSize = [info paperSize];
+			//NSLog (@"%f %f", paperSize. width, paperSize. height);
+			thePrinter. paperWidth = paperSize. width / 0.12;
+			thePrinter. paperHeight = paperSize. height / 0.12;
+			[info setLeftMargin: 0.0];
+			[info setRightMargin: 0.0];
+			[info setTopMargin: 0.0];
+			[info setBottomMargin: 0.0];
+			/*
+			 * Although the paper size reported may be 595 x 842 points (A4),
+			 * 783 points (just under 11 inches) is the largest height that keeps the view on one page.
+			 */
+			int viewWidth = paperSize. width;
+			int viewHeight = paperSize. height;
+			NSLog (@"%d %d", viewWidth, viewHeight);
+			NSRect rect = NSMakeRect (0, 0, viewWidth, viewHeight);
+			NSView *cocoaPrintingArea = [[GuiCocoaPrintingArea alloc] initWithFrame: rect];
+			theMacView = cocoaPrintingArea;
+			[cocoaPrintingArea setBoundsSize: NSMakeSize (viewWidth / 0.12, viewHeight / 0.12)];   // 72 points per inch / 600 dpi = 0.12 points per dot
+			[cocoaPrintingArea setBoundsOrigin: NSMakePoint (0, 0)];
+			NSPrintOperation *op = [NSPrintOperation
+				printOperationWithView: cocoaPrintingArea];
+			#if 1
+				if (op) [op runOperation];
+			#else
+				/*
+				 * This may crash with multiple pages.
+				 */
+				if (op) {
+					[op setCanSpawnSeparateThread: NO];
+					NSView *pictureView = ((GraphicsScreen) Picture_getGraphics ((Picture) boss)) -> d_macView;
+					[op
+						runOperationModalForWindow: [pictureView window]
+						delegate: cocoaPrintingArea
+						didRunSelector: @selector(printOperationDidRun:success:contextInfo:)
+						contextInfo: NULL
+					];
+				}
+			#endif
 		#elif defined (_WIN32)
 			int postScriptCode = POSTSCRIPT_PASSTHROUGH;
 			DOCINFO docInfo;
@@ -428,8 +516,8 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			PMGetOrientation (theMacPageFormat, & orientation);
 			thePrinter. orientation = orientation == kPMLandscape ||
 				orientation == kPMReverseLandscape ? kGraphicsPostscript_orientation_LANDSCAPE : kGraphicsPostscript_orientation_PORTRAIT;
-			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);   // PMSessionBeginCGDocumentNoDialog
-			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);   // PMSessionBeginPageNoDialog
+			PMSessionBeginDocument (theMacPrintSession, theMacPrintSettings, theMacPageFormat);
+			PMSessionBeginPage (theMacPrintSession, theMacPageFormat, NULL);
 			PMSessionGetGraphicsContext (theMacPrintSession, kPMGraphicsContextQuickdraw, (void **) & theMacPort);
 			/*
 			 * On PostScript, the point (0, 0) is the bottom left corner of the paper, which is fine.
@@ -448,8 +536,8 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			draw (boss, thePrinter. graphics);
 			forget (thePrinter. graphics);
 			if (theMacPort) {
-				PMSessionEndPage (theMacPrintSession);   // PMSessionEndPageNoDialog
-				PMSessionEndDocument (theMacPrintSession);   // PMSessionEndDocumentNoDialog
+				PMSessionEndPage (theMacPrintSession);
+				PMSessionEndDocument (theMacPrintSession);
 				theMacPort = NULL;
 			}
 		#endif

@@ -1,6 +1,6 @@
 /* ButtonEditor.cpp
  *
- * Copyright (C) 1996-2011,2013 Paul Boersma
+ * Copyright (C) 1996-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,9 +197,8 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 			praat_Command action = praat_getAction (i);
 			if (! action || ! action -> callback) return 0;
 			if (action -> title) {
-				UiHistory_write (L"\ndo (\"");
-				UiHistory_write_expandQuotes (action -> title);
-				UiHistory_write (L"\")");
+				UiHistory_write (L"\n");
+				UiHistory_write_colonize (action -> title);
 			}
 			if (action -> script) {
 				try {
@@ -221,9 +220,8 @@ int structButtonEditor :: v_goToPage (const wchar_t *title) {
 			praat_Command menuCommand = praat_getMenuCommand (i);
 			if (! menuCommand || ! menuCommand -> callback) return 0;
 			if (menuCommand -> title) {
-				UiHistory_write (L"\ndo (\"");
-				UiHistory_write_expandQuotes (menuCommand -> title);
-				UiHistory_write (L"\")");
+				UiHistory_write (L"\n");
+				UiHistory_write_colonize (menuCommand -> title);
 			}
 			if (menuCommand -> script) {
 				try {

@@ -1,6 +1,6 @@
 /* manual_BSS.cpp
  *
- * Copyright (C) 2010-2013 David Weenink
+ * Copyright (C) 2010-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +101,7 @@ INTRO (L"Detemines the @@Covariance|covariances@ between the channels of a selec
 NORMAL (L"The covariance of a sound is determined by calculating the @@CrossCorrelationTable@ of a multichannel sound for a lag time equal to zero.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20130502)
+MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20140106)
 INTRO (L"Analyze the selected multi-channel sound into its independent components by an iterative method.")
 NORMAL (L"The @@blind source separation@ method to find the independent components tries to simultaneously diagonalize a number of "
 	"@@CrossCorrelationTable@s that are calculated from the multi-channel sound at different lag times.")
@@ -136,13 +136,13 @@ NORMAL (L"In this model #Y is a matrix with the selected multi-channel sound, #A
 	"Essentially the model says that each channel in the multi-channel sound is a linear combination of the "
 	"independent sound components in #X. "
 	"If we would know the mixing matrix #A we could easily solve the model above for #X by standard means. "
-	"However, if we don't know #A and we don't know #X, the decomposition of #Y is underdetermined as there "
-	"are an infinite number of possibilities. ")
+	"However, if we don't know #A and we don't know #X, the decomposition of #Y is underdetermined.  This means there "
+	"are an infinite number of possible combinations of #A and #X that result in the same #Y. ")
 NORMAL (L"One approach to solve the equation above is to make assumptions about the statistical properties "
 	"of the components in the matrix #X: it turns out that a sufficient assumption is to assume that the "
 	"components in #X at each time instant are %%statistically independent%. This is not an unrealistic "
 	"assumption in many cases, although in practice it need not be exactly the case. Another assumption is "
-	"that the mixing matrix is constant." )
+	"that the mixing matrix is constant, which means that the mixing conditions did not change during the recoding of the sound." )
 NORMAL (L"The theory says that statistically independent signals are not correlated (although the reverse "
 	"is not always true: signals that are not correlated don't have to be statistically independent). "
 	"The methods implemented here all follow this lead as follows. If we calculate the @@CrossCorrelationTable@ "

@@ -1,6 +1,6 @@
 /* praat_picture.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1345,7 +1345,7 @@ static void cb_selectionChanged (Picture p, void *closure,
 		double xmargin = fontSize * 4.2 / 72.0, ymargin = fontSize * 2.8 / 72.0;
 		if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
 		if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-		UiHistory_write (L"\ndo (\"Select inner viewport...\", ");
+		UiHistory_write (L"\nSelect inner viewport: ");
 		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC + xmargin));
 		UiHistory_write (L", ");
 		UiHistory_write (Melder_single (theCurrentPraatPicture -> x2NDC - xmargin));
@@ -1353,9 +1353,8 @@ static void cb_selectionChanged (Picture p, void *closure,
 		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y2NDC + ymargin));
 		UiHistory_write (L", ");
 		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y1NDC - ymargin));
-		UiHistory_write (L")");
 	} else {
-		UiHistory_write (L"\ndo (\"Select outer viewport...\", ");
+		UiHistory_write (L"\nSelect outer viewport: ");
 		UiHistory_write (Melder_single (theCurrentPraatPicture -> x1NDC));
 		UiHistory_write (L", ");
 		UiHistory_write (Melder_single (theCurrentPraatPicture -> x2NDC));
@@ -1363,7 +1362,6 @@ static void cb_selectionChanged (Picture p, void *closure,
 		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y2NDC));
 		UiHistory_write (L", ");
 		UiHistory_write (Melder_single (12 - theCurrentPraatPicture -> y1NDC));
-		UiHistory_write (L")");
 	}
 }
 

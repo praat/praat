@@ -202,7 +202,7 @@ INTRO (L"A command in the @@New menu@ to create a @Strings object containing a l
 	"It works completely analogously to @@Create Strings as file list...@.")
 MAN_END
 
-MAN_BEGIN (L"Create Strings as file list...", L"ppgb", 20130521)
+MAN_BEGIN (L"Create Strings as file list...", L"ppgb", 20140107)
 INTRO (L"A command in the @@New menu@ to create a @Strings object containing a list of files in a given directory.")
 ENTRY (L"Settings")
 SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), L""
@@ -234,20 +234,20 @@ NORMAL (L"In a script, you can use this command to cycle through the files in a 
 	"For instance, to read in all the sound files in a specified directory, "
 	"you could use the following script:")
 CODE (L"directory\\$  = \"/usr/people/miep/sounds\"")
-CODE (L"strings = do (\"Create Strings as file list...\", \"list\", directory\\$  + \"/*.wav\")")
-CODE (L"numberOfFiles = do (\"Get number of strings\")")
+CODE (L"strings = Create Strings as file list: \"list\", directory\\$  + \"/*.wav\"")
+CODE (L"numberOfFiles = Get number of strings")
 CODE (L"for ifile to numberOfFiles")
 	CODE1 (L"selectObject (strings)")
-	CODE1 (L"fileName\\$  = do\\$  (\"Get string...\", ifile)")
-	CODE1 (L"do (\"Read from file...\", directory\\$  + \"/\" + fileName\\$ )")
+	CODE1 (L"fileName\\$  = Get string: ifile")
+	CODE1 (L"Read from file: directory\\$  + \"/\" + fileName\\$ ")
 CODE (L"endfor")
 NORMAL (L"If the script has been saved to a script file, you can use file paths that are relative to the directory "
 	"where you saved the script. Thus, with")
-CODE (L"do (\"Create Strings as file list...\", \"list\", \"*.wav\")")
+CODE (L"Create Strings as file list: \"list\", \"*.wav\"")
 NORMAL (L"you get a list of all the .wav files that are in the same directory as the script that contains this line. "
 	"And to get a list of all the .wav files in the directory Sounds that resides in the same directory as your script, "
 	"you can do")
-CODE (L"do (\"Create Strings as file list...\", \"list\", \"Sounds/*.wav\")")
+CODE (L"Create Strings as file list: \"list\", \"Sounds/*.wav\"")
 NORMAL (L"As is usual in Praat scripting, the forward slash (\"/\") in this example can be used on all platforms, including Windows. "
 	"This makes your script portable across platforms.")
 ENTRY (L"See also")
@@ -1924,7 +1924,8 @@ NORMAL (L"where %x is a normalized time that runs from 0 to 1 and %U(%x) is the 
 	"If %power1 = 2.0 and %power2 = 3.0, the glottal flow shape is that proposed by @@Rosenberg (1971)@, "
 	"upon which for instance the Klatt synthesizer is based (@@Klatt & Klatt (1990)@):")
 SCRIPT (4.5, 3,
-	L"Axes... 0 1 -0.1 1\n"
+	L"Select outer viewport... 0 4.5 -0.4 3\n"
+	"Axes... 0 1 -0.1 1\n"
 	"One mark left... 0 yes yes yes\n"
 	"One mark bottom... 0 yes yes no\n"
 	"One mark bottom... 1 yes yes no\n"

@@ -1,6 +1,6 @@
 /* manual_HMM.cpp
  *
- * Copyright (C) 2011-2013 David Weenink
+ * Copyright (C) 2011-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,7 +256,7 @@ TAG (L"##Covariance matrices are")
 DEFINITION (L"defines whether the complete covariance matrices in the mixture have to be calculated or only the diagonal.")
 MAN_END
 
-MAN_BEGIN (L"HMM_ObservationSequence", L"djmw", 20101010)
+MAN_BEGIN (L"HMM_ObservationSequence", L"djmw", 20140117)
 INTRO (L"An HMM_ObservationSequence models a sequence of observations. The observation sequence can be generated "
 	"by the @HMM or it can be used to train a model.")
 MAN_END
@@ -271,9 +271,9 @@ INTRO (L"A HMM is a Hidden Markov Model. Markov models are often used to model o
 	"depend on the previous observation. "
 	"A HMM can be visualised as a graph with a number of %%states%. If states are connected they have line connecting them. The following picture shows a HMM with two states, labeled \"Rainy\" and \"Sunny\". Each state can emit three symbols (these are not visible in the graph).   ")
 SCRIPT (5, 5,
-	L"do (\"Create simple HMM...\", \"wheather\", \"no\", \"Rainy Sunny\", \"Walk Shop Clean\")\n"
-	"do (\"Draw...\", \"no\")\n"
-	"do (\"Remove\")\n")
+	L"Create simple HMM: \"wheather\", \"no\", \"Rainy Sunny\", \"Walk Shop Clean\"\n"
+	"Draw: \"no\"\n"
+	"Remove\n")
 INTRO (L"For an introduction into HMM's see @@Rabiner (1989)@.")
 MAN_END
 
