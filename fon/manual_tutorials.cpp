@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140124)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140212)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.64# (12 February 2014)")
+LIST_ITEM (L"\\bu Scripting language: writeInfo, procedure, exitScript, runScript: all with colons.")
+LIST_ITEM (L"\\bu 64-bit Mac graphics: better highlighting and unhighlighting of selection.")
+LIST_ITEM (L"\\bu 64-bit Mac graphics: full screen.")
 NORMAL (L"##5.3.63# (24 January 2014)")
 LIST_ITEM (L"\\bu Scripting language: easier menu command invocation using the colon \":\".")
 LIST_ITEM (L"\\bu 64-bit Mac graphics: better handling of any absence of Doulos SIL or Charis SIL.")
@@ -2854,7 +2858,7 @@ NORMAL (L"To create new objects from files on disk, use the @@Open menu@ instead
 	"Objects can also often be create from other objects, with commands that start with ##To#.")
 MAN_END
 
-MAN_BEGIN (L"Object window", L"ppgb", 20030528)
+MAN_BEGIN (L"Object window", L"ppgb", 20140212)
 INTRO (L"One of the two main windows in the Praat program.")
 ENTRY (L"Subdivision")
 LIST_ITEM (L"To the left: the @@List of Objects@.")
@@ -2872,7 +2876,6 @@ LIST_ITEM (L"The Object window contains several fixed menus: "
 	"It also contains the #Save menu, whose contents vary with the kinds of selected objects, "
 	"and must, therefore, be considered part of the dynamic menu.")
 ENTRY (L"The Praat menu")
-LIST_ITEM (L"\\bu (@@Run script...@)")
 LIST_ITEM (L"\\bu @@New Praat script@: creates an empty @@ScriptEditor@")
 LIST_ITEM (L"\\bu @@Open Praat script...@: creates a @@ScriptEditor@ with a script from disk")
 LIST_ITEM (L"\\bu The ##Goodies submenu#: for doing things (like using the Calculator) "

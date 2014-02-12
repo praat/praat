@@ -67,12 +67,14 @@ void structScriptEditor :: v_goAway () {
 
 static void args_ok (UiForm sendingForm, int narg_dummy, Stackel args_dummy, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified_dummy, I) {
 	iam (ScriptEditor);
+	(void) narg_dummy;
+	(void) args_dummy;
 	(void) sendingString_dummy;
 	(void) interpreter_dummy;
 	(void) invokingButtonTitle;
 	(void) modified_dummy;
+	autostring text = my textWidget -> f_getString ();
 	structMelderFile file = { 0 };
-	wchar_t *text = my textWidget -> f_getString ();   // BUG: auto
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
@@ -83,38 +85,58 @@ static void args_ok (UiForm sendingForm, int narg_dummy, Stackel args_dummy, con
 
 	autoPraatBackground background;
 	if (my name [0]) MelderFile_setDefaultDir (& file);
-	Interpreter_run (my interpreter, text);
-	Melder_free (text);
+	Interpreter_run (my interpreter, text.peek());
 }
 
-static void run (ScriptEditor me, wchar_t **text) {
+static void args_ok_selectionOnly (UiForm sendingForm, int narg_dummy, Stackel args_dummy, const wchar_t *sendingString_dummy, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified_dummy, I) {
+	iam (ScriptEditor);
+	(void) narg_dummy;
+	(void) args_dummy;
+	(void) sendingString_dummy;
+	(void) interpreter_dummy;
+	(void) invokingButtonTitle;
+	(void) modified_dummy;
+	autostring text = my textWidget -> f_getSelection ();
+	if (text.peek() == NULL)
+		Melder_throw ("No text is selected any longer.\nPlease reselect or click Cancel.");
 	structMelderFile file = { 0 };
 	if (my name [0]) {
 		Melder_pathToFile (my name, & file);
 		MelderFile_setDefaultDir (& file);
 	}
-	Melder_includeIncludeFiles (text);
-	int npar = Interpreter_readParameters (my interpreter, *text);
-	if (npar) {
-		/*
-		 * Pop up a dialog box for querying the arguments.
-		 */
-		forget (my argsDialog);
-		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, NULL, args_ok, me);
-		UiForm_do (my argsDialog, false);
-	} else {
-		autoPraatBackground background;
-		if (my name [0]) MelderFile_setDefaultDir (& file);
-		Interpreter_run (my interpreter, *text);
-	}
+	Melder_includeIncludeFiles (& text);
+
+	Interpreter_getArgumentsFromDialog (my interpreter, sendingForm);
+
+	autoPraatBackground background;
+	if (my name [0]) MelderFile_setDefaultDir (& file);
+	Interpreter_run (my interpreter, text.peek());
 }
 
 static void menu_cb_run (EDITOR_ARGS) {
 	EDITOR_IAM (ScriptEditor);
 	if (my interpreter -> running)
 		Melder_throw ("The script is already running (paused). Please close or continue the pause or demo window.");
-	autostring text = my textWidget -> f_getString ();   // BUG: not an autostring (the text pointer can be changed by including include files)
-	run (me, & text);
+	autostring text = my textWidget -> f_getString ();
+	structMelderFile file = { 0 };
+	if (my name [0]) {
+		Melder_pathToFile (my name, & file);
+		MelderFile_setDefaultDir (& file);
+	}
+	Melder_includeIncludeFiles (& text);
+	int npar = Interpreter_readParameters (my interpreter, text.peek());
+	if (npar) {
+		/*
+		 * Pop up a dialog box for querying the arguments.
+		 */
+		forget (my argsDialog);
+		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, NULL, args_ok, me, false);
+		UiForm_do (my argsDialog, false);
+	} else {
+		autoPraatBackground background;
+		if (my name [0]) MelderFile_setDefaultDir (& file);
+		Interpreter_run (my interpreter, text.peek());
+	}
 }
 
 static void menu_cb_runSelection (EDITOR_ARGS) {
@@ -124,7 +146,25 @@ static void menu_cb_runSelection (EDITOR_ARGS) {
 	autostring text = my textWidget -> f_getSelection ();
 	if (text.peek() == NULL)
 		Melder_throw ("No text selected.");
-	run (me, & text);
+	structMelderFile file = { 0 };
+	if (my name [0]) {
+		Melder_pathToFile (my name, & file);
+		MelderFile_setDefaultDir (& file);
+	}
+	Melder_includeIncludeFiles (& text);
+	int npar = Interpreter_readParameters (my interpreter, text.peek());
+	if (npar) {
+		/*
+		 * Pop up a dialog box for querying the arguments.
+		 */
+		forget (my argsDialog);
+		my argsDialog = Interpreter_createForm (my interpreter, my d_windowForm, NULL, args_ok_selectionOnly, me, true);
+		UiForm_do (my argsDialog, false);
+	} else {
+		autoPraatBackground background;
+		if (my name [0]) MelderFile_setDefaultDir (& file);
+		Interpreter_run (my interpreter, text.peek());
+	}
 }
 
 static void menu_cb_addToMenu (EDITOR_ARGS) {

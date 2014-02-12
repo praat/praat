@@ -607,37 +607,45 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 	#elif mac
         int width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0 || height <= 0) return;
+		/*
+		 * This is pixel-precise drawing, and may therefore by different on retina displays than on 100 dpi displays.
+		 */
+		#if cocoa
+			bool isRetinaDisplay = [[d_macView window] backingScaleFactor] == 2.0;
+		#else
+			bool isRetinaDisplay = false;
+		#endif
 
-		#define SetRect(r, left, top, right, bottom) r.origin.x = left; r.origin.y = top; r.size.width = right - left; r.size.height = bottom - top;
-    
 		GraphicsQuartz_initDraw (this);
 		CGContextSetLineWidth (d_macGraphicsContext, 1.0);
 		CGContextSetAllowsAntialiasing (d_macGraphicsContext, false);   // because we want to draw by pixel
-        CGFloat gray = 0.1;
-        CGContextSetRGBStrokeColor (d_macGraphicsContext, gray, gray, gray, 1.0);
-        CGRect rect;
-        SetRect (rect, x1DC - 1, y2DC, x2DC + 1, y1DC);
+        CGFloat red = 0.3, green = 0.3, blue = 0.2;
+        CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
+		if (! isRetinaDisplay)
+			x1DC --;
+        CGRect rect = CGRectMake (x1DC, y2DC, width, height);
         CGContextAddRect (d_macGraphicsContext, rect);
         CGContextStrokePath (d_macGraphicsContext);
-		if (width > 2 && height > 2) {
-			gray = 0.3;
-			CGContextSetRGBStrokeColor (d_macGraphicsContext, gray, gray, gray, 1.0);
-			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y1DC - 1);
-			CGContextAddLineToPoint (d_macGraphicsContext, x2DC - 2, y1DC - 1);
-			CGContextMoveToPoint (d_macGraphicsContext, x2DC - 2, y1DC - 1);
-			CGContextAddLineToPoint (d_macGraphicsContext, x2DC - 2, y2DC);
+		x1DC ++, x2DC --, y1DC --, y2DC ++, width -= 2, height -= 2;
+		if (width > 0 && height > 0) {
+			red = 0.5, green = 0.5, blue = 0.4;
+			CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
+			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y1DC);
+			CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y1DC);
+			CGContextMoveToPoint (d_macGraphicsContext, x2DC, y1DC);
+			CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y2DC);
 			CGContextStrokePath (d_macGraphicsContext);
-			gray = 1.0;
-			CGContextSetRGBStrokeColor (d_macGraphicsContext, gray, gray, gray, 1.0);
-			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y1DC - 1);
-			CGContextAddLineToPoint (d_macGraphicsContext, x1DC, y2DC + 1);
-			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y2DC + 1);
-            CGContextAddLineToPoint (d_macGraphicsContext, x2DC - 2, y2DC + 1);
+			red = 1.0, green = 1.0, blue = 0.9;
+			CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
+			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y1DC);
+			CGContextAddLineToPoint (d_macGraphicsContext, x1DC, y2DC);
+			CGContextMoveToPoint (d_macGraphicsContext, x1DC, y2DC);
+            CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y2DC);
             CGContextStrokePath (d_macGraphicsContext);
-			if (width > 4 && height > 4) {
-				gray = 0.65;
-				CGContextSetRGBFillColor (d_macGraphicsContext, gray, gray, gray, 1.0);
-				SetRect (rect, x1DC + 1, y2DC + 1, x2DC - 4, y1DC - 4);
+			if (width > 2 && height > 2) {
+				red = 0.75, green = 0.75, blue = 0.65;
+				CGContextSetRGBFillColor (d_macGraphicsContext, red, green, blue, 1.0);
+				rect = CGRectMake (x1DC, y2DC, width, height);
 				CGContextFillRect (d_macGraphicsContext, rect);
             }
         }

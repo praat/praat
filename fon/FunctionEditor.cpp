@@ -187,7 +187,8 @@ static void drawNow (FunctionEditor me) {
 	 */
 	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
-	Graphics_setGrey (my d_graphics, 0.85);
+	Graphics_Colour windowBackgroundColour = { 0.90, 0.90, 0.85 } ;
+	Graphics_setColour (my d_graphics, windowBackgroundColour);
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
@@ -1174,9 +1175,10 @@ void structFunctionEditor :: v_createChildren () {
 
 	/***** Create drawing area. *****/
 
+	int marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting = cocoa ? 3 : 0;
 	drawingArea = GuiDrawingArea_createShown (d_windowForm,
 		0, 0,
-		Machine_getMenuBarHeight () + ( v_hasText () ? TEXT_HEIGHT : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
+		Machine_getMenuBarHeight () + ( v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, 0);
 	drawingArea -> f_setSwipable (scrollBar, NULL);
 }
@@ -1213,6 +1215,9 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_text1 (my d_graphics, xleft, 0.0, Melder_fixed (xleft, 6));
 	Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
 	Graphics_text1 (my d_graphics, xright, 0.0, Melder_fixed (xright, 6));
+	Graphics_setLineType (my d_graphics, Graphics_DOTTED);
+	Graphics_line (my d_graphics, xleft, 0.0, xleft, 1.0);
+	Graphics_line (my d_graphics, xright, 0.0, xright, 1.0);
 	Graphics_xorOff (my d_graphics);
 }
 
@@ -1253,8 +1258,10 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 			/*
 			 * Undraw the visible part of the old selection.
 			 */
-			if (endVisible > startVisible)
+			if (endVisible > startVisible) {
 				v_unhighlightSelection (startVisible, endVisible, 0, 1);
+				//Graphics_flushWs (d_graphics);
+			}
 		}
 		if (xbegin >= secondMark) {
 		 	/*

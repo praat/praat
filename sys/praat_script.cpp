@@ -1,6 +1,6 @@
 /* praat_script.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma
+ * Copyright (C) 1993-2012,2013,2014 Paul Boersma
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,28 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2002/10/02 system -> Melder_system
- * pb 2003/03/09 set UiInterpreter back to NULL
- * pb 2004/02/22 allow numeric expressions after select/plus/minus
- * pb 2004/10/27 warning off
- * pb 2004/12/04 support for multiple open script dialogs with Apply buttons, both from "Run script..." and from added buttons
- * pb 2005/02/10 corrected bug in nowarn
- * pb 2005/08/22 renamed Control menu to "Praat"
- * pb 2006/01/11 local variables
- * pb 2006/12/28 theCurrentPraat
- * pb 2007/02/17 corrected the messages about trailing spaces
- * pb 2007/06/11 wchar_t
- * pb 2007/10/04 removed swscanf
- * pb 2009/01/04 allow proc(args) syntax
- * pb 2009/01/17 arguments to UiForm callbacks
- * pb 2009/01/20 pause uses a pause form
- * pb 2011/03/20 C++
- * pb 2011/03/24 command no longer const
- * pb 2011/07/05 C++
  */
 
 #include <ctype.h>
@@ -529,6 +507,22 @@ void praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments) {
 	}
 }
 
+void praat_executeScriptFromFileName (const wchar_t *fileName, int narg, Stackel args) {
+	try {
+		structMelderFile file = { 0 };
+		Melder_relativePathToFile (fileName, & file);
+		autostring text = MelderFile_readText (& file);
+		autoMelderFileSetDefaultDir dir (& file);   // so that relative file names can be used inside the script
+		Melder_includeIncludeFiles (& text);
+		autoInterpreter interpreter = Interpreter_createFromEnvironment (praatP.editor);
+		Interpreter_readParameters (interpreter.peek(), text.peek());
+		Interpreter_getArgumentsFromArgs (interpreter.peek(), narg, args);
+		Interpreter_run (interpreter.peek(), text.peek());
+	} catch (MelderError) {
+		Melder_throw ("Script ", fileName, " not completed.");
+	}
+}
+
 void praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments) {
 	wchar_t path [256];
 	const wchar_t *p, *arguments;
@@ -600,7 +594,7 @@ static void firstPassThroughScript (MelderFile file) {
 		if (Interpreter_readParameters (interpreter.peek(), text.peek()) > 0) {
 			Any form = Interpreter_createForm (interpreter.peek(),
 				praatP.editor ? ((Editor) praatP.editor) -> d_windowForm : theCurrentPraatApplication -> topShell,
-				Melder_fileToPath (file), secondPassThroughScript, NULL);
+				Melder_fileToPath (file), secondPassThroughScript, NULL, false);
 			UiForm_destroyWhenUnmanaged (form);
 			UiForm_do (form, false);
 		} else {
@@ -619,30 +613,6 @@ static void fileSelectorOkCallback (UiForm dia, int narg, Stackel args, const wc
 	(void) modified;
 	(void) dummy;
 	firstPassThroughScript (UiFile_getFile (dia));
-}
-
-/*
- * DO_praat_runScript () is the command callback for "Run script...", which is a bit obsolete command,
- * hidden in the Praat menu, and otherwise replaced by "execute".
- */
-void DO_praat_runScript (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter_dummy, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
-	(void) interpreter_dummy;
-	(void) modified;
-	(void) dummy;
-	if (sendingForm == NULL && sendingString == NULL) {
-		/*
-		 * User clicked the "Run script..." button in the Praat menu.
-		 */
-		static Any file_dialog;
-		if (! file_dialog)
-			file_dialog = UiInfile_create (theCurrentPraatApplication -> topShell, L"Praat: run script", fileSelectorOkCallback, NULL, invokingButtonTitle, NULL, false);
-		UiInfile_do (file_dialog);
-	} else {
-		/*
-		 * A script called "Run script..."
-		 */
-		praat_executeScriptFromFileNameWithArguments (sendingString);
-	}
 }
 
 void DO_RunTheScriptFromAnyAddedMenuCommand (UiForm sendingForm_dummy, int narg, Stackel args, const wchar_t *scriptPath, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {

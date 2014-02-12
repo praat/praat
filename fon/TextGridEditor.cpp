@@ -1,6 +1,6 @@
 /* TextGridEditor.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1340,7 +1340,7 @@ static void gui_text_cb_change (I, GuiTextEvent event) {
 
 void structTextGridEditor :: v_createChildren () {
 	TextGridEditor_Parent :: v_createChildren ();
-	text -> f_setChangeCallback (gui_text_cb_change, this);
+	if (text) text -> f_setChangeCallback (gui_text_cb_change, this);
 }
 
 void structTextGridEditor :: v_dataChanged () {
@@ -2103,12 +2103,14 @@ void structTextGridEditor :: v_updateText () {
 		}
 	}
 	//Melder_casual ("v_updateText in editor %ld %ls %d", this, name, (int) suppressRedraw);
-	suppressRedraw = TRUE;   // prevent valueChangedCallback from redrawing
-	trace ("setting new text %ls", newText);
-	text -> f_setString (newText);
-	long cursor = wcslen (newText);   // at end
-	text -> f_setSelection (cursor, cursor);
-	suppressRedraw = FALSE;
+	if (text) {
+		suppressRedraw = TRUE;   // prevent valueChangedCallback from redrawing
+		trace ("setting new text %ls", newText);
+		text -> f_setString (newText);
+		long cursor = wcslen (newText);   // at end
+		text -> f_setSelection (cursor, cursor);
+		suppressRedraw = FALSE;
+	}
 }
 
 void structTextGridEditor :: v_prefs_addFields (EditorCommand cmd) {
@@ -2159,7 +2161,7 @@ void structTextGridEditor :: v_highlightSelection (double left, double right, do
 	if (v_hasAnalysis () && p_spectrogram_show && (d_longSound.data || d_sound.data)) {
 		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		Graphics_highlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
+		//Graphics_highlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_highlight (d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
 		Graphics_highlight (d_graphics, left, right, bottom, top);
@@ -2170,7 +2172,7 @@ void structTextGridEditor :: v_unhighlightSelection (double left, double right, 
 	if (v_hasAnalysis () && p_spectrogram_show && (d_longSound.data || d_sound.data)) {
 		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		Graphics_unhighlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
+		//Graphics_unhighlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_unhighlight (d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
 		Graphics_unhighlight (d_graphics, left, right, bottom, top);
@@ -2214,6 +2216,12 @@ void structTextGridEditor :: f_init (const wchar_t *title, TextGrid grid, Sample
 	}
 	if (a_spellingChecker != NULL)
 		this -> text -> f_setSelection (0, 0);
+	if (a_sound && a_sound -> xmin == 0.0 && grid -> xmin != 0.0)
+		Melder_warning ("The time domain of the TextGrid (starting at ",
+			Melder_fixed (grid -> xmin, 6), " seconds) is not aligned with that of the sound "
+			"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
+			"and choose “Shift times to...” from the Modify menu "
+			"to shift the starting time of the TextGrid to zero.");
 }
 
 TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker) {

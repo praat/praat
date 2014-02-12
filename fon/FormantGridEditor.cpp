@@ -338,7 +338,7 @@ int structFormantGridEditor :: v_click (double xWC, double yWC, bool shiftKeyPre
 	/*
 	 * Perform the default action: move cursor.
 	 */
-	d_startSelection = d_endSelection = xWC;
+	//d_startSelection = d_endSelection = xWC;
 	ycursor = (1.0 - yWC) * ymin + yWC * ymax;
 	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, ymin, ymax);
 	yWC = ycursor;

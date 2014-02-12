@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,23 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2002/03/07 GPL
- * pb 2003/07/19 extra null byte in Windows metafile name
- * pb 2004/02/19 outer selection
- * pb 2004/09/05 inner selection
- * pb 2005/05/19 EPS files have the option to switch off the screen preview
- * pb 2005/09/18 useSilipaPS
- * pb 2006/10/28 erased MacOS 9 stuff
- * pb 2007/11/30 erased Graphics_printf
- * sdk 2008/05/09 Picture_selfExpose
- * pb 2009/07/22 Picture_writeToPdfFile
- * fb 2010/03/01 cairo fix for black 1px borders
- * pb 2011/05/15 C++
- * pb 2011/07/08 C++
- * pb 2013/08/31 removed all GTK code that redrew the whole Picture window while dragging
  */
 
 #include "melder.h"
@@ -178,6 +161,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 		ixstart = ix < (ix1 + ix2) / 2 ? ix2 : ix1;
 		iystart = iy < (iy1 + iy2) / 2 ? iy2 : iy1;
 	}
+	//while (Graphics_mouseStillDown (my selectionGraphics)) {
 	do {
 		Graphics_getMouseLocation (my selectionGraphics, & xWC, & yWC);
 		ix = 1 + floor (xWC * SQUARES / SIDE);
@@ -202,6 +186,7 @@ static void gui_drawingarea_cb_click (I, GuiDrawingAreaClickEvent event) {
 			oldix = ix; oldiy = iy;
 		}
 	} while (Graphics_mouseStillDown (my selectionGraphics));
+	// }
 	#if cocoa
 		Graphics_updateWs (my selectionGraphics);   // to change the dark red back into black
 	#endif

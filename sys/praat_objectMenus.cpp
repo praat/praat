@@ -626,7 +626,6 @@ void praat_addMenus (GuiWindow window) {
 		praat_addMenuCommand (L"Objects", L"Praat", itemTitle_about.string, 0, praat_UNHIDABLE, DO_About);
 	#endif
 	praat_addMenuCommand (L"Objects", L"Praat", L"-- script --", 0, 0, 0);
-	praat_addMenuCommand (L"Objects", L"Praat", L"Run script...", 0, praat_HIDDEN, DO_praat_runScript);
 	praat_addMenuCommand (L"Objects", L"Praat", L"New Praat script", 0, 0, DO_praat_newScript);
 	praat_addMenuCommand (L"Objects", L"Praat", L"Open Praat script...", 0, 0, DO_praat_openScript);
 	praat_addMenuCommand (L"Objects", L"Praat", L"-- buttons --", 0, 0, 0);

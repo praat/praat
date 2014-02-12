@@ -29,6 +29,7 @@
 #include "Interpreter.h"
 #include "Ui.h"
 #include "praatP.h"
+#include "praat_script.h"
 #include "UnicodeData.h"
 #include "longchar.h"
 #include "UiPause.h"
@@ -120,7 +121,7 @@ enum { GEENSYMBOOL_,
 		DO_, DOSTR_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
-		EXIT_SCRIPT_,
+		EXIT_SCRIPT_, RUN_SCRIPT_,
 		MIN_, MAX_, IMIN_, IMAX_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
@@ -217,7 +218,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"do", L"do$",
 	L"writeInfo", L"writeInfoLine", L"appendInfo", L"appendInfoLine",
 	L"writeFile", L"writeFileLine", L"appendFile", L"appendFileLine",
-	L"exitScript",
+	L"exitScript", L"runScript",
 	L"min", L"max", L"imin", L"imax",
 	L"left$", L"right$", L"mid$",
 	L"selected", L"selected$", L"numberOfSelected", L"selectObject", L"plusObject", L"minusObject", L"removeObject",
@@ -2557,7 +2558,7 @@ static void do_writeFile () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	int numberOfArguments = narg->number;
 	w -= numberOfArguments;
-	Stackel fileName = & theStack [1];
+	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
 		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
 	}
@@ -2581,7 +2582,7 @@ static void do_writeFileLine () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	int numberOfArguments = narg->number;
 	w -= numberOfArguments;
-	Stackel fileName = & theStack [1];
+	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
 		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
 	}
@@ -2606,7 +2607,7 @@ static void do_appendFile () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	int numberOfArguments = narg->number;
 	w -= numberOfArguments;
-	Stackel fileName = & theStack [1];
+	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
 		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
 	}
@@ -2630,7 +2631,7 @@ static void do_appendFileLine () {
 	Melder_assert (narg->which == Stackel_NUMBER);
 	int numberOfArguments = narg->number;
 	w -= numberOfArguments;
-	Stackel fileName = & theStack [1];
+	Stackel fileName = & theStack [w + 1];
 	if (fileName -> which != Stackel_STRING) {
 		Melder_throw ("The first argument of \"writeFile\" has to be a string (a file name), not ", Stackel_whichText (fileName), ".");
 	}
@@ -2661,6 +2662,19 @@ static void do_exitScript () {
 			Melder_error_noLine (arg->string);
 	}
 	Melder_throw ("\nScript exited.");
+	pushNumber (1);
+}
+static void do_runScript () {
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	if (numberOfArguments < 1)
+		Melder_throw ("The function \"runScript\" requires at least one argument, namely the file name.");
+	w -= numberOfArguments;
+	Stackel fileName = & theStack [w + 1];
+	if (fileName->which != Stackel_STRING)
+		Melder_throw ("The first argument to \"runScript\" has to be a string (the file name), not ", Stackel_whichText (fileName));
+	praat_executeScriptFromFileName (fileName->string, numberOfArguments - 1, & theStack [w + 1]);
 	pushNumber (1);
 }
 static void do_min (void) {
@@ -4688,6 +4702,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case APPEND_FILE_     : { do_appendFile     ();
 } break; case APPEND_FILE_LINE_: { do_appendFileLine ();
 } break; case EXIT_SCRIPT_: { do_exitScript ();
+} break; case RUN_SCRIPT_: { do_runScript ();
 } break; case MIN_: { do_min ();
 } break; case MAX_: { do_max ();
 } break; case IMIN_: { do_imin ();

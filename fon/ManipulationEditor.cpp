@@ -932,14 +932,13 @@ void structManipulationEditor :: v_draw () {
 static void drawWhileDragging (ManipulationEditor me, double xWC, double yWC, long first, long last, double dt, double df) {
 	Manipulation ana = (Manipulation) my data;
 	PitchTier pitch = ana -> pitch;
-	long i;
 	(void) xWC;
 	(void) yWC;
 
 	/*
 	 * Draw all selected pitch points as magenta empty circles, if inside the window.
 	 */
-	for (i = first; i <= last; i ++) {
+	for (long i = first; i <= last; i ++) {
 		RealPoint point = (RealPoint) pitch -> points -> item [i];
 		double t = point -> number + dt, f = YLIN (point -> value) + df;
 		if (t >= my d_startWindow && t <= my d_endWindow)

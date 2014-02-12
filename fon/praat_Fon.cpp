@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1142,6 +1142,11 @@ END
 DIRECT (Formant_PointProcess_to_FormantTier)
 	Formant formant = NULL;
 	PointProcess point = NULL;
+	LOOP {
+		if (CLASS == classFormant) formant = (Formant) OBJECT;
+		if (CLASS == classPointProcess) point = (PointProcess) OBJECT;
+		if (formant && point) break;
+	}
 	autoFormantTier thee = Formant_PointProcess_to_FormantTier (formant, point);
 	praat_new (thee.transfer(), formant -> name, L"_", point -> name);
 END

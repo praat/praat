@@ -183,7 +183,7 @@ void Melder_includeIncludeFiles (wchar_t **text) {
 			wcscpy (newText + headLength + includeTextLength, L"\n");
 			wcscpy (newText + headLength + includeTextLength + 1, tail);
 			/*
-				Replace the old text with the new.
+				Replace the old text with the new. This will work even within an autostring.
 			 */
 			Melder_free (*text);
 			*text = newText;
@@ -306,9 +306,12 @@ long Interpreter_readParameters (Interpreter me, wchar_t *text) {
 }
 
 UiForm Interpreter_createForm (Interpreter me, GuiWindow parent, const wchar_t *path,
-	void (*okCallback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure)
+	void (*okCallback) (UiForm, int, Stackel, const wchar_t *, Interpreter, const wchar_t *, bool, void *), void *okClosure,
+	bool selectionOnly)
 {
-	UiForm form = UiForm_create (parent, my dialogTitle [0] ? my dialogTitle : L"Script arguments", okCallback, okClosure, NULL, NULL);
+	UiForm form = UiForm_create (parent,
+		Melder_wcscat (selectionOnly ? L"Run script (selection only): " : L"Run script: ", my dialogTitle),
+		okCallback, okClosure, NULL, NULL);
 	Any radio = NULL;
 	if (path) UiForm_addText (form, L"$file", path);
 	for (int ipar = 1; ipar <= my numberOfParameters; ipar ++) {
@@ -489,6 +492,93 @@ void Interpreter_getArgumentsFromString (Interpreter me, const wchar_t *argument
 		Melder_free (my arguments [size]);
 		my arguments [size] = Melder_wcsdup_f (arguments);
 	}
+	/*
+	 * Convert booleans and choices to numbers.
+	 */
+	for (int ipar = 1; ipar <= size; ipar ++) {
+		if (my types [ipar] == Interpreter_BOOLEAN) {
+			wchar_t *arg = & my arguments [ipar] [0];
+			if (wcsequ (arg, L"1") || wcsequ (arg, L"yes") || wcsequ (arg, L"on") ||
+			    wcsequ (arg, L"Yes") || wcsequ (arg, L"On") || wcsequ (arg, L"YES") || wcsequ (arg, L"ON"))
+			{
+				wcscpy (arg, L"1");
+			} else if (wcsequ (arg, L"0") || wcsequ (arg, L"no") || wcsequ (arg, L"off") ||
+			    wcsequ (arg, L"No") || wcsequ (arg, L"Off") || wcsequ (arg, L"NO") || wcsequ (arg, L"OFF"))
+			{
+				wcscpy (arg, L"0");
+			} else {
+				Melder_throw ("Unknown value \"", arg, "\" for boolean \"", my parameters [ipar], "\".");
+			}
+		} else if (my types [ipar] == Interpreter_CHOICE) {
+			int jpar;
+			wchar_t *arg = & my arguments [ipar] [0];
+			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
+				if (my types [jpar] != Interpreter_BUTTON && my types [jpar] != Interpreter_OPTION)
+					Melder_throw ("Unknown value \"", arg, "\" for choice \"", my parameters [ipar], "\".");
+				if (wcsequ (my arguments [jpar], arg)) {   // the button labels are in the arguments; see Interpreter_readParameters
+					swprintf (arg, 40, L"%d", jpar - ipar);
+					wcscpy (my choiceArguments [ipar], my arguments [jpar]);
+					break;
+				}
+			}
+			if (jpar > my numberOfParameters)
+				Melder_throw ("Unknown value \"", arg, "\" for choice \"", my parameters [ipar], "\".");
+		} else if (my types [ipar] == Interpreter_OPTIONMENU) {
+			int jpar;
+			wchar_t *arg = & my arguments [ipar] [0];
+			for (jpar = ipar + 1; jpar <= my numberOfParameters; jpar ++) {
+				if (my types [jpar] != Interpreter_OPTION && my types [jpar] != Interpreter_BUTTON)
+					Melder_throw ("Unknown value \"", arg, "\" for option menu \"", my parameters [ipar], "\".");
+				if (wcsequ (my arguments [jpar], arg)) {
+					swprintf (arg, 40, L"%d", jpar - ipar);
+					wcscpy (my choiceArguments [ipar], my arguments [jpar]);
+					break;
+				}
+			}
+			if (jpar > my numberOfParameters)
+				Melder_throw ("Unknown value \"", arg, "\" for option menu \"", my parameters [ipar], "\".");
+		}
+	}
+}
+
+void Interpreter_getArgumentsFromArgs (Interpreter me, int narg, Stackel args) {
+	trace ("%d arguments", narg);
+	int size = my numberOfParameters;
+	while (size >= 1 && my parameters [size] [0] == '\0')
+		size --;   // ignore trailing fields without a variable name (button, comment)
+	for (int ipar = 1; ipar <= size; ipar ++) {
+		wchar_t *p = my parameters [ipar];
+		/*
+		 * Ignore buttons and comments again.
+		 */
+		if (! *p) continue;
+		/*
+		 * Strip parentheses and colon off parameter name.
+		 */
+		if ((p = wcschr (p, '(')) != NULL) {
+			*p = '\0';
+			if (p - my parameters [ipar] > 0 && p [-1] == '_') p [-1] = '\0';
+		}
+		p = my parameters [ipar];
+		if (*p != '\0' && p [wcslen (p) - 1] == ':') p [wcslen (p) - 1] = '\0';
+	}
+	int iarg = 0;
+	for (int ipar = 1; ipar <= size; ipar ++) {
+		/*
+		 * Ignore buttons and comments again. The buttons will keep their labels as "arguments".
+		 */
+		if (my parameters [ipar] [0] == '\0') continue;
+		Melder_free (my arguments [ipar]);   // erase the current values, probably the default values
+		if (iarg == narg)
+			Melder_throw ("Found ", narg, " arguments but expected more.");
+		Stackel arg = & args [++ iarg];
+		my arguments [ipar] =
+			arg -> which == Stackel_NUMBER ? Melder_wcsdup (Melder_double (arg -> number)) :
+			arg -> which == Stackel_STRING ? Melder_wcsdup (arg -> string) : NULL;   // replace with the actual arguments
+		Melder_assert (my arguments [ipar] != NULL);
+	}
+	if (iarg < narg)
+		Melder_throw ("Found ", narg, " arguments but expected only ", iarg, ".");
 	/*
 	 * Convert booleans and choices to numbers.
 	 */
@@ -826,17 +916,22 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 						wchar_t *p = command2.string + 1;
 						while (*p == ' ' || *p == '\t') p ++;   // skip whitespace
 						wchar_t *callName = p;
-						while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '(') p ++;
+						while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '(' && *p != ':') p ++;
 						if (p == callName) Melder_throw ("Missing procedure name after \"@\".");
-						if (*p == '\0') Melder_throw ("Missing parenthesis after procedure name.");
-						bool parenthesisFound = *p == '(';
-						*p = '\0';   // close procedure name
-						if (! parenthesisFound) {
-							p ++;   // step over first white space
-							while (*p != '\0' && (*p == ' ' || *p == '\t') && *p != '(') p ++;   // skip more whitespace
-							if (*p != '(') Melder_throw ("Missing parenthesis after procedure name \"", callName, "\".");
+						bool hasArguments = ( *p != '\0' );
+						if (hasArguments) {
+							bool parenthesisOrColonFound = ( *p == '(' || *p == ':' );
+							*p = '\0';   // close procedure name
+							if (! parenthesisOrColonFound) {
+								p ++;   // step over first white space
+								while (*p != '\0' && (*p == ' ' || *p == '\t')) p ++;   // skip more whitespace
+								hasArguments = ( *p != '\0' );
+								parenthesisOrColonFound = ( *p == '(' || *p == ':' );
+								if (hasArguments && ! parenthesisOrColonFound)
+									Melder_throw ("Missing parenthesis or colon after procedure name \"", callName, "\".");
+							}
+							p ++;   // step over parenthesis or colon
 						}
-						p ++;   // step over parenthesis
 						int callLength = wcslen (callName);
 						long iline = 1;
 						for (; iline <= numberOfLines; iline ++) {
@@ -847,7 +942,7 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 							q = lines [iline] + 10;
 							while (*q == ' ' || *q == '\t') q ++;   // skip whitespace before procedure name
 							wchar_t *procName = q;
-							while (*q != '\0' && *q != ' ' && *q != '\t' && *q != '(') q ++;
+							while (*q != '\0' && *q != ' ' && *q != '\t' && *q != '(' && *q != ':') q ++;
 							if (q == procName) Melder_throw ("Missing procedure name after 'procedure'.");
 							if (q - procName == callLength && wcsnequ (procName, callName, callLength)) {
 								/*
@@ -856,13 +951,12 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 								if (++ my callDepth > Interpreter_MAX_CALL_DEPTH)
 									Melder_throw ("Call depth greater than ", Interpreter_MAX_CALL_DEPTH, ".");
 								wcscpy (my procedureNames [my callDepth], callName);
-								parenthesisFound = *q == '(';
-								if (! parenthesisFound) {
-									q ++;   // step over first white space
-									while (*q != '\0' && (*q == ' ' || *q == '\t') && *q != '(') q ++;   // skip more whitespace
-									if (*q != '(') Melder_throw ("Missing parenthesis after procedure name \"", callName, "\".");
+								bool parenthesisOrColonFound = ( *q == '(' || *q == ':' );
+								if (*q) q ++;   // step over parenthesis or colon or first white space
+								if (! parenthesisOrColonFound) {
+									while (*q == ' ' || *q == '\t') q ++;   // skip more whitespace
+									if (*q == '(' || *q == ':') q ++;   // step over parenthesis or colon
 								}
-								++ q;   // step over parenthesis
 								while (*q && *q != ')') {
 									static MelderString argument = { 0 };
 									MelderString_empty (& argument);
@@ -961,9 +1055,9 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 							wchar_t *p = command2.string + 5, *callName, *procName;
 							long iline;
 							int hasArguments, callLength;
-							while (*p == ' ' || *p == '\t') p ++;
+							while (*p == ' ' || *p == '\t') p ++;   // skip whitespace
 							callName = p;
-							while (*p != '\0' && *p != ' ' && *p != '\t') p ++;
+							while (*p != '\0' && *p != ' ' && *p != '\t' && *p != '(' && *p != ':') p ++;
 							if (p == callName) Melder_throw ("Missing procedure name after 'call'.");
 							hasArguments = *p != '\0';
 							*p = '\0';   /* Close procedure name. */
@@ -977,7 +1071,7 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 								q = lines [iline] + 10;
 								while (*q == ' ' || *q == '\t') q ++;
 								procName = q;
-								while (*q != '\0' && *q != ' ' && *q != '\t') q ++;
+								while (*q != '\0' && *q != ' ' && *q != '\t' && *q != '(' && *q != ':') q ++;
 								if (q == procName) Melder_throw ("Missing procedure name after 'procedure'.");
 								hasParameters = *q != '\0';
 								if (q - procName == callLength && wcsnequ (procName, callName, callLength)) {
@@ -989,16 +1083,21 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 										Melder_throw ("Call depth greater than ", Interpreter_MAX_CALL_DEPTH, ".");
 									wcscpy (my procedureNames [my callDepth], callName);
 									if (hasParameters) {
+										bool parenthesisOrColonFound = ( *q == '(' || *q == ':' );
+										q ++;   // step over parenthesis or colon or first white space
+										if (! parenthesisOrColonFound) {
+											while (*q == ' ' || *q == '\t') q ++;   // skip more whitespace
+											if (*q == '(' || *q == ':') q ++;   // step over parenthesis or colon
+										}
 										++ p;   /* First argument. */
-										++ q;   /* First parameter. */
-										while (*q) {
+										while (*q && *q != ')') {
 											wchar_t *par, save;
 											static MelderString arg = { 0 };
 											MelderString_empty (& arg);
 											while (*p == ' ' || *p == '\t') p ++;
-											while (*q == ' ' || *q == '\t') q ++;
+											while (*q == ' ' || *q == '\t' || *q == ',' || *q == ')') q ++;
 											par = q;
-											while (*q != '\0' && *q != ' ' && *q != '\t') q ++;   /* Collect parameter name. */
+											while (*q != '\0' && *q != ' ' && *q != '\t' && *q != ',' && *q != ')') q ++;   /* Collect parameter name. */
 											if (*q) {   /* Does anything follow the parameter name? */
 												if (*p == '\"') {
 													p ++;   /* Skip initial quote. */

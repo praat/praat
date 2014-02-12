@@ -2,7 +2,7 @@
 #define _praat_script_h_
 /* praat_script.h
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 int praat_executeCommand (Interpreter me, wchar_t *command);
 void praat_executeCommandFromStandardInput (const char *programName);
 void praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments);
+void praat_executeScriptFromFileName (const wchar_t *fileName, int narg, Stackel args);
 void praat_executeScriptFromFileNameWithArguments (const wchar_t *nameAndArguments);
 void praat_executeScriptFromText (wchar_t *text);
 void praat_executeScriptFromDialog (Any dia);

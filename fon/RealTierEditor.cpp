@@ -255,7 +255,7 @@ int structRealTierEditor :: v_click (double xWC, double yWC, bool shiftKeyPresse
 	/*
 	 * Perform the default action: move cursor.
 	 */
-	//my startSelection = my endSelection = xWC;
+	//d_startSelection = d_endSelection = xWC;
 	if (d_sound.data) {
 		if (yWC < 1 - SOUND_HEIGHT) {   /* Clicked in tier area? */
 			yWC /= 1 - SOUND_HEIGHT;

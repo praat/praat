@@ -1270,7 +1270,7 @@ FORMULA (L"(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
 	"= 30 \\.c (1.0167^^SL^ \\-- 1)")
 MAN_END
 
-MAN_BEGIN (L"plug-ins", L"ppgb", 20140107)
+MAN_BEGIN (L"plug-ins", L"ppgb", 20140212)
 INTRO (L"Experienced Praat script writers can distribute their product as a plug-in to Praat.")
 ENTRY (L"The Praat plug-in mechanism")
 NORMAL (L"When Praat starts up, it will execute all Praat scripts called ##setup.praat# "
@@ -1320,7 +1320,7 @@ LIST_ITEM (L"1. Create a script that adds buttons to the fixed and dynamic menus
 LIST_ITEM (L"2. Put this script where everybody can see it, "
 	"for instance in ##U:\\bsMaldenGuineaPigResearchButtons.praat#, where U is your shared computer.")
 LIST_ITEM (L"3. Create a file ##setup.praat# that contains only the following line:")
-CODE1 (L"execute U:\\bsMaldenGuineaPigResearchButtons.praat")
+CODE1 (L"runScript: \"U:\\bsMaldenGuineaPigResearchButtons.praat\"")
 LIST_ITEM (L"4. Put the ##setup.praat# file in a new directory called ##plugin_MaldenGuineaPigResearch#, "
 	"and distribute this directory among your local colleagues.")
 NORMAL (L"This procedure allows all members of the group to automatically enjoy all the later changes in your "
@@ -1365,17 +1365,7 @@ NORMAL (L"On Windows it is called ##Preferences5.ini#, "
 	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsPreferences5.ini#.")
 MAN_END
 
-MAN_BEGIN (L"Run script...", L"ppgb", 20050822)
-INTRO (L"A hidden command in the @@Praat menu@. Runs a @@Praat script@.")
-ENTRY (L"Usage")
-NORMAL (L"This command is hidden because you would normally open a script "
-	"with @@Open Praat script...@, so that you can run it several times without "
-	"selecting a file each time.")
-NORMAL (L"In scripts, the command ##%%Run script...#% is automatically replaced "
-	"by the script directive #execute.")
-MAN_END
-
-MAN_BEGIN (L"Scripting", L"ppgb", 20140124)
+MAN_BEGIN (L"Scripting", L"ppgb", 20140212)
 INTRO (L"This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.")
 NORMAL (L"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
@@ -1405,7 +1395,7 @@ LIST_ITEM1 (L"@@Scripting 5.6. Arrays")
 LIST_ITEM1 (L"@@Scripting 5.7. Including other scripts")
 LIST_ITEM1 (L"@@Scripting 5.8. Quitting@ (exitScript)")
 LIST_ITEM (L"@@Scripting 6. Communication outside the script")
-LIST_ITEM1 (L"@@Scripting 6.1. Arguments to the script@ (form/endform, execute)")
+LIST_ITEM1 (L"@@Scripting 6.1. Arguments to the script@ (form/endform, runScript)")
 LIST_ITEM1 (L"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
 LIST_ITEM1 (L"@@Scripting 6.3. Query commands@ (Get, Count)")
 LIST_ITEM1 (L"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createDirectory)")
@@ -1705,7 +1695,7 @@ SCRIPT (6, 3, L""
 	"Text: 0, \"left\", 90, \"half\", \"\\s{How do you do?}\"\n"
 	"Draw rectangle: 0, 560, 0, 260\n"
 )
-NORMAL (L"This works because #appendInfoLine write a line without erasing the Info window first.")
+NORMAL (L"This works because #appendInfoLine writes a line without erasing the Info window first.")
 NORMAL (L"Finally, try the following script:")
 CODE (L"appendInfoLine: \"Another try\"")
 CODE (L"appendInfoLine: \"Goodbye\"")
@@ -2428,7 +2418,7 @@ NORMAL (L"If the expression evaluates to zero or %false to begin with, the state
 	"are not executed even once.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 5.5. Procedures", L"ppgb", 20140111)
+MAN_BEGIN (L"Scripting 5.5. Procedures", L"ppgb", 20140126)
 NORMAL (L"Sometimes in a Praat script, you will want to perform the same thing more than once. "
 	"In @@Scripting 5.4. Loops|\\SS5.4@ we saw how %loops can help there. "
 	"In this section we will see how %procedures (also called %subroutines) can help us.")
@@ -2495,7 +2485,7 @@ CODE (L"Play")
 CODE (L"Remove")
 NORMAL (L"You can now see that seven lines of the script appear identically three times. "
 	"I'll put those seven lines into a %procedure that I name \"playOctave\":")
-CODE (L"#procedure playOctave ()")
+CODE (L"#procedure playOctave")
 	CODE1 (L"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (L"Play")
 	CODE1 (L"Remove")
@@ -2513,12 +2503,12 @@ NORMAL (L"You can put a procedure definition anywhere in your script; "
 NORMAL (L"The bodies of procedures are executed only if you %call the procedure explicitly, "
 	"which you can do anywhere in the rest of your script:")
 CODE (L"frequency = 440")
-CODE (L"\\@ playOctave ()")
+CODE (L"\\@ playOctave")
 CODE (L"frequency = 400")
-CODE (L"\\@ playOctave ()")
+CODE (L"\\@ playOctave")
 CODE (L"frequency = 500")
-CODE (L"\\@ playOctave ()")
-CODE (L"#procedure playOctave ()")
+CODE (L"\\@ playOctave")
+CODE (L"#procedure playOctave")
 	CODE1 (L"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (L"Play")
 	CODE1 (L"Remove")
@@ -2545,10 +2535,10 @@ NORMAL (L"The above example contains something awkward. The procedure %playOctav
 	"is set to an appropriate value, so before calling %playOctave you always have to insert a line like")
 CODE (L"frequency = 440")
 NORMAL (L"This can be improved upon. In the following version of the script, the procedure %playOctave requires an explicit %argument:")
-CODE (L"\\@ playOctave (440)")
-CODE (L"\\@ playOctave (400)")
-CODE (L"\\@ playOctave (500)")
-CODE (L"#procedure playOctave (frequency)")
+CODE (L"\\@ playOctave: 440")
+CODE (L"\\@ playOctave: 400")
+CODE (L"\\@ playOctave: 500")
+CODE (L"#procedure playOctave: frequency")
 	CODE1 (L"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (L"Play")
 	CODE1 (L"Remove")
@@ -2566,11 +2556,11 @@ ENTRY (L"Encapsulation and local variables")
 NORMAL (L"Although the size of the script has now been reduced to 12 lines, which cannot be further improved upon, "
 	"there is still something wrong with it. Imagine the following script:")
 CODE (L"frequency = 300")
-CODE (L"\\@ playOctave (440)")
-CODE (L"\\@ playOctave (400)")
-CODE (L"\\@ playOctave (500)")
+CODE (L"\\@ playOctave: 440")
+CODE (L"\\@ playOctave: 400")
+CODE (L"\\@ playOctave: 500")
 CODE (L"#writeInfoLine: frequency")
-CODE (L"#procedure playOctave (frequency)")
+CODE (L"#procedure playOctave: frequency")
 	CODE1 (L"Create Sound from formula: \"note\", 1, 0, 0.3, 44100, frequency, 0.2, 0.01, 0.01")
 	CODE1 (L"Play")
 	CODE1 (L"Remove")
@@ -2588,11 +2578,11 @@ NORMAL (L"What you would want is that variables that are used inside procedures,
 	"could somehow be made not to \"clash\" with variable names used outside the procedure. "
 	"A trick that works would be to include the procedure name into the names of these variables:")
 CODE (L"frequency = 300")
-CODE (L"\\@ playOctave (440)")
-CODE (L"\\@ playOctave (400)")
-CODE (L"\\@ playOctave (500)")
+CODE (L"\\@ playOctave: 440")
+CODE (L"\\@ playOctave: 400")
+CODE (L"\\@ playOctave: 500")
 CODE (L"#writeInfoLine: frequency")
-CODE (L"#procedure playOctave (playOctave.frequency)")
+CODE (L"#procedure playOctave: playOctave.frequency")
 	CODE1 (L"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, playOctave.frequency, 0.2, 0.01, 0.01")
 	CODE1 (L"Play")
 	CODE1 (L"Remove")
@@ -2606,11 +2596,11 @@ NORMAL (L"This works. The six tones will be played, and \"300\" will be written 
 NORMAL (L"Fortunately, Praat allows an abbreviated version of these long names: "
 	"just leave \"playOctave\" off from the names of the variables, but keep the period (.):")
 CODE (L"frequency = 300")
-CODE (L"\\@ playOctave (440)")
-CODE (L"\\@ playOctave (400)")
-CODE (L"\\@ playOctave (500)")
+CODE (L"\\@ playOctave: 440")
+CODE (L"\\@ playOctave: 400")
+CODE (L"\\@ playOctave: 500")
 CODE (L"#writeInfoLine: frequency")
-CODE (L"#procedure playOctave (.frequency)")
+CODE (L"#procedure playOctave: .frequency")
 	CODE1 (L"Create Sound as pure tone: \"note\", 1, 0, 0.3, 44100, .frequency, 0.2, 0.01, 0.01")
 	CODE1 (L"Play")
 	CODE1 (L"Remove")
@@ -2629,41 +2619,41 @@ NORMAL (L"It is advisable that you use such \"local\" variable names for all %pa
 	"and thereby perhaps inadvertently change the value of a variable that you expect to be constant across a procedure call.")
 ENTRY (L"A list of numeric and string arguments")
 NORMAL (L"You can use multiple arguments, separated by commas, and string arguments (with a dollar sign in the variable name):")
-CODE (L"\\@ listSpeaker (\"Bart\", 38)")
-CODE (L"\\@ listSpeaker (\"Katja\", 24)")
-CODE (L"#procedure listSpeaker (.name\\$ , .age)")
+CODE (L"\\@ listSpeaker: \"Bart\", 38")
+CODE (L"\\@ listSpeaker: \"Katja\", 24")
+CODE (L"#procedure listSpeaker: .name\\$ , .age")
 	CODE1 (L"#appendInfoLine: \"Speaker \", .name\\$ , \" is \", .age, \" years old.\"")
 CODE (L"#endproc")
 NORMAL (L"or")
-CODE (L"\\@ conjugateVerb (\"be\", \"I am\", \"you are\", \"she is\")")
-CODE (L"#procedure conjugateVerb (.verb\\$ , .first\\$ , .second\\$ , .third\\$ )")
+CODE (L"\\@ conjugateVerb: \"be\", \"I am\", \"you are\", \"she is\"")
+CODE (L"#procedure conjugateVerb: .verb\\$ , .first\\$ , .second\\$ , .third\\$ ")
 	CODE1 (L"#writeInfoLine: \"Conjugation of 'to \", .verb\\$ , \"':\"")
 	CODE1 (L"#appendInfoLine: \"1sg \", .first\\$ ")
 	CODE1 (L"#appendInfoLine: \"2sg \", .second\\$ ")
 	CODE1 (L"#appendInfoLine: \"3sg \", .third\\$ ")
 CODE (L"#endproc")
 NORMAL (L"For the arguments you can use expressions:")
-CODE (L"\\@ playOctave (400 + 100)")
+CODE (L"\\@ playOctave: 400 + 100")
 NORMAL (L"As with all string literals, the double quotes in literal string arguments should be doubled:")
-CODE (L"#procedure texts (.top\\$ , .bottom\\$ )")
+CODE (L"#procedure texts: .top\\$ , .bottom\\$ ")
 	CODE1 (L"Text top: \"yes\", .top\\$ ")
 	CODE1 (L"Text bottom: \"yes\", .bottom\\$ ")
 CODE (L"#endproc")
-CODE (L"\\@ texts (\\\" \\\" \\\" hello\\\" \\\"  at the top\\\" , \\\" \\\" \\\" goodbye\\\" \\\"  at the bottom\\\" )")
+CODE (L"\\@ texts: \\\" \\\" \\\" hello\\\" \\\"  at the top\\\" , \\\" \\\" \\\" goodbye\\\" \\\"  at the bottom\\\" ")
 ENTRY (L"Functions")
 NORMAL (L"The Praat scripting language does not have the concept of a \"function\" like some other scripting languages do. "
 	"A function is a procedure that returns a number or a string. For instance, you can imagine the function $$squareNumber$ "
 	"which takes a number (e.g. 5) as an argument and returns the square of that number (e.g. 25). "
 	"Here is an example of how you can do that, using the global availability of local variables:")
-CODE (L"\\@ squareNumber (5)")
+CODE (L"\\@ squareNumber: 5")
 CODE (L"#writeInfoLine: \"The square of 5 is \", squareNumber.result, \".\"")
-CODE (L"#procedure squareNumber (.number)")
+CODE (L"#procedure squareNumber: .number")
 	CODE1 (L".result = .number \\^  2")
 CODE (L"#endproc")
 NORMAL (L"Another way to emulate functions is to use a variable name as an argument:")
-CODE (L"\\@ squareNumber (5, \"square5\")")
+CODE (L"\\@ squareNumber: 5, \"square5\"")
 CODE (L"#writeInfoLine: \"The square of 5 is \", square5, \".\"")
-CODE (L"#procedure squareNumber (.number, .squareVariableName\\$ )")
+CODE (L"#procedure squareNumber: .number, .squareVariableName\\$ ")
 	CODE1 (L"'.squareVariableName\\$ ' = .number \\^  2")
 CODE (L"#endproc")
 NORMAL (L"However, this uses variable substitution, a trick better avoided.")
@@ -2732,7 +2722,7 @@ LIST_ITEM (L"@@Scripting 6.8. Messages to the user@ (exit, assert, nowarn, noche
 LIST_ITEM (L"@@Scripting 6.9. Calling from the command line")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.1. Arguments to the script", L"ppgb", 20140111)
+MAN_BEGIN (L"Scripting 6.1. Arguments to the script", L"ppgb", 20140212)
 NORMAL (L"You can cause a Praat script to prompt for arguments. The file $$playSine.praat$ may contain the following:")
 CODE (L"#form Play a sine wave")
 	CODE1 (L"#positive Sine_frequency_(Hz) 377")
@@ -2838,14 +2828,13 @@ CODE (L"#writeInfoLine: \"The duration is \", duration, \" years.\"")
 NORMAL (L"The interpreter will only show the single text \"Year range\", followed by two small text fields.")
 ENTRY (L"Calling a script from another script")
 NORMAL (L"Scripts can be nested: the file %%doremi.praat% may contain the following:")
-CODE (L"#execute playSine.praat 550 0.9")
-CODE (L"#execute playSine.praat 615 0.9")
-CODE (L"#execute playSine.praat 687 0.9")
-NORMAL (L"With the #execute command, Praat will not display a form window, but simply execute the script "
+CODE (L"#runScript: \"playSine.praat\", 550, 0.9")
+CODE (L"#runScript: \"playSine.praat\", 615, 0.9")
+CODE (L"#runScript: \"playSine.praat\", 687, 0.9")
+NORMAL (L"With #runScript, Praat will not display a form window, but simply execute the script "
 	"with the two arguments that you supply on the same line (e.g. 550 and 0.9).")
-NORMAL (L"Arguments (except for the last) that contain spaces must be put between double quotes, "
-	"and values for #choice must be passed as strings:")
-CODE (L"#execute \"fill attributes.praat\" \"Navy blue\" With holes")
+NORMAL (L"Values for #choice must be passed as strings:")
+CODE (L"#runScript: \"fill attributes.praat\", \"Navy blue\", \"With holes\"")
 NORMAL (L"You can pass values for #boolean either as \"yes\" and \"no\" or 1 and 0.")
 MAN_END
 
@@ -3204,7 +3193,7 @@ CODE (L"nocheck Remove")
 NORMAL (L"This would cause the script to continue even if there is nothing to remove.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20130407)
+MAN_BEGIN (L"Scripting 6.9. Calling from the command line", L"ppgb", 20140212)
 INTRO (L"Previous sections of this tutorial have shown you how to run a Praat script from the Script window. "
 	"However, you can also call a Praat script from the command line (text console) instead. "
 	"Information that would normally show up in the Info window, then goes to %stdout, "
@@ -3231,7 +3220,7 @@ NORMAL (L"Note that you use the program ##praatcon.exe# instead of ##praat.exe#.
 ENTRY (L"How to get arguments into the script")
 NORMAL (L"In the above example, the script ##doit.praat# requires two arguments. In the script ##doit.praat#, "
 	"you use #form and #endform to receive these arguments. See @@Scripting 6.1. Arguments to the script@. "
-	"As with the #execute command, Praat will not present a form window, but simply execute the script "
+	"As with #runScript, Praat will not present a form window, but simply run the script "
 	"with the arguments given on the command line. The example given in @@Scripting 6.1. Arguments to the script@ "
 	"will be called in the following way:")
 CODE (L"> /people/mietta/praat playSine.praat 550 0.9")
@@ -3360,7 +3349,7 @@ LIST_ITEM (L"@@Scripting 8.2. The sendpraat program")
 LIST_ITEM (L"@@Scripting 8.3. The sendpraat directive")
 MAN_END
 
-MAN_BEGIN (L"Scripting 8.1. The sendpraat subroutine", L"ppgb", 20091020)
+MAN_BEGIN (L"Scripting 8.1. The sendpraat subroutine", L"ppgb", 20140212)
 INTRO (L"A subroutine for sending messages to a %running Praat. "
 	"Also a Unix, MacOS, or DOS console program with the same purpose.")
 ENTRY (L"Syntax")
@@ -3403,19 +3392,19 @@ NORMAL (L"This will work because ##Play reverse# is an action command "
 	"On Unix, sendpraat will allow #Praat at most 1000 seconds to perform this.")
 ENTRY (L"Example 3: executing a large script file")
 NORMAL (L"Sometimes, it may be unpractical to send a large script directly to #sendpraat. "
-	"Fortunately, the receiving program knows the #execute directive:")
+	"Fortunately, the receiving program knows #runScript:")
 CODE (L"char message [100], *errorMessage;")
-CODE (L"strcpy (message, \"execute doAll.praat 20\");")
+CODE (L"strcpy (message, \"runScript: \\bs\"doAll.praat\\bs\", 20\");")
 CODE (L"errorMessage = #sendpraat (NULL, \"praat\", 0, message);")
-NORMAL (L"This causes the program #Praat to execute the script ##doAll.praat# with an argument of \"20\".")
+NORMAL (L"This causes the program #Praat to run the script ##doAll.praat# with an argument of \"20\".")
 ENTRY (L"How to download")
 NORMAL (L"You can download the source code of the sendpraat subroutine and program "
 	"via ##www.praat.org# or from ##http://www.fon.hum.uva.nl/praat/sendpraat.html#.")
 ENTRY (L"Instead")
 NORMAL (L"Instead of using sendpraat, you can also just take the following simple steps in your program:")
-LIST_ITEM (L"1. on Linux, write the script that you want to execute, and save it as ##~/.praat-dir/message#;")
+LIST_ITEM (L"1. on Linux, write the script that you want to run, and save it as ##~/.praat-dir/message#;")
 LIST_ITEM (L"2. get Praat's process id from ##~/.praat-dir/pid#;")
-LIST_ITEM (L"3. if Praat's process id is eg. 1178, send it a SIGUSR1 signal: $$kill -USR1 1178")
+LIST_ITEM (L"3. if Praat's process id is e.g. 1178, send it a SIGUSR1 signal: $$kill -USR1 1178")
 NORMAL (L"If the first line of your script is the comment \"\\#  999\", where 999 stands for the process id of your program, "
 	"Praat will send your program a SIGUSR2 signal back when it finishes handling the script.")
 ENTRY (L"See also")
@@ -3424,7 +3413,7 @@ NORMAL (L"To start a program from the command line instead and sending it a mess
 	"See @@Scripting 6.9. Calling from the command line@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 8.2. The sendpraat program", L"ppgb", 20140107)
+MAN_BEGIN (L"Scripting 8.2. The sendpraat program", L"ppgb", 20140212)
 INTRO (L"A Unix or DOS console program for sending messages to a %running Praat program.")
 ENTRY (L"Syntax")
 CODE (L"#sendpraat [%timeOut] %program %message...")
@@ -3442,8 +3431,8 @@ NORMAL (L"Each line is a separate argument. Lines that contain spaces should be 
 ENTRY (L"Example 3: drawing")
 CODE (L"sendpraat als \"for i from 1 to 5\" \"Draw circle: 0.5, 0.5, i\" \"endfor\"")
 NORMAL (L"This causes the program #Als to draw five concentric circles into the Picture window.")
-ENTRY (L"Example 4: executing a large script")
-CODE (L"sendpraat praat \"execute doAll.praat 20\"")
+ENTRY (L"Example 4: running a large script")
+CODE (L"sendpraat praat \"runScript: \\bs\"doAll.praat\\bs\", 20\"")
 NORMAL (L"This causes the program #Praat to execute the script ##doAll.praat# with an argument of \"20\".")
 MAN_END
 

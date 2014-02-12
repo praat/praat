@@ -205,6 +205,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = 12-top + ymargin;
 		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
+		Graphics_updateWs (GRAPHICS);
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
@@ -251,6 +252,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = 12-bottom;
 		theCurrentPraatPicture -> y2NDC = 12-top;
 		Picture_setSelection (praat_picture, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC, false);
+		Graphics_updateWs (GRAPHICS);   // BUG: needed on Cocoa, but why?
 	} else if (theCurrentPraatObjects != & theForegroundPraatObjects) {   // in manual?
 		if (top > bottom) { double temp; temp = top; top = bottom; bottom = temp; }
 		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
