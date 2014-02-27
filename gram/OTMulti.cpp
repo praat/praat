@@ -451,6 +451,42 @@ static void OTMulti_modifyRankings (OTMulti me, long iwinner, long iloser,
 			}
 		}
 		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
+	} else if (updateRule == kOTGrammar_rerankingStrategy_SYMMETRIC_ALL_SKIPPABLE) {
+		bool changed = false;
+		int winningConstraints = 0, losingConstraints = 0;
+		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			int winnerMarks = winner -> marks [icons];
+			int loserMarks = loser -> marks [icons];
+			if (loserMarks > winnerMarks) losingConstraints ++;
+			if (winnerMarks > loserMarks) winningConstraints ++;
+		}
+		if (winningConstraints != 0) for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+			OTConstraint constraint = & my constraints [icons];
+			double constraintStep = step * constraint -> plasticity;
+			int winnerMarks = winner -> marks [icons];
+			int loserMarks = loser -> marks [icons];
+			if (loserMarks > winnerMarks) {
+				if (multiplyStepByNumberOfViolations) constraintStep *= loserMarks - winnerMarks;
+				constraint -> ranking -= constraintStep * (1.0 + constraint -> ranking * my leak);
+				changed = true;
+			}
+			if (winnerMarks > loserMarks) {
+				if (multiplyStepByNumberOfViolations) constraintStep *= winnerMarks - loserMarks;
+				constraint -> ranking += constraintStep * (1.0 - constraint -> ranking * my leak);
+				changed = true;
+			}
+		}
+		if (changed && my decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_HG) {
+			double sumOfWeights = 0.0;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				sumOfWeights += my constraints [icons]. ranking;
+			}
+			double averageWeight = sumOfWeights / my numberOfConstraints;
+			for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+				my constraints [icons]. ranking -= averageWeight;
+			}
+		}
+		if (grammarHasChanged != NULL) *grammarHasChanged = changed;
 	} else if (updateRule == kOTGrammar_rerankingStrategy_WEIGHTED_UNCANCELLED) {
 		int winningConstraints = 0, losingConstraints = 0;
 		for (long icons = 1; icons <= my numberOfConstraints; icons ++) {

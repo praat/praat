@@ -1017,16 +1017,19 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			if (! needBitmappedIPA) {
 				#if cairo
 					if (my duringXor) {
-						static GdkFont *font = NULL;
-						if (font == NULL) {
-							font = gdk_font_load ("-*-courier-medium-r-normal--*-120-*-*-*-*-iso8859-1");
-							if (! font) {
-								font = gdk_font_load ("-*-courier 10 pitch-medium-r-normal--*-120-*-*-*-*-iso8859-1");
+						#if ALLOW_GDK_DRAWING
+							static GdkFont *font = NULL;
+							if (font == NULL) {
+								font = gdk_font_load ("-*-courier-medium-r-normal--*-120-*-*-*-*-iso8859-1");
+								if (! font) {
+									font = gdk_font_load ("-*-courier 10 pitch-medium-r-normal--*-120-*-*-*-*-iso8859-1");
+								}
 							}
-						}
-						if (font) {
-							gdk_draw_text_wc (my d_window, font, my d_gdkGraphicsContext, xDC, yDC, (const GdkWChar *) codes, nchars);
-						}
+							if (font) {
+								gdk_draw_text_wc (my d_window, font, my d_gdkGraphicsContext, xDC, yDC, (const GdkWChar *) codes, nchars);
+							}
+							gdk_flush ();
+						#endif
 					} else {
 						Melder_assert (my d_cairoGraphicsContext);
 						enum _cairo_font_slant slant   = (lc -> style & Graphics_ITALIC ? CAIRO_FONT_SLANT_ITALIC : CAIRO_FONT_SLANT_NORMAL);

@@ -34,7 +34,9 @@
 #include "Printer.h"
 #include "GuiP.h"
 
-#if win
+#if gtk
+	#include <cairo/cairo-pdf.h>
+#elif win
 	//#include "winport_on.h"
 	#include <gdiplus.h>
 	//#include "winport_off.h"
@@ -57,13 +59,19 @@ Thing_implement (GraphicsScreen, Graphics, 0);
 
 void structGraphicsScreen :: v_destroy () {
 	#if cairo
-		if (d_gdkGraphicsContext != NULL) {
-			g_object_unref (d_gdkGraphicsContext);			
-			d_gdkGraphicsContext = NULL;
-		}
+		#if ALLOW_GDK_DRAWING
+			if (d_gdkGraphicsContext != NULL) {
+				g_object_unref (d_gdkGraphicsContext);			
+				d_gdkGraphicsContext = NULL;
+			}
+		#endif
 		if (d_cairoGraphicsContext != NULL) {
 			cairo_destroy (d_cairoGraphicsContext);
 			d_cairoGraphicsContext = NULL;
+		}
+		if (d_cairoSurface != NULL) {
+			cairo_surface_flush (d_cairoSurface);
+			cairo_surface_destroy (d_cairoSurface);
 		}
 	#elif win
 		if (d_gdiGraphicsContext != NULL) {
@@ -250,7 +258,9 @@ void structGraphicsScreen :: v_updateWs () {
 			cairo_rectangle (d_cairoGraphicsContext, rect.x, rect.y, rect.width, rect.height);
 			cairo_clip (d_cairoGraphicsContext);
 		}
-		gdk_window_clear (d_window);
+		#if ALLOW_GDK_DRAWING
+			gdk_window_clear (d_window);
+		#endif
 		gdk_window_invalidate_rect (d_window, & rect, true);
 		//gdk_window_process_updates (d_window, true);
 	#elif cocoa
@@ -303,10 +313,14 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		my d_display = (GdkDisplay *) gdk_display_get_default ();
 		_GraphicsScreen_text_init (me);
 		my resolution = 100;
-		trace ("retrieving window");
-		my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
-		trace ("retrieved window");
-		my d_gdkGraphicsContext = gdk_gc_new (my d_window);
+		#if ALLOW_GDK_DRAWING
+			trace ("retrieving window");
+			my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
+			trace ("retrieved window");
+			my d_gdkGraphicsContext = gdk_gc_new (my d_window);
+		#else
+			my d_window = gtk_widget_get_window (GTK_WIDGET (voidDisplay));
+		#endif
 		my d_cairoGraphicsContext = gdk_cairo_create (my d_window);
 	#elif win
 		if (my printer) {
@@ -333,14 +347,14 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 		(void) voidDisplay;
         #if useCarbon
             my d_macPort = (GrafPtr) voidWindow;
-			(void) my d_macGraphicsContext;   // will be retreived from QuickDraw with every drawing command!
+			(void) my d_macGraphicsContext;   // will be retrieved from QuickDraw with every drawing command!
         #else
 			if (my printer) {
 				my d_macView = (NSView *) voidWindow;   // in case we do view-based printing
 				//my d_macGraphicsContext = (CGContextRef) voidWindow;   // in case we do context-based printing
 			} else {
 				my d_macView = (NSView *) voidWindow;
-				(void) my d_macGraphicsContext;   // will be retreived from Core Graphics with every drawing command!
+				(void) my d_macGraphicsContext;   // will be retrieved from Core Graphics with every drawing command!
 			}
         #endif
 		my d_macColour = theBlackColour;
@@ -482,17 +496,27 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
 {
-	GraphicsScreen me = Thing_new (GraphicsScreen);
+	autoGraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
 	#ifdef macintosh
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me);
+	Graphics_init (me.peek());
 	my resolution = resolution;
-	#ifdef macintosh
+	#if gtk
+		my d_cairoSurface = cairo_pdf_surface_create (Melder_peekWcsToUtf8 (file -> path),
+			(x2inches - x1inches) * 72.0, (y2inches - y1inches) * 72.0);
+		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
+		my d_x1DC = my d_x1DCmin = 0;
+		my d_x2DC = my d_x2DCmax = 7.5 * resolution;
+		my d_y1DC = my d_y1DCmin = 0;
+		my d_y2DC = my d_y2DCmax = 11.0 * resolution;
+		Graphics_setWsWindow ((Graphics) me.peek(), 0, 7.5, 1.0, 12.0);
+		cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
+	#elif mac
 		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, (CFStringRef) Melder_peekWcsToCfstring (file -> path), kCFURLPOSIXPathStyle, false);
-		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72, (y2inches - y1inches) * 72);   // don't tire PDF viewers with funny origins
+		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72.0, (y2inches - y1inches) * 72.0);   // don't tire PDF viewers with funny origins
 		CFStringRef key = (CFStringRef) Melder_peekWcsToCfstring (L"Creator");
 		CFStringRef value = (CFStringRef) Melder_peekWcsToCfstring (L"Praat");
 		CFIndex numberOfValues = 1;
@@ -501,18 +525,19 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 		my d_macGraphicsContext = CGPDFContextCreateWithURL (url, & rect, dictionary);
 		CFRelease (url);
 		CFRelease (dictionary);
+    	if (my d_macGraphicsContext == NULL)
+			Melder_throw ("Could not create PDF file ", file, ".");
 		my d_x1DC = my d_x1DCmin = 0;
 		my d_x2DC = my d_x2DCmax = 7.5 * resolution;
 		my d_y1DC = my d_y1DCmin = 0;
 		my d_y2DC = my d_y2DCmax = 11.0 * resolution;
-		Graphics_setWsWindow ((Graphics) me, 0, 7.5, 1.0, 12.0);
-    	Melder_assert (my d_macGraphicsContext != NULL);
+		Graphics_setWsWindow ((Graphics) me.peek(), 0, 7.5, 1.0, 12.0);
 		CGContextBeginPage (my d_macGraphicsContext, & rect);
 		CGContextScaleCTM (my d_macGraphicsContext, 72.0 / resolution, 72.0 / resolution);
 		CGContextTranslateCTM (my d_macGraphicsContext, - x1inches * resolution, (12.0 - y1inches) * resolution);
 		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#endif
-	return (Graphics) me;
+	return (Graphics) me.transfer();
 }
 Graphics Graphics_create_pdf (void *context, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
@@ -549,6 +574,22 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 	void Graphics_x_setCR (Graphics me, void *cairoGraphicsContext) {
 		((GraphicsScreen) me) -> d_cairoGraphicsContext = (cairo_t *) cairoGraphicsContext;
 	}
+	#if 0
+		cairo_surface_t *surface = cairo_image_surface_create (CAIRO_FORMAT_RGB24, 1000, 500);
+		cairo_surface_t *surface = cairo_pdf_surface_create (filename, width_in_points, height_in_points);
+		cairo_t *context = cairo_create (surface);
+		cairo_rectangle (context, 100, 100, 800, 300);
+		cairo_destroy (context);
+		cairo_surface_flush (surface);
+		#if simple
+			cairo_surface_write_to_png (surface, fileName);
+		#else
+			unsigned char *bitmap = cairo_image_surface_get_data (surface);   // peeking into the internal bits
+			// copy bitmap to PNG structure created with the PNG library
+			// save the PNG tructure to a file
+		#endif
+		cairo_surface_destroy (surface);
+	#endif
 #endif
 
 #if mac

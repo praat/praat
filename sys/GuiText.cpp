@@ -1,6 +1,6 @@
 /* GuiText.cpp
  *
- * Copyright (C) 1993-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1518,7 +1518,12 @@ void structGuiText :: f_setFontSize (int size) {
 	#if gtk
 		GtkRcStyle *modStyle = gtk_widget_get_modifier_style (GTK_WIDGET (d_widget));
 		trace ("before initializing Pango: locale is %s", setlocale (LC_ALL, NULL));
-		PangoFontDescription *fontDesc = modStyle -> font_desc != NULL ? modStyle->font_desc : pango_font_description_copy (GTK_WIDGET (d_widget) -> style -> font_desc);
+		PangoFontDescription *fontDesc = modStyle -> font_desc != NULL ? modStyle->font_desc :
+			#if ALLOW_GDK_DRAWING
+				pango_font_description_copy (GTK_WIDGET (d_widget) -> style -> font_desc);
+			#else
+				NULL;
+			#endif
 		trace ("during initializing Pango: locale is %s", setlocale (LC_ALL, NULL));
 		pango_font_description_set_absolute_size (fontDesc, size * PANGO_SCALE);
 		trace ("after initializing Pango: locale is %s", setlocale (LC_ALL, NULL));

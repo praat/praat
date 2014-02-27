@@ -122,8 +122,10 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 		 * The size of the viewable part of the drawing area may have changed.
 		 */
 		Melder_assert (event -> widget);
-		gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my graphics),          GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
-		gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my selectionGraphics), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
+		#if ALLOW_GDK_DRAWING
+			gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my graphics),          GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
+			gdk_cairo_reset_clip ((cairo_t *) Graphics_x_getCR (my selectionGraphics), GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window));
+		#endif
 	#endif
 	drawMarkers (me);
 	Graphics_play ((Graphics) my graphics, (Graphics) my graphics);

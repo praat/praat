@@ -1,6 +1,6 @@
 /* Eigen.c
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -260,7 +260,7 @@ void Eigen_initFromSymmetricMatrix (I, double **a, long n) {
 	(void) NUMlapack_dsyev (&jobz, &uplo, &n, &my eigenvectors[1][1], &n,
 	                        &my eigenvalues[1], wt, &lwork, &info);
 	if (info != 0) {
-		Melder_throw ("dsyev fails");
+		Melder_throw ("dsyev initialization fails");
 	}
 
 	lwork = wt[0];

@@ -1,11 +1,11 @@
 #ifdef _WIN32
 /*
- * $Id: pa_win_util.c 1197 2007-05-04 13:07:10Z gordon_gidluck $
+ * $Id: pa_win_util.c 1584 2011-02-02 18:58:17Z rossb $
  * Portable Audio I/O Library
  * Win32 platform-specific support functions
  *
  * Based on the Open Source API proposed by Ross Bencina
- * Copyright (c) 1999-2000 Ross Bencina
+ * Copyright (c) 1999-2008 Ross Bencina
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files
@@ -41,17 +41,17 @@
 /** @file
  @ingroup win_src
 
- Win32 platform-specific support functions.
-
-    @todo Implement workaround for QueryPerformanceCounter() skipping forward
-    bug. (see msdn kb Q274323).
+ @brief Win32 implementation of platform-specific PaUtil support functions.
 */
-
-#undef UNICODE
+ 
 #include <windows.h>
 #include <mmsystem.h> /* for timeGetTime() */
 
 #include "pa_util.h"
+
+#if (defined(WIN32) && (defined(_MSC_VER) && (_MSC_VER >= 1200))) && !defined(_WIN32_WCE) /* MSC version 6 and above */
+#pragma comment( lib, "winmm.lib" )
+#endif
 
 
 /*
@@ -127,13 +127,18 @@ double PaUtil_GetTime( void )
 
     if( usePerformanceCounter_ )
     {
-        /* FIXME:
-            according to this knowledge-base article, QueryPerformanceCounter
-            can skip forward by seconds!
+        /*
+            Note: QueryPerformanceCounter has a known issue where it can skip forward
+            by a few seconds (!) due to a hardware bug on some PCI-ISA bridge hardware.
+            This is documented here:
             http://support.microsoft.com/default.aspx?scid=KB;EN-US;Q274323&
 
-            it may be better to use the rtdsc instruction using inline asm,
-            however then a method is needed to calculate a ticks/seconds ratio.
+            The work-arounds are not very paletable and involve querying GetTickCount 
+            at every time step.
+
+            Using rdtsc is not a good option on multi-core systems.
+
+            For now we just use QueryPerformanceCounter(). It's good, most of the time.
         */
         QueryPerformanceCounter( &time );
         return time.QuadPart * secondsPerTick_;
@@ -147,4 +152,5 @@ double PaUtil_GetTime( void )
 #endif                
     }
 }
+
 #endif

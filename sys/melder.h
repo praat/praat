@@ -65,6 +65,12 @@ bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const 
 	#define NULL  ((void *) 0)
 #endif
 
+/*
+ * Operating system version control.
+ */
+#define ALLOW_GDK_DRAWING  1
+/* */
+
 typedef struct { double red, green, blue, transparency; } double_rgbt;
 
 /********** NUMBER TO STRING CONVERSION **********/
@@ -917,8 +923,6 @@ double MelderAudio_getOutputSilenceBefore (void);
 #endif
 void MelderAudio_setOutputSilenceAfter (double silenceAfter);
 double MelderAudio_getOutputSilenceAfter (void);
-void MelderAudio_setOutputUsesBlocking (bool outputUsesBlocking);
-bool MelderAudio_getOutputUsesBlocking (void);
 void MelderAudio_setUseInternalSpeaker (bool useInternalSpeaker);   // for HP-UX and Sun
 bool MelderAudio_getUseInternalSpeaker (void);
 void MelderAudio_setOutputMaximumAsynchronicity (enum kMelder_asynchronicityLevel maximumAsynchronicity);
@@ -991,8 +995,6 @@ void Melder_readAudioToShort (FILE *f, int numberOfChannels, int encoding, short
  */
 void MelderFile_writeFloatToAudio (MelderFile file, int numberOfChannels, int encoding, double **buffer, long numberOfSamples, int warnIfClipped);
 void MelderFile_writeShortToAudio (MelderFile file, int numberOfChannels, int encoding, const short *buffer, long numberOfSamples);
-
-void Melder_audioTrigger (void);
 
 /********** QUANTITY **********/
 

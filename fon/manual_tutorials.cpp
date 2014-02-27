@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140212)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140227)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.65# (27 February 2014)")
+LIST_ITEM (L"\\bu Scripting language: removed some bugs from runScript.")
+LIST_ITEM (L"\\bu Linux: can save the Picture window to PDF file.")
 NORMAL (L"##5.3.64# (12 February 2014)")
 LIST_ITEM (L"\\bu Scripting language: writeInfo, procedure, exitScript, runScript: all with colons.")
 LIST_ITEM (L"\\bu 64-bit Mac graphics: better highlighting and unhighlighting of selection.")

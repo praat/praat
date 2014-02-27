@@ -1,6 +1,6 @@
 /* GaussianMixture.cpp
  *
- * Copyright (C) 2011-2013 David Weenink
+ * Copyright (C) 2011-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -444,7 +444,7 @@ void GaussianMixture_getIntervalsAlongDirections (GaussianMixture me, long d1, l
 	if (d1 < 1 || d1 > my dimension || d2 < 1 || d2 > my dimension) {
 		Melder_throw ("Incorrect directions.");
 	}
-	autoSSCPs sscps = SSCPs_extractTwoDimensions ( (SSCPs) my covariances, d1, d2);
+	autoSSCPs sscps = SSCPs_extractTwoDimensions ((SSCPs) my covariances, d1, d2);
 	SSCPs_getEllipsesBoundingBoxCoordinates (sscps.peek(), -nsigmas, 0, xmin, xmax, ymin, ymax);
 }
 
@@ -881,7 +881,9 @@ int GaussianMixture_and_TableOfReal_getProbabilities (GaussianMixture me, TableO
 
 			for (long i = 1; i <= thy numberOfRows; i++) {
 				double dsq = NUMmahalanobisDistance_chi (his lowerCholesky, thy data[i], his centroid, his numberOfRows, my dimension);
-				p[i][ic] = exp (- 0.5 * (ln2pid + his lnd + dsq));
+				double prob = exp (- 0.5 * (ln2pid + his lnd + dsq));
+				prob = prob < 1e-300 ? 1e-300 : prob; // prevent p from being zero
+				p[i][ic] = prob;
 			}
 		}
 

@@ -53,7 +53,7 @@
 
 /**
  @file
- @ingroup hostaip_src
+ @ingroup hostapi_src
 
  This file contains the implementation
  required for blocking I/O. It is separated from pa_mac_core.c simply to ease
@@ -71,12 +71,12 @@
 #endif
 
 /*
- * This fnuction determines the size of a particular sample format.
+ * This function determines the size of a particular sample format.
  * if the format is not recognized, this returns zero.
  */
 static size_t computeSampleSizeFromFormat( PaSampleFormat format )
 {
-   switch( format ) {
+   switch( format & (~paNonInterleaved) ) {
    case paFloat32: return 4;
    case paInt32: return 4;
    case paInt24: return 3;
@@ -91,7 +91,7 @@ static size_t computeSampleSizeFromFormat( PaSampleFormat format )
  */
 static size_t computeSampleSizeFromFormatPow2( PaSampleFormat format )
 {
-   switch( format ) {
+   switch( format & (~paNonInterleaved) ) {
    case paFloat32: return 4;
    case paInt32: return 4;
    case paInt24: return 4;
@@ -121,6 +121,7 @@ PaError initializeBlioRingBuffers(
 {
    void *data;
    int result;
+   OSStatus err;
 
    /* zeroify things */
    bzero( blio, sizeof( PaMacBlio ) );
@@ -169,10 +170,11 @@ PaError initializeBlioRingBuffers(
          goto error;
       }
 
-      assert( 0 == PaUtil_InitializeRingBuffer(
+      err = PaUtil_InitializeRingBuffer(
             &blio->inputRingBuffer,
-            ringBufferSize*blio->inputSampleSizePow2*inChan,
-            data ) );
+            1, ringBufferSize*blio->inputSampleSizePow2*inChan,
+            data );
+      assert( !err );
    }
    if( outChan ) {
       data = calloc( ringBufferSize, blio->outputSampleSizePow2*outChan );
@@ -182,10 +184,11 @@ PaError initializeBlioRingBuffers(
          goto error;
       }
 
-      assert( 0 == PaUtil_InitializeRingBuffer(
+      err = PaUtil_InitializeRingBuffer(
             &blio->outputRingBuffer,
-            ringBufferSize*blio->outputSampleSizePow2*outChan,
-            data ) );
+            1, ringBufferSize*blio->outputSampleSizePow2*outChan,
+            data );
+      assert( !err );
    }
 
    result = resetBlioRingBuffers( blio );
@@ -344,6 +347,8 @@ int BlioCallback( const void *input, void *output, unsigned long frameCount,
    long avail;
    long toRead;
    long toWrite;
+   long read;
+   long written;
 
    /* set flags returned by OS: */
    OSAtomicOr32( statusFlags, &blio->statusFlags ) ;
@@ -354,13 +359,15 @@ int BlioCallback( const void *input, void *output, unsigned long frameCount,
 
       /* check for underflow */
       if( avail < frameCount * blio->inputSampleSizeActual * blio->inChan )
+      {
          OSAtomicOr32( paInputOverflow, &blio->statusFlags );
-
+      }
       toRead = MIN( avail, frameCount * blio->inputSampleSizeActual * blio->inChan );
 
       /* copy the data */
       /*printf( "reading %d\n", toRead );*/
-      assert( toRead == PaUtil_WriteRingBuffer( &blio->inputRingBuffer, input, toRead ) );
+      read = PaUtil_WriteRingBuffer( &blio->inputRingBuffer, input, toRead );
+      assert( toRead == read );
 #ifdef PA_MAC__BLIO_MUTEX
       /* Priority inversion. See notes below. */
       blioSetIsInputEmpty( blio, false );
@@ -383,7 +390,8 @@ int BlioCallback( const void *input, void *output, unsigned long frameCount,
                 frameCount * blio->outputSampleSizeActual * blio->outChan - toWrite );
       /* copy the data */
       /*printf( "writing %d\n", toWrite );*/
-      assert( toWrite == PaUtil_ReadRingBuffer( &blio->outputRingBuffer, output, toWrite ) );
+      written = PaUtil_ReadRingBuffer( &blio->outputRingBuffer, output, toWrite );
+      assert( toWrite == written );
 #ifdef PA_MAC__BLIO_MUTEX
       /* We have a priority inversion here. However, we will only have to
          wait if this was true and is now false, which means we've got
@@ -570,7 +578,7 @@ signed long GetStreamReadAvailable( PaStream* stream )
     VVDBUG(("GetStreamReadAvailable()\n"));
 
     return PaUtil_GetRingBufferReadAvailable( &blio->inputRingBuffer )
-                         / ( blio->outputSampleSizeActual * blio->outChan );
+                         / ( blio->inputSampleSizeActual * blio->inChan );
 }
 
 

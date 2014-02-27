@@ -1,10 +1,10 @@
 #ifdef _WIN32
 /*
- * $Id: pa_win_hostapis.c 1097 2006-08-26 08:27:53Z rossb $
+ * $Id: pa_win_hostapis.c 1728 2011-08-18 03:31:51Z rossb $
  * Portable Audio I/O Library Windows initialization table
  *
  * Based on the Open Source API proposed by Ross Bencina
- * Copyright (c) 1999-2002 Ross Bencina, Phil Burk
+ * Copyright (c) 1999-2008 Ross Bencina, Phil Burk
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files
@@ -40,14 +40,18 @@
 /** @file
  @ingroup win_src
 
-    Win32 host API initialization function table.
-
-    @todo Consider using PA_USE_WMME etc instead of PA_NO_WMME. This is what
-    the Unix version does, we should consider being consistent.
+    @brief Win32 host API initialization function table.
 */
 
+/* This is needed to make this source file depend on CMake option changes
+   and at the same time make it transparent for clients not using CMake.
+*/
+#ifdef PORTAUDIO_CMAKE_GENERATED
+#include "options_cmake.h"
+#endif
 
 #include "pa_hostapi.h"
+
 
 #ifdef __cplusplus
 extern "C"
@@ -59,7 +63,7 @@ PaError PaWinMme_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiInd
 PaError PaWinDs_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
 PaError PaAsio_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
 PaError PaWinWdm_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
-PaError PaWinWasapi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaWasapi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
 
 #ifdef __cplusplus
 }
@@ -68,14 +72,13 @@ PaError PaWinWasapi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApi
 
 PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
-        PaSkeleton_Initialize,   // 0; just for testing
-        PaWinMme_Initialize,   // 1
-        //PaWinDs_Initialize,   // 2
-        //PaWinWdm_Initialize,   // 3
+        PaWinMme_Initialize,   // 0 ppgb
+        //PaWinDs_Initialize,   // 1 ppgb
+        //PaWinWdm_Initialize,   // 2 ppgb
         //PaAsio_Initialize,
 		//PaWinWasapi_Initialize,
         0   /* NULL terminated array */
     };
 
-int paDefaultHostApiIndex = 1;
+int paDefaultHostApiIndex = 0;   // ppgb
 #endif

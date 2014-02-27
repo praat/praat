@@ -503,14 +503,17 @@ void praat_executeScriptFromFile (MelderFile file, const wchar_t *arguments) {
 		}
 		Interpreter_run (interpreter.peek(), text.peek());
 	} catch (MelderError) {
-		Melder_throw ("Script ", file, " not completed.");
+		Melder_throw (L"Script ", file, L" not completed.");
 	}
 }
 
 void praat_executeScriptFromFileName (const wchar_t *fileName, int narg, Stackel args) {
+	/*
+	 * The argument 'fileName' is unsafe. Duplicate its contents.
+	 */
+	structMelderFile file = { 0 };
+	Melder_relativePathToFile (fileName, & file);
 	try {
-		structMelderFile file = { 0 };
-		Melder_relativePathToFile (fileName, & file);
 		autostring text = MelderFile_readText (& file);
 		autoMelderFileSetDefaultDir dir (& file);   // so that relative file names can be used inside the script
 		Melder_includeIncludeFiles (& text);
@@ -519,7 +522,7 @@ void praat_executeScriptFromFileName (const wchar_t *fileName, int narg, Stackel
 		Interpreter_getArgumentsFromArgs (interpreter.peek(), narg, args);
 		Interpreter_run (interpreter.peek(), text.peek());
 	} catch (MelderError) {
-		Melder_throw ("Script ", fileName, " not completed.");
+		Melder_throw (L"Script ", & file, L" not completed.");   // don't refer to 'fileName', because its contents may have changed
 	}
 }
 

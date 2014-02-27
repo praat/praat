@@ -1,6 +1,6 @@
 #ifdef UNIX
 /*
- * $Id: pa_unix_hostapis.c 1097 2006-08-26 08:27:53Z rossb $
+ * $Id: pa_unix_hostapis.c 1740 2011-08-25 07:17:48Z philburk $
  * Portable Audio I/O Library UNIX initialization table
  *
  * Based on the Open Source API proposed by Ross Bencina
@@ -50,19 +50,19 @@ PaError PaOSS_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex 
 PaError PaSGI_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
 /* Linux AudioScience HPI */
 PaError PaAsiHpi_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaMacCore_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
+PaError PaSkeleton_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex index );
 
+/** Note that on Linux, ALSA is placed before OSS so that the former is preferred over the latter.
+ */
 
 PaUtilHostApiInitializer *paHostApiInitializers[] =
     {
 		#if defined (linux) && defined (ALSA)
-			PaAlsa_Initialize,
-		#elif defined (sgi)
-			PaSGI_Initialize,
-		#else
-			//PaOSS_Initialize,
+			PaAlsa_Initialize,   // ppgb
 		#endif
         0   /* NULL terminated array */
     };
 
-int paDefaultHostApiIndex = 0;
+int paDefaultHostApiIndex = 0;   // ppgb
 #endif

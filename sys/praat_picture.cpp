@@ -1490,7 +1490,7 @@ void praat_picture_init (void) {
 			width += margin * 2;
 		#endif
 		sprintf (pictureWindowTitle, "%s Picture", praatP.title);
-		dialog = GuiWindow_create (x, y, width, height, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
+		dialog = GuiWindow_create (x, y, width, height, 400, 200, Melder_peekUtf8ToWcs (pictureWindowTitle), NULL, NULL, 0);
 		dialog -> f_addMenuBar ();
 	}
 	if (! theCurrentPraatApplication -> batch) {
@@ -1512,10 +1512,10 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"File", L"Save as praat picture file...", 0, 0, DO_Picture_writeToPraatPictureFile);
 	praat_addMenuCommand (L"Picture", L"File", L"Write to praat picture file...", 0, praat_HIDDEN, DO_Picture_writeToPraatPictureFile);
 	#ifdef _WIN32
-	praat_addMenuCommand (L"Picture", L"File", L"Save as Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
-	praat_addMenuCommand (L"Picture", L"File", L"Write to Windows metafile...", 0, praat_HIDDEN, DO_Picture_writeToWindowsMetafile);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as Windows metafile...", 0, 0, DO_Picture_writeToWindowsMetafile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to Windows metafile...", 0, praat_HIDDEN, DO_Picture_writeToWindowsMetafile);
 	#endif
-	#if defined (macintosh)
+	#if defined (macintosh) || defined (UNIX)
 		praat_addMenuCommand (L"Picture", L"File", L"Save as PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
 		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, praat_HIDDEN, DO_Picture_writeToPdfFile);
 		praat_addMenuCommand (L"Picture", L"File", L"Save EPS file", 0, 0, NULL);

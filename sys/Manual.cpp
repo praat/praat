@@ -427,8 +427,9 @@ static void gui_cb_search (GUI_ARGS) {
 }
 
 void structManual :: v_createChildren () {
-	Manual_Parent :: v_createChildren ();
 	ManPages pages = (ManPages) data;   // has been installed here by Editor_init ()
+	d_hasExtraRowOfTools = pages -> dynamic;
+	Manual_Parent :: v_createChildren ();
 	#if defined (macintosh)
 		#define STRING_SPACING 8
 	#else
@@ -438,10 +439,6 @@ void structManual :: v_createChildren () {
 	homeButton = GuiButton_createShown (d_windowForm, 104, 168, y, y + height,
 		L"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
-		#if motif
-			XtVaSetValues (drawingArea -> d_widget, XmNtopOffset, y + height * 2 + 16, NULL);
-			XtVaSetValues (verticalScrollBar -> d_widget, XmNtopOffset, y + height * 2 + 16, NULL);
-		#endif
 		recordButton = GuiButton_createShown (d_windowForm, 4, 79, y+height+8, y+height+8 + height,
 			L"Record", gui_button_cb_record, this, 0);
 		playButton = GuiButton_createShown (d_windowForm, 85, 160, y+height+8, y+height+8 + height,

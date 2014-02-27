@@ -2,7 +2,7 @@
 #define PA_LINUX_ALSA_H
 
 /*
- * $Id: pa_linux_alsa.h 1236 2007-06-24 20:39:26Z aknudsen $
+ * $Id: pa_linux_alsa.h 1597 2011-02-11 00:15:51Z dmitrykos $
  * PortAudio Portable Real-Time Audio Library
  * ALSA-specific extensions
  *
@@ -40,8 +40,10 @@
  */
 
 /** @file
- * ALSA-specific PortAudio API extension header file.
+ *  @ingroup public_header
+ *  @brief ALSA-specific PortAudio API extension header file.
  */
+
 #include "portaudio.h"
 
 #ifdef __cplusplus
@@ -86,7 +88,19 @@ PaError PaAlsa_GetStreamOutputCard( PaStream *s, int *card );
  */
 PaError PaAlsa_SetNumPeriods( int numPeriods );
 
-PaError PaAlsa_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );
+/** Set the maximum number of times to retry opening busy device (sleeping for a
+ * short interval inbetween).
+ */
+PaError PaAlsa_SetRetriesBusy( int retries );
+
+/** Set the path and name of ALSA library file if PortAudio is configured to load it dynamically (see
+ *  PA_ALSA_DYNAMIC). This setting will overwrite the default name set by PA_ALSA_PATHNAME define.
+ * @param pathName Full path with filename. Only filename can be used, but dlopen() will lookup default
+ *                 searchable directories (/usr/lib;/usr/local/lib) then.
+ */
+void PaAlsa_SetLibraryPathName( const char *pathName );
+
+PaError PaAlsa_Initialize( PaUtilHostApiRepresentation **hostApi, PaHostApiIndex hostApiIndex );   // ppgb
 
 #ifdef __cplusplus
 }

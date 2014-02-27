@@ -49,7 +49,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 		// TODO: that helps against the damaged regions outside the rect where the
 		// Graphics drawing is done, but where does that margin come from in the
 		// first place?? Additionally this causes even more flickering
-		//gdk_window_clear_area(widget->window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
+		//gdk_window_clear_area ((GTK_WIDGET (widget)) -> window, expose->area.x, expose->area.y, expose->area.width, expose->area.height);
 		if (my d_exposeCallback) {
 			struct structGuiDrawingAreaExposeEvent event = { me, 0 };
 			event. x = expose -> area. x;
@@ -65,6 +65,8 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 				trace ("the expose callback finished");
 				trace ("locale is %s", setlocale (LC_ALL, NULL));
 				//gdk_window_end_paint ((GTK_WIDGET (widget)) -> window);
+				//gdk_window_flush ((GTK_WIDGET (widget)) -> window);
+				//gdk_flush ();
 			} catch (MelderError) {
 				Melder_flushError ("Redrawing not completed");
 			}
@@ -102,11 +104,11 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			/*
 			 * Translate with the help of /usr/include/gtk-2.0/gdk/gdkkeysyms.h
 			 */
-			if (event. key == GDK_Escape) event. key = 27;
-			if (event. key == GDK_Left)   event. key = 0x2190;
-			if (event. key == GDK_Up)     event. key = 0x2191;
-			if (event. key == GDK_Right)  event. key = 0x2192;
-			if (event. key == GDK_Down)   event. key = 0x2193;
+			if (event. key == GDK_KEY_Escape) event. key = 27;
+			if (event. key == GDK_KEY_Left)   event. key = 0x2190;
+			if (event. key == GDK_KEY_Up)     event. key = 0x2191;
+			if (event. key == GDK_KEY_Right)  event. key = 0x2192;
+			if (event. key == GDK_KEY_Down)   event. key = 0x2193;
 			event. shiftKeyPressed = (gkeyEvent -> state & GDK_SHIFT_MASK) != 0;
 			event. commandKeyPressed = (gkeyEvent -> state & GDK_CONTROL_MASK) != 0;
 			event. optionKeyPressed = (gkeyEvent -> state & GDK_MOD1_MASK) != 0;
@@ -455,7 +457,9 @@ static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *e
 	iam (GuiDrawingArea);
 	if (my d_horizontalScrollBar) {
 		double hv = gtk_range_get_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
-		double hi = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget)) -> step_increment;
+		GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_horizontalScrollBar -> d_widget));
+		gdouble hi;
+		g_object_get (adjustment, "step_increment", & hi, NULL);
 		switch (event -> direction) {
 			case GDK_SCROLL_LEFT:
 				gtk_range_set_value (GTK_RANGE (my d_horizontalScrollBar -> d_widget), hv - hi);
@@ -467,7 +471,9 @@ static gboolean _guiGtkDrawingArea_swipeCallback (GuiObject w, GdkEventScroll *e
 	}
 	if (my d_verticalScrollBar) {
 		double vv = gtk_range_get_value (GTK_RANGE (my d_verticalScrollBar -> d_widget));
-		double vi = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget)) -> step_increment;
+		GtkAdjustment *adjustment = gtk_range_get_adjustment (GTK_RANGE (my d_verticalScrollBar -> d_widget));
+		gdouble vi;
+		g_object_get (adjustment, "step_increment", & vi, NULL);
 		switch (event -> direction) {
 			case GDK_SCROLL_UP:
 				gtk_range_set_value (GTK_RANGE (my d_verticalScrollBar -> d_widget), vv - vi);

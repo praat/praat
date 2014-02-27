@@ -143,18 +143,6 @@ long computeRingBufferSize( const PaStreamParameters *inputParameters,
                                    long outputFramesPerBuffer,
                                    double sampleRate );
 
-/*
- * Durring testing of core audio, I found that serious crashes could occur
- * if properties such as sample rate were changed multiple times in rapid
- * succession. The function below has some fancy logic to make sure that changes
- * are acknowledged before another is requested. That seems to help a lot.
- */
-
-typedef struct {
-   bool once; /* I didn't end up using this. bdr */
-   pthread_mutex_t mutex;
-} MutexAndBool ;
-
 OSStatus propertyProc(
     AudioDeviceID inDevice, 
     UInt32 inChannel, 
@@ -202,4 +190,29 @@ PaError setBestFramesPerBuffer( const AudioDeviceID device,
                                 const bool isOutput,
                                 UInt32 requestedFramesPerBuffer, 
                                 UInt32 *actualFramesPerBuffer );
+
+
+/*********************
+ *
+ *  xrun handling
+ *
+ *********************/
+
+OSStatus xrunCallback(
+    AudioDeviceID inDevice, 
+    UInt32 inChannel, 
+    Boolean isInput, 
+    AudioDevicePropertyID inPropertyID, 
+    void* inClientData ) ;
+
+/** returns zero on success or a unix style error code. */
+int initializeXRunListenerList();
+/** returns zero on success or a unix style error code. */
+int destroyXRunListenerList();
+
+/**Returns the list, so that it can be passed to CorAudio.*/
+void *addToXRunListenerList( void *stream );
+/**Returns the number of Listeners in the list remaining.*/
+int removeFromXRunListenerList( void *stream );
+
 #endif /* PA_MAC_CORE_UTILITIES_H__*/

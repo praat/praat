@@ -1,6 +1,6 @@
 /* praat_logo.cpp
  *
- * Copyright (C) 1996-2012,2013 Paul Boersma, 2008 Stefan de Konink
+ * Copyright (C) 1996-2012,2013,2014 Paul Boersma, 2008 Stefan de Konink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +65,11 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	if (theLogo.graphics == NULL)
 		theLogo.graphics = Graphics_create_xmdrawingarea (theLogo.drawingArea);
 	#if gtk
-		Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
+		#if ALLOW_GDK_DRAWING
+			Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (GDK_DRAWABLE (GTK_WIDGET (event -> widget -> d_widget) -> window)));
+		#else
+			Graphics_x_setCR (theLogo.graphics, gdk_cairo_create (gtk_widget_get_window (GTK_WIDGET (event -> widget -> d_widget))));
+		#endif
 		cairo_rectangle ((cairo_t *) Graphics_x_getCR (theLogo.graphics), (double) event->x, (double) event->y, (double) event->width, (double) event->height);
 		cairo_clip ((cairo_t *) Graphics_x_getCR (theLogo.graphics));
 		theLogo.draw (theLogo.graphics);

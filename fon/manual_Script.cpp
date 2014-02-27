@@ -147,7 +147,7 @@ NORMAL (L"To add a fixed button from a script (perhaps your @@initialization scr
 	"use the hidden shell command @@Add menu command...@ instead.")
 MAN_END
 
-MAN_BEGIN (L"binomialQ", L"ppgb", 20130421)
+MAN_BEGIN (L"binomialQ", L"ppgb", 20140223)
 INTRO (L"A function that can be used in @@Formulas@. The complement of the cumulative binomial distribution.")
 ENTRY (L"Syntax")
 TAG (L"$$binomialQ (%p, %k, %n)")
@@ -167,13 +167,13 @@ NORMAL (L"You convert 1000 values of pitch targets in Hz to the nearest note on 
 CODE (L"a = 597")
 CODE (L"b = 403")
 CODE (L"p = 7/12 ; no preference")
-CODE (L"writeInfoLine (\"*** Binomial test \", a, \", \", b, \", p = \", fixed\\$  (p, 6), \" ***\")")
+CODE (L"writeInfoLine: \"*** Binomial test \", a, \", \", b, \", p = \", fixed\\$  (p, 6), \" ***\"")
 CODE (L"pbin = binomialQ (p, a, a+b)")
-CODE (L"appendInfoLine (\"P (binomial) = \", fixed\\$  (pbin, 6))")
+CODE (L"appendInfoLine: \"P (binomial) = \", fixed\\$  (pbin, 6)")
 CODE (L"\\#  Chi-square test with Yates correction:")
 CODE (L"x2 = (a - 1/2 - p * (a+b))\\^ 2/(p*(a+b)) + (b + 1/2 - (1-p) * (a+b))\\^ 2/((1-p)*(a+b))")
 CODE (L"px2 = chiSquareQ (x2, 1)")
-CODE (L"appendInfoLine (\"P (chi-square) = \", fixed\\$  (px2, 6))")
+CODE (L"appendInfoLine: \"P (chi-square) = \", fixed\\$  (px2, 6)")
 NORMAL (L"The result is:")
 CODE (L"*** Binomial test 597, 403, p = 0.583333 ***")
 CODE (L"P (binomial) = 0.199330")
@@ -544,7 +544,7 @@ TAG (L"\\bu ##self (%%x-expression%)")
 DEFINITION (L"the expression is linearly interpolated between the two nearest samples (or frames).")
 MAN_END
 
-MAN_BEGIN (L"Formulas 1.9. Formulas in scripts", L"ppgb", 20140107)
+MAN_BEGIN (L"Formulas 1.9. Formulas in scripts", L"ppgb", 20140223)
 INTRO (L"In scripts, you can assign numeric expressions to numeric variables, "
 	"and string expressions to string variables. You can also use numeric and string variables in expressions.")
 ENTRY (L"Example: report a square")
@@ -552,7 +552,7 @@ NORMAL (L"Choose @@New Praat script@ from the @@Praat menu@. A script editor win
 	"Type the following lines into that window:")
 CODE (L"x = 99")
 CODE (L"x2 = x * x")
-CODE (L"writeInfoLine (\"The square of \", x, \" is \", x2, \".\")")
+CODE (L"writeInfoLine: \"The square of \", x, \" is \", x2, \".\"")
 NORMAL (L"This is an example of a simple @@Praat script@; it assigns the results of the numeric formulas $$99$ and $$x * x$ "
 	"to the numeric variables %x and %x2. Note that the formula $$x * x$ itself refers to the variable %x. "
 	"To run (execute) this script, type Command-R or choose #Run from the #Run menu. "
@@ -565,7 +565,7 @@ CODE (L"current\\$  = \"Bush\"")
 CODE (L"previous\\$  = \"Clinton\"")
 CODE (L"famous\\$  = \"Lincoln\"")
 CODE (L"newCapital\\$  = current\\$  + mid\\$  (famous\\$ , 2, 3) + right\\$  (previous\\$ , 3)")
-CODE (L"writeInfoLine (\"The new capital will be \", newCapital\\$ , \".\")")
+CODE (L"writeInfoLine: \"The new capital will be \", newCapital\\$ , \".\"")
 NORMAL (L"This script assigns the results of four string expressions to the four string variables %%current\\$ %, "
 	"%%previous\\$ %, %%famous\\$ %, and %%newCapital\\$ %. The dollar sign is the notation for a string variable or "
 	"for a function whose result is a string (like ##left\\$ #). Note that the formula in the fourth line refers to three existing "
@@ -844,7 +844,7 @@ TAG (L"##besselI (%n, %x)")
 TAG (L"##besselK (%n, %x)")
 MAN_END
 
-MAN_BEGIN (L"Formulas 5. String functions", L"ppgb", 20131208)
+MAN_BEGIN (L"Formulas 5. String functions", L"ppgb", 20140223)
 INTRO (L"String functions are functions that either return a text string or have at least one text string as an argument. "
 	"Since string computations are not very useful in the @calculator, in settings windows, or in creation and "
 	"modification formulas, this page only gives examples of strings in scripts, so that the example may contain "
@@ -923,7 +923,7 @@ DEFINITION (L"the same as ##fixed\\$ #, but with a percent sign. For instance, $
 TAG (L"##number (a\\$ )")
 DEFINITION (L"interprets a string as a number.")
 		CODE2 (L"string\\$  = \"5e6\"")
-		CODE2 (L"writeInfoLine (3 + number (string\\$ ))")
+		CODE2 (L"writeInfoLine: 3 + number (string\\$ )")
 DEFINITION (L"the Info window contains the number 500003.")
 TAG (L"##date\\$  ( )")
 DEFINITION (L"gives the date and time in the following format:")
@@ -931,7 +931,7 @@ DEFINITION (L"gives the date and time in the following format:")
 DEFINITION (L"To write the day of the month into the Info window, you type:")
 		CODE2 (L"date\\$  = date\\$  ()")
 		CODE2 (L"day\\$  = mid\\$  (date\\$ , 9, 2)")
-		CODE2 (L"writeInfoLine (\"The month day is \", day\\$ , \".\")")
+		CODE2 (L"writeInfoLine: \"The month day is \", day\\$ , \".\"")
 TAG (L"##extractNumber (\"Type: Sound\" + newline\\$  + \"Name: hello there\" + newline\\$  + \"Size: 44007\", \"Size:\")")
 DEFINITION (L"looks for a number after the first occurrence of \"Size:\" in the long string. Outcome: 44007. "
 	"This is useful in scripts that try to get information from long reports, as the following script that "
@@ -1050,7 +1050,7 @@ NORMAL (L"causes the sound to decay exponentially in such a way that it has only
 NORMAL (L"More examples of the use of attributes are on the next page.")
 MAN_END
 
-MAN_BEGIN (L"Formulas 8. Data in objects", L"ppgb", 20140107)
+MAN_BEGIN (L"Formulas 8. Data in objects", L"ppgb", 20140223)
 NORMAL (L"With square brackets, you can get the values inside some objects.")
 ENTRY (L"Object contents in the calculator")
 NORMAL (L"The outcomes of the following examples can be checked with the @calculator.")
@@ -1122,7 +1122,7 @@ CODE (L"sumDiagonal = 0")
 CODE (L"for i to Matrix_hello.ncol")
 	CODE1 (L"sumDiagonal += Matrix_hello [i, i]")
 CODE (L"endfor")
-CODE (L"writeInfoLine (\"The sum of cells along the diagonal is \", sumDiagonal, \".\")")
+CODE (L"writeInfoLine: \"The sum of cells along the diagonal is \", sumDiagonal, \".\"")
 NORMAL (L"This example could have been written completely with commands from the dynamic menu:")
 CODE (L"select Matrix hello")
 CODE (L"sumDiagonal = 0")
@@ -1131,7 +1131,7 @@ CODE (L"for i to ncol")
 	CODE1 (L"value = Get value in cell: i, i")
 	CODE1 (L"sumDiagonal += value")
 CODE (L"endfor")
-CODE (L"writeInfoLine (\"The sum of cells along the diagonal is \", sumDiagonal, \".\")")
+CODE (L"writeInfoLine: \"The sum of cells along the diagonal is \", sumDiagonal, \".\"")
 NORMAL (L"The first version, which accesses the contents directly, is not only three lines shorter, but also three times faster.")
 MAN_END
 
@@ -2077,7 +2077,7 @@ LIST_ITEM (L"@@Scripting 4.2. Removing objects")
 LIST_ITEM (L"@@Scripting 4.3. Querying objects")
 MAN_END
 
-MAN_BEGIN (L"Scripting 4.1. Selecting objects", L"ppgb", 20140111)
+MAN_BEGIN (L"Scripting 4.1. Selecting objects", L"ppgb", 20140223)
 NORMAL (L"To simulate the mouse-clicked and dragged selection in the list of objects, "
 	"you have the commands #selectObject, #plusObject and #minusObject.")
 NORMAL (L"Suppose you start Praat and use ##Create Sound as tone...# to create a Sound called %tone. "
@@ -2110,7 +2110,7 @@ NORMAL (L"or even")
 CODE (L"#selectObject: 1, \"Spectrum tone\"")
 ENTRY (L"How to refer to objects created in your script")
 NORMAL (L"In a script, you typically don't know whether the IDs of the objects are 1 and 2, or much higher numbers. "
-	"Fortunately, the #do function gives you the ID of the object that is created, "
+	"Fortunately, commands that create a new object give you the ID of the object that is created, "
 	"so that you can refer to the object later on. For instance, suppose you want to generate a sine wave, play it, "
 	"draw its spectrum, and then throw away both the Sound and the Spectrum. Here is how you do it:")
 CODE (L"sound = Create Sound as pure tone: \"sine377\",")
@@ -2710,15 +2710,15 @@ DEFINITION (L"stops the execution of the script while sending an error message t
 NORMAL (L"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20130428)
-LIST_ITEM (L"@@Scripting 6.1. Arguments to the script@ (form/endform, execute)")
+MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20140223)
+LIST_ITEM (L"@@Scripting 6.1. Arguments to the script@ (form/endform, runScript)")
 LIST_ITEM (L"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
 LIST_ITEM (L"@@Scripting 6.3. Query commands@ (Get, Count)")
 LIST_ITEM (L"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createDirectory)")
 LIST_ITEM (L"@@Scripting 6.5. Calling system commands@ (system, environment\\$ , stopwatch)")
 LIST_ITEM (L"@@Scripting 6.6. Controlling the user@ (pause, beginPause/endPause, chooseReadFile\\$ )")
 LIST_ITEM (L"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
-LIST_ITEM (L"@@Scripting 6.8. Messages to the user@ (exit, assert, nowarn, nocheck)")
+LIST_ITEM (L"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn, nocheck)")
 LIST_ITEM (L"@@Scripting 6.9. Calling from the command line")
 MAN_END
 
@@ -2835,7 +2835,7 @@ NORMAL (L"With #runScript, Praat will not display a form window, but simply exec
 	"with the two arguments that you supply on the same line (e.g. 550 and 0.9).")
 NORMAL (L"Values for #choice must be passed as strings:")
 CODE (L"#runScript: \"fill attributes.praat\", \"Navy blue\", \"With holes\"")
-NORMAL (L"You can pass values for #boolean either as \"yes\" and \"no\" or 1 and 0.")
+NORMAL (L"You can pass values for #boolean either as \"yes\" and \"no\" or as 1 and 0.")
 MAN_END
 
 MAN_BEGIN (L"Scripting 6.2. Writing to the Info window", L"ppgb", 20140111)
@@ -3640,7 +3640,7 @@ LIST_ITEM (L"@@Script for TextGrid boundary drawing")
 LIST_ITEM (L"@@Script for analysing pitch with a TextGrid")
 MAN_END
 
-MAN_BEGIN (L"Script for listing time\\--F0 pairs", L"ppgb", 20140112)
+MAN_BEGIN (L"Script for listing time\\--F0 pairs", L"ppgb", 20140223)
 INTRO (L"\"I wish to have a list of time markers in one column and F0 in the other. "
 	"Those times that have no voiced data should be represented as \\\"l.\\\"r in the F0 column.\"")
 CODE (L"writeInfoLine: \"Time:    Pitch:\"")
@@ -3649,9 +3649,9 @@ CODE (L"for iframe to numberOfFrames")
 	CODE1 (L"time = Get time from frame: iframe")
 	CODE1 (L"pitch = Get value in frame: iframe, \"Hertz\"")
 	CODE1 (L"if pitch = undefined")
-		CODE2 (L"appendInfoLine (fixed\\$  (time, 6))")
+		CODE2 (L"appendInfoLine: fixed\\$  (time, 6)")
 	CODE1 (L"else")
-		CODE2 (L"appendInfoLine (fixed\\$  (time, 6), \" \", fixed\\$  (pitch, 3))")
+		CODE2 (L"appendInfoLine: fixed\\$  (time, 6), \" \", fixed\\$  (pitch, 3)")
 	CODE1 (L"endif")
 CODE (L"endfor")
 NORMAL (L"If you want to see this in a text file, you can copy and paste from the Info window, or save the Info window, "

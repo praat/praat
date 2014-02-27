@@ -1378,23 +1378,23 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 				continue;
             
 			/*
-			 * Undraw the text.
-			 */
-			drawWhileDragging (this, anchorForDragging, xold);
-			/*
 			 * Undraw previous dragged selection.
 			 */
 			if (xold > anchorForDragging) x1 = anchorForDragging, x2 = xold; else x1 = xold, x2 = anchorForDragging;
 			if (x1 != x2) v_unhighlightSelection (x1, x2, 0, 1);
 			/*
-			 * Draw new dragged selection.
+			 * Undraw the text.
 			 */
-			if (x > anchorForDragging) x1 = anchorForDragging, x2 = x; else x1 = x, x2 = anchorForDragging;
-			if (x1 != x2) v_highlightSelection (x1, x2, 0, 1);
+			drawWhileDragging (this, anchorForDragging, xold);
 			/*
 			 * Redraw the text at the new location.
 			 */
             drawWhileDragging (this, anchorForDragging, x);
+			/*
+			 * Draw new dragged selection.
+			 */
+			if (x > anchorForDragging) x1 = anchorForDragging, x2 = x; else x1 = x, x2 = anchorForDragging;
+			if (x1 != x2) v_highlightSelection (x1, x2, 0, 1);
         } ;
 		/*
 		 * Set the new selection.

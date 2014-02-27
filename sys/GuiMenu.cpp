@@ -88,18 +88,38 @@ void structGuiMenu :: v_destroy () {
 					}
 				}
 			} else if (character == NSBackTabCharacter) {
+				/*
+				 * One can get here by pressing Shift-Tab.
+				 *
+				 * But that is not the only way to get here:
+				 * NSBackTabCharacter equals 25, which may be the reason why
+				 * one can get here as well by pressing Ctrl-Y (Y is the 25th letter in the alphabet).
+				 */
 				NSWindow *cocoaKeyWindow = [NSApp keyWindow];
 				if ([cocoaKeyWindow class] == [GuiCocoaWindow class]) {
 					GuiWindow window = (GuiWindow) [(GuiCocoaWindow *) cocoaKeyWindow userData];
-					Melder_assert ([nsEvent modifierFlags] & NSShiftKeyMask);
-					if (window -> d_shiftTabCallback) {
-						try {
-							struct structGuiMenuItemEvent event = { NULL, 0 };
-							window -> d_shiftTabCallback (window -> d_shiftTabBoss, & event);
-						} catch (MelderError) {
-							Melder_flushError ("Tab key not completely handled.");
+					if ([nsEvent modifierFlags] & NSShiftKeyMask) {
+						/*
+						 * Make sure we got here by Shift-Tab rather than Ctrl-Y.
+						 */
+						if (window -> d_shiftTabCallback) {
+							try {
+								struct structGuiMenuItemEvent event = { NULL, 0 };
+								window -> d_shiftTabCallback (window -> d_shiftTabBoss, & event);
+							} catch (MelderError) {
+								Melder_flushError ("Tab key not completely handled.");
+							}
+							return;
 						}
-						return;
+					} else {
+						/*
+						 * We probably got in this branch by pressing Ctrl-Y.
+						 * People sometimes press that because it means "yank" (= Paste) in Emacs,
+						 * and indeed sending this key combination on, as we do here,
+						 * implements (together with Ctrl-K = "kil" = Cut)
+						 * a special cut & paste operation in text fields.
+						 */
+						// do nothing, i.e. send on
 					}
 				}
 			} else if (character == NSDeleteCharacter) {
@@ -118,7 +138,7 @@ void structGuiMenu :: v_destroy () {
 				}
 			}
 		}
-		[super sendEvent: nsEvent];   // the default action
+		[super sendEvent: nsEvent];   // the default action: send on
 	}
 	/*
 	 * The delegate methods.

@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,15 +48,17 @@ static void psRevertLine (GraphicsPostscript me) {
 }
 
 #if cairo
-	static void gdkPrepareLine (GraphicsScreen me) {
-		gdk_gc_set_line_attributes (my d_gdkGraphicsContext, my lineWidth,
-			my lineType >= Graphics_DOTTED ? GDK_LINE_ON_OFF_DASH : GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
-	}
-	static void gdkRevertLine (GraphicsScreen me) {
-		if (my lineType >= Graphics_DOTTED) {
-			gdk_gc_set_line_attributes (my d_gdkGraphicsContext, my lineWidth, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+	#if ALLOW_GDK_DRAWING
+		static void gdkPrepareLine (GraphicsScreen me) {
+			gdk_gc_set_line_attributes (my d_gdkGraphicsContext, my lineWidth,
+				my lineType >= Graphics_DOTTED ? GDK_LINE_ON_OFF_DASH : GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
 		}
-	}
+		static void gdkRevertLine (GraphicsScreen me) {
+			if (my lineType >= Graphics_DOTTED) {
+				gdk_gc_set_line_attributes (my d_gdkGraphicsContext, my lineWidth, GDK_LINE_SOLID, GDK_CAP_ROUND, GDK_JOIN_ROUND);
+			}
+		}
+	#endif
 	static void cairoPrepareLine (GraphicsScreen me) {
 		if (my d_cairoGraphicsContext == NULL) return;
 		double dotted_line [] = { 2, 2 };
@@ -155,11 +157,14 @@ static void psRevertLine (GraphicsPostscript me) {
 void structGraphicsScreen :: v_polyline (long numberOfPoints, long *xyDC, bool close) {
 	#if cairo
 		if (duringXor) {
-			gdkPrepareLine (this);
-			for (long i = 0; i < numberOfPoints - 1; i ++) {
-				gdk_draw_line (d_window, d_gdkGraphicsContext, xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
-			}
-			gdkRevertLine (this);
+			#if ALLOW_GDK_DRAWING
+				gdkPrepareLine (this);
+				for (long i = 0; i < numberOfPoints - 1; i ++) {
+					gdk_draw_line (d_window, d_gdkGraphicsContext, xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
+				}
+				gdkRevertLine (this);
+				gdk_flush ();
+			#endif
 		} else {
 			if (d_cairoGraphicsContext == NULL) return;
 			cairoPrepareLine (this);
@@ -378,9 +383,12 @@ void structGraphicsPostscript :: v_fillRectangle (long x1DC, long x2DC, long y1D
 void structGraphicsScreen :: v_circle (double xDC, double yDC, double rDC) {
 	#if cairo
 		if (duringXor) {
-			gdkPrepareLine (this);
-			gdk_draw_arc (d_window, d_gdkGraphicsContext, FALSE, xDC - rDC, yDC - rDC, rDC + rDC, rDC + rDC, 0, 360 * 64);
-			gdkRevertLine (this);
+			#if ALLOW_GDK_DRAWING
+				gdkPrepareLine (this);
+				gdk_draw_arc (d_window, d_gdkGraphicsContext, FALSE, xDC - rDC, yDC - rDC, rDC + rDC, rDC + rDC, 0, 360 * 64);
+				gdkRevertLine (this);
+				gdk_flush ();
+			#endif
 		} else {
 			if (d_cairoGraphicsContext == NULL) return;
 			cairoPrepareLine (this);
@@ -572,7 +580,12 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 		if (d_drawingArea && 0) {
 			// clip to drawing area
 			int w, h;
-			gdk_drawable_get_size (d_window, & w, & h);
+			#if ALLOW_GDK_DRAWING
+				gdk_drawable_get_size (d_window, & w, & h);
+			#else
+				w = gdk_window_get_width (d_window);
+				h = gdk_window_get_height (d_window);
+			#endif
 			cairo_rectangle (d_cairoGraphicsContext, 0, 0, w, h);
 			cairo_clip (d_cairoGraphicsContext);
 		}
@@ -626,7 +639,7 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
         CGRect rect = CGRectMake (x1DC, y2DC, width, height);
         CGContextAddRect (d_macGraphicsContext, rect);
         CGContextStrokePath (d_macGraphicsContext);
-		x1DC ++, x2DC --, y1DC --, y2DC ++, width -= 2, height -= 2;
+		x1DC ++, x2DC --, y1DC --, y2DC ++, width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width > 0 && height > 0) {
 			red = 0.5, green = 0.5, blue = 0.4;
 			CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
@@ -643,6 +656,7 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
             CGContextAddLineToPoint (d_macGraphicsContext, x2DC, y2DC);
             CGContextStrokePath (d_macGraphicsContext);
 			if (width > 2 && height > 2) {
+				if (! isRetinaDisplay) x1DC ++, width = x2DC - x1DC, height = y1DC - y2DC;
 				red = 0.75, green = 0.75, blue = 0.65;
 				CGContextSetRGBFillColor (d_macGraphicsContext, red, green, blue, 1.0);
 				rect = CGRectMake (x1DC, y2DC, width, height);

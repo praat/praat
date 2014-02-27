@@ -2,7 +2,7 @@
 #define _GraphicsP_h_
 /* GraphicsP.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,8 +50,13 @@ Thing_define (GraphicsScreen, Graphics) {
 	public:
 		#if defined (UNIX)
 			GdkDisplay *d_display;
-			GdkDrawable *d_window;
-			GdkGC *d_gdkGraphicsContext;
+			#if ALLOW_GDK_DRAWING
+				GdkDrawable *d_window;
+				GdkGC *d_gdkGraphicsContext;
+			#else
+				GdkWindow *d_window;
+			#endif
+			cairo_surface_t *d_cairoSurface;
 			cairo_t *d_cairoGraphicsContext;
 		#elif defined (_WIN32)
 			HWND d_winWindow;

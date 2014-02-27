@@ -460,7 +460,7 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 		top += Machine_getTitleBarHeight ();
 		bottom += Machine_getTitleBarHeight ();
 	#endif
-	my d_windowForm = GuiWindow_create (left, top, width, height, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
+	my d_windowForm = GuiWindow_create (left, top, width, height, 450, 250, title, gui_window_cb_goAway, me, my v_canFullScreen () ? GuiWindow_FULLSCREEN : 0);
 	Thing_setName (me, title);
 	my data = data;
 	my v_copyPreferencesToInstance ();

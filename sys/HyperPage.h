@@ -2,7 +2,7 @@
 #define _HyperPage_h_
 /* HyperPage.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ Thing_define (HyperPage, Editor) {
 	public:
 		GuiDrawingArea drawingArea;
 		GuiScrollBar verticalScrollBar;
+		bool d_hasExtraRowOfTools;
 		Graphics g, ps;
 		double d_x, d_y, rightMargin, previousBottomSpacing;
 		long d_printingPageNumber;

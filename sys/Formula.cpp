@@ -38,7 +38,10 @@
 static Interpreter theInterpreter, theLocalInterpreter;
 static Data theSource;
 static const wchar_t *theExpression;
-static int theExpressionType, theOptimize;
+static int theLevel = 1;
+#define MAXIMUM_NUMBER_OF_LEVELS  20
+static int theExpressionType [1 + MAXIMUM_NUMBER_OF_LEVELS];
+static int theOptimize;
 
 static struct Formula_NumericArray theZeroNumericArray = { 0, 0, NULL };
 
@@ -506,7 +509,7 @@ static void Formula_lexan (void) {
 				 */
 				int jkar = ikar + 1;
 				while (theExpression [jkar] == ' ' || theExpression [jkar] == '\t') jkar ++;
-				if (theExpression [jkar] == '(') {
+				if (theExpression [jkar] == '(' || theExpression [jkar] == ':') {
 					Melder_throw (
 						"Unknown function " L_LEFT_GUILLEMET, token.string, L_RIGHT_GUILLEMET " in formula.");
 				} else if (theExpression [jkar] == '[' && ! isArray) {
@@ -1826,7 +1829,7 @@ void Formula_compile (Any interpreter, Any data, const wchar_t *expression, int 
 	}
 	theSource = (Data) data;
 	theExpression = expression;
-	theExpressionType = expressionType;
+	theExpressionType [theLevel] = expressionType;
 	theOptimize = optimize;
 	if (! lexan) {
 		lexan = Melder_calloc_f (struct structFormulaInstruction, 3000);
@@ -2674,7 +2677,14 @@ static void do_runScript () {
 	Stackel fileName = & theStack [w + 1];
 	if (fileName->which != Stackel_STRING)
 		Melder_throw ("The first argument to \"runScript\" has to be a string (the file name), not ", Stackel_whichText (fileName));
-	praat_executeScriptFromFileName (fileName->string, numberOfArguments - 1, & theStack [w + 1]);
+	theLevel += 1;
+	try {
+		praat_executeScriptFromFileName (fileName->string, numberOfArguments - 1, & theStack [w + 1]);
+		theLevel -= 1;
+	} catch (MelderError) {
+		theLevel -= 1;
+		throw;
+	}
 	pushNumber (1);
 }
 static void do_min (void) {
@@ -4897,25 +4907,26 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 			programPointer ++;
 		} // endwhile
 		if (w != 1) Melder_fatal ("Formula: stackpointer ends at %ld instead of 1.", w);
-		if (theExpressionType == kFormula_EXPRESSION_TYPE_NUMERIC) {
+		if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC) {
 			if (theStack [1]. which == Stackel_STRING) Melder_throw ("Found a string expression instead of a numeric expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_ARRAY) Melder_throw ("Found a numeric array expression instead of a numeric expression.");
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 			result -> result.numericResult = theStack [1]. number;
-		} else if (theExpressionType == kFormula_EXPRESSION_TYPE_STRING) {
-			if (theStack [1]. which == Stackel_NUMBER) Melder_throw ("Found a numeric expression instead of a string expression.");
+		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_STRING) {
+			if (theStack [1]. which == Stackel_NUMBER)
+				Melder_throw ("Found a numeric expression (value ", theStack [1]. number, ") instead of a string expression.");
 			if (theStack [1]. which == Stackel_NUMERIC_ARRAY) Melder_throw ("Found a numeric array expression instead of a string expression.");
 			result -> expressionType = kFormula_EXPRESSION_TYPE_STRING;
 			result -> result.stringResult = theStack [1]. string;   // dangle...
 			theStack [1]. string = NULL;   // ...undangle (and disown)
-		} else if (theExpressionType == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
+		} else if (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY) {
 			if (theStack [1]. which == Stackel_NUMBER) Melder_throw ("Found a numeric expression instead of a numeric array expression.");
 			if (theStack [1]. which == Stackel_STRING) Melder_throw ("Found a string expression instead of a numeric array expression.");
 			result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC_ARRAY;
 			result -> result.numericArrayResult = theStack [1]. numericArray;   // dangle
 			theStack [1]. numericArray = theZeroNumericArray;   // ...undangle (and disown)
 		} else {
-			Melder_assert (theExpressionType == kFormula_EXPRESSION_TYPE_UNKNOWN);
+			Melder_assert (theExpressionType [theLevel] == kFormula_EXPRESSION_TYPE_UNKNOWN);
 			if (theStack [1]. which == Stackel_NUMBER) {
 				result -> expressionType = kFormula_EXPRESSION_TYPE_NUMERIC;
 				result -> result.numericResult = theStack [1]. number;

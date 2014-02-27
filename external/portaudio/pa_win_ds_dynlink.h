@@ -41,7 +41,7 @@
 
 /**
  @file
- @ingroup hostaip_src
+ @ingroup hostapi_src
 */
 
 #ifndef INCLUDED_PA_DSOUND_DYNLINK_H
@@ -56,9 +56,13 @@
 #endif
 
 /*
-  We are only using DX3 in here, no need to polute the namespace - davidv
+  Use the earliest version of DX required, no need to polute the namespace
 */
+#ifdef PAWIN_USE_DIRECTSOUNDFULLDUPLEXCREATE
+#define DIRECTSOUND_VERSION 0x0800
+#else
 #define DIRECTSOUND_VERSION 0x0300
+#endif
 #include <dsound.h>
 
 #ifdef __cplusplus
@@ -80,6 +84,13 @@ typedef struct
     HRESULT (WINAPI *DirectSoundCaptureCreate)(LPGUID, LPDIRECTSOUNDCAPTURE *, LPUNKNOWN);
     HRESULT (WINAPI *DirectSoundCaptureEnumerateW)(LPDSENUMCALLBACKW, LPVOID);
     HRESULT (WINAPI *DirectSoundCaptureEnumerateA)(LPDSENUMCALLBACKA, LPVOID);
+
+#ifdef PAWIN_USE_DIRECTSOUNDFULLDUPLEXCREATE
+    HRESULT (WINAPI *DirectSoundFullDuplexCreate8)(
+                LPCGUID, LPCGUID, LPCDSCBUFFERDESC, LPCDSBUFFERDESC,
+                HWND, DWORD, LPDIRECTSOUNDFULLDUPLEX *, LPDIRECTSOUNDCAPTUREBUFFER8 *, 
+                LPDIRECTSOUNDBUFFER8 *, LPUNKNOWN );
+#endif
 }PaWinDsDSoundEntryPoints;
 
 extern PaWinDsDSoundEntryPoints paWinDsDSoundEntryPoints;

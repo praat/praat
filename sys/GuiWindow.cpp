@@ -1,6 +1,6 @@
 /* GuiWindow.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,6 +54,35 @@ Thing_implement (GuiWindow, GuiShell, 0);
 		}
 		return TRUE;
 	}
+	static void _GuiWindow_child_resizeCallback (GtkWidget *childWidget, gpointer data) {
+		GtkAllocation *allocation = (GtkAllocation *) data;
+		GtkWidget *parentWidget = gtk_widget_get_parent (childWidget);
+		Thing_cast (GuiThing, child, _GuiObject_getUserData (childWidget));
+		if (child) {
+			GuiControl control = NULL;
+			if (Thing_member (child, classGuiControl)) {
+				control = static_cast <GuiControl> (child);
+			} else if (Thing_member (child, classGuiMenu)) {
+				Thing_cast (GuiMenu, menu, child);
+				control = menu -> d_cascadeButton;
+			}
+			if (control) {
+				/*
+				 * Move and resize.
+				 */
+				trace ("moving child of class %ls", Thing_className (control));
+				int left = control -> d_left, right = control -> d_right, top = control -> d_top, bottom = control -> d_bottom;
+				if (left   <  0) left   += allocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
+				if (right  <= 0) right  += allocation -> width;
+				if (top    <  0) top    += allocation -> height;
+				if (bottom <= 0) bottom += allocation -> height;
+				trace ("moving child to (%d,%d)", left, top);
+				gtk_fixed_move (GTK_FIXED (parentWidget), GTK_WIDGET (childWidget), left, top);
+				gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
+				trace ("moved child of class %ls", Thing_className (control));
+			}
+		}
+	}
 	static gboolean _GuiWindow_resizeCallback (GuiObject widget, GtkAllocation *allocation, gpointer void_me) {
 		(void) widget;
 		iam (GuiWindow);
@@ -68,37 +97,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 			/*
 			 * We move and resize all the children of the fixed.
 			 */
-			GList *children = GTK_FIXED (widget) -> children;
-			for (GList *l = g_list_first (children); l != NULL; l = g_list_next (l)) {
-				GtkFixedChild *listElement = (GtkFixedChild *) l -> data;
-				GtkWidget *childWidget = listElement -> widget;
-				Melder_assert (childWidget);
-				Thing_cast (GuiThing, child, _GuiObject_getUserData (childWidget));
-				if (child) {
-					GuiControl control = NULL;
-					if (Thing_member (child, classGuiControl)) {
-						control = static_cast <GuiControl> (child);
-					} else if (Thing_member (child, classGuiMenu)) {
-						Thing_cast (GuiMenu, menu, child);
-						control = menu -> d_cascadeButton;
-					}
-					if (control) {
-						/*
-						 * Move and resize.
-						 */
-						trace ("moving child of class %ls", Thing_className (control));
-						int left = control -> d_left, right = control -> d_right, top = control -> d_top, bottom = control -> d_bottom;
-						if (left   <  0) left   += allocation -> width;   // this replicates structGuiControl :: v_positionInForm ()
-						if (right  <= 0) right  += allocation -> width;
-						if (top    <  0) top    += allocation -> height;
-						if (bottom <= 0) bottom += allocation -> height;
-						trace ("moving child to (%d,%d)", left, top);
-						gtk_fixed_move (GTK_FIXED (widget), GTK_WIDGET (childWidget), left, top);
-						gtk_widget_set_size_request (GTK_WIDGET (childWidget), right - left, bottom - top);
-						trace ("moved child of class %ls", Thing_className (control));
-					}
-				}
-			}
+			gtk_container_foreach (GTK_CONTAINER (widget), _GuiWindow_child_resizeCallback, allocation);
 			my d_width = allocation -> width;
 			my d_height = allocation -> height;
 			gtk_widget_set_size_request (GTK_WIDGET (widget), allocation -> width, allocation -> height);
@@ -163,7 +162,7 @@ Thing_implement (GuiWindow, GuiShell, 0);
 	}
 #endif
 
-GuiWindow GuiWindow_create (int x, int y, int width, int height,
+GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidth, int minimumHeight,
 	const wchar_t *title, void (*goAwayCallback) (void *goAwayBoss), void *goAwayBoss, unsigned long flags)
 {
 	GuiWindow me = Thing_new (GuiWindow);
@@ -177,13 +176,15 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 		g_signal_connect (G_OBJECT (my d_gtkWindow), "destroy-event", G_CALLBACK (_GuiWindow_destroyCallback), me);
 
 		gtk_window_set_default_size (GTK_WINDOW (my d_gtkWindow), width, height);
-		gtk_window_set_policy (GTK_WINDOW (my d_gtkWindow), TRUE, TRUE, FALSE);
+		gtk_window_set_resizable (GTK_WINDOW (my d_gtkWindow), TRUE);
 		my f_setTitle (title);
 
 		my d_widget = gtk_fixed_new ();
 		_GuiObject_setUserData (my d_widget, me);
 		gtk_widget_set_size_request (GTK_WIDGET (my d_widget), width, height);
 		gtk_container_add (GTK_CONTAINER (my d_gtkWindow), GTK_WIDGET (my d_widget));
+		GdkGeometry geometry = { minimumWidth, minimumHeight, 0, 0, 0, 0, 0, 0, 0, 0, GDK_GRAVITY_NORTH_WEST };
+		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_gtkWindow), & geometry, GDK_HINT_MIN_SIZE);
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me);
 	#elif cocoa
 		NSRect rect = { { x, y }, { width, height } };
@@ -193,7 +194,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height,
 			backing: NSBackingStoreBuffered
 			defer: false];
 		[my d_cocoaWindow setCollectionBehavior: NSWindowCollectionBehaviorFullScreenPrimary];
-        [my d_cocoaWindow setMinSize: NSMakeSize (150.0, 150.0)];
+        [my d_cocoaWindow setMinSize: NSMakeSize (minimumWidth, minimumHeight)];
 		my f_setTitle (title);
 		[my d_cocoaWindow makeKeyAndOrderFront: nil];
 		my d_widget = [my d_cocoaWindow contentView];

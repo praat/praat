@@ -163,13 +163,15 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 			if (my d_cairoGraphicsContext == NULL) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
-			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
-			GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
-			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
-			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, width, height);
-			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
-			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
-			gdk_flush ();
+			#if ALLOW_GDK_DRAWING
+				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
+				GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
+				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, width, height);
+				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
+				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
+				gdk_flush ();
+			#endif
 		#elif cocoa
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
@@ -179,6 +181,8 @@ static void highlight (Graphics graphics, long x1DC, long x2DC, long y1DC, long 
 				if (direction == 1) {   // forward
 					NSRect rect = NSMakeRect (x1DC, y2DC, width, height);
 					NSRect windowRect = [nsView convertRect: rect toView: nil];
+					//windowRect.origin.x += 1;
+					//windowRect.size.width -= 2;
 					[[nsView window] cacheImageInRect: windowRect];
 					[drawingArea lockFocus];
 					CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
@@ -243,16 +247,18 @@ static void highlight2 (Graphics graphics, long x1DC, long x2DC, long y1DC, long
 			if (my d_cairoGraphicsContext == NULL) return;
 			int width = x2DC - x1DC, height = y1DC - y2DC;
 			if (width <= 0 || height <= 0) return;
-			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
-			GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
-			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
-			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
-			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
-			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
-			gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
-			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
-			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
-			gdk_flush ();
+			#if ALLOW_GDK_DRAWING
+				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
+				GdkColor pinkXorWhite = { 0, 0x0000, 0x4000, 0x4000 }, black = { 0, 0x0000, 0x0000, 0x0000 };
+				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & pinkXorWhite);
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC, x2DC - x1DC, y2DC_inner - y2DC); // upper
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y2DC_inner, x1DC_inner - x1DC, y1DC_inner - y2DC_inner); // left part
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x2DC_inner, y2DC_inner, x2DC - x2DC_inner, y1DC_inner - y2DC_inner); // right part
+				gdk_draw_rectangle (my d_window, my d_gdkGraphicsContext, TRUE, x1DC, y1DC_inner, x2DC - x1DC, y1DC - y1DC_inner); // lower
+				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
+				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
+				gdk_flush ();
+			#endif
 		#elif cocoa
 			GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*) my d_drawingArea -> d_widget;
 			if (drawingArea) {
@@ -344,11 +350,14 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 				(uint16_t) (colour. red * 65535.0) ^ 0xFFFF,
 				(uint16_t) (colour. green * 65535.0) ^ 0xFFFF,
 				(uint16_t) (colour. blue * 65535.0) ^ 0xFFFF };
-			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & colourXorWhite);
-			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
-			//cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
-			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_XOR);
-			gdk_flush ();
+			#if ALLOW_GDK_DRAWING
+				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & colourXorWhite);
+				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);
+				gdk_flush ();
+			#else
+				cairo_set_source_rgba (my d_cairoGraphicsContext, 1.0, 0.8, 0.8, 0.5);
+				cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_XOR);
+			#endif
 		#elif win
 			SetROP2 (my d_gdiGraphicsContext, R2_XORPEN);
 			colour. red = ((uint16_t) (colour. red * 65535.0) ^ 0xFFFF) / 65535.0;
@@ -369,11 +378,14 @@ void Graphics_xorOff (Graphics graphics) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
 			GdkColor black = { 0, 0x0000, 0x0000, 0x0000 };
-			gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
-			gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
-			//cairo_set_source_rgba (my d_cairoGraphicsContext, 0.0, 0.0, 0.0, 1.0);
-			//cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
-			gdk_flush ();   // to undraw the last drawing
+			#if ALLOW_GDK_DRAWING
+				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & black);
+				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_COPY);
+				gdk_flush ();   // to undraw the last drawing
+			#else
+				cairo_set_source_rgba (my d_cairoGraphicsContext, 0.0, 0.0, 0.0, 1.0);
+				cairo_set_operator (my d_cairoGraphicsContext, CAIRO_OPERATOR_OVER);
+			#endif
 		#elif win
 			SetROP2 (my d_gdiGraphicsContext, R2_COPYPEN);
 			_Graphics_setColour (me, my colour);
