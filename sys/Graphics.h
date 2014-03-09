@@ -146,6 +146,8 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches);
 Graphics Graphics_create_pdf (void *context, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches);
+Graphics Graphics_create_pngfile (MelderFile file, int resolution,
+	double x1inches, double x2inches, double y1inches, double y2inches);
 Graphics Graphics_create_postscriptprinter (void);
 Graphics Graphics_create_screenPrinter (void *display, void *window);
 Graphics Graphics_create_screen (void *display, void *window, int resolution);

@@ -1,6 +1,6 @@
 /* Photo_def.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,9 @@ oo_DEFINE_CLASS (Photo, SampledXY)
 			void f_saveAsAppleIconFile     (MelderFile file);
 			void f_saveAsWindowsIconFile   (MelderFile file);
 		// helpers:
-			#if defined (macintosh)
+			#if defined (_WIN32)
+				void _win_saveAsImageFile (MelderFile file, const wchar_t *which);
+			#elif defined (macintosh)
 				void _mac_saveAsImageFile (MelderFile file, const void *which);
 			#endif
 	#endif

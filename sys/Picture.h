@@ -2,7 +2,7 @@
 #define _Picture_h_
 /* Picture.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,6 +115,7 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file);
 
 void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS);
 void Picture_writeToPdfFile (Picture me, MelderFile file);
+void Picture_writeToPngFile (Picture me, MelderFile file);
 
 void Picture_print (Picture me);
 void Picture_printToPostScriptPrinter (Picture me, int spots, int paperSize, int rotation, double magnification);

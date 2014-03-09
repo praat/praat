@@ -24,6 +24,7 @@
 
 #if defined (_WIN32)
 	#include <windowsx.h>
+	#include <gdiplus.h>
 #elif defined (macintosh)
 	#include "macport_on.h"
     #if useCarbon
@@ -48,6 +49,8 @@ void Graphics_init (Graphics me);
 Thing_define (GraphicsScreen, Graphics) {
 	// new data:
 	public:
+		bool d_isPng;
+		structMelderFile d_file;
 		#if defined (UNIX)
 			GdkDisplay *d_display;
 			#if ALLOW_GDK_DRAWING
@@ -66,6 +69,8 @@ Thing_define (GraphicsScreen, Graphics) {
 			HBRUSH d_winBrush;
 			bool d_fatNonSolid;
 			bool d_useGdiplus;
+			HBITMAP d_gdiBitmap;
+			Gdiplus::Bitmap *d_gdiplusBitmap;
 		#elif defined (macintosh)
             #if useCarbon
                 GrafPtr d_macPort;

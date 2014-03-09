@@ -1,6 +1,6 @@
 /* Graphics_image.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -166,9 +166,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			long arrayWidth = clipx2 - clipx1;
 			long arrayHeight = clipy1 - clipy2;
 			trace ("arrayWidth %f, arrayHeight %f", (double) arrayWidth, (double) arrayHeight);
-			// We're creating an alpha-only surface here (size is 1/4 compared to RGB24 and ARGB)
-			// The grey values are reversed as we let the foreground colour shine through instead of blackening
-			cairo_surface_t *sfc = cairo_image_surface_create (/*CAIRO_FORMAT_A8*/ CAIRO_FORMAT_RGB24, arrayWidth, arrayHeight);
+			cairo_surface_t *sfc = cairo_image_surface_create (CAIRO_FORMAT_RGB24, arrayWidth, arrayHeight);
 			unsigned char *bits = cairo_image_surface_get_data (sfc);
 			int scanLineLength = cairo_image_surface_get_stride (sfc);
 			unsigned char grey [256];
@@ -179,30 +177,23 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			long bitmapWidth = clipx2 - clipx1, bitmapHeight = clipy1 - clipy2;
 			int igrey;
 			/*
-			 * Create a device-independent bitmap, 8 pixels deep, for 256 greys.
+			 * Create a device-independent bitmap, 32 bits deep.
 			 */
-			struct { BITMAPINFOHEADER header; RGBQUAD colours [256]; } bitmapInfo;
-			long scanLineLength = (bitmapWidth + 3) & ~3L;
-			//long scanLineLength = (bitmapWidth * 3 + 3) & ~3L;
+			struct { BITMAPINFOHEADER header; } bitmapInfo;
+			long scanLineLength = bitmapWidth * 4;   // for 24 bits: (bitmapWidth * 3 + 3) & ~3L;
 			HBITMAP bitmap;
-			unsigned char *bits;
+			unsigned char *bits;   // a pointer to memory allocated by VirtualAlloc or by CreateDIBSection ()
 			bitmapInfo. header.biSize = sizeof (BITMAPINFOHEADER);
-			bitmapInfo. header.biWidth = scanLineLength;
+			bitmapInfo. header.biWidth = bitmapWidth;   // scanLineLength;
 			bitmapInfo. header.biHeight = bitmapHeight;
 			bitmapInfo. header.biPlanes = 1;
-			bitmapInfo. header.biBitCount = 8;
-			//bitmapInfo. header.biBitCount = 24;
+			bitmapInfo. header.biBitCount = 32;
 			bitmapInfo. header.biCompression = 0;
 			bitmapInfo. header.biSizeImage = 0;
 			bitmapInfo. header.biXPelsPerMeter = 0;
 			bitmapInfo. header.biYPelsPerMeter = 0;
 			bitmapInfo. header.biClrUsed = 0;
 			bitmapInfo. header.biClrImportant = 0;
-			for (igrey = 0; igrey <= 255; igrey ++) {
-				bitmapInfo. colours [igrey]. rgbRed = igrey;
-				bitmapInfo. colours [igrey]. rgbGreen = igrey;
-				bitmapInfo. colours [igrey]. rgbBlue = igrey;
-			}
 			bitmap = CreateDIBSection (my d_gdiGraphicsContext /* ignored */, (CONST BITMAPINFO *) & bitmapInfo,
 				DIB_RGB_COLORS, (VOID **) & bits, NULL, 0);
 		#elif mac
@@ -227,14 +218,14 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 				}
 		#elif win
 			#define ROW_START_ADDRESS  (bits + (clipy1 - 1 - yDC) * scanLineLength)
-			#define PUT_PIXEL  *pixelAddress ++ = value <= 0 ? 0 : value >= 255 ? 255 : (int) value;
-			/*#define PUT_PIXEL \
+			#define PUT_PIXEL \
 				if (1) { \
 					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
-				}*/
+					*pixelAddress ++ = 0; \
+				}
 		#elif mac
 			#define ROW_START_ADDRESS  (imageData + (clipy1 - 1 - yDC) * bytesPerRow)
 			#define PUT_PIXEL \
@@ -296,10 +287,17 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 							if (green        < 0.0) green        = 0.0; else if (green        > 1.0) green        = 1.0;
 							if (blue         < 0.0) blue         = 0.0; else if (blue         > 1.0) blue         = 1.0;
 							if (transparency < 0.0) transparency = 0.0; else if (transparency > 1.0) transparency = 1.0;
-							*pixelAddress ++ = red          * 255.0;
-							*pixelAddress ++ = green        * 255.0;
-							*pixelAddress ++ = blue         * 255.0;
-							*pixelAddress ++ = transparency * 255.0;
+							#if win
+								*pixelAddress ++ = blue         * 255.0;
+								*pixelAddress ++ = green        * 255.0;
+								*pixelAddress ++ = red          * 255.0;
+								*pixelAddress ++ = 0;
+							#else
+								*pixelAddress ++ = red          * 255.0;
+								*pixelAddress ++ = green        * 255.0;
+								*pixelAddress ++ = blue         * 255.0;
+								*pixelAddress ++ = transparency * 255.0;
+							#endif
 						}
 					} else {
 						unsigned char *ztop = z_byte [itop], *zbottom = z_byte [ibottom];
@@ -671,20 +669,21 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 		if (my d_useGdiplus) {
 			structMelderFile file;
 			Melder_relativePathToFile (relativeFileName, & file);
-			Gdiplus::Image image (file. path);
+			Gdiplus::Bitmap *image = new Gdiplus::Bitmap (file. path);
 			Gdiplus::Graphics dcplus (my d_gdiGraphicsContext);
 			if (x1 == x2 && y1 == y2) {
-				width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
-				height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
+				width = image -> GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
+				height = image -> GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
 			} else if (x1 == x2) {
-				width = height * (double) image. GetWidth () / (double) image. GetHeight ();
+				width = height * (double) image -> GetWidth () / (double) image -> GetHeight ();
 				x1DC -= width / 2, x2DC = x1DC + width;
 			} else if (y1 == y2) {
-				height = width * (double) image. GetHeight () / (double) image. GetWidth ();
+				height = width * (double) image -> GetHeight () / (double) image -> GetWidth ();
 				y2DC -= height / 2, y1DC = y2DC + height;
 			}
 			Gdiplus::Rect rect (x1DC, y2DC, width, height);
-			dcplus. DrawImage (& image, rect);
+			dcplus. DrawImage (image, rect);
+			delete image;
 		}
 	#elif mac
 		structMelderFile file;

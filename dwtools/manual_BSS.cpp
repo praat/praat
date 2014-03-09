@@ -101,7 +101,7 @@ INTRO (L"Detemines the @@Covariance|covariances@ between the channels of a selec
 NORMAL (L"The covariance of a sound is determined by calculating the @@CrossCorrelationTable@ of a multichannel sound for a lag time equal to zero.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20140106)
+MAN_BEGIN (L"Sound: To Sound (blind source separation)...", L"djmw", 20140224)
 INTRO (L"Analyze the selected multi-channel sound into its independent components by an iterative method.")
 NORMAL (L"The @@blind source separation@ method to find the independent components tries to simultaneously diagonalize a number of "
 	"@@CrossCorrelationTable@s that are calculated from the multi-channel sound at different lag times.")
@@ -166,50 +166,50 @@ NORMAL (L"Unfortunately the convergence criteria of these two algorithms cannot 
 	"change in the eigenvectors norm during an iteration.")
 ENTRY (L"Example")
 NORMAL (L"We start by creating a speech synthesizer that need to create two sounds. We will mix the two sounds and finally our blind source separation software will try to undo our mixing by extracting the two original sounds as well as possible from the two mixtures.")
-CODE(L"synth = do (\"Create SpeechSynthesizer...\", \"English\", \"default\")")
-CODE(L"s1 = do (\"To Sound...\", \"This is some text\", \"no\")")
+CODE(L"synth = Create SpeechSynthesizer: \"English\", \"default\"")
+CODE(L"s1 = To Sound: \"This is some text\", \"no\"")
 NORMAL (L"The first speech sound was created from the text \"This is some text\" at a speed of 175 words per minute.")
-CODE(L"selectObject (synth)")
-CODE(L"do (\"Set speech output settings...\", 44100, 0.01, 80, 50, 145, \"no\", \"IPA\")")
-CODE(L"s2 = do (\"To Sound...\", \"Abracadabra, abra\", 0.01, 80, 50, 145, \"yes\", \"no\", \"no\", \"yes\")")
+CODE(L"selectObject: synth")
+CODE(L"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"")
+CODE(L"s2 = To Sound.: \"Abracadabra, abra\", 0.01, 80, 50, 145, \"yes\", \"no\", \"no\", \"yes\"")
 NORMAL (L"The second sound \"Abracadabra, abra\" was synthesized at 145 words per minute with a somewhat larger pitch excursion (80) than the previous sound (50).")
-CODE(L"plusObject (s1)")
-CODE(L"stereo = do (\"Combine to stereo\")")
+CODE(L"plusObject: s1")
+CODE(L"stereo = Combine to stereo")
 NORMAL (L"We combine the two separate sounds into one stereo sound because our blind source separation works on multichannel sounds only.")
-CODE(L"mm = do (\"Create simple MixingMatrix...\", \"mm\", 2, 2, \"1.0 2.0 2.0 1.0\")")
+CODE(L"mm = Create simple MixingMatrix: \"mm\", 2, 2, \"1.0 2.0 2.0 1.0\"")
 NORMAL (L"A two by two MixingMatrix is created.")
-CODE(L"plusObject (stereo)")
-CODE(L"do (\"Mix\")")
+CODE(L"plusObject: stereo")
+CODE(L"Mix")
 NORMAL (L"The last command, Mix, creates a new two-channel sound where each channel is a linear mixture of the two "
     "channels in the stereo sound, i.e. channel 1 is the sum of s1 and s2 with mixture strengths of 1 and 2, respectively. "
     "The second channel is also the sum of s1 and s2 but now with mixture strengths 2 and 1, respectively.")
-CODE (L"do (\"To Sound (blind source separation)...\", 0.1, 1, 20, 0.0002, 100, 0.001, \"ffdiag\")")
+CODE (L"To Sound (blind source separation): 0.1, 1, 20, 0.0002, 100, 0.001, \"ffdiag\"")
 NORMAL (L"The two channels in the new sound that results from this command contain a reasonable approximation of "
     "the two originating sounds.")
 NORMAL (L"In the top panel the two speech sounds \"This is some text\" and \"abracadabra, abra\". "
     "The middle panel shows the two mixed sounds while the lower panel shows the two sounds after unmixing.")
 SCRIPT (6, 6, L" "
-	"syn = do (\"Create SpeechSynthesizer...\", \"English\", \"default\")\n"
-	"s1 = do (\"To Sound...\", \"This is some text\", \"no\")\n"
-    "selectObject (syn)\n"
-	"do (\"Set speech output settings...\", 44100, 0.01, 80, 50, 145, \"no\", \"IPA\")\n"
-	"s2 = do (\"To Sound...\", \"abracadabra, abra\", \"no\")\n"
-    "plusObject (s1)\n"
-	"stereo = do (\"Combine to stereo\")\n"
-	"do (\"Select inner viewport...\", 1, 6, 0.1, 1.9)\n"
-	"do (\"Draw...\", 0, 0, 0, 0, \"no\", \"Curve\")\n"
-	"do (\"Draw inner box\")\n"
-	"mm = do (\"Create simple MixingMatrix...\", \"mm\", 2, 2, \"1.0 2.0 2.0 1.0\")\n"
-    "plusObject (stereo)\n"
-	"mixed = do (\"Mix\")\n"
-	"do (\"Select inner viewport...\", 1, 6, 2.1, 3.9)\n"
-	"do (\"Draw...\", 0, 0, 0, 0, \"no\", \"Curve\")\n"
-	"do (\"Draw inner box\")\n"
-	"unmixed = do (\"To Sound (bss)...\", 0.1, 1, 20, 0.00021, 100, 0.001, \"ffdiag\")\n"
-	"do (\"Select inner viewport...\", 1, 6, 4.1, 5.9)\n"
-	"do (\"Draw...\", 0, 0, 0, 0, \"no\", \"Curve\")\n"
-	"do (\"Draw inner box\")\n"
-	"removeObject (unmixed, syn, stereo, s1, s2, mixed, mm)\n"
+	"syn = Create SpeechSynthesizer: \"English\", \"default\"\n"
+	"s1 = To Sound: \"This is some text\", \"no\"\n"
+    "selectObject: syn\n"
+	"Set speech output settings: 44100, 0.01, 80, 50, 145, \"no\", \"IPA\"\n"
+	"s2 = To Sound: \"abracadabra, abra\", \"no\"\n"
+    "plusObject: s1\n"
+	"stereo = Combine to stereo\n"
+	"Select inner viewport: 1, 6, 0.1, 1.9\n"
+	"Draw: 0, 0, 0, 0, \"no\", \"Curve\"\n"
+	"Draw inner box\n"
+	"mm = Create simple MixingMatrix: \"mm\", 2, 2, \"1.0 2.0 2.0 1.0\"\n"
+    "plusObject: stereo\n"
+	"mixed = Mix\n"
+	"Select inner viewport: 1, 6, 2.1, 3.9\n"
+	"Draw: 0, 0, 0, 0, \"no\", \"Curve\"\n"
+	"Draw inner box\n"
+	"unmixed = To Sound (bss): 0.1, 1, 20, 0.00021, 100, 0.001, \"ffdiag\"\n"
+	"Select inner viewport: 1, 6, 4.1, 5.9\n"
+	"Draw: 0, 0, 0, 0, \"no\", \"Curve\"\n"
+	"Draw inner box\n"
+	"removeObject: unmixed, syn, stereo, s1, s2, mixed, mm\n"
 )
 NORMAL (L"The first two panels will not change between different sessions of praat. The last panel, which shows "
     "the result of the blind source separation, i.e. unmixing, will not always be the same because of two things. In the first place the unmixing always starts with an initialisation with random values of the parameters that "

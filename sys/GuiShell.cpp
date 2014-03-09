@@ -79,7 +79,7 @@ void structGuiShell :: f_drain () {
 	#elif cocoa
         //[d_cocoaWindow displayIfNeeded];
         [d_cocoaWindow flushWindow];
-		[d_cocoaWindow display];
+		//[d_cocoaWindow display];
 	#elif win
 	#elif mac
 		Melder_assert (d_xmShell != NULL);

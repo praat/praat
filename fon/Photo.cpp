@@ -1,6 +1,6 @@
 /* Photo.cpp
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,9 @@
 #include "Photo.h"
 #include "NUM2.h"
 #include "Formula.h"
-#if defined (macintosh)
+#if defined (_WIN32)
+	#include <GraphicsP.h>
+#elif defined (macintosh)
 	#include "macport_on.h"
 	#include <Cocoa/Cocoa.h>
 	#include "macport_off.h"
@@ -81,7 +83,7 @@ Photo Photo_create
 		my f_init (xmin, xmax, nx, dx, x1, ymin, ymax, ny, dy, y1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not created.");
+		Melder_throw ("Photo object not created.");
 	}
 }
 
@@ -92,62 +94,80 @@ Photo Photo_createSimple (long numberOfRows, long numberOfColumns) {
 		           0.5, numberOfRows    + 0.5, numberOfRows,    1, 1);
 		return me.transfer();
 	} catch (MelderError) {
-		Melder_throw ("Matrix object not created.");
+		Melder_throw ("Photo object not created.");
 	}
 }
 
 Photo Photo_readFromImageFile (MelderFile file) {
-	autoPhoto me = NULL;
-	#if defined (linux)
-		(void) file;
-		Melder_throw ("Cannot read image files on Linux yet. Try the Mac.");
-		// NYI
-	#elif defined (_WIN32)
-		(void) file;
-		Melder_throw ("Cannot read image files on Windows yet. Try the Mac.");
-		// NYI
-	#elif defined (macintosh)
-		char utf8 [500];
-		Melder_wcsTo8bitFileRepresentation_inline (file -> path, utf8);
-		CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
-		CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
-		CFRelease (path);
-		CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
-		CFRelease (url);
-		if (imageSource != NULL) {
-			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
-			CFRelease (imageSource);
-			if (image != NULL) {
-				long width = CGImageGetWidth (image);
-				long height = CGImageGetHeight (image);
-				me.reset (Photo_createSimple (height, width));
-				long bitsPerPixel = CGImageGetBitsPerPixel (image);
-				long bitsPerComponent = CGImageGetBitsPerComponent (image);
-				long bytesPerRow = CGImageGetBytesPerRow (image);
-				trace ("%ld bits per pixel, %ld bits per component, %ld bytes per row", bitsPerPixel, bitsPerComponent, bytesPerRow);
-				/*
-				 * Now we probably need to use:
-				 * CGColorSpaceRef CGImageGetColorSpace (CGImageRef image);
-				 * CGImageAlphaInfo CGImageGetAlphaInfo (CGImageRef image);
-				 */
-				CGDataProviderRef dataProvider = CGImageGetDataProvider (image);   // not retained, so don't release
-				CFDataRef data = CGDataProviderCopyData (dataProvider);
-				uint8_t *pixelData = (uint8_t *) CFDataGetBytePtr (data);
-				for (long irow = 1; irow <= height; irow ++) {
-					uint8_t *rowAddress = pixelData + bytesPerRow * (height - irow);
-					for (long icol = 1; icol <= width; icol ++) {
-						my d_red -> z [irow] [icol] = (*rowAddress ++) / 255.0;
-						my d_green -> z [irow] [icol] = (*rowAddress ++) / 255.0;
-						my d_blue -> z [irow] [icol] = (*rowAddress ++) / 255.0;
-						my d_transparency -> z [irow] [icol] = 1.0 - (*rowAddress ++) / 255.0;
-					}
+	try {
+		#if defined (linux)
+			(void) file;
+			Melder_throw ("Cannot read image files on Linux yet.");
+			// NYI
+		#elif defined (_WIN32)
+			Gdiplus::Bitmap *gdiplusBitmap = new Gdiplus::Bitmap (file -> path);
+			if (gdiplusBitmap == NULL)
+				Melder_throw ("Cannot read bitmap.");
+			long width = gdiplusBitmap -> GetWidth ();
+			long height = gdiplusBitmap -> GetHeight ();
+			autoPhoto me = Photo_createSimple (height, width);
+			for (long irow = 1; irow <= height; irow ++) {
+				for (long icol = 1; icol <= width; icol ++) {
+					Gdiplus::Color gdiplusColour;
+					gdiplusBitmap -> GetPixel (icol - 1, height - irow, & gdiplusColour);
+					my d_red -> z [irow] [icol] = (gdiplusColour. GetRed ()) / 255.0;
+					my d_green -> z [irow] [icol] = (gdiplusColour. GetGreen ()) / 255.0;
+					my d_blue -> z [irow] [icol] = (gdiplusColour. GetBlue ()) / 255.0;
+					my d_transparency -> z [irow] [icol] = 1.0 - (gdiplusColour. GetAlpha ()) / 255.0;
 				}
-				CFRelease (data);
-				CGImageRelease (image);
 			}
-		}
-	#endif
-	return me.transfer();
+			return me.transfer();
+		#elif defined (macintosh)
+			autoPhoto me = NULL;
+			char utf8 [500];
+			Melder_wcsTo8bitFileRepresentation_inline (file -> path, utf8);
+			CFStringRef path = CFStringCreateWithCString (NULL, utf8, kCFStringEncodingUTF8);
+			CFURLRef url = CFURLCreateWithFileSystemPath (NULL, path, kCFURLPOSIXPathStyle, false);
+			CFRelease (path);
+			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
+			CFRelease (url);
+			if (imageSource != NULL) {
+				CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
+				CFRelease (imageSource);
+				if (image != NULL) {
+					long width = CGImageGetWidth (image);
+					long height = CGImageGetHeight (image);
+					me.reset (Photo_createSimple (height, width));
+					long bitsPerPixel = CGImageGetBitsPerPixel (image);
+					long bitsPerComponent = CGImageGetBitsPerComponent (image);
+					long bytesPerRow = CGImageGetBytesPerRow (image);
+					trace ("%ld bits per pixel, %ld bits per component, %ld bytes per row", bitsPerPixel, bitsPerComponent, bytesPerRow);
+					/*
+					 * Now we probably need to use:
+					 * CGColorSpaceRef CGImageGetColorSpace (CGImageRef image);
+					 * CGImageAlphaInfo CGImageGetAlphaInfo (CGImageRef image);
+					 */
+					CGDataProviderRef dataProvider = CGImageGetDataProvider (image);   // not retained, so don't release
+					CFDataRef data = CGDataProviderCopyData (dataProvider);
+					uint8_t *pixelData = (uint8_t *) CFDataGetBytePtr (data);
+					for (long irow = 1; irow <= height; irow ++) {
+						uint8_t *rowAddress = pixelData + bytesPerRow * (height - irow);
+						for (long icol = 1; icol <= width; icol ++) {
+							my d_red -> z [irow] [icol] = (*rowAddress ++) / 255.0;
+							my d_green -> z [irow] [icol] = (*rowAddress ++) / 255.0;
+							my d_blue -> z [irow] [icol] = (*rowAddress ++) / 255.0;
+							my d_transparency -> z [irow] [icol] = 1.0 - (*rowAddress ++) / 255.0;
+						}
+					}
+					CFRelease (data);
+					CGImageRelease (image);
+				}
+			}
+			return me.transfer();
+		#endif
+	} catch (MelderError) {
+		Melder_throw ("Picture file ", file, " not opened as Photo.");
+	}
 }
 
 #if defined (macintosh)
@@ -160,8 +180,54 @@ Photo Photo_readFromImageFile (MelderFile file) {
 	}
 #endif
 
+#ifdef _WIN32
+void structPhoto::_win_saveAsImageFile (MelderFile file, const wchar_t *mimeType) {
+	Gdiplus::Bitmap gdiplusBitmap (nx, ny, PixelFormat32bppARGB);
+	for (long irow = 1; irow <= ny; irow ++) {
+		for (long icol = 1; icol <= nx; icol ++) {
+			Gdiplus::Color gdiplusColour (
+				255 - round (d_transparency -> z [irow] [icol] * 255.0),
+				round (d_red   -> z [irow] [icol] * 255.0),
+				round (d_green -> z [irow] [icol] * 255.0),
+				round (d_blue  -> z [irow] [icol] * 255.0));
+			gdiplusBitmap. SetPixel (icol - 1, ny - irow, gdiplusColour);
+		}
+	}
+	/*
+	 * The 'mimeType' parameter specifies a "class encoder". Look it up.
+	 */
+	UINT numberOfImageEncoders, sizeOfImageEncoderArray;
+	Gdiplus::GetImageEncodersSize (& numberOfImageEncoders, & sizeOfImageEncoderArray);
+	if (sizeOfImageEncoderArray == 0)
+		Melder_throw ("Cannot find image encoders.");
+	Gdiplus::ImageCodecInfo *imageEncoderInfos = Melder_malloc (Gdiplus::ImageCodecInfo, sizeOfImageEncoderArray);
+	Gdiplus::GetImageEncoders (numberOfImageEncoders, sizeOfImageEncoderArray, imageEncoderInfos);
+	for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
+		trace ("Supported MIME type: %ls", imageEncoderInfos [iencoder]. MimeType);
+		if (Melder_wcsequ (imageEncoderInfos [iencoder]. MimeType, mimeType)) {
+			Gdiplus::EncoderParameters *p = NULL;
+			if (Melder_wcsequ (mimeType, L"image/jpeg")) {
+				Gdiplus::EncoderParameters encoderParameters;
+				encoderParameters. Count = 1;
+				GUID guid = { 0x1D5BE4B5, 0xFA4A, 0x452D, { 0x9C, 0xDD, 0x5D, 0xB3, 0x51, 0x05, 0xE7, 0xEB }};  // EncoderQuality
+				encoderParameters. Parameter [0]. Guid = guid;
+				encoderParameters. Parameter [0]. Type = Gdiplus::EncoderParameterValueTypeLong;
+				encoderParameters. Parameter [0]. NumberOfValues = 1;
+				ULONG quality = 100;
+				encoderParameters. Parameter [0]. Value = & quality;
+				p = & encoderParameters;
+			}
+			gdiplusBitmap. Save (file -> path, & imageEncoderInfos [iencoder]. Clsid, p);
+			Melder_free (imageEncoderInfos);
+			return;
+		}
+	}
+	Melder_throw ("Unknown MIME type ", mimeType, ".");
+}
+#endif
+
 #ifdef macintosh
-void structPhoto :: _mac_saveAsImageFile (MelderFile file, const void *which) {
+	void structPhoto :: _mac_saveAsImageFile (MelderFile file, const void *which) {
 		long bytesPerRow = this -> nx * 4;
 		long numberOfRows = this -> ny;
 		unsigned char *imageData = Melder_malloc_f (unsigned char, bytesPerRow * numberOfRows);
@@ -198,53 +264,69 @@ void structPhoto :: _mac_saveAsImageFile (MelderFile file, const void *which) {
 		CFRelease (destination);
 		CGColorSpaceRelease (colourSpace);
 		CGImageRelease (image);
-}
+	}
 #endif
 
 void structPhoto :: f_saveAsPNG (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/png");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypePNG);
 	#endif
 }
 
 void structPhoto :: f_saveAsTIFF (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/tiff");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypeTIFF);
 	#endif
 }
 
 void structPhoto :: f_saveAsGIF (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/gif");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypeGIF);
 	#endif
 }
 
 void structPhoto :: f_saveAsWindowsBitmapFile (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/bmp");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypeBMP);
 	#endif
 }
 
 void structPhoto :: f_saveAsJPEG (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/jpeg");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypeJPEG);
 	#endif
 }
 
 void structPhoto :: f_saveAsJPEG2000 (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/jpeg2000");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypeJPEG2000);
 	#endif
 }
 
 void structPhoto :: f_saveAsAppleIconFile (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/ICNS");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypeAppleICNS);
 	#endif
 }
 
 void structPhoto :: f_saveAsWindowsIconFile (MelderFile file) {
-	#ifdef macintosh
+	#if defined (_WIN32)
+		_win_saveAsImageFile (file, L"image/icon");
+	#elif defined (macintosh)
 		_mac_saveAsImageFile (file, kUTTypeICO);
 	#endif
 }

@@ -71,6 +71,15 @@ void structGraphicsScreen :: v_destroy () {
 		}
 		if (d_cairoSurface != NULL) {
 			cairo_surface_flush (d_cairoSurface);
+			if (d_isPng) {
+				#if 1
+					cairo_surface_write_to_png (d_cairoSurface, Melder_peekWcsToUtf8 (d_file. path));
+				#else
+					unsigned char *bitmap = cairo_image_surface_get_data (my d_cairoSurface);   // peeking into the internal bits
+					// copy bitmap to PNG structure created with the PNG library
+					// save the PNG tructure to a file
+				#endif
+			}
 			cairo_surface_destroy (d_cairoSurface);
 		}
 	#elif win
@@ -86,6 +95,79 @@ void structGraphicsScreen :: v_destroy () {
 		if (d_winBrush != NULL) {
 			DeleteObject (d_winBrush);
 			d_winBrush = NULL;
+		}
+		if (d_isPng && d_gdiBitmap) {
+			trace ("saving the filled bitmap to a PNG file");
+			/*
+			 * Deselect the bitmap from the device context (otherwise GetDIBits won't work).
+			 */
+			//SelectBitmap (d_gdiGraphicsContext, NULL);
+			//SelectBitmap (d_gdiGraphicsContext, CreateCompatibleBitmap (NULL, 1, 1));
+
+			BITMAP bitmap;
+			GetObject (d_gdiBitmap, sizeof (BITMAP), & bitmap);
+			int width = bitmap. bmWidth, height = bitmap. bmHeight;
+			trace ("width %d, height %d", width, height);
+
+			/*
+			 * Get the bits from the HBITMAP;
+			 */
+			struct { BITMAPINFOHEADER header; } bitmapInfo;
+			bitmapInfo. header.biSize = sizeof (BITMAPINFOHEADER);
+			bitmapInfo. header.biWidth = width;
+			bitmapInfo. header.biHeight = height;
+			bitmapInfo. header.biPlanes = 1;
+			bitmapInfo. header.biBitCount = 32;
+			bitmapInfo. header.biCompression = BI_RGB;
+			bitmapInfo. header.biSizeImage = 0;
+			bitmapInfo. header.biXPelsPerMeter = 0;
+			bitmapInfo. header.biYPelsPerMeter = 0;
+			bitmapInfo. header.biClrUsed = 0;
+			bitmapInfo. header.biClrImportant = 0;
+			unsigned char *bits = Melder_calloc (unsigned char, 4 * width * height);
+			//HANDLE handle = GlobalAlloc (GHND, 4 * width * height);
+			//unsigned char *bits = (unsigned char *) GlobalLock (handle);
+			int numberOfLinesScanned = GetDIBits (GetDC (NULL), d_gdiBitmap, 0, height, bits, (BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS);
+			trace ("%d lines scanned", numberOfLinesScanned);
+
+			trace ("creating a savable bitmap");
+
+			//Gdiplus::Bitmap gdiplusBitmap (width, height, PixelFormat32bppARGB);
+			Gdiplus::Bitmap gdiplusBitmap ((BITMAPINFO *) & bitmapInfo, bits);
+			gdiplusBitmap. SetResolution (resolution, resolution);
+
+			trace ("copying the device-independent bits to the savable bitmap.");
+
+			/*
+			for (long irow = 1; irow <= height; irow ++) {
+				for (long icol = 1; icol <= width; icol ++) {
+					unsigned char blue = *bits ++, green = *bits ++, red = *bits ++, alpha = 255 - *bits ++;
+					Gdiplus::Color gdiplusColour (alpha, red, green, blue);
+					gdiplusBitmap. SetPixel (icol - 1, height - irow, gdiplusColour);
+				}
+			}
+			*/
+
+			trace ("saving");
+
+			UINT numberOfImageEncoders, sizeOfImageEncoderArray;
+			Gdiplus::GetImageEncodersSize (& numberOfImageEncoders, & sizeOfImageEncoderArray);
+			Gdiplus::ImageCodecInfo *imageEncoderInfos = Melder_malloc (Gdiplus::ImageCodecInfo, sizeOfImageEncoderArray);
+			Gdiplus::GetImageEncoders (numberOfImageEncoders, sizeOfImageEncoderArray, imageEncoderInfos);
+			for (int iencoder = 0; iencoder < numberOfImageEncoders; iencoder ++) {
+				if (Melder_wcsequ (imageEncoderInfos [iencoder]. MimeType, L"image/png")) {
+					gdiplusBitmap. Save (d_file. path, & imageEncoderInfos [iencoder]. Clsid, NULL);
+				}
+			}
+
+			trace ("cleaning up");
+
+			Melder_free (imageEncoderInfos);
+			//bits -= 4 * width * height;
+			Melder_free (bits);
+			//GlobalUnlock (handle);
+			//GlobalFree (handle);
+			DeleteObject (d_gdiBitmap);
 		}
 		/*
 		 * No ReleaseDC here, because we have not created it ourselves,
@@ -105,7 +187,9 @@ void structGraphicsScreen :: v_destroy () {
             }
         #endif
 	#endif
+	trace ("destroying parent");
 	GraphicsScreen_Parent :: v_destroy ();
+	trace ("exit");
 }
 
 void structGraphicsScreen :: v_flushWs () {
@@ -493,6 +577,63 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	return (Graphics) me;
 }
 
+Graphics Graphics_create_pngfile (MelderFile file, int resolution,
+	double x1inches, double x2inches, double y1inches, double y2inches)
+{
+	autoGraphicsScreen me = Thing_new (GraphicsScreen);
+	my screen = true;
+	my yIsZeroAtTheTop = true;
+	#ifdef macintosh
+		_GraphicsMacintosh_tryToInitializeQuartz ();
+	#endif
+	Graphics_init (me.peek());
+	my d_isPng = true;
+	my resolution = resolution;
+	my d_file = *file;
+	my d_x1DC = my d_x1DCmin = 0;
+	my d_x2DC = my d_x2DCmax = 7.5 * resolution;
+	my d_y1DC = my d_y1DCmin = 0;
+	my d_y2DC = my d_y2DCmax = 11.0 * resolution;
+	Graphics_setWsWindow ((Graphics) me.peek(), 0, 7.5, 1.0, 12.0);
+	#if gtk
+		my d_cairoSurface = cairo_image_surface_create (CAIRO_FORMAT_RGB24,
+			(x2inches - x1inches) * resolution, (y2inches - y1inches) * resolution);
+		my d_cairoGraphicsContext = cairo_create (my d_cairoSurface);
+		//cairo_scale (my d_cairoGraphicsContext, 72.0 / resolution, 72.0 / resolution);
+		/*
+		 * Fill in the whole area with a white background.
+		 */
+		cairo_set_source_rgb (my d_cairoGraphicsContext, 1.0, 1.0, 1.0);
+		cairo_rectangle (my d_cairoGraphicsContext, 0, 0, my d_x2DC, my d_y2DC);
+		cairo_fill (my d_cairoGraphicsContext);
+		cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 0.0);
+	#elif win
+		my metafile = TRUE;
+		HDC screenDC = GetDC (NULL);
+		my d_gdiGraphicsContext = CreateCompatibleDC (screenDC);
+		trace ("d_gdiGraphicsContext %p", my d_gdiGraphicsContext);
+		Melder_assert (my d_gdiGraphicsContext != NULL);
+		my d_gdiBitmap = CreateCompatibleBitmap (screenDC, (x2inches - x1inches) * resolution, (y2inches - y1inches) * resolution);
+		trace ("d_gdiBitmap %p", my d_gdiBitmap);
+		SelectObject (my d_gdiGraphicsContext, my d_gdiBitmap);
+		trace ("bitmap selected into device context");
+		my resolution = resolution;
+		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);
+		my d_winPen = CreatePen (PS_SOLID, 0, RGB (0, 0, 0));
+		my d_winBrush = CreateSolidBrush (RGB (0, 0, 0));
+		SetTextAlign (my d_gdiGraphicsContext, TA_LEFT | TA_BASELINE | TA_NOUPDATECP);
+		/*
+		 * Fill in the whole area with a white background.
+		 */
+		SelectPen (my d_gdiGraphicsContext, GetStockPen (NULL_PEN));
+		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (WHITE_BRUSH));
+		Rectangle (my d_gdiGraphicsContext, 0, 0, my d_x2DC, my d_y2DC);
+		SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
+		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
+	#endif
+	return (Graphics) me.transfer();
+}
+
 Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	double x1inches, double x2inches, double y1inches, double y2inches)
 {
@@ -574,22 +715,6 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 	void Graphics_x_setCR (Graphics me, void *cairoGraphicsContext) {
 		((GraphicsScreen) me) -> d_cairoGraphicsContext = (cairo_t *) cairoGraphicsContext;
 	}
-	#if 0
-		cairo_surface_t *surface = cairo_image_surface_create (CAIRO_FORMAT_RGB24, 1000, 500);
-		cairo_surface_t *surface = cairo_pdf_surface_create (filename, width_in_points, height_in_points);
-		cairo_t *context = cairo_create (surface);
-		cairo_rectangle (context, 100, 100, 800, 300);
-		cairo_destroy (context);
-		cairo_surface_flush (surface);
-		#if simple
-			cairo_surface_write_to_png (surface, fileName);
-		#else
-			unsigned char *bitmap = cairo_image_surface_get_data (surface);   // peeking into the internal bits
-			// copy bitmap to PNG structure created with the PNG library
-			// save the PNG tructure to a file
-		#endif
-		cairo_surface_destroy (surface);
-	#endif
 #endif
 
 #if mac

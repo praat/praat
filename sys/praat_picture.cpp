@@ -487,6 +487,23 @@ static void DO_Picture_writeToPdfFile (UiForm sendingForm, int narg, Stackel arg
 	}
 }
 
+static void DO_Picture_writeToPngFile (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
+	static Any dia;
+	(void) narg;
+	(void) interpreter;
+	(void) modified;
+	(void) dummy;
+	if (! dia) dia = UiOutfile_create (theCurrentPraatApplication -> topShell, L"Save as PNG file",
+		DO_Picture_writeToPngFile, NULL, invokingButtonTitle, NULL);
+	if (sendingForm == NULL && args == NULL && sendingString == NULL) {
+		UiOutfile_do (dia, L"praat.png");
+	} else { MelderFile file; structMelderFile file2 = { 0 };
+		if (args == NULL && sendingString == NULL) file = UiFile_getFile (dia);
+		else { Melder_relativePathToFile (args ? args [1]. string : sendingString, & file2); file = & file2; }
+		Picture_writeToPngFile (praat_picture, file);
+	}
+}
+
 static void DO_Picture_writeToPraatPictureFile (UiForm sendingForm, int narg, Stackel args, const wchar_t *sendingString, Interpreter interpreter, const wchar_t *invokingButtonTitle, bool modified, void *dummy) {
 	static Any dia;
 	(void) narg;
@@ -1518,23 +1535,21 @@ void praat_picture_init (void) {
 	#if defined (macintosh) || defined (UNIX)
 		praat_addMenuCommand (L"Picture", L"File", L"Save as PDF file...", 0, 'S', DO_Picture_writeToPdfFile);
 		praat_addMenuCommand (L"Picture", L"File", L"Write to PDF file...", 0, praat_HIDDEN, DO_Picture_writeToPdfFile);
-		praat_addMenuCommand (L"Picture", L"File", L"Save EPS file", 0, 0, NULL);
-			praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 1, DO_PostScript_settings);
-			praat_addMenuCommand (L"Picture", L"File", L"Save as EPS file...", 0, 1, DO_Picture_writeToEpsFile);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToEpsFile);
-			praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (XIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_xipa);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToFontlessEpsFile_xipa);
-			praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (SILIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_silipa);
-			praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToFontlessEpsFile_silipa);
-	#else
-		praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 0, DO_PostScript_settings);
-		praat_addMenuCommand (L"Picture", L"File", L"Save as EPS file...", 0, 'S', DO_Picture_writeToEpsFile);
-		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, praat_HIDDEN, DO_Picture_writeToEpsFile);
-		praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (XIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, praat_HIDDEN, DO_Picture_writeToFontlessEpsFile_xipa);
-		praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (SILIPA)...", 0, 0, DO_Picture_writeToFontlessEpsFile_silipa);
-		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, praat_HIDDEN, DO_Picture_writeToFontlessEpsFile_silipa);
 	#endif
+	#if defined (_WIN32)
+		praat_addMenuCommand (L"Picture", L"File", L"Save as 600-dpi PNG file...", 0, 'S', DO_Picture_writeToPngFile);
+	#endif
+	#if defined (UNIX)
+		praat_addMenuCommand (L"Picture", L"File", L"Save as 600-dpi PNG file...", 0, 0, DO_Picture_writeToPngFile);
+	#endif
+	praat_addMenuCommand (L"Picture", L"File", L"Save EPS file", 0, 0, NULL);
+		praat_addMenuCommand (L"Picture", L"File", L"PostScript settings...", 0, 1, DO_PostScript_settings);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as EPS file...", 0, 1, DO_Picture_writeToEpsFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to EPS file...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToEpsFile);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (XIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (XIPA)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToFontlessEpsFile_xipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Save as fontless EPS file (SILIPA)...", 0, 1, DO_Picture_writeToFontlessEpsFile_silipa);
+		praat_addMenuCommand (L"Picture", L"File", L"Write to fontless EPS file (SILIPA)...", 0, praat_HIDDEN + praat_DEPTH_1, DO_Picture_writeToFontlessEpsFile_silipa);
 	praat_addMenuCommand (L"Picture", L"File", L"-- print --", 0, 0, 0);
 	#if defined (macintosh)
 		praat_addMenuCommand (L"Picture", L"File", L"Page setup...", 0, 0, DO_Page_setup);

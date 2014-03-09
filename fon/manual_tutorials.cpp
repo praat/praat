@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140227)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140309)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.66# (9 March 2014)")
+LIST_ITEM (L"\\bu Windows and Linux: can save the Picture window to PNG file.")
+LIST_ITEM (L"\\bu Windows: opening, modifying and saving PNG, TIFF or JPEG files (the Photo object, as on the Mac).")
 NORMAL (L"##5.3.65# (27 February 2014)")
 LIST_ITEM (L"\\bu Scripting language: removed some bugs from runScript.")
 LIST_ITEM (L"\\bu Linux: can save the Picture window to PDF file.")
