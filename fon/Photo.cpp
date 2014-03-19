@@ -240,8 +240,11 @@ void structPhoto::_win_saveAsImageFile (MelderFile file, const wchar_t *mimeType
 				* rowAddress ++ = 255 - round (d_transparency -> z [irow] [icol] * 255.0);
 			}
 		}
-		CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB
-		Melder_assert (colourSpace != NULL);
+		static CGColorSpaceRef colourSpace = NULL;
+		if (colourSpace == NULL) {
+			colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB
+			Melder_assert (colourSpace != NULL);
+		}
 		CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL,
 			imageData,
 			bytesPerRow * numberOfRows,

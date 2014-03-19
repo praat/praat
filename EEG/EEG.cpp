@@ -227,24 +227,50 @@ EEG EEG_readFromBdfFile (MelderFile file, bool hasLetters) {
 		}
 		autoTextGrid thee;
 		if (hasLetters) {
-			thee.reset (TextGrid_create (0, duration,
-				numberOfStatusBits == 8 ? L"S1" : L"S1 S2", L""));
-			for (int byte = 1; byte <= numberOfStatusBits / 8; byte ++) {
-				unsigned long mask = byte == 1 ? 0x000000ff : 0x0000ff00;
-				IntervalTier tier = (IntervalTier) thy tiers -> item [byte];
-				for (long i = 1; i <= my nx; i ++) {
-					unsigned long previousValue = i == 1 ? 0 : (long) my z [numberOfChannels] [i - 1];
-					unsigned long thisValue = (long) my z [numberOfChannels] [i];
-					if ((thisValue & mask) != (previousValue & mask)) {
-						double time = i == 1 ? 0.0 : my x1 + (i - 1.5) * my dx;
-						if (time != 0.0)
-							TextGrid_insertBoundary (thee.peek(), byte, time);
-						if ((thisValue & mask) != 0) {
-							wchar_t kar [2] = { byte == 1 ? (thisValue & mask) : (thisValue & mask) >> 8, '\0' };
-							TextGrid_setIntervalText (thee.peek(), byte, tier -> intervals -> size, & kar [0]);
+			thee.reset (TextGrid_create (0, duration, L"Mark Trigger", L"Mark Trigger"));
+			autoMelderString letters;
+			double time = NUMundefined;
+			for (long i = 1; i <= my nx; i ++) {
+				unsigned long value = (long) my z [numberOfChannels] [i];
+				for (int byte = 1; byte <= numberOfStatusBits / 8; byte ++) {
+					unsigned long mask = byte == 1 ? 0x000000ff : 0x0000ff00;
+					wchar_t kar = byte == 1 ? (value & mask) : (value & mask) >> 8;
+					if (kar != '\0' && kar != 20) {
+						MelderString_appendCharacter (& letters, kar);
+					} else if (letters. string [0] != '\0') {
+						if (letters. string [0] == '+') {
+							if (NUMdefined (time)) {
+								try {
+									TextGrid_insertPoint (thee.peek(), 1, time, L"");
+								} catch (MelderError) {
+									Melder_throw ("Did not insert empty mark (", letters. string, ") on Mark tier.");
+								}
+								time = NUMundefined;   // defensive
+							}
+							time = Melder_atof (& letters. string [1]);
+							MelderString_empty (& letters);
+						} else {
+							if (! NUMdefined (time)) {
+								Melder_throw ("Undefined time for label at sample ", i, ".");
+							}
+							try {
+								if (Melder_wcsnequ (letters. string, L"Trigger-", 8)) {
+									TextGrid_insertPoint (thee.peek(), 2, time, & letters. string [8]);
+								} else {
+									TextGrid_insertPoint (thee.peek(), 1, time, & letters. string [0]);
+								}
+							} catch (MelderError) {
+								Melder_throw ("Did not insert mark (", letters. string, ") on Trigger tier.");
+							}
+							time = NUMundefined;   // crucial
+							MelderString_empty (& letters);
 						}
 					}
 				}
+			}
+			if (NUMdefined (time)) {
+				TextGrid_insertPoint (thee.peek(), 1, time, L"");
+				time = NUMundefined;   // defensive
 			}
 		} else {
 			thee.reset (TextGrid_create (0, duration,

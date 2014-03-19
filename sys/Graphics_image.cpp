@@ -365,8 +365,11 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			//	bits, (CONST BITMAPINFO *) & bitmapInfo, DIB_RGB_COLORS, SRCCOPY);
 		#elif mac
 			CGImageRef image;
-			CGColorSpaceRef colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB
-			Melder_assert (colourSpace != NULL);
+			static CGColorSpaceRef colourSpace = NULL;
+			if (colourSpace == NULL) {
+				colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);   // used to be kCGColorSpaceUserRGB
+				Melder_assert (colourSpace != NULL);
+			}
 			if (1) {
 				CGDataProviderRef dataProvider = CGDataProviderCreateWithData (NULL,
 					imageData,

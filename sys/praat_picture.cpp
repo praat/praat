@@ -1539,7 +1539,7 @@ void praat_picture_init (void) {
 	#if defined (_WIN32)
 		praat_addMenuCommand (L"Picture", L"File", L"Save as 600-dpi PNG file...", 0, 'S', DO_Picture_writeToPngFile);
 	#endif
-	#if defined (UNIX)
+	#if defined (macintosh) || defined (UNIX)
 		praat_addMenuCommand (L"Picture", L"File", L"Save as 600-dpi PNG file...", 0, 0, DO_Picture_writeToPngFile);
 	#endif
 	praat_addMenuCommand (L"Picture", L"File", L"Save EPS file", 0, 0, NULL);

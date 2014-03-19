@@ -80,6 +80,7 @@ Thing_define (GraphicsScreen, Graphics) {
 			int d_macFont, d_macStyle;
 			int d_depth;
 			RGBColor d_macColour;
+			uint8_t *d_bits;
 			CGContextRef d_macGraphicsContext;
 		#endif
 	// overridden methods:

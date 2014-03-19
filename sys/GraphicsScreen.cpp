@@ -175,17 +175,49 @@ void structGraphicsScreen :: v_destroy () {
 		 */
 	#elif mac
         #if useCarbon
-            if (d_macPort == NULL) {
+            if (d_macPort == NULL && ! d_isPng) {
                 CGContextEndPage (d_macGraphicsContext);
                 CGContextRelease (d_macGraphicsContext);
             }
-
         #else
-            if (d_macView == NULL) {
+            if (d_macView == NULL && ! d_isPng) {
                 CGContextEndPage (d_macGraphicsContext);
                 CGContextRelease (d_macGraphicsContext);
             }
         #endif
+		if (d_isPng && d_macGraphicsContext) {
+			/*
+			 * Turn the offscreen bitmap into an image.
+			 */
+			CGImageRef image = CGBitmapContextCreateImage (d_macGraphicsContext);
+			Melder_assert (image != NULL);
+			//CGContextRelease (d_macGraphicsContext);
+			/*
+			 * Create a dictionary with resolution properties.
+			 */
+			CFTypeRef keys [2], values [2];
+			keys [0] = kCGImagePropertyDPIWidth;
+			keys [1] = kCGImagePropertyDPIHeight;
+			float resolution_float = resolution;
+			values [1] = values [0] = CFNumberCreate (NULL, kCFNumberFloatType, & resolution_float);
+			CFDictionaryRef properties = CFDictionaryCreate (NULL,
+				(const void **) keys, (const void **) values, 2,
+				& kCFTypeDictionaryKeyCallBacks, & kCFTypeDictionaryValueCallBacks);
+			Melder_assert (properties != NULL);
+			/*
+			 */
+			CFURLRef url = CFURLCreateWithFileSystemPath (NULL,
+				(CFStringRef) Melder_peekWcsToCfstring (d_file. path), kCFURLPOSIXPathStyle, false);
+			CGImageDestinationRef imageDestination = CGImageDestinationCreateWithURL (url, kUTTypePNG, 1, NULL);
+			Melder_assert (imageDestination != NULL);
+			CGImageDestinationAddImage (imageDestination, image, properties);
+			CGImageRelease (image);
+			CFRelease (properties);
+			CGImageDestinationFinalize (imageDestination);
+			CFRelease (imageDestination);
+			CFRelease (url);
+		}
+		Melder_free (d_bits);
 	#endif
 	trace ("destroying parent");
 	GraphicsScreen_Parent :: v_destroy ();
@@ -591,10 +623,10 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 	my resolution = resolution;
 	my d_file = *file;
 	my d_x1DC = my d_x1DCmin = 0;
-	my d_x2DC = my d_x2DCmax = 7.5 * resolution;
+	my d_x2DC = my d_x2DCmax = (x2inches - x1inches) * resolution;
 	my d_y1DC = my d_y1DCmin = 0;
-	my d_y2DC = my d_y2DCmax = 11.0 * resolution;
-	Graphics_setWsWindow ((Graphics) me.peek(), 0, 7.5, 1.0, 12.0);
+	my d_y2DC = my d_y2DCmax = (y2inches - y1inches) * resolution;
+	Graphics_setWsWindow ((Graphics) me.peek(), x1inches, x2inches, y1inches, y2inches);
 	#if gtk
 		my d_cairoSurface = cairo_image_surface_create (CAIRO_FORMAT_RGB24,
 			(x2inches - x1inches) * resolution, (y2inches - y1inches) * resolution);
@@ -607,6 +639,31 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 		cairo_rectangle (my d_cairoGraphicsContext, 0, 0, my d_x2DC, my d_y2DC);
 		cairo_fill (my d_cairoGraphicsContext);
 		cairo_set_source_rgb (my d_cairoGraphicsContext, 0.0, 0.0, 0.0);
+	#elif mac
+		long width = (x2inches - x1inches) * resolution, height = (y2inches - y1inches) * resolution;
+		long stride = width * 4;
+		stride = (stride + 15) & ~15;   // CommonCode/AppDrawing.c: "a multiple of 16 bytes, for best performance"
+		my d_bits = Melder_malloc (uint8_t, stride * height);
+		static CGColorSpaceRef colourSpace = NULL;
+		if (colourSpace == NULL) {
+			colourSpace = CGColorSpaceCreateWithName (kCGColorSpaceGenericRGB);
+			Melder_assert (colourSpace != NULL);
+		}
+		my d_macGraphicsContext = CGBitmapContextCreate (my d_bits,
+			width, height,
+			8,   // bits per component
+			stride,
+			colourSpace,
+			kCGImageAlphaPremultipliedLast);
+    	if (my d_macGraphicsContext == NULL)
+			Melder_throw ("Could not create PNG file ", file, ".");
+		CGRect rect = CGRectMake (0, 0, width, height);
+		CGContextSetAlpha (my d_macGraphicsContext, 1.0);
+		CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
+		CGContextSetRGBFillColor (my d_macGraphicsContext, 1.0, 1.0, 1.0, 1.0);
+		CGContextFillRect (my d_macGraphicsContext, rect);
+		CGContextTranslateCTM (my d_macGraphicsContext, 0, height);
+		CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
 	#elif win
 		my metafile = TRUE;
 		HDC screenDC = GetDC (NULL);
