@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140319)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140320)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.68# (20 March 2014)")
+LIST_ITEM (L"\\bu Mac: corrected a bug introduced in 5.3.19 that could cause crashes when drawing a spectrogram.")
+LIST_ITEM (L"\\bu Mac and Linux: @@Create Strings as file list...@ handles broken symbolic links more leniently.")
 NORMAL (L"##5.3.67# (19 March 2014)")
 LIST_ITEM (L"\\bu Corrected a bug that would create strange PNG files if the selection did not touch the upper left corner of the Picture window.")
 LIST_ITEM (L"\\bu Mac: can save the Picture window to PNG file.")

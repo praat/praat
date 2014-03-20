@@ -396,7 +396,7 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			GraphicsQuartz_initDraw (me);
 			CGContextDrawImage (my d_macGraphicsContext, CGRectMake (clipx1, clipy2, clipx2 - clipx1, clipy1 - clipy2), image);
 			GraphicsQuartz_exitDraw (me);
-			CGColorSpaceRelease (colourSpace);
+			//CGColorSpaceRelease (colourSpace);
 			CGImageRelease (image);
 		#endif
 		/*

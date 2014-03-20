@@ -145,7 +145,7 @@ static Strings Strings_createAsFileOrDirectoryList (const wchar_t *path, int typ
 				Melder_wcsTo8bitFileRepresentation_inline (filePath. string, buffer8);
 				struct stat stats;
 				if (stat (buffer8, & stats) != 0) {
-					Melder_throw ("Cannot look at file ", filePath. string, ".");
+					//Melder_throw ("Cannot look at file ", filePath. string, ".");
 					//stats. st_mode = -1L;
 				}
 				//Melder_casual ("statted %s", filePath. string);
