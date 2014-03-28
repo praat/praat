@@ -1,6 +1,6 @@
 /* Graphics.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,25 +42,25 @@ void structGraphics :: v_destroy () {
  * Graphics_setWsViewport ().
  */
 static void widgetToWindowCoordinates (I) {
-#if motif && mac
-    iam (Graphics);
-    if (my screen) {
-        iam (GraphicsScreen);
-        if (my d_drawingArea) {
-            GuiObject widget = my d_drawingArea -> d_widget;
-            int shellX = 0, shellY = 0;
-            do {
-                int x = widget -> x, y = widget -> y;
-                shellX += x;
-                shellY += y;
-                widget = widget -> parent;
-            } while (! XtIsShell (widget));
-            my d_x1DC += shellX;
-            my d_x2DC += shellX;
-            my d_y1DC += shellY;
-            my d_y2DC += shellY;
-        }
-    }
+	#if motif && mac
+		iam (Graphics);
+		if (my screen) {
+			iam (GraphicsScreen);
+			if (my d_drawingArea) {
+				GuiObject widget = my d_drawingArea -> d_widget;
+				int shellX = 0, shellY = 0;
+				do {
+					int x = widget -> x, y = widget -> y;
+					shellX += x;
+					shellY += y;
+					widget = widget -> parent;
+				} while (! XtIsShell (widget));
+				my d_x1DC += shellX;
+				my d_x2DC += shellX;
+				my d_y1DC += shellY;
+				my d_y2DC += shellY;
+			}
+		}
 	#else
 		(void) void_me;
 	#endif
@@ -88,7 +88,17 @@ static void computeTrafo (I) {
 
 /***** WORKSTATION FUNCTIONS *****/
 
-void Graphics_init (Graphics me) {
+void Graphics_init (Graphics me, int resolution) {
+	my resolution = resolution;
+	if (resolution == 100) {
+		my resolutionNumber = kGraphics_resolution_100;
+	} else if (resolution == 300) {
+		my resolutionNumber = kGraphics_resolution_300;
+	} else if (resolution == 600) {
+		my resolutionNumber = kGraphics_resolution_600;
+	} else {
+		Melder_fatal ("Unsupported resolution %d dpi.", resolution);
+	}
 	my d_x1DC = my d_x1DCmin = 0;	my d_x2DC = my d_x2DCmax = 32767;
 	my d_y1DC = my d_y1DCmin = 0;	my d_y2DC = my d_y2DCmax = 32767;
 	my d_x1WC = my d_x1NDC = my d_x1wNDC = 0.0;
@@ -114,8 +124,7 @@ void Graphics_init (Graphics me) {
 
 Graphics Graphics_create (int resolution) {
 	Graphics me = (Graphics) Thing_new (Graphics);
-	Graphics_init (me);
-	my resolution = resolution;
+	Graphics_init (me, resolution);
 	return me;
 }
 

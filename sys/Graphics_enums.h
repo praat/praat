@@ -1,6 +1,6 @@
 /* Graphics_enums.h
  *
- * Copyright (C) 1992-2007,2013 Paul Boersma
+ * Copyright (C) 1992-2007,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,12 @@ enums_begin (kGraphics_horizontalAlignment, 0)
 	enums_alt (kGraphics_horizontalAlignment,    CENTRE, L"center")
 	enums_add (kGraphics_horizontalAlignment, 2, RIGHT, L"right")
 enums_end (kGraphics_horizontalAlignment, 2, CENTRE)
+
+enums_begin (kGraphics_resolution, 0)
+	enums_add (kGraphics_resolution, 0, 100, L"100 dpi")
+	enums_add (kGraphics_resolution, 1, 300, L"300 dpi")
+	enums_add (kGraphics_resolution, 2, 600, L"600 dpi")
+enums_end (kGraphics_resolution, 2, 100)
 
 enums_begin (kGraphicsPostscript_spots, 0)
 	enums_add (kGraphicsPostscript_spots, 0, FINE, L"finest")

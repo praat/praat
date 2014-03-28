@@ -77,8 +77,7 @@ extern const char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 
 #if win
 	#define win_MAXIMUM_FONT_SIZE  500
-	static HFONT screenFonts [1 + kGraphics_font_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
-	static HFONT printerFonts [1 + kGraphics_font_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
+	static HFONT fonts [1 + kGraphics_resolution_MAX] [1 + kGraphics_font_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int ipaAvailable = FALSE;
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
@@ -222,15 +221,11 @@ static void charSize (I, _Graphics_widechar *lc) {
 			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
 			size = lc -> size < 100 ? smallSize : normalSize;
 			style = lc -> style & (Graphics_ITALIC | Graphics_BOLD);   // take out Graphics_CODE
-			fontInfo = my printer || my metafile ? printerFonts [font] [size] [style] : screenFonts [font] [size] [style];
+			fontInfo = fonts [my resolutionNumber] [font] [size] [style];
 			if (! fontInfo) {
 				fontInfo = loadFont (me, font, size, style);
 				if (! fontInfo) return;
-				if (my printer || my metafile) {
-					printerFonts [font] [size] [style] = fontInfo;
-				} else {
-					screenFonts [font] [size] [style] = fontInfo;
-				}
+				fonts [my resolutionNumber] [font] [size] [style] = fontInfo;
 			}
 			if (font == kGraphics_font_IPATIMES && ! ipaAvailable) {
 				int overstrike = ipaSerifRegular24 [info -> psEncoding - 32] [0] [0] == 'o';
@@ -1069,16 +1064,14 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						}
 						width += 4;   // For slant.
 						Rectangle (dc, 0, top, width, bottom);
-						SelectFont (dc, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
-							screenFonts [font] [lc -> size] [lc -> style]);
+						SelectFont (dc, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
 						SetTextColor (dc, my d_winForegroundColour);
 						TextOutW (dc, 0, baseline, (const wchar_t *) codes16, nchars);
 						BitBlt (my d_gdiGraphicsContext, xDC, yDC - ascent, width, bottom - top, dc, 0, top, SRCINVERT);
 					} else {
 						SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255)); else SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
-						SelectFont (my d_gdiGraphicsContext, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
-							screenFonts [font] [lc -> size] [lc -> style]);
+						SelectFont (my d_gdiGraphicsContext, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
 						TextOutW (my d_gdiGraphicsContext, xDC, yDC, (const wchar_t *) codes16, nchars);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
 						SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN)), SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
@@ -1209,8 +1202,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					if (1) {
 						SelectPen (my d_gdiGraphicsContext, my d_winPen), SelectBrush (my d_gdiGraphicsContext, my d_winBrush);
 						if (lc -> link) SetTextColor (my d_gdiGraphicsContext, RGB (0, 0, 255)); else SetTextColor (my d_gdiGraphicsContext, my d_winForegroundColour);
-						SelectFont (my d_gdiGraphicsContext, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
-							screenFonts [font] [lc -> size] [lc -> style]);
+						SelectFont (my d_gdiGraphicsContext, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
 						int restore = SaveDC (my d_gdiGraphicsContext);
 						SetGraphicsMode (my d_gdiGraphicsContext, GM_ADVANCED);
 						double a = my textRotation * NUMpi / 180.0, cosa = cos (a), sina = sin (a);
@@ -1251,8 +1243,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					//Rectangle (dc, 0, 0, maxWidth, maxHeight);
 					SelectPen (dc, GetStockPen (BLACK_PEN));
 					SelectBrush (dc, GetStockBrush (NULL_BRUSH));
-					SelectFont (dc, my printer || my metafile ? printerFonts [font] [lc -> size] [lc -> style] :
-							screenFonts [font] [lc -> size] [lc -> style]);
+					SelectFont (dc, fonts [my resolutionNumber] [font] [lc -> size] [lc -> style]);
 					TextOutW (dc, 0, baseline, (const wchar_t *) codes16, nchars);
 				#endif
 				if (my textRotation == 90.0) { cosa = 0.0; sina = 1.0; }
@@ -2008,9 +1999,9 @@ void _GraphicsScreen_text_init (GraphicsScreen me) {   /* BUG: should be done as
 			for (font = kGraphics_font_MIN; font <= kGraphics_font_DINGBATS; font ++)
 				for (size = 0; size <= 4; size ++)
 					for (style = 0; style <= Graphics_BOLD_ITALIC; style ++)
-						if (printerFonts [font] [size] [style]) {
-							DeleteObject (printerFonts [font] [size] [style]);
-							printerFonts [font] [size] [style] = 0;
+						if (fonts [my resolutionNumber] [font] [size] [style]) {
+							//DeleteObject (fonts [my resolutionNumber] [font] [size] [style]);
+							//fonts [my resolutionNumber] [font] [size] [style] = 0;
 						}
 	#elif mac
 		if (theTimesAtsuiFont == 0) {

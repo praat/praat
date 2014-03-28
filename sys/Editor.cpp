@@ -136,34 +136,35 @@ static void Editor_scriptCallback (Editor me, EditorCommand cmd, UiForm sendingF
 GuiMenuItem Editor_addCommandScript (Editor me, const wchar_t *menuTitle, const wchar_t *itemTitle, long flags,
 	const wchar_t *script)
 {
-	try {
-		long numberOfMenus = my menus -> size;
-		for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
-			EditorMenu menu = (EditorMenu) my menus -> item [imenu];
-			if (wcsequ (menuTitle, menu -> menuTitle)) {
-				autoEditorCommand cmd = Thing_new (EditorCommand);
-				cmd -> d_editor = me;
-				cmd -> menu = menu;
-				cmd -> itemTitle = Melder_wcsdup_f (itemTitle);
-				cmd -> itemWidget = script == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
-					GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.peek());   // DANGLE BUG
-				cmd -> commandCallback = Editor_scriptCallback;
-				if (wcslen (script) == 0) {
-					cmd -> script = Melder_wcsdup_f (L"");
-				} else {
-					structMelderFile file = { 0 };
-					Melder_relativePathToFile (script, & file);
-					cmd -> script = Melder_wcsdup_f (Melder_fileToPath (& file));
-				}
-				GuiMenuItem result = cmd -> itemWidget;
-				Collection_addItem (menu -> commands, cmd.transfer());
-				return result;
+	long numberOfMenus = my menus -> size;
+	for (long imenu = 1; imenu <= numberOfMenus; imenu ++) {
+		EditorMenu menu = (EditorMenu) my menus -> item [imenu];
+		if (wcsequ (menuTitle, menu -> menuTitle)) {
+			autoEditorCommand cmd = Thing_new (EditorCommand);
+			cmd -> d_editor = me;
+			cmd -> menu = menu;
+			cmd -> itemTitle = Melder_wcsdup_f (itemTitle);
+			cmd -> itemWidget = script == NULL ? GuiMenu_addSeparator (menu -> menuWidget) :
+				GuiMenu_addItem (menu -> menuWidget, itemTitle, flags, commonCallback, cmd.peek());   // DANGLE BUG
+			cmd -> commandCallback = Editor_scriptCallback;
+			if (wcslen (script) == 0) {
+				cmd -> script = Melder_wcsdup_f (L"");
+			} else {
+				structMelderFile file = { 0 };
+				Melder_relativePathToFile (script, & file);
+				cmd -> script = Melder_wcsdup_f (Melder_fileToPath (& file));
 			}
+			GuiMenuItem result = cmd -> itemWidget;
+			Collection_addItem (menu -> commands, cmd.transfer());
+			return result;
 		}
-		Melder_throw ("Menu \"", menuTitle, L"\" does not exist.");
-	} catch (MelderError) {
-		Melder_throw ("Command \"", itemTitle, "\" not inserted in menu \"", menuTitle, ".");
 	}
+	Melder_warning (
+		"Menu \"", menuTitle, L"\" does not exist.\n"
+		"Command \"", itemTitle, "\" not inserted in menu \"", menuTitle, ".\n"
+		"To fix this, go to Praat->Preferences->Buttons->Editors, and remove the script from this menu.\n"
+		"You may want to install the script in a different menu.");
+	return NULL;
 }
 
 void Editor_setMenuSensitive (Editor me, const wchar_t *menuTitle, int sensitive) {

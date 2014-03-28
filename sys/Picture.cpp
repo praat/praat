@@ -452,7 +452,16 @@ void Picture_writeToPdfFile (Picture me, MelderFile file) {
 	}
 }
 
-void Picture_writeToPngFile (Picture me, MelderFile file) {
+void Picture_writeToPngFile_300 (Picture me, MelderFile file) {
+	try {
+		autoGraphics graphics = Graphics_create_pngfile (file, 300, my selx1, my selx2, my sely1, my sely2);
+		Graphics_play ((Graphics) my graphics, graphics.peek());
+	} catch (MelderError) {
+		Melder_throw ("Picture not written to PNG file ", file, ".");
+	}
+}
+
+void Picture_writeToPngFile_600 (Picture me, MelderFile file) {
 	try {
 		autoGraphics graphics = Graphics_create_pngfile (file, 600, my selx1, my selx2, my sely1, my sely2);
 		Graphics_play ((Graphics) my graphics, graphics.peek());

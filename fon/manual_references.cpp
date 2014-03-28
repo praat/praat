@@ -146,8 +146,8 @@ NORMAL (L"The authors show that if we model each vocal cord as two coupled mass-
 	"at least for a male speaker.")
 MAN_END
 
-MAN_BEGIN (L"J\\a\"ger (2003)", L"ppgb", 20070423)
-NORMAL (L"Gerhard J\\a\"ger (2003): \"Maximum Entropy Models and Stochastic Optimality Theory.\" "
+MAN_BEGIN (L"Jäger (2003)", L"ppgb", 20070423)
+NORMAL (L"Gerhard Jäger (2003): \"Maximum Entropy Models and Stochastic Optimality Theory.\" "
 	"To appear in Jane Grimshaw, Joan Maling, Chris Manning, Jane Simpson, and Annie Zaenen (eds.): "
 	"%%Architectures, rules, and preferences: A Festschrift for Joan Bresnan%, "
 	"CSLI Publications, Stanford.")
@@ -164,9 +164,9 @@ NORMAL (L"D.H. Klatt & L.C. Klatt (1990): \"Analysis, synthesis and perception o
 	"%%Journal of the Acoustical Society of America% #87: 820\\--856.")
 MAN_END
 
-MAN_BEGIN (L"Ladefoged (2001)", L"ppgb", 20030316)
+MAN_BEGIN (L"Ladefoged (2001)", L"ppgb", 20140325)
 NORMAL (L"Peter Ladefoged (2001). %%Vowels and consonants%: %%an introduction to the sounds of languages%. "
-	"Oxford: Blackwell.")
+	"Oxford: Blackwell. [second edition: 2005; third edition with Sandra Disner: 2012]")
 NORMAL (L"A very readable introduction to phonetics, mainly acoustic and articulatory. "
 	"Has lots of spectrograms of the sounds of the world's languages. Comes with a CD that has all those "
 	"sounds and includes training material for transcription (from another book).")

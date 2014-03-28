@@ -22,7 +22,6 @@
 /* Normally on, because e.g. the intensity contour in the Sound window should not run through the play buttons: */
 #define FUNCTIONS_ARE_CLIPPED  1
 
-#define POSTSCRIPT_MAXPATH  1000
 #define LINE_WIDTH_IN_PIXELS(me)  ( my resolution > 192 ? my lineWidth * (my resolution / 192.0) : my lineWidth )
 #define ORDER_DC  { long temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; \
 	if (yIsZeroAtTheTop == (y2DC > y1DC)) temp = y1DC, y1DC = y2DC, y2DC = temp; }
@@ -116,6 +115,7 @@ static void psRevertLine (GraphicsPostscript me) {
 	}
 #elif mac
 	static void quartzPrepareLine (GraphicsScreen me) {
+		CGContextSetLineJoin (my d_macGraphicsContext, kCGLineJoinRound);
 		if (my duringXor) {
 			CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
 			CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
@@ -154,13 +154,14 @@ static void psRevertLine (GraphicsPostscript me) {
 
 /* First level. */
 
-void structGraphicsScreen :: v_polyline (long numberOfPoints, long *xyDC, bool close) {
+void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool close) {
 	#if cairo
 		if (duringXor) {
 			#if ALLOW_GDK_DRAWING
 				gdkPrepareLine (this);
 				for (long i = 0; i < numberOfPoints - 1; i ++) {
-					gdk_draw_line (d_window, d_gdkGraphicsContext, xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
+					gdk_draw_line (d_window, d_gdkGraphicsContext,
+						xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
 				}
 				gdkRevertLine (this);
 				gdk_flush ();
@@ -169,9 +170,9 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, long *xyDC, bool c
 			if (d_cairoGraphicsContext == NULL) return;
 			cairoPrepareLine (this);
 			// cairo_new_path (d_cairoGraphicsContext); // move_to() automatically creates a new path
-			cairo_move_to (d_cairoGraphicsContext, (double) xyDC [0], (double) xyDC [1]);
+			cairo_move_to (d_cairoGraphicsContext, xyDC [0], xyDC [1]);
 			for (long i = 1; i < numberOfPoints; i ++) {
-				cairo_line_to (d_cairoGraphicsContext, (double) xyDC [i + i], (double) xyDC [i + i + 1]);
+				cairo_line_to (d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 			}
 			if (close) cairo_close_path (d_cairoGraphicsContext);
 			cairo_stroke (d_cairoGraphicsContext);
@@ -220,33 +221,13 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, long *xyDC, bool c
 	#endif
 }
 
-void structGraphicsPostscript :: v_polyline (long numberOfPoints, long *xyDC, bool close) {
-	long nn = numberOfPoints + numberOfPoints;
+void structGraphicsPostscript :: v_polyline (long numberOfPoints, double *xyDC, bool close) {
+	long nn = 2 * numberOfPoints;
 	psPrepareLine (this);
-	d_printf (d_file, "N %ld %ld moveto\n", xyDC [0], xyDC [1]);
-	for (long i = 2, ipath = 1; i < nn; i += 2) {
-		long dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
-		if (dx == 1 && i < nn - 20 && xyDC [i + 2] - xyDC [i] == 1 &&
-			 xyDC [i + 4] - xyDC [i + 2] == 1 && xyDC [i + 6] - xyDC [i + 4] == 1 &&
-			 xyDC [i + 8] - xyDC [i + 6] == 1 && xyDC [i + 10] - xyDC [i + 8] == 1 &&
-			 xyDC [i + 12] - xyDC [i + 10] == 1 && xyDC [i + 14] - xyDC [i + 12] == 1 &&
-			 xyDC [i + 16] - xyDC [i + 14] == 1 && xyDC [i + 18] - xyDC [i + 16] == 1)
-		{
-			d_printf (d_file, "%ld %ld %ld %ld %ld %ld %ld %ld %ld %ld F\n",
-				xyDC [i + 19] - xyDC [i + 17], xyDC [i + 17] - xyDC [i + 15],
-				xyDC [i + 15] - xyDC [i + 13], xyDC [i + 13] - xyDC [i + 11],
-				xyDC [i + 11] - xyDC [i + 9], xyDC [i + 9] - xyDC [i + 7],
-				xyDC [i + 7] - xyDC [i + 5], xyDC [i + 5] - xyDC [i + 3],
-				xyDC [i + 3] - xyDC [i + 1], dy);
-			ipath += 9;
-			i += 18;
-		} else if (dx != 0 || dy != 0 || i < 4) {
-			d_printf (d_file, "%ld %ld L\n", dx, dy);
-		}
-		if (++ ipath >= POSTSCRIPT_MAXPATH && i != nn - 2) {
-			d_printf (d_file, "currentpoint stroke moveto\n");
-			ipath = 1;
-		}
+	d_printf (d_file, "N %.7g %.7g moveto\n", xyDC [0], xyDC [1]);
+	for (long i = 2; i < nn; i += 2) {
+		double dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
+		d_printf (d_file, "%.7g %.7g L\n", dx, dy);
 	}
 	if (close)
 		d_printf (d_file, "closepath ");
@@ -254,7 +235,7 @@ void structGraphicsPostscript :: v_polyline (long numberOfPoints, long *xyDC, bo
 	psRevertLine (this);
 }
 
-void structGraphicsScreen :: v_fillArea (long numberOfPoints, long *xyDC) {
+void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;
 		// cairo_new_path (d_cairoGraphicsContext); // move_to() automatically creates a new path
@@ -285,33 +266,22 @@ void structGraphicsScreen :: v_fillArea (long numberOfPoints, long *xyDC) {
 	#endif
 }
 
-void structGraphicsPostscript :: v_fillArea (long numberOfPoints, long *xyDC) {
+void structGraphicsPostscript :: v_fillArea (long numberOfPoints, double *xyDC) {
 	long nn = numberOfPoints + numberOfPoints;
-	d_printf (d_file, "N %ld %ld M\n", xyDC [0], xyDC [1]);
-	/*
-	 * Very old (?) printers have path size restrictions.
-	 * That's no reason to truncate the path on newer printers.
-	 */
-	#if 0
-		if (numberOfPoints > POSTSCRIPT_MAXPATH) {
-			Melder_warning (L"GraphicsPostscript::fillArea: path truncated.");
-			numberOfPoints = POSTSCRIPT_MAXPATH, nn = numberOfPoints + numberOfPoints;
-		}
-	#endif
+	d_printf (d_file, "N %.7g %.7g M\n", xyDC [0], xyDC [1]);
 	for (long i = 2; i < nn; i += 2) {
-		d_printf (d_file, "%ld %ld L\n",
-			xyDC [i] - xyDC [i - 2], xyDC [i + 1] - xyDC [i - 1]);
+		d_printf (d_file, "%.7g %.7g L\n", xyDC [i] - xyDC [i - 2], xyDC [i + 1] - xyDC [i - 1]);
 	}
 	d_printf (d_file, "closepath fill\n");
 }
 
 /* Second level. */
 
-void structGraphicsScreen :: v_rectangle (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;
-		int width = x2DC - x1DC, height = y1DC - y2DC;
+		double width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0 || height <= 0) return;
 		cairoPrepareLine (this);
 		cairo_rectangle (d_cairoGraphicsContext, x1DC, y2DC, width, height);
@@ -324,11 +294,11 @@ void structGraphicsScreen :: v_rectangle (long x1DC, long x2DC, long y1DC, long 
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
-		CGContextStrokeRect (d_macGraphicsContext, CGRectMake (x1DC - 0.5, y2DC - 0.5, x2DC - x1DC, y1DC - y2DC));
+		CGContextStrokeRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
 		quartzRevertLine (this);
 		GraphicsQuartz_exitDraw (this);
 	#else
-		long xyDC [8];
+		double xyDC [8];
 		xyDC [0] = x1DC;	xyDC [1] = y1DC;
 		xyDC [2] = x2DC;	xyDC [3] = y1DC;
 		xyDC [4] = x2DC;	xyDC [5] = y2DC;
@@ -337,14 +307,14 @@ void structGraphicsScreen :: v_rectangle (long x1DC, long x2DC, long y1DC, long 
 	#endif
 }
 
-void structGraphicsPostscript :: v_rectangle (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsPostscript :: v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	psPrepareLine (this);
-	d_printf (d_file, "N %ld %ld M %ld %ld lineto %ld %ld lineto %ld %ld lineto closepath stroke\n",
+	d_printf (d_file, "N %.7g %.7g M %.7g %.7g lineto %.7g %.7g lineto %.7g %.7g lineto closepath stroke\n",
 		x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
 	psRevertLine (this);
 }
 
-void structGraphicsScreen :: v_fillRectangle (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsScreen :: v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;	
@@ -364,7 +334,7 @@ void structGraphicsScreen :: v_fillRectangle (long x1DC, long x2DC, long y1DC, l
 		CGContextFillRect (d_macGraphicsContext, CGRectMake (x1DC, y2DC, x2DC - x1DC, y1DC - y2DC));
 		GraphicsQuartz_exitDraw (this);
 	#else
-		long xyDC [10];
+		double xyDC [10];
 		xyDC [0] = x1DC;	xyDC [1] = y1DC;
 		xyDC [2] = x2DC;	xyDC [3] = y1DC;
 		xyDC [4] = x2DC;	xyDC [5] = y2DC;
@@ -374,9 +344,9 @@ void structGraphicsScreen :: v_fillRectangle (long x1DC, long x2DC, long y1DC, l
 	#endif
 }
 
-void structGraphicsPostscript :: v_fillRectangle (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsPostscript :: v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC) {
 	d_printf (d_file,
-		"N %ld %ld M %ld %ld lineto %ld %ld lineto %ld %ld lineto closepath fill\n",
+		"N %.7g %.7g M %.7g %.7g lineto %.7g %.7g lineto %.7g %.7g lineto closepath fill\n",
 		x1DC, y1DC, x2DC, y1DC, x2DC, y2DC, x1DC, y2DC);
 }
 
@@ -418,7 +388,7 @@ void structGraphicsPostscript :: v_circle (double xDC, double yDC, double rDC) {
 	psRevertLine (this);
 }
 
-void structGraphicsScreen :: v_ellipse (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsScreen :: v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;
@@ -438,8 +408,7 @@ void structGraphicsScreen :: v_ellipse (long x1DC, long x2DC, long y1DC, long y2
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
-        NSCAssert( d_macGraphicsContext, @"nil context");
-
+        NSCAssert (d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (d_macGraphicsContext);
 		CGContextSaveGState (d_macGraphicsContext);
 		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
@@ -453,22 +422,22 @@ void structGraphicsScreen :: v_ellipse (long x1DC, long x2DC, long y1DC, long y2
 	#endif
 }
 
-void structGraphicsPostscript :: v_ellipse (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsPostscript :: v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	if (x1DC != x2DC && y1DC != y2DC) {   // prevent division by zero
 		psPrepareLine (this);
 		/* To draw an ellipse, we will have to 'translate' and 'scale' and draw a circle. */
 		/* However, we have to scale back before the actual 'stroke', */
 		/* because we want the normal line thickness; */
 		/* So we cannot use 'gsave' and 'grestore', which clear the path (Cookbook 3). */
-		d_printf (d_file, "gsave %f %f translate %f %f scale N 0 0 1 0 360 arc\n"
-			" %f %f scale stroke grestore\n",
+		d_printf (d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 0 360 arc\n"
+			" %.7g %.7g scale stroke grestore\n",
 			0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC), 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC),
 			2.0 / (x2DC - x1DC), 2.0 / (y2DC - y1DC));
 		psRevertLine (this);
 	}
 }
 
-void structGraphicsScreen :: v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle) {
+void structGraphicsScreen :: v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) {
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;
 		cairoPrepareLine (this);
@@ -495,15 +464,15 @@ void structGraphicsScreen :: v_arc (long xDC, long yDC, long rDC, double fromAng
 	#endif
 }
 
-void structGraphicsPostscript :: v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle) {
+void structGraphicsPostscript :: v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) {
 	psPrepareLine (this);
-	d_printf (d_file, "N %ld %ld %ld %f %f arc stroke\n", xDC, yDC, rDC, fromAngle, toAngle);
+	d_printf (d_file, "N %.7g %.7g %.7g %.7g %.7g arc stroke\n", xDC, yDC, rDC, fromAngle, toAngle);
 	psRevertLine (this);
 }
 
 /* Third level. */
 
-void structGraphicsScreen :: v_fillCircle (long xDC, long yDC, long rDC) {
+void structGraphicsScreen :: v_fillCircle (double xDC, double yDC, double rDC) {
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;
 		cairo_new_path (d_cairoGraphicsContext);
@@ -528,11 +497,11 @@ void structGraphicsScreen :: v_fillCircle (long xDC, long yDC, long rDC) {
 	#endif
 }
 
-void structGraphicsPostscript :: v_fillCircle (long xDC, long yDC, long rDC) {
-	d_printf (d_file, "N %ld %ld %ld FC\n", xDC, yDC, rDC);
+void structGraphicsPostscript :: v_fillCircle (double xDC, double yDC, double rDC) {
+	d_printf (d_file, "N %.7g %.7g %.7g FC\n", xDC, yDC, rDC);
 }
 
-void structGraphicsScreen :: v_fillEllipse (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsScreen :: v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;	
@@ -550,10 +519,9 @@ void structGraphicsScreen :: v_fillEllipse (long x1DC, long x2DC, long y1DC, lon
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
+        NSCAssert (d_macGraphicsContext, @"nil context");
 		CGContextBeginPath (d_macGraphicsContext);
 		CGContextSaveGState (d_macGraphicsContext);
-        NSCAssert(d_macGraphicsContext, @"nil context");
-
 		CGContextTranslateCTM (d_macGraphicsContext, 0.5 * (x2DC + x1DC), 0.5 * (y2DC + y1DC));
 		CGContextScaleCTM (d_macGraphicsContext, 0.5 * (x2DC - x1DC), 0.5 * (y2DC - y1DC));
 		CGContextAddArc (d_macGraphicsContext, 0.0, 0.0, 1.0, 0.0, NUM2pi, 0);
@@ -566,12 +534,12 @@ void structGraphicsScreen :: v_fillEllipse (long x1DC, long x2DC, long y1DC, lon
 	#endif
 }
 
-void structGraphicsPostscript :: v_fillEllipse (long x1DC, long x2DC, long y1DC, long y2DC) {
-	d_printf (d_file, "gsave %ld %ld translate %ld %ld scale N 0 0 1 FC grestore\n",
+void structGraphicsPostscript :: v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC) {
+	d_printf (d_file, "gsave %.7g %.7g translate %.7g %.7g scale N 0 0 1 FC grestore\n",
 		(x2DC + x1DC) / 2, (y2DC + y1DC) / 2, (x2DC - x1DC) / 2, (y2DC - y1DC) / 2);
 }
 
-void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2DC) {
+void structGraphicsScreen :: v_button (double x1DC, double x2DC, double y1DC, double y2DC) {
 	ORDER_DC
 	#if cairo
 		if (x2DC <= x1DC || y1DC <= y2DC) return;
@@ -618,7 +586,7 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 		}
 		cairo_restore (d_cairoGraphicsContext);
 	#elif mac
-        int width = x2DC - x1DC, height = y1DC - y2DC;
+        double width = x2DC - x1DC, height = y1DC - y2DC;
 		if (width <= 0 || height <= 0) return;
 		/*
 		 * This is pixel-precise drawing, and may therefore by different on retina displays than on 100 dpi displays.
@@ -636,6 +604,7 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
         CGContextSetRGBStrokeColor (d_macGraphicsContext, red, green, blue, 1.0);
 		if (! isRetinaDisplay)
 			x1DC --;
+		x1DC += 0.5, x2DC -= 0.5, y1DC -= 0.5, y2DC += 0.5, width = x2DC - x1DC, height = y1DC - y2DC;
         CGRect rect = CGRectMake (x1DC, y2DC, width, height);
         CGContextAddRect (d_macGraphicsContext, rect);
         CGContextStrokePath (d_macGraphicsContext);
@@ -678,8 +647,9 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
 	#endif
 }
 
-void structGraphics :: v_roundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r) {
-	long dy = yIsZeroAtTheTop ? - r : r, xyDC [4];
+void structGraphics :: v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
+	double dy = yIsZeroAtTheTop ? - r : r;
+	double xyDC [4];
 	ORDER_DC
 	xyDC [0] = x1DC + r;
 	xyDC [1] = y1DC;
@@ -707,9 +677,9 @@ void structGraphics :: v_roundedRectangle (long x1DC, long x2DC, long y1DC, long
 	v_arc (x1DC + r, y1DC + dy, r, 180, 270);
 }
 
-void structGraphicsScreen :: v_roundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r) {
+void structGraphicsScreen :: v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
 	#if win
-		long dy = yIsZeroAtTheTop ? - r : r, xyDC [4];
+		double dy = yIsZeroAtTheTop ? - r : r, xyDC [4];
 		ORDER_DC
 		winPrepareLine (this);
 		RoundRect (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1, r + r, r + r);
@@ -722,8 +692,8 @@ void structGraphicsScreen :: v_roundedRectangle (long x1DC, long x2DC, long y1DC
 
 /* Fourth level. */
 
-void structGraphics :: v_fillRoundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r) {
-	long dy = yIsZeroAtTheTop ? - r : r;
+void structGraphics :: v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r) {
+	double dy = yIsZeroAtTheTop ? - r : r;
 	ORDER_DC
 	v_fillCircle (x2DC - r, y1DC + dy, r);
 	v_fillCircle (x2DC - r, y2DC - dy, r);
@@ -740,9 +710,9 @@ void structGraphics :: v_fillRoundedRectangle (long x1DC, long x2DC, long y1DC, 
 
 void Graphics_polyline (Graphics me, long numberOfPoints, double *xWC, double *yWC) {   // base 0
 	if (numberOfPoints == 0) return;
-	long *xyDC;
+	double *xyDC;
 	try {
-		xyDC = Melder_malloc (long, 2 * numberOfPoints);
+		xyDC = Melder_malloc (double, 2 * numberOfPoints);
 	} catch (MelderError) {
 		/*
 		 * Out of memory: silently refuse to draw.
@@ -766,9 +736,9 @@ void Graphics_polyline (Graphics me, long numberOfPoints, double *xWC, double *y
 
 void Graphics_polyline_closed (Graphics me, long numberOfPoints, double *xWC, double *yWC) {   // base 0
 	if (numberOfPoints == 0) return;
-	long *xyDC;
+	double *xyDC;
 	try {
-		xyDC = Melder_malloc (long, 2 * numberOfPoints);
+		xyDC = Melder_malloc (double, 2 * numberOfPoints);
 	} catch (MelderError) {
 		/*
 		 * Out of memory: silently refuse to draw.
@@ -791,7 +761,7 @@ void Graphics_polyline_closed (Graphics me, long numberOfPoints, double *xWC, do
 }
 
 void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
-	long xyDC [4];
+	double xyDC [4];
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC);
@@ -801,9 +771,9 @@ void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y
 }
 
 void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *yWC) {
-	long *xyDC;
+	double *xyDC;
 	try {
-		xyDC = Melder_malloc (long, 2 * numberOfPoints);
+		xyDC = Melder_malloc (double, 2 * numberOfPoints);
 	} catch (MelderError) {
 		/*
 		 * Out of memory: silently refuse to draw.
@@ -843,10 +813,10 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 	if (n > (x2DC - x1DC + 1) * 2) {  /* Optimize: draw one vertical line for each device x coordinate. */ \
 		long numberOfPixels = x2DC - x1DC + 1, k = 0; \
 		long numberOfPointsActuallyDrawn = numberOfPixels * 2; \
-		long *xyDC; \
+		double *xyDC; \
 		TYPE lastMini; \
 		if (numberOfPointsActuallyDrawn < 1) return; \
-		xyDC = Melder_malloc_f (long, 2 * numberOfPointsActuallyDrawn); \
+		xyDC = Melder_malloc_f (double, 2 * numberOfPointsActuallyDrawn); \
 		for (i = 0; i < numberOfPixels; i ++) { \
 			long j, jmin = ix1 + i / scale, jmax = ix1 + (i + 1) / scale; \
 			TYPE mini, maxi; \
@@ -906,7 +876,7 @@ void Graphics_fillArea (Graphics me, long numberOfPoints, double *xWC, double *y
 		if (k > 1) my v_polyline (k / 2, xyDC, false); \
 		Melder_free (xyDC); \
 	} else {  /* Normal. */  \
-		long *xyDC = Melder_malloc_f (long, 2 * n); \
+		double *xyDC = Melder_malloc_f (double, 2 * n); \
 		for (i = 0; i < n; i ++) { \
 			long ix = ix1 + i; \
 			long value = wdy (yWC [STAGGER (ix)]); \
@@ -1044,13 +1014,13 @@ void Graphics_fillArc (Graphics me, double xWC, double yWC, double rWC, double f
 
 /* Arrows. */
 
-void structGraphics :: v_arrowHead (long xDC, long yDC, double angle) {
+void structGraphics :: v_arrowHead (double xDC, double yDC, double angle) {
 	(void) xDC;
 	(void) yDC;
 	(void) angle;
 }
 
-void structGraphicsScreen :: v_arrowHead (long xDC, long yDC, double angle) {
+void structGraphicsScreen :: v_arrowHead (double xDC, double yDC, double angle) {
 	#if cairo
 		if (d_cairoGraphicsContext == NULL) return;
 		double size = 10.0 * resolution * arrowSize / 75.0; // TODO: die 75 zou dat niet de scherm resolutie moeten worden?
@@ -1073,10 +1043,9 @@ void structGraphicsScreen :: v_arrowHead (long xDC, long yDC, double angle) {
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
+		NSCAssert( d_macGraphicsContext, @"nil context");
 		CGContextSaveGState (d_macGraphicsContext);
 		CGContextBeginPath (d_macGraphicsContext);
-    NSCAssert( d_macGraphicsContext, @"nil context");
-
 		CGContextTranslateCTM (d_macGraphicsContext, xDC, yDC);
 		CGContextRotateCTM (d_macGraphicsContext, - angle * NUMpi / 180);
 		CGContextMoveToPoint (d_macGraphicsContext, 0.0, 0.0);
@@ -1090,16 +1059,16 @@ void structGraphicsScreen :: v_arrowHead (long xDC, long yDC, double angle) {
 	#endif
 }
 
-void structGraphicsPostscript :: v_arrowHead (long xDC, long yDC, double angle) {
-	long length = resolution * arrowSize / 10, radius = resolution * arrowSize / 30;
-	d_printf (d_file, "gsave %ld %ld translate %f rotate\n"
-		"N 0 0 M -%ld 0 %ld -60 60 arc closepath fill grestore\n", xDC, yDC, angle, length, radius);
+void structGraphicsPostscript :: v_arrowHead (double xDC, double yDC, double angle) {
+	double length = resolution * arrowSize / 10, radius = resolution * arrowSize / 30;
+	d_printf (d_file, "gsave %.7g %.7g translate %.7g rotate\n"
+		"N 0 0 M %.7g 0 %.7g -60 60 arc closepath fill grestore\n", xDC, yDC, angle, - length, radius);
 }
 
 void Graphics_arrow (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
 	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1 : 1), wdx (x2WC) - wdx (x1WC));
 	double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10;
-	long xyDC [4];
+	double xyDC [4];
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;
@@ -1112,7 +1081,7 @@ void Graphics_arrow (Graphics me, double x1WC, double y1WC, double x2WC, double 
 void Graphics_doubleArrow (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
 	double angle = (180.0 / NUMpi) * atan2 ((wdy (y2WC) - wdy (y1WC)) * (my yIsZeroAtTheTop ? -1 : 1), wdx (x2WC) - wdx (x1WC));
 	double size = my screen ? 10.0 * my resolution * my arrowSize / 72.0 : my resolution * my arrowSize / 10;
-	long xyDC [4];
+	double xyDC [4];
 	xyDC [0] = wdx (x1WC) + (my screen ? 0.7 : 0.6) * cos (angle * NUMpi / 180) * size;
 	xyDC [1] = wdy (y1WC) + (my yIsZeroAtTheTop ? -1.0 : 1.0) * (my screen ? 0.7 : 0.6) * sin (angle * NUMpi / 180) * size;
 	xyDC [2] = wdx (x2WC) + (my screen ? 0.7 : 0.6) * cos ((angle - 180) * NUMpi / 180) * size;

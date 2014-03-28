@@ -442,10 +442,7 @@ praat_Command praat_getMenuCommand (long i)
 void praat_addCommandsToEditor (Editor me) {
 	const wchar_t *windowName = my classInfo -> className;
 	for (long i = 1; i <= theNumberOfCommands; i ++) if (wcsequ (theCommands [i]. window, windowName)) {
-		if (! Editor_addCommandScript (me, theCommands [i]. menu, theCommands [i]. title, 0, theCommands [i]. script))
-			Melder_flushError ("To fix this, go to Praat->Preferences->Buttons->Editors, "
-				"and remove the script from this menu.\n"
-				"You may want to install the script in a different menu.");
+		Editor_addCommandScript (me, theCommands [i]. menu, theCommands [i]. title, 0, theCommands [i]. script);
 	}
 }
 

@@ -33,7 +33,7 @@
 	#include "macport_off.h"
 #endif
 
-void Graphics_init (Graphics me);
+void Graphics_init (Graphics me, int resolution);
 /*
 	Postconditions:
 		my font == Graphics_FONT_HELVETICA;
@@ -86,18 +86,18 @@ Thing_define (GraphicsScreen, Graphics) {
 	// overridden methods:
 	protected:
 		virtual void v_destroy ();
-		virtual void v_polyline (long numberOfPoints, long *xyDC, bool close);
-		virtual void v_fillArea (long numberOfPoints, long *xyDC);
-		virtual void v_rectangle (long x1DC, long x2DC, long y1DC, long y2DC);
-		virtual void v_fillRectangle (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_polyline (long numberOfPoints, double *xyDC, bool close);
+		virtual void v_fillArea (long numberOfPoints, double *xyDC);
+		virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC);
+		virtual void v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC);
 		virtual void v_circle (double xDC, double yDC, double rDC);
-		virtual void v_ellipse (long x1DC, long x2DC, long y1DC, long y2DC);
-		virtual void v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle);
-		virtual void v_fillCircle (long xDC, long yDC, long rDC);
-		virtual void v_fillEllipse (long x1DC, long x2DC, long y1DC, long y2DC);
-		virtual void v_button (long x1DC, long x2DC, long y1DC, long y2DC);
-		virtual void v_roundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r);
-		virtual void v_arrowHead (long xDC, long yDC, double angle);
+		virtual void v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC);
+		virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle);
+		virtual void v_fillCircle (double xDC, double yDC, double rDC);
+		virtual void v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC);
+		virtual void v_button (double x1DC, double x2DC, double y1DC, double y2DC);
+		virtual void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
+		virtual void v_arrowHead (double xDC, double yDC, double angle);
 		virtual bool v_mouseStillDown ();
 		virtual void v_getMouseLocation (double *xWC, double *yWC);
 		virtual void v_flushWs ();
@@ -135,16 +135,16 @@ Thing_define (GraphicsPostscript, Graphics) {
 		int job, eps, pageNumber, lastSize;
 	// overridden methods:
 		virtual void v_destroy ();
-		virtual void v_polyline (long numberOfPoints, long *xyDC, bool close);
-		virtual void v_fillArea (long numberOfPoints, long *xyDC);
-		virtual void v_rectangle (long x1DC, long x2DC, long y1DC, long y2DC);
-		virtual void v_fillRectangle (long x1DC, long x2DC, long y1DC, long y2DC);
+		virtual void v_polyline (long numberOfPoints, double *xyDC, bool close);
+		virtual void v_fillArea (long numberOfPoints, double *xyDC);
+		virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC);
+		virtual void v_fillRectangle (double x1DC, double x2DC, double y1DC, double y2DC);
 		virtual void v_circle (double xDC, double yDC, double rDC);
-		virtual void v_ellipse (long x1DC, long x2DC, long y1DC, long y2DC);
-		virtual void v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle);
-		virtual void v_fillCircle (long xDC, long yDC, long rDC);
-		virtual void v_fillEllipse (long x1DC, long x2DC, long y1DC, long y2DC);
-		virtual void v_arrowHead (long xDC, long yDC, double angle);
+		virtual void v_ellipse (double x1DC, double x2DC, double y1DC, double y2DC);
+		virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle);
+		virtual void v_fillCircle (double xDC, double yDC, double rDC);
+		virtual void v_fillEllipse (double x1DC, double x2DC, double y1DC, double y2DC);
+		virtual void v_arrowHead (double xDC, double yDC, double angle);
 };
 
 /* Opcodes for recording. */

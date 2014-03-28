@@ -421,14 +421,13 @@ void Graphics_updateWs (Graphics me) {
 		my v_updateWs ();
 }
 
-static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *voidWindow, int resolution) {
+static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *voidWindow) {
 
 	/* Fill in new members. */
 
 	#if cairo
 		my d_display = (GdkDisplay *) gdk_display_get_default ();
 		_GraphicsScreen_text_init (me);
-		my resolution = 100;
 		#if ALLOW_GDK_DRAWING
 			trace ("retrieving window");
 			my d_window = GDK_DRAWABLE (GTK_WIDGET (voidDisplay) -> window);
@@ -449,7 +448,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			my d_gdiGraphicsContext = GetDC (my d_winWindow);   // window must have a constant display context; see XtInitialize ()
 		}
 		Melder_assert (my d_gdiGraphicsContext != NULL);
-		my resolution = resolution;
 		SetBkMode (my d_gdiGraphicsContext, TRANSPARENT);   // not the default!
 		/*
 		 * Create pens and brushes.
@@ -474,7 +472,6 @@ static int GraphicsScreen_init (GraphicsScreen me, void *voidDisplay, void *void
 			}
         #endif
 		my d_macColour = theBlackColour;
-		my resolution = resolution;
 		my d_depth = my resolution > 150 ? 1 : 8;   /* BUG: replace by true depth (1=black/white) */
 		_GraphicsScreen_text_init (me);
 	#endif
@@ -485,12 +482,12 @@ Graphics Graphics_create_screen (void *display, void *window, int resolution) {
 	GraphicsScreen me = Thing_new (GraphicsScreen);
 	my screen = true;
 	my yIsZeroAtTheTop = true;
-	Graphics_init (me);
+	Graphics_init (me, resolution);
 	Graphics_setWsViewport ((Graphics) me, 0, 100, 0, 100);
 	#if mac && useCarbon
-		GraphicsScreen_init (me, display, GetWindowPort ((WindowRef) window), resolution);
+		GraphicsScreen_init (me, display, GetWindowPort ((WindowRef) window));
 	#else
-		GraphicsScreen_init (me, display, window, resolution);
+		GraphicsScreen_init (me, display, window);
 	#endif
 	return (Graphics) me;
 }
@@ -503,7 +500,7 @@ Graphics Graphics_create_screenPrinter (void *display, void *window) {
 	#ifdef macintosh
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me);
+	Graphics_init (me, thePrinter. resolution);
 	my paperWidth = (double) thePrinter. paperWidth / thePrinter. resolution;
 	my paperHeight = (double) thePrinter. paperHeight / thePrinter. resolution;
 	//NSLog (@"Graphics_create_screenPrinter: %f %f", my paperWidth, my paperHeight);
@@ -521,7 +518,7 @@ Graphics Graphics_create_screenPrinter (void *display, void *window) {
 		my d_y2DC -= GetDeviceCaps ((HDC) window, PHYSICALOFFSETY);
 	#endif
 	Graphics_setWsWindow ((Graphics) me, 0, my paperWidth - 1.0, 13.0 - my paperHeight, 12.0);
-	GraphicsScreen_init (me, display, window, thePrinter. resolution);
+	GraphicsScreen_init (me, display, window);
 	return (Graphics) me;
 }
 
@@ -567,24 +564,24 @@ Graphics Graphics_create_xmdrawingarea (GuiDrawingArea w) {
 	#elif mac
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me);
-	#if mac 
+	#if mac
+		Graphics_init (me, Gui_getResolution (NULL));
 		#if useCarbon
             GraphicsScreen_init (me,
                 XtDisplay (my d_drawingArea -> d_widget),
-                GetWindowPort ((WindowRef) XtWindow (my d_drawingArea -> d_widget)),
-                Gui_getResolution (NULL));
+                GetWindowPort ((WindowRef) XtWindow (my d_drawingArea -> d_widget)));
 		#else
             GraphicsScreen_init (me,
                                  my d_drawingArea -> d_widget,
-                                 my d_drawingArea -> d_widget,
-                                 Gui_getResolution (NULL));
+                                 my d_drawingArea -> d_widget);
 		#endif
 	#else
 		#if gtk
-			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget), Gui_getResolution (my d_drawingArea -> d_widget));
+			Graphics_init (me, Gui_getResolution (my d_drawingArea -> d_widget));
+			GraphicsScreen_init (me, GTK_WIDGET (my d_drawingArea -> d_widget), GTK_WIDGET (my d_drawingArea -> d_widget));
 		#elif motif
-			GraphicsScreen_init (me, XtDisplay (my d_drawingArea -> d_widget), XtWindow (my d_drawingArea -> d_widget), Gui_getResolution (my d_drawingArea -> d_widget));
+			Graphics_init (me, Gui_getResolution (my d_drawingArea -> d_widget));
+			GraphicsScreen_init (me, XtDisplay (my d_drawingArea -> d_widget), XtWindow (my d_drawingArea -> d_widget));
 		#endif
 	#endif
 
@@ -618,9 +615,8 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 	#ifdef macintosh
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me.peek());
+	Graphics_init (me.peek(), resolution);
 	my d_isPng = true;
-	my resolution = resolution;
 	my d_file = *file;
 	my d_x1DC = my d_x1DCmin = 0;
 	my d_x2DC = my d_x2DCmax = (x2inches - x1inches) * resolution;
@@ -700,8 +696,7 @@ Graphics Graphics_create_pdffile (MelderFile file, int resolution,
 	#ifdef macintosh
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me.peek());
-	my resolution = resolution;
+	Graphics_init (me.peek(), resolution);
 	#if gtk
 		my d_cairoSurface = cairo_pdf_surface_create (Melder_peekWcsToUtf8 (file -> path),
 			(x2inches - x1inches) * 72.0, (y2inches - y1inches) * 72.0);
@@ -746,8 +741,7 @@ Graphics Graphics_create_pdf (void *context, int resolution,
 	#ifdef macintosh
 		_GraphicsMacintosh_tryToInitializeQuartz ();
 	#endif
-	Graphics_init (me);
-	my resolution = resolution;
+	Graphics_init (me, resolution);
 	#ifdef macintosh
 		my d_macGraphicsContext = static_cast <CGContext *> (context);
 		CGRect rect = CGRectMake (0, 0, (x2inches - x1inches) * 72, (y2inches - y1inches) * 72);   // don't tire PDF viewers with funny origins

@@ -23,11 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140320)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140328)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.69# (28 March 2014)")
+LIST_ITEM (L"\\bu Picture window: can save to 300-dpi and 600-dpi PNG files.")
+LIST_ITEM (L"\\bu Graphics: sub-pixel precision line drawing on Mac and Linux.")
+LIST_ITEM (L"\\bu Repaired a bug that could show spurious buttons in the Objects window if a plug-in created objects.")
 NORMAL (L"##5.3.68# (20 March 2014)")
-LIST_ITEM (L"\\bu Mac: corrected a bug introduced in 5.3.19 that could cause crashes when drawing a spectrogram.")
+LIST_ITEM (L"\\bu Mac: corrected a bug introduced in 5.3.67 that could cause crashes when drawing a spectrogram.")
 LIST_ITEM (L"\\bu Mac and Linux: @@Create Strings as file list...@ handles broken symbolic links more leniently.")
 NORMAL (L"##5.3.67# (19 March 2014)")
 LIST_ITEM (L"\\bu Corrected a bug that would create strange PNG files if the selection did not touch the upper left corner of the Picture window.")
@@ -836,7 +840,7 @@ LIST_ITEM (L"\\bu Macintosh: improved drawing of spectrograms for printing and c
 	"(this was crippled in 4.5.18, but now it is better than before 4.5.18).")
 NORMAL (L"##4.5.21# (24 April 2007)")
 LIST_ITEM (L"\\bu OT learning: corrected HarmonicGrammar (and LinearOT) learning procedure "
-	"to the stochastic gradient ascent method applied by @@J\\a\"ger (2003)@ to MaxEnt grammars.")
+	"to the stochastic gradient ascent method applied by @@Jäger (2003)@ to MaxEnt grammars.")
 LIST_ITEM (L"\\bu Scripting: removed a bug that could make selection checking (in command windows) unreliable after a script was run.")
 NORMAL (L"##4.5.20# (19 April 2007)")
 LIST_ITEM (L"\\bu Scripting: allow assignments like $$pitch = To Pitch... 0 75 600$.")

@@ -1,6 +1,6 @@
 /* manual_Picture.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -673,18 +673,15 @@ DEFINITION (L"you can specify a red-green-blue value as three values between 0 a
 	"and separated by commas, e.g. {0.8,0.1,0.2} is something reddish.")
 MAN_END
 
-MAN_BEGIN (L"Picture window", L"ppgb", 20110129)
+MAN_BEGIN (L"Picture window", L"ppgb", 20140325)
 INTRO (L"One of the two main windows in Praat.")
 TAG (L"File menu")
+LIST_ITEM (L"\\bu @@Save as PDF file...")
+LIST_ITEM (L"\\bu @@Save as PNG file...")
+LIST_ITEM (L"\\bu @@Save as EPS file...")
+LIST_ITEM (L"\\bu @@Save as Windows metafile...@")
 LIST_ITEM (L"\\bu @@Read from Praat picture file...@, @@Save as Praat picture file...")
 LIST_ITEM (L"\\bu @@PostScript settings...")
-#if defined (macintosh)
-	LIST_ITEM (L"\\bu @@Save as PDF file...")
-#endif
-LIST_ITEM (L"\\bu @@Save as EPS file...")
-#if defined (_WIN32)
-	LIST_ITEM (L"\\bu @@Save as Windows metafile...@")
-#endif
 LIST_ITEM (L"\\bu @@Print...")
 TAG (L"Edit menu")
 LIST_ITEM (L"\\bu @@Undo@")
@@ -945,33 +942,17 @@ ENTRY (L"Usage")
 NORMAL (L"You can use all @@special symbols@ and @@text styles@.")
 MAN_END
 
-MAN_BEGIN (L"Save as EPS file...", L"ppgb", 20110129)
+MAN_BEGIN (L"Save as EPS file...", L"ppgb", 20140325)
 INTRO (L"A command in the File menu of the @@Picture window@.")
 NORMAL (L"It saves the picture to an @@Encapsulated PostScript@ (EPS) file, "
 	"which can be imported by many other programs, such as Microsoft^\\re Word^\\tm.")
-ENTRY (L"PostScript = highest possible quality!")
-NORMAL (L"With EPS files you can use high-quality graphics in your word-processor documents. "
-	"The quality is higher than if you use @@Copy to clipboard@.")
-#ifdef _WIN32
-ENTRY (L"The big limitation")
-NORMAL (L"EPS pictures imported in Word for Windows will show correctly only on PostScript printers, or with GhostView, or in PDF files "
-	"created by Adobe^\\re Acrobat^\\tm Distiller^\\tm. "
-	"To print EPS pictures on non-PostScript printers, use a Linux or Macintosh computer.")
-#endif
-#ifdef macintosh
 ENTRY (L"Usage")
-NORMAL (L"To import an EPS file in Word, choose #Insert \\-> #Picture \\-> ##From file...#. "
-	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
-NORMAL (L"(In Word versions from 2001 or older, Word will show you a screen preview in a mediocre quality, "
-	"but you will see the high-quality PostScript version when you print.)")
-#endif
-#ifdef _WIN32
-ENTRY (L"Usage")
-NORMAL (L"If Word cannot read your EPS files, you may have to install EPS support from the Office^\\tm CD, "
-	"because the standard installation of Office may not support EPS files. "
-	"When you import an EPS file in an older version of Word, you may only see the file name and the date and time of creation, "
-	"and a message that the picture will print correctly to a PostScript printer (it will, if the PostScript driver has been selected).")
-#endif
+NORMAL (L"EPS files are on the way out, mainly because they do not really support international text. "
+	"On Macintosh and Linux, it is almost always better to use @@Save as PDF file...@ instead, "
+	"or (on the Mac) to use @@Copy to clipboard@. On Windows, which does not really support PDF files yet, "
+	"you may find that EPS files sometimes creates better quality than @@Copy to clipboard@; "
+	"you should also check out @@Save as PNG file...@ on Windows. "
+	"To import an EPS file in Word, choose #Insert \\-> #Picture \\-> ##From file...#. ")
 ENTRY (L"Behaviour")
 NORMAL (L"Though all the contents of the Picture window are written to the EPS file, "
 	"only the part that you selected in the Picture window (the %viewport) may become visible in Word (or another program).")
@@ -979,25 +960,42 @@ ENTRY (L"Settings")
 NORMAL (L"The EPS picture is saved with the grey resolution and fonts that you specified with @@PostScript settings...@.")
 MAN_END
 
-MAN_BEGIN (L"Save as PDF file...", L"ppgb", 20110129)
-INTRO (L"A command in the File menu of the @@Picture window@, on Macintosh only.")
+MAN_BEGIN (L"Save as PDF file...", L"ppgb", 20140325)
+INTRO (L"A command in the File menu of the @@Picture window@, on Macintosh and Linux.")
 NORMAL (L"It saves the picture to a PDF file, "
-	"which can be imported by several other programs, such as Microsoft^\\re Word\\tm 2008 on the Mac.")
-ENTRY (L"PDF = PostScript = highest possible quality!")
+	"which can be imported by several other programs, such as modern versions of Microsoft^\\re Word\\tm.")
+ENTRY (L"PDF means highest possible quality")
 NORMAL (L"With PDF pictures you can use high-quality graphics in your word-processor documents. "
-	"The quality is the same as if you use @@Copy to clipboard@.")
-NORMAL (L"On Windows or Linux, use @@Save as EPS file...@ instead.")
+	"On the Mac, the quality is the same as if you use @@Copy to clipboard@.")
+NORMAL (L"On Windows, use @@Save as PNG file...@ or @@Save as EPS file...@ instead.")
 ENTRY (L"Behaviour")
 NORMAL (L"Though all the contents of the Picture window are written to the PDF file, "
-	"only the part that you selected in the Picture window (the %viewport) may become visible in Word (or another program).")
+	"only the part that you selected in the Picture window (the %viewport) will become visible in Word (or another program).")
 ENTRY (L"Usage")
-NORMAL (L"To import a PDF file in Word 2008, choose #Insert \\-> #Picture \\-> ##From file...#. "
+NORMAL (L"To import a PDF file in Word, choose #Insert \\-> #Picture \\-> ##From file...#. "
 	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
-NORMAL (L"Please note that if you save the Word document as a ##.doc# file, Word will convert the PDF picture into a mediocre 300-dpi bitmap; "
-	"therefore, you should save the document as a ##.docx# file instead. If you cannot use ##.docx# files "
-	"(for instance because your publisher does not support these yet, or because you still use Word 2004), "
-	"you may use @@Save as EPS file...@; "
-	"the quality will be the same, but you cannot use Czech, Russian, Korean or Arabic characters in EPS files.")
+MAN_END
+
+MAN_BEGIN (L"Save as PNG file...", L"ppgb", 20140325)
+INTRO (L"A command in the File menu of the @@Picture window@, on all platforms.")
+NORMAL (L"It saves the picture to a PNG (\"ping\") image file, "
+	"which can be imported by several other programs, such as Microsoft^\\re Word\\tm. "
+	"For the resolution you can choose between 600 dots per inch (very good quality even when printed) "
+	"and 300 dpi (enough for all web sites, even on retina displays).")
+ENTRY (L"Usage in text processors")
+NORMAL (L"On Windows, PNG files may sometimes have the best quality that you can get, "
+	"although you should also try @@Save as EPS file...@ and @@Copy to clipboard@. "
+	"On Macintosh or Linux, @@Save as PDF file...@ or @@Copy to clipboard@ is almost always better.")
+ENTRY (L"Usage for publication")
+NORMAL (L"Some publishers do not accept PDF pictures. In such a case, "
+	"they may accept 600-dpi or 300-dpi PNG pictures. If they accept TIFF pictures only, "
+	"then you can easily convert your PNG picture to a TIFF picture with any graphics converter program.")
+ENTRY (L"Behaviour")
+NORMAL (L"Only the contents of the part of the Picture window that you selected (the %viewport) "
+	"are written to the PNG file.")
+ENTRY (L"Usage")
+NORMAL (L"To import a PNG file in Word, choose #Insert \\-> #Picture \\-> ##From file...#. "
+	"Word will create a picture with the same size as the originally selected part of the Picture window (the %viewport).")
 MAN_END
 
 MAN_BEGIN (L"Save as Praat picture file...", L"ppgb", 20110129)
@@ -1008,7 +1006,7 @@ NORMAL (L"With the help of this command, you can transfer the contents of the pi
 	"for instance from a Macintosh to a Windows computer.")
 MAN_END
 
-MAN_BEGIN (L"Save as Windows metafile...", L"ppgb", 20120430)
+MAN_BEGIN (L"Save as Windows metafile...", L"ppgb", 20140325)
 INTRO (L"A command in the File menu of the @@Picture window@, if you are on Windows.")
 NORMAL (L"It saves the selected part of the picture in an \"enhanced metafile\" (.EMF) format, "
 	"which can be imported by many Windows programs, like Adobe^\\re Illustrator^\\tm or Microsoft^\\re Word^\\tm.")
@@ -1020,8 +1018,6 @@ NORMAL (L"You will not use this command very often, "
 	"because it is usually easier to copy the selection to the clipboard with the @@Copy to clipboard@ command, "
 	"and `Paste' it into the other program. You may use a metafile instead of the clipboard if the clipboard is too large "
 	"for the other program to read, or if you want to transfer the picture to another computer.")
-NORMAL (L"If you have a PostScript printer, you would use @@Save as EPS file...@ instead "
-	"for best printing results.")
 MAN_END
 
 }

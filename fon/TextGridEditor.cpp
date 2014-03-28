@@ -2216,9 +2216,9 @@ void structTextGridEditor :: f_init (const wchar_t *title, TextGrid grid, Sample
 	}
 	if (a_spellingChecker != NULL)
 		this -> text -> f_setSelection (0, 0);
-	if (a_sound && a_sound -> xmin == 0.0 && grid -> xmin != 0.0)
+	if (a_sound && a_sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > a_sound -> xmax)
 		Melder_warning ("The time domain of the TextGrid (starting at ",
-			Melder_fixed (grid -> xmin, 6), " seconds) is not aligned with that of the sound "
+			Melder_fixed (grid -> xmin, 6), " seconds) does not overlap with that of the sound "
 			"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
 			"and choose “Shift times to...” from the Modify menu "
 			"to shift the starting time of the TextGrid to zero.");

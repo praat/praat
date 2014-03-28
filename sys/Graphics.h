@@ -2,7 +2,7 @@
 #define _Graphics_h_
 /* Graphics.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,6 +57,8 @@ Thing_define (Graphics, Thing) {
 			/* Also used as a boolean. */
 		int resolution;
 			/* Dots per inch. */
+		enum kGraphics_resolution resolutionNumber;
+			/* 1 = 100 dpi, 2 = 300 dpi, 3 = 600 dpi */
 		long d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
 			/* Maximum dimensions of the output device. */
 			/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */
@@ -114,22 +116,22 @@ Thing_define (Graphics, Thing) {
 	// overridden methods:
 		virtual void v_destroy ();
 	// new methods:
-		virtual void v_polyline (long numberOfPoints, long *xyDC, bool close) { (void) numberOfPoints; (void) xyDC; (void) close; }
-		virtual void v_fillArea (long numberOfPoints, long *xyDC) { (void) numberOfPoints; (void) xyDC; }
-		virtual void v_rectangle (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-		virtual void v_fillRectangle (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+		virtual void v_polyline (long numberOfPoints, double *xyDC, bool close) { (void) numberOfPoints; (void) xyDC; (void) close; }
+		virtual void v_fillArea (long numberOfPoints, double *xyDC) { (void) numberOfPoints; (void) xyDC; }
+		virtual void v_rectangle (double x1DC, double x2DC, double y1DC, double y2DC) { (void) x1DC; (void) x2DC; (void) y1DC; (void) y2DC; }
+		virtual void v_fillRectangle (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
 		virtual void v_circle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
-		virtual void v_ellipse (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-		virtual void v_arc (long xDC, long yDC, long rDC, double fromAngle, double toAngle) { (void) xDC; (void) yDC; (void) rDC; (void) fromAngle; (void) toAngle; }
-		virtual void v_fillCircle (long xDC, long yDC, long rDC) { (void) xDC; (void) yDC; (void) rDC; }
-		virtual void v_fillEllipse (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
-		virtual void v_button (long a_x1DC, long a_x2DC, long a_y1DC, long a_y2DC)
+		virtual void v_ellipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+		virtual void v_arc (double xDC, double yDC, double rDC, double fromAngle, double toAngle) { (void) xDC; (void) yDC; (void) rDC; (void) fromAngle; (void) toAngle; }
+		virtual void v_fillCircle (double xDC, double yDC, double rDC) { (void) xDC; (void) yDC; (void) rDC; }
+		virtual void v_fillEllipse (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC) { (void) a_x1DC; (void) a_x2DC; (void) a_y1DC; (void) a_y2DC; }
+		virtual void v_button (double a_x1DC, double a_x2DC, double a_y1DC, double a_y2DC)
 			{
 				v_rectangle (a_x1DC, a_x2DC, a_y1DC, a_y2DC);   // the simplest implementation
 			}
-		virtual void v_roundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r);
-		virtual void v_fillRoundedRectangle (long x1DC, long x2DC, long y1DC, long y2DC, long r);
-		virtual void v_arrowHead (long xDC, long yDC, double angle);
+		virtual void v_roundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
+		virtual void v_fillRoundedRectangle (double x1DC, double x2DC, double y1DC, double y2DC, double r);
+		virtual void v_arrowHead (double xDC, double yDC, double angle);
 		virtual bool v_mouseStillDown () { return false; }
 		virtual void v_getMouseLocation (double *xWC, double *yWC) { *xWC = *yWC = NUMundefined; }
 		virtual void v_flushWs () { }

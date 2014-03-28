@@ -115,7 +115,8 @@ void Picture_readFromPraatPictureFile (Picture me, MelderFile file);
 
 void Picture_writeToEpsFile (Picture me, MelderFile file, int includeFonts, int useSilipaPS);
 void Picture_writeToPdfFile (Picture me, MelderFile file);
-void Picture_writeToPngFile (Picture me, MelderFile file);
+void Picture_writeToPngFile_300 (Picture me, MelderFile file);
+void Picture_writeToPngFile_600 (Picture me, MelderFile file);
 
 void Picture_print (Picture me);
 void Picture_printToPostScriptPrinter (Picture me, int spots, int paperSize, int rotation, double magnification);

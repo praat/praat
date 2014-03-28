@@ -1,6 +1,6 @@
 /* GraphicsPostscript.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,9 +136,7 @@ Graphics Graphics_create_postscriptjob (MelderFile file, int resolution, enum kG
 	my postScript = true, my yIsZeroAtTheTop = false, my languageLevel = 2;
 	my job = TRUE, my eps = FALSE, my printer = FALSE;
 	my d_printf = (int (*)(void *, const char*, ...)) fprintf;
-	Graphics_init (me.peek());
-	my resolution = resolution;   /* Virtual resolution; may not be equal to that of the printer; */
-					/* there is no problem if this always equals 600 dpi. */
+	Graphics_init (me.peek(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
 	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
@@ -206,9 +204,7 @@ Graphics Graphics_create_epsfile (MelderFile file, int resolution, enum kGraphic
 	#else
 		my d_printf = (int (*)(void *, const char*, ...)) fprintf;
 	#endif
-	Graphics_init (me.peek());
-	my resolution = resolution;   /* Virtual resolution; may not be equal to that of the printer; */
-					/* there is no problem if this always equals 600 dpi. */
+	Graphics_init (me.peek(), resolution);   // virtual resolution; may differ from that of the printer; OK if always 600 dpi
 	my photocopyable = spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }
@@ -253,8 +249,7 @@ Graphics Graphics_create_postscriptprinter (void) {
 	my postScript = TRUE, my languageLevel = 2;
 	my job = FALSE, my eps = FALSE, my printer = TRUE;
 	my d_printf = Printer_postScript_printf;
-	Graphics_init (me);
-	my resolution = thePrinter. resolution;   /* Virtual resolution. */
+	Graphics_init (me, thePrinter. resolution);   // virtual resolution
 	my photocopyable = thePrinter. spots == kGraphicsPostscript_spots_PHOTOCOPYABLE;
 	if (my photocopyable) { my spotsDensity = 85; my spotsAngle = 35; }
 	else { my spotsDensity = 106; my spotsAngle = 46; }

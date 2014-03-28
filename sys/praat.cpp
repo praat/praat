@@ -1,6 +1,6 @@
 /* praat.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1495,12 +1495,14 @@ void praat_run (void) {
 				MelderDir_getSubdir (& praatDir, directoryNames -> strings [i], & pluginDir);
 				MelderDir_getFile (& pluginDir, L"setup.praat", & plugin);
 				if (MelderFile_readable (& plugin)) {
+					Melder_backgrounding = true;
 					try {
 						praat_executeScriptFromFile (& plugin, NULL);
 					} catch (MelderError) {
 						Melder_error_ (praatP.title, ": plugin ", & plugin, " contains an error.");
 						Melder_flushError (NULL);
 					}
+					Melder_backgrounding = false;
 				}
 			}
 		}
