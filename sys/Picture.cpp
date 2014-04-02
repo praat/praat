@@ -1,6 +1,6 @@
 /* Picture.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma, 2008 Stefan de Konink, 2010 Franz Brauße
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -219,11 +219,8 @@ Picture Picture_create (GuiDrawingArea drawingArea, bool sensitive) {
 		} else {
 			/*
 			 * Create a dummy Graphics.
-			 * This has device coordinates from 0 to 32767.
-			 * This will be mapped on an area of 12x12 inches,
-			 * so the resolution is 32767 / 12 = 2731.
 			 */
-			my graphics = Graphics_create (2731);
+			my graphics = Graphics_create (600);
 		}
 		Graphics_setWsWindow (my graphics, 0.0, 12.0, 0.0, 12.0);
 		Graphics_setViewport (my graphics, my selx1, my selx2, my sely1, my sely2);

@@ -1218,6 +1218,7 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_setLineType (my d_graphics, Graphics_DOTTED);
 	Graphics_line (my d_graphics, xleft, 0.0, xleft, 1.0);
 	Graphics_line (my d_graphics, xright, 0.0, xright, 1.0);
+	Graphics_setLineType (my d_graphics, Graphics_DRAWN);
 	Graphics_xorOff (my d_graphics);
 }
 

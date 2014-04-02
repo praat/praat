@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140328)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140402)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.70# (2 April 2014)")
+LIST_ITEM (L"\\bu Added some query commands for DurationTier objects.")
+LIST_ITEM (L"\\bu Repaired a bug that caused Praat not to run as a console app.")
 NORMAL (L"##5.3.69# (28 March 2014)")
 LIST_ITEM (L"\\bu Picture window: can save to 300-dpi and 600-dpi PNG files.")
 LIST_ITEM (L"\\bu Graphics: sub-pixel precision line drawing on Mac and Linux.")

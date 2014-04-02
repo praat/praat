@@ -131,37 +131,37 @@ Photo Photo_readFromImageFile (MelderFile file) {
 			CFRelease (path);
 			CGImageSourceRef imageSource = CGImageSourceCreateWithURL (url, NULL);
 			CFRelease (url);
-			if (imageSource != NULL) {
-				CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
-				CFRelease (imageSource);
-				if (image != NULL) {
-					long width = CGImageGetWidth (image);
-					long height = CGImageGetHeight (image);
-					me.reset (Photo_createSimple (height, width));
-					long bitsPerPixel = CGImageGetBitsPerPixel (image);
-					long bitsPerComponent = CGImageGetBitsPerComponent (image);
-					long bytesPerRow = CGImageGetBytesPerRow (image);
-					trace ("%ld bits per pixel, %ld bits per component, %ld bytes per row", bitsPerPixel, bitsPerComponent, bytesPerRow);
-					/*
-					 * Now we probably need to use:
-					 * CGColorSpaceRef CGImageGetColorSpace (CGImageRef image);
-					 * CGImageAlphaInfo CGImageGetAlphaInfo (CGImageRef image);
-					 */
-					CGDataProviderRef dataProvider = CGImageGetDataProvider (image);   // not retained, so don't release
-					CFDataRef data = CGDataProviderCopyData (dataProvider);
-					uint8_t *pixelData = (uint8_t *) CFDataGetBytePtr (data);
-					for (long irow = 1; irow <= height; irow ++) {
-						uint8_t *rowAddress = pixelData + bytesPerRow * (height - irow);
-						for (long icol = 1; icol <= width; icol ++) {
-							my d_red -> z [irow] [icol] = (*rowAddress ++) / 255.0;
-							my d_green -> z [irow] [icol] = (*rowAddress ++) / 255.0;
-							my d_blue -> z [irow] [icol] = (*rowAddress ++) / 255.0;
-							my d_transparency -> z [irow] [icol] = 1.0 - (*rowAddress ++) / 255.0;
-						}
+			if (imageSource == NULL)
+				Melder_throw ("Cannot open picture file ", file, ".");
+			CGImageRef image = CGImageSourceCreateImageAtIndex (imageSource, 0, NULL);
+			CFRelease (imageSource);
+			if (image != NULL) {
+				long width = CGImageGetWidth (image);
+				long height = CGImageGetHeight (image);
+				me.reset (Photo_createSimple (height, width));
+				long bitsPerPixel = CGImageGetBitsPerPixel (image);
+				long bitsPerComponent = CGImageGetBitsPerComponent (image);
+				long bytesPerRow = CGImageGetBytesPerRow (image);
+				trace ("%ld bits per pixel, %ld bits per component, %ld bytes per row", bitsPerPixel, bitsPerComponent, bytesPerRow);
+				/*
+				 * Now we probably need to use:
+				 * CGColorSpaceRef CGImageGetColorSpace (CGImageRef image);
+				 * CGImageAlphaInfo CGImageGetAlphaInfo (CGImageRef image);
+				 */
+				CGDataProviderRef dataProvider = CGImageGetDataProvider (image);   // not retained, so don't release
+				CFDataRef data = CGDataProviderCopyData (dataProvider);
+				uint8_t *pixelData = (uint8_t *) CFDataGetBytePtr (data);
+				for (long irow = 1; irow <= height; irow ++) {
+					uint8_t *rowAddress = pixelData + bytesPerRow * (height - irow);
+					for (long icol = 1; icol <= width; icol ++) {
+						my d_red -> z [irow] [icol] = (*rowAddress ++) / 255.0;
+						my d_green -> z [irow] [icol] = (*rowAddress ++) / 255.0;
+						my d_blue -> z [irow] [icol] = (*rowAddress ++) / 255.0;
+						my d_transparency -> z [irow] [icol] = 1.0 - (*rowAddress ++) / 255.0;
 					}
-					CFRelease (data);
-					CGImageRelease (image);
 				}
+				CFRelease (data);
+				CGImageRelease (image);
 			}
 			return me.transfer();
 		#endif

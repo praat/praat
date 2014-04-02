@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 
 #include "SampledXY.h"
 #include "Graphics.h"
-#include "Table.h"
-#include "TableOfReal.h"
+#include "../stat/Table.h"
+#include "../stat/TableOfReal.h"
 #include "Interpreter_decl.h"
 
 #include "Matrix_def.h"

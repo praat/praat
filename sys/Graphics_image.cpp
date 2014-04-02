@@ -32,6 +32,8 @@
 
 #include "GraphicsP.h"
 
+#include "../fon/Photo.h"
+
 #if win
 	#include <GdiPlus.h>
 #elif mac
@@ -668,7 +670,26 @@ void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
-	#if win
+	#if 0
+	try {
+		structMelderFile file;
+		Melder_relativePathToFile (relativeFileName, & file);
+		autoPhoto photo = Photo_readFromImageFile (& file);
+		if (x1 == x2 && y1 == y2) {
+			width = photo -> nx, x1DC -= width / 2, x2DC = x1DC + width;
+			height = photo -> ny, y2DC -= height / 2, y1DC = y2DC + height;
+		} else if (x1 == x2) {
+			width = height * (double) photo -> nx / (double) photo -> ny;
+			x1DC -= width / 2, x2DC = x1DC + width;
+		} else if (y1 == y2) {
+			height = width * (double) photo -> ny / (double) photo -> nx;
+			y2DC -= height / 2, y1DC = y2DC + height;
+		}
+		photo -> f_paintImage (me, x1DC, x2DC, y2DC, y1DC);
+	} catch (MelderError) {
+		Melder_clearError ();
+	}
+	#elif win
 		if (my d_useGdiplus) {
 			structMelderFile file;
 			Melder_relativePathToFile (relativeFileName, & file);
@@ -735,7 +756,7 @@ void Graphics_imageFromFile (Graphics me, const wchar_t *relativeFileName, doubl
 	if (my recording) {
 		char *txt_utf8 = Melder_peekWcsToUtf8 (relativeFileName);
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
-		op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
+		//op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
 	}
 }
 

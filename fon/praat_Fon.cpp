@@ -6474,6 +6474,8 @@ praat_addAction1 (classDistributions, 0, L"Learn", 0, 0, 0);
 	praat_addAction1 (classDurationTier, 0, L"Query -", 0, 0, 0);
 		praat_TimeTier_query_init (classDurationTier);
 		praat_addAction1 (classDurationTier, 1, L"-- get content --", 0, 1, 0);
+		praat_addAction1 (classDurationTier, 1, L"Get value at time...", 0, 1, DO_DurationTier_getValueAtTime);
+		praat_addAction1 (classDurationTier, 1, L"Get value at index...", 0, 1, DO_DurationTier_getValueAtIndex);
 		praat_addAction1 (classDurationTier, 1, L"Get target duration...", 0, 1, DO_DurationTier_getTargetDuration);
 	praat_addAction1 (classDurationTier, 0, L"Modify -", 0, 0, 0);
 		praat_TimeTier_modify_init (classDurationTier);
