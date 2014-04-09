@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140402)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140409)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.71# (9 April 2014)")
+LIST_ITEM (L"\\bu Windows: brought more unity in the style of Chinese characters.")
 NORMAL (L"##5.3.70# (2 April 2014)")
 LIST_ITEM (L"\\bu Added some query commands for DurationTier objects.")
 LIST_ITEM (L"\\bu Repaired a bug that caused Praat not to run as a console app.")

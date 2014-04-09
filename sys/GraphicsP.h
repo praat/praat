@@ -45,6 +45,7 @@ void Graphics_init (Graphics me, int resolution);
 #define kGraphics_font_IPATIMES  (kGraphics_font_MAX + 2)
 #define kGraphics_font_IPAPALATINO  (kGraphics_font_MAX + 3)
 #define kGraphics_font_DINGBATS  (kGraphics_font_MAX + 4)
+#define kGraphics_font_CHINESE  (kGraphics_font_MAX + 5)
 
 Thing_define (GraphicsScreen, Graphics) {
 	// new data:

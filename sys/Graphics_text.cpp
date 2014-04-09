@@ -77,7 +77,7 @@ extern const char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 
 #if win
 	#define win_MAXIMUM_FONT_SIZE  500
-	static HFONT fonts [1 + kGraphics_resolution_MAX] [1 + kGraphics_font_DINGBATS] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
+	static HFONT fonts [1 + kGraphics_resolution_MAX] [1 + kGraphics_font_CHINESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int ipaAvailable = FALSE;
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
@@ -122,11 +122,16 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 	spec. lfWeight = style & Graphics_BOLD ? FW_BOLD : 0;
 	spec. lfItalic = style & Graphics_ITALIC ? 1 : 0;
 	spec. lfUnderline = spec. lfStrikeOut = 0;
-	spec. lfCharSet = font == kGraphics_font_SYMBOL ? SYMBOL_CHARSET : font >= kGraphics_font_IPATIMES ? DEFAULT_CHARSET : ANSI_CHARSET;
+	spec. lfCharSet =
+		font == kGraphics_font_SYMBOL ? SYMBOL_CHARSET :
+		font == kGraphics_font_CHINESE ? DEFAULT_CHARSET :
+		font >= kGraphics_font_IPATIMES ? DEFAULT_CHARSET :
+		ANSI_CHARSET;
 	spec. lfOutPrecision = spec. lfClipPrecision = spec. lfQuality = 0;
 	spec. lfPitchAndFamily =
 		( font == kGraphics_font_COURIER ? FIXED_PITCH : font == kGraphics_font_IPATIMES ? DEFAULT_PITCH : VARIABLE_PITCH ) |
 		( font == kGraphics_font_HELVETICA ? FF_SWISS : font == kGraphics_font_COURIER ? FF_MODERN :
+		  font == kGraphics_font_CHINESE ? FF_DONTCARE :
 		  font >= kGraphics_font_IPATIMES ? FF_DONTCARE : FF_ROMAN );
 	if (font == kGraphics_font_IPATIMES && ! ipaInited && Melder_debug != 15) {
 		LOGFONTW logFont;
@@ -152,6 +157,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		font == kGraphics_font_SYMBOL    ? L"Symbol" :
 		font == kGraphics_font_IPATIMES  ? ( doulosAvailable && style == 0 ? L"Doulos SIL" : charisAvailable ? L"Charis SIL" : L"Times New Roman" ) :
 		font == kGraphics_font_DINGBATS  ? L"Wingdings" :
+		font == kGraphics_font_CHINESE   ? L"SimSun" :
 		L"");
 	return CreateFontIndirectW (& spec);
 }
@@ -219,6 +225,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 			font = info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
 			       info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
+			if ((unsigned int) lc -> kar >= 0x2E80 && (unsigned int) lc -> kar <= 0x9FFF)
+				font = kGraphics_font_CHINESE;
 			size = lc -> size < 100 ? smallSize : normalSize;
 			style = lc -> style & (Graphics_ITALIC | Graphics_BOLD);   // take out Graphics_CODE
 			fontInfo = fonts [my resolutionNumber] [font] [size] [style];
@@ -237,7 +245,13 @@ static void charSize (I, _Graphics_widechar *lc) {
 			} else {
 				SIZE extent;
 				wchar_t code;
-				lc -> code = font == kGraphics_font_IPATIMES || font == kGraphics_font_TIMES || font == kGraphics_font_HELVETICA || font == kGraphics_font_COURIER ? (unsigned short) lc -> kar : info -> winEncoding;
+				lc -> code =
+					font == kGraphics_font_IPATIMES ||
+					font == kGraphics_font_TIMES ||
+					font == kGraphics_font_HELVETICA ||
+					font == kGraphics_font_CHINESE ||
+					font == kGraphics_font_COURIER ? (unsigned short) lc -> kar :
+					info -> winEncoding;
 				if (lc -> code == 0) {
 					_Graphics_widechar *lc2;
 					if (lc -> kar == UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK) {
