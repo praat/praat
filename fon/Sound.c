@@ -1,6 +1,6 @@
 /* Sound.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2003/07/10 NUMbessel_i0_f
  * pb 2004/05/05 Vector_draw
  * pb 2005/02/09 Sound_setZero
+ * pb 2006/12/31 stereo
  */
 
 #include "Sound.h"
@@ -43,6 +44,8 @@ static void info (I) {
 	double minimum = amplitude [1], maximum = minimum;
 	double sum = 0.0, sumOfSquares = 0.0, mean, penergy, energy, power;
 	classData -> info (me);
+	MelderInfo_writeLine3 ("Number of channels: ", Melder_integer (my ny),
+		my ny == 1 ? " (mono)" : my ny == 2 ? " (stereo)" : "");
 	MelderInfo_writeLine1 ("Time domain:");
 	MelderInfo_writeLine3 ("   Start time: ", Melder_double (my xmin), " seconds");
 	MelderInfo_writeLine3 ("   End time: ", Melder_double (my xmax), " seconds");
@@ -87,42 +90,149 @@ static void info (I) {
 	}
 }
 
+static double getValueAtSample (I, long isamp, long ilevel, int unit) {
+	iam (Sound);
+	(void) ilevel;
+	(void) unit;   // Always Pascal.
+	if (my ny == 1) return my z [1] [isamp];   // Optimization.
+	if (ilevel == Sound_LEVEL_MONO) {
+		double sum = 0.0;
+		for (long channel = 1; channel <= my ny; channel ++) {
+			sum += my z [channel] [isamp];
+		}
+		return sum / my ny;
+	}
+	if (ilevel < 1 || ilevel > my ny) return NUMundefined;
+	return my z [ilevel] [isamp];
+}
+
 class_methods (Sound, Vector)
 	class_method (info)
+	class_method (getValueAtSample)
 class_methods_end
 
-Sound Sound_create (double xmin, double xmax, long nx, double dx, double x1) {
+Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1) {
 	Sound me = new (Sound);
-	if (! me || ! Matrix_init (me, xmin, xmax, nx, dx, x1, 1, 1, 1, 1, 1))
+	if (! me || ! Matrix_init (me, xmin, xmax, nx, dx, x1, 1, numberOfChannels, numberOfChannels, 1, 1))
 		forget (me);
 	return me;
 }
 
-Sound Sound_createSimple (double duration, double samplingFrequency) {
-	return Sound_create (0.0, duration, floor (duration * samplingFrequency + 0.5),
+Sound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency) {
+	return Sound_create (numberOfChannels, 0.0, duration, floor (duration * samplingFrequency + 0.5),
 		1 / samplingFrequency, 0.5 / samplingFrequency);
+}
+
+Sound Sound_convertToMono (Sound me) {
+	if (my ny == 1) return Data_copy (me);   // Optimization.
+	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
+	if (my ny == 2) {   // Optimization.
+		for (long i = 1; i <= my nx; i ++) {
+			thy z [1] [i] = 0.5 * (my z [1] [i] + my z [2] [i]);
+		}
+	} else {
+		for (long i = 1; i <= my nx; i ++) {
+			double sum = my z [1] [i] + my z [2] [i] + my z [3] [i];
+			for (long channel = 4; channel <= my ny; channel ++) {
+				sum += my z [channel] [i];
+			}
+			thy z [1] [i] = sum / my ny;
+		}
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+Sound Sound_convertToStereo (Sound me) {
+	if (my ny == 2) return Data_copy (me);
+	if (my ny > 2) {
+		return Melder_errorp ("Don't know how to convert a Sound with %ld channels to stereo.", my ny);
+	}
+	Sound thee = NULL;
+	Melder_assert (my ny == 1);
+	thee = Sound_create (2, my xmin, my xmax, my nx, my dx, my x1); cherror
+	for (long i = 1; i <= my nx; i ++) {
+		thy z [1] [i] = thy z [2] [i] = my z [1] [i];
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+Sound Sounds_combineToStereo (Sound me, Sound thee) {
+	if (my ny != 1 || thy ny != 1) return Melder_errorp ("Can only combine mono sounds. Stereo sound not created.");
+	if (my xmin != thy xmin || my xmax != thy xmax) return Melder_errorp ("Time domains do not match. Sounds not combined.");
+	if (my nx != thy nx) return Melder_errorp ("Numbers of samples do not match. Sounds not combined.");
+	if (my dx != thy dx) return Melder_errorp ("Sampling frequencies do not match. Sounds not combined.");
+	if (my x1 != thy x1) return Melder_errorp ("Sampling times do not match. Sounds not combined.");
+	Sound him = Sound_create (2, my xmin, my xmax, my nx, my dx, my x1); cherror
+	for (long i = 1; i <= my nx; i ++) {
+		his z [1] [i] = my z [1] [i];
+		his z [2] [i] = thy z [1] [i];
+	}
+end:
+	iferror forget (him);
+	return him;
+}
+
+Sound Sound_extractLeftChannel (Sound me) {
+	if (my ny != 2) return Melder_errorp ("Sound not stereo. Left channel not extracted.");
+	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
+	for (long i = 1; i <= my nx; i ++) {
+		thy z [1] [i] = my z [1] [i];
+	}
+end:
+	iferror forget (thee);
+	return thee;
+}
+
+Sound Sound_extractRightChannel (Sound me) {
+	if (my ny != 2) return Melder_errorp ("Sound not stereo. Right channel not extracted.");
+	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1); cherror
+	for (long i = 1; i <= my nx; i ++) {
+		thy z [1] [i] = my z [2] [i];
+	}
+end:
+	iferror forget (thee);
+	return thee;
 }
 
 double Sound_getEnergyInAir (Sound me) {
 	long i, n = my nx;
-	double sum2 = 0.0; for (i = 1; i <= n; i ++) sum2 += my z [1] [i] * my z [1] [i];
+	double sum2 = 0.0;
+	for (i = 1; i <= n; i ++) {
+		double value = Sampled_getValueAtSample (me, i, 0, 0);
+		if (value == NUMundefined) return NUMundefined;
+		sum2 += value * value;
+	}
 	return sum2 * my dx / 400;
 }
 
 double Sound_getIntensity_dB (Sound me) {
 	long i, n = my nx;
-	double sum2 = 0.0; for (i = 1; i <= n; i ++) sum2 += my z [1] [i] * my z [1] [i];
+	double sum2 = 0.0;
+	for (i = 1; i <= n; i ++) {
+		double value = Sampled_getValueAtSample (me, i, 0, 0);
+		if (value == NUMundefined) return NUMundefined;
+		sum2 += value * value;
+	}
 	return sum2 == 0.0 ? NUMundefined : 10 * log10 (sum2 / n / 4.0e-10);
 }
 
 double Sound_getPowerInAir (Sound me) {
 	long i, n = my nx;
-	double sum2 = 0.0; for (i = 1; i <= n; i ++) sum2 += my z [1] [i] * my z [1] [i];
+	double sum2 = 0.0;
+	for (i = 1; i <= n; i ++) {
+		double value = Sampled_getValueAtSample (me, i, 0, 0);
+		if (value == NUMundefined) return NUMundefined;
+		sum2 += value * value;
+	}
 	return sum2 / n / 400;
 }
 
-Sound Matrix_to_Sound (Matrix me, long row) {
-	Sound thee = Sound_create (my xmin, my xmax, my nx, my dx, my x1);
+Sound Matrix_to_Sound_mono (Matrix me, long row) {
+	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 	if (! thee) return NULL;
 	if (row < 0) row = my ny + 1 + row;
 	if (row < 1) row = 1;
@@ -139,22 +249,27 @@ Matrix Sound_to_Matrix (Sound me) {
 }
 
 Sound Sound_upsample (Sound me) {
-	long nfft = 1, i, imin;
-	float *data = NULL, factor;
+	float *data = NULL;
 	Sound thee = NULL;
+
+	long nfft = 1;
 	while (nfft < my nx + 2000) nfft *= 2;
-	thee = Sound_create (my xmin, my xmax, my nx * 2, my dx / 2, my x1); cherror
+	thee = Sound_create (my ny, my xmin, my xmax, my nx * 2, my dx / 2, my x1); cherror
 	data = NUMfvector (1, 2 * nfft); cherror
-	NUMfvector_copyElements (my z [1], data + 1000, 1, my nx);
-	NUMrealft (data, nfft, 1); cherror
-	imin = nfft * 0.95;
-	for (i = imin + 1; i <= nfft; i ++)
-		data [i] *= ((double) (nfft - i)) / (nfft - imin);
-	data [2] = 0.0;
-	NUMrealft (data, 2 * nfft, -1); cherror
-	factor = 1.0 / nfft;
-	for (i = 1; i <= thy nx; i ++)
-		thy z [1] [i] = data [i + 2000] * factor;
+	for (long channel = 1; channel <= my ny; channel ++) {
+		NUMfvector_copyElements (my z [channel], data + 1000, 1, my nx);
+		NUMrealft (data, nfft, 1); cherror
+		long imin = (long) (nfft * 0.95);
+		for (long i = imin + 1; i <= nfft; i ++) {
+			data [i] *= ((double) (nfft - i)) / (nfft - imin);
+		}
+		data [2] = 0.0;
+		NUMrealft (data, 2 * nfft, -1); cherror
+		float factor = 1.0 / nfft;
+		for (long i = 1; i <= thy nx; i ++) {
+			thy z [channel] [i] = data [i + 2000] * factor;
+		}
+	}
 end:
 	NUMfvector_free (data, 1);
 	iferror forget (thee);
@@ -162,7 +277,7 @@ end:
 }
 
 Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
-	float *from, *to, *data = NULL;
+	float *data = NULL;
 	double upfactor = samplingFrequency * my dx;
 	long numberOfSamples = floor ((my xmax - my xmin) * samplingFrequency + 0.5), i;
 	Sound thee = NULL, filtered = NULL;
@@ -170,42 +285,47 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 	if (fabs (upfactor - 1) < 1e-6) return Data_copy (me);
 	if (numberOfSamples < 1)
 		return Melder_errorp ("Cannot resample to 0 samples.");
-	thee = Sound_create (my xmin, my xmax, numberOfSamples, 1.0 / samplingFrequency,
+	thee = Sound_create (my ny, my xmin, my xmax, numberOfSamples, 1.0 / samplingFrequency,
 		0.5 * (my xmin + my xmax - (numberOfSamples - 1) / samplingFrequency)); cherror
 	if (upfactor < 1.0) {   /* Need anti-aliasing filter? */
-		long nfft = 1, i, antiTurnAround = 1000;
-		float factor;
+		long nfft = 1, antiTurnAround = 1000;
 		while (nfft < my nx + antiTurnAround * 2) nfft *= 2;
 		data = NUMfvector (1, nfft); cherror
-		filtered = Sound_create (my xmin, my xmax, my nx, my dx, my x1); cherror
-		NUMfvector_copyElements (my z [1], data + antiTurnAround, 1, my nx);
-		NUMrealft (data, nfft, 1); cherror   /* Go to the frequency domain. */
-		for (i = floor (upfactor * nfft); i <= nfft; i ++)
-			data [i] = 0;   /* Filter away high frequencies. */
-		data [2] = 0.0;
-		NUMrealft (data, nfft, -1); cherror   /* Return to the time domain. */
-		factor = 1.0 / nfft;
-		to = filtered -> z [1];
-		for (i = 1; i <= my nx; i ++)
-			to [i] = data [i + antiTurnAround] * factor;
+		filtered = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1); cherror
+		for (long channel = 1; channel <= my ny; channel ++) {
+			NUMfvector_copyElements (my z [channel], data + antiTurnAround, 1, my nx);
+			NUMrealft (data, nfft, 1); cherror   /* Go to the frequency domain. */
+			for (long i = floor (upfactor * nfft); i <= nfft; i ++) {
+				data [i] = 0;   /* Filter away high frequencies. */
+			}
+			data [2] = 0.0;
+			NUMrealft (data, nfft, -1); cherror   /* Return to the time domain. */
+			float factor = 1.0 / nfft;
+			float *to = filtered -> z [channel];
+			for (long i = 1; i <= my nx; i ++) {
+				to [i] = data [i + antiTurnAround] * factor;
+			}
+		}
 		me = filtered;   /* Reference copy. Remove at end. */
 	}
-	from = my z [1];
-	to = thy z [1];
-	if (precision <= 1) {
-		for (i = 1; i <= numberOfSamples; i ++) {
-			double x = thy x1 + (i - 1) * thy dx;   /* Sampled_indexToX (thee, i); */
-			double index = (x - my x1) / my dx + 1;   /* Sampled_xToIndex (me, x); */
-			long leftSample = floor (index);
-			double fraction = index - leftSample;
-			to [i] = leftSample < 1 || leftSample >= my nx ? 0.0 :
-				(1 - fraction) * from [leftSample] + fraction * from [leftSample + 1];
-		}
-	} else {
-		for (i = 1; i <= numberOfSamples; i ++) {
-			double x = thy x1 + (i - 1) * thy dx;   /* Sampled_indexToX (thee, i); */
-			double index = (x - my x1) / my dx + 1;   /* Sampled_xToIndex (me, x); */
-			to [i] = NUM_interpolate_sinc (my z [1], my nx, index, precision);
+	for (long channel = 1; channel <= my ny; channel ++) {
+		float *from = my z [channel];
+		float *to = thy z [channel];
+		if (precision <= 1) {
+			for (i = 1; i <= numberOfSamples; i ++) {
+				double x = thy x1 + (i - 1) * thy dx;   /* Sampled_indexToX (thee, i); */
+				double index = (x - my x1) / my dx + 1;   /* Sampled_xToIndex (me, x); */
+				long leftSample = floor (index);
+				double fraction = index - leftSample;
+				to [i] = leftSample < 1 || leftSample >= my nx ? 0.0 :
+					(1 - fraction) * from [leftSample] + fraction * from [leftSample + 1];
+			}
+		} else {
+			for (i = 1; i <= numberOfSamples; i ++) {
+				double x = thy x1 + (i - 1) * thy dx;   /* Sampled_indexToX (thee, i); */
+				double index = (x - my x1) / my dx + 1;   /* Sampled_xToIndex (me, x); */
+				to [i] = NUM_interpolate_sinc (my z [channel], my nx, index, precision);
+			}
 		}
 	}
 end:
@@ -218,16 +338,20 @@ end:
 Sound Sounds_append (Sound me, double silenceDuration, Sound thee) {
 	Sound him;
 	long nx_silence = floor (silenceDuration / my dx + 0.5), nx = my nx + nx_silence + thy nx;
+	if (my ny != thy ny)
+		return Melder_errorp ("Sounds_append: numbers of channels do not match (one is mono, the other stereo).");
 	if (my dx != thy dx)
 		return Melder_errorp ("Sounds_append: sampling frequencies do not match.");
-	him = Sound_create (0, nx * my dx, nx, my dx, 0.5 * my dx);
+	him = Sound_create (my ny, 0, nx * my dx, nx, my dx, 0.5 * my dx);
 	if (! him) return NULL;
-	NUMfvector_copyElements (my z [1], his z [1], 1, my nx);
-	NUMfvector_copyElements (thy z [1], his z [1] + my nx + nx_silence, 1, thy nx);
+	for (long channel = 1; channel <= my ny; channel ++) {
+		NUMfvector_copyElements (my z [channel], his z [channel], 1, my nx);
+		NUMfvector_copyElements (thy z [channel], his z [channel] + my nx + nx_silence, 1, thy nx);
+	}
 	return him;
 }
 
-Sound Sounds_convolve (Sound me, Sound thee) {
+Sound Sounds_convolve (Sound me, Sound thee) {   // STEREO BUG
 	Sound him = NULL;
 	long n1 = my nx, n2 = thy nx;
 	long n3 = n1 + n2 - 1, nfft = 1, i;
@@ -237,7 +361,7 @@ Sound Sounds_convolve (Sound me, Sound thee) {
 	while (nfft < n3) nfft *= 2;
 	data1 = NUMfvector (1, nfft); cherror
 	data2 = NUMfvector (1, nfft); cherror
-	him = Sound_create (my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1); cherror
+	him = Sound_create (1, my xmin + thy xmin, my xmax + thy xmax, n3, my dx, my x1 + thy x1); cherror
 	a = my z [1];
 	for (i = n1; i > 0; i --) data1 [i] = a [i];
 	a = thy z [1];
@@ -266,7 +390,7 @@ end:
 void Sound_draw (Sound me, Graphics g,
 	double tmin, double tmax, double minimum, double maximum, int garnish, const char *method)
 {
-	Vector_draw (me, g, & tmin, & tmax, & minimum, & maximum, 0.5, method);
+	Vector_draw (me, g, & tmin, & tmax, & minimum, & maximum, 0.5, method);   // STEREO BUG
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, 1, "Time (s)");
@@ -283,10 +407,10 @@ static double interpolate (Sound me, long i1)
 {
 	long i2 = i1 + 1;
 	double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
-	double y1 = my z [1] [i1], y2 = my z [1] [i2];
+	double y1 = my z [1] [i1], y2 = my z [1] [i2];   // STEREO BUG
 	return x1 + (x2 - x1) * y1 / (y1 - y2);   /* Linear. */
 }
-double Sound_getNearestZeroCrossing (Sound me, double position) {
+double Sound_getNearestZeroCrossing (Sound me, double position) {   // STEREO BUG
 	float *amplitude = my z [1];
 	long leftSample = Sampled_xToLowIndex (me, position);
 	long rightSample = leftSample + 1, ileft, iright;
@@ -319,7 +443,7 @@ double Sound_getNearestZeroCrossing (Sound me, double position) {
 		position - leftZero < rightZero - position ? leftZero : rightZero;
 }
 
-void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing) {
+void Sound_setZero (Sound me, double tmin, double tmax, int roundTimesToNearestZeroCrossing) {   // STEREO BUG
 	long imin, imax, i;
 	Function_unidirectionalAutowindow (me, & tmin, & tmax);
 	Function_intersectRangeWithDomain (me, & tmin, & tmax);
@@ -365,7 +489,7 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime, double s
 	 * Generate the Sound.
 	 */
 	factor = 0.99 / numberOfComponents;
-	me = Sound_create (startingTime, endTime, floor ((endTime - startingTime) * sampleRate + 0.5),
+	me = Sound_create (1, startingTime, endTime, floor ((endTime - startingTime) * sampleRate + 0.5),
 		1 / sampleRate, startingTime + 0.5 / sampleRate);
 	if (! me) return NULL;
 	amplitude = my z [1];
@@ -384,80 +508,83 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime, double s
 }
 
 void Sound_multiplyByWindow (Sound me, int windowType) {
-	long i, n = my nx;
-	float *amp = my z [1];
-	double imid, edge, onebyedge1, factor;
-	switch (windowType) {
-		case enumi (Sound_WINDOW, Rectangular):
-			;
-		break;
-		case enumi (Sound_WINDOW, Triangular):   /* "Bartlett" */
-			for (i = 1; i <= n; i ++) { double phase = (double) i / n;   /* 0..1 */
-				amp [i] *= 1.0 - fabs ((2.0 * phase - 1.0)); }
-		break;
-		case enumi (Sound_WINDOW, Parabolic):   /* "Welch" */
-			for (i = 1; i <= n; i ++) { double phase = (double) i / n;
-				amp [i] *= 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0); }
-		break;
-		case enumi (Sound_WINDOW, Hanning):
-			for (i = 1; i <= n; i ++) { double phase = (double) i / n;
-				amp [i] *= 0.5 * (1.0 - cos (2.0 * NUMpi * phase)); }
-		break;
-		case enumi (Sound_WINDOW, Hamming):
-			for (i = 1; i <= n; i ++) { double phase = (double) i / n;
-				amp [i] *= 0.54 - 0.46 * cos (2.0 * NUMpi * phase); }
-		break;
-		case enumi (Sound_WINDOW, Gaussian1):
-			imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1 / (1.0 - edge);   /* -0.5..+0.5 */
-			for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
-				amp [i] *= (exp (-12.0 * phase * phase) - edge) * onebyedge1; }
-		break;
-		case enumi (Sound_WINDOW, Gaussian2):
-			imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1 / (1.0 - edge);
-			for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
-				amp [i] *= (exp (-48.0 * phase * phase) - edge) * onebyedge1; }
-		break;
-		case enumi (Sound_WINDOW, Gaussian3):
-			imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1 / (1.0 - edge);
-			for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
-				amp [i] *= (exp (-108.0 * phase * phase) - edge) * onebyedge1; }
-		break;
-		case enumi (Sound_WINDOW, Gaussian4):
-			imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1 / (1.0 - edge);
-			for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
-				amp [i] *= (exp (-192.0 * phase * phase) - edge) * onebyedge1; }
-		break;
-		case enumi (Sound_WINDOW, Gaussian5):
-			imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1 / (1.0 - edge);
-			for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
-				amp [i] *= (exp (-300.0 * phase * phase) - edge) * onebyedge1; }
-		break;
-		case enumi (Sound_WINDOW, Kaiser1):
-			imid = 0.5 * (double) (n + 1);
-			factor = 1 / NUMbessel_i0_f (2 * NUMpi);
-			for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
-				double root = 1 - phase * phase;
-				amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2 * NUMpi * sqrt (root)); }
-		break;
-		case enumi (Sound_WINDOW, Kaiser2):
-			imid = 0.5 * (double) (n + 1);
-			factor = 1 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
-			for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
-				double root = 1 - phase * phase;
-				amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2 * NUMpi * NUMpi + 0.5) * sqrt (root)); }
-		break;
-		default:
-		break;
+	for (long channel = 1; channel <= my ny; channel ++) {
+		long i, n = my nx;
+		float *amp = my z [channel];
+		double imid, edge, onebyedge1, factor;
+		switch (windowType) {
+			case enumi (Sound_WINDOW, Rectangular):
+				;
+			break;
+			case enumi (Sound_WINDOW, Triangular):   /* "Bartlett" */
+				for (i = 1; i <= n; i ++) { double phase = (double) i / n;   /* 0..1 */
+					amp [i] *= 1.0 - fabs ((2.0 * phase - 1.0)); }
+			break;
+			case enumi (Sound_WINDOW, Parabolic):   /* "Welch" */
+				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
+					amp [i] *= 1.0 - (2.0 * phase - 1.0) * (2.0 * phase - 1.0); }
+			break;
+			case enumi (Sound_WINDOW, Hanning):
+				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
+					amp [i] *= 0.5 * (1.0 - cos (2.0 * NUMpi * phase)); }
+			break;
+			case enumi (Sound_WINDOW, Hamming):
+				for (i = 1; i <= n; i ++) { double phase = (double) i / n;
+					amp [i] *= 0.54 - 0.46 * cos (2.0 * NUMpi * phase); }
+			break;
+			case enumi (Sound_WINDOW, Gaussian1):
+				imid = 0.5 * (n + 1), edge = exp (-3.0), onebyedge1 = 1 / (1.0 - edge);   /* -0.5..+0.5 */
+				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+					amp [i] *= (exp (-12.0 * phase * phase) - edge) * onebyedge1; }
+			break;
+			case enumi (Sound_WINDOW, Gaussian2):
+				imid = 0.5 * (double) (n + 1), edge = exp (-12.0), onebyedge1 = 1 / (1.0 - edge);
+				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+					amp [i] *= (exp (-48.0 * phase * phase) - edge) * onebyedge1; }
+			break;
+			case enumi (Sound_WINDOW, Gaussian3):
+				imid = 0.5 * (double) (n + 1), edge = exp (-27.0), onebyedge1 = 1 / (1.0 - edge);
+				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+					amp [i] *= (exp (-108.0 * phase * phase) - edge) * onebyedge1; }
+			break;
+			case enumi (Sound_WINDOW, Gaussian4):
+				imid = 0.5 * (double) (n + 1), edge = exp (-48.0), onebyedge1 = 1 / (1.0 - edge);
+				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+					amp [i] *= (exp (-192.0 * phase * phase) - edge) * onebyedge1; }
+			break;
+			case enumi (Sound_WINDOW, Gaussian5):
+				imid = 0.5 * (double) (n + 1), edge = exp (-75.0), onebyedge1 = 1 / (1.0 - edge);
+				for (i = 1; i <= n; i ++) { double phase = ((double) i - imid) / n;
+					amp [i] *= (exp (-300.0 * phase * phase) - edge) * onebyedge1; }
+			break;
+			case enumi (Sound_WINDOW, Kaiser1):
+				imid = 0.5 * (double) (n + 1);
+				factor = 1 / NUMbessel_i0_f (2 * NUMpi);
+				for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
+					double root = 1 - phase * phase;
+					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f (2 * NUMpi * sqrt (root)); }
+			break;
+			case enumi (Sound_WINDOW, Kaiser2):
+				imid = 0.5 * (double) (n + 1);
+				factor = 1 / NUMbessel_i0_f (2 * NUMpi * NUMpi + 0.5);
+				for (i = 1; i <= n; i ++) { double phase = 2 * ((double) i - imid) / n;   /* -1..+1 */
+					double root = 1 - phase * phase;
+					amp [i] *= root <= 0.0 ? 0.0 : factor * NUMbessel_i0_f ((2 * NUMpi * NUMpi + 0.5) * sqrt (root)); }
+			break;
+			default:
+			break;
+		}
 	}
 }
 
 void Sound_scaleIntensity (Sound me, double newAverageIntensity) {
 	double currentIntensity = Sound_getIntensity_dB (me), factor;
-	long i;
 	if (currentIntensity == NUMundefined) return;
 	factor = pow (10, (newAverageIntensity - currentIntensity) / 20.0);
-	for (i = 1; i <= my nx; i ++) {
-		my z [1] [i] *= factor;
+	for (long channel = 1; channel <= my ny; channel ++) {
+		for (long i = 1; i <= my nx; i ++) {
+			my z [channel] [i] *= factor;
+		}
 	}
 }
 
@@ -496,14 +623,16 @@ Sound Sound_extractPart (Sound me, double t1, double t2, int windowType, double 
 	/*
 	 * Create sound, optionally shifted to [0..t2-t1].
 	 */
-	thee = Sound_create (t1, t2, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx); cherror
+	thee = Sound_create (my ny, t1, t2, ix2 - ix1 + 1, my dx, my x1 + (ix1 - 1) * my dx); cherror
 	if (! preserveTimes) { thy xmin = 0.0; thy xmax -= t1; thy x1 -= t1; }
 	/*
 	 * Copy only *real* samples into the new sound.
 	 * The *virtual* samples will remain at zero.
 	 */
-	NUMfvector_copyElements (my z [1], thy z [1] + 1 - ix1,
-			( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
+	for (long channel = 1; channel <= my ny; channel ++) {
+		NUMfvector_copyElements (my z [channel], thy z [channel] + 1 - ix1,
+				( ix1 < 1 ? 1 : ix1 ), ( ix2 > my nx ? my nx : ix2 ));
+	}
 	/*
 	 * Multiply by a window that extends throughout the target domain.
 	 */
@@ -516,18 +645,18 @@ end:
 int Sound_filterWithFormants (Sound me, double tmin, double tmax,
 	int numberOfFormants, float formant [], float bandwidth [])
 {
-	float *amplitude;
-	int iformant;
-	long itmin, itmax, n;
-
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
-	if ((n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) <= 2)
-		return Melder_error ("Sound too short.");
-	amplitude = my z [1] + itmin - 1;   /* Base 1. */
-	NUMdeemphasize_f (amplitude, n, my dx, 50.0);
-	for (iformant = 1; iformant <= numberOfFormants; iformant ++)
-		NUMfilterSecondOrderSection_fb (amplitude, n, my dx, formant [iformant], bandwidth [iformant]);
-	NUMautoscale (amplitude, n, 0.9);
+	for (long channel = 1; channel <= my ny; channel ++) {
+		long itmin, itmax, n;
+		if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
+		if ((n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax)) <= 2)
+			return Melder_error ("Sound too short.");
+		float *amplitude = my z [channel] + itmin - 1;   /* Base 1. */
+		NUMdeemphasize_f (amplitude, n, my dx, 50.0);
+		for (int iformant = 1; iformant <= numberOfFormants; iformant ++) {
+			NUMfilterSecondOrderSection_fb (amplitude, n, my dx, formant [iformant], bandwidth [iformant]);
+		}
+	}
+	Matrix_scaleAbsoluteExtremum (me, 0.99);
 	return 1;
 }
 
@@ -539,8 +668,10 @@ Sound Sound_filter_oneFormant (Sound me, double frequency, double bandwidth) {
 }
 
 int Sound_filterWithOneFormantInline (Sound me, double frequency, double bandwidth) {
-	NUMfilterSecondOrderSection_fb (my z [1], my nx, my dx, frequency, bandwidth);
-	NUMautoscale (my z [1], my nx, 0.9);
+	for (long channel = 1; channel <= my ny; channel ++) {
+		NUMfilterSecondOrderSection_fb (my z [channel], my nx, my dx, frequency, bandwidth);
+	}
+	Matrix_scaleAbsoluteExtremum (me, 0.99);
 	return 1;
 }
 
@@ -548,7 +679,7 @@ Sound Sound_filter_preemphasis (Sound me, double frequency) {
 	Sound thee = Data_copy (me);
 	if (! thee) return NULL;
 	Sound_preEmphasis (thee, frequency);
-	Vector_scale (thee, 0.99);
+	Matrix_scaleAbsoluteExtremum (me, 0.99);
 	return thee;
 }
 
@@ -556,23 +687,25 @@ Sound Sound_filter_deemphasis (Sound me, double frequency) {
 	Sound thee = Data_copy (me);
 	if (! thee) return NULL;
 	Sound_deEmphasis (thee, frequency);
-	Vector_scale (thee, 0.99);
+	Matrix_scaleAbsoluteExtremum (me, 0.99);
 	return thee;
 }
 
 void Sound_reverse (Sound me, double tmin, double tmax) {
-	long itmin, itmax, n, i;
-	float *amp = my z [1];
-	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
-	n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax) / 2;
-	for (i = 0; i < n; i ++) {
-		float dummy = amp [itmin + i];
-		amp [itmin + i] = amp [itmax - i];
-		amp [itmax - i] = dummy;
+	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   // Autowindowing.
+	long itmin, itmax;
+	long n = Sampled_getWindowSamples (me, tmin, tmax, & itmin, & itmax) / 2;
+	for (long channel = 1; channel <= my ny; channel ++) {
+		float *amp = my z [channel];
+		for (long i = 0; i < n; i ++) {
+			float dummy = amp [itmin + i];
+			amp [itmin + i] = amp [itmax - i];
+			amp [itmax - i] = dummy;
+		}
 	}
 }
 
-Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int normalize) {
+Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int normalize) {   // STEREO BUG
 	Sound him = NULL;
 	double dt, dphase, t1;
 	long i1, i2, nt, i;
@@ -587,7 +720,7 @@ Sound Sounds_crossCorrelate (Sound me, Sound thee, double tmin, double tmax, int
 	if (nt < 1)
 		return Melder_errorp ("(Sounds_crossCorrelation:) Window too small.");
 	t1 = (dphase + i1) * dt;
-	him = Sound_create (tmin, tmax, nt, dt, t1);
+	him = Sound_create (1, tmin, tmax, nt, dt, t1);
 	if (him == NULL) return NULL;
 	for (i = 1; i <= nt; i ++) {
 		long di = i - 1 + i1, ime;

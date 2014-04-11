@@ -1,6 +1,6 @@
 /* Sound_and_Spectrum.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,8 @@
  * pb 2004/04/21 Sound_to_Spectrum_dft
  * pb 2004/10/18 explicit Fourier tables
  * pb 2004/11/22 single Sound_to_Spectrum procedure
+ * pb 2006/12/30 new Sound_create API
+ * pb 2006/12/31 compatible with stereo sounds
  */
 
 #include "Sound_and_Spectrum.h"
@@ -35,10 +37,7 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	long numberOfSamples = my nx, i, numberOfFrequencies;
 	float *data = NULL, scaling;
 	float *re, *im;
-	struct NUMfft_Table_f fourierTable_struct;
-	NUMfft_Table_f fourierTable = & fourierTable_struct;
-	fourierTable -> trigcache = NULL;
-	fourierTable -> splitcache = NULL;
+	struct NUMfft_Table_f fourierTable = { 0 };
 
 	if (fast) {
 		numberOfSamples = 2;
@@ -46,10 +45,10 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	}
 	numberOfFrequencies = numberOfSamples / 2 + 1;   /* 4 samples -> cos0 cos1 sin1 cos2; 5 samples -> cos0 cos1 sin1 cos2 sin2 */
 	data = NUMfvector (1, numberOfSamples); cherror
-	NUMfft_Table_init_f (fourierTable, numberOfSamples); cherror
+	NUMfft_Table_init_f (& fourierTable, numberOfSamples); cherror
 
-	for (i = 1; i <= my nx; i ++) data [i] = my z [1] [i];
-	NUMfft_forward_f (fourierTable, data); cherror
+	for (i = 1; i <= my nx; i ++) data [i] = my ny == 1 ? my z [1] [i] : 0.5 * (my z [1] [i] + my z [2] [i]);
+	NUMfft_forward_f (& fourierTable, data); cherror
 	thee = Spectrum_create (0.5 / my dx, numberOfFrequencies); cherror
 	thy dx = 1.0 / (my dx * numberOfSamples);   /* Override. */
 	re = thy z [1]; im = thy z [2];
@@ -71,7 +70,7 @@ Spectrum Sound_to_Spectrum (Sound me, int fast) {
 	}
 end:
 	NUMfvector_free (data, 1);
-	NUMfft_Table_free_f (fourierTable);
+	NUMfft_Table_free_f (& fourierTable);
 	iferror forget (thee);
 	return thee;
 }
@@ -87,7 +86,7 @@ Sound Spectrum_to_Sound (Spectrum me) {
 		goto end;
 	}
 	numberOfSamples = 2 * my nx - ( originalNumberOfSamplesProbablyOdd ? 1 : 2 );
-	thee = Sound_createSimple (1 / my dx, numberOfSamples * my dx); cherror
+	thee = Sound_createSimple (1, 1 / my dx, numberOfSamples * my dx); cherror
 	amp = thy z [1];
 	scaling = my dx;
 	amp [1] = re [1] * scaling;

@@ -31,6 +31,7 @@
  * pb 2006/08/07 removed quotes from around file paths in openDocument message
  * pb 2006/09/30 praat_selection () can take NULL as an argument
  * pb 2006/10/28 removed MacOS 9 stuff
+ * pb 2006/12/26 theCurrentPraat
  */
 
 #include "melder.h"
@@ -55,7 +56,7 @@
 #include "ScriptEditor.h"
 #include "Strings.h"
 
-#define EDITOR  praat.list [IOBJECT]. editors
+#define EDITOR  theCurrentPraat -> list [IOBJECT]. editors
 
 #if defined (_WIN32)
 	#define LIST_WIDTH 220
@@ -70,7 +71,8 @@
 	#define BUTTON_WIDTH 120
 #endif
 
-struct structPraat praat;
+structPraat theForegroundPraat;
+Praat theCurrentPraat = & theForegroundPraat;
 struct PraatP praatP;
 static int doingCommandLineInterface;
 static char programName [64];
@@ -113,8 +115,6 @@ static structMelderFile buttonsFile;
 #endif
 
 static Widget praatList_objects;
-static int praat_totalBeingCreated;
-
 
 /***** selection *****/
 
@@ -173,8 +173,8 @@ int praat_selectionGeneric (void *klas) {
 void praat_deselect (int IOBJECT) {
 	if (! SELECTED) return;
 	SELECTED = FALSE;
-	praat.totalSelection -= 1;
-	if (! Melder_backgrounding) XmListDeselectPos (praatList_objects, IOBJECT);
+	theCurrentPraat -> totalSelection -= 1;
+	if (! theCurrentPraat -> batch && ! Melder_backgrounding) XmListDeselectPos (praatList_objects, IOBJECT);
 }
 
 void praat_deselectAll (void) { int IOBJECT; WHERE (1) praat_deselect (IOBJECT); }
@@ -182,8 +182,8 @@ void praat_deselectAll (void) { int IOBJECT; WHERE (1) praat_deselect (IOBJECT);
 void praat_select (int IOBJECT) {
 	if (SELECTED) return;
 	SELECTED = TRUE;
-	praat.totalSelection += 1;
-	if (! Melder_backgrounding) {  /* Trick required, or the other items will be deselected. */
+	theCurrentPraat -> totalSelection += 1;
+	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {  /* Trick required, or the other items will be deselected. */
 		#ifdef UNIX
 			XtVaSetValues (praatList_objects, XmNselectionPolicy, XmMULTIPLE_SELECT, NULL);
 		#endif
@@ -215,21 +215,21 @@ Any praat_onlyObject (void *klas) {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED && CLASS == klas) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
-	return praat.list [result]. object;
+	return theCurrentPraat -> list [result]. object;
 }
 
 Any praat_onlyObject_generic (void *klas) {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED && Thing_subclass (CLASS, klas)) { result = IOBJECT; found += 1; }
 	if (found != 1) return NULL;
-	return praat.list [result]. object;
+	return theCurrentPraat -> list [result]. object;
 }
 
 praat_Object praat_onlyScreenObject (void) {
 	int IOBJECT, result = 0, found = 0;
 	WHERE (SELECTED) { result = IOBJECT; found += 1; }
 	if (found != 1) Melder_fatal ("praat_onlyScreenObject: found %d objects instead of 1.", found);
-	return & praat.list [result];
+	return & theCurrentPraat -> list [result];
 }
 
 char *praat_name (int IOBJECT) { return strchr (FULL_NAME, ' ') + 1; }
@@ -255,10 +255,10 @@ static void removeAllReferencesToEditor (Any editor) {
 	 * Remove all references to this editor.
 	 * It may be editing multiple objects.
 	 */
-	for (iobject = 1; iobject <= praat.n; iobject ++)
+	for (iobject = 1; iobject <= theCurrentPraat -> n; iobject ++)
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (praat.list [iobject]. editors [ieditor] == editor)
-				praat.list [iobject]. editors [ieditor] = NULL;
+			if (theCurrentPraat -> list [iobject]. editors [ieditor] == editor)
+				theCurrentPraat -> list [iobject]. editors [ieditor] = NULL;
 	if (praatP. editor == editor)
 		praatP. editor = NULL;
 }
@@ -267,10 +267,10 @@ static void praat_remove (int iobject) {
 /* Remove the "object" from the list. */
 /* Kill everything to do with selection. */
 	int ieditor;
-	Melder_assert (iobject >= 1 && iobject <= praat.n);
-	if (praat.list [iobject]. _beingCreated) {
-		praat.list [iobject]. _beingCreated = FALSE;
-		praat_totalBeingCreated --;
+	Melder_assert (iobject >= 1 && iobject <= theCurrentPraat -> n);
+	if (theCurrentPraat -> list [iobject]. _beingCreated) {
+		theCurrentPraat -> list [iobject]. _beingCreated = FALSE;
+		theCurrentPraat -> totalBeingCreated --;
 	}
 	praat_deselect (iobject);
 
@@ -278,15 +278,15 @@ static void praat_remove (int iobject) {
 	 * To prevent synchronization problems, kill editors before killing the data.
 	 */
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-		Any editor = praat.list [iobject]. editors [ieditor];   /* Save this one reference. */
+		Any editor = theCurrentPraat -> list [iobject]. editors [ieditor];   /* Save this one reference. */
 		if (editor) {
 			removeAllReferencesToEditor (editor);
 			forget (editor);
 		}
 	}
-	MelderFile_setToNull (& praat.list [iobject]. file);
-	Melder_free (praat.list [iobject]. name);
-	forget (praat.list [iobject]. object);
+	MelderFile_setToNull (& theCurrentPraat -> list [iobject]. file);
+	Melder_free (theCurrentPraat -> list [iobject]. name);
+	forget (theCurrentPraat -> list [iobject]. object);
 }
 
 void praat_cleanUpName (char *name) {
@@ -367,22 +367,22 @@ int praat_new (I, const char *format, ...) {
 
 	sprintf (name, "%s %s", Thing_className (me), givenName);
 
-	if (praat.n == praat_MAXNUM_OBJECTS) {
+	if (theCurrentPraat -> n == praat_MAXNUM_OBJECTS) {
 		forget (me);
 		return Melder_error ("The Object Window cannot contain more than %d objects. "
 			"You could remove some objects.", praat_MAXNUM_OBJECTS);
 	}
 		
-	IOBJECT = ++ praat.n;
+	IOBJECT = ++ theCurrentPraat -> n;
 	Melder_assert (FULL_NAME == NULL);
 	FULL_NAME = Melder_strdup (name);
 	Melder_assert (FULL_NAME != NULL);
 	++ uniqueID;
 
-	if (! Melder_batch) {   /* Put a new object on the screen, at the bottom of the list. */
+	if (! theCurrentPraat -> batch) {   /* Put a new object on the screen, at the bottom of the list. */
 		XmString s = XmStringCreateSimple (name);
 		#ifdef UNIX
-			XtVaSetValues (praatList_objects, XmNvisibleItemCount, praat.n + 2, NULL);
+			XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 2, NULL);
 		#endif
 
 		/* The new item must appear unselected (for the moment).
@@ -392,7 +392,7 @@ int praat_new (I, const char *format, ...) {
 		 * because the new item would end up UNselected in this case, after praat_updateSelection.
 		 * ppgb, 95/10/16
 		 */
-		XmListAddItemUnselected (praatList_objects, s, praat.n);
+		XmListAddItemUnselected (praatList_objects, s, theCurrentPraat -> n);
 		XmStringFree (s);
 	}
 	OBJECT = me;
@@ -402,29 +402,31 @@ int praat_new (I, const char *format, ...) {
 		EDITOR [ieditor] = NULL;
 	MelderFile_setToNull (& FILENAME);
 	ID = uniqueID;
-	praat.list [IOBJECT]. _beingCreated = TRUE;
+	theCurrentPraat -> list [IOBJECT]. _beingCreated = TRUE;
 	Thing_setName (OBJECT, givenName);
-	praat_totalBeingCreated ++;
+	theCurrentPraat -> totalBeingCreated ++;
 	va_end (arg);
 	return IOBJECT;
 }
 
 void praat_updateSelection (void) {
-	if (praat_totalBeingCreated) {
+	if (theCurrentPraat -> totalBeingCreated) {
 		int IOBJECT;
 		praat_deselectAll ();
-		WHERE (praat.list [IOBJECT]. _beingCreated) {
+		WHERE (theCurrentPraat -> list [IOBJECT]. _beingCreated) {
 			praat_select (IOBJECT);
-			praat.list [IOBJECT]. _beingCreated = FALSE;
+			theCurrentPraat -> list [IOBJECT]. _beingCreated = FALSE;
 		}
-		praat_totalBeingCreated = 0;
+		theCurrentPraat -> totalBeingCreated = 0;
 		/*
 		 * The following is a workaround for a bug in LessTif (the free Motif implementation for Linux),
 		 * suggested by Stefan Werner of Joensuu on January 26, 1999,
 		 * after I had suggested him to insert this line in praat_init (), which did not suffice.
 		 */
 		#ifdef lesstif
-			XtVaSetValues (praatList_objects, XmNwidth, LIST_WIDTH - 14, NULL);
+			if (! theCurrentPraat -> batch) {
+				XtVaSetValues (praatList_objects, XmNwidth, LIST_WIDTH - 14, NULL);
+			}
 		#endif
 		praat_show ();
 	}
@@ -433,14 +435,14 @@ void praat_updateSelection (void) {
 MOTIF_CALLBACK (cb_list)
 	int pos, position_count, *position_list, IOBJECT, first = TRUE;
 	WHERE (1) SELECTED = FALSE;
-	praat.totalSelection = 0;
+	theCurrentPraat -> totalSelection = 0;
 	if (XmListGetSelectedPos (praatList_objects, & position_list, & position_count)) {
 		for (pos = 0; pos < position_count; pos ++) {
 			IOBJECT = position_list [pos];
 			SELECTED = TRUE;
 			UiHistory_write (first ? "\nselect %s" : "\nplus %s", FULL_NAME);
 			first = FALSE;
-			praat.totalSelection += 1;
+			theCurrentPraat -> totalSelection += 1;
 		}
 		XtFree ((XtPointer) position_list);
 	}
@@ -448,7 +450,7 @@ MOTIF_CALLBACK (cb_list)
 MOTIF_CALLBACK_END
 
 void praat_list_renameAndSelect (int position, const char *name) {
-	if (! Melder_batch) {
+	if (! theCurrentPraat -> batch) {
 		XmString s = XmStringCreateSimple (MOTIF_CONST_CHAR_ARG (name));
 		XmListReplaceItemsPos (praatList_objects, & s, 1, position);   /* Void if name equal. */
 		if (! Melder_backgrounding)
@@ -462,11 +464,11 @@ void praat_list_renameAndSelect (int position, const char *name) {
 void praat_name2 (char *name, void *klas1, void *klas2) {
 	int i1 = 1, i2;
 	char *name1, *name2;
-	while (praat.list [i1]. selected == 0 || praat.list [i1]. klas != klas1) i1 ++;
+	while (theCurrentPraat -> list [i1]. selected == 0 || theCurrentPraat -> list [i1]. klas != klas1) i1 ++;
 	i2 = 1;   /* This late initialization works around a Think C BUG. */
-	while (praat.list [i2]. selected == 0 || praat.list [i2]. klas != klas2) i2 ++;
-	name1 = strchr (praat.list [i1]. name, ' ') + 1;
-	name2 = strchr (praat.list [i2]. name, ' ') + 1;
+	while (theCurrentPraat -> list [i2]. selected == 0 || theCurrentPraat -> list [i2]. klas != klas2) i2 ++;
+	name1 = strchr (theCurrentPraat -> list [i1]. name, ' ') + 1;
+	name2 = strchr (theCurrentPraat -> list [i2]. name, ' ') + 1;
 	if (strequ (name1, name2))
 		strcpy (name, name1);
 	else
@@ -476,19 +478,19 @@ void praat_name2 (char *name, void *klas1, void *klas2) {
 void praat_removeObject (int i) {
 	int j, ieditor;
 	praat_remove (i);   /* Dangle. */
-	for (j = i; j < praat.n; j ++)
-		praat.list [j] = praat.list [j + 1];   /* Undangle but create second references. */
-	praat.list [praat.n]. name = NULL;   /* Undangle or remove second reference. */
-	praat.list [praat.n]. object = NULL;   /* Undangle or remove second reference. */
-	praat.list [praat.n]. selected = 0;
+	for (j = i; j < theCurrentPraat -> n; j ++)
+		theCurrentPraat -> list [j] = theCurrentPraat -> list [j + 1];   /* Undangle but create second references. */
+	theCurrentPraat -> list [theCurrentPraat -> n]. name = NULL;   /* Undangle or remove second reference. */
+	theCurrentPraat -> list [theCurrentPraat -> n]. object = NULL;   /* Undangle or remove second reference. */
+	theCurrentPraat -> list [theCurrentPraat -> n]. selected = 0;
 	for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-		praat.list [praat.n]. editors [ieditor] = NULL;   /* Undangle or remove second reference. */
-	MelderFile_setToNull (& praat.list [praat.n]. file);   /* Undangle or remove second reference. */
-	-- praat.n;
-	if (! Melder_batch) {
+		theCurrentPraat -> list [theCurrentPraat -> n]. editors [ieditor] = NULL;   /* Undangle or remove second reference. */
+	MelderFile_setToNull (& theCurrentPraat -> list [theCurrentPraat -> n]. file);   /* Undangle or remove second reference. */
+	-- theCurrentPraat -> n;
+	if (! theCurrentPraat -> batch) {
 		XmListDeletePos (praatList_objects, i);
 		#ifdef UNIX
-			XtVaSetValues (praatList_objects, XmNvisibleItemCount, praat.n + 1, NULL);
+			XtVaSetValues (praatList_objects, XmNvisibleItemCount, theCurrentPraat -> n + 1, NULL);
 		#endif
 	}
 }
@@ -496,8 +498,8 @@ void praat_removeObject (int i) {
 static void praat_exit (int exit_code) {
 	int IOBJECT;
 	#ifdef _WIN32
-		if (! Melder_batch)
-			XtDestroyWidget (praat. topShell);
+		if (! theCurrentPraat -> batch)
+			XtDestroyWidget (theCurrentPraat -> topShell);
 	#endif
 	praat_picture_exit ();
 	praat_statistics_exit ();   /* Record total memory use across sessions. */
@@ -531,7 +533,7 @@ static void praat_exit (int exit_code) {
 	/*
 	 * Save the script buttons.
 	 */
-	if (! Melder_batch) {
+	if (! theCurrentPraat -> batch) {
 		FILE *f = Melder_fopen (& buttonsFile, "w");
 		if (f) {
 			MelderFile_setMacTypeAndCreator (& buttonsFile, 'pref', 'PpgB');
@@ -569,26 +571,26 @@ static void cb_Editor_dataChanged (I, void *closure, Any data) {
 	iam (Editor);
 	int iobject, ieditor;
 	(void) closure;
-	for (iobject = 1; iobject <= praat.n; iobject ++) {
+	for (iobject = 1; iobject <= theCurrentPraat -> n; iobject ++) {
 		int editingThisObject = FALSE;
 		/*
 		 * Am I editing this object?
 		 */
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (praat.list [iobject]. editors [ieditor] == me)
+			if (theCurrentPraat -> list [iobject]. editors [ieditor] == me)
 				editingThisObject = TRUE;
 		if (editingThisObject) {
 			/*
 			 * Change the data if needed (unusual but possible).
 			 * BUG: DO NOT, because changed object may be second data in editor.
 			 */
-			/*if (data && ((Data) data) -> methods == ((Data) praat.list [iobject]. object) -> methods)
-				praat.list [iobject]. object = data;*/
+			/*if (data && ((Data) data) -> methods == ((Data) theCurrentPraat -> list [iobject]. object) -> methods)
+				theCurrentPraat -> list [iobject]. object = data;*/
 			/*
 			 * Notify all other editors associated with this object.
 			 */
 			for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-				Editor otherEditor = praat.list [iobject]. editors [ieditor];
+				Editor otherEditor = theCurrentPraat -> list [iobject]. editors [ieditor];
 				if (otherEditor != NULL && otherEditor != me)
 					Editor_dataChanged (otherEditor, data);
 			}
@@ -628,13 +630,13 @@ int praat_installEditor2 (Any editor, int i1, int i2) {
 	int ieditor1 = 0, ieditor2 = 0;
 	if (! editor) return 0;
 	for (ieditor1 = 0; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
-		if (praat.list [i1]. editors [ieditor1] == NULL)
+		if (theCurrentPraat -> list [i1]. editors [ieditor1] == NULL)
 			break;
 	for (ieditor2 = 0; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
-		if (praat.list [i2]. editors [ieditor2] == NULL)
+		if (theCurrentPraat -> list [i2]. editors [ieditor2] == NULL)
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS) {
-		praat.list [i1]. editors [ieditor1] = praat.list [i2]. editors [ieditor2] = editor;
+		theCurrentPraat -> list [i1]. editors [ieditor1] = theCurrentPraat -> list [i2]. editors [ieditor2] = editor;
 		Editor_setDestroyCallback (editor, cb_Editor_destroy, NULL);
 		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
 		Editor_setPublishCallback (editor, cb_Editor_publish, NULL);
@@ -650,16 +652,16 @@ int praat_installEditor3 (Any editor, int i1, int i2, int i3) {
 	int ieditor1 = 0, ieditor2 = 0, ieditor3;
 	if (! editor) return 0;
 	for (ieditor1 = 0; ieditor1 < praat_MAXNUM_EDITORS; ieditor1 ++)
-		if (praat.list [i1]. editors [ieditor1] == NULL)
+		if (theCurrentPraat -> list [i1]. editors [ieditor1] == NULL)
 			break;
 	for (ieditor2 = 0; ieditor2 < praat_MAXNUM_EDITORS; ieditor2 ++)
-		if (praat.list [i2]. editors [ieditor2] == NULL)
+		if (theCurrentPraat -> list [i2]. editors [ieditor2] == NULL)
 			break;
 	for (ieditor3 = 0; ieditor3 < praat_MAXNUM_EDITORS; ieditor3 ++)
-		if (praat.list [i3]. editors [ieditor3] == NULL)
+		if (theCurrentPraat -> list [i3]. editors [ieditor3] == NULL)
 			break;
 	if (ieditor1 < praat_MAXNUM_EDITORS && ieditor2 < praat_MAXNUM_EDITORS && ieditor3 < praat_MAXNUM_EDITORS) {
-		praat.list [i1]. editors [ieditor1] = praat.list [i2]. editors [ieditor2]  = praat.list [i3]. editors [ieditor3] = editor;
+		theCurrentPraat -> list [i1]. editors [ieditor1] = theCurrentPraat -> list [i2]. editors [ieditor2] = theCurrentPraat -> list [i3]. editors [ieditor3] = editor;
 		Editor_setDestroyCallback (editor, cb_Editor_destroy, NULL);
 		Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
 		Editor_setPublishCallback (editor, cb_Editor_publish, NULL);
@@ -680,11 +682,11 @@ int praat_installEditorN (Any editor, Ordered objects) {
 	 */
 	for (iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
 		Data object = objects -> item [iOrderedObject];
-		for (iPraatObject = 1; iPraatObject <= praat.n; iPraatObject ++) {
-			if (object == praat.list [iPraatObject]. object) {
+		for (iPraatObject = 1; iPraatObject <= theCurrentPraat -> n; iPraatObject ++) {
+			if (object == theCurrentPraat -> list [iPraatObject]. object) {
 				int ieditor;
 				for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-					if (praat.list [iPraatObject]. editors [ieditor] == NULL) {
+					if (theCurrentPraat -> list [iPraatObject]. editors [ieditor] == NULL) {
 						break;
 					}
 				}
@@ -695,19 +697,19 @@ int praat_installEditorN (Any editor, Ordered objects) {
 				break;
 			}
 		}
-		Melder_assert (iPraatObject <= praat.n);   /* An element of the Ordered does not occur in the List of Objects. */
+		Melder_assert (iPraatObject <= theCurrentPraat -> n);   /* An element of the Ordered does not occur in the List of Objects. */
 	}
 	/*
 	 * There appears to be room for all elements of the Ordered. The editor window can appear. Install the editor in all objects.
 	 */
 	for (iOrderedObject = 1; iOrderedObject <= objects -> size; iOrderedObject ++) {
 		Data object = objects -> item [iOrderedObject];
-		for (iPraatObject = 1; iPraatObject <= praat.n; iPraatObject ++) {
-			if (object == praat.list [iPraatObject]. object) {
+		for (iPraatObject = 1; iPraatObject <= theCurrentPraat -> n; iPraatObject ++) {
+			if (object == theCurrentPraat -> list [iPraatObject]. object) {
 				int ieditor;
 				for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-					if (praat.list [iPraatObject]. editors [ieditor] == NULL) {
-						praat.list [iPraatObject]. editors [ieditor] = editor;
+					if (theCurrentPraat -> list [iPraatObject]. editors [ieditor] == NULL) {
+						theCurrentPraat -> list [iPraatObject]. editors [ieditor] = editor;
 						Editor_setDestroyCallback (editor, cb_Editor_destroy, NULL);
 						Editor_setDataChangedCallback (editor, cb_Editor_dataChanged, NULL);
 						Editor_setPublishCallback (editor, cb_Editor_publish, NULL);
@@ -718,7 +720,7 @@ int praat_installEditorN (Any editor, Ordered objects) {
 				break;
 			}
 		}
-		Melder_assert (iPraatObject <= praat.n);   /* We already checked, but still. */
+		Melder_assert (iPraatObject <= theCurrentPraat -> n);   /* We already checked, but still. */
 	}
 	return 1;
 }
@@ -734,15 +736,15 @@ void praat_dataChanged (Any object) {
 void praat_clipboardChanged (void *closure, Any clipboard) {
 	int iobject, ieditor;
 	(void) closure;
-	for (iobject = 1; iobject <= praat.n; iobject ++)
+	for (iobject = 1; iobject <= theCurrentPraat -> n; iobject ++)
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++)
-			if (praat.list [iobject]. editors [ieditor])
-				Editor_clipboardChanged (praat.list [iobject]. editors [ieditor], clipboard);
+			if (theCurrentPraat -> list [iobject]. editors [ieditor])
+				Editor_clipboardChanged (theCurrentPraat -> list [iobject]. editors [ieditor], clipboard);
 }
 
 static void helpProc (const char *query) {
-	if (Melder_batch) { Melder_flushError ("Cannot view manual from batch."); return; }
-	if (! Manual_create (praat.topShell, query, praat.manPages))
+	if (theCurrentPraat -> batch) { Melder_flushError ("Cannot view manual from batch."); return; }
+	if (! Manual_create (theCurrentPraat -> topShell, query, theCurrentPraat -> manPages))
 		Melder_flushError ("help: no help on \"%s\".", query);   /* Failure. */
 }
 
@@ -754,9 +756,9 @@ static int publishProc (void *anything) {
 
 Editor praat_findEditorFromString (const char *string) {
 	int iobject, ieditor;
-	for (iobject = praat.n; iobject >= 1; iobject --)
+	for (iobject = theCurrentPraat -> n; iobject >= 1; iobject --)
 		for (ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
-			Editor editor = praat.list [iobject]. editors [ieditor];
+			Editor editor = theCurrentPraat -> list [iobject]. editors [ieditor];
 			if (editor && strequ (editor -> name, string)) return editor;
 	}
 	return NULL;
@@ -770,12 +772,12 @@ FORM (Quit, "Confirm Quit", "Quit")
 {
 	char prompt [300];
 	if (ScriptEditors_dirty ()) {
-		if (praat.n)
+		if (theCurrentPraat -> n)
 			sprintf (prompt, "You have objects and unsaved scripts! Do you still want to quit %s?", praatP.title);
 		else
 			sprintf (prompt, "You have unsaved scripts! Do you still want to quit %s?", praatP.title);
 		SET_STRING ("label", prompt);
-	} else if (praat.n) {
+	} else if (theCurrentPraat -> n) {
 		sprintf (prompt, "You have objects in your list! Do you still want to quit %s?", praatP.title);
 		SET_STRING ("label", prompt);
 	} else {
@@ -804,8 +806,10 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 			long pid;
 			int narg = fscanf (f, "#%ld", & pid);
 			fclose (f);
+			praat_background ();
 			if (! praat_executeScriptFromFile (& messageFile, NULL))
 				Melder_flushError ("%s: message not completely handled.", praatP.title);
+			praat_foreground ();
 			if (narg) kill (pid, SIGUSR2);
 		} else {
 			Melder_clearError ();
@@ -817,12 +821,14 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 		haveMessage = TRUE;
 		/* Trial: */
 		haveMessage = FALSE;
-		XtAppAddTimeOut (praat.context, 100, timerProc_userMessage, 0);
+		XtAppAddTimeOut (theCurrentPraat -> context, 100, timerProc_userMessage, 0);
 	}
 #elif defined (_WIN32)
 	static int cb_userMessage (void) {
+		praat_background ();
 		if (! praat_executeScriptFromFile (& messageFile, NULL))
 			Melder_flushError ("%s: message not completely handled.", praatP.title);
+		praat_foreground ();
 		return 0;
 	}
 	extern char *sendpraat (void *display, const char *programName, long timeOut, const char *text);
@@ -834,8 +840,10 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	}
 #elif defined (macintosh)
 	static int cb_userMessage (char *message) {
+		praat_background ();
 		if (! praat_executeScriptFromText (message))
 			Melder_flushError ("%s: message not completely handled.", praatP.title);
+		praat_foreground ();
 		return 0;
 	}
 	static int cb_quitApplication (void) {
@@ -868,9 +876,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		 * or running PRAATCON.EXE from the MS-DOS prompt or the NT command line:
 		 *    <programName> <scriptFileName>
 		 */
-		praat.batchName = argc > 1 && (int) argv [1] [0] != '-' ? argv [1] : NULL;
+		theCurrentPraat -> batchName = argc > 1 && (int) argv [1] [0] != '-' ? argv [1] : NULL;
 
-		Melder_batch = praat.batchName != NULL;
+		Melder_batch = theCurrentPraat -> batchName != NULL;
 
 		#if defined (_WIN32) && defined (CONSOLE_APPLICATION)
 			if (! Melder_batch) {
@@ -891,12 +899,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		sprintf (truncatedTitle, argc && argv [0] [0] ? argv [0] : title && title [0] ? title : "praat");
 	#else
 		#if defined (_WIN32)
-			praat.batchName = argv [3];   /* The command line. */
+			theCurrentPraat -> batchName = argv [3];   /* The command line. */
 		#endif
 		Melder_batch = FALSE;   /* Classic Macintosh and PRAAT.EXE are always interactive. */
 		sprintf (truncatedTitle, title && title [0] ? title : "praat");
 	#endif
-	praat.batch = Melder_batch;
+	theCurrentPraat -> batch = Melder_batch;
 
 	/*
 	 * Construct a program name like "myProg 3.2" by removing directory path.
@@ -1006,20 +1014,20 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	praat_menuCommands_init ();
 
 	if (Melder_batch) {
-		praat.batchName = Melder_calloc (1000, 1);
+		theCurrentPraat -> batchName = Melder_calloc (1000, 1);
 		#if defined (UNIX) || defined (macintosh) || defined (_WIN32) && defined (CONSOLE_APPLICATION)
 		{
 			unsigned int i;
 			for (i = 1; i < argc; i ++) {
 				int needsQuoting = strchr (argv [i], ' ') != NULL && (i == 1 || i < argc - 1);
-				if (i > 1) strcat (praat.batchName, " ");
-				if (needsQuoting) strcat (praat.batchName, "\"");
-				strcat (praat.batchName, argv [i]);
-				if (needsQuoting) strcat (praat.batchName, "\"");
+				if (i > 1) strcat (theCurrentPraat -> batchName, " ");
+				if (needsQuoting) strcat (theCurrentPraat -> batchName, "\"");
+				strcat (theCurrentPraat -> batchName, argv [i]);
+				if (needsQuoting) strcat (theCurrentPraat -> batchName, "\"");
 			}
 		}
 		#elif defined (_WIN32)
-			strcpy (praat.batchName, argv [3]);
+			strcpy (theCurrentPraat -> batchName, argv [3]);
 		#endif
 	} else {
 		char objectWindowTitle [100];
@@ -1028,18 +1036,18 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			argv [0] = & praatP. title [0];   /* argc == 4 */
 			motif_setOpenDocumentCallback (cb_openDocument);
 		#endif
-		praat.topShell = XtVaAppInitialize (& praat.context, "Praatwulg", NULL, 0, & argc, argv, Machine_getXresources (), NULL);
+		theCurrentPraat -> topShell = XtVaAppInitialize (& theCurrentPraat -> context, "Praatwulg", NULL, 0, & argc, argv, Machine_getXresources (), NULL);
 		sprintf (objectWindowTitle, "%s objects", praatP.title);
-		XtVaSetValues (praat.topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
+		XtVaSetValues (theCurrentPraat -> topShell, XmNdeleteResponse, XmDO_NOTHING, XmNtitle, objectWindowTitle, XmNx, 10, NULL);
 		#if defined (macintosh) || defined (_WIN32)
-			XtVaSetValues (praat.topShell, XmNheight, WINDOW_HEIGHT, NULL);
+			XtVaSetValues (theCurrentPraat -> topShell, XmNheight, WINDOW_HEIGHT, NULL);
 		#endif
 		#if ! defined (sun4)
 		{
 			/* Catch Window Manager "Close" and "Quit". */
-			Atom atom = XmInternAtom (XtDisplay (praat.topShell), "WM_DELETE_WINDOW", True);
-			XmAddWMProtocols (praat.topShell, & atom, 1);
-			XmAddWMProtocolCallback (praat.topShell, atom, cb_quit, 0);
+			Atom atom = XmInternAtom (XtDisplay (theCurrentPraat -> topShell), "WM_DELETE_WINDOW", True);
+			XmAddWMProtocols (theCurrentPraat -> topShell, & atom, 1);
+			XmAddWMProtocolCallback (theCurrentPraat -> topShell, atom, cb_quit, 0);
 		}
 		#endif
 	}
@@ -1054,9 +1062,9 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		Widget listWindow;
 #endif
 		#ifdef macintosh
-		MelderMotif_create (praat.context, praat.topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
+		MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* BUG: default Melder_assert would call printf recursively!!! */
 		#endif
-		Raam = XmCreateForm (praat.topShell, "raam", NULL, 0);
+		Raam = XmCreateForm (theCurrentPraat -> topShell, "raam", NULL, 0);
 #ifdef macintosh
 		XtVaSetValues (Raam, XmNwidth, LIST_WIDTH + BUTTON_WIDTH, NULL);
 		praatP.topBar = motif_addMenuBar (Raam);
@@ -1099,10 +1107,10 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		praat_addFixedButtons (Raam);
 		praat_actions_createDynamicMenu (Raam, LIST_WIDTH - 1);
 		XtManageChild (Raam);
-		XtRealizeWidget (praat.topShell);
+		XtRealizeWidget (theCurrentPraat -> topShell);
 		#ifdef UNIX
 			if ((f = Melder_fopen (& pidFile, "a")) != NULL) {
-				fprintf (f, " %ld", (long) XtWindow (praat.topShell));
+				fprintf (f, " %ld", (long) XtWindow (theCurrentPraat -> topShell));
 				fclose (f);
 			} else {
 				Melder_clearError ();
@@ -1115,12 +1123,12 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 			/* praat_showLogo (TRUE);   /* Mac: later. */
 		#endif
 		#if ! defined (CONSOLE_APPLICATION) && ! defined (macintosh)
-			MelderMotif_create (praat.context, praat.topShell);   /* Mac: done this earlier. */
+			MelderMotif_create (theCurrentPraat -> context, theCurrentPraat -> topShell);   /* Mac: done this earlier. */
 		#endif
 		Melder_setHelpProc (helpProc);
 	}
 	Melder_setPublishProc (publishProc);
-	praat.manPages = ManPages_create ();
+	theCurrentPraat -> manPages = ManPages_create ();
 	if (! praatP.dontUsePictureWindow) praat_picture_init ();
 	#if defined (macintosh)
 		if (! Melder_batch) {
@@ -1246,11 +1254,11 @@ void praat_run (void) {
 				praat_exit (-1);
 			}
 		} else {
-			if (praat_executeScriptFromFileNameWithArguments (praat.batchName)) {
+			if (praat_executeScriptFromFileNameWithArguments (theCurrentPraat -> batchName)) {
 				praat_exit (0);
 			} else {
 				structMelderFile batchFile;
-				if (! Melder_relativePathToFile (praat.batchName, & batchFile)) praat_exit (-1);
+				if (! Melder_relativePathToFile (theCurrentPraat -> batchName, & batchFile)) praat_exit (-1);
 				#if defined (_WIN32) && ! defined (CONSOLE_APPLICATION)
 					MelderMotif_create (NULL, NULL);
 				#endif
@@ -1288,7 +1296,7 @@ void praat_run (void) {
 		praatP.phase = praat_HANDLING_EVENTS;
 		
 		#if defined (_WIN32)
-			if (praat.batchName [0]) {
+			if (theCurrentPraat -> batchName [0]) {
 				char text [500];
 				/*
 				 * The user dropped a file on the Praat icon, while Praat was not running yet.
@@ -1296,7 +1304,7 @@ void praat_run (void) {
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				sprintf (text, "Read from file... %s", praat.batchName [0] == '\"' ? praat.batchName + 1 : praat.batchName);
+				sprintf (text, "Read from file... %s", theCurrentPraat -> batchName [0] == '\"' ? theCurrentPraat -> batchName + 1 : theCurrentPraat -> batchName);
 				if (strlen (text) > 0 && text [strlen (text) - 1] == '\"') {
 					text [strlen (text) - 1] = '\0';
 				}
@@ -1321,7 +1329,7 @@ void praat_run (void) {
 					haveMessage = FALSE;
 				}
 			#endif
-			XtAppNextEvent (praat.context, & event);
+			XtAppNextEvent (theCurrentPraat -> context, & event);
 			#if defined (UNIX)
 				if (event. type == ClientMessage && event. xclient.send_event && strnequ (& event. xclient.data.b [0], "SENDPRAAT", 9)) {
 					if ((f = Melder_fopen (& messageFile, "r")) != NULL) {

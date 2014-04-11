@@ -1,6 +1,6 @@
 /* Sound_audio.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,8 @@
  * pb 2005/10/13 edition for OpenBSD
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/20 Sound_playPart and Sound_play allow stereo
+ * pb 2006/12/30 Sound_playPart and Sound_play allow better stereo
+ * pb 2007/01/07 PortAudio
  */
 
 #include <errno.h>
@@ -42,13 +44,30 @@
 #include "Sound.h"
 #include "Preferences.h"
 
-#if defined (sgi)
+//#define USE_PORTAUDIO  1
+#ifndef USE_PORTAUDIO
+	#if defined (macintosh)
+		#define USE_PORTAUDIO  1
+	#else
+		#define USE_PORTAUDIO  0
+	#endif
+#endif
+
+#if USE_PORTAUDIO
+	#include "portaudio.h"
+	#if defined (macintosh)
+		#include "pa_mac_core.h"
+	#endif
+#elif defined (sgi)
 	#include <audio.h>
 	#include <unistd.h>   /* sginap (): nap while waiting for a sound to finish playing. */
 #elif defined (macintosh)
 	#include "macport_on.h"
 	#include <Carbon/Carbon.h>
 	#include "macport_off.h"
+	#ifndef __MWERKS__
+		typedef SndListPtr *SndListHandle;
+	#endif
 #elif defined (linux)
 	#include <fcntl.h>
 	#if defined (__OpenBSD__) || defined (__NetBSD__)
@@ -116,10 +135,38 @@ static int ulaw2linear [] =
             56,     48,     40,     32,     24,     16,      8,      0
        };
 
-#ifdef macintosh
-#ifndef __MWERKS__
-	typedef SndListPtr *SndListHandle;
-#endif
+#if USE_PORTAUDIO
+	struct Sound_recordFixedTime_Info {
+		long numberOfSamples, numberOfSamplesRead;
+		short *buffer;
+	};
+	static long getNumberOfSamplesRead (struct Sound_recordFixedTime_Info *info) {
+		volatile long numberOfSamplesRead = info -> numberOfSamplesRead;
+		return numberOfSamplesRead;
+	}
+static int portaudioStreamCallback (
+    const void *input, void *output,
+    unsigned long frameCount,
+    const PaStreamCallbackTimeInfo* timeInfo,
+    PaStreamCallbackFlags statusFlags,
+    void *void_info)
+{
+	(void) output;
+	(void) timeInfo;
+	(void) statusFlags;
+	struct Sound_recordFixedTime_Info *info = (struct Sound_recordFixedTime_Info *) void_info;
+	unsigned long samplesLeft = info -> numberOfSamples - info -> numberOfSamplesRead;
+	if (samplesLeft > 0) {
+		unsigned long dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
+		memcpy (info -> buffer + 1 + info -> numberOfSamplesRead, input, 2 * dsamples);
+		info -> numberOfSamplesRead += dsamples;
+		if (info -> numberOfSamplesRead >= info -> numberOfSamples) return paComplete;
+	} else /*if (info -> numberOfSamplesRead >= info -> numberOfSamples)*/ {
+		info -> numberOfSamplesRead = info -> numberOfSamples;
+		return paComplete;
+	}
+	return paContinue;
+}
 #endif
 
 Sound Sound_recordFixedTime (int inputSource, double gain, double balance, double sampleRate, double duration) {
@@ -132,7 +179,12 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Declare system-dependent data structures. */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		static bool paInitialized = false;
+		PaStream *portaudioStream = NULL;
+		struct Sound_recordFixedTime_Info info = { 0 };
+		PaStreamParameters streamParameters = { 0 };
+	#elif defined (sgi)
 		ALconfig config;
 		ALport port;
 	#elif defined (macintosh)
@@ -173,7 +225,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Check sampling frequency. */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO && defined (macintosh)
+		if (sampleRate != 44100 && sampleRate != 48000 && sampleRate != 96000)
+	#elif defined (sgi)
 		if (sampleRate != 8000 && sampleRate != 9800 && sampleRate != 11025 &&
 		    	sampleRate != 16000 && sampleRate != 22050 &&
 		    	sampleRate != 32000 && sampleRate != 44100 &&
@@ -194,7 +248,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 		if (sampleRate != 8000 && sampleRate != 11025 &&
 		    	sampleRate != 16000 && sampleRate != 22050 &&
 		    	sampleRate != 32000 && sampleRate != 44100 &&
-		    	sampleRate != 48000)
+		    	sampleRate != 48000 && sampleRate != 96000)
 	#endif
 		return Melder_errorp ("(Sound_record:) Audio hardware does not support sampling frequency %.8g.", sampleRate);
 
@@ -203,8 +257,16 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	 * On some systems, the info is filled in before the audio port is opened.
 	 * On other systems, the info is filled in after the port is opened.
 	 */
-
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		if (! paInitialized) {
+			PaError err = Pa_Initialize ();
+			if (err) {
+				Melder_error ("Pa_Initialize: %s", Pa_GetErrorText (err));
+				goto error;
+			}
+			paInitialized = true;
+		}
+	#elif defined (sgi)
 		config = ALnewconfig ();
 		if (! config) return Melder_errorp
 			("(Sound_record:) Do not know how to record a sound on this machine.");
@@ -246,7 +308,13 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Set the input source; the default is the microphone. */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		if (inputSource < 1 || inputSource > Pa_GetDeviceCount ()) {
+			Melder_error ("Unknown device #%d.", inputSource);
+			goto error;
+		}
+		streamParameters. device = inputSource - 1;
+	#elif defined (sgi)
 		if (inputSource == 0) {
 			/* Do not change input source: e.g., use the one set by the Audio Control Panel. */
 		} else {
@@ -329,7 +397,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Set gain and balance. */
 
-	#if defined (sgi) || defined (HPUX) || defined (macintosh)
+	#if USE_PORTAUDIO || defined (sgi) || defined (HPUX) || defined (macintosh) || defined (_WIN32)
 		/* Taken from Audio Control Panel. */
 	#elif defined (sun)
 		AUDIO_INITINFO (& info);
@@ -366,7 +434,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Set the sampling frequency. */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		// Set while opening.
+	#elif defined (sgi)
 		if (sampleRate == 0.0) {
 			/* Do not change sampling frequency. Get it from audio panel. */
 			long params [2];
@@ -392,13 +462,11 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 			ALsetparams (AL_DEFAULT_DEVICE, params, 2);
 		}
 	#elif defined (macintosh)
-	{
 		unsigned long sampleRate_uf = sampleRate * 65536.0;
 		if (SPBSetDeviceInfo (refNum, siSampleRate, & sampleRate_uf) != noErr) {
 			Melder_error ("(Sound_record:) Cannot set sampling frequency to %f.", sampleRate);
 			goto error;
 		}
-	}
 	#elif defined (sun)
 		AUDIO_INITINFO (& info);
 		info. record. sample_rate = sampleRate;
@@ -422,7 +490,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Set the number of channels to 1 (mono), if possible. */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		streamParameters. channelCount = 1;
+	#elif defined (sgi)
 		ALsetchannels (config, AL_MONO);
 	#elif defined (macintosh)
 	{
@@ -454,7 +524,9 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Set the encoding to 16-bit linear (or to 8-bit linear, if 16-bit is not available). */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		streamParameters. sampleFormat = paInt16;
+	#elif defined (sgi)
 		ALsetwidth (config, AL_SAMPLE_16);
 	#elif defined (macintosh)
 	{
@@ -501,7 +573,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	if (numberOfSamples < 1)
 		return Melder_errorp ("(Sound_record:) Duration too short.");
 	if (! (buffer = NUMsvector (1, numberOfSamples * (fakeMonoByStereo ? 2 : 1)))) return NULL;
-	if (! (me = Sound_createSimple (numberOfSamples / sampleRate, sampleRate))) {
+	if (! (me = Sound_createSimple (1, numberOfSamples / sampleRate, sampleRate))) {   // STEREO BUG
 		NUMsvector_free (buffer, 1);
 		return NULL;
 	}
@@ -512,7 +584,25 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	 * This starts recording now.
 	 */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		streamParameters. suggestedLatency = Pa_GetDeviceInfo (inputSource - 1) -> defaultLowInputLatency;
+		#if defined (macintosh)
+			struct paMacCoreStreamInfo macCoreStreamInfo = { 0 };
+			macCoreStreamInfo. size = sizeof (paMacCoreStreamInfo);
+			macCoreStreamInfo. hostApiType = paCoreAudio;
+			macCoreStreamInfo. version = 0x01;
+			macCoreStreamInfo. flags = paMacCore_ChangeDeviceParameters | paMacCore_FailIfConversionRequired;
+			streamParameters. hostApiSpecificStreamInfo = & macCoreStreamInfo;
+		#endif
+		info. numberOfSamples = numberOfSamples;
+		info. numberOfSamplesRead = 0;
+		info. buffer = buffer;
+		PaError err = Pa_OpenStream (& portaudioStream, & streamParameters, NULL,
+			sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) & info);
+		if (err) { Melder_error ("open %s", Pa_GetErrorText (err)); goto error; }
+		Pa_StartStream (portaudioStream);
+		if (err) { Melder_error ("start %s", Pa_GetErrorText (err)); goto error; }
+	#elif defined (sgi)
 		port = ALopenport ("Sound_record", "r", config);
 		if (! port) {
 			return Melder_errorp ("(Sound_recordFixedTime:) Cannot open audio port.");
@@ -556,7 +646,13 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Read the sound into the buffer. */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		// The callback will do this. Just wait.
+		while (getNumberOfSamplesRead (& info) < numberOfSamples) {
+			Pa_Sleep (1);
+			//Melder_casual ("filled %ld/%ld", getNumberOfSamplesRead (& info), numberOfSamples);
+		}
+	#elif defined (sgi)
 		ALreadsamps (port, & buffer [1], numberOfSamples);
 	#elif defined (macintosh)
 	#elif defined (_WIN32)
@@ -607,7 +703,10 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	/* Close the audio device. */
 
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		Pa_StopStream (portaudioStream);
+		Pa_CloseStream (portaudioStream);
+	#elif defined (sgi)
 		ALcloseport (port);
 		ALfreeconfig (config);
 	#elif defined (macintosh)
@@ -625,7 +724,10 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 error:
 	forget (me);
 	NUMsvector_free (buffer, 1);
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		if (portaudioStream) Pa_StopStream (portaudioStream);
+		if (portaudioStream) Pa_CloseStream (portaudioStream);
+	#elif defined (sgi)
 		if (port) ALcloseport (port);
 		if (config) ALfreeconfig (config);
 	#elif defined (macintosh)
@@ -663,31 +765,24 @@ static int melderPlayCallback (void *closure, long samplesPlayed) {
 	return 1;
 }
 
-int Sound_playPart (Sound left, Sound right, double tmin, double tmax,
+int Sound_playPart (Sound me, double tmin, double tmax,
 	int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure)
 {
-	if (right != NULL) {
-		if (left -> xmin != right -> xmin || left -> xmax != right -> xmax || left -> nx != right -> nx ||
-		    left -> dx != right -> dx || left -> x1 != right -> x1)
-		{
-			return Melder_error ("The time samplings of the two sounds do not match.");
-		}
-	}
-	long ifsamp = floor (1.0 / left -> dx + 0.5), bestSampleRate = Melder_getBestSampleRate (ifsamp);
+	long ifsamp = floor (1.0 / my dx + 0.5), bestSampleRate = Melder_getBestSampleRate (ifsamp);
 	if (ifsamp == bestSampleRate) {
 		struct SoundPlay *thee = (struct SoundPlay *) & thePlayingSound;
-		float *fromLeft = left -> z [1], *fromRight = right ? right -> z [1] : NULL;
+		float *fromLeft = my z [1], *fromRight = my ny > 1 ? my z [2] : NULL;
 		Melder_stopPlaying (Melder_IMPLICIT);
 		long i1, i2;
-		if ((thy numberOfSamples = Matrix_getWindowSamplesX (left, tmin, tmax, & i1, & i2)) < 1) goto end;
+		if ((thy numberOfSamples = Matrix_getWindowSamplesX (me, tmin, tmax, & i1, & i2)) < 1) goto end;
 		thy tmin = tmin;
 		thy tmax = tmax;
-		thy dt = left -> dx;
-		thy t1 = left -> x1;
+		thy dt = my dx;
+		thy t1 = my x1;
 		thy callback = callback;
 		thy closure = closure;
 		thy zeroPadding = (long) (ifsamp * Melder_getZeroPadding ());
-		int numberOfChannels = right ? 2 : 1;
+		int numberOfChannels = my ny > 1 ? 2 : 1;
 		thy buffer = NUMsvector (1, (i2 - i1 + 1 + 2 * thy zeroPadding) * numberOfChannels); cherror
 		thy i1 = i1;
 		thy i2 = i2;
@@ -710,21 +805,19 @@ int Sound_playPart (Sound left, Sound right, double tmin, double tmax,
 			thy zeroPadding + thy numberOfSamples + thy zeroPadding, numberOfChannels, melderPlayCallback, thee))
 			Melder_flushError (NULL);
 	} else {
-		Sound resampledLeft = Sound_resample (left, bestSampleRate, 1);
-		Sound resampledRight = right ? Sound_resample (right, bestSampleRate, 1) : NULL;
-		Sound_playPart (resampledLeft, resampledRight, tmin, tmax, callback, closure);   /* Recursively. */
-		forget (resampledLeft);
-		forget (resampledRight);
+		Sound resampled = Sound_resample (me, bestSampleRate, 1);
+		Sound_playPart (resampled, tmin, tmax, callback, closure);   /* Recursively. */
+		forget (resampled);
 	}
 end:
 	iferror return 0;
 	return 1;
 }
 
-int Sound_play (Sound left, Sound right,
+int Sound_play (Sound me,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure)
 {
-	return Sound_playPart (left, right, left -> xmin, left -> xmax, playCallback, playClosure);
+	return Sound_playPart (me, my xmin, my xmax, playCallback, playClosure);
 }
 
 /* End of file Sound_audio.c */

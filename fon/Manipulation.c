@@ -20,7 +20,7 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2003/11/26 repaired a memory leak in Sound_to_Manipulation
- * pb 2006/12/20 new Sound_play API
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "Manipulation.h"
@@ -158,12 +158,12 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 		amp = played -> z [1];
 		for (imin = 1; imin <= played -> nx; imin ++) if (amp [imin] != 0.0) break;
 		for (imax = played -> nx; imax >= 1; imax --) if (amp [imax] != 0.0) break;
-		Sound_playPart (played, NULL, played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, NULL, 0);
+		Sound_playPart (played, played -> x1 + (imin - 1.5) * played -> dx, played -> x1 + (imax - 0.5) * played -> dx, NULL, 0);
 		forget (played);
 	} else {
 		Sound sound = Manipulation_to_Sound (me, method);
 		if (! sound) return 0;
-		Sound_playPart (sound, NULL, tmin, tmax, NULL, 0);
+		Sound_playPart (sound, tmin, tmax, NULL, 0);
 		forget (sound);
 	}
 	return 1;
@@ -172,7 +172,7 @@ int Manipulation_playPart (Manipulation me, double tmin, double tmax, int method
 int Manipulation_play (Manipulation me, int method) {
 	Sound sound = Manipulation_to_Sound (me, method);
 	if (! sound) return 0;
-	Sound_play (sound, NULL, NULL, NULL);
+	Sound_play (sound, NULL, NULL);
 	forget (sound);
 	return 1;
 }
@@ -255,7 +255,7 @@ static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tmi
 }
 
 Sound Sound_Point_Point_to_Sound (Sound me, PointProcess source, PointProcess target, double maxT) {
-	Sound thee = Sound_create (my xmin, my xmax, my nx, my dx, my x1);
+	Sound thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1);
 	long i;
 	if (! thee) return NULL;
 
@@ -313,7 +313,7 @@ Sound Sound_Point_Pitch_Duration_to_Sound (Sound me, PointProcess pulses,
 	/*
 	 * Create a Sound long enough to hold the longest possible duration-manipulated sound.
 	 */
-	thee = Sound_create (my xmin, my xmin + 3 * (my xmax - my xmin), 3 * my nx, my dx, my x1);
+	thee = Sound_create (1, my xmin, my xmin + 3 * (my xmax - my xmin), 3 * my nx, my dx, my x1);
 	if (! thee) return NULL;
 
 	/*

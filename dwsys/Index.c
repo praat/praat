@@ -20,10 +20,11 @@
 /*
  djmw 20050724
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20070102
 */
 
 #include <time.h>
-#include "Strings_extensions.h"
+#include "Index.h"
 #include "NUM2.h"
 
 #include "oo_DESTROY.h"

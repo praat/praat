@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/08/04
+ * pb 2006/12/26
  */
 
 #include "Editor.h"
@@ -136,17 +136,21 @@ typedef struct {
 } structPraat_Object, *praat_Object;
 
 #define praat_MAXNUM_OBJECTS 1000   /* Maximum number of objects in the list. */
-extern struct structPraat {   /* Readonly */
+typedef struct {   /* Readonly */
 	int n;	 /* The current number of objects in the list. */
 	structPraat_Object list [1 + praat_MAXNUM_OBJECTS];   /* The list of objects: list [1..n]. */
 	char *batchName;   /* The name of the command file when called from batch. */
 	int batch;   /* Was the program called from the command line? */
 	int totalSelection;   /* The total number of selected objects, <= n. */
+	int totalBeingCreated;
 	XtAppContext context;   /* If you want to install an Xt WorkProc (rare). */
 	Widget topShell;   /* The application shell: parent of editors and standard dialogs. */
 	Graphics graphics;   /* The Graphics associated with the Picture window. */
 	ManPages manPages;
-} praat;   /* The global object containing the state of the application; only reachable from interface files. */
+} structPraat, *Praat;
+extern structPraat theForegroundPraat;
+extern Praat theCurrentPraat;
+	/* The global object containing the state of the application; only reachable from interface files. */
 
 Any praat_onlyObject (void *klas);
 	/* Returns a selected Data of class 'klas'. */
@@ -217,7 +221,7 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 #define FORM(proc,name,helpTitle) \
 	static int DO_##proc (Any sender, void *modified) \
 	{ static Any dia; if (dia == NULL) { Any radio = 0; (void) radio; \
-	dia = UiForm_create (praat.topShell, name, DO_##proc, NULL, helpTitle);
+	dia = UiForm_create (theCurrentPraat -> topShell, name, DO_##proc, NULL, helpTitle);
 #define REAL(label,def)		UiForm_addReal (dia, label, def);
 #define POSITIVE(label,def)	UiForm_addPositive (dia, label, def);
 #define INTEGER(label,def)	UiForm_addInteger (dia, label, def);
@@ -268,14 +272,14 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 	#define FORM_READ(proc,title,help) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
-		if (! dia) dia = UiInfile_create (praat.topShell, title, DO_##proc, NULL, help); \
+		if (! dia) dia = UiInfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
 		if (! sender) UiInfile_do (dia); else { MelderFile file; int IOBJECT = 0; structMelderFile file2; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
 	#define FORM_WRITE(proc,title,help,ext) \
 	static int DO_##proc (Any sender, void *dummy) { \
 		static Any dia; (void) dummy; \
-		if (! dia) dia = UiOutfile_create (praat.topShell, title, DO_##proc, NULL, help); \
+		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, title, DO_##proc, NULL, help); \
 		if (! sender) praat_write_do (dia, ext); else { MelderFile file; int IOBJECT = 0; structMelderFile file2; (void) IOBJECT; \
 		if (sender == dia) file = UiFile_getFile (sender); \
 		else { if (! Melder_relativePathToFile (sender, & file2)) return 0; file = & file2; } {
@@ -300,16 +304,16 @@ void praat_name2 (char *name, void *klas1, void *klas2);
 #define REQUIRE(c,t)  if (! (c)) return Melder_error ("%s", t);
 #define NEW(proc)  if (! praat_new (proc, NULL)) return 0;
 
-#define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= praat.n; IOBJECT ++) if (condition)
-#define WHERE_DOWN(condition)  for (IOBJECT = praat.n; IOBJECT > 0; IOBJECT --) if (condition)
-#define SELECTED  (praat.list [IOBJECT]. selected)
-#define CLASS  (praat.list [IOBJECT]. klas)
-#define OBJECT  (praat.list [IOBJECT]. object)
-#define GRAPHICS  praat.graphics
-#define FULL_NAME  (praat.list [IOBJECT]. name)
-#define ID  (praat.list [IOBJECT]. id)
+#define WHERE(condition)  for (IOBJECT = 1; IOBJECT <= theCurrentPraat -> n; IOBJECT ++) if (condition)
+#define WHERE_DOWN(condition)  for (IOBJECT = theCurrentPraat -> n; IOBJECT > 0; IOBJECT --) if (condition)
+#define SELECTED  (theCurrentPraat -> list [IOBJECT]. selected)
+#define CLASS  (theCurrentPraat -> list [IOBJECT]. klas)
+#define OBJECT  (theCurrentPraat -> list [IOBJECT]. object)
+#define GRAPHICS  theCurrentPraat -> graphics
+#define FULL_NAME  (theCurrentPraat -> list [IOBJECT]. name)
+#define ID  (theCurrentPraat -> list [IOBJECT]. id)
 #define NAME  praat_name (IOBJECT)
-#define FILENAME  (praat.list [IOBJECT]. file)
+#define FILENAME  (theCurrentPraat -> list [IOBJECT]. file)
 #define EVERY(proc)  WHERE (SELECTED) proc;
 #define EVERY_CHECK(proc)  EVERY (if (! proc) return 0)
 #define EVERY_TO(proc)  EVERY_CHECK (praat_new (proc, NAME))
@@ -383,7 +387,7 @@ void praat_picture_close (void);
 #define INCLUDE_LIBRARY(praat_xxx_init) \
    { extern void praat_xxx_init (void); praat_xxx_init (); }
 #define INCLUDE_MANPAGES(manual_xxx_init) \
-   { extern void manual_xxx_init (ManPages me); manual_xxx_init (praat.manPages); }
+   { extern void manual_xxx_init (ManPages me); manual_xxx_init (theCurrentPraat -> manPages); }
 
 /* For text-only applications that do not want to see that irritating Picture window. */
 /* Works only if called before praat_init. */

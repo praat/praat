@@ -166,7 +166,7 @@ extern struct PraatP {
 	int dontUsePictureWindow;   /* See praat_dontUsePictureWindow (). */
 	char *title;
 	Widget topBar, menuBar;
-	int phase, inManual;
+	int phase;
 	Any editor;   /* Scripting environment. */
 } praatP;
 

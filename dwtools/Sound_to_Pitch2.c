@@ -1,6 +1,6 @@
 /* Sound_to_Pitch2.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020813 GPL header
  djmw 20021106 Latest modification
  djmw 20041124 Changed call to Sound_to_Spectrum.
+ djmw 20070103 Sound interface changes
 */
 
 #include "Sound_to_Pitch2.h"
@@ -98,7 +99,7 @@ Pitch Sound_to_Pitch_shs (Sound me, double timeStep, double minimumPitch,
 	
 	if (! (sound = Sound_resample (me, newSamplingFrequency, 50)) ||
 		! Sampled_shortTermAnalysis (sound, windowDuration, timeStep, &numberOfFrames, &firstTime) ||
-		! (frame = Sound_createSimple (frameDuration, newSamplingFrequency)) ||
+		! (frame = Sound_createSimple (1, frameDuration, newSamplingFrequency)) ||
 		! (hamming = Sound_createHamming (nx / newSamplingFrequency, newSamplingFrequency)) ||
 		! (thee = Pitch_create (my xmin, my xmax, numberOfFrames, timeStep, firstTime,
 				ceiling, maxnCandidates)) ||

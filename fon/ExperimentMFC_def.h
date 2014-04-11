@@ -26,7 +26,7 @@
  * pb 2005/11/21 added replayButton
  * pb 2005/12/04 added okButton and oopsButton
  * pb 2005/12/06 fix stimuliAreSounds: defaults to TRUE
- * pb 2006/12/20
+ * pb 2006/12/31
  */
 
 
@@ -35,8 +35,7 @@ oo_DEFINE_STRUCT (SoundMFC)
 
 	oo_STRING (name)
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (Sound, 0, soundLeft)
-		oo_OBJECT (Sound, 0, soundRight)
+		oo_OBJECT (Sound, 0, sound)
 	#endif
 		
 oo_END_STRUCT (SoundMFC)
@@ -51,8 +50,7 @@ oo_DEFINE_STRUCT (StimulusMFC)
 		oo_STRING (visibleText)
 	oo_ENDFROM
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (Sound, 0, soundLeft)
-		oo_OBJECT (Sound, 0, soundRight)
+		oo_OBJECT (Sound, 0, sound)
 	#endif
 		
 oo_END_STRUCT (StimulusMFC)
@@ -72,8 +70,7 @@ oo_DEFINE_STRUCT (ResponseMFC)
 	oo_ENDFROM
 	oo_STRING (name)
 	#if !oo_READING && !oo_WRITING
-		oo_OBJECT (Sound, 0, soundLeft)
-		oo_OBJECT (Sound, 0, soundRight)
+		oo_OBJECT (Sound, 0, sound)
 	#endif
 
 oo_END_STRUCT (ResponseMFC)
@@ -184,8 +181,7 @@ oo_DEFINE_CLASS (ExperimentMFC, Data)
 		oo_LONG_VECTOR (stimuli, my numberOfTrials)
 		oo_LONG_VECTOR (responses, my numberOfTrials)
 		oo_DOUBLE_VECTOR (goodnesses, my numberOfTrials)
-		oo_OBJECT (Sound, 0, playBufferLeft)
-		oo_OBJECT (Sound, 0, playBufferRight)
+		oo_OBJECT (Sound, 0, playBuffer)
 	#endif
 	oo_DIR (rootDirectory)
 	#if oo_READING

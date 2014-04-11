@@ -1,6 +1,6 @@
 /* Artword_Speaker_to_Sound.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,8 @@
  */
 
 /*
- * pb 1996/06/11
  * pb 2002/07/16 GPL
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "Speaker_to_Delta.h"
@@ -54,7 +54,7 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 	Sound *v1, int iv1, Sound *v2, int iv2, Sound *v3, int iv3)
 {
 	Delta delta;
-	Sound result = Sound_createSimple (artword -> totalTime, fsamp);
+	Sound result = Sound_createSimple (1, artword -> totalTime, fsamp);
 	long numberOfSamples = result -> nx;
 	float minTract [1+78], maxTract [1+78];   /* For drawing. */
 	double Dt = 1 / fsamp / oversampling,
@@ -79,15 +79,15 @@ Sound Artword_Speaker_to_Sound (Artword artword, Speaker speaker,
 	Artword_intoArt (artword, art, 0.0);
 	Art_Speaker_intoDelta (art, speaker, delta);
 	M = delta -> numberOfTubes;
-	if (iw1 > 0 && iw1 <= M) *w1 = Sound_createSimple (artword -> totalTime, fsamp); else iw1 = 0;
-	if (iw2 > 0 && iw2 <= M) *w2 = Sound_createSimple (artword -> totalTime, fsamp); else iw2 = 0;
-	if (iw3 > 0 && iw3 <= M) *w3 = Sound_createSimple (artword -> totalTime, fsamp); else iw3 = 0;
-	if (ip1 > 0 && ip1 <= M) *p1 = Sound_createSimple (artword -> totalTime, fsamp); else ip1 = 0;
-	if (ip2 > 0 && ip2 <= M) *p2 = Sound_createSimple (artword -> totalTime, fsamp); else ip2 = 0;
-	if (ip3 > 0 && ip3 <= M) *p3 = Sound_createSimple (artword -> totalTime, fsamp); else ip3 = 0;
-	if (iv1 > 0 && iv1 <= M) *v1 = Sound_createSimple (artword -> totalTime, fsamp); else iv1 = 0;
-	if (iv2 > 0 && iv2 <= M) *v2 = Sound_createSimple (artword -> totalTime, fsamp); else iv2 = 0;
-	if (iv3 > 0 && iv3 <= M) *v3 = Sound_createSimple (artword -> totalTime, fsamp); else iv3 = 0;
+	if (iw1 > 0 && iw1 <= M) *w1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw1 = 0;
+	if (iw2 > 0 && iw2 <= M) *w2 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw2 = 0;
+	if (iw3 > 0 && iw3 <= M) *w3 = Sound_createSimple (1, artword -> totalTime, fsamp); else iw3 = 0;
+	if (ip1 > 0 && ip1 <= M) *p1 = Sound_createSimple (1, artword -> totalTime, fsamp); else ip1 = 0;
+	if (ip2 > 0 && ip2 <= M) *p2 = Sound_createSimple (1, artword -> totalTime, fsamp); else ip2 = 0;
+	if (ip3 > 0 && ip3 <= M) *p3 = Sound_createSimple (1, artword -> totalTime, fsamp); else ip3 = 0;
+	if (iv1 > 0 && iv1 <= M) *v1 = Sound_createSimple (1, artword -> totalTime, fsamp); else iv1 = 0;
+	if (iv2 > 0 && iv2 <= M) *v2 = Sound_createSimple (1, artword -> totalTime, fsamp); else iv2 = 0;
+	if (iv3 > 0 && iv3 <= M) *v3 = Sound_createSimple (1, artword -> totalTime, fsamp); else iv3 = 0;
 	/* Initialize drawing. */
 	{ int i; for (i = 1; i <= 78; i ++) { minTract [i] = 100; maxTract [i] = -100; } }
 	totalVolume = 0.0;

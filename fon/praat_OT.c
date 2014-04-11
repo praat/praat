@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/18
+ * pb 2006/12/26
  */
 
 #include "praat.h"
@@ -98,11 +98,11 @@ DO
 END
 
 DIRECT (OTGrammar_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTGrammarEditor_create (praat.topShell, FULL_NAME,
+			if (! praat_installEditor (OTGrammarEditor_create (theCurrentPraat -> topShell, FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}
@@ -638,11 +638,11 @@ DO
 END
 
 DIRECT (OTMulti_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit from batch.");
 	} else {
 		WHERE (SELECTED) {
-			if (! praat_installEditor (OTMultiEditor_create (praat.topShell, FULL_NAME,
+			if (! praat_installEditor (OTMultiEditor_create (theCurrentPraat -> topShell, FULL_NAME,
 				OBJECT), IOBJECT)) return 0;
 		}
 	}

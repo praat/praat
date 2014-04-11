@@ -1,4 +1,4 @@
-#define PRAAT_VERSION 4.5.08
-#define PRAAT_YEAR 2006
-#define PRAAT_MONTH December
-#define PRAAT_DAY 20
+#define PRAAT_VERSION 4.5.09
+#define PRAAT_YEAR 2007
+#define PRAAT_MONTH January
+#define PRAAT_DAY 1

@@ -1,6 +1,6 @@
 /* Sound_to_Cochleagram.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
  * pb 2002/07/16 GPL
  * pb 2002/08/26 correct handling of zero forwardMaskingTime (bug found by djmw)
  * pb 2004/11/22 simplified Sound_to_Spectrum ()
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "Sound_to_Cochleagram.h"
@@ -47,7 +48,7 @@ Cochleagram Sound_to_Cochleagram (I, double dt, double df, double dt_window,
 	if (nFrames < 2) return NULL;
 	t1 = my x1 + 0.5 * (duration - my dx - (nFrames - 1) * dt); /* Centre of first frame. */
 	if (! (thee = Cochleagram_create (my xmin, my xmax, nFrames, dt, t1, df, nf)) ||
-		! (window = Sound_createSimple (nsamp_window * my dx, 1 / my dx)))
+		! (window = Sound_createSimple (1, nsamp_window * my dx, 1 / my dx)))
 	{
 		forget (thee);
 		return NULL;
@@ -103,7 +104,7 @@ static Sound createGammatone (double midFrequency_Hertz, double samplingFrequenc
 	double decayTime = 1e-3 * pow (midFrequency_Hertz / 1000, -0.663);
 	/* EdB's omega: */
 	double midFrequency_radPerSecond = 2 * NUMpi * midFrequency_Hertz;
-	Sound gammatone = Sound_createSimple (lengthOfGammatone_seconds, samplingFrequency);
+	Sound gammatone = Sound_createSimple (1, lengthOfGammatone_seconds, samplingFrequency);
 	lengthOfGammatone_samples = gammatone -> nx;
 	for (itime = 1; itime <= lengthOfGammatone_samples; itime ++) {
 		double time_seconds = (itime - 0.5) / samplingFrequency;

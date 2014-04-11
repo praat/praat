@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
  * pb 2003/11/19 Sound_to_Intensity veryAccurate
  * pb 2003/12/15 removed bug introduced by previous change
  * pb 2004/10/27 subtractMean
+ * pb 2006/12/31 compatible with stereo sounds
  */
 
 #include "Sound_to_Intensity.h"
@@ -66,8 +67,14 @@ Intensity Sound_to_Intensity (Sound me, double minimumPitch, double timeStep, in
 		if (leftSample < 1) leftSample = 1;
 		if (rightSample > my nx) rightSample = my nx;
 
-		for (i = leftSample; i <= rightSample; i ++) {
-			amplitude [i - midSample] = my z [1] [i];
+		if (my ny == 1) {
+			for (i = leftSample; i <= rightSample; i ++) {
+				amplitude [i - midSample] = my z [1] [i];
+			}
+		} else {
+			for (i = leftSample; i <= rightSample; i ++) {
+				amplitude [i - midSample] = 0.5 * (my z [1] [i] + my z [2] [i]);
+			}
 		}
 		if (subtractMeanPressure) {
 			double sum = 0.0, mean;

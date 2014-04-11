@@ -1186,10 +1186,18 @@ int Interpreter_run (Interpreter me, char *text) {
 						Melder_free (var -> stringValue);
 						var -> stringValue = value;   /* var becomes owner */
 					} else if (withFile == 2) {
+						if (theCurrentPraat != & theForegroundPraat) {
+							Melder_error ("Commands that write to a file are not available inside pictures.");
+							goto end;
+						}
 						InterpreterVariable var = Interpreter_hasVariable (me, command2.string); cherror
 						if (! var) { Melder_error ("Variable %s undefined.", command2.string); goto end; }
 						MelderFile_appendText (& file, var -> stringValue); cherror
 					} else {
+						if (theCurrentPraat != & theForegroundPraat) {
+							Melder_error ("Commands that write to a file are not available inside pictures.");
+							goto end;
+						}
 						InterpreterVariable var = Interpreter_hasVariable (me, command2.string); cherror
 						if (! var) { Melder_error ("Variable %s undefined.", command2.string); goto end; }
 						MelderFile_writeText (& file, var -> stringValue); cherror

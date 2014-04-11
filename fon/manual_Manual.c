@@ -57,7 +57,7 @@ ENTRY ("Your own manual pages")
 NORMAL ("To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN ("ManPages", "ppgb", 20061020)
+MAN_BEGIN ("ManPages", "ppgb", 20061228)
 INTRO ("You can create a documentation or education system with files that you and others "
 	"can read into P\\s{RAAT} (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -75,7 +75,7 @@ LIST_ITEM ("1. The word \"ManPagesTextFile\" on the first line.")
 LIST_ITEM ("2. The title of the manual page, between double quotes. "
 	"This will be drawn at the top of the page. "
 	"The name of the ManPages text file should be derived from this title (see below).")
-LIST_ITEM ("3. The author of the man page, between double quotes. "
+LIST_ITEM ("3. The author of the manual page, between double quotes. "
 	"This will be drawn at the bottom of the page.")
 LIST_ITEM ("4. The date you created or modified the page, "
 	"in the format year \\-- month (two digits) \\-- day (two digits), without spaces.")
@@ -126,7 +126,7 @@ NORMAL ("The title in the second line of ##Back_vowels.man# must be equal to the
 ENTRY ("Paragraph types")
 NORMAL ("A normal paragraph will have type <normal>. The hypertext system will "
 	"leave a blank space between paragraphs with this type. "
-	"The first paragraph of a man page will normally have the type <intro>. "
+	"The first paragraph of a manual page will normally have the type <intro>. "
 	"Though this may look the same as <normal>, the search system of the @Manual "
 	"may take account of the distinction.")
 NORMAL ("Headings (like the title \"Paragraph types\" of this subsection) "
@@ -168,7 +168,7 @@ NORMAL ("The format of the sound link \"$$\\@ \\@ \\bsFIo.aifc|o\\@ $\" is to be
 	"this file, sees that it contains a sound, and plays that sound.")
 NORMAL ("You can use relative path names, e.g., \\bsFIsounds/o.aifc refers to the file "
 	"##o.aifc# in the subdirectory #sounds, which must be contained in the same directory "
-	"as the ##.man# files. To make sure that your man pages run on all platforms "
+	"as the ##.man# files. To make sure that your manual pages run on all platforms "
 	"(Windows, Macintosh, Unix), you will want to use the forward slash (/) to separate "
 	"the directory name(s) from the file name, as in this example "
 	"(i.e. you avoid the backslash (\\bs) that is usual on Windows computers).")
@@ -187,33 +187,25 @@ NORMAL ("The two numbers after ##<script># are the width and the height of the p
 	"If the font size is larger, the viewport will be scaled up accordingly.")
 NORMAL ("Please note that the script is enclosed within double quotes. "
 	"Therefore, you will have to double any double quotes that occur in the script.")
-NORMAL ("A script like this can create objects in the list, if needed. However, you have to make sure "
-	"that you remove them after use and that you restore the original selection of objects:")
+NORMAL ("If needed, a script like this can create objects in the object list of the manual. "
+	"However, you have to make sure that you remove them after use:")
 CODE ("<script> 6 3 \"")
-CODE1 ("n = numberOfSelected ()")
-CODE1 ("for i to n")
-	CODE2 ("object'i' = selected (i)")
-CODE1 ("endfor")
 CODE1 ("Create Sound... sineWithNoise 0.0 1.0 22050 1/2*sin(2*pi*377*x)+randomGauss(0,0.1)")
 CODE1 ("To Spectrogram... 0.005 5000 0.002 20 Gaussian")
 CODE1 ("Paint... 0 0 0 0 100.0 yes 50.0 6.0 0.0 yes")
 CODE1 ("plus Sound sineWithNoise")
 CODE1 ("Remove")
-CODE1 ("if n > 0")
-	CODE2 ("select object1")
-	CODE2 ("for i from 2 to n")
-		CODE3 ("plus object'i'")
-	CODE2 ("endfor")
-CODE1 ("endif")
 CODE ("\\\"r")
 NORMAL ("Note that unlike the previous script, this script does not set the font and font size. "
 	"This means that the drawing will use the font and font size of the manual page, "
 	"which is usually what you want.")
-NORMAL ("For obvious safety reasons, the user will see a warning about "
-	"\"trusting the author of the manual pages\" if you include embedded scripts in your manual. "
-	"For the same reason it is impossible to include an embedded script "
-	"in the opening page of your manual. "
-	"If you try, the user will get a message that the manual pages cannot be opened.")
+NORMAL ("For obvious safety reasons, embedded scripts cannot contain commands that change the contents of any disk "
+	"or send messages. Thus, commands like ##Write to WAV file...#, ##filedelete out.txt#, ##string\\$  >> out.txt#, "
+	"#system, or #sendpraat are forbidden. Several other commands, such as #pause, #editor, and ##Set outer viewport...# "
+	"are irrelevant inside pictures and are therefore forbidden as well. "
+	"Note that commands like #echo, ##Read from file...#, and #execute are still available "
+	"(with the last two, you can use relative paths; "
+	"with #execute, you can only run scripts that do not contain any of the forbidden commands).")
 ENTRY ("Script links")
 NORMAL ("Your text may contain links to Praat scripts. They are drawn in blue. "
 	"The format is:")

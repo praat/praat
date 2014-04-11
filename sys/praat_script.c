@@ -27,6 +27,7 @@
  * pb 2005/02/10 corrected bug in nowarn
  * pb 2005/08/22 renamed Control menu to "Praat"
  * pb 2006/01/11 local variables
+ * pb 2006/12/28 theCurrentPraat
  */
 
 #include <ctype.h>
@@ -103,6 +104,8 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			if (command [9] == ' ') Melder_print (command + 10);
 			Melder_print ("\n");
 		} else if (strnequ (command, "fappendinfo ", 12)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"fappendinfo\" is not available inside pictures.");
 			FILE *f;
 			structMelderFile file;
 			if (! Melder_relativePathToFile (command + 12, & file)) return 0;
@@ -111,16 +114,24 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			fprintf (f, "%s", Melder_getInfo ());
 			fclose (f);
 		} else if (strnequ (command, "unix ", 5)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"unix\" is not available inside pictures.");
 			if (! Melder_system (command + 5))
 				return Melder_error ("Unix command \"%s\" returned error status;\n"
 					"if you want to ignore this, use `unix_nocheck' instead of `unix'.", command + 5);
 		} else if (strnequ (command, "unix_nocheck ", 13)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"unix_nocheck\" is not available inside pictures.");
 			(void) Melder_system (command + 13); Melder_clearError ();
 		} else if (strnequ (command, "system ", 7)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"system\" is not available inside pictures.");
 			if (! Melder_system (command + 7))
 				return Melder_error ("System command \"%s\" returned error status;\n"
 					"if you want to ignore this, use `system_nocheck' instead of `system'.", command + 7);
 		} else if (strnequ (command, "system_nocheck ", 15)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"system_nocheck\" is not available inside pictures.");
 			(void) Melder_system (command + 15); Melder_clearError ();
 		} else if (strnequ (command, "nowarn ", 7)) {
 			int result;
@@ -141,7 +152,7 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			int wasBackgrounding = Melder_backgrounding;
 			structMelderDir dir;
 			Melder_getDefaultDir (& dir);
-			if (praat.batch) return 1;
+			if (theCurrentPraat -> batch) return 1;
 			UiFile_hide ();
 			if (wasBackgrounding) praat_foreground ();
 			if (! Melder_pause (command + 5)) return Melder_error ("You interrupted the script.");
@@ -151,6 +162,8 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 		} else if (strnequ (command, "execute ", 8)) {
 			praat_executeScriptFromFileNameWithArguments (command + 8);
 		} else if (strnequ (command, "editor", 6)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"editor\" is not available inside pictures.");
 			if (command [6] == ' ' && isalpha (command [7])) {
 				praatP. editor = praat_findEditorFromString (command + 7);
 				if (praatP. editor == NULL)
@@ -163,8 +176,12 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 				return Melder_error ("No editor specified.");
 			}
 		} else if (strnequ (command, "endeditor", 9)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"endeditor\" is not available inside pictures.");
 			praatP. editor = NULL;
 		} else if (strnequ (command, "sendpraat ", 10)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"sendpraat\" is not available inside pictures.");
 			char programName [41], *q = & programName [0], *result;
 			#ifdef macintosh
 				#define SENDPRAAT_TIMEOUT  10
@@ -180,10 +197,12 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			while (*p == ' ' || *p == '\t') p ++;
 			if (*p == '\0')
 				return Melder_error ("Missing command after `sendpraat'.");
-			result = sendpraat (XtDisplay (praat.topShell), programName, SENDPRAAT_TIMEOUT, p);
+			result = sendpraat (XtDisplay (theCurrentPraat -> topShell), programName, SENDPRAAT_TIMEOUT, p);
 			if (result)
 				return Melder_error ("%s\nMessage to %s not completed.", result, programName);
 		} else if (strnequ (command, "sendsocket ", 11)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"sendsocket\" is not available inside pictures.");
 			char hostName [61], *q = & hostName [0], *result;
 			const char *p = command + 11;
 			while (*p == ' ' || *p == '\t') p ++;
@@ -198,6 +217,8 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			if (result)
 				return Melder_error ("%s\nMessage to %s not completed.", result, hostName);
 		} else if (strnequ (command, "filedelete ", 11)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"filedelete\" is not available inside pictures.");
 			const char *p = command + 11;
 			structMelderFile file;
 			while (*p == ' ' || *p == '\t') p ++;
@@ -206,6 +227,8 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 			if (! Melder_relativePathToFile (p, & file)) return 0;
 			MelderFile_delete (& file);
 		} else if (strnequ (command, "fileappend ", 11)) {
+			if (theCurrentPraat != & theForegroundPraat)
+				return Melder_error ("The script command \"fileappend\" is not available inside pictures.");
 			const char *p = command + 11;
 			char path [256], *q = & path [0];
 			while (*p == ' ' || *p == '\t') p ++;
@@ -275,11 +298,17 @@ int praat_executeCommand (Interpreter interpreter, const char *command) {
 		/* First try loose commands, then fixed commands. */
 
 		UiInterpreter_set (interpreter);
-		if (praatP. editor) {
+		if (theCurrentPraat == & theForegroundPraat && praatP. editor != NULL) {
 			if (! Editor_doMenuCommand (praatP. editor, command, arguments)) {
 				UiInterpreter_set (NULL);
 				return 0;
 			}
+		} else if (theCurrentPraat != & theForegroundPraat &&
+		    (strnequ (command, "Write ", 6) ||
+			 strnequ (command, "Append ", 7) ||
+			 strequ (command, "Quit")))
+		{
+			return Melder_error ("Commands that write files (including Quit) are not available inside pictures.");
 		} else if (! praat_doAction (command, arguments)) {
 			if (Melder_hasError ()) {
 				UiInterpreter_set (NULL);
@@ -424,7 +453,7 @@ static int firstPassThroughScript (MelderFile file) {
 	Melder_setDefaultDir (& saveDir);
 	interpreter = Interpreter_createFromEnvironment (praatP.editor);
 	if (Interpreter_readParameters (interpreter, text) > 0) {
-		Any form = Interpreter_createForm (interpreter, praat.topShell, Melder_fileToPath (file), secondPassThroughScript, NULL);
+		Any form = Interpreter_createForm (interpreter, theCurrentPraat -> topShell, Melder_fileToPath (file), secondPassThroughScript, NULL);
 		UiForm_destroyWhenUnmanaged (form);
 		UiForm_do (form, 0);
 	} else {
@@ -457,7 +486,7 @@ int DO_praat_runScript (Any sender, void *dummy) {
 		 */
 		static Any file_dialog;
 		if (! file_dialog)
-			file_dialog = UiInfile_create (praat.topShell, "Praat: run script", fileSelectorOkCallback, NULL, 0);
+			file_dialog = UiInfile_create (theCurrentPraat -> topShell, "Praat: run script", fileSelectorOkCallback, NULL, 0);
 		UiInfile_do (file_dialog);
 	} else {
 		/*

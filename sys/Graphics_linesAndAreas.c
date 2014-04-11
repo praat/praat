@@ -1,6 +1,6 @@
 /* Graphics_linesAndAreas.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,17 @@
 /*
  * pb 2004/01/13 the same high-resolution line width formula for all platforms
  * pb 2004/01/29 removed path size restriction for polygons
- * pb 2004/02/11 ellipses and rectangles handle reversed axes better
+ * pb 2004/02/11 ORDER_DC: ellipses and rectangles handle reversed axes better
  * pb 2005/07/31 better arrowheads
+ * pb 2007/01/06 made ORDER_DC compatible with PostScript
  */
 
 #include "GraphicsP.h"
 
 #define POSTSCRIPT_MAXPATH  1000
 #define LINE_WIDTH_IN_PIXELS(me)  ( my resolution > 192 ? my lineWidth * (my resolution / 192.0) : my lineWidth )
-#define ORDER_DC  { short temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; if (y2DC > y1DC) temp = y1DC, y1DC = y2DC, y2DC = temp; }
+#define ORDER_DC  { short temp; if (x1DC > x2DC) temp = x1DC, x1DC = x2DC, x2DC = temp; \
+	if ((my screen != 0) == (y2DC > y1DC)) temp = y1DC, y1DC = y2DC, y2DC = temp; }
 
 static void psPrepareLine (GraphicsPostscript me) {
 	double lineWidth_pixels = LINE_WIDTH_IN_PIXELS (me);

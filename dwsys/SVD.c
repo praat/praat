@@ -29,6 +29,7 @@
  djmw 20051201 Adapt for numberOfRows < numberOfColumns
  djmw 20060810 Removed #include praat.h
  djmw 20061212 Changed info to Melder_writeLine<x> format.
+ djmw 20070102 Removed the #include "TableOfReal.h"
 */
 
 #include "SVD.h"
@@ -37,8 +38,6 @@
 #include "Collection.h"
 #include "NUMclapack.h"
 #include "NUMcblas.h"
-
-#include "TableOfReal.h"
 
 #include "oo_DESTROY.h"
 #include "SVD_def.h"

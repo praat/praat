@@ -18,11 +18,11 @@
  */
 
 /*
- * pb 2006/05/02
+ * pb 2006/12/28
  */
 
-#define kBundleShortVersion "Praat 4.4 or up (PowerPC only)"
-#define kBundleGetInfo kBundleShortVersion ", © 1992-2006 by Paul Boersma and David Weenink"
+#define kBundleShortVersion "Praat 4.5 or up (PowerPC only)"
+#define kBundleGetInfo kBundleShortVersion ", © 1992-2007 by Paul Boersma and David Weenink"
 
 plist {
 	dictionary {

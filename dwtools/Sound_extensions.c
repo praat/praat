@@ -1,6 +1,6 @@
 /* Sound_extensions.c
  *
- * Copyright (C) 1993-2006 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
  djmw 20061010 Removed crashing bug in Sound_to_IntervalTier_detectSilence.
  djmw 20061201 Interface change: removed minimumPitch parameter from Sound_and_Pitch_changeGender.
  djmw 20061214 Sound_and_Pitch_changeSpeaker removed warning.
+ djmw 20070103 Sound interface changes
 */
 
 #include "Intensity_extensions.h"
@@ -279,7 +280,7 @@ Sound Sound_readFromCmuAudioFile (MelderFile file)
 		Melder_fclose (file, f);
 		return Melder_errorp ("Sound_readFromCmuAudioFile: incorrect number of samples. "); 
 	}
-	if (! (me = Sound_createSimple (nSamples/16000., 16000))) goto error;
+	if (! (me = Sound_createSimple (1, nSamples/16000., 16000))) goto error;
 	i2read (me, f, littleEndian);
 	if (feof (f) || ferror (f))
 	{
@@ -319,7 +320,7 @@ Sound Sound_readFromRawFile (MelderFile file, const char *format, int nBitsCodin
 		Melder_fclose (file, f);
 		return Melder_errorp ("Sound_readFromRawFile: no samples left to read");
 	}
-	if (! (me = Sound_createSimple (nSamples/samplingFrequency, samplingFrequency)))
+	if (! (me = Sound_createSimple (1, nSamples/samplingFrequency, samplingFrequency)))
 	{
 		Melder_fclose (file, f);
 		return Melder_errorp ("Sound_readFromRawFile: no memory for Sound.");
@@ -482,7 +483,7 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 		Melder_fclose (file, f);
 		return Melder_errorp ("%s: File too long", proc);
 	}
-	me = Sound_createSimple (numberOfSamples /sampleRate, sampleRate);
+	me = Sound_createSimple (1, numberOfSamples /sampleRate, sampleRate);
 	if (me == NULL) return NULL;
 	
 	/*
@@ -506,29 +507,34 @@ Sound Sound_readFromDialogicADPCMFile (MelderFile file, double sampleRate)
 
 void Sound_preEmphasis (Sound me, double preEmphasisFrequency)
 {
-	long i; float *s = my z[1]; 
 	double preEmphasis = exp(- 2.0 * NUMpi * preEmphasisFrequency * my dx);
-	for (i=my nx; i >= 2; i--) s[i] -= preEmphasis * s[i-1];
+	for (long channel = 1; channel <= my ny; channel++)
+	{
+		float *s = my z[channel];
+		for (long i = my nx; i >= 2; i--) s[i] -= preEmphasis * s[i-1];
+	}
 }
 
 void Sound_deEmphasis (Sound me, double deEmphasisFrequency)
 {
-	long i; float *s = my z[1]; 
 	double deEmphasis = exp(- 2.0 * NUMpi * deEmphasisFrequency * my dx);
-	for (i=2; i <= my nx; i++) s[i] += deEmphasis * s[i-1];
+	for (long channel = 1; channel <= my ny; channel++)
+	{
+		float *s = my z[channel];
+		for (long i = 2; i <= my nx; i++) s[i] += deEmphasis * s[i-1];
+	}
 }
 
 Sound Sound_createGaussian (double windowDuration, double samplingFrequency)
 {
-	Sound me = Sound_createSimple (windowDuration, samplingFrequency);
+	Sound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 	double imid, edge;
-	long i;
 	float *s = my z[1];
 	
 	if (me == NULL) return NULL;
 	
 	imid = 0.5 * (my nx + 1); edge = exp (-12.0);
-	for (i=1; i <= my nx; i++)
+	for (long i = 1; i <= my nx; i++)
 	{
 		s[i] = (exp (-48.0*(i-imid)*(i-imid)/(my nx+1)/(my nx+1)) - edge)
 			/ (1-edge);
@@ -538,15 +544,14 @@ Sound Sound_createGaussian (double windowDuration, double samplingFrequency)
 
 Sound Sound_createHamming (double windowDuration, double samplingFrequency)
 {
-	Sound me = Sound_createSimple (windowDuration, samplingFrequency);
+	Sound me = Sound_createSimple (1, windowDuration, samplingFrequency);
 	double p;
 	float *s = my z[1];
-	long i;
 	
 	if (me == NULL) return NULL;
 	
 	p = 2 * NUMpi / (my nx - 1);
-	for (i=1; i <= my nx; i++)
+	for (long i = 1; i <= my nx; i++)
 	{
 		s[i] = 0.54 - 0.46 * cos ((i-1) * p);
 	}
@@ -555,7 +560,7 @@ Sound Sound_createHamming (double windowDuration, double samplingFrequency)
 
 static Sound Sound_create2 (double minimumTime, double maximumTime, double samplingFrequency)
 {
-	return Sound_create (minimumTime, maximumTime, floor ((maximumTime - minimumTime) * samplingFrequency + 0.5),
+	return Sound_create (1, minimumTime, maximumTime, floor ((maximumTime - minimumTime) * samplingFrequency + 0.5),
 		1.0 / samplingFrequency, minimumTime + 0.5 / samplingFrequency);
 }
 
@@ -641,12 +646,12 @@ Sound Sound_createGammaTone (double minimumTime, double maximumTime, double samp
 	long gamma, double frequency, double bandwidth, double initialPhase, double addition,
 	int scaleAmplitudes)
 {
-	Sound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency); long i;
+	Sound me = Sound_create2 (minimumTime, maximumTime, samplingFrequency);
 	double twoPi = 2 * NUMpi, nyquistFrequency = samplingFrequency / 2;
 	double b2pi = twoPi * bandwidth, w = twoPi * frequency;
 	
 	if (! me) return NULL;
-	for (i=1; i <= my nx; i++)
+	for (long i = 1; i <= my nx; i++)
 	{
 		double t = (i - 0.5) * my dx;
 		double f = frequency + addition / (twoPi * t);
@@ -775,25 +780,29 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 
 Sound Sound_filterByGammaToneFilter4 (Sound me, double centre_frequency, double bandwidth)
 {
-	Sound thee = NULL; long i; double *y = NULL, *x = NULL, fs = 1 / my dx;
+	Sound thee = NULL;
+	double *y = NULL, *x = NULL, fs = 1 / my dx;
 
 	if (centre_frequency <= 0 || bandwidth < 0) return NULL;
 	
-	if (! (thee = Sound_create (my xmin, my xmax, my nx, my dx, my x1)) ||
+	if (! (thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1)) ||
 		! (y = NUMdvector (1, my nx)) ||
 		! (x = NUMdvector (1, my nx))) goto end;
-		
-	for (i=1; i <= my nx; i++) x[i] = my z[1][i];
 	
-	NUMgammatoneFilter4 (x, y, my nx, centre_frequency, bandwidth, fs);
+	for (long channel = 1; channel <= my ny; channel++)
+	{	
+		for (long i = 1; i <= my nx; i++) x[i] = my z[channel][i];
 	
-	for (i=1; i <= my nx; i++)
-	{
-		thy z[1][i] = y[i];
+		NUMgammatoneFilter4 (x, y, my nx, centre_frequency, bandwidth, fs);
+	
+		for (long i = 1; i <= my nx; i++)
+		{
+			thy z[channel][i] = y[i];
+		}
 	}
-	
 end:
-	NUMdvector_free (x, 1); NUMdvector_free (y, 1);
+	NUMdvector_free (x, 1);
+	NUMdvector_free (y, 1);
 	if (Melder_hasError ()) forget (thee);
 	return thee;
 }
@@ -809,15 +818,10 @@ static Sound Sound_filterByGammaToneFilter42 (Sound me, double centre_frequency,
 	if (centre_frequency < 50 || centre_frequency > 0.5 / my dx ||
 		bandwidth < 0) return  NULL;
 	
-	if (! (thee = Sound_create (my xmin, my xmax, my nx, my dx, my x1)) ||
+	if (! (thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1)) ||
 		! (y = NUMdvector (-7, my nx)) ||
 		! (x = NUMdvector (-3, my nx))) goto end;
-	
-	for (i=1; i <= my nx; i++)
-	{
-		x[i] = my z[1][i];
-	}
-	
+		
 	b[0] = 1;
 	b[1]= -8 * cos (wt) * exp (-bt);
 	b[2]= (16 + 12 * cos (2 * wt)) * exp (-2 * bt);
@@ -875,17 +879,27 @@ static Sound Sound_filterByGammaToneFilter42 (Sound me, double centre_frequency,
 	
 	/* perform the filtering */
 	
-	for (i=1; i <= my nx; i++)
+	for (long channel = 1; channel <= my ny; channel ++)
 	{
-		y[i] = a[0] * x[i];
-		y[i] += a[1] * x[i-1] + a[2] * x[i-2] + a[3] * x[i-3] + a[4] * x[i-4];
-		y[i] -= b[1] * y[i-1] + b[2] * y[i-2] + b[3] * y[i-3] + b[4] * y[i-4];
-		y[i] -= b[5] * y[i-5] + b[6] * y[i-6] + b[7] * y[i-7] + b[8] * y[i-8];
-		thy z[1][i] = y[i];
-	}
+		for (i = -7; i <= 0; i++) y[i] = 0;
+		for (i = -3; i <= 0; i++) x[i] = 0;
+		for (i = 1; i <= my nx; i++)
+		{
+			x[i] = my z[channel][i];
+		}
 	
+		for (i = 1; i <= my nx; i++)
+		{
+			y[i] = a[0] * x[i];
+			y[i] += a[1] * x[i-1] + a[2] * x[i-2] + a[3] * x[i-3] + a[4] * x[i-4];
+			y[i] -= b[1] * y[i-1] + b[2] * y[i-2] + b[3] * y[i-3] + b[4] * y[i-4];
+			y[i] -= b[5] * y[i-5] + b[6] * y[i-6] + b[7] * y[i-7] + b[8] * y[i-8];
+			thy z[channel][i] = y[i];
+		}
+	}
 end:
-	NUMdvector_free (x, -3); NUMdvector_free (y, -7);
+	NUMdvector_free (x, -3);
+	NUMdvector_free (y, -7);
 	if (Melder_hasError ()) forget (thee);
 	return thee;
 }

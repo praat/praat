@@ -50,7 +50,7 @@ static void logo (Graphics g) {
 	Graphics_setFont (g, Graphics_HELVETICA);
 	Graphics_setFontSize (g, 10);
 	Graphics_text (g, 0.5, 0.16, "Copyright  \\co 1992-" xstr(PRAAT_YEAR) " by Paul Boersma and David Weenink");
-	Graphics_text (g, 0.5, 0.04, "PostScript phonetic font:  \\co 2005 Fukui Rei & Rafael Laboissi\\e`re");
+	Graphics_text (g, 0.5, 0.04, "PostScript phonetic font:  \\co 2005-2006 Fukui Rei & Rafael Laboissi\\e`re");
 	Graphics_text (g, 0.5, -0.02, "GNU Scientific Library:  \\co 1996-2001 Gerard Jungman & Brian Gough");
 	Graphics_text (g, 0.5, -0.08, "PortAudio:  \\co 1999-2006 Ross Bencina, Phil Burk, Bjorn Roche");
 }

@@ -1,6 +1,6 @@
 /* praat_menuCommands.c
  *
- * Copyright (C) 1992-2005 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2002/03/18 Mach
  * pb 2005/08/22 renamed Control menu to "Praat"
+ * pb 2006/12/26 theCurrentPraat
  */
 
 #include "praatP.h"
@@ -179,7 +180,7 @@ Widget praat_addMenuCommand (const char *window, const char *menu, const char *t
 	theCommands [position]. hidden = hidden;
 	theCommands [position]. unhidable = unhidable;
 
-	if (! praat.batch) {
+	if (! theCurrentPraat -> batch) {
 		Widget parent = NULL;
 
 		/* WHERE TO PUT IT?
@@ -274,7 +275,7 @@ int praat_addMenuCommandScript (const char *window, const char *menu, const char
 		theCommands [position]. uniqueID = ++ uniqueID;
 	}
 
-	if (! praat.batch) {
+	if (! theCurrentPraat -> batch) {
 		Widget parent = NULL;
 
 		/* WHERE TO PUT IT?
@@ -314,7 +315,7 @@ int praat_addMenuCommandScript (const char *window, const char *menu, const char
 int praat_hideMenuCommand (const char *window, const char *menu, const char *title) {
 	int found;
 	praat_Command command;
-	if (praat.batch || ! window || ! menu || ! title) return 1;
+	if (theCurrentPraat -> batch || ! window || ! menu || ! title) return 1;
 	found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return 0;
 	command = & theCommands [found];
@@ -329,7 +330,7 @@ int praat_hideMenuCommand (const char *window, const char *menu, const char *tit
 int praat_showMenuCommand (const char *window, const char *menu, const char *title) {
 	int found;
 	praat_Command command;
-	if (praat.batch || ! window || ! menu || ! title) return 1;
+	if (theCurrentPraat -> batch || ! window || ! menu || ! title) return 1;
 	found = lookUpMatchingMenuCommand (window, menu, title);
 	if (! found) return 0;
 	command = & theCommands [found];
@@ -371,7 +372,7 @@ void praat_addFixedButtonCommand (Widget parent, const char *title, int (*callba
 	my title = title;
 	my callback = callback;
 	my unhidable = TRUE;
-	if (praat.batch)
+	if (theCurrentPraat -> batch)
 		my button = NULL;
 	else {
 		Widget button = my button = XmCreatePushButton (parent, MOTIF_CONST_CHAR_ARG (title), 0, 0);
@@ -389,7 +390,7 @@ void praat_sensitivizeFixedButtonCommand (const char *title, int sensitive) {
 	for (i = 1; i <= theNumberOfCommands; i ++)
 		if (strequ (theCommands [i]. title, title)) break;   /* Search. */
 	theCommands [i]. executable = sensitive;
-	if (! Melder_backgrounding) XtSetSensitive (theCommands [i]. button, sensitive);
+	if (! theCurrentPraat -> batch && ! Melder_backgrounding) XtSetSensitive (theCommands [i]. button, sensitive);
 }
 
 int praat_doMenuCommand (const char *command, const char *arguments) {

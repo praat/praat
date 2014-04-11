@@ -1,6 +1,6 @@
 /* Sound_and_FilterBank.c
  *
- * Copyright (C) 1993-2003 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20010718
  djmw 20020813 GPL header.
  djmw 20041124 Changed call to Sound_to_Spectrum.
+ djmw 20070103 Sound interface changes
 */
 
 #include "Sound_and_FilterBank.h"
@@ -156,7 +157,7 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	if (nf <= 0) return Melder_errorp ("Sound_to_BarkFilter: The combination of filter parameters is not valid.");
 		
 	if (! Sampled_shortTermAnalysis (me, windowDuration, dt, & nt, & t1) ||
-		((sframe = Sound_createSimple (windowDuration, samplingFrequency)) == NULL) ||
+		((sframe = Sound_createSimple (1, windowDuration, samplingFrequency)) == NULL) ||
 		((window = Sound_createGaussian (windowDuration, samplingFrequency)) == NULL) ||
 		((thee = BarkFilter_create (my xmin, my xmax, nt, dt, t1, 
 				fmin_bark, fmax_bark, nf, df_bark, f1_bark)) == NULL)) goto end;
@@ -267,7 +268,7 @@ MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
 	fmax_mel = f1_mel + nf * df_mel;
 
 	if (! Sampled_shortTermAnalysis (me, windowDuration, dt, &nt, &t1) ||
-		((sframe = Sound_createSimple (windowDuration, samplingFrequency)) == NULL) ||
+		((sframe = Sound_createSimple (1, windowDuration, samplingFrequency)) == NULL) ||
 		((window = Sound_createGaussian (windowDuration, samplingFrequency)) == NULL) ||
 		((thee = MelFilter_create (my xmin, my xmax, nt, dt, t1, fmin_mel, 
 			fmax_mel, nf, df_mel, f1_mel)) == NULL)) goto end;
@@ -419,7 +420,7 @@ FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
 		Temporary objects
 	*/
 	
-	if (((sframe = Sound_createSimple (windowDuration, samplingFrequency)) == NULL) ||
+	if (((sframe = Sound_createSimple (1, windowDuration, samplingFrequency)) == NULL) ||
 		((window = Sound_createGaussian (windowDuration, samplingFrequency)) == NULL))
 			goto end;
 

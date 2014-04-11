@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/12/20
+ * pb 2007/01/01
  */
 
 /* Sound inherits from Vector */
@@ -35,20 +35,20 @@
 class_create (Sound, Vector)
 
 /* Attributes:
-	xmin				// Start time (seconds).
-	xmax			// End time (seconds).
-	nx				// Number of samples.
-	dx				// Sampling period (seconds).
-	x1				// Time of first sample (seconds).
-	ymin == 1			// First and only row.
-	ymax == 1		// Last and only row.
-	ny == 1			// One row.
-	dy == 1; y1 == 1	// y is row number.
-	z [1] [...]			// Amplitude.
+	xmin              // Start time (seconds).
+	xmax              // End time (seconds).
+	nx                // Number of samples.
+	dx                // Sampling period (seconds).
+	x1                // Time of first sample (seconds).
+	ymin == 1         // Left or only channel.
+	ymax              // Right or only channels.
+	ny                // Number of channels.
+	dy == 1; y1 == 1  // y is channel number (1 = left or mono; 2 = right).
+	z [i] [...]       // Amplitude.
 	z may be replaced (e.g., in pasting).
 */
 
-Sound Sound_create (double xmin, double xmax, long nx, double dx, double x1);
+Sound Sound_create (long numberOfChannels, double xmin, double xmax, long nx, double dx, double x1);
 /*
 	Function:
 		return a new silent Sound, or NULL if out of memory.
@@ -62,10 +62,15 @@ Sound Sound_create (double xmin, double xmax, long nx, double dx, double x1);
 		thy nx == nx;
 		thy dx == dx;
 		thy x1 == x1;
-		thy z [1] [1..nx] == 0.0;
+		thy ymin = 1.0;
+		thy ymax = numberOfChannels;
+		thy ny = numberOfChannels;
+		thy dx = 1.0;
+		thy x1 = 1.0;
+		thy z [i] [1..nx] == 0.0;
 */
 
-Sound Sound_createSimple (double duration, double samplingFrequency);
+Sound Sound_createSimple (long numberOfChannels, double duration, double samplingFrequency);
 /*
 	Function:
 		return a new silent Sound, or NULL if out of memory.
@@ -78,8 +83,24 @@ Sound Sound_createSimple (double duration, double samplingFrequency);
 		thy nx == floor (duration * samplingFrequency + 0.5);
 		thy dx == 1 / samplingFrequency;
 		thy x1 == 0.5 * thy dx;		// Centre of first sampling period.
-		thy z [1] [1..nx] == 0.0;
+		thy ymin = 1.0;
+		thy ymax = numberOfChannels;
+		thy ny = numberOfChannels;
+		thy dx = 1.0;
+		thy x1 = 1.0;
+		thy z [i] [1..nx] == 0.0;
 */
+
+Sound Sound_convertToMono (Sound me);
+Sound Sound_convertToStereo (Sound me);
+Sound Sound_extractLeftChannel (Sound me);
+Sound Sound_extractRightChannel (Sound me);
+Sound Sounds_combineToStereo (Sound me, Sound thee);
+
+/* Levels for Sampled_getValueAtSample (me, index, level, unit) */
+#define Sound_LEVEL_MONO  0
+#define Sound_LEVEL_LEFT  1
+#define Sound_LEVEL_RIGHT  2
 
 Sound Sound_upsample (Sound me);   /* By a factor 2. */
 
@@ -89,7 +110,6 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision);
 		precision <= 1: linear interpolation.
 		precision >= 2: sinx/x interpolation with maximum depth equal to 'precision'.
 */
-
 
 Sound Sounds_append (Sound me, double silenceDuration, Sound thee);
 /*
@@ -165,7 +185,7 @@ Matrix Sound_to_Matrix (Sound me);
 	Return NULL if out of memory.  
 */
 
-Sound Matrix_to_Sound (Matrix me, long row);
+Sound Matrix_to_Sound_mono (Matrix me, long row);
 /*
 	Function:
 		create a Sound from one row of a Matrix.
@@ -224,7 +244,7 @@ Sound Sound_recordFixedTime (int inputSource,
 			and wait for the publishCallback.
 	*/
 
-int Sound_playPart (Sound left, Sound right /* can be NULL */, double tmin, double tmax,
+int Sound_playPart (Sound me, double tmin, double tmax,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 /*
  * Play a sound. The playing can be interrupted with the Escape key (also Command-period on the Mac).
@@ -259,18 +279,15 @@ int Sound_playPart (Sound left, Sound right /* can be NULL */, double tmin, doub
  *
  * Sound_playPart () usually runs asynchronously, and kills an already playing sound.
  */
-int Sound_play (Sound left, Sound right /* can be NULL */,
+int Sound_play (Sound me,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 	/* The same as Sound_playPart (me, my xmin, my xmax, playCallback, playClosure); */
 
 /********** Sound_files.c **********/
 
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
-/* All are mono PCM. */
-/* If 'right' is not NULL, the files will be stereo;
-   the sample rate will equal that of 'me';
-   the number of samples will equal the maximum of those of 'me' and 'right'. */
-int Sound_writeToAudioFile16 (Sound me, Sound right, MelderFile file, int audioFileType);
+/* All are mono or stereo PCM. */
+int Sound_writeToAudioFile16 (Sound me, MelderFile file, int audioFileType);
 #ifdef macintosh
 	int Sound_writeToMacSoundFile (Sound me, MelderFile file);   /* 8 bit */
 #endif
@@ -291,8 +308,7 @@ Sound Sound_readFromBellLabsFile (MelderFile file);   /* 16 bit */
 Sound Sound_readFromRawAlawFile (MelderFile file);
 Sound Sound_readFromMovieFile (MelderFile file);
 
-int Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfChannels, double sampleRate,
-	Sound *left, Sound *right);
+Sound Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfChannels, double sampleRate);
 /*
 	'encoding' is any of the following:
 		Melder_LINEAR_8_SIGNED
@@ -303,11 +319,8 @@ int Sound_readFromRawSoundFile (MelderFile file, int encoding, int numberOfChann
 		Melder_ALAW
 	'numberOfChannels' is 1 (mono) or 2 (stereo)
 	'sampleRate' is in Hertz
-	return values:
-		if mono, then a Sound will be returned in 'left';
-		if stereo, then Sounds will be returned in 'left' and 'right'.
 */
-int Sound_writeToRawSoundFile (Sound me, Sound right, MelderFile file, int encoding);
+int Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 /*
 	'encoding' is any of the following:
 		Melder_LINEAR_8_SIGNED
@@ -315,8 +328,6 @@ int Sound_writeToRawSoundFile (Sound me, Sound right, MelderFile file, int encod
 		Melder_LINEAR_16_BIG_ENDIAN
 		Melder_LINEAR_16_LITTLE_ENDIAN
 	'me' must exist
-	'right' may be NULL: in that case, the resulting sound file will be mono;
-		if 'right' exists, the resulting sound file will be stereo
 */
 
 /********** Sound_enhance.c **********/

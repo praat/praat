@@ -24,9 +24,9 @@
  * pb 2004/04/02 nicer dialogs
  * pb 2004/06/18 allow reversed axes
  * pb 2004/09/05 allow selection of inner viewport
- * pb 2005/05/07 inManual
  * pb 2005/07/05 Draw function...
  * pb 2006/11/22 after 14 years we renamed "Plain line" to "Solid line", which is the common term nowadays
+ * pb 2006/12/26 theCurrentPraat
  */
 
 #include "praatP.h"
@@ -50,18 +50,19 @@ static int praat_font = Graphics_HELVETICA;
 static Widget praatButton_times, praatButton_helvetica,
 	praatButton_newCenturySchoolbook, praatButton_palatino, praatButton_courier;
 static void updateFontMenu (void) {
-	if (praat.batch) return;
-	XmToggleButtonGadgetSetState (praatButton_times, praat_font == Graphics_TIMES, 0);
-	XmToggleButtonGadgetSetState (praatButton_newCenturySchoolbook, praat_font == Graphics_NEWCENTURYSCHOOLBOOK, 0);
-	XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == Graphics_HELVETICA, 0);
-	XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == Graphics_PALATINO, 0);
-	XmToggleButtonGadgetSetState (praatButton_courier, praat_font == Graphics_COURIER, 0);
+	if (! theCurrentPraat -> batch) {
+		XmToggleButtonGadgetSetState (praatButton_times, praat_font == Graphics_TIMES, 0);
+		XmToggleButtonGadgetSetState (praatButton_newCenturySchoolbook, praat_font == Graphics_NEWCENTURYSCHOOLBOOK, 0);
+		XmToggleButtonGadgetSetState (praatButton_helvetica, praat_font == Graphics_HELVETICA, 0);
+		XmToggleButtonGadgetSetState (praatButton_palatino, praat_font == Graphics_PALATINO, 0);
+		XmToggleButtonGadgetSetState (praatButton_courier, praat_font == Graphics_COURIER, 0);
+	}
 }
 static void setFont (int font) {
 	praat_picture_open ();
 	Graphics_setFont (GRAPHICS, font);
 	praat_picture_close ();
-	if (! praatP.inManual) {
+	if (theCurrentPraat == & theForegroundPraat) {
 		praat_font = font;
 		updateFontMenu ();
 	}
@@ -77,18 +78,19 @@ DIRECT (Courier) setFont (Graphics_COURIER); END
 static int praat_size = 10;
 static Widget praatButton_10, praatButton_12, praatButton_14, praatButton_18, praatButton_24;
 static void updateSizeMenu (void) {
-	if (praat.batch) return;
-	XmToggleButtonGadgetSetState (praatButton_10, praat_size == 10, 0);
-	XmToggleButtonGadgetSetState (praatButton_12, praat_size == 12, 0);
-	XmToggleButtonGadgetSetState (praatButton_14, praat_size == 14, 0);
-	XmToggleButtonGadgetSetState (praatButton_18, praat_size == 18, 0);
-	XmToggleButtonGadgetSetState (praatButton_24, praat_size == 24, 0);
+	if (! theCurrentPraat -> batch) {
+		XmToggleButtonGadgetSetState (praatButton_10, praat_size == 10, 0);
+		XmToggleButtonGadgetSetState (praatButton_12, praat_size == 12, 0);
+		XmToggleButtonGadgetSetState (praatButton_14, praat_size == 14, 0);
+		XmToggleButtonGadgetSetState (praatButton_18, praat_size == 18, 0);
+		XmToggleButtonGadgetSetState (praatButton_24, praat_size == 24, 0);
+	}
 }
 static void setFontSize (int fontSize) {
 	praat_picture_open ();
 	Graphics_setFontSize (GRAPHICS, fontSize);
 	praat_picture_close ();
-	if (! praatP.inManual) {
+	if (theCurrentPraat == & theForegroundPraat) {
 		praat_size = fontSize;
 		updateSizeMenu ();
 	}
@@ -132,12 +134,14 @@ END
 
 static Widget praatButton_innerViewport, praatButton_outerViewport;
 static void updateViewportMenu (void) {
-	if (praat.batch) return;
-	XmToggleButtonGadgetSetState (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0, 0);
-	XmToggleButtonGadgetSetState (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1, 0);
+	if (! theCurrentPraat -> batch) {
+		XmToggleButtonGadgetSetState (praatButton_innerViewport, praat_mouseSelectsInnerViewport ? 1 : 0, 0);
+		XmToggleButtonGadgetSetState (praatButton_outerViewport, praat_mouseSelectsInnerViewport ? 0 : 1, 0);
+	}
 }
 
 DIRECT (MouseSelectsInnerViewport)
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = TRUE);
 	praat_picture_close ();
@@ -145,6 +149,7 @@ DIRECT (MouseSelectsInnerViewport)
 END
 
 DIRECT (MouseSelectsOuterViewport)
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
 	praat_picture_open ();
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport = FALSE);
 	praat_picture_close ();
@@ -169,6 +174,7 @@ SET_REAL ("right Horizontal range", x2NDC - xmargin);
 SET_REAL ("left Vertical range", 12-y2NDC + ymargin);
 SET_REAL ("right Vertical range", 12-y1NDC - ymargin);
 DO
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
 	double left = GET_REAL ("left Horizontal range"), right = GET_REAL ("right Horizontal range");
 	double top = GET_REAL ("left Vertical range"), bottom = GET_REAL ("right Vertical range");
 	double xmargin = praat_size * 4.2 / 72.0, ymargin = praat_size * 2.8 / 72.0;
@@ -206,6 +212,7 @@ SET_REAL ("right Horizontal range", x2NDC);
 SET_REAL ("left Vertical range", 12-y2NDC);
 SET_REAL ("right Vertical range", 12-y1NDC);
 DO
+	if (theCurrentPraat != & theForegroundPraat) return Melder_error ("Viewport commands are not available inside pictures.");
 	double left = GET_REAL ("left Horizontal range"), right = GET_REAL ("right Horizontal range");
 	double top = GET_REAL ("left Vertical range"), bottom = GET_REAL ("right Vertical range");
 	if (left == right) {
@@ -264,32 +271,33 @@ static Widget praatButton_black, praatButton_white, praatButton_red, praatButton
 	praatButton_yellow, praatButton_cyan, praatButton_magenta, praatButton_maroon, praatButton_lime,
 	praatButton_navy, praatButton_teal, praatButton_purple, praatButton_olive, praatButton_silver, praatButton_grey;
 static void updatePenMenu (void) {
-	if (praat.batch) return;
-	XmToggleButtonGadgetSetState (praatButton_solidLine, praat_lineType == Graphics_DRAWN, 0);
-	XmToggleButtonGadgetSetState (praatButton_dottedLine, praat_lineType == Graphics_DOTTED, 0);
-	XmToggleButtonGadgetSetState (praatButton_dashedLine, praat_lineType == Graphics_DASHED, 0);
-	XmToggleButtonGadgetSetState (praatButton_black, praat_colour == Graphics_BLACK, 0);
-	XmToggleButtonGadgetSetState (praatButton_white, praat_colour == Graphics_WHITE, 0);
-	XmToggleButtonGadgetSetState (praatButton_red, praat_colour == Graphics_RED, 0);
-	XmToggleButtonGadgetSetState (praatButton_green, praat_colour == Graphics_GREEN, 0);
-	XmToggleButtonGadgetSetState (praatButton_blue, praat_colour == Graphics_BLUE, 0);
-	XmToggleButtonGadgetSetState (praatButton_yellow, praat_colour == Graphics_YELLOW, 0);
-	XmToggleButtonGadgetSetState (praatButton_cyan, praat_colour == Graphics_CYAN, 0);
-	XmToggleButtonGadgetSetState (praatButton_magenta, praat_colour == Graphics_MAGENTA, 0);
-	XmToggleButtonGadgetSetState (praatButton_maroon, praat_colour == Graphics_MAROON, 0);
-	XmToggleButtonGadgetSetState (praatButton_lime, praat_colour == Graphics_LIME, 0);
-	XmToggleButtonGadgetSetState (praatButton_navy, praat_colour == Graphics_NAVY, 0);
-	XmToggleButtonGadgetSetState (praatButton_teal, praat_colour == Graphics_TEAL, 0);
-	XmToggleButtonGadgetSetState (praatButton_purple, praat_colour == Graphics_PURPLE, 0);
-	XmToggleButtonGadgetSetState (praatButton_olive, praat_colour == Graphics_OLIVE, 0);
-	XmToggleButtonGadgetSetState (praatButton_silver, praat_colour == Graphics_SILVER, 0);
-	XmToggleButtonGadgetSetState (praatButton_grey, praat_colour == Graphics_GREY, 0);
+	if (! theCurrentPraat -> batch) {
+		XmToggleButtonGadgetSetState (praatButton_solidLine, praat_lineType == Graphics_DRAWN, 0);
+		XmToggleButtonGadgetSetState (praatButton_dottedLine, praat_lineType == Graphics_DOTTED, 0);
+		XmToggleButtonGadgetSetState (praatButton_dashedLine, praat_lineType == Graphics_DASHED, 0);
+		XmToggleButtonGadgetSetState (praatButton_black, praat_colour == Graphics_BLACK, 0);
+		XmToggleButtonGadgetSetState (praatButton_white, praat_colour == Graphics_WHITE, 0);
+		XmToggleButtonGadgetSetState (praatButton_red, praat_colour == Graphics_RED, 0);
+		XmToggleButtonGadgetSetState (praatButton_green, praat_colour == Graphics_GREEN, 0);
+		XmToggleButtonGadgetSetState (praatButton_blue, praat_colour == Graphics_BLUE, 0);
+		XmToggleButtonGadgetSetState (praatButton_yellow, praat_colour == Graphics_YELLOW, 0);
+		XmToggleButtonGadgetSetState (praatButton_cyan, praat_colour == Graphics_CYAN, 0);
+		XmToggleButtonGadgetSetState (praatButton_magenta, praat_colour == Graphics_MAGENTA, 0);
+		XmToggleButtonGadgetSetState (praatButton_maroon, praat_colour == Graphics_MAROON, 0);
+		XmToggleButtonGadgetSetState (praatButton_lime, praat_colour == Graphics_LIME, 0);
+		XmToggleButtonGadgetSetState (praatButton_navy, praat_colour == Graphics_NAVY, 0);
+		XmToggleButtonGadgetSetState (praatButton_teal, praat_colour == Graphics_TEAL, 0);
+		XmToggleButtonGadgetSetState (praatButton_purple, praat_colour == Graphics_PURPLE, 0);
+		XmToggleButtonGadgetSetState (praatButton_olive, praat_colour == Graphics_OLIVE, 0);
+		XmToggleButtonGadgetSetState (praatButton_silver, praat_colour == Graphics_SILVER, 0);
+		XmToggleButtonGadgetSetState (praatButton_grey, praat_colour == Graphics_GREY, 0);
+	}
 }
 static void setLineType (int lineType) {
 	praat_picture_open ();
 	Graphics_setLineType (GRAPHICS, lineType);
 	praat_picture_close ();
-	if (! praatP.inManual) {
+	if (theCurrentPraat == & theForegroundPraat) {
 		praat_lineType = lineType;
 		updatePenMenu ();
 	}
@@ -307,7 +315,7 @@ DO
 	praat_picture_open ();
 	Graphics_setLineWidth (GRAPHICS, lineWidth);
 	praat_picture_close ();
-	if (! praatP.inManual) {
+	if (theCurrentPraat == & theForegroundPraat) {
 		praat_lineWidth = lineWidth;
 	}
 END
@@ -316,7 +324,7 @@ static void setColour (int colour) {
 	praat_picture_open ();
 	Graphics_setColour (GRAPHICS, colour);
 	praat_picture_close ();
-	if (! praatP.inManual) {
+	if (theCurrentPraat == & theForegroundPraat) {
 		praat_colour = colour;
 		updatePenMenu ();
 	}
@@ -361,7 +369,7 @@ END
 static int DO_Picture_writeToEpsFile (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (praat.topShell, "Write to EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to EPS file",
 		DO_Picture_writeToEpsFile, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
@@ -379,7 +387,7 @@ END*/
 static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (praat.topShell, "Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_xipa, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
@@ -394,7 +402,7 @@ static int DO_Picture_writeToFontlessEpsFile_xipa (Any sender, void *dummy) {
 static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (praat.topShell, "Write to fontless EPS file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to fontless EPS file",
 		DO_Picture_writeToFontlessEpsFile_silipa, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.eps");
@@ -409,7 +417,7 @@ static int DO_Picture_writeToFontlessEpsFile_silipa (Any sender, void *dummy) {
 static int DO_Picture_writeToPraatPictureFile (Any sender, void *dummy) {
 	static Any dia;
 	(void) dummy;
-	if (! dia) dia = UiOutfile_create (praat.topShell, "Write to Praat picture file",
+	if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to Praat picture file",
 		DO_Picture_writeToPraatPictureFile, NULL, NULL);
 	if (! sender) {
 		UiOutfile_do (dia, "praat.prapic");
@@ -439,7 +447,7 @@ END
 	static int DO_Picture_writeToMacPictFile (Any sender, void *dummy) {
 		static Any dia;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (praat.topShell, "Write to Mac PICT file",
+		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to Mac PICT file",
 			DO_Picture_writeToMacPictFile, NULL, NULL);
 		if (! sender) {
 			UiOutfile_do (dia, "praat.pict");
@@ -455,7 +463,7 @@ END
 	static int DO_Picture_writeToWindowsMetafile (Any sender, void *dummy) {
 		static Any dia;
 		(void) dummy;
-		if (! dia) dia = UiOutfile_create (praat.topShell, "Write to Windows metafile",
+		if (! dia) dia = UiOutfile_create (theCurrentPraat -> topShell, "Write to Windows metafile",
 			DO_Picture_writeToWindowsMetafile, NULL, NULL);
 		if (! sender) {
 			UiOutfile_do (dia, "praat.emf");
@@ -1349,9 +1357,9 @@ void praat_picture_exit (void) {
 
 void praat_picture_open (void) {
 	double x1WC, x2WC, y1WC, y2WC;
-	if (praatP.inManual) return;
+	if (theCurrentPraat != & theForegroundPraat) return;
 	Graphics_markGroup (GRAPHICS);   /* We start a group of graphics output here. */
-	if (! praat.batch) {
+	if (! theCurrentPraat -> batch) {
 		XtMapWidget (shell);
 		XMapRaised (XtDisplay (shell), XtWindow (shell)); 
 		Picture_unhighlight (praat_picture);
@@ -1374,18 +1382,18 @@ void praat_picture_open (void) {
 }
 
 void praat_picture_close (void) {
-	if (praatP.inManual) return;
-	if (! praat.batch) Picture_highlight (praat_picture);
+	if (theCurrentPraat != & theForegroundPraat) return;
+	if (! theCurrentPraat -> batch) Picture_highlight (praat_picture);
 }
 
 void praat_picture_init (void) {
 	Widget dialog, scrollWindow, menuBar, drawingArea = NULL;
 	int margin, width, height, resolution, x;
 	static char itemTitle_search [100];
-	if (! praat.batch) {
+	if (! theCurrentPraat -> batch) {
 		char pictureWindowTitle [100];
-		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (praat.topShell)));
-		resolution = motif_getResolution (praat.topShell);
+		int screenWidth = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (theCurrentPraat -> topShell)));
+		resolution = motif_getResolution (theCurrentPraat -> topShell);
 		#if defined (macintosh)
 			margin = 2, width = 6 * resolution + 20;
 			height = 9 * resolution + Machine_getMenuBarHeight () + 24;
@@ -1401,7 +1409,7 @@ void praat_picture_init (void) {
 			x = screenWidth - width - 10;
 			width += margin * 2;
 		#endif
-		shell = motif_addShell (praat.topShell, 0);
+		shell = motif_addShell (theCurrentPraat -> topShell, 0);
 		sprintf (pictureWindowTitle, "%s picture", praatP.title);
 		XtVaSetValues (shell, XmNwidth, width, XmNheight, height,
 			XmNdeleteResponse, XmUNMAP, XmNiconName, "Picture", XmNtitle, pictureWindowTitle,
@@ -1413,7 +1421,7 @@ void praat_picture_init (void) {
 		#endif
 		menuBar = motif_addMenuBar (dialog);
 	}
-	if (! praat.batch) {
+	if (! theCurrentPraat -> batch) {
 		fileMenu = motif_addMenu (menuBar, "File", 0);
 		editMenu = motif_addMenu (menuBar, "Edit", 0);
 		marginsMenu = motif_addMenu (menuBar, "Margins", 0);
@@ -1576,7 +1584,7 @@ void praat_picture_init (void) {
 	sprintf (itemTitle_search, "Search %s manual...", praatP.title);
 	praat_addMenuCommand ("Picture", "Help", itemTitle_search, 0, 'M', DO_SearchManual);
 
-	if (! praat.batch) {
+	if (! theCurrentPraat -> batch) {
 		XtManageChild (menuBar);
 		#if defined (macintosh) || defined (_WIN32)
 			scrollWindow = XmCreateScrolledWindow (dialog, "scrolledWindow", NULL, 0);
@@ -1621,13 +1629,13 @@ void praat_picture_init (void) {
 		XtManageChild (dialog);
 		XtRealizeWidget (shell);
 	}
-	praat_picture = Picture_create (drawingArea, ! praat.batch);
+	praat_picture = Picture_create (drawingArea, ! theCurrentPraat -> batch);
 	Picture_setSelectionChangedCallback (praat_picture, cb_selectionChanged, NULL);
 	updatePenMenu ();
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
-	praat.graphics = Picture_getGraphics (praat_picture);
+	theCurrentPraat -> graphics = Picture_getGraphics (praat_picture);
 }
 
 void praat_picture_prefs (void) {
@@ -1640,7 +1648,7 @@ void praat_picture_prefsChanged (void) {
 	updateFontMenu ();
 	updateSizeMenu ();
 	updateViewportMenu ();
-	Graphics_setFontSize (praat.graphics, praat_size);   /* So that the thickness of the selection rectangle is correct. */
+	Graphics_setFontSize (theCurrentPraat -> graphics, praat_size);   /* So that the thickness of the selection rectangle is correct. */
 	Picture_setMouseSelectsInnerViewport (praat_picture, praat_mouseSelectsInnerViewport);
 }
 

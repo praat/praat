@@ -1,6 +1,6 @@
 /* manual_sound.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "Sound.h"
 
 static void draw_SoundDeepen_filter (Graphics g) {
-	Sound s = Sound_createSimple (100, 10);
+	Sound s = Sound_createSimple (1, 100, 10);
 	int i;
 	double alpha = sqrt (log (2.0));
 	if (! s) return;
@@ -51,7 +51,7 @@ static void draw_SoundDeepen_filter (Graphics g) {
 }
 
 static void draw_SoundDeepen_impulse (Graphics g) {
-	Sound s = Sound_create (-0.2, 0.2, 1000, 4e-4, -0.1998);
+	Sound s = Sound_create (1, -0.2, 0.2, 1000, 4e-4, -0.1998);
 	int i;
 	double pibyalpha = NUMpi / sqrt (log (2.0)), twosqrtpitimespibyalpha = 2 * sqrt (NUMpi) * pibyalpha;
 	if (! s) return;

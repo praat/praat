@@ -19,7 +19,6 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2006/12/20 new Sound_play API
  */
 
 #include "DurationTierEditor.h"
@@ -42,7 +41,7 @@ static void createMenus (I) {
 static void play (I, double tmin, double tmax) {
 	iam (DurationTierEditor);
 	if (my sound.data) {
-		Sound_playPart (my sound.data, NULL, tmin, tmax, NULL, NULL);
+		Sound_playPart (my sound.data, tmin, tmax, NULL, NULL);
 	} else {
 		/*if (! DurationTier_playPart (my data, tmin, tmax, FALSE)) Melder_flushError (NULL);*/
 	}

@@ -1,6 +1,6 @@
 /* manual_tutorials.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,21 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN ("What's new?", "ppgb", 20061220)
+MAN_BEGIN ("What's new?", "ppgb", 20070106)
 INTRO ("Latest changes in P\\s{RAAT}.")
 /*LIST_ITEM ("\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL ("##4.5.09# (January 6, 2007)")
+LIST_ITEM ("\\bu Sound objects can be stereo, for better playback quality "
+	"(all analyses will still regard the sound as mono).")
+LIST_ITEM ("\\bu Macintosh: recording a sound now uses CoreAudio instead of SoundManager, "	
+	"for more compatibility with modern recording devices, "
+	"and the possibility to record with a sampling frequency of 96 kHz.")
+LIST_ITEM ("\\bu @ManPages allow picture scripts with separate object lists.")
+LIST_ITEM ("\\bu @sendpraat scripts correctly wait until sounds have played.")
 NORMAL ("##4.5.08# (December 20, 2006)")
 LIST_ITEM ("\\bu ExperimentMFC: can use stereo sounds.")
 NORMAL ("##4.5.07# (December 16, 2006)")
-LIST_ITEM ("\\bu Macintosh: now uses CoreAudio instead of SoundManager.")
+LIST_ITEM ("\\bu Macintosh: playing a sound now uses CoreAudio instead of SoundManager.")
 LIST_ITEM ("\\bu Phonetic symbols: \\\'1primary stress and \\\'1secon\\\'2dary stress.")
 NORMAL ("##4.5.06# (December 13, 2006)")
 LIST_ITEM ("\\bu Support for 32-bit floating-point WAV files.")
@@ -781,7 +789,7 @@ MAN_END
 >lines (and is WAY too wide).
 */
  
-MAN_BEGIN ("Acknowledgments", "ppgb", 20061216)
+MAN_BEGIN ("Acknowledgments", "ppgb", 20061228)
 NORMAL ("For supplying source code:")
 LIST_ITEM ("GPL IPA fonts: Fukui Rei (XIPA) & Rafael Laboissi\\e`re (adaptation to Praat).")
 LIST_ITEM ("IPA fonts: Summer Institute of Linguistics (Doulos1989, until January 2005).")
@@ -811,6 +819,8 @@ LIST_ITEM ("J\\o\"rg Jescheniak, Universit\\a\"t Leipzig.")
 LIST_ITEM ("The Linguistics Teaching Laboratory, Ohio State University.")
 LIST_ITEM ("Linguistics & Cognitive Science, Dartmouth College, Hanover NH.")
 LIST_ITEM ("Cornell Phonetics Lab, Ithaca NY.")
+NORMAL ("Finally:")
+LIST_ITEM ("Daniel Hirst, for managing the Praat Discussion list.")
 MAN_END
 
 MAN_BEGIN ("Praat menu", "ppgb", 20050822)
@@ -1877,7 +1887,7 @@ NORMAL ("For instance, suppose you want to have a pitch that falls from 350 to 1
 	"You can put this PitchTier into a Manipulation object in the way described above.")
 MAN_END
 
-MAN_BEGIN ("Intro 8.2. Manipulation of duration", "ppgb", 20030316)
+MAN_BEGIN ("Intro 8.2. Manipulation of duration", "ppgb", 20070107)
 INTRO ("You can use P\\s{RAAT} to modify the relative durations in an existing sound.")
 NORMAL ("First, you select a @Sound object and click \"To Manipulation\". "
 	"A @Manipulation object will then appear in the list. "
@@ -1906,7 +1916,7 @@ CODE ("Create DurationTier... shorten 0 0.085+0.270")
 CODE ("Add point... 0.000 70/85")
 CODE ("Add point... 0.084999 70/85")
 CODE ("Add point... 0.085001 200/270")
-CODE ("Add point... 0.0355 200/270")
+CODE ("Add point... 0.355 200/270")
 NORMAL ("To put this DurationTier back into a Manipulation object, you select the two objects together "
 	"(e.g. a click on the DurationTier and a Command-click on the Manipulation), "
 	"and choose ##Replace duration tier#.")
@@ -2616,7 +2626,7 @@ NORMAL ("If no object is selected, the Write menu is empty. "
 	"If any object is selected, it will at least contain the following commands:")
 LIST_ITEM ("\\bu @@Write to console")
 LIST_ITEM ("\\bu @@Write to text file...")
-LIST_ITEM ("\\bu ##Write to short text file...")
+LIST_ITEM ("\\bu @@Write to short text file...")
 LIST_ITEM ("\\bu @@Write to binary file...")
 ENTRY ("Dynamic commands")
 NORMAL ("Depending on the class of the selected object, the following commands may be available "
@@ -2637,13 +2647,14 @@ NORMAL ("These files are in a device-independent binary format, "
 	"and can be written and read on any machine.")
 MAN_END
 
-MAN_BEGIN ("Write to console", "ppgb", 19960904)
+MAN_BEGIN ("Write to console", "ppgb", 20070106)
 INTRO ("One of the commands in the @@Write menu@.")
 NORMAL ("You can choose this command after selecting one object. "
-	"The data that it contains, is written to the Console window, "
+	"The data that it contains, is written to the Console window "
+	"(the terminal window, if you started up Praat from a terminal window), "
 	"in the same format as with the @@Write to text file...@ command, "
 	"except for the first line, which reads something like:")
-CODE ("Write to console: class Sound,  \"name hallo\"")
+CODE ("Write to console: class Sound,  name \"hallo\"")
 MAN_END
 
 MAN_BEGIN ("Write to short text file...", "ppgb", 19981124)
@@ -2659,7 +2670,7 @@ NORMAL ("The format is much shorter than the one described at @@Write to text fi
 NORMAL ("The file can be read again with the all-purpose @@Read from file...@.")
 MAN_END
 
-MAN_BEGIN ("Write to text file...", "ppgb", 19970911)
+MAN_BEGIN ("Write to text file...", "ppgb", 20070106)
 INTRO ("One of the commands in the @@Write menu@.")
 ENTRY ("Availability")
 NORMAL ("You can choose this command after selecting one or more @objects.")
@@ -2667,16 +2678,15 @@ ENTRY ("Behaviour")
 NORMAL ("The Object window will ask you for a file name. "
 	"After you click OK, the objects will be written to a text file on disk.")
 ENTRY ("File format")
-NORMAL ("The format is the same as used by @@Write to console@, "
-	"except for the first two lines:")
-LIST_ITEM ("\\bu if you selected a single object, e.g., of class Pitch, "
+NORMAL ("If you selected a single object, e.g., of class Pitch, "
 	"the file will start with the lines:")
 CODE ("File type = \"ooTextFile\"")
-CODE ("Class = \"Pitch\"")
-LIST_ITEM ("\\bu if you selected more than one object, e.g., `Pitch hallo' and `Polygon kromme', "
+CODE ("Object class = \"Pitch\"")
+NORMAL ("After this, the pitch data will follow.")
+LIST_ITEM ("If you selected more than one object, e.g., `Pitch hallo' and `Polygon kromme', "
 	"the file will look like:")
 CODE ("File type = \"ooTextFile\"")
-CODE ("Class = \"Collection\"")
+CODE ("Object class = \"Collection\"")
 CODE ("size = 2")
 CODE ("item []:")
 CODE ("    item [1]:")
@@ -2698,8 +2708,6 @@ NORMAL ("Thus, all text that is not a free-standing number and is not enclosed i
 	"is considered a comment, as is all text following an exclamation mark (`!') on the same line.")
 MAN_END
 
-MAN_BEGIN ("Numerics library", "ppgb", 20010410)
-MAN_END
 }
 
 /*

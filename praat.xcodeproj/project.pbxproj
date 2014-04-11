@@ -56,7 +56,10 @@
 		23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB5809A22902004E41D5 /* motifEmulator.c */; };
 		23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB9009A22903004E41D5 /* gsl_sf__gamma.c */; };
 		23AEE90F09A286AF000D3DB7 /* gsl_sf__bessel_amp_phase.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5CB7209A22902004E41D5 /* gsl_sf__bessel_amp_phase.c */; };
-		23AEE91809A286F9000D3DB7 /* main_Praat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93009A228FB004E41D5 /* main_Praat.c */; };
+		23D87E820B3C8FF700AD716D /* main_Praat.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93009A228FB004E41D5 /* main_Praat.c */; };
+		23D87E860B3C929700AD716D /* Eigen_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D87E830B3C929700AD716D /* Eigen_def.h */; };
+		23D87E870B3C929700AD716D /* Eigen.c in Sources */ = {isa = PBXBuildFile; fileRef = 23D87E840B3C929700AD716D /* Eigen.c */; };
+		23D87E880B3C929700AD716D /* Eigen.h in Headers */ = {isa = PBXBuildFile; fileRef = 23D87E850B3C929700AD716D /* Eigen.h */; };
 		23E4918E0ABF529D00FA787E /* Strings.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E4918D0ABF529D00FA787E /* Strings.h */; };
 		23E5CF4D09A22A57004E41D5 /* praat_Artsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93609A228FC004E41D5 /* praat_Artsynth.c */; };
 		23E5CF4E09A22A57004E41D5 /* manual_Artsynth.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C93509A228FC004E41D5 /* manual_Artsynth.c */; };
@@ -136,8 +139,6 @@
 		23E5CF9809A22A57004E41D5 /* Discriminant.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C9C809A228FE004E41D5 /* Discriminant.h */; };
 		23E5CF9909A22A57004E41D5 /* DTW.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C9CD09A228FE004E41D5 /* DTW.c */; };
 		23E5CF9A09A22A57004E41D5 /* DTW.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C9CE09A228FE004E41D5 /* DTW.h */; };
-		23E5CF9B09A22A57004E41D5 /* Eigen.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C9CF09A228FE004E41D5 /* Eigen.c */; };
-		23E5CF9C09A22A57004E41D5 /* Eigen.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C9D009A228FE004E41D5 /* Eigen.h */; };
 		23E5CF9D09A22A57004E41D5 /* Excitations.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C9D909A228FE004E41D5 /* Excitations.c */; };
 		23E5CF9E09A22A57004E41D5 /* Excitations.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5C9DA09A228FE004E41D5 /* Excitations.h */; };
 		23E5CF9F09A22A57004E41D5 /* Matrix_Categories.c in Sources */ = {isa = PBXBuildFile; fileRef = 23E5C9E109A228FE004E41D5 /* Matrix_Categories.c */; };
@@ -683,7 +684,6 @@
 		23E5D1D809A22AB1004E41D5 /* oo_DESCRIPTION.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEBA09A22A40004E41D5 /* oo_DESCRIPTION.h */; };
 		23E5D1D909A22AB3004E41D5 /* EditorM.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEBC09A22A44004E41D5 /* EditorM.h */; };
 		23E5D1DA09A22AB3004E41D5 /* Discriminant_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEBE09A22A44004E41D5 /* Discriminant_def.h */; };
-		23E5D1DB09A22AB3004E41D5 /* Eigen_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEC009A22A46004E41D5 /* Eigen_def.h */; };
 		23E5D1DC09A22AB3004E41D5 /* PCA_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEC209A22A46004E41D5 /* PCA_def.h */; };
 		23E5D1DD09A22AB3004E41D5 /* Polynomial_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEC409A22A46004E41D5 /* Polynomial_def.h */; };
 		23E5D1DE09A22AB3004E41D5 /* Sampled2_def.h in Headers */ = {isa = PBXBuildFile; fileRef = 23E5CEC609A22A46004E41D5 /* Sampled2_def.h */; };
@@ -803,6 +803,9 @@
 		2339E4AD0B29EBFC00B6B6A7 /* melder_info.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_info.c; path = sys/melder_info.c; sourceTree = "<group>"; };
 		2339E6FC0B2C77CB00B6B6A7 /* melder_alloc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = melder_alloc.c; path = sys/melder_alloc.c; sourceTree = "<group>"; };
 		236449F10AF4AC3B0047F320 /* Strings_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings_def.h; path = sys/Strings_def.h; sourceTree = "<group>"; };
+		23D87E830B3C929700AD716D /* Eigen_def.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen_def.h; path = dwsys/Eigen_def.h; sourceTree = "<group>"; };
+		23D87E840B3C929700AD716D /* Eigen.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = Eigen.c; path = dwsys/Eigen.c; sourceTree = "<group>"; };
+		23D87E850B3C929700AD716D /* Eigen.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Eigen.h; path = dwsys/Eigen.h; sourceTree = "<group>"; };
 		23E4918D0ABF529D00FA787E /* Strings.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = Strings.h; path = sys/Strings.h; sourceTree = "<group>"; };
 		23E5C92009A228FA004E41D5 /* Praat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Praat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		23E5C93009A228FB004E41D5 /* main_Praat.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = main_Praat.c; path = main/main_Praat.c; sourceTree = SOURCE_ROOT; };
@@ -956,8 +959,6 @@
 		23E5C9CC09A228FE004E41D5 /* Distance.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Distance.h; path = dwtools/Distance.h; sourceTree = SOURCE_ROOT; };
 		23E5C9CD09A228FE004E41D5 /* DTW.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = DTW.c; path = dwtools/DTW.c; sourceTree = SOURCE_ROOT; };
 		23E5C9CE09A228FE004E41D5 /* DTW.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = DTW.h; path = dwtools/DTW.h; sourceTree = SOURCE_ROOT; };
-		23E5C9CF09A228FE004E41D5 /* Eigen.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Eigen.c; path = dwtools/Eigen.c; sourceTree = SOURCE_ROOT; };
-		23E5C9D009A228FE004E41D5 /* Eigen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Eigen.h; path = dwtools/Eigen.h; sourceTree = SOURCE_ROOT; };
 		23E5C9D109A228FE004E41D5 /* Eigen_and_Matrix.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Eigen_and_Matrix.c; path = dwtools/Eigen_and_Matrix.c; sourceTree = SOURCE_ROOT; };
 		23E5C9D209A228FE004E41D5 /* Eigen_and_Matrix.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Eigen_and_Matrix.h; path = dwtools/Eigen_and_Matrix.h; sourceTree = SOURCE_ROOT; };
 		23E5C9D309A228FE004E41D5 /* Eigen_and_Procrustes.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = Eigen_and_Procrustes.c; path = dwtools/Eigen_and_Procrustes.c; sourceTree = SOURCE_ROOT; };
@@ -1449,7 +1450,6 @@
 		23E5CEBA09A22A40004E41D5 /* oo_DESCRIPTION.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = oo_DESCRIPTION.h; path = sys/oo_DESCRIPTION.h; sourceTree = "<group>"; };
 		23E5CEBC09A22A44004E41D5 /* EditorM.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = EditorM.h; path = sys/EditorM.h; sourceTree = "<group>"; };
 		23E5CEBE09A22A44004E41D5 /* Discriminant_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Discriminant_def.h; path = dwtools/Discriminant_def.h; sourceTree = "<group>"; };
-		23E5CEC009A22A46004E41D5 /* Eigen_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Eigen_def.h; path = dwtools/Eigen_def.h; sourceTree = "<group>"; };
 		23E5CEC209A22A46004E41D5 /* PCA_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = PCA_def.h; path = dwtools/PCA_def.h; sourceTree = "<group>"; };
 		23E5CEC409A22A46004E41D5 /* Polynomial_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Polynomial_def.h; path = dwtools/Polynomial_def.h; sourceTree = "<group>"; };
 		23E5CEC609A22A46004E41D5 /* Sampled2_def.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Sampled2_def.h; path = dwtools/Sampled2_def.h; sourceTree = "<group>"; };
@@ -1731,6 +1731,9 @@
 				23E5C98409A228FD004E41D5 /* Collection_extensions.c */,
 				23E5C98709A228FD004E41D5 /* Command.h */,
 				23E5C98609A228FD004E41D5 /* Command.c */,
+				23D87E830B3C929700AD716D /* Eigen_def.h */,
+				23D87E850B3C929700AD716D /* Eigen.h */,
+				23D87E840B3C929700AD716D /* Eigen.c */,
 				23E5CF3B09A22A55004E41D5 /* Index_def.h */,
 				23E5C98909A228FD004E41D5 /* Index.h */,
 				23E5C98809A228FD004E41D5 /* Index.c */,
@@ -1822,9 +1825,6 @@
 				23E5C9CD09A228FE004E41D5 /* DTW.c */,
 				231E5F970AC6D1C4004B07A8 /* DTW_and_TextGrid.h */,
 				231E5F960AC6D1C4004B07A8 /* DTW_and_TextGrid.c */,
-				23E5CEC009A22A46004E41D5 /* Eigen_def.h */,
-				23E5C9D009A228FE004E41D5 /* Eigen.h */,
-				23E5C9CF09A228FE004E41D5 /* Eigen.c */,
 				23E5C9D209A228FE004E41D5 /* Eigen_and_Matrix.h */,
 				23E5C9D109A228FE004E41D5 /* Eigen_and_Matrix.c */,
 				23E5C9D409A228FE004E41D5 /* Eigen_and_Procrustes.h */,
@@ -2209,8 +2209,8 @@
 				23E5CEE809A22A4B004E41D5 /* praatP.h */,
 				23E5CAFF09A22901004E41D5 /* praat.c */,
 				23E5CB0109A22901004E41D5 /* praat_actions.c */,
-				23E5CB0209A22901004E41D5 /* praat_logo.c */,
 				23E5CB0309A22901004E41D5 /* praat_menuCommands.c */,
+				23E5CB0209A22901004E41D5 /* praat_logo.c */,
 				23E5CB0409A22901004E41D5 /* praat_objectMenus.c */,
 				23E5CB0509A22901004E41D5 /* praat_picture.c */,
 				23E5CB0709A22901004E41D5 /* praat_script.h */,
@@ -2534,7 +2534,6 @@
 				23E5CF9609A22A57004E41D5 /* Confusion.h in Headers */,
 				23E5CF9809A22A57004E41D5 /* Discriminant.h in Headers */,
 				23E5CF9A09A22A57004E41D5 /* DTW.h in Headers */,
-				23E5CF9C09A22A57004E41D5 /* Eigen.h in Headers */,
 				23E5CF9E09A22A57004E41D5 /* Excitations.h in Headers */,
 				23E5CFA009A22A57004E41D5 /* Matrix_Categories.h in Headers */,
 				23E5CFA209A22A57004E41D5 /* Matrix_extensions.h in Headers */,
@@ -2787,7 +2786,6 @@
 				23E5D1D809A22AB1004E41D5 /* oo_DESCRIPTION.h in Headers */,
 				23E5D1D909A22AB3004E41D5 /* EditorM.h in Headers */,
 				23E5D1DA09A22AB3004E41D5 /* Discriminant_def.h in Headers */,
-				23E5D1DB09A22AB3004E41D5 /* Eigen_def.h in Headers */,
 				23E5D1DC09A22AB3004E41D5 /* PCA_def.h in Headers */,
 				23E5D1DD09A22AB3004E41D5 /* Polynomial_def.h in Headers */,
 				23E5D1DE09A22AB3004E41D5 /* Sampled2_def.h in Headers */,
@@ -2874,6 +2872,8 @@
 				230022C40B3347D900A7FE19 /* pa_mac_core_internal.h in Headers */,
 				230022C60B3347E000A7FE19 /* pa_mac_core_utilities.h in Headers */,
 				230026EB0B34E03200A7FE19 /* pa_mac_util.h in Headers */,
+				23D87E860B3C929700AD716D /* Eigen_def.h in Headers */,
+				23D87E880B3C929700AD716D /* Eigen.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2984,7 +2984,6 @@
 				23E5CF9509A22A57004E41D5 /* Confusion.c in Sources */,
 				23E5CF9709A22A57004E41D5 /* Discriminant.c in Sources */,
 				23E5CF9909A22A57004E41D5 /* DTW.c in Sources */,
-				23E5CF9B09A22A57004E41D5 /* Eigen.c in Sources */,
 				23E5CF9D09A22A57004E41D5 /* Excitations.c in Sources */,
 				23E5CF9F09A22A57004E41D5 /* Matrix_Categories.c in Sources */,
 				23E5CFA109A22A57004E41D5 /* Matrix_extensions.c in Sources */,
@@ -3281,7 +3280,6 @@
 				23AEE8A809A234FA000D3DB7 /* motifEmulator.c in Sources */,
 				23AEE8FC09A28130000D3DB7 /* gsl_sf__gamma.c in Sources */,
 				23AEE90F09A286AF000D3DB7 /* gsl_sf__bessel_amp_phase.c in Sources */,
-				23AEE91809A286F9000D3DB7 /* main_Praat.c in Sources */,
 				23EE67C609F2E61200E660F9 /* melder_atof.c in Sources */,
 				23EE67C809F2E62700E660F9 /* melder_ftoa.c in Sources */,
 				23EE67CA09F2E63900E660F9 /* melder_token.c in Sources */,
@@ -3308,6 +3306,8 @@
 				230021CA0B33021F00A7FE19 /* pa_mac_util.c in Sources */,
 				2300220C0B3340C800A7FE19 /* pa_mac_core.c in Sources */,
 				230022270B33458700A7FE19 /* pa_mac_core_utilities.c in Sources */,
+				23D87E820B3C8FF700AD716D /* main_Praat.c in Sources */,
+				23D87E870B3C929700AD716D /* Eigen.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -38,6 +38,7 @@
  * pb 2006/05/30 replace_regex$
  * pb 2006/06/10 prevented replace_regex$ from returning null string (now empty string)
  * pb 2006/12/18 better info
+ * pb 2006/12/26 theCurrentPraat
  */
 
 #include <ctype.h>
@@ -468,27 +469,27 @@ static int Formula_lexan (void) {
 					"(variables start with lower case; object names contain an underscore).", token.string);
 			} else if (strnequ (token.string, "Object_", 7)) {
 				long uniqueID = atol (token.string + 7);
-				int i = praat.n;
-				while (i > 0 && uniqueID != praat.list [i]. id)
+				int i = theCurrentPraat -> n;
+				while (i > 0 && uniqueID != theCurrentPraat -> list [i]. id)
 					i --;
 				if (i == 0) {
 					formulefout ("No such object (note: variables start with lower case)", ikar);
 					return 0;
 				}
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
-				tokmatriks (praat.list [i]. object);
+				tokmatriks (theCurrentPraat -> list [i]. object);
 			} else {
-				int i = praat.n;
+				int i = theCurrentPraat -> n;
 				*underscore = ' ';
 				if (endsInDollarSign) token.string [-- token.length] = '\0';
-				while (i > 0 && ! strequ (token.string, praat.list [i]. name))
+				while (i > 0 && ! strequ (token.string, theCurrentPraat -> list [i]. name))
 					i --;
 				if (i == 0) {
 					formulefout ("No such object (note: variables start with lower case)", ikar);
 					return 0;
 				}
 				nieuwtok (endsInDollarSign ? MATRIKSSTR_ : MATRIKS_)
-				tokmatriks (praat.list [i]. object);
+				tokmatriks (theCurrentPraat -> list [i]. object);
 			}
 		} else if (kar == '(') {
 			nieuwtok (HAAKJEOPENEN_)

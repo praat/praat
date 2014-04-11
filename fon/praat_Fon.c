@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/17
+ * pb 2006/12/26
  */
 
 #include "praat.h"
@@ -152,7 +152,7 @@ Graphics Movie_create (const char *title, int width, int height) {
 	static Graphics graphics;
 	static Widget shell, dialog, drawingArea;
 	if (! graphics) {
-		dialog = XmCreateFormDialog (praat.topShell, "Movie", NULL, 0);
+		dialog = XmCreateFormDialog (theCurrentPraat -> topShell, "Movie", NULL, 0);
 		shell = XtParent (dialog);
 		drawingArea = XmCreateDrawingArea (dialog, "movingArea", NULL, 0);
 		XtVaSetValues (shell, XmNx, 100, XmNy, 100, XmNtitle, title, XmNwidth, width + 2, XmNheight, height + 2,
@@ -202,14 +202,14 @@ DIRECT (AmplitudeTier_downto_TableOfReal)
 END
 
 DIRECT (AmplitudeTier_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit an AmplitudeTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classAmplitudeTier)
-			if (! praat_installEditor (AmplitudeTierEditor_create (praat.topShell, FULL_NAME,
+			if (! praat_installEditor (AmplitudeTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -501,14 +501,14 @@ DIRECT (DurationTier_downto_PointProcess)
 END
 
 DIRECT (DurationTier_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit a DurationTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classDurationTier)
-			if (! praat_installEditor (DurationTierEditor_create (praat.topShell, FULL_NAME,
+			if (! praat_installEditor (DurationTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -1267,14 +1267,14 @@ DIRECT (IntensityTier_downto_TableOfReal)
 END
 
 DIRECT (IntensityTier_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit an IntensityTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classIntensityTier)
-			if (! praat_installEditor (IntensityTierEditor_create (praat.topShell, FULL_NAME,
+			if (! praat_installEditor (IntensityTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -1639,11 +1639,11 @@ static void cb_ManipulationEditor_publish (Any editor, void *closure, Any publis
 	praat_updateSelection ();
 }
 DIRECT (Manipulation_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit a Manipulation from batch.");
 	} else {
 		WHERE (SELECTED) {
-			ManipulationEditor editor = ManipulationEditor_create (praat.topShell, FULL_NAME, OBJECT);
+			ManipulationEditor editor = ManipulationEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_ManipulationEditor_publish, NULL);
 		}
@@ -2076,12 +2076,12 @@ DIRECT (Matrix_to_Polygon)
 	EVERY_TO (Matrix_to_Polygon (OBJECT))
 END
 
-FORM (Matrix_to_Sound, "Matrix: To Sound", 0)
+FORM (Matrix_to_Sound_mono, "Matrix: To Sound (mono)", 0)
 	INTEGER ("Row", "1")
 	LABEL ("", "(negative values count from last row)")
 	OK
 DO
-	EVERY_TO (Matrix_to_Sound (OBJECT, GET_INTEGER ("Row")))
+	EVERY_TO (Matrix_to_Sound_mono (OBJECT, GET_INTEGER ("Row")))
 END
 
 DIRECT (Matrix_to_TableOfReal)
@@ -2245,11 +2245,11 @@ DO
 END
 
 DIRECT (Pitch_edit)
-	if (praat.batch)
+	if (theCurrentPraat -> batch)
 		return Melder_error ("Cannot edit a Pitch from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (PitchEditor_create (praat.topShell, FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (PitchEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -2687,14 +2687,14 @@ DO
 END
 
 DIRECT (PitchTier_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit a PitchTier from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPitchTier)
-			if (! praat_installEditor (PitchTierEditor_create (praat.topShell, FULL_NAME,
+			if (! praat_installEditor (PitchTierEditor_create (theCurrentPraat -> topShell, FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -2950,14 +2950,14 @@ DO
 END
 
 DIRECT (PointProcess_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit a PointProcess from batch.");
 	} else {
 		Sound sound = NULL;
 		WHERE (SELECTED)
 			if (CLASS == classSound) sound = OBJECT;
 		WHERE (SELECTED && CLASS == classPointProcess)
-			if (! praat_installEditor (PointEditor_create (praat.topShell, FULL_NAME,
+			if (! praat_installEditor (PointEditor_create (theCurrentPraat -> topShell, FULL_NAME,
 				OBJECT, sound, TRUE), IOBJECT)) return 0;
 	}
 END
@@ -3582,12 +3582,12 @@ DO
 END
 
 DIRECT (Spectrogram_view)
-	if (praat.batch)
+	if (theCurrentPraat -> batch)
 		return Melder_error ("Cannot view a Spectrogram from batch.");
 	else
 		WHERE (SELECTED)
 			if (! praat_installEditor
-				(SpectrogramEditor_create (praat.topShell, FULL_NAME, OBJECT), IOBJECT))
+				(SpectrogramEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
 					return 0;
 END
 
@@ -3627,9 +3627,9 @@ DO
 END
 
 DIRECT (Spectrum_edit)
-	if (praat.batch) return Melder_error ("Cannot edit a Spectrum from batch.");
+	if (theCurrentPraat -> batch) return Melder_error ("Cannot edit a Spectrum from batch.");
 	else WHERE (SELECTED)
-		if (! praat_installEditor (SpectrumEditor_create (praat.topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+		if (! praat_installEditor (SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Spectrum_formula, "Spectrum: Formula", "Spectrum: Formula...")
@@ -5053,7 +5053,7 @@ praat_addAction1 (classMatrix, 0, "Analyse", 0, 0, 0);
 		praat_addAction1 (classMatrix, 0, "To Pitch", 0, 1, DO_Matrix_to_Pitch);
 		praat_addAction1 (classMatrix, 0, "To PointProcess", 0, 1, DO_Matrix_to_PointProcess);
 		praat_addAction1 (classMatrix, 0, "To Polygon", 0, 1, DO_Matrix_to_Polygon);
-		praat_addAction1 (classMatrix, 0, "To Sound (slice)...", 0, 1, DO_Matrix_to_Sound);
+		praat_addAction1 (classMatrix, 0, "To Sound (slice)...", 0, 1, DO_Matrix_to_Sound_mono);
 		praat_addAction1 (classMatrix, 0, "To Spectrogram", 0, 1, DO_Matrix_to_Spectrogram);
 		praat_addAction1 (classMatrix, 0, "To TableOfReal", 0, 1, DO_Matrix_to_TableOfReal);
 		praat_addAction1 (classMatrix, 0, "To Spectrum", 0, 1, DO_Matrix_to_Spectrum);

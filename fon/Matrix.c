@@ -694,4 +694,23 @@ int Matrix_formula (Matrix me, const char *expression, Matrix target) {
 	return 1;
 }
 
+void Matrix_scaleAbsoluteExtremum (I, double scale) { iam (Matrix);
+	float extremum = 0.0;
+	for (long i = 1; i <= my ny; i ++) {
+		for (long j = 1; j <= my nx; j ++) {
+			if (fabs (my z [i] [j]) > extremum) {
+				extremum = fabs (my z [i] [j]);
+			}
+		}
+	}
+	if (extremum != 0.0) {
+		double factor = scale / extremum;
+		for (long i = 1; i <= my ny; i ++) {
+			for (long j = 1; j <= my nx; j ++) {
+				my z [i] [j] *= factor;
+			}
+		}
+	}
+}
+
 /* End of file Matrix.c */

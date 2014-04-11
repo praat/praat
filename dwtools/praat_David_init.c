@@ -46,7 +46,7 @@
  djmw SVD extract lef/right singular vectors
  djmw 20060111 TextGrid: Extend time moved from depth 1 to depth 2.
  djmw 20060308 Thing_recognizeClassesByName: StringsIndex, CCA
- djmw 20061217 Latest modification.
+ djmw 20061229 Latest modification.
 */
 
 #include "praat.h"
@@ -216,12 +216,11 @@ DO
 END
 
 DIRECT (Categories_edit)
-	if (praat.batch)
+	if (theCurrentPraat -> batch)
 		return Melder_error ("Cannot edit a Categories from batch.");
 	else
-		WHERE (SELECTED)
-			if (! praat_installEditor (CategoriesEditor_create (praat.topShell,
-				FULL_NAME, OBJECT), IOBJECT)) return 0;
+		WHERE (SELECTED) if (! praat_installEditor (CategoriesEditor_create (theCurrentPraat -> topShell,
+			FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
 DIRECT (Categories_getNumberOfDifferences)
@@ -278,8 +277,8 @@ DIRECT (Categories_to_Confusion)
 		}
 	}
 	Melder_assert (c1 && c2);
-	(void) sprintf (name, "%s_%s", strchr (praat.list[i1].name, ' ') + 1, 
-		strchr (praat.list[i2].name, ' ') + 1);
+	(void) sprintf (name, "%s_%s", strchr (theCurrentPraat -> list[i1].name, ' ') + 1,
+		strchr (theCurrentPraat -> list[i2].name, ' ') + 1);
 	if (! praat_new (Categories_to_Confusion (c1, c2), name)) return 0;
 END
 

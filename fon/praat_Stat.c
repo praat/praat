@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/18
+ * pb 2006/12/26
  */
 
 #include "praat.h"
@@ -153,11 +153,11 @@ DO
 END
 
 DIRECT (Table_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit a Table from batch.");
 	} else {
 		WHERE (SELECTED) {
-			TableEditor editor = TableEditor_create (praat.topShell, FULL_NAME, ONLY_OBJECT);
+			TableEditor editor = TableEditor_create (theCurrentPraat -> topShell, FULL_NAME, ONLY_OBJECT);
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 		}
 	}
@@ -396,7 +396,7 @@ DO
 	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
 		" (lowest tau that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest tau that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+		" (highest tau that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_close ();
 END
 
@@ -423,7 +423,7 @@ DO
 	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
 		" (lowest r that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest r that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+		" (highest r that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_close ();
 END
 	
@@ -451,7 +451,7 @@ DO
 	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
 		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest difference that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_close ();
 END
 	
@@ -476,7 +476,7 @@ DO
 	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
 		" (lowest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest value that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+		" (highest value that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_close ();
 END
 
@@ -508,7 +508,7 @@ DO
 	MelderInfo_writeLine5 ("   Lower limit = ", Melder_double (lowerLimit),
 		" (lowest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_writeLine5 ("   Upper limit = ", Melder_double (upperLimit),
-		" (highest difference that cannot be rejected with p =  ", Melder_double (significanceLevel), ")");
+		" (highest difference that cannot be rejected with p = ", Melder_double (significanceLevel), ")");
 	MelderInfo_close ();
 END
 

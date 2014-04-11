@@ -1,6 +1,6 @@
 /* Sound_to_SPINET.c
  *
- * Copyright (C) 1993-2002 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 
 /*
  djmw 20020813 GPL header
+ djmw 20070103 Sound interface changes
 */
 
 #include "Sound_to_SPINET.h"
@@ -53,7 +54,7 @@ SPINET Sound_to_SPINET (Sound me, double timeStep, double windowDuration,
 			minimumFrequencyHz, maximumFrequencyHz, nFilters,
 			excitationErbProportion, inhibitionErbProportion)) ||
 		! (window = Sound_createGaussian (windowDuration, samplingFrequency)) ||
-		! (frame = Sound_createSimple (windowDuration, samplingFrequency)) ||
+		! (frame = Sound_createSimple (1, windowDuration, samplingFrequency)) ||
 		! (f = NUMdvector (1, nFilters)) || ! (bw = NUMdvector (1, nFilters)) ||
 		! (aex = NUMdvector (1, nFilters)) || ! (ain = NUMdvector (1, nFilters))) goto cleanup;
 				

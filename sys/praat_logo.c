@@ -1,6 +1,6 @@
 /* praat_logo.c
  *
- * Copyright (C) 1996-2002 Paul Boersma
+ * Copyright (C) 1996-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 /*
  * pb 2002/03/07 GPL
- * pb 2006/11/05
+ * pb 2006/12/28 theCurrentPraat
  */
 
 #include "praatP.h"
@@ -74,9 +74,9 @@ void praat_showLogo (int autoPopDown) {
 	#ifdef UNIX
 	XWindowAttributes windowAttributes;
 	#endif
-	if (praat.batch || ! theLogo.draw) return;
+	if (theCurrentPraat -> batch || ! theLogo.draw) return;
 	if (! theLogo.form) {
-		theLogo.form = XmCreateFormDialog (praat.topShell, "logo", NULL, 0);
+		theLogo.form = XmCreateFormDialog (theCurrentPraat -> topShell, "logo", NULL, 0);
 		XtVaSetValues (XtParent (theLogo.form), XmNx, 100, XmNy, 100,
 			XmNtitle, "About",
 			#ifdef UNIX
@@ -112,14 +112,14 @@ void praat_showLogo (int autoPopDown) {
 	       windowAttributes. map_state != IsViewable)
 	{
 		XEvent event;
-		XtAppNextEvent (praat.context, & event);
+		XtAppNextEvent (theCurrentPraat -> context, & event);
 		XtDispatchEvent (& event);
 	}
 	logo_cb_expose (0, 0, 0);
 	#endif
 
 	if (autoPopDown)
-		XtAppAddTimeOut (praat.context, 2000, logo_timeOut, (XtPointer) NULL);
+		XtAppAddTimeOut (theCurrentPraat -> context, 2000, logo_timeOut, (XtPointer) NULL);
 }
 
 /* End of file praat_logo.c */

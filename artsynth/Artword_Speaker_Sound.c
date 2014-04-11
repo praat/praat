@@ -1,6 +1,6 @@
 /* Artword_Speaker_Sound.c
  *
- * Copyright (C) 1992-2002 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2001/08/02 last change
  * pb 2002/07/16 GPL
  * pb 2006/12/20 new Sound_play API
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "Artword_Speaker_Sound.h"
@@ -53,14 +54,14 @@ void Artword_Speaker_Sound_movie (Artword artword, Speaker speaker, Sound sound,
 	info. speaker = speaker;
 	info. graphics = graphics;
 	if (sound == NULL) {
-		sound = Sound_createSimple (artword -> totalTime, 22050);
+		sound = Sound_createSimple (1, artword -> totalTime, 22050);
 		if (! sound) {
 			Melder_flushError (NULL);
 			return;
 		}
 		own = TRUE;
 	}
-	Sound_play (sound, NULL, playCallback, & info);
+	Sound_play (sound, playCallback, & info);
 	iferror Melder_clearError ();
 	if (own) {
 		forget (sound);

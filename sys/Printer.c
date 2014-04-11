@@ -23,6 +23,7 @@
  * pb 2005/05/19 preference to switch screen preview off
  * pb 2005/07/21 removed bug in previous change for Linux
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/28 theCurrentPraat
  */
 
 #include "melder.h"
@@ -272,7 +273,7 @@ int Printer_postScriptSettings (void) {
 	static Any dia;
 	if (dia == NULL) {
 		Any radio;
-		dia = UiForm_create (praat.topShell, "PostScript settings", DO_Printer_postScriptSettings, NULL, "PostScript settings...");
+		dia = UiForm_create (theCurrentPraat -> topShell, "PostScript settings", DO_Printer_postScriptSettings, NULL, "PostScript settings...");
 		#if defined (_WIN32) || defined (macintosh)
 			UiForm_addBoolean (dia, "Allow direct PostScript", TRUE);
 		#endif
@@ -418,7 +419,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 			thePrinter. paperWidth = 1000;
 			thePrinter. paperHeight = 1000;
 		}
-		EnableWindow ((HWND) XtWindow (praat.topShell), FALSE);
+		EnableWindow ((HWND) XtWindow (theCurrentPraat -> topShell), FALSE);
 		SetAbortProc (theWinDC, AbortFunc);
 		memset (& docInfo, 0, sizeof (DOCINFO));
 		docInfo. cbSize = sizeof (DOCINFO);
@@ -448,7 +449,7 @@ int Printer_print (void (*draw) (void *boss, Graphics g), void *boss) {
 				EndDoc (theWinDC);
 			}
 		}
-		EnableWindow ((HWND) XtWindow (praat.topShell), TRUE);
+		EnableWindow ((HWND) XtWindow (theCurrentPraat -> topShell), TRUE);
 		DeleteDC (theWinDC), theWinDC = NULL;
 	#elif defined (macintosh)
 		Boolean result;

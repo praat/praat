@@ -553,10 +553,6 @@ int Manual_init (I, Widget parent, const char *title, Any data) {
 		return Melder_error ("Page \"%s\" not found.", title);
 	my path = i;
 	page = manPages -> pages -> item [i];
-	if (page -> hasEmbeddedScripts) {
-		return Melder_error ("This manual has an embedded script (a picture) on its opening page. "
-			"For safety reasons, Praat therefore cannot open this manual.");
-	}
 	my paragraphs = page -> paragraphs;
 	my numberOfParagraphs = 0;
 	par = my paragraphs;
@@ -569,6 +565,7 @@ int Manual_init (I, Widget parent, const char *title, Any data) {
 		strcpy (windowTitle, "Manual");
 	}
 	if (! HyperPage_init (me, parent, windowTitle, data)) { forget (me); return 0; }
+	MelderDir_copy (& manPages -> rootDirectory, & my rootDirectory);
 	my history [0]. page = Melder_strdup (title);   /* BAD */
 	return 1;
 }

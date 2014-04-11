@@ -22,7 +22,7 @@
  * pb 2003/04/15 improved handling of edges in Sound_getRms
  * pb 2003/07/20 moved shimmer measurements to VoiceAnalysis.c
  * pb 2005/07/07 glottal source signals
- * pb 2006/12/20 new Sound_play API
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "PointProcess_and_Sound.h"
@@ -38,7 +38,7 @@ Sound PointProcess_to_Sound_pulseTrain
 	double tmid = (my xmin + my xmax) / 2;
 	double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
 	float *sound;
-	thee = Sound_create (my xmin, my xmax, sound_nt, dt, t1);
+	thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 	if (! thee) return NULL;
 	sound = thy z [1];
 	for (it = 1; it <= my nt; it ++) {
@@ -83,7 +83,7 @@ Sound PointProcess_to_Sound_phonation
 	double a = (power1 + power2 + 1.0) / (power2 - power1);
 	double re = openPhase - collisionPhase;
 	float *sound;
-	thee = Sound_create (my xmin, my xmax, sound_nt, dt, t1);
+	thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 	if (! thee) return NULL;
 	/*
 	 * Compute "re" by iteration.
@@ -194,7 +194,7 @@ Sound PointProcess_to_Sound_phonation
 int PointProcess_playPart (PointProcess me, double tmin, double tmax) {
 	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
 	if (! sound) return 0;
-	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }
@@ -211,7 +211,7 @@ int PointProcess_hum (PointProcess me, double tmin, double tmax) {
 	Sound sound = PointProcess_to_Sound_pulseTrain (me, 22050, 0.7, 0.05, 30);
 	if (! sound) return 0;
 	if (! Sound_filterWithFormants (sound, tmin, tmax, 6, formant, bandwidth)) return 0;
-	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }

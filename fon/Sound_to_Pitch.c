@@ -1,6 +1,6 @@
 /* Sound_to_Pitch.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2004/05/10 better error messages
  * pb 2004/10/18 auto maxnCandidates
  * pb 2004/10/18 use of constant FFT tables speeds up AC method by a factor of 1.9
+ * pb 2006/12/31 compatible with stereo sounds
  */
 
 #include "Sound_to_Pitch.h"
@@ -43,7 +44,6 @@ Pitch Sound_to_Pitch_any (Sound me,
 	double silenceThreshold, double voicingThreshold,
 	double octaveCost, double octaveJumpCost, double voicedUnvoicedCost, double ceiling)
 {
-	float *amplitude;   /* Sound data. */
 	double duration, t1;
 	Pitch thee = NULL;
 	long i, j;
@@ -56,8 +56,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 	long nsamp_period, halfnsamp_period;   /* Number of samples in longest period. */
 	long brent_ixmax, brent_depth;
 	double brent_accuracy;   /* Obsolete. */
-	struct NUMfft_Table_d fftTable_struct = { 0 };
-	NUMfft_Table_d fftTable = & fftTable_struct;
+	struct NUMfft_Table_d fftTable = { 0 };
 
 	Melder_assert (maxnCandidates >= 2);
 	Melder_assert (method >= AC_HANNING && method <= FCC_ACCURATE);
@@ -90,7 +89,6 @@ Pitch Sound_to_Pitch_any (Sound me,
 			interpolation_depth = 1.0;
 			break;
 	}
-	amplitude = my z [1];
 	duration = my dx * my nx;
 	if (minimumPitch < periodsPerWindow / duration) {
 		Melder_error ("For this Sound, the parameter 'minimum pitch'\n"
@@ -146,10 +144,10 @@ Pitch Sound_to_Pitch_any (Sound me,
 	{
 		double mean = 0.0;
 		globalPeak = 0;
-		for (i = 1; i <= my nx; i ++) mean += amplitude [i];
+		for (i = 1; i <= my nx; i ++) mean += Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
 		mean /= my nx;
 		for (i = 1; i <= my nx; i ++) {
-			double damp = amplitude [i] - mean;
+			double damp = Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0) - mean;
 			if (fabs (damp) > globalPeak) globalPeak = fabs (damp);
 		}
 		if (globalPeak == 0.0) { Melder_progress (1.0, NULL); return thee; }
@@ -180,7 +178,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		frame = NUMdvector (1, nsampFFT); cherror
 		windowR = NUMdvector (1, nsampFFT); cherror
 		window = NUMdvector (1, nsamp_window); cherror
-		NUMfft_Table_init_d (fftTable, nsampFFT); cherror
+		NUMfft_Table_init_d (& fftTable, nsampFFT); cherror
 
 		/*
 		* A Gaussian or Hanning window is applied against phase effects.
@@ -201,14 +199,14 @@ Pitch Sound_to_Pitch_any (Sound me,
 		* Compute the normalized autocorrelation of the window.
 		*/
 		for (i = 1; i <= nsamp_window; i ++) windowR [i] = window [i];
-		NUMfft_forward_d (fftTable, windowR);
+		NUMfft_forward_d (& fftTable, windowR);
 		windowR [1] *= windowR [1];   /* DC component. */
 		for (i = 2; i < nsampFFT; i += 2) {
 			windowR [i] = windowR [i] * windowR [i] + windowR [i+1] * windowR [i+1];
 			windowR [i + 1] = 0.0;   /* Power spectrum: square and zero. */
 		}
 		windowR [nsampFFT] *= windowR [nsampFFT];   /* Nyquist frequency. */
-		NUMfft_backward_d (fftTable, windowR);   /* Autocorrelation. */
+		NUMfft_backward_d (& fftTable, windowR);   /* Autocorrelation. */
 		for (i = 2; i <= nsamp_window; i ++) windowR [i] /= windowR [1];   /* Normalize. */
 		windowR [1] = 1.0;   /* Normalize. */
 
@@ -234,7 +232,7 @@ Pitch Sound_to_Pitch_any (Sound me,
 		endSample = leftSample + nsamp_period;
 		Melder_assert (startSample >= 1);
 		Melder_assert (endSample <= my nx);
-		for (i = startSample; i <= endSample; i ++) localMean += amplitude [i];
+		for (i = startSample; i <= endSample; i ++) localMean += Sampled_getValueAtSample (me, i, Sound_LEVEL_MONO, 0);
 		localMean /= 2 * nsamp_period;
 
 		/*
@@ -247,10 +245,10 @@ Pitch Sound_to_Pitch_any (Sound me,
 		Melder_assert (endSample <= my nx);
 		if (method >= FCC_NORMAL) {
 			for (j = 1, i = startSample; j <= nsamp_window; j ++)
-				frame [j] = (amplitude [i ++] - localMean);
+				frame [j] = (Sampled_getValueAtSample (me, i ++ , Sound_LEVEL_MONO, 0) - localMean);
 		} else {
 			for (j = 1, i = startSample; j <= nsamp_window; j ++)
-				frame [j] = (amplitude [i ++] - localMean) * window [j];
+				frame [j] = (Sampled_getValueAtSample (me, i ++, Sound_LEVEL_MONO, 0) - localMean) * window [j];
 			for (j = nsamp_window + 1; j <= nsampFFT; j ++)
 				frame [j] = 0.0;
 		}
@@ -277,17 +275,21 @@ Pitch Sound_to_Pitch_any (Sound me,
 			localMaximumLag = localSpan - nsamp_window;
 			offset = startSample - 1;
 			for (i = 1; i <= nsamp_window; i ++) {
-				double x = amplitude [offset + i];
+				double x = Sampled_getValueAtSample (me, offset + i, Sound_LEVEL_MONO, 0);
 				sumx2 += x * x;
 			}
 			sumy2 = sumx2;   /* At zero lag, these are still equal. */
 			r [0] = 1.0;
 			for (i = 1; i <= localMaximumLag; i ++) {
-				float *x = amplitude + offset, *y = x + i;
 				double product = 0.0;
-				sumy2 += y [nsamp_window] * y [nsamp_window] - y [0] * y [0];
-				for (j = 1; j <= nsamp_window; j ++)
-					product += x [j] * y [j];
+				double y0 = Sampled_getValueAtSample (me, offset + i, Sound_LEVEL_MONO, 0);
+				double yZ = Sampled_getValueAtSample (me, offset + i + nsamp_window, Sound_LEVEL_MONO, 0);
+				sumy2 += yZ * yZ - y0 * y0;
+				for (j = 1; j <= nsamp_window; j ++) {
+					double x = Sampled_getValueAtSample (me, offset + j, Sound_LEVEL_MONO, 0);
+					double y = Sampled_getValueAtSample (me, offset + i + j, Sound_LEVEL_MONO, 0);
+					product += x * y;
+				}
 				r [- i] = r [i] = product / sqrt (sumx2 * sumy2);
 			}
 		} else {
@@ -295,14 +297,14 @@ Pitch Sound_to_Pitch_any (Sound me,
 			/*
 			 * The FFT of the autocorrelation is the power spectrum.
 			 */
-			NUMfft_forward_d (fftTable, frame);   /* Complex spectrum. */
+			NUMfft_forward_d (& fftTable, frame);   /* Complex spectrum. */
 			frame [1] *= frame [1];   /* DC component? */
 			for (i = 2; i < nsampFFT; i += 2) {
 				frame [i] = frame [i] * frame [i] + frame [i+1] * frame [i+1];
 				frame [i + 1] = 0.0;   /* Power spectrum: square and zero. */
 			}
 			frame [nsampFFT] *= frame [nsampFFT];   /* Nyquist frequency. */
-			NUMfft_backward_d (fftTable, frame);   /* Autocorrelation. */
+			NUMfft_backward_d (& fftTable, frame);   /* Autocorrelation. */
 
 			/*
 			 * Normalize the autocorrelation to the value with zero lag,
@@ -410,7 +412,7 @@ end:
 	NUMdvector_free (windowR, 1);
 	NUMdvector_free (r, - nsamp_window);
 	NUMlvector_free (imax, 1);
-	NUMfft_Table_free_d (fftTable);
+	NUMfft_Table_free_d (& fftTable);
 	iferror forget (thee);
 	return thee;
 }

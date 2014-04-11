@@ -1,6 +1,6 @@
 /* melder_audio.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
  * pb 2005/10/13 edition for OpenBSD
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/16 Macintosh uses CoreAudio (via PortAudio)
+ * pb 2007/01/03 best sample rate can be over 64 kHz
  */
 
 #include "melder.h"
@@ -162,7 +163,7 @@ void Melder_audio_prefs (void) {
 
 long Melder_getBestSampleRate (long fsamp) {
 	#if defined (macintosh)
-		return fsamp > 64000 ? 44100 : fsamp;
+		return fsamp;
 	#elif defined (sgi)
 		_melder_sgi_checkAudioServer ();
 		if (_melder_sgi_useAudioServer) return fsamp;

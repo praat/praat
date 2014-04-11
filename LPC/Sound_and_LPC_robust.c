@@ -20,6 +20,7 @@
 /*
  djmw 20030814 First version
  djmw 20061218 To Melder_information<x> format
+ djmw 20070103 Sound interface changes
 */
 
 #include "Sound_and_LPC.h"
@@ -48,7 +49,7 @@ static int huber_struct_init (struct huber_struct *hs, double windowDuration,
 {
 	long n;
 		
-	hs -> e = Sound_createSimple (windowDuration, samplingFrequency);
+	hs -> e = Sound_createSimple (1, windowDuration, samplingFrequency);
 	if (hs -> e == NULL) return 0;
 	n = hs -> e -> nx;
 	hs -> n = n;
@@ -237,7 +238,7 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	
 	sound = (Sound) Data_copy (me);
 	if (sound == NULL) goto end;
-	sframe = Sound_createSimple (windowDuration, samplingFrequency);
+	sframe = Sound_createSimple (1, windowDuration, samplingFrequency);
 	if (sframe == NULL) goto end;
 	window = Sound_createGaussian (windowDuration, samplingFrequency);
 	if (window == NULL) goto end;

@@ -1242,7 +1242,7 @@ FORMULA ("(1 / (0.463\\.c0.072)) (10^^(0.072/10)(10log(%I/%I__0_))^ \\-- 1) "
 	"= 30 \\.c (1.0167^^SL^ \\-- 1)")
 MAN_END
 
-MAN_BEGIN ("plug-ins", "ppgb", 20060920)
+MAN_BEGIN ("plug-ins", "ppgb", 20070106)
 INTRO ("Experienced Praat script writers can distribute their product as a plug-in to Praat.")
 ENTRY ("The Praat plug-in mechanism")
 NORMAL ("When Praat starts up, it will execute all Praat scripts called ##setup.praat# "
@@ -1264,7 +1264,7 @@ NORMAL ("(If you ran this script, Praat would install those two commands in the 
 	"but you are now going to install them in a different way.)")
 NORMAL ("You now put the three scripts in a new directory called ##plugin_Queak#, "
 	"and put this directory in your Praat preferences directory. If you are on Windows, "
-	"you will now have a directory called something like ##C:\\bsDocuments and Settings\\bsYour Name\\bsPraat#.")
+	"you will now have a directory called something like ##C:\\bsDocuments and Settings\\bsYour Name\\bsPraat\\bsplugin_Queak#.")
 NORMAL ("If you now start up Praat, Praat will automatically execute the script "
 	"##C:\\bsDocuments and Settings\\bsYour Name\\bsPraat\\bsplugin_Queak\\bssetup.praat# "
 	"and thereby install the two buttons. The two buttons will %not be remembered in the buttons file, "
@@ -1276,7 +1276,7 @@ ENTRY ("The structure of your plug-in directory")
 NORMAL ("In the example ##setup.praat# file above, the names of the scripts ##analyseQueak.praat# and ##createQueak.praat# "
 	"occur without any directory information. This works because Praat regards these file names as being relative to the directory "
 	"where ##setup.praat# is located. If your plug-in is much larger than two scripts, you may want to put subdirectories into "
-	"the ##plugin_Queak#. For instance, if you put ##analyseQueak.praat# into the subdirectory ##analysis#, "
+	"the directory ##plugin_Queak#. For instance, if you put ##analyseQueak.praat# into the subdirectory ##analysis#, "
 	"your line in the ##setup.praat# script would look as follows:")
 CODE ("@@Add action command...@ Sound 1 \"\" 0 \"\" 0 \"Analyse queak\" \"\" 0 analysis/analyseQueak.praat")
 NORMAL ("The forward slash (\"/\") in this example makes your plug-in platform-independent: it will work unchanged "

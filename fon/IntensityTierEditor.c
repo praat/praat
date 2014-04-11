@@ -19,7 +19,6 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2006/12/20 new Sound_play API
  */
 
 #include "IntensityTierEditor.h"
@@ -42,7 +41,7 @@ static void createMenus (I) {
 static void play (I, double tmin, double tmax) {
 	iam (IntensityTierEditor);
 	if (my sound.data) {
-		Sound_playPart (my sound.data, NULL, tmin, tmax, our playCallback, me);
+		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
 	} else {
 		/*if (! IntensityTier_playPart (my data, tmin, tmax, FALSE)) Melder_flushError (NULL);*/
 	}

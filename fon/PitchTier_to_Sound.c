@@ -20,7 +20,7 @@
 /*
  * pb 2004/10/03 sine wave generation
  * pb 2005/07/08 PitchTier_to_Sound_phonation
- * pb 2006/12/20 new Sound_play API
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "PitchTier_to_Sound.h"
@@ -64,7 +64,7 @@ Sound PitchTier_to_Sound_phonation (PitchTier me, double samplingFrequency,
 int PitchTier_playPart (PitchTier me, double tmin, double tmax, int hum) {
 	Sound sound = PitchTier_to_Sound_pulseTrain (me, 22050.0, 0.7, 0.05, 30, hum);
 	if (! sound) return 0;
-	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }
@@ -87,7 +87,7 @@ Sound PitchTier_to_Sound_sine (I, double tmin, double tmax, double samplingFrequ
 	samplingPeriod = 1.0 / samplingFrequency;
 	tmid = (tmin + tmax) / 2;
 	t1 = tmid - 0.5 * (numberOfSamples - 1) * samplingPeriod;
-	thee = Sound_create (tmin, tmax, numberOfSamples, samplingPeriod, t1); cherror
+	thee = Sound_create (1, tmin, tmax, numberOfSamples, samplingPeriod, t1); cherror
 	for (isamp = 2; isamp <= numberOfSamples; isamp ++) {
 		double tleft = t1 + (isamp - 1.5) * samplingPeriod;
 		double fleft = RealTier_getValueAtTime (me, tleft);
@@ -104,7 +104,7 @@ int PitchTier_playPart_sine (I, double tmin, double tmax) {
 	Sound sound = PitchTier_to_Sound_sine (me, tmin, tmax, 22050.0);
 	if (! sound) return Melder_error ("PitchTier_play: not played.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
-	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }

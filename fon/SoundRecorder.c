@@ -1,6 +1,6 @@
 /* SoundRecorder.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,9 @@
  * pb 2006/04/01 corrections for Intel Mac
  * pb 2006/08/09 acknowledge the 67 MB buffer limit on Windows XP
  * pb 2006/10/28 erased MacOS 9 stuff
+ * pb 2006/12/30 stereo
+ * pb 2007/01/03 CoreAudio (PortAudio)
+ * pb 2007/01/03 flexible drawing area
  */
 
 /* This source file describes interactive sound recorders for the following systems:
@@ -57,29 +60,74 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "Preferences.h"
-#ifdef macintosh
-	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
+
+//#define USE_PORTAUDIO  1
+#ifndef USE_PORTAUDIO
+	// Default: use PortAudio on Mac only.
+	#if defined (macintosh)
+		#define USE_PORTAUDIO  1
+	#else
+		#define USE_PORTAUDIO  0
+	#endif
 #endif
+#if USE_PORTAUDIO
+	#include "portaudio.h"
+	#if defined (macintosh)
+		#include "pa_mac_core.h"
+	#endif
+#endif
+
+struct SoundRecorder_Device {
+	char name [1+40];
+	bool canDo;
+	Widget button;
+};
+#define SoundRecorder_IDEVICE_MAX  8
+
+struct SoundRecorder_Fsamp {
+	double fsamp;
+	bool canDo;
+	Widget button;
+};
+#define SoundRecorder_IFSAMP_8000  1
+#define SoundRecorder_IFSAMP_9800  2
+#define SoundRecorder_IFSAMP_11025  3
+#define SoundRecorder_IFSAMP_12000  4
+#define SoundRecorder_IFSAMP_16000  5
+#define SoundRecorder_IFSAMP_22050  6
+#define SoundRecorder_IFSAMP_22254  7
+#define SoundRecorder_IFSAMP_24000  8
+#define SoundRecorder_IFSAMP_32000  9
+#define SoundRecorder_IFSAMP_44100  10
+#define SoundRecorder_IFSAMP_48000  11
+#define SoundRecorder_IFSAMP_64000  12
+#define SoundRecorder_IFSAMP_96000  13
+#define SoundRecorder_IFSAMP_MAX  13
 
 #define CommonSoundRecorder_members Editor_members \
 	int numberOfChannels, fakeMono; \
 	XtWorkProcId workProcId; \
 	long nsamp, nmax; \
 	int synchronous, recording, lastLeftMaximum, lastRightMaximum, coupled; \
-	int can8000, can9800, can11025, can12000, can16000, can22050, can22254, can24000, can32000, can44100, can48000, can64000; \
+	long numberOfInputDevices; \
+	struct SoundRecorder_Device device [1+SoundRecorder_IDEVICE_MAX]; \
+	struct SoundRecorder_Fsamp fsamp [1+SoundRecorder_IFSAMP_MAX]; \
 	short *buffer; \
-	Widget progressScale, recordButton, stopButton, playButton, closeButton; \
-	Widget publishLeftButton, publishRightButton, leftName, rightName; \
-	Widget button8000, button9800, button11025, button12000, button16000, button22050, button22254, button24000, \
-		button32000, button44100, button48000, button64000, leftMeter, rightMeter; \
-	Widget microphoneButton, lineButton, digitalButton, in4Button, in5Button, in6Button, in7Button, in8Button; \
+	Widget monoButton, stereoButton, meter; \
+	Widget progressScale, recordButton, stopButton, playButton; \
+	Widget soundName, cancelButton, applyButton, okButton; \
 	Widget leftGainScale, rightGainScale; \
 	Widget coupleButton; \
-	Graphics leftGraphics, rightGraphics;
+	Graphics graphics;
 
 /* Class definition of SoundRecorder. */
 
-#if defined (sgi)
+#if USE_PORTAUDIO
+	#define SoundRecorder_members CommonSoundRecorder_members \
+		const PaDeviceInfo *deviceInfos [1+SoundRecorder_IDEVICE_MAX]; \
+		PaDeviceIndex deviceIndices [1+SoundRecorder_IDEVICE_MAX]; \
+		PaStream *portaudioStream;
+#elif defined (sgi)
 	#include <audio.h>
 	#define SoundRecorder_members CommonSoundRecorder_members \
 		ALconfig audio; \
@@ -93,11 +141,10 @@
 	MMRESULT err; \
 	short buffertje1 [1000*2], buffertje2 [1000*2];
 #elif defined (macintosh)
+	#define PtoCstr(p)  (p [p [0] + 1] = '\0', (char *) p + 1)
 	#define SoundRecorder_members CommonSoundRecorder_members \
 		Handle temporaryMemoryHandle; \
-		int numberOfMacSources; \
 		short macSource [1+8]; \
-		char macSourceTitle [1+8] [100]; \
 		Str255 hybridDeviceNames [1+8]; \
 		SPB spb; \
 		long refNum;
@@ -148,14 +195,10 @@ class_create_opaque (SoundRecorder, Editor)
 
 static int theCouplePreference = 1;
 static int nmaxMB_pref = 4;
-static char macDefaultDevice [Resources_STRING_BUFFER_SIZE];
-static char macDefaultSource [Resources_STRING_BUFFER_SIZE];
 
 void SoundRecorder_prefs (void) {
 	Resources_addInt ("SoundRecorder.bufferSize_MB", & nmaxMB_pref);
 	Resources_addInt ("SoundRecorder.coupleSliders", & theCouplePreference);
-	Resources_addString ("SoundRecorder.mac.defaultDevice", & macDefaultDevice [0]);
-	Resources_addString ("SoundRecorder.mac.defaultSource", & macDefaultSource [0]);
 }
 
 int SoundRecorder_getBufferSizePref_MB (void) { return nmaxMB_pref; }
@@ -174,16 +217,16 @@ static struct {
 	double sampleRate;
 } theControlPanel =
 #if defined (sgi) || defined (HPUX) || defined (linux)
-	{ 1, 200, 200, 22050 };
+	{ 1, 200, 200, 44100 };
 #elif defined (macintosh)
 	{ 1, 26, 26, 44100 };
 #else
-	{ 1, 26, 26, 22050 };
+	{ 1, 26, 26, 44100 };
 #endif
 
 /********** ERROR HANDLING **********/
 
-#ifdef _WIN32
+#if defined (_WIN32) && ! USE_PORTAUDIO
 static void win_fillFormat (SoundRecorder me) {
 	my waveFormat. nSamplesPerSec = (int) theControlPanel. sampleRate;
 	my waveFormat. nChannels = my numberOfChannels;
@@ -293,7 +336,11 @@ static void stopRecording (SoundRecorder me) {
 	if (! my recording) return;
 	my recording = FALSE;
 	if (! my synchronous) {
-		#if defined (_WIN32)
+		#if USE_PORTAUDIO
+			Pa_StopStream (my portaudioStream);
+			Pa_CloseStream (my portaudioStream);
+			my portaudioStream = NULL;
+		#elif defined (_WIN32)
 			/*
 			 * On newer systems, waveInStop waits until the buffer is full.
 			 * Wrong behaviour!
@@ -345,7 +392,7 @@ static void destroy (I) {
 	stopRecording (me);   /* Must occur before freeing my buffer. */
 	Melder_stopPlaying (Melder_IMPLICIT);   /* Must also occur before freeing my buffer. */
 	if (my workProcId) XtRemoveWorkProc (my workProcId);
-	#if defined (macintosh)
+	#if defined (macintosh) && ! USE_PORTAUDIO
 		if (my temporaryMemoryHandle) {
 			DisposeHandle (my temporaryMemoryHandle);
 		} else {
@@ -355,9 +402,9 @@ static void destroy (I) {
 		NUMsvector_free (my buffer, 0);
 	#endif
 
-	#if defined (sgi)
-		if (my port) ALcloseport (my port);
-		if (my audio) ALfreeconfig (my audio);
+	#if USE_PORTAUDIO
+		if (my portaudioStream) Pa_StopStream (my portaudioStream);
+		if (my portaudioStream) Pa_CloseStream (my portaudioStream);
 	#elif defined (_WIN32)
 		if (my hWaveIn != 0) {
 			waveInReset (my hWaveIn);
@@ -366,49 +413,75 @@ static void destroy (I) {
 		}
 	#elif defined (macintosh)
 		if (my refNum) SPBCloseDevice (my refNum);
+	#elif defined (sgi)
+		if (my port) ALcloseport (my port);
+		if (my audio) ALfreeconfig (my audio);
 	#elif defined (UNIX) || defined (HPUX)
 		if (my fd != -1) close (my fd);
-	#else
 	#endif
-	forget (my leftGraphics);
-	forget (my rightGraphics);
+	forget (my graphics);
 	inherited (SoundRecorder) destroy (me);
 }
 
-static void showMaximum (Graphics graphics, double maximum) {
-	Graphics_setGrey (graphics, 0.9);
-	Graphics_fillRectangle (graphics, 0.0, 1.0, maximum, 32768.0);
-	Graphics_setColour (graphics, Graphics_GREEN);
-	if (maximum < 23000) {
-		Graphics_fillRectangle (graphics, 0.0, 1.0, 0.0, maximum);
+static void showMaximum (SoundRecorder me, int channel, double maximum) {
+	maximum /= 32768.0;
+	Graphics_setWindow (my graphics,
+		my numberOfChannels == 1 || channel == 1 ? -0.1 : -2.1,
+		my numberOfChannels == 1 || channel == 2 ? 1.1 : 3.1,
+		-0.1, 1.1);
+	Graphics_setGrey (my graphics, 0.9);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, maximum, 1.0);
+	Graphics_setColour (my graphics, Graphics_GREEN);
+	if (maximum < 0.75) {
+		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, maximum);
 	} else {
-		Graphics_fillRectangle (graphics, 0.0, 1.0, 0.0, 23000.0);
-		Graphics_setColour (graphics, Graphics_YELLOW);
-		if (maximum < 30000) {
-			Graphics_fillRectangle (graphics, 0.0, 1.0, 23000.0, maximum);
+		Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 0.75);
+		Graphics_setColour (my graphics, Graphics_YELLOW);
+		if (maximum < 0.92) {
+			Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.75, maximum);
 		} else {
-			Graphics_fillRectangle (graphics, 0.0, 1.0, 23000.0, 30000.0);
-			Graphics_setColour (graphics, Graphics_RED);
-			Graphics_fillRectangle (graphics, 0.0, 1.0, 30000.0, maximum);
+			Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.75, 0.92);
+			Graphics_setColour (my graphics, Graphics_RED);
+			Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.92, maximum);
 		}
 	}
 }
 
-static void showMaxima (SoundRecorder me, int leftMaximum, int rightMaximum) {
+static void showMeter (SoundRecorder me, short *buffer, long nsamp) {
+	Graphics_setWindow (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics, Graphics_WHITE);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setColour (my graphics, Graphics_BLACK);
+	if (nsamp < 1) {
+		Graphics_setTextAlignment (my graphics, Graphics_CENTRE, Graphics_HALF);
+		Graphics_text (my graphics, 0.5, 0.5, "Not recording.");
+		return;
+	}
+	short leftMaximum = 0, rightMaximum = 0;
+	if (my numberOfChannels == 1) {
+		for (long i = 0; i < nsamp; i ++) {
+			short value = buffer [i];
+			if (abs (value) > leftMaximum) leftMaximum = abs (value);
+		}
+	} else {
+		for (long i = 0; i < nsamp; i ++) {
+			long left = buffer [i+i], right = buffer [i+i+1];
+			if (abs (left) > leftMaximum) leftMaximum = abs (left);
+			if (abs (right) > rightMaximum) rightMaximum = abs (right);
+		}
+	}
 	if (my lastLeftMaximum > 30000) {
-		int leak = my lastLeftMaximum - 2000000 /
-			(theControlPanel. inputSource == 3 ? 48000 : theControlPanel. sampleRate);
+		int leak = my lastLeftMaximum - 2000000 / theControlPanel. sampleRate;
 		if (leftMaximum < leak) leftMaximum = leak;
 	}
-	showMaximum (my leftGraphics, leftMaximum);
+	showMaximum (me, 1, leftMaximum);
 	my lastLeftMaximum = leftMaximum;
 	if (my numberOfChannels == 2) {
 		if (my lastRightMaximum > 30000) {
-			int leak = my lastRightMaximum - 2000000 /
-				(theControlPanel. inputSource == 3 ? 48000 : theControlPanel. sampleRate);
+			int leak = my lastRightMaximum - 2000000 / theControlPanel. sampleRate;
 			if (rightMaximum < leak) rightMaximum = leak;
 		}
-		showMaximum (my rightGraphics, rightMaximum);
+		showMaximum (me, 2, rightMaximum);
 		my lastRightMaximum = rightMaximum;
 	}
 }
@@ -422,10 +495,15 @@ static int tooManySamplesInBufferToReturnToGui (SoundRecorder me) {
 	#endif
 }
 
+static long getMyNsamp (SoundRecorder me) {
+	volatile long nsamp = my nsamp;   // Prevent inlining.
+	return nsamp;
+}
+
 static Boolean workProc (XtPointer void_me) {
 	iam (SoundRecorder);
 	short buffertje [step*2];
-	int leftMaximum = 0, rightMaximum = 0, i, stepje = 0;
+	int leftMaximum = 0, rightMaximum = 0, stepje = 0;
 
 	#if defined (linux)
 		#define min(a,b) a > b ? b : a
@@ -448,22 +526,23 @@ static Boolean workProc (XtPointer void_me) {
 		theControlPanel. rightGain = 255 - my info [7];
 		theControlPanel. sampleRate = my info [3] == AL_INPUT_DIGITAL ? my info [9] : my info [1];
 	#elif defined (macintosh)
-	{
-		OSErr err;
-		short macSource, isource;
-		Str255 pdeviceName;
-		err = SPBGetDeviceInfo (my refNum, siDeviceName, & pdeviceName);
-		if (err != noErr) { onceError ("SPBGetDeviceInfo (deviceName)", err); return False; }
-		err = SPBGetDeviceInfo (my refNum, siInputSource, & macSource);
-		if (err != noErr) { onceError ("SPBGetDeviceInfo (inputSource)", err); return False; }
-		for (isource = 1; isource <= my numberOfMacSources; isource ++) {
-			if (strequ ((const char *) & pdeviceName, (const char *) my hybridDeviceNames [isource]) &&
-					macSource == my macSource [isource]) {
-				theControlPanel. inputSource = isource;
-				break;
+		#if USE_PORTAUDIO
+		#else
+			OSErr err;
+			short macSource, isource;
+			Str255 pdeviceName;
+			err = SPBGetDeviceInfo (my refNum, siDeviceName, & pdeviceName);
+			if (err != noErr) { onceError ("SPBGetDeviceInfo (deviceName)", err); return False; }
+			err = SPBGetDeviceInfo (my refNum, siInputSource, & macSource);
+			if (err != noErr) { onceError ("SPBGetDeviceInfo (inputSource)", err); return False; }
+			for (isource = 1; isource <= my numberOfInputDevices; isource ++) {
+				if (strequ ((const char *) & pdeviceName, (const char *) my hybridDeviceNames [isource]) &&
+						macSource == my macSource [isource]) {
+					theControlPanel. inputSource = isource;
+					break;
+				}
 			}
-		}
-	}
+		#endif
 	#elif defined (sun)
 		ioctl (my fd, AUDIO_GETINFO, & my info);
 		theControlPanel. inputSource =
@@ -480,7 +559,6 @@ static Boolean workProc (XtPointer void_me) {
 		if (my info. record. encoding != AUDIO_ENCODING_LINEAR)
 			Melder_casual ("(SoundRecorder:) Not linear.");
 	#elif defined (HPUX)
-	{
 		int leftGain = my hpGains. cgain [0]. receive_gain * 11;
 		int rightGain = my hpGains. cgain [1]. receive_gain * 11;
 		int sampleRate;
@@ -493,7 +571,6 @@ static Boolean workProc (XtPointer void_me) {
 			theControlPanel. rightGain = rightGain;
 		ioctl (my fd, AUDIO_GET_SAMPLE_RATE, & sampleRate);
 		theControlPanel. sampleRate = sampleRate;
-	}
 	#endif
 
 	/* Set the buttons according to the audio parameters. */
@@ -501,47 +578,30 @@ static Boolean workProc (XtPointer void_me) {
 	if (my recordButton) XtSetSensitive (my recordButton, my recording == FALSE);
 	if (my stopButton) XtSetSensitive (my stopButton, my recording == TRUE);
 	if (my playButton) XtSetSensitive (my playButton, my recording == FALSE && my nsamp > 0);
-	if (my publishLeftButton) XtSetSensitive (my publishLeftButton, my recording == FALSE && my nsamp > 0);
-	if (my publishRightButton) XtSetSensitive (my publishRightButton, my recording == FALSE && my nsamp > 0);
-	if (my button8000) XmToggleButtonSetState (my button8000, theControlPanel. sampleRate == 8000, False);
-	if (my button9800) XmToggleButtonSetState (my button9800, theControlPanel. sampleRate == 9800, False);
-	if (my button11025) XmToggleButtonSetState (my button11025, theControlPanel. sampleRate == 11025, False);
-	if (my button12000) XmToggleButtonSetState (my button12000, theControlPanel. sampleRate == 12000, False);
-	if (my button16000) XmToggleButtonSetState (my button16000, theControlPanel. sampleRate == 16000, False);
-	if (my button22050) XmToggleButtonSetState (my button22050, theControlPanel. sampleRate == 22050, False);
-	if (my button22254) XmToggleButtonSetState (my button22254, theControlPanel. sampleRate == 22254.54545, False);
-	if (my button24000) XmToggleButtonSetState (my button24000, theControlPanel. sampleRate == 24000, False);
-	if (my button32000) XmToggleButtonSetState (my button32000, theControlPanel. sampleRate == 32000, False);
-	if (my button44100) XmToggleButtonSetState (my button44100, theControlPanel. sampleRate == 44100, False);
-	if (my button48000) XmToggleButtonSetState (my button48000, theControlPanel. sampleRate == 48000, False);
-	if (my button64000) XmToggleButtonSetState (my button64000, theControlPanel. sampleRate == 64000, False);
-	if (my button8000) XtSetSensitive (my button8000, ! my recording);
-	if (my button9800) XtSetSensitive (my button9800, ! my recording);
-	if (my button11025) XtSetSensitive (my button11025, ! my recording);
-	if (my button12000) XtSetSensitive (my button12000, ! my recording);
-	if (my button16000) XtSetSensitive (my button16000, ! my recording);
-	if (my button22050) XtSetSensitive (my button22050, ! my recording);
-	if (my button22254) XtSetSensitive (my button22254, ! my recording);
-	if (my button24000) XtSetSensitive (my button24000, ! my recording);
-	if (my button32000) XtSetSensitive (my button32000, ! my recording);
-	if (my button44100) XtSetSensitive (my button44100, ! my recording);
-	if (my button48000) XtSetSensitive (my button48000, ! my recording);
-	if (my button64000) XtSetSensitive (my button64000, ! my recording);
-	if (my microphoneButton) XmToggleButtonSetState (my microphoneButton, theControlPanel. inputSource == 1, False);
-	if (my lineButton) XmToggleButtonSetState (my lineButton, theControlPanel. inputSource == 2, False);
-	if (my digitalButton) XmToggleButtonSetState (my digitalButton, theControlPanel. inputSource == 3, False);
-	if (my in4Button) XmToggleButtonSetState (my in4Button, theControlPanel. inputSource == 4, False);
-	if (my in5Button) XmToggleButtonSetState (my in5Button, theControlPanel. inputSource == 5, False);
-	if (my in6Button) XmToggleButtonSetState (my in6Button, theControlPanel. inputSource == 6, False);
-	if (my in7Button) XmToggleButtonSetState (my in7Button, theControlPanel. inputSource == 7, False);
-	if (my in8Button) XmToggleButtonSetState (my in8Button, theControlPanel. inputSource == 8, False);
+	if (my applyButton) XtSetSensitive (my applyButton, my recording == FALSE && my nsamp > 0);
+	if (my okButton) XtSetSensitive (my okButton, my recording == FALSE && my nsamp > 0);
+	if (my monoButton) XmToggleButtonSetState (my monoButton, my numberOfChannels == 1, False);
+	if (my stereoButton) XmToggleButtonSetState (my stereoButton, my numberOfChannels == 2, False);
+	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
+		if (my fsamp [i]. button)
+			XmToggleButtonSetState (my fsamp [i]. button, theControlPanel. sampleRate == my fsamp [i]. fsamp, False);
+	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
+		if (my device [i]. button)
+			XmToggleButtonSetState (my device [i]. button, theControlPanel. inputSource == i, False);
+	if (my monoButton) XtSetSensitive (my monoButton, ! my recording);
+	if (my stereoButton) XtSetSensitive (my stereoButton, ! my recording);
+	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
+		if (my fsamp [i]. button) XtSetSensitive (my fsamp [i]. button, ! my recording);
+	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++)
+		if (my device [i]. button)
+			XtSetSensitive (my device [i]. button, ! my recording);
 	if (my leftGainScale) XmScaleSetValue (my leftGainScale, theControlPanel. leftGain);
 	if (my rightGainScale) XmScaleSetValue (my rightGainScale, theControlPanel. rightGain);
 
-	/*Graphics_setGrey (my leftGraphics, 0.9);
-	Graphics_fillRectangle (my leftGraphics, 0.0, 1.0, 0.0, 32768.0);
-	Graphics_setGrey (my rightGraphics, 0.9);
-	Graphics_fillRectangle (my rightGraphics, 0.0, 1.0, 0.0, 32768.0);*/
+	/*Graphics_setGrey (my graphics, 0.9);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 32768.0);
+	Graphics_setGrey (my graphics, 0.9);
+	Graphics_fillRectangle (my graphics, 0.0, 1.0, 0.0, 32768.0);*/
 
 	if (my synchronous) {
 		/*
@@ -551,31 +611,18 @@ static Boolean workProc (XtPointer void_me) {
 			#if defined (sgi)
 				ALreadsamps (my port, buffertje, step * my numberOfChannels);
 				stepje = step;
-			#elif defined (macintosh)
-				my spb. bufferPtr = (char *) buffertje;
-				my spb. bufferLength = my spb. count = step * (sizeof (short) * my numberOfChannels);
-				SPBRecord (& my spb, false);   /* Synchronous. */
-				stepje = step;
-			#elif defined (_WIN32)
+			#elif defined (macintosh) || defined (_WIN32)
+				/*
+				 * Asynchronous recording on these systems: do nothing.
+				 */
 			#else
 				stepje = read (my fd, (void *) buffertje, step * (sizeof (short) * my numberOfChannels)) / (sizeof (short) * my numberOfChannels);
 			#endif
 
-			if (my numberOfChannels == 1) {
-				for (i = 0; i < stepje; i ++) {
-					short left = buffertje [i];
-					if (abs (left) > leftMaximum) leftMaximum = abs (left);
-				}
-			} else {
-				for (i = 0; i < stepje; i ++) {
-					short left = buffertje [i+i], right = buffertje [i+i+1];
-					if (abs (left) > leftMaximum) leftMaximum = abs (left);
-					if (abs (right) > rightMaximum) rightMaximum = abs (right);
-				}
-			}
-			if (my recording)
+			if (my recording) {
 				memcpy (my buffer + my nsamp * my numberOfChannels, buffertje, stepje * (sizeof (short) * my numberOfChannels));
-			showMaxima (me, leftMaximum, rightMaximum);
+			}
+			showMeter (me, buffertje, stepje);
 			if (my recording) {
 				my nsamp += stepje;
 				if (my nsamp > my nmax - step) my recording = FALSE;
@@ -584,66 +631,124 @@ static Boolean workProc (XtPointer void_me) {
 			}
 		} while (my recording && tooManySamplesInBufferToReturnToGui (me));
 	} else {
-		#if defined (_WIN32)
-			if (my recording) {
+		if (my recording) {
+			/*
+			 * We have to know how far the buffer has been filled.
+			 * However, the buffer may be filled at interrupt time,
+			 * so that the buffer may be filled during this workproc.
+			 * So we ask for the buffer filling just once, namely here at the beginning.
+			 */
+			#if USE_PORTAUDIO
+				 /*
+				  * The buffer filling is contained in my nsamp,
+				  * which has been set during interrupt time and may again be updated behind our backs during this workproc.
+				  * So we do it in such a way that the compiler cannot ask for my nsamp twice.
+				  */
+				long lastSample = getMyNsamp (me);
+			#elif defined (_WIN32)
 				MMTIME mmtime;
-				long firstSample = 0, lastSample = 0, i;
 				mmtime. wType = TIME_BYTES;
+				long lastSample = 0;
 				if (waveInGetPosition (my hWaveIn, & mmtime, sizeof (MMTIME)) == MMSYSERR_NOERROR)
 					lastSample = mmtime. u.cb / (sizeof (short) * my numberOfChannels);
-				firstSample = lastSample - 1000;
-				if (firstSample < 0) firstSample = 0;
-				if (my numberOfChannels == 1) {
-					for (i = firstSample; i < lastSample; i ++) {
-						long left = my buffer [i];
-						if (abs (left) > leftMaximum) leftMaximum = abs (left);
-					}
-				} else {
-					for (i = firstSample; i < lastSample; i ++) {
-						long left = my buffer [i+i], right = my buffer [i+i+1];
-						if (abs (left) > leftMaximum) leftMaximum = abs (left);
-						if (abs (right) > rightMaximum) rightMaximum = abs (right);
-					}
-				}
-				XmScaleSetValue (my progressScale, (int) (1000.0f * ((float) lastSample / (float) my nmax)));
-				showMaxima (me, leftMaximum, rightMaximum);
-			}
-		#elif defined (macintosh)
-			OSErr err;
-			short recordingStatus, meterLevel;
-			unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
-			err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
-					& totalSamplesToRecord, & numberOfSamplesRecorded,
-					& totalMsecsToRecord, & numberOfMsecsRecorded);
-			if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return FALSE; }
-			Melder_casual ("Meter level %ld", meterLevel);
-			if (meterLevel < 0) meterLevel = 0;   /* Should not occur. */
-			if (meterLevel > 255) meterLevel = 255;   /* Should not occur. */
-			leftMaximum = rightMaximum = 128 * meterLevel;
-			if (my recording) {
+			#elif defined (macintosh)
+				OSErr err;
+				short recordingStatus, meterLevel;
+				unsigned long totalSamplesToRecord, numberOfSamplesRecorded, totalMsecsToRecord, numberOfMsecsRecorded;
+				err = SPBGetRecordingStatus (my refNum, & recordingStatus, & meterLevel,
+						& totalSamplesToRecord, & numberOfSamplesRecorded,
+						& totalMsecsToRecord, & numberOfMsecsRecorded);
+				if (err != noErr) { onceError ("SPBGetRecordingStatus", err); return FALSE; }
 				if (totalSamplesToRecord == 0)
 					my nsamp = my nmax;
 				else
 					my nsamp = numberOfSamplesRecorded / (sizeof (short) * my numberOfChannels);
-				XmScaleSetValue (my progressScale, (int) (1000.0f * ((float) my nsamp / (float) my nmax)));
-			}
-			showMaxima (me, leftMaximum, rightMaximum);
-		#else
-			showMaxima (me, leftMaximum, rightMaximum);
-		#endif
+				long lastSample = my nsamp;
+			#else
+				long lastSample = 0;   // Will not occur.
+			#endif
+			long firstSample = lastSample - 1000;
+			if (firstSample < 0) firstSample = 0;
+			showMeter (me, my buffer + firstSample * my numberOfChannels, lastSample - firstSample);
+			XmScaleSetValue (my progressScale, (int) (1000.0f * ((float) lastSample / (float) my nmax)));
+		} else {
+			showMeter (me, NULL, 0);
+		}
 	}
 	iferror Melder_flushError (NULL);
 	return False;
 }
 
+#if USE_PORTAUDIO
+static int portaudioStreamCallback (
+    const void *input, void *output,
+    unsigned long frameCount,
+    const PaStreamCallbackTimeInfo* timeInfo,
+    PaStreamCallbackFlags statusFlags,
+    void *void_me)
+{
+	/*
+	 * This procedure may be called at interrupt time.
+	 * It therefore accesses only data that is constant during recording,
+	 * namely me, my buffer, my numberOfChannels, and my nmax.
+	 * The only thing it changes is my nsamp;
+	 * the workProc will therefore have to take some care in accessing my nsamp (see there).
+	 */
+	iam (SoundRecorder);
+	(void) output;
+	(void) timeInfo;
+	(void) statusFlags;
+	if (Melder_debug == 20) Melder_casual ("The PortAudio stream callback receives %ld frames.", frameCount);
+	Melder_assert (my nsamp <= my nmax);
+	unsigned long samplesLeft = my nmax - my nsamp;
+	if (samplesLeft > 0) {
+		unsigned long dsamples = samplesLeft > frameCount ? frameCount : samplesLeft;
+		if (Melder_debug == 20) Melder_casual ("play %s %s", Melder_integer (dsamples),
+			Melder_double (Pa_GetStreamCpuLoad (my portaudioStream)));
+		memcpy (my buffer + my nsamp * my numberOfChannels, input, 2 * dsamples * my numberOfChannels);
+		my nsamp += dsamples;
+		if (my nsamp >= my nmax) return paComplete;
+	} else /*if (my nsamp >= my nmax)*/ {
+		my nsamp = my nmax;
+		return paComplete;
+	}
+	return paContinue;
+}
+#endif
+
 static void cb_record (Widget w, XtPointer void_me, XtPointer call) {
 	iam (SoundRecorder);
 	(void) w;
 	(void) call;
+	if (my recording) return;
 	my nsamp = 0;
 	my recording = TRUE;
+	my lastLeftMaximum = 0;
+	my lastRightMaximum = 0;
 	if (! my synchronous) {
-		#if defined (_WIN32)
+		#if USE_PORTAUDIO
+			PaStreamParameters streamParameters = { 0 };
+			streamParameters. device = my deviceIndices [theControlPanel. inputSource];
+			streamParameters. channelCount = my numberOfChannels;
+			streamParameters. sampleFormat = paInt16;
+			streamParameters. suggestedLatency = my deviceInfos [theControlPanel. inputSource] -> defaultLowInputLatency;
+			#if defined (macintosh)
+				struct paMacCoreStreamInfo macCoreStreamInfo = { 0 };
+				macCoreStreamInfo. size = sizeof (paMacCoreStreamInfo);
+				macCoreStreamInfo. hostApiType = paCoreAudio;
+				macCoreStreamInfo. version = 0x01;
+				macCoreStreamInfo. flags = paMacCore_ChangeDeviceParameters | paMacCore_FailIfConversionRequired;
+				streamParameters. hostApiSpecificStreamInfo = & macCoreStreamInfo;
+			#endif
+			if (Melder_debug == 20) Melder_casual ("Before Pa_OpenStream");
+			PaError err = Pa_OpenStream (& my portaudioStream, & streamParameters, NULL,
+				theControlPanel. sampleRate, 0, paNoFlag, portaudioStreamCallback, (void *) me);
+			if (Melder_debug == 20) Melder_casual ("Pa_OpenStream returns %d", err);
+			if (err) { Melder_error ("open %s", Pa_GetErrorText (err)); goto end; }
+			Pa_StartStream (my portaudioStream);
+			if (Melder_debug == 20) Melder_casual ("Pa_StartStream returns %d", err);
+			if (err) { Melder_error ("start %s", Pa_GetErrorText (err)); goto end; }
+		#elif defined (_WIN32)
 			win_fillFormat (me);
 			win_fillHeader (me, 0);
 			win_waveInOpen (me); cherror
@@ -652,15 +757,12 @@ static void cb_record (Widget w, XtPointer void_me, XtPointer call) {
 			win_waveInStart (me); cherror
 		#elif defined (macintosh)
 			OSErr err;
-			/*FILE *f = fopen ("Harde schijf:Desktop Folder:praatlongsoundkanweg.rawww", "wb");
-			if (! f) return;*/
 			err = SPBStopRecording (my refNum);
 			if (err != noErr) { onceError ("SPBStopRecording", err); return; }
 			for (;;) {
 				my spb. bufferPtr = (char *) my buffer;
 				my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
 				err = SPBRecord (& my spb, true);   /* Asynchronous. */
-				/* err = SPBRecordToFile (f -> handle, & my spb, true);*/
 				if (err == noErr) break;   /* Success. */
 				if (err == notEnoughMemoryErr) {
 					if (my temporaryMemoryHandle) {
@@ -671,13 +773,10 @@ static void cb_record (Widget w, XtPointer void_me, XtPointer call) {
 					} else { Melder_flushError ("Out of memory. Quit other programs."); return; }
 				} else if (err != noErr) { onceError ("SPBRecord", err); return; }
 			}
-			/*fclose (f);*/
 		#endif
 	}
-#ifdef _WIN32
 end:
-	iferror Melder_flushError ("Cannot record.");
-#endif
+	iferror { my recording = FALSE; Melder_flushError ("Cannot record."); }
 }
 
 static void cb_stop (Widget w, XtPointer void_me, XtPointer call) {
@@ -698,16 +797,13 @@ static void cb_play (Widget w, XtPointer void_me, XtPointer call) {
 }
 #endif
 
-static void cb_publishLeft (Widget w, XtPointer void_me, XtPointer call) {
-	iam (SoundRecorder);
+static void publish (SoundRecorder me) {
 	Sound sound = NULL;
 	long i, nsamp = my fakeMono ? my nsamp / 2 : my nsamp;
 	double fsamp = theControlPanel. sampleRate;
-	(void) w;
-	(void) call;
 	if (my nsamp == 0) return;
 	if (fsamp <= 0) fsamp = 48000.0;   /* Safe. */
-	sound = Sound_createSimple ((double) nsamp / fsamp, fsamp);
+	sound = Sound_createSimple (my numberOfChannels, (double) nsamp / fsamp, fsamp);
 	if (Melder_hasError ()) { Melder_flushError ("You can still save to file."); return; }
 	if (my fakeMono) {
 		for (i = 1; i <= nsamp; i ++)
@@ -716,11 +812,13 @@ static void cb_publishLeft (Widget w, XtPointer void_me, XtPointer call) {
 		for (i = 1; i <= nsamp; i ++)
 			sound -> z [1] [i] = my buffer [i - 1] * (1.0 / 32768);
 	} else {
-		for (i = 1; i <= nsamp; i ++)
+		for (i = 1; i <= nsamp; i ++) {
 			sound -> z [1] [i] = my buffer [i + i - 2] * (1.0 / 32768);
+			sound -> z [2] [i] = my buffer [i + i - 1] * (1.0 / 32768);
+		}
 	}
-	if (my leftName) {
-		char *name = XmTextFieldGetString (my leftName);
+	if (my soundName) {
+		char *name = XmTextFieldGetString (my soundName);
 		Thing_setName (sound, name);
 		XtFree (name);
 	}
@@ -728,33 +826,28 @@ static void cb_publishLeft (Widget w, XtPointer void_me, XtPointer call) {
 		my publishCallback (me, my publishClosure, sound);
 }
 
-static void cb_publishRight (Widget w, XtPointer void_me, XtPointer call) {
-	iam (SoundRecorder);
-	Sound sound = NULL;
-	long i;
-	double fsamp = theControlPanel. sampleRate;
-	(void) w;
-	(void) call;
-	if (my nsamp == 0) return;
-	if (fsamp <= 0) fsamp = 48000.0;   /* Safe. */
-	sound = Sound_createSimple ((double) my nsamp / fsamp, fsamp);
-	if (Melder_hasError ()) { Melder_flushError ("You can still save to file."); return; }
-	for (i = 1; i <= my nsamp; i ++)
-		sound -> z [1] [i] = my buffer [i + i - 1] * (1.0 / 32768);
-	if (my rightName) {
-		char *name = XmTextFieldGetString (my rightName);
-		Thing_setName (sound, name);
-		XtFree (name);
-	}
-	if (my publishCallback)
-		my publishCallback (me, my publishClosure, sound);
-}
-
-static void cb_close (Widget w, XtPointer void_me, XtPointer call) {
+static void cb_cancel (Widget w, XtPointer void_me, XtPointer call) {
 	iam (SoundRecorder);
 	(void) w;
 	(void) call;
 	stopRecording (me);
+	forget (me);
+}
+
+static void cb_apply (Widget w, XtPointer void_me, XtPointer call) {
+	iam (SoundRecorder);
+	(void) w;
+	(void) call;
+	stopRecording (me);
+	publish (me);
+}
+
+static void cb_ok (Widget w, XtPointer void_me, XtPointer call) {
+	iam (SoundRecorder);
+	(void) w;
+	(void) call;
+	stopRecording (me);
+	publish (me);
 	forget (me);
 }
 
@@ -864,98 +957,104 @@ static int open_win (SoundRecorder me) {
 
 #ifdef macintosh
 static int open_mac (SoundRecorder me) {
-	unsigned long sampleRate_uf = theControlPanel. sampleRate * 65536L;
-	short numberOfChannels = my numberOfChannels, continuous = TRUE, sampleSize = 16, levelMeterOnOff = 1, async;
-	short inputSource = theControlPanel. inputSource, irate;
-	OSType compressionType = 'NONE';
-	struct { Handle dummy1; short dummy2, number; Handle handle; } sampleRateInfo;   /* Make sure that number is adjacent to handle. */
-	if (SPBOpenDevice (my hybridDeviceNames [inputSource], siWritePermission, & my refNum) != noErr)
-		Melder_flushError ("(Sound_record:) Cannot open audio input device.");
-	/*
-	 	From Apple:
-	 	"Get the range of sample rates this device can produce.
-	 	The infoData  parameter points to an integer, which is the number of sample rates the device supports, followed by a handle.
-	 	The handle references a list of sample rates, each of type Fixed .
-	 	If the device can record a range of sample rates, the number of sample rates is set to 0 and the handle contains two rates,
-	 	the minimum and the maximum of the range of sample rates.
-	 	Otherwise, a list is returned that contains the sample rates supported.
-	 	In order to accommodate sample rates greater than 32ÊkHz, the most significant bit is not treated as a sign bit;
-	 	instead, that bit is interpreted as having the value 32,768."
-	 */
-	SPBGetDeviceInfo (my refNum, siSampleRateAvailable, & sampleRateInfo. number);
-	if (sampleRateInfo. number == 0) {
-	} else {
-		my can8000 = FALSE;
-		my can11025 = FALSE;
-		my can12000 = FALSE;
-		my can16000 = FALSE;
-		my can22050 = FALSE;
-		my can24000 = FALSE;
-		my can32000 = FALSE;
-		my can44100 = FALSE;
-		my can48000 = FALSE;
-		my can64000 = FALSE;
-		for (irate = 1; irate <= sampleRateInfo. number; irate ++) {
-			Fixed rate_fixed = (* (Fixed **) sampleRateInfo. handle) [irate - 1];
-			unsigned short rate_ushort = * (unsigned short *) & rate_fixed;
-			switch (rate_ushort) {
-				case 0: my can44100 = TRUE, my can48000 = TRUE; break;   /* BUG */
-				case 8000: my can8000 = TRUE; break;
-				case 11025: my can11025 = TRUE; break;
-				case 12000: my can12000 = TRUE; break;
-				case 16000: my can16000 = TRUE; break;
-				case 22050: my can22050 = TRUE; break;
-				case 22254: my can22254 = TRUE; break;
-				case 24000: my can24000 = TRUE; break;
-				case 32000: my can32000 = TRUE; break;
-				case 44100: my can44100 = TRUE; break;
-				case 48000: my can48000 = TRUE; break;
-				case 64000: my can64000 = TRUE; break;
-				default: Melder_warning ("Your computer seems to support a sampling frequency of %d Hz. "
-					"Contact the author (paul.boersma@uva.nl) to make this frequency available to you.", rate_ushort);
+	#if USE_PORTAUDIO
+		my fsamp [SoundRecorder_IFSAMP_8000]. canDo = false;
+		my fsamp [SoundRecorder_IFSAMP_11025]. canDo = false;
+		my fsamp [SoundRecorder_IFSAMP_12000]. canDo = false;
+		my fsamp [SoundRecorder_IFSAMP_16000]. canDo = false;
+		my fsamp [SoundRecorder_IFSAMP_22050]. canDo = false;
+		my fsamp [SoundRecorder_IFSAMP_24000]. canDo = false;
+		my fsamp [SoundRecorder_IFSAMP_32000]. canDo = false;
+		my fsamp [SoundRecorder_IFSAMP_64000]. canDo = false;
+	#else
+		unsigned long sampleRate_uf = theControlPanel. sampleRate * 65536L;
+		short numberOfChannels = my numberOfChannels, continuous = TRUE, sampleSize = 16, async;
+		char levelMeterOnOff = 1;
+		short inputSource = theControlPanel. inputSource, irate;
+		OSType compressionType = 'NONE';
+		struct { Handle dummy1; short dummy2, number; Handle handle; } sampleRateInfo;   /* Make sure that number is adjacent to handle. */
+		if (SPBOpenDevice (my hybridDeviceNames [inputSource], siWritePermission, & my refNum) != noErr)
+			Melder_flushError ("(Sound_record:) Cannot open audio input device.");
+		/*
+			From Apple:
+			"Get the range of sample rates this device can produce.
+			The infoData  parameter points to an integer, which is the number of sample rates the device supports, followed by a handle.
+			The handle references a list of sample rates, each of type Fixed .
+			If the device can record a range of sample rates, the number of sample rates is set to 0 and the handle contains two rates,
+			the minimum and the maximum of the range of sample rates.
+			Otherwise, a list is returned that contains the sample rates supported.
+			In order to accommodate sample rates greater than 32 kHz, the most significant bit is not treated as a sign bit;
+			instead, that bit is interpreted as having the value 32,768."
+		 */
+		SPBGetDeviceInfo (my refNum, siSampleRateAvailable, & sampleRateInfo. number);
+		if (sampleRateInfo. number == 0) {
+		} else {
+			for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
+				my fsamp [i]. canDo = false;
+			}
+			for (irate = 1; irate <= sampleRateInfo. number; irate ++) {
+				Fixed rate_fixed = (* (Fixed **) sampleRateInfo. handle) [irate - 1];
+				unsigned short rate_ushort = * (unsigned short *) & rate_fixed;
+				switch (rate_ushort) {
+					case 0: my fsamp [SoundRecorder_IFSAMP_44100]. canDo = true,
+					        my fsamp [SoundRecorder_IFSAMP_48000]. canDo = true; break;   /* BUG */
+					case 8000: my fsamp [SoundRecorder_IFSAMP_8000]. canDo = true; break;
+					case 11025: my fsamp [SoundRecorder_IFSAMP_11025]. canDo = true; break;
+					case 12000: my fsamp [SoundRecorder_IFSAMP_12000]. canDo = true; break;
+					case 16000: my fsamp [SoundRecorder_IFSAMP_16000]. canDo = true; break;
+					case 22050: my fsamp [SoundRecorder_IFSAMP_22050]. canDo = true; break;
+					case 22254: my fsamp [SoundRecorder_IFSAMP_22254]. canDo = true; break;
+					case 24000: my fsamp [SoundRecorder_IFSAMP_24000]. canDo = true; break;
+					case 32000: my fsamp [SoundRecorder_IFSAMP_32000]. canDo = true; break;
+					case 44100: my fsamp [SoundRecorder_IFSAMP_44100]. canDo = true; break;
+					case 48000: my fsamp [SoundRecorder_IFSAMP_48000]. canDo = true; break;
+					case 64000: my fsamp [SoundRecorder_IFSAMP_64000]. canDo = true; break;
+					default: Melder_warning ("Your computer seems to support a sampling frequency of %d Hz. "
+						"Contact the author (paul.boersma@uva.nl) to make this frequency available to you.", rate_ushort);
+				}
 			}
 		}
-	}
-	if (SPBSetDeviceInfo (my refNum, siInputSource, & my macSource [inputSource]) != noErr)
-		Melder_flushError ("(Sound_record:) Cannot change input source.");
-	/*if (SPBOpenDevice (NULL, siWritePermission, & my refNum) != noErr)
-		return Melder_error ("Cannot open audio input device.");*/
-	if (SPBSetDeviceInfo (my refNum, siSampleRate, & sampleRate_uf) != noErr) {
-		Melder_flushError ("Cannot set sampling frequency to %.5f Hz.", theControlPanel. sampleRate);
-		theControlPanel. sampleRate = 44100;
-	}
-	if (SPBSetDeviceInfo (my refNum, siNumberChannels, & numberOfChannels) != noErr) {
-		if (my numberOfChannels == 1) {
-			my fakeMono = TRUE;
-		} else {
-			return Melder_error ("(Sound_record:) Cannot set to stereo.");
+		if (SPBSetDeviceInfo (my refNum, siInputSource, & my macSource [inputSource]) != noErr)
+			Melder_flushError ("(Sound_record:) Cannot change input source.");
+		/*if (SPBOpenDevice (NULL, siWritePermission, & my refNum) != noErr)
+			return Melder_error ("Cannot open audio input device.");*/
+		if (SPBSetDeviceInfo (my refNum, siSampleRate, & sampleRate_uf) != noErr) {
+			Melder_flushError ("Cannot set sampling frequency to %.5f Hz.", theControlPanel. sampleRate);
+			theControlPanel. sampleRate = 44100;
 		}
-	}
-	if (SPBSetDeviceInfo (my refNum, siCompressionType, & compressionType) != noErr)
-		return Melder_error ("(Sound_record:) Cannot set to linear.");
-	if (SPBSetDeviceInfo (my refNum, siSampleSize, & sampleSize) != noErr)
-		return Melder_error ("(Sound_record:) Cannot set to %d-bit.", sampleSize);
-	if (SPBSetDeviceInfo (my refNum, siLevelMeterOnOff, & levelMeterOnOff) != noErr)
-		return Melder_error ("(Sound_record:) Cannot set level meter to ON.");
-	if (! my synchronous && (SPBGetDeviceInfo (my refNum, siAsync, & async) != noErr || ! async)) {
-		static int warned = FALSE;
-		my synchronous = TRUE;
-		if (! warned) { Melder_warning ("Recording must and will be synchronous on this machine."); warned = TRUE; }
-	}
-	if (my synchronous && SPBSetDeviceInfo (my refNum, siContinuous, & continuous) != noErr)
-		return Melder_error ("(Sound_record:) Cannot set continuous recording.");
-	my spb. inRefNum = my refNum;
-	if (! my synchronous) {
-		OSErr err;
-		if (my recording) {
-			my spb. bufferPtr = (char *) my buffer;
-			my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
-		} else {
-			my spb. bufferPtr = NULL;
+		if (SPBSetDeviceInfo (my refNum, siNumberChannels, & numberOfChannels) != noErr) {
+			if (my numberOfChannels == 1) {
+				my fakeMono = TRUE;
+			} else {
+				return Melder_error ("(Sound_record:) Cannot set to stereo.");
+			}
 		}
-		err = SPBRecord (& my spb, true);
-		if (err != noErr) { onceError ("SPBRecord", err); return 1; }
-	}
+		if (SPBSetDeviceInfo (my refNum, siCompressionType, & compressionType) != noErr)
+			return Melder_error ("(Sound_record:) Cannot set to linear.");
+		if (SPBSetDeviceInfo (my refNum, siSampleSize, & sampleSize) != noErr)
+			return Melder_error ("(Sound_record:) Cannot set to %d-bit.", sampleSize);
+		if (SPBSetDeviceInfo (my refNum, siLevelMeterOnOff, & levelMeterOnOff) != noErr)
+			return Melder_error ("(Sound_record:) Cannot set level meter to ON.");
+		if (! my synchronous && (SPBGetDeviceInfo (my refNum, siAsync, & async) != noErr || ! async)) {
+			static int warned = FALSE;
+			my synchronous = TRUE;
+			if (! warned) { Melder_warning ("Recording must and will be synchronous on this machine."); warned = TRUE; }
+		}
+		if (my synchronous && SPBSetDeviceInfo (my refNum, siContinuous, & continuous) != noErr)
+			return Melder_error ("(Sound_record:) Cannot set continuous recording.");
+		my spb. inRefNum = my refNum;
+		if (! my synchronous) {
+			OSErr err;
+			if (my recording) {
+				my spb. bufferPtr = (char *) my buffer;
+				my spb. bufferLength = my spb. count = my nmax * (sizeof (short) * my numberOfChannels);
+			} else {
+				my spb. bufferPtr = NULL;
+			}
+			err = SPBRecord (& my spb, true);
+			if (err != noErr) { onceError ("SPBRecord", err); return 1; }
+		}
+	#endif
 	return 1;
 }
 #endif
@@ -1097,15 +1196,13 @@ static int open_linux (SoundRecorder me) {
 
 static void cb_input (Widget w, XtPointer void_me, XtPointer call) {
 	iam (SoundRecorder);
-	theControlPanel. inputSource =
-		w == my microphoneButton ? 1 :
-		w == my lineButton ? 2 :
-		w == my digitalButton ? 3 :
-		w == my in4Button ? 4 :
-		w == my in5Button ? 5 :
-		w == my in6Button ? 6 :
-		w == my in7Button ? 7 :
-		w == my in8Button ? 8 : 1;
+	theControlPanel. inputSource = 1;   // Default.
+	Melder_assert (w != NULL);
+	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
+		if (w == my device [i]. button) {
+			theControlPanel. inputSource = i;
+		}
+	}
 	(void) call;
 
 	/* Set system's input source. */
@@ -1116,12 +1213,11 @@ static void cb_input (Widget w, XtPointer void_me, XtPointer call) {
 			theControlPanel. inputSource == 2 ? AL_INPUT_LINE : AL_INPUT_DIGITAL;
 		ALsetparams (AL_DEFAULT_DEVICE, my info, 2);
 	#elif defined (macintosh)
-	{
-		SPBCloseDevice (my refNum);
-		strcpy (macDefaultDevice, (const char *) & my hybridDeviceNames [theControlPanel. inputSource] [1]);
-		strcpy (macDefaultSource, (const char *) & my macSourceTitle [theControlPanel. inputSource] [0]);
-		if (! open_mac (me)) Melder_flushError (NULL);
-	}
+		#if USE_PORTAUDIO
+		#else
+			SPBCloseDevice (my refNum);
+			if (! open_mac (me)) Melder_flushError (NULL);
+		#endif
 	#elif defined (sun)
 		AUDIO_INITINFO (& my info);
 		my info. record. port =
@@ -1131,34 +1227,25 @@ static void cb_input (Widget w, XtPointer void_me, XtPointer call) {
 		ioctl (my fd, AUDIO_SET_INPUT,
 			theControlPanel. inputSource == 1 ? AUDIO_IN_MIKE : AUDIO_IN_LINE);
 	#elif defined (linux)
-	{
-		int dev_mask, fd_mixer = open ("/dev/mixer", O_WRONLY);		
+		int fd_mixer = open ("/dev/mixer", O_WRONLY);		
 		if (fd_mixer == -1) {
 			Melder_flushError ("(Sound_record:) Cannot open /dev/mixer.");
 		}
-		dev_mask = theControlPanel.inputSource == 2 ? SOUND_MASK_LINE : SOUND_MASK_MIC;
+		int dev_mask = theControlPanel.inputSource == 2 ? SOUND_MASK_LINE : SOUND_MASK_MIC;
 		if (ioctl (fd_mixer, SOUND_MIXER_WRITE_RECSRC, & dev_mask) == -1)
 			Melder_flushError ("(Sound_record:) Can't set recording device in mixer");		
-		close(fd_mixer);
-	}
+		close (fd_mixer);
 	#endif
 }
 
 static void cb_fsamp (Widget w, XtPointer void_me, XtPointer call) {
 	iam (SoundRecorder);
-	double fsamp =
-		w == my button8000 ? 8000 :
-		w == my button9800 ? 9800 :
-		w == my button11025 ? 11025 :
-		w == my button12000 ? 12000 :
-		w == my button16000 ? 16000 :
-		w == my button22050 ? 22050 :
-		w == my button22254 ? 22254.54545 :
-		w == my button24000 ? 24000 :
-		w == my button32000 ? 32000 :
-		w == my button44100 ? 44100 :
-		w == my button48000 ? 48000 :
-		/* w == my button64000 */ 64000;
+	if (my recording) return;
+	double fsamp = NUMundefined;
+	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++)
+		if (w == my fsamp [i]. button)
+			fsamp = my fsamp [i]. fsamp;
+	Melder_assert (NUMdefined (fsamp));
 	(void) call;
 	/*
 	 * If we push the 48000 button while the sampling frequency is 22050,
@@ -1177,11 +1264,12 @@ static void cb_fsamp (Widget w, XtPointer void_me, XtPointer call) {
 	 * On some systems, we cannot do this without closing the audio device,
 	 * and reopening it with a new sampling frequency.
 	 */
-	#if defined (sgi)
+	#if USE_PORTAUDIO || defined (_WIN32)
+	    // Deferred to the start of recording.
+	#elif defined (sgi)
 		my info [0] = AL_INPUT_RATE;
 		my info [1] = (int) theControlPanel. sampleRate;
 		ALsetparams (AL_DEFAULT_DEVICE, my info, 2);
-	#elif defined (_WIN32)
 	#elif defined (macintosh)
 		SPBCloseDevice (my refNum);
 		if (! open_mac (me)) Melder_flushError (NULL);
@@ -1203,91 +1291,93 @@ end:
 #endif
 }
 
+MOTIF_CALLBACK (cb_resize)
+	iam (SoundRecorder);
+	Dimension width, height, marginWidth = 10, marginHeight = 10;
+	XtVaGetValues (w, XmNwidth, & width, XmNheight, & height,
+		XmNmarginWidth, & marginWidth, XmNmarginHeight, & marginHeight, NULL);
+	Graphics_setWsViewport (my graphics, marginWidth, width - marginWidth, marginHeight, height - marginHeight);
+	width = width - marginWidth - marginWidth;
+	height = height - marginHeight - marginHeight;
+	Graphics_setWsWindow (my graphics, 0, width, 0, height);
+	Graphics_setViewport (my graphics, 0, width, 0, height);
+	Graphics_updateWs (my graphics);
+MOTIF_CALLBACK_END
+
 static void createChildren (I) {
 	iam (SoundRecorder);
-	Widget column, row, rcInput, rcMeter, rcMeters, rcRate, rcLeft, rcRight;
-	Widget fsamp, form;
-	#ifndef _WIN32
-		Widget input;
-	#endif
+	Widget form = XmCreateForm (my dialog, "form", NULL, 0);
+	XtVaSetValues (form,
+		XmNleftAttachment, XmATTACH_FORM, XmNrightAttachment, XmATTACH_FORM,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, Machine_getMenuBarHeight (),
+		XmNbottomAttachment, XmATTACH_FORM,
+		XmNtraversalOn, False,   /* Needed in order to redirect all keyboard input to the text widget. */
+		NULL);
 
-	column = XmCreateRowColumn (my dialog, "column", NULL, 0);
-	XtVaSetValues (column, XmNorientation, XmVERTICAL, XmNspacing, 5, XmNy, Machine_getMenuBarHeight (), NULL);
+	XtVaCreateManagedWidget ("Channels:", xmLabelWidgetClass, form,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 20,
+		NULL);
+	Widget channels = XmCreateRadioBox (form, "channels", NULL, 0);
+	XtVaSetValues (channels,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
+		XmNwidth, 150,
+		NULL);
+	my monoButton = XmCreateToggleButton (channels, "Mono", NULL, 0);
+	XtManageChild (my monoButton);
+	my stereoButton = XmCreateToggleButton (channels, "Stereo", NULL, 0);
+	XtManageChild (my stereoButton);
+	XtManageChild (channels);
 
-	row = XmCreateRowColumn (column, "row", NULL, 0);
-	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 22, NULL);
-
-	rcInput = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaCreateManagedWidget ("Input source:", xmLabelWidgetClass, rcInput, XmNy, 30, NULL);
-	#if defined (_WIN32)
-		XtVaCreateManagedWidget ("(use Windows mixer", xmLabelWidgetClass, rcInput, XmNy, 60, NULL);
-		XtVaCreateManagedWidget ("   without meters)", xmLabelWidgetClass, rcInput, XmNy, 85, NULL);
-	#else
-		input = XmCreateRadioBox (rcInput, "input", NULL, 0);
-		XtVaSetValues (input, XmNy, 55, NULL);
-		#ifdef macintosh
-			if (my numberOfMacSources >= 1)
-				my microphoneButton = XmCreateToggleButton (input, my macSourceTitle [1], NULL, 0);
-			else
-				my microphoneButton = XmCreateToggleButton (input, "Built-in", NULL, 0);
-			if (my numberOfMacSources >= 2)
-				my lineButton = XmCreateToggleButton (input, my macSourceTitle [2], NULL, 0);
-			if (my numberOfMacSources >= 3)
-				my digitalButton = XmCreateToggleButton (input, my macSourceTitle [3], NULL, 0);
-			if (my numberOfMacSources >= 4)
-				my in4Button = XmCreateToggleButton (input, my macSourceTitle [4], NULL, 0);
-			if (my numberOfMacSources >= 5)
-				my in5Button = XmCreateToggleButton (input, my macSourceTitle [5], NULL, 0);
-			if (my numberOfMacSources >= 6)
-				my in6Button = XmCreateToggleButton (input, my macSourceTitle [6], NULL, 0);
-			if (my numberOfMacSources >= 7)
-				my in7Button = XmCreateToggleButton (input, my macSourceTitle [7], NULL, 0);
-			if (my numberOfMacSources >= 8)
-				my in8Button = XmCreateToggleButton (input, my macSourceTitle [8], NULL, 0);
-		#else
-			my microphoneButton = XmCreateToggleButton (input, "microphone", NULL, 0);
-			my lineButton = XmCreateToggleButton (input, "line", NULL, 0);
-			#if defined (sgi)
-				my digitalButton = XmCreateToggleButton (input, "digital", NULL, 0);
-			#endif
-		#endif
-		if (my microphoneButton) XtAddCallback (my microphoneButton, XmNvalueChangedCallback, cb_input, me);
-		if (my microphoneButton) XtManageChild (my microphoneButton);
-		if (my lineButton) XtAddCallback (my lineButton, XmNvalueChangedCallback, cb_input, me);
-		if (my lineButton) XtManageChild (my lineButton);
-		if (my digitalButton) XtAddCallback (my digitalButton, XmNvalueChangedCallback, cb_input, me);
-		if (my digitalButton) XtManageChild (my digitalButton);
-		if (my in4Button) XtAddCallback (my in4Button, XmNvalueChangedCallback, cb_input, me);
-		if (my in4Button) XtManageChild (my in4Button);
-		if (my in5Button) XtAddCallback (my in5Button, XmNvalueChangedCallback, cb_input, me);
-		if (my in5Button) XtManageChild (my in5Button);
-		if (my in6Button) XtAddCallback (my in6Button, XmNvalueChangedCallback, cb_input, me);
-		if (my in6Button) XtManageChild (my in6Button);
-		if (my in7Button) XtAddCallback (my in7Button, XmNvalueChangedCallback, cb_input, me);
-		if (my in7Button) XtManageChild (my in7Button);
-		if (my in8Button) XtAddCallback (my in8Button, XmNvalueChangedCallback, cb_input, me);
-		if (my in8Button) XtManageChild (my in8Button);
-		XtManageChild (input);
-	#endif
-	XtManageChild (rcInput);
-
-	rcMeter = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaCreateManagedWidget ("Meter", xmLabelWidgetClass, rcMeter, NULL);
-	rcMeters = XmCreateRowColumn (rcMeter, "rc", NULL, 0);
-	XtVaSetValues (rcMeters, XmNorientation, XmHORIZONTAL, XmNspacing, 12, NULL);
-	my leftMeter = XmCreateDrawingArea (rcMeters, "meter", NULL, 0);
-	XtVaSetValues (my leftMeter, XmNheight, 150, XmNy, 25, XmNwidth, 12, XmNborderWidth, 1, NULL);
-	XtManageChild (my leftMeter);
-	if (my numberOfChannels == 2) {
-		my rightMeter = XmCreateDrawingArea (rcMeters, "meter", NULL, 0);
-		XtVaSetValues (my rightMeter, XmNheight, 150, XmNy, 25, XmNwidth, 12, XmNborderWidth, 1, NULL);
-		XtManageChild (my rightMeter);
+	long y = 110, dy = 25;
+	XtVaCreateManagedWidget ("Input source:", xmLabelWidgetClass, form,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y,
+		NULL);
+	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
+		if (my device [i]. canDo) {
+			y += dy;
+			my device [i]. button = XtVaCreateManagedWidget (my device [i]. name, 
+			xmToggleButtonWidgetClass, form, XmNindicatorType, XmONE_OF_MANY,
+			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
+			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y,
+			NULL);
+		}
 	}
-	XtManageChild (rcMeters);
-	XtManageChild (rcMeter);
+	#if defined (_WIN32)
+		XtVaCreateManagedWidget ("(use Windows mixer", xmLabelWidgetClass, form,
+			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
+			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y,
+			NULL);
+		XtVaCreateManagedWidget ("   without meters)", xmLabelWidgetClass, form,
+			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
+			XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, y + dy,
+			NULL);
+	#endif
+	for (long i = 1; i <= SoundRecorder_IDEVICE_MAX; i ++) {
+		if (my device [i]. button) {
+			XtAddCallback (my device [i]. button, XmNvalueChangedCallback, cb_input, me);
+			XtManageChild (my device [i]. button);
+		}
+	}
 
-	#if defined (UNIX)
-	{
+	XtVaCreateManagedWidget ("Meter", xmLabelWidgetClass, form,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 170,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 20,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 170,
+		XmNalignment, XmALIGNMENT_CENTER,
+		NULL);
+	my meter = XmCreateDrawingArea (form, "meter", NULL, 0);
+	XtVaSetValues (my meter,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 170,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 170,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 150,
+		XmNborderWidth, 1, NULL);
+	XtManageChild (my meter);
+
+	#if defined (UNIX) && 0
 		Widget rcG, rcGain, rcGains;
 		rcG = XmCreateRowColumn (row, "rcG", NULL, 0);
 		rcGain = XmCreateRowColumn (rcG, "rcGain", NULL, 0);
@@ -1323,336 +1413,171 @@ static void createChildren (I) {
 		}
 		XtManageChild (rcGain);
 		XtManageChild (rcG);
-	}
 	#endif
 
-	rcRate = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaCreateManagedWidget ("Sampling frequency:", xmLabelWidgetClass, rcRate, NULL);
-	fsamp = XmCreateRadioBox (rcRate, "fsamp", NULL, 0);
-	XtVaSetValues (fsamp, XmNy, 25, NULL);
-	if (my can8000) {
-		my button8000 = XmCreateToggleButton (fsamp, "8000", NULL, 0);
-		XtAddCallback (my button8000, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button8000);
+	XtVaCreateManagedWidget ("Sampling frequency:", xmLabelWidgetClass, form,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 10,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 20,
+		XmNwidth, 150,
+		NULL);
+	Widget fsampBox = XmCreateRadioBox (form, "fsamp", NULL, 0);
+	XtVaSetValues (fsampBox,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 10,
+		XmNtopAttachment, XmATTACH_FORM, XmNtopOffset, 45,
+		XmNwidth, 150,
+		NULL);
+	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) {
+		if (my fsamp [i]. canDo) {
+			double fsamp = my fsamp [i]. fsamp;
+			char title [40];
+			sprintf (title, "%s Hz", fsamp == floor (fsamp) ? Melder_integer ((long) fsamp) : Melder_fixed (fsamp, 5));
+			my fsamp [i]. button = XmCreateToggleButton (fsampBox, title, NULL, 0);
+			XtAddCallback (my fsamp [i]. button, XmNvalueChangedCallback, cb_fsamp, me);
+			XtManageChild (my fsamp [i]. button);
+		}
 	}
-	if (my can9800) {
-		my button9800 = XmCreateToggleButton (fsamp, "9800", NULL, 0);
-		XtAddCallback (my button9800, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button9800);
-	}
-	if (my can11025) {
-		my button11025 = XmCreateToggleButton (fsamp, "11025", NULL, 0);
-		XtAddCallback (my button11025, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button11025);
-	}
-	if (my can12000) {
-		my button12000 = XmCreateToggleButton (fsamp, "12000", NULL, 0);
-		XtAddCallback (my button12000, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button12000);
-	}
-	if (my can16000) {
-		my button16000 = XmCreateToggleButton (fsamp, "16000", NULL, 0);
-		XtAddCallback (my button16000, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button16000);
-	}
-	if (my can22050) {
-		my button22050 = XmCreateToggleButton (fsamp, "22050", NULL, 0);
-		XtAddCallback (my button22050, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button22050);
-	}
-	if (my can22254) {
-		my button22254 = XmCreateToggleButton (fsamp, "22254.54545", NULL, 0);
-		XtAddCallback (my button22254, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button22254);
-	}
-	if (my can24000) {
-		my button24000 = XmCreateToggleButton (fsamp, "24000", NULL, 0);
-		XtAddCallback (my button24000, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button24000);
-	}
-	if (my can32000) {
-		my button32000 = XmCreateToggleButton (fsamp, "32000", NULL, 0);
-		XtAddCallback (my button32000, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button32000);
-	}
-	if (my can44100) {
-		my button44100 = XmCreateToggleButton (fsamp, "44100", NULL, 0);
-		XtAddCallback (my button44100, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button44100);
-	}
-	if (my can48000) {
-		my button48000 = XmCreateToggleButton (fsamp, "48000", NULL, 0);
-		XtAddCallback (my button48000, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button48000);
-	}
-	if (my can64000) {
-		my button64000 = XmCreateToggleButton (fsamp, "64000", NULL, 0);
-		XtAddCallback (my button64000, XmNvalueChangedCallback, cb_fsamp, me);
-		XtManageChild (my button64000);
-	}
-	XtManageChild (fsamp);
-	XtManageChild (rcRate);
+	XtManageChild (fsampBox);
 
-	XtManageChild (row);
-
-	my progressScale = XmCreateScale (column, "scale", NULL, 0);
+	my progressScale = XmCreateScale (form, "scale", NULL, 0);
 	XtVaSetValues (my progressScale, XmNorientation, XmHORIZONTAL,
 		XmNminimum, 0, XmNmaximum, 1000,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 10,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, 90,
+		XmNwidth, 250,
 		#ifdef macintosh
 			XmNscaleWidth, 340,
 		#endif
 		NULL);
 	XtManageChild (my progressScale);
 
-	form = XmCreateForm (column, "form", NULL, 0);
-
-	row = XmCreateRowColumn (form, "row", NULL, 0);
-	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 20, NULL);
-
-	my recordButton = XmCreatePushButton (row, "Record", NULL, 0);
+	y = 60;
+	my recordButton = XmCreatePushButton (form, "Record", NULL, 0);
 	XtAddCallback (my recordButton, XmNactivateCallback, cb_record, (XtPointer) me);
-	#ifdef macintosh
-		XtVaSetValues (my recordButton, XmNx, 4, NULL);
-	#endif
+	XtVaSetValues (my recordButton,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 20,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+		XmNwidth, 70,
+		NULL);
 	XtManageChild (my recordButton);
-	my stopButton = XmCreatePushButton (row, "Stop", NULL, 0);
+	my stopButton = XmCreatePushButton (form, "Stop", NULL, 0);
 	XtAddCallback (my stopButton, XmNactivateCallback, cb_stop, (XtPointer) me);
-	#ifdef macintosh
-		XtVaSetValues (my stopButton, XmNx, 80, NULL);
-	#endif
+	XtVaSetValues (my stopButton,
+		XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 100,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+		XmNwidth, 70,
+		NULL);
 	XtManageChild (my stopButton);
 	#if defined (sgi) || defined (_WIN32) || defined (macintosh)
-		my playButton = XmCreatePushButton (row, "Play", NULL, 0);
+		my playButton = XmCreatePushButton (form, "Play", NULL, 0);
 		XtAddCallback (my playButton, XmNactivateCallback, cb_play, (XtPointer) me);
-		#ifdef macintosh
-			XtVaSetValues (my playButton, XmNx, 140, NULL);
-		#endif
+		XtVaSetValues (my playButton,
+			XmNleftAttachment, XmATTACH_FORM, XmNleftOffset, 180,
+			XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+			XmNwidth, 70,
+			NULL);
 		XtManageChild (my playButton);
 	#endif
-
-	my closeButton = XmCreatePushButton (form, "Close", NULL, 0);
-	XtAddCallback (my closeButton, XmNactivateCallback, cb_close, (XtPointer) me);
-	XtVaSetValues (my closeButton, XmNrightAttachment, XmATTACH_FORM, XmNrightOffset,
-		#ifdef macintosh
-			6,
+	XtVaCreateManagedWidget ("Name:", xmLabelWidgetClass, form,
+		XmNrightAttachment, XmATTACH_FORM,
+		#if defined (macintosh)
+			XmNrightOffset, 100,
 		#else
-			0,
+			XmNrightOffset, 130,
 		#endif
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+		XmNalignment, XmALIGNMENT_END,
 		NULL);
-	XtManageChild (my closeButton);
+	my soundName = XtVaCreateManagedWidget ("name", xmTextFieldWidgetClass, form, XmNcolumns, 10,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 20,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+		NULL);
+	XtAddCallback (my soundName, XmNactivateCallback, cb_apply, (XtPointer) me);
+	XmTextFieldSetString (my soundName, "untitled");
 
-	XtManageChild (row);
+	y = 20;
+
+	my cancelButton = XmCreatePushButton (form, "Close", NULL, 0);
+	XtAddCallback (my cancelButton, XmNactivateCallback, cb_cancel, (XtPointer) me);
+	XtVaSetValues (my cancelButton,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 280,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+		XmNwidth, 70,
+		NULL);
+	XtManageChild (my cancelButton);
+
+	my applyButton = XmCreatePushButton (form, "Save to list", NULL, 0);
+	XtAddCallback (my applyButton, XmNactivateCallback, cb_apply, (XtPointer) me);
+	XtVaSetValues (my applyButton,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 170,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+		XmNwidth, 100,
+		NULL);
+	XtManageChild (my applyButton);
+
+	my okButton = XmCreatePushButton (form, "Save to list & Close", NULL, 0);
+	XtAddCallback (my okButton, XmNactivateCallback, cb_ok, (XtPointer) me);
+	XtVaSetValues (my okButton,
+		XmNrightAttachment, XmATTACH_FORM, XmNrightOffset, 20,
+		XmNbottomAttachment, XmATTACH_FORM, XmNbottomOffset, y,
+		XmNwidth, 140,
+		NULL);
+	XtManageChild (my okButton);
+
 	XtManageChild (form);
-
-	XtManageChild (XmCreateSeparator (column, "sep", NULL, 0));
-
-	row = XmCreateRowColumn (column, "row", NULL, 0);
-	XtVaSetValues (row, XmNorientation, XmHORIZONTAL, XmNspacing, 20, NULL);
-
-	rcLeft = XmCreateRowColumn (row, "rc", NULL, 0);
-	XtVaSetValues (rcLeft, XmNorientation, XmVERTICAL, NULL);
-	my publishLeftButton = XmCreatePushButton (rcLeft,
-		my numberOfChannels == 1 ? "Save to list:" : "Save left channel to list:", NULL, 0);
-	XtAddCallback (my publishLeftButton, XmNactivateCallback, cb_publishLeft, (XtPointer) me);
-	XtManageChild (my publishLeftButton);
-	my leftName = XtVaCreateManagedWidget ("left", xmTextFieldWidgetClass, rcLeft, XmNcolumns, 10, XmNx, 20,
-		#ifdef macintosh
-			#if TARGET_API_MAC_CARBON
-				XmNy, 32,
-			#endif
-		#endif
-		NULL);
-	XtAddCallback (my leftName, XmNactivateCallback, cb_publishLeft, (XtPointer) me);
-	XmTextFieldSetString (my leftName, my numberOfChannels == 1 ? "sound" : "left");
-	XtManageChild (rcLeft);
-
-	if (my numberOfChannels == 2) {
-		rcRight = XmCreateRowColumn (row, "rc", NULL, 0);
-		XtVaSetValues (rcRight, XmNorientation, XmVERTICAL, NULL);
-		my publishRightButton = XmCreatePushButton (rcRight, "Save right channel to list:", NULL, 0);
-		XtAddCallback (my publishRightButton, XmNactivateCallback, cb_publishRight, (XtPointer) me);
-		XtManageChild (my publishRightButton);
-		my rightName = XtVaCreateManagedWidget ("right", xmTextFieldWidgetClass, rcRight, XmNcolumns, 10, XmNx, 20,
-			#ifdef macintosh
-				#if TARGET_API_MAC_CARBON
-					XmNy, 32,
-				#endif
-			#endif
-			NULL);
-		XtAddCallback (my rightName, XmNactivateCallback, cb_publishRight, (XtPointer) me);
-		XmTextFieldSetString (my rightName, "right");
-		XtManageChild (rcRight);
-	}
-
-	XtManageChild (row);
-
-	XtManageChild (column);
 }
 
-static int writeAudioFile_mono (SoundRecorder me, MelderFile file, int audioFileType) {
-	long i, nsamp = my fakeMono ? my nsamp / 2 : my nsamp;
-	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
-	if (file -> filePointer) {
-		Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, theControlPanel. sampleRate, nsamp, 1);
-		if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
-			if (my fakeMono) {
-				for (i = 0; i < nsamp; i ++)
+static int writeAudioFile (SoundRecorder me, MelderFile file, int audioFileType) {
+	if (my fakeMono) {
+		long nsamp = my nsamp / 2;
+		MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
+		if (file -> filePointer) {
+			Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, theControlPanel. sampleRate, nsamp, 1);
+			if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
+				for (long i = 0; i < nsamp; i ++)
 					binputi2 ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
 			} else {
-				for (i = 0; i < nsamp; i ++)
-					binputi2 (my buffer [i], file -> filePointer);
-			}
-		} else {
-			if (my fakeMono) {
-				for (i = 0; i < nsamp; i ++)
+				for (long i = 0; i < nsamp; i ++)
 					binputi2LE ((my buffer [i + i - 2] + my buffer [i + i - 1]) / 2, file -> filePointer);
-			} else {
-				for (i = 0; i < nsamp; i ++)
-					binputi2LE (my buffer [i], file -> filePointer);
 			}
 		}
+		MelderFile_close (file);
+	} else {
+		MelderFile_writeAudioFile16 (file, audioFileType, my buffer, theControlPanel. sampleRate, my nsamp, my numberOfChannels);
 	}
-	MelderFile_close (file);
 	iferror return Melder_error ("Audio file not written.");
 	return 1;
 }
 
 FORM_WRITE (SoundRecorder, cb_writeWav, "Write to WAV file", 0)
-	char *name = XmTextFieldGetString (my leftName);
+	char *name = XmTextFieldGetString (my soundName);
 	sprintf (defaultName, "%s.wav", name);
 	XtFree (name);
 DO_WRITE
-	if (! writeAudioFile_mono (me, file, Melder_WAV)) return 0;
+	if (! writeAudioFile (me, file, Melder_WAV)) return 0;
 END
 
 FORM_WRITE (SoundRecorder, cb_writeAifc, "Write to AIFC file", 0)
-	char *name = XmTextFieldGetString (my leftName);
+	char *name = XmTextFieldGetString (my soundName);
 	sprintf (defaultName, "%s.aifc", name);
 	XtFree (name);
 DO_WRITE
-	if (! writeAudioFile_mono (me, file, Melder_AIFC)) return 0;
+	if (! writeAudioFile (me, file, Melder_AIFC)) return 0;
 END
 
 FORM_WRITE (SoundRecorder, cb_writeNextSun, "Write to NeXT/Sun file", 0)
-	char *name = XmTextFieldGetString (my leftName);
+	char *name = XmTextFieldGetString (my soundName);
 	sprintf (defaultName, "%s.au", name);
 	XtFree (name);
 DO_WRITE
-	if (! writeAudioFile_mono (me, file, Melder_NEXT_SUN)) return 0;
+	if (! writeAudioFile (me, file, Melder_NEXT_SUN)) return 0;
 END
 
 FORM_WRITE (SoundRecorder, cb_writeNist, "Write to NIST file", 0)
-	char *name = XmTextFieldGetString (my leftName);
+	char *name = XmTextFieldGetString (my soundName);
 	sprintf (defaultName, "%s.nist", name);
 	XtFree (name);
 DO_WRITE
-	if (! writeAudioFile_mono (me, file, Melder_NIST)) return 0;
-END
-
-static int writeAudioFile_oneChannel (SoundRecorder me, MelderFile file, int audioFileType, int channel /* 0 = left, 1 = right */) {
-	long i;
-	MelderFile_create (file, Melder_macAudioFileType (audioFileType), "PpgB", Melder_winAudioFileExtension (audioFileType));
-	if (file -> filePointer) {
-		Melder_writeAudioFileHeader16 (file -> filePointer, audioFileType, theControlPanel. sampleRate, my nsamp, 1);
-		if (Melder_defaultAudioFileEncoding16 (audioFileType) == Melder_LINEAR_16_BIG_ENDIAN) {
-			for (i = 0; i < my nsamp; i ++)
-				binputi2 (my buffer [i + i + channel], file -> filePointer);
-		} else {
-			for (i = 0; i < my nsamp; i ++)
-				binputi2LE (my buffer [i + i + channel], file -> filePointer);
-		}
-	}
-	MelderFile_close (file);
-	iferror return Melder_error ("Audio file not written.");
-	return 1;
-}
-
-FORM_WRITE (SoundRecorder, cb_writeLeftWav, "Write left to WAV file", 0)
-	char *name = XmTextFieldGetString (my leftName);
-	sprintf (defaultName, "%s.wav", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_WAV, 0)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeRightWav, "Write right to WAV file", 0)
-	char *name = XmTextFieldGetString (my rightName);
-	sprintf (defaultName, "%s.wav", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_WAV, 1)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeStereoWav, "Write to stereo WAV file", 0)
-	sprintf (defaultName, "stereo.wav");
-DO_WRITE
-	if (! MelderFile_writeAudioFile16 (file, Melder_WAV, my buffer, theControlPanel. sampleRate, my nsamp, 2)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeLeftAifc, "Write left to AIFC file", 0)
-	char *name = XmTextFieldGetString (my leftName);
-	sprintf (defaultName, "%s.aifc", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_AIFC, 0)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeRightAifc, "Write right to AIFC file", 0)
-	char *name = XmTextFieldGetString (my rightName);
-	sprintf (defaultName, "%s.aifc", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_AIFC, 1)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeStereoAifc, "Write to stereo AIFC file", 0)
-	sprintf (defaultName, "stereo.aifc");
-DO_WRITE
-	if (! MelderFile_writeAudioFile16 (file, Melder_AIFC, my buffer, theControlPanel. sampleRate, my nsamp, 2)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeLeftNextSun, "Write left to NeXT/Sun file", 0)
-	char *name = XmTextFieldGetString (my leftName);
-	sprintf (defaultName, "%s.au", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_NEXT_SUN, 0)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeRightNextSun, "Write right to NeXT/Sun file", 0)
-	char *name = XmTextFieldGetString (my rightName);
-	sprintf (defaultName, "%s.au", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_NEXT_SUN, 1)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeStereoNextSun, "Write to stereo NeXT/Sun file", 0)
-	sprintf (defaultName, "stereo.au");
-DO_WRITE
-	if (! MelderFile_writeAudioFile16 (file, Melder_NEXT_SUN, my buffer, theControlPanel. sampleRate, my nsamp, 2)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeLeftNist, "Write left to NIST file", 0)
-	char *name = XmTextFieldGetString (my leftName);
-	sprintf (defaultName, "%s.nist", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_NIST, 0)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeRightNist, "Write right to NIST file", 0)
-	char *name = XmTextFieldGetString (my rightName);
-	sprintf (defaultName, "%s.nist", name);
-	XtFree (name);
-DO_WRITE
-	if (! writeAudioFile_oneChannel (me, file, Melder_NIST, 1)) return 0;
-END
-
-FORM_WRITE (SoundRecorder, cb_writeStereoNist, "Write to stereo NIST file", 0)
-	sprintf (defaultName, "stereo.nist");
-DO_WRITE
-	if (! MelderFile_writeAudioFile16 (file, Melder_NIST, my buffer, theControlPanel. sampleRate, my nsamp, 2)) return 0;
+	if (! writeAudioFile (me, file, Melder_NIST)) return 0;
 END
 
 DIRECT (SoundRecorder, cb_SoundRecorder_help) Melder_help ("SoundRecorder"); END
@@ -1660,30 +1585,11 @@ DIRECT (SoundRecorder, cb_SoundRecorder_help) Melder_help ("SoundRecorder"); END
 static void createMenus (I) {
 	iam (SoundRecorder);
 	inherited (SoundRecorder) createMenus (me);
-	if (my numberOfChannels == 1) {
-		Editor_addCommand (me, "File", "Write to WAV file...", 0, cb_writeWav);
-		Editor_addCommand (me, "File", "Write to AIFC file...", 0, cb_writeAifc);
-		Editor_addCommand (me, "File", "Write to NeXT/Sun file...", 0, cb_writeNextSun);
-		Editor_addCommand (me, "File", "Write to NIST file...", 0, cb_writeNist);
-		Editor_addCommand (me, "File", "-- write --", 0, 0);
-	} else {
-		Editor_addCommand (me, "File", "Write left channel to WAV file...", 0, cb_writeLeftWav);
-		Editor_addCommand (me, "File", "Write right channel to WAV file...", 0, cb_writeRightWav);
-		Editor_addCommand (me, "File", "Write to stereo WAV file...", 0, cb_writeStereoWav);
-		Editor_addCommand (me, "File", "-- write wav --", 0, 0);
-		Editor_addCommand (me, "File", "Write left channel to AIFC file...", 0, cb_writeLeftAifc);
-		Editor_addCommand (me, "File", "Write right channel to AIFC file...", 0, cb_writeRightAifc);
-		Editor_addCommand (me, "File", "Write to stereo AIFC file...", 0, cb_writeStereoAifc);
-		Editor_addCommand (me, "File", "-- write aifc --", 0, 0);
-		Editor_addCommand (me, "File", "Write left channel to NeXT/Sun file...", 0, cb_writeLeftNextSun);
-		Editor_addCommand (me, "File", "Write right channel to NeXT/Sun file...", 0, cb_writeRightNextSun);
-		Editor_addCommand (me, "File", "Write to stereo NeXT/Sun file...", 0, cb_writeStereoNextSun);
-		Editor_addCommand (me, "File", "-- write next/sun --", 0, 0);
-		Editor_addCommand (me, "File", "Write left channel to NIST file...", 0, cb_writeLeftNist);
-		Editor_addCommand (me, "File", "Write right channel to NIST file...", 0, cb_writeRightNist);
-		Editor_addCommand (me, "File", "Write to stereo NIST file...", 0, cb_writeStereoNist);
-		Editor_addCommand (me, "File", "-- write nist --", 0, 0);
-	}
+	Editor_addCommand (me, "File", "Write to WAV file...", 0, cb_writeWav);
+	Editor_addCommand (me, "File", "Write to AIFC file...", 0, cb_writeAifc);
+	Editor_addCommand (me, "File", "Write to NeXT/Sun file...", 0, cb_writeNextSun);
+	Editor_addCommand (me, "File", "Write to NIST file...", 0, cb_writeNist);
+	Editor_addCommand (me, "File", "-- write --", 0, 0);
 	Editor_addCommand (me, "Help", "SoundRecorder help", '?', cb_SoundRecorder_help);
 }
 
@@ -1697,6 +1603,7 @@ class_methods_end
 
 SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppContext context) {
 	SoundRecorder me = new (SoundRecorder);
+
 	#if defined (_WIN32)
 		UINT numberOfDevices = waveInGetNumDevs (), i;
 		WAVEINCAPS caps;
@@ -1744,9 +1651,6 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	if (nmaxMB_pref < 1) nmaxMB_pref = 1;   /* Validate preferences. */
 	if (nmaxMB_pref > 1000) nmaxMB_pref = 1000;
 	if (my buffer == NULL) {
-		/*
-		 * Third try: application memory.
-		 */
 		long nmax_bytes_pref = nmaxMB_pref * 1000000;
 		long nmax_bytes =
 			#if defined (_WIN32)
@@ -1768,11 +1672,41 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	/*
 	 * Count the number of input devices and sources.
 	 */
-	#if defined (macintosh)
-	{
-		int idevice;
-		my numberOfMacSources = 0;
-		for (idevice = 1; idevice <= 8; idevice ++) {
+	#if USE_PORTAUDIO
+		static bool paInitialized = false;
+		if (! paInitialized) {
+			PaError err = Pa_Initialize ();
+			if (Melder_debug == 20) Melder_casual ("init %s", Pa_GetErrorText (err));
+			paInitialized = true;
+			if (Melder_debug == 20) {
+				PaHostApiIndex hostApiCount = Pa_GetHostApiCount ();
+				Melder_casual ("host API count %s", Melder_integer (hostApiCount));
+				for (PaHostApiIndex iHostApi = 0; iHostApi < hostApiCount; iHostApi ++) {
+					const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo (iHostApi);
+					PaHostApiTypeId type = hostApiInfo -> type;
+					Melder_casual ("host API %s: %s, \"%s\"", Melder_integer (iHostApi), Melder_integer (type), hostApiInfo -> name, Melder_integer (hostApiInfo -> deviceCount));
+				}
+				PaHostApiIndex defaultHostApi = Pa_GetDefaultHostApi ();
+				Melder_casual ("default host API %s", Melder_integer (defaultHostApi));
+				PaDeviceIndex deviceCount = Pa_GetDeviceCount ();
+				Melder_casual ("device count %s", Melder_integer (deviceCount));
+			}
+		}
+		PaDeviceIndex deviceCount = Pa_GetDeviceCount ();
+		for (PaDeviceIndex idevice = 0; idevice < deviceCount; idevice ++) {
+			const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (idevice);
+			if (Melder_debug == 20) Melder_casual ("Device \"%s\", input %d, output %d, sample rate %lf", deviceInfo -> name,
+				deviceInfo -> maxInputChannels, deviceInfo -> maxOutputChannels, deviceInfo -> defaultSampleRate);
+			if (deviceInfo -> maxInputChannels > 0 && my numberOfInputDevices < SoundRecorder_IDEVICE_MAX) {
+				my device [++ my numberOfInputDevices]. canDo = true;
+				strncpy (my device [my numberOfInputDevices]. name, deviceInfo -> name, 40);
+				my device [my numberOfInputDevices]. name [40] = '\0';
+				my deviceInfos [my numberOfInputDevices] = deviceInfo;
+				my deviceIndices [my numberOfInputDevices] = idevice;
+			}
+		}
+	#elif defined (macintosh)
+		for (long idevice = 1; idevice <= 8; idevice ++) {
 			Str255 hybridDeviceName;
 			OSErr err = SPBGetIndexedDevice (idevice, & hybridDeviceName [0], NULL);
 			if (err == siBadSoundInDevice) break;
@@ -1785,15 +1719,12 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 					/*HLock (handle);*/
 					plength = & data [2];
 					for (deviceSource = 1; deviceSource <= numberOfDeviceSources; deviceSource ++) {
-						my numberOfMacSources ++;
-						if (my numberOfMacSources > 8) break;
-						strcpy ((char *) my hybridDeviceNames [my numberOfMacSources], (const char *) hybridDeviceName);
-						my macSource [my numberOfMacSources] = deviceSource;
-						strncpy (my macSourceTitle [my numberOfMacSources], plength + 1, *plength);
-						my macSourceTitle [my numberOfMacSources] [*plength] = '\0';
-						if (strequ ((const char *) hybridDeviceName + 1, macDefaultDevice) &&
-								strequ (my macSourceTitle [my numberOfMacSources], macDefaultSource))
-							theControlPanel. inputSource = my numberOfMacSources;
+						if (my numberOfInputDevices == SoundRecorder_IDEVICE_MAX) break;
+						my device [++ my numberOfInputDevices]. canDo = true;
+						strcpy ((char *) my hybridDeviceNames [my numberOfInputDevices], (const char *) hybridDeviceName);
+						my macSource [my numberOfInputDevices] = deviceSource;
+						strncpy (my device [my numberOfInputDevices]. name, plength + 1, *plength < 40 ? *plength : 40);
+						my device [my numberOfInputDevices]. name [*plength < 40 ? *plength : 40] = '\0';
 						plength += *plength + 1;
 					}
 					DisposeHandle (handle);
@@ -1801,22 +1732,42 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 				SPBCloseDevice (my refNum);
 			}
 		}
-	}
+	#elif defined (_WIN32)
+		// No device info: use Windows mixer.
+	#else
+		my device [1]. canDo = true;
+		strcpy (my device [1]. name, "Microphone");
+		my device [2]. canDo = true;
+		strcpy (my device [2]. name, "Line");
+		#if defined (sgi)
+			my device [3]. canDo = true;
+			strcpy (my device [3]. name, "Digital");
+		#endif
 	#endif
+
+	/*
+	 * Sampling frequency constants.
+	 */
+	my fsamp [SoundRecorder_IFSAMP_8000]. fsamp = 8000.0;
+	my fsamp [SoundRecorder_IFSAMP_9800]. fsamp = 9800.0;
+	my fsamp [SoundRecorder_IFSAMP_11025]. fsamp = 11025.0;
+	my fsamp [SoundRecorder_IFSAMP_12000]. fsamp = 12000.0;
+	my fsamp [SoundRecorder_IFSAMP_16000]. fsamp = 16000.0;
+	my fsamp [SoundRecorder_IFSAMP_22050]. fsamp = 22050.0;
+	my fsamp [SoundRecorder_IFSAMP_22254]. fsamp = 22254.54545;
+	my fsamp [SoundRecorder_IFSAMP_24000]. fsamp = 24000.0;
+	my fsamp [SoundRecorder_IFSAMP_32000]. fsamp = 32000.0;
+	my fsamp [SoundRecorder_IFSAMP_44100]. fsamp = 44100.0;
+	my fsamp [SoundRecorder_IFSAMP_48000]. fsamp = 48000.0;
+	my fsamp [SoundRecorder_IFSAMP_64000]. fsamp = 64000.0;
+	my fsamp [SoundRecorder_IFSAMP_96000]. fsamp = 96000.0;
 
 	/*
 	 * The default set of possible sampling frequencies, to be modified in the open_xxx procedures.
 	 */
-	my can8000 = TRUE;
-	my can11025 = TRUE;
-	my can12000 = TRUE;
-	my can16000 = TRUE;
-	my can22050 = TRUE;
-	my can24000 = TRUE;
-	my can32000 = TRUE;
-	my can44100 = TRUE;
-	my can48000 = TRUE;
-	my can64000 = TRUE;
+	for (long i = 1; i <= SoundRecorder_IFSAMP_MAX; i ++) my fsamp [i]. canDo = true;   // optimistic: can do all, except two:
+	my fsamp [SoundRecorder_IFSAMP_9800]. canDo = false;   // sgi only
+	my fsamp [SoundRecorder_IFSAMP_22254]. canDo = false;   // old Mac only
 
 	/*
 	 * Initialize system-dependent structures.
@@ -1835,26 +1786,15 @@ SoundRecorder SoundRecorder_create (Widget parent, int numberOfChannels, XtAppCo
 	#elif defined (HPUX)
 		if (! open_hp (me)) goto error;
 	#elif defined (linux)
-		if (! open_linux (me)) goto error;		
+		if (! open_linux (me)) Melder_clearError (); //goto error;		
 	#endif
 
-#if defined (macintosh)
-	if (! Editor_init (me, parent, 100, 100, 350, 100, "SoundRecorder", NULL)) goto error;
-#elif defined (_WIN32)
-	if (! Editor_init (me, parent, 100, 100, 300, 100, "SoundRecorder", NULL)) goto error;
-#else
-	if (! Editor_init (me, parent, 0, 0, 0, 0, "SoundRecorder", NULL)) goto error;
-#endif
-	Melder_assert (XtWindow (my leftMeter));
-	my leftGraphics = Graphics_create_xmdrawingarea (my leftMeter);
-	Melder_assert (my leftGraphics);
-	Graphics_setWindow (my leftGraphics, 0.0, 1.0, 0.0, 32768.0);
-	if (numberOfChannels == 2) {
-		Melder_assert (XtWindow (my rightMeter));
-		my rightGraphics = Graphics_create_xmdrawingarea (my rightMeter);
-		Melder_assert (my rightGraphics);
-		Graphics_setWindow (my rightGraphics, 0.0, 1.0, 0.0, 32768.0);
-	}
+	if (! Editor_init (me, parent, 100, 100, 600, 500, "SoundRecorder", NULL)) goto error;
+	Melder_assert (XtWindow (my meter));
+	my graphics = Graphics_create_xmdrawingarea (my meter);
+	Melder_assert (my graphics);
+	XtAddCallback (my meter, XmNresizeCallback, cb_resize, (XtPointer) me);
+cb_resize (my meter, (XtPointer) me, 0);
 	my workProcId = XtAppAddWorkProc (context, workProc, (XtPointer) me);
 	return me;
 error:

@@ -26,6 +26,7 @@
  * pb 2004/04/04 Melder_bigInteger
  * pb 2006/04/16 separated from melder.c
  * pb 2006/12/10 A and W versions
+ * pb 2006/12/29 removed future bug
  */
 
 #include "melder.h"
@@ -51,7 +52,7 @@ const char * Melder_integerA (long value) {
 }
 
 const wchar_t * Melder_integerW (long value) {
-	if (++ ibufferA == NUMBER_OF_BUFFERS) ibufferW = 0;
+	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
 	swprintf (buffersW [ibufferW], MAXIMUM_NUMERIC_STRING_LENGTH, L"%ld", value);
 	return buffersW [ibufferW];
 }
@@ -102,7 +103,7 @@ const wchar_t * Melder_bigIntegerW (double value) {
 	if (fabs (value) > 1e15) return Melder_doubleW (value);
 	if (++ ibufferW == NUMBER_OF_BUFFERS) ibufferW = 0;
 	text = buffersW [ibufferW];
-	text [0] = '\0';
+	text [0] = L'\0';
 	if (value < 0.0) {
 		swprintf (text, MAXIMUM_NUMERIC_STRING_LENGTH, L"-");
 		value = - value;

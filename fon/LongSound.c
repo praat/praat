@@ -1,6 +1,6 @@
 /* LongSound.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
  * pb 2004/11/24 made buffer length settable
  * pb 2006/12/10 MelderInfo
  * pb 2006/12/13 support for IEEE float 32-bit audio files
+ * pb 2007/01/01 compatible with stereo sounds
  */
 
 #include "LongSound.h"
@@ -137,7 +138,7 @@ Sound LongSound_extractPart (LongSound me, double tmin, double tmax, int preserv
 	if (tmax > my xmax) tmax = my xmax;
 	n = Sampled_getWindowSamples (me, tmin, tmax, & imin, & imax);
 	if (n < 1) { Melder_error ("Less than 1 sample in window."); goto end; }
-	thee = Sound_create (tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx); cherror
+	thee = Sound_create (1, tmin, tmax, n, my dx, my x1 + (imin - 1) * my dx); cherror   // STEREO BUG
 	if (! preserveTimes) thy xmin = 0.0, thy xmax -= tmin, thy x1 -= tmin;
 	if (fseek (my f, my startOfData + (imin - 1) * my numberOfChannels * my numberOfBytesPerSamplePoint, SEEK_SET))
 		{ Melder_error ("Cannot seek in file %s.", MelderFile_messageName (& my file)); goto end; }
@@ -419,7 +420,7 @@ int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
 	if (data -> methods == (Data_Table) classSound) {
 		Sound sound = (Sound) data;
 		sampleRate = floor (1.0 / sound -> dx + 0.5);
-		numberOfChannels = 1;
+		numberOfChannels = sound -> ny;
 		n = sound -> nx;
 	} else {
 		LongSound longSound = (LongSound) data;
@@ -436,7 +437,7 @@ int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
 		if (data -> methods == (Data_Table) classSound) {
 			Sound sound = (Sound) data;
 			sampleRatesMatch = floor (1.0 / sound -> dx + 0.5) == sampleRate;
-			numbersOfChannelsMatch = 1 == numberOfChannels;
+			numbersOfChannelsMatch = sound -> ny == numberOfChannels;
 			n += sound -> nx;
 		} else {
 			LongSound longSound = (LongSound) data;
@@ -461,7 +462,8 @@ int LongSound_concatenate (Ordered me, MelderFile file, int audioFileType) {
 			Sound sound = (Sound) data;
 			if (file -> filePointer)
 				Melder_writeFloatToAudio (file -> filePointer, Melder_defaultAudioFileEncoding16 (audioFileType),
-					& sound -> z [1] [1], sound -> nx, NULL, 0, TRUE);
+					& sound -> z [1] [1], sound -> nx,
+					sound -> ny > 1 ? & sound -> z [2] [1] : NULL, sound -> ny > 1 ? sound -> nx : 0, TRUE);
 		} else {
 			LongSound longSound = (LongSound) data;
 			writePartToOpenFile16 (longSound, audioFileType, 1, longSound -> nx, file, 0);

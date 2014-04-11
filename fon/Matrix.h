@@ -2,7 +2,7 @@
 #define _Matrix_h_
 /* Matrix.h
  *
- * Copyright (C) 1992-2003 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2003/08/28
+ * pb 2006/12/30
  */
 
 /* Matrix inherits from Sampled */
@@ -265,6 +265,8 @@ Matrix Matrix_power (I, long power);
 
 int Matrix_writeToMatrixTextFile (Matrix me, MelderFile file);
 int Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
+
+void Matrix_scaleAbsoluteExtremum (I, double scale);
 
 #endif
 /* End of file Matrix.h */

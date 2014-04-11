@@ -1,6 +1,6 @@
 /* Sound_and_LPC.c
  *
- * Copyright (C) 1994-2004 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  djmw 20020625 GPL header
  djmw corrected a bug in Sound_into_LPC_Frame_marple that could crash praat when signal has only zero samples.
  djmw 20040303 Removed warning in Sound_to_LPC.
+ djmw 20070103 Sound interface changes
 */
 
 #include "Sound_and_LPC.h"
@@ -420,7 +421,7 @@ static LPC _Sound_to_LPC (Sound me, int predictionOrder, double analysisWidth, d
 
 	if (! Sampled_shortTermAnalysis (me, windowDuration, dt, & nFrames, & t1) ||
 		! (sound = (Sound) Data_copy (me)) ||
-		! (sframe = Sound_createSimple (windowDuration, samplingFrequency)) ||
+		! (sframe = Sound_createSimple (1, windowDuration, samplingFrequency)) ||
 		! (window = Sound_createGaussian (windowDuration, samplingFrequency)) ||
 		! (thee = LPC_create (my xmin, my xmax, nFrames, dt, t1, predictionOrder, my dx))) goto end;
 		 

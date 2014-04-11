@@ -1,6 +1,6 @@
 /* PitchTierEditor.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2002 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
 
 /*
  * pb 2002/07/16 GPL
- * pb 2006/12/20 new Sound_play API
  */
 
 #include "PitchTierEditor.h"
@@ -42,7 +41,7 @@ static void createMenus (I) {
 
 static void play (I, double tmin, double tmax) {
 	iam (PitchTierEditor);
-	if (my sound.data) Sound_playPart (my sound.data, NULL, tmin, tmax, our playCallback, me);
+	if (my sound.data) Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
 	else if (! PitchTier_playPart (my data, tmin, tmax, FALSE)) Melder_flushError (NULL);
 }
 

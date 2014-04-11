@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/18
+ * pb 2006/12/26
  */
 
 #include "praat.h"
@@ -42,7 +42,7 @@ END
 /***** EXPERIMENT_MFC *****/
 
 DIRECT (ExperimentMFC_run)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot run experiments from the command line.");
 	} else {
 		RunnerMFC runner = NULL;
@@ -55,7 +55,7 @@ DIRECT (ExperimentMFC_run)
 				return 0;
 			}
 		}
-		runner = RunnerMFC_create (praat.topShell, "listening experiments", experiments);   /* Transfer ownership of experiments (ref). */
+		runner = RunnerMFC_create (theCurrentPraat -> topShell, "listening experiments", experiments);   /* Transfer ownership of experiments (ref). */
 		if (! runner) return 0;
 		if (! praat_installEditorN (runner, experiments)) return 0;
 	}

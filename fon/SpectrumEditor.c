@@ -20,7 +20,6 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2006/04/01 dynamic range setting
- * pb 2006/12/20 new Sound_play API
  */
 
 #include "SpectrumEditor.h"
@@ -118,7 +117,7 @@ static void play (I, double fmin, double fmax) {
 	iam (SpectrumEditor);
 	Sound sound = Spectrum_to_Sound_part (my data, fmin, fmax);
 	if (! sound) { Melder_flushError (NULL); return; }
-	Sound_play (sound, NULL, NULL, NULL);
+	Sound_play (sound, NULL, NULL);
 	forget (sound);
 }
 

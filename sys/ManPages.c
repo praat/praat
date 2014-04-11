@@ -27,6 +27,7 @@
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/10 MelderInfo
  * pb 2006/12/15 turned HTML special symbols into Unicode (and removed glyph pictures)
+ * pb 2006/12/28 repaired a memory leak
  */
 
 #include <ctype.h>
@@ -110,6 +111,7 @@ static int readOnePage (ManPages me, FILE *f) {
 	 * Check whether a page with this title is already present.
 	 */
 	if (lookUp_unsorted (me, title)) {
+		Melder_free (title);   // memory leak repaired, ppgb 20061228
 		return 1;
 	}
 
@@ -143,8 +145,6 @@ static int readOnePage (ManPages me, FILE *f) {
 			}
 		}
 		if (par -> type == enumi (ManPage_TYPE, script)) {
-			page -> hasEmbeddedScripts = TRUE;
-			my executable = TRUE;
 			par -> width = ascgetr4 (f);
 			par -> height = ascgetr4 (f);
 		}

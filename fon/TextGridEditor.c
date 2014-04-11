@@ -27,7 +27,6 @@
  * pb 2005/06/17 enums
  * pb 2005/09/23 interface update
  * pb 2006/12/18 better info
- * pb 2006/12/20 new Sound_play API
  */
 
 #include "TextGridEditor.h"
@@ -2024,7 +2023,7 @@ static void play (I, double tmin, double tmax) {
 	if (my longSound.data) {
 		LongSound_playPart (my longSound.data, tmin, tmax, our playCallback, me);
 	} else if (my sound.data) {
-		Sound_playPart (my sound.data, NULL, tmin, tmax, our playCallback, me);
+		Sound_playPart (my sound.data, tmin, tmax, our playCallback, me);
 	}
 }
 

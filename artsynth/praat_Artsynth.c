@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/18
+ * pb 2006/12/26
  */
 
 #include "Art_Speaker.h"
@@ -57,7 +57,7 @@ FORM (Art_edit, "Edit Art", 0)
 DO
 	Art object = (Art) ONLY_OBJECT;
 	int i;
-	if (praat.batch) return Melder_error ("Cannot edit an Art from batch.");
+	if (theCurrentPraat -> batch) return Melder_error ("Cannot edit an Art from batch.");
 	for (i = 1; i <= enumlength (Art_MUSCLE); i ++)
 		object -> art [i] = GET_REAL (enumstring (Art_MUSCLE, i));
 END
@@ -81,11 +81,11 @@ DO
 END
 
 DIRECT (Artword_edit)
-	if (praat.batch)
+	if (theCurrentPraat -> batch)
 		return Melder_error ("Cannot edit an Artword from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (ArtwordEditor_create (praat.topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
+			if (! praat_installEditor (ArtwordEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT)) return 0;
 END
 
 FORM (Artword_getTarget, "Get one Artword target", 0)

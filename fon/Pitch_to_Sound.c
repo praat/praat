@@ -1,6 +1,6 @@
 /* Pitch_to_Sound.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2005 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
 /*
  * pb 2002/07/16 GPL
  * pb 2005/02/09 Pitch_to_Sound_sine
- * pb 2006/12/20 new Sound_play API
  */
 
 #include "Pitch_to_PointProcess.h"
@@ -53,7 +52,7 @@ int Pitch_play (I, double tmin, double tmax) {
 	Sound sound = Pitch_to_Sound (me, tmin, tmax, FALSE);
 	if (! sound) return Melder_error ("Pitch_play: not played.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
-	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }
@@ -63,7 +62,7 @@ int Pitch_hum (I, double tmin, double tmax) {
 	Sound sound = Pitch_to_Sound (me, tmin, tmax, TRUE);
 	if (! sound) return Melder_error ("Pitch_hum: not played.");
 	if (tmax <= tmin) { tmin = my xmin; tmax = my xmax; }   /* Autowindowing. */
-	Sound_playPart (sound, NULL, tmin, tmax, NULL, NULL);
+	Sound_playPart (sound, tmin, tmax, NULL, NULL);
 	forget (sound);
 	return 1;
 }

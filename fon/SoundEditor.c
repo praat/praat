@@ -24,7 +24,8 @@
  * pb 2005/06/16 units
  * pb 2005/09/21 interface update
  * pb 2006/05/10 repaired memory leak in do_write
- * pb 2006/12/20 new Sound_play API
+ * pb 2006/12/30 new Sound_create API
+ * pb 2007/01/01 compatible with stereo sounds
  */
 
 #include "SoundEditor.h"
@@ -128,7 +129,7 @@ static int do_write (SoundEditor me, MelderFile file, int format) {
 		last += nmargin;
 		if (numberOfSamples) {
 			int result;
-			Sound save = Sound_create (0.0, numberOfSamples * sound -> dx,
+			Sound save = Sound_create (1, 0.0, numberOfSamples * sound -> dx,
 							numberOfSamples, sound -> dx, 0.5 * sound -> dx);
 			if (! save) return 0;
 			offset = first - 1;
@@ -136,7 +137,7 @@ static int do_write (SoundEditor me, MelderFile file, int format) {
 			if (last > sound -> nx) last = sound -> nx;
 			for (i = first; i <= last; i ++)
 				save -> z [1] [i - offset] = sound -> z [1] [i];
-			result = Sound_writeToAudioFile16 (save, NULL, file, format);
+			result = Sound_writeToAudioFile16 (save, file, format);
 			forget (save);
 			return result;
 		}
@@ -198,7 +199,7 @@ DIRECT (SoundEditor, cb_cut)
 	if (selectionNumberOfSamples) {
 		float **newData, **oldData = sound -> z, *amp;
 		forget (Sound_clipboard);
-		Sound_clipboard = Sound_create (0.0, selectionNumberOfSamples * sound -> dx,
+		Sound_clipboard = Sound_create (1, 0.0, selectionNumberOfSamples * sound -> dx,
 						selectionNumberOfSamples, sound -> dx, 0.5 * sound -> dx);
 		if (! Sound_clipboard) return 0;
 		j = 0;
@@ -593,7 +594,7 @@ static void play (I, double tmin, double tmax) {
 	if (my longSound.data)
 		LongSound_playPart (my data, tmin, tmax, our playCallback, me);
 	else
-		Sound_playPart (my data, NULL, tmin, tmax, our playCallback, me);
+		Sound_playPart (my data, tmin, tmax, our playCallback, me);
 }
 
 static void dataChanged (I) {

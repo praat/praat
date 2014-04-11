@@ -1,6 +1,6 @@
 /* manual_spectrum.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 
 static void draw_SpectrumHann (Graphics g, double f1, double f2, int stop, int garnish) {
 	double fmin = garnish == 1 ? 300 : 0, fmax = garnish == 1 ? 1300 : 4000, df = garnish == 1 ? 1 : 4;
-	Sound me = Sound_create (fmin, fmax, (fmax - fmin) / df + 1, df, fmin);
+	Sound me = Sound_create (1, fmin, fmax, (fmax - fmin) / df + 1, df, fmin);
 	double w = 100, f1left = f1 - w, f1right = f1 + w, f2left = f2 - w, f2right = f2 + w, halfpibysmooth = NUMpi / (w + w);
 	int i;
 	if (! me) return;

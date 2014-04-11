@@ -20,7 +20,7 @@
  */
 
 /*
- * pb 2006/10/20
+ * pb 2006/12/28
  */
 
 #ifndef _Editor_h_
@@ -54,7 +54,10 @@ HyperLink HyperLink_create (const char *name, double x1, double x2, double y1, d
 	struct { char *page; int top; } history [20]; \
 	int historyPointer; \
 	char *currentPageTitle; \
-	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24;
+	Widget fontSizeButton_10, fontSizeButton_12, fontSizeButton_14, fontSizeButton_18, fontSizeButton_24; \
+	void *praat; \
+	bool scriptErrorHasBeenNotified; \
+	structMelderDir rootDirectory;
 #define HyperPage_methods Editor_methods \
 	void (*draw) (I); \
 	long (*getNumberOfPages) (I); \

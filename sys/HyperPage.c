@@ -32,7 +32,7 @@
 #include "Preferences.h"
 #include "machine.h"
 
-#include "praatP.h"
+#include "praat.h"
 #include "EditorM.h"
 
 #define PAGE_HEIGHT  320.0
@@ -223,7 +223,6 @@ if (! my printing) {
 	}
 	my y = Graphics_inqTextY (my ps);
 }
-
 	my previousBottomSpacing = bottomSpacing;
 	return 1;
 }
@@ -434,22 +433,38 @@ if (! my printing) {
 		Graphics_setWrapWidth (my g, 0);
 		Graphics_setViewport (my g, my x, my x + width_inches, my y, my y + height_inches);
 		{
-			Graphics saveGraphics = praat.graphics;
-			praat.graphics = my g;
-			praatP.inManual = TRUE;
-			praat_background ();
+			if (my praat == NULL) my praat = Melder_malloc (sizeof (structPraat));
+			theCurrentPraat = my praat;
+			theCurrentPraat -> graphics = my g;
+			theCurrentPraat -> batch = true;
+			Melder_progressOff ();
+			Melder_warningOff ();
+			structMelderDir saveDir;
+			Melder_getDefaultDir (& saveDir);
+			if (! MelderDir_isNull (& my rootDirectory)) Melder_setDefaultDir (& my rootDirectory);
 			Interpreter_run (interpreter, text);
-			iferror Melder_clearError ();
-			numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
+			Melder_setDefaultDir (& saveDir);
+			Melder_warningOn ();
+			Melder_progressOn ();
+			Graphics_setLineType (my g, Graphics_DRAWN);
+			Graphics_setLineWidth (my g, 1.0);
+			Graphics_setColour (my g, Graphics_BLACK);
+			iferror {
+				if (my scriptErrorHasBeenNotified) {
+					Melder_clearError ();
+				} else {
+					Melder_flushError (NULL);
+					my scriptErrorHasBeenNotified = true;
+				}
+			}
+			/*numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
 			if (my links) for (ilink = 1; ilink <= numberOfParagraphLinks; ilink ++) {
 				HyperLink link = HyperLink_create (paragraphLinks [ilink]. name,
 					paragraphLinks [ilink]. x1, paragraphLinks [ilink]. x2,
 					paragraphLinks [ilink]. y1, paragraphLinks [ilink]. y2);
 				Collection_addItem (my links, link);
-			}
-			praat_foreground ();
-			praatP.inManual = FALSE;
-			praat.graphics = saveGraphics;
+			}*/
+			theCurrentPraat = & theForegroundPraat;
 		}
 		Graphics_setViewport (my g, 0, 1, 0, 1);
 		Graphics_setWindow (my g, 0, 1, 0, 1);
@@ -474,13 +489,17 @@ if (! my printing) {
 	Graphics_setWrapWidth (my ps, 0);
 	Graphics_setViewport (my ps, my x, my x + width_inches, my y, my y + height_inches);
 	{
-		Graphics saveGraphics = praat.graphics;
-		praat.graphics = my ps;
-		praat_background ();
+		if (my praat == NULL) my praat = Melder_malloc (sizeof (structPraat));
+		theCurrentPraat = my praat;
+		theCurrentPraat -> graphics = my ps;
+		theCurrentPraat -> batch = true;
+		Melder_progressOff ();
+		Melder_warningOff ();
 		Interpreter_run (interpreter, text);
+		Melder_warningOn ();
+		Melder_progressOn ();
 		iferror Melder_clearError ();
-		praat_foreground ();
-		praat.graphics = saveGraphics;
+		theCurrentPraat = & theForegroundPraat;
 	}
 	Graphics_setViewport (my ps, 0, 1, 0, 1);
 	Graphics_setWindow (my ps, 0, 1, 0, 1);
@@ -511,12 +530,18 @@ static void print (I, Graphics graphics) {
 
 static void destroy (I) {
 	iam (HyperPage);
-	int i;
 	forget (my links);
 	Melder_free (my entryHint);
 	forget (my g);
-	for (i = 0; i < 20; i ++) Melder_free (my history [i]. page);
+	for (int i = 0; i < 20; i ++) Melder_free (my history [i]. page);
 	Melder_free (my currentPageTitle);
+	if (my praat != NULL) {
+		for (int iobject = ((Praat) my praat) -> n; iobject >= 1; iobject --) {
+			Melder_free (((Praat) my praat) -> list [iobject]. name);
+			forget (((Praat) my praat) -> list [iobject]. object);
+		}
+		Melder_free (my praat);
+	}
 	inherited (HyperPage) destroy (me);
 }
 
@@ -729,16 +754,17 @@ END
 /********** **********/
 
 static int do_back (HyperPage me) {
-	char *page;
-	int top;
 	if (my historyPointer <= 0) return 1;
-	page = Melder_strdup (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
-	top = my history [my historyPointer]. top;
+	char *page = Melder_strdup (my history [-- my historyPointer]. page);   /* Temporary, because pointer will be moved. */
+	int top = my history [my historyPointer]. top;
 	if (our goToPage (me, page)) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
-	} else return 0;
+	} else {
+		Melder_free (page);
+		return 0;
+	}
 	Melder_free (page);
 	return 1;
 }
@@ -762,7 +788,10 @@ static int do_forth (HyperPage me) {
 		my top = top;
 		HyperPage_clear (me);
 		updateVerticalScrollBar (me);
-	} else return 0;
+	} else {
+		Melder_free (page);
+		return 0;
+	}
 	Melder_free (page);
 	return 1;
 }

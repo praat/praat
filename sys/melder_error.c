@@ -100,9 +100,9 @@ void * Melder_errorp (const char *format, ...) {
 	return NULL;
 }
 
-int Melder_hasError (void) { return errors [0] != '\0'; }
+int Melder_hasError (void) { return errors [0] != L'\0'; }
 
-void Melder_clearError (void) { errors [0] = '\0'; }
+void Melder_clearError (void) { errors [0] = L'\0'; }
 
 wchar_t * Melder_getErrorW (void) { return & errors [0]; }
 

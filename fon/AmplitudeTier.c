@@ -1,6 +1,6 @@
 /* AmplitudeTier.c
  *
- * Copyright (C) 2003-2004 Paul Boersma
+ * Copyright (C) 2003-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  * pb 2003/06/10
  * pb 2004/07/14 maximum amplitude factor
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "AmplitudeTier.h"
@@ -333,7 +334,7 @@ Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long i
 	double tmid = (my xmin + my xmax) / 2;
 	double t1 = tmid - 0.5 * (sound_nt - 1) * dt;
 	float *sound;
-	thee = Sound_create (my xmin, my xmax, sound_nt, dt, t1);
+	thee = Sound_create (1, my xmin, my xmax, sound_nt, dt, t1);
 	if (! thee) return NULL;
 	sound = thy z [1];
 	for (it = 1; it <= my points -> size; it ++) {

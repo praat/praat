@@ -1,6 +1,6 @@
 /* Cepstrum_and_Spectrum.c
  *
- * Copyright (C) 1994-2002 David Weenink
+ * Copyright (C) 1994-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 /*
  djmw 20020812 GPL header
  djmw 20041124 Changed call to Sound_to_Spectrum.
+ djmw 20070103 Sound interface changes
 */
 
 #include "Cepstrum_and_Spectrum.h"
@@ -72,7 +73,7 @@ Spectrum Cepstrum_to_Spectrum (Cepstrum me)
 	Sound x = NULL;
 	long i;
 
-	if ((x = Sound_create (my xmin, my xmax, my nx, my dx, my x1)) == NULL)
+	if ((x = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1)) == NULL)
 		return NULL;
 	
 	NUMfvector_copyElements	(my z[1], x -> z[1], 1, my nx);

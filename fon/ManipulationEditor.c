@@ -24,7 +24,6 @@
  * pb 2004/04/13 less flashing
  * pb 2006/01/02 removed bug in Shift Frequencies: wrong option list
  * pb 2006/12/08 better NUMundefined pitch and duration range checking
- * pb 2006/12/20 new Sound_play API
  */
 
 #include "ManipulationEditor.h"
@@ -1233,7 +1232,7 @@ static void play (I, double tmin, double tmax) {
 	iam (ManipulationEditor);
 	Manipulation ana = my data;
 	if (my shiftKeyPressed) {
-		if (ana -> sound) Sound_playPart (ana -> sound, NULL, tmin, tmax, our playCallback, me);
+		if (ana -> sound) Sound_playPart (ana -> sound, tmin, tmax, our playCallback, me);
 	} else {
 		if (! Manipulation_playPart (ana, tmin, tmax, my synthesisMethod))
 			Melder_flushError (NULL);

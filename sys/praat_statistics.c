@@ -24,6 +24,7 @@
  * pb 2005/03/02 pref string 260 bytes long
  * pb 2006/10/28 erased MacOS 9 stuff
  * pb 2006/12/06 MelderString
+ * pb 2006/12/26 theCurrentPraat
  */
 
 #include <time.h>
@@ -50,7 +51,7 @@ void praat_statistics_prefsChanged (void) {
 		newLine = strchr (statistics.dateOfFirstSession, '\n');
 		if (newLine) *newLine = '\0';
 	}
-	if (praat.batch)
+	if (theCurrentPraat -> batch)
 		statistics.batchSessions += 1;
 	else
 		statistics.interactiveSessions += 1;
@@ -66,7 +67,7 @@ void praat_memoryInfo (void) {
 		"   Strings: ", Melder_integer (MelderString_allocationCount () - MelderString_deallocationCount ()));
 	MelderInfo_writeLine2 ("   Arrays: ", Melder_integer (NUM_getTotalNumberOfArrays ()));
 	MelderInfo_writeLine5 ("   Things: ", Melder_integer (Thing_getTotalNumberOfThings ()),
-		" (objects in list: ", Melder_integer (praat.n), ")");
+		" (objects in list: ", Melder_integer (theCurrentPraat -> n), ")");
 	MelderInfo_writeLine2 ("   Other: ",
 		Melder_bigInteger (Melder_allocationCount () - Melder_deallocationCount ()
 			- Thing_getTotalNumberOfThings () - NUM_getTotalNumberOfArrays ()
@@ -86,4 +87,3 @@ void praat_memoryInfo (void) {
 }
 
 /* End of file praat_statistics.c */
-

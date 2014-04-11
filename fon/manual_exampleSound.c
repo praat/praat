@@ -1,6 +1,6 @@
 /* manual_exampleSound.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 2004-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
+
+/*
+ * 2004 created
+ * 2006/12/30 new Sound_create API
  */
 
 #include "manual_exampleSound.h"
@@ -2584,7 +2589,7 @@ Sound manual_exampleSound (void) {
 	static Sound me = NULL;
 	if (me == NULL) {
 		long istring = 0, ichar = 24, isamp;
-		me = Sound_create (0.0, 20457.0/44100, 20457, 1.0/44100, 0.5/44100);
+		me = Sound_create (1, 0.0, 20457.0/44100, 20457, 1.0/44100, 0.5/44100);
 		for (isamp = 1; isamp <= 20457; isamp ++) {
 			unsigned short part1 = data [istring] [ichar] - '0';
 			unsigned short part2 = data [istring] [++ ichar] - '0';

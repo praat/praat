@@ -1,6 +1,6 @@
 /* praat_Sound_init.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
  */
 
 /*
- * pb 2006/12/20
+ * pb 2007/01/07
  */
 
 #include "praat.h"
@@ -152,11 +152,11 @@ DO
 END
 
 DIRECT (LongSound_view)
-	if (praat.batch)
+	if (theCurrentPraat -> batch)
 		return Melder_error ("Cannot view a LongSound from batch.");
 	else
 		WHERE (SELECTED)
-			if (! praat_installEditor (SoundEditor_create (praat.topShell, FULL_NAME, OBJECT), IOBJECT))
+			if (! praat_installEditor (SoundEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT), IOBJECT))
 				return 0;
 END
 
@@ -268,12 +268,27 @@ DO
 	}
 END
 
+DIRECT (Sounds_combineToStereo)
+	Sound sound1 = NULL, sound2 = NULL;
+	int i1 = 0, i2 = 0;
+	char name [200];
+	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
+	Melder_assert (sound1 && sound2 && i1 && i2);
+	sprintf (name, "%s_%s", strchr (theCurrentPraat -> list [i1]. name, ' ') + 1, strchr (theCurrentPraat -> list [i2]. name, ' ') + 1);
+	if (! praat_new (Sounds_combineToStereo (sound1, sound2), name)) return 0;
+END
+
 DIRECT (Sounds_concatenate)
-	long nx = 0;
+	long numberOfChannels = 0, nx = 0;
 	double dx = 0.0;
 	Sound thee;
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
+		if (numberOfChannels == 0) {
+			numberOfChannels = my ny;
+		} else if (my ny != numberOfChannels) {
+			return Melder_error ("To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+		}
 		if (dx == 0.0) {
 			dx = my dx;
 		} else if (my dx != dx) {
@@ -282,24 +297,31 @@ DIRECT (Sounds_concatenate)
 		}
 		nx += my nx;
 	}
-	thee = Sound_create (0.0, nx * dx, nx, dx, 0.5 * dx);
+	thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx);
 	if (! thee) return 0;
 	nx = 0;
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
-		NUMfvector_copyElements (my z [1], thy z [1] + nx, 1, my nx);
+		for (long channel = 1; channel <= numberOfChannels; channel ++) {
+			NUMfvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
+		}
 		nx += my nx;
 	}
 	if (! praat_new (thee, "chain")) return 0;
 END
 
 DIRECT (Sounds_concatenateRecoverably)
-	long nx = 0, iinterval = 0;
+	long numberOfChannels = 0, nx = 0, iinterval = 0;
 	double dx = 0.0, tmin = 0.0;
 	Sound thee = NULL;
 	TextGrid him = NULL;
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
+		if (numberOfChannels == 0) {
+			numberOfChannels = my ny;
+		} else if (my ny != numberOfChannels) {
+			return Melder_error ("To concatenate sounds, their numbers of channels (mono, stereo) must be equal.");
+		}
 		if (dx == 0.0) {
 			dx = my dx;
 		} else if (my dx != dx) {
@@ -308,13 +330,15 @@ DIRECT (Sounds_concatenateRecoverably)
 		}
 		nx += my nx;
 	}
-	thee = Sound_create (0.0, nx * dx, nx, dx, 0.5 * dx); cherror
+	thee = Sound_create (numberOfChannels, 0.0, nx * dx, nx, dx, 0.5 * dx); cherror
 	him = TextGrid_create (0.0, nx * dx, "labels", ""); cherror
 	nx = 0;
 	WHERE (SELECTED) {
 		Sound me = OBJECT;
 		double tmax = tmin + my nx * dx;
-		NUMfvector_copyElements (my z [1], thy z [1] + nx, 1, my nx);
+		for (long channel = 1; channel <= numberOfChannels; channel ++) {
+			NUMfvector_copyElements (my z [channel], thy z [channel] + nx, 1, my nx);
+		}
 		iinterval ++;
 		if (iinterval > 1) { TextGrid_insertBoundary (him, 1, tmin); cherror }
 		TextGrid_setIntervalText (him, 1, iinterval, my name); cherror
@@ -327,13 +351,27 @@ end:
 	iferror { forget (thee); forget (him); return 0; }
 END
 
+DIRECT (Sound_convertToMono)
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		if (! praat_new (Sound_convertToMono (me), "%s_mono", my name)) return 0;
+	}
+END
+
+DIRECT (Sound_convertToStereo)
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		if (! praat_new (Sound_convertToStereo (me), "%s_stereo", my name)) return 0;
+	}
+END
+
 DIRECT (Sounds_convolve)
 	Sound sound1 = NULL, sound2 = NULL;
 	int i1 = 0, i2 = 0;
 	char name [200];
 	WHERE (SELECTED) { if (sound1) { sound2 = OBJECT; i2 = IOBJECT; } else { sound1 = OBJECT; i1 = IOBJECT; } }
 	Melder_assert (sound1 && sound2 && i1 && i2);
-	sprintf (name, "%s_%s", strchr (praat.list [i1]. name, ' ') + 1, strchr (praat.list [i2]. name, ' ') + 1);
+	sprintf (name, "%s_%s", strchr (theCurrentPraat -> list [i1]. name, ' ') + 1, strchr (theCurrentPraat -> list [i2]. name, ' ') + 1);
 	if (! praat_new (Sounds_convolve (sound1, sound2), name)) return 0;
 END
 
@@ -349,7 +387,7 @@ DO
 		GET_INTEGER ("Normalize")), "cc_%s_%s", s1 -> name, s2 -> name)) return 0;
 END
 
-FORM (Sound_create, "Create Sound", "Create Sound...")
+FORM (Sound_create, "Create mono Sound", "Create Sound...")
 	WORD ("Name", "sineWithNoise")
 	REAL ("Start time (s)", "0.0")
 	REAL ("End time (s)", "1.0")
@@ -394,7 +432,7 @@ DO
 			return Melder_error ("Please raise the start time, lower the end time, or lower the sampling frequency.");
 	}
 	numberOfSamples = (long) numberOfSamples_real;
-	sound = Sound_create (startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
+	sound = Sound_create (1, startTime, endTime, numberOfSamples, 1.0 / samplingFrequency,
 		startTime + 0.5 * (endTime - startTime - (numberOfSamples - 1) / samplingFrequency));
 	if (sound == NULL) {
 		if (strstr (Melder_getError (), "memory")) {
@@ -502,22 +540,29 @@ static void cb_SoundEditor_publish (Any editor, void *closure, Any publish) {
 	if (Thing_member (publish, classSpectrum) && strequ (Thing_getName (publish), "slice")) {
 		int IOBJECT;
 		WHERE (SELECTED) {
-			SpectrumEditor editor2 = SpectrumEditor_create (praat.topShell, FULL_NAME, OBJECT);
+			SpectrumEditor editor2 = SpectrumEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
 			if (! editor2) return;
 			if (! praat_installEditor (editor2, IOBJECT)) Melder_flushError (NULL);
 		}
 	}
 }
 DIRECT (Sound_edit)
-	if (praat.batch) {
+	if (theCurrentPraat -> batch) {
 		return Melder_error ("Cannot edit a Sound from batch.");
 	} else {
 		WHERE (SELECTED) {
-			SoundEditor editor = SoundEditor_create (praat.topShell, FULL_NAME, OBJECT);
+			SoundEditor editor = SoundEditor_create (theCurrentPraat -> topShell, FULL_NAME, OBJECT);
 			if (! editor) return 0;
 			if (! praat_installEditor (editor, IOBJECT)) return 0;
 			Editor_setPublishCallback (editor, cb_SoundEditor_publish, NULL);
 		}
+	}
+END
+
+DIRECT (Sound_extractLeftChannel)
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		if (! praat_new (Sound_extractLeftChannel (me), "%s_left", my name)) return 0;
 	}
 END
 
@@ -536,6 +581,13 @@ DO
 			GET_INTEGER ("Window"), GET_REAL ("Relative width"),
 			GET_INTEGER ("Preserve times")),
 			"%s_part", my name)) return 0;
+	}
+END
+
+DIRECT (Sound_extractRightChannel)
+	WHERE (SELECTED) {
+		Sound me = OBJECT;
+		if (! praat_new (Sound_extractRightChannel (me), "%s_right", my name)) return 0;
 	}
 END
 
@@ -713,6 +765,11 @@ DO
 	Melder_informationReal (Sound_getNearestZeroCrossing (ONLY (classSound), GET_REAL ("Time")), "seconds");
 END
 
+DIRECT (Sound_getNumberOfChannels)
+	Sound me = ONLY (classSound);
+	Melder_information2 (Melder_integer (my ny), my ny == 1 ? " channel (mono)" : my ny == 2 ? " channels (stereo)" : "channels");
+END
+
 DIRECT (Sound_getNumberOfSamples)
 	Sound me = ONLY (classSound);
 	Melder_information2 (Melder_integer (my nx), " samples");
@@ -865,10 +922,10 @@ DIRECT (Sound_play)
 	int n = 0;
 	EVERY (n ++)
 	if (n == 1 || Melder_getMaximumAsynchronicity () < Melder_ASYNCHRONOUS) {
-		EVERY (Sound_play (OBJECT, NULL, NULL, NULL))
+		EVERY (Sound_play (OBJECT, NULL, NULL))
 	} else {
 		Melder_setMaximumAsynchronicity (Melder_INTERRUPTABLE);
-		EVERY (Sound_play (OBJECT, NULL, NULL, NULL))
+		EVERY (Sound_play (OBJECT, NULL, NULL))
 		Melder_setMaximumAsynchronicity (Melder_ASYNCHRONOUS);
 	}
 END
@@ -909,7 +966,7 @@ static void cb_SoundRecorder_publish (Any editor, void *closure, Any publish) {
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_mono)
-	if (praat.batch) return Melder_error ("Cannot record a Sound from batch.");
+	if (theCurrentPraat -> batch) return Melder_error ("Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 1) {
 			Editor_raise (soundRecorder);
@@ -918,7 +975,7 @@ DIRECT (Sound_record_mono)
 		}
 	}
 	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (praat.topShell, 1, praat.context);
+		soundRecorder = SoundRecorder_create (theCurrentPraat -> topShell, 1, theCurrentPraat -> context);
 		if (soundRecorder == NULL) return 0;
 		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
 		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
@@ -932,7 +989,7 @@ static void cb_SoundRecorder_publish2 (Any editor, Any closure, Any publish1, An
 	praat_updateSelection ();
 }
 DIRECT (Sound_record_stereo)
-	if (praat.batch) return Melder_error ("Cannot record a Sound from batch.");
+	if (theCurrentPraat -> batch) return Melder_error ("Cannot record a Sound from batch.");
 	if (soundRecorder) {
 		if (previousNumberOfChannels == 2) {
 			Editor_raise (soundRecorder);
@@ -941,7 +998,7 @@ DIRECT (Sound_record_stereo)
 		}
 	}
 	if (! soundRecorder) {
-		soundRecorder = SoundRecorder_create (praat.topShell, 2, praat.context);
+		soundRecorder = SoundRecorder_create (theCurrentPraat -> topShell, 2, theCurrentPraat -> context);
 		if (soundRecorder == NULL) return 0;
 		Editor_setDestroyCallback (soundRecorder, cb_SoundRecorder_destroy, NULL);
 		Editor_setPublishCallback (soundRecorder, cb_SoundRecorder_publish, NULL);
@@ -954,8 +1011,8 @@ FORM (Sound_recordFixedTime, "Record Sound", 0)
 	RADIO ("Input source", 1)
 		RADIOBUTTON ("Microphone")
 		RADIOBUTTON ("Line")
-		RADIOBUTTON ("Digital")
 	#if defined (sgi)
+		RADIOBUTTON ("Digital")
 		REAL ("Gain (0-1)", "0.5")
 	#else
 		REAL ("Gain (0-1)", "0.1")
@@ -971,18 +1028,21 @@ FORM (Sound_recordFixedTime, "Record Sound", 0)
 		#ifdef sgi
 		RADIOBUTTON ("9800")
 		#endif
+		#ifndef macintosh
 		RADIOBUTTON ("11025")
+		#endif
 		#ifdef UNIX
 		RADIOBUTTON ("16000")
 		#endif
+		#ifndef macintosh
 		RADIOBUTTON ("22050")
+		#endif
 		#ifdef UNIX
 		RADIOBUTTON ("32000")
 		#endif
 		RADIOBUTTON ("44100")
-		#ifdef UNIX
 		RADIOBUTTON ("48000")
-		#endif
+		RADIOBUTTON ("96000")
 	POSITIVE ("Duration (seconds)", "1.0")
 	OK
 DO
@@ -1463,7 +1523,7 @@ FORM (Sound_writeToRawSoundFile, "Write to raw sound file", 0)
 DO
 	structMelderFile file;
 	Melder_relativePathToFile (GET_STRING ("Raw binary file"), & file);
-	if (! Sound_writeToRawSoundFile (ONLY_OBJECT, NULL, & file, GET_INTEGER ("Encoding"))) return 0;
+	if (! Sound_writeToRawSoundFile (ONLY_OBJECT, & file, GET_INTEGER ("Encoding"))) return 0;
 END
 
 FORM_WRITE (Sound_writeToKayFile, "Write to Kay sound file", 0, "kay")
@@ -1492,35 +1552,45 @@ FORM_WRITE (Sound_writeToStereoAifcFile, "Write to stereo AIFC file", 0, "aifc")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
-	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_AIFC)) return 0;
+	Sound stereo = Sounds_combineToStereo (s1, s2); if (stereo == NULL) return 0;
+	if (! Sound_writeToAudioFile16 (stereo, file, Melder_AIFC)) { forget (stereo); return 0; }
+	forget (stereo);
 END
 
 FORM_WRITE (Sound_writeToStereoAiffFile, "Write to stereo AIFF file", 0, "aiff")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
-	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_AIFF)) return 0;
+	Sound stereo = Sounds_combineToStereo (s1, s2); if (stereo == NULL) return 0;
+	if (! Sound_writeToAudioFile16 (stereo, file, Melder_AIFF)) { forget (stereo); return 0; }
+	forget (stereo);
 END
 
 FORM_WRITE (Sound_writeToStereoNextSunFile, "Write to stereo NeXT/Sun file", 0, "au")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
-	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_NEXT_SUN)) return 0;
+	Sound stereo = Sounds_combineToStereo (s1, s2); if (stereo == NULL) return 0;
+	if (! Sound_writeToAudioFile16 (stereo, file, Melder_NEXT_SUN)) { forget (stereo); return 0; }
+	forget (stereo);
 END
 
 FORM_WRITE (Sound_writeToStereoNistFile, "Write to stereo NIST file", 0, "nist")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
-	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_NIST)) return 0;
+	Sound stereo = Sounds_combineToStereo (s1, s2); if (stereo == NULL) return 0;
+	if (! Sound_writeToAudioFile16 (stereo, file, Melder_NIST)) { forget (stereo); return 0; }
+	forget (stereo);
 END
 
 FORM_WRITE (Sound_writeToStereoWavFile, "Write to stereo WAV file", 0, "wav")
 	Sound s1 = NULL, s2 = NULL;
 	WHERE (SELECTED) { if (s1) s2 = OBJECT; else s1 = OBJECT; }
 	Melder_assert (s1 && s2);
-	if (! Sound_writeToAudioFile16 (s1, s2, file, Melder_WAV)) return 0;
+	Sound stereo = Sounds_combineToStereo (s1, s2); if (stereo == NULL) return 0;
+	if (! Sound_writeToAudioFile16 (stereo, file, Melder_WAV)) { forget (stereo); return 0; }
+	forget (stereo);
 END
 
 FORM_WRITE (Sound_writeToSunAudioFile, "Write to NeXT/Sun file", 0, "au")
@@ -1619,12 +1689,12 @@ static int recordFromFileProc (MelderFile file) {
 	if (! melderSoundFromFile) return 0;
 	if (! Thing_member (melderSoundFromFile, classSound)) { forget (melderSoundFromFile); return 0; }
 	last = melderSoundFromFile;
-	Sound_play (melderSoundFromFile, NULL, NULL, NULL);
+	Sound_play (melderSoundFromFile, NULL, NULL);
 	return 1;
 }
 static void playProc (void) {
 	if (melderSound) {
-		Sound_play (melderSound, NULL, NULL, NULL);
+		Sound_play (melderSound, NULL, NULL);
 		last = melderSound;
 	}
 }
@@ -1736,17 +1806,18 @@ void praat_uvafon_Sound_init (void) {
 	#endif
 	praat_addAction1 (classSound, 1, "Write to raw 8-bit signed file...", 0, praat_HIDDEN, DO_Sound_writeToRaw8bitSignedFile);
 	praat_addAction1 (classSound, 1, "Write to raw 8-bit unsigned file...", 0, praat_HIDDEN, DO_Sound_writeToRaw8bitUnsignedFile);
-	praat_addAction1 (classSound, 2, "Write to stereo WAV file...", 0, 0, DO_Sound_writeToStereoWavFile);
-	praat_addAction1 (classSound, 2, "Write to stereo AIFF file...", 0, 0, DO_Sound_writeToStereoAiffFile);
-	praat_addAction1 (classSound, 2, "Write to stereo AIFC file...", 0, 0, DO_Sound_writeToStereoAifcFile);
-	praat_addAction1 (classSound, 2, "Write to stereo Next/Sun file...", 0, 0, DO_Sound_writeToStereoNextSunFile);
-	praat_addAction1 (classSound, 2, "Write to stereo NIST file...", 0, 0, DO_Sound_writeToStereoNistFile);
+	praat_addAction1 (classSound, 2, "Write to stereo WAV file...", 0, praat_HIDDEN, DO_Sound_writeToStereoWavFile);   // grandfathered 2007
+	praat_addAction1 (classSound, 2, "Write to stereo AIFF file...", 0, praat_HIDDEN, DO_Sound_writeToStereoAiffFile);   // grandfathered 2007
+	praat_addAction1 (classSound, 2, "Write to stereo AIFC file...", 0, praat_HIDDEN, DO_Sound_writeToStereoAifcFile);   // grandfathered 2007
+	praat_addAction1 (classSound, 2, "Write to stereo Next/Sun file...", 0, praat_HIDDEN, DO_Sound_writeToStereoNextSunFile);   // grandfathered 2007
+	praat_addAction1 (classSound, 2, "Write to stereo NIST file...", 0, praat_HIDDEN, DO_Sound_writeToStereoNistFile);   // grandfathered 2007
 	praat_addAction1 (classSound, 0, "Sound help", 0, 0, DO_Sound_help);
 	praat_addAction1 (classSound, 1, "Edit", 0, 0, DO_Sound_edit);
 	praat_addAction1 (classSound, 0, "Play", 0, 0, DO_Sound_play);
 	praat_addAction1 (classSound, 0, "Draw...", 0, 0, DO_Sound_draw);
 	praat_addAction1 (classSound, 1, "Query -          ", 0, 0, 0);
 		praat_TimeFunction_query_init (classSound);
+		praat_addAction1 (classSound, 1, "Get number of channels", 0, 1, DO_Sound_getNumberOfChannels);
 		praat_addAction1 (classSound, 1, "Time sampling", 0, 1, 0);
 		praat_addAction1 (classSound, 1, "Get number of samples", 0, 2, DO_Sound_getNumberOfSamples);
 		praat_addAction1 (classSound, 1, "Get sampling period", 0, 2, DO_Sound_getSamplePeriod);
@@ -1846,6 +1917,10 @@ void praat_uvafon_Sound_init (void) {
 	praat_addAction1 (classSound, 0, "To Manipulation...", 0, 0, DO_Sound_to_Manipulation);
 	praat_addAction1 (classSound, 0, "Synthesize", 0, 0, 0);
 	praat_addAction1 (classSound, 0, "Convert -       ", 0, 0, 0);
+		praat_addAction1 (classSound, 0, "Convert to mono", 0, 1, DO_Sound_convertToMono);
+		praat_addAction1 (classSound, 0, "Convert to stereo", 0, 1, DO_Sound_convertToStereo);
+		praat_addAction1 (classSound, 0, "Extract left channel", 0, 1, DO_Sound_extractLeftChannel);
+		praat_addAction1 (classSound, 0, "Extract right channel", 0, 1, DO_Sound_extractRightChannel);
 		praat_addAction1 (classSound, 0, "Extract part...", 0, 1, DO_Sound_extractPart);
 		praat_addAction1 (classSound, 0, "Resample...", 0, 1, DO_Sound_resample);
 		praat_addAction1 (classSound, 0, "-- enhance --", 0, 1, 0);
@@ -1864,6 +1939,7 @@ void praat_uvafon_Sound_init (void) {
 		praat_addAction1 (classSound, 0, "Filter (pre-emphasis)...", 0, 1, DO_Sound_filter_preemphasis);
 		praat_addAction1 (classSound, 0, "Filter (de-emphasis)...", 0, 1, DO_Sound_filter_deemphasis);
 	praat_addAction1 (classSound, 0, "Combine sounds -", 0, 0, 0);
+		praat_addAction1 (classSound, 2, "Combine to stereo", 0, 1, DO_Sounds_combineToStereo);
 		praat_addAction1 (classSound, 2, "Convolve", 0, 1, DO_Sounds_convolve);
 		praat_addAction1 (classSound, 0, "Concatenate", 0, 1, DO_Sounds_concatenate);
 		praat_addAction1 (classSound, 0, "Concatenate recoverably", 0, 1, DO_Sounds_concatenateRecoverably);

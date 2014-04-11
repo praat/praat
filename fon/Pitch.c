@@ -27,6 +27,7 @@
  * pb 2005/08/31 semitones re 200 Hz
  * pb 2006/12/17 Pitch_getMeanAbsoluteSlope returns NUMundefined instead of 0.0
  * pb 2006/12/18 better info
+ * pb 2006/12/30 new Sound_create API
  */
 
 #include "Pitch.h"
@@ -749,7 +750,7 @@ Pitch Pitch_smooth (Pitch me, double bandWidth) {
 	double fextrap;
 	if (! (interp = Pitch_interpolate (me))) goto error;
 	if (! (matrix1 = Pitch_to_Matrix (interp))) goto error;
-	if (! (sound1 = Sound_create (2 * matrix1->xmin - matrix1->xmax, 2 * matrix1->xmax - matrix1->xmin,
+	if (! (sound1 = Sound_create (1, 2 * matrix1->xmin - matrix1->xmax, 2 * matrix1->xmax - matrix1->xmin,
 		3 * matrix1->nx, matrix1->dx, matrix1->x1 - 2 * matrix1->nx * matrix1->dx))) goto error;
 	for (i = 1; i <= matrix1 -> nx; i ++) {
 		double f = matrix1 -> z [1] [i];

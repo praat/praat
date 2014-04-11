@@ -1,6 +1,6 @@
 /* praat_actions.c
  *
- * Copyright (C) 1992-2004 Paul Boersma
+ * Copyright (C) 1992-2006 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +21,7 @@
  * pb 2002/03/07 GPL
  * pb 2002/03/18 Mach
  * pb 2004/04/01 second-level menus
+ * pb 2006/12/26 theCurrentPraat
  */
 
 #include "praatP.h"
@@ -183,6 +184,8 @@ void praat_addAction4 (void *class1, int n1, void *class2, int n2, void *class3,
 
 static void deleteDynamicMenu (void) {
 	if (praatP.phase != praat_HANDLING_EVENTS) return;
+//static int deletions;
+//Melder_information1(Melder_integer(++deletions));
 	if (praat_dynamicMenu) {
 		int i;
 		XtDestroyWidget (praat_dynamicMenu);
@@ -424,12 +427,12 @@ static int allowExecutionHook (void *closure) {
 			if (! my class1) return Melder_error ("No class1???");
 			numberOfMatchingCallbacks += 1;
 			if (! firstMatchingCallback) firstMatchingCallback = i;
-			sel1 = my class1 == classData ? praat.totalSelection : praat_selection (my class1);
+			sel1 = my class1 == classData ? theCurrentPraat -> totalSelection : praat_selection (my class1);
 			if (sel1 == 0) continue;
 			if (my class2 && (sel2 = praat_selection (my class2)) == 0) continue;
 			if (my class3 && (sel3 = praat_selection (my class3)) == 0) continue;
 			if (my class4 && (sel4 = praat_selection (my class4)) == 0) continue;
-			if (sel1 + sel2 + sel3 + sel4 != praat.totalSelection) continue;
+			if (sel1 + sel2 + sel3 + sel4 != theCurrentPraat -> totalSelection) continue;
 			if ((my n1 && sel1 != my n1) || (my n2 && sel2 != my n2) || (my n3 && sel3 != my n3) || (my n4 && sel4 != my n4)) continue;
 			return TRUE;   /* Found a matching action. */
 		}
@@ -493,38 +496,40 @@ void praat_actions_show (void) {
 	/* The selection has changed;
 	 * kill the dynamic menu and the write menu.
 	 */
-	#if defined (macintosh) || defined (_WIN32)
-		deleteDynamicMenu ();
-	#endif
-	if (! Melder_backgrounding) {
-		int nbuttons = 0, nwriteButtons = 0;
-		XtSetSensitive (praat_writeMenuTitle, False);
-		if (praat_writeMenuSeparator) XtUnmanageChild (praat_writeMenuSeparator);
-		if (praat_dynamicMenu) XtUnmanageChild (praat_dynamicMenu);
-		for (i = theNumberOfActions; i >= 1; i --) {
-			praat_Command me = & theActions [i];
-			if (! my visible) continue;
-			if (my button) {
-				if (XtParent (my button) == praat_dynamicMenu)   /* Unmanage only level-1 visible buttons. */
-					buttons [nbuttons ++] = my button;
-				else if (my title && (strnequ (my title, "Write ", 6) || strnequ (my title, "Append to ", 10)))
-					writeButtons [nwriteButtons ++] = my button;
+	if (! theCurrentPraat -> batch) {
+		#if defined (macintosh) || defined (_WIN32)
+			deleteDynamicMenu ();
+		#endif
+		if (! Melder_backgrounding) {
+			int nbuttons = 0, nwriteButtons = 0;
+			XtSetSensitive (praat_writeMenuTitle, False);
+			if (praat_writeMenuSeparator) XtUnmanageChild (praat_writeMenuSeparator);
+			if (praat_dynamicMenu) XtUnmanageChild (praat_dynamicMenu);
+			for (i = theNumberOfActions; i >= 1; i --) {
+				praat_Command me = & theActions [i];
+				if (! my visible) continue;
+				if (my button) {
+					if (XtParent (my button) == praat_dynamicMenu)   /* Unmanage only level-1 visible buttons. */
+						buttons [nbuttons ++] = my button;
+					else if (my title && (strnequ (my title, "Write ", 6) || strnequ (my title, "Append to ", 10)))
+						writeButtons [nwriteButtons ++] = my button;
+				}
+				if (nbuttons) XtUnmanageChildren (buttons, nbuttons);
+				if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);
 			}
-			if (nbuttons) XtUnmanageChildren (buttons, nbuttons);
-			if (nwriteButtons) XtUnmanageChildren (writeButtons, nwriteButtons);
+			/*
+			 * BUG: Despite all these precautions,
+			 * creating and removing a lot of objects from a script
+			 * still leaves several seconds of flashing after the script finishes.
+			 * Events remaining?
+			 */
 		}
-		/*
-		 * BUG: Despite all these precautions,
-		 * creating and removing a lot of objects from a script
-		 * still leaves several seconds of flashing after the script finishes.
-		 * Events remaining?
-		 */
-	}
 
-	/* Determine the visibility and sensitivity of all the actions.
-	 */
-	if (praat.totalSelection != 0 && ! Melder_backgrounding)
-		XtSetSensitive (praat_writeMenuTitle, True);
+		/* Determine the visibility and sensitivity of all the actions.
+		 */
+		if (theCurrentPraat -> totalSelection != 0 && ! Melder_backgrounding)
+			XtSetSensitive (praat_writeMenuTitle, True);
+	}
 	for (i = 1; i <= theNumberOfActions; i ++) {
 		int sel1 = 0, sel2 = 0, sel3 = 0, sel4 = 0;
 		int n1 = theActions [i]. n1, n2 = theActions [i]. n2, n3 = theActions [i]. n3, n4 = theActions [i]. n4;
@@ -537,12 +542,12 @@ void praat_actions_show (void) {
 		/* Match the actually selected classes with the selection required for this visibility. */
 
 		if (! theActions [i]. class1) continue;   /* At least one class selected. */
-		sel1 = theActions [i]. class1 == classData ? praat.totalSelection : praat_selection (theActions [i]. class1);
+		sel1 = theActions [i]. class1 == classData ? theCurrentPraat -> totalSelection : praat_selection (theActions [i]. class1);
 		if (sel1 == 0) continue;
 		if (theActions [i]. class2 && (sel2 = praat_selection (theActions [i]. class2)) == 0) continue;
 		if (theActions [i]. class3 && (sel3 = praat_selection (theActions [i]. class3)) == 0) continue;
 		if (theActions [i]. class4 && (sel4 = praat_selection (theActions [i]. class4)) == 0) continue;
-		if (sel1 + sel2 + sel3 + sel4 != praat.totalSelection) continue;   /* Other classes selected? Do not show. */
+		if (sel1 + sel2 + sel3 + sel4 != theCurrentPraat -> totalSelection) continue;   /* Other classes selected? Do not show. */
 		theActions [i]. visible = ! theActions [i]. hidden;
 
 		/* Match the actually selected objects with the selection required for this action. */
@@ -553,7 +558,7 @@ void praat_actions_show (void) {
 	}
 
 	/* Create a new column of buttons in the dynamic menu. */
-	if (! Melder_backgrounding) {
+	if (! theCurrentPraat -> batch && ! Melder_backgrounding) {
 		Widget currentSubmenu1 = NULL, currentSubmenu2 = NULL;
 		int writeMenuGoingToSeparate = FALSE;
 		int nbuttons = 0, nwriteButtons = 0;
@@ -677,7 +682,7 @@ void praat_actions_show (void) {
 }
 
 void praat_actions_createWriteMenu (Widget bar) {
-	if (praat.batch) return;
+	if (theCurrentPraat -> batch) return;
 	praat_writeMenuTitle = XtVaCreateManagedWidget ("Write", xmCascadeButtonWidgetClass, bar, NULL);
 	XtSetSensitive (praat_writeMenuTitle, False);
 	praat_writeMenu = XmCreatePulldownMenu (bar, "Write", NULL, 0);
@@ -689,7 +694,7 @@ void praat_actions_init (void) {
 }
 
 void praat_actions_createDynamicMenu (Widget form, int leftOffset) {
-	if (praat.batch) return;
+	if (theCurrentPraat -> batch) return;
 	praat_dynamicMenuWindow = XmCreateScrolledWindow (form, "menuWindow", NULL, 0);
 	#ifdef macintosh
 		XtVaSetValues (praat_dynamicMenuWindow,
