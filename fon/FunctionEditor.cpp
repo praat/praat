@@ -47,6 +47,8 @@ Thing_implement (FunctionEditor, Editor, 0);
 static int nGroup = 0;
 static FunctionEditor theGroup [1 + maxGroup];
 
+static void drawWhileDragging (FunctionEditor me, double x1, double x2);
+
 static int group_equalDomain (double tmin, double tmax) {
 	if (nGroup == 0) return 1;
 	for (int i = 1; i <= maxGroup; i ++)
@@ -335,6 +337,17 @@ static void drawNow (FunctionEditor me) {
 	 * End of inner drawing.
 	 */
 	Graphics_setViewport (my d_graphics, my functionViewerLeft, my selectionViewerRight, 0, my height);
+#if cocoa
+    if (my anchorForDragging > 0) {
+        
+        double left = my anchorForDragging, right = my xForDragging;
+        if (my anchorForDragging > my xForDragging)
+            left = my xForDragging, right = my anchorForDragging;
+
+        drawWhileDragging (me, left,right);
+		my v_highlightSelection (left, right, 0.0, 1.0);
+    }
+#endif
 }
 
 /********** METHODS **********/
@@ -1068,15 +1081,17 @@ if (gtk && event -> type != BUTTON_PRESS) return;
 			event -> button == 1 ? my v_click (xWC, yWC, my shiftKeyPressed) :
 			event -> button == 2 ? my v_clickB (xWC, yWC) : my v_clickE (xWC, yWC);
 #endif
+#if cocoa
+        if (needsUpdate) {
+            GuiCocoaDrawingArea *drawingArea = (GuiCocoaDrawingArea*) my drawingArea->d_widget;
+            [drawingArea setNeedsDisplay:YES];
+            needsUpdate = 0;
+        }
+#endif
 		if (needsUpdate) my v_updateText ();
 		Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 		if (needsUpdate) /*Graphics_updateWs (my d_graphics);*/ drawNow (me);
 		if (needsUpdate) updateGroup (me);
-#if cocoa
-        if (needsUpdate) {
-            [(GuiCocoaDrawingArea*)my drawingArea -> d_widget flush];
-        }
-#endif
 	}
 	else   /* Clicked outside signal region? Let us hear it. */
 	{
@@ -1187,20 +1202,12 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_setTextAlignment (my d_graphics, Graphics_LEFT, Graphics_BOTTOM);
 	Graphics_text1 (my d_graphics, xright, 0.0, Melder_fixed (xright, 6));
 	Graphics_xorOff (my d_graphics);
-#if cocoa
-    [(GuiCocoaDrawingArea*)my drawingArea -> d_widget flush];
-#endif
 }
 
 int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
 	bool drag = false;
 	double x = xbegin, y = ybegin;
     
-#if cocoa
-    // Need to rewrite this to handle moved events
-    if (clickEvent->type == BUTTON_RELEASE || clickEvent->type == MOTION_NOTIFY)
-        return FunctionEditor_NO_UPDATE_NEEDED;
-#endif
     
 	/*
 	 * The 'anchor' is the point that will stay fixed during dragging.
@@ -1209,9 +1216,18 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 	 * even if she later chooses to drag the mouse to the left of it.
 	 * Another example: if she shift-clicks near E, B will become (and stay) the anchor.
 	 */
-	double anchorForDragging = xbegin;   // the default (for if the shift key isn't pressed)
-	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0, 1);
-	if (shiftKeyPressed) {
+
+    Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0, 1);
+
+#if cocoa
+    xForDragging = xbegin;
+    if (clickEvent->type == BUTTON_PRESS)
+        anchorForDragging = xbegin;   // the default (for if the shift key isn't pressed)
+	if (shiftKeyPressed && clickEvent->type == BUTTON_PRESS) {
+#else
+  	double anchorForDragging = xbegin;   // the default (for if the shift key isn't pressed)
+        if (shiftKeyPressed) {
+#endif
 		/*
 		 * Extend the selection.
 		 * We should always end up with a real selection (B < E),
@@ -1293,6 +1309,10 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
+    
+#if cocoa
+    drag = clickEvent->type == MOTION_NOTIFY;
+#else
 	while (Graphics_mouseStillDown (d_graphics)) {
 		Graphics_getMouseLocation (d_graphics, & x, & y);
 		if (x < d_startWindow) x = d_startWindow;
@@ -1302,6 +1322,8 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 			break;
 		}
 	}
+#endif
+    
 	if (drag) {
 		/*
 		 * First undraw the old selection.
@@ -1322,7 +1344,10 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 		 * Draw the text at least once.
 		 */
 		/*if (x < d_startWindow) x = d_startWindow; else if (x > d_endWindow) x = d_endWindow;*/
-		drawWhileDragging (this, anchorForDragging, x);
+#if cocoa
+#else
+        drawWhileDragging (this, anchorForDragging, x);
+#endif
 		/*
 		 * Draw the dragged selection at least once.
 		 */
@@ -1334,15 +1359,26 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 		/*
 		 * Drag for the new selection.
 		 */
-		while (Graphics_mouseStillDown (d_graphics)) {
+        
+#if cocoa
+        if (drag)
+#else
+		while (Graphics_mouseStillDown (d_graphics))
+#endif
+        {
 			double xold = x, x1, x2;
 			Graphics_getMouseLocation (d_graphics, & x, & y);
 			/*
 			 * Clip to the visible window. Ideally, we should perform autoscrolling instead, though...
 			 */
 			if (x < d_startWindow) x = d_startWindow; else if (x > d_endWindow) x = d_endWindow;
-			if (x == xold)
-				continue;
+            
+#if cocoa
+#else
+                if (x == xold)
+                    continue;
+#endif
+            
 			/*
 			 * Undraw and redraw the text at the top.
 			 */
@@ -1360,8 +1396,29 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 			/*
 			 * Redraw the text at the top.
 			 */
-			drawWhileDragging (this, anchorForDragging, x);
-		} ;
+#if cocoa
+            } else if (! shiftKeyPressed && clickEvent->type == BUTTON_PRESS) {
+                /*
+                 * Move the cursor to the clicked position.
+                 */
+                d_startSelection = d_endSelection = xbegin;
+            }
+        }
+
+        
+        if (clickEvent->type == BUTTON_RELEASE) {
+            /*
+             * Set the new selection.
+             */
+            if (x > anchorForDragging) d_startSelection = anchorForDragging, d_endSelection = x;
+            else d_startSelection = x, d_endSelection = anchorForDragging;
+            
+            anchorForDragging = -1.0;
+        }
+
+#else
+            drawWhileDragging (this, anchorForDragging, x);
+        } ;
 		/*
 		 * Set the new selection.
 		 */
@@ -1373,6 +1430,7 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 		 */
 		d_startSelection = d_endSelection = xbegin;
 	}
+#endif
 	return FunctionEditor_UPDATE_NEEDED;
 }
 

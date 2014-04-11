@@ -225,7 +225,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 - (void)resizeCallback:(NSRect)rect {
     GuiDrawingArea me = (GuiDrawingArea) d_userData;
     
-    if (my d_resizeCallback) {
+    if (me && my d_resizeCallback) {
         struct structGuiDrawingAreaResizeEvent event = { me, 0 };
         event. width = rect.size.width;
         event. height = rect.size.height;
@@ -237,14 +237,6 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
         }
     }
     
-}
-
-- (void)flush {
-    [self lockFocus];
-    CGContextRef context = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    NSCAssert(context, @"nil context");
-    CGContextFlush(context);
-    [self unlockFocus];
 }
 
 - (void)setFrame:(NSRect)rect {
@@ -358,6 +350,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
     event.optionKeyPressed = NSAlternateKeyMask & modifiers;
     event.commandKeyPressed = NSCommandKeyMask & modifiers;
 
+    
     if (my d_keyCallback) {
         try {
             my d_keyCallback (my d_keyBoss, & event);
@@ -466,6 +459,7 @@ Thing_implement (GuiDrawingArea, GuiControl, 0);
 			event. commandKeyPressed = (macEvent -> modifiers & cmdKey) != 0;
 			event. optionKeyPressed = (macEvent -> modifiers & optionKey) != 0;
 			event. extraControlKeyPressed = (macEvent -> modifiers & controlKey) != 0;
+            event. type = BUTTON_PRESS;
 			try {
 				my d_clickCallback (my d_clickBoss, & event);
 			} catch (MelderError) {
@@ -595,7 +589,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiForm parent, int left, int right, int t
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), FALSE);
 	#elif cocoa
     
-        GuiCocoaDrawingArea *drawingArea = [GuiCocoaDrawingArea alloc];
+        GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
 		my d_widget = (GuiObject) drawingArea;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
         [drawingArea setUserData:me];
@@ -670,7 +664,7 @@ GuiDrawingArea GuiDrawingArea_create (GuiScrolledWindow parent, int width, int h
 		gtk_widget_set_double_buffered (GTK_WIDGET (my d_widget), FALSE);
 	#elif cocoa
     
-        GuiCocoaDrawingArea *drawingArea = [GuiCocoaDrawingArea alloc];
+        GuiCocoaDrawingArea *drawingArea = [[GuiCocoaDrawingArea alloc] init];
         my d_widget = (GuiObject) drawingArea;
         my v_positionInScrolledWindow (my d_widget, width, height, parent);
         [drawingArea setUserData:me];

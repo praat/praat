@@ -388,6 +388,8 @@ void structGuiMenuItem :: f_check (bool check) {
 		gtk_check_menu_item_set_active (GTK_CHECK_MENU_ITEM (d_widget), check);
 		d_callbackBlocked = false;
 	#elif cocoa
+        GuiCocoaMenuItem *item = (GuiCocoaMenuItem*)d_widget;
+        [item setState:check];
 	#elif motif
 		XmToggleButtonGadgetSetState (d_widget, check, False);
 	#endif

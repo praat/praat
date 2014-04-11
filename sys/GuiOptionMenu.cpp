@@ -91,7 +91,7 @@ void structGuiOptionMenu :: f_init (GuiForm parent, int left, int right, int top
 		GTK_WIDGET_UNSET_FLAGS (d_widget, GTK_CAN_DEFAULT);
 	#elif cocoa
     
-        GuiCocoaOptionMenu *optionMenu = [GuiCocoaOptionMenu alloc];
+        GuiCocoaOptionMenu *optionMenu = [[GuiCocoaOptionMenu alloc] init];
 
         d_widget = (GuiObject) optionMenu;
 		v_positionInForm (d_widget, left, right, top, bottom, parent);

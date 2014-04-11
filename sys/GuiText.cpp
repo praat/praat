@@ -927,7 +927,7 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkText_destroyCallback), me);
 	#elif cocoa
 		trace ("create");
-		my d_widget = [GuiCocoaText alloc];
+		my d_widget = [[GuiCocoaText alloc] init];
 		trace ("position");
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		trace ("set user data");

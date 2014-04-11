@@ -74,7 +74,7 @@ const wchar_t * Graphics_Colour_name (Graphics_Colour colour) {
 		Graphics_Colour_equal (colour, Graphics_OLIVE) ? L"olive" :
 		Graphics_Colour_equal (colour, Graphics_SILVER) ? L"silver" :
 		Graphics_Colour_equal (colour, Graphics_GREY) ? L"grey" :
-		colour. red == colour. green && colour. red == colour. blue ? Melder_fixed (colour. red, 6) :
+		//colour. red == colour. green && colour. red == colour. blue ? Melder_fixed (colour. red, 6) :
 		Melder_wcscat (L"{", Melder_fixed (colour. red, 6), L",", Melder_fixed (colour. green, 6), L",",
 			Melder_fixed (colour. blue, 6), L"}");
 }

@@ -101,7 +101,7 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		//parentHeight = GTK_WIDGET (parent -> d_widget) -> allocation.height;
 		if (left   <  0) left   += parentWidth;
 		if (right  <= 0) right  += parentWidth;
-		if (top    <  0) top    += parentHeight;
+        if (top    <  0) top    += parentHeight;
 		if (bottom <= 0) bottom += parentHeight;
 		trace ("fixed: parent width %d height %d", parentWidth, parentHeight);
 		gtk_widget_set_size_request (GTK_WIDGET (widget), right - left, bottom - top);
@@ -137,7 +137,7 @@ void structGuiControl :: v_positionInForm (GuiObject widget, int left, int right
 		top = parentHeight - top;         // flip
 		bottom = parentHeight - bottom;   // flip
 		NSRect rect = { { left, bottom }, { right - left, top - bottom } };
-		[widgetView initWithFrame: rect];
+		[widgetView setFrame: rect];
 
         [widgetView setAutoresizingMask:horizMask | vertMask];
         [superView addSubview:widgetView];   // parent will retain the subview...

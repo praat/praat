@@ -492,8 +492,9 @@ static void UiForm_okOrApply (I, GuiButton button, int hide) {
 						UiHistory_write_expandQuotes (field -> strings [field -> integerValue]);
 						UiHistory_write (L"\"");
 					} break; case UI_COLOUR: {
-						UiHistory_write (L", ");
+						UiHistory_write (L", \"");
 						UiHistory_write (Graphics_Colour_name (field -> colourValue));
+						UiHistory_write (L"\"");
 					}
 				}
 			}

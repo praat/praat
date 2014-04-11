@@ -619,11 +619,10 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
         CGContextTranslateCTM (d_macGraphicsContext, 0, cocoaDrawingArea.bounds.size.height);
         CGContextScaleCTM (d_macGraphicsContext, 1.0, -1.0);
 
-    CGRect rect;
+        CGRect rect;
         int width, height;
         width = x2DC - x1DC, height = y1DC - y2DC;
         if (width <= 0 || height <= 0) return;
-        
         CGContextSetRGBStrokeColor(d_macGraphicsContext, 0.1 , 0.1 , 0.1 , 1.0);
         SetRect (rect, x1DC - 1, y2DC - 1, x2DC, y1DC);
 
@@ -665,12 +664,8 @@ void structGraphicsScreen :: v_button (long x1DC, long x2DC, long y1DC, long y2D
         
         CGContextSetRGBStrokeColor(d_macGraphicsContext, 0.65 , 0.65 , 0.65 , 1.0);
         CGContextSynchronize ( d_macGraphicsContext);
-    
-    CGContextFlush(d_macGraphicsContext);
-    CGContextRestoreGState (d_macGraphicsContext);
-
-        [ d_macView unlockFocus];
-
+        CGContextRestoreGState (d_macGraphicsContext);
+        [d_macView unlockFocus];
 
 	#elif mac
 		int width, height;

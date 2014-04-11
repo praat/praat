@@ -125,7 +125,7 @@ GuiCheckButton GuiCheckButton_create (GuiForm parent, int left, int right, int t
 		my d_valueChangedHandlerId = g_signal_connect (GTK_TOGGLE_BUTTON (my d_widget), "toggled", G_CALLBACK (_GuiGtkCheckButton_valueChangedCallback), me);
 	#elif cocoa
     
-        GuiCocoaCheckButton *checkButton = [GuiCocoaCheckButton alloc];
+        GuiCocoaCheckButton *checkButton = [[GuiCocoaCheckButton alloc] init];
         my d_widget = (GuiObject) checkButton;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
         [checkButton setUserData:me];

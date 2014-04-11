@@ -53,6 +53,7 @@ oo_DEFINE_CLASS (TextTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
 
 	#if oo_DECLARING
+		TextPoint f_item (long i) { return static_cast <TextPoint> (points -> item [i]); }
 		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
@@ -68,6 +69,8 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, intervals, TextInterval, 0)
 
 	#if oo_DECLARING
+		TextInterval f_item (long i) { return static_cast <TextInterval> (intervals -> item [i]); }
+		//TextInterval operator[] (long i) { return static_cast <TextInterval> (intervals -> item [i]); }   // oops: operator[] not for pointer objects
 		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);

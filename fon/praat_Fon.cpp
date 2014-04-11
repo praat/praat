@@ -1,6 +1,6 @@
 /* praat_Fon.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2013 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -5406,7 +5406,7 @@ END
 
 FORM (Strings_createAsFileList, L"Create Strings as file list", L"Create Strings as file list...")
 	SENTENCE (L"Name", L"fileList")
-	LABEL (L"", L"Path:")
+	LABEL (L"", L"File path:")
 	TEXTFIELD (L"path", L"/people/Miep/*.wav")
 	OK
 static int inited;

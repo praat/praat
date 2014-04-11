@@ -406,7 +406,7 @@ GuiMenu GuiMenu_createInForm (GuiForm form, int left, int right, int top, int bo
 		_GuiObject_setUserData (my d_widget, me);
 		_GuiObject_setUserData (my d_cascadeButton -> d_widget, me);
 	#elif cocoa
-		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [GuiCocoaMenuButton alloc];
+		my d_cascadeButton -> d_widget = my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc] init];
 		my d_cascadeButton -> v_positionInForm (my d_cocoaMenuButton, left, right, top, bottom, form);
 		[my d_cocoaMenuButton   setUserData: me];
 		[my d_cocoaMenuButton   setPullsDown: YES];

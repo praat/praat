@@ -125,11 +125,17 @@ Thing_define (FunctionEditor, Editor) {
 		virtual void v_form_pictureSelection (EditorCommand cmd);
 		virtual void v_ok_pictureSelection (EditorCommand cmd);
 		virtual void v_do_pictureSelection (EditorCommand cmd);
-	// new preferences:
-		#include "FunctionEditor_prefs.h"
+    
 #if cocoa
-    GuiDrawingAreaClickEvent clickEvent;
+        // mouse events
+        GuiDrawingAreaClickEvent clickEvent;
+        double anchorForDragging;
+        double xForDragging;
 #endif
+    
+    // new preferences:
+    #include "FunctionEditor_prefs.h"
+
 };
 
 int theFunctionEditor_playCallback (void *void_me, int phase, double tmin, double tmax, double t);

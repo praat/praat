@@ -606,7 +606,7 @@ PointProcess TextGrid_getStartingPoints (TextGrid me, long tierNumber, int which
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
-			TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
+			TextInterval interval = tier -> f_item (iinterval);
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
 				PointProcess_addPoint (thee.peek(), interval -> xmin);
 			}
@@ -622,7 +622,7 @@ PointProcess TextGrid_getEndPoints (TextGrid me, long tierNumber, int which_Meld
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
-			TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
+			TextInterval interval = tier -> f_item (iinterval);
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
 				PointProcess_addPoint (thee.peek(), interval -> xmax);
 			}
@@ -638,7 +638,7 @@ PointProcess TextGrid_getCentrePoints (TextGrid me, long tierNumber, int which_M
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
 		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
-			TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
+			TextInterval interval = tier -> f_item (iinterval);
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
 				PointProcess_addPoint (thee.peek(), 0.5 * (interval -> xmin + interval -> xmax));
 			}

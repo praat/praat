@@ -411,7 +411,7 @@ GuiList GuiList_create (GuiForm parent, int left, int right, int top, int bottom
 		g_signal_connect (sel, "changed", G_CALLBACK (_GuiGtkList_selectionChangedCallback), me);
 	#elif cocoa
 
-        GuiCocoaList *list = [GuiCocoaList alloc];
+        GuiCocoaList *list = [[GuiCocoaList alloc] init];
         my d_widget = (GuiObject) list;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
         [list setAllowMultipleSelection:allowMultipleSelection];

@@ -208,7 +208,7 @@ GuiScrollBar GuiScrollBar_create (GuiForm parent, int left, int right, int top, 
 		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
 		g_signal_connect (G_OBJECT (my d_widget), "value-changed", G_CALLBACK (_GuiGtkScrollBar_valueChangedCallback), me);
 	#elif cocoa
-        GuiCocoaScrollBar *scroller = [GuiCocoaScrollBar alloc];
+        GuiCocoaScrollBar *scroller = [[GuiCocoaScrollBar alloc] init];
         my d_widget = (GuiObject) scroller;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
         [scroller setUserData:me];
@@ -266,9 +266,6 @@ GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int 
 	double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement,
 	void (*valueChangedCallback) (void *boss, GuiScrollBarEvent event), void *valueChangedBoss, unsigned long flags)
 {
-    //NSLog(@"GuiScrollBar_createShown %f minimum, %f maximum, %f value, %f sliderSize, %f increment, %f pageIncrement",
-    //      minimum, maximum, value, sliderSize, increment, pageIncrement);
-
 	GuiScrollBar me = GuiScrollBar_create (parent, left, right, top, bottom,
 		minimum, maximum, value, sliderSize, increment, pageIncrement,
 		valueChangedCallback, valueChangedBoss, flags);
@@ -287,6 +284,9 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 			NUMdefined (pageIncrement) ? pageIncrement : gtk_adjustment_get_page_increment (GTK_ADJUSTMENT (adj)),
 			NUMdefined (sliderSize) ? sliderSize : gtk_adjustment_get_page_size (GTK_ADJUSTMENT (adj)));
 	#elif cocoa
+    
+        if (minimum == NUMundefined)
+            minimum = 0.0;
     
         NSLog(@"f_set %f minimum, %f maximum, %f value, %f sliderSize, %f increment, %f pageIncrement",
               minimum, maximum, value, sliderSize, increment, pageIncrement);
@@ -316,9 +316,8 @@ int structGuiScrollBar :: f_getValue () {
 		return gtk_range_get_value (GTK_RANGE (d_widget));
 	#elif cocoa
     
-    GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar*)d_widget;
-    
-    NSLog(@"f_getValue %d ", [scroller getScrollerValue]);
+        GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar*)d_widget;
+        NSLog(@"f_getValue %d ", [scroller getScrollerValue]);
 
     return [scroller getScrollerValue];
 

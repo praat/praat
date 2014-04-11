@@ -83,19 +83,22 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		gtk_misc_set_alignment (GTK_MISC (my d_widget), flags & GuiLabel_RIGHT ? 1.0 : flags & GuiLabel_CENTRE ? 0.5 : 0.0, 0.5);
 	#elif cocoa
 		trace ("create");
-		my d_widget = [[GuiCocoaLabel alloc] init];
+        GuiCocoaLabel *label = [[GuiCocoaLabel alloc] init];
+		my d_widget = label;
 		trace ("position");
-		my v_positionInForm (my d_widget, left, right, top, bottom, parent);
+		my v_positionInForm (label, left, right, top, bottom, parent);
 		trace ("set user data");
-		[(GuiCocoaLabel *) my d_widget setUserData: me];
+		[label setUserData: me];
 		trace ("set bezel style");
-		[(NSTextField *) my d_widget setBezelStyle: NSRoundedBezelStyle];
+		[label setBezelStyle: NSRoundedBezelStyle];
 		trace ("set bordered");
-		[(NSTextField *) my d_widget setBordered: NO];
+		[label setBordered: NO];
 		trace ("set selectable");
-		[(NSTextField *) my d_widget setSelectable: NO];
+		[label setSelectable: NO];
 		trace ("title");
-		[(NSTextField *) my d_widget setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (labelText)];
+		[label setTitleWithMnemonic: (NSString *) Melder_peekWcsToCfstring (labelText)];
+        [label setAlignment:( flags & GuiLabel_RIGHT ? NSRightTextAlignment : flags & GuiLabel_CENTRE ? NSCenterTextAlignment : NSLeftTextAlignment )];
+
 	#elif win
 		my d_widget = _Gui_initializeWidget (xmLabelWidgetClass, parent -> d_widget, labelText);
 		_GuiObject_setUserData (my d_widget, me);

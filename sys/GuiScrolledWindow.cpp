@@ -90,7 +90,7 @@ GuiScrolledWindow GuiScrolledWindow_create (GuiForm parent, int left, int right,
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkScrolledWindow_destroyCallback), me);
 	#elif cocoa
     
-        GuiCocoaScrolledWindow *scrollView = [GuiCocoaScrolledWindow alloc];
+        GuiCocoaScrolledWindow *scrollView = [[GuiCocoaScrolledWindow alloc] init];
         my d_widget = (GuiObject) scrollView;
         my v_positionInForm (my d_widget, left, right, top, bottom, parent);
         [scrollView setUserData:me];

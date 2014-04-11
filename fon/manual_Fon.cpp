@@ -202,47 +202,52 @@ INTRO (L"A command in the @@New menu@ to create a @Strings object containing a l
 	"It works completely analogously to @@Create Strings as file list...@.")
 MAN_END
 
-MAN_BEGIN (L"Create Strings as file list...", L"ppgb", 20060919)
+MAN_BEGIN (L"Create Strings as file list...", L"ppgb", 20130521)
 INTRO (L"A command in the @@New menu@ to create a @Strings object containing a list of files in a given directory.")
 ENTRY (L"Settings")
+SCRIPT (5.4, Manual_SETTINGS_WINDOW_HEIGHT (2.6), L""
+	Manual_DRAW_SETTINGS_WINDOW ("Create Strings as file list", 2.6)
+	Manual_DRAW_SETTINGS_WINDOW_FIELD ("Name", "fileList")
+	Manual_DRAW_SETTINGS_WINDOW_TEXT ("File path", "/Users/miep/Sounds/*.wav")
+)
 TAG (L"##Name")
-DEFINITION (L"the name of the resulting Strings object, usually \"fileList\".")
-TAG (L"##Path")
-DEFINITION (L"the directory name, with an optional wildcard for selecting files.")
+DEFINITION (L"the name of the resulting Strings object.")
+TAG (L"##File path")
+DEFINITION (L"the directory name, with an optional %wildcard (see below) for selecting files.")
 ENTRY (L"Behaviour")
 NORMAL (L"The resulting Strings object will contain an alphabetical list of file names, "
-	"without the preceding path through the directory structures. If there are not files that match %path, "
+	"without the preceding path through the directory structures. If there are no files that match the file path, "
 	"the Strings object will contain no strings.")
 ENTRY (L"Usage")
-NORMAL (L"There are two ways to specify the path.")
-NORMAL (L"One way is to specify a directory name only. On Unix, you could type "
+NORMAL (L"There are two ways to specify the file path.")
+NORMAL (L"One way is to specify a directory name only. On Unix, the file path could be "
 	"##/usr/people/miep/sounds# or ##/usr/people/miep/sounds/#, for instance. On Windows, "
-	"##C:\\bsDocument and Settings\\bsMiep\\bsSounds# or ##C:\\bsDocument and Settings\\bsMiep\\bsSounds\\bs#. "
-	"On Macintosh, ##/Users/miep/Sounds# or ##/Users/miep/Sounds/#. Any of these return "
+	"##C:\\bsDocuments and Settings\\bsMiep\\bsSounds# or ##C:\\bsDocuments and Settings\\bsMiep\\bsSounds\\bs#. "
+	"On Macintosh, ##/Users/miep/Sounds# or ##/Users/miep/Sounds/#. Any of these produce "
 	"a list of all the files in the specified directory.")
 NORMAL (L"The other way is to specify a wildcard (a single asterisk) for the file names. "
 	"To get a list of all the files whose names start with \"hal\" and end in \".wav\", "
-	"type ##/usr/people/miep/sounds/hal*.wav#, ##C:\\bsDocument and Settings\\bsMiep\\bsSounds\\bshal*.wav#, "
+	"type ##/usr/people/miep/sounds/hal*.wav#, ##C:\\bsDocuments and Settings\\bsMiep\\bsSounds\\bshal*.wav#, "
 	"or ##/Users/miep/Sounds/hal*.wav#.")
 ENTRY (L"Script usage")
 NORMAL (L"In a script, you can use this command to cycle through the files in a directory. "
 	"For instance, to read in all the sound files in a specified directory, "
 	"you could use the following script:")
 CODE (L"directory\\$  = \"/usr/people/miep/sounds\"")
-CODE (L"Create Strings as file list... list 'directory\\$ '/*.wav")
-CODE (L"numberOfFiles = Get number of strings")
+CODE (L"strings = do (\"Create Strings as file list...\", \"list\", directory\\$  + \"/*.wav\")")
+CODE (L"numberOfFiles = do (\"Get number of strings\")")
 CODE (L"for ifile to numberOfFiles")
-CODE (L"   select Strings list")
-CODE (L"   fileName\\$  = Get string... ifile")
-CODE (L"   Read from file... 'directory\\$ '/'fileName\\$ '")
+	CODE1 (L"selectObject (strings)")
+	CODE1 (L"fileName\\$  = do\\$  (\"Get string...\", ifile)")
+	CODE1 (L"do (\"Read from file...\", directory\\$  + \"/\" + fileName\\$ )")
 CODE (L"endfor")
-NORMAL (L"If the script has been saved to a script file, you can use paths that are relative to the directory "
+NORMAL (L"If the script has been saved to a script file, you can use file paths that are relative to the directory "
 	"where you saved the script. Thus, with")
-CODE (L"Create Strings as file list... list *.wav")
+CODE (L"do (\"Create Strings as file list...\", \"list\", \"*.wav\")")
 NORMAL (L"you get a list of all the .wav files that are in the same directory as the script that contains this line. "
 	"And to get a list of all the .wav files in the directory Sounds that resides in the same directory as your script, "
 	"you can do")
-CODE (L"Create Strings as file list... list Sounds/*.wav")
+CODE (L"do (\"Create Strings as file list...\", \"list\", \"Sounds/*.wav\")")
 NORMAL (L"As is usual in Praat scripting, the forward slash (\"/\") in this example can be used on all platforms, including Windows. "
 	"This makes your script portable across platforms.")
 ENTRY (L"See also")
