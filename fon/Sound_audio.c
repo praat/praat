@@ -44,7 +44,7 @@
 #include "Sound.h"
 #include "Preferences.h"
 
-//#define USE_PORTAUDIO  1
+#define USE_PORTAUDIO  1
 #ifndef USE_PORTAUDIO
 	#if defined (macintosh)
 		#define USE_PORTAUDIO  1
@@ -68,15 +68,6 @@
 	#ifndef __MWERKS__
 		typedef SndListPtr *SndListHandle;
 	#endif
-#elif defined (linux)
-	#include <fcntl.h>
-	#if defined (__OpenBSD__) || defined (__NetBSD__)
-		#include <soundcard.h>
-	#else
-		#include <sys/soundcard.h>
-	#endif
-	#include <sys/ioctl.h>   /* ioctl */
-	#include <unistd.h>   /* open write close read */
 #elif defined (sun)
 	#include <fcntl.h>
 	#include <stropts.h>
@@ -96,6 +87,15 @@
 #elif defined (_WIN32)
 	#include <windows.h>
 	#include <mmsystem.h>
+#elif defined (linux)
+	#include <fcntl.h>
+	#if defined (__OpenBSD__) || defined (__NetBSD__)
+		#include <soundcard.h>
+	#else
+		#include <sys/soundcard.h>
+	#endif
+	#include <sys/ioctl.h>   /* ioctl */
+	#include <unistd.h>   /* open write close read */
 #else
 	#include <fcntl.h>
 #endif
@@ -136,14 +136,14 @@ static int ulaw2linear [] =
        };
 
 #if USE_PORTAUDIO
-	struct Sound_recordFixedTime_Info {
-		long numberOfSamples, numberOfSamplesRead;
-		short *buffer;
-	};
-	static long getNumberOfSamplesRead (struct Sound_recordFixedTime_Info *info) {
-		volatile long numberOfSamplesRead = info -> numberOfSamplesRead;
-		return numberOfSamplesRead;
-	}
+struct Sound_recordFixedTime_Info {
+	long numberOfSamples, numberOfSamplesRead;
+	short *buffer;
+};
+static long getNumberOfSamplesRead (volatile struct Sound_recordFixedTime_Info *info) {
+	volatile long numberOfSamplesRead = info -> numberOfSamplesRead;
+	return numberOfSamplesRead;
+}
 static int portaudioStreamCallback (
     const void *input, void *output,
     unsigned long frameCount,
@@ -182,7 +182,7 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 	#if USE_PORTAUDIO
 		static bool paInitialized = false;
 		PaStream *portaudioStream = NULL;
-		struct Sound_recordFixedTime_Info info = { 0 };
+		volatile struct Sound_recordFixedTime_Info info = { 0 };
 		PaStreamParameters streamParameters = { 0 };
 	#elif defined (sgi)
 		ALconfig config;
@@ -648,8 +648,8 @@ Sound Sound_recordFixedTime (int inputSource, double gain, double balance, doubl
 
 	#if USE_PORTAUDIO
 		// The callback will do this. Just wait.
-		while (getNumberOfSamplesRead (& info) < numberOfSamples) {
-			Pa_Sleep (1);
+		while (/*getNumberOfSamplesRead (& info)*/ info. numberOfSamplesRead < numberOfSamples) {
+			//Pa_Sleep (1);
 			//Melder_casual ("filled %ld/%ld", getNumberOfSamplesRead (& info), numberOfSamples);
 		}
 	#elif defined (sgi)

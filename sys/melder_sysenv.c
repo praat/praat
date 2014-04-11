@@ -60,6 +60,9 @@ int Melder_system (const char *command) {
 		STARTUPINFO siStartInfo;
 		PROCESS_INFORMATION piProcInfo;
 		char *comspec = Melder_getenv ("COMSPEC");   /* E.g. "C:\WINDOWS\COMMAND.COM" or "C:\WINNT\windows32\cmd.exe" */
+		if (comspec == NULL) {
+			comspec = Melder_getenv ("ComSpec");
+		}
 		if (comspec != NULL) {
 			strcpy (Melder_buffer1, comspec);
 		} else {

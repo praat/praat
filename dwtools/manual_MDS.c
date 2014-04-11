@@ -1,6 +1,6 @@
 /* manual_MDS.c
  *
- * Copyright (C) 1993-2005 David Weenink
+ * Copyright (C) 1993-2007 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
  djmw 20040214 Removed last link to @praat program@.
  djmw 20040407 Change Arguments -> Settings.
  djmw 20040513 Spelling.
- djmw 20050406 Latest modification.
+ djmw 20070108 Latest modification.
 */
 
 #include "ManPagesM.h"
@@ -1660,24 +1660,24 @@ LIST_ITEM ("10. Set #Z = #X^^[%k]^, and go to 2.")
 NORMAL ("This algorithm goes back to @@De Leeuw (1977)@.")
 MAN_END
 
-MAN_BEGIN ("spline", "djmw", 19980112)
+MAN_BEGIN ("spline", "djmw", 20070108)
 INTRO ("A spline function %f is a piecewise polynomial function defined on "
 	"an interval [%x__%min_, %x__%max_] "
 	"with specified continuity constraints, i.e., when the interval [%x__%min_,"
-	" %x__%max_] is subdivided by points \\xi__%i_ such that %x__%min_ = "
-	"\\xi__%1_ < ... < \\xi__%q_ = %%x__%max_, then within each subinterval "
-	"[\\xi__%j_, \\xi__%j+1_) the function is a polynomial %P__%j_ of "
+	" %x__%max_] is subdivided by points %\\xi__%i_ such that %x__%min_ = "
+	"%\\xi__%1_ < ... < %\\xi__%q_ = %%x__%max_, then within each subinterval "
+	"[%\\xi__%j_, %\\xi__%j+1_) the function is a polynomial %P__%j_ of "
 	"specified order %k.")
 NORMAL ("A %%knot sequence% %t = {%t__1_, ..., %t__%n+%k_}, where %n is the "
 	"number of free parameters that specify the spline function, is derived "
-	"from the \\xi__%i_ by placing knots at the boundary values \\xi__%i_ "
+	"from the %\\xi__%i_ by placing knots at the boundary values %\\xi__%i_ "
 	"according to the order of continuity at that boundary. The most common "
-	"continuity chcharacteristicsmposed on %f request that for adjacent "
+	"continuity characteristics imposed on %f request that for adjacent "
 	"polynomials the derivatives up to order %k\\--2 match. For example, "
 	"the knot sequence of a spline of order %k for a partition of [%x__%min_,"
 	" %%x__%max_] into three intervals (%q = 4) will be %t__1_ = ... = "
-	"%t__%k_ = %x__%min_ (=\\xi__1_), %t__%k+1_ = \\xi__2_, %t__%k+2_ = "
-	"\\xi__3_ , %t__%k+3_ = ... = %t__%k+%k+2_ = %x__%max_ (= \\xi__4_). "
+	"%t__%k_ = %x__%min_ (=%\\xi__1_), %t__%k+1_ = %\\xi__2_, %t__%k+2_ = "
+	"%\\xi__3_ , %t__%k+3_ = ... = %t__%k+%k+2_ = %x__%max_ (= %\\xi__4_). "
 	"This is called a %simple knot sequence, because all interior knots are "
 	"simple. The number of free parameters %n for this case obeys a simple "
 	"formula:")
@@ -1685,7 +1685,7 @@ FORMULA ("%n = %numberOfInteriorKnots + %order.")
 NORMAL ("With suitable basis functions, for example, the M-spline family "
 	"%M__%i_(%x|%k, %t), %i=1..%n, we can write any spline %f in the form:")
 FORMULA ("%f = \\su__%i=1..%n_ %a__%i_%M__%i_,")
-NORMAL ("where the %M__%i_ are defined by the following recursive formulas:")
+NORMAL ("where the %M__%i_ are defined by the following recursive formula's:")
 FORMULA ("%M__%i_(%x|1,%t) = 1 / (%t__%i+1_ \\-- %t__%i_),           %t__%i_ "
 	"\\<_ %x < %t__%i+1_, 0 otherwise")
 FORMULA ("%M__%i_(%x|%k,%t) = %k [(%x\\--%t__%i_)%M__%i_(%x|%k\\--1,%t) + "

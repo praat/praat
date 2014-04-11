@@ -1,6 +1,6 @@
 /* Pitch.c
  *
- * Copyright (C) 1992-2006 Paul Boersma
+ * Copyright (C) 1992-2007 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
  * pb 2006/12/17 Pitch_getMeanAbsoluteSlope returns NUMundefined instead of 0.0
  * pb 2006/12/18 better info
  * pb 2006/12/30 new Sound_create API
+ * pb 2007/01/12 guard path finder against weird settings
+ * pb 2007/01/12 commented out Melder_casual in Pitch_difference
  */
 
 #include "Pitch.h"
@@ -456,8 +458,8 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 {
 	long iframe;
 	int icand, icand1, icand2, maxnCandidates = Pitch_getMaxnCandidates (me), place;
-	float maximum, value;
-	float **delta;
+	double maximum, value;
+	double **delta;
 	int **psi;
 	double ceiling2 = pullFormants ? 2 * ceiling : ceiling;
 	/* Next three lines 20011015 */
@@ -466,7 +468,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	voicedUnvoicedCost *= timeStepCorrection;
 
 	my ceiling = ceiling;
-	delta = NUMfmatrix (1, my nx, 1, maxnCandidates);
+	delta = NUMdmatrix (1, my nx, 1, maxnCandidates);
 	psi = NUMimatrix (1, my nx, 1, maxnCandidates);
 	if (! delta || ! psi) goto end;
 
@@ -489,11 +491,11 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 
 	for (iframe = 2; iframe <= my nx; iframe ++) {
 		Pitch_Frame prevFrame = & my frame [iframe - 1], curFrame = & my frame [iframe];
-		float *prevDelta = delta [iframe - 1], *curDelta = delta [iframe];
+		double *prevDelta = delta [iframe - 1], *curDelta = delta [iframe];
 		int *curPsi = psi [iframe];
 		for (icand2 = 1; icand2 <= curFrame -> nCandidates; icand2 ++) {
 			double f2 = curFrame -> candidate [icand2]. frequency;
-			maximum = -10;
+			maximum = -1e308;
 			place = 0;
 			for (icand1 = 1; icand1 <= prevFrame -> nCandidates; icand1 ++) {
 				double f1 = prevFrame -> candidate [icand1]. frequency, transitionCost;
@@ -530,26 +532,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 		struct structPitch_Candidate help = frame -> candidate [1];
 		frame -> candidate [1] = frame -> candidate [place];
 		frame -> candidate [place] = help;
-		place = psi [iframe] [place];
-		/*
-		 * Correct translation by CodeWarrior 11, with "Reduction in strength" or "Lifetime analysis" off:
-		 *
-000004B1: 8B 4C 24 1C             mov       ecx,dword ptr [esp]+01C       // ecx = iframe
-000004B5: 8B 44 24 28             mov       eax,dword ptr [esp]+028       // eax = psi
-000004B9: 8B 14 88                mov       edx,dword ptr [eax][ecx*04]   // edx = * (psi + iframe*4) = psi [iframe]
-000004BC: 8B 4C 24 18             mov       ecx,dword ptr [esp]+018       // ecx = place
-000004C0: 8B 04 8A                mov       eax,dword ptr [edx][ecx*04]  // eax = * (psi [iframe] + place*4) = psi [iframe] [place]
-000004C3: 89 44 24 18             mov       dword ptr [esp]+018,eax       // place = eax
-		 *
-		 * Incorrect when both "Reduction in strength" and "Lifetime analysis" on:
-		 *
-000004B2: 8B 4C 24 1C             mov       ecx,dword ptr [esp]+01C       // ecx = iframe
-000004B6: 8B 44 24 28             mov       eax,dword ptr [esp]+028       // eax = psi
-000004BA: 8B 0C 88                mov       ecx,dword ptr [eax][ecx*04]   // ecx = * (psi + iframe*4) = psi [iframe]
-000004BD: 8B 4C 24 18             mov       ecx,dword ptr [esp]+018       // ecx = place !!
-000004C1: 8B 04 89                mov       eax,dword ptr [ecx][ecx*04]  // eax = * (place + place*4) !!!!
-000004C4: 89 44 24 18             mov       dword ptr [esp]+018,eax
-		 */
+		place = psi [iframe] [place];   // This assignment is challenging to CodeWarrior 11.
 	}
 
 	/* Pull formants: devoice frames with frequencies between ceiling and ceiling2. */
@@ -572,7 +555,7 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	}
 
 end:
-	NUMfmatrix_free (delta, 1, 1);
+	NUMdmatrix_free (delta, 1, 1);
 	NUMimatrix_free (psi, 1, 1);
 }
 
@@ -617,12 +600,10 @@ void Pitch_difference (Pitch me, Pitch thee) {
 			nvtouv ++;
 		} else if (! myUnvoiced && ! thyUnvoiced) {
 			if (myf > thyf) {
-				Melder_casual ("Frame %ld time %f: downward frequency jump "
-					"from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
+				//Melder_casual ("Frame %ld time %f: downward frequency jump from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
 				ndfdown ++;
 			} else if (myf < thyf) {
-				Melder_casual ("Frame %ld time %f: upward frequency jump "
-					"from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
+				//Melder_casual ("Frame %ld time %f: upward frequency jump from %.5g Hz to %.5g Hz.", i, t, myf, thyf);
 				ndfup ++;
 			}
 		}

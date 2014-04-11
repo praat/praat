@@ -39,16 +39,22 @@
 #include <time.h>
 #define my  me ->
 
-#if defined (macintosh) && (! defined (USE_PORTAUDIO) || USE_PORTAUDIO == 1)
-	#include "portaudio.h"
-	#define USE_PORTAUDIO  1
-#else
-	#define USE_PORTAUDIO  0
+#define USE_PORTAUDIO  1
+#ifndef USE_PORTAUDIO
+	#if defined (macintosh)
+		#define USE_PORTAUDIO  1
+	#else
+		#define USE_PORTAUDIO  0
+	#endif
 #endif
 
-#define Melder_HPUX_USE_AUDIO_SERVER
+#ifdef macintosh
+	#include <sys/time.h>
+#endif
 
-#if defined (sgi)
+#if USE_PORTAUDIO
+	#include "portaudio.h"
+#elif defined (sgi)
 	/* For local audio: */
 	#include <audio.h>
 	#include <unistd.h>
@@ -62,23 +68,9 @@
 	#include <arpa/inet.h>
 	#include <errno.h>
 #elif defined (macintosh)
-	#include <sys/time.h>
-	#define USE_COREAUDIO  0
-	#if USE_COREAUDIO
-		#include <AudioUnit.h>
-	#endif
 	#include <math.h>
-#elif defined (_WIN32)
-	#include <windows.h>
-	#include <math.h>
-#elif defined (sun)
-	#include <fcntl.h>
-	#include <stropts.h>
-	#include <unistd.h>
-	#include <sys/audioio.h>
-	#include <sys/time.h>
-	#include <signal.h>
 #elif defined (HPUX)
+	#define Melder_HPUX_USE_AUDIO_SERVER
 	#include <fcntl.h>
 	#include <ctype.h>
 	#include <unistd.h>
@@ -88,6 +80,13 @@
 	#if defined (Melder_HPUX_USE_AUDIO_SERVER)
 		#include "Alib.h"
 	#endif
+#elif defined (sun)
+	#include <fcntl.h>
+	#include <stropts.h>
+	#include <unistd.h>
+	#include <sys/audioio.h>
+	#include <sys/time.h>
+	#include <signal.h>
 #elif defined (linux)
 	#include <sys/types.h>
 	#include <sys/stat.h>
@@ -102,6 +101,9 @@
 	#include <errno.h>
 	#include <sys/time.h>
 	#include <signal.h>
+#elif defined (_WIN32)
+	#include <windows.h>
+	#include <math.h>
 #endif
 
 #if defined (sgi)
@@ -168,20 +170,20 @@ long Melder_getBestSampleRate (long fsamp) {
 		_melder_sgi_checkAudioServer ();
 		if (_melder_sgi_useAudioServer) return fsamp;
 		return fsamp == 8000 || fsamp == 9800 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
-			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 22050;
+			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 44100;
 	#elif defined (_WIN32)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
-			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 22050;
+			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;
 	#elif defined (HPUX) && defined (USE_AUDIO_SERVER)
 		return fsamp == 5513 ? 5512 : fsamp;   /* 5512.5 should be given as 5512 */
 	#elif defined (sun) || defined (HPUX)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
-			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 22050;
+			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 44100;
 	#elif defined (linux)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
-			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 22050;
+			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 ? fsamp : 44100;
 	#else
-		return 22050;
+		return 44100;
 	#endif
 }
 
@@ -194,7 +196,10 @@ static struct MelderPlay {
 	int (*callback) (void *closure, long samplesPlayed);
 	void *closure;
 	XtWorkProcId workProcId;
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		PaStream *stream;
+		double startingTime;
+	#elif defined (sgi)
 		/* For local audio: */
 		ALconfig config;
 		ALport port;
@@ -202,18 +207,8 @@ static struct MelderPlay {
 		int inited, status, portNumber, sokket;
 		char hostName [64];
 		long defchan, channels;
-	#elif defined (_WIN32)
-		HWAVEOUT hWaveOut;
-		WAVEHDR waveHeader;
-		MMRESULT status;
-		clock_t startingTime;
 	#elif defined (macintosh)
-		#if USE_PORTAUDIO
-			PaStream *stream;
-		#else
-			SndChannelPtr soundChannel;
-			/*static void channelCallback (SndChannelPtr channel, SndCommand cmd) {} */
-		#endif
+		SndChannelPtr soundChannel;
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		long status;
 		Audio *audio;
@@ -226,6 +221,11 @@ static struct MelderPlay {
 		audio_info_t audioInfo;
 	#elif defined (linux)
 		int audio_fd, val, err;
+	#elif defined (_WIN32)
+		HWAVEOUT hWaveOut;
+		WAVEHDR waveHeader;
+		MMRESULT status;
+		clock_t startingTime;
 	#endif
 } thePlay;
 
@@ -237,7 +237,17 @@ int Melder_stopWasExplicit (void) {
 	return thePlay. explicit;
 }
 
-#if defined (linux) || defined (sun) || defined (HPUX) || defined (macintosh)
+#if defined (_WIN32)
+	static long theTide;
+	static void Melder_startClock (void) {
+		theTide = GetTickCount ();
+	}
+	static double Melder_clock (void) {
+		return (GetTickCount () - theTide) / 1000.0;
+	}
+	static void Melder_stopClock (void) {
+	}
+#else
 	static struct itimerval theTide;
 	static void Melder_startClock (void) {
 		theTide.it_value.tv_sec = 20000;
@@ -266,7 +276,10 @@ int Melder_stopWasExplicit (void) {
  */
 static Boolean flush (void) {
 	struct MelderPlay *me = & thePlay;
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		Pa_CloseStream (my stream), my stream = NULL;
+		Melder_stopClock ();
+	#elif defined (sgi)
 		_melder_sgi_checkAudioServer ();
 		if (_melder_sgi_useAudioServer) {
 			close (my sokket);
@@ -274,28 +287,9 @@ static Boolean flush (void) {
 		} else {
 			ALcloseport (my port), my port = 0;
 		}
-	#elif defined (_WIN32)
-		/*
-		 * FIX: Do not reset the sound card if played to the end:
-		 * the last 20 milliseconds may be truncated!
-		 * This used to happen on Barbertje's Dell PC, not with SoundBlaster.
-		 */
-		if (my samplesPlayed != my numberOfSamples || Melder_debug == 2)
-			waveOutReset (my hWaveOut);
-		my status = waveOutUnprepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
-		if (/* Melder_debug == 3 && */ my status == WAVERR_STILLPLAYING) {
-			waveOutReset (my hWaveOut);
-			waveOutUnprepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
-		}
-		waveOutClose (my hWaveOut), my hWaveOut = 0;
 	#elif defined (macintosh)
 		if (my asynchronicity == Melder_ASYNCHRONOUS) {   /* Other asynchronicities are handled within Melder_play16 (). */
-			#if USE_PORTAUDIO
-				Pa_CloseStream (my stream), my stream = NULL;
-			#else
-				SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
-			#endif
-			my samplesPlayed = Melder_clock () * my sampleRate;
+			SndDisposeChannel (my soundChannel, 1), my soundChannel = NULL;
 		}
 		Melder_stopClock ();
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
@@ -330,6 +324,20 @@ static Boolean flush (void) {
 			close (my audio_fd), my audio_fd = 0;
 		}
 		Melder_stopClock ();
+	#elif defined (_WIN32)
+		/*
+		 * FIX: Do not reset the sound card if played to the end:
+		 * the last 20 milliseconds may be truncated!
+		 * This used to happen on Barbertje's Dell PC, not with SoundBlaster.
+		 */
+		if (my samplesPlayed != my numberOfSamples || Melder_debug == 2)
+			waveOutReset (my hWaveOut);
+		my status = waveOutUnprepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
+		if (/* Melder_debug == 3 && */ my status == WAVERR_STILLPLAYING) {
+			waveOutReset (my hWaveOut);
+			waveOutUnprepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
+		}
+		waveOutClose (my hWaveOut), my hWaveOut = 0;
 	#endif
 	if (my fakeMono) {
 		NUMsvector_free ((short *) my buffer, 0);
@@ -362,7 +370,20 @@ int Melder_stopPlaying (int explicit) {
 
 static Boolean workProc (XtPointer closure) {
 	struct MelderPlay *me = & thePlay;
-	#if defined (sgi)
+	#if USE_PORTAUDIO
+		if (Pa_IsStreamActive (my stream)) {
+			// my samplesPlayed has been set at interrupt time.
+			if (my callback && ! my callback (my closure,
+					//my samplesPlayed
+					//(Pa_GetStreamTime (my stream) - my startingTime) * my sampleRate)
+					Melder_clock () * my sampleRate)
+				)
+				return flush ();
+		} else {
+			my samplesPlayed = my numberOfSamples;
+			return flush ();
+		}
+	#elif defined (sgi)
 		_melder_sgi_checkAudioServer ();
 		if (_melder_sgi_useAudioServer) {
 		} else {
@@ -387,49 +408,17 @@ static Boolean workProc (XtPointer closure) {
 				sginap (1);
 			}
 		}
-	#elif defined (_WIN32)
-  		if (my waveHeader. dwFlags & WHDR_DONE) {
+	#elif defined (macintosh)
+		SCStatus status;
+		SndChannelStatus (my soundChannel, sizeof (SCStatus), & status);
+		if (status. scChannelBusy) {
+			my samplesPlayed = Melder_clock () * my sampleRate;
+			if (my callback && ! my callback (my closure, my samplesPlayed))
+				return flush ();
+		} else {
 			my samplesPlayed = my numberOfSamples;
 			return flush ();
-  		} else {
-  			static long previousTime = 0;
-  			unsigned long currentTime = clock ();
-  			if (Melder_debug == 1) {
-				my samplesPlayed = ((clock () - my startingTime) / (double) CLOCKS_PER_SEC) * my sampleRate;
-  			} else {
-	  			MMTIME mmtime;
-	  			mmtime. wType = TIME_BYTES;
-	  			waveOutGetPosition (my hWaveOut, & mmtime, sizeof (MMTIME));
-				my samplesPlayed = mmtime. u.cb / (2 * my numberOfChannels);
-			}
-			if (/* Melder_debug != 4 || */ currentTime - previousTime > CLOCKS_PER_SEC / 100) {
-				previousTime = currentTime;
-				if (my callback && ! my callback (my closure, my samplesPlayed))
-					return flush ();
-			}
-  		}
-	#elif defined (macintosh)
-		#if USE_PORTAUDIO
-			if (Pa_IsStreamActive (my stream)) {
-				my samplesPlayed = Melder_clock () * my sampleRate;
-				if (my callback && ! my callback (my closure, my samplesPlayed))
-					return flush ();
-			} else {
-				my samplesPlayed = my numberOfSamples;
-				return flush ();
-			}
-		#else
-			SCStatus status;
-			SndChannelStatus (my soundChannel, sizeof (SCStatus), & status);
-			if (status. scChannelBusy) {
-				my samplesPlayed = Melder_clock () * my sampleRate;
-				if (my callback && ! my callback (my closure, my samplesPlayed))
-					return flush ();
-			} else {
-				my samplesPlayed = my numberOfSamples;
-				return flush ();
-			}
-		#endif
+		}
 	#elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 		AEvent audioEvent;
 		int eventAvailable = ACheckEvent (my audio, & audioEvent, & my status);
@@ -487,12 +476,33 @@ static Boolean workProc (XtPointer closure) {
 			if (my callback && ! my callback (my closure, my samplesPlayed))
 				return flush ();*/
 		}
+	#elif defined (_WIN32)
+  		if (my waveHeader. dwFlags & WHDR_DONE) {
+			my samplesPlayed = my numberOfSamples;
+			return flush ();
+  		} else {
+  			static long previousTime = 0;
+  			unsigned long currentTime = clock ();
+  			if (Melder_debug == 1) {
+				my samplesPlayed = Melder_clock () * my sampleRate;
+  			} else {
+	  			MMTIME mmtime;
+	  			mmtime. wType = TIME_BYTES;
+	  			waveOutGetPosition (my hWaveOut, & mmtime, sizeof (MMTIME));
+				my samplesPlayed = mmtime. u.cb / (2 * my numberOfChannels);
+			}
+			if (/* Melder_debug != 4 || */ currentTime - previousTime > CLOCKS_PER_SEC / 100) {
+				previousTime = currentTime;
+				if (my callback && ! my callback (my closure, my samplesPlayed))
+					return flush ();
+			}
+  		}
 	#endif
 	(void) closure;
 	return False;
 }
 
-#ifndef macintosh
+#if ! USE_PORTAUDIO && ! defined (macintosh)
 static void cancel (void) {
 	struct MelderPlay *me = & thePlay;
 	#if defined (sgi)
@@ -581,7 +591,7 @@ static int thePaStreamCallback (const void *input, void *output,
 		unsigned long dsamples = my samplesLeft > frameCount ? frameCount : my samplesLeft;
 		if (Melder_debug == 20) Melder_casual ("play %s %s", Melder_integer (dsamples),
 			Melder_double (Pa_GetStreamCpuLoad (my stream)));
-		bzero (output, 2 * frameCount * my numberOfChannels);
+		memset (output, 2 * frameCount * my numberOfChannels, 0);
 		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
 		my samplesLeft -= dsamples;
 		my samplesSent += dsamples;
@@ -618,7 +628,83 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	my samplesSent = 0;
 	my samplesPlayed = 0;
 	Melder_isPlaying = 1;
-#if defined (sgi)
+#if USE_PORTAUDIO
+{
+	PaError err;
+	static bool paInitialized = false;
+	if (! paInitialized) {
+		err = Pa_Initialize ();
+		if (err) Melder_fatal ("PortAudio does not initialize: %s", Pa_GetErrorText (err));
+		paInitialized = true;
+	}
+	PaStreamParameters outputParameters = { 0 };
+	outputParameters. device = Pa_GetDefaultOutputDevice ();
+	const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
+	outputParameters. channelCount = my numberOfChannels;
+	outputParameters. sampleFormat = paInt16;
+	outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
+	outputParameters. hostApiSpecificStreamInfo = NULL;
+	err = Pa_OpenStream (& my stream, NULL, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
+		paDitherOff, thePaStreamCallback, me);
+	if (err) return Melder_error ("PortAudio cannot open sound output: %s", Pa_GetErrorText (err));
+	Melder_startClock ();
+	err = Pa_StartStream (my stream);
+	if (err) return Melder_error ("PortAudio cannot start sound output: %s", Pa_GetErrorText (err));
+	//my startingTime = Pa_GetStreamTime (my stream);
+	if (my asynchronicity <= Melder_INTERRUPTABLE) {
+		while (Pa_IsStreamActive (my stream)) {
+			bool interrupted = false;
+			if (my asynchronicity != Melder_SYNCHRONOUS && my callback && ! my callback (my closure, my samplesPlayed))
+				interrupted = true;
+			/*
+			 * Safe operation: only listen to key-down events.
+			 * Do this on the lowest level that will work.
+			 */
+			if (my asynchronicity == Melder_INTERRUPTABLE && ! interrupted) {
+				#if defined (macintosh)
+					EventRecord event;
+					if (EventAvail (keyDownMask, & event)) {
+						/*
+						* Remove the event, even if it was a different key.
+						* Otherwise, the key will block the future availability of the Escape key.
+						*/
+						FlushEvents (keyDownMask, 0);
+						/*
+						* Catch Escape and Command-period.
+						*/
+						if ((event. message & charCodeMask) == 27 ||
+							((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
+						{
+							my explicit = Melder_EXPLICIT;
+							interrupted = 1;
+						}
+					}
+				#elif defined (_WIN32)
+					MSG event;
+					if (PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN) {
+						if (LOWORD (event. wParam) == VK_ESCAPE) {
+							my explicit = Melder_EXPLICIT;
+							interrupted = true;
+						}
+					}
+				#endif
+			}
+			if (interrupted) {
+				flush ();
+				return 1;
+			}
+		}
+		if (my samplesPlayed != my numberOfSamples) {
+			Melder_fatal ("Played %ld instead of %ld samples.", my samplesPlayed, my numberOfSamples);
+		}
+	} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
+		my workProcId = XtAppAddWorkProc (0, workProc, 0);
+		return 1;
+	}
+	flush ();
+	return 1;
+}
+#elif defined (sgi)
 {
 	_melder_sgi_checkAudioServer ();
 	if (_melder_sgi_useAudioServer) {
@@ -783,173 +869,7 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	flush ();
 	return 1;
 }
-#elif defined (_WIN32)
-{
-	WAVEFORMATEX waveFormat;
-	MMRESULT err;
-	waveFormat. wFormatTag = WAVE_FORMAT_PCM;
-	waveFormat. nChannels = my numberOfChannels;
-	waveFormat. nSamplesPerSec = my sampleRate;
-	waveFormat. wBitsPerSample = 16;
-	waveFormat. nBlockAlign = my numberOfChannels * waveFormat. wBitsPerSample / 8;
-	waveFormat. nAvgBytesPerSec = waveFormat. nBlockAlign * waveFormat. nSamplesPerSec;
-	waveFormat. cbSize = 0;
-	err = waveOutOpen (& my hWaveOut, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL | WAVE_ALLOWSYNC);
-	if (err != MMSYSERR_NOERROR) {
-		Melder_isPlaying = 0;
-		return Melder_error (
-			err == MMSYSERR_ALLOCATED ?
-				"(Melder_play16:) Previous sound is still playing? Should not occur!\n"
-				"Report bug to the author: %ld; wasPlaying: %d" :
-			err == MMSYSERR_BADDEVICEID ?
-				"(Melder_play16:) Cannot play a sound. Perhaps another program is playing a sound at the same time?" :
-			err == MMSYSERR_NODRIVER ?
-				"(Melder_play16:) This machine probably has no sound card." :
-			err == MMSYSERR_NOMEM ?
-				"(Melder_play16:) Not enough free memory to play any sound at all." :
-			err == WAVERR_BADFORMAT ?
-				"(Melder_play16:) Bad sound format? Should not occur! Report bug to the author!" :
-			"(Melder_play16:) Unknown error %ld while trying to play a sound? Report bug to the author!", err, wasPlaying);
-	}
-
-	my waveHeader. dwFlags = 0;
-	my waveHeader. lpData = (char *) my buffer;
-	my waveHeader. dwBufferLength = my numberOfSamples * 2 * my numberOfChannels;
-	my waveHeader. dwLoops = 1;
-	my waveHeader. lpNext = NULL;
-	my waveHeader. reserved = 0;
-	err = waveOutPrepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
-//waveOutReset (my hWaveOut);
-	if (err != MMSYSERR_NOERROR) {
-		waveOutClose (my hWaveOut), my hWaveOut = 0;
-		Melder_isPlaying = 0;
-		return Melder_error (
-			err == MMSYSERR_INVALHANDLE ?
-				"(Melder_play16:) No device? Should not occur!" :
-			err == MMSYSERR_NODRIVER ?
-				"(Melder_play16:) No driver? Should not occur!" :
-			err == MMSYSERR_NOMEM ?
-				"(Melder_play16:) Not enough free memory to play this sound.\n"
-				"Remove some objects, play a shorter sound, or buy more memory." :
-			"(Melder_play16:) Unknown error %ld while preparing header? Should not occur!", err);
-	}
-
-	my startingTime = clock ();
-	err = waveOutWrite (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
-	if (err != MMSYSERR_NOERROR) {
-		waveOutReset (my hWaveOut);
-		waveOutUnprepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
-		waveOutClose (my hWaveOut), my hWaveOut = 0;
-		Melder_isPlaying = 0;
-		return Melder_error ("(Melder_play16:) Error %d while writing.", err);   /* BUG: should flush */
-	}
-
-	if (my asynchronicity == Melder_SYNCHRONOUS) {
-		while (! (my waveHeader. dwFlags & WHDR_DONE)) { (void) clock (); }
-		my samplesPlayed = my numberOfSamples;
-  	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
-  		while (! (my waveHeader. dwFlags & WHDR_DONE)) {
-			MSG event;
-			my samplesPlayed = ((clock () - my startingTime) / (double) CLOCKS_PER_SEC) * my sampleRate;
-			if (my callback && ! my callback (my closure, my samplesPlayed))
-				break;
-			if (my asynchronicity == Melder_INTERRUPTABLE &&
-			    PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN) {
-				if (LOWORD (event. wParam) == VK_ESCAPE) { my explicit = Melder_EXPLICIT; break; }
-			}
-		}
-	} else {
-		my workProcId = XtAppAddWorkProc (0, workProc, 0);
-		return 1;
-	}
-	flush ();
-	return 1;
-}
 #elif defined (macintosh)
-#if USE_PORTAUDIO
-	PaError err;
-	static bool paInitialized = false;
-	if (! paInitialized) {
-		err = Pa_Initialize ();
-		if (Melder_debug == 20) Melder_casual ("init %s", Pa_GetErrorText (err));
-		paInitialized = true;
-		if (Melder_debug == 20) {
-			PaHostApiIndex hostApiCount = Pa_GetHostApiCount ();
-			Melder_casual ("host API count %s", Melder_integer (hostApiCount));
-			for (PaHostApiIndex iHostApi = 0; iHostApi < hostApiCount; iHostApi ++) {
-				const PaHostApiInfo *hostApiInfo = Pa_GetHostApiInfo (iHostApi);
-				PaHostApiTypeId type = hostApiInfo -> type;
-				Melder_casual ("host API %s: %s, \"%s\"", Melder_integer (iHostApi), Melder_integer (type), hostApiInfo -> name, Melder_integer (hostApiInfo -> deviceCount));
-			}
-			PaHostApiIndex defaultHostApi = Pa_GetDefaultHostApi ();
-			Melder_casual ("default host API %s", Melder_integer (defaultHostApi));
-			PaDeviceIndex deviceCount = Pa_GetDeviceCount ();
-			Melder_casual ("device count %s", Melder_integer (deviceCount));
-		}
-	}
-	PaStreamParameters outputParameters = { 0 };
-	outputParameters. device = Pa_GetDefaultOutputDevice ();
-	const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
-	if (Melder_debug == 20) {
-		Melder_casual ("default device %s", Melder_integer (outputParameters. device));
-		Melder_casual ("device \"%s\", host API %s, channels in %s out %s, latency in %s-%s out %s-%s, rate %s",
-			deviceInfo -> name, Melder_integer (deviceInfo -> hostApi),
-			Melder_integer (deviceInfo -> maxInputChannels), Melder_integer (deviceInfo -> maxOutputChannels),
-			Melder_double (deviceInfo -> defaultLowInputLatency), Melder_double (deviceInfo -> defaultHighInputLatency),
-			Melder_double (deviceInfo -> defaultLowOutputLatency), Melder_double (deviceInfo -> defaultHighOutputLatency),
-			Melder_double (deviceInfo -> defaultSampleRate));
-	}
-	outputParameters. channelCount = my numberOfChannels;
-	outputParameters. sampleFormat = paInt16;
-	outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;
-	outputParameters. hostApiSpecificStreamInfo = NULL;
-	err = Pa_OpenStream (& my stream, NULL, & outputParameters, my sampleRate, paFramesPerBufferUnspecified,
-		paDitherOff, thePaStreamCallback, me);
-	if (err) return Melder_error ("open %s", Pa_GetErrorText (err));
-	Melder_startClock ();
-	err = Pa_StartStream (my stream);
-	if (err) return Melder_error ("start %s", Pa_GetErrorText (err));
-	if (my asynchronicity <= Melder_INTERRUPTABLE) {
-		while (Pa_IsStreamActive (my stream)) {
-			bool interrupted = false;
-			EventRecord event;
-			my samplesPlayed = Melder_clock () * my sampleRate;
-			if (my asynchronicity != Melder_SYNCHRONOUS && my callback && ! my callback (my closure, my samplesPlayed))
-				interrupted = true;
-			/*
-			 * Safe operation: only listen to key-down events.
-			 * Do this on the lowest level that will work.
-			 */
-			if (my asynchronicity == Melder_INTERRUPTABLE && ! interrupted && EventAvail (keyDownMask, & event)) {
-				/*
-				 * Remove the event, even if it was a different key.
-				 * Otherwise, the key will block the future availability of the Escape key.
-				 */
-				FlushEvents (keyDownMask, 0);
-				/*
-				 * Catch Escape and Command-period.
-				 */
-				if ((event. message & charCodeMask) == 27 ||
-					((event. modifiers & cmdKey) && (event. message & charCodeMask) == '.'))
-					my explicit = Melder_EXPLICIT, interrupted = 1;
-			}
-			if (interrupted) {
-				my samplesPlayed = Melder_clock () * my sampleRate;
-				/*FlushEvents (everyEvent, 0);*/
-				Pa_CloseStream (my stream), my stream = NULL;
-				flush ();
-				return 1;
-			}
-		}
-		Pa_CloseStream (my stream), my stream = NULL;
-		my samplesPlayed = my numberOfSamples;
-	} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
-		my workProcId = XtAppAddWorkProc (0, workProc, 0);
-		return 1;
-	}
-	flush ();
-	return 1;
-#else
 {
 	if (my asynchronicity == Melder_SYNCHRONOUS) {
 		static char listResource [500];
@@ -1042,7 +962,6 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 	flush ();
 	return 1;
 }
-#endif
 #elif defined (HPUX) && defined (Melder_HPUX_USE_AUDIO_SERVER)
 {
 	AudioAttributes attributes;
@@ -1333,6 +1252,88 @@ int Melder_play16 (const short *buffer, long sampleRate, long numberOfSamples, i
 		}
 	} else /* my asynchronicity == Melder_ASYNCHRONOUS */ {
 		my workProcId = XtAppAddWorkProc (Melder_appContext, workProc, 0);
+		return 1;
+	}
+	flush ();
+	return 1;
+}
+#elif defined (_WIN32)
+{
+	WAVEFORMATEX waveFormat;
+	MMRESULT err;
+	waveFormat. wFormatTag = WAVE_FORMAT_PCM;
+	waveFormat. nChannels = my numberOfChannels;
+	waveFormat. nSamplesPerSec = my sampleRate;
+	waveFormat. wBitsPerSample = 16;
+	waveFormat. nBlockAlign = my numberOfChannels * waveFormat. wBitsPerSample / 8;
+	waveFormat. nAvgBytesPerSec = waveFormat. nBlockAlign * waveFormat. nSamplesPerSec;
+	waveFormat. cbSize = 0;
+	err = waveOutOpen (& my hWaveOut, WAVE_MAPPER, & waveFormat, 0, 0, CALLBACK_NULL | WAVE_ALLOWSYNC);
+	if (err != MMSYSERR_NOERROR) {
+		Melder_isPlaying = 0;
+		return Melder_error (
+			err == MMSYSERR_ALLOCATED ?
+				"(Melder_play16:) Previous sound is still playing? Should not occur!\n"
+				"Report bug to the author: %ld; wasPlaying: %d" :
+			err == MMSYSERR_BADDEVICEID ?
+				"(Melder_play16:) Cannot play a sound. Perhaps another program is playing a sound at the same time?" :
+			err == MMSYSERR_NODRIVER ?
+				"(Melder_play16:) This machine probably has no sound card." :
+			err == MMSYSERR_NOMEM ?
+				"(Melder_play16:) Not enough free memory to play any sound at all." :
+			err == WAVERR_BADFORMAT ?
+				"(Melder_play16:) Bad sound format? Should not occur! Report bug to the author!" :
+			"(Melder_play16:) Unknown error %ld while trying to play a sound? Report bug to the author!", err, wasPlaying);
+	}
+
+	my waveHeader. dwFlags = 0;
+	my waveHeader. lpData = (char *) my buffer;
+	my waveHeader. dwBufferLength = my numberOfSamples * 2 * my numberOfChannels;
+	my waveHeader. dwLoops = 1;
+	my waveHeader. lpNext = NULL;
+	my waveHeader. reserved = 0;
+	err = waveOutPrepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
+//waveOutReset (my hWaveOut);
+	if (err != MMSYSERR_NOERROR) {
+		waveOutClose (my hWaveOut), my hWaveOut = 0;
+		Melder_isPlaying = 0;
+		return Melder_error (
+			err == MMSYSERR_INVALHANDLE ?
+				"(Melder_play16:) No device? Should not occur!" :
+			err == MMSYSERR_NODRIVER ?
+				"(Melder_play16:) No driver? Should not occur!" :
+			err == MMSYSERR_NOMEM ?
+				"(Melder_play16:) Not enough free memory to play this sound.\n"
+				"Remove some objects, play a shorter sound, or buy more memory." :
+			"(Melder_play16:) Unknown error %ld while preparing header? Should not occur!", err);
+	}
+
+	err = waveOutWrite (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
+	if (err != MMSYSERR_NOERROR) {
+		waveOutReset (my hWaveOut);
+		waveOutUnprepareHeader (my hWaveOut, & my waveHeader, sizeof (WAVEHDR));
+		waveOutClose (my hWaveOut), my hWaveOut = 0;
+		Melder_isPlaying = 0;
+		return Melder_error ("(Melder_play16:) Error %d while writing.", err);   /* BUG: should flush */
+	}
+
+	Melder_startClock ();
+	if (my asynchronicity == Melder_SYNCHRONOUS) {
+		while (! (my waveHeader. dwFlags & WHDR_DONE)) { (void) clock (); }
+		my samplesPlayed = my numberOfSamples;
+  	} else if (my asynchronicity <= Melder_INTERRUPTABLE) {
+  		while (! (my waveHeader. dwFlags & WHDR_DONE)) {
+			MSG event;
+			my samplesPlayed = Melder_clock () * my sampleRate;
+			if (my callback && ! my callback (my closure, my samplesPlayed))
+				break;
+			if (my asynchronicity == Melder_INTERRUPTABLE &&
+			    PeekMessage (& event, 0, 0, 0, PM_REMOVE) && event. message == WM_KEYDOWN) {
+				if (LOWORD (event. wParam) == VK_ESCAPE) { my explicit = Melder_EXPLICIT; break; }
+			}
+		}
+	} else {
+		my workProcId = XtAppAddWorkProc (0, workProc, 0);
 		return 1;
 	}
 	flush ();

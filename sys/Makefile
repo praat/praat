@@ -1,8 +1,8 @@
 # Makefile of the library "sys"
-# Paul Boersma, December 15, 2006
+# Paul Boersma, January 8, 2007
 
 include ../makefile.defs
-CFLAGS = -I ../dwsys -I ../GSL -I ../kar
+CFLAGS = -I ../dwsys -I ../GSL -I ../kar -I ../audio
 
 OBJECTS = NUM.o NUMarrays.o NUMrandom.o NUMsort.o NUMear.o \
    enum.o abcio.o lispio.o complex.o \
@@ -30,4 +30,4 @@ libsys.a: $(OBJECTS)
 	ar cq libsys.a $(OBJECTS)
 	$(RANLIB) libsys.a
 
-$(OBJECTS): *.h ../dwsys/*.h ../kar/*.h
+$(OBJECTS): *.h ../audio/*.h ../kar/*.h ../dwsys/*.h

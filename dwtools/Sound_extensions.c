@@ -770,10 +770,13 @@ static void NUMgammatoneFilter4 (double *x, double *y, long n, double centre_fre
 	
 	for (i = n8 + 1; i <= n; i++)
 	{
-		y[i]  = a[0] * x[i];
-		y[i] += a[1] * x[i-1] + a[2] * x[i-2] + a[3] * x[i-3] + a[4] * x[i-4];
-		y[i] -= b[1] * y[i-1] + b[2] * y[i-2] + b[3] * y[i-3] + b[4] * y[i-4];
-		y[i] -= b[5] * y[i-5] + b[6] * y[i-6] + b[7] * y[i-7] + b[8] * y[i-8];
+		// y[i]  = a[0] * x[i];
+		// y[i] += a[1] * x[i-1] + a[2] * x[i-2] + a[3] * x[i-3] + a[4] * x[i-4];
+		// y[i] -= b[1] * y[i-1] + b[2] * y[i-2] + b[3] * y[i-3] + b[4] * y[i-4];
+		// y[i] -= b[5] * y[i-5] + b[6] * y[i-6] + b[7] * y[i-7] + b[8] * y[i-8];
+		y[i] = a[0] * x[i] + a[1] * x[i-1] + a[2] * x[i-2] + a[3] * x[i-3] + a[4] * x[i-4]
+			 - b[1] * y[i-1] - b[2] * y[i-2] - b[3] * y[i-3] - b[4] * y[i-4]
+			 - b[5] * y[i-5] - b[6] * y[i-6] - b[7] * y[i-7] - b[8] * y[i-8];
 	}
 }
 
@@ -818,7 +821,7 @@ static Sound Sound_filterByGammaToneFilter42 (Sound me, double centre_frequency,
 	if (centre_frequency < 50 || centre_frequency > 0.5 / my dx ||
 		bandwidth < 0) return  NULL;
 	
-	if (! (thee = Sound_create (1, my xmin, my xmax, my nx, my dx, my x1)) ||
+	if (! (thee = Sound_create (my ny, my xmin, my xmax, my nx, my dx, my x1)) ||
 		! (y = NUMdvector (-7, my nx)) ||
 		! (x = NUMdvector (-3, my nx))) goto end;
 		
