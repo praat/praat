@@ -21,6 +21,7 @@
 
 #include "Sound.h"
 #include "TextGrid.h"
+#include "../dwtools/ICA.h"
 
 #include "EEG_def.h"
 oo_CLASS_CREATE (EEG, Function);

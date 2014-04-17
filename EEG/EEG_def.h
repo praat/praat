@@ -49,6 +49,7 @@ oo_DEFINE_CLASS (EEG, Function)
 			TextGrid f_extractTextGrid () { return Data_copy (d_textgrid); }
 			EEG f_extractPart (double tmin, double tmax, bool preserveTimes);
 			void f_replaceTextGrid (TextGrid textgrid);
+			MixingMatrix f_to_MixingMatrix (long maxNumberOfIterations, double tol, int method);
 		// overridden methods:
 		protected:
 			virtual void v_info ();

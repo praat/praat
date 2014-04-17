@@ -117,8 +117,10 @@ static void gui_button_cb_change (I, GuiButtonEvent event) {
 		#elif gtk
 			gboolean visible;
 			g_object_get (G_OBJECT (my d_fieldData [irow]. text), "visible", & visible, NULL);
-		#elif ! useCarbon
+		#elif defined (macintosh) && ! useCarbon
 			bool visible = ! [(GuiCocoaTextField *) my d_fieldData [irow]. text -> d_widget   isHidden];
+		#else
+			bool visible = false;
 		#endif
 		if (visible) {
 			int type = my d_fieldData [irow]. description -> type;

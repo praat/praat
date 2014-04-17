@@ -1,6 +1,6 @@
 /* sendpraat.c */
 /* by Paul Boersma */
-/* 25 April 2013 */
+/* 12 April 2014 */
 
 /*
  * The sendpraat subroutine (Unix with GTK; Windows; Macintosh) sends a message
@@ -49,8 +49,12 @@
 	#include <unistd.h>
 	#include <ctype.h>
 	#include <wchar.h>
-	#include <gtk/gtk.h>
-	#define gtk 1
+	#if defined (NO_GRAPHICS)
+		#define gtk 0
+	#else
+		#include <gtk/gtk.h>
+		#define gtk 1
+	#endif
 	#define win 0
 	#define mac 0
 #else

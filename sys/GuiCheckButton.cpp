@@ -1,6 +1,6 @@
 /* GuiCheckButton.cpp
  *
- * Copyright (C) 1993-2012,2013 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
+ * Copyright (C) 1993-2012,2013,2014 Paul Boersma, 2007-2008 Stefan de Konink, 2010 Franz Brausse, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -196,9 +196,7 @@ bool structGuiCheckButton :: f_getValue () {
 }
 
 void structGuiCheckButton :: f_setValue (bool value) {
-	/*
-	 * The value should be set without calling the valueChanged callback.
-	 */
+	GuiControlBlockValueChangedCallbacks block (this);
 	#if gtk
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), value);
 	#elif cocoa

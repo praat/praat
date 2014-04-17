@@ -52,7 +52,8 @@ Thing_define (GraphicsScreen, Graphics) {
 	public:
 		bool d_isPng;
 		structMelderFile d_file;
-		#if defined (UNIX)
+		#if defined (NO_GRAPHICS)
+		#elif defined (UNIX)
 			GdkDisplay *d_display;
 			#if ALLOW_GDK_DRAWING
 				GdkDrawable *d_window;
@@ -106,7 +107,8 @@ Thing_define (GraphicsScreen, Graphics) {
 		virtual void v_updateWs ();
 };
 
-#if defined (UNIX)
+#if defined (NO_GRAPHICS)
+#elif defined (UNIX)
 	#define mac 0
 	#define win 0
 	#define cairo 1

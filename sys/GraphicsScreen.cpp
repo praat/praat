@@ -680,7 +680,7 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 		 */
 		SelectPen (my d_gdiGraphicsContext, GetStockPen (NULL_PEN));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (WHITE_BRUSH));
-		Rectangle (my d_gdiGraphicsContext, 0, 0, my d_x2DC, my d_y2DC);
+		Rectangle (my d_gdiGraphicsContext, 0, 0, my d_x2DC + 1, my d_y2DC + 1);   // plus 1, in order to prevent two black edges
 		SelectPen (my d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 		SelectBrush (my d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
 	#endif

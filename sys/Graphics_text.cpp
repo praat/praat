@@ -293,7 +293,9 @@ static void charSize (I, _Graphics_widechar *lc) {
 						( hasDoulos ?
 							( lc -> style == 0 ?
 								kGraphics_font_IPATIMES :
-								kGraphics_font_IPAPALATINO   // other styles in Charis, because Doulos has no bold or italic
+							  hasCharis ?
+								kGraphics_font_IPAPALATINO :   // other styles in Charis, because Doulos has no bold or italic
+								kGraphics_font_TIMES
 							) :
 						  hasCharis ?
 							kGraphics_font_IPAPALATINO :
@@ -321,6 +323,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 					( hasDoulos ?
 						( lc -> style == 0 ?
 							kGraphics_font_IPATIMES :
+						  hasCharis ?
+							kGraphics_font_IPAPALATINO :
 							kGraphics_font_TIMES 
 						) :
 						kGraphics_font_TIMES
@@ -721,6 +725,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 		if (lc -> link) my d_printf (my d_file, "0 0 0 setrgbcolor\n");
 	} else if (my screen) {
 		iam (GraphicsScreen);
+		bool needBitmappedIPA = false;
 		#if cairo
 			if (my duringXor) {
 			} else {
@@ -728,7 +733,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 				// TODO!
 			}
 			int font = lc -> font.integer;
-			int needBitmappedIPA = 0;
 		#elif cocoa
 			/*
 			 * Determine the font family.
@@ -793,7 +797,6 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			CTFontRef ctFont = CTFontCreateWithFontDescriptor (ctFontDescriptor, lc -> size, NULL);
 			CFRelease (ctFontDescriptor);
 
-			int needBitmappedIPA = 0;
 			bool hasHighUnicodeValues = false;
 			for (long i = 0; i < nchars; i ++) {
 				hasHighUnicodeValues |= codes [i] > 0xFFFF;
@@ -921,9 +924,8 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
         
 		#elif win
 			int font = lc -> font.integer;
-			int needBitmappedIPA = font == kGraphics_font_IPATIMES && ! ipaAvailable;
+			needBitmappedIPA = font == kGraphics_font_IPATIMES && ! ipaAvailable;
 		#elif mac
-			int needBitmappedIPA = 0;
 			ATSFontRef atsuiFont = (ATSFontRef) lc -> font.integer;
 			Melder_assert (atsuiFont != 0);
 			/*

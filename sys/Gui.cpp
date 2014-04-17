@@ -133,7 +133,7 @@ void Gui_getWindowPositioningBounds (double *x, double *y, double *width, double
 		if (y) *y = 0;
 		if (width) *width = gdk_screen_get_width (screen);
 		if (height) *height = gdk_screen_get_height (screen);
-	#else
+	#elif ! defined (NO_GRAPHICS)
 		if (x) *x = 0;
 		if (y) *y = 0;
 		if (width) *width = WidthOfScreen (DefaultScreenOfDisplay (XtDisplay (parent)));

@@ -1,0 +1,23 @@
+# File: makefile.defs.linuxc.alsa
+
+# System: Linux
+# Paul Boersma, 10 April 2014
+
+CC = gcc -std=gnu99
+
+CXX = g++
+
+CFLAGS = -DCONSOLE_APPLICATION -DUNIX -Dlinux -DALSA -Werror=missing-prototypes -Werror=implicit -Wreturn-type -Wunused -Wunused-parameter -Wuninitialized -O1 -g1
+
+CXXFLAGS = $(CFLAGS) -Wshadow
+
+LINK = g++
+
+EXECUTABLE = praat
+
+LIBS = -lm -lasound -lpthread
+
+AR = ar
+RANLIB = ls
+ICON =
+MAIN_ICON =

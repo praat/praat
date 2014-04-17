@@ -1175,7 +1175,11 @@ void structFunctionEditor :: v_createChildren () {
 
 	/***** Create drawing area. *****/
 
-	int marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting = cocoa ? 3 : 0;
+	#if cocoa
+		int marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting = 3;
+	#else
+		int marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting = 0;
+	#endif
 	drawingArea = GuiDrawingArea_createShown (d_windowForm,
 		0, 0,
 		Machine_getMenuBarHeight () + ( v_hasText () ? TEXT_HEIGHT + marginBetweenTextAndDrawingAreaToEnsureCorrectUnhighlighting : 0), -8 - Gui_PUSHBUTTON_HEIGHT,

@@ -870,7 +870,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 			gboolean retval;
 			g_signal_emit_by_name (GTK_OBJECT (theCurrentPraatApplication -> topShell -> d_gtkWindow), "client-event", NULL, & retval);
 		#else
-			#if ALLOW_GDK_DRAWING
+			#if ALLOW_GDK_DRAWING && ! defined (NO_GRAPHICS)
 				GdkEventClient gevent;
 				gevent. type = GDK_CLIENT_EVENT;
 				gevent. window = GTK_WIDGET (theCurrentPraatApplication -> topShell -> d_gtkWindow) -> window;
@@ -885,7 +885,7 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 #endif
 
 #if defined (UNIX)
-	#if ALLOW_GDK_DRAWING
+	#if ALLOW_GDK_DRAWING && ! defined (NO_GRAPHICS)
 		static gboolean cb_userMessage (GtkWidget widget, GdkEventClient *event, gpointer user_data) {
 			(void) widget;
 			(void) user_data;
@@ -1350,7 +1350,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 		trace ("showing the Objects window");
 		raam -> f_show ();
 	//Melder_fatal ("stop");
-		#ifdef UNIX
+		#if defined (UNIX) && ! defined (NO_GRAPHICS)
 			try {
 				autofile f = Melder_fopen (& pidFile, "a");
 				#if ALLOW_GDK_DRAWING

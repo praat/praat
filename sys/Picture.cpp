@@ -360,7 +360,8 @@ static HENHMETAFILE copyToMetafile (Picture me) {
 	SetRect (& rect, my selx1 * 2540, (12 - my sely2) * 2540, my selx2 * 2540, (12 - my sely1) * 2540);
 	dc = CreateEnhMetaFile (defaultPrinter. hDC, NULL, & rect, L"Praat\0");
 	if (! dc) Melder_throw ("Cannot create Windows metafile.");
-	resolution = GetDeviceCaps (dc, LOGPIXELSX);   // Virtual PC: 360
+	resolution = GetDeviceCaps (dc, LOGPIXELSX);   // Virtual PC: 360; Parallels Desktop: 600
+	//Melder_fatal ("resolution %d", resolution);
 	if (Melder_debug == 6) {
 		DEVMODE *devMode = * (DEVMODE **) defaultPrinter. hDevMode;
 		MelderInfo_open ();

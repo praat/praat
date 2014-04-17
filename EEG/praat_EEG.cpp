@@ -228,6 +228,22 @@ DO
 	}
 END
 
+FORM (EEG_to_MixingMatrix, L"To MixingMatrix", 0)
+	NATURAL (L"Maximum number of iterations", L"100")
+	POSITIVE (L"Tolerance", L"0.001")
+	OPTIONMENU (L"Diagonalization method", 2)
+		OPTION (L"qdiag")
+		OPTION (L"ffdiag")
+	OK
+DO
+	LOOP {
+		iam (EEG);
+		autoMixingMatrix thee = my f_to_MixingMatrix (GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"),
+			GET_INTEGER (L"Diagonalization method"));
+		praat_new (thee.transfer(), my name);
+	}
+END
+
 static void cb_EEGWindow_publication (Editor editor, void *closure, Data publication) {
 	(void) editor;
 	(void) closure;
@@ -717,6 +733,7 @@ void praat_EEG_init (void) {
 		praat_addAction1 (classEEG, 0, L"Extract channel...", 0, 0, DO_EEG_extractChannel);
 		praat_addAction1 (classEEG, 1, L"Extract part...", 0, 0, DO_EEG_extractPart);
 		praat_addAction1 (classEEG, 0, L"To ERPTier...", 0, 0, DO_EEG_to_ERPTier);
+		praat_addAction1 (classEEG, 0, L"To MixingMatrix...", 0, 0, DO_EEG_to_MixingMatrix);
 	praat_addAction1 (classEEG, 0, L"Synthesize", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Concatenate", 0, 0, DO_EEGs_concatenate);
 	praat_addAction1 (classEEG, 0, L"Hack -", 0, 0, 0);

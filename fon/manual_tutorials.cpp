@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140409)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140417)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.72# (17 April 2014)")
+LIST_ITEM (L"\\bu Windows: repaired a bug that caused two black edges in PNG files.")
+LIST_ITEM (L"\\bu Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 360 dpi.")
+LIST_ITEM (L"\\bu Linux: repaired a bug that caused Praat to crash when cutting or pasting a sound in the Sound window.")
 NORMAL (L"##5.3.71# (9 April 2014)")
 LIST_ITEM (L"\\bu Windows: brought more unity in the style of Chinese characters.")
 NORMAL (L"##5.3.70# (2 April 2014)")

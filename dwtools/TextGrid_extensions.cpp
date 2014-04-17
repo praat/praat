@@ -1,6 +1,6 @@
 /* TextGrid_extensions.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,6 +99,13 @@ struct TIMIT_key {
 	{"p", "p"},				/* pea: PCL P iy */
 	{"t", "t"},				/* tea: TCL T iy */
 	{"k", "k"},				/* key: KCL K iy */
+	/* 20140315: Added silences before the burst */
+	{"bcl", ""},
+	{"dcl", ""},
+	{"gcl", ""},
+	{"pcl", ""},
+	{"tcl", ""},
+	{"kcl", ""},
 	/* flap */
 	{"dx", "\\fh"},			/* muddy: m ah DX iy & dirty: dcl d er DX iy */
 	/* glottal stop */

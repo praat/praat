@@ -1,0 +1,66 @@
+echo
+echo '***************************************************'
+echo '*                                                 *'
+echo "*   Paul's aliases, version 12 April 2014...      *"
+echo '*                                                 *'
+echo '***************************************************'
+echo
+if ($?DISPLAY == 0) then
+	if ($?REMOTEHOST) then
+		setenv DISPLAY ${REMOTEHOST}:0
+	else
+		setenv DISPLAY :0
+	endif
+endif
+alias g 'cd \!*; set prompt = "#${HOST}:`pwd` > "'
+alias f 'df -m'
+alias clean 'rm */*.[oa] */*/*.[oa]'
+alias e edit
+alias u 'ssh -X paul@uvafon.hum.uva.nl'
+alias u201 'ssh -X pboersma@145.18.230.201'
+alias lisa 'ssh -X pboersma@lisa.surfsara.nl'
+alias d 'ls -al'
+if ($HOSTTYPE == "intel-mac") then
+	alias d 'ls -alwFG'
+	alias h 'g /Users/pboersma/'
+	alias i 'g /Users/pboersma/www'
+	alias v 'd /var/vm'
+	alias e edit
+	alias m32 '(cd /src/w32; cp makefiles/makefile.defs.mingw32 makefile.defs; make)'
+	alias m64 '(cd /src/w64; cp makefiles/makefile.defs.mingw64 makefile.defs; make)'
+	alias m32c '(cd /src/w32c; cp makefiles/makefile.defs.mingw32c makefile.defs; make)'
+	alias m64c '(cd /src/w64c; cp makefiles/makefile.defs.mingw64c makefile.defs; make)'
+	alias p '/Users/pboersma/Praats/DerivedData/praat64/Build/Products/Configuration64/Praat.app/Contents/MacOS/Praat'
+	alias p32 '/Users/pboersma/Praats/DerivedData/praat32/Build/Products/Configuration1/Praat.app/Contents/MacOS/Praat'
+endif
+if ($HOST == "uvafon") then
+	alias w 'g /u/praat/www'
+	alias h 'g /u/paul'
+	alias i 'g /u/paul/www'
+	alias m '(cd /u/paul/src; cp makefiles/makefile.defs.linux makefile.defs; make)'
+	alias p '~/src/praat'
+	alias d 'ls -alF --color=always'
+endif
+if ($HOSTTYPE == "i686-linux") then
+	alias h 'g /home/pboersma'
+	alias s 'g /media/psf/srcl1232'
+	alias p '/media/psf/srcl1232/praat'
+	alias e 'gedit \!* &'
+	alias m '(cd /media/psf/srcl1232; cp makefiles/makefile.defs.linux.alsa makefile.defs; make)'
+	alias d 'ls -al --color=always'
+endif
+if ($HOST == "paul-ubuntu-12-64") then
+	alias h 'g /home/pboersma'
+	alias s  'g /media/psf/srcl1264'
+	alias sc 'g /media/psf/srcl1264c'
+	alias ss 'g /media/psf/srcl1264s'
+	alias p  '/media/psf/srcl1264/praat'
+	alias pc '/media/psf/srcl1264c/praat'
+	alias e 'gedit \!* &'
+	alias m  '(cd /media/psf/srcl1264;  cp makefiles/makefile.defs.linux.alsa  makefile.defs; make)'
+	alias mc '(cd /media/psf/srcl1264c; cp makefiles/makefile.defs.linuxc.alsa makefile.defs; make)'
+	alias ms '(cd /media/psf/srcl1264s; cp makefiles/makefile.defs.linuxs.alsa makefile.defs; make)'
+	alias d 'ls -al --color=always'
+endif
+h
+alias

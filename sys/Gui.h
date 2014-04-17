@@ -22,7 +22,11 @@
 /*
  * Determine the widget set.
  */
-#if defined (UNIX)
+#if defined (NO_GRAPHICS)
+	#define gtk 0
+	#define motif 0
+	#define cocoa 0
+#elif defined (UNIX)
 	#define gtk 1
 	#define motif 0
 	#define cocoa 0
@@ -303,6 +307,8 @@
 		int motif_win_mouseStillDown (void);
 		void motif_win_setUserMessageCallback (int (*userMessageCallback) (void));
 	#endif
+#else
+	typedef void *GuiObject;
 #endif
 
 int Gui_getResolution (GuiObject widget);

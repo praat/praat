@@ -1,6 +1,6 @@
 /* EEG.cpp
  *
- * Copyright (C) 2011-2012,2013 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -616,6 +616,21 @@ void structEEG :: f_replaceTextGrid (TextGrid textgrid) {
 		d_textgrid = textgrid2.transfer();
 	} catch (MelderError) {
 		Melder_throw (this, ": TextGrid not replaced with ", textgrid, ".");
+	}
+}
+
+MixingMatrix structEEG :: f_to_MixingMatrix (long maxNumberOfIterations, double tol, int method) {
+	try {
+		autoCrossCorrelationTables tables = Sound_to_CrossCorrelationTables (d_sound, 0.0, 0.0, 0.002, 1);
+		autoMixingMatrix thee = MixingMatrix_create (d_sound -> ny, d_sound -> ny);
+		for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
+			TableOfReal_setRowLabel (thee.peek(), ichan, d_channelNames [ichan]);
+			TableOfReal_setColumnLabel (thee.peek(), ichan, Melder_wcscat (L"ic", Melder_integer (ichan)));
+		}
+		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), tables.peek(), maxNumberOfIterations, tol, method);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (this, ": no MixingMatrix created.");
 	}
 }
 

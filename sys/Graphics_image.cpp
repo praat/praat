@@ -238,6 +238,9 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = 0; \
 				}
+		#else
+			#define ROW_START_ADDRESS  NULL
+			#define PUT_PIXEL
 		#endif
 		if (interpolate) {
 			try {
