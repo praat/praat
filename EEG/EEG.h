@@ -28,7 +28,7 @@ oo_CLASS_CREATE (EEG, Function);
 
 EEG EEG_create (double tmin, double tmax);
 
-EEG EEG_readFromBdfFile (MelderFile file, bool hasLetters);
+EEG EEG_readFromBdfFile (MelderFile file);
 
 EEG EEGs_concatenate (Collection me);
 

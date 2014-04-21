@@ -91,7 +91,7 @@ long structEEG :: f_getChannelNumber (const wchar_t *channelName) {
 	return 0;
 }
 
-EEG EEG_readFromBdfFile (MelderFile file, bool hasLetters) {
+EEG EEG_readFromBdfFile (MelderFile file) {
 	try {
 		autofile f = Melder_fopen (file, "rb");
 		char buffer [81];
@@ -136,7 +136,9 @@ EEG EEG_readFromBdfFile (MelderFile file, bool hasLetters) {
 				}
 			}
 			channelNames [ichannel] = Melder_wcsdup (Melder_peekUtf8ToWcs (buffer));
+			trace ("Channel <<%ls>>", channelNames [ichannel]);
 		}
+		bool hasLetters = wcsequ (channelNames [numberOfChannels], L"EDF Annotations");
 		double samplingFrequency = NUMundefined;
 		for (long channel = 1; channel <= numberOfChannels; channel ++) {
 			fread (buffer, 1, 80, f); buffer [80] = '\0';   // transducer type
@@ -255,7 +257,12 @@ EEG EEG_readFromBdfFile (MelderFile file, bool hasLetters) {
 							}
 							try {
 								if (Melder_wcsnequ (letters. string, L"Trigger-", 8)) {
-									TextGrid_insertPoint (thee.peek(), 2, time, & letters. string [8]);
+									try {
+										TextGrid_insertPoint (thee.peek(), 2, time, & letters. string [8]);
+									} catch (MelderError) {
+										Melder_clearError ();
+										trace ("Duplicate trigger at %f seconds: %ls", time, & letters. string [8]);
+									}
 								} else {
 									TextGrid_insertPoint (thee.peek(), 1, time, & letters. string [0]);
 								}

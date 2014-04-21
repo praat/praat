@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140417)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140421)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.73# (21 April 2014)")
+LIST_ITEM (L"\\bu EEG: understand more EGI/NetStation files.")
 NORMAL (L"##5.3.72# (17 April 2014)")
 LIST_ITEM (L"\\bu Windows: repaired a bug that caused two black edges in PNG files.")
 LIST_ITEM (L"\\bu Windows: repaired a bug that could cause Praat to crash if a metafile resolution was 360 dpi.")

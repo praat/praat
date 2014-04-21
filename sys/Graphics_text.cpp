@@ -287,7 +287,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			 */
 			Longchar_Info info = Longchar_getInfoFromNative (lc -> kar);
 			int font =
-				info -> alphabet == Longchar_SYMBOL ? kGraphics_font_SYMBOL :
+				info -> alphabet == Longchar_SYMBOL || // ? kGraphics_font_SYMBOL :
 				info -> alphabet == Longchar_PHONETIC ?
 					( my font == kGraphics_font_TIMES ?
 						( hasDoulos ?
@@ -392,14 +392,6 @@ static void charSize (I, _Graphics_widechar *lc) {
 				length: nchars * 2
 				encoding: NSUTF16LittleEndianStringEncoding   // BUG: should be NSUTF16NativeStringEncoding, except that that doesn't exist
 				];
-			//CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-			//NSCAssert (context, @"nil context");
-
-			//[NSGraphicsContext setCurrentContext: my d_macGraphicsContext];
-			//Melder_assert (my d_macGraphicsContext != NULL);
-			//Melder_assert (context == my d_macGraphicsContext);
-			//CGContextSaveGState (context);
-			//CGContextSetTextMatrix (context, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
 
 			CFRange textRange = CFRangeMake (0, [s length]);
 
@@ -424,7 +416,6 @@ static void charSize (I, _Graphics_widechar *lc) {
 			CFRelease (string);
 			[s release];
 			CFRelease (path);
-            //CGContextRestoreGState (context);
 
 			bool isDiacritic = info -> ps.times == 0;
 			lc -> width = isDiacritic ? 0.0 : frameSize.width * lc -> size / 100.0;
@@ -748,7 +739,7 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 			 * Determine the font-style combination.
 			 */
 			CTFontSymbolicTraits ctStyle = ( style & Graphics_BOLD ? kCTFontBoldTrait : 0 ) | ( lc -> style & Graphics_ITALIC ? kCTFontItalicTrait : 0 );
-			#if 1
+			#if 0
 				CFStringRef key = kCTFontSymbolicTrait;
 				CFNumberRef value = CFNumberCreate (NULL, kCFNumberIntType, & ctStyle);
 				CFIndex numberOfValues = 1;
@@ -845,75 +836,34 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
              * Draw.
              */
     
-            // Create a path to render text in
-            //CGMutablePathRef path = CGPathCreateMutable ();
-            //NSRect measureRect = NSMakeRect (0, 0, CGFLOAT_MAX, CGFLOAT_MAX);
-            //CGPathAddRect (path, NULL, (CGRect) measureRect);
-
             CGContextSetTextMatrix (my d_macGraphicsContext, CGAffineTransformIdentity);   // this could set the "current context" for CoreText
-
-            // create the framesetter and render text
-            //CTFramesetterRef framesetter = CTFramesetterCreateWithAttributedString ((CFAttributedStringRef) string);
-			//Melder_assert (framesetter != NULL);
-            //CTFrameRef frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, length), path, NULL);
-			//Melder_assert (frame != NULL);
-        
-            //CFRange fitRange;
-            //CGSize targetSize = CGSizeMake (CGFLOAT_MAX, CGFLOAT_MAX);
-            //CGSize frameSize = CTFramesetterSuggestFrameSizeWithConstraints (framesetter, textRange, NULL, targetSize, & fitRange);
-            //CFRelease (path);
             CFRelease (color);
-            //CFRelease (frame);
-            //path = CGPathCreateMutable ();
-            //NSRect drawRect = NSMakeRect (0, 0, frameSize.width, frameSize.height);
-			//trace ("frame %f %f", frameSize.width, frameSize.height);
-            //CGPathAddRect (path, NULL, (CGRect) drawRect);
-            //frame = CTFramesetterCreateFrame (framesetter, CFRangeMake (0, length), path, NULL);
-		//CTRunGetTypographicBounds(run, glyphRange, &ascent, &descent, NULL);
-			//Melder_assert (frame != NULL);
 
 			if (my d_macView) {
 				[my d_macView   lockFocus];
 				my d_macGraphicsContext = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
 			}
             CGContextSaveGState (my d_macGraphicsContext);
-            CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC /*+ descent*/);
+            CGContextTranslateCTM (my d_macGraphicsContext, xDC, yDC);
             if (my yIsZeroAtTheTop) CGContextScaleCTM (my d_macGraphicsContext, 1.0, -1.0);
             CGContextRotateCTM (my d_macGraphicsContext, my textRotation * NUMpi / 180.0);
 
-			//CGContextRef context = (CGContextRef) [[NSGraphicsContext currentContext] graphicsPort];
-			//Melder_assert (my d_macGraphicsContext != NULL);
-			//Melder_assert (context == my d_macGraphicsContext);
 			CTLineRef line = CTLineCreateWithAttributedString (string);
             if (my duringXor) {
                 CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeDifference);
                 CGContextSetAllowsAntialiasing (my d_macGraphicsContext, false);
-                //CTFrameDraw (frame, my d_macGraphicsContext);
 				CTLineDraw (line, my d_macGraphicsContext);
                 CGContextSetBlendMode (my d_macGraphicsContext, kCGBlendModeNormal);
                 CGContextSetAllowsAntialiasing (my d_macGraphicsContext, true);
             } else {
-                //CTFrameDraw (frame, my d_macGraphicsContext);
-//CFArrayRef runArray = CTLineGetGlyphRuns (line);
-//CTRunRef run = (CTRunRef) CFArrayGetValueAtIndex (runArray, 0);
-//CTRunGetTypographicBounds (run, glyphRange, &ascent, &descent, NULL);
-//CTRunDraw (run, my d_macGraphicsContext, CFRangeMake (0, length));
 				CTLineDraw (line, my d_macGraphicsContext);
             }
 			CFRelease (line);
             CGContextRestoreGState (my d_macGraphicsContext);
-            //CGContextRestoreGState (my d_macGraphicsContext);
 
             // Clean up
-            //CFRelease (frame);
-            //CFRelease (path);
-            //CFRelease (framesetter);
             CFRelease (string);
-			#if 1
-				CFRelease (s);
-			#else
-            	[s release];
-			#endif
+			CFRelease (s);
 			CFRelease (ctFont);
 			if (my d_macView) {
 				#if useCarbon

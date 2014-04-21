@@ -161,11 +161,6 @@ DO
 	}
 END
 
-FORM_READ (EEG_readFromBdfFileWithStatusLetters, L"Read EEG from BDF file with trigger letters", 0, true)
-	autoEEG me = EEG_readFromBdfFile (file, true);
-	praat_new (me.transfer(), MelderFile_name (file));
-END
-
 FORM (EEG_setChannelName, L"Set channel name", 0)
 	NATURAL (L"Channel number", L"1")
 	WORD (L"New name", L"BLA")
@@ -698,7 +693,7 @@ static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
 	bool isBdfFile = wcsstr (fileName, L".bdf") != NULL || wcsstr (fileName, L".BDF") != NULL;
 	bool isEdfFile = wcsstr (fileName, L".edf") != NULL || wcsstr (fileName, L".EDF") != NULL;
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
-	return EEG_readFromBdfFile (file, false);
+	return EEG_readFromBdfFile (file);
 }
 
 /***** buttons *****/
@@ -711,9 +706,6 @@ void praat_EEG_init (void) {
 	Thing_recognizeClassesByName (classEEG, classERPTier, classERP, NULL);
 
 	Data_recognizeFileType (bdfFileRecognizer);
-
-	praat_addMenuCommand (L"Objects", L"Open", L"Read from special EEG file", 0, 0, 0);
-		praat_addMenuCommand (L"Objects", L"Open", L"Read EEG from BDF file with trigger letters...", 0, 1, DO_EEG_readFromBdfFileWithStatusLetters);
 
 	praat_addAction1 (classEEG, 0, L"EEG help", 0, 0, DO_EEG_help);
 	praat_addAction1 (classEEG, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_EEG_viewAndEdit);
