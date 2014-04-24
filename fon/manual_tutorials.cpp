@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140421)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140424)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.74# (24 April 2014)")
+LIST_ITEM (L"\\bu EEG: more interpretation of triggers in EDF+ files.")
 NORMAL (L"##5.3.73# (21 April 2014)")
 LIST_ITEM (L"\\bu EEG: understand more EGI/NetStation files.")
 NORMAL (L"##5.3.72# (17 April 2014)")
@@ -2773,7 +2775,7 @@ NORMAL (L"For instance, suppose you want to have a pitch that falls from 350 to 
 	"You can put this PitchTier into a Manipulation object in the way described above.")
 MAN_END
 
-MAN_BEGIN (L"Intro 8.2. Manipulation of duration", L"ppgb", 20110128)
+MAN_BEGIN (L"Intro 8.2. Manipulation of duration", L"ppgb", 20140421)
 INTRO (L"You can use Praat to modify the relative durations in an existing sound.")
 NORMAL (L"First, you select a @Sound object and click \"To Manipulation\". "
 	"A @Manipulation object will then appear in the list. "
@@ -2798,11 +2800,11 @@ NORMAL (L"In your first 85 ms, your relative duration should be 70/85, "
 	"and during the last 270 ms, it should be 200/270. "
 	"The DurationTier does linear interpolation, so it can only be approximate these precise times, "
 	"but fortunately to any precision you like:")
-CODE (L"Create DurationTier... shorten 0 0.085+0.270")
-CODE (L"Add point... 0.000 70/85")
-CODE (L"Add point... 0.084999 70/85")
-CODE (L"Add point... 0.085001 200/270")
-CODE (L"Add point... 0.355 200/270")
+CODE (L"Create DurationTier: \"shorten\", 0, 0.085 + 0.270")
+CODE (L"Add point: 0.000 70/85")
+CODE (L"Add point: 0.084999, 70/85")
+CODE (L"Add point: 0.085001, 200/270")
+CODE (L"Add point: 0.355, 200/270")
 NORMAL (L"To put this DurationTier back into a Manipulation object, you select the two objects together "
 	"(e.g. a click on the DurationTier and a Command-click on the Manipulation), "
 	"and choose ##Replace duration tier#.")
@@ -3168,7 +3170,7 @@ LIST_ITEM (L"@@Source-filter synthesis 3. The ba-da continuum")
 LIST_ITEM (L"@@Source-filter synthesis 4. Using existing sounds")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20110128)
+MAN_BEGIN (L"Source-filter synthesis 1. Creating a source from pitch targets", L"ppgb", 20140421)
 INTRO (L"Creating a glottal source signal for speech synthesis involves creating a @PointProcess, "
 	"which is a series of time points that should represent the exact moments of glottal closure.")
 NORMAL (L"You may want to start with creating a well-defined pitch contour. "
@@ -3246,21 +3248,19 @@ NORMAL (L"The glottal source signal sounds as a voice without a vocal tract. "
 	"The following section describes how you add vocal-tract resonances, i.e. the %filter.")
 ENTRY (L"Automation")
 NORMAL (L"In a clean Praat script, the procedure described above will look as follows:")
-CODE (L"pitchTier = Create PitchTier... source 0 0.5")
-CODE (L"Add point... 0.0 150")
-CODE (L"Add point... 0.5 100")
+CODE (L"pitchTier = Create PitchTier: \"source\", 0, 0.5")
+CODE (L"Add point: 0.0, 150")
+CODE (L"Add point: 0.5, 100")
 CODE (L"pulses = To PointProcess")
-CODE (L"Remove points between... 0 0.02")
-CODE (L"Remove points between... 0.24 0.31")
-CODE (L"Remove points between... 0.48 0.5")
-CODE (L"source = To Sound (phonation)... 44100 0.6 0.05 0.7 0.03 3.0 4.0")
-CODE (L"select pitchTier")
-CODE (L"plus pulses")
-CODE (L"Remove")
-CODE (L"select source")
+CODE (L"Remove points between: 0, 0.02")
+CODE (L"Remove points between: 0.24, 0.31")
+CODE (L"Remove points between: 0.48, 0.5")
+CODE (L"source = To Sound (phonation): 44100, 0.6, 0.05, 0.7, 0.03, 3.0, 4.0")
+CODE (L"removeObject: pitchTier, pulses")
+CODE (L"selectObject: source")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 2. Filtering a source", L"ppgb", 20080427)
+MAN_BEGIN (L"Source-filter synthesis 2. Filtering a source", L"ppgb", 20140421)
 INTRO (L"Once you have a glottal source signal, you are ready to create a filter that represents "
 	"the resonances of the vocal tract, as a function of time. In other words, you create a @FormantGrid object.")
 NORMAL (L"For a vowel spoken by an average (i.e. adult female) human voice, tradition assumes five formants in the range "
@@ -3270,19 +3270,19 @@ NORMAL (L"For a vowel spoken by an average (i.e. adult female) human voice, trad
 	"which, with a sound velocity of 352 m/s, means a resonance frequency of 352/0.64 = 550 hertz. "
 	"The other resonances will be at 1650, 2750, 3850, and 4950 hertz.")
 NORMAL (L"You can create a @FormantGrid object with @@Create FormantGrid...@ from the #New menu (submenu #Tiers):")
-CODE (L"Create FormantGrid... filter 0 0.5 10 550 1100 60 50")
+CODE (L"Create FormantGrid: \"filter\", 0, 0.5, 10, 550, 1100, 60, 50")
 NORMAL (L"This creates a FormantGrid with 10 formants and a single frequency value for each formant: %F__1_ is 550 Hz "
 	"and the higher formants are spaced 1100 Hz apart, i.e., they are "
 	"1650, 2750, 3850, 4950, 6050, 7150, 8250, 9350, and 10450 hertz; "
 	"the ten bandwidths start at 60 Hz and have a spacing of 50 Hz, "
 	"i.e., they are 60, 110, 160, 210, 260, 310, 360, 410, 460, and 510 hertz.")
 NORMAL (L"You can then create formant contours with @@FormantGrid: Add formant point...@:")
-CODE (L"Remove formant points between... 1 0 0.5")
-CODE (L"Add formant point... 1 0.00 100")
-CODE (L"Add formant point... 1 0.05 700")
-CODE (L"Remove formant points between... 2 0 0.5")
-CODE (L"Add formant point... 2 0.00 500")
-CODE (L"Add formant point... 2 0.05 1100")
+CODE (L"Remove formant points between: 1, 0, 0.5")
+CODE (L"Add formant point: 1, 0.00, 100")
+CODE (L"Add formant point: 1, 0.05, 700")
+CODE (L"Remove formant points between: 2, 0, 0.5")
+CODE (L"Add formant point: 2, 0.00, 500")
+CODE (L"Add formant point: 2, 0.05, 1100")
 NORMAL (L"This example creates a spectral specification whose %F__1_ rises from 100 to 700 hertz during the "
 	"first 50 milliseconds (as for any obstruent), and whose %F__2_ rises from 500 to 1100 hertz. "
 	"The other eight formants keep their original values, as do the ten bandwidths. "
@@ -3294,50 +3294,45 @@ NORMAL (L"The resulting sound will have a fairly straight intensity contour. You
 	"acoustic result with an @Intensity or @IntensityTier object.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 3. The ba-da continuum", L"ppgb", 20091012)
+MAN_BEGIN (L"Source-filter synthesis 3. The ba-da continuum", L"ppgb", 20140421)
 INTRO (L"As an example, we are going to create a male [ba]-[da] continuum in six steps. The acoustic difference "
 	"between [ba] and [da] is the initial %F__2_, which is 500 Hz for [ba], and 2500 Hz for [da].")
 NORMAL (L"We use the same @PitchTier throughout, to model a falling intonation contour:")
-CODE (L"Create PitchTier... f0 0.00 0.50")
-CODE (L"Add point... 0.00 150")
-CODE (L"Add point... 0.50 100")
+CODE (L"Create PitchTier: \"f0\", 0.00, 0.50")
+CODE (L"Add point: 0.00, 150")
+CODE (L"Add point: 0.50, 100")
 NORMAL (L"The first and last 50 milliseconds are voiceless:")
 CODE (L"To PointProcess")
-CODE (L"Remove points between... 0.00 0.05")
-CODE (L"Remove points between... 0.45 0.50")
+CODE (L"Remove points between: 0.00, 0.05")
+CODE (L"Remove points between: 0.45, 0.50")
 NORMAL (L"Generate the glottal source signal:")
-CODE (L"To Sound (phonation)... 44100 0.6 0.05 0.7 0.03 3.0 4.0")
+CODE (L"To Sound (phonation): 44100, 0.6, 0.05, 0.7, 0.03, 3.0, 4.0")
 NORMAL (L"During the labial or coronal closure, the sound is almost silent, so we use an @IntensityTier "
 	"that models this:")
-CODE (L"Create IntensityTier... intens 0.00 0.50")
-CODE (L"Add point... 0.05 60")
-CODE (L"Add point... 0.10 80")
+CODE (L"Create IntensityTier: \"intens\", 0.00, 0.50")
+CODE (L"Add point: 0.05, 60")
+CODE (L"Add point: 0.10, 80")
 NORMAL (L"Generate the source signal:")
-CODE (L"#plus Sound f0")
+CODE (L"#plusObject: \"Sound f0\"")
 CODE (L"Multiply")
-CODE (L"Rename... source")
+CODE (L"Rename: \"source\"")
 NORMAL (L"The ten sounds are generated in a loop:")
 CODE (L"#for i #from 1 #to 10")
-CODE (L"   f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
-CODE (L"   Create FormantGrid... filter 0.0 0.5 9 800 1000 60 80")
-CODE (L"   Remove formant points between... 1 0.0 0.5")
-CODE (L"   Add formant point... 1 0.05 100")
-CODE (L"   Add bandwidth point... 1 0.05 50")
-CODE (L"   Add formant point... 2 0.05 f2_locus")
-CODE (L"   Add bandwidth point... 2 0.05 100")
-CODE (L"   #plus Sound source")
-CODE (L"   Filter (no scale)")
-CODE (L"   Rename... bada'i'")
-CODE (L"   #select FormantGrid filter")
-CODE (L"   Remove")
+	CODE1 (L"f2_locus = 500 + (2500/9) * (i - 1) ; variable names start with lower case!")
+	CODE1 (L"Create FormantGrid: \"filter\", 0.0, 0.5, 9, 800, 1000, 60, 80")
+	CODE1 (L"Remove formant points between: 1, 0.0, 0.5")
+	CODE1 (L"Add formant point: 1, 0.05, 100")
+	CODE1 (L"Add bandwidth point: 1, 0.05, 50")
+	CODE1 (L"Add formant point: 2, 0.05, f2_locus")
+	CODE1 (L"Add bandwidth point: 2, 0.05, 100")
+	CODE1 (L"#plusObject: \"Sound source\"")
+	CODE1 (L"Filter (no scale)")
+	CODE1 (L"Rename: \"bada\" + string\\$  (i)")
+	CODE1 (L"#removeObject: \"FormantGrid filter\"")
 CODE (L"#endfor")
 NORMAL (L"Clean up:")
-CODE (L"#select Sound source")
-CODE (L"#plus Sound f0")
-CODE (L"#plus IntensityTier intens")
-CODE (L"#plus PointProcess f0")
-CODE (L"#plus PitchTier f0")
-CODE (L"Remove")
+CODE (L"#removeObject: \"Sound source\", \"Sound f0\", \"IntensityTier intens\",")
+CODE (L"... \"PointProcess f0\", \"PitchTier f0\"")
 NORMAL (L"In this example, filtering was done without automatic scaling, so that "
 	"the resulting signals have equal intensities in the areas where they have "
 	"equal formants. You will probably want to multiply all these signals with "
@@ -3345,7 +3340,7 @@ NORMAL (L"In this example, filtering was done without automatic scaling, so that
 	"between -1 and +1 Pascal.")
 MAN_END
 
-MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20111018)
+MAN_BEGIN (L"Source-filter synthesis 4. Using existing sounds", L"ppgb", 20140421)
 ENTRY (L"1. How to extract the %filter from an existing speech sound")
 NORMAL (L"You can separate source and filter with the help of the technique of %%linear prediction% "
 	"(see @@Sound: LPC analysis@). This technique tries to approximate a given frequency spectrum with "
@@ -3365,12 +3360,12 @@ NORMAL (L"To perform the resampling, you use @@Sound: Resample...@: "
 	"you select a @Sound object, and click ##Resample...#. "
 	"In the rest of this tutorial, I will use the syntax that you would use in a script, "
 	"though you will usually do these things by clicking on objects and buttons. Thus:")
-CODE (L"#select Sound hallo")
-CODE (L"Resample... 11000 50")
+CODE (L"#selectObject: \"Sound hallo\"")
+CODE (L"Resample: 11000, 50")
 NORMAL (L"You can then perform a linear-prediction analysis on the resampled sound "
 	"with @@Sound: To LPC (burg)...@:")
-CODE (L"#select Sound hallo_11000")
-CODE (L"To LPC (burg)... 10 0.025 0.005 50")
+CODE (L"#selectObject: \"Sound hallo_11000\"")
+CODE (L"To LPC (burg): 10, 0.025, 0.005, 50")
 NORMAL (L"This says that your analysis is done with 10 linear-prediction parameters "
 	"(which will yield at most five formant-bandwidth pairs), with an analysis window "
 	"effectively 25 milliseconds long, with time steps of 5 milliseconds (so that the windows "
@@ -3381,16 +3376,16 @@ NORMAL (L"As a result, an object called \"LPC hallo\" will appear in the list of
 	"These coefficients are rather opaque even to the expert (try to view them with @Inspect), "
 	"but they are the raw material from which formant and bandwidth values can be computed. "
 	"To see the smoothed @Spectrogram associated with the LPC object, choose @@LPC: To Spectrogram...@:")
-CODE (L"#select LPC hallo_11000")
-CODE (L"To Spectrogram... 20 0 50")
-CODE (L"Paint... 0 0 0 0 50 0 0 yes")
+CODE (L"#selectObject: \"LPC hallo_11000\"")
+CODE (L"To Spectrogram: 20, 0, 50")
+CODE (L"Paint: 0, 0, 0, 0, 50, 0, 0, \"yes\"")
 NORMAL (L"Note that when drawing this Spectrogram, you will want to set the pre-emphasis to zero "
 	"(the fifth 0 in the last line), because pre-emphasis has already been applied in the analysis.")
 NORMAL (L"You can get and draw the formant-bandwidth pairs from the LPC object, "
 	"with @@LPC: To Formant@ and @@Formant: Speckle...@:")
-CODE (L"#select LPC hallo_11000")
+CODE (L"#selectObject: \"LPC hallo_11000\"")
 CODE (L"To Formant")
-CODE (L"Speckle... 0 0 5500 30 yes")
+CODE (L"Speckle: 0, 0, 5500, 30, \"yes\"")
 NORMAL (L"Note that in converting the @LPC into a @Formant object, you may have lost some "
 	"information about spectral peaks at very low frequencies (below 50 Hz) or at very high "
 	"frequencies (near the @@Nyquist frequency@ of 5500 Hz. Such peaks usually try to fit "
@@ -3399,8 +3394,8 @@ NORMAL (L"Note that in converting the @LPC into a @Formant object, you may have 
 	"For resynthesis purposes, they might still be important.")
 NORMAL (L"Instead of using the intermediate LPC object, you could have done a formant analysis "
 	"directly on the original Sound, with @@Sound: To Formant (burg)...@:")
-CODE (L"#select Sound hallo")
-CODE (L"To Formant (burg)... 0.005 5 5500 0.025 50")
+CODE (L"#selectObject: \"Sound hallo\"")
+CODE (L"To Formant (burg): 0.005, 5, 5500, 0.025, 50")
 NORMAL (L"A @Formant object has a fixed sampling (time step, frame length), and for every "
 	"%%formant frame%, it contains a number of formant-bandwidth pairs.")
 NORMAL (L"From a Formant object, you can create a @FormantGrid with @@Formant: Down to FormantGrid@. "
@@ -3411,8 +3406,7 @@ ENTRY (L"2. How to extract the %source from an existing speech sound")
 NORMAL (L"If you are only interested in the %filter characteristics, you can get by with @Formant objects. "
 	"To get at the %source signal, however, you need the raw @LPC object: "
 	"you select it together with the resampled @Sound, and apply %%inverse filtering%:")
-CODE (L"#select Sound hallo_11000")
-CODE (L"#plus LPC hallo_11000")
+CODE (L"#selectObject: \"Sound hallo_11000\", \"LPC hallo_11000\"")
 CODE (L"Filter (inverse)")
 NORMAL (L"A new Sound named \"hallo_11000\" will appear in the list of objects "
 	"(you could rename it to \"source\"). "
@@ -3430,40 +3424,36 @@ NORMAL (L"Note that with inverse filtering you cannot measure the actual spectra
 ENTRY (L"3. How to do the synthesis")
 NORMAL (L"You can create a new Sound from a source Sound and a filter, in at least four ways.")
 NORMAL (L"If your filter is an @LPC object, you select it and the source, and choose @@LPC & Sound: Filter...@:")
-CODE (L"#select Sound source")
-CODE (L"#plus LPC filter")
-CODE (L"Filter... no")
+CODE (L"#selectObject: \"Sound source\", \"LPC filter\"")
+CODE (L"Filter: \"no\"")
 NORMAL (L"If you had computed the source and filter from an LPC analysis, this procedure should give "
 	"you back the original Sound, except that windowing has caused 25 milliseconds at the beginning "
 	"and end of the signal to be set to zero.")
 NORMAL (L"If your filter is a @Formant object, you select it and the source, and choose @@Sound & Formant: Filter@:")
-CODE (L"#select Sound source")
-CODE (L"#plus Formant filter")
+CODE (L"#selectObject: \"Sound source\", \"Formant filter\"")
 CODE (L"Filter")
 NORMAL (L"If you had computed the source and filter from an LPC analysis, this procedure will not generally give "
 	"you back the original Sound, because some linear-prediction coefficients will have been ignored "
 	"in the conversion to formant-bandwidth pairs.")
 NORMAL (L"If your filter is a @FormantGrid object, you select it and the source, and choose @@Sound & FormantGrid: Filter@:")
-CODE (L"#select Sound source")
-CODE (L"#plus FormantGrid filter")
+CODE (L"#selectObject: \"Sound source\", \"FormantGrid filter\"")
 CODE (L"Filter")
 NORMAL (L"Finally, you could just know the %%impulse response% of your filter (in a @Sound object). "
 	"You then select both Sound objects, and choose @@Sounds: Convolve...@:")
-CODE (L"#select Sound source")
-CODE (L"#plus Sound filter")
-CODE (L"Convolve... integral zero")
+CODE (L"#selectObject: \"Sound source\", \"Sound filter\"")
+CODE (L"Convolve: \"integral\", \"zero\"")
 NORMAL (L"As a last step, you may want to bring the resulting sound within the [-1; +1] range:")
-CODE (L"Scale peak... 0.99")
+CODE (L"Scale peak: 0.99")
 ENTRY (L"4. How to manipulate the filter")
 NORMAL (L"You can hardly change the values in an @LPC object in a meaningful way: "
 	"you would have to manually change its rather opaque data with the help of @Inspect.")
 NORMAL (L"A @Formant object can be changed in a friendlier way, with @@Formant: Formula (frequencies)...@ "
 	"and @@Formant: Formula (bandwidths)...@. For instance, to multiply all formant frequencies by 0.9, "
 	"you do")
-CODE (L"#select Formant filter")
-CODE (L"Formula (frequencies)... self * 0.9")
+CODE (L"#selectObject: \"Formant filter\"")
+CODE (L"Formula (frequencies): \"self * 0.9\"")
 NORMAL (L"To add 200 hertz to all values of %F__2_, you do")
-CODE (L"Formula (frequencies)... if row = 2 then self + 200 else self fi")
+CODE (L"Formula (frequencies): \"if row = 2 then self + 200 else self fi\"")
 NORMAL (L"A @FormantGrid object can be changed by adding or removing points:")
 LIST_ITEM (L"@@FormantGrid: Add formant point...@")
 LIST_ITEM (L"@@FormantGrid: Add bandwidth point...@")

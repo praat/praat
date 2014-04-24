@@ -1,6 +1,6 @@
 /* manual_Sampling.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2010,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,27 +24,27 @@
 void manual_Sampling_init (ManPages me);
 void manual_Sampling_init (ManPages me) {
 
-MAN_BEGIN (L"Get sampling period", L"ppgb", 20040420)
+MAN_BEGIN (L"Get sampling period", L"ppgb", 20140421)
 INTRO (L"A command that becomes available in the #Query menu if you select a @Sound object.")
 NORMAL (L"The Info window will tell you the @@sampling period@ in seconds.")
 ENTRY (L"Usage")
 NORMAL (L"You will not often choose this command with the mouse, "
 	"since the sampling period is included in the information that you get "
 	"by clicking the #Info button. This command is probably more useful in a Praat script:")
-CODE (L"select Sound hello")
+CODE (L"selectObject: \"Sound hello\"")
 CODE (L"samplingPeriod = Get sampling period")
 ENTRY (L"Details for hackers")
 NORMAL (L"With @Inspect, you can see how the sampling period is stored in a #Sound object: it is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (L"Get sampling frequency", L"ppgb", 20040420)
+MAN_BEGIN (L"Get sampling frequency", L"ppgb", 20140421)
 INTRO (L"A command that becomes available in the #Query menu if you select a @Sound object.")
 NORMAL (L"The Info window will tell you the @@sampling frequency@ in hertz.")
 ENTRY (L"Usage")
 NORMAL (L"You will not often choose this command with the mouse, "
 	"since the sampling frequency is included in the information that you get "
 	"by clicking the #Info button. This command is probably more useful in a Praat script:")
-CODE (L"select Sound hello")
+CODE (L"selectObject: \"Sound hello\"")
 CODE (L"samplingFrequency = Get sampling frequency")
 ENTRY (L"Algorithm")
 NORMAL (L"The sampling frequency is defined as 1 / (\\De%t), where \\De%t is the @@sampling period@. "
@@ -67,7 +67,7 @@ NORMAL (L"If you select a Sound or LongSound and click @Inspect, "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (L"Get sample number from time...", L"ppgb", 20040505)
+MAN_BEGIN (L"Get sample number from time...", L"ppgb", 20140421)
 INTRO (L"A command that becomes available in the #Query menu if you select a @Sound or @LongSound object.")
 NORMAL (L"The Info window will tell you the sample number belonging to the time that you specify. "
 	"The result is presented as a real number.")
@@ -79,7 +79,7 @@ NORMAL (L"If the sound has a sampling frequency of 10 kHz, the sample number ass
 	"will usually be 1000.5.")
 ENTRY (L"Scripting")
 NORMAL (L"You can use this command to put the nearest sample number into a script variable:")
-CODE (L"select Sound hallo")
+CODE (L"selectObject: \"Sound hallo\"")
 CODE (L"sampleNumber = Get sample number from time... 0.1")
 CODE (L"nearestSample = round (sampleNumber)")
 NORMAL (L"In this case, the value will not be written into the Info window. To round down or up, use")
@@ -123,7 +123,7 @@ NORMAL (L"If you select one of the above objects and click @Inspect, "
 	"%t__1_ is the #x1 attribute, and \\De%t is the #dx attribute.")
 MAN_END
 
-MAN_BEGIN (L"Get frame number from time...", L"ppgb", 20040505)
+MAN_BEGIN (L"Get frame number from time...", L"ppgb", 20140421)
 INTRO (L"A command that becomes available in the #Query menu if you select a sound-analysis object that is a function of time "
 	"and that is evenly sampled in time (@Pitch, @Formant, @Intensity, @Harmonicity).")
 NORMAL (L"The Info window will tell you the frame number belonging to the time that you specify. "
@@ -136,7 +136,7 @@ NORMAL (L"If the Pitch object has a time step of 10 ms, and the first frame is c
 	"the frame number associated with a time of 0.1 seconds is 9.2.")
 ENTRY (L"Scripting")
 NORMAL (L"You can use this command to put the nearest frame centre into a script variable:")
-CODE (L"select Pitch hallo")
+CODE (L"selectObject: \"Pitch hallo\"")
 CODE (L"frame = Get frame from time... 0.1")
 CODE (L"nearestFrame = round (frame)")
 NORMAL (L"In this case, the value will not be written into the Info window. To round down or up, use")

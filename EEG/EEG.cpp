@@ -641,4 +641,8 @@ MixingMatrix structEEG :: f_to_MixingMatrix (long maxNumberOfIterations, double 
 	}
 }
 
+void MixingMatrix_draw (MixingMatrix me) {
+	
+}
+
 /* End of file EEG.cpp */

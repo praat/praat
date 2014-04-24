@@ -1,6 +1,6 @@
 /* ERPTier.cpp
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ double structERPTier :: f_getMean (long pointNumber, const wchar_t *channelName,
 	return f_getMean (pointNumber, f_getChannelNumber (channelName), tmin, tmax);
 }
 
-ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit) {
+static ERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, double fromTime, double toTime) {
 	try {
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), fromTime, toTime);
@@ -87,7 +87,6 @@ ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit) {
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (my d_channelNames [ichan]);
 		}
-		autoPointProcess events = TextGrid_getStartingPoints (my d_textgrid, markerBit, kMelder_string_EQUAL_TO, L"1");
 		long numberOfEvents = events -> nt;
 		thy d_events = SortedSetOfDouble_create ();
 		double soundDuration = toTime - fromTime;
@@ -118,6 +117,43 @@ ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit) {
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": ERP analysis not performed.");
+	}
+}
+
+ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit) {
+	try {
+		autoPointProcess events = TextGrid_getStartingPoints (my d_textgrid, markerBit, kMelder_string_EQUAL_TO, L"1");
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": ERPTier not created.");
+	}
+}
+
+ERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
+	int which_Melder_STRING, const wchar_t *criterion)
+{
+	try {
+		autoPointProcess events = TextGrid_getPoints (my d_textgrid, 2, which_Melder_STRING, criterion);
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": ERPTier not created.");
+	}
+}
+
+ERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
+	int which_Melder_STRING, const wchar_t *criterion,
+	int which_Melder_STRING_precededBy, const wchar_t *criterion_precededBy)
+{
+	try {
+		autoPointProcess events = TextGrid_getPoints_preceded (my d_textgrid, 2,
+			which_Melder_STRING, criterion,
+			which_Melder_STRING_precededBy, criterion_precededBy);
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": ERPTier not created.");
 	}
 }
 

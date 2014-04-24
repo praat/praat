@@ -1,6 +1,6 @@
 /* praat_TextGrid_init.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1314,6 +1314,44 @@ DO
 	}
 END
 
+FORM (TextGrid_getPoints_followed, L"Get points (followed)", 0)
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	OPTIONMENU_ENUM (L"Get points where label", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"hi")
+	OPTIONMENU_ENUM (L"followed by a label that", kMelder_string, DEFAULT)
+	SENTENCE (L" ...the text", L"there")
+	OK
+DO
+	wchar_t *text = GET_STRING (L"...the text");
+	wchar_t *following = GET_STRING (L" ...the text");
+	LOOP {
+		iam (TextGrid);
+		autoPointProcess thee = TextGrid_getPoints_followed (me, GET_INTEGER (STRING_TIER_NUMBER),
+			GET_ENUM (kMelder_string, L"Get points where label"), text,
+			GET_ENUM (kMelder_string, L"followed by a label that"), following);
+		praat_new (thee.transfer(), my name, L"_", text);
+	}
+END
+
+FORM (TextGrid_getPoints_preceded, L"Get points (preceded)", 0)
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	OPTIONMENU_ENUM (L"Get points where label", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"there")
+	OPTIONMENU_ENUM (L"preceded by a label that", kMelder_string, DEFAULT)
+	SENTENCE (L" ...the text", L"hi")
+	OK
+DO
+	wchar_t *text = GET_STRING (L"...the text");
+	wchar_t *preceding = GET_STRING (L" ...the text");
+	LOOP {
+		iam (TextGrid);
+		autoPointProcess thee = TextGrid_getPoints_preceded (me, GET_INTEGER (STRING_TIER_NUMBER),
+			GET_ENUM (kMelder_string, L"Get points where label"), text,
+			GET_ENUM (kMelder_string, L"preceded by a label that"), preceding);
+		praat_new (thee.transfer(), my name, L"_", text);
+	}
+END
+
 FORM (TextGrid_removeLeftBoundary, L"TextGrid: Remove left boundary", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
 	NATURAL (STRING_INTERVAL_NUMBER, L"2")
@@ -1690,6 +1728,8 @@ praat_addAction1 (classTextGrid, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classTextGrid, 1, L"Get centre points...", 0, 1, DO_TextGrid_getCentrePoints);
 	praat_addAction1 (classTextGrid, 1, L"Analyse point tier -", 0, 0, 0);
 		praat_addAction1 (classTextGrid, 1, L"Get points...", 0, 1, DO_TextGrid_getPoints);
+		praat_addAction1 (classTextGrid, 1, L"Get points (preceded)...", 0, 1, DO_TextGrid_getPoints_preceded);
+		praat_addAction1 (classTextGrid, 1, L"Get points (followed)...", 0, 1, DO_TextGrid_getPoints_followed);
 praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 0, L"Merge", 0, 0, DO_TextGrids_merge);
 	praat_addAction1 (classTextGrid, 0, L"Concatenate", 0, 0, DO_TextGrids_concatenate);

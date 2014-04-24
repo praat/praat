@@ -1,6 +1,6 @@
 /* manual_Fon.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -140,16 +140,16 @@ INTRO (L"A command for changing the data in all selected @Cochleagram objects.")
 NORMAL (L"See the @Formulas tutorial for examples and explanations.")
 MAN_END
 
-MAN_BEGIN (L"Create DurationTier...", L"ppgb", 20021204)
+MAN_BEGIN (L"Create DurationTier...", L"ppgb", 20140421)
 INTRO (L"A command in the @@New menu@ to create an empty @DurationTier object.")
 NORMAL (L"The resulting object will have the specified name and time domain, but contain no duration points. "
 	"To add some points to it, use @@DurationTier: Add point...@.")
 ENTRY (L"Scripting example")
 NORMAL (L"To create a tier 0.9 seconds long, with an deceleration around 0.6 seconds, you do:")
-CODE (L"Create DurationTier... dur 0 0.9")
-CODE (L"Add point... 0.3 1")
-CODE (L"Add point... 0.6 2.3")
-CODE (L"Add point... 0.7 1")
+CODE (L"Create DurationTier: \"dur\", 0, 0.9")
+CODE (L"Add point: 0.3, 1")
+CODE (L"Add point: 0.6, 2.3")
+CODE (L"Add point: 0.7, 1")
 NORMAL (L"The result will look like")
 PICTURE (5, 2.5, draw_CreateDurationTier)
 NORMAL (L"The target duration will be the area under this curve, which is 0.9 + 1/2 \\.c 1.3 \\.c 0.4 = 1.16 seconds.")
@@ -237,7 +237,7 @@ CODE (L"directory\\$  = \"/usr/people/miep/sounds\"")
 CODE (L"strings = Create Strings as file list: \"list\", directory\\$  + \"/*.wav\"")
 CODE (L"numberOfFiles = Get number of strings")
 CODE (L"for ifile to numberOfFiles")
-	CODE1 (L"selectObject (strings)")
+	CODE1 (L"selectObject: strings")
 	CODE1 (L"fileName\\$  = Get string: ifile")
 	CODE1 (L"Read from file: directory\\$  + \"/\" + fileName\\$ ")
 CODE (L"endfor")
@@ -791,7 +791,7 @@ LIST_ITEM (L"Page-down (in sound windows): Scroll page forward")
 LIST_ITEM (L"Escape: Interrupt playing")
 MAN_END
 
-MAN_BEGIN (L"Log files", L"ppgb", 20110808)
+MAN_BEGIN (L"Log files", L"ppgb", 20140421)
 INTRO (L"With some commands in the @Query menu of the @SoundEditor and @TextGridEditor, "
 	"you can write combined information about times, pitch values, formants, and intensities "
 	"to the @@Info window@ and to a log file.")
@@ -868,8 +868,8 @@ NORMAL (L"You may sometimes require information in your log file that cannot be 
 CODE (L"f1 = Get first formant")
 CODE (L"f2 = Get second formant")
 CODE (L"f21 = f2 - f1")
-CODE (L"printline 'f1:0' 'f21:0'")
-CODE (L"fileappend \"D:\\bsPraat logs\\bsFormant log.txt\" 'f1:0''tab\\$ ''f21:0''newline\\$ '")
+CODE (L"appendInfoLine: fixed\\$  (f1, 0), \" \", fixed\\$  (f21, 0)")
+CODE (L"appendFileLine: \"D:\\bsPraat logs\\bsFormant log.txt\", fixed\\$  (f1, 0), tab\\$ , fixed\\$  (f21, 0)")
 NORMAL (L"With this script, the information would be appended both to the Info window and to the "
 	"file \"Formant log.txt\" on your desktop.")
 NORMAL (L"You can make this script accessible with Option-F12 (or Command-F12) "
@@ -883,8 +883,8 @@ CODE (L"endform")
 CODE (L"f1 = Get first formant")
 CODE (L"f2 = Get second formant")
 CODE (L"f21 = f2 - f1")
-CODE (L"printline 'vowel\\$ ' 'f1:0' 'f21:0'")
-CODE (L"fileappend \"~/Praat logs/Vowels and formants log\" 'vowel\\$ ''f1:0''tab\\$ ''f21:0''newline\\$ '")
+CODE (L"appendInfoLine: vowel\\$ , \" \", fixed\\$  (f1, 0), \" \", fixed\\$  (f21, 0)")
+CODE (L"appendFileLine: \"~/Praat logs/Vowels and formants log\", vowel\\$ , tab\\$ , fixed\\$  (f1, 0), tab\\$ , fixed\\$  (f21, 0)")
 NORMAL (L"Beware of the following pitfall: because of the nature of scripts, you should not try to do this "
 	"when you have two editor windows with the same name. I cannot predict which of the two windows "
 	"will answer the #Get queries...")

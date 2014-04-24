@@ -1,6 +1,6 @@
 /* manual_formant.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2010,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -171,7 +171,7 @@ TAG (L"##Interpolation")
 DEFINITION (L"the interpolation method (#None or #Parabolic). See @@vector peak interpolation@.")
 MAN_END
 
-MAN_BEGIN (L"Formant: Get mean...", L"ppgb", 19991016)
+MAN_BEGIN (L"Formant: Get mean...", L"ppgb", 20140421)
 INTRO (L"A @query to ask the selected @Formant object for the mean value of the specified formant.")
 ENTRY (L"Return value")
 NORMAL (L"the mean, in hertz or Bark.")
@@ -186,8 +186,8 @@ TAG (L"##Units")
 DEFINITION (L"the units of the result (#Hertz or #Bark).")
 ENTRY (L"Scripting")
 NORMAL (L"You can use this command to put the mean into a script variable:")
-CODE (L"select Formant hallo")
-CODE (L"mean = Get mean... 2 0 0 Hertz")
+CODE (L"selectObject: \"Formant hallo\"")
+CODE (L"mean = Get mean: 2, 0, 0, \"Hertz\"")
 NORMAL (L"In this case, the value will not be written into the Info window.")
 MAN_END
 

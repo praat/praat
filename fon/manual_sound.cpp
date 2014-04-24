@@ -1,6 +1,6 @@
 /* manual_sound.cpp
  *
- * Copyright (C) 1992-2010 Paul Boersma
+ * Copyright (C) 1992-2010,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ Create Sound from formula... 'Naam' Mono begintijd eindtijd samplefrequentie
 */
 MAN_END
 
-MAN_BEGIN (L"Create Sound from tone complex...", L"ppgb", 20060202)
+MAN_BEGIN (L"Create Sound from tone complex...", L"ppgb", 20140421)
 INTRO (L"A command in the @@New menu@ to create a @Sound as the sum of a number of sine waves "
 	"with equidistant frequencies.")
 ENTRY (L"Settings")
@@ -140,8 +140,8 @@ ENTRY (L"Example 1: a pulse train")
 NORMAL (L"A series of pulses at regular intervals, "
 	"sampled after low-pass filtering at the Nyquist frequency, "
 	"can be regarded as a sum of cosine waves. For instance, a 100-Hz pulse train, "
-	"sampled at 22050 Hz, can be created with:")
-CODE (L"Create Sound from tone complex... train 0 1 22050 Cosine 100 0 0 0")
+	"sampled at 44100 Hz, can be created with:")
+CODE (L"Create Sound from tone complex: \"train\", 0, 1, 44100, \"Cosine\", 100, 0, 0, 0")
 NORMAL (L"Supplying the value 0 for %firstFrequency yields an unshifted harmonic complex.")
 ENTRY (L"Example 2: a shifted harmonic complex")
 NORMAL (L"Some experiments on human pitch perception (%%residue pitch%) use "
@@ -149,9 +149,9 @@ NORMAL (L"Some experiments on human pitch perception (%%residue pitch%) use "
 	"related frequencies that are all shifted by a constant amount.")
 NORMAL (L"For instance, to get a sum of sine waves with frequencies 105 Hz, 205 Hz, and 305 Hz, "
 	"you would use:")
-CODE (L"Create Sound from tone complex... train 0.3 1 22050 Sine 100 105 0 3")
+CODE (L"Create Sound from tone complex: \"train\", 0.3, 1, 44100, \"Sine\", 100, 105, 0, 3")
 NORMAL (L"or")
-CODE (L"Create Sound from tone complex... train 0.3 1 22050 Sine 100 105 350 0")
+CODE (L"Create Sound from tone complex: \"train\", 0.3, 1, 44100, \"Sine\", 100, 105, 350, 0")
 NORMAL (L"whichever you prefer.")
 NORMAL (L"Some of these experiments are described in @@Plomp (1967)@ and @@Patterson & Wightman (1976)@.")
 ENTRY (L"Algorithm")
@@ -172,16 +172,16 @@ CODE (L"form Add waves with decreasing amplitudes")
 CODE1 (L"natural Number_of_components 19")
 CODE (L"endform")
 CODE (L"\\#  Create a Matrix with frequency and amplitude information in each row:")
-CODE (L"Create simple Matrix... freqAndGain number_of_components 2 0")
-CODE (L"Formula... if col = 1 then row * 100 + 5 else 1 / row fi")
+CODE (L"Create simple Matrix: \"freqAndGain\", number_of_components, 2, \"0\"")
+CODE (L"Formula: \"if col = 1 then row * 100 + 5 else 1 / row fi\"")
 CODE (L"\\#  Create a large Matrix with all the component sine waves:")
-CODE (L"Create Matrix... components 0 1 10000 1e-4 0.5e-4 1 number_of_components number_of_components 1 1 0")
-CODE (L"Formula... Matrix_freqAndGain [2] * sin (2 * pi * Matrix_freqAndGain [1] * x)")
+CODE (L"Create Matrix: \"components\", 0, 1, 10000, 1e-4, 0.5e-4, 1, number_of_components, number_of_components, 1, 1, \"0\"")
+CODE (L"Formula: \"Matrix_freqAndGain [2] * sin (2 * pi * Matrix_freqAndGain [1] * x)\"")
 CODE (L"\\#  Integrate:")
-CODE (L"Formula... self + self [row - 1, col]")
+CODE (L"Formula: \"self + self [row - 1, col]\"")
 CODE (L"\\#  Publish last row:")
-CODE (L"To Sound (slice)... number_of_components")
-CODE (L"Scale amplitudes... 0.99")
+CODE (L"To Sound (slice): number_of_components")
+CODE (L"Scale amplitudes: 0.99")
 MAN_END
 
 MAN_BEGIN (L"Extract one channel...", L"ppgb", 20110129)
@@ -979,7 +979,7 @@ NORMAL (L"A new Sound will appear in the list of objects, "
 	"For instance, the Sound \"hallo\" will give a new Sound \"hallo_10000\".")
 MAN_END
 
-MAN_BEGIN (L"Sound: Set value at sample number...", L"ppgb", 20040420)
+MAN_BEGIN (L"Sound: Set value at sample number...", L"ppgb", 20140421)
 INTRO (L"A command to change a specified sample of the selected @Sound object.")
 ENTRY (L"Settings")
 TAG (L"##Sample number")
@@ -989,8 +989,8 @@ TAG (L"##New value")
 DEFINITION (L"the value that is to be put into the specified sample.")
 ENTRY (L"Scripting")
 NORMAL (L"Example:")
-CODE (L"select Sound hallo")
-CODE (L"Set value at sample number... 100 1/2")
+CODE (L"selectObject: \"Sound hallo\"")
+CODE (L"Set value at sample number: 100, 1/2")
 NORMAL (L"This sets the value of the 100th sample to 0.5.")
 MAN_END
 

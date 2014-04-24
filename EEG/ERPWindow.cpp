@@ -156,8 +156,8 @@ void structERP :: f_drawScalp (Graphics graphics, double tmin, double tmax, doub
 	//Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
 	//Graphics_setColour (graphics, Graphics_BLACK);
 	long numberOfDrawableChannels =
-			this -> ny >= 64 && Melder_wcsequ (this -> d_channelNames [64], L"O2") ? 64 :
-			this -> ny >= 32 && Melder_wcsequ (this -> d_channelNames [32], L"Cz") ? 32 :
+			our ny >= 64 && Melder_wcsequ (our d_channelNames [64], L"O2") ? 64 :
+			our ny >= 32 && Melder_wcsequ (our d_channelNames [32], L"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {

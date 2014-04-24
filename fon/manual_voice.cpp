@@ -1,6 +1,6 @@
 /* manual_voice.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ NORMAL (L"The difference between Praat's and MDVP's jitter measures is due to a 
 	"For detailed illustrations, see @@Boersma (2009a)@.")
 MAN_END
 
-MAN_BEGIN (L"Voice 6. Automating voice analysis with a script", L"ppgb", 20061028)
+MAN_BEGIN (L"Voice 6. Automating voice analysis with a script", L"ppgb", 20140421)
 INTRO (L"In a Praat script you usually do not want to raise a Sound window. "
 	"Instead, you probably want to work with objects in the Objects window only. "
 	"This page tells you how to do that for voice analysis.")
@@ -251,10 +251,10 @@ NORMAL (L"If you select the Sound, the Pitch, and the PointProcess together (all
 	"will be written to the Info window. This is identical to the voice report in the Sound window, "
 	"although you will have to specify the time range by manually typing it.")
 NORMAL (L"In a script, you can get the jitter and shimmer from the voice report by doing something like:")
-CODE (L"voiceReport\\$  = Voice report... 0 0 75 500 1.3 1.6 0.03 0.45")
+CODE (L"voiceReport\\$  = Voice report: 0, 0, 75, 500, 1.3, 1.6, 0.03, 0.45")
 CODE (L"jitter = extractNumber (voiceReport\\$ , \"Jitter (local): \")")
 CODE (L"shimmer = extractNumber (voiceReport\\$ , \"Shimmer (local): \")")
-CODE (L"echo Jitter = 'jitter:3\\% ', shimmer = 'shimmer:3\\% '")
+CODE (L"writeInfoLine: \"Jitter = \", percent\\$  (jitter, 3), \", shimmer = \", percent\\$  (shimmer, 3)")
 ENTRY (L"5. Disadvantage of automating voice analysis")
 NORMAL (L"In all the commands mentioned above, you have to guess the time range, "
 	"and you would usually supply \"0.0\" and \"0.0\", in which case "

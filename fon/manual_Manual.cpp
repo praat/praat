@@ -53,7 +53,7 @@ ENTRY (L"Your own manual pages")
 NORMAL (L"To create your own manual pages, create @ManPages text files.")
 MAN_END
 
-MAN_BEGIN (L"ManPages", L"ppgb", 20140107)
+MAN_BEGIN (L"ManPages", L"ppgb", 20140421)
 INTRO (L"You can create a documentation or education system with files that you and others "
 	"can read into Praat (with the @@Read from file...@ command). "
 	"Your files will become a hypertext system very similar to the usual @Manual.")
@@ -187,7 +187,7 @@ CODE (L"<script> 6 3 \"")
 CODE1 (L"Create Sound from formula: \"sineWithNoise\", 1, 0.0, 1.0, 44100, \"1/2*sin(2*pi*377*x)+randomGauss(0,0.1)\"")
 CODE1 (L"To Spectrogram: 0.005, 5000, 0.002, 20, \"Gaussian\"")
 CODE1 (L"Paint: 0, 0, 0, 0, 100.0, \"yes\", 50.0, 6.0, 0.0, \"yes\"")
-CODE1 (L"plusObject (\"Sound sineWithNoise\")")
+CODE1 (L"plusObject: \"Sound sineWithNoise\"")
 CODE1 (L"Remove")
 CODE (L"\\\"r")
 NORMAL (L"Note that unlike the previous script, this script does not set the font and font size. "

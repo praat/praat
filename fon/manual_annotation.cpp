@@ -169,7 +169,7 @@ LIST_ITEM (L"##TextGrid & Pitch: Draw...")
 LIST_ITEM (L"##TextGrid & Pitch: Draw separately...")
 MAN_END
 
-MAN_BEGIN (L"TextGrid: Count labels...", L"ppgb", 20140107)
+MAN_BEGIN (L"TextGrid: Count labels...", L"ppgb", 20140421)
 INTRO (L"A command to ask the selected @TextGrid object how many of the specified labels "
 	"it contains in the specified tier.")
 ENTRY (L"Settings")
@@ -182,7 +182,7 @@ NORMAL (L"The number of intervals or points with label %%Label text% in tier %%T
 	"is written into the @@Info window@. If the specified tier does not exist, the number will be 0.")
 ENTRY (L"Scripting")
 NORMAL (L"You can use this command to put the number into a script variable:")
-CODE (L"select TextGrid hallo")
+CODE (L"selectObject: \"TextGrid hallo\"")
 CODE (L"number_of_a = Count labels: 1, \"a\"")
 NORMAL (L"In this case, the value will not be written into the Info window.")
 MAN_END
@@ -282,7 +282,7 @@ NORMAL (L"You can check the spelling of the intervals in your tiers by including
 	"which will search for the next word in the tier or interval that does not occur in the lexicon.")
 MAN_END
 
-MAN_BEGIN (L"WordList", L"ppgb", 20110131)
+MAN_BEGIN (L"WordList", L"ppgb", 20140421)
 INTRO (L"One of the @@types of objects@ in Praat. "
 	"An object of class WordList contains a sorted list of strings in a system-independent format. "
 	"WordList objects can be used for spelling checking after conversion to a @SpellingChecker object.")
@@ -300,11 +300,11 @@ NORMAL (L"You can create a binary (compressed) WordList file from a simple text 
 	"Perhaps such a text file has been supplied by a lexicographic institution in your country; "
 	"because of copyright issues, such word lists cannot be distributed with the Praat program. "
 	"To convert the simple text file into a compressed WordList file, you basically take the following steps:")
-CODE (L"Read Strings from raw text file... lexicon.iso")
+CODE (L"Read Strings from raw text file: \"lexicon.iso\"")
 CODE (L"Genericize")
 CODE (L"Sort")
 CODE (L"To WordList")
-CODE (L"Save as binary file... lexicon.WordList")
+CODE (L"Save as binary file: \"lexicon.WordList\"")
 NORMAL (L"I'll explain these steps in detail. "
 	"For instance, a simple text file may contain the following list of words:")
 CODE (L"cook")

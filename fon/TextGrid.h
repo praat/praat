@@ -72,6 +72,12 @@ PointProcess TextGrid_getStartingPoints (TextGrid me, long itier, int which_Meld
 PointProcess TextGrid_getEndPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
 PointProcess TextGrid_getCentrePoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
 PointProcess TextGrid_getPoints (TextGrid me, long itier, int which_Melder_STRING, const wchar_t *criterion);
+PointProcess TextGrid_getPoints_preceded (TextGrid me, long tierNumber,
+	int which_Melder_STRING, const wchar_t *criterion,
+	int which_Melder_STRING_precededBy, const wchar_t *criterion_precededBy);
+PointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
+	int which_Melder_STRING, const wchar_t *criterion,
+	int which_Melder_STRING_followedBy, const wchar_t *criterion_followedBy);
 
 void TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber);
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber);

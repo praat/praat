@@ -725,6 +725,50 @@ PointProcess TextGrid_getPoints (TextGrid me, long tierNumber, int which_Melder_
 	}
 }
 
+PointProcess TextGrid_getPoints_preceded (TextGrid me, long tierNumber,
+	int which_Melder_STRING, const wchar_t *criterion,
+	int which_Melder_STRING_precededBy, const wchar_t *criterion_precededBy)
+{
+	try {
+		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
+		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
+		for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
+			TextPoint point = (TextPoint) tier -> points -> item [ipoint];
+			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
+				TextPoint preceding = ipoint <= 1 ? NULL : (TextPoint) tier -> points -> item [ipoint - 1];
+				if (Melder_stringMatchesCriterion (preceding -> mark, which_Melder_STRING_precededBy, criterion_precededBy)) {
+					PointProcess_addPoint (thee.peek(), point -> number);
+				}
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": points not converted to PointProcess.");
+	}
+}
+
+PointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
+	int which_Melder_STRING, const wchar_t *criterion,
+	int which_Melder_STRING_followedBy, const wchar_t *criterion_followedBy)
+{
+	try {
+		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
+		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
+		for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
+			TextPoint point = (TextPoint) tier -> points -> item [ipoint];
+			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
+				TextPoint following = ipoint >= tier -> points -> size ? NULL : (TextPoint) tier -> points -> item [ipoint + 1];
+				if (Melder_stringMatchesCriterion (following -> mark, which_Melder_STRING_followedBy, criterion_followedBy)) {
+					PointProcess_addPoint (thee.peek(), point -> number);
+				}
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": points not converted to PointProcess.");
+	}
+}
+
 PointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointProcess point, double phase) {
 	try {
 		autoPointProcess thee = PointProcess_create (tier -> xmin, tier -> xmax, 10);

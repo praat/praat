@@ -2,7 +2,7 @@
 #define _ERPTier_h_
 /* ERPTier.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,11 @@ oo_CLASS_CREATE (ERPPoint, AnyPoint);
 oo_CLASS_CREATE (ERPTier, Function);
 
 ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit);
+ERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
+	int which_Melder_STRING, const wchar_t *criterion);
+ERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,
+	int which_Melder_STRING, const wchar_t *criterion,
+	int which_Melder_STRING_precededBy, const wchar_t *criterion_precededBy);
 
 /* End of file ERPTier.h */
 #endif
