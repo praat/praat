@@ -1,6 +1,6 @@
 /* Graphics_record.cpp
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,36 +98,30 @@ void Graphics_clearRecording (Graphics me) {
 	}
 }
 
-// TODO: Paul, ik zou er een enorme fan van zijn als bij deze functie
-// ook een bounding box van events kan worden meegeven.
 void Graphics_play (Graphics me, Graphics thee) {
 	double *p = my record, *endp = p + my irecord;
 	bool wasRecording = my recording;
 	if (! p) return;
-	my recording = false;   /* Temporarily, in case me == thee. */
+	my recording = false;   // temporarily, in case me == thee
 	while (p < endp) {
 		#define get  (* ++ p)
 		#define mget(n)  (p += n, p - n)
 		#define sget(n)  ((char *) (p += n, p - n + 1))
-//		#define skip(x1, x2, y1, y2) if ((((x1 >= thy x1DC && x1 <= thy x2DC) || (x2 >= thy x1DC && x2 <= thy x2DC)) && ((y1 >= thy y1DC && y1 <= thy y2DC) || (y2 >= thy y1DC && y2 <= thy y2DC))) == FALSE) { g_debug("SKIP!"); break; }
 		int opcode = (int) get;
 		(void) (long) get;   // ignore number of arguments
 		switch (opcode) {
 			case SET_VIEWPORT:
 			{  double x1NDC = get, x2NDC = get, y1NDC = get, y2NDC = get;
-//				skip(x1NDC, x2NDC, y1NDC, y2NDC)
 				Graphics_setViewport (thee, x1NDC, x2NDC, y1NDC, y2NDC);
 			}  break;
 			case SET_INNER: Graphics_setInner (thee); break;
 			case UNSET_INNER: Graphics_unsetInner (thee); break;
 			case SET_WINDOW:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get;
-//				skip(x1, x2, y1, y2)
 				Graphics_setWindow (thee, x1, x2, y1, y2);
 			}  break;
 			case TEXT:
 			{  double x = get, y = get; long length = get; char *text_utf8 = sget (length);
-//				skip(x, x, y, y)
 				Graphics_text (thee, x, y, Melder_peekUtf8ToWcs (text_utf8));
 			}  break;
 			case POLYLINE:
@@ -136,7 +130,6 @@ void Graphics_play (Graphics me, Graphics thee) {
 			} break;
 			case LINE:
 			{  double x1 = get, y1 = get, x2 = get, y2 = get;
-//				skip(x1, x2, y1, y2)
 				Graphics_line (thee, x1, y1, x2, y2);
 			}  break;
 			case ARROW:
@@ -157,7 +150,6 @@ void Graphics_play (Graphics me, Graphics thee) {
 			}  break;
 			case FILL_RECTANGLE:
 			{  double x1 = get, x2 = get, y1 = get, y2 = get;
-//				skip(x1, x2, y1, y2)
 				Graphics_fillRectangle (thee, x1, x2, y1, y2);
 			}  break;
 			case CIRCLE:
@@ -422,13 +414,23 @@ void Graphics_writeRecordings (Graphics me, FILE *f) {
 			binputr4 ((float) numberOfArguments, f);
 		}
 		if (opcode == TEXT) {
-			binputr4 (get, f);   /* x */
-			binputr4 (get, f);   /* y */
-			binputr4 (get, f);   /* length */
+			binputr4 (get, f);   // x
+			binputr4 (get, f);   // y
+			binputr4 (get, f);   // length
 			Melder_assert (sizeof (double) == 8);
 			if ((long) fwrite (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
 				Melder_throw ("Error writing graphics recordings.");
 			p += numberOfArguments - 4;
+		} else if (opcode == IMAGE_FROM_FILE) {
+			binputr4 (get, f);   // x1
+			binputr4 (get, f);   // x2
+			binputr4 (get, f);   // y1
+			binputr4 (get, f);   // y2
+			binputr4 (get, f);   // length
+			Melder_assert (sizeof (double) == 8);
+			if ((long) fwrite (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
+				Melder_throw ("Error writing graphics recordings.");
+			p += numberOfArguments - 6;
 		} else {
 			for (long i = numberOfArguments; i > 0; i --) binputr4 (get, f);
 		}
@@ -462,6 +464,15 @@ void Graphics_readRecordings (Graphics me, FILE *f) {
 				if ((long) fread (++ p, 8, numberOfArguments - 3, f) < numberOfArguments - 3)   // text
 					Melder_throw ("Error reading graphics recordings.");
 				p += numberOfArguments - 4;
+			} else if (opcode == IMAGE_FROM_FILE) {
+				put (bingetr4 (f));   // x1
+				put (bingetr4 (f));   // x2
+				put (bingetr4 (f));   // y1
+				put (bingetr4 (f));   // y2
+				put (bingetr4 (f));   // length
+				if ((long) fread (++ p, 8, numberOfArguments - 5, f) < numberOfArguments - 5)   // text
+					Melder_throw ("Error reading graphics recordings.");
+				p += numberOfArguments - 6;
 			} else {
 				for (long i = numberOfArguments; i > 0; i --) put (bingetr4 (f));
 			}

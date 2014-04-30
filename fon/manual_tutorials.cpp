@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140424)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140430)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.75# (30 April 2014)")
+LIST_ITEM (L"\\bu Linux Matrix graphics bug fix: corrected working of ##Draw cells...#.")
+LIST_ITEM (L"\\bu Scripting bug fix: ability to use x and y as indexed variables.")
+LIST_ITEM (L"\\bu PowerCepstrogram bug fix: made old version of Paint command available again for scripts.")
 NORMAL (L"##5.3.74# (24 April 2014)")
 LIST_ITEM (L"\\bu EEG: more interpretation of triggers in EDF+ files.")
 NORMAL (L"##5.3.73# (21 April 2014)")

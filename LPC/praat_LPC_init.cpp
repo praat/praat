@@ -362,6 +362,25 @@ DIRECT (PowerCepstrogram_help)
 	Melder_help (L"PowerCepstrogram");
 END
 
+FORM (old_PowerCepstrogram_paint, L"PowerCepstrogram: Paint", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Quefrency range (s)", L"0.0")
+	REAL (L"right Quefrency range (s)", L"0.0")
+	REAL (L"Minimum (dB)", L"0.0")
+	REAL (L"Maximum (dB)", L"0.0")
+	BOOLEAN (L"Garnish", 1);
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (PowerCepstrogram);
+		PowerCepstrogram_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
+  			GET_REAL (L"Maximum"), false, GET_REAL (L"Maximum") - GET_REAL (L"Minimum"),
+			0.0, GET_INTEGER (L"Garnish"));
+	}
+END
 
 FORM (PowerCepstrogram_paint, L"PowerCepstrogram: Paint", L"PowerCepstrogram: Paint...")
 	REAL (L"left Time range (s)", L"0.0")
@@ -374,7 +393,7 @@ FORM (PowerCepstrogram_paint, L"PowerCepstrogram: Paint", L"PowerCepstrogram: Pa
 	REAL (L"Dynamic compression (0-1)", L"0.0");
 	BOOLEAN (L"Garnish", 1);
 	OK
-DO
+DO_ALTERNATIVE (old_PowerCepstrogram_paint)
 	autoPraatPicture picture;
 	LOOP {
 		iam (PowerCepstrogram);

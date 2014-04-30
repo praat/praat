@@ -152,7 +152,6 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 			#if cairo
 				for (int igrey = 0; igrey < sizeof (grey) / sizeof (*grey); igrey ++)
 					cairo_pattern_destroy (grey [igrey]);
-				cairo_paint (my d_cairoGraphicsContext);
 			#elif mac
 				CGContextSetRGBFillColor (my d_macGraphicsContext, 0.0, 0.0, 0.0, 1.0);
 				GraphicsQuartz_exitDraw (me);
@@ -759,7 +758,7 @@ void Graphics_imageFromFile (Graphics me, const wchar_t *relativeFileName, doubl
 	if (my recording) {
 		char *txt_utf8 = Melder_peekWcsToUtf8 (relativeFileName);
 		int length = strlen (txt_utf8) / sizeof (double) + 1;
-		//op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
+		op (IMAGE_FROM_FILE, 5 + length); put (x1); put (x2); put (y1); put (y2); sput (txt_utf8, length)
 	}
 }
 

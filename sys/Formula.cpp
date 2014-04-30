@@ -478,26 +478,38 @@ static void Formula_lexan (void) {
 						/*
 						 * This must be a variable, since there is no "current object" here.
 						 */
-						InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
-						if (var == NULL) {
-							nieuwtok (VARIABLE_NAME_)
+						int jkar = ikar + 1;
+						while (theExpression [jkar] == ' ' || theExpression [jkar] == '\t') jkar ++;
+						if (theExpression [jkar] == '[' && ! isArray) {
+							if (isString) {
+								nieuwtok (INDEXED_STRING_VARIABLE_)
+							} else {
+								nieuwtok (INDEXED_NUMERIC_VARIABLE_)
+							}
 							lexan [itok]. content.string = Melder_wcsdup_f (token.string);
 							numberOfStringConstants ++;
 						} else {
-							if (isArray) {
-								if (isString) {
-									nieuwtok (STRING_ARRAY_VARIABLE_)
-								} else {
-									nieuwtok (NUMERIC_ARRAY_VARIABLE_)
-								}
+							InterpreterVariable var = Interpreter_hasVariable (theInterpreter, token.string);
+							if (var == NULL) {
+								nieuwtok (VARIABLE_NAME_)
+								lexan [itok]. content.string = Melder_wcsdup_f (token.string);
+								numberOfStringConstants ++;
 							} else {
-								if (isString) {
-									nieuwtok (STRING_VARIABLE_)
+								if (isArray) {
+									if (isString) {
+										nieuwtok (STRING_ARRAY_VARIABLE_)
+									} else {
+										nieuwtok (NUMERIC_ARRAY_VARIABLE_)
+									}
 								} else {
-									nieuwtok (NUMERIC_VARIABLE_)
+									if (isString) {
+										nieuwtok (STRING_VARIABLE_)
+									} else {
+										nieuwtok (NUMERIC_VARIABLE_)
+									}
 								}
+								lexan [itok]. content.variable = var;
 							}
-							lexan [itok]. content.variable = var;
 						}
 					}
 				} else {
