@@ -1816,8 +1816,9 @@ void structTimeSoundAnalysisEditor :: v_draw_analysis () {
 	TimeSoundAnalysisEditor_computeFormants (this);
 	if (p_formant_show && d_formant != NULL) {
 		Graphics_setColour (d_graphics, Graphics_RED);
+		Graphics_setSpeckleSize (d_graphics, p_formant_dotSize);
 		Formant_drawSpeckles_inside (d_formant, d_graphics, d_startWindow, d_endWindow, 
-			p_spectrogram_viewFrom, p_spectrogram_viewTo, p_formant_dynamicRange, p_formant_dotSize);
+			p_spectrogram_viewFrom, p_spectrogram_viewTo, p_formant_dynamicRange);
 		Graphics_setColour (d_graphics, Graphics_BLACK);
 	}
 	/*

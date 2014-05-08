@@ -968,6 +968,11 @@ void Graphics_fillCircle_mm (Graphics me, double xWC, double yWC, double diamete
 	if (my recording) { op (FILL_CIRCLE_MM, 3); put (xWC); put (yWC); put (diameter); }
 }
 
+void Graphics_speckle (Graphics me, double xWC, double yWC) {
+	my v_fillCircle (wdx (xWC), wdy (yWC), ceil (0.5 * my speckleSize * my resolution / 25.4));
+	if (my recording) { op (SPECKLE, 2); put (xWC); put (yWC); }
+}
+
 void Graphics_rectangle_mm (Graphics me, double xWC, double yWC, double horSide, double vertSide) {
 	long xDC = wdx (xWC), yDC = wdy (yWC);
 	long halfHorSide = ceil (0.5 * horSide * my resolution / 25.4);
@@ -1125,10 +1130,16 @@ void Graphics_setArrowSize (Graphics me, double arrowSize) {
 	if (my recording) { op (SET_ARROW_SIZE, 1); put (arrowSize); }
 }
 
+void Graphics_setSpeckleSize (Graphics me, double speckleSize) {
+	my speckleSize = speckleSize;
+	if (my recording) { op (SET_SPECKLE_SIZE, 1); put (speckleSize); }
+}
+
 /* Inquiries. */
 
 int Graphics_inqLineType (Graphics me) { return my lineType; }
 double Graphics_inqLineWidth (Graphics me) { return my lineWidth; }
 double Graphics_inqArrowSize (Graphics me) { return my arrowSize; }
+double Graphics_inqSpeckleSize (Graphics me) { return my speckleSize; }
 
 /* End of file Graphics_linesAndAreas.cpp */

@@ -550,6 +550,7 @@ static void writeParagraphsAsHtml (ManPages me, MelderFile file, ManPage_Paragra
 			theCurrentPraatPicture -> colour = Graphics_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
 			theCurrentPraatPicture -> arrowSize = 1.0;
+			theCurrentPraatPicture -> speckleSize = 1.0;
 			theCurrentPraatPicture -> x1NDC = 0;
 			theCurrentPraatPicture -> x2NDC = paragraph -> width;
 			theCurrentPraatPicture -> y1NDC = 0;

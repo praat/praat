@@ -1984,7 +1984,7 @@ void Sound_drawWhere (Sound me, Graphics g, double tmin, double tmax, double min
 				Formula_run (channel, ix, & result);
 				if (result.result.numericResult) {
 					double x = Sampled_indexToX (me, ix);
-					Graphics_fillCircle_mm (g, x, my z [channel] [ix], 1.0);
+					Graphics_speckle (g, x, my z [channel] [ix]);
 				}
 			}
 		} else {

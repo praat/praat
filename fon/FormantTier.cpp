@@ -144,7 +144,7 @@ void FormantTier_speckle (FormantTier me, Graphics g, double tmin, double tmax, 
 		double t = point -> time;
 		for (long j = 1; j <= point -> numberOfFormants; j ++) {
 			double f = point -> formant [j-1];
-			if (f <= fmax) Graphics_fillCircle_mm (g, t, f, 1.0);
+			if (f <= fmax) Graphics_speckle (g, t, f);
 		}
 	}
 	Graphics_unsetInner (g);

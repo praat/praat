@@ -106,7 +106,7 @@ enum { GEENSYMBOOL_,
 
 	/* Functions of 2 variables; if you add, update the #defines. */
 	#define LOW_FUNCTION_2  ARCTAN2_
-		ARCTAN2_, RANDOM_UNIFORM_, RANDOM_INTEGER_, RANDOM_GAUSS_,
+		ARCTAN2_, RANDOM_UNIFORM_, RANDOM_INTEGER_, RANDOM_GAUSS_, RANDOM_BINOMIAL_,
 		CHI_SQUARE_P_, CHI_SQUARE_Q_, INCOMPLETE_GAMMAP_,
 		INV_CHI_SQUARE_Q_, STUDENT_P_, STUDENT_Q_, INV_STUDENT_Q_,
 		BETA_, BETA2_, BESSEL_I_, BESSEL_K_, LN_BETA_,
@@ -211,7 +211,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"hertzToMel", L"melToHertz", L"hertzToSemitones", L"semitonesToHertz",
 	L"erb", L"hertzToErb", L"erbToHertz",
 	L"string$",
-	L"arctan2", L"randomUniform", L"randomInteger", L"randomGauss",
+	L"arctan2", L"randomUniform", L"randomInteger", L"randomGauss", L"randomBinomial",
 	L"chiSquareP", L"chiSquareQ", L"incompleteGammaP", L"invChiSquareQ", L"studentP", L"studentQ", L"invStudentQ",
 	L"beta", L"beta2", L"besselI", L"besselK", L"lnBeta",
 	L"soundPressureToPhon", L"objectsAreIdentical",
@@ -2356,6 +2356,17 @@ static void do_function_ld_d (double (*f) (long, double)) {
 	}
 }
 static void do_function_ll_l (long (*f) (long, long)) {
+	Stackel y = pop, x = pop;
+	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
+		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
+			f (x->number, y->number));
+	} else {
+		Melder_throw ("The function ", Formula_instructionNames [parse [programPointer]. symbol],
+			" requires two numeric arguments, not ",
+			Stackel_whichText (x), " and ", Stackel_whichText (y), ".");
+	}
+}
+static void do_function_dl_l (long (*f) (double, long)) {
 	Stackel y = pop, x = pop;
 	if (x->which == Stackel_NUMBER && y->which == Stackel_NUMBER) {
 		pushNumber (x->number == NUMundefined || y->number == NUMundefined ? NUMundefined :
@@ -4689,6 +4700,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case RANDOM_UNIFORM_: { do_function_dd_d (NUMrandomUniform);
 } break; case RANDOM_INTEGER_: { do_function_ll_l (NUMrandomInteger);
 } break; case RANDOM_GAUSS_: { do_function_dd_d (NUMrandomGauss);
+} break; case RANDOM_BINOMIAL_: { do_function_dl_l (NUMrandomBinomial);
 } break; case CHI_SQUARE_P_: { do_function_dd_d (NUMchiSquareP);
 } break; case CHI_SQUARE_Q_: { do_function_dd_d (NUMchiSquareQ);
 } break; case INCOMPLETE_GAMMAP_: { do_function_dd_d (NUMincompleteGammaP);

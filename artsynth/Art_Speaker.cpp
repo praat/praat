@@ -1,6 +1,6 @@
 /* Art_Speaker.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -418,7 +418,7 @@ void Art_Speaker_drawMesh (Art art, Speaker speaker, Graphics graphics) {
 		Graphics_line (graphics, xmm [i], ymm [i], xmm [i + 1], ymm [i + 1]);
 
 	for (i = 1; i <= Art_Speaker_meshCount + 1; i ++)
-		Graphics_fillCircle_mm (graphics, xmm [i], ymm [i], 1.0);
+		Graphics_speckle (graphics, xmm [i], ymm [i]);
 	Graphics_setTextAlignment (graphics, Graphics_LEFT, Graphics_HALF);
 	Graphics_text (graphics, 0.0, 0.0, L"O");   /* Origin. */
 	Graphics_resetViewport (graphics, previous);

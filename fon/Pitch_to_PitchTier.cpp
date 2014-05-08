@@ -1,6 +1,6 @@
 /* Pitch_to_PitchTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -99,7 +99,7 @@ void PitchTier_Pitch_draw (PitchTier me, Pitch uv, Graphics g,
 	} else for (i = imin; i <= imax; i ++) {
 		RealPoint point = (RealPoint) my points -> item [i];
 		double t = point -> number, f = point -> value;
-		Graphics_fillCircle_mm (g, t, f, 1);
+		Graphics_speckle (g, t, f);
 		if (i == 1)
 			Pitch_line (uv, g, tmin, f, t, f, nonPeriodicLineType);
 		else if (i == imin)

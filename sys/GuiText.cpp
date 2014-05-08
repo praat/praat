@@ -1283,6 +1283,7 @@ wchar_t * structGuiText :: f_getStringAndSelectionPosition (long *first, long *l
 			*first = nsRange. location;
 			*last = *first + nsRange. length;
 			for (long i = 0; i < *first; i ++) if (result [i] > 0xFFFF) { (*first) --; (*last) --; }
+			for (long i = *first; i < *last; i ++) if (result [i] > 0xFFFF) { (*last) --; }
 			return result;
 		}
 	#elif win

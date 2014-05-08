@@ -53,7 +53,7 @@ static void updateFontMenu (void) {
 	}
 }
 static void setFont (kGraphics_font font) {
-	{
+	{// scope
 		autoPraatPicture picture;
 		Graphics_setFont (GRAPHICS, font);
 	}
@@ -81,7 +81,7 @@ static void updateSizeMenu (void) {
 }
 static void setFontSize (int fontSize) {
 	//Melder_casual("Praat picture: set font size %d", fontSize);
-	{
+	{// scope
 		autoPraatPicture picture;
 		Graphics_setFontSize (GRAPHICS, fontSize);
 	}
@@ -327,7 +327,7 @@ static void updatePenMenu (void) {
 	}
 }
 static void setLineType (int lineType) {
-	{
+	{// scope
 		autoPraatPicture picture;
 		Graphics_setLineType (GRAPHICS, lineType);
 	}
@@ -347,7 +347,7 @@ OK
 	SET_REAL (L"Line width", theCurrentPraatPicture -> lineWidth);
 DO
 	double lineWidth = GET_REAL (L"Line width");
-	{
+	{// scope
 		autoPraatPicture picture;
 		Graphics_setLineWidth (GRAPHICS, lineWidth);
 	}
@@ -360,15 +360,30 @@ OK
 	SET_REAL (L"Arrow size", theCurrentPraatPicture -> arrowSize);
 DO
 	double arrowSize = GET_REAL (L"Arrow size");
-	{
+	{// scope
 		autoPraatPicture picture;
 		Graphics_setArrowSize (GRAPHICS, arrowSize);
 	}
 	theCurrentPraatPicture -> arrowSize = arrowSize;
 END
 
+FORM (Speckle_size, L"Praat picture: Speckle size", 0)
+	LABEL (L"", L"Here you determine the diameter (in millimetres)")
+	LABEL (L"", L"of the dots that are drawn by \"speckle\" commands.")
+	POSITIVE (L"Speckle size (mm)", L"1.0")
+OK
+	SET_REAL (L"Speckle size", theCurrentPraatPicture -> speckleSize);
+DO
+	double speckleSize = GET_REAL (L"Speckle size");
+	{// scope
+		autoPraatPicture picture;
+		Graphics_setSpeckleSize (GRAPHICS, speckleSize);
+	}
+	theCurrentPraatPicture -> speckleSize = speckleSize;
+END
+
 static void setColour (Graphics_Colour colour) {
-	{
+	{// scope
 		autoPraatPicture picture;
 		Graphics_setColour (GRAPHICS, colour);
 	}
@@ -400,7 +415,7 @@ FORM (Colour, L"Praat picture: Colour", 0)
 OK
 DO
 	Graphics_Colour colour = GET_COLOUR (L"Colour");
-	{
+	{// scope
 		autoPraatPicture picture;
 		Graphics_setColour (GRAPHICS, colour);
 	}
@@ -1350,6 +1365,7 @@ DIRECT (Picture_settings_report)
 		L"(unknown)");
 	MelderInfo_writeLine (L"Line width: ", Melder_double (theCurrentPraatPicture -> lineWidth));
 	MelderInfo_writeLine (L"Arrow size: ", Melder_double (theCurrentPraatPicture -> arrowSize));
+	MelderInfo_writeLine (L"Speckle size: ", Melder_double (theCurrentPraatPicture -> speckleSize));
 	MelderInfo_writeLine (L"Colour: ", Graphics_Colour_name (theCurrentPraatPicture -> colour));
 	MelderInfo_writeLine (L"Red: ", Melder_double (theCurrentPraatPicture -> colour. red));
 	MelderInfo_writeLine (L"Green: ", Melder_double (theCurrentPraatPicture -> colour. green));
@@ -1448,6 +1464,7 @@ void praat_picture_open (void) {
 	Graphics_setLineType (GRAPHICS, theCurrentPraatPicture -> lineType);
 	Graphics_setLineWidth (GRAPHICS, theCurrentPraatPicture -> lineWidth);
 	Graphics_setArrowSize (GRAPHICS, theCurrentPraatPicture -> arrowSize);
+	Graphics_setSpeckleSize (GRAPHICS, theCurrentPraatPicture -> speckleSize);
 	Graphics_setColour (GRAPHICS, theCurrentPraatPicture -> colour);
 
 	Graphics_setViewport (GRAPHICS, theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
@@ -1492,6 +1509,7 @@ void praat_picture_init (void) {
 	theCurrentPraatPicture -> colour = Graphics_BLACK;
 	theCurrentPraatPicture -> lineWidth = 1.0;
 	theCurrentPraatPicture -> arrowSize = 1.0;
+	theCurrentPraatPicture -> speckleSize = 1.0;
 	theCurrentPraatPicture -> x1NDC = 0.0;
 	theCurrentPraatPicture -> x2NDC = 6.0;
 	theCurrentPraatPicture -> y1NDC = 8.0;
@@ -1672,6 +1690,7 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"Pen", L"-- line width --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Line width...", 0, 0, DO_Line_width);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Arrow size...", 0, 0, DO_Arrow_size);
+	praat_addMenuCommand (L"Picture", L"Pen", L"Speckle size...", 0, 0, DO_Speckle_size);
 	praat_addMenuCommand (L"Picture", L"Pen", L"-- colour --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"Pen", L"Colour...", 0, 0, DO_Colour);
 	praatButton_black = praat_addMenuCommand (L"Picture", L"Pen", L"Black", 0, praat_CHECKBUTTON, DO_Black);

@@ -793,7 +793,7 @@ void Sound_draw (Sound me, Graphics g,
 		} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
 				double x = Sampled_indexToX (me, ix);
-				Graphics_fillCircle_mm (g, x, my z [channel] [ix], 1.0);
+				Graphics_speckle (g, x, my z [channel] [ix]);
 			}
 		} else {
 			/*

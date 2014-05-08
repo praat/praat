@@ -109,6 +109,7 @@ void Graphics_init (Graphics me, int resolution) {
 	computeTrafo (me);
 	my lineWidth = 1.0;
 	my arrowSize = 1.0;
+	my speckleSize = 1.0;
 	my font = kGraphics_font_HELVETICA;
 	my fontSize = 10;
 	my fontStyle = Graphics_NORMAL;

@@ -1,6 +1,6 @@
 /* Pitch.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -240,15 +240,15 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 	double *out_hertz, double *out_mel, double *out_semitones, double *out_erb, double *out_withoutOctaveJumps)
 {
 	long firstVoicedFrame = 0, lastVoicedFrame = 0, nVoiced = 0, i;
-	double *frequencies = NUMvector <double> (1, my nx);
+	autoNUMvector <double> frequencies (1, my nx);
 	for (i = 1; i <= my nx; i ++) {
 		double frequency = my frame [i]. candidate [1]. frequency;
 		frequencies [i] = frequency > 0.0 && frequency < my ceiling ? frequency : 0.0;
 		if (frequencies [i]) nVoiced ++;
 	}
-	for (i = 1; i <= my nx; i ++)   /* Look for first voiced frame. */
+	for (i = 1; i <= my nx; i ++)   // look for first voiced frame
 		if (frequencies [i] != 0.0) { firstVoicedFrame = i; break; }
-	for (i = my nx; i >= 1; i --)   /* Look for last voiced frame. */
+	for (i = my nx; i >= 1; i --)   // look for last voiced frame
 		if (frequencies [i] != 0.0) { lastVoicedFrame = i; break; }
 	if (nVoiced > 1) {
 		int ilast = firstVoicedFrame;
@@ -260,7 +260,7 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 			slopeMel += fabs (MEL (frequencies [i]) - MEL (flast));
 			slopeSemitones += localStepSemitones;
 			slopeErb += fabs (ERB (frequencies [i]) - ERB (flast));
-			while (localStepSemitones >= 12.0) localStepSemitones -= 12.0;   /* Kill octave jumps. */
+			while (localStepSemitones >= 12.0) localStepSemitones -= 12.0;   // kill octave jumps
 			if (localStepSemitones > 6.0) localStepSemitones = 12.0 - localStepSemitones;
 			slopeRobust += localStepSemitones;
 			ilast = i;
@@ -278,7 +278,6 @@ static long Pitch_getMeanAbsoluteSlope (Pitch me,
 		if (out_erb) *out_erb = NUMundefined;
 		if (out_withoutOctaveJumps) *out_withoutOctaveJumps = NUMundefined;
 	}
-	NUMvector_free (frequencies, 1);
 	return nVoiced;
 }
 
@@ -304,7 +303,7 @@ long Pitch_getMeanAbsSlope_noOctave (Pitch me, double *slope) {
 
 void structPitch :: v_info () {
 	long nVoiced;
-	double *frequencies = Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, & nVoiced);
+	autoNUMvector <double> frequencies (Sampled_getSortedValues (this, Pitch_LEVEL_FREQUENCY, kPitch_unit_HERTZ, & nVoiced), 1);
 	structData :: v_info ();
 	MelderInfo_writeLine (L"Time domain:");
 	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
@@ -316,13 +315,13 @@ void structPitch :: v_info () {
 	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 	MelderInfo_writeLine (L"Ceiling at: ", Melder_double (ceiling), L" Hz");
 
-	if (nVoiced >= 1) {   /* Quantiles. */
+	if (nVoiced >= 1) {   // quantiles
 		double quantile10, quantile16, quantile50, quantile84, quantile90;
-		quantile10 = NUMquantile (nVoiced, frequencies, 0.10);
-		quantile16 = NUMquantile (nVoiced, frequencies, 0.16);
-		quantile50 = NUMquantile (nVoiced, frequencies, 0.50);   /* Median. */
-		quantile84 = NUMquantile (nVoiced, frequencies, 0.84);
-		quantile90 = NUMquantile (nVoiced, frequencies, 0.90);
+		quantile10 = NUMquantile (nVoiced, frequencies.peek(), 0.10);
+		quantile16 = NUMquantile (nVoiced, frequencies.peek(), 0.16);
+		quantile50 = NUMquantile (nVoiced, frequencies.peek(), 0.50);   // median
+		quantile84 = NUMquantile (nVoiced, frequencies.peek(), 0.84);
+		quantile90 = NUMquantile (nVoiced, frequencies.peek(), 0.90);
 		MelderInfo_writeLine (L"\nEstimated quantiles:");
 		MelderInfo_write (L"   10% = ", Melder_single (quantile10), L" Hz = ", Melder_single (MEL (quantile10)), L" Mel = ");
 		MelderInfo_writeLine (Melder_single (SEMITONES (quantile10)), L" semitones above 100 Hz = ", Melder_single (ERB (quantile10)), L" ERB");
@@ -345,7 +344,7 @@ void structPitch :: v_info () {
 			MelderInfo_writeLine (Melder_half ((SEMITONES (quantile90) - SEMITONES (quantile10)) * corr), L" semitones = ", Melder_half ((ERB (quantile90) - ERB (quantile10)) * corr), L" ERB");
 		}
 	}
-	if (nVoiced >= 1) {   /* Extrema, range, mean and standard deviation. */
+	if (nVoiced >= 1) {   // extrema, range, mean and standard deviation
 		double minimum = Pitch_getMinimum (this, xmin, xmax, kPitch_unit_HERTZ, FALSE);
 		double maximum = Pitch_getMaximum (this, xmin, xmax, kPitch_unit_HERTZ, FALSE);
 		double meanHertz, meanMel, meanSemitones, meanErb;
@@ -370,8 +369,7 @@ void structPitch :: v_info () {
 			MelderInfo_writeLine (Melder_half (stdevSemitones), L" semitones = ", Melder_half (stdevErb), L" ERB");
 		}
 	}
-	NUMvector_free (frequencies, 1);
-	if (nVoiced > 1) {   /* Variability: mean absolute slope. */
+	if (nVoiced > 1) {   // variability: mean absolute slope
 		double slopeHertz, slopeMel, slopeSemitones, slopeErb, slopeWithoutOctaveJumps;
 		Pitch_getMeanAbsoluteSlope (this, & slopeHertz, & slopeMel, & slopeSemitones, & slopeErb, & slopeWithoutOctaveJumps);
 		MelderInfo_write (L"\nMean absolute slope: ", Melder_half (slopeHertz), L" Hz/s = ", Melder_half (slopeMel), L" Mel/s = ");
@@ -568,26 +566,26 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	}
 }
 
-void Pitch_drawInside (Pitch me, Graphics g, double xmin, double xmax, double fmin, double fmax, int speckle, int unit) {
+void Pitch_drawInside (Pitch me, Graphics g, double xmin, double xmax, double fmin, double fmax, bool speckle, int unit) {
 	Sampled_drawInside (me, g, xmin, xmax, fmin, fmax, speckle, Pitch_LEVEL_FREQUENCY, unit);
 }
 
-void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, int garnish, int speckle, int unit) {
+void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish, bool speckle, int unit) {
 	Graphics_setInner (g);
 	Pitch_drawInside (me, g, tmin, tmax, fmin, fmax, speckle, unit);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);
-		Graphics_textBottom (g, TRUE, L"Time (s)");
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		Graphics_textBottom (g, true, L"Time (s)");
+		Graphics_marksBottom (g, 2, true, true, false);
 		static MelderString buffer = { 0 };
 		MelderString_empty (& buffer);
 		MelderString_append (& buffer, L"Pitch (", Function_getUnitText (me, Pitch_LEVEL_FREQUENCY, unit, Function_UNIT_TEXT_GRAPHICAL), L")");
 		Graphics_textLeft (g, TRUE, buffer.string);
 		if (Function_isUnitLogarithmic (me, Pitch_LEVEL_FREQUENCY, unit)) {
-			Graphics_marksLeftLogarithmic (g, 6, TRUE, TRUE, FALSE);
+			Graphics_marksLeftLogarithmic (g, 6, true, true, false);
 		} else {
-			Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+			Graphics_marksLeft (g, 2, true, true, false);
 		}
 	}
 }

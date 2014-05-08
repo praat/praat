@@ -2,7 +2,7 @@
 #define _Pitch_h_
 /* Pitch.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -126,12 +126,12 @@ void Pitch_pathFinder (Pitch me, double silenceThreshold, double voicingThreshol
 	double ceiling, int pullFormants);
 
 /* Drawing methods. */
-#define Pitch_speckle_NO  FALSE
-#define Pitch_speckle_YES  TRUE
+#define Pitch_speckle_NO  false
+#define Pitch_speckle_YES  true
 void Pitch_drawInside (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	int speckle, int yscale);
-void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, int garnish,
-	int speckle, int yscale);
+	bool speckle, int yscale);
+void Pitch_draw (Pitch me, Graphics g, double tmin, double tmax, double fmin, double fmax, bool garnish,
+	bool speckle, int yscale);
 /*
 	draw a pitch contour into a Graphics.
 	If tmax <= tmin, draw whole time domain.

@@ -164,6 +164,7 @@ void Demo_open (void) {
 			theCurrentPraatPicture -> colour = Graphics_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
 			theCurrentPraatPicture -> arrowSize = 1.0;
+			theCurrentPraatPicture -> speckleSize = 1.0;
 			theCurrentPraatPicture -> x1NDC = 0;
 			theCurrentPraatPicture -> x2NDC = 100;
 			theCurrentPraatPicture -> y1NDC = 0;

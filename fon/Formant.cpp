@@ -142,7 +142,7 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 }
 
 void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	double suppress_dB, double dotSize)
+	double suppress_dB)
 {
 	long itmin, itmax;
 	double maximumIntensity = 0.0, minimumIntensity;
@@ -167,7 +167,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 		for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 			double frequency = frame -> formant [iformant]. frequency;
 			if (frequency >= fmin && frequency <= fmax)
-				Graphics_fillCircle_mm (g, x, frequency, dotSize);
+				Graphics_speckle (g, x, frequency);
 		}
 	}
 }
@@ -176,7 +176,7 @@ void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, dou
 	int garnish)
 {
 	Graphics_setInner (g);
-	Formant_drawSpeckles_inside (me, g, tmin, tmax, 0.0, fmax, suppress_dB, 1.0);
+	Formant_drawSpeckles_inside (me, g, tmin, tmax, 0.0, fmax, suppress_dB);
 	Graphics_unsetInner (g);
 	if (garnish) {
 		Graphics_drawInnerBox (g);

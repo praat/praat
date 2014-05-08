@@ -450,6 +450,7 @@ if (! my printing) {
 			theCurrentPraatPicture -> colour = Graphics_BLACK;
 			theCurrentPraatPicture -> lineWidth = 1.0;
 			theCurrentPraatPicture -> arrowSize = 1.0;
+			theCurrentPraatPicture -> speckleSize = 1.0;
 			theCurrentPraatPicture -> x1NDC = my d_x;
 			theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
 			theCurrentPraatPicture -> y1NDC = my d_y;
@@ -489,6 +490,7 @@ if (! my printing) {
 			Graphics_setLineType (my g, Graphics_DRAWN);
 			Graphics_setLineWidth (my g, 1.0);
 			Graphics_setArrowSize (my g, 1.0);
+			Graphics_setSpeckleSize (my g, 1.0);
 			Graphics_setColour (my g, Graphics_BLACK);
 			/*Graphics_Link *paragraphLinks;
 			long numberOfParagraphLinks = Graphics_getLinks (& paragraphLinks);
@@ -545,6 +547,7 @@ if (! my printing) {
 		theCurrentPraatPicture -> colour = Graphics_BLACK;
 		theCurrentPraatPicture -> lineWidth = 1.0;
 		theCurrentPraatPicture -> arrowSize = 1.0;
+		theCurrentPraatPicture -> speckleSize = 1.0;
 		theCurrentPraatPicture -> x1NDC = my d_x;
 		theCurrentPraatPicture -> x2NDC = my d_x + true_width_inches;
 		theCurrentPraatPicture -> y1NDC = my d_y;
@@ -583,6 +586,7 @@ if (! my printing) {
 		Graphics_setLineType (my ps, Graphics_DRAWN);
 		Graphics_setLineWidth (my ps, 1.0);
 		Graphics_setArrowSize (my ps, 1.0);
+		Graphics_setSpeckleSize (my ps, 1.0);
 		Graphics_setColour (my ps, Graphics_BLACK);
 		theCurrentPraatApplication = & theForegroundPraatApplication;
 		theCurrentPraatObjects = & theForegroundPraatObjects;

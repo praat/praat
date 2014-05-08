@@ -100,7 +100,7 @@ Thing_define (Graphics, Thing) {
 		/* Graphics state. */
 		int lineType;
 		Graphics_Colour colour;
-		double lineWidth, arrowSize;
+		double lineWidth, arrowSize, speckleSize;
 		int horizontalTextAlignment, verticalTextAlignment;
 		double textRotation, wrapWidth, secondIndent, textX, textY;
 		enum kGraphics_font font;
@@ -215,6 +215,7 @@ void Graphics_circle (Graphics me, double x, double y, double r);
 void Graphics_fillCircle (Graphics me, double x, double y, double r);
 void Graphics_circle_mm (Graphics me, double x, double y, double d);
 void Graphics_fillCircle_mm (Graphics me, double x, double y, double d);
+void Graphics_speckle (Graphics me, double x, double y);
 void Graphics_rectangle_mm (Graphics me, double x, double y, double horizontalSide_mm, double verticalSide_mm);
 void Graphics_fillRectangle_mm (Graphics me, double x, double y, double horizontalSide_mm, double verticalSide_mm);
 void Graphics_arc (Graphics me, double x, double y, double r, double fromAngle, double toAngle);
@@ -288,7 +289,8 @@ void Graphics_setLineType (Graphics me, int lineType);
 #define Graphics_DASHED  2
 #define Graphics_DASHED_DOTTED  3
 void Graphics_setLineWidth (Graphics me, double lineWidth);
-void Graphics_setArrowSize (Graphics me, double arrorSize);
+void Graphics_setArrowSize (Graphics me, double arrowSize);
+void Graphics_setSpeckleSize (Graphics me, double speckleSize);
 
 void Graphics_inqViewport (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_inqWindow (Graphics me, double *x1WC, double *x2WC, double *y1WC, double *y2WC);
@@ -298,6 +300,7 @@ int Graphics_inqFontStyle (Graphics me);
 int Graphics_inqLineType (Graphics me);
 double Graphics_inqLineWidth (Graphics me);
 double Graphics_inqArrowSize (Graphics me);
+double Graphics_inqSpeckleSize (Graphics me);
 Graphics_Colour Graphics_inqColour (Graphics me);
 
 void Graphics_contour (Graphics me, double **z,

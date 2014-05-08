@@ -383,6 +383,11 @@ void Graphics_play (Graphics me, Graphics thee) {
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
+			case SET_SPECKLE_SIZE: Graphics_setSpeckleSize (thee, get); break;
+			case SPECKLE:
+			{  double x = get, y = get;
+				Graphics_speckle (thee, x, y);
+			}  break;
 			default:
 				my recording = wasRecording;
 				Melder_flushError ("Graphics_play: unknown opcode (%d).\n%f %f", opcode, p [-1], p [1]);

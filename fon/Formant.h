@@ -71,7 +71,7 @@ void Formant_sort (Formant me);
 
 void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, double fmax, int garnish);
 void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tmax, double fmin, double fmax,
-	double suppress_dB, double dotSize);
+	double suppress_dB);
 void Formant_drawSpeckles (Formant me, Graphics g, double tmin, double tmax, double fmax,
 	double suppress_dB, int garnish);
 void Formant_scatterPlot (Formant me, Graphics g, double tmin, double tmax,

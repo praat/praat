@@ -1,6 +1,6 @@
 /* praat.h
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ typedef struct {   /* Readonly */
 	Graphics graphics;   /* The Graphics associated with the Picture window or HyperPage window or Demo window. */
 	int font, fontSize, lineType;
 	Graphics_Colour colour;
-	double lineWidth, arrowSize, x1NDC, x2NDC, y1NDC, y2NDC;
+	double lineWidth, arrowSize, speckleSize, x1NDC, x2NDC, y1NDC, y2NDC;
 } structPraatPicture, *PraatPicture;
 extern structPraatApplication theForegroundPraatApplication;
 extern PraatApplication theCurrentPraatApplication;

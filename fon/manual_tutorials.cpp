@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140430)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140508)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.76# (8 May 2014)")
+LIST_ITEM (L"\\bu One can determine the size of \"speckles\" (filled circles) with ##Speckle size...# in the #Pen menu. "
+	"Speckles are used in drawing Formant, PitchTier, and several other kinds of objects.")
 NORMAL (L"##5.3.75# (30 April 2014)")
 LIST_ITEM (L"\\bu Linux Matrix graphics bug fix: corrected working of ##Draw cells...#.")
 LIST_ITEM (L"\\bu Scripting bug fix: ability to use x and y as indexed variables.")
