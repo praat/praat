@@ -560,7 +560,7 @@ END
 FORM (TextGrid_Sound_extractIntervalsWhere, L"TextGrid & Sound: Extract intervals", 0)
 	INTEGER (STRING_TIER_NUMBER, L"1")
 	BOOLEAN (L"Preserve times", 0)
-	OPTIONMENU_ENUM (L"Extract all intervals whose label...", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (L"Extract every interval whose label...", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"")
 	OK
 DO
@@ -572,7 +572,7 @@ DO
 	}
 	autoCollection thee = TextGrid_Sound_extractIntervalsWhere (grid, sound,
 		GET_INTEGER (STRING_TIER_NUMBER),
-		GET_ENUM (kMelder_string, L"Extract all intervals whose label..."),
+		GET_ENUM (kMelder_string, L"Extract every interval whose label..."),
 		GET_STRING (L"...the text"),
 		GET_INTEGER (L"Preserve times"));
 	praat_new (thee.transfer(), GET_STRING (L"...the text"));
@@ -1256,7 +1256,7 @@ END
 
 FORM (TextGrid_getCentrePoints, L"TextGrid: Get centre points", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
-	OPTIONMENU_ENUM (L"Get centre points where label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (L"Get centre points whose label", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
@@ -1264,14 +1264,14 @@ DO
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getCentrePoints (me, GET_INTEGER (STRING_TIER_NUMBER),
-			GET_ENUM (kMelder_string, L"Get centre points where label"), text);
+			GET_ENUM (kMelder_string, L"Get centre points whose label"), text);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
 END
 
 FORM (TextGrid_getEndPoints, L"TextGrid: Get end points", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
-	OPTIONMENU_ENUM (L"Get end points where label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (L"Get end points whose label", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
@@ -1279,14 +1279,14 @@ DO
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getEndPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
-			GET_ENUM (kMelder_string, L"Get end points where label"), text);
+			GET_ENUM (kMelder_string, L"Get end points whose label"), text);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
 END
 
 FORM (TextGrid_getStartingPoints, L"TextGrid: Get starting points", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
-	OPTIONMENU_ENUM (L"Get starting points where label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (L"Get starting points whose label", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
@@ -1294,14 +1294,14 @@ DO
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getStartingPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
-			GET_ENUM (kMelder_string, L"Get starting points where label"), text);
+			GET_ENUM (kMelder_string, L"Get starting points whose label"), text);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
 END
 
 FORM (TextGrid_getPoints, L"Get points", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
-	OPTIONMENU_ENUM (L"Get points where label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (L"Get points whose label", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"hi")
 	OK
 DO
@@ -1309,14 +1309,14 @@ DO
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getPoints (me, GET_INTEGER (STRING_TIER_NUMBER),
-			GET_ENUM (kMelder_string, L"Get points where label"), text);
+			GET_ENUM (kMelder_string, L"Get points whose label"), text);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
 END
 
 FORM (TextGrid_getPoints_followed, L"Get points (followed)", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
-	OPTIONMENU_ENUM (L"Get points where label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (L"Get points whose label", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"hi")
 	OPTIONMENU_ENUM (L"followed by a label that", kMelder_string, DEFAULT)
 	SENTENCE (L" ...the text", L"there")
@@ -1327,7 +1327,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getPoints_followed (me, GET_INTEGER (STRING_TIER_NUMBER),
-			GET_ENUM (kMelder_string, L"Get points where label"), text,
+			GET_ENUM (kMelder_string, L"Get points whose label"), text,
 			GET_ENUM (kMelder_string, L"followed by a label that"), following);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
@@ -1335,7 +1335,7 @@ END
 
 FORM (TextGrid_getPoints_preceded, L"Get points (preceded)", 0)
 	NATURAL (STRING_TIER_NUMBER, L"1")
-	OPTIONMENU_ENUM (L"Get points where label", kMelder_string, DEFAULT)
+	OPTIONMENU_ENUM (L"Get points whose label", kMelder_string, DEFAULT)
 	SENTENCE (L"...the text", L"there")
 	OPTIONMENU_ENUM (L"preceded by a label that", kMelder_string, DEFAULT)
 	SENTENCE (L" ...the text", L"hi")
@@ -1346,7 +1346,7 @@ DO
 	LOOP {
 		iam (TextGrid);
 		autoPointProcess thee = TextGrid_getPoints_preceded (me, GET_INTEGER (STRING_TIER_NUMBER),
-			GET_ENUM (kMelder_string, L"Get points where label"), text,
+			GET_ENUM (kMelder_string, L"Get points whose label"), text,
 			GET_ENUM (kMelder_string, L"preceded by a label that"), preceding);
 		praat_new (thee.transfer(), my name, L"_", text);
 	}
@@ -1401,6 +1401,19 @@ DO
 			Melder_throw ("You cannot remove point ", ipoint, " from tier ", itier, " of ", me,
 				", because that tier has only ", pointTier -> points -> size, " points.");
 		TextTier_removePoint (pointTier, ipoint);
+		praat_dataChanged (me);
+	}
+END
+
+FORM (TextGrid_removePoints, L"Remove points", 0)
+	NATURAL (STRING_TIER_NUMBER, L"1")
+	OPTIONMENU_ENUM (L"Remove every point whose label...", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"hi")
+	OK
+DO
+	LOOP {
+		iam (TextGrid);
+		my removePoints (GET_INTEGER (STRING_TIER_NUMBER), GET_ENUM (kMelder_string, L"Remove every point whose label..."), GET_STRING (L"...the text"));
 		praat_dataChanged (me);
 	}
 END
@@ -1717,6 +1730,7 @@ void praat_uvafon_TextGrid_init (void) {
 		praat_addAction1 (classTextGrid, 0, L"Modify point tier", 0, 1, 0);
 			praat_addAction1 (classTextGrid, 0, L"Insert point...", 0, 2, DO_TextGrid_insertPoint);
 			praat_addAction1 (classTextGrid, 0, L"Remove point...", 0, 2, DO_TextGrid_removePoint);
+			praat_addAction1 (classTextGrid, 0, L"Remove points...", 0, 2, DO_TextGrid_removePoints);
 			praat_addAction1 (classTextGrid, 0, L"Set point text...", 0, 2, DO_TextGrid_setPointText);
 praat_addAction1 (classTextGrid, 0, L"Analyse", 0, 0, 0);
 	praat_addAction1 (classTextGrid, 1, L"Extract one tier...", 0, 0, DO_TextGrid_extractOneTier);

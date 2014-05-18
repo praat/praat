@@ -342,7 +342,8 @@ END
 /********** SOUND **********/
 
 FORM (Sound_add, L"Sound: Add", 0)
-	LABEL (L"", L"The following number will be added to the amplitudes of all samples of the sound.")
+	LABEL (L"", L"The following number will be added to the amplitudes of ")
+	LABEL (L"", L"all samples of the sound.")
 	REAL (L"Number", L"0.1")
 	OK
 DO
@@ -2215,7 +2216,9 @@ static Any soundFileRecognizer (int nread, const char *header, MelderFile file) 
 	if (strnequ (header, ".snd", 4)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "NIST_1A", 7)) return Sound_readFromSoundFile (file);
 	if (strnequ (header, "fLaC", 4)) return Sound_readFromSoundFile (file);   // Erez Volk, March 2007
-	if ((wcsstr (MelderFile_name (file), L".mp3") || wcsstr (MelderFile_name (file), L".MP3")) && mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
+	if ((Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, L".mp3") ||
+	     Melder_stringMatchesCriterion (MelderFile_name (file), kMelder_string_ENDS_WITH, L".MP3"))
+		&& mp3_recognize (nread, header)) return Sound_readFromSoundFile (file);   // Erez Volk, May 2007
 	return NULL;
 }
 
@@ -2226,8 +2229,10 @@ static Any movieFileRecognizer (int nread, const char *header, MelderFile file) 
 		header [1], header [2], header [3],
 		header [4], header [5], header [6],
 		header [7], header [8], header [9]);*/
-	if (nread < 512 || (! wcsstr (fileName, L".mov") && ! wcsstr (fileName, L".MOV") &&
-	    ! wcsstr (fileName, L".avi") && ! wcsstr (fileName, L".AVI"))) return NULL;
+	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".mov") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".MOV") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".avi") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".AVI"))) return NULL;
 	Melder_throw ("This Praat version cannot open movie files.");
 	return NULL;
 }
@@ -2235,7 +2240,8 @@ static Any movieFileRecognizer (int nread, const char *header, MelderFile file) 
 static Any sesamFileRecognizer (int nread, const char *header, MelderFile file) {
 	const wchar_t *fileName = MelderFile_name (file);
 	(void) header;
-	if (nread < 512 || (! wcsstr (fileName, L".sdf") && ! wcsstr (fileName, L".SDF"))) return NULL;
+	if (nread < 512 || (! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".sdf") &&
+	                    ! Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".SDF"))) return NULL;
 	return Sound_readFromSesamFile (file);
 }
 

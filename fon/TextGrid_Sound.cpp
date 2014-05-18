@@ -1,6 +1,6 @@
 /* TextGrid_Sound.cpp
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -570,7 +570,7 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 	double fontSize, int useTextStyles, int horizontalAlignment, int garnish, int speckle, int unit)
 {
 	try {
-		TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);
+		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (grid, tierNumber);
 		double oldFontSize = Graphics_inqFontSize (g);
 		Pitch_draw (pitch, g, tmin, tmax, fmin, fmax, garnish, speckle, unit);
 		if (tmax <= tmin) tmin = grid -> xmin, tmax = grid -> xmax;
@@ -586,11 +586,10 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 		Graphics_setNumberSignIsBold (g, useTextStyles);
 		Graphics_setCircumflexIsSuperscript (g, useTextStyles);
 		Graphics_setUnderscoreIsSubscript (g, useTextStyles);
-		Function anyTier = (Function) grid -> tiers -> item [tierNumber];
 		if (anyTier -> classInfo == classIntervalTier) {
-			IntervalTier tier = (IntervalTier) anyTier;
-			for (long i = 1; i <= tier -> intervals -> size; i ++) {
-				TextInterval interval = (TextInterval) tier -> intervals -> item [i];
+			IntervalTier tier = static_cast <IntervalTier> (anyTier);
+			for (long i = 1; i <= tier -> numberOfIntervals (); i ++) {
+				TextInterval interval = tier -> interval (i);
 				double tleft = interval -> xmin, tright = interval -> xmax, tmid, f0;
 				if (! interval -> text || ! interval -> text [0]) continue;
 				if (tleft < pitch -> xmin) tleft = pitch -> xmin;
@@ -604,9 +603,9 @@ void TextGrid_Pitch_draw (TextGrid grid, Pitch pitch, Graphics g,
 					f0, interval -> text);
 			}
 		} else {
-			TextTier tier = (TextTier) anyTier;
-			for (long i = 1; i <= tier -> points -> size; i ++) {
-				TextPoint point = (TextPoint) tier -> points -> item [i];
+			TextTier tier = static_cast <TextTier> (anyTier);
+			for (long i = 1; i <= tier -> numberOfPoints (); i ++) {
+				TextPoint point = tier -> point (i);
 				double t = point -> number, f0;
 				if (! point -> mark || ! point -> mark [0]) continue;
 				if (t < tmin || t > tmax) continue;

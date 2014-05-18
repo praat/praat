@@ -161,6 +161,18 @@ DO
 	}
 END
 
+FORM (EEG_removeTriggers, L"Remove triggers", 0)
+	OPTIONMENU_ENUM (L"Remove every trigger that...", kMelder_string, DEFAULT)
+	SENTENCE (L"...the text", L"hi")
+	OK
+DO
+	LOOP {
+		iam (EEG);
+		my removeTriggers (GET_ENUM (kMelder_string, L"Remove every trigger that..."), GET_STRING (L"...the text"));
+		praat_dataChanged (me);
+	}
+END
+
 FORM (EEG_setChannelName, L"Set channel name", 0)
 	NATURAL (L"Channel number", L"1")
 	WORD (L"New name", L"BLA")
@@ -722,9 +734,12 @@ DIRECT (ERPTier_help) Melder_help (L"ERPTier"); END
 /***** file recognizers *****/
 
 static Any bdfFileRecognizer (int nread, const char *header, MelderFile file) {
+	(void) header;
 	const wchar_t *fileName = MelderFile_name (file);
-	bool isBdfFile = wcsstr (fileName, L".bdf") != NULL || wcsstr (fileName, L".BDF") != NULL;
-	bool isEdfFile = wcsstr (fileName, L".edf") != NULL || wcsstr (fileName, L".EDF") != NULL;
+	bool isBdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".bdf") ||
+	                 Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".BDF");
+	bool isEdfFile = Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".edf") ||
+	                 Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".EDF");
 	if (nread < 512 || (! isBdfFile && ! isEdfFile)) return NULL;
 	return EEG_readFromBdfFile (file);
 }
@@ -753,6 +768,7 @@ void praat_EEG_init (void) {
 		praat_addAction1 (classEEG, 0, L"Subtract mean channel...", 0, 1, DO_EEG_subtractMeanChannel);
 		praat_addAction1 (classEEG, 0, L"Detrend", 0, 1, DO_EEG_detrend);
 		praat_addAction1 (classEEG, 0, L"Filter...", 0, 1, DO_EEG_filter);
+		praat_addAction1 (classEEG, 0, L"Remove triggers...", 0, 1, DO_EEG_removeTriggers);
 		praat_addAction1 (classEEG, 0, L"Set channel to zero...", 0, 1, DO_EEG_setChannelToZero);
 	praat_addAction1 (classEEG, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Extract channel...", 0, 0, DO_EEG_extractChannel);

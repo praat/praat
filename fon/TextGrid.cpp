@@ -418,45 +418,43 @@ TextTier TextTier_readFromXwaves (MelderFile file) {
 	}
 }
 
-void TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber) {
+Function TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber) {
 	if (tierNumber < 1)
 		Melder_throw (me, ": the specified tier number is ", tierNumber, ", but should be at least 1.");
 	if (tierNumber > my tiers -> size)
 		Melder_throw (me, ": the specified tier number (", tierNumber, ") exceeds my number of tiers (", my tiers -> size, ").");	
+	return my tier (tierNumber);
 }
 
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber) {
-	TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-	Function tier = (Function) my tiers -> item [tierNumber];
+	Function tier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 	if (tier -> classInfo != classIntervalTier)
 		Melder_throw ("Tier ", tierNumber, " is not an interval tier.");
-	return (IntervalTier) tier;
+	return static_cast <IntervalTier> (tier);
 }
 
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber) {
-	TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-	Function tier = (Function) my tiers -> item [tierNumber];
+	Function tier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 	if (tier -> classInfo != classTextTier)
 		Melder_throw ("Tier ", tierNumber, " is not a point tier.");
-	return (TextTier) tier;
+	return static_cast <TextTier> (tier);
 }
 
 long TextGrid_countLabels (TextGrid me, long tierNumber, const wchar_t *text) {
 	try {
-		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
+		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
 		long count = 0;
-		Function anyTier = (Function) my tiers -> item [tierNumber];
 		if (anyTier -> classInfo == classIntervalTier) {
 			IntervalTier tier = (IntervalTier) anyTier;
-			for (long i = 1; i <= tier -> intervals -> size; i ++) {
-				TextInterval segment = (TextInterval) tier -> intervals -> item [i];
+			for (long i = 1; i <= tier -> numberOfIntervals (); i ++) {
+				TextInterval segment = tier -> interval (i);
 				if (segment -> text && wcsequ (segment -> text, text))
 					count ++;
 			}
 		} else {
 			TextTier tier = (TextTier) anyTier;
-			for (long i = 1; i <= tier -> points -> size; i ++) {
-				TextPoint point = (TextPoint) tier -> points -> item [i];
+			for (long i = 1; i <= tier -> numberOfPoints (); i ++) {
+				TextPoint point = tier -> point (i);
 				if (point -> mark && wcsequ (point -> mark, text))
 					count ++;
 			}
@@ -665,8 +663,8 @@ PointProcess TextGrid_getStartingPoints (TextGrid me, long tierNumber, int which
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
-			TextInterval interval = tier -> f_item (iinterval);
+		for (long iinterval = 1; iinterval <= tier -> numberOfIntervals (); iinterval ++) {
+			TextInterval interval = tier -> interval (iinterval);
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
 				PointProcess_addPoint (thee.peek(), interval -> xmin);
 			}
@@ -681,8 +679,8 @@ PointProcess TextGrid_getEndPoints (TextGrid me, long tierNumber, int which_Meld
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
-			TextInterval interval = tier -> f_item (iinterval);
+		for (long iinterval = 1; iinterval <= tier -> numberOfIntervals (); iinterval ++) {
+			TextInterval interval = tier -> interval (iinterval);
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
 				PointProcess_addPoint (thee.peek(), interval -> xmax);
 			}
@@ -697,8 +695,8 @@ PointProcess TextGrid_getCentrePoints (TextGrid me, long tierNumber, int which_M
 	try {
 		IntervalTier tier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (long iinterval = 1; iinterval <= tier -> intervals -> size; iinterval ++) {
-			TextInterval interval = tier -> f_item (iinterval);
+		for (long iinterval = 1; iinterval <= tier -> numberOfIntervals (); iinterval ++) {
+			TextInterval interval = tier -> interval (iinterval);
 			if (Melder_stringMatchesCriterion (interval -> text, which_Melder_STRING, criterion)) {
 				PointProcess_addPoint (thee.peek(), 0.5 * (interval -> xmin + interval -> xmax));
 			}
@@ -713,8 +711,8 @@ PointProcess TextGrid_getPoints (TextGrid me, long tierNumber, int which_Melder_
 	try {
 		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
-			TextPoint point = (TextPoint) tier -> points -> item [ipoint];
+		for (long ipoint = 1; ipoint <= tier -> numberOfPoints (); ipoint ++) {
+			TextPoint point = tier -> point (ipoint);
 			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
 				PointProcess_addPoint (thee.peek(), point -> number);
 			}
@@ -732,8 +730,8 @@ PointProcess TextGrid_getPoints_preceded (TextGrid me, long tierNumber,
 	try {
 		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
-			TextPoint point = (TextPoint) tier -> points -> item [ipoint];
+		for (long ipoint = 1; ipoint <= tier -> numberOfPoints (); ipoint ++) {
+			TextPoint point = tier -> point (ipoint);
 			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
 				TextPoint preceding = ipoint <= 1 ? NULL : (TextPoint) tier -> points -> item [ipoint - 1];
 				if (Melder_stringMatchesCriterion (preceding -> mark, which_Melder_STRING_precededBy, criterion_precededBy)) {
@@ -754,8 +752,8 @@ PointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
 	try {
 		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
 		autoPointProcess thee = PointProcess_create (my xmin, my xmax, 10);
-		for (long ipoint = 1; ipoint <= tier -> points -> size; ipoint ++) {
-			TextPoint point = (TextPoint) tier -> points -> item [ipoint];
+		for (long ipoint = 1; ipoint <= tier -> numberOfPoints (); ipoint ++) {
+			TextPoint point = tier -> point (ipoint);
 			if (Melder_stringMatchesCriterion (point -> mark, which_Melder_STRING, criterion)) {
 				TextPoint following = ipoint >= tier -> points -> size ? NULL : (TextPoint) tier -> points -> item [ipoint + 1];
 				if (Melder_stringMatchesCriterion (following -> mark, which_Melder_STRING_followedBy, criterion_followedBy)) {
@@ -776,7 +774,7 @@ PointProcess IntervalTier_PointProcess_startToCentre (IntervalTier tier, PointPr
 			double t = point -> t [i];
 			long index = IntervalTier_timeToLowIndex (tier, t);
 			if (index) {
-				TextInterval interval = (TextInterval) tier -> intervals -> item [index];
+				TextInterval interval = tier -> interval (index);
 				if (interval -> xmin == t)
 					PointProcess_addPoint (thee.peek(), (1 - phase) * interval -> xmin + phase * interval -> xmax);
 			}
@@ -794,7 +792,7 @@ PointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProc
 			double t = point -> t [i];
 			long index = IntervalTier_timeToHighIndex (tier, t);
 			if (index) {
-				TextInterval interval = (TextInterval) tier -> intervals -> item [index];
+				TextInterval interval = tier -> interval (index);
 				if (interval -> xmax == t)
 					PointProcess_addPoint (thee.peek(), (1 - phase) * interval -> xmin + phase * interval -> xmax);
 			}
@@ -808,8 +806,8 @@ PointProcess IntervalTier_PointProcess_endToCentre (IntervalTier tier, PointProc
 TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const wchar_t *label) {
 	try {
 		long n = 0;
-		for (long i = 1; i <= my intervals -> size; i ++) {
-			TextInterval interval = (TextInterval) my intervals -> item [i];
+		for (long i = 1; i <= my numberOfIntervals (); i ++) {
+			TextInterval interval = my interval (i);
 			if (label == NULL || (label [0] == '\0' && ! interval -> text) || (interval -> text && wcsequ (interval -> text, label)))
 				n ++;
 		}
@@ -818,8 +816,8 @@ TableOfReal IntervalTier_downto_TableOfReal (IntervalTier me, const wchar_t *lab
 		TableOfReal_setColumnLabel (thee.peek(), 2, L"End");
 		TableOfReal_setColumnLabel (thee.peek(), 3, L"Duration");
 		n = 0;
-		for (long i = 1; i <= my intervals -> size; i ++) {
-			TextInterval interval = (TextInterval) my intervals -> item [i];
+		for (long i = 1; i <= my numberOfIntervals (); i ++) {
+			TextInterval interval = my interval (i);
 			if (label == NULL || (label [0] == '\0' && ! interval -> text) || (interval -> text && wcsequ (interval -> text, label))) {
 				n ++;
 				TableOfReal_setRowLabel (thee.peek(), n, interval -> text ? interval -> text : L"");
@@ -849,8 +847,8 @@ TableOfReal TextTier_downto_TableOfReal (TextTier me, const wchar_t *label) {
 		autoTableOfReal thee = TableOfReal_create (n, 1);
 		TableOfReal_setColumnLabel (thee.peek(), 1, L"Time");
 		n = 0;
-		for (long i = 1; i <= my points -> size; i ++) {
-			TextPoint point = (TextPoint) my points -> item [i];
+		for (long i = 1; i <= my numberOfPoints (); i ++) {
+			TextPoint point = my point (i);
 			if (label == NULL || (label [0] == '\0' && ! point -> mark) || (point -> mark && wcsequ (point -> mark, label))) {
 				n ++;
 				TableOfReal_setRowLabel (thee.peek(), n, point -> mark ? point -> mark : L"");
@@ -1039,22 +1037,21 @@ static void genericize (wchar_t **pstring, wchar_t *buffer) {
 
 void TextGrid_genericize (TextGrid me) {
 	try {
-		long ntier = my tiers -> size;
 		autostring buffer = Melder_calloc (wchar_t, TextGrid_maximumLabelLength (me) * 3 + 1);
-		for (long itier = 1; itier <= ntier; itier ++) {
-			Function anyTier = (Function) my tiers -> item [itier];
+		for (long itier = 1; itier <= my numberOfTiers (); itier ++) {
+			Function anyTier = my tier (itier);
 			if (anyTier -> classInfo == classIntervalTier) {
-				IntervalTier tier = (IntervalTier) anyTier;
-				long ninterval = tier -> intervals -> size;
-				for (long iinterval = 1; iinterval <= ninterval; iinterval ++) {
-					TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
+				IntervalTier tier = static_cast <IntervalTier> (anyTier);
+				long n = tier -> numberOfIntervals ();
+				for (long i = 1; i <= n; i ++) {
+					TextInterval interval = tier -> interval (i);
 					genericize (& interval -> text, buffer.peek());
 				}
 			} else {
 				TextTier tier = (TextTier) anyTier;
 				long n = tier -> points -> size;
-				for (long ipoint = 1; ipoint <= n; ipoint ++) {
-					TextPoint point = (TextPoint) tier -> points -> item [ipoint];
+				for (long i = 1; i <= n; i ++) {
+					TextPoint point = tier -> point (i);
 					genericize (& point -> mark, buffer.peek());
 				}
 			}
@@ -1066,25 +1063,24 @@ void TextGrid_genericize (TextGrid me) {
 
 void TextGrid_nativize (TextGrid me) {
 	try {
-		long ntier = my tiers -> size;
 		autostring buffer = Melder_calloc (wchar_t, TextGrid_maximumLabelLength (me) + 1);
-		for (long itier = 1; itier <= ntier; itier ++) {
-			Function anyTier = (Function) my tiers -> item [itier];
+		for (long itier = 1; itier <= my numberOfTiers (); itier ++) {
+			Function anyTier = my tier (itier);
 			if (anyTier -> classInfo == classIntervalTier) {
-				IntervalTier tier = (IntervalTier) anyTier;
-				long ninterval = tier -> intervals -> size;
-				for (long iinterval = 1; iinterval <= ninterval; iinterval ++) {
-					TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
+				IntervalTier tier = static_cast <IntervalTier> (anyTier);
+				long n = tier -> numberOfIntervals ();
+				for (long i = 1; i <= n; i ++) {
+					TextInterval interval = tier -> interval (i);
 					if (interval -> text) {
 						Longchar_nativizeW (interval -> text, buffer.peek(), FALSE);
 						wcscpy (interval -> text, buffer.peek());
 					}
 				}
 			} else {
-				TextTier tier = (TextTier) anyTier;
-				long n = tier -> points -> size;
-				for (long ipoint = 1; ipoint <= n; ipoint ++) {
-					TextPoint point = (TextPoint) tier -> points -> item [ipoint];
+				TextTier tier = static_cast <TextTier> (anyTier);
+				long n = tier -> numberOfPoints ();
+				for (long i = 1; i <= n; i ++) {
+					TextPoint point = tier -> point (i);
 					if (point -> mark) {
 						Longchar_nativizeW (point -> mark, buffer.peek(), FALSE);
 						wcscpy (point -> mark, buffer.peek());
@@ -1106,29 +1102,29 @@ void TextPoint_removeText (TextPoint me) {
 }
 
 void IntervalTier_removeText (IntervalTier me) {
-	long ninterval = my intervals -> size;
+	long ninterval = my numberOfIntervals ();
 	for (long iinterval = 1; iinterval <= ninterval; iinterval ++)
-		TextInterval_removeText ((TextInterval) my intervals -> item [iinterval]);
+		TextInterval_removeText (my interval (iinterval));
 }
 
 void TextTier_removeText (TextTier me) {
-	long npoint = my points -> size;
+	long npoint = my numberOfPoints ();
 	for (long ipoint = 1; ipoint <= npoint; ipoint ++)
-		TextPoint_removeText ((TextPoint) my points -> item [ipoint]);
+		TextPoint_removeText (my point (ipoint));
 }
 
 void TextGrid_insertBoundary (TextGrid me, int tierNumber, double t) {
 	try {
-		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-		IntervalTier intervalTier = (IntervalTier) my tiers -> item [tierNumber];
-		if (intervalTier -> classInfo != classIntervalTier)
+		Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
+		if (anyTier -> classInfo != classIntervalTier)
 			Melder_throw ("Cannot add a boundary on tier ", tierNumber, ", because that tier is not an interval tier.");
+		IntervalTier intervalTier = static_cast <IntervalTier> (anyTier);
 		if (IntervalTier_hasTime (intervalTier, t))
 			Melder_throw ("Cannot add a boundary at ", Melder_fixed (t, 6), " seconds, because there is already a boundary there.");
 		long intervalNumber = IntervalTier_timeToIndex (intervalTier, t);
 		if (intervalNumber == 0)
 			Melder_throw ("Cannot add a boundary at ", Melder_fixed (t, 6), " seconds, because this is outside the time domain of the intervals.");
-		TextInterval interval = (TextInterval) intervalTier -> intervals -> item [intervalNumber];
+		TextInterval interval = intervalTier -> interval (intervalNumber);
 		/*
 		 * Move the text to the left of the boundary.
 		 */
@@ -1140,12 +1136,12 @@ void TextGrid_insertBoundary (TextGrid me, int tierNumber, double t) {
 	}
 }
 
-void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval) {
+void IntervalTier_removeLeftBoundary (IntervalTier me, long intervalNumber) {
 	try {
-		Melder_assert (iinterval > 1);
-		Melder_assert (iinterval <= my intervals -> size);
-		TextInterval left = (TextInterval) my intervals -> item [iinterval - 1];
-		TextInterval right = (TextInterval) my intervals -> item [iinterval];
+		Melder_assert (intervalNumber > 1);
+		Melder_assert (intervalNumber <= my numberOfIntervals ());
+		TextInterval left = my interval (intervalNumber - 1);
+		TextInterval right = my interval (intervalNumber);
 		/*
 		 * Move the text to the left of the boundary.
 		 */
@@ -1160,7 +1156,7 @@ void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval) {
 			MelderString_append (& buffer, left -> text, right -> text);
 			TextInterval_setText (left, buffer.string);
 		}
-		Collection_removeItem (my intervals, iinterval);   // remove right interval
+		Collection_removeItem (my intervals, intervalNumber);   // remove right interval
 	} catch (MelderError) {
 		Melder_throw (me, ": left boundary not removed.");
 	}
@@ -1168,32 +1164,26 @@ void IntervalTier_removeLeftBoundary (IntervalTier me, long iinterval) {
 
 void TextGrid_removeBoundaryAtTime (TextGrid me, int tierNumber, double t) {
 	try {
-		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-		IntervalTier intervalTier = (IntervalTier) my tiers -> item [tierNumber];
-		if (intervalTier -> classInfo != classIntervalTier)
-			Melder_throw ("Tier ", tierNumber, " is not an interval tier.");
+		IntervalTier intervalTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
 		if (! IntervalTier_hasTime (intervalTier, t))
 			Melder_throw ("There is no boundary at ", t, " seconds.");
-		long iinterval = IntervalTier_timeToIndex (intervalTier, t);
-		if (iinterval == 0)
+		long intervalNumber = IntervalTier_timeToIndex (intervalTier, t);
+		if (intervalNumber == 0)
 			Melder_throw ("The time of ", t, " seconds is outside the time domain of the intervals.");
-		if (iinterval == 1)
+		if (intervalNumber == 1)
 			Melder_throw ("The time of ", t, " seconds is at the left edge of the tier.");
-		IntervalTier_removeLeftBoundary (intervalTier, iinterval);
+		IntervalTier_removeLeftBoundary (intervalTier, intervalNumber);
 	} catch (MelderError) {
 		Melder_throw (me, ": boundary not removed.");
 	}
 }
 
-void TextGrid_setIntervalText (TextGrid me, int tierNumber, long iinterval, const wchar_t *text) {
+void TextGrid_setIntervalText (TextGrid me, int tierNumber, long intervalNumber, const wchar_t *text) {
 	try {
-		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-		IntervalTier intervalTier = (IntervalTier) my tiers -> item [tierNumber];
-		if (intervalTier -> classInfo != classIntervalTier)
-			Melder_throw ("Tier ", tierNumber, " is not an interval tier.");
-		if (iinterval < 1 || iinterval > intervalTier -> intervals -> size)
-			Melder_throw ("Interval ", iinterval, " does not exist on tier ", tierNumber, ".");
-		TextInterval interval = (TextInterval) intervalTier -> intervals -> item [iinterval];
+		IntervalTier intervalTier = TextGrid_checkSpecifiedTierIsIntervalTier (me, tierNumber);
+		if (intervalNumber < 1 || intervalNumber > intervalTier -> numberOfIntervals ())
+			Melder_throw ("Interval ", intervalNumber, " does not exist on tier ", tierNumber, ".");
+		TextInterval interval = intervalTier -> interval (intervalNumber);
 		TextInterval_setText (interval, text);
 	} catch (MelderError) {
 		Melder_throw (me, ": interval text not set.");
@@ -1202,10 +1192,7 @@ void TextGrid_setIntervalText (TextGrid me, int tierNumber, long iinterval, cons
 
 void TextGrid_insertPoint (TextGrid me, int tierNumber, double t, const wchar_t *mark) {
 	try {
-		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-		TextTier textTier = (TextTier) my tiers -> item [tierNumber];
-		if (textTier -> classInfo != classTextTier)
-			Melder_throw ("Tier ", tierNumber, " is not a point tier.");
+		TextTier textTier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
 		if (AnyTier_hasPoint (textTier, t))
 			Melder_throw ("There is already a point at ", t, " seconds.");
 		autoTextPoint newPoint = TextPoint_create (t, mark);
@@ -1220,15 +1207,27 @@ void TextTier_removePoint (TextTier me, long ipoint) {
 	Collection_removeItem (my points, ipoint);
 }
 
-void TextGrid_setPointText (TextGrid me, int tierNumber, long ipoint, const wchar_t *text) {
+void structTextTier :: removePoints (int which_Melder_STRING, const wchar_t *criterion) {
+	for (long i = our numberOfPoints (); i > 0; i --)
+		if (Melder_stringMatchesCriterion (our point (i) -> mark, which_Melder_STRING, criterion))
+			Collection_removeItem (our points, i);
+}
+
+void structTextGrid :: removePoints (long tierNumber, int which_Melder_STRING, const wchar_t *criterion) {
 	try {
-		TextGrid_checkSpecifiedTierNumberWithinRange (me, tierNumber);
-		TextTier textTier = (TextTier) my tiers -> item [tierNumber];
-		if (textTier -> classInfo != classTextTier)
-			Melder_throw ("Tier ", tierNumber, " is not a point tier.");
-		if (ipoint < 1 || ipoint > textTier -> points -> size)
-			Melder_throw ("Point ", ipoint, " does not exist on tier ", tierNumber, ".");
-		TextPoint point = (TextPoint) textTier -> points -> item [ipoint];
+		TextTier tier = TextGrid_checkSpecifiedTierIsPointTier (this, tierNumber);
+		tier -> removePoints (which_Melder_STRING, criterion);
+	} catch (MelderError) {
+		Melder_throw (this, ": points not removed.");
+	}
+}
+
+void TextGrid_setPointText (TextGrid me, int tierNumber, long pointNumber, const wchar_t *text) {
+	try {
+		TextTier textTier = TextGrid_checkSpecifiedTierIsPointTier (me, tierNumber);
+		if (pointNumber < 1 || pointNumber > textTier -> numberOfPoints ())
+			Melder_throw ("Point ", pointNumber, " does not exist on tier ", tierNumber, ".");
+		TextPoint point = textTier -> point (pointNumber);
 		TextPoint_setText (point, text);
 	} catch (MelderError) {
 		Melder_throw (me, ": point text not set.");
@@ -1328,14 +1327,14 @@ TextGrid TextGrid_readFromChronologicalTextFile (MelderFile file) {
 					throw;
 				}
 			}
-			TextGrid_checkSpecifiedTierNumberWithinRange (me.peek(), tierNumber);
-			if (((Function) my tiers -> item [tierNumber]) -> classInfo == classIntervalTier) {
-				IntervalTier tier = (IntervalTier) my tiers -> item [tierNumber];
+			Function anyTier = TextGrid_checkSpecifiedTierNumberWithinRange (me.peek(), tierNumber);
+			if (anyTier -> classInfo == classIntervalTier) {
+				IntervalTier tier = static_cast <IntervalTier> (anyTier);
 				autoTextInterval interval = Thing_new (TextInterval);
 				interval -> v_readText (text.peek());
 				Collection_addItem (tier -> intervals, interval.transfer());   // not earlier: sorting depends on contents of interval
 			} else {
-				TextTier tier = (TextTier) my tiers -> item [tierNumber];
+				TextTier tier = static_cast <TextTier> (anyTier);
 				autoTextPoint point = Thing_new (TextPoint);
 				point -> v_readText (text.peek());
 				Collection_addItem (tier -> points, point.transfer());   // not earlier: sorting depends on contents of point

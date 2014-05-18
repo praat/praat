@@ -1,6 +1,6 @@
 /* TextGrid_def.h
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,9 @@ oo_DEFINE_CLASS (TextTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, points, TextPoint, 0)
 
 	#if oo_DECLARING
-		TextPoint f_item (long i) { return static_cast <TextPoint> (points -> item [i]); }
+		long numberOfPoints () { return our points -> size; }
+		TextPoint point (long i) { return static_cast <TextPoint> (our points -> item [i]); }
+		void removePoints (int which_Melder_STRING, const wchar_t *criterion);
 		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
@@ -69,8 +71,9 @@ oo_DEFINE_CLASS (IntervalTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, intervals, TextInterval, 0)
 
 	#if oo_DECLARING
-		TextInterval f_item (long i) { return static_cast <TextInterval> (intervals -> item [i]); }
-		//TextInterval operator[] (long i) { return static_cast <TextInterval> (intervals -> item [i]); }   // oops: operator[] not for pointer objects
+		long numberOfIntervals () { return our intervals -> size; }
+		TextInterval interval (long i) { return static_cast <TextInterval> (our intervals -> item [i]); }
+		// TextInterval operator[] (long i) { return static_cast <TextInterval> (our intervals -> item [i]); }   // oops: operator[] not for pointer objects
 		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 		virtual void v_shiftX (double xfrom, double xto);
 		virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
@@ -86,6 +89,9 @@ oo_DEFINE_CLASS (TextGrid, Function)
 	oo_OBJECT (Ordered, 0, tiers)   // TextTier and IntervalTier objects
 
 	#if oo_DECLARING
+		long numberOfTiers () { return our tiers -> size; }
+		Function tier (long i) { return static_cast <Function> (our tiers -> item [i]); }
+		void removePoints (long tierNumber, int which_Melder_STRING, const wchar_t *criterion);
 		virtual void v_info ();
 		virtual int v_domainQuantity () { return MelderQuantity_TIME_SECONDS; }
 		virtual void v_shiftX (double xfrom, double xto);

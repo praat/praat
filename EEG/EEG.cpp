@@ -530,6 +530,16 @@ void structEEG :: f_setChannelToZero (const wchar_t *channelName) {
 	}
 }
 
+void structEEG :: removeTriggers (int which_Melder_STRING, const wchar_t *criterion) {
+	try {
+		if (our d_textgrid -> numberOfTiers () < 2 || ! Melder_wcsequ (our d_textgrid -> tier (2) -> name, L"Trigger"))
+			Melder_throw (this, " does not have a Trigger channel.");
+		our d_textgrid -> removePoints (2, which_Melder_STRING, criterion);
+	} catch (MelderError) {
+		Melder_throw (this, ": triggers not removed.");
+	}
+}
+
 EEG structEEG :: f_extractChannel (long channelNumber) {
 	try {
 		if (channelNumber < 1 || channelNumber > d_numberOfChannels)

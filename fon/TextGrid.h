@@ -2,7 +2,7 @@
 #define _TextGrid_h_
 /* TextGrid.h
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ PointProcess TextGrid_getPoints_followed (TextGrid me, long tierNumber,
 	int which_Melder_STRING, const wchar_t *criterion,
 	int which_Melder_STRING_followedBy, const wchar_t *criterion_followedBy);
 
-void TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber);
+Function TextGrid_checkSpecifiedTierNumberWithinRange (TextGrid me, long tierNumber);
 IntervalTier TextGrid_checkSpecifiedTierIsIntervalTier (TextGrid me, long tierNumber);
 TextTier TextGrid_checkSpecifiedTierIsPointTier (TextGrid me, long tierNumber);
 

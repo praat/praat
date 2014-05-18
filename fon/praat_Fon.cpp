@@ -6267,11 +6267,16 @@ static Any chronologicalTextGridTextFileRecognizer (int nread, const char *heade
 static Any imageFileRecognizer (int nread, const char *header, MelderFile file) {
 	const wchar_t *fileName = MelderFile_name (file);
 	(void) header;
-	if (wcsstr (fileName, L".jpg") || wcsstr (fileName, L".JPG") ||
-	    wcsstr (fileName, L".jpeg") || wcsstr (fileName, L".JPEG") ||
-	    wcsstr (fileName, L".png") || wcsstr (fileName, L".PNG") ||
-	    wcsstr (fileName, L".tiff") || wcsstr (fileName, L".TIFF") ||
-		wcsstr (fileName, L".tif") || wcsstr (fileName, L".TIF"))
+	if (Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".jpg") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".JPG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".jpeg") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".JPEG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".png") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".PNG") ||
+	    Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".tiff") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".TIFF") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".tif") ||
+		Melder_stringMatchesCriterion (fileName, kMelder_string_ENDS_WITH, L".TIF"))
 	{
 		return Photo_readFromImageFile (file);
 	}

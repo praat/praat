@@ -60,7 +60,7 @@ void structERPTier :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 
 long structERPTier :: f_getChannelNumber (const wchar_t *channelName) {
 	for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
-		if (Melder_wcsequ (d_channelNames [ichan], channelName)) {
+		if (Melder_wcsequ (our d_channelNames [ichan], channelName)) {
 			return ichan;
 		}
 	}
@@ -83,6 +83,7 @@ static ERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, double 
 		autoERPTier thee = Thing_new (ERPTier);
 		Function_init (thee.peek(), fromTime, toTime);
 		thy d_numberOfChannels = my d_numberOfChannels - my f_getNumberOfExtraSensors ();
+		Melder_assert (thy d_numberOfChannels > 0);
 		thy d_channelNames = NUMvector <wchar_t *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
 			thy d_channelNames [ichan] = Melder_wcsdup (my d_channelNames [ichan]);
@@ -223,7 +224,7 @@ ERP structERPTier :: f_extractERP (long eventNumber) {
 		}
 		thy d_channelNames = NUMvector <wchar_t *> (1, thy ny);
 		for (long ichan = 1; ichan <= thy ny; ichan ++) {
-			thy d_channelNames [ichan] = Melder_wcsdup (d_channelNames [ichan]);
+			thy d_channelNames [ichan] = Melder_wcsdup (our d_channelNames [ichan]);
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -260,7 +261,7 @@ ERP structERPTier :: f_toERP_mean () {
 		}
 		mean -> d_channelNames = NUMvector <wchar_t *> (1, mean -> ny);
 		for (long ichan = 1; ichan <= mean -> ny; ichan ++) {
-			mean -> d_channelNames [ichan] = Melder_wcsdup (d_channelNames [ichan]);
+			mean -> d_channelNames [ichan] = Melder_wcsdup (our d_channelNames [ichan]);
 		}
 		return mean.transfer();
 	} catch (MelderError) {
@@ -305,15 +306,15 @@ ERPTier structERPTier :: f_extractEventsWhereColumn_string (Table table, long co
 		if (d_events -> size != table -> rows -> size)
 			Melder_throw (this, " & ", table, ": the number of rows in the table (", table -> rows -> size, ") doesn't match the number of events (", d_events -> size, ").");
 		autoERPTier thee = Thing_new (ERPTier);
-		Function_init (thee.peek(), our xmin, this -> xmax);
-		thy d_numberOfChannels = this -> d_numberOfChannels;
+		Function_init (thee.peek(), our xmin, our xmax);
+		thy d_numberOfChannels = our d_numberOfChannels;
 		thy d_channelNames = NUMvector <wchar_t *> (1, thy d_numberOfChannels);
 		for (long ichan = 1; ichan <= thy d_numberOfChannels; ichan ++) {
-			thy d_channelNames [ichan] = Melder_wcsdup (this -> d_channelNames [ichan]);
+			thy d_channelNames [ichan] = Melder_wcsdup (our d_channelNames [ichan]);
 		}
 		thy d_events = SortedSetOfDouble_create ();
 		for (long ievent = 1; ievent <= d_events -> size; ievent ++) {
-			ERPPoint oldEvent = this -> f_peekEvent (ievent);
+			ERPPoint oldEvent = our f_peekEvent (ievent);
 			TableRow row = table -> f_peekRow (ievent);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
