@@ -1,13 +1,13 @@
 # File: makefile.defs.mingw32
 
 # System: MinGW
-# Paul Boersma, 8 August 2012
+# Paul Boersma, 12 June 2014
 
 CC = /mingw32/bin/gcc -std=gnu99 -isystem /mingw32/include
 
-CXX = /mingw32/bin/g++ -isystem /mingw32/include/c++/4.7.0 -isystem /mingw32/include -Wshadow
+CXX = /mingw32/bin/g++ -std=c++0x -isystem /mingw32/include/c++/4.7.0 -isystem /mingw32/include -Wshadow
 
-CFLAGS = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -DUNICODE -Dmain=wingwmain -O1
+CFLAGS = -DWINVER=0x0500 -D_WIN32_WINNT=0x0500 -D_WIN32_IE=0x0500 -DUNICODE -Dmain=wingwmain -O1 -pthread
 
 CXXFLAGS = $(CFLAGS)
 

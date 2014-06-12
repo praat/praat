@@ -149,28 +149,27 @@ Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns) {
 	}
 }
 
-double Matrix_columnToX (I, double column) { iam (Matrix); return my x1 + (column - 1) * my dx; }
+double Matrix_columnToX (Matrix me, double column) { return my x1 + (column - 1) * my dx; }
 
-double Matrix_rowToY (I, double row) { iam (Matrix); return my y1 + (row - 1) * my dy; }
+double Matrix_rowToY (Matrix me, double row) { return my y1 + (row - 1) * my dy; }
 
-double Matrix_xToColumn (I, double x) { iam (Matrix); return (x - my x1) / my dx + 1; }
+double Matrix_xToColumn (Matrix me, double x) { return (x - my x1) / my dx + 1; }
 
-long Matrix_xToLowColumn (I, double x) { iam (Matrix); return (long) floor (Matrix_xToColumn (me, x)); }
+long Matrix_xToLowColumn (Matrix me, double x) { return (long) floor (Matrix_xToColumn (me, x)); }
 
-long Matrix_xToHighColumn (I, double x) { iam (Matrix); return (long) ceil (Matrix_xToColumn (me, x)); }
+long Matrix_xToHighColumn (Matrix me, double x) { return (long) ceil (Matrix_xToColumn (me, x)); }
 
-long Matrix_xToNearestColumn (I, double x) { iam (Matrix); return (long) floor (Matrix_xToColumn (me, x) + 0.5); }
+long Matrix_xToNearestColumn (Matrix me, double x) { return (long) floor (Matrix_xToColumn (me, x) + 0.5); }
 
-double Matrix_yToRow (I, double y) { iam (Matrix); return (y - my y1) / my dy + 1; }
+double Matrix_yToRow (Matrix me, double y) { return (y - my y1) / my dy + 1; }
 
-long Matrix_yToLowRow (I, double y) { iam (Matrix); return (long) floor (Matrix_yToRow (me, y)); }
+long Matrix_yToLowRow (Matrix me, double y) { return (long) floor (Matrix_yToRow (me, y)); }
 
-long Matrix_yToHighRow (I, double y) { iam (Matrix); return (long) ceil (Matrix_yToRow (me, y)); }
+long Matrix_yToHighRow (Matrix me, double y) { return (long) ceil (Matrix_yToRow (me, y)); }
 
-long Matrix_yToNearestRow (I, double y) { iam (Matrix); return (long) floor (Matrix_yToRow (me, y) + 0.5); }
+long Matrix_yToNearestRow (Matrix me, double y) { return (long) floor (Matrix_yToRow (me, y) + 0.5); }
 
-long Matrix_getWindowSamplesX (I, double xmin, double xmax, long *ixmin, long *ixmax) {
-	iam (Matrix);
+long Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, long *ixmin, long *ixmax) {
 	*ixmin = 1 + (long) ceil  ((xmin - my x1) / my dx);
 	*ixmax = 1 + (long) floor ((xmax - my x1) / my dx);
 	if (*ixmin < 1) *ixmin = 1;
@@ -179,8 +178,7 @@ long Matrix_getWindowSamplesX (I, double xmin, double xmax, long *ixmin, long *i
 	return *ixmax - *ixmin + 1;
 }
 
-long Matrix_getWindowSamplesY (I, double ymin, double ymax, long *iymin, long *iymax) {
-	iam (Matrix);
+long Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, long *iymin, long *iymax) {
 	*iymin = 1 + (long) ceil  ((ymin - my y1) / my dy);
 	*iymax = 1 + (long) floor ((ymax - my y1) / my dy);
 	if (*iymin < 1) *iymin = 1;
@@ -189,10 +187,9 @@ long Matrix_getWindowSamplesY (I, double ymin, double ymax, long *iymin, long *i
 	return *iymax - *iymin + 1;
 }
 
-long Matrix_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
+long Matrix_getWindowExtrema (Matrix me, long ixmin, long ixmax, long iymin, long iymax,
 	double *minimum, double *maximum)
 {
-	iam (Matrix);
 	if (ixmin == 0) ixmin = 1;
 	if (ixmax == 0) ixmax = my nx;
 	if (iymin == 0) iymin = 1;
@@ -208,8 +205,7 @@ long Matrix_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
 	return (ixmax - ixmin + 1) * (iymax - iymin + 1);
 }
 
-double Matrix_getValueAtXY (I, double x, double y) {
-	iam (Matrix);
+double Matrix_getValueAtXY (Matrix me, double x, double y) {
 	long bottomRow, leftCol, topRow, rightCol;
 	double drow, dcol;
 	double row_real = (y - my y1) / my dy + 1.0;
@@ -247,8 +243,7 @@ double Matrix_getValueAtXY (I, double x, double y) {
 		drow * dcol * my z [topRow] [rightCol];
 }
 
-double Matrix_getSum (I) {
-	iam (Matrix);
+double Matrix_getSum (Matrix me) {
 	double sum = 0.0;
 	for (long row = 1; row <= my ny; row ++)
 		for (long col = 1; col <= my nx; col ++)
@@ -256,8 +251,7 @@ double Matrix_getSum (I) {
 	return sum;
 }
 
-double Matrix_getNorm (I) {
-	iam (Matrix);
+double Matrix_getNorm (Matrix me) {
 	double sum = 0.0;
 	for (long row = 1; row <= my ny; row ++)
 		for (long col = 1; col <= my nx; col ++)
@@ -265,10 +259,9 @@ double Matrix_getNorm (I) {
 	return sqrt (sum);
 }
 
-void Matrix_drawRows (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	iam (Matrix);
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
 	long ixmin, ixmax, iymin, iymax;
@@ -291,10 +284,9 @@ void Matrix_drawRows (I, Graphics g, double xmin, double xmax, double ymin, doub
 		Graphics_setWindow (g, xmin, xmax, my y1 + (iymin - 1.5) * my dy, my y1 + (iymax - 0.5) * my dy);
 }
 
-void Matrix_drawOneContour (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double height)
 {
-	iam (Matrix);
 	bool xreversed = xmin > xmax, yreversed = ymin > ymax;
 	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
@@ -314,10 +306,9 @@ void Matrix_drawOneContour (I, Graphics g, double xmin, double xmax, double ymin
 	Graphics_unsetInner (g);
 }
 
-void Matrix_drawContours (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	iam (Matrix);
 	double border [1 + 8];
 	if (xmax == xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax == ymin) { ymin = my ymin; ymax = my ymax; }
@@ -340,10 +331,9 @@ void Matrix_drawContours (I, Graphics g, double xmin, double xmax, double ymin, 
 	Graphics_unsetInner (g);
 }
 
-void Matrix_paintContours (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	iam (Matrix);
 	double border [1 + 30];
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
@@ -366,10 +356,9 @@ void Matrix_paintContours (I, Graphics g, double xmin, double xmax, double ymin,
 	Graphics_unsetInner (g);
 }
 
-static void cellArrayOrImage (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum, int interpolate)
 {
-	iam (Matrix);
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
 	long ixmin, ixmax, iymin, iymax;
@@ -385,34 +374,33 @@ static void cellArrayOrImage (I, Graphics g, double xmin, double xmax, double ym
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	if (interpolate)
 		Graphics_image (g, my z,
-			ixmin, ixmax, Matrix_columnToX (me, ixmin - 0.5), Matrix_columnToX (me, ixmax + 0.5),
-			iymin, iymax, Matrix_rowToY (me, iymin - 0.5), Matrix_rowToY (me, iymax + 0.5),
+			ixmin, ixmax, my f_indexToX (ixmin - 0.5), my f_indexToX (ixmax + 0.5),
+			iymin, iymax, my f_indexToY (iymin - 0.5), my f_indexToY (iymax + 0.5),
 			minimum, maximum);
 	else
 		Graphics_cellArray (g, my z,
-			ixmin, ixmax, Matrix_columnToX (me, ixmin - 0.5), Matrix_columnToX (me, ixmax + 0.5),
-			iymin, iymax, Matrix_rowToY (me, iymin - 0.5), Matrix_rowToY (me, iymax + 0.5),
+			ixmin, ixmax, my f_indexToX (ixmin - 0.5), my f_indexToX (ixmax + 0.5),
+			iymin, iymax, my f_indexToY (iymin - 0.5), my f_indexToY (iymax + 0.5),
 			minimum, maximum);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);
 }
 
-void Matrix_paintImage (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintImage (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	cellArrayOrImage (void_me, g, xmin, xmax, ymin, ymax, minimum, maximum, TRUE);
+	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, TRUE);
 }
 
-void Matrix_paintCells (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintCells (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum)
 {
-	cellArrayOrImage (void_me, g, xmin, xmax, ymin, ymax, minimum, maximum, FALSE);
+	cellArrayOrImage (me, g, xmin, xmax, ymin, ymax, minimum, maximum, FALSE);
 }
 
-void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum, double elevation, double azimuth)
 {
-	iam (Matrix);
 	if (xmax <= xmin) { xmin = my xmin; xmax = my xmax; }
 	if (ymax <= ymin) { ymin = my ymin; ymax = my ymax; }
 	long ixmin, ixmax, iymin, iymax;
@@ -430,8 +418,7 @@ void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, 
 	Graphics_unsetInner (g);
 }
 
-void Matrix_movie (I, Graphics g) {
-	iam (Matrix);
+void Matrix_movie (Matrix me, Graphics g) {
 	autoNUMvector <double> column (1, my ny);
 	double minimum = 0.0, maximum = 1.0;
 	Matrix_getWindowExtrema (me, 1, my nx, 1, my ny, & minimum, & maximum);
@@ -558,8 +545,7 @@ Matrix Matrix_readFromRawTextFile (MelderFile file) {   // BUG: not Unicode-comp
 	}
 }
 
-void Matrix_eigen (I, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
-	iam (Matrix);
+void Matrix_eigen (Matrix me, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
 	*out_eigenvectors = NULL;
 	*out_eigenvalues = NULL;
 	try {
@@ -582,8 +568,7 @@ void Matrix_eigen (I, Matrix *out_eigenvectors, Matrix *out_eigenvalues) {
 	}
 }
 
-Matrix Matrix_power (I, long power) {
-	iam (Matrix);
+Matrix Matrix_power (Matrix me, long power) {
 	try {
 		if (my nx != my ny)
 			Melder_throw ("Matrix not square.");
@@ -679,8 +664,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 	}
 }
 
-void Matrix_scaleAbsoluteExtremum (I, double scale) {
-	iam (Matrix);
+void Matrix_scaleAbsoluteExtremum (Matrix me, double scale) {
 	double extremum = 0.0;
 	for (long i = 1; i <= my ny; i ++) {
 		for (long j = 1; j <= my nx; j ++) {
@@ -699,8 +683,7 @@ void Matrix_scaleAbsoluteExtremum (I, double scale) {
 	}
 }
 
-Matrix TableOfReal_to_Matrix (I) {
-	iam (TableOfReal);
+Matrix TableOfReal_to_Matrix (TableOfReal me) {
 	try {
 		autoMatrix thee = Matrix_createSimple (my numberOfRows, my numberOfColumns);
 		for (long i = 1; i <= my numberOfRows; i ++)
@@ -712,8 +695,7 @@ Matrix TableOfReal_to_Matrix (I) {
 	}
 }
 
-TableOfReal Matrix_to_TableOfReal (I) {
-	iam (Matrix);
+TableOfReal Matrix_to_TableOfReal (Matrix me) {
 	try {
 		autoTableOfReal thee = TableOfReal_create (my ny, my nx);
 		for (long i = 1; i <= my ny; i ++)

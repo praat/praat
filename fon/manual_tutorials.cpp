@@ -23,9 +23,20 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140518)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140612)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.78# (12 June 2014)")
+LIST_ITEM (L"\\bu Multithreading can now speed up pitch analysis by a factor of 4 or so, "
+	"depending on the number of cores in your processor.")
+LIST_ITEM (L"\\bu Linux: can now open and save Photo objects (from PNG files) "
+	"and use @@Insert picture from file...@.")
+LIST_ITEM (L"\\bu Open WAV files that are in the \"extensible\" format (previously \"unsupported format -2\").")
+LIST_ITEM (L"\\bu Windows: support for dropping more than one file on the Praat icon.")
+LIST_ITEM (L"\\bu Scripting: can now use the #editor command with an object's ID instead of only with its name.")
+LIST_ITEM (L"\\bu Windows: removed a bug that sometimes disallowed saving more than one JPEG file.")
+LIST_ITEM (L"\\bu Linux audio: created a workaround that reduces the chances of a freeze that is due to a potential deadlock "
+	"in the collaboration between Alsa and PulseAudio that can occur when the playback of a sound is cancelled.")
 NORMAL (L"##5.3.77# (18 May 2014)")
 LIST_ITEM (L"\\bu EEG: more facilities for EDF+ files.")
 NORMAL (L"##5.3.76# (8 May 2014)")

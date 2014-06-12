@@ -1,6 +1,6 @@
 /* ManPages.cpp
  *
- * Copyright (C) 1996-2012 Paul Boersma
+ * Copyright (C) 1996-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -163,7 +163,7 @@ static void readOnePage (ManPages me, MelderReadText text) {
 		} catch (MelderError) {
 			Melder_throw ("Cannot find text.");
 		}
-		for (const wchar_t *p = extractLink (par -> text, NULL, link); p != NULL; p = extractLink (par -> text, p, link)) {
+		for (const wchar_t *plink = extractLink (par -> text, NULL, link); plink != NULL; plink = extractLink (par -> text, plink, link)) {
 			/*
 			 * Now, `link' contains the link text, with spaces and all.
 			 * Transform it into a file name.

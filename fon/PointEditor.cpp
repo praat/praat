@@ -1,6 +1,6 @@
 /* PointEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -189,7 +189,7 @@ void structPointEditor :: v_draw () {
 			Graphics_line (d_graphics, d_startWindow, 0.0, d_endWindow, 0.0);
 			Graphics_setLineType (d_graphics, Graphics_DRAWN);      
 			Graphics_function (d_graphics, sound -> z [1], first, last,
-				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+				sound -> f_indexToX (first), sound -> f_indexToX (last));
 		}
 	}
 	Graphics_setColour (d_graphics, Graphics_BLUE);

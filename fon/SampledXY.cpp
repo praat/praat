@@ -1,6 +1,6 @@
 /* SampledXY.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,22 +41,22 @@
 Thing_implement (SampledXY, Sampled, 0);
 
 void structSampledXY :: f_init
-	(double xmin, double xmax, long nx, double dx, double x1,
-	 double ymin, double ymax, long ny, double dy, double y1)
+	(double xmin_, double xmax_, long nx_, double dx_, double x1_,
+	 double ymin_, double ymax_, long ny_, double dy_, double y1_)
 {
-	Sampled_init (this, xmin, xmax, nx, dx, x1);
-	this -> ymin = ymin;
-	this -> ymax = ymax;
-	this -> ny = ny;
-	this -> dy = dy;
-	this -> y1 = y1;
+	Sampled_init (this, xmin_, xmax_, nx_, dx_, x1_);
+	our ymin = ymin_;
+	our ymax = ymax_;
+	our ny = ny_;
+	our dy = dy_;
+	our y1 = y1_;
 }
 
-long structSampledXY :: f_getWindowSamplesY (double ymin, double ymax, long *iymin, long *iymax) {
-	*iymin = 1 + (long) ceil  ((ymin - this -> y1) / this -> dy);
-	*iymax = 1 + (long) floor ((ymax - this -> y1) / this -> dy);
-	if (*iymin < 1) *iymin = 1;
-	if (*iymax > this -> ny) *iymax = this -> ny;
+long structSampledXY :: f_getWindowSamplesY (double ymin_, double ymax_, long *iymin, long *iymax) {
+	double riymin = 1.0 + ceil ((ymin_ - our y1) / our dy);
+	double riymax = 1.0 + floor ((ymax_ - our y1) / our dy);   // could be above 32-bit LONG_MAX
+	*iymin = riymin < 1.0 ? 1 : (long) riymin;
+	*iymax = riymax > (double) our ny ? our ny : (long) riymax;
 	if (*iymin > *iymax) return 0;
 	return *iymax - *iymin + 1;
 }

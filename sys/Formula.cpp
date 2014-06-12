@@ -2909,14 +2909,17 @@ static void do_editor (void) {
 		Stackel editor = pop;
 		if (editor->which == Stackel_STRING) {
 			praatP. editor = praat_findEditorFromString (editor->string);
+		} else if (editor->which == Stackel_NUMBER) {
+			praatP. editor = praat_findEditorById (round (editor->number));
 		} else {
-			Melder_throw ("The function \"editor\" requires a string argument, not ", Stackel_whichText (editor), ".");
+			Melder_throw ("The function \"editor\" requires a numeric or string argument, not ", Stackel_whichText (editor), ".");
 		}
 	} else {
 		Melder_throw ("The function \"editor\" requires 0 or 1 arguments, not ", n->number, ".");
 	}
 	pushNumber (1);
 }
+
 static void do_numericArrayElement (void) {
 	Stackel n = pop;
 	Melder_assert (n -> which == Stackel_NUMBER);

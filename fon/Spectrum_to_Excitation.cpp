@@ -1,6 +1,6 @@
 /* Spectrum_to_Excitation.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,7 @@
 
 #include "Spectrum_to_Excitation.h"
 
-Excitation Spectrum_to_Excitation (I, double dbark) {
-	iam (Spectrum);
+Excitation Spectrum_to_Excitation (Spectrum me, double dbark) {
 	try {
 		long nbark = (int) floor (25.6 / dbark + 0.5);
 		double *re = my z [1], *im = my z [2]; 
@@ -67,7 +66,7 @@ Excitation Spectrum_to_Excitation (I, double dbark) {
 
 		autoExcitation thee = Excitation_create (dbark, nbark);
 		for (long i = 1; i <= nbark; i ++)
-			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), Sampled_indexToX (thee.peek(), i));
+			thy z [1] [i] = Excitation_soundPressureToPhon (sqrt (outSig [i + nbark/2]), thy f_indexToX (i));
 
 		return thee.transfer();
 	} catch (MelderError) {

@@ -1,6 +1,6 @@
 /* melder_files.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,9 +66,9 @@ using namespace std;
 	#include "macport_off.h"
 #endif
 #include <errno.h>
-#include "melder.h"
 #include "flac_FLAC_stream_encoder.h"
 #include "abcio.h"
+#include "melder.h"
 
 #if defined (macintosh)
 	#include <sys/stat.h>

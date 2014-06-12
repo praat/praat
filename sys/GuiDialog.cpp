@@ -121,7 +121,7 @@ GuiDialog GuiDialog_create (GuiWindow parent, int x, int y, int width, int heigh
 		g_signal_connect (G_OBJECT (my d_widget), "destroy", G_CALLBACK (_GuiGtkDialog_destroyCallback), me);
 	#elif cocoa
 		(void) parent;
-		NSRect rect = { { x, y }, { width, height } };
+		NSRect rect = { { (CGFloat) x, (CGFloat) y }, { (CGFloat) width, (CGFloat) height } };
 		NSWindow *nsWindow = [[GuiCocoaDialog alloc]
 			initWithContentRect: rect
 			styleMask: NSTitledWindowMask | NSClosableWindowMask

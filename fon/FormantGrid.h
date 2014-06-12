@@ -2,7 +2,7 @@
 #define _FormantGrid_h_
 /* FormantGrid.h
  *
- * Copyright (C) 2008-2011 Paul Boersma & David Weenink
+ * Copyright (C) 2008-2011,2014 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ Thing_declare (Interpreter);
 #include "FormantGrid_def.h"
 oo_CLASS_CREATE (FormantGrid, Function);
 
-void FormantGrid_init (I, double tmin, double tmax, long numberOfFormants);
+void FormantGrid_init (FormantGrid me, double tmin, double tmax, long numberOfFormants);
 FormantGrid FormantGrid_createEmpty (double tmin, double tmax, long numberOfFormants);
 
 FormantGrid FormantGrid_create (double tmin, double tmax, long numberOfFormants,

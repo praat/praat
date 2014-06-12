@@ -296,10 +296,15 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 								*pixelAddress ++ = green        * 255.0;
 								*pixelAddress ++ = red          * 255.0;
 								*pixelAddress ++ = 0;
-							#else
+							#elif mac
 								*pixelAddress ++ = red          * 255.0;
 								*pixelAddress ++ = green        * 255.0;
 								*pixelAddress ++ = blue         * 255.0;
+								*pixelAddress ++ = transparency * 255.0;
+							#elif cairo
+								*pixelAddress ++ = blue         * 255.0;
+								*pixelAddress ++ = green        * 255.0;
+								*pixelAddress ++ = red          * 255.0;
 								*pixelAddress ++ = transparency * 255.0;
 							#endif
 						}
@@ -602,12 +607,11 @@ static void _cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rg
 	_Graphics_setColour (me, my colour);
 }
 
-static void cellArrayOrImage (I, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
+static void cellArrayOrImage (Graphics me, double **z_float, double_rgbt **z_rgbt, unsigned char **z_byte,
 	long ix1, long ix2, double x1WC, double x2WC,
 	long iy1, long iy2, double y1WC, double y2WC,
 	double minimum, double maximum, int interpolate)
 {
-	iam (Graphics);
 	if (ix2 < ix1 || iy2 < iy1 || minimum == maximum) return;
 	_cellArrayOrImage (me, z_float, z_rgbt, z_byte,
 		ix1, ix2, wdx (x1WC), wdx (x2WC),
@@ -672,44 +676,57 @@ void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
-	#if 0
-	try {
+	#if 1
 		structMelderFile file;
 		Melder_relativePathToFile (relativeFileName, & file);
-		autoPhoto photo = Photo_readFromImageFile (& file);
-		if (x1 == x2 && y1 == y2) {
-			width = photo -> nx, x1DC -= width / 2, x2DC = x1DC + width;
-			height = photo -> ny, y2DC -= height / 2, y1DC = y2DC + height;
-		} else if (x1 == x2) {
-			width = height * (double) photo -> nx / (double) photo -> ny;
-			x1DC -= width / 2, x2DC = x1DC + width;
-		} else if (y1 == y2) {
-			height = width * (double) photo -> ny / (double) photo -> nx;
-			y2DC -= height / 2, y1DC = y2DC + height;
+		try {
+			autoPhoto photo = Photo_readFromImageFile (& file);
+			if (x1 == x2 && y1 == y2) {
+				width = photo -> nx, x1DC -= width / 2, x2DC = x1DC + width;
+				height = photo -> ny, y2DC -= height / 2, y1DC = y2DC + height;
+			} else if (x1 == x2) {
+				width = height * (double) photo -> nx / (double) photo -> ny;
+				x1DC -= width / 2, x2DC = x1DC + width;
+			} else if (y1 == y2) {
+				height = width * (double) photo -> ny / (double) photo -> nx;
+				y2DC -= height / 2, y1DC = y2DC + height;
+			}
+			autoNUMmatrix <double_rgbt> z (1, photo -> ny, 1, photo -> nx);
+			for (long iy = 1; iy <= photo -> ny; iy ++) {
+				for (long ix = 1; ix <= photo -> nx; ix ++) {
+					z [iy] [ix]. red          = photo -> d_red          -> z [iy] [ix];
+					z [iy] [ix]. green        = photo -> d_green        -> z [iy] [ix];
+					z [iy] [ix]. blue         = photo -> d_blue         -> z [iy] [ix];
+					z [iy] [ix]. transparency = photo -> d_transparency -> z [iy] [ix];
+				}
+			}
+			_cellArrayOrImage (me, NULL, z.peek(), NULL,
+				1, photo -> nx, x1DC, x2DC, 1, photo -> ny, y1DC, y2DC,
+				0.0, 1.0,
+				//wdx (my d_x1WC), wdx (my d_x2WC), wdy (my d_y1WC), wdy (my d_y2WC),   // in case of clipping
+				LONG_MIN, LONG_MAX, LONG_MAX, LONG_MIN,   // in case of no clipping
+				true);
+		} catch (MelderError) {
+			Melder_clearError ();
 		}
-		photo -> f_paintImage (me, x1DC, x2DC, y2DC, y1DC);
-	} catch (MelderError) {
-		Melder_clearError ();
-	}
 	#elif win
 		if (my d_useGdiplus) {
 			structMelderFile file;
 			Melder_relativePathToFile (relativeFileName, & file);
-			Gdiplus::Bitmap *image = new Gdiplus::Bitmap (file. path);
-			Gdiplus::Graphics dcplus (my d_gdiGraphicsContext);
+			Gdiplus::Bitmap image (file. path);
 			if (x1 == x2 && y1 == y2) {
-				width = image -> GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
-				height = image -> GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
+				width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
+				height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
 			} else if (x1 == x2) {
-				width = height * (double) image -> GetWidth () / (double) image -> GetHeight ();
+				width = height * (double) image. GetWidth () / (double) image -> GetHeight ();
 				x1DC -= width / 2, x2DC = x1DC + width;
 			} else if (y1 == y2) {
-				height = width * (double) image -> GetHeight () / (double) image -> GetWidth ();
+				height = width * (double) image. GetHeight () / (double) image -> GetWidth ();
 				y2DC -= height / 2, y1DC = y2DC + height;
 			}
+			Gdiplus::Graphics dcplus (my d_gdiGraphicsContext);
 			Gdiplus::Rect rect (x1DC, y2DC, width, height);
-			dcplus. DrawImage (image, rect);
-			delete image;
+			dcplus. DrawImage (& image, rect);
 		}
 	#elif mac
 		structMelderFile file;

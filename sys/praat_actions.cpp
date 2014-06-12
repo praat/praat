@@ -56,15 +56,15 @@ static void fixSelectionSpecification (ClassInfo *class1, int *n1, ClassInfo *cl
 	 * Bubble-sort the input by class name.
 	 */
 	if (*class2 && wcscmp ((*class1) -> className, (*class2) -> className) > 0) {
-		ClassInfo helpClass = *class1; *class1 = *class2; *class2 = helpClass;
-		int helpN = *n1; *n1 = *n2; *n2 = helpN;
+		ClassInfo helpClass1 = *class1; *class1 = *class2; *class2 = helpClass1;
+		int helpN1 = *n1; *n1 = *n2; *n2 = helpN1;
 	}
 	if (*class3 && wcscmp ((*class2) -> className, (*class3) -> className) > 0) {
-		ClassInfo helpClass = *class2; *class2 = *class3; *class3 = helpClass;
-		int helpN = *n2; *n2 = *n3; *n3 = helpN;
+		ClassInfo helpClass2 = *class2; *class2 = *class3; *class3 = helpClass2;
+		int helpN2 = *n2; *n2 = *n3; *n3 = helpN2;
 		if (wcscmp ((*class1) -> className, (*class2) -> className) > 0) {
-			ClassInfo helpClass = *class1; *class1 = *class2; *class2 = helpClass;
-			int helpN = *n1; *n1 = *n2; *n2 = helpN;
+			ClassInfo helpClass1 = *class1; *class1 = *class2; *class2 = helpClass1;
+			int helpN1 = *n1; *n1 = *n2; *n2 = helpN1;
 		}
 	}
 }

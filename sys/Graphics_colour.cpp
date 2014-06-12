@@ -347,9 +347,9 @@ void Graphics_xorOn (Graphics graphics, Graphics_Colour colour) {
 		GraphicsScreen me = static_cast <GraphicsScreen> (graphics);
 		#if cairo
 			GdkColor colourXorWhite = { 0,
-				(uint16_t) (colour. red * 65535.0) ^ 0xFFFF,
-				(uint16_t) (colour. green * 65535.0) ^ 0xFFFF,
-				(uint16_t) (colour. blue * 65535.0) ^ 0xFFFF };
+				(uint16_t) ((uint16_t) (colour. red * 65535.0) ^ (uint16_t) 0xFFFF),
+				(uint16_t) ((uint16_t) (colour. green * 65535.0) ^ (uint16_t) 0xFFFF),
+				(uint16_t) ((uint16_t) (colour. blue * 65535.0) ^ (uint16_t) 0xFFFF) };
 			#if ALLOW_GDK_DRAWING
 				gdk_gc_set_rgb_fg_color (my d_gdkGraphicsContext, & colourXorWhite);
 				gdk_gc_set_function (my d_gdkGraphicsContext, GDK_XOR);

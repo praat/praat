@@ -1172,9 +1172,9 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 						int restore = SaveDC (my d_gdiGraphicsContext);
 						SetGraphicsMode (my d_gdiGraphicsContext, GM_ADVANCED);
 						double a = my textRotation * NUMpi / 180.0, cosa = cos (a), sina = sin (a);
-						XFORM rotate = { cosa, - sina, sina, cosa, 0, 0 };
+						XFORM rotate = { (float) cosa, (float) - sina, (float) sina, (float) cosa, 0, 0 };
 						ModifyWorldTransform (my d_gdiGraphicsContext, & rotate, MWT_RIGHTMULTIPLY);
-						XFORM translate = { 1, 0, 0, 1, xDC, yDC };
+						XFORM translate = { 1, 0, 0, 1, (float) xDC, (float) yDC };
 						ModifyWorldTransform (my d_gdiGraphicsContext, & translate, MWT_RIGHTMULTIPLY);
 						TextOutW (my d_gdiGraphicsContext, 0 /*xDC*/, 0 /*yDC*/, (const wchar_t *) codes16, nchars);
 						RestoreDC (my d_gdiGraphicsContext, restore);

@@ -1,6 +1,6 @@
 /* Sound_files.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma & David Weenink
+ * Copyright (C) 1992-2011,2012,2014 Paul Boersma & David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,23 +321,23 @@ void Sound_writeToKayFile (Sound me, MelderFile file) {
 
 		binputi4LE (floor (1 / my dx + 0.5), file -> filePointer);   // sampling frequency
 		binputi4LE (my nx, file -> filePointer);   // number of samples
-		int maximum = 0;
+		int maximumA = 0;
 		for (long i = 1; i <= my nx; i ++) {
 			long value = floor (my z [1] [i] * 32768 + 0.5);
-			if (value < - maximum) maximum = - value;
-			if (value > maximum) maximum = value;
+			if (value < - maximumA) maximumA = - value;
+			if (value > maximumA) maximumA = value;
 		}
-		binputi2LE (maximum, file -> filePointer);   // absolute maximum window A
+		binputi2LE (maximumA, file -> filePointer);   // absolute maximum window A
 		if (my ny == 1) {
 			binputi2LE (-1, file -> filePointer);
 		} else {
-			int maximum = 0;
+			int maximumB = 0;
 			for (long i = 1; i <= my nx; i ++) {
 				long value = floor (my z [2] [i] * 32768 + 0.5);
-				if (value < - maximum) maximum = - value;
-				if (value > maximum) maximum = value;
+				if (value < - maximumB) maximumB = - value;
+				if (value > maximumB) maximumB = value;
 			}
-			binputi2LE (maximum, file -> filePointer);   // absolute maximum window B
+			binputi2LE (maximumB, file -> filePointer);   // absolute maximum window B
 		}
 		fwrite ("SDA_", 1, 4, file -> filePointer);
 		binputi4LE (my nx * 2, file -> filePointer);   // chunk size

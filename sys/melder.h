@@ -34,7 +34,8 @@
 #include <stddef.h>
 #include <wchar.h>
 #ifdef __MINGW32__
-	#define swprintf  _snwprintf
+	#undef swprintf
+	#define swprintf  __mingw_snwprintf
 #endif
 #include <stdbool.h>
 #include <stdint.h>
@@ -75,7 +76,7 @@ typedef struct { double red, green, blue, transparency; } double_rgbt;
 
 /********** NUMBER TO STRING CONVERSION **********/
 
-/*
+/**
 	The following routines return a static string, chosen from a circularly used set of 11 buffers.
 	You can call at most 11 of them in one Melder_casual call, for instance.
 */
@@ -116,6 +117,7 @@ void Melder_writeToConsole (const wchar_t *message, bool useStderr);
 /* These routines also maintain a count of the total number of blocks allocated. */
 
 void Melder_alloc_init (void);   // to be called around program start-up
+void Melder_message_init (void);   // to be called around program start-up
 void * _Melder_malloc (unsigned long size);
 #define Melder_malloc(type,numberOfElements)  (type *) _Melder_malloc ((numberOfElements) * sizeof (type))
 void * _Melder_malloc_f (unsigned long size);
@@ -141,7 +143,7 @@ wchar_t * Melder_wcsExpandBackslashSequences (const wchar_t *string);
 wchar_t * Melder_wcsReduceBackslashSequences (const wchar_t *string);
 void Melder_wcsReduceBackslashSequences_inline (const wchar_t *string);
 
-/*
+/**
  * Text encodings.
  */
 void Melder_textEncoding_prefs (void);
@@ -522,7 +524,7 @@ void Melder_beep (void);
 extern int Melder_debug;
 
 /* The following trick uses Melder_debug only because it is the only plain variable known to exist at the moment. */
-#define Melder_offsetof(klas,member) (char *) & ((klas) & Melder_debug) -> member - (char *) & Melder_debug
+#define Melder_offsetof(klas,member) (int) ((char *) & ((klas) & Melder_debug) -> member - (char *) & Melder_debug)
 
 /********** ERROR **********/
 

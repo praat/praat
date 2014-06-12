@@ -600,7 +600,7 @@ void Pitch_difference (Pitch me, Pitch thee) {
 		double myf = my frame [i]. candidate [1]. frequency, thyf = thy frame [i]. candidate [1]. frequency;
 		int myUnvoiced = myf == 0 || myf > my ceiling;
 		int thyUnvoiced = thyf == 0 || thyf > thy ceiling;
-		double t = Sampled_indexToX (me, i);
+		double t = my f_indexToX (i);
 		if (myUnvoiced && ! thyUnvoiced) {
 			Melder_casual ("Frame %ld time %f: unvoiced to voiced.", i, t);
 			nuvtov ++;

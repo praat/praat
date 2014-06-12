@@ -187,7 +187,7 @@ GuiWindow GuiWindow_create (int x, int y, int width, int height, int minimumWidt
 		gtk_window_set_geometry_hints (my d_gtkWindow, GTK_WIDGET (my d_gtkWindow), & geometry, GDK_HINT_MIN_SIZE);
 		g_signal_connect (G_OBJECT (my d_widget), "size-allocate", G_CALLBACK (_GuiWindow_resizeCallback), me);
 	#elif cocoa
-		NSRect rect = { { x, y }, { width, height } };
+		NSRect rect = { { static_cast<CGFloat>(x), static_cast<CGFloat>(y) }, { static_cast<CGFloat>(width), static_cast<CGFloat>(height) } };
 		my d_cocoaWindow = [[GuiCocoaWindow alloc]
 			initWithContentRect: rect
 			styleMask: NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask

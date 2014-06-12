@@ -1,6 +1,6 @@
 /* praat_Sound_init.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,7 +74,7 @@ FORM (LongSound_getIndexFromTime, L"LongSound: Get sample index from time", L"So
 DO
 	LOOP {
 		iam (LongSound);
-		double index = Sampled_xToIndex (me, GET_REAL (L"Time"));
+		double index = my f_xToIndex (GET_REAL (L"Time"));
 		Melder_informationReal (index, NULL);
 	}
 END
@@ -99,7 +99,7 @@ FORM (LongSound_getTimeFromIndex, L"LongSound: Get time from sample index", L"So
 DO
 	LOOP {
 		iam (LongSound);
-		Melder_informationReal (Sampled_indexToX (me, GET_INTEGER (L"Sample index")), L"seconds");
+		Melder_informationReal (my f_indexToX (GET_INTEGER (L"Sample index")), L"seconds");
 	}
 END
 
@@ -973,7 +973,7 @@ FORM (Sound_getIndexFromTime, L"Get sample number from time", L"Get sample numbe
 DO
 	LOOP {
 		iam (Sound);
-		double realIndex = Sampled_xToIndex (me, GET_REAL (L"Time"));
+		double realIndex = my f_xToIndex (GET_REAL (L"Time"));
 		Melder_informationReal (realIndex, NULL);
 	}
 END
@@ -1172,7 +1172,7 @@ FORM (Sound_getTimeFromIndex, L"Get time from sample number", L"Get time from sa
 DO
 	LOOP {
 		iam (Sound);
-		double time = Sampled_indexToX (me, GET_INTEGER (L"Sample number"));
+		double time = my f_indexToX (GET_INTEGER (L"Sample number"));
 		Melder_informationReal (time, L"seconds");
 	}
 END

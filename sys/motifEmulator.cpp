@@ -2882,11 +2882,31 @@ void GuiInitialize (const char *name, unsigned int *argc, char **argv)
 				 * this is especially likely to happen if the path contains spaces,
 				 * which on Windows XP is very usual.
 				 */
-				wchar_t *s = Melder_peekUtf8ToWcs (argv [3]);
-				Melder_relativePathToFile (s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s, & file);
-				long l = wcslen (file. path);
-				if (l > 0 && file. path [l - 1] == '\"') file. path [l - 1] = '\0';
-				theOpenDocumentCallback (& file);
+				wchar_t *s = Melder_utf8ToWcs (argv [3]);
+				for (;;) {
+					bool endSeen = false;
+					while (*s == ' ' || *s == '\n') s ++;
+					if (*s == '\0') break;
+					wchar_t *path = s;
+					if (*s == '\"') {
+						path = ++ s;
+						while (*s != '\"' && *s != '\0') s ++;
+						if (*s == '\0') break;
+						Melder_assert (*s == '\"');
+						*s = '\0';
+					} else {
+						while (*s != ' ' && *s != '\n' && *s != '\0') s ++;
+						if (*s == ' ' || *s == '\n') {
+							*s = '\0';
+						} else {
+							endSeen = true;
+						}
+					}
+					swprintf (file. path, 500, L"%ls", path);
+					theOpenDocumentCallback (& file);
+					if (endSeen) break;
+					s ++;
+				}
 			}
 			exit (0);   // possible problem
 		}

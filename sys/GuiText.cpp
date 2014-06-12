@@ -1643,7 +1643,7 @@ void structGuiText :: f_setSelection (long first, long last) {
 		last += numberOfLeadingHighUnicodeValues + numberOfSelectedHighUnicodeValues;
 		Melder_free (text);
 		if (isTextControl (d_widget)) {
-			ControlEditTextSelectionRec rec = { first, last };
+			ControlEditTextSelectionRec rec = { (int16_t) first, (int16_t) last };
 			SetControlData (d_widget -> nat.control.handle, kControlEntireControl, kControlEditTextSelectionTag, sizeof (rec), & rec);
 		} else if (isMLTE (this)) {
 			TXNSetSelection (d_macMlteObject, first, last);

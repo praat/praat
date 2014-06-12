@@ -1,6 +1,6 @@
 /* PointProcess_and_Sound.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ Sound PointProcess_to_Sound_pulseTrain
 			long begin = mid - interpolationDepth, end = mid + interpolationDepth;
 			if (begin < 1) begin = 1;
 			if (end > thy nx) end = thy nx;
-			angle = NUMpi * (Sampled_indexToX (thee.peek(), begin) - t) / thy dx;
+			angle = NUMpi * (thy f_indexToX (begin) - t) / thy dx;
 			halfampsinangle = 0.5 * amplitude * sin (angle);
 			for (long j = begin; j <= end; j ++) {
 				if (fabs (angle) < 1e-6)

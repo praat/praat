@@ -2,7 +2,7 @@
 #define _Table_h_
 /* Table.h
  *
- * Copyright (C) 2002-2011,2012 Paul Boersma
+ * Copyright (C) 2002-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,9 +27,9 @@
 oo_CLASS_CREATE (TableRow, Data);
 oo_CLASS_CREATE (Table, Data);
 
-void Table_initWithColumnNames (I, long numberOfRows, const wchar_t *columnNames);
+void Table_initWithColumnNames (Table me, long numberOfRows, const wchar_t *columnNames);
 Table Table_createWithColumnNames (long numberOfRows, const wchar_t *columnNames);
-void Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns);
+void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfColumns);
 Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns);
 #define Table_create Table_createWithoutColumnNames
 

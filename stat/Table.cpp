@@ -121,8 +121,7 @@ static TableRow TableRow_create (long numberOfColumns) {
 	return me.transfer();
 }
 
-void Table_initWithoutColumnNames (I, long numberOfRows, long numberOfColumns) {
-	iam (Table);
+void Table_initWithoutColumnNames (Table me, long numberOfRows, long numberOfColumns) {
 	if (numberOfColumns < 1)
 		Melder_throw ("Cannot create table without columns.");
 	my numberOfColumns = numberOfColumns;
@@ -143,8 +142,7 @@ Table Table_createWithoutColumnNames (long numberOfRows, long numberOfColumns) {
 	}
 }
 
-void Table_initWithColumnNames (I, long numberOfRows, const wchar_t *columnNames) {
-	iam (Table);
+void Table_initWithColumnNames (Table me, long numberOfRows, const wchar_t *columnNames) {
 	Table_initWithoutColumnNames (me, numberOfRows, Melder_countTokens (columnNames));
 	long icol = 0;
 	for (wchar_t *columnName = Melder_firstToken (columnNames); columnName != NULL; columnName = Melder_nextToken ()) {

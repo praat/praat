@@ -2102,7 +2102,7 @@ FORM (Ltas_getBinNumberFromFrequency, L"Ltas: Get band from frequency", L"Ltas: 
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double binNumber = Sampled_xToIndex (me, GET_REAL (L"Frequency"));
+	double binNumber = my f_xToIndex (GET_REAL (L"Frequency"));
 	Melder_informationReal (binNumber, NULL);
 END
 
@@ -2116,7 +2116,7 @@ FORM (Ltas_getFrequencyFromBinNumber, L"Ltas: Get frequency from bin number", L"
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double frequency = Sampled_indexToX (me, GET_INTEGER (L"Bin number"));
+	double frequency = my f_indexToX (GET_INTEGER (L"Bin number"));
 	Melder_informationReal (frequency, L"hertz");
 END
 
@@ -3070,11 +3070,11 @@ FORM (Photo_create, L"Create Photo", L"Create Photo...")
 	POSITIVE (L"dy", L"1.0")
 	REAL (L"y1", L"1.0")
 	LABEL (L"", L"Red formula:")
-	TEXTFIELD (L"redFormula", L"x*y")
+	TEXTFIELD (L"redFormula", L"x*y/100")
 	LABEL (L"", L"Green formula:")
-	TEXTFIELD (L"greenFormula", L"x*y")
+	TEXTFIELD (L"greenFormula", L"x*y/1000")
 	LABEL (L"", L"Blue formula:")
-	TEXTFIELD (L"blueFormula", L"x*y")
+	TEXTFIELD (L"blueFormula", L"x*y/100")
 	OK
 DO
 	double xmin = GET_REAL (L"xmin"), xmax = GET_REAL (L"xmax");
@@ -3095,11 +3095,11 @@ FORM (Photo_createSimple, L"Create simple Photo", L"Create simple Photo...")
 	NATURAL (L"Number of rows", L"10")
 	NATURAL (L"Number of columns", L"10")
 	LABEL (L"", L"Red formula:")
-	TEXTFIELD (L"redFormula", L"x*y")
+	TEXTFIELD (L"redFormula", L"x*y/100")
 	LABEL (L"", L"Green formula:")
-	TEXTFIELD (L"greenFormula", L"x*y")
+	TEXTFIELD (L"greenFormula", L"x*y/1000")
 	LABEL (L"", L"Blue formula:")
-	TEXTFIELD (L"blueFormula", L"x*y")
+	TEXTFIELD (L"blueFormula", L"x*y/100")
 	OK
 DO
 	autoPhoto me = Photo_createSimple (GET_INTEGER (L"Number of rows"), GET_INTEGER (L"Number of columns"));
@@ -5353,7 +5353,7 @@ FORM (Spectrum_getBinFromFrequency, L"Spectrum: Get bin from frequency", 0)
 DO
 	LOOP {
 		iam (Spectrum);
-		double bin = Sampled_xToIndex (me, GET_REAL (L"Frequency"));
+		double bin = my f_xToIndex (GET_REAL (L"Frequency"));
 		Melder_informationReal (bin, NULL);
 	}
 END
@@ -5394,7 +5394,7 @@ FORM (Spectrum_getFrequencyFromBin, L"Spectrum: Get frequency from bin", 0)
 DO
 	LOOP {
 		iam (Spectrum);
-		double frequency = Sampled_indexToX (me, GET_INTEGER (L"Band number"));
+		double frequency = my f_indexToX (GET_INTEGER (L"Band number"));
 		Melder_informationReal (frequency, L"hertz");
 	}
 END
@@ -5952,7 +5952,7 @@ FORM (TimeFrameSampled_getFrameFromTime, L"Get frame number from time", L"Get fr
 DO
 	LOOP {
 		iam (Sampled);
-		double frame = Sampled_xToIndex (me, GET_REAL (L"Time"));
+		double frame = my f_xToIndex (GET_REAL (L"Time"));
 		Melder_informationReal (frame, NULL);
 	}
 END
@@ -5971,7 +5971,7 @@ FORM (TimeFrameSampled_getTimeFromFrame, L"Get time from frame number", L"Get ti
 DO
 	LOOP {
 		iam (Sampled);
-		double time = Sampled_indexToX (me, GET_INTEGER (L"Frame number"));
+		double time = my f_indexToX (GET_INTEGER (L"Frame number"));
 		Melder_informationReal (time, L"seconds");
 	}
 END
@@ -6777,10 +6777,12 @@ praat_addAction1 (classMatrix, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classPhoto, 0, L"Extract blue", 0, 1, DO_Photo_extractBlue);
 		praat_addAction1 (classPhoto, 0, L"Extract transparency", 0, 1, DO_Photo_extractTransparency);
 	praat_addAction1 (classPhoto, 1, L"Save as PNG file...", 0, 0, DO_Photo_saveAsPNG);
-	praat_addAction1 (classPhoto, 1, L"Save as TIFF file...", 0, 0, DO_Photo_saveAsTIFF);
-	praat_addAction1 (classPhoto, 1, L"Save as GIF file...", 0, 0, DO_Photo_saveAsGIF);
-	praat_addAction1 (classPhoto, 1, L"Save as Windows bitmap file...", 0, 0, DO_Photo_saveAsWindowsBitmapFile);
-	praat_addAction1 (classPhoto, 1, L"Save as lossy JPEG file...", 0, 0, DO_Photo_saveAsJPEG);
+	#if defined (macintosh) || defined (_WIN32)
+		praat_addAction1 (classPhoto, 1, L"Save as TIFF file...", 0, 0, DO_Photo_saveAsTIFF);
+		praat_addAction1 (classPhoto, 1, L"Save as GIF file...", 0, 0, DO_Photo_saveAsGIF);
+		praat_addAction1 (classPhoto, 1, L"Save as Windows bitmap file...", 0, 0, DO_Photo_saveAsWindowsBitmapFile);
+		praat_addAction1 (classPhoto, 1, L"Save as lossy JPEG file...", 0, 0, DO_Photo_saveAsJPEG);
+	#endif
 	#if defined (macintosh)
 		praat_addAction1 (classPhoto, 1, L"Save as JPEG-2000 file...", 0, 0, DO_Photo_saveAsJPEG2000);
 		praat_addAction1 (classPhoto, 1, L"Save as Apple icon file...", 0, 0, DO_Photo_saveAsAppleIconFile);

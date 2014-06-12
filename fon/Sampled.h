@@ -31,15 +31,11 @@ oo_CLASS_CREATE (Sampled, Function);
 /* The first sample point is at x1, the second at x1 + dx, */
 /* and the last at x1 + (nx - 1) * dx. */
 
-double Sampled_indexToX (Sampled me, long i);
-
-double Sampled_xToIndex (Sampled me, double x);
-
-long Sampled_xToLowIndex (Sampled me, double x);
-
-long Sampled_xToHighIndex (Sampled me, double x);
-
-long Sampled_xToNearestIndex (Sampled me, double x);
+static inline double Sampled_indexToX (Sampled me, long i) { return my f_indexToX (i); }
+static inline double Sampled_xToIndex (Sampled me, double x) { return my f_xToIndex (x); }
+static inline long Sampled_xToLowIndex (Sampled me, double x) { return my f_xToLowIndex (x); }
+static inline long Sampled_xToHighIndex (Sampled me, double x) { return my f_xToHighIndex (x); }
+static inline long Sampled_xToNearestIndex (Sampled me, double x) { return my f_xToNearestIndex (x); }
 
 long Sampled_getWindowSamples (Sampled me, double xmin, double xmax, long *ixmin, long *ixmax);
 

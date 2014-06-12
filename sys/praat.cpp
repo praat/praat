@@ -928,10 +928,12 @@ void praat_dontUsePictureWindow (void) { praatP.dontUsePictureWindow = TRUE; }
 	extern "C" wchar_t *sendpraatW (void *display, const wchar_t *programName, long timeOut, const wchar_t *text);
 	static void cb_openDocument (MelderFile file) {
 		wchar_t text [500];
-		wchar_t *s = file -> path;
-		swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
-		long l = wcslen (text);
-		if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
+		/*
+		 * The user dropped a file on the Praat icon, while Praat is already running.
+		 * Windows may have enclosed the path between quotes;
+		 * this is especially likely to happen for a path that contains spaces.
+		 */
+		swprintf (text, 500, L"Read from file... %ls", file -> path);
 		sendpraatW (NULL, Melder_peekUtf8ToWcs (praatP.title), 0, text);
 	}
 #elif cocoa
@@ -1067,6 +1069,7 @@ void praat_init (const char *title, unsigned int argc, char **argv) {
 	NUMmachar ();
 	NUMinit ();
 	Melder_alloc_init ();
+	Melder_message_init ();
 	/*
 		Remember the current directory. Only useful for scripts run from batch.
 	*/
@@ -1611,24 +1614,39 @@ void praat_run (void) {
 				if (theCurrentPraatApplication -> batchName.string [0] != '\0') {
 					wchar_t text [500];
 					/*
-					 * The user dropped a file on the Praat icon, while Praat was not running yet.
-					 * Windows may have enclosed the path between quotes;
-					 * this is especially likely to happen if the path contains spaces (which is usual).
-					 * And sometimes, Windows prepends a space before the quote.
-					 * Peel all that off.
-					 *
-					 * BUG: this only works now with single files; it should work with multiple files as well.
+					 * The user dropped one or more files on the Praat icon, while Praat was not running yet.
+					 * Windows may have enclosed each path between quotes;
+					 * this is especially likely to happen for paths that contain spaces (which is usual).
 					 */
+
 					wchar_t *s = theCurrentPraatApplication -> batchName.string;
-					swprintf (text, 500, L"Read from file... %ls", s [0] == ' ' && s [1] == '\"' ? s + 2 : s [0] == '\"' ? s + 1 : s);
-					long l = wcslen (text);
-					if (l > 0 && text [l - 1] == '\"') text [l - 1] = '\0';
-					//Melder_error3 (L"command <<", text, L">>");
-					//Melder_flushError (NULL);
-					try {
-						praat_executeScriptFromText (text);
-					} catch (MelderError) {
-						Melder_flushError (NULL);
+					for (;;) {
+						bool endSeen = false;
+						while (*s == ' ' || *s == '\n') s ++;
+						if (*s == '\0') break;
+						wchar_t *path = s;
+						if (*s == '\"') {
+							path = ++ s;
+							while (*s != '\"' && *s != '\0') s ++;
+							if (*s == '\0') break;
+							Melder_assert (*s == '\"');
+							*s = '\0';
+						} else {
+							while (*s != ' ' && *s != '\n' && *s != '\0') s ++;
+							if (*s == ' ' || *s == '\n') {
+								*s = '\0';
+							} else {
+								endSeen = true;
+							}
+						}
+						swprintf (text, 500, L"Read from file... %ls", path);
+						try {
+							praat_executeScriptFromText (text);
+						} catch (MelderError) {
+							Melder_flushError (NULL);
+						}
+						if (endSeen) break;
+						s ++;
 					}
 				}
 			#endif

@@ -475,7 +475,7 @@ static struct structLongchar_Info Longchar_database [] = {
 { 'd', '^', 2, { "/dhooktop",       500, 0,   523, 578,  500, 0,    500, 0,   0,   0   }, 235, 235, 235, 235, UNICODE_LATIN_SMALL_LETTER_D_WITH_HOOK },
 { 'e', '-', 2, { "/erev",           444, 0,   462, 462,  444, 0,    444, 0,   0,   0   }, 251, 130, 130, 251, UNICODE_LATIN_SMALL_LETTER_REVERSED_E }, // 1993 addition
 { 's', 'w', 2, { "/schwa",          444, 0,   462, 462,  444, 0,    444, 0,   0,   0   }, 171, 171, 171, 171, UNICODE_LATIN_SMALL_LETTER_SCHWA },
-{ 's', 'r', 2, { "/schwarighthook", 600, 0, 600.0,600.0, 600, 0,    600, 0,   0,   0   }, 212,   0,   0, 212, UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK }, // Am. bird
+{ 's', 'r', 2, { "/schwarighthook", 600, 0,   600, 600,  600, 0,    600, 0,   0,   0   }, 212,   0,   0, 212, UNICODE_LATIN_SMALL_LETTER_SCHWA_WITH_HOOK }, // Am. bird
 { 'e', 'f', 2, { "/epsilonphonetic",444, 0,   441, 471,  444, 0,    444, 0,   0,   0   },  69,  69,  69,  69, UNICODE_LATIN_SMALL_LETTER_OPEN_E },
 { 'e', 'r', 2, { "/epsilonrev",     444, 0,   441, 471,  444, 0,    444, 0,   0,   0   }, 206, 206, 206, 206, UNICODE_LATIN_SMALL_LETTER_REVERSED_OPEN_E },
 { 'k', 'b', 2, { "/kidneybean",     500, 0,   471, 514,  500, 0,    500, 0,   0,   0   }, 185, 207, 207, 185, UNICODE_LATIN_SMALL_LETTER_CLOSED_REVERSED_OPEN_E }, // 1993 addition, 1996 correction

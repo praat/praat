@@ -124,7 +124,7 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 	for (long itrack = 1; itrack <= ntrack; itrack ++) {
 		for (long iframe = itmin; iframe < itmax; iframe ++) {
 			Formant_Frame curFrame = & my d_frames [iframe], nextFrame = & my d_frames [iframe + 1];
-			double x1 = Sampled_indexToX (me, iframe), x2 = Sampled_indexToX (me, iframe + 1);
+			double x1 = my f_indexToX (iframe), x2 = my f_indexToX (iframe + 1);
 			double f1 = curFrame -> formant [itrack]. frequency;
 			double f2 = nextFrame -> formant [itrack]. frequency;
 			if (NUMdefined (x1) && NUMdefined (f1) && NUMdefined (x2) && NUMdefined (f2))
@@ -162,7 +162,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 
 	for (long iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
-		double x = Sampled_indexToX (me, iframe);
+		double x = my f_indexToX (iframe);
 		if (frame -> intensity < minimumIntensity) continue;
 		for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 			double frequency = frame -> formant [iformant]. frequency;
@@ -404,7 +404,7 @@ static double getLocalCost (long iframe, long icand, int itrack, void *closure) 
 	if (icand > frame -> nFormants) return 1e30;
 	candidate = & frame -> formant [icand];
 	/*if (candidate -> frequency <= 0.0) candidate -> frequency = 0.001;
-		/*Melder_fatal ("Weird formant frequency %ls Hz.", Melder_double (candidate -> frequency))*/;
+		Melder_fatal ("Weird formant frequency %ls Hz.", Melder_double (candidate -> frequency))*/;
 	Melder_assert (candidate -> bandwidth > 0.0);
 	Melder_assert (itrack > 0 && itrack <= 5);
 	return my dfCost * fabs (candidate -> frequency - my refF [itrack]) +

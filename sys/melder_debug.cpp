@@ -1,6 +1,6 @@
 /* melder_debug.cpp
  *
- * Copyright (C) 2000-2012 Paul Boersma
+ * Copyright (C) 2000-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include "melder.h"
+#if gtk
+	#include "GuiP.h"
+#endif
 #include <time.h>
-#include "GuiP.h"
 #include "praat_version.h"
 
 int Melder_debug = 0;

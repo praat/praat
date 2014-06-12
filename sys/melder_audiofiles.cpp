@@ -61,6 +61,7 @@
 #define WAVE_FORMAT_ALAW  0x0006
 #define WAVE_FORMAT_MULAW  0x0007
 #define WAVE_FORMAT_DVI_ADPCM  0x0011
+#define WAVE_FORMAT_EXTENSIBLE 0xFFFE
 
 void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long sampleRate, long numberOfSamples, int numberOfChannels, int numberOfBitsPerSamplePoint) {
 	try {
@@ -134,22 +135,35 @@ void MelderFile_writeAudioFileHeader (MelderFile file, int audioFileType, long s
 			} break;
 			case Melder_WAV: {
 				try {
+					bool needExtensibleFormat =
+						numberOfBitsPerSamplePoint > 16 ||
+						numberOfChannels > 2 ||
+						numberOfBitsPerSamplePoint != numberOfBytesPerSamplePoint * 8;
+					const int formatSize = needExtensibleFormat ? 40 : 16;
 					long dataSize = numberOfSamples * numberOfBytesPerSamplePoint * numberOfChannels;
 
 					/* RIFF Chunk: contains all other chunks. */
 					if (fwrite ("RIFF", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the RIFF statement.");
-					binputi4LE (4 + (12 + 16) + (4 + dataSize), f);
+					binputi4LE (4 + (12 + formatSize) + (4 + dataSize), f);
 					if (fwrite ("WAVE", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the WAV file type.");
 
-					/* Format Chunk: 8 + 16 bytes. */
+					/* Format Chunk: if 16-bits audio, then 8 + 16 bytes; else 8 + 40 bytes. */
 					if (fwrite ("fmt ", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the FMT statement.");
-					binputi4LE (16, f);
-					binputi2LE (WAVE_FORMAT_PCM, f);
+					binputi4LE (formatSize, f);
+					binputi2LE (needExtensibleFormat ? WAVE_FORMAT_EXTENSIBLE : WAVE_FORMAT_PCM, f);
 					binputi2LE (numberOfChannels, f);
 					binputi4LE (sampleRate, f);   // number of samples per second
 					binputi4LE (sampleRate * numberOfBytesPerSamplePoint * numberOfChannels, f);   // average number of bytes per second
 					binputi2LE (numberOfBytesPerSamplePoint * numberOfChannels, f);   // block alignment
-					binputi2LE (numberOfBitsPerSamplePoint, f);
+					binputi2LE (numberOfBytesPerSamplePoint * 8, f);   // padded bits per sample
+					if (needExtensibleFormat) {
+						binputi2LE (22, f);   // extensionSize
+						binputi2LE (numberOfBitsPerSamplePoint, f);   // valid bits per sample
+						binputi4LE (0, f);   // speaker position mask
+						binputi2LE (WAVE_FORMAT_PCM, f);
+						if (fwrite ("\x00\x00\x00\x00\x10\x00\x80\x00\x00\xAA\x00\x38\x9B\x71",
+							1, 14, f) != 14) Melder_throw ("Error in file while trying to write the subformat.");
+					}
 
 					/* Data Chunk: 8 bytes + samples. */
 					if (fwrite ("data", 1, 4, f) != 4) Melder_throw ("Error in file while trying to write the DATA statement.");
@@ -440,7 +454,7 @@ static void Melder_checkAiffFile (FILE *f, int *numberOfChannels, int *encoding,
 static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 	double *sampleRate, long *startOfData, long *numberOfSamples)
 {
-	char data [8], chunkID [4];
+	char data [14], chunkID [4];
 	bool formatChunkPresent = false, dataChunkPresent = false;
 	int numberOfBitsPerSamplePoint = -1;
 	long dataChunkSize = -1;
@@ -464,7 +478,7 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 			/*
 			 * Found a Format Chunk.
 			 */
-			int winEncoding = bingeti2LE (f);
+			uint16_t winEncoding = bingetu2LE (f);
 			formatChunkPresent = true;			
 			*numberOfChannels = bingeti2LE (f);
 			if (*numberOfChannels < 1) Melder_throw ("Too few sound channels (", *numberOfChannels, ").");
@@ -501,8 +515,43 @@ static void Melder_checkWavFile (FILE *f, int *numberOfChannels, int *encoding,
 						"Please use uncompressed audio files. If you must open this file,\n"
 						"please use an audio converter program to convert it first to normal (PCM) WAV format\n"
 						"(Praat may have difficulty analysing the poor recording, though).");
+				case WAVE_FORMAT_EXTENSIBLE: {
+					if (chunkSize < 40)
+						Melder_throw ("Not enough format data in extensible WAV format");
+					(void) bingeti2LE (f);   // extensionSize
+					(void) bingeti2LE (f);   // validBitsPerSample
+					(void) bingeti4LE (f);   // channelMask
+					uint16_t winEncoding2 = bingetu2LE (f);   // override
+					switch (winEncoding2) {
+						case WAVE_FORMAT_PCM:
+							*encoding =
+								numberOfBitsPerSamplePoint > 24 ? Melder_LINEAR_32_LITTLE_ENDIAN :
+								numberOfBitsPerSamplePoint > 16 ? Melder_LINEAR_24_LITTLE_ENDIAN :
+								numberOfBitsPerSamplePoint > 8 ? Melder_LINEAR_16_LITTLE_ENDIAN :
+								Melder_LINEAR_8_UNSIGNED;
+							break;
+						case WAVE_FORMAT_IEEE_FLOAT:
+							*encoding = Melder_IEEE_FLOAT_32_LITTLE_ENDIAN;
+							break;
+						case WAVE_FORMAT_ALAW:
+							*encoding = Melder_ALAW;
+							break;
+						case WAVE_FORMAT_MULAW:
+							*encoding = Melder_MULAW;
+							break;
+						case WAVE_FORMAT_DVI_ADPCM:
+							Melder_throw ("Cannot read lossy compressed audio files (this one is DVI ADPCM).\n"
+								"Please use uncompressed audio files. If you must open this file,\n"
+								"please use an audio converter program to convert it first to normal (PCM) WAV format\n"
+								"(Praat may have difficulty analysing the poor recording, though).");
+						default:
+							Melder_throw ("Unsupported Windows audio encoding ", winEncoding2, ".");
+					}
+					if (fread (data, 1, 14, f) < 14)   Melder_throw ("File too small: no SubFormat data.");
+					continue;   // next chunk
+				}
 				default:
-					Melder_throw ("Unsupported Windows audio encoding %d.", winEncoding);
+					Melder_throw ("Unsupported Windows audio encoding ", winEncoding, ".");
 			}
 			if (chunkSize & 1) chunkSize ++;
 			for (long i = 17; i <= chunkSize; i ++)

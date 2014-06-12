@@ -219,28 +219,28 @@ void structEditor :: v_destroy () {
 	 * The following command must be performed before the shell is destroyed.
 	 * Otherwise, we would be forgetting dangling command dialogs here.
 	 */
-	forget (menus);
+	forget (our menus);
 	broadcastDestruction ();
-	if (d_windowForm) {
+	if (our d_windowForm) {
 		#if gtk
-			if (d_windowForm -> d_gtkWindow) {
-				Melder_assert (GTK_IS_WIDGET (d_windowForm -> d_gtkWindow));
-				gtk_widget_destroy (GTK_WIDGET (d_windowForm -> d_gtkWindow));
+			if (our d_windowForm -> d_gtkWindow) {
+				Melder_assert (GTK_IS_WIDGET (our d_windowForm -> d_gtkWindow));
+				gtk_widget_destroy (GTK_WIDGET (our d_windowForm -> d_gtkWindow));
 			}
 		#elif cocoa
-			if (d_windowForm -> d_cocoaWindow) {
-				NSWindow *cocoaWindow = d_windowForm -> d_cocoaWindow;
+			if (our d_windowForm -> d_cocoaWindow) {
+				NSWindow *cocoaWindow = our d_windowForm -> d_cocoaWindow;
 				//d_windowForm -> d_cocoaWindow = NULL;
 				[cocoaWindow close];
 			}
 		#elif motif
-			if (d_windowForm -> d_xmShell) {
-				XtDestroyWidget (d_windowForm -> d_xmShell);
+			if (our d_windowForm -> d_xmShell) {
+				XtDestroyWidget (our d_windowForm -> d_xmShell);
 			}
 		#endif
 	}
-	forget (previousData);
-	if (d_ownData) forget (data);
+	forget (our previousData);
+	if (our d_ownData) forget (our data);
 	Editor_Parent :: v_destroy ();
 }
 

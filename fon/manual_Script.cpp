@@ -3242,20 +3242,22 @@ LIST_ITEM (L"@@Scripting 7.1. Scripting an editor from a shell script@ (editor/e
 LIST_ITEM (L"@@Scripting 7.2. Scripting an editor from within@")
 MAN_END
 
-MAN_BEGIN (L"Scripting 7.1. Scripting an editor from a shell script", L"ppgb", 20140113)
+MAN_BEGIN (L"Scripting 7.1. Scripting an editor from a shell script", L"ppgb", 20140526)
 NORMAL (L"From a Praat shell script, you can switch to an editor and back again:")
 CODE (L"sound\\$  = \"hallo\"")
 CODE (L"start = 0.3")
 CODE (L"finish = 0.7")
-CODE (L"Read from file: sound\\$  + \".aifc\"")
+CODE (L"sound = Read from file: sound\\$  + \".aifc\"")
 CODE (L"View & Edit")
-CODE (L"#editor: \"Sound \" + sound\\$ ")
+CODE (L"#editor: sound")
 	CODE1 (L"Zoom: start, finish")
 CODE (L"#endeditor")
 CODE (L"Play")
 NORMAL (L"This script reads a sound file from disk, pops up an editor for the resulting object, "
 	"makes this editor zoom in on the part between 0.3 and 0.7 seconds, "
 	"and returns to the Praat shell to play the entire sound.")
+NORMAL (L"After #editor you can either give the unique id of the object, as above, or its name:")
+CODE (L"#editor: \"Sound \" + sound\\$ ")
 MAN_END
 
 MAN_BEGIN (L"Scripting 7.2. Scripting an editor from within", L"ppgb", 20140113)

@@ -1,5 +1,5 @@
 #ifndef _DataEditor_h_
-#define _DataEditor_h
+#define _DataEditor_h_
 /* DataEditor.h
  *
  * Copyright (C) 1995-2011,2012 Paul Boersma

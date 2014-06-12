@@ -102,11 +102,10 @@ static void gui_drawingarea_cb_key (I, GuiDrawingAreaKeyEvent event) {
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (DemoEditor);
 	if (my graphics == NULL) return;   // Could be the case in the very beginning.
-	int marginWidth = 0, marginHeight = 0;
 	trace ("%d %d", event -> width, event -> height);
-	Graphics_setWsViewport (my graphics, marginWidth, event -> width - marginWidth, marginHeight, event -> height - marginHeight);
+	Graphics_setWsViewport (my graphics, 0, event -> width, 0, event -> height);
 	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
-	Graphics_setViewport (my graphics, 0, 100, 0, 100);
+	//Graphics_setViewport (my graphics, 0, 100, 0, 100);
 	Graphics_updateWs (my graphics);
 }
 
@@ -123,14 +122,10 @@ void DemoEditor_init (DemoEditor me) {
 	Graphics_fillRectangle (my graphics, 0, 1, 0, 1);
 	Graphics_setColour (my graphics, Graphics_BLACK);
 	Graphics_startRecording (my graphics);
-	//Graphics_setViewport (my graphics, 0, 100, 0, 100);
-	//Graphics_setWindow (my graphics, 0, 100, 0, 100);
-	//Graphics_line (my graphics, 0, 100, 100, 0);
-
-struct structGuiDrawingAreaResizeEvent event = { my drawingArea, 0 };
-event. width  = my drawingArea -> f_getWidth  ();
-event. height = my drawingArea -> f_getHeight ();
-gui_drawingarea_cb_resize (me, & event);
+	Graphics_setWsViewport (my graphics, 0, my drawingArea -> f_getWidth (), 0, my drawingArea -> f_getHeight ());
+	Graphics_setWsWindow (my graphics, 0, 100, 0, 100);
+	Graphics_setViewport (my graphics, 0, 100, 0, 100);
+	Graphics_updateWs (my graphics);
 }
 
 DemoEditor DemoEditor_create () {
@@ -272,9 +267,13 @@ double Demo_x (void) {
 		Melder_throw ("You cannot work with the Demo window while it is waiting for input. "
 			"Please click or type into the Demo window or close it.");
 	}
+	trace ("NDC before: %f %f", theDemoEditor -> graphics -> d_x1NDC, theDemoEditor -> graphics -> d_x2NDC);
 	Graphics_setInner (theDemoEditor -> graphics);
+	trace ("NDC after: %f %f", theDemoEditor -> graphics -> d_x1NDC, theDemoEditor -> graphics -> d_x2NDC);
 	double xWC, yWC;
+	trace ("DC: x %ld, y %ld", theDemoEditor -> x, theDemoEditor -> y);
 	Graphics_DCtoWC (theDemoEditor -> graphics, theDemoEditor -> x, theDemoEditor -> y, & xWC, & yWC);
+	trace ("WC: x %f, y %f", xWC, yWC);
 	Graphics_unsetInner (theDemoEditor -> graphics);
 	return xWC;
 }

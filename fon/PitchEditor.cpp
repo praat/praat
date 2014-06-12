@@ -1,6 +1,6 @@
 /* PitchEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -226,7 +226,7 @@ void structPitchEditor :: v_draw () {
 
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
-			double t = Sampled_indexToX (pitch, it);
+			double t = pitch -> f_indexToX (it);
 			double f = frame -> candidate [1]. frequency;
 			if (f > 0.0 && f < pitch -> ceiling) {
 				Graphics_setColour (d_graphics, Graphics_MAGENTA);
@@ -259,7 +259,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_setTextAlignment (d_graphics, Graphics_CENTRE, Graphics_HALF);
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
-			double t = Sampled_indexToX (pitch, it);
+			double t = pitch -> f_indexToX (it);
 			int strength = (int) floor (10 * frame -> intensity + 0.5);   // map 0.0-1.0 to 0-9
 			if (strength > 9) strength = 9;
 			Graphics_text1 (d_graphics, t, 0.5, Melder_integer (strength));
@@ -284,7 +284,7 @@ void structPitchEditor :: v_draw () {
 		Graphics_text (d_graphics, d_endWindow, 0.5, L"Unv");
 		for (it = it1; it <= it2; it ++) {
 			Pitch_Frame frame = & pitch -> frame [it];
-			double t = Sampled_indexToX (pitch, it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
+			double t = pitch -> f_indexToX (it), tleft = t - 0.5 * pitch -> dx, tright = t + 0.5 * pitch -> dx;
 			double f = frame -> candidate [1]. frequency;
 			if ((f > 0.0 && f < pitch -> ceiling) || tright <= d_startWindow || tleft >= d_endWindow) continue;
 			if (tleft < d_startWindow) tleft = d_startWindow;
@@ -315,7 +315,7 @@ int structPitchEditor :: v_click (double xWC, double yWC, bool dummy) {
 	if (ibestFrame > pitch -> nx) ibestFrame = pitch -> nx;
 	bestFrame = & pitch -> frame [ibestFrame];
 
-	tmid = Sampled_indexToX (pitch, ibestFrame);
+	tmid = pitch -> f_indexToX (ibestFrame);
 	for (cand = 1; cand <= bestFrame -> nCandidates; cand ++) {
 		double df = frequency - bestFrame -> candidate [cand]. frequency;
 		if (fabs (df) < minimumDf) {

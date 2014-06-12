@@ -1,6 +1,6 @@
 /* SampledXY_def.h
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,8 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 		// functions:
 			void f_init (double xmin, double xmax, long nx, double dx, double x1,
 			             double ymin, double ymax, long ny, double dy, double y1);
-			double f_indexToY (long index) { return y1 + (index - 1) * dy; }
-			double f_yToIndex (double y) { return (y - y1) / dy + 1; }
+			double f_indexToY (double index) { return y1 + (index - 1.0) * dy; }
+			double f_yToIndex (double y) { return (y - y1) / dy + 1.0; }
 			long f_yToLowIndex     (double y) { return (long) floor (f_yToIndex (y)); }
 			long f_yToHighIndex    (double y) { return (long) ceil  (f_yToIndex (y)); }
 			long f_yToNearestIndex (double y) { return (long) round (f_yToIndex (y)); }

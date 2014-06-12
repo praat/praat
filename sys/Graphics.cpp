@@ -66,8 +66,7 @@ static void widgetToWindowCoordinates (I) {
 	#endif
 }
 
-static void computeTrafo (I) {
-	iam (Graphics);
+static void computeTrafo (Graphics me) {
 	double worldScaleX, worldScaleY, workScaleX, workScaleY;
 	worldScaleX = (my d_x2NDC - my d_x1NDC) / (my d_x2WC - my d_x1WC);
 	worldScaleY = (my d_y2NDC - my d_y1NDC) / (my d_y2WC - my d_y1WC);
@@ -226,6 +225,7 @@ void Graphics_WCtoDC (Graphics me, double xWC, double yWC, long *xDC, long *yDC)
 /***** OUTPUT PRIMITIVES, RECORDABLE *****/
 
 void Graphics_setViewport (Graphics me, double x1NDC, double x2NDC, double y1NDC, double y2NDC) {
+	trace ("enter %f %f %f %f", x1NDC, x2NDC, y1NDC, y2NDC);
 	my d_x1NDC = x1NDC;
 	my d_x2NDC = x2NDC;
 	my d_y1NDC = y1NDC;
@@ -253,6 +253,7 @@ void Graphics_setInner (Graphics me) {
 	my d_x2NDC = (1 - dx) * my outerViewport.x2NDC + dx * my outerViewport.x1NDC;
 	my d_y1NDC = (1 - dy) * my outerViewport.y1NDC + dy * my outerViewport.y2NDC;
 	my d_y2NDC = (1 - dy) * my outerViewport.y2NDC + dy * my outerViewport.y1NDC;
+	trace ("done %f %f %f %f", my d_x1NDC, my d_x2NDC, my d_y1NDC, my d_y2NDC);
 	computeTrafo (me);
 	if (my recording) { op (SET_INNER, 0); }
 }
@@ -262,6 +263,7 @@ void Graphics_unsetInner (Graphics me) {
 	my d_x2NDC = my outerViewport.x2NDC;
 	my d_y1NDC = my outerViewport.y1NDC;
 	my d_y2NDC = my outerViewport.y2NDC;
+	trace ("done %f %f %f %f", my d_x1NDC, my d_x2NDC, my d_y1NDC, my d_y2NDC);
 	computeTrafo (me);
 	if (my recording)
 		{ op (UNSET_INNER, 0); }
@@ -296,6 +298,7 @@ void Graphics_inqWindow (Graphics me, double *x1WC, double *x2WC, double *y1WC, 
 Graphics_Viewport Graphics_insetViewport
 	(Graphics me, double x1rel, double x2rel, double y1rel, double y2rel)
 {
+	trace ("enter");
 	Graphics_Viewport previous;
 	previous.x1NDC = my d_x1NDC;
 	previous.x2NDC = my d_x2NDC;
@@ -310,6 +313,7 @@ Graphics_Viewport Graphics_insetViewport
 }
 
 void Graphics_resetViewport (Graphics me, Graphics_Viewport viewport) {
+	trace ("enter");
 	Graphics_setViewport (me, viewport.x1NDC, viewport.x2NDC, viewport.y1NDC, viewport.y2NDC);
 }
 

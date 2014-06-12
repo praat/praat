@@ -1,6 +1,6 @@
 /* Spectrum_and_Spectrogram.cpp
  *
- * Copyright (C) 1992-2011 David Weenink & Paul Boersma
+ * Copyright (C) 1992-2011,2014 David Weenink & Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ Spectrum Spectrogram_to_Spectrum (I, double tim) {
 		thy xmax = my ymax;
 		thy x1 = my y1;   // centre of first band, instead of 0 (makes it unFFTable)
 		thy dx = my dy;   // frequency step
-		long itime = Sampled_xToIndex (me, tim);
+		long itime = my f_xToIndex (tim);
 		if (itime < 1 ) itime = 1;
 		if (itime > my nx) itime = my nx;
 		for (long ifreq = 1; ifreq <= my ny; ifreq ++) {

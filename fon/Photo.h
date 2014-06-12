@@ -2,7 +2,7 @@
 #define _Photo_h_
 /* Photo.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,9 @@
 #include "Photo_def.h"
 oo_CLASS_CREATE (Photo, SampledXY);
 
+void Photo_init (Photo me,
+	double xmin, double xmax, long nx, double dx, double x1,
+	double ymin, double ymax, long ny, double dy, double y1);
 
 Photo Photo_create
 	(double xmin, double xmax, long nx, double dx, double x1,

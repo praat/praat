@@ -71,8 +71,8 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		}
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
 		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			double midTime = Sampled_indexToX (thee.peek(), iframe);
-			long midSample = Sampled_xToNearestIndex (me, midTime);
+			double midTime = thy f_indexToX (iframe);
+			long midSample = my f_xToNearestIndex (midTime);
 			long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
 			double sumxw = 0.0, sumw = 0.0, intensity;
 			if (leftSample < 1) leftSample = 1;

@@ -1,6 +1,6 @@
 /* Vector.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,14 +118,14 @@ double Vector_getValueAtX (Vector me, double x, long ilevel, int interpolation) 
 	if (x <  leftEdge || x > rightEdge) return NUMundefined;
 	if (ilevel > Vector_CHANNEL_AVERAGE) {
 		Melder_assert (ilevel <= my ny);
-		return NUM_interpolate_sinc (my z [ilevel], my nx, Sampled_xToIndex (me, x),
+		return NUM_interpolate_sinc (my z [ilevel], my nx, my f_xToIndex (x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
 	}
 	double sum = 0.0;
 	for (long channel = 1; channel <= my ny; channel ++) {
-		sum += NUM_interpolate_sinc (my z [channel], my nx, Sampled_xToIndex (me, x),
+		sum += NUM_interpolate_sinc (my z [channel], my nx, my f_xToIndex (x),
 			interpolation == Vector_VALUE_INTERPOLATION_SINC70 ? NUM_VALUE_INTERPOLATE_SINC70 :
 			interpolation == Vector_VALUE_INTERPOLATION_SINC700 ? NUM_VALUE_INTERPOLATE_SINC700 :
 			interpolation);
@@ -403,7 +403,7 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 	Graphics_setWindow (g, xreversed ? *pxmax : *pxmin, xreversed ? *pxmin : *pxmax, yreversed ? *pymax : *pymin, yreversed ? *pymin : *pymax);
 	if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
-			double x = Sampled_indexToX (me, ix);
+			double x = my f_indexToX (ix);
 			double y = my z [1] [ix];
 			double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
 			if (y > *pymax) y = *pymax;
@@ -417,12 +417,12 @@ void Vector_draw (Vector me, Graphics g, double *pxmin, double *pxmax, double *p
 		}
 	} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
-			double x = Sampled_indexToX (me, ix);
+			double x = my f_indexToX (ix);
 			Graphics_line (g, x, 0, x, my z [1] [ix]);
 		}
 	} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
 		for (ix = ixmin; ix <= ixmax; ix ++) {
-			double x = Sampled_indexToX (me, ix);
+			double x = my f_indexToX (ix);
 			Graphics_speckle (g, x, my z [1] [ix]);
 		}
 	} else {

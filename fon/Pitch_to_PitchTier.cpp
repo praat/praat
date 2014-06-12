@@ -36,7 +36,7 @@ PitchTier Pitch_to_PitchTier (Pitch me) {
 			 * Count only voiced frames.
 			 */
 			if (frequency > 0.0 && frequency < my ceiling) {
-				double time = Sampled_indexToX (me, i);
+				double time = my f_indexToX (i);
 				RealTier_addPoint (thee.peek(), time, frequency);
 			}
 		}
@@ -68,7 +68,7 @@ static void Pitch_line (Pitch me, Graphics g, double tmin, double fleft, double 
 		} else if (nonPeriodicLineType != 2) {
 			Graphics_setLineWidth (g, 2 * lineWidth);
 		}
-		tleft = Sampled_indexToX (me, i) - 0.5 * my dx, tright = tleft + my dx;
+		tleft = my f_indexToX (i) - 0.5 * my dx, tright = tleft + my dx;
 		if (tleft < tmin) tleft = tmin;
 		if (tright > tmax) tright = tmax;
 		Graphics_line (g, tleft, fleft + (tleft - tmin) * slope,
@@ -131,7 +131,7 @@ Pitch Pitch_PitchTier_to_Pitch (Pitch me, PitchTier tier) {
 			Pitch_Frame frame = & thy frame [iframe];
 			Pitch_Candidate cand = & frame -> candidate [1];
 			if (cand -> frequency > 0.0 && cand -> frequency <= my ceiling)
-				cand -> frequency = RealTier_getValueAtTime (tier, Sampled_indexToX (me, iframe));
+				cand -> frequency = RealTier_getValueAtTime (tier, my f_indexToX (iframe));
 			cand -> strength = 0.9;
 			frame -> nCandidates = 1;
 		}

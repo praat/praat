@@ -2,7 +2,7 @@
 #define _Regression_h_
 /* Regression.h
  *
- * Copyright (C) 2005-2011 Paul Boersma
+ * Copyright (C) 2005-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@
 oo_CLASS_CREATE (RegressionParameter, Data);
 oo_CLASS_CREATE (Regression, Data);
 
-void Regression_init (I);
-void Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value);
-long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName);
+void Regression_init (Regression me);
+void Regression_addParameter (Regression me, const wchar_t *label, double minimum, double maximum, double value);
+long Regression_getFactorIndexFromFactorName_e (Regression me, const wchar_t *factorName);
 
 Thing_define (LinearRegression, Regression) {
 };

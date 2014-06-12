@@ -46,6 +46,7 @@
 	#endif
 	#include "Gui.h"
 #endif
+#include "MelderThread.h"
 
 #include "enums_getText.h"
 #include "melder_enums.h"
@@ -141,6 +142,7 @@ void Melder_casual (const char *format, ...) {
 /********** PROGRESS **********/
 
 static int theProgressDepth = 0;
+static bool theProgressCancelled = false;
 void Melder_progressOff (void) { theProgressDepth --; }
 void Melder_progressOn (void) { theProgressDepth ++; }
 
@@ -260,6 +262,10 @@ static bool waitWhileProgress (double progress, const wchar_t *message, GuiDialo
 		#elif cocoa
 			scale -> f_setValue (progress);
 			//[scale -> d_cocoaProgressBar   displayIfNeeded];
+			if (theProgressCancelled) {
+				theProgressCancelled = false;
+				return false;
+			}
 		#elif motif
 			scale -> f_setValue (progress);
 			XmUpdateDisplay (dia -> d_widget);
@@ -269,20 +275,30 @@ static bool waitWhileProgress (double progress, const wchar_t *message, GuiDialo
 	return true;
 }
 
-#if gtk
+#if gtk || macintosh
 static void progress_dia_close (void *cancelButton) {
-	g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
+	theProgressCancelled = true;
+	#if gtk
+		g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
+	#else
+		(void) cancelButton;
+	#endif
 }
 static void progress_cancel_btn_press (void *cancelButton, GuiButtonEvent event) {
 	(void) event;
-	g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
+	theProgressCancelled = true;
+	#if gtk
+		g_object_set_data (G_OBJECT ((* (GuiButton *) cancelButton) -> d_widget), "pressed", (gpointer) 1);
+	#else
+		(void) cancelButton;
+	#endif
 }
 #endif
 
 static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *label1, GuiLabel *label2, GuiButton *cancelButton, bool hasMonitor) {
 	trace ("creating the dialog");
 	*dia = GuiDialog_create (Melder_topShell, 200, 100, 400, hasMonitor ? 430 : 200, L"Work in progress",
-		#if gtk
+		#if gtk || macintosh
 			progress_dia_close, cancelButton,
 		#else
 			NULL, NULL,
@@ -299,7 +315,7 @@ static void _Melder_dia_init (GuiDialog *dia, GuiProgressBar *scale, GuiLabel *l
 	trace ("creating the cancel button");
 	*cancelButton = GuiButton_createShown (*dia, 0, 400, 170, 170 + Gui_PUSHBUTTON_HEIGHT,
 		L"Interrupt",
-		#if gtk
+		#if gtk || macintosh
 			progress_cancel_btn_press, cancelButton,
 		#else
 			NULL, NULL,
@@ -765,7 +781,15 @@ void Melder_beep (void) {
 
 /*********** FATAL **********/
 
+MelderThread_MUTEX (theMelder_fatal_mutex);
+
+void Melder_message_init () {
+	static bool inited = false;
+	if (! inited) { MelderThread_MUTEX_INIT (theMelder_fatal_mutex); inited = true; }
+}
+
 int Melder_fatal (const char *format, ...) {
+	MelderThread_LOCK (theMelder_fatal_mutex);
 	const char *lead = strstr (format, "Praat cannot start up") ? "" :
 		"Praat will crash. Notify the author (paul.boersma@uva.nl) with the following information:\n";
 	va_list arg;

@@ -52,31 +52,20 @@ void structSampled :: v_scaleX (double xminfrom, double xmaxfrom, double xminto,
 	dx *= (xmaxto - xminto) / (xmaxfrom - xminfrom);
 }
 
-double Sampled_indexToX (Sampled me, long i) {
-	return my x1 + (i - 1) * my dx;
-}
-
-double Sampled_xToIndex (Sampled me, double x) {
-	return (x - my x1) / my dx + 1;
-}
-
-long Sampled_xToLowIndex (Sampled me, double x) {
-	return (long) floor ((x - my x1) / my dx) + 1;
-}
-
-long Sampled_xToHighIndex (Sampled me, double x) {
-	return (long) ceil ((x - my x1) / my dx) + 1;
-}
-
-long Sampled_xToNearestIndex (Sampled me, double x) {
-	return (long) floor ((x - my x1) / my dx + 1.5);
-}
-
 long Sampled_getWindowSamples (Sampled me, double xmin, double xmax, long *ixmin, long *ixmax) {
 	double rixmin = 1.0 + ceil ((xmin - my x1) / my dx);
-	double rixmax = 1.0 + floor ((xmax - my x1) / my dx);
+	double rixmax = 1.0 + floor ((xmax - my x1) / my dx);   // could be above 32-bit LONG_MAX
 	*ixmin = rixmin < 1.0 ? 1 : (long) rixmin;
 	*ixmax = rixmax > (double) my nx ? my nx : (long) rixmax;
+	if (*ixmin > *ixmax) return 0;
+	return *ixmax - *ixmin + 1;
+}
+
+long structSampled :: f_getWindowSamplesX (double xmin, double xmax, long *ixmin, long *ixmax) {
+	double rixmin = 1.0 + ceil ((xmin - our x1) / our dx);
+	double rixmax = 1.0 + floor ((xmax - our x1) / our dx);   // could be above 32-bit LONG_MAX
+	*ixmin = rixmin < 1.0 ? 1 : (long) rixmin;
+	*ixmax = rixmax > (double) our nx ? our nx : (long) rixmax;
 	if (*ixmin > *ixmax) return 0;
 	return *ixmax - *ixmin + 1;
 }
@@ -110,7 +99,7 @@ double Sampled_getValueAtSample (Sampled me, long isamp, long ilevel, int unit) 
 double Sampled_getValueAtX (Sampled me, double x, long ilevel, int unit, bool interpolate) {
 	if (x < my xmin || x > my xmax) return NUMundefined;
 	if (interpolate) {
-		double ireal = Sampled_xToIndex (me, x);
+		double ireal = my f_xToIndex (x);
 		long ileft = floor (ireal), inear, ifar;
 		double phase = ireal - ileft;
 		if (phase < 0.5) {
@@ -269,7 +258,7 @@ static void Sampled_getSumAndDefinitionRange
 				}
 			}
 		} else {   /* No interpolation. */
-			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
+			double rimin = my f_xToIndex (xmin), rimax = my f_xToIndex (xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
 				imin = rimin < 0.5 ? 0 : (long) floor (rimin + 0.5);
 				imax = rimax >= my nx + 0.5 ? my nx + 1 : (long) floor (rimax + 0.5);
@@ -444,7 +433,7 @@ static void Sampled_getSum2AndDefinitionRange
 				}
 			}
 		} else {   // no interpolation
-			double rimin = Sampled_xToIndex (me, xmin), rimax = Sampled_xToIndex (me, xmax);
+			double rimin = my f_xToIndex (xmin), rimax = my f_xToIndex (xmax);
 			if (rimax >= 0.5 && rimin < my nx + 0.5) {
 				imin = rimin < 0.5 ? 0 : (long) floor (rimin + 0.5);
 				imax = rimax >= my nx + 0.5 ? my nx + 1 : (long) floor (rimax + 0.5);
@@ -672,7 +661,7 @@ static void Sampled_speckleInside (Sampled me, Graphics g, double xmin, double x
 	for (long ix = ixmin; ix <= ixmax; ix ++) {
 		double value = Sampled_getValueAtSample (me, ix, ilevel, unit);
 		if (NUMdefined (value)) {
-			double x = Sampled_indexToX (me, ix);
+			double x = my f_indexToX (ix);
 			if (value >= ymin && value <= ymax) {
 				Graphics_speckle (g, x, value);
 			}
@@ -702,11 +691,11 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 		double previousValue = Sampled_getValueAtSample (me, ixmin - 1, ilevel, unit);
 		if (NUMdefined (previousValue)) {
 			startOfDefinedStretch = ixmin - 1;
-			xarray [ixmin - 1] = Sampled_indexToX (me, ixmin - 1);
+			xarray [ixmin - 1] = my f_indexToX (ixmin - 1);
 			yarray [ixmin - 1] = previousValue;
 		}
 		for (long ix = ixmin; ix <= ixmax; ix ++) {
-			double x = Sampled_indexToX (me, ix), value = Sampled_getValueAtSample (me, ix, ilevel, unit);
+			double x = my f_indexToX (ix), value = Sampled_getValueAtSample (me, ix, ilevel, unit);
 			if (NUMdefined (value)) {
 				if (NUMdefined (previousValue)) {
 					xarray [ix] = x;
@@ -735,7 +724,7 @@ void Sampled_drawInside (Sampled me, Graphics g, double xmin, double xmax, doubl
 			previousValue = value;
 		}
 		if (startOfDefinedStretch > -1) {
-			double x = Sampled_indexToX (me, ixmax + 1), value = Sampled_getValueAtSample (me, ixmax + 1, ilevel, unit);
+			double x = my f_indexToX (ixmax + 1), value = Sampled_getValueAtSample (me, ixmax + 1, ilevel, unit);
 			Melder_assert (NUMdefined (previousValue));
 			if (NUMdefined (value)) {
 				xarray [ixmax + 1] = x;

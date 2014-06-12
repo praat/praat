@@ -1,6 +1,6 @@
 /* ManipulationEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -700,7 +700,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 */    
 		Graphics_setColour (my d_graphics, Graphics_BLACK);
 		Graphics_function (my d_graphics, sound -> z [1], first, last,
-			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
+			sound -> f_indexToX (first), sound -> f_indexToX (last));
 	}
 
 	Graphics_resetViewport (my d_graphics, viewport);

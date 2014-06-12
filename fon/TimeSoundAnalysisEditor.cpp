@@ -1,6 +1,6 @@
 /* TimeSoundAnalysisEditor.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -754,7 +754,7 @@ static void menu_cb_pitchListing (EDITOR_ARGS) {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my d_pitch, tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
-			double t = Sampled_indexToX (my d_pitch, i);
+			double t = my d_pitch -> f_indexToX (i);
 			double f0 = Sampled_getValueAtSample (my d_pitch, i, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
 			f0 = Function_convertToNonlogarithmic (my d_pitch, f0, Pitch_LEVEL_FREQUENCY, my p_pitch_unit);
 			MelderInfo_writeLine (Melder_fixed (t, 6), L"   ", Melder_fixed (f0, 6));
@@ -1013,7 +1013,7 @@ static void menu_cb_intensityListing (EDITOR_ARGS) {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my d_intensity, tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
-			double t = Sampled_indexToX (my d_intensity, i);
+			double t = my d_intensity -> f_indexToX (i);
 			double intensity = Vector_getValueAtX (my d_intensity, t, Vector_CHANNEL_1, Vector_VALUE_INTERPOLATION_NEAREST);
 			MelderInfo_writeLine (Melder_fixed (t, 6), L"   ", Melder_fixed (intensity, 6));
 		}
@@ -1196,7 +1196,7 @@ static void menu_cb_formantListing (EDITOR_ARGS) {
 		long i, i1, i2;
 		Sampled_getWindowSamples (my d_formant, tmin, tmax, & i1, & i2);
 		for (i = i1; i <= i2; i ++) {
-			double t = Sampled_indexToX (my d_formant, i);
+			double t = my d_formant -> f_indexToX (i);
 			double f1 = Formant_getValueAtTime (my d_formant, 1, t, 0);
 			double f2 = Formant_getValueAtTime (my d_formant, 2, t, 0);
 			double f3 = Formant_getValueAtTime (my d_formant, 3, t, 0);

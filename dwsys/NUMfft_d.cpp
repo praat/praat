@@ -77,8 +77,8 @@ void NUMfft_backward (NUMfft_Table me, double *data) {
 
 void NUMfft_Table_init (NUMfft_Table me, long n) {
 	my n = n;
-	my trigcache = NUMvector <double> (0, 3 * n - 1);
-	my splitcache = NUMvector <long> (0, 31);
+	my trigcache = NUMvector <double> (0L, 3 * n - 1);
+	my splitcache = NUMvector <long> (0L, 31);
 	NUMrffti (n, my trigcache, my splitcache);
 }
 

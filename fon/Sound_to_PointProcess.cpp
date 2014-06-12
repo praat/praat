@@ -1,6 +1,6 @@
 /* Sound_to_PointProcess.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -98,7 +98,7 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 			if ((includeRaisers && y [i - 1] < 0.0 && y [i] >= 0.0) ||
 				(includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0))
 			{
-				double time = Sampled_indexToX (me, i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   // linear
+				double time = my f_indexToX (i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   // linear
 				PointProcess_addPoint (thee.peek(), time);
 			}
 		}

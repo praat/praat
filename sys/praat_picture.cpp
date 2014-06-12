@@ -168,8 +168,10 @@ FORM (SelectInnerViewport, L"Praat picture: Select inner viewport", L"Select inn
 	REAL (L"right Vertical range (inches)", L"6.0")
 OK
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
-	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
+		ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
+	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
+		xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
 	SET_REAL (L"left Horizontal range", theCurrentPraatPicture -> x1NDC + xmargin);
 	SET_REAL (L"right Horizontal range", theCurrentPraatPicture -> x2NDC - xmargin);
 	SET_REAL (L"left Vertical range", 12 - theCurrentPraatPicture -> y2NDC + ymargin);
@@ -179,6 +181,7 @@ DO
 	double left = GET_REAL (L"left Horizontal range"), right = GET_REAL (L"right Horizontal range");
 	double top = GET_REAL (L"left Vertical range"), bottom = GET_REAL (L"right Vertical range");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
+	trace ("1: xmargin %f ymargin %f", xmargin, ymargin);
 	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
 		long x1DC, x2DC, y1DC, y2DC;
 		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
@@ -191,6 +194,7 @@ DO
 	}
 	if (xmargin > 2 * (right - left)) xmargin = 2 * (right - left);
 	if (ymargin > 2 * (bottom - top)) ymargin = 2 * (bottom - top);
+	trace ("2: xmargin %f ymargin %f", xmargin, ymargin);
 	if (left == right) {
 		Melder_throw ("The left and right edges of the viewport cannot be equal.\nPlease change the horizontal range.");
 	}
@@ -218,6 +222,7 @@ DO
 		theCurrentPraatPicture -> y1NDC = bottom - ymargin;
 		theCurrentPraatPicture -> y2NDC = top + ymargin;
 	}
+	trace ("3: x1NDC %f x2NDC %f y1NDC %f y2NDC %f", theCurrentPraatPicture -> x1NDC, theCurrentPraatPicture -> x2NDC, theCurrentPraatPicture -> y1NDC, theCurrentPraatPicture -> y2NDC);
 END
 
 FORM (SelectOuterViewport, L"Praat picture: Select outer viewport", L"Select outer viewport...")
@@ -1344,18 +1349,43 @@ DIRECT (AboutTextStyles) Melder_help (L"Text styles"); END
 DIRECT (PhoneticSymbols) Melder_help (L"Phonetic symbols"); END
 DIRECT (Picture_settings_report)
 	MelderInfo_open ();
-	MelderInfo_writeLine (L"Outer viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC), L" inches");
-	MelderInfo_writeLine (L"Outer viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC), L" inches");
-	MelderInfo_writeLine (L"Outer viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC), L" inches");
-	MelderInfo_writeLine (L"Outer viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC), L" inches");
+	const wchar_t *units = theCurrentPraatPicture == & theForegroundPraatPicture ? L" inches" : L"";
+	MelderInfo_writeLine (L"Outer viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC), units);
+	MelderInfo_writeLine (L"Outer viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC), units);
+	MelderInfo_writeLine (L"Outer viewport top: ", Melder_double (
+		theCurrentPraatPicture != & theForegroundPraatPicture ?
+			theCurrentPraatPicture -> y1NDC :
+			12 - theCurrentPraatPicture -> y2NDC), units);
+	MelderInfo_writeLine (L"Outer viewport bottom: ", Melder_double (
+		theCurrentPraatPicture != & theForegroundPraatPicture ?
+			theCurrentPraatPicture -> y2NDC :
+			12 - theCurrentPraatPicture -> y1NDC), units);
 	MelderInfo_writeLine (L"Font size: ", Melder_double (theCurrentPraatPicture -> fontSize), L" points");
 	double xmargin = theCurrentPraatPicture -> fontSize * 4.2 / 72.0, ymargin = theCurrentPraatPicture -> fontSize * 2.8 / 72.0;
-	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC)) ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
-	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC)) xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
-	MelderInfo_writeLine (L"Inner viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC + xmargin), L" inches");
-	MelderInfo_writeLine (L"Inner viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC - xmargin), L" inches");
-	MelderInfo_writeLine (L"Inner viewport top: ", Melder_double (12 - theCurrentPraatPicture -> y2NDC + ymargin), L" inches");
-	MelderInfo_writeLine (L"Inner viewport bottom: ", Melder_double (12 - theCurrentPraatPicture -> y1NDC - ymargin), L" inches");
+	if (theCurrentPraatPicture != & theForegroundPraatPicture) {
+		long x1DC, x2DC, y1DC, y2DC;
+		Graphics_inqWsViewport (GRAPHICS, & x1DC, & x2DC, & y1DC, & y2DC);
+		double x1wNDC, x2wNDC, y1wNDC, y2wNDC;
+		Graphics_inqWsWindow (GRAPHICS, & x1wNDC, & x2wNDC, & y1wNDC, & y2wNDC);
+		double wDC = (x2DC - x1DC) / (x2wNDC - x1wNDC);
+		double hDC = abs (y2DC - y1DC) / (y2wNDC - y1wNDC);
+		xmargin *= Graphics_getResolution (GRAPHICS) / wDC;
+		ymargin *= Graphics_getResolution (GRAPHICS) / hDC;
+	}
+	if (ymargin > 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC))
+		ymargin = 0.4 * (theCurrentPraatPicture -> y2NDC - theCurrentPraatPicture -> y1NDC);
+	if (xmargin > 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC))
+		xmargin = 0.4 * (theCurrentPraatPicture -> x2NDC - theCurrentPraatPicture -> x1NDC);
+	MelderInfo_writeLine (L"Inner viewport left: ", Melder_double (theCurrentPraatPicture -> x1NDC + xmargin), units);
+	MelderInfo_writeLine (L"Inner viewport right: ", Melder_double (theCurrentPraatPicture -> x2NDC - xmargin), units);
+	MelderInfo_writeLine (L"Inner viewport top: ", Melder_double (
+		theCurrentPraatPicture != & theForegroundPraatPicture ?
+			theCurrentPraatPicture -> y1NDC + ymargin :
+			12 - theCurrentPraatPicture -> y2NDC + ymargin), units);
+	MelderInfo_writeLine (L"Inner viewport bottom: ", Melder_double (
+		theCurrentPraatPicture != & theForegroundPraatPicture ?
+			theCurrentPraatPicture -> y2NDC - ymargin :
+			12 - theCurrentPraatPicture -> y1NDC - ymargin), units);
 	MelderInfo_writeLine (L"Font: ", kGraphics_font_getText (theCurrentPraatPicture -> font));
 	MelderInfo_writeLine (L"Line type: ",
 		theCurrentPraatPicture -> lineType == Graphics_DRAWN ? L"Solid" :
@@ -1656,10 +1686,8 @@ void praat_picture_init (void) {
 	praat_addMenuCommand (L"Picture", L"World", L"Paint circle...", 0, 0, DO_PaintCircle);
 	praat_addMenuCommand (L"Picture", L"World", L"Draw circle (mm)...", 0, 0, DO_DrawCircle_mm);
 	praat_addMenuCommand (L"Picture", L"World", L"Paint circle (mm)...", 0, 0, DO_PaintCircle_mm);
-	#if defined (macintosh) || defined (_WIN32)
-		praat_addMenuCommand (L"Picture", L"World", L"-- picture --", 0, 0, 0);
-		praat_addMenuCommand (L"Picture", L"World", L"Insert picture from file...", 0, 0, DO_InsertPictureFromFile);
-	#endif
+	praat_addMenuCommand (L"Picture", L"World", L"-- picture --", 0, 0, 0);
+	praat_addMenuCommand (L"Picture", L"World", L"Insert picture from file...", 0, 0, DO_InsertPictureFromFile);
 	praat_addMenuCommand (L"Picture", L"World", L"-- axes --", 0, 0, 0);
 	praat_addMenuCommand (L"Picture", L"World", L"Axes...", 0, 0, DO_Axes);
 	praat_addMenuCommand (L"Picture", L"World", L"Measure", 0, 0, 0);

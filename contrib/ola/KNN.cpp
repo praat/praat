@@ -1591,7 +1591,7 @@ Permutation KNN_SA_ToPermutation
     KNN_SA_t * istruct = KNN_SA_t_create(my input); 
     Permutation result = Permutation_create(my nInstances);
 
-    gsl_siman_params_t params = {tries, iterations, step_size, boltzmann_c, temp_start, damping_f, temp_stop};
+    gsl_siman_params_t params = { (int) tries, (int) iterations, step_size, boltzmann_c, temp_start, damping_f, temp_stop};
 
     gsl_rng_env_setup();
     T = gsl_rng_default;

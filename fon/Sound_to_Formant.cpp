@@ -1,6 +1,6 @@
 /* Sound_to_Formant.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,8 +293,8 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	}
 
 	for (long iframe = 1; iframe <= nFrames; iframe ++) {
-		double t = Sampled_indexToX (thee.peek(), iframe);
-		long leftSample = Sampled_xToLowIndex (me, t);
+		double t = thy f_indexToX (iframe);
+		long leftSample = my f_xToLowIndex (t);
 		long rightSample = leftSample + 1;
 		long startSample = rightSample - halfnsamp_window;
 		long endSample = leftSample + halfnsamp_window;

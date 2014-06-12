@@ -1,6 +1,6 @@
 /* TextGrid_Sound.h
  *
- * Copyright (C) 1992-2011,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 #include "Pitch.h"
 
 void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, double tmax,
-	int showBoundaries, int useTextStyles, int garnish);
+	bool showBoundaries, bool useTextStyles, bool garnish);
 Collection TextGrid_Sound_extractAllIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractNonemptyIntervals (TextGrid me, Sound sound, long itier, int preserveTimes);
 Collection TextGrid_Sound_extractIntervalsWhere (TextGrid me, Sound sound,

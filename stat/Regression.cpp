@@ -1,6 +1,6 @@
 /* Regression.cpp
  *
- * Copyright (C) 2005-2011 Paul Boersma
+ * Copyright (C) 2005-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,13 +65,11 @@ void structRegression :: v_info () {
 
 Thing_implement (Regression, Data, 0);
 
-void Regression_init (I) {
-	iam (Regression);
+void Regression_init (Regression me) {
 	my parameters = Ordered_create ();
 }
 
-void Regression_addParameter (I, const wchar_t *label, double minimum, double maximum, double value) {
-	iam (Regression);
+void Regression_addParameter (Regression me, const wchar_t *label, double minimum, double maximum, double value) {
 	try {
 		autoRegressionParameter thee = Thing_new (RegressionParameter);
 		thy label = Melder_wcsdup (label);
@@ -84,8 +82,7 @@ void Regression_addParameter (I, const wchar_t *label, double minimum, double ma
 	}
 }
 
-long Regression_getFactorIndexFromFactorName_e (I, const wchar_t *factorName) {
-	iam (Regression);
+long Regression_getFactorIndexFromFactorName_e (Regression me, const wchar_t *factorName) {
 	for (long iparm = 1; iparm <= my parameters -> size; iparm ++) {
 		RegressionParameter parm = static_cast<RegressionParameter> (my parameters -> item [iparm]);
 		if (Melder_wcsequ (factorName, parm -> label)) return iparm;

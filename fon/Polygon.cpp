@@ -1,6 +1,6 @@
 /* Polygon.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,28 +37,28 @@
 Thing_implement (Polygon, Data, 1);
 
 void structPolygon :: v_info () {
-	structData :: v_info ();
-	MelderInfo_writeLine (L"Number of points: ", Melder_integer (numberOfPoints));
+	our structData :: v_info ();
+	MelderInfo_writeLine (L"Number of points: ", Melder_integer (our numberOfPoints));
 	MelderInfo_writeLine (L"Perimeter: ", Melder_single (Polygon_perimeter (this)));
 }
   
 void structPolygon :: v_writeText (MelderFile file) {
-	texputi4 (file, numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
-	for (long i = 1; i <= numberOfPoints; i ++) {
-		texputr4 (file, x [i], L"x [", Melder_integer (i), L"]", 0,0,0);
-		texputr4 (file, y [i], L"y [", Melder_integer (i), L"]", 0,0,0);
+	texputi4 (file, our numberOfPoints, L"numberOfPoints", 0,0,0,0,0);
+	for (long i = 1; i <= our numberOfPoints; i ++) {
+		texputr4 (file, our x [i], L"x [", Melder_integer (i), L"]", 0,0,0);
+		texputr4 (file, our y [i], L"y [", Melder_integer (i), L"]", 0,0,0);
 	}
 }
 
 void structPolygon :: v_readText (MelderReadText text) {
-	numberOfPoints = texgeti4 (text);
-	if (numberOfPoints < 1)
-		Melder_throw ("Cannot read a Polygon with only ", numberOfPoints, " points.");
-	x = NUMvector <double> (1, numberOfPoints);
-	y = NUMvector <double> (1, numberOfPoints);
-	for (long i = 1; i <= numberOfPoints; i ++) {
-		x [i] = texgetr4 (text);
-		y [i] = texgetr4 (text);
+	our numberOfPoints = texgeti4 (text);
+	if (our numberOfPoints < 1)
+		Melder_throw ("Cannot read a Polygon with only ", our numberOfPoints, " points.");
+	our x = NUMvector <double> (1, our numberOfPoints);
+	our y = NUMvector <double> (1, our numberOfPoints);
+	for (long i = 1; i <= our numberOfPoints; i ++) {
+		our x [i] = texgetr4 (text);
+		our y [i] = texgetr4 (text);
 	}
 }
 

@@ -1,6 +1,6 @@
 /* FormantTier.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ FormantTier Formant_downto_FormantTier (Formant me) {
 		autoFormantTier thee = FormantTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nx; i ++) {
 			Formant_Frame frame = & my d_frames [i];
-			autoFormantPoint point = FormantPoint_create (Sampled_indexToX (me, i));
+			autoFormantPoint point = FormantPoint_create (my f_indexToX (i));
 			point -> numberOfFormants = frame -> nFormants > 10 ? 10 : frame -> nFormants;
 			for (long j = 1; j <= point -> numberOfFormants; j ++) {
 				Formant_Formant pair = & frame -> formant [j];

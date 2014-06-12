@@ -1226,11 +1226,10 @@ static void drawWhileDragging (FunctionEditor me, double x1, double x2) {
 	Graphics_xorOff (my d_graphics);
 }
 
-int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKeyPressed) {
+int structFunctionEditor :: v_click (double xbegin, double ybegin, bool a_shiftKeyPressed) {
 	bool drag = false;
 	double x = xbegin, y = ybegin;
-    
-    
+
 	/*
 	 * The 'anchor' is the point that will stay fixed during dragging.
 	 * For instance, if she clicks and drags to the right,
@@ -1242,7 +1241,7 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0, 1);
 
 	double anchorForDragging = xbegin;   // the default (for if the shift key isn't pressed)
-	if (shiftKeyPressed) {
+	if (a_shiftKeyPressed) {
 		/*
 		 * Extend the selection.
 		 * We should always end up with a real selection (B < E),
@@ -1406,7 +1405,7 @@ int structFunctionEditor :: v_click (double xbegin, double ybegin, bool shiftKey
 		 */
 		if (x > anchorForDragging) d_startSelection = anchorForDragging, d_endSelection = x;
 		else d_startSelection = x, d_endSelection = anchorForDragging;
-	} else if (! shiftKeyPressed) {
+	} else if (! a_shiftKeyPressed) {
 		/*
 		 * Move the cursor to the clicked position.
 		 */

@@ -1,0 +1,24 @@
+# File: makefile.defs.mingw32-490
+
+# System: MinGW
+# Paul Boersma, 9 June 2014
+
+CC = /mingw32-490/bin/x86_64-w64-mingw32-gcc -std=gnu99 -isystem /mingw32-490/mingw/include
+
+CXX = /mingw32-490/bin/x86_64-w64-mingw32-g++ -std=c++0x -isystem /mingw32-490/mingw/include/c++/4.9.0 -isystem /mingw32-490/mingw/include -Wshadow -m64 -flto
+
+CFLAGS = -DWINVER=0x0600 -D_WIN32_WINNT=0x0600 -D_WIN32_IE=0x0700 -DUNICODE -Dmain=wingwmain -O1
+
+CXXFLAGS = $(CFLAGS) -pthread
+
+LINK = /mingw32-490/mingw/bin/g++
+
+EXECUTABLE = Praat.exe
+
+LIBS = -L/mingw32-490/x86_64-w64-mingw32/lib -lwinmm -lwsock32 -lcomctl32 -lole32 -lgdi32 -lgdiplus -lcomdlg32 -static-libgcc -static-libstdc++ -mwindows
+
+AR = /mingw32-490/mingw/bin/ar
+RANLIB = /mingw32-490/mingw/bin/ranlib
+WINDRES = /mingw32-490/bin/x86_64-w64-mingw32-windres
+ICON = praat_win.o
+MAIN_ICON = main/praat_win.o

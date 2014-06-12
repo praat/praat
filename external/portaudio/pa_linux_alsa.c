@@ -3035,7 +3035,9 @@ static PaError AlsaStop( PaAlsaStream *stream, int abort )
     {
         if( stream->playback.pcm )
         {
+PA_DEBUG(( "%s: Before dropping\n", __FUNCTION__ ));
             ENSURE_( alsa_snd_pcm_drop( stream->playback.pcm ), paUnanticipatedHostError );
+PA_DEBUG(( "%s: After dropping\n", __FUNCTION__ ));
         }
         if( stream->capture.pcm && !stream->pcmsSynced )
         {

@@ -1,6 +1,6 @@
 /* ParamCurve.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ void structParamCurve :: v_readBinary (FILE *f) {
 	Data_readBinary (y, f);
 	Thing_version = saveVersion;
 	xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
-	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax; 
+	xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
 }
 
 void ParamCurve_init (ParamCurve me, Sound x, Sound y) {
@@ -101,7 +101,7 @@ void ParamCurve_init (ParamCurve me, Sound x, Sound y) {
 	my x = Data_copy (x);
 	my y = Data_copy (y);
 	my xmin = x -> xmin > y -> xmin ? x -> xmin : y -> xmin;
-	my xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax; 
+	my xmax = x -> xmax < y -> xmax ? x -> xmax : y -> xmax;
 }
 
 ParamCurve ParamCurve_create (Sound x, Sound y) {
@@ -137,9 +137,9 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		autoNUMvector <double> y (1, numberOfPoints);
 		for (long i = 1; i <= numberOfPoints; i ++) {
 			double t = i == numberOfPoints ? t2 : t1 + (i - 1) * dt;
-			double index = Sampled_xToIndex (my x, t);
+			double index = my x -> f_xToIndex (t);
 			x [i] = NUM_interpolate_sinc (my x -> z [1], my x -> nx, index, 50);
-			index = Sampled_xToIndex (my y, t);
+			index = my y -> f_xToIndex (t);
 			y [i] = NUM_interpolate_sinc (my y -> z [1], my y -> nx, index, 50);
 		}
 		Graphics_setWindow (g, x1, x2, y1, y2);

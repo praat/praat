@@ -118,7 +118,7 @@ Matrix Matrix_createSimple (long numberOfRows, long numberOfColumns);
 			Out of input.
 */
 
-long Matrix_getWindowSamplesX (I, double xmin, double xmax, long *ixmin, long *ixmax);
+long Matrix_getWindowSamplesX (Matrix me, double xmin, double xmax, long *ixmin, long *ixmax);
 /*
 	Function:
 		return the number of samples with x values in [xmin, xmax].
@@ -131,39 +131,39 @@ long Matrix_getWindowSamplesX (I, double xmin, double xmax, long *ixmin, long *i
 		if (result != 0) result == *ixmax - *ixmin + 1;
 */
 
-double Matrix_getValueAtXY (I, double x, double y);
+double Matrix_getValueAtXY (Matrix me, double x, double y);
 /*
 	Linear interpolation between matrix points,
 	constant extrapolation in cells on the edge,
 	NUMundefined outside the union of the unit squares around the points.
 */
 
-double Matrix_getSum (I);
-double Matrix_getNorm (I);
+double Matrix_getSum (Matrix me);
+double Matrix_getNorm (Matrix me);
 
-double Matrix_columnToX (I, double column);   /* Return my x1 + (column - 1) * my dx.	 */
+double Matrix_columnToX (Matrix me, double column);   /* Return my x1 + (column - 1) * my dx.	 */
 
-double Matrix_rowToY (I, double row);   /* Return my y1 + (row - 1) * my dy. */
+double Matrix_rowToY (Matrix me, double row);   /* Return my y1 + (row - 1) * my dy. */
 
-double Matrix_xToColumn (I, double x);   /* Return (x - xmin) / my dx + 1. */
+double Matrix_xToColumn (Matrix me, double x);   /* Return (x - xmin) / my dx + 1. */
 
-long Matrix_xToLowColumn (I, double x);   /* Return floor (Matrix_xToColumn (me, x)). */
+long Matrix_xToLowColumn (Matrix me, double x);   /* Return floor (Matrix_xToColumn (me, x)). */
 
-long Matrix_xToHighColumn (I, double x);   /* Return ceil (Matrix_xToColumn (me, x)). */
+long Matrix_xToHighColumn (Matrix me, double x);   /* Return ceil (Matrix_xToColumn (me, x)). */
 
-long Matrix_xToNearestColumn (I, double x);   /* Return floor (Matrix_xToColumn (me, x) + 0.5). */
+long Matrix_xToNearestColumn (Matrix me, double x);   /* Return floor (Matrix_xToColumn (me, x) + 0.5). */
 
-double Matrix_yToRow (I, double y);   /* Return (y - ymin) / my dy + 1. */
+double Matrix_yToRow (Matrix me, double y);   /* Return (y - ymin) / my dy + 1. */
 
-long Matrix_yToLowRow (I, double y);   /* Return floor (Matrix_yToRow (me, y)). */
+long Matrix_yToLowRow (Matrix me, double y);   /* Return floor (Matrix_yToRow (me, y)). */
 
-long Matrix_yToHighRow (I, double x);   /* Return ceil (Matrix_yToRow (me, y)). */
+long Matrix_yToHighRow (Matrix me, double x);   /* Return ceil (Matrix_yToRow (me, y)). */
 
-long Matrix_yToNearestRow (I, double y);   /* Return floor (Matrix_yToRow (me, y) + 0.5). */
+long Matrix_yToNearestRow (Matrix me, double y);   /* Return floor (Matrix_yToRow (me, y) + 0.5). */
 
-long Matrix_getWindowSamplesY (I, double ymin, double ymax, long *iymin, long *iymax);
+long Matrix_getWindowSamplesY (Matrix me, double ymin, double ymax, long *iymin, long *iymax);
 
-long Matrix_getWindowExtrema (I, long ixmin, long ixmax, long iymin, long iymax,
+long Matrix_getWindowExtrema (Matrix me, long ixmin, long ixmax, long iymin, long iymax,
 	double *minimum, double *maximum);
 /*
 	Function:
@@ -206,7 +206,7 @@ void Matrix_formula_part (Matrix me, double xmin, double xmax, double ymin, doub
 	by the minimum and maximum values of the samples inside the window.
 */
 
-void Matrix_drawRows (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_drawRows (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum);
 /*
 	Every row is plotted as a function of x,
@@ -214,55 +214,55 @@ void Matrix_drawRows (I, Graphics g, double xmin, double xmax, double ymin, doub
 	The rows are stacked from bottom to top.
 */
 
-void Matrix_drawOneContour (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_drawOneContour (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double height);
 
-void Matrix_drawContours (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_drawContours (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum);
 /* A contour altitude plot with curves at multiple heights. */
 
-void Matrix_paintContours (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintContours (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum);
 /* A contour plot with multiple shades of grey and white (low) and black (high) paint. */
 
-void Matrix_paintImage (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintImage (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum);
 /*
 	Two-dimensional interpolation of greys.
 	The larger the value of the sample, the darker the greys.
 */
 
-void Matrix_paintCells (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintCells (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum);
 /*
 	Every sample is drawn as a grey rectangle.
 	The larger the value of the sample, the darker the rectangle.
 */
 
-void Matrix_paintSurface (I, Graphics g, double xmin, double xmax, double ymin, double ymax,
+void Matrix_paintSurface (Matrix me, Graphics g, double xmin, double xmax, double ymin, double ymax,
 	double minimum, double maximum, double elevation, double azimuth);
 /*
 	3D surface plot. Every space between adjacent four samples is drawn as a tetragon filled with a grey value.
 	'elevation' may be 30 degrees, 'azimuth' may be 45 degrees.
 */
 
-void Matrix_movie (I, Graphics g);
+void Matrix_movie (Matrix me, Graphics g);
 
 Matrix Matrix_readFromRawTextFile (MelderFile file);
 Matrix Matrix_readAP (MelderFile file);
 Matrix Matrix_appendRows (Matrix me, Matrix thee, ClassInfo klas);
 
-void Matrix_eigen (I, Matrix *eigenvectors, Matrix *eigenvalues);
-Matrix Matrix_power (I, long power);
+void Matrix_eigen (Matrix me, Matrix *eigenvectors, Matrix *eigenvalues);
+Matrix Matrix_power (Matrix me, long power);
 
-void Matrix_scaleAbsoluteExtremum (I, double scale);
+void Matrix_scaleAbsoluteExtremum (Matrix me, double scale);
 
 Matrix Table_to_Matrix (Table me);
 void Matrix_writeToMatrixTextFile (Matrix me, MelderFile file);
 void Matrix_writeToHeaderlessSpreadsheetFile (Matrix me, MelderFile file);
 
-Matrix TableOfReal_to_Matrix (I);
-TableOfReal Matrix_to_TableOfReal (I);
+Matrix TableOfReal_to_Matrix (TableOfReal me);
+TableOfReal Matrix_to_TableOfReal (Matrix me);
 
 /* End of file Matrix.h */
 #endif

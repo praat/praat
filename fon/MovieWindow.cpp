@@ -1,6 +1,6 @@
 /* MovieWindow.cpp
  *
- * Copyright (C) 2011-2012,2013 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,12 +65,12 @@ void structMovieWindow :: v_draw () {
 		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
 		Graphics_setColour (d_graphics, Graphics_BLACK);
 		Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0.0, 1.0);
-		long firstFrame = round (Sampled_xToIndex (movie, d_startWindow));
-		long lastFrame = round (Sampled_xToIndex (movie, d_endWindow));
+		long firstFrame = movie -> f_xToNearestIndex (d_startWindow);
+		long lastFrame = movie -> f_xToNearestIndex (d_endWindow);
 		if (firstFrame < 1) firstFrame = 1;
 		if (lastFrame > movie -> nx) lastFrame = movie -> nx;
 		for (long iframe = firstFrame; iframe <= lastFrame; iframe ++) {
-			double time = Sampled_indexToX (movie, iframe);
+			double time = movie -> f_indexToX (iframe);
 			double timeLeft = time - 0.5 * movie -> dx, timeRight = time + 0.5 * movie -> dx;
 			if (timeLeft < d_startWindow) timeLeft = d_startWindow;
 			if (timeRight > d_endWindow) timeRight = d_endWindow;

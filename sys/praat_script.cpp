@@ -86,6 +86,19 @@ Editor praat_findEditorFromString (const wchar_t *string) {
 	Melder_throw ("Editor \"", string, "\" does not exist.");
 }
 
+Editor praat_findEditorById (long id) {
+	int IOBJECT;
+	WHERE (1) {
+		if (ID == id) {
+			for (int ieditor = 0; ieditor < praat_MAXNUM_EDITORS; ieditor ++) {
+				Editor editor = (Editor) theCurrentPraatObjects -> list [IOBJECT]. editors [ieditor];
+				if (editor) return editor;
+			}
+		}
+	}
+	Melder_throw ("Editor ", id, " does not exist.");
+}
+
 static int parseCommaSeparatedArguments (Interpreter interpreter, wchar_t *arguments, structStackel args []) {
 	int narg = 0, depth = 0;
 	for (wchar_t *p = arguments; ; p ++) {

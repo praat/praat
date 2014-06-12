@@ -823,14 +823,15 @@ ENTRY (L"Usage")
 NORMAL (L"With the ##Text...# command, you can use all @@special symbols@ and @@text styles@.")
 MAN_END
 
-MAN_BEGIN (L"Insert picture from file...", L"ppgb", 20110803)
-INTRO (L"A command in the #World menu of the @@Picture window@, on Macintosh and Windows only.")
+MAN_BEGIN (L"Insert picture from file...", L"ppgb", 20140608)
+INTRO (L"A command in the #World menu of the @@Picture window@.")
 ENTRY (L"Purpose")
-NORMAL (L"To draw a JPEG, TIFF or PNG picture into the Picture window (or into the Demo window).")
+NORMAL (L"To draw a picture file (PNG; on Mac and Windows also JPEG or TIFF; "
+	"other picture formats may also work) into the Picture window (or into the Demo window).")
 ENTRY (L"Settings")
 TAG (L"##File name")
-DEFINITION (L"the name of the picture file (JPEG, TIFF or PNG; other picture formats may also work). If you use this command in a script, "
-	"you can use a relative path name such as $$pictures/myface.jpg$ or $$~/Desktop/hello.jpg$.")
+DEFINITION (L"the name of the picture file. If you use this command in a script, "
+	"you can use a relative path name such as $$pictures/myface.png$ or $$~/Desktop/hello.png$.")
 TAG (L"##From x")
 TAG (L"##To x")
 DEFINITION (L"The horizontal location (in world coordinates) where the picture will appear. "

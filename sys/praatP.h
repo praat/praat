@@ -1,6 +1,6 @@
 /* praatP.h
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,6 +121,7 @@ void praat_list_foreground ();   // updates the list of objects after background
 void praat_background ();
 void praat_foreground ();
 Editor praat_findEditorFromString (const wchar_t *string);
+Editor praat_findEditorById (long id);
 
 void praat_showLogo (int autoPopDown);
 

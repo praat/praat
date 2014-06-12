@@ -407,7 +407,7 @@ RealTier Vector_to_RealTier (Vector me, long channel, ClassInfo klas) {
 	try {
 		autoRealTier thee = RealTier_createWithClass (my xmin, my xmax, klas);
 		for (long i = 1; i <= my nx; i ++) {
-			RealTier_addPoint (thee.peek(), Sampled_indexToX (me, i), my z [channel] [i]);
+			RealTier_addPoint (thee.peek(), my f_indexToX (i), my z [channel] [i]);
 		}
 		return thee.transfer();
 	} catch (MelderError) {

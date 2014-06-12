@@ -333,7 +333,7 @@ GuiMenu GuiMenu_createInWindow (GuiWindow window, const wchar_t *title, long fla
 			} else {
 				window -> d_menuBarWidth += width - 1;
 			}
-			NSRect rect = { { x, y }, { width, height } };
+			NSRect rect = { { (CGFloat) x, (CGFloat) y }, { (CGFloat) width, (CGFloat) height } };
 			my d_cocoaMenuButton = [[GuiCocoaMenuButton alloc]
 				initWithFrame: rect   pullsDown: YES];
 			[my d_cocoaMenuButton   setAutoenablesItems: NO];

@@ -37,8 +37,6 @@ oo_DEFINE_CLASS (Photo, SampledXY)
 			virtual bool v_hasGetDy        () { return true; }   virtual double v_getDy        ()        { return dy; }
 			virtual bool v_hasGetY         () { return true; }   virtual double v_getY         (long iy) { return y1 + (iy - 1) * dy; }
 		// functions:
-			void f_init (double xmin, double xmax, long nx, double dx, double x1,
-			             double ymin, double ymax, long ny, double dy, double y1);
 
 			double_rgbt f_getValueAtXY (double x, double y);
 			/*
@@ -73,6 +71,8 @@ oo_DEFINE_CLASS (Photo, SampledXY)
 				void _win_saveAsImageFile (MelderFile file, const wchar_t *which);
 			#elif defined (macintosh)
 				void _mac_saveAsImageFile (MelderFile file, const void *which);
+			#elif defined (linux)
+				void _lin_saveAsImageFile (MelderFile file, const wchar_t *which);
 			#endif
 	#endif
 
