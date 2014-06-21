@@ -1,6 +1,6 @@
 /* ERPWindow_prefs.h
  *
- * Copyright (C) 2013 Paul Boersma
+ * Copyright (C) 2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 prefs_begin (ERPWindow)
 	// overridden:
 		prefs_add_bool   (ERPWindow, showSelectionViewer,            1, true)
+		prefs_add_enum_with_data   (ERPWindow, scalp_colourScale,              1, kGraphics_colourScale, BLUE_TO_RED)
 		prefs_add_enum   (ERPWindow, sound_scalingStrategy,          1, kTimeSoundEditor_scalingStrategy, DEFAULT)
 		prefs_add_double (ERPWindow, sound_scaling_height,           1, L"20e-6")
 		prefs_add_double (ERPWindow, sound_scaling_minimum,          1, L"-10e-6")

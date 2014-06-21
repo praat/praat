@@ -1,6 +1,6 @@
 /* EEGWindow.cpp
  *
- * Copyright (C) 2011-2012,2013 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,47 +41,47 @@ void structEEGWindow :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 const wchar_t * structEEGWindow :: v_getChannelName (long channelNumber) {
-	Melder_assert (d_eeg != NULL);
-	return d_eeg -> d_channelNames [channelNumber];
-}
-
-void structEEGWindow :: f_init (const wchar_t *title, EEG eeg) {
-	d_eeg = eeg;   // before initing, because initing will already draw!
-	structTextGridEditor :: f_init (title, eeg -> d_textgrid, eeg -> d_sound, false, NULL);
+	Melder_assert (our d_eeg != NULL);
+	return our d_eeg -> channelNames [channelNumber];
 }
 
 static void menu_cb_ExtractSelectedEEG_preserveTimes (EDITOR_ARGS) {
 	EDITOR_IAM (EEGWindow);
 	if (my d_endSelection <= my d_startSelection) Melder_throw ("No selection.");
-	autoEEG extract = my d_eeg -> f_extractPart (my d_startSelection, my d_endSelection, true);
+	autoEEG extract = EEG_extractPart (my d_eeg, my d_startSelection, my d_endSelection, true);
 	my broadcastPublication (extract.transfer());
 }
 
 static void menu_cb_ExtractSelectedEEG_timeFromZero (EDITOR_ARGS) {
 	EDITOR_IAM (EEGWindow);
 	if (my d_endSelection <= my d_startSelection) Melder_throw ("No selection.");
-	autoEEG extract = my d_eeg -> f_extractPart (my d_startSelection, my d_endSelection, false);
+	autoEEG extract = EEG_extractPart (my d_eeg, my d_startSelection, my d_endSelection, false);
 	my broadcastPublication (extract.transfer());
 }
 
 void structEEGWindow :: v_createMenuItems_file_extract (EditorMenu menu) {
 	EEGWindow_Parent :: v_createMenuItems_file_extract (menu);
-	d_extractSelectedEEGPreserveTimesButton =
+	our d_extractSelectedEEGPreserveTimesButton =
 		EditorMenu_addCommand (menu, L"Extract selected EEG (preserve times)", 0, menu_cb_ExtractSelectedEEG_preserveTimes);
-	d_extractSelectedEEGTimeFromZeroButton =
+	our d_extractSelectedEEGTimeFromZeroButton =
 		EditorMenu_addCommand (menu, L"Extract selected EEG (time from zero)", 0, menu_cb_ExtractSelectedEEG_timeFromZero);
 }
 
 void structEEGWindow :: v_updateMenuItems_file () {
 	EEGWindow_Parent :: v_updateMenuItems_file ();
-	d_extractSelectedEEGPreserveTimesButton -> f_setSensitive (d_endSelection > d_startSelection);
-	d_extractSelectedEEGTimeFromZeroButton -> f_setSensitive (d_endSelection > d_startSelection);
+	our d_extractSelectedEEGPreserveTimesButton -> f_setSensitive (d_endSelection > d_startSelection);
+	our d_extractSelectedEEGTimeFromZeroButton -> f_setSensitive (d_endSelection > d_startSelection);
+}
+
+void EEGWindow_init (EEGWindow me, const wchar_t *title, EEG eeg) {
+	my d_eeg = eeg;   // before initing, because initing will already draw!
+	TextGridEditor_init (me, title, eeg -> textgrid, eeg -> sound, false, NULL);
 }
 
 EEGWindow EEGWindow_create (const wchar_t *title, EEG eeg) {
 	try {
 		autoEEGWindow me = Thing_new (EEGWindow);
-		my f_init (title, eeg);
+		EEGWindow_init (me.peek(), title, eeg);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("EEG window not created.");

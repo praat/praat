@@ -251,6 +251,9 @@ int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		} else if (wcsnequ (command, L"demo ", 5)) {
 			autoDemoOpen demo;
 			praat_executeCommand (interpreter, command + 5);
+		} else if (wcsnequ (command, L"asynchronous ", 13)) {
+			autoMelderAsynchronous asynchronous;
+			praat_executeCommand (interpreter, command + 13);
 		} else if (wcsnequ (command, L"pause ", 6) || wcsequ (command, L"pause")) {
 			if (theCurrentPraatApplication -> batch)
 				return 1;   // in batch we ignore pause statements

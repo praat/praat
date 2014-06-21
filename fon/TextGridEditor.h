@@ -34,12 +34,6 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		bool suppressRedraw;
 		wchar_t *findString;
 		GuiMenuItem extractSelectedTextGridPreserveTimesButton, extractSelectedTextGridTimeFromZeroButton;
-	// functions:
-	public:
-		void f_init (const wchar_t *title, TextGrid grid,
-			Sampled sound,   // either a Sound or a LongSound, or null
-			bool ownSound,
-			SpellingChecker spellingChecker);
 	// overridden methods:
 		virtual void v_info ();
 		virtual void v_createChildren ();
@@ -69,6 +63,8 @@ Thing_define (TextGridEditor, TimeSoundAnalysisEditor) {
 		virtual void v_createMenuItems_pitch_picture (EditorMenu menu);
 	#include "TextGridEditor_prefs.h"
 };
+
+void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker);
 
 TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid,
 	Sampled sound,   // either a Sound or a LongSound, or null

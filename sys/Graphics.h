@@ -101,6 +101,7 @@ Thing_define (Graphics, Thing) {
 		int lineType;
 		Graphics_Colour colour;
 		double lineWidth, arrowSize, speckleSize;
+		enum kGraphics_colourScale colourScale;
 		int horizontalTextAlignment, verticalTextAlignment;
 		double textRotation, wrapWidth, secondIndent, textX, textY;
 		enum kGraphics_font font;
@@ -231,7 +232,7 @@ void Graphics_innerRectangle (Graphics me, double x1, double x2, double y1, doub
 
 extern Graphics_Colour Graphics_BLACK, Graphics_WHITE, Graphics_RED, Graphics_GREEN, Graphics_BLUE,
 	Graphics_CYAN, Graphics_MAGENTA, Graphics_YELLOW, Graphics_MAROON, Graphics_LIME, Graphics_NAVY, Graphics_TEAL,
-	Graphics_PURPLE, Graphics_OLIVE, Graphics_PINK, Graphics_SILVER, Graphics_GREY;
+	Graphics_PURPLE, Graphics_OLIVE, Graphics_PINK, Graphics_SILVER, Graphics_GREY, Graphics_WINDOW_BACKGROUND_COLOUR;
 const wchar_t * Graphics_Colour_name (Graphics_Colour colour);
 static inline bool Graphics_Colour_equal (Graphics_Colour colour1, Graphics_Colour colour2) {
 	return colour1. red == colour2. red && colour1. green == colour2. green && colour1. blue == colour2. blue;
@@ -257,17 +258,20 @@ void Graphics_unhighlight2 (Graphics me, double x1, double x2, double y1, double
 #define Graphics_TOP  2
 #define Graphics_BASELINE  3
 void Graphics_setTextAlignment (Graphics me, int horizontal, int vertical);
+
 void Graphics_setFont (Graphics me, enum kGraphics_font font);
 void Graphics_setFontSize (Graphics me, int height);
-void Graphics_setFontStyle (Graphics me, int style);
-void Graphics_setItalic (Graphics me, bool onoff);
-void Graphics_setBold (Graphics me, bool onoff);
-void Graphics_setCode (Graphics me, bool onoff);
+
 #define Graphics_NORMAL  0
 #define Graphics_BOLD  1
 #define Graphics_ITALIC  2
 #define Graphics_BOLD_ITALIC  3
 #define Graphics_CODE  4
+void Graphics_setFontStyle (Graphics me, int style);
+
+void Graphics_setItalic (Graphics me, bool onoff);
+void Graphics_setBold (Graphics me, bool onoff);
+void Graphics_setCode (Graphics me, bool onoff);
 void Graphics_setTextRotation (Graphics me, double angle);
 void Graphics_setTextRotation_vector (Graphics me, double dx, double dy);
 void Graphics_setWrapWidth (Graphics me, double wrapWidth);
@@ -283,14 +287,17 @@ void Graphics_setUnderscoreIsSubscript (Graphics me, bool isSubscript);
 void Graphics_setDollarSignIsCode (Graphics me, bool isCode);
 void Graphics_setAtSignIsLink (Graphics me, bool isLink);
 
-void Graphics_setLineType (Graphics me, int lineType);
 #define Graphics_DRAWN  0
 #define Graphics_DOTTED  1
 #define Graphics_DASHED  2
 #define Graphics_DASHED_DOTTED  3
+void Graphics_setLineType (Graphics me, int lineType);
+
 void Graphics_setLineWidth (Graphics me, double lineWidth);
 void Graphics_setArrowSize (Graphics me, double arrowSize);
 void Graphics_setSpeckleSize (Graphics me, double speckleSize);
+
+void Graphics_setColourScale (Graphics me, enum kGraphics_colourScale colourScale);
 
 void Graphics_inqViewport (Graphics me, double *x1NDC, double *x2NDC, double *y1NDC, double *y2NDC);
 void Graphics_inqWindow (Graphics me, double *x1WC, double *x2WC, double *y1WC, double *y2WC);
@@ -302,6 +309,7 @@ double Graphics_inqLineWidth (Graphics me);
 double Graphics_inqArrowSize (Graphics me);
 double Graphics_inqSpeckleSize (Graphics me);
 Graphics_Colour Graphics_inqColour (Graphics me);
+enum kGraphics_colourScale Graphics_inqColourScale (Graphics me);
 
 void Graphics_contour (Graphics me, double **z,
 	long ix1, long ix2, double x1WC, double x2WC, long iy1, long iy2, double y1WC, double y2WC, double height);

@@ -38,7 +38,7 @@ END
 DIRECT (EEG_detrend)
 	LOOP {
 		iam (EEG);
-		my f_detrend ();
+		EEG_detrend (me);
 		praat_dataChanged (me);
 	}
 END
@@ -56,24 +56,24 @@ FORM (EEG_editExternalElectrodeNames, L"Edit external electrode names", 0)
 int IOBJECT;
 LOOP {
 	iam (EEG);
-	if (my f_getNumberOfExternalElectrodes () == 8) {
-		const long offsetExternalElectrode = my f_getNumberOfCapElectrodes ();
-		SET_STRING (L"External electrode 1", my d_channelNames [offsetExternalElectrode + 1])
-		SET_STRING (L"External electrode 2", my d_channelNames [offsetExternalElectrode + 2])
-		SET_STRING (L"External electrode 3", my d_channelNames [offsetExternalElectrode + 3])
-		SET_STRING (L"External electrode 4", my d_channelNames [offsetExternalElectrode + 4])
-		SET_STRING (L"External electrode 5", my d_channelNames [offsetExternalElectrode + 5])
-		SET_STRING (L"External electrode 6", my d_channelNames [offsetExternalElectrode + 6])
-		SET_STRING (L"External electrode 7", my d_channelNames [offsetExternalElectrode + 7])
-		SET_STRING (L"External electrode 8", my d_channelNames [offsetExternalElectrode + 8])
+	if (EEG_getNumberOfExternalElectrodes (me) == 8) {
+		const long offsetExternalElectrode = EEG_getNumberOfCapElectrodes (me);
+		SET_STRING (L"External electrode 1", my channelNames [offsetExternalElectrode + 1])
+		SET_STRING (L"External electrode 2", my channelNames [offsetExternalElectrode + 2])
+		SET_STRING (L"External electrode 3", my channelNames [offsetExternalElectrode + 3])
+		SET_STRING (L"External electrode 4", my channelNames [offsetExternalElectrode + 4])
+		SET_STRING (L"External electrode 5", my channelNames [offsetExternalElectrode + 5])
+		SET_STRING (L"External electrode 6", my channelNames [offsetExternalElectrode + 6])
+		SET_STRING (L"External electrode 7", my channelNames [offsetExternalElectrode + 7])
+		SET_STRING (L"External electrode 8", my channelNames [offsetExternalElectrode + 8])
 	}
 }
 DO
 	LOOP {
 		iam (EEG);
-		if (my f_getNumberOfExternalElectrodes () != 8)
+		if (EEG_getNumberOfExternalElectrodes (me) != 8)
 			Melder_throw ("You can do this only if there are 8 external electrodes.");
-		my f_setExternalElectrodeNames (GET_STRING (L"External electrode 1"), GET_STRING (L"External electrode 2"), GET_STRING (L"External electrode 3"),
+		EEG_setExternalElectrodeNames (me, GET_STRING (L"External electrode 1"), GET_STRING (L"External electrode 2"), GET_STRING (L"External electrode 3"),
 			GET_STRING (L"External electrode 4"), GET_STRING (L"External electrode 5"), GET_STRING (L"External electrode 6"),
 			GET_STRING (L"External electrode 7"), GET_STRING (L"External electrode 8"));
 		praat_dataChanged (me);
@@ -87,7 +87,7 @@ DO
 	LOOP {
 		iam (EEG);
 		const wchar_t *channelName = GET_STRING (L"Channel name");
-		autoEEG thee = my f_extractChannel (channelName);
+		autoEEG thee = EEG_extractChannel (me, channelName);
 		praat_new (thee.transfer(), my name, L"_", channelName);
 	}
 END
@@ -100,7 +100,7 @@ FORM (EEG_extractPart, L"EEG: Extract part", 0)
 DO
 	LOOP {
 		iam (EEG);
-		autoEEG thee = my f_extractPart (GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Preserve times"));
+		autoEEG thee = EEG_extractPart (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Preserve times"));
 		praat_new (thee.transfer(), my name, L"_part");
 	}
 END
@@ -108,8 +108,8 @@ END
 DIRECT (EEG_extractSound)
 	LOOP {
 		iam (EEG);
-		if (! my d_sound) Melder_throw (me, ": I don't contain a waveform.");
-		autoSound thee = my f_extractSound ();
+		if (! my sound) Melder_throw (me, ": I don't contain a waveform.");
+		autoSound thee = EEG_extractSound (me);
 		praat_new (thee.transfer(), NULL);
 	}
 END
@@ -117,8 +117,8 @@ END
 DIRECT (EEG_extractTextGrid)
 	LOOP {
 		iam (EEG);
-		if (! my d_textgrid) Melder_throw (me, ": I don't contain marks.");
-		autoTextGrid thee = my f_extractTextGrid ();
+		if (! my textgrid) Melder_throw (me, ": I don't contain marks.");
+		autoTextGrid thee = EEG_extractTextGrid (me);
 		praat_new (thee.transfer(), NULL);
 	}
 END
@@ -133,7 +133,7 @@ FORM (EEG_filter, L"Filter", 0)
 DO
 	LOOP {
 		iam (EEG);
-		my f_filter (GET_REAL (L"Low frequency"), GET_REAL (L"Low width"), GET_REAL (L"High frequency"), GET_REAL (L"High width"), GET_INTEGER (L"Notch at 50 Hz"));
+		EEG_filter (me, GET_REAL (L"Low frequency"), GET_REAL (L"Low width"), GET_REAL (L"High frequency"), GET_REAL (L"High width"), GET_INTEGER (L"Notch at 50 Hz"));
 		praat_dataChanged (me);
 	}
 END
@@ -145,9 +145,9 @@ DO
 	LOOP {
 		iam (EEG);
 		long channelNumber = GET_INTEGER (L"Channel number");
-		if (channelNumber > my d_numberOfChannels)
-			Melder_throw (me, ": there are only ", my d_numberOfChannels, " channels.");
-		Melder_information (my d_channelNames [channelNumber]);
+		if (channelNumber > my numberOfChannels)
+			Melder_throw (me, ": there are only ", my numberOfChannels, " channels.");
+		Melder_information (my channelNames [channelNumber]);
 	}
 END
 
@@ -157,7 +157,7 @@ FORM (EEG_getChannelNumber, L"Get channel number", 0)
 DO
 	LOOP {
 		iam (EEG);
-		Melder_information (Melder_integer (my f_getChannelNumber (GET_STRING (L"Channel name"))));
+		Melder_information (Melder_integer (EEG_getChannelNumber (me, GET_STRING (L"Channel name"))));
 	}
 END
 
@@ -168,7 +168,7 @@ FORM (EEG_removeTriggers, L"Remove triggers", 0)
 DO
 	LOOP {
 		iam (EEG);
-		my removeTriggers (GET_ENUM (kMelder_string, L"Remove every trigger that..."), GET_STRING (L"...the text"));
+		EEG_removeTriggers (me, GET_ENUM (kMelder_string, L"Remove every trigger that..."), GET_STRING (L"...the text"));
 		praat_dataChanged (me);
 	}
 END
@@ -180,7 +180,7 @@ FORM (EEG_setChannelName, L"Set channel name", 0)
 DO
 	LOOP {
 		iam (EEG);
-		my f_setChannelName (GET_INTEGER (L"Channel number"), GET_STRING (L"New name"));
+		EEG_setChannelName (me, GET_INTEGER (L"Channel number"), GET_STRING (L"New name"));
 		praat_dataChanged (me);
 	}
 END
@@ -191,7 +191,7 @@ FORM (EEG_setChannelToZero, L"Set channel to zero", 0)
 DO
 	LOOP {
 		iam (EEG);
-		my f_setChannelToZero (GET_STRING (L"Channel"));
+		EEG_setChannelToZero (me, GET_STRING (L"Channel"));
 		praat_dataChanged (me);
 	}
 END
@@ -204,7 +204,7 @@ FORM (EEG_subtractMeanChannel, L"Subtract mean channel", 0)
 DO
 	LOOP {
 		iam (EEG);
-		my f_subtractMeanChannel (GET_INTEGER (L"From channel"), GET_INTEGER (L"To channel"));
+		EEG_subtractMeanChannel (me, GET_INTEGER (L"From channel"), GET_INTEGER (L"To channel"));
 		praat_dataChanged (me);
 	}
 END
@@ -216,7 +216,7 @@ FORM (EEG_subtractReference, L"Subtract reference", 0)
 DO
 	LOOP {
 		iam (EEG);
-		my f_subtractReference (GET_STRING (L"Reference channel 1"), GET_STRING (L"Reference channel 2"));
+		EEG_subtractReference (me, GET_STRING (L"Reference channel 1"), GET_STRING (L"Reference channel 2"));
 		praat_dataChanged (me);
 	}
 END
@@ -278,7 +278,8 @@ FORM (EEG_to_MixingMatrix, L"To MixingMatrix", 0)
 DO
 	LOOP {
 		iam (EEG);
-		autoMixingMatrix thee = my f_to_MixingMatrix (GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"),
+		autoMixingMatrix thee = EEG_to_MixingMatrix (me,
+			GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"),
 			GET_INTEGER (L"Diagonalization method"));
 		praat_new (thee.transfer(), my name);
 	}
@@ -319,7 +320,7 @@ END
 
 DIRECT (EEG_TextGrid_replaceTextGrid)
 	EEG me = FIRST (EEG);
-	me -> f_replaceTextGrid (FIRST (TextGrid));
+	EEG_replaceTextGrid (me, FIRST (TextGrid));
 	praat_dataChanged (me);
 END
 
@@ -328,7 +329,7 @@ END
 DIRECT (ERP_downto_Sound)
 	LOOP {
 		iam (ERP);
-		autoSound thee = my f_downToSound ();
+		autoSound thee = ERP_downto_Sound (me);
 		praat_new (thee.transfer(), NULL);
 	}
 END
@@ -345,7 +346,7 @@ FORM (ERP_downto_Table, L"ERP: Down to Table", 0)
 DO
 	LOOP {
 		iam (ERP);
-		autoTable thee = my f_tabulate (GET_INTEGER (L"Include sample number"),
+		autoTable thee = ERP_tabulate (me, GET_INTEGER (L"Include sample number"),
 			GET_INTEGER (L"Include time"), GET_INTEGER (L"Time decimals"), GET_INTEGER (L"Voltage decimals"), GET_INTEGER (L"Voltage units"));
 		praat_new (thee.transfer(), my name);
 	}
@@ -363,7 +364,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (ERP);
-		me -> f_draw (GRAPHICS, GET_STRING (L"Channel name"), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		ERP_drawChannel_name (me, GRAPHICS, GET_STRING (L"Channel name"), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 			GET_REAL (L"left Voltage range"), GET_REAL (L"right Voltage range"), GET_INTEGER (L"Garnish"));
 	}
 END
@@ -379,9 +380,37 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam (ERP);
-		me -> f_drawScalp (GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_REAL (L"left Voltage range"), GET_REAL (L"right Voltage range"), GET_INTEGER (L"Garnish"));
+		ERP_drawScalp (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_REAL (L"left Voltage range"), GET_REAL (L"right Voltage range"), kGraphics_colourScale_GREY, GET_INTEGER (L"Garnish"));
 	}
+END
+
+FORM (ERP_drawScalp_colour, L"ERP: Draw scalp (colour)", 0)
+	REAL (L"left Time range (s)", L"0.1")
+	REAL (L"right Time range", L"0.2")
+	REAL (L"left Voltage range (V)", L"10e-6")
+	REAL (L"right Voltage range", L"-10e-6")
+	RADIO_ENUM (L"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (ERP);
+		ERP_drawScalp (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+			GET_REAL (L"left Voltage range"), GET_REAL (L"right Voltage range"), GET_ENUM(kGraphics_colourScale, L"Colour scale"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (ERP_drawScalp_garnish, L"ERP: Draw scalp (garnish)", 0)
+	REAL (L"left Voltage range (V)", L"10e-6")
+	REAL (L"right Voltage range", L"-10e-6")
+	RADIO_ENUM (L"Colour scale", kGraphics_colourScale, BLUE_TO_RED)
+	OK
+DO
+	autoPraatPicture picture;
+	ERP_drawScalp_garnish (GRAPHICS,
+		GET_REAL (L"left Voltage range"), GET_REAL (L"right Voltage range"), GET_ENUM(kGraphics_colourScale, L"Colour scale"));
 END
 
 FORM (ERP_extractOneChannelAsSound, L"ERP: Extract one channel as Sound", 0)
@@ -391,7 +420,7 @@ DO
 	LOOP {
 		iam (ERP);
 		const wchar_t *channelName = GET_STRING (L"Channel name");
-		long channelNumber = my f_getChannelNumber (channelName);
+		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, ": no channel named \"", channelName, "\".");
 		autoSound thee = Sound_extractChannel (me, channelNumber);
 		praat_new (thee.transfer(), my name, L"_", channelName);
@@ -452,7 +481,7 @@ DO
 		long channelNumber = GET_INTEGER (L"Channel number");
 		if (channelNumber > my ny)
 			Melder_throw (me, ": there are only ", my ny, " channels.");
-		Melder_information (my d_channelNames [channelNumber]);
+		Melder_information (my channelNames [channelNumber]);
 	}
 END
 
@@ -462,7 +491,7 @@ FORM (ERP_getChannelNumber, L"Get channel number", 0)
 DO
 	LOOP {
 		iam (ERP);
-		Melder_information (Melder_integer (my f_getChannelNumber (GET_STRING (L"Channel name"))));
+		Melder_information (Melder_integer (ERP_getChannelNumber (me, GET_STRING (L"Channel name"))));
 	}
 END
 
@@ -481,7 +510,7 @@ DO
 	LOOP {
 		iam (ERP);
 		const wchar_t *channelName = GET_STRING (L"Channel name");
-		long channelNumber = my f_getChannelNumber (channelName);
+		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, ": no channel named \"", channelName, "\".");
 		double maximum;
 		Vector_getMaximumAndX (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), channelNumber, GET_INTEGER (L"Interpolation") - 1, & maximum, NULL);
@@ -498,7 +527,7 @@ DO
 	LOOP {
 		iam (ERP);
 		const wchar_t *channelName = GET_STRING (L"Channel name");
-		long channelNumber = my f_getChannelNumber (channelName);
+		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, ": no channel named \"", channelName, "\".");
 		double mean = Vector_getMean (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), channelNumber);
 		Melder_informationReal (mean, L"Volt");
@@ -520,7 +549,7 @@ DO
 	LOOP {
 		iam (ERP);
 		const wchar_t *channelName = GET_STRING (L"Channel name");
-		long channelNumber = my f_getChannelNumber (channelName);
+		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, ": no channel named \"", channelName, "\".");
 		double minimum;
 		Vector_getMinimumAndX (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), channelNumber, GET_INTEGER (L"Interpolation") - 1, & minimum, NULL);
@@ -543,7 +572,7 @@ DO
 	LOOP {
 		iam (ERP);
 		const wchar_t *channelName = GET_STRING (L"Channel name");
-		long channelNumber = my f_getChannelNumber (channelName);
+		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, ": no channel named \"", channelName, "\".");
 		double timeOfMaximum;
 		Vector_getMaximumAndX (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), channelNumber, GET_INTEGER (L"Interpolation") - 1, NULL, & timeOfMaximum);
@@ -566,7 +595,7 @@ DO
 	LOOP {
 		iam (ERP);
 		const wchar_t *channelName = GET_STRING (L"Channel name");
-		long channelNumber = my f_getChannelNumber (channelName);
+		long channelNumber = ERP_getChannelNumber (me, channelName);
 		if (channelNumber == 0) Melder_throw (me, ": no channel named \"", channelName, "\".");
 		double timeOfMinimum;
 		Vector_getMinimumAndX (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), channelNumber, GET_INTEGER (L"Interpolation") - 1, NULL, & timeOfMinimum);
@@ -614,9 +643,9 @@ DO
 	LOOP {
 		iam (ERPTier);
 		long channelNumber = GET_INTEGER (L"Channel number");
-		if (channelNumber > my d_numberOfChannels)
-			Melder_throw (me, ": there are only ", my d_numberOfChannels, " channels.");
-		Melder_information (my d_channelNames [channelNumber]);
+		if (channelNumber > my numberOfChannels)
+			Melder_throw (me, ": there are only ", my numberOfChannels, " channels.");
+		Melder_information (my channelNames [channelNumber]);
 	}
 END
 
@@ -626,7 +655,7 @@ FORM (ERPTier_getChannelNumber, L"Get channel number", 0)
 DO
 	LOOP {
 		iam (ERPTier);
-		Melder_information (Melder_integer (my f_getChannelNumber (GET_STRING (L"Channel name"))));
+		Melder_information (Melder_integer (ERPTier_getChannelNumber (me, GET_STRING (L"Channel name"))));
 	}
 END
 
@@ -639,7 +668,7 @@ FORM (ERPTier_getMean, L"ERPTier: Get mean", L"ERPTier: Get mean...")
 DO
 	LOOP {
 		iam (ERPTier);
-		double mean = my f_getMean (GET_INTEGER (L"Point number"), GET_STRING (L"Channel name"), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
+		double mean = ERPTier_getMean (me, GET_INTEGER (L"Point number"), GET_STRING (L"Channel name"), GET_REAL (L"left Time range"), GET_REAL (L"right Time range"));
 		Melder_informationReal (mean, L"Volt");
 	}
 END
@@ -650,7 +679,7 @@ FORM (ERPTier_rejectArtefacts, L"Reject artefacts", 0)
 DO
 	LOOP {
 		iam (ERPTier);
-		my f_rejectArtefacts (GET_REAL (L"Threshold"));
+		ERPTier_rejectArtefacts (me, GET_REAL (L"Threshold"));
 		praat_dataChanged (me);
 	}
 END
@@ -674,7 +703,7 @@ FORM (ERPTier_subtractBaseline, L"Subtract baseline", 0)
 DO
 	LOOP {
 		iam (ERPTier);
-		my f_subtractBaseline (GET_REAL (L"From time"), GET_REAL (L"To time"));
+		ERPTier_subtractBaseline (me, GET_REAL (L"From time"), GET_REAL (L"To time"));
 		praat_dataChanged (me);
 	}
 END
@@ -685,7 +714,7 @@ FORM (ERPTier_to_ERP, L"ERPTier: To ERP", 0)
 DO
 	LOOP {
 		iam (ERPTier);
-		autoERP thee = my f_extractERP (GET_INTEGER (L"Event number"));
+		autoERP thee = ERPTier_extractERP (me, GET_INTEGER (L"Event number"));
 		praat_new (thee.transfer(), my name, L"_mean");
 	}
 END
@@ -693,7 +722,7 @@ END
 DIRECT (ERPTier_to_ERP_mean)
 	LOOP {
 		iam (ERPTier);
-		autoERP thee = my f_toERP_mean ();
+		autoERP thee = ERPTier_to_ERP_mean (me);
 		praat_new (thee.transfer(), my name, L"_mean");
 	}
 END
@@ -709,7 +738,7 @@ DO
 	ERPTier erpTier = FIRST (ERPTier);
 	Table table = FIRST (Table);
 	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (L"Extract all events where column..."));
-	autoERPTier thee = erpTier -> f_extractEventsWhereColumn_number (table, columnNumber, GET_ENUM (kMelder_number, L"...is..."), GET_REAL (L"...the number"));
+	autoERPTier thee = ERPTier_extractEventsWhereColumn_number (erpTier, table, columnNumber, GET_ENUM (kMelder_number, L"...is..."), GET_REAL (L"...the number"));
 	praat_new (thee.transfer(), erpTier -> name);
 END
 
@@ -722,7 +751,7 @@ DO
 	ERPTier erpTier = FIRST (ERPTier);
 	Table table = FIRST (Table);
 	long columnNumber = Table_getColumnIndexFromColumnLabel (table, GET_STRING (L"Extract all events where column..."));
-	autoERPTier thee = erpTier -> f_extractEventsWhereColumn_string (table, columnNumber, GET_ENUM (kMelder_string, L"..."), GET_STRING (L"...the text"));
+	autoERPTier thee = ERPTier_extractEventsWhereColumn_string (erpTier, table, columnNumber, GET_ENUM (kMelder_string, L"..."), GET_STRING (L"...the text"));
 	praat_new (thee.transfer(), erpTier -> name);
 END
 
@@ -787,6 +816,8 @@ void praat_EEG_init (void) {
 	praat_addAction1 (classERP, 0, L"Draw -", 0, 0, 0);
 		praat_addAction1 (classERP, 0, L"Draw...", 0, 1, DO_ERP_draw);
 		praat_addAction1 (classERP, 0, L"Draw scalp...", 0, 1, DO_ERP_drawScalp);
+		praat_addAction1 (classERP, 0, L"Draw scalp (colour)...", 0, 1, DO_ERP_drawScalp_colour);
+		praat_addAction1 (classERP, 0, L"Draw scalp (garnish)...", 0, 1, DO_ERP_drawScalp_garnish);
 	praat_addAction1 (classERP, 0, L"Tabulate -", 0, 0, 0);
 		praat_addAction1 (classERP, 0, L"Down to Table...", 0, 1, DO_ERP_downto_Table);
 	praat_addAction1 (classERP, 0, L"Query -", 0, 0, 0);

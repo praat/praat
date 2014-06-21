@@ -1,6 +1,6 @@
 /* ERP_def.h
  *
- * Copyright (C) 2011-2012 Paul Boersma
+ * Copyright (C) 2011-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,7 @@
 #define ooSTRUCT ERP
 oo_DEFINE_CLASS (ERP, Sound)
 
-	oo_STRING_VECTOR (d_channelNames, ny)
-
-	#if oo_DECLARING
-		// functions:
-		public:
-			long f_getChannelNumber (const wchar_t *channelName);
-			void f_draw (Graphics graphics, long channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish);
-			void f_draw (Graphics graphics, const wchar_t *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish);
-			void f_drawScalp (Graphics graphics, double tmin, double tmax, double vmin, double vmax, bool garnish);
-			Table f_tabulate (bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units);
-			Sound f_downToSound ();
-	#endif
+	oo_STRING_VECTOR (channelNames, ny)
 
 oo_END_CLASS (ERP)
 #undef ooSTRUCT

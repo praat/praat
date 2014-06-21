@@ -230,12 +230,44 @@ static void _GraphicsScreen_cellArrayOrImage (GraphicsScreen me, double **z_floa
 		#elif mac
 			#define ROW_START_ADDRESS  (imageData + (clipy1 - 1 - yDC) * bytesPerRow)
 			#define PUT_PIXEL \
-				if (1) { \
+				if (my colourScale == kGraphics_colourScale_GREY) { \
 					unsigned char kar = value <= 0 ? 0 : value >= 255 ? 255 : (int) value; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = kar; \
 					*pixelAddress ++ = 0; \
+				} else if (my colourScale == kGraphics_colourScale_BLUE_TO_RED) { \
+					if (value < 0.0) { \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 63; \
+						*pixelAddress ++ = 0; \
+					} else if (value < 64.0) { \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = (int) (value * 3 + 63.999); \
+						*pixelAddress ++ = 0; \
+					} else if (value < 128.0) { \
+						*pixelAddress ++ = (int) (value * 4 - 256.0); \
+						*pixelAddress ++ = (int) (value * 4 - 256.0); \
+						*pixelAddress ++ = 255; \
+						*pixelAddress ++ = 0; \
+					} else if (value < 192.0) { \
+						*pixelAddress ++ = 255; \
+						*pixelAddress ++ = (int) ((256.0 - value) * 4 - 256.0); \
+						*pixelAddress ++ = (int) ((256.0 - value) * 4 - 256.0); \
+						*pixelAddress ++ = 0; \
+					} else if (value < 256.0) { \
+						*pixelAddress ++ = (int) ((256.0 - value) * 3 + 63.999); \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 0; \
+					} else { \
+						*pixelAddress ++ = 63; \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 0; \
+						*pixelAddress ++ = 0; \
+					} \
 				}
 		#else
 			#define ROW_START_ADDRESS  NULL
@@ -462,7 +494,7 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
 		/* New rows (scanlines) are longer: */
 		my d_printf (my d_file, "/scanline %ld string def\n", nx_new);
-		/* The first four arguments to the 'image' command,
+		/* The first four arguments to the 'image' command, */
 		/* namely the new number of columns, the new number of rows, the bit depth, and the matrix: */
 		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny_new, nx_new, ny_new);
 		/* Since our imageproc is going to output only one scanline at a time, */
@@ -514,7 +546,7 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 		my d_printf (my d_file, "/row %ld string def\n", nx, nx);
 		/* New rows (scanlines) are longer: */
 		my d_printf (my d_file, "/scanline %ld string def\n", nx_new);
-		/* The first four arguments to the 'image' command,
+		/* The first four arguments to the 'image' command, */
 		/* namely the new number of columns, the number of rows, the bit depth, and the matrix: */
 		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx_new, ny, nx_new, ny);
 		/* The imageproc starts here. We fill one original row. */
@@ -546,7 +578,7 @@ static void _GraphicsPostscript_cellArrayOrImage (GraphicsPostscript me, double 
 		my d_printf (my d_file, "/lorow %ld string def /hirow %ld string def\n", nx, nx);
 		/* New rows (scanlines) are equally long: */
 		my d_printf (my d_file, "/scanline %ld string def\n", nx);
-		/* The first four arguments to the 'image' command,
+		/* The first four arguments to the 'image' command, */
 		/* namely the number of columns, the new number of rows, the bit depth, and the matrix: */
 		my d_printf (my d_file, "%ld %ld 8 [%ld 0 0 %ld 0 0]\n", nx, ny_new, nx, ny_new);
 		/* Since our imageproc is going to output only one scanline at a time, */
@@ -676,7 +708,7 @@ void Graphics_image8 (Graphics me, unsigned char **z, long ix1, long ix2, double
 static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *relativeFileName, double x1, double x2, double y1, double y2) {
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
-	#if 1
+	#if 0
 		structMelderFile file;
 		Melder_relativePathToFile (relativeFileName, & file);
 		try {
@@ -718,10 +750,10 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 				width = image. GetWidth (), x1DC -= width / 2, x2DC = x1DC + width;
 				height = image. GetHeight (), y2DC -= height / 2, y1DC = y2DC + height;
 			} else if (x1 == x2) {
-				width = height * (double) image. GetWidth () / (double) image -> GetHeight ();
+				width = height * (double) image. GetWidth () / (double) image. GetHeight ();
 				x1DC -= width / 2, x2DC = x1DC + width;
 			} else if (y1 == y2) {
-				height = width * (double) image. GetHeight () / (double) image -> GetWidth ();
+				height = width * (double) image. GetHeight () / (double) image. GetWidth ();
 				y2DC -= height / 2, y1DC = y2DC + height;
 			}
 			Gdiplus::Graphics dcplus (my d_gdiGraphicsContext);

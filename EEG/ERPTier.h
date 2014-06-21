@@ -26,6 +26,23 @@
 oo_CLASS_CREATE (ERPPoint, AnyPoint);
 oo_CLASS_CREATE (ERPTier, Function);
 
+
+long ERPTier_getChannelNumber (ERPTier me, const wchar_t *channelName);
+static inline void ERPTier_checkEventNumber (ERPTier me, long eventNumber) {
+	if (eventNumber < 1)
+		Melder_throw ("The specified event number is ", eventNumber, " but should have been positive.");
+	if (eventNumber > my events -> size)
+		Melder_throw ("The specified event number (", eventNumber, ") exceeds the number of events (", my events -> size, ").");
+}
+double ERPTier_getMean (ERPTier me, long pointNumber, long channelNumber, double tmin, double tmax);
+double ERPTier_getMean (ERPTier me, long pointNumber, const wchar_t *channelName, double tmin, double tmax);
+void ERPTier_subtractBaseline (ERPTier me, double tmin, double tmax);
+void ERPTier_rejectArtefacts (ERPTier me, double threshold);
+ERP ERPTier_extractERP (ERPTier me, long pointNumber);
+ERP ERPTier_to_ERP_mean (ERPTier me);
+ERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion);
+ERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, long columnNumber, int which_Melder_STRING, const wchar_t *criterion);
+
 ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit);
 ERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
 	int which_Melder_STRING, const wchar_t *criterion);

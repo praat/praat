@@ -2,7 +2,7 @@
 #define _Sound_h_
 /* Sound.h
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -215,7 +215,7 @@ Sound Matrix_to_Sound_mono (Matrix me, long row);
 
 extern Sound Sound_clipboard;
 
-/********** Sound_audio.c **********/
+/********** Sound_audio.cpp **********/
 
 Sound Sound_recordFixedTime (int inputSource,
 	double gain, double balance, double samplingFrequency, double duration);
@@ -293,7 +293,7 @@ void Sound_play (Sound me,
 	int (*playCallback) (void *playClosure, int phase, double tmin, double tmax, double t), void *playClosure);
 	/* The same as Sound_playPart (me, my xmin, my xmax, playCallback, playClosure); */
 
-/********** Sound_files.c **********/
+/********** Sound_files.cpp **********/
 
 /* To avoid clipping, keep the absolute amplitude below 1.000. */
 /* All are mono or stereo PCM. */
@@ -330,7 +330,7 @@ void Sound_writeToRawSoundFile (Sound me, MelderFile file, int encoding);
 	'me' must exist
 */
 
-/********** Sound_enhance.c **********/
+/********** Sound_enhance.cpp **********/
 
 Sound Sound_lengthen_overlapAdd (Sound me, double fmin, double fmax, double factor);
 Sound Sound_deepenBandModulation (Sound me, double enhancement_dB,

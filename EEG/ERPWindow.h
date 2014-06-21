@@ -2,7 +2,7 @@
 #define _ERPWindow_h_
 /* ERPWindow.h
  *
- * Copyright (C) 2012,2013 Paul Boersma
+ * Copyright (C) 2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +25,23 @@
 Thing_define (ERPWindow, SoundEditor) { public:
 	// overridden methods:
 		virtual const wchar_t * v_getChannelName (long channelNumber) {
-			ERP erp = (ERP) this -> data;
-			return erp -> d_channelNames [channelNumber];
+			ERP erp = (ERP) our data;
+			return erp -> channelNames [channelNumber];
 		}
 		virtual void v_drawSelectionViewer ();
 		virtual bool v_hasPitch     () { return false; }
 		virtual bool v_hasIntensity () { return false; }
 		virtual bool v_hasFormants  () { return false; }
 		virtual bool v_hasPulses    () { return false; }
+		virtual void v_prefs_addFields (EditorCommand cmd);
+		virtual void v_prefs_setValues (EditorCommand cmd);
+		virtual void v_prefs_getValues (EditorCommand cmd);
 	#include "ERPWindow_prefs.h"
 };
 
+/**
+	Create an ERPWindow.
+*/
 ERPWindow ERPWindow_create (const wchar_t *title, ERP data);
 
 /* End of file ERPWindow.h */

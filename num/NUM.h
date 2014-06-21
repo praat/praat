@@ -50,7 +50,7 @@
 #include "abcio.h"
 #define NUMlog2(x)  (log (x) * NUMlog2e)
 
-void NUMinit (void);
+void NUMinit ();
 
 double NUMpow (double base, double exponent);   /* Zero for non-positive base. */
 void NUMshift (double *x, double xfrom, double xto);
@@ -218,7 +218,7 @@ bool NUMmatrix_equal (long elementSize, void *m1, void *m2, long row1, long row2
 
 long NUM_getTotalNumberOfArrays (void);   /* For debugging. */
 
-/********** Special functions (NUM.c) **********/
+/********** Special functions (NUM.cpp) **********/
 
 double NUMlnGamma (double x);
 double NUMbeta (double z, double w);
@@ -245,7 +245,7 @@ double NUMbinomialQ (double p, double k, double n);
 double NUMinvBinomialP (double p, double k, double n);
 double NUMinvBinomialQ (double p, double k, double n);
 
-/********** Auditory modelling (NUMear.c) **********/
+/********** Auditory modelling (NUMear.cpp) **********/
 
 double NUMhertzToBark (double hertz);
 double NUMbarkToHertz (double bark);
@@ -260,7 +260,7 @@ double NUMerb (double f);
 double NUMhertzToErb (double hertz);
 double NUMerbToHertz (double erb);
 
-/********** Sorting (NUMsort.c) **********/
+/********** Sorting (NUMsort.cpp) **********/
 
 void NUMsort_d (long n, double ra []);   /* Heap sort. */
 void NUMsort_i (long n, int ra []);
@@ -277,7 +277,7 @@ double NUMquantile (long n, double a [], double factor);
 	If your array has not been sorted, first sort it with NUMsort (n, a).
 */
 
-/********** Interpolation and optimization (NUM.c) **********/
+/********** Interpolation and optimization (NUM.cpp) **********/
 
 // Special values for interpolationDepth:
 #define NUM_VALUE_INTERPOLATE_NEAREST  0
@@ -313,7 +313,7 @@ void NUM_viterbi_multi (
 	void (*putResult) (long iframe, long place, int itrack, void *closure),
 	void *closure);
 
-/********** Metrics (NUM.c) **********/
+/********** Metrics (NUM.cpp) **********/
 
 int NUMrotationsPointInPolygon
 	(double x0, double y0, long n, double x [], double y []);
@@ -326,22 +326,20 @@ int NUMrotationsPointInPolygon
 	If the point is on the polygon, the result is unpredictable.
 */
 
-/********** Random numbers (NUMrandom.c) **********/
+/********** Random numbers (NUMrandom.cpp) **********/
 
-void NUMrandomRestart (unsigned long seed);
-/*
-	Not needed for starting the random generator for the first time;
-	that will be done on the basis of the current time.
-*/
+void NUMrandom_init ();   // automatically called by NUMinit ();
 
-double NUMrandomFraction (void);
+double NUMrandomFraction ();
+double NUMrandomFraction_mt (int threadNumber);
 
 double NUMrandomUniform (double lowest, double highest);
 
 long NUMrandomInteger (long lowest, long highest);
 
 double NUMrandomGauss (double mean, double standardDeviation);
-	
+double NUMrandomGauss_mt (int threadNumber, double mean, double standardDeviation);
+
 double NUMrandomPoisson (double mean);
 
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2);

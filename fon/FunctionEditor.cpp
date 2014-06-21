@@ -187,8 +187,7 @@ static void drawNow (FunctionEditor me) {
 	 */
 	Graphics_setViewport (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
 	Graphics_setWindow (my d_graphics, my functionViewerLeft, my functionViewerRight, 0, my height);
-	Graphics_Colour windowBackgroundColour = { 0.90, 0.90, 0.85 } ;
-	Graphics_setColour (my d_graphics, windowBackgroundColour);
+	Graphics_setColour (my d_graphics, Graphics_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);

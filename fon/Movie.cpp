@@ -53,12 +53,12 @@ void structMovie :: v_info ()
 	MelderInfo_writeLine (L"   First frame centred at: ", Melder_double (x1), L" seconds");
 }
 
-void structMovie :: f_init (Sound sound, const wchar_t *folderName, Strings fileNames)
+void Movie_init (Movie me, Sound sound, const wchar_t *folderName, Strings fileNames)
 {
-	Sampled_init (this, sound -> xmin, sound -> xmax, fileNames ? fileNames -> numberOfStrings : 0, 0.04, 0.0);
-	d_sound = sound;
-	d_folderName = Melder_wcsdup (folderName);
-	d_fileNames = fileNames;
+	Sampled_init (me, sound -> xmin, sound -> xmax, fileNames ? fileNames -> numberOfStrings : 0, 0.04, 0.0);
+	my d_sound = sound;
+	my d_folderName = Melder_wcsdup (folderName);
+	my d_fileNames = fileNames;
 }
 
 Movie Movie_openFromSoundFile (MelderFile file)
@@ -76,35 +76,35 @@ Movie Movie_openFromSoundFile (MelderFile file)
 		autoStrings strings = Strings_createAsFileList (Melder_wcscat (fileNameHead.string, L"*.png"));
 		struct structMelderDir folder;
 		MelderFile_getParentDir (file, & folder);
-		my f_init (sound.transfer(), Melder_dirToPath (& folder), strings.transfer());
+		Movie_init (me.peek(), sound.transfer(), Melder_dirToPath (& folder), strings.transfer());
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Movie object not read from file ", file, ".");
 	}
 }
 
-void structMovie :: f_paintOneImageInside (Graphics graphics, long frameNumber, double a_xmin, double a_xmax, double a_ymin, double a_ymax)
+void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax)
 {
 	try {
 		if (frameNumber < 1) Melder_throw ("Specified frame number is ", frameNumber, " but should be at least 1.");
-		if (frameNumber > nx) Melder_throw ("Specified frame number is ", frameNumber, " but there are only ", nx, "frames.");
-		Melder_assert (d_fileNames != 0);
-		Melder_assert (d_fileNames -> numberOfStrings == nx);
+		if (frameNumber > my nx) Melder_throw ("Specified frame number is ", frameNumber, " but there are only ", my nx, "frames.");
+		Melder_assert (my d_fileNames != 0);
+		Melder_assert (my d_fileNames -> numberOfStrings == my nx);
 		struct structMelderDir folder;
-		Melder_pathToDir (d_folderName, & folder);
+		Melder_pathToDir (my d_folderName, & folder);
 		struct structMelderFile file;
-		MelderDir_getFile (& folder, d_fileNames -> strings [frameNumber], & file);
-		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), a_xmin, a_xmax, a_ymin, a_ymax);
+		MelderDir_getFile (& folder, my d_fileNames -> strings [frameNumber], & file);
+		Graphics_imageFromFile (graphics, Melder_fileToPath (& file), xmin, xmax, ymin, ymax);
 	} catch (MelderError) {
-		Melder_throw (this, ": image ", frameNumber, " not painted.");
+		Melder_throw (me, ": image ", frameNumber, " not painted.");
 	}
 }
 
-void structMovie :: f_paintOneImage (Graphics graphics, long frameNumber, double a_xmin, double a_xmax, double a_ymin, double a_ymax) {
+void Movie_paintOneImage (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax) {
 	try {
 		Graphics_setInner (graphics);
 		Graphics_setWindow (graphics, 0.0, 1.0, 0.0, 1.0);
-		f_paintOneImageInside (graphics, frameNumber, a_xmin, a_xmax, a_ymin, a_ymax);
+		Movie_paintOneImageInside (me, graphics, frameNumber, xmin, xmax, ymin, ymax);
 		Graphics_unsetInner (graphics);
 	} catch (MelderError) {
 		Graphics_unsetInner (graphics);   // TODO: should be auto
@@ -112,9 +112,10 @@ void structMovie :: f_paintOneImage (Graphics graphics, long frameNumber, double
 	}
 }
 
-void structMovie :: f_play (Graphics g, double tmin, double tmax, int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure)
+void Movie_play (Movie me, Graphics g, double tmin, double tmax, int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure)
 {
-	Sound_playPart (d_sound, tmin, tmax, callback, closure);
+	(void) g;
+	Sound_playPart (my d_sound, tmin, tmax, callback, closure);
 }
 
 /* End of file Movie.cpp */

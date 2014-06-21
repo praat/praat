@@ -44,47 +44,51 @@ Thing_implement (EEG, Function, 0);
 void structEEG :: v_info () {
 	structData :: v_info ();
 	MelderInfo_writeLine (L"Time domain:");
-	MelderInfo_writeLine (L"   Start time: ", Melder_double (xmin), L" seconds");
-	MelderInfo_writeLine (L"   End time: ", Melder_double (xmax), L" seconds");
-	MelderInfo_writeLine (L"   Total duration: ", Melder_double (xmax - xmin), L" seconds");
-	if (d_sound != NULL) {
+	MelderInfo_writeLine (L"   Start time: ", Melder_double (our xmin), L" seconds");
+	MelderInfo_writeLine (L"   End time: ", Melder_double (our xmax), L" seconds");
+	MelderInfo_writeLine (L"   Total duration: ", Melder_double (our xmax - our xmin), L" seconds");
+	if (our sound != NULL) {
 		MelderInfo_writeLine (L"Time sampling of the signal:");
-		MelderInfo_writeLine (L"   Number of samples: ", Melder_integer (d_sound -> nx));
-		MelderInfo_writeLine (L"   Sampling period: ", Melder_double (d_sound -> dx), L" seconds");
-		MelderInfo_writeLine (L"   Sampling frequency: ", Melder_single (1.0 / d_sound -> dx), L" Hz");
-		MelderInfo_writeLine (L"   First sample centred at: ", Melder_double (d_sound -> x1), L" seconds");
+		MelderInfo_writeLine (L"   Number of samples: ", Melder_integer (our sound -> nx));
+		MelderInfo_writeLine (L"   Sampling period: ", Melder_double (our sound -> dx), L" seconds");
+		MelderInfo_writeLine (L"   Sampling frequency: ", Melder_single (1.0 / our sound -> dx), L" Hz");
+		MelderInfo_writeLine (L"   First sample centred at: ", Melder_double (our sound -> x1), L" seconds");
 	}
-	MelderInfo_writeLine (L"Number of cap electrodes: ", Melder_integer (f_getNumberOfCapElectrodes ()));
-	MelderInfo_writeLine (L"Number of external electrodes: ", Melder_integer (f_getNumberOfExternalElectrodes ()));
-	MelderInfo_writeLine (L"Number of extra sensors: ", Melder_integer (f_getNumberOfExtraSensors ()));
+	MelderInfo_writeLine (L"Number of cap electrodes: ", Melder_integer (EEG_getNumberOfCapElectrodes (this)));
+	MelderInfo_writeLine (L"Number of external electrodes: ", Melder_integer (EEG_getNumberOfExternalElectrodes (this)));
+	MelderInfo_writeLine (L"Number of extra sensors: ", Melder_integer (EEG_getNumberOfExtraSensors (this)));
 }
 
 void structEEG :: v_shiftX (double xfrom, double xto) {
 	EEG_Parent :: v_shiftX (xfrom, xto);
-	if (d_sound    != NULL)  Function_shiftXTo (d_sound,    xfrom, xto);
-	if (d_textgrid != NULL)  Function_shiftXTo (d_textgrid, xfrom, xto);
+	if (our sound    != NULL)  Function_shiftXTo (our sound,    xfrom, xto);
+	if (our textgrid != NULL)  Function_shiftXTo (our textgrid, xfrom, xto);
 }
 
 void structEEG :: v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto) {
 	EEG_Parent :: v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (d_sound    != NULL)  d_sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
-	if (d_textgrid != NULL)  d_textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our sound    != NULL)  our sound    -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+	if (our textgrid != NULL)  our textgrid -> v_scaleX (xminfrom, xmaxfrom, xminto, xmaxto);
+}
+
+void EEG_init (EEG me, double tmin, double tmax) {
+	my xmin = tmin;
+	my xmax = tmax;
 }
 
 EEG EEG_create (double tmin, double tmax) {
 	try {
 		autoEEG me = Thing_new (EEG);
-		my xmin = tmin;
-		my xmax = tmax;
+		EEG_init (me.peek(), tmin, tmax);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("EEG object not created.");
 	}
 }
 
-long structEEG :: f_getChannelNumber (const wchar_t *channelName) {
-	for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
-		if (Melder_wcsequ (d_channelNames [ichan], channelName)) {
+long EEG_getChannelNumber (EEG me, const wchar_t *channelName) {
+	for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
+		if (Melder_wcsequ (my channelNames [ichan], channelName)) {
 			return ichan;
 		}
 	}
@@ -187,14 +191,14 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 		}
 		double duration = numberOfDataRecords * durationOfDataRecord;
 		autoEEG him = EEG_create (0, duration);
-		his d_numberOfChannels = numberOfChannels;
+		his numberOfChannels = numberOfChannels;
 		autoSound me = Sound_createSimple (numberOfChannels, duration, samplingFrequency);
 		Melder_assert (my nx == numberOfSamplesPerDataRecord * numberOfDataRecords);
 		autoNUMvector <unsigned char> dataBuffer (0L, 3 * numberOfSamplesPerDataRecord - 1);
 		for (long record = 1; record <= numberOfDataRecords; record ++) {
 			for (long channel = 1; channel <= numberOfChannels; channel ++) {
 				double factor = channel == numberOfChannels ? 1.0 : physicalMinimum [channel] / digitalMinimum [channel];
-				if (channel < numberOfChannels - his f_getNumberOfExtraSensors ()) factor /= 1000000.0;
+				if (channel < numberOfChannels - EEG_getNumberOfExtraSensors (him.peek())) factor /= 1000000.0;
 				if (is24bit) {
 					fread (& dataBuffer [0], 3, numberOfSamplesPerDataRecord, f);
 					unsigned char *p = & dataBuffer [0];
@@ -299,107 +303,107 @@ EEG EEG_readFromBdfFile (MelderFile file) {
 			}
 		}
 		f.close (file);
-		his d_channelNames = channelNames.transfer();
-		his d_sound = me.transfer();
-		his d_textgrid = thee.transfer();
-		if (his f_getNumberOfCapElectrodes () == 32) {
-			his f_setChannelName (1, L"Fp1");
-			his f_setChannelName (2, L"AF3");
-			his f_setChannelName (3, L"F7");
-			his f_setChannelName (4, L"F3");
-			his f_setChannelName (5, L"FC1");
-			his f_setChannelName (6, L"FC5");
-			his f_setChannelName (7, L"T7");
-			his f_setChannelName (8, L"C3");
-			his f_setChannelName (9, L"CP1");
-			his f_setChannelName (10, L"CP5");
-			his f_setChannelName (11, L"P7");
-			his f_setChannelName (12, L"P3");
-			his f_setChannelName (13, L"Pz");
-			his f_setChannelName (14, L"PO3");
-			his f_setChannelName (15, L"O1");
-			his f_setChannelName (16, L"Oz");
-			his f_setChannelName (17, L"O2");
-			his f_setChannelName (18, L"PO4");
-			his f_setChannelName (19, L"P4");
-			his f_setChannelName (20, L"P8");
-			his f_setChannelName (21, L"CP6");
-			his f_setChannelName (22, L"CP2");
-			his f_setChannelName (23, L"C4");
-			his f_setChannelName (24, L"T8");
-			his f_setChannelName (25, L"FC6");
-			his f_setChannelName (26, L"FC2");
-			his f_setChannelName (27, L"F4");
-			his f_setChannelName (28, L"F8");
-			his f_setChannelName (29, L"AF4");
-			his f_setChannelName (30, L"Fp2");
-			his f_setChannelName (31, L"Fz");
-			his f_setChannelName (32, L"Cz");
-		} else if (his f_getNumberOfCapElectrodes () == 64) {
-			his f_setChannelName (1, L"Fp1");
-			his f_setChannelName (2, L"AF7");
-			his f_setChannelName (3, L"AF3");
-			his f_setChannelName (4, L"F1");
-			his f_setChannelName (5, L"F3");
-			his f_setChannelName (6, L"F5");
-			his f_setChannelName (7, L"F7");
-			his f_setChannelName (8, L"FT7");
-			his f_setChannelName (9, L"FC5");
-			his f_setChannelName (10, L"FC3");
-			his f_setChannelName (11, L"FC1");
-			his f_setChannelName (12, L"C1");
-			his f_setChannelName (13, L"C3");
-			his f_setChannelName (14, L"C5");
-			his f_setChannelName (15, L"T7");
-			his f_setChannelName (16, L"TP7");
-			his f_setChannelName (17, L"CP5");
-			his f_setChannelName (18, L"CP3");
-			his f_setChannelName (19, L"CP1");
-			his f_setChannelName (20, L"P1");
-			his f_setChannelName (21, L"P3");
-			his f_setChannelName (22, L"P5");
-			his f_setChannelName (23, L"P7");
-			his f_setChannelName (24, L"P9");
-			his f_setChannelName (25, L"PO7");
-			his f_setChannelName (26, L"PO3");
-			his f_setChannelName (27, L"O1");
-			his f_setChannelName (28, L"Iz");
-			his f_setChannelName (29, L"Oz");
-			his f_setChannelName (30, L"POz");
-			his f_setChannelName (31, L"Pz");
-			his f_setChannelName (32, L"CPz");
-			his f_setChannelName (33, L"Fpz");
-			his f_setChannelName (34, L"Fp2");
-			his f_setChannelName (35, L"AF8");
-			his f_setChannelName (36, L"AF4");
-			his f_setChannelName (37, L"AFz");
-			his f_setChannelName (38, L"Fz");
-			his f_setChannelName (39, L"F2");
-			his f_setChannelName (40, L"F4");
-			his f_setChannelName (41, L"F6");
-			his f_setChannelName (42, L"F8");
-			his f_setChannelName (43, L"FT8");
-			his f_setChannelName (44, L"FC6");
-			his f_setChannelName (45, L"FC4");
-			his f_setChannelName (46, L"FC2");
-			his f_setChannelName (47, L"FCz");
-			his f_setChannelName (48, L"Cz");
-			his f_setChannelName (49, L"C2");
-			his f_setChannelName (50, L"C4");
-			his f_setChannelName (51, L"C6");
-			his f_setChannelName (52, L"T8");
-			his f_setChannelName (53, L"TP8");
-			his f_setChannelName (54, L"CP6");
-			his f_setChannelName (55, L"CP4");
-			his f_setChannelName (56, L"CP2");
-			his f_setChannelName (57, L"P2");
-			his f_setChannelName (58, L"P4");
-			his f_setChannelName (59, L"P6");
-			his f_setChannelName (60, L"P8");
-			his f_setChannelName (61, L"P10");
-			his f_setChannelName (62, L"PO8");
-			his f_setChannelName (63, L"PO4");
-			his f_setChannelName (64, L"O2");
+		his channelNames = channelNames.transfer();
+		his sound = me.transfer();
+		his textgrid = thee.transfer();
+		if (EEG_getNumberOfCapElectrodes (him.peek()) == 32) {
+			EEG_setChannelName (him.peek(), 1, L"Fp1");
+			EEG_setChannelName (him.peek(), 2, L"AF3");
+			EEG_setChannelName (him.peek(), 3, L"F7");
+			EEG_setChannelName (him.peek(), 4, L"F3");
+			EEG_setChannelName (him.peek(), 5, L"FC1");
+			EEG_setChannelName (him.peek(), 6, L"FC5");
+			EEG_setChannelName (him.peek(), 7, L"T7");
+			EEG_setChannelName (him.peek(), 8, L"C3");
+			EEG_setChannelName (him.peek(), 9, L"CP1");
+			EEG_setChannelName (him.peek(), 10, L"CP5");
+			EEG_setChannelName (him.peek(), 11, L"P7");
+			EEG_setChannelName (him.peek(), 12, L"P3");
+			EEG_setChannelName (him.peek(), 13, L"Pz");
+			EEG_setChannelName (him.peek(), 14, L"PO3");
+			EEG_setChannelName (him.peek(), 15, L"O1");
+			EEG_setChannelName (him.peek(), 16, L"Oz");
+			EEG_setChannelName (him.peek(), 17, L"O2");
+			EEG_setChannelName (him.peek(), 18, L"PO4");
+			EEG_setChannelName (him.peek(), 19, L"P4");
+			EEG_setChannelName (him.peek(), 20, L"P8");
+			EEG_setChannelName (him.peek(), 21, L"CP6");
+			EEG_setChannelName (him.peek(), 22, L"CP2");
+			EEG_setChannelName (him.peek(), 23, L"C4");
+			EEG_setChannelName (him.peek(), 24, L"T8");
+			EEG_setChannelName (him.peek(), 25, L"FC6");
+			EEG_setChannelName (him.peek(), 26, L"FC2");
+			EEG_setChannelName (him.peek(), 27, L"F4");
+			EEG_setChannelName (him.peek(), 28, L"F8");
+			EEG_setChannelName (him.peek(), 29, L"AF4");
+			EEG_setChannelName (him.peek(), 30, L"Fp2");
+			EEG_setChannelName (him.peek(), 31, L"Fz");
+			EEG_setChannelName (him.peek(), 32, L"Cz");
+		} else if (EEG_getNumberOfCapElectrodes (him.peek()) == 64) {
+			EEG_setChannelName (him.peek(), 1, L"Fp1");
+			EEG_setChannelName (him.peek(), 2, L"AF7");
+			EEG_setChannelName (him.peek(), 3, L"AF3");
+			EEG_setChannelName (him.peek(), 4, L"F1");
+			EEG_setChannelName (him.peek(), 5, L"F3");
+			EEG_setChannelName (him.peek(), 6, L"F5");
+			EEG_setChannelName (him.peek(), 7, L"F7");
+			EEG_setChannelName (him.peek(), 8, L"FT7");
+			EEG_setChannelName (him.peek(), 9, L"FC5");
+			EEG_setChannelName (him.peek(), 10, L"FC3");
+			EEG_setChannelName (him.peek(), 11, L"FC1");
+			EEG_setChannelName (him.peek(), 12, L"C1");
+			EEG_setChannelName (him.peek(), 13, L"C3");
+			EEG_setChannelName (him.peek(), 14, L"C5");
+			EEG_setChannelName (him.peek(), 15, L"T7");
+			EEG_setChannelName (him.peek(), 16, L"TP7");
+			EEG_setChannelName (him.peek(), 17, L"CP5");
+			EEG_setChannelName (him.peek(), 18, L"CP3");
+			EEG_setChannelName (him.peek(), 19, L"CP1");
+			EEG_setChannelName (him.peek(), 20, L"P1");
+			EEG_setChannelName (him.peek(), 21, L"P3");
+			EEG_setChannelName (him.peek(), 22, L"P5");
+			EEG_setChannelName (him.peek(), 23, L"P7");
+			EEG_setChannelName (him.peek(), 24, L"P9");
+			EEG_setChannelName (him.peek(), 25, L"PO7");
+			EEG_setChannelName (him.peek(), 26, L"PO3");
+			EEG_setChannelName (him.peek(), 27, L"O1");
+			EEG_setChannelName (him.peek(), 28, L"Iz");
+			EEG_setChannelName (him.peek(), 29, L"Oz");
+			EEG_setChannelName (him.peek(), 30, L"POz");
+			EEG_setChannelName (him.peek(), 31, L"Pz");
+			EEG_setChannelName (him.peek(), 32, L"CPz");
+			EEG_setChannelName (him.peek(), 33, L"Fpz");
+			EEG_setChannelName (him.peek(), 34, L"Fp2");
+			EEG_setChannelName (him.peek(), 35, L"AF8");
+			EEG_setChannelName (him.peek(), 36, L"AF4");
+			EEG_setChannelName (him.peek(), 37, L"AFz");
+			EEG_setChannelName (him.peek(), 38, L"Fz");
+			EEG_setChannelName (him.peek(), 39, L"F2");
+			EEG_setChannelName (him.peek(), 40, L"F4");
+			EEG_setChannelName (him.peek(), 41, L"F6");
+			EEG_setChannelName (him.peek(), 42, L"F8");
+			EEG_setChannelName (him.peek(), 43, L"FT8");
+			EEG_setChannelName (him.peek(), 44, L"FC6");
+			EEG_setChannelName (him.peek(), 45, L"FC4");
+			EEG_setChannelName (him.peek(), 46, L"FC2");
+			EEG_setChannelName (him.peek(), 47, L"FCz");
+			EEG_setChannelName (him.peek(), 48, L"Cz");
+			EEG_setChannelName (him.peek(), 49, L"C2");
+			EEG_setChannelName (him.peek(), 50, L"C4");
+			EEG_setChannelName (him.peek(), 51, L"C6");
+			EEG_setChannelName (him.peek(), 52, L"T8");
+			EEG_setChannelName (him.peek(), 53, L"TP8");
+			EEG_setChannelName (him.peek(), 54, L"CP6");
+			EEG_setChannelName (him.peek(), 55, L"CP4");
+			EEG_setChannelName (him.peek(), 56, L"CP2");
+			EEG_setChannelName (him.peek(), 57, L"P2");
+			EEG_setChannelName (him.peek(), 58, L"P4");
+			EEG_setChannelName (him.peek(), 59, L"P6");
+			EEG_setChannelName (him.peek(), 60, L"P8");
+			EEG_setChannelName (him.peek(), 61, L"P10");
+			EEG_setChannelName (him.peek(), 62, L"PO8");
+			EEG_setChannelName (him.peek(), 63, L"PO4");
+			EEG_setChannelName (him.peek(), 64, L"O2");
 		}
 		return him.transfer();
 	} catch (MelderError) {
@@ -415,23 +419,23 @@ static void detrend (double *a, long numberOfSamples) {
 	}
 }
 
-void structEEG :: f_detrend () {
-	for (long ichan = 1; ichan <= d_numberOfChannels - f_getNumberOfExtraSensors (); ichan ++) {
-		detrend (d_sound -> z [ichan], d_sound -> nx);
+void EEG_detrend (EEG me) {
+	for (long ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
+		detrend (my sound -> z [ichan], my sound -> nx);
 	}
 }
 
-void structEEG :: f_filter (double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz) {
+void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz) {
 	try {
 /*
 	long nsampFFT = 1;
-	while (nsampFFT < d_sound -> nx)
+	while (nsampFFT < my sound -> nx)
 		nsampFFT *= 2;
 	autoNUMfft_Table fftTable;
 	NUMfft_Table_init (& fftTable, nsampFFT);
 */
-		for (long ichan = 1; ichan <= d_numberOfChannels - f_getNumberOfExtraSensors (); ichan ++) {
-			autoSound channel = Sound_extractChannel (d_sound, ichan);
+		for (long ichan = 1; ichan <= my numberOfChannels - EEG_getNumberOfExtraSensors (me); ichan ++) {
+			autoSound channel = Sound_extractChannel (my sound, ichan);
 			autoSpectrum spec = Sound_to_Spectrum (channel.peek(), TRUE);
 			Spectrum_passHannBand (spec.peek(), lowFrequency, 0.0, lowWidth);
 			Spectrum_passHannBand (spec.peek(), 0.0, highFrequency, highWidth);
@@ -439,131 +443,132 @@ void structEEG :: f_filter (double lowFrequency, double lowWidth, double highFre
 				Spectrum_stopHannBand (spec.peek(), 48.0, 52.0, 1.0);
 			}
 			autoSound him = Spectrum_to_Sound (spec.peek());
-			NUMvector_copyElements (his z [1], d_sound -> z [ichan], 1, d_sound -> nx);
+			NUMvector_copyElements (his z [1], my sound -> z [ichan], 1, my sound -> nx);
 		}
 	} catch (MelderError) {
-		Melder_throw (this, ": not filtered.");
+		Melder_throw (me, ": not filtered.");
 	}
 }
 
-void structEEG :: f_setChannelName (long channelNumber, const wchar_t *a_name) {
+void EEG_setChannelName (EEG me, long channelNumber, const wchar_t *a_name) {
 	autostring l_name = Melder_wcsdup (a_name);
-	Melder_free (d_channelNames [channelNumber]);
-	d_channelNames [channelNumber] = l_name.transfer();
+	Melder_free (my channelNames [channelNumber]);
+	my channelNames [channelNumber] = l_name.transfer();
 }
 
-void structEEG :: f_setExternalElectrodeNames (const wchar_t *nameExg1, const wchar_t *nameExg2, const wchar_t *nameExg3, const wchar_t *nameExg4,
+void EEG_setExternalElectrodeNames (EEG me,
+	const wchar_t *nameExg1, const wchar_t *nameExg2, const wchar_t *nameExg3, const wchar_t *nameExg4,
 	const wchar_t *nameExg5, const wchar_t *nameExg6, const wchar_t *nameExg7, const wchar_t *nameExg8)
 {
-	if (f_getNumberOfExternalElectrodes () != 8)
+	if (EEG_getNumberOfExternalElectrodes (me) != 8)
 		Melder_throw (L"There aren't 8 external electrodes.");
-	const long firstExternalElectrode = f_getNumberOfCapElectrodes () + 1;
-	f_setChannelName (firstExternalElectrode, nameExg1);
-	f_setChannelName (firstExternalElectrode + 1, nameExg2);
-	f_setChannelName (firstExternalElectrode + 2, nameExg3);
-	f_setChannelName (firstExternalElectrode + 3, nameExg4);
-	f_setChannelName (firstExternalElectrode + 4, nameExg5);
-	f_setChannelName (firstExternalElectrode + 5, nameExg6);
-	f_setChannelName (firstExternalElectrode + 6, nameExg7);
-	f_setChannelName (firstExternalElectrode + 7, nameExg8);
+	const long firstExternalElectrode = EEG_getNumberOfCapElectrodes (me) + 1;
+	EEG_setChannelName (me, firstExternalElectrode, nameExg1);
+	EEG_setChannelName (me, firstExternalElectrode + 1, nameExg2);
+	EEG_setChannelName (me, firstExternalElectrode + 2, nameExg3);
+	EEG_setChannelName (me, firstExternalElectrode + 3, nameExg4);
+	EEG_setChannelName (me, firstExternalElectrode + 4, nameExg5);
+	EEG_setChannelName (me, firstExternalElectrode + 5, nameExg6);
+	EEG_setChannelName (me, firstExternalElectrode + 6, nameExg7);
+	EEG_setChannelName (me, firstExternalElectrode + 7, nameExg8);
 }
 
-void structEEG :: f_subtractReference (const wchar_t *channelNumber1_text, const wchar_t *channelNumber2_text) {
-	long channelNumber1 = f_getChannelNumber (channelNumber1_text);
+void EEG_subtractReference (EEG me, const wchar_t *channelNumber1_text, const wchar_t *channelNumber2_text) {
+	long channelNumber1 = EEG_getChannelNumber (me, channelNumber1_text);
 	if (channelNumber1 == 0)
-		Melder_throw (this, ": no channel named \"", channelNumber1_text, "\".");
-	long channelNumber2 = f_getChannelNumber (channelNumber2_text);
+		Melder_throw (me, ": no channel named \"", channelNumber1_text, "\".");
+	long channelNumber2 = EEG_getChannelNumber (me, channelNumber2_text);
 	if (channelNumber2 == 0 && channelNumber2_text [0] != '\0')
-		Melder_throw (this, ": no channel named \"", channelNumber2_text, "\".");
-	const long numberOfElectrodeChannels = d_numberOfChannels - f_getNumberOfExtraSensors ();
-	for (long isamp = 1; isamp <= d_sound -> nx; isamp ++) {
-		double referenceValue = channelNumber2 == 0 ? d_sound -> z [channelNumber1] [isamp] :
-			0.5 * (d_sound -> z [channelNumber1] [isamp] + d_sound -> z [channelNumber2] [isamp]);
+		Melder_throw (me, ": no channel named \"", channelNumber2_text, "\".");
+	const long numberOfElectrodeChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
+	for (long isamp = 1; isamp <= my sound -> nx; isamp ++) {
+		double referenceValue = channelNumber2 == 0 ? my sound -> z [channelNumber1] [isamp] :
+			0.5 * (my sound -> z [channelNumber1] [isamp] + my sound -> z [channelNumber2] [isamp]);
 		for (long ichan = 1; ichan <= numberOfElectrodeChannels; ichan ++) {
-			d_sound -> z [ichan] [isamp] -= referenceValue;
+			my sound -> z [ichan] [isamp] -= referenceValue;
 		}
 	}
 }
 
-void structEEG :: f_subtractMeanChannel (long fromChannel, long toChannel) {
-	if (fromChannel < 1 || fromChannel > d_numberOfChannels)
+void EEG_subtractMeanChannel (EEG me, long fromChannel, long toChannel) {
+	if (fromChannel < 1 || fromChannel > my numberOfChannels)
 		Melder_throw ("No channel ", fromChannel, ".");
-	if (toChannel < 1 || toChannel > d_numberOfChannels)
+	if (toChannel < 1 || toChannel > my numberOfChannels)
 		Melder_throw ("No channel ", toChannel, ".");
 	if (fromChannel > toChannel)
 		Melder_throw ("Channel range cannot run from ", fromChannel, " to ", toChannel, ". Please reverse.");
-	const long numberOfElectrodeChannels = d_numberOfChannels - f_getNumberOfExtraSensors ();
-	for (long isamp = 1; isamp <= d_sound -> nx; isamp ++) {
+	const long numberOfElectrodeChannels = my numberOfChannels - EEG_getNumberOfExtraSensors (me);
+	for (long isamp = 1; isamp <= my sound -> nx; isamp ++) {
 		double referenceValue = 0.0;
 		for (long ichan = fromChannel; ichan <= toChannel; ichan ++) {
-			referenceValue += d_sound -> z [ichan] [isamp];
+			referenceValue += my sound -> z [ichan] [isamp];
 		}
 		referenceValue /= (toChannel - fromChannel + 1);
 		for (long ichan = 1; ichan <= numberOfElectrodeChannels; ichan ++) {
-			d_sound -> z [ichan] [isamp] -= referenceValue;
+			my sound -> z [ichan] [isamp] -= referenceValue;
 		}
 	}
 }
 
-void structEEG :: f_setChannelToZero (long channelNumber) {
+void EEG_setChannelToZero (EEG me, long channelNumber) {
 	try {
-		if (channelNumber < 1 || channelNumber > d_numberOfChannels)
+		if (channelNumber < 1 || channelNumber > my numberOfChannels)
 			Melder_throw ("No channel ", channelNumber, ".");
-		long numberOfSamples = d_sound -> nx;
-		double *channel = d_sound -> z [channelNumber];
+		long numberOfSamples = my sound -> nx;
+		double *channel = my sound -> z [channelNumber];
 		for (long isample = 1; isample <= numberOfSamples; isample ++) {
 			channel [isample] = 0.0;
 		}
 	} catch (MelderError) {
-		Melder_throw (this, ": channel ", channelNumber, " not set to zero.");
+		Melder_throw (me, ": channel ", channelNumber, " not set to zero.");
 	}
 }
 
-void structEEG :: f_setChannelToZero (const wchar_t *channelName) {
+void EEG_setChannelToZero (EEG me, const wchar_t *channelName) {
 	try {
-		long channelNumber = f_getChannelNumber (channelName);
+		long channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)
 			Melder_throw ("No channel named \"", channelName, "\".");
-		f_setChannelToZero (channelNumber);
+		EEG_setChannelToZero (me, channelNumber);
 	} catch (MelderError) {
-		Melder_throw (this, ": channel ", channelName, " not set to zero.");
+		Melder_throw (me, ": channel ", channelName, " not set to zero.");
 	}
 }
 
-void structEEG :: removeTriggers (int which_Melder_STRING, const wchar_t *criterion) {
+void EEG_removeTriggers (EEG me, int which_Melder_STRING, const wchar_t *criterion) {
 	try {
-		if (our d_textgrid -> numberOfTiers () < 2 || ! Melder_wcsequ (our d_textgrid -> tier (2) -> name, L"Trigger"))
-			Melder_throw (this, " does not have a Trigger channel.");
-		our d_textgrid -> removePoints (2, which_Melder_STRING, criterion);
+		if (my textgrid -> numberOfTiers () < 2 || ! Melder_wcsequ (my textgrid -> tier (2) -> name, L"Trigger"))
+			Melder_throw (me, " does not have a Trigger channel.");
+		my textgrid -> removePoints (2, which_Melder_STRING, criterion);
 	} catch (MelderError) {
-		Melder_throw (this, ": triggers not removed.");
+		Melder_throw (me, ": triggers not removed.");
 	}
 }
 
-EEG structEEG :: f_extractChannel (long channelNumber) {
+EEG EEG_extractChannel (EEG me, long channelNumber) {
 	try {
-		if (channelNumber < 1 || channelNumber > d_numberOfChannels)
+		if (channelNumber < 1 || channelNumber > my numberOfChannels)
 			Melder_throw ("No channel ", channelNumber, ".");
-		autoEEG thee = EEG_create (xmin, xmax);
-		thee -> d_numberOfChannels = 1;
-		thee -> d_channelNames = NUMvector <wchar_t *> (1, 1);
-		thee -> d_channelNames [1] = Melder_wcsdup (d_channelNames [1]);
-		thee -> d_sound = Sound_extractChannel (d_sound, channelNumber);
-		thee -> d_textgrid = Data_copy (d_textgrid);
+		autoEEG thee = EEG_create (my xmin, my xmax);
+		thy numberOfChannels = 1;
+		thy channelNames = NUMvector <wchar_t *> (1, 1);
+		thy channelNames [1] = Melder_wcsdup (my channelNames [1]);
+		thy sound = Sound_extractChannel (my sound, channelNumber);
+		thy textgrid = Data_copy (my textgrid);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (this, ": channel ", channelNumber, " not extracted.");
+		Melder_throw (me, ": channel ", channelNumber, " not extracted.");
 	}
 }
 
-EEG structEEG :: f_extractChannel (const wchar_t *channelName) {
+EEG EEG_extractChannel (EEG me, const wchar_t *channelName) {
 	try {
-		long channelNumber = f_getChannelNumber (channelName);
+		long channelNumber = EEG_getChannelNumber (me, channelName);
 		if (channelNumber == 0)
 			Melder_throw ("No channel named \"", channelName, "\".");
-		return f_extractChannel (channelNumber);
+		return EEG_extractChannel (me, channelNumber);
 	} catch (MelderError) {
-		Melder_throw (this, ": channel ", channelName, " not extracted.");
+		Melder_throw (me, ": channel ", channelName, " not extracted.");
 	}
 }
 
@@ -572,15 +577,15 @@ EEG EEGs_concatenate (Collection me) {
 		if (my size < 1)
 			Melder_throw ("Cannot concatenate zero EEG objects.");
 		EEG first = (EEG) my item [1];
-		long numberOfChannels = first -> d_numberOfChannels;
-		wchar_t **channelNames = first -> d_channelNames;
+		long numberOfChannels = first -> numberOfChannels;
+		wchar_t **channelNames = first -> channelNames;
 		for (long ieeg = 2; ieeg <= my size; ieeg ++) {
 			EEG other = (EEG) my item [ieeg];
-			if (other -> d_numberOfChannels != numberOfChannels)
+			if (other -> numberOfChannels != numberOfChannels)
 				Melder_throw ("The number of channels of ", other, " does not match the number of channels of ", first, ".");
 			for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-				if (! Melder_wcsequ (other -> d_channelNames [ichan], channelNames [ichan]))
-					Melder_throw ("Channel ", ichan, " has a different name in ", other, " (", other -> d_channelNames [ichan], ") than in ", first, " (", channelNames [ichan], ").");
+				if (! Melder_wcsequ (other -> channelNames [ichan], channelNames [ichan]))
+					Melder_throw ("Channel ", ichan, " has a different name in ", other, " (", other -> channelNames [ichan], ") than in ", first, " (", channelNames [ichan], ").");
 			}
 		}
 		autoOrdered soundCollection = Ordered_create ();
@@ -589,70 +594,66 @@ EEG EEGs_concatenate (Collection me) {
 		Collection_dontOwnItems (textgridCollection.peek());
 		for (long ieeg = 1; ieeg <= my size; ieeg ++) {
 			EEG eeg = (EEG) my item [ieeg];
-			Collection_addItem (soundCollection.peek(), eeg -> d_sound);
-			Collection_addItem (textgridCollection.peek(), eeg -> d_textgrid);
+			Collection_addItem (soundCollection.peek(), eeg -> sound);
+			Collection_addItem (textgridCollection.peek(), eeg -> textgrid);
 		}
 		autoEEG thee = Thing_new (EEG);
-		thy d_numberOfChannels = numberOfChannels;
-		thy d_channelNames = NUMvector <wchar_t *> (1, numberOfChannels);
+		thy numberOfChannels = numberOfChannels;
+		thy channelNames = NUMvector <wchar_t *> (1, numberOfChannels);
 		for (long ichan = 1; ichan <= numberOfChannels; ichan ++) {
-			thy d_channelNames [ichan] = Melder_wcsdup (channelNames [ichan]);
+			thy channelNames [ichan] = Melder_wcsdup (channelNames [ichan]);
 		}
-		thy d_sound = Sounds_concatenate_e (soundCollection.peek(), 0.0);
-		thy d_textgrid = TextGrids_concatenate (textgridCollection.peek());
-		thy xmin = thy d_textgrid -> xmin;
-		thy xmax = thy d_textgrid -> xmax;
+		thy sound = Sounds_concatenate_e (soundCollection.peek(), 0.0);
+		thy textgrid = TextGrids_concatenate (textgridCollection.peek());
+		thy xmin = thy textgrid -> xmin;
+		thy xmax = thy textgrid -> xmax;
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw ("TextGrids not concatenated.");
 	}
 }
 
-EEG structEEG :: f_extractPart (double tmin, double tmax, bool preserveTimes) {
+EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes) {
 	try {
 		autoEEG thee = Thing_new (EEG);
-		thy d_numberOfChannels = d_numberOfChannels;
-		thy d_channelNames = NUMvector <wchar_t *> (1, d_numberOfChannels);
-		for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
-			thy d_channelNames [ichan] = Melder_wcsdup (d_channelNames [ichan]);
+		thy numberOfChannels = my numberOfChannels;
+		thy channelNames = NUMvector <wchar_t *> (1, my numberOfChannels);
+		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
+			thy channelNames [ichan] = Melder_wcsdup (my channelNames [ichan]);
 		}
-		thy d_sound = Sound_extractPart (d_sound, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
-		thy d_textgrid = TextGrid_extractPart (d_textgrid, tmin, tmax, preserveTimes);
-		thy xmin = thy d_textgrid -> xmin;
-		thy xmax = thy d_textgrid -> xmax;
+		thy sound = Sound_extractPart (my sound, tmin, tmax, kSound_windowShape_RECTANGULAR, 1.0, preserveTimes);
+		thy textgrid = TextGrid_extractPart (my textgrid, tmin, tmax, preserveTimes);
+		thy xmin = thy textgrid -> xmin;
+		thy xmax = thy textgrid -> xmax;
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (this, ": part not extracted.");
+		Melder_throw (me, ": part not extracted.");
 	}
 }
 
-void structEEG :: f_replaceTextGrid (TextGrid textgrid) {
+void EEG_replaceTextGrid (EEG me, TextGrid textgrid) {
 	try {
 		autoTextGrid textgrid2 = Data_copy (textgrid);
-		forget (d_textgrid);
-		d_textgrid = textgrid2.transfer();
+		forget (my textgrid);
+		my textgrid = textgrid2.transfer();
 	} catch (MelderError) {
-		Melder_throw (this, ": TextGrid not replaced with ", textgrid, ".");
+		Melder_throw (me, ": TextGrid not replaced with ", textgrid, ".");
 	}
 }
 
-MixingMatrix structEEG :: f_to_MixingMatrix (long maxNumberOfIterations, double tol, int method) {
+MixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol, int method) {
 	try {
-		autoCrossCorrelationTables tables = Sound_to_CrossCorrelationTables (d_sound, 0.0, 0.0, 0.002, 1);
-		autoMixingMatrix thee = MixingMatrix_create (d_sound -> ny, d_sound -> ny);
-		for (long ichan = 1; ichan <= d_numberOfChannels; ichan ++) {
-			TableOfReal_setRowLabel (thee.peek(), ichan, d_channelNames [ichan]);
+		autoCrossCorrelationTables tables = Sound_to_CrossCorrelationTables (my sound, 0.0, 0.0, 0.002, 1);
+		autoMixingMatrix thee = MixingMatrix_create (my sound -> ny, my sound -> ny);
+		for (long ichan = 1; ichan <= my numberOfChannels; ichan ++) {
+			TableOfReal_setRowLabel (thee.peek(), ichan, my channelNames [ichan]);
 			TableOfReal_setColumnLabel (thee.peek(), ichan, Melder_wcscat (L"ic", Melder_integer (ichan)));
 		}
 		MixingMatrix_and_CrossCorrelationTables_improveUnmixing (thee.peek(), tables.peek(), maxNumberOfIterations, tol, method);
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (this, ": no MixingMatrix created.");
+		Melder_throw (me, ": no MixingMatrix created.");
 	}
-}
-
-void MixingMatrix_draw (MixingMatrix me) {
-	
 }
 
 /* End of file EEG.cpp */

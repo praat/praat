@@ -2,7 +2,7 @@
 #define _Movie_h_
 /* Movie.h
  *
- * Copyright (C) 2011 Paul Boersma
+ * Copyright (C) 2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,14 @@
 oo_CLASS_CREATE (Movie, Sampled);
 
 Movie Movie_openFromSoundFile (MelderFile file);
+
+void Movie_init (Movie me, Sound sound, const wchar_t *folderName, Strings fileNames);
+
+void Movie_paintOneImageInside (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax);
+
+void Movie_paintOneImage (Movie me, Graphics graphics, long frameNumber, double xmin, double xmax, double ymin, double ymax);
+
+void Movie_play (Movie me, Graphics graphics, double tmin, double tmax, int (*callback) (void *closure, int phase, double tmin, double tmax, double t), void *closure);
 
 /* End of file Movie.h */
 #endif

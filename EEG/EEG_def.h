@@ -21,38 +21,12 @@
 #define ooSTRUCT EEG
 oo_DEFINE_CLASS (EEG, Function)
 
-	oo_LONG (d_numberOfChannels)
-	oo_STRING_VECTOR (d_channelNames, d_numberOfChannels)
-	oo_OBJECT (Sound, 2, d_sound)
-	oo_OBJECT (TextGrid, 0, d_textgrid)
+	oo_LONG (numberOfChannels)
+	oo_STRING_VECTOR (channelNames, numberOfChannels)
+	oo_OBJECT (Sound, 2, sound)
+	oo_OBJECT (TextGrid, 0, textgrid)
 
 	#if oo_DECLARING
-		// functions:
-		public:
-			void f_init (double tmin, double tmax);
-			long f_getChannelNumber (const wchar_t *channelName);
-			void f_setChannelName (long channelNumber, const wchar_t *a_name);
-			long f_getNumberOfCapElectrodes () { return (d_numberOfChannels - 1) & ~ 15L; }   // BUG
-			long f_getNumberOfExternalElectrodes () { return d_numberOfChannels - f_getNumberOfCapElectrodes () - f_getNumberOfExtraSensors (); }
-			long f_getNumberOfExtraSensors () {
-				return d_numberOfChannels == 1 ? 0 : d_numberOfChannels & 1 ? 1 : 8;
-			}   // BUG
-			void f_setExternalElectrodeNames (const wchar_t *nameExg1, const wchar_t *nameExg2, const wchar_t *nameExg3, const wchar_t *nameExg4,
-				const wchar_t *nameExg5, const wchar_t *nameExg6, const wchar_t *nameExg7, const wchar_t *nameExg8);
-			void f_detrend ();
-			void f_filter (double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz);
-			void f_subtractReference (const wchar_t *channelNumber1, const wchar_t *channelNumber2);
-			void f_subtractMeanChannel (long fromChannel, long toChannel);
-			void f_setChannelToZero (long channelNumber);
-			void f_setChannelToZero (const wchar_t *channelName);
-			void removeTriggers (int which_Melder_STRING, const wchar_t *criterion);
-			EEG f_extractChannel (long channelNumber);
-			EEG f_extractChannel (const wchar_t *channelName);
-			Sound f_extractSound () { return Data_copy (d_sound); }
-			TextGrid f_extractTextGrid () { return Data_copy (d_textgrid); }
-			EEG f_extractPart (double tmin, double tmax, bool preserveTimes);
-			void f_replaceTextGrid (TextGrid textgrid);
-			MixingMatrix f_to_MixingMatrix (long maxNumberOfIterations, double tol, int method);
 		// overridden methods:
 		protected:
 			virtual void v_info ();

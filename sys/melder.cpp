@@ -57,6 +57,7 @@
 
 bool Melder_batch;   // don't we have a GUI?- Set once at application start-up
 bool Melder_backgrounding;   // are we running a script?- Set and unset dynamically
+bool Melder_asynchronous;
 char Melder_buffer1 [30001], Melder_buffer2 [30001];
 unsigned long Melder_systemVersion;
 

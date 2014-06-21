@@ -36,6 +36,7 @@ oo_DEFINE_CLASS (Sampled, Function)
 			virtual double v_getValueAtSample (long isamp, long ilevel, int unit)
 				{ (void) isamp; (void) ilevel; (void) unit; return NUMundefined; }
 		// functions:
+			inline double f_indexToX (long   index) { return x1 + (index - 1  ) * dx; }
 			inline double f_indexToX (double index) { return x1 + (index - 1.0) * dx; }
 			double f_xToIndex (double x) { return (x - x1) / dx + 1.0; }
 			long f_xToLowIndex     (double x) { return (long) floor (f_xToIndex (x)); }

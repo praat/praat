@@ -538,22 +538,29 @@ void Sound_playPart (Sound me, double tmin, double tmax,
 			thy closure = closure;
 			thy silenceBefore = (long) (ifsamp * MelderAudio_getOutputSilenceBefore ());
 			thy silenceAfter = (long) (ifsamp * MelderAudio_getOutputSilenceAfter ());
-			int numberOfChannels = my ny > 1 ? 2 : 1;
+			int numberOfChannels = my ny;
 			NUMvector_free (thy buffer, 1);   // just in case
 			thy buffer = NUMvector <short> (1, (i2 - i1 + 1 + thy silenceBefore + thy silenceAfter) * numberOfChannels);
 			thy i1 = i1;
 			thy i2 = i2;
 			short *to = thy buffer + thy silenceBefore * numberOfChannels;
-			if (numberOfChannels == 2) {
+			if (numberOfChannels > 2) {
 				for (long i = i1; i <= i2; i ++) {
-					long valueLeft = (long) floor (fromLeft [i] * 32768.0 + 0.5);
+					for (long chan = 1; chan <= my ny; chan ++) {
+						long value = (long) round (my z [chan] [i] * 32768.0);
+						* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
+					}
+				}
+			} else if (numberOfChannels == 2) {
+				for (long i = i1; i <= i2; i ++) {
+					long valueLeft = (long) round (fromLeft [i] * 32768.0);
 					* ++ to = valueLeft < -32768 ? -32768 : valueLeft > 32767 ? 32767 : valueLeft;
-					long valueRight = (long) floor (fromRight [i] * 32768.0 + 0.5);
+					long valueRight = (long) round (fromRight [i] * 32768.0);
 					* ++ to = valueRight < -32768 ? -32768 : valueRight > 32767 ? 32767 : valueRight;
 				}
 			} else {
 				for (long i = i1; i <= i2; i ++) {
-					long value = (long) floor (fromLeft [i] * 32768.0 + 0.5);
+					long value = (long) round (fromLeft [i] * 32768.0);
 					* ++ to = value < -32768 ? -32768 : value > 32767 ? 32767 : value;
 				}
 			}

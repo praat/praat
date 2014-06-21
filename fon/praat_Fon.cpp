@@ -3016,7 +3016,7 @@ DO
 	LOOP {
 		iam (Movie);
 		autoPraatPicture picture;
-		my f_paintOneImage (GRAPHICS, GET_INTEGER (L"Frame number"),
+		Movie_paintOneImage (me, GRAPHICS, GET_INTEGER (L"Frame number"),
 			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
 	}
 END

@@ -383,6 +383,7 @@ void Graphics_play (Graphics me, Graphics thee) {
 								0, nrow - 1, y1, y2, minimum, maximum);
 				Melder_free (z);
 			}  break;
+			case SET_COLOUR_SCALE: Graphics_setColourScale (thee, (enum kGraphics_colourScale) get); break;
 			case SET_SPECKLE_SIZE: Graphics_setSpeckleSize (thee, get); break;
 			case SPECKLE:
 			{  double x = get, y = get;

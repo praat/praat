@@ -15,7 +15,7 @@
 
 int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t *arg4) {
 	long i, n = wcstol (arg1, NULL, 10);
-	double x;
+	double x, t;
 	(void) arg1;
 	(void) arg2;
 	(void) arg3;
@@ -23,15 +23,15 @@ int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t
 	Melder_clearInfo ();
 	Melder_stopwatch ();
 	switch (itest) {
-		case kPraatTests_CHECK_RANDOM_1009_2009: {
-			NUMrandomRestart (310952);
-			for (i = 1; i <= 1009 * 2009 - 100 + 1; i ++)
-				x = NUMrandomFraction ();
-			MelderInfo_writeLine (Melder_double (x));
-		} break;
 		case kPraatTests_TIME_RANDOM_FRACTION: {
 			for (i = 1; i <= n; i ++)
 				(void) NUMrandomFraction ();
+			t = Melder_stopwatch ();
+		} break;
+		case kPraatTests_TIME_RANDOM_GAUSS: {
+			for (i = 1; i <= n; i ++)
+				(void) NUMrandomGauss (0.0, 1.0);
+			t = Melder_stopwatch ();
 		} break;
 		case kPraatTests_TIME_SORT: {
 			long m = wcstol (arg2, NULL, 10);
@@ -41,22 +41,25 @@ int Praat_tests (int itest, wchar_t *arg1, wchar_t *arg2, wchar_t *arg3, wchar_t
 			Melder_stopwatch ();
 			for (i = 1; i <= n; i ++)
 				NUMsort_l (m, array);
+			t = Melder_stopwatch ();
 			NUMvector_free (array, 1);
 		} break;
 		case kPraatTests_TIME_INTEGER: {
 			double sum = 0;
 			for (i = 1; i <= n; i ++)
 				sum += i * (i - 1) * (i - 2);
+			t = Melder_stopwatch ();
 			MelderInfo_writeLine (Melder_double (sum));
 		} break;
 		case kPraatTests_TIME_FLOAT: {
 			double sum = 0.0, fn = n;
 			for (double fi = 1.0; fi <= fn; fi = fi + 1.0)
 				sum += fi * (fi - 1.0) * (fi - 2.0);
+			t = Melder_stopwatch ();
 			MelderInfo_writeLine (Melder_double (sum));
 		} break;
 	}
-	MelderInfo_writeLine (Melder_single (Melder_stopwatch () / n * 1e9), L" nanoseconds");
+	MelderInfo_writeLine (Melder_single (t / n * 1e9), L" nanoseconds");
 	MelderInfo_close ();
 	return 1;
 }

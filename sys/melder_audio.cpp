@@ -492,7 +492,7 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 	my closure = playClosure;
 	my asynchronicity =
 		Melder_batch ? kMelder_asynchronicityLevel_SYNCHRONOUS :
-		Melder_backgrounding ? kMelder_asynchronicityLevel_INTERRUPTABLE :
+		(Melder_backgrounding && ! Melder_asynchronous) ? kMelder_asynchronicityLevel_INTERRUPTABLE :
 		kMelder_asynchronicityLevel_ASYNCHRONOUS;
 	if (my asynchronicity > preferences. maximumAsynchronicity)
 		my asynchronicity = preferences. maximumAsynchronicity;

@@ -1,6 +1,6 @@
 /* ERPWindow.cpp
  *
- * Copyright (C) 2012,2013 Paul Boersma
+ * Copyright (C) 2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
  */
 
 #include "ERPWindow.h"
+#include "EditorM.h"
 #include "Preferences.h"
 
 Thing_implement (ERPWindow, SoundEditor, 0);
@@ -149,15 +150,33 @@ static BiosemiLocationData biosemiCapCoordinates32 [1+32] =
 	{   0,   0 },   // 32 Cz
 };
 
-void structERP :: f_drawScalp (Graphics graphics, double tmin, double tmax, double vmin, double vmax, bool garnish) {
+void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kGraphics_colourScale colourScale) {
+	long n = 201;
+	autoNUMmatrix <double> legend (1, n, 1, 2);
+	for (long irow = 1; irow <= n; irow ++) {
+		for (long icol = 1; icol <= 2; icol ++) {
+			legend [irow] [icol] = (irow - 1) / (n - 1.0);
+		}
+	}
+	Graphics_setColourScale (graphics, colourScale);
+	Graphics_image (graphics, legend.peek(), 1, 2, 0.85, 0.98, 1, n, -0.8, +0.8, 0.0, 1.0);
+	Graphics_setColourScale (graphics, kGraphics_colourScale_GREY);
+	Graphics_rectangle (graphics, 0.85, 0.98, -0.8, +0.8);
+	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
+	Graphics_text2 (graphics, 1.0, -0.8, Melder_double (vmin * 1e6), L" \\muV");
+	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_BOTTOM);
+	Graphics_text2 (graphics, 1.0, +0.8, Melder_double (vmax * 1e6), L" \\muV");
+}
+
+void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double vmin, double vmax, enum kGraphics_colourScale colourScale, bool garnish) {
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, -1.0, 1.0, -1.0, 1.0);
 	//Graphics_setGrey (graphics, 1.0);
 	//Graphics_fillRectangle (graphics, -1.1, 1.1, -1.01, 1.19);
 	//Graphics_setColour (graphics, Graphics_BLACK);
 	long numberOfDrawableChannels =
-			our ny >= 64 && Melder_wcsequ (our d_channelNames [64], L"O2") ? 64 :
-			our ny >= 32 && Melder_wcsequ (our d_channelNames [32], L"Cz") ? 32 :
+			my ny >= 64 && Melder_wcsequ (my channelNames [64], L"O2") ? 64 :
+			my ny >= 32 && Melder_wcsequ (my channelNames [32], L"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -174,8 +193,8 @@ void structERP :: f_drawScalp (Graphics graphics, double tmin, double tmax, doub
 	autoNUMvector <double> mean (1, numberOfDrawableChannels);
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
 		mean [ichan] = tmin == tmax ?
-				Sampled_getValueAtX (this, tmin, ichan, 0, true) :
-				Vector_getMean (this, tmin, tmax, ichan);
+				Sampled_getValueAtX (me, tmin, ichan, 0, true) :
+				Vector_getMean (me, tmin, tmax, ichan);
 	}
 	autoNUMmatrix <double> image (1, n, 1, n);
 	for (long irow = 1; irow <= n; irow ++) {
@@ -202,21 +221,24 @@ void structERP :: f_drawScalp (Graphics graphics, double tmin, double tmax, doub
 			}
 		}
 	}
+	double whiteValue = colourScale == kGraphics_colourScale_BLUE_TO_RED ? 0.5 * (vmin + vmax) : vmin;
+	Graphics_setColourScale (graphics, colourScale);
 	for (long irow = 1; irow <= n; irow ++) {
 		double y = -1.0 + (irow - 1) * d;
 		for (long icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y > 1.0) {
-				image [irow] [icol] = vmin;
+				image [irow] [icol] = whiteValue;
 			}
 		}
 	}
 	Graphics_image (graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, vmin, vmax);
+	Graphics_setColourScale (graphics, kGraphics_colourScale_GREY);
 	Graphics_setLineWidth (graphics, 2.0);
 	/*
 	 * Nose.
 	 */
-	Graphics_setGrey (graphics, 0.5);
+	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (graphics, 3, x, y);
@@ -227,7 +249,7 @@ void structERP :: f_drawScalp (Graphics graphics, double tmin, double tmax, doub
 	/*
 	 * Ears.
 	 */
-	Graphics_setGrey (graphics, 0.5);
+	Graphics_setGrey (graphics, colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (graphics, -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (graphics, 1.09, 1.00, -0.08, 0.08);
 	Graphics_setColour (graphics, Graphics_BLACK);
@@ -244,30 +266,19 @@ void structERP :: f_drawScalp (Graphics graphics, double tmin, double tmax, doub
 	Graphics_setLineWidth (graphics, 1.0);
 	Graphics_unsetInner (graphics);
 	if (garnish) {
-		autoNUMmatrix <double> legend (1, n, 1, 2);
-		for (long irow = 1; irow <= n; irow ++) {
-			for (long icol = 1; icol <= 2; icol ++) {
-				legend [irow] [icol] = (irow - 1) / (n - 1.0);
-			}
-		}
-		Graphics_image (graphics, legend.peek(), 1, 2, 0.78, 0.98, 1, n, -0.8, +0.8, 0.0, 1.0);
-		Graphics_rectangle (graphics, 0.78, 0.98, -0.8, +0.8);
-		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
-		Graphics_text2 (graphics, 1.0, -0.8, Melder_double (vmin * 1e6), L" \\muV");
-		Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_BOTTOM);
-		Graphics_text2 (graphics, 1.0, +0.8, Melder_double (vmax * 1e6), L" \\muV");
+		ERP_drawScalp_garnish (graphics, vmin, vmax, colourScale);
 	}
 }
 
 void structERPWindow :: v_drawSelectionViewer () {
 	ERP erp = (ERP) data;
 	Graphics_setWindow (d_graphics, -1.1, 1.1, -1.01, 1.19);
-	Graphics_setGrey (d_graphics, 0.85);
+	Graphics_setColour (d_graphics, Graphics_WINDOW_BACKGROUND_COLOUR);
 	Graphics_fillRectangle (d_graphics, -1.1, 1.1, -1.01, 1.19);
 	Graphics_setColour (d_graphics, Graphics_BLACK);
 	long numberOfDrawableChannels =
-			erp -> ny >= 64 && Melder_wcsequ (erp -> d_channelNames [64], L"O2") ? 64 :
-			erp -> ny >= 32 && Melder_wcsequ (erp -> d_channelNames [32], L"Cz") ? 32 :
+			erp -> ny >= 64 && Melder_wcsequ (erp -> channelNames [64], L"O2") ? 64 :
+			erp -> ny >= 32 && Melder_wcsequ (erp -> channelNames [32], L"Cz") ? 32 :
 			0;
 	BiosemiLocationData *biosemiLocationData = numberOfDrawableChannels == 64 ? biosemiCapCoordinates64 : numberOfDrawableChannels == 32 ? biosemiCapCoordinates32 : 0;
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
@@ -281,9 +292,9 @@ void structERPWindow :: v_drawSelectionViewer () {
 	}
 	long n = 201;
 	double d = 2.0 / (n - 1);
-	autoNUMvector <double> mean (1, numberOfDrawableChannels);
+	autoNUMvector <double> means (1, numberOfDrawableChannels);
 	for (long ichan = 1; ichan <= numberOfDrawableChannels; ichan ++) {
-		mean [ichan] =
+		means [ichan] =
 			d_startSelection == d_endSelection ?
 				Sampled_getValueAtX (erp, d_startSelection, ichan, 0, true) :
 				Vector_getMean (erp, d_startSelection, d_endSelection, ichan);
@@ -300,11 +311,11 @@ void structERPWindow :: v_drawSelectionViewer () {
 					double dy = y - biosemiLocationData [ichan]. topY;
 					double distance = sqrt (dx * dx + dy * dy);
 					if (distance < 1e-12) {
-						value = mean [ichan];
+						value = means [ichan];
 						break;
 					}
 					distance = distance * distance * distance * distance * distance * distance;
-					sum += mean [ichan] / distance;
+					sum += means [ichan] / distance;
 					weight += 1.0 / distance;
 				}
 				if (value == NUMundefined)
@@ -338,16 +349,20 @@ void structERPWindow :: v_drawSelectionViewer () {
 		for (long icol = 1; icol <= n; icol ++) {
 			double x = -1.0 + (icol - 1) * d;
 			if (x * x + y * y > 1.0) {
-				image [irow] [icol] = minimum + 0.1875 * (maximum - minimum);   // -0.625 * absoluteExtremum;
+				image [irow] [icol] = minimum +
+					( our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 0.46 : 0.1875 ) * (maximum - minimum);
+					   // -0.625 * absoluteExtremum;
 			}
 		}
 	}
+	Graphics_setColourScale (d_graphics, our p_scalp_colourScale);
 	Graphics_image (d_graphics, image.peek(), 1, n, -1.0-0.5/n, 1.0+0.5/n, 1, n, -1.0-0.5/n, 1.0+0.5/n, minimum, maximum);
+	Graphics_setColourScale (d_graphics, kGraphics_colourScale_GREY);
 	Graphics_setLineWidth (d_graphics, 2.0);
 	/*
 	 * Nose.
 	 */
-	Graphics_setGrey (d_graphics, 0.5);
+	Graphics_setGrey (d_graphics, our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
 	{// scope
 		double x [3] = { -0.08, 0.0, 0.08 }, y [3] = { 0.99, 1.18, 0.99 };
 		Graphics_fillArea (d_graphics, 3, x, y);
@@ -358,7 +373,7 @@ void structERPWindow :: v_drawSelectionViewer () {
 	/*
 	 * Ears.
 	 */
-	Graphics_setGrey (d_graphics, 0.5);
+	Graphics_setGrey (d_graphics, our p_scalp_colourScale == kGraphics_colourScale_BLUE_TO_RED ? 1.0 : 0.5);
 	Graphics_fillRectangle (d_graphics, -1.09, -1.00, -0.08, 0.08);
 	Graphics_fillRectangle (d_graphics, 1.09, 1.00, -0.08, 0.08);
 	Graphics_setColour (d_graphics, Graphics_BLACK);
@@ -375,11 +390,23 @@ void structERPWindow :: v_drawSelectionViewer () {
 	Graphics_setLineWidth (d_graphics, 1.0);
 }
 
+void structERPWindow :: v_prefs_addFields (EditorCommand cmd) {
+	Any radio;
+	OPTIONMENU_ENUM (L"Scalp colour space", kGraphics_colourScale, kGraphics_colourScale_BLUE_TO_RED)
+}
+void structERPWindow :: v_prefs_setValues (EditorCommand cmd) {
+	SET_ENUM (L"Scalp colour space", kGraphics_colourScale, p_scalp_colourScale)
+}
+void structERPWindow :: v_prefs_getValues (EditorCommand cmd) {
+	pref_scalp_colourScale () = p_scalp_colourScale = GET_ENUM (kGraphics_colourScale, L"Scalp colour space");
+	FunctionEditor_redraw (this);
+}
+
 ERPWindow ERPWindow_create (const wchar_t *title, ERP data) {
 	Melder_assert (data != NULL);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		me -> structSoundEditor :: f_init (title, data);
+		my structSoundEditor :: f_init (title, data);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("ERP window not created.");

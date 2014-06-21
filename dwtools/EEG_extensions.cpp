@@ -29,13 +29,13 @@
 static EEG EEG_copyWithoutSound (EEG me) {
 	try {
  		autoEEG thee = EEG_create (my xmin, my xmax);
-		thy d_numberOfChannels = my d_numberOfChannels;
-		thy d_textgrid = (TextGrid) Data_copy (my d_textgrid);
-		autostringvector channelNames (1, my d_numberOfChannels);
-		for (long i = 1; i <= my d_numberOfChannels; i++) {
-			channelNames[i] = Melder_wcsdup (my d_channelNames[i]);
+		thy numberOfChannels = my numberOfChannels;
+		thy textgrid = (TextGrid) Data_copy (my textgrid);
+		autostringvector channelNames (1, my numberOfChannels);
+		for (long i = 1; i <= my numberOfChannels; i++) {
+			channelNames[i] = Melder_wcsdup (my channelNames[i]);
 		}
-		thy d_channelNames = channelNames.transfer();
+		thy channelNames = channelNames.transfer();
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": not copied.");
@@ -46,8 +46,8 @@ static long *EEG_channelNames_to_channelNumbers (EEG me, wchar_t **channelNames,
 	try {
 		autoNUMvector<long> channelNumbers (1, numberOfChannelNames);
 		for (long i = 1; i <= numberOfChannelNames; i++) {
-			for (long j = 1; j <= my d_numberOfChannels; j++) {
-				if (Melder_wcsequ (channelNames[i], my d_channelNames[j])) {
+			for (long j = 1; j <= my numberOfChannels; j++) {
+				if (Melder_wcsequ (channelNames[i], my channelNames[j])) {
 					channelNumbers[i] = j;
 				}
 			}
@@ -66,7 +66,7 @@ static void EEG_setChannelNames_selected (EEG me, const wchar_t *precursor, long
 	const wchar_t *zero = L"0";
 	for (long i = 1; i <= numberOfChannels; i++) {
 		MelderString_append (&name, precursor);
-		if (my d_numberOfChannels > 100) {
+		if (my numberOfChannels > 100) {
 			if (i < 10) {
 				MelderString_append (&name, zero);
 			}
@@ -77,7 +77,7 @@ static void EEG_setChannelNames_selected (EEG me, const wchar_t *precursor, long
 			MelderString_append (&name, zero);
 		}
 		MelderString_append (&name, Melder_integer (i));
-		my f_setChannelName (channelNumbers[i], name.string);
+		EEG_setChannelName (me, channelNumbers[i], name.string);
 		MelderString_empty (&name);
 	}
 }
@@ -96,15 +96,15 @@ CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, do
 		if (endTime > my xmax) {
 			endTime = my xmax;
 		}
-		autoEEG thee = my f_extractPart (startTime, endTime, true);
+		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy d_numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
-		autoSound soundPart = Sound_copyChannelRanges (thy d_sound, channelRanges);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
 		autoCrossCorrelationTable him = Sound_to_CrossCorrelationTable (soundPart.peek(), startTime, endTime, lagTime);
 		// assign channel names
 		for (long i = 1; i <= numberOfChannels; i++) {
 			long ichannel = channels[i];
-			wchar_t *label = my d_channelNames[ichannel];
+			wchar_t *label = my channelNames[ichannel];
 			TableOfReal_setRowLabel (him.peek(), i, label);
 			TableOfReal_setColumnLabel (him.peek(), i, label);
 		}
@@ -140,10 +140,10 @@ CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, 
 		if (endTime > my xmax) {
 			endTime = my xmax;
 		}
-		autoEEG thee = my f_extractPart (startTime, endTime, true);
+		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		long numberOfChannels;
-		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy d_numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
-		autoSound soundPart = Sound_copyChannelRanges (thy d_sound, channelRanges);
+		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
 		autoCrossCorrelationTables him = Sound_to_CrossCorrelationTables (soundPart.peek(), startTime, endTime, lagTime, ncovars);
 		return him.transfer();
 	} catch (MelderError) {
@@ -172,15 +172,15 @@ EEG EEG_and_PCA_to_EEG_whiten (EEG me, PCA thee, long numberOfComponents) {
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
 			numberOfComponents = thy numberOfEigenvalues;
 		}
-		numberOfComponents = numberOfComponents > my d_numberOfChannels ? my d_numberOfChannels : numberOfComponents;
+		numberOfComponents = numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents;
 
 		autoNUMvector<long> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
 
 		autoEEG him = (EEG) Data_copy (me);
-		autoSound white = Sound_and_PCA_whitenSelectedChannels (my d_sound, thee, numberOfComponents, channelNumbers.peek(), thy dimension);
+		autoSound white = Sound_and_PCA_whitenSelectedChannels (my sound, thee, numberOfComponents, channelNumbers.peek(), thy dimension);
 		for (long i = 1; i <= thy dimension; i++) {
 			long ichannel = channelNumbers[i];
-			NUMvector_copyElements<double> (white -> z[i], his d_sound -> z[ichannel], 1, his d_sound -> nx);
+			NUMvector_copyElements<double> (white -> z[i], his sound -> z[ichannel], 1, his sound -> nx);
 		}
 		EEG_setChannelNames_selected (him.peek(), L"wh", channelNumbers.peek(), thy dimension);
 		return him.transfer();
@@ -194,14 +194,14 @@ EEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfCompo
 		if (numberOfComponents <= 0 || numberOfComponents > thy numberOfEigenvalues) {
 			numberOfComponents = thy numberOfEigenvalues;
 		}
-		numberOfComponents = numberOfComponents > my d_numberOfChannels ? my d_numberOfChannels : numberOfComponents;
+		numberOfComponents = numberOfComponents > my numberOfChannels ? my numberOfChannels : numberOfComponents;
 
 		autoNUMvector<long> channelNumbers (EEG_channelNames_to_channelNumbers (me, thy labels, thy dimension), 1);
 		autoEEG him = (EEG) Data_copy (me);
-		autoSound pc = Sound_and_PCA_to_Sound_pc_selectedChannels (my d_sound, thee, numberOfComponents, channelNumbers.peek(), thy dimension);
+		autoSound pc = Sound_and_PCA_to_Sound_pc_selectedChannels (my sound, thee, numberOfComponents, channelNumbers.peek(), thy dimension);
 		for (long i = 1; i <= thy dimension; i++) {
 			long ichannel = channelNumbers[i];
-			NUMvector_copyElements<double> (pc -> z[i], his d_sound -> z[ichannel], 1, his d_sound -> nx);
+			NUMvector_copyElements<double> (pc -> z[i], his sound -> z[ichannel], 1, his sound -> nx);
 		}
 		EEG_setChannelNames_selected (him.peek(), L"pc", channelNumbers.peek(), thy dimension);
 		return him.transfer();
@@ -224,18 +224,18 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 			endTime = my xmax;
 		}
 		long numberOfChannels;
-		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my d_numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
-		autoEEG thee = my f_extractPart (startTime, endTime, true);
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		autoEEG thee = EEG_extractPart (me, startTime, endTime, true);
 		if (whiteningMethod != 0) {
 			bool fromCorrelation = whiteningMethod == 2;
 			autoPCA pca = EEG_to_PCA (thee.peek(), thy xmin, thy xmax, channelRanges, fromCorrelation);
 			autoEEG white = EEG_and_PCA_to_EEG_whiten (thee.peek(), pca.peek(), 0);
 			thee.reset (white.transfer());
 		}
-		autoMixingMatrix mm = Sound_to_MixingMatrix (thy d_sound, startTime, endTime, ncovars, lagTime, maxNumberOfIterations, tol, diagonalizerMethod);
+		autoMixingMatrix mm = Sound_to_MixingMatrix (thy sound, startTime, endTime, ncovars, lagTime, maxNumberOfIterations, tol, diagonalizerMethod);
 
 		autoEEG him = EEG_copyWithoutSound (me);
-		his d_sound = Sound_and_MixingMatrix_unmix (my d_sound, mm.peek());
+		his sound = Sound_and_MixingMatrix_unmix (my sound, mm.peek());
 		EEG_setChannelNames_selected (him.peek(), L"ic", channelNumbers.peek(), numberOfChannels);
 
 		// Calculate the cross-correlations between eye-channels and the ic's
@@ -251,15 +251,15 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwidth, const wchar_t *channelRanges) {
 	try {
 		long numberOfChannels;
-		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my d_numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
-		double maxFreq = baseFrequency + my d_numberOfChannels * channelBandwidth;
+		autoNUMvector <long> channelNumbers (NUMstring_getElementsOfRanges (channelRanges, my numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
+		double maxFreq = baseFrequency + my numberOfChannels * channelBandwidth;
 		double samplingFrequency = 2 * maxFreq;
 		samplingFrequency = samplingFrequency < 44100 ? 44100 : samplingFrequency;
 		autoSound thee = Sound_createSimple (1, my xmax - my xmin, samplingFrequency);
 		for (long i = 1; i <= numberOfChannels; i++) {
 			long ichannel = channelNumbers[i];
 			double fbase = baseFrequency;// + (ichannel - 1) * channelBandwidth;
-			autoSound si = Sound_extractChannel (my d_sound, ichannel);
+			autoSound si = Sound_extractChannel (my sound, ichannel);
 			autoSpectrum spi = Sound_to_Spectrum (si.peek(), 1);
 			Spectrum_passHannBand (spi.peek(), 0.5, channelBandwidth - 0.5, 0.5);
 			autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), fbase, samplingFrequency / 2, 30);
@@ -278,7 +278,7 @@ Sound EEG_to_Sound_modulated (EEG me, double baseFrequency, double channelBandwi
 
 Sound EEG_to_Sound_frequencyShifted (EEG me, long channel, double frequencyShift, double samplingFrequency, double maxAmp) {
 	try {
-		autoSound si = Sound_extractChannel (my d_sound, channel);
+		autoSound si = Sound_extractChannel (my sound, channel);
 		autoSpectrum spi = Sound_to_Spectrum (si.peek(), 1);
 		autoSpectrum spi_shifted = Spectrum_shiftFrequencies (spi.peek(), frequencyShift, samplingFrequency / 2, 30);
 		autoSound thee = Spectrum_to_Sound (spi_shifted.peek());

@@ -1,6 +1,6 @@
 /* ERP.cpp
  *
- * Copyright (C) 2011-2012,2013 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,34 +42,34 @@
 
 Thing_implement (ERP, Sound, 2);
 
-long structERP :: f_getChannelNumber (const wchar_t *channelName) {
-	for (long ichan = 1; ichan <= ny; ichan ++) {
-		if (Melder_wcsequ (d_channelNames [ichan], channelName)) {
+long ERP_getChannelNumber (ERP me, const wchar_t *channelName) {
+	for (long ichan = 1; ichan <= my ny; ichan ++) {
+		if (Melder_wcsequ (my channelNames [ichan], channelName)) {
 			return ichan;
 		}
 	}
 	return 0;
 }
 
-void structERP :: f_draw (Graphics graphics, long channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish) {
-	if (channelNumber < 1 || channelNumber > our ny) return;
+void ERP_drawChannel_number (ERP me, Graphics graphics, long channelNumber, double tmin, double tmax, double vmin, double vmax, bool garnish) {
+	if (channelNumber < 1 || channelNumber > my ny) return;
 	/*
 	 * Automatic domain.
 	 */
 	if (tmin == tmax) {
-		tmin = our xmin;
-		tmax = our xmax;
+		tmin = my xmin;
+		tmax = my xmax;
 	}
 	/*
 	 * Domain expressed in sample numbers.
 	 */
 	long ixmin, ixmax;
-	Matrix_getWindowSamplesX (this, tmin, tmax, & ixmin, & ixmax);
+	Matrix_getWindowSamplesX (me, tmin, tmax, & ixmin, & ixmax);
 	/*
 	 * Automatic vertical range.
 	 */
 	if (vmin == vmax) {
-		Matrix_getWindowExtrema (this, ixmin, ixmax, channelNumber, channelNumber, & vmin, & vmax);
+		Matrix_getWindowExtrema (me, ixmin, ixmax, channelNumber, channelNumber, & vmin, & vmax);
 		if (vmin == vmax) {
 			vmin -= 1.0;
 			vmax += 1.0;
@@ -80,11 +80,11 @@ void structERP :: f_draw (Graphics graphics, long channelNumber, double tmin, do
 	 */
 	Graphics_setInner (graphics);
 	Graphics_setWindow (graphics, tmin, tmax, vmin, vmax);
-	Graphics_function (graphics, our z [channelNumber], ixmin, ixmax, Matrix_columnToX (this, ixmin), Matrix_columnToX (this, ixmax));
+	Graphics_function (graphics, my z [channelNumber], ixmin, ixmax, Matrix_columnToX (me, ixmin), Matrix_columnToX (me, ixmax));
 	Graphics_unsetInner (graphics);
 	if (garnish) {
 		Graphics_drawInnerBox (graphics);
-		Graphics_textTop (graphics, true, Melder_wcscat (L"Channel ", d_channelNames [channelNumber]));
+		Graphics_textTop (graphics, true, Melder_wcscat (L"Channel ", my channelNames [channelNumber]));
 		Graphics_textBottom (graphics, true, L"Time (s)");
 		Graphics_marksBottom (graphics, 2, true, true, false);
 		if (0.0 > tmin && 0.0 < tmax)
@@ -99,12 +99,11 @@ void structERP :: f_draw (Graphics graphics, long channelNumber, double tmin, do
 
 }
 
-void structERP :: f_draw (Graphics graphics, const wchar_t *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
-	f_draw (graphics, f_getChannelNumber (channelName), tmin, tmax, vmin, vmax, garnish);
+void ERP_drawChannel_name (ERP me, Graphics graphics, const wchar_t *channelName, double tmin, double tmax, double vmin, double vmax, bool garnish) {
+	ERP_drawChannel_number (me, graphics, ERP_getChannelNumber (me, channelName), tmin, tmax, vmin, vmax, garnish);
 }
 
-Table structERP :: f_tabulate (bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units)
-{
+Table ERP_tabulate (ERP me, bool includeSampleNumbers, bool includeTime, int timeDecimals, int voltageDecimals, int units) {
 	double voltageScaling = 1.0;
 	const wchar_t *unitText = L"(V)";
 	if (units == 2) {
@@ -113,34 +112,34 @@ Table structERP :: f_tabulate (bool includeSampleNumbers, bool includeTime, int 
 		unitText = L"(uV)";
 	}
 	try {
-		autoTable thee = Table_createWithoutColumnNames (nx, includeSampleNumbers + includeTime + ny);
+		autoTable thee = Table_createWithoutColumnNames (my nx, includeSampleNumbers + includeTime + my ny);
 		long icol = 0;
 		if (includeSampleNumbers) Table_setColumnLabel (thee.peek(), ++ icol, L"sample");
 		if (includeTime) Table_setColumnLabel (thee.peek(), ++ icol, L"time(s)");
-		for (long ichan = 1; ichan <= ny; ichan ++) {
-			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (d_channelNames [ichan], unitText));
+		for (long ichan = 1; ichan <= my ny; ichan ++) {
+			Table_setColumnLabel (thee.peek(), ++ icol, Melder_wcscat (my channelNames [ichan], unitText));
 		}
-		for (long isamp = 1; isamp <= nx; isamp ++) {
+		for (long isamp = 1; isamp <= my nx; isamp ++) {
 			icol = 0;
 			if (includeSampleNumbers) Table_setNumericValue (thee.peek(), isamp, ++ icol, isamp);
-			if (includeTime) Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (x1 + (isamp - 1) * dx, timeDecimals));
-			for (long ichan = 1; ichan <= ny; ichan ++) {
-				Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (voltageScaling * z [ichan] [isamp], voltageDecimals));
+			if (includeTime) Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (my x1 + (isamp - 1) * my dx, timeDecimals));
+			for (long ichan = 1; ichan <= my ny; ichan ++) {
+				Table_setStringValue (thee.peek(), isamp, ++ icol, Melder_fixed (voltageScaling * my z [ichan] [isamp], voltageDecimals));
 			}
 		}
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (this, ": not converted to Table.");
+		Melder_throw (me, ": not converted to Table.");
 	}
 }
 
-Sound structERP :: f_downToSound () {
+Sound ERP_downto_Sound (ERP me) {
 	try {
 		autoSound thee = Thing_new (Sound);
-		structSound :: v_copy (thee.peek());
+		my structSound :: v_copy (thee.peek());
 		return thee.transfer();
 	} catch (MelderError) {
-		Melder_throw (this, ": not converted to Sound.");
+		Melder_throw (me, ": not converted to Sound.");
 	}
 }
 

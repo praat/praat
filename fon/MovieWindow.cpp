@@ -25,109 +25,112 @@ Thing_implement (MovieWindow, TimeSoundAnalysisEditor, 0);
 /********** MENU COMMANDS **********/
 
 void structMovieWindow :: v_createMenuItems_view (EditorMenu menu) {
-	MovieWindow_Parent :: v_createMenuItems_view (menu);
+	our MovieWindow_Parent :: v_createMenuItems_view (menu);
 	//EditorMenu_addCommand (menu, L"-- view/realtier --", 0, 0);
 	//EditorMenu_addCommand (menu, v_setRangeTitle (), 0, menu_cb_setRange);
 }
 
 void structMovieWindow :: v_createMenus () {
-	MovieWindow_Parent :: v_createMenus ();
+	our MovieWindow_Parent :: v_createMenus ();
 	//EditorMenu menu = Editor_addMenu (this, L"Movie", 0);
 	//EditorMenu_addCommand (menu, L"Add point at cursor", 'T', menu_cb_addPointAtCursor);
-	v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the Movie menus
+	our v_createMenus_analysis ();   // insert some of the ancestor's menus *after* the Movie menus
 }
 
 /********** DRAWING AREA **********/
 
-double structMovieWindow :: h_getSoundBottomPosition () {
-	Movie movie = (Movie) data;
-	bool showAnalysis = (p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) && movie -> d_sound;
+/**
+ * @returns a value between 0.0 and 1.0; depends on whether the Sound and/or analyses are visible
+ */
+static double _MovieWindow_getSoundBottomPosition (MovieWindow me) {
+	Movie movie = (Movie) my data;
+	bool showAnalysis = (my p_spectrogram_show || my p_pitch_show || my p_intensity_show || my p_formant_show) && movie -> d_sound;
 	return movie -> d_sound ? (showAnalysis ? 0.7 : 0.3) : 1.0;
 }
 
 void structMovieWindow :: v_draw () {
-	Movie movie = (Movie) data;
-	bool showAnalysis = (p_spectrogram_show || p_pitch_show || p_intensity_show || p_formant_show) && movie -> d_sound;
-	double soundY = h_getSoundBottomPosition ();
+	Movie movie = (Movie) our data;
+	bool showAnalysis = (our p_spectrogram_show || our p_pitch_show || our p_intensity_show || our p_formant_show) && movie -> d_sound;
+	double soundY = _MovieWindow_getSoundBottomPosition (this);
 	if (movie -> d_sound) {
-		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics, 0, 1, soundY, 1.0);
-		Graphics_setColour (d_graphics, Graphics_WHITE);
-		Graphics_setWindow (d_graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
-		f_drawSound (-1.0, 1.0);
-		Graphics_flushWs (d_graphics);
-		Graphics_resetViewport (d_graphics, viewport);
+		Graphics_Viewport viewport = Graphics_insetViewport (our d_graphics, 0, 1, soundY, 1.0);
+		Graphics_setColour (our d_graphics, Graphics_WHITE);
+		Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
+		Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
+		our f_drawSound (-1.0, 1.0);
+		Graphics_flushWs (our d_graphics);
+		Graphics_resetViewport (our d_graphics, viewport);
 	}
 	if (true) {
 		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics, 0.0, 1.0, 0.0, 0.3);
-		Graphics_setColour (d_graphics, Graphics_WHITE);
-		Graphics_setWindow (d_graphics, 0, 1, 0, 1);
-		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
-		Graphics_setColour (d_graphics, Graphics_BLACK);
-		Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0.0, 1.0);
-		long firstFrame = movie -> f_xToNearestIndex (d_startWindow);
-		long lastFrame = movie -> f_xToNearestIndex (d_endWindow);
+		Graphics_setColour (our d_graphics, Graphics_WHITE);
+		Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
+		Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
+		Graphics_setColour (our d_graphics, Graphics_BLACK);
+		Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0.0, 1.0);
+		long firstFrame = movie -> f_xToNearestIndex (our d_startWindow);
+		long lastFrame = movie -> f_xToNearestIndex (our d_endWindow);
 		if (firstFrame < 1) firstFrame = 1;
 		if (lastFrame > movie -> nx) lastFrame = movie -> nx;
 		for (long iframe = firstFrame; iframe <= lastFrame; iframe ++) {
 			double time = movie -> f_indexToX (iframe);
 			double timeLeft = time - 0.5 * movie -> dx, timeRight = time + 0.5 * movie -> dx;
-			if (timeLeft < d_startWindow) timeLeft = d_startWindow;
-			if (timeRight > d_endWindow) timeRight = d_endWindow;
-			movie -> f_paintOneImageInside (d_graphics, iframe, timeLeft, timeRight, 0.0, 1.0);
+			if (timeLeft < our d_startWindow) timeLeft = our d_startWindow;
+			if (timeRight > our d_endWindow) timeRight = our d_endWindow;
+			Movie_paintOneImageInside (movie, our d_graphics, iframe, timeLeft, timeRight, 0.0, 1.0);
 		}
-		Graphics_flushWs (d_graphics);
-		Graphics_resetViewport (d_graphics, viewport);
+		Graphics_flushWs (our d_graphics);
+		Graphics_resetViewport (our d_graphics, viewport);
 	}
 	if (showAnalysis) {
-		Graphics_Viewport viewport = Graphics_insetViewport (d_graphics, 0.0, 1.0, 0.3, soundY);
-		v_draw_analysis ();
-		Graphics_flushWs (d_graphics);
-		Graphics_resetViewport (d_graphics, viewport);
+		Graphics_Viewport viewport = Graphics_insetViewport (our d_graphics, 0.0, 1.0, 0.3, soundY);
+		our v_draw_analysis ();
+		Graphics_flushWs (our d_graphics);
+		Graphics_resetViewport (our d_graphics, viewport);
 		/* Draw pulses. */
-		if (p_pulses_show) {
-			viewport = Graphics_insetViewport (d_graphics, 0.0, 1.0, soundY, 1.0);
-			v_draw_analysis_pulses ();
-			f_drawSound (-1.0, 1.0);   // second time, partially across the pulses
-			Graphics_flushWs (d_graphics);
-			Graphics_resetViewport (d_graphics, viewport);
+		if (our p_pulses_show) {
+			viewport = Graphics_insetViewport (our d_graphics, 0.0, 1.0, soundY, 1.0);
+			our v_draw_analysis_pulses ();
+			our f_drawSound (-1.0, 1.0);   // second time, partially across the pulses
+			Graphics_flushWs (our d_graphics);
+			Graphics_resetViewport (our d_graphics, viewport);
 		}
 	}
-	v_updateMenuItems_file ();
+	our v_updateMenuItems_file ();
 }
 
 void structMovieWindow :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (p_spectrogram_show)
-		Graphics_highlight (d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
+	if (our p_spectrogram_show)
+		Graphics_highlight (our d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
 	else
-		Graphics_highlight (d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
+		Graphics_highlight (our d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
 void structMovieWindow :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (p_spectrogram_show)
-		Graphics_highlight (d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
+	if (our p_spectrogram_show)
+		Graphics_highlight (our d_graphics, left, right, 0.3 * bottom + 0.7 * top, top);
 	else
-		Graphics_highlight (d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
+		Graphics_highlight (our d_graphics, left, right, 0.7 * bottom + 0.3 * top, top);
 }
 
 int structMovieWindow :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
-	return MovieWindow_Parent :: v_click (xWC, yWC, shiftKeyPressed);
+	return our MovieWindow_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
-void structMovieWindow :: v_play (double a_tmin, double a_tmax) {
+void structMovieWindow :: v_play (double tmin, double tmax) {
 	Movie movie = (Movie) data;
-	movie -> f_play (d_graphics, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+	Movie_play (movie, our d_graphics, tmin, tmax, theFunctionEditor_playCallback, this);
 }
 
-void structMovieWindow :: f_init (const wchar_t *title, Movie movie) {
+void MovieWindow_init (MovieWindow me, const wchar_t *title, Movie movie) {
 	Melder_assert (movie != NULL);
-	structTimeSoundAnalysisEditor :: f_init (title, movie, movie -> d_sound, false);
+	my structTimeSoundAnalysisEditor :: f_init (title, movie, movie -> d_sound, false);
 }
 
 MovieWindow MovieWindow_create (const wchar_t *title, Movie movie) {
 	try {
 		autoMovieWindow me = Thing_new (MovieWindow);
-		my f_init (title, movie);
+		MovieWindow_init (me.peek(), title, movie);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("Movie window not created.");

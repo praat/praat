@@ -2,7 +2,7 @@
 #define _EEGWindow_h_
 /* EEGWindow.h
  *
- * Copyright (C) 2011-2012,2013 Paul Boersma
+ * Copyright (C) 2011-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,6 @@ Thing_define (EEGWindow, TextGridEditor) { public:
 	// new data:
 		EEG d_eeg;
 		GuiMenuItem d_extractSelectedEEGPreserveTimesButton, d_extractSelectedEEGTimeFromZeroButton;
-	// functions:
-		void f_init (const wchar_t *title, EEG eeg);
 	// overridden methods:
 		virtual bool v_hasPitch     () { return false; }
 		virtual bool v_hasIntensity () { return false; }
@@ -40,6 +38,8 @@ Thing_define (EEGWindow, TextGridEditor) { public:
 		virtual void v_updateMenuItems_file ();
 	#include "EEGWindow_prefs.h"
 };
+
+void EEGWindow_init (EEGWindow me, const wchar_t *title, EEG eeg);
 
 EEGWindow EEGWindow_create (const wchar_t *title, EEG eeg);
 

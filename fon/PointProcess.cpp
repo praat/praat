@@ -319,9 +319,9 @@ PointProcess PointProcesses_difference (PointProcess me, PointProcess thee) {
 void PointProcess_fill (PointProcess me, double tmin, double tmax, double period) {
 	try {
 		if (tmax <= tmin) tmin = my xmin, tmax = my xmax;   // autowindowing
-		long n = floor ((tmax - tmin) / period), i;
+		long n = floor ((tmax - tmin) / period);
 		double t = 0.5 * (tmin + tmax - n * period);
-		for (i = 1, t = 0.5 * (tmin + tmax - n * period); i <= n; i ++, t += period) {
+		for (long i = 1; i <= n; i ++, t += period) {
 			PointProcess_addPoint (me, t);
 		}
 	} catch (MelderError) {

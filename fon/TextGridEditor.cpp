@@ -2159,7 +2159,6 @@ void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 
 void structTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
 	if (v_hasAnalysis () && p_spectrogram_show && (d_longSound.data || d_sound.data)) {
-		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		//Graphics_highlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_highlight (d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
@@ -2170,7 +2169,6 @@ void structTextGridEditor :: v_highlightSelection (double left, double right, do
 
 void structTextGridEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
 	if (v_hasAnalysis () && p_spectrogram_show && (d_longSound.data || d_sound.data)) {
-		TextGrid grid = (TextGrid) data;
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
 		//Graphics_unhighlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
 		Graphics_unhighlight (d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
@@ -2200,23 +2198,23 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void structTextGridEditor :: f_init (const wchar_t *title, TextGrid grid, Sampled a_sound, bool a_ownSound, SpellingChecker a_spellingChecker)
+void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker)
 {
-	this -> spellingChecker = a_spellingChecker;   // set in time
+	my spellingChecker = spellingChecker;   // set in time
 
-	structTimeSoundAnalysisEditor :: f_init (title, grid, a_sound, a_ownSound);
+	my structTimeSoundAnalysisEditor :: f_init (title, grid, sound, ownSound);
 
-	this -> selectedTier = 1;
-	v_updateText ();   // to reflect changed tier selection
-	if (d_endWindow - d_startWindow > 30.0) {
-		d_endWindow = d_startWindow + 30.0;
-		if (d_startWindow == d_tmin)
-			d_startSelection = d_endSelection = 0.5 * (d_startWindow + d_endWindow);
-		FunctionEditor_marksChanged (this, false);
+	my selectedTier = 1;
+	my v_updateText ();   // to reflect changed tier selection
+	if (my d_endWindow - my d_startWindow > 30.0) {
+		my d_endWindow = my d_startWindow + 30.0;
+		if (my d_startWindow == my d_tmin)
+			my d_startSelection = my d_endSelection = 0.5 * (my d_startWindow + my d_endWindow);
+		FunctionEditor_marksChanged (me, false);
 	}
-	if (a_spellingChecker != NULL)
-		this -> text -> f_setSelection (0, 0);
-	if (a_sound && a_sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > a_sound -> xmax)
+	if (spellingChecker != NULL)
+		my text -> f_setSelection (0, 0);
+	if (sound && sound -> xmin == 0.0 && grid -> xmin != 0.0 && grid -> xmax > sound -> xmax)
 		Melder_warning ("The time domain of the TextGrid (starting at ",
 			Melder_fixed (grid -> xmin, 6), " seconds) does not overlap with that of the sound "
 			"(which starts at 0 seconds).\nIf you want to repair this, you can select the TextGrid "
@@ -2227,7 +2225,7 @@ void structTextGridEditor :: f_init (const wchar_t *title, TextGrid grid, Sample
 TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		my f_init (title, grid, sound, ownSound, spellingChecker);
+		TextGridEditor_init (me.peek(), title, grid, sound, ownSound, spellingChecker);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("TextGrid window not created.");

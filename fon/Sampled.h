@@ -31,7 +31,8 @@ oo_CLASS_CREATE (Sampled, Function);
 /* The first sample point is at x1, the second at x1 + dx, */
 /* and the last at x1 + (nx - 1) * dx. */
 
-static inline double Sampled_indexToX (Sampled me, long i) { return my f_indexToX (i); }
+static inline double Sampled_indexToX (Sampled me, long   i) { return my f_indexToX (i); }
+static inline double Sampled_indexToX (Sampled me, double i) { return my f_indexToX (i); }
 static inline double Sampled_xToIndex (Sampled me, double x) { return my f_xToIndex (x); }
 static inline long Sampled_xToLowIndex (Sampled me, double x) { return my f_xToLowIndex (x); }
 static inline long Sampled_xToHighIndex (Sampled me, double x) { return my f_xToHighIndex (x); }

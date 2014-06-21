@@ -32,5 +32,34 @@ EEG EEG_readFromBdfFile (MelderFile file);
 
 EEG EEGs_concatenate (Collection me);
 
+void EEG_init (EEG me, double tmin, double tmax);
+long EEG_getChannelNumber (EEG me, const wchar_t *channelName);
+void EEG_setChannelName (EEG me, long channelNumber, const wchar_t *a_name);
+static inline long EEG_getNumberOfCapElectrodes (EEG me) {
+	return (my numberOfChannels - 1) & ~ 15L;   // BUG
+}
+static inline long EEG_getNumberOfExtraSensors (EEG me) {
+	return my numberOfChannels == 1 ? 0 : my numberOfChannels & 1 ? 1 : 8;   // BUG
+}
+static inline long EEG_getNumberOfExternalElectrodes (EEG me) {
+	return my numberOfChannels - EEG_getNumberOfCapElectrodes (me) - EEG_getNumberOfExtraSensors (me);
+}
+void EEG_setExternalElectrodeNames (EEG me, const wchar_t *nameExg1, const wchar_t *nameExg2, const wchar_t *nameExg3, const wchar_t *nameExg4,
+	const wchar_t *nameExg5, const wchar_t *nameExg6, const wchar_t *nameExg7, const wchar_t *nameExg8);
+void EEG_detrend (EEG me);
+void EEG_filter (EEG me, double lowFrequency, double lowWidth, double highFrequency, double highWidth, bool doNotch50Hz);
+void EEG_subtractReference (EEG me, const wchar_t *channelNumber1, const wchar_t *channelNumber2);
+void EEG_subtractMeanChannel (EEG me, long fromChannel, long toChannel);
+void EEG_setChannelToZero (EEG me, long channelNumber);
+void EEG_setChannelToZero (EEG me, const wchar_t *channelName);
+void EEG_removeTriggers (EEG me, int which_Melder_STRING, const wchar_t *criterion);
+EEG EEG_extractChannel (EEG me, long channelNumber);
+EEG EEG_extractChannel (EEG me, const wchar_t *channelName);
+static inline Sound EEG_extractSound (EEG me) { return Data_copy (my sound); }
+static inline TextGrid EEG_extractTextGrid (EEG me) { return Data_copy (my textgrid); }
+EEG EEG_extractPart (EEG me, double tmin, double tmax, bool preserveTimes);
+void EEG_replaceTextGrid (EEG me, TextGrid textgrid);
+MixingMatrix EEG_to_MixingMatrix (EEG me, long maxNumberOfIterations, double tol, int method);
+
 /* End of file EEG.h */
 #endif

@@ -1,6 +1,6 @@
 /* NUM.cpp
  *
- * Copyright (C) 1992-2008,2011,2012 Paul Boersma
+ * Copyright (C) 1992-2008,2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,6 +60,7 @@ void NUMscale (double *x, double xminfrom, double xmaxfrom, double xminto, doubl
 
 void NUMinit (void) {
 	gsl_set_error_handler_off ();
+	NUMrandom_init ();
 }
 
 void NUMfbtoa (double formant, double bandwidth, double dt, double *a1, double *a2) {

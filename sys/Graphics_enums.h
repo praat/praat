@@ -38,6 +38,11 @@ enums_begin (kGraphics_resolution, 0)
 	enums_add (kGraphics_resolution, 3, 600, L"600 dpi")
 enums_end (kGraphics_resolution, 3, 100)
 
+enums_begin (kGraphics_colourScale, 0)
+	enums_add (kGraphics_colourScale, 0, GREY, L"grey")
+	enums_add (kGraphics_colourScale, 1, BLUE_TO_RED, L"blue to red")
+enums_end (kGraphics_colourScale, 1, GREY)
+
 enums_begin (kGraphicsPostscript_spots, 0)
 	enums_add (kGraphicsPostscript_spots, 0, FINE, L"finest")
 	enums_add (kGraphicsPostscript_spots, 1, PHOTOCOPYABLE, L"photocopyable")

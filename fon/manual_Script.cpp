@@ -3787,7 +3787,7 @@ CODE (L"endfor")
 CODE (L"selectObject: sound, textgrid")
 MAN_END
 
-MAN_BEGIN (L"Demo window", L"ppgb", 20140112)
+MAN_BEGIN (L"Demo window", L"ppgb", 20140621)
 INTRO (L"The Demo window is a window in which you can draw and ask for user input. "
 	"You can use it for demonstrations, presentations, simulations, adaptive listening experiments, "
 	"and stand-alone programs (see @@Scripting 9.1. Turning a script into a stand-alone program@).")
@@ -3922,12 +3922,33 @@ CODE (L"demo Text: 50, \"centre\", 20, \"half\", \"Analyse\"")
 CODE (L"while demoWaitForInput ( )")
 	CODE1 (L"goto ANALYSE demoClickedIn (30, 70, 16, 24)")
 ENTRY (L"Full-screen viewing")
-NORMAL (L"When you click in the \"zoom box\" (the green button in the title bar of the Demo window on the Mac), "
+NORMAL (L"When you click in the top right corner of the Demo window (64-bit Mac) "
+	"or in the \"zoom box\" (the green button in the title bar of the Demo window on 32-bit Mac), "
 	"the Demo window will zoom out very strongly: it will fill up the whole screen. The menu bar becomes invisible, "
 	"although you can still make it temporarily visible and accessible by moving the mouse to the upper edge of the screen. "
 	"The Dock also becomes invisible, although you can make it temporarily visible and accessible by moving the mouse to the edge "
 	"of the screen (the left, bottom, or right edge, depending on where your Dock normally is). "
 	"When you click the zoom box again, the Demo window is restored to its original size. See also Tips and Tricks below.")
+ENTRY (L"Asynchronous play")
+NORMAL (L"If you select a Sound and execute the command")
+CODE (L"Play")
+NORMAL (L"Praat will play the whole sound before proceeding to the next line of your script. "
+	"You will often instead want Praat to continue running your script while the sound is playing. "
+	"To accomplish that, use the \"asynchronous\" directive:")
+CODE (L"Create Sound as pure tone: \"tone\", 1, 0, 0.2, 44100, 440, 0.2, 0.01, 0.01")
+CODE (L"#asynchronous Play")
+CODE (L"Remove")
+NORMAL (L"The sound will continue to play, even after the Sound object has been removed.")
+NORMAL (L"Please note that a following Play command will interrupt the playing of the first:")
+CODE (L"while demoWaitForInput ( )")
+	CODE1 (L"if demoClicked ( )")
+		CODE2 (L"Create Sound as pure tone: \"tone\", 1, 0, 3.0, 44100,")
+		CODE2 (L"... randomGauss (440, 100), 0.2, 0.01, 0.01")
+		CODE2 (L"asynchronous Play")
+		CODE2 (L"Remove")
+	CODE1 (L"endif")
+CODE (L"endwhile")
+NORMAL (L"The first sound will stop playing soon after the user clicks for the second time.")
 ENTRY (L"Miscellaneous")
 NORMAL (L"In the above examples, things will often get drawn to the screen with some delay, "
 	"i.e., you may not see the erasures and paintings happening. This is because several operating systems "

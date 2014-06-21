@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140612)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140621)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.79# (21 June 2014)")
+LIST_ITEM (L"\\bu Can now play sounds over more than two channels.")
+LIST_ITEM (L"\\bu Asynchronous play in scripts (see @@Demo window@).")
+LIST_ITEM (L"\\bu EEG: blue-to-red colour scale for scalp distributions.")
 NORMAL (L"##5.3.78# (12 June 2014)")
 LIST_ITEM (L"\\bu Multithreading can now speed up pitch analysis by a factor of 4 or so, "
 	"depending on the number of cores in your processor.")

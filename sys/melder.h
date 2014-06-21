@@ -852,6 +852,7 @@ void MelderGui_create (/* GuiWindow */ void *parent);
 extern bool Melder_batch;   // true if run from the batch or from an interactive command-line interface
 extern bool Melder_backgrounding;   /* True if running a script. */
 extern bool Melder_consoleIsAnsi;
+extern bool Melder_asynchronous;   // true if specified by the "asynchronous" directive in a script
 #ifndef CONTROL_APPLICATION
 	typedef struct structGuiWindow *GuiWindow;
 	extern GuiWindow Melder_topShell;
@@ -1226,6 +1227,11 @@ public:
 		MelderAudio_setOutputMaximumAsynchronicity (d_saveAsynchronicity);
 		trace ("value set to %d", (int) d_saveAsynchronicity);
 	}
+};
+
+struct autoMelderAsynchronous {
+	autoMelderAsynchronous () { Melder_asynchronous = true; }
+	~autoMelderAsynchronous () { Melder_asynchronous = false; }
 };
 
 /* End of file melder.h */

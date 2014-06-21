@@ -41,6 +41,7 @@ oo_DEFINE_CLASS (SampledXY, Sampled)
 		// functions:
 			void f_init (double xmin, double xmax, long nx, double dx, double x1,
 			             double ymin, double ymax, long ny, double dy, double y1);
+			double f_indexToY (long   index) { return y1 + (index - 1  ) * dy; }
 			double f_indexToY (double index) { return y1 + (index - 1.0) * dy; }
 			double f_yToIndex (double y) { return (y - y1) / dy + 1.0; }
 			long f_yToLowIndex     (double y) { return (long) floor (f_yToIndex (y)); }
