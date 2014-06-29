@@ -374,5 +374,7 @@ void Graphics_getMouseLocation (Graphics me, double *xWC, double *yWC);
 
 void Graphics_nextSheetOfPaper (Graphics me);
 
+void Graphics_prefs ();
+
 /* End of file Graphics.h */
 #endif

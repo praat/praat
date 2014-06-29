@@ -1,6 +1,6 @@
 /* praat_objectMenus.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,7 @@
 #include "ButtonEditor.h"
 #include "DataEditor.h"
 #include "site.h"
+#include "GraphicsP.h"
 
 #undef iam
 #define iam iam_LOOP
@@ -251,6 +252,15 @@ SET_ENUM (L"Output encoding", kMelder_textOutputEncoding, Melder_getOutputEncodi
 DO
 	Melder_setOutputEncoding (GET_ENUM (kMelder_textOutputEncoding, L"Output encoding"));
 END
+
+FORM (GraphicsCjkFontStyleSettings, L"CJK font style preferences", 0)
+	OPTIONMENU_ENUM (L"CJK font style", kGraphics_cjkFontStyle, DEFAULT)
+	OK
+SET_ENUM (L"CJK font style", kGraphics_cjkFontStyle, theGraphicsCjkFontStyle)
+DO
+	theGraphicsCjkFontStyle = GET_ENUM (kGraphics_cjkFontStyle, L"CJK font style");
+END
+
 
 /********** Callbacks of the Goodies menu. **********/
 
@@ -647,6 +657,7 @@ void praat_addMenus (GuiWindow window) {
 	praat_addMenuCommand (L"Objects", L"Preferences", L"-- encoding prefs --", 0, 0, 0);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text reading preferences...", 0, 0, DO_TextInputEncodingSettings);
 	praat_addMenuCommand (L"Objects", L"Preferences", L"Text writing preferences...", 0, 0, DO_TextOutputEncodingSettings);
+	praat_addMenuCommand (L"Objects", L"Preferences", L"CJK font style preferences...", 0, 0, DO_GraphicsCjkFontStyleSettings);
 
 	menuItem = praat_addMenuCommand (L"Objects", L"Praat", L"Technical", 0, praat_UNHIDABLE, 0);
 	technicalMenu = menuItem ? menuItem -> d_menu : NULL;

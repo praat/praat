@@ -285,6 +285,7 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 #define COLOUR(label,def)	UiForm_addColour (dia, label, def);
 #define CHANNEL(label,def)	UiForm_addChannel (dia, label, def);
 #define OK UiForm_finish (dia); } if (sendingForm == NULL && args == NULL && sendingString == NULL) {
+#define OK2 } UiForm_finish (dia); } if (sendingForm == NULL && args == NULL && sendingString == NULL) {
 #define SET_REAL(name,value)	UiForm_setReal (dia, name, value);
 #define SET_INTEGER(name,value)	UiForm_setInteger (dia, name, value);
 #define SET_STRING(name,value)	UiForm_setString (dia, name, value);
@@ -343,6 +344,14 @@ void praat_name2 (wchar_t *name, ClassInfo klas1, ClassInfo klas2);
 			praat_updateSelection (); \
 		} \
 	}
+#define END2 \
+				} \
+			} catch (MelderError) { \
+				praat_updateSelection (); \
+				throw; \
+			} \
+			praat_updateSelection (); \
+		}
 
 #define DIRECT(proc) \
 	static void DO_##proc (UiForm dummy1, int narg, Stackel args, const wchar_t *dummy2, Interpreter dummy3, const wchar_t *dummy4, bool dummy5, void *dummy6) { \

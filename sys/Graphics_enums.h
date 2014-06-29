@@ -66,4 +66,9 @@ enums_begin (kGraphicsPostscript_fontChoiceStrategy, 0)
 	enums_add (kGraphicsPostscript_fontChoiceStrategy, 3, PS_MONOTYPE, L"PS Monotype")
 enums_end (kGraphicsPostscript_fontChoiceStrategy, 3, AUTOMATIC)
 
+enums_begin (kGraphics_cjkFontStyle, 0)
+	enums_add (kGraphics_cjkFontStyle, 0, CHINESE, L"Chinese")
+	enums_add (kGraphics_cjkFontStyle, 1, JAPANESE, L"Japanese")
+enums_end (kGraphics_cjkFontStyle, 1, CHINESE)
+
 /* End of file Graphics_enums.h */

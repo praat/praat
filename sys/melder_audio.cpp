@@ -146,6 +146,7 @@ static struct MelderPlay {
 	unsigned int asynchronicity;
 	int numberOfChannels;
 	bool explicitStop, fakeMono;
+	volatile int volatile_interrupted;
 	bool (*callback) (void *closure, long samplesPlayed);
 	void *closure;
 	#if cocoa
@@ -188,6 +189,7 @@ static bool flush (void) {
 	if (my usePortAudio) {
 		if (my stream != NULL) {
 			#ifdef linux
+
 				Pa_Sleep (200);   // this reduces the chance of seeing the Alsa/PulseAudio deadlock:
 				/*
 					(gdb) thread apply all bt
@@ -330,7 +332,6 @@ bool MelderAudio_stopPlaying (bool explicitStop) {
 	struct MelderPlay *me = & thePlay;
 	my explicitStop = explicitStop;
 	if (! MelderAudio_isPlaying || my asynchronicity < kMelder_asynchronicityLevel_ASYNCHRONOUS) return false;
-	(void) flush ();
 	#if cocoa
 		CFRunLoopRemoveTimer (CFRunLoopGetCurrent (), thePlay. cocoaTimer, kCFRunLoopCommonModes);
 	#elif motif
@@ -338,6 +339,7 @@ bool MelderAudio_stopPlaying (bool explicitStop) {
 	#elif gtk
 		g_source_remove (thePlay. workProcId_gtk);
 	#endif
+	(void) flush ();
 	return true;
 }
 
@@ -347,36 +349,52 @@ static bool workProc (void *closure) {
 //n ++;
 //Melder_casual("workProc %ld", n);
 	if (my usePortAudio) {
-		/*
-		 * Not all hostApis support paComplete or wait till all buffers have been played in Pa_StopStream.
-		 * Once pa_win_ds implements this, we can simply do:
-		 * if (Pa_IsStreamActive (my stream)) {
-		 *    if (my callback && ! my callback (my closure, my samplesPlayed))
-		 *       return flush ();
-		 * } else {
-		 *    my samplesPlayed = my numberOfSamples;
-		 *    return flush ();
-		 * }
-		 * But then we also have to use paComplete in the stream callback.
-		 */
-		double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-		my samplesPlayed = timeElapsed * my sampleRate;
-		if (my supports_paComplete && Pa_IsStreamActive (my stream)) {
-			if (my callback && ! my callback (my closure, my samplesPlayed)) {
-				Pa_AbortStream (my stream);
+		#if defined (linux)
+			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+			long samplesPlayed = timeElapsed * my sampleRate;
+			if (my callback && ! my callback (my closure, samplesPlayed)) {
+				my volatile_interrupted = 1;
 				return flush ();
 			}
-		} else if (my samplesPlayed < my numberOfSamples + my sampleRate / 20) {   // allow the latency estimate to be 50 ms off.
-			if (my callback && ! my callback (my closure, my samplesPlayed)) {
-				Pa_AbortStream (my stream);
+			if (my samplesLeft == 0) {
 				return flush ();
 			}
-		} else {
-			Pa_AbortStream (my stream);
-			my samplesPlayed = my numberOfSamples;
-			return flush ();
-		}
-		Pa_Sleep (10);
+		#elif defined (linuxXXX)
+			/*
+			 * Not all hostApis support paComplete or wait till all buffers have been played in Pa_StopStream.
+			 * Once pa_win_ds implements this, we can simply do:
+			 */
+			if (Pa_IsStreamActive (my stream)) {
+				if (my callback && ! my callback (my closure, my samplesPlayed))
+					return flush ();
+			} else {
+				Pa_StopStream (my stream);
+				my samplesPlayed = my numberOfSamples;
+				return flush ();
+			}
+			/*
+			 * But then we also have to use paComplete in the stream callback.
+			 */
+		#else
+			double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+			my samplesPlayed = timeElapsed * my sampleRate;
+			if (my supports_paComplete && Pa_IsStreamActive (my stream)) {
+				if (my callback && ! my callback (my closure, my samplesPlayed)) {
+					Pa_AbortStream (my stream);
+					return flush ();
+				}
+			} else if (my samplesPlayed < my numberOfSamples + my sampleRate / 20) {   // allow the latency estimate to be 50 ms off.
+				if (my callback && ! my callback (my closure, my samplesPlayed)) {
+					Pa_AbortStream (my stream);
+					return flush ();
+				}
+			} else {
+				Pa_AbortStream (my stream);
+				my samplesPlayed = my numberOfSamples;
+				return flush ();
+			}
+			Pa_Sleep (10);
+		#endif
 	} else {
 	#if defined (macintosh)
 	#elif defined (linux)
@@ -453,6 +471,11 @@ static int thePaStreamCallback (const void *input, void *output,
 	(void) timeInfo;
 	(void) userData;
 	struct MelderPlay *me = & thePlay;
+	if (my volatile_interrupted) {
+		memset (output, '\0', 2 * frameCount * my numberOfChannels);
+		my samplesPlayed = my numberOfSamples;
+		return my supports_paComplete ? paComplete : paContinue;
+	}
 	if (statusFlags & paOutputUnderflow) {
 		if (Melder_debug == 20) Melder_casual ("output underflow");
 	}
@@ -464,6 +487,7 @@ static int thePaStreamCallback (const void *input, void *output,
 		if (Melder_debug == 20) Melder_casual ("play %ls %ls", Melder_integer (dsamples),
 			Melder_double (Pa_GetStreamCpuLoad (my stream)));
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
+		Melder_assert (my buffer != NULL);
 		memcpy (output, (char *) & my buffer [my samplesSent * my numberOfChannels], 2 * dsamples * my numberOfChannels);
 		my samplesLeft -= dsamples;
 		my samplesSent += dsamples;
@@ -471,6 +495,7 @@ static int thePaStreamCallback (const void *input, void *output,
 	} else /*if (my samplesPlayed >= my numberOfSamples)*/ {
 		memset (output, '\0', 2 * frameCount * my numberOfChannels);
 		my samplesPlayed = my numberOfSamples;
+		trace ("paComplete");
 		return my supports_paComplete ? paComplete : paContinue;
 	}
 	return paContinue;
@@ -500,6 +525,7 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 	my usePortAudio = preferences. outputUsesPortAudio;
 	my explicitStop = MelderAudio_IMPLICIT;
 	my fakeMono = false;
+	my volatile_interrupted = 0;
 
 	my samplesLeft = numberOfSamples;
 	my samplesSent = 0;
@@ -530,12 +556,25 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 		my paStartingTime = Pa_GetStreamTime (my stream);
 		if (my asynchronicity <= kMelder_asynchronicityLevel_INTERRUPTABLE) {
 			for (;;) {
-				double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
-				my samplesPlayed = timeElapsed * my sampleRate;
-				if (my samplesPlayed >= my numberOfSamples + my sampleRate / 20) {
-					my samplesPlayed = my numberOfSamples;
-					break;
-				}
+				#if defined (linux)
+					/*
+					 * This is how PortAudio was designed to work.
+					 */
+					if (my samplesLeft == 0) {
+						my samplesPlayed = my numberOfSamples;
+						break;
+					}
+				#else
+					/*
+					 * A version that doesn't trust that the stream callback will complete.
+					 */
+					double timeElapsed = Melder_clock () - theStartingTime - Pa_GetStreamInfo (my stream) -> outputLatency;
+					long samplesPlayed = timeElapsed * my sampleRate;
+					if (samplesPlayed >= my numberOfSamples + my sampleRate / 20) {
+						my samplesPlayed = my numberOfSamples;
+						break;
+					}
+				#endif
 				bool interrupted = false;
 				if (my asynchronicity != kMelder_asynchronicityLevel_SYNCHRONOUS && my callback &&
 					! my callback (my closure, my samplesPlayed))
@@ -545,8 +584,10 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 				 * Do this on the lowest level that will work.
 				 */
 				if (my asynchronicity == kMelder_asynchronicityLevel_INTERRUPTABLE && ! interrupted) {
-					#if cocoa
-						// TODO: implement
+					#if gtk
+						// TODO: implement a reaction to the Escape key
+					#elif cocoa
+						// TODO: implement a reaction to the Escape key
 					#elif defined (macintosh)
 						EventRecord event;
 						if (EventAvail (keyDownMask, & event)) {
@@ -584,7 +625,9 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 			if (my samplesPlayed != my numberOfSamples) {
 				Melder_fatal ("Played %ld instead of %ld samples.", my samplesPlayed, my numberOfSamples);
 			}
-			Pa_AbortStream (my stream);
+			#ifndef linux
+				Pa_AbortStream (my stream);
+			#endif
 		} else /* my asynchronicity == kMelder_asynchronicityLevel_ASYNCHRONOUS */ {
 			#if cocoa
 				CFRunLoopTimerContext context = { 0, NULL, NULL, NULL, NULL };

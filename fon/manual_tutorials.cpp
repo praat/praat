@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140621)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140629)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.80# (29 June 2014)")
+LIST_ITEM (L"\\bu Praat preferences: choice between Chinese and Japanese style for Han characters.")
 NORMAL (L"##5.3.79# (21 June 2014)")
 LIST_ITEM (L"\\bu Can now play sounds over more than two channels.")
 LIST_ITEM (L"\\bu Asynchronous play in scripts (see @@Demo window@).")

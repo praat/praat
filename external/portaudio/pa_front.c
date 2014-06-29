@@ -1323,7 +1323,6 @@ PaError PaUtil_ValidateStreamPointer( PaStream* stream )
     return paNoError;
 }
 
-
 PaError Pa_CloseStream( PaStream* stream )
 {
     PaUtilStreamInterface *interface;

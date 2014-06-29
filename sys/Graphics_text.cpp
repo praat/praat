@@ -77,7 +77,7 @@ extern const char * ipaSerifRegular24 [1 + 255-33+1 + 1] [24 + 1];
 
 #if win
 	#define win_MAXIMUM_FONT_SIZE  500
-	static HFONT fonts [1 + kGraphics_resolution_MAX] [1 + kGraphics_font_CHINESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
+	static HFONT fonts [1 + kGraphics_resolution_MAX] [1 + kGraphics_font_JAPANESE] [1+win_MAXIMUM_FONT_SIZE] [1 + Graphics_BOLD_ITALIC];
 	static int ipaAvailable = FALSE;
 	static int win_size2isize (int size) { return size > win_MAXIMUM_FONT_SIZE ? win_MAXIMUM_FONT_SIZE : size; }
 	static int win_isize2size (int isize) { return isize; }
@@ -125,6 +125,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 	spec. lfCharSet =
 		font == kGraphics_font_SYMBOL ? SYMBOL_CHARSET :
 		font == kGraphics_font_CHINESE ? DEFAULT_CHARSET :
+		font == kGraphics_font_JAPANESE ? DEFAULT_CHARSET :
 		font >= kGraphics_font_IPATIMES ? DEFAULT_CHARSET :
 		ANSI_CHARSET;
 	spec. lfOutPrecision = spec. lfClipPrecision = spec. lfQuality = 0;
@@ -132,6 +133,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		( font == kGraphics_font_COURIER ? FIXED_PITCH : font == kGraphics_font_IPATIMES ? DEFAULT_PITCH : VARIABLE_PITCH ) |
 		( font == kGraphics_font_HELVETICA ? FF_SWISS : font == kGraphics_font_COURIER ? FF_MODERN :
 		  font == kGraphics_font_CHINESE ? FF_DONTCARE :
+		  font == kGraphics_font_JAPANESE ? FF_DONTCARE :
 		  font >= kGraphics_font_IPATIMES ? FF_DONTCARE : FF_ROMAN );
 	if (font == kGraphics_font_IPATIMES && ! ipaInited && Melder_debug != 15) {
 		LOGFONTW logFont;
@@ -158,6 +160,7 @@ static HFONT loadFont (GraphicsScreen me, int font, int size, int style) {
 		font == kGraphics_font_IPATIMES  ? ( doulosAvailable && style == 0 ? L"Doulos SIL" : charisAvailable ? L"Charis SIL" : L"Times New Roman" ) :
 		font == kGraphics_font_DINGBATS  ? L"Wingdings" :
 		font == kGraphics_font_CHINESE   ? L"SimSun" :
+		font == kGraphics_font_JAPANESE  ? L"MS UI Gothic" :
 		L"");
 	return CreateFontIndirectW (& spec);
 }
@@ -226,7 +229,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 			       info -> alphabet == Longchar_PHONETIC ? kGraphics_font_IPATIMES :
 			       info -> alphabet == Longchar_DINGBATS ? kGraphics_font_DINGBATS : lc -> font.integer;
 			if ((unsigned int) lc -> kar >= 0x2E80 && (unsigned int) lc -> kar <= 0x9FFF)
-				font = kGraphics_font_CHINESE;
+				font = ( theGraphicsCjkFontStyle == kGraphics_cjkFontStyle_CHINESE ? kGraphics_font_CHINESE : kGraphics_font_JAPANESE );
 			size = lc -> size < 100 ? smallSize : normalSize;
 			style = lc -> style & (Graphics_ITALIC | Graphics_BOLD);   // take out Graphics_CODE
 			fontInfo = fonts [my resolutionNumber] [font] [size] [style];
@@ -250,6 +253,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 					font == kGraphics_font_TIMES ||
 					font == kGraphics_font_HELVETICA ||
 					font == kGraphics_font_CHINESE ||
+					font == kGraphics_font_JAPANESE ||
 					font == kGraphics_font_COURIER ? (unsigned short) lc -> kar :
 					info -> winEncoding;
 				if (lc -> code == 0) {
@@ -304,9 +308,9 @@ static void charSize (I, _Graphics_widechar *lc) {
 					  my font == kGraphics_font_HELVETICA || my font == kGraphics_font_COURIER ?
 						my font :   // sans serif or wide, so fall back on Lucida Grande for phonetic characters
 					  /* my font must be kGraphics_font_PALATINO */
-					  hasCharis ?
+					  hasCharis && Melder_debug != 900 ?
 						kGraphics_font_IPAPALATINO :
-					  hasDoulos ?
+					  hasDoulos && Melder_debug != 900 ?
 					    ( lc -> style == 0 ?
 							kGraphics_font_IPATIMES :
 							kGraphics_font_TIMES
@@ -323,6 +327,8 @@ static void charSize (I, _Graphics_widechar *lc) {
 					( hasDoulos ?
 						( lc -> style == 0 ?
 							kGraphics_font_IPATIMES :
+						  lc -> style == Graphics_ITALIC ?
+							kGraphics_font_TIMES :
 						  hasCharis ?
 							kGraphics_font_IPAPALATINO :
 							kGraphics_font_TIMES 
@@ -332,7 +338,7 @@ static void charSize (I, _Graphics_widechar *lc) {
 				my font == kGraphics_font_HELVETICA ?
 					kGraphics_font_HELVETICA :
 				my font == kGraphics_font_PALATINO ?
-					( hasCharis ?
+					( hasCharis && Melder_debug != 900 ?
 						kGraphics_font_IPAPALATINO :
 						kGraphics_font_PALATINO
 					) :
@@ -360,7 +366,11 @@ static void charSize (I, _Graphics_widechar *lc) {
 					case kGraphics_font_TIMES:       { [attributes   setObject: @"Times"           forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_HELVETICA:   { [attributes   setObject: @"Arial"           forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_COURIER:     { [attributes   setObject: @"Courier New"     forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_PALATINO:    { [attributes   setObject: @"Palatino"        forKey: (id) kCTFontNameAttribute]; } break;
+					case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
+															[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
+													   else
+														    [attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
+													 } break;
 					case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"          forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"      forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"      forKey: (id) kCTFontNameAttribute]; } break;
@@ -754,7 +764,11 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					case kGraphics_font_TIMES:       { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Times New Roman"); } break;
 					case kGraphics_font_HELVETICA:   { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Arial"          ); } break;
 					case kGraphics_font_COURIER:     { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Courier New"    ); } break;
-					case kGraphics_font_PALATINO:    { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Palatino"       ); } break;
+					case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
+															cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"DG Meta Serif Science");
+													   else
+														    cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Palatino");
+													 } break;
 					case kGraphics_font_SYMBOL:      { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Symbol"         ); } break;
 					case kGraphics_font_IPATIMES:    { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Doulos SIL"     ); } break;
 					case kGraphics_font_IPAPALATINO: { cfFont = (CFStringRef) Melder_peekWcsToCfstring (L"Charis SIL"     ); } break;
@@ -775,7 +789,11 @@ static void charDraw (I, int xDC, int yDC, _Graphics_widechar *lc,
 					case kGraphics_font_TIMES:       { [attributes   setObject: @"Times New Roman"   forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_HELVETICA:   { [attributes   setObject: @"Arial"             forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_COURIER:     { [attributes   setObject: @"Courier New"       forKey: (id) kCTFontNameAttribute]; } break;
-					case kGraphics_font_PALATINO:    { [attributes   setObject: @"Palatino"          forKey: (id) kCTFontNameAttribute]; } break;
+					case kGraphics_font_PALATINO:    { if (Melder_debug == 900)
+															[attributes   setObject: @"DG Meta Serif Science" forKey: (id) kCTFontNameAttribute];
+													   else
+														    [attributes   setObject: @"Palatino"              forKey: (id) kCTFontNameAttribute];
+													 } break;
 					case kGraphics_font_SYMBOL:      { [attributes   setObject: @"Symbol"            forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_IPATIMES:    { [attributes   setObject: @"Doulos SIL"        forKey: (id) kCTFontNameAttribute]; } break;
 					case kGraphics_font_IPAPALATINO: { [attributes   setObject: @"Charis SIL"        forKey: (id) kCTFontNameAttribute]; } break;

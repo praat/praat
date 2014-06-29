@@ -26,10 +26,17 @@
 #include "Graphics_enums.h"
 
 #include "GuiP.h"
+#include "Preferences.h"
 
 /***** Methods *****/
 
 Thing_implement (Graphics, Thing, 0);
+
+enum kGraphics_cjkFontStyle theGraphicsCjkFontStyle;
+
+void Graphics_prefs () {
+	Preferences_addEnum (L"Graphics.cjkFontStyle", & theGraphicsCjkFontStyle, kGraphics_cjkFontStyle, kGraphics_cjkFontStyle_DEFAULT);
+}
 
 void structGraphics :: v_destroy () {
 	Melder_free (record);

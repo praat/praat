@@ -227,7 +227,7 @@ double NUMrandomFraction () {
 
         my index = 0;
     }
-  
+
     x = my array [my index ++];
 
     x ^= (x >> 29) & UINT64_C (0x5555555555555555);
@@ -260,7 +260,7 @@ double NUMrandomFraction_mt (int threadNumber) {
 
         my index = 0;
     }
-  
+
     x = my array [my index ++];
 
     x ^= (x >> 29) & UINT64_C (0x5555555555555555);
