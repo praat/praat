@@ -1,6 +1,6 @@
 /* EditDistanceTable_def.h
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012,2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ oo_END_STRUCT (PairOfInteger)
 #define ooSTRUCT WarpingPath
 oo_DEFINE_CLASS (WarpingPath, Data)
 	oo_LONG (_capacity)
-	oo_LONG (d_pathLength)
-	oo_STRUCT_VECTOR (PairOfInteger, d_path, d_pathLength)
+	oo_LONG (pathLength)
+	oo_STRUCT_VECTOR (PairOfInteger, path, pathLength)
 oo_END_CLASS (WarpingPath)
 #undef ooSTRUCT
 
@@ -50,9 +50,9 @@ oo_END_CLASS (EditCostsTable)
 
 #define ooSTRUCT EditDistanceTable
 	oo_DEFINE_CLASS (EditDistanceTable, TableOfReal)
-	oo_OBJECT (WarpingPath, 0, d_warpingPath)
+	oo_OBJECT (WarpingPath, 0, warpingPath)
 	#if oo_DECLARING
-		oo_OBJECT (EditCostsTable, 0, d_editCostsTable)
+		oo_OBJECT (EditCostsTable, 0, editCostsTable)
 		// overridden methods:
 			virtual void v_info ();
 	#endif

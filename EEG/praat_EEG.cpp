@@ -221,7 +221,7 @@ DO
 	}
 END
 
-FORM (EEG_to_ERPTier, L"To ERPTier", 0)
+FORM (EEG_to_ERPTier_bit, L"To ERPTier (bit)", 0)
 	REAL (L"From time (s)", L"-0.11")
 	REAL (L"To time (s)", L"0.39")
 	NATURAL (L"Marker bit", L"8")
@@ -230,8 +230,22 @@ DO
 	LOOP {
 		iam (EEG);
 		int markerBit = GET_INTEGER (L"Marker bit");
-		autoERPTier thee = EEG_to_ERPTier (me, GET_REAL (L"From time"), GET_REAL (L"To time"), markerBit);
+		autoERPTier thee = EEG_to_ERPTier_bit (me, GET_REAL (L"From time"), GET_REAL (L"To time"), markerBit);
 		praat_new (thee.transfer(), my name, L"_bit", Melder_integer (markerBit));
+	}
+END
+
+FORM (EEG_to_ERPTier_marker, L"To ERPTier (marker)", 0)
+	REAL (L"From time (s)", L"-0.11")
+	REAL (L"To time (s)", L"0.39")
+	NATURAL (L"Marker number", L"12")
+	OK
+DO
+	LOOP {
+		iam (EEG);
+		uint16_t markerNumber = GET_INTEGER (L"Marker number");
+		autoERPTier thee = EEG_to_ERPTier_marker (me, GET_REAL (L"From time"), GET_REAL (L"To time"), markerNumber);
+		praat_new (thee.transfer(), my name, L"_", Melder_integer (markerNumber));
 	}
 END
 
@@ -802,9 +816,12 @@ void praat_EEG_init (void) {
 	praat_addAction1 (classEEG, 0, L"Analyse", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Extract channel...", 0, 0, DO_EEG_extractChannel);
 		praat_addAction1 (classEEG, 1, L"Extract part...", 0, 0, DO_EEG_extractPart);
-		praat_addAction1 (classEEG, 0, L"To ERPTier...", 0, 0, DO_EEG_to_ERPTier);
-		praat_addAction1 (classEEG, 0, L"To ERPTier (triggers)...", 0, 0, DO_EEG_to_ERPTier_triggers);
-		praat_addAction1 (classEEG, 0, L"To ERPTier (triggers, preceded)...", 0, 0, DO_EEG_to_ERPTier_triggers_preceded);
+		praat_addAction1 (classEEG, 0, L"To ERPTier -", 0, 0, 0);
+		praat_addAction1 (classEEG, 0, L"To ERPTier (bit)...", 0, 1, DO_EEG_to_ERPTier_bit);
+		praat_addAction1 (classEEG, 0, L"To ERPTier (marker)...", 0, 1, DO_EEG_to_ERPTier_marker);
+		praat_addAction1 (classEEG, 0, L"To ERPTier (triggers)...", 0, 1, DO_EEG_to_ERPTier_triggers);
+		praat_addAction1 (classEEG, 0, L"To ERPTier (triggers, preceded)...", 0, 1, DO_EEG_to_ERPTier_triggers_preceded);
+		praat_addAction1 (classEEG, 0, L"To ERPTier...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_EEG_to_ERPTier_bit);
 		praat_addAction1 (classEEG, 0, L"To MixingMatrix...", 0, 0, DO_EEG_to_MixingMatrix);
 	praat_addAction1 (classEEG, 0, L"Synthesize", 0, 0, 0);
 		praat_addAction1 (classEEG, 0, L"Concatenate", 0, 0, DO_EEGs_concatenate);

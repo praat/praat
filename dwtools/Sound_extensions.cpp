@@ -69,6 +69,11 @@
 #include "Manipulation.h"
 #include "NUM2.h"
 
+#ifdef linux
+//#include <pulse/simple.h>
+//#include <pulse/error.h>
+#endif
+
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
 static void PitchTier_modifyExcursionRange (PitchTier me, double tmin, double tmax, double multiplier, double fref_Hz) {
@@ -2271,5 +2276,6 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 		Melder_throw (me, " not played with frequencies shifted.");
 	}
 }
+
 
 /* End of file Sound_extensions.cpp */

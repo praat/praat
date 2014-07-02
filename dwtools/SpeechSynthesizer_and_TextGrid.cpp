@@ -705,11 +705,11 @@ Table IntervalTiers_to_Table_textAlignmentment (IntervalTier target, IntervalTie
 			EditDistanceTable_setEditCosts (edit.peek(), costs);
 			EditDistanceTable_findPath (edit.peek(), NULL);
 		}
-		long pathLength = edit -> d_warpingPath -> d_pathLength;
+		long pathLength = edit -> warpingPath -> pathLength;
 		autoTable thee = Table_createWithColumnNames (pathLength - 1, L"targetInterval targetText targetStart targetEnd sourceInterval sourceText sourceStart sourceEnd operation");
 		for (long i = 2; i <= pathLength; i++) {
-			structPairOfInteger p = edit -> d_warpingPath -> d_path[i];
-			structPairOfInteger p1 = edit -> d_warpingPath -> d_path[i - 1];
+			structPairOfInteger p = edit -> warpingPath -> path[i];
+			structPairOfInteger p1 = edit -> warpingPath -> path[i - 1];
 			double targetStart = NUMundefined, targetEnd =  NUMundefined;
 			double sourceStart = NUMundefined, sourceEnd =  NUMundefined;
 			const wchar_t * targetText = L"", *sourceText = L"";

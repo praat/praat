@@ -1,6 +1,6 @@
 /* EditDistanceTable.c
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,8 +60,8 @@ Thing_implement (WarpingPath, Data, 0);
 WarpingPath WarpingPath_create (long length) {
 	try {
 		autoWarpingPath me = Thing_new (WarpingPath);
-		my d_path = NUMvector<structPairOfInteger> (1, length);
-		my _capacity = my d_pathLength = length;
+		my path = NUMvector<structPairOfInteger> (1, length);
+		my _capacity = my pathLength = length;
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("WarpPath not created.");
@@ -70,15 +70,15 @@ WarpingPath WarpingPath_create (long length) {
 
 static void WarpingPath_reset (WarpingPath me) {
 	for (long i = 1; i <= my _capacity; i++) {
-		my d_path[i].x = my d_path[i].y = 0;
+		my path[i].x = my path[i].y = 0;
 	}
-	my d_pathLength = my _capacity;
+	my pathLength = my _capacity;
 }
 
 static void WarpingPath_getPath (WarpingPath me, short **psi, long iy, long ix) { // psi[0..nrows-1][0..ncols-1]
-	long index = my d_pathLength;
-	my d_path[index].x = ix;
-	my d_path[index].y = iy;
+	long index = my pathLength;
+	my path[index].x = ix;
+	my path[index].y = iy;
 	while (!(ix == 0 && iy == 0)) {
 		if (psi[iy][ix] == WARPING_fromLeft) {
 			ix--;
@@ -87,22 +87,22 @@ static void WarpingPath_getPath (WarpingPath me, short **psi, long iy, long ix) 
 		} else { // WARPING_fromDiag
 			ix--; iy--;
 		}
-		my d_path[--index].x = ix;
-		my d_path[index].y = iy;
+		my path[--index].x = ix;
+		my path[index].y = iy;
 	}
 	if (index > 1) {
 		long k = 1;
-		for (long i = index; i <= my d_pathLength; i++) {
-			my d_path[k++] = my d_path[i];
-			my d_path[i].x = my d_path[i].y = 0;
+		for (long i = index; i <= my pathLength; i++) {
+			my path[k++] = my path[i];
+			my path[i].x = my path[i].y = 0;
 		}
-		my d_pathLength = k - 1;
+		my pathLength = k - 1;
 	}
 }
 
 static void WarpingPath_shiftPathByOne (WarpingPath me) {
-	for (long i = 1; i <= my d_pathLength; i++) {
-		(my d_path[i].x)++; (my d_path[i].y)++;
+	for (long i = 1; i <= my pathLength; i++) {
+		(my path[i].x)++; (my path[i].y)++;
 	}
 }
 
@@ -111,12 +111,12 @@ long WarpingPath_getColumnsFromRowIndex (WarpingPath me, long iy, long *ix1, lon
 		return 0;
 	}
 	*ix1 = 0; *ix2 = 0;
-	for (long i = 1; i <= my d_pathLength; i++) {
-		if (my d_path[i].y < iy) {
+	for (long i = 1; i <= my pathLength; i++) {
+		if (my path[i].y < iy) {
 			continue;
-		} else if (my d_path[i].y == iy) {
-			if (*ix1 == 0) *ix1 = my d_path[i].x;
-			*ix2 = my d_path[i].x;
+		} else if (my path[i].y == iy) {
+			if (*ix1 == 0) *ix1 = my path[i].x;
+			*ix2 = my path[i].x;
 		} else {
 			break;
 		}
@@ -129,12 +129,12 @@ long WarpingPath_getRowsFromColumnIndex (WarpingPath me, long ix, long *iy1, lon
 		return 0;
 	}
 	*iy1 = 0; *iy2 = 0;
-	for (long i = 1; i <= my d_pathLength; i++) {
-		if (my d_path[i].x < ix) {
+	for (long i = 1; i <= my pathLength; i++) {
+		if (my path[i].x < ix) {
 			continue;
-		} else if (my d_path[i].x == ix) {
-			if (*iy1 == 0) *iy1 = my d_path[i].y;
-			*iy2 = my d_path[i].y;
+		} else if (my path[i].x == ix) {
+			if (*iy1 == 0) *iy1 = my path[i].y;
+			*iy2 = my path[i].y;
 		} else {
 			break;
 		}
@@ -342,8 +342,8 @@ EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
 		for (long i = 1; i <= numberOfTargetSymbols; i++) {
 			my rowLabels[i + 1] = Melder_wcsdup (target -> strings[i]);
 		}
-		my d_warpingPath = WarpingPath_create (numberOfTargetSymbols + numberOfSourceSymbols + 1);
-		my d_editCostsTable = EditCostsTable_createDefault ();
+		my warpingPath = WarpingPath_create (numberOfTargetSymbols + numberOfSourceSymbols + 1);
+		my editCostsTable = EditCostsTable_createDefault ();
 		EditDistanceTable_findPath (me.peek(), 0);
 		return me.transfer();
 	} catch (MelderError) {
@@ -353,9 +353,9 @@ EditDistanceTable EditDistanceTable_create (Strings target, Strings source) {
 
 void EditDistanceTable_setEditCosts (EditDistanceTable me, EditCostsTable thee) {
 	try {
-		forget (my d_editCostsTable);
+		forget (my editCostsTable);
 		autoEditCostsTable ect = (EditCostsTable) Data_copy (thee);
-		my d_editCostsTable = ect.transfer();
+		my editCostsTable = ect.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": edit costs not set.");
 	}
@@ -437,8 +437,8 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 	double maxTextWidth = getMaxRowLabelWidth (me, graphics, rowmin, rowmax);
 	double y = 1 + 0.1 * lineSpacing;
 	autoNUMmatrix<bool> onPath (1, my numberOfRows, 1, my numberOfColumns);
-	for (long i = 1; i <= my d_warpingPath -> d_pathLength; i++) {
-		structPairOfInteger poi = my d_warpingPath -> d_path[i];
+	for (long i = 1; i <= my warpingPath -> pathLength; i++) {
+		structPairOfInteger poi = my warpingPath -> path[i];
 		onPath[poi.y] [poi.x] = true;
 	}
 
@@ -486,12 +486,12 @@ void EditDistanceTable_draw (EditDistanceTable me, Graphics graphics, int iforma
 
 void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphics) {
 	const wchar_t *oinsertion = L"i", *insertion = L"*", *odeletion = L"d", *deletion = L"*", *osubstitution = L"s", *oequal = L"";
-	Graphics_setWindow (graphics, 0.5, my d_warpingPath -> d_pathLength - 0.5, 0, 1); // pathLength-1 symbols
+	Graphics_setWindow (graphics, 0.5, my warpingPath -> pathLength - 0.5, 0, 1); // pathLength-1 symbols
 	double lineSpacing = getLineSpacing (graphics);
 	double ytarget = 1 - lineSpacing, ysource = ytarget - 2 * lineSpacing, yoper = ysource - lineSpacing;
 	Graphics_setTextAlignment (graphics, Graphics_CENTRE, Graphics_BOTTOM);
-	for (long i = 2; i <= my d_warpingPath -> d_pathLength; i++) {
-		structPairOfInteger p = my d_warpingPath -> d_path[i], p1 = my d_warpingPath -> d_path[i - 1];
+	for (long i = 2; i <= my warpingPath -> pathLength; i++) {
+		structPairOfInteger p = my warpingPath -> path[i], p1 = my warpingPath -> path[i - 1];
 		double x = i - 1;
 		if (p.x == p1.x) { // insertion
 			Graphics_text (graphics, x, ytarget, my rowLabels[p.y]);
@@ -511,7 +511,7 @@ void EditDistanceTable_drawEditOperations (EditDistanceTable me, Graphics graphi
 }
 
 void EditDistanceTable_setDefaultCosts (EditDistanceTable me, double insertionCosts, double deletionCosts, double substitutionCosts) {
-	EditCostsTable_setDefaultCosts (my d_editCostsTable, insertionCosts, deletionCosts, substitutionCosts);
+	EditCostsTable_setDefaultCosts (my editCostsTable, insertionCosts, deletionCosts, substitutionCosts);
 	EditDistanceTable_findPath (me, 0);
 }
 
@@ -533,19 +533,19 @@ void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions) 
 		autoNUMmatrix<double> delta (0, numberOfTargets, 0, numberOfSources);
 
 		for (long j = 1; j <= numberOfSources; j++) {
-			delta[0][j] = delta[0][j - 1] + EditCostsTable_getDeletionCost (my d_editCostsTable, my columnLabels[j+1]);
+			delta[0][j] = delta[0][j - 1] + EditCostsTable_getDeletionCost (my editCostsTable, my columnLabels[j+1]);
 			psi[0][j] = WARPING_fromLeft;
 		}
 		for (long i = 1; i <= numberOfTargets; i++) {
-			delta[i][0] = delta[i - 1][0] + EditCostsTable_getInsertionCost (my d_editCostsTable, my rowLabels[i+1]);
+			delta[i][0] = delta[i - 1][0] + EditCostsTable_getInsertionCost (my editCostsTable, my rowLabels[i+1]);
 			psi[i][0] = WARPING_fromBelow;
 		}
 		for (long j = 1; j <= numberOfSources; j++) {
 			for (long i = 1; i <= numberOfTargets; i++) {
 				// the substitution, deletion and insertion costs.
-				double left = delta[i][j - 1] + EditCostsTable_getInsertionCost (my d_editCostsTable, my rowLabels[i+1]);
-				double bottom = delta[i - 1][j] + EditCostsTable_getDeletionCost (my d_editCostsTable, my columnLabels[j+1]);
-				double mindist = delta[i - 1][j - 1] + EditCostsTable_getSubstitutionCost (my d_editCostsTable, my rowLabels[i+1], my columnLabels[j+1]); // diag
+				double left = delta[i][j - 1] + EditCostsTable_getInsertionCost (my editCostsTable, my rowLabels[i+1]);
+				double bottom = delta[i - 1][j] + EditCostsTable_getDeletionCost (my editCostsTable, my columnLabels[j+1]);
+				double mindist = delta[i - 1][j - 1] + EditCostsTable_getSubstitutionCost (my editCostsTable, my rowLabels[i+1], my columnLabels[j+1]); // diag
 				psi[i][j] = WARPING_fromDiag;
 				if (bottom < mindist) {
 					mindist = bottom;
@@ -561,11 +561,11 @@ void EditDistanceTable_findPath (EditDistanceTable me, TableOfReal *directions) 
 		// find minimum distance in last column
 		long iy = numberOfTargets, ix = numberOfSources;
 
-		WarpingPath_reset (my d_warpingPath);
+		WarpingPath_reset (my warpingPath);
 
-		WarpingPath_getPath (my d_warpingPath, psi.peek(), iy, ix);
+		WarpingPath_getPath (my warpingPath, psi.peek(), iy, ix);
 
-		WarpingPath_shiftPathByOne (my d_warpingPath);
+		WarpingPath_shiftPathByOne (my warpingPath);
 
 		for (long i = 0; i <= numberOfTargets; i++) {
 			for (long j = 0; j <= numberOfSources; j++) {

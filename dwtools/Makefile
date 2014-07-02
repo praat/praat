@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20130826 Latest modification
+# djmw 20140409 Latest modification
 
 include ../makefile.defs
 
@@ -13,7 +13,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	ClassificationTable.o Confusion.o \
 	Configuration.o ContingencyTable.o \
 	Configuration_AffineTransform.o \
-	Configuration_and_Procrustes.o Distance.o \
+	Configuration_and_Procrustes.o  DataModeler.o Distance.o \
 	DTW.o DTW_and_TextGrid.o \
 	Discriminant.o  Discriminant_Pattern_Categories.o \
 	EditDistanceTable.o EEG_extensions.o \
@@ -28,7 +28,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	KlattGrid.o KlattGridEditors.o KlattTable.o \
 	Ltas_extensions.o \
 	MelFilter_and_MFCC.o MFCC.o \
-	manual_dwtools.o manual_BSS.o manual_HMM.o \
+	manual_DataModeler.o manual_dwtools.o manual_BSS.o manual_HMM.o \
 	manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o \
 	Matrix_extensions.o \
@@ -49,7 +49,8 @@ OBJECTS = Activation.o AffineTransform.o \
 	TableOfReal_and_Permutation.o \
 	TextGrid_extensions.o \
 	VowelEditor.o \
-	praat_MDS_init.o praat_BSS_init.o praat_HMM_init.o praat_KlattGrid_init.o praat_David_init.o
+	praat_MDS_init.o praat_BSS_init.o praat_HMM_init.o \
+	praat_KlattGrid_init.o praat_DataModeler_init.o praat_David_init.o
 
 .PHONY: all clean
 

@@ -58,7 +58,7 @@ Thing_define (Graphics, Thing) {
 		int resolution;
 			/* Dots per inch. */
 		enum kGraphics_resolution resolutionNumber;
-			/* 1 = 100 dpi, 2 = 300 dpi, 3 = 600 dpi */
+			/* 0 = 96 dpi, 1 = 100 dpi, 2 = 300 dpi, 3 = 360 dpi, 4 = 600 dpi */
 		long d_x1DCmin, d_x2DCmax, d_y1DCmin, d_y2DCmax;
 			/* Maximum dimensions of the output device. */
 			/* x1DCmin < x2DCmax; y1DCmin < y2DCmax; */

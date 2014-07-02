@@ -1,6 +1,6 @@
 /* Table_extensions.cpp
 	 *
- * Copyright (C) 1997-2013 David Weenink
+ * Copyright (C) 1997-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 	F0, F1, F2, F3
 */
 
+#include "Discriminant.h"
 #include "Formula.h"
 #include "GraphicsP.h"
 #include "Graphics_extensions.h"
@@ -39,6 +40,7 @@
 #include "NUM2.h"
 #include <ctype.h>
 #include "Strings_extensions.h"
+#include "SSCP.h"
 #include "Table_extensions.h"
 
 static bool Table_selectedColumnPartIsNumeric (Table me, long column, long *selectedRows, long numberOfSelectedRows) {
@@ -3885,7 +3887,7 @@ void Table_normalProbabilityPlot (Table me, Graphics g, long column, long number
 		}
 		double mean, var;
 		NUMvector_avevar (data.peek(), numberOfData, &mean, &var);
-		double xmin = 100, xmax = -xmin, ymin = 1e38, ymax = -ymin, stdev = sqrt (var);
+		double xmin = 100, xmax = -xmin, ymin = 1e38, ymax = -ymin, stdev = sqrt (var / (numberOfData - 1));
 		if (numberOfSigmas != 0) {
 			xmin = -numberOfSigmas; 
 			xmax =  numberOfSigmas;
@@ -4062,6 +4064,69 @@ void Table_boxPlots (Table me, Graphics g, long dataColumn, long factorColumn, d
 	}
 }
 
+void Table_boxPlotsWhere (Table me, Graphics g, wchar_t *dataColumns_string, long factorColumn, double ymin, double ymax, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long numberOfSelectedColumns;
+		autoNUMvector<long> dataColumns (Table_getColumnIndicesFromColumnLabelString (me, dataColumns_string,  &numberOfSelectedColumns), 1);
+		if (factorColumn < 1 || factorColumn > my numberOfColumns) {
+			return;
+		}
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+		long numberOfData = my rows -> size;
+		autoStringsIndex si = Table_to_StringsIndex_column (me, factorColumn);
+		long numberOfLevels = si -> classes -> size;
+		if (ymin == ymax) {
+			ymin = 1e38, ymax = -ymin;
+			for (long icol = 1; icol <= numberOfSelectedColumns; icol++) {
+				double ymaxi = Table_getMaximum (me, dataColumns[icol]);
+				double ymini = Table_getMinimum (me, dataColumns[icol]);
+				ymax = ymaxi > ymax ? ymaxi : ymax;
+				ymin = ymini < ymin ? ymini : ymin;
+			}
+			if (ymax == ymin) {
+				ymax += 1; ymin -= 1;
+			}
+		}
+		Graphics_setWindow (g, 1 - 0.5, numberOfLevels + 0.5, ymin, ymax);
+		Graphics_setInner (g);
+		double boxWidth = 4, spaceBetweenBoxesInGroup = 1, barWidth = boxWidth / 3;
+		double spaceBetweenGroupsdiv2 = 3.0 / 2; 
+		double widthUnit = 1.0 / (numberOfSelectedColumns * boxWidth + (numberOfSelectedColumns - 1) * spaceBetweenBoxesInGroup + spaceBetweenGroupsdiv2 + spaceBetweenGroupsdiv2);
+		autoNUMvector<double> data (1, numberOfData);
+		for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
+			double xlevel = ilevel;
+			for (long icol = 1; icol <= numberOfSelectedColumns; icol++) {
+				long numberOfDataInLevelColumn = 0;
+				for (long irow = 1; irow <= numberOfData; irow++) {
+					if (si -> classIndex[irow] == ilevel) {
+						struct Formula_Result result;
+						Formula_run (irow, dataColumns[icol], & result);
+						if (result.result.numericResult) {
+							data[++numberOfDataInLevelColumn] = Table_getNumericValue_Assert (me, irow, dataColumns[icol]);
+						}
+					}
+				}
+				if (numberOfDataInLevelColumn > 0) {
+					// determine position
+					double xc = xlevel - 0.5 + (spaceBetweenGroupsdiv2 + (icol - 1) * (boxWidth + spaceBetweenBoxesInGroup) + boxWidth / 2) * widthUnit;
+					Graphics_boxAndWhiskerPlot (g, data.peek(), numberOfDataInLevelColumn, xc, 0.5 * barWidth * widthUnit , 0.5 * boxWidth * widthUnit, ymin, ymax);
+				}
+			}
+		}
+		Graphics_unsetInner (g);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			for (long ilevel = 1; ilevel <= numberOfLevels; ilevel++) {
+				SimpleString ss = (SimpleString) si -> classes -> item[ilevel];
+				Graphics_markBottom (g, ilevel, 0, 1, 0, ss -> string);
+			}
+			Graphics_marksLeft (g, 2, 1, 1, 0);
+		}
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
+
 void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double minimum, double maximum, long nBins, double freqMin, double freqMax, int garnish, const wchar_t *formula, Interpreter interpreter) {
 	try {
 		if (dataColumn < 1 || dataColumn > my numberOfColumns) return;
@@ -4078,7 +4143,7 @@ void Table_distributionPlotWhere (Table me, Graphics g, long dataColumn, double 
 		}
 		Matrix_drawDistribution (thee.peek(), g, 0, 1, 0.5, mrow+0.5, minimum, maximum, nBins, freqMin, freqMax, 0, garnish);
 	} catch (MelderError) {
-		//
+		Melder_clearError ();   // drawing errors shall be ignored
 	}
 }
 
@@ -4142,10 +4207,27 @@ Graphics_Colour Strings_colourToValue  (Strings me, long index) {
 	return colourValue;
 }
 
+long Table_getNumberOfRowsWhere (Table me, const wchar_t *formula, Interpreter interpreter) {
+	long numberOfRows = 0;
+	Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
+	for (long irow = 1; irow <= my rows -> size; irow ++) {
+		struct Formula_Result result;
+		Formula_run (irow, 1, & result);
+		if (result.result.numericResult) {
+			numberOfRows++;
+		}
+	}
+	return numberOfRows;
+}
+
 long *Table_findRowsMatchingCriterion (Table me, const wchar_t *formula, Interpreter interpreter, long *numberOfMatches) {
 	try {
-		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE);
-		autoNUMvector<long> selectedRows (1, my rows -> size);
+		*numberOfMatches = Table_getNumberOfRowsWhere (me, formula, interpreter);
+		if (*numberOfMatches < 1) {
+			Melder_throw ("No rows selected.");
+		}
+		Formula_compile (interpreter, me, formula, kFormula_EXPRESSION_TYPE_UNKNOWN, TRUE); // again?
+		autoNUMvector<long> selectedRows (1, *numberOfMatches);
 		long n = 0;
 		for (long irow =1; irow <= my rows -> size; irow++) {
 			struct Formula_Result result;
@@ -4154,10 +4236,7 @@ long *Table_findRowsMatchingCriterion (Table me, const wchar_t *formula, Interpr
 				selectedRows[++n] = irow;
 			}
 		}
-		if (n < 1) {
-			Melder_throw ("No rows selected.");
-		}
-		*numberOfMatches = n;
+		Melder_assert (n == *numberOfMatches);
 		return selectedRows.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": cannot find matches.");
@@ -4165,15 +4244,14 @@ long *Table_findRowsMatchingCriterion (Table me, const wchar_t *formula, Interpr
 }
 
 
-void Table_barPlotWhere (Table me, Graphics g, const wchar_t *columnLabels, double ymin, double ymax,const wchar_t *labelColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const wchar_t *colours, double angle, int garnish, const wchar_t *formula, Interpreter interpreter) {
+void Table_barPlotWhere (Table me, Graphics g, const wchar_t *columnLabels, double ymin, double ymax, const wchar_t *factorColumn, double xoffsetFraction, double interbarFraction, double interbarsFraction, const wchar_t *colours, double angle, int garnish, const wchar_t *formula, Interpreter interpreter) {
 	try {
 		long numberOfColumns, numberOfRowMatches = 0;
 		autoNUMvector<long> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, &numberOfColumns), 1);
-		long labelIndex = Table_findColumnIndexFromColumnLabel (me, labelColumn);
+		long labelIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
 		autoStrings colour = itemizeColourString (colours);// removes all spaces within { } so each {} can be parsed as 1 item
 		
 		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfRowMatches), 1);
-
 		if (ymax <= ymin) { // autoscaling
 			ymin = 1e38; ymax= - ymin;
 			for (long icol = 1; icol <= numberOfColumns; icol++) {
@@ -4255,7 +4333,7 @@ void Table_barPlotWhere (Table me, Graphics g, const wchar_t *columnLabels, doub
 			Graphics_marksLeft (g, 2, 1, 1, 0);
 		}
 	} catch (MelderError) {
-		//
+		Melder_clearError ();   // drawing errors shall be ignored
 	}
 }
 
@@ -4276,7 +4354,7 @@ static int Graphics_getConnectingLine (Graphics g, const wchar_t *text1, double 
 	return drawLine;
 }
 
-// take the xcolumn as labels if non-numeric column elsee as numbers and arrange distances accordingly.
+// take the xcolumn as labels if non-numeric column else as numbers and arrange distances accordingly.
 void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, double xmax, long ycolumn, double ymin, double ymax, const wchar_t *symbol, double angle, int garnish, const wchar_t *formula, Interpreter interpreter) {
 	try {
 		if (ycolumn < 1 || ycolumn > my rows -> size) return;
@@ -4363,7 +4441,41 @@ void Table_lineGraphWhere (Table me, Graphics g, long xcolumn, double xmin, doub
 			}
 		}
 	} catch (MelderError) {
-		//
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
+
+void Table_lagPlotWhere (Table me, Graphics g, long column, long lag, double xmin, double xmax, const wchar_t *symbol, int labelSize, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		if (column < 1 || column > my rows -> size) {
+			return;
+		}
+		long numberOfSelectedRows = 0;
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);
+		if (xmax <= xmin) { // autoscaling
+			Table_columnExtremesFromSelectedRows (me, column, selectedRows.peek(), numberOfSelectedRows, &xmin, &xmax);
+		}
+		autoNUMvector<double> x (1, numberOfSelectedRows);
+		for (long i = 1; i <= numberOfSelectedRows; i++) {
+			x[i] = Table_getNumericValue_Assert (me, selectedRows[i], column);
+		}
+		Graphics_setInner (g);
+		Graphics_setWindow (g, xmin, xmax, xmin, xmax);
+		Graphics_lagPlot (g, x.peek(), numberOfSelectedRows, xmin, xmax, lag, labelSize, symbol);
+		Graphics_unsetInner (g);
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+			Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+			if (my columnHeaders [column]. label) {
+				Graphics_textLeft (g, TRUE, my columnHeaders[column].label);
+				autoMelderString textbottom;
+				MelderString_append (&textbottom, my columnHeaders[column].label, L" (lag = ", Melder_integer (lag), L")");
+				Graphics_textBottom (g, TRUE, textbottom.string);
+			}
+		}
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
 	}
 }
 
@@ -4393,4 +4505,152 @@ Table Table_extractRowsWhere (Table me, const wchar_t *formula, Interpreter inte
 	}
 }
 
+TableOfReal Table_to_TableOfRealWhere (Table me, const wchar_t *columnLabels, const wchar_t *factorColumn, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long numberOfColumns, numberOfSelectedRows = 0;
+		long factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn);
+		autoNUMvector<long> columnIndex (Table_getColumnIndicesFromColumnLabelString (me, columnLabels, &numberOfColumns), 1);
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);
+		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, numberOfColumns);
+		for (long i = 1; i <= numberOfSelectedRows; i++) {
+			for (long icol = 1; icol <= numberOfColumns; icol++) {
+				double value = Table_getNumericValue_Assert (me, selectedRows[i], columnIndex[icol]);
+				thy data[i][icol] = value;
+			}
+			if (factorColIndex > 0) { // if no factorColumn given labels may be empty
+				const wchar_t *label = Table_getStringValue_Assert (me, selectedRows[i], factorColIndex);
+				TableOfReal_setRowLabel (thee.peek(), i, label);
+			}
+		}
+		for (long icol = 1; icol <= numberOfColumns; icol++) {
+			TableOfReal_setColumnLabel (thee.peek(), icol, my columnHeaders [columnIndex[icol]].label);
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, "No TableOfReal created from Table.");
+	}
+}
+
+SSCPs Table_to_SSCPsWhere (Table me, const wchar_t *columnLabels, const wchar_t *factorColumn, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		autoTableOfReal thee = Table_to_TableOfRealWhere (me, columnLabels, factorColumn, formula, interpreter);
+		autoSSCPs him = TableOfReal_to_SSCPs_byLabel (thee.peek());
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, "No Discriminant created from Table.");
+	}
+}
+
+static long SSCPs_findIndexOfGroupLabel (SSCPs me, const wchar_t *label) {
+	for (long i = 1; i <= my size; i++) {
+		if (Melder_wcscmp (Thing_getName ((SSCP) my item[i]), label) == 0) {
+			return i;
+		}
+	}
+	return 0;
+}
+
+Table Table_and_SSCPs_extractMahalanobisWhere (Table me, SSCPs thee, double numberOfSigmas, int which_Melder_NUMBER, const wchar_t *factorColumn, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		SSCP sscp = (SSCP) thy item[1];
+		long numberOfColumns = sscp -> numberOfColumns, numberOfSelectedRows = 0;
+		long factorColIndex = Table_findColumnIndexFromColumnLabel (me, factorColumn); // can be absent
+		autoNUMvector<long> columnIndex (1, numberOfColumns);
+		autoNUMvector<double> vector (1, numberOfColumns);
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);
+		for (long icol = 1; icol <= numberOfColumns; icol++) {
+			columnIndex[icol] = Table_getColumnIndexFromColumnLabel (me, sscp -> columnLabels[icol]); // throw if not present
+		}
+		long numberOfGroups = thy size;
+		autoTable him = Table_create (0, my numberOfColumns);
+		for (long icol = 1; icol <= my numberOfColumns; icol ++) {
+			autostring newLabel = Melder_wcsdup (my columnHeaders[icol].label);
+			his columnHeaders[icol].label = newLabel.transfer();
+		}
+		autoOrdered covs = Ordered_create ();
+		for (long igroup = 1; igroup <= numberOfGroups; igroup++) {
+			autoCovariance cov = SSCP_to_Covariance ((SSCP) thy item[igroup], 1); 
+			SSCP_expandLowerCholesky (cov.peek());
+			Collection_addItem (covs.peek(), cov.transfer());
+		}
+		for (long i = 1; i <= numberOfSelectedRows; i++) {
+			long irow = selectedRows[i];
+			long igroup = 1; // if factorColIndex == 0 we don't need labels
+			if (factorColIndex > 0) {
+				const wchar_t *label = Table_getStringValue_Assert (me, irow, factorColIndex);
+				igroup = SSCPs_findIndexOfGroupLabel (thee, label);
+				if (igroup == 0) {
+					Melder_throw ("The label \"", label, "\" in row ", Melder_integer (irow), " is not valid in this context.");
+				}
+			}
+			Covariance covi = (Covariance) covs -> item[igroup];
+			for (long icol = 1; icol <= numberOfColumns; icol++) {
+				vector[icol] = Table_getNumericValue_Assert (me, irow, columnIndex[icol]);
+			}
+			double dm2 = NUMmahalanobisDistance_chi (covi -> lowerCholesky, vector.peek(), covi -> centroid, numberOfColumns, numberOfColumns);
+			if (Melder_numberMatchesCriterion (sqrt (dm2), which_Melder_NUMBER, numberOfSigmas)) {
+				TableRow row = static_cast <TableRow> (my rows -> item [irow]);
+				autoTableRow newRow = Data_copy (row);
+				Collection_addItem (his rows, newRow.transfer());
+			}
+		}
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, "Table (mahalanobis) not extracted.");
+	}
+}
+
+Table Table_extractMahalanobisWhere(Table me, const wchar_t *columnLabels, const wchar_t *factorColumn, double numberOfSigmas, int which_Melder_NUMBER, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		autoSSCPs thee = Table_to_SSCPsWhere (me, columnLabels, factorColumn, formula, interpreter);
+		autoTable him = Table_and_SSCPs_extractMahalanobisWhere (me, thee.peek(), numberOfSigmas, which_Melder_NUMBER, factorColumn, formula, interpreter);
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, "Table not extracted.");
+	}
+}
+
+void Table_drawEllipsesWhere (Table me, Graphics g, long xcolumn, long ycolumn, long factorColumn, double xmin, double xmax, double ymin, double ymax, double numberOfSigmas, long labelSize, int garnish, const wchar_t *formula, Interpreter interpreter) {
+	try {
+		long numberOfSelectedRows = 0;
+		autoNUMvector<long> selectedRows (Table_findRowsMatchingCriterion (me, formula, interpreter, &numberOfSelectedRows), 1);	
+		autoTableOfReal thee = TableOfReal_create (numberOfSelectedRows, 2);
+		for (long i = 1; i <= numberOfSelectedRows; i++) {
+			double x = Table_getNumericValue_Assert (me, selectedRows[i], xcolumn);
+			double y = Table_getNumericValue_Assert (me, selectedRows[i], ycolumn);
+			const wchar_t *label = Table_getStringValue_Assert (me, selectedRows[i], factorColumn);
+			thy data[i][1] = x; thy data[i][2] = y;
+			TableOfReal_setRowLabel (thee.peek(), i, label);
+		}
+		autoSSCPs him = TableOfReal_to_SSCPs_byLabel (thee.peek());
+		int confidence = 0;
+		if (ymax == ymin) { // autoscaling
+			SSCPs_getEllipsesBoundingBoxCoordinates (him.peek(), numberOfSigmas, confidence, &xmin, &xmax, &ymin, &ymax);
+		}
+		Graphics_setWindow (g, xmin, xmax, ymin, ymax);
+		Graphics_setInner (g);
+		for (long i = 1; i <= his size; i++) {
+			SSCP sscpi = (SSCP) his item[i];
+			double scalei = SSCP_getEllipseScalefactor (sscpi, numberOfSigmas, confidence);
+			if (scalei > 0) {
+				SSCP_drawTwoDimensionalEllipse_inside  (sscpi, g, scalei, Thing_getName (sscpi), labelSize);
+			}
+		}
+		Graphics_unsetInner (g);
+
+		if (garnish) {
+			Graphics_drawInnerBox (g);
+			Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+			Graphics_marksLeft (g, 2, TRUE, TRUE, FALSE);
+			if (my columnHeaders [xcolumn]. label) {
+				Graphics_textBottom (g, TRUE, my columnHeaders[xcolumn].label);
+			}
+			if (my columnHeaders [ycolumn]. label) {
+				Graphics_textLeft (g, TRUE, my columnHeaders[ycolumn].label);
+			}
+		}
+	} catch (MelderError) {
+		Melder_clearError ();   // drawing errors shall be ignored
+	}
+}
 /* End of file Table_extensions.cpp */

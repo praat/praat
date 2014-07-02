@@ -1,6 +1,6 @@
 /* TableOfReal_and_Permutation.cpp
  *
- * Copyright (C) 2005-2011 David Weenink
+ * Copyright (C) 2005-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,9 @@ TableOfReal TableOfReal_and_Permutation_permuteRows (I, Permutation thee) {
 
 		for (long i = 1; i <= thy numberOfElements; i++) {
 			TableOfReal_copyOneRowWithLabel (me, him.peek(), thy p[i], i);
+		}
+		for (long j = 1; j <= my numberOfColumns; j++) {
+			TableOfReal_setColumnLabel (him.peek(), j, my columnLabels[j]);
 		}
 		return him.transfer();
 	} catch (MelderError) {

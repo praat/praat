@@ -1,6 +1,6 @@
 /* EEG_extensions.cpp
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 
 
 #include "ICA.h"
-#include "EEG.h"
+#include "EEG_extensions.h"
 #include "NUM2.h"
 #include "Sound_and_PCA.h"
 #include "Sound_extensions.h"
@@ -82,7 +82,7 @@ static void EEG_setChannelNames_selected (EEG me, const wchar_t *precursor, long
 	}
 }
 
-CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagTime, const wchar_t *channelRanges)
+CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, double endTime, double lagStep, const wchar_t *channelRanges)
 {
 	try {
 		// autowindow
@@ -100,7 +100,7 @@ CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, do
 		long numberOfChannels;
 		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
-		autoCrossCorrelationTable him = Sound_to_CrossCorrelationTable (soundPart.peek(), startTime, endTime, lagTime);
+		autoCrossCorrelationTable him = Sound_to_CrossCorrelationTable (soundPart.peek(), startTime, endTime, lagStep);
 		// assign channel names
 		for (long i = 1; i <= numberOfChannels; i++) {
 			long ichannel = channels[i];
@@ -117,8 +117,8 @@ CrossCorrelationTable EEG_to_CrossCorrelationTable (EEG me, double startTime, do
 Covariance EEG_to_Covariance (EEG me, double startTime, double endTime, const wchar_t *channelRanges)
 {
 	try {
-		double lagTime = 0.0;
-		autoCrossCorrelationTable thee = EEG_to_CrossCorrelationTable (me, startTime, endTime, lagTime, channelRanges);
+		double lagStep = 0.0;
+		autoCrossCorrelationTable thee = EEG_to_CrossCorrelationTable (me, startTime, endTime, lagStep, channelRanges);
         autoCovariance him = Thing_new (Covariance);
         thy structCrossCorrelationTable :: v_copy (him.peek());
 		return him.transfer();
@@ -127,7 +127,7 @@ Covariance EEG_to_Covariance (EEG me, double startTime, double endTime, const wc
 	}
 }
 
-CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagTime, long ncovars, const wchar_t *channelRanges) {
+CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, double endTime, double lagStep, long ncovars, const wchar_t *channelRanges) {
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -144,7 +144,7 @@ CrossCorrelationTables EEG_to_CrossCorrelationTables (EEG me, double startTime, 
 		long numberOfChannels;
 		autoNUMvector <long> channels (NUMstring_getElementsOfRanges (channelRanges, thy numberOfChannels, & numberOfChannels, NULL, L"channel", true), 1);
 		autoSound soundPart = Sound_copyChannelRanges (thy sound, channelRanges);
-		autoCrossCorrelationTables him = Sound_to_CrossCorrelationTables (soundPart.peek(), startTime, endTime, lagTime, ncovars);
+		autoCrossCorrelationTables him = Sound_to_CrossCorrelationTables (soundPart.peek(), startTime, endTime, lagStep, ncovars);
 		return him.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no CrossCorrelationTables calculated.");
@@ -210,7 +210,7 @@ EEG EEG_and_PCA_to_EEG_principalComponents (EEG me, PCA thee, long numberOfCompo
 	}
 }
 
-EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagTime, const wchar_t *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol) {
+EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, double lagStep, const wchar_t *channelRanges, int whiteningMethod, int diagonalizerMethod, long maxNumberOfIterations, double tol) {
 	try {
 		// autowindow
 		if (startTime == endTime) {
@@ -232,7 +232,7 @@ EEG EEG_to_EEG_bss (EEG me, double startTime, double endTime, long ncovars, doub
 			autoEEG white = EEG_and_PCA_to_EEG_whiten (thee.peek(), pca.peek(), 0);
 			thee.reset (white.transfer());
 		}
-		autoMixingMatrix mm = Sound_to_MixingMatrix (thy sound, startTime, endTime, ncovars, lagTime, maxNumberOfIterations, tol, diagonalizerMethod);
+		autoMixingMatrix mm = Sound_to_MixingMatrix (thy sound, startTime, endTime, ncovars, lagStep, maxNumberOfIterations, tol, diagonalizerMethod);
 
 		autoEEG him = EEG_copyWithoutSound (me);
 		his sound = Sound_and_MixingMatrix_unmix (my sound, mm.peek());

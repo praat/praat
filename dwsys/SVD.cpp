@@ -1,6 +1,6 @@
 /* SVD.cpp
  *
- * Copyright (C) 1994-2011 David Weenink
+ * Copyright (C) 1994-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -244,27 +244,17 @@ void SVD_compute (SVD me) {
 
 // V D^2 V'or V D^-2 V
 void SVD_getSquared (SVD me, double **m, bool inverse) {
-	if (inverse) {
-		for (long i = 1; i <= my numberOfColumns; i++) {
-			for (long j = 1; j <= my numberOfColumns; j++) {
-				double val = 0;
-				for (long k = 1; k <= my numberOfColumns; k++) {
-					if (my d[k] > 0) {
-						val += my v[i][k] * my v[j][k] / (my d[k] * my d[k]);
-					}
+	for (long i = 1; i <= my numberOfColumns; i++) {
+		for (long j = 1; j <= my numberOfColumns; j++) {
+			double val = 0;
+			for (long k = 1; k <= my numberOfColumns; k++) {
+				if (my d[k] > 0) {
+					double dsq = my d[k] * my d[k];
+					double factor = inverse ? 1 / dsq : dsq;
+					val += my v[i][k] * my v[j][k] * factor;
 				}
-				m[i][j] = val;
 			}
-		}
-	} else {
-		for (long i = 1; i <= my numberOfColumns; i++) {
-			for (long j = 1; j <= my numberOfColumns; j++) {
-				double val = 0;
-				for (long k = 1; k <= my numberOfColumns; k++) {
-					val += my d[k] * my d[k] * my v[i][k] * my v[j][k];
-				}
-				m[i][j] = val;
-			}
+			m[i][j] = val;
 		}
 	}
 }

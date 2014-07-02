@@ -25,8 +25,8 @@
 #include "ManPagesM.h"
 #include "MFCC.h"
 
-void manual_LPC_init (ManPages me);
-void manual_LPC_init (ManPages me)
+void manual_LPC (ManPages me);
+void manual_LPC (ManPages me)
 {
 
 MAN_BEGIN (L"CC: Paint...", L"djmw", 20040407)
@@ -63,6 +63,29 @@ FORMULA (L"%z__%ji_ = %c__%ij_, with 1 \\<_ %i \\<_ %nx and "
 	"1 \\<_ j \\<_ %numberOfCoefficients__%i_,")
 NORMAL (L"where %z__%ji_ is the matrix element in row %j and column %i and "
 	"%c__%ij_ is the %j-th cepstral coefficient in frame %i.")
+MAN_END
+
+MAN_BEGIN (L"Formants: Extract smoothest part...", L"djmw", 20140313)
+INTRO (L"Extracts the part from one of the selected formants which shows the smoothest formant tracks in a given interval.")
+ENTRY (L"Settings")
+SCRIPT (5, Manual_SETTINGS_WINDOW_HEIGHT (5), L""
+	Manual_DRAW_SETTINGS_WINDOW (L"Formants: Extract smoothest part", 5)
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (L"Time range (s)", L"0.0", L"0.0")
+	Manual_DRAW_SETTINGS_WINDOW_RANGE (L"Fitter formant range", L"1", L"3")
+	Manual_DRAW_SETTINGS_WINDOW_FIELD (L"Order of polynomials", L"3")
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN (L"Use bandwidths to model formant tracks", 1)
+	Manual_DRAW_SETTINGS_WINDOW_BOOLEAN (L"Bandwidths for smoothing test", 0)
+)
+TAG (L"##Time range (s)#")
+DEFINITION (L"determines the position of the intervals that have to be compared.")
+TAG (L"##Fitter formant range")
+DEFINITION (L"determines which formant tracks will be modelled with a polynomial function. The goodness of fit of these models will be used in the comparison.")
+TAG (L"##Order of polynomials")
+DEFINITION (L"determines the maximum order of the polynomials that are used in modeling each formant track. Order 0 means a model which is a constant function; this model needs only one parameter. Order 1 means a model that is a straight line function; this order needs two parameters. Order 2 means that an additional parabolic function is used in the modeling; order 2 needs therefore 3 parameters. In general an order %p model needs %p+1 parameters.")
+TAG (L"##Use bandwidths to model formant tracks")
+DEFINITION (L"Bandwidths give an indication about the sharpness of a spectral peak. Sharp peaks have small bandwidths and, vice versa, broad peaks have large bandwidths. The width of a peak can also be interpreted as a measure of certainty for its formant frequency value. Setting this option %%on%, the default setting, means that you force the modeling function to be closer to frequencies that are well defined, i.e. that have sharp peaks, than to the frequencies of broad peaks, if choices have to be made. The consequence is that in the model sharp peaks will be better represented than broad peaks.")
+TAG (L"##Bandwidths for smoothing test")
+DEFINITION (L"determines whether for the smoothnes determination the formant frequencies are still needed. Not using them anymore probably gives a better indication of the smoothness of a track.")
 MAN_END
 
 MAN_BEGIN (L"PowerCepstrogram", L"djmw", 20130616)

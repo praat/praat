@@ -2,7 +2,7 @@
 #define _ICA_h_
 /* ICA.h
  *
- * Copyright (C) 2010-2012 David Weenink
+ * Copyright (C) 2010-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +78,9 @@ Diagonalizer Diagonalizer_create (long dimension);
 Sound Sound_and_MixingMatrix_mix (Sound me, MixingMatrix thee);
 Sound Sound_and_MixingMatrix_unmix (Sound me, MixingMatrix thee);
 
-MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double delta_w, int method);
+MixingMatrix Sound_to_MixingMatrix (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
-Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagTime, long maxNumberOfIterations, double delta_w, int method);
+Sound Sound_to_Sound_BSS (Sound me, double startTime, double endTime, long ncovars, double lagStep, long maxNumberOfIterations, double delta_w, int method);
 
 Sound Sound_whitenChannels (Sound me, double varianceFraction);
 Sound Sound_and_Covariance_whitenChannels (Sound me, Covariance thee, double varianceFraction);
@@ -107,15 +107,15 @@ MixingMatrix Diagonalizer_to_MixingMatrix (Diagonalizer me);
 	The cross-correlation between channel i and channel j is defined as
 		sum(k=1..nsamples; (z[i][k] - mean[i])(z[j][k + lag] - mean[j])) / (nsamples - 1).
 */
-CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagTime);
-CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagTime);
+CrossCorrelationTable Sound_to_CrossCorrelationTable (Sound me, double startTime, double endTime, double lagStep);
+CrossCorrelationTable Sounds_to_CrossCorrelationTable_combined (Sound me, Sound thee, double relativeStartTime, double relativeEndTime, double lagStep);
 
 // The covariance is the cross-correlation with lag 0.
 Covariance Sound_to_Covariance_channels (Sound me, double startTime, double endTime);
 /*
-	Determine a CrossCorrelationTable for lags (k-1)*lagTime, where k = 1...n.
+	Determine a CrossCorrelationTable for lags (k-1)*lagStep, where k = 1...n.
 */
-CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagTime, long n);
+CrossCorrelationTables Sound_to_CrossCorrelationTables (Sound me, double startTime, double endTime, double lagStep, long n);
 
 MixingMatrix TableOfReal_to_MixingMatrix (TableOfReal me);
 

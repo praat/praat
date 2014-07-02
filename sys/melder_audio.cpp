@@ -543,6 +543,12 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 		PaStreamParameters outputParameters = { 0 };
 		outputParameters. device = Pa_GetDefaultOutputDevice ();
 		const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
+		if (my numberOfChannels > deviceInfo -> maxOutputChannels) {
+			my numberOfChannels = deviceInfo -> maxOutputChannels;
+			for (long isamp = 1; isamp < numberOfSamples; isamp ++) {
+				memcpy ((char *) & my buffer [isamp * my numberOfChannels], (char *) & my buffer [isamp * numberOfChannels], 2 * my numberOfChannels);
+			}
+		}
 		outputParameters. channelCount = my numberOfChannels;
 		outputParameters. sampleFormat = paInt16;
 		if (deviceInfo != NULL) outputParameters. suggestedLatency = deviceInfo -> defaultLowOutputLatency;

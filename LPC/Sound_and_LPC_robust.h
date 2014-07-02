@@ -39,7 +39,7 @@ void LPC_Frames_and_Sound_huber (LPC_Frame me, Sound thee, LPC_Frame him, struct
 LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth,
 	double preEmphasisFrequency, double k, int itermax, double tol, int wantlocation);
 
-Formant Sound_to_Formant_robust (Sound me, double dt_in, int numberOfPoles, double maximumFrequency,
+Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
 	double halfdt_window, double preemphasisFrequency, double safetyMargin, double k, int itermax, double tol, int wantlocation);
 
 #endif /* _Sound_and_LPC_robust_h_ */

@@ -43,7 +43,8 @@ ERP ERPTier_to_ERP_mean (ERPTier me);
 ERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long columnNumber, int which_Melder_NUMBER, double criterion);
 ERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table, long columnNumber, int which_Melder_STRING, const wchar_t *criterion);
 
-ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit);
+ERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit);
+ERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16_t marker);
 ERPTier EEG_to_ERPTier_triggers (EEG me, double fromTime, double toTime,
 	int which_Melder_STRING, const wchar_t *criterion);
 ERPTier EEG_to_ERPTier_triggers_preceded (EEG me, double fromTime, double toTime,

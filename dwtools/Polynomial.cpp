@@ -1,6 +1,6 @@
 /* Polynomial.cpp
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,7 +412,7 @@ static void Graphics_polyline_clipTopBottom (Graphics g, double *x, double *y, l
 			if (y1 < ymin && y2 > ymin) {
 				// Line enters from below: start new segment. Save start values
 
-				xb = x[i - 1]; yb = y[i - 1]; index = i - 1; // David, dit klopt toch niet? xb is tweemaal gedefinieerd, en hier verdwijnt een toekenning; Klopt, nu niet meer (was overigens geen probleem vanwege nieuwe toekenning!)
+				xb = x[i - 1]; yb = y[i - 1]; index = i - 1;
 				y[i - 1] = ymin; x[i - 1] = xcros_min;
 			}
 			if (y1 < ymax && y2 > ymax) {

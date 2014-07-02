@@ -88,6 +88,7 @@
 #include "FileInMemory.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"
+#include "DataModeler.h"
 #include "FormantGrid_extensions.h"
 #include "Intensity_extensions.h"
 #include "IntensityTierEditor.h"
@@ -3290,6 +3291,18 @@ static void print_means (Table me) {
 	}
 }
 
+FORM (Table_getNumberOfRowsWhere, L"", 0)
+	LABEL (L"", L"Count only rows where the following condition holds:")
+	TEXTFIELD (L"Formula", L"1; self$[\"gender\"]=\"M\"")
+	OK
+DO
+	LOOP {
+		iam (Table);
+		long numberOfRows = Table_getNumberOfRowsWhere (me, GET_STRING (L"Formula"), interpreter);
+		Melder_information (Melder_integer (numberOfRows));
+	}
+END
+
 FORM (Table_reportOneWayAnova, L"Table: Report one-way anova",  L"Table: Report one-way anova...")
 	SENTENCE (L"Column with data", L"F0")
 	SENTENCE (L"Factor", L"Vowel")
@@ -6316,7 +6329,7 @@ DO
 END
 
 FORM (Table_boxPlots, L"Table: Box plots", 0)
-	WORD (L"Data column", L"")
+	WORD (L"Data columns", L"")
 	WORD (L"Factor column", L"")
 	REAL (L"left Vertical range", L"0.0")
 	REAL (L"right Vertical range", L"0.0")
@@ -6329,14 +6342,13 @@ DO
 	int garnish = GET_INTEGER (L"Garnish");
 	LOOP {
 		iam (Table);
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Data column"));
 		long factorColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Factor column"));
-		Table_boxPlots (me, GRAPHICS, dataColumn, factorColumn, ymin, ymax, garnish);
+		Table_boxPlotsWhere (me, GRAPHICS, GET_STRING (L"Data columns"), factorColumn, ymin, ymax, garnish, L"1", interpreter);
 	}
 END
 
 FORM (Table_boxPlotsWhere, L"Table: Box plots where", L"Table: Box plots where...")
-	WORD (L"Data column", L"")
+	SENTENCE (L"Data columns", L"")
 	WORD (L"Factor column", L"")
 	REAL (L"left Vertical range", L"0.0")
 	REAL (L"right Vertical range", L"0.0")
@@ -6349,12 +6361,11 @@ DO
 	double ymin = GET_REAL (L"left Vertical range");
 	double ymax = GET_REAL (L"right Vertical range");
 	int garnish = GET_INTEGER (L"Garnish");
+	wchar_t *dataColumns = GET_STRING (L"Data columns");
 	LOOP {
 		iam (Table);
-		long dataColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Data column"));
 		long factorColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Factor column"));
-		autoTable thee = Table_extractRowsWhere (me, GET_STRING (L"Formula"), interpreter);
-		Table_boxPlots (thee.peek(), GRAPHICS, dataColumn, factorColumn, ymin, ymax, garnish);
+		Table_boxPlotsWhere (me, GRAPHICS, dataColumns, factorColumn, ymin, ymax, garnish, GET_STRING (L"Formula"), interpreter);
 	}
 END
 
@@ -6383,6 +6394,60 @@ DO
 			GET_REAL (L"Number of sigmas"), GET_INTEGER (L"Garnish"));
 	}
 END
+
+FORM (Table_drawEllipses, L"Table: Draw ellipses", 0)
+	WORD (L"Horizontal column", L"F2")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0 (= auto)")
+	WORD (L"Vertical column", L"F1")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0 (= auto)")
+	WORD (L"Factor column", L"Vowel")
+	POSITIVE (L"Number of sigmas", L"1.0")
+	NATURAL (L"Font size", L"12")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
+		long factorcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Factor column"));
+		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, GET_REAL (L"left Horizontal range"), 
+			 GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+			 GET_REAL (L"Number of sigmas"), GET_INTEGER (L"Font size"), GET_INTEGER (L"Garnish"), L"1", interpreter);
+	}
+END
+
+FORM (Table_drawEllipsesWhere, L"Table: Draw ellipses where", 0)
+	WORD (L"Horizontal column", L"F2")
+	REAL (L"left Horizontal range", L"0.0")
+	REAL (L"right Horizontal range", L"0.0 (= auto)")
+	WORD (L"Vertical column", L"F1")
+	REAL (L"left Vertical range", L"0.0")
+	REAL (L"right Vertical range", L"0.0 (= auto)")
+	WORD (L"Factor column", L"Vowel")
+	POSITIVE (L"Number of sigmas", L"1.0")
+	NATURAL (L"Font size", L"12")
+	BOOLEAN (L"Garnish", 1)
+	LABEL (L"", L"Use only data in rows where the following condition holds:")
+	TEXTFIELD (L"Formula", L"1; self$[\"gender\"]=\"male\"")
+	
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long xcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Horizontal column"));
+		long ycolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Vertical column"));
+		long factorcolumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Factor column"));
+		Table_drawEllipsesWhere (me, GRAPHICS, xcolumn, ycolumn, factorcolumn, GET_REAL (L"left Horizontal range"), 
+			 GET_REAL (L"right Horizontal range"), GET_REAL (L"left Vertical range"), GET_REAL (L"right Vertical range"),
+			 GET_REAL (L"Number of sigmas"), GET_INTEGER (L"Font size"), GET_INTEGER (L"Garnish"), GET_STRING (L"Formula"), interpreter);
+	}
+END
+
 
 FORM (Table_normalProbabilityPlot, L"Table: Normal probability plot", L"Table: Normal probability plot...")
 	WORD (L"Column", L"")
@@ -6480,6 +6545,49 @@ DO
 	}
 END
 
+FORM (Table_lagPlot, L"Table: lag plot",0)
+	WORD (L"Data column", L"errors")
+	NATURAL (L"Lag", L"1")
+	REAL (L"left Horizontal and vertical range", L"0.0")
+	REAL (L"right Horizontal and vertical range", L"0.0")
+	NATURAL (L"Label size", L"12")
+	WORD (L"Label", L"+")
+	BOOLEAN (L"Garnish", 1);
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long dataColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Data column"));
+		Table_lagPlotWhere (me, GRAPHICS, dataColumn, GET_INTEGER (L"Lag"), GET_REAL (L"left Horizontal and vertical range"),
+			GET_REAL (L"right Horizontal and vertical range"), GET_STRING (L"Label"), GET_INTEGER (L"Label size"),
+			GET_INTEGER (L"Garnish"), L"1", interpreter);
+	}
+END
+
+
+FORM (Table_lagPlotWhere, L"Table: lag plot where",0)
+	WORD (L"Data column", L"errors")
+	NATURAL (L"Lag", L"1")
+	REAL (L"left Horizontal and vertical range", L"0.0")
+	REAL (L"right Horizontal and vertical range", L"0.0")
+	NATURAL (L"Label size", L"12")
+	WORD (L"Label", L"+")
+	BOOLEAN (L"Garnish", 1);
+	LABEL (L"", L"Use only data in rows where the following condition holds:")
+	TEXTFIELD (L"Formula", L"1; self$[\"gender\"]=\"male\"")
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Table);
+		long dataColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Data column"));
+		Table_lagPlotWhere (me, GRAPHICS, dataColumn, GET_INTEGER (L"Lag"), GET_REAL (L"left Horizontal and vertical range"),
+			GET_REAL (L"right Horizontal and vertical range"), GET_STRING (L"Label"), GET_INTEGER (L"Label size"),
+			GET_INTEGER (L"Garnish"), GET_STRING (L"Formula"), interpreter);
+	}
+END
+
 FORM (Table_distributionPlot, L"Table: Distribution plot", 0)
 	WORD (L"Data column", L"data")
 	REAL (L"Minimum value", L"0.0")
@@ -6496,8 +6604,8 @@ DO
 		iam (Table);
 		long dataColumn = Table_getColumnIndexFromColumnLabel (me, GET_STRING (L"Data column"));
 		Table_distributionPlotWhere (me, GRAPHICS, dataColumn, GET_REAL (L"Minimum value"), GET_REAL (L"Maximum value"),
-			GET_INTEGER (L"Number of bins"), GET_REAL (L"Minimum frequency"), GET_REAL (L"Maximum frequency"), GET_INTEGER (L"Garnish"),
-			L"1", interpreter);
+			GET_INTEGER (L"Number of bins"), GET_REAL (L"Minimum frequency"), GET_REAL (L"Maximum frequency"), 
+			GET_INTEGER (L"Garnish"), L"1", interpreter);
 	}
 END
 
@@ -6649,6 +6757,25 @@ DO
 		iam (Table);
 		autoTable thee = Table_extractRowsWhere (me, GET_STRING (L"Formula"), interpreter);
 		praat_new (thee.transfer(), my name, L"_formula");
+	}
+END
+
+FORM (Table_extractRowsMahalanobisWhere, L"Table: Extract rows where (mahalanobis)", 0)
+	SENTENCE (L"Extract all rows where columns...", L"")
+	RADIO_ENUM (L"...have a mahalanobis distance...", kMelder_number, GREATER_THAN)
+	REAL (L"...the number", L"2.0")
+	WORD (L"Factor column", L"")
+	LABEL (L"", L"Process only rows where the following condition holds:")
+	TEXTFIELD (L"Formula", L"1; self$[\"gender\"]=\"male\"")
+	OK
+DO
+	double numberOfSigmas = GET_REAL (L"...the number");
+	LOOP {
+		iam (Table);
+		autoTable thee = Table_extractMahalanobisWhere(me, GET_STRING (L"Extract all rows where columns..."), 
+		   GET_STRING (L"Factor column"), numberOfSigmas, GET_ENUM (kMelder_number, L"...have a mahalanobis distance..."), 
+		   GET_STRING (L"Formula"), interpreter);
+		praat_new (thee.transfer(), my name, L"_mahalanobis");
 	}
 END
 
@@ -8091,15 +8218,16 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSVD, 0, L"Extract left singular vectors", 0, 0, DO_SVD_extractLeftSingularVectors);
 	praat_addAction1 (classSVD, 0, L"Extract right singular vectors", 0, 0, DO_SVD_extractRightSingularVectors);
 	praat_addAction1 (classSVD, 0, L"Extract singular values", 0, 0, DO_SVD_extractSingularValues);
-
-		praat_addAction1 (classTable, 0, L"Box plots...", L"Draw ellipse (standard deviation)...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_boxPlots);
+		praat_addAction1 (classTable, 0, L"Draw ellipses...", L"Draw ellipse (standard deviation)...", praat_DEPTH_1, DO_Table_drawEllipses);
+		praat_addAction1 (classTable, 0, L"Box plots...", L"Draw ellipses...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_boxPlots);
 		praat_addAction1 (classTable, 0, L"Normal probability plot...", L"Box plots...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_normalProbabilityPlot);
 		praat_addAction1 (classTable, 0, L"Quantile-quantile plot...", L"Normal probability plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot);
 		praat_addAction1 (classTable, 0, L"Quantile-quantile plot (between levels)...", L"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_quantileQuantilePlot_betweenLevels);
+		praat_addAction1 (classTable, 0, L"Lag plot...", L"Quantile-quantile plot (between levels)...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_lagPlot);
 		praat_addAction1 (classTable, 0, L"Horizontal error bars plot...", L"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_horizontalErrorBarsPlot);
 		praat_addAction1 (classTable, 0, L"Vertical error bars plot...", L"Scatter plot (mark)...", praat_DEPTH_1, DO_Table_verticalErrorBarsPlot);
 		praat_addAction1 (classTable, 0, L"Distribution plot...", L"Quantile-quantile plot...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_distributionPlot);
-		praat_addAction1 (classTable, 1, L"Draw where",  L"Quantile-quantile plot (between levels)...", 1 , 0);
+		praat_addAction1 (classTable, 1, L"Draw where",  L"Lag plot...", 1 , 0);
 			praat_addAction1 (classTable, 0, L"Scatter plot where...", L"Draw where", 2, DO_Table_scatterPlotWhere);
 			praat_addAction1 (classTable, 0, L"Scatter plot where (mark)...", L"Scatter plot where...", 2, DO_Table_scatterPlotMarkWhere);
 			praat_addAction1 (classTable, 0, L"Horizontal error bars plot where...", L"Scatter plot where (mark)...", praat_DEPTH_2, DO_Table_horizontalErrorBarsPlotWhere);
@@ -8111,11 +8239,15 @@ void praat_uvafon_David_init () {
 			praat_addAction1 (classTable, 0, L"Normal probability plot where...", L"Box plots where...", 2, DO_Table_normalProbabilityPlotWhere);
 			praat_addAction1 (classTable, 0, L"Bar plot where...", L"Normal probability plot where...", 2, DO_Table_barPlotWhere);
 			praat_addAction1 (classTable, 0, L"Line graph where...", L"Bar plot where...", 2, DO_Table_LineGraphWhere);
+			praat_addAction1 (classTable, 0, L"Lag plot where...", L"Line graph where...", 2, DO_Table_lagPlotWhere);
+			praat_addAction1 (classTable, 0, L"Draw ellipses where...", L"Lag plot where...", 2, DO_Table_drawEllipsesWhere);
 
+	praat_addAction1 (classTable, 1, L"Get number of rows where...", L"Get number of rows", praat_DEPTH_1 | praat_HIDDEN,	DO_Table_getNumberOfRowsWhere);
 	praat_addAction1 (classTable, 1, L"Report one-way anova...", L"Report group difference (Wilcoxon rank sum)...", praat_DEPTH_1 | praat_HIDDEN,	DO_Table_reportOneWayAnova);
 	praat_addAction1 (classTable, 1, L"Report one-way Kruskal-Wallis...", L"Report one-way anova...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_reportOneWayKruskalWallis);
 	praat_addAction1 (classTable, 1, L"Report two-way anova...", L"Report one-way Kruskal-Wallis...", praat_DEPTH_1 | praat_HIDDEN, DO_Table_reportTwoWayAnova);
 	praat_addAction1 (classTable, 1, L"Extract rows where...", L"Extract rows where column (text)...", praat_DEPTH_1, DO_Table_extractRowsWhere);
+	praat_addAction1 (classTable, 1, L"Extract rows where (mahalanobis)...", L"Extract rows where...", praat_DEPTH_1| praat_HIDDEN, DO_Table_extractRowsMahalanobisWhere);
 
 	praat_addAction1 (classTable, 0, L"To KlattTable", 0, praat_HIDDEN, DO_Table_to_KlattTable);
 	praat_addAction1 (classTable, 1, L"Get median absolute deviation...", L"Get standard deviation...", 1, DO_Table_getMedianAbsoluteDeviation);

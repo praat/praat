@@ -245,12 +245,12 @@ LPC LPC_and_Sound_to_LPC_robust (LPC thee, Sound me, double analysisWidth, doubl
 	}
 }
 
-Formant Sound_to_Formant_robust (Sound me, double dt_in, int numberOfPoles, double maximumFrequency,
+Formant Sound_to_Formant_robust (Sound me, double dt_in, double numberOfFormants, double maximumFrequency,
 	double halfdt_window, double preEmphasisFrequency, double safetyMargin, double k, int itermax, double tol, int wantlocation)
 {
 	double dt = dt_in > 0.0 ? dt_in : halfdt_window / 4.0;
 	double nyquist = 0.5 / my dx;
-	long predictionOrder = 2 * numberOfPoles;
+	int predictionOrder = 2 * numberOfFormants;
 	try {
 		autoSound sound = NULL;
 		if (maximumFrequency <= 0.0 || fabs (maximumFrequency / nyquist - 1) < 1.0e-12) {

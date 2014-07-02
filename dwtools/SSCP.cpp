@@ -1,6 +1,6 @@
 /* SSCP.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ void structSSCP :: v_info () {
 	Calculate scale factor by which sqrt(eigenvalue) has to
 	be multiplied to obtain the length of an ellipse axis.
 */
-static double ellipseScalefactor (I, double scale, int confidence) {
+double SSCP_getEllipseScalefactor (I, double scale, int confidence) {
 	iam (SSCP);
 	long n = SSCP_getNumberOfObservations (me);
 
@@ -128,7 +128,7 @@ static double ellipseScalefactor (I, double scale, int confidence) {
 static void getEllipseBoundingBoxCoordinates (SSCP me, double scale, int confidence,
         double *xmin, double *xmax, double *ymin, double *ymax) {
 	double a, b, cs, sn, width, height;
-	double lscale = ellipseScalefactor (me, scale, confidence);
+	double lscale = SSCP_getEllipseScalefactor (me, scale, confidence);
 
 	NUMeigencmp22 (my data[1][1], my data[1][2], my data[2][2], &a, &b, &cs, &sn);
 	NUMgetEllipseBoundingBox (sqrt (a), sqrt (b), cs, & width, & height);
@@ -195,6 +195,45 @@ SSCPs SSCPs_extractTwoDimensions (SSCPs me, long d1, long d2) {
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": cannot extract two dimensions.");
+	}
+}
+
+void SSCP_drawTwoDimensionalEllipse_inside  (SSCP me, Graphics g, double scale, wchar_t * label, int fontSize) {
+	try {
+		long nsteps = 100;
+		autoNUMvector<double> x (0L, nsteps);
+		autoNUMvector<double> y (0L, nsteps);
+		// Get principal axes and orientation for the ellipse by performing the
+		// eigen decomposition of a symmetric 2-by-2 matrix.
+		// Principal axes are a and b with eigenvector/orientation (cs, sn).
+
+		double a, b, cs, sn;
+		NUMeigencmp22 (my data[1][1], my data[1][2], my data[2][2], &a, &b, &cs, &sn);
+		// 1. Take sqrt to get units of 'std_dev'
+
+		a = scale * sqrt (a) / 2;
+		b = scale * sqrt (b) / 2;
+		x[nsteps] = x[0] = my centroid[1] + cs * a;
+		y[nsteps] = y[0] = my centroid[2] + sn * a;
+		double angle = 0;
+		double angle_inc = NUM2pi / nsteps;
+		for (long i = 1; i < nsteps; i++, angle += angle_inc) {
+			double xc = a * cos (angle);
+			double yc = b * sin (angle);
+			double xt = xc * cs - yc * sn;
+			y[i] = my centroid[2] + xc * sn + yc * cs;
+			x[i] = my centroid[1] + xt;
+		}
+		Graphics_polyline (g, nsteps + 1, x.peek(), y.peek());
+		if (label != NULL) {
+			int oldFontSize = Graphics_inqFontSize (g);
+			Graphics_setFontSize (g, fontSize);
+			Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+			Graphics_text (g, my centroid[1], my centroid[2], label);
+			Graphics_setFontSize (g, oldFontSize);
+		}
+	} catch (MelderError) {
+		//
 	}
 }
 
@@ -315,7 +354,7 @@ double SSCP_getConcentrationEllipseArea (I, double scale, int confidence, long d
 		Melder_throw ("Incorrect axes.");
 	}
 	autoSSCP thee = _SSCP_extractTwoDimensions (me, d1, d2);
-	scale = ellipseScalefactor (thee.peek(), scale, confidence);
+	scale = SSCP_getEllipseScalefactor (thee.peek(), scale, confidence);
 	if (scale < 0) {
 		Melder_throw ("Invalid scale factor.");
 	}
@@ -372,7 +411,7 @@ void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale,
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	Graphics_setInner (g);
 
-	scale = ellipseScalefactor (thee.peek(), scale, confidence);
+	scale = SSCP_getEllipseScalefactor (thee.peek(), scale, confidence);
 	if (scale < 0) {
 		Melder_throw ("Invalid scale factor.");
 	}
@@ -524,9 +563,11 @@ SSCP TableOfReal_to_SSCP (I, long rowb, long rowe, long colb, long cole) {
 				thy data[i][j] = thy data[j][i] = t;
 			}
 		}
-
-		NUMstrings_copyElements (TOVEC (my columnLabels[colb]), thy columnLabels, 1, n);
-		NUMstrings_copyElements (thy columnLabels, thy rowLabels, 1, n);
+		for (long j = 1; j <= n; j++) {
+			wchar_t *label = my columnLabels[colb + j - 1];
+			TableOfReal_setColumnLabel (thee.peek(), j, label);
+			TableOfReal_setRowLabel (thee.peek(), j, label);
+		}
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": SSCP not created.");
@@ -1047,9 +1088,8 @@ void SSCPs_drawConcentrationEllipses (SSCPs me, Graphics g, double scale, int co
 
 
 	for (long i = 1; i <= thy size; i++) {
-		double lscale;
 		t = (SSCP) thy item[i];
-		lscale = ellipseScalefactor (t, scale, confidence);
+		double lscale = SSCP_getEllipseScalefactor (t, scale, confidence);
 		if (lscale < 0) {
 			continue;
 		}

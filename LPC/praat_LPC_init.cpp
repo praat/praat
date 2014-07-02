@@ -29,7 +29,6 @@
 */
 
 #include <math.h>
-#include "praat.h"
 #include "Cepstrumc.h"
 #include "Cepstrogram.h"
 #include "Cepstrum_and_Spectrum.h"
@@ -47,6 +46,7 @@
 #include "LPC_to_Spectrum.h"
 #include "NUM2.h"
 #include "MelFilter_and_MFCC.h"
+#include "praatP.h"
 #include "Sound_and_LPC.h"
 #include "Sound_and_LPC_robust.h"
 #include "Sound_and_Cepstrum.h"
@@ -377,9 +377,9 @@ DO
 		iam (PowerCepstrogram);
 		PowerCepstrogram_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
 			GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
-  			GET_REAL (L"Maximum"), false, GET_REAL (L"Maximum") - GET_REAL (L"Minimum"),
+			GET_REAL (L"Maximum"), false, GET_REAL (L"Maximum") - GET_REAL (L"Minimum"),
 			0.0, GET_INTEGER (L"Garnish"));
-	}
+        }
 END
 
 FORM (PowerCepstrogram_paint, L"PowerCepstrogram: Paint", L"PowerCepstrogram: Paint...")
@@ -398,9 +398,9 @@ DO_ALTERNATIVE (old_PowerCepstrogram_paint)
 	LOOP {
 		iam (PowerCepstrogram);
 		PowerCepstrogram_paint (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
-  			GET_REAL (L"Maximum"), GET_INTEGER (L"Autoscaling"), GET_REAL (L"Dynamic range"), 
-			GET_REAL (L"Dynamic compression"), GET_INTEGER (L"Garnish"));
+		GET_REAL (L"left Quefrency range"), GET_REAL (L"right Quefrency range"),
+		GET_REAL (L"Maximum"), GET_INTEGER (L"Autoscaling"), GET_REAL (L"Dynamic range"),
+		GET_REAL (L"Dynamic compression"), GET_INTEGER (L"Garnish"));
 	}
 END
 
@@ -696,7 +696,7 @@ DO
 	}
 END
 
-/******************** Formant & Spectrogram ********************************************/
+/******************** Formant & Spectrogram ************************************/
 
 FORM (Formant_and_Spectrogram_to_IntensityTier, L"Formant & Spectrogram: To IntensityTier", L"Formant & Spectrogram: To IntensityTier...")
 	NATURAL (L"Formant number", L"1")
@@ -708,7 +708,6 @@ DO
 	autoIntensityTier him = Formant_and_Spectrogram_to_IntensityTier (me, thee, iformant);
 	praat_new (him.transfer(), my name, L"_", Melder_integer (GET_INTEGER (L"Formant number")));
 END
-
 
 /********************LFCC ********************************************/
 
@@ -932,7 +931,7 @@ END
 	
 FORM (Sound_to_Formant_robust, L"Sound: To Formant (robust)", L"Sound: To Formant (robust)...")
 	REAL (L"Time step (s)", L"0.0 (= auto)")
-	POSITIVE (L"Max. number of formants", L"5")
+	POSITIVE (L"Max. number of formants", L"5.0")
 	REAL (L"Maximum formant (Hz)", L"5500 (= adult female)")
 	POSITIVE (L"Window length (s)", L"0.025")
 	POSITIVE (L"Pre-emphasis from (Hz)", L"50")
@@ -1267,6 +1266,8 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classFormant, 0, L"Formula...", L"Formula (bandwidths)...", 1, DO_Formant_formula);
 	praat_addAction2 (classFormant, 1, classSpectrogram, 1, L"To IntensityTier...", 0, 0, DO_Formant_and_Spectrogram_to_IntensityTier);
 
+	
+	
 	praat_addAction1 (classLFCC, 0, L"LFCC help", 0, 0, DO_LFCC_help);
 	praat_CC_init (classLFCC);
 	praat_addAction1 (classLFCC, 0, L"To LPC...", 0, 0, DO_LFCC_to_LPC);
@@ -1323,8 +1324,10 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classVocalTractTier, 0, L"To LPC...", 0, 0, DO_VocalTractTier_to_LPC);
 	praat_addAction1 (classVocalTractTier, 0, L"To VocalTract...", 0, 0, DO_VocalTractTier_to_VocalTract);
 	praat_addAction2 (classVocalTractTier, 1, classVocalTract, 1, L"Add VocalTract...", 0, 0, DO_VocalTractTier_addVocalTract);
-	INCLUDE_MANPAGES (manual_LPC_init)
+	INCLUDE_MANPAGES (manual_LPC)
+	INCLUDE_MANPAGES (manual_DataModeler)
 
+	INCLUDE_LIBRARY (praat_DataModeler_init)
 }
 
 /* End of file praat_LPC_init.c */

@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140629)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140702)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.81# (2 July 2014)")
+LIST_ITEM (L"\\bu EEG: can work with status %numbers instead of only with status %bits.")
+LIST_ITEM (L"\\bu Windows: repaired a bug that could cause Praat to crash if there was a 96-dpi printer.")
 NORMAL (L"##5.3.80# (29 June 2014)")
 LIST_ITEM (L"\\bu Praat preferences: choice between Chinese and Japanese style for Han characters.")
 NORMAL (L"##5.3.79# (21 June 2014)")

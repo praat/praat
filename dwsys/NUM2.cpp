@@ -1,6 +1,6 @@
 /* NUM2.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,7 @@
  djmw 20101209 removed NUMwcscmp is Melder_wcscmp now
  djmw 20110304 Thing_new
  djmw 20111110 use autostringvector
+ djmw 20140318 NUMvector_avevar now returns variance instead of sigma^2
 */
 
 #include <vector>
@@ -336,7 +337,7 @@ void NUMvector_avevar (double *a, long n, double *average, double *variance) {
 			var += s * s;
 		}
 
-		var = (var - eps * eps / n) / (n - 1);
+		var = (var - eps * eps / n);
 	} else {
 		var = NUMundefined;
 	}
@@ -370,7 +371,7 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average,
 			var += s * s;
 		}
 
-		var = (var - eps * eps / nr) / (nr - 1);
+		var = (var - eps * eps / nr);
 	} else {
 		var = NUMundefined;
 	}
@@ -381,7 +382,6 @@ void NUMcolumn_avevar (double **a, long nr, long nc, long icol, double *average,
 void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
                         double *average1, double *variance1, double *average2, double *variance2,
                         double *covariance) {
-	long ndf = nr - 1;
 	double eps1 = 0, eps2 = 0, mean1 = 0, mean2 = 0;
 	double var1 = 0, var2 = 0, covar = 0;
 
@@ -417,9 +417,8 @@ void NUMcolumn2_avevar (double **a, long nr, long nc, long icol1, long icol2,
 			covar += s1 * s2;
 		}
 
-		var1 = (var1 - eps1 * eps1 / nr) / ndf;
-		var2 = (var2 - eps2 * eps2 / nr) / ndf;
-		covar /= ndf;
+		var1 = (var1 - eps1 * eps1 / nr);
+		var2 = (var2 - eps2 * eps2 / nr);;
 	} else {
 		var1 = NUMundefined;
 		var2 = NUMundefined;

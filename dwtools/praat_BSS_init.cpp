@@ -1,6 +1,6 @@
 /* praat_BSS_init.c
  *
- * Copyright (C) 2010-2011 David Weenink
+ * Copyright (C) 2010-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,13 +41,13 @@ void praat_TableOfReal_init3 (ClassInfo klas);
 FORM (EEG_to_CrossCorrelationTable, L"EEG: To CrossCorrelationTable", L"EEG: To CrossCorrelationTable...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
-	REAL (L"Lag time (s)", L"0.05")
+	REAL (L"Lag step (s)", L"0.05")
 	TEXTFIELD (L"Channel ranges", L"1:64")
 	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	OK
 DO
 	double startTime = GET_REAL (L"left Time range"), endTime = GET_REAL (L"right Time range");
-	double lagTime = GET_REAL (L"Lag time");
+	double lagTime = GET_REAL (L"Lag step");
 	const wchar_t *channelRanges = GET_STRING (L"Channel ranges");
 	LOOP {
 		iam (EEG);
@@ -75,7 +75,7 @@ END
 FORM (EEG_to_CrossCorrelationTables, L"EEG: To CrossCorrelationTables", L"EEG: To CrossCorrelationTables...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
-	POSITIVE (L"Lag time (s)", L"0.02")
+	POSITIVE (L"Lag step (s)", L"0.02")
 	NATURAL (L"Number of cross-correlations", L"40")
 	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	TEXTFIELD (L"Channel ranges", L"1:64")
@@ -84,7 +84,7 @@ DO
 	LOOP {
 		iam (EEG);
 		autoCrossCorrelationTables thee = EEG_to_CrossCorrelationTables (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_REAL (L"Lag time"), GET_INTEGER (L"Number of cross-correlations"), GET_STRING (L"Channel ranges"));
+			GET_REAL (L"Lag step"), GET_INTEGER (L"Number of cross-correlations"), GET_STRING (L"Channel ranges"));
 		praat_new (thee.transfer(), my name);
 	}
 END
@@ -93,7 +93,7 @@ FORM (EEG_to_EEG_bss, L"EEG: To EEG (bss)", L"EEG: To EEG (bss)...")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
 	NATURAL (L"Number of cross-correlations", L"40")
-	POSITIVE (L"Lag times (s)", L"0.002")
+	POSITIVE (L"Lag step (s)", L"0.002")
 	LABEL (L"", L"To supply rising or falling ranges, use e.g. 2:6 or 5:3.")
 	TEXTFIELD (L"Channel ranges", L"1:64")
 	LABEL (L"", L"Pre-whitening parameters")
@@ -113,7 +113,7 @@ DO
 	LOOP {
 		iam (EEG);
 		autoEEG thee = EEG_to_EEG_bss (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_INTEGER (L"Number of cross-correlations"), GET_REAL (L"Lag times"), GET_STRING (L"Channel ranges"),
+			GET_INTEGER (L"Number of cross-correlations"), GET_REAL (L"Lag step"), GET_STRING (L"Channel ranges"),
 			whiteningMethod, GET_INTEGER (L"Diagonalization method"),
 			GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"));
 		praat_new (thee.transfer(), my name, L"_bss");
@@ -280,10 +280,10 @@ END
 FORM (Sound_to_CrossCorrelationTable, L"Sound: To CrossCorrelationTable", L"Sound: To CrossCorrelationTable...")
     REAL (L"left Time range (s)", L"0.0")
     REAL (L"right Time range (s)", L"10.0")
-    REAL (L"Lag time (s)", L"0.0")
+    REAL (L"Lag step (s)", L"0.0")
     OK
 DO
-	double lagTime = fabs (GET_REAL (L"Lag time"));
+	double lagTime = fabs (GET_REAL (L"Lag step"));
     LOOP {
         iam (Sound);
         praat_new (Sound_to_CrossCorrelationTable (me, GET_REAL (L"left Time range"),
@@ -294,7 +294,7 @@ END
 FORM (Sounds_to_CrossCorrelationTable_combined, L"Sound: To CrossCorrelationTable (combined)", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
-	REAL (L"Lag time (s)", L"0.0")
+	REAL (L"Lag step (s)", L"0.0")
 	OK
 DO
 	Sound s1 = NULL, s2 = NULL;
@@ -304,7 +304,7 @@ DO
 	}
 	Melder_assert (s1 != NULL && s2 != NULL);
 	autoCrossCorrelationTable thee = Sounds_to_CrossCorrelationTable_combined (s1, s2, GET_REAL (L"left Time range"),
-		GET_REAL (L"right Time range"), GET_REAL (L"Lag time"));
+		GET_REAL (L"right Time range"), GET_REAL (L"Lag step"));
 	praat_new (thee.transfer(), s1 -> name, L"_", s2 -> name, L"_cc");
 END
 
@@ -419,7 +419,7 @@ FORM (Sound_to_MixingMatrix, L"Sound: To MixingMatrix", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
 	NATURAL (L"Number of cross-correlations", L"40")
-	POSITIVE (L"Lag times (s)", L"0.002")
+	POSITIVE (L"Lag step (s)", L"0.002")
 	LABEL (L"", L"Iteration parameters")
 	NATURAL (L"Maximum number of iterations", L"100")
 	POSITIVE (L"Tolerance", L"0.001")
@@ -432,7 +432,7 @@ DO
 		iam (Sound);
 		praat_new (Sound_to_MixingMatrix (me,
 			GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_INTEGER (L"Number of cross-correlations"),
-			GET_REAL (L"Lag times"), GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"),
+			GET_REAL (L"Lag step"), GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"),
 			GET_INTEGER (L"Diagonalization method")), my name);
 	}
 END
@@ -441,12 +441,12 @@ FORM (Sound_to_CrossCorrelationTables, L"Sound: To CrossCorrelationTables", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
 	NATURAL (L"Number of cross-correlations", L"40")
-	POSITIVE (L"Lag times (s)", L"0.002")
+	POSITIVE (L"Lag step (s)", L"0.002")
 	OK
 DO
 	LOOP {
 		iam (Sound);
-		praat_new (Sound_to_CrossCorrelationTables (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Lag times"), GET_INTEGER (L"Number of cross-correlations")), my name);
+		praat_new (Sound_to_CrossCorrelationTables (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"), GET_REAL (L"Lag step"), GET_INTEGER (L"Number of cross-correlations")), my name);
 	}
 END
 
@@ -454,7 +454,7 @@ FORM (Sound_to_Sound_bss, L"Sound: To Sound (blind source separation)", L"Sound:
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"10.0")
 	NATURAL (L"Number of cross-correlations", L"40")
-	POSITIVE (L"Lag times (s)", L"0.002")
+	POSITIVE (L"Lag step (s)", L"0.002")
 	LABEL (L"", L"Iteration parameters")
 	NATURAL (L"Maximum number of iterations", L"100")
 	POSITIVE (L"Tolerance", L"0.001")
@@ -466,7 +466,7 @@ DO
 	LOOP {
 		iam (Sound);
 		praat_new (Sound_to_Sound_BSS (me, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
-			GET_INTEGER (L"Number of cross-correlations"), GET_REAL (L"Lag times"),
+			GET_INTEGER (L"Number of cross-correlations"), GET_REAL (L"Lag step"),
 			GET_INTEGER (L"Maximum number of iterations"), GET_REAL (L"Tolerance"),
 			GET_INTEGER (L"Diagonalization method")), my name, L"_bss");
 	}

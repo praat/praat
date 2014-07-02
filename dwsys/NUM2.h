@@ -2,7 +2,7 @@
 #define _NUM2_h_
 /* NUM2.h
  *
- * Copyright (C) 1997-2012 David Weenink
+ * Copyright (C) 1997-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -316,7 +316,6 @@ void NUMmonotoneRegression (const double x[], long n, double xs[]);
     array b[1..n]. A characteristic of heapsort is that it does not conserve
     the order of equals: e.g., the array 3,1,1,2 will be sorted as 1,1,2,3.
     It may occur that a_sorted[1] = a_presorted[2] and a_sorted[2] = a_presorted[1]
-    no g
 */
 template<class T1, class T2>
 void NUMsort2 (long n, T1 *a, T2 *b) {

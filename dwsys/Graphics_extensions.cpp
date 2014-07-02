@@ -1,6 +1,6 @@
 /* Graphics_extensions.c
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012 -2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 		return;
 	}
 	/*
-		Sort the data (increasing: data[1] <= ... <= data[ndata]).
+		Sort the data (ascending: data[1] <= ... <= data[ndata]).
 		Get the median (q50) and the upper and lower quartile points
 		(q25 and q75).
 		Now q25 and q75 are the lower and upper hinges, respectively.
@@ -174,7 +174,7 @@ void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x
 	}
 }
 
-void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double *xdata, long xnumberOfData, double *ydata, long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *plotLabel) {
+void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double xdata[], long xnumberOfData, double ydata[], long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *plotLabel) {
 	int fontSize = Graphics_inqFontSize (g);
 
 	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
@@ -246,6 +246,24 @@ void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, l
 		Graphics_setColour (g, colour);
 		Graphics_rectangle (g, x1, x2 , y1, y2);
 	}
+}
+
+void Graphics_lagPlot (Graphics g, double data[], long numberOfData, double xmin, double xmax, long lag, int labelSize, const wchar_t *plotLabel) {
+	if (lag < 0 || lag >= numberOfData) {
+		return;
+	}
+	int fontSize = Graphics_inqFontSize (g);
+	Graphics_setFontSize (g, labelSize);
+	Graphics_setTextAlignment (g, Graphics_CENTRE, Graphics_HALF);
+	// plot x[i] vertically and x[i-lag] horizontally
+	for (long i = 1; i <= numberOfData - lag; i++) {
+		double x = data[i + lag], y = data[i];
+		if (x >= xmin && x <= xmax && y >= xmin && y <= xmax) {
+			Graphics_text (g, x, y, plotLabel);
+		}
+	}
+	Graphics_setLineType (g, Graphics_DRAWN);
+	Graphics_setFontSize (g, fontSize);
 }
 
 /* End of file Graphics_extensions.c */

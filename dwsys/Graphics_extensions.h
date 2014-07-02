@@ -2,7 +2,7 @@
 #define _Graphics_extensions_h_
 /* Graphics_extensions.h
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,8 +33,10 @@
 
 void Graphics_boxAndWhiskerPlot (Graphics g, double data[], long ndata, double x, double r, double w, double ymin, double ymax);
 
-void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double *xdata, long xnumberOfData, double *ydata, long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *plotLabel);
+void Graphics_quantileQuantilePlot (Graphics g, long numberOfQuantiles, double xdata[], long xnumberOfData, double ydata[], long ynumberOfData, double xmin, double xmax, double ymin, double ymax, int labelSize, const wchar_t *plotLabel);
 
 void Graphics_matrixAsSquares (Graphics g, double **matrix, long numberOfRows, long numberOfColumns, double zmin, double zmax, double cellSizeFactor, int randomFillOrder);
+
+void Graphics_lagPlot (Graphics g, double x[], long numberOfData, double xmin, double xmax, long lag, int labelSize, const wchar_t *plotLabel);
 
 #endif /* _Graphics_extensions_h_ */

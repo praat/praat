@@ -2,7 +2,7 @@
 #define _SSCP_h_
 /* SSCP.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,6 +43,8 @@ void SSCP_init (I, long dimension, long storage);
 
 SSCP SSCP_create (long dimension);
 
+void SSCP_drawTwoDimensionalEllipse_inside  (SSCP me, Graphics g, double scale, wchar_t * label, int fontSize);
+double SSCP_getEllipseScalefactor (I, double scale, int confidence);
 void SSCP_drawConcentrationEllipse (SSCP me, Graphics g, double scale, int confidence,
 	long d1, long d2, double xmin, double xmax, double ymin, double ymax, int garnish);
 
@@ -197,6 +199,8 @@ void Covariances_equality (Collection me, int method, double *prob, double *chis
 */
 
 SSCPs SSCPs_create ();
+
+SSCPs TableOfReal_to_SSCPs_byLabel (I);
 
 SSCP SSCPs_to_SSCP_sum (SSCPs me);
 /* Sum the sscp's and weigh each means with it's numberOfObservations. */

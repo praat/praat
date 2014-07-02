@@ -121,9 +121,52 @@ static ERPTier EEG_PointProcess_to_ERPTier (EEG me, PointProcess events, double 
 	}
 }
 
-ERPTier EEG_to_ERPTier (EEG me, double fromTime, double toTime, int markerBit) {
+ERPTier EEG_to_ERPTier_bit (EEG me, double fromTime, double toTime, int markerBit) {
 	try {
 		autoPointProcess events = TextGrid_getStartingPoints (my textgrid, markerBit, kMelder_string_EQUAL_TO, L"1");
+		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": ERPTier not created.");
+	}
+}
+
+static PointProcess TextGrid_getStartingPoints_multiNumeric (TextGrid me, uint16_t number) {
+	try {
+		autoPointProcess thee = NULL;
+		int numberOfBits = my numberOfTiers();
+		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
+			(void) TextGrid_checkSpecifiedTierIsIntervalTier (me, ibit + 1);
+			if (number & (1 << ibit)) {
+				autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, L"1");
+				if (thee.peek()) {
+					autoPointProcess intersection = PointProcesses_intersection (thee.peek(), bitEvents.peek());
+					thee.reset (intersection.transfer());
+				} else {
+					thee.reset (bitEvents.transfer());
+				}
+			}
+		}
+		for (int ibit = 0; ibit < numberOfBits; ibit ++) {
+			autoPointProcess bitEvents = TextGrid_getStartingPoints (me, ibit + 1, kMelder_string_EQUAL_TO, L"1");
+			if (! (number & (1 << ibit))) {
+				if (thee.peek()) {
+					autoPointProcess difference = PointProcesses_difference (thee.peek(), bitEvents.peek());
+					thee.reset (difference.transfer());
+				} else {
+					thee.reset (PointProcess_create (my xmin, my xmax, 10));
+				}
+			}
+		}
+		return thee.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": starting points not converted to PointProcess.");
+	}
+}
+
+ERPTier EEG_to_ERPTier_marker (EEG me, double fromTime, double toTime, uint16_t marker) {
+	try {
+		autoPointProcess events = TextGrid_getStartingPoints_multiNumeric (my textgrid, marker);
 		autoERPTier thee = EEG_PointProcess_to_ERPTier (me, events.peek(), fromTime, toTime);
 		return thee.transfer();
 	} catch (MelderError) {

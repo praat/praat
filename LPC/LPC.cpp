@@ -1,6 +1,6 @@
 /* LPC.cpp
  *
- * Copyright (C) 1994-2012 David Weenink
+ * Copyright (C) 1994-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ void LPC_drawGain (LPC me, Graphics g, double tmin, double tmax, double gmin, do
 	Graphics_setWindow (g, tmin, tmax, gmin, gmax);
 	for (long iframe = itmin; iframe <= itmax; iframe++) {
 		double x = Sampled_indexToX (me, iframe);
-		Graphics_fillCircle_mm (g, x, gain[iframe], 1.0);
+		Graphics_speckle (g, x, gain[iframe]);
 	}
 	Graphics_unsetInner (g);
 	if (garnish) {

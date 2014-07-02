@@ -96,10 +96,14 @@ static void computeTrafo (Graphics me) {
 
 void Graphics_init (Graphics me, int resolution) {
 	my resolution = resolution;
-	if (resolution == 100) {
+	if (resolution == 96) {
+		my resolutionNumber = kGraphics_resolution_96;
+	} else if (resolution == 100) {
 		my resolutionNumber = kGraphics_resolution_100;
 	} else if (resolution == 300) {
 		my resolutionNumber = kGraphics_resolution_300;
+	} else if (resolution == 360) {
+		my resolutionNumber = kGraphics_resolution_360;
 	} else if (resolution == 600) {
 		my resolutionNumber = kGraphics_resolution_600;
 	} else {
