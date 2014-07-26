@@ -1,6 +1,6 @@
 /* Distributions_and_Strings.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ Strings Distributions_to_Strings (Distributions me, long column, long numberOfSt
 		thy strings = NUMvector <wchar_t*> (1, numberOfStrings);
 		for (long istring = 1; istring <= numberOfStrings; istring ++) {
 			wchar_t *string;
-			Distributions_peek (me, column, & string);
+			Distributions_peek (me, column, & string, NULL);
 			thy strings [istring] = Melder_wcsdup (string);
 		}
 		return thee.transfer();

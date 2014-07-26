@@ -2,7 +2,7 @@
 #define _OTGrammar_h_
 /* OTGrammar.h
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,8 @@ bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialO
 	/* Is there an input for which this partial output is contained in any of the optimal outputs? */
 bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput);
 	/* Is every optimal output that contains this partial output the only optimal output in its tableau? */
+bool OTGrammar_areAllPartialOutputsGrammatical (OTGrammar me, Strings thee);
+bool OTGrammar_areAllPartialOutputsSinglyGrammatical (OTGrammar me, Strings thee);
 
 void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar_t *input);
 
@@ -111,7 +113,8 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
-	long storeHistoryEvery, OTHistory *history_out);
+	long storeHistoryEvery, OTHistory *history_out,
+	bool resampleForVirtualProduction, bool compareOnlyPartialOutput);
 double OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, long numberOfInputs);
 long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistribution thee,
@@ -131,6 +134,7 @@ OTGrammar OTGrammar_create_metrics (int equal_footForm_wsp,
 	/* T&S: 1, FALSE, FALSE, FALSE, 1, TRUE, FALSE, FALSE */
 
 void OTGrammar_reset (OTGrammar me, double ranking);
+void OTGrammar_resetToRandomRanking (OTGrammar me, double mean, double standardDeviation);
 void OTGrammar_resetToRandomTotalRanking (OTGrammar me, double maximumRanking, double rankingDistance);
 void OTGrammar_setRanking (OTGrammar me, long constraint, double ranking, double disharmony);
 void OTGrammar_setConstraintPlasticity (OTGrammar me, long constraint, double plasticity);

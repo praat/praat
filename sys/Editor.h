@@ -2,7 +2,7 @@
 #define _Editor_h_
 /* Editor.h
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013.2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,6 +68,7 @@ Thing_define (Editor, Thing) {
 		void (*d_dataChangedCallback) (Editor me, void *closure);                   void *d_dataChangedClosure;
 		void (*d_destructionCallback) (Editor me, void *closure);                   void *d_destructionClosure;
 		void (*d_publicationCallback) (Editor me, void *closure, Data publication); void *d_publicationClosure;
+		const char *callbackSocket;
 
 	// new messages:
 	public:

@@ -1,6 +1,6 @@
 /* Manual.cpp
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,16 +97,16 @@ static void menu_cb_searchForPageList (EDITOR_ARGS) {
 }
 
 void structManual :: v_draw () {
-	ManPages manPages = (ManPages) data;
+	ManPages manPages = (ManPages) our data;
 	ManPage page;
 	ManPage_Paragraph paragraph;
 	#if motif
 	Graphics_clearWs (g);
 	#endif
-	if (path == SEARCH_PAGE) {
+	if (our path == SEARCH_PAGE) {
 		HyperPage_pageTitle (this, L"Best matches");
 		HyperPage_intro (this, L"The best matches to your query seem to be:");
-		for (int i = 1; i <= numberOfMatches; i ++) {
+		for (int i = 1; i <= our numberOfMatches; i ++) {
 			wchar_t link [300];
 			page = (ManPage) manPages -> pages -> item [matches [i]];
 			swprintf (link, 300, L"\\bu @@%ls", page -> title);
@@ -115,7 +115,7 @@ void structManual :: v_draw () {
 		return;
 	}
 	page = (ManPage) manPages -> pages -> item [path];
-	if (! paragraphs) return;
+	if (! our paragraphs) return;
 	HyperPage_pageTitle (this, page -> title);
 	for (paragraph = & page -> paragraphs [0]; paragraph -> type != 0; paragraph ++) {
 		switch (paragraph -> type) {
@@ -149,25 +149,25 @@ void structManual :: v_draw () {
 			default: break;
 		}
 	}
-	if (ManPages_uniqueLinksHither (manPages, path)) {
+	if (ManPages_uniqueLinksHither (manPages, our path)) {
 		long ilink, jlink, lastParagraph = 0;
-		int goAhead = TRUE;
+		bool goAhead = true;
 		while (page -> paragraphs [lastParagraph]. type != 0) lastParagraph ++;
 		if (lastParagraph > 0) {
 			const wchar_t *text = page -> paragraphs [lastParagraph - 1]. text;
 			if (text == NULL || text [0] == '\0' || text [wcslen (text) - 1] != ':') {
-				if (printing && suppressLinksHither)
-					goAhead = FALSE;
+				if (our printing && our suppressLinksHither)
+					goAhead = false;
 				else
 					HyperPage_entry (this, L"Links to this page");
 			}
 		}
 		if (goAhead) for (ilink = 1; ilink <= page -> nlinksHither; ilink ++) {
 			long link = page -> linksHither [ilink];
-			int alreadyShown = FALSE;
+			bool alreadyShown = false;
 			for (jlink = 1; jlink <= page -> nlinksThither; jlink ++)
 				if (page -> linksThither [jlink] == link)
-					alreadyShown = TRUE;
+					alreadyShown = true;
 			if (! alreadyShown) {
 				const wchar_t *title = ((ManPage) manPages -> pages -> item [page -> linksHither [ilink]]) -> title;
 				wchar_t linkText [304];
@@ -176,7 +176,7 @@ void structManual :: v_draw () {
 			}
 		}
 	}
-	if (! printing && page -> date) {
+	if (! our printing && page -> date) {
 		wchar_t signature [100];
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
@@ -185,9 +185,9 @@ void structManual :: v_draw () {
 			wcsequ (page -> author, L"ppgb") ? L"Paul Boersma" :
 			wcsequ (page -> author, L"djmw") ? L"David Weenink" : page -> author,
 			date % 100, month [imonth], date / 10000);
-		HyperPage_any (this, L"", p_font, p_fontSize, 0, 0.0,
+		HyperPage_any (this, L"", our p_font, our p_fontSize, 0, 0.0,
 			0.0, 0.0, 0.1, 0.1, HyperPage_ADD_BORDER);
-		HyperPage_any (this, signature, p_font, p_fontSize, Graphics_ITALIC, 0.0,
+		HyperPage_any (this, signature, our p_font, our p_fontSize, Graphics_ITALIC, 0.0,
 			0.03, 0.0, 0.1, 0.0, 0);
 	}
 }
@@ -427,8 +427,8 @@ static void gui_cb_search (GUI_ARGS) {
 }
 
 void structManual :: v_createChildren () {
-	ManPages pages = (ManPages) data;   // has been installed here by Editor_init ()
-	d_hasExtraRowOfTools = pages -> dynamic;
+	ManPages pages = (ManPages) our data;   // has been installed here by Editor_init ()
+	our d_hasExtraRowOfTools = pages -> dynamic;
 	Manual_Parent :: v_createChildren ();
 	#if defined (macintosh)
 		#define STRING_SPACING 8
@@ -436,19 +436,19 @@ void structManual :: v_createChildren () {
 		#define STRING_SPACING 2
 	#endif
 	int height = Machine_getTextHeight (), y = Machine_getMenuBarHeight () + 4;
-	homeButton = GuiButton_createShown (d_windowForm, 104, 168, y, y + height,
+	our homeButton = GuiButton_createShown (our d_windowForm, 104, 168, y, y + height,
 		L"Home", gui_button_cb_home, this, 0);
 	if (pages -> dynamic) {
-		recordButton = GuiButton_createShown (d_windowForm, 4, 79, y+height+8, y+height+8 + height,
+		our recordButton = GuiButton_createShown (our d_windowForm, 4, 79, y+height+8, y+height+8 + height,
 			L"Record", gui_button_cb_record, this, 0);
-		playButton = GuiButton_createShown (d_windowForm, 85, 160, y+height+8, y+height+8 + height,
+		our playButton = GuiButton_createShown (our d_windowForm, 85, 160, y+height+8, y+height+8 + height,
 			L"Play", gui_button_cb_play, this, 0);
-		publishButton = GuiButton_createShown (d_windowForm, 166, 166 + 175, y+height+8, y+height+8 + height, 
+		our publishButton = GuiButton_createShown (our d_windowForm, 166, 166 + 175, y+height+8, y+height+8 + height,
 			L"Copy last played to list", gui_button_cb_publish, this, 0);
 	}
-	GuiButton_createShown (d_windowForm, 274, 274 + 69, y, y + height,
+	GuiButton_createShown (our d_windowForm, 274, 274 + 69, y, y + height,
 		L"Search:", gui_button_cb_search, this, GuiButton_DEFAULT);
-	searchText = GuiText_createShown (d_windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
+	our searchText = GuiText_createShown (our d_windowForm, 274+69 + STRING_SPACING, 452 + STRING_SPACING - 2, y, y + Gui_TEXTFIELD_HEIGHT, 0);
 }
 
 static void menu_cb_help (EDITOR_ARGS) { EDITOR_IAM (Manual); HyperPage_goToPage (me, L"Manual"); }
@@ -488,35 +488,35 @@ void structManual :: v_defaultHeaders (EditorCommand cmd) {
 }
 
 long structManual :: v_getNumberOfPages () {
-	ManPages manPages = (ManPages) data;
+	ManPages manPages = (ManPages) our data;
 	return manPages -> pages -> size;
 }
 
 long structManual :: v_getCurrentPageNumber () {
-	return path ? path : 1;
+	return our path ? our path : 1;
 }
 
 void structManual :: v_goToPage_i (long pageNumber) {
-	ManPages manPages = (ManPages) data;
+	ManPages manPages = (ManPages) our data;
 	if (pageNumber < 1 || pageNumber > manPages -> pages -> size) {
 		if (pageNumber == SEARCH_PAGE) {
-			path = SEARCH_PAGE;
-			Melder_free (currentPageTitle);
+			our path = SEARCH_PAGE;
+			Melder_free (our currentPageTitle);
 			return;
 		} else Melder_throw ("Page ", pageNumber, " not found.");
 	}
-	path = pageNumber;
+	our path = pageNumber;
 	ManPage page = (ManPage) manPages -> pages -> item [path];
-	paragraphs = page -> paragraphs;
-	numberOfParagraphs = 0;
+	our paragraphs = page -> paragraphs;
+	our numberOfParagraphs = 0;
 	ManPage_Paragraph par = paragraphs;
-	while ((par ++) -> type) numberOfParagraphs ++;
-	Melder_free (currentPageTitle);
-	currentPageTitle = Melder_wcsdup_f (page -> title);
+	while ((par ++) -> type) our numberOfParagraphs ++;
+	Melder_free (our currentPageTitle);
+	our currentPageTitle = Melder_wcsdup_f (page -> title);
 }
 
 int structManual :: v_goToPage (const wchar_t *title) {
-	ManPages manPages = (ManPages) data;
+	ManPages manPages = (ManPages) our data;
 	if (title [0] == '\\' && title [1] == 'F' && title [2] == 'I') {
 		structMelderFile file = { 0 };
 		MelderDir_relativePathToFile (& manPages -> rootDirectory, title + 3, & file);
@@ -535,7 +535,7 @@ int structManual :: v_goToPage (const wchar_t *title) {
 		long i = ManPages_lookUp (manPages, title);
 		if (! i)
 			Melder_throw ("Page \"", title, "\" not found.");
-		v_goToPage_i (i);
+		our v_goToPage_i (i);
 		return 1;
 	}
 }

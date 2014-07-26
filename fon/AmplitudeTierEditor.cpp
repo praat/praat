@@ -1,6 +1,6 @@
 /* AmplitudeTierEditor.cpp
  *
- * Copyright (C) 2003-2011,2012 Paul Boersma
+ * Copyright (C) 2003-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@ void structAmplitudeTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 	EditorMenu_addCommand (menu, L"AmplitudeTier help", 0, menu_cb_AmplitudeTierHelp);
 }
 
-void structAmplitudeTierEditor :: v_play (double tmin, double tmax) {
-	if (d_sound.data) {
-		Sound_playPart (d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+void structAmplitudeTierEditor :: v_play (double fromTime, double toTime) {
+	if (our d_sound.data) {
+		Sound_playPart (our d_sound.data, fromTime, toTime, theFunctionEditor_playCallback, this);
 	} else {
-		//AmplitudeTier_playPart (data, tmin, tmax, FALSE);
+		//AmplitudeTier_playPart (data, fromTime, toTime, FALSE);
 	}
 }
 

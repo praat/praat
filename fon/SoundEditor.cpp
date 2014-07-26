@@ -1,6 +1,6 @@
 /* SoundEditor.cpp
  *
- * Copyright (C) 1992-2012,2013 Paul Boersma, 2007 Erez Volk (FLAC support)
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma, 2007 Erez Volk (FLAC support)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,8 +105,8 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 
 			/* Start updating the markers of the FunctionEditor, respecting the invariants. */
 
-			my d_tmin = sound -> xmin;
-			my d_tmax = sound -> xmax;
+			my tmin = sound -> xmin;
+			my tmax = sound -> xmax;
 
 			/* Collapse the selection, */
 			/* so that the Cut operation can immediately be undone by a Paste. */
@@ -129,16 +129,16 @@ static void menu_cb_Cut (EDITOR_ARGS) {
 				else   /* Cut overlaps entire window: centre. */
 					my d_startWindow = my d_startSelection - 0.5 * windowLength;
 				my d_endWindow = my d_startWindow + windowLength;   // first try
-				if (my d_endWindow > my d_tmax) {
-					my d_startWindow -= my d_endWindow - my d_tmax;   // second try
-					if (my d_startWindow < my d_tmin)
-						my d_startWindow = my d_tmin;   // third try
-					my d_endWindow = my d_tmax;   // second try
-				} else if (my d_startWindow < my d_tmin) {
-					my d_endWindow -= my d_startWindow - my d_tmin;   // second try
-					if (my d_endWindow > my d_tmax)
-						my d_endWindow = my d_tmax;   // third try
-					my d_startWindow = my d_tmin;   // second try
+				if (my d_endWindow > my tmax) {
+					my d_startWindow -= my d_endWindow - my tmax;   // second try
+					if (my d_startWindow < my tmin)
+						my d_startWindow = my tmin;   // third try
+					my d_endWindow = my tmax;   // second try
+				} else if (my d_startWindow < my tmin) {
+					my d_endWindow -= my d_startWindow - my tmin;   // second try
+					if (my d_endWindow > my tmax)
+						my d_endWindow = my tmax;   // third try
+					my d_startWindow = my tmin;   // second try
 				}
 			}
 
@@ -207,8 +207,8 @@ static void menu_cb_Paste (EDITOR_ARGS) {
 
 	/* Start updating the markers of the FunctionEditor, respecting the invariants. */
 
-	my d_tmin = sound -> xmin;
-	my d_tmax = sound -> xmax;
+	my tmin = sound -> xmin;
+	my tmax = sound -> xmax;
 	my d_startSelection = leftSample * sound -> dx;
 	my d_endSelection = (leftSample + Sound_clipboard -> nx) * sound -> dx;
 
@@ -440,7 +440,7 @@ void structSoundEditor :: f_init (const wchar_t *title, Sampled data) {
 	structTimeSoundAnalysisEditor :: f_init (title, data, data, false);
 	if (d_longSound.data && d_endWindow - d_startWindow > 30.0) {
 		d_endWindow = d_startWindow + 30.0;
-		if (d_startWindow == d_tmin)
+		if (our d_startWindow == our tmin)
 			d_startSelection = d_endSelection = 0.5 * (d_startWindow + d_endWindow);
 		FunctionEditor_marksChanged (this, false);
 	}

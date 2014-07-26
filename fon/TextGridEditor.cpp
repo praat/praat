@@ -86,7 +86,7 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int iti
 		long iinterval = IntervalTier_timeToIndex (intervalTier, t);
 		TextInterval interval;
 		if (iinterval == 0) {
-			if (t < my d_tmin) {
+			if (t < my tmin) {
 				iinterval = 1;
 			} else {
 				iinterval = intervalTier -> intervals -> size;
@@ -98,16 +98,16 @@ static void _TextGridEditor_timeToInterval (TextGridEditor me, double t, int iti
 	} else {
 		long n = textTier -> points -> size;
 		if (n == 0) {
-			*tmin = my d_tmin;
-			*tmax = my d_tmax;
+			*tmin = my tmin;
+			*tmax = my tmax;
 		} else {
 			long ipointleft = AnyTier_timeToLowIndex (textTier, t);
-			*tmin = ipointleft == 0 ? my d_tmin : ((TextPoint) textTier -> points -> item [ipointleft]) -> number;
-			*tmax = ipointleft == n ? my d_tmax : ((TextPoint) textTier -> points -> item [ipointleft + 1]) -> number;
+			*tmin = ipointleft == 0 ? my tmin : ((TextPoint) textTier -> points -> item [ipointleft]) -> number;
+			*tmax = ipointleft == n ? my tmax : ((TextPoint) textTier -> points -> item [ipointleft + 1]) -> number;
 		}
 	}
-	if (*tmin < my d_tmin) *tmin = my d_tmin;   // clip by FunctionEditor's time domain
-	if (*tmax > my d_tmax) *tmax = my d_tmax;
+	if (*tmin < my tmin) *tmin = my tmin;   // clip by FunctionEditor's time domain
+	if (*tmax > my tmax) *tmax = my tmax;
 }
 
 static void checkTierSelection (TextGridEditor me, const wchar_t *verbPhrase) {
@@ -1436,7 +1436,7 @@ static void do_drawIntervalTier (TextGridEditor me, IntervalTier tier, int itier
 	for (iinterval = 1; iinterval <= ninterval; iinterval ++) {
 		TextInterval interval = (TextInterval) tier -> intervals -> item [iinterval];
 		double tmin = interval -> xmin, tmax = interval -> xmax;
-		if (tmin < my d_tmin) tmin = my d_tmin; if (tmax > my d_tmax) tmax = my d_tmax;
+		if (tmin < my tmin) tmin = my tmin; if (tmax > my tmax) tmax = my tmax;
 		if (tmin >= tmax) continue;
 		bool intervalIsSelected = selectedInterval == iinterval;
 
@@ -1701,7 +1701,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 	TextGrid grid = (TextGrid) my data;
 	int itier, numberOfTiers = grid -> tiers -> size, itierDrop;
 	double xWC = xbegin, yWC;
-	double leftDraggingBoundary = my d_tmin, rightDraggingBoundary = my d_tmax;   // initial dragging range
+	double leftDraggingBoundary = my tmin, rightDraggingBoundary = my tmax;   // initial dragging range
 	int selectedTier [100];
 	double soundY = _TextGridEditor_computeSoundY (me);
 
@@ -2198,7 +2198,7 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 
 /********** EXPORTED **********/
 
-void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker)
+void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket)
 {
 	my spellingChecker = spellingChecker;   // set in time
 
@@ -2208,7 +2208,7 @@ void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid
 	my v_updateText ();   // to reflect changed tier selection
 	if (my d_endWindow - my d_startWindow > 30.0) {
 		my d_endWindow = my d_startWindow + 30.0;
-		if (my d_startWindow == my d_tmin)
+		if (my d_startWindow == my tmin)
 			my d_startSelection = my d_endSelection = 0.5 * (my d_startWindow + my d_endWindow);
 		FunctionEditor_marksChanged (me, false);
 	}
@@ -2222,10 +2222,10 @@ void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid
 			"to shift the starting time of the TextGrid to zero.");
 }
 
-TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker) {
+TextGridEditor TextGridEditor_create (const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket) {
 	try {
 		autoTextGridEditor me = Thing_new (TextGridEditor);
-		TextGridEditor_init (me.peek(), title, grid, sound, ownSound, spellingChecker);
+		TextGridEditor_init (me.peek(), title, grid, sound, ownSound, spellingChecker, callbackSocket);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("TextGrid window not created.");

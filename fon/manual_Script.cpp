@@ -3001,13 +3001,16 @@ CODE (L"time = stopwatch")
 CODE (L"writeInfoLine: a, \" \", fixed\\$  (time, 3)")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20140112)
+MAN_BEGIN (L"Scripting 6.6. Controlling the user", L"ppgb", 20140726)
 INTRO (L"You can temporarily halt a Praat script:")
-TAG (L"#pause %text")
+TAG (L"#pauseScript: %message")
 DEFINITION (L"suspends execution of the script, and allows the user to interrupt it. "
-	"A message window will appear with the %text and the buttons Stop and Continue:")
-CODE (L"#pause The next file will be beerbeet.TextGrid")
-NORMAL (L"In the pause window you can include the same kinds of arguments as in a @@Scripting 6.1. Arguments to the script|form@. "
+	"A message window will appear with the %message (you can use the same argument list as with #writeInfoLine) and the buttons Stop and Continue:")
+CODE (L"#pauseScript: \"The next file will be \", fileName\\$ ")
+NORMAL (L"The pauseScript function is useful if you want to send a simple message to the user, "
+	"and you only want to ask the user whether she wants to proceed or not. "
+	"More interesting interactions between your script and the user are possible with the %%pause window%. "
+	"In a pause window you can include the same kinds of arguments as in a @@Scripting 6.1. Arguments to the script|form@. "
 	"Here is an extensive example:")
 CODE (L"writeInfoLine: \"script\"")
 CODE (L"compression = 1")

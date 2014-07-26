@@ -618,21 +618,21 @@ static void print (I, Graphics graphics) {
 /********** class HyperPage **********/
 
 void structHyperPage :: v_destroy () {
-	forget (links);
-	Melder_free (entryHint);
-	forget (g);
-	for (int i = 0; i < 20; i ++) Melder_free (history [i]. page);
-	Melder_free (currentPageTitle);
+	forget (our links);
+	Melder_free (our entryHint);
+	forget (our g);
+	for (int i = 0; i < 20; i ++) Melder_free (our history [i]. page);
+	Melder_free (our currentPageTitle);
 	if (praatApplication != NULL) {
-		for (int iobject = ((PraatObjects) praatObjects) -> n; iobject >= 1; iobject --) {
-			Melder_free (((PraatObjects) praatObjects) -> list [iobject]. name);
-			forget (((PraatObjects) praatObjects) -> list [iobject]. object);
+		for (int iobject = ((PraatObjects) our praatObjects) -> n; iobject >= 1; iobject --) {
+			Melder_free (((PraatObjects) our praatObjects) -> list [iobject]. name);
+			forget (((PraatObjects) our praatObjects) -> list [iobject]. object);
 		}
-		Melder_free (praatApplication);
-		Melder_free (praatObjects);
-		Melder_free (praatPicture);
+		Melder_free (our praatApplication);
+		Melder_free (our praatObjects);
+		Melder_free (our praatPicture);
 	}
-	HyperPage_Parent :: v_destroy ();
+	our HyperPage_Parent :: v_destroy ();
 }
 
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
@@ -903,7 +903,7 @@ void structHyperPage :: v_createMenus () {
 	Editor_addCommand (this, L"File", L"Print page...", 'P', menu_cb_print);
 	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
 
-	if (v_hasHistory ()) {
+	if (our v_hasHistory ()) {
 		Editor_addMenu (this, L"Go to", 0);
 		Editor_addCommand (this, L"Go to", L"Search for page...", 0, menu_cb_searchForPage);
 		Editor_addCommand (this, L"Go to", L"Back", GuiMenu_OPTION | GuiMenu_LEFT_ARROW, menu_cb_back);
@@ -956,30 +956,30 @@ void structHyperPage :: v_createChildren () {
 
 	/***** Create navigation buttons. *****/
 
-	if (v_hasHistory ()) {
-		GuiButton_createShown (d_windowForm, 4, 48, y, y + height,
+	if (our v_hasHistory ()) {
+		GuiButton_createShown (our d_windowForm, 4, 48, y, y + height,
 			L"<", gui_button_cb_back, this, 0);
-		GuiButton_createShown (d_windowForm, 54, 98, y, y + height,
+		GuiButton_createShown (our d_windowForm, 54, 98, y, y + height,
 			L">", gui_button_cb_forth, this, 0);
 	}
-	if (v_isOrdered ()) {
-		GuiButton_createShown (d_windowForm, 174, 218, y, y + height,
+	if (our v_isOrdered ()) {
+		GuiButton_createShown (our d_windowForm, 174, 218, y, y + height,
 			L"< 1", gui_button_cb_previousPage, this, 0);
-		GuiButton_createShown (d_windowForm, 224, 268, y, y + height,
+		GuiButton_createShown (our d_windowForm, 224, 268, y, y + height,
 			L"1 >", gui_button_cb_nextPage, this, 0);
 	}
 
 	/***** Create scroll bar. *****/
 
-	createVerticalScrollBar (this, d_windowForm);
+	createVerticalScrollBar (this, our d_windowForm);
 
 	/***** Create drawing area. *****/
 
-	drawingArea = GuiDrawingArea_createShown (d_windowForm,
+	drawingArea = GuiDrawingArea_createShown (our d_windowForm,
 		0, - Machine_getScrollBarWidth (),
-		y + ( d_hasExtraRowOfTools ? 2 * height + 16 : height + 9 ), - Machine_getScrollBarWidth (),
+		y + ( our d_hasExtraRowOfTools ? 2 * height + 16 : height + 9 ), - Machine_getScrollBarWidth (),
 		gui_drawingarea_cb_expose, gui_drawingarea_cb_click, NULL, gui_drawingarea_cb_resize, this, GuiDrawingArea_BORDER);
-	drawingArea -> f_setSwipable (NULL, verticalScrollBar);
+	drawingArea -> f_setSwipable (NULL, our verticalScrollBar);
 }
 
 void HyperPage_init (HyperPage me, const wchar_t *title, Data data) {
@@ -1011,7 +1011,7 @@ void HyperPage_clear (HyperPage me) {
 
 void structHyperPage :: v_dataChanged () {
 	int oldError = Melder_hasError ();   // this method can be called during error time
-	(void) v_goToPage (currentPageTitle);
+	(void) our v_goToPage (our currentPageTitle);
 	if (Melder_hasError () && ! oldError) Melder_flushError (NULL);
 	HyperPage_clear (this);
 	updateVerticalScrollBar (this);

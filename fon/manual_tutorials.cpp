@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140702)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140726)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.82# (26 July 2014)")
+LIST_ITEM (L"\\bu Audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
+LIST_ITEM (L"\\bu Pause forms: more consistent appearance of the Revert button.")
+LIST_ITEM (L"\\bu Scripting: pauseScript ( ) function.")
 NORMAL (L"##5.3.81# (2 July 2014)")
 LIST_ITEM (L"\\bu EEG: can work with status %numbers instead of only with status %bits.")
 LIST_ITEM (L"\\bu Windows: repaired a bug that could cause Praat to crash if there was a 96-dpi printer.")

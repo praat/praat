@@ -35,20 +35,13 @@
 #include <wchar.h>
 #ifdef __MINGW32__
 	#undef swprintf
-	#define swprintf  __mingw_snwprintf
+	#define swprintf  _snwprintf
+	//#define swprintf  __mingw_snwprintf
 #endif
 #include <stdbool.h>
 #include <stdint.h>
 
 typedef wchar_t wchar;
-typedef int8_t int8;
-typedef uint8_t uint8;
-typedef int16_t int16;
-typedef uint16_t uint16;
-typedef int32_t int32;
-typedef uint32_t uint32;
-typedef int64_t int64;
-typedef uint64_t uint64;
 
 bool Melder_wcsequ_firstCharacterCaseInsensitive (const wchar_t *string1, const wchar_t *string2);
 
@@ -157,13 +150,13 @@ enum kMelder_textOutputEncoding Melder_getOutputEncoding (void);
  * these constants should stay separate from the above encoding constants
  * because they occur in the same fields of struct MelderFile.
  */
-#define kMelder_textInputEncoding_FLAC  0x464C4143
-#define kMelder_textOutputEncoding_ASCII  0x41534349
-#define kMelder_textOutputEncoding_ISO_LATIN1  0x4C415401
-#define kMelder_textOutputEncoding_FLAC  0x464C4143
+const uint32_t kMelder_textInputEncoding_FLAC = 0x464C4143;
+const uint32_t kMelder_textOutputEncoding_ASCII = 0x41534349;
+const uint32_t kMelder_textOutputEncoding_ISO_LATIN1 = 0x4C415401;
+const uint32_t kMelder_textOutputEncoding_FLAC = 0x464C4143;
 
-typedef uint16 MelderUtf16;
-typedef uint32 MelderUtf32;
+typedef uint16_t MelderUtf16;
+typedef uint32_t MelderUtf32;
 
 bool Melder_isValidAscii (const wchar_t *string);
 bool Melder_strIsValidUtf8 (const char *string);
@@ -820,7 +813,7 @@ int Melder_publishPlayed (void);
 
 extern unsigned long Melder_systemVersion;
 /*
-	For Macintosh, this is set in the Motif emulator.
+	For Macintosh, this is set in praat_init.
 */
 
 /********** SCRATCH TEXT BUFFERS **********/
@@ -933,7 +926,7 @@ enum kMelder_asynchronicityLevel MelderAudio_getOutputMaximumAsynchronicity (voi
 long MelderAudio_getOutputBestSampleRate (long fsamp);
 
 extern bool MelderAudio_isPlaying;
-void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
+void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
 	bool (*playCallback) (void *playClosure, long numberOfSamplesPlayed),   // return true to continue, false to stop
 	void *playClosure);
 bool MelderAudio_stopPlaying (bool isExplicit);   // returns true if sound was playing

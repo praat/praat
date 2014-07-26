@@ -1,6 +1,6 @@
 /* TextGrid.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -493,25 +493,6 @@ TextGrid TextGrid_merge (Collection textGrids) {
 	}
 }
 
-static TextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
-	autoTextGrid thee = TextGrid_createWithoutTiers (tmin, tmax);
-	for (long itier = 1; itier <= my size; itier ++) {
-		Tier tier = (Tier) my item [itier];
-		autoIntervalTier intervalTier = IntervalTier_create (tmin, tmax);
-		Collection_addItem (thy tiers, intervalTier.transfer());
-		Collection_removeItem (intervalTier -> intervals, 1);
-		for (long iinterval = 1; iinterval <= tier -> size; iinterval ++) {
-			Autosegment autosegment = (Autosegment) tier -> item [iinterval];
-			autoTextInterval textInterval = TextInterval_create (
-				iinterval == 1 ? tmin : autosegment -> xmin,
-				iinterval == tier -> size ? tmax : autosegment -> xmax,
-				autosegment -> name);
-			Collection_addItem (intervalTier -> intervals, textInterval.transfer());
-		}
-	}
-	return thee.transfer();
-}
-
 TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preserveTimes) {
 	try {
 		autoTextGrid thee = (TextGrid) Data_copy (me);
@@ -550,6 +531,25 @@ TextGrid TextGrid_extractPart (TextGrid me, double tmin, double tmax, int preser
 	} catch (MelderError) {
 		Melder_throw (me, ": part not extracted.");
 	}
+}
+
+static TextGrid _Label_to_TextGrid (Label me, double tmin, double tmax) {
+	autoTextGrid thee = TextGrid_createWithoutTiers (tmin, tmax);
+	for (long itier = 1; itier <= my size; itier ++) {
+		Tier tier = (Tier) my item [itier];
+		autoIntervalTier intervalTier = IntervalTier_create (tmin, tmax);
+		Collection_addItem (thy tiers, intervalTier.transfer());
+		Collection_removeItem (intervalTier -> intervals, 1);
+		for (long iinterval = 1; iinterval <= tier -> size; iinterval ++) {
+			Autosegment autosegment = (Autosegment) tier -> item [iinterval];
+			autoTextInterval textInterval = TextInterval_create (
+				iinterval == 1 ? tmin : autosegment -> xmin,
+				iinterval == tier -> size ? tmax : autosegment -> xmax,
+				autosegment -> name);
+			Collection_addItem (intervalTier -> intervals, textInterval.transfer());
+		}
+	}
+	return thee.transfer();
 }
 
 TextGrid Label_to_TextGrid (Label me, double duration) {

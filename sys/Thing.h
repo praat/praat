@@ -2,7 +2,7 @@
 #define _Thing_h_
 /* Thing.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ class structThing {
 			 */
 };
 
-#define forget(thing)  do { _Thing_forget (thing); thing = NULL; } while (0)
+#define forget(thing)  do { _Thing_forget (thing); thing = NULL; } while (false)
 /*
 	Function:
 		free all memory associated with 'thing'.

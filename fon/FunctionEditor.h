@@ -2,7 +2,7 @@
 #define _FunctionEditor_h_
 /* FunctionEditor.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@ Thing_define (FunctionEditor, Editor) {
 		/* but has to respect the invariants, */
 		/* and has to call FunctionEditor_marksChanged () */
 		/* immediately after making the changes. */
-		double d_tmin, d_tmax, d_startWindow, d_endWindow;
+		double tmin, tmax, d_startWindow, d_endWindow;
 		double d_startSelection, d_endSelection;   // markers
 			/* These attributes are all expressed in seconds. Invariants: */
 			/*    tmin <= startWindow < endWindow <= tmax; */

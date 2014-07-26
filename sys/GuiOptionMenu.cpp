@@ -80,9 +80,9 @@ void structGuiOptionMenu :: v_show () {
 
 void structGuiOptionMenu :: f_init (GuiForm parent, int left, int right, int top, int bottom, unsigned long flags)
 {
-	d_shell = parent -> d_shell;
-	d_parent = parent;
-	d_options = Ordered_create ();
+	our d_shell = parent -> d_shell;
+	our d_parent = parent;
+	our d_options = Ordered_create ();
 	#if gtk
 		d_widget = gtk_combo_box_new_text ();
 		gtk_widget_set_size_request (GTK_WIDGET (d_widget), right - left, bottom - top + 8);
@@ -93,8 +93,8 @@ void structGuiOptionMenu :: f_init (GuiForm parent, int left, int right, int top
     
         GuiCocoaOptionMenu *optionMenu = [[GuiCocoaOptionMenu alloc] init];
 
-        d_widget = (GuiObject) optionMenu;
-		v_positionInForm (d_widget, left, right, top - 1, bottom + 1, parent);
+        our d_widget = (GuiObject) optionMenu;
+		v_positionInForm (our d_widget, left, right, top - 1, bottom + 1, parent);
     
         [optionMenu setUserData: this];
 //        [optionMenu setBezelStyle: NSRoundedBezelStyle];

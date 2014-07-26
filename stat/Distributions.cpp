@@ -1,6 +1,6 @@
 /* Distributions.cpp
  *
- * Copyright (C) 1997-2012 Paul Boersma
+ * Copyright (C) 1997-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,31 +44,7 @@ void Distributions_checkSpecifiedColumnNumberWithinRange (Distributions me, long
 		Melder_throw (me, ": the specified column number is ", columnNumber, ", but should be at most my number of columns (", my numberOfColumns, ").");
 }
 
-int Distributions_peek (Distributions me, long column, wchar_t **string) {
-	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
-	if (my numberOfRows < 1)
-		Melder_throw (me, ": I have no candidates.");
-	double total = 0.0;
-	for (long irow = 1; irow <= my numberOfRows; irow ++) {
-		total += my data [irow] [column];
-	}
-	if (total <= 0.0)
-		Melder_throw (me, ": the total weight of column ", column, " is not positive.");
-	long irow;
-	do {
-		double rand = NUMrandomUniform (0, total), sum = 0.0;
-		for (irow = 1; irow <= my numberOfRows; irow ++) {
-			sum += my data [irow] [column];
-			if (rand <= sum) break;
-		}
-	} while (irow > my numberOfRows);   // guard against rounding errors
-	*string = my rowLabels [irow];
-	if (! *string)
-		Melder_throw (me, ": no string in row ", irow, ".");
-	return 1;
-}
-
-int Distributions_peek_opt (Distributions me, long column, long *number) {
+void Distributions_peek (Distributions me, long column, wchar_t **string, long *number) {
 	Distributions_checkSpecifiedColumnNumberWithinRange (me, column);
 	if (my numberOfRows < 1)
 		Melder_throw (me, ": I have no candidates.");
@@ -88,8 +64,10 @@ int Distributions_peek_opt (Distributions me, long column, long *number) {
 	} while (irow > my numberOfRows);   /* Guard against rounding errors. */
 	if (my rowLabels [irow] == NULL)
 		Melder_throw (me, ": no string in row ", irow, ".");
-	*number = irow;
-	return 1;
+	if (string)
+		*string = my rowLabels [irow];
+	if (number)
+		*number = irow;
 }
 
 double Distributions_getProbability (Distributions me, const wchar_t *string, long column) {

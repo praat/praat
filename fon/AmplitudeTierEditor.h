@@ -2,7 +2,7 @@
 #define _AmplitudeTierEditor_h_
 /* AmplitudeTierEditor.h
  *
- * Copyright (C) 2003-2011,2012 Paul Boersma
+ * Copyright (C) 2003-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 Thing_define (AmplitudeTierEditor, RealTierEditor) {
 	// overridden methods:
 		virtual void v_createHelpMenuItems (EditorMenu menu);
-		virtual void v_play (double tmin, double tmax);
+		virtual void v_play (double fromTime, double toTime);
 		virtual const wchar_t *
 			v_quantityText ()
 				{ return L"Sound pressure (Pa)"; }

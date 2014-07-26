@@ -2,7 +2,7 @@
 #define _OTMulti_h_
 /* OTMulti.h
  *
- * Copyright (C) 2005-2011 Paul Boersma
+ * Copyright (C) 2005-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,6 +55,10 @@ void OTMulti_PairDistribution_learn (OTMulti me, PairDistribution thee,
 	long numberOfPlasticities, double relativePlasticityNoise, long storeHistoryEvery, Table *history_out);
 
 void OTMulti_drawTableau (OTMulti me, Graphics g, const wchar_t *form1, const wchar_t *form2, bool vertical, bool showDisharmonies);
+
+OTMulti OTMulti_create_metrics (int equal_footForm_wsp, int trochaicityConstraint, int includeFootBimoraic, int includeFootBisyllabic,
+	int includePeripheral, int nonfinalityConstraint, int overtFormsHaveSecondaryStress,
+	int includeClashAndLapse, int includeCodas);
 
 void OTMulti_reset (OTMulti me, double ranking);
 void OTMulti_setRanking (OTMulti me, long constraint, double ranking, double disharmony);

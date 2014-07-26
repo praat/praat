@@ -1392,9 +1392,9 @@ void praat_DataModeler_init (void) {
 
 	praat_addAction1 (classPitchModeler, 0, L"Draw...", 0, 0, DO_PitchModeler_draw);
 
-	praat_addAction1 (classSound, 0, L"To Formant (interval)...", 0, 0, DO_Sound_to_Formant_interval);
-	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained)...", 0, 0, DO_Sound_to_Formant_interval_constrained);
-	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained, robust)...", 0, 0, DO_Sound_to_Formant_interval_constrained_robust);
+	praat_addAction1 (classSound, 0, L"To Formant (interval)...", L"To Formant (burg)...", 1, DO_Sound_to_Formant_interval);
+	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained)...", L"To Formant (interval)...", 1, DO_Sound_to_Formant_interval_constrained);
+	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained, robust)...", L"To Formant (interval, constrained)...", 1, DO_Sound_to_Formant_interval_constrained_robust);
 	praat_addAction1 (classTable, 0, L"To DataModeler...", L"To logistic regression...", 1, DO_Table_to_DataModeler);
 }
 

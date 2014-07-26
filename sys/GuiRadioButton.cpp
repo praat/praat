@@ -71,7 +71,7 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 		GuiRadioButton d_userData;
 	}
 	- (void) dealloc {   // override
-		GuiRadioButton me = d_userData;
+		GuiRadioButton me = self -> d_userData;
 		forget (me);
 		trace ("deleting a radio button");
 		[super dealloc];

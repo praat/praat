@@ -22,6 +22,7 @@
 #include "machine.h"
 #include "EditorM.h"
 #include "praat_script.h"
+#include "sendsocket.h"
 
 #include "enums_getText.h"
 #include "Editor_enums.h"
@@ -241,6 +242,7 @@ void structEditor :: v_destroy () {
 	}
 	forget (our previousData);
 	if (our d_ownData) forget (our data);
+	Melder_free (our callbackSocket);
 	Editor_Parent :: v_destroy ();
 }
 
@@ -269,6 +271,18 @@ void structEditor :: v_saveData () {
 void structEditor :: v_restoreData () {
 	if (data && previousData)
 		Thing_swap (data, previousData);
+}
+
+static void menu_cb_sendBackToCallingProgram (EDITOR_ARGS) {
+	EDITOR_IAM (Editor);
+	if (my data) {
+		extern structMelderDir praatDir;
+		structMelderFile file;
+		MelderDir_getFile (& praatDir, L"praat_backToCaller.Data", & file);
+		Data_writeToBinaryFile (my data, & file);
+		sendsocket (my callbackSocket, NULL);
+	}
+	my v_goAway ();
 }
 
 static void menu_cb_close (EDITOR_ARGS) {
@@ -490,6 +504,8 @@ void Editor_init (Editor me, int x, int y, int width, int height, const wchar_t 
 		 * Add the scripted commands.
 		 */
 		praat_addCommandsToEditor (me);
+		if (my callbackSocket)
+			Editor_addCommand (me, L"File", L"Send back to calling program", 0, menu_cb_sendBackToCallingProgram);
 		Editor_addCommand (me, L"File", L"Close", 'W', menu_cb_close);
 	}
 	my d_windowForm -> f_show ();

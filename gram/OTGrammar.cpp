@@ -70,6 +70,7 @@
  * pb 2011/04/27 Melder_debug 41 and 42
  * pb 2011/07/14 C++
  * pb 2014/02/27 skippable symmetric all
+ * pb 2014/07/25 RRIP
  */
 
 #include "OTGrammar.h"
@@ -652,6 +653,16 @@ bool OTGrammar_isPartialOutputGrammatical (OTGrammar me, const wchar_t *partialO
 	return false;
 }
 
+bool OTGrammar_areAllPartialOutputsGrammatical (OTGrammar me, Strings thee) {
+	for (long ioutput = 1; ioutput <= thy numberOfStrings; ioutput ++) {
+		const wchar_t *partialOutput = thy strings [ioutput];
+		if (! OTGrammar_isPartialOutputGrammatical (me, partialOutput)) {
+			return false;
+		}
+	}
+	return true;
+}
+
 bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *partialOutput) {
 	bool found = false;
 	for (long itab = 1; itab <= my numberOfTableaus; itab ++) {
@@ -675,6 +686,16 @@ bool OTGrammar_isPartialOutputSinglyGrammatical (OTGrammar me, const wchar_t *pa
 		}
 	}
 	return found;
+}
+
+bool OTGrammar_areAllPartialOutputsSinglyGrammatical (OTGrammar me, Strings thee) {
+	for (long ioutput = 1; ioutput <= thy numberOfStrings; ioutput ++) {
+		const wchar_t *partialOutput = thy strings [ioutput];
+		if (! OTGrammar_isPartialOutputSinglyGrammatical (me, partialOutput)) {
+			return false;
+		}
+	}
+	return true;
 }
 
 static int OTGrammar_crucialCell (OTGrammar me, long itab, long icand, long iwinner, long numberOfOptimalCandidates) {
@@ -1859,12 +1880,26 @@ void OTGrammar_reset (OTGrammar me, double ranking) {
 	OTGrammar_sort (me);
 }
 
+void OTGrammar_resetToRandomRanking (OTGrammar me, double mean, double standardDeviation) {
+	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
+		OTGrammarConstraint constraint = & my constraints [my index [icons]];
+		constraint -> disharmony = constraint -> ranking = NUMrandomGauss (mean, standardDeviation);
+	}
+	OTGrammar_sort (me);
+}
+
 void OTGrammar_resetToRandomTotalRanking (OTGrammar me, double maximumRanking, double rankingDistance) {
+	/*
+	 * First put the constraints in a random order and build a random index.
+	 */
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [icons];
 		constraint -> ranking = 0.0;
 	}
 	OTGrammar_newDisharmonies (me, 1.0);
+	/*
+	 * Then use the random index to yield a cascade of rankings.
+	 */
 	for (long icons = 1; icons <= my numberOfConstraints; icons ++) {
 		OTGrammarConstraint constraint = & my constraints [my index [icons]];
 		constraint -> disharmony = constraint -> ranking = maximumRanking - (icons - 1) * rankingDistance;
@@ -1947,7 +1982,7 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar_t *partialAd
 				my tableaus [assumedAdultInputTableau]. input,
 				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output,
 				evaluationNoise, updateRule, honourLocalRankings,
-				plasticity, relativePlasticityNoise, FALSE, warnIfStalled, & grammarHasChanged);
+				plasticity, relativePlasticityNoise, Melder_debug == 47, warnIfStalled, & grammarHasChanged);
 			if (! grammarHasChanged) return;
 		}
 		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy_EDCD && ichew > numberOfChews) {
@@ -1971,9 +2006,10 @@ void OTGrammar_learnOneFromPartialOutput (OTGrammar me, const wchar_t *partialAd
 	}
 }
 
-static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, long ipartialAdultOutput,
+static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, const wchar_t *partialAdultOutput, long ipartialAdultOutput,
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
-	double plasticity, double relativePlasticityNoise, long numberOfChews, int warnIfStalled)
+	double plasticity, double relativePlasticityNoise, long numberOfChews, int warnIfStalled,
+	bool resampleForVirtualProduction, bool compareOnlyPartialOutput)
 {
 	try {
 		OTGrammar_newDisharmonies (me, evaluationNoise);
@@ -1984,12 +2020,45 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, long ipartial
 		for (; ichew <= numberOfChews; ichew ++) {
 			long assumedAdultInputTableau, assumedAdultCandidate;
 			OTGrammar_getInterpretiveParse_opt (me, ipartialAdultOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
-			int grammarHasChanged;
-			OTGrammar_learnOne (me,
-				my tableaus [assumedAdultInputTableau]. input,
-				my tableaus [assumedAdultInputTableau]. candidates [assumedAdultCandidate]. output,
-				evaluationNoise, updateRule, honourLocalRankings,
-				plasticity, relativePlasticityNoise, FALSE, warnIfStalled, & grammarHasChanged);
+			OTGrammarTableau tableau = & my tableaus [assumedAdultInputTableau];
+			OTGrammarCandidate assumedCorrect = & tableau -> candidates [assumedAdultCandidate];
+
+			/*
+			 * Determine the "winner", i.e. the candidate that wins in the learner's grammar
+			 * (Tesar & Smolensky call this the "loser").
+			 */
+			if (resampleForVirtualProduction) OTGrammar_newDisharmonies (me, evaluationNoise);
+			long iwinner = OTGrammar_getWinner (me, assumedAdultInputTableau);
+			OTGrammarCandidate winner = & tableau -> candidates [iwinner];
+
+			/*
+			 * Error-driven: compare the adult winner (the correct candidate) and the learner's winner.
+			 */
+			if (compareOnlyPartialOutput) {
+				if (wcsstr (winner -> output, partialAdultOutput)) return;   // as far as we know, the grammar is already correct: don't update rankings
+			} else {
+				if (wcsequ (winner -> output, assumedCorrect -> output)) return;   // as far as we know, the grammar is already correct: don't update rankings
+			}
+
+			/*
+			 * Find (perhaps the learner's interpretation of) the adult output in the learner's own tableau
+			 * (Tesar & Smolensky call this the "winner").
+			 */
+			long iadult = 1;
+			for (; iadult <= tableau -> numberOfCandidates; iadult ++) {
+				OTGrammarCandidate cand = & tableau -> candidates [iadult];
+				if (wcsequ (cand -> output, assumedCorrect -> output)) break;
+			}
+			if (iadult > tableau -> numberOfCandidates)
+				Melder_throw ("Cannot generate adult output \"", assumedCorrect -> output, L"\".");
+
+			/*
+			 * Now we know that the current hypothesis prefers the (wrong) learner's winner over the (correct) adult output.
+			 * The grammar will have to change.
+			 */
+			int grammarHasChanged = FALSE;
+			OTGrammar_modifyRankings (me, assumedAdultInputTableau, iwinner, iadult, updateRule, honourLocalRankings,
+				plasticity, relativePlasticityNoise, warnIfStalled, & grammarHasChanged);
 			if (! grammarHasChanged) return;
 		}
 		if (numberOfChews > 1 && updateRule == kOTGrammar_rerankingStrategy_EDCD && ichew > numberOfChews) {
@@ -2009,7 +2078,7 @@ static void OTGrammar_learnOneFromPartialOutput_opt (OTGrammar me, long ipartial
 			}
 		}
 	} catch (MelderError) {
-		Melder_throw (me, ": not learned from partial adult output ", ipartialAdultOutput, ".");
+		Melder_throw (me, ": not learned from partial adult output ", partialAdultOutput, ".");
 	}
 }
 
@@ -2155,7 +2224,8 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 	double evaluationNoise, enum kOTGrammar_rerankingStrategy updateRule, int honourLocalRankings,
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
-	long storeHistoryEvery, OTHistory *history_out)
+	long storeHistoryEvery, OTHistory *history_out,
+	bool resampleForVirtualProduction, bool compareOnlyPartialOutput)
 {
 	long idatum = 0;
 	const long numberOfData = numberOfPlasticities * replicationsPerPlasticity;
@@ -2173,8 +2243,9 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 			double plasticity = initialPlasticity;
 			for (long iplasticity = 1; iplasticity <= numberOfPlasticities; iplasticity ++) {
 				for (long ireplication = 1; ireplication <= replicationsPerPlasticity; ireplication ++) {
+					wchar_t *partialOutput;
 					long ipartialOutput;
-					Distributions_peek_opt (thee, columnNumber, & ipartialOutput);
+					Distributions_peek (thee, columnNumber, & partialOutput, & ipartialOutput);
 					++ idatum;
 					if (monitor.graphics() && idatum % (numberOfData / 400 + 1) == 0) {
 						Graphics_setWindow (monitor.graphics(), 0, numberOfData, 50, 150);
@@ -2189,9 +2260,10 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 						L"Processing partial output ", Melder_integer (idatum), L" out of ", Melder_integer (numberOfData), L": ",
 						thy rowLabels [ipartialOutput]);
 					try {
-						OTGrammar_learnOneFromPartialOutput_opt (me, ipartialOutput,
+						OTGrammar_learnOneFromPartialOutput_opt (me, partialOutput, ipartialOutput,
 							evaluationNoise, updateRule, honourLocalRankings,
-							plasticity, relativePlasticityNoise, numberOfChews, FALSE);   // no warning if stalled: RIP form is allowed to be harmonically bounded
+							plasticity, relativePlasticityNoise, numberOfChews, FALSE,
+							resampleForVirtualProduction, compareOnlyPartialOutput);   // no warning if stalled: RIP form is allowed to be harmonically bounded
 					} catch (MelderError) {
 						if (history.peek()) {
 							OTGrammar_updateHistory (me, history.peek(), storeHistoryEvery, idatum, thy rowLabels [ipartialOutput]);
@@ -2278,7 +2350,7 @@ double OTGrammar_Distributions_getFractionCorrect (OTGrammar me, Distributions t
 		OTGrammar_Distributions_opt_createOutputMatching (me, thee, columnNumber);
 		for (long ireplication = 1; ireplication <= numberOfInputs; ireplication ++) {
 			long ipartialOutput;
-			Distributions_peek_opt (thee, columnNumber, & ipartialOutput);
+			Distributions_peek (thee, columnNumber, NULL, & ipartialOutput);
 			OTGrammar_newDisharmonies (me, evaluationNoise);
 			long assumedAdultInputTableau, assumedAdultCandidate;
 			OTGrammar_getInterpretiveParse_opt (me, ipartialOutput, & assumedAdultInputTableau, & assumedAdultCandidate);
@@ -2732,7 +2804,7 @@ void OTGrammar_Distributions_listObligatoryRankings (OTGrammar me, Distributions
 				Melder_progressOff ();
 				OTGrammar_Distributions_learnFromPartialOutputs (me, thee, columnNumber,
 					1e-9, kOTGrammar_rerankingStrategy_EDCD, TRUE /* honour fixed rankings; very important */,
-					1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL);
+					1.0, 1000, 0.0, 1, 0.0, 1, 0, NULL, false, false);
 				Melder_progressOn ();
 				for (kcons = 1; kcons <= my numberOfConstraints; kcons ++) {
 					if (my constraints [kcons]. ranking < 0.0) {

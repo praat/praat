@@ -829,12 +829,16 @@ int OTMulti_learnOne (OTMulti me, const wchar_t *form1, const wchar_t *form2,
 {
 	long iloser = OTMulti_getWinner (me, form1, form2);
 	if (direction & OTMulti_LEARN_FORWARD) {
+		if (Melder_debug == 47) OTMulti_newDisharmonies (me, 2.0);
 		long iwinner = OTMulti_getWinner (me, form1, L"");
-		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
+		if (Melder_debug != 47 || ! OTMulti_candidateMatches (me, iwinner, form2, L""))
+			OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
 	}
 	if (direction & OTMulti_LEARN_BACKWARD) {
+		if (Melder_debug == 47) OTMulti_newDisharmonies (me, 2.0);
 		long iwinner = OTMulti_getWinner (me, form2, L"");
-		OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
+		if (Melder_debug != 47 || ! OTMulti_candidateMatches (me, iwinner, form1, L""))
+			OTMulti_modifyRankings (me, iwinner, iloser, updateRule, plasticity, relativePlasticityNoise);
 	}
 	return 1;
 }

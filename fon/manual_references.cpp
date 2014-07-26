@@ -31,7 +31,7 @@ MAN_BEGIN (L"Boersma (1993)", L"ppgb", 20030312)
 NORMAL (L"Paul Boersma (1993): \"Accurate short-term analysis of the fundamental frequency "
 	"and the harmonics-to-noise ratio of a sampled sound.\" "
 	"%%Proceedings of the Institute of Phonetic Sciences% #17: 97\\--110. University of Amsterdam.")
-NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+NORMAL (L"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma (1997)", L"ppgb", 19981219)
@@ -60,40 +60,40 @@ MAN_END
 MAN_BEGIN (L"Boersma (2009a)", L"ppgb", 20100330)
 NORMAL (L"Paul Boersma (2009): \"Should jitter be measured by peak picking or by waveform matching?\" "
 	"%%Folia Phoniatrica et Logopaedica% #61: 305\\--308.")
-NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+NORMAL (L"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma (2009b)", L"ppgb", 20100330)
 NORMAL (L"Paul Boersma (2009b): \"Some correct error-driven versions of the Constraint Demotion algorithm.\" "
 	"%%Linguistic Inquiry% #40: 667\\--686.")
-NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+NORMAL (L"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma & Escudero (2008)", L"ppgb", 20100331)
 NORMAL (L"Paul Boersma & Paola Escudero (2008): \"Learning to perceive a smaller L2 vowel inventory: "
 	"an Optimality Theory account.\" In Peter Avery, Elan Dresher & Keren Rice (eds.), "
 	"%%Contrast in phonology: theory, perception, acquisition%. Berlin: Mouton De Gruyter. 271\\--301.")
-NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+NORMAL (L"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma & Hayes (2001)", L"ppgb", 20020511)
 NORMAL (L"Paul Boersma & Bruce Hayes (2001): \"Empirical tests of the Gradual Learning Algorithm.\" "
 	"%%Linguistic Inquiry% #32: 45\\--86.")
-NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+NORMAL (L"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma & Kovacic (2006)", L"ppgb", 20061203)
 NORMAL (L"Paul Boersma & Gordana Kovacic (2006): "
 	"\"Spectral characteristics of three styles of Croatian folk singing.\" "
 	"%%Journal of the Acoustical Society of America% #119: 1805\\--1816.")
-NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+NORMAL (L"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Boersma & Pater (2008)", L"ppgb", 20100331)
 NORMAL (L"Paul Boersma & Joe Pater (2008): "
 	"\"Convergence properties of a gradual learning algorithm for Harmonic Grammar.\" "
 	"%%Rutgers Optimality Archive% #970, http://ruccs.rutgers.edu/roa.html.")
-NORMAL (L"Can be downloaded as a PDF file from http://fon.hum.uva.nl/paul/")
+NORMAL (L"Can be downloaded as a PDF file from http://www.fon.hum.uva.nl/paul/")
 MAN_END
 
 MAN_BEGIN (L"Childers (1978)", L"ppgb", 20030515)

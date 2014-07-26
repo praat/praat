@@ -141,7 +141,7 @@ bool MelderAudio_isPlaying;
 static double theStartingTime = 0.0;
 
 static struct MelderPlay {
-	const int16_t *buffer;
+	int16_t *buffer;
 	long sampleRate, numberOfSamples, samplesLeft, samplesSent, samplesPlayed;
 	unsigned int asynchronicity;
 	int numberOfChannels;
@@ -501,7 +501,7 @@ static int thePaStreamCallback (const void *input, void *output,
 	return paContinue;
 }
 
-void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
+void MelderAudio_play16 (int16_t *buffer, long sampleRate, long numberOfSamples, int numberOfChannels,
 	bool (*playCallback) (void *playClosure, long numberOfSamplesPlayed), void *playClosure)
 {
 	struct MelderPlay *me = & thePlay;
@@ -545,8 +545,32 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 		const PaDeviceInfo *deviceInfo = Pa_GetDeviceInfo (outputParameters. device);
 		if (my numberOfChannels > deviceInfo -> maxOutputChannels) {
 			my numberOfChannels = deviceInfo -> maxOutputChannels;
-			for (long isamp = 1; isamp < numberOfSamples; isamp ++) {
-				memcpy ((char *) & my buffer [isamp * my numberOfChannels], (char *) & my buffer [isamp * numberOfChannels], 2 * my numberOfChannels);
+		}
+		if (numberOfChannels > my numberOfChannels) {
+			/*
+			 * Redistribute the in channels over the out channels.
+			 */
+			if (numberOfChannels == 4 && my numberOfChannels == 2) {   // a common case
+				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					long in1 = *in ++, in2 = *in ++, in3 = *in ++, in4 = *in ++;
+					*out ++ = (in1 + in2) / 2;
+					*out ++ = (in3 + in4) / 2;
+				}
+			} else {
+				int16_t *in = & my buffer [0], *out = & my buffer [0];
+				for (long isamp = 1; isamp <= numberOfSamples; isamp ++) {
+					for (long iout = 1; iout <= my numberOfChannels; iout ++) {
+						long outValue = 0;
+						long numberOfIn = numberOfChannels / my numberOfChannels;
+						if (iout == my numberOfChannels)
+							numberOfIn += numberOfChannels % my numberOfChannels;
+						for (long iin = 1; iin <= numberOfIn; iin ++)
+							outValue += *in ++;
+						outValue /= numberOfIn;
+						*out ++ = outValue;
+					}
+				}
 			}
 		}
 		outputParameters. channelCount = my numberOfChannels;
@@ -685,7 +709,7 @@ void MelderAudio_play16 (const int16_t *buffer, long sampleRate, long numberOfSa
 						for (long isamp = 0; isamp < numberOfSamples; isamp ++) {
 							newBuffer [isamp + isamp] = newBuffer [isamp + isamp + 1] = buffer [isamp];
 						}
-						my buffer = (const int16_t *) newBuffer;
+						my buffer = newBuffer;
 						my numberOfChannels = 2;
 					} else {
 						Melder_throw ("Cannot set number of channels to .", my numberOfChannels, ".");

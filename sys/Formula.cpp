@@ -124,7 +124,7 @@ enum { GEENSYMBOOL_,
 		DO_, DOSTR_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
-		EXIT_SCRIPT_, RUN_SCRIPT_,
+		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_,
 		MIN_, MAX_, IMIN_, IMAX_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
@@ -221,7 +221,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"do", L"do$",
 	L"writeInfo", L"writeInfoLine", L"appendInfo", L"appendInfoLine",
 	L"writeFile", L"writeFileLine", L"appendFile", L"appendFileLine",
-	L"exitScript", L"runScript",
+	L"pauseScript", L"exitScript", L"runScript",
 	L"min", L"max", L"imin", L"imax",
 	L"left$", L"right$", L"mid$",
 	L"selected", L"selected$", L"numberOfSelected", L"selectObject", L"plusObject", L"minusObject", L"removeObject",
@@ -2675,6 +2675,27 @@ static void do_appendFileLine () {
 	MelderFile_appendText (& file, text.transfer());
 	pushNumber (1);
 }
+static void do_pauseScript () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw ("The function \"pause\" is not available inside manuals.");
+	if (theCurrentPraatApplication -> batch) return;   // in batch we ignore pause statements
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	autoMelderString buffer;
+	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& buffer, Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& buffer, arg->string);
+	}
+	UiPause_begin (theCurrentPraatApplication -> topShell, L"stop or continue", theInterpreter);
+	UiPause_comment (numberOfArguments == 0 ? L"..." : buffer.string);
+	UiPause_end (1, 1, 0, L"Continue", NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, theInterpreter);
+	pushNumber (1);
+}
 static void do_exitScript () {
 	Stackel narg = pop;
 	Melder_assert (narg->which == Stackel_NUMBER);
@@ -4738,6 +4759,7 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case WRITE_FILE_LINE_ : { do_writeFileLine  ();
 } break; case APPEND_FILE_     : { do_appendFile     ();
 } break; case APPEND_FILE_LINE_: { do_appendFileLine ();
+} break; case PAUSE_SCRIPT_: { do_pauseScript ();
 } break; case EXIT_SCRIPT_: { do_exitScript ();
 } break; case RUN_SCRIPT_: { do_runScript ();
 } break; case MIN_: { do_min ();

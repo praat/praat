@@ -918,7 +918,14 @@ void UiForm_finish (I) {
 		my helpButton = GuiButton_createShown (form, HELP_BUTTON_X, HELP_BUTTON_X + HELP_BUTTON_WIDTH, y, y + Gui_PUSHBUTTON_HEIGHT,
 			L"Help", gui_button_cb_help, me, 0);
 	}
-	if (my numberOfFields > 1 || (my numberOfFields > 0 && my field [1] -> type != UI_LABEL)) {
+	bool commentsOnly = true;
+	for (long ifield = 1; ifield <= my numberOfFields; ifield ++) {
+		if (my field [ifield] -> type != UI_LABEL) {
+			commentsOnly = false;
+			break;
+		}
+	}
+	if (! commentsOnly) {
 		if (my isPauseForm) {
 			my revertButton = GuiButton_createShown (form,
 				HELP_BUTTON_X, HELP_BUTTON_X + REVERT_BUTTON_WIDTH,

@@ -594,7 +594,7 @@ static void menu_cb_convertToCString (EDITOR_ARGS) {
 		} else if (*p == '\\') {
 			MelderInfo_write (L"\\\\");
 		} else if (*p < 0 || *p > 127) {
-			uint32 kar = *p;
+			uint32_t kar = *p;
 			if (kar <= 0xFFFF) {
 				MelderInfo_write (L"\\u", hex [kar >> 12], hex [(kar >> 8) & 0x0000000F], hex [(kar >> 4) & 0x0000000F], hex [kar & 0x0000000F]);
 			} else {

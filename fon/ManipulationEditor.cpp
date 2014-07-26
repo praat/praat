@@ -1042,11 +1042,11 @@ static int clickPitch (ManipulationEditor me, double xWC, double yWC, bool shift
 	{
 		RealPoint *points = (RealPoint *) pitch -> points -> item;
 		double newTime = points [ifirstSelected] -> number + dt;
-		if (newTime < my d_tmin) return 1;   // outside domain
+		if (newTime < my tmin) return 1;   // outside domain
 		if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
 			return 1;   /* Past left neighbour. */
 		newTime = points [ilastSelected] -> number + dt;
-		if (newTime > my d_tmax) return 1;   // outside domain
+		if (newTime > my tmax) return 1;   // outside domain
 		if (ilastSelected < pitch -> points -> size && newTime >= points [ilastSelected + 1] -> number)
 			return 1;   // past right neighbour
 	}
@@ -1190,11 +1190,11 @@ static int clickDuration (ManipulationEditor me, double xWC, double yWC, int shi
 	{
 		RealPoint *points = (RealPoint *) duration -> points -> item;
 		double newTime = points [ifirstSelected] -> number + dt;
-		if (newTime < my d_tmin) return 1;   // outside domain
+		if (newTime < my tmin) return 1;   // outside domain
 		if (ifirstSelected > 1 && newTime <= points [ifirstSelected - 1] -> number)
 			return 1;   /* Past left neighbour. */
 		newTime = points [ilastSelected] -> number + dt;
-		if (newTime > my d_tmax) return 1;   // outside domain
+		if (newTime > my tmax) return 1;   // outside domain
 		if (ilastSelected < duration -> points -> size && newTime >= points [ilastSelected + 1] -> number)
 			return 1;   // past right neighbour
 	}
