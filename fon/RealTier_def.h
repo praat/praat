@@ -33,21 +33,21 @@ oo_DEFINE_CLASS (RealTier, Function)
 	oo_COLLECTION (SortedSetOfDouble, points, RealPoint, 0)
 
 	#if oo_DECLARING
+		// access functions:
+			long numberOfPoints () { return points -> size; }
+			RealPoint * peekPoints () { return reinterpret_cast <RealPoint *> (points -> item); }
+			RealPoint point (long ipoint) { return static_cast <RealPoint> (points -> item [ipoint]); }
 		// overridden methods:
 			virtual void v_info ();
-			virtual bool v_hasGetNx        () { return true; }   virtual double v_getNx   ()        { return points -> size; }
-			virtual bool v_hasGetX         () { return true; }   virtual double v_getX    (long ix) { return ((RealPoint) points -> item [ix]) -> number; }
-			virtual bool v_hasGetNcol      () { return true; }   virtual double v_getNcol ()        { return points -> size; }
+			virtual bool v_hasGetNx        () { return true; }   virtual double v_getNx   ()        { return numberOfPoints (); }
+			virtual bool v_hasGetX         () { return true; }   virtual double v_getX    (long ix) { return point (ix) -> number; }
+			virtual bool v_hasGetNcol      () { return true; }   virtual double v_getNcol ()        { return numberOfPoints (); }
 			virtual bool v_hasGetVector    () { return true; }   virtual double v_getVector    (long irow, long icol);
 			virtual bool v_hasGetFunction1 () { return true; }   virtual double v_getFunction1 (long irow, double x);
 			virtual const wchar_t * v_getUnitText (long ilevel, int unit, unsigned long flags)
 				{ (void) ilevel; (void) unit; (void) flags; return L"Time (s)"; }
 			virtual void v_shiftX (double xfrom, double xto);
 			virtual void v_scaleX (double xminfrom, double xmaxfrom, double xminto, double xmaxto);
-		// new functions:
-			long f_getNumberOfPoints () { return points -> size; }
-			RealPoint *f_peekPoints () { return (RealPoint *) points -> item; }
-			RealPoint f_peekPoint (long ipoint) { return (RealPoint) points -> item [ipoint]; }
 	#endif
 
 oo_END_CLASS (RealTier)

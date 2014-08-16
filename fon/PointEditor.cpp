@@ -189,7 +189,7 @@ void structPointEditor :: v_draw () {
 			Graphics_line (d_graphics, d_startWindow, 0.0, d_endWindow, 0.0);
 			Graphics_setLineType (d_graphics, Graphics_DRAWN);      
 			Graphics_function (d_graphics, sound -> z [1], first, last,
-				sound -> f_indexToX (first), sound -> f_indexToX (last));
+				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		}
 	}
 	Graphics_setColour (d_graphics, Graphics_BLUE);
@@ -217,7 +217,7 @@ PointEditor PointEditor_create (const wchar_t *title, PointProcess point, Sound 
 		if (sound) {
 			my monoSound = Sound_convertToMono (sound);
 		}
-		my structTimeSoundEditor :: f_init (title, point, my monoSound, false);
+		TimeSoundEditor_init (me.peek(), title, point, my monoSound, false);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("PointProcess window not created.");

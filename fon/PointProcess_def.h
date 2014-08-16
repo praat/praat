@@ -30,12 +30,12 @@ oo_DEFINE_CLASS (PointProcess, Function)
 	#if oo_COPYING
 		oo_DOUBLE_VECTOR (t, maxnt)
 	#elif oo_READING
-		if (nt) {
-			maxnt = nt;
+		if (our nt) {
+			our maxnt = our nt;
 			oo_DOUBLE_VECTOR (t, nt)
 		} else {
-			maxnt = 1;
-			t = NUMvector <double> (1, 1);
+			our maxnt = 1;
+			our t = NUMvector <double> (1, 1);
 		}
 	#else
 		oo_DOUBLE_VECTOR (t, nt)

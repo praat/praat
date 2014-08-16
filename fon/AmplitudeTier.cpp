@@ -357,7 +357,7 @@ Sound AmplitudeTier_to_Sound (AmplitudeTier me, double samplingFrequency, long i
 			long begin = mid - interpolationDepth, end = mid + interpolationDepth;
 			if (begin < 1) begin = 1;
 			if (end > thy nx) end = thy nx;
-			angle = NUMpi * (thy f_indexToX (begin) - t) / thy dx;
+			angle = NUMpi * (Sampled_indexToX (thee.peek(), begin) - t) / thy dx;
 			halfampsinangle = 0.5 * amplitude * sin (angle);
 			for (j = begin; j <= end; j ++) {
 				if (fabs (angle) < 1e-6)

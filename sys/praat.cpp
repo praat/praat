@@ -1049,9 +1049,10 @@ void praat_setStandAloneScriptText (wchar_t *text) {
 }
 
 void praat_init (const char *title, unsigned int argc, char **argv) {
-	static char truncatedTitle [300];   /* Static because praatP.title will point into it. */
+	static char truncatedTitle [300];   // static because praatP.title will point into it
 	#if defined (UNIX)
 		setlocale (LC_ALL, "C");
+		setenv ("PULSE_LATENCY_MSEC", "1", 0);   // Rafael Laboissiere, August 2014
 	#elif defined (_WIN32)
 		setlocale (LC_ALL, "C");   // said to be superfluous
 	#elif defined (macintosh)

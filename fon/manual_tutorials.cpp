@@ -23,9 +23,15 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140726)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140816)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.83# (16 August 2014)")
+LIST_ITEM (L"\\bu TextGrid window: repaired a bug with automatic alignment that could cause an analysis tier to go out of order.")
+LIST_ITEM (L"\\bu Linux audio: created a second workaround that reduces even more the chances of a freeze that is due to a potential deadlock "
+	"in the collaboration between Alsa and PulseAudio that can occur when the playback of a sound is cancelled.")
+LIST_ITEM (L"\\bu Smoother communication with Phon.")
+LIST_ITEM (L"\\bu Windows: repaired a memory leak when saving PNG files.")
 NORMAL (L"##5.3.82# (26 July 2014)")
 LIST_ITEM (L"\\bu Audio playback: if the sound has more channels than the audio hardware, distribute them evenly.")
 LIST_ITEM (L"\\bu Pause forms: more consistent appearance of the Revert button.")

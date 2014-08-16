@@ -1,6 +1,6 @@
 /* oo_WRITE_BINARY.h
  *
- * Copyright (C) 1994-2012,2013 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,84 +20,84 @@
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	binput##storage (x, f);
+	binput##storage (our x, f);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		binput##storage (x [i], f);
+		binput##storage (our x [i], f);
 
 #define oo_SET(type,storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		binput##storage (x [i], f);
+		binput##storage (our x [i], f);
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (x) \
-		NUMvector_writeBinary_##storage (x, min, max, f);
+	if (our x) \
+		NUMvector_writeBinary_##storage (our x, min, max, f);
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (x) \
-		NUMmatrix_writeBinary_##storage (x, row1, row2, col1, col2, f);
+	if (our x) \
+		NUMmatrix_writeBinary_##storage (our x, row1, row2, col1, col2, f);
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	binput##storage (x, f);
+	binput##storage (our x, f);
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		binput##storage (x [i], f);
+		binput##storage (our x [i], f);
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		binput##storage (x [i], f);
+		binput##storage (our x [i], f);
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (x) \
-		NUMvector_writeBinary_##storage (x, min, max, f);
+	if (our x) \
+		NUMvector_writeBinary_##storage (our x, min, max, f);
 
 #define oo_STRINGx(storage,x)  \
-	binput##storage (x, f);
+	binput##storage (our x, f);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		binput##storage (x [i], f);
+		binput##storage (our x [i], f);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		binput##storage (x [i], f);
+		binput##storage (our x [i], f);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	for (long i = min; i <= max; i ++) \
-		binput##storage (x [i], f);
+		binput##storage (our x [i], f);
 
 #define oo_STRUCT(Type,x)  \
-	x. writeBinary (f);
+	our x. writeBinary (f);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		x [i]. writeBinary (f);
+		our x [i]. writeBinary (f);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		x [i]. writeBinary (f);
+		our x [i]. writeBinary (f);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	for (long i = min; i <= max; i ++) \
-		x [i]. writeBinary (f);
+		our x [i]. writeBinary (f);
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
 	for (long i = row1; i <= row2; i ++) \
 		for (long j = col1; j <= col2; j ++) \
-			x [i] [j]. writeBinary (f);
+			our x [i] [j]. writeBinary (f);
 
 #define oo_OBJECT(Class,version,x)  \
-	binputex (x != NULL, f); \
-	if (x) \
-		Data_writeBinary (x, f);
+	binputex (our x != NULL, f); \
+	if (our x) \
+		Data_writeBinary (our x, f);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	binputi4 (x ? x -> size : 0, f); \
-	if (x) { \
-		for (long i = 1; i <= x -> size; i ++) { \
-			ItemClass data = (ItemClass) x -> item [i]; \
+	binputi4 (our x ? our x -> size : 0, f); \
+	if (our x) { \
+		for (long i = 1; i <= our x -> size; i ++) { \
+			ItemClass data = (ItemClass) our x -> item [i]; \
 			data -> struct##ItemClass :: v_writeBinary (f); \
 		} \
 	}

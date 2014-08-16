@@ -1,6 +1,6 @@
 /* SpectrumEditor.cpp
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,31 +44,31 @@ void structSpectrumEditor :: v_dataChanged () {
 }
 
 void structSpectrumEditor :: v_draw () {
-	Spectrum spectrum = (Spectrum) data;
+	Spectrum spectrum = (Spectrum) our data;
 
-	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (d_graphics, Graphics_BLACK);
-	Graphics_rectangle (d_graphics, 0, 1, 0, 1);
-	Spectrum_drawInside (spectrum, d_graphics, d_startWindow, d_endWindow, minimum, maximum);
-	FunctionEditor_drawRangeMark (this, maximum, Melder_fixed (maximum, 1), L" dB", Graphics_TOP);
-	FunctionEditor_drawRangeMark (this, minimum, Melder_fixed (minimum, 1), L" dB", Graphics_BOTTOM);
-	if (cursorHeight > minimum && cursorHeight < maximum)
-		FunctionEditor_drawHorizontalHair (this, cursorHeight, Melder_fixed (cursorHeight, 1), L" dB");
-	Graphics_setColour (d_graphics, Graphics_BLACK);
+	Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (our d_graphics, Graphics_WHITE);
+	Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (our d_graphics, Graphics_BLACK);
+	Graphics_rectangle (our d_graphics, 0, 1, 0, 1);
+	Spectrum_drawInside (spectrum, our d_graphics, our d_startWindow, our d_endWindow, our minimum, our maximum);
+	FunctionEditor_drawRangeMark (this, our maximum, Melder_fixed (maximum, 1), L" dB", Graphics_TOP);
+	FunctionEditor_drawRangeMark (this, our minimum, Melder_fixed (minimum, 1), L" dB", Graphics_BOTTOM);
+	if (our cursorHeight > our minimum && our cursorHeight < our maximum)
+		FunctionEditor_drawHorizontalHair (this, our cursorHeight, Melder_fixed (our cursorHeight, 1), L" dB");
+	Graphics_setColour (our d_graphics, Graphics_BLACK);
 
 	/* Update buttons. */
 
 	long first, last;
-	long selectedSamples = Sampled_getWindowSamples (spectrum, d_startSelection, d_endSelection, & first, & last);
-	publishBandButton  -> f_setSensitive (selectedSamples != 0);
-	publishSoundButton -> f_setSensitive (selectedSamples != 0);
+	long selectedSamples = Sampled_getWindowSamples (spectrum, our d_startSelection, our d_endSelection, & first, & last);
+	our publishBandButton  -> f_setSensitive (selectedSamples != 0);
+	our publishSoundButton -> f_setSensitive (selectedSamples != 0);
 }
 
 int structSpectrumEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
-	cursorHeight = minimum + yWC * (maximum - minimum);
-	return SpectrumEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // move cursor or drag selection
+	our cursorHeight = our minimum + yWC * (our maximum - our minimum);
+	return our SpectrumEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);   // move cursor or drag selection
 }
 
 static Spectrum Spectrum_band (Spectrum me, double fmin, double fmax) {
@@ -87,7 +87,7 @@ static Sound Spectrum_to_Sound_part (Spectrum me, double fmin, double fmax) {
 }
 
 void structSpectrumEditor :: v_play (double fmin, double fmax) {
-	autoSound sound = Spectrum_to_Sound_part ((Spectrum) data, fmin, fmax);
+	autoSound sound = Spectrum_to_Sound_part ((Spectrum) our data, fmin, fmax);
 	Sound_play (sound.peek(), NULL, NULL);
 }
 
@@ -162,8 +162,8 @@ static void menu_cb_help_Spectrum (EDITOR_ARGS) { EDITOR_IAM (SpectrumEditor); M
 
 void structSpectrumEditor :: v_createMenus () {
 	SpectrumEditor_Parent :: v_createMenus ();
-	publishBandButton = Editor_addCommand (this, L"File", L"Publish band", 0, menu_cb_publishBand);
-	publishSoundButton = Editor_addCommand (this, L"File", L"Publish band-filtered sound", 0, menu_cb_publishSound);
+	our publishBandButton = Editor_addCommand (this, L"File", L"Publish band", 0, menu_cb_publishBand);
+	our publishSoundButton = Editor_addCommand (this, L"File", L"Publish band-filtered sound", 0, menu_cb_publishSound);
 	Editor_addCommand (this, L"File", L"-- close --", 0, NULL);
 	Editor_addCommand (this, L"Edit", L"-- edit band --", 0, NULL);
 	Editor_addCommand (this, L"Edit", L"Pass band...", 0, menu_cb_passBand);

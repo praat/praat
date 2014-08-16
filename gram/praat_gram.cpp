@@ -119,7 +119,7 @@ DO
 	autoPraatPicture picture;
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_draw (GRAPHICS, GET_INTEGER (L"Colour"));
+		Network_draw (me, GRAPHICS, GET_INTEGER (L"Colour"));
 	}
 END2 }
 
@@ -140,7 +140,7 @@ FORM (Network_listNodes, L"Network: List nodes", 0) {
 DO
 	LOOP {
 		iam (Network);
-		my f_listNodes (GET_INTEGER (L"From node number"), GET_INTEGER (L"To node number"),
+		Network_listNodes (me, GET_INTEGER (L"From node number"), GET_INTEGER (L"To node number"),
 			GET_INTEGER (L"Include node numbers"),
 			GET_INTEGER (L"Include x"), GET_INTEGER (L"Include y"), GET_INTEGER (L"Position decimals"),
 			GET_INTEGER (L"Include clamped"),
@@ -163,7 +163,7 @@ FORM (Network_nodes_downto_Table, L"Network: Nodes down to Table", 0) {
 DO
 	LOOP {
 		iam (Network);
-		autoTable thee = my f_nodes_downto_Table (GET_INTEGER (L"From node number"), GET_INTEGER (L"To node number"),
+		autoTable thee = Network_nodes_downto_Table (me, GET_INTEGER (L"From node number"), GET_INTEGER (L"To node number"),
 			GET_INTEGER (L"Include node numbers"),
 			GET_INTEGER (L"Include x"), GET_INTEGER (L"Include y"), GET_INTEGER (L"Position decimals"),
 			GET_INTEGER (L"Include clamped"),
@@ -179,7 +179,7 @@ FORM (Network_getActivity, L"Network: Get activity", 0) {
 	OK2
 DO
 	iam_ONLY (Network);
-	double activity = me -> f_getActivity (GET_INTEGER (L"Node"));
+	double activity = Network_getActivity (me, GET_INTEGER (L"Node"));
 	Melder_information (Melder_double (activity));
 END2 }
 
@@ -188,7 +188,7 @@ FORM (Network_getWeight, L"Network: Get weight", 0) {
 	OK2
 DO
 	iam_ONLY (Network);
-	double weight = me -> f_getWeight (GET_INTEGER (L"Connection"));
+	double weight = Network_getWeight (me, GET_INTEGER (L"Connection"));
 	Melder_information (Melder_double (weight));
 END2 }
 
@@ -203,7 +203,7 @@ FORM (Network_addConnection, L"Network: Add connection", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_addConnection (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity"));
+		Network_addConnection (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"), GET_REAL (L"Weight"), GET_REAL (L"Plasticity"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -217,7 +217,7 @@ FORM (Network_addNode, L"Network: Add node", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_addNode (GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping"));
+		Network_addNode (me, GET_REAL (L"x"), GET_REAL (L"y"), GET_REAL (L"Activity"), GET_INTEGER (L"Clamping"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -229,7 +229,7 @@ FORM (Network_normalizeActivities, L"Network: Normalize activities", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_normalizeActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"));
+		Network_normalizeActivities (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -244,7 +244,7 @@ FORM (Network_normalizeWeights, L"Network: Normalize weights", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_normalizeWeights (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"),
+		Network_normalizeWeights (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"),
 			GET_INTEGER (L"From incoming node"), GET_INTEGER (L"To incoming node"), GET_REAL (L"New sum"));
 		praat_dataChanged (me);
 	}
@@ -257,7 +257,7 @@ FORM (Network_setActivity, L"Network: Set activity", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_setActivity (GET_INTEGER (L"Node"), GET_REAL (L"Activity"));
+		Network_setActivity (me, GET_INTEGER (L"Node"), GET_REAL (L"Activity"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -266,10 +266,10 @@ FORM (Network_setActivityClippingRule, L"Network: Set activity clipping rule", 0
 	RADIO_ENUM (L"Activity clipping rule", kNetwork_activityClippingRule, DEFAULT)
 	OK2
 iam_ONLY (Network);
-SET_ENUM (L"Activity clipping rule", kNetwork_activityClippingRule, my d_activityClippingRule);
+SET_ENUM (L"Activity clipping rule", kNetwork_activityClippingRule, my activityClippingRule);
 DO
 	iam_ONLY (Network);
-	me -> f_setActivityClippingRule (GET_ENUM (kNetwork_activityClippingRule, L"Activity clipping rule"));
+	Network_setActivityClippingRule (me, GET_ENUM (kNetwork_activityClippingRule, L"Activity clipping rule"));
 	praat_dataChanged (me);
 END2 }
 
@@ -277,10 +277,10 @@ FORM (Network_setActivityLeak, L"Network: Set activity leak", 0) {
 	REAL (L"Activity leak", L"1.0")
 	OK2
 iam_ONLY (Network);
-SET_REAL (L"Activity leak", my d_activityLeak);
+SET_REAL (L"Activity leak", my activityLeak);
 DO
 	iam_ONLY (Network);
-	me -> f_setActivityLeak (GET_REAL (L"Activity leak"));
+	Network_setActivityLeak (me, GET_REAL (L"Activity leak"));
 	praat_dataChanged (me);
 END2 }
 
@@ -291,7 +291,7 @@ FORM (Network_setClamping, L"Network: Set clamping", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_setClamping (GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping"));
+		Network_setClamping (me, GET_INTEGER (L"Node"), GET_INTEGER (L"Clamping"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -300,10 +300,10 @@ FORM (Network_setInstar, L"Network: Set instar", 0) {
 	REAL (L"Instar", L"0.0")
 	OK2
 iam_ONLY (Network);
-SET_REAL (L"Instar", my d_instar);
+SET_REAL (L"Instar", my instar);
 DO
 	iam_ONLY (Network);
-	me -> f_setInstar (GET_REAL (L"Instar"));
+	Network_setInstar (me, GET_REAL (L"Instar"));
 	praat_dataChanged (me);
 END2 }
 
@@ -311,10 +311,10 @@ FORM (Network_setWeightLeak, L"Network: Set weight leak", 0) {
 	REAL (L"Weight leak", L"0.0")
 	OK2
 iam_ONLY (Network);
-SET_REAL (L"Weight leak", my d_weightLeak);
+SET_REAL (L"Weight leak", my weightLeak);
 DO
 	iam_ONLY (Network);
-	me -> f_setWeightLeak (GET_REAL (L"Weight leak"));
+	Network_setWeightLeak (me, GET_REAL (L"Weight leak"));
 	praat_dataChanged (me);
 END2 }
 
@@ -322,10 +322,10 @@ FORM (Network_setOutstar, L"Network: Set outstar", 0) {
 	REAL (L"Outstar", L"0.0")
 	OK2
 iam_ONLY (Network);
-SET_REAL (L"Outstar", my d_outstar);
+SET_REAL (L"Outstar", my outstar);
 DO
 	iam_ONLY (Network);
-	me -> f_setOutstar (GET_REAL (L"Outstar"));
+	Network_setOutstar (me, GET_REAL (L"Outstar"));
 	praat_dataChanged (me);
 END2 }
 
@@ -335,7 +335,7 @@ FORM (Network_setShunting, L"Network: Set shunting", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_setShunting (GET_REAL (L"Shunting"));
+		Network_setShunting (me, GET_REAL (L"Shunting"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -347,7 +347,7 @@ FORM (Network_setWeight, L"Network: Set weight", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_setWeight (GET_INTEGER (L"Connection"), GET_REAL (L"Weight"));
+		Network_setWeight (me, GET_INTEGER (L"Connection"), GET_REAL (L"Weight"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -358,7 +358,7 @@ FORM (Network_spreadActivities, L"Network: Spread activities", 0) {
 DO
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_spreadActivities (GET_INTEGER (L"Number of steps"));
+		Network_spreadActivities (me, GET_INTEGER (L"Number of steps"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -366,7 +366,7 @@ END2 }
 DIRECT2 (Network_updateWeights) {
 	LOOP {
 		iam_LOOP (Network);
-		me -> f_updateWeights ();
+		Network_updateWeights (me);
 		praat_dataChanged (me);
 	}
 END2 }
@@ -378,7 +378,7 @@ FORM (Network_zeroActivities, L"Network: Zero activities", 0) {
 DO
 	LOOP {
 		iam (Network);
-		me -> f_zeroActivities (GET_INTEGER (L"From node"), GET_INTEGER (L"To node"));
+		Network_zeroActivities (me, GET_INTEGER (L"From node"), GET_INTEGER (L"To node"));
 		praat_dataChanged (me);
 	}
 END2 }
@@ -1077,7 +1077,7 @@ DO
 			GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 			GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
 			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
-			GET_INTEGER (L"Store history every"), & history, false, false);
+			GET_INTEGER (L"Store history every"), & history, false, false, 0);
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);
@@ -1111,7 +1111,75 @@ DO
 			GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
 			GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
 			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
-			GET_INTEGER (L"Store history every"), & history, true, true);
+			GET_INTEGER (L"Store history every"), & history, true, true, 0);
+		praat_dataChanged (me);
+	} catch (MelderError) {
+		praat_dataChanged (me);
+		Melder_flushError (NULL);
+	}
+	if (history) praat_new (history, my name);
+END2 }
+
+FORM (OTGrammar_Distributions_learnFromPartialOutputs_eip, L"OTGrammar & Distributions: Learn from partial outputs (eip)", L"OT learning 6. Shortcut to grammar learning") {
+	NATURAL (L"Column number", L"1")
+	REAL (L"Evaluation noise", L"2.0")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (L"Initial plasticity", L"1.0")
+	NATURAL (L"Replications per plasticity", L"100000")
+	REAL (L"Plasticity decrement", L"0.1")
+	NATURAL (L"Number of plasticities", L"4")
+	REAL (L"Rel. plasticity spreading", L"0.1")
+	BOOLEAN (L"Honour local rankings", 1)
+	NATURAL (L"Number of chews", L"1")
+	INTEGER (L"Store history every", L"0")
+	OK2
+DO
+	iam_ONLY (OTGrammar);
+	thouart_ONLY (Distributions);
+	OTHistory history = NULL;
+	try {
+		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (L"Column number"),
+			GET_REAL (L"Evaluation noise"),
+			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+			GET_INTEGER (L"Honour local rankings"),
+			GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
+			GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
+			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
+			GET_INTEGER (L"Store history every"), & history, true, true, 1000);
+		praat_dataChanged (me);
+	} catch (MelderError) {
+		praat_dataChanged (me);
+		Melder_flushError (NULL);
+	}
+	if (history) praat_new (history, my name);
+END2 }
+
+FORM (OTGrammar_Distributions_learnFromPartialOutputs_wrip, L"OTGrammar & Distributions: Learn from partial outputs (wrip)", L"OT learning 6. Shortcut to grammar learning") {
+	NATURAL (L"Column number", L"1")
+	REAL (L"Evaluation noise", L"2.0")
+	OPTIONMENU_ENUM (L"Update rule", kOTGrammar_rerankingStrategy, SYMMETRIC_ALL)
+	REAL (L"Initial plasticity", L"1.0")
+	NATURAL (L"Replications per plasticity", L"100000")
+	REAL (L"Plasticity decrement", L"0.1")
+	NATURAL (L"Number of plasticities", L"4")
+	REAL (L"Rel. plasticity spreading", L"0.1")
+	BOOLEAN (L"Honour local rankings", 1)
+	NATURAL (L"Number of chews", L"1")
+	INTEGER (L"Store history every", L"0")
+	OK2
+DO
+	iam_ONLY (OTGrammar);
+	thouart_ONLY (Distributions);
+	OTHistory history = NULL;
+	try {
+		OTGrammar_Distributions_learnFromPartialOutputs (me, thee, GET_INTEGER (L"Column number"),
+			GET_REAL (L"Evaluation noise"),
+			GET_ENUM (kOTGrammar_rerankingStrategy, L"Update rule"),
+			GET_INTEGER (L"Honour local rankings"),
+			GET_REAL (L"Initial plasticity"), GET_INTEGER (L"Replications per plasticity"),
+			GET_REAL (L"Plasticity decrement"), GET_INTEGER (L"Number of plasticities"),
+			GET_REAL (L"Rel. plasticity spreading"), GET_INTEGER (L"Number of chews"),
+			GET_INTEGER (L"Store history every"), & history, true, true, 1);
 		praat_dataChanged (me);
 	} catch (MelderError) {
 		praat_dataChanged (me);
@@ -1677,6 +1745,8 @@ void praat_uvafon_gram_init (void) {
 	praat_addAction2 (classOTGrammar, 1, classStrings, 2, L"Learn...", 0, 0, DO_OTGrammar_Stringses_learn);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"Learn from partial outputs...", 0, 0, DO_OTGrammar_Distributions_learnFromPartialOutputs);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"Learn from partial outputs (rrip)...", 0, 0, DO_OTGrammar_Distributions_learnFromPartialOutputs_rrip);
+	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"Learn from partial outputs (eip)...", 0, 0, DO_OTGrammar_Distributions_learnFromPartialOutputs_eip);
+	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"Learn from partial outputs (wrip)...", 0, 0, DO_OTGrammar_Distributions_learnFromPartialOutputs_wrip);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"Get fraction correct...", 0, 0, DO_OTGrammar_Distributions_getFractionCorrect);
 	praat_addAction2 (classOTGrammar, 1, classDistributions, 1, L"List obligatory rankings...", 0, praat_HIDDEN, DO_OTGrammar_Distributions_listObligatoryRankings);
 	praat_addAction2 (classOTGrammar, 1, classPairDistribution, 1, L"Learn...", 0, 0, DO_OTGrammar_PairDistribution_learn);

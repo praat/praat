@@ -610,12 +610,12 @@ void structTimeSoundEditor :: f_drawSound (double globalMinimum, double globalMa
 				FunctionEditor_drawCursorFunctionValue (this, cursorFunctionValue, Melder_float (Melder_half (cursorFunctionValue)), L"");
 			Graphics_setColour (d_graphics, Graphics_BLACK);
 			Graphics_function (d_graphics, sound -> z [ichan], first, last,
-				sound -> f_indexToX (first), sound -> f_indexToX (last));
+				Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 		} else {
 			Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, minimum * 32768, maximum * 32768);
 			Graphics_function16 (d_graphics,
 				longSound -> buffer - longSound -> imin * nchan + (ichan - 1), nchan - 1, first, last,
-				longSound -> f_indexToX (first), longSound -> f_indexToX (last));
+				Sampled_indexToX (longSound, first), Sampled_indexToX (longSound, last));
 		}
 		Graphics_resetViewport (d_graphics, vp);
 	}
@@ -644,24 +644,24 @@ int structTimeSoundEditor :: v_click (double xbegin, double ybegin, bool shiftKe
 	return TimeSoundEditor_Parent :: v_click (xbegin, ybegin, shiftKeyPressed);
 }
 
-void structTimeSoundEditor :: f_init (const wchar_t *title, Function data, Sampled sound, bool ownSound) {
-	d_ownSound = ownSound;
+void TimeSoundEditor_init (TimeSoundEditor me, const wchar_t *title, Function data, Sampled sound, bool ownSound) {
+	my d_ownSound = ownSound;
 	if (sound != NULL) {
 		if (ownSound) {
 			Melder_assert (Thing_member (sound, classSound));
-			d_sound.data = Data_copy ((Sound) sound);   // deep copy; ownership transferred
-			Matrix_getWindowExtrema (d_sound.data, 1, d_sound.data -> nx, 1, d_sound.data -> ny, & d_sound.minimum, & d_sound.maximum);
+			my d_sound.data = Data_copy ((Sound) sound);   // deep copy; ownership transferred
+			Matrix_getWindowExtrema (my d_sound.data, 1, my d_sound.data -> nx, 1, my d_sound.data -> ny, & my d_sound.minimum, & my d_sound.maximum);
 		} else if (Thing_member (sound, classSound)) {
-			d_sound.data = (Sound) sound;   // reference copy; ownership not transferred
-			Matrix_getWindowExtrema (d_sound.data, 1, d_sound.data -> nx, 1, d_sound.data -> ny, & d_sound.minimum, & d_sound.maximum);
+			my d_sound.data = (Sound) sound;   // reference copy; ownership not transferred
+			Matrix_getWindowExtrema (my d_sound.data, 1, my d_sound.data -> nx, 1, my d_sound.data -> ny, & my d_sound.minimum, & my d_sound.maximum);
 		} else if (Thing_member (sound, classLongSound)) {
-			d_longSound.data = (LongSound) sound;
-			d_sound.minimum = -1.0, d_sound.maximum = 1.0;
+			my d_longSound.data = (LongSound) sound;
+			my d_sound.minimum = -1.0, my d_sound.maximum = 1.0;
 		} else {
 			Melder_fatal ("Invalid sound class in TimeSoundEditor::init.");
 		}
 	}
-	FunctionEditor_init (this, title, data);
+	FunctionEditor_init (me, title, data);
 }
 
 /* End of file TimeSoundEditor.cpp */

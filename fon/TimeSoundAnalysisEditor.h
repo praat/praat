@@ -2,7 +2,7 @@
 #define _TimeSoundAnalysisEditor_h_
 /* TimeSoundAnalysisEditor.h
  *
- * Copyright (C) 1992-2011,2012,2013 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,8 +64,6 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) { public:
 		Formant d_formant;
 		PointProcess d_pulses;
 		GuiMenuItem spectrogramToggle, pitchToggle, intensityToggle, formantToggle, pulsesToggle;
-	// functions:
-		void f_init (const wchar_t *title, Function data, Sampled sound, bool ownSound);
 	// overridden methods:
 		virtual void v_destroy ();
 		virtual void v_info ();
@@ -96,6 +94,9 @@ Thing_define (TimeSoundAnalysisEditor, TimeSoundEditor) { public:
 	// preferences:
 		#include "TimeSoundAnalysisEditor_prefs.h"
 };
+
+void TimeSoundAnalysisEditor_init (TimeSoundAnalysisEditor me,
+	const wchar_t *title, Function data, Sampled sound, bool ownSound);
 
 void TimeSoundAnalysisEditor_computeSpectrogram (TimeSoundAnalysisEditor me);
 void TimeSoundAnalysisEditor_computePitch (TimeSoundAnalysisEditor me);

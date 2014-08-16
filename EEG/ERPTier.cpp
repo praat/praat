@@ -329,7 +329,7 @@ ERPTier ERPTier_extractEventsWhereColumn_number (ERPTier me, Table table, long c
 		thy events = SortedSetOfDouble_create ();
 		for (long ievent = 1; ievent <= my events -> size; ievent ++) {
 			ERPPoint oldEvent = my event (ievent);
-			TableRow row = table -> f_peekRow (ievent);
+			TableRow row = table -> row (ievent);
 			if (Melder_numberMatchesCriterion (row -> cells [columnNumber]. number, which_Melder_NUMBER, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				Collection_addItem (thy events, newEvent.transfer());
@@ -362,7 +362,7 @@ ERPTier ERPTier_extractEventsWhereColumn_string (ERPTier me, Table table,
 		thy events = SortedSetOfDouble_create ();
 		for (long ievent = 1; ievent <= my events -> size; ievent ++) {
 			ERPPoint oldEvent = my event (ievent);
-			TableRow row = table -> f_peekRow (ievent);
+			TableRow row = table -> row (ievent);
 			if (Melder_stringMatchesCriterion (row -> cells [columnNumber]. string, which_Melder_STRING, criterion)) {
 				autoERPPoint newEvent = Data_copy (oldEvent);
 				Collection_addItem (thy events, newEvent.transfer());

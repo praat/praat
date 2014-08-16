@@ -40,23 +40,23 @@
 
 Thing_implement (SampledXY, Sampled, 0);
 
-void structSampledXY :: f_init
-	(double xmin_, double xmax_, long nx_, double dx_, double x1_,
-	 double ymin_, double ymax_, long ny_, double dy_, double y1_)
+void SampledXY_init (SampledXY me,
+	double xmin, double xmax, long nx, double dx, double x1,
+	double ymin, double ymax, long ny, double dy, double y1)
 {
-	Sampled_init (this, xmin_, xmax_, nx_, dx_, x1_);
-	our ymin = ymin_;
-	our ymax = ymax_;
-	our ny = ny_;
-	our dy = dy_;
-	our y1 = y1_;
+	Sampled_init (me, xmin, xmax, nx, dx, x1);
+	my ymin = ymin;
+	my ymax = ymax;
+	my ny = ny;
+	my dy = dy;
+	my y1 = y1;
 }
 
-long structSampledXY :: f_getWindowSamplesY (double ymin_, double ymax_, long *iymin, long *iymax) {
-	double riymin = 1.0 + ceil ((ymin_ - our y1) / our dy);
-	double riymax = 1.0 + floor ((ymax_ - our y1) / our dy);   // could be above 32-bit LONG_MAX
+long SampledXY_getWindowSamplesY (SampledXY me, double fromY, double toY, long *iymin, long *iymax) {
+	double riymin = 1.0 + ceil ((fromY - my y1) / my dy);
+	double riymax = 1.0 + floor ((toY - my y1) / my dy);   // could be above 32-bit LONG_MAX
 	*iymin = riymin < 1.0 ? 1 : (long) riymin;
-	*iymax = riymax > (double) our ny ? our ny : (long) riymax;
+	*iymax = riymax > (double) my ny ? my ny : (long) riymax;
 	if (*iymin > *iymax) return 0;
 	return *iymax - *iymin + 1;
 }

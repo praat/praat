@@ -68,12 +68,12 @@ void structMovieWindow :: v_draw () {
 		Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
 		Graphics_setColour (our d_graphics, Graphics_BLACK);
 		Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0.0, 1.0);
-		long firstFrame = movie -> f_xToNearestIndex (our d_startWindow);
-		long lastFrame = movie -> f_xToNearestIndex (our d_endWindow);
+		long firstFrame = Sampled_xToNearestIndex (movie, our d_startWindow);
+		long lastFrame = Sampled_xToNearestIndex (movie, our d_endWindow);
 		if (firstFrame < 1) firstFrame = 1;
 		if (lastFrame > movie -> nx) lastFrame = movie -> nx;
 		for (long iframe = firstFrame; iframe <= lastFrame; iframe ++) {
-			double time = movie -> f_indexToX (iframe);
+			double time = Sampled_indexToX (movie, iframe);
 			double timeLeft = time - 0.5 * movie -> dx, timeRight = time + 0.5 * movie -> dx;
 			if (timeLeft < our d_startWindow) timeLeft = our d_startWindow;
 			if (timeRight > our d_endWindow) timeRight = our d_endWindow;
@@ -124,7 +124,7 @@ void structMovieWindow :: v_play (double tmin, double tmax) {
 
 void MovieWindow_init (MovieWindow me, const wchar_t *title, Movie movie) {
 	Melder_assert (movie != NULL);
-	my structTimeSoundAnalysisEditor :: f_init (title, movie, movie -> d_sound, false);
+	TimeSoundAnalysisEditor_init (me, title, movie, movie -> d_sound, false);
 }
 
 MovieWindow MovieWindow_create (const wchar_t *title, Movie movie) {

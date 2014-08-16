@@ -1,6 +1,6 @@
 /* IntensityTierEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,10 @@ void structIntensityTierEditor :: v_createHelpMenuItems (EditorMenu menu) {
 }
 
 void structIntensityTierEditor :: v_play (double a_tmin, double a_tmax) {
-	if (d_sound.data) {
-		Sound_playPart (d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
+	if (our d_sound.data) {
+		Sound_playPart (our d_sound.data, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
-		//IntensityTier_playPart (data, a_tmin, a_tmax, FALSE);
+		//IntensityTier_playPart (our data, a_tmin, a_tmax, FALSE);
 	}
 }
 

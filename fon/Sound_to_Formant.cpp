@@ -293,8 +293,8 @@ static Formant Sound_to_Formant_any_inline (Sound me, double dt_in, int numberOf
 	}
 
 	for (long iframe = 1; iframe <= nFrames; iframe ++) {
-		double t = thy f_indexToX (iframe);
-		long leftSample = my f_xToLowIndex (t);
+		double t = Sampled_indexToX (thee.peek(), iframe);
+		long leftSample = Sampled_xToLowIndex (me, t);
 		long rightSample = leftSample + 1;
 		long startSample = rightSample - halfnsamp_window;
 		long endSample = leftSample + halfnsamp_window;

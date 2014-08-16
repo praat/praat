@@ -1872,7 +1872,7 @@ static void do_dragBoundary (TextGridEditor me, double xbegin, int iClickedTier,
 }
 
 int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPressed) {
-	TextGrid grid = (TextGrid) data;
+	TextGrid grid = (TextGrid) our data;
 	double tmin, tmax, x, y;
 	long ntiers = grid -> tiers -> size, iClickedTier, iClickedInterval, iClickedPoint;
 	int clickedLeftBoundary = 0, nearBoundaryOrPoint, nearCursorCircle, drag = FALSE;
@@ -1888,11 +1888,11 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 	 * we keep the same tier selected and move the cursor or drag the "yellow" selection.
 	 */
 	if (yWC > soundY) {   /* Clicked in sound part? */
-		if ((p_spectrogram_show || p_formant_show) && yWC < 0.5 * (soundY + 1.0)) {
-			d_spectrogram_cursor = p_spectrogram_viewFrom +
-				2.0 * (yWC - soundY) / (1.0 - soundY) * (p_spectrogram_viewTo - p_spectrogram_viewFrom);
+		if ((our p_spectrogram_show || our p_formant_show) && yWC < 0.5 * (soundY + 1.0)) {
+			our d_spectrogram_cursor = our p_spectrogram_viewFrom +
+				2.0 * (yWC - soundY) / (1.0 - soundY) * (our p_spectrogram_viewTo - our p_spectrogram_viewFrom);
 		}
-		TextGridEditor_Parent :: v_click (xclick, yWC, shiftKeyPressed);
+		our TextGridEditor_Parent :: v_click (xclick, yWC, shiftKeyPressed);
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 
@@ -1902,8 +1902,8 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 	 */
 	iClickedTier = _TextGridEditor_yWCtoTier (this, yWC);
 
-	if (xclick <= d_startWindow || xclick >= d_endWindow) {
-		selectedTier = iClickedTier;
+	if (xclick <= our d_startWindow || xclick >= our d_endWindow) {
+		our selectedTier = iClickedTier;
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 
@@ -1930,7 +1930,7 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 			 * She clicked outside time domain of intervals.
 			 * This can occur when we are grouped with a longer time function.
 			 */
-			selectedTier = iClickedTier;
+			our selectedTier = iClickedTier;
 			return FunctionEditor_UPDATE_NEEDED;
 		}
 	} else {
@@ -1945,18 +1945,18 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 	/*
 	 * Where did she click?
 	 */
-	nearBoundaryOrPoint = tnear != NUMundefined && fabs (Graphics_dxWCtoMM (d_graphics, xclick - tnear)) < 1.5;
-	nearCursorCircle = d_startSelection == d_endSelection && Graphics_distanceWCtoMM (d_graphics, xclick, yWC,
-		d_startSelection, (ntiers + 1 - iClickedTier) * soundY / ntiers - Graphics_dyMMtoWC (d_graphics, 1.5)) < 1.5;
+	nearBoundaryOrPoint = tnear != NUMundefined && fabs (Graphics_dxWCtoMM (our d_graphics, xclick - tnear)) < 1.5;
+	nearCursorCircle = our d_startSelection == our d_endSelection && Graphics_distanceWCtoMM (our d_graphics, xclick, yWC,
+		our d_startSelection, (ntiers + 1 - iClickedTier) * soundY / ntiers - Graphics_dyMMtoWC (our d_graphics, 1.5)) < 1.5;
 
 	/*
 	 * Find out whether this is a click or a drag.
 	 */
-	while (Graphics_mouseStillDown (d_graphics)) {
-		Graphics_getMouseLocation (d_graphics, & x, & y);
-		if (x < d_startWindow) x = d_startWindow;
-		if (x > d_endWindow) x = d_endWindow;
-		if (fabs (Graphics_dxWCtoMM (d_graphics, x - xclick)) > 1.5) {
+	while (Graphics_mouseStillDown (our d_graphics)) {
+		Graphics_getMouseLocation (our d_graphics, & x, & y);
+		if (x < our d_startWindow) x = our d_startWindow;
+		if (x > our d_endWindow) x = our d_endWindow;
+		if (fabs (Graphics_dxWCtoMM (our d_graphics, x - xclick)) > 1.5) {
 			drag = TRUE;
 			break;
 		}
@@ -1971,13 +1971,13 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 			/*
 			 * Ignore click on left edge of first interval or right edge of last interval.
 			 */
-			selectedTier = iClickedTier;
+			our selectedTier = iClickedTier;
 		} else if (drag) {
 			/*
 			 * The tier that has been clicked becomes the new selected tier.
 			 * This has to be done before the next Update, i.e. also before do_dragBoundary!
 			 */
-			selectedTier = iClickedTier;
+			our selectedTier = iClickedTier;
 			do_dragBoundary (this, tnear, iClickedTier, shiftKeyPressed);
 			return FunctionEditor_NO_UPDATE_NEEDED;
 		} else {
@@ -1985,14 +1985,14 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 			 * If she clicked on an unselected boundary or point, we select it.
 			 */
 			if (shiftKeyPressed) {
-				if (tnear > 0.5 * (d_startSelection + d_endSelection))
-					d_endSelection = tnear;
+				if (tnear > 0.5 * (our d_startSelection + our d_endSelection))
+					our d_endSelection = tnear;
 				else
-					d_startSelection = tnear;
+					our d_startSelection = tnear;
 			} else {
-				d_startSelection = d_endSelection = tnear;   /* Move cursor so that the boundary or point is selected. */
+				our d_startSelection = our d_endSelection = tnear;   /* Move cursor so that the boundary or point is selected. */
 			}
-			selectedTier = iClickedTier;
+			our selectedTier = iClickedTier;
 		}
 	} else if (nearCursorCircle) {
 		/*
@@ -2000,23 +2000,23 @@ int structTextGridEditor :: v_click (double xclick, double yWC, bool shiftKeyPre
 		 * Insert boundary or point. There is no danger that we insert on top of an existing boundary or point,
 		 * because we are not 'nearBoundaryOrPoint'.
 		 */
-		insertBoundaryOrPoint (this, iClickedTier, d_startSelection, d_startSelection, false);
-		selectedTier = iClickedTier;
+		insertBoundaryOrPoint (this, iClickedTier, our d_startSelection, our d_startSelection, false);
+		our selectedTier = iClickedTier;
 		FunctionEditor_marksChanged (this, true);
-		broadcastDataChanged ();
-		if (drag) Graphics_waitMouseUp (d_graphics);
+		our broadcastDataChanged ();
+		if (drag) Graphics_waitMouseUp (our d_graphics);
 		return FunctionEditor_NO_UPDATE_NEEDED;
 	} else {
 		/*
 		 * Possibility 3: she clicked in empty space.
 		 */
 		if (intervalTier) {
-			d_startSelection = tmin;
-			d_endSelection = tmax;
+			our d_startSelection = tmin;
+			our d_endSelection = tmax;
 		}
 		selectedTier = iClickedTier;
 	}
-	if (drag) Graphics_waitMouseUp (d_graphics);
+	if (drag) Graphics_waitMouseUp (our d_graphics);
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
@@ -2024,22 +2024,22 @@ int structTextGridEditor :: v_clickB (double t, double yWC) {
 	double soundY = _TextGridEditor_computeSoundY (this);
 
 	if (yWC > soundY) {   // clicked in sound part?
-		d_startSelection = t;
-		if (d_startSelection > d_endSelection) {
-			double dummy = d_startSelection;
-			d_startSelection = d_endSelection;
-			d_endSelection = dummy;
+		our d_startSelection = t;
+		if (our d_startSelection > our d_endSelection) {
+			double dummy = our d_startSelection;
+			our d_startSelection = our d_endSelection;
+			our d_endSelection = dummy;
 		}
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 	int itier = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, itier, & tmin, & tmax);
-	d_startSelection = t - tmin < tmax - t ? tmin : tmax;   // to nearest boundary
-	if (d_startSelection > d_endSelection) {
-		double dummy = d_startSelection;
-		d_startSelection = d_endSelection;
-		d_endSelection = dummy;
+	our d_startSelection = t - tmin < tmax - t ? tmin : tmax;   // to nearest boundary
+	if (our d_startSelection > our d_endSelection) {
+		double dummy = our d_startSelection;
+		our d_startSelection = our d_endSelection;
+		our d_endSelection = dummy;
 	}
 	return FunctionEditor_UPDATE_NEEDED;
 }
@@ -2048,39 +2048,39 @@ int structTextGridEditor :: v_clickE (double t, double yWC) {
 	double soundY = _TextGridEditor_computeSoundY (this);
 
 	if (yWC > soundY) {   // clicked in sound part?
-		d_endSelection = t;
-		if (d_startSelection > d_endSelection) {
-			double dummy = d_startSelection;
-			d_startSelection = d_endSelection;
-			d_endSelection = dummy;
+		our d_endSelection = t;
+		if (our d_startSelection > our d_endSelection) {
+			double dummy = our d_startSelection;
+			our d_startSelection = our d_endSelection;
+			our d_endSelection = dummy;
 		}
 		return FunctionEditor_UPDATE_NEEDED;
 	}
 	int itier = _TextGridEditor_yWCtoTier (this, yWC);
 	double tmin, tmax;
 	_TextGridEditor_timeToInterval (this, t, itier, & tmin, & tmax);
-	d_endSelection = t - tmin < tmax - t ? tmin : tmax;
-	if (d_startSelection > d_endSelection) {
-		double dummy = d_startSelection;
-		d_startSelection = d_endSelection;
-		d_endSelection = dummy;
+	our d_endSelection = t - tmin < tmax - t ? tmin : tmax;
+	if (our d_startSelection > our d_endSelection) {
+		double dummy = our d_startSelection;
+		our d_startSelection = our d_endSelection;
+		our d_endSelection = dummy;
 	}
 	return FunctionEditor_UPDATE_NEEDED;
 }
 
 void structTextGridEditor :: v_play (double tmin, double tmax) {
-	if (d_longSound.data) {
-		LongSound_playPart (d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
-	} else if (d_sound.data) {
-		Sound_playPart (d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+	if (our d_longSound.data) {
+		LongSound_playPart (our d_longSound.data, tmin, tmax, theFunctionEditor_playCallback, this);
+	} else if (our d_sound.data) {
+		Sound_playPart (our d_sound.data, tmin, tmax, theFunctionEditor_playCallback, this);
 	}
 }
 
 void structTextGridEditor :: v_updateText () {
-	TextGrid grid = (TextGrid) data;
+	TextGrid grid = (TextGrid) our data;
 	const wchar_t *newText = L"";
-	trace ("selected tier %ld", selectedTier);
-	if (selectedTier) {
+	trace ("selected tier %ld", our selectedTier);
+	if (our selectedTier) {
 		IntervalTier intervalTier;
 		TextTier textTier;
 		_AnyTier_identifyClass ((Function) grid -> tiers -> item [selectedTier], & intervalTier, & textTier);
@@ -2103,13 +2103,13 @@ void structTextGridEditor :: v_updateText () {
 		}
 	}
 	//Melder_casual ("v_updateText in editor %ld %ls %d", this, name, (int) suppressRedraw);
-	if (text) {
-		suppressRedraw = TRUE;   // prevent valueChangedCallback from redrawing
+	if (our text) {
+		our suppressRedraw = TRUE;   // prevent valueChangedCallback from redrawing
 		trace ("setting new text %ls", newText);
 		text -> f_setString (newText);
 		long cursor = wcslen (newText);   // at end
 		text -> f_setSelection (cursor, cursor);
-		suppressRedraw = FALSE;
+		our suppressRedraw = FALSE;
 	}
 }
 
@@ -2158,22 +2158,22 @@ void structTextGridEditor :: v_createMenuItems_view_timeDomain (EditorMenu menu)
 }
 
 void structTextGridEditor :: v_highlightSelection (double left, double right, double bottom, double top) {
-	if (v_hasAnalysis () && p_spectrogram_show && (d_longSound.data || d_sound.data)) {
+	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		//Graphics_highlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_highlight (d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
+		//Graphics_highlight (our d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
+		Graphics_highlight (our d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
-		Graphics_highlight (d_graphics, left, right, bottom, top);
+		Graphics_highlight (our d_graphics, left, right, bottom, top);
 	}
 }
 
 void structTextGridEditor :: v_unhighlightSelection (double left, double right, double bottom, double top) {
-	if (v_hasAnalysis () && p_spectrogram_show && (d_longSound.data || d_sound.data)) {
+	if (our v_hasAnalysis () && our p_spectrogram_show && (our d_longSound.data || our d_sound.data)) {
 		double soundY = _TextGridEditor_computeSoundY (this), soundY2 = 0.5 * (1.0 + soundY);
-		//Graphics_unhighlight (d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
-		Graphics_unhighlight (d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
+		//Graphics_unhighlight (our d_graphics, left, right, bottom, soundY * top + (1 - soundY) * bottom);
+		Graphics_unhighlight (our d_graphics, left, right, soundY2 * top + (1 - soundY2) * bottom, top);
 	} else {
-		Graphics_unhighlight (d_graphics, left, right, bottom, top);
+		Graphics_unhighlight (our d_graphics, left, right, bottom, top);
 	}
 }
 
@@ -2192,8 +2192,8 @@ void structTextGridEditor :: v_createMenuItems_pitch_picture (EditorMenu menu) {
 
 void structTextGridEditor :: v_updateMenuItems_file () {
 	TextGridEditor_Parent :: v_updateMenuItems_file ();
-	extractSelectedTextGridPreserveTimesButton -> f_setSensitive (d_endSelection > d_startSelection);
-	extractSelectedTextGridTimeFromZeroButton  -> f_setSensitive (d_endSelection > d_startSelection);
+	extractSelectedTextGridPreserveTimesButton -> f_setSensitive (our d_endSelection > our d_startSelection);
+	extractSelectedTextGridTimeFromZeroButton  -> f_setSensitive (our d_endSelection > our d_startSelection);
 }
 
 /********** EXPORTED **********/
@@ -2201,8 +2201,9 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket)
 {
 	my spellingChecker = spellingChecker;   // set in time
+	my callbackSocket = callbackSocket ? strdup (callbackSocket) : NULL;
 
-	my structTimeSoundAnalysisEditor :: f_init (title, grid, sound, ownSound);
+	TimeSoundAnalysisEditor_init (me, title, grid, sound, ownSound);
 
 	my selectedTier = 1;
 	my v_updateText ();   // to reflect changed tier selection

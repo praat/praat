@@ -2,7 +2,7 @@
 #define _TimeSoundEditor_h_
 /* TimeSoundEditor.h
  *
- * Copyright (C) 1992-2012, 2013 Paul Boersma
+ * Copyright (C) 1992-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,6 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 			GuiMenuItem writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
 	// messages:
 		public:
-			void f_init (const wchar_t *title, Function data, Sampled sound, bool ownSound);
 			void f_drawSound (double globalMinimum, double globalMaximum);
 	// overridden methods:
 		protected:
@@ -61,6 +60,8 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 			virtual const wchar_t * v_getChannelName (long channelNumber) { (void) channelNumber; return NULL; }
 	#include "TimeSoundEditor_prefs.h"
 };
+
+void TimeSoundEditor_init (TimeSoundEditor me, const wchar_t *title, Function data, Sampled sound, bool ownSound);
 
 /* End of file TimeSoundEditor.h */
 #endif

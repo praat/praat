@@ -1,6 +1,6 @@
 /* oo_EQUAL.h
  *
- * Copyright (C) 1994-2012,2013 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,92 +20,92 @@
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	if (x != thy x) return false;
+	if (our x != thy x) return false;
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (x [i] != thy x [i]) return false; \
+		if (our x [i] != thy x [i]) return false; \
 
 #define oo_SET(type,storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (x [i] != thy x [i]) return false; \
+		if (our x [i] != thy x [i]) return false; \
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (! x != ! thy x || \
-		(x && ! NUMvector_equal <type> (x, thy x, min, max))) return false;
+	if (! our x != ! thy x || \
+		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (! x != ! thy x || \
-		(x && ! NUMmatrix_equal <type> (x, thy x, row1, row2, col1, col2))) return false;
+	if (! our x != ! thy x || \
+		(our x && ! NUMmatrix_equal <type> (our x, thy x, row1, row2, col1, col2))) return false;
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	if (x != thy x) return false;
+	if (our x != thy x) return false;
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) if (x [i] != thy x [i]) return false;
+	for (int i = 0; i < n; i ++) if (our x [i] != thy x [i]) return false;
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) if (x [i] != thy x [i]) return false;
+	for (int i = 0; i <= setType##_MAX; i ++) if (our x [i] != thy x [i]) return false;
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (! x != ! thy x || \
-		(x && ! NUMvector_equal <type> (x, thy x, min, max))) return false;
+	if (! our x != ! thy x || \
+		(our x && ! NUMvector_equal <type> (our x, thy x, min, max))) return false;
 
 #define oo_STRINGx(storage,x)  \
-	if (! Melder_wcsequ (x, thy x)) return false;
+	if (! Melder_wcsequ (our x, thy x)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (! Melder_wcsequ (x [i], thy x [i])) return false;
+		if (! Melder_wcsequ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! Melder_wcsequ (x [i], thy x [i])) return false;
+		if (! Melder_wcsequ (our x [i], thy x [i])) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (! x != ! thy x) return false; \
-	if (x) { \
+	if (! our x != ! thy x) return false; \
+	if (our x) { \
 		for (long i = min; i <= max; i ++) \
-			if (! Melder_wcsequ (x [i], thy x [i])) return false; \
+			if (! Melder_wcsequ (our x [i], thy x [i])) return false; \
 	}
 
 #define oo_STRUCT(Type,x)  \
-	if (! x. equal (& thy x)) return false;
+	if (! our x. equal (& thy x)) return false;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (! x [i]. equal (& thy x [i])) return false;
+		if (! our x [i]. equal (& thy x [i])) return false;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! x [i]. equal (& thy x [i])) return false;
+		if (! our x [i]. equal (& thy x [i])) return false;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (! x != ! thy x) return false; \
-	if (x) { \
+	if (! our x != ! thy x) return false; \
+	if (our x) { \
 		for (long i = min; i <= max; i ++) \
-			if (! x [i]. equal (& thy x [i])) return false; \
+			if (! our x [i]. equal (& thy x [i])) return false; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (! x != ! thy x) return false; \
-	if (x) { \
+	if (! our x != ! thy x) return false; \
+	if (our x) { \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				if (! x [i] [j]. equal (& thy x [i] [j])) return false; \
+				if (! our x [i] [j]. equal (& thy x [i] [j])) return false; \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
-	if (! x != ! thy x || (x && ! Data_equal (x, thy x))) return false;
+	if (! our x != ! thy x || (our x && ! Data_equal (our x, thy x))) return false;
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (! x != ! thy x || (x && ! Data_equal (x, thy x))) return false;
+	if (! our x != ! thy x || (our x && ! Data_equal (our x, thy x))) return false;
 
 #define oo_FILE(x)  \
-	if (! MelderFile_equal (& x, & thy x)) return false;
+	if (! MelderFile_equal (& our x, & thy x)) return false;
 
 #define oo_DIR(x)  \
-	if (! MelderDir_equal (& x, & thy x)) return false;
+	if (! MelderDir_equal (& our x, & thy x)) return false;
 
 #define oo_DEFINE_STRUCT(Type)  \
 	bool struct##Type :: equal (Type thee) {

@@ -114,7 +114,7 @@ void OTGrammar_Distributions_learnFromPartialOutputs (OTGrammar me, Distribution
 	double initialPlasticity, long replicationsPerPlasticity, double plasticityDecrement,
 	long numberOfPlasticities, double relativePlasticityNoise, long numberOfChews,
 	long storeHistoryEvery, OTHistory *history_out,
-	bool resampleForVirtualProduction, bool compareOnlyPartialOutput);
+	bool resampleForVirtualProduction, bool compareOnlyPartialOutput, long resampleForCorrectForm);
 double OTGrammar_PairDistribution_getFractionCorrect (OTGrammar me, PairDistribution thee,
 	double evaluationNoise, long numberOfInputs);
 long OTGrammar_PairDistribution_getMinimumNumberCorrect (OTGrammar me, PairDistribution thee,

@@ -1,6 +1,6 @@
 /* oo_COPY.h
  *
- * Copyright (C) 1994-2012,2013 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,89 +20,89 @@
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	thy x = x;
+	thy x = our x;
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		thy x [i] = x [i];
+		thy x [i] = our x [i];
 
 #define oo_SET(type,storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		thy x [i] = x [i];
+		thy x [i] = our x [i];
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (x) thy x = NUMvector_copy (x, min, max);
+	if (our x) thy x = NUMvector_copy (our x, min, max);
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (x) thy x = NUMmatrix_copy (x, row1, row2, col1, col2);
+	if (our x) thy x = NUMmatrix_copy (our x, row1, row2, col1, col2);
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	thy x = x;
+	thy x = our x;
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
-	for (int i = 0; i < n; i ++) thy x [i] = x [i];
+	for (int i = 0; i < n; i ++) thy x [i] = our x [i];
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
-	for (int i = 0; i <= setType##_MAX; i ++) thy x [i] = x [i];
+	for (int i = 0; i <= setType##_MAX; i ++) thy x [i] = our x [i];
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	if (x) thy x = NUMvector_copy (x, min, max);
+	if (our x) thy x = NUMvector_copy (our x, min, max);
 
 #define oo_STRINGx(storage,x)  \
-	if (x) thy x = Melder_wcsdup (x);
+	if (our x) thy x = Melder_wcsdup (our x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (x [i]) thy x [i] = Melder_wcsdup (x [i]);
+		if (our x [i]) thy x [i] = Melder_wcsdup (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (x [i]) thy x [i] = Melder_wcsdup (x [i]);
+		if (our x [i]) thy x [i] = Melder_wcsdup (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (x) { \
+	if (our x) { \
 		thy x = NUMvector <wchar_t*> (min, max); \
 		for (long i = min; i <= max; i ++) \
-			if (x [i]) thy x [i] = Melder_wcsdup (x [i]); \
+			if (our x [i]) thy x [i] = Melder_wcsdup (our x [i]); \
 	}
 
 #define oo_STRUCT(Type,x)  \
-	x. copy (& thy x);
+	our x. copy (& thy x);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		x [i]. copy (& thy x [i]);
+		our x [i]. copy (& thy x [i]);
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		x [i]. copy (& thy x [i]);
+		our x [i]. copy (& thy x [i]);
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
 	if (x) { \
 		thy x = NUMvector <struct##Type> (min, max); \
 		for (long i = min; i <= max; i ++) \
-			x [i]. copy (& thy x [i]); \
+			our x [i]. copy (& thy x [i]); \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (x) { \
+	if (our x) { \
 		thy x = NUMmatrix <struct##Type> (row1, row2, col1, col2); \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				x [i] [j]. copy (& thy x [i] [j]); \
+				our x [i] [j]. copy (& thy x [i] [j]); \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
-	if (x) thy x = Data_copy (x);
+	if (our x) thy x = Data_copy (our x);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (x) thy x = Data_copy (x);
+	if (our x) thy x = Data_copy (our x);
 
 #define oo_FILE(x)  \
-	MelderFile_copy (& x, & thy x);
+	MelderFile_copy (& our x, & thy x);
 
 #define oo_DIR(x)  \
-	MelderDir_copy (& x, & thy x);
+	MelderDir_copy (& our x, & thy x);
 
 #define oo_DEFINE_STRUCT(Type)  \
 	void struct##Type :: copy (Type thee) {

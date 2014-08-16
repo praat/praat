@@ -1,6 +1,6 @@
 /* Sound_to_Intensity.cpp
  *
- * Copyright (C) 1992-2011 Paul Boersma
+ * Copyright (C) 1992-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -71,8 +71,8 @@ static Intensity Sound_to_Intensity_ (Sound me, double minimumPitch, double time
 		}
 		autoIntensity thee = Intensity_create (my xmin, my xmax, numberOfFrames, timeStep, thyFirstTime);
 		for (long iframe = 1; iframe <= numberOfFrames; iframe ++) {
-			double midTime = thy f_indexToX (iframe);
-			long midSample = my f_xToNearestIndex (midTime);
+			double midTime = Sampled_indexToX (thee.peek(), iframe);
+			long midSample = Sampled_xToNearestIndex (me, midTime);
 			long leftSample = midSample - halfWindowSamples, rightSample = midSample + halfWindowSamples;
 			double sumxw = 0.0, sumw = 0.0, intensity;
 			if (leftSample < 1) leftSample = 1;

@@ -36,44 +36,6 @@ oo_DEFINE_CLASS (Photo, SampledXY)
 			virtual bool v_hasGetNy        () { return true; }   virtual double v_getNy        ()        { return ny; }
 			virtual bool v_hasGetDy        () { return true; }   virtual double v_getDy        ()        { return dy; }
 			virtual bool v_hasGetY         () { return true; }   virtual double v_getY         (long iy) { return y1 + (iy - 1) * dy; }
-		// functions:
-
-			double_rgbt f_getValueAtXY (double x, double y);
-			/*
-				Linear interpolation between matrix points,
-				constant extrapolation in cells on the edge,
-				NUMundefined outside the union of the unit squares around the points.
-			*/
-
-			void f_replaceRed (Matrix red);
-			void f_replaceGreen (Matrix green);
-			void f_replaceBlue (Matrix blue);
-			void f_replaceTransparency (Matrix transparency);
-
-			void f_paintImage (Graphics g, double xmin, double xmax, double ymin, double ymax);
-
-			void f_paintCells (Graphics g, double xmin, double xmax, double ymin, double ymax);
-			/*
-				Every sample is drawn as a rectangle.
-			*/
-
-			void f_movie (Graphics g);
-			void f_saveAsPNG               (MelderFile file);
-			void f_saveAsTIFF              (MelderFile file);
-			void f_saveAsGIF               (MelderFile file);
-			void f_saveAsWindowsBitmapFile (MelderFile file);
-			void f_saveAsJPEG              (MelderFile file);
-			void f_saveAsJPEG2000          (MelderFile file);
-			void f_saveAsAppleIconFile     (MelderFile file);
-			void f_saveAsWindowsIconFile   (MelderFile file);
-		// helpers:
-			#if defined (_WIN32)
-				void _win_saveAsImageFile (MelderFile file, const wchar_t *which);
-			#elif defined (macintosh)
-				void _mac_saveAsImageFile (MelderFile file, const void *which);
-			#elif defined (linux)
-				void _lin_saveAsImageFile (MelderFile file, const wchar_t *which);
-			#endif
 	#endif
 
 oo_END_CLASS (Photo)

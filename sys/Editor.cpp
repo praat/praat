@@ -43,9 +43,9 @@ Thing_implement (Editor, Thing, 0);
 Thing_implement (EditorCommand, Thing, 0);
 
 void structEditorCommand :: v_destroy () {
-	Melder_free (itemTitle);
-	Melder_free (script);
-	forget (d_uiform);
+	Melder_free (our itemTitle);
+	Melder_free (our script);
+	forget (our d_uiform);
 	EditorCommand_Parent :: v_destroy ();
 }
 
@@ -54,8 +54,8 @@ void structEditorCommand :: v_destroy () {
 Thing_implement (EditorMenu, Thing, 0);
 
 void structEditorMenu :: v_destroy () {
-	Melder_free (menuTitle);
-	forget (commands);
+	Melder_free (our menuTitle);
+	forget (our commands);
 	EditorMenu_Parent :: v_destroy ();
 }
 
@@ -248,29 +248,29 @@ void structEditor :: v_destroy () {
 
 void structEditor :: v_info () {
 	MelderInfo_writeLine (L"Editor type: ", Thing_className (this));
-	MelderInfo_writeLine (L"Editor name: ", name ? name : L"<no name>");
+	MelderInfo_writeLine (L"Editor name: ", our name ? our name : L"<no name>");
 	time_t today = time (NULL);
 	MelderInfo_writeLine (L"Date: ", Melder_peekUtf8ToWcs (ctime (& today)));   // includes a newline
-	if (data) {
-		MelderInfo_writeLine (L"Data type: ", data -> classInfo -> className);
-		MelderInfo_writeLine (L"Data name: ", data -> name);
+	if (our data) {
+		MelderInfo_writeLine (L"Data type: ", our data -> classInfo -> className);
+		MelderInfo_writeLine (L"Data name: ", our data -> name);
 	}
 }
 
 void structEditor :: v_nameChanged () {
-	if (name)
-		d_windowForm -> f_setTitle (name);
+	if (our name)
+		our d_windowForm -> f_setTitle (our name);
 }
 
 void structEditor :: v_saveData () {
-	if (! data) return;
-	forget (previousData);
-	previousData = Data_copy (data);
+	if (! our data) return;
+	forget (our previousData);
+	our previousData = Data_copy (our data);
 }
 
 void structEditor :: v_restoreData () {
-	if (data && previousData)
-		Thing_swap (data, previousData);
+	if (our data && our previousData)
+		Thing_swap (our data, our previousData);
 }
 
 static void menu_cb_sendBackToCallingProgram (EDITOR_ARGS) {
@@ -280,7 +280,7 @@ static void menu_cb_sendBackToCallingProgram (EDITOR_ARGS) {
 		structMelderFile file;
 		MelderDir_getFile (& praatDir, L"praat_backToCaller.Data", & file);
 		Data_writeToBinaryFile (my data, & file);
-		sendsocket (my callbackSocket, NULL);
+		sendsocket (my callbackSocket, Melder_peekWcsToUtf8 (my data -> name));
 	}
 	my v_goAway ();
 }
@@ -335,8 +335,8 @@ void structEditor :: v_createMenuItems_file (EditorMenu menu) {
 }
 
 void structEditor :: v_createMenuItems_edit (EditorMenu menu) {
-	if (data)
-		undoButton = EditorMenu_addCommand (menu, L"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
+	if (our data)
+		our undoButton = EditorMenu_addCommand (menu, L"Cannot undo", GuiMenu_INSENSITIVE + 'Z', menu_cb_undo);
 }
 
 static void menu_cb_settingsReport (EDITOR_ARGS) {

@@ -44,71 +44,71 @@ Thing_implement (Matrix, SampledXY, 2);
 void structMatrix :: v_info () {
 	structData :: v_info ();
 	double minimum = 0.0, maximum = 0.0;
-	Matrix_getWindowExtrema (this, 1, nx, 1, ny, & minimum, & maximum);
-	MelderInfo_writeLine (L"xmin: ", Melder_double (xmin));
-	MelderInfo_writeLine (L"xmax: ", Melder_double (xmax));
-	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (nx));
-	MelderInfo_writeLine (L"dx: ", Melder_double (dx), L" (-> sampling rate ", Melder_double (1.0 / dx), L" )");
-	MelderInfo_writeLine (L"x1: ", Melder_double (x1));
-	MelderInfo_writeLine (L"ymin: ", Melder_double (ymin));
-	MelderInfo_writeLine (L"ymax: ", Melder_double (ymax));
-	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (ny));
-	MelderInfo_writeLine (L"dy: ", Melder_double (dy), L" (-> sampling rate ", Melder_double (1.0 / dy), L" )");
-	MelderInfo_writeLine (L"y1: ", Melder_double (y1));
+	Matrix_getWindowExtrema (this, 1, our nx, 1, our ny, & minimum, & maximum);
+	MelderInfo_writeLine (L"xmin: ", Melder_double (our xmin));
+	MelderInfo_writeLine (L"xmax: ", Melder_double (our xmax));
+	MelderInfo_writeLine (L"Number of columns: ", Melder_integer (our nx));
+	MelderInfo_writeLine (L"dx: ", Melder_double (our dx), L" (-> sampling rate ", Melder_double (1.0 / our dx), L" )");
+	MelderInfo_writeLine (L"x1: ", Melder_double (our x1));
+	MelderInfo_writeLine (L"ymin: ", Melder_double (our ymin));
+	MelderInfo_writeLine (L"ymax: ", Melder_double (our ymax));
+	MelderInfo_writeLine (L"Number of rows: ", Melder_integer (our ny));
+	MelderInfo_writeLine (L"dy: ", Melder_double (our dy), L" (-> sampling rate ", Melder_double (1.0 / our dy), L" )");
+	MelderInfo_writeLine (L"y1: ", Melder_double (our y1));
 	MelderInfo_writeLine (L"Minimum value: ", Melder_single (minimum));
 	MelderInfo_writeLine (L"Maximum value: ", Melder_single (maximum));
 }
 
 void structMatrix :: v_readText (MelderReadText text) {
 	if (Thing_version < 0) {
-		xmin = texgetr8 (text);
-		xmax = texgetr8 (text);
-		ymin = texgetr8 (text);
-		ymax = texgetr8 (text);
-		nx = texgeti4 (text);
-		ny = texgeti4 (text);
-		dx = texgetr8 (text);
-		dy = texgetr8 (text);
-		x1 = texgetr8 (text);
-		y1 = texgetr8 (text);
+		our xmin = texgetr8 (text);
+		our xmax = texgetr8 (text);
+		our ymin = texgetr8 (text);
+		our ymax = texgetr8 (text);
+		our nx = texgeti4 (text);
+		our ny = texgeti4 (text);
+		our dx = texgetr8 (text);
+		our dy = texgetr8 (text);
+		our x1 = texgetr8 (text);
+		our y1 = texgetr8 (text);
 	} else {
 		Matrix_Parent :: v_readText (text);
 	}
-	if (xmin > xmax)
+	if (our xmin > our xmax)
 		Melder_throw ("xmin should be less than or equal to xmax.");
-	if (ymin > ymax)
+	if (our ymin > our ymax)
 		Melder_throw ("ymin should be less than or equal to ymax.");
-	if (nx < 1)
+	if (our nx < 1)
 		Melder_throw ("nx should be at least 1.");
-	if (ny < 1)
+	if (our ny < 1)
 		Melder_throw ("ny should be at least 1.");
-	if (dx <= 0.0)
+	if (our dx <= 0.0)
 		Melder_throw ("dx should be greater than 0.0.");
-	if (dy <= 0.0)
+	if (our dy <= 0.0)
 		Melder_throw ("dy should be greater than 0.0.");
-	z = NUMmatrix_readText_r8 (1, ny, 1, nx, text, "z");
+	our z = NUMmatrix_readText_r8 (1, our ny, 1, our nx, text, "z");
 }
 
 double structMatrix :: v_getValueAtSample (long isamp, long ilevel, int unit) {
-	double value = z [ilevel] [isamp];
-	return NUMdefined (value) ? v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined;
+	double value = our z [ilevel] [isamp];
+	return NUMdefined (value) ? our v_convertStandardToSpecialUnit (value, ilevel, unit) : NUMundefined;
 }
 
 double structMatrix :: v_getMatrix (long irow, long icol) {
-	if (irow < 1 || irow > ny) return 0.0;
-	if (icol < 1 || icol > nx) return 0.0;
+	if (irow < 1 || irow > our ny) return 0.0;
+	if (icol < 1 || icol > our nx) return 0.0;
 	return z [irow] [icol];
 }
 
 double structMatrix :: v_getFunction2 (double x, double y) {
-	double rrow = (y - y1) / dy + 1.0;
-	double rcol = (x - x1) / dx + 1.0;
+	double rrow = (y - our y1) / our dy + 1.0;
+	double rcol = (x - our x1) / our dx + 1.0;
 	long irow = floor (rrow), icol = floor (rcol);
 	double drow = rrow - irow, dcol = rcol - icol;
-	double z1 = irow < 1 || irow > ny || icol < 1 || icol > nx ? 0.0 : z [irow] [icol];
-	double z2 = irow < 0 || irow >= ny || icol < 1 || icol > nx ? 0.0 : z [irow + 1] [icol];
-	double z3 = irow < 1 || irow > ny || icol < 0 || icol >= nx ? 0.0 : z [irow] [icol + 1];
-	double z4 = irow < 0 || irow >= ny || icol < 0 || icol >= nx ? 0.0 : z [irow + 1] [icol + 1];
+	double z1 = irow < 1 || irow >  our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow]     [icol];
+	double z2 = irow < 0 || irow >= our ny || icol < 1 || icol >  our nx ? 0.0 : z [irow + 1] [icol];
+	double z3 = irow < 1 || irow >  our ny || icol < 0 || icol >= our nx ? 0.0 : z [irow]     [icol + 1];
+	double z4 = irow < 0 || irow >= our ny || icol < 0 || icol >= our nx ? 0.0 : z [irow + 1] [icol + 1];
 	return (1.0 - drow) * (1.0 - dcol) * z1 + drow * (1.0 - dcol) * z2 + (1.0 - drow) * dcol * z3 + drow * dcol * z4;
 }
 
@@ -374,13 +374,13 @@ static void cellArrayOrImage (Matrix me, Graphics g, double xmin, double xmax, d
 	Graphics_setWindow (g, xmin, xmax, ymin, ymax);
 	if (interpolate)
 		Graphics_image (g, my z,
-			ixmin, ixmax, my f_indexToX (ixmin - 0.5), my f_indexToX (ixmax + 0.5),
-			iymin, iymax, my f_indexToY (iymin - 0.5), my f_indexToY (iymax + 0.5),
+			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
+			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
 	else
 		Graphics_cellArray (g, my z,
-			ixmin, ixmax, my f_indexToX (ixmin - 0.5), my f_indexToX (ixmax + 0.5),
-			iymin, iymax, my f_indexToY (iymin - 0.5), my f_indexToY (iymax + 0.5),
+			ixmin, ixmax, Sampled_indexToX   (me, ixmin - 0.5), Sampled_indexToX   (me, ixmax + 0.5),
+			iymin, iymax, SampledXY_indexToY (me, iymin - 0.5), SampledXY_indexToY (me, iymax + 0.5),
 			minimum, maximum);
 	Graphics_rectangle (g, xmin, xmax, ymin, ymax);
 	Graphics_unsetInner (g);

@@ -63,8 +63,8 @@ static int Pitch_getVoicedIntervalAfter (Pitch me, double after, double *tleft, 
 		if (! Pitch_isVoiced_i (me, iright)) break;
 	iright --;
 
-	*tleft = my f_indexToX (ileft) - 0.5 * my dx;   /* The whole frame is considered voiced. */
-	*tright = my f_indexToX (iright) + 0.5 * my dx;
+	*tleft = Sampled_indexToX (me, ileft) - 0.5 * my dx;   // the whole frame is considered voiced
+	*tright = Sampled_indexToX (me, iright) + 0.5 * my dx;
 	if (*tleft >= my xmax - 0.5 * my dx) return 0;
 	if (*tleft < my xmin) *tleft = my xmin;
 	if (*tright > my xmax) *tright = my xmax;

@@ -48,7 +48,7 @@ Cochleagram Sound_to_Cochleagram (Sound me, double dt, double df, double dt_wind
 		autoCochleagram thee = Cochleagram_create (my xmin, my xmax, nFrames, dt, t1, df, nf);
 		autoSound window = Sound_createSimple (1, nsamp_window * my dx, 1.0 / my dx);
 		for (long iframe = 1; iframe <= nFrames; iframe ++) {
-			double t = thy f_indexToX (iframe);
+			double t = Sampled_indexToX (thee.peek(), iframe);
 			long leftSample = Sampled_xToLowIndex (me, t);
 			long rightSample = leftSample + 1;
 			long startSample = rightSample - halfnsamp_window;

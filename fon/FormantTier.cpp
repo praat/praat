@@ -162,7 +162,7 @@ FormantTier Formant_downto_FormantTier (Formant me) {
 		autoFormantTier thee = FormantTier_create (my xmin, my xmax);
 		for (long i = 1; i <= my nx; i ++) {
 			Formant_Frame frame = & my d_frames [i];
-			autoFormantPoint point = FormantPoint_create (my f_indexToX (i));
+			autoFormantPoint point = FormantPoint_create (Sampled_indexToX (me, i));
 			point -> numberOfFormants = frame -> nFormants > 10 ? 10 : frame -> nFormants;
 			for (long j = 1; j <= point -> numberOfFormants; j ++) {
 				Formant_Formant pair = & frame -> formant [j];

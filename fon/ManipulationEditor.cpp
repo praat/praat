@@ -106,9 +106,9 @@ static int getDurationArea (ManipulationEditor me, double *ymin, double *ymax) {
 /********** DESTRUCTION **********/
 
 void structManipulationEditor :: v_destroy () {
-	forget (previousPulses);
-	forget (previousPitch);
-	forget (previousDuration);
+	forget (our previousPulses);
+	forget (our previousPitch);
+	forget (our previousDuration);
 	ManipulationEditor_Parent :: v_destroy ();
 }
 
@@ -158,21 +158,21 @@ static void menu_cb_extractManipulatedSound (EDITOR_ARGS) {
 /***** EDIT MENU *****/
 
 void structManipulationEditor :: v_saveData () {
-	Manipulation ana = (Manipulation) data;
-	forget (previousPulses);
-	forget (previousPitch);
-	forget (previousDuration);
-	if (ana -> pulses) previousPulses = Data_copy (ana -> pulses);
-	if (ana -> pitch) previousPitch = Data_copy (ana -> pitch);
-	if (ana -> duration) previousDuration = Data_copy (ana -> duration);
+	Manipulation ana = (Manipulation) our data;
+	forget (our previousPulses);
+	forget (our previousPitch);
+	forget (our previousDuration);
+	if (ana -> pulses)   our previousPulses   = Data_copy (ana -> pulses);
+	if (ana -> pitch)    our previousPitch    = Data_copy (ana -> pitch);
+	if (ana -> duration) our previousDuration = Data_copy (ana -> duration);
 }
 
 void structManipulationEditor :: v_restoreData () {
-	Manipulation ana = (Manipulation) data;
+	Manipulation ana = (Manipulation) our data;
 	Any dummy;
-	dummy = ana -> pulses;   ana -> pulses   = previousPulses;   previousPulses   = (PointProcess) dummy;
-	dummy = ana -> pitch;    ana -> pitch    = previousPitch;    previousPitch    = (PitchTier)    dummy;
-	dummy = ana -> duration; ana -> duration = previousDuration; previousDuration = (DurationTier) dummy;
+	dummy = ana -> pulses;   ana -> pulses   = our previousPulses;   our previousPulses   = (PointProcess) dummy;
+	dummy = ana -> pitch;    ana -> pitch    = our previousPitch;    our previousPitch    = (PitchTier)    dummy;
+	dummy = ana -> duration; ana -> duration = our previousDuration; our previousDuration = (DurationTier) dummy;
 }
 
 /***** PULSES MENU *****/
@@ -615,18 +615,18 @@ void structManipulationEditor :: v_createMenus () {
 	Editor_addCommand (this, L"Dur", L"Forget duration", 0, menu_cb_forgetDuration);
 
 	Editor_addMenu (this, L"Synth", 0);
-	synthPulsesButton = Editor_addCommand (this, L"Synth", L"Pulses --", GuiMenu_RADIO_FIRST, menu_cb_Synth_Pulses);
-	synthPulsesHumButton = Editor_addCommand (this, L"Synth", L"Pulses (hum) --", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_hum);
+	our synthPulsesButton = Editor_addCommand (this, L"Synth", L"Pulses --", GuiMenu_RADIO_FIRST, menu_cb_Synth_Pulses);
+	our synthPulsesHumButton = Editor_addCommand (this, L"Synth", L"Pulses (hum) --", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_hum);
 
-	synthPulsesLpcButton = Editor_addCommand (this, L"Synth", L"Pulses & LPC -- (\"LPC resynthesis\")", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Lpc);
+	our synthPulsesLpcButton = Editor_addCommand (this, L"Synth", L"Pulses & LPC -- (\"LPC resynthesis\")", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Lpc);
 	Editor_addCommand (this, L"Synth", L"-- pitch resynth --", 0, NULL);
-	synthPitchButton = Editor_addCommand (this, L"Synth", L" -- Pitch", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch);
-	synthPitchHumButton = Editor_addCommand (this, L"Synth", L" -- Pitch (hum)", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch_hum);
-	synthPulsesPitchButton = Editor_addCommand (this, L"Synth", L"Pulses -- Pitch", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Pitch);
-	synthPulsesPitchHumButton = Editor_addCommand (this, L"Synth", L"Pulses -- Pitch (hum)", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Pitch_hum);
+	our synthPitchButton = Editor_addCommand (this, L"Synth", L" -- Pitch", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch);
+	our synthPitchHumButton = Editor_addCommand (this, L"Synth", L" -- Pitch (hum)", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch_hum);
+	our synthPulsesPitchButton = Editor_addCommand (this, L"Synth", L"Pulses -- Pitch", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Pitch);
+	our synthPulsesPitchHumButton = Editor_addCommand (this, L"Synth", L"Pulses -- Pitch (hum)", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pulses_Pitch_hum);
 	Editor_addCommand (this, L"Synth", L"-- full resynth --", 0, NULL);
-	synthOverlapAddButton = Editor_addCommand (this, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON, menu_cb_Synth_OverlapAdd);
-	synthPitchLpcButton = Editor_addCommand (this, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch_Lpc);
+	our synthOverlapAddButton = Editor_addCommand (this, L"Synth", L"Sound & Pulses -- Pitch & Duration  (\"Overlap-add manipulation\")", GuiMenu_RADIO_NEXT | GuiMenu_TOGGLE_ON, menu_cb_Synth_OverlapAdd);
+	our synthPitchLpcButton = Editor_addCommand (this, L"Synth", L"LPC -- Pitch  (\"LPC pitch manipulation\")", GuiMenu_RADIO_NEXT, menu_cb_Synth_Pitch_Lpc);
 }
 
 void structManipulationEditor :: v_createHelpMenuItems (EditorMenu menu) {
@@ -700,7 +700,7 @@ static void drawSoundArea (ManipulationEditor me, double ymin, double ymax) {
 		 */    
 		Graphics_setColour (my d_graphics, Graphics_BLACK);
 		Graphics_function (my d_graphics, sound -> z [1], first, last,
-			sound -> f_indexToX (first), sound -> f_indexToX (last));
+			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
 	Graphics_resetViewport (my d_graphics, viewport);
@@ -913,18 +913,18 @@ void structManipulationEditor :: v_draw () {
 	if (hasPitchArea) drawPitchArea (this, ypitchmin, ypitchmax);
 	if (hasDurationArea) drawDurationArea (this, ydurationmin, ydurationmax);
 
-	Graphics_setWindow (d_graphics, 0.0, 1.0, 0.0, 1.0);
-	Graphics_setGrey (d_graphics, 0.85);
-	Graphics_fillRectangle (d_graphics, -0.001, 1.001, ypitchmax, ysoundmin);
-	Graphics_setGrey (d_graphics, 0.00);
-	Graphics_line (d_graphics, 0, ysoundmin, 1, ysoundmin);
-	Graphics_line (d_graphics, 0, ypitchmax, 1, ypitchmax);
+	Graphics_setWindow (our d_graphics, 0.0, 1.0, 0.0, 1.0);
+	Graphics_setGrey (our d_graphics, 0.85);
+	Graphics_fillRectangle (our d_graphics, -0.001, 1.001, ypitchmax, ysoundmin);
+	Graphics_setGrey (our d_graphics, 0.00);
+	Graphics_line (our d_graphics, 0, ysoundmin, 1, ysoundmin);
+	Graphics_line (our d_graphics, 0, ypitchmax, 1, ypitchmax);
 	if (hasDurationArea) {
-		Graphics_setGrey (d_graphics, 0.85);
-		Graphics_fillRectangle (d_graphics, -0.001, 1.001, ydurationmax, ypitchmin);
-		Graphics_setGrey (d_graphics, 0.00);
-		Graphics_line (d_graphics, 0, ypitchmin, 1, ypitchmin);
-		Graphics_line (d_graphics, 0, ydurationmax, 1, ydurationmax);
+		Graphics_setGrey (our d_graphics, 0.85);
+		Graphics_fillRectangle (our d_graphics, -0.001, 1.001, ydurationmax, ypitchmin);
+		Graphics_setGrey (our d_graphics, 0.00);
+		Graphics_line (our d_graphics, 0, ypitchmin, 1, ypitchmin);
+		Graphics_line (our d_graphics, 0, ydurationmax, 1, ydurationmax);
 	}
 	updateMenus (this);
 }
@@ -1234,25 +1234,25 @@ int structManipulationEditor :: v_click (double xWC, double yWC, bool shiftKeyPr
 	 * Dispatch click to clicked area.
 	 */
 	if (hasPitchArea && yWC > ypitchmin && yWC < ypitchmax) {   // clicked in pitch area?
-		inset = Graphics_insetViewport (d_graphics, 0, 1, ypitchmin, ypitchmax);
+		inset = Graphics_insetViewport (our d_graphics, 0, 1, ypitchmin, ypitchmax);
 		return clickPitch (this, xWC, (yWC - ypitchmin) / (ypitchmax - ypitchmin), shiftKeyPressed);
 	} else if (hasDurationArea && yWC > ydurationmin && yWC < ydurationmax) {   // clicked in duration area?
-		inset = Graphics_insetViewport (d_graphics, 0, 1, ydurationmin, ydurationmax);
+		inset = Graphics_insetViewport (our d_graphics, 0, 1, ydurationmin, ydurationmax);
 		return clickDuration (this, xWC, (yWC - ydurationmin) / (ydurationmax - ydurationmin), shiftKeyPressed);
 	}
 	/*
 	 * Perform the default action: move cursor or drag selection.
 	 */
-	return ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
+	return our ManipulationEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
 void structManipulationEditor :: v_play (double a_tmin, double a_tmax) {
-	Manipulation ana = (Manipulation) data;
-	if (shiftKeyPressed) {
+	Manipulation ana = (Manipulation) our data;
+	if (our shiftKeyPressed) {
 		if (ana -> sound)
 			Sound_playPart (ana -> sound, a_tmin, a_tmax, theFunctionEditor_playCallback, this);
 	} else {
-		Manipulation_playPart (ana, a_tmin, a_tmax, synthesisMethod);
+		Manipulation_playPart (ana, a_tmin, a_tmax, our synthesisMethod);
 	}
 }
 

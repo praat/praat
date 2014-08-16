@@ -28,6 +28,21 @@
 #include "SpeechSynthesizer_and_TextGrid.h"
 #include "LongSound.h"
 
+static bool IntervalTier_check (IntervalTier me) {
+	for (long iinterval = 1; iinterval <= my numberOfIntervals (); iinterval ++) {
+		TextInterval interval = my interval (iinterval);
+		if (interval -> xmin >= interval -> xmax)
+			return false;
+	}
+	if (my numberOfIntervals () < 2) return true;
+	for (long iinterval = 1; iinterval < my numberOfIntervals (); iinterval ++) {
+		TextInterval interval = my interval (iinterval), nextInterval = my interval (iinterval + 1);
+		if (interval -> xmax != nextInterval -> xmin)
+			return false;
+	}
+	return true;
+}
+
 static void IntervalTier_insertIntervalDestructively (IntervalTier me, double tmin, double tmax) {
 	Melder_assert (tmin < tmax);
 	Melder_assert (tmin >= my xmin);
@@ -160,9 +175,33 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			Melder_assert (analysis -> xmax == interval -> xmax);
 			Melder_assert (analysis -> numberOfTiers () == 4);
 			Thing_cast (IntervalTier, analysisWordTier, analysis -> tier (3));
+			if (! IntervalTier_check (analysisWordTier))
+				Melder_throw (L"Analysis word tier out of order.");
 			IntervalTier_removeEmptyIntervals (analysisWordTier, NULL);
+			Melder_assert (analysisWordTier -> xmax == analysis -> xmax);
+			Melder_assert (analysisWordTier -> numberOfIntervals () >= 1);
+			TextInterval firstInterval = analysisWordTier -> interval (1);
+			TextInterval lastInterval = analysisWordTier -> interval (analysisWordTier -> numberOfIntervals ());
+			firstInterval -> xmin = analysis -> xmin;
+			lastInterval  -> xmax = analysis -> xmax;
+			if (lastInterval -> xmax != analysis -> xmax)
+				Melder_fatal ("analysis ends at %ls, but last interval at %ls seconds",
+					Melder_double (analysis -> xmax), Melder_double (lastInterval -> xmax));
+			if (! IntervalTier_check (analysisWordTier))
+				Melder_throw (L"Analysis word tier out of order (2).");
 			Thing_cast (IntervalTier, analysisPhonemeTier, analysis -> tier (4));
+			if (! IntervalTier_check (analysisPhonemeTier))
+				Melder_throw (L"Analysis phoneme tier out of order.");
 			IntervalTier_removeEmptyIntervals (analysisPhonemeTier, analysisWordTier);
+			Melder_assert (analysisPhonemeTier -> xmax == analysis -> xmax);
+			Melder_assert (analysisPhonemeTier -> numberOfIntervals () >= 1);
+			firstInterval = analysisPhonemeTier -> interval (1);
+			lastInterval  = analysisPhonemeTier -> interval (analysisPhonemeTier -> numberOfIntervals ());
+			firstInterval -> xmin = analysis -> xmin;
+			lastInterval  -> xmax = analysis -> xmax;
+			Melder_assert (lastInterval -> xmax == analysis -> xmax);
+			if (! IntervalTier_check (analysisPhonemeTier))
+				Melder_throw (L"Analysis phoneme tier out of order (2).");
 		}
 		long wordTierNumber = 0, phonemeTierNumber = 0;
 		IntervalTier wordTier = NULL, phonemeTier = NULL;
@@ -204,6 +243,10 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 			Melder_assert (wordIntervalNumber != 0);
 			if (analysis.peek()) {
 				Thing_cast (IntervalTier, analysisWordTier, analysis -> tier (3));
+				if (! IntervalTier_check (analysisWordTier))
+					Melder_throw (L"Analysis word tier out of order (3).");
+				if (! IntervalTier_check (wordTier))
+					Melder_throw (L"Word tier out of order (3).");
 				for (long ianalysisInterval = 1; ianalysisInterval <= analysisWordTier -> numberOfIntervals (); ianalysisInterval ++) {
 					TextInterval analysisInterval = analysisWordTier -> interval (ianalysisInterval);
 					TextInterval wordInterval = NULL;
@@ -219,6 +262,10 @@ void TextGrid_anySound_alignInterval (TextGrid me, Function anySound, long tierN
 						wordIntervalNumber ++;
 					}
 				}
+				if (! IntervalTier_check (analysisWordTier))
+					Melder_throw (L"Analysis word tier out of order (4).");
+				if (! IntervalTier_check (wordTier))
+					Melder_throw (L"Word tier out of order (4).");
 			}
 		}
 		/*
@@ -309,7 +356,7 @@ void TextGrid_Sound_draw (TextGrid me, Sound sound, Graphics g, double tmin, dou
 		Graphics_line (g, tmin, 0.0, tmax, 0.0);
 		Graphics_setLineType (g, Graphics_DRAWN);      
 		Graphics_function (g, sound -> z [1], first, last,
-			sound -> f_indexToX (first), sound -> f_indexToX (last));
+			Sampled_indexToX (sound, first), Sampled_indexToX (sound, last));
 	}
 
 	/*

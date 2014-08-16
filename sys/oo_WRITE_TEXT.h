@@ -1,6 +1,6 @@
 /* oo_WRITE_TEXT.h
  *
- * Copyright (C) 1994-2012,2013 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,80 +20,80 @@
 #include "oo_undef.h"
 
 #define oo_SIMPLE(type,storage,x)  \
-	texput##storage (file, x, L"" #x, 0,0,0,0,0);
+	texput##storage (file, our x, L"" #x, 0,0,0,0,0);
 
 #define oo_ARRAY(type,storage,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
-		texput##storage (file, x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_SET(type,storage,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		texput##storage (file, x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	if (x) \
-		NUMvector_writeText_##storage (x, min, max, file, L"" #x);
+	if (our x) \
+		NUMvector_writeText_##storage (our x, min, max, file, L"" #x);
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	if (x) \
-		NUMmatrix_writeText_##storage (x, row1, row2, col1, col2, file, L"" #x);
+	if (our x) \
+		NUMmatrix_writeText_##storage (our x, row1, row2, col1, col2, file, L"" #x);
 
 #define oo_ENUMx(type,storage,Type,x)  \
-	texput##storage (file, x, Type##_getText, L"" #x, 0,0,0,0,0);
+	texput##storage (file, our x, Type##_getText, L"" #x, 0,0,0,0,0);
 
 #define oo_ENUMx_ARRAY(type,storage,Type,x,cap,n)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
-		texput##storage (file, x [i], Type##_getText, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], Type##_getText, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_ENUMx_SET(type,storage,Type,x,setType)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		texput##storage (file, x [i], Type##_getText, L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], Type##_getText, L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
-		texput##storage (file, x [i], Type##_getText, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], Type##_getText, L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGx(storage,x)  \
-	texput##storage (file, x, L""#x, 0,0,0,0,0);
+	texput##storage (file, our x, L""#x, 0,0,0,0,0);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) \
-		texput##storage (file, x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		texput##storage (file, x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], L"" #x " [", setType##_getText (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) \
-		texput##storage (file, x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
+		texput##storage (file, our x [i], L"" #x " [", Melder_integer (i), L"]", 0,0,0); \
 	texexdent (file);
 
 #define oo_STRUCT(Type,x)  \
 	texputintro (file, L"" #x ":", 0,0,0,0,0); \
-	x. writeText (file); \
+	our x. writeText (file); \
 	texexdent (file);
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	texputintro (file, L"" #x " []: ", n ? NULL : L"(empty)", 0,0,0,0); \
 	for (int i = 0; i < n; i ++) { \
 		texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
-		x [i]. writeText (file); \
+		our x [i]. writeText (file); \
 		texexdent (file); \
 	} \
 	texexdent (file);
@@ -102,7 +102,7 @@
 	texputintro (file, L"" #x " []:", 0,0,0,0,0); \
 	for (int i = 0; i <= setType##_MAX; i ++) { \
 		texputintro (file, L"" #x " [", setType##_getText (i), L"]:", 0,0,0); \
-		x [i]. writeText (file); \
+		our x [i]. writeText (file); \
 		texexdent (file); \
 	} \
 	texexdent (file);
@@ -111,7 +111,7 @@
 	texputintro (file, L"" #x " []: ", max >= min ? NULL : L"(empty)", 0,0,0,0); \
 	for (long i = min; i <= max; i ++) { \
 		texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
-		x [i]. writeText (file); \
+		our x [i]. writeText (file); \
 		texexdent (file); \
 	} \
 	texexdent (file);
@@ -122,7 +122,7 @@
 		texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
 		for (long j = col1; j <= col2; j ++) { \
 			texputintro (file, L"" #x " [", Melder_integer (i), L"] [", Melder_integer (j), L"]:", 0); \
-			x [i] [j]. writeText (file); \
+			our x [i] [j]. writeText (file); \
 			texexdent (file); \
 		} \
 		texexdent (file); \
@@ -130,15 +130,15 @@
 	texexdent (file);
 
 #define oo_OBJECT(Class,version,x)  \
-	texputex (file, x != NULL, L"" #x, 0,0,0,0,0); \
-	if (x) \
-		Data_writeText (x, file);
+	texputex (file, our x != NULL, L"" #x, 0,0,0,0,0); \
+	if (our x) \
+		Data_writeText (our x, file);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	texputi4 (file, x ? x -> size : 0, L"" #x ": size", 0,0,0,0,0); \
-	if (x) { \
-		for (long i = 1; i <= x -> size; i ++) { \
-			ItemClass data = (ItemClass) x -> item [i]; \
+	texputi4 (file, our x ? our x -> size : 0, L"" #x ": size", 0,0,0,0,0); \
+	if (our x) { \
+		for (long i = 1; i <= our x -> size; i ++) { \
+			ItemClass data = (ItemClass) our x -> item [i]; \
 			texputintro (file, L"" #x " [", Melder_integer (i), L"]:", 0,0,0); \
 			data -> struct##ItemClass :: v_writeText (file); \
 			texexdent (file); \

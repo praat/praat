@@ -74,7 +74,7 @@ FORM (LongSound_getIndexFromTime, L"LongSound: Get sample index from time", L"So
 DO
 	LOOP {
 		iam (LongSound);
-		double index = my f_xToIndex (GET_REAL (L"Time"));
+		double index = Sampled_xToIndex (me, GET_REAL (L"Time"));
 		Melder_informationReal (index, NULL);
 	}
 END2 }
@@ -99,7 +99,7 @@ FORM (LongSound_getTimeFromIndex, L"LongSound: Get time from sample index", L"So
 DO
 	LOOP {
 		iam (LongSound);
-		Melder_informationReal (my f_indexToX (GET_INTEGER (L"Sample index")), L"seconds");
+		Melder_informationReal (Sampled_indexToX (me, GET_INTEGER (L"Sample index")), L"seconds");
 	}
 END2 }
 
@@ -973,7 +973,7 @@ FORM (Sound_getIndexFromTime, L"Get sample number from time", L"Get sample numbe
 DO
 	LOOP {
 		iam (Sound);
-		double realIndex = my f_xToIndex (GET_REAL (L"Time"));
+		double realIndex = Sampled_xToIndex (me, GET_REAL (L"Time"));
 		Melder_informationReal (realIndex, NULL);
 	}
 END2 }
@@ -1172,7 +1172,7 @@ FORM (Sound_getTimeFromIndex, L"Get time from sample number", L"Get time from sa
 DO
 	LOOP {
 		iam (Sound);
-		double time = my f_indexToX (GET_INTEGER (L"Sample number"));
+		double time = Sampled_indexToX (me, GET_INTEGER (L"Sample number"));
 		Melder_informationReal (time, L"seconds");
 	}
 END2 }

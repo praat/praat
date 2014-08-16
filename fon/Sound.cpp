@@ -399,8 +399,8 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 			double *to = thy z [channel];
 			if (precision <= 1) {
 				for (long i = 1; i <= numberOfSamples; i ++) {
-					double x = thy f_indexToX (i);
-					double index = my f_xToIndex (x);
+					double x = Sampled_indexToX (thee.peek(), i);
+					double index = Sampled_xToIndex (me, x);
 					long leftSample = floor (index);
 					double fraction = index - leftSample;
 					to [i] = leftSample < 1 || leftSample >= my nx ? 0.0 :
@@ -408,8 +408,8 @@ Sound Sound_resample (Sound me, double samplingFrequency, long precision) {
 				}
 			} else {
 				for (long i = 1; i <= numberOfSamples; i ++) {
-					double x = thy f_indexToX (i);
-					double index = my f_xToIndex (x);
+					double x = Sampled_indexToX (thee.peek(), i);
+					double index = Sampled_xToIndex (me, x);
 					to [i] = NUM_interpolate_sinc (my z [channel], my nx, index, precision);
 				}
 			}
@@ -775,7 +775,7 @@ void Sound_draw (Sound me, Graphics g,
 			maximum + (channel - 1) * (maximum - minimum));
 		if (wcsstr (method, L"bars") || wcsstr (method, L"Bars")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
-				double x = my f_indexToX (ix);
+				double x = Sampled_indexToX (me, ix);
 				double y = my z [channel] [ix];
 				double left = x - 0.5 * my dx, right = x + 0.5 * my dx;
 				if (y > maximum) y = maximum;
@@ -787,12 +787,12 @@ void Sound_draw (Sound me, Graphics g,
 			}
 		} else if (wcsstr (method, L"poles") || wcsstr (method, L"Poles")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
-				double x = my f_indexToX (ix);
+				double x = Sampled_indexToX (me, ix);
 				Graphics_line (g, x, 0, x, my z [channel] [ix]);
 			}
 		} else if (wcsstr (method, L"speckles") || wcsstr (method, L"Speckles")) {
 			for (long ix = ixmin; ix <= ixmax; ix ++) {
-				double x = my f_indexToX (ix);
+				double x = Sampled_indexToX (me, ix);
 				Graphics_speckle (g, x, my z [channel] [ix]);
 			}
 		} else {
@@ -831,7 +831,7 @@ static double interpolate (Sound me, long i1, long channel)
 /* Precondition: my z [1] [i1] != my z [1] [i1 + 1]; */
 {
 	long i2 = i1 + 1;
-	double x1 = my f_indexToX (i1), x2 = my f_indexToX (i2);
+	double x1 = Sampled_indexToX (me, i1), x2 = Sampled_indexToX (me, i2);
 	double y1 = my z [channel] [i1], y2 = my z [channel] [i2];
 	return x1 + (x2 - x1) * y1 / (y1 - y2);   /* Linear. */
 }
@@ -944,7 +944,7 @@ Sound Sound_createFromToneComplex (double startingTime, double endTime, double s
 			1 / sampleRate, startingTime + 0.5 / sampleRate);
 		double *amplitude = my z [1];
 		for (long isamp = 1; isamp <= my nx; isamp ++) {
-			double value = 0.0, t = my f_indexToX (isamp);
+			double value = 0.0, t = Sampled_indexToX (me.peek(), isamp);
 			double omegaStepT = omegaStep * t, firstOmegaT = firstOmega * t;
 			if (phase == Sound_TONE_COMPLEX_SINE)
 				for (long icomp = 1; icomp <= numberOfComponents; icomp ++)

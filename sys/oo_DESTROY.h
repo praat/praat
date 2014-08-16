@@ -1,6 +1,6 @@
 /* oo_DESTROY.h
  *
- * Copyright (C) 1994-2012,2013 Paul Boersma
+ * Copyright (C) 1994-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,10 +26,10 @@
 #define oo_SET(type,storage,x,setType)
 
 #define oo_VECTOR(type,storage,x,min,max)  \
-	NUMvector_free <type> (x, min);
+	NUMvector_free <type> (our x, min);
 
 #define oo_MATRIX(type,storage,x,row1,row2,col1,col2)  \
-	NUMmatrix_free <type> (x, row1, col1);
+	NUMmatrix_free <type> (our x, row1, col1);
 
 
 #define oo_ENUMx(type,storage,Type,x)
@@ -39,57 +39,57 @@
 #define oo_ENUMx_SET(type,storage,Type,x,setType)
 
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)  \
-	NUMvector_free <type> (x, min);
+	NUMvector_free <type> (our x, min);
 
 #define oo_STRINGx(storage,x)  \
-	Melder_free (x);
+	Melder_free (our x);
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		Melder_free (x [i]);
+		Melder_free (our x [i]);
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		Melder_free (x [i]);
+		Melder_free (our x [i]);
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (x) { \
+	if (our x) { \
 		for (long i = min; i <= max; i ++) \
-			Melder_free (x [i]); \
-		NUMvector_free <wchar_t*> (x, min); \
+			Melder_free (our x [i]); \
+		NUMvector_free <wchar_t*> (our x, min); \
 	}
 
 #define oo_STRUCT(Type,x)  \
-	x. destroy ();
+	our x. destroy ();
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		x [i]. destroy ();
+		our x [i]. destroy ();
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		x [i]. destroy ();
+		our x [i]. destroy ();
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (x) { \
+	if (our x) { \
 		for (long i = min; i <= max; i ++) \
-			x [i]. destroy (); \
-		NUMvector_free <struct##Type> (x, min); \
+			our x [i]. destroy (); \
+		NUMvector_free <struct##Type> (our x, min); \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (x) { \
+	if (our x) { \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				x [i] [j]. destroy (); \
-		NUMmatrix_free <struct##Type> (x, row1, col1); \
+				our x [i] [j]. destroy (); \
+		NUMmatrix_free <struct##Type> (our x, row1, col1); \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
-	forget (x);
+	forget (our x);
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	forget (x);
+	forget (our x);
 
 #define oo_FILE(x)
 

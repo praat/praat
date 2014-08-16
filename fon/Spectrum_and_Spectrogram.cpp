@@ -34,7 +34,7 @@ Spectrum Spectrogram_to_Spectrum (I, double tim) {
 		thy xmax = my ymax;
 		thy x1 = my y1;   // centre of first band, instead of 0 (makes it unFFTable)
 		thy dx = my dy;   // frequency step
-		long itime = my f_xToIndex (tim);
+		long itime = Sampled_xToIndex (me, tim);
 		if (itime < 1 ) itime = 1;
 		if (itime > my nx) itime = my nx;
 		for (long ifreq = 1; ifreq <= my ny; ifreq ++) {

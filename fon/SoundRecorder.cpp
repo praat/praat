@@ -229,30 +229,30 @@ void structSoundRecorder :: v_destroy () {
 	stopRecording (this);   // must occur before freeing my buffer
 	MelderAudio_stopPlaying (MelderAudio_IMPLICIT);   // must also occur before freeing my buffer
 	#if cocoa
-		if (d_cocoaTimer) CFRunLoopTimerInvalidate (d_cocoaTimer);
+		if (our d_cocoaTimer) CFRunLoopTimerInvalidate (our d_cocoaTimer);
 	#elif gtk
 		g_idle_remove_by_data (this);
 	#elif motif
-		if (workProcId) XtRemoveWorkProc (workProcId);
+		if (our workProcId) XtRemoveWorkProc (our workProcId);
 	#endif
-	NUMvector_free <short> (buffer, 0);
+	NUMvector_free (buffer, 0);
 
-	if (inputUsesPortAudio) {
-		if (portaudioStream) Pa_StopStream (portaudioStream);
-		if (portaudioStream) Pa_CloseStream (portaudioStream);
+	if (our inputUsesPortAudio) {
+		if (our portaudioStream) Pa_StopStream (our portaudioStream);
+		if (our portaudioStream) Pa_CloseStream (our portaudioStream);
 	} else {
 		#if defined (_WIN32)
-			if (hWaveIn != 0) {
-				waveInReset (hWaveIn);
-				waveInUnprepareHeader (hWaveIn, & waveHeader [0], sizeof (WAVEHDR));
-				waveInClose (hWaveIn);
+			if (our hWaveIn != 0) {
+				waveInReset (our hWaveIn);
+				waveInUnprepareHeader (our hWaveIn, & our waveHeader [0], sizeof (WAVEHDR));
+				waveInClose (our hWaveIn);
 			}
 		#elif defined (macintosh)
 		#elif defined (UNIX)
-			if (fd != -1) close (fd);
+			if (our fd != -1) close (our fd);
 		#endif
 	}
-	forget (graphics);
+	forget (our graphics);
 	SoundRecorder_Parent :: v_destroy ();
 }
 
@@ -361,6 +361,7 @@ static long getMyNsamp (SoundRecorder me) {
 
 #if cocoa
 static void workProc (CFRunLoopTimerRef timer, void *void_me) {
+	(void) timer;
 #elif gtk
 static gboolean workProc (void *void_me) {
 #else

@@ -64,7 +64,7 @@ oo_DEFINE_CLASS (Table, Data)
 
 	#if oo_DECLARING
 		// functions:
-			TableRow f_peekRow (long i) { return static_cast <TableRow> (rows -> item [i]); }
+			TableRow row (long i) { return static_cast <TableRow> (rows -> item [i]); }
 		// overridden methods:
 			virtual void v_info ();
 			virtual bool v_hasGetNrow      () { return true; }   virtual double        v_getNrow      () { return rows -> size; }

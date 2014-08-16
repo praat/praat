@@ -26,9 +26,6 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 		private:
 			GuiMenuItem cutButton, copyButton, pasteButton, zeroButton, reverseButton;
 			double maxBuffer;
-	// functions:
-		public:
-			void f_init (const wchar_t *title, Sampled data);
 	// overridden methods:
 		private:
 			virtual void v_createMenus ();
@@ -41,6 +38,8 @@ Thing_define (SoundEditor, TimeSoundAnalysisEditor) {
 			virtual void v_highlightSelection (double left, double right, double bottom, double top);
 			virtual void v_unhighlightSelection (double left, double right, double bottom, double top);
 };
+
+void SoundEditor_init (SoundEditor me, const wchar_t *title, Sampled data);
 
 SoundEditor SoundEditor_create (
 	const wchar_t *title,

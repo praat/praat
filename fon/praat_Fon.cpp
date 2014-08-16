@@ -2102,7 +2102,7 @@ FORM (Ltas_getBinNumberFromFrequency, L"Ltas: Get band from frequency", L"Ltas: 
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double binNumber = my f_xToIndex (GET_REAL (L"Frequency"));
+	double binNumber = Sampled_xToIndex (me, GET_REAL (L"Frequency"));
 	Melder_informationReal (binNumber, NULL);
 END
 
@@ -2116,7 +2116,7 @@ FORM (Ltas_getFrequencyFromBinNumber, L"Ltas: Get frequency from bin number", L"
 	OK
 DO
 	Ltas me = FIRST (Ltas);
-	double frequency = my f_indexToX (GET_INTEGER (L"Bin number"));
+	double frequency = Sampled_indexToX (me, GET_INTEGER (L"Bin number"));
 	Melder_informationReal (frequency, L"hertz");
 END
 
@@ -3223,7 +3223,7 @@ DO
 	LOOP {
 		iam (Photo);
 		autoPraatPicture picture;
-		my f_paintCells (GRAPHICS,
+		Photo_paintCells (me, GRAPHICS,
 			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
 	}
 END
@@ -3238,7 +3238,7 @@ DO
 	LOOP {
 		iam (Photo);
 		autoPraatPicture picture;
-		my f_paintImage (GRAPHICS,
+		Photo_paintImage (me, GRAPHICS,
 			GET_REAL (L"From x ="), GET_REAL (L"To x ="), GET_REAL (L"From y ="), GET_REAL (L"To y ="));
 	}
 END
@@ -3246,56 +3246,56 @@ END
 FORM_WRITE (Photo_saveAsAppleIconFile, L"Save as Apple icon file", 0, L"icns")
 	LOOP {
 		iam (Photo);
-		my f_saveAsAppleIconFile (file);
+		Photo_saveAsAppleIconFile (me, file);
 	}
 END
 
 FORM_WRITE (Photo_saveAsGIF, L"Save as GIF file", 0, L"gif")
 	LOOP {
 		iam (Photo);
-		my f_saveAsGIF (file);
+		Photo_saveAsGIF (me, file);
 	}
 END
 
 FORM_WRITE (Photo_saveAsJPEG, L"Save as JPEG file", 0, L"jpg")
 	LOOP {
 		iam (Photo);
-		my f_saveAsJPEG (file);
+		Photo_saveAsJPEG (me, file);
 	}
 END
 
 FORM_WRITE (Photo_saveAsJPEG2000, L"Save as JPEG-2000 file", 0, L"jpg")
 	LOOP {
 		iam (Photo);
-		my f_saveAsJPEG2000 (file);
+		Photo_saveAsJPEG2000 (me, file);
 	}
 END
 
 FORM_WRITE (Photo_saveAsPNG, L"Save as PNG file", 0, L"png")
 	LOOP {
 		iam (Photo);
-		my f_saveAsPNG (file);
+		Photo_saveAsPNG (me, file);
 	}
 END
 
 FORM_WRITE (Photo_saveAsTIFF, L"Save as TIFF file", 0, L"tiff")
 	LOOP {
 		iam (Photo);
-		my f_saveAsTIFF (file);
+		Photo_saveAsTIFF (me, file);
 	}
 END
 
 FORM_WRITE (Photo_saveAsWindowsBitmapFile, L"Save as Windows bitmap file", 0, L"bmp")
 	LOOP {
 		iam (Photo);
-		my f_saveAsWindowsBitmapFile (file);
+		Photo_saveAsWindowsBitmapFile (me, file);
 	}
 END
 
 FORM_WRITE (Photo_saveAsWindowsIconFile, L"Save as Windows icon file", 0, L"ico")
 	LOOP {
 		iam (Photo);
-		my f_saveAsWindowsIconFile (file);
+		Photo_saveAsWindowsIconFile (me, file);
 	}
 END
 
@@ -3304,28 +3304,28 @@ END
 DIRECT (Photo_Matrix_replaceBlue)
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
-	my f_replaceBlue (thee);
+	Photo_replaceBlue (me, thee);
 	praat_dataChanged (me);
 END
 
 DIRECT (Photo_Matrix_replaceGreen)
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
-	my f_replaceGreen (thee);
+	Photo_replaceGreen (me, thee);
 	praat_dataChanged (me);
 END
 
 DIRECT (Photo_Matrix_replaceRed)
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
-	my f_replaceRed (thee);
+	Photo_replaceRed (me, thee);
 	praat_dataChanged (me);
 END
 
 DIRECT (Photo_Matrix_replaceTransparency)
 	Photo me = FIRST (Photo);
 	Matrix thee = FIRST (Matrix);
-	my f_replaceTransparency (thee);
+	Photo_replaceTransparency (me, thee);
 	praat_dataChanged (me);
 END
 
@@ -5353,7 +5353,7 @@ FORM (Spectrum_getBinFromFrequency, L"Spectrum: Get bin from frequency", 0)
 DO
 	LOOP {
 		iam (Spectrum);
-		double bin = my f_xToIndex (GET_REAL (L"Frequency"));
+		double bin = Sampled_xToIndex (me, GET_REAL (L"Frequency"));
 		Melder_informationReal (bin, NULL);
 	}
 END
@@ -5394,7 +5394,7 @@ FORM (Spectrum_getFrequencyFromBin, L"Spectrum: Get frequency from bin", 0)
 DO
 	LOOP {
 		iam (Spectrum);
-		double frequency = my f_indexToX (GET_INTEGER (L"Band number"));
+		double frequency = Sampled_indexToX (me, GET_INTEGER (L"Band number"));
 		Melder_informationReal (frequency, L"hertz");
 	}
 END
@@ -5952,7 +5952,7 @@ FORM (TimeFrameSampled_getFrameFromTime, L"Get frame number from time", L"Get fr
 DO
 	LOOP {
 		iam (Sampled);
-		double frame = my f_xToIndex (GET_REAL (L"Time"));
+		double frame = Sampled_xToIndex (me, GET_REAL (L"Time"));
 		Melder_informationReal (frame, NULL);
 	}
 END
@@ -5971,7 +5971,7 @@ FORM (TimeFrameSampled_getTimeFromFrame, L"Get time from frame number", L"Get ti
 DO
 	LOOP {
 		iam (Sampled);
-		double time = my f_indexToX (GET_INTEGER (L"Frame number"));
+		double time = Sampled_indexToX (me, GET_INTEGER (L"Frame number"));
 		Melder_informationReal (time, L"seconds");
 	}
 END

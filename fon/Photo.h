@@ -80,5 +80,34 @@ Photo Photo_createSimple (long numberOfRows, long numberOfColumns);
 
 Photo Photo_readFromImageFile (MelderFile file);
 
+double_rgbt Photo_getValueAtXY (Photo me, double x, double y);
+/*
+	Linear interpolation between matrix points,
+	constant extrapolation in cells on the edge,
+	NUMundefined outside the union of the unit squares around the points.
+*/
+
+void Photo_replaceRed (Photo me, Matrix red);
+void Photo_replaceGreen (Photo me, Matrix green);
+void Photo_replaceBlue (Photo me, Matrix blue);
+void Photo_replaceTransparency (Photo me, Matrix transparency);
+
+void Photo_paintImage (Photo me, Graphics g, double xmin, double xmax, double ymin, double ymax);
+
+void Photo_paintCells (Photo me, Graphics g, double xmin, double xmax, double ymin, double ymax);
+/*
+	Every sample is drawn as a rectangle.
+*/
+
+void Photo_movie (Photo me, Graphics g);
+void Photo_saveAsPNG               (Photo me, MelderFile file);
+void Photo_saveAsTIFF              (Photo me, MelderFile file);
+void Photo_saveAsGIF               (Photo me, MelderFile file);
+void Photo_saveAsWindowsBitmapFile (Photo me, MelderFile file);
+void Photo_saveAsJPEG              (Photo me, MelderFile file);
+void Photo_saveAsJPEG2000          (Photo me, MelderFile file);
+void Photo_saveAsAppleIconFile     (Photo me, MelderFile file);
+void Photo_saveAsWindowsIconFile   (Photo me, MelderFile file);
+
 /* End of file Photo.h */
 #endif

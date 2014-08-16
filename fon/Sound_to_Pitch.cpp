@@ -318,7 +318,7 @@ static MelderThread_RETURN_TYPE Sound_into_Pitch (Sound_into_Pitch_Args me)
 	}
 	for (long iframe = my firstFrame; iframe <= my lastFrame; iframe ++) {
 		Pitch_Frame pitchFrame = & my pitch -> frame [iframe];
-		double t = my pitch -> f_indexToX (iframe);
+		double t = Sampled_indexToX (my pitch, iframe);
 		if (my isMainThread) {
 			try {
 				Melder_progress (0.1 + 0.8 * (iframe - my firstFrame) / (my lastFrame - my firstFrame),

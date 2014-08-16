@@ -294,7 +294,7 @@ FormantGrid Formant_downto_FormantGrid (Formant me) {
 		autoFormantGrid thee = FormantGrid_createEmpty (my xmin, my xmax, my maxnFormants);
 		for (long iframe = 1; iframe <= my nx; iframe ++) {
 			Formant_Frame frame = & my d_frames [iframe];
-			double t = my f_indexToX (iframe);
+			double t = Sampled_indexToX (me, iframe);
 			for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 				Formant_Formant pair = & frame -> formant [iformant];
 				FormantGrid_addFormantPoint (thee.peek(), iformant, t, pair -> frequency);

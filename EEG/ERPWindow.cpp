@@ -406,7 +406,7 @@ ERPWindow ERPWindow_create (const wchar_t *title, ERP data) {
 	Melder_assert (data != NULL);
 	try {
 		autoERPWindow me = Thing_new (ERPWindow);
-		my structSoundEditor :: f_init (title, data);
+		SoundEditor_init (me.peek(), title, data);
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("ERP window not created.");

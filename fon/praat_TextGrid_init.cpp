@@ -838,6 +838,23 @@ DIRECT2 (TextGrid_edit) {
 	}
 END2 }
 
+FORM (TextGrid_editWithCallback, L"TextGrid: View & Edit with callback", 0) {
+	SENTENCE (L"Callback text", L"r1")
+	OK2
+DO
+	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a TextGrid from batch.");
+	Sound sound = NULL;
+	LOOP {
+		if (CLASS == classSound) sound = (Sound) OBJECT;   // may stay NULL
+	}
+	LOOP if (CLASS == classTextGrid) {
+		iam (TextGrid);
+		autoTextGridEditor editor = TextGridEditor_create (ID_AND_FULL_NAME, me, sound, true, NULL, Melder_peekWcsToUtf8 (GET_STRING (L"Callback text")));
+		editor -> setPublicationCallback (cb_TextGridEditor_publication, NULL);
+		praat_installEditor (editor.transfer(), IOBJECT);
+	}
+END2 }
+
 DIRECT2 (TextGrid_LongSound_edit) {
 	if (theCurrentPraatApplication -> batch) Melder_throw ("Cannot view or edit a TextGrid from batch.");
 	LongSound longSound = NULL;
@@ -1803,6 +1820,7 @@ praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, L"Speckle separately (erb)...", 0, 1, DO_TextGrid_Pitch_speckleSeparatelyErb);
 	praat_addAction2 (classPitch, 1, classTextTier, 1, L"To PitchTier...", 0, 0, DO_Pitch_TextTier_to_PitchTier);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_TextGrid_edit);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, L"View & Edit with callback", 0, praat_HIDDEN, DO_TextGrid_editWithCallback);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Edit", 0, praat_HIDDEN, DO_TextGrid_edit);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Draw...", 0, 0, DO_TextGrid_Sound_draw);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Extract -", 0, 0, 0);

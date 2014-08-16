@@ -160,22 +160,22 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			#if ALLOW_GDK_DRAWING
 				gdkPrepareLine (this);
 				for (long i = 0; i < numberOfPoints - 1; i ++) {
-					gdk_draw_line (d_window, d_gdkGraphicsContext,
+					gdk_draw_line (our d_window, our d_gdkGraphicsContext,
 						xyDC [i + i], xyDC [i + i + 1], xyDC [i + i + 2], xyDC [i + i + 3]);
 				}
 				gdkRevertLine (this);
 				gdk_flush ();
 			#endif
 		} else {
-			if (d_cairoGraphicsContext == NULL) return;
+			if (our d_cairoGraphicsContext == NULL) return;
 			cairoPrepareLine (this);
 			// cairo_new_path (d_cairoGraphicsContext); // move_to() automatically creates a new path
-			cairo_move_to (d_cairoGraphicsContext, xyDC [0], xyDC [1]);
+			cairo_move_to (our d_cairoGraphicsContext, xyDC [0], xyDC [1]);
 			for (long i = 1; i < numberOfPoints; i ++) {
-				cairo_line_to (d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
+				cairo_line_to (our d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 			}
-			if (close) cairo_close_path (d_cairoGraphicsContext);
-			cairo_stroke (d_cairoGraphicsContext);
+			if (close) cairo_close_path (our d_cairoGraphicsContext);
+			cairo_stroke (our d_cairoGraphicsContext);
 			cairoRevertLine (this);
 		}
 	#elif win
@@ -188,34 +188,34 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 			}
 			if (close)
 				points [numberOfPoints] = points [0];
-			Polyline (d_gdiGraphicsContext, points, numberOfPoints + close);
-			if (d_fatNonSolid) {
+			Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
+			if (our d_fatNonSolid) {
 				for (long i = 0; i < numberOfPoints; i ++)
 					points [i]. x -= 1;
 				if (close)
 					points [numberOfPoints] = points [0];
-				Polyline (d_gdiGraphicsContext, points, numberOfPoints + close);
+				Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
 				for (long i = 0; i < numberOfPoints; i ++) {
 					points [i]. x += 1;
 					points [i]. y -= 1;
 				}
 				if (close)
 					points [numberOfPoints] = points [0];
-				Polyline (d_gdiGraphicsContext, points, numberOfPoints + close);
+				Polyline (our d_gdiGraphicsContext, points, numberOfPoints + close);
 			}
 		}
 		DEFAULT
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextMoveToPoint (d_macGraphicsContext, xyDC [0], xyDC [1]);   // starts a new subpath
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);   // starts a new subpath
 		for (long i = 1; i < numberOfPoints; i ++) {
-			CGContextAddLineToPoint (d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
+			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		}
 		if (close)
-			CGContextClosePath (d_macGraphicsContext);   // closes only the subpath
-		CGContextStrokePath (d_macGraphicsContext);
+			CGContextClosePath (our d_macGraphicsContext);   // closes only the subpath
+		CGContextStrokePath (our d_macGraphicsContext);
 		quartzRevertLine (this);
 		GraphicsQuartz_exitDraw (this);
 	#endif
@@ -224,44 +224,44 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 void structGraphicsPostscript :: v_polyline (long numberOfPoints, double *xyDC, bool close) {
 	long nn = 2 * numberOfPoints;
 	psPrepareLine (this);
-	d_printf (d_file, "N %.7g %.7g moveto\n", xyDC [0], xyDC [1]);
+	our d_printf (our d_file, "N %.7g %.7g moveto\n", xyDC [0], xyDC [1]);
 	for (long i = 2; i < nn; i += 2) {
 		double dx = xyDC [i] - xyDC [i - 2], dy = xyDC [i + 1] - xyDC [i - 1];
-		d_printf (d_file, "%.7g %.7g L\n", dx, dy);
+		our d_printf (our d_file, "%.7g %.7g L\n", dx, dy);
 	}
 	if (close)
-		d_printf (d_file, "closepath ");
-	d_printf (d_file, "stroke\n");
+		our d_printf (our d_file, "closepath ");
+	our d_printf (our d_file, "stroke\n");
 	psRevertLine (this);
 }
 
 void structGraphicsScreen :: v_fillArea (long numberOfPoints, double *xyDC) {
 	#if cairo
-		if (d_cairoGraphicsContext == NULL) return;
-		// cairo_new_path (d_cairoGraphicsContext); // move_to() automatically creates a new path
-		cairo_move_to (d_cairoGraphicsContext, xyDC [0], xyDC [1]);
+		if (our d_cairoGraphicsContext == NULL) return;
+		// cairo_new_path (our d_cairoGraphicsContext); // move_to() automatically creates a new path
+		cairo_move_to (our d_cairoGraphicsContext, xyDC [0], xyDC [1]);
 		for (long i = 1; i < numberOfPoints; i ++)
-			cairo_line_to (d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
-		cairo_close_path (d_cairoGraphicsContext);
-		cairo_fill (d_cairoGraphicsContext);
+			cairo_line_to (our d_cairoGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
+		cairo_close_path (our d_cairoGraphicsContext);
+		cairo_fill (our d_cairoGraphicsContext);
 	#elif win
 		MY_BRUSH
-		BeginPath (d_gdiGraphicsContext);
-		MoveToEx (d_gdiGraphicsContext, xyDC [0], xyDC [1], NULL);
+		BeginPath (our d_gdiGraphicsContext);
+		MoveToEx (our d_gdiGraphicsContext, xyDC [0], xyDC [1], NULL);
 		for (long i = 1; i < numberOfPoints; i ++)
-			LineTo (d_gdiGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
-		EndPath (d_gdiGraphicsContext);
-		FillPath (d_gdiGraphicsContext);
+			LineTo (our d_gdiGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
+		EndPath (our d_gdiGraphicsContext);
+		FillPath (our d_gdiGraphicsContext);
 		DEFAULT
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextMoveToPoint (d_macGraphicsContext, xyDC [0], xyDC [1]);
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);
 		for (long i = 1; i < numberOfPoints; i ++) {
-			CGContextAddLineToPoint (d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
+			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
 		}
-		CGContextFillPath (d_macGraphicsContext);
+		CGContextFillPath (our d_macGraphicsContext);
 		GraphicsQuartz_exitDraw (this);
 	#endif
 }
@@ -289,7 +289,7 @@ void structGraphicsScreen :: v_rectangle (double x1DC, double x2DC, double y1DC,
 		cairoRevertLine (this);
 	#elif win
 		winPrepareLine (this);
-		Rectangle (d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
+		Rectangle (our d_gdiGraphicsContext, x1DC, y2DC, x2DC + 1, y1DC + 1);
 		DEFAULT
 	#elif mac
 		GraphicsQuartz_initDraw (this);
@@ -1027,39 +1027,39 @@ void structGraphics :: v_arrowHead (double xDC, double yDC, double angle) {
 
 void structGraphicsScreen :: v_arrowHead (double xDC, double yDC, double angle) {
 	#if cairo
-		if (d_cairoGraphicsContext == NULL) return;
-		double size = 10.0 * resolution * arrowSize / 75.0; // TODO: die 75 zou dat niet de scherm resolutie moeten worden?
-		cairo_new_path (d_cairoGraphicsContext);
-		cairo_move_to (d_cairoGraphicsContext, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size);
-		cairo_line_to (d_cairoGraphicsContext, xDC, yDC);
-		cairo_line_to (d_cairoGraphicsContext, xDC + cos ((angle - 160) * NUMpi / 180) * size, yDC - sin ((angle - 160) * NUMpi / 180) * size);
-		cairo_close_path (d_cairoGraphicsContext);
-		cairo_fill (d_cairoGraphicsContext);
+		if (our d_cairoGraphicsContext == NULL) return;
+		double size = 10.0 * our resolution * our arrowSize / 75.0; // TODO: die 75 zou dat niet de scherm resolutie moeten worden?
+		cairo_new_path (our d_cairoGraphicsContext);
+		cairo_move_to (our d_cairoGraphicsContext, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size);
+		cairo_line_to (our d_cairoGraphicsContext, xDC, yDC);
+		cairo_line_to (our d_cairoGraphicsContext, xDC + cos ((angle - 160) * NUMpi / 180) * size, yDC - sin ((angle - 160) * NUMpi / 180) * size);
+		cairo_close_path (our d_cairoGraphicsContext);
+		cairo_fill (our d_cairoGraphicsContext);
 	#elif win
-		double size = 10.0 * resolution * arrowSize / 72.0;
+		double size = 10.0 * our resolution * our arrowSize / 72.0;
 		MY_BRUSH
-		BeginPath (d_gdiGraphicsContext);
-		MoveToEx (d_gdiGraphicsContext, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size, NULL);
-		LineTo (d_gdiGraphicsContext, xDC, yDC);
-		LineTo (d_gdiGraphicsContext, xDC + cos ((angle - 160) * NUMpi / 180) * size, yDC - sin ((angle - 160) * NUMpi / 180) * size);
-		EndPath (d_gdiGraphicsContext);
-		FillPath (d_gdiGraphicsContext);
+		BeginPath (our d_gdiGraphicsContext);
+		MoveToEx (our d_gdiGraphicsContext, xDC + cos ((angle + 160) * NUMpi / 180) * size, yDC - sin ((angle + 160) * NUMpi / 180) * size, NULL);
+		LineTo (our d_gdiGraphicsContext, xDC, yDC);
+		LineTo (our d_gdiGraphicsContext, xDC + cos ((angle - 160) * NUMpi / 180) * size, yDC - sin ((angle - 160) * NUMpi / 180) * size);
+		EndPath (our d_gdiGraphicsContext);
+		FillPath (our d_gdiGraphicsContext);
 		DEFAULT
 	#elif mac
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareFill (this);
-		NSCAssert( d_macGraphicsContext, @"nil context");
-		CGContextSaveGState (d_macGraphicsContext);
-		CGContextBeginPath (d_macGraphicsContext);
-		CGContextTranslateCTM (d_macGraphicsContext, xDC, yDC);
-		CGContextRotateCTM (d_macGraphicsContext, - angle * NUMpi / 180);
-		CGContextMoveToPoint (d_macGraphicsContext, 0.0, 0.0);
-		double size = 10.0 * resolution * arrowSize / 72.0;
-		double radius = resolution * arrowSize / 30;
-		CGContextAddArc (d_macGraphicsContext, - size, 0.0, radius, - NUMpi / 3.0, NUMpi / 3.0, 0);
-		CGContextAddLineToPoint (d_macGraphicsContext, 0.0, 0.0);
-		CGContextFillPath (d_macGraphicsContext);
-		CGContextRestoreGState (d_macGraphicsContext);
+		NSCAssert (our d_macGraphicsContext, @"nil context");
+		CGContextSaveGState (our d_macGraphicsContext);
+		CGContextBeginPath (our d_macGraphicsContext);
+		CGContextTranslateCTM (our d_macGraphicsContext, xDC, yDC);
+		CGContextRotateCTM (our d_macGraphicsContext, - angle * NUMpi / 180);
+		CGContextMoveToPoint (our d_macGraphicsContext, 0.0, 0.0);
+		double size = 10.0 * our resolution * our arrowSize / 72.0;
+		double radius = our resolution * our arrowSize / 30;
+		CGContextAddArc (our d_macGraphicsContext, - size, 0.0, radius, - NUMpi / 3.0, NUMpi / 3.0, 0);
+		CGContextAddLineToPoint (our d_macGraphicsContext, 0.0, 0.0);
+		CGContextFillPath (our d_macGraphicsContext);
+		CGContextRestoreGState (our d_macGraphicsContext);
 		GraphicsQuartz_exitDraw (this);
 	#endif
 }

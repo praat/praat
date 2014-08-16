@@ -98,7 +98,7 @@ PointProcess Sound_to_PointProcess_zeroes (Sound me, long channel, bool includeR
 			if ((includeRaisers && y [i - 1] < 0.0 && y [i] >= 0.0) ||
 				(includeFallers && y [i - 1] >= 0.0 && y [i] < 0.0))
 			{
-				double time = my f_indexToX (i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   // linear
+				double time = Sampled_indexToX (me, i - 1) + my dx * y [i - 1] / (y [i - 1] - y [i]);   // linear
 				PointProcess_addPoint (thee.peek(), time);
 			}
 		}

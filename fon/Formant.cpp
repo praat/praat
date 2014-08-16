@@ -1,6 +1,6 @@
 /* Formant.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,7 @@ void Formant_drawTracks (Formant me, Graphics g, double tmin, double tmax, doubl
 	for (long itrack = 1; itrack <= ntrack; itrack ++) {
 		for (long iframe = itmin; iframe < itmax; iframe ++) {
 			Formant_Frame curFrame = & my d_frames [iframe], nextFrame = & my d_frames [iframe + 1];
-			double x1 = my f_indexToX (iframe), x2 = my f_indexToX (iframe + 1);
+			double x1 = Sampled_indexToX (me, iframe), x2 = Sampled_indexToX (me, iframe + 1);
 			double f1 = curFrame -> formant [itrack]. frequency;
 			double f2 = nextFrame -> formant [itrack]. frequency;
 			if (NUMdefined (x1) && NUMdefined (f1) && NUMdefined (x2) && NUMdefined (f2))
@@ -162,7 +162,7 @@ void Formant_drawSpeckles_inside (Formant me, Graphics g, double tmin, double tm
 
 	for (long iframe = itmin; iframe <= itmax; iframe ++) {
 		Formant_Frame frame = & my d_frames [iframe];
-		double x = my f_indexToX (iframe);
+		double x = Sampled_indexToX (me, iframe);
 		if (frame -> intensity < minimumIntensity) continue;
 		for (long iformant = 1; iformant <= frame -> nFormants; iformant ++) {
 			double frequency = frame -> formant [iformant]. frequency;

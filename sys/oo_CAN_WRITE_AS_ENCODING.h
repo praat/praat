@@ -1,6 +1,6 @@
 /* oo_CAN_WRITE_AS_ENCODING.h
  *
- * Copyright (C) 2007-2012,2013 Paul Boersma
+ * Copyright (C) 2007-2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,57 +38,57 @@
 #define oo_ENUMx_VECTOR(type,storage,Type,x,min,max)
 
 #define oo_STRINGx(storage,x)  \
-	if (x && ! Melder_isEncodable (x, encoding)) return false;
+	if (our x && ! Melder_isEncodable (our x, encoding)) return false;
 
 #define oo_STRINGx_ARRAY(storage,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (x [i] && ! Melder_isEncodable (x [i], encoding)) return false;
+		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_SET(storage,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (x [i] && ! Melder_isEncodable (x [i], encoding)) return false;
+		if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false;
 
 #define oo_STRINGx_VECTOR(storage,x,min,max)  \
-	if (x) { \
+	if (our x) { \
 		for (long i = min; i <= max; i ++) \
-			if (x [i] && ! Melder_isEncodable (x [i], encoding)) return false; \
+			if (our x [i] && ! Melder_isEncodable (our x [i], encoding)) return false; \
 	}
 
 #define oo_STRUCT(Type,x)  \
-	if (! x. canWriteAsEncoding (encoding)) return false;
+	if (! our x. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_ARRAY(Type,x,cap,n)  \
 	for (int i = 0; i < n; i ++) \
-		if (! x [i]. canWriteAsEncoding (encoding)) return false;
+		if (! our x [i]. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_SET(Type,x,setType)  \
 	for (int i = 0; i <= setType##_MAX; i ++) \
-		if (! x [i]. canWriteAsEncoding (encoding)) return false;
+		if (! our x [i]. canWriteAsEncoding (encoding)) return false;
 
 #define oo_STRUCT_VECTOR_FROM(Type,x,min,max)  \
-	if (x) { \
+	if (our x) { \
 		for (long i = min; i <= max; i ++) \
-			if (! x [i]. canWriteAsEncoding (encoding)) return false; \
+			if (! our x [i]. canWriteAsEncoding (encoding)) return false; \
 	}
 
 #define oo_STRUCT_MATRIX_FROM(Type,x,row1,row2,col1,col2)  \
-	if (x) { \
+	if (our x) { \
 		for (long i = row1; i <= row2; i ++) \
 			for (long j = col1; j <= col2; j ++) \
-				if (! x [i] [j]. canWriteAsEncoding (encoding)) return false; \
+				if (! our x [i] [j]. canWriteAsEncoding (encoding)) return false; \
 	}
 
 #define oo_OBJECT(Class,version,x)  \
-	if (x && ! Data_canWriteAsEncoding (x, encoding)) return false;
+	if (our x && ! Data_canWriteAsEncoding (our x, encoding)) return false;
 
 #define oo_COLLECTION(Class,x,ItemClass,version)  \
-	if (x && ! Data_canWriteAsEncoding (x, encoding)) return false;
+	if (our x && ! Data_canWriteAsEncoding (our x, encoding)) return false;
 
 #define oo_FILE(x)  \
-	if (! Melder_isEncodable (x. path, encoding)) return false;
+	if (! Melder_isEncodable (our x. path, encoding)) return false;
 
 #define oo_DIR(x)  \
-	if (! Melder_isEncodable (x. path, encoding)) return false;
+	if (! Melder_isEncodable (our x. path, encoding)) return false;
 
 #define oo_DEFINE_STRUCT(Type)  \
 	bool struct##Type :: canWriteAsEncoding (int encoding) { \

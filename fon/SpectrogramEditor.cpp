@@ -1,6 +1,6 @@
 /* SpectrogramEditor.cpp
  *
- * Copyright (C) 1992-2011,2012 Paul Boersma
+ * Copyright (C) 1992-2011,2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,59 +22,59 @@
 Thing_implement (SpectrogramEditor, FunctionEditor, 0);
 
 void structSpectrogramEditor :: v_draw () {
-	Spectrogram spectrogram = (Spectrogram) data;
+	Spectrogram spectrogram = (Spectrogram) our data;
 
-	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (d_graphics, Graphics_WHITE);
-	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
-	Graphics_setColour (d_graphics, Graphics_BLACK);
-	Graphics_rectangle (d_graphics, 0, 1, 0, 1);
+	Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (our d_graphics, Graphics_WHITE);
+	Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
+	Graphics_setColour (our d_graphics, Graphics_BLACK);
+	Graphics_rectangle (our d_graphics, 0, 1, 0, 1);
 
 	long itmin, itmax;
-	Sampled_getWindowSamples (spectrogram, d_startWindow, d_endWindow, & itmin, & itmax);
+	Sampled_getWindowSamples (spectrogram, our d_startWindow, our d_endWindow, & itmin, & itmax);
 
 	/*
 	 * Autoscale frequency axis.
 	 */
-	maximum = spectrogram -> ymax;
+	our maximum = spectrogram -> ymax;
 
-	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0.0, maximum);
-	Spectrogram_paintInside (spectrogram, d_graphics, d_startWindow, d_endWindow, 0, 0, 0.0, TRUE,
+	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0.0, our maximum);
+	Spectrogram_paintInside (spectrogram, our d_graphics, our d_startWindow, our d_endWindow, 0, 0, 0.0, TRUE,
 		 60, 6.0, 0);
 
 	/*
 	 * Horizontal scaling lines.
 	 */
-	Graphics_setWindow (d_graphics, 0.0, 1.0, 0.0, maximum);
-	Graphics_setTextAlignment (d_graphics, Graphics_RIGHT, Graphics_HALF);
-	Graphics_setColour (d_graphics, Graphics_RED);
+	Graphics_setWindow (our d_graphics, 0.0, 1.0, 0.0, our maximum);
+	Graphics_setTextAlignment (our d_graphics, Graphics_RIGHT, Graphics_HALF);
+	Graphics_setColour (our d_graphics, Graphics_RED);
 	long df = 1000;
-	for (long f = df; f <= maximum; f += df) {
-		Graphics_line (d_graphics, 0.0, f, 1.0, f);
-		Graphics_text2 (d_graphics, -0.01, f, Melder_integer (f), L" Hz");
+	for (long f = df; f <= our maximum; f += df) {
+		Graphics_line (our d_graphics, 0.0, f, 1.0, f);
+		Graphics_text2 (our d_graphics, -0.01, f, Melder_integer (f), L" Hz");
 	}
 
 	/*
 	 * Vertical cursor lines.
 	 */
-	Graphics_setWindow (d_graphics, d_startWindow, d_endWindow, 0.0, maximum);
-	if (d_startSelection > d_startWindow && d_startSelection < d_endWindow)
-		Graphics_line (d_graphics, d_startSelection, 0, d_startSelection, maximum);
-	if (d_endSelection > d_startWindow && d_endSelection < d_endWindow)
-		Graphics_line (d_graphics, d_endSelection, 0, d_endSelection, maximum);
-	Graphics_setColour (d_graphics, Graphics_BLACK);
+	Graphics_setWindow (our d_graphics, our d_startWindow, our d_endWindow, 0.0, our maximum);
+	if (our d_startSelection > our d_startWindow && our d_startSelection < our d_endWindow)
+		Graphics_line (our d_graphics, our d_startSelection, 0, our d_startSelection, our maximum);
+	if (our d_endSelection > our d_startWindow && d_endSelection < d_endWindow)
+		Graphics_line (our d_graphics, our d_endSelection, 0, our d_endSelection, our maximum);
+	Graphics_setColour (our d_graphics, Graphics_BLACK);
 }
 
 int structSpectrogramEditor :: v_click (double xWC, double yWC, bool shiftKeyPressed) {
-	Spectrogram spectrogram = (Spectrogram) data;
-	/*double frequency = yWC * maximum;*/
+	Spectrogram spectrogram = (Spectrogram) our data;
+	/*double frequency = yWC * our maximum;*/
 	long bestFrame;
 	bestFrame = Sampled_xToNearestIndex (spectrogram, xWC);
 	if (bestFrame < 1)
 		bestFrame = 1;
 	else if (bestFrame > spectrogram -> nx)
 		bestFrame = spectrogram -> nx;
-	return SpectrogramEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
+	return our SpectrogramEditor_Parent :: v_click (xWC, yWC, shiftKeyPressed);
 }
 
 SpectrogramEditor SpectrogramEditor_create (const wchar_t *title, Spectrogram data) {

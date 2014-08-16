@@ -137,9 +137,9 @@ void ParamCurve_draw (ParamCurve me, Graphics g, double t1, double t2, double dt
 		autoNUMvector <double> y (1, numberOfPoints);
 		for (long i = 1; i <= numberOfPoints; i ++) {
 			double t = i == numberOfPoints ? t2 : t1 + (i - 1) * dt;
-			double index = my x -> f_xToIndex (t);
+			double index = Sampled_xToIndex (my x, t);
 			x [i] = NUM_interpolate_sinc (my x -> z [1], my x -> nx, index, 50);
-			index = my y -> f_xToIndex (t);
+			index = Sampled_xToIndex (my y, t);
 			y [i] = NUM_interpolate_sinc (my y -> z [1], my y -> nx, index, 50);
 		}
 		Graphics_setWindow (g, x1, x2, y1, y2);

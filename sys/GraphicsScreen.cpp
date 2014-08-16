@@ -86,7 +86,6 @@ void structGraphicsScreen :: v_destroy () {
 		if (d_gdiGraphicsContext != NULL) {
 			SelectPen (d_gdiGraphicsContext, GetStockPen (BLACK_PEN));
 			SelectBrush (d_gdiGraphicsContext, GetStockBrush (NULL_BRUSH));
-			d_gdiGraphicsContext = NULL;
 		}
 		if (d_winPen != NULL) {
 			DeleteObject (d_winPen);
@@ -107,6 +106,7 @@ void structGraphicsScreen :: v_destroy () {
 			BITMAP bitmap;
 			GetObject (d_gdiBitmap, sizeof (BITMAP), & bitmap);
 			int width = bitmap. bmWidth, height = bitmap. bmHeight;
+			//int width = 3600, height = 3600;
 			trace ("width %d, height %d", width, height);
 
 			/*
@@ -168,11 +168,14 @@ void structGraphicsScreen :: v_destroy () {
 			//GlobalUnlock (handle);
 			//GlobalFree (handle);
 			DeleteObject (d_gdiBitmap);
+			Melder_assert (d_gdiGraphicsContext);
+			DeleteDC (d_gdiGraphicsContext);   // this was a memory leak before 5.3.83
 		}
 		/*
 		 * No ReleaseDC here, because we have not created it ourselves,
-		 * not even with GetDC.
+		 * not even with GetDC. Is this a BUG?
 		 */
+		d_gdiGraphicsContext = NULL;
 	#elif mac
         #if useCarbon
             if (d_macPort == NULL && ! d_isPng) {
@@ -668,6 +671,8 @@ Graphics Graphics_create_pngfile (MelderFile file, int resolution,
 		Melder_assert (my d_gdiGraphicsContext != NULL);
 		my d_gdiBitmap = CreateCompatibleBitmap (screenDC, (x2inches - x1inches) * resolution, (y2inches - y1inches) * resolution);
 		trace ("d_gdiBitmap %p", my d_gdiBitmap);
+		Melder_assert (my d_gdiBitmap != NULL);
+		ReleaseDC (NULL, screenDC);
 		SelectObject (my d_gdiGraphicsContext, my d_gdiBitmap);
 		trace ("bitmap selected into device context");
 		my resolution = resolution;
