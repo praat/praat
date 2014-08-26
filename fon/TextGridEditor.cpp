@@ -1564,7 +1564,7 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setColour (d_graphics, Graphics_WHITE);
 		Graphics_setWindow (d_graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
-		f_drawSound (-1.0, 1.0);
+		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 		Graphics_flushWs (d_graphics);
 		Graphics_resetViewport (d_graphics, vp1);
 	}
@@ -1663,7 +1663,7 @@ void structTextGridEditor :: v_draw () {
 		if (p_pulses_show) {
 			vp1 = Graphics_insetViewport (d_graphics, 0.0, 1.0, soundY2, 1.0);
 			v_draw_analysis_pulses ();
-			f_drawSound (-1.0, 1.0);   // second time, partially across the pulses
+			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_flushWs (d_graphics);
 			Graphics_resetViewport (d_graphics, vp1);
 		}
@@ -2201,7 +2201,7 @@ void structTextGridEditor :: v_updateMenuItems_file () {
 void TextGridEditor_init (TextGridEditor me, const wchar_t *title, TextGrid grid, Sampled sound, bool ownSound, SpellingChecker spellingChecker, const char *callbackSocket)
 {
 	my spellingChecker = spellingChecker;   // set in time
-	my callbackSocket = callbackSocket ? strdup (callbackSocket) : NULL;
+	my callbackSocket = Melder_strdup (callbackSocket);
 
 	TimeSoundAnalysisEditor_init (me, title, grid, sound, ownSound);
 

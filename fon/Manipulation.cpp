@@ -276,13 +276,15 @@ static void copyBell2 (Sound me, PointProcess source, long isource, double leftW
 }
 
 static void copyFlat (Sound me, double tmin, double tmax, Sound thee, double tminTarget) {
-	long imin, imax, iminTarget;
-	imin = Sampled_xToHighIndex (me, tmin);
+	long imin = Sampled_xToHighIndex (me, tmin);
 	if (imin < 1) imin = 1;
-	imax = Sampled_xToHighIndex (me, tmax) - 1;   /* Not xToLowIndex: ensure separation of subsequent calls. */
+	long imax = Sampled_xToHighIndex (me, tmax) - 1;   /* Not xToLowIndex: ensure separation of subsequent calls. */
 	if (imax > my nx) imax = my nx;
 	if (imax < imin) return;
-	iminTarget = Sampled_xToHighIndex (thee, tminTarget);
+	long iminTarget = Sampled_xToHighIndex (thee, tminTarget);
+	if (iminTarget < 1) iminTarget = 1;
+	trace ("%.17g %.17g %.17g %ld %ld %ld", tmin, tmax, tminTarget, imin, imax, iminTarget);
+	Melder_assert (iminTarget + imax - imin <= thy nx);
 	NUMvector_copyElements (my z [1] + imin, thy z [1] + iminTarget, 0, imax - imin);
 }
 

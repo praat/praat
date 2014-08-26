@@ -23,9 +23,12 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140816)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140826)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.84# (26 August 2014)")
+LIST_ITEM (L"\\bu Manipulation: repaired a bug that could cause Praat to crash when playing a manipulation of a Sound created by the SpeechSynthesizer.")
+LIST_ITEM (L"\\bu Mac: repaired a bug that could cause poor sound quality on some USB headphones when playing a sound with a low sampling frequency.")
 NORMAL (L"##5.3.83# (16 August 2014)")
 LIST_ITEM (L"\\bu TextGrid window: repaired a bug with automatic alignment that could cause an analysis tier to go out of order.")
 LIST_ITEM (L"\\bu Linux audio: created a second workaround that reduces even more the chances of a freeze that is due to a potential deadlock "
@@ -1812,7 +1815,7 @@ NORMAL (L"#Question: what algorithm is used for formant analysis?")
 NORMAL (L"Answer: see @@Sound: To Formant (burg)...@.")
 MAN_END
 
-MAN_BEGIN (L"FAQ: How to cite Praat", L"ppgb", 20100401)
+MAN_BEGIN (L"FAQ: How to cite Praat", L"ppgb", 20140826)
 NORMAL (L"#Question: how do I cite Praat in my articles?")
 NORMAL (L"Answer: nowadays most journals allow you to cite computer programs and web sites. "
 	"The style approved by the American Psychological Association, "
@@ -1826,6 +1829,7 @@ NORMAL (L"Boersma, Paul & Weenink, David (" xstr(PRAAT_YEAR) "). "
 NORMAL (L"If the journal does not allow you to cite a web site, then try:")
 NORMAL (L"Boersma, Paul (2001). Praat, a system for doing phonetics by computer. "
 	"%%Glot International% ##5:9/10#, 341-345.")
+NORMAL (L"This paper can be downloaded from Boersma's website.")
 MAN_END
 
 MAN_BEGIN (L"FAQ: Pitch analysis", L"ppgb", 20060913)

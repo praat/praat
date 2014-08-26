@@ -57,7 +57,7 @@ void structMovieWindow :: v_draw () {
 		Graphics_setColour (our d_graphics, Graphics_WHITE);
 		Graphics_setWindow (our d_graphics, 0, 1, 0, 1);
 		Graphics_fillRectangle (our d_graphics, 0, 1, 0, 1);
-		our f_drawSound (-1.0, 1.0);
+		TimeSoundEditor_drawSound (this, -1.0, 1.0);
 		Graphics_flushWs (our d_graphics);
 		Graphics_resetViewport (our d_graphics, viewport);
 	}
@@ -91,7 +91,7 @@ void structMovieWindow :: v_draw () {
 		if (our p_pulses_show) {
 			viewport = Graphics_insetViewport (our d_graphics, 0.0, 1.0, soundY, 1.0);
 			our v_draw_analysis_pulses ();
-			our f_drawSound (-1.0, 1.0);   // second time, partially across the pulses
+			TimeSoundEditor_drawSound (this, -1.0, 1.0);   // second time, partially across the pulses
 			Graphics_flushWs (our d_graphics);
 			Graphics_resetViewport (our d_graphics, viewport);
 		}

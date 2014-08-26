@@ -363,7 +363,7 @@ void structSoundEditor :: v_draw () {
 	Graphics_setColour (d_graphics, Graphics_WHITE);
 	Graphics_setWindow (d_graphics, 0, 1, 0, 1);
 	Graphics_fillRectangle (d_graphics, 0, 1, 0, 1);
-	f_drawSound (d_sound.minimum, d_sound.maximum);
+	TimeSoundEditor_drawSound (this, d_sound.minimum, d_sound.maximum);
 	Graphics_flushWs (d_graphics);
 	if (showAnalysis)
 		Graphics_resetViewport (d_graphics, viewport);
@@ -384,7 +384,7 @@ void structSoundEditor :: v_draw () {
 		if (showAnalysis)
 			viewport = Graphics_insetViewport (d_graphics, 0, 1, 0.5, 1);
 		v_draw_analysis_pulses ();
-		f_drawSound (d_sound.minimum, d_sound.maximum);   // second time, partially across the pulses
+		TimeSoundEditor_drawSound (this, d_sound.minimum, d_sound.maximum);   // second time, partially across the pulses
 		Graphics_flushWs (d_graphics);
 		if (showAnalysis)
 			Graphics_resetViewport (d_graphics, viewport);

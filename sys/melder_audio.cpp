@@ -125,7 +125,7 @@ double MelderAudio_getOutputSilenceAfter (void) { return preferences. silenceAft
 
 long MelderAudio_getOutputBestSampleRate (long fsamp) {
 	#if defined (macintosh)
-		return fsamp;
+		return fsamp == 44100 || fsamp == 96000 ? fsamp : fsamp;
 	#elif defined (_WIN32)
 		return fsamp == 8000 || fsamp == 11025 || fsamp == 16000 || fsamp == 22050 ||
 			fsamp == 32000 || fsamp == 44100 || fsamp == 48000 || fsamp == 96000 ? fsamp : 44100;

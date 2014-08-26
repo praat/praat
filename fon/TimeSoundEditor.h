@@ -39,9 +39,6 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 			struct { LongSound data; } d_longSound;
 			GuiMenuItem drawButton, publishButton, publishPreserveButton, publishWindowButton, publishOverlapButton;
 			GuiMenuItem writeAiffButton, d_saveAs24BitWavButton, d_saveAs32BitWavButton, writeAifcButton, writeWavButton, writeNextSunButton, writeNistButton, writeFlacButton;
-	// messages:
-		public:
-			void f_drawSound (double globalMinimum, double globalMaximum);
 	// overridden methods:
 		protected:
 			virtual void v_destroy ();
@@ -54,7 +51,7 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 			virtual void v_createMenuItems_view (EditorMenu menu);
 			virtual int v_click (double xbegin, double ybegin, bool shiftKeyPressed);   // catch channel scrolling
 	// new methods:
-		protected:
+		public:   // BUG
 			virtual void v_createMenuItems_view_sound (EditorMenu menu);
 			virtual void v_updateMenuItems_file ();
 			virtual const wchar_t * v_getChannelName (long channelNumber) { (void) channelNumber; return NULL; }
@@ -62,6 +59,8 @@ Thing_define (TimeSoundEditor, FunctionEditor) {
 };
 
 void TimeSoundEditor_init (TimeSoundEditor me, const wchar_t *title, Function data, Sampled sound, bool ownSound);
+
+void TimeSoundEditor_drawSound (TimeSoundEditor me, double globalMinimum, double globalMaximum);
 
 /* End of file TimeSoundEditor.h */
 #endif

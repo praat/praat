@@ -337,7 +337,7 @@ Sound Sound_upsample (Sound me) {
 	try {
 		long nfft = 1;
 		while (nfft < my nx + 2000) nfft *= 2;
-		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * 2, my dx / 2, my x1);
+		autoSound thee = Sound_create (my ny, my xmin, my xmax, my nx * 2, my dx / 2, my x1 - my dx / 4);
 		autoNUMvector <double> data (1, 2 * nfft);
 		for (long channel = 1; channel <= my ny; channel ++) {
 			NUMvector_copyElements (my z [channel], & data [1000], 1, my nx);

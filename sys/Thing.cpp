@@ -47,13 +47,13 @@ ClassInfo classThing = & theClassInfo_Thing;
 
 const wchar_t * Thing_className (Thing me) { return my classInfo -> className; }
 
-Any _Thing_new (ClassInfo classInfo_) {
-	Thing me = (Thing) classInfo_ -> _new ();
-	trace ("created %ls", classInfo_ -> className);
+Any _Thing_new (ClassInfo classInfo) {
+	Thing me = (Thing) classInfo -> _new ();
+	trace ("created %ls", classInfo -> className);
 	theTotalNumberOfThings += 1;
-	my classInfo = classInfo_;
+	my classInfo = classInfo;
 	Melder_assert (my name == NULL);   // check that _new called calloc
-	if (Melder_debug == 40) Melder_casual ("created %ls (%p, %p)", classInfo_ -> className, classInfo_, me);
+	if (Melder_debug == 40) Melder_casual ("created %ls (%p, %p)", classInfo -> className, classInfo, me);
 	return me;
 }
 

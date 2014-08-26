@@ -55,12 +55,21 @@ typedef void *Any;   /* Prevent compile-time type checking. */
 
 typedef struct structClassInfo *ClassInfo;
 struct structClassInfo {
+	/*
+	 * The following five fields are statically initialized by the Thing_implement() macro.
+	 */
 	const wchar_t *className;
 	ClassInfo parent;
 	long size;
-	Thing (* _new) ();
+	Thing (* _new) ();   // objects have to be constructed via this function, because it calls C++ "new", which initializes the C++ class pointer
 	long version;
+	/*
+	 * The following field is initialized by Thing_recognizeClassesByName, only for classes that have to be read (usually from disk).
+	 */
 	long sequentialUniqueIdOfReadableClass;
+	/*
+	 * The following field is initialized by Thing_dummyObject(), whihc is used only rarely.
+	 */
 	Thing dummyObject;
 };
 
@@ -89,7 +98,7 @@ extern ClassInfo classThing;
 extern struct structClassInfo theClassInfo_Thing;
 class structThing {
 	public:
-		ClassInfo classInfo;
+		ClassInfo classInfo;   // the Praat class pointer (every object also has a C++ class pointer initialized by C++ "new")
 		wchar_t *name;
 		void * operator new (size_t size) { return Melder_calloc (char, size); }
 		void operator delete (void *ptr, size_t size) { (void) size; Melder_free (ptr); }
