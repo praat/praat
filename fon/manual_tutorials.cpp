@@ -23,12 +23,14 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140826)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140919)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.85# (19 September 2014)")
+LIST_ITEM (L"\\bu Mac audio: circumvented a bug in PortAudio by which playback of sounds with sampling frequencies "
+	"below 44100 Hz could be distorted on some USB headsets.")
 NORMAL (L"##5.3.84# (26 August 2014)")
 LIST_ITEM (L"\\bu Manipulation: repaired a bug that could cause Praat to crash when playing a manipulation of a Sound created by the SpeechSynthesizer.")
-LIST_ITEM (L"\\bu Mac: repaired a bug that could cause poor sound quality on some USB headphones when playing a sound with a low sampling frequency.")
 NORMAL (L"##5.3.83# (16 August 2014)")
 LIST_ITEM (L"\\bu TextGrid window: repaired a bug with automatic alignment that could cause an analysis tier to go out of order.")
 LIST_ITEM (L"\\bu Linux audio: created a second workaround that reduces even more the chances of a freeze that is due to a potential deadlock "

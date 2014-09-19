@@ -88,7 +88,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 					DescType typeCode;
 					Size actualSize = 0;
 					FSRef machFile;
-					structMelderFile file;
+					structMelderFile file = { 0 };
 					if ((err = AEGetNthPtr (& reply. selection, ifile, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr)
 						Melder_machToFile (& machFile, & file);
 					my addString (Melder_fileToPath (& file));
@@ -142,7 +142,7 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 				structMelderDir dir;
 				Melder_pathToDir (fullFileName, & dir);
 				for (const wchar_t *p = & fullFileName [firstFileNameLength + 1]; *p != '\0'; p += wcslen (p) + 1) {
-					structMelderFile file;
+					structMelderFile file = { 0 };
 					MelderDir_getFile (& dir, p, & file);
 					my addString (Melder_fileToPath (& file));
 				}
@@ -221,7 +221,7 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 					FSRefMakePath (& machFile, (unsigned char *) directoryPath_utf8, 999);
 					if (! (directoryPath_utf8 [0] == '/' && directoryPath_utf8 [1] == '\0'))
 						strcat (directoryPath_utf8, "/");
-					structMelderFile file;
+					structMelderFile file = { 0 };
 					Melder_8bitToWcs_inline (directoryPath_utf8, file. path, kMelder_textInputEncoding_UTF8); // BUG throwable
 					int dirLength = wcslen (file. path);
 					int n = CFStringGetLength (outfileName_cf);
@@ -321,7 +321,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 				DescType typeCode;
 				Size actualSize = 0;
 				FSRef machFile;
-				structMelderFile file;
+				structMelderFile file = { 0 };
 				if ((err = AEGetNthPtr (& reply. selection, 1, typeFSRef, & keyWord, & typeCode, & machFile, sizeof (FSRef), & actualSize)) == noErr) {
 					Melder_machToFile (& machFile, & file);
 					directoryName = Melder_wcsdup_f (Melder_fileToPath (& file));

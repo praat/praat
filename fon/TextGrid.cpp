@@ -1728,10 +1728,11 @@ void TextGrid_correctRoundingErrors (TextGrid me) {
 				TextInterval left = (TextInterval) tier -> intervals -> item [iinterval];
 				TextInterval right = (TextInterval) tier -> intervals -> item [iinterval + 1];
 				right -> xmin = left -> xmax;
-				trace ("tier %ld, interval %ld, %17g %17g", itier, iinterval, right -> xmin, right -> xmax);
+				trace ("tier %ld, interval %ld, %.17g %.17g", itier, iinterval, right -> xmin, right -> xmax);
 				Melder_assert (right -> xmin < right -> xmax);
 			}
 			TextInterval last = (TextInterval) tier -> intervals -> item [tier -> intervals -> size];
+			trace ("%ld %.17g %.17g", tier -> intervals -> size, last -> xmax, my xmax);
 			last -> xmax = my xmax;
 			Melder_assert (last -> xmax > last -> xmin);
 		}

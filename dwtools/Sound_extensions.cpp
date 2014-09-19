@@ -69,10 +69,8 @@
 #include "Manipulation.h"
 #include "NUM2.h"
 
-#ifdef linux
 //#include <pulse/simple.h>
 //#include <pulse/error.h>
-#endif
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
@@ -2277,5 +2275,24 @@ void Sound_playAsFrequencyShifted (Sound me, double shiftBy, double newSamplingF
 	}
 }
 
+/*
+void Sound_playAsPulse (Sound me, long fromTime, long toTime)  {
+	 static const pa_sample_spec ss = {
+		.format = PA_SAMPLE_S16LE,
+		.rate = 44100,
+		.channels = 2
+	};
+	long ixmin, ixmax, numberOfChannels = my ny > 2 ? 2 : my ny;
+	long numberOfSamples = Sampled_getWindowSamples (me, fromTime, toTime, &ixmin, &ixmax);
+	if (numberOfSamples < 1) {
+		return;
+	}
+	long playBufferSize = 1000 * numberOfChannels, indexInPlaybuffer = 1;
+	autoNUMvector<float> buffer (1, numberOfChannels * playBufferSize);
+	pa_simple *s = NULL;
+	int ret = 1;
+	int error;
 
+}
+*/
 /* End of file Sound_extensions.cpp */

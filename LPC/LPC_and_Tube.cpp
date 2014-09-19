@@ -1,6 +1,6 @@
 /* LPC_and_Tube.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,10 +79,8 @@ double VocalTract_and_LPC_Frame_getMatchingLength (VocalTract me, LPC_Frame thee
 		LPC_Frame_into_Spectrum (thee, lps.peek(), 0, 50);
 		autoSpectrumTier vtst = Spectrum_to_SpectrumTier_peaks (vts.peek());
 		autoSpectrumTier lpst = Spectrum_to_SpectrumTier_peaks (lps.peek());
-		RealPoint point = vtst -> point (1); double vt_f1 = point -> number;
-		point = vtst -> point (2); double vt_f2 = point -> number;
-		point = lpst -> point (1); double lp_f1 = point -> number;
-		point = lpst -> point (2); double lp_f2 = point -> number;
+		double vt_f1 = vtst -> point(1) -> number, vt_f2 = vtst -> point(2) -> number;
+		double lp_f1 = lpst -> point(1) -> number, lp_f2 = lpst -> point(2) -> number;
 		double df1 = lp_f1 - vt_f1, df2 =  lp_f2 - vt_f2, df = 0.5 * (df1 + df2);
 		double dl = - df / lp_f2;
 		return my dx * my nx * (1 + dl);

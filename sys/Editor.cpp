@@ -277,9 +277,9 @@ static void menu_cb_sendBackToCallingProgram (EDITOR_ARGS) {
 	EDITOR_IAM (Editor);
 	if (my data) {
 		extern structMelderDir praatDir;
-		structMelderFile file;
+		structMelderFile file = { 0 };
 		MelderDir_getFile (& praatDir, L"praat_backToCaller.Data", & file);
-		Data_writeToBinaryFile (my data, & file);
+		Data_writeToTextFile (my data, & file);
 		sendsocket (my callbackSocket, Melder_peekWcsToUtf8 (my data -> name));
 	}
 	my v_goAway ();

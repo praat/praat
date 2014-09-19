@@ -1,4 +1,4 @@
-# test_onewayAnova.praat
+# test_OnewayAnova.praat
 # djmw 20120625
 
 printline One-way Anova test
@@ -14,7 +14,7 @@ total = extractNumber (report$, "Total")
 assert abs (between-22.57) < 0.01
 assert abs (within - 878.93) < 0.01
 assert abs (total - 901.5) < 0.1
-Remove
+
 printline One-way Anova test OK
 
 

@@ -1,6 +1,6 @@
 /* manual_Permutation.cpp
  *
- * Copyright (C) 2005-2013 David Weenink
+ * Copyright (C) 2005-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -218,18 +218,29 @@ NORMAL (L"3. With ##Index range# = [0,0], ##Block size# = 3, and ##Offset# = 2, 
 NORMAL (L"4. With ##Index range# = [0,0], ##Block size# = 4, and ##Offset# = 1, the permutation ((1,2,3,4),(5,6,7,8)) is turned into (1,6,3,8,2,7,4,5).")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Next", L"djmw", 20100521)
-NORMAL (L"Get the next @@Permutation|permutation@ in lexicographic order. Starting with the identity permutation and "
-	"repeatedly applying this function will iterate through all possible permutations. If no further permutation "
-	"is available the current permutation will not change. ")
-ENTRY (L"Examples")
-NORMAL (L"If we start with (1,2,3,4) successively applying Next will generate the following sequence (1,2,4,3), (1,3,2,4), (1,3,4,2), (1,4,2,3), (1,4,3,2), etc.")
+MAN_BEGIN (L"lexicographic permutation order", L"djmw", 20140131)
+INTRO (L"We can order the %n numbers 1, 2, 3,..., n in %n! different ways. Each of these n! orderings represents a different permutation of "
+	"the numbers 1, 2, 3,..., n. For example, if %n equals 3 we have 6 (=3\\.c2\\.c1) possible orderings: (1,2,3), (1,3,2), (2,1,3), (2,3,1), (3,1,2) and (3,2,1). "
+	"The %%lexicographic permutation order% starts from the identity permutation (1,2,..., n). By successively swapping only two numbers one "
+	"obtains all possible permutations. The last permutation in lexicographic order will be the permutation with all numbers in reversed order, "
+	"i.e. (n,n-1,...,2,1). The example given above has all 6 permutations in lexicographic permutation order.")
 MAN_END
 
-MAN_BEGIN (L"Permutation: Previous", L"djmw", 20100521)
-NORMAL (L"Get the previous @@Permutation|permutation@ in lexicographic order. If no further permutation "
-	"is available the current permutation will not change. ")
-NORMAL (L"This Previous operation follows the opposite order of @@Permutation: Next@.")
+MAN_BEGIN (L"Permutation: Next", L"djmw", 20140131)
+INTRO (L"Get the next @@Permutation|permutation@ in @@lexicographic permutation order@. ")
+NORMAL (L"The next permutation is obtained from the selected permutation "
+	"by swapping values %%at only two positions%. Starting with the identity permutation and "
+	"repeatedly applying this function will iterate through all possible permutations. If no further permutation "
+	"is available, i.e. the selected permutation is at the lexicographic end position (n, n-1, ..., 3, 2, 1), the current permutation will not change anymore. ")
+ENTRY (L"Examples")
+NORMAL (L"If we start with (1,2,3,4) successively applying ##Next# will generate the following sequence (1,2,4,3), (1,3,2,4), (1,3,4,2), (1,4,2,3), (1,4,3,2), etc.")
+MAN_END
+
+MAN_BEGIN (L"Permutation: Previous", L"djmw", 20140131)
+NORMAL (L"Get the previous @@Permutation|permutation@ in @@lexicographic permutation order@. The previous permutation is obtained "
+	"from the selected permutation by swapping values %%at only two positions%. If no further permutation "
+	"is available, i.e. the current permutation is at the lexicographic start position (1, 2, 3, ..., n-1, n), the current permutation will not change anymore. ")
+NORMAL (L"The ##Previous# operation follows the opposite order of @@Permutation: Next@.")
 MAN_END
 
 MAN_BEGIN (L"Permutation: Rotate...", L"djmw", 20110105)
@@ -267,7 +278,7 @@ ENTRY (L"Example")
 NORMAL (L"If the selected TableOfReal has 5 rows and the permutation is (5,4,3,2,1) the first row of the new TableOfReal equals the fifth row of the selected, the second row of new equals the fourth row of the selected and so on.")
 MAN_END
 
-MAN_BEGIN (L"Strings & Permutation: Permute strings", L"djmw", 20050721)
+MAN_BEGIN (L"Strings & Permutation: Permute strings", L"djmw", 20140130)
 INTRO (L"Generate a new @Strings with a strings ordering determined by the @Permutation.")
 NORMAL (L"The number of strings in the #Strings and the number of elements in the #Permutation have to be equal.")
 ENTRY (L"Examples")
@@ -278,7 +289,7 @@ NORMAL (L"2. In the example that is discussed in the @@ExperimentMFC|listening e
 	"randomization strategy, i.e. stimuli presented in blocks of four, randomized, and no two successive stimuli equal. "
 	"This type of randomization can easily be accomplished with a Permutation object and a Strings." )
 LIST_ITEM (L"1. Fill the Strings object with 12 strings, i.e. three repetitions of the four stimuli. ")
-LIST_ITEM (L"2. Create a Permutation object with 12 elements and perform  ##@@Permutation: Permute randomly (blocks)...|Permute randomly (blocks)...@ 0 0 4 yes yes#. We randomly permute blocks of size 4 and permute randomly within these blocks and make sure that on the transition from on block to the other no two stimuli are equal. (Of course, the random permutation of the blocks makes no difference here since all the blocks have the same content.)")
+LIST_ITEM (L"2. Create a Permutation object with 12 elements and perform  ##@@Permutation: Permute randomly (blocks)...|Permute randomly (blocks):@ 0, 0, 4, \"yes\", \"yes\"#. We randomly permute blocks of size 4 and permute randomly within these blocks and make sure that on the transition from on block to the other no two stimuli are equal. (Of course, the random permutation of the blocks makes no difference here since all the blocks have the same content.)")
 LIST_ITEM (L"3. Select the Strings and the Permutation together and choose ##Permute strings#. "
 	"Now the new Strings will contain the new ordering of the stimuli.")
 MAN_END

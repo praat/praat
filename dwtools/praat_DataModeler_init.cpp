@@ -17,8 +17,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "praatP.h"
 #include <math.h>
+#include "praatP.h"
 #include "DataModeler.h"
 #include "Formant_extensions.h"
 #include "Pitch.h"
@@ -395,36 +395,6 @@ DO
 	}
 END
 
-FORM (Formants_getSmoothestInInterval, L"Formant: Get smoothest in interval", 0)
-	REAL (L"left Time range (s)", L"0.0")
-	REAL (L"right Time range (s)", L"0.0")
-	NATURAL (L"Number of formant tracks", L"4")
-	INTEGER (L"Order of polynomials", L"3")
-	LABEL (L"", L"Use bandwidths to model the formant tracks")
-	OPTIONMENU (L"Weigh data", 2)
-		OPTION (L"Equally")
-		OPTION (L"Bandwidth")
-		OPTION (L"Bandwidth / frequency")
-		OPTION (L"Sqrt bandwidth")
-	LABEL (L"", L"Zero parameter values whose range include zero.")
-	REAL (L"Number of sigmas", L"1.0")
-	POSITIVE (L"Parameter variance power", L"2.5")
-	OK
-DO
-	autoCollection set = praat_getSelectedObjects ();
-	double tmin = GET_REAL (L"left Time range"), tmax = GET_REAL (L"right Time range");
-	long index = Formants_getSmoothestInInterval (set.peek(), tmin, tmax, GET_INTEGER (L"Number of formant tracks"),
-		GET_INTEGER (L"Order of polynomials") + 1, 
-		GET_INTEGER (L"Weigh data") - 1, GET_REAL (L"Number of sigmas"), GET_REAL (L"Parameter variance power"), 0, 1, 1, 1, 1, 1);
-	long iselected = 0;
-	LOOP {
-		iselected ++;
-		if (iselected != index) {
-			praat_deselect (IOBJECT);
-		}
-	}
-END
-
 FORM (Formants_extractSmoothestPart, L"Formants: Extract smoothest part", L"Formants: Extract smoothest part")
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0")
@@ -438,7 +408,7 @@ FORM (Formants_extractSmoothestPart, L"Formants: Extract smoothest part", L"Form
 		OPTION (L"Sqrt bandwidth")
 	LABEL (L"", L"Zero parameter values whose range include zero.")
 	REAL (L"Number of sigmas", L"1.0")
-	POSITIVE (L"Parameter variance power", L"2.5")
+	POSITIVE (L"Parameter variance power", L"1.5")
 	OK
 DO
 	autoCollection set = praat_getSelectedObjects ();
@@ -476,7 +446,7 @@ FORM (Formants_extractSmoothestPart_constrained, L"Formants: Extract smoothest p
 		OPTION (L"Sqrt bandwidth")
 	LABEL (L"", L"Zero parameter values whose range include zero.")
 	REAL (L"Number of sigmas", L"1.0")
-	POSITIVE (L"Parameter variance power", L"2.5")
+	POSITIVE (L"Parameter variance power", L"1.5")
 	LABEL (L"", L"The constraints on the formants")
 	REAL (L"Minimum F1 (Hz)", L"100.0")
 	REAL (L"Maximum F1 (Hz)", L"1200.0")
@@ -904,7 +874,7 @@ FORM (FormantModeler_getSmoothnessValue, L"FormantModeler: Get smoothness value"
 	INTEGER (L"left Formant range", L"0")
 	INTEGER (L"right Formant range", L"0")
 	INTEGER (L"Order of polynomials", L"3")
-	POSITIVE (L"Parameter variance power", L"2.5")
+	POSITIVE (L"Parameter variance power", L"1.5")
 	OK
 DO
 	LOOP {
@@ -1161,7 +1131,7 @@ FORM (Sound_to_Formant_interval, L"Sound: To Formant (interval)", 0)
 		OPTION (L"Sqrt bandwidth")
 	LABEL (L"", L"Make parameters that include zero in their confidence region zero")
 	REAL (L"Number of sigmas", L"1.0")
-	POSITIVE (L"Parameter variance power", L"2.5")
+	POSITIVE (L"Parameter variance power", L"1.5")
 	OK
 DO
 	LOOP {
@@ -1196,7 +1166,7 @@ FORM (Sound_to_Formant_interval_constrained, L"Sound: To Formant (interval, cons
 		OPTION (L"Sqrt bandwidth")
 	LABEL (L"", L"Make parameters that include zero in their confidence region zero")
 	REAL (L"Number of sigmas", L"1.0")
-	POSITIVE (L"Parameter variance power", L"2.5")
+	POSITIVE (L"Parameter variance power", L"1.5")
 	LABEL (L"", L"Formant frequency constraints")
 	REAL (L"Minimum F1 (Hz)", L"100.0")
 	REAL (L"Maximum F1 (Hz)", L"1200.0")
@@ -1238,7 +1208,7 @@ FORM (Sound_to_Formant_interval_constrained_robust, L"Sound: To Formant (interva
 		OPTION (L"Sqrt bandwidth")
 	LABEL (L"", L"Make parameters that include zero in their confidence region zero")
 	REAL (L"Number of sigmas", L"1.0")
-	POSITIVE (L"Parameter variance power", L"2.5")
+	POSITIVE (L"Parameter variance power", L"1.5")
 	LABEL (L"", L"Formant frequency constraints")
 	REAL (L"Minimum F1 (Hz)", L"100.0")
 	REAL (L"Maximum F1 (Hz)", L"1200.0")
@@ -1331,7 +1301,6 @@ void praat_DataModeler_init (void) {
 	praat_addAction1 (classDataModeler, 0, L"To Table (z-scores)...", 0, 0, DO_DataModeler_to_Table_zscores);
 
 	praat_addAction1 (classFormant, 0, L"To FormantModeler...", L"To LPC...", 0, DO_Formant_to_FormantModeler);
-	praat_addAction1 (classFormant, 0, L"Select smoothest...", L"To LPC...", 0, DO_Formants_getSmoothestInInterval);
 	praat_addAction1 (classFormant, 0, L"Extract smoothest part...", 0, 0, DO_Formants_extractSmoothestPart);
 	praat_addAction1 (classFormant, 0, L"Extract smoothest part (constrained)...", 0, 0, DO_Formants_extractSmoothestPart_constrained);
 
@@ -1392,10 +1361,12 @@ void praat_DataModeler_init (void) {
 
 	praat_addAction1 (classPitchModeler, 0, L"Draw...", 0, 0, DO_PitchModeler_draw);
 
-	praat_addAction1 (classSound, 0, L"To Formant (interval)...", L"To Formant (burg)...", 1, DO_Sound_to_Formant_interval);
-	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained)...", L"To Formant (interval)...", 1, DO_Sound_to_Formant_interval_constrained);
-	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained, robust)...", L"To Formant (interval, constrained)...", 1, DO_Sound_to_Formant_interval_constrained_robust);
-	praat_addAction1 (classTable, 0, L"To DataModeler...", L"To logistic regression...", 1, DO_Table_to_DataModeler);
+	praat_addAction1 (classSound, 0, L"To Formant (interval)...", L"To Formant (robust)...", praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval);
+	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained)...", L"To Formant (interval)...",
+		praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval_constrained);
+	praat_addAction1 (classSound, 0, L"To Formant (interval, constrained, robust)...", L"To Formant (interval, constrained)...", 
+		praat_DEPTH_2 | praat_HIDDEN, DO_Sound_to_Formant_interval_constrained_robust);
+	praat_addAction1 (classTable, 0, L"To DataModeler...", L"To logistic regression...", praat_DEPTH_1 + praat_HIDDEN, DO_Table_to_DataModeler);
 }
 
 /* End of file praat_DataModeler_init.c */

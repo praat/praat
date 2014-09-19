@@ -1820,7 +1820,7 @@ praat_addAction1 (classTextGrid, 0, L"Synthesize", 0, 0, 0);
 	praat_addAction2 (classPitch, 1, classTextGrid, 1, L"Speckle separately (erb)...", 0, 1, DO_TextGrid_Pitch_speckleSeparatelyErb);
 	praat_addAction2 (classPitch, 1, classTextTier, 1, L"To PitchTier...", 0, 0, DO_Pitch_TextTier_to_PitchTier);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"View & Edit", 0, praat_ATTRACTIVE, DO_TextGrid_edit);
-	praat_addAction2 (classSound, 1, classTextGrid, 1, L"View & Edit with callback", 0, praat_HIDDEN, DO_TextGrid_editWithCallback);
+	praat_addAction2 (classSound, 1, classTextGrid, 1, L"View & Edit with callback...", 0, praat_HIDDEN, DO_TextGrid_editWithCallback);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Edit", 0, praat_HIDDEN, DO_TextGrid_edit);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Draw...", 0, 0, DO_TextGrid_Sound_draw);
 	praat_addAction2 (classSound, 1, classTextGrid, 1, L"Extract -", 0, 0, 0);

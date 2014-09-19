@@ -1,6 +1,6 @@
 /* praat_LPC_init.cpp
  *
- * Copyright (C) 1994-2013 David Weenink
+ * Copyright (C) 1994-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1067,11 +1067,7 @@ END
 DIRECT (VocalTract_getLength)
 	LOOP {
 		iam (VocalTract);
-		double length = my xmax - my xmin;
-		if (length <= 0.02) {
-			length = NUMundefined;
-		}
-		Melder_information (Melder_double (length), L" m");
+		Melder_information (Melder_double (my xmax - my xmin), L" m");
 	}
 END
 
@@ -1324,6 +1320,7 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classVocalTractTier, 0, L"To LPC...", 0, 0, DO_VocalTractTier_to_LPC);
 	praat_addAction1 (classVocalTractTier, 0, L"To VocalTract...", 0, 0, DO_VocalTractTier_to_VocalTract);
 	praat_addAction2 (classVocalTractTier, 1, classVocalTract, 1, L"Add VocalTract...", 0, 0, DO_VocalTractTier_addVocalTract);
+
 	INCLUDE_MANPAGES (manual_LPC)
 	INCLUDE_MANPAGES (manual_DataModeler)
 

@@ -709,7 +709,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 	long x1DC = wdx (x1), x2DC = wdx (x2), y1DC = wdy (y1), y2DC = wdy (y2);
 	long width = x2DC - x1DC, height = my yIsZeroAtTheTop ? y1DC - y2DC : y2DC - y1DC;
 	#if 0
-		structMelderFile file;
+		structMelderFile file = { 0 };
 		Melder_relativePathToFile (relativeFileName, & file);
 		try {
 			autoPhoto photo = Photo_readFromImageFile (& file);
@@ -743,7 +743,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 		}
 	#elif win
 		if (my d_useGdiplus) {
-			structMelderFile file;
+			structMelderFile file = { 0 };
 			Melder_relativePathToFile (relativeFileName, & file);
 			Gdiplus::Bitmap image (file. path);
 			if (x1 == x2 && y1 == y2) {
@@ -761,7 +761,7 @@ static void _GraphicsScreen_imageFromFile (GraphicsScreen me, const wchar_t *rel
 			dcplus. DrawImage (& image, rect);
 		}
 	#elif mac
-		structMelderFile file;
+		structMelderFile file = { 0 };
 		Melder_relativePathToFile (relativeFileName, & file);
 		char utf8 [500];
 		Melder_wcsTo8bitFileRepresentation_inline (file. path, utf8);

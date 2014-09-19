@@ -1563,7 +1563,7 @@ double FormantModeler_getSmoothnessValue (FormantModeler me, long fromFormant, l
 		double ndof, var = FormantModeler_getVarianceOfParameters (me, fromFormant, toFormant, 1, numberOfParametersPerTrack, &nofp);
 		double chisq = FormantModeler_getChiSquaredQ (me, fromFormant, toFormant, TRUE, NULL, &ndof);
 		if (NUMdefined (var) && NUMdefined (chisq) && nofp > 0) {
-			smoothness = sqrt (pow (var / nofp, power) * chisq / ndof);
+			smoothness = log10 (pow (var / nofp, power) * (chisq / ndof));
 		}
 	}
 	return smoothness;
@@ -1773,7 +1773,7 @@ void PitchModeler_draw (PitchModeler me, Graphics g, double tmin, double tmax, d
 	}
 }
 
-Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *ceiling) {
+Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
 	try {
 		// parameter check
 		if (endTime <= startTime) {
@@ -1818,8 +1818,8 @@ Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, d
 		}
 		autoFormant thee = Formant_extractPart ((Formant) formants -> item[i_best], startTime, endTime);
 		Melder_progressOn ();
-		if (ceiling) {
-			*ceiling = ceiling_best;
+		if (optimalCeiling) {
+			*optimalCeiling = ceiling_best;
 		}
 		return thee.transfer();
 	} catch (MelderError) {
@@ -1827,7 +1827,7 @@ Formant Sound_to_Formant_interval (Sound me, double startTime, double endTime, d
 	}
 }
 
-Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *ceiling) {
+Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double endTime, double windowLength, double timeStep, double minFreq, double maxFreq, long numberOfFrequencySteps, double preemphasisFrequency, long numberOfFormantTracks, long numberOfParametersPerTrack, int weighData, double numberOfSigmas, double power, bool useConstraints, double minF1, double maxF1, double minF2, double maxF2, double minF3, double *optimalCeiling) {
 	try {
 		// parameter check
 		if (endTime <= startTime) {
@@ -1872,8 +1872,8 @@ Formant Sound_to_Formant_interval_robust (Sound me, double startTime, double end
 		}
 		autoFormant thee = Formant_extractPart ((Formant) formants -> item[i_best], startTime, endTime);
 		Melder_progressOn ();
-		if (ceiling) {
-			*ceiling = ceiling_best;
+		if (optimalCeiling) {
+			*optimalCeiling = ceiling_best;
 		}
 		return thee.transfer();
 	} catch (MelderError) {

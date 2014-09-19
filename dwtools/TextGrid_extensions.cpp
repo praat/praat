@@ -656,10 +656,23 @@ void TextGrid_changeLabels (TextGrid me, int tier, long from, long to, const wch
 	}
 }
 
+static void IntervalTier_checkStartAndEndTime (IntervalTier me) {
+	TextInterval ti = (TextInterval) my intervals -> item[1];
+	if (my xmin != ti -> xmin) {
+		Melder_throw (me, ": start time of first interval doesn't match start time of the tier.");
+	}
+	ti = (TextInterval) my intervals -> item[my intervals -> size];
+	if (my xmax != ti -> xmax) {
+		Melder_throw (me, ": end time of last interval doesn't match end time of the tier.");
+	}
+}
+
 // Precondition: if (preserveTimes) { my xmax <= thy xmin }
 // Postcondition: my xmin preserved
 void IntervalTiers_append_inline (IntervalTier me, IntervalTier thee, bool preserveTimes) {
 	try {
+		IntervalTier_checkStartAndEndTime (me); // start/end time of first/last interval should match with tier
+		IntervalTier_checkStartAndEndTime (thee);
         double xmax_previous = my xmax, time_shift = my xmax - thy xmin;
 		if (preserveTimes && my xmax < thy xmin) {
 			autoTextInterval connection = TextInterval_create (my xmax, thy xmin, L"");
@@ -709,6 +722,17 @@ void TextTiers_append_inline (TextTier me, TextTier thee, bool preserveTimes) {
 	}
 }
 
+static void TextGrid_checkStartAndEndTimesOfTiers (TextGrid me) {
+	for (long itier = 1; itier <= my tiers -> size; itier++) {
+		Function tier = (Function) my tiers -> item[itier];
+		if (tier -> xmin != my xmin) {
+			Melder_throw (me, ": the start time of tier ", Melder_integer (itier), " does not match the start time of its TextGrid.");
+		} else if (tier -> xmax != my xmax) {
+			Melder_throw (me, ": the end time of tier ", Melder_integer (itier), " does not match the end time of its TextGrid.");
+		}
+	}
+}
+
 void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 {
 	try {
@@ -718,11 +742,14 @@ void TextGrids_append_inline (TextGrid me, TextGrid thee, bool preserveTimes)
 		if (preserveTimes && thy xmin < my xmax) {
 			Melder_throw ("The start time of the second TextGrid can't be earlier than the end time of the first one if you want to preserve times.");
 		}
-		// all tiers must have the same end time
+		
+		TextGrid_checkStartAndEndTimesOfTiers (me); // all tiers must have the same start/end time as textgrid
+		TextGrid_checkStartAndEndTimesOfTiers (thee);
 		// last intervals must have the same end time
 		double xmax = preserveTimes ? thy xmax : my xmax + (thy xmax - thy xmin);
 		for (long itier = 1; itier <= my tiers -> size; itier++) {
 			Function myTier = (Function) my tiers -> item[itier], thyTier = (Function) thy tiers -> item[itier];
+			
 			if (myTier -> classInfo == classIntervalTier && thyTier -> classInfo == classIntervalTier) {
                 IntervalTier ti = (IntervalTier) myTier;
 				IntervalTiers_append_inline (ti, (IntervalTier) thy tiers -> item[itier], preserveTimes);

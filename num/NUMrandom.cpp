@@ -135,25 +135,25 @@ class NUMrandom_State { public:
 /* initialize the array with a number of seeds */
 void NUMrandom_State :: init_by_array64 (uint64_t init_key [], unsigned int key_length)
 {
-    init_genrand64 (UINT64_C (19650218));   // warm it up
+	init_genrand64 (UINT64_C (19650218));   // warm it up
 
-    unsigned int i = 1, j = 0;
-    unsigned int k = ( NN > key_length ? NN : key_length );
-    for (; k; k --) {
-        array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (3935559000370003845)))
-          + init_key [j] + (uint64_t) j;   /* non linear */
-        i ++, j ++;
-        if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
-        if (j >= key_length) j = 0;
-    }
-    for (k = NN - 1; k; k --) {
-        array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (2862933555777941757)))
-          - (uint64_t) i;   /* non linear */
-        i ++;
-        if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
-    }
+	unsigned int i = 1, j = 0;
+	unsigned int k = ( NN > key_length ? NN : key_length );
+	for (; k; k --) {
+		array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (3935559000370003845)))
+		  + init_key [j] + (uint64_t) j;   /* non linear */
+		i ++, j ++;
+		if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
+		if (j >= key_length) j = 0;
+	}
+	for (k = NN - 1; k; k --) {
+		array [i] = (array [i] ^ ((array [i - 1] ^ (array [i - 1] >> 62)) * UINT64_C (2862933555777941757)))
+		  - (uint64_t) i;   /* non linear */
+		i ++;
+		if (i >= NN) { array [0] = array [NN - 1]; i = 1; }
+	}
 
-    array [0] = UINT64_C (1) << 63; /* MSB is 1; assuring non-zero initial array */
+	array [0] = UINT64_C (1) << 63; /* MSB is 1; assuring non-zero initial array */
 }
 
 static bool theInited = false;
@@ -207,66 +207,66 @@ void NUMrandom_init () {
 
 double NUMrandomFraction () {
 	NUMrandom_State *me = & states [0];
-    uint64_t x;
+	uint64_t x;
 
-    if (my index >= NN) { /* generate NN words at a time */
+	if (my index >= NN) { /* generate NN words at a time */
 
 		Melder_assert (theInited);   // if NUMrandom_init() hasn't been called, we'll detect that here, probably in the first call
 
 		int i;
-        for (i = 0; i < NN - MM; i ++) {
-            x = (my array [i] & UM) | (my array [i + 1] & LM);
-            my array [i] = my array [i + MM] ^ (x >> 1) ^ ZERO_OR_MAGIC;
-        }
-        for (; i < NN - 1; i ++) {
-            x = (my array [i] & UM) | (my array [i + 1] & LM);
-            my array [i] = my array [i + (MM - NN)] ^ (x >> 1) ^ ZERO_OR_MAGIC;
-        }
-        x = (my array [NN - 1] & UM) | (my array [0] & LM);
-        my array [NN - 1] = my array [MM - 1] ^ (x >> 1) ^ ZERO_OR_MAGIC;
+		for (i = 0; i < NN - MM; i ++) {
+			x = (my array [i] & UM) | (my array [i + 1] & LM);
+			my array [i] = my array [i + MM] ^ (x >> 1) ^ ZERO_OR_MAGIC;
+		}
+		for (; i < NN - 1; i ++) {
+			x = (my array [i] & UM) | (my array [i + 1] & LM);
+			my array [i] = my array [i + (MM - NN)] ^ (x >> 1) ^ ZERO_OR_MAGIC;
+		}
+		x = (my array [NN - 1] & UM) | (my array [0] & LM);
+		my array [NN - 1] = my array [MM - 1] ^ (x >> 1) ^ ZERO_OR_MAGIC;
 
-        my index = 0;
-    }
+		my index = 0;
+	}
 
-    x = my array [my index ++];
+	x = my array [my index ++];
 
-    x ^= (x >> 29) & UINT64_C (0x5555555555555555);
-    x ^= (x << 17) & UINT64_C (0x71D67FFFEDA60000);
-    x ^= (x << 37) & UINT64_C (0xFFF7EEE000000000);
-    x ^= (x >> 43);
+	x ^= (x >> 29) & UINT64_C (0x5555555555555555);
+	x ^= (x << 17) & UINT64_C (0x71D67FFFEDA60000);
+	x ^= (x << 37) & UINT64_C (0xFFF7EEE000000000);
+	x ^= (x >> 43);
 
 	return (x >> 11) * (1.0/9007199254740992.0);
 }
 
 double NUMrandomFraction_mt (int threadNumber) {
 	NUMrandom_State *me = & states [threadNumber];
-    uint64_t x;
+	uint64_t x;
 
-    if (my index >= NN) { /* generate NN words at a time */
+	if (my index >= NN) { /* generate NN words at a time */
 
 		Melder_assert (theInited);
 
 		int i;
-        for (i = 0; i < NN - MM; i ++) {
-            x = (my array [i] & UM) | (my array [i + 1] & LM);
-            my array [i] = my array [i + MM] ^ (x >> 1) ^ ZERO_OR_MAGIC;
-        }
-        for (; i < NN - 1; i ++) {
-            x = (my array [i] & UM) | (my array [i + 1] & LM);
-            my array [i] = my array [i + (MM - NN)] ^ (x >> 1) ^ ZERO_OR_MAGIC;
-        }
-        x = (my array [NN - 1] & UM) | (my array [0] & LM);
-        my array [NN - 1] = my array [MM - 1] ^ (x >> 1) ^ ZERO_OR_MAGIC;
+		for (i = 0; i < NN - MM; i ++) {
+			x = (my array [i] & UM) | (my array [i + 1] & LM);
+			my array [i] = my array [i + MM] ^ (x >> 1) ^ ZERO_OR_MAGIC;
+		}
+		for (; i < NN - 1; i ++) {
+			x = (my array [i] & UM) | (my array [i + 1] & LM);
+			my array [i] = my array [i + (MM - NN)] ^ (x >> 1) ^ ZERO_OR_MAGIC;
+		}
+		x = (my array [NN - 1] & UM) | (my array [0] & LM);
+		my array [NN - 1] = my array [MM - 1] ^ (x >> 1) ^ ZERO_OR_MAGIC;
 
-        my index = 0;
-    }
+		my index = 0;
+	}
 
-    x = my array [my index ++];
+	x = my array [my index ++];
 
-    x ^= (x >> 29) & UINT64_C (0x5555555555555555);
-    x ^= (x << 17) & UINT64_C (0x71D67FFFEDA60000);
-    x ^= (x << 37) & UINT64_C (0xFFF7EEE000000000);
-    x ^= (x >> 43);
+	x ^= (x >> 29) & UINT64_C (0x5555555555555555);
+	x ^= (x << 17) & UINT64_C (0x71D67FFFEDA60000);
+	x ^= (x << 37) & UINT64_C (0xFFF7EEE000000000);
+	x ^= (x >> 43);
 
 	return (x >> 11) * (1.0/9007199254740992.0);
 }
