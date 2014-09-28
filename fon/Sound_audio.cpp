@@ -45,9 +45,6 @@
 	#define DEV_AUDIO  "/dev/audio"
 #endif
 
-/*
- * In the new Mac SDK/ CodeWarrior, the following must be included before <Sound.h> and <Resources.h>...???
- */
 #include "Sound.h"
 #include "Preferences.h"
 #include "../external/portaudio/portaudio.h"

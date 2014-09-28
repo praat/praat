@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20140919)
+MAN_BEGIN (L"What's new?", L"ppgb", 20140928)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"\\bu Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.3.86# (28 September 2014)")
+LIST_ITEM (L"\\bu Linux audio: reverted to old version of PortAudio because of race problems in the Alsa–PulseAudio cooperation.")
 NORMAL (L"##5.3.85# (19 September 2014)")
 LIST_ITEM (L"\\bu Mac audio: circumvented a bug in PortAudio by which playback of sounds with sampling frequencies "
 	"below 44100 Hz could be distorted on some USB headsets.")

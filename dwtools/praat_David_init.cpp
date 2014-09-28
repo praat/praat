@@ -333,6 +333,17 @@ END
 
 /***************** CC ****************************************/
 
+FORM (CC_getNumberOfCoefficients, L"Get number of coefficients", 0)
+	NATURAL (L"Frame number", L"1")
+	OK
+DO
+	LOOP {
+		iam (CC);
+		long numberOfCoefficients = CC_getNumberOfCoefficients (me, GET_INTEGER (L"Frame number"));
+		Melder_information (Melder_integer (numberOfCoefficients));
+	}
+END
+
 FORM (CC_getValue, L"CC: Get value", L"CC: Get value...")
 	REAL (L"Time (s)", L"0.1")
 	NATURAL (L"Index", L"1")
@@ -341,6 +352,27 @@ DO
 	LOOP {
 		iam (CC); // ?? generic
 		Melder_informationReal (CC_getValue (me, GET_REAL (L"Time"), GET_INTEGER (L"Index")), 0);
+	}
+END
+
+FORM (CC_getValueInFrame, L"CC: Get value in frame", L"CC: Get value in frame...")
+	NATURAL (L"Frame number", L"1")
+	NATURAL (L"Index", L"1")
+	OK
+DO
+	LOOP {
+		iam (CC); // ?? generic
+		Melder_informationReal (CC_getValueInFrame (me, GET_INTEGER (L"Frame number"), GET_INTEGER (L"Index")), 0);
+	}
+END
+
+FORM (CC_getC0ValueInFrame, L"CC: Get c0 value in frame", L"CC: Get c0 value in frame...")
+	NATURAL (L"Frame number", L"1")
+	OK
+DO
+	LOOP {
+		iam (CC); // ?? generic
+		Melder_informationReal (CC_getC0ValueInFrame (me, GET_INTEGER (L"Frame number")), 0);
 	}
 END
 
@@ -7393,7 +7425,10 @@ void praat_CC_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, L"Draw...", 0, 1, DO_CC_drawC0);
 	praat_addAction1 (klas, 1, QUERY_BUTTON, 0, 0, 0);
 	praat_TimeFrameSampled_query_init (klas);
-	praat_addAction1 (klas, 1, L"Get value...", 0, 1, DO_CC_getValue);
+	praat_addAction1 (klas, 1, L"Get number of coefficients...", 0, 1, DO_CC_getNumberOfCoefficients);
+	praat_addAction1 (klas, 1, L"Get value in frame...", 0, 1, DO_CC_getValueInFrame);
+	praat_addAction1 (klas, 1, L"Get c0 value in frame...", 0, 1, DO_CC_getC0ValueInFrame);
+	praat_addAction1 (klas, 1, L"Get value...", 0, praat_HIDDEN + praat_DEPTH_1, DO_CC_getValue);
 	praat_addAction1 (klas, 0, L"To Matrix", 0, 0, DO_CC_to_Matrix);
 	praat_addAction1 (klas, 2, L"To DTW...", 0, 0, DO_CCs_to_DTW);
 }

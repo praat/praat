@@ -353,18 +353,6 @@ void praat_uvafon_Artsynth_init (void) {
 	praat_addMenuCommand (L"Objects", L"New", L"Create Articulation...", 0, 1, DO_Art_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Speaker...", 0, 1, DO_Speaker_create);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Artword...", 0, 1, DO_Artword_create);
-	/*praat_addMenuCommand (L"Objects", L"New", L"-- figures --", 0, 1, 0);
-	praat_addMenuCommand (L"Objects", L"New", L"Figures", 0, 1, 0);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 4.1: many tubes", 0, 2, DO_Fig_manyTubes);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 4.4: tube connections", 0, 2, DO_Fig_tubeConnections);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 4.7: vocal-tract construction", 0, 2, DO_Fig_vocalTractConstruction);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 5.2: pumping and sucking", 0, 2, DO_Fig_pumpingAndSucking);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 5.8: closed boundary", 0, 2, DO_Fig_closedBoundary);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 5.9: open boundary", 0, 2, DO_Fig_openBoundary);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 5.10: two-way boundary", 0, 2, DO_Fig_twoWayBoundary);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 5.11: three-way boundary", 0, 2, DO_Fig_threeWayBoundary);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 6.3: smoothing errors", 0, 2, DO_Fig_smoothingErrors);
-	praat_addMenuCommand (L"Objects", L"New", L"PB Fig. 6.8: HNR window ripples", 0, 2, DO_Fig_hnrWindowRipples);*/
 	praat_addMenuCommand (L"Objects", L"New", L"-- new vocal tract --", 0, 1, 0);
 	praat_addMenuCommand (L"Objects", L"New", L"Create Vocal Tract from phone...", 0, 1, DO_VocalTract_createFromPhone);
 

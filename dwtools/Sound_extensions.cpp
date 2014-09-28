@@ -69,8 +69,10 @@
 #include "Manipulation.h"
 #include "NUM2.h"
 
-//#include <pulse/simple.h>
-//#include <pulse/error.h>
+/*
+#include <pulse/simple.h>
+#include <pulse/error.h>
+*/
 
 #define MAX_T  0.02000000001   /* Maximum interval between two voice pulses (otherwise voiceless). */
 
@@ -2295,4 +2297,5 @@ void Sound_playAsPulse (Sound me, long fromTime, long toTime)  {
 
 }
 */
+
 /* End of file Sound_extensions.cpp */

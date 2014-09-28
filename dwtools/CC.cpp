@@ -1,6 +1,6 @@
 /* CC.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,6 +188,31 @@ long CC_getMaximumNumberOfCoefficients (I, long startframe, long endframe) {
 	return max;
 }
 
+long CC_getNumberOfCoefficients (I, long iframe) {
+	iam (CC);
+	if (iframe < 1 || iframe > my nx) {
+		return 0;
+	}
+	CC_Frame cf = & me -> frame[iframe];
+	return cf -> numberOfCoefficients;
+}
+
+
+double CC_getValueInFrame (I, long iframe, long index) {
+	iam (CC);
+	if (iframe < 1 || iframe > my nx) {
+		return NUMundefined;
+	}
+	CC_Frame cf = & me -> frame[iframe];
+	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
+}
+
+double CC_getValueAtTime (I, double t, long index) {
+	iam (CC);
+	long iframe = Sampled_xToNearestIndex (me, t);
+	return CC_getValueInFrame (me, iframe, index);
+}
+
 double CC_getValue (I, double t, long index) {
 	iam (CC);
 	long iframe = Sampled_xToNearestIndex (me, t);
@@ -196,6 +221,21 @@ double CC_getValue (I, double t, long index) {
 	}
 	CC_Frame cf = & me -> frame[iframe];
 	return index > cf -> numberOfCoefficients ? NUMundefined : cf -> c[index];
+}
+
+double CC_getC0ValueInFrame (I, long iframe) {
+	iam (CC);
+	if (iframe < 1 || iframe > my nx) {
+		return NUMundefined;
+	}
+	CC_Frame cf = & me -> frame[iframe];
+	return cf -> c0;
+}
+
+double CC_getC0ValueAtTime (I, double t) {
+	iam (CC);
+	long iframe = Sampled_xToNearestIndex (me, t);
+	return CC_getC0ValueInFrame (me, iframe);
 }
 
 /* End of file CC.cpp */

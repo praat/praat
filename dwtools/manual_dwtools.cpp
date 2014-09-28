@@ -358,6 +358,14 @@ NORMAL (L"Any object that represents cepstral coefficients as a function of "
 	"time.")
 MAN_END
 
+MAN_BEGIN (L"CC: Get value in frame...", L"djmw", 20140926)
+INTRO (L"Get the cepstral coefficient value at a specified position in a specified frame.")
+MAN_END
+
+MAN_BEGIN (L"CC: Get c0 value in frame...", L"djmw", 20140926)
+INTRO (L"Get the zeroth cepstral coefficient value in the specified frame. For a @MFCC object this value relates to energy.")
+MAN_END
+
 MAN_BEGIN (L"CCA", L"djmw", 20020323)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}. ")
 NORMAL (L"An object of type CCA represents the @@Canonical correlation "

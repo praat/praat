@@ -2,7 +2,7 @@
 #define _CC_h_
 /* CC.h
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,11 @@ void CC_getNumberOfCoefficients_extrema (I, long startframe,
 long CC_getMinimumNumberOfCoefficients (I, long startframe, long endframe);
 
 long CC_getMaximumNumberOfCoefficients (I, long startframe, long endframe);
+
+long CC_getNumberOfCoefficients (I, long iframe);
+
+double CC_getValueInFrame (I, long iframe, long index);
+double CC_getC0ValueInFrame (I, long iframe);
 
 void CC_paint (I, Graphics g, double xmin, double xmax, long cmin,
 	long cmax, double minimum, double maximum, int garnish);
