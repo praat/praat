@@ -1,6 +1,6 @@
 /* OTMultiEditor.cpp
  *
- * Copyright (C) 2005-2011,2012,2013 Paul Boersma
+ * Copyright (C) 2005-2011,2012,2013,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +211,7 @@ void structOTMultiEditor :: v_draw () {
 	for (long icons = 1; icons <= grammar -> numberOfConstraints; icons ++) {
 		OTConstraint constraint = & grammar -> constraints [grammar -> index [icons]];
 		MelderString_empty (& buffer);
-		MelderString_append (& buffer, L"\t", icons == selectedConstraint ? L"\\sp " : L"   ", L"@@", Melder_integer (icons),
+		MelderString_append (& buffer, L"\t", icons == selectedConstraint ? L"♠︎ " : L"   ", L"@@", Melder_integer (icons),
 			L"|", constraint -> name, L"@\t      ", Melder_fixed (constraint -> ranking, 3));
 		MelderString_append (& buffer, L"\t      ", Melder_fixed (constraint -> disharmony, 3));
 		MelderString_append (& buffer, L"\t      ", Melder_fixed (constraint -> plasticity, 6));

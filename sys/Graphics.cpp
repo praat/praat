@@ -100,12 +100,16 @@ void Graphics_init (Graphics me, int resolution) {
 		my resolutionNumber = kGraphics_resolution_96;
 	} else if (resolution == 100) {
 		my resolutionNumber = kGraphics_resolution_100;
+	} else if (resolution == 180) {
+		my resolutionNumber = kGraphics_resolution_180;
 	} else if (resolution == 300) {
 		my resolutionNumber = kGraphics_resolution_300;
 	} else if (resolution == 360) {
 		my resolutionNumber = kGraphics_resolution_360;
 	} else if (resolution == 600) {
 		my resolutionNumber = kGraphics_resolution_600;
+	} else if (resolution == 1200) {
+		my resolutionNumber = kGraphics_resolution_1200;
 	} else {
 		Melder_fatal ("Unsupported resolution %d dpi.", resolution);
 	}

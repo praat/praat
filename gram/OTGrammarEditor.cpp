@@ -218,12 +218,12 @@ void structOTGrammarEditor :: v_draw () {
 			ot -> decisionStrategy == kOTGrammar_decisionStrategy_EXPONENTIAL_MAXIMUM_ENTROPY)
 		{
 			swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f\t %ls",
-				icons == selected ? L"\\sp " : L"   ", icons, constraint -> name,
+				icons == selected ? L"♠︎ " : L"   ", icons, constraint -> name,
 				constraint -> ranking, constraint -> disharmony, constraint -> plasticity,
 				Melder_float (Melder_half (exp (constraint -> disharmony))));
 		} else {
 			swprintf (text, 1000, L"\t%ls@@%ld|%ls@\t      %.3f\t      %.3f\t      %.6f",
-				icons == selected ? L"\\sp " : L"   ", icons, constraint -> name,
+				icons == selected ? L"♠︎ " : L"   ", icons, constraint -> name,
 				constraint -> ranking, constraint -> disharmony, constraint -> plasticity);
 		}
 		HyperPage_listItem (this, text);

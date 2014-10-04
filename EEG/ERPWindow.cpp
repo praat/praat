@@ -163,9 +163,9 @@ void ERP_drawScalp_garnish (Graphics graphics, double vmin, double vmax, enum kG
 	Graphics_setColourScale (graphics, kGraphics_colourScale_GREY);
 	Graphics_rectangle (graphics, 0.85, 0.98, -0.8, +0.8);
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_TOP);
-	Graphics_text2 (graphics, 1.0, -0.8, Melder_double (vmin * 1e6), L" \\muV");
+	Graphics_text2 (graphics, 1.0, -0.8, Melder_double (vmin * 1e6), L" μV");
 	Graphics_setTextAlignment (graphics, Graphics_RIGHT, Graphics_BOTTOM);
-	Graphics_text2 (graphics, 1.0, +0.8, Melder_double (vmax * 1e6), L" \\muV");
+	Graphics_text2 (graphics, 1.0, +0.8, Melder_double (vmax * 1e6), L" μV");
 }
 
 void ERP_drawScalp (ERP me, Graphics graphics, double tmin, double tmax, double vmin, double vmax, enum kGraphics_colourScale colourScale, bool garnish) {

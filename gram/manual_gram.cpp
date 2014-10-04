@@ -1,6 +1,6 @@
 /* manual_gram.cpp
  *
- * Copyright (C) 1997-2011 Paul Boersma
+ * Copyright (C) 1997-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,17 +111,15 @@ INTRO (L"In @@Optimality Theory@, the `rules' that an output form has to satisfy
 NORMAL (L"See the @@OT learning@ tutorial for many examples.")
 MAN_END
 
-MAN_BEGIN (L"Create tongue-root grammar...", L"ppgb", 20021204)
+MAN_BEGIN (L"Create tongue-root grammar...", L"ppgb", 20141001)
 INTRO (L"A command in the @@New menu@ for creating an @OTGrammar object with a tongue-root-harmony grammar.")
 NORMAL (L"These OTGrammar grammars only accept inputs of the form V__1_tV__2_, where V__1_ and V__2_ are "
-	"chosen from the six front vowels i, \\ic, e, \\ef, \\sw, and a. In a text field, these "
-	"vowels should be typed as $$##i#$, $$##\\bsic#$, $$##e#$, $$##\\bsep#$, $$##\\bssw#$, "
-	"and $$##a#$, respectively (see @@Special symbols@).")
+	"chosen from the six front vowels i, ɪ, e, ɛ, ə, and a.")
 NORMAL (L"The following phonological features are relevant:")
 LIST_ITEM (L"\t\tATR\tRTR")
-LIST_ITEM (L"\thigh\ti\t\\ic")
-LIST_ITEM (L"\tmid\te\t\\ef")
-LIST_ITEM (L"\tlow\t\\sw\ta")
+LIST_ITEM (L"\thigh\ti\tɪ")
+LIST_ITEM (L"\tmid\te\tɛ")
+LIST_ITEM (L"\tlow\tə\ta")
 ENTRY (L"Constraints")
 NORMAL (L"The resulting OTGrammar will usually contain at least the following five constraints:")
 TAG (L"*[rtr / hi]")
@@ -135,11 +133,11 @@ DEFINITION (L"\"make an underlying [advanced tongue root] specification surface.
 TAG (L"*G\\s{ESTURE} (contour)")
 DEFINITION (L"\"do not go from advanced to retracted tongue root, nor the other way around, within a word.\"")
 NORMAL (L"This set of constraints thus comprises: ")
-LIST_ITEM (L"\\bu two %%##grounding conditions#% (@@Archangeli & Pulleyblank (1994)@), "
+LIST_ITEM (L"• two %%##grounding conditions#% (@@Archangeli & Pulleyblank (1994)@), "
 	"which we can see as gestural constraints;")
-LIST_ITEM (L"\\bu two %%##faithfulness constraints#%, which favour the similarity between input and output, "
+LIST_ITEM (L"• two %%##faithfulness constraints#%, which favour the similarity between input and output, "
 	"and can be seen as implementing the principle of maximization of perceptual contrast;")
-LIST_ITEM (L"\\bu a %%##harmony constraint#%, which, if crucially ranked higher than at least one faithfulness constraint, "
+LIST_ITEM (L"• a %%##harmony constraint#%, which, if crucially ranked higher than at least one faithfulness constraint, "
 	"forces %%##tongue-root harmony#%.")
 NORMAL (L"In addition, there may be the following four constraints:")
 TAG (L"*[rtr / mid]")
@@ -288,7 +286,7 @@ NORMAL (L"From the first tableau, we see that the underlying form /pat/ will sur
 	"because the alternative [pat] violates a constraint (namely, N\\s{O}C\\s{ODA}) with a higher disharmony than does [pa], "
 	"which only violates P\\s{ARSE}, which has a lower disharmony.")
 NORMAL (L"Note the standard OT tableau layout: asterisks (*) showing violations, exclamation marks (!) showing crucial violations, "
-	"greying of cells that do not contribute to determining the winning candidate, and a finger (\\pf) pointing to the winner "
+	"greying of cells that do not contribute to determining the winning candidate, and a finger (☞) pointing to the winner "
 	"(this may look like a plus sign (+) if you don't have the Zapf Dingbats font installed on your computer or printer). "
 	"An HG tableau contains asterisks and a pointing finger, but no exclamation marks or grey cells.")
 NORMAL (L"The second tableau shows that /pa/ always surfaces as [pa], which is no wonder since this is "
@@ -428,12 +426,12 @@ MAN_BEGIN (L"OT learning 2.5. Editing a grammar", L"ppgb", 20110808)
 NORMAL (L"In the N\\s{O}C\\s{ODA} example, the winning candidate for the input /pat/ was always [pa].")
 NORMAL (L"To make [pat] the winner instead, N\\s{O}C\\s{ODA} should be ranked lower than P\\s{ARSE}. "
 	"To achieve this even with zero noise, go to the editor and select the N\\s{O}C\\s{ODA} constraint by clicking on it "
-	"(a spade symbol \\sp will mark the selected constraint), "
+	"(a spade symbol ♠︎ will mark the selected constraint), "
 	"and choose ##Edit ranking...# from the #Edit menu, or use the keyboard shortcut Command-E.")
 NORMAL (L"In the resulting command window, we lower the ranking of the constraint from 100 to 80, and click OK. "
 	"This is what you will see in the editor:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
-LIST_ITEM1 (L"\t\\sp ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       1.000")
+LIST_ITEM1 (L"\t♠︎ ##N\\s{O}C\\s{ODA}#\t      80.000\t      103.429\t       1.000")
 LIST_ITEM1 (L"\t##P\\s{ARSE}#\t      90.000\t      88.083\t       1.000")
 PICTURE (3.0, 1.0, draw_NoCoda_pat)
 NORMAL (L"Nothing has happened to the tableau, because the disharmonies still have their old values. So choose "
@@ -541,7 +539,7 @@ NORMAL (L"To ask the grammar to produce %many outputs for a specified input form
 	"and collect them in a @Strings object, "
 	"you select an @OTGrammar and choose @@OTGrammar: Input to outputs...|Input to outputs...@.")
 NORMAL (L"For example, select the object \"OTGrammar assimilation\" from our place assimilation example "
-	"(@@OT learning 2.6. Variable output|\\SS2.6@), and click ##Input to outputs...#. "
+	"(@@OT learning 2.6. Variable output|§2.6@), and click ##Input to outputs...#. "
 	"In the resulting command window, you specify 1000 trials, a noise strength of 2.0, and \"an+pa\" for the input form.")
 NORMAL (L"After you click OK, a @Strings object will appear in the list. "
 	"If you click Info, you will see that it contains 1000 strings. "
@@ -565,18 +563,18 @@ LIST_ITEM (L"\tanpa\t169920")
 NORMAL (L"The expected values under the 80\\%  - 20\\%  distribution hypothesis are:")
 LIST_ITEM (L"\tampa\t800000")
 LIST_ITEM (L"\tanpa\t200000")
-NORMAL (L"We compute (e.g. with @@Calculator...@) a %\\ci^2 of 30080^2/800000 + 30080^2/200000 = 5655.04, "
+NORMAL (L"We compute (e.g. with @@Calculator...@) a %χ^2 of 30080^2/800000 + 30080^2/200000 = 5655.04, "
 	"which, of course, is much too high for a distribution with a single degree of freedom. "
 	"So the ranking difference must be smaller. If it is 2.4 (change the ranking of *G\\s{ESTURE} to 102.4), "
 	"the numbers become something like")
 LIST_ITEM (L"\tampa\t801974")
 LIST_ITEM (L"\tanpa\t198026")
-NORMAL (L"which gives a %\\ci^2 of 24.35. By using the Calculator with the formula $$chiSquareQ (24.35, 1)$, "
-	"we find that values larger than this have a probability of 8\\.c10^^-7^ "
+NORMAL (L"which gives a %χ^2 of 24.35. By using the Calculator with the formula $$chiSquareQ (24.35, 1)$, "
+	"we find that values larger than this have a probability of 8·10^^-7^ "
 	"under the 80\\%  - 20\\%  distribution hypothesis, which must therefore be rejected again.")
 NORMAL (L"Rather than continuing this iterative procedure to find the correct ranking values for an "
 	"80\\%  - 20\\%  grammar, we will use the Gradual Learning Algorithm "
-	"(@@OT learning 5. Learning a stochastic grammar|\\SS5@) to determine the rankings automatically, "
+	"(@@OT learning 5. Learning a stochastic grammar|§5@) to determine the rankings automatically, "
 	"without any memory of past events other than the memory associated with maintaining the ranking values.")
 ENTRY (L"Measuring all inputs")
 NORMAL (L"To measure the outcomes of all the possible inputs at once, you select an @OTGrammar "
@@ -629,7 +627,7 @@ NORMAL (L"To generate input-output pairs from the above distribution, select the
 	"i.e., the two series of strings are aligned. See also the example at @@PairDistribution: To Stringses...@.")
 NORMAL (L"These two Strings objects are sufficient to help an @OTGrammar grammar to change its constraint rankings "
 	"in such a way that the output distributions generated by the grammar match the output distributions "
-	"in the language data. See @@OT learning 5. Learning a stochastic grammar|\\SS5@.")
+	"in the language data. See @@OT learning 5. Learning a stochastic grammar|§5@.")
 MAN_END
 
 MAN_BEGIN (L"OT learning 3.2. Data from another grammar", L"ppgb", 20110128)
@@ -651,24 +649,24 @@ NORMAL (L"This simplified Wolof grammar, with five constraints with clearly diff
 	"to the traditional OT ranking")
 FORMULA (L"*[rtr / hi] >> P\\s{ARSE} (rtr) >> *G\\s{ESTURE} (contour) >> P\\s{ARSE} (atr) >> *[atr / lo]")
 NORMAL (L"These constraints are based on a description of Wolof by "
-	"@@Archangeli & Pulleyblank (1994)|Archangeli & Pulleyblank (1994: 225\\--239)@. "
+	"@@Archangeli & Pulleyblank (1994)|Archangeli & Pulleyblank (1994: 225–239)@. "
 	"For the meaning of these constraints, see @@Boersma (1998)|Boersma (1998: 295)@, "
 	"or the @@Create tongue-root grammar...@ manual page.")
 NORMAL (L"For each input, there are four output candidates: "
 	"the vowel heights will be the same as those in the input, but the tongue-root values of V__1_ and V__2_ are varied. "
 	"For example, for the input [ita] we will have the four candidates "
-	"[ita], [it\\sw], [\\icta], and [\\ict\\sw].")
+	"[ita], [itə], [ɪta], and [ɪtə].")
 NORMAL (L"With this way of generating candidates, we see that the five constraints are completely ranked. "
-	"First, the absolute prohibition on surface [\\ic] shows that *[rtr / hi] outranks RTR faithfulness "
-	"(otherwise, [\\ict\\ic] would have been the winner):")
+	"First, the absolute prohibition on surface [ɪ] shows that *[rtr / hi] outranks RTR faithfulness "
+	"(otherwise, [ɪtɪ] would have been the winner):")
 PICTURE (4.0, 1.5, draw_Wolof_ItI)
-NORMAL (L"Second, the faithful surfacing of the disharmonic /it\\ef/ shows that RTR faithfulness must outrank "
+NORMAL (L"Second, the faithful surfacing of the disharmonic /itɛ/ shows that RTR faithfulness must outrank "
 	"the harmony (anti-contour) constraint (otherwise, [ite] would have been the winner):")
 PICTURE (4.0, 1.5, draw_Wolof_itE)
-NORMAL (L"Third, the RTR-dominant harmonicization of underlying disharmonic /et\\ef/ shows that harmony must outrank ATR faithfulness "
-	"(otherwise, [et\\ef] would have won):")
+NORMAL (L"Third, the RTR-dominant harmonicization of underlying disharmonic /etɛ/ shows that harmony must outrank ATR faithfulness "
+	"(otherwise, [etɛ] would have won):")
 PICTURE (4.0, 1.5, draw_Wolof_etE)
-NORMAL (L"Finally, the faithful surfacing of the low ATR vowel /\\sw/ even if not forced by harmony, shows that "
+NORMAL (L"Finally, the faithful surfacing of the low ATR vowel /ə/ even if not forced by harmony, shows that "
 	"ATR faithfulness outranks *[atr / lo] (otherwise, [ata] would have been the winning candidate):")
 PICTURE (4.0, 1.5, draw_Wolof_schwatschwa)
 NORMAL (L"These four ranking arguments clearly establish the crucial rankings of all five constraints.")
@@ -678,7 +676,7 @@ NORMAL (L"According to @@Prince & Smolensky (1993)@, the input to an OT grammar 
 	"When doing a practical investigation, however, we are only interested in the inputs "
 	"that will illustrate the properties of our partial grammars. "
 	"In the case of simplified Wolof, this means the 36 possible V__1_tV__2_ sequences "
-	"where V__1_ and V__2_ are any of the six front vowels i, \\ic, e, \\ef, \\sw, and a "
+	"where V__1_ and V__2_ are any of the six front vowels i, ɪ, e, ɛ, ə, and a "
 	"(see @@Create tongue-root grammar...@).")
 NORMAL (L"A set of inputs can be generated from an @OTGrammar object by inspecting the list of tableaus. "
 	"So select the Wolof tongue-root grammar and choose @@OTGrammar: Generate inputs...|Generate inputs...@. "
@@ -686,7 +684,7 @@ NORMAL (L"A set of inputs can be generated from an @OTGrammar object by inspecti
 	"will appear in the list. Click Inspect and examine the 100 input strings. "
 	"You will see that they have been randomly chosen from the 36 possible V__1_tV__2_ sequences "
 	"as described at @@Create tongue-root grammar...@:")
-FORMULA (L"\\epta, et\\ef, \\epti, it\\ef, \\ept\\ef, iti, \\eft\\ic, it\\ic, \\icti, et\\ef, ...")
+FORMULA (L"ɛta, etɛ, ɛti, itɛ, ɛtɛ, iti, ɛtɪ, itɪ, ɪti, etɛ, ...")
 NORMAL (L"Thus, when asked to generate a random input, these grammars produce any of the 36 possible V__1_tV__2_ "
 	"sequences, all with equal probability.")
 ENTRY (L"Generating outputs from the grammar")
@@ -695,7 +693,7 @@ NORMAL (L"To compute the outputs for the above set of input forms, select %both 
 	"perhaps specifying zero evaluation noise. "
 	"A new Strings objects called \"Wolof_out\" will appear in the list. "
 	"If you Inspect it, you will see that it contains a string sequence aligned with the original input strings:")
-FORMULA (L"\\epta, \\ept\\ef, \\efti, it\\ef, \\eft\\ef, iti, \\efti, iti, iti, \\eft\\ef, ...")
+FORMULA (L"ɛta, ɛtɛ, ɛti, itɛ, ɛtɛ, iti, ɛti, iti, iti, ɛtɛ, ...")
 NORMAL (L"In this way, we have created two Strings objects, which together form a series of input-output pairs "
 	"needed for learning a grammar that contains faithfulness constraints.")
 MAN_END
@@ -714,11 +712,11 @@ LIST_ITEM1 (L"\t##*[atr / lo]#\t      100.000\t      100.244\t       1.000")
 LIST_ITEM1 (L"\t##*[rtr / hi]#\t      100.000\t      97.086\t       1.000")
 LIST_ITEM1 (L"\t##P\\s{ARSE} (rtr)#\t      50.000\t      51.736\t       1.000")
 LIST_ITEM1 (L"\t##P\\s{ARSE} (atr)#\t      50.000\t      46.959\t       1.000")
-NORMAL (L"Such a grammar produces all kinds of non-adult results. For instance, the input /\\swt\\ic/ "
-	"will surface as [at\\ic]:")
+NORMAL (L"Such a grammar produces all kinds of non-adult results. For instance, the input /ətɪ/ "
+	"will surface as [atɪ]:")
 PICTURE (4.0, 1.5, draw_Infant_swtI)
-NORMAL (L"The adult form is very different: [\\swti]. The cause of the discrepancy is in the order of "
-	"the constraints *[atr / lo] and *[rtr / hi], which militate against [\\sw] and [\\ic], respectively. "
+NORMAL (L"The adult form is very different: [əti]. The cause of the discrepancy is in the order of "
+	"the constraints *[atr / lo] and *[rtr / hi], which militate against [ə] and [ɪ], respectively. "
 	"Simply reversing the rankings of these two constraints would solve the problem in this case. "
 	"More generally, @@Tesar & Smolensky (1998)@ claim that demoting all the constraints that cause the "
 	"adult form to lose into the stratum just below the highest-ranked constraint "
@@ -732,7 +730,7 @@ NORMAL (L"But Tesar & Smolensky's algorithm cannot be used for variable data, si
 	"Since language data do tend to be variable, we need a gradual and balanced learning algorithm, "
 	"and the following algorithm is guaranteed to converge "
 	"to the target language, if that language can be described by a stochastic OT grammar.")
-NORMAL (L"The reaction of the learner to hearing the mismatch between the adult [\\swti] and her own [at\\ic], "
+NORMAL (L"The reaction of the learner to hearing the mismatch between the adult [əti] and her own [atɪ], "
 	"is simply:")
 LIST_ITEM (L"1. to move the constraints violated in her own form, i.e. *[rtr / hi] and P\\s{ARSE} (atr), "
 	"up by a small step along the ranking scale, thus decreasing the probability that her form will be the winner "
@@ -756,7 +754,7 @@ NORMAL (L"Note that the relative rankings of P\\s{ARSE} (atr) and P\\s{ARSE} (rt
 	"This does not matter: the procedure will converge nevertheless.")
 NORMAL (L"We are now going to simulate the infant who learns simplified Wolof. Take an adult Wolof grammar "
 	"and generate 1000 input strings and the corresponding 1000 output strings "
-	"following the procedure described in @@OT learning 3.2. Data from another grammar|\\SS3.2@. "
+	"following the procedure described in @@OT learning 3.2. Data from another grammar|§3.2@. "
 	"Now select the infant @OTGrammar and both @Strings objects, and choose @@OTGrammar & 2 Strings: Learn...|Learn...@. "
 	"After you click OK, the learner processes each of the 1000 input-output pairs in succession, "
 	"gradually changing the constraint ranking in case of a mismatch. The resulting grammar may look like:")
@@ -772,7 +770,7 @@ NORMAL (L"We already see some features of the target grammar, namely the top ran
 	"The step is also multiplied by the %%constraint plasticity%, which is simply 1.000 in all examples in this tutorial; "
 	"you could set it to 0.0 to prevent a constraint from moving up or down at all. "
 	"The %leak is the part of the constraint weight (especially in Harmonic Grammar) that is thrown away whenever a constraint is reranked; "
-	"e.g if the leak is 0.01 and the step is 0.11, the constraint weight is multiplied by (1 \\-- 0.01\\.c0.11) = 0.9989 before "
+	"e.g if the leak is 0.01 and the step is 0.11, the constraint weight is multiplied by (1 – 0.01·0.11) = 0.9989 before "
 	"the learning step is taken; in this way you could implement forgetful learning of correlations.")
 NORMAL (L"After learning once more with the same data, the result is:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
@@ -793,7 +791,7 @@ LIST_ITEM1 (L"\t##P\\s{ARSE} (atr)#\t      79.409\t      76.853\t       1.000")
 NORMAL (L"By inspecting the first column, you can see that the ranking values are already in the same order as in the target grammar, "
 	"so that the learner will produce 100 percent correct adult utterances if her evaluation noise is zero. However, "
 	"with a noise of 2.0, there will still be variation. For instance, the disharmonies above will "
-	"produce [ata] instead of [\\swt\\sw] for underlying /\\swt\\sw/. Learning seven times more "
+	"produce [ata] instead of [ətə] for underlying /ətə/. Learning seven times more "
 	"with the same data gives a reasonable proficiency:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (L"\t##*[rtr / hi]#\t      100.800\t      99.167\t       1.000")
@@ -826,7 +824,7 @@ NORMAL (L"Our Harmonic Grammars with constraint noise (Noisy HG) are slightly di
 	"except that the learning step of each constraint is multiplied by "
 	"the difference of the number of violations of this constraint between the correct form and the incorrect winner; "
 	"this multiplication is crucial (without it, stochastic gradient ascent is not guaranteed to converge), "
-	"as was noted by J\\a\"ger for MaxEnt. The same procedure for updating weights occurs "
+	"as was noted by Jäger for MaxEnt. The same procedure for updating weights occurs "
 	"in @@Soderstrom, Mathis & Smolensky (2006)@, who propose "
 	"an incremental version (formulas 21 and 35d) of the harmony version (formulas 14 and 18) "
 	"of the learning equation for Boltzmann machines (formula 13). "
@@ -839,19 +837,19 @@ MAN_END
 MAN_BEGIN (L"OT learning 5. Learning a stochastic grammar", L"ppgb", 20070725)
 NORMAL (L"Having shown that the algorithm can learn deep obligatory rankings, we will now see "
 	"that it also performs well in replicating the variation in the language environment.")
-NORMAL (L"Create a place assimilation grammar as described in @@OT learning 2.6. Variable output|\\SS2.6@, "
+NORMAL (L"Create a place assimilation grammar as described in @@OT learning 2.6. Variable output|§2.6@, "
 	"and set all its rankings to 100.000:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (L"\t##*G\\s{ESTURE}#\t      100.000\t      100.000\t       1.000")
 LIST_ITEM1 (L"\t##*R\\s{EPLACE} (t, p)#\t      100.000\t      100.000\t       1.000")
 LIST_ITEM1 (L"\t##*R\\s{EPLACE} (n, m)#\t      100.000\t      100.000\t       1.000")
-NORMAL (L"Create a place assimilation distribution and generate 1000 string pairs (@@OT learning 3.1. Data from a pair distribution|\\SS3.1@). "
+NORMAL (L"Create a place assimilation distribution and generate 1000 string pairs (@@OT learning 3.1. Data from a pair distribution|§3.1@). "
 	"Select the grammar and the two @Strings objects, and learn with a plasticity of 0.1:")
 LIST_ITEM1 (L"\t\t      %%ranking value\t      %disharmony\t      %plasticity")
 LIST_ITEM1 (L"\t##*R\\s{EPLACE} (t, p)#\t      104.540\t      103.140\t       1.000")
 LIST_ITEM1 (L"\t##*R\\s{EPLACE} (n, m)#\t      96.214\t      99.321\t       1.000")
 LIST_ITEM1 (L"\t##*G\\s{ESTURE}#\t      99.246\t      97.861")
-NORMAL (L"The output distributions are now (using @@OTGrammar: To output Distributions...@, see @@OT learning 2.9. Output distributions|\\SS2.9@):")
+NORMAL (L"The output distributions are now (using @@OTGrammar: To output Distributions...@, see @@OT learning 2.9. Output distributions|§2.9@):")
 LIST_ITEM1 (L"\t/an+pa/ \\-> anpa\t14.3\\% ")
 LIST_ITEM1 (L"\t/an+pa/ \\-> ampa\t85.7\\% ")
 LIST_ITEM1 (L"\t/at+ma/ \\-> atma\t96.9\\% ")
@@ -945,29 +943,29 @@ INTRO (L"In order to be able to learn phonological production, both EDCD and GLA
 ENTRY (L"Interpretive parsing")
 NORMAL (L"The language-learning child has to construct both the surface form and the underlying form from the overt form "
 	"that she hears. @@Tesar & Smolensky (1998)@ proposed that the child computes a surface form from the "
-	"overt form by using the same constraint ranking as in production. For instance, the overt form [\\si \\si\\'^ \\si], which "
+	"overt form by using the same constraint ranking as in production. For instance, the overt form [σ σ σ], which "
 	"is a sequence of three syllables with stress on the second syllable, will be interpreted as the surface form "
-	"/(\\si \\si\\'^) \\si/ in iambic left-aligning languages (I\\s{AMBIC} >> T\\s{ROCHAIC}, and A\\s{LL}F\\s{EET}L\\s{EFT} "
-	">> A\\s{LL}F\\s{EET}R\\s{IGHT}), but as the surface form /\\si (\\si\\'^ \\si)/ in trochaic right-aligning languages. "
+	"/(σ σˈ) σ/ in iambic left-aligning languages (I\\s{AMBIC} >> T\\s{ROCHAIC}, and A\\s{LL}F\\s{EET}L\\s{EFT} "
+	">> A\\s{LL}F\\s{EET}R\\s{IGHT}), but as the surface form /σ (σˈ σ)/ in trochaic right-aligning languages. "
 	"Tesar & Smolensky call this procedure @@Robust Interpretive Parsing@, because it works even if the listener's grammar "
 	"would never produce such a form. For instance, if I\\s{AMBIC} >> A\\s{LL}F\\s{EET}R\\s{IGHT} >> T\\s{ROCHAIC} >> "
-	"A\\s{LL}F\\s{EET}L\\s{EFT}, the listener herself would produce the iambic right-aligned /\\si (\\si \\si\\'^)/ "
-	"for any trisyllabic underlying form, though she will still interpret [\\si \\si\\'^ \\si] as /(\\si \\si\\'^) \\si/, "
+	"A\\s{LL}F\\s{EET}L\\s{EFT}, the listener herself would produce the iambic right-aligned /σ (σ σˈ)/ "
+	"for any trisyllabic underlying form, though she will still interpret [σ σˈ σ] as /(σ σˈ) σ/, "
 	"which is illegal in her own grammar. Hearing forms that are illegal in one's own grammar is of course a common "
 	"situation for language-learning children.")
 NORMAL (L"In Tesar & Smolensky's view, the underlying form can be trivially computed from the surface form, "
-	"since the surface form %contains enough information. For instance, the surface form /(\\si \\si\\'^) \\si/ must "
-	"lead to the underlying form \\|f\\si \\si \\si\\|f if all parentheses and stress marks are removed. Since "
+	"since the surface form %contains enough information. For instance, the surface form /(σ σˈ) σ/ must "
+	"lead to the underlying form |σ σ σ| if all parentheses and stress marks are removed. Since "
 	"@@McCarthy & Prince (1995)@, this %containment view of surface representations has been abandoned. "
 	"In Praat, therefore, the underlying form is not trivially computed from the surface form, "
 	"but all the tableaus are scanned for the surface form that violates the least high-ranked constraints (in the usual "
 	"OT sense), as long as it contains the given overt form. For instance, if I\\s{AMBIC} >> A\\s{LL}F\\s{EET}R\\s{IGHT} "
-	">> T\\s{ROCHAIC} >> A\\s{LL}F\\s{EET}L\\s{EFT}, the overt form [\\si \\si\\'^ \\si] occurs in two candidates: "
-	"the surface form /(\\si \\si\\'^) \\si/ in the tableau for the underlying form \\|f\\si \\si \\si\\|f, and "
-	"the surface form /\\si (\\si\\'^ \\si)/ in the tableau for the underlying form \\|f\\si \\si \\si\\|f. The best candidate "
-	"is the surface form /(\\si \\si\\'^) \\si/ in the tableau for the underlying form \\|f\\si \\si \\si\\|f. Hence, "
-	"Praat's version of Robust Interpretive Parsing will map the overt form [\\si \\si\\'^ \\si] to the underlying form "
-	"\\|f\\si \\si \\si\\|f (the 'winning tableau') and to the surface form /(\\si \\si\\'^) \\si/ (to be sure, "
+	">> T\\s{ROCHAIC} >> A\\s{LL}F\\s{EET}L\\s{EFT}, the overt form [σ σˈ σ] occurs in two candidates: "
+	"the surface form /(σ σˈ) σ/ in the tableau for the underlying form |σ σ σ|, and "
+	"the surface form /σ (σˈ σ)/ in the tableau for the underlying form |σ σ σ|. The best candidate "
+	"is the surface form /(σ σˈ) σ/ in the tableau for the underlying form |σ σ σ|. Hence, "
+	"Praat's version of Robust Interpretive Parsing will map the overt form [σ σˈ σ] to the underlying form "
+	"|σ σ σ| (the ‘winning tableau’) and to the surface form /(σ σˈ) σ/ (to be sure, "
 	"this is the same result as in Tesar & Smolensky's "
 	"version, but crucial differences between the two versions will appear when faithfulness constraints are involved).")
 NORMAL (L"In Praat, you can do interpretive parsing. For example, create a grammar with ##Create metrics grammar...# "
@@ -978,8 +976,8 @@ ENTRY (L"Learning from partial forms")
 NORMAL (L"Now that the learning child can convert an overt form to an underlying-surface pair, she can compare this "
 	"surface form to the surface form that she herself would have derived from this underlying form. For instance, "
 	"If I\\s{AMBIC} >> A\\s{LL}F\\s{EET}R\\s{IGHT} >> T\\s{ROCHAIC} >> A\\s{LL}F\\s{EET}L\\s{EFT}, the winning "
-	"tableau is \\|f\\si \\si \\si\\|f, and the perceived adult surface form is /(\\si \\si\\'^) \\si/. "
-	"But from the underlying form \\|f\\si \\si \\si\\|f, the learner will derive /\\si (\\si \\si\\'^)/ as her own surface form. "
+	"tableau is |σ σ σ|, and the perceived adult surface form is /(σ σˈ) σ/. "
+	"But from the underlying form |σ σ σ|, the learner will derive /σ (σ σˈ)/ as her own surface form. "
 	"The two surface forms are different, so that the learner can take action by reranking one or more constraints, "
 	"perhaps with EDCD or GLA.")
 NORMAL (L"In Praat, you can learn from partial forms. Select the metrics grammar and choose ##Learn from one partial output...#, "
@@ -1073,8 +1071,8 @@ LIST_ITEM (L"##*G\\s{ESTURE} (contour)#  99.000  99.000")
 LIST_ITEM (L"##*[atr / lo]#  99.000  99.000")
 NORMAL (L"You will get a comparable result with @@OTAnyGrammar & Strings: Learn output (GLA)...@.")
 NORMAL (L"The resulting grammar represents the learner's state after the acquisition of "
-	"all the relevant gestures. The learner will now faithfully reproduce /et\\ef/ "
-	"if that were in her lexicon. Before being able to render such an underlying form as [\\eft\\ef], "
+	"all the relevant gestures. The learner will now faithfully reproduce /etɛ/ "
+	"if that were in her lexicon. Before being able to render such an underlying form as [ɛtɛ], "
 	"she must learn that faithfulness can be violated.")
 ENTRY (L"Example 2: When underlying forms are irrelevant")
 NORMAL (L"Underlying forms are relevant only if faithfulness constraints are involved. "
@@ -1125,7 +1123,7 @@ NORMAL (L"Instead of generating the data from a @Distributions, you could have g
 MAN_END
 */
 
-MAN_BEGIN (L"OTGrammar", L"ppgb", 20041110)
+MAN_BEGIN (L"OTGrammar", L"ppgb", 20141001)
 INTRO (L"One of the @@types of objects@ in Praat. See the @@OT learning@ tutorial.")
 ENTRY (L"Inside an OTGrammar")
 NORMAL (L"With @Inspect, you will see the following attributes:")
@@ -1150,14 +1148,14 @@ TAG (L"%tableaus")
 DEFINITION (L"a list of tableaus. Each tableau contains the following attributes:")
 TAG1 (L"%input")
 DEFINITION1 (L"the input string of the tableau. For production grammaras, the underlying form of the utterance, for example "
-	"\\|fan+pa\\|f or \\|fb\\rt\\ic\\ng + \\s{PAST}\\|f.")
+	"|an+pa| or |bɹɪŋ + \\s{PAST}|.")
 TAG1 (L"%candidates")
 DEFINITION1 (L"a list of output candidates. Each output candidate consists of:")
 TAG2 (L"%output")
-DEFINITION2 (L"the output string of the tableau. In generative phonology: the surface form of the utterance, for example "
-	"[anpa] or [ampa] or [b\\rt\\ct:t] or [b\\rt\\ae\\ng]. In functional phonology: the combination of the articulatory "
-	"and the perceptual results, for example [anpa]-/anpa/ or [ampa]-/ampa/ or [b\\rt\\ct:t]-/b\\rt\\ct:t/ or "
-	"[b\\rt\\ae\\ng]-/b\\rt\\ae\\ng/.")
+DEFINITION2 (L"the output string of the tableau. In two-level phonology: the surface form of the utterance, for example "
+	"[anpa] or [ampa] or [bɹɔːt] or [bɹæŋ]. In multi-level phonology: the combination of phonological surface "
+	"and phonetic results, for example /anpa/[anpa] or /ampa/[ampa] or /bɹɔːt/[bɹɔːt] or "
+	"/bɹæŋ/[bɹæŋ].")
 TAG2 (L"%marks")
 DEFINITION2 (L"a list of the number of violations of each constraint for this output form. If there are 13 constraints, "
 	"this list will contain 13 integer numbers for each candidate.")

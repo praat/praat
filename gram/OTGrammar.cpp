@@ -887,7 +887,7 @@ void OTGrammar_drawTableau (OTGrammar me, Graphics g, bool vertical, const wchar
 				Graphics_setTextAlignment (g, Graphics_LEFT, Graphics_HALF);
 				Graphics_setFontSize (g, (int) (1.5 * fontSize));
 				if (numberOfOptimalCandidates > 1) Graphics_setColour (g, Graphics_RED);
-				Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, L"\\pf");
+				Graphics_text (g, x + margin, y + descent - Graphics_dyMMtoWC (g, 1.0) * fontSize / 12.0, L"☞");
 				Graphics_setColour (g, colour);
 				Graphics_setFontSize (g, (int) fontSize);
 			}

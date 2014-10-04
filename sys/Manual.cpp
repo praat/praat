@@ -109,7 +109,7 @@ void structManual :: v_draw () {
 		for (int i = 1; i <= our numberOfMatches; i ++) {
 			wchar_t link [300];
 			page = (ManPage) manPages -> pages -> item [matches [i]];
-			swprintf (link, 300, L"\\bu @@%ls", page -> title);
+			swprintf (link, 300, L"• @@%ls", page -> title);
 			HyperPage_listItem (this, link);
 		}
 		return;
@@ -181,7 +181,7 @@ void structManual :: v_draw () {
 		long date = page -> date;
 		int imonth = date % 10000 / 100;
 		if (imonth < 0 || imonth > 12) imonth = 0;
-		swprintf (signature, 100, L"\\co %ls, %ld %ls %ld",
+		swprintf (signature, 100, L"© %ls, %ld %ls %ld",
 			wcsequ (page -> author, L"ppgb") ? L"Paul Boersma" :
 			wcsequ (page -> author, L"djmw") ? L"David Weenink" : page -> author,
 			date % 100, month [imonth], date / 10000);

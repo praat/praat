@@ -1,6 +1,6 @@
 /* GuiFileSelect.cpp
  *
- * Copyright (C) 2010-2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 2010-2012,2013,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 #endif
 
 SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t *title, bool allowMultipleFiles) {
+	structMelderDir saveDir = { { 0 } };
+	Melder_getDefaultDir (& saveDir);
 	autoSortedSetOfString me = SortedSetOfString_create ();
 	#if gtk
 		(void) parent;
@@ -150,10 +152,13 @@ SortedSetOfString GuiFileSelect_getInfileNames (GuiWindow parent, const wchar_t 
 		}
 		setlocale (LC_ALL, "C");
 	#endif
+	Melder_setDefaultDir (& saveDir);
 	return me.transfer();
 }
 
 wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, const wchar_t *defaultName) {
+	structMelderDir saveDir = { { 0 } };
+	Melder_getDefaultDir (& saveDir);
 	wchar_t *outfileName = NULL;
 	#if gtk
 		(void) parent;
@@ -261,10 +266,13 @@ wchar_t * GuiFileSelect_getOutfileName (GuiWindow parent, const wchar_t *title, 
 		}
 		setlocale (LC_ALL, "C");
 	#endif
+	Melder_setDefaultDir (& saveDir);
 	return outfileName;
 }
 
 wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title) {
+	structMelderDir saveDir = { { 0 } };
+	Melder_getDefaultDir (& saveDir);
 	wchar_t *directoryName = NULL;
 	#if gtk
 		(void) parent;
@@ -293,7 +301,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 		if ([openPanel runModal] == NSFileHandlingPanelOKButton) {
 			for (NSURL *url in [openPanel URLs]) {
 				const char *directoryName_utf8 = [[url path] UTF8String];
-				structMelderDir dir = { 0 };
+				structMelderDir dir = { { 0 } };
 				Melder_8bitFileRepresentationToWcs_inline (directoryName_utf8, dir. path);
 				directoryName = Melder_wcsdup (dir. path);
 			}
@@ -350,6 +358,7 @@ wchar_t * GuiFileSelect_getDirectoryName (GuiWindow parent, const wchar_t *title
 		directoryName = Melder_wcsdup_f (fullFileName);
 		setlocale (LC_ALL, "C");
 	#endif
+	Melder_setDefaultDir (& saveDir);
 	return directoryName;
 }
 

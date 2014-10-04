@@ -152,7 +152,7 @@ CODE (L"Add point: 0.6, 2.3")
 CODE (L"Add point: 0.7, 1")
 NORMAL (L"The result will look like")
 PICTURE (5, 2.5, draw_CreateDurationTier)
-NORMAL (L"The target duration will be the area under this curve, which is 0.9 + 1/2 \\.c 1.3 \\.c 0.4 = 1.16 seconds.")
+NORMAL (L"The target duration will be the area under this curve, which is 0.9 + 1/2 · 1.3 · 0.4 = 1.16 seconds.")
 MAN_END
 
 MAN_BEGIN (L"Create empty PointProcess...", L"ppgb", 20021204)
@@ -173,8 +173,8 @@ MAN_END
 
 MAN_BEGIN (L"Create Poisson process...", L"ppgb", 20041005)
 INTRO (L"A command to create a @PointProcess object that represents a Poisson process.")
-NORMAL (L"A Poisson process is a stationary point process with a fixed density %\\la, "
-	"which means that there are, on the average, %\\la events per second.")
+NORMAL (L"A Poisson process is a stationary point process with a fixed density %λ, "
+	"which means that there are, on the average, %λ events per second.")
 ENTRY (L"Settings")
 TAG (L"##Start time (s)")
 DEFINITION (L"%t__%min_, the beginning of the time domain, in seconds.")
@@ -184,11 +184,11 @@ TAG (L"##Density (Hz)")
 DEFINITION (L"the average number of points per second.")
 ENTRY (L"Algorithm")
 NORMAL (L"First, the number of points %N in the time domain is determined. Its expectation value is")
-FORMULA (L"%\\la = (%t__%max_ \\-- %t__%min_) \\.c %density")
+FORMULA (L"%λ = (%t__%max_ – %t__%min_) · %density")
 NORMAL (L"but its actual value is taken from the Poisson distribution:")
-FORMULA (L"%p(%n) = (%%\\la^n% / %n!) %e^^\\--%\\la")
+FORMULA (L"%p(%n) = (%%λ^n% / %n!) %e^^–%λ")
 NORMAL (L"Then, %N points are computed throughout the time domain, according to a uniform distribution:")
-FORMULA (L"%p(%t) = 1 / (%t__%max_ \\-- %t__%min_)   for %t \\e= [%t__%min_, %t__%max_]")
+FORMULA (L"%p(%t) = 1 / (%t__%max_ – %t__%min_)   for %t ∈ [%t__%min_, %t__%max_]")
 FORMULA (L"%p(%t) = 0   outside [%t__%min_, %t__%max_]")
 MAN_END
 
@@ -337,20 +337,20 @@ MAN_END
 MAN_BEGIN (L"Editors", L"ppgb", 20110128)
 INTRO (L"Many @@types of objects@ in Praat can be viewed and edited in their own windows.")
 ENTRY (L"Editor windows")
-LIST_ITEM (L"\\bu @SoundEditor")
-LIST_ITEM (L"\\bu @LongSoundEditor")
-LIST_ITEM (L"\\bu @TextGridEditor")
-LIST_ITEM (L"\\bu @ManipulationEditor")
-LIST_ITEM (L"\\bu @SpectrumEditor")
-LIST_ITEM (L"\\bu @PitchEditor")
-LIST_ITEM (L"\\bu @PointEditor")
-LIST_ITEM (L"\\bu @PitchTierEditor")
-LIST_ITEM (L"\\bu @IntensityTierEditor")
-LIST_ITEM (L"\\bu @DurationTierEditor")
-LIST_ITEM (L"\\bu #SpectrogramEditor")
-LIST_ITEM (L"\\bu #ArtwordEditor")
-LIST_ITEM (L"\\bu @OTGrammarEditor")
-LIST_ITEM (L"\\bu (any type: @Inspect)")
+LIST_ITEM (L"• @SoundEditor")
+LIST_ITEM (L"• @LongSoundEditor")
+LIST_ITEM (L"• @TextGridEditor")
+LIST_ITEM (L"• @ManipulationEditor")
+LIST_ITEM (L"• @SpectrumEditor")
+LIST_ITEM (L"• @PitchEditor")
+LIST_ITEM (L"• @PointEditor")
+LIST_ITEM (L"• @PitchTierEditor")
+LIST_ITEM (L"• @IntensityTierEditor")
+LIST_ITEM (L"• @DurationTierEditor")
+LIST_ITEM (L"• #SpectrogramEditor")
+LIST_ITEM (L"• #ArtwordEditor")
+LIST_ITEM (L"• @OTGrammarEditor")
+LIST_ITEM (L"• (any type: @Inspect)")
 ENTRY (L"How to open an editor for an object")
 NORMAL (L"To open an editor window for an object in the list, select the object and choose ##View & Edit# "
 	"(if the ##View & Edit# button exists, it is usually at the top of the @@Dynamic menu@). "
@@ -367,12 +367,12 @@ NORMAL (L"All editors are independent windows: you can minimize and maximize the
 NORMAL (L"If you rename an object that you are viewing or editing (with @@Rename...@), "
 	"the title of the editor window immediately changes to the new name.")
 ENTRY (L"Ways to control an editor window")
-LIST_ITEM (L"\\bu @@Click")
-LIST_ITEM (L"\\bu @@Shift-click")
-LIST_ITEM (L"\\bu @@Drag")
-LIST_ITEM (L"\\bu @@Shift-drag")
-LIST_ITEM (L"\\bu @@Time selection")
-LIST_ITEM (L"\\bu @@Keyboard shortcuts")
+LIST_ITEM (L"• @@Click")
+LIST_ITEM (L"• @@Shift-click")
+LIST_ITEM (L"• @@Drag")
+LIST_ITEM (L"• @@Shift-drag")
+LIST_ITEM (L"• @@Time selection")
+LIST_ITEM (L"• @@Keyboard shortcuts")
 MAN_END
 
 MAN_BEGIN (L"Excitation", L"ppgb", 20030316)
@@ -407,11 +407,11 @@ ENTRY (L"Return value")
 NORMAL (L"the loudness in sone units.")
 ENTRY (L"Algorithm")
 NORMAL (L"The loudness is defined as")
-FORMULA (L"\\in%df 2^^(%e(%f) - 40 phon) / 10^")
+FORMULA (L"∫%df 2^^(%e(%f) - 40 phon) / 10^")
 NORMAL (L"where %f is the frequency in Bark, and %e(%f) the excitation in phon. "
 	"For our discrete Excitation object, the loudness is computed as")
-FORMULA (L"\\De%f \\su 2^^(%e__%i_ - 40) / 10")
-NORMAL (L"where \\De%f is the distance between the excitation channels (in Bark).")
+FORMULA (L"Δ%f ∑ 2^^(%e__%i_ - 40) / 10")
+NORMAL (L"where Δ%f is the distance between the excitation channels (in Bark).")
 MAN_END
 
 MAN_BEGIN (L"Excitation_hertzToBark", L"ppgb", 19970401)
@@ -420,7 +420,7 @@ INTRO (L"A routine for converting frequency into basilar place, "
 ENTRY (L"Syntax")
 PROTOTYPE (L"##double Excitation_hertzToBark (double #%hertz##);")
 ENTRY (L"Algorithm")
-NORMAL (L"Returns 7 \\.c ln (%hertz / 650 + \\Vr (1 + (%hertz / 650)^2)).")
+NORMAL (L"Returns 7 · ln (%hertz / 650 + √ (1 + (%hertz / 650)^2)).")
 MAN_END
 
 MAN_BEGIN (L"Excitation_barkToHertz", L"ppgb", 19970401)
@@ -429,7 +429,7 @@ INTRO (L"A routine for converting basilar place into frequency, "
 ENTRY (L"Syntax")
 PROTOTYPE (L"##double Excitation_barkToHertz (double #%bark##);")
 ENTRY (L"Algorithm")
-NORMAL (L"Returns 650 \\.c sinh (%bark / 7).")
+NORMAL (L"Returns 650 · sinh (%bark / 7).")
 MAN_END
 
 /*
@@ -501,13 +501,13 @@ DEFINITION (L"the selected time domain. Values outside this domain are ignored. 
 ENTRY (L"Algorithm")
 NORMAL (L"The curve consists of a sequence of line segments. The contribution of the line segment from "
 	"(%t__1_, %f__1_) to (%t__2_, %f__2_) to the area is")
-FORMULA (L"1/2 (%f__1_ + %f__2_) (%t__2_ \\-- %t__1_)")
+FORMULA (L"1/2 (%f__1_ + %f__2_) (%t__2_ – %t__1_)")
 MAN_END
 
 MAN_BEGIN (L"Intensity", L"ppgb", 20030316)
 INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"An Intensity object represents an intensity contour at linearly spaced time points "
-	"%t__%i_ = %t__1_ + (%i \\-- 1) %dt, with values in dB SPL, i.e. dB relative to 2\\.c10^^-5^ Pascal, "
+	"%t__%i_ = %t__1_ + (%i – 1) %dt, with values in dB SPL, i.e. dB relative to 2·10^^-5^ Pascal, "
 	"which is the normative auditory threshold for a 1000-Hz sine wave.")
 MAN_END
 
@@ -541,11 +541,11 @@ DEFINITION (L"the units in which the averaging is performed. If the method is #e
 	"and based on averaging properties of the human ear.")
 ENTRY (L"Algorithm")
 NORMAL (L"If the averaging method is #dB, the mean intensity between the times %t__1_ and %t__2_ is defined as")
-FORMULA (L"1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %x(%t) %dt")
+FORMULA (L"1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ %x(%t) %dt")
 NORMAL (L"where %x(%t) is the intensity as a function of time, in dB. If the method is #energy, the result is")
-FORMULA (L"10 log__10_ { 1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ 10^^%x(%t)/10^ %dt }")
+FORMULA (L"10 log__10_ { 1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ 10^^%x(%t)/10^ %dt }")
 NORMAL (L"If the method is #sones, the result is")
-FORMULA (L"10 log__2_ { 1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ 2^^%x(%t)/10^ %dt }")
+FORMULA (L"10 log__2_ { 1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ 2^^%x(%t)/10^ %dt }")
 ENTRY (L"Behaviour")
 NORMAL (L"After you do @@Sound: To Intensity...@, the mean intensity of the resulting #Intensity, "
 	"if the averaging method is #energy, should be close to the mean SPL of the original #Sound, "
@@ -576,10 +576,10 @@ DEFINITION (L"the time range (%t__1_, %t__2_). Values outside this range are ign
 	"If %t__1_ is not less than %t__2_, the entire time domain of the Intensity is considered.")
 ENTRY (L"Algorithm")
 NORMAL (L"The standard deviation between the times %t__1_ and %t__2_ is defined as")
-FORMULA (L"\\Vr {1/(%t__2_ - %t__1_)  \\in__%%t%1_^^%%t%2^ %dt (%x(%t) - %\\mu)^2}")
-NORMAL (L"where %x(%t) is the intensity (in dB) as a function of time, and %\\mu its mean. "
+FORMULA (L"√ {1/(%t__2_ - %t__1_)  ∫__%%t%1_^^%%t%2^ %dt (%x(%t) - %μ)^2}")
+NORMAL (L"where %x(%t) is the intensity (in dB) as a function of time, and %μ its mean. "
 	"For our discrete Intensity object, the standard deviation is approximated by")
-FORMULA (L"\\Vr {1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2}")
+FORMULA (L"√ {1/(%n-1) ∑__%i=%m..%m+%n-1_ (%x__%i_ - %μ)^2}")
 NORMAL (L"where %n is the number of frames between %t__1_ and %t__2_. Note the \"minus 1\".")
 MAN_END
 
@@ -641,15 +641,15 @@ ENTRY (L"Behaviour")
 NORMAL (L"Every sample in the @Intensity object is copied to a point on the @IntensityTier.")
 ENTRY (L"Postconditions")
 DEFINITION (L"Equal time domains:")
-LIST_ITEM (L"\\bu %result. %xmin == %intensity. %xmin")
-LIST_ITEM (L"\\bu %result. %xmax == %intensity. %xmax")
+LIST_ITEM (L"• %result. %xmin == %intensity. %xmin")
+LIST_ITEM (L"• %result. %xmax == %intensity. %xmax")
 DEFINITION (L"Equal number of points:")
-LIST_ITEM (L"\\bu %result. %points. %size == %intensity. %nx")
+LIST_ITEM (L"• %result. %points. %size == %intensity. %nx")
 NORMAL (L"For all points %i = 1 ... %intensity. %nx:")
 DEFINITION (L"   Explicit times:")
-LIST_ITEM (L"   \\bu %result. %points. %item [%i]. %time == %intensity. %x1 + (%i \\-- 1) * %intensity. %dx")
+LIST_ITEM (L"   • %result. %points. %item [%i]. %time == %intensity. %x1 + (%i – 1) * %intensity. %dx")
 DEFINITION (L"   Equal number of points:")
-LIST_ITEM (L"   \\bu %result. %points. %item [%i]. %value == %intensity. %z [1] [%i]")
+LIST_ITEM (L"   • %result. %points. %item [%i]. %value == %intensity. %z [1] [%i]")
 MAN_END
 
 MAN_BEGIN (L"Intensity & PointProcess: To IntensityTier...", L"ppgb", 20101230)
@@ -668,27 +668,27 @@ NORMAL (L"For examples, see @@Source-filter synthesis@.")
 ENTRY (L"IntensityTier commands")
 NORMAL (L"Creation:")
 LIST_ITEM (L"From scratch:")
-LIST_ITEM (L"\\bu @@Create IntensityTier...")
-LIST_ITEM (L"\\bu @@IntensityTier: Add point...")
+LIST_ITEM (L"• @@Create IntensityTier...")
+LIST_ITEM (L"• @@IntensityTier: Add point...")
 LIST_ITEM (L"Copy from another object:")
-LIST_ITEM (L"\\bu @@Intensity: To IntensityTier@: trivial copying of linearly spaced points.")
-LIST_ITEM (L"\\bu @@Intensity & PointProcess: To IntensityTier...@: copying interpolated values at specified points.")
-LIST_ITEM (L"\\bu @@PointProcess: Up to IntensityTier...@: equal values at specified points.")
+LIST_ITEM (L"• @@Intensity: To IntensityTier@: trivial copying of linearly spaced points.")
+LIST_ITEM (L"• @@Intensity & PointProcess: To IntensityTier...@: copying interpolated values at specified points.")
+LIST_ITEM (L"• @@PointProcess: Up to IntensityTier...@: equal values at specified points.")
 NORMAL (L"Viewing and editing:")
-LIST_ITEM (L"\\bu @IntensityTierEditor")
+LIST_ITEM (L"• @IntensityTierEditor")
 NORMAL (L"Conversion:")
-LIST_ITEM (L"\\bu @@IntensityTier: Down to PointProcess@: copy times.")
+LIST_ITEM (L"• @@IntensityTier: Down to PointProcess@: copy times.")
 NORMAL (L"Synthesis (see @@Source-filter synthesis@):")
-LIST_ITEM (L"\\bu @@Sound & IntensityTier: Multiply@")
+LIST_ITEM (L"• @@Sound & IntensityTier: Multiply@")
 NORMAL (L"Queries:")
-LIST_ITEM (L"\\bu @@Get low index from time...")
-LIST_ITEM (L"\\bu @@Get high index from time...")
-LIST_ITEM (L"\\bu @@Get nearest index from time...")
+LIST_ITEM (L"• @@Get low index from time...")
+LIST_ITEM (L"• @@Get high index from time...")
+LIST_ITEM (L"• @@Get nearest index from time...")
 NORMAL (L"Modification:")
-LIST_ITEM (L"\\bu @@Remove point...")
-LIST_ITEM (L"\\bu @@Remove point near...")
-LIST_ITEM (L"\\bu @@Remove points between...")
-LIST_ITEM (L"\\bu @@IntensityTier: Add point...@")
+LIST_ITEM (L"• @@Remove point...")
+LIST_ITEM (L"• @@Remove point near...")
+LIST_ITEM (L"• @@Remove points between...")
+LIST_ITEM (L"• @@IntensityTier: Add point...@")
 MAN_END
 
 MAN_BEGIN (L"IntensityTier: Add point...", L"ppgb", 20010410)
@@ -839,7 +839,7 @@ NORMAL (L"Beware of the following pitfall: if your pitch units are not hertz, bu
 	"then \'f0\' will give the result in semitones. A format as in this example will then be misleading.")
 ENTRY (L"Example 2: formant logging")
 NORMAL (L"Suppose you want to log the start and finish of the selection, its duration, and the mean values "
-	"of the first three formants, all separated by tab stops for easy importation into Microsoft\\re Excel\\tm. "
+	"of the first three formants, all separated by tab stops for easy importation into Microsoft® Excel™. "
 	"You could use the following log format:")
 CODE (L"\'t1:4\'\'tab\\$ \'\'t2:4\'\'tab\\$ \'\'f1:0\'\'tab\\$ \'\'f2:0\'\'tab\\$ \'\'f3:0\'")
 NORMAL (L"You see that \'t1\' and \'t2\' are the start and finish of the selection, respectively, "
@@ -917,10 +917,10 @@ LIST_ITEM (L"3. The pitch contour is converted to a pitch tier with many points 
 LIST_ITEM (L"4. An empty @DurationTier is created.")
 ENTRY (L"Resynthesis")
 TAG (L"A Manipulation object can produce Sound input. This Sound can be computed in several ways:")
-LIST_ITEM (L"\\bu @@overlap-add@: from original sound + pulses + pitch tier + duration tier;")
-LIST_ITEM (L"\\bu #LPC: from LPC (from original sound) + pulses + pitch tier;")
-LIST_ITEM (L"\\bu from the pulses only, as a pulse train or hummed;")
-LIST_ITEM (L"\\bu from the pitch tier only, as a pulse train or hummed.")
+LIST_ITEM (L"• @@overlap-add@: from original sound + pulses + pitch tier + duration tier;")
+LIST_ITEM (L"• #LPC: from LPC (from original sound) + pulses + pitch tier;")
+LIST_ITEM (L"• from the pulses only, as a pulse train or hummed;")
+LIST_ITEM (L"• from the pitch tier only, as a pulse train or hummed.")
 MAN_END
 
 MAN_BEGIN (L"Manipulation: Extract duration tier", L"ppgb", 20010330)
@@ -973,16 +973,16 @@ MAN_BEGIN (L"ManipulationEditor", L"ppgb", 20030316)
 	INTRO (L"One of the @Editors in Praat, for viewing and manipulating a @Manipulation object.")
 ENTRY (L"Objects")
 	NORMAL (L"The editor shows:")
-	LIST_ITEM (L"\\bu The original @Sound.")
-	LIST_ITEM (L"\\bu The @PointProcess that represents the glottal %pulses. "
+	LIST_ITEM (L"• The original @Sound.")
+	LIST_ITEM (L"• The @PointProcess that represents the glottal %pulses. "
 		"You can edit it for improving the pitch analysis.")
-	LIST_ITEM (L"\\bu A pitch contour based on the locations of the pulses, for comparison (drawn as grey dots). "
+	LIST_ITEM (L"• A pitch contour based on the locations of the pulses, for comparison (drawn as grey dots). "
 		"Changes shape if you edit the pulses.")
-	LIST_ITEM (L"\\bu The @PitchTier that determines the pitch contour of the resynthesized @Sound (drawn as blue circles). "
+	LIST_ITEM (L"• The @PitchTier that determines the pitch contour of the resynthesized @Sound (drawn as blue circles). "
 		"At the creation of the @Manipulation object, it is computed from the original pitch contour. "
 		"You can manipulate it by simplifying it (i.e., removing targets), "
 		"or by moving parts of it up and down, and back and forth.")
-	LIST_ITEM (L"\\bu A @DurationTier for manipulating the relative durations of the voiced parts of the sound.")
+	LIST_ITEM (L"• A @DurationTier for manipulating the relative durations of the voiced parts of the sound.")
 ENTRY (L"Playing")
 	NORMAL (L"To play (a part of) the %resynthesized sound (by any of the methods shown in the #Synth menu, "
 		"like @@overlap-add@ and #LPC), @click on any of the 1 to 8 buttons below and above the drawing area "
@@ -1023,43 +1023,43 @@ MAN_END
 MAN_BEGIN (L"Matrix", L"ppgb", 20030216)
 INTRO (L"One of the @@types of objects@ in Praat. "
 	"A Matrix object represents a function %z (%x, %y) "
-	"on the domain [%x__%min_, %x__%max_] \\xx [%y__%min_, %y__%max_]. "
+	"on the domain [%x__%min_, %x__%max_] × [%y__%min_, %y__%max_]. "
 	"The domain has been sampled in the %x and %y directions "
 	"with constant sampling intervals (%dx and %dy) along each direction. "
 	"The samples are thus %z [%i__%y_] [%i__%x_], %i__%x_ = 1 ... %n__%x_, %i__%y_ = 1 ... %n__%y_. "
 	"The samples represent the function values %z (%x__1_ + (%ix - 1) %dx, %y__1_ + (%iy - 1) %dy).")
 ENTRY (L"Matrix commands")
 NORMAL (L"Creation:")
-LIST_ITEM (L"\\bu @@Create Matrix...")
-LIST_ITEM (L"\\bu @@Create simple Matrix...")
-LIST_ITEM (L"\\bu @@Read from file...")
-LIST_ITEM (L"\\bu @@Read Matrix from raw text file...")
-LIST_ITEM (L"\\bu ##Read Matrix from LVS AP file...")
+LIST_ITEM (L"• @@Create Matrix...")
+LIST_ITEM (L"• @@Create simple Matrix...")
+LIST_ITEM (L"• @@Read from file...")
+LIST_ITEM (L"• @@Read Matrix from raw text file...")
+LIST_ITEM (L"• ##Read Matrix from LVS AP file...")
 NORMAL (L"Drawing:")
-LIST_ITEM (L"\\bu ##Matrix: Draw rows...")
-LIST_ITEM (L"\\bu ##Matrix: Draw contours...")
-LIST_ITEM (L"\\bu ##Matrix: Paint contours...")
-LIST_ITEM (L"\\bu ##Matrix: Paint cells...")
-LIST_ITEM (L"\\bu ##Matrix: Scatter plot...")
-LIST_ITEM (L"\\bu @@Matrix: Draw as squares...")
-LIST_ITEM (L"\\bu ##Matrix: Draw value distribution...")
-LIST_ITEM (L"\\bu ##Matrix: Paint surface...")
+LIST_ITEM (L"• ##Matrix: Draw rows...")
+LIST_ITEM (L"• ##Matrix: Draw contours...")
+LIST_ITEM (L"• ##Matrix: Paint contours...")
+LIST_ITEM (L"• ##Matrix: Paint cells...")
+LIST_ITEM (L"• ##Matrix: Scatter plot...")
+LIST_ITEM (L"• @@Matrix: Draw as squares...")
+LIST_ITEM (L"• ##Matrix: Draw value distribution...")
+LIST_ITEM (L"• ##Matrix: Paint surface...")
 NORMAL (L"Modification:")
-LIST_ITEM (L"\\bu @@Matrix: Formula...")
-LIST_ITEM (L"\\bu ##Matrix: Scale...")
+LIST_ITEM (L"• @@Matrix: Formula...")
+LIST_ITEM (L"• ##Matrix: Scale...")
 ENTRY (L"Inside a Matrix object")
 NORMAL (L"With @Inspect, you will see the following attributes.")
-TAG (L"%xmin, %xmax \\>_ %xmin")
+TAG (L"%xmin, %xmax ≥ %xmin")
 DEFINITION (L"%x domain.")
-TAG (L"%nx \\>_ 1")
+TAG (L"%nx ≥ 1")
 DEFINITION (L"number of columns.")
 TAG (L"%dx > 0.0")
 DEFINITION (L"distance between columns.")
 TAG (L"%x1")
 DEFINITION (L"%x value associated with first column.")
-TAG (L"%ymin, %ymax \\>_ %ymin")
+TAG (L"%ymin, %ymax ≥ %ymin")
 DEFINITION (L"%y domain.")
-TAG (L"%ny \\>_ 1")
+TAG (L"%ny ≥ 1")
 DEFINITION (L"number of rows.")
 TAG (L"%dy > 0.0")
 DEFINITION (L"distance between rows.")
@@ -1070,7 +1070,7 @@ DEFINITION (L"The sample values.")
 NORMAL (L"After creation of the #Matrix, %xmin, %xmax, %ymin, %ymax, "
 	"%nx, %ny, %dx, %dy, %x1, and %y1 "
 	"do not usually change. The contents of %z do.")
-NORMAL (L"Normally, you will want %xmin \\<_ %x1 and %xmax \\>_ %x1 + (%nx - 1) %dx.")
+NORMAL (L"Normally, you will want %xmin ≤ %x1 and %xmax ≥ %x1 + (%nx - 1) %dx.")
 ENTRY (L"Example: simple matrix")
 NORMAL (L"If a simple matrix has %x equal to column number "
 	"and %y equal to row number, it has the following attributes:")
@@ -1079,7 +1079,7 @@ LIST_ITEM (L"%ymin = 1;   %ymax = %ny;   %dy = 1;  %y1 = 1;")
 ENTRY (L"Example: sampled signal")
 NORMAL (L"If the matrix represents a sampled signal of 1 second duration "
 	"with a sampling frequency of 10 kHz, it has the following attributes:")
-LIST_ITEM (L"%xmin = 0.0;   %xmax = 1.0;   %nx = 10000 ;   %dx = 1.0\\.c10^^-4^;   %x1 = 0.5\\.c10^^-4^;")
+LIST_ITEM (L"%xmin = 0.0;   %xmax = 1.0;   %nx = 10000 ;   %dx = 1.0·10^^-4^;   %x1 = 0.5·10^^-4^;")
 LIST_ITEM (L"%ymin = 1;   %ymax = 1;   %ny = 1;   %dy = 1;   %y1 = 1;")
 ENTRY (L"Example: complex signal")
 NORMAL (L"If the matrix represents a complex spectrum "
@@ -1097,11 +1097,11 @@ ENTRY (L"Settings")
 TAG (L"##Xmin")
 TAG (L"##Xmax")
 DEFINITION (L"the windowing domain in the %x direction. Elements outside will not be drawn. "
-	"%Autowindowing: if (%Xmin \\>_ %Xmax), the entire %x domain [%x__%min_, %x__%max_] of the Matrix is used.")
+	"%Autowindowing: if (%Xmin ≥ %Xmax), the entire %x domain [%x__%min_, %x__%max_] of the Matrix is used.")
 TAG (L"##Ymin")
 TAG (L"##Ymax")
 DEFINITION (L"the windowing domain in the %y direction. Elements outside will not be drawn. "
-	"%Autowindowing: if (%Ymin \\>_ %Ymax), the entire %y domain [%y__%min_, %y__%max_] of the Matrix is used.")
+	"%Autowindowing: if (%Ymin ≥ %Ymax), the entire %y domain [%y__%min_, %y__%max_] of the Matrix is used.")
 TAG (L"##Garnish")
 DEFINITION (L"determines whether axes are drawn around the picture. "
 	"Turn this button off if you prefer to garnish your picture by yourself with the @Margins menu.")
@@ -1379,9 +1379,9 @@ INTRO (L"One of the @Editors in Praat, for viewing and manipulating a @PointProc
 	"which is optionally shown together with a @Sound object.")
 ENTRY (L"Objects")
 NORMAL (L"The editor shows:")
-LIST_ITEM (L"\\bu The @Sound, if you selected a Sound object together with the PointProcess object "
+LIST_ITEM (L"• The @Sound, if you selected a Sound object together with the PointProcess object "
 	"before you clicked ##View & Edit#.")
-LIST_ITEM (L"\\bu The @PointProcess; vertical blue lines represent the points.")
+LIST_ITEM (L"• The @PointProcess; vertical blue lines represent the points.")
 ENTRY (L"Playing")
 NORMAL (L"To play (a part of) the %resynthesized sound (pulse train): "
 	"@click on any of the 8 buttons below and above the drawing area, or choose a Play command from the View menu.")
@@ -1401,59 +1401,59 @@ NORMAL (L"A PointProcess object represents a %%point process%, "
 	"The index %i runs from 1 to the number of points. The points are sorted by time, i.e. %t__%i+1_ > %t__%i_.")
 ENTRY (L"PointProcess commands")
 NORMAL (L"Creation from scratch:")
-LIST_ITEM (L"\\bu @@Create empty PointProcess...@")
-LIST_ITEM (L"\\bu @@Create Poisson process...@")
+LIST_ITEM (L"• @@Create empty PointProcess...@")
+LIST_ITEM (L"• @@Create Poisson process...@")
 NORMAL (L"Creation of a pulse train from a pitch contour:")
-LIST_ITEM (L"\\bu @@PitchTier: To PointProcess@: area-1 along entire time domain.")
-LIST_ITEM (L"\\bu @@Pitch: To PointProcess@: same, but excludes voiceless intervals.")
-LIST_ITEM (L"\\bu @@Sound & Pitch: To PointProcess (cc)@: \"pitch-synchronous\": near locations of high amplitude.")
-LIST_ITEM (L"\\bu @@Sound & Pitch: To PointProcess (peaks)...@: \"pitch-synchronous\": near locations of high amplitude.")
-LIST_ITEM (L"\\bu @@Sound: To PointProcess (periodic, cc)...@: near locations of high amplitude.")
-LIST_ITEM (L"\\bu @@Sound: To PointProcess (periodic, peaks)...@: near locations of high amplitude.")
+LIST_ITEM (L"• @@PitchTier: To PointProcess@: area-1 along entire time domain.")
+LIST_ITEM (L"• @@Pitch: To PointProcess@: same, but excludes voiceless intervals.")
+LIST_ITEM (L"• @@Sound & Pitch: To PointProcess (cc)@: \"pitch-synchronous\": near locations of high amplitude.")
+LIST_ITEM (L"• @@Sound & Pitch: To PointProcess (peaks)...@: \"pitch-synchronous\": near locations of high amplitude.")
+LIST_ITEM (L"• @@Sound: To PointProcess (periodic, cc)...@: near locations of high amplitude.")
+LIST_ITEM (L"• @@Sound: To PointProcess (periodic, peaks)...@: near locations of high amplitude.")
 NORMAL (L"Creation from converting another object:")
-LIST_ITEM (L"\\bu ##Matrix: To PointProcess")
-LIST_ITEM (L"\\bu @@PitchTier: Down to PointProcess@")
-LIST_ITEM (L"\\bu @@IntensityTier: Down to PointProcess@")
+LIST_ITEM (L"• ##Matrix: To PointProcess")
+LIST_ITEM (L"• @@PitchTier: Down to PointProcess@")
+LIST_ITEM (L"• @@IntensityTier: Down to PointProcess@")
 NORMAL (L"Hearing:")
-LIST_ITEM (L"\\bu @@PointProcess: Play@: pulse train.")
-LIST_ITEM (L"\\bu @@PointProcess: Hum@: pulse train with formants.")
+LIST_ITEM (L"• @@PointProcess: Play@: pulse train.")
+LIST_ITEM (L"• @@PointProcess: Hum@: pulse train with formants.")
 NORMAL (L"Drawing:")
-LIST_ITEM (L"\\bu @@PointProcess: Draw...@")
+LIST_ITEM (L"• @@PointProcess: Draw...@")
 NORMAL (L"Editing:")
-LIST_ITEM (L"\\bu ##PointProcess: View & Edit#: invokes a @PointEditor.")
-LIST_ITEM (L"\\bu ##PointProcess & Sound: View & Edit#: invokes a @PointEditor.")
-LIST_ITEM (L"\\bu Inside a @ManipulationEditor.")
+LIST_ITEM (L"• ##PointProcess: View & Edit#: invokes a @PointEditor.")
+LIST_ITEM (L"• ##PointProcess & Sound: View & Edit#: invokes a @PointEditor.")
+LIST_ITEM (L"• Inside a @ManipulationEditor.")
 NORMAL (L"Queries:")
-LIST_ITEM (L"\\bu @@PointProcess: Get jitter (local)...@: periodic jitter.")
-LIST_ITEM (L"\\bu @@PointProcess: Get jitter (local, absolute)...@: periodic jitter.")
-LIST_ITEM (L"\\bu @@PointProcess: Get jitter (rap)...@: periodic jitter.")
-LIST_ITEM (L"\\bu @@PointProcess: Get jitter (ppq5)...@: periodic jitter.")
-LIST_ITEM (L"\\bu @@PointProcess: Get jitter (ddp)...@: periodic jitter.")
-LIST_ITEM (L"\\bu @@PointProcess: Get low index...@: index of nearest point not after specified time.")
-LIST_ITEM (L"\\bu @@PointProcess: Get high index...@: index of nearest point not before specified time.")
-LIST_ITEM (L"\\bu @@PointProcess: Get nearest index...@: index of point nearest to specified time.")
-LIST_ITEM (L"\\bu @@PointProcess: Get interval...@: duration of interval around specified time.")
+LIST_ITEM (L"• @@PointProcess: Get jitter (local)...@: periodic jitter.")
+LIST_ITEM (L"• @@PointProcess: Get jitter (local, absolute)...@: periodic jitter.")
+LIST_ITEM (L"• @@PointProcess: Get jitter (rap)...@: periodic jitter.")
+LIST_ITEM (L"• @@PointProcess: Get jitter (ppq5)...@: periodic jitter.")
+LIST_ITEM (L"• @@PointProcess: Get jitter (ddp)...@: periodic jitter.")
+LIST_ITEM (L"• @@PointProcess: Get low index...@: index of nearest point not after specified time.")
+LIST_ITEM (L"• @@PointProcess: Get high index...@: index of nearest point not before specified time.")
+LIST_ITEM (L"• @@PointProcess: Get nearest index...@: index of point nearest to specified time.")
+LIST_ITEM (L"• @@PointProcess: Get interval...@: duration of interval around specified time.")
 NORMAL (L"Set calculations:")
-LIST_ITEM (L"\\bu @@PointProcesses: Union@: the union of two point processes.")
-LIST_ITEM (L"\\bu @@PointProcesses: Intersection@: the intersection of two point processes.")
-LIST_ITEM (L"\\bu @@PointProcesses: Difference@: the difference of two point processes.")
+LIST_ITEM (L"• @@PointProcesses: Union@: the union of two point processes.")
+LIST_ITEM (L"• @@PointProcesses: Intersection@: the intersection of two point processes.")
+LIST_ITEM (L"• @@PointProcesses: Difference@: the difference of two point processes.")
 NORMAL (L"Modification:")
-LIST_ITEM (L"\\bu @@PointProcess: Add point...@: at a specified time.")
-LIST_ITEM (L"\\bu @@PointProcess: Remove point...@: at specified index.")
-LIST_ITEM (L"\\bu @@PointProcess: Remove point near...@: near specified time.")
-LIST_ITEM (L"\\bu @@PointProcess: Remove points...@: between specified indices.")
-LIST_ITEM (L"\\bu @@PointProcess: Remove points between...@: between specified times.")
+LIST_ITEM (L"• @@PointProcess: Add point...@: at a specified time.")
+LIST_ITEM (L"• @@PointProcess: Remove point...@: at specified index.")
+LIST_ITEM (L"• @@PointProcess: Remove point near...@: near specified time.")
+LIST_ITEM (L"• @@PointProcess: Remove points...@: between specified indices.")
+LIST_ITEM (L"• @@PointProcess: Remove points between...@: between specified times.")
 NORMAL (L"Analysis:")
-LIST_ITEM (L"\\bu @@PointProcess: To PitchTier...@: pitch values in interval centres.")
-LIST_ITEM (L"\\bu ##PointProcess & Sound: To Manipulation")
+LIST_ITEM (L"• @@PointProcess: To PitchTier...@: pitch values in interval centres.")
+LIST_ITEM (L"• ##PointProcess & Sound: To Manipulation")
 NORMAL (L"Synthesis:")
-LIST_ITEM (L"\\bu @@PointProcess: To Sound (pulse train)...@")
-LIST_ITEM (L"\\bu @@PointProcess: To Sound (hum)...@")
+LIST_ITEM (L"• @@PointProcess: To Sound (pulse train)...@")
+LIST_ITEM (L"• @@PointProcess: To Sound (hum)...@")
 NORMAL (L"Conversion:")
-LIST_ITEM (L"\\bu ##PointProcess: To Matrix")
-LIST_ITEM (L"\\bu @@PointProcess: Up to TextGrid...")
-LIST_ITEM (L"\\bu @@PointProcess: Up to PitchTier...")
-LIST_ITEM (L"\\bu @@PointProcess: Up to IntensityTier...")
+LIST_ITEM (L"• ##PointProcess: To Matrix")
+LIST_ITEM (L"• @@PointProcess: Up to TextGrid...")
+LIST_ITEM (L"• @@PointProcess: Up to PitchTier...")
+LIST_ITEM (L"• @@PointProcess: Up to IntensityTier...")
 MAN_END
 
 MAN_BEGIN (L"PointProcess: Add point...", L"ppgb", 20010410)
@@ -1549,14 +1549,14 @@ NORMAL (L"The local jitter is defined as the relative mean absolute "
 	"second-order difference of the point process (= the first-order difference of the interval process), as follows.")
 NORMAL (L"First, we define the absolute (non-relative) local jitter (in seconds) as the mean absolute (non-negative) "
 	"difference of consecutive intervals:")
-FORMULA (L"%jitter(seconds) = \\su__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
+FORMULA (L"%jitter(seconds) = ∑__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - %T__%i-1_| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 2, the result of the command is @undefined).")
 NORMAL (L"Second, we define the mean period as")
-FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+FORMULA (L"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1612,7 +1612,7 @@ NORMAL (L"The absolute local jitter is defined as the absolute (i.e. non-relativ
 	"second-order difference of the point process (= the first-order difference of the interval process), as follows.")
 NORMAL (L"The absolute local jitter (in seconds) is the mean absolute (non-negative) "
 	"difference of consecutive intervals:")
-FORMULA (L"%jitter(seconds) = \\su__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
+FORMULA (L"%jitter(seconds) = ∑__%i=2_^^%N^ |%T__%i_ - %T__%i-1_| / (%N - 1)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor#, "
@@ -1662,14 +1662,14 @@ NORMAL (L"The RAP can be used as a measure of voice quality; "
 ENTRY (L"3. Algorithm")
 NORMAL (L"Relative Average Perturbation is defined in terms of three consecutive intervals, as follows.")
 NORMAL (L"First, we define the absolute (i.e. non-relative) Average Perturbation (in seconds):")
-FORMULA (L"%absAP(seconds) = \\su__%i=2_^^%N-1^ |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| / (%N - 2)")
+FORMULA (L"%absAP(seconds) = ∑__%i=2_^^%N-1^ |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| / (%N - 2)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - (%T__%i-1_ + %T__%i_ + %T__%i+1_) / 3| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 3, the result of the command is @undefined).")
 NORMAL (L"Second, we define the mean period as")
-FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+FORMULA (L"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1723,14 +1723,14 @@ NORMAL (L"The jitter can be used as a measure of voice quality. See @@Voice 2. J
 ENTRY (L"3. Algorithm")
 NORMAL (L"The five-point Period Perturbation Quotient (PPQ5) is defined in terms of five consecutive intervals, as follows.")
 NORMAL (L"First, we define the absolute (i.e. non-relative) PPQ5 (in seconds):")
-FORMULA (L"%absPPQ5(seconds) = \\su__%i=3_^^%N-2^ |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| / (%N - 4)")
+FORMULA (L"%absPPQ5(seconds) = ∑__%i=3_^^%N-2^ |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| / (%N - 4)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-2_ or %T__%i-1_ or %T__%i_ or %T__%i+1_ or %T__%i+2_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-2_/%T__%i-1_ or %T__%i-1_/%T__%i-2_ or %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ or %T__%i+2_/%T__%i+1_ or %T__%i+1_/%T__%i+2_ is greater than ##Maximum period factor#, "
 	"the term |%T__%i_ - (%T__%i-2_ + %T__%i-1_ + %T__%i_ + %T__%i+1_ + %T__%i+2_) / 5| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 5, the result of the command is @undefined).")
 NORMAL (L"Second, we define the mean period as")
-FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+FORMULA (L"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1788,14 +1788,14 @@ NORMAL (L"DDP is defined as the relative mean absolute (i.e. non-negative) "
 	"third-order difference of the point process (= the second-order difference of the interval process), as follows.")
 NORMAL (L"First, we define the absolute (i.e. non-relative) Average Perturbation (in seconds) as one third of the mean absolute (non-negative) "
 	"difference of difference of consecutive intervals:")
-FORMULA (L"%absDDP(seconds) = \\su__%i=2_^^%N-1^ |(%T__%i+1_ - %T__%i_) - (%T__%i_ - %T__%i-1_)| / (%N - 2)")
+FORMULA (L"%absDDP(seconds) = ∑__%i=2_^^%N-1^ |(%T__%i+1_ - %T__%i_) - (%T__%i_ - %T__%i-1_)| / (%N - 2)")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i-1_ or %T__%i_ or %T__%i+1_ is not between ###Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ or %T__%i+1_/%T__%i_ or %T__%i_/%T__%i+1_ is greater than ##Maximum period factor#, "
 	"the term |2%T__%i_ - %T__%i-1_ - %T__%i+1_| is not counted in the sum, and %N is lowered by 1 "
 	"(if %N ends up being less than 3, the result of the command is @undefined).")
 NORMAL (L"Second, we define the mean period as")
-FORMULA (L"%meanPeriod(seconds) = \\su__%i=1_^^%N^ %T__%i_ / %N")
+FORMULA (L"%meanPeriod(seconds) = ∑__%i=1_^^%N^ %T__%i_ / %N")
 NORMAL (L"where %T__%i_ is the duration of the %%i%th interval and %N is the number of intervals. "
 	"If an interval %T__%i_ is not between ##Period floor# and ##Period ceiling#, "
 	"or if %T__%i-1_/%T__%i_ or %T__%i_/%T__%i-1_ is greater than ##Maximum period factor# "
@@ -1887,7 +1887,7 @@ MAN_END
 MAN_BEGIN (L"PointProcess: Remove points...", L"ppgb", 20021212)
 INTRO (L"A command to remove a range of points from every selected @PointProcess.")
 ENTRY (L"Settings")
-TAG (L"##From index (\\>_ 1)")
+TAG (L"##From index (≥ 1)")
 DEFINITION (L"the first index of the range of points that are to be removed.")
 TAG (L"##To index")
 DEFINITION (L"the last index of the range of points that are to be removed.")
@@ -2004,7 +2004,7 @@ SCRIPT (4.5, 2.5,
 )
 NORMAL (L"The final setting that influences the shape of the glottal flow is the %%collision phase%. "
 	"If it is 0.03, for instance, the glottal flow derivative will not go abruptly to 0 at a pulse, "
-	"but will instead decay by a factor of %e (\\~~ 2.7183) every 3 percent of a period. "
+	"but will instead decay by a factor of %e (≈ 2.7183) every 3 percent of a period. "
 	"In order to keep the glottal flow curve smooth (and the derivative continuous), "
 	"the basic shape discussed above has to be shifted slightly to the right and truncated "
 	"at the time of the pulse, to be replaced there with the exponential decay curve; "
@@ -2161,45 +2161,34 @@ NORMAL (L"The resulting Sound equals the original sound, multiplied by a linear 
 	"Afterwards, the resulting Sound is scaled so that its maximum absolute amplitude is 0.9.")
 MAN_END
 
-MAN_BEGIN (L"Strings", L"ppgb", 20041110)
+MAN_BEGIN (L"Strings", L"ppgb", 20141001)
 INTRO (L"One of the @@types of objects@ in Praat. Represents an ordered list of strings.")
 ENTRY (L"Creation")
-NORMAL (L"The difficult way is to create a #Strings object from a generic Praat text file:")
+NORMAL (L"The difficult way is to create a #Strings object from a generic Praat text file "
+	"(if there are non-ASCII symbols, use UTF-8 or UTF-16 format):")
 CODE (L"\"ooTextFile\"")
 CODE (L"\"Strings\"")
 CODE (L"5 ! number of strings")
 CODE (L"\"Hello\"")
 CODE (L"\"Goodbye\"")
 CODE (L"\"Auf wiedersehen\"")
-CODE (L"\"Tsch\\bsu\\\" \\\" ss\"")
+CODE (L"\"Tschüss\"")
 CODE (L"\"Arrivederci\"")
 NORMAL (L"In this example, we see that a double quote within a string should be written twice; "
-	"the fourth string will therefore be read as ##Tsch\\bsu\\\" ss#, "
-	"and will be shown in info messages or in graphical text as ##Tsch\\u\"ss# (see @@special symbols@). "
+	"the fourth string will therefore be read as ##Tschüss#. "
 	"This file can be read simply with the generic @@Read from file...@ command from the #Open menu.")
 NORMAL (L"An easier way is to use the special command @@Read Strings from raw text file...@. "
 	"The file can then simply look like this:")
 CODE (L"Hello")
 CODE (L"Goodbye")
 CODE (L"Auf wiedersehen")
-CODE (L"Tsch\\bsu\\\" ss")
+CODE (L"Tschüss")
 CODE (L"Arrivederci")
-NORMAL (L"In this example, all the strings are in the generic system-independent ASCII format that is used "
-	"everywhere in Praat (messages, graphical text) "
-	"for @@special symbols@. You could also have supplied the strings in a native format, which is "
-	"ISO-Latin1 encoding on Unix and Windows computers, or Mac encoding on Macintosh computers. "
-	"The file would then have simply looked like:")
-CODE (L"Hello")
-CODE (L"Goodbye")
-CODE (L"Auf wiedersehen")
-CODE (L"Tsch\\u\"ss")
-CODE (L"Arrivederci")
-NORMAL (L"To convert this into the generic system-independent ASCII format, use the #Genericize command.")
 NORMAL (L"You can also create a #Strings object from a directory listing or from some other objects:")
-LIST_ITEM (L"\\bu @@Create Strings as file list...")
-LIST_ITEM (L"\\bu @@Distributions: To Strings...@")
-LIST_ITEM (L"\\bu @@OTGrammar: Generate inputs...@")
-LIST_ITEM (L"\\bu @@OTGrammar & Strings: Inputs to outputs...@")
+LIST_ITEM (L"• @@Create Strings as file list...")
+LIST_ITEM (L"• @@Distributions: To Strings...@")
+LIST_ITEM (L"• @@OTGrammar: Generate inputs...@")
+LIST_ITEM (L"• @@OTGrammar & Strings: Inputs to outputs...@")
 MAN_END
 
 MAN_BEGIN (L"Strings: To Distributions", L"ppgb", 19971025)

@@ -28,7 +28,7 @@ INTRO (L"This is a description of the articulatory synthesis package in Praat. "
 	"see @@Boersma (1998)@, chapters 2 and 3. "
 	"For examples of how to synthesize utterances, consult http://www.fon.hum.uva.nl/paul/diss/ch5/.")
 ENTRY (L"How to start (after reading the @Intro)")
-NORMAL (L"We are going to have the synthesizer say [\\swp\\sw]. We need a @Speaker and an @Artword object.")
+NORMAL (L"We are going to have the synthesizer say [əpə]. We need a @Speaker and an @Artword object.")
 NORMAL (L"1. Create a speaker with @@Create Speaker...@ from the @@New menu@.")
 NORMAL (L"2. Create an articulation word of 0.5 seconds with @@Create Artword...@.")
 NORMAL (L"3. Edit the Artword by selecting it and clicking ##View & Edit#.")
@@ -59,8 +59,8 @@ MAN_BEGIN (L"Artword", L"ppgb", 20030316)
 INTRO (L"One of the @@types of objects@ in Praat. See @@Articulatory synthesis@.")
 NORMAL (L"An object of class Artword object represents the activities of several speech muscles as functions of time.")
 ENTRY (L"Artword commands")
-LIST_ITEM (L"\\bu @@Create Artword...@: creates an Artword with relaxed muscles")
-LIST_ITEM (L"\\bu @@Artword & Speaker: To Sound...@: articulatory synthesis")
+LIST_ITEM (L"• @@Create Artword...@: creates an Artword with relaxed muscles")
+LIST_ITEM (L"• @@Artword & Speaker: To Sound...@: articulatory synthesis")
 MAN_END
 
 MAN_BEGIN (L"Artword & Speaker: To Sound...", L"ppgb", 20040331)
@@ -115,13 +115,13 @@ LIST_ITEM (L"65..78: nose (from back to front)")
 LIST_ITEM (L"79..86: conus elasticus (only for a 10-mass model)")
 LIST_ITEM (L"87..89: glottal shunt between the arytenoids (from bottom to top)")
 NORMAL (L"Some structural properties:")
-LIST_ITEM (L"\\bu Tube 1 is closed at the bottom.")
-LIST_ITEM (L"\\bu Tubes 64 (lips) and 78 (nostrils) radiate into the air.")
-LIST_ITEM (L"\\bu The nasopharyngeal branch is at tubes 50, 51, and 65. They are constrained to have equal lengths.")
-LIST_ITEM (L"\\bu For a one-mass model of the vocal cords, tube 36 is connected to 38.")
-LIST_ITEM (L"\\bu For a 10-mass model, tubes 32..35 are replaced with 79..86, so that "
+LIST_ITEM (L"• Tube 1 is closed at the bottom.")
+LIST_ITEM (L"• Tubes 64 (lips) and 78 (nostrils) radiate into the air.")
+LIST_ITEM (L"• The nasopharyngeal branch is at tubes 50, 51, and 65. They are constrained to have equal lengths.")
+LIST_ITEM (L"• For a one-mass model of the vocal cords, tube 36 is connected to 38.")
+LIST_ITEM (L"• For a 10-mass model, tubes 32..35 are replaced with 79..86, so that "
 	"tube 31 is connected to 79, and 86 is connected to 36.")
-LIST_ITEM (L"\\bu A glottal shunt will be implemented if the speaker's $$shunt.Dx$ attribute is not zero. "
+LIST_ITEM (L"• A glottal shunt will be implemented if the speaker's $$shunt.Dx$ attribute is not zero. "
 	"A branch is then made from tubes 34 and 35 (or 85 and 86) to 87, "
 	"and from tube 89 to 38 and 39.")
 MAN_END
@@ -165,8 +165,8 @@ MAN_END
 MAN_BEGIN (L"Speaker", L"ppgb", 19980201)
 INTRO (L"One of the @@types of objects@ in Praat. See @@Articulatory synthesis@.")
 ENTRY (L"Speaker commands")
-LIST_ITEM (L"\\bu @@Create Speaker...")
-LIST_ITEM (L"\\bu @@Artword & Speaker: To Sound...@: articulatory synthesis")
+LIST_ITEM (L"• @@Create Speaker...")
+LIST_ITEM (L"• @@Artword & Speaker: To Sound...@: articulatory synthesis")
 MAN_END
 
 MAN_BEGIN (L"VocalTract", L"ppgb", 20030316)

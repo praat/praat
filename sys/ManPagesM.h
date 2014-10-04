@@ -2,7 +2,7 @@
 #define _ManPagesM_h_
 /* ManPagesM.h
  *
- * Copyright (C) 1996-2011 Paul Boersma
+ * Copyright (C) 1996-2011,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,10 +17,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
- */
-
-/*
- * pb 2011/01/05
  */
 
 /* ManPages macros. */
@@ -135,7 +131,7 @@
 #define Manual_DRAW_SETTINGS_WINDOW_BOOLEAN(label,on) \
 	"if " #on "\n" \
 	"    Paint rectangle... yellow 265 279 y-7 y+7\n" \
-	"    Text special... 272 centre y half Times fontSize*1.2 0 ##\\Vr\n" \
+	"    Text special... 272 centre y half Times fontSize*1.2 0 ##√\n" \
 	"else\n" \
 	"    Paint rectangle... white 265 279 y-7 y+7\n" \
 	"endif\n" \

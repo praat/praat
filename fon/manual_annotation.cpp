@@ -236,7 +236,7 @@ NORMAL (L"You can use all the @@Special symbols@ "
 	"and phonetic symbols.")
 ENTRY (L"Selecting a tier")
 NORMAL (L"To select a tier, click anywhere inside it. Its number and name will be drawn in red, "
-	"and a pointing finger symbol (\\pf) will appear on its left.")
+	"and a pointing finger symbol (☞) will appear on its left.")
 ENTRY (L"Selecting a boundary or point")
 NORMAL (L"To select a boundary on an interval tier, @click in its vicinity or inside the following interval; "
 	"the boundary will be drawn in red. The text in the interval will appear in the text window.")

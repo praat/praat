@@ -62,13 +62,13 @@ DEFINITION (L"start time, in seconds.")
 TAG (L"%xmax")
 DEFINITION (L"end time, in seconds.")
 TAG (L"%nx")
-DEFINITION (L"the number of frames (\\>_ 1).")
+DEFINITION (L"the number of frames (≥ 1).")
 TAG (L"%dx")
 DEFINITION (L"time step = frame length = frame duration, in seconds.")
 TAG (L"%x1")
 DEFINITION (L"the time associated with the first frame, in seconds. "
 	"This will usually be in the range [%xmin, %xmax]. "
-	"The time associated with the last frame (i.e., %x1 + (%nx \\-- 1) %dx)) "
+	"The time associated with the last frame (i.e., %x1 + (%nx – 1) %dx)) "
 	"will also usually be in that range.")
 TAG (L"%frame__%i_, %i = 1 ... %nx")
 DEFINITION (L"the frames (see below).")
@@ -151,7 +151,7 @@ ENTRY (L"Algorithm")
 NORMAL (L"If possible (i.e. if the adjacent frame has enough formants), "
 	"a linear interpolation is performed between the centre of the frame and the centre of the adjacent frame. "
 	"With Bark units, the hertz-to-Bark transformation is performed "
-	"on the two frequencies %F \\+_ 1/2 %B (after interpolation), and the result is the difference between these two values")
+	"on the two frequencies %F ± 1/2 %B (after interpolation), and the result is the difference between these two values")
 MAN_END
 
 MAN_BEGIN (L"Formant: Get maximum...", L"ppgb", 19991016)
@@ -392,30 +392,30 @@ DEFINITION (L"the local cost of having a formant value in your track that deviat
 	"the cost of putting this formant in the first track is 0.250, "
 	"because the distance to the reference F1 of 550 Hz is 250 Hz. "
 	"The cost of putting the formant in the second track would be 0.850 "
-	"(= (1.650 kHz - 0.600 kHz) \\.c 1.0/kHz), so we see that the procedure "
+	"(= (1.650 kHz - 0.600 kHz) · 1.0/kHz), so we see that the procedure "
 	"locally favours the inclusion of the 800 Hz candidate into the F1 track. "
 	"But the next two cost factors may override this local preference.")
 TAG (L"##Bandwidth cost")
 DEFINITION (L"the local cost of having a bandwidth, relative to the formant frequency. "
 	"For instance, if a candidate has a formant frequency of 400 Hz and "
 	"a bandwidth of 80 Hz, and ##Bandwidth cost# is 1.0, "
-	"the cost of having this formant in any track is (80/400) \\.c 1.0 = 0.200. "
+	"the cost of having this formant in any track is (80/400) · 1.0 = 0.200. "
 	"So we see that the procedure locally favours the inclusion of candidates "
 	"with low relative bandwidths.")
 TAG (L"##Transition cost (per octave)")
 DEFINITION (L"the cost of having two different consecutive formant values in a track. "
 	"For instance, if a proposed track through the candidates has two consecutive formant "
 	"values of 300 Hz and 424 Hz, and ##Transition cost# is 1.0/octave, "
-	"the cost of having this large frequency jump is (0.5 octave) \\.c (1.0/octave) = 0.500.")
+	"the cost of having this large frequency jump is (0.5 octave) · (1.0/octave) = 0.500.")
 ENTRY (L"Algorithm")
 NORMAL (L"This command uses a Viterbi algorithm with multiple planes. For instance, if the selected Formant object "
 	"contains up to five formants per frame, and you request three tracks, the Viterbi algorithm will have to choose "
 	"between ten candidates (the number of combinations of three out of five) for each frame.")
 NORMAL (L"The formula for the cost of e.g. track 3, with proposed values %F__2%i_ (%i = 1...%N, "
 	"where %N is the number of frames) is:")
-FORMULA (L"\\su__%i=1..%N_ %frequencyCost\\.c\\|f%F__3%i_ \\-- %referenceF3\\|f/1000 +")
-FORMULA (L"+ \\su__%i=1..%N_ %bandWidthCost\\.c%B__3%i_/%F__3%i_ +")
-FORMULA (L"+ \\su__%i=1..%N-1_ %transitionCost\\.c\\|flog__2_(%F__3%i_/%F__3,%i+1_)\\|f")
+FORMULA (L"∑__%i=1..%N_ %frequencyCost·|%F__3%i_ – %referenceF3|/1000 +")
+FORMULA (L"+ ∑__%i=1..%N_ %bandWidthCost·%B__3%i_/%F__3%i_ +")
+FORMULA (L"+ ∑__%i=1..%N-1_ %transitionCost·|log__2_(%F__3%i_/%F__3,%i+1_)|")
 NORMAL (L"Analogous formulas compute the cost of track 1 and track 2. "
 	"The procedure will assign those candidates to the three tracks that minimize "
 	"the sum of three track costs.")
@@ -430,26 +430,26 @@ NORMAL (L"For examples, see @@Source-filter synthesis@.")
 ENTRY (L"FormantGrid commands")
 NORMAL (L"Creation:")
 LIST_ITEM (L"From scratch:")
-LIST_ITEM (L"\\bu @@Create FormantGrid...")
-LIST_ITEM (L"\\bu @@FormantGrid: Add formant point...")
-LIST_ITEM (L"\\bu @@FormantGrid: Add bandwidth point...")
+LIST_ITEM (L"• @@Create FormantGrid...")
+LIST_ITEM (L"• @@FormantGrid: Add formant point...")
+LIST_ITEM (L"• @@FormantGrid: Add bandwidth point...")
 LIST_ITEM (L"Copy from another object:")
-LIST_ITEM (L"\\bu @@Formant: Down to FormantGrid@: trivial copying of frames to points.")
+LIST_ITEM (L"• @@Formant: Down to FormantGrid@: trivial copying of frames to points.")
 //NORMAL (L"Conversion:")
-//LIST_ITEM (L"\\bu @@FormantGrid: Down to PointProcess@: copy times.")
+//LIST_ITEM (L"• @@FormantGrid: Down to PointProcess@: copy times.")
 NORMAL (L"Synthesis:")
-LIST_ITEM (L"\\bu @@Sound & FormantGrid: Filter@: see @@Source-filter synthesis@.")
+LIST_ITEM (L"• @@Sound & FormantGrid: Filter@: see @@Source-filter synthesis@.")
 //NORMAL (L"Queries:")
-//LIST_ITEM (L"\\bu @@Get low index from time...")
-//LIST_ITEM (L"\\bu @@Get high index from time...")
-//LIST_ITEM (L"\\bu @@Get nearest index from time...")
+//LIST_ITEM (L"• @@Get low index from time...")
+//LIST_ITEM (L"• @@Get high index from time...")
+//LIST_ITEM (L"• @@Get nearest index from time...")
 NORMAL (L"Modification:")
-LIST_ITEM (L"\\bu @@FormantGrid: Add formant point...")
-LIST_ITEM (L"\\bu @@FormantGrid: Add bandwidth point...")
-//LIST_ITEM (L"\\bu @@Remove point...")
-//LIST_ITEM (L"\\bu @@Remove point near...")
-LIST_ITEM (L"\\bu @@FormantGrid: Remove formant points between...")
-LIST_ITEM (L"\\bu @@FormantGrid: Remove bandwidth points between...")
+LIST_ITEM (L"• @@FormantGrid: Add formant point...")
+LIST_ITEM (L"• @@FormantGrid: Add bandwidth point...")
+//LIST_ITEM (L"• @@Remove point...")
+//LIST_ITEM (L"• @@Remove point near...")
+LIST_ITEM (L"• @@FormantGrid: Remove formant points between...")
+LIST_ITEM (L"• @@FormantGrid: Remove bandwidth points between...")
 MAN_END
 
 MAN_BEGIN (L"FormantGrid: Add bandwidth point...", L"ppgb", 20080425)

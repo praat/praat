@@ -1879,7 +1879,7 @@ static void TimeSoundAnalysisEditor_v_draw_analysis (TimeSoundAnalysisEditor me)
 		Graphics_setColour (my d_graphics, textColour);
 		intensityCursorVisible = NUMdefined (intensityCursor) && intensityCursor > my p_intensity_viewFrom && intensityCursor < my p_intensity_viewTo;
 		if (intensityCursorVisible) {
-			static const wchar_t *methodString [] = { L" (.5)", L" (\\muE)", L" (\\muS)", L" (\\mu)" };
+			static const wchar_t *methodString [] = { L" (.5)", L" (μE)", L" (μS)", L" (μ)" };
 			Graphics_setTextAlignment (my d_graphics, alignment, Graphics_HALF);
 			Graphics_text3 (my d_graphics, y, intensityCursor, Melder_float (Melder_half (intensityCursor)), L" dB",
 				my d_startSelection == my d_endSelection ? L"" : methodString [my p_intensity_averagingMethod]);

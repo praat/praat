@@ -89,7 +89,7 @@ MAN_BEGIN (L"Ltas", L"ppgb", 20070320)
 INTRO (L"One of the @@types of objects@ in Praat. "
 	"#Ltas is short for Long-Term Average Spectrum.")
 NORMAL (L"An object of class Ltas represents the logarithmic @@power spectral density@ as a function of frequency, "
-	"expressed in dB/Hz relative to 2\\.c10^^-5^ Pa. ")
+	"expressed in dB/Hz relative to 2·10^^-5^ Pa. ")
 ENTRY (L"Inside an Ltas object")
 NORMAL (L"With @Inspect, you will see the following attributes:")
 TAG (L"%x__%min_")
@@ -97,7 +97,7 @@ DEFINITION (L"the bottom of the frequency domain, in hertz. Usually 0.")
 TAG (L"%x__%max_")
 DEFINITION (L"the top of the frequency domain, in hertz.")
 TAG (L"%n__%x_")
-DEFINITION (L"the number of frequency bins (\\>_ 1).")
+DEFINITION (L"the number of frequency bins (≥ 1).")
 TAG (L"%dx")
 DEFINITION (L"the frequency step, or %%bin width%, in hertz.")
 TAG (L"%x__1_")
@@ -139,9 +139,9 @@ TAG (L"##Bin number")
 DEFINITION (L"the bin number whose frequency is sought.")
 ENTRY (L"Algorithm")
 NORMAL (L"the result is")
-FORMULA (L"%f__1_ + (%binNumber - 1) \\.c \\De%f")
+FORMULA (L"%f__1_ + (%binNumber - 1) · Δ%f")
 NORMAL (L"where %f__1_ is the frequency associated with the centre of the first bin, "
-	"and \\De%f is the bin width.")
+	"and Δ%f is the bin width.")
 MAN_END
 
 MAN_BEGIN (L"Ltas: Get frequency of maximum...", L"ppgb", 20110701)
@@ -216,10 +216,10 @@ DEFINITION (L"the frequency range. Values outside this range are ignored. "
 	"If ##To frequency# is not greater than ##From frequency#, the entire frequency domain of the Ltas is considered.")
 ENTRY (L"Algorithm")
 NORMAL (L"The mean value between the frequencies %f__1_ and %f__2_ is defined as")
-FORMULA (L"1/(%f__2_ - %f__1_)  \\in__%%f%1_^^%%f%2^ %df %x(%f)")
+FORMULA (L"1/(%f__2_ - %f__1_)  ∫__%%f%1_^^%%f%2^ %df %x(%f)")
 NORMAL (L"where %x(%f) is the LTAS as a function of frequency, expressed in dB. "
 	"For our discrete Ltas object, this mean is approximated by")
-FORMULA (L"1/%n \\su__%i=%m..%m+%n-1_ %x__%i_")
+FORMULA (L"1/%n ∑__%i=%m..%m+%n-1_ %x__%i_")
 NORMAL (L"where %n is the number of band centres between %f__1_ and %f__2_.")
 MAN_END
 
@@ -257,10 +257,10 @@ DEFINITION (L"the frequency window. Values outside this domain are ignored. "
 	"If ##To frequency# is not greater than ##From frequency#, the entire frequency domain of the Ltas is considered.")
 ENTRY (L"Algorithm")
 NORMAL (L"The standard deviation between the frequencies %f__1_ and %f__2_ is defined as")
-FORMULA (L"1/(%f__2_ - %f__1_)  \\in__%%f%1_^^%%f%2^ %df (%x(%f) - %\\mu)^2")
-NORMAL (L"where %x(%f) is the LTAS as a function of frequency, and %\\mu its mean. "
+FORMULA (L"1/(%f__2_ – %f__1_)  ∫__%%f%1_^^%%f%2^ %df (%x(%f) – %μ)^2")
+NORMAL (L"where %x(%f) is the LTAS as a function of frequency, and %μ its mean. "
 	"For our discrete Ltas object, the standard deviation is approximated by")
-FORMULA (L"1/(%n-1) \\su__%i=%m..%m+%n-1_ (%x__%i_ - %\\mu)^2")
+FORMULA (L"1/(%n–1) ∑__%i=%m..%m+%n-1_ (%x__%i_ – %μ)^2")
 NORMAL (L"where %n is the number of band centres between %f__1_ and %f__2_. Note the \"minus 1\".")
 MAN_END
 
@@ -300,7 +300,7 @@ DEFINITION (L"the duration of the analysis window, in seconds. If this is 0.005 
 	"(for Gaussian windows, Praat actually uses a bit more than that). "
 	"The window length determines the %bandwidth of the spectral analysis, i.e. the width of the horizontal line "
 	"in the spectrogram of a pure sine wave. "
-	"For a Gaussian window, the -3 dB bandwidth is 2*sqrt(6*ln(2))/(\\pi*%%Window length%), "
+	"For a Gaussian window, the -3 dB bandwidth is 2*sqrt(6*ln(2))/(%π*%%Window length%), "
 	"or 1.2982804 / %%Window length%. "
 	"To get a `broad-band' spectrogram (bandwidth 260 Hz), set %%Window length% to 5 milliseconds; "
 	"to get a `narrow-band' spectrogram (bandwidth 43 Hz), set it to 30 milliseconds. "
@@ -328,10 +328,10 @@ DEFINITION (L"determines the shape of the analysis window. "
 	"it analyzes a factor of 2 slower than the other window shapes, "
 	"because the analysis is actually performed on twice as many samples per frame.")
 NORMAL (L"For purposes of computation speed, Praat may decide to change the time step and the frequency step. "
-	"This is because the time step never needs to be smaller than 1/(8\\Vr\\pi) of the window length, "
-	"and the frequency step never needs to be smaller than (\\Vr\\pi)/8 of the inverse of the window length. "
-	"For instance, if the window length is 29 ms, the actual time step will be never be less than 29/(8\\Vr\\pi) = 2.045 ms. "
-	"And if the window length is 5 ms, the actual frequency step will never be less than (\\Vr\\pi)/8/0.005 = 44.31 Hz.")
+	"This is because the time step never needs to be smaller than 1/(8√%π) of the window length, "
+	"and the frequency step never needs to be smaller than (√%π)/8 of the inverse of the window length. "
+	"For instance, if the window length is 29 ms, the actual time step will be never be less than 29/(8√%π) = 2.045 ms. "
+	"And if the window length is 5 ms, the actual frequency step will never be less than (√%π)/8/0.005 = 44.31 Hz.")
 ENTRY (L"Tests of the bandwidth")
 NORMAL (L"You can check the bandwidth formula with the following procedure:")
 CODE (L"! create a 1000-Hz sine wave, windowed by a 0.2-seconds Gaussian window.")
@@ -410,39 +410,39 @@ ENTRY (L"Mathematical procedure")
 NORMAL (L"For the Fourier transform, the Praat-defined @@time domain@ of the @Sound is ignored. "
 	"Instead, its time domain is considered to run from %t=0 to %t=%T, "
 	"where %t=0 is supposed to be aligned with the first sample, "
-	"and %T is the total duration of the samples, i.e. %%N%\\De%t, "
-	"where %N is the number of samples and \\De%t is the @@sampling period@. "
-	"Thus, the last sample lies at %t=%T-\\De%t.")
+	"and %T is the total duration of the samples, i.e. %%N%Δ%t, "
+	"where %N is the number of samples and Δe%t is the @@sampling period@. "
+	"Thus, the last sample lies at %t=%T–Δ%t.")
 NORMAL (L"For a sound %x(%t), defined for all times %t in the domain (0, %T), "
 	"the complex spectrum %X(%f) for any frequency %f is the forward Fourier transform of %x(%t), with a negative exponent:")
-FORMULA (L"%X(%f) = \\in__0_^^%T^ %x(%t) %e^^-2%%\\piift%^ %dt")
-NORMAL (L"If the Sound is expressed in Pascal (Pa), the Spectrum is expressed in Pa\\.cs, or Pa/Hz. "
+FORMULA (L"%X(%f) = ∫__0_^^%T^ %x(%t) %e^^-2%%πift%^ %dt")
+NORMAL (L"If the Sound is expressed in Pascal (Pa), the Spectrum is expressed in Pa·s, or Pa/Hz. "
 	"Since a @Spectrum object can only contain a finite number of frequency samples, "
-	"it is only computed for frequencies that are multiples of \\De%f = 1/%T. "
+	"it is only computed for frequencies that are multiples of Δ%f = 1/%T. "
 	"The number of those frequencies is determined by the number of samples %N of the sound.")
 NORMAL (L"If %N is odd, there will be %N frequency samples. For instance, if the sound has 20,457 samples, "
-	"the spectrum will be computed at the frequencies -10,228\\De%f, -10,227\\De%f, ..., -\\De%f, 0, +\\De%f, ..., "
-	"+10,227\\De%f, +10,228\\De%f. If we suppose that a frequency sample represents a frequency bin with a width of \\De%f, "
+	"the spectrum will be computed at the frequencies -10,228Δ%f, -10,227Δ%f, ..., –Δ%f, 0, +Δ%f, ..., "
+	"+10,227Δ%f, +10,228Δ%f. If we suppose that a frequency sample represents a frequency bin with a width of Δ%f, "
 	"we see that the frequency samples span adjacent frequency ranges, "
-	"e.g. the first sample runs from -10,228.5\\De%f to -10,227.5\\De%f, the second from -10,227.5\\De%f to -10,226.5\\De%f. "
+	"e.g. the first sample runs from -10,228.5Δ%f to -10,227.5Δ%f, the second from -10,227.5Δ%f to -10,226.5Δ%f. "
 	"Together, the frequency samples span the frequency domain of the spectrum, "
-	"which runs from -%F to +%F, where %F = 10,228.5\\De%f. "
+	"which runs from -%F to +%F, where %F = 10,228.5Δ%f. "
 	"We can see that this frequency equals one half of the @@sampling frequency@ of the original sound: "
-	"%F = 10,228.5\\De%f = 10,228.5/%T = 10,228.5/(20,457\\De%t) = 0.5/\\De%t. This is the so-called @@Nyquist frequency@.")
+	"%F = 10,228.5Δ%f = 10,228.5/%T = 10,228.5/(20,457Δ%t) = 0.5/Δ%t. This is the so-called @@Nyquist frequency@.")
 NORMAL (L"If %N is even, there will be %N+1 frequency samples. For instance, if the sound has 32,768 samples, "
-	"the spectrum will be computed at the frequencies -16,384\\De%f, -16,383\\De%f, ..., -\\De%f, 0, +\\De%f, ..., "
-	"+16,383\\De%f, +16,384\\De%f. Again, the frequency samples span adjacent frequency ranges, "
+	"the spectrum will be computed at the frequencies -16,384Δ%f, -16,383Δ%f, ..., -Δ%f, 0, +Δ%f, ..., "
+	"+16,383Δ%f, +16,384Δ%f. Again, the frequency samples span adjacent frequency ranges, "
 	"but the first and last samples are only half as wide as the rest, "
-	"i.e. the first sample runs from -16,384\\De%f to -16,383.5\\De%f, the second from -16,383.5\\De%f to -16,382.5\\De%f, "
-	"and the last from +16,383.5\\De%f to +16,384\\De%f. "
+	"i.e. the first sample runs from -16,384Δ%f to -16,383.5Δ%f, the second from -16,383.5Δ%f to -16,382.5Δ%f, "
+	"and the last from +16,383.5Δ%f to +16,384Δ%f. "
 	"Together, the frequency samples again span the frequency domain of the spectrum, "
-	"which runs from -%F to +%F, where %F = 16,384\\De%f = 0.5/\\De%t, the Nyquist frequency.")
+	"which runs from –%F to +%F, where %F = 16,384Δ%f = 0.5/Δ%t, the Nyquist frequency.")
 ENTRY (L"Storage")
 NORMAL (L"In a @Spectrum object, Praat stores the real and imaginary parts of the complex spectrum separately. "
 	"The real part is equal to the cosine transform:")
-FORMULA (L"re %X(%f) = \\in__0_^^%T^ %x(%t) cos (2%%\\pift%) %dt")
+FORMULA (L"re %X(%f) = ∫__0_^^%T^ %x(%t) cos (2%%πft%) %dt")
 NORMAL (L"The imaginary part is equal to the reverse of the sine transform:")
-FORMULA (L"im %X(%f) = - \\in__0_^^%T^ %x(%t) sin (2%%\\pift%) %dt")
+FORMULA (L"im %X(%f) = – ∫__0_^^%T^ %x(%t) sin (2%%πft%) %dt")
 NORMAL (L"The complex spectrum can be reconstructed from the real and imaginary part as follows:")
 FORMULA (L"%X(%f) = re %X(%f) + %i im %X(%f)")
 NORMAL (L"Since the cosine is a symmetric function of %t and the sine is an antisymmetric function of %t, "
@@ -450,22 +450,22 @@ NORMAL (L"Since the cosine is a symmetric function of %t and the sine is an anti
 	"positive frequency:")
 FORMULA (L"%X(-%f) = re %X(-%f) + %i im %X(-%f) = re %X(%f) - %i im %X(%f) = %X^*(%f)")
 NORMAL (L"For purposes of storage, therefore, the negative frequencies are superfluous. "
-	"For this reason, the Spectrum object stores re %X(%f) and im %X(%f) only for frequencies %f = 0, \\De%f, 2\\De%f... "
+	"For this reason, the Spectrum object stores re %X(%f) and im %X(%f) only for frequencies %f = 0, Δ%f, 2Δ%f... "
 	"In the case of a sound with 20,457 samples, the Spectrum object contains the real part of %X(0) "
 	"(its imaginary part is always zero), and the real and imaginary parts of %X(%f) "
-	"for frequencies from \\De%f to 10,228\\De%f, which makes in total 1+2\\.c10,228 = 20,457 real values. "
-	"In the case of a sound with 32,768 samples, the Spectrum object contains the real parts of %X(0) and %X(16,384\\De%f) "
+	"for frequencies from Δ%f to 10,228Δ%f, which makes in total 1+2·10,228 = 20,457 real values. "
+	"In the case of a sound with 32,768 samples, the Spectrum object contains the real parts of %X(0) and %X(16,384Δ%f) "
 	"(their imaginary parts are always zero), and the real and imaginary parts of %X(%f) "
-	"for frequencies from \\De%f to 16,383\\De%f, which makes in total 2+2\\.c16,383 = 32,768 real values.")
+	"for frequencies from Δ%f to 16,383Δ%f, which makes in total 2+2·16,383 = 32,768 real values.")
 NORMAL (L"Since the negative frequencies have been removed, the frequency domain now runs from 0 to %F. "
-	"This means that the first frequency bin is now only 0.5\\De%f wide (i.e. as wide as the last bin for even-%N spectra), "
+	"This means that the first frequency bin is now only 0.5Δ%f wide (i.e. as wide as the last bin for even-%N spectra), "
 	"which has consequences for computations of energies.")
 ENTRY (L"Behaviour")
 NORMAL (L"If you perform @@Spectrum: To Sound@ on the resulting Spectrum object, "
 	"a Sound is created that is equal to the original Sound (or to the original Sound with appended zeroes).")
 ENTRY (L"Properties")
 NORMAL (L"The frequency integral over the squared Spectrum equals the time integral over the squared Sound:")
-FORMULA (L"\\in__-%F_^^+%F^ |%X(%f)|^2 %df = \\in__0_^%T |%x(%t)|^2 %dt")
+FORMULA (L"∫__-%F_^^+%F^ |%X(%f)|^2 %df = ∫__0_^%T |%x(%t)|^2 %dt")
 NORMAL (L"This is called %%Parceval's theorem%.")
 /*
 Copy... square
@@ -502,25 +502,25 @@ DEFINITION (L"start time, in seconds.")
 TAG (L"%xmax")
 DEFINITION (L"end time, in seconds.")
 TAG (L"%nx")
-DEFINITION (L"the number of times (\\>_ 1).")
+DEFINITION (L"the number of times (≥ 1).")
 TAG (L"%dx")
 DEFINITION (L"time step, in seconds.")
 TAG (L"%x1")
 DEFINITION (L"the time associated with the first column, in seconds. "
 	"This will usually be in the range [%xmin, %xmax]. "
-	"The time associated with the last column (i.e., %x1 + (%nx \\-- 1) %dx)) "
+	"The time associated with the last column (i.e., %x1 + (%nx – 1) %dx)) "
 	"will also usually be in that range.")
 TAG (L"%ymin")
 DEFINITION (L"lowest frequency, in Hertz. Normally 0.")
 TAG (L"%ymax")
 DEFINITION (L"highest frequency, in Hertz.")
 TAG (L"%ny")
-DEFINITION (L"the number of frequencies (\\>_ 1).")
+DEFINITION (L"the number of frequencies (≥ 1).")
 TAG (L"%dy")
 DEFINITION (L"frequency step, in Hertz.")
 TAG (L"%y1")
 DEFINITION (L"the frequency associated with the first row, in Hertz. Usually %dy / 2. "
-	"The frequency associated with the last row (i.e., %y1 + (%ny \\-- 1) %dy)) "
+	"The frequency associated with the last row (i.e., %y1 + (%ny – 1) %dy)) "
 	"will often be %ymax - %dy / 2.")
 TAG (L"%z__%ij_, %i = 1 ... %ny, %j = 1 ... %nx")
 DEFINITION (L"the power spectral density, in Pa^2/Hz. ")
@@ -578,22 +578,22 @@ INTRO (L"One of the @@types of objects@ in Praat. A Spectrum object represents "
 	"For detailed information, see @@Sound: To Spectrum...@.")
 ENTRY (L"Spectrum commands")
 NORMAL (L"Creation:")
-LIST_ITEM (L"\\bu @@Sound: To Spectrum...")
+LIST_ITEM (L"• @@Sound: To Spectrum...")
 NORMAL (L"Queries:")
-LIST_ITEM (L"\\bu @@Spectrum: Get centre of gravity...")
-LIST_ITEM (L"\\bu @@Spectrum: Get standard deviation...")
-LIST_ITEM (L"\\bu @@Spectrum: Get skewness...")
-LIST_ITEM (L"\\bu @@Spectrum: Get kurtosis...")
-LIST_ITEM (L"\\bu @@Spectrum: Get central moment...")
+LIST_ITEM (L"• @@Spectrum: Get centre of gravity...")
+LIST_ITEM (L"• @@Spectrum: Get standard deviation...")
+LIST_ITEM (L"• @@Spectrum: Get skewness...")
+LIST_ITEM (L"• @@Spectrum: Get kurtosis...")
+LIST_ITEM (L"• @@Spectrum: Get central moment...")
 NORMAL (L"Modification:")
-LIST_ITEM (L"\\bu @@Spectrum: Filter (pass Hann band)...")
-LIST_ITEM (L"\\bu @@Spectrum: Filter (stop Hann band)...")
-LIST_ITEM (L"\\bu @@Formula...")
+LIST_ITEM (L"• @@Spectrum: Filter (pass Hann band)...")
+LIST_ITEM (L"• @@Spectrum: Filter (stop Hann band)...")
+LIST_ITEM (L"• @@Formula...")
 NORMAL (L"Conversion:")
-LIST_ITEM (L"\\bu @@Spectrum: To Ltas (1-to-1)")
-LIST_ITEM (L"\\bu @@Spectrum: To Spectrogram")
+LIST_ITEM (L"• @@Spectrum: To Ltas (1-to-1)")
+LIST_ITEM (L"• @@Spectrum: To Spectrogram")
 NORMAL (L"Synthesis:")
-LIST_ITEM (L"\\bu @@Spectrum: To Sound")
+LIST_ITEM (L"• @@Spectrum: To Sound")
 MAN_END
 
 MAN_BEGIN (L"Spectrum: Filter (pass Hann band)...", L"ppgb", 20030916)
@@ -643,11 +643,11 @@ MAN_END
 MAN_BEGIN (L"Spectrum: Get central moment...", L"ppgb", 20020323)
 INTRO (L"A command to query the selected @Spectrum object.")
 NORMAL (L"If the complex spectrum is given by %S(%f), the %%n%th central spectral moment is given by")
-FORMULA (L"\\in__0_^\\oo  (%f \\-- %f__%c_)^%n |%S(%f)|^%p %df")
+FORMULA (L"∫__0_^∞  (%f – %f__%c_)^%n |%S(%f)|^%p %df")
 NORMAL (L"divided by the \"energy\"")
-FORMULA (L"\\in__0_^\\oo  |%S(%f)|^%p %df")
+FORMULA (L"∫__0_^∞  |%S(%f)|^%p %df")
 NORMAL (L"In this formula, %f__%c_ is the spectral centre of gravity (see @@Spectrum: Get centre of gravity...@). "
-	"Thus, the %%n%th central moment is the average of (%f \\-- %f__%c_)^%n over the entire frequency domain, "
+	"Thus, the %%n%th central moment is the average of (%f – %f__%c_)^%n over the entire frequency domain, "
 	"weighted by |%S(%f)|^%p. For %p = 2, the weighting is done by the power spectrum, and for %p = 1, "
 	"the weighting is done by the absolute spectrum. A value of %p = 2/3 has been seen as well.")
 ENTRY (L"Settings")
@@ -663,19 +663,19 @@ NORMAL (L"For %n = 1, the central moment should be zero, since the centre of gra
 	"to normalize it, you can divide by the 1.5 power of the second moment. For %n = 4, you get the "
 	"non-normalized spectral kurtosis; to normalize it, you can divide by the square of the second moment "
 	"and subtract 3. Praat can directly give you the quantities mentioned here:")
-LIST_ITEM (L"\\bu @@Spectrum: Get centre of gravity...")
-LIST_ITEM (L"\\bu @@Spectrum: Get standard deviation...")
-LIST_ITEM (L"\\bu @@Spectrum: Get skewness...")
-LIST_ITEM (L"\\bu @@Spectrum: Get kurtosis...")
+LIST_ITEM (L"• @@Spectrum: Get centre of gravity...")
+LIST_ITEM (L"• @@Spectrum: Get standard deviation...")
+LIST_ITEM (L"• @@Spectrum: Get skewness...")
+LIST_ITEM (L"• @@Spectrum: Get kurtosis...")
 MAN_END
 
 MAN_BEGIN (L"Spectrum: Get centre of gravity...", L"ppgb", 20070225)
 INTRO (L"A command to query the selected @Spectrum object.")
 NORMAL (L"If the complex spectrum is given by %S(%f), where %f is the frequency, the %%centre of gravity% "
 	"is given by")
-FORMULA (L"\\in__0_^\\oo  %f |%S(%f)|^%p %df")
+FORMULA (L"∫__0_^∞  %f |%S(%f)|^%p %df")
 NORMAL (L"divided by the \"energy\"")
-FORMULA (L"\\in__0_^\\oo  |%S(%f)|^%p %df")
+FORMULA (L"∫__0_^∞  |%S(%f)|^%p %df")
 NORMAL (L"Thus, the centre of gravity is the average of %f over the entire frequency domain, "
 	"weighted by |%S(%f)|^%p. For %p = 2, the weighting is done by the power spectrum, and for %p = 1, "
 	"the weighting is done by the absolute spectrum. A value of %p = 2/3 has been seen as well.")
@@ -690,10 +690,10 @@ NORMAL (L"The spectral centre of gravity is a measure for how high the frequenci
 	"the centre of gravity is 5512.5 Hz, i.e. one half of the @@Nyquist frequency@.")
 ENTRY (L"Related measures")
 NORMAL (L"The centre of gravity is used in the computation of spectral moments:")
-LIST_ITEM (L"\\bu @@Spectrum: Get central moment...")
-LIST_ITEM (L"\\bu @@Spectrum: Get standard deviation...")
-LIST_ITEM (L"\\bu @@Spectrum: Get skewness...")
-LIST_ITEM (L"\\bu @@Spectrum: Get kurtosis...")
+LIST_ITEM (L"• @@Spectrum: Get central moment...")
+LIST_ITEM (L"• @@Spectrum: Get standard deviation...")
+LIST_ITEM (L"• @@Spectrum: Get skewness...")
+LIST_ITEM (L"• @@Spectrum: Get kurtosis...")
 MAN_END
 
 MAN_BEGIN (L"Spectrum: Get kurtosis...", L"ppgb", 20020323)
@@ -710,10 +710,10 @@ NORMAL (L"The kurtosis is a measure for how much the shape of the spectrum aroun
 	"%%centre of gravity% is different from a Gaussian shape. "
 	"For a white noise, the kurtosis is -6/5.")
 ENTRY (L"Related measures")
-LIST_ITEM (L"\\bu @@Spectrum: Get centre of gravity...")
-LIST_ITEM (L"\\bu @@Spectrum: Get central moment...")
-LIST_ITEM (L"\\bu @@Spectrum: Get standard deviation...")
-LIST_ITEM (L"\\bu @@Spectrum: Get skewness...")
+LIST_ITEM (L"• @@Spectrum: Get centre of gravity...")
+LIST_ITEM (L"• @@Spectrum: Get central moment...")
+LIST_ITEM (L"• @@Spectrum: Get standard deviation...")
+LIST_ITEM (L"• @@Spectrum: Get skewness...")
 MAN_END
 
 MAN_BEGIN (L"Spectrum: Get skewness...", L"ppgb", 20020323)
@@ -730,10 +730,10 @@ NORMAL (L"The skewness is a measure for how much the shape of the spectrum below
 	"%%centre of gravity% is different from the shape above the mean frequency. "
 	"For a white noise, the skewness is zero.")
 ENTRY (L"Related measures")
-LIST_ITEM (L"\\bu @@Spectrum: Get centre of gravity...")
-LIST_ITEM (L"\\bu @@Spectrum: Get central moment...")
-LIST_ITEM (L"\\bu @@Spectrum: Get standard deviation...")
-LIST_ITEM (L"\\bu @@Spectrum: Get kurtosis...")
+LIST_ITEM (L"• @@Spectrum: Get centre of gravity...")
+LIST_ITEM (L"• @@Spectrum: Get central moment...")
+LIST_ITEM (L"• @@Spectrum: Get standard deviation...")
+LIST_ITEM (L"• @@Spectrum: Get kurtosis...")
 MAN_END
 
 MAN_BEGIN (L"Spectrum: Get standard deviation...", L"ppgb", 20020323)
@@ -748,21 +748,21 @@ ENTRY (L"Interpretation")
 NORMAL (L"The standard deviation is a measure for how much the frequencies in a spectrum can deviate from "
 	"the %%centre of gravity%. "
 	"For a sine wave, the standard deviation is zero. For a white noise, the standard deviation "
-	"is the @@Nyquist frequency@ divided by \\Vr12.")
+	"is the @@Nyquist frequency@ divided by √12.")
 ENTRY (L"Related measures")
-LIST_ITEM (L"\\bu @@Spectrum: Get centre of gravity...")
-LIST_ITEM (L"\\bu @@Spectrum: Get central moment...")
-LIST_ITEM (L"\\bu @@Spectrum: Get skewness...")
-LIST_ITEM (L"\\bu @@Spectrum: Get kurtosis...")
+LIST_ITEM (L"• @@Spectrum: Get centre of gravity...")
+LIST_ITEM (L"• @@Spectrum: Get central moment...")
+LIST_ITEM (L"• @@Spectrum: Get skewness...")
+LIST_ITEM (L"• @@Spectrum: Get kurtosis...")
 MAN_END
 
-MAN_BEGIN (L"Spectrum: To Ltas (1-to-1)", L"ppgb", 19980327)
+MAN_BEGIN (L"Spectrum: To Ltas (1-to-1)", L"ppgb", 20141001)
 INTRO (L"A command for converting each selected @Spectrum object into an @Ltas object without loss of frequency resolution.")
 ENTRY (L"Algorithm")
 NORMAL (L"Each band %b__%i_ in the Ltas is computed from a single frequency sample %s__%i_ in the Spectrum as follows:")
-FORMULA (L"%b__%i_ = 2 ((Re (%s__%i_))^2 + (Im (%s__%i_))^2) / 4.0\\.c10^^-10^")
+FORMULA (L"%b__%i_ = 2 ((re (%s__%i_))^2 + (im (%s__%i_))^2) / 4.0·10^^-10^")
 NORMAL (L"If the original Spectrum is expressible in Pa / Hz (sound pressure in air), the Ltas values "
-	"are in \"dB/Hz\" relative to the auditory threshold at 1000 Hz (2\\.c10^^-5^ Pa).")
+	"are in \"dB/Hz\" relative to the auditory threshold at 1000 Hz (2·10^^-5^ Pa).")
 MAN_END
 
 MAN_BEGIN (L"Spectrum: To Sound", L"ppgb", 200411123)

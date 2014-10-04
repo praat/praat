@@ -1596,7 +1596,7 @@ void structTextGridEditor :: v_draw () {
 		Graphics_setFont (d_graphics, oldFont);
 		Graphics_setFontSize (d_graphics, 14);
 		Graphics_setTextAlignment (d_graphics, Graphics_RIGHT, Graphics_HALF);
-		Graphics_text2 (d_graphics, d_startWindow, 0.5, tierIsSelected ? L"\\pf " : L"", Melder_integer (itier));
+		Graphics_text2 (d_graphics, d_startWindow, 0.5, tierIsSelected ? L"☞ " : L"", Melder_integer (itier));
 		Graphics_setFontSize (d_graphics, oldFontSize);
 		if (anyTier -> name && anyTier -> name [0]) {
 			Graphics_setTextAlignment (d_graphics, Graphics_LEFT,
