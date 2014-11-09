@@ -90,7 +90,7 @@ GuiLabel GuiLabel_create (GuiForm parent, int left, int right, int top, int bott
 		trace ("set user data");
 		[label setUserData: me];
 		trace ("set bezel style");
-		[label setBezelStyle: NSRoundedBezelStyle];
+		[label setBezelStyle: NSTextFieldRoundedBezel];
 		trace ("set bordered");
 		[label setBordered: NO];
 		trace ("set selectable");

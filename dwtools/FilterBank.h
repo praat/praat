@@ -2,7 +2,7 @@
 #define _FilterBank_h_
 /* FilterBank.h
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@
 #include "MFCC.h"
 #include "Intensity.h"
 #include "PCA.h"
+#include "Pitch.h"
+#include "Spectrogram_extensions.h"
 
 #define HZTOBARK(x) NUMhertzToBark2(x)
 #define HZTOMEL(x)	NUMhertzToMel2(x)
@@ -47,6 +49,10 @@
 #define FilterBank_HERTZ 1
 #define FilterBank_BARK  2
 #define FilterBank_MEL   3
+
+// FilterBank, BarkFilter, MelFilter are deprecated as op october 2014.
+// New types are BandFilterSpectrogram, BarkSpectrogram and MelSpectrogram.
+// This interface is maintained because older scripts stiil have to work.
 
 Thing_define (FilterBank, Matrix) {
 	// new methods:
@@ -84,6 +90,8 @@ void BarkFilter_drawSekeyHansonFilterFunctions (BarkFilter me, Graphics g,
 
 void FilterBank_drawTimeSlice (I, Graphics g, double t, double fmin, double fmax,
 	double min, double max, const wchar_t *xlabel, int garnish);
+
+void FilterBank_paint (FilterBank me, Graphics g, double xmin, double xmax, double ymin, double ymax, double minimum, double maximum, int garnish);
 
 BarkFilter BarkFilter_create (double tmin, double tmax, long nt, double dt,
 	double t1, double fmin, double fmax, long nf, double df, long f1);
@@ -152,5 +160,48 @@ Intensity FilterBank_to_Intensity (I);
 
 void FilterBank_and_PCA_drawComponent (I, PCA thee, Graphics g, long component, double dblevel,
 	double frequencyOffset, double scale, double tmin, double tmax, double fmin, double fmax);
+
+// Convert old types to new types
+
+MelSpectrogram MelFilter_to_MelSpectrogram (MelFilter me);
+BarkSpectrogram BarkFilter_to_BarkSpectrogram (BarkFilter me);
+Spectrogram FormantFilter_to_Spectrogram (FormantFilter me);
+
+
+MFCC MelFilter_to_MFCC (MelFilter me, long numberOfCoefficients);
+/*
+Calculates the Cosine Transform of the filterbank values.
+*/
+
+MelFilter MFCC_to_MelFilter (MFCC me, long firstCoefficient, long lastCoefficient);
+/*
+Calculates the Inverse CT of cepstral coefficients.
+*/
+
+BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
+	double f1_bark, double fmax_bark, double df_bark);
+/*
+	Filtering with filters on a Bark scale as defined by
+		Andrew Sekey & Brian Hanson (1984), "Improved 1-Bark bandwidth
+		"auditory filter", Jasa 75, 1902-1904.
+	Although not explicitely stated the filter function is defined in the
+	power domain.
+	10 log F(z) = 15.8 + 7.5(z + 0.5) - 17.5 * sqrt(1 + (z + 0.5)^2)
+*/
+
+MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
+	double f1_mel, double fmax_mel, double df_mel);
+
+FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
+	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
+	double minimumPitch, double maximumPitch);
+
+FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
+	double analysisWidth, double dt, double f1_hz, double fmax_hz,
+	double df_hz, double relative_bw);
+
+Sound FilterBanks_crossCorrelate (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+Sound FilterBanks_convolve (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+
 
 #endif /* _FilterBank_h_ */

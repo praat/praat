@@ -173,7 +173,7 @@ NORMAL (L"is:")
 FORMULA (L"#%x = #%A^^-1^ - #%A^^-1^#%t.")
 MAN_END
 
-MAN_BEGIN (L"Band filtering in the frequency domain", L"djmw", 20010404)
+MAN_BEGIN (L"band filtering in the frequency domain", L"djmw", 20010404)
 INTRO (L"We describe how band filtering in the frequency domain is performed.")
 NORMAL (L"We start with a @Sound and end with a filter bank representation of "
 	"this sound. We assume a standard analysis context: a sound divided into "
@@ -255,20 +255,42 @@ LIST_ITEM (L"\\bu the whisker lines outside the rectangle connect %%q25% with %%
 MAN_END
 
 
-MAN_BEGIN (L"BarkFilter", L"djmw", 20010404)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+MAN_BEGIN (L"BarkFilter", L"djmw", 20141023)
+INTRO (L"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by @@BarkSpectrogram@.")
 NORMAL (L"An object of type BarkFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%z, %t), expressed "
-	"in dB's. "
+	"in dB's as 10*log10(power/4e-10)). In the now preferred BarkSpectrogram the power is represented instead of its dB value."
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
 	"and frequencies %z__%j_ (on a Bark scale).")
 ENTRY (L"Inside a BarkFilter")
-NORMAL (L"With @Inspect you will see that this type contains the same "
-	"attributes a @Matrix.")
+NORMAL (L"With @Inspect you will see that this type contains the same attributes a @Matrix object.")
 MAN_END
 
-MAN_BEGIN (L"Bootstrap", L"djmw", 20031103)
-INTRO (L"The bootstrap data points are a random sample of size %n "
+
+MAN_BEGIN (L"BarkSpectrogram", L"djmw", 20141023)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+NORMAL (L"An object of type BarkSpectrogram represents an acoustic time-frequency "
+	"representation of a sound: the power spectral density %P(%z, %t). "
+	"It is sampled into a number of points around equally spaced times %t__%i_ "
+	"and frequencies %z__%j_ (on a Bark scale).")
+NORMAL (L" The bark to hertz transformation is defined as:")
+FORMULA (L"hertz = 650.0 * sinh (bark / 7.0),")
+NORMAL (L"while its inverse is defined as:")
+FORMULA (L"bark = 7.0 * log (hertz/650 + sqrt (1 + (hertz/650)^^2^).")
+ENTRY (L"Inside a BarkSpectrogram")
+NORMAL (L"With @Inspect you will see that this type contains the same attributes a @Matrix object.")
+MAN_END
+
+MAN_BEGIN (L"BarkSpectrogram: Draw Sekey-Hanson auditory filters...", L"djmw", 20141023)
+INTRO (L"A command to draw the auditory filters defined in @@Sekey & Hanson (1984)@.")
+MAN_END
+
+MAN_BEGIN (L"BarkSpectrogram: Paint image...", L"djmw", 20141023)
+INTRO (L"A command to draw the selected @BarkSpectrogram into the @@Picture window@ in shades of grey.")
+MAN_END
+
+MAN_BEGIN (L"bootstrap", L"djmw", 20141101)
+INTRO (L"The bootstrap data set is a random sample of size %n "
 	"drawn %%with% replacement from the sample (%x__1_,...%x__n_). This "
 	"means that the bootstrap data set consists of members of the original "
 	"data set, some appearing zero times, some appearing once, some appearing "
@@ -617,6 +639,15 @@ FORMULA (L"\\Si__%k=1..%numberOfCoefficients_ %c__%k_ %x^^%k^ = \\Si__%k=1.."
 NORMAL (L"We use the recurrence relation for @@Chebyshev polynomials@ to calculate these coefficients.")
 MAN_END
 
+MAN_BEGIN (L"ClassificationTable: To Confusion...", L"djmw", 20141030)
+INTRO (L"A command to create a @Confusion object from the selected @ClassificationTable object.")
+ENTRY (L"Settings")
+TAG (L"##Only class labels#")
+DEFINITION (L"defines whether the class labels from the ClassificationTable object will be used not only as response labels but also as stimulus labels. If checked the resulting Confusion will always have equal stimulus and response labels. If not checked the stimulus labels will be determined from the row labels of the ClassificationTable object. ")
+ENTRY (L"Behaviour")
+NORMAL (L"In obtaining a Confusion object from a ClassificationTable we explicitly use its row labels as stimulus labels.")
+MAN_END
+
 MAN_BEGIN (L"ClassificationTable", L"djmw", 19990525)
 INTRO (L"One of the @@types of objects@ in Praat.")
 NORMAL (L"An object of type ClassificationTable represents the result of a classification experiment. "
@@ -742,7 +773,7 @@ CODE (L"       u    i    a   ! The response labels")
 CODE (L" u     6    2    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
 CODE (L" a     1    4    4   ! Responses on stimulus  a")
-NORMAL (L"The command ##Increase: \"u\", \"i\"# results in:")
+NORMAL (L"The command  ##Increase: \"u\", \"i\"#  results in:")
 CODE (L"       u    i    a   ! The responses")
 CODE (L" u     6    3    1   ! Responses on stimulus  u,")
 CODE (L" i     3    4    2   ! Responses on stimulus  i")
@@ -865,6 +896,17 @@ INTRO (L"A @@query@ to ask the selected @Confusion matrix for the fraction of "
 NORMAL (L"The \"fraction correct\" is defined as the quotient of the number "
 	"of correct classifications and the sum of the entries in the matrix.")
 NORMAL (L"Correct classifications have identical row and column labels.")
+MAN_END
+
+MAN_BEGIN (L"Confusion & ClassificationTable: Increase confusion count", L"djmw", 201411101)
+INTRO (L"Increases the contents of cell(s) in the selected @@Confusion@. The cells to increase are determined by the selected "
+	"@ClassificationTable.")
+ENTRY (L"Behaviour")
+NORMAL (L"For each row in the ClassificationTable object the contents of one cell in the Confusion we be increased by one. "
+	"This cell is determined as follows: we start by finding the label of the column wich the largest number in it. "
+	"This label is defined as the ##response label#. We use the corresponding row label as the ##stimulus label#. The content "
+	"of the cell in the Confusion object whose row and column are labeled with ##stimulus label# and ##response label#, "
+	"respectively, is increased by one.")
 MAN_END
 
 MAN_BEGIN (L"Confusion: To TableOfReal (marginals)", L"djmw", 20011031)
@@ -1487,7 +1529,7 @@ LIST_ITEM (L"\\bu Draw eigenvector...")
 LIST_ITEM (L"\\bu @@Discriminant: Draw sigma ellipses...|Draw sigma ellipses...@")
 MAN_END
 
-MAN_BEGIN (L"Discriminant analysis", L"djmw", 20140509)
+MAN_BEGIN (L"Discriminant analysis", L"djmw", 20141101)
 INTRO (L"This tutorial will show you how to perform discriminant analysis with P\\s{RAAT}")
 NORMAL (L"As an example, we will use the dataset from @@Pols et al. (1973)@ "
 	"with the frequencies and levels of the first three formants from the 12 "
@@ -1579,8 +1621,48 @@ NORMAL (L"In general you would separate your data into two independent sets, "
 	"\\s{TRAIN} and \\s{TEST}. You would use \\s{TRAIN} to train the "
 	"discriminant classifier and \\s{TEST} to test how well it classifies. "
 	"Several possibilities for splitting a dataset into two sets exist. "
-	"We mention the @@Jackknife|jackknife@ (\"leave-one-out\") and the "
-	"@@Bootstrap|bootstrap@ methods (\"resampling\").")
+	"We mention the @@jackknife@ (\"leave-one-out\") and the "
+	"@@bootstrap@ methods (\"resampling\").")
+ENTRY (L"5.1 Jacknife classification")
+NORMAL (L"The following script summarizes #jackknife classification of the dataset:")
+CODE (L"selectObject: table")
+CODE (L"numberOfRows = Get number of rows")
+CODE (L"for irow to numberOfRows")
+CODE (L"  selectObject: table")
+CODE (L"  rowi = Extract rows where: \"row = irow\"")
+CODE (L"  selectObject: table")
+CODE (L"  rest = Extract rows where: \"row <> .irow\"")
+CODE (L"  discriminant = To Discriminant")
+CODE (L"  plusObject: rowi")
+CODE (L"  classification = To ClassificationTable: \"yes\", \"yes\"")
+CODE (L"    if irow = 1")
+CODE (L"    confusion = To Confusion: \"yes\"")
+CODE (L"  else")
+CODE (L"    plusObject: confusion")
+CODE (L"    Increase confusion count")
+CODE (L"  endif")
+CODE (L"  removeObject: rowi, rest, discriminant, classification")
+CODE (L"endfor")
+CODE (L"selectObject: confusion")
+CODE (L"fractionCorrect = Get fraction correct")
+CODE (L"appendInfoLine: fractionCorrect, \" (= fraction correct, jackknifed \", numberOfRows, \" times).\"")
+CODE (L"removeObject: confusion")
+ENTRY (L"5.2 Bootstrap classification")
+NORMAL (L"The following script summarizes bootstrap classification.")
+CODE (L"fractionCorrect = 0")
+CODE (L"for i to numberOfBootstraps")
+CODE (L"  selectObject: table")
+CODE (L"  resampled = To TableOfReal (bootstrap)")
+CODE (L"  discriminant = To Discriminant")
+CODE (L"  plusObject: resampled")
+CODE (L"  classification = To ClassificationTable: \"yes\", \"yes\"")
+CODE (L"  confusion = To Confusion: \"yes\"")
+CODE (L"  fc = Get fraction correct")
+CODE (L"  fractionCorrect += fc")
+CODE (L"  removeObject: resampled, discriminant, classification, confusion")
+CODE (L"endfor")
+CODE (L"fractionCorrect /= numberOfBootstraps")
+CODE (L"appendInfoLine: fractionCorrect, \" (= fraction correct, bootstrapped \", numberOfBootstraps, \" times).\"")
 MAN_END
 
 MAN_BEGIN (L"Discriminant: Draw sigma ellipses...", L"djmw", 20040407)
@@ -2207,11 +2289,11 @@ MAN_END
 MAN_BEGIN (L"FilterBank: Get frequency in mel...", L"djmw", 20030901)
 MAN_END
 
-MAN_BEGIN (L"FormantFilter", L"djmw", 20010404)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+MAN_BEGIN (L"FormantFilter", L"djmw", 20141022)
+INTRO (L"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by @@Spectrogram@.")
 NORMAL (L"An object of type FormantFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t), expressed "
-	"in dB's. "
+	"in dB as 10*log10(power/4e-10)). In the now preferred Spectrogram the power is represented instead of its dB value. "
 	"It is sampled into a number of points around equally spaced times %t__%i_ "
 	"and frequencies %f__%j_ (on a linear frequency scale).")
 ENTRY (L"Inside a FormantFilter")
@@ -2287,9 +2369,8 @@ NORMAL (L"An object of type ISpline represents a linear combination of basis "
 FORMULA (L"ISpline (%x) = \\Si__%k=1..%numberOfCoefficients_ %c__%k_ %ispline__%k_(%x)")
 MAN_END
 
-MAN_BEGIN (L"Jackknife", L"djmw", 20031103)
-INTRO (L"A technique for estimating the bias and standard deviation of an "
-	"estimate.")
+MAN_BEGIN (L"jackknife", L"djmw", 20141101)
+INTRO (L"A technique for estimating the bias and standard deviation of an estimate.")
 NORMAL (L"Suppose we have a sample #%x = (%x__1_, %x__2_,...%x__n_) and wish to estimate "
 	"the bias and standard error of an estimator \\Te. The jackknife "
 	"focuses on the samples that leave out one observation at a time: "
@@ -2375,8 +2456,8 @@ NORMAL (L"Singular value decomposition with backsubstitution. "
 NORMAL (L"See for more details: @@Golub & van Loan (1996)@ chapters 2 and 3.")
 MAN_END
 
-MAN_BEGIN (L"MelFilter", L"djmw", 20120724)
-INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+MAN_BEGIN (L"MelFilter", L"djmw", 20141022)
+INTRO (L"A #deprecated @@types of objects|type of object@ in P\\s{RAAT}. It is replaced by the @@MelSpectrogram@.")
 NORMAL (L"An object of type MelFilter represents an acoustic time-frequency "
 	"representation of a sound: the power spectral density %P(%f, %t), "
 	"expressed in dB's. "
@@ -2386,20 +2467,36 @@ NORMAL (L"The frequency in mels is:")
 FORMULA (L"mels = 2595 * log10 (1 + hertz / 700),")
 NORMAL (L"and its inverse is:")
 FORMULA (L"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
-ENTRY (L"Inside a MelFilter")
+MAN_END
+
+MAN_BEGIN (L"MelSpectrogram", L"djmw", 20141022)
+INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
+NORMAL (L"An object of type MelSpectrogram represents an acoustic time-frequency "
+	"representation of a sound: the power spectral density %P(%f, %t)."
+	"It is sampled into a number of points around equally spaced times %t__%i_ "
+	"and frequencies %f__%j_ (on a Mel frequency scale).")
+NORMAL (L"The mel frequency scale is defined as:")
+FORMULA (L"mels = 2595 * log10 (1 + hertz / 700),")
+NORMAL (L"and its inverse is:")
+FORMULA (L"hertz = 700 * (10.0^^mel / 2595.0^ - 1).")
+ENTRY (L"Inside a MelSpectrogram")
 NORMAL (L"With @Inspect you will see that this type contains the same "
 	"attributes a @Matrix.")
 MAN_END
 
-MAN_BEGIN (L"MelFilter: To MFCC...", L"djmw", 20130221)
-INTRO (L"A command to create a @MFCC object from each selected @MelFilter "
+MAN_BEGIN (L"MelSpectrogram: Paint image...", L"djmw", 20141023)
+INTRO (L"A command to draw the selected @MelSpectrogram into the @@Picture window@ in shades of grey.")
+MAN_END
+
+MAN_BEGIN (L"MelSpectrogram: To MFCC...", L"djmw", 20141023)
+INTRO (L"A command to create a @MFCC object from each selected @MelSpectrogram "
 	"object.")
-NORMAL (L"Mel frequency cepstral coefficients result from the Discrete Cosine "
-	"Transform of the filterbank spectrum (in dB). The following formula "
-	"shows the relation:")
+NORMAL (L"Mel frequency cepstral coefficients %c__%k_ in each frame of the MFCC object result from the output of a Discrete Cosine "
+	"Transform on spectral values %P__%j_ in the corresponding frame of the MelSpectrogram. The following formula "
+	"shows the relation between the values in each frame:")
 FORMULA (L"%c__%k-1_ = \\Si__%j=1_^^%N^ %P__%j_ cos (\\pi(%k-1)(%j-0.5)/%N)),")
-NORMAL (L"where %N represents the number of filters and %P__%j_ the power in dB "
-	"in the %j^^%th^ filter (%k runs from 1 to %N).")
+NORMAL (L"where %N represents the number of spectral values and %P__%j_ the power in dB "
+	"of the %j^^%th^ spectral value (%k runs from 1 to %N).")
 NORMAL (L"This transformation was first used by @@Davis & Mermelstein (1980)@.")
 MAN_END
 
@@ -3429,27 +3526,36 @@ NORMAL (L"Rodents produce sounds with frequencies far outside the human audible 
 	"rodents frequencies in the interval from 54000 Hz to 76050 Hz will theredore be mapped to the frequency interval between 0 and 22050 Hz. ")
 MAN_END
 
-MAN_BEGIN (L"Sound: To BarkFilter...", L"djmw", 20010404)
-INTRO (L"A command that creates a @BarkFilter object from every selected "
+MAN_BEGIN (L"Sound: To BarkSpectrogram...", L"djmw", 20141023)
+INTRO (L"A command that creates a @BarkSpectrogram object from every selected "
 	"@Sound object by @@band filtering in the frequency domain@ with a "
 	"bank of filters.")
-NORMAL (L"The filter functions used are:")
+NORMAL (L"The auditory filter functions used are defined as:")
 FORMULA (L"10 log %#H(%z) = 7 - 7.5 * (%z__%c_ - %z - 0.215) - 17.5 * \\Vr "
 	"(0.196 + (%z__%c_ - %z - 0.215)^2)")
 NORMAL (L"where %z__%c_ is the central (resonance) frequency of the filter in Bark. "
-	"The bandwidths of these filters are constant and equal 1 Bark.")
+	"The bandwidths of these filters are constant and equal 1 Bark. ")
+NORMAL (L"The auditory filters are defined in @@Sekey & Hanson (1984)@. You can draw these filters from "
+	"a BarkSpectrogram object by selecting @@BarkSpectrogram: Draw Sekey-Hanson auditory filters...@.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To FormantFilter...", L"djmw", 20010404)
-INTRO (L"A command that creates a @FormantFilter object from every selected "
-	"@Sound object by @@band filtering in the frequency domain@ with a "
-	"bank of filters whose bandwidths depend on the pitch of the signal.")
+MAN_BEGIN (L"Sound: To FormantFilter...", L"djmw", 20141024)
+INTRO (L"A #deprecated command that creates a @FormantFilter object from every selected @Sound object by "
+	"@@band filtering in the frequency domain@ with a bank of filters whose bandwidths depend on the pitch of the signal.")
 NORMAL (L"The analysis proceeds in two steps:")
-LIST_ITEM (L"1. We perform a pitch analysis (see @@Sound: To Pitch...@ for "
-	"details).")
+LIST_ITEM (L"1. We perform a pitch analysis (see @@Sound: To Pitch...@ for details).")
+LIST_ITEM (L"2. We perform a filter bank analysis on a linear frequency scale. The bandwidth of the filters depends on "
+	"the measured pitch (see @@Sound & Pitch: To Spectrogram...@ for details).")
+MAN_END
+
+MAN_BEGIN (L"Sound: To Spectrogram (pitch-dependent)...", L"djmw", 20141024)
+INTRO (L"A command that creates a @Spectrogram object from every selected "
+	"@Sound object by @@band filtering in the frequency domain@ with a "
+	"bank of formant filters whose bandwidths vary with the local pitch of the signal.")
+NORMAL (L"The analysis proceeds in two steps:")
+LIST_ITEM (L"1. We perform a pitch analysis (see @@Sound: To Pitch...@ for details).")
 LIST_ITEM (L"2. We perform a filter bank analysis on a linear frequency scale. "
-	"The bandwidth of the filters depends on the measured pitch (see @@Sound & "
-	"Pitch: To FormantFilter...@ for details).")
+	"The bandwidth of the filters depends on the measured pitch (see @@Sound & Pitch: To Spectrogram...@ for details).")
 MAN_END
 
 MAN_BEGIN (L"Sound: Paint where...", L"djmw", 20140509)
@@ -3646,10 +3752,10 @@ TAG (L"%%Trim label%,")
 DEFINITION (L"determines the label that the trimmed intervals in the TextGrid will get.")
 MAN_END
 
-MAN_BEGIN (L"Sound & Pitch: To FormantFilter...", L"djmw", 20010404)
-INTRO (L"A command that creates a @FormantFilter object from the selected "
+MAN_BEGIN (L"Sound & Pitch: To Spectrogram...", L"djmw", 20141024)
+INTRO (L"A command that creates a @Spectrogram object from the selected "
 	"@Sound and @Pitch objects by @@band filtering in the frequency domain@ with a "
-	"bank of filters whose bandwidths depend on the Pitch.")
+	"bank of filters whose bandwidths depend on the local pitch.")
 NORMAL (L"The filter functions used are:")
 FORMULA (L"%#H(%f, %F__0_) = 1 / (((%f__%c_^^2^ - %f^2) /%f\\.c%B(%F__0_)))^2 + 1),")
 NORMAL (L"where %f__%c_ is the central (resonance) frequency of the filter. "
@@ -3659,20 +3765,24 @@ NORMAL (L"where %F__0_ is the fundamental frequency as determined from the Pitch
 	"object. Whenever the value of %F__0_ is undefined, a value of 100 Hz is taken.")
 MAN_END
 
-MAN_BEGIN (L"Sound: To MelFilter...", L"djmw", 20010404)
-INTRO (L"A command that creates a @MelFilter object from every selected "
+MAN_BEGIN (L"Sound: To MelFilter...", L"djmw", 20141022)
+INTRO (L"A deprecated command. Use @@Sound: To MelSpectrogram...@ instead.")
+MAN_END
+
+MAN_BEGIN (L"Sound: To MelSpectrogram...", L"djmw", 20141022)
+INTRO (L"A command that creates a @MelSpectrogram object from every selected "
 	"@Sound object by @@band filtering in the frequency domain@ with a "
-	"bank of filters.")
-NORMAL (L"The filter functions used are triangular in shape on a %linear "
-	"frequency scale. The filter function depends on three parameters, the "
+	"set of triangular filters.")
+NORMAL (L"The filter functions used are all triangular in shape on a %mel "
+	"frequency scale. Each filter function depends on three parameters, the "
 	"lower frequency %f__%l_, the central frequency %f__%c_ and the higher "
 	"frequency %f__%h_. "
 	"On a %mel scale, the distances %f__%c_-%f__%l_ and %f__%h_-%f__%c_ "
-	"are the same for each filter and are equal to the distance between the "
-	"%f__%c_'s of successive filters. The filter function is:" )
+	"are equal for each filter. The filter function is as follows:" )
 FORMULA (L"%#H(%f) = 0 for %f \\<_ %f__%l_ and %f \\>_ %f__%h_")
 FORMULA (L"%#H(%f) = (%f - %f__%l_) / (%f__%c_ - %f__%l_) for %f__%l_ \\<_ %f \\<_ %f__%c_")
 FORMULA (L"%#H(%f) = (%f__%h_ - %f) / (%f__%h_ - %f__%c_) for %f__%c_ \\<_ %f \\<_ %f__%h_")
+NORMAL (L"In general the number of filter values stored in each frame of the MelSpectrogram is an order of magnitude smaller than the number of sound samples in the corresponding analysis frame.")
 MAN_END
 
 MAN_BEGIN (L"Sound: To Pitch (shs)...", L"djmw", 19970402)
@@ -4939,6 +5049,11 @@ MAN_END
 MAN_BEGIN (L"Sakoe & Chiba (1978)", L"djmw", 20050302)
 NORMAL (L"H. Sakoe & S. Chiba (1978): \"Dynamic programming algorithm optimization for spoken word recognition.\" "
 	"%%Transactions on ASSP% #26: 43\\--49.")
+MAN_END
+
+MAN_BEGIN (L"Sekey & Hanson (1984)", L"djmw", 20050302)
+NORMAL (L"A. Sekey & B.A. Hanson (1984): \"Improved 1-Bark bandwidth auditory filter.\" "
+	"%%Journal of the Acoustical Society of America% #75: 1902\\--1904.")
 MAN_END
 
 MAN_BEGIN (L"Schott (2001)", L"djmw", 20090629)

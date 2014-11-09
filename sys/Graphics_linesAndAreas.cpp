@@ -209,6 +209,7 @@ void structGraphicsScreen :: v_polyline (long numberOfPoints, double *xyDC, bool
 		GraphicsQuartz_initDraw (this);
 		quartzPrepareLine (this);
 		CGContextBeginPath (our d_macGraphicsContext);
+		trace ("starting point %.17g %.17g", xyDC [0], xyDC [1]);
 		CGContextMoveToPoint (our d_macGraphicsContext, xyDC [0], xyDC [1]);   // starts a new subpath
 		for (long i = 1; i < numberOfPoints; i ++) {
 			CGContextAddLineToPoint (our d_macGraphicsContext, xyDC [i + i], xyDC [i + i + 1]);
@@ -762,6 +763,7 @@ void Graphics_polyline_closed (Graphics me, long numberOfPoints, double *xWC, do
 
 void Graphics_line (Graphics me, double x1WC, double y1WC, double x2WC, double y2WC) {
 	double xyDC [4];
+	trace ("%.17g %.17g %.17g %.17g", x1WC, y1WC, x2WC, y2WC);
 	xyDC [0] = wdx (x1WC);
 	xyDC [1] = wdy (y1WC);
 	xyDC [2] = wdx (x2WC);

@@ -58,7 +58,9 @@ static int _GuiRadioButton_getPosition (GuiRadioButton me) {
 	}
 	static void _GuiGtkRadioButton_handleToggle (GuiObject widget, gpointer void_me) {
 		iam (GuiRadioButton);
+		trace ("enter");
 		if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget))) {
+			trace ("on");
 			if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
 				struct structGuiRadioButtonEvent event = { me };
 				event. position = _GuiRadioButton_getPosition (me);
@@ -302,6 +304,7 @@ bool structGuiRadioButton :: f_getValue () {
 }
 
 void structGuiRadioButton :: f_set () {
+	trace ("enter");
 	GuiControlBlockValueChangedCallbacks block (this);   // the value should be set without calling the valueChanged callback (crucial on GTK)
 	#if gtk
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (d_widget), TRUE);
@@ -339,6 +342,7 @@ void structGuiRadioButton :: f_set () {
 			SetControlValue (sibling -> d_widget -> nat.control.handle, false);
 		}
 	#endif
+	trace ("exit");
 }
 
 /* End of file GuiRadioButton.cpp */

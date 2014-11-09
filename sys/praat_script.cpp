@@ -45,6 +45,15 @@ static int praat_findObjectFromString (Interpreter interpreter, const wchar_t *s
 				if (wcsequ (className, Thing_className ((Thing) OBJECT)) && wcsequ (givenName, object -> name))
 					return IOBJECT;
 			}
+			/*
+			 * No object with that name. Perhaps the class name was wrong?
+			 */
+			ClassInfo klas = Thing_classFromClassName (className);
+			WHERE_DOWN (1) {
+				Data object = (Data) OBJECT;
+				if (wcsequ (klas -> className, Thing_className ((Thing) OBJECT)) && wcsequ (givenName, object -> name))
+					return IOBJECT;
+			}
 			Melder_throw ("No object with that name.");
 		} else {
 			/*
@@ -189,12 +198,15 @@ int praat_executeCommand (Interpreter interpreter, wchar_t *command) {
 		} else if (wcsnequ (command, L"clearinfo", 9)) {
 			Melder_clearInfo ();
 		} else if (wcsnequ (command, L"print ", 6)) {
-			Melder_print (command + 6);
+			MelderInfo_write (command + 6);
+			MelderInfo_drain ();
 		} else if (wcsnequ (command, L"printtab", 8)) {
-			Melder_print (L"\t");
+			MelderInfo_write (L"\t");
+			MelderInfo_drain ();
 		} else if (wcsnequ (command, L"printline", 9)) {
-			if (command [9] == ' ') Melder_print (command + 10);
-			Melder_print (L"\n");
+			if (command [9] == ' ') MelderInfo_write (command + 10);
+			MelderInfo_write (L"\n");
+			MelderInfo_drain ();
 		} else if (wcsnequ (command, L"fappendinfo ", 12)) {
 			if (theCurrentPraatObjects != & theForegroundPraatObjects)
 				Melder_throw ("The script command \"fappendinfo\" is not available inside pictures.");

@@ -34,10 +34,12 @@ ClassificationTable ClassificationTable_create (long numberOfRows, long numberOf
 Categories ClassificationTable_to_Categories_maximumProbability (ClassificationTable me);
 Strings ClassificationTable_to_Strings_maximumProbability (ClassificationTable me);
 
-Confusion ClassificationTable_to_Confusion (ClassificationTable me);
+Confusion ClassificationTable_to_Confusion (ClassificationTable me, int onlyClassLabels);
 
 /* Correlations between the classes (columns) */
 Correlation ClassificationTable_to_Correlation_columns (ClassificationTable me);
+
+void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTable thee);
 
 #endif /* _ClassificationTable_h_ */
 

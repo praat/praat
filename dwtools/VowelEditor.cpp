@@ -489,6 +489,7 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 	double glw = Graphics_inqLineWidth (g), x1, x1p, y1, y1p, t1;
 	Graphics_Colour colour = Graphics_inqColour (g);
 	long nfp = my points -> size;
+	trace ("number of points %ld", nfp);
 	FormantPoint fp = (FormantPoint) my points -> item[1];
 	FormantPoint fpn = (FormantPoint) my points -> item[nfp];
 	double tm, markLength = 0.01;
@@ -515,19 +516,22 @@ static void FormantTier_drawF1F2Trajectory (FormantTier me, Graphics g, double f
 			double fraction = (tm - t1) / (t2 - t1);
 			double dx = x2 - x1, dy = y2 - y1;
 			double xm = x1 + fraction * dx, ym = y1 + fraction * dy;
-			double xl1 = dy * markLength / sqrt (dx * dx + dy * dy), xl2 = - xl1;
-			double yl1 = dx * markLength / sqrt (dx * dx + dy * dy), yl2 = - yl1;
+			double d = sqrt (dx * dx + dy * dy);
+			if (d > 0.0) {
+				double xl1 = dy * markLength / d, xl2 = - xl1;
+				double yl1 = dx * markLength / d, yl2 = - yl1;
 
-			if (dx * dy > 0) {
-				xl1 = -fabs (xl1); yl1 = fabs (yl1);
-				xl2 = fabs (xl1); yl2 = -fabs (yl1);
-			} else if (dx * dy < 0) {
-				xl1 = -fabs (xl1); yl1 = -fabs (yl1);
-				xl2 = fabs (xl1); yl2 = fabs (yl1);
+				if (dx * dy > 0) {
+					xl1 = -fabs (xl1); yl1 = fabs (yl1);
+					xl2 = fabs (xl1); yl2 = -fabs (yl1);
+				} else if (dx * dy < 0) {
+					xl1 = -fabs (xl1); yl1 = -fabs (yl1);
+					xl2 = fabs (xl1); yl2 = fabs (yl1);
+				}
+				Graphics_setLineWidth (g, 1);
+				trace ("%.17g %.17g %.17g %.17g %.17g %.17g", xm, ym, xl1, xl2, yl1, yl2);
+				Graphics_line (g, xm + xl1, ym + yl1, xm + xl2, ym + yl2);
 			}
-			Graphics_setLineWidth (g, 1);
-			Graphics_line (g, xm + xl1, ym + yl1, xm + xl2, ym + yl2);
-
 			imark++;
 		}
 		x1p = x1; y1p = y1;
@@ -1281,9 +1285,12 @@ static void gui_button_cb_reverse (I, GuiButtonEvent event) {
 /* Main drawing routine: it's been called after every call to Graphics_updateWs (g) */
 static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	iam (VowelEditor);
+	Melder_assert (me != NULL);
 	(void) event;
+	Melder_assert (my vowel != NULL);
 	double ts = my vowel -> xmin, te = my vowel -> xmax;
 	FormantTier ft = (FormantTier) my vowel -> ft;
+	Melder_assert (ft != NULL);
 	static MelderString statusInfo = { 0 };
 	if (my g == 0) {
 		return;    // Could be the case in the very beginning.
@@ -1310,6 +1317,9 @@ static void gui_drawingarea_cb_expose (I, GuiDrawingAreaExposeEvent event) {
 	Graphics_setGrey (my g, 0);
 
 	VowelEditor_drawBackground (me, my g);
+	Melder_assert (me != NULL);
+	Melder_assert (my vowel != NULL);
+	Melder_assert (my vowel -> ft != NULL);
 	FormantTier_drawF1F2Trajectory (my vowel -> ft, my g, my f1min, my f1max, my f2min, my f2max, my markTraceEvery, my width);
 }
 
@@ -1330,6 +1340,7 @@ static void gui_drawingarea_cb_resize__ (I, GuiDrawingAreaResizeEvent event) {
 
 static void gui_drawingarea_cb_resize (I, GuiDrawingAreaResizeEvent event) {
 	iam (VowelEditor);
+	Melder_assert (me != NULL);
 	if (my g == NULL) {
 		return;    // Could be the case in the very beginning.
 	}
@@ -1603,12 +1614,15 @@ static Sound VowelEditor_createTarget (VowelEditor me) {
 
 VowelEditor VowelEditor_create (const wchar_t *title, Data data) {
 	try {
+		trace ("enter");
 		autoVowelEditor me = Thing_new (VowelEditor);
+		Melder_assert (me.peek() != NULL);
 		Editor_init (me.peek(), 0, 0, prefs.shellWidth, prefs.shellHeight, title, data);
 #if motif
 		Melder_assert (XtWindow (my drawingArea -> d_widget));
 #endif
 		my g = Graphics_create_xmdrawingarea (my drawingArea);
+		Melder_assert (my g != NULL);
 		Graphics_setFontSize (my g, 12);
 		my setPublicationCallback (cb_publish, NULL);
 
@@ -1655,6 +1669,7 @@ VowelEditor VowelEditor_create (const wchar_t *title, Data data) {
 		//event.widget = my drawingArea;
 		//gui_drawingarea_cb_resize (me, & event);
 		updateWidgets (me.peek());
+		trace ("exit");
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("VowelEditor not created.");

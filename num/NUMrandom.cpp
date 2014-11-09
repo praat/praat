@@ -159,7 +159,7 @@ void NUMrandom_State :: init_by_array64 (uint64_t init_key [], unsigned int key_
 static bool theInited = false;
 void NUMrandom_init () {
 	for (int threadNumber = 0; threadNumber <= 16; threadNumber ++) {
-		const int numberOfKeys = 5;
+		const int numberOfKeys = 6;
 		uint64_t keys [numberOfKeys];
 		keys [0] = round (1e6 * Melder_clock ());   // unique between boots of the same computer
 		keys [1] = UINT64_C (7320321686725470078) + (uint64_t) threadNumber;   // unique between threads in the same process
@@ -184,9 +184,9 @@ void NUMrandom_init () {
 			default: Melder_fatal ("Thread number too high.");
 		}
 		keys [4] = getpid ();   // unique between processes that run simultaneously on the same computer
-		/*
-			TODO: need to add a seed that is unique between computers. gethostid?
-		*/
+		#ifndef _WIN32
+		keys [5] = gethostid ();   // unique between computers
+		#endif
 		states [threadNumber]. init_by_array64 (keys, numberOfKeys);
 	}
 	theInited = true;

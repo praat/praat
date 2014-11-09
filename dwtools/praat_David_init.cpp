@@ -86,6 +86,7 @@
 #include "Excitations.h"
 #include "espeakdata_FileInMemory.h"
 #include "FileInMemory.h"
+#include "FilterBank.h"
 #include "Formula.h"
 #include "FormantGridEditor.h"
 #include "DataModeler.h"
@@ -123,10 +124,9 @@
 #include "CCs_to_DTW.h"
 #include "Discriminant_Pattern_Categories.h"
 #include "DTW_and_TextGrid.h"
-#include "MelFilter_and_MFCC.h"
 #include "Permutation_and_Index.h"
 #include "Pitch_extensions.h"
-#include "Sound_and_FilterBank.h"
+#include "Sound_and_Spectrogram_extensions.h"
 #include "Sound_to_Pitch2.h"
 #include "Sound_to_SPINET.h"
 #include "TableOfReal_and_SVD.h"
@@ -149,7 +149,7 @@ void praat_SSCP_as_TableOfReal_init (ClassInfo klas);
 void praat_CC_init (ClassInfo klas);
 void DTW_constraints_addCommonFields (void *dia);
 void DTW_constraints_getCommonFields (void *dia, int *begin, int *end, int *slope);
-void praat_Matrixft_query_init (ClassInfo klas);
+void praat_BandFilterSpectrogram_query_init (ClassInfo klas);
 int praat_Fon_formula (UiForm dia, Interpreter interpreter);
 void praat_EditDistanceTable_as_TableOfReal_init (ClassInfo klas);
 
@@ -172,10 +172,34 @@ DIRECT (Activation_to_Matrix)
 	}
 END
 
+/********************** BandFilterSpectrogram *******************************************/
+
+FORM (BandFilterSpectrogram_drawFrequencyScale, L"", L"")
+	REAL (L"left Horizontal frequency range (Hz)", L"0.0")
+	REAL (L"right Horizontal frequency range (Hz)", L"0.0")
+	REAL (L"left Vertical frequency range (mel)", L"0.0")
+	REAL (L"right Vertical frequency range (mel)", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (BandFilterSpectrogram);
+		BandFilterSpectrogram_drawFrequencyScale (me, GRAPHICS, GET_REAL (L"left Horizontal frequency range"), 
+			GET_REAL (L"right Horizontal frequency range"),
+			GET_REAL (L"left Vertical frequency range"), GET_REAL (L"right Vertical frequency range"),
+			GET_INTEGER (L"Garnish"));
+	}
+END
+
 /********************** BarkFilter *******************************************/
 
 DIRECT (BarkFilter_help)
 	Melder_help (L"BarkFilter");
+END
+
+DIRECT (BarkSpectrogram_help)
+	Melder_help (L"BarkSpectrogram");
 END
 
 FORM (BarkFilter_drawSpectrum, L"BarkFilter: Draw spectrum (slice)", L"FilterBank: Draw spectrum (slice)...")
@@ -221,6 +245,73 @@ DO
 			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
 	}
 END
+
+FORM (BarkSpectrogram_drawSekeyHansonAuditoryFilters, L"BarkSpectrogram: Draw Sekey-Hanson auditory filters", L"BarkSpectrogram: Draw Sekey-Hanson auditory filters...")
+	INTEGER (L"left Filter range", L"0")
+	INTEGER (L"right Filter range", L"0")
+	RADIO (L"Frequency scale", 2)
+	RADIOBUTTON (L"Hertz")
+	RADIOBUTTON (L"Bark")
+	REAL (L"left Frequency range", L"0.0")
+	REAL (L"right Frequency range", L"0.0")
+	BOOLEAN (L"Amplitude scale in dB", 1)
+	REAL (L"left Amplitude range", L"0.0")
+	REAL (L"right Amplitude range", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (BarkSpectrogram);
+		bool xIsHertz = GET_INTEGER (L"Frequency scale") == 1;
+		BarkSpectrogram_drawSekeyHansonFilterFunctions (me, GRAPHICS, xIsHertz,
+			GET_INTEGER (L"left Filter range"), GET_INTEGER (L"right Filter range"),
+			GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+			GET_INTEGER (L"Amplitude scale in dB"), GET_REAL (L"left Amplitude range"),
+			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (BarkFilter_paint, L"FilterBank: Paint", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Frequency range (bark)", L"0.0")
+	REAL (L"right Frequency range (bark)", L"0.0")
+	REAL (L"left Amplitude range", L"0.0")
+	REAL (L"right Amplitude range", L"0.0")
+	BOOLEAN (L"Garnish", 0)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Matrix);
+		FilterBank_paint ((FilterBank) me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+		GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+DIRECT (BarkFilter_to_BarkSpectrogram)
+	LOOP {
+		iam (BarkFilter);
+		praat_new (BarkFilter_to_BarkSpectrogram (me), my name);
+	}
+END
+
+DIRECT (MelFilter_to_MelSpectrogram)
+	LOOP {
+		iam (MelFilter);
+		praat_new (MelFilter_to_MelSpectrogram (me), my name);
+	}
+END
+
+DIRECT (FormantFilter_to_Spectrogram)
+	LOOP {
+		iam (FormantFilter);
+		praat_new (FormantFilter_to_Spectrogram (me), my name);
+	}
+END
+
 /********************** Categories  ****************************************/
 
 FORM (Categories_append, L"Categories: Append 1 category", L"Categories: Append 1 category...")
@@ -626,10 +717,43 @@ DIRECT (ClassificationTable_help)
 	Melder_help (L"ClassificationTable");
 END
 
-DIRECT (ClassificationTable_to_Confusion)
+FORM (ClassificationTable_getClassIndexAtMaximumInRow, L"ClassificationTable: Get class index at maximum in row", 0)
+	NATURAL (L"Row number", L"1")
+	OK
+DO
 	LOOP {
 		iam (ClassificationTable);
-		praat_new (ClassificationTable_to_Confusion (me), 0);
+		long classIndex = TableOfReal_getColumnIndexAtMaximumInRow (me, GET_INTEGER (L"Row number"));
+		Melder_information (Melder_integer (classIndex));
+	}
+END
+
+FORM (ClassificationTable_getClassLabelAtMaximumInRow, L"ClassificationTable: Get class label at maximum in row", 0)
+	NATURAL (L"Row number", L"1")
+	OK
+DO
+	LOOP {
+		iam (ClassificationTable);
+		const wchar_t *classLabel = TableOfReal_getColumnLabelAtMaximumInRow (me, GET_INTEGER (L"Row number"));
+		Melder_information (classLabel);
+	}
+END
+
+// deprecated 2014
+DIRECT (ClassificationTable_to_Confusion_old)
+	LOOP {
+		iam (ClassificationTable);
+		praat_new (ClassificationTable_to_Confusion (me, 0), my name);
+	}
+END
+
+FORM (ClassificationTable_to_Confusion, L"ClassificationTable: To Confusion", L"ClassificationTable: To Confusion...")
+	BOOLEAN (L"Only class labels", 1)
+	OK
+DO
+	LOOP {
+		iam (ClassificationTable);
+		praat_new (ClassificationTable_to_Confusion (me, GET_INTEGER (L"Only class labels")), my name);
 	}
 END
 
@@ -807,6 +931,12 @@ DIRECT (Confusion_getFractionCorrect)
 		Confusion_getFractionCorrect (me, &f, &n);
 		Melder_information (Melder_double (f), L" (fraction correct)");
 	}
+END
+
+DIRECT (Confusion_and_ClassificationTable_increase)
+	Confusion me = FIRST (Confusion);
+	ClassificationTable thee = FIRST (ClassificationTable);
+	Confusion_and_ClassificationTable_increase (me, thee);
 END
 
 /******************* Confusion & Matrix *************************************/
@@ -2314,8 +2444,8 @@ FORM (Eigen_and_Matrix_project, L"Eigen & Matrix: Project", L"Eigen & Matrix: Pr
 	OK
 DO
 	Eigen me = FIRST_GENERIC (Eigen);
-	Matrix mat = FIRST_GENERIC (Matrix);
-	praat_new (Eigen_and_Matrix_project (me, mat, GET_INTEGER (L"Number of dimensions")), my name, L"_", mat->name);
+	Matrix thee = FIRST_GENERIC (Matrix);
+	praat_new (Eigen_and_Matrix_project (me, thee, GET_INTEGER (L"Number of dimensions")), my name, L"_", thy name);
 END
 
 DIRECT (Eigen_and_SSCP_project)
@@ -2731,6 +2861,44 @@ DO
 	}
 END
 
+FORM (MelSpectrogram_paintImage, L"MelSpectrogram: Paint image", L"MelSpectrogram: Paint image...")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Frequency range (mel)", L"0.0")
+	REAL (L"right Frequency range (mel)", L"0.0")
+	REAL (L"left Amplitude range (dB)", L"0.0")
+	REAL (L"right Amplitude range (dB)", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (MelSpectrogram);
+		BandFilterSpectrogram_paintImage (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+		GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (BarkSpectrogram_paintImage, L"BarkSpectrogram: Paint image", L"BarkSpectrogram: Paint image...")
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Frequency range (bark)", L"0.0")
+	REAL (L"right Frequency range (bark)", L"0.0")
+	REAL (L"left Amplitude range (dB)", L"0.0")
+	REAL (L"right Amplitude range (dB)", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (BarkSpectrogram);
+		BandFilterSpectrogram_paintImage (me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+		GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
 FORM (FilterBank_paintImage, L"FilterBank: Paint image", 0)
 	REAL (L"left Time range (s)", L"0.0")
 	REAL (L"right Time range (s)", L"0.0")
@@ -2860,10 +3028,31 @@ DO
 	}
 END
 
+FORM (BandFilterSpectrogram_equalizeIntensities, L"BandFilterSpectrogram: Equalize intensities", L"")
+	REAL (L"Intensity (dB)", L"80.0")
+	OK
+DO
+	LOOP {
+		iam (BandFilterSpectrogram);
+		BandFilterSpectrogram_equalizeIntensities (me, GET_REAL (L"Intensity"));
+		praat_dataChanged (me);
+	}
+END
+
 DIRECT (FilterBank_to_Matrix)
 	LOOP {
 		iam (FilterBank);
 		praat_new (FilterBank_to_Matrix (me), my name);
+	}
+END
+
+FORM (BandFilterSpectrogram_to_Matrix, L"(BandFilterSpectrogram: To Matrix", 0)
+	BOOLEAN (L"Convert to dB values", 1)
+	OK
+DO
+	LOOP {
+		iam (BandFilterSpectrogram);
+		praat_new (BandFilterSpectrogram_to_Matrix (me, GET_INTEGER (L"Convert to dB values")), my name);
 	}
 END
 
@@ -2876,6 +3065,22 @@ DO
 	LOOP { iam (FilterBank); (f1 ? f2 : f1) = me; }
 	Melder_assert (f1 != 0 && f2 != 0);
 	praat_new (FilterBanks_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, L"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, L"Signal outside time domain is...")),
+		f1 -> name, L"_", f2 -> name);
+END
+
+FORM (BandFilterSpectrograms_crossCorrelate, L"BandFilterSpectrograms: Cross-correlate", 0)
+	RADIO_ENUM (L"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (L"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	OK
+DO
+	BandFilterSpectrogram f1 = 0, f2 = 0;
+	LOOP {
+		iam (BandFilterSpectrogram); 
+		(f1 ? f2 : f1) = me;
+	}
+	Melder_assert (f1 != 0 && f2 != 0);
+	praat_new (BandFilterSpectrograms_crossCorrelate (f1, f2, GET_ENUM (kSounds_convolve_scaling, L"Amplitude scaling"),
 		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, L"Signal outside time domain is...")),
 		f1 -> name, L"_", f2 -> name);
 END
@@ -2893,10 +3098,33 @@ DO
 		f1 -> name, L"_", f2 -> name);
 END
 
+FORM (BandFilterSpectrograms_convolve, L"BandFilterSpectrograms: Convolve", 0)
+	RADIO_ENUM (L"Amplitude scaling", kSounds_convolve_scaling, DEFAULT)
+	RADIO_ENUM (L"Signal outside time domain is...", kSounds_convolve_signalOutsideTimeDomain, DEFAULT)
+	OK
+DO
+	BandFilterSpectrogram f1 = 0, f2 = 0;
+	LOOP {
+		iam (BandFilterSpectrogram);
+		(f1 ? f2 : f1) = me;
+	}
+	Melder_assert (f1 != 0 && f2 != 0);
+	praat_new (BandFilterSpectrograms_convolve (f1, f2, GET_ENUM (kSounds_convolve_scaling, L"Amplitude scaling"),
+		GET_ENUM (kSounds_convolve_signalOutsideTimeDomain, L"Signal outside time domain is...")),
+		f1 -> name, L"_", f2 -> name);
+END
+
 DIRECT (FilterBank_to_Intensity)
 	LOOP {
 		iam (FilterBank);
 		praat_new (FilterBank_to_Intensity (me), my name);
+	}
+END
+
+DIRECT (BandFilterSpectrogram_to_Intensity)
+	LOOP {
+		iam (BandFilterSpectrogram);
+		praat_new (BandFilterSpectrogram_to_Intensity (me), my name);
 	}
 END
 
@@ -3717,55 +3945,55 @@ END
 
 /***** MATRIXFT *************/
 
-DIRECT (Matrixft_getHighestFrequency)
+DIRECT (BandFilterSpectrogram_getHighestFrequency)
 	LOOP {
-		iam (Matrix);
-		Melder_information (Melder_double (my ymax));
+		iam (BandFilterSpectrogram);
+		Melder_information (Melder_double (my ymax), L" ", my v_getFrequencyUnit ());
 	}
 END
 
-DIRECT (Matrixft_getLowestFrequency)
+DIRECT (BandFilterSpectrogram_getLowestFrequency)
 	LOOP {
-		iam (Matrix);
-		Melder_information (Melder_double (my ymin));
+		iam (BandFilterSpectrogram);
+		Melder_information (Melder_double (my ymin), L" ", my v_getFrequencyUnit ());
 	}
 END
 
-DIRECT (Matrixft_getNumberOfFrequencies)
+DIRECT (BandFilterSpectrogram_getNumberOfFrequencies)
 	LOOP {
-		iam (Matrix);
+		iam (BandFilterSpectrogram);
 		Melder_information (Melder_double (my ny));
 	}
 END
 
-DIRECT (Matrixft_getFrequencyDistance)
+DIRECT (BandFilterSpectrogram_getFrequencyDistance)
 	LOOP {
-		iam (Matrix);
-		Melder_information (Melder_double (my dy));
+		iam (BandFilterSpectrogram);
+		Melder_information (Melder_double (my dy), L" ", my v_getFrequencyUnit ());
 	}
 END
 
-FORM (Matrixft_getFrequencyOfRow, L"Get frequency of row", 0)
+FORM (BandFilterSpectrogram_getFrequencyOfRow, L"Get frequency of row", 0)
 	NATURAL (L"Row number", L"1")
 	OK
 DO
 	LOOP {
-		iam (Matrix);
-		Melder_information (Melder_double (Matrix_rowToY (me, GET_INTEGER (L"Row number"))));
+		iam (BandFilterSpectrogram);
+		Melder_information (Melder_double (Matrix_rowToY (me, GET_INTEGER (L"Row number"))), L" ", my v_getFrequencyUnit ());
 	}
 END
 
-FORM (Matrixft_getXofColumn, L"Get time of column", 0)
+FORM (BandFilterSpectrogram_getXofColumn, L"Get time of column", 0)
 	NATURAL (L"Column number", L"1")
 	OK
 DO
 	LOOP {
-		iam (Matrix);
+		iam (BandFilterSpectrogram);
 		Melder_information (Melder_double (Matrix_columnToX (me, GET_INTEGER (L"Column number"))));
 	}
 END
 
-FORM (Matrixft_getValueInCell, L"Get value in cell", 0)
+FORM (BandFilterSpectrogram_getValueInCell, L"Get value in cell", 0)
 	POSITIVE (L"Time (s)", L"0.5")
 	POSITIVE (L"Frequency", L"1")
 	OK
@@ -3773,7 +4001,7 @@ DO
 	double t = GET_REAL (L"Time");
 	double f = GET_REAL (L"Frequency");
 	LOOP {
-		iam (Matrix);
+		iam (BandFilterSpectrogram);
 		if (f < my ymin || f > my ymax) {
 			Melder_throw ("Frequency out of range.");
 		}
@@ -3807,6 +4035,10 @@ DIRECT (MelFilter_help)
 	Melder_help (L"MelFilter");
 END
 
+DIRECT (MelSpectrogram_help)
+	Melder_help (L"MelSpectrogram");
+END
+
 FORM (MelFilter_drawFilterFunctions, L"MelFilter: Draw filter functions", L"FilterBank: Draw filter functions...")
 	INTEGER (L"left Filter range", L"0")
 	INTEGER (L"right Filter range", L"0")
@@ -3834,6 +4066,33 @@ DO
 	}
 END
 
+FORM (MelSpectrogram_drawTriangularFilterFunctions, L"MelSpectrogram: Draw triangulat filter functions", L"MelSpectrogram: Draw filter functions...")
+	INTEGER (L"left Filter range", L"0")
+	INTEGER (L"right Filter range", L"0")
+	RADIO (L"Frequency scale", 1)
+	RADIOBUTTON (L"Mel")
+	RADIOBUTTON (L"Hertz")
+	REAL (L"left Frequency range", L"0.0")
+	REAL (L"right Frequency range", L"0.0")
+	BOOLEAN (L"Amplitude scale in dB", 0)
+	REAL (L"left Amplitude range", L"0.0")
+	REAL (L"right Amplitude range", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (MelSpectrogram);
+		MelSpectrogram_drawTriangularFilterFunctions (me, GRAPHICS, GET_INTEGER (L"Frequency scale") - 1,
+			GET_INTEGER (L"left Filter range"), GET_INTEGER (L"right Filter range"),
+			GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+			GET_INTEGER (L"Amplitude scale in dB"),
+			GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"),
+			GET_INTEGER (L"Garnish"));
+	}
+END
+
+
 FORM (MelFilter_drawSpectrum, L"MelFilter: Draw spectrum (slice)", L"FilterBank: Draw spectrum (slice)...")
 	POSITIVE (L"Time (s)", L"0.1")
 	REAL (L"left Frequency range (mel)", L"0.0")
@@ -3852,13 +4111,78 @@ DO
 	}
 END
 
-FORM (MelFilter_to_MFCC, L"MelFilter: To MFCC", L"MelFilter: To MFCC...")
+FORM (MelSpectrogram_drawSpectrumAtNearestTimeSlice, L"MelSpectrogram: Draw spectrum at nearest time slice", L"BandFilterSpectrogram: Draw spectrum at nearest time slice...")
+	REAL (L"Time (s)", L"0.1")
+	REAL (L"left Frequency range (mel)", L"0.0")
+	REAL (L"right Frequency range (mel)", L"0.0")
+	REAL (L"left Amplitude range (dB)", L"0.0")
+	REAL (L"right Amplitude range (dB)", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (MelSpectrogram);
+		BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (me, GRAPHICS, GET_REAL (L"Time"), GET_REAL (L"left Frequency range"),
+			GET_REAL (L"right Frequency range"), GET_REAL (L"left Amplitude range"),
+			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (BarkSpectrogram_drawSpectrumAtNearestTimeSlice, L"BarkSpectrogram: Draw spectrum at nearest time slice", L"BandFilterSpectrogram: Draw spectrum at nearest time slice...")
+	REAL (L"Time (s)", L"0.1")
+	REAL (L"left Frequency range (bark)", L"0.0")
+	REAL (L"right Frequency range (bark)", L"0.0")
+	REAL (L"left Amplitude range (dB)", L"0.0")
+	REAL (L"right Amplitude range (dB)", L"0.0")
+	BOOLEAN (L"Garnish", 1)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (MelSpectrogram);
+		BandFilterSpectrogram_drawSpectrumAtNearestTimeSlice (me, GRAPHICS, GET_REAL (L"Time"), GET_REAL (L"left Frequency range"),
+			GET_REAL (L"right Frequency range"), GET_REAL (L"left Amplitude range"),
+			GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (MelFilter_paint, L"FilterBank: Paint", 0)
+	REAL (L"left Time range (s)", L"0.0")
+	REAL (L"right Time range (s)", L"0.0")
+	REAL (L"left Frequency range (mel)", L"0.0")
+	REAL (L"right Frequency range (mel)", L"0.0")
+	REAL (L"left Amplitude range", L"0.0")
+	REAL (L"right Amplitude range", L"0.0")
+	BOOLEAN (L"Garnish", 0)
+	OK
+DO
+	autoPraatPicture picture;
+	LOOP {
+		iam (Matrix);
+		FilterBank_paint ((FilterBank) me, GRAPHICS, GET_REAL (L"left Time range"), GET_REAL (L"right Time range"),
+		GET_REAL (L"left Frequency range"), GET_REAL (L"right Frequency range"),
+		GET_REAL (L"left Amplitude range"), GET_REAL (L"right Amplitude range"), GET_INTEGER (L"Garnish"));
+	}
+END
+
+FORM (MelFilter_to_MFCC, L"MelFilter: To MFCC", L"MelSpectrogram: To MFCC...")
 	NATURAL (L"Number of coefficients", L"12")
 	OK
 DO
 	LOOP {
 		iam (MelFilter);
 		praat_new (MelFilter_to_MFCC (me, GET_INTEGER (L"Number of coefficients")), my name);
+	}
+END
+
+FORM (MelSpectrogram_to_MFCC, L"MelSpectrogram: To MFCC", L"MelSpectrogram: To MFCC...")
+	NATURAL (L"Number of coefficients", L"12")
+	OK
+DO
+	LOOP {
+		iam (MelSpectrogram);
+		praat_new (MelSpectrogram_to_MFCC (me, GET_INTEGER (L"Number of coefficients")), my name);
 	}
 END
 
@@ -3897,7 +4221,7 @@ DIRECT (MFCC_help)
 	Melder_help (L"MFCC");
 END
 
-FORM (MFCC_to_MelFilter, L"MFCC: To MelFilter", L"MFCC: To MelFilter...")
+FORM (MFCC_to_MelFilter, L"MFCC: To MelFilter", 0)
 	INTEGER (L"From coefficient", L"0")
 	INTEGER (L"To coefficient", L"0")
 	OK
@@ -3905,6 +4229,19 @@ DO
 	LOOP {
 		iam (MFCC);
 		praat_new (MFCC_to_MelFilter (me, GET_INTEGER (L"From coefficient"), GET_INTEGER (L"To coefficient")), my name);
+	}
+END
+
+FORM (MFCC_to_MelSpectrogram, L"MFCC: MelSpectrogram", L"MFCC: To MelSpectrogram...")
+	INTEGER (L"From coefficient", L"0")
+	INTEGER (L"To coefficient", L"0")
+	BOOLEAN (L"Include constant term", 1)
+	OK
+DO
+	LOOP {
+		iam (MFCC);
+		praat_new (MFCC_to_MelSpectrogram (me, GET_INTEGER (L"From coefficient"), GET_INTEGER (L"To coefficient"),
+			GET_INTEGER (L"Include constant term")), my name);
 	}
 END
 
@@ -4983,7 +5320,7 @@ static void Sound_create_checkCommonFields (void *dia, double *startingTime, dou
 	}
 }
 
-FORM (Sound_and_Pitch_to_FormantFilter, L"Sound & Pitch: To FormantFilter", L"Sound & Pitch: To FormantFilter...")
+FORM (Sound_and_Pitch_to_FormantFilter, L"Sound & Pitch: To FormantFilter", L"Sound & Pitch: To Spectrogram...")
 	POSITIVE (L"Analysis window duration (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
 	LABEL (L"", L"Filter bank parameters")
@@ -4999,6 +5336,24 @@ DO
 		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
 		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters"),
 		GET_REAL (L"Relative bandwidth")), my name, L"_", p->name);
+END
+
+FORM (Sound_and_Pitch_to_Spectrogram, L"Sound & Pitch: To Spectrogram", L"Sound & Pitch: To Spectrogram...")
+	POSITIVE (L"Analysis window duration (s)", L"0.015")
+	POSITIVE (L"Time step (s)", L"0.005")
+	LABEL (L"", L"Filter bank parameters")
+	POSITIVE (L"Position of first filter (Hz)", L"100.0")
+	POSITIVE (L"Distance between filters (Hz)", L"50.0")
+	REAL (L"Maximum frequency", L"0");
+	POSITIVE (L"Relative bandwidth", L"1.1")
+	OK
+DO
+	Sound me = FIRST (Sound);
+	Pitch thee = FIRST (Pitch);
+	praat_new (Sound_and_Pitch_to_Spectrogram (me, thee, GET_REAL (L"Analysis window duration"),
+		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
+		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters"),
+		GET_REAL (L"Relative bandwidth")), my name, L"_", thy name);
 END
 
 FORM (Sound_and_Pitch_changeGender, L"Sound & Pitch: Change gender", L"Sound & Pitch: Change gender...")
@@ -5248,7 +5603,8 @@ DO
 	}
 END
 
-FORM (Sound_to_BarkFilter, L"Sound: To BarkFilter", L"Sound: To BarkFilter...")
+// deprecated
+FORM (Sound_to_BarkFilter, L"Sound: To BarkFilter", L"Sound: To BarkSpectrogram...")
 	POSITIVE (L"Window length (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
 	LABEL (L"", L"Filter bank parameters")
@@ -5265,6 +5621,24 @@ DO
 	}
 END
 
+FORM (Sound_to_BarkSpectrogram, L"Sound: To BarkSpectrogram", L"Sound: To BarkSpectrogram...")
+	POSITIVE (L"Window length (s)", L"0.015")
+	POSITIVE (L"Time step (s)", L"0.005")
+	LABEL (L"", L"Filter bank parameters")
+	POSITIVE (L"Position of first filter (bark)", L"1.0")
+	POSITIVE (L"Distance between filters (bark)", L"1.0")
+	REAL (L"Maximum frequency (bark)", L"0");
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_BarkSpectrogram (me, GET_REAL (L"Window length"),
+			GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
+			GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), my name);
+	}
+END
+
+// deprecated
 FORM (Sound_to_FormantFilter, L"Sound: To FormantFilter", L"Sound: To FormantFilter...")
 	POSITIVE (L"Window length (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
@@ -5288,6 +5662,30 @@ DO
 	}
 END
 
+FORM (Sound_to_Spectrogram_pitchDependent, L"Sound: To Spectrogram (pitch-dependent)", L"Sound: To Spectrogram (pitch-dependent)...")
+	POSITIVE (L"Window length (s)", L"0.015")
+	POSITIVE (L"Time step (s)", L"0.005")
+	LABEL (L"", L"Filter bank parameters")
+	POSITIVE (L"Position of first filter (Hz)", L"100.0")
+	POSITIVE (L"Distance between filters (Hz)", L"50.0")
+	REAL (L"Maximum frequency", L"0");
+	POSITIVE (L"Relative bandwidth", L"1.1")
+	LABEL (L"", L"Pitch analysis")
+	REAL (L"Minimum pitch (Hz)", L"75.0")
+	REAL (L"Maximum pitch (Hz)", L"600.0")
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_Spectrogram_pitchDependent (me, GET_REAL (L"Window length"),
+		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
+		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters"),
+		GET_REAL (L"Relative bandwidth"), GET_REAL (L"Minimum pitch"),
+		GET_REAL (L"Maximum pitch")), my name);
+	}
+END
+
+// deprecated
 FORM (Sound_to_MelFilter, L"Sound: To MelFilter", L"Sound: To MelFilter...")
 	POSITIVE (L"Window length (s)", L"0.015")
 	POSITIVE (L"Time step (s)", L"0.005")
@@ -5300,6 +5698,23 @@ DO
 	LOOP {
 		iam (Sound);
 		praat_new (Sound_to_MelFilter (me, GET_REAL (L"Window length"),
+		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
+		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), my name);
+	}
+END
+
+FORM (Sound_to_MelSpectrogram, L"Sound: To MelSpectrogram", L"Sound: To MelSpectrogram...")
+	POSITIVE (L"Window length (s)", L"0.015")
+	POSITIVE (L"Time step (s)", L"0.005")
+	LABEL (L"", L"Filter bank parameters")
+	POSITIVE (L"Position of first filter (mel)", L"100.0")
+	POSITIVE (L"Distance between filters (mel)", L"100.0")
+	REAL (L"Maximum frequency (mel)", L"0.0");
+	OK
+DO
+	LOOP {
+		iam (Sound);
+		praat_new (Sound_to_MelSpectrogram (me, GET_REAL (L"Window length"),
 		GET_REAL (L"Time step"), GET_REAL (L"Position of first filter"),
 		GET_REAL (L"Maximum frequency"), GET_REAL (L"Distance between filters")), my name);
 	}
@@ -7433,8 +7848,13 @@ void praat_CC_init (ClassInfo klas) {
 	praat_addAction1 (klas, 2, L"To DTW...", 0, 0, DO_CCs_to_DTW);
 }
 
-static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm);
+static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm); // deprecated 2014
 static void praat_Eigen_Matrix_project (ClassInfo klase, ClassInfo klasm) {
+	praat_addAction2 (klase, 1, klasm, 1, L"Project...", 0, praat_HIDDEN, DO_Eigen_and_Matrix_project);
+}
+
+static void praat_Eigen_Spectrogram_project (ClassInfo klase, ClassInfo klasm);
+static void praat_Eigen_Spectrogram_project (ClassInfo klase, ClassInfo klasm) {
 	praat_addAction2 (klase, 1, klasm, 1, L"Project...", 0, 0, DO_Eigen_and_Matrix_project);
 }
 
@@ -7458,35 +7878,62 @@ static void praat_Index_init (ClassInfo klas) {
 	praat_addAction1 (klas, 1, L"Extract part...", 0, 0, DO_Index_extractPart);
 }
 
+static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas);
+static void praat_BandFilterSpectrogram_draw_init (ClassInfo klas) {
+	praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
+//	praat_addAction1 (klas, 0, L"Paint image...", 0, praat_DEPTH_1, DO_BandFilterSpectrogram_paintImage);
+//	praat_addAction1 (klas, 0, L"Draw filters...", 0, 1, DO_FilterBank_drawFilters);
+//	praat_addAction1 (klas, 0, L"Draw one contour...", 0, 1, DO_FilterBank_drawOneContour);
+//	praat_addAction1 (klas, 0, L"Draw contours...", 0, 1, DO_FilterBank_drawContours);
+//	praat_addAction1 (klas, 0, L"Paint contours...", 0, 1, DO_FilterBank_paintContours);
+//	praat_addAction1 (klas, 0, L"Paint cells...", 0, 1, DO_FilterBank_paintCells);
+//	praat_addAction1 (klas, 0, L"Paint surface...", 0, 1, DO_FilterBank_paintSurface);
+	praat_addAction1 (klas, 0, L"-- frequency scales --", 0, 1, 0);
+	praat_addAction1 (klas, 0, L"Draw frequency scale...", 0, 1, DO_BandFilterSpectrogram_drawFrequencyScale);
+}
+
+void praat_Matrixft_query_init (ClassInfo klas);
+void praat_Matrixft_query_init (ClassInfo klas) {
+	praat_TimeFrameSampled_query_init (klas);
+	praat_addAction1 (klas, 1, L"Get time from column...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getXofColumn);
+	praat_addAction1 (klas, 1, L"-- frequencies --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
+	praat_addAction1 (klas, 1, L"Get lowest frequency", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getLowestFrequency);
+	praat_addAction1 (klas, 1, L"Get highest frequency", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getHighestFrequency);
+	praat_addAction1 (klas, 1, L"Get number of frequencies", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getNumberOfFrequencies);
+	praat_addAction1 (klas, 1, L"Get frequency distance", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getFrequencyDistance);
+	praat_addAction1 (klas, 1, L"Get frequency from row...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getFrequencyOfRow);
+	praat_addAction1 (klas, 1, L"-- get value --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
+	praat_addAction1 (klas, 1, L"Get value in cell...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_BandFilterSpectrogram_getValueInCell);
+}
+
 static void praat_FilterBank_query_init (ClassInfo klas);
 static void praat_FilterBank_query_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_Matrixft_query_init (klas);
-	praat_addAction1 (klas, 0, L"-- frequency scales --", 0, 1, 0);
-	praat_addAction1 (klas, 1, L"Get frequency in Hertz...", 0, 1, DO_FilterBank_getFrequencyInHertz);
-	praat_addAction1 (klas, 1, L"Get frequency in Bark...", 0, 1, DO_FilterBank_getFrequencyInBark);
-	praat_addAction1 (klas, 1, L"Get frequency in mel...", 0, 1, DO_FilterBank_getFrequencyInMel);
+	praat_addAction1 (klas, 0, L"-- frequency scales --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
+	praat_addAction1 (klas, 1, L"Get frequency in Hertz...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_getFrequencyInHertz);
+	praat_addAction1 (klas, 1, L"Get frequency in Bark...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_getFrequencyInBark);
+	praat_addAction1 (klas, 1, L"Get frequency in mel...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_getFrequencyInMel);
 }
 
 static void praat_FilterBank_modify_init (ClassInfo klas);
 static void praat_FilterBank_modify_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, MODIFY_BUTTON, 0, 0, 0);
-	praat_addAction1 (klas, 0, L"Equalize intensities...", 0, 1, DO_FilterBank_equalizeIntensities);
+	// praat_addAction1 (klas, 0, MODIFY_BUTTON, 0, 0, 0); 
+	praat_addAction1 (klas, 0, L"Equalize intensities...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_equalizeIntensities);
 }
 
 static void praat_FilterBank_draw_init (ClassInfo klas);
 static void praat_FilterBank_draw_init (ClassInfo klas) {
-	praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
-	praat_addAction1 (klas, 0, L"Draw filters...", 0, 1, DO_FilterBank_drawFilters);
-	praat_addAction1 (klas, 0, L"Draw one contour...", 0, 1, DO_FilterBank_drawOneContour);
-	praat_addAction1 (klas, 0, L"Draw contours...", 0, 1, DO_FilterBank_drawContours);
-	praat_addAction1 (klas, 0, L"Paint image...", 0, 1, DO_FilterBank_paintImage);
-	praat_addAction1 (klas, 0, L"Paint contours...", 0, 1, DO_FilterBank_paintContours);
-	praat_addAction1 (klas, 0, L"Paint cells...", 0, 1, DO_FilterBank_paintCells);
-	praat_addAction1 (klas, 0, L"Paint surface...", 0, 1, DO_FilterBank_paintSurface);
-	praat_addAction1 (klas, 0, L"-- frequency scales --", 0, 1, 0);
-	praat_addAction1 (klas, 0, L"Draw frequency scales...", 0, 1, DO_FilterBank_drawFrequencyScales);
-
+	// praat_addAction1 (klas, 0, DRAW_BUTTON, 0, 0, 0);
+	praat_addAction1 (klas, 0, L"Draw filters...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawFilters);
+	praat_addAction1 (klas, 0, L"Draw one contour...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawOneContour);
+	praat_addAction1 (klas, 0, L"Draw contours...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawContours);
+	praat_addAction1 (klas, 0, L"Paint image...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintImage);
+	praat_addAction1 (klas, 0, L"Paint contours...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintContours);
+	praat_addAction1 (klas, 0, L"Paint cells...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintCells);
+	praat_addAction1 (klas, 0, L"Paint surface...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_paintSurface);
+	praat_addAction1 (klas, 0, L"-- frequency scales --", 0, praat_DEPTH_1 + praat_HIDDEN, 0);
+	praat_addAction1 (klas, 0, L"Draw frequency scales...", 0, praat_DEPTH_1 + praat_HIDDEN, DO_FilterBank_drawFrequencyScales);
 }
 
 static void praat_FilterBank_all_init (ClassInfo klas);
@@ -7494,10 +7941,10 @@ static void praat_FilterBank_all_init (ClassInfo klas) {
 	praat_FilterBank_draw_init (klas);
 	praat_FilterBank_query_init (klas);
 	praat_FilterBank_modify_init (klas);
-	praat_addAction1 (klas, 0, L"To Intensity", 0, 0, DO_FilterBank_to_Intensity);
-	praat_addAction1 (klas, 0, L"To Matrix", 0, 0, DO_FilterBank_to_Matrix);
-	praat_addAction1 (klas, 2, L"Cross-correlate...", 0, 0, DO_FilterBanks_crossCorrelate);
-	praat_addAction1 (klas, 2, L"Convolve...", 0, 0, DO_FilterBanks_convolve);
+	praat_addAction1 (klas, 0, L"To Intensity", 0, praat_HIDDEN, DO_FilterBank_to_Intensity);
+	praat_addAction1 (klas, 0, L"To Matrix", 0, praat_HIDDEN, DO_FilterBank_to_Matrix);
+	praat_addAction1 (klas, 2, L"Cross-correlate...", 0, praat_HIDDEN, DO_FilterBanks_crossCorrelate);
+	praat_addAction1 (klas, 2, L"Convolve...", 0, praat_HIDDEN, DO_FilterBanks_convolve);
 }
 
 static void praat_FunctionTerms_init (ClassInfo klas) {
@@ -7522,17 +7969,17 @@ static void praat_FunctionTerms_init (ClassInfo klas) {
 
 /* Query buttons for frame-based frequency x time subclasses of matrix. */
 
-void praat_Matrixft_query_init (ClassInfo klas) {
+void praat_BandFilterSpectrogram_query_init (ClassInfo klas) {
 	praat_TimeFrameSampled_query_init (klas);
-	praat_addAction1 (klas, 1, L"Get time from column...", 0, 1, DO_Matrixft_getXofColumn);
+	praat_addAction1 (klas, 1, L"Get time from column...", 0, 1, DO_BandFilterSpectrogram_getXofColumn);
 	praat_addAction1 (klas, 1, L"-- frequencies --", 0, 1, 0);
-	praat_addAction1 (klas, 1, L"Get lowest frequency", 0, 1, DO_Matrixft_getLowestFrequency);
-	praat_addAction1 (klas, 1, L"Get highest frequency", 0, 1, DO_Matrixft_getHighestFrequency);
-	praat_addAction1 (klas, 1, L"Get number of frequencies", 0, 1, DO_Matrixft_getNumberOfFrequencies);
-	praat_addAction1 (klas, 1, L"Get frequency distance", 0, 1, DO_Matrixft_getFrequencyDistance);
-	praat_addAction1 (klas, 1, L"Get frequency from row...", 0, 1, DO_Matrixft_getFrequencyOfRow);
+	praat_addAction1 (klas, 1, L"Get lowest frequency", 0, 1, DO_BandFilterSpectrogram_getLowestFrequency);
+	praat_addAction1 (klas, 1, L"Get highest frequency", 0, 1, DO_BandFilterSpectrogram_getHighestFrequency);
+	praat_addAction1 (klas, 1, L"Get number of frequencies", 0, 1, DO_BandFilterSpectrogram_getNumberOfFrequencies);
+	praat_addAction1 (klas, 1, L"Get frequency distance", 0, 1, DO_BandFilterSpectrogram_getFrequencyDistance);
+	praat_addAction1 (klas, 1, L"Get frequency from row...", 0, 1, DO_BandFilterSpectrogram_getFrequencyOfRow);
 	praat_addAction1 (klas, 1, L"-- get value --", 0, 1, 0);
-	praat_addAction1 (klas, 1, L"Get value in cell...", 0, 1, DO_Matrixft_getValueInCell);
+	praat_addAction1 (klas, 1, L"Get value in cell...", 0, 1, DO_BandFilterSpectrogram_getValueInCell);
 }
 
 static void praat_Spline_init (ClassInfo klas) {
@@ -7540,7 +7987,6 @@ static void praat_Spline_init (ClassInfo klas) {
 	praat_addAction1 (klas, 0, L"Draw knots...", L"Draw basis function...", 1, DO_Spline_drawKnots);
 	praat_addAction1 (klas, 1, L"Get order", L"Get degree", 1, DO_Spline_getOrder);
 	praat_addAction1 (klas, 1, L"Scale x...", L"Analyse",	0, DO_Spline_scaleX);
-
 }
 
 static void praat_SSCP_query_init (ClassInfo klas) {
@@ -7612,7 +8058,7 @@ void praat_uvafon_David_init () {
 	Data_recognizeFileType (TextGrid_TIMITLabelFileRecognizer);
 	Data_recognizeFileType (cmuAudioFileRecognizer);
 
-	Thing_recognizeClassesByName (classActivation, classBarkFilter,
+	Thing_recognizeClassesByName (classActivation, classBarkFilter, classBarkSpectrogram,
 		classCategories, classCepstrum, classCCA,
 		classChebyshevSeries, classClassificationTable, classConfusion,
 		classCorrelation, classCovariance, classDiscriminant, classDTW,
@@ -7620,7 +8066,7 @@ void praat_uvafon_David_init () {
 		classFileInMemory, classFilesInMemory, classFormantFilter,
 		classIndex, classKlattTable,
 		classPermutation, classISpline, classLegendreSeries,
-		classMelFilter, classMSpline, classPattern, classPCA, classPolynomial, classRoots,
+		classMelFilter, classMelSpectrogram, classMSpline, classPattern, classPCA, classPolynomial, classRoots,
 		classSimpleString, classStringsIndex, classSpeechSynthesizer, classSPINET, classSSCP,
 		classSVD, NULL);
 
@@ -7682,10 +8128,26 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classActivation, 1, classCategories, 1, L"To TableOfReal", 0, 0, DO_Matrix_Categories_to_TableOfReal);
 
 	praat_addAction1 (classBarkFilter, 0, L"BarkFilter help", 0, 0, DO_BarkFilter_help);
-	praat_FilterBank_all_init (classBarkFilter);
-	praat_addAction1 (classBarkFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", 1, DO_BarkFilter_drawSpectrum);
-	praat_addAction1 (classBarkFilter, 1, L"Draw filter functions...", L"Draw filters...", 1, DO_BarkFilter_drawSekeyHansonFilterFunctions);
+	praat_FilterBank_all_init (classBarkFilter);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_BarkFilter_drawSpectrum);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 1, L"Draw filter functions...", L"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_BarkFilter_drawSekeyHansonFilterFunctions);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 0, L"Paint...", L"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_BarkFilter_paint);	// deprecated 2014
+	praat_addAction1 (classBarkFilter, 0, L"To BarkSpectrogram", 0, 0, DO_BarkFilter_to_BarkSpectrogram);
 
+	praat_addAction1 (classBarkSpectrogram, 0, L"BarkSpectrogram help", 0, 0, DO_BarkSpectrogram_help);
+	praat_BandFilterSpectrogram_draw_init (classBarkSpectrogram);
+	praat_addAction1 (classBarkSpectrogram, 0, L"Paint image...", 0, 1, DO_BarkSpectrogram_paintImage);
+	praat_addAction1 (classBarkSpectrogram, 0, L"Draw Sekey-Hanson auditory filters...", 0, 1, DO_BarkSpectrogram_drawSekeyHansonAuditoryFilters);
+	praat_addAction1 (classBarkSpectrogram, 0, L"Draw spectrum at nearest time slice...", 0, 1, DO_BarkSpectrogram_drawSpectrumAtNearestTimeSlice);
+	praat_addAction1 (classBarkSpectrogram, 0, QUERY_BUTTON, 0, 0, 0);
+	praat_BandFilterSpectrogram_query_init (classBarkSpectrogram);
+	praat_addAction1 (classBarkSpectrogram, 0, L"Equalize intensities...", 0, 0, DO_BandFilterSpectrogram_equalizeIntensities);
+	praat_addAction1 (classBarkSpectrogram, 0, L"To Intensity", 0, 0, DO_BandFilterSpectrogram_to_Intensity);
+	praat_addAction1 (classBarkSpectrogram, 0, L"To Matrix...", 0, 0, DO_BandFilterSpectrogram_to_Matrix);
+	praat_addAction1 (classBarkSpectrogram, 2, L"Cross-correlate...", 0, 0, DO_BandFilterSpectrograms_crossCorrelate);
+	praat_addAction1 (classBarkSpectrogram, 2, L"Convolve...", 0, 0, DO_BandFilterSpectrograms_convolve);
+	
+	
 	praat_addAction1 (classCategories, 0, L"Edit", 0, 0, DO_Categories_edit);
 	praat_addAction1 (classCategories, 0, QUERY_BUTTON, 0, 0, 0);
 	praat_addAction1 (classCategories, 1, L"Get number of categories", QUERY_BUTTON, 1, DO_Categories_getNumberOfCategories);
@@ -7759,6 +8221,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classConfusion, 0, L"Group responses...", 0, 0, DO_Confusion_groupResponses);
 	praat_addAction1 (classConfusion, 2, L"To difference matrix", 0, 0,
 	                  DO_Confusion_difference);
+	
+	praat_addAction2 (classConfusion, 1, classClassificationTable, 1, L"Increase confusion count", 0, 0, DO_Confusion_and_ClassificationTable_increase);
 
 	praat_addAction2 (classConfusion, 1, classMatrix, 1, L"Draw", 0, 0, 0);
 	praat_addAction2 (classConfusion, 1, classMatrix, 1, L"Draw confusion...",
@@ -7789,7 +8253,10 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classClassificationTable, 0, L"ClassificationTable help", 0, 0, DO_ClassificationTable_help);
 	praat_TableOfReal_init (classClassificationTable);
-	praat_addAction1 (classClassificationTable, 0, L"To Confusion", 0, 0, DO_ClassificationTable_to_Confusion);
+	praat_addAction1 (classClassificationTable, 0, L"Get class index at maximum in row...", L"Get column index...", 1, DO_ClassificationTable_getClassIndexAtMaximumInRow);
+	praat_addAction1 (classClassificationTable, 0, L"Get class label at maximum in row...",L"Get class index at maximum in row...", 1, DO_ClassificationTable_getClassLabelAtMaximumInRow);
+	praat_addAction1 (classClassificationTable, 0, L"To Confusion", 0, praat_HIDDEN, DO_ClassificationTable_to_Confusion_old); // deprecated 2014
+	praat_addAction1 (classClassificationTable, 0, L"To Confusion...", 0, 0, DO_ClassificationTable_to_Confusion);
 	praat_addAction1 (classClassificationTable, 0, L"To Correlation (columns)", 0, 0, DO_ClassificationTable_to_Correlation_columns);
 	praat_addAction1 (classClassificationTable, 0, L"To Strings (max. prob.)", 0, 0, DO_ClassificationTable_to_Strings_maximumProbability);
 
@@ -7850,10 +8317,13 @@ void praat_uvafon_David_init () {
 	/*		praat_addAction1 (classDiscriminant, 1, L"Extract coefficients...", 0, 1, DO_Discriminant_extractCoefficients);*/
 
 
-
-	praat_Eigen_Matrix_project (classDiscriminant, classFormantFilter);
-	praat_Eigen_Matrix_project (classDiscriminant, classBarkFilter);
-	praat_Eigen_Matrix_project (classDiscriminant, classMelFilter);
+	praat_Eigen_Spectrogram_project (classDiscriminant, classSpectrogram);
+	praat_Eigen_Spectrogram_project (classDiscriminant, classBarkSpectrogram);
+	praat_Eigen_Spectrogram_project (classDiscriminant, classMelSpectrogram);
+	
+	praat_Eigen_Matrix_project (classDiscriminant, classFormantFilter); // deprecated 2014
+	praat_Eigen_Matrix_project (classDiscriminant, classBarkFilter); // deprecated 2014
+	praat_Eigen_Matrix_project (classDiscriminant, classMelFilter); // deprecated 2014
 
 	praat_addAction2 (classDiscriminant, 1, classPattern, 1, L"To Categories...", 0, 0, DO_Discriminant_and_Pattern_to_Categories);
 	praat_addAction2 (classDiscriminant, 1, classSSCP, 1, L"Project", 0, 0, DO_Eigen_and_SSCP_project);
@@ -7981,9 +8451,12 @@ void praat_uvafon_David_init () {
 
 	praat_addAction1 (classFormantFilter, 0, L"FormantFilter help", 0, 0, DO_FormantFilter_help);
 	praat_FilterBank_all_init (classFormantFilter);
-	praat_addAction1 (classFormantFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", 1, DO_FormantFilter_drawSpectrum);
-	praat_addAction1 (classFormantFilter, 0, L"Draw filter functions...", L"Draw filters...", 1, DO_FormantFilter_drawFilterFunctions);
-	praat_addAction1 (classFormantGrid, 0, L"Draw...", L"Edit", 1, DO_FormantGrid_draw);
+	praat_addAction1 (classFormantFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawSpectrum);
+	praat_addAction1 (classFormantFilter, 0, L"Draw filter functions...", L"Draw filters...",  praat_DEPTH_1 + praat_HIDDEN, DO_FormantFilter_drawFilterFunctions);
+	praat_addAction1 (classFormantFilter, 0, L"To Spectrogram", 0, 0, DO_FormantFilter_to_Spectrogram);
+	
+	
+	praat_addAction1 (classFormantGrid, 0, L"Draw...", L"Edit", praat_DEPTH_1 + praat_HIDDEN, DO_FormantGrid_draw);
 
 
 	praat_addAction1 (classIntensity, 0, L"To TextGrid (silences)...", L"To IntensityTier (valleys)", 0, DO_Intensity_to_TextGrid_detectSilences);
@@ -8033,15 +8506,35 @@ void praat_uvafon_David_init () {
 
 	praat_addAction2 (classMatrix, 1, classCategories, 1, L"To TableOfReal", 0, 0, DO_Matrix_Categories_to_TableOfReal);
 
-	praat_addAction1 (classMelFilter, 0, L"MelFilter help", 0, 0, DO_MelFilter_help);
-	praat_FilterBank_all_init (classMelFilter);
-	praat_addAction1 (classMelFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", 1, DO_MelFilter_drawSpectrum);
-	praat_addAction1 (classMelFilter, 0, L"Draw filter functions...", L"Draw filters...", 1, DO_MelFilter_drawFilterFunctions);
-	praat_addAction1 (classMelFilter, 0, L"To MFCC...", 0, 0, DO_MelFilter_to_MFCC);
+	
+	praat_addAction1 (classMelSpectrogram, 0, L"MelSpectrogram help", 0, 0, DO_MelSpectrogram_help);
+	praat_BandFilterSpectrogram_draw_init (classMelSpectrogram);
+	praat_addAction1 (classMelSpectrogram, 0, L"Paint image...", 0, 1, DO_MelSpectrogram_paintImage);
+	praat_addAction1 (classMelSpectrogram, 0, L"Draw triangular filter functions...", 0, 1, DO_MelSpectrogram_drawTriangularFilterFunctions);
+	praat_addAction1 (classMelSpectrogram, 0, L"Draw spectrum at nearest time slice...", 0, 1, DO_MelSpectrogram_drawSpectrumAtNearestTimeSlice);
+	praat_addAction1 (classMelSpectrogram, 0, QUERY_BUTTON, 0, 0, 0);
+	praat_BandFilterSpectrogram_query_init (classMelSpectrogram);
 
+	praat_addAction1 (classMelSpectrogram, 0, L"Equalize intensities...", 0, 0, DO_BandFilterSpectrogram_equalizeIntensities);
+	praat_addAction1 (classMelSpectrogram, 0, L"To MFCC...", 0, 0, DO_MelSpectrogram_to_MFCC);
+	praat_addAction1 (classMelSpectrogram, 0, L"To Intensity", 0, 0, DO_BandFilterSpectrogram_to_Intensity);
+	praat_addAction1 (classMelSpectrogram, 0, L"To Matrix...", 0, 0, DO_BandFilterSpectrogram_to_Matrix);
+	praat_addAction1 (classMelSpectrogram, 2, L"Cross-correlate...", 0, 0, DO_BandFilterSpectrograms_crossCorrelate);
+	praat_addAction1 (classMelSpectrogram, 2, L"Convolve...", 0, 0, DO_BandFilterSpectrograms_convolve);
+	
+	praat_addAction1 (classMelFilter, 0, L"MelFilter help", 0, 0, DO_MelFilter_help); // deprecated 2014
+	praat_FilterBank_all_init (classMelFilter); // deprecated 2014
+	praat_addAction1 (classMelFilter, 0, L"Draw spectrum (slice)...", L"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_MelFilter_drawSpectrum); // deprecated 2014
+	praat_addAction1 (classMelFilter, 0, L"Draw filter functions...", L"Draw filters...", praat_DEPTH_1 + praat_HIDDEN, DO_MelFilter_drawFilterFunctions); // deprecated 2014
+	praat_addAction1 (classMelFilter, 0, L"Paint...", L"Draw filter functions...", praat_DEPTH_1 + praat_HIDDEN, DO_MelFilter_paint); // deprecated 2014
+	praat_addAction1 (classMelFilter, 0, L"To MFCC...", 0, praat_HIDDEN, DO_MelFilter_to_MFCC); // deprecated 2014
+	praat_addAction1 (classMelFilter, 0, L"To MelSpectrogram", 0, 0, DO_MelFilter_to_MelSpectrogram);
+
+	
 	praat_addAction1 (classMFCC, 0, L"MFCC help", 0, 0, DO_MFCC_help);
 	praat_CC_init (classMFCC);
-	praat_addAction1 (classMFCC, 0, L"To MelFilter...", 0, 0, DO_MFCC_to_MelFilter);
+	praat_addAction1 (classMFCC, 0, L"To MelFilter...", 0, praat_HIDDEN, DO_MFCC_to_MelFilter);
+	praat_addAction1 (classMFCC, 0, L"To MelSpectrogram...", 0, 0, DO_MFCC_to_MelSpectrogram);
 	praat_addAction1 (classMFCC, 0, L"To TableOfReal...", 0, 0, DO_MFCC_to_TableOfReal);
 	praat_addAction1 (classMFCC, 0, L"To Matrix (features)...", 0, praat_HIDDEN, DO_MFCC_to_Matrix_features);
 	praat_addAction1 (classMFCC, 0, L"To Sound", 0, praat_HIDDEN, DO_MFCC_to_Sound);
@@ -8088,9 +8581,13 @@ void praat_uvafon_David_init () {
 	praat_addAction2 (classPCA, 1, classTableOfReal, 1, L"Get fraction variance...", 0, 0, DO_PCA_and_TableOfReal_getFractionVariance);
 	praat_addAction2 (classPCA, 1, classCovariance, 1, L"Project", 0, 0, DO_Eigen_and_Covariance_project);
 
-	praat_Eigen_Matrix_project (classPCA, classFormantFilter);
-	praat_Eigen_Matrix_project (classPCA, classBarkFilter);
-	praat_Eigen_Matrix_project (classPCA, classMelFilter);
+	praat_Eigen_Spectrogram_project (classPCA, classSpectrogram);
+	praat_Eigen_Spectrogram_project (classPCA, classBarkSpectrogram);
+	praat_Eigen_Spectrogram_project (classPCA, classMelSpectrogram);
+
+	praat_Eigen_Matrix_project (classPCA, classFormantFilter); // deprecated 2014
+	praat_Eigen_Matrix_project (classPCA, classBarkFilter); // deprecated 2014
+	praat_Eigen_Matrix_project (classPCA, classMelFilter); // deprecated 2014
 
 	praat_addAction1 (classPermutation, 0, L"Permutation help", 0, 0, DO_Permutation_help);
 	praat_addAction1 (classPermutation, 0, QUERY_BUTTON, 0, 0, 0);
@@ -8177,11 +8674,14 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, L"Fade out...", L"Fade in...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_fadeOut);
 	praat_addAction1 (classSound, 0, L"To Pitch (SPINET)...", L"To Pitch (cc)...", 1, DO_Sound_to_Pitch_SPINET);
 
-	praat_addAction1 (classSound, 0, L"To FormantFilter...", L"To Cochleagram (edb)...", 1, DO_Sound_to_FormantFilter);
+	praat_addAction1 (classSound, 0, L"To FormantFilter...", L"To Cochleagram (edb)...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_FormantFilter);
+	praat_addAction1 (classSound, 0, L"To Spectrogram (pitch-dependent)...", L"To Cochleagram (edb)...", 1, DO_Sound_to_Spectrogram_pitchDependent);
 
-	praat_addAction1 (classSound, 0, L"To BarkFilter...", L"To FormantFilter...", 1, DO_Sound_to_BarkFilter);
+	praat_addAction1 (classSound, 0, L"To BarkFilter...", L"To FormantFilter...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_BarkFilter); // deprecated 2014
+	praat_addAction1 (classSound, 0, L"To BarkSpectrogram...", L"To FormantFilter...", praat_DEPTH_1, DO_Sound_to_BarkSpectrogram);
 
-	praat_addAction1 (classSound, 0, L"To MelFilter...", L"To BarkFilter...", 1, DO_Sound_to_MelFilter);
+	praat_addAction1 (classSound, 0, L"To MelFilter...", L"To BarkFilter...", praat_HIDDEN + praat_DEPTH_1, DO_Sound_to_MelFilter); // deprecated 2014
+	praat_addAction1 (classSound, 0, L"To MelSpectrogram...", L"To BarkSpectrogram...", praat_DEPTH_1, DO_Sound_to_MelSpectrogram);
 
 	praat_addAction1 (classSound, 0, L"To Polygon...", L"Down to Matrix", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_to_Polygon);
     praat_addAction1 (classSound, 2, L"To Polygon (enclosed)...", L"Cross-correlate...", praat_DEPTH_1 | praat_HIDDEN, DO_Sounds_to_Polygon_enclosed);
@@ -8196,7 +8696,8 @@ void praat_uvafon_David_init () {
 	praat_addAction1 (classSound, 0, L"Copy channel ranges...", L"Extract all channels", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_copyChannelRanges);
 	praat_addAction1 (classSound, 0, L"Trim silences...", L"Resample...", praat_DEPTH_1 | praat_HIDDEN, DO_Sound_trimSilences);
 	praat_addAction1 (classSound, 0, L"To KlattGrid (simple)...", L"To Manipulation...", 1, DO_Sound_to_KlattGrid_simple);
-	praat_addAction2 (classSound, 1, classPitch, 1, L"To FormantFilter...", 0, 0, DO_Sound_and_Pitch_to_FormantFilter);
+	praat_addAction2 (classSound, 1, classPitch, 1, L"To FormantFilter...", 0, praat_HIDDEN, DO_Sound_and_Pitch_to_FormantFilter);
+	praat_addAction2 (classSound, 1, classPitch, 1, L"To Spectrogram (pitch-dependent)...", 0, 0, DO_Sound_and_Pitch_to_Spectrogram);
 
 	praat_addAction2 (classSound, 1, classPitch, 1, L"Change gender...", 0, 0, DO_Sound_and_Pitch_changeGender);
 	praat_addAction2 (classSound, 1, classPitch, 1, L"Change speaker...", 0, praat_HIDDEN, DO_Sound_and_Pitch_changeSpeaker);

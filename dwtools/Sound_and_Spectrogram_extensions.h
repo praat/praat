@@ -1,8 +1,8 @@
-#ifndef _Sound_and_FilterBank_h_
-#define _Sound_and_FilterBank_h_
-/* Sound_and_FilterBank.h
+#ifndef _Sound_and_Spectrogram_extensions_h_
+#define _Sound_and_Spectrogram_extensions_h_
+/* Sound_and_Spectrogram_extensions.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,14 @@
  */
 
 /*
- djmw 20010404
- djmw 20020813 GPL header
- djmw 20120508 Latest modification
+ djmw 20140914
 */
 
-#include "FilterBank.h"
+#include "Spectrogram_extensions.h"
 #include "Pitch.h"
 #include "Sound.h"
 
-BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
+BarkSpectrogram Sound_to_BarkSpectrogram (Sound me, double analysisWidth, double dt,
 	double f1_bark, double fmax_bark, double df_bark);
 /*
 	Filtering with filters on a Bark scale as defined by
@@ -40,19 +38,19 @@ BarkFilter Sound_to_BarkFilter (Sound me, double analysisWidth, double dt,
 	10 log F(z) = 15.8 + 7.5(z + 0.5) - 17.5 * sqrt(1 + (z + 0.5)^2)
 */
 
-MelFilter Sound_to_MelFilter (Sound me, double analysisWidth, double dt,
+MelSpectrogram Sound_to_MelSpectrogram (Sound me, double analysisWidth, double dt,
 	double f1_mel, double fmax_mel, double df_mel);
 
-FormantFilter Sound_to_FormantFilter (Sound me, double analysisWidth,
+Spectrogram Sound_to_Spectrogram_pitchDependent (Sound me, double analysisWidth,
 	double dt, double f1_hz, double fmax_hz, double df_hz, double relative_bw,
 	double minimumPitch, double maximumPitch);
 
-FormantFilter Sound_and_Pitch_to_FormantFilter (Sound me, Pitch thee,
+Spectrogram Sound_and_Pitch_to_Spectrogram (Sound me, Pitch thee,
 	double analysisWidth, double dt, double f1_hz, double fmax_hz,
 	double df_hz, double relative_bw);
 
-Sound FilterBanks_crossCorrelate (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
-Sound FilterBanks_convolve (FilterBank me, FilterBank thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+Sound BandFilterSpectrograms_crossCorrelate (BandFilterSpectrogram me, BandFilterSpectrogram thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
+Sound BandFilterSpectrograms_convolve (BandFilterSpectrogram me, BandFilterSpectrogram thee, enum kSounds_convolve_scaling scaling, enum kSounds_convolve_signalOutsideTimeDomain signalOutsideTimeDomain);
 
 
-#endif /* _Sound_and_FilterBank_h_ */
+#endif /* _Sound_and_Spectrogram_extensions_h_ */

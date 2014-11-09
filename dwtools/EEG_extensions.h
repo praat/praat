@@ -1,4 +1,4 @@
-#ifndef __extensions_h_
+#ifndef _EEG_extensions_h_
 #define _EEG_extensions_h_
 /* EEG_extensions.h
  *

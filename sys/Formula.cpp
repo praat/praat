@@ -124,7 +124,7 @@ enum { GEENSYMBOOL_,
 		DO_, DOSTR_,
 		WRITE_INFO_, WRITE_INFO_LINE_, APPEND_INFO_, APPEND_INFO_LINE_,
 		WRITE_FILE_, WRITE_FILE_LINE_, APPEND_FILE_, APPEND_FILE_LINE_,
-		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_,
+		PAUSE_SCRIPT_, EXIT_SCRIPT_, RUN_SCRIPT_, RUN_SYSTEM_, RUN_SYSTEM_NOCHECK_,
 		MIN_, MAX_, IMIN_, IMAX_,
 		LEFTSTR_, RIGHTSTR_, MIDSTR_,
 		SELECTED_, SELECTEDSTR_, NUMBER_OF_SELECTED_, SELECT_OBJECT_, PLUS_OBJECT_, MINUS_OBJECT_, REMOVE_OBJECT_,
@@ -221,7 +221,7 @@ static const wchar_t *Formula_instructionNames [1 + hoogsteSymbool] = { L"",
 	L"do", L"do$",
 	L"writeInfo", L"writeInfoLine", L"appendInfo", L"appendInfoLine",
 	L"writeFile", L"writeFileLine", L"appendFile", L"appendFileLine",
-	L"pauseScript", L"exitScript", L"runScript",
+	L"pauseScript", L"exitScript", L"runScript", L"runSystem", L"runSystem_nocheck",
 	L"min", L"max", L"imin", L"imax",
 	L"left$", L"right$", L"mid$",
 	L"selected", L"selected$", L"numberOfSelected", L"selectObject", L"plusObject", L"minusObject", L"removeObject",
@@ -2731,6 +2731,51 @@ static void do_runScript () {
 	}
 	pushNumber (1);
 }
+static void do_runSystem () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw ("The function \"runSystem\" is not available inside manuals.");
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	autoMelderString text;
+	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& text, Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& text, arg->string);
+	}
+	try {
+		Melder_system (text.string);
+	} catch (MelderError) {
+		Melder_throw ("System command \"", text.string, "\" returned error status;\n"
+			"if you want to ignore this, use `runSystem_nocheck' instead of `runSystem'.");
+	}
+	pushNumber (1);
+}
+static void do_runSystem_nocheck () {
+	if (theCurrentPraatObjects != & theForegroundPraatObjects)
+		Melder_throw ("The function \"runSystem\" is not available inside manuals.");
+	Stackel narg = pop;
+	Melder_assert (narg->which == Stackel_NUMBER);
+	int numberOfArguments = narg->number;
+	w -= numberOfArguments;
+	autoMelderString text;
+	for (int iarg = 1; iarg <= numberOfArguments; iarg ++) {
+		Stackel arg = & theStack [w + iarg];
+		if (arg->which == Stackel_NUMBER)
+			MelderString_append (& text, Melder_double (arg->number));
+		else if (arg->which == Stackel_STRING)
+			MelderString_append (& text, arg->string);
+	}
+	try {
+		Melder_system (text.string);
+	} catch (MelderError) {
+		Melder_clearError ();
+	}
+	pushNumber (1);
+}
 static void do_min (void) {
 	Stackel n = pop, last;
 	double result;
@@ -3426,6 +3471,12 @@ static int praat_findObjectFromString (const wchar_t *name) {
 		WHERE_DOWN (1) {
 			Data object = (Data) OBJECT;
 			if (wcsequ (className, Thing_className ((Thing) OBJECT)) && wcsequ (givenName, object -> name))
+				return IOBJECT;
+		}
+		ClassInfo klas = Thing_classFromClassName (className);
+		WHERE_DOWN (1) {
+			Data object = (Data) OBJECT;
+			if (wcsequ (klas -> className, Thing_className ((Thing) OBJECT)) && wcsequ (givenName, object -> name))
 				return IOBJECT;
 		}
 	}
@@ -4762,6 +4813,8 @@ case NUMBER_: { pushNumber (f [programPointer]. content.number);
 } break; case PAUSE_SCRIPT_: { do_pauseScript ();
 } break; case EXIT_SCRIPT_: { do_exitScript ();
 } break; case RUN_SCRIPT_: { do_runScript ();
+} break; case RUN_SYSTEM_: { do_runSystem ();
+} break; case RUN_SYSTEM_NOCHECK_: { do_runSystem_nocheck ();
 } break; case MIN_: { do_min ();
 } break; case MAX_: { do_max ();
 } break; case IMIN_: { do_imin ();

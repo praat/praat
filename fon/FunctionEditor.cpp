@@ -191,11 +191,13 @@ static void drawNow (FunctionEditor me) {
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, my height - (TOP_MARGIN + space), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerLeft, my functionViewerLeft + MARGIN, BOTTOM_MARGIN + ( leftFromWindow ? space * 2 : 0 ), my height);
 	Graphics_fillRectangle (my d_graphics, my functionViewerRight - MARGIN, my functionViewerRight, BOTTOM_MARGIN + ( rightFromWindow ? space * 2 : 0 ), my height);
-	Graphics_setViewport (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
-	Graphics_setWindow (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
-	Graphics_fillRectangle (my d_graphics, my selectionViewerLeft, my selectionViewerLeft + MARGIN, BOTTOM_MARGIN, my height);
-	Graphics_fillRectangle (my d_graphics, my selectionViewerRight - MARGIN, my selectionViewerRight, BOTTOM_MARGIN, my height);
-	Graphics_fillRectangle (my d_graphics, my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, 0, BOTTOM_MARGIN + space * 3);
+	if (my p_showSelectionViewer) {
+		Graphics_setViewport (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
+		Graphics_setWindow (my d_graphics, my selectionViewerLeft, my selectionViewerRight, 0, my height);
+		Graphics_fillRectangle (my d_graphics, my selectionViewerLeft, my selectionViewerLeft + MARGIN, BOTTOM_MARGIN, my height);
+		Graphics_fillRectangle (my d_graphics, my selectionViewerRight - MARGIN, my selectionViewerRight, BOTTOM_MARGIN, my height);
+		Graphics_fillRectangle (my d_graphics, my selectionViewerLeft + MARGIN, my selectionViewerRight - MARGIN, 0, BOTTOM_MARGIN + space * 3);
+	}
 	Graphics_setGrey (my d_graphics, 0.0);
 	#if defined (macintosh)
 		Graphics_line (my d_graphics, my functionViewerLeft, 2, my selectionViewerRight, 2);

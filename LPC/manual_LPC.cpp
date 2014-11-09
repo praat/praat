@@ -475,20 +475,19 @@ TAG (L"##Use filter at time (s)")
 DEFINITION (L"determines which LPC frame will be chosen to inverse filter the sound. ")
 MAN_END
 
-MAN_BEGIN (L"MFCC", L"djmw", 20010411)
+MAN_BEGIN (L"MFCC", L"djmw", 20141022)
 INTRO (L"One of the @@types of objects@ in P\\s{RAAT}.")
 NORMAL (L"An object of type MFCC represents mel frequency cepstral coefficients "
 	"as a function of time. The coefficients are represented in frames "
-	"with constant sampling period.")
+	"at constant sampling period.")
 ENTRY (L"MFCC commands")
 NORMAL (L"Creation:")
 LIST_ITEM (L"\\bu @@Sound: To MFCC...@")
-LIST_ITEM (L"\\bu @@MelFilter: To MFCC...@")
+LIST_ITEM (L"\\bu @@MelSpectrogram: To MFCC...@")
 MAN_END
 
-MAN_BEGIN (L"MFCC: To MelFilter...", L"djmw", 20130221)
-INTRO (L"A command to reconstruct @MelFilter objects  from the selected @MFCC "
-	"objects .")
+MAN_BEGIN (L"MFCC: To MelFilter...", L"djmw", 20141023)
+INTRO (L"A #deprecated command replaced by @@MFCC: To MelSpectrogram...@.")
 ENTRY (L"Settings")
 TAG (L"##From coefficient#, ##To coefficient#")
 DEFINITION (L"the range of coefficients that will be used in the reconstruction.")
@@ -497,6 +496,20 @@ NORMAL (L"The output of the triangular filters in a mel filter bank will be "
 	"reconstructed by applying the inverse cosine transform:")
 FORMULA (L"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
 NORMAL (L"where %N represents the number of filters, %j runs from 1 to %N, and coefficients %c__%k_ with %k less than "
+	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
+MAN_END
+
+MAN_BEGIN (L"MFCC: To MelSpectrogram...", L"djmw", 20141023)
+INTRO (L"A command to (re)construct a @MelSpectrogram object from the selected @MFCC object.")
+ENTRY (L"Settings")
+TAG (L"##From coefficient#, ##To coefficient#")
+DEFINITION (L"the range of coefficients that will be used in the reconstruction.")
+TAG (L"##Include constant term")
+DEFINITION (L"selects whether or not to include the %c__0_ coefficient in the reconstruction. As can be seen from the formula below, the contribution of the %c__0_ term is equal for each filter.")
+ENTRY (L"Details")
+NORMAL (L"The values %P__%j_ in each frame of the MelSpectrogram will be constructed by applying the inverse Discrete Cosine Transform to the corresponding frame of the MFCC object:")
+FORMULA (L"%P__%j_ = 2/N (%c__0_/2 + \\Si__%k=1_^^%N-1^ %c__%k_ cos (\\pi%k(%j-0.5)/%N))),")
+NORMAL (L"where %N represents the number of filters that were used to get the MFCC object, %j runs from 1 to %N, and coefficients %c__%k_ with %k less than "
 	"%%fromCoefficient% and %k larger than %%toCoefficient% take zero values in the evaluation.")
 MAN_END
 
@@ -603,14 +616,14 @@ ENTRY (L"Algorithm")
 NORMAL (L"Burg's algorithm is described in @@Anderson (1978)@")
 MAN_END
 
-MAN_BEGIN (L"Sound: To MFCC...", L"djmw", 20010410)
+MAN_BEGIN (L"Sound: To MFCC...", L"djmw", 20141022)
 INTRO (L"A command that creates a @MFCC object from every selected @Sound "
 	"object.")
 NORMAL (L"The analysis proceeds in two steps:")
-LIST_ITEM (L"1.  We perform a filter bank analysis on a mel frequency scale "
-	"(see @@Sound: To MelFilter...@ for details).")
-LIST_ITEM (L"2.  We convert the filter values to mel frequency cepstral "
-	"coefficients (see @@MelFilter: To MFCC...@ for details).")
+LIST_ITEM (L"1.  We perform a spectrum analysis on a mel frequency scale "
+	"(see @@Sound: To MelSpectrogram...@ for details).")
+LIST_ITEM (L"2.  We convert the melspectrogram values to mel frequency cepstral "
+	"coefficients (see @@MelSpectrogram: To MFCC...@ for details).")
 MAN_END
 
 MAN_BEGIN (L"VocalTractTier", L"djmw", 20120423)

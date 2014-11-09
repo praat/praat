@@ -503,9 +503,6 @@ class autoMelderDivertInfo {
 		~autoMelderDivertInfo () { Melder_divertInfo (NULL); }
 };
 
-void Melder_print (const wchar_t *s);
-	/* Write formatted text to the Info window without clearing it, and without adding a new-line symbol at the end. */
-
 void Melder_clearInfo (void);   /* Clear the Info window. */
 const wchar_t * Melder_getInfo (void);
 void Melder_help (const wchar_t *query);

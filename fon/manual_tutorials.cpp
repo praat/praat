@@ -23,9 +23,13 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20141004)
+MAN_BEGIN (L"What's new?", L"ppgb", 20141109)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.01# (9 November 2014)")
+LIST_ITEM (L"• @MelSpectrogram, @BarkSpectrogram.")
+LIST_ITEM (L"• Linux: removed a bug that could cause too many flashes when scrolling a Sound window.")
+LIST_ITEM (L"• Mac: repaired a bug that could cause a crash in the VowelEditor window.")
 NORMAL (L"##5.4# (4 October 2014)")
 NORMAL (L"##5.3.87# (3 October 2014)")
 LIST_ITEM (L"• Windows scripting: prevented incorrect handling of relative paths after the use of chooseReadFile\\$ .")
@@ -3525,7 +3529,7 @@ MAN_BEGIN (L"Technical", L"ppgb", 20120915)
 INTRO (L"The title of a submenu of the @@Praat menu@.")
 MAN_END
 
-MAN_BEGIN (L"Types of objects", L"ppgb", 20101230)
+MAN_BEGIN (L"Types of objects", L"ppgb", 20141109)
 INTRO (L"Praat contains the following types of objects and @Editors. "
 	"For an introduction and tutorials, see @Intro.")
 NORMAL (L"General purpose:")
@@ -3553,7 +3557,7 @@ LIST_ITEM1 (L"• @@Intro 3. Spectral analysis")
 LIST_ITEM1 (L"• @@Intro 5. Formant analysis")
 LIST_ITEM (L"• @Spectrum: complex-valued equally spaced frequency spectrum (@SpectrumEditor)")
 LIST_ITEM (L"• @Ltas: long-term average spectrum")
-LIST_ITEM (L"• Spectro-temporal: @Spectrogram, @BarkFilter, @MelFilter, @FormantFilter")
+LIST_ITEM (L"• Spectro-temporal: @Spectrogram, @BarkSpectrogram, @MelSpectrogram")
 LIST_ITEM (L"• @Formant: acoustic formant contours")
 LIST_ITEM (L"• @LPC: coefficients of Linear Predictive Coding, as a function of time")
 LIST_ITEM (L"• @Cepstrum, @CC, @LFCC, @MFCC (cepstral coefficients)")

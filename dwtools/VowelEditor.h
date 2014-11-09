@@ -72,10 +72,11 @@ Thing_define (VowelEditor, Editor) {
 		GuiLabel startInfo, endInfo;
 		structVowelEditor_F1F2Grid grid;
 	// overridden methods:
-		void v_destroy ();
-		void v_createChildren ();
-		void v_createMenus ();
-		void v_createHelpMenuItems (EditorMenu menu);
+		virtual void v_destroy ();
+		virtual bool v_scriptable () { return false; }
+		virtual void v_createChildren ();
+		virtual void v_createMenus ();
+		virtual void v_createHelpMenuItems (EditorMenu menu);
 };
 
 VowelEditor VowelEditor_create (const wchar_t *title, Data data);

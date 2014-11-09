@@ -35,9 +35,23 @@ Thing_define (MFCC, CC) {
 };
 
 /*
+	Three slightly "different" definitions of MFCC
+	1. Davis & Mermelstein
+		MFCC[i] = SUM (j=1..N, f[j] * cos (i(j-1/2)pi/N)), i = 1..N-1
+	2. Vergin & O'Shaughnessy
+		MFCC[i] = SUM (j=0..N-1, f[j] * cos (i(j+1/2)pi/N)), i = 0..N-1
+	3. HTK-book
+		MFCC[i] = sqrt(2/n) SUM (j=1..N, f[j] * cos (i(j-1/2)pi/N)), i = 0..N-1
+
+	The f[j]'s are the MelSpectrogram values converted to dB.
+	We follow the definition of Davis and Mermelstein:
+    	MFCC[i] = SUM (j=1..N, f[j] * cos (i(j-1/2)pi/N)), i=1..N-1,
+*/
+
+/*
 	Interpretation:
-	Mel frequency cepstral coefficients as a function of time.
-	c0 represents the average filter output (dB's).
+	Mel frequency cepstral coefficient vectors as a function of time.
+	c0 represents the sum of the dB filter outputs.
 */
 
 MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,

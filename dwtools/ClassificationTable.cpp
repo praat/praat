@@ -1,6 +1,6 @@
 /* ClassificationTable.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,29 +28,43 @@
 */
 
 #include "ClassificationTable.h"
+#include "Distributions_and_Strings.h"
 #include "Strings_extensions.h"
 #include "NUM2.h"
 
 Thing_implement (ClassificationTable, TableOfReal, 0);
 
-ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfGroups) {
+ClassificationTable ClassificationTable_create (long numberOfRows, long numberOfClasses) {
 	try {
 		autoClassificationTable me = Thing_new (ClassificationTable);
-		TableOfReal_init (me.peek(), numberOfRows, numberOfGroups);
+		TableOfReal_init (me.peek(), numberOfRows, numberOfClasses );
 		return me.transfer();
 	} catch (MelderError) {
 		Melder_throw ("ClassificationTable not created.");
 	}
 }
 
-Confusion ClassificationTable_to_Confusion (ClassificationTable me) {
+Confusion ClassificationTable_to_Confusion (ClassificationTable me, int onlyClassLabels) {
 	try {
-		autoCategories c1 = TableOfReal_to_CategoriesRow (me);
-		autoCategories c2 = ClassificationTable_to_Categories_maximumProbability (me);
-		autoConfusion thee = Categories_to_Confusion (c1.peek(), c2.peek());
+		autoStrings responses = TableOfReal_extractColumnLabelsAsStrings (me);
+		autoStrings s2 = TableOfReal_extractRowLabelsAsStrings (me);
+		autoDistributions d2 = Strings_to_Distributions (s2.peek());
+		autoStrings stimuli = TableOfReal_extractRowLabelsAsStrings (d2.peek());
+		autoConfusion thee = Confusion_createFromStringses ((onlyClassLabels ? responses.peek() : stimuli.peek()), responses.peek());
+		Confusion_and_ClassificationTable_increase (thee.peek(), me);
 		return thee.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": confusions cannot be calculated.");
+	}
+}
+
+void Confusion_and_ClassificationTable_increase (Confusion me, ClassificationTable thee) {
+	if (my numberOfColumns != thy numberOfColumns) {
+		Melder_throw ("The number of columns must be equal.");
+	}
+	for (long irow = 1; irow <= thy numberOfRows; irow++) {
+		long index = TableOfReal_getColumnIndexAtMaximumInRow (thee, irow);
+		Confusion_increase (me, thy rowLabels[irow], my columnLabels[index]);
 	}
 }
 

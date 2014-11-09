@@ -1,22 +1,18 @@
 # test_Discriminant.praat
-# djmw 20110518
+# djmw 20110518, 20141030
 
-printline test_Discriminant
+appendInfoLine: "test_Discriminant"
 
-t = Create TableOfReal (Pols 1973)... no
-Formula... log10(self)
+t = Create TableOfReal (Pols 1973): "no"
+Formula: "log10(self)"
 
 dis = To Discriminant
 plus t
-clas = To ClassificationTable... yes yes
-conf = To Confusion
+clas = To ClassificationTable: "yes", "yes"
+conf = To Confusion: "no"
 fc = Get fraction correct
 assert fc -0.74 < 0.00001
 
-select t
-plus dis
-plus clas
-plus conf
-Remove
+removeObject: t, dis, clas, conf
 
-printline test_Discriminant OK
+appendInfoLine: "test_Discriminant OK"

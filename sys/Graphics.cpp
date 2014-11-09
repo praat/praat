@@ -75,13 +75,17 @@ static void widgetToWindowCoordinates (I) {
 
 static void computeTrafo (Graphics me) {
 	double worldScaleX, worldScaleY, workScaleX, workScaleY;
+	Melder_assert (my d_x2WC != my d_x1WC);
 	worldScaleX = (my d_x2NDC - my d_x1NDC) / (my d_x2WC - my d_x1WC);
+	Melder_assert (my d_y2WC != my d_y1WC);
 	worldScaleY = (my d_y2NDC - my d_y1NDC) / (my d_y2WC - my d_y1WC);
 	my deltaX = my d_x1NDC - my d_x1WC * worldScaleX;
 	my deltaY = my d_y1NDC - my d_y1WC * worldScaleY;
+	Melder_assert (my d_x2wNDC != my d_x1wNDC);
 	workScaleX = (my d_x2DC - my d_x1DC) / (my d_x2wNDC - my d_x1wNDC);
 	my deltaX = my d_x1DC - (my d_x1wNDC - my deltaX) * workScaleX;
 	my scaleX = worldScaleX * workScaleX;
+	Melder_assert (my d_y2wNDC != my d_y1wNDC);
 	if (my yIsZeroAtTheTop) {
 		workScaleY = ((int) my d_y1DC - (int) my d_y2DC) / (my d_y2wNDC - my d_y1wNDC);
 		my deltaY = my d_y2DC - (my d_y1wNDC - my deltaY) * workScaleY;
@@ -285,6 +289,8 @@ void Graphics_unsetInner (Graphics me) {
 }
 
 void Graphics_setWindow (Graphics me, double x1WC, double x2WC, double y1WC, double y2WC) {
+	Melder_assert (x1WC != x2WC);
+	Melder_assert (y1WC != y2WC);
 	my d_x1WC = x1WC;
 	my d_x2WC = x2WC;
 	my d_y1WC = y1WC;

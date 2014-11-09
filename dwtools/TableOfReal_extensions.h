@@ -2,7 +2,7 @@
 #define _TableOfReal_extensions_h_
 /* TableOfReal_extensions.h
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +61,8 @@ TableOfReal TableOfReal_createFromVanNieropData_25females (int include_levels);
 TableOfReal TableOfReal_createFromWeeninkData (int option); /* M W C */
 
 void TableOfReal_getColumnExtrema (I, long col, double *min, double *max);
+long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber);
+const wchar_t *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, long rowNumber);
 
 void TableOfReal_drawRowsAsHistogram (I, Graphics g, const wchar_t *rows, long colb, long cole,
 	double ymin, double ymax, double xoffsetFraction, double interbarFraction,

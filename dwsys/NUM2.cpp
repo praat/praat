@@ -2147,8 +2147,7 @@ int NUMburg (double x[], long n, double a[], int m, double *xms) {
 	return 1;
 }
 
-void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
-                        double ref, double factor, double floor) {
+void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce, double ref, double factor, double floor) {
 	double ref_db, factor10 = factor * 10;
 	double max = m[rb][cb], min = max;
 
@@ -2164,9 +2163,9 @@ void NUMdmatrix_to_dBs (double **m, long rb, long re, long cb, long ce,
 		}
 	}
 
-	if (max < 0 || min < 0) Melder_throw ("NUMdmatrix_to_dBs: all "
-		                                      "matrix elements must be positive.");
-
+	if (max < 0 || min < 0) {
+		Melder_throw ("NUMdmatrix_to_dBs: all matrix elements must be positive.");
+	}
 	ref_db = factor10 * log10 (ref);
 
 	for (long i = rb; i <= re; i++) {
@@ -2361,7 +2360,7 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 }
 
 
-int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
+bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
                                 double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2) {
 	int ncrossings = 0;
 	bool xswap, yswap;
@@ -2373,13 +2372,13 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	// within the rectangle
 	if (xl1 >= xr1 && xl1 <= xr2 && yl1 >= yr1 && yl1 <= yr2 &&
 	        xl2 >= xr1 && xl2 <= xr2 && yl2 >= yr1 && yl2 <= yr2) {
-		return 1;
+		return true;
 	}
 
 	// All lines that are completely outside the rectangle
 	if ( (xl1 <= xr1 && xl2 <= xr1) || (xl1 >= xr2 && xl2 >= xr2) ||
 	        (yl1 <= yr1 && yl2 <= yr1) || (yl1 >= yr2 && yl2 >= yr2)) {
-		return 0;
+		return false;
 	}
 
 	// At least line spans (part of) the rectangle.
@@ -2405,7 +2404,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		if (xswap) {
 			t = *xo1; *xo1 = *xo2; *xo2 = t;
 		}
-		return 1;
+		return true;
 	}
 	if (vline) {
 		if (ymin < yr1) {
@@ -2417,7 +2416,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		if (yswap) {
 			t = *yo1; *yo1 = *yo2; *yo2 = t;
 		}
-		return 1;
+		return true;
 	}
 
 	// Now we know that the line from (x1,y1) to (x2,y2) is neither horizontal nor vertical.
@@ -2474,7 +2473,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		}
 	}
 	if (ncrossings == 0) {
-		return 0;
+		return false;
 	}
 	if (ncrossings == 1 || ncrossings == 2) {
 		// if start and endpoint of line are outside rectangle and ncrossings == 1,
@@ -2482,7 +2481,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 		if (ncrossings == 1 &&
 		        (xl1 < xr1 || xl1 > xr2 || yl1 < yr1 || yl1 > yr2) &&
 		        (xl2 < xr1 || xl2 > xr2 || yl2 < yr1 || yl2 > yr2)) {
-			return 0;
+			return true;
 		}
 
 		if ( (xc[1] > xc[2] && ! xswap) || (xc[1] < xc[2] && xswap)) {
@@ -2493,7 +2492,7 @@ int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, 
 	} else {
 		Melder_throw ("Too many crossings found.");
 	}
-	return 1;
+	return true;
 }
 
 void NUMgetEllipseBoundingBox (double a, double b, double cospsi, double *width, double *height) {

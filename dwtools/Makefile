@@ -1,6 +1,6 @@
 # Makefile of the library "dwtools"
 # David Weenink, 22 February 2010
-# djmw 20140409 Latest modification
+# djmw 20141019 Latest modification
 
 include ../makefile.defs
 
@@ -27,7 +27,7 @@ OBJECTS = Activation.o AffineTransform.o \
 	LFCC.o LongSound_extensions.o \
 	KlattGrid.o KlattGridEditors.o KlattTable.o \
 	Ltas_extensions.o \
-	MelFilter_and_MFCC.o MFCC.o \
+	MFCC.o \
 	manual_DataModeler.o manual_dwtools.o manual_BSS.o manual_HMM.o \
 	manual_KlattGrid.o manual_MDS.o manual_Permutation.o \
 	Minimizers.o \
@@ -39,10 +39,10 @@ OBJECTS = Activation.o AffineTransform.o \
 	Proximity.o \
 	Resonator.o \
 	Sampled2.o \
-	Sound_and_FilterBank.o Sound_and_PCA.o Sound_extensions.o \
+	Sound_and_Spectrogram_extensions.o Sound_and_PCA.o Sound_extensions.o \
 	Sound_to_MFCC.o Sounds_to_DTW.o \
 	Sound_to_Pitch2.o Sound_to_SPINET.o SPINET.o SPINET_to_Pitch.o \
-	Spectrum_extensions.o SSCP.o Strings_extensions.o \
+	Spectrogram_extensions.o Spectrum_extensions.o SSCP.o Strings_extensions.o \
 	SpeechSynthesizer.o SpeechSynthesizer_and_TextGrid.o\
 	Table_extensions.o TableOfReal_and_SVD.o\
 	TableOfReal_extensions.o \

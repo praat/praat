@@ -33,6 +33,7 @@
 #include "Cepstrogram.h"
 #include "Cepstrum_and_Spectrum.h"
 #include "DTW.h"
+#include "FilterBank.h"
 #include "Formant_extensions.h"
 #include "LPC.h"
 #include "MFCC.h"
@@ -45,7 +46,6 @@
 #include "LPC_to_Spectrogram.h"
 #include "LPC_to_Spectrum.h"
 #include "NUM2.h"
-#include "MelFilter_and_MFCC.h"
 #include "praatP.h"
 #include "Sound_and_LPC.h"
 #include "Sound_and_LPC_robust.h"
@@ -58,6 +58,7 @@
 
 static const wchar_t *DRAW_BUTTON    = L"Draw -";
 static const wchar_t *QUERY_BUTTON   = L"Query -";
+static const wchar_t *MODIFY_BUTTON   = L"Modify -";
 
 void praat_CC_init (ClassInfo klas);
 void praat_TimeFrameSampled_query_init (ClassInfo klas);
@@ -1273,9 +1274,11 @@ void praat_uvafon_LPC_init (void) {
 	praat_addAction1 (classLPC, 0, L"Draw gain...", 0, 1, DO_LPC_drawGain);
 	praat_addAction1 (classLPC, 0, L"Draw poles...", 0, 1, DO_LPC_drawPoles);
 	praat_addAction1 (classLPC, 0, QUERY_BUTTON, 0, 0, 0);
-	praat_TimeFrameSampled_query_init (classLPC);
-	praat_addAction1 (classLPC, 1, L"Get sampling interval", 0, 1, DO_LPC_getSamplingInterval);
-	praat_addAction1 (classLPC, 1, L"Get number of coefficients...", 0, 1, DO_LPC_getNumberOfCoefficients);
+		praat_TimeFrameSampled_query_init (classLPC);
+		praat_addAction1 (classLPC, 1, L"Get sampling interval", 0, 1, DO_LPC_getSamplingInterval);
+		praat_addAction1 (classLPC, 1, L"Get number of coefficients...", 0, 1, DO_LPC_getNumberOfCoefficients);
+	praat_addAction1 (classLPC, 0, MODIFY_BUTTON, 0, 0, 0);
+		praat_TimeFunction_modify_init (classLPC);
 	praat_addAction1 (classLPC, 0, L"Extract", 0, 0, 0);
 
 	praat_addAction1 (classLPC, 0, L"To Spectrum (slice)...", 0, 0, DO_LPC_to_Spectrum);

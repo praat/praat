@@ -1365,7 +1365,7 @@ NORMAL (L"On Windows it is called ##Preferences5.ini#, "
 	"for instance ##C:\\bsDocuments and Settings\\bsMiep\\bsPraat\\bsPreferences5.ini#.")
 MAN_END
 
-MAN_BEGIN (L"Scripting", L"ppgb", 20140212)
+MAN_BEGIN (L"Scripting", L"ppgb", 20141012)
 INTRO (L"This is one of the tutorials of the Praat program. It assumes you are familiar with the @Intro.")
 NORMAL (L"A %script is a text that consists of menu commands and action commands. "
 	"If you %run the script (perhaps from a @ScriptEditor), "
@@ -1399,7 +1399,7 @@ LIST_ITEM1 (L"@@Scripting 6.1. Arguments to the script@ (form/endform, runScript
 LIST_ITEM1 (L"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
 LIST_ITEM1 (L"@@Scripting 6.3. Query commands@ (Get, Count)")
 LIST_ITEM1 (L"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createDirectory)")
-LIST_ITEM1 (L"@@Scripting 6.5. Calling system commands@ (system, environment\\$ , stopwatch)")
+LIST_ITEM1 (L"@@Scripting 6.5. Calling system commands@ (runSystem, environment\\$ , stopwatch)")
 LIST_ITEM1 (L"@@Scripting 6.6. Controlling the user@ (pause, beginPause/endPause, chooseReadFile\\$ )")
 LIST_ITEM1 (L"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
 LIST_ITEM1 (L"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn, nocheck)")
@@ -2710,12 +2710,12 @@ DEFINITION (L"stops the execution of the script while sending an error message t
 NORMAL (L"For an example, see @@Scripting 6.8. Messages to the user@.")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20140223)
+MAN_BEGIN (L"Scripting 6. Communication outside the script", L"ppgb", 20141012)
 LIST_ITEM (L"@@Scripting 6.1. Arguments to the script@ (form/endform, runScript)")
 LIST_ITEM (L"@@Scripting 6.2. Writing to the Info window@ (writeInfoLine, appendInfoLine, appendInfo, tab\\$ )")
 LIST_ITEM (L"@@Scripting 6.3. Query commands@ (Get, Count)")
 LIST_ITEM (L"@@Scripting 6.4. Files@ (fileReadable, readFile, writeFile, deleteFile, createDirectory)")
-LIST_ITEM (L"@@Scripting 6.5. Calling system commands@ (system, environment\\$ , stopwatch)")
+LIST_ITEM (L"@@Scripting 6.5. Calling system commands@ (runSystem, environment\\$ , stopwatch)")
 LIST_ITEM (L"@@Scripting 6.6. Controlling the user@ (pause, beginPause/endPause, chooseReadFile\\$ )")
 LIST_ITEM (L"@@Scripting 6.7. Sending a message to another program@ (sendsocket)")
 LIST_ITEM (L"@@Scripting 6.8. Messages to the user@ (exitScript, assert, nowarn, nocheck)")
@@ -2965,31 +2965,28 @@ NORMAL (L"you can also write")
 CODE (L"#deleteFile (%%fileName\\$ %)")
 MAN_END
 
-MAN_BEGIN (L"Scripting 6.5. Calling system commands", L"ppgb", 20140111)
+MAN_BEGIN (L"Scripting 6.5. Calling system commands", L"ppgb", 20141012)
 INTRO (L"From a Praat script you can call system commands. "
-	"These are the same commands that you would normally type into a terminal window or into the Window command line prompt.")
-TAG (L"#system %command")
-DEFINITION (L"executes a system command.")
-NORMAL (L"Some system commands are identical on all platforms (Macintosh, Windows, Unix):")
-CODE (L"#system mkdir sounds")
-NORMAL (L"which creates a new directory #sounds in the directory of the script. Some other system commands "
-	"are different on different platforms. For instance, to throw away all WAV files in the script's directory, "
-	"you would write")
-CODE (L"#system del *.wav")
+	"These are the same commands that you would normally type into a terminal window or into the Window command line prompt. "
+	"The syntax is the same as that of the #writeInfo command.")
+NORMAL (L"Most system commands are different on different platforms. "
+	"For instance, to throw away all WAV files in the directory whose name (relative to the script's directory) is "
+	"in the variable directory\\$ , you would write")
+CODE (L"#runSystem: \"del \", directory\\$ , \"\\bs*.wav\"")
 NORMAL (L"on Windows, but")
-CODE (L"#system rm *.wav")
+CODE (L"#runSystem: \"rm \", directory\\$ , \"/*.wav\"")
 NORMAL (L"on Macintosh and Unix.")
 NORMAL (L"The script will stop running if a system command returns an error. For instance,")
-CODE (L"#system mkdir sounds")
-NORMAL (L"will stop the script if the directory #sounds already exists. "
-	"In order to prevent this, you can tell Praat to ignore the return value of the system command:")
-TAG (L"#system_nocheck %command")
-DEFINITION (L"executes a system command, ignoring any errors.")
-NORMAL (L"Thus, to make sure that the directory #sounds exists, you would write")
-CODE (L"#system_nocheck mkdir sounds")
+CODE (L"#runSystem: \"rm \", directory\\$ , \"/*.wav\"")
+NORMAL (L"will stop the script if there are no WAV files in the directory. "
+	"In order to prevent this, you can tell Praat to ignore the return value of the runSystem command.")
+NORMAL (L"Thus, to make sure that the directory contains no WAV files, you would write")
+CODE (L"#runSystem_nocheck: \"rm \", directory\\$ , \"/*.wav\"")
+ENTRY (L"Getting the values of system variables")
 TAG (L"##environment\\$  (#%%symbol-string%#)")
 DEFINITION (L"returns the value of an environment variable, e.g.")
 CODE1 (L"homeDirectory\\$  = ##environment\\$ # (\"HOME\")")
+ENTRY (L"Getting system duration")
 TAG (L"##stopwatch")
 DEFINITION (L"returns the time that has elapsed since the previous #stopwatch.")
 NORMAL (L"Here is a Praat script that measures how long it takes to do a million assignments:")

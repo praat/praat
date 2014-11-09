@@ -258,6 +258,7 @@ PowerCepstrum PowerCepstrogram_to_PowerCepstrum_slice (PowerCepstrogram me, doub
 	}
 }
 
+PowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me);
 PowerCepstrogram Matrix_to_PowerCepstrogram (Matrix me) {
 	try {
 		autoPowerCepstrogram thee = Thing_new (PowerCepstrogram);
@@ -315,6 +316,7 @@ PowerCepstrogram Sound_to_PowerCepstrogram (Sound me, double pitchFloor, double 
 	}
 }
 
+Cepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me);
 Cepstrum Spectrum_to_Cepstrum_hillenbrand (Spectrum me) {
 	try {
 		autoNUMfft_Table fftTable;

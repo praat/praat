@@ -1,6 +1,6 @@
 /* Sound_to_MFCC.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,13 +23,12 @@
 */
 
 #include "Sound_to_MFCC.h"
-#include "Sound_and_FilterBank.h"
+#include "Sound_and_Spectrogram_extensions.h"
 
-MFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth,
-                    double dt, double f1_mel, double fmax_mel, double df_mel) {
+MFCC Sound_to_MFCC (Sound me, long numberOfCoefficients, double analysisWidth, double dt, double f1_mel, double fmax_mel, double df_mel) {
 	try {
-		autoMelFilter mf = Sound_to_MelFilter (me, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
-		autoMFCC mfcc = MelFilter_to_MFCC (mf.peek(), numberOfCoefficients);
+		autoMelSpectrogram mf = Sound_to_MelSpectrogram (me, analysisWidth, dt, f1_mel, fmax_mel, df_mel);
+		autoMFCC mfcc = MelSpectrogram_to_MFCC (mf.peek(), numberOfCoefficients);
 		return mfcc.transfer();
 	} catch (MelderError) {
 		Melder_throw (me, ": no MFCC created.");

@@ -1,8 +1,8 @@
-#ifndef _Sound_to_DTW_h_
+#ifndef _Sounds_to_DTW_h_
 #define _Sounds_to_DTW_h_
 /* Sounds_to_DTW.h
  *
- * Copyright (C) 2012 David Weenink
+ * Copyright (C) 2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

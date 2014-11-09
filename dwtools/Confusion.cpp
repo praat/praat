@@ -1,6 +1,6 @@
 /* Confusion.cpp
  *
- * Copyright (C) 1993-2011 David Weenink
+ * Copyright (C) 1993-2011, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,6 +58,26 @@ void structConfusion :: v_info () {
 	MelderInfo_writeLine (L"  Total number of entries: ",
 	                       Melder_integer (Confusion_getNumberOfEntries (this)));
 	MelderInfo_writeLine (L" Fraction correct: ", Melder_double (frac));
+}
+
+Confusion Confusion_createFromStringses (Strings me, Strings thee) {
+	try {
+		if (my numberOfStrings < 1 || thy numberOfStrings < 1) {
+			Melder_throw ("Empty Strings.");
+		}
+		autoConfusion him = Confusion_create (my numberOfStrings, thy numberOfStrings);
+		for (long irow = 1; irow <= my numberOfStrings; irow++) {
+			const wchar_t *label = my strings[irow];
+			TableOfReal_setRowLabel (him.peek(), irow, label);
+		}
+		for (long icol = 1; icol <= thy numberOfStrings; icol++) {
+			const wchar_t *label = thy strings[icol];
+			TableOfReal_setColumnLabel (him.peek(), icol, label);
+		}
+		return him.transfer();
+	} catch (MelderError) {
+		Melder_throw (me, ": could not create Confusion with ", thee);
+	}
 }
 
 Confusion Confusion_create (long numberOfStimuli, long numberOfResponses) {

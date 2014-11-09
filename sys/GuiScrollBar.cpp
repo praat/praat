@@ -1,6 +1,6 @@
 /* GuiScrollBar.cpp
  *
- * Copyright (C) 1993-2011,2012,2013 Paul Boersma, 2013 Tom Naughton
+ * Copyright (C) 1993-2011,2012,2013,2014 Paul Boersma, 2013 Tom Naughton
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,8 +40,10 @@ Thing_implement (GuiScrollBar, GuiControl, 0);
 	}
 	static void _GuiGtkScrollBar_valueChangedCallback (GuiObject widget, gpointer void_me) {
 		iam (GuiScrollBar);
-		trace ("enter");
-		if (my d_valueChangedCallback != NULL && ! my d_blockValueChangedCallbacks) {
+		trace ("enter: blocked %d", my d_blockValueChangedCallbacks);
+		if (my d_blockValueChangedCallbacks) {
+			my d_blockValueChangedCallbacks = false;
+		} else if (my d_valueChangedCallback) {
 			struct structGuiScrollBarEvent event = { me };
 			try {
 				my d_valueChangedCallback (my d_valueChangedBoss, & event);
@@ -279,8 +281,22 @@ GuiScrollBar GuiScrollBar_createShown (GuiForm parent, int left, int right, int 
 }
 
 void structGuiScrollBar :: f_set (double minimum, double maximum, double value, double sliderSize, double increment, double pageIncrement) {
-	GuiControlBlockValueChangedCallbacks block (this);
+	/*
+	 * This function calls the native scroll bar modification function.
+	 *
+	 * Note:
+	 * On almost all platforms, using the native scroll bar modification function sends a value-changed notification to the scroll bar.
+	 * This will call our own d_valueChangedCallback if we don't prevent it.
+	 * We have to prevent that, because our d_valueChangedCallback is only for user-initiated modifications.
+	 */
+	trace ("enter %.17g %.17g %.17g %.17g %.17g %.17g", minimum, maximum, value, sliderSize, increment, pageIncrement);
 	#if gtk
+		/*
+		 * We're going to modify the scroll bar with gtk_adjustment_configure ().
+		 * This function sends a *slow* value-changed notification to the scroll bar.
+		 * We have to make sure that our own d_valueChangedCallback is not called.
+		 */
+		d_blockValueChangedCallbacks = true;
 		GtkAdjustment *adj = gtk_range_get_adjustment (GTK_RANGE (d_widget));
 		gtk_adjustment_configure (GTK_ADJUSTMENT (adj),
 			NUMdefined (value)         ? value         : gtk_adjustment_get_value          (GTK_ADJUSTMENT (adj)),
@@ -289,7 +305,16 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 			NUMdefined (increment)     ? increment     : gtk_adjustment_get_step_increment (GTK_ADJUSTMENT (adj)),
 			NUMdefined (pageIncrement) ? pageIncrement : gtk_adjustment_get_page_increment (GTK_ADJUSTMENT (adj)),
 			NUMdefined (sliderSize)    ? sliderSize    : gtk_adjustment_get_page_size      (GTK_ADJUSTMENT (adj)));
+		/*
+		 * We don't set d_blockValueChangedCallbacks back to false yet, because GTK calls the valueChangedCallback with a delay.
+		 */
 	#elif cocoa
+		/*
+		 * We're going to modify the scroll bar with setMinimum:maximum:...
+		 * This function sends a *synchronous* value-changed notification to the scroll bar.
+		 * We have to make sure that our own d_valueChangedCallback is not called.
+		 */
+		GuiControlBlockValueChangedCallbacks block (this);
 		GuiCocoaScrollBar *scroller = (GuiCocoaScrollBar *) d_widget;
 		[scroller
 			setMinimum:    NUMdefined (minimum)       ? minimum       : [scroller m_minimum]
@@ -312,6 +337,7 @@ void structGuiScrollBar :: f_set (double minimum, double maximum, double value, 
 			NUMdefined (pageIncrement) ? pageIncrement : oldPageIncrement,
 			False);
 	#endif
+	trace ("exit");
 }
 
 int structGuiScrollBar :: f_getValue () {

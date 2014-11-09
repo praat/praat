@@ -946,6 +946,7 @@ double NUMformantfilter_amplitude (double fc, double bw, double f);
 
 	H(f) = 1.0 / (dq * dq + 1.0), where
 		dq = (fc * fc - f * f) / (bw * f)
+	Preconditions: f > 0 && bw > 0
 */
 
 int NUMburg (double x[], long n, double a[], int m, double *xms);
@@ -1030,12 +1031,12 @@ int NUMgetIntersectionsWithRectangle (double x1, double y1, double x2, double y2
 	The returned value is the number of intersections found and is either 0 or 1 or 2.
 */
 
-int NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
+bool NUMclipLineWithinRectangle (double xl1, double yl1, double xl2, double yl2, double xr1, double yr1,
 	double xr2, double yr2, double *xo1, double *yo1, double *xo2, double *yo2);
 /*
-	Returns in (xo1, yo1) and (xo2, yo2) the coordinates of that piece of the line (xl1, yl1)..(xl2, yl2)
+	If true, then returns in (xo1, yo1) and (xo2, yo2) the coordinates of that piece of the line (xl1, yl1)..(xl2, yl2)
 	that can be drawn within the rectangle with lowerleft corner (xr1, yr1) and upperright (xr2, yr2).
-	Returns 0 if there is nothing to be drawn inside.
+	Returns false if there is nothing to be drawn inside.
 */
 
 void NUMgetEllipseBoundingBox (double a, double b, double cospsi,

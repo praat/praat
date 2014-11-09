@@ -1,6 +1,6 @@
 /* TableOfReal_extensions.cpp
  *
- * Copyright (C) 1993-2012 David Weenink
+ * Copyright (C) 1993-2012, 2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,26 @@
 
 TableOfReal TableOfReal_and_TableOfReal_columnCorrelations (I, thou, int center, int normalize);
 TableOfReal TableOfReal_and_TableOfReal_rowCorrelations (I, thou, int center, int normalize);
+
+long TableOfReal_getColumnIndexAtMaximumInRow (TableOfReal me, long rowNumber) {
+	long columnNumber = 0;
+	if (rowNumber > 0 && rowNumber <= my numberOfRows) {
+		double max = my data[rowNumber][1];
+		columnNumber = 1;
+		for (long icol = 2; icol <= my numberOfColumns; icol++) {
+			if (my data[rowNumber][icol] > max) {
+				max = my data[rowNumber][icol]; columnNumber = icol;
+			}
+		}
+	}
+	return columnNumber;
+}
+
+const wchar_t *TableOfReal_getColumnLabelAtMaximumInRow (TableOfReal me, long rowNumber) {
+	long columnNumber = TableOfReal_getColumnIndexAtMaximumInRow (me, rowNumber);
+	return my v_getColStr (columnNumber);
+}
+
 
 int TableOfReal_areAllCellsDefined (I, long rb, long re, long cb, long ce) {
 	iam (TableOfReal);

@@ -2,7 +2,7 @@
  *
  * Mel Frequency Cepstral Coefficients class.
  *
- * Copyright (C) 1993-2013 David Weenink
+ * Copyright (C) 1993-2014 David Weenink
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,14 +24,15 @@
  * djmw 20110304 Thing_new
 */
 
-#include "MelFilter_and_MFCC.h"
+#include "MFCC.h"
+#include "Spectrogram_extensions.h"
 #include "NUM2.h"
 
 
 Thing_implement (MFCC, CC, 1);
 
 MFCC MFCC_create (double tmin, double tmax, long nt, double dt, double t1,
-                  long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
+	  long maximumNumberOfCoefficients, double fmin_mel, double fmax_mel) {
 	try {
 		autoMFCC me = Thing_new (MFCC);
 		CC_init (me.peek(), tmin, tmax, nt, dt, t1, maximumNumberOfCoefficients, fmin_mel, fmax_mel);
@@ -157,7 +158,7 @@ static double CC_Frames_distance (CC_Frame me, CC_Frame thee, bool includeEnergy
 Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy) {
 	try {
 		long nw = windowLength / my dx / 2;
-		autoMelFilter him = MFCC_to_MelFilter (me, 0, 0);
+		autoMelSpectrogram him = MFCC_to_MelSpectrogram (me, 0, 0, 1);
 		autoMatrix thee = Matrix_create (my xmin, my xmax, my nx, my dx, my x1, 1, 4, 4, 1, 1);
 		thy z[1][1] = thy z[1][my nx] = 0;  // first & last frame
 		for (long iframe = 2; iframe <= my nx - 1; iframe++) {
@@ -215,7 +216,6 @@ Matrix MFCC_to_Matrix_features (MFCC me, double windowLength, bool includeEnergy
 	} catch (MelderError) {
 		Melder_throw (me, ": no features calculated.");
 	}
-
 }
 
 /* End of file MFCC.cpp */

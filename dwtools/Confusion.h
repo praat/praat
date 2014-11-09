@@ -37,6 +37,8 @@ Confusion Confusion_create (long numberOfStimuli, long numberOfResponses);
 
 Confusion Confusion_createSimple (const wchar *labels);
 
+Confusion Confusion_createFromStringses (Strings stimulusLabels, Strings responseLabels);
+
 Confusion Categories_to_Confusion (Categories me, Categories thee);
 
 void Confusion_increase (Confusion me, const wchar_t *stimulus, const wchar_t *response);

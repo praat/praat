@@ -1551,8 +1551,8 @@ static Sound Sound_VocalTractGrid_CouplingGrid_filter_cascade (Sound me, VocalTr
 			if (oral_formant_warning) {
 				MelderString_append (&warning, L"\tOral formants: one or more are missing.\n");
 			}
-            Melder_print (L"\nWarning:\n");
-			Melder_print (warning.string);
+			MelderInfo_write (L"\nWarning:\n", warning.string);
+			MelderInfo_drain ();
 		}
 		return him.transfer();
 	} catch (MelderError) {

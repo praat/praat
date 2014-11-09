@@ -1728,7 +1728,7 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 					long save_assertErrorLineNumber = assertErrorLineNumber;
 					assertErrorLineNumber = 0;
 					Melder_throw ("Script assertion fails in line ", save_assertErrorLineNumber,
-							": error " L_LEFT_GUILLEMET " ", assertErrorString.string, " " L_RIGHT_GUILLEMET " not raised. Instead: no error.");
+							L": error « ", assertErrorString.string, L" » not raised. Instead: no error.");
 					
 				}
 			} catch (MelderError) {
@@ -1745,7 +1745,7 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 						Melder_clearError ();
 						autostring errorCopy = errorCopy_nothrow;   // UGLY but necessary (2)
 						Melder_throw ("Script assertion fails in line ", assertErrorLineNumber,
-							": error " L_LEFT_GUILLEMET " ", assertErrorString.string, " " L_RIGHT_GUILLEMET " not raised. Instead:\n",
+							L": error « ", assertErrorString.string, L" » not raised. Instead:\n",
 							errorCopy.peek());
 					}
 				}
@@ -1755,13 +1755,15 @@ void Interpreter_run (Interpreter me, wchar_t *text) {
 		my running = false;
 		my stopped = false;
 	} catch (MelderError) {
-		bool normalExplicitExit = wcsnequ (lines [lineNumber], L"exit ", 5) || Melder_hasError (L"Script exited.");
-		if (! normalExplicitExit && ! assertionFailed) {   // don't show the message twice!
-			while (lines [lineNumber] [0] == '\0') {   // did this use to be a continuation line?
-				lineNumber --;
-				Melder_assert (lineNumber > 0);   // originally empty lines that stayed empty should not generate errors
+		if (lineNumber > 0) {
+			bool normalExplicitExit = wcsnequ (lines [lineNumber], L"exit ", 5) || Melder_hasError (L"Script exited.");
+			if (! normalExplicitExit && ! assertionFailed) {   // don't show the message twice!
+				while (lines [lineNumber] [0] == '\0') {   // did this use to be a continuation line?
+					lineNumber --;
+					Melder_assert (lineNumber > 0);   // originally empty lines that stayed empty should not generate errors
+				}
+				Melder_error_ ("Script line ", lineNumber, L" not performed or completed:\n« ", lines [lineNumber], L" »");
 			}
-			Melder_error_ ("Script line ", lineNumber, " not performed or completed:\n" L_LEFT_GUILLEMET " ", lines [lineNumber], " " L_RIGHT_GUILLEMET);
 		}
 		my numberOfLabels = 0;
 		my running = false;
