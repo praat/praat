@@ -23,9 +23,11 @@
 void manual_tutorials_init (ManPages me);
 void manual_tutorials_init (ManPages me) {
 
-MAN_BEGIN (L"What's new?", L"ppgb", 20141109)
+MAN_BEGIN (L"What's new?", L"ppgb", 20141126)
 INTRO (L"Latest changes in Praat.")
 /*LIST_ITEM (L"• Manual page about @@drawing a vowel triangle@.")*/
+NORMAL (L"##5.4.02# (26 November 2014)")
+LIST_ITEM (L"• Mac: repaired a bug by which quote characters typed into the script window could become curly instead of straight.")
 NORMAL (L"##5.4.01# (9 November 2014)")
 LIST_ITEM (L"• @MelSpectrogram, @BarkSpectrogram.")
 LIST_ITEM (L"• Linux: removed a bug that could cause too many flashes when scrolling a Sound window.")

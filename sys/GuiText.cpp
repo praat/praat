@@ -996,11 +996,11 @@ GuiText GuiText_create (GuiForm parent, int left, int right, int top, int bottom
 			}
 			[my d_cocoaTextView setFont: theTextFont];
 			[my d_cocoaTextView setAllowsUndo: YES];
-			//[my d_cocoaTextView turnOffLigatures: nil];
+			[my d_cocoaTextView turnOffLigatures: nil];
 			[my d_cocoaTextView setSmartInsertDeleteEnabled: NO];
-			//[my d_cocoaTextView setAutomaticQuoteSubstitutionEnabled: NO];
+			[my d_cocoaTextView setAutomaticQuoteSubstitutionEnabled: NO];
 			[my d_cocoaTextView setAutomaticTextReplacementEnabled: NO];
-			//[my d_cocoaTextView setAutomaticDashSubstitutionEnabled: NO];
+			[my d_cocoaTextView setAutomaticDashSubstitutionEnabled: NO];
 			[my d_cocoaTextView setDelegate: my d_cocoaTextView];
 		} else {
 			my d_widget = [[GuiCocoaTextField alloc] init];

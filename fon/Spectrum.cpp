@@ -1,6 +1,6 @@
 /* Spectrum.cpp
  *
- * Copyright (C) 1992-2012 Paul Boersma
+ * Copyright (C) 1992-2012,2014 Paul Boersma
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,9 +149,9 @@ void Spectrum_draw (Spectrum me, Graphics g, double fmin, double fmax, double mi
 	if (garnish) {
 		Graphics_drawInnerBox (g);
 		Graphics_textBottom (g, 1, L"Frequency (Hz)");
-		Graphics_marksBottom (g, 2, TRUE, TRUE, FALSE);
+		Graphics_marksBottom (g, 2, true, true, false);
 		Graphics_textLeft (g, 1, L"Sound pressure level (dB/Hz)");
-		Graphics_marksLeftEvery (g, 1.0, 20.0, TRUE, TRUE, FALSE);
+		Graphics_marksLeftEvery (g, 1.0, 20.0, true, true, false);
 	}
 }
 
@@ -391,9 +391,8 @@ double Spectrum_getBandEnergyDifference (Spectrum me, double lowBandMin, double 
 }
 
 double Spectrum_getCentreOfGravity (Spectrum me, double power) {
-	long i;
 	double halfpower = 0.5 * power, sumenergy = 0.0, sumfenergy = 0.0;
-	for (i = 1; i <= my nx; i ++) {
+	for (long i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
 		if (halfpower != 1.0) energy = pow (energy, halfpower);
@@ -404,11 +403,10 @@ double Spectrum_getCentreOfGravity (Spectrum me, double power) {
 }
 
 double Spectrum_getCentralMoment (Spectrum me, double moment, double power) {
-	long i;
 	double halfpower = 0.5 * power, sumenergy = 0.0, sumfenergy = 0.0;
 	double fmean = Spectrum_getCentreOfGravity (me, power);
 	if (fmean == NUMundefined) return NUMundefined;
-	for (i = 1; i <= my nx; i ++) {
+	for (long i = 1; i <= my nx; i ++) {
 		double re = my z [1] [i], im = my z [2] [i], energy = re * re + im * im;
 		double f = my x1 + (i - 1) * my dx;
 		if (halfpower != 1.0) energy = pow (energy, halfpower);
